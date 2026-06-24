@@ -86,12 +86,12 @@ template<size_t I> const auto& get(const PositionTryFallback::RuleAndTactics& va
 template<> struct CSSValueConversion<PositionTryFallback> { auto operator()(BuilderState&, const CSSValue&) -> PositionTryFallback; };
 
 // `PositionTryFallback::PositionArea` is special-cased to handle `ImmutableStyleProperties`.
-template<> struct CSSValueCreation<PositionTryFallback::PositionArea> { auto operator()(CSSValuePool&, const RenderStyle&, const PositionTryFallback::PositionArea&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<PositionTryFallback::PositionArea> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const PositionTryFallback::PositionArea&) -> Ref<CSSValue>; };
 
 // MARK: - Serialization
 
 // `PositionTryFallback::PositionArea` is special-cased to handle `ImmutableStyleProperties`.
-template<> struct Serialize<PositionTryFallback::PositionArea> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const PositionTryFallback::PositionArea&); };
+template<> struct Serialize<PositionTryFallback::PositionArea> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const PositionTryFallback::PositionArea&); };
 
 // MARK: - Logging
 

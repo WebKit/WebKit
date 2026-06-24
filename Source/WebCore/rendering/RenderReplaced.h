@@ -44,7 +44,7 @@ public:
     LayoutSize intrinsicSize() const final;
 
     bool isContentLikelyVisibleInViewport();
-    bool shouldInvalidatePreferredWidths() const override;
+    bool shouldInvalidateContentWidths() const override;
 
     virtual bool paintsContent() const { return true; }
 
@@ -64,20 +64,21 @@ public:
     FloatSize preferredAspectRatioAsSize() const override;
 
 protected:
-    RenderReplaced(Type, Element&, RenderStyle&&, OptionSet<ReplacedFlag> = { });
-    RenderReplaced(Type, Element&, RenderStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
-    RenderReplaced(Type, Document&, RenderStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
+    RenderReplaced(Type, Element&, Style::ComputedStyle&&, OptionSet<ReplacedFlag> = { });
+    RenderReplaced(Type, Element&, Style::ComputedStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
+    RenderReplaced(Type, Document&, Style::ComputedStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
 
     void layout() override;
 
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const final;
-    void computeIntrinsicKeywordLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const final;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const final;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicKeywordLogicalWidths() const final;
+    std::pair<LayoutUnit, LayoutUnit> computeAspectRatioAdjustedIntrinsicLogicalWidths() const;
 
     virtual LayoutUnit minimumReplacedHeight() const { return 0_lu; }
 
     bool NODELETE isSelected() const;
 
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     void setIntrinsicSize(const LayoutSize& intrinsicSize) { m_intrinsicSize = intrinsicSize; }
     virtual void intrinsicSizeChanged();
@@ -109,7 +110,7 @@ private:
 
     bool canHaveChildren() const override { return false; }
 
-    void computePreferredLogicalWidths() final;
+    void computeIntrinsicLogicalWidthContributions() final;
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;

@@ -15,6 +15,7 @@
 #include <string>
 
 #include "api/media_types.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "media/base/codec.h"
 #include "media/base/media_constants.h"
@@ -160,9 +161,11 @@ TEST(RtpParametersConversionTest, ToRtpCapabilities) {
   EXPECT_EQ(0u, capabilities.codecs[2].parameters.size());
   ASSERT_EQ(2u, capabilities.header_extensions.size());
   EXPECT_EQ("uri", capabilities.header_extensions[0].uri);
-  EXPECT_EQ(1, capabilities.header_extensions[0].preferred_id);
+  EXPECT_EQ(RtpHeaderExtensionId(1),
+            capabilities.header_extensions[0].preferred_id);
   EXPECT_EQ("uri2", capabilities.header_extensions[1].uri);
-  EXPECT_EQ(3, capabilities.header_extensions[1].preferred_id);
+  EXPECT_EQ(RtpHeaderExtensionId(3),
+            capabilities.header_extensions[1].preferred_id);
   EXPECT_EQ(0u, capabilities.fec.size());
 
   capabilities =

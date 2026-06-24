@@ -212,7 +212,7 @@ public:
     void invalidateParentChildList();
 #endif
 
-    CheckedRef<const RenderStyle> lineStyle() const;
+    CheckedRef<const Style::ComputedStyle> lineStyle() const;
 
     inline const Style::VerticalAlign& verticalAlign() const LIFETIME_BOUND; // Defined in LegacyInlineBoxInlines.h
 

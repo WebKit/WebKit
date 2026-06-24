@@ -68,6 +68,9 @@ class TestLand(testing.PathTestCase):
         super(TestLand, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
         os.mkdir(os.path.join(self.path, '.svn'))
+        patcher = patch.object(Tracker, '_trackers', [])
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def test_none(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn():
@@ -392,6 +395,9 @@ class TestLandGitHub(testing.PathTestCase):
         super(TestLandGitHub, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
         os.mkdir(os.path.join(self.path, '.svn'))
+        patcher = patch.object(Tracker, '_trackers', [])
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     @classmethod
     def webserver(cls, approved=None, labels=None, environment=None):
@@ -620,6 +626,9 @@ class TestLandBitBucket(testing.PathTestCase):
         super(TestLandBitBucket, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
         os.mkdir(os.path.join(self.path, '.svn'))
+        patcher = patch.object(Tracker, '_trackers', [])
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     @classmethod
     def webserver(cls, approved=None):

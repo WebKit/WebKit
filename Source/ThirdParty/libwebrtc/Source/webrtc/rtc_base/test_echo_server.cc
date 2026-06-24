@@ -18,11 +18,9 @@
 namespace webrtc {
 
 TestEchoServer::TestEchoServer(const Environment& env,
-                               Thread* thread,
+                               SocketServer* ss,
                                const SocketAddress& addr)
-    : env_(env),
-      server_socket_(
-          thread->socketserver()->Create(addr.family(), SOCK_STREAM)) {
+    : env_(env), server_socket_(ss->Create(addr.family(), SOCK_STREAM)) {
   server_socket_->Bind(addr);
   server_socket_->Listen(5);
   server_socket_->SubscribeReadEvent(

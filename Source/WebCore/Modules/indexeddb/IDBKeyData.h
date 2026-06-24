@@ -99,11 +99,11 @@ public:
     bool isNull() const { return std::holds_alternative<std::nullptr_t>(m_value); }
     bool isValid() const;
     WEBCORE_EXPORT static bool isValidValue(const ValueVariant&);
-    IndexedDB::KeyType NODELETE type() const;
+    WEBCORE_EXPORT IndexedDB::KeyType type() const;
 
     WEBCORE_EXPORT friend std::weak_ordering operator<=>(const IDBKeyData&, const IDBKeyData&);
 
-    bool operator==(const IDBKeyData& other) const;
+    WEBCORE_EXPORT bool operator==(const IDBKeyData& other) const;
 
     String string() const
     {
@@ -152,10 +152,12 @@ inline void add(Hasher& hasher, const IDBKeyData& keyData)
     case IndexedDB::KeyType::Min:
         break;
     case IndexedDB::KeyType::Number:
-        add(hasher, keyData.number());
+        // Normalize negative 0.
+        add(hasher, keyData.number() + 0.0);
         break;
     case IndexedDB::KeyType::Date:
-        add(hasher, keyData.date());
+        // Normalize negative 0.
+        add(hasher, keyData.date() + 0.0);
         break;
     case IndexedDB::KeyType::String:
         add(hasher, keyData.string());

@@ -76,7 +76,7 @@ typedef enum {
 typedef struct _WebKitFeature WebKitFeature;
 
 WEBKIT_API GType
-webkit_feature_get_type          (void) G_GNUC_CONST;
+webkit_feature_get_type          (void);
 
 WEBKIT_API WebKitFeature *
 webkit_feature_ref               (WebKitFeature *feature);

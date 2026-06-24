@@ -21,6 +21,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static BN_ULONG word_is_odd_mask(BN_ULONG a) { return (BN_ULONG)0 - (a & 1); }
 
 static void maybe_rshift1_words(BN_ULONG *a, BN_ULONG mask, BN_ULONG *tmp,
@@ -56,7 +58,7 @@ static int bn_gcd_consttime(BIGNUM *r, unsigned *out_shift, const BIGNUM *x,
   }
 
   // This is a constant-time implementation of Stein's algorithm (binary GCD).
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *u = BN_CTX_get(ctx);
   BIGNUM *v = BN_CTX_get(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
@@ -121,9 +123,9 @@ int BN_gcd(BIGNUM *r, const BIGNUM *x, const BIGNUM *y, BN_CTX *ctx) {
   return bn_gcd_consttime(r, &shift, x, y, ctx) && BN_lshift(r, r, shift);
 }
 
-int bn_is_relatively_prime(int *out_relatively_prime, const BIGNUM *x,
-                           const BIGNUM *y, BN_CTX *ctx) {
-  bssl::BN_CTXScope scope(ctx);
+int bssl::bn_is_relatively_prime(int *out_relatively_prime, const BIGNUM *x,
+                                 const BIGNUM *y, BN_CTX *ctx) {
+  BN_CTXScope scope(ctx);
   unsigned shift;
   BIGNUM *gcd = BN_CTX_get(ctx);
   if (gcd == nullptr || !bn_gcd_consttime(gcd, &shift, x, y, ctx)) {
@@ -144,8 +146,9 @@ int bn_is_relatively_prime(int *out_relatively_prime, const BIGNUM *x,
   return 1;
 }
 
-int bn_lcm_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
-  bssl::BN_CTXScope scope(ctx);
+int bssl::bn_lcm_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
+                           BN_CTX *ctx) {
+  BN_CTXScope scope(ctx);
   unsigned shift;
   BIGNUM *gcd = BN_CTX_get(ctx);
   return gcd != nullptr &&  //
@@ -156,8 +159,9 @@ int bn_lcm_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
          bn_rshift_secret_shift(r, r, shift, ctx);
 }
 
-int bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse, const BIGNUM *a,
-                             const BIGNUM *n, BN_CTX *ctx) {
+int bssl::bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse,
+                                   const BIGNUM *a, const BIGNUM *n,
+                                   BN_CTX *ctx) {
   *out_no_inverse = 0;
   if (BN_is_negative(a) || BN_ucmp(a, n) >= 0) {
     OPENSSL_PUT_ERROR(BN, BN_R_INPUT_NOT_REDUCED);
@@ -196,7 +200,7 @@ int bn_mod_inverse_consttime(BIGNUM *r, int *out_no_inverse, const BIGNUM *a,
     a_width = n_width;
   }
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *u = BN_CTX_get(ctx);
   BIGNUM *v = BN_CTX_get(ctx);
   BIGNUM *A = BN_CTX_get(ctx);

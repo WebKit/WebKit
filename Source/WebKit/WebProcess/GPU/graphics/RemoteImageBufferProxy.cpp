@@ -286,6 +286,9 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
         return nullptr;
     bool hasAlpha = !pixelFormatIsOpaque(pixelFormat());
     Ref nativeImage = renderingBackend->remoteResourceCacheProxy().createNativeImage(backendSize(), colorSpace().platformColorSpace(), hasAlpha);
+    // This read-back bypasses flushDrawingContext(), so send any buffered line
+    // strokes into the stream before the (in-order) CopyNativeImage message.
+    sendPendingDrawsIfNecessary();
     const_cast<RemoteImageBufferProxy*>(this)->send(Messages::RemoteImageBuffer::CopyNativeImage(nativeImage->renderingResourceIdentifier()));
     return nativeImage;
 }
@@ -323,6 +326,9 @@ RefPtr<NativeImage> RemoteImageBufferProxy::filteredNativeImage(Filter& filter)
 {
     if (!m_renderingBackend) [[unlikely]]
         return nullptr;
+    // FilteredNativeImage reads the buffer in the GPU process, so send any
+    // buffered line strokes into the stream first.
+    sendPendingDrawsIfNecessary();
     auto sendResult = sendSync(Messages::RemoteImageBuffer::FilteredNativeImage(filter));
     if (!sendResult.succeeded())
         return nullptr;
@@ -341,6 +347,9 @@ RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferForm
     auto* backend = ensureBackend();
     if (!backend)
         return { };
+    // getPixelBuffer observes the buffer's pixels (the non-mappable branch
+    // bypasses flushDrawingContext()), so send any buffered line strokes first.
+    sendPendingDrawsIfNecessary();
     if (backend->canMapBackingStore()) {
         const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
         return ImageBuffer::getPixelBuffer(destinationFormat, sourceRect, allocator);
@@ -395,6 +404,9 @@ void RemoteImageBufferProxy::putPixelBuffer(const PixelBufferSourceView& pixelBu
     // The math inside PixelBuffer::create() doesn't agree with the math inside ImageBufferBackend::putPixelBuffer() about how m_resolutionScale interacts with the data in the ImageBuffer.
     // This means that putPixelBuffer() is only called when resolutionScale() == 1.
     ASSERT(resolutionScale() == 1);
+    // This put is ordered after prior draws in the stream; send any buffered
+    // line strokes first so they are not reordered behind it.
+    sendPendingDrawsIfNecessary();
     backingStoreWillChange();
     send(Messages::RemoteImageBuffer::PutPixelBuffer(pixelBuffer, srcRect.location(), srcRect.size(), destPoint, destFormat));
     // Small putPixelBuffers are batched, large ones are not.
@@ -406,11 +418,13 @@ void RemoteImageBufferProxy::putPixelBuffer(const PixelBufferSourceView& pixelBu
 
 void RemoteImageBufferProxy::convertToLuminanceMask()
 {
+    sendPendingDrawsIfNecessary();
     send(Messages::RemoteImageBuffer::ConvertToLuminanceMask());
 }
 
 void RemoteImageBufferProxy::transformToColorSpace(const DestinationColorSpace& colorSpace)
 {
+    sendPendingDrawsIfNecessary();
     send(Messages::RemoteImageBuffer::TransformToColorSpace(colorSpace));
 }
 

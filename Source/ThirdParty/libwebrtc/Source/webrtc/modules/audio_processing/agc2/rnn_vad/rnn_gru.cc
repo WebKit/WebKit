@@ -14,10 +14,10 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/vector_math.h"
 #include "rtc_base/checks.h"
@@ -31,7 +31,7 @@ namespace {
 
 constexpr int kNumGruGates = 3;  // Update, reset, output.
 
-std::vector<float> PreprocessGruTensor(ArrayView<const int8_t> tensor_src,
+std::vector<float> PreprocessGruTensor(std::span<const int8_t> tensor_src,
                                        int output_size) {
   // Transpose, cast and scale.
   // `n` is the size of the first dimension of the 3-dim tensor `weights`.
@@ -64,12 +64,12 @@ std::vector<float> PreprocessGruTensor(ArrayView<const int8_t> tensor_src,
 void ComputeUpdateResetGate(int input_size,
                             int output_size,
                             const VectorMath& vector_math,
-                            ArrayView<const float> input,
-                            ArrayView<const float> state,
-                            ArrayView<const float> bias,
-                            ArrayView<const float> weights,
-                            ArrayView<const float> recurrent_weights,
-                            ArrayView<float> gate) {
+                            std::span<const float> input,
+                            std::span<const float> state,
+                            std::span<const float> bias,
+                            std::span<const float> weights,
+                            std::span<const float> recurrent_weights,
+                            std::span<float> gate) {
   RTC_DCHECK_EQ(input.size(), input_size);
   RTC_DCHECK_EQ(state.size(), output_size);
   RTC_DCHECK_EQ(bias.size(), output_size);
@@ -79,9 +79,9 @@ void ComputeUpdateResetGate(int input_size,
   for (int o = 0; o < output_size; ++o) {
     float x = bias[o];
     x += vector_math.DotProduct(input,
-                                weights.subview(o * input_size, input_size));
+                                weights.subspan(o * input_size, input_size));
     x += vector_math.DotProduct(
-        state, recurrent_weights.subview(o * output_size, output_size));
+        state, recurrent_weights.subspan(o * output_size, output_size));
     gate[o] = ::rnnoise::SigmoidApproximated(x);
   }
 }
@@ -100,13 +100,13 @@ void ComputeUpdateResetGate(int input_size,
 void ComputeStateGate(int input_size,
                       int output_size,
                       const VectorMath& vector_math,
-                      ArrayView<const float> input,
-                      ArrayView<const float> update,
-                      ArrayView<const float> reset,
-                      ArrayView<const float> bias,
-                      ArrayView<const float> weights,
-                      ArrayView<const float> recurrent_weights,
-                      ArrayView<float> state) {
+                      std::span<const float> input,
+                      std::span<const float> update,
+                      std::span<const float> reset,
+                      std::span<const float> bias,
+                      std::span<const float> weights,
+                      std::span<const float> recurrent_weights,
+                      std::span<float> state) {
   RTC_DCHECK_EQ(input.size(), input_size);
   RTC_DCHECK_GE(update.size(), output_size);  // `update` is over-allocated.
   RTC_DCHECK_GE(reset.size(), output_size);   // `reset` is over-allocated.
@@ -121,10 +121,10 @@ void ComputeStateGate(int input_size,
   for (int o = 0; o < output_size; ++o) {
     float x = bias[o];
     x += vector_math.DotProduct(input,
-                                weights.subview(o * input_size, input_size));
+                                weights.subspan(o * input_size, input_size));
     x += vector_math.DotProduct(
         {reset_x_state.data(), static_cast<size_t>(output_size)},
-        recurrent_weights.subview(o * output_size, output_size));
+        recurrent_weights.subspan(o * output_size, output_size));
     state[o] = update[o] * state[o] + (1.f - update[o]) * std::max(0.f, x);
   }
 }
@@ -134,9 +134,9 @@ void ComputeStateGate(int input_size,
 GatedRecurrentLayer::GatedRecurrentLayer(
     const int input_size,
     const int output_size,
-    const ArrayView<const int8_t> bias,
-    const ArrayView<const int8_t> weights,
-    const ArrayView<const int8_t> recurrent_weights,
+    const std::span<const int8_t> bias,
+    const std::span<const int8_t> weights,
+    const std::span<const int8_t> recurrent_weights,
     const AvailableCpuFeatures& cpu_features,
     absl::string_view layer_name)
     : input_size_(input_size),
@@ -167,39 +167,39 @@ void GatedRecurrentLayer::Reset() {
   state_.fill(0.f);
 }
 
-void GatedRecurrentLayer::ComputeOutput(ArrayView<const float> input) {
+void GatedRecurrentLayer::ComputeOutput(std::span<const float> input) {
   RTC_DCHECK_EQ(input.size(), input_size_);
 
   // The tensors below are organized as a sequence of flattened tensors for the
   // `update`, `reset` and `state` gates.
-  ArrayView<const float> bias(bias_);
-  ArrayView<const float> weights(weights_);
-  ArrayView<const float> recurrent_weights(recurrent_weights_);
+  std::span<const float> bias(bias_);
+  std::span<const float> weights(weights_);
+  std::span<const float> recurrent_weights(recurrent_weights_);
   // Strides to access to the flattened tensors for a specific gate.
   const int stride_weights = input_size_ * output_size_;
   const int stride_recurrent_weights = output_size_ * output_size_;
 
-  ArrayView<float> state(state_.data(), output_size_);
+  std::span<float> state(state_.data(), output_size_);
 
   // Update gate.
   std::array<float, kGruLayerMaxUnits> update;
   ComputeUpdateResetGate(
       input_size_, output_size_, vector_math_, input, state,
-      bias.subview(0, output_size_), weights.subview(0, stride_weights),
-      recurrent_weights.subview(0, stride_recurrent_weights), update);
+      bias.subspan(0, output_size_), weights.subspan(0, stride_weights),
+      recurrent_weights.subspan(0, stride_recurrent_weights), update);
   // Reset gate.
   std::array<float, kGruLayerMaxUnits> reset;
   ComputeUpdateResetGate(input_size_, output_size_, vector_math_, input, state,
-                         bias.subview(output_size_, output_size_),
-                         weights.subview(stride_weights, stride_weights),
-                         recurrent_weights.subview(stride_recurrent_weights,
+                         bias.subspan(output_size_, output_size_),
+                         weights.subspan(stride_weights, stride_weights),
+                         recurrent_weights.subspan(stride_recurrent_weights,
                                                    stride_recurrent_weights),
                          reset);
   // State gate.
   ComputeStateGate(input_size_, output_size_, vector_math_, input, update,
-                   reset, bias.subview(2 * output_size_, output_size_),
-                   weights.subview(2 * stride_weights, stride_weights),
-                   recurrent_weights.subview(2 * stride_recurrent_weights,
+                   reset, bias.subspan(2 * output_size_, output_size_),
+                   weights.subspan(2 * stride_weights, stride_weights),
+                   recurrent_weights.subspan(2 * stride_recurrent_weights,
                                              stride_recurrent_weights),
                    state);
 }

@@ -175,6 +175,17 @@ enum RtcpMuxPolicyUsage {
   kRtcpMuxPolicyUsageMax
 };
 
+// Metrics for RTCRtpHeaderEncryptionPolicy (which enables cryptex).
+// https://w3c.github.io/webrtc-extensions/#rtp-header-extension-encryption
+enum CryptexPolicyUsage {
+  kCryptexPolicyUsageDisabled = 0,  // Non-spec.
+  kCryptexPolicyUsageNegotiate = 1,
+  // Policy was `negotiate` and it was negotiated at session level.
+  kCryptexPolicyUsageNegotiated = 2,
+  kCryptexPolicyUsageRequire = 3,
+  kCryptexPolicyUsageMax
+};
+
 // Metrics for SDP munging.
 // These values are persisted to logs. Entries should not be renumbered and
 // numeric values should never be reused. Keep in (loose) sync with
@@ -203,10 +214,14 @@ enum SdpMungingType {
   kIceCandidateCount = 32,
   kBundle = 33,
   kBandwidth = 34,
+  kSframe = 35,
+  kMsidStream = 36,
+  kMsidTrack = 37,
   // RTP header extension munging.
   kRtpHeaderExtensionRemoved = 40,
   kRtpHeaderExtensionAdded = 41,
   kRtpHeaderExtensionModified = 42,
+  kCryptex = 43,
   // Audio-related munging.
   kAudioCodecsRemoved = 60,
   kAudioCodecsAdded = 61,
@@ -236,7 +251,7 @@ enum SdpMungingType {
   // DataChannel-related munging.
   kDataChannelSctpInit = 100,
   kDataChannelMaxMessageSize = 101,
-  kDataChannelSctpPort = 101,
+  kDataChannelSctpPort = 102,
   kMaxValue,
 };
 
@@ -247,6 +262,18 @@ enum class SdpMungingOutcome {
   kAccepted = 0,
   kRejected = 1,
   kMaxValue = kRejected,
+};
+
+// These values are persisted to logs. Entries should not be renumbered and
+// numeric values should never be reused.
+enum SdpBandwidthCategory {
+  kSdpBandwidthParseFailure = 0,
+  kSdpBandwidthNegativeOne = 1,
+  kSdpBandwidthZero = 2,
+  kSdpBandwidthSmall = 3,  // 1 to INT_MAX/1000
+  kSdpBandwidthLarge = 4,  // INT_MAX/1000 + 1 to INT_MAX
+  kSdpBandwidthNegative = 5,
+  kSdpBandwidthMax
 };
 
 // When adding new metrics please consider using the style described in

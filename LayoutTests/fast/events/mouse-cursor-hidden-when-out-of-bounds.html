@@ -82,8 +82,6 @@ if (!window.eventSender)
     testFailed('This test must run in the test runner.');
 
 if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
     window.jsTestIsAsync = true;
 }
 

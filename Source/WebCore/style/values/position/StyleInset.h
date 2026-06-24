@@ -24,14 +24,14 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
 namespace WebCore {
 namespace Style {
 
 // <'top'>/<'right'>/<'bottom'>/<'left'> = auto | <length-percentage>
 // https://drafts.csswg.org/css-position/#insets
-struct InsetEdge : LengthWrapperBase<LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>, CSS::Keyword::Auto> {
+struct InsetEdge : PrimitiveNumericOrKeyword<LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>, CSS::Keyword::Auto> {
     using Base::Base;
 
     ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }

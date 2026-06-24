@@ -2,7 +2,7 @@ import { insertCustomIframe, testSupportScript } from "./helpers.mjs";
 import { waitForIframe, testGetter } from "../../resources/helpers.mjs";
 
 const testSupportScriptSuitableForNesting =
-  testSupportScript.replace('</script>', '</scri`>');
+  testSupportScript.replace('</script>', '</scri` + `pt>');
 
 export default () => {
   promise_setup(async () => {

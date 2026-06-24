@@ -142,7 +142,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)getAllCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
 {
-    protect(*_cookieStore)->cookies(makeCookieConversionHandler(_cookieStore->isOptInCookiePartitioningEnabled(), completionHandler), &cookieConversionQueueSingleton());
+    protect(*_cookieStore)->cookies(makeCookieConversionHandler(protect(*_cookieStore)->isOptInCookiePartitioningEnabled(), completionHandler), &cookieConversionQueueSingleton());
 }
 
 - (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)(void))completionHandler
@@ -240,7 +240,7 @@ static WKCookiePolicy NODELETE toWKCookiePolicy(WebCore::HTTPCookieAcceptPolicy 
 
 - (void)getCookiesForURL:(NSURL *)url completionHandler:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
 {
-    protect(*_cookieStore)->cookiesForURL(url, makeCookieConversionHandler(_cookieStore->isOptInCookiePartitioningEnabled(), completionHandler), &cookieConversionQueueSingleton());
+    protect(*_cookieStore)->cookiesForURL(url, makeCookieConversionHandler(protect(*_cookieStore)->isOptInCookiePartitioningEnabled(), completionHandler), &cookieConversionQueueSingleton());
 }
 #pragma mark WKObject protocol implementation
 

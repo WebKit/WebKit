@@ -402,7 +402,8 @@ static unsigned int highbd_get_prediction_error(BLOCK_SIZE bsize,
 // for first pass test.
 static int get_search_range(const VP9_COMP *cpi) {
   int sr = 0;
-  const int dim = VPXMIN(cpi->initial_width, cpi->initial_height);
+  int dim = VPXMIN(cpi->initial_width, cpi->initial_height);
+  dim = VPXMAX(dim, MI_SIZE);
 
   while ((dim << sr) < MAX_FULL_PEL_VAL) ++sr;
   return sr;

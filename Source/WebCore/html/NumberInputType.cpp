@@ -619,14 +619,14 @@ void NumberInputType::attributeChanged(const QualifiedName& name)
         if (RefPtr element = this->element()) {
             element->invalidateStyleForSubtree();
             if (CheckedPtr renderer = element->renderer())
-                renderer->setNeedsLayoutAndPreferredWidthsUpdate();
+                renderer->setNeedsLayoutAndInvalidateContentLogicalWidths();
         }
         break;
     case AttributeNames::classAttr:
     case AttributeNames::stepAttr:
         if (RefPtr element = this->element()) {
             if (CheckedPtr renderer = element->renderer())
-                renderer->setNeedsLayoutAndPreferredWidthsUpdate();
+                renderer->setNeedsLayoutAndInvalidateContentLogicalWidths();
         }
         break;
     default:

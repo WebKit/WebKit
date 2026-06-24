@@ -40,7 +40,7 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSContentValue&) const;
 
-    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
 private:
     CSSContentValue(CSS::Content&&);

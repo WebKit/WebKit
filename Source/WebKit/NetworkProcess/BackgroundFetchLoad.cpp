@@ -123,14 +123,17 @@ void BackgroundFetchLoad::loadRequest(NetworkProcess& networkProcess, ResourceRe
 void BackgroundFetchLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
     m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTF::move(request), WTF::move(redirectResponse), nullptr, [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (auto&& result) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return completionHandler({ });
         if (!result.has_value()) {
-            weakThis->didFinish(result.error());
+            protectedThis->didFinish(result.error());
             completionHandler({ });
             return;
         }
         auto request = WTF::move(result->redirectRequest);
         if (!request.url().protocolIsInHTTPFamily()) {
-            weakThis->didFinish(ResourceError { String { }, 0, request.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
+            protectedThis->didFinish(ResourceError { String { }, 0, request.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
             completionHandler({ });
             return;
         }

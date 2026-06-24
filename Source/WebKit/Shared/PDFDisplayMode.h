@@ -29,18 +29,18 @@
 
 namespace WebKit {
 
-enum class PDFDisplayMode : uint8_t {
+enum class PDFPluginDisplayMode : uint8_t {
     SinglePageDiscrete,
     SinglePageContinuous,
     TwoUpDiscrete,
     TwoUpContinuous,
 };
 
-constexpr bool isSinglePagePDFDisplayMode(PDFDisplayMode mode) { return mode == PDFDisplayMode::SinglePageDiscrete || mode == PDFDisplayMode::SinglePageContinuous; }
-constexpr bool isTwoUpPDFDisplayMode(PDFDisplayMode mode) { return mode == PDFDisplayMode::TwoUpDiscrete || mode == PDFDisplayMode::TwoUpContinuous; }
+constexpr bool isSinglePagePDFDisplayMode(PDFPluginDisplayMode mode) { return mode == PDFPluginDisplayMode::SinglePageDiscrete || mode == PDFPluginDisplayMode::SinglePageContinuous; }
+constexpr bool isTwoUpPDFDisplayMode(PDFPluginDisplayMode mode) { return mode == PDFPluginDisplayMode::TwoUpDiscrete || mode == PDFPluginDisplayMode::TwoUpContinuous; }
 
-constexpr bool isScrollingPDFDisplayMode(PDFDisplayMode mode) { return mode == PDFDisplayMode::SinglePageContinuous || mode == PDFDisplayMode::TwoUpContinuous; }
-constexpr bool isDiscretePDFDisplayMode(PDFDisplayMode mode) { return mode == PDFDisplayMode::SinglePageDiscrete || mode == PDFDisplayMode::TwoUpDiscrete; }
+constexpr bool isScrollingPDFDisplayMode(PDFPluginDisplayMode mode) { return mode == PDFPluginDisplayMode::SinglePageContinuous || mode == PDFPluginDisplayMode::TwoUpContinuous; }
+constexpr bool isDiscretePDFDisplayMode(PDFPluginDisplayMode mode) { return mode == PDFPluginDisplayMode::SinglePageDiscrete || mode == PDFPluginDisplayMode::TwoUpDiscrete; }
 
 } // namespace WebKit
 

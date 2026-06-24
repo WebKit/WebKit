@@ -238,8 +238,15 @@ static String mimeTypeFor(std::span<const uint8_t> data)
         return "audio/wav"_s;
     case kAudioFileCAFType:
         return "audio/x-caf"_s;
+    case 'MooV': // kAudioFileQTMovieType
+        return "video/quicktime"_s;
+    case 'ec-3': // kAudioFileEAC3Type
+        return "audio/eac3"_s;
+    case 'Oggf': // kAudioFileOggType
+        return "audio/ogg"_s;
     case kAudioFileNextType:
     default:
+        RELEASE_LOG_FAULT(WebAudio, "mimeTypeFor typeID: %u unsupported", static_cast<unsigned>(typeID));
         return emptyString();
     }
 }
@@ -340,6 +347,8 @@ std::unique_ptr<AudioFileReaderData> AudioFileReader::demuxAVFData(std::span<con
         mimeType = mimeTypeFor(data);
     if (mimeType.isEmpty())
         return nullptr;
+    if (mimeType == "application/ogg"_s)
+        mimeType = "audio/ogg"_s;
 
     // Create a custom URL scheme for in-memory data
     RetainPtr url = adoptNS([[NSURL alloc] initWithString:@"custom-audiofilereader://audio"]);
@@ -367,7 +376,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!audioTracks || ![audioTracks count]) {
-        RELEASE_LOG_FAULT(WebAudio, "AudioFileReader: No audio tracks found");
+        RELEASE_LOG_FAULT(WebAudio, "AudioFileReader: No audio tracks found for '%s' type", mimeType.utf8().data());
         return nullptr;
     }
 

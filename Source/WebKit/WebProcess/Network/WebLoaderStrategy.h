@@ -115,6 +115,7 @@ private:
 
     WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const final;
+    bool isBlockedError(const WebCore::ResourceError&) const final;
     WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&) const final;

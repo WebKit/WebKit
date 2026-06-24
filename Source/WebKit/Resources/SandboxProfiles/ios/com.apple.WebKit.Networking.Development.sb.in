@@ -21,6 +21,9 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(DEVELOPMENT_SANDBOX_FALLBACK)
+#include "Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in"
+#else
 #include "Shared/Sandbox/iOS/common.sb"
 #include "Shared/Sandbox/iOS/networking-defines.sb"
 
@@ -181,3 +184,5 @@
 #if HAVE(ENHANCED_SECURITY_LINKS) && __has_include(<WebKitAdditions/EnhancedSecurityLinks-ios.sb>)
 #include <WebKitAdditions/EnhancedSecurityLinks-ios.sb>
 #endif
+
+#endif // !ENABLE(DEVELOPMENT_SANDBOX_FALLBACK)

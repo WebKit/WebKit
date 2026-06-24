@@ -13,6 +13,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "api/rtp_packet_infos.h"
@@ -27,7 +28,7 @@
 namespace webrtc {
 namespace test {
 
-int64_t FakeEncodedFrame::ReceivedTime() const {
+std::optional<Timestamp> FakeEncodedFrame::ReceivedTimestamp() const {
   return received_time_;
 }
 
@@ -35,7 +36,7 @@ int64_t FakeEncodedFrame::RenderTime() const {
   return _renderTimeMs;
 }
 
-void FakeEncodedFrame::SetReceivedTime(int64_t received_time) {
+void FakeEncodedFrame::SetReceivedTime(Timestamp received_time) {
   received_time_ = received_time;
 }
 
@@ -107,7 +108,7 @@ std::unique_ptr<FakeEncodedFrame> FakeFrameBuilder::Build() {
   if (spatial_layer_)
     frame->SetSpatialIndex(spatial_layer_);
   if (received_time_)
-    frame->SetReceivedTime(received_time_->ms());
+    frame->SetReceivedTime(*received_time_);
   if (payload_type_)
     frame->SetPayloadType(*payload_type_);
   if (ntp_time_)

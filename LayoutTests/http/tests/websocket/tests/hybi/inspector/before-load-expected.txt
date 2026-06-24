@@ -6,9 +6,16 @@ Tests that WebSockets created before the inspector loads are also tracked.
 PASS: Should have 1 WebSocketResource
 PASS: Resource should be a WebSocket.
 PASS: Resource URL should be "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo".
-PASS: Resource should have request headers.
-PASS: Resource should have response headers.
-Resource readyState should be Symbol(open).
+PASS: Resource status code should be 101.
+PASS: Resource status text should be "Switching Protocols".
+PASS: Resource should have request header Connection.
+PASS: Resource should have request header Sec-Websocket-Key.
+PASS: Resource should have request header Sec-Websocket-Version.
+PASS: Resource should have request header Upgrade.
+PASS: Resource should have response header Connection.
+PASS: Resource should have response header sec-websocket-accept.
+PASS: Resource should have response header Upgrade.
+PASS: Resource should be open.
 PASS: Frame data should be 'Hello World!'
 PASS: Frame outgoing should be 'true'
 PASS: Frame data should be 'Hello World!'

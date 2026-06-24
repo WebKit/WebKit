@@ -29,9 +29,9 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "MouseEvent.h"
-#include "RenderStyle+GettersInlines.h"
 #include "ResolvedStyle.h"
 #include "StyleAppearance.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -75,7 +75,7 @@ bool DataListButtonElement::isDisabledFormControl() const
     return host && host->isDisabledFormControl();
 }
 
-std::optional<Style::UnadjustedStyle> DataListButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
+std::optional<Style::UnadjustedStyle> DataListButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* shadowHostStyle)
 {
     m_canAdjustStyleForAppearance = true;
 

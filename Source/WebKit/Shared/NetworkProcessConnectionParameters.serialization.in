@@ -28,4 +28,5 @@ struct WebKit::NetworkProcessConnectionParameters {
     Vector<WebKit::WebPageProxyIdentifier> pagesWithRelaxedThirdPartyCookieBlocking;
     WebKit::LoadedWebArchive loadedWebArchive;
     HashSet<WebCore::RegistrableDomain> allowedFirstPartiesForCookies;
+    HashMap<WebCore::PageIdentifier, Vector<String>> corsDisablingPatternsPerPage;
 };

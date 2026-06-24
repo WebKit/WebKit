@@ -33,21 +33,21 @@ namespace Style {
 // MARK: - Conversion from strongly typed `CSS::` value types to `WebCore::DeprecatedCSSOMValue` types.
 
 template<Numeric StyleType> struct DeprecatedCSSOMValueCreation<StyleType> {
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
     {
         return CSS::createDeprecatedCSSOMValue(pool, owner, toCSS(value, style));
     }
 };
 
 template<DimensionPercentageNumeric StyleType> struct DeprecatedCSSOMValueCreation<StyleType> {
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
     {
         return CSS::createDeprecatedCSSOMValue(pool, owner, toCSS(value, style));
     }
 };
 
 template<Calc StyleType> struct DeprecatedCSSOMValueCreation<StyleType> {
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
     {
         return CSS::createDeprecatedCSSOMValue(pool, owner, toCSS(value, style));
     }
@@ -56,7 +56,7 @@ template<Calc StyleType> struct DeprecatedCSSOMValueCreation<StyleType> {
 template<auto nR, auto pR, typename V> struct DeprecatedCSSOMValueCreation<NumberOrPercentage<nR, pR, V>> {
     using StyleType = NumberOrPercentage<nR, pR, V>;
 
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
     {
         return CSS::createDeprecatedCSSOMValue(pool, owner, toCSS(value, style));
     }
@@ -65,7 +65,7 @@ template<auto nR, auto pR, typename V> struct DeprecatedCSSOMValueCreation<Numbe
 template<auto nR, auto pR, typename V> struct DeprecatedCSSOMValueCreation<NumberOrPercentageResolvedToNumber<nR, pR, V>> {
     using StyleType = NumberOrPercentageResolvedToNumber<nR, pR, V>;
 
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const StyleType& value)
     {
         return CSS::createDeprecatedCSSOMValue(pool, owner, toCSS(value, style));
     }

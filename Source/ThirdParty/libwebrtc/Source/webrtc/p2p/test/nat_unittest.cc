@@ -36,6 +36,7 @@
 #include "rtc_base/virtual_socket_server.h"
 #include "test/create_test_environment.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 
 namespace webrtc {
@@ -231,13 +232,13 @@ bool TestConnectivity(const SocketAddress& src, const IPAddress& dst) {
 }
 
 void TestPhysicalInternal(const SocketAddress& int_addr) {
-  AutoThread main_thread;
+  test::RunLoop main_thread;
   PhysicalSocketServer socket_server;
   const Environment env = CreateTestEnvironment();
   BasicNetworkManager network_manager(env, &socket_server);
   network_manager.StartUpdating();
   // Process pending messages so the network list is updated.
-  Thread::Current()->ProcessMessages(0);
+  main_thread.Flush();
 
   std::vector<const Network*> networks = network_manager.GetNetworks();
   std::erase_if(networks, [](const Network* network) {
@@ -301,7 +302,7 @@ class TestVirtualSocketServer : public VirtualSocketServer {
 }  // namespace
 
 void TestVirtualInternal(int family) {
-  AutoThread main_thread;
+  test::RunLoop main_thread;
   const Environment env = CreateTestEnvironment();
   std::unique_ptr<TestVirtualSocketServer> int_vss(
       new TestVirtualSocketServer());

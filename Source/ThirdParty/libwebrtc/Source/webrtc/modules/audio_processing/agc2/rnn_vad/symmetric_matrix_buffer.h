@@ -14,10 +14,10 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <span>
 #include <type_traits>
 #include <utility>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_compare.h"
 
@@ -52,7 +52,7 @@ class SymmetricMatrixBuffer {
   // most recent one in the ring buffer, whereas the last element in `values`
   // must correspond to the comparison between the most recent item and the
   // oldest one in the ring buffer.
-  void Push(ArrayView<T, S - 1> values) {
+  void Push(std::span<T, S - 1> values) {
     // Move the lower-right sub-matrix of size (S-2) x (S-2) one row up and one
     // column left.
     std::memmove(buf_.data(), buf_.data() + S, (buf_.size() - S) * sizeof(T));

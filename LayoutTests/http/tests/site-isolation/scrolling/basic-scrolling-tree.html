@@ -8,18 +8,13 @@
 description("Verifies scrolling tree for simple page.");
 jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();            
-}
 
 window.addEventListener('load', async () => {
     if (!window.internals)
         return
 
     document.getElementById('scrollingTree').innerText = await UIHelper.getScrollingTree();
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }, false);
 </script>
 <iframe width="300" height="300" src="http://localhost:8000/site-isolation/scrolling/resources/empty-iframe.html"></iframe>

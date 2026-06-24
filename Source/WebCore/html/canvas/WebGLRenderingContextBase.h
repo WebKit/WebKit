@@ -531,6 +531,7 @@ protected:
     friend class ScopedDisableScissorTest;
     friend class ScopedEnableBackbuffer;
     friend class ScopedInspectorShaderProgramHighlight;
+    friend class ScopedScissorTestForRegion;
     friend class ScopedWebGLRestoreFramebuffer;
     friend class ScopedWebGLRestoreRenderbuffer;
     friend class ScopedWebGLRestoreTexture;

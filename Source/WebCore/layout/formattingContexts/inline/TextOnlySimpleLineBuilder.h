@@ -46,15 +46,15 @@ public:
     static bool isEligibleForSimplifiedDisplayBuild(const ElementBox& rootBlockContainer);
 
 private:
-    InlineItemPosition placeInlineTextContent(const RenderStyle&, const InlineItemRange&);
-    InlineItemPosition placeNonWrappingInlineTextContent(const RenderStyle&, const InlineItemRange&);
+    InlineItemPosition placeInlineTextContent(const Style::ComputedStyle&, const InlineItemRange&);
+    InlineItemPosition placeNonWrappingInlineTextContent(const Style::ComputedStyle&, const InlineItemRange&);
     std::optional<LineLayoutResult> placeSingleCharacterContentIfApplicable(const LineInput&, bool isFirstFormattedLineCandidate);
-    TextOnlyLineBreakResult handleOverflowingTextContent(const RenderStyle&, const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
-    TextOnlyLineBreakResult commitCandidateContent(const RenderStyle&, const CandidateTextContent&, const InlineItemRange&);
+    TextOnlyLineBreakResult handleOverflowingTextContent(const Style::ComputedStyle&, const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
+    TextOnlyLineBreakResult commitCandidateContent(const Style::ComputedStyle&, const CandidateTextContent&, const InlineItemRange&);
     void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>&, bool isFirstFormattedLine);
-    void handleLineEnding(const RenderStyle&, InlineItemPosition, size_t layoutRangeEndIndex);
-    size_t revertToTrailingItem(const RenderStyle&, const InlineItemRange&, const InlineTextItem&);
-    size_t revertToLastNonOverflowingItem(const RenderStyle&, const InlineItemRange&);
+    void handleLineEnding(const Style::ComputedStyle&, InlineItemPosition, size_t layoutRangeEndIndex);
+    size_t revertToTrailingItem(const Style::ComputedStyle&, const InlineItemRange&, const InlineTextItem&);
+    size_t revertToLastNonOverflowingItem(const Style::ComputedStyle&, const InlineItemRange&);
     InlineLayoutUnit NODELETE availableWidth() const;
 
 private:

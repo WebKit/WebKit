@@ -544,6 +544,13 @@ SdpMungingType DetermineContentsModification(
       return SdpMungingType::kDirection;
     }
 
+    // Validate Sframe attribute.
+    if (last_created_media_description->sframe_enabled() !=
+        media_description_to_set->sframe_enabled()) {
+      RTC_LOG(LS_ERROR) << "SDP munging: sframe attribute modified.";
+      return SdpMungingType::kSframe;
+    }
+
     // Validate media streams.
     if (last_created_media_description->streams().size() !=
         media_description_to_set->streams().size()) {
@@ -553,11 +560,25 @@ SdpMungingType DetermineContentsModification(
     }
     for (size_t i = 0; i < last_created_media_description->streams().size();
          i++) {
+      // ssrcs, then stream and track ids.
+      const StreamParams& created_stream_params =
+          last_created_media_description->streams()[i];
+      const StreamParams& set_stream_params =
+          media_description_to_set->streams()[i];
       if (last_created_media_description->streams()[i].ssrcs !=
           media_description_to_set->streams()[i].ssrcs) {
         RTC_LOG(LS_WARNING)
             << "SDP munging: SSRCs do not match last created description.";
         return SdpMungingType::kSsrcs;
+      }
+      if (created_stream_params.stream_ids() !=
+          set_stream_params.stream_ids()) {
+        RTC_LOG(LS_WARNING) << "SDP munging: msid stream modified.";
+        return SdpMungingType::kMsidStream;
+      }
+      if (created_stream_params.id != set_stream_params.id) {
+        RTC_LOG(LS_WARNING) << "SDP munging: msid track (deprecated) modified.";
+        return SdpMungingType::kMsidTrack;
       }
     }
 
@@ -578,6 +599,13 @@ SdpMungingType DetermineContentsModification(
         RTC_LOG(LS_WARNING) << "SDP munging: header extension modified.";
         return SdpMungingType::kRtpHeaderExtensionModified;
       }
+    }
+
+    // Validate media level cryptex.
+    if (last_created_media_description->cryptex() !=
+        media_description_to_set->cryptex()) {
+      RTC_LOG(LS_WARNING) << "SDP munging: cryptex changed at media level.";
+      return SdpMungingType::kCryptex;
     }
 
     // Validate b= (which does not have an effect in the local description).
@@ -679,6 +707,13 @@ SdpMungingType DetermineSdpMungingType(
     }
   }
 
+  // Validate cryptex setting.
+  if (sdesc->description()->cryptex() !=
+      last_created_desc->description()->cryptex()) {
+    RTC_LOG(LS_WARNING) << "SDP munging: cryptex changed at session level.";
+    return SdpMungingType::kCryptex;
+  }
+
   // TODO: crbug.com/40567530 - this serializes the descriptions back to a SDP
   // string which is very complex and we not should be be forced to rely on
   // string equality.
@@ -732,7 +767,11 @@ bool IsSdpMungingAllowed(SdpMungingType sdp_munging_type,
       return true;
     case SdpMungingType::kNumberOfContents:
       return false;
-    case kDataChannelSctpInit:
+    case SdpMungingType::kSframe:
+      return false;
+    case SdpMungingType::kDataChannelSctpInit:
+      return false;
+    case SdpMungingType::kCryptex:
       return false;
     default:
       // Handled below.

@@ -11,9 +11,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_processing/audio_buffer.h"
@@ -77,7 +77,7 @@ void RunBitExactnessTest(int sample_rate_hz,
                          int analog_level_min,
                          int analog_level_max,
                          int achieved_stream_analog_level_reference,
-                         ArrayView<const float> output_reference) {
+                         std::span<const float> output_reference) {
   GainControlImpl gain_controller;
   SetupComponent(sample_rate_hz, mode, target_level_dbfs, stream_analog_level,
                  compression_gain_db, enable_limiter, analog_level_min,

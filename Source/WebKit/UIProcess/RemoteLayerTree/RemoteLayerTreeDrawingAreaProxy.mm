@@ -411,10 +411,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
             return;
     }
 
-    {
-        CheckedRef scrollingCoordinatorProxy = *page->scrollingCoordinatorProxy();
+    if (CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
         scrollingCoordinatorProxy->establishLayerTreeScrollingRelations(connection);
-    }
 
     for (auto& callbackID : bundle.pageData.callbackIDs) {
         removeOutstandingPresentationUpdateCallback(connection, callbackID);
@@ -482,9 +480,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     if (!page)
         return;
 
-    {
+    if (CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy()) {
         ScrollRequestData requestedScroll;
-        CheckedRef scrollingCoordinatorProxy = *page->scrollingCoordinatorProxy();
 
         auto commitLayerAndScrollingTrees = [&] {
             if (layerTreeTransaction.hasAnyLayerChanges())
@@ -511,7 +508,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
 
         scrollingCoordinatorProxy->applyScrollingTreeLayerPositionsAfterCommit();
 
-#if ENABLE(SCROLL_STRETCH_NOTIFICATIONS)
+#if HAVE(NSREFRESHCONTROLLER)
         if (mainFrameData && !layerTreeTransaction.remoteContextHostedIdentifier()) {
             if (RefPtr pageClient = page->pageClient()) {
                 auto scrollPosition = scrollingCoordinatorProxy->currentMainFrameScrollPosition();

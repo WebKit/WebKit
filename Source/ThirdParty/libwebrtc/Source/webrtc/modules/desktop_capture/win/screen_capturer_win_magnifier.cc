@@ -17,7 +17,10 @@
 #include <string>
 #include <utility>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/desktop_capture/desktop_capture_metrics_helper.h"
+#include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_geometry.h"
@@ -28,7 +31,6 @@
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -49,7 +51,9 @@ static wchar_t kHostWindowName[] = L"MagnifierHost";
 static wchar_t kMagnifierWindowClass[] = L"Magnifier";
 static wchar_t kMagnifierWindowName[] = L"MagnifierWindow";
 
-ScreenCapturerWinMagnifier::ScreenCapturerWinMagnifier() = default;
+ScreenCapturerWinMagnifier::ScreenCapturerWinMagnifier(
+    const DesktopCaptureOptions& options)
+    : clock_(options.clock()) {}
 ScreenCapturerWinMagnifier::~ScreenCapturerWinMagnifier() {
   // DestroyWindow must be called before MagUninitialize. magnifier_window_ is
   // destroyed automatically when host_window_ is destroyed.
@@ -91,7 +95,7 @@ void ScreenCapturerWinMagnifier::CaptureFrame() {
     return;
   }
 
-  int64_t capture_start_time_nanos = TimeNanos();
+  Timestamp capture_start_time = clock_.CurrentTime();
 
   // Switch to the desktop receiving user input if different from the current
   // one.
@@ -125,8 +129,7 @@ void ScreenCapturerWinMagnifier::CaptureFrame() {
   frame->mutable_updated_region()->SetRect(
       DesktopRect::MakeSize(frame->size()));
 
-  int capture_time_ms =
-      (TimeNanos() - capture_start_time_nanos) / kNumNanosecsPerMillisec;
+  int capture_time_ms = (clock_.CurrentTime() - capture_start_time).ms();
   RTC_HISTOGRAM_COUNTS_1000(
       "WebRTC.DesktopCapture.Win.MagnifierCapturerFrameTime", capture_time_ms);
   frame->set_capture_time_ms(capture_time_ms);

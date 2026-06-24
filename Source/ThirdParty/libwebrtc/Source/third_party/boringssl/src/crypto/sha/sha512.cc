@@ -19,6 +19,8 @@
 #include "../fipsmodule/bcm_interface.h"
 
 
+using namespace bssl;
+
 int SHA384_Init(SHA512_CTX *sha) {
   BCM_sha384_init(sha);
   return 1;

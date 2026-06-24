@@ -46,10 +46,12 @@
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderIterator.h"
+#include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGBlockInlines.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGModelObject.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGTextPath.h"
 #include "SVGElementTypeHelpers.h"
@@ -67,6 +69,7 @@
 #include "SVGVisitedRendererTracking.h"
 #include "Settings.h"
 #include "StyleTextShadow.h"
+#include "StyleTransformResolver.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
 #include <tuple>
@@ -78,7 +81,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGText);
 
-RenderSVGText::RenderSVGText(SVGTextElement& element, RenderStyle&& style)
+RenderSVGText::RenderSVGText(SVGTextElement& element, Style::ComputedStyle&& style)
     : RenderSVGBlock(Type::SVGText, element, WTF::move(style))
 {
     ASSERT(isRenderSVGText());
@@ -94,7 +97,7 @@ SVGTextElement& RenderSVGText::textElement() const
     return downcast<SVGTextElement>(RenderSVGBlock::graphicsElement());
 }
 
-bool RenderSVGText::isChildAllowed(const RenderObject& child, const RenderStyle&) const
+bool RenderSVGText::isChildAllowed(const RenderObject& child, const Style::ComputedStyle&) const
 {
     auto isEmptySVGInlineText = [](const RenderObject* object) {
         const auto svgInlineText = dynamicDowncast<RenderSVGInlineText>(object);
@@ -237,8 +240,6 @@ void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTex
     if (!shouldHandleSubtreeMutations())
         return;
 
-    checkLayoutAttributesConsistency(this, m_layoutAttributes);
-
     // The positioning elements cache depends on the size of each text renderer in the
     // subtree. If this changes, clear the cache. It's going to be rebuilt below.
     m_layoutAttributesBuilder.clearTextPositioningElements();
@@ -305,6 +306,19 @@ static inline void updateFontInAllDescendants(RenderSVGText& text)
     }
 }
 
+AffineTransform RenderSVGText::computeLocalTransform() const
+{
+    ASSERT(document().settings().layerBasedSVGEngineEnabled());
+    TransformationMatrix transform;
+    applyTransform(transform, style(), transformReferenceBoxRect(style()), Style::TransformResolver::allTransformOperations);
+    return transform.toAffineTransform();
+}
+
+void RenderSVGText::updateLocalTransform()
+{
+    m_localTransform = computeLocalTransform();
+}
+
 void RenderSVGText::layout()
 {
     auto isLayerBasedSVGEngineEnabled = [&]() {
@@ -326,7 +340,7 @@ void RenderSVGText::layout()
     // We update the transform now because updateScaledFont() needs it, but we do it a second time at the end of the layout,
     // since the transform reference box may change because of the font change.
     if (!isLayerBasedSVGEngineEnabled() && m_needsTransformUpdate) {
-        m_localTransform = textElement().animatedLocalTransform();
+        m_localTransform = protect(textElement())->animatedLocalTransform();
         updateCachedBoundariesInParents = true;
     }
 
@@ -411,12 +425,17 @@ void RenderSVGText::layout()
 
     if (isLayerBasedSVGEngineEnabled()) {
         updateLayerTransform();
+        // Non-layered text caches its transform in m_localTransform (read via localTransform()
+        // by getCTM()/getScreenCTM(), hit-testing and the transform-recursion paint path),
+        // mirroring RenderSVGModelObject::updateLocalTransform(). Layered text uses its RenderLayer.
+        if (!hasLayer())
+            updateLocalTransform();
         updateCachedBoundariesInParents = false; // No longer needed for LBSE.
         layoutChanged = false; // No longer needed for LBSE.
     } else {
         if (m_needsTransformUpdate) {
             if (previousReferenceBoxRect != transformReferenceBoxRect())
-                m_localTransform = textElement().animatedLocalTransform();
+                m_localTransform = protect(textElement())->animatedLocalTransform();
             m_needsTransformUpdate = false;
         }
         if (!updateCachedBoundariesInParents)
@@ -686,6 +705,10 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     auto adjustedLocation = accumulatedOffset + location();
 
+    // SVG text is hit per glyph in the foreground phase only, like RenderSVGShape.
+    if (hitTestAction != HitTestAction::Foreground)
+        return false;
+
     PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, style().pointerEvents());
     if (request.isVisibleForStyle(style()) || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (!style().stroke().isNone() || !hitRules.requireStroke))
@@ -698,14 +721,18 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
             SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-            auto localPoint = locationInContainer.point();
+            // The inline text fragments are positioned in this element's SVG coordinate system, so
+            // the query point and the offset that places the line boxes must both be expressed there.
+            // coordinateSystemOriginTranslation maps the caller's space into it, and is non-zero for
+            // a text layer whose origin differs from the SVG coordinate system. Shift both the
+            // location and the offset by it.
             auto coordinateSystemOriginTranslation = nominalSVGLayoutLocation() - adjustedLocation;
-            localPoint.move(coordinateSystemOriginTranslation);
+            HitTestLocation localLocation(locationInContainer, coordinateSystemOriginTranslation);
 
-            if (!pointInSVGClippingArea(localPoint))
+            if (!pointInSVGClippingArea(localLocation.point()))
                 return false;
 
-            return RenderBlock::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction);
+            return RenderBlock::nodeAtPoint(request, result, localLocation, accumulatedOffset + coordinateSystemOriginTranslation, hitTestAction);
         }
     }
 
@@ -768,7 +795,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
     return false;
 }
 
-void RenderSVGText::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
+void RenderSVGText::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
     applySVGTransform(transform, protect(textElement()), style, boundingBox, std::nullopt, std::nullopt, options);
@@ -804,8 +831,11 @@ PositionWithAffinity RenderSVGText::positionForPoint(const LayoutPoint& pointInC
 
 bool RenderSVGText::requiresLayer() const
 {
-    if (document().settings().layerBasedSVGEngineEnabled())
-        return true;
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (document().settings().layerBasedSVGEngineForceLayerCreationEnabled())
+            return true;
+        return requiresLayerForSVGIntrinsicReasons();
+    }
     return false;
 }
 
@@ -885,7 +915,7 @@ void RenderSVGText::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint&
     if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
         return;
 
-    bool isPrinting = document().printing();
+    bool isPrinting = protect(document())->printing();
     bool hasSelection = !isPrinting && selectionState() != RenderObject::HighlightState::None;
     bool shouldPaintSelectionHighlight = !(paintInfo.paintBehavior.contains(PaintBehavior::SkipSelectionHighlight));
 
@@ -1006,7 +1036,7 @@ void RenderSVGText::updatePositionAndOverflow(const FloatRect& boundaries)
     ASSERT(m_objectBoundingBox == frameRect());
 }
 
-void RenderSVGText::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderSVGText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     auto needsTransformUpdate = [&]() {
         if (document().settings().layerBasedSVGEngineEnabled())

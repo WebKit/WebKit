@@ -11,8 +11,8 @@
 #define TEST_NULL_TRANSPORT_H_
 
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 
 namespace webrtc {
@@ -22,9 +22,9 @@ class PacketReceiver;
 namespace test {
 class NullTransport : public Transport {
  public:
-  bool SendRtp(ArrayView<const uint8_t> packet,
+  bool SendRtp(std::span<const uint8_t> packet,
                const PacketOptions& options) override;
-  bool SendRtcp(ArrayView<const uint8_t> packet,
+  bool SendRtcp(std::span<const uint8_t> packet,
                 const PacketOptions& options) override;
 };
 }  // namespace test

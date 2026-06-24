@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import errno
+import functools
 import logging
 import re
 
@@ -60,6 +61,16 @@ class LayoutTestFinder(object):
         self._filesystem = self._port.host.filesystem
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._test_list_expectations = []
+        # Cache the inner finder per device_type. Bound here, not module-level, so the
+        # cache doesn't outlive this LayoutTestFinder instance.
+        self._inner_finder = functools.cache(self._make_inner_finder)
+
+    def _make_inner_finder(self, device_type=None):
+        return LayoutTestFinder_New(
+            self._port.host.filesystem,
+            self._port.layout_tests_dir(),
+            self._port.baseline_search_path(device_type),
+        )
 
     def find_tests(self, options, args, device_type=None, with_expectations=False):
         paths = self._strip_test_dir_prefixes(args)
@@ -95,30 +106,16 @@ class LayoutTestFinder(object):
 
     def find_tests_by_path(self, paths, device_type=None, with_expectations=False):
         """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
-        finder = LayoutTestFinder_New(
-            self._port.host.filesystem,
-            self._port.layout_tests_dir(),
-            self._port.baseline_search_path(device_type),
-        )
-
-        return list(finder.get_tests(paths))
+        return list(self._inner_finder(device_type).get_tests(paths))
 
     def _is_test_file(self, filesystem, dirname, filename):
-        finder = LayoutTestFinder_New(
-            self._port.host.filesystem,
-            self._port.layout_tests_dir(),
-            self._port.baseline_search_path(),
-        )
+        finder = self._inner_finder()
         return finder.is_test_file(
             dirname, filename
         ) and not self._is_w3c_resource_file(filesystem, dirname, filename)
 
     def _is_w3c_resource_file(self, filesystem, dirname, filename):
-        finder = LayoutTestFinder_New(
-            self._port.host.filesystem,
-            self._port.layout_tests_dir(),
-            self._port.baseline_search_path(),
-        )
+        finder = self._inner_finder()
 
         if dirname:
             dirname = self._filesystem.relpath(dirname, self._port.layout_tests_dir())

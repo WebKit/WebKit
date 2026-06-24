@@ -1,3 +1,0 @@
-
-PASS Imported inline CSS is not blocked on pending CSS
-

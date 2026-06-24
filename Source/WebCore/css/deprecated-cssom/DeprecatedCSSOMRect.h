@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,16 +27,16 @@
 #pragma once
 
 #include <WebCore/DeprecatedCSSOMPrimitiveValue.h>
-#include <WebCore/Rect.h>
 
 namespace WebCore {
 
+namespace CSS {
+struct ClipRect;
+}
+
 class DeprecatedCSSOMRect final : public RefCounted<DeprecatedCSSOMRect> {
 public:
-    static Ref<DeprecatedCSSOMRect> create(const Rect& rect, CSSStyleDeclaration& owner)
-    {
-        return adoptRef(*new DeprecatedCSSOMRect(rect, owner));
-    }
+    static Ref<DeprecatedCSSOMRect> create(const CSS::ClipRect&, CSSStyleDeclaration&);
 
     DeprecatedCSSOMPrimitiveValue& top() const { return m_top; }
     DeprecatedCSSOMPrimitiveValue& right() const { return m_right; }
@@ -43,13 +44,7 @@ public:
     DeprecatedCSSOMPrimitiveValue& left() const { return m_left; }
 
 private:
-    DeprecatedCSSOMRect(const Rect& rect, CSSStyleDeclaration& owner)
-        : m_top(DeprecatedCSSOMPrimitiveValue::create(rect.top(), owner))
-        , m_right(DeprecatedCSSOMPrimitiveValue::create(rect.right(), owner))
-        , m_bottom(DeprecatedCSSOMPrimitiveValue::create(rect.bottom(), owner))
-        , m_left(DeprecatedCSSOMPrimitiveValue::create(rect.left(), owner))
-    {
-    }
+    DeprecatedCSSOMRect(const CSS::ClipRect&, CSSStyleDeclaration&);
 
     const Ref<DeprecatedCSSOMPrimitiveValue> m_top;
     const Ref<DeprecatedCSSOMPrimitiveValue> m_right;

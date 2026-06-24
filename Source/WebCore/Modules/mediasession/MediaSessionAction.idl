@@ -38,6 +38,10 @@
     "togglemicrophone",
     "togglecamera",
     "togglescreenshare",
+    "hangup",
+    "previousslide",
+    "nextslide",
+    "enterpictureinpicture",
     "voiceactivity",
     "togglecaptions",
     "selectcaptiontrack"

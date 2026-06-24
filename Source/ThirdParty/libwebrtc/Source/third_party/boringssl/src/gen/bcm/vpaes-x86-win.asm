@@ -2,7 +2,7 @@
 ; source tree. Do not edit by hand.
 
 %ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
+%include "boringssl_prefix_symbols_internal_x86_win_asm.inc"
 %endif
 %ifidn __OUTPUT_FORMAT__, win32
 %ifidn __OUTPUT_FORMAT__,obj
@@ -88,12 +88,12 @@ __vpaes_encrypt_core:
 	pandn	xmm1,xmm0
 	pand	xmm0,xmm6
 	movdqu	xmm5,[edx]
-db	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	movdqa	xmm0,[16+ebp]
 	pxor	xmm2,xmm5
 	psrld	xmm1,4
 	add	edx,16
-db	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	lea	ebx,[192+ebp]
 	pxor	xmm0,xmm2
 	jmp	NEAR L$000enc_entry
@@ -101,25 +101,25 @@ align	16
 L$001enc_loop:
 	movdqa	xmm4,[32+ebp]
 	movdqa	xmm0,[48+ebp]
-db	102,15,56,0,226
-db	102,15,56,0,195
+	pshufb	xmm4,xmm2
+	pshufb	xmm0,xmm3
 	pxor	xmm4,xmm5
 	movdqa	xmm5,[64+ebp]
 	pxor	xmm0,xmm4
 	movdqa	xmm1,[ecx*1+ebx-64]
-db	102,15,56,0,234
+	pshufb	xmm5,xmm2
 	movdqa	xmm2,[80+ebp]
 	movdqa	xmm4,[ecx*1+ebx]
-db	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	movdqa	xmm3,xmm0
 	pxor	xmm2,xmm5
-db	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	add	edx,16
 	pxor	xmm0,xmm2
-db	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	add	ecx,16
 	pxor	xmm3,xmm0
-db	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	and	ecx,48
 	sub	eax,1
 	pxor	xmm0,xmm3
@@ -129,30 +129,30 @@ L$000enc_entry:
 	pandn	xmm1,xmm0
 	psrld	xmm1,4
 	pand	xmm0,xmm6
-db	102,15,56,0,232
+	pshufb	xmm5,xmm0
 	movdqa	xmm3,xmm7
 	pxor	xmm0,xmm1
-db	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	movdqa	xmm4,xmm7
 	pxor	xmm3,xmm5
-db	102,15,56,0,224
+	pshufb	xmm4,xmm0
 	movdqa	xmm2,xmm7
 	pxor	xmm4,xmm5
-db	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	movdqa	xmm3,xmm7
 	pxor	xmm2,xmm0
-db	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	movdqu	xmm5,[edx]
 	pxor	xmm3,xmm1
 	jnz	NEAR L$001enc_loop
 	movdqa	xmm4,[96+ebp]
 	movdqa	xmm0,[112+ebp]
-db	102,15,56,0,226
+	pshufb	xmm4,xmm2
 	pxor	xmm4,xmm5
-db	102,15,56,0,195
+	pshufb	xmm0,xmm3
 	movdqa	xmm1,[64+ecx*1+ebx]
 	pxor	xmm0,xmm4
-db	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	ret
 align	16
 __vpaes_decrypt_core:
@@ -166,10 +166,10 @@ __vpaes_decrypt_core:
 	movdqu	xmm5,[edx]
 	shl	ecx,4
 	pand	xmm0,xmm6
-db	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	movdqa	xmm0,[ebx-48]
 	xor	ecx,48
-db	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	and	ecx,48
 	pxor	xmm2,xmm5
 	movdqa	xmm5,[176+ebp]
@@ -181,32 +181,32 @@ align	16
 L$003dec_loop:
 	movdqa	xmm4,[ebx-32]
 	movdqa	xmm1,[ebx-16]
-db	102,15,56,0,226
-db	102,15,56,0,203
+	pshufb	xmm4,xmm2
+	pshufb	xmm1,xmm3
 	pxor	xmm0,xmm4
 	movdqa	xmm4,[ebx]
 	pxor	xmm0,xmm1
 	movdqa	xmm1,[16+ebx]
-db	102,15,56,0,226
-db	102,15,56,0,197
-db	102,15,56,0,203
+	pshufb	xmm4,xmm2
+	pshufb	xmm0,xmm5
+	pshufb	xmm1,xmm3
 	pxor	xmm0,xmm4
 	movdqa	xmm4,[32+ebx]
 	pxor	xmm0,xmm1
 	movdqa	xmm1,[48+ebx]
-db	102,15,56,0,226
-db	102,15,56,0,197
-db	102,15,56,0,203
+	pshufb	xmm4,xmm2
+	pshufb	xmm0,xmm5
+	pshufb	xmm1,xmm3
 	pxor	xmm0,xmm4
 	movdqa	xmm4,[64+ebx]
 	pxor	xmm0,xmm1
 	movdqa	xmm1,[80+ebx]
-db	102,15,56,0,226
-db	102,15,56,0,197
-db	102,15,56,0,203
+	pshufb	xmm4,xmm2
+	pshufb	xmm0,xmm5
+	pshufb	xmm1,xmm3
 	pxor	xmm0,xmm4
 	add	edx,16
-db	102,15,58,15,237,12
+	palignr	xmm5,xmm5,12
 	pxor	xmm0,xmm1
 	sub	eax,1
 L$002dec_entry:
@@ -215,30 +215,30 @@ L$002dec_entry:
 	pandn	xmm1,xmm0
 	pand	xmm0,xmm6
 	psrld	xmm1,4
-db	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	movdqa	xmm3,xmm7
 	pxor	xmm0,xmm1
-db	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	movdqa	xmm4,xmm7
 	pxor	xmm3,xmm2
-db	102,15,56,0,224
+	pshufb	xmm4,xmm0
 	pxor	xmm4,xmm2
 	movdqa	xmm2,xmm7
-db	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	movdqa	xmm3,xmm7
 	pxor	xmm2,xmm0
-db	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	movdqu	xmm0,[edx]
 	pxor	xmm3,xmm1
 	jnz	NEAR L$003dec_loop
 	movdqa	xmm4,[96+ebx]
-db	102,15,56,0,226
+	pshufb	xmm4,xmm2
 	pxor	xmm4,xmm0
 	movdqa	xmm0,[112+ebx]
 	movdqa	xmm2,[ecx]
-db	102,15,56,0,195
+	pshufb	xmm0,xmm3
 	pxor	xmm0,xmm4
-db	102,15,56,0,194
+	pshufb	xmm0,xmm2
 	ret
 align	16
 __vpaes_schedule_core:
@@ -256,7 +256,7 @@ __vpaes_schedule_core:
 	jmp	NEAR L$005schedule_go
 L$004schedule_am_decrypting:
 	movdqa	xmm1,[256+ecx*1+ebp]
-db	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	movdqu	[edx],xmm3
 	xor	ecx,48
 L$005schedule_go:
@@ -281,7 +281,7 @@ L$007schedule_192:
 	mov	eax,4
 L$011loop_schedule_192:
 	call	__vpaes_schedule_round
-db	102,15,58,15,198,8
+	palignr	xmm0,xmm6,8
 	call	__vpaes_schedule_mangle
 	call	__vpaes_schedule_192_smear
 	call	__vpaes_schedule_mangle
@@ -315,7 +315,7 @@ L$010schedule_mangle_last:
 	test	edi,edi
 	jnz	NEAR L$013schedule_mangle_last_dec
 	movdqa	xmm1,[256+ecx*1+ebp]
-db	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	lea	ebx,[352+ebp]
 	add	edx,32
 L$013schedule_mangle_last_dec:
@@ -346,11 +346,11 @@ align	16
 __vpaes_schedule_round:
 	movdqa	xmm2,[8+esp]
 	pxor	xmm1,xmm1
-db	102,15,58,15,202,15
-db	102,15,58,15,210,15
+	palignr	xmm1,xmm2,15
+	palignr	xmm2,xmm2,15
 	pxor	xmm7,xmm1
 	pshufd	xmm0,xmm0,255
-db	102,15,58,15,192,1
+	palignr	xmm0,xmm0,1
 	movdqa	[8+esp],xmm2
 L$_vpaes_schedule_low_round:
 	movdqa	xmm1,xmm7
@@ -367,24 +367,24 @@ L$_vpaes_schedule_low_round:
 	psrld	xmm1,4
 	pand	xmm0,xmm4
 	movdqa	xmm2,[ebp-32]
-db	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	pxor	xmm0,xmm1
 	movdqa	xmm3,xmm5
-db	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
 	movdqa	xmm4,xmm5
-db	102,15,56,0,224
+	pshufb	xmm4,xmm0
 	pxor	xmm4,xmm2
 	movdqa	xmm2,xmm5
-db	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	pxor	xmm2,xmm0
 	movdqa	xmm3,xmm5
-db	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	pxor	xmm3,xmm1
 	movdqa	xmm4,[32+ebp]
-db	102,15,56,0,226
+	pshufb	xmm4,xmm2
 	movdqa	xmm0,[48+ebp]
-db	102,15,56,0,195
+	pshufb	xmm0,xmm3
 	pxor	xmm0,xmm4
 	pxor	xmm0,xmm7
 	movdqa	xmm7,xmm0
@@ -397,9 +397,9 @@ __vpaes_schedule_transform:
 	psrld	xmm1,4
 	pand	xmm0,xmm2
 	movdqa	xmm2,[ebx]
-db	102,15,56,0,208
+	pshufb	xmm2,xmm0
 	movdqa	xmm0,[16+ebx]
-db	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	pxor	xmm0,xmm2
 	ret
 align	16
@@ -410,11 +410,11 @@ __vpaes_schedule_mangle:
 	jnz	NEAR L$014schedule_mangle_dec
 	add	edx,16
 	pxor	xmm4,[336+ebp]
-db	102,15,56,0,229
+	pshufb	xmm4,xmm5
 	movdqa	xmm3,xmm4
-db	102,15,56,0,229
+	pshufb	xmm4,xmm5
 	pxor	xmm3,xmm4
-db	102,15,56,0,229
+	pshufb	xmm4,xmm5
 	pxor	xmm3,xmm4
 	jmp	NEAR L$015schedule_mangle_both
 align	16
@@ -426,35 +426,35 @@ L$014schedule_mangle_dec:
 	psrld	xmm1,4
 	pand	xmm4,xmm2
 	movdqa	xmm2,[esi]
-db	102,15,56,0,212
+	pshufb	xmm2,xmm4
 	movdqa	xmm3,[16+esi]
-db	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
-db	102,15,56,0,221
+	pshufb	xmm3,xmm5
 	movdqa	xmm2,[32+esi]
-db	102,15,56,0,212
+	pshufb	xmm2,xmm4
 	pxor	xmm2,xmm3
 	movdqa	xmm3,[48+esi]
-db	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
-db	102,15,56,0,221
+	pshufb	xmm3,xmm5
 	movdqa	xmm2,[64+esi]
-db	102,15,56,0,212
+	pshufb	xmm2,xmm4
 	pxor	xmm2,xmm3
 	movdqa	xmm3,[80+esi]
-db	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
-db	102,15,56,0,221
+	pshufb	xmm3,xmm5
 	movdqa	xmm2,[96+esi]
-db	102,15,56,0,212
+	pshufb	xmm2,xmm4
 	pxor	xmm2,xmm3
 	movdqa	xmm3,[112+esi]
-db	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	pxor	xmm3,xmm2
 	add	edx,-16
 L$015schedule_mangle_both:
 	movdqa	xmm1,[256+ecx*1+ebp]
-db	102,15,56,0,217
+	pshufb	xmm3,xmm1
 	add	ecx,-16
 	and	ecx,48
 	movdqu	[edx],xmm3

@@ -19,7 +19,6 @@
 #include <vector>
 
 #include "api/audio/audio_processing.h"
-#include "api/environment/environment_factory.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_processing/agc2/agc2_testing_common.h"
 #include "modules/audio_processing/agc2/input_volume_controller.h"
@@ -27,6 +26,7 @@
 #include "modules/audio_processing/test/audio_buffer_tools.h"
 #include "modules/audio_processing/test/bitexactness_tools.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -77,7 +77,7 @@ std::unique_ptr<GainController2> CreateAgc2FixedDigitalMode(
   config.adaptive_digital.enabled = false;
   config.fixed_digital.gain_db = fixed_gain_db;
   EXPECT_TRUE(GainController2::Validate(config));
-  return std::make_unique<GainController2>(CreateEnvironment(), config,
+  return std::make_unique<GainController2>(CreateTestEnvironment(), config,
                                            InputVolumeControllerConfig{},
                                            sample_rate_hz,
                                            /*num_channels=*/1,
@@ -180,8 +180,8 @@ TEST(GainController2,
   config.input_volume_controller.enabled = false;
 
   auto gain_controller = std::make_unique<GainController2>(
-      CreateEnvironment(), config, InputVolumeControllerConfig{}, kSampleRateHz,
-      kNumChannels,
+      CreateTestEnvironment(), config, InputVolumeControllerConfig{},
+      kSampleRateHz, kNumChannels,
       /*use_internal_vad=*/true);
 
   EXPECT_FALSE(gain_controller->recommended_input_volume().has_value());
@@ -213,7 +213,7 @@ TEST(
   config.input_volume_controller.enabled = false;
 
   auto gain_controller = std::make_unique<GainController2>(
-      CreateEnvironment(), config, kTestInputVolumeControllerConfig,
+      CreateTestEnvironment(), config, kTestInputVolumeControllerConfig,
       kSampleRateHz, kNumChannels,
       /*use_internal_vad=*/true);
 
@@ -246,8 +246,8 @@ TEST(GainController2,
   config.adaptive_digital.enabled = true;
 
   auto gain_controller = std::make_unique<GainController2>(
-      CreateEnvironment(), config, InputVolumeControllerConfig{}, kSampleRateHz,
-      kNumChannels,
+      CreateTestEnvironment(), config, InputVolumeControllerConfig{},
+      kSampleRateHz, kNumChannels,
       /*use_internal_vad=*/true);
 
   EXPECT_FALSE(gain_controller->recommended_input_volume().has_value());
@@ -280,7 +280,7 @@ TEST(
   config.adaptive_digital.enabled = true;
 
   auto gain_controller = std::make_unique<GainController2>(
-      CreateEnvironment(), config, kTestInputVolumeControllerConfig,
+      CreateTestEnvironment(), config, kTestInputVolumeControllerConfig,
       kSampleRateHz, kNumChannels,
       /*use_internal_vad=*/true);
 
@@ -302,7 +302,7 @@ TEST(
 // Checks that the default config is applied.
 TEST(GainController2, ApplyDefaultConfig) {
   auto gain_controller2 = std::make_unique<GainController2>(
-      CreateEnvironment(), Agc2Config{}, InputVolumeControllerConfig{},
+      CreateTestEnvironment(), Agc2Config{}, InputVolumeControllerConfig{},
       /*sample_rate_hz=*/16000, /*num_channels=*/2,
       /*use_internal_vad=*/true);
   EXPECT_TRUE(gain_controller2.get());
@@ -419,7 +419,7 @@ TEST(GainController2, CheckFinalGainWithAdaptiveDigitalController) {
   Agc2Config config;
   config.fixed_digital.gain_db = 0.0f;
   config.adaptive_digital.enabled = true;
-  GainController2 agc2(CreateEnvironment(), config,
+  GainController2 agc2(CreateTestEnvironment(), config,
                        /*input_volume_controller_config=*/{}, kSampleRateHz,
                        kStereo,
                        /*use_internal_vad=*/true);

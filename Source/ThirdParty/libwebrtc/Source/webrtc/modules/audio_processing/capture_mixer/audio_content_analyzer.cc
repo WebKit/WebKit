@@ -10,8 +10,7 @@
 #include "modules/audio_processing/capture_mixer/audio_content_analyzer.h"
 
 #include <cstddef>
-
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
@@ -19,8 +18,8 @@ AudioContentAnalyzer::AudioContentAnalyzer(size_t num_samples_per_channel)
     : dc_levels_estimator_(num_samples_per_channel),
       saturation_estimator_(num_samples_per_channel) {}
 
-bool AudioContentAnalyzer::Analyze(ArrayView<const float> channel0,
-                                   ArrayView<const float> channel1) {
+bool AudioContentAnalyzer::Analyze(std::span<const float> channel0,
+                                   std::span<const float> channel1) {
   ++num_frames_analyzed_;
 
   // Exclude the first frame from the analysis to avoid reacting on any
@@ -40,7 +39,7 @@ bool AudioContentAnalyzer::Analyze(ArrayView<const float> channel0,
     return false;
   }
 
-  ArrayView<const float, 2> dc_levels = dc_levels_estimator_.GetLevels();
+  std::span<const float, 2> dc_levels = dc_levels_estimator_.GetLevels();
   energy_estimator_.Update(channel0, channel1, dc_levels);
   saturation_estimator_.Update(channel0, channel1, dc_levels);
 

@@ -29,9 +29,11 @@ header: "WebsiteDataFetchOption.h"
 
 #if PLATFORM(IOS_FAMILY)
     std::optional<WebKit::SandboxExtensionHandle> cookieStorageDirectoryExtensionHandle;
+#if !USE(EXTENSIONKIT)
     std::optional<WebKit::SandboxExtensionHandle> containerCachesDirectoryExtensionHandle;
-    std::optional<WebKit::SandboxExtensionHandle> parentBundleDirectoryExtensionHandle;
     std::optional<WebKit::SandboxExtensionHandle> tempDirectoryExtensionHandle;
+#endif
+    std::optional<WebKit::SandboxExtensionHandle> parentBundleDirectoryExtensionHandle;
     std::optional<WebKit::SandboxExtensionHandle> tempDirectoryRootExtensionHandle;
 #endif
 };

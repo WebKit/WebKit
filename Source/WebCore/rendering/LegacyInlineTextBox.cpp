@@ -49,11 +49,11 @@
 #include "RenderLineBreak.h"
 #include "RenderObjectStyle.h"
 #include "RenderSVGInlineText.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyledMarkedText.h"
 #include "Text.h"
 #include "TextBoxPainter.h"
@@ -96,7 +96,7 @@ RenderSVGInlineText& LegacyInlineTextBox::renderer() const
     return downcast<RenderSVGInlineText>(LegacyInlineBox::renderer());
 }
 
-const RenderStyle& LegacyInlineTextBox::lineStyle() const
+const Style::ComputedStyle& LegacyInlineTextBox::lineStyle() const
 {
     return isFirstLine() ? renderer().firstLineStyle() : renderer().style();
 }

@@ -143,6 +143,7 @@ class WebRtcSessionDescriptionFactory {
   const std::unique_ptr<RTCCertificateGeneratorInterface> cert_generator_;
   const SdpStateProvider* sdp_info_;
   const std::string session_id_;
+  const Environment env_;
   CertificateRequestState certificate_request_state_;
   std::queue<absl::AnyInvocable<void() &&>> callbacks_;
 

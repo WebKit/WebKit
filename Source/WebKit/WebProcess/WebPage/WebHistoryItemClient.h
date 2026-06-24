@@ -43,6 +43,7 @@ private:
     explicit WebHistoryItemClient(WebPage&);
     void historyItemChanged(const WebCore::HistoryItem&) final;
     void clearChildren(const WebCore::HistoryItem&) const final;
+    ScopeExit<CompletionHandler<void()>> ignoreChangesForScopeDuringRedirect(const WebCore::LocalFrame&) final;
 
     const WeakPtr<WebPage> m_page;
     bool m_shouldIgnoreChanges { false };

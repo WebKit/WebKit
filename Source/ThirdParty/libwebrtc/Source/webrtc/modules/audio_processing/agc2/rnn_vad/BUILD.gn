@@ -32,10 +32,7 @@ rtc_library("rnn_vad") {
     ":rnn_vad_spectral_features",
     "..:biquad_filter",
     "..:cpu_features",
-    "../../../../api:array_view",
     "../../../../rtc_base:checks",
-    "../../../../rtc_base:safe_compare",
-    "../../../../rtc_base:safe_conversions",
     "//third_party/rnnoise:rnn_vad",
   ]
 }
@@ -47,7 +44,6 @@ rtc_library("rnn_vad_auto_correlation") {
   ]
   deps = [
     ":rnn_vad_common",
-    "../../../../api:array_view",
     "../../../../rtc_base:checks",
     "../../utility:pffft_wrapper",
   ]
@@ -71,7 +67,6 @@ rtc_library("rnn_vad_lp_residual") {
     "lp_residual.h",
   ]
   deps = [
-    "../../../../api:array_view",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:safe_compare",
   ]
@@ -95,7 +90,6 @@ rtc_library("rnn_vad_layers") {
     ":rnn_vad_common",
     ":vector_math",
     "..:cpu_features",
-    "../../../../api:array_view",
     "../../../../api:function_view",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:safe_conversions",
@@ -111,7 +105,6 @@ rtc_source_set("vector_math") {
   sources = [ "vector_math.h" ]
   deps = [
     "..:cpu_features",
-    "../../../../api:array_view",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:safe_conversions",
     "../../../../rtc_base/system:arch",
@@ -131,7 +124,6 @@ if (current_cpu == "x86" || current_cpu == "x64") {
     }
     deps = [
       ":vector_math",
-      "../../../../api:array_view",
       "../../../../rtc_base:checks",
       "../../../../rtc_base:safe_conversions",
     ]
@@ -157,7 +149,6 @@ rtc_library("rnn_vad_pitch") {
     ":rnn_vad_common",
     ":vector_math",
     "..:cpu_features",
-    "../../../../api:array_view",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:gtest_prod",
     "../../../../rtc_base:safe_compare",
@@ -171,18 +162,12 @@ rtc_library("rnn_vad_pitch") {
 
 rtc_source_set("rnn_vad_ring_buffer") {
   sources = [ "ring_buffer.h" ]
-  deps = [
-    "../../../../api:array_view",
-    "../../../../rtc_base:checks",
-  ]
+  deps = [ "../../../../rtc_base:checks" ]
 }
 
 rtc_source_set("rnn_vad_sequence_buffer") {
   sources = [ "sequence_buffer.h" ]
-  deps = [
-    "../../../../api:array_view",
-    "../../../../rtc_base:checks",
-  ]
+  deps = [ "../../../../rtc_base:checks" ]
 }
 
 rtc_library("rnn_vad_spectral_features") {
@@ -196,7 +181,6 @@ rtc_library("rnn_vad_spectral_features") {
     ":rnn_vad_common",
     ":rnn_vad_ring_buffer",
     ":rnn_vad_symmetric_matrix_buffer",
-    "../../../../api:array_view",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:safe_compare",
     "../../utility:pffft_wrapper",
@@ -206,7 +190,6 @@ rtc_library("rnn_vad_spectral_features") {
 rtc_source_set("rnn_vad_symmetric_matrix_buffer") {
   sources = [ "symmetric_matrix_buffer.h" ]
   deps = [
-    "../../../../api:array_view",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:safe_compare",
   ]
@@ -222,7 +205,6 @@ if (rtc_include_tests) {
     deps = [
       ":rnn_vad",
       ":rnn_vad_common",
-      "../../../../api:array_view",
       "../../../../api:scoped_refptr",
       "../../../../rtc_base:checks",
       "../../../../rtc_base:safe_compare",
@@ -290,7 +272,6 @@ if (rtc_include_tests) {
       ":vector_math",
       "..:cpu_features",
       "../..:audioproc_test_utils",
-      "../../../../api:array_view",
       "../../../../common_audio/",
       "../../../../rtc_base:checks",
       "../../../../rtc_base:logging",
@@ -319,12 +300,10 @@ if (rtc_include_tests) {
         ":rnn_vad",
         ":rnn_vad_common",
         "..:cpu_features",
-        "../../../../api:array_view",
         "../../../../common_audio",
         "../../../../rtc_base:checks",
         "../../../../rtc_base:logging",
         "../../../../rtc_base:safe_compare",
-        "../../../../test:test_support",
         "//third_party/abseil-cpp/absl/flags:flag",
         "//third_party/abseil-cpp/absl/flags:parse",
       ]

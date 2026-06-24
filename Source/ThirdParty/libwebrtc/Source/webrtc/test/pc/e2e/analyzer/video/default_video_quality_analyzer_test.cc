@@ -18,12 +18,12 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/rtp_packet_info.h"
 #include "api/rtp_packet_infos.h"
@@ -110,7 +110,7 @@ VideoFrame DeepCopy(const VideoFrame& frame) {
 }
 
 std::vector<StatsSample> GetSortedSamples(const SamplesStatsCounter& counter) {
-  ArrayView<const StatsSample> view = counter.GetTimedSamples();
+  std::span<const StatsSample> view = counter.GetTimedSamples();
   std::vector<StatsSample> out(view.begin(), view.end());
   std::sort(out.begin(), out.end(),
             [](const StatsSample& a, const StatsSample& b) {
@@ -120,7 +120,7 @@ std::vector<StatsSample> GetSortedSamples(const SamplesStatsCounter& counter) {
 }
 
 std::vector<double> GetTimeSortedValues(const SamplesStatsCounter& counter) {
-  ArrayView<const StatsSample> view = counter.GetTimedSamples();
+  std::span<const StatsSample> view = counter.GetTimedSamples();
   std::vector<StatsSample> sorted(view.begin(), view.end());
   std::sort(sorted.begin(), sorted.end(),
             [](const StatsSample& a, const StatsSample& b) {

@@ -42,9 +42,9 @@
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
 #include "SVGPropertyOwnerRegistry.h"
+#include "StyleDocumentScope.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
-#include "StyleScope.h"
 #include <math.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -243,7 +243,7 @@ int SVGFontFaceElement::descent() const
 
 String SVGFontFaceElement::fontFamily() const
 {
-    return fontFaceRule().properties().getPropertyValue(CSSPropertyFontFamily);
+    return protect(fontFaceRule())->properties().getPropertyValue(CSSPropertyFontFamily);
 }
 
 SVGFontElement* SVGFontFaceElement::associatedFontElement() const
@@ -296,7 +296,7 @@ Node::NeedsPostConnectionSteps SVGFontFaceElement::insertionSteps(InsertionType 
         ASSERT(!m_fontElement);
         return NeedsPostConnectionSteps::No;
     }
-    protect(document())->svgExtensions().registerSVGFontFaceElement(*this);
+    protect(protect(document())->svgExtensions())->registerSVGFontFaceElement(*this);
 
     rebuildFontFace();
     return result;
@@ -309,7 +309,7 @@ void SVGFontFaceElement::removingSteps(RemovalType removalType, ContainerNode& o
     if (removalType.disconnectedFromDocument) {
         m_fontElement = nullptr;
         Ref<Document> document = this->document();
-        protect(document->svgExtensions())->unregisterSVGFontFaceElement(*this);
+        protect(document->svgExtensions())->unregisterSVGFontFaceElement(protect(*this));
         Ref fontFaceSet = document->fontSelector().cssFontFaceSet();
         Ref fontFaceRule = m_fontFaceRule;
         if (RefPtr fontFace = fontFaceSet->lookUpByCSSConnection(fontFaceRule))

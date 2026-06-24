@@ -13,15 +13,14 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
-#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
@@ -32,6 +31,7 @@
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "test/audio_decoder_proxy_factory.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -43,7 +43,7 @@ namespace {
 std::unique_ptr<NetEq> CreateNetEq(
     const NetEq::Config& config,
     scoped_refptr<AudioDecoderFactory> decoder_factory) {
-  return DefaultNetEqFactory().Create(CreateEnvironment(), config,
+  return DefaultNetEqFactory().Create(CreateTestEnvironment(), config,
                                       std::move(decoder_factory));
 }
 
@@ -76,7 +76,7 @@ class MockAudioDecoder final : public AudioDecoder {
     size_t Duration() const override { return kPacketDuration; }
 
     std::optional<DecodeResult> Decode(
-        ArrayView<int16_t> decoded) const override {
+        std::span<int16_t> decoded) const override {
       const size_t output_size =
           sizeof(int16_t) * kPacketDuration * num_channels_;
       if (decoded.size() >= output_size) {

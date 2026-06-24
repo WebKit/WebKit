@@ -133,19 +133,6 @@ int GetSpeechLevelRmsErrorDb(float speech_level_dbfs,
 
   return rms_error_db;
 }
-
-int GetTargetRangeMaxDbfs(const InputVolumeController::Config& config,
-                          const FieldTrialsView& field_trials) {
-  if (field_trials.IsEnabled("WebRTC-Agc2MaxSpeechLevelExperimental")) {
-    RTC_LOG(LS_INFO) << "AGC2 input volume controller using experimental "
-                        "maximum speech level";
-    return config.target_range_experimental_max_dbfs;
-  } else {
-    RTC_LOG(LS_INFO)
-        << "AGC2 input volume controller using default maximum speech level";
-    return config.target_range_max_dbfs;
-  }
-}
 }  // namespace
 
 MonoInputVolumeController::MonoInputVolumeController(
@@ -388,7 +375,7 @@ InputVolumeController::InputVolumeController(
       frames_since_clipped_(config.clipped_wait_frames),
       clipping_rate_log_counter_(0),
       clipping_rate_log_(0.0f),
-      target_range_max_dbfs_(GetTargetRangeMaxDbfs(config, field_trials)),
+      target_range_max_dbfs_(config.target_range_max_dbfs),
       target_range_min_dbfs_(config.target_range_min_dbfs),
       channel_controllers_(num_capture_channels) {
   RTC_LOG(LS_INFO)

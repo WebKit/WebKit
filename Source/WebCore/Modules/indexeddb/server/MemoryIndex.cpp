@@ -354,6 +354,8 @@ void MemoryIndex::transactionAborted(MemoryBackingStoreTransaction& transaction)
     if (m_writeTransaction != &transaction)
         return;
 
+    notifyCursorsOfAllRecordsChanged();
+
     auto transactionModifiedRecords = std::exchange(m_transactionModifiedRecords, { });
     for (auto& [key, valueKeys] : transactionModifiedRecords) {
         removeIndexRecord(key);

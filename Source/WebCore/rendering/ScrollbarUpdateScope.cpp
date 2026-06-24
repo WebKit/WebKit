@@ -35,10 +35,10 @@
 
 namespace WebCore {
 
-ScrollbarUpdateScope::ScrollbarUpdateScope(RenderLayerScrollableArea& scrollableArea, ScrollPosition originalScrollPosition, OptionSet<ScrollbarChange> scrollbarChanges, HasHorizontalOverflow hasHorizontalOverflow, HasVerticalOverflow hasVerticalOverflow)
+ScrollbarUpdateScope::ScrollbarUpdateScope(RenderLayerScrollableArea& scrollableArea, ScrollPosition originalScrollPosition, EnumSet<ScrollbarOrientation> autoScrollbarChanges, HasHorizontalOverflow hasHorizontalOverflow, HasVerticalOverflow hasVerticalOverflow)
     : m_renderLayerScrollableArea(scrollableArea)
     , m_originalScrollPosition(originalScrollPosition)
-    , m_scrollbarChanges(scrollbarChanges)
+    , m_autoScrollbarChanges(autoScrollbarChanges)
     , m_hasHorizontalOverflow(hasHorizontalOverflow)
     , m_hasVerticalOverflow(hasVerticalOverflow)
 {

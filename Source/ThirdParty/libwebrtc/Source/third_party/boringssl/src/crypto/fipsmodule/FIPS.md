@@ -16,15 +16,20 @@ BoringCrypto has undergone the following validations:
 1. 2021-04-29: certificate [#4407](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4407).
 1. 2022-06-13: certificate [#4735](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4735).
 1. 2023-04-28: certificate [#4953](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4953).
+1. 2024-04-07: certificate [#5104](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5104).
+1. 2024-08-05: certificate [#5244](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5244).
+
+Entropy validations:
+
+1. 2025-07-25: certificate [#E321](https://csrc.nist.gov/projects/cryptographic-module-validation-program/entropy-validations/certificate/321).
 
 The following validations are active:
 
 | Version | Status | CAVP |
 | ------- | ------ | ---- |
-| 2024-04-07 | Review Pending at NIST    | [A5370](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18027) |
-| 2024-08-05 | Review Pending at NIST    | [A6134](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=9831) |
 | 2025-01-07 | Review Pending at NIST    | [A6838](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19570) |
 | 2025-07-28 | Review Pending at NIST    | [A7303](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=39913) |
+| 2025-10-31 | Review Pending at NIST    | [A7700](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=40310) |
 
 ## Update stream
 
@@ -45,7 +50,7 @@ ninja && ninja run_tests
 
 The latest stable versions of Clang, Go, Ninja, and CMake should be used.
 
-On the upstream stream, `FIPS_version` will return zero to indicate that it is not the validated module stream.
+On the update stream, `FIPS_version` will return zero to indicate that it is not the validated module stream.
 
 ## Running ACVP tests
 
@@ -59,7 +64,6 @@ Some FIPS tests cannot be broken by replacing a known string in the binary. For 
 
 1. `RSA_PWCT`
 1. `ECDSA_PWCT`
-1. `CRNG`
 
 ## Breaking the integrity test
 
@@ -67,21 +71,17 @@ The utility in `util/fipstools/break-hash.go` can be used to corrupt the FIPS mo
 
 ## RNG design
 
-FIPS 140-2 requires that one of its PRNGs be used (which they call DRBGs). In BoringCrypto, we use CTR-DRBG with AES-256 exclusively and `RAND_bytes` (the primary interface for the rest of the system to get random data) takes its output from there.
+FIPS 140-3 requires that one of its PRNGs be used (which they call DRBGs). In BoringCrypto, we use CTR-DRBG with AES-256 exclusively and `RAND_bytes` (the primary interface for the rest of the system to get random data) takes its output from there.
 
-The DRBG state is kept in a thread-local structure and is seeded from one of the following entropy sources in preference order: RDRAND (on Intel chips), `getrandom`, and `/dev/urandom`. In the case of `/dev/urandom`, in order to ensure that the system has a minimum level of entropy, BoringCrypto polls the kernel until the estimated entropy is at least 256 bits. This is a poor man's version of `getrandom` and we strongly recommend using a kernel recent enough to support the real thing.
+For performance, each thread gets a thread-local DRBG from which it can generate random bytes. Those DRBGs are seeded from a compliant entropy source. For Linux platforms, that means a jitter source implemented within BoringCrypto (ESV \#E321). On Android, BoringCrypto makes a UNIX domain socket connection to a local entropy daemon, which provides entropy from a certified hardware source.
 
-In FIPS mode, each of those entropy sources is subject to a 10× overread. That is, when *n* bytes of entropy are needed, *10n* bytes will be read from the entropy source and XORed down to *n* bytes. Reads from the entropy source are also processed in blocks of 16 bytes and if two consecutive chunks are equal the process will abort.
+The jitter source takes a little time to generate and so it is wrapped in its own DRBG, which is process-wide. That DRBG is only reseeded at the rate that NIST requires. Since we use CTR-DRBG with AES-256, 2⁴⁸ calls are allowed before reseeding and thus most processes will never reseed it. Therefore any jittering delay can be considered a one-time cost and brought forward by calling `RAND_bytes` to generate a single byte at startup. In order to be more uniform, Android also uses this process-wide DRBG and thus only seeds from the daemon once.
 
-In the case that the seed is taken from RDRAND, getrandom will also be queried with `GRND_NONBLOCK` to attempt to obtain additional entropy from the operating system. If available, that extra entropy will be XORed into the whitened seed.
+The FIPS DRBGs allow “additional input” to be fed into a given call. We use this feature to be as robust as possible to state duplication from process forks and VM copies:
 
-On Android, only `getrandom` is supported and, when seeding for the first time, the system property `ro.boringcrypto.hwrand` is queried. If set to `true` then `getrandom` will be called with the `GRND_RANDOM` flag. Only entropy draws destined for DRBG seeds are affected by this. We are not suggesting that there is any security advantage at all to doing this, and thus recommend that Android vendors do _not_ set this flag.
+The thread-local DRBGs are seeded from the entropy source as described above, but OS entropy will also be used as additional input when seeding. Also, for every call we read 32 bytes of “additional data” from the OS or RDRAND, unless there's no fast RDRAND and the OS provides a signal when the address space forks (or if the process has promised not to fork). This is called “prediction resistance” by FIPS, but we do _not_ claim this property in a FIPS context because we don't implement it the way they want.
 
-The CTR-DRBG is reseeded every 4096 calls to `RAND_bytes`. Thus the process will randomly crash about every 2¹³⁵ calls.
-
-The FIPS PRNGs allow “additional input” to be fed into a given call. We use this feature to be as robust as possible to state duplication from process forks and VM copies: for every call we read 32 bytes of “additional data” from the entropy source (without overread) which means that cloned states will diverge at the next call to `RAND_bytes`. This is called “prediction resistance” by FIPS, but we do *not* claim this property in a FIPS context because we don't implement it the way they want.
-
-There is a second interface to the RNG which allows the caller to supply bytes that will be XORed into the generated additional data (`RAND_bytes_with_additional_data`). This is used in the ECDSA code to include the message and private key in the generation of *k*, the ECDSA nonce. This allows ECDSA to be robust to entropy failures while still following the FIPS rules.
+There is a second interface to the RNG which allows the caller to supply bytes that will be XORed into the generated additional data (`RAND_bytes_with_additional_data`). This is used in the ECDSA code to include the message and private key in the generation of _k_, the ECDSA nonce. This allows ECDSA to be robust to entropy failures while still following the FIPS rules.
 
 FIPS requires that RNG state be zeroed when the process exits. In order to implement this, all per-thread RNG states are tracked in a linked list and a destructor function is included which clears them. In order for this to be safe in the presence of threads, a lock is used to stop all other threads from using the RNG once this process has begun. Thus the main thread exiting may cause other threads to deadlock, and drawing on entropy in a destructor function may also deadlock.
 
@@ -141,17 +141,17 @@ In order to allow this we use a similar design to the redirector functions: the 
 
 The script performs a number of other transformations which are worth noting but do not warrant their own discussions:
 
-1.  It duplicates each global symbol with a local symbol that has `_local_target` appended to the name. References to the global symbols are rewritten to use these duplicates instead. Otherwise, although the generated code uses IP-relative references, relocations are emitted for global symbols in case they are overridden by a different object file during the link.
-1.  Various sections, notably `.rodata`, are moved to the `.text` section, inside the module, so module code may reference it without relocations.
-1.  For each BSS symbol, it generates a function named after that symbol but with `_bss_get` appended, which returns its address.
-1.  It inserts the labels that delimit the module's code and data (called `module_start` and `module_end` in the diagram above).
-1.  It adds a 64-byte, read-only array outside of the module to contain the known-good HMAC value.
+1. It duplicates each global symbol with a local symbol that has `_local_target` appended to the name. References to the global symbols are rewritten to use these duplicates instead. Otherwise, although the generated code uses IP-relative references, relocations are emitted for global symbols in case they are overridden by a different object file during the link.
+1. Various sections, notably `.rodata`, are moved to the `.text` section, inside the module, so module code may reference it without relocations.
+1. For each BSS symbol, it generates a function named after that symbol but with `_bss_get` appended, which returns its address.
+1. It inserts the labels that delimit the module's code and data (called `module_start` and `module_end` in the diagram above).
+1. It adds a 64-byte, read-only array outside of the module to contain the known-good HMAC value.
 
 ##### Integrity testing
 
 In order to actually implement the integrity test, a constructor function within the module calculates an HMAC from `module_start` to `module_end` using a fixed, all-zero key. It compares the result with the known-good value added (by the script) to the unhashed portion of the text segment. If they don't match, it calls `exit` in an infinite loop.
 
-Initially the known-good value will be incorrect. Another script (`inject_hash.go`) calculates the correct value from the assembled object and injects it back into the object.
+Initially the known-good value will be incorrect. Another script (`inject_hash.go`) calculates the correct value from the assembled object and injects it back into the object. When we calculate the correct value, we link `bcm.o` into a sample shared library to evaluate relocations first. Although the above process ensures that the module's text segment is the same every time it is linked, there may be some unevaluated relocations in `bcm.o`. The relocations will just be independent of anything else we link `bcm.o` into with.
 
 ![build process](./intcheck2.png)
 
@@ -161,16 +161,16 @@ Initially the known-good value will be incorrect. Another script (`inject_hash.g
 
 OpenSSL's solution to this problem is very similar to our shared build, with just a few differences:
 
-1.  OpenSSL deals with run-time relocations by not hashing parts of the module's data.
-1.  OpenSSL uses `ld -r` (the partial linking mode) to merge a number of object files into their `fipscanister.o`. For BoringCrypto's static build, we merge all the C source files by building a single C file that #includes all the others, and we merge the assembly sources by appending them to the assembly output from the C compiler.
-1.  OpenSSL depends on the link order and inserts two object files, `fips_start.o` and `fips_end.o`, in order to establish the `module_start` and `module_end` values. BoringCrypto adds labels at the correct places in the assembly for the static build, or uses a linker script for the shared build.
-1.  OpenSSL calculates the hash after the final link and either injects it into the binary or recompiles with the value of the hash passed in as a #define. BoringCrypto calculates it prior to the final link and injects it into the object file.
-1.  OpenSSL references read-write data directly, since it can know the offsets to it. BoringCrypto indirects these loads and stores.
-1.  OpenSSL doesn't run the power-on test until `FIPS_module_mode_set` is called. BoringCrypto does it in a constructor function. Failure of the test is non-fatal in OpenSSL, BoringCrypto will crash.
-1.  Since the contents of OpenSSL's module change between compilation and use, OpenSSL generates `fipscanister.o.sha1` to check that the compiled object doesn't change before linking. Since BoringCrypto's module is fixed after compilation (in the static case), the final integrity check is unbroken through the linking process.
+1. OpenSSL deals with run-time relocations by not hashing parts of the module's data.
+1. OpenSSL uses `ld -r` (the partial linking mode) to merge a number of object files into their `fipscanister.o`. For BoringCrypto's static build, we merge all the C source files by building a single C file that #includes all the others, and we merge the assembly sources by appending them to the assembly output from the C compiler.
+1. OpenSSL depends on the link order and inserts two object files, `fips_start.o` and `fips_end.o`, in order to establish the `module_start` and `module_end` values. BoringCrypto adds labels at the correct places in the assembly for the static build, or uses a linker script for the shared build.
+1. OpenSSL calculates the hash after the final link and either injects it into the binary or recompiles with the value of the hash passed in as a #define. BoringCrypto calculates it prior to the final link and injects it into the object file.
+1. OpenSSL references read-write data directly, since it can know the offsets to it. BoringCrypto indirects these loads and stores.
+1. OpenSSL doesn't run the power-on test until `FIPS_module_mode_set` is called. BoringCrypto does it in a constructor function. Failure of the test is non-fatal in OpenSSL, BoringCrypto will crash.
+1. Since the contents of OpenSSL's module change between compilation and use, OpenSSL generates `fipscanister.o.sha1` to check that the compiled object doesn't change before linking. Since BoringCrypto's module is fixed after compilation (in the static case), the final integrity check is unbroken through the linking process.
 
 Some of the similarities are worth noting:
 
-1.  OpenSSL has all out-calls from the module indirecting via the PLT, which is equivalent to the redirector functions described above.
+1. OpenSSL has all out-calls from the module indirecting via the PLT, which is equivalent to the redirector functions described above.
 
 ![OpenSSL build process](./intcheck3.png)

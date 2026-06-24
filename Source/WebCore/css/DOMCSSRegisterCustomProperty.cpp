@@ -36,8 +36,8 @@
 #include "ExceptionOr.h"
 #include "StyleBuilder.h"
 #include "StyleCustomPropertyRegistry.h"
+#include "StyleDocumentScope.h"
 #include "StyleResolver.h"
-#include "StyleScope.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

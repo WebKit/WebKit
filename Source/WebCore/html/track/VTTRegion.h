@@ -37,6 +37,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/TextTrack.h>
 #include <WebCore/Timer.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
@@ -45,7 +46,13 @@ class HTMLDivElement;
 class VTTCueBox;
 class VTTScanner;
 
-class WEBCORE_EXPORT VTTRegion final : public RefCounted<VTTRegion>, public ContextDestructionObserver {
+class WEBCORE_EXPORT VTTRegion final
+    : public RefCounted<VTTRegion>
+    , public ContextDestructionObserver
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     static Ref<VTTRegion> create(ScriptExecutionContext& context)
     {
@@ -95,6 +102,13 @@ public:
     void willRemoveTextTrackCueBox(VTTCueBox*);
 
     void cueStyleChanged() { m_recalculateStyles = true; }
+
+#if !RELEASE_LOG_DISABLED
+    ASCIILiteral logClassName() const final;
+    const Logger& logger() const final;
+    uint64_t logIdentifier() const final;
+    WTFLogChannel& logChannel() const final;
+#endif
 
 private:
     VTTRegion(ScriptExecutionContext&);
@@ -151,6 +165,11 @@ private:
     Timer m_scrollTimer;
 
     bool m_recalculateStyles { true };
+
+#if !RELEASE_LOG_DISABLED
+    mutable RefPtr<Logger> m_logger;
+    mutable uint64_t m_logIdentifier { 0 };
+#endif
 };
 
 } // namespace WebCore

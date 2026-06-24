@@ -2,22 +2,19 @@
 <html>
 <head>
     <title>New Window Opener Test</title>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
 </head>
 
 <body>
 
     <script type="text/javascript">
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
 
     
         description(
             'This tests that the different arguments given to a new window are honored.<br/>\
             Take note that menubar is special and always on in Mac but not in Win.'
         );
+        window.jsTestIsAsync = true;
 
         var args = [ "scrollbars=yes,width=75,height=100"
                    , "scrollbars=no,width=75,height=100"
@@ -71,9 +68,7 @@
         nextTest();
         function nextTest() {
             if (testNum == lastTest) {
-                isSuccessfullyParsed();
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                finishJSTest();
                 return;
             } else if (testNum == 0) {
                 debug("");

@@ -49,14 +49,14 @@ ReturnType wtfCallIMP(IMP implementation, id target, SEL selector, ArgumentTypes
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE MallocSpan<Method, SystemMalloc> class_copyMethodListSpan(Class);
-WTF_EXPORT_PRIVATE MallocSpan<__unsafe_unretained Protocol *, SystemMalloc> class_copyProtocolListSpan(Class);
-WTF_EXPORT_PRIVATE MallocSpan<objc_property_t, SystemMalloc> class_copyPropertyListSpan(Class);
-WTF_EXPORT_PRIVATE MallocSpan<Ivar, SystemMalloc> class_copyIvarListSpan(Class);
+WTF_EXPORT_PRIVATE MallocSpan<::Method, SystemMalloc> class_copyMethodListSpan(::Class);
+WTF_EXPORT_PRIVATE MallocSpan<__unsafe_unretained ::Protocol *, SystemMalloc> class_copyProtocolListSpan(::Class);
+WTF_EXPORT_PRIVATE MallocSpan<objc_property_t, SystemMalloc> class_copyPropertyListSpan(::Class);
+WTF_EXPORT_PRIVATE MallocSpan<Ivar, SystemMalloc> class_copyIvarListSpan(::Class);
 WTF_EXPORT_PRIVATE MallocSpan<objc_property_attribute_t, SystemMalloc> property_copyAttributeListSpan(objc_property_t);
-WTF_EXPORT_PRIVATE MallocSpan<objc_method_description, SystemMalloc> protocol_copyMethodDescriptionListSpan(Protocol *, BOOL isRequiredMethod, BOOL isInstanceMethod);
-WTF_EXPORT_PRIVATE MallocSpan<objc_property_t, SystemMalloc> protocol_copyPropertyListSpan(Protocol *);
-WTF_EXPORT_PRIVATE MallocSpan<__unsafe_unretained Protocol *, SystemMalloc> protocol_copyProtocolListSpan(Protocol *);
+WTF_EXPORT_PRIVATE MallocSpan<objc_method_description, SystemMalloc> protocol_copyMethodDescriptionListSpan(::Protocol *, BOOL isRequiredMethod, BOOL isInstanceMethod);
+WTF_EXPORT_PRIVATE MallocSpan<objc_property_t, SystemMalloc> protocol_copyPropertyListSpan(::Protocol *);
+WTF_EXPORT_PRIVATE MallocSpan<__unsafe_unretained ::Protocol *, SystemMalloc> protocol_copyProtocolListSpan(::Protocol *);
 
 template<typename Type>
 std::span<const char> objcEncode()

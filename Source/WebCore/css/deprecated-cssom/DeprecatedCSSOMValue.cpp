@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,97 +27,8 @@
 #include "config.h"
 #include "DeprecatedCSSOMValue.h"
 
-#include "CSSKeywordValue.h"
-#include "CSSSerializationContext.h"
-#include "DeprecatedCSSOMLazySerializingCustomValue.h"
-#include "DeprecatedCSSOMPrimitiveValue.h"
-#include "DeprecatedCSSOMValueList.h"
-
 namespace WebCore {
 
-void DeprecatedCSSOMValue::operator delete(DeprecatedCSSOMValue* value, std::destroying_delete_t)
-{
-    auto destroyAndFree = [&]<typename ValueType> (ValueType& value) {
-        std::destroy_at(&value);
-        ValueType::freeAfterDestruction(&value);
-    };
+DeprecatedCSSOMValue::~DeprecatedCSSOMValue() = default;
 
-    switch (value->classType()) {
-    case ClassType::LazySerializingCustom:
-        destroyAndFree(uncheckedDowncast<DeprecatedCSSOMLazySerializingCustomValue>(*value));
-        break;
-    case ClassType::Complex:
-        destroyAndFree(uncheckedDowncast<DeprecatedCSSOMComplexValue>(*value));
-        break;
-    case ClassType::Primitive:
-        destroyAndFree(uncheckedDowncast<DeprecatedCSSOMPrimitiveValue>(*value));
-        break;
-    case ClassType::List:
-        destroyAndFree(uncheckedDowncast<DeprecatedCSSOMValueList>(*value));
-        break;
-    }
-}
-
-unsigned short DeprecatedCSSOMValue::cssValueType() const
-{
-    switch (classType()) {
-    case ClassType::LazySerializingCustom:
-        return uncheckedDowncast<DeprecatedCSSOMLazySerializingCustomValue>(*this).cssValueType();
-    case ClassType::Complex:
-        return uncheckedDowncast<DeprecatedCSSOMComplexValue>(*this).cssValueType();
-    case ClassType::Primitive:
-        return uncheckedDowncast<DeprecatedCSSOMPrimitiveValue>(*this).cssValueType();
-    case ClassType::List:
-        return CSS_VALUE_LIST;
-    }
-    ASSERT_NOT_REACHED();
-    return CSS_CUSTOM;
-}
-
-String DeprecatedCSSOMValue::cssText() const
-{
-    switch (classType()) {
-    case ClassType::LazySerializingCustom:
-        return uncheckedDowncast<DeprecatedCSSOMLazySerializingCustomValue>(*this).cssText();
-    case ClassType::Complex:
-        return uncheckedDowncast<DeprecatedCSSOMComplexValue>(*this).cssText();
-    case ClassType::Primitive:
-        return uncheckedDowncast<DeprecatedCSSOMPrimitiveValue>(*this).cssText();
-    case ClassType::List:
-        return uncheckedDowncast<DeprecatedCSSOMValueList>(*this).cssText();
-    }
-    ASSERT_NOT_REACHED();
-    return emptyString();
-}
-
-String DeprecatedCSSOMComplexValue::cssText() const
-{
-    return m_value->cssText(CSS::defaultSerializationContext());
-}
-
-unsigned short DeprecatedCSSOMComplexValue::cssValueType() const
-{
-    // These values are exposed in the DOM, but constants for them are not.
-    constexpr unsigned short CSS_INITIAL = 4;
-    constexpr unsigned short CSS_UNSET = 5;
-    constexpr unsigned short CSS_REVERT = 6;
-
-    RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(m_value);
-    if (!keywordValue)
-        return CSS_CUSTOM;
-
-    switch (keywordValue->valueID()) {
-    case CSSValueInherit:
-        return CSS_INHERIT;
-    case CSSValueInitial:
-        return CSS_INITIAL;
-    case CSSValueUnset:
-        return CSS_UNSET;
-    case CSSValueRevert:
-        return CSS_REVERT;
-    default:
-        return CSS_CUSTOM;
-    }
-}
-
-}
+} // namespace WebCore

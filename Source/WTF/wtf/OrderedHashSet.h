@@ -110,6 +110,42 @@ public:
         return m_impl.template contains<HashTranslator>(value);
     }
 
+    template<SmartPtr V = ValueType>
+    iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const LIFETIME_BOUND
+    {
+        return find<HashSetTranslator<ValueTraits, HashFunctions>>(value);
+    }
+
+    template<SmartPtr V = ValueType>
+    bool contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const
+    {
+        return find<V>(value) != end();
+    }
+
+    template<SmartPtr V = ValueType>
+    bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value)
+    {
+        return remove(find<V>(value));
+    }
+
+    template<SmartPtr V = ValueType>
+    TakeType take(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value)
+    {
+        return take(find<V>(value));
+    }
+
+    template<SmartPtr V = ValueType>
+    iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) const LIFETIME_BOUND { return find<V>(&ref); }
+
+    template<SmartPtr V = ValueType>
+    bool contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) const { return contains<V>(&ref); }
+
+    template<SmartPtr V = ValueType>
+    bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) { return remove<V>(&ref); }
+
+    template<SmartPtr V = ValueType>
+    TakeType take(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) { return take<V>(&ref); }
+
     AddResult add(const ValueType& value) LIFETIME_BOUND
     {
         auto result = m_impl.add(value, [&]() ALWAYS_INLINE_LAMBDA -> ValueType { return value; });
@@ -169,6 +205,9 @@ public:
     }
 
     TakeType takeAny() { return take(begin()); }
+
+    const ValueType& first() const { ASSERT(!isEmpty()); return *begin(); }
+    const ValueType& last() const { ASSERT(!isEmpty()); return *rbegin(); }
 
     static bool isValidValue(const ValueType& value)
     {

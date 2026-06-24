@@ -14,8 +14,8 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/neteq/neteq.h"
 #include "api/rtp_headers.h"
 #include "api/units/timestamp.h"
@@ -92,7 +92,7 @@ int32_t Channel::SendData(AudioFrameType frameType,
   }
 
   status = _neteq->InsertPacket(
-      rtp_header, ArrayView<const uint8_t>(_payloadData, payloadDataSize),
+      rtp_header, std::span<const uint8_t>(_payloadData, payloadDataSize),
       /*receive_time=*/Timestamp::MinusInfinity());
 
   return status;

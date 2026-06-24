@@ -1,0 +1,6 @@
+
+NOTRUN Eligibility (in-flight fetch): Redirect header received when in BFCache Could have been BFCached but actually wasn't
+NOTRUN Eligibility (in-flight fetch): Redirect header received when in BFCache w/ CSP passing Could have been BFCached but actually wasn't
+NOTRUN Eligibility (in-flight fetch): Cross-origin redirect header received when in BFCache Could have been BFCached but actually wasn't
+NOTRUN Eligibility (in-flight fetch): Cross-origin redirect header received when in BFCache w/ CSP failing Could have been BFCached but actually wasn't
+

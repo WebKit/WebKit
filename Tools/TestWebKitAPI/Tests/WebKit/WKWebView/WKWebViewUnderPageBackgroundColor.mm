@@ -279,8 +279,6 @@ TEST(WKWebViewUnderPageBackgroundColor, KVO)
 
 #if PLATFORM(IOS_FAMILY)
 
-constexpr CGFloat whiteColorComponents[4] = { 1, 1, 1, 1 };
-
 // There's no API/SPI to get the background color of the scroll area on macOS.
 
 TEST(WKWebViewUnderPageBackgroundColor, MatchesScrollView)

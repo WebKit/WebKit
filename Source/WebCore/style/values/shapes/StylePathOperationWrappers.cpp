@@ -120,12 +120,12 @@ RefPtr<PathOperation> CSSValueConversion<RefPtr<PathOperation>>::operator()(Buil
     return operation;
 }
 
-Ref<CSSValue> CSSValueCreation<RayPath>::operator()(CSSValuePool&, const RenderStyle& style, const RayPath& path)
+Ref<CSSValue> CSSValueCreation<RayPath>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const RayPath& path)
 {
     return CSSRayValue::create(toCSS(path.ray(), style), path.referenceBox());
 }
 
-Ref<CSSValue> CSSValueCreation<BasicShapePath>::operator()(CSSValuePool& pool, const RenderStyle& style, const BasicShapePath& path, PathConversion conversion)
+Ref<CSSValue> CSSValueCreation<BasicShapePath>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const BasicShapePath& path, PathConversion conversion)
 {
     if (path.referenceBox() == CSSBoxType::BoxMissing)
         return CSSValueList::createSpaceSeparated(createCSSValue(pool, style, path.shape(), conversion));
@@ -134,7 +134,7 @@ Ref<CSSValue> CSSValueCreation<BasicShapePath>::operator()(CSSValuePool& pool, c
 
 // MARK: - Serialization
 
-void Serialize<BasicShapePath>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const BasicShapePath& shape, PathConversion conversion)
+void Serialize<BasicShapePath>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const BasicShapePath& shape, PathConversion conversion)
 {
     if (shape.referenceBox() == CSSBoxType::BoxMissing) {
         serializationForCSS(builder, context, style, shape.shape(), conversion);
@@ -190,10 +190,10 @@ AcceleratedEffectReferencePath Evaluation<ReferencePath, AcceleratedEffectRefere
     };
 }
 
-AcceleratedEffectBasicShapePath Evaluation<BasicShapePath, AcceleratedEffectBasicShapePath>::operator()(const BasicShapePath& value, const TransformOperationData& data, ZoomFactor zoom)
+AcceleratedEffectBasicShapePath Evaluation<BasicShapePath, AcceleratedEffectBasicShapePath>::operator()(const BasicShapePath& value, const FloatRect& containingBlock, ZoomFactor zoom)
 {
     return {
-        .basicShape = evaluate<AcceleratedEffectBasicShape>(value.shape(), data, zoom),
+        .basicShape = evaluate<AcceleratedEffectBasicShape>(value.shape(), containingBlock, zoom),
         .box = toAcceleratedEffectCoordBox(value.referenceBox()),
     };
 }

@@ -29,6 +29,8 @@
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 
+namespace webrtc {
+
 namespace {
 
 struct Fraction {
@@ -135,8 +137,6 @@ std::optional<std::pair<int, int>> Swap(
 }
 
 }  // namespace
-
-namespace webrtc {
 
 VideoAdapter::VideoAdapter(int source_resolution_alignment)
     : frames_in_(0),

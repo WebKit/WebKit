@@ -308,6 +308,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._delegate?.spreadsheetCSSStyleDeclarationSectionSetAllPropertyVisibilityMode?.(this, propertyVisibilityMode);
     }
 
+    spreadsheetCSSStyleDeclarationEditorStyleLockedChanged(editor, locked)
+    {
+        this._delegate?.spreadsheetCSSStyleDeclarationSectionStyleLockedChanged(this, locked);
+    }
+
     applyFilter(filterText)
     {
         this._filterText = filterText;

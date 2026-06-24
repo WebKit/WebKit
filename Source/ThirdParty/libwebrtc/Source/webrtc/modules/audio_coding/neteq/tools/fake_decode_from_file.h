@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "rtc_base/buffer.h"
@@ -68,7 +68,7 @@ class FakeDecodeFromFile : public AudioDecoder {
   static void PrepareEncoded(uint32_t timestamp,
                              size_t samples,
                              size_t original_payload_size_bytes,
-                             ArrayView<uint8_t> encoded);
+                             std::span<uint8_t> encoded);
 
  private:
   std::unique_ptr<InputAudioFile> input_;

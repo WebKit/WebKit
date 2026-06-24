@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ dumpResourceResponseMIMETypes=green-400-px-square.png ] -->
 <html>
 <head>
 <script src="../../resources/srcset-helper.js"></script>
@@ -5,6 +6,8 @@
 <script>
     if (window.testRunner)
         testRunner.dumpAsText();
+    if (window.internals)
+        internals.clearMemoryCache();
 
     function updateSrc() {
         var img = document.getElementById("foo");
@@ -14,8 +17,6 @@
     }
 
     addEventListener("DOMContentLoaded", function() {
-        if (sessionStorage.pageReloaded)
-            testRunner.dumpResourceResponseMIMETypes();
         updateSrc();
     }, false);
 

@@ -40,9 +40,11 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     std::optional<bool> hitNodeOrWindowHasDoubleClickListener,
     Selectability&& selectability,
     bool isSelected,
+    bool isOverSelectableText,
     bool prefersDraggingOverTextSelection,
     bool isDHTMLDraggable,
     bool isColorInput,
+    bool isRangeInput,
     bool isNearMarkedText,
 #if PLATFORM(IOS_FAMILY)
     bool touchCalloutEnabled,
@@ -104,9 +106,11 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     , hitNodeOrWindowHasDoubleClickListener(hitNodeOrWindowHasDoubleClickListener)
     , selectability(selectability)
     , isSelected(isSelected)
+    , isOverSelectableText(isOverSelectableText)
     , prefersDraggingOverTextSelection(prefersDraggingOverTextSelection)
     , isDHTMLDraggable(isDHTMLDraggable)
     , isColorInput(isColorInput)
+    , isRangeInput(isRangeInput)
     , isNearMarkedText(isNearMarkedText)
 #if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(touchCalloutEnabled)

@@ -289,6 +289,8 @@ void JSExposedToWorkerAndWindow::analyzeHeap(JSCell* cell, HeapAnalyzer& analyze
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSExposedToWorkerAndWindowOwner::JSExposedToWorkerAndWindowOwner(ClangVTableWorkaroundTag) { }
+
 bool JSExposedToWorkerAndWindowOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -301,7 +303,7 @@ void JSExposedToWorkerAndWindowOwner::finalize(JSC::Handle<JSC::Unknown> handle,
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsExposedToWorkerAndWindow = static_cast<JSExposedToWorkerAndWindow*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsExposedToWorkerAndWindow->wrapped()).ptr(), jsExposedToWorkerAndWindow);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsExposedToWorkerAndWindow->wrapped(), jsExposedToWorkerAndWindow);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

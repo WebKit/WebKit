@@ -29,7 +29,7 @@
 
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TableFormattingGeometry.h"
 #include <ranges>

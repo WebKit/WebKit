@@ -14,8 +14,8 @@
 #include <cerrno>
 #include <cstdint>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/stream.h"
 
@@ -25,7 +25,7 @@ StreamState MemoryStream::GetState() const {
   return SS_OPEN;
 }
 
-StreamResult MemoryStream::Read(ArrayView<uint8_t> buffer,
+StreamResult MemoryStream::Read(std::span<uint8_t> buffer,
                                 size_t& bytes_read,
                                 int& error) {
   if (seek_position_ >= data_length_) {
@@ -45,7 +45,7 @@ StreamResult MemoryStream::Read(ArrayView<uint8_t> buffer,
   return SR_SUCCESS;
 }
 
-StreamResult MemoryStream::Write(ArrayView<const uint8_t> buffer,
+StreamResult MemoryStream::Write(std::span<const uint8_t> buffer,
                                  size_t& bytes_written,
                                  int& error) {
   size_t available = buffer_length_ - seek_position_;

@@ -37,9 +37,11 @@ namespace CSS {
 struct FontStyleRange {
     struct Oblique {
         using Angle = CSS::Angle<Range{-90, 90}>;
+        using Angles = MinimallySerializingSpaceSeparatedPair<Angle>;
 
-        std::optional<Angle> first;
-        std::optional<Angle> second;
+        // Empty represents `oblique` without an explicit angle. A single angle is
+        // stored as an equal-bounds pair, which serializes minimally (`oblique 10deg`).
+        std::optional<Angles> angle;
 
         bool operator==(const Oblique&) const = default;
     };
@@ -54,13 +56,7 @@ struct FontStyleRange {
     bool operator==(const FontStyleRange&) const = default;
 };
 
-template<size_t I> const auto& get(const FontStyleRange::Oblique& value)
-{
-    if constexpr (!I)
-        return value.first;
-    else if constexpr (I == 1)
-        return value.second;
-}
+DEFINE_TYPE_WRAPPER_GET(FontStyleRange::Oblique, angle)
 
 // MARK: - Conversion
 
@@ -73,5 +69,5 @@ template<> struct Serialize<FontStyleRange::Oblique> { void operator()(StringBui
 } // namespace CSS
 } // namespace WebCore
 
-DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::FontStyleRange::Oblique, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::FontStyleRange::Oblique)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::FontStyleRange)

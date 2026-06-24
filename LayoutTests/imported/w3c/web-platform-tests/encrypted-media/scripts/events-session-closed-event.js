@@ -22,6 +22,10 @@ function runTest(config, qualifier)
             initDataType = access.getConfiguration().initDataTypes[0];
             return access.createMediaKeys();
         }).then(function (mediaKeys) {
+            if (config.servercertificate)
+                return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+            return mediaKeys;
+        }).then(function (mediaKeys) {
             mediaKeySession = mediaKeys.createSession();
             if(config.initData) {
                 initData = config.initData;

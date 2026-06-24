@@ -89,6 +89,8 @@ function runTest(configEncrypted,configClear,qualifier) {
             return access.createMediaKeys();
         }).then(function(mediaKeys) {
             _mediaKeys = mediaKeys;
+            if (configEncrypted.servercertificate)
+                return _mediaKeys.setServerCertificate(configEncrypted.servercertificate).then(function() { return _video.setMediaKeys(_mediaKeys); });
             return _video.setMediaKeys(_mediaKeys);
         }).then(function(){
             waitForEventAndRunStep('encrypted', _video, onEncrypted, test);

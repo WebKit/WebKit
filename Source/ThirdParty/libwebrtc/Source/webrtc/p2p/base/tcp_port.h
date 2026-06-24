@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <list>
 #include <memory>
+#include <span>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
@@ -81,13 +82,12 @@ class TCPPort : public Port {
           bool allow_listen);
 
   // Handles sending using the local TCP socket.
-  int SendTo(const void* data,
-             size_t size,
+  int SendTo(std::span<const uint8_t> data,
              const SocketAddress& addr,
              const AsyncSocketPacketOptions& options,
              bool payload) override;
-
   // Accepts incoming TCP connection.
+
   void OnNewConnection(AsyncListenSocket* socket,
                        AsyncPacketSocket* new_socket);
 
@@ -133,8 +133,7 @@ class TCPConnection : public Connection {
                 AsyncPacketSocket* socket = nullptr);
   ~TCPConnection() override;
 
-  int Send(const void* data,
-           size_t size,
+  int Send(std::span<const uint8_t> data,
            const AsyncSocketPacketOptions& options) override;
   int GetError() override;
 

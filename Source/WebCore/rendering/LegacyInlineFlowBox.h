@@ -53,7 +53,7 @@ public:
 #endif
 
     RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(LegacyInlineBox::renderer()); }
-    const RenderStyle& lineStyle() const LIFETIME_BOUND { return isFirstLine() ? renderer().firstLineStyle() : renderer().style(); }
+    const Style::ComputedStyle& lineStyle() const LIFETIME_BOUND { return isFirstLine() ? renderer().firstLineStyle() : renderer().style(); }
 
     LegacyInlineFlowBox* prevLineBox() const LIFETIME_BOUND { return m_prevLineBox; }
     LegacyInlineFlowBox* nextLineBox() const LIFETIME_BOUND { return m_nextLineBox; }

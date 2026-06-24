@@ -592,7 +592,7 @@ public:
     RefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, const SimpleRange& context, bool allowPlainText, bool& chosePlainText);
 
     WEBCORE_EXPORT RefPtr<Font> fontForSelection(bool& hasMultipleFonts);
-    WEBCORE_EXPORT const RenderStyle* styleForSelectionStart(RefPtr<Node>& nodeToRemove);
+    WEBCORE_EXPORT const Style::ComputedStyle* styleForSelectionStart(RefPtr<Node>& nodeToRemove);
     WEBCORE_EXPORT FontAttributes fontAttributesAtSelectionStart();
 
 #if PLATFORM(COCOA)

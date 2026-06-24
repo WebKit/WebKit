@@ -1,0 +1,4 @@
+
+PASS :has() child-change invalidation produces correct styles
+PASS :has() child-change invalidation is not O(n^2)
+

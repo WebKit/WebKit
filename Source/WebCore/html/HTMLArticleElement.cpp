@@ -43,7 +43,7 @@ Ref<HTMLArticleElement> HTMLArticleElement::create(const QualifiedName& tagName,
 HTMLArticleElement::HTMLArticleElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
 {
-    ASSERT(tagName == HTMLNames::articleTag);
+    ASSERT(hasTagName(HTMLNames::articleTag));
 }
 
 auto HTMLArticleElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> NeedsPostConnectionSteps

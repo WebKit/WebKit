@@ -2,6 +2,7 @@
 .file 2 "inserted_by_delocate.c"
 .loc 2 1 0
 BORINGSSL_bcm_text_start:
+.LBORINGSSL_bcm_text_start_local_target:
 	# Most instructions and lines should pass unaltered. This is made up of
 	# copy-and-pasted bits of compiler output and likely does not actually
 	# run.
@@ -60,6 +61,7 @@ foo:
 .text
 .loc 2 2 0
 BORINGSSL_bcm_text_end:
+.LBORINGSSL_bcm_text_end_local_target:
 .type BORINGSSL_bcm_text_hash, @object
 .size BORINGSSL_bcm_text_hash, 32
 BORINGSSL_bcm_text_hash:

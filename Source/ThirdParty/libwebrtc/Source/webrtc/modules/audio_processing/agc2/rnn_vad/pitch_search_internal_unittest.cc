@@ -11,10 +11,10 @@
 #include "modules/audio_processing/agc2/rnn_vad/pitch_search_internal.h"
 
 #include <array>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
@@ -93,7 +93,7 @@ TEST(RnnVadTest, ComputePitchPeriod48kHzBitExactness) {
 
   PitchTestData test_data;
   std::vector<float> y_energy(kRefineNumLags24kHz);
-  ArrayView<float, kRefineNumLags24kHz> y_energy_view(y_energy.data(),
+  std::span<float, kRefineNumLags24kHz> y_energy_view(y_energy.data(),
                                                       kRefineNumLags24kHz);
   ComputeSlidingFrameSquareEnergies24kHz(test_data.PitchBuffer24kHzView(),
                                          y_energy_view, cpu_features);
@@ -128,7 +128,7 @@ TEST_P(PitchCandidatesParametrization,
 
   PitchTestData test_data;
   std::vector<float> y_energy(kRefineNumLags24kHz);
-  ArrayView<float, kRefineNumLags24kHz> y_energy_view(y_energy.data(),
+  std::span<float, kRefineNumLags24kHz> y_energy_view(y_energy.data(),
                                                       kRefineNumLags24kHz);
   ComputeSlidingFrameSquareEnergies24kHz(test_data.PitchBuffer24kHzView(),
                                          y_energy_view, params.cpu_features);
@@ -179,7 +179,7 @@ TEST_P(ExtendedPitchPeriodSearchParametrizaion,
 
   PitchTestData test_data;
   std::vector<float> y_energy(kRefineNumLags24kHz);
-  ArrayView<float, kRefineNumLags24kHz> y_energy_view(y_energy.data(),
+  std::span<float, kRefineNumLags24kHz> y_energy_view(y_energy.data(),
                                                       kRefineNumLags24kHz);
   ComputeSlidingFrameSquareEnergies24kHz(test_data.PitchBuffer24kHzView(),
                                          y_energy_view, params.cpu_features);

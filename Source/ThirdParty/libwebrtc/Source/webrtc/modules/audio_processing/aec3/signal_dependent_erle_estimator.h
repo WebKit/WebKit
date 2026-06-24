@@ -14,9 +14,9 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
@@ -39,7 +39,7 @@ class SignalDependentErleEstimator {
   void Reset();
 
   // Returns the Erle per frequency subband.
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle(
+  std::span<const std::array<float, kFftLengthBy2Plus1>> Erle(
       bool onset_compensated) const {
     return onset_compensated && use_onset_detection_ ? erle_onset_compensated_
                                                      : erle_;
@@ -49,13 +49,13 @@ class SignalDependentErleEstimator {
   // to be an estimation of the average Erle achieved by the linear filter.
   void Update(
       const RenderBuffer& render_buffer,
-      ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+      std::span<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
           filter_frequency_response,
-      ArrayView<const float, kFftLengthBy2Plus1> X2,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> average_erle,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+      std::span<const float, kFftLengthBy2Plus1> X2,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> Y2,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> E2,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> average_erle,
+      std::span<const std::array<float, kFftLengthBy2Plus1>>
           average_erle_onset_compensated,
       const std::vector<bool>& converged_filters);
 
@@ -66,18 +66,18 @@ class SignalDependentErleEstimator {
  private:
   void ComputeNumberOfActiveFilterSections(
       const RenderBuffer& render_buffer,
-      ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+      std::span<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
           filter_frequency_responses);
 
   void UpdateCorrectionFactors(
-      ArrayView<const float, kFftLengthBy2Plus1> X2,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+      std::span<const float, kFftLengthBy2Plus1> X2,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> Y2,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> E2,
       const std::vector<bool>& converged_filters);
 
   void ComputeEchoEstimatePerFilterSection(
       const RenderBuffer& render_buffer,
-      ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+      std::span<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
           filter_frequency_responses);
 
   void ComputeActiveFilterSections();

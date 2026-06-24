@@ -21,19 +21,22 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/base/no_destructor.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -41,13 +44,15 @@
 #include "rtc_base/openssl_adapter.h"
 #include "rtc_base/openssl_digest.h"
 #include "rtc_base/openssl_utility.h"
+#include "rtc_base/span_helpers.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/stream.h"
 #include "rtc_base/string_encode.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_utils/repeating_task.h"
-#include "rtc_base/time_utils.h"
+#include "system_wrappers/include/clock.h"
 
 #ifdef OPENSSL_IS_BORINGSSL
 #include <openssl/digest.h>
@@ -91,13 +96,19 @@ constexpr SrtpCipherMapEntry kSrtpCipherMap[] = {
 #ifdef OPENSSL_IS_BORINGSSL
 // Enabled by EnableTimeCallbackForTesting. Should never be set in production
 // code.
-bool g_use_time_callback_for_testing = false;
-// Not used in production code. Actual time should be relative to Jan 1, 1970.
-void TimeCallbackForTesting(const SSL* ssl, struct timeval* out_clock) {
-  int64_t time = TimeNanos();
-  out_clock->tv_sec = time / kNumNanosecsPerSec;
-  out_clock->tv_usec = (time % kNumNanosecsPerSec) / kNumNanosecsPerMicrosec;
+constinit bool g_use_time_callback_for_testing = false;
+constinit size_t g_num_clock_for_testing_users = 0;
+constinit Clock* g_clock_for_testing = nullptr;
+Mutex& GlobalClockMutex() {
+  static absl::NoDestructor<Mutex> m;
+  return *m;
 }
+#endif
+
+#ifdef DTLS1_3_VERSION
+#define MAX_SSL_PROTOCOL_DTLS SSL_PROTOCOL_DTLS_13
+#else
+#define MAX_SSL_PROTOCOL_DTLS SSL_PROTOCOL_DTLS_12
 #endif
 
 uint16_t GetMaxVersion(SSLMode ssl_mode, SSLProtocolVersion version) {
@@ -120,10 +131,10 @@ uint16_t GetMaxVersion(SSLMode ssl_mode, SSLProtocolVersion version) {
     case SSL_MODE_DTLS:
       switch (version) {
         default:
-        case SSL_PROTOCOL_NOT_GIVEN:
         case SSL_PROTOCOL_DTLS_10:
         case SSL_PROTOCOL_DTLS_12:
           return DTLS1_2_VERSION;
+        case SSL_PROTOCOL_NOT_GIVEN:
         case SSL_PROTOCOL_DTLS_13:
 #ifdef DTLS1_3_VERSION
           return DTLS1_3_VERSION;
@@ -132,45 +143,6 @@ uint16_t GetMaxVersion(SSLMode ssl_mode, SSLProtocolVersion version) {
 #endif
       }
   }
-}
-
-constexpr int kForceDtls13Off = 0;
-#ifdef DTLS1_3_VERSION
-constexpr int kForceDtls13Enabled = 1;
-constexpr int kForceDtls13Only = 2;
-#endif
-
-int GetForceDtls13(const FieldTrialsView* field_trials) {
-#ifdef DTLS1_3_VERSION
-  if (field_trials) {
-#if defined(WEBRTC_CHROMIUM_BUILD)
-    if (field_trials->IsDisabled("WebRTC-ForceDtls13")) {
-      RTC_LOG(LS_WARNING) << "WebRTC-ForceDtls13 Disabled";
-      return kForceDtls13Off;
-    }
-#else
-    if (field_trials->IsEnabled("WebRTC-ForceDtls13")) {
-      RTC_LOG(LS_WARNING) << "WebRTC-ForceDtls13 Enabled";
-      return kForceDtls13Enabled;
-    }
-#endif  // defined(WEBRTC_CHROMIUM_BUILD)
-    if (field_trials->Lookup("WebRTC-ForceDtls13") == "Only") {
-      RTC_LOG(LS_WARNING) << "WebRTC-ForceDtls13 Only";
-      return kForceDtls13Only;
-    }
-  }
-  // Default behavior:
-#if defined(WEBRTC_CHROMIUM_BUILD)
-  RTC_LOG(LS_WARNING) << "WebRTC-ForceDtls13 Enabled";
-  return kForceDtls13Enabled;
-#else
-  RTC_LOG(LS_WARNING) << "WebRTC-ForceDtls13 Disabled";
-  return kForceDtls13Off;
-#endif  // defined(WEBRTC_CHROMIUM_BUILD)
-
-#else
-  return kForceDtls13Off;
-#endif  // DTLS1_3_VERSION
 }
 
 #ifdef OPENSSL_IS_BORINGSSL
@@ -247,8 +219,8 @@ int stream_read(BIO* b, char* out, int outl) {
   BIO_clear_retry_flags(b);
   size_t read;
   int error;
-  StreamResult result = stream->Read(
-      MakeArrayView(reinterpret_cast<uint8_t*>(out), outl), read, error);
+  StreamResult result =
+      stream->Read(AsWritableUint8Span(std::span(out, outl)), read, error);
   if (result == SR_SUCCESS) {
     return checked_cast<int>(read);
   } else if (result == SR_BLOCK) {
@@ -265,8 +237,8 @@ int stream_write(BIO* b, const char* in, int inl) {
   BIO_clear_retry_flags(b);
   size_t written;
   int error;
-  StreamResult result = stream->Write(
-      MakeArrayView(reinterpret_cast<const uint8_t*>(in), inl), written, error);
+  StreamResult result =
+      stream->Write(AsUint8Span(std::span(in, inl)), written, error);
   if (result == SR_SUCCESS) {
     return checked_cast<int>(written);
   } else if (result == SR_BLOCK) {
@@ -321,10 +293,11 @@ long stream_ctrl(BIO* b, int cmd, long num, void* ptr) {
 /////////////////////////////////////////////////////////////////////////////
 
 OpenSSLStreamAdapter::OpenSSLStreamAdapter(
+    std::optional<Environment> env,
     std::unique_ptr<StreamInterface> stream,
-    absl::AnyInvocable<void(SSLHandshakeError)> handshake_error,
-    const FieldTrialsView* field_trials)
-    : stream_(std::move(stream)),
+    absl::AnyInvocable<void(SSLHandshakeError)> handshake_error)
+    : env_(std::move(env)),
+      stream_(std::move(stream)),
       handshake_error_(std::move(handshake_error)),
       owner_(TaskQueueBase::Current()),
       state_(SSL_NONE),
@@ -334,10 +307,10 @@ OpenSSLStreamAdapter::OpenSSLStreamAdapter(
       ssl_(nullptr),
       ssl_ctx_(nullptr),
       ssl_mode_(SSL_MODE_DTLS),
-      ssl_max_version_(SSL_PROTOCOL_DTLS_12),
-      force_dtls_13_(GetForceDtls13(field_trials)),
-      disable_ssl_group_ids_(field_trials && field_trials->IsEnabled(
-                                                 "WebRTC-DisableSslGroupIds")) {
+      ssl_max_version_(MAX_SSL_PROTOCOL_DTLS),
+      disable_ssl_group_ids_(
+          env_.has_value() &&
+          env_->field_trials().IsEnabled("WebRTC-DisableSslGroupIds")) {
   stream_->SetEventCallback(
       [this](int events, int err) { OnEvent(events, err); });
 }
@@ -366,7 +339,7 @@ void OpenSSLStreamAdapter::SetServerRole(SSLRole role) {
 
 SSLPeerCertificateDigestError OpenSSLStreamAdapter::SetPeerCertificateDigest(
     absl::string_view digest_alg,
-    ArrayView<const uint8_t> digest_val) {
+    std::span<const uint8_t> digest_val) {
   RTC_DCHECK(!peer_certificate_verified_);
   RTC_DCHECK(!HasPeerCertificateDigest());
   size_t expected_len;
@@ -521,7 +494,7 @@ bool OpenSSLStreamAdapter::AppendSrtpKeyingMaterial(
   // use_context            optional, can be null, 0 (IN). Not used by WebRTC.
   bool success = false;
   key_buffer.AppendData(
-      key_material_size, [&](ArrayView<uint8_t> keying_material) -> size_t {
+      key_material_size, [&](std::span<uint8_t> keying_material) -> size_t {
         int result = SSL_export_keying_material(
             ssl_, keying_material.data(), keying_material.size(),
             kDtlsSrtpExporterLabel.data(), kDtlsSrtpExporterLabel.size(),
@@ -646,11 +619,7 @@ void OpenSSLStreamAdapter::UpdateRetransmissionTimeout(int timeout_ms) {
   dtls_handshake_timeout_ms_ = timeout_ms;
 #ifdef OPENSSL_IS_BORINGSSL
   if (ssl_ctx_ != nullptr && ssl_mode_ == SSL_MODE_DTLS) {
-    // TODO jonaso, webrtc:404763475 : Now that this is actually
-    // implemented in BORING_SSL we need to update test cases that
-    // will otherwise start to fail.
-    // DTLSv1_set_initial_timeout_duration(ssl_, dtls_handshake_timeout_ms_);
-
+    DTLSv1_set_initial_timeout_duration(ssl_, dtls_handshake_timeout_ms_);
     // Clear the DTLS timer
     timeout_task_.Stop();
     MaybeSetTimeout();
@@ -668,7 +637,7 @@ void OpenSSLStreamAdapter::SetMTU(int mtu) {
 //
 // StreamInterface Implementation
 //
-StreamResult OpenSSLStreamAdapter::Write(ArrayView<const uint8_t> data,
+StreamResult OpenSSLStreamAdapter::Write(std::span<const uint8_t> data,
                                          size_t& written,
                                          int& error) {
   RTC_DLOG(LS_VERBOSE) << "OpenSSLStreamAdapter::Write(" << data.size() << ")";
@@ -726,7 +695,7 @@ StreamResult OpenSSLStreamAdapter::Write(ArrayView<const uint8_t> data,
   // not reached
 }
 
-StreamResult OpenSSLStreamAdapter::Read(ArrayView<uint8_t> data,
+StreamResult OpenSSLStreamAdapter::Read(std::span<uint8_t> data,
                                         size_t& read,
                                         int& error) {
   RTC_DLOG(LS_VERBOSE) << "OpenSSLStreamAdapter::Read(" << data.size() << ")";
@@ -1140,6 +1109,36 @@ void OpenSSLStreamAdapter::Cleanup(uint8_t alert) {
   timeout_task_.Stop();
 }
 
+#ifdef OPENSSL_IS_BORINGSSL
+OpenSSLStreamAdapter::ScopedClockForTesting::ScopedClockForTesting(
+    SSL_CTX* ctx,
+    Clock* clock) {
+  MutexLock lock(&GlobalClockMutex());
+  if (g_num_clock_for_testing_users == 0) {
+    g_clock_for_testing = clock;
+  } else {
+    RTC_CHECK(g_clock_for_testing == clock)
+        << "Multiple SSL clocks for testing is not implemented";
+  }
+  ++g_num_clock_for_testing_users;
+
+  // Not used in production code. Actual time should be relative to Jan 1, 1970.
+  SSL_CTX_set_current_time_cb(
+      ctx, +[](const SSL*, timeval* out_clock) {
+        Timestamp time = g_clock_for_testing->CurrentTime();
+        out_clock->tv_sec = time.us() / TimeDelta::Seconds(1).us();
+        out_clock->tv_usec = time.us() % TimeDelta::Seconds(1).us();
+      });
+}
+OpenSSLStreamAdapter::ScopedClockForTesting::~ScopedClockForTesting() {
+  MutexLock lock(&GlobalClockMutex());
+  --g_num_clock_for_testing_users;
+  if (g_num_clock_for_testing_users == 0) {
+    g_clock_for_testing = nullptr;
+  }
+}
+#endif
+
 SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
 #ifdef OPENSSL_IS_BORINGSSL
   // If X509 objects aren't used, we can use these methods to avoid
@@ -1158,14 +1157,6 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
   auto min_version =
       ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION;
   auto max_version = GetMaxVersion(ssl_mode_, ssl_max_version_);
-#ifdef DTLS1_3_VERSION
-  if (force_dtls_13_ == kForceDtls13Enabled) {
-    max_version = DTLS1_3_VERSION;
-  } else if (force_dtls_13_ == kForceDtls13Only) {
-    min_version = DTLS1_3_VERSION;
-    max_version = DTLS1_3_VERSION;
-  }
-#endif
 
   SSL_CTX_set_min_proto_version(ctx, min_version);
   SSL_CTX_set_max_proto_version(ctx, max_version);
@@ -1173,7 +1164,9 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
 #ifdef OPENSSL_IS_BORINGSSL
   // SSL_CTX_set_current_time_cb is only supported in BoringSSL.
   if (g_use_time_callback_for_testing) {
-    SSL_CTX_set_current_time_cb(ctx, &TimeCallbackForTesting);
+    // Clock should be injected to set one for testing.
+    RTC_CHECK(env_.has_value());
+    clock_for_testing_.emplace(ctx, &env_->clock());
   }
   SSL_CTX_set0_buffer_pool(ctx, openssl::GetBufferPool());
 #endif
@@ -1239,7 +1232,7 @@ bool OpenSSLStreamAdapter::VerifyPeerCertificate() {
     return false;
   }
 
-  Buffer computed_digest(0, EVP_MAX_MD_SIZE);
+  Buffer computed_digest = Buffer::CreateWithCapacity(EVP_MAX_MD_SIZE);
   if (!peer_cert_chain_->Get(0).ComputeDigest(
           peer_certificate_digest_algorithm_, computed_digest)) {
     RTC_LOG(LS_WARNING) << "Failed to compute peer cert digest.";

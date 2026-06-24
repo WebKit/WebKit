@@ -40,27 +40,7 @@ void av1_get_tile_limits(AV1_COMMON *const cm) {
   const int sb_size_log2 = seq_params->mib_size_log2 + MI_SIZE_LOG2;
   tiles->max_width_sb = MAX_TILE_WIDTH >> sb_size_log2;
 
-#if CONFIG_CWG_C013
-  bool use_level_7_above = false;
-  for (int i = 0; i < seq_params->operating_points_cnt_minus_1 + 1; i++) {
-    if (seq_params->seq_level_idx[i] >= SEQ_LEVEL_7_0 &&
-        seq_params->seq_level_idx[i] <= SEQ_LEVEL_8_3) {
-      // Currently it is assumed that levels 7.x and 8.x are either used for all
-      // operating points, or none of them.
-      if (i != 0 && !use_level_7_above) {
-        aom_internal_error(cm->error, AOM_CODEC_UNSUP_BITSTREAM,
-                           "Either all the operating points are levels 7.x or "
-                           "8.x, or none of them are.");
-      }
-      use_level_7_above = true;
-    }
-  }
-  const int max_tile_area_sb =
-      (use_level_7_above ? MAX_TILE_AREA_LEVEL_7_AND_ABOVE : MAX_TILE_AREA) >>
-      (2 * sb_size_log2);
-#else
   const int max_tile_area_sb = MAX_TILE_AREA >> (2 * sb_size_log2);
-#endif
 
   tiles->min_log2_cols = tile_log2(tiles->max_width_sb, sb_cols);
   tiles->max_log2_cols = tile_log2(1, AOMMIN(sb_cols, MAX_TILE_COLS));

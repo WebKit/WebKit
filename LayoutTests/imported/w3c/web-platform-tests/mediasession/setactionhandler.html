@@ -1,20 +1,33 @@
 <!DOCTYPE html>
 <title>Test that setting MediaSession event handler should notify the service</title>
+<link rel="help" href="https://w3c.github.io/mediasession/#media-session-action" />
 <script src=/resources/testharness.js></script>
 <script src="/resources/testharnessreport.js"></script>
 <script>
 
-test(function(t) {
-  window.navigator.mediaSession.setActionHandler("play", null);
-  window.navigator.mediaSession.setActionHandler("pause", null);
-  window.navigator.mediaSession.setActionHandler("previoustrack", null);
-  window.navigator.mediaSession.setActionHandler("nexttrack", null);
-  window.navigator.mediaSession.setActionHandler("seekbackward", null);
-  window.navigator.mediaSession.setActionHandler("seekforward", null);
-  window.navigator.mediaSession.setActionHandler("stop", null);
-  window.navigator.mediaSession.setActionHandler("seekto", null);
-  window.navigator.mediaSession.setActionHandler("skipad", null);
-}, "Test that setActionHandler() can be executed for supported actions");
+[
+  "play",
+  "pause",
+  "previoustrack",
+  "nexttrack",
+  "seekbackward",
+  "seekforward",
+  "stop",
+  "seekto",
+  "skipad",
+  "togglemicrophone",
+  "togglecamera",
+  "togglescreenshare",
+  "hangup",
+  "previousslide",
+  "nextslide",
+  "enterpictureinpicture",
+  "voiceactivity"
+].forEach((action) =>
+  test((t) => {
+    window.navigator.mediaSession.setActionHandler(action, null);
+  }, `Test that setActionHandler("${action}") succeeds`)
+);
 
 test(function(t) {
   assert_throws_js(

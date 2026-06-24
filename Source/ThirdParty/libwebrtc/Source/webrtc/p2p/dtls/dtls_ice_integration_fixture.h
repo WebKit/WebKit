@@ -30,6 +30,7 @@
 #include "api/test/create_network_emulation_manager.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/simulated_network.h"
+#include "api/test/time_controller.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -44,7 +45,6 @@
 #include "p2p/test/fake_ice_transport.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/fake_clock.h"
 #include "rtc_base/fake_network.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/network.h"
@@ -56,6 +56,7 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "test/create_test_field_trials.h"
+#include "test/time_controller/simulated_time_controller.h"
 #include "test/wait_until.h"
 
 namespace webrtc {
@@ -385,7 +386,11 @@ class Base {
         RTCCertificate::Create(SSLIdentity::Create("test", KT_DEFAULT));
 
     if (network_emulation_manager_ == nullptr) {
-      thread_ = std::make_unique<AutoSocketServerThread>(ss_.get());
+      global_time_controller_ = std::make_unique<GlobalSimulatedTimeController>(
+          Timestamp::Seconds(10000), ss_.get());
+      time_controller_ = global_time_controller_.get();
+    } else {
+      time_controller_ = network_emulation_manager_->time_controller();
     }
 
     client_thread()->BlockingCall([&]() {
@@ -406,41 +411,21 @@ class Base {
   }
 
   Timestamp CurrentTime() {
-    if (network_emulation_manager_ == nullptr) {
-      return Timestamp::Micros(fake_clock_.TimeNanos() / 1000);
-    } else {
-      return network_emulation_manager_->time_controller()
-          ->GetClock()
-          ->CurrentTime();
-    }
+    return time_controller_->GetClock()->CurrentTime();
   }
 
-  void AdvanceTime(TimeDelta delta) {
-    RTC_CHECK(network_emulation_manager_ != nullptr);
-    if (network_emulation_manager_ == nullptr) {
-      fake_clock_.AdvanceTime(delta);
-    } else {
-      network_emulation_manager_->time_controller()->AdvanceTime(delta);
-    }
-  }
+  void AdvanceTime(TimeDelta delta) { time_controller_->AdvanceTime(delta); }
 
   WaitUntilSettings wait_until_settings(int timeout_ms = kDefaultTimeout) {
-    if (network_emulation_manager_ == nullptr) {
-      return {
-          .timeout = TimeDelta::Millis(timeout_ms),
-          .clock = &fake_clock_,
-      };
-    } else {
-      return {
-          .timeout = TimeDelta::Millis(timeout_ms),
-          .clock = network_emulation_manager_->time_controller(),
-      };
-    }
+    return {
+        .timeout = TimeDelta::Millis(timeout_ms),
+        .clock = time_controller_,
+    };
   }
 
   Thread* thread(Endpoint& ep) {
     if (ep.emulated_network_manager == nullptr) {
-      return thread_.get();
+      return time_controller_->GetMainThread();
     } else {
       return ep.emulated_network_manager->network_thread();
     }
@@ -484,11 +469,11 @@ class Base {
   }
 
   TestConfig config_;
-  ScopedFakeClock fake_clock_;
   std::unique_ptr<VirtualSocketServer> ss_;
   std::unique_ptr<BasicPacketSocketFactory> socket_factory_;
   std::unique_ptr<NetworkEmulationManager> network_emulation_manager_;
-  std::unique_ptr<AutoSocketServerThread> thread_;
+  std::unique_ptr<GlobalSimulatedTimeController> global_time_controller_;
+  TimeController* time_controller_ = nullptr;
   std::unique_ptr<FakeNetworkManager> network_manager_;
 
   Endpoint client_;
@@ -552,6 +537,14 @@ class Base {
         ep.client ? "client_transport" : "server_transport",
         /* component= */ 0, std::move(init));
     ep.ice_transport = make_ref_counted<FakeIceTransport>(std::move(channel));
+
+    // Enable(or disable) the dtls_in_stun parameter before
+    // DTLS is negotiated.
+    IceConfig config;
+    config.continual_gathering_policy = GATHER_CONTINUALLY;
+    config.dtls_handshake_in_stun = ep.config.dtls_in_stun;
+    ep.ice()->SetIceConfig(config);
+
     // Is peer using ice-lite.
     if (ep.config.ice_lite && ep.config.ice_role == ICEROLE_CONTROLLING) {
       ep.ice()->SetRemoteIceMode(ICEMODE_LITE);
@@ -569,13 +562,6 @@ class Base {
     if (ice_lite_agent) {
       ep.dtls->SetFakeIceLite();
     }
-
-    // Enable(or disable) the dtls_in_stun parameter before
-    // DTLS is negotiated.
-    IceConfig config;
-    config.continual_gathering_policy = GATHER_CONTINUALLY;
-    config.dtls_handshake_in_stun = ep.config.dtls_in_stun;
-    ep.ice()->SetIceConfig(config);
 
     // Setup ICE.
     ep.ice()->SetIceParameters(ep.client ? client_ice_parameters_

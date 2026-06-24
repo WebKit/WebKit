@@ -12,11 +12,11 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/candidate.h"
 #include "api/environment/environment.h"
 #include "api/jsep.h"
@@ -51,8 +51,8 @@ class ScenarioIceConnection {
   virtual ~ScenarioIceConnection() = default;
 
   // Posts tasks to send packets to network thread.
-  virtual void SendRtpPacket(ArrayView<const uint8_t> packet_view) = 0;
-  virtual void SendRtcpPacket(ArrayView<const uint8_t> packet_view) = 0;
+  virtual void SendRtpPacket(std::span<const uint8_t> packet_view) = 0;
+  virtual void SendRtcpPacket(std::span<const uint8_t> packet_view) = 0;
 
   // Used for ICE configuration, called on signaling thread.
   virtual void SetRemoteSdp(SdpType type, const std::string& remote_sdp) = 0;

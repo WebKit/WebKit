@@ -257,7 +257,7 @@ public:
         m_bitsOrPointer &= other.m_bitsOrPointer;
         ASSERT(isInline());
     }
-    
+
     void exclude(const BitVector& other)
     {
         if (!isInline() || !other.isInline()) {

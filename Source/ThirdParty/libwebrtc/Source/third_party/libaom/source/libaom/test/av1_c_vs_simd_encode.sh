@@ -440,7 +440,7 @@ av1_test_generic() {
     # The cmake command line option -DENABLE_MMX=0 flag disables all SIMD
     # optimizations, and generates a C-only binary.
     local cmake_command="cmake $LIBAOM_SOURCE_DIR -DENABLE_MMX=0 \
-      -DCMAKE_TOOLCHAIN_FILE=${LIBAOM_SOURCE_DIR}/build/cmake/toolchains/i686-linux-gcc.cmake"
+      -DCMAKE_TOOLCHAIN_FILE=${LIBAOM_SOURCE_DIR}/cmake/toolchains/i686-linux-gcc.cmake"
   fi
 
   echo "Build for: Generic ${arch}"
@@ -483,7 +483,7 @@ av1_test_x86() {
     local target="x86-linux"
     local cmake_command="cmake \
     $LIBAOM_SOURCE_DIR \
-    -DCMAKE_TOOLCHAIN_FILE=${LIBAOM_SOURCE_DIR}/build/cmake/toolchains/i686-linux-gcc.cmake"
+    -DCMAKE_TOOLCHAIN_FILE=${LIBAOM_SOURCE_DIR}/cmake/toolchains/i686-linux-gcc.cmake"
   elif [ $arch = "x86_64" ]; then
     local target="x86_64-linux"
     local cmake_command="cmake $LIBAOM_SOURCE_DIR"
@@ -519,7 +519,7 @@ av1_test_arm() {
   local arch="arm64"
   local target="arm64-linux-gcc"
   local cmake_command="cmake $LIBAOM_SOURCE_DIR \
-        -DCMAKE_TOOLCHAIN_FILE=$LIBAOM_SOURCE_DIR/build/cmake/toolchains/${target}.cmake \
+        -DCMAKE_TOOLCHAIN_FILE=$LIBAOM_SOURCE_DIR/cmake/toolchains/${target}.cmake \
         -DCMAKE_C_FLAGS=-Wno-maybe-uninitialized"
   echo "Build for arm64: ${target}"
   if ! av1_enc_build "${target}" "${cmake_command}"; then

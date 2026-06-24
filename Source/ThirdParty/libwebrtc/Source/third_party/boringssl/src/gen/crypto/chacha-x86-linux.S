@@ -853,7 +853,7 @@ ChaCha20_ctr32_ssse3:
 .L010loop1x:
 	paddd	%xmm1,%xmm0
 	pxor	%xmm0,%xmm3
-.byte	102,15,56,0,222
+	pshufb	%xmm6,%xmm3
 	paddd	%xmm3,%xmm2
 	pxor	%xmm2,%xmm1
 	movdqa	%xmm1,%xmm4
@@ -862,7 +862,7 @@ ChaCha20_ctr32_ssse3:
 	por	%xmm4,%xmm1
 	paddd	%xmm1,%xmm0
 	pxor	%xmm0,%xmm3
-.byte	102,15,56,0,223
+	pshufb	%xmm7,%xmm3
 	paddd	%xmm3,%xmm2
 	pxor	%xmm2,%xmm1
 	movdqa	%xmm1,%xmm4
@@ -875,7 +875,7 @@ ChaCha20_ctr32_ssse3:
 	nop
 	paddd	%xmm1,%xmm0
 	pxor	%xmm0,%xmm3
-.byte	102,15,56,0,222
+	pshufb	%xmm6,%xmm3
 	paddd	%xmm3,%xmm2
 	pxor	%xmm2,%xmm1
 	movdqa	%xmm1,%xmm4
@@ -884,7 +884,7 @@ ChaCha20_ctr32_ssse3:
 	por	%xmm4,%xmm1
 	paddd	%xmm1,%xmm0
 	pxor	%xmm0,%xmm3
-.byte	102,15,56,0,223
+	pshufb	%xmm7,%xmm3
 	paddd	%xmm3,%xmm2
 	pxor	%xmm2,%xmm1
 	movdqa	%xmm1,%xmm4

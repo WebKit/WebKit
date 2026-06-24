@@ -46,6 +46,7 @@ DECLARE_SYSTEM_HEADER
 - (id)_oldFirstResponderBeforeBecoming;
 - (id)_newFirstResponderAfterResigning;
 - (void)_setCursorForMouseLocation:(NSPoint)point;
+- (void)_enableScreenUpdatesIfNeeded;
 - (void)exitFullScreenMode:(id)sender;
 - (void)enterFullScreenMode:(id)sender;
 

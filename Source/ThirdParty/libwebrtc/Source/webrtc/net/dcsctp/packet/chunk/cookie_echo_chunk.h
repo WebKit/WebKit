@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
 #include "net/dcsctp/packet/tlv_trait.h"
 
@@ -33,16 +33,15 @@ class CookieEchoChunk : public Chunk, public TLVTrait<CookieEchoChunkConfig> {
  public:
   static constexpr int kType = CookieEchoChunkConfig::kType;
 
-  explicit CookieEchoChunk(webrtc::ArrayView<const uint8_t> cookie)
+  explicit CookieEchoChunk(std::span<const uint8_t> cookie)
       : cookie_(cookie.begin(), cookie.end()) {}
 
-  static std::optional<CookieEchoChunk> Parse(
-      webrtc::ArrayView<const uint8_t> data);
+  static std::optional<CookieEchoChunk> Parse(std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
-  webrtc::ArrayView<const uint8_t> cookie() const { return cookie_; }
+  std::span<const uint8_t> cookie() const { return cookie_; }
 
  private:
   std::vector<uint8_t> cookie_;

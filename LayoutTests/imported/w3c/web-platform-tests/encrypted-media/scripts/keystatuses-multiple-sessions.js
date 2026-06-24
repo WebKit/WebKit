@@ -83,6 +83,10 @@ function runTest(config,qualifier)
         navigator.requestMediaKeySystemAccess(config.keysystem, [configuration]).then(function(access) {
             return access.createMediaKeys();
         }).then(function(mediaKeys) {
+            if (config.servercertificate)
+                return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+            return mediaKeys;
+        }).then(function(mediaKeys) {
             mediaKeySession1 = mediaKeys.createSession();
             mediaKeySession2 = mediaKeys.createSession();
 

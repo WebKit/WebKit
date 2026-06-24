@@ -13,6 +13,7 @@
 #include <cstddef>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
@@ -48,8 +49,8 @@ void TransceiverStableState::SetRemoteStreamIds(
 }
 
 void TransceiverStableState::SetInitSendEncodings(
-    const std::vector<RtpEncodingParameters>& encodings) {
-  init_send_encodings_ = encodings;
+    std::vector<RtpEncodingParameters> encodings) {
+  init_send_encodings_ = std::move(encodings);
 }
 
 std::vector<RtpTransceiver*> TransceiverList::ListInternal() const {

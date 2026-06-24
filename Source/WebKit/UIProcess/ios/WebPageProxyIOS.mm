@@ -689,18 +689,6 @@ void WebPageProxy::storeSelectionForAccessibility(bool shouldStore)
     protect(m_legacyMainFrameProcess)->send(Messages::WebPage::StoreSelectionForAccessibility(shouldStore), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
-{
-    m_isAutoscrolling = true;
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::StartAutoscrollAtPosition(positionInWindow), webPageIDInMainFrameProcess());
-}
-
-void WebPageProxy::cancelAutoscroll()
-{
-    m_isAutoscrolling = false;
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::CancelAutoscroll(), webPageIDInMainFrameProcess());
-}
-
 void WebPageProxy::moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
@@ -832,9 +820,9 @@ void WebPageProxy::inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&
     protect(legacyMainFrameProcess())->send(Messages::WebPage::InspectorNodeSearchEndedAtPosition(position), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::blurFocusedElement()
+void WebPageProxy::blurFocusedElement(std::optional<WebCore::FrameIdentifier> frameID)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::BlurFocusedElement(), webPageIDInMainFrameProcess());
+    sendToProcessContainingFrame(frameID, Messages::WebPage::BlurFocusedElement());
 }
 
 FloatSize WebPageProxy::screenSize()
@@ -1022,12 +1010,12 @@ void WebPageProxy::didReleaseAllTouchPoints()
     m_pendingInputModeChange = std::nullopt;
 }
 
-void WebPageProxy::autofillLoginCredentials(const String& username, const String& password)
+void WebPageProxy::autofillLoginCredentials(std::optional<WebCore::FrameIdentifier> frameID, const String& username, const String& password)
 {
 #if HAVE(WEB_AUTHN_AS_MODERN)
     protect(m_webAuthnCredentialsMessenger)->recordAutofill(username, URL { currentURL() });
 #endif
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::AutofillLoginCredentials(username, password), webPageIDInMainFrameProcess());
+    sendToProcessContainingFrame(frameID, Messages::WebPage::AutofillLoginCredentials(username, password));
 }
 
 void WebPageProxy::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)
@@ -1066,16 +1054,17 @@ void WebPageProxy::disableInspectorNodeSearch()
         pageClient->disableInspectorNodeSearch();
 }
 
-void WebPageProxy::focusNextFocusedElement(bool isForward, CompletionHandler<void()>&& callbackFunction)
+void WebPageProxy::focusNextFocusedElement(std::optional<WebCore::FrameIdentifier> frameID, bool isForward, CompletionHandler<void()>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
         callbackFunction();
         return;
     }
-    
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::FocusNextFocusedElement(isForward), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::focusNextFocusedElement"_s)] () mutable {
+
+    auto backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::focusNextFocusedElement"_s);
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::FocusNextFocusedElement(isForward), CompletionHandler<void()> { [callbackFunction = WTF::move(callbackFunction), backgroundActivity = WTF::move(backgroundActivity)] () mutable {
         callbackFunction();
-    }, webPageIDInMainFrameProcess());
+    } });
 }
 
 void WebPageProxy::setFocusedElementValue(std::optional<WebCore::FrameIdentifier> frameID, const WebCore::ElementContext& context, const String& value)
@@ -1860,17 +1849,17 @@ void WebPageProxy::updatePDFPageNumberIndicatorCurrentPage(PDFPluginIdentifier i
 
 #if ENABLE(UNIFIED_PDF)
 
-PDFDisplayMode WebPageProxy::pdfDisplayMode() const
+PDFPluginDisplayMode WebPageProxy::pdfDisplayMode() const
 {
     return internals().pdfDisplayMode;
 }
 
-void WebPageProxy::setPDFDisplayMode(PDFDisplayMode mode)
+void WebPageProxy::setPDFDisplayMode(PDFPluginDisplayMode mode)
 {
     internals().pdfDisplayMode = mode;
 }
 
-void WebPageProxy::requestPDFDisplayMode(PDFDisplayMode mode)
+void WebPageProxy::requestPDFDisplayMode(PDFPluginDisplayMode mode)
 {
     if (!hasRunningProcess())
         return;

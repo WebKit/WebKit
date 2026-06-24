@@ -23,7 +23,6 @@
 #include <utility>
 #include <vector>
 
-#include "api/field_trials.h"
 #include "api/field_trials_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
@@ -1308,23 +1307,6 @@ TEST_P(RtcEventLogEncoderTest, RtcEventRtpPacketOutgoing) {
   TestRtpPackets<RtcEventRtpPacketOutgoing, LoggedRtpPacketOutgoing>(*encoder);
 }
 
-TEST_P(RtcEventLogEncoderTest,
-       RtcEventRtpPacketIncomingNoDependencyDescriptor) {
-  FieldTrials no_dd = CreateTestFieldTrials(
-      "WebRTC-RtcEventLogEncodeDependencyDescriptor/Disabled/");
-  std::unique_ptr<RtcEventLogEncoder> encoder = CreateEncoder(no_dd);
-  verifier_.ExpectDependencyDescriptorExtensionIsSet(false);
-  TestRtpPackets<RtcEventRtpPacketIncoming, LoggedRtpPacketIncoming>(*encoder);
-}
-
-TEST_P(RtcEventLogEncoderTest,
-       RtcEventRtpPacketOutgoingNoDependencyDescriptor) {
-  FieldTrials no_dd = CreateTestFieldTrials(
-      "WebRTC-RtcEventLogEncodeDependencyDescriptor/Disabled/");
-  std::unique_ptr<RtcEventLogEncoder> encoder = CreateEncoder(no_dd);
-  verifier_.ExpectDependencyDescriptorExtensionIsSet(false);
-  TestRtpPackets<RtcEventRtpPacketOutgoing, LoggedRtpPacketOutgoing>(*encoder);
-}
 
 // TODO(eladalon/terelius): Test with multiple events in the batch.
 TEST_P(RtcEventLogEncoderTest, RtcEventVideoReceiveStreamConfig) {

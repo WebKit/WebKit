@@ -6,4 +6,8 @@ Result
 
 a4 received focus ()
 FAIL Some form elements didn't get focus
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
 

@@ -26,13 +26,15 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_KEYID(
     const X509V3_EXT_METHOD *method, void *ext, STACK_OF(CONF_VALUE) *extlist);
 static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
                                  const X509V3_CTX *ctx,
                                  const STACK_OF(CONF_VALUE) *values);
 
-const X509V3_EXT_METHOD v3_akey_id = {
+const X509V3_EXT_METHOD bssl::v3_akey_id = {
     NID_authority_key_identifier,
     X509V3_EXT_MULTILINE,
     ASN1_ITEM_ref(AUTHORITY_KEYID),

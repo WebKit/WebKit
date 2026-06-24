@@ -177,10 +177,14 @@ Ref<JSON::Object> TimelineRecordFactory::createScreenshotData(const String& imag
     return data;
 }
 
-void TimelineRecordFactory::appendLayoutRoot(JSON::Object& data, Inspector::Protocol::DOM::NodeId nodeId, const FloatQuad& quad)
+void TimelineRecordFactory::appendLayoutRoot(JSON::Object& data, const FloatQuad& quad)
+{
+    data.setArray("root"_s, createQuad(quad));
+}
+
+void TimelineRecordFactory::appendNodeId(JSON::Object& data, Inspector::Protocol::DOM::NodeId nodeId)
 {
     data.setInteger("nodeId"_s, nodeId);
-    data.setArray("root"_s, createQuad(quad));
 }
 
 } // namespace WebCore

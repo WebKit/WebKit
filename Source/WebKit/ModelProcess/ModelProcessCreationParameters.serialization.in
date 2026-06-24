@@ -30,6 +30,7 @@ headers: "ModelProcessCreationParameters.h" "AuxiliaryProcessCreationParameters.
     String applicationVisibleName;
     bool restrictiveRenderingMode;
     std::optional<int> debugEntityMemoryLimit;
+    std::optional<int> debugImmersiveEntityMemoryLimit;
 };
 
 #endif

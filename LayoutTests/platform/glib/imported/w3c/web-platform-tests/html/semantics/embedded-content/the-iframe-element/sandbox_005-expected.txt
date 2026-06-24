@@ -1,3 +1,0 @@
-
-PASS Block script execution inside iframe with sandbox attribute.
-

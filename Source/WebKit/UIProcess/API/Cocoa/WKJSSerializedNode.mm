@@ -44,6 +44,3 @@
 }
 
 @end
-
-@implementation _WKSerializedNode
-@end

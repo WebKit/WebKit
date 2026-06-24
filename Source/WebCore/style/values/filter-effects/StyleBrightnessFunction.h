@@ -64,7 +64,7 @@ DEFINE_TYPE_WRAPPER_GET(Brightness, value);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<Brightness> { auto operator()(const Brightness&, const RenderStyle&) -> CSS::Brightness; };
+template<> struct ToCSS<Brightness> { auto operator()(const Brightness&, const Style::ComputedStyle&) -> CSS::Brightness; };
 template<> struct ToStyle<CSS::Brightness> { auto operator()(const CSS::Brightness&, const BuilderState&) -> Brightness; };
 
 // MARK: - Blending

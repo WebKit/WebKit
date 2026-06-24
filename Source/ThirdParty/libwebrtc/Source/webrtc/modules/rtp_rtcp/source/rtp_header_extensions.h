@@ -15,11 +15,11 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/units/time_delta.h"
@@ -51,11 +51,11 @@ class AbsoluteSendTime {
     return RtpExtension::kAbsSendTimeUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data, uint32_t* time_24bits);
+  static bool Parse(std::span<const uint8_t> data, uint32_t* time_24bits);
   static size_t ValueSize(uint32_t /* time_24bits */) {
     return kValueSizeBytes;
   }
-  static bool Write(ArrayView<uint8_t> data, uint32_t time_24bits);
+  static bool Write(std::span<uint8_t> data, uint32_t time_24bits);
 
   static constexpr uint32_t To24Bits(Timestamp time) {
     int64_t time_us = time.us() % (int64_t{1 << 6} * 1'000'000);
@@ -87,10 +87,10 @@ class AbsoluteCaptureTimeExtension {
     return RtpExtension::kAbsoluteCaptureTimeUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     AbsoluteCaptureTime* extension);
   static size_t ValueSize(const AbsoluteCaptureTime& extension);
-  static bool Write(ArrayView<uint8_t> data,
+  static bool Write(std::span<uint8_t> data,
                     const AbsoluteCaptureTime& extension);
 };
 
@@ -103,11 +103,11 @@ class AudioLevelExtension {
     return RtpExtension::kAudioLevelUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data, AudioLevel* extension);
+  static bool Parse(std::span<const uint8_t> data, AudioLevel* extension);
   static size_t ValueSize(const AudioLevel& /* extension */) {
     return kValueSizeBytes;
   }
-  static bool Write(ArrayView<uint8_t> data, const AudioLevel& extension);
+  static bool Write(std::span<uint8_t> data, const AudioLevel& extension);
 };
 
 class CsrcAudioLevel {
@@ -118,11 +118,11 @@ class CsrcAudioLevel {
     return RtpExtension::kCsrcAudioLevelsUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     std::vector<uint8_t>* csrc_audio_levels);
-  static size_t ValueSize(ArrayView<const uint8_t> csrc_audio_levels);
-  static bool Write(ArrayView<uint8_t> data,
-                    ArrayView<const uint8_t> csrc_audio_levels);
+  static size_t ValueSize(std::span<const uint8_t> csrc_audio_levels);
+  static bool Write(std::span<uint8_t> data,
+                    std::span<const uint8_t> csrc_audio_levels);
 };
 
 class TransmissionOffset {
@@ -134,9 +134,9 @@ class TransmissionOffset {
     return RtpExtension::kTimestampOffsetUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data, int32_t* rtp_time);
+  static bool Parse(std::span<const uint8_t> data, int32_t* rtp_time);
   static size_t ValueSize(int32_t /* rtp_time */) { return kValueSizeBytes; }
-  static bool Write(ArrayView<uint8_t> data, int32_t rtp_time);
+  static bool Write(std::span<uint8_t> data, int32_t rtp_time);
 };
 
 class TransportSequenceNumber {
@@ -148,12 +148,12 @@ class TransportSequenceNumber {
     return RtpExtension::kTransportSequenceNumberUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     uint16_t* transport_sequence_number);
   static size_t ValueSize(uint16_t /*transport_sequence_number*/) {
     return kValueSizeBytes;
   }
-  static bool Write(ArrayView<uint8_t> data,
+  static bool Write(std::span<uint8_t> data,
                     uint16_t transport_sequence_number);
 };
 
@@ -167,7 +167,7 @@ class TransportSequenceNumberV2 {
     return RtpExtension::kTransportSequenceNumberV2Uri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     uint16_t* transport_sequence_number,
                     std::optional<FeedbackRequest>* feedback_request);
   static size_t ValueSize(
@@ -176,7 +176,7 @@ class TransportSequenceNumberV2 {
     return feedback_request ? kValueSizeBytes
                             : kValueSizeBytesWithoutFeedbackRequest;
   }
-  static bool Write(ArrayView<uint8_t> data,
+  static bool Write(std::span<uint8_t> data,
                     uint16_t transport_sequence_number,
                     const std::optional<FeedbackRequest>& feedback_request);
 
@@ -193,12 +193,12 @@ class VideoOrientation {
     return RtpExtension::kVideoRotationUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data, VideoRotation* value);
+  static bool Parse(std::span<const uint8_t> data, VideoRotation* value);
   static size_t ValueSize(VideoRotation) { return kValueSizeBytes; }
-  static bool Write(ArrayView<uint8_t> data, VideoRotation value);
-  static bool Parse(ArrayView<const uint8_t> data, uint8_t* value);
+  static bool Write(std::span<uint8_t> data, VideoRotation value);
+  static bool Parse(std::span<const uint8_t> data, uint8_t* value);
   static size_t ValueSize(uint8_t /* value */) { return kValueSizeBytes; }
-  static bool Write(ArrayView<uint8_t> data, uint8_t value);
+  static bool Write(std::span<uint8_t> data, uint8_t value);
 };
 
 class PlayoutDelayLimits {
@@ -217,10 +217,10 @@ class PlayoutDelayLimits {
   // Maximum playout delay value in milliseconds.
   static constexpr TimeDelta kMax = 0xfff * kGranularity;  // 40950.
 
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     VideoPlayoutDelay* playout_delay);
   static size_t ValueSize(const VideoPlayoutDelay&) { return kValueSizeBytes; }
-  static bool Write(ArrayView<uint8_t> data,
+  static bool Write(std::span<uint8_t> data,
                     const VideoPlayoutDelay& playout_delay);
 };
 
@@ -233,10 +233,10 @@ class VideoContentTypeExtension {
     return RtpExtension::kVideoContentTypeUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     VideoContentType* content_type);
   static size_t ValueSize(VideoContentType) { return kValueSizeBytes; }
-  static bool Write(ArrayView<uint8_t> data, VideoContentType content_type);
+  static bool Write(std::span<uint8_t> data, VideoContentType content_type);
 };
 
 class VideoTimingExtension {
@@ -258,15 +258,15 @@ class VideoTimingExtension {
   static constexpr uint8_t kNetworkTimestampDeltaOffset = 9;
   static constexpr uint8_t kNetwork2TimestampDeltaOffset = 11;
 
-  static bool Parse(ArrayView<const uint8_t> data, VideoSendTiming* timing);
+  static bool Parse(std::span<const uint8_t> data, VideoSendTiming* timing);
   static size_t ValueSize(const VideoSendTiming&) { return kValueSizeBytes; }
-  static bool Write(ArrayView<uint8_t> data, const VideoSendTiming& timing);
+  static bool Write(std::span<uint8_t> data, const VideoSendTiming& timing);
 
   static size_t ValueSize(uint16_t /* time_delta_ms */, uint8_t /* idx */) {
     return kValueSizeBytes;
   }
   // Writes only single time delta to position idx.
-  static bool Write(ArrayView<uint8_t> data,
+  static bool Write(std::span<uint8_t> data,
                     uint16_t time_delta_ms,
                     uint8_t offset);
 };
@@ -281,12 +281,12 @@ class ColorSpaceExtension {
     return RtpExtension::kColorSpaceUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data, ColorSpace* color_space);
+  static bool Parse(std::span<const uint8_t> data, ColorSpace* color_space);
   static size_t ValueSize(const ColorSpace& color_space) {
     return color_space.hdr_metadata() ? kValueSizeBytes
                                       : kValueSizeBytesWithoutHdrMetadata;
   }
-  static bool Write(ArrayView<uint8_t> data, const ColorSpace& color_space);
+  static bool Write(std::span<uint8_t> data, const ColorSpace& color_space);
 
  private:
   static constexpr int kChromaticityDenominator = 50000;  // 0.00002 resolution.
@@ -297,12 +297,12 @@ class ColorSpaceExtension {
       ColorSpace::RangeID range,
       ColorSpace::ChromaSiting chroma_siting_horizontal,
       ColorSpace::ChromaSiting chroma_siting_vertical);
-  static size_t ParseHdrMetadata(ArrayView<const uint8_t> data,
+  static size_t ParseHdrMetadata(std::span<const uint8_t> data,
                                  HdrMetadata* hdr_metadata);
   static size_t ParseChromaticity(const uint8_t* data,
                                   HdrMasteringMetadata::Chromaticity* p);
   static size_t ParseLuminance(const uint8_t* data, float* f, int denominator);
-  static size_t WriteHdrMetadata(ArrayView<uint8_t> data,
+  static size_t WriteHdrMetadata(std::span<uint8_t> data,
                                  const HdrMetadata& hdr_metadata);
   static size_t WriteChromaticity(uint8_t* data,
                                   const HdrMasteringMetadata::Chromaticity& p);
@@ -318,9 +318,9 @@ class BaseRtpStringExtension {
   // maximum length that can be encoded with one-byte header extensions.
   static constexpr uint8_t kMaxValueSizeBytes = 16;
 
-  static bool Parse(ArrayView<const uint8_t> data, std::string* str);
+  static bool Parse(std::span<const uint8_t> data, std::string* str);
   static size_t ValueSize(absl::string_view str) { return str.size(); }
-  static bool Write(ArrayView<uint8_t> data, absl::string_view str);
+  static bool Write(std::span<uint8_t> data, absl::string_view str);
 };
 
 class RtpStreamId : public BaseRtpStringExtension {
@@ -353,12 +353,12 @@ class InbandComfortNoiseExtension {
       "http://www.webrtc.org/experiments/rtp-hdrext/inband-cn";
   static constexpr absl::string_view Uri() { return kUri; }
 
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     std::optional<uint8_t>* level);
   static size_t ValueSize(std::optional<uint8_t> /* level */) {
     return kValueSizeBytes;
   }
-  static bool Write(ArrayView<uint8_t> data, std::optional<uint8_t> level);
+  static bool Write(std::span<uint8_t> data, std::optional<uint8_t> level);
 };
 
 class VideoFrameTrackingIdExtension {
@@ -370,12 +370,12 @@ class VideoFrameTrackingIdExtension {
     return RtpExtension::kVideoFrameTrackingIdUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     uint16_t* video_frame_tracking_id);
   static size_t ValueSize(uint16_t /*video_frame_tracking_id*/) {
     return kValueSizeBytes;
   }
-  static bool Write(ArrayView<uint8_t> data, uint16_t video_frame_tracking_id);
+  static bool Write(std::span<uint8_t> data, uint16_t video_frame_tracking_id);
 };
 
 }  // namespace webrtc

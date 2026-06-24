@@ -47,7 +47,8 @@ public:
     ~WebSocketChannelInspector();
 
     void didCreateWebSocket(const URL&) const;
-    void willSendWebSocketHandshakeRequest(const ResourceRequest&) const;
+    void willSendWebSocketHandshakeRequest(ResourceRequest&) const;
+    void didSendWebSocketHandshakeRequest(const ResourceRequest&) const;
     void didReceiveWebSocketHandshakeResponse(const ResourceResponse&) const;
     void didCloseWebSocket() const;
     void didReceiveWebSocketFrame(const WebSocketFrame&) const;

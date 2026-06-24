@@ -24,4 +24,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-no-cors.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-element.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-header.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-insecure-context.tentative.http.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-match.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-registration.tentative.https.html

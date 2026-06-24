@@ -39,15 +39,18 @@ public:
     {
     }
 
-    void setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
+    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
     {
-        setFromAndToValues(targetElement, from, by);
+        if (!setFromAndToValues(targetElement, from, by))
+            return false;
         addFromAndToValues(targetElement);
+        return true;
     }
 
-    void setToAtEndOfDurationValue(SVGElement&, const String&) override
+    bool setToAtEndOfDurationValue(SVGElement&, const String&) override
     {
         ASSERT_NOT_REACHED();
+        return false;
     }
 
 protected:

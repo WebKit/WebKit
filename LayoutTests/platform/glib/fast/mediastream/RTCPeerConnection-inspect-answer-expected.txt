@@ -89,7 +89,7 @@ a=rtcp-fb:99 nack
 a=rtcp-fb:99 nack pli
 a=rtcp-fb:99 ccm fir
 a=rtcp-fb:99 transport-cc
-a=fmtp:99 packetization-mode=1;profile-level-id=42c01f;level-asymmetry-allowed=1
+a=fmtp:99 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42c01f
 a=rtpmap:96 rtx/90000
 a=fmtp:96 apt=99
 a=rtpmap:100 H264/90000
@@ -97,7 +97,7 @@ a=rtcp-fb:100 nack
 a=rtcp-fb:100 nack pli
 a=rtcp-fb:100 ccm fir
 a=rtcp-fb:100 transport-cc
-a=fmtp:100 packetization-mode=0;profile-level-id=42c01f;level-asymmetry-allowed=1
+a=fmtp:100 level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42c01f
 a=rtpmap:97 rtx/90000
 a=fmtp:97 apt=100
 a=rtpmap:101 H264/90000
@@ -105,7 +105,7 @@ a=rtcp-fb:101 nack
 a=rtcp-fb:101 nack pli
 a=rtcp-fb:101 ccm fir
 a=rtcp-fb:101 transport-cc
-a=fmtp:101 packetization-mode=1;profile-level-id=42e01f;level-asymmetry-allowed=1
+a=fmtp:101 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
 a=rtpmap:98 rtx/90000
 a=fmtp:98 apt=101
 a=rtpmap:102 H264/90000
@@ -113,7 +113,7 @@ a=rtcp-fb:102 nack
 a=rtcp-fb:102 nack pli
 a=rtcp-fb:102 ccm fir
 a=rtcp-fb:102 transport-cc
-a=fmtp:102 packetization-mode=0;profile-level-id=42e01f;level-asymmetry-allowed=1
+a=fmtp:102 level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42e01f
 a=rtpmap:114 rtx/90000
 a=fmtp:114 apt=102
 a=rtpmap:103 H264/90000
@@ -121,7 +121,7 @@ a=rtcp-fb:103 nack
 a=rtcp-fb:103 nack pli
 a=rtcp-fb:103 ccm fir
 a=rtcp-fb:103 transport-cc
-a=fmtp:103 packetization-mode=1;profile-level-id=640c1f;level-asymmetry-allowed=1
+a=fmtp:103 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=640c1f
 a=rtpmap:115 rtx/90000
 a=fmtp:115 apt=103
 a=rtpmap:104 H264/90000
@@ -129,7 +129,7 @@ a=rtcp-fb:104 nack
 a=rtcp-fb:104 nack pli
 a=rtcp-fb:104 ccm fir
 a=rtcp-fb:104 transport-cc
-a=fmtp:104 packetization-mode=0;profile-level-id=640c1f;level-asymmetry-allowed=1
+a=fmtp:104 level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=640c1f
 a=rtpmap:116 rtx/90000
 a=fmtp:116 apt=104
 a=rtpmap:105 H264/90000
@@ -137,7 +137,7 @@ a=rtcp-fb:105 nack
 a=rtcp-fb:105 nack pli
 a=rtcp-fb:105 ccm fir
 a=rtcp-fb:105 transport-cc
-a=fmtp:105 packetization-mode=1;profile-level-id=42001f;level-asymmetry-allowed=1
+a=fmtp:105 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f
 a=rtpmap:117 rtx/90000
 a=fmtp:117 apt=105
 a=rtpmap:106 H264/90000
@@ -145,7 +145,7 @@ a=rtcp-fb:106 nack
 a=rtcp-fb:106 nack pli
 a=rtcp-fb:106 ccm fir
 a=rtcp-fb:106 transport-cc
-a=fmtp:106 packetization-mode=0;profile-level-id=42001f;level-asymmetry-allowed=1
+a=fmtp:106 level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42001f
 a=rtpmap:118 rtx/90000
 a=fmtp:118 apt=106
 a=rtpmap:107 H264/90000
@@ -153,7 +153,7 @@ a=rtcp-fb:107 nack
 a=rtcp-fb:107 nack pli
 a=rtcp-fb:107 ccm fir
 a=rtcp-fb:107 transport-cc
-a=fmtp:107 packetization-mode=1;profile-level-id=4d001f;level-asymmetry-allowed=1
+a=fmtp:107 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=4d001f
 a=rtpmap:119 rtx/90000
 a=fmtp:119 apt=107
 a=rtpmap:108 H264/90000
@@ -161,7 +161,7 @@ a=rtcp-fb:108 nack
 a=rtcp-fb:108 nack pli
 a=rtcp-fb:108 ccm fir
 a=rtcp-fb:108 transport-cc
-a=fmtp:108 packetization-mode=0;profile-level-id=4d001f;level-asymmetry-allowed=1
+a=fmtp:108 level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=4d001f
 a=rtpmap:120 rtx/90000
 a=fmtp:120 apt=108
 a=rtpmap:109 H265/90000

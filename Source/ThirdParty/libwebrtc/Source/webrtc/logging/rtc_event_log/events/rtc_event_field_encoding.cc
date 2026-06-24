@@ -14,17 +14,19 @@
 #include <cstdint>
 #include <limits>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/encoder/bit_writer.h"
 #include "logging/rtc_event_log/encoder/var_int.h"
 #include "logging/rtc_event_log/events/fixed_length_encoding_parameters_v3.h"
 #include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
 #include "rtc_base/checks.h"
+
+namespace webrtc {
 
 using webrtc_event_logging::UnsignedDelta;
 
@@ -59,8 +61,6 @@ std::string SerializeLittleEndian(uint64_t value, uint8_t bytes) {
 }
 
 }  // namespace
-
-namespace webrtc {
 
 std::string EncodeOptionalValuePositions(std::vector<bool> positions) {
   BitWriter writer((positions.size() + 7) / 8);
@@ -107,7 +107,7 @@ std::optional<FieldType> ConvertFieldType(uint64_t value) {
 
 std::string EncodeDeltasV3(FixedLengthEncodingParametersV3 params,
                            uint64_t base,
-                           ArrayView<const uint64_t> values) {
+                           std::span<const uint64_t> values) {
   size_t outputbound = (values.size() * params.delta_bit_width() + 7) / 8;
   BitWriter writer(outputbound);
 
@@ -142,7 +142,7 @@ std::string EncodeDeltasV3(FixedLengthEncodingParametersV3 params,
 }
 
 EventEncoder::EventEncoder(EventParameters params,
-                           ArrayView<const RtcEvent*> batch) {
+                           std::span<const RtcEvent*> batch) {
   batch_size_ = batch.size();
   if (!batch.empty()) {
     // Encode event type.
@@ -212,9 +212,9 @@ void EventEncoder::EncodeField(const FieldParameters& params,
   const bool values_optional = values.size() != batch_size_;
 
   // Compute delta parameters
-  ArrayView<const uint64_t> all_values(values);
+  std::span<const uint64_t> all_values(values);
   uint64_t base = values[0];
-  ArrayView<const uint64_t> remaining_values(all_values.subview(1));
+  std::span<const uint64_t> remaining_values = all_values.subspan(1);
 
   FixedLengthEncodingParametersV3 delta_params =
       FixedLengthEncodingParametersV3::CalculateParameters(

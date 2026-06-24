@@ -12,10 +12,10 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/field_trials.h"
 #include "api/rtp_packet_infos.h"
 #include "api/scoped_refptr.h"
@@ -29,6 +29,7 @@
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_type.h"
+#include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
 #include "api/video_codecs/video_decoder.h"
 #include "common_video/include/corruption_score_calculator.h"
@@ -55,7 +56,7 @@ class MockCorruptionScoreCalculator : public CorruptionScoreCalculator {
   MOCK_METHOD(void,
               CalculateCorruptionScore,
               (const VideoFrame& frame,
-               const FrameInstrumentationData& frame_instrumentation_data,
+               FrameInstrumentationData frame_instrumentation_data,
                VideoContentType content_type),
               (override));
 };
@@ -75,7 +76,7 @@ class ReceiveCallback : public VCMReceiveCallback {
     return ret;
   }
 
-  ArrayView<const VideoFrame> GetAllFrames() const { return frames_; }
+  std::span<const VideoFrame> GetAllFrames() const { return frames_; }
 
   void OnDroppedFrames(uint32_t frames_dropped) override {
     frames_dropped_ += frames_dropped;
@@ -256,6 +257,7 @@ TEST_F(GenericDecoderTest, UsesMappedColorSpaceIfSet) {
   FrameInfo frame_info;
   frame_info.rtp_timestamp = kRtpTimestamp;
   frame_info.decode_start = Timestamp::Zero();
+  frame_info.rotation = kVideoRotation_0;
   frame_info.content_type = VideoContentType::UNSPECIFIED;
   frame_info.frame_type = VideoFrameType::kVideoFrameKey;
   frame_info.color_space = kMappedColorSpace;
@@ -273,6 +275,46 @@ TEST_F(GenericDecoderTest, UsesMappedColorSpaceIfSet) {
   EXPECT_EQ(decoded_frame->color_space(), kMappedColorSpace);
 }
 
+TEST_F(GenericDecoderTest, SetsScreenshareContentTypeIfSetInFrameInfo) {
+  constexpr uint32_t kRtpTimestamp = 1;
+  FrameInfo frame_info;
+  frame_info.rtp_timestamp = kRtpTimestamp;
+  frame_info.decode_start = Timestamp::Zero();
+  frame_info.content_type = VideoContentType::SCREENSHARE;
+  frame_info.frame_type = VideoFrameType::kVideoFrameKey;
+
+  VideoFrame video_frame = VideoFrame::Builder()
+                               .set_video_frame_buffer(I420Buffer::Create(5, 5))
+                               .set_rtp_timestamp(kRtpTimestamp)
+                               .build();
+  vcm_callback_.Map(std::move(frame_info));
+  vcm_callback_.Decoded(video_frame);
+
+  std::optional<VideoFrame> decoded_frame = user_callback_.PopLastFrame();
+  ASSERT_TRUE(decoded_frame.has_value());
+  EXPECT_EQ(decoded_frame->content_type(), VideoContentType::SCREENSHARE);
+}
+
+TEST_F(GenericDecoderTest, SetsUnspecifiedContentTypeIfSetInFrameInfo) {
+  constexpr uint32_t kRtpTimestamp = 1;
+  FrameInfo frame_info;
+  frame_info.rtp_timestamp = kRtpTimestamp;
+  frame_info.decode_start = Timestamp::Zero();
+  frame_info.content_type = VideoContentType::UNSPECIFIED;
+  frame_info.frame_type = VideoFrameType::kVideoFrameKey;
+
+  VideoFrame video_frame = VideoFrame::Builder()
+                               .set_video_frame_buffer(I420Buffer::Create(5, 5))
+                               .set_rtp_timestamp(kRtpTimestamp)
+                               .build();
+  vcm_callback_.Map(std::move(frame_info));
+  vcm_callback_.Decoded(video_frame);
+
+  std::optional<VideoFrame> decoded_frame = user_callback_.PopLastFrame();
+  ASSERT_TRUE(decoded_frame.has_value());
+  EXPECT_EQ(decoded_frame->content_type(), VideoContentType::UNSPECIFIED);
+}
+
 TEST_F(GenericDecoderTest, UsesDecoderColorSpaceIfNoneMapped) {
   constexpr uint32_t kRtpTimestamp = 1;
   const ColorSpace kDecoderColorSpace(
@@ -284,6 +326,7 @@ TEST_F(GenericDecoderTest, UsesDecoderColorSpaceIfNoneMapped) {
   FrameInfo frame_info;
   frame_info.rtp_timestamp = kRtpTimestamp;
   frame_info.decode_start = Timestamp::Zero();
+  frame_info.rotation = kVideoRotation_0;
   frame_info.content_type = VideoContentType::UNSPECIFIED;
   frame_info.frame_type = VideoFrameType::kVideoFrameKey;
   frame_info.color_space = std::nullopt;

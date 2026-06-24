@@ -34,6 +34,11 @@
 #if USE(AVFOUNDATION)
 
 #import <AVFoundation/AVFoundation.h>
+#if USE(APPLE_INTERNAL_SDK)
+// Load private headers before their declarations are redefined as macros
+// below.
+#import <pal/spi/cocoa/AVFoundationSPI.h>
+#endif
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -129,6 +134,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaCharacteristicVisual, NS
 #define AVMediaCharacteristicVisual PAL::get_AVFoundation_AVMediaCharacteristicVisualSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaCharacteristicAudible, NSString *)
 #define AVMediaCharacteristicAudible PAL::get_AVFoundation_AVMediaCharacteristicAudibleSingleton()
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVMediaCharacteristicMachineGenerated, NSString *)
+#define AVMediaCharacteristicMachineGenerated PAL::get_AVFoundation_AVMediaCharacteristicMachineGeneratedSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaTypeClosedCaption, NSString *)
 #define AVMediaTypeClosedCaption PAL::get_AVFoundation_AVMediaTypeClosedCaptionSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaTypeText, NSString *)

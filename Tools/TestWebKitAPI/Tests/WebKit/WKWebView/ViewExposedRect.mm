@@ -39,12 +39,12 @@
 - (WKPageRef)_pageForTesting;
 @end
 
-static bool didForceRepaint;
+static bool viewExposedRectDidForceRepaint;
 
-static void forceRepaintCallback(WKErrorRef error, void*)
+static void viewExposedRectForceRepaintCallback(WKErrorRef error, void*)
 {
     EXPECT_NULL(error);
-    didForceRepaint = true;
+    viewExposedRectDidForceRepaint = true;
 }
 
 TEST(WebKit, InitialTileCoverageUsesViewExposedRect)
@@ -55,9 +55,9 @@ TEST(WebKit, InitialTileCoverageUsesViewExposedRect)
     [webView addToTestWindow];
     [webView synchronouslyLoadHTMLString:@""];
 
-    didForceRepaint = false;
-    WKPageForceRepaint([webView _pageForTesting], 0, forceRepaintCallback);
-    TestWebKitAPI::Util::run(&didForceRepaint);
+    viewExposedRectDidForceRepaint = false;
+    WKPageForceRepaint([webView _pageForTesting], 0, viewExposedRectForceRepaintCallback);
+    TestWebKitAPI::Util::run(&viewExposedRectDidForceRepaint);
 }
 
 #endif // PLATFORM(MAC)

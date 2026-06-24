@@ -625,7 +625,11 @@ Packing RewriteGlobalVariables::getPacking(AST::BinaryExpression& expression)
                     if (auto value = evaluate(shaderModule, expression.rightExpression(), overrideValues))
                         validationArguments[1] = { *value };
 
-                    if (auto error = validate(WTF::move(validationArguments)))
+                    FixedVector<const Type*> paramTypes(2);
+                    paramTypes[0] = expression.leftExpression().inferredType();
+                    paramTypes[1] = expression.rightExpression().inferredType();
+
+                    if (auto error = validate(WTF::move(validationArguments), paramTypes))
                         return Error(*error, expression.span());
 
                     return std::nullopt;
@@ -743,7 +747,11 @@ Packing RewriteGlobalVariables::getPacking(AST::CallExpression& call)
                         validationArguments[i] = { *value };
                 }
 
-                if (auto error = validate(WTF::move(validationArguments)))
+                FixedVector<const Type*> paramTypes(argumentCount);
+                for (unsigned i = 0; i < argumentCount; ++i)
+                    paramTypes[i] = call.arguments()[i].inferredType();
+
+                if (auto error = validate(WTF::move(validationArguments), paramTypes))
                     return Error(*error, call.span());
 
                 return std::nullopt;

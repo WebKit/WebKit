@@ -2,7 +2,9 @@ find_library(COREGRAPHICS_LIBRARY CoreGraphics)
 find_library(FOUNDATION_LIBRARY Foundation)
 find_library(IOSURFACE_LIBRARY IOSurface)
 find_library(METAL_LIBRARY Metal)
-find_package(ZLIB REQUIRED)
+if (NOT TARGET ZLIB::ZLIB)
+    find_package(ZLIB REQUIRED)
+endif ()
 
 list(APPEND ANGLE_SOURCES
     ${metal_backend_sources}

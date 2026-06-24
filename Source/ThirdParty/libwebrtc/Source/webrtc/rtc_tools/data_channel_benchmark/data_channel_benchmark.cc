@@ -69,11 +69,9 @@ struct SetupMessage {
   size_t transfer_size;
 
   std::string ToString() {
-    char buffer[64];
-    webrtc::SimpleStringBuilder sb(buffer);
+    webrtc::StringBuilder sb;
     sb << packet_size << "," << transfer_size;
-
-    return sb.str();
+    return sb.Release();
   }
 
   static SetupMessage FromString(absl::string_view sv) {

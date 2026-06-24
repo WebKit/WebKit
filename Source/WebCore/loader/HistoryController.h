@@ -106,7 +106,7 @@ public:
 private:
     friend class Page;
     bool NODELETE shouldStopLoadingForHistoryItem(HistoryItem&) const;
-    void goToItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad);
+    void goToItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified);
     void goToItemForNavigationAPI(HistoryItem&, FrameLoadType, LocalFrame& triggeringFrame, NavigationAPIMethodTracker*);
     void goToItemShared(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&, ShouldTreatAsContinuingLoad = ShouldTreatAsContinuingLoad::No);
 
@@ -116,7 +116,7 @@ private:
 
     enum class ForNavigationAPI : bool { No, Yes };
     void recursiveSetProvisionalItem(HistoryItem&, HistoryItem*, ForNavigationAPI = ForNavigationAPI::No);
-    void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType, ShouldTreatAsContinuingLoad);
+    void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified);
     bool NODELETE isMultipartReplaceLoadTypeWithProvisionalItem(FrameLoadType);
     bool NODELETE isReloadTypeWithProvisionalItem(FrameLoadType);
     void recursiveUpdateForCommit();

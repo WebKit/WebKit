@@ -43,12 +43,12 @@ class RenderSVGText final : public RenderSVGBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGText);
 public:
-    RenderSVGText(SVGTextElement&, RenderStyle&&);
+    RenderSVGText(SVGTextElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGText();
 
     SVGTextElement& NODELETE textElement() const;
 
-    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
 
     void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
     void setNeedsTextMetricsUpdate() { m_needsTextMetricsUpdate = true; }
@@ -86,6 +86,10 @@ public:
 
     SVGRootInlineBox* legacyRootBox() const;
 
+    void updateLocalTransform();
+    AffineTransform computeLocalTransform() const;
+    AffineTransform localTransform() const override { return m_localTransform; }
+
 private:
     void graphicsElement() const = delete;
 
@@ -97,7 +101,7 @@ private:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     bool requiresLayer() const override;
@@ -111,12 +115,11 @@ private:
 
     void willBeDestroyed() override;
 
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 
     // FIXME: [LBSE] Begin code only needed for legacy SVG engine.
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
     const AffineTransform& localToParentTransform() const LIFETIME_BOUND override { return m_localTransform; }
-    AffineTransform localTransform() const override { return m_localTransform; }
     // FIXME: [LBSE] End code only needed for legacy SVG engine.
 
     bool NODELETE shouldHandleSubtreeMutations() const;

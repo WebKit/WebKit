@@ -52,7 +52,6 @@
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserState.h"
 #include "CSSPropertyParsing.h"
-#include "CSSQuadValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
@@ -301,7 +300,7 @@ std::optional<CSS::BorderImageWidth> consumeUnresolvedBorderImageWidth(CSSParser
         if (auto lengthPercentage = MetaConsumer<CSS::BorderImageWidth::Value::LengthPercentage>::consume(range, state, { .overrideParserMode = HTMLStandardMode })) {
             hasLength = WTF::switchOn(*lengthPercentage,
                 [](const CSS::LengthPercentage<CSS::Nonnegative>::Calc& calc) {
-                    return calc.calcValue().primitiveType() == CSSUnitType::CSS_PX;
+                    return calc.primitiveType() == CSSUnitType::CSS_PX;
                 },
                 [](const CSS::LengthPercentage<CSS::Nonnegative>::Raw& raw) {
                     return raw.unit != CSS::PercentageUnit::Percentage;

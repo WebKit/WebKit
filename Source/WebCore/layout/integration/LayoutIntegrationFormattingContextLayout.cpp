@@ -127,7 +127,7 @@ static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& p
         auto shapeOutsideInfo = floatingObject->renderer()->shapeOutsideInfo();
         RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
 
-        auto usedPosition = RenderStyle::usedFloat(*floatingObject->renderer()) == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
+        auto usedPosition = Style::ComputedStyle::usedFloat(*floatingObject->renderer()) == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
         placedFloats.add({ usedPosition, boxGeometry, floatRect.location(), WTF::move(shape) });
     }
 }
@@ -219,14 +219,12 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
     switch (logicalWidthType) {
     case LogicalWidthType::PreferredMaximum:
-        return renderer->maxPreferredLogicalWidth();
+        return renderer->maxContentLogicalWidthContribution();
     case LogicalWidthType::PreferredMinimum:
-        return renderer->minPreferredLogicalWidth();
+        return renderer->minContentLogicalWidthContribution();
     case LogicalWidthType::MaxContent:
     case LogicalWidthType::MinContent: {
-        auto minimunLogicalWidth = LayoutUnit { };
-        auto maximumLogicalWidth = LayoutUnit { };
-        renderer->computeIntrinsicLogicalWidths(minimunLogicalWidth, maximumLogicalWidth);
+        auto [minimunLogicalWidth, maximumLogicalWidth] = renderer->computeIntrinsicLogicalWidths();
         return logicalWidthType == LogicalWidthType::MaxContent ? maximumLogicalWidth : minimunLogicalWidth;
     }
     default:

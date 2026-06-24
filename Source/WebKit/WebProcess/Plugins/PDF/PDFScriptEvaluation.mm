@@ -47,6 +47,43 @@ static bool isPrintScript(const String& script)
     return printRegex->match(script) != -1;
 }
 
+static bool actionContainsPrintScript(CGPDFDictionaryRef action)
+{
+    if (!action)
+        return false;
+
+    if (CGPDFDictionaryGetNameString(action, "S"_s) != "JavaScript"_s)
+        return false;
+
+    auto scriptFromBytes = [](std::span<const uint8_t> bytes) {
+        static constexpr uint8_t utf16BigEndianBOMFirstByte = 0xFE;
+        static constexpr uint8_t utf16BigEndianBOMSecondByte = 0xFF;
+        CFStringEncoding encoding = (bytes.size() > 1 && bytes[0] == utf16BigEndianBOMFirstByte && bytes[1] == utf16BigEndianBOMSecondByte) ? kCFStringEncodingUnicode : kCFStringEncodingUTF8;
+        return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, bytes.data(), bytes.size(), encoding, true));
+    };
+
+    auto scriptFromStream = [&] -> RetainPtr<CFStringRef> {
+        CGPDFStreamRef stream = nullptr;
+        if (!CGPDFDictionaryGetStream(action, "JS", &stream))
+            return nullptr;
+        CGPDFDataFormat format;
+        RetainPtr data = adoptCF(CGPDFStreamCopyData(stream, &format));
+        if (!data)
+            return nullptr;
+        return scriptFromBytes(span(data));
+    };
+
+    auto scriptFromString = [&] -> RetainPtr<CFStringRef> {
+        CGPDFStringRef string = nullptr;
+        if (!CGPDFDictionaryGetString(action, "JS", &string))
+            return nullptr;
+        return scriptFromBytes(unsafeMakeSpan(CGPDFStringGetBytePtr(string), CGPDFStringGetLength(string)));
+    };
+
+    RetainPtr script = scriptFromStream() ?: scriptFromString();
+    return script && isPrintScript({ script.get() });
+}
+
 static void appendValuesInPDFNameSubtreeToVector(RetainPtr<CGPDFDictionaryRef> subtree, Vector<CGPDFObjectRef>& values)
 {
     CGPDFArrayRef names = nullptr;
@@ -82,6 +119,10 @@ static bool pdfDocumentContainsPrintScript(RetainPtr<CGPDFDocumentRef> pdfDocume
     if (!pdfCatalog)
         return false;
 
+    CGPDFDictionaryRef openAction = nullptr;
+    if (CGPDFDictionaryGetDictionary(pdfCatalog, "OpenAction", &openAction) && actionContainsPrintScript(openAction))
+        return true;
+
     // Get the dictionary of all document-level name trees.
     CGPDFDictionaryRef namesDictionary = nullptr;
     if (!CGPDFDictionaryGetDictionary(pdfCatalog, "Names", &namesDictionary))
@@ -101,34 +142,7 @@ static bool pdfDocumentContainsPrintScript(RetainPtr<CGPDFDocumentRef> pdfDocume
         if (!CGPDFObjectGetValue(object, kCGPDFObjectTypeDictionary, &javaScriptAction))
             continue;
 
-        // A JavaScript action must have an action type of "JavaScript".
-        if (CGPDFDictionaryGetNameString(javaScriptAction, "S"_s) != "JavaScript"_s)
-            continue;
-
-        auto scriptFromBytes = [](std::span<const uint8_t> bytes) {
-            CFStringEncoding encoding = (bytes.size() > 1 && bytes[0] == 0xFE && bytes[1] == 0xFF) ? kCFStringEncodingUnicode : kCFStringEncodingUTF8;
-            return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, bytes.data(), bytes.size(), encoding, true));
-        };
-
-        auto scriptFromStream = [&] -> RetainPtr<CFStringRef> {
-            CGPDFStreamRef stream = nullptr;
-            if (!CGPDFDictionaryGetStream(javaScriptAction, "JS", &stream))
-                return nullptr;
-            CGPDFDataFormat format;
-            RetainPtr<CFDataRef> data = adoptCF(CGPDFStreamCopyData(stream, &format));
-            if (!data)
-                return nullptr;
-            return scriptFromBytes(span(data.get()));
-        };
-
-        auto scriptFromString = [&] -> RetainPtr<CFStringRef> {
-            CGPDFStringRef string = nullptr;
-            if (!CGPDFDictionaryGetString(javaScriptAction, "JS", &string))
-                return nullptr;
-            return scriptFromBytes(unsafeMakeSpan(CGPDFStringGetBytePtr(string), CGPDFStringGetLength(string)));
-        };
-
-        if (RetainPtr<CFStringRef> script = scriptFromStream() ?: scriptFromString(); script && isPrintScript({ script.get() }))
+        if (actionContainsPrintScript(javaScriptAction))
             return true;
     }
 

@@ -353,7 +353,7 @@ void OperationRecorder::fillRoundedRect(const FloatRoundedRect& roundedRect, con
             Cairo::State::setCompositeOperation(platformContext, arg<2>(), arg<3>());
 
             auto& rect = arg<0>();
-            if (rect.isRounded())
+            if (rect.hasNonZeroRadii())
                 Cairo::fillRoundedRect(platformContext, rect, arg<1>(), arg<4>());
             else
                 Cairo::fillRect(platformContext, rect.rect(), arg<1>(), arg<4>());

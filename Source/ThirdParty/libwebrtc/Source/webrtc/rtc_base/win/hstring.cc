@@ -15,6 +15,8 @@
 
 #include <cstdint>
 
+namespace webrtc {
+
 namespace {
 
 FARPROC LoadComBaseFunction(const char* function_name) {
@@ -38,8 +40,6 @@ decltype(&::WindowsDeleteString) GetWindowsDeleteString() {
 }
 
 }  // namespace
-
-namespace webrtc {
 
 bool ResolveCoreWinRTStringDelayload() {
   return GetWindowsDeleteString() && GetWindowsCreateString();

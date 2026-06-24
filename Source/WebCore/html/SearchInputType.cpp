@@ -46,9 +46,9 @@
 #include "Page.h"
 #include "RenderObjectInlines.h"
 #include "RenderSearchField.h"
-#include "RenderStyle+GettersInlines.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePreferredSize.h"
 #include "TextControlInnerElements.h"
 #include "UserAgentParts.h"
@@ -120,7 +120,7 @@ PopupMenuStyle SearchInputType::itemStyle(unsigned) const
 
 PopupMenuStyle SearchInputType::menuStyle() const
 {
-    auto defaultStyle = RenderStyle::create();
+    auto defaultStyle = Style::ComputedStyle::create();
     CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer());
     CheckedRef style = renderer ? renderer->style() : defaultStyle;
     return PopupMenuStyle(
@@ -267,7 +267,7 @@ void SearchInputType::attributeChanged(const QualifiedName& name)
     BaseTextInputType::attributeChanged(name);
 }
 
-RenderPtr<RenderElement> SearchInputType::createInputRenderer(RenderStyle&& style)
+RenderPtr<RenderElement> SearchInputType::createInputRenderer(Style::ComputedStyle&& style)
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
@@ -396,7 +396,7 @@ void SearchInputType::setValue(const String& sanitizedValue, bool valueChanged, 
         return;
 
     if (RefPtr cancelButton = m_cancelButton)
-        cancelButton->invalidateStyleInternal();
+        cancelButton->invalidateStyle();
 }
 
 } // namespace WebCore

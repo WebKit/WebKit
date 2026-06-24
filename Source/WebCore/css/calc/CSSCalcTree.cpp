@@ -42,6 +42,7 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(AnchorSize);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Asin);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Atan);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Atan2);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CalcMix);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Clamp);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Cos);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Deg2Rad);
@@ -593,6 +594,14 @@ std::optional<Type> toType(const Progress& root)
     auto type = getValidatedTypeFor(root, root.value);
     type = mergeTypesFor(root, type, getValidatedTypeFor(root, root.start));
     type = mergeTypesFor(root, type, getValidatedTypeFor(root, root.end));
+    return transformTypeFor(root, type);
+}
+
+std::optional<Type> toType(const CalcMix& root)
+{
+    auto type = getValidatedTypeFor(root, root.children[0].value);
+    for (size_t i = 1; i < root.children.size(); ++i)
+        type = mergeTypesFor(root, type, getValidatedTypeFor(root, root.children[i].value));
     return transformTypeFor(root, type);
 }
 

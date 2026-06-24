@@ -888,6 +888,92 @@ TEST_P(PixelLocalStorageTest, R32_always_noncoherent)
     doR32Test(PixelLocalStorageTest::CoherencyMode::AlwaysNoncoherent);
 }
 
+// Test that comma operator and passing PLS planes to functions work.
+TEST_P(PixelLocalStorageTest, CommaOperator)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
+
+    constexpr char kFS[] = R"(layout(r32f, binding=0) uniform highp pixelLocalANGLE plane1;
+    layout(binding=1, r32i) uniform highp ipixelLocalANGLE plane2;
+    layout(r32ui, binding=2) uniform highp upixelLocalANGLE plane3;
+
+    highp vec4 loadPlane(highp pixelLocalANGLE p)
+    {
+        return pixelLocalLoadANGLE(p);
+    }
+
+    highp ivec4 iloadPlane(highp ipixelLocalANGLE p)
+    {
+        return pixelLocalLoadANGLE(p);
+    }
+
+    highp uvec4 uloadPlane(highp pixelLocalANGLE unused, highp upixelLocalANGLE p)
+    {
+        return pixelLocalLoadANGLE(p);
+    }
+
+    int j = 0;
+    void incJ()
+    {
+        ++j;
+    }
+
+    void main()
+    {
+        highp int i = 0;
+        pixelLocalStoreANGLE(plane1, color + loadPlane((++i, plane1)));
+        pixelLocalStoreANGLE(plane2, ivec4(aux1) + iloadPlane((plane1, incJ(), plane2)));
+        pixelLocalStoreANGLE(plane3, uvec4(aux2) + uloadPlane((++i, plane1), (loadPlane((++i, incJ(), plane1)), plane3)));
+        if (i != 3 || j != 2)
+        {
+            pixelLocalStoreANGLE(plane3, uvec4(1234));
+        }
+    })";
+    mProgram.compile(kFS);
+
+    PLSTestTexture tex1(GL_R32F);
+    PLSTestTexture tex2(GL_R32I);
+    PLSTestTexture tex3(GL_R32UI);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexturePixelLocalStorageANGLE(0, tex1, 0, 0, GL_NONE);
+    glFramebufferTexturePixelLocalStorageANGLE(1, tex2, 0, 0, GL_NONE);
+    glFramebufferTexturePixelLocalStorageANGLE(2, tex3, 0, 0, GL_NONE);
+    glViewport(0, 0, W, H);
+    glDrawBuffers(0, nullptr);
+
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+
+    // Accumulate R in 4 separate passes.
+    mProgram.drawBoxes(
+        {{FULLSCREEN, {-1.5, 0, 0, 0}, {0x000000ff, 0, 0, 0}, {0x000000ff, 0, 0, 0}},
+         {FULLSCREEN, {-10.25, 0, 0, 0}, {0x0000ff00, 0, 0, 0}, {0x0000ff00, 0, 0, 0}},
+         {FULLSCREEN, {-100, 0, 0, 0}, {0x00ff0000, 0, 0, 0}, {0x00ff0000, 0, 0, 0}},
+         {FULLSCREEN, {.25, 0, 0, 0}, {-0x1000000, 0, 0, 0}, {0xff000000, 0, 0, 22}}},
+        UseBarriers::IfNotCoherent);
+
+    glEndPixelLocalStorageANGLE(3, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE,
+                                                GL_STORE_OP_STORE_ANGLE}));
+
+    // Incorrectly transformed without the IR.  Test above makes sure there is no compiler crash
+    // without the IR.
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
+
+    attachTexture2DToScratchFBO(tex1);
+    EXPECT_PIXEL_RECT32F_EQ(0, 0, W, H, GLColor32F(-111.5, 0, 0, 1));
+
+    attachTexture2DToScratchFBO(tex2);
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, W, H, GLColor32I(-1, 0, 0, 1));
+
+    attachTexture2DToScratchFBO(tex3);
+    EXPECT_PIXEL_RECT32UI_EQ(0, 0, W, H, GLColor32UI(0xffffffff, 0, 0, 1));
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Check proper functioning of the clear value state.
 TEST_P(PixelLocalStorageTest, ClearValues_rgba8)
 {
@@ -4773,6 +4859,131 @@ TEST_P(PixelLocalStorageTest, ImplicitEndWithoutPLS)
     ASSERT_GL_NO_ERROR();
 }
 
+// Check that redefining textures or renderbuffers bound to the current framebuffer
+// while pixel local storage is active generates GL_INVALID_OPERATION.
+TEST_P(PixelLocalStorageTest, RedefineBoundAttachmentsConflict)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+
+    // Case 1: Texture attachment
+    {
+        GLTexture texFB;
+        glBindTexture(GL_TEXTURE_2D, texFB);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        ASSERT_GL_NO_ERROR();
+
+        GLTexture texNonFB;
+        glBindTexture(GL_TEXTURE_2D, texNonFB);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        ASSERT_GL_NO_ERROR();
+
+        GLTexture texNonFBStorage;
+        // Bind it to initialize it as a 2D texture, but don't define images yet.
+        glBindTexture(GL_TEXTURE_2D, texNonFBStorage);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texFB, 0);
+        ASSERT_GL_NO_ERROR();
+
+        // Set up PLS on plane 0 (using a different texture)
+        GLTexture texPLS;
+        glBindTexture(GL_TEXTURE_2D, texPLS);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, W, H);
+        ASSERT_GL_NO_ERROR();
+        glFramebufferTexturePixelLocalStorageANGLE(0, texPLS, 0, 0, GL_NONE);
+        ASSERT_GL_NO_ERROR();
+
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Begin PLS
+        glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+
+        // Attempt to redefine texFB (bound to FB)
+        glBindTexture(GL_TEXTURE_2D, texFB);
+
+        // 1. glTexImage2D
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        // 2. glTexStorage2D
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, W, H);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        // 3. glGenerateMipmap
+        glGenerateMipmap(GL_TEXTURE_2D);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        // Attempt to redefine texNonFB (NOT bound to FB) - should succeed
+        glBindTexture(GL_TEXTURE_2D, texNonFB);
+
+        // 1. glTexImage2D
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        EXPECT_GL_NO_ERROR();
+
+        // 2. glGenerateMipmap
+        glGenerateMipmap(GL_TEXTURE_2D);
+        EXPECT_GL_NO_ERROR();
+
+        // 3. glTexStorage2D on texNonFBStorage (NOT bound to FB) - should succeed
+        glBindTexture(GL_TEXTURE_2D, texNonFBStorage);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, W, H);
+        EXPECT_GL_NO_ERROR();
+
+        // End PLS
+        glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Case 2: Renderbuffer attachment
+    {
+        GLRenderbuffer rboFB;
+        glBindRenderbuffer(GL_RENDERBUFFER, rboFB);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, W, H);
+        ASSERT_GL_NO_ERROR();
+
+        GLRenderbuffer rboNonFB;
+        glBindRenderbuffer(GL_RENDERBUFFER, rboNonFB);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, W, H);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboFB);
+        ASSERT_GL_NO_ERROR();
+
+        // Set up PLS on plane 0
+        GLTexture texPLS;
+        glBindTexture(GL_TEXTURE_2D, texPLS);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, W, H);
+        ASSERT_GL_NO_ERROR();
+        glFramebufferTexturePixelLocalStorageANGLE(0, texPLS, 0, 0, GL_NONE);
+        ASSERT_GL_NO_ERROR();
+
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Begin PLS
+        glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+
+        // Attempt to redefine rboFB (bound to FB)
+        glBindRenderbuffer(GL_RENDERBUFFER, rboFB);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, W, H);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        // Attempt to redefine rboNonFB (NOT bound to FB) - should succeed
+        glBindRenderbuffer(GL_RENDERBUFFER, rboNonFB);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, W, H);
+        EXPECT_GL_NO_ERROR();
+
+        // End PLS
+        glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+    }
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTest);
 #define PLATFORM(API, BACKEND) API##_##BACKEND()
 #define PLS_INSTANTIATE_RENDERING_TEST_AND(TEST, API, ...)                                \
@@ -8136,25 +8347,31 @@ TEST_P(PixelLocalStorageValidationTest, ModifyTextureDuringPLS)
     glBeginPixelLocalStorageANGLE(2, GLenumArray({GL_DONT_CARE, GL_DONT_CARE}));
     ASSERT_GL_NO_ERROR();
 
-#define CHECK_TEXTURE_2D_MODIFICATION(FN)                                            \
-    glBindTexture(GL_TEXTURE_2D, pls2d);                                             \
-    FN;                                                                              \
-    EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);                                    \
-    EXPECT_GL_SINGLE_ERROR_MSG(                                                      \
-        "Operation not permitted on an active pixel local storage backing texture.") \
-    glBindTexture(GL_TEXTURE_2D, nonpls2d);                                          \
-    FN;                                                                              \
+#define CHECK_TEXTURE_2D_MODIFICATION_MSG(FN, MSG) \
+    glBindTexture(GL_TEXTURE_2D, pls2d);           \
+    FN;                                            \
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);  \
+    EXPECT_GL_SINGLE_ERROR_MSG(MSG)                \
+    glBindTexture(GL_TEXTURE_2D, nonpls2d);        \
+    FN;                                            \
     EXPECT_GL_NO_ERROR();
 
-#define CHECK_TEXTURE_2D_ARRAY_MODIFICATION(FN)                                      \
-    glBindTexture(GL_TEXTURE_2D_ARRAY, pls2darray);                                  \
-    FN;                                                                              \
-    EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);                                    \
-    EXPECT_GL_SINGLE_ERROR_MSG(                                                      \
-        "Operation not permitted on an active pixel local storage backing texture.") \
-    glBindTexture(GL_TEXTURE_2D_ARRAY, nonpls2darray);                               \
-    FN;                                                                              \
+#define CHECK_TEXTURE_2D_MODIFICATION(FN) \
+    CHECK_TEXTURE_2D_MODIFICATION_MSG(    \
+        FN, "Operation not permitted on an active pixel local storage backing texture.")
+
+#define CHECK_TEXTURE_2D_ARRAY_MODIFICATION_MSG(FN, MSG) \
+    glBindTexture(GL_TEXTURE_2D_ARRAY, pls2darray);      \
+    FN;                                                  \
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);        \
+    EXPECT_GL_SINGLE_ERROR_MSG(MSG)                      \
+    glBindTexture(GL_TEXTURE_2D_ARRAY, nonpls2darray);   \
+    FN;                                                  \
     EXPECT_GL_NO_ERROR();
+
+#define CHECK_TEXTURE_2D_ARRAY_MODIFICATION(FN) \
+    CHECK_TEXTURE_2D_ARRAY_MODIFICATION_MSG(    \
+        FN, "Operation not permitted on an active pixel local storage backing texture.")
 
     std::vector<uint8_t> imageData(H * W * 4);
 
@@ -8164,9 +8381,13 @@ TEST_P(PixelLocalStorageValidationTest, ModifyTextureDuringPLS)
     CHECK_TEXTURE_2D_ARRAY_MODIFICATION(glTexSubImage3D(
         GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, W, H, 1, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data()));
 
-    CHECK_TEXTURE_2D_MODIFICATION(glGenerateMipmap(GL_TEXTURE_2D));
+    CHECK_TEXTURE_2D_MODIFICATION_MSG(
+        glGenerateMipmap(GL_TEXTURE_2D),
+        "Operation not permitted while pixel local storage is active.");
 
-    CHECK_TEXTURE_2D_ARRAY_MODIFICATION(glGenerateMipmap(GL_TEXTURE_2D_ARRAY));
+    CHECK_TEXTURE_2D_ARRAY_MODIFICATION_MSG(
+        glGenerateMipmap(GL_TEXTURE_2D_ARRAY),
+        "Operation not permitted while pixel local storage is active.");
 
     if (EnsureGLExtensionEnabled("GL_ANGLE_robust_client_memory"))
     {
@@ -8183,13 +8404,6 @@ TEST_P(PixelLocalStorageValidationTest, ModifyTextureDuringPLS)
     {
         CHECK_TEXTURE_2D_ARRAY_MODIFICATION(glTexSubImage3DOES(
             GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, W, H, 1, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data()));
-    }
-
-    if (EnsureGLExtensionEnabled("GL_ANGLE_texture_external_update"))
-    {
-        CHECK_TEXTURE_2D_MODIFICATION(glInvalidateTextureANGLE(GL_TEXTURE_2D));
-
-        CHECK_TEXTURE_2D_ARRAY_MODIFICATION(glInvalidateTextureANGLE(GL_TEXTURE_2D_ARRAY));
     }
 
     GLfloat zerof[4] = {};

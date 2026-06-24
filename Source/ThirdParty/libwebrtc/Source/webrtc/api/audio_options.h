@@ -40,7 +40,7 @@ struct RTC_EXPORT AudioOptions {
   // (until Apple fixes the bug) for a device with non-functioning AEC. May
   // improve performance on that particular device, but will cause unpredictable
   // behavior in all other cases. See http://bugs.webrtc.org/8682.
-  std::optional<bool> ios_force_software_aec_HACK;
+  [[deprecated]] std::optional<bool> ios_force_software_aec_HACK;
 #endif
   // Audio processing to adjust the sensitivity of the local mic dynamically.
   std::optional<bool> auto_gain_control;

@@ -24,8 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
-#include <WebCore/StyleValueTypes.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
@@ -33,7 +32,7 @@ namespace Style {
 // <'letter-spacing'> = normal | <length-percentage>
 // NOTE: Computed value resolves `normal` to 0px.
 // https://drafts.csswg.org/css-text-4/#propdef-letter-spacing
-struct LetterSpacing : LengthWrapperBase<LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>> {
+struct LetterSpacing : PrimitiveNumericWrapperBase<LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>> {
     using Base::Base;
 
     LetterSpacing(CSS::Keyword::Normal)
@@ -49,4 +48,4 @@ template<> struct CSSValueConversion<LetterSpacing> { auto operator()(BuilderSta
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::LetterSpacing);
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::LetterSpacing);

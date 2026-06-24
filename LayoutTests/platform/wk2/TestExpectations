@@ -192,14 +192,10 @@ http/tests/download/inherited-encoding.html
 http/tests/images/loading-image-border.html
 http/tests/images/loading-image-no-border.html
 
-http/tests/media/hls/hls-progress.html [ Pass Crash Failure ]
-
 # webkit.org/b/221685
-media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Failure Pass ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html [ Timeout Pass ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Timeout Pass ]
 media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback.html [ Failure Pass ]
-media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Timeout Pass ]
 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeout Pass ]
 
 # webkit.org/b/221693
@@ -207,8 +203,6 @@ media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash 
 
 # webkit.org/b/221806
 # webgl/2.0.y/conformance/textures/video/tex-2d-rgb-rgb-unsigned_byte.html [ Failure ]
-
-webkit.org/b/222569 fast/mediastream/media-stream-track-interrupted.html [ Crash Pass ]
 
 ### END OF (1) Classified failures with bug reports
 ########################################
@@ -577,8 +571,6 @@ fast/dom/MutationObserver/database-callback-delivery.html [ Skip ]
 http/tests/security/cross-origin-websql-allowed.html [ Skip ]
 http/tests/security/cross-origin-websql.html [ Skip ]
 http/tests/security/same-origin-websql-blocked.html [ Skip ]
-http/tests/security/storage-blocking-loosened-websql.html [ Skip ]
-http/tests/security/storage-blocking-strengthened-websql.html [ Skip ]
 http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]
 fast/history/page-cache-webdatabase-no-transaction-db.html [ Skip ]
 fast/history/page-cache-webdatabase-pending-transaction.html [ Skip ]
@@ -597,6 +589,9 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin
 [ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-webPush.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Skip ]
+[ Debug ] http/tests/ipc/web-authenticator-get-assertion-spoofed-origin-crash.html [ Skip ]
+[ Debug ] http/tests/ipc/web-authenticator-make-credential-spoofed-origin-crash.html [ Skip ]
+[ Debug ] ipc/media-containment-bypass-create-player.html [ Crash ]
 
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
@@ -663,6 +658,11 @@ http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.https.html 
 http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Skip ]
 http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html [ Skip ]
 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-with-link-query-using-cookiestore-api.https.html [ Skip ]
+
+# These are only supported on macOS Tahoe+ / iOS 26
+http/tests/resourceLoadStatistics/only-partitioned-third-party-cookies.https.html [ Skip ]
+http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Skip ]
+http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.https.html [ Skip ]
 
 # This feature is currently disabled by default and unfinished <rdar://problem/38925077>.
 http/tests/navigation/process-swap-window-open.html [ Skip ]
@@ -765,8 +765,6 @@ webkit.org/b/260926 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/261314 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Pass Failure ]
-
-webkit.org/b/265700 webrtc/multi-video.html [ Pass Failure ]
 
 webkit.org/b/286450 imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass Failure ]
 

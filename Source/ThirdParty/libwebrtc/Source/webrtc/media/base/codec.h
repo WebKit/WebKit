@@ -20,6 +20,8 @@
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
 #include "api/audio_codecs/audio_format.h"
+#include "api/field_trials_view.h"
+#include "api/payload_type.h"
 #include "api/rtp_parameters.h"
 #include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/sdp_video_format.h"
@@ -87,7 +89,7 @@ struct RTC_EXPORT Codec {
   static const int kIdNotSet = -1;
 
   Type type;
-  int id;
+  PayloadType id;
   std::string name;
   int clockrate;
 
@@ -173,7 +175,11 @@ struct RTC_EXPORT Codec {
   std::string ToString() const;
 
   // Default constructor, for initialization.
-  Codec() : Codec(Type::kAudio, kIdNotSet, "", kDefaultAudioClockRateHz) {}
+  Codec()
+      : Codec(Type::kAudio,
+              PayloadType::NotSet(),
+              "",
+              kDefaultAudioClockRateHz) {}
   Codec& operator=(const Codec& c);
   Codec& operator=(Codec&& c);
 
@@ -183,7 +189,7 @@ struct RTC_EXPORT Codec {
 
   template <typename Sink>
   friend void AbslStringify(Sink& sink, const Codec& c) {
-    absl::Format(&sink, "[%d:", c.id);
+    absl::Format(&sink, "[%v:", c.id);
     switch (c.type) {
       case Codec::Type::kAudio:
         sink.Append("audio/");
@@ -208,9 +214,9 @@ struct RTC_EXPORT Codec {
   // Creates an empty codec.
   explicit Codec(Type type);
   // Creates a codec with the given parameters.
-  Codec(Type type, int id, const std::string& name, int clockrate);
+  Codec(Type type, PayloadType id, const std::string& name, int clockrate);
   Codec(Type type,
-        int id,
+        PayloadType id,
         const std::string& name,
         int clockrate,
         size_t channels);
@@ -218,36 +224,38 @@ struct RTC_EXPORT Codec {
   explicit Codec(const SdpAudioFormat& c);
   explicit Codec(const SdpVideoFormat& c);
 
-  friend Codec CreateAudioCodec(int id,
+  friend Codec CreateAudioCodec(PayloadType id,
                                 const std::string& name,
                                 int clockrate,
                                 size_t channels);
   friend Codec CreateAudioCodec(const SdpAudioFormat& c);
-  friend Codec CreateAudioRtxCodec(int rtx_payload_type,
-                                   int associated_payload_type);
-  friend Codec CreateVideoCodec(int id, const std::string& name);
+  friend Codec CreateAudioRtxCodec(PayloadType rtx_payload_type,
+                                   PayloadType associated_payload_type);
+  friend Codec CreateVideoCodec(PayloadType id, const std::string& name);
   friend Codec CreateVideoCodec(const SdpVideoFormat& c);
-  friend Codec CreateVideoRtxCodec(int rtx_payload_type,
-                                   int associated_payload_type);
+  friend Codec CreateVideoCodec(PayloadType id, const SdpVideoFormat& sdp);
 };
 
 using Codecs = std::vector<Codec>;
 
-Codec CreateAudioCodec(int id,
+Codec CreateAudioCodec(PayloadType id,
                        const std::string& name,
                        int clockrate,
                        size_t channels);
 Codec CreateAudioCodec(const SdpAudioFormat& c);
-Codec CreateAudioRtxCodec(int rtx_payload_type, int associated_payload_type);
+Codec CreateAudioRtxCodec(PayloadType rtx_payload_type,
+                          PayloadType associated_payload_type);
 Codec CreateVideoCodec(const std::string& name);
-Codec CreateVideoCodec(int id, const std::string& name);
+Codec CreateVideoCodec(PayloadType id, const std::string& name);
 Codec CreateVideoCodec(const SdpVideoFormat& c);
-Codec CreateVideoCodec(int id, const SdpVideoFormat& sdp);
-Codec CreateVideoRtxCodec(int rtx_payload_type, int associated_payload_type);
+Codec CreateVideoCodec(PayloadType id, const SdpVideoFormat& sdp);
+Codec CreateVideoRtxCodec(PayloadType rtx_payload_type,
+                          PayloadType associated_payload_type);
 
 // Get the codec setting associated with `payload_type`. If there
 // is no codec associated with that payload type it returns nullptr.
-const Codec* FindCodecById(const std::vector<Codec>& codecs, int payload_type);
+const Codec* FindCodecById(const std::vector<Codec>& codecs,
+                           PayloadType payload_type);
 
 bool HasLntf(const Codec& codec);
 bool HasNack(const Codec& codec);
@@ -266,6 +274,11 @@ std::vector<const Codec*> FindAllMatchingCodecs(
 
 RTC_EXPORT void AddH264ConstrainedBaselineProfileToSupportedFormats(
     std::vector<SdpVideoFormat>* supported_formats);
+
+// This function adds the default RTCP feedback parameters to the codec,
+// based on the codec name and the active field trials.
+void AddDefaultFeedbackParams(Codec* codec, const FieldTrialsView& trials);
+
 }  // namespace webrtc
 
 

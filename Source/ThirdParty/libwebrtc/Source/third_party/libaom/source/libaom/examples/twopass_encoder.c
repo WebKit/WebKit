@@ -187,7 +187,6 @@ static void pass1(aom_image_t *raw, FILE *infile, const char *outfile_name,
 int main(int argc, char **argv) {
   FILE *infile = NULL;
   int w, h;
-  aom_codec_ctx_t codec;
   aom_codec_enc_cfg_t cfg;
   aom_image_t raw;
   aom_codec_err_t res;
@@ -225,7 +224,8 @@ int main(int argc, char **argv) {
 
   // Configuration
   res = aom_codec_enc_config_default(encoder, &cfg, 0);
-  if (res) die_codec(&codec, "Failed to get default codec config.");
+  if (res)
+    die("Failed to get default codec config: %s", aom_codec_err_to_string(res));
 
   cfg.g_w = w;
   cfg.g_h = h;

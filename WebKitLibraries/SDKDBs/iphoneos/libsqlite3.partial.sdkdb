@@ -291,7 +291,7 @@
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_sqlite3_wal_checkpoint_v2"},
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_sqlite3_wal_hook"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "Fts5Context"},
     {"access": "public", "name": "Fts5ExtensionApi"},

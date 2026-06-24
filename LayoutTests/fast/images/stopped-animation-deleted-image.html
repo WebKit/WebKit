@@ -25,8 +25,7 @@
 
         function imageRemove()
         {
-            image.addEventListener("webkitImageFrameReady", function listener() {
-                image.removeEventListener("webkitImageFrameReady", listener, true);
+            image.addEventListener("webkitImageFrameReady", function() {
                 frameIndex = internals.imageFrameIndex(image);
                 image.remove();
                 setTimeout(function() {

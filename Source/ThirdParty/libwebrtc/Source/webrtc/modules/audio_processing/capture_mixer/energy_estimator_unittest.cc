@@ -11,10 +11,10 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 #include <tuple>
 #include <vector>
 
-#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -63,7 +63,7 @@ TEST_P(AverageEnergyEstimatorParametrizedTest, VerifyEstimates) {
     estimator.Update(channel0, channel1, dc_levels);
   }
 
-  ArrayView<const float, 2> energies = estimator.GetChannelEnergies();
+  std::span<const float, 2> energies = estimator.GetChannelEnergies();
 
   constexpr float kToleranceError = 0.0001f;
   const float expected_energy_channel_0 =

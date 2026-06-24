@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 272: "Zooming Menu List"
       RenderBlock (anonymous) at (0,58) size 784x61
         RenderMenuList {SELECT} at (0,0) size 167x60 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (3,3) size 161x54
-            RenderText at (5,5) size 74x44
+          RenderBlock {DIV} at (3,3) size 161x54
+            RenderText {#text} at (5,5) size 74x44
               text run at (5,5) width 74: "One"
         RenderText {#text} at (0,0) size 0x0

@@ -64,16 +64,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLObjectElement);
 
 using namespace HTMLNames;
 
-inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document)
     : HTMLPlugInElement(tagName, document)
-    , FormListedElement(form)
 {
     ASSERT(hasTagName(objectTag));
 }
 
-Ref<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new HTMLObjectElement(tagName, document, form));
+    return adoptRef(*new HTMLObjectElement(tagName, document));
 }
 
 HTMLObjectElement::~HTMLObjectElement()

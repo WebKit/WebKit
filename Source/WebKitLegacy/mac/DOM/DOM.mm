@@ -41,10 +41,13 @@
 #import <WebCore/BoundaryPointInlines.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/ContainerNodeInlines.h>
+#import <WebCore/DocumentPage.h>
 #import <WebCore/DocumentView.h>
 #import <WebCore/DragImage.h>
+#import <WebCore/FloatQuad.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontCascadeInlines.h>
+#import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLDocument.h>
 #import <WebCore/HTMLLinkElement.h>
@@ -55,17 +58,19 @@
 #import <WebCore/JSNode.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameInlines.h>
 #import <WebCore/NativeImage.h>
 #import <WebCore/NodeFilter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderImage.h>
-#import <WebCore/RenderObjectInlines.h>
-#import <WebCore/RenderStyle+GettersInlines.h>
+#import <WebCore/RenderObjectStyle.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SimpleRange.h>
+#import <WebCore/StyleComputedStyle+GettersInlines.h>
+#import <WebCore/StyleLineWidth.h>
 #import <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/Touch.h>
@@ -649,7 +654,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* renderer = core(self)->renderer();
     if (!renderer)
         return nil;
-    return renderer->style().fontCascade().primaryFont().ctFont();
+    return WebCore::Style::fontCascade(renderer->style()).primaryFont().ctFont();
 }
 
 #if PLATFORM(MAC)

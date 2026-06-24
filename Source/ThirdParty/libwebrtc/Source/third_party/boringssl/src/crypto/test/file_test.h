@@ -72,9 +72,9 @@
 //
 // Additional blank lines and lines beginning with # are ignored.
 //
-// Functions in this module freely output to |stderr| on failure. Tests should
+// Functions in this module freely output to `stderr` on failure. Tests should
 // also do so, and it is recommended they include the corresponding test's line
-// number in any output. |PrintLine| does this automatically.
+// number in any output. `PrintLine` does this automatically.
 //
 // Each attribute in a test and all instructions applying to it must be
 // consumed. When a test completes, if any attributes or instructions haven't
@@ -103,7 +103,7 @@ class FileTest {
     // callback is called for each test. It should get the parameters from this
     // object and signal any errors by returning false.
     FileTestFunc callback = nullptr;
-    // arg is an opaque pointer that is passed to |callback|.
+    // arg is an opaque pointer that is passed to `callback`.
     void *arg = nullptr;
     // silent suppressed the "PASS" string that is otherwise printed after
     // successful runs.
@@ -121,10 +121,10 @@ class FileTest {
                     bool is_kas_test);
   ~FileTest();
 
-  // ReadNext reads the next test from the file. It returns |kReadSuccess| if
-  // successfully reading a test and |kReadEOF| at the end of the file. On
+  // ReadNext reads the next test from the file. It returns `kReadSuccess` if
+  // successfully reading a test and `kReadEOF` at the end of the file. On
   // error or if the previous test had unconsumed attributes, it returns
-  // |kReadError|.
+  // `kReadError`.
   ReadResult ReadNext();
 
   // PrintLine is a variant of printf which prepends the line number and appends
@@ -138,26 +138,26 @@ class FileTest {
   // GetParameter returns the value of the first attribute of the current test.
   const std::string &GetParameter();
 
-  // HasAttribute returns true if the current test has an attribute named |key|.
+  // HasAttribute returns true if the current test has an attribute named `key`.
   bool HasAttribute(std::string_view key);
 
-  // GetAttribute looks up the attribute with key |key|. It sets |*out_value| to
+  // GetAttribute looks up the attribute with key `key`. It sets `*out_value` to
   // the value and returns true if it exists and returns false with an error to
-  // |stderr| otherwise.
+  // `stderr` otherwise.
   bool GetAttribute(std::string *out_value, std::string_view key);
 
-  // GetAttributeOrDie looks up the attribute with key |key| and aborts if it is
-  // missing. It should only be used after a |HasAttribute| call.
+  // GetAttributeOrDie looks up the attribute with key `key` and aborts if it is
+  // missing. It should only be used after a `HasAttribute` call.
   const std::string &GetAttributeOrDie(std::string_view key);
 
-  // IgnoreAttribute marks the attribute with key |key| as used.
+  // IgnoreAttribute marks the attribute with key `key` as used.
   void IgnoreAttribute(std::string_view key) { HasAttribute(key); }
 
-  // GetBytes looks up the attribute with key |key| and decodes it as a byte
-  // string. On success, it writes the result to |*out| and returns
-  // true. Otherwise it returns false with an error to |stderr|. The value may
+  // GetBytes looks up the attribute with key `key` and decodes it as a byte
+  // string. On success, it writes the result to `*out` and returns
+  // true. Otherwise it returns false with an error to `stderr`. The value may
   // be either a hexadecimal string or a quoted ASCII string. It returns true on
-  // success and returns false with an error to |stderr| on failure.
+  // success and returns false with an error to `stderr` on failure.
   bool GetBytes(std::vector<uint8_t> *out, std::string_view key);
 
   // AtNewInstructionBlock returns true if the current test was immediately
@@ -167,20 +167,20 @@ class FileTest {
   // HasInstruction returns true if the current test has an instruction.
   bool HasInstruction(std::string_view key);
 
-  // IgnoreInstruction marks the instruction with key |key| as used.
+  // IgnoreInstruction marks the instruction with key `key` as used.
   void IgnoreInstruction(std::string_view key) { HasInstruction(key); }
 
   // IgnoreAllUnusedInstructions disables checking for unused instructions.
   void IgnoreAllUnusedInstructions();
 
-  // GetInstruction looks up the instruction with key |key|. It sets
-  // |*out_value| to the value (empty string if the instruction has no value)
-  // and returns true if it exists and returns false with an error to |stderr|
+  // GetInstruction looks up the instruction with key `key`. It sets
+  // `*out_value` to the value (empty string if the instruction has no value)
+  // and returns true if it exists and returns false with an error to `stderr`
   // otherwise.
   bool GetInstruction(std::string *out_value, std::string_view key);
 
-  // GetInstructionOrDie looks up the instruction with key |key| and aborts if
-  // it is missing. It should only be used after a |HasInstruction| call.
+  // GetInstructionOrDie looks up the instruction with key `key` and aborts if
+  // it is missing. It should only be used after a `HasInstruction` call.
   const std::string &GetInstructionOrDie(std::string_view key);
 
   // GetInstructionBytes behaves like GetBytes, but looks up the corresponding
@@ -245,8 +245,8 @@ class FileTest {
   FileTest &operator=(const FileTest &) = delete;
 };
 
-// FileTestMain runs a file-based test out of |path| and returns an exit code
-// suitable to return out of |main|. |run_test| should return true on pass and
+// FileTestMain runs a file-based test out of `path` and returns an exit code
+// suitable to return out of `main`. `run_test` should return true on pass and
 // false on failure. FileTestMain also implements common handling of the 'Error'
 // attribute. A test with that attribute is expected to fail. The value of the
 // attribute is the reason string of the expected OpenSSL error code.
@@ -261,7 +261,7 @@ int FileTestMain(FileTestFunc run_test, void *arg, const char *path);
 // FileTestMain accepts a larger number of options via a struct.
 int FileTestMain(const FileTest::Options &opts);
 
-// FileTestGTest behaves like FileTestMain, but for GTest. |path| must be the
+// FileTestGTest behaves like FileTestMain, but for GTest. `path` must be the
 // name of a test file embedded in the test binary.
 void FileTestGTest(const char *path, std::function<void(FileTest *)> run_test);
 

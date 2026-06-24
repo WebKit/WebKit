@@ -519,7 +519,7 @@ private:
 
             static Ref<HTMLInputElement> create(Document& document)
             {
-                return HTMLInputElement::create(HTMLNames::inputTag, document, /* form */ nullptr, /* createdByParser */ true);
+                return HTMLInputElement::create(HTMLNames::inputTag, document, /* createdByParser */ true);
             }
         };
 

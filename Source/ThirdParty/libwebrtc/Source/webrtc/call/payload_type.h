@@ -11,37 +11,17 @@
 #ifndef CALL_PAYLOAD_TYPE_H_
 #define CALL_PAYLOAD_TYPE_H_
 
-#include <cstdint>
 
 #include "absl/strings/string_view.h"
+#include "api/payload_type.h"
 #include "api/rtc_error.h"
+#include "api/rtp_header_extension_id.h"
+#include "api/rtp_parameters.h"
 #include "media/base/codec.h"
-#include "rtc_base/strong_alias.h"
 
 namespace webrtc {
 
 class PayloadTypePicker;
-
-class PayloadType : public StrongAlias<class PayloadTypeTag, uint8_t> {
- public:
-  // Non-explicit conversions from and to ints are to be deprecated and
-  // removed once calling code is upgraded.
-  PayloadType(uint8_t pt) { value_ = pt; }                // NOLINT: explicit
-  constexpr operator uint8_t() const& { return value_; }  // NOLINT: Explicit
-  static bool IsValid(PayloadType id, bool rtcp_mux) {
-    // A payload type is a 7-bit value in the RTP header, so max = 127.
-    // If RTCP multiplexing is used, the numbers from 64 to 95 are reserved
-    // for RTCP packets.
-    if (rtcp_mux && (id > 63 && id < 96)) {
-      return false;
-    }
-    return id >= 0 && id <= 127;
-  }
-  template <typename Sink>
-  friend void AbslStringify(Sink& sink, const PayloadType pt) {
-    absl::Format(&sink, "%d", pt.value_);
-  }
-};
 
 class PayloadTypeSuggester {
  public:
@@ -51,13 +31,29 @@ class PayloadTypeSuggester {
   // Media section is indicated by MID.
   // The function will either return a PT already in use on the connection
   // or a newly suggested one.
-  virtual RTCErrorOr<PayloadType> SuggestPayloadType(absl::string_view mid,
-                                                     const Codec& codec) = 0;
+  virtual RTCErrorOr<PayloadType> SuggestPayloadType(
+      absl::string_view mid,
+      const Codec& codec,
+      bool pick_from_top_of_range = false) = 0;
   // Register a payload type as mapped to a specific codec for this MID
   // at this time.
   virtual RTCError AddLocalMapping(absl::string_view mid,
                                    PayloadType payload_type,
                                    const Codec& codec) = 0;
+
+  // Suggest an ID for a given RTP header extension on a given media section.
+  // The function will either return an ID already in use on the connection
+  // or a newly suggested one.
+  virtual RTCErrorOr<RtpHeaderExtensionId> SuggestRtpHeaderExtensionId(
+      absl::string_view mid,
+      const RtpExtension& extension,
+      RtpTransceiverIdDomain id_domain) = 0;
+  // Register an RTP header extension ID as mapped to a specific extension
+  // for this MID at this time.
+  [[nodiscard]] virtual RTCError AddRtpHeaderExtensionMapping(
+      absl::string_view mid,
+      const RtpExtension& extension,
+      bool local) = 0;
 };
 
 }  // namespace webrtc

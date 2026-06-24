@@ -14,10 +14,10 @@
 #include <stdint.h>
 
 #include <optional>
+#include <span>
 #include <string>
 #include <type_traits>
 
-#include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -29,8 +29,8 @@ class MockTransformableFrame : public TransformableFrameInterface {
  public:
   MockTransformableFrame() : TransformableFrameInterface(Passkey()) {}
 
-  MOCK_METHOD(ArrayView<const uint8_t>, GetData, (), (const, override));
-  MOCK_METHOD(void, SetData, (ArrayView<const uint8_t>), (override));
+  MOCK_METHOD(std::span<const uint8_t>, GetData, (), (const, override));
+  MOCK_METHOD(void, SetData, (std::span<const uint8_t>), (override));
   MOCK_METHOD(uint8_t, GetPayloadType, (), (const, override));
   MOCK_METHOD(bool, CanSetPayloadType, (), (const, override));
   MOCK_METHOD(void, SetPayloadType, (uint8_t), (override));

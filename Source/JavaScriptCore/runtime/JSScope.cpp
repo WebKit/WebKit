@@ -31,6 +31,7 @@
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
+#include "JSScopeInlines.h"
 #include "JSWithScope.h"
 #include "TopExceptionScope.h"
 #include "VMTrapsInlines.h"

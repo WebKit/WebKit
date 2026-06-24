@@ -32,7 +32,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-static bool finishedLoad = false;
+static bool firstResponderFinishedLoad = false;
 
 @interface FirstResponderNavigationDelegate : NSObject <WKNavigationDelegate>
 @end
@@ -40,7 +40,7 @@ static bool finishedLoad = false;
 @implementation FirstResponderNavigationDelegate
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    finishedLoad = true;
+    firstResponderFinishedLoad = true;
 }
 @end
 
@@ -65,15 +65,15 @@ TEST(WebKit, FirstResponderSuppression)
     // Ensure having an autofocused input field does not steal focus.
     NSString *testHTML = @"<!doctype html><html><body><input type=\"text\" autofocus /></body></html>";
     [webView loadHTMLString:testHTML baseURL:nil];
-    TestWebKitAPI::Util::run(&finishedLoad);
+    TestWebKitAPI::Util::run(&firstResponderFinishedLoad);
     EXPECT_EQ([window firstResponder], [window contentView]);
-    finishedLoad = false;
+    firstResponderFinishedLoad = false;
 
     [webView _setShouldSuppressFirstResponderChanges:NO];
 
     // Ensure having an autofocused input field does steal focus.
     [webView loadHTMLString:testHTML baseURL:nil];
-    TestWebKitAPI::Util::run(&finishedLoad);
+    TestWebKitAPI::Util::run(&firstResponderFinishedLoad);
 
     [webView waitForNextPresentationUpdate];
 

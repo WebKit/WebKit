@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 
-// CHECKED_CAST casts |p| from type |from| to type |to|.
+// CHECKED_CAST casts `p` from type `from` to type `to`.
 //
 // TODO(davidben): Although this macro is not public API and is unused in
 // BoringSSL, wpa_supplicant uses it to define its own stacks. Remove this once

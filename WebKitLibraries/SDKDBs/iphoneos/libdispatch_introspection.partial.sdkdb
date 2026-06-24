@@ -11,7 +11,7 @@
     {"access": "public", "introduced": "7", "kind": "function", "linkage": "exported", "name": "_dispatch_introspection_hook_queue_item_dequeue"},
     {"access": "public", "introduced": "7", "kind": "function", "linkage": "exported", "name": "_dispatch_introspection_hook_queue_item_enqueue"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

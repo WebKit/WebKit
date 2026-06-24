@@ -26,6 +26,7 @@
 #include "StyleComputedStyleProperties+GettersCustomInlines.h"
 
 #include "RenderTheme.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {

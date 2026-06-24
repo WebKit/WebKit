@@ -29,6 +29,7 @@
 #include <openssl/rand.h>
 #include <openssl/stack.h>
 
+#include "../crypto/bytestring/internal.h"
 #include "../crypto/internal.h"
 #include "internal.h"
 
@@ -256,18 +257,29 @@ static bool add_new_session_tickets(SSL_HANDSHAKE *hs, bool *out_sent_tickets) {
   return true;
 }
 
-bool ssl_check_tls13_credential_ignoring_issuer(SSL_HANDSHAKE *hs,
-                                                const SSL_CREDENTIAL *cred,
-                                                uint16_t *out_sigalg) {
+bool ssl_check_tls13_credential_ignoring_issuer(
+    SSL_HANDSHAKE *hs, Span<const uint8_t> allowed_cert_types,
+    const SSLCredential *cred, uint16_t *out_sigalg) {
+  assert(!allowed_cert_types.empty());
+  const auto is_cert_type_allowed = [&](uint8_t cert_type) {
+    return std::find(allowed_cert_types.begin(), allowed_cert_types.end(),
+                     cert_type) != allowed_cert_types.end();
+  };
   switch (cred->type) {
-    case SSLCredentialType::kX509:
-      break;
     case SSLCredentialType::kDelegated:
       // Check that the peer supports the signature over the delegated
       // credential.
       if (std::find(hs->peer_sigalgs.begin(), hs->peer_sigalgs.end(),
                     cred->dc_algorithm) == hs->peer_sigalgs.end()) {
         OPENSSL_PUT_ERROR(SSL, SSL_R_NO_COMMON_SIGNATURE_ALGORITHMS);
+        return false;
+      }
+      [[fallthrough]];
+    case SSLCredentialType::kX509:
+    case SSLCredentialType::kRawPublicKey:
+      if (!is_cert_type_allowed(
+              *ssl_credential_type_to_cert_type(cred->type))) {
+        OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_CERTIFICATE_TYPE);
         return false;
       }
       break;
@@ -283,16 +295,18 @@ bool ssl_check_tls13_credential_ignoring_issuer(SSL_HANDSHAKE *hs,
 }
 
 static bool check_signature_credential(SSL_HANDSHAKE *hs,
-                                       const SSL_CREDENTIAL *cred,
+                                       Span<const uint8_t> allowed_cert_types,
+                                       const SSLCredential *cred,
                                        uint16_t *out_sigalg) {
-  return ssl_check_tls13_credential_ignoring_issuer(hs, cred, out_sigalg) &&
+  return ssl_check_tls13_credential_ignoring_issuer(hs, allowed_cert_types,
+                                                    cred, out_sigalg) &&
          // Use this credential if it either matches a requested issuer,
          // or does not require issuer matching.
          ssl_credential_matches_requested_issuers(hs, cred);
 }
 
 static bool check_pake_credential(SSL_HANDSHAKE *hs,
-                                  const SSL_CREDENTIAL *cred) {
+                                  const SSLCredential *cred) {
   assert(cred->type == SSLCredentialType::kSPAKE2PlusV1Server);
   // Look for a client PAKE share that matches |cred|.
   if (hs->pake_share == nullptr ||
@@ -306,14 +320,58 @@ static bool check_pake_credential(SSL_HANDSHAKE *hs,
   return true;
 }
 
+static bool check_psk_credential(SSL_HANDSHAKE *hs, const SSLCredential *cred,
+                                 const std::optional<SSLOfferedPSKs> &psks) {
+  assert(cred->type == SSLCredentialType::kPreSharedKey);
+  SSL *const ssl = hs->ssl;
+  if (!psks) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_MISSING_EXTENSION);
+    return false;
+  }
+  if (!hs->accept_psk_mode) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_SUPPORTED_PSK_MODE);
+    return false;
+  }
+
+  // Look for a matching PSK.
+  const EVP_MD *md =
+      ssl_get_handshake_digest(ssl_protocol_version(ssl), hs->new_cipher);
+  SSLOfferedPSKs copy = *psks;
+  for (;;) {
+    std::optional<SSLOfferedPSK> psk = copy.Next();
+    if (!psk) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_PSK_IDENTITY_NOT_FOUND);
+      return false;
+    }
+    if (tls13_compare_imported_psk_identity(psk->identity, cred,
+                                            ssl->s3->version, md)) {
+      return true;
+    }
+  }
+}
+
 static enum ssl_hs_wait_t do_select_parameters(SSL_HANDSHAKE *hs) {
   // At this point, most ClientHello extensions have already been processed by
-  // the common handshake logic. Resolve the remaining non-PSK parameters.
+  // the common handshake logic. Resolve the remaining non-resumption
+  // parameters. First, parse out another copy of the ClientHello and important
+  // extensions.
   SSL *const ssl = hs->ssl;
   SSLMessage msg;
   SSL_CLIENT_HELLO client_hello;
   if (!hs->GetClientHello(&msg, &client_hello)) {
     return ssl_hs_error;
+  }
+  std::optional<SSLOfferedPSKs> psks;
+  CBS psk_ext;
+  uint8_t alert = SSL_AD_DECODE_ERROR;
+  if (ssl_client_hello_get_extension(&client_hello, &psk_ext,
+                                     TLSEXT_TYPE_pre_shared_key)) {
+    psks = ssl_ext_pre_shared_key_parse_clienthello(hs, &alert, &client_hello,
+                                                    &psk_ext);
+    if (!psks) {
+      ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
+      return ssl_hs_error;
+    }
   }
 
   if (SSL_is_quic(ssl) && client_hello.session_id_len > 0) {
@@ -330,7 +388,16 @@ static enum ssl_hs_wait_t do_select_parameters(SSL_HANDSHAKE *hs) {
         Span(client_hello.session_id, client_hello.session_id_len));
   }
 
-  Array<SSL_CREDENTIAL *> creds;
+  // Negotiate the cipher suite. This must happen before negotiating PSKs.
+  hs->new_cipher = choose_tls13_cipher(ssl, &client_hello);
+  if (hs->new_cipher == nullptr) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_SHARED_CIPHER);
+    ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
+    return ssl_hs_error;
+  }
+
+  // Select the credential to use.
+  Array<SSLCredential *> creds;
   if (!ssl_get_full_credential_list(hs, &creds)) {
     return ssl_hs_error;
   }
@@ -339,9 +406,13 @@ static enum ssl_hs_wait_t do_select_parameters(SSL_HANDSHAKE *hs) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
     return ssl_hs_error;
   }
-
-  // Select the credential to use.
-  for (SSL_CREDENTIAL *cred : creds) {
+  std::optional<Span<const uint8_t>> allowed_cert_types =
+      ssl_get_allowed_server_cert_types(hs, &client_hello, &alert);
+  if (!allowed_cert_types.has_value()) {
+    ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
+    return ssl_hs_error;
+  }
+  for (SSLCredential *cred : creds) {
     ERR_clear_error();
     if (cred->type == SSLCredentialType::kSPAKE2PlusV1Server) {
       if (check_pake_credential(hs, cred)) {
@@ -357,9 +428,25 @@ static enum ssl_hs_wait_t do_select_parameters(SSL_HANDSHAKE *hs) {
         }
         break;
       }
+    } else if (cred->type == SSLCredentialType::kPreSharedKey) {
+      if (check_psk_credential(hs, cred, psks)) {
+        const EVP_MD *md =
+            ssl_get_handshake_digest(ssl_protocol_version(ssl), hs->new_cipher);
+        std::optional<SSLImportedPSK> imported =
+            tls13_derive_imported_psk(hs, cred, ssl->s3->version, md);
+        if (!imported) {
+          return ssl_hs_error;
+        }
+        hs->credential = UpRef(cred);
+        hs->pre_shared_key = MakeUnique<SSLPreSharedKey>(*std::move(imported));
+        if (hs->pre_shared_key == nullptr) {
+          return ssl_hs_error;
+        }
+        break;
+      }
     } else {
       uint16_t sigalg;
-      if (check_signature_credential(hs, cred, &sigalg)) {
+      if (check_signature_credential(hs, *allowed_cert_types, cred, &sigalg)) {
         hs->credential = UpRef(cred);
         hs->signature_algorithm = sigalg;
         break;
@@ -373,17 +460,8 @@ static enum ssl_hs_wait_t do_select_parameters(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  // Negotiate the cipher suite.
-  hs->new_cipher = choose_tls13_cipher(ssl, &client_hello);
-  if (hs->new_cipher == nullptr) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_SHARED_CIPHER);
-    ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
-    return ssl_hs_error;
-  }
-
   // HTTP/2 negotiation depends on the cipher suite, so ALPN negotiation was
   // deferred. Complete it now.
-  uint8_t alert = SSL_AD_DECODE_ERROR;
   if (!ssl_negotiate_alpn(hs, &alert, &client_hello)) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
     return ssl_hs_error;
@@ -422,11 +500,9 @@ static enum ssl_ticket_aead_result_t select_session(
     return ssl_ticket_aead_error;
   }
 
-  CBS ticket, binders;
-  uint32_t client_ticket_age;
-  if (!ssl_ext_pre_shared_key_parse_clienthello(
-          hs, &ticket, &binders, &client_ticket_age, out_alert, client_hello,
-          &pre_shared_key)) {
+  std::optional<SSLOfferedPSKs> psks = ssl_ext_pre_shared_key_parse_clienthello(
+      hs, out_alert, client_hello, &pre_shared_key);
+  if (!psks) {
     return ssl_ticket_aead_error;
   }
 
@@ -441,12 +517,21 @@ static enum ssl_ticket_aead_result_t select_session(
     return ssl_ticket_aead_ignore_ticket;
   }
 
-  // TLS 1.3 session tickets are renewed separately as part of the
-  // NewSessionTicket.
+  // We only consider the first PSK for session resumption.
+  std::optional<SSLOfferedPSK> psk = psks->Next();
+  if (!psk) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return ssl_ticket_aead_error;
+  }
+
+  // Ignore whether the caller asked for TLS 1.2 ticket renewal. TLS 1.3 session
+  // tickets are renewed separately as part of the NewSessionTicket. Also save
+  // the ticket so we can find the PSK again on the second ClientHello.
   bool unused_renew;
   UniquePtr<SSL_SESSION> session;
   enum ssl_ticket_aead_result_t ret =
-      ssl_process_ticket(hs, &session, &unused_renew, ticket, {});
+      ssl_process_ticket(hs, &session, &unused_renew, psk->identity,
+                         /*session_id=*/{}, /*save_ticket=*/true);
   switch (ret) {
     case ssl_ticket_aead_success:
       break;
@@ -464,7 +549,8 @@ static enum ssl_ticket_aead_result_t select_session(
   }
 
   // Recover the client ticket age and convert to seconds.
-  client_ticket_age -= session->ticket_age_add;
+  uint32_t client_ticket_age =
+      psk->obfuscated_ticket_age - session->ticket_age_add;
   client_ticket_age /= 1000;
 
   OPENSSL_timeval now = ssl_ctx_get_current_time(ssl->ctx.get());
@@ -481,13 +567,6 @@ static enum ssl_ticket_aead_result_t select_session(
 
   *out_ticket_age_skew = static_cast<int32_t>(client_ticket_age) -
                          static_cast<int32_t>(server_ticket_age);
-
-  // Check the PSK binder.
-  if (!tls13_verify_psk_binder(hs, session.get(), msg, &binders)) {
-    *out_alert = SSL_AD_DECRYPT_ERROR;
-    return ssl_ticket_aead_error;
-  }
-
   *out_session = std::move(session);
   return ssl_ticket_aead_success;
 }
@@ -507,6 +586,10 @@ static bool quic_ticket_compatible(const SSL_SESSION *session,
     return false;
   }
   return true;
+}
+
+static bool using_certificate(const SSL_HANDSHAKE *hs) {
+  return !hs->pre_shared_key && !hs->pake_verifier;
 }
 
 static enum ssl_hs_wait_t do_select_session(SSL_HANDSHAKE *hs) {
@@ -540,12 +623,15 @@ static enum ssl_hs_wait_t do_select_session(SSL_HANDSHAKE *hs) {
         return ssl_hs_error;
       }
 
-      ssl->s3->session_reused = true;
-      hs->can_release_private_key = true;
-
       // Resumption incorporates fresh key material, so refresh the timeout.
       ssl_session_renew_timeout(ssl, hs->new_session.get(),
                                 ssl->session_ctx->session_psk_dhe_timeout);
+
+      ssl->s3->session_reused = true;
+      hs->pre_shared_key = MakeUnique<SSLPreSharedKey>(UpRef(session));
+      if (hs->pre_shared_key == nullptr) {
+        return ssl_hs_error;
+      }
       break;
 
     case ssl_ticket_aead_error:
@@ -557,11 +643,22 @@ static enum ssl_hs_wait_t do_select_session(SSL_HANDSHAKE *hs) {
       return ssl_hs_pending_ticket;
   }
 
+  hs->can_release_private_key = !using_certificate(hs);
+
   // Negotiate ALPS now, after ALPN is negotiated and |hs->new_session| is
   // initialized.
   if (!ssl_negotiate_alps(hs, &alert, &client_hello)) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
     return ssl_hs_error;
+  }
+
+  if (using_certificate(hs)) {
+    // Determine whether to request a client certificate.
+    hs->cert_request = !!(hs->config->verify_mode & SSL_VERIFY_PEER);
+    if (!ssl_negotiate_client_certificate_type(hs, &alert, &client_hello)) {
+      ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
+      return ssl_hs_error;
+    }
   }
 
   // Record connection properties in the new session.
@@ -573,7 +670,13 @@ static enum ssl_hs_wait_t do_select_session(SSL_HANDSHAKE *hs) {
   if (hs->pake_verifier == nullptr) {
     if (!tls1_get_shared_group(hs, &hs->new_session->group_id)) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_NO_SHARED_GROUP);
-      ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
+      // RFC 8446, section 9.2 specifies that the "missing extension" alert
+      // should be sent if the ClientHello does not have both or neither of
+      // "key_share" and "supported_groups".
+      ssl_send_alert(ssl, SSL3_AL_FATAL,
+                     hs->peer_supported_group_list.empty()
+                         ? SSL_AD_MISSING_EXTENSION
+                         : SSL_AD_HANDSHAKE_FAILURE);
       return ssl_hs_error;
     }
     bool found_key_share;
@@ -660,13 +763,20 @@ static enum ssl_hs_wait_t do_select_session(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
+  if (hs->pre_shared_key &&
+      !ssl_verify_psk_binder(hs, &alert, *hs->pre_shared_key, client_hello)) {
+    ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
+    return ssl_hs_error;
+  }
+
   size_t hash_len = EVP_MD_size(
       ssl_get_handshake_digest(ssl_protocol_version(ssl), hs->new_cipher));
 
   // Set up the key schedule and incorporate the PSK into the running secret.
-  if (!tls13_init_key_schedule(hs, ssl->s3->session_reused
-                                       ? Span(hs->new_session->secret)
-                                       : Span(kZeroes, hash_len)) ||
+  Span<const uint8_t> psk = hs->pre_shared_key
+                                ? ssl_pre_shared_key_secret(*hs->pre_shared_key)
+                                : Span(kZeroes, hash_len);
+  if (!tls13_init_key_schedule(hs, psk) ||  //
       !ssl_hash_message(hs, msg)) {
     return ssl_hs_error;
   }
@@ -850,31 +960,13 @@ static enum ssl_hs_wait_t do_read_second_client_hello(SSL_HANDSHAKE *hs) {
   //
   // We do, however, check the second PSK binder. This covers the client key
   // share, in case we ever send half-RTT data (we currently do not). It is also
-  // a tricky computation, so we enforce the peer handled it correctly.
-  if (ssl->s3->session_reused) {
-    CBS pre_shared_key;
-    if (!ssl_client_hello_get_extension(&client_hello, &pre_shared_key,
-                                        TLSEXT_TYPE_pre_shared_key)) {
-      OPENSSL_PUT_ERROR(SSL, SSL_R_INCONSISTENT_CLIENT_HELLO);
-      ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
-      return ssl_hs_error;
-    }
-
-    CBS ticket, binders;
-    uint32_t client_ticket_age;
+  // a tricky computation, so we enforce the peer handled it correctly. It is
+  // also necessary to search the PSK list from the second ClientHello because
+  // PSK indices may have changed (RFC 8446 section 4.1.4).
+  if (hs->pre_shared_key) {
     uint8_t alert = SSL_AD_DECODE_ERROR;
-    if (!ssl_ext_pre_shared_key_parse_clienthello(
-            hs, &ticket, &binders, &client_ticket_age, &alert, &client_hello,
-            &pre_shared_key)) {
+    if (!ssl_verify_psk_binder(hs, &alert, *hs->pre_shared_key, client_hello)) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
-      return ssl_hs_error;
-    }
-
-    // Note it is important that we do not obtain a new |SSL_SESSION| from
-    // |ticket|. We have already selected parameters based on the first
-    // ClientHello (in the transcript) and must not switch partway through.
-    if (!tls13_verify_psk_binder(hs, hs->new_session.get(), msg, &binders)) {
-      ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_DECRYPT_ERROR);
       return ssl_hs_error;
     }
   }
@@ -987,11 +1079,6 @@ static enum ssl_hs_wait_t do_send_server_hello(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  if (!ssl->s3->session_reused && !hs->pake_verifier) {
-    // Determine whether to request a client certificate.
-    hs->cert_request = !!(hs->config->verify_mode & SSL_VERIFY_PEER);
-  }
-
   // Send a CertificateRequest, if necessary.
   if (hs->cert_request) {
     CBB cert_request_extensions, sigalg_contents, sigalgs_cbb;
@@ -1026,7 +1113,7 @@ static enum ssl_hs_wait_t do_send_server_hello(SSL_HANDSHAKE *hs) {
   }
 
   // Send the server Certificate message, if necessary.
-  if (!ssl->s3->session_reused && !hs->pake_verifier) {
+  if (using_certificate(hs)) {
     if (!tls13_add_certificate(hs)) {
       return ssl_hs_error;
     }
@@ -1290,7 +1377,7 @@ static enum ssl_hs_wait_t do_read_client_certificate(SSL_HANDSHAKE *hs) {
 
 static enum ssl_hs_wait_t do_read_client_certificate_verify(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
-  if (sk_CRYPTO_BUFFER_num(hs->new_session->certs.get()) == 0) {
+  if (!ssl_session_has_peer_cred(hs->new_session.get())) {
     // Skip this state.
     hs->tls13_state = state13_read_channel_id;
     return ssl_hs_ok;

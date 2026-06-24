@@ -12,8 +12,8 @@
 #define API_TEST_METRICS_STDOUT_METRICS_EXPORTER_H_
 
 #include <cstdio>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_exporter.h"
 
@@ -29,7 +29,7 @@ class StdoutMetricsExporter : public MetricsExporter {
   StdoutMetricsExporter(const StdoutMetricsExporter&) = delete;
   StdoutMetricsExporter& operator=(const StdoutMetricsExporter&) = delete;
 
-  bool Export(ArrayView<const Metric> metrics) override;
+  bool Export(std::span<const Metric> metrics) override;
 
  private:
   void PrintMetric(const Metric& metric);

@@ -19,6 +19,10 @@
 #include "../test/file_test.h"
 #include "../test/test_util.h"
 
+
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 TEST(BLAKE2B256Test, ABC) {
   // https://tools.ietf.org/html/rfc7693#appendix-A, except updated for the
   // 256-bit hash output.
@@ -53,3 +57,6 @@ TEST(BLAKE2B256Test, TestVectors) {
     EXPECT_EQ(Bytes(digest), Bytes(expected)) << msg.size();
   });
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

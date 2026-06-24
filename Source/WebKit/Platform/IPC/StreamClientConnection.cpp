@@ -123,7 +123,7 @@ void StreamClientConnection::setMaxBatchSize(unsigned size)
 void StreamClientConnection::open(Connection::Client& receiver, SerialFunctionDispatcher& dispatcher)
 {
     lazyInitialize(m_dedicatedConnectionClient, makeUniqueWithoutRefCountedCheck<DedicatedConnectionClient>(*this, receiver));
-    m_connection->open(Ref { *m_dedicatedConnectionClient }.get(), dispatcher);
+    m_connection->open(protect(*m_dedicatedConnectionClient), dispatcher);
 }
 
 Error StreamClientConnection::flushSentMessages()

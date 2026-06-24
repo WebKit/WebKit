@@ -1,4 +1,20 @@
 
-PASS Test that setActionHandler() can be executed for supported actions
+PASS Test that setActionHandler("play") succeeds
+PASS Test that setActionHandler("pause") succeeds
+PASS Test that setActionHandler("previoustrack") succeeds
+PASS Test that setActionHandler("nexttrack") succeeds
+PASS Test that setActionHandler("seekbackward") succeeds
+PASS Test that setActionHandler("seekforward") succeeds
+PASS Test that setActionHandler("stop") succeeds
+PASS Test that setActionHandler("seekto") succeeds
+PASS Test that setActionHandler("skipad") succeeds
+PASS Test that setActionHandler("togglemicrophone") succeeds
+PASS Test that setActionHandler("togglecamera") succeeds
+PASS Test that setActionHandler("togglescreenshare") succeeds
+PASS Test that setActionHandler("hangup") succeeds
+PASS Test that setActionHandler("previousslide") succeeds
+PASS Test that setActionHandler("nextslide") succeeds
+PASS Test that setActionHandler("enterpictureinpicture") succeeds
+PASS Test that setActionHandler("voiceactivity") succeeds
 PASS Test that setActionHandler() throws exception for unsupported actions
 

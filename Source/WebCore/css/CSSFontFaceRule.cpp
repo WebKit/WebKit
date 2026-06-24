@@ -47,18 +47,18 @@ CSSFontFaceRule::~CSSFontFaceRule()
 CSSFontFaceDescriptors& CSSFontFaceRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = CSSFontFaceDescriptors::create(m_fontFaceRule->mutableProperties(), *this);
+        m_propertiesCSSOMWrapper = CSSFontFaceDescriptors::create(protect(m_fontFaceRule)->mutableProperties(), *this);
     return *m_propertiesCSSOMWrapper;
 }
 
 String CSSFontFaceRule::cssText() const
 {
-    return cssTextInternal(m_fontFaceRule->properties().asText(CSS::defaultSerializationContext()));
+    return cssTextInternal(protect(m_fontFaceRule)->properties().asText(CSS::defaultSerializationContext()));
 }
 
 String CSSFontFaceRule::cssText(const CSS::SerializationContext& context) const
 {
-    return cssTextInternal(m_fontFaceRule->properties().asText(context));
+    return cssTextInternal(protect(m_fontFaceRule)->properties().asText(context));
 }
 
 String CSSFontFaceRule::cssTextInternal(const String& declarations) const
@@ -73,7 +73,7 @@ void CSSFontFaceRule::reattach(StyleRuleBase& rule)
 {
     m_fontFaceRule = downcast<StyleRuleFontFace>(rule);
     if (m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper->reattach(m_fontFaceRule->mutableProperties());
+        m_propertiesCSSOMWrapper->reattach(protect(m_fontFaceRule)->mutableProperties());
 }
 
 } // namespace WebCore

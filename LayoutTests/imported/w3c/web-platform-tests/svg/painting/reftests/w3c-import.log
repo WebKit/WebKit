@@ -93,7 +93,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-007-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-007-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-007.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-non-uniform-scale-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-non-uniform-scale-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-non-uniform-scale.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-precision-loss.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-with-none-preserve-aspect-ratio-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-with-none-preserve-aspect-ratio-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-with-none-preserve-aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001.svg

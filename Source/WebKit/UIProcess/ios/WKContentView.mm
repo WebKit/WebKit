@@ -33,6 +33,7 @@
 #import "FrameProcess.h"
 #import "FullscreenClient.h"
 #import "GPUProcessProxy.h"
+#import "LayerHostingVisibilityPropagator.h"
 #import "Logging.h"
 #import "ModelProcessProxy.h"
 #import "PDFDisplayMode.h"
@@ -228,6 +229,9 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     RetainPtr<NSMutableSet<WKVisibilityPropagationView *>> _visibilityPropagationViews;
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    WeakHashSet<WebKit::LayerHostingVisibilityPropagator> _layerHostingVisibilityPropagators;
+#endif
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
     __weak UIScreen *_screen;
@@ -330,12 +334,20 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 {
     for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
         [visibilityPropagationView propagateVisibilityToProcess:process contextID:contextID];
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    for (auto& propagator : _layerHostingVisibilityPropagators)
+        propagator.propagateVisibilityToProcess(process);
+#endif
 }
 
 - (void)_removeVisibilityPropagationForWebProcess:(WebKit::WebProcessProxy&)process
 {
     for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
         [visibilityPropagationView stopPropagatingVisibilityToProcess:process];
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    for (auto& propagator : _layerHostingVisibilityPropagators)
+        propagator.stopPropagatingVisibilityToProcess(process);
+#endif
 }
 
 - (void)_setupVisibilityPropagationForAllWebProcesses
@@ -368,6 +380,10 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
     for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
         [visibilityPropagationView propagateVisibilityToProcess:*gpuProcess contextID:page->contextIDForVisibilityPropagationInGPUProcess()];
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    for (auto& propagator : _layerHostingVisibilityPropagators)
+        propagator.propagateVisibilityToProcess(*gpuProcess);
+#endif
 }
 #endif // ENABLE(GPU_PROCESS)
 
@@ -384,6 +400,10 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
     for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
         [visibilityPropagationView propagateVisibilityToProcess:*modelProcess contextID:page->contextIDForVisibilityPropagationInModelProcess()];
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    for (auto& propagator : _layerHostingVisibilityPropagators)
+        propagator.propagateVisibilityToProcess(*modelProcess);
+#endif
 }
 #endif // ENABLE(MODEL_PROCESS)
 
@@ -413,6 +433,10 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
     for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
         [visibilityPropagationView stopPropagatingVisibilityToProcess:*gpuProcess];
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    for (auto& propagator : _layerHostingVisibilityPropagators)
+        propagator.stopPropagatingVisibilityToProcess(*gpuProcess);
+#endif
 }
 
 #if ENABLE(MODEL_PROCESS)
@@ -428,6 +452,10 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
     for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
         [visibilityPropagationView stopPropagatingVisibilityToProcess:*modelProcess];
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    for (auto& propagator : _layerHostingVisibilityPropagators)
+        propagator.stopPropagatingVisibilityToProcess(*modelProcess);
+#endif
 }
 #endif // ENABLE(MODEL_PROCESS)
 
@@ -867,6 +895,10 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 {
     for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
         [visibilityPropagationView clear];
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    for (auto& propagator : _layerHostingVisibilityPropagators)
+        propagator.clear();
+#endif
 }
 
 - (void)_setupVisibilityPropagation
@@ -939,6 +971,16 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     if (RetainPtr visibilityPropagationView = dynamic_objc_cast<WKVisibilityPropagationView>(view))
         [_visibilityPropagationViews removeObject:visibilityPropagationView.get()];
 }
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+- (RefPtr<WebKit::LayerHostingVisibilityPropagator>)_createLayerHostingVisibilityPropagator
+{
+    Ref propagator = WebKit::LayerHostingVisibilityPropagator::create();
+    _layerHostingVisibilityPropagators.add(propagator.get());
+    [self _setupVisibilityPropagation];
+    return propagator.ptr();
+}
+#endif // ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
 
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
@@ -1106,7 +1148,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)
         return;
 
-    page->requestPDFDisplayMode(WebKit::PDFDisplayMode::SinglePageContinuous);
+    page->requestPDFDisplayMode(WebKit::PDFPluginDisplayMode::SinglePageContinuous);
 }
 #endif
 

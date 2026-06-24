@@ -121,8 +121,6 @@ private:
     HashMap<IDBDatabaseConnectionIdentifier, WeakPtr<UniqueIDBDatabaseConnection>> m_databaseConnections;
     HashMap<IDBResourceIdentifier, WeakPtr<UniqueIDBDatabaseTransaction>> m_transactions;
 
-    HashMap<uint64_t, Function<void ()>> m_deleteDatabaseCompletionHandlers;
-
     String m_databaseDirectoryPath;
 
     SpaceRequester m_spaceRequester;

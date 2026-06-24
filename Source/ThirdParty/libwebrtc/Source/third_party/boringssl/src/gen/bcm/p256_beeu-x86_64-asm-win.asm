@@ -9,14 +9,13 @@ default	rel
 %define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
+%include "boringssl_prefix_symbols_internal_x86_64_win_asm.inc"
 %endif
 section	.text code align=64
 
 
-
-
 global	beeu_mod_inverse_vartime
+
 ALIGN	32
 beeu_mod_inverse_vartime:
 	mov	QWORD[8+rsp],rdi	;WIN64 prologue

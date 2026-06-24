@@ -26,7 +26,6 @@
 #include "api/video/encoded_frame.h"
 #include "api/video/frame_buffer.h"
 #include "api/video/video_content_type.h"
-#include "api/video/video_timing.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/timing/inter_frame_delay_variation_calculator.h"
 #include "modules/video_coding/timing/jitter_estimator.h"
@@ -73,8 +72,6 @@ class VideoStreamBufferControllerStatsObserver {
                                            int jitter_delay_ms,
                                            int min_playout_delay_ms,
                                            int render_delay_ms) = 0;
-
-  virtual void OnTimingFrameInfoUpdated(const TimingFrameInfo& info) = 0;
 };
 
 class VideoStreamBufferController {
@@ -109,7 +106,6 @@ class VideoStreamBufferController {
   void FrameReadyForDecode(uint32_t rtp_timestamp, Timestamp render_time);
   void UpdateDroppedFrames() RTC_RUN_ON(&worker_sequence_checker_);
   void UpdateFrameBufferTimings(Timestamp min_receive_time, Timestamp now);
-  void UpdateTimingFrameInfo();
   bool IsTooManyFramesQueued() const RTC_RUN_ON(&worker_sequence_checker_);
   void ForceKeyFrameReleaseImmediately() RTC_RUN_ON(&worker_sequence_checker_);
   void MaybeScheduleFrameForRelease() RTC_RUN_ON(&worker_sequence_checker_);

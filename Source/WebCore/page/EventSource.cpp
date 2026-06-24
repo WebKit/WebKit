@@ -335,7 +335,7 @@ void EventSource::doExplicitLoadCancellation()
 {
     ASSERT(m_requestInFlight);
     SetForScope explicitLoadCancellation(m_isDoingExplicitCancellation, true);
-    m_loader->cancel();
+    protect(m_loader)->cancel();
 }
 
 void EventSource::parseEventStream()

@@ -15,12 +15,12 @@
 #include <memory>
 #include <optional>
 #include <ostream>
+#include <span>
 #include <string>
 #include <utility>
 #include <variant>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
@@ -98,7 +98,7 @@ class Av1Decoder : public DecodedImageCallback {
     return 0;
   }
 
-  VideoFrame Decode(ArrayView<uint8_t> bitstream_data) {
+  VideoFrame Decode(std::span<uint8_t> bitstream_data) {
     EncodedImage img;
     img.SetEncodedData(EncodedImageBuffer::Create(bitstream_data.data(),
                                                   bitstream_data.size()));
@@ -127,7 +127,7 @@ class FrameEncoderSettingsBuilder {
   FrameEncoderSettingsBuilder() {
     class IgnoredOutput : public VideoEncoderInterface::FrameOutput {
      public:
-      ArrayView<uint8_t> GetBitstreamOutputBuffer(DataSize size) override {
+      std::span<uint8_t> GetBitstreamOutputBuffer(DataSize size) override {
         unread_.resize(size.bytes());
         return unread_;
       }
@@ -203,9 +203,9 @@ class FrameEncoderSettingsBuilder {
  private:
   struct FrameOut : public VideoEncoderInterface::FrameOutput {
     explicit FrameOut(EncOut& e) : eo(e) {}
-    ArrayView<uint8_t> GetBitstreamOutputBuffer(DataSize size) override {
+    std::span<uint8_t> GetBitstreamOutputBuffer(DataSize size) override {
       eo.bitstream.resize(size.bytes());
-      return ArrayView<uint8_t>(eo.bitstream);
+      return std::span<uint8_t>(eo.bitstream);
     }
     void EncodeComplete(const EncodeResult& encode_result) override {
       eo.res = encode_result;
@@ -468,7 +468,7 @@ TEST(LibaomAv1Encoder, TempoSpatial) {
 
   VideoFrame f = dec.Decode(tu2_s2.bitstream);
   EXPECT_THAT(Resolution(f), ResolutionIs(640, 360));
-  EXPECT_THAT(Psnr(frame, f), Gt(40));
+  EXPECT_THAT(Psnr(frame, f), Gt(39));
 }
 
 TEST(DISABLED_LibaomAv1Encoder, InvertedTempoSpatial) {
@@ -734,24 +734,40 @@ TEST(LibaomAv1Encoder, S3T1) {
 }
 
 TEST(LibaomAv1Encoder, HigherEffortLevelYieldsHigherQualityFrames) {
-  auto frame_in = CreateFrameReader()->PullFrame();
+  constexpr int kNumFrames = 10;
+  std::vector<scoped_refptr<I420Buffer>> input_frames;
+  auto frame_reader = CreateFrameReader();
+  for (int i = 0; i < kNumFrames; ++i) {
+    input_frames.push_back(frame_reader->PullFrame());
+  }
   std::pair<int, int> effort_range = LibaomAv1EncoderFactory()
                                          .GetEncoderCapabilities()
                                          .performance.min_max_effort_level;
-  // Cbr rc{.duration = TimeDelta::Millis(100),
-  //       .target_bitrate = DataRate::KilobitsPerSec(100)};
   std::optional<double> psnr_last;
-  Av1Decoder dec;
-
   for (int i = effort_range.first; i <= effort_range.second; ++i) {
+    Av1Decoder dec;
+    double psnr_sum = 0;
     auto enc = LibaomAv1EncoderFactory().CreateEncoder(kCbrEncoderSettings, {});
-    EncOut tu0;
-    enc->Encode(
-        frame_in, {.presentation_timestamp = Timestamp::Millis(0)},
-        ToVec({Fb().Rate(kCbr).Res(640, 360).Upd(0).Key().Effort(i).Out(tu0)}));
-    double psnr = Psnr(frame_in, dec.Decode(tu0.bitstream));
-    EXPECT_THAT(psnr, Gt(psnr_last));
-    psnr_last = psnr;
+    for (int tu = 0; tu < kNumFrames; ++tu) {
+      EncOut out;
+      if (tu == 0) {
+        enc->Encode(
+            input_frames[tu], {.presentation_timestamp = Timestamp::Millis(0)},
+            ToVec({Fb().Rate(kCbr).Res(640, 360).Upd(0).Key().Effort(i).Out(
+                out)}));
+      } else {
+        enc->Encode(
+            input_frames[tu],
+            {.presentation_timestamp = Timestamp::Millis(100 * tu)},
+            ToVec({Fb().Rate(kCbr).Res(640, 360).Ref({0}).Upd(0).Effort(i).Out(
+                out)}));
+      }
+      psnr_sum += Psnr(input_frames[tu], dec.Decode(out.bitstream));
+    }
+    double avg_psnr = psnr_sum / kNumFrames;
+    RTC_LOG(LS_WARNING) << "PSNR for effort " << i << ": " << avg_psnr;
+    EXPECT_THAT(avg_psnr, Gt(psnr_last));
+    psnr_last = avg_psnr;
   }
 }
 

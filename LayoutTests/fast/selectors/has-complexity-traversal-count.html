@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>:has() style invalidation should not be O(n^2)</title>
+<link rel="author" title="Antti Koivisto" href="mailto:antti@apple.com">
+<link rel="help" href="https://drafts.csswg.org/selectors/#relational">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<!--
+  WebKit-specific (internals) regression test for has-complexity.html. The imported WPT can only catch the
+  O(n^2) :has() invalidation regression via a timeout, which is flaky and machine-dependent. This measures the
+  style-invalidation traversal count instead and asserts it scales linearly with the number of elements.
+-->
+<style>
+div, main { color: grey }
+main:has(span) .subject { color: red }
+main:has(span + span) .subject { color: green }
+main:has(span + final) .subject { color: blue }
+main:has(nonexistent + span) .subject { color: black }
+main:has(span) span { color: black }
+main:has(nonexistent) span { color: black }
+main:has(div div span) .subject { color: purple }
+</style>
+<body>
+<script>
+const grey = 'rgb(128, 128, 128)';
+const red = 'rgb(255, 0, 0)';
+const green = 'rgb(0, 128, 0)';
+const blue = 'rgb(0, 0, 255)';
+const purple = 'rgb(128, 0, 128)';
+
+// Builds the has-complexity tree and runs its full mutation sequence with `count` elements per phase,
+// returning the total style-invalidation traversal count. When `checkColors` is set, also asserts the
+// computed color after each phase (mirroring has-complexity.html's correctness checks).
+function runScenario(count, checkColors) {
+    const main = document.createElement("main");
+    const container = document.createElement("div");
+    container.appendChild(document.createElement("span"));
+    main.appendChild(container);
+    const subject = document.createElement("div");
+    subject.className = "subject";
+    main.appendChild(subject);
+    document.body.appendChild(main);
+
+    const color = () => getComputedStyle(subject).color;
+    let total = 0;
+    const phase = (mutate, expectedColor, description) => {
+        internals.resetStyleInvalidationTraversalCount();
+        mutate();
+        document.body.offsetHeight; // Force a style update.
+        total += internals.styleInvalidationTraversalCount;
+        if (checkColors)
+            assert_equals(color(), expectedColor, description);
+    };
+
+    if (checkColors)
+        assert_equals(color(), red, "before appending");
+
+    phase(() => {
+        for (let i = 0; i < count; ++i)
+            container.appendChild(document.createElement("span"));
+    }, green, "after appending spans");
+
+    phase(() => {
+        for (let i = 0; i < count - 1; ++i)
+            container.appendChild(document.createElement("span"));
+        container.appendChild(document.createElement("final"));
+    }, blue, "after appending more spans and a final");
+
+    phase(() => {
+        const div = document.createElement("div");
+        for (let i = 0; i < count; ++i)
+            div.appendChild(document.createElement("span"));
+        container.appendChild(div);
+    }, purple, "after appending a div with spans");
+
+    phase(() => {
+        container.lastElementChild.remove(); // The div.
+    }, blue, "after removing the div");
+
+    phase(() => {
+        for (let i = 0; i < count; ++i)
+            container.lastElementChild.remove();
+    }, green, "after removing elements one-by-one");
+
+    phase(() => {
+        container.replaceChildren();
+    }, grey, "after removing the remaining elements");
+
+    main.remove();
+    return total;
+}
+
+test(() => {
+    runScenario(50, true);
+}, ":has() child-change invalidation produces correct styles");
+
+test(() => {
+    // The traversal count must scale ~linearly with the element count. An O(n^2) regression pushes the
+    // ratio toward 4 (and times out at scale); a linear implementation keeps it near 2.
+    const atN = runScenario(200, false);
+    const at2N = runScenario(400, false);
+    assert_less_than(at2N / atN, 3, `traversal count should scale linearly (${atN} at 200 elements, ${at2N} at 400)`);
+}, ":has() child-change invalidation is not O(n^2)");
+</script>

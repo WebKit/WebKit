@@ -16,12 +16,12 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/neural_residual_echo_estimator/neural_feature_extractor.h"
@@ -78,36 +78,34 @@ class MockModelRunner : public NeuralResidualEchoEstimatorImpl::ModelRunner {
 
   int StepSize() const override { return constants_.step_size; }
 
-  ArrayView<float> GetInput(ModelInputEnum input_enum) override {
+  std::span<float> GetInput(ModelInputEnum input_enum) override {
     switch (input_enum) {
       case ModelInputEnum::kMic:
-        return webrtc::ArrayView<float>(input_mic_.data(),
-                                        constants_.frame_size);
+        return std::span<float>(input_mic_.data(), constants_.frame_size);
       case ModelInputEnum::kLinearAecOutput:
-        return webrtc::ArrayView<float>(input_linear_aec_output_.data(),
-                                        constants_.frame_size);
+        return std::span<float>(input_linear_aec_output_.data(),
+                                constants_.frame_size);
       case ModelInputEnum::kAecRef:
-        return webrtc::ArrayView<float>(input_aec_ref_.data(),
-                                        constants_.frame_size);
+        return std::span<float>(input_aec_ref_.data(), constants_.frame_size);
       case ModelInputEnum::kModelState:
       case ModelInputEnum::kNumInputs:
         RTC_CHECK(false);
-        return webrtc::ArrayView<float>();
+        return std::span<float>();
     }
   }
 
-  ArrayView<const float> GetOutput(ModelOutputEnum output_enum) override {
+  std::span<const float> GetOutput(ModelOutputEnum output_enum) override {
     switch (output_enum) {
       case ModelOutputEnum::kEchoMask:
       case ModelOutputEnum::kUnboundedEchoMask:
-        return ArrayView<const float>(output_echo_mask_.data(),
+        return std::span<const float>(output_echo_mask_.data(),
                                       constants_.frame_size_by_2_plus_1);
       case ModelOutputEnum::kModelState:
         // Mock model state output if needed, for now return empty
-        return ArrayView<const float>();
+        return std::span<const float>();
       default:
         RTC_CHECK(false);
-        return ArrayView<float>();
+        return std::span<float>();
     }
   }
 

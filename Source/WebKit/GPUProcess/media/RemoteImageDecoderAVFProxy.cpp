@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
+#include "Logging.h"
 #include "RemoteImageDecoderAVFManagerMessages.h"
 #include "RemoteImageDecoderAVFProxyMessages.h"
 #include "SharedBufferReference.h"
@@ -64,6 +65,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageDecoderAVFProxy);
 
 void RemoteImageDecoderAVFProxy::createDecoder(const IPC::SharedBufferReference& data, const String& mimeType, CompletionHandler<void(std::optional<ImageDecoderIdentifier>&&)>&& completionHandler)
 {
+    MESSAGE_CHECK_WITH_MESSAGE_BASE(ImageDecoderAVFObjC::canDecodeType(mimeType), m_connectionToWebProcess.get()->connection(), "createDecoder() should not be called with unsupported mime-type.");
+
     RefPtr imageDecoder = ImageDecoderAVFObjC::create(data.isNull() ? SharedBuffer::create() : data.unsafeBuffer().releaseNonNull(), mimeType, AlphaOption::Premultiplied, GammaAndColorProfileOption::Ignored, m_resourceOwner);
 
     std::optional<ImageDecoderIdentifier> imageDecoderIdentifier;

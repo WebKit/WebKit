@@ -344,6 +344,71 @@ TEST(WKWebExtension, IconErrorsOnce)
     EXPECT_EQ(testExtension.errors.count, 4u);
 }
 
+TEST(WKWebExtension, IconsWithUnsupportedFormatsAreRejected)
+{
+    static constexpr uint8_t photoshopBytes[] = {
+        '8', 'B', 'P', 'S', 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00,
+        0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x08, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00
+    };
+
+    auto *photoshopData = [NSData dataWithBytes:photoshopBytes length:sizeof(photoshopBytes)];
+    auto *photoshopDataURL = [@"data:image/png;base64," stringByAppendingString:[photoshopData base64EncodedStringWithOptions:0]];
+
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+        @"icons": @{ @"128": @"icon-128.psd" },
+        @"action": @{ @"default_icon": @{ @"128": photoshopDataURL } }
+    };
+
+    auto *resources = @{ @"icon-128.psd": photoshopData };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NULL([testExtension iconForSize:CGSizeMake(128, 128)]);
+    EXPECT_NULL([testExtension actionIconForSize:CGSizeMake(128, 128)]);
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
+
+    // The MIME type derived from the icon path must not allow bypassing the format restriction.
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+        @"icons": @{ @"128": @"icon-128.svg" }
+    };
+
+    resources = @{ @"icon-128.svg": photoshopData };
+
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NULL([testExtension iconForSize:CGSizeMake(128, 128)]);
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
+}
+
+TEST(WKWebExtension, SVGIconViaIconsKeyLoads)
+{
+    // A real SVG supplied through the plain `icons` key must still decode (via the dedicated SVG
+    // path), not be rejected by the bitmap allow-list. This is the positive companion to
+    // IconsWithUnsupportedFormatsAreRejected.
+    auto *iconSVG = @"<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'><circle cx='50' cy='50' r='50' fill='white' /></svg>";
+
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+        @"icons": @{ @"128": @"icon-128.svg" }
+    };
+
+    auto *resources = @{ @"icon-128.svg": iconSVG };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NOT_NULL([testExtension iconForSize:CGSizeMake(128, 128)]);
+    EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
+}
+
 TEST(WKWebExtension, SymbolImageIcon)
 {
     auto *testManifestDictionary = @{

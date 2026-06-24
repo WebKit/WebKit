@@ -20,6 +20,8 @@
 #include <utility>
 #include <vector>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/desktop_capture/cropped_desktop_frame.h"
 #include "modules/desktop_capture/desktop_capture_metrics_helper.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
@@ -32,7 +34,6 @@
 #include "modules/desktop_capture/win/window_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
 #include "rtc_base/win/windows_version.h"
 #include "system_wrappers/include/metrics.h"
@@ -100,14 +101,13 @@ BOOL CALLBACK OwnedWindowCollector(HWND hwnd, LPARAM param) {
   return TRUE;
 }
 
-WindowCapturerWinGdi::WindowCapturerWinGdi(
-    bool enumerate_current_process_windows)
-    : enumerate_current_process_windows_(enumerate_current_process_windows) {}
+WindowCapturerWinGdi::WindowCapturerWinGdi(const DesktopCaptureOptions& options)
+    : options_(options) {}
 WindowCapturerWinGdi::~WindowCapturerWinGdi() {}
 
 bool WindowCapturerWinGdi::GetSourceList(SourceList* sources) {
   if (!window_capture_helper_.EnumerateCapturableWindows(
-          sources, enumerate_current_process_windows_))
+          sources, options_.enumerate_current_process_windows()))
     return false;
 
   std::map<HWND, DesktopSize> new_map;
@@ -162,7 +162,7 @@ void WindowCapturerWinGdi::Start(Callback* callback) {
 
 void WindowCapturerWinGdi::CaptureFrame() {
   RTC_DCHECK(callback_);
-  int64_t capture_start_time_nanos = TimeNanos();
+  Timestamp capture_start_time = options_.clock().CurrentTime();
 
   CaptureResults results = CaptureFrame(/*capture_owned_windows*/ true);
   if (!results.frame) {
@@ -174,7 +174,7 @@ void WindowCapturerWinGdi::CaptureFrame() {
   }
 
   int capture_time_ms =
-      (TimeNanos() - capture_start_time_nanos) / kNumNanosecsPerMillisec;
+      (options_.clock().CurrentTime() - capture_start_time).ms();
   RTC_HISTOGRAM_COUNTS_1000(
       "WebRTC.DesktopCapture.Win.WindowGdiCapturerFrameTime", capture_time_ms);
   results.frame->set_capture_time_ms(capture_time_ms);
@@ -361,8 +361,8 @@ WindowCapturerWinGdi::CaptureResults WindowCapturerWinGdi::CaptureFrame(
 
       if (!owned_windows_.empty()) {
         if (!owned_window_capturer_) {
-          owned_window_capturer_ = std::make_unique<WindowCapturerWinGdi>(
-              enumerate_current_process_windows_);
+          owned_window_capturer_ =
+              std::make_unique<WindowCapturerWinGdi>(options_);
         }
 
         // Owned windows are stored in top-down z-order, so this iterates in
@@ -405,8 +405,7 @@ WindowCapturerWinGdi::CaptureResults WindowCapturerWinGdi::CaptureFrame(
 // static
 std::unique_ptr<DesktopCapturer> WindowCapturerWinGdi::CreateRawWindowCapturer(
     const DesktopCaptureOptions& options) {
-  return std::unique_ptr<DesktopCapturer>(
-      new WindowCapturerWinGdi(options.enumerate_current_process_windows()));
+  return std::unique_ptr<DesktopCapturer>(new WindowCapturerWinGdi(options));
 }
 
 }  // namespace webrtc

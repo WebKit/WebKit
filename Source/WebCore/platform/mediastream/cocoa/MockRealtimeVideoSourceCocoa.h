@@ -60,7 +60,6 @@ private:
     bool canResizeVideoFrames() const final { return true; }
 
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
-    IntSize m_presetSize;
     size_t m_pixelGenerationFailureCount { 0 };
 };
 

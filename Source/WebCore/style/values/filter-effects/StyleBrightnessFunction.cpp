@@ -54,7 +54,7 @@ bool Brightness::transformColor(SRGBA<float>& color) const
 
 // MARK: - Conversion
 
-auto ToCSS<Brightness>::operator()(const Brightness& value, const RenderStyle& style) -> CSS::Brightness
+auto ToCSS<Brightness>::operator()(const Brightness& value, const Style::ComputedStyle& style) -> CSS::Brightness
 {
     return { .value = CSS::Brightness::Parameter { toCSS(value.value, style) } };
 }

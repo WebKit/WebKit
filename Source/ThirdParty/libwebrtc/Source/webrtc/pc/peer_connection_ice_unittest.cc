@@ -20,7 +20,6 @@
 #include "api/candidate.h"
 #include "api/create_modular_peer_connection_factory.h"
 #include "api/enable_media_with_defaults.h"
-#include "api/environment/environment_factory.h"
 #include "api/ice_transport_interface.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
@@ -49,6 +48,7 @@
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
 #ifdef WEBRTC_ANDROID
@@ -1481,7 +1481,7 @@ class PeerConnectionIceConfigTest : public ::testing::Test {
   }
   void CreatePeerConnection(const RTCConfiguration& config) {
     auto port_allocator = network_thread_->BlockingCall([&] {
-      return std::make_unique<FakePortAllocator>(CreateEnvironment(),
+      return std::make_unique<FakePortAllocator>(CreateTestEnvironment(),
                                                  socket_server_.get());
     });
     port_allocator_ = port_allocator.get();

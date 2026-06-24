@@ -141,7 +141,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
         attachmentRect.unite(line.backgroundRect);
     if (!subtitleTextRect.isEmpty()) {
         FloatRect roundedSubtitleTextRect = subtitleTextRect;
-        roundedSubtitleTextRect.inflateX(attachmentSubtitleWidthIncrement - clampToInteger(ceilf(subtitleTextRect.width())) % attachmentSubtitleWidthIncrement);
+        roundedSubtitleTextRect.inflateX(attachmentSubtitleWidthIncrement - clampTo<int>(ceilf(subtitleTextRect.width())) % attachmentSubtitleWidthIncrement);
         attachmentRect.unite(roundedSubtitleTextRect);
     }
     attachmentRect.inflate(attachmentMargin);
@@ -233,7 +233,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
     widthPadding = attachmentRect.width();
 
     hasProgress = getAttachmentProgress(attachment, progress);
-    String title = attachment.attachmentElement().attachmentTitleForDisplay();
+    String title = protect(attachment.attachmentElement())->attachmentTitleForDisplay();
     String action = attachment.attachmentElement().attachmentActionForDisplay();
     String subtitle = attachment.attachmentElement().attachmentSubtitleForDisplay();
 
@@ -245,7 +245,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
     }
 
     if (action.isEmpty() && !hasProgress) {
-        attachment.attachmentElement().requestIconIfNeededWithSize(FloatSize());
+        protect(attachment.attachmentElement())->requestIconIfNeededWithSize(FloatSize());
         FloatSize iconSize = attachment.attachmentElement().iconSize();
         icon = attachment.attachmentElement().icon();
         

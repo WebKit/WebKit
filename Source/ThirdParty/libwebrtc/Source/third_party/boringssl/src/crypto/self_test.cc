@@ -18,7 +18,5 @@
 
 
 TEST(SelfTests, KAT) {
-#if !defined(_MSC_VER)
   EXPECT_TRUE(BORINGSSL_self_test());
-#endif
 }

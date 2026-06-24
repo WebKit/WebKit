@@ -24,8 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
-#include <WebCore/StyleValueTypes.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
@@ -33,7 +32,7 @@ namespace Style {
 // <'word-spacing'> = normal | <length-percentage>
 // NOTE: Computed value resolves `normal` to 0px.
 // https://drafts.csswg.org/css-text-4/#propdef-word-spacing
-struct WordSpacing : LengthWrapperBase<LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>> {
+struct WordSpacing : PrimitiveNumericWrapperBase<LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>> {
     using Base::Base;
 
     WordSpacing(CSS::Keyword::Normal)
@@ -49,4 +48,4 @@ template<> struct CSSValueConversion<WordSpacing> { auto operator()(BuilderState
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WordSpacing);
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::WordSpacing);

@@ -21,6 +21,9 @@
 #endif
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 TEST(RefCountTest, Basic) {
   CRYPTO_refcount_t count = 0;
 
@@ -77,3 +80,6 @@ TEST(RefCountTest, Threads) {
   }
 }
 #endif
+
+}  // namespace
+BSSL_NAMESPACE_END

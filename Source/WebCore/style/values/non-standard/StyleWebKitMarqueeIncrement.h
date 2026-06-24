@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
@@ -34,11 +34,9 @@ namespace Style {
 // NOTE: There is no standard associated with this property. It exists to model the "marquee scroll distance" concept derived from the <marquee> element's `scrollamount` attribute.
 // https://html.spec.whatwg.org/multipage/obsolete.html#marquee-scroll-distance
 // FIXME: Consider changing this type (and the associated internal property `-webkit-marquee-increment`) to be named after the spec term "marquee scroll distance".
-struct WebkitMarqueeIncrement : LengthWrapperBase<LengthPercentage<>> {
-    using Base::Base;
-};
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(WebkitMarqueeIncrement, LengthPercentage<>);
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WebkitMarqueeIncrement)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::WebkitMarqueeIncrement)

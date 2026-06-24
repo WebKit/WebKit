@@ -24,6 +24,14 @@
 #include "../../../Configurations/CommonBase.xcconfig"
 
 ALWAYS_SEARCH_USER_PATHS = NO;
+// The PBXBuildRule for *.appex (Tools/TestRunnerShared/Scripts/install-extensions-rule.sh)
+// runs ditto into a declared-directory output, which the user-script sandbox cannot
+// permit (file-write* on a literal directory path doesn't cover ditto's atomic .BC.T_*
+// temp files written inside). Only fires on iOS where XPC services are repackaged as
+// App Extensions, so gate sandboxing to macOS only.
+ENABLE_USER_SCRIPT_SANDBOXING = NO;
+ENABLE_USER_SCRIPT_SANDBOXING[sdk=macosx*] = YES;
+EXCLUDED_USER_SCRIPT_SANDBOXING_PHASE_NAMES = $(inherited) "Check .xcfilelists" "Generate Derived Sources" "Generate <wtf/Platform.h> args" "Run Sublaunch Script";
 CLANG_CXX_LANGUAGE_STANDARD = c++2b;
 CLANG_CXX_LIBRARY = libc++;
 CLANG_ENABLE_EXPLICIT_MODULES = NO;

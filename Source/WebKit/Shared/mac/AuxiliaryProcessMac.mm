@@ -664,13 +664,14 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     RELEASE_ASSERT(!sandboxParameters.userDirectorySuffix().isNull());
 
     // Use private temporary and cache directories.
-    setenv("DIRHELPER_USER_DIR_SUFFIX", FileSystem::fileSystemRepresentation(sandboxParameters.userDirectorySuffix()).data(), 1);
+    CString userDirectorySuffixString = FileSystem::fileSystemRepresentation(sandboxParameters.userDirectorySuffix());
+    RELEASE_ASSERT(_set_user_dir_suffix(userDirectorySuffixString.data()));
+
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
         WTFLogAlways("%s: couldn't retrieve private temporary directory path: %d\n", getprogname(), errno);
         exitProcess(EX_NOPERM);
     }
-    setenv("TMPDIR", temporaryDirectory, 1);
 
     String bundlePath = webKit2BundleSingleton().bundlePath;
     if (!bundlePath.startsWith("/System/Library/Frameworks"_s))

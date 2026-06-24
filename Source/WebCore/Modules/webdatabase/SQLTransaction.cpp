@@ -80,7 +80,7 @@ ExceptionOr<void> SQLTransaction::executeSql(const String& sqlStatement, std::op
         return Exception { ExceptionCode::InvalidStateError };
 
     int permissions = DatabaseAuthorizer::ReadWriteMask;
-    if (!m_database->databaseContext().allowDatabaseAccess())
+    if (!protect(m_database)->databaseContext().allowDatabaseAccess())
         permissions |= DatabaseAuthorizer::NoAccessMask;
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
@@ -138,7 +138,7 @@ void SQLTransaction::callErrorCallbackDueToInterruption()
     if (!errorCallback)
         return;
 
-    protect(m_database->document().eventLoop())->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback)]() mutable {
+    protect(protect(m_database)->document().eventLoop())->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback)]() mutable {
         errorCallback->invoke(SQLError::create(SQLError::DATABASE_ERR, "the database was closed"_s));
     });
 }
@@ -412,7 +412,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
     // error to have occurred in this transaction.
     RefPtr<SQLTransactionErrorCallback> errorCallback = m_errorCallbackWrapper.unwrap();
     if (errorCallback) {
-        protect(m_database->document().eventLoop())->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), transactionError = m_transactionError]() mutable {
+        protect(protect(m_database)->document().eventLoop())->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), transactionError = m_transactionError]() mutable {
             errorCallback->invoke(*transactionError);
         });
     }
@@ -463,7 +463,7 @@ void SQLTransaction::deliverSuccessCallback()
     // Spec 4.3.2.8: Deliver success callback.
     RefPtr<VoidCallback> successCallback = m_successCallbackWrapper.unwrap();
     if (successCallback) {
-        protect(m_database->document().eventLoop())->queueTask(TaskSource::Networking, [successCallback = WTF::move(successCallback)]() mutable {
+        protect(protect(m_database)->document().eventLoop())->queueTask(TaskSource::Networking, [successCallback = WTF::move(successCallback)]() mutable {
             successCallback->invoke();
         });
     }

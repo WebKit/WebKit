@@ -120,8 +120,6 @@ class VideoTrackList;
 class VideoTrackPrivate;
 class WebKitMediaKeys;
 
-struct MachSendRightAnnotated;
-
 enum class AudioSessionCategory : uint8_t;
 enum class AudioSessionMode : uint8_t;
 enum class DynamicRangeMode : uint8_t;
@@ -314,6 +312,7 @@ public:
     WEBCORE_EXPORT bool ended() const;
     bool NODELETE autoplay() const;
     bool isAutoplaying() const { return m_autoplaying; }
+    bool wasInterruptedForInvisibleAutoplay() const { return m_wasInterruptedForInvisibleAutoplay; }
     bool NODELETE loop() const;
     void setLoop(bool b);
 
@@ -767,8 +766,8 @@ protected:
 
     bool isMediaElement() const final { return true; }
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool isReplaced(const RenderStyle* = nullptr) const override { return true; }
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    bool isReplaced(const Style::ComputedStyle* = nullptr) const override { return true; }
 
     SecurityOriginData documentSecurityOrigin() const final;
 
@@ -826,7 +825,7 @@ private:
     void createMediaPlayer();
 
     bool supportsFocus() const override;
-    bool rendererIsNeeded(const RenderStyle&) override;
+    bool rendererIsNeeded(const Style::ComputedStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void postConnectionSteps() override;
@@ -1269,7 +1268,7 @@ private:
 #if ENABLE(FULLSCREEN_API)
     bool m_isChildOfElementFullscreen { false };
 #endif
-    bool m_preparedForInline;
+    bool m_preparedForInline { false };
     Function<void()> m_preparedForInlineCompletionHandler;
 
     bool m_temporarilyAllowingInlinePlaybackAfterFullscreen { false };
@@ -1342,7 +1341,6 @@ private:
     bool m_havePreparedToPlay : 1;
     bool m_parsingInProgress : 1;
     bool m_elementIsHidden : 1;
-    bool m_elementWasRemovedFromDOM : 1;
     bool m_receivedLayoutSizeChanged : 1;
     bool m_hasEverNotifiedAboutPlaying : 1;
 
@@ -1372,6 +1370,7 @@ private:
     ControlsState m_controlsState { ControlsState::None };
 
     AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
+    bool m_isDispatchingAutoplayPlayPauseQuirkEvents { false };
 
     String m_subtitleTrackLanguage;
     std::optional<String> m_languageOfPrimaryAudioTrack;
@@ -1417,7 +1416,6 @@ private:
     const Ref<WTF::Observer<WebCoreOpaqueRoot()>> m_opaqueRootProvider;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    bool m_hasNeedkeyListener { false };
     RefPtr<WebKitMediaKeys> m_webKitMediaKeys;
 #endif
 

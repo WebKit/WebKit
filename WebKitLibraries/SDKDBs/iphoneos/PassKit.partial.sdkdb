@@ -475,9 +475,11 @@
     {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkCarteBancaires"},
     {"access": "public", "introduced": "11.2", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkCartesBancaires"},
     {"access": "public", "introduced": "9.2", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkChinaUnionPay"},
+    {"access": "public", "introduced": "26.2", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkConecs"},
     {"access": "public", "introduced": "15.1", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkDankort"},
     {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkDiscover"},
     {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkEftpos"},
+    {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkElCorteIngles"},
     {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkElectron"},
     {"access": "public", "introduced": "12.1.1", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkElo"},
     {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_PKPaymentNetworkGirocard"},
@@ -520,7 +522,8 @@
       {"access": "public", "getter": "password", "name": "password", "setter": "setPassword:"},
       {"access": "public", "getter": "supportedRadioTechnologies", "introduced": "14.5", "name": "supportedRadioTechnologies", "setter": "setSupportedRadioTechnologies:"},
       {"access": "public", "getter": "manufacturerIdentifier", "introduced": "16", "name": "manufacturerIdentifier", "setter": "setManufacturerIdentifier:"},
-      {"access": "public", "getter": "provisioningTemplateIdentifier", "introduced": "16", "name": "provisioningTemplateIdentifier", "setter": "setProvisioningTemplateIdentifier:"}
+      {"access": "public", "getter": "provisioningTemplateIdentifier", "introduced": "16", "name": "provisioningTemplateIdentifier", "setter": "setProvisioningTemplateIdentifier:"},
+      {"access": "public", "getter": "productPlanIdentifier", "introduced": "26.4", "name": "productPlanIdentifier", "setter": "setProductPlanIdentifier:"}
      ],
      "super": "PKAddSecureElementPassConfiguration"
     },
@@ -887,7 +890,8 @@
       {"access": "public", "getter": "requiredRecipientContactFields", "name": "requiredRecipientContactFields", "setter": "setRequiredRecipientContactFields:"},
       {"access": "public", "getter": "recipientContact", "name": "recipientContact", "setter": "setRecipientContact:"},
       {"access": "public", "getter": "supportedRegions", "name": "supportedRegions", "setter": "setSupportedRegions:"},
-      {"access": "public", "getter": "applicationData", "name": "applicationData", "setter": "setApplicationData:"}
+      {"access": "public", "getter": "applicationData", "name": "applicationData", "setter": "setApplicationData:"},
+      {"access": "public", "getter": "isDelegatedRequest", "introduced": "26.4", "name": "isDelegatedRequest", "setter": "setIsDelegatedRequest:"}
      ],
      "super": "NSObject"
     },
@@ -1027,7 +1031,11 @@
       {"access": "public", "attr": [ "readonly", "class" ], "getter": "drivingPrivilegesElement", "name": "drivingPrivilegesElement"},
       {"access": "public", "attr": [ "readonly", "class" ], "getter": "ageElement", "name": "ageElement"},
       {"access": "public", "attr": [ "readonly", "class" ], "getter": "dateOfBirthElement", "name": "dateOfBirthElement"},
-      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sexElement", "introduced": "17.2", "name": "sexElement"}
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sexElement", "introduced": "17.2", "name": "sexElement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "signatureUsualMarkElement", "introduced": "26.4", "name": "signatureUsualMarkElement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "placeOfBirthElement", "introduced": "26.4", "name": "placeOfBirthElement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "nationalityElement", "introduced": "26.4", "name": "nationalityElement"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "dhsTemporaryLawfulStatusElement", "introduced": "26.4", "name": "dhsTemporaryLawfulStatusElement"}
      ],
      "protocols": [
       "NSCopying"
@@ -1086,7 +1094,8 @@
      "properties": [
       {"access": "public", "getter": "descriptor", "name": "descriptor", "setter": "setDescriptor:"},
       {"access": "public", "getter": "nonce", "name": "nonce", "setter": "setNonce:"},
-      {"access": "public", "getter": "merchantIdentifier", "name": "merchantIdentifier", "setter": "setMerchantIdentifier:"}
+      {"access": "public", "getter": "merchantIdentifier", "name": "merchantIdentifier", "setter": "setMerchantIdentifier:"},
+      {"access": "public", "getter": "usageDescriptionKey", "introduced": "26.2", "name": "usageDescriptionKey", "setter": "setUsageDescriptionKey:"}
      ],
      "super": "NSObject"
     },
@@ -1239,6 +1248,7 @@
       {"access": "public", "name": "replacePassWithPass:"},
       {"access": "public", "introduced": "7", "name": "addPasses:withCompletionHandler:"},
       {"access": "public", "introduced": "8.3", "name": "openPaymentSetup"},
+      {"access": "public", "introduced": "26.4", "name": "openPaymentSetupWithMerchantIdentifier:"},
       {"access": "public", "introduced": "10", "name": "presentPaymentPass:"},
       {"access": "public", "introduced": "13.4", "name": "presentSecureElementPass:"},
       {"access": "public", "introduced": "9", "name": "canAddPaymentPassWithPrimaryAccountIdentifier:"},
@@ -1493,7 +1503,8 @@
       {"access": "public", "getter": "recurringPaymentRequest", "introduced": "16", "name": "recurringPaymentRequest", "setter": "setRecurringPaymentRequest:"},
       {"access": "public", "getter": "automaticReloadPaymentRequest", "introduced": "16", "name": "automaticReloadPaymentRequest", "setter": "setAutomaticReloadPaymentRequest:"},
       {"access": "public", "getter": "deferredPaymentRequest", "introduced": "16.4", "name": "deferredPaymentRequest", "setter": "setDeferredPaymentRequest:"},
-      {"access": "public", "getter": "applePayLaterAvailability", "introduced": "17", "name": "applePayLaterAvailability", "setter": "setApplePayLaterAvailability:"}
+      {"access": "public", "getter": "applePayLaterAvailability", "introduced": "17", "name": "applePayLaterAvailability", "setter": "setApplePayLaterAvailability:"},
+      {"access": "public", "getter": "isDelegatedRequest", "introduced": "26.4", "name": "isDelegatedRequest", "setter": "setIsDelegatedRequest:"}
      ],
      "super": "NSObject"
     },
@@ -1987,7 +1998,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "PKAddIdentityDocumentType"},
     {"access": "public", "name": "PKAddPassButtonStyle"},

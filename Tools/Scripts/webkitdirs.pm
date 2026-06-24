@@ -115,7 +115,6 @@ BEGIN {
        &getJhbuildPath
        &getJhbuildModulesetName
        &inCrossTargetEnvironment
-       &inFlatpakSandbox
        &iosVersion
        &isARM64
        &isAnyWindows
@@ -167,7 +166,6 @@ BEGIN {
        &runGitUpdate
        &runIOSWebKitApp
        &runInCrossTargetEnvironment
-       &runInFlatpak
        &runMacWebKitApp
        &runMiniBrowser
        &runSwiftBrowser
@@ -189,7 +187,6 @@ BEGIN {
        &sharedCommandLineOptionsUsage
        &shouldBuild32Bit
        &shouldBuildForCrossTarget
-       &shouldUseFlatpak
        &shouldUseVcpkg
        &isWinCrossCompileFromLinux
        &winCrossCompileVcpkgRoot
@@ -579,9 +576,16 @@ sub determineArchitecture
             # This gets called from argumentsForConfiguration() which needs to resolve the target architecture
             # before entering into the cross-toolchain-env, so to achieve that we call the cross-target cmake.
             if (shouldBuildForCrossTarget()) {
-                $prefix = sprintf("%s --cross-target=%s --cross-toolchain-run-cmd",
-                            File::Spec->catfile(sourceDir(), "Tools", "Scripts", "cross-toolchain-helper"),
-                            getCrossTargetName());
+                my $helper = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "cross-toolchain-helper");
+                my $target = getCrossTargetName();
+                # Pre-build the toolchain if needed so its (potentially multi-hour) bitbake output reaches
+                # the terminal instead of being swallowed by the pipe opened below.
+                # The build-toolchain call runs with info log level (the default) because it is the first
+                # one to happen, so those messages are printed at the start. Next calls to cross-toolchain-helper
+                # should pass --log-level=quiet to avoid repeated messages.
+                system($helper, "--cross-target=$target", "--build-toolchain") == 0
+                    or die "cross-toolchain-helper --build-toolchain failed for $target\n";
+                $prefix = "$helper --log-level=quiet --cross-target=$target --cross-toolchain-run-cmd";
             }
             if (open my $cmake_sysinfo, "$prefix cmake --system-information |") {
                 while (<$cmake_sysinfo>) {
@@ -1188,7 +1192,7 @@ sub determineConfigurationProductDir
         if (usesPerConfigurationBuildDirectory()) {
             $configurationProductDir = "$baseProductDir";
         } else {
-            if (isGtk() or isWPE() or isJSCOnly() or shouldUseFlatpak() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
+            if (isGtk() or isWPE() or isJSCOnly() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
                 $configurationProductDir = "$baseProductDir/$portName/$configuration";
             } elsif (isAppleCocoaWebKit() && isCMakeBuild()) {
                 $configurationProductDir = "$baseProductDir/cmake-mac/$configuration";
@@ -2285,7 +2289,7 @@ sub relativeScriptsDir()
 sub scriptPathForName($)
 {
     my $scriptName = shift;
-    if ((isGtk() || isWPE()) && inFlatpakSandbox()) {
+    if (isGtk() || isWPE()) {
         return "Tools/Scripts/$scriptName";
     } else {
         return relativeScriptsDir() . "/$scriptName";
@@ -2495,22 +2499,6 @@ sub getJhbuildModulesetName()
 }
 
 
-sub getUserFlatpakPath()
-{
-    if (defined($ENV{'WEBKIT_FLATPAK_USER_DIR'})) {
-       return $ENV{'WEBKIT_FLATPAK_USER_DIR'};
-    }
-
-    my $productDir = baseProductDir();
-    if (isGit() && isGitBranchBuild() && gitBranch()) {
-        my $branch = gitBranch();
-        $productDir =~ s/$branch//;
-    }
-    my @flatpakPath = File::Spec->splitdir($productDir);
-    push(@flatpakPath, "UserFlatpak");
-    return File::Spec->catdir(@flatpakPath);
-}
-
 sub isCachedArgumentfileOutOfDate($@)
 {
     my ($filename, $currentContents) = @_;
@@ -2540,17 +2528,13 @@ sub isCachedArgumentfileOutOfDate($@)
     return 0;
 }
 
-sub inFlatpakSandbox()
-{
-    return (-f "/.flatpak-info");
-}
-
-
 sub runInCrossTargetEnvironment(@)
 {
     return if not shouldBuildForCrossTarget();
+    # Run with quiet log level to avoid repeated messages, the first run at determineArchitecture()
+    # to build the toolchain happens with log level info (the default)
     my @prefix = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "cross-toolchain-helper"),
-                  "--cross-target", getCrossTargetName(), "--cross-toolchain-run-cmd");
+                  "--log-level=quiet", "--cross-target", getCrossTargetName(), "--cross-toolchain-run-cmd");
     my @command = @_;
     exec @prefix, @command, argumentsForConfiguration(), @ARGV or die;
 }
@@ -2568,7 +2552,6 @@ sub maybeEnterWebKitContainerSDK()
     # Mirror the cheap opt-out checks from maybe_enter_webkit_container_sdk so
     # that the overwhelmingly common no-op case avoids forking a Python
     # interpreter on every wrapper invocation. Keep in sync with that function.
-    return if ($ENV{'WEBKIT_FLATPAK'} // '') eq '1';
     return if ($ENV{'WEBKIT_JHBUILD'} // '') eq '1';
     return if ($ENV{'WEBKIT_CONTAINER_SDK_INSIDE_MOUNT_NAMESPACE'} // '') eq '1';
     return unless -f File::Spec->catfile(sourceDir(), ".wkdev-sdk-version");
@@ -2592,9 +2575,8 @@ sub maybeEnterWebKitContainerSDK()
 sub maybeUseContainerSDKRootDir()
 {
     return if not isLinux();
-    return if (shouldUseFlatpak() or shouldBuildForCrossTarget() or inCrossTargetEnvironment());
+    return if (shouldBuildForCrossTarget() or inCrossTargetEnvironment());
     return if ($ENV{'WEBKIT_CONTAINER_SDK_INSIDE_MOUNT_NAMESPACE'} // '') eq '1';
-    return if ($ENV{'WEBKIT_FLATPAK'} // '') eq '1';
     return if ($ENV{'WEBKIT_JHBUILD'} // '') eq '1';
     if (($ENV{'WEBKIT_CONTAINER_SDK'} // '') ne '1') {
         print STDERR "WARNING: Running outside wkdev-sdk container. For proper testing, use https://github.com/Igalia/webkit-container-sdk\n";
@@ -2624,37 +2606,6 @@ sub maybeUseContainerSDKRootDir()
         $ENV{"CFLAGS"} = "-ffile-prefix-map=$sourceDir=/sdk/webkit" . ($ENV{"CFLAGS"} || "");
         $ENV{"CXXFLAGS"} = "-ffile-prefix-map=$sourceDir=/sdk/webkit" . ($ENV{"CXXFLAGS"} || "");
     }
-}
-
-
-sub runInFlatpak(@)
-{
-    if (isGtk() && checkForArgumentAndRemoveFromARGV("--update-gtk")) {
-        system("perl", File::Spec->catfile(sourceDir(), "Tools", "Scripts", "update-webkitgtk-libs"), argumentsForConfiguration()) == 0 or die $!;
-    }
-
-    if (isWPE() && checkForArgumentAndRemoveFromARGV("--update-wpe")) {
-        system("perl", File::Spec->catfile(sourceDir(), "Tools", "Scripts", "update-webkitwpe-libs"), argumentsForConfiguration()) == 0 or die $!;
-    }
-
-    my @arg = @_;
-    my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "webkit-flatpak"));
-
-    my @flatpakArgs;
-    my @filteredArgv;
-
-    # Filter-out Flatpak SDK-specific arguments to a separate array, passed to webkit-flatpak.
-    my $prefix = "--flatpak-";
-    foreach my $opt (@ARGV) {
-        if (substr($opt, 0, length($prefix)) eq $prefix) {
-            my ($name, $value) = split("--flatpak-", $opt);
-            push(@flatpakArgs, "--$value");
-        } else {
-            push(@filteredArgv, $opt);
-        }
-    }
-
-    exec @command, argumentsForConfiguration(), @flatpakArgs, "--command", @_, argumentsForConfiguration(), @filteredArgv or die;
 }
 
 sub jhbuildWrapperPrefix()
@@ -2707,26 +2658,6 @@ sub wrapperPrefixIfNeeded()
     return ();
 }
 
-sub shouldUseFlatpak()
-{
-    if (!isGtk() and !isWPE()) {
-        return 0;
-    }
-
-    if (defined $ENV{'WEBKIT_JHBUILD'} and $ENV{'WEBKIT_JHBUILD'}) {
-        return 0;
-    }
-
-    if (shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
-        return 0;
-    }
-
-    return 0 unless (defined $ENV{'WEBKIT_FLATPAK'} and $ENV{'WEBKIT_FLATPAK'});
-
-    my @prefix = wrapperPrefixIfNeeded();
-    return ((! inFlatpakSandbox()) and (@prefix == 0) and -e getUserFlatpakPath());
-}
-
 sub shouldUseVcpkg()
 {
     return isWin() || (isJSCOnly() && isAnyWindows());
@@ -2760,7 +2691,7 @@ sub shouldRemoveCMakeCache(@)
                              "CPATH", "LIBRARY_PATH", # GCC/Clang include/lib helpers
                              "CMAKE_MODULE_PATH", "CMAKE_PREFIX_PATH", # CMake-specific
                              # WebKit-tooling build modifiers
-                             "WEBKIT_CONTAINER_SDK", "WEBKIT_FLATPAK", "WEBKIT_JHBUILD", "WEBKIT_USE_SCCACHE");
+                             "WEBKIT_CONTAINER_SDK", "WEBKIT_JHBUILD", "WEBKIT_USE_SCCACHE");
     for my $envFlag (@relevantEnvFlags) {
         my $flagValue = $ENV{$envFlag} || "";
             $buildArgsEnv .= "\n" . $envFlag . "=" . $flagValue;
@@ -2780,19 +2711,15 @@ sub shouldRemoveCMakeCache(@)
     }
 
     my $cacheFileModifiedTime = stat($cmakeCache)->mtime;
-    my $platformConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "Options" . cmakeBasedPortName() . ".cmake");
-    if ($cacheFileModifiedTime < stat($platformConfiguration)->mtime) {
-        return 1;
-    }
 
-    my $globalConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "OptionsCommon.cmake");
-    if ($cacheFileModifiedTime < stat($globalConfiguration)->mtime) {
-        return 1;
-    }
-
-    my $compilerFlagsCMake = File::Spec->catdir(sourceDir(), "Source", "cmake", "WebKitCompilerFlags.cmake");
-    if ($cacheFileModifiedTime < stat($compilerFlagsCMake)->mtime) {
-        return 1;
+    # Any .cmake file under Source/cmake can influence the generated cache, so
+    # glob them all instead of enumerating by hand. Top level only; use
+    # File::Find if cmake modules ever move into subdirectories.
+    my $cmakeModuleDirectory = File::Spec->catdir(sourceDir(), "Source", "cmake");
+    for my $cmakeFile (bsd_glob(File::Spec->catfile($cmakeModuleDirectory, "*.cmake"))) {
+        if ($cacheFileModifiedTime < stat($cmakeFile)->mtime) {
+            return 1;
+        }
     }
 
     # FIXME: This probably does not work as expected, or the next block to
@@ -2808,15 +2735,8 @@ sub shouldRemoveCMakeCache(@)
         return 1;
     }
 
-    if(isAnyWindows()) {
-        my $winConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "OptionsWin.cmake");
-        if ($cacheFileModifiedTime < stat($winConfiguration)->mtime) {
-            return 1;
-        }
-    }
-
     # If a change on the JHBuild moduleset has been done, we need to clean the cache as well.
-    if (! shouldUseFlatpak() and (isGtk() || isWPE())) {
+    if (isGtk() || isWPE()) {
         my $jhbuildRootDirectory = File::Spec->catdir(getJhbuildPath(), "Root");
         # The script update-webkit-libs-jhbuild shall re-generate $jhbuildRootDirectory if the moduleset changed.
         if (-d $jhbuildRootDirectory && $cacheFileModifiedTime < stat($jhbuildRootDirectory)->mtime) {
@@ -2977,7 +2897,7 @@ sub generateBuildSystemFromCMakeProject
     push @args, '-DSHOW_BINDINGS_GENERATION_PROGRESS=1' unless ($willUseNinja && -t STDOUT);
 
     # Some ports have production mode, but build-webkit should always use developer mode.
-    push @args, "-DDEVELOPER_MODE=ON" unless isAppleWebKit();
+    push @args, "-DDEVELOPER_MODE=ON" if isCMakeBuild();
 
     if (architecture() eq "x86_64" && shouldBuild32Bit()) {
         # CMAKE_LIBRARY_ARCHITECTURE is needed to get the right .pc
@@ -3012,6 +2932,21 @@ sub generateBuildSystemFromCMakeProject
     my $cmakeSourceDir = isCygwin() ? windowsSourceDir() : sourceDir();
     $cmakeSourceDir .= "\\\\" if $cmakeSourceDir =~ /^[A-Za-z]:$/;
     push @args, '"' . $cmakeSourceDir . '"';
+
+    # The GTK and WPE bots build and test with -DENABLE_ASSERTS=ON (both on Release and Debug).
+    # Warn when the local build differs from the CI configuration.
+    if (isGtk() || isWPE()) {
+        # configuration() is the name of the build config and directory, and in the case of a cross-toolchain
+        # build it is something like "Release_rpi4-64bits-mesa" (for example), so this doesn't trigger in that case.
+        # That is intentional: the CI does not enable assertions for cross-toolchain builds, so no need to warn.
+        if (configuration() eq "Release") {
+            my $assertsOn = grep { /^-DENABLE_ASSERTS=ON\b/i } @args;
+            print STDERR "WARNING: Building Release without assertions. Pass --asserts to match the CI build.\n" unless $assertsOn;
+        } elsif (configuration() eq "Debug") {
+            my $assertsOff = grep { /^-DENABLE_ASSERTS=OFF\b/i } @args;
+            print STDERR "WARNING: Building Debug with assertions disabled. Drop --no-asserts to match the CI build.\n" if $assertsOff;
+        }
+    }
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters.
@@ -3846,9 +3781,6 @@ sub updateGtkOrWpeLibs
     } elsif (defined $ENV{'WEBKIT_CROSS_TARGET'} or grep(/^--cross-target/, @ARGV)) {
         exec("$scriptsDir/cross-toolchain-helper", "--build-toolchain", @ARGV)
             or die "Failed to exec cross-toolchain-helper: $!";
-    } elsif (defined $ENV{'WEBKIT_FLATPAK'} and $ENV{'WEBKIT_FLATPAK'}) {
-        exec("$scriptsDir/update-webkit-flatpak", @ARGV)
-            or die "Failed to exec update-webkit-flatpak: $!";
     }
     if (defined $ENV{'WEBKIT_CONTAINER_SDK'} and $ENV{'WEBKIT_CONTAINER_SDK'}) {
         # FIXME: implement a way to check if the update is needed by calling some script at /wkdev-sdk and then print a different message.

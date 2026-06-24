@@ -48,20 +48,24 @@ class GraphicsContext;
 class FontCascadeFonts;
 class FontSelector;
 class LayoutRect;
-class RenderStyle;
 class RenderText;
 class TextLayout;
 class TextRun;
-
-namespace DisplayList {
-class DisplayList;
-}
 
 struct GlyphData;
 struct GlyphGeometryCacheEntry;
 struct GlyphOverflow;
 struct FloatSegment;
 struct TabSize;
+
+namespace DisplayList {
+class DisplayList;
+}
+
+namespace Style {
+// FIXME: This is a layering violation. Platform code should not reference types in the Style namespace.
+class ComputedStyle;
+}
 
 #if USE(CORE_TEXT)
 AffineTransform computeBaseOverallTextMatrix(const std::optional<AffineTransform>& syntheticOblique);
@@ -177,7 +181,8 @@ public:
     static bool NODELETE isCJKIdeograph(char32_t);
     static bool NODELETE isCJKIdeographOrSymbol(char32_t);
 
-    static bool canUseGlyphDisplayList(const RenderStyle&);
+    // FIXME: This is a layering violation. Platform code should not reference types in the Style namespace.
+    static bool canUseGlyphDisplayList(const Style::ComputedStyle&);
 
     // Returns (the number of opportunities, whether the last expansion is a trailing expansion)
     // If there are no opportunities, the bool will be true iff we are forbidding leading expansions.

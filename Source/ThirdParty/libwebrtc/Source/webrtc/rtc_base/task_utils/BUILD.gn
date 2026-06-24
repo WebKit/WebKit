@@ -15,9 +15,7 @@ rtc_library("repeating_task") {
   ]
   deps = [
     "..:checks",
-    "..:logging",
     "..:macromagic",
-    "..:timeutils",
     "../../api:location",
     "../../api:scoped_refptr",
     "../../api:sequence_checker",
@@ -46,6 +44,7 @@ if (rtc_include_tests) {
       "../../system_wrappers",
       "../../test:test_support",
       "//third_party/abseil-cpp/absl/functional:any_invocable",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
   }
 }

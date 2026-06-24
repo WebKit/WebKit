@@ -21,4 +21,7 @@ PASS gFocusedDocument.activeElement.getAttribute("id") is "s12"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "p11"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "p21"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 This test is testing that we prefer focusable elements with absolute positioning over other elements.

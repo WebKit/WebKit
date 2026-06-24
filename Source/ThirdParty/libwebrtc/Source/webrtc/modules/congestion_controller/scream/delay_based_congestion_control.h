@@ -12,11 +12,11 @@
 
 #include <algorithm>
 
-#include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "modules/congestion_controller/scream/scream_feedback.h"
 #include "modules/congestion_controller/scream/scream_v2_parameters.h"
 #include "rtc_base/numerics/windowed_min_filter.h"
 
@@ -31,22 +31,13 @@ class DelayBasedCongestionControl {
  public:
   explicit DelayBasedCongestionControl(ScreamV2Parameters params);
 
-  void OnTransportPacketsFeedback(const TransportPacketsFeedback& msg);
-
-  // Set a limit on how much the reference window can be reduced due to
-  // increased delay.
-  void SetMinDelayBasedBwe(DataRate min_delay_based_bwe) {
-    min_delay_based_bwe_ = min_delay_based_bwe;
-  }
+  void Update(const ScreamFeedback& feedback, bool alr);
 
   // Returns true if queue delay is detected and above a threshold.
   bool IsQueueDelayDetected() const {
     return queue_delay_avg_.IsFinite() &&
            queue_delay_avg_ > params_.queue_delay_target.Get() / 2;
   }
-
-  DataSize UpdateReferenceWindow(DataSize rew_window,
-                                 double ref_window_mss_ratio) const;
 
   // Returns false if the minimum queue delay has been above the drain threshold
   // for a prolonged time. This can happen if minimum possible latency has
@@ -63,29 +54,21 @@ class DelayBasedCongestionControl {
 
   TimeDelta queue_delay() const { return queue_delay_avg_; }
 
-  double queue_delay_dev_norm() const { return queue_delay_dev_norm_; }
+  TimeDelta queue_delay_min_avg() const { return queue_delay_min_avg_; }
+  TimeDelta latency_difference_avg() const { return latency_difference_avg_; }
 
-  // Scales the reference window increase/decrease due to increased delay if L4S
-  // does not appear to be used. See 4.2.2.1.
-  double ref_window_scale_factor_due_to_increased_delay() const {
-    return std::clamp(
-        1 - queue_delay_avg_ / (params_.queue_delay_target.Get() / 4), 0.1,
-        1.0);
-  }
+  // Scale factor used for scaling reference window increase/decrease due to
+  // minimum average queue delay per feedback. The scale factor is 0.1
+  // if the delay is higher than the threshold, and increases linearly to 1.0 if
+  // the delay is lower than the threshold / 4.
+  double ref_window_scale_factor_due_to_avg_min_delay(
+      bool allow_zero = false) const;
 
-  // Scales the reference window increase/decrease due to delay variation.
-  // See 4.2.2.1 and 4.2.2.2. The scale factor is 0.0 if the delay variation
-  // is higher than the threshold, and decreases linearly to 1.0 if the delay
-  // variation is zero.
-  double ref_window_scale_factor_due_to_delay_variation(
-      double ref_window_mss_ratio) const {
-    // 4.2.1.4.
-    double queue_delay_dev_norm_threshold =
-        std::max(0.05, 0.1 * (1.0 - ref_window_mss_ratio / 0.1));
-    return std::clamp((queue_delay_dev_norm_threshold - queue_delay_dev_norm_) /
-                          queue_delay_dev_norm_threshold,
-                      0.0, 1.0);
-  }
+  // Scale factor used for scaling reference window increase if
+  // latency differences per feedback is larger than the threshold. If the send
+  // rate is close to link capacity, the difference between min and max latency
+  // per feedback increases and the scale factor decreases.
+  double ref_window_scale_factor_due_to_latency_difference() const;
 
   TimeDelta rtt() const { return last_smoothed_rtt_; }
 
@@ -95,12 +78,12 @@ class DelayBasedCongestionControl {
   TimeDelta min_base_delay() const {
     return std::min(next_base_delay_, base_delay_history_.GetMin());
   }
-  void UpdateSmoothedRtt(TimeDelta rtt_sample);
+  void UpdateSmoothedRtt(TimeDelta rtt_sample, bool alr);
   void UpdateQueueDelayAverage(TimeDelta one_way_delay);
+  void UpdateQueueDelayMinAverage(TimeDelta packet_qdelay);
+  void UpdateLatencyDifferenceAverage(TimeDelta packet_latency_diff);
 
   const ScreamV2Parameters params_;
-
-  DataRate min_delay_based_bwe_;
 
   // For computing min one way delay and compensate for clock drift.
   // Based on https://datatracker.ietf.org/doc/html/rfc6817
@@ -110,9 +93,12 @@ class DelayBasedCongestionControl {
 
   Timestamp min_queue_delay_above_threshold_start_ = Timestamp::MinusInfinity();
   TimeDelta last_smoothed_rtt_ = TimeDelta::Zero();
+
   Timestamp last_update_qdelay_avg_time_ = Timestamp::MinusInfinity();
+  TimeDelta last_queue_delay_sample_ = TimeDelta::PlusInfinity();
   TimeDelta queue_delay_avg_ = TimeDelta::PlusInfinity();
-  double queue_delay_dev_norm_ = 0.0;
+  TimeDelta queue_delay_min_avg_ = TimeDelta::Zero();
+  TimeDelta latency_difference_avg_ = TimeDelta::Zero();
 };
 
 }  // namespace webrtc

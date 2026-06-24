@@ -23,23 +23,25 @@
 #include <openssl/mem.h>
 
 #include "../../internal.h"
+#include "../../mem_internal.h"
 #include "internal.h"
 
 
-void bn_mont_ctx_init(BN_MONT_CTX *mont) {
+using namespace bssl;
+
+void bssl::bn_mont_ctx_init(BN_MONT_CTX *mont) {
   OPENSSL_memset(mont, 0, sizeof(BN_MONT_CTX));
   BN_init(&mont->RR);
   BN_init(&mont->N);
 }
 
-void bn_mont_ctx_cleanup(BN_MONT_CTX *mont) {
+void bssl::bn_mont_ctx_cleanup(BN_MONT_CTX *mont) {
   BN_free(&mont->RR);
   BN_free(&mont->N);
 }
 
-BN_MONT_CTX *BN_MONT_CTX_new(void) {
-  BN_MONT_CTX *ret =
-      reinterpret_cast<BN_MONT_CTX *>(OPENSSL_malloc(sizeof(BN_MONT_CTX)));
+BN_MONT_CTX *BN_MONT_CTX_new() {
+  BN_MONT_CTX *ret = New<BN_MONT_CTX>();
   if (ret == nullptr) {
     return nullptr;
   }
@@ -53,7 +55,7 @@ void BN_MONT_CTX_free(BN_MONT_CTX *mont) {
     return;
   }
   bn_mont_ctx_cleanup(mont);
-  OPENSSL_free(mont);
+  Delete(mont);
 }
 
 BN_MONT_CTX *BN_MONT_CTX_copy(BN_MONT_CTX *to, const BN_MONT_CTX *from) {
@@ -163,23 +165,21 @@ BN_MONT_CTX *BN_MONT_CTX_new_consttime(const BIGNUM *mod, BN_CTX *ctx) {
   return mont;
 }
 
-int BN_MONT_CTX_set_locked(BN_MONT_CTX **pmont, CRYPTO_MUTEX *lock,
-                           const BIGNUM *mod, BN_CTX *bn_ctx) {
-  CRYPTO_MUTEX_lock_read(lock);
-  BN_MONT_CTX *ctx = *pmont;
-  CRYPTO_MUTEX_unlock_read(lock);
+int bssl::BN_MONT_CTX_set_locked(UniquePtr<BN_MONT_CTX> *pmont, Mutex *lock,
+                                 const BIGNUM *mod, BN_CTX *bn_ctx) {
+  lock->LockRead();
+  BN_MONT_CTX *ctx = pmont->get();
+  lock->UnlockRead();
 
   if (ctx) {
     return 1;
   }
 
-  CRYPTO_MUTEX_lock_write(lock);
+  MutexWriteLock write_lock(lock);
   if (*pmont == nullptr) {
-    *pmont = BN_MONT_CTX_new_for_modulus(mod, bn_ctx);
+    pmont->reset(BN_MONT_CTX_new_for_modulus(mod, bn_ctx));
   }
-  const int ok = *pmont != nullptr;
-  CRYPTO_MUTEX_unlock_write(lock);
-  return ok;
+  return *pmont != nullptr;
 }
 
 int BN_to_montgomery(BIGNUM *ret, const BIGNUM *a, const BN_MONT_CTX *mont,
@@ -240,7 +240,7 @@ static int BN_from_montgomery_word(BIGNUM *ret, BIGNUM *r,
 
 int BN_from_montgomery(BIGNUM *r, const BIGNUM *a, const BN_MONT_CTX *mont,
                        BN_CTX *ctx) {
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *t = BN_CTX_get(ctx);
   if (t == nullptr || !BN_copy(t, a)) {
     return 0;
@@ -249,7 +249,8 @@ int BN_from_montgomery(BIGNUM *r, const BIGNUM *a, const BN_MONT_CTX *mont,
   return BN_from_montgomery_word(r, t, mont);
 }
 
-int bn_one_to_montgomery(BIGNUM *r, const BN_MONT_CTX *mont, BN_CTX *ctx) {
+int bssl::bn_one_to_montgomery(BIGNUM *r, const BN_MONT_CTX *mont,
+                               BN_CTX *ctx) {
   // If the high bit of |n| is set, R = 2^(width*BN_BITS2) < 2 * |n|, so we
   // compute R - |n| rather than perform Montgomery reduction.
   const BIGNUM *n = &mont->N;
@@ -273,7 +274,7 @@ static int bn_mod_mul_montgomery_fallback(BIGNUM *r, const BIGNUM *a,
                                           const BIGNUM *b,
                                           const BN_MONT_CTX *mont,
                                           BN_CTX *ctx) {
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
   if (tmp == nullptr) {
     return 0;
@@ -324,17 +325,18 @@ int BN_mod_mul_montgomery(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
   return bn_mod_mul_montgomery_fallback(r, a, b, mont, ctx);
 }
 
-int bn_less_than_montgomery_R(const BIGNUM *bn, const BN_MONT_CTX *mont) {
+int bssl::bn_less_than_montgomery_R(const BIGNUM *bn, const BN_MONT_CTX *mont) {
   return !BN_is_negative(bn) && bn_fits_in_words(bn, mont->N.width);
 }
 
-void bn_to_montgomery_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
-                            const BN_MONT_CTX *mont) {
+void bssl::bn_to_montgomery_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
+                                  const BN_MONT_CTX *mont) {
   bn_mod_mul_montgomery_small(r, a, mont->RR.d, num, mont);
 }
 
-void bn_from_montgomery_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a,
-                              size_t num_a, const BN_MONT_CTX *mont) {
+void bssl::bn_from_montgomery_small(BN_ULONG *r, size_t num_r,
+                                    const BN_ULONG *a, size_t num_a,
+                                    const BN_MONT_CTX *mont) {
   if (num_r != (size_t)mont->N.width || num_r > BN_SMALL_MAX_WORDS ||
       num_a > 2 * num_r) {
     abort();
@@ -347,9 +349,9 @@ void bn_from_montgomery_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a,
   OPENSSL_cleanse(tmp, 2 * num_r * sizeof(BN_ULONG));
 }
 
-void bn_mod_mul_montgomery_small(BN_ULONG *r, const BN_ULONG *a,
-                                 const BN_ULONG *b, size_t num,
-                                 const BN_MONT_CTX *mont) {
+void bssl::bn_mod_mul_montgomery_small(BN_ULONG *r, const BN_ULONG *a,
+                                       const BN_ULONG *b, size_t num,
+                                       const BN_MONT_CTX *mont) {
   if (num != (size_t)mont->N.width || num > BN_SMALL_MAX_WORDS) {
     abort();
   }
@@ -378,8 +380,9 @@ void bn_mod_mul_montgomery_small(BN_ULONG *r, const BN_ULONG *a,
 }
 
 #if defined(OPENSSL_BN_ASM_MONT) && defined(OPENSSL_X86_64)
-void bn_mul_mont_words(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
-                       const BN_ULONG *np, const BN_ULONG *n0, size_t num) {
+void bssl::bn_mul_mont_words(BN_ULONG *rp, const BN_ULONG *ap,
+                             const BN_ULONG *bp, const BN_ULONG *np,
+                             const BN_ULONG *n0, size_t num) {
   if (ap == bp && bn_sqr8x_mont_capable(num)) {
     bn_sqr8x_mont(rp, ap, bn_mulx_adx_capable(), np, n0, num);
   } else if (bn_mulx4x_mont_capable(num)) {
@@ -393,8 +396,9 @@ void bn_mul_mont_words(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
 #endif
 
 #if defined(OPENSSL_BN_ASM_MONT) && defined(OPENSSL_ARM)
-void bn_mul_mont_words(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
-                       const BN_ULONG *np, const BN_ULONG *n0, size_t num) {
+void bssl::bn_mul_mont_words(BN_ULONG *rp, const BN_ULONG *ap,
+                             const BN_ULONG *bp, const BN_ULONG *np,
+                             const BN_ULONG *n0, size_t num) {
   if (bn_mul8x_mont_neon_capable(num)) {
     bn_mul8x_mont_neon(rp, ap, bp, np, n0, num);
   } else {

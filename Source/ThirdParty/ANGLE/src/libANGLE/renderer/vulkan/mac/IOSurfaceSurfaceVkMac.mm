@@ -173,6 +173,9 @@ egl::Error IOSurfaceSurfaceVkMac::bindTexImage(const gl::Context *context,
     pixelUnpack.rowLength   = static_cast<GLint>(rowLengthInPixels);
     pixelUnpack.imageHeight = static_cast<GLint>(height);
 
+    const gl::Offset offset{};
+    const gl::Extents extents(static_cast<int>(width), pixelUnpack.imageHeight, 1);
+
     void *source = IOSurfaceGetBaseAddressOfPlane(mIOSurface, mPlane);
 
     const gl::InternalFormat &internalFormatInfo =
@@ -180,12 +183,23 @@ egl::Error IOSurfaceSurfaceVkMac::bindTexImage(const gl::Context *context,
     const vk::Format &format =
         renderer->getFormat(kIOSurfaceFormats[mFormatIndex].nativeSizedInternalFormat);
 
+    GLuint inputRowPitch   = 0;
+    GLuint inputDepthPitch = 0;
+    GLuint inputSkipBytes  = 0;
+    angle::Result result   = mColorAttachment.image.calculateBufferInfo(
+        contextVk, extents, internalFormatInfo, pixelUnpack, kIOSurfaceFormats[mFormatIndex].type,
+        false, &inputRowPitch, &inputDepthPitch, &inputSkipBytes);
+
+    if (result != angle::Result::Continue)
+    {
+        return angle::ToEGL(result, EGL_BAD_SURFACE);
+    }
+
     bool updateAppliedImmediately = false;
-    angle::Result result          = mColorAttachment.image.stageSubresourceUpdate(
-        contextVk, gl::ImageIndex::Make2D(0),
-        gl::Extents(static_cast<int>(width), pixelUnpack.imageHeight, 1), gl::Offset(),
-        internalFormatInfo, pixelUnpack, kIOSurfaceFormats[mFormatIndex].type,
-        reinterpret_cast<uint8_t *>(source), format, vk::ImageFormatSupport::Renderable,
+    result                        = mColorAttachment.image.stageSubresourceUpdate(
+        contextVk, gl::ImageIndex::Make2D(0), extents, offset, internalFormatInfo,
+        kIOSurfaceFormats[mFormatIndex].type, reinterpret_cast<uint8_t *>(source), format,
+        vk::ImageFormatSupport::Renderable, inputRowPitch, inputDepthPitch, inputSkipBytes,
         vk::ApplyImageUpdate::Defer, &updateAppliedImmediately);
 
     IOSurfaceUnlock(mIOSurface, 0, nullptr);

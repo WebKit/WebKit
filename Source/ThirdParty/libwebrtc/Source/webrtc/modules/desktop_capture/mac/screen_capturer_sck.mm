@@ -25,8 +25,6 @@
 #include "sck_picker_handle.h"
 #include "sdk/objc/helpers/scoped_cftyperef.h"
 
-using webrtc::DesktopFrameIOSurface;
-
 namespace webrtc {
 class ScreenCapturerSck;
 }  // namespace webrtc

@@ -46,9 +46,9 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
 #include "RenderScrollbar.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
 #include <wtf/StackStats.h>
@@ -61,7 +61,7 @@ using namespace HTMLNames;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlSingleLine);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlInnerBlock);
 
-RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, RenderStyle&& style)
+RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, Style::ComputedStyle&& style)
     : RenderTextControl(type, element, WTF::move(style))
 {
     ASSERT(isRenderTextControlSingleLine());
@@ -71,7 +71,7 @@ RenderTextControlSingleLine::~RenderTextControlSingleLine() = default;
 
 inline HTMLElement* RenderTextControlSingleLine::innerSpinButtonElement() const
 {
-    return inputElement().innerSpinButtonElement();
+    return protect(inputElement())->innerSpinButtonElement();
 }
 
 static void resetOverriddenHeight(RenderBox* box, const RenderObject* ancestor)
@@ -163,7 +163,7 @@ void RenderTextControlSingleLine::layout()
             if (!inputElement().hasAutofillStrongPasswordButton())
                 return nullptr;
 
-            RefPtr autoFillButtonElement = inputElement().autoFillButtonElement();
+            RefPtr autoFillButtonElement = protect(inputElement())->autoFillButtonElement();
             if (!autoFillButtonElement)
                 return nullptr;
 
@@ -222,7 +222,7 @@ void RenderTextControlSingleLine::layout()
 
     bool innerTextSizeChanged = innerTextRenderer && innerTextRenderer->size() != oldInnerTextSize;
 
-    RefPtr placeholderElement = inputElement().placeholderElement();
+    RefPtr placeholderElement = protect(inputElement())->placeholderElement();
     if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
         auto innerTextWidth = LayoutUnit { };
         auto usedZoomForLength = placeholderBox->style().usedZoomForLength().value;
@@ -306,7 +306,7 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     return true;
 }
 
-void RenderTextControlSingleLine::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderTextControlSingleLine::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderTextControl::styleDidChange(diff, oldStyle);
 
@@ -325,7 +325,7 @@ void RenderTextControlSingleLine::styleDidChange(Style::Difference diff, const R
     if (diff == Style::DifferenceResult::Layout) {
         if (CheckedPtr innerTextRenderer = this->innerTextRenderer())
             innerTextRenderer->setNeedsLayout(MarkingBehavior::MarkContainingBlockChain);
-        if (RefPtr placeholder = inputElement().placeholderElement()) {
+        if (RefPtr placeholder = protect(inputElement())->placeholderElement()) {
             if (placeholder->renderer())
                 placeholder->renderer()->setNeedsLayout(MarkingBehavior::MarkContainingBlockChain);
         }
@@ -338,14 +338,14 @@ bool RenderTextControlSingleLine::hasControlClip() const
     auto shouldClipInnerContent = [&] {
         // Apply control clip for text fields with decorations.
         RenderBox* innerRenderBox = nullptr;
-        if (auto* containerElement = inputElement().containerElement())
+        if (auto* containerElement = protect(inputElement())->containerElement())
             innerRenderBox = containerElement->renderBox();
 
-        if (!innerRenderBox && inputElement().placeholderElement())
-            innerRenderBox = inputElement().placeholderElement()->renderBox();
+        if (!innerRenderBox && protect(inputElement())->placeholderElement())
+            innerRenderBox = protect(inputElement())->placeholderElement()->renderBox();
 
-        if (!innerRenderBox && inputElement().innerTextElement())
-            innerRenderBox = inputElement().innerTextElement()->renderBox();
+        if (!innerRenderBox && protect(inputElement())->innerTextElement())
+            innerRenderBox = protect(inputElement())->innerTextElement()->renderBox();
 
         return !!innerRenderBox;
     };
@@ -386,7 +386,7 @@ float RenderTextControlSingleLine::getAverageCharWidth()
 LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charWidth) const
 {
     int factor = 0;
-    bool includesDecoration = inputElement().sizeShouldIncludeDecoration(factor);
+    bool includesDecoration = protect(inputElement())->sizeShouldIncludeDecoration(factor);
     if (factor <= 0)
         factor = 20;
 
@@ -411,7 +411,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
         result += maxCharWidth - charWidth;
 
     if (includesDecoration)
-        result += inputElement().decorationWidth(result);
+        result += protect(inputElement())->decorationWidth(result);
 
     if (CheckedPtr innerTextRenderer = this->innerTextRenderer())
         result += innerTextRenderer->endPaddingWidthForCaret();
@@ -518,7 +518,7 @@ RenderTextControlInnerBlock* RenderTextControlSingleLine::innerTextRenderer() co
     return innerTextElement() ? innerTextElement()->renderer() : nullptr;
 }
 
-RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, RenderStyle&& style)
+RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, Style::ComputedStyle&& style)
     : RenderBlockFlow(Type::TextControlInnerBlock, element, WTF::move(style))
 {
     ASSERT(isRenderTextControlInnerBlock());

@@ -95,6 +95,10 @@ class DataChannelSink {
   // The data channel's buffered_amount has fallen to or below the threshold
   // set when calling `SetBufferedAmountLowThreshold`
   virtual void OnBufferedAmountLow(int channel_id) = 0;
+
+  // The data channel's max-message-size has changed as a result of SDP
+  // negotiation.
+  virtual void OnMaxMessageSize(int max_message_size) = 0;
 };
 
 // Transport for data channels.

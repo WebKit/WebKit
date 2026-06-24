@@ -73,7 +73,7 @@ public:
         return *m_animatedSMILStyleProperties;
     }
 
-    inline const RenderStyle* overrideComputedStyle(Element&, const RenderStyle* parentStyle);
+    inline const Style::ComputedStyle* overrideComputedStyle(Element&, const Style::ComputedStyle* parentStyle);
 
     bool useOverrideComputedStyle() const { return m_useOverrideComputedStyle; }
     void setUseOverrideComputedStyle(bool value) { m_useOverrideComputedStyle = value; }
@@ -99,7 +99,7 @@ private:
     bool m_useOverrideComputedStyle : 1;
     bool m_needsOverrideComputedStyleUpdate : 1;
     RefPtr<MutableStyleProperties> m_animatedSMILStyleProperties;
-    std::unique_ptr<RenderStyle> m_overrideComputedStyle;
+    std::unique_ptr<Style::ComputedStyle> m_overrideComputedStyle;
     std::unique_ptr<SVGConditionalProcessingAttributes> m_conditionalProcessingAttributes;
 };
 

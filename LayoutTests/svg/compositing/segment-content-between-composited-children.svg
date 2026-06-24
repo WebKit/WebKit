@@ -1,0 +1,9 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Non-composited content between two composited children must not be skipped. With A, C, E non-composited and B, D composited, C paints into the overlay segment between B and D. -->
+    <rect x="10" y="10" width="60" height="60" fill="blue"/>
+    <rect style="will-change: transform" x="80" y="10" width="60" height="60" fill="green"/>
+    <rect x="150" y="10" width="60" height="60" fill="red"/>
+    <rect style="will-change: transform" x="220" y="10" width="60" height="60" fill="orange"/>
+    <rect x="290" y="10" width="60" height="60" fill="purple"/>
+</svg>

@@ -122,8 +122,6 @@ private:
     bool m_predefinedCounterStyle { false };
     CSSCounterStyleDescriptors::Name m_fallbackName;
     WeakPtr<const CSSRegisteredCounterStyle> m_fallbackReference { nullptr };
-    WeakPtr<const CSSRegisteredCounterStyle> m_extendsReference { nullptr };
     bool m_isFallingBack { false };
-    bool m_isExtendedUnresolved { true };
 };
 } // namespace WebCore

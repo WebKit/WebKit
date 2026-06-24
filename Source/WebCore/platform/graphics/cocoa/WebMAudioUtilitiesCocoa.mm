@@ -462,7 +462,10 @@ Vector<uint8_t> createOpusPrivateData(const AudioStreamBasicDescription& descrip
 }
 
 #if ENABLE(VORBIS)
+#if !defined(WEBCORE_kAudioFormatVorbis_DEFINED)
+#define WEBCORE_kAudioFormatVorbis_DEFINED
 static constexpr uint32_t kAudioFormatVorbis = 'vorb';
+#endif
 
 static Vector<uint8_t> cookieFromVorbisCodecPrivate(std::span<const uint8_t> codecPrivateData)
 {

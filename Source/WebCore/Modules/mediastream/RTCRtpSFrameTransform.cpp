@@ -107,7 +107,7 @@ uint64_t RTCRtpSFrameTransform::keyIdForTesting() const
 
 bool RTCRtpSFrameTransform::isAttached() const
 {
-    return m_isAttached || (m_readable && m_readable->isLocked()) || (m_writable && m_writable->locked());
+    return m_isAttached || (m_readable && protect(m_readable)->isLocked()) || (m_writable && protect(m_writable)->locked());
 }
 
 static RTCRtpSFrameTransformErrorEvent::Type NODELETE errorTypeFromInformation(const RTCRtpSFrameTransformer::ErrorInformation& errorInformation)
@@ -160,9 +160,9 @@ void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backen
 
     m_isAttached = true;
     if (m_readable)
-        m_readable->lock();
+        protect(m_readable)->lock();
     if (m_writable)
-        m_writable->lock();
+        protect(m_writable)->lock();
 
     m_transformer->setIsEncrypting(side == Side::Sender);
     m_transformer->setMediaType(backend.mediaType());
@@ -178,7 +178,7 @@ void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backen
 
         frame->setData(result.value().span());
 
-        backend->processTransformedFrame(frame.get());
+        backend->processTransformedFrame(protect(frame.get()));
     });
 }
 
@@ -264,8 +264,8 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
     m_readable = readable.releaseReturnValue();
     m_writable = writable.releaseReturnValue();
     if (m_isAttached) {
-        m_readable->lock();
-        m_writable->lock();
+        protect(m_readable)->lock();
+        protect(m_writable)->lock();
     }
     return { };
 }

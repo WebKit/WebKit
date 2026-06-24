@@ -144,6 +144,16 @@
     return _impl->hasFlagsChangedEventMonitor();
 }
 
+- (CGFloat)_fullScreenTitlebarOverlayHeightForTesting
+{
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    return _impl->fullScreenTitlebarOverlayHeight();
+#else
+    return 0;
+#endif
+}
+
+
 @end
 
 #endif // PLATFORM(MAC)

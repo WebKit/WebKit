@@ -10,6 +10,6 @@ layer at (0,0) size 800x39
         RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 15x23 clip at (13,13) size 5x13
   RenderMenuList {SELECT} at (0,0) size 15x23 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
-    RenderSelectFallbackButton {DIV} at (5,5) size 5x13
-      RenderText at (-9999,0) size 0x13
+    RenderBlock {DIV} at (5,5) size 5x13
+      RenderText {#text} at (-9999,0) size 0x13
         text run at (-9999,0) width 0: " "

@@ -15,22 +15,24 @@
 #include "rtc_base/trace_event.h"
 #include "test/gtest.h"
 
+namespace webrtc {
+
 namespace {
 
 class TestStatistics {
  public:
   void Reset() {
-    webrtc::MutexLock lock(&mutex_);
+    MutexLock lock(&mutex_);
     events_logged_ = 0;
   }
 
   void Increment() {
-    webrtc::MutexLock lock(&mutex_);
+    MutexLock lock(&mutex_);
     ++events_logged_;
   }
 
   int Count() const {
-    webrtc::MutexLock lock(&mutex_);
+    MutexLock lock(&mutex_);
     return events_logged_;
   }
 
@@ -41,13 +43,11 @@ class TestStatistics {
   }
 
  private:
-  mutable webrtc::Mutex mutex_;
+  mutable Mutex mutex_;
   int events_logged_ RTC_GUARDED_BY(mutex_) = 0;
 };
 
 }  // namespace
-
-namespace webrtc {
 
 TEST(EventTracerTest, EventTracerDisabled) {
   { TRACE_EVENT0("webrtc-test", "EventTracerDisabled"); }

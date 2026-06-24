@@ -26,6 +26,7 @@
 #include <openssl/mem.h>
 #include <openssl/span.h>
 
+#include "../crypto/bytestring/internal.h"
 #include "../crypto/internal.h"
 #include "internal.h"
 
@@ -33,15 +34,23 @@
 BSSL_NAMESPACE_BEGIN
 
 bool ssl_is_key_type_supported(int key_type) {
-  return key_type == EVP_PKEY_RSA || key_type == EVP_PKEY_EC ||
-         key_type == EVP_PKEY_ED25519;
+  switch (key_type) {
+    case EVP_PKEY_RSA:
+    case EVP_PKEY_EC:
+    case EVP_PKEY_ED25519:
+    case EVP_PKEY_ML_DSA_44:
+    case EVP_PKEY_ML_DSA_65:
+    case EVP_PKEY_ML_DSA_87:
+      return true;
+  }
+  return false;
 }
 
 typedef struct {
   uint16_t sigalg;
   int pkey_type;
   int curve;
-  const EVP_MD *(*digest_func)(void);
+  const EVP_MD *(*digest_func)();
   bool is_rsa_pss;
   bool tls12_ok;
   bool tls13_ok;
@@ -67,7 +76,7 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
      /*client_only=*/false},
 
     // Legacy PKCS#1 v1.5 code points are only allowed in TLS 1.3 and
-    // client-only. See draft-ietf-tls-tls13-pkcs1-00.
+    // client-only. See RFC 9963.
     {SSL_SIGN_RSA_PKCS1_SHA256_LEGACY, EVP_PKEY_RSA, NID_undef, &EVP_sha256,
      /*is_rsa_pss=*/false, /*tls12_ok=*/false, /*tls13_ok=*/true,
      /*client_only=*/true},
@@ -98,6 +107,16 @@ static const SSL_SIGNATURE_ALGORITHM kSignatureAlgorithms[] = {
     {SSL_SIGN_ED25519, EVP_PKEY_ED25519, NID_undef, nullptr,
      /*is_rsa_pss=*/false, /*tls12_ok=*/true, /*tls13_ok=*/true,
      /*client_only=*/false},
+
+    {SSL_SIGN_ML_DSA_44, EVP_PKEY_ML_DSA_44, NID_undef, nullptr,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/false, /*tls13_ok=*/true,
+     /*client_only=*/false},
+    {SSL_SIGN_ML_DSA_65, EVP_PKEY_ML_DSA_65, NID_undef, nullptr,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/false, /*tls13_ok=*/true,
+     /*client_only=*/false},
+    {SSL_SIGN_ML_DSA_87, EVP_PKEY_ML_DSA_87, NID_undef, nullptr,
+     /*is_rsa_pss=*/false, /*tls12_ok=*/false, /*tls13_ok=*/true,
+     /*client_only=*/false},
 };
 
 static const SSL_SIGNATURE_ALGORITHM *get_signature_algorithm(uint16_t sigalg) {
@@ -115,8 +134,9 @@ bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
   // code elimination, but for now we just specify every algorithm that might be
   // reachable from libssl.
   const EVP_PKEY_ALG *const algs[] = {
-      EVP_pkey_rsa(),     EVP_pkey_ec_p256(), EVP_pkey_ec_p384(),
-      EVP_pkey_ec_p521(), EVP_pkey_ed25519(),
+      EVP_pkey_rsa(),       EVP_pkey_ec_p256(),   EVP_pkey_ec_p384(),
+      EVP_pkey_ec_p521(),   EVP_pkey_ed25519(),   EVP_pkey_ml_dsa_44(),
+      EVP_pkey_ml_dsa_65(), EVP_pkey_ml_dsa_87(),
   };
   return bssl::UniquePtr<EVP_PKEY>(EVP_PKEY_from_subject_public_key_info(
       spki.data(), spki.size(), algs, std::size(algs)));
@@ -210,7 +230,7 @@ enum ssl_private_key_result_t ssl_private_key_sign(
     SSL_HANDSHAKE *hs, uint8_t *out, size_t *out_len, size_t max_out,
     uint16_t sigalg, Span<const uint8_t> in) {
   SSL *const ssl = hs->ssl;
-  const SSL_CREDENTIAL *const cred = hs->credential.get();
+  const SSLCredential *const cred = hs->credential.get();
   SSL_HANDSHAKE_HINTS *const hints = hs->hints.get();
   Array<uint8_t> spki;
   if (hints) {
@@ -241,8 +261,16 @@ enum ssl_private_key_result_t ssl_private_key_sign(
   assert(!hs->can_release_private_key);
 
   if (key_method != nullptr) {
+    if (key_method->sign == nullptr) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+      return ssl_private_key_failure;
+    }
     enum ssl_private_key_result_t ret;
     if (hs->pending_private_key_op) {
+      if (key_method->complete == nullptr) {
+        OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+        return ssl_private_key_failure;
+      }
       ret = key_method->complete(ssl, out, out_len, max_out);
     } else {
       ret = key_method->sign(ssl, out, out_len, max_out, sigalg, in.data(),
@@ -298,11 +326,19 @@ enum ssl_private_key_result_t ssl_private_key_decrypt(SSL_HANDSHAKE *hs,
                                                       size_t max_out,
                                                       Span<const uint8_t> in) {
   SSL *const ssl = hs->ssl;
-  const SSL_CREDENTIAL *const cred = hs->credential.get();
+  const SSLCredential *const cred = hs->credential.get();
   assert(!hs->can_release_private_key);
   if (cred->key_method != nullptr) {
+    if (cred->key_method->decrypt == nullptr) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+      return ssl_private_key_failure;
+    }
     enum ssl_private_key_result_t ret;
     if (hs->pending_private_key_op) {
+      if (cred->key_method->complete == nullptr) {
+        OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+        return ssl_private_key_failure;
+      }
       ret = cred->key_method->complete(ssl, out, out_len, max_out);
     } else {
       ret = cred->key_method->decrypt(ssl, out, out_len, max_out, in.data(),
@@ -420,8 +456,8 @@ int SSL_CTX_use_PrivateKey(SSL_CTX *ctx, EVP_PKEY *pkey) {
     return 0;
   }
 
-  return SSL_CREDENTIAL_set1_private_key(ctx->cert->legacy_credential.get(),
-                                         pkey);
+  return SSL_CREDENTIAL_set1_private_key(
+      FromOpaque(ctx)->cert->legacy_credential.get(), pkey);
 }
 
 int SSL_CTX_use_PrivateKey_ASN1(int type, SSL_CTX *ctx, const uint8_t *der,
@@ -453,7 +489,7 @@ void SSL_set_private_key_method(SSL *ssl,
 void SSL_CTX_set_private_key_method(SSL_CTX *ctx,
                                     const SSL_PRIVATE_KEY_METHOD *key_method) {
   BSSL_CHECK(SSL_CREDENTIAL_set_private_key_method(
-      ctx->cert->legacy_credential.get(), key_method));
+      FromOpaque(ctx)->cert->legacy_credential.get(), key_method));
 }
 
 static constexpr size_t kMaxSignatureAlgorithmNameLen = 24;
@@ -480,6 +516,9 @@ static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_RSA_PSS_RSAE_SHA384, "rsa_pss_rsae_sha384"},
     {SSL_SIGN_RSA_PSS_RSAE_SHA512, "rsa_pss_rsae_sha512"},
     {SSL_SIGN_ED25519, "ed25519"},
+    {SSL_SIGN_ML_DSA_44, "mldsa44"},
+    {SSL_SIGN_ML_DSA_65, "mldsa65"},
+    {SSL_SIGN_ML_DSA_87, "mldsa87"},
 };
 
 const char *SSL_get_signature_algorithm_name(uint16_t sigalg,
@@ -596,25 +635,26 @@ static bool set_sigalg_prefs(Array<uint16_t> *out, Span<const uint16_t> prefs) {
 int SSL_CREDENTIAL_set1_signing_algorithm_prefs(SSL_CREDENTIAL *cred,
                                                 const uint16_t *prefs,
                                                 size_t num_prefs) {
-  if (!cred->UsesPrivateKey()) {
+  auto *cred_impl = FromOpaque(cred);
+  if (!cred_impl->UsesPrivateKey()) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
   }
 
   // Delegated credentials are constrained to a single algorithm, so there is no
   // need to configure this.
-  if (cred->type == SSLCredentialType::kDelegated) {
+  if (cred_impl->type == SSLCredentialType::kDelegated) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
   }
 
-  return set_sigalg_prefs(&cred->sigalgs, Span(prefs, num_prefs));
+  return set_sigalg_prefs(&cred_impl->sigalgs, Span(prefs, num_prefs));
 }
 
 int SSL_CTX_set_signing_algorithm_prefs(SSL_CTX *ctx, const uint16_t *prefs,
                                         size_t num_prefs) {
   return SSL_CREDENTIAL_set1_signing_algorithm_prefs(
-      ctx->cert->legacy_credential.get(), prefs, num_prefs);
+      FromOpaque(ctx)->cert->legacy_credential.get(), prefs, num_prefs);
 }
 
 int SSL_set_signing_algorithm_prefs(SSL *ssl, const uint16_t *prefs,
@@ -643,6 +683,9 @@ static constexpr struct {
     {EVP_PKEY_EC, NID_sha384, SSL_SIGN_ECDSA_SECP384R1_SHA384},
     {EVP_PKEY_EC, NID_sha512, SSL_SIGN_ECDSA_SECP521R1_SHA512},
     {EVP_PKEY_ED25519, NID_undef, SSL_SIGN_ED25519},
+    {EVP_PKEY_ML_DSA_44, NID_undef, SSL_SIGN_ML_DSA_44},
+    {EVP_PKEY_ML_DSA_65, NID_undef, SSL_SIGN_ML_DSA_65},
+    {EVP_PKEY_ML_DSA_87, NID_undef, SSL_SIGN_ML_DSA_87},
 };
 
 static bool parse_sigalg_pairs(Array<uint16_t> *out, const int *values,
@@ -904,7 +947,8 @@ int SSL_set1_sigalgs_list(SSL *ssl, const char *str) {
 
 int SSL_CTX_set_verify_algorithm_prefs(SSL_CTX *ctx, const uint16_t *prefs,
                                        size_t num_prefs) {
-  return set_sigalg_prefs(&ctx->verify_sigalgs, Span(prefs, num_prefs));
+  return set_sigalg_prefs(&FromOpaque(ctx)->verify_sigalgs,
+                          Span(prefs, num_prefs));
 }
 
 int SSL_set_verify_algorithm_prefs(SSL *ssl, const uint16_t *prefs,

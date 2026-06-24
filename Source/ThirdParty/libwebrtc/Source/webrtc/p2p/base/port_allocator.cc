@@ -338,11 +338,6 @@ Candidate PortAllocator::SanitizeCandidate(const Candidate& c) const {
 }
 
 void PortAllocatorSession::SubscribePortReady(
-    absl::AnyInvocable<void(PortAllocatorSession*, PortInterface*)> callback) {
-  port_ready_callbacks_.AddReceiver(std::move(callback));
-}
-
-void PortAllocatorSession::SubscribePortReady(
     void* tag,
     absl::AnyInvocable<void(PortAllocatorSession*, PortInterface*)> callback) {
   port_ready_callbacks_.AddReceiver(tag, std::move(callback));

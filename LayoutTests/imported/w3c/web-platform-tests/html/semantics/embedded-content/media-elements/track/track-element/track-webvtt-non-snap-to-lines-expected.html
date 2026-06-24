@@ -19,7 +19,7 @@
 }
 </style>
 <div class="container">
-  <video autoplay onplaying="this.onplaying = null; waitForActiveCueAndTakeScreenshot();">
+  <video autoplay onplaying="this.onplaying = null; this.pause(); takeScreenshot();">
     <script>
     document.currentScript.parentNode.src = getVideoURI("/media/test");
     </script>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -11,8 +11,6 @@
         window.internals.enableMockSpeechSynthesizer();
 
     window.jsTestIsAsync = true;
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     var utterance = new SpeechSynthesisUtterance("this is a test");
     count = 10;
@@ -30,5 +28,4 @@
     // so we make gc happen after first speaking.
     setTimeout(() => { gc(); }, 150);
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>

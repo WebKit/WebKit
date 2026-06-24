@@ -542,7 +542,7 @@ bool dtls_seal_record(SSL *ssl, DTLSRecordNumber *out_number, uint8_t *out,
     // would require coordinating with the application on ACK feedback to know
     // that the peer is not too far behind.
     CRYPTO_store_u16_be(out + 1, write_epoch->next_record.sequence());
-    // TODO(crbug.com/42290594): When we know the record is last in the packet,
+    // TODO(crbug.com/383078467): When we know the record is last in the packet,
     // omit the length.
     CRYPTO_store_u16_be(out + 3, ciphertext_len);
   } else {

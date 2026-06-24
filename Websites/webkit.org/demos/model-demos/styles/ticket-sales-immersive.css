@@ -1,0 +1,49 @@
+/* Floating "Exit Immersive" button on the seat map (visible when popup is closed) */
+.seatmap-exit-btn {
+    position: absolute;
+    z-index: 2;
+    bottom: 16px;
+    left: 16px;
+    border-color: rgba(225, 29, 72, 0.3);
+    background: #9f123a;
+    color: #fda4af;
+}
+
+/* Popup immersive button — enter/exit, content updated via JS. */
+.immersive-btn {
+    border-color: rgba(225, 29, 72, 0.3);
+    background: #780a28;
+    color: #ffe4e6;
+}
+
+/* Centered "Immersive" title — replaces the inline model render when immersive */
+.immersive-title {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #fda4af;
+    pointer-events: none;
+    text-shadow:
+        0 0 20px rgba(225, 29, 72, 0.8),
+        0 0 60px rgba(225, 29, 72, 0.4);
+}
+
+/* Immersive-mode overrides: solid overlay, swap pill icon, reveal title */
+.seat-preview.immersive .preview-overlay {
+    background: #141416;
+}
+
+.seat-preview.immersive .immersive-btn img {
+    content: url(../images/svg/exit-immersive.svg);
+}
+
+.seat-preview.immersive .immersive-title {
+    display: flex;
+}

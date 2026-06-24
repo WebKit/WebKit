@@ -27,6 +27,7 @@
 
 #include "CallLinkInfo.h"
 #include "ErrorInstance.h"
+#include "ErrorInstanceInlines.h"
 #include "ExceptionHelpers.h"
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"

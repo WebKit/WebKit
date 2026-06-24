@@ -77,14 +77,14 @@ Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, IsIn
     return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier));
 }
 
-Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic, DownloadableBinaryFontTrustedTypes trustedType)
+Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool, bool, DownloadableBinaryFontTrustedTypes trustedType)
 {
     bool wrapping;
     auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping, trustedType);
     FontDescription description;
     description.setComputedSize(fontSize);
     // FIXME: Why doesn't this pass in any meaningful data for the last few arguments?
-    auto platformData = CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { });
+    auto platformData = CachedFont::platformDataFromCustomData(*customFontData, description, { });
     return Font::create(WTF::move(platformData), origin);
 }
 

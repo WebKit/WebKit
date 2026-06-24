@@ -41,9 +41,8 @@
 #endif
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(const MediaPlaybackTarget& target)
     : m_deviceName { target.deviceName() }

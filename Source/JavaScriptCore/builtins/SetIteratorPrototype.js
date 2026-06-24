@@ -35,7 +35,7 @@ function next()
 
     if (!done) {
         var kind = @getSetIteratorInternalField(this, @setIteratorFieldKind);
-        var value = @setIteratorKey(this);
+        value = @setIteratorKey(this);
         if (kind === @iterationKindEntries)
             value = [value, value];
     }

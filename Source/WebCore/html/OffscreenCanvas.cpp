@@ -354,7 +354,7 @@ void OffscreenCanvas::clearCopiedImage() const
 SecurityOrigin* OffscreenCanvas::securityOrigin() const
 {
     Ref scriptExecutionContext = *canvasBaseScriptExecutionContext();
-    if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext.get()))
+    if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext.get()))
         return &globalScope->topOrigin();
 
     return &downcast<Document>(scriptExecutionContext)->securityOrigin();
@@ -390,7 +390,7 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
     RefPtr imageBuffer = m_context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
     if (!imageBuffer)
         return;
-    m_placeholderSource->setPlaceholderBuffer(*imageBuffer, m_context->canvasBase().originClean(), m_context->isOpaque());
+    protect(m_placeholderSource)->setPlaceholderBuffer(*imageBuffer, m_context->canvasBase().originClean(), m_context->isOpaque());
 }
 
 void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()

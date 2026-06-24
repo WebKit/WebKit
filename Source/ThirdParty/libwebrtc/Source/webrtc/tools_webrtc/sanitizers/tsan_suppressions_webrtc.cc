@@ -44,12 +44,6 @@ char kTSanDefaultSuppressions[] =
     // https://code.google.com/p/libyuv/issues/detail?id=508
     "race:InitCpuFlags\n"
 
-    // Test-only race due to PeerConnection::session() being virtual for
-    // testing. The stats collector may call session() before or after the
-    // destructor begins executing, which modifies the vtable.
-    "race:*RTCStatsIntegrationTest_GetsStatsWhileDestroyingPeerConnections_"
-    "Test::TestBody\n"
-
     // http://crbug.com/244856
     "race:libpulsecommon*.so\n"
 

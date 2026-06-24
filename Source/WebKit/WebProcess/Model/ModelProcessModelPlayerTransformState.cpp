@@ -28,8 +28,8 @@
 
 #if ENABLE(MODEL_PROCESS) || ENABLE(GPU_PROCESS_MODEL)
 
+#include "CoreRESPI.h"
 #include "Logging.h"
-#include <CoreRE/CoreRE.h>
 
 namespace WebKit {
 

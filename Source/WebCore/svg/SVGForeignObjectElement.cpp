@@ -102,7 +102,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     document().setMayHaveRenderedSVGForeignObjects();
     if (document().settings().layerBasedSVGEngineEnabled())
@@ -120,7 +120,7 @@ bool SVGForeignObjectElement::childShouldCreateRenderer(const Node& child) const
     return StyledElement::childShouldCreateRenderer(child);
 }
 
-bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)
+bool SVGForeignObjectElement::rendererIsNeeded(const Style::ComputedStyle& style)
 {
     // Suppress foreignObject renderers in SVG hidden containers.
     // (https://bugs.webkit.org/show_bug.cgi?id=87297)

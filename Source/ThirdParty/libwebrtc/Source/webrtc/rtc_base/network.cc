@@ -16,6 +16,7 @@
 #include <cstring>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -26,7 +27,6 @@
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
@@ -327,6 +327,12 @@ MdnsResponderInterface* NetworkManager::GetMdnsResponder() const {
   return nullptr;
 }
 
+NetworkManager::NetworkManager(NetworksChangedCallback callback) {
+  RTC_CHECK(callback.callback != nullptr);
+  networks_changed_callbacks_.AddReceiver(callback.removal_tag,
+                                          std::move(callback.callback));
+}
+
 void NetworkManager::SubscribeNetworksChanged(
     absl::AnyInvocable<void()> callback) {
   networks_changed_callbacks_.AddReceiver(std::move(callback));
@@ -353,6 +359,10 @@ void NetworkManager::UnsubscribeError(void* tag) {
 
 NetworkManagerBase::NetworkManagerBase()
     : enumeration_permission_(NetworkManager::ENUMERATION_ALLOWED) {}
+
+NetworkManagerBase::NetworkManagerBase(NetworksChangedCallback callback)
+    : NetworkManager(std::move(callback)),
+      enumeration_permission_(NetworkManager::ENUMERATION_ALLOWED) {}
 
 NetworkManager::EnumerationPermission
 NetworkManagerBase::enumeration_permission() const {
@@ -567,7 +577,7 @@ Network* NetworkManagerBase::GetNetworkFromAddress(const IPAddress& ip) const {
   return nullptr;
 }
 
-bool NetworkManagerBase::IsVpnMacAddress(ArrayView<const uint8_t> address) {
+bool NetworkManagerBase::IsVpnMacAddress(std::span<const uint8_t> address) {
   if (address.data() == nullptr && address.empty()) {
     return false;
   }
@@ -585,6 +595,22 @@ BasicNetworkManager::BasicNetworkManager(
     SocketFactory* absl_nonnull socket_factory,
     NetworkMonitorFactory* absl_nullable network_monitor_factory)
     : env_(env),
+      network_monitor_factory_(network_monitor_factory),
+      socket_factory_(socket_factory),
+      allow_mac_based_ipv6_(
+          env_.field_trials().IsEnabled("WebRTC-AllowMACBasedIPv6")),
+      bind_using_ifname_(
+          !env_.field_trials().IsDisabled("WebRTC-BindUsingInterfaceName")) {
+  RTC_DCHECK(socket_factory_);
+}
+
+BasicNetworkManager::BasicNetworkManager(
+    const Environment& env,
+    SocketFactory* absl_nonnull socket_factory,
+    NetworksChangedCallback callback,
+    NetworkMonitorFactory* absl_nullable network_monitor_factory)
+    : NetworkManagerBase(std::move(callback)),
+      env_(env),
       network_monitor_factory_(network_monitor_factory),
       socket_factory_(socket_factory),
       allow_mac_based_ipv6_(
@@ -910,7 +936,7 @@ bool BasicNetworkManager::CreateNetworks(
             adapter_type = ADAPTER_TYPE_VPN;
           }
           if (adapter_type != ADAPTER_TYPE_VPN &&
-              IsVpnMacAddress(ArrayView<const uint8_t>(
+              IsVpnMacAddress(std::span<const uint8_t>(
                   reinterpret_cast<const uint8_t*>(
                       adapter_addrs->PhysicalAddress),
                   adapter_addrs->PhysicalAddressLength))) {
@@ -1167,6 +1193,7 @@ std::unique_ptr<Network> Network::Clone() const {
   clone->active_ = active_;
   clone->id_ = id_;
   clone->network_preference_ = network_preference_;
+  clone->network_slice_ = network_slice_;
   return clone;
 }
 
@@ -1323,6 +1350,9 @@ std::string Network::ToString() const {
      << AdapterTypeToString(type_);
   if (IsVpn()) {
     ss << "/" << AdapterTypeToString(underlying_type_for_vpn_);
+  }
+  if (network_slice() != NetworkSlice::NO_SLICE) {
+    ss << "/" << NetworkSliceToString(network_slice());
   }
   ss << ":id=" << id_ << "]";
   return ss.Release();

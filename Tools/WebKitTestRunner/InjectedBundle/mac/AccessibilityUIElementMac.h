@@ -301,6 +301,7 @@ public:
     int textMarkerRangeLength(AccessibilityTextMarkerRange*) override;
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*) override;
     int indexForTextMarker(AccessibilityTextMarker*) override;
+    int relativeIndexForTextMarker(AccessibilityTextMarker*) override;
     bool isTextMarkerValid(AccessibilityTextMarker*) override;
     bool isTextMarkerRangeValid(AccessibilityTextMarkerRange*) override;
     bool isTextMarkerNull(AccessibilityTextMarker*) override;

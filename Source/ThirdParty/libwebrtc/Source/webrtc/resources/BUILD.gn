@@ -172,10 +172,3 @@ video_engine_tests_resources = [
 group("video_engine_tests_data") {
   data = video_engine_tests_resources
 }
-if (is_ios) {
-  bundle_data("video_engine_tests_bundle_data") {
-    testonly = true
-    sources = video_engine_tests_resources
-    outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
-  }
-}

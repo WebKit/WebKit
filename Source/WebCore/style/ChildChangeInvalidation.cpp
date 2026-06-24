@@ -30,28 +30,36 @@
 #include "NodeRenderStyle.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
-#include "RenderStyle+GettersInlines.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
 #include "StyleScopeRuleSets.h"
 #include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore::Style {
 
-static bool rightmostCompoundContainsEmpty(const CSSSelector& selector)
+static bool elementIsEmptyForCSS(const Element& element)
 {
-    for (auto* simple = &selector; simple; simple = simple->followingInCompound()) {
-        if (simple->match() == CSSSelector::Match::PseudoClass && simple->pseudoClass() == CSSSelector::PseudoClass::Empty)
-            return true;
-        if (auto* selectorList = simple->selectorList()) {
-            for (auto& inner : *selectorList) {
-                if (rightmostCompoundContainsEmpty(inner))
-                    return true;
-            }
+    for (auto* node = element.firstChild(); node; node = node->nextSibling()) {
+        if (is<Element>(*node))
+            return false;
+        if (auto* textNode = dynamicDowncast<Text>(*node)) {
+            if (!textNode->data().isEmpty())
+                return false;
         }
     }
-    return false;
+    return true;
+}
+
+bool ChildChangeInvalidation::emptyStateMayChange() const
+{
+    // CharacterData::makeChildChange uses TextChanged only when both the old and new data are non-empty,
+    // so the parent's :empty state can't flip and we can skip the traversal below.
+    if (m_childChange.type == ContainerNode::ChildChange::Type::TextChanged)
+        return false;
+    bool wasEmpty = elementIsEmptyForCSS(*m_parentElement);
+    return m_childChange.isInsertion() == wasEmpty;
 }
 
 static bool isSiblingHasRelation(const MatchElement& matchElement)
@@ -73,9 +81,10 @@ static bool isSiblingHasRelation(const MatchElement& matchElement)
     return false;
 }
 
-void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElement, MatchingHasSelectors& matchingHasSelectors, ChangedElementRelation changedElementRelation, EmptyInvalidation emptyInvalidation)
+void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElement, MatchingHasSelectors& matchingHasSelectors, ChangedElementRelation changedElementRelation)
 {
-    auto& ruleSets = parentElement().styleResolver().ruleSets();
+    Ref resolver = parentElement().styleResolver();
+    auto& ruleSets = resolver->ruleSets();
 
     Invalidator::MatchElementRuleSets matchElementRuleSets;
 
@@ -100,18 +109,31 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
     };
 
     auto hasAlreadyMatchedAndMutationIsIrrelevant = [&](const InvalidationRuleSet& invalidationRuleSet) {
-        // For the first changed element at the mutation point, check if a neighbor already matches the
-        // :has() argument. If so, adding/removing one more matching element doesn't change the :has() result.
+        // Check if a pre-existing neighbor already matches the :has() argument. If so, adding/removing one
+        // more matching element doesn't change the :has() result, so no invalidation is needed.
         // This doesn't apply inside :not() (inverted logic) or for sibling :has() arguments (direction matters).
-        if (!isChild || changedElementRelation != ChangedElementRelation::SelfOrDescendant)
-            return false;
-        if (m_childChange.previousSiblingElement != changedElement.previousElementSibling())
+        if (!isChild)
             return false;
         if (invalidationRuleSet.isNegation == IsNegation::Yes)
             return false;
         if (isSiblingHasRelation(invalidationRuleSet.matchElement))
             return false;
-        return true;
+
+        switch (changedElementRelation) {
+        case ChangedElementRelation::SelfOrDescendant:
+            // The changed element must be exactly at the mutation point so a sibling probe reflects pre-mutation state.
+            return m_childChange.previousSiblingElement == changedElement.previousElementSibling();
+        case ChangedElementRelation::Sibling:
+            // The changed element is itself a pre-existing neighbor. Only safe when the argument is a purely
+            // structural sibling combinator (so an element's match depends only on itself and preceding siblings)
+            // and the mutation is at the end of the element list, so every visited (preceding) sibling's match is
+            // unaffected by it — meaning "it matches now" == "it matched before the mutation".
+            return invalidationRuleSet.hasArgumentProperties.contains(HasArgumentProperty::StructuralSibling) && !m_childChange.nextSiblingElement;
+        case ChangedElementRelation::FirstOrLastChild:
+            return false;
+        }
+        ASSERT_NOT_REACHED();
+        return false;
     };
 
     auto hasMatchingInvalidationSelector = [&](auto& invalidationRuleSet) {
@@ -120,13 +142,14 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
         checkingContext.matchesAllHasScopes = true;
 
         for (auto& selector : invalidationRuleSet.invalidationSelectors) {
-            // For :empty invalidation only look for :empty selectors to avoid invalidating unnecessarily.
-            if (emptyInvalidation == EmptyInvalidation::Yes && !rightmostCompoundContainsEmpty(selector))
-                continue;
-
             if (hasAlreadyMatchedAndMutationIsIrrelevant(invalidationRuleSet)) {
                 // FIXME: We could cache this state across invalidations instead of just testing a single sibling.
-                RefPtr sibling = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement : m_childChange.nextSiblingElement;
+                // For sibling visits the changed element is itself the pre-existing neighbor to probe.
+                RefPtr<Element> sibling;
+                if (changedElementRelation == ChangedElementRelation::Sibling)
+                    sibling = &changedElement;
+                else
+                    sibling = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement : m_childChange.nextSiblingElement;
                 if (sibling && selectorChecker.match(selector, *sibling, checkingContext)) {
                     matchingHasSelectors.add(&selector);
                     continue;
@@ -149,6 +172,11 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
             return;
         for (auto& invalidationRuleSet : *invalidationRuleSets) {
             if (!canAffectElementsWithStyle(invalidationRuleSet))
+                continue;
+            // Order-insensitive :has() arguments can only change when the changed element's own subtree changes,
+            // which the SelfOrDescendant traversal already covers. Re-evaluating them per sibling is redundant
+            // (and re-walks the bearer subtree on every mutation), so skip them on sibling visits.
+            if (changedElementRelation == ChangedElementRelation::Sibling && !invalidationRuleSet.hasArgumentProperties.contains(HasArgumentProperty::OrderSensitive))
                 continue;
             if (!hasMatchingInvalidationSelector(invalidationRuleSet))
                 continue;
@@ -193,10 +221,10 @@ void ChildChangeInvalidation::invalidateForHasSiblings(MatchingHasSelectors& mat
         return;
 
     if (RefPtr next = m_childChange.nextSiblingElement; next && parentElement().childrenAffectedByFirstChildRules() && !next->previousElementSibling())
-        invalidateForChangedElement(*next, matchingHasSelectors, ChangedElementRelation::Sibling);
+        invalidateForChangedElement(*next, matchingHasSelectors, ChangedElementRelation::FirstOrLastChild);
 
     if (RefPtr previous = m_childChange.previousSiblingElement; previous && parentElement().childrenAffectedByLastChildRules() && !previous->nextElementSibling())
-        invalidateForChangedElement(*previous, matchingHasSelectors, ChangedElementRelation::Sibling);
+        invalidateForChangedElement(*previous, matchingHasSelectors, ChangedElementRelation::FirstOrLastChild);
 }
 
 void ChildChangeInvalidation::invalidateForHasBeforeMutation()
@@ -208,15 +236,6 @@ void ChildChangeInvalidation::invalidateForHasBeforeMutation()
     traverseRemovedElements([&](auto& changedElement) {
         invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
     });
-
-    auto emptyStateWillChange = [&] {
-        bool isEmpty = !parentElement().hasChildNodes();
-        return m_childChange.isInsertion() == isEmpty;
-    };
-
-    // :empty is special because insertions and removals can affect the matching state of the parent element.
-    if (emptyStateWillChange())
-        invalidateForChangedElement(parentElement(), matchingHasSelectors, ChangedElementRelation::SelfOrDescendant, EmptyInvalidation::Yes);
 
     invalidateForHasSiblings(matchingHasSelectors, MutationPhase::Before);
 }
@@ -230,15 +249,6 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
     traverseAddedElements([&](auto& changedElement) {
         invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
     });
-
-    auto emptyStateDidChange = [&] {
-        bool isEmpty = !parentElement().hasChildNodes();
-        return m_childChange.isInsertion() != isEmpty;
-    };
-
-    // :empty is special because insertions and removals can affect the matching state of the parent element.
-    if (emptyStateDidChange())
-        invalidateForChangedElement(parentElement(), matchingHasSelectors, ChangedElementRelation::SelfOrDescendant, EmptyInvalidation::Yes);
 
     invalidateForHasSiblings(matchingHasSelectors, MutationPhase::After);
 }
@@ -257,7 +267,8 @@ void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
     if (m_childChange.isInsertion() && m_childChange.type != ContainerNode::ChildChange::Type::AllChildrenReplaced)
         return;
 
-    auto& features = parentElement().styleResolver().ruleSets().features();
+    Ref resolver = parentElement().styleResolver();
+    auto& features = resolver->ruleSets().features();
     bool needsDescendantTraversal = Style::needsDescendantTraversal(features);
 
     RefPtr firstToRemove = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement->nextElementSibling() : parentElement().firstElementChild();
@@ -282,7 +293,8 @@ void ChildChangeInvalidation::traverseAddedElements(Function&& function)
     auto callFunctionOnInclusiveDescendants = [&](Element& element) {
         function(element);
 
-        auto& features = parentElement().styleResolver().ruleSets().features();
+        Ref resolver = parentElement().styleResolver();
+        auto& features = resolver->ruleSets().features();
         if (!needsDescendantTraversal(features))
             return;
 
@@ -300,14 +312,18 @@ void ChildChangeInvalidation::traverseAddedElements(Function&& function)
     }
 }
 
-static void checkForEmptyStyleChange(Element& element)
+static void invalidateForSiblingCombinators(Element* sibling)
 {
-    if (!element.styleAffectedByEmpty())
-        return;
-
-    auto* style = element.renderStyle();
-    if (!style || (!style->emptyState() || element.hasChildNodes()))
-        element.invalidateStyleForSubtree();
+    for (RefPtr element = sibling; element; element = element->nextElementSibling()) {
+        if (element->styleIsAffectedByPreviousSibling())
+            element->invalidateStyle();
+        if (element->descendantsAffectedByPreviousSibling()) {
+            for (RefPtr siblingChild = element->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
+                siblingChild->invalidateStyleForSubtree();
+        }
+        if (!element->affectsNextSiblingElementStyle())
+            return;
+    }
 }
 
 static void invalidateForForwardPositionalRules(Element& parent, Element* elementAfterChange)
@@ -320,10 +336,10 @@ static void invalidateForForwardPositionalRules(Element& parent, Element* elemen
 
     for (RefPtr sibling = elementAfterChange; sibling; sibling = sibling->nextElementSibling()) {
         if (childrenAffected)
-            sibling->invalidateStyleInternal();
+            sibling->invalidateStyle();
         if (descendantsAffected) {
             for (RefPtr siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
-                siblingChild->invalidateStyleForSubtreeInternal();
+                siblingChild->invalidateStyleForSubtree();
         }
     }
 }
@@ -338,10 +354,10 @@ static void invalidateForBackwardPositionalRules(Element& parent, Element* eleme
 
     for (RefPtr sibling = elementBeforeChange; sibling; sibling = sibling->previousElementSibling()) {
         if (childrenAffected)
-            sibling->invalidateStyleInternal();
+            sibling->invalidateStyle();
         if (descendantsAffected) {
             for (RefPtr siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
-                siblingChild->invalidateStyleForSubtreeInternal();
+                siblingChild->invalidateStyleForSubtree();
         }
     }
 }
@@ -350,20 +366,18 @@ static void invalidateForFirstChildState(Element& child, bool state)
 {
     auto* style = child.renderStyle();
     if (!style || style->firstChildState() == state)
-        child.invalidateStyleForSubtreeInternal();
+        child.invalidateStyleForSubtree();
 }
 
 static void invalidateForLastChildState(Element& child, bool state)
 {
     auto* style = child.renderStyle();
     if (!style || style->lastChildState() == state)
-        child.invalidateStyleForSubtreeInternal();
+        child.invalidateStyleForSubtree();
 }
 
 void ChildChangeInvalidation::invalidateAfterChange()
 {
-    checkForEmptyStyleChange(parentElement());
-
     if (m_childChange.source == ContainerNode::ChildChange::Source::Parser)
         return;
 
@@ -374,8 +388,6 @@ void ChildChangeInvalidation::invalidateAfterFinishedParsingChildren(Element& pa
 {
     if (!parent.needsStyleInvalidation())
         return;
-
-    checkForEmptyStyleChange(parent);
 
     RefPtr lastChildElement = ElementTraversal::lastChild(parent);
     if (!lastChildElement)

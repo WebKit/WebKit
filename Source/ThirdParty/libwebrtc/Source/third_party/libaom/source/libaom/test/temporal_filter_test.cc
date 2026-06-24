@@ -89,7 +89,13 @@ class TemporalFilterTest
       for (int ii = 0; ii < plane_h; ii++) {
         for (int jj = 0; jj < plane_w; jj++) {
           src1p[jj] = rnd_.Rand8();
-          src2p[jj] = rnd_.Rand8();
+          // Keep each pixel of `src2_` within [-7, 7] of `src1_` so the
+          // window_error stays small in apply_temporal_filter. Otherwise
+          // scaled_error clamps to 7 regardless of other factors and masks bugs
+          // in subblock_mvs and subblock_mses handling.
+          do {
+            src2p[jj] = rnd_.Rand8();
+          } while (abs(src2p[jj] - src1p[jj]) >= 8);
         }
         src1p += plane_stride;
         src2p += plane_stride2;
@@ -131,9 +137,10 @@ void TemporalFilterTest::RunTest(int isRandom, int run_times,
                                  ColorFormat color_fmt) {
   aom_usec_timer ref_timer, test_timer;
   const BLOCK_SIZE block_size = TF_BLOCK_SIZE;
-  static_assert(block_size == BLOCK_32X32, "");
-  const int width = 32;
-  const int height = 32;
+  static_assert(block_size == BLOCK_64X64, "");
+  const int width = 64;
+  const int height = 64;
+  const int pels = width * height;
   int num_planes = MAX_MB_PLANE;
   int subsampling_x = 0;
   int subsampling_y = 0;
@@ -165,18 +172,23 @@ void TemporalFilterTest::RunTest(int isRandom, int run_times,
     }
     double sigma[MAX_MB_PLANE] = { 2.1002103677063437, 2.1002103677063437,
                                    2.1002103677063437 };
-    DECLARE_ALIGNED(16, unsigned int, accumulator_ref[1024 * 3]);
-    DECLARE_ALIGNED(16, uint16_t, count_ref[1024 * 3]);
-    memset(accumulator_ref, 0, 1024 * 3 * sizeof(accumulator_ref[0]));
-    memset(count_ref, 0, 1024 * 3 * sizeof(count_ref[0]));
-    DECLARE_ALIGNED(16, unsigned int, accumulator_mod[1024 * 3]);
-    DECLARE_ALIGNED(16, uint16_t, count_mod[1024 * 3]);
-    memset(accumulator_mod, 0, 1024 * 3 * sizeof(accumulator_mod[0]));
-    memset(count_mod, 0, 1024 * 3 * sizeof(count_mod[0]));
+    DECLARE_ALIGNED(16, unsigned int, accumulator_ref[pels * 3]);
+    DECLARE_ALIGNED(16, uint16_t, count_ref[pels * 3]);
+    memset(accumulator_ref, 0, pels * 3 * sizeof(accumulator_ref[0]));
+    memset(count_ref, 0, pels * 3 * sizeof(count_ref[0]));
+    DECLARE_ALIGNED(16, unsigned int, accumulator_mod[pels * 3]);
+    DECLARE_ALIGNED(16, uint16_t, count_mod[pels * 3]);
+    memset(accumulator_mod, 0, pels * 3 * sizeof(accumulator_mod[0]));
+    memset(count_mod, 0, pels * 3 * sizeof(count_mod[0]));
 
-    static_assert(width == 32 && height == 32, "");
-    const MV subblock_mvs[4] = { { 0, 0 }, { 5, 5 }, { 7, 8 }, { 2, 10 } };
-    const int subblock_mses[4] = { 15, 16, 17, 18 };
+    static_assert(width == 64 && height == 64, "");
+    const MV subblock_mvs[NUM_16X16] = {
+      { 0, 0 }, { 5, 5 },  { 7, 8 }, { 2, 10 }, { 0, 0 }, { 5, 5 },
+      { 7, 8 }, { 2, 10 }, { 0, 0 }, { 5, 5 },  { 7, 8 }, { 2, 10 },
+      { 0, 0 }, { 5, 5 },  { 7, 8 }, { 2, 10 }
+    };
+    const int subblock_mses[NUM_16X16] = { 15, 16, 17, 18, 15, 16, 17, 18,
+                                           15, 16, 17, 18, 15, 16, 17, 18 };
     const int q_factor = 12;
     const int filter_strength = 5;
     const int mb_row = 0;
@@ -190,21 +202,25 @@ void TemporalFilterTest::RunTest(int isRandom, int run_times,
     frame_to_filter->heights[PLANE_TYPE_UV] = height >> subsampling_y;
     frame_to_filter->strides[PLANE_TYPE_Y] = stride;
     frame_to_filter->strides[PLANE_TYPE_UV] = stride >> subsampling_x;
-    DECLARE_ALIGNED(16, uint8_t, src[1024 * 3]);
+    DECLARE_ALIGNED(16, uint8_t, src[pels * 3]);
     frame_to_filter->buffer_alloc = src;
     frame_to_filter->flags = 0;  // Only support low bit-depth test.
-    memcpy(src, src1_, 1024 * 3 * sizeof(uint8_t));
+    memcpy(src, src1_, pels * 3 * sizeof(uint8_t));
 
     std::unique_ptr<MACROBLOCKD> mbd(new (std::nothrow) MACROBLOCKD);
     ASSERT_NE(mbd, nullptr);
     mbd->bd = 8;
+    int plane_offset = 0;
     for (int plane = AOM_PLANE_Y; plane < num_planes; plane++) {
-      int plane_height = plane ? height >> subsampling_y : height;
-      int plane_stride = plane ? stride >> subsampling_x : stride;
+      int plane_height =
+          plane ? (height + subsampling_y) >> subsampling_y : height;
+      int plane_stride =
+          plane ? (stride + subsampling_x) >> subsampling_x : stride;
       frame_to_filter->buffers[plane] =
-          frame_to_filter->buffer_alloc + plane * plane_stride * plane_height;
+          frame_to_filter->buffer_alloc + plane_offset;
       mbd->plane[plane].subsampling_x = plane ? subsampling_x : 0;
       mbd->plane[plane].subsampling_y = plane ? subsampling_y : 0;
+      plane_offset += plane_height * plane_stride;
     }
 
     params_.ref_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
@@ -247,17 +263,26 @@ void TemporalFilterTest::RunTest(int isRandom, int run_times,
           height, color_fmt_str[color_fmt]);
 
     } else {
-      for (int i = 0, l = 0; i < height; i++) {
-        for (int j = 0; j < width; j++, l++) {
-          EXPECT_EQ(accumulator_ref[l], accumulator_mod[l])
-              << "Error:" << k << " SSE Sum Test [" << width << "x" << height
-              << "] " << color_fmt_str[color_fmt]
-              << " C accumulator does not match optimized accumulator.";
-          EXPECT_EQ(count_ref[l], count_mod[l])
-              << "Error:" << k << " SSE Sum Test [" << width << "x" << height
-              << "] " << color_fmt_str[color_fmt]
-              << " count does not match optimized count.";
+      plane_offset = 0;
+      for (int plane = AOM_PLANE_Y; plane < num_planes; plane++) {
+        int plane_height =
+            plane ? (height + subsampling_y) >> subsampling_y : height;
+        int plane_stride =
+            plane ? (stride + subsampling_x) >> subsampling_x : stride;
+        for (int i = 0, l = 0; i < plane_height; i++) {
+          for (int j = 0; j < plane_stride; j++, l++) {
+            EXPECT_EQ(accumulator_ref[l + plane_offset],
+                      accumulator_mod[l + plane_offset])
+                << "Error:" << k << " SSE Sum Test [" << width << "x" << height
+                << "] " << color_fmt_str[color_fmt]
+                << " C accumulator does not match optimized accumulator.";
+            EXPECT_EQ(count_ref[l + plane_offset], count_mod[l + plane_offset])
+                << "Error:" << k << " SSE Sum Test [" << width << "x" << height
+                << "] " << color_fmt_str[color_fmt]
+                << " count does not match optimized count.";
+          }
         }
+        plane_offset += plane_height * plane_stride;
       }
     }
   }
@@ -470,7 +495,13 @@ class HBDTemporalFilterTest
       for (int ii = 0; ii < plane_h; ii++) {
         for (int jj = 0; jj < plane_w; jj++) {
           src1p[jj] = rnd_.Rand16() & max_val;
-          src2p[jj] = rnd_.Rand16() & max_val;
+          // Keep each pixel of `src2_` within [-7, 7] of `src1_` so the
+          // window_error stays small in apply_temporal_filter. Otherwise
+          // scaled_error clamps to 7 regardless of other factors and masks bugs
+          // in subblock_mvs and subblock_mses handling.
+          do {
+            src2p[jj] = rnd_.Rand16() & max_val;
+          } while (abs(src2p[jj] - src1p[jj]) >= 8);
         }
         src1p += plane_stride;
         src2p += plane_stride2;
@@ -514,9 +545,10 @@ void HBDTemporalFilterTest::RunTest(int isRandom, int run_times, int BD,
                                     ColorFormat color_fmt) {
   aom_usec_timer ref_timer, test_timer;
   const BLOCK_SIZE block_size = TF_BLOCK_SIZE;
-  static_assert(block_size == BLOCK_32X32, "");
-  const int width = 32;
-  const int height = 32;
+  static_assert(block_size == BLOCK_64X64, "");
+  const int width = 64;
+  const int height = 64;
+  const int pels = width * height;
   int num_planes = MAX_MB_PLANE;
   int subsampling_x = 0;
   int subsampling_y = 0;
@@ -548,18 +580,23 @@ void HBDTemporalFilterTest::RunTest(int isRandom, int run_times, int BD,
     }
     double sigma[MAX_MB_PLANE] = { 2.1002103677063437, 2.1002103677063437,
                                    2.1002103677063437 };
-    DECLARE_ALIGNED(16, unsigned int, accumulator_ref[1024 * 3]);
-    DECLARE_ALIGNED(16, uint16_t, count_ref[1024 * 3]);
-    memset(accumulator_ref, 0, 1024 * 3 * sizeof(accumulator_ref[0]));
-    memset(count_ref, 0, 1024 * 3 * sizeof(count_ref[0]));
-    DECLARE_ALIGNED(16, unsigned int, accumulator_mod[1024 * 3]);
-    DECLARE_ALIGNED(16, uint16_t, count_mod[1024 * 3]);
-    memset(accumulator_mod, 0, 1024 * 3 * sizeof(accumulator_mod[0]));
-    memset(count_mod, 0, 1024 * 3 * sizeof(count_mod[0]));
+    DECLARE_ALIGNED(16, unsigned int, accumulator_ref[pels * 3]);
+    DECLARE_ALIGNED(16, uint16_t, count_ref[pels * 3]);
+    memset(accumulator_ref, 0, pels * 3 * sizeof(accumulator_ref[0]));
+    memset(count_ref, 0, pels * 3 * sizeof(count_ref[0]));
+    DECLARE_ALIGNED(16, unsigned int, accumulator_mod[pels * 3]);
+    DECLARE_ALIGNED(16, uint16_t, count_mod[pels * 3]);
+    memset(accumulator_mod, 0, pels * 3 * sizeof(accumulator_mod[0]));
+    memset(count_mod, 0, pels * 3 * sizeof(count_mod[0]));
 
-    static_assert(width == 32 && height == 32, "");
-    const MV subblock_mvs[4] = { { 0, 0 }, { 5, 5 }, { 7, 8 }, { 2, 10 } };
-    const int subblock_mses[4] = { 15, 16, 17, 18 };
+    static_assert(width == 64 && height == 64, "");
+    const MV subblock_mvs[NUM_16X16] = {
+      { 0, 0 }, { 5, 5 },  { 7, 8 }, { 2, 10 }, { 0, 0 }, { 5, 5 },
+      { 7, 8 }, { 2, 10 }, { 0, 0 }, { 5, 5 },  { 7, 8 }, { 2, 10 },
+      { 0, 0 }, { 5, 5 },  { 7, 8 }, { 2, 10 }
+    };
+    const int subblock_mses[NUM_16X16] = { 15, 16, 17, 18, 15, 16, 17, 18,
+                                           15, 16, 17, 18, 15, 16, 17, 18 };
     const int q_factor = 12;
     const int filter_strength = 5;
     const int mb_row = 0;
@@ -573,22 +610,26 @@ void HBDTemporalFilterTest::RunTest(int isRandom, int run_times, int BD,
     frame_to_filter->heights[PLANE_TYPE_UV] = height >> subsampling_y;
     frame_to_filter->strides[PLANE_TYPE_Y] = stride;
     frame_to_filter->strides[PLANE_TYPE_UV] = stride >> subsampling_x;
-    DECLARE_ALIGNED(16, uint16_t, src[1024 * 3]);
+    DECLARE_ALIGNED(16, uint16_t, src[pels * 3]);
     frame_to_filter->buffer_alloc = CONVERT_TO_BYTEPTR(src);
     frame_to_filter->flags =
         YV12_FLAG_HIGHBITDEPTH;  // Only Hihgbd bit-depth test.
-    memcpy(src, src1_, 1024 * 3 * sizeof(uint16_t));
+    memcpy(src, src1_, pels * 3 * sizeof(uint16_t));
 
     std::unique_ptr<MACROBLOCKD> mbd(new (std::nothrow) MACROBLOCKD);
     ASSERT_NE(mbd, nullptr);
     mbd->bd = BD;
+    int plane_offset = 0;
     for (int plane = AOM_PLANE_Y; plane < num_planes; plane++) {
-      int plane_height = plane ? height >> subsampling_y : height;
-      int plane_stride = plane ? stride >> subsampling_x : stride;
+      int plane_height =
+          plane ? (height + subsampling_y) >> subsampling_y : height;
+      int plane_stride =
+          plane ? (stride + subsampling_x) >> subsampling_x : stride;
       frame_to_filter->buffers[plane] =
-          frame_to_filter->buffer_alloc + plane * plane_stride * plane_height;
+          frame_to_filter->buffer_alloc + plane_offset;
       mbd->plane[plane].subsampling_x = plane ? subsampling_x : 0;
       mbd->plane[plane].subsampling_y = plane ? subsampling_y : 0;
+      plane_offset += plane_height * plane_stride;
     }
 
     params_.ref_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
@@ -631,17 +672,26 @@ void HBDTemporalFilterTest::RunTest(int isRandom, int run_times, int BD,
           height, color_fmt_str[color_fmt]);
 
     } else {
-      for (int i = 0, l = 0; i < height; i++) {
-        for (int j = 0; j < width; j++, l++) {
-          EXPECT_EQ(accumulator_ref[l], accumulator_mod[l])
-              << "Error:" << k << " SSE Sum Test [" << width << "x" << height
-              << "] " << color_fmt_str[color_fmt]
-              << " C accumulator does not match optimized accumulator.";
-          EXPECT_EQ(count_ref[l], count_mod[l])
-              << "Error:" << k << " SSE Sum Test [" << width << "x" << height
-              << "] " << color_fmt_str[color_fmt]
-              << " C count does not match optimized count.";
+      plane_offset = 0;
+      for (int plane = AOM_PLANE_Y; plane < num_planes; plane++) {
+        int plane_height =
+            plane ? (height + subsampling_y) >> subsampling_y : height;
+        int plane_stride =
+            plane ? (stride + subsampling_x) >> subsampling_x : stride;
+        for (int i = 0, l = 0; i < plane_height; i++) {
+          for (int j = 0; j < plane_stride; j++, l++) {
+            EXPECT_EQ(accumulator_ref[l + plane_offset],
+                      accumulator_mod[l + plane_offset])
+                << "Error:" << k << " SSE Sum Test [" << width << "x" << height
+                << "] " << color_fmt_str[color_fmt]
+                << " C accumulator does not match optimized accumulator.";
+            EXPECT_EQ(count_ref[l + plane_offset], count_mod[l + plane_offset])
+                << "Error:" << k << " SSE Sum Test [" << width << "x" << height
+                << "] " << color_fmt_str[color_fmt]
+                << " count does not match optimized count.";
+          }
         }
+        plane_offset += plane_height * plane_stride;
       }
     }
   }
@@ -667,6 +717,7 @@ TEST_P(HBDTemporalFilterTest, DISABLED_Speed) {
   RunTest(1, 100000, 10, I422);
   RunTest(1, 100000, 10, I444);
 }
+
 #if HAVE_SSE2
 HBDTemporalFilterFuncParam HBDtemporal_filter_test_sse2[] = {
   HBDTemporalFilterFuncParam(&av1_highbd_apply_temporal_filter_c,

@@ -1,15 +1,5 @@
 include(PlatformCocoa.cmake)
 
-if (WEBKIT_ADDITIONS_INCLUDE_PATH AND EXISTS "${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/CMake/TouchEvents.cmake")
-    include("${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/CMake/TouchEvents.cmake")
-endif ()
-if (WEBKIT_ADDITIONS_INCLUDE_PATH AND EXISTS "${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/CMake/GestureEvents.cmake")
-    include("${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/CMake/GestureEvents.cmake")
-endif ()
-if (WEBKIT_ADDITIONS_COMPILE_PATH AND EXISTS "${WEBKIT_ADDITIONS_COMPILE_PATH}/WebKitAdditions")
-    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${WEBKIT_ADDITIONS_COMPILE_PATH}/WebKitAdditions")
-endif ()
-
 target_compile_options(WebCore PRIVATE -Wno-\#warnings -Wno-abstract-final-class)
 
 set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")

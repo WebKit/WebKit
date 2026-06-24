@@ -38,9 +38,8 @@ namespace WebCore {
 FragmentDirectiveParser::FragmentDirectiveParser(StringView fragmentDirective)
 {
     parseFragmentDirective(fragmentDirective);
-    
+
     m_fragmentDirective = fragmentDirective;
-    m_isValid = true;
 }
 
 FragmentDirectiveParser::~FragmentDirectiveParser() = default;

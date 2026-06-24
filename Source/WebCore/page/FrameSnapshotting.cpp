@@ -46,8 +46,8 @@
 #include "Page.h"
 #include "RenderAncestorIterator.h"
 #include "RenderObject.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 
@@ -64,8 +64,8 @@ struct ScopedFramePaintingState {
     ~ScopedFramePaintingState()
     {
         frame->view()->setPaintBehavior(paintBehavior);
-        frame->view()->setBaseBackgroundColor(backgroundColor);
-        frame->view()->setNodeToDraw(nullptr);
+        protect(frame->view())->setBaseBackgroundColor(backgroundColor);
+        protect(frame->view())->setNodeToDraw(nullptr);
     }
 
     const WeakRef<LocalFrame> frame;
@@ -135,7 +135,7 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
 
     auto renderingMode = options.flags.contains(SnapshotFlags::Accelerated) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
     auto purpose = options.flags.contains(SnapshotFlags::Shareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
-    auto hostWindow = (document->view() && document->view()->root()) ? document->view()->root()->hostWindow() : nullptr;
+    auto hostWindow = (document->view() && document->view()->root()) ? protect(document->view()->root())->hostWindow() : nullptr;
 
     auto buffer = ImageBuffer::create(imageRect.size(), renderingMode, purpose, scaleFactor, options.colorSpace, options.pixelFormat, hostWindow);
     if (!buffer)
@@ -150,7 +150,7 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
         buffer->context().clipPath(clipPath);
     }
 
-    frame.view()->paintContentsForSnapshot(buffer->context(), imageRect, shouldIncludeSelection, coordinateSpace);
+    protect(frame.view())->paintContentsForSnapshot(buffer->context(), imageRect, shouldIncludeSelection, coordinateSpace);
     return buffer;
 }
 
@@ -178,14 +178,14 @@ RefPtr<ImageBuffer> snapshotNode(LocalFrame& frame, Node& node, SnapshotOptions&
 
     ScopedFramePaintingState state(frame, &node);
 
-    frame.view()->setBaseBackgroundColor(Color::transparentBlack);
-    frame.view()->setNodeToDraw(&node);
+    protect(frame.view())->setBaseBackgroundColor(Color::transparentBlack);
+    protect(frame.view())->setNodeToDraw(&node);
 
     LayoutRect topLevelRect;
     return snapshotFrameRect(frame, snappedIntRect(node.renderer()->paintingRootRect(topLevelRect)), WTF::move(options));
 }
 
-static bool styleContainsComplexBackground(const RenderStyle& style)
+static bool styleContainsComplexBackground(const Style::ComputedStyle& style)
 {
     return style.blendMode() != BlendMode::Normal
         || Style::hasImageInAnyLayer(style.backgroundLayers())
@@ -197,7 +197,7 @@ static bool styleContainsComplexBackground(const RenderStyle& style)
 
 Color estimatedBackgroundColorForRange(const SimpleRange& range, const LocalFrame& frame)
 {
-    auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparentBlack;
+    auto estimatedBackgroundColor = frame.view() ? protect(frame.view())->documentBackgroundColor() : Color::transparentBlack;
 
     RenderElement* renderer = nullptr;
     RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(range);

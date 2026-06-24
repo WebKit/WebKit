@@ -29,13 +29,13 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderSVGBlockInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TransformState.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGForeignObject);
 
-LegacyRenderSVGForeignObject::LegacyRenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
+LegacyRenderSVGForeignObject::LegacyRenderSVGForeignObject(SVGForeignObjectElement& element, Style::ComputedStyle&& style)
     : RenderSVGBlock(Type::LegacySVGForeignObject, element, WTF::move(style))
 {
     ASSERT(isLegacyRenderSVGForeignObject());
@@ -128,7 +128,7 @@ void LegacyRenderSVGForeignObject::layout()
 
     bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
-        m_localTransform = foreignObjectElement().animatedLocalTransform();
+        m_localTransform = protect(foreignObjectElement())->animatedLocalTransform();
         m_needsTransformUpdate = false;
         updateCachedBoundariesInParents = true;
     }
@@ -146,7 +146,7 @@ void LegacyRenderSVGForeignObject::layout()
         updateCachedBoundariesInParents = oldViewport != m_viewport;
 
     // Set box origin to the foreignObject x/y translation, so positioned objects in XHTML content get correct
-    // positions. A regular RenderBoxModelObject would pull this information from RenderStyle - in SVG those
+    // positions. A regular RenderBoxModelObject would pull this information from Style::ComputedStyle - in SVG those
     // properties are ignored for non <svg> elements, so we mimic what happens when specifying them through CSS.
     setLocation(LayoutPoint(viewportLocation));
 

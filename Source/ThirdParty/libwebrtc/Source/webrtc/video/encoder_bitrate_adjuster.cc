@@ -76,9 +76,16 @@ EncoderBitrateAdjuster::EncoderBitrateAdjuster(
   if (codec_settings.codecType == VideoCodecType::kVideoCodecAV1 &&
       codec_settings.numberOfSimulcastStreams <= 1 &&
       codec_settings.GetScalabilityMode().has_value()) {
-    for (int si = 0; si < ScalabilityModeToNumSpatialLayers(
-                              *(codec_settings.GetScalabilityMode()));
-         ++si) {
+    const int num_spatial_layers = ScalabilityModeToNumSpatialLayers(
+        *(codec_settings.GetScalabilityMode()));
+    for (int si = 0; si < num_spatial_layers; ++si) {
+      if (si >= static_cast<int>(kMaxSpatialLayers)) {
+        RTC_LOG(LS_WARNING)
+            << "AV1 scalability mode specifies " << num_spatial_layers
+            << " spatial layers, which exceeds kMaxSpatialLayers ("
+            << kMaxSpatialLayers << ")";
+        break;
+      }
       if (codec_settings.spatialLayers[si].active) {
         min_bitrates_bps_[si] =
             std::max(codec_settings.minBitrate * 1000,
@@ -88,6 +95,13 @@ EncoderBitrateAdjuster::EncoderBitrateAdjuster(
   } else if (codec_settings.codecType == VideoCodecType::kVideoCodecVP9 &&
              codec_settings.numberOfSimulcastStreams <= 1) {
     for (size_t si = 0; si < codec_settings.VP9().numberOfSpatialLayers; ++si) {
+      if (si >= kMaxSpatialLayers) {
+        RTC_LOG(LS_WARNING)
+            << "VP9 specifies " << codec_settings.VP9().numberOfSpatialLayers
+            << " spatial layers, which exceeds kMaxSpatialLayers ("
+            << kMaxSpatialLayers << ")";
+        break;
+      }
       if (codec_settings.spatialLayers[si].active) {
         min_bitrates_bps_[si] =
             std::max(codec_settings.minBitrate * 1000,
@@ -96,6 +110,13 @@ EncoderBitrateAdjuster::EncoderBitrateAdjuster(
     }
   } else {
     for (size_t si = 0; si < codec_settings.numberOfSimulcastStreams; ++si) {
+      if (si >= kMaxSpatialLayers) {
+        RTC_LOG(LS_WARNING)
+            << "Codec specifies " << codec_settings.numberOfSimulcastStreams
+            << " simulcast streams, which exceeds kMaxSpatialLayers ("
+            << kMaxSpatialLayers << ")";
+        break;
+      }
       if (codec_settings.simulcastStream[si].active) {
         min_bitrates_bps_[si] =
             std::max(codec_settings.minBitrate * 1000,
@@ -372,6 +393,12 @@ void EncoderBitrateAdjuster::OnEncoderInfo(
   // Copy allocation into current state and re-allocate.
   for (size_t si = 0; si < kMaxSpatialLayers; ++si) {
     current_fps_allocation_[si] = encoder_info.fps_allocation[si];
+    if (current_fps_allocation_[si].size() > kMaxTemporalStreams) {
+      RTC_LOG(LS_WARNING) << "fps_allocation has more than "
+                          << kMaxTemporalStreams
+                          << " temporal streams. Truncating.";
+      current_fps_allocation_[si].resize(kMaxTemporalStreams);
+    }
   }
 
   // Trigger re-allocation so that overshoot detectors have correct targets.
@@ -381,6 +408,15 @@ void EncoderBitrateAdjuster::OnEncoderInfo(
 void EncoderBitrateAdjuster::OnEncodedFrame(DataSize size,
                                             int stream_index,
                                             int temporal_index) {
+  if (stream_index < 0 || stream_index >= static_cast<int>(kMaxSpatialLayers) ||
+      temporal_index < 0 ||
+      temporal_index >= static_cast<int>(kMaxTemporalStreams)) {
+    RTC_LOG(LS_WARNING) << "OnEncodedFrame called with invalid layer: "
+                        << "stream_index = " << stream_index
+                        << ", temporal_index = " << temporal_index;
+    return;
+  }
+
   ++frames_since_layout_change_;
   // Detectors may not exist, for instance if ScreenshareLayers is used.
   auto& detector = overshoot_detectors_[stream_index][temporal_index];

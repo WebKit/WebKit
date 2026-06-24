@@ -207,7 +207,7 @@ struct StyleFeatureSchema : public FeatureSchema {
                 context.conversionData.elementForContainerUnitResolution()
             };
 
-            auto dummyStyle = RenderStyle::clone(*style);
+            auto dummyStyle = Style::ComputedStyle::clone(*style);
             auto dummyMatchResult = Style::MatchResult::create();
 
             auto styleBuilder = Style::Builder { dummyStyle, WTF::move(builderContext), dummyMatchResult };
@@ -223,6 +223,22 @@ struct StyleFeatureSchema : public FeatureSchema {
 
         ASSERT(feature.rightComparison->op == ComparisonOperator::Equal);
         return toEvaluationResult(customPropertyValue && customPropertyValue->valueEquals(*resolvedFeatureValue));
+    }
+};
+
+// Scroll-state query features: scroll-state(scrollable | scrolled | stuck | snapped [: <keyword>]).
+// https://drafts.csswg.org/css-conditional-5/#scroll-state-container
+struct ScrollStateFeatureSchema : public FeatureSchema {
+    ScrollStateFeatureSchema(const AtomString& name, FixedVector<CSSValueID>&& valueIdentifiers)
+        : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, { }, WTF::move(valueIdentifiers))
+    {
+    }
+
+    EvaluationResult evaluate(const MQ::Feature&, const FeatureEvaluationContext&) const override
+    {
+        // FIXME: Evaluate the actual scroll state. For now the feature is recognized and
+        // evaluates to false (no active scroll state); real evaluation is a follow-up.
+        return EvaluationResult::False;
     }
 };
 
@@ -270,6 +286,30 @@ static const StyleFeatureSchema& styleFeatureSchema()
     return schema;
 }
 
+static const ScrollStateFeatureSchema& scrollableFeatureSchema()
+{
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "scrollable"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
+    return schema;
+}
+
+static const ScrollStateFeatureSchema& scrolledFeatureSchema()
+{
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "scrolled"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
+    return schema;
+}
+
+static const ScrollStateFeatureSchema& stuckFeatureSchema()
+{
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "stuck"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd } };
+    return schema;
+}
+
+static const ScrollStateFeatureSchema& snappedFeatureSchema()
+{
+    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "snapped"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth } };
+    return schema;
+}
+
 // MARK: - Type erased exposed schemas
 
 const MQ::FeatureSchema& width()
@@ -305,6 +345,19 @@ const MQ::FeatureSchema& orientation()
 const MQ::FeatureSchema& style()
 {
     return styleFeatureSchema();
+}
+
+const MQ::FeatureSchema* scrollState(const AtomString& name)
+{
+    if (name == "scrollable"_s)
+        return &scrollableFeatureSchema();
+    if (name == "scrolled"_s)
+        return &scrolledFeatureSchema();
+    if (name == "stuck"_s)
+        return &stuckFeatureSchema();
+    if (name == "snapped"_s)
+        return &snappedFeatureSchema();
+    return nullptr;
 }
 
 Vector<const MQ::FeatureSchema*> allSchemas()

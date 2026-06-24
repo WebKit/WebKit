@@ -27,8 +27,8 @@
 
 #include <WebCore/LayoutUnits.h>
 #include <WebCore/RenderObject.h>
-#include <WebCore/RenderStyle.h>
 #include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleComputedStyle.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -181,9 +181,9 @@ public:
     bool NODELETE isPaddingApplicable() const;
     bool NODELETE isOverflowVisible() const;
 
-    void updateStyle(RenderStyle&& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle);
-    const RenderStyle& style() const LIFETIME_BOUND { return m_style; }
-    const RenderStyle& firstLineStyle() const LIFETIME_BOUND { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
+    void updateStyle(Style::ComputedStyle&& newStyle, std::unique_ptr<Style::ComputedStyle>&& newFirstLineStyle);
+    const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
+    const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
     WritingMode writingMode() const { return style().writingMode(); }
 
     // FIXME: Find a better place for random DOM things.
@@ -210,7 +210,7 @@ public:
     UniqueRef<Box> removeFromParent();
 
 protected:
-    Box(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, EnumSet<BaseTypeFlag>);
+    Box(ElementAttributes&&, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle, EnumSet<BaseTypeFlag>);
 
 private:
     friend class ElementBox;
@@ -223,7 +223,7 @@ private:
 
         CellSpan tableCellSpan;
         std::optional<LayoutUnit> columnWidth;
-        std::unique_ptr<RenderStyle> firstLineStyle;
+        std::unique_ptr<Style::ComputedStyle> firstLineStyle;
         RefPtr<const LayoutShape> shape;
     };
 
@@ -248,7 +248,7 @@ private:
     bool m_isInlineIntegrationRoot : 1 { false };
     bool m_isAnonymousTextIndentCandidateForIntegration : 1 { false }; // Either first anonymous block box child or simple anonymous block container (e.g flex item).
 
-    RenderStyle m_style;
+    Style::ComputedStyle m_style;
 
     CheckedPtr<ElementBox> m_parent;
 

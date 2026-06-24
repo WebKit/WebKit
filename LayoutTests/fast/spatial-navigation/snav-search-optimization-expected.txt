@@ -10,4 +10,7 @@ PASS internals.lastSpatialNavigationCandidateCount() is 6
 PASS internals.lastSpatialNavigationCandidateCount() is 2
 PASS internals.lastSpatialNavigationCandidateCount() is 5
 PASS internals.lastSpatialNavigationCandidateCount() is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

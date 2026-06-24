@@ -47,8 +47,8 @@ public:
     bool NODELETE onLine() const final;
     void setIsOnline(bool isOnline) { m_isOnline = isOnline; }
 
-    void setAppBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
-    void clearAppBadge(Ref<DeferredPromise>&&);
+    void setAppBadge(ScriptExecutionContext&, std::optional<unsigned long long>, Ref<DeferredPromise>&&);
+    void clearAppBadge(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     NavigatorUAData& userAgentData() const;
 
     GPU* gpu();

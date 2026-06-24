@@ -34,7 +34,7 @@ namespace WebCore {
 
 enum WhitespacePosition : bool { LeadingWhitespace, TrailingWhitespace };
 
-inline CheckedRef<const RenderStyle> lineStyle(const RenderObject& renderer, const LineInfo& lineInfo)
+inline CheckedRef<const Style::ComputedStyle> lineStyle(const RenderObject& renderer, const LineInfo& lineInfo)
 {
     return lineInfo.isFirstLine() ? renderer.firstLineStyle() : CheckedRef { renderer.style() };
 }
@@ -53,7 +53,7 @@ inline bool requiresLineBoxForContent(const RenderInline& flow, const LineInfo& 
     return false;
 }
 
-inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const LineInfo& lineInfo, WhitespacePosition whitespacePosition)
+inline bool shouldCollapseWhiteSpace(const Style::ComputedStyle* style, const LineInfo& lineInfo, WhitespacePosition whitespacePosition)
 {
     // CSS2 16.6.1
     // If a space (U+0020) at the beginning of a line has 'white-space' set to 'normal', 'nowrap', or 'pre-line', it is removed.

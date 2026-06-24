@@ -19,6 +19,7 @@
 #include <limits.h>
 #include <string.h>
 
+#include <algorithm>
 #include <tuple>
 
 #include <openssl/buf.h>
@@ -31,6 +32,7 @@
 #include <openssl/rand.h>
 #include <openssl/sha2.h>
 
+#include "../crypto/bytestring/internal.h"
 #include "../crypto/internal.h"
 #include "internal.h"
 
@@ -100,7 +102,7 @@ bool tls_add_message(SSL *ssl, Array<uint8_t> msg) {
   if (!SSL_is_quic(ssl) && ssl->s3->aead_write_ctx->is_null_cipher()) {
     while (!rest.empty()) {
       Span<const uint8_t> chunk =
-          rest.subspan(0, /* up to */ ssl->max_send_fragment);
+          rest.first(std::min(size_t{ssl->max_send_fragment}, rest.size()));
       rest = rest.subspan(chunk.size());
 
       if (!add_record_to_flight(ssl, SSL3_RT_HANDSHAKE, chunk)) {
@@ -118,8 +120,8 @@ bool tls_add_message(SSL *ssl, Array<uint8_t> msg) {
 
       size_t pending_len =
           ssl->s3->pending_hs_data ? ssl->s3->pending_hs_data->length : 0;
-      Span<const uint8_t> chunk =
-          rest.subspan(0, /* up to */ ssl->max_send_fragment - pending_len);
+      Span<const uint8_t> chunk = rest.first(
+          std::min(ssl->max_send_fragment - pending_len, rest.size()));
       assert(!chunk.empty());
       rest = rest.subspan(chunk.size());
 
@@ -618,6 +620,8 @@ bool ssl_tls13_cipher_meets_policy(uint16_t cipher_id,
       }
 
     case ssl_compliance_policy_wpa3_192_202304:
+    case ssl_compliance_policy_cnsa1_202603:
+    case ssl_compliance_policy_cnsa2_202603:
       switch (cipher_id) {
         case SSL_CIPHER_AES_256_GCM_SHA384:
           return true;

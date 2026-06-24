@@ -28,29 +28,37 @@
 
 #if ENABLE(WEBXR_LAYERS)
 
+#include "DOMPointReadOnly.h"
 #include "XRCompositionLayer.h"
+#include "XRCubeLayerInit.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
-class DOMPointReadOnly;
-class WebXRSpace;
+class WebXRSession;
+class XRLayerBacking;
 
 // https://immersive-web.github.io/layers/#xcubelayertype
 class XRCubeLayer : public XRCompositionLayer {
+    WTF_MAKE_TZONE_ALLOCATED(XRCubeLayer);
 public:
+    static Ref<XRCubeLayer> create(ScriptExecutionContext& scriptExecutionContext, WebXRSession& session, Ref<XRLayerBacking>&& backing, const XRCubeLayerInit& init)
+    {
+        return adoptRef(*new XRCubeLayer(scriptExecutionContext, session, WTF::move(backing), init));
+    }
+
     virtual ~XRCubeLayer();
 
-    const WebXRSpace& space() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setSpace(WebXRSpace&) { RELEASE_ASSERT_NOT_REACHED(); }
-    const DOMPointReadOnly& orientation() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setOrientation(DOMPointReadOnly&) { RELEASE_ASSERT_NOT_REACHED(); }
+    const DOMPointReadOnly& orientation() const { return m_orientation.get(); }
+    void setOrientation(DOMPointReadOnly&);
 
 private:
+    XRCubeLayer(ScriptExecutionContext&, WebXRSession&, Ref<XRLayerBacking>&&, const XRCubeLayerInit&);
     bool isXRCubeLayer() const final { return true; }
 
-    // WebXRLayer.
-    [[noreturn]] void startFrame(PlatformXR::FrameData&) final { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] PlatformXR::DeviceLayer endFrame() final { RELEASE_ASSERT_NOT_REACHED(); }
+    void fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer&) const final;
+
+    Ref<DOMPointReadOnly> m_orientation;
 };
 
 } // namespace WebCore

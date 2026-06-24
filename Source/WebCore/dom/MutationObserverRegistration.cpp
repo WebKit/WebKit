@@ -93,7 +93,7 @@ HashSet<GCReachableRef<Node>> MutationObserverRegistration::takeTransientRegistr
     }
 
     for (auto& node : m_transientRegistrationNodes)
-        node->unregisterTransientMutationObserver(*this);
+        protect(node.get())->unregisterTransientMutationObserver(*this);
 
     auto returnValue = std::exchange(m_transientRegistrationNodes, { });
 

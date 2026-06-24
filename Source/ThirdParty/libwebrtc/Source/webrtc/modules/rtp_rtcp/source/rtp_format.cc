@@ -12,9 +12,9 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format_h264.h"
 #include "modules/rtp_rtcp/source/rtp_format_video_generic.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp8.h"
@@ -32,7 +32,7 @@ namespace webrtc {
 
 std::unique_ptr<RtpPacketizer> RtpPacketizer::Create(
     PacketizationFormat format,
-    ArrayView<const uint8_t> payload,
+    std::span<const uint8_t> payload,
     PayloadSizeLimits limits,
     // Codec-specific details.
     const RTPVideoHeader& rtp_video_header) {

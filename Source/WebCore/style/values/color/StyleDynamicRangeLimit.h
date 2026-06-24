@@ -119,30 +119,18 @@ template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(F&&... f) con
     );
 }
 
-inline DynamicRangeLimit::Kind DynamicRangeLimit::copyKind(const Kind& other)
-{
-    return WTF::switchOn(other,
-        []<CSSValueID Id>(const Constant<Id>& keyword) {
-            return Kind { keyword };
-        },
-        [](const UniqueRef<DynamicRangeLimitMixFunction>& mix) {
-            return Kind { WTF::makeUniqueRef<DynamicRangeLimitMixFunction>(mix) };
-        }
-    );
-}
-
 // MARK: Conversion
 
-template<> struct ToCSS<DynamicRangeLimit> { auto operator()(const DynamicRangeLimit&, const RenderStyle&) -> CSS::DynamicRangeLimit; };
+template<> struct ToCSS<DynamicRangeLimit> { auto operator()(const DynamicRangeLimit&, const Style::ComputedStyle&) -> CSS::DynamicRangeLimit; };
 template<> struct ToStyle<CSS::DynamicRangeLimit> { auto operator()(const CSS::DynamicRangeLimit&, const BuilderState&) -> DynamicRangeLimit; };
 
 // `DynamicRangeLimit` is special-cased to return a `CSSDynamicRangeLimitValue`.
-template<> struct CSSValueCreation<DynamicRangeLimit> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const DynamicRangeLimit&); };
+template<> struct CSSValueCreation<DynamicRangeLimit> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const DynamicRangeLimit&); };
 template<> struct CSSValueConversion<DynamicRangeLimit> { auto operator()(BuilderState&, const CSSValue&) -> DynamicRangeLimit; };
 
 // MARK: Serialization
 
-template<> struct Serialize<DynamicRangeLimit> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const DynamicRangeLimit&); };
+template<> struct Serialize<DynamicRangeLimit> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const DynamicRangeLimit&); };
 
 // MARK: Blending
 

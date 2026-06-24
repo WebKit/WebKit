@@ -1,4 +1,18 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Query condition should be valid: scroll-state(snapped)
+PASS Query condition should be valid: scroll-state(snapped: x)
+PASS Query condition should be valid: scroll-state(snapped: y)
+PASS Query condition should be valid: scroll-state(snapped: none)
+PASS Query condition should be valid: scroll-state(snapped: block)
+PASS Query condition should be valid: scroll-state(snapped: inline)
+PASS Query condition should be valid: scroll-state(snapped: both)
+PASS Query condition should be valid: (scroll-state(snapped: block))
+PASS Query condition should be valid: scroll-state((snapped: inline))
+PASS Query condition should be valid: scroll-state(not ((snapped: inline) and (snapped: block)))
+PASS Query condition should be valid: scroll-state((snapped: x) or (snapped: y))
+PASS Query condition should be valid but unknown: scroll-state(snapped: auto)
+PASS Query condition should be valid but unknown: scroll-state(snapped: true)
+PASS Query condition should be valid but unknown: scroll-state(style(snapped: inline))
+PASS Query condition should be valid but unknown: style(scroll-state(snapped: inline))
+PASS Query condition should be valid but unknown: scroll-state(snapped:)
 

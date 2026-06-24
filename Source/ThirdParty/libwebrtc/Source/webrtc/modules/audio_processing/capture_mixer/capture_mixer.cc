@@ -10,8 +10,8 @@
 #include "modules/audio_processing/capture_mixer/capture_mixer.h"
 
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/capture_mixer/channel_content_remixer.h"
 #include "rtc_base/checks.h"
 
@@ -28,8 +28,8 @@ CaptureMixer::CaptureMixer(size_t num_samples_per_channel)
       remixing_logic_(num_samples_per_channel) {}
 
 void CaptureMixer::Mix(size_t num_output_channels,
-                       ArrayView<float> channel0,
-                       ArrayView<float> channel1) {
+                       std::span<float> channel0,
+                       std::span<float> channel1) {
   RTC_DCHECK_GE(num_output_channels, 1);
   RTC_DCHECK_LE(num_output_channels, 2);
 
@@ -45,11 +45,11 @@ void CaptureMixer::Mix(size_t num_output_channels,
     return;
   }
 
-  ArrayView<const float, 2> average_energies =
+  std::span<const float, 2> average_energies =
       audio_content_analyzer_.GetChannelEnergies();
-  ArrayView<const int, 2> num_frames_since_activity =
+  std::span<const int, 2> num_frames_since_activity =
       audio_content_analyzer_.GetNumFramesSinceActivity();
-  ArrayView<const float, 2> saturation_factors =
+  std::span<const float, 2> saturation_factors =
       audio_content_analyzer_.GetSaturationFactors();
 
   mixing_variant_ = remixing_logic_.SelectStereoChannelMixing(

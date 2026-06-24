@@ -143,7 +143,7 @@ template<> bool isValidEnum<WebCore::NotificationDirection>(std::underlying_type
 
 namespace TestWebKitAPI {
 
-static bool done;
+static bool webPushDaemonDone;
 
 static RetainPtr<NSURL> testWebPushDaemonLocation()
 {
@@ -559,7 +559,7 @@ TEST(WebPushD, BasicCommunication)
     // FIXME: This is a false positive. <rdar://164843889>
     SUPPRESS_RETAINPTR_CTOR_ADOPT OSObjectPtr connection = adoptOSObject(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", mainDispatchQueueSingleton(), 0));
 
-    __block bool done = false;
+    __block bool webPushDaemonDone = false;
     __block bool interrupted = false;
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t request) {
         if (request == XPC_ERROR_CONNECTION_INTERRUPTED) {
@@ -573,9 +573,9 @@ TEST(WebPushD, BasicCommunication)
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
     sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(defaultWebPushDaemonConfiguration()));
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), ^(Vector<String>, Vector<String>) {
-        done = true;
+        webPushDaemonDone = true;
     });
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     // Sending a message with a higher protocol version should cause the connection to be terminated.
     sender.setShouldIncrementProtocolVersionForTesting();
@@ -1003,16 +1003,16 @@ public:
         [m_dataStore _setResourceLoadStatisticsEnabled:YES];
         clearWebsiteDataStore(m_dataStore.get());
 
-        __block bool done = false;
+        __block bool webPushDaemonDone = false;
         [m_dataStore _setPrevalentDomain:m_url.get() completionHandler:^{
-            done = true;
+            webPushDaemonDone = true;
         }];
-        Util::run(&done);
-        done = false;
+        Util::run(&webPushDaemonDone);
+        webPushDaemonDone = false;
         [m_dataStore _logUserInteraction:m_url.get() completionHandler:^{
-            done = true;
+            webPushDaemonDone = true;
         }];
-        Util::run(&done);
+        Util::run(&webPushDaemonDone);
 
         [configuration setProcessPool:processPool];
         [configuration setWebsiteDataStore:m_dataStore.get()];
@@ -1137,15 +1137,15 @@ public:
     // active service worker).
     bool hasPushSubscriptionForTesting()
     {
-        __block bool done = false;
+        __block bool webPushDaemonDone = false;
         __block bool result = false;
 
         [m_dataStore _scopeURL:m_url.get() hasPushSubscriptionForTesting:^(BOOL fetchedResult) {
             result = fetchedResult;
-            done = true;
+            webPushDaemonDone = true;
         }];
 
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&webPushDaemonDone);
         return result;
     }
 
@@ -1181,14 +1181,14 @@ public:
 
     NSNumber *getAppBadge()
     {
-        __block bool done = false;
+        __block bool webPushDaemonDone = false;
         __block NSNumber *result = nil;
         [m_webView.get().configuration.websiteDataStore _getAppBadgeForTesting:^(NSNumber *badge) {
             result = badge;
-            done = true;
+            webPushDaemonDone = true;
         }];
 
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&webPushDaemonDone);
         return result;
     }
 
@@ -1221,13 +1221,13 @@ public:
 
         auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
         auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-        __block bool done = false;
+        __block bool webPushDaemonDone = false;
         sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
             if (!error.isEmpty())
                 NSLog(@"ERROR: %s", error.utf8().data());
-            done = true;
+            webPushDaemonDone = true;
         });
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&webPushDaemonDone);
     }
 #endif
 
@@ -1269,11 +1269,11 @@ public:
 
         auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
         auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-        __block bool done = false;
+        __block bool webPushDaemonDone = false;
         sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectEncryptedPushMessageForTesting(message), ^(bool injected) {
-            done = true;
+            webPushDaemonDone = true;
         });
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&webPushDaemonDone);
     }
 
     RetainPtr<NSDictionary> fetchPushMessage()
@@ -1346,17 +1346,17 @@ public:
         static constexpr Seconds days { 3600.0 * 24 };
         auto advance = days * daysToAdvance;
 
-        __block bool done = false;
+        __block bool webPushDaemonDone = false;
         [m_dataStore _setResourceLoadStatisticsTimeAdvanceForTesting:advance.value() completionHandler:^{
-            done = true;
+            webPushDaemonDone = true;
         }];
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-        done = false;
+        webPushDaemonDone = false;
         [m_dataStore _processStatisticsAndDataRecords:^{
-            done = true;
+            webPushDaemonDone = true;
         }];
-        Util::run(&done);
+        Util::run(&webPushDaemonDone);
     }
 
     void assertPushEventSucceeds(unsigned daysToAdvance)
@@ -1381,11 +1381,11 @@ public:
 
     void processPushMessage(NSDictionary *pushMessage)
     {
-        __block bool done = false;
+        __block bool webPushDaemonDone = false;
         [m_dataStore _processPushMessage:pushMessage completionHandler:^(bool result) {
-            done = true;
+            webPushDaemonDone = true;
         }];
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&webPushDaemonDone);
     }
 
     void captureAllMessages()
@@ -1462,13 +1462,13 @@ public:
         Vector<String> ignoredTopics;
         auto connection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
         auto sender = WebPushXPCConnectionMessageSender { connection.get() };
-        bool done = false;
+        bool webPushDaemonDone = false;
         sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), [&](Vector<String> enabled, Vector<String> ignored) {
             enabledTopics = enabled;
             ignoredTopics = ignored;
-            done = true;
+            webPushDaemonDone = true;
         });
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&webPushDaemonDone);
 
         return std::make_pair(WTF::move(enabledTopics), WTF::move(ignoredTopics));
     }
@@ -1541,12 +1541,12 @@ TEST_F(WebPushDTest, SubscribeTest)
     auto connection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
     Vector<WebCore::SecurityOriginData> origins;
-    bool done = false;
+    bool webPushDaemonDone = false;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetAllPushSubscriptionOrigins(), [&](Vector<WebCore::SecurityOriginData> result) {
         origins = WTF::move(result);
-        done = true;
+        webPushDaemonDone = true;
     });
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
     ASSERT_TRUE(origins.contains(WebCore::SecurityOriginData::fromURL(URL { "https://example.com"_s })));
 }
 
@@ -1554,11 +1554,11 @@ TEST_F(WebPushDTest, SubscribeWithBadIPCVersionRaisesExceptionTest)
 {
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-    bool done = false;
-    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&done]() {
-        done = true;
+    bool webPushDaemonDone = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&webPushDaemonDone]() {
+        webPushDaemonDone = true;
     });
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     for (auto& v : webViews()) {
         ASSERT_FALSE(v->hasPushSubscription());
@@ -1571,11 +1571,11 @@ TEST_F(WebPushDTest, GetPushSubscriptionWithBadIPCVersionRaisesExceptionTest)
 {
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-    bool done = false;
-    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&done]() {
-        done = true;
+    bool webPushDaemonDone = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&webPushDaemonDone]() {
+        webPushDaemonDone = true;
     });
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     for (auto& v : webViews()) {
         ASSERT_FALSE(v->hasPushSubscription());
@@ -1897,11 +1897,11 @@ TEST_F(WebPushDTest, GetPushSubscriptionWithMismatchedPublicToken)
     // If the public token changes, all subscriptions should be invalidated.
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-    bool done = false;
+    bool webPushDaemonDone = false;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetPublicTokenForTesting("foobar"_s), [&]() {
-        done = true;
+        webPushDaemonDone = true;
     });
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     for (auto& v : webViews())
         ASSERT_FALSE(v->hasPushSubscription());
@@ -1963,25 +1963,25 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
     // No badge had been set, so confirm its `nil`
     EXPECT_FALSE(view->getAppBadge());
 
-    done = false;
+    webPushDaemonDone = false;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
         if (!error.isEmpty())
             NSLog(@"ERROR: %s", error.utf8().data());
-        done = true;
+        webPushDaemonDone = true;
     });
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     RetainPtr delegate = (PushNotificationDelegate *)dataStore.get()._delegate;
     [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
         EXPECT_EQ(messages.count, 1u);
 
         [dataStore _processPushMessage:messages.firstObject completionHandler:^(bool handled) {
             EXPECT_TRUE(handled);
-            done = true;
+            webPushDaemonDone = true;
         }];
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     id result = view->getNotifications();
     EXPECT_TRUE([result isEqualToString:@"0 - title: notification body:  tag:  dir: auto silent: null data: null "]);
@@ -2102,11 +2102,11 @@ TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerIgnoredForInspectedContexts)
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
 
     auto setServiceWorkerIsBeingInspected = [&](const String& originString) {
-        __block bool done = false;
+        __block bool webPushDaemonDone = false;
         sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetServiceWorkerIsBeingInspected(URL(originString), true), ^() {
-            done = true;
+            webPushDaemonDone = true;
         });
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&webPushDaemonDone);
     };
 
     for (auto& v : webViews()) {
@@ -2779,7 +2779,7 @@ TEST(WebPushD, DeclarativeParsing)
     clearWebsiteDataStore(dataStore.get());
 
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-    static bool done = false;
+    static bool webPushDaemonDone = false;
 
     WebKit::WebPushD::PushMessageForTesting message;
     message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
@@ -2789,31 +2789,31 @@ TEST(WebPushD, DeclarativeParsing)
     unsigned i = 0;
     while (!jsonAndErrors[i].first.isNull()) {
         message.payload = jsonAndErrors[i].first;
-        done = false;
+        webPushDaemonDone = false;
         sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](const String& error) {
             if (!error.isEmpty())
                 EXPECT_TRUE(error.endsWith(jsonAndErrors[i].second));
             else
                 EXPECT_FALSE(strcmp(jsonAndErrors[i].second, " "));
 
-            done = true;
+            webPushDaemonDone = true;
         });
-        TestWebKitAPI::Util::run(&done);
+        TestWebKitAPI::Util::run(&webPushDaemonDone);
         ++i;
     }
 
     // Now retrieve the successfully parsed messages like a client would,
     // but validate they make sense like you only can in internals.
-    done = false;
+    webPushDaemonDone = false;
     [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
         EXPECT_EQ(messages.count, expectedSuccessfulMessages());
 
         for (NSDictionary *message in messages)
             EXPECT_TRUE(message[@"WebKitNotificationPayload"]);
 
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 }
 
 // Verifies that handling a declarative web push message - with no service worker even registered - calls
@@ -2833,7 +2833,7 @@ TEST(WebPushD, DeclarativeWebPushHandling)
 
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-    static bool done = false;
+    static bool webPushDaemonDone = false;
 
     WebKit::WebPushD::PushMessageForTesting message;
     message.pushPartitionString = "TestWebKitAPI"_s;
@@ -2843,17 +2843,17 @@ TEST(WebPushD, DeclarativeWebPushHandling)
     message.payload = json33;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](const String& error) {
         EXPECT_TRUE(error.isEmpty());
-        done = true;
+        webPushDaemonDone = true;
     });
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     // Verify that even after having sent a push message to the daemon, there are no pending messages, as it was already handled.
-    done = false;
+    webPushDaemonDone = false;
     [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
         EXPECT_EQ(messages.count, 0u);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     RetainPtr configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
@@ -2863,16 +2863,16 @@ TEST(WebPushD, DeclarativeWebPushHandling)
     configuration.get().partition = @"TestWebKitAPI";
     RetainPtr connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
 
-    done = false;
+    webPushDaemonDone = false;
 
     [connection getNotifications:message.registrationURL.createNSURL().get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(notifications);
         EXPECT_EQ(notifications.count, 1u);
         EXPECT_TRUE([notifications[0].title isEqualToString:@"Hello world!"]);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
     // FIXME: Figure out how to activate the notification programtically to verify the appropriate delegate callbacks are made
@@ -2890,26 +2890,26 @@ TEST(WebPushD, WKWebPushDaemonConnectionRequestPushPermission)
     RetainPtr connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
     RetainPtr url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org"]);
 
-    __block bool done = false;
+    __block bool webPushDaemonDone = false;
     [connection getPushPermissionStateForOrigin:url.get() completionHandler:^(_WKWebPushPermissionState state) {
-        done = true;
+        webPushDaemonDone = true;
         EXPECT_EQ(state, _WKWebPushPermissionStatePrompt);
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection requestPushPermissionForOrigin:url.get() completionHandler:^(BOOL granted) {
-        done = true;
+        webPushDaemonDone = true;
         EXPECT_TRUE(granted);
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection getPushPermissionStateForOrigin:url.get() completionHandler:^(_WKWebPushPermissionState state) {
-        done = true;
+        webPushDaemonDone = true;
         EXPECT_EQ(state, _WKWebPushPermissionStateGranted);
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 }
 #endif
 
@@ -2926,49 +2926,49 @@ TEST(WebPushD, WKWebPushDaemonConnectionPushNotifications)
     RetainPtr url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org/sw.js"]);
     RetainPtr applicationServerKey = [NSData dataWithBytes:(const void *)validServerKey.characters() length:validServerKey.length()];
 
-    __block bool done = false;
+    __block bool webPushDaemonDone = false;
     [connection subscribeToPushServiceForScope:url.get() applicationServerKey:applicationServerKey.get() completionHandler:^(_WKWebPushSubscriptionData *subscription, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(subscription);
         EXPECT_WK_STREQ(@"https://webkit.org/push", subscription.endpoint.absoluteString);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection getSubscriptionForScope:url.get() completionHandler:^(_WKWebPushSubscriptionData *subscription, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(subscription);
         EXPECT_WK_STREQ(@"https://webkit.org/push", subscription.endpoint.absoluteString);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection unsubscribeFromPushServiceForScope:url.get() completionHandler:^(BOOL unsubscribed, NSError * error) {
         EXPECT_NULL(error);
         EXPECT_TRUE(unsubscribed);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection getSubscriptionForScope:url.get() completionHandler:^(_WKWebPushSubscriptionData *subscription, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NULL(subscription);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    done = false;
+    webPushDaemonDone = false;
     [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(notifications);
         EXPECT_EQ(notifications.count, 0u);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     RetainPtr notification = adoptNS([[_WKMutableNotificationData alloc] init]);
     notification.get().title = @"Hello World!";
@@ -2983,13 +2983,13 @@ TEST(WebPushD, WKWebPushDaemonConnectionPushNotifications)
     RetainPtr uuid1 = [NSUUID UUID];
     notification.get().uuid = uuid1.get();
 
-    done = false;
+    webPushDaemonDone = false;
     [connection showNotification:notification.get() completionHandler:^{
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_EQ(notifications.count, 1u);
@@ -3005,68 +3005,68 @@ TEST(WebPushD, WKWebPushDaemonConnectionPushNotifications)
             EXPECT_TRUE([notifications[0].serviceWorkerRegistrationURL isEqual:url.get()]);
             EXPECT_TRUE([notifications[0].uuid isEqual:uuid1.get()]);
         }
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     [connection cancelNotification:url.get() uuid:uuid1.get()];
 
-    done = false;
+    webPushDaemonDone = false;
     [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(notifications);
         EXPECT_EQ(notifications.count, 0u);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection showNotification:notification.get() completionHandler:^{
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     notification.get().body = @"Body2";
     notification.get().tag = @"Tag2";
     RetainPtr uuid2 = [NSUUID UUID];
     notification.get().uuid = uuid2.get();
-    done = false;
+    webPushDaemonDone = false;
     [connection showNotification:notification.get() completionHandler:^{
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_EQ(notifications.count, 2u);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection getNotifications:url.get() tag:@"Tag1" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_EQ(notifications.count, 1u);
         if (notifications.count)
             EXPECT_TRUE([notifications[0].body isEqualToString:@"Body1"]);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
-    done = false;
+    webPushDaemonDone = false;
     [connection getNotifications:url.get() tag:@"Tag2" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_EQ(notifications.count, 1u);
         if (notifications.count)
             EXPECT_TRUE([notifications[0].body isEqualToString:@"Body2"]);
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     [connection cancelNotification:url.get() uuid:uuid1.get()];
 
-    done = false;
+    webPushDaemonDone = false;
     [connection getNotifications:url.get() tag:@"" completionHandler:^(NSArray<_WKNotificationData *> *notifications, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_EQ(notifications.count, 1u);
@@ -3074,9 +3074,9 @@ TEST(WebPushD, WKWebPushDaemonConnectionPushNotifications)
             EXPECT_TRUE([notifications[0].body isEqualToString:@"Body2"]);
             EXPECT_TRUE([notifications[0].uuid isEqual:uuid2.get()]);
         }
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 }
 
@@ -3086,11 +3086,11 @@ TEST(WebPushD, WKWebPushDaemonConnectionSubscribeWithBadIPCVersionRaisesExceptio
 
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-    bool done = false;
-    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&done]() {
-        done = true;
+    bool webPushDaemonDone = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&webPushDaemonDone]() {
+        webPushDaemonDone = true;
     });
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     RetainPtr configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
     configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
@@ -3101,13 +3101,13 @@ TEST(WebPushD, WKWebPushDaemonConnectionSubscribeWithBadIPCVersionRaisesExceptio
     RetainPtr url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org/sw.js"]);
     RetainPtr applicationServerKey = [NSData dataWithBytes:(const void *)validServerKey.characters() length:validServerKey.length()];
 
-    done = false;
+    webPushDaemonDone = false;
     RetainPtr<NSError> error;
-    [connection subscribeToPushServiceForScope:url.get() applicationServerKey:applicationServerKey.get() completionHandler:[&done, &error] (_WKWebPushSubscriptionData *subscription, NSError *subscriptionError) {
+    [connection subscribeToPushServiceForScope:url.get() applicationServerKey:applicationServerKey.get() completionHandler:[&webPushDaemonDone, &error] (_WKWebPushSubscriptionData *subscription, NSError *subscriptionError) {
         error = subscriptionError;
-        done = true;
+        webPushDaemonDone = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&webPushDaemonDone);
 
     ASSERT_TRUE([[error description] containsString:@"Connection to web push daemon failed"]);
 }

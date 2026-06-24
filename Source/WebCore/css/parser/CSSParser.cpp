@@ -406,7 +406,7 @@ bool CSSParser::consumeRuleList(CSSParserTokenRange range, RuleList ruleListType
         }
         if (rule) {
             allowedRules = computeNewAllowedRules(allowedRules, rule.get());
-            callback(Ref { *rule });
+            callback(protect(*rule));
         }
     }
 
@@ -1409,13 +1409,13 @@ RefPtr<StyleRuleProperty> CSSParser::consumePropertyRule(CSSParserTokenRange pre
     for (auto& property : declarations) {
         switch (property.id()) {
         case CSSPropertySyntax:
-            descriptor.syntax = Ref { downcast<CSSStringValue>(*property.value()) }->string().value;
+            descriptor.syntax = protect(downcast<CSSStringValue>(*property.value()))->string().value;
             continue;
         case CSSPropertyInherits:
             descriptor.inherits = isValueID(property.value(), CSSValueTrue);
             break;
         case CSSPropertyInitialValue:
-            descriptor.initialValue = Ref { downcast<CSSCustomPropertyValue>(*property.value()) }->asVariableData();
+            descriptor.initialValue = protect(downcast<CSSCustomPropertyValue>(*property.value()))->asVariableData();
             break;
         default:
             break;

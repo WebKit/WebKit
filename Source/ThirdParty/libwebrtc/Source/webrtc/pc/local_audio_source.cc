@@ -12,10 +12,7 @@
 
 #include "api/audio_options.h"
 #include "api/make_ref_counted.h"
-#include "api/media_stream_interface.h"
 #include "api/scoped_refptr.h"
-
-using webrtc::MediaSourceInterface;
 
 namespace webrtc {
 

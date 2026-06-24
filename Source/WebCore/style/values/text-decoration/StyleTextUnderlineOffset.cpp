@@ -26,14 +26,14 @@
 #include "StyleTextUnderlineOffset.h"
 
 #include "AnimationUtilities.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderState.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {
 
-float TextUnderlineOffset::resolve(const RenderStyle& style, float autoValue) const
+float TextUnderlineOffset::resolve(const Style::ComputedStyle& style, float autoValue) const
 {
     return WTF::switchOn(*this,
         [&](const CSS::Keyword::Auto&) -> float {
@@ -53,7 +53,7 @@ float TextUnderlineOffset::resolve(const RenderStyle& style, float autoValue) co
 
 // MARK: - Blending
 
-auto Blending<TextUnderlineOffset>::canBlend(const TextUnderlineOffset& a, const TextUnderlineOffset& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+auto Blending<TextUnderlineOffset>::canBlend(const TextUnderlineOffset& a, const TextUnderlineOffset& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     if (a.isAuto() || b.isAuto())
         return false;
@@ -61,7 +61,7 @@ auto Blending<TextUnderlineOffset>::canBlend(const TextUnderlineOffset& a, const
     return a.resolve(aStyle) != b.resolve(bStyle);
 }
 
-auto Blending<TextUnderlineOffset>::blend(const TextUnderlineOffset& a, const TextUnderlineOffset& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> TextUnderlineOffset
+auto Blending<TextUnderlineOffset>::blend(const TextUnderlineOffset& a, const TextUnderlineOffset& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> TextUnderlineOffset
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1.0);

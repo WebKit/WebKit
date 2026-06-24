@@ -24,9 +24,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
@@ -36,7 +36,7 @@ namespace webrtc {
 class RtpPacketizerVp9 : public RtpPacketizer {
  public:
   // The `payload` must be one encoded VP9 layer frame.
-  RtpPacketizerVp9(ArrayView<const uint8_t> payload,
+  RtpPacketizerVp9(std::span<const uint8_t> payload,
                    PayloadSizeLimits limits,
                    const RTPVideoHeaderVP9& hdr);
 
@@ -58,12 +58,12 @@ class RtpPacketizerVp9 : public RtpPacketizer {
   // the layer frame. Returns false on failure.
   bool WriteHeader(bool layer_begin,
                    bool layer_end,
-                   ArrayView<uint8_t> rtp_payload) const;
+                   std::span<uint8_t> rtp_payload) const;
 
   const RTPVideoHeaderVP9 hdr_;
   const int header_size_;
   const int first_packet_extra_header_size_;
-  ArrayView<const uint8_t> remaining_payload_;
+  std::span<const uint8_t> remaining_payload_;
   std::vector<int> payload_sizes_;
   std::vector<int>::const_iterator current_packet_;
 };

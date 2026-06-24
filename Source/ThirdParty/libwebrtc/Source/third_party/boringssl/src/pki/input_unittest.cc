@@ -50,11 +50,6 @@ TEST(InputTest, LessThan) {
   EXPECT_TRUE(test_truncated < test);
 }
 
-TEST(InputTest, AsString) {
-  Input input(kInput);
-  EXPECT_EQ(bssl::BytesAsStringView(kInput), input.AsString());
-}
-
 TEST(InputTest, StaticArray) {
   Input input(kInput);
   EXPECT_EQ(std::size(kInput), input.size());

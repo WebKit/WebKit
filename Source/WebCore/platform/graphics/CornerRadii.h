@@ -96,7 +96,7 @@ public:
     void NODELETE scale(float factor);
     void scale(float horizontalFactor, float verticalFactor);
     void expandEvenIfZero(float size);
-    void expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth);
+    WEBCORE_EXPORT void expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth);
     void expand(float size) { expand(size, size, size, size); }
     void shrink(float topWidth, float bottomWidth, float leftWidth, float rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
     void shrink(float size) { shrink(size, size, size, size); }

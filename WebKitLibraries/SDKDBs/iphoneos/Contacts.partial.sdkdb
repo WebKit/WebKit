@@ -1142,7 +1142,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "CNAuthorizationStatus"},
     {"access": "public", "name": "CNContactDisplayNameOrder"},
@@ -1156,18 +1156,35 @@
    ]
   },
   {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "description"},
+      {"access": "public", "introduced": "9", "name": "shortDebugDescription"},
+      {"access": "public", "introduced": "9", "name": "debugDescription"}
+     ],
+     "interface": "CNContact",
+     "introduced": "9",
+     "name": "Contacts"
+    }
+   ],
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE15affectedRecordsSayyXlGSgvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE15affectedRecordsSayyXlGSgvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE25affectedRecordIdentifiersSaySSGSgvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE25affectedRecordIdentifiersSaySSGSgvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE8keyPathsSaySSGSgvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE8keyPathsSaySSGSgvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo9CNContactC8ContactsE2id10Foundation4UUIDVvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo9CNContactC8ContactsE2id10Foundation4UUIDVvpMV"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE15affectedRecordsSayyXlGSgvg"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE15affectedRecordsSayyXlGSgvpMV"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE25affectedRecordIdentifiersSaySSGSgvg"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE25affectedRecordIdentifiersSaySSGSgvpMV"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE8keyPathsSaySSGSgvg"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSC11CNErrorCodeLeV8ContactsE8keyPathsSaySSGSgvpMV"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSo9CNContactC8ContactsE11descriptionSSvg"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSo9CNContactC8ContactsE16debugDescriptionSSvg"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSo9CNContactC8ContactsE21shortDebugDescriptionSSvg"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSo9CNContactC8ContactsE21shortDebugDescriptionSSvpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo9CNContactC8ContactsE2id10Foundation4UUIDVvg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo9CNContactC8ContactsE2id10Foundation4UUIDVvpMV"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo9CNContactCs12Identifiable8ContactsMc"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

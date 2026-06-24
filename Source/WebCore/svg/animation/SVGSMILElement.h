@@ -115,7 +115,7 @@ protected:
     ActiveState activeState() const { return m_activeState; }
     void setInactive() { m_activeState = Inactive; }
 
-    bool rendererIsNeeded(const RenderStyle&) override { return false; }
+    bool rendererIsNeeded(const Style::ComputedStyle&) override { return false; }
 
     // Sub-classes may need to take action when the target is changed.
     virtual void setTargetElement(SVGElement*);
@@ -188,10 +188,10 @@ private:
     WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_targetElement;
 
     Vector<Condition> m_conditions;
-    bool m_conditionsConnected;
-    bool m_hasEndEventConditions;     
+    bool m_conditionsConnected { false };
+    bool m_hasEndEventConditions { false };
 
-    bool m_isWaitingForFirstInterval;
+    bool m_isWaitingForFirstInterval { true };
 
     WeakHashSet<SVGSMILElement, WeakPtrImplWithEventTargetData> m_timeDependents;
 
@@ -200,25 +200,28 @@ private:
     Vector<SMILTimeWithOrigin> m_endTimes;
 
     // This is the upcoming or current interval
-    SMILTime m_intervalBegin;
-    SMILTime m_intervalEnd;
+    SMILTime m_intervalBegin { SMILTime::unresolved() };
+    SMILTime m_intervalEnd { SMILTime::unresolved() };
 
-    SMILTime m_previousIntervalBegin;
+    SMILTime m_previousIntervalBegin { SMILTime::unresolved() };
 
-    ActiveState m_activeState;
-    float m_lastPercent;
-    unsigned m_lastRepeat;
+    ActiveState m_activeState { Inactive };
+    float m_lastPercent { 0 };
+    unsigned m_lastRepeat { 0 };
 
-    SMILTime m_nextProgressTime;
+    SMILTime m_nextProgressTime { 0 };
 
     RefPtr<SMILTimeContainer> m_timeContainer;
-    unsigned m_documentOrderIndex;
+    unsigned m_documentOrderIndex { 0 };
 
-    mutable SMILTime m_cachedDur;
-    mutable SMILTime m_cachedRepeatDur;
-    mutable SMILTime m_cachedRepeatCount;
-    mutable SMILTime m_cachedMin;
-    mutable SMILTime m_cachedMax;
+    // This is used for duration type time values that can't be negative.
+    static constexpr double invalidCachedTime = -1;
+
+    mutable SMILTime m_cachedDur { invalidCachedTime };
+    mutable SMILTime m_cachedRepeatDur { invalidCachedTime };
+    mutable SMILTime m_cachedRepeatCount { invalidCachedTime };
+    mutable SMILTime m_cachedMin { invalidCachedTime };
+    mutable SMILTime m_cachedMax { invalidCachedTime };
 
     // FIXME: Remove once TimeEvent carries the repeat iteration count directly (webkit.org/b/313717).
     Deque<unsigned> m_pendingRepeatIterations;

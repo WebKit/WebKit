@@ -54,57 +54,73 @@ WI.DOMObserver = class DOMObserver extends InspectorBackend.Dispatcher
 
     attributeModified(nodeId, name, value)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetAttributeModified(this._target, nodeId, name, value);
+            return;
+        }
         WI.domManager._attributeModified(nodeId, name, value);
     }
 
     attributeRemoved(nodeId, name)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetAttributeRemoved(this._target, nodeId, name);
+            return;
+        }
         WI.domManager._attributeRemoved(nodeId, name);
     }
 
     inlineStyleInvalidated(nodeIds)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetInlineStyleInvalidated(this._target, nodeIds);
+            return;
+        }
         WI.domManager._inlineStyleInvalidated(nodeIds);
     }
 
     characterDataModified(nodeId, characterData)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetCharacterDataModified(this._target, nodeId, characterData);
+            return;
+        }
         WI.domManager._characterDataModified(nodeId, characterData);
     }
 
     childNodeCountUpdated(nodeId, childNodeCount)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetChildNodeCountUpdated(this._target, nodeId, childNodeCount);
+            return;
+        }
         WI.domManager._childNodeCountUpdated(nodeId, childNodeCount);
     }
 
     childNodeInserted(parentNodeId, previousNodeId, node)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetChildNodeInserted(this._target, parentNodeId, previousNodeId, node);
+            return;
+        }
         WI.domManager._childNodeInserted(parentNodeId, previousNodeId, node);
     }
 
     childNodeRemoved(parentNodeId, nodeId)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetChildNodeRemoved(this._target, parentNodeId, nodeId);
+            return;
+        }
         WI.domManager._childNodeRemoved(parentNodeId, nodeId);
     }
 
     willDestroyDOMNode(nodeId)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return; // FIXME: <https://webkit.org/b/298980> Route to frame-target handler.
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager._frameTargetWillDestroyDOMNode(this._target, nodeId);
+            return;
+        }
         WI.domManager.willDestroyDOMNode(nodeId);
     }
 

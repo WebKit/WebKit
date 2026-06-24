@@ -24,6 +24,8 @@
 
 #if !defined(WINUWP)
 
+namespace webrtc {
+
 namespace {
 
 typedef BOOL(WINAPI* GetProductInfoPtr)(DWORD, DWORD, DWORD, DWORD, PDWORD);
@@ -166,6 +168,8 @@ class RegKey {
 };
 
 }  // namespace
+
+}  // namespace webrtc
 
 #endif  // !defined(WINUWP)
 

@@ -41,10 +41,58 @@ bool SubtreeScrollbarChangesState::isEligibleForScrollbarHandlingByAncestor(cons
     return !is<HTMLTextAreaElement>(renderer.element());
 }
 
-SubtreeScrollbarChangesStateScope::SubtreeScrollbarChangesStateScope(LocalFrameViewLayoutContext& layoutContext, RenderBlock& subtreeRoot)
+EnumSet<LogicalBoxAxis> SubtreeScrollbarChangesState::sizesAffectedForSubtreeRootFromScrollbarChanges(const RenderBlock& rendererWithScrollbarChanges, EnumSet<ScrollbarOrientation> orientationsForChangedScrollbars) const
+{
+    auto subtreeRootWritingMode = subtreeRoot->writingMode();
+    auto translateToSubtreeRootAxis = [&](BoxAxis perpendicularAxis) {
+        auto axis = mapAxisPhysicalToLogical(subtreeRootWritingMode, perpendicularAxis);
+        // FIXME:
+        //   <div class="outer" style="writing-mode: vertical-lr">
+        //     <div class="parent" style="writing-mode: horizontal-tb; overflow: auto">
+        //       <div class="content"></div>
+        //     </div>
+        //   </div>
+        //
+        // .outer is the subtree root (orthogonal to body, hence shrink-to-fit). When
+        // .content overflows, .parent gains a vertical scrollbar. In .outer's frame
+        // (vertical-lr) that scrollbar consumes block-axis space, so without this
+        // remap we'd classify the change as Block and discard it. But in .parent's
+        // frame (horizontal-tb) the same scrollbar consumes inline-axis space, so
+        // .parent's preferred inline-size grows. The only thing that propagates that
+        // growth up to .outer is the brute-force subtreeRoot->layoutBlock(RelayoutChildren::Yes)
+        // at the end of the handler, which reruns orthogonal-flow sizing. We have to do
+        // this remapping in order to maintain functionality but this should really be
+        // treated as a change to the content's block axis size for the subtree root.
+        if (axis == LogicalBoxAxis::Block && subtreeRootWritingMode.isOrthogonal(rendererWithScrollbarChanges.writingMode()))
+            axis = LogicalBoxAxis::Inline;
+        return axis;
+    };
+
+    EnumSet<LogicalBoxAxis> sizesAffectedFromScrollbarChanges;
+    if (orientationsForChangedScrollbars.contains(ScrollbarOrientation::Vertical))
+        sizesAffectedFromScrollbarChanges.add(translateToSubtreeRootAxis(BoxAxis::Horizontal));
+    if (orientationsForChangedScrollbars.contains(ScrollbarOrientation::Horizontal))
+        sizesAffectedFromScrollbarChanges.add(translateToSubtreeRootAxis(BoxAxis::Vertical));
+    return sizesAffectedFromScrollbarChanges & sizesAffectedForSubtreeRoot;
+}
+
+void SubtreeScrollbarChangesState::addRendererWithScrollbarChange(RenderBlock& renderer, EnumSet<LogicalBoxAxis> sizesAffectedFromScrollbarChanges)
+{
+    ASSERT(sizesAffectedForSubtreeRoot.containsAll(sizesAffectedFromScrollbarChanges));
+    auto currentEntryIndex = rendererScrollbarChanges.findIf([&](auto& rendererScrollbarChange) {
+        return rendererScrollbarChange.renderer.ptr() == &renderer;
+    });
+    if (currentEntryIndex == notFound) {
+        rendererScrollbarChanges.append({ renderer, sizesAffectedFromScrollbarChanges });
+        return;
+    }
+    rendererScrollbarChanges[currentEntryIndex].sizesAffectedFromScrollbarChanges.add(sizesAffectedFromScrollbarChanges);
+}
+
+SubtreeScrollbarChangesStateScope::SubtreeScrollbarChangesStateScope(LocalFrameViewLayoutContext& layoutContext, RenderBlock& subtreeRoot, EnumSet<LogicalBoxAxis> sizesAffectedForSubtreeRoot)
     : m_layoutContext(layoutContext)
 {
-    layoutContext.setSubtreeScrollbarChangesState(SubtreeScrollbarChangesState { subtreeRoot, { } });
+    layoutContext.setSubtreeScrollbarChangesState(SubtreeScrollbarChangesState { subtreeRoot, sizesAffectedForSubtreeRoot, { } });
 }
 
 SubtreeScrollbarChangesStateScope::~SubtreeScrollbarChangesStateScope()
@@ -64,8 +112,8 @@ SubtreeScrollbarChangesHandler::SubtreeScrollbarChangesHandler(RenderBlock& rend
 
     bool isSubtreeRootHandlingScrollbarChanges = subtreeScrollbarChangesState->subtreeRoot.ptr() == &rendererHandlingScrollbarChanges;
     if (!isSubtreeRootHandlingScrollbarChanges) {
-        m_renderersWithScrollbarChangesHandledByAncestor = WTF::move(subtreeScrollbarChangesState->renderersWithScrollbarChange);
-        layoutContext->setSubtreeScrollbarChangesState(SubtreeScrollbarChangesState { subtreeScrollbarChangesState->subtreeRoot, { } });
+        m_rendererScrollbarChangesHandledByAncestor = WTF::move(subtreeScrollbarChangesState->rendererScrollbarChanges);
+        layoutContext->setSubtreeScrollbarChangesState(SubtreeScrollbarChangesState { subtreeScrollbarChangesState->subtreeRoot, subtreeScrollbarChangesState->sizesAffectedForSubtreeRoot, { } });
     }
 }
 
@@ -76,9 +124,9 @@ SubtreeScrollbarChangesHandler::~SubtreeScrollbarChangesHandler()
     auto& subtreeScrollbarChangesState = layoutContext->subtreeScrollbarChangesState();
     bool isSubtreeRootHandlingScrollbarChanges = subtreeScrollbarChangesState->subtreeRoot.ptr() == m_rendererHandlingScrollbarChanges.ptr();
 
-    auto descendantsWithScrollbarChange = WTF::move(subtreeScrollbarChangesState->renderersWithScrollbarChange);
+    auto descendantsWithScrollbarChange = WTF::move(subtreeScrollbarChangesState->rendererScrollbarChanges);
     auto restoreRenderersWithScrollbarChanges = makeScopeExit([&]() {
-        subtreeScrollbarChangesState->renderersWithScrollbarChange = WTF::move(m_renderersWithScrollbarChangesHandledByAncestor);
+        subtreeScrollbarChangesState->rendererScrollbarChanges = WTF::move(m_rendererScrollbarChangesHandledByAncestor);
         ASSERT(descendantsWithScrollbarChange.isEmpty());
     });
 
@@ -86,23 +134,27 @@ SubtreeScrollbarChangesHandler::~SubtreeScrollbarChangesHandler()
         return;
 
 #if ASSERT_ENABLED
-    for (auto& renderer : descendantsWithScrollbarChange)
-        ASSERT(subtreeScrollbarChangesState->isEligibleForScrollbarHandlingByAncestor(renderer.get()));
+    for (auto& rendererScrollbarChange : descendantsWithScrollbarChange)
+        ASSERT(subtreeScrollbarChangesState->isEligibleForScrollbarHandlingByAncestor(rendererScrollbarChange.renderer.get()));
 #endif
 
     if (!isSubtreeRootHandlingScrollbarChanges) {
-        while (!descendantsWithScrollbarChange.isEmpty()) {
-            CheckedPtr rendererWithScrollbarChange = descendantsWithScrollbarChange.takeFirst();
-            RenderBlock::relayoutRenderBlockForScrollbarChange(*rendererWithScrollbarChange);
-        }
+        for (auto& rendererScrollbarChange : descendantsWithScrollbarChange)
+            RenderBlock::relayoutRenderBlockForScrollbarChange(rendererScrollbarChange.renderer.get());
+        descendantsWithScrollbarChange.clear();
         return;
     }
 
     auto& subtreeRoot = subtreeScrollbarChangesState->subtreeRoot;
-    while (!descendantsWithScrollbarChange.isEmpty()) {
-        CheckedPtr rendererWithScrollbarChange = descendantsWithScrollbarChange.takeFirst();
-        rendererWithScrollbarChange->setNeedsPreferredWidthsUpdate(MarkingBehavior::MarkContainingBlockChain, protect(subtreeRoot->containingBlock()));
+    for (auto& rendererScrollbarChange : descendantsWithScrollbarChange) {
+        CheckedRef renderer = rendererScrollbarChange.renderer;
+        ASSERT(renderer->isDescendantOf(subtreeRoot.ptr()));
+        if (rendererScrollbarChange.sizesAffectedFromScrollbarChanges.contains(LogicalBoxAxis::Block))
+            renderer->setNeedsLayout();
+        if (rendererScrollbarChange.sizesAffectedFromScrollbarChanges.contains(LogicalBoxAxis::Inline))
+            renderer->invalidateContentLogicalWidths(MarkingBehavior::MarkContainingBlockChain, protect(subtreeRoot->containingBlock()));
     }
+    descendantsWithScrollbarChange.clear();
 
     subtreeRoot->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
     subtreeRoot->layoutBlock(RelayoutChildren::Yes);

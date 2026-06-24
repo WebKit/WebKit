@@ -33,5 +33,6 @@ WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 
 @property (nonatomic, readonly, copy) WKFrameInfo *info WK_API_AVAILABLE(macos(14.0), ios(17.0));
 @property (nonatomic, readonly) NSArray<_WKFrameTreeNode *> *childFrames;
+@property (nonatomic, readonly, copy) NSURL *_topDocumentURLForTesting;
 
 @end

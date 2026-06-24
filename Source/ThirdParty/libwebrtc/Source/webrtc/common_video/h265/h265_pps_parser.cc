@@ -12,9 +12,9 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
 #include "common_video/h265/h265_sps_parser.h"
 #include "rtc_base/bitstream_reader.h"
@@ -52,20 +52,20 @@
     }                                                                    \
   } while (0)
 
+namespace webrtc {
+
 namespace {
 constexpr int kMaxNumTileColumnWidth = 19;
 constexpr int kMaxNumTileRowHeight = 21;
 constexpr int kMaxRefIdxActive = 15;
 }  // namespace
 
-namespace webrtc {
-
 // General note: this is based off the 08/2021 version of the H.265 standard.
 // You can find it on this page:
 // http://www.itu.int/rec/T-REC-H.265
 
 std::optional<H265PpsParser::PpsState> H265PpsParser::ParsePps(
-    ArrayView<const uint8_t> data,
+    std::span<const uint8_t> data,
     const H265SpsParser::SpsState* sps) {
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
@@ -73,7 +73,7 @@ std::optional<H265PpsParser::PpsState> H265PpsParser::ParsePps(
   return ParseInternal(H265::ParseRbsp(data), sps);
 }
 
-bool H265PpsParser::ParsePpsIds(ArrayView<const uint8_t> data,
+bool H265PpsParser::ParsePpsIds(std::span<const uint8_t> data,
                                 uint32_t* pps_id,
                                 uint32_t* sps_id) {
   RTC_DCHECK(pps_id);
@@ -91,7 +91,7 @@ bool H265PpsParser::ParsePpsIds(ArrayView<const uint8_t> data,
 }
 
 std::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
-    ArrayView<const uint8_t> buffer,
+    std::span<const uint8_t> buffer,
     const H265SpsParser::SpsState* sps) {
   BitstreamReader reader(buffer);
   PpsState pps;

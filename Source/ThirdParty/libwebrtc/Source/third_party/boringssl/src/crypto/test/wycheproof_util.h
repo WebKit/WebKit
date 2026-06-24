@@ -37,11 +37,11 @@ struct WycheproofResult {
 
   // IsValid returns true if the Wycheproof test should be considered valid. A
   // test result of "acceptable" is treated as valid if all flags are included
-  // in |acceptable_flags| and invalid otherwise.
+  // in `acceptable_flags` and invalid otherwise.
   bool IsValid(const std::vector<std::string> &acceptable_flags = {}) const;
 };
 
-// GetWycheproofResult sets |*out| to the parsed "result" and "flags" keys of |t|.
+// GetWycheproofResult sets `*out` to the parsed "result" and "flags" keys of `t`.
 bool GetWycheproofResult(FileTest *t, WycheproofResult *out);
 
 // GetWycheproofDigest returns a digest function using the Wycheproof name, or

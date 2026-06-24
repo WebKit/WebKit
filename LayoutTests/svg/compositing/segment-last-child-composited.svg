@@ -1,0 +1,7 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Last child is composited, the rest are not. The non-composited children all precede it and paint into the primary segment, with no trailing overlay segment. -->
+    <rect x="10" y="10" width="80" height="80" fill="blue"/>
+    <rect x="110" y="10" width="80" height="80" fill="red"/>
+    <rect style="will-change: transform" x="210" y="10" width="80" height="80" fill="green"/>
+</svg>

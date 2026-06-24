@@ -27,10 +27,13 @@
 #include "./internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 template <typename T>
 static std::vector<uint8_t> Marshal(int (*marshal_func)(CBB *, const T *),
                                     const T *t) {
-  bssl::ScopedCBB cbb;
+  ScopedCBB cbb;
   uint8_t *encoded;
   size_t encoded_len;
   if (!CBB_init(cbb.get(), 1) ||      //
@@ -171,3 +174,6 @@ static void KyberFileTest(FileTest *t) {
 TEST(KyberTest, TestVectors) {
   FileTestGTest("crypto/kyber/kyber_tests.txt", KyberFileTest);
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

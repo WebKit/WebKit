@@ -159,7 +159,6 @@ PASS font-variant-numeric
 PASS font-variant-position
 PASS font-variation-settings
 PASS font-weight
-PASS glyph-orientation-horizontal
 PASS glyph-orientation-vertical
 PASS grid-auto-columns
 PASS grid-auto-flow
@@ -233,6 +232,7 @@ PASS min-width
 PASS mix-blend-mode
 PASS object-fit
 PASS object-position
+PASS object-view-box
 PASS offset-anchor
 PASS offset-distance
 PASS offset-path

@@ -15,13 +15,13 @@
 #include <fstream>
 #include <ios>
 #include <memory>
+#include <span>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_compare.h"
@@ -49,7 +49,7 @@ class FloatFileReader : public FileReader {
   ~FloatFileReader() override = default;
 
   int size() const override { return size_; }
-  bool ReadChunk(ArrayView<float> dst) override {
+  bool ReadChunk(std::span<float> dst) override {
     const std::streamsize bytes_to_read = dst.size() * sizeof(T);
     if (std::is_same<T, float>::value) {
       is_.read(reinterpret_cast<char*>(dst.data()), bytes_to_read);
@@ -77,8 +77,8 @@ class FloatFileReader : public FileReader {
 
 using test::ResourcePath;
 
-void ExpectEqualFloatArray(ArrayView<const float> expected,
-                           ArrayView<const float> computed) {
+void ExpectEqualFloatArray(std::span<const float> expected,
+                           std::span<const float> computed) {
   ASSERT_EQ(expected.size(), computed.size());
   for (int i = 0; SafeLt(i, expected.size()); ++i) {
     SCOPED_TRACE(i);
@@ -86,8 +86,8 @@ void ExpectEqualFloatArray(ArrayView<const float> expected,
   }
 }
 
-void ExpectNearAbsolute(ArrayView<const float> expected,
-                        ArrayView<const float> computed,
+void ExpectNearAbsolute(std::span<const float> expected,
+                        std::span<const float> computed,
                         float tolerance) {
   ASSERT_EQ(expected.size(), computed.size());
   for (int i = 0; SafeLt(i, expected.size()); ++i) {

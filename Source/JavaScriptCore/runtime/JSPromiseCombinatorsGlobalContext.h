@@ -45,28 +45,28 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static JSPromiseCombinatorsGlobalContext* create(VM&, JSValue promise, JSValue values, JSValue remainingElementsCount);
+    static JSPromiseCombinatorsGlobalContext* create(VM&, JSValue promise, JSValue values, uint64_t remainingElementsCount);
 
     JSValue promise() const { return m_promise.get(); }
     JSValue values() const { return m_values.get(); }
-    JSValue remainingElementsCount() const { return m_remainingElementsCount.get(); }
+    uint64_t remainingElementsCount() const { return m_remainingElementsCount; }
 
     void setPromise(VM& vm, JSValue promise) { m_promise.set(vm, this, promise); }
     void setValues(VM& vm, JSValue values) { m_values.set(vm, this, values); }
-    void setRemainingElementsCount(VM& vm, JSValue remainingElementsCount) { m_remainingElementsCount.set(vm, this, remainingElementsCount); }
+    void setRemainingElementsCount(uint64_t remainingElementsCount) { m_remainingElementsCount = remainingElementsCount; }
 
 private:
-    JSPromiseCombinatorsGlobalContext(VM& vm, Structure* structure, JSValue promise, JSValue values, JSValue remainingElementsCount)
+    JSPromiseCombinatorsGlobalContext(VM& vm, Structure* structure, JSValue promise, JSValue values, uint64_t remainingElementsCount)
         : Base(vm, structure)
         , m_promise(promise, WriteBarrierEarlyInit)
         , m_values(values, WriteBarrierEarlyInit)
-        , m_remainingElementsCount(remainingElementsCount, WriteBarrierEarlyInit)
+        , m_remainingElementsCount(remainingElementsCount)
     {
     }
 
     WriteBarrier<Unknown> m_promise;
     WriteBarrier<Unknown> m_values;
-    WriteBarrier<Unknown> m_remainingElementsCount;
+    uint64_t m_remainingElementsCount;
 };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromiseCombinatorsGlobalContext);

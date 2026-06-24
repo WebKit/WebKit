@@ -42,7 +42,7 @@ Ref<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGTSpanElement(tagName, document));
 }
 
-RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGTSpan>(*this, WTF::move(style));
 }
@@ -59,7 +59,7 @@ bool SVGTSpanElement::childShouldCreateRenderer(const Node& child) const
     return false;
 }
 
-bool SVGTSpanElement::rendererIsNeeded(const RenderStyle& style)
+bool SVGTSpanElement::rendererIsNeeded(const Style::ComputedStyle& style)
 {
     if (parentNode()
         && (parentNode()->hasTagName(SVGNames::aTag)

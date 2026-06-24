@@ -14,8 +14,10 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "absl/algorithm/container.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_view.h"
+#include "api/audio/channel_layout.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -24,7 +26,7 @@ namespace webrtc {
 namespace acm2 {
 
 ResamplerHelper::ResamplerHelper() {
-  ClearSamples(last_audio_buffer_);
+  absl::c_fill(last_audio_buffer_, 0);
 }
 
 bool ResamplerHelper::MaybeResample(int desired_sample_rate_hz,
@@ -48,6 +50,9 @@ bool ResamplerHelper::MaybeResample(int desired_sample_rate_hz,
       RTC_LOG(LS_ERROR) << "AudioFrame cannot hold resampled data.";
       AudioFrameOperations::Mute(audio_frame);
       audio_frame->SetSampleRateAndChannelSize(desired_sample_rate_hz);
+      audio_frame->SetLayoutAndNumChannels(
+          CHANNEL_LAYOUT_UNSUPPORTED,
+          AudioFrame::kMaxDataSizeSamples / audio_frame->samples_per_channel());
       return false;
     }
   }

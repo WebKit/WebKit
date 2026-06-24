@@ -330,6 +330,7 @@ public:
 
     virtual void contentsSizeChanged(LocalFrame&, const IntSize&) const = 0;
     virtual void intrinsicContentsSizeChanged(const IntSize&) const = 0;
+    virtual void scrollOriginDidChange(const LocalFrame&) const { }
 
     virtual void scrollContainingScrollViewsToRevealRect(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
     virtual void scrollMainFrameToRevealRect(const IntRect&) const { };
@@ -347,9 +348,6 @@ public:
     virtual void themeColorChanged() const { }
     virtual void pageExtendedBackgroundColorDidChange() const { }
     virtual void sampledPageTopColorChanged() const { }
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    virtual void spatialBackdropSourceChanged() const { }
-#endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     virtual void allowImmersiveElement(CompletionHandler<void(bool)>&& completion) const { completion(false); }

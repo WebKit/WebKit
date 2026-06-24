@@ -19,9 +19,9 @@
 #include "api/test/rtc_error_matchers.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 
 class FakeAdmTest : public ::testing::Test, public webrtc::AudioTransport {
@@ -127,7 +127,7 @@ class FakeAdmTest : public ::testing::Test, public webrtc::AudioTransport {
     return min_buffer_size;
   }
 
-  webrtc::AutoThread main_thread_;
+  webrtc::test::RunLoop main_thread_;
 
   mutable webrtc::Mutex mutex_;
 

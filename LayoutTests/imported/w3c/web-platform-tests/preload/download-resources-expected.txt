@@ -1,3 +1,3 @@
 
-PASS Makes sure that preloaded resources are downloaded
+FAIL Makes sure that preloaded resources are downloaded Error: assert_equals: resources/white.mp4 expected 0 but got 1
 

@@ -41,10 +41,6 @@ DesktopCapturer::SourceId FullScreenWindowDetector::FindFullScreenWindow(
 
 DesktopCapturer::SourceId FullScreenWindowDetector::FindEditorWindow(
     DesktopCapturer::SourceId original_source_id) {
-  if (!UseHeuristicForFindingEditor()) {
-    return 0;
-  }
-
   if (app_handler_ == nullptr ||
       app_handler_->GetSourceId() != original_source_id) {
     return 0;
@@ -123,26 +119,18 @@ void FullScreenWindowDetector::CreateApplicationHandlerIfNeeded(
 
   if (app_handler_ == nullptr) {
     no_handler_source_id_ = source_id;
-  } else {
-    app_handler_->SetHeuristicForFindingEditor(
-        use_heuristic_for_finding_editor_);
-    if (found_editor_for_chosen_slide_show_) {
+  } else if (found_editor_for_chosen_slide_show_) {
       app_handler_->SetEditorWasFound();
-    }
   }
 }
 
 void FullScreenWindowDetector::SetEditorWasFoundForChosenSlideShow() {
-  if (!UseHeuristicForFindingEditor())
-    return;
-
   found_editor_for_chosen_slide_show_ = true;
 }
 
 void FullScreenWindowDetector::CreateFullScreenApplicationHandlerForTest(
     DesktopCapturer::SourceId source_id,
-    bool fullscreen_slide_show_started_after_capture_start,
-    bool use_heuristic_for_finding_editor) {
+    bool fullscreen_slide_show_started_after_capture_start) {
   if (app_handler_) {
     return;
   }
@@ -150,8 +138,6 @@ void FullScreenWindowDetector::CreateFullScreenApplicationHandlerForTest(
   app_handler_ = std::make_unique<FullScreenPowerPointHandler>(source_id);
   app_handler_->SetSlideShowCreationStateForTest(
       fullscreen_slide_show_started_after_capture_start);
-  use_heuristic_for_finding_editor_ = use_heuristic_for_finding_editor;
-  app_handler_->SetHeuristicForFindingEditor(use_heuristic_for_finding_editor);
 #endif
 }
 

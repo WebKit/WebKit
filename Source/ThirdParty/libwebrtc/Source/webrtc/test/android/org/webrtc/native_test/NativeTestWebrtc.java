@@ -28,8 +28,8 @@ import org.jni_zero.JniType;
 import org.jni_zero.NativeMethods;
 
 import org.webrtc.native_test.StrictModeContext;
+import org.webrtc.native_test.TestStatusReporter;
 import org.chromium.build.gtest_apk.NativeTestIntent;
-import org.chromium.test.reporter.TestStatusReporter;
 
 import java.io.File;
 

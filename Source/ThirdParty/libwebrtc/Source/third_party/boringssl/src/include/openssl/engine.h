@@ -27,9 +27,9 @@ extern "C" {
 // be overridden via a callback. This can be used, for example, to implement an
 // RSA* that forwards operations to a hardware module.
 //
-// Methods are reference counted but |ENGINE|s are not. When creating a method,
+// Methods are reference counted but `ENGINE`s are not. When creating a method,
 // you should zero the whole structure and fill in the function pointers that
-// you wish before setting it on an |ENGINE|. Any functions pointers that
+// you wish before setting it on an `ENGINE`. Any functions pointers that
 // are NULL indicate that the default behaviour should be used.
 
 
@@ -40,7 +40,7 @@ extern "C" {
 OPENSSL_EXPORT ENGINE *ENGINE_new(void);
 
 // ENGINE_free decrements the reference counts for all methods linked from
-// |engine| and frees |engine| itself. It returns one.
+// `engine` and frees `engine` itself. It returns one.
 OPENSSL_EXPORT int ENGINE_free(ENGINE *engine);
 
 
@@ -69,11 +69,11 @@ OPENSSL_EXPORT ECDSA_METHOD *ENGINE_get_ECDSA_method(const ENGINE *engine);
 // These functions take a void* type but actually operate on all method
 // structures.
 
-// METHOD_ref increments the reference count of |method|. This is a no-op for
+// METHOD_ref increments the reference count of `method`. This is a no-op for
 // now because all methods are currently static.
 void METHOD_ref(void *method);
 
-// METHOD_unref decrements the reference count of |method| and frees it if the
+// METHOD_unref decrements the reference count of `method` and frees it if the
 // reference count drops to zero. This is a no-op for now because all methods
 // are currently static.
 void METHOD_unref(void *method);

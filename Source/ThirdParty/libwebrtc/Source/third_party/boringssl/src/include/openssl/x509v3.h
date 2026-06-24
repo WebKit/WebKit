@@ -46,7 +46,7 @@
 
 // Deprecated constants.
 
-// The following constants are legacy aliases for |X509v3_KU_*|. They are
+// The following constants are legacy aliases for `X509v3_KU_*`. They are
 // defined here instead of in <openssl/x509.h> because NSS's public headers use
 // the same symbols. Some callers have inadvertently relied on the conflicts
 // only being defined in this header.

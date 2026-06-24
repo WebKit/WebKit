@@ -53,7 +53,7 @@ void GPUCommandEncoder::setLabel(String&& label)
 ExceptionOr<Ref<GPURenderPassEncoder>> GPUCommandEncoder::beginRenderPass(const GPURenderPassDescriptor& renderPassDescriptor)
 {
     RefPtr encoder = protect(backing())->beginRenderPass(renderPassDescriptor.convertToBacking());
-    RefPtr device = m_device.get();
+    RefPtr device { m_device };
     if (!encoder || !device)
         return Exception { ExceptionCode::InvalidStateError, "GPUCommandEncoder.beginRenderPass: Unable to begin render pass."_s };
     return GPURenderPassEncoder::create(encoder.releaseNonNull(), *device);
@@ -62,7 +62,7 @@ ExceptionOr<Ref<GPURenderPassEncoder>> GPUCommandEncoder::beginRenderPass(const 
 ExceptionOr<Ref<GPUComputePassEncoder>> GPUCommandEncoder::beginComputePass(const std::optional<GPUComputePassDescriptor>& computePassDescriptor)
 {
     RefPtr computePass = protect(backing())->beginComputePass(computePassDescriptor ? std::optional { computePassDescriptor->convertToBacking() } : std::nullopt);
-    RefPtr device = m_device.get();
+    RefPtr device { m_device };
     if (!computePass || !device)
         return Exception { ExceptionCode::InvalidStateError, "GPUCommandEncoder.beginComputePass: Unable to begin compute pass."_s };
     return GPUComputePassEncoder::create(computePass.releaseNonNull(), *device);
@@ -163,7 +163,7 @@ ExceptionOr<Ref<GPUCommandBuffer>> GPUCommandEncoder::finish(const std::optional
     if (!buffer)
         return Exception { ExceptionCode::InvalidStateError, "GPUCommandEncoder.finish: Unable to finish."_s };
     auto result = GPUCommandBuffer::create(buffer.releaseNonNull(), *this);
-    if (RefPtr device = m_device.get()) {
+    if (RefPtr device = m_device) {
         m_overrideLabel = label();
         m_backing = device->invalidCommandEncoder();
     }

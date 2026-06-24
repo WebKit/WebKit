@@ -35,9 +35,10 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/TZoneMalloc.h>
 
+class GrDirectContext;
+
 namespace WebCore {
 
-class GLFence;
 class GraphicsContextSkia;
 class SkiaSwitchableCanvas;
 
@@ -64,7 +65,8 @@ private:
     void getPixelBuffer(const IntRect&, PixelBuffer&) final;
     void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
 
-    std::unique_ptr<GLFence> flushCanvasRecordingContextIfNeeded();
+    GrDirectContext* grContext() const;
+    void replayCanvasRecordingContextIfNeeded();
     void ensureCanvasRecordingContext();
 
 #if USE(COORDINATED_GRAPHICS)

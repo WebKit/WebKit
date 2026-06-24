@@ -157,6 +157,9 @@ struct ContentView: View {
                     DialogMessageView(dialog: dialog)
                 }
                 .scrollBounceBehavior(scrollBounceBehaviorBasedOnSize == true ? .basedOnSize : .automatic)
+                .refreshable {
+                    await viewModel.reload()
+                }
                 .webViewContentBackground(backgroundHidden == true ? .hidden : .automatic)
                 .webViewScrollEdgeEffectStyle(showColorInTabBar ? .soft : .hard, for: .all)
                 .webContextMenu()

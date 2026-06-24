@@ -19,8 +19,7 @@
 namespace webrtc {
 
 std::string AvailableCpuFeatures::ToString() const {
-  char buf[64];
-  SimpleStringBuilder builder(buf);
+  StringBuilder builder;
   bool first = true;
   if (sse2) {
     builder << (first ? "SSE2" : "_SSE2");

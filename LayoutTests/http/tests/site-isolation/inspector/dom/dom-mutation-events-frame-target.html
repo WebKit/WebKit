@@ -1,0 +1,188 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.MutationEvents");
+
+    let frameTarget = null;
+    let frameDoc = null;
+    let containerNode = null;
+
+    function evaluateInFrame(expression) {
+        return frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and expand the DOM tree.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+
+            // Expand HTML > BODY > #container so mutations are visible.
+            let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+            await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+
+            let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+            await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+
+            containerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+            InspectorTest.expectNotNull(containerNode, "Should find #container.");
+            await new Promise((resolve) => containerNode.getChildNodes(resolve));
+
+            InspectorTest.expectEqual(containerNode.getAttribute("data-role"), "frame-root", "#container should have data-role='frame-root'.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.MutationEvents.AttributeModified",
+        description: "Modifying an attribute in a cross-origin frame should fire attributeModified.",
+        async test() {
+            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.AttributeModified);
+            evaluateInFrame("modifyAttribute()");
+
+            let event = await eventPromise;
+            let {node, name} = event.data;
+            InspectorTest.expectEqual(node, containerNode, "Modified node should be #container.");
+            InspectorTest.expectEqual(name, "data-role", "Modified attribute should be 'data-role'.");
+            InspectorTest.expectEqual(containerNode.getAttribute("data-role"), "updated-role", "Attribute value should be 'updated-role'.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.MutationEvents.AttributeRemoved",
+        description: "Removing an attribute in a cross-origin frame should fire attributeRemoved.",
+        async test() {
+            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.AttributeRemoved);
+            evaluateInFrame("removeAttribute()");
+
+            let event = await eventPromise;
+            let {node, name} = event.data;
+            InspectorTest.expectEqual(node, containerNode, "Removed attribute node should be #container.");
+            InspectorTest.expectEqual(name, "data-role", "Removed attribute should be 'data-role'.");
+            InspectorTest.expectEqual(containerNode.getAttribute("data-role"), undefined, "data-role attribute should no longer exist.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.MutationEvents.CharacterDataModified",
+        description: "Modifying text content in a cross-origin frame should fire characterDataModified.",
+        async test() {
+            let textParagraph = containerNode.children.find((child) => child.getAttribute("id") === "text-node");
+            InspectorTest.expectNotNull(textParagraph, "Should find #text-node.");
+
+            // Expand #text-node so we can see its text child.
+            await new Promise((resolve) => textParagraph.getChildNodes(resolve));
+
+            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.CharacterDataModified);
+            evaluateInFrame("modifyCharacterData()");
+
+            let event = await eventPromise;
+            let {node} = event.data;
+            InspectorTest.expectEqual(node.nodeValue(), "Updated text content.", "Text node should have updated content.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.MutationEvents.ChildNodeInserted",
+        description: "Inserting a child in a cross-origin frame should fire NodeInserted.",
+        async test() {
+            let childCountBefore = containerNode.children.length;
+
+            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted);
+            evaluateInFrame("insertChild()");
+
+            let event = await eventPromise;
+            let {node, parent} = event.data;
+            InspectorTest.expectEqual(parent, containerNode, "Inserted node's parent should be #container.");
+            InspectorTest.expectEqual(node.nodeName(), "SPAN", "Inserted node should be a SPAN.");
+            InspectorTest.expectEqual(node.getAttribute("id"), "inserted-span", "Inserted node should have id='inserted-span'.");
+            InspectorTest.expectEqual(containerNode.children.length, childCountBefore + 1, "Container should have one more child.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.MutationEvents.ChildNodeRemoved",
+        description: "Removing a child from a cross-origin frame should fire NodeRemoved.",
+        async test() {
+            let headingNode = containerNode.children.find((child) => child.getAttribute("id") === "heading");
+            InspectorTest.expectNotNull(headingNode, "Should find #heading before removal.");
+
+            let childCountBefore = containerNode.children.length;
+
+            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.NodeRemoved);
+            evaluateInFrame("removeChild()");
+
+            let event = await eventPromise;
+            let {node, parent} = event.data;
+            InspectorTest.expectEqual(node, headingNode, "Removed node should be #heading.");
+            InspectorTest.expectEqual(parent, containerNode, "Removed node's parent should be #container.");
+            InspectorTest.expectEqual(containerNode.children.length, childCountBefore - 1, "Container should have one fewer child.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.MutationEvents.InlineStyleInvalidated",
+        description: "Modifying inline style in a cross-origin frame should fire attributeModified for 'style'.",
+        async test() {
+            let eventPromise = WI.domManager.awaitEvent(WI.DOMManager.Event.AttributeModified);
+            evaluateInFrame("modifyInlineStyle()");
+
+            let event = await eventPromise;
+            let {node, name} = event.data;
+            InspectorTest.expectEqual(node, containerNode, "Style-invalidated node should be #container.");
+            InspectorTest.expectEqual(name, "style", "Modified attribute should be 'style'.");
+            InspectorTest.expectThat(containerNode.getAttribute("style").includes("color"), "Style attribute should include the updated color.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.MutationEvents.ChildNodeCountUpdated",
+        description: "Inserting a child into an unexpanded node in a cross-origin frame should fire ChildNodeCountUpdated.",
+        async test() {
+            // #list was never expanded, so the backend reports a count change rather than the inserted node.
+            let listNode = containerNode.children.find((child) => child.getAttribute("id") === "list");
+            InspectorTest.expectNotNull(listNode, "Should find #list.");
+
+            let childCountBefore = listNode.childNodeCount;
+
+            // ChildNodeCountUpdated is a manager-wide event that the page target also fires (e.g. the
+            // harness mutating its own output element while logging), so wait for the event whose node
+            // belongs to the frame target instead of the first one that arrives.
+            let eventPromise = new Promise((resolve) => {
+                WI.domManager.addEventListener(WI.DOMManager.Event.ChildNodeCountUpdated, function listener(event) {
+                    let node = event.data;
+                    if (node._owningTarget !== frameTarget || node.getAttribute("id") !== "list")
+                        return;
+                    WI.domManager.removeEventListener(WI.DOMManager.Event.ChildNodeCountUpdated, listener, null);
+                    resolve(node);
+                });
+            });
+            evaluateInFrame("insertUnexpandedChild()");
+
+            let node = await eventPromise;
+            InspectorTest.expectEqual(node.getAttribute("id"), "list", "Count-updated node should be #list.");
+            InspectorTest.expectEqual(node.childNodeCount, childCountBefore + 1, "#list should report one more child.");
+        }
+    });
+
+    // FIXME: willDestroyDOMNode is not covered here. It fires when the backend tears down a Node
+    // (on GC after detachment), which can't be triggered deterministically from script. Its frontend
+    // handler dispatches the same NodeRemoved event already exercised by ChildNodeRemoved above.
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that DOM mutation events from cross-origin iframes are correctly forwarded to the frontend under site isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-mutation-frame.html"></iframe>
+</body>

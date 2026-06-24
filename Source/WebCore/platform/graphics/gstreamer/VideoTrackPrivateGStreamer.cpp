@@ -62,8 +62,8 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
     ensureVideoTrackDebugCategoryInitialized();
 }
 
-VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
-    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Video, this, index, stream)
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstStream>&& stream)
+    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Video, this, index, WTF::move(stream))
 {
     ensureVideoTrackDebugCategoryInitialized();
 

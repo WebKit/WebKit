@@ -158,7 +158,7 @@ class MasterValueParser : public ElementParser {
   template <typename Parser, typename Value, typename... Tags>
   class SingleChildFactory {
    public:
-    constexpr SingleChildFactory(Id id, Element<Value> T::*member)
+    constexpr SingleChildFactory(Id id, Element<Value> T::* member)
         : id_(id), member_(member) {}
 
     // Builds a std::pair<Id, std::unique_ptr<ElementParser>>. The parent
@@ -195,14 +195,14 @@ class MasterValueParser : public ElementParser {
 
    private:
     Id id_;
-    Element<Value> T::*member_;
+    Element<Value> T::* member_;
   };
 
   template <typename Parser, typename Value, typename... Tags>
   class RepeatedChildFactory {
    public:
     constexpr RepeatedChildFactory(Id id,
-                                   std::vector<Element<Value>> T::*member)
+                                   std::vector<Element<Value>> T::* member)
         : id_(id), member_(member) {}
 
     // Builds a std::pair<Id, std::unique_ptr<ElementParser>>. The parent
@@ -242,13 +242,13 @@ class MasterValueParser : public ElementParser {
 
    private:
     Id id_;
-    std::vector<Element<Value>> T::*member_;
+    std::vector<Element<Value>> T::* member_;
   };
 
   template <typename Parser, typename... Tags>
   class RecursiveChildFactory {
    public:
-    constexpr RecursiveChildFactory(Id id, std::vector<Element<T>> T::*member,
+    constexpr RecursiveChildFactory(Id id, std::vector<Element<T>> T::* member,
                                     std::size_t max_recursion_depth)
         : id_(id), member_(member), max_recursion_depth_(max_recursion_depth) {}
 
@@ -291,7 +291,7 @@ class MasterValueParser : public ElementParser {
 
    private:
     Id id_;
-    std::vector<Element<T>> T::*member_;
+    std::vector<Element<T>> T::* member_;
     std::size_t max_recursion_depth_;
   };
 
@@ -310,7 +310,7 @@ class MasterValueParser : public ElementParser {
   // the necessary factories to the constructor.
   template <typename Parser, typename Value>
   static SingleChildFactory<Parser, Value> MakeChild(
-      Id id, Element<Value> T::*member) {
+      Id id, Element<Value> T::* member) {
     static_assert(std::is_base_of<ElementParser, Parser>::value,
                   "Parser must derive from ElementParser");
     static_assert(!std::is_base_of<MasterValueParser<T>, Parser>::value,
@@ -320,7 +320,7 @@ class MasterValueParser : public ElementParser {
 
   template <typename Parser, typename Value>
   static RepeatedChildFactory<Parser, Value> MakeChild(
-      Id id, std::vector<Element<Value>> T::*member) {
+      Id id, std::vector<Element<Value>> T::* member) {
     static_assert(std::is_base_of<ElementParser, Parser>::value,
                   "Parser must derive from ElementParser");
     static_assert(!std::is_base_of<MasterValueParser<T>, Parser>::value,
@@ -330,7 +330,7 @@ class MasterValueParser : public ElementParser {
 
   template <typename Parser>
   static RecursiveChildFactory<Parser> MakeChild(
-      Id id, std::vector<Element<T>> T::*member,
+      Id id, std::vector<Element<T>> T::* member,
       std::size_t max_recursion_depth) {
     static_assert(std::is_base_of<MasterValueParser<T>, Parser>::value,
                   "Child must be recusrive to use maximum recursion depth");

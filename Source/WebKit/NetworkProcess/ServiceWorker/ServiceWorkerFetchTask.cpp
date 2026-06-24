@@ -319,7 +319,7 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
 
     if (shouldSetSource == ShouldSetSource::Yes)
         response.setSource(ResourceResponse::Source::ServiceWorker);
-    loader->sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, PrivateRelayed::No, needsContinueDidReceiveResponseMessage);
+    loader->sendDidReceiveResponseWithPotentialProcessSwap(response, PrivateRelayed::No, needsContinueDidReceiveResponseMessage);
     if (needsContinueDidReceiveResponseMessage)
         loader->setResponse(WTF::move(response));
 }

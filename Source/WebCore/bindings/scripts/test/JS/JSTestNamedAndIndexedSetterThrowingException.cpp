@@ -426,6 +426,8 @@ void JSTestNamedAndIndexedSetterThrowingException::analyzeHeap(JSCell* cell, Hea
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestNamedAndIndexedSetterThrowingExceptionOwner::JSTestNamedAndIndexedSetterThrowingExceptionOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestNamedAndIndexedSetterThrowingExceptionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -438,7 +440,7 @@ void JSTestNamedAndIndexedSetterThrowingExceptionOwner::finalize(JSC::Handle<JSC
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedAndIndexedSetterThrowingException = static_cast<JSTestNamedAndIndexedSetterThrowingException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestNamedAndIndexedSetterThrowingException->wrapped()).ptr(), jsTestNamedAndIndexedSetterThrowingException);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedAndIndexedSetterThrowingException->wrapped(), jsTestNamedAndIndexedSetterThrowingException);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

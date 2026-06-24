@@ -399,11 +399,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if HAVE(PASSKIT_DELEGATED_REQUEST)
-    if (auto isDelegatedRequest = paymentRequest.isDelegatedRequest()) {
-        // FIXME: <rdar://165836164> (Remove bincompat staging code from WebKit)
-        if ([result respondsToSelector:@selector(setIsDelegatedRequest:)])
-            [result setIsDelegatedRequest:*isDelegatedRequest];
-    }
+    if (auto isDelegatedRequest = paymentRequest.isDelegatedRequest())
+        [result setIsDelegatedRequest:*isDelegatedRequest];
 #endif
 
     return result;

@@ -1,0 +1,3 @@
+PASS: wheel event was dispatched to <svg> with mouse in empty interior.
+
+no event region

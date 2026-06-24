@@ -34,6 +34,10 @@ SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
 SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabled, Boolean, (), ());
 #endif
 
+#if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
+#import <UIKit/UIAccessibility.h>
+#endif
+
 #import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 
 namespace AXPreferenceHelpers {
@@ -95,6 +99,17 @@ bool imageAnimationEnabled()
         return functionPointer();
 #endif
     return true;
+}
+
+bool videoAutoplayPreviewsEnabled()
+{
+#if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
+    if (shouldUseDefault()) [[unlikely]]
+        return WebKit::initialVideoAutoplayPreviewsEnabled;
+    return UIAccessibilityIsVideoAutoplayEnabled();
+#else
+    return true;
+#endif
 }
 
 bool enhanceTextLegibilityOverall()

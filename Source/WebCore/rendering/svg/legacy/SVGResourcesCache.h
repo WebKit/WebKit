@@ -31,10 +31,10 @@ namespace WebCore {
 class LegacyRenderSVGResourceContainer;
 class RenderElement;
 class RenderObject;
-class RenderStyle;
 class SVGResources;
 
 namespace Style {
+class ComputedStyle;
 struct Difference;
 }
 
@@ -60,7 +60,7 @@ public:
     static void clientLayoutChanged(RenderElement&);
 
     // Called from all SVG renderers styleDidChange() methods.
-    static void clientStyleChanged(RenderElement&, Style::Difference, const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    static void clientStyleChanged(RenderElement&, Style::Difference, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);
 
     // Called from LegacyRenderSVGResourceContainer::willBeDestroyed().
     static void resourceDestroyed(LegacyRenderSVGResourceContainer&);
@@ -68,18 +68,18 @@ public:
     class SetStyleForScope {
         WTF_MAKE_NONCOPYABLE(SetStyleForScope);
     public:
-        SetStyleForScope(RenderElement&, const RenderStyle& scopedStyle, const RenderStyle& newStyle);
+        SetStyleForScope(RenderElement&, const Style::ComputedStyle& scopedStyle, const Style::ComputedStyle& newStyle);
         ~SetStyleForScope();
     private:
-        void setStyle(const RenderStyle&);
+        void setStyle(const Style::ComputedStyle&);
 
         RenderElement& m_renderer;
-        const RenderStyle& m_scopedStyle;
+        const Style::ComputedStyle& m_scopedStyle;
         bool m_needsNewStyle { false };
     };
 
 private:
-    void addResourcesFromRenderer(RenderElement&, const RenderStyle&);
+    void addResourcesFromRenderer(RenderElement&, const Style::ComputedStyle&);
     void removeResourcesFromRenderer(RenderElement&);
 
     using CacheMap = HashMap<SingleThreadWeakRef<const RenderElement>, std::unique_ptr<SVGResources>>;

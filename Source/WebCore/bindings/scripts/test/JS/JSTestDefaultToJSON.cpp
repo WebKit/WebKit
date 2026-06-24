@@ -860,6 +860,8 @@ void JSTestDefaultToJSON::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestDefaultToJSONOwner::JSTestDefaultToJSONOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestDefaultToJSONOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -872,7 +874,7 @@ void JSTestDefaultToJSONOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* 
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDefaultToJSON = static_cast<JSTestDefaultToJSON*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestDefaultToJSON->wrapped()).ptr(), jsTestDefaultToJSON);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDefaultToJSON->wrapped(), jsTestDefaultToJSON);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

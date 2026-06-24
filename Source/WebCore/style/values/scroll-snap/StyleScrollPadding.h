@@ -25,7 +25,7 @@
 #pragma once
 
 #include <WebCore/BoxExtents.h>
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
 namespace WebCore {
 
@@ -35,7 +35,7 @@ namespace Style {
 
 // <'scroll-padding-*'> = auto | <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-scroll-snap-1/#padding-longhands-physical
-struct ScrollPaddingEdge : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::Auto> {
+struct ScrollPaddingEdge : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::Auto> {
     using Base::Base;
 };
 

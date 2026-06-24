@@ -28,8 +28,8 @@
 
 #include "CSSKeywordValue.h"
 #include "Document.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleInterpolationClient.h"
 #include "StyleInterpolationContext.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
@@ -86,7 +86,7 @@ auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSVal
 
 // MARK: - Blending
 
-auto Blending<LineWidth>::blend(const LineWidth& a, const LineWidth& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const Interpolation::Context& context) -> LineWidth
+auto Blending<LineWidth>::blend(const LineWidth& a, const LineWidth& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const Interpolation::Context& context) -> LineWidth
 {
     auto blendedValue = Style::blend(a.value, b.value, aStyle, bStyle, context);
     if (RefPtr document = context.client.document())

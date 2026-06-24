@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<title>max-height: -webkit-fill-available on replaced element caps at viewport in indefinite containing block</title>
+<link rel="match" href="replaced-max-height-fill-available-indefinite-cb-expected.html">
+<style>
+body {
+  margin: 0;
+}
+canvas {
+  display: block;
+  width: 100px;
+  height: 2000px;
+  max-height: -webkit-fill-available;
+  background: green;
+}
+</style>
+<canvas></canvas>

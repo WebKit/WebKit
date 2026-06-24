@@ -179,10 +179,10 @@ static FIAT_P256_FIAT_INLINE void fiat_p256_cmovznz_u64(uint64_t* out1, fiat_p25
 static FIAT_P256_FIAT_INLINE void fiat_p256_mul(fiat_p256_montgomery_domain_field_element out1, const fiat_p256_montgomery_domain_field_element arg1, const fiat_p256_montgomery_domain_field_element arg2) {
   // NOTE: edited by hand, see third_party/fiat/README.md
 #if !defined(OPENSSL_NO_ASM) && defined(__GNUC__) && defined(__x86_64__)
-  if (CRYPTO_is_BMI1_capable() && CRYPTO_is_BMI2_capable() &&
-    CRYPTO_is_ADX_capable()) {
-      fiat_p256_adx_mul(out1, arg1, arg2);
-      return;
+  if (bssl::CRYPTO_is_BMI1_capable() && bssl::CRYPTO_is_BMI2_capable() &&
+      bssl::CRYPTO_is_ADX_capable()) {
+    fiat_p256_adx_mul(out1, arg1, arg2);
+    return;
   }
 #endif
   uint64_t x1;
@@ -494,10 +494,10 @@ static FIAT_P256_FIAT_INLINE void fiat_p256_mul(fiat_p256_montgomery_domain_fiel
 static FIAT_P256_FIAT_INLINE void fiat_p256_square(fiat_p256_montgomery_domain_field_element out1, const fiat_p256_montgomery_domain_field_element arg1) {
   // NOTE: edited by hand, see third_party/fiat/README.md
 #if !defined(OPENSSL_NO_ASM) && defined(__GNUC__) && defined(__x86_64__)
-  if (CRYPTO_is_BMI1_capable() && CRYPTO_is_BMI2_capable() &&
-    CRYPTO_is_ADX_capable()) {
-      fiat_p256_adx_sqr(out1, arg1);
-      return;
+  if (bssl::CRYPTO_is_BMI1_capable() && bssl::CRYPTO_is_BMI2_capable() &&
+      bssl::CRYPTO_is_ADX_capable()) {
+    fiat_p256_adx_sqr(out1, arg1);
+    return;
   }
 #endif
   uint64_t x1;

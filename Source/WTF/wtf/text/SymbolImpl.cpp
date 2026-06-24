@@ -26,7 +26,66 @@
 #include "config.h"
 #include <wtf/text/SymbolImpl.h>
 
+#include <wtf/text/SymbolRegistry.h>
+
 namespace WTF {
+
+SymbolImpl::SymbolImpl(std::span<const Latin1Character> characters, Ref<StringImpl>&& base, Flags flags)
+    : UniquedStringImpl(CreateSymbol, characters)
+    , m_owner(&base.leakRef())
+    , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
+    , m_flags(flags)
+{
+    static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
+}
+
+SymbolImpl::SymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base, Flags flags)
+    : UniquedStringImpl(CreateSymbol, characters)
+    , m_owner(&base.leakRef())
+    , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
+    , m_flags(flags)
+{
+    static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
+}
+
+SymbolImpl::SymbolImpl(Flags flags)
+    : UniquedStringImpl(CreateSymbol)
+    , m_owner(StringImpl::empty())
+    , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
+    , m_flags(flags | s_flagIsNullSymbol)
+{
+    static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
+}
+
+IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
+// Always destroyed via StringImpl::destroy().
+SymbolImpl::~SymbolImpl()
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+IGNORE_CLANG_WARNINGS_END
+
+PrivateSymbolImpl::PrivateSymbolImpl(std::span<const Latin1Character> characters, Ref<StringImpl>&& base)
+    : SymbolImpl(characters, WTF::move(base), s_flagIsPrivate)
+{
+}
+
+PrivateSymbolImpl::PrivateSymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base)
+    : SymbolImpl(characters, WTF::move(base), s_flagIsPrivate)
+{
+}
+
+RegisteredSymbolImpl::RegisteredSymbolImpl(std::span<const Latin1Character> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags)
+    : SymbolImpl(characters, WTF::move(base), flags)
+    , m_symbolRegistry(&registry)
+{
+}
+
+RegisteredSymbolImpl::RegisteredSymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags)
+    : SymbolImpl(characters, WTF::move(base), flags)
+    , m_symbolRegistry(&registry)
+{
+}
 
 // In addition to the normal hash value, store specialized hash value for
 // symbolized StringImpl*. And don't use the normal hash value for symbolized

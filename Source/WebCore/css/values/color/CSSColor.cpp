@@ -37,6 +37,7 @@
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSRelativeAlphaColor.h"
 #include "CSSRelativeColor.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "StyleColorResolutionState.h"
@@ -85,6 +86,11 @@ Color::Color(ContrastColor&& color)
 }
 
 Color::Color(LightDarkColor&& color)
+    : value { makeIndirectColor(WTF::move(color)) }
+{
+}
+
+Color::Color(RelativeAlphaColor&& color)
     : value { makeIndirectColor(WTF::move(color)) }
 {
 }
@@ -402,7 +408,7 @@ IterationStatus CSSValueChildrenVisitor<Color>::operator()(NOESCAPE const Functi
 
 Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<Color>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const Color& value)
 {
-    return DeprecatedCSSOMPrimitiveValue::create(CSSColorValue::create(value), owner);
+    return DeprecatedCSSOMPrimitiveValue::create(value, owner);
 }
 
 } // namespace CSS

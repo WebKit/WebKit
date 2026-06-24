@@ -2277,7 +2277,6 @@ unsigned int vp9_int_pro_motion_estimation(const VP9_COMP *cpi, MACROBLOCK *x,
   const int search_width = bw << 1;
   const int search_height = bh << 1;
   const int src_stride = x->plane[0].src.stride;
-  const int ref_stride = xd->plane[0].pre[0].stride;
   uint8_t const *ref_buf, *src_buf;
   MV *tmp_mv = &xd->mi[0]->mv[0].as_mv;
   unsigned int best_sad, tmp_sad, this_sad[4];
@@ -2297,6 +2296,7 @@ unsigned int vp9_int_pro_motion_estimation(const VP9_COMP *cpi, MACROBLOCK *x,
     for (i = 0; i < MAX_MB_PLANE; i++) backup_yv12[i] = xd->plane[i].pre[0];
     vp9_setup_pre_planes(xd, 0, scaled_ref_frame, mi_row, mi_col, NULL);
   }
+  const int ref_stride = xd->plane[0].pre[0].stride;
 
 #if CONFIG_VP9_HIGHBITDEPTH
   // TODO(jingning): Implement integral projection functions for high bit-depth

@@ -4,1687 +4,1165 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
-layer at (117.39,15.52) size 216x17
-  RenderSVGText {text} at (117,15) size 216x19 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 216x18
-      chunk 1 (middle anchor) text run 1 at (117.39,30.00) startOffset 0 endOffset 29 width 215.22: "patterns, preserveAspectRatio"
-layer at (-3.67,-20) size 310x420 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (-3.67,-20) size 309.23x420
-layer at (0,-20) size 141x140 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGHiddenContainer {defs} at (3.67,0) size 140x140
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,20) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#000000]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGText {text} at (117,15) size 216x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 216x18
+        chunk 1 (middle anchor) text run 1 at (117.39,30.00) startOffset 0 endOffset 29 width 215.22: "patterns, preserveAspectRatio"
+    RenderSVGTransformableContainer {g} at (-3.67,-20) size 309.23x420
+      RenderSVGHiddenContainer {defs} at (3.67,0) size 140x140
+        RenderSVGTransformableContainer {g} at (0,20) size 1x3
+          RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [cx=0.50] [cy=0.50] [r=0.50]
+          RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+          RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#000000]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+        RenderSVGRect {rect} at (0,20) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+        RenderSVGRect {rect} at (0,20) size 20x120 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+        RenderSVGRect {rect} at (20,20) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+        RenderSVGRect {rect} at (40,20) size 100x40 [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+        RenderSVGTransformableContainer {g} at (0,20) size 53.67x120
+          RenderSVGText {text} at (17,6) size 36x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 35x18
+              chunk 1 (middle anchor) text run 1 at (17.66,20.00) startOffset 0 endOffset 4 width 34.67: "yMin"
+          RenderSVGText {text} at (17,46) size 36x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 35x18
+              chunk 1 (middle anchor) text run 1 at (17.66,60.00) startOffset 0 endOffset 4 width 34.67: "yMid"
+          RenderSVGText {text} at (16,86) size 38x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 38x18
+              chunk 1 (middle anchor) text run 1 at (16.34,100.00) startOffset 0 endOffset 4 width 37.33: "yMax"
+        RenderSVGTransformableContainer {g} at (40,20) size 100x40
+        RenderSVGRect {rect} at (40,0) size 100x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,20) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {use} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {use} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {use} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,20) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 3x3
   RenderSVGHiddenContainer {pattern} at (0,20) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {use} at (0,0) size 3x3
 layer at (0,0) size 3x3
   RenderSVGTransformableContainer {g} at (0,0) size 3x3
-layer at (0,0) size 3x3
-  RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+    RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 1x3
   RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x3
-  RenderSVGTransformableContainer {g} at (0,0) size 1x3
-layer at (0,0) size 1x1
-  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-layer at (0,1) size 1x1
-  RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
-layer at (0,2) size 1x1
-  RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-layer at (0,0) size 20x120
-  RenderSVGRect {rect} at (0,20) size 20x120 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (20,20) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (40,20) size 100x40 [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (0,0) size 54x120
-  RenderSVGTransformableContainer {g} at (0,20) size 53.67x120
+    RenderSVGTransformableContainer {g} at (0,0) size 1x3
+      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
+      RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+      RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
 layer at (0,0) size 20x120
   RenderSVGTransformableContainer {use} at (0,0) size 20x120
-layer at (0,0) size 20x120
-  RenderSVGRect {rect} at (0,0) size 20x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+    RenderSVGRect {rect} at (0,0) size 20x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {use} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (17.66,6) size 34x18
-  RenderSVGText {text} at (17,6) size 36x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (17.66,20.00) startOffset 0 endOffset 4 width 34.67: "yMin"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {use} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (17.66,46) size 34x18
-  RenderSVGText {text} at (17,46) size 36x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (17.66,60.00) startOffset 0 endOffset 4 width 34.67: "yMid"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {use} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (16.33,86) size 38x18
-  RenderSVGText {text} at (16,86) size 38x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 38x18
-      chunk 1 (middle anchor) text run 1 at (16.34,100.00) startOffset 0 endOffset 4 width 37.33: "yMax"
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (40,20) size 100x40
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {use} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {use} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {use} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {use} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {use} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {use} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {use} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {use} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {use} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {use} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,-20) size 100x20 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGRect {rect} at (40,0) size 100x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+layer at (40,0) size 100x40
+  RenderSVGTransformableContainer {use} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+layer at (40,0) size 100x40
+  RenderSVGTransformableContainer {use} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+layer at (40,0) size 100x40
+  RenderSVGTransformableContainer {use} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (-3.67,-20) size 310x420 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (0,0) size 309.23x420
+    RenderSVGText {text} at (1,66) size 35x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 35x18
+        chunk 1 (middle anchor) text run 1 at (-2.34,60.00) startOffset 0 endOffset 4 width 34.67: "xMin"
+    RenderSVGText {text} at (1,186) size 35x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 35x18
+        chunk 1 (middle anchor) text run 1 at (-2.34,180.00) startOffset 0 endOffset 4 width 34.67: "xMid"
+    RenderSVGText {text} at (0,306) size 38x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 38x18
+        chunk 1 (middle anchor) text run 1 at (-3.66,300.00) startOffset 0 endOffset 4 width 37.33: "xMax"
+    RenderSVGText {text} at (78,1) size 32x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 32x18
+        chunk 1 (middle anchor) text run 1 at (74.45,-5.00) startOffset 0 endOffset 4 width 31.09: "meet"
+    RenderSVGText {text} at (179,1) size 30x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 30x18
+        chunk 1 (middle anchor) text run 1 at (175.34,-5.00) startOffset 0 endOffset 5 width 29.32: "slice"
+    RenderSVGText {text} at (278,1) size 32x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 32x18
+        chunk 1 (middle anchor) text run 1 at (274.45,-5.00) startOffset 0 endOffset 4 width 31.10: "none"
+    RenderSVGRect {rect} at (3.67,380) size 40x40 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=360.00] [width=40.00] [height=40.00]
+    RenderSVGText {text} at (13,386) size 32x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 32x18
+        chunk 1 (middle anchor) text run 1 at (9.45,380.00) startOffset 0 endOffset 4 width 31.10: "none"
+    RenderSVGTransformableContainer {g} at (3.67,20) size 90x30
 layer at (0,0) size 55x120
   RenderSVGTransformableContainer {use} at (3.67,20) size 53.67x120
-layer at (0,0) size 54x120
-  RenderSVGTransformableContainer {g} at (0,0) size 53.67x120
+    RenderSVGTransformableContainer {g} at (0,0) size 53.67x120
+      RenderSVGText {text} at (17,6) size 36x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 35x18
+          chunk 1 (middle anchor) text run 1 at (17.66,20.00) startOffset 0 endOffset 4 width 34.67: "yMin"
+      RenderSVGText {text} at (17,46) size 36x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 35x18
+          chunk 1 (middle anchor) text run 1 at (17.66,60.00) startOffset 0 endOffset 4 width 34.67: "yMid"
+      RenderSVGText {text} at (16,86) size 38x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 38x18
+          chunk 1 (middle anchor) text run 1 at (16.34,100.00) startOffset 0 endOffset 4 width 37.33: "yMax"
 layer at (0,0) size 20x120
   RenderSVGTransformableContainer {g} at (0,0) size 20x120
-layer at (0,0) size 20x120
-  RenderSVGRect {rect} at (0,0) size 20x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+    RenderSVGRect {rect} at (0,0) size 20x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {g} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (17.66,6) size 34x18
-  RenderSVGText {text} at (17,6) size 36x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (17.66,20.00) startOffset 0 endOffset 4 width 34.67: "yMin"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {g} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (17.66,46) size 34x18
-  RenderSVGText {text} at (17,46) size 36x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (17.66,60.00) startOffset 0 endOffset 4 width 34.67: "yMid"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {g} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (16.33,86) size 38x18
-  RenderSVGText {text} at (16,86) size 38x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 38x18
-      chunk 1 (middle anchor) text run 1 at (16.34,100.00) startOffset 0 endOffset 4 width 37.33: "yMax"
-layer at (-2.34,46) size 35x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGText {text} at (1,66) size 35x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (-2.34,60.00) startOffset 0 endOffset 4 width 34.67: "xMin"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (0,0) size 55x120
   RenderSVGTransformableContainer {use} at (3.67,20) size 53.67x120
-layer at (0,0) size 54x120
-  RenderSVGTransformableContainer {g} at (0,0) size 53.67x120
+    RenderSVGTransformableContainer {g} at (0,0) size 53.67x120
+      RenderSVGText {text} at (17,6) size 36x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 35x18
+          chunk 1 (middle anchor) text run 1 at (17.66,20.00) startOffset 0 endOffset 4 width 34.67: "yMin"
+      RenderSVGText {text} at (17,46) size 36x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 35x18
+          chunk 1 (middle anchor) text run 1 at (17.66,60.00) startOffset 0 endOffset 4 width 34.67: "yMid"
+      RenderSVGText {text} at (16,86) size 38x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 38x18
+          chunk 1 (middle anchor) text run 1 at (16.34,100.00) startOffset 0 endOffset 4 width 37.33: "yMax"
 layer at (0,0) size 20x120
   RenderSVGTransformableContainer {g} at (0,0) size 20x120
-layer at (0,0) size 20x120
-  RenderSVGRect {rect} at (0,0) size 20x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+    RenderSVGRect {rect} at (0,0) size 20x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {g} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (17.66,6) size 34x18
-  RenderSVGText {text} at (17,6) size 36x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (17.66,20.00) startOffset 0 endOffset 4 width 34.67: "yMin"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {g} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (17.66,46) size 34x18
-  RenderSVGText {text} at (17,46) size 36x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (17.66,60.00) startOffset 0 endOffset 4 width 34.67: "yMid"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {g} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (16.33,86) size 38x18
-  RenderSVGText {text} at (16,86) size 38x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 38x18
-      chunk 1 (middle anchor) text run 1 at (16.34,100.00) startOffset 0 endOffset 4 width 37.33: "yMax"
-layer at (-2.34,166) size 35x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGText {text} at (1,186) size 35x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (-2.34,180.00) startOffset 0 endOffset 4 width 34.67: "xMid"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (0,0) size 55x120
   RenderSVGTransformableContainer {use} at (3.67,20) size 53.67x120
-layer at (0,0) size 54x120
-  RenderSVGTransformableContainer {g} at (0,0) size 53.67x120
+    RenderSVGTransformableContainer {g} at (0,0) size 53.67x120
+      RenderSVGText {text} at (17,6) size 36x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 35x18
+          chunk 1 (middle anchor) text run 1 at (17.66,20.00) startOffset 0 endOffset 4 width 34.67: "yMin"
+      RenderSVGText {text} at (17,46) size 36x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 35x18
+          chunk 1 (middle anchor) text run 1 at (17.66,60.00) startOffset 0 endOffset 4 width 34.67: "yMid"
+      RenderSVGText {text} at (16,86) size 38x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 38x18
+          chunk 1 (middle anchor) text run 1 at (16.34,100.00) startOffset 0 endOffset 4 width 37.33: "yMax"
 layer at (0,0) size 20x120
   RenderSVGTransformableContainer {g} at (0,0) size 20x120
-layer at (0,0) size 20x120
-  RenderSVGRect {rect} at (0,0) size 20x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+    RenderSVGRect {rect} at (0,0) size 20x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {g} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (17.66,6) size 34x18
-  RenderSVGText {text} at (17,6) size 36x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (17.66,20.00) startOffset 0 endOffset 4 width 34.67: "yMin"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {g} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (17.66,46) size 34x18
-  RenderSVGText {text} at (17,46) size 36x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 35x18
-      chunk 1 (middle anchor) text run 1 at (17.66,60.00) startOffset 0 endOffset 4 width 34.67: "yMid"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (20,0) size 20x40
   RenderSVGTransformableContainer {g} at (20,0) size 20x40
-layer at (20,0) size 20x40
-  RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (16.33,86) size 38x18
-  RenderSVGText {text} at (16,86) size 38x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 38x18
-      chunk 1 (middle anchor) text run 1 at (16.34,100.00) startOffset 0 endOffset 4 width 37.33: "yMax"
-layer at (-3.67,286) size 37x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGText {text} at (0,306) size 38x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 38x18
-      chunk 1 (middle anchor) text run 1 at (-3.66,300.00) startOffset 0 endOffset 4 width 37.33: "xMax"
+    RenderSVGRect {rect} at (0,0) size 20x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
 layer at (40,0) size 101x40
   RenderSVGTransformableContainer {use} at (43.67,20) size 100x40
+    RenderSVGTransformableContainer {g} at (0,0) size 100x40
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+  RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+layer at (40,0) size 100x40
+  RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+layer at (40,0) size 100x40
+  RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 101x40
   RenderSVGTransformableContainer {use} at (43.67,20) size 100x40
+    RenderSVGTransformableContainer {g} at (0,0) size 100x40
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+  RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+layer at (40,0) size 100x40
+  RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+layer at (40,0) size 100x40
+  RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 101x40
   RenderSVGTransformableContainer {use} at (43.67,20) size 100x40
+    RenderSVGTransformableContainer {g} at (0,0) size 100x40
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-layer at (40,0) size 100x40
-  RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
-layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
   RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,0) size 100x40
-  RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+  RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+layer at (40,0) size 100x40
+  RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+layer at (40,0) size 100x40
+  RenderSVGTransformableContainer {g} at (0,0) size 100x40
+    RenderSVGRect {rect} at (0,0) size 100x40 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
 layer at (40,-20) size 101x20 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {use} at (43.67,0) size 100x20
-layer at (40,-20) size 100x20 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGRect {rect} at (0,0) size 100x20 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
+    RenderSVGRect {rect} at (0,0) size 100x20 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
 layer at (40,-20) size 101x20 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {use} at (43.67,0) size 100x20
-layer at (40,-20) size 100x20 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGRect {rect} at (0,0) size 100x20 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
+    RenderSVGRect {rect} at (0,0) size 100x20 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
 layer at (40,-20) size 101x20 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {use} at (43.67,0) size 100x20
-layer at (40,-20) size 100x20 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGRect {rect} at (0,0) size 100x20 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
-layer at (0,360) size 41x40
-  RenderSVGRect {rect} at (3.67,380) size 40x40 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=360.00] [width=40.00] [height=40.00]
-layer at (9.44,366) size 31x18
-  RenderSVGText {text} at (13,386) size 32x18 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 32x18
-      chunk 1 (middle anchor) text run 1 at (9.45,380.00) startOffset 0 endOffset 4 width 31.10: "none"
-layer at (0,0) size 91x30
-  RenderSVGTransformableContainer {g} at (3.67,20) size 90x30
+    RenderSVGRect {rect} at (0,0) size 100x20 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30
+    RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30
+    RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {g} at (0,0) size 90x30
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30
+    RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30
+    RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {g} at (0,0) size 90x30
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30
+    RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30
+    RenderSVGRect {rect} at (0,0) size 90x30 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 91x30
   RenderSVGTransformableContainer {g} at (3.67,20) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {g} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {g} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 91x30
   RenderSVGTransformableContainer {g} at (3.67,20) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {g} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {g} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 91x30
   RenderSVGTransformableContainer {g} at (3.67,20) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (0,0) size 90x30
-  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
-layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
   RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
 layer at (0,0) size 90x30
-  RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
-layer at (-0.05,-0.36) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {use} at (-0.05,-0.36) size 539x563.77
-layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
-layer at (1,1) size 447x497
-  RenderSVGRect {rect} at (1.05,1.36) size 446x496 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
-layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
-layer at (0,0) size 28x29 backgroundClip at (0,0.36) size 450x499.64
-  RenderSVGViewportContainer {svg} at (0.05,0.36) size 27x28
-layer at (158.31,352.16) size 287x212 backgroundClip at (417.98,467) size 27x28 clip at (417.98,467) size 27x28
-  RenderSVGPath {path} at (158.31,352.16) size 286.69x211.25 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]
+  RenderSVGTransformableContainer {use} at (0,0) size 90x30 [start marker=startEndMarker] [end marker=startEndMarker]
+    RenderSVGRect {rect} at (0,0) size 90x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00000000]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+layer at (0,0) size 447x497
+  RenderSVGTransformableContainer {use} at (0,0) size 447x497
+    RenderSVGTransformableContainer {g} at (0,0) size 447x497
+      RenderSVGRect {rect} at (1,1) size 446x496 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+layer at (0,0) size 27x28
+  RenderSVGTransformableContainer {g} at (0,0) size 27x28
+layer at (0,0) size 27x28
+  RenderSVGViewportContainer {svg} at (0,0) size 27x28
+    RenderSVGPath {path} at (-0.05,41.47) size 246.38x345.83 [fill={[type=SOLID] [color=#6666FF]}] [data="M 172 44 C 137 60 31 135 11 199 C 3 226 33 247 55 232 C 14 306 -1 332 0 356 C 0 370 13 398 44 383 C 52 379 79 358 96 342 C 110 341 120 331 138 314 C 155 328 174 324 190 307 C 212 309 272 229 234 199 C 231 175 204 162 181 181 C 175 179 168 180 163 182 C 185 147 206 100 212 77 C 219 47 188 36 172 44 Z"]
+    RenderSVGPath {path} at (294,-0.36) size 244.95x298.03 [fill={[type=SOLID] [color=#FF0000]}] [data="M 400 0 C 382 3 351 31 351 31 C 322 54 308 89 323 126 C 310 140 294 170 294 193 C 294 221 314 245 344 222 C 351 230 365 238 381 227 C 376 256 384 275 407 276 C 408 286 420 307 443 293 C 459 283 501 254 522 237 C 547 214 547 143 504 148 C 537 89 501 52 477 64 C 467 68 431 89 425 94 C 424 87 420 82 414 80 C 436 45 436 -5 401 0 Z"]
+    RenderSVGPath {path} at (158.31,352.16) size 286.69x211.25 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

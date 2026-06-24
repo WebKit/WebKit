@@ -13,6 +13,10 @@ foo:
 	adrp x0, :got:stderr
 	ldr x0, [x0, :got_lo12:stderr]
 
+	// GOT load of synthesized symbol.
+	adrp x0, :got:BORINGSSL_bcm_text_start
+	ldr x0, [x0, :got_lo12:BORINGSSL_bcm_text_start]
+
 	// Address load
 	adrp x0, .Llocal_data
 	add x1, x0, :lo12:.Llocal_data

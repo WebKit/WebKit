@@ -47,7 +47,6 @@ void TestWithEnabledByAndConjunction::didReceiveMessage(IPC::Connection& connect
         decoder.markInvalid();
         return;
     }
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithEnabledByAndConjunction::AlwaysEnabled::name()) {
         IPC::handleMessage<Messages::TestWithEnabledByAndConjunction::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledByAndConjunction::alwaysEnabled);
         return;

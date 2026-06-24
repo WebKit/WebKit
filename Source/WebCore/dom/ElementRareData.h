@@ -85,11 +85,11 @@ public:
     String userInfo() const { return m_userInfo; }
     void setUserInfo(String&& userInfo) { m_userInfo = WTF::move(userInfo); }
 
-    RenderStyle* computedStyle() const LIFETIME_BOUND { return m_computedStyle.get(); }
-    void setComputedStyle(std::unique_ptr<RenderStyle>&& computedStyle) { m_computedStyle = WTF::move(computedStyle); }
+    Style::ComputedStyle* computedStyle() const LIFETIME_BOUND { return m_computedStyle.get(); }
+    void setComputedStyle(std::unique_ptr<Style::ComputedStyle>&& computedStyle) { m_computedStyle = WTF::move(computedStyle); }
 
-    RenderStyle* displayContentsOrNoneStyle() const LIFETIME_BOUND { return m_displayContentsOrNoneStyle.get(); }
-    void setDisplayContentsOrNoneStyle(std::unique_ptr<RenderStyle> style) { m_displayContentsOrNoneStyle = WTF::move(style); }
+    Style::ComputedStyle* displayContentsOrNoneStyle() const LIFETIME_BOUND { return m_displayContentsOrNoneStyle.get(); }
+    void setDisplayContentsOrNoneStyle(std::unique_ptr<Style::ComputedStyle> style) { m_displayContentsOrNoneStyle = WTF::move(style); }
 
     const AtomString& effectiveLang() const LIFETIME_BOUND { return m_effectiveLang; }
     void setEffectiveLang(const AtomString& lang) { m_effectiveLang = lang; }
@@ -230,8 +230,8 @@ private:
 
     String m_userInfo;
 
-    std::unique_ptr<RenderStyle> m_computedStyle;
-    std::unique_ptr<RenderStyle> m_displayContentsOrNoneStyle;
+    std::unique_ptr<Style::ComputedStyle> m_computedStyle;
+    std::unique_ptr<Style::ComputedStyle> m_displayContentsOrNoneStyle;
 
     AtomString m_effectiveLang;
     const std::unique_ptr<DatasetDOMStringMap> m_dataset;

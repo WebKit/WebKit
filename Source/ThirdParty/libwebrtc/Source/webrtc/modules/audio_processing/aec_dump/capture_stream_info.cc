@@ -27,7 +27,7 @@ void CaptureStreamInfo::AddInput(const AudioFrameView<const float>& src) {
 
 void CaptureStreamInfo::AddInputChannel(MonoView<const float> channel) {
   auto* stream = event_->mutable_stream();
-  stream->add_input_channel(channel.begin(), sizeof(float) * channel.size());
+  stream->add_input_channel(channel.data(), sizeof(float) * channel.size());
 }
 
 void CaptureStreamInfo::AddOutput(const AudioFrameView<const float>& src) {
@@ -38,7 +38,7 @@ void CaptureStreamInfo::AddOutput(const AudioFrameView<const float>& src) {
 
 void CaptureStreamInfo::AddOutputChannel(MonoView<const float> channel) {
   auto* stream = event_->mutable_stream();
-  stream->add_output_channel(channel.begin(), sizeof(float) * channel.size());
+  stream->add_output_channel(channel.data(), sizeof(float) * channel.size());
 }
 
 void CaptureStreamInfo::AddInput(const int16_t* const data,

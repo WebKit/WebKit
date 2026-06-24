@@ -30,6 +30,8 @@
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrameInlines.h"
+#include "ProcessIdentifier.h"
+#include "RemoteFrame.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -37,6 +39,18 @@ namespace Inspector {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IdentifierRegistry);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyIdentifierRegistry);
+
+// The WebContent process that hosts a frame's content: the current process for a
+// LocalFrame, or the RemoteFrame's recorded hosting process for a remote stub. Both
+// UIProcess and WebContent feed this into protocolFrameId() so they compute matching
+// IDs for the same frame regardless of which process holds it. See webkit.org/b/310164.
+static WebCore::ProcessIdentifier hostingProcessForFrame(const WebCore::Frame& frame)
+{
+    if (auto* remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(frame))
+        return remoteFrame->hostingProcessIdentifier();
+    return WebCore::Process::identifier();
+}
+
 
 LegacyIdentifierRegistry::LegacyIdentifierRegistry() = default;
 LegacyIdentifierRegistry::~LegacyIdentifierRegistry() = default;
@@ -98,7 +112,7 @@ Protocol::Network::FrameId BackendIdentifierRegistry::frameId(const WebCore::Fra
 {
     if (!frame)
         return emptyString();
-    auto identifier = protocolFrameId(frame->frameID());
+    auto identifier = protocolFrameId(frame->frameID(), hostingProcessForFrame(*frame));
     m_identifierToFrame.set(identifier, frame);
     return identifier;
 }
@@ -134,7 +148,7 @@ WebCore::LocalFrame* BackendIdentifierRegistry::assertFrame(Protocol::ErrorStrin
 
 Protocol::Network::FrameId BackendIdentifierRegistry::takeFrame(const WebCore::Frame& frame)
 {
-    auto identifier = protocolFrameId(frame.frameID());
+    auto identifier = protocolFrameId(frame.frameID(), hostingProcessForFrame(frame));
     m_identifierToFrame.remove(identifier);
     return identifier;
 }

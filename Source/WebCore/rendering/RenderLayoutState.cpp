@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,8 @@
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,14 +43,8 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLayoutState);
 
 RenderLayoutState::RenderLayoutState(RenderElement& renderer)
-    : m_clipped(false)
-    , m_isPaginated(false)
-    , m_pageLogicalHeightChanged(false)
 #if ASSERT_ENABLED
-    , m_layoutDeltaXSaturated(false)
-    , m_layoutDeltaYSaturated(false)
-    , m_marginTrimBlockStart(false)
-    , m_renderer(&renderer)
+    : m_renderer(&renderer)
 #endif
 {
     if (RenderElement* container = renderer.container()) {
@@ -71,15 +65,7 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer)
 }
 
 RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<LineClamp> lineClamp, std::optional<LegacyLineClamp> legacyLineClamp)
-    : m_clipped(false)
-    , m_isPaginated(false)
-    , m_pageLogicalHeightChanged(false)
-#if ASSERT_ENABLED
-    , m_layoutDeltaXSaturated(false)
-    , m_layoutDeltaYSaturated(false)
-#endif
-    , m_marginTrimBlockStart(false)
-    , m_lineClamp(lineClamp)
+    : m_lineClamp(lineClamp)
     , m_legacyLineClamp(legacyLineClamp)
 #if ASSERT_ENABLED
     , m_renderer(&renderer)
@@ -117,10 +103,18 @@ void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, Render
     if (renderer.hasNonVisibleOverflow())
         m_paintOffset -= toLayoutSize(renderer.scrollPosition());
 
-    m_layoutDelta = ancestor.layoutDelta();
+    // A repaint container (own backing store, a full-layer filter, or a fragmented flow) is the origin
+    // of its own repaint coordinate space, so a delta accumulated in the ancestor space must not leak
+    // into the subtree; reset it here and let in-container repositions accumulate onto the fresh value.
+    auto isRepaintContainer = [&] {
+        if (CheckedPtr layer = renderer.layer())
+            return compositedWithOwnBackingStore(*layer) || layer->requiresFullLayerImageForFilters();
+        return renderer.isRenderFragmentedFlow();
+    }();
+    m_layoutDeltaForRepaint = isRepaintContainer ? LayoutSize() : ancestor.layoutDelta();
 #if ASSERT_ENABLED
-    m_layoutDeltaXSaturated = ancestor.m_layoutDeltaXSaturated;
-    m_layoutDeltaYSaturated = ancestor.m_layoutDeltaYSaturated;
+    m_layoutDeltaForRepaintXSaturated = isRepaintContainer ? false : ancestor.m_layoutDeltaForRepaintXSaturated;
+    m_layoutDeltaForRepaintYSaturated = isRepaintContainer ? false : ancestor.m_layoutDeltaForRepaintYSaturated;
 #endif
 }
 
@@ -267,17 +261,17 @@ void RenderLayoutState::establishLineGrid(const LocalFrameViewLayoutContext::Lay
 
 void RenderLayoutState::addLayoutDelta(LayoutSize delta)
 {
-    m_layoutDelta += delta;
+    m_layoutDeltaForRepaint += delta;
 #if ASSERT_ENABLED
-    m_layoutDeltaXSaturated |= m_layoutDelta.width() == LayoutUnit::max() || m_layoutDelta.width() == LayoutUnit::min();
-    m_layoutDeltaYSaturated |= m_layoutDelta.height() == LayoutUnit::max() || m_layoutDelta.height() == LayoutUnit::min();
+    m_layoutDeltaForRepaintXSaturated |= m_layoutDeltaForRepaint.width() == LayoutUnit::max() || m_layoutDeltaForRepaint.width() == LayoutUnit::min();
+    m_layoutDeltaForRepaintYSaturated |= m_layoutDeltaForRepaint.height() == LayoutUnit::max() || m_layoutDeltaForRepaint.height() == LayoutUnit::min();
 #endif
 }
 
 #if ASSERT_ENABLED
 bool RenderLayoutState::layoutDeltaMatches(LayoutSize delta) const
 {
-    return (delta.width() == m_layoutDelta.width() || m_layoutDeltaXSaturated) && (delta.height() == m_layoutDelta.height() || m_layoutDeltaYSaturated);
+    return (delta.width() == m_layoutDeltaForRepaint.width() || m_layoutDeltaForRepaintXSaturated) && (delta.height() == m_layoutDeltaForRepaint.height() || m_layoutDeltaForRepaintYSaturated);
 }
 #endif
 

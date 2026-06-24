@@ -316,8 +316,9 @@ namespace DelById {
     static constexpr GPRReg scratch1GPR { scratchRegisters[0] };
     static constexpr GPRReg scratch2GPR { scratchRegisters[1] };
     static constexpr GPRReg scratch3GPR { scratchRegisters[2] };
+    static constexpr JSValueRegs scratchJSR { JSValueRegs::withTwoAvailableRegs(scratch1GPR, scratch2GPR) };
 
-    static_assert(noOverlap(baseJSR, propertyCacheGPR, scratch1GPR, scratch2GPR, scratch3GPR, GPRInfo::handlerGPR), "Required for call to slow operation");
+    static_assert(noOverlap(baseJSR, propertyCacheGPR, scratchJSR, scratch3GPR, GPRInfo::handlerGPR), "Required for call to slow operation");
     static_assert(noOverlap(resultJSR.payloadGPR(), propertyCacheGPR));
 }
 
@@ -332,7 +333,9 @@ namespace DelByVal {
     static constexpr GPRReg scratch1GPR { scratchRegisters[0] };
     static constexpr GPRReg scratch2GPR { scratchRegisters[1] };
     static constexpr GPRReg scratch3GPR { scratchRegisters[2] };
-    static_assert(noOverlap(baseJSR, propertyJSR, propertyCacheGPR, scratch1GPR, scratch2GPR, scratch3GPR, GPRInfo::handlerGPR), "Required for call to slow operation");
+    static constexpr JSValueRegs scratchJSR { JSValueRegs::withTwoAvailableRegs(scratch1GPR, scratch2GPR) };
+
+    static_assert(noOverlap(baseJSR, propertyJSR, propertyCacheGPR, scratchJSR, scratch3GPR, GPRInfo::handlerGPR), "Required for call to slow operation");
     static_assert(noOverlap(resultJSR.payloadGPR(), propertyCacheGPR));
 }
 

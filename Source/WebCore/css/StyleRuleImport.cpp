@@ -59,7 +59,7 @@ void StyleRuleImport::cancelLoad()
 
     m_loading = false;
     if (m_parentStyleSheet)
-        m_parentStyleSheet->checkLoaded();
+        protect(m_parentStyleSheet)->checkLoaded();
 }
 
 StyleRuleImport::~StyleRuleImport()
@@ -67,7 +67,7 @@ StyleRuleImport::~StyleRuleImport()
     if (m_styleSheet)
         m_styleSheet->clearOwnerRule();
     if (m_cachedSheet)
-        m_cachedSheet->removeClient(m_styleSheetClient);
+        protect(m_cachedSheet)->removeClient(protect(m_styleSheetClient));
 }
 
 void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet* cachedStyleSheet)
@@ -85,16 +85,17 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, A
     if ((m_parentStyleSheet && m_parentStyleSheet->loadedFromOpaqueSource() == LoadedFromOpaqueSource::Yes) || !cachedStyleSheet->isCORSSameOrigin())
         m_styleSheet->setAsLoadedFromOpaqueSource();
 
-    bool parseSucceeded = m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? &document->securityOrigin() : nullptr);
+    RefPtr securityOrigin = document ? &document->securityOrigin() : nullptr;
+    bool parseSucceeded = protect(m_styleSheet)->parseAuthorStyleSheet(cachedStyleSheet, securityOrigin.get());
 
     m_loading = false;
 
     if (m_parentStyleSheet) {
         if (parseSucceeded)
-            m_parentStyleSheet->notifyLoadedSheet(cachedStyleSheet);
+            protect(m_parentStyleSheet)->notifyLoadedSheet(cachedStyleSheet);
         else
             m_parentStyleSheet->setLoadErrorOccured();
-        m_parentStyleSheet->checkLoaded();
+        protect(m_parentStyleSheet)->checkLoaded();
     }
 }
 
@@ -136,7 +137,7 @@ void StyleRuleImport::requestStyleSheet()
     CachedResourceRequest request(WTF::move(absURL), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, String(m_parentStyleSheet->charset()));
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
     if (m_cachedSheet)
-        m_cachedSheet->removeClient(m_styleSheetClient);
+        protect(m_cachedSheet)->removeClient(protect(m_styleSheetClient));
     if (m_parentStyleSheet->isUserStyleSheet()) {
         ResourceLoaderOptions options {
             SendCallbackPolicy::DoNotSendCallbacks,
@@ -171,12 +172,12 @@ void StyleRuleImport::requestStyleSheet()
         // removed from the pending sheet count, so let the doc know
         // the sheet being imported is pending.
         if (m_parentStyleSheet && m_parentStyleSheet->loadCompleted() && rootSheet == m_parentStyleSheet)
-            m_parentStyleSheet->startLoadingDynamicSheet();
+            protect(m_parentStyleSheet)->startLoadingDynamicSheet();
         m_loading = true;
-        m_cachedSheet->addClient(m_styleSheetClient);
+        protect(m_cachedSheet)->addClient(protect(m_styleSheetClient));
     } else if (m_parentStyleSheet) {
         m_parentStyleSheet->setLoadErrorOccured();
-        m_parentStyleSheet->checkLoaded();
+        protect(m_parentStyleSheet)->checkLoaded();
     }
 }
 

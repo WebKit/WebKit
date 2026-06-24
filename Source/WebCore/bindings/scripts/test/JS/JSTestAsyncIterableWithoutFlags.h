@@ -56,8 +56,12 @@ protected:
 
 class JSTestAsyncIterableWithoutFlagsOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestAsyncIterableWithoutFlagsOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestAsyncIterableWithoutFlagsOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestAsyncIterableWithoutFlags*)

@@ -32,10 +32,7 @@ rtc_library("frame_instrumentation_data") {
     "frame_instrumentation_data.h",
   ]
 
-  deps = [
-    "../../:array_view",
-    "../../../rtc_base:checks",
-  ]
+  deps = []
 }
 
 rtc_library("frame_instrumentation_data_reader") {
@@ -47,8 +44,6 @@ rtc_library("frame_instrumentation_data_reader") {
 
   deps = [
     ":frame_instrumentation_data",
-    "../../:array_view",
-    "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../transport/rtp:corruption_detection_message",
   ]
@@ -62,10 +57,8 @@ rtc_library("frame_instrumentation_evaluation") {
   ]
   deps = [
     ":frame_instrumentation_data",
-    "../:video_frame",
-    "../:video_rtp_headers",
-    "../../:array_view",
-    "../../:scoped_refptr",
+    "..:video_frame",
+    "..:video_rtp_headers",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../video/corruption_detection:corruption_classifier",
@@ -80,12 +73,11 @@ rtc_library("frame_instrumentation_generator_factory") {
     "frame_instrumentation_generator_factory.h",
   ]
   deps = [
-    ":frame_instrumentation_generator_header",
-    "../:video_frame",
+    ":frame_instrumentation_generator_header",  # keep
+    "..:video_frame",
     "../../../video/corruption_detection:frame_instrumentation_generator_impl",
     "../../environment",
     "../../video_codecs:scalability_mode",
-    "../../video_codecs:video_codecs_api",
   ]
 }
 
@@ -94,9 +86,8 @@ rtc_library("frame_instrumentation_generator_header") {
   sources = [ "frame_instrumentation_generator.h" ]
   deps = [
     ":frame_instrumentation_data",
-    "../:encoded_image",
-    "../:video_frame",
-    "../../video_codecs:video_codecs_api",
+    "..:encoded_image",
+    "..:video_frame",
   ]
 }
 
@@ -111,10 +102,8 @@ rtc_library("frame_instrumentation_generator") {
   deps = [
     ":frame_instrumentation_data",
     ":frame_instrumentation_generator_factory",
-    ":frame_instrumentation_generator_header",
-    "../:encoded_image",
-    "../:video_frame",
-    "../../video_codecs:video_codecs_api",
+    "..:encoded_image",
+    "..:video_frame",
   ]
 }
 
@@ -125,7 +114,6 @@ if (rtc_include_tests) {
     deps = [
       ":corruption_detection_settings_generator",
       ":filter_settings",
-      "../../:field_trials",
       "../../../test:test_support",
     ]
   }
@@ -158,10 +146,11 @@ if (rtc_include_tests) {
     deps = [
       ":frame_instrumentation_data",
       ":frame_instrumentation_evaluation",
-      "../:video_frame",
-      "../:video_rtp_headers",
-      "../../:scoped_refptr",
+      "..:video_frame",
+      "..:video_rtp_headers",
+      "../..:scoped_refptr",
       "../../../test:test_support",
+      "../../../video/corruption_detection:halton_frame_sampler",
     ]
   }
 }

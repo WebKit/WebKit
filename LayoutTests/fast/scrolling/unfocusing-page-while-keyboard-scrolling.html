@@ -5,10 +5,7 @@
     <script src="../../resources/js-test.js"></script>
     <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        window.jsTestIsAsync = true;
 
         function scrollRed()
         {
@@ -19,7 +16,7 @@
                     debug("FAIL: Blue frame scrolled as far as the red frame.");
                 else
                     debug("SUCCESS: Blue frame stopped scolling before red frame");
-                testRunner.notifyDone();
+                finishJSTest();
             }
         }
 

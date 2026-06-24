@@ -17,7 +17,7 @@ extern crate alloc;
 use crate::{CSlice, CSliceMut};
 use alloc::{vec, vec::Vec};
 use bssl_sys::EVP_CIPHER;
-use core::{ffi::c_int, marker::PhantomData};
+use core::marker::PhantomData;
 
 /// AES-CTR stream cipher operations.
 pub mod aes_ctr;
@@ -177,7 +177,7 @@ impl<C: EvpCipherType> Cipher<C> {
 
     fn cipher_mode(&self) -> u32 {
         // Safety:
-        // - The cipher context is initialized with EVP_EncryptInit_ex in `new`
+        // - The cipher context is initialized with `EVP_EncryptInit_ex` in `new`
         unsafe { bssl_sys::EVP_CIPHER_CTX_mode(self.ctx) }
     }
 
@@ -187,26 +187,24 @@ impl<C: EvpCipherType> Cipher<C> {
         assert_eq!(
             self.cipher_mode(),
             bssl_sys::EVP_CIPH_CTR_MODE as u32,
-            "Cannot use apply_keystraem_in_place for non-CTR modes"
+            "Cannot use apply_keystream_in_place for non-CTR modes"
         );
         let mut cslice_buf_mut = CSliceMut::from(buffer);
         let mut out_len = 0;
 
-        let buff_len_int = c_int::try_from(cslice_buf_mut.len()).map_err(|_| CipherError)?;
-
-        // Safety:
-        // - The output buffer provided is always large enough for an in-place operation.
+        // Safety: the input and output buffer bounds are passed into `EVP_EncryptUpdate_ex`.
         let result = unsafe {
-            bssl_sys::EVP_EncryptUpdate(
+            bssl_sys::EVP_EncryptUpdate_ex(
                 self.ctx,
                 cslice_buf_mut.as_mut_ptr(),
                 &mut out_len,
+                cslice_buf_mut.len(),
                 cslice_buf_mut.as_mut_ptr(),
-                buff_len_int,
+                cslice_buf_mut.len(),
             )
         };
         if result == 1 {
-            assert_eq!(out_len as usize, cslice_buf_mut.len());
+            assert_eq!(out_len, cslice_buf_mut.len());
             Ok(())
         } else {
             Err(CipherError)
@@ -220,39 +218,30 @@ impl<C: EvpCipherType> Cipher<C> {
         let block_size: usize = block_size_u32
             .try_into()
             .expect("Block size should always fit in usize");
-        // Allocate an output vec that is large enough for both EncryptUpdate and EncryptFinal
-        // operations
-        let max_encrypt_update_output_size = buffer.len() + block_size - 1;
-        let max_encrypt_final_output_size = block_size;
-        let mut output_vec =
-            vec![0_u8; max_encrypt_update_output_size + max_encrypt_final_output_size];
+        let max_encrypt_total_output_size = buffer.len() + block_size;
+        let mut output_vec = vec![0_u8; max_encrypt_total_output_size];
         // EncryptUpdate block
-        let update_out_len_usize = {
+        let update_out_len = {
             let mut cslice_out_buf_mut = CSliceMut::from(&mut output_vec[..]);
             let mut update_out_len = 0;
 
             let cslice_in_buf = CSlice::from(buffer);
-            let in_buff_len_int = c_int::try_from(cslice_in_buf.len()).map_err(|_| CipherError)?;
 
-            // Safety:
-            // - `EVP_EncryptUpdate` requires that "The number of output bytes may be up to `in_len`
-            //   plus the block length minus one and `out` must have sufficient space". This is the
-            //   `max_encrypt_update_output_size` part of the output_vec's capacity.
+            // Safety: the input and output buffer bounds are passed into `EVP_EncryptUpdate_ex`.
             let update_result = unsafe {
-                bssl_sys::EVP_EncryptUpdate(
+                bssl_sys::EVP_EncryptUpdate_ex(
                     self.ctx,
                     cslice_out_buf_mut.as_mut_ptr(),
                     &mut update_out_len,
+                    cslice_out_buf_mut.len(),
                     cslice_in_buf.as_ptr(),
-                    in_buff_len_int,
+                    cslice_in_buf.len(),
                 )
             };
             if update_result != 1 {
                 return Err(CipherError);
             }
             update_out_len
-                .try_into()
-                .expect("Output length should always fit in usize")
         };
 
         // EncryptFinal block
@@ -260,20 +249,19 @@ impl<C: EvpCipherType> Cipher<C> {
             // Slice indexing here will not panic because we ensured `output_vec` is larger than
             // what `EncryptUpdate` will write.
             #[allow(clippy::indexing_slicing)]
-            let mut cslice_finalize_buf_mut =
-                CSliceMut::from(&mut output_vec[update_out_len_usize..]);
+            let mut cslice_finalize_buf_mut = CSliceMut::from(&mut output_vec[update_out_len..]);
             let mut final_out_len = 0;
+            // Safety: the output buffer bounds are passed into `EVP_EncryptFinal_ex2`.
             let final_result = unsafe {
-                bssl_sys::EVP_EncryptFinal_ex(
+                bssl_sys::EVP_EncryptFinal_ex2(
                     self.ctx,
                     cslice_finalize_buf_mut.as_mut_ptr(),
                     &mut final_out_len,
+                    cslice_finalize_buf_mut.len(),
                 )
             };
-            let final_put_len_usize =
-                <usize>::try_from(final_out_len).expect("Output length should always fit in usize");
             if final_result == 1 {
-                output_vec.truncate(update_out_len_usize + final_put_len_usize)
+                output_vec.truncate(update_out_len + final_out_len)
             } else {
                 return Err(CipherError);
             }
@@ -284,44 +272,30 @@ impl<C: EvpCipherType> Cipher<C> {
     #[allow(clippy::expect_used)]
     fn decrypt(self, in_buffer: &[u8]) -> Result<Vec<u8>, CipherError> {
         // Safety: self.ctx is initialized with a cipher in `new()`.
-        let block_size_u32 = unsafe { bssl_sys::EVP_CIPHER_CTX_block_size(self.ctx) };
-        let block_size: usize = block_size_u32
-            .try_into()
-            .expect("Block size should always fit in usize");
-        // Allocate an output vec that is large enough for both DecryptUpdate and DecryptFinal
-        // operations
-        let max_decrypt_update_output_size = in_buffer.len() + block_size - 1;
-        let max_decrypt_final_output_size = block_size;
-        let mut output_vec =
-            vec![0_u8; max_decrypt_update_output_size + max_decrypt_final_output_size];
+        let mut output_vec = vec![0_u8; in_buffer.len()];
 
         // DecryptUpdate block
-        let update_out_len_usize = {
+        let update_out_len = {
             let mut cslice_out_buf_mut = CSliceMut::from(&mut output_vec[..]);
             let mut update_out_len = 0;
 
             let cslice_in_buf = CSlice::from(in_buffer);
-            let in_buff_len_int = c_int::try_from(cslice_in_buf.len()).map_err(|_| CipherError)?;
 
-            // Safety:
-            // - `EVP_DecryptUpdate` requires that "The number of output bytes may be up to `in_len`
-            //   plus the block length minus one and `out` must have sufficient space". This is the
-            //   `max_decrypt_update_output_size` part of the output_vec's capacity.
+            // Safety: the input and output buffer bounds are passed into `EVP_DecryptUpdate_ex`.
             let update_result = unsafe {
-                bssl_sys::EVP_DecryptUpdate(
+                bssl_sys::EVP_DecryptUpdate_ex(
                     self.ctx,
                     cslice_out_buf_mut.as_mut_ptr(),
                     &mut update_out_len,
+                    cslice_out_buf_mut.len(),
                     cslice_in_buf.as_ptr(),
-                    in_buff_len_int,
+                    cslice_in_buf.len(),
                 )
             };
             if update_result != 1 {
                 return Err(CipherError);
             }
             update_out_len
-                .try_into()
-                .expect("Output length should always fit in usize")
         };
 
         // DecryptFinal block
@@ -329,20 +303,20 @@ impl<C: EvpCipherType> Cipher<C> {
             // Slice indexing here will not panic because we ensured `output_vec` is larger than
             // what `DecryptUpdate` will write.
             #[allow(clippy::indexing_slicing)]
-            let mut cslice_final_buf_mut = CSliceMut::from(&mut output_vec[update_out_len_usize..]);
+            let mut cslice_final_buf_mut = CSliceMut::from(&mut output_vec[update_out_len..]);
             let mut final_out_len = 0;
+            // Safety: the output buffer bounds are passed into `EVP_DecryptFinal_ex2`.
             let final_result = unsafe {
-                bssl_sys::EVP_DecryptFinal_ex(
+                bssl_sys::EVP_DecryptFinal_ex2(
                     self.ctx,
                     cslice_final_buf_mut.as_mut_ptr(),
                     &mut final_out_len,
+                    cslice_final_buf_mut.len(),
                 )
             };
-            let final_put_len_usize =
-                <usize>::try_from(final_out_len).expect("Output length should always fit in usize");
 
             if final_result == 1 {
-                output_vec.truncate(update_out_len_usize + final_put_len_usize)
+                output_vec.truncate(update_out_len + final_out_len)
             } else {
                 return Err(CipherError);
             }

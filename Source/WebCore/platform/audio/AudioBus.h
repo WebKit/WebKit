@@ -161,7 +161,6 @@ private:
     Vector<std::unique_ptr<AudioChannel>> m_channels;
     int m_layout;
     float m_busGain { 1 };
-    std::unique_ptr<AudioFloatArray> m_dezipperGainValues;
     bool m_isFirstTime { 0 };
     float m_sampleRate { 0 }; // 0.0 if unknown or N/A
 };

@@ -41,7 +41,9 @@
 
 #if ENABLE(MODEL_PROCESS)
 #import "ModelPresentationManagerProxy.h"
+#if HAVE(CORE_RE)
 #import "WKPageHostedModelView.h"
+#endif
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -120,7 +122,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
         if (!protect(m_drawingArea)->page())
             return nullptr;
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
         if (auto modelContext = properties.modelContext()) {
             if (auto modelPresentationManager = m_drawingArea->page() ? m_drawingArea->page()->modelPresentationManagerProxy() : nullptr) {
                 if (auto view = modelPresentationManager->setUpModelView(*modelContext)) {

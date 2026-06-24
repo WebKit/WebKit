@@ -40,7 +40,6 @@ namespace WebKit {
 
 void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithImageData::SendImageData::name()) {
         IPC::handleMessage<Messages::TestWithImageData::SendImageData>(connection, decoder, this, &TestWithImageData::sendImageData);
         return;

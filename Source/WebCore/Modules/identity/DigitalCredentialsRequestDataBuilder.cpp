@@ -66,7 +66,7 @@ ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawReques
             DigitalCredentialsRawRequests { WTF::move(rawRequestStrings) });
     });
 
-    std::optional<ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>>> firstException = std::nullopt;
+    std::optional<ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>>> firstException;
     for (auto result : results) {
         // return the first matching result without exception
         if (!result.hasException())

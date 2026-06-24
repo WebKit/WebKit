@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: getResponseHeader() in error state (failing cross-origin test)
-

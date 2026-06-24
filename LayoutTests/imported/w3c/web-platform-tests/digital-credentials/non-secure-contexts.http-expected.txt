@@ -1,0 +1,3 @@
+
+PASS When in a non-secure context, there is no access to digital credentials.
+

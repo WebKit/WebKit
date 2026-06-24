@@ -70,6 +70,8 @@ OPENSSL_MSVC_PRAGMA(comment(lib, "Ws2_32.lib"))
 #endif
 
 
+using namespace bssl;
+
 #if !defined(OPENSSL_WINDOWS)
 using Socket = int;
 #define INVALID_SOCKET (-1)
@@ -431,6 +433,12 @@ static bool IsPAKE(const SSL *ssl) {
                          CredentialConfigType::kSPAKE2PlusV1;
 }
 
+static bool IsTLS13PSK(const SSL *ssl) {
+  int idx = GetTestState(ssl)->selected_credential;
+  return idx >= 0 && GetTestConfig(ssl)->credentials[idx].type ==
+                         CredentialConfigType::kPreSharedKey;
+}
+
 // CheckHandshakeProperties checks, immediately after |ssl| completes its
 // initial handshake (or False Starts), whether all the properties are
 // consistent with the test configuration and invariants.
@@ -661,14 +669,10 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
     return false;
   }
 
-  if (!config->psk.empty()) {
+  if (config->expect_no_peer_cert || !config->psk.empty() || IsTLS13PSK(ssl) ||
+      IsPAKE(ssl) || !config->expect_peer_rpk_sha256.empty()) {
     if (SSL_get_peer_cert_chain(ssl) != nullptr) {
-      fprintf(stderr, "Received peer certificate on a PSK cipher.\n");
-      return false;
-    }
-  } else if (IsPAKE(ssl)) {
-    if (SSL_get_peer_cert_chain(ssl) != nullptr) {
-      fprintf(stderr, "Received peer certificate on a PAKE handshake.\n");
+      fprintf(stderr, "Received unexpected peer certificate.\n");
       return false;
     }
   } else if (!config->is_server || config->require_any_client_certificate) {
@@ -692,6 +696,13 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
     return false;
   }
 
+  if (config->expect_server_sent_requested_padding !=
+      !!SSL_server_sent_requested_padding(ssl)) {
+    fprintf(stderr, "Server padding was %smatched, but wanted opposite.\n",
+            SSL_server_sent_requested_padding(ssl) ? "" : "not ");
+    return false;
+  }
+
   if ((config->expect_hrr && !SSL_used_hello_retry_request(ssl)) ||
       (config->expect_no_hrr && SSL_used_hello_retry_request(ssl))) {
     fprintf(stderr, "Got %sHRR, but wanted opposite.\n",
@@ -709,6 +720,16 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
     fprintf(stderr, "X.509 key usage was %svalid, but wanted opposite.\n",
             SSL_was_key_usage_invalid(ssl) ? "in" : "");
     return false;
+  }
+
+  if (const auto &expected = config->expect_peer_certificate_type;
+      expected.has_value()) {
+    const uint8_t negotiated = SSL_get_peer_cert_type(ssl);
+    if (*expected != negotiated) {
+      fprintf(stderr, "Negotiated peer cert type %d, but wanted %d.\n",
+              negotiated, *expected);
+      return false;
+    }
   }
 
   // Check all the selected parameters are covered by the string APIs.
@@ -826,14 +847,7 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
   }
 
   if (config->is_dtls) {
-    bssl::UniquePtr<BIO> packeted = PacketedBioCreate(
-        GetClock(),
-        [ssl_raw = ssl.get()](timeval *out) -> bool {
-          return DTLSv1_get_timeout(ssl_raw, out);
-        },
-        [ssl_raw = ssl.get()](uint32_t mtu) -> bool {
-          return SSL_set_mtu(ssl_raw, mtu);
-        });
+    bssl::UniquePtr<BIO> packeted = PacketedBioCreate(GetClock(), ssl.get());
     if (!packeted) {
       return false;
     }
@@ -1152,7 +1166,6 @@ static bool DoExchange(bssl::UniquePtr<SSL_SESSION> *out_session,
       }
     }
   } else {
-    static const char kInitialWrite[] = "hello";
     bool pending_initial_write = false;
     if (config->read_with_unfinished_write) {
       if (!config->async) {
@@ -1167,15 +1180,19 @@ static bool DoExchange(bssl::UniquePtr<SSL_SESSION> *out_session,
 
       // Let only one byte of the record through.
       AsyncBioAllowWrite(test_state->async_bio, 1);
-      int write_ret = SSL_write(ssl, kInitialWrite, strlen(kInitialWrite));
+      int write_ret = SSL_write(ssl, config->shim_initial_write.data(),
+                                config->shim_initial_write.size());
       if (SSL_get_error(ssl, write_ret) != SSL_ERROR_WANT_WRITE) {
         fprintf(stderr, "Failed to leave unfinished write.\n");
         return false;
       }
       pending_initial_write = true;
     } else if (config->shim_writes_first) {
-      if (WriteAll(ssl, kInitialWrite, strlen(kInitialWrite)) < 0) {
-        return false;
+      for (int i = 0; i < config->repeat_shim_initial_write; i++) {
+        if (WriteAll(ssl, config->shim_initial_write.data(),
+                     config->shim_initial_write.size()) < 0) {
+          return false;
+        }
       }
     }
     if (!config->shim_shuts_down) {
@@ -1233,7 +1250,8 @@ static bool DoExchange(bssl::UniquePtr<SSL_SESSION> *out_session,
 
         // Clear the initial write, if unfinished.
         if (pending_initial_write) {
-          if (WriteAll(ssl, kInitialWrite, strlen(kInitialWrite)) < 0) {
+          if (WriteAll(ssl, config->shim_initial_write.data(),
+                       config->shim_initial_write.size()) < 0) {
             return false;
           }
           pending_initial_write = false;

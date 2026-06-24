@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -45,10 +45,10 @@
 		DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; };
 		DDC9E8CC2A91DEDE00B015C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD954C942A90280800C6843C /* UIKit.framework */; };
 		DDC9E8CD2A91E0F400B015C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD954C942A90280800C6843C /* UIKit.framework */; };
-		E37DD4942FB4F8180069AF09 /* WebContentEnhancedSecurityExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E37DD4932FB4F8180069AF09 /* WebContentEnhancedSecurityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E3EE46DB2DF3473D009ED72B /* GPUExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E3EE46DA2DF3473D009ED72B /* GPUExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E3EE46DD2DF3475B009ED72B /* NetworkingExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E3EE46DC2DF3475B009ED72B /* NetworkingExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E3EE46DF2DF34770009ED72B /* WebContentExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E3EE46DE2DF34770009ED72B /* WebContentExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E37DD4942FB4F8180069AF09 /* WebContentEnhancedSecurityExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E37DD4932FB4F8180069AF09 /* WebContentEnhancedSecurityExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E3EE46DB2DF3473D009ED72B /* GPUExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E3EE46DA2DF3473D009ED72B /* GPUExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E3EE46DD2DF3475B009ED72B /* NetworkingExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E3EE46DC2DF3475B009ED72B /* NetworkingExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E3EE46DF2DF34770009ED72B /* WebContentExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = E3EE46DE2DF34770009ED72B /* WebContentExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -149,7 +149,7 @@
 		CDC279282935417100151088 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.mp4; sourceTree = "<group>"; };
 		CDC279292935417100151088 /* looping2s.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = looping2s.html; sourceTree = "<group>"; };
 		DD954C942A90280800C6843C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		E37DD4932FB4F8180069AF09 /* WebContentEnhancedSecurityExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; name = WebContentEnhancedSecurityExtension.appex; path = WebContentEnhancedSecurityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E37DD4932FB4F8180069AF09 /* WebContentEnhancedSecurityExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = WebContentEnhancedSecurityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3C8BD852BBF286D00181A2E /* MobileMiniBrowser.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = MobileMiniBrowser.entitlements; sourceTree = "<group>"; };
 		E3EE46DA2DF3473D009ED72B /* GPUExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = GPUExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3EE46DC2DF3475B009ED72B /* NetworkingExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = NetworkingExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -364,7 +364,7 @@
 		CD1DAF8A1D709E3600017CF0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 2700;
 				ORGANIZATIONNAME = WebKit;
 				TargetAttributes = {
 					CD1DAF911D709E3600017CF0 = {
@@ -479,7 +479,10 @@
 		};
 		DD2A1D0A2888D1D300342472 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+				xros,
+			);
 			target = CD1DAF911D709E3600017CF0 /* MobileMiniBrowser */;
 			targetProxy = DD2A1D092888D1D300342472 /* PBXContainerItemProxy */;
 		};

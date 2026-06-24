@@ -12,10 +12,11 @@ rtc_library("mock_task_queue_base") {
   testonly = true
   sources = [ "mock_task_queue_base.h" ]
   deps = [
+    "..:task_queue",
     "../..:location",
-    "../../../api/task_queue",
-    "../../../api/units:time_delta",
     "../../../test:test_support",
+    "../../units:time_delta",
     "//third_party/abseil-cpp/absl/functional:any_invocable",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }

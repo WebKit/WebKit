@@ -33,7 +33,7 @@ class LegacyRenderSVGResourceMarker final : public LegacyRenderSVGResourceContai
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceMarker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceMarker);
 public:
-    LegacyRenderSVGResourceMarker(SVGMarkerElement&, RenderStyle&&);
+    LegacyRenderSVGResourceMarker(SVGMarkerElement&, Style::ComputedStyle&&);
     virtual ~LegacyRenderSVGResourceMarker();
 
     inline SVGMarkerElement& markerElement() const;
@@ -53,7 +53,7 @@ public:
     const AffineTransform& localToParentTransform() const LIFETIME_BOUND override;
     AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
 
-    OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override { return { }; }
+    OptionSet<ApplyResult> applyResource(RenderElement&, const Style::ComputedStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override { return { }; }
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override { return FloatRect(); }
 
     FloatPoint referencePoint() const;
@@ -68,7 +68,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderSVGResourceMarker"_s; }
 
     // Generates a transformation matrix usable to render marker content. Handles scaling the marker content
-    // acording to SVGs markerUnits="strokeWidth" concept, when a strokeWidth value != -1 is passed in.
+    // according to SVGs markerUnits="strokeWidth" concept, when a strokeWidth value != -1 is passed in.
     AffineTransform markerContentTransformation(const AffineTransform& contentTransformation, const FloatPoint& origin, float strokeWidth = -1) const;
 
     AffineTransform viewportTransform() const;

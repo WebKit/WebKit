@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests removing the value attribute of a button as it tries to close the dialog element.<br>
+WebKit should not crash or hit any assertions under ASAN.</p>
+<dialog id=dialog open>
+    <button command=close commandfor=dialog>Close</button>
+</dialog>
+<script>
+window?.testRunner?.dumpAsText();
+window?.GCController?.collect();
+const button = document.querySelector('button');
+button.setAttribute('value', 'PA' + 'SS');
+document.querySelector('dialog').addEventListener('beforetoggle', (event) => {
+    button.removeAttribute('value');
+});
+button.click();
+document.write(dialog.returnValue);
+</script>
+</body>
+</html>

@@ -69,22 +69,22 @@ class OPENSSL_EXPORT Input {
   constexpr Input() = default;
 
   // Creates an Input from a span. The constructed Input is only valid as long
-  // as |data| points to live memory. If constructed from, say, a
-  // |std::vector<uint8_t>|, mutating the vector will invalidate the Input.
+  // as `data` points to live memory. If constructed from, say, a
+  // `std::vector<uint8_t>`, mutating the vector will invalidate the Input.
   constexpr Input(bssl::Span<const uint8_t> data) : data_(data) {}
 
-  // Creates an Input from the given |data| and |len|.
+  // Creates an Input from the given `data` and `len`.
   constexpr explicit Input(const uint8_t *data, size_t len)
       : data_(Span(data, len)) {}
 
   // Deprecated: Use StringAsBytes.
   //
   // Creates an Input from a std::string_view. The constructed Input is only
-  // valid as long as |data| points to live memory. If constructed from, say, a
-  // |std::string|, mutating the vector will invalidate the Input.
+  // valid as long as `data` points to live memory. If constructed from, say, a
+  // `std::string`, mutating the vector will invalidate the Input.
   explicit Input(std::string_view str) : data_(StringAsBytes(str)) {}
 
-  // The following APIs have the same semantics as in |bssl::Span|.
+  // The following APIs have the same semantics as in `bssl::Span`.
   constexpr Span<const uint8_t>::iterator begin() const {
     return data_.begin();
   }
@@ -95,48 +95,27 @@ class OPENSSL_EXPORT Input {
   constexpr uint8_t operator[](size_t idx) const { return data_[idx]; }
   constexpr uint8_t front() const { return data_.front(); }
   constexpr uint8_t back() const { return data_.back(); }
-  constexpr Input subspan(size_t pos = 0, size_t len = dynamic_extent) const {
+  constexpr Input subspan(size_t pos, size_t len) const {
     return Input(data_.subspan(pos, len));
+  }
+  constexpr Input subspan(size_t pos) const {
+    return Input(data_.subspan(pos));
   }
   constexpr Input first(size_t len) const { return Input(data_.first(len)); }
   constexpr Input last(size_t len) const { return Input(data_.last(len)); }
-
-  // Deprecated: use BytesAsStringView and convert to std::string.
-  //
-  // Returns a copy of the data represented by this object as a std::string.
-  std::string AsString() const;
-
-  // Deprecated: Use ByteAsString. 
-  //
-  // Returns a std::string_view pointing to the same data as the Input. The
-  // resulting string_view must not outlive the data that was used to construct
-  // this Input.
-  std::string_view AsStringView() const { return BytesAsStringView(data_); }
-
-  // Deprecated: This class implicitly converts to bssl::Span<const uint8_t>.
-  //
-  // Returns a span pointing to the same data as the Input. The resulting span
-  // must not outlive the data that was used to construct this Input.
-  Span<const uint8_t> AsSpan() const { return *this; }
-
-  // Deprecated: Use size() instead.
-  constexpr size_t Length() const { return size(); }
-
-  // Deprecated: Use data() instead.
-  constexpr const uint8_t *UnsafeData() const { return data(); }
 
  private:
   // TODO(crbug.com/770501): Replace this type with span altogether.
   Span<const uint8_t> data_;
 };
 
-// Return true if |lhs|'s data and |rhs|'s data are byte-wise equal.
+// Return true if `lhs`'s data and `rhs`'s data are byte-wise equal.
 OPENSSL_EXPORT bool operator==(Input lhs, Input rhs);
 
-// Return true if |lhs|'s data and |rhs|'s data are not byte-wise equal.
+// Return true if `lhs`'s data and `rhs`'s data are not byte-wise equal.
 OPENSSL_EXPORT bool operator!=(Input lhs, Input rhs);
 
-// Returns true if |lhs|'s data is lexicographically less than |rhs|'s data.
+// Returns true if `lhs`'s data is lexicographically less than `rhs`'s data.
 OPENSSL_EXPORT constexpr bool operator<(Input lhs, Input rhs) {
   // This is `std::lexicographical_compare`, but that's not `constexpr` until
   // C++-20.
@@ -177,11 +156,11 @@ class OPENSSL_EXPORT ByteReader {
   explicit ByteReader(Input in);
 
   // Reads a single byte from the input source, putting the byte read in
-  // |*byte_p|. If a byte cannot be read from the input (because there is
+  // `*byte_p`. If a byte cannot be read from the input (because there is
   // no input left), then this method returns false.
   [[nodiscard]] bool ReadByte(uint8_t *out);
 
-  // Reads |len| bytes from the input source, and initializes an Input to
+  // Reads `len` bytes from the input source, and initializes an Input to
   // point to that data. If there aren't enough bytes left in the input source,
   // then this method returns false.
   [[nodiscard]] bool ReadBytes(size_t len, Input *out);

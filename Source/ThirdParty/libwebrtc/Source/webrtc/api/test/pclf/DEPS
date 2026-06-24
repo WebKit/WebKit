@@ -8,7 +8,7 @@ specific_include_rules = {
     "+rtc_base/socket_factory.h",
     "+rtc_base/thread.h",
   ],
-  "media_quality_test_params\.h": [
+  "media_quality_test_params\\.h": [
     "+p2p/base/port_allocator.h",
     "+rtc_base/socket_factory.h",
   ],

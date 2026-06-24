@@ -56,10 +56,11 @@ public:
     bool NODELETE hasSelfPaintingLayer() const;
     RenderLayer* layer() const LIFETIME_BOUND { return m_layer.get(); }
 
-    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     virtual bool requiresLayer() const = 0;
+    bool requiresLayerForSVGIntrinsicReasons() const;
 
     // Returns true if the background is painted opaque in the given rect.
     // The query rect is given in local coordinate system.
@@ -94,18 +95,27 @@ public:
     // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
     void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
 
-    void applySVGTransform(TransformationMatrix&, const SVGGraphicsElement&, const RenderStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption>) const;
+    void applySVGTransform(TransformationMatrix&, const SVGGraphicsElement&, const Style::ComputedStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption>) const;
     void updateHasSVGTransformFlags();
     virtual bool needsHasSVGTransformFlags() const { ASSERT_NOT_REACHED(); return false; }
 
-    void repaintOrRelayoutAfterSVGTransformChange();
+    enum class SVGAttributeChangeRepaintMode : bool {
+        // Issue a full repaint at the new position from inside the function.
+        Issue,
+        // Skip the post-mutation repaint - the caller will emit a delta repaint
+        // (via repaintAfterLayoutIfNeeded()) using a pre-mutation rect snapshot.
+        Defer
+    };
+    void updateTransformAndRepaintForSVGAfterAttributeChange(SVGAttributeChangeRepaintMode = SVGAttributeChangeRepaintMode::Issue);
+    bool svgTransformAttributeChangeInducesLayerComposition();
 
     LayoutPoint nominalSVGLayoutLocation() const { return flooredLayoutPoint(objectBoundingBoxWithoutTransformations().minXMinYCorner()); }
+    LayoutPoint objectBoundingBoxLocation() const { return flooredLayoutPoint(objectBoundingBox().minXMinYCorner()); }
     virtual LayoutPoint currentSVGLayoutLocation() const { ASSERT_NOT_REACHED(); return { }; }
     virtual void setCurrentSVGLayoutLocation(const LayoutPoint&) { ASSERT_NOT_REACHED(); }
 
-    RenderSVGResourcePaintServer* svgFillPaintServerResourceFromStyle(const RenderStyle&) const;
-    RenderSVGResourcePaintServer* svgStrokePaintServerResourceFromStyle(const RenderStyle&) const;
+    RenderSVGResourcePaintServer* svgFillPaintServerResourceFromStyle(const Style::ComputedStyle&) const;
+    RenderSVGResourcePaintServer* svgStrokePaintServerResourceFromStyle(const Style::ComputedStyle&) const;
 
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
     RenderSVGResourceFilter* svgFilterResourceFromStyle() const;
@@ -125,10 +135,16 @@ public:
     TransformationMatrix* NODELETE layerTransform() const;
 
     virtual void updateLayerTransform();
-    virtual void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const = 0;
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox) const;
+    virtual void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const = 0;
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox) const;
 
     virtual void invalidateCachedVisualOverflowRect() { }
+
+    // LBSE: flag the transform-dependent bounding boxes (objectBoundingBox / strokeBoundingBox)
+    // for lazy recomputation. Overridden by RenderSVGContainer / RenderSVGRoot, which cache them.
+    // The deferred SVG transform-attribute flush uses it to dirty the container ancestor chain of
+    // a renderer whose transform changed without a layout. No-op otherwise.
+    virtual void invalidateCachedSVGTransformDependentBoundingBoxes() { }
 
     inline bool shouldUsePositionedClipping() const;
 
@@ -139,8 +155,8 @@ public:
     AffineTransform computeRendererTransform() const;
 
 protected:
-    RenderLayerModelObject(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
-    RenderLayerModelObject(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderLayerModelObject(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderLayerModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
 
     void createLayer();
     void willBeDestroyed() override;
@@ -148,6 +164,9 @@ protected:
     virtual void updateFromStyle() { }
 
 private:
+    bool createLayerIfAllowed();
+    void removeOnlyThisLayerWithRepaint();
+
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;
 
     UniquelyOwnedPtr<RenderLayer> m_layer;

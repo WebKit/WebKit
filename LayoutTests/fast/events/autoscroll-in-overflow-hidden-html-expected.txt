@@ -1,3 +1,6 @@
 
 PASSED: the autoscroll has not happened.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

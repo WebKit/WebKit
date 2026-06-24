@@ -52,7 +52,7 @@ struct RTC_EXPORT StreamsConfig {
   // If `enable_repeated_initial_probing` is set to true, Probes are sent
   // periodically every 1s during the first 5s after the network becomes
   // available. The probes ignores max_total_allocated_bitrate.
-  std::optional<bool> enable_repeated_initial_probing;
+  bool enable_repeated_initial_probing = false;
   std::optional<double> pacing_factor;
 
   // TODO(srte): Use BitrateAllocationLimits here.
@@ -88,6 +88,9 @@ struct RTC_EXPORT NetworkRouteChange {
   // The TargetRateConstraints are set here so they can be changed synchronously
   // when network route changes.
   TargetRateConstraints constraints;
+  // If true, the change is significant enough to warrant a reset of the
+  // bandwidth estimator.
+  bool restart_bwe = true;
 };
 
 struct RTC_EXPORT PacedPacketInfo {

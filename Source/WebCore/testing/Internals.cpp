@@ -61,6 +61,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "CookieJar.h"
 #include "CrossOriginPreflightResultCache.h"
+#include "CueMatch.h"
 #include "Cursor.h"
 #include "DOMAsyncIterator.h"
 #include "DOMPointReadOnly.h"
@@ -68,6 +69,7 @@
 #include "DOMRectList.h"
 #include "DOMStringList.h"
 #include "DOMURL.h"
+#include "DOMWrapperWorld.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DiagnosticLoggingClient.h"
 #include "DisabledAdaptations.h"
@@ -246,10 +248,10 @@
 #include "StorageNamespaceProvider.h"
 #include "StreamTransferUtilities.h"
 #include "StringCallback.h"
+#include "StyleDocumentScope.h"
 #include "StyleGridPosition.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
-#include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "SystemSoundManager.h"
 #include "TextIterator.h"
@@ -635,8 +637,8 @@ void Internals::resetToConsistentState(Page& page)
         page.setHeaderHeight(0);
         page.setFooterHeight(0);
         page.setObscuredContentInsets({ });
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-        page.setHasBannerViewOverlay(false);
+#if HAVE(NSREFRESHCONTROLLER)
+        page.setHasRefreshController(false);
 #endif
         mainFrameView->setUseFixedLayout(false);
         mainFrameView->setFixedLayoutSize(IntSize());
@@ -1252,6 +1254,14 @@ void Internals::pauseImageAnimation(HTMLImageElement& element)
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
+#if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
+void Internals::setVideoAutoplayPreviewsEnabled(bool enabled)
+{
+    if (auto* page = contextDocument() ? contextDocument()->page() : nullptr)
+        page->setVideoAutoplayPreviewsEnabled(enabled);
+}
+#endif
+
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
 void Internals::setPrefersNonBlinkingCursor(bool enabled)
 {
@@ -1348,6 +1358,12 @@ void Internals::setHasHDRContentForTesting(HTMLImageElement& element)
 bool Internals::hasPendingActivity(const WebCodecsVideoDecoder& decoder) const
 {
     return decoder.hasPendingActivity();
+}
+
+bool Internals::is10bitsVideoFrame(const WebCodecsVideoFrame& frame) const
+{
+    RefPtr videoFrame = frame.internalFrame();
+    return videoFrame && videoFrame->is10bits();
 }
 #endif
 
@@ -2696,7 +2712,11 @@ ExceptionOr<String> Internals::autofillFieldName(Element& element)
         return String { formControl->autofillData().fieldName };
 
     return Exception { ExceptionCode::InvalidNodeTypeError };
+}
 
+void Internals::allowAutofillForCurrentWorld(JSC::JSGlobalObject& globalObject)
+{
+    currentWorld(globalObject).setAllowAutofill();
 }
 
 ExceptionOr<void> Internals::invalidateControlTints()
@@ -3341,6 +3361,24 @@ ExceptionOr<unsigned> Internals::countFindMatches(const String& text, const Vect
 
     return document->page()->countFindMatches(text, parsedOptions.releaseReturnValue(), 1000);
 }
+
+#if ENABLE(VIDEO)
+ExceptionOr<Vector<double>> Internals::findCueMatches(const String& text, const Vector<String>& findOptions)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    auto parsedOptions = parseFindOptions(findOptions);
+    if (parsedOptions.hasException())
+        return parsedOptions.releaseException();
+
+    auto matches = document->page()->findCueMatches(text, parsedOptions.releaseReturnValue());
+    return WTF::map(matches, [](const auto& match) -> double {
+        return match.seekTime.toDouble();
+    });
+}
+#endif
 
 unsigned Internals::numberOfIDBTransactions() const
 {
@@ -4277,7 +4315,7 @@ void Internals::setScreenContentsFormatsForTesting(const Vector<Internals::Conte
     }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    WebCore::setScreenContentsFormatsForTesting(contentsFormats);
+    PlatformScreen::singleton()->updateSingletonContentsFormatsForTesting(contentsFormats);
 #else
     UNUSED_PARAM(contentsFormats);
 #endif
@@ -5539,6 +5577,12 @@ bool Internals::isPlayerPaused(const HTMLMediaElement& element) const
     return player && player->paused();
 }
 
+double Internals::effectiveRate(const HTMLMediaElement& element) const
+{
+    RefPtr player = element.player();
+    return player ? player->effectiveRate() : 0.0;
+}
+
 void Internals::forceStereoDecoding(HTMLMediaElement& element)
 {
     element.forceStereoDecoding();
@@ -5796,6 +5840,11 @@ size_t Internals::mediaElementCount() const
 void Internals::setMediaElementVolumeLocked(HTMLMediaElement& element, bool volumeLocked)
 {
     element.setVolumeLocked(volumeLocked);
+}
+
+String Internals::mediaElementViewportVisibility(HTMLMediaElement& element)
+{
+    return convertEnumerationToString(element.viewportVisibility());
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)
@@ -6237,8 +6286,8 @@ float Internals::pageMediaVolume()
     return page->mediaVolume();
 }
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-void Internals::setPageHasBannerViewOverlayForTesting(bool hasBannerViewOverlay)
+#if ENABLE(NSREFRESHCONTROLLER_TESTING)
+void Internals::setPageHasRefreshControllerForTesting(bool hasRefreshController)
 {
     RefPtr document = contextDocument();
     if (!document)
@@ -6248,7 +6297,7 @@ void Internals::setPageHasBannerViewOverlayForTesting(bool hasBannerViewOverlay)
     if (!page)
         return;
 
-    page->setHasBannerViewOverlay(hasBannerViewOverlay);
+    page->setHasRefreshController(hasRefreshController);
 }
 #endif
 
@@ -7151,6 +7200,11 @@ void Internals::terminateWebContentProcess()
     exit(0);
 }
 
+unsigned Internals::getpid() const
+{
+    return static_cast<unsigned>(getCurrentProcessID());
+}
+
 #if ENABLE(APPLE_PAY)
 ExceptionOr<Ref<MockPaymentCoordinator>> Internals::mockPaymentCoordinator(Document& document)
 {
@@ -7377,7 +7431,7 @@ void Internals::notifyResourceLoadObserver()
 unsigned Internals::primaryScreenDisplayID()
 {
 #if PLATFORM(COCOA)
-    return WebCore::primaryScreenDisplayID();
+    return PlatformScreen::singleton()->primaryScreenDisplayID();
 #else
     return 0;
 #endif
@@ -8506,27 +8560,6 @@ void Internals::setTopDocumentURLForQuirks(const String& urlString)
     protect(document->page())->settings().setNeedsSiteSpecificQuirks(true);
     document->quirks().setTopDocumentURLForTesting(URL { urlString });
 }
-
-#if ENABLE(CONTENT_EXTENSIONS)
-void Internals::setResourceMonitorNetworkUsageThreshold(size_t threshold, double randomness)
-{
-    ResourceMonitorChecker::singleton().setNetworkUsageThreshold(threshold, randomness);
-}
-
-bool Internals::shouldSkipResourceMonitorThrottling() const
-{
-    if (auto* document = contextDocument())
-        return document->shouldSkipResourceMonitorThrottling();
-
-    return false;
-}
-
-void Internals::setShouldSkipResourceMonitorThrottling(bool flag)
-{
-    if (auto* document = contextDocument())
-        document->setShouldSkipResourceMonitorThrottling(flag);
-}
-#endif
 
 #if ENABLE(DAMAGE_TRACKING)
 ExceptionOr<Vector<Internals::FrameDamage>> Internals::getFrameDamageHistory() const

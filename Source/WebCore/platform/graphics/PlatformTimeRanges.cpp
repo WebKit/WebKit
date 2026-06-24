@@ -131,7 +131,8 @@ PlatformTimeRanges& PlatformTimeRanges::operator-=(const Range& range)
 
     auto firstEnd = std::max(m_ranges[0].start, range.start);
     auto secondStart = std::min(m_ranges.last().end, range.end);
-    Vector<Range> ranges { 2 };
+    Vector<Range> ranges;
+    ranges.reserveInitialCapacity(2);
     if (m_ranges[0].start != firstEnd)
         ranges.append({ m_ranges[0].start, firstEnd });
     if (secondStart != m_ranges.last().end)
@@ -295,7 +296,7 @@ bool PlatformTimeRanges::containWithEpsilon(const PlatformTimeRanges& ranges, co
 
     // Ensure that if we have a gap in the buffered range, it is smaller than the fudge factor;
     for (unsigned i = 1; i < bufferedRanges.length(); i++) {
-        if (bufferedRanges.end(i) - bufferedRanges.start(i-1) > epsilon)
+        if (bufferedRanges.start(i) - bufferedRanges.end(i - 1) > epsilon)
             return false;
     }
 

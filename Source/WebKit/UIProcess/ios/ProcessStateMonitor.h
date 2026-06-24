@@ -46,11 +46,11 @@ public:
 
     ~ProcessStateMonitor();
     void processWillBeSuspendedImmediately();
+    void processDidBecomeRunning();
 
 private:
     ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler);
 
-    void processDidBecomeRunning();
     void processWillBeSuspended(Seconds timeout);
     void suspendTimerFired();
     void checkRemainingRunTime();

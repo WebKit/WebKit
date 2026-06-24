@@ -43,6 +43,9 @@
 /* Forced text track display name format that includes the language and/or locale (e.g. 'English Forced'). */
 "%@ Forced (text track)" = "%@ Forced";
 
+/* Generated text track display name format that includes the language and/or locale (e.g. 'English Generated'). */
+"%@ Generated (text track)" = "%@ Generated";
+
 /* visible name of the GPU process. The argument is the application name. */
 "%@ Graphics and Media" = "%@ Graphics and Media";
 
@@ -634,6 +637,9 @@
 /* WKWebExtensionErrorInvalidActionIcon description for failing to load single image for browser_action or page_action */
 "Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry." = "Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for icon with unsupported image format */
+"Failed to load image for path “%@”. The image is not in a supported format." = "Failed to load image for path “%@”. The image is not in a supported format.";
+
 /* WKWebExtensionErrorInvalidActionIcon description for failing to load images for action only */
 "Failed to load images in `default_icon` for the `action` manifest entry." = "Failed to load images in `default_icon` for the `action` manifest entry.";
 
@@ -678,6 +684,9 @@
 
 /* WebKitErrorFrameLoadInterruptedByPolicyChange description */
 "Frame load interrupted" = "Frame load interrupted";
+
+/* Display name for text track kind 'generated'. */
+"Generated (text track)" = "Generated";
 
 /* Title of the Go button for zoomed form controls. */
 "Go" = "Go";
@@ -926,7 +935,7 @@
 "Local documents on your computer" = "Local documents on your computer";
 
 /* Lockdown Mode alert title */
-"Lockdown Mode is Turned On For “%@“" = "Lockdown Mode is Turned On For “%@“";
+"Lockdown Mode is Turned On For “%@”" = "Lockdown Mode is Turned On For “%@”";
 
 /* Title for Look Up action button */
 "Look Up" = "Look Up";
@@ -1003,8 +1012,8 @@
 /* WKWebExtensionErrorInvalidBackgroundContent description for missing background service_worker or scripts keys */
 "Manifest `background` entry has missing or empty required `service_worker` or `scripts` key for `preferred_environment` of `service_worker`." = "Manifest `background` entry has missing or empty required `service_worker` or `scripts` key for `preferred_environment` of `service_worker`.";
 
-/* WKWebExtensionErrorInvalidContentScripts description for missing or empty 'js' and 'css' arrays */
-"Manifest `content_scripts` entry has missing or empty 'js' and 'css' arrays." = "Manifest `content_scripts` entry has missing or empty 'js' and 'css' arrays.";
+/* WKWebExtensionErrorInvalidContentScripts description for missing or empty `js` and `css` arrays */
+"Manifest `content_scripts` entry has missing or empty `js` and `css` arrays." = "Manifest `content_scripts` entry has missing or empty `js` and `css` arrays.";
 
 /* WKWebExtensionErrorInvalidContentScripts description for missing matches entry */
 "Manifest `content_scripts` entry has no specified `matches` entry." = "Manifest `content_scripts` entry has no specified `matches` entry.";
@@ -1645,20 +1654,20 @@
 /* accessibility role description for a URL field. */
 "URL field" = "URL field";
 
-/* WKWebExtensionErrorResourceNotFound description with file name */
-"Unable to find \"%@\" in the extension’s resources." = "Unable to find \"%@\" in the extension’s resources.";
-
-/* WKWebExtensionErrorResourceNotFound description with invalid file path */
-"Unable to find \"%@\" in the extension’s resources. It is an invalid path." = "Unable to find \"%@\" in the extension’s resources. It is an invalid path.";
-
-/* WKWebExtensionErrorResourceNotFound description with file name */
-"Unable to find \"%s\" in the extension’s resources." = "Unable to find \"%s\" in the extension’s resources.";
-
-/* WKWebExtensionErrorResourceNotFound description with invalid file path */
-"Unable to find \"%s\" in the extension’s resources. It is an invalid path." = "Unable to find \"%s\" in the extension’s resources. It is an invalid path.";
-
 /* Error description for missing default_locale */
 "Unable to find `default_locale` in “_locales” folder." = "Unable to find `default_locale` in “_locales” folder.";
+
+/* WKWebExtensionErrorResourceNotFound description with file name */
+"Unable to find “%@” in the extension’s resources." = "Unable to find “%@” in the extension’s resources.";
+
+/* WKWebExtensionErrorResourceNotFound description with invalid file path */
+"Unable to find “%@” in the extension’s resources. It is an invalid path." = "Unable to find “%@” in the extension’s resources. It is an invalid path.";
+
+/* WKWebExtensionErrorResourceNotFound description with file name */
+"Unable to find “%s” in the extension’s resources." = "Unable to find “%s” in the extension’s resources.";
+
+/* WKWebExtensionErrorResourceNotFound description with invalid file path */
+"Unable to find “%s” in the extension’s resources. It is an invalid path." = "Unable to find “%s” in the extension’s resources. It is an invalid path.";
 
 /* WKWebExtensionErrorInvalidDeclarativeNetRequest description */
 "Unable to parse `declarativeNetRequest` rules because of an unexpected error." = "Unable to parse `declarativeNetRequest` rules because of an unexpected error.";
@@ -1673,7 +1682,7 @@
 "Unable to parse manifest: %s" = "Unable to parse manifest: %s";
 
 /* WKWebExtensionErrorInvalidResourceCodeSignature description with file name */
-"Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built." = "Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.";
+"Unable to validate “%@” with the extension’s code signature. It likely has been modified since the extension was built." = "Unable to validate “%@” with the extension’s code signature. It likely has been modified since the extension was built.";
 
 /* Unacceptable TLS certificate error */
 "Unacceptable TLS certificate" = "Unacceptable TLS certificate";
@@ -2227,6 +2236,9 @@
 /* Message for requesting access to the device motion and orientation */
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
 
+/* Full Screen Warning Banner Content Text */
+"“%@” is in full screen.\nSwipe down to exit." = "“%@” is in full screen.\nSwipe down to exit.";
+
 /* Allow the specified bundle to sign in to the specified website */
 "“%@” would like to sign in to “%@”." = "“%@” would like to sign in to “%@”.";
 
@@ -2235,9 +2247,6 @@
 
 /* Prompt for a webpage to request location access. The parameter is the domain for the webpage. */
 "“%@” would like to use your current location." = "“%@” would like to use your current location.";
-
-/* Full Screen Warning Banner Content Text */
-"”%@” is in full screen.\nSwipe down to exit." = "”%@” is in full screen.\nSwipe down to exit.";
 
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";

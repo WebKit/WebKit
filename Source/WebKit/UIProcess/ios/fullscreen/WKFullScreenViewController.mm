@@ -817,7 +817,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _location = location;
 
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
-    SUPPRESS_UNRETAINED_ARG RetainPtr text = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"”%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), self.location]);
+    SUPPRESS_UNRETAINED_ARG RetainPtr text = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"“%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), self.location]);
     [_bannerLabel setText:text.get()];
     [_bannerLabel sizeToFit];
 #endif
@@ -925,7 +925,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_bannerLabel setNumberOfLines:0];
     [_bannerLabel setLineBreakMode:NSLineBreakByWordWrapping];
     [_bannerLabel setTextAlignment:NSTextAlignmentCenter];
-    SUPPRESS_UNRETAINED_ARG RetainPtr bannerText = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"”%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), self.location]);
+    SUPPRESS_UNRETAINED_ARG RetainPtr bannerText = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"“%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), self.location]);
     [_bannerLabel setText:bannerText.get()];
 
     auto banner = adoptNS([[WKFullscreenStackView alloc] init]);

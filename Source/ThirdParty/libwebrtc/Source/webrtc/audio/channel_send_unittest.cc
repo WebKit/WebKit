@@ -14,10 +14,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
@@ -30,6 +30,7 @@
 #include "api/field_trials.h"
 #include "api/frame_transformer_interface.h"
 #include "api/make_ref_counted.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_frame_transformer.h"
@@ -155,7 +156,7 @@ TEST_F(ChannelSendTest, IncreaseRtpTimestampByPauseDuration) {
   channel_->StartSend();
   uint32_t timestamp;
   int sent_packets = 0;
-  auto send_rtp = [&](ArrayView<const uint8_t> data,
+  auto send_rtp = [&](std::span<const uint8_t> data,
                       const PacketOptions& /* options */) {
     ++sent_packets;
     RtpPacketReceived packet;
@@ -190,7 +191,7 @@ TEST_F(ChannelSendTest, FrameTransformerGetsCorrectTimestamp) {
   EXPECT_CALL(*mock_frame_transformer, UnregisterTransformedFrameCallback);
 
   std::optional<uint32_t> sent_timestamp;
-  auto send_rtp = [&](ArrayView<const uint8_t> data,
+  auto send_rtp = [&](std::span<const uint8_t> data,
                       const PacketOptions& /* options */) {
     RtpPacketReceived packet;
     packet.Parse(data);
@@ -226,7 +227,7 @@ TEST_F(ChannelSendTest, FrameTransformerGetsCorrectTimestamp) {
 // Ensure that AudioLevel calculations are performed correctly per-packet even
 // if there's an async Encoded Frame Transform happening.
 TEST_F(ChannelSendTest, AudioLevelsAttachedToCorrectTransformedFrame) {
-  channel_->SetSendAudioLevelIndicationStatus(true, /*id=*/1);
+  channel_->SetSendAudioLevelIndicationStatus(RtpHeaderExtensionId(1));
   RtpPacketReceived::ExtensionManager extension_manager;
   extension_manager.RegisterByType(1, kRtpExtensionAudioLevel);
 
@@ -239,7 +240,7 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToCorrectTransformedFrame) {
   EXPECT_CALL(*mock_frame_transformer, UnregisterTransformedFrameCallback);
 
   std::vector<uint8_t> sent_audio_levels;
-  auto send_rtp = [&](ArrayView<const uint8_t> data,
+  auto send_rtp = [&](std::span<const uint8_t> data,
                       const PacketOptions& /* options */) {
     RtpPacketReceived packet(&extension_manager);
     packet.Parse(data);
@@ -290,7 +291,7 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToCorrectTransformedFrame) {
 // Ensure that AudioLevels are attached to frames injected into the
 // Encoded Frame transform.
 TEST_F(ChannelSendTest, AudioLevelsAttachedToInsertedTransformedFrame) {
-  channel_->SetSendAudioLevelIndicationStatus(true, /*id=*/1);
+  channel_->SetSendAudioLevelIndicationStatus(RtpHeaderExtensionId(1));
   RtpPacketReceived::ExtensionManager extension_manager;
   extension_manager.RegisterByType(1, kRtpExtensionAudioLevel);
 
@@ -303,7 +304,7 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToInsertedTransformedFrame) {
   EXPECT_CALL(*mock_frame_transformer, UnregisterTransformedFrameCallback);
 
   std::optional<uint8_t> sent_audio_level;
-  auto send_rtp = [&](ArrayView<const uint8_t> data,
+  auto send_rtp = [&](std::span<const uint8_t> data,
                       const PacketOptions& /* options */) {
     RtpPacketReceived packet(&extension_manager);
     packet.Parse(data);
@@ -323,7 +324,7 @@ TEST_F(ChannelSendTest, AudioLevelsAttachedToInsertedTransformedFrame) {
   ON_CALL(*mock_frame, AudioLevel()).WillByDefault(Return(audio_level));
   uint8_t payload[10];
   ON_CALL(*mock_frame, GetData())
-      .WillByDefault(Return(ArrayView<uint8_t>(&payload[0], 10)));
+      .WillByDefault(Return(std::span<uint8_t>(&payload[0], 10)));
   EXPECT_THAT(WaitUntil([&] { return callback; }, IsTrue()), IsRtcOk());
   callback->OnTransformedFrame(std::move(mock_frame));
 
@@ -415,7 +416,7 @@ TEST_F(ChannelSendTest, ConfiguredCsrcsAreIncludedInRtpPackets) {
   channel_->SetCsrcs(expected_csrcs);
 
   std::vector<uint32_t> csrcs;
-  auto send_rtp = [&](ArrayView<const uint8_t> data,
+  auto send_rtp = [&](std::span<const uint8_t> data,
                       const PacketOptions& /* options */) {
     RtpPacketReceived packet;
     packet.Parse(data);
@@ -500,7 +501,7 @@ TEST_F(ChannelSendTest, FrameTransformerTakesPrecedenceOverSetCsrcs) {
   channel_->StartSend();
 
   std::vector<uint32_t> sent_csrcs;
-  auto send_rtp = [&](ArrayView<const uint8_t> data,
+  auto send_rtp = [&](std::span<const uint8_t> data,
                       const PacketOptions& /* options */) {
     RtpPacketReceived packet;
     packet.Parse(data);

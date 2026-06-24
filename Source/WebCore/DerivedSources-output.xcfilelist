@@ -856,6 +856,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+WebDatabase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+WebDatabase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindowConstructorAttributes.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDataCue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDataCue.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDataTransfer.cpp
@@ -2099,8 +2100,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Geolocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Geolocation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+LoginStatus.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+LoginStatus.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGlobalPrivacyControl.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGlobalPrivacyControl.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaCapabilities.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaDevices.cpp
@@ -2125,6 +2124,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCookies.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorCookies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGPU.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGPU.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGlobalPrivacyControl.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorGlobalPrivacyControl.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorID.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorID.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorLanguage.cpp
@@ -3763,11 +3764,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultReaderBuiltins
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultReaderBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamInternalsBuiltins.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties+ConstructionInlines.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties+GettersInlines.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties+SettersInlines.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementTypeHelpers.h
@@ -3784,6 +3780,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleBuilderGenerated.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleChangedAnimatablePropertiesGenerated.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleComputedStyleProperties+ConstructionInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleComputedStyleProperties+GettersInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleComputedStyleProperties+InitialInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleComputedStyleProperties+SettersInlines.h

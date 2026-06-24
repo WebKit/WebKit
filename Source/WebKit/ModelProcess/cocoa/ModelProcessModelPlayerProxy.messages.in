@@ -35,7 +35,7 @@ messages -> ModelProcessModelPlayerProxy {
     [EnabledBy=AllowTestOnlyIPC] DisableUnloadDelayForTesting()
     
     # WebCore::ModelPlayer
-    LoadModel(Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize)
+    LoadModel(Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize, bool isForImmersive)
     SizeDidChange(WebCore::LayoutSize layoutSize)
     SetEntityTransform(WebCore::TransformationMatrix transform)
     SetAutoplay(bool autoplay)

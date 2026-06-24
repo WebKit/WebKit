@@ -65,7 +65,7 @@ void ImageFrameWorkQueue::start()
 
     m_workQueue = WorkQueue::create("org.webkit.ImageDecoder"_s, WorkQueue::QOS::Default);
 
-    m_workQueue->dispatch([protectedThis = Ref { *this }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = m_source.get(), protectedDecoder = Ref { *decoder }, protectedRequestQueue = Ref { requestQueue() }] () mutable {
+    protect(m_workQueue)->dispatch([protectedThis = Ref { *this }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = m_source.get(), protectedDecoder = Ref { *decoder }, protectedRequestQueue = Ref { requestQueue() }] () mutable {
         Request request;
         while (protectedRequestQueue->dequeue(request)) {
             TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
@@ -121,7 +121,7 @@ void ImageFrameWorkQueue::dispatch(const Request& request)
 {
     ASSERT(isMainThread());
 
-    requestQueue().enqueue(request);
+    protect(requestQueue())->enqueue(request);
     decodeQueue().append(request);
 
     start();
@@ -139,7 +139,7 @@ void ImageFrameWorkQueue::stop()
     }
 
     if (m_requestQueue) {
-        m_requestQueue->close();
+        protect(m_requestQueue)->close();
         m_requestQueue = nullptr;
     }
 

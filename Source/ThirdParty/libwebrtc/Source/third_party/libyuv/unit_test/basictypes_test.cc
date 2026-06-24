@@ -22,22 +22,22 @@ TEST_F(LibYUVBaseTest, SizeOfTypes) {
   uint32_t u32 = 1u;
   int64_t i64 = -1;
   uint64_t u64 = 1u;
-  EXPECT_EQ(1u, sizeof(i8));
-  EXPECT_EQ(1u, sizeof(u8));
-  EXPECT_EQ(2u, sizeof(i16));
-  EXPECT_EQ(2u, sizeof(u16));
-  EXPECT_EQ(4u, sizeof(i32));
-  EXPECT_EQ(4u, sizeof(u32));
-  EXPECT_EQ(8u, sizeof(i64));
-  EXPECT_EQ(8u, sizeof(u64));
-  EXPECT_GT(0, i8);
-  EXPECT_LT(0u, u8);
-  EXPECT_GT(0, i16);
-  EXPECT_LT(0u, u16);
-  EXPECT_GT(0, i32);
-  EXPECT_LT(0u, u32);
-  EXPECT_GT(0, i64);
-  EXPECT_LT(0u, u64);
+  ASSERT_EQ(1u, sizeof(i8));
+  ASSERT_EQ(1u, sizeof(u8));
+  ASSERT_EQ(2u, sizeof(i16));
+  ASSERT_EQ(2u, sizeof(u16));
+  ASSERT_EQ(4u, sizeof(i32));
+  ASSERT_EQ(4u, sizeof(u32));
+  ASSERT_EQ(8u, sizeof(i64));
+  ASSERT_EQ(8u, sizeof(u64));
+  ASSERT_GT(0, i8);
+  ASSERT_LT(0u, u8);
+  ASSERT_GT(0, i16);
+  ASSERT_LT(0u, u16);
+  ASSERT_GT(0, i32);
+  ASSERT_LT(0u, u32);
+  ASSERT_GT(0, i64);
+  ASSERT_LT(0u, u64);
 }
 
 }  // namespace libyuv

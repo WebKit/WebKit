@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "NetworkRTCMonitor.h"
+#include "NetworkRTCProvider.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/WorkQueue.h>
 

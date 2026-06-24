@@ -42,19 +42,14 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-namespace IDBServer {
-class UniqueIDBDatabase;
-}
-}
 
-namespace WebCore {
-
-struct ClientOrigin;
 class IDBError;
 class IDBGetAllResult;
-struct IDBGetRecordData;
 class IDBRequestData;
 class IDBTransactionInfo;
+
+struct ClientOrigin;
+struct IDBGetRecordData;
 
 enum class IDBGetRecordDataType : bool;
 
@@ -65,6 +60,7 @@ enum class IndexRecordType : bool;
 namespace IDBServer {
 
 class IDBConnectionToClient;
+class UniqueIDBDatabase;
 class UniqueIDBDatabaseConnection;
 class UniqueIDBDatabaseManager;
 
@@ -124,12 +120,15 @@ public:
 
     bool NODELETE hasActiveTransactions() const;
     WEBCORE_EXPORT void abortActiveTransactions();
+    void abortInProgressTransactionsBlockedOnSuspendedClients();
     WEBCORE_EXPORT bool tryClose();
 
     WEBCORE_EXPORT String filePath() const;
     WEBCORE_EXPORT std::optional<IDBDatabaseNameAndVersion> NODELETE nameAndVersion() const;
     WEBCORE_EXPORT bool hasDataInMemory() const;
     WEBCORE_EXPORT void handleLowMemoryWarning();
+
+    WEBCORE_EXPORT bool isVersionChangeTransactionFinishingOrFinished(const IDBResourceIdentifier& transactionIdentifier) const;
 
 private:
     void handleDatabaseOperations();
@@ -148,6 +147,7 @@ private:
 
     void handleTransactions();
     RefPtr<UniqueIDBDatabaseTransaction> takeNextRunnableTransaction(bool& hadDeferredTransactions);
+    bool transactionBlocksPendingTransactions(UniqueIDBDatabaseTransaction&);
 
     void activateTransactionInBackingStore(UniqueIDBDatabaseTransaction&);
     void transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction>&&);

@@ -31,9 +31,9 @@
 #include "NodeDocument.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderProgress.h"
-#include "RenderStyle+GettersInlines.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "UserAgentParts.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -56,7 +56,7 @@ Ref<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagNam
     return progress;
 }
 
-RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     if (!style.hasUsedAppearance())
         return RenderElement::createFor(*this, WTF::move(style));
@@ -140,7 +140,7 @@ void HTMLProgressElement::didChangeElementValue()
 
     if (RefPtr fillElement = m_fillElement) {
         fillElement->setInlineStyleProperty(CSSPropertyTransform, makeString("translate(-"_s, 100 - percentageValue, "%, 0)"_s));
-        fillElement->invalidateStyleInternal();
+        fillElement->invalidateStyle();
     }
 
     if (CheckedPtr renderer = renderProgress())

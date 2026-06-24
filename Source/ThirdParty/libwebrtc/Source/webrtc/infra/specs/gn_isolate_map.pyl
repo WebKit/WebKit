@@ -47,6 +47,22 @@
     "label": "//:audio_engine_tests",
     "type": "console_test_launcher",
   },
+  "call_tests": {
+    "label": "//call:call_tests",
+    "type": "console_test_launcher",
+  },
+  "resource_adaptation_tests": {
+    "label": "//call/adaptation:resource_adaptation_tests",
+    "type": "console_test_launcher",
+  },
+  "video_adaptation_tests": {
+    "label": "//video/adaptation:video_adaptation_tests",
+    "type": "console_test_launcher",
+  },
+  "video_tests": {
+    "label": "//video:video_tests",
+    "type": "console_test_launcher",
+  },
   "common_audio_unittests": {
     "label": "//common_audio:common_audio_unittests",
     "type": "console_test_launcher",
@@ -104,6 +120,10 @@
     "label": "//:rtc_unittests",
     "type": "console_test_launcher",
   },
+  "rust_tests": {
+    "label": "//:rust_tests",
+    "type": "generated_script",
+  },
   "sdk_framework_unittests": {
     "label": "//sdk:sdk_framework_unittests",
     "type": "console_test_launcher",
@@ -139,10 +159,6 @@
   "video_codec_perf_tests": {
     "label": "//modules/video_coding:video_codec_perf_tests",
     "type": "raw",
-  },
-  "video_engine_tests": {
-    "label": "//:video_engine_tests",
-    "type": "console_test_launcher",
   },
   "video_timing_tests": {
     "label": "//video/timing:video_timing_tests",

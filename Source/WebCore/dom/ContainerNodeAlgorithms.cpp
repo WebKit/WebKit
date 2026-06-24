@@ -172,6 +172,7 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
         next = node->nextSibling();
         node->setNextSibling(nullptr);
         node->setParentNode(nullptr);
+        node->resetShadowIncludingRoot();
         container.setFirstChild(next.get());
         if (next)
             next->setPreviousSibling(nullptr);
@@ -179,6 +180,8 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
         node->setTreeScopeRecursively(Ref<Document> { container.document() });
         if (node->isInTreeScope())
             notifyChildNodeRemoved(container, *node);
+        else if (node->refCount() > 1)
+            node->updateShadowIncludingRootForSubtree();
         ASSERT_WITH_SECURITY_IMPLICATION(!node->isInTreeScope());
     }
 }

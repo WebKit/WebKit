@@ -81,10 +81,17 @@ ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count
     return m_data.substring(offset, count);
 }
 
-static ContainerNode::ChildChange NODELETE makeChildChange(CharacterData& characterData, ContainerNode::ChildChange::Source source)
+static ContainerNode::ChildChange::Type NODELETE textChildChangeType(unsigned oldLength, bool toEmpty)
+{
+    if (oldLength && !toEmpty)
+        return ContainerNode::ChildChange::Type::TextChanged;
+    return toEmpty ? ContainerNode::ChildChange::Type::TextRemoved : ContainerNode::ChildChange::Type::TextInserted;
+}
+
+static ContainerNode::ChildChange NODELETE makeChildChange(CharacterData& characterData, bool toEmpty, ContainerNode::ChildChange::Source source)
 {
     return {
-        ContainerNode::ChildChange::Type::TextChanged,
+        textChildChangeType(characterData.length(), toEmpty),
         nullptr,
         nullptr,
         ElementTraversal::previousSibling(characterData),
@@ -96,7 +103,7 @@ static ContainerNode::ChildChange NODELETE makeChildChange(CharacterData& charac
 
 void CharacterData::parserAppendData(StringView string, StringBuilder& buffer)
 {
-    auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::Parser);
+    auto childChange = makeChildChange(*this, false, ContainerNode::ChildChange::Source::Parser);
     std::optional<Style::ChildChangeInvalidation> styleInvalidation;
     if (RefPtr parent = parentNode())
         styleInvalidation.emplace(*parent, childChange);
@@ -185,14 +192,15 @@ void CharacterData::setDataWithoutUpdate(const String& data)
 
 void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges shouldUpdateLiveRanges)
 {
-    auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::API);
+    auto childChange = makeChildChange(*this, !newData.length(), ContainerNode::ChildChange::Source::API);
 
-    String oldData = WTF::move(m_data);
+    String oldData;
     {
         std::optional<Style::ChildChangeInvalidation> styleInvalidation;
         if (RefPtr parent = parentNode())
             styleInvalidation.emplace(*parent, childChange);
 
+        oldData = WTF::move(m_data);
         m_data = newData;
     }
 

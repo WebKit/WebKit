@@ -48,15 +48,13 @@ bool eliminateDeadCodeImpl(Procedure& proc)
     Vector<UpsilonValue*, 128> upsilons;
     for (BasicBlock* block : proc) {
         for (Value* value : *block) {
-            Effects effects;
             // We don't care about effects of SSA operations, since we model them more
             // accurately than the effects() method does.
-            if (value->opcode() != Phi && value->opcode() != Upsilon)
-                effects = value->effects();
-            
-            if (effects.mustExecute())
-                worklist.push(value);
-            
+            if (value->opcode() != Phi && value->opcode() != Upsilon) {
+                if (value->mustExecute())
+                    worklist.push(value);
+            }
+
             if (UpsilonValue* upsilon = value->as<UpsilonValue>())
                 upsilons.append(upsilon);
         }

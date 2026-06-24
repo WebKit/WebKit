@@ -133,7 +133,7 @@ auto CSSValueConversion<FontVariantAlternates>::operator()(BuilderState& state, 
     return result;
 }
 
-Ref<CSSValue> CSSValueCreation<FontVariantAlternates>::operator()(CSSValuePool& pool, const RenderStyle& style, const FontVariantAlternates& alternates)
+Ref<CSSValue> CSSValueCreation<FontVariantAlternates>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const FontVariantAlternates& alternates)
 {
     if (alternates.isNormal())
         return createCSSValue(pool, style, CSS::Keyword::Normal { });
@@ -170,7 +170,7 @@ Ref<CSSValue> CSSValueCreation<FontVariantAlternates>::operator()(CSSValuePool& 
     return CSSValueList::createSpaceSeparated(WTF::move(valueList));
 }
 
-void Serialize<FontVariantAlternates>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const FontVariantAlternates& alternates)
+void Serialize<FontVariantAlternates>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const FontVariantAlternates& alternates)
 {
     if (alternates.isNormal()) {
         serializationForCSS(builder, context, style, CSS::Keyword::Normal { });

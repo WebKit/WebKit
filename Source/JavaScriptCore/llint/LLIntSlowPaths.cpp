@@ -52,7 +52,7 @@
 #include "JSCJSValue.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
-#include "JSLexicalEnvironment.h"
+#include "JSLexicalEnvironmentInlines.h"
 #include "JSString.h"
 #include "LLIntCommon.h"
 #include "LLIntData.h"
@@ -68,6 +68,7 @@
 #include "RepatchInlines.h"
 #include "ShadowChicken.h"
 #include "SuperSampler.h"
+#include "SymbolTableInlines.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
 #include <wtf/NeverDestroyed.h>
@@ -2838,17 +2839,17 @@ extern "C" UGPRPair SYSV_ABI llint_slow_path_array_sort_comparator_return(CallFr
     //      [ userDefinedComparator frame ]
     //
     //  After the comparator's baseline finishes we land here. We re-execute
-    //  op_call (sort) instead of advancing past it. This is safe because
+    //  the sort call instead of advancing past it. This is safe because
     //  ArraySortCommit (the only node that mutates the array) is downstream of
     //  the comparator in the DFG graph and has not yet run, and the spec allows
     //  Array.prototype.sort to invoke the comparator any number of times.
     LLINT_BEGIN_NO_SET_PC();
     UNUSED_PARAM(globalObject);
 
-    // reifyInlinedCallFrames stored CallSiteIndex(op_call_bc) in argumentCountIncludingThis's tag.
+    // reifyInlinedCallFrames stored CallSiteIndex of the sort call in argumentCountIncludingThis's tag.
     BytecodeIndex bytecodeIndex = callFrame->bytecodeIndex();
     auto pc = codeBlock->instructions().at(bytecodeIndex);
-    ASSERT_UNUSED(pc, pc->opcodeID() == op_call);
+    ASSERT_UNUSED(pc, pc->opcodeID() == op_call || pc->opcodeID() == op_call_ignore_result || pc->opcodeID() == op_tail_call);
     return dispatchToCurrentInstructionDuringExit(throwScope, codeBlock, pc);
 }
 

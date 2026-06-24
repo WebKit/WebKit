@@ -31,13 +31,10 @@
 #include "XRCompositionLayer.h"
 #include "XREquirectLayerInit.h"
 #include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebXRRigidTransform;
 class WebXRSession;
-class WebXRSpace;
 class XRLayerBacking;
 
 // https://immersive-web.github.io/layers/#xrequirectlayertype
@@ -51,11 +48,6 @@ public:
 
     virtual ~XREquirectLayer();
 
-    const WebXRSpace& space() const;
-    void setSpace(WebXRSpace&);
-    const WebXRRigidTransform& transform() const;
-    void setTransform(WebXRRigidTransform&);
-
     float radius() const { return m_radius; }
     void setRadius(float);
     float centralHorizontalAngle() const { return m_centralHorizontalAngle; }
@@ -68,19 +60,13 @@ public:
 private:
     XREquirectLayer(ScriptExecutionContext&, WebXRSession&, Ref<XRLayerBacking>&&, const XREquirectLayerInit&);
     bool isXREquirectLayer() const final { return true; }
-    void recomputePose();
 
-    RefPtr<WebXRSpace> m_space;
-    RefPtr<WebXRRigidTransform> m_transform;
+    void fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer&) const final;
+
     float m_radius;
     float m_centralHorizontalAngle;
     float m_upperVerticalAngle;
     float m_lowerVerticalAngle;
-    PlatformXR::FrameData::Pose m_poseInLocalSpace;
-
-    // WebXRLayer.
-    void startFrame(PlatformXR::FrameData&) final;
-    PlatformXR::DeviceLayer endFrame() final;
 };
 
 } // namespace WebCore

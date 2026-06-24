@@ -16,10 +16,10 @@
 
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_encoder_multi_channel_opus_config.h"
@@ -59,7 +59,7 @@ class AudioEncoderMultiChannelOpusImpl final : public AudioEncoder {
 
  protected:
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,
-                         ArrayView<const int16_t> audio,
+                         std::span<const int16_t> audio,
                          Buffer* encoded) override;
 
  private:

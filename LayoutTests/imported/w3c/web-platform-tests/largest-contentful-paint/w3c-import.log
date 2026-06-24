@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-removed-before-load.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-src-change.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-sw-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-upscaling-empty-url.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-upscaling.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/initially-invisible-images.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/invisible-images-composited-1.html
@@ -54,6 +55,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-text.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/performance-entry-sequence.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/placeholder-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/progressively-loaded-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/redirects-tao-star.html

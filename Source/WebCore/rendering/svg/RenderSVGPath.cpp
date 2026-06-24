@@ -35,19 +35,19 @@
 #include "RenderLayer.h"
 #include "RenderSVGResourceMarkerInlines.h"
 #include "RenderSVGShapeInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGMarkerElement.h"
 #include "SVGPathElement.h"
 #include "SVGSubpathData.h"
 #include "SVGVisitedRendererTracking.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGPath);
 
-RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
+RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, Style::ComputedStyle&& style)
     : RenderSVGShape(Type::SVGPath, element, WTF::move(style))
 {
     ASSERT(isRenderSVGPath());
@@ -140,19 +140,6 @@ bool RenderSVGPath::shouldStrokeZeroLengthSubpath() const
     return !style().stroke().isNone() && style().capStyle() != LineCap::Butt;
 }
 
-Path* RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
-{
-    static NeverDestroyed<Path> tempPath;
-
-    tempPath.get().clear();
-    if (style().capStyle() == LineCap::Square)
-        tempPath.get().addRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
-    else
-        tempPath.get().addEllipseInRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
-
-    return &tempPath.get();
-}
-
 FloatRect RenderSVGPath::zeroLengthSubpathRect(const FloatPoint& linecapPosition, float strokeWidth) const
 {
     return FloatRect(linecapPosition.x() - strokeWidth / 2, linecapPosition.y() - strokeWidth / 2, strokeWidth, strokeWidth);
@@ -183,11 +170,20 @@ void RenderSVGPath::strokeZeroLengthSubpaths(GraphicsContext& context) const
 
     GraphicsContextStateSaver stateSaver(context, true);
     useStrokeStyleToFill(context);
-    for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
-        auto usePath = zeroLengthLinecapPath(m_zeroLengthLinecapLocations[i]);
-        if (hasNonScalingStroke())
-            usePath = nonScalingStrokePath(usePath, nonScalingTransform);
-        context.fillPath(*usePath);
+
+    float strokeWidth = this->strokeWidth();
+    bool isSquareCap = style().capStyle() == LineCap::Square;
+    for (auto& linecapLocation : m_zeroLengthLinecapLocations) {
+        // The linecap location is path geometry, not stroke geometry. So when
+        // vector-effect: non-scaling-stroke is in effect, the transform must be
+        // applied to the position where the cap is drawn -- not to the generated
+        // cap shape, which would otherwise be distorted by the transform.
+        auto position = hasNonScalingStroke() ? nonScalingTransform.mapPoint(linecapLocation) : linecapLocation;
+        auto subpathRect = zeroLengthSubpathRect(position, strokeWidth);
+        if (isSquareCap)
+            context.fillRect(subpathRect);
+        else
+            context.fillEllipse(subpathRect);
     }
 }
 
@@ -208,7 +204,7 @@ static inline RenderSVGResourceMarker* NODELETE markerForType(SVGMarkerType type
 
 bool RenderSVGPath::shouldGenerateMarkerPositions() const
 {
-    if (style().hasMarkers() && graphicsElement().supportsMarkers())
+    if (style().hasMarkers() && protect(graphicsElement())->supportsMarkers())
         return svgMarkerStartResourceFromStyle() || svgMarkerMidResourceFromStyle() || svgMarkerEndResourceFromStyle();
     return false;
 }
@@ -297,7 +293,7 @@ bool RenderSVGPath::isRenderingDisabled() const
     return !hasPath() || path().isEmpty();
 }
 
-void RenderSVGPath::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderSVGPath::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(graphicsElement())) {
         if (!oldStyle || style().d() != oldStyle->d())

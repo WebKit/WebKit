@@ -90,7 +90,9 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
@@ -4558,15 +4560,14 @@ static Vector<std::pair<String, JavaScriptEvaluationResult>> parseAsyncFunctionA
 
     Vector<std::pair<String, JavaScriptEvaluationResult>> argumentsVector;
 
-    GVariantIter iter;
-    g_variant_iter_init(&iter, arguments);
+    GUniquePtr<GVariantIter> iter(g_variant_iter_new(arguments));
     const char* key;
-    GVariant* value;
-    while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
+    GRefPtr<GVariant> value;
+    while (g_variant_iter_next(iter.get(), "{&sv}", &key, &value.outPtr())) {
         if (!key)
             continue;
 
-        auto parameter = JavaScriptEvaluationResult::extract(value);
+        auto parameter = JavaScriptEvaluationResult::extract(value.get());
         if (!parameter) {
             *error = g_error_new(WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_INVALID_PARAMETER, "Invalid parameter %s passed as argument of async function call", key);
             return argumentsVector;

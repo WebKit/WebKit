@@ -29,7 +29,6 @@
 #include "api/units/time_delta.h"
 #include "rtc_base/callback_list.h"
 #include "rtc_base/event.h"
-#include "rtc_base/fake_clock.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
@@ -232,14 +231,11 @@ class VirtualSocket : public Socket {
 class VirtualSocketServer : public SocketServer {
  public:
   VirtualSocketServer();
-  // This constructor needs to be used if the test uses a fake clock and
-  // ProcessMessagesUntilIdle, since ProcessMessagesUntilIdle needs a way of
-  // advancing time.
-  explicit VirtualSocketServer(ThreadProcessingFakeClock* fake_clock);
-  ~VirtualSocketServer() override;
 
   VirtualSocketServer(const VirtualSocketServer&) = delete;
   VirtualSocketServer& operator=(const VirtualSocketServer&) = delete;
+
+  ~VirtualSocketServer() override;
 
   // The default source address specifies which local address to use when a
   // socket is bound to the 'any' address, e.g. 0.0.0.0. (If not set, the 'any'
@@ -457,10 +453,6 @@ class VirtualSocketServer : public SocketServer {
 
   typedef std::map<SocketAddress, VirtualSocket*> AddressMap;
   typedef std::map<SocketAddressPair, VirtualSocket*> ConnectionMap;
-
-  // May be null if the test doesn't use a fake clock, or it does but doesn't
-  // use ProcessMessagesUntilIdle.
-  ThreadProcessingFakeClock* fake_clock_ = nullptr;
 
   // Used to implement Wait/WakeUp.
   Event wakeup_;

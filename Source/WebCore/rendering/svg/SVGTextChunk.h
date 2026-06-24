@@ -21,6 +21,7 @@
 #pragma once
 
 #include "InlineIteratorSVGTextBox.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -29,6 +30,7 @@ namespace WebCore {
 
 class AffineTransform;
 class SVGInlineTextBox;
+class SVGTextContentElement;
 
 using SVGChunkTransformMap = HashMap<InlineIterator::SVGTextBox::Key, AffineTransform>;
 using SVGTextFragmentMap = HashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>>;
@@ -44,6 +46,8 @@ public:
     void layout(SVGChunkTransformMap&) const;
 
 private:
+    friend class SVGTextChunkBuilder;
+
     enum class ChunkStyle : uint8_t {
         MiddleAnchor = 1 << 0,
         EndAnchor = 1 << 1,
@@ -78,8 +82,18 @@ private:
     };
     Vector<BoxAndFragments> m_boxes;
 
+    // Owner used by SVGTextChunkBuilder to group chunks for element-level textLength. webkit.org/b/61855.
+    CheckedPtr<const SVGTextContentElement> m_textContentElement;
+
     float m_desiredTextLength { 0 };
     OptionSet<ChunkStyle> m_chunkStyle;
+
+    // ElementGroup: textLength applied by SVGTextChunkBuilder; layout() must skip per-chunk scaling.
+    enum class TextLengthLayoutMode : uint8_t {
+        SingleChunk,
+        ElementGroup
+    };
+    TextLengthLayoutMode m_textLengthLayoutMode { TextLengthLayoutMode::SingleChunk };
 };
 
 } // namespace WebCore

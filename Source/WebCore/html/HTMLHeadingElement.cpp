@@ -44,21 +44,18 @@ HTMLHeadingElement::~HTMLHeadingElement() = default;
 
 unsigned HTMLHeadingElement::level() const
 {
-    auto& tag = tagQName();
-    if (tag == HTMLNames::h1Tag)
+    if (hasTagName(HTMLNames::h1Tag))
         return 1;
-    if (tag == HTMLNames::h2Tag)
+    if (hasTagName(HTMLNames::h2Tag))
         return 2;
-    if (tag == HTMLNames::h3Tag)
+    if (hasTagName(HTMLNames::h3Tag))
         return 3;
-    if (tag == HTMLNames::h4Tag)
+    if (hasTagName(HTMLNames::h4Tag))
         return 4;
-    if (tag == HTMLNames::h5Tag)
+    if (hasTagName(HTMLNames::h5Tag))
         return 5;
-    if (tag == HTMLNames::h6Tag)
-        return 6;
-    ASSERT_NOT_REACHED();
-    return 0;
+    ASSERT(hasTagName(HTMLNames::h6Tag));
+    return 6;
 }
 
 }

@@ -56,8 +56,12 @@ protected:
 
 class JSTestMapLikeOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestMapLikeOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestMapLikeOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestMapLike*)

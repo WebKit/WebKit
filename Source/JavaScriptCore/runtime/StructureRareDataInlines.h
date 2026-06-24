@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/PackedCellPtr.h>
 #include <JavaScriptCore/StructureChain.h>
+#include <JavaScriptCore/StructureInlinesLight.h>
 #include <JavaScriptCore/StructureRareData.h>
 #include <JavaScriptCore/VM.h>
 #include <wtf/Bag.h>

@@ -82,16 +82,25 @@ find_library(UNIFORMTYPEIDENTIFIERS_LIBRARY UniformTypeIdentifiers)
 find_library(VIDEOTOOLBOX_LIBRARY VideoToolbox)
 find_library(XML2_LIBRARY XML2)
 
-find_package(SQLite3 REQUIRED)
-find_package(ZLIB REQUIRED)
-
-if (NOT TARGET SQLite3::SQLite3) # CMake < 4.3
+# SQLite3::SQLite3 and ZLIB::ZLIB are declared in OptionsCocoa.cmake; only search
+# if missing (e.g. ANGLE/WebCore configured standalone).
+if (NOT TARGET SQLite3::SQLite3)
+    find_package(SQLite3 REQUIRED)
     add_library(SQLite3::SQLite3 ALIAS SQLite::SQLite3)
+endif ()
+if (NOT TARGET ZLIB::ZLIB)
+    find_package(ZLIB REQUIRED)
 endif ()
 
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesCocoa.txt"
 )
+# FIXME: Test building on iOS and then enable on iOS.
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
+        "SourcesCMakeCocoa.txt"
+    )
+endif ()
 
 list(APPEND WebCore_LIBRARIES
     ${ACCELERATE_LIBRARY}
@@ -120,7 +129,7 @@ if (ACCESSIBILITYSUPPORT_LIBRARY)
 endif ()
 
 if (USE_LIBWEBRTC)
-    list(APPEND WebCore_PRIVATE_LIBRARIES webrtc opus vpx webm yuv libsrtp)
+    list(APPEND WebCore_PRIVATE_LIBRARIES webrtc opus vpx webm yuv libsrtp webrtc_objc_categories)
 else ()
     set(_webm_parser_dir "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source/third_party/libwebm/webm_parser")
     file(GLOB _webm_parser_srcs "${_webm_parser_dir}/src/*.cc")
@@ -142,7 +151,8 @@ if (NOT ENABLE_WEBGPU)
         list(APPEND WebCore_PRIVATE_LIBRARIES "-Wl,-undefined,dynamic_lookup")
     endif ()
 else ()
-    list(APPEND WebCore_LIBRARIES WebGPU)
+    list(APPEND WebCore_LIBRARIES "$<TARGET_LINKER_FILE:WebGPU>")
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/WebGPU/Headers")
 endif ()
 
 set(WebCore_EXTRA_LINK_OPTIONS "SHELL:-Wl,-force_load $<TARGET_FILE:PAL>")
@@ -1204,6 +1214,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/MediaPlayerEnumsCocoa.h
     platform/graphics/cocoa/NullPlaybackSessionInterface.h
     platform/graphics/cocoa/NullVideoPresentationInterface.h
+    platform/graphics/cocoa/PeriodicSharedTimer.h
     platform/graphics/cocoa/ShareableCVPixelBuffer.h
     platform/graphics/cocoa/ShareableCVPixelFormat.h
     platform/graphics/cocoa/ShareableGainMap.h

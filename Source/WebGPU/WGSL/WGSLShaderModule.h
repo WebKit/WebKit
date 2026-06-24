@@ -300,6 +300,7 @@ public:
     const OverloadedDeclaration* lookupOverload(const String&) const;
 
     void addOverride(AST::Variable& variable) { m_overrides.append(&variable); }
+    bool containsOverride(const String& key) const;
 
     Result<ConstantValue> ensureOverrideValue(const AST::Expression&, const HashMap<String, ConstantValue>&) const;
 

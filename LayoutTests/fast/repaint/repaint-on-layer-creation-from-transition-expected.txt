@@ -1,0 +1,29 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+(repaint rects
+  (rect 78 70 300 300)
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 58.00 50.00)
+          (bounds 340.00 340.00)
+          (drawsContent 1)
+          (repaint rects
+            (rect 20.00 20.00 300.00 300.00)
+            (rect 20.00 20.00 150.00 150.00)
+            (rect 20.00 20.00 150.00 150.00)
+          )
+        )
+      )
+    )
+  )
+)
+

@@ -92,7 +92,7 @@ private:
         ShouldNotThrottle
     };
 
-    int m_timeoutId;
+    int m_timeoutId { 0 };
     int m_nestingLevel;
     EventLoopTimerHandle m_timer;
     Function<void(ScriptExecutionContext&)> m_action;

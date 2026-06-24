@@ -74,6 +74,7 @@
 #include "CSSPropertyParserConsumer+Masking.h"
 #include "CSSPropertyParserConsumer+Motion.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
+#include "CSSPropertyParserConsumer+ObjectViewBox.h"
 #include "CSSPropertyParserConsumer+Overflow.h"
 #include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSPropertyParserConsumer+PercentageDefinitions.h"
@@ -98,13 +99,11 @@
 #include "CSSPropertyParserConsumer+ViewTransition.h"
 #include "CSSPropertyParserResult.h"
 #include "CSSPropertyParsing.h"
-#include "CSSQuadValue.h"
 #include "CSSTransformListValue.h"
 #include "CSSURLValue.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "FontFace.h"
-#include "Rect.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
 #include "StyleURL.h"
@@ -985,7 +984,7 @@ inline bool PropertyParserCustom::consumeAnimationShorthand(CSSParserTokenRange&
 
         for (size_t i = 0; i < longhandCount; ++i) {
             if (!parsedLonghand[i] && !isResetOnlyLonghand(shorthandProperties[i]))
-                longhands[i].append(Ref { CSSKeywordValue::implicitInitialValue() });
+                longhands[i].append(protect(CSSKeywordValue::implicitInitialValue()));
             parsedLonghand[i] = false;
         }
     } while (consumeCommaIncludingWhitespace(range));
@@ -1061,7 +1060,7 @@ inline bool PropertyParserCustom::consumeTransitionShorthand(CSSParserTokenRange
 
         for (size_t i = 0; i < longhandCount; ++i) {
             if (!parsedLonghand[i])
-                longhands[i].append(Ref { CSSKeywordValue::implicitInitialValue() });
+                longhands[i].append(protect(CSSKeywordValue::implicitInitialValue()));
             parsedLonghand[i] = false;
         }
     } while (consumeCommaIncludingWhitespace(range));
@@ -1236,7 +1235,7 @@ inline bool PropertyParserCustom::consumeBackgroundShorthand(CSSParserTokenRange
                 continue;
             }
             if (!parsedLonghand[i])
-                longhands[i].append(Ref { CSSKeywordValue::implicitInitialValue() });
+                longhands[i].append(protect(CSSKeywordValue::implicitInitialValue()));
         }
     } while (consumeCommaIncludingWhitespace(range));
     if (!range.atEnd())

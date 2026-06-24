@@ -809,7 +809,8 @@
           "comment": "public key with low order",
           "flags": [
             "LowOrderPublic",
-            "ZeroSharedSecret"
+            "ZeroSharedSecret",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMEIwBQYDK2VvAzkAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAAA=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMEYCAQAwBQYDK2VvBDoEOMBb0Zxh0cLA55QUNFz7nBOO7YgFT6yPdLLEteHoF6qt\nYp0VmQO+9AwQyFqLkLhDPH81JI1yvqLR\n-----END PRIVATE KEY-----\n",
@@ -832,7 +833,8 @@
           "tcId": 67,
           "comment": "public key with low order",
           "flags": [
-            "LowOrderPublic"
+            "LowOrderPublic",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMEIwBQYDK2VvAzkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAIA=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMEYCAQAwBQYDK2VvBDoEOMBb0Zxh0cLA55QUNFz7nBOO7YgFT6yPdLLEteHoF6qt\nYp0VmQO+9AwQyFqLkLhDPH81JI1yvqLR\n-----END PRIVATE KEY-----\n",
@@ -843,7 +845,8 @@
           "tcId": 68,
           "comment": "public key with low order",
           "flags": [
-            "LowOrderPublic"
+            "LowOrderPublic",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMEIwBQYDK2VvAzkAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAAIA=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMEYCAQAwBQYDK2VvBDoEOMBb0Zxh0cLA55QUNFz7nBOO7YgFT6yPdLLEteHoF6qt\nYp0VmQO+9AwQyFqLkLhDPH81JI1yvqLR\n-----END PRIVATE KEY-----\n",
@@ -854,7 +857,8 @@
           "tcId": 69,
           "comment": "public key with low order",
           "flags": [
-            "LowOrderPublic"
+            "LowOrderPublic",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMEIwBQYDK2VvAzkA/v////////////////////////////////////7/////////\n/////////////////////////38=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMEYCAQAwBQYDK2VvBDoEOMBb0Zxh0cLA55QUNFz7nBOO7YgFT6yPdLLEteHoF6qt\nYp0VmQO+9AwQyFqLkLhDPH81JI1yvqLR\n-----END PRIVATE KEY-----\n",

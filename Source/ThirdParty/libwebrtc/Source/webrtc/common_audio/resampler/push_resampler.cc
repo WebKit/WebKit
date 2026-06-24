@@ -106,6 +106,8 @@ void PushResampler<T>::Resample(InterleavedView<const T> src,
 
 template <typename T>
 void PushResampler<T>::Resample(MonoView<const T> src, MonoView<T> dst) {
+  EnsureInitialized(SamplesPerChannel(src), SamplesPerChannel(dst), 1);
+
   RTC_DCHECK_EQ(resamplers_.size(), 1);
   RTC_DCHECK_EQ(SamplesPerChannel(src), SamplesPerChannel(source_view_));
   RTC_DCHECK_EQ(SamplesPerChannel(dst), SamplesPerChannel(destination_view_));

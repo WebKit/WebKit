@@ -83,8 +83,6 @@ public:
 private:
     SVGFEColorMatrixElement(const QualifiedName&, Document&);
 
-    bool isInvalidValuesLength() const;
-
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 

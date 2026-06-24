@@ -520,6 +520,14 @@ ExceptionOr<bool> DOMWindow::crossOriginIsolated() const
     return localThis->crossOriginIsolated();
 }
 
+ExceptionOr<bool> DOMWindow::originAgentCluster() const
+{
+    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    if (!localThis)
+        return Exception { ExceptionCode::SecurityError };
+    return localThis->originAgentCluster();
+}
+
 void DOMWindow::focus(LocalDOMWindow& incumbentWindow)
 {
     switch (m_type) {
@@ -953,7 +961,7 @@ void DOMWindow::printErrorMessage(const String& message) const
 
 String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWindow, IncludeTargetOrigin includeTargetOrigin)
 {
-    const URL& activeWindowURL = activeWindow.document()->url();
+    URL activeWindowURL = protect(activeWindow.document())->url();
     if (activeWindowURL.isNull())
         return String();
 
@@ -974,7 +982,7 @@ String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWind
         message = makeString("Blocked a frame with origin \""_s, activeOrigin->toString(), "\" from accessing a cross-origin frame. "_s);
 
     // Sandbox errors: Use the origin of the frames' location, rather than their actual origin (since we know that at least one will be "null").
-    URL activeURL = activeWindow.document()->url();
+    URL activeURL = protect(activeWindow.document())->url();
     RefPtr<const SecurityOrigin> remoteFrameSecurityOrigin = (m_type == DOMWindowType::Remote) ? remoteFrame->frameDocumentSecurityOriginOrOpaque() : RefPtr<const SecurityOrigin>();
     URL targetURL = localDocument ? localDocument->url() : remoteFrameSecurityOrigin->toURL();
     bool targetSandboxed = localDocument ? localDocument->isSandboxed(SandboxFlag::Origin) : (remoteFrame && remoteFrame->frameDocumentIsSandboxedOrigin());

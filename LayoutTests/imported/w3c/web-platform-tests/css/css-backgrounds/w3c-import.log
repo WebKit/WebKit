@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-text-fill-color
+None
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -72,6 +72,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-010-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-border-area-and-blend-mode-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-border-area-and-blend-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-color-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-color-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-color-repaint-expected.html
@@ -82,12 +84,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-with-border-radius-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-with-border-radius-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-with-border-radius-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-with-border-radius-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-padding-box-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-padding-box-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-padding-box-with-border-radius-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-padding-box-with-border-radius-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-padding-box-with-border-radius-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-padding-box-with-border-radius-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-padding-box-with-border-radius-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-padding-box-with-border-radius.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-root.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-text-and-blend-mode-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-text-and-blend-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip_padding-box-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip_padding-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-color-applied-to-rounded-inline-element.htm
@@ -194,6 +206,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-will-change-root-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-will-change-root-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-will-change-root.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-multiple-layers-table-cell-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-multiple-layers-table-cell-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-multiple-layers-table-cell.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-none-none-and-color-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-none-none-and-color-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-none-none-and-color.html
@@ -248,6 +263,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-4-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-4-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-4.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-empty-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-10-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-10-ref.html
@@ -446,6 +462,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-019.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-020-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-020.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-021-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-021.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-calc-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-calc-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-calc.html
@@ -467,6 +485,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-outset-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-outset-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-outset-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-outset-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-outset-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-002.htm
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-004-expected.html
@@ -786,8 +806,20 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-generated-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-generated-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-generated.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-svg-root-fixed-position-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-svg-root-fixed-position-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-svg-root-fixed-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-table-border-collapse-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-table-border-collapse-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-table-row-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-table-row-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-table-row-display.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/child-move-reveals-parent-background-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/child-move-reveals-parent-background-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/child-move-reveals-parent-background.html
@@ -866,6 +898,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-content-box-scroll-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-content-box-scroll-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-content-box-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-flex-column-reverse-scroll-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-flex-column-reverse-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-flex-column-reverse-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-flex-row-reverse-scroll-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-flex-row-reverse-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-flex-row-reverse-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-rtl-and-flex-row-reverse-scroll-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-rtl-and-flex-row-reverse-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-rtl-and-flex-row-reverse-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-rtl-scroll-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-rtl-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-rtl-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/none-as-image-layer.htm
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/order-of-images-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/order-of-images.htm

@@ -20,21 +20,21 @@
         }
     </style>
     <script>
-        if (window.testRunner) {
+        window.jsTestIsAsync = true;
+
+        if (window.testRunner)
             testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
 
         function documentScrolled()
         {
             debug("UNSUCCESSFUL: keyboard scroll skipped over overflow:scroll region to main document.");
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         function overflowScrolled()
         {
             debug("SUCCESSFUL: keyboard scroll propagated from iframe to parent overflow:scroll region.");
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         async function runTest()
@@ -61,6 +61,6 @@
         </iframe>
         <div id="innerDiv"></div>
     </div>
-    <script src="../../../../resources/js-test-post.js"></script>
+    <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

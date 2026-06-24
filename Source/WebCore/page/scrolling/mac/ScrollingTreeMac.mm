@@ -47,7 +47,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/text/TextStream.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 Ref<ScrollingTreeMac> ScrollingTreeMac::create(AsyncScrollingCoordinator& scrollingCoordinator)
 {
@@ -257,5 +257,7 @@ void ScrollingTreeMac::registerForPlatformRenderingUpdateCallback()
         PlatformCALayerContentsDelayedReleaser::singleton().scrollingThreadCommitDidEnd();
     } forPhase:kCATransactionPhasePostCommit];
 }
+
+} // namespace WebCore
 
 #endif // PLATFORM(MAC)

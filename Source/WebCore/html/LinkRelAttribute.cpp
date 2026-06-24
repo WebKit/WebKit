@@ -65,12 +65,6 @@ static constexpr SortedArrayMap linkTypes { WTF::toArray<std::pair<ComparableLet
     { "preconnect"_s, { [](auto document) { return document.settings().linkPreconnectEnabled(); }, [](auto relAttribute) { relAttribute.isLinkPreconnect = true; } } },
     { "prefetch"_s, { [](auto document) { return document.settings().linkPrefetchEnabled(); }, [](auto relAttribute) { relAttribute.isLinkPrefetch = true; } } },
     { "preload"_s, { [](auto document) { return document.settings().linkPreloadEnabled(); }, [](auto relAttribute) { relAttribute.isLinkPreload = true; } } },
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    { "spatial-backdrop"_s, {
-        [](auto document) { return document.settings().webPageSpatialBackdropEnabled(); },
-        [](auto relAttribute) { relAttribute.isSpatialBackdrop = true; }
-    } },
-#endif
     { "stylesheet"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.isStyleSheet = true; } } },
 }) };
 

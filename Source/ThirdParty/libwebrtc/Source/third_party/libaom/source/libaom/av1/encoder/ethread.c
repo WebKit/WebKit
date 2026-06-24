@@ -249,6 +249,7 @@ static void row_mt_mem_alloc(AV1_COMP *cpi, int max_rows, int max_cols,
   av1_row_mt_mem_dealloc(cpi);
 
   // Allocate memory for row based multi-threading
+  assert(cpi->allocated_tiles == tile_cols * tile_rows);
   for (tile_row = 0; tile_row < tile_rows; tile_row++) {
     for (tile_col = 0; tile_col < tile_cols; tile_col++) {
       int tile_index = tile_row * tile_cols + tile_col;
@@ -265,6 +266,8 @@ static void row_mt_mem_alloc(AV1_COMP *cpi, int max_rows, int max_cols,
       }
     }
   }
+  enc_row_mt->allocated_tile_cols = tile_cols;
+  enc_row_mt->allocated_tile_rows = tile_rows;
   const int sb_rows = get_sb_rows_in_frame(cm);
   CHECK_MEM_ERROR(
       cm, enc_row_mt->num_tile_cols_done,
@@ -295,6 +298,8 @@ void av1_row_mt_mem_dealloc(AV1_COMP *cpi) {
       }
     }
   }
+  enc_row_mt->allocated_tile_cols = 0;
+  enc_row_mt->allocated_tile_rows = 0;
   aom_free(enc_row_mt->num_tile_cols_done);
   enc_row_mt->num_tile_cols_done = NULL;
   enc_row_mt->allocated_rows = 0;
@@ -829,9 +834,7 @@ void av1_init_lr_mt_buffers(AV1_COMP *cpi) {
   if (lr_sync->sync_range) {
     if (cpi->ppi->gf_group.frame_parallel_level[cpi->gf_frame_index] > 0)
       return;
-    int num_lr_workers =
-        av1_get_num_mod_workers_for_alloc(&cpi->ppi->p_mt_info, MOD_LR);
-    assert(num_lr_workers <= lr_sync->num_workers);
+    int num_lr_workers = lr_sync->num_workers;
     lr_sync->lrworkerdata[num_lr_workers - 1].rst_tmpbuf = cm->rst_tmpbuf;
     lr_sync->lrworkerdata[num_lr_workers - 1].rlbs = cm->rlbs;
   }
@@ -917,12 +920,13 @@ void av1_init_mt_sync(AV1_COMP *cpi, int is_first_pass) {
       int rst_unit_size = cpi->sf.lpf_sf.min_lr_unit_size;
       int num_rows_lr = av1_lr_count_units(rst_unit_size, cm->height);
       int num_lr_workers = av1_get_num_mod_workers_for_alloc(p_mt_info, MOD_LR);
+      const int num_planes = av1_num_planes(cm);
       if (!lr_sync->sync_range || num_rows_lr > lr_sync->rows ||
           num_lr_workers > lr_sync->num_workers ||
-          MAX_MB_PLANE > lr_sync->num_planes) {
+          num_planes > lr_sync->num_planes) {
         av1_loop_restoration_dealloc(lr_sync);
         av1_loop_restoration_alloc(lr_sync, cm, num_lr_workers, num_rows_lr,
-                                   MAX_MB_PLANE, cm->width);
+                                   num_planes, cm->width);
       }
     }
 #endif
@@ -960,6 +964,7 @@ void av1_init_tile_thread_data(AV1_PRIMARY *ppi, int is_first_pass) {
   assert(p_mt_info->workers != NULL);
   assert(p_mt_info->tile_thr_data != NULL);
 
+  const int is_highbitdepth = ppi->seq_params.use_highbitdepth;
   int num_workers = p_mt_info->num_workers;
   int num_enc_workers = av1_get_num_mod_workers_for_alloc(p_mt_info, MOD_ENC);
   assert(num_enc_workers <= num_workers);
@@ -988,6 +993,11 @@ void av1_init_tile_thread_data(AV1_PRIMARY *ppi, int is_first_pass) {
           aom_internal_error(&ppi->error, AOM_CODEC_MEM_ERROR,
                              "Failed to allocate PICK_MODE_CONTEXT");
       }
+
+      AOM_CHECK_MEM_ERROR(
+          &ppi->error, td->upsample_pred,
+          aom_memalign(16, (1 + is_highbitdepth) * ((MAX_SB_SIZE + 16) + 16) *
+                               MAX_SB_SIZE * sizeof(*td->upsample_pred)));
 
       if (!is_first_pass && i < num_enc_workers) {
         // Set up sms_tree.
@@ -1108,6 +1118,8 @@ void av1_create_workers(AV1_PRIMARY *ppi, int num_workers) {
     }
     winterface->sync(worker);
 
+    // Ensure p_mt_info->num_workers is the number of threads successfuly
+    // created. Important to av1_terminate_workers().
     ++p_mt_info->num_workers;
   }
 }
@@ -1630,6 +1642,7 @@ static inline void prepare_enc_workers(AV1_COMP *cpi, AVxWorkerHook hook,
       thread_data->td->mb.palette_buffer = thread_data->td->palette_buffer;
       thread_data->td->mb.comp_rd_buffer = thread_data->td->comp_rd_buffer;
       thread_data->td->mb.tmp_conv_dst = thread_data->td->tmp_conv_dst;
+      thread_data->td->mb.upsample_pred = thread_data->td->upsample_pred;
       for (int j = 0; j < 2; ++j) {
         thread_data->td->mb.tmp_pred_bufs[j] =
             thread_data->td->tmp_pred_bufs[j];
@@ -1641,6 +1654,8 @@ static inline void prepare_enc_workers(AV1_COMP *cpi, AVxWorkerHook hook,
           thread_data->td->src_var_info_of_4x4_sub_blocks;
 
       thread_data->td->mb.e_mbd.tmp_conv_dst = thread_data->td->mb.tmp_conv_dst;
+      thread_data->td->mb.e_mbd.tmp_upsample_pred =
+          thread_data->td->mb.upsample_pred;
       for (int j = 0; j < 2; ++j) {
         thread_data->td->mb.e_mbd.tmp_obmc_bufs[j] =
             thread_data->td->mb.tmp_pred_bufs[j];
@@ -1732,9 +1747,8 @@ void av1_encode_tiles_mt(AV1_COMP *cpi) {
   const int tile_rows = cm->tiles.rows;
   int num_workers = mt_info->num_mod_workers[MOD_ENC];
 
-  assert(IMPLIES(cpi->tile_data == NULL,
-                 cpi->allocated_tiles < tile_cols * tile_rows));
-  if (cpi->allocated_tiles < tile_cols * tile_rows) av1_alloc_tile_data(cpi);
+  assert(IMPLIES(cpi->tile_data == NULL, cpi->allocated_tiles == 0));
+  if (cpi->allocated_tiles != tile_cols * tile_rows) av1_alloc_tile_data(cpi);
 
   av1_init_tile_data(cpi);
   num_workers = AOMMIN(num_workers, mt_info->num_workers);
@@ -1922,9 +1936,10 @@ void av1_encode_tiles_row_mt(AV1_COMP *cpi) {
        enc_row_mt->allocated_rows != max_sb_rows_in_tile ||
        enc_row_mt->allocated_cols != (max_sb_cols_in_tile - 1) ||
        enc_row_mt->allocated_sb_rows != sb_rows_in_frame);
-  const bool alloc_tile_data = cpi->allocated_tiles < tile_cols * tile_rows;
+  const bool alloc_tile_data = cpi->allocated_tiles != tile_cols * tile_rows;
 
   assert(IMPLIES(cpi->tile_data == NULL, alloc_tile_data));
+  assert(IMPLIES(cpi->tile_data == NULL, cpi->allocated_tiles == 0));
   if (alloc_tile_data) {
     av1_alloc_tile_data(cpi);
   }
@@ -2000,9 +2015,10 @@ void av1_fp_encode_tiles_row_mt(AV1_COMP *cpi) {
   const bool alloc_row_mt_mem = enc_row_mt->allocated_tile_cols != tile_cols ||
                                 enc_row_mt->allocated_tile_rows != tile_rows ||
                                 enc_row_mt->allocated_rows != max_mb_rows;
-  const bool alloc_tile_data = cpi->allocated_tiles < tile_cols * tile_rows;
+  const bool alloc_tile_data = cpi->allocated_tiles != tile_cols * tile_rows;
 
   assert(IMPLIES(cpi->tile_data == NULL, alloc_tile_data));
+  assert(IMPLIES(cpi->tile_data == NULL, cpi->allocated_tiles == 0));
   if (alloc_tile_data) {
     av1_alloc_tile_data(cpi);
   }
@@ -2290,6 +2306,9 @@ static inline void prepare_tpl_workers(AV1_COMP *cpi, AVxWorkerHook hook,
       }
       thread_data->td->mb.tmp_conv_dst = thread_data->td->tmp_conv_dst;
       thread_data->td->mb.e_mbd.tmp_conv_dst = thread_data->td->mb.tmp_conv_dst;
+      thread_data->td->mb.upsample_pred = thread_data->td->upsample_pred;
+      thread_data->td->mb.e_mbd.tmp_upsample_pred =
+          thread_data->td->mb.upsample_pred;
     }
   }
 }
@@ -2466,6 +2485,9 @@ static void prepare_tf_workers(AV1_COMP *cpi, AVxWorkerHook hook,
         aom_internal_error(cpi->common.error, AOM_CODEC_MEM_ERROR,
                            "Error allocating temporal filter data");
       }
+      thread_data->td->mb.upsample_pred = thread_data->td->upsample_pred;
+      thread_data->td->mb.e_mbd.tmp_upsample_pred =
+          thread_data->td->mb.upsample_pred;
     }
   }
 }
@@ -2924,6 +2946,7 @@ static inline size_t get_bs_chunk_size(int tg_or_tile_size,
 
 // Initializes params required for pack bitstream tile.
 static void init_tile_pack_bs_params(AV1_COMP *const cpi, uint8_t *const dst,
+                                     size_t dst_size,
                                      struct aom_write_bit_buffer *saved_wb,
                                      PackBSParams *const pack_bs_params_arr,
                                      uint8_t obu_extn_header) {
@@ -2976,9 +2999,9 @@ static void init_tile_pack_bs_params(AV1_COMP *const cpi, uint8_t *const dst,
     }
   }
 
-  assert(cpi->available_bs_size > 0);
+  assert(dst_size > 0);
   size_t tg_buf_size[MAX_TILES] = { 0 };
-  size_t max_buf_size = cpi->available_bs_size;
+  size_t max_buf_size = dst_size;
   size_t remain_buf_size = max_buf_size;
   const int frame_size_mi = cm->mi_params.mi_rows * cm->mi_params.mi_cols;
 
@@ -3202,12 +3225,15 @@ static void accumulate_pack_bs_data(
   }
 }
 
-void av1_write_tile_obu_mt(
-    AV1_COMP *const cpi, uint8_t *const dst, uint32_t *total_size,
-    struct aom_write_bit_buffer *saved_wb, uint8_t obu_extn_header,
-    const FrameHeaderInfo *fh_info, int *const largest_tile_id,
-    unsigned int *max_tile_size, uint32_t *const obu_header_size,
-    uint8_t **tile_data_start, const int num_workers) {
+void av1_write_tile_obu_mt(AV1_COMP *const cpi, uint8_t *const dst,
+                           size_t dst_size, uint32_t *total_size,
+                           struct aom_write_bit_buffer *saved_wb,
+                           uint8_t obu_extn_header,
+                           const FrameHeaderInfo *fh_info,
+                           int *const largest_tile_id,
+                           unsigned int *max_tile_size,
+                           uint32_t *const obu_header_size,
+                           uint8_t **tile_data_start, const int num_workers) {
   MultiThreadInfo *const mt_info = &cpi->mt_info;
 
   PackBSParams pack_bs_params[MAX_TILES];
@@ -3216,7 +3242,8 @@ void av1_write_tile_obu_mt(
   for (int tile_idx = 0; tile_idx < MAX_TILES; tile_idx++)
     pack_bs_params[tile_idx].total_size = &tile_size[tile_idx];
 
-  init_tile_pack_bs_params(cpi, dst, saved_wb, pack_bs_params, obu_extn_header);
+  init_tile_pack_bs_params(cpi, dst, dst_size, saved_wb, pack_bs_params,
+                           obu_extn_header);
   prepare_pack_bs_workers(cpi, pack_bs_params, pack_bs_worker_hook,
                           num_workers);
   launch_workers(mt_info, num_workers);
@@ -3330,7 +3357,8 @@ static int cdef_filter_block_worker_hook(void *arg1, void *arg2) {
   while (cdef_get_next_job(cdef_sync, cdef_search_ctx, &cur_fbr, &cur_fbc,
                            &sb_count)) {
     av1_cdef_mse_calc_block(cdef_search_ctx, error_info, cur_fbr, cur_fbc,
-                            sb_count);
+                            sb_count,
+                            thread_data->cpi->sf.lpf_sf.adaptive_cdef_mode);
   }
   error_info->setjmp = 0;
   return 1;

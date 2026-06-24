@@ -88,7 +88,7 @@ public:
         return std::bit_cast<T*>(m_pointer);
     }
 
-    T* ptr(OwnerType& owner) LIFETIME_BOUND RETURNS_NONNULL { &get(owner); }
+    T* ptr(OwnerType& owner) LIFETIME_BOUND RETURNS_NONNULL { return &get(owner); }
     T* ptr(const OwnerType& owner) const LIFETIME_BOUND RETURNS_NONNULL { return &get(owner); }
 
     template<typename Func>

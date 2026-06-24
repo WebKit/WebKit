@@ -12,8 +12,8 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "common_audio/third_party/ooura/fft_size_256/fft4g.h"
 #include "modules/audio_processing/ns/ns_common.h"
 
@@ -29,9 +29,9 @@ NrFft::NrFft() : bit_reversal_state_(kFftSize / 2), tables_(kFftSize / 2) {
               tables_.data());
 }
 
-void NrFft::Fft(ArrayView<float, kFftSize> time_data,
-                ArrayView<float, kFftSize> real,
-                ArrayView<float, kFftSize> imag) {
+void NrFft::Fft(std::span<float, kFftSize> time_data,
+                std::span<float, kFftSize> real,
+                std::span<float, kFftSize> imag) {
   WebRtc_rdft(kFftSize, 1, time_data.data(), bit_reversal_state_.data(),
               tables_.data());
 
@@ -47,9 +47,9 @@ void NrFft::Fft(ArrayView<float, kFftSize> time_data,
   }
 }
 
-void NrFft::Ifft(ArrayView<const float> real,
-                 ArrayView<const float> imag,
-                 ArrayView<float> time_data) {
+void NrFft::Ifft(std::span<const float> real,
+                 std::span<const float> imag,
+                 std::span<float> time_data) {
   time_data[0] = real[0];
   time_data[1] = real[kFftSizeBy2Plus1 - 1];
   for (size_t i = 1; i < kFftSizeBy2Plus1 - 1; ++i) {

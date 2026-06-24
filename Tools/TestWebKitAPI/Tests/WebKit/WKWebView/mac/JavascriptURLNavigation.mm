@@ -46,7 +46,7 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-static RetainPtr<WKWebView> createdWebView;
+static RetainPtr<WKWebView> javascriptURLCreatedWebView;
 static RetainPtr<TestNavigationDelegate> navDelegate;
 
 @interface JavascriptURLNavigationDelegate : NSObject <WKUIDelegatePrivate>
@@ -55,26 +55,26 @@ static RetainPtr<TestNavigationDelegate> navDelegate;
 
 - (void)_webViewRunModal:(WKWebView *)webView
 {
-    EXPECT_EQ(webView, createdWebView.get());
+    EXPECT_EQ(webView, javascriptURLCreatedWebView.get());
 }
 
 - (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
-    createdWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
-    [createdWebView setUIDelegate:self];
+    javascriptURLCreatedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [javascriptURLCreatedWebView setUIDelegate:self];
 
     navDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [navDelegate setDecidePolicyForNavigationAction:[&] (WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
         decisionHandler(WKNavigationActionPolicyAllow);
     }];
-    [createdWebView setNavigationDelegate:navDelegate.get()];
+    [javascriptURLCreatedWebView setNavigationDelegate:navDelegate.get()];
 
-    return createdWebView.get();
+    return javascriptURLCreatedWebView.get();
 }
 
 - (void)_webViewClose:(WKWebView *)webView
 {
-    EXPECT_EQ(webView, createdWebView.get());
+    EXPECT_EQ(webView, javascriptURLCreatedWebView.get());
     [webView _close];
 }
 

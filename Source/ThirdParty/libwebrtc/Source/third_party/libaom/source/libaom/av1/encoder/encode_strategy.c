@@ -611,6 +611,11 @@ int av1_calc_refresh_idx_for_intnl_arf(
   }
 }
 
+static int get_new_fb_map_idx_rc(int new_fb_map_idx) {
+  if (new_fb_map_idx == INVALID_IDX) return 0;
+  return 1 << new_fb_map_idx;
+}
+
 int av1_get_refresh_frame_flags(
     const AV1_COMP *const cpi, const EncodeFrameParams *const frame_params,
     FRAME_UPDATE_TYPE frame_update_type, int gf_index, int cur_disp_order,
@@ -637,11 +642,15 @@ int av1_get_refresh_frame_flags(
 #if !CONFIG_REALTIME_ONLY
   if (cpi->use_ducky_encode &&
       cpi->ducky_encode_info.frame_info.gop_mode == DUCKY_ENCODE_GOP_MODE_RCL) {
-    int new_fb_map_idx = cpi->ppi->gf_group.update_ref_idx[gf_index];
-    if (new_fb_map_idx == INVALID_IDX) return 0;
-    return 1 << new_fb_map_idx;
+    return get_new_fb_map_idx_rc(gf_group->update_ref_idx[gf_index]);
   }
 #endif  // !CONFIG_REALTIME_ONLY
+
+  if (cpi->ext_ratectrl.ready &&
+      (cpi->ext_ratectrl.funcs.rc_type & AOM_RC_GOP) != 0 &&
+      cpi->ext_ratectrl.funcs.get_gop_decision != NULL) {
+    return get_new_fb_map_idx_rc(gf_group->update_ref_idx[gf_index]);
+  }
 
   int refresh_mask = 0;
   if (ext_refresh_frame_flags->update_pending) {
@@ -787,7 +796,8 @@ static int denoise_and_encode(AV1_COMP *const cpi, uint8_t *const dest,
       if (tf_buf != NULL) {
         frame_input->source = tf_buf;
         show_existing_alt_ref = av1_check_show_filtered_frame(
-            tf_buf, &frame_diff, q_index, cm->seq_params->bit_depth);
+            tf_buf, &frame_diff, q_index, cm->seq_params->bit_depth,
+            cpi->oxcf.algo_cfg.enable_overlay, 0);
         if (show_existing_alt_ref) {
           cpi->common.showable_frame |= 1;
         } else {
@@ -822,8 +832,9 @@ static int denoise_and_encode(AV1_COMP *const cpi, uint8_t *const dest,
       // TODO(angiebird): Reuse tf_info->tf_buf here.
       av1_temporal_filter(cpi, arf_src_index, cpi->gf_frame_index, &frame_diff,
                           tf_buf_second_arf);
-      show_existing_alt_ref = av1_check_show_filtered_frame(
-          tf_buf_second_arf, &frame_diff, q_index, cm->seq_params->bit_depth);
+      show_existing_alt_ref =
+          av1_check_show_filtered_frame(tf_buf_second_arf, &frame_diff, q_index,
+                                        cm->seq_params->bit_depth, 1, 1);
       if (show_existing_alt_ref) {
         aom_extend_frame_borders(tf_buf_second_arf, av1_num_planes(cm));
         frame_input->source = tf_buf_second_arf;
@@ -869,11 +880,18 @@ static int denoise_and_encode(AV1_COMP *const cpi, uint8_t *const dest,
     if (frame_params->frame_type != KEY_FRAME) {
       // In rare case, it's possible to have non ARF/GF update_type here.
       // We should set allow_tpl to zero in the situation
-      allow_tpl =
-          allow_tpl && (update_type == ARF_UPDATE || update_type == GF_UPDATE ||
-                        (cpi->use_ducky_encode &&
-                         cpi->ducky_encode_info.frame_info.gop_mode ==
-                             DUCKY_ENCODE_GOP_MODE_RCL));
+      bool frame_type_allow_tpl =
+          update_type == ARF_UPDATE || update_type == GF_UPDATE;
+      // When external rate control is used, sometimes the sequence ends with
+      // a GOP with only 1 frame which is a leaf frame. TPL stats needs to be
+      // calculated for it as well.
+      if (av1_use_tpl_for_extrc(&cpi->ext_ratectrl)) {
+        frame_type_allow_tpl |= update_type == LF_UPDATE;
+      }
+      allow_tpl = allow_tpl && (frame_type_allow_tpl ||
+                                (cpi->use_ducky_encode &&
+                                 cpi->ducky_encode_info.frame_info.gop_mode ==
+                                     DUCKY_ENCODE_GOP_MODE_RCL));
     }
 
     if (allow_tpl) {
@@ -994,6 +1012,21 @@ void av1_get_ref_frames(RefFrameMapPair ref_frame_map_pairs[REF_FRAMES],
 
   // Initialize reference frame mappings.
   for (int i = 0; i < REF_FRAMES; ++i) remapped_ref_idx[i] = INVALID_IDX;
+
+  if (cpi->ppi->gf_group.use_ext_ref_frame_map[gf_index]) {
+    for (int rf = LAST_FRAME; rf < REF_FRAMES; ++rf) {
+      if (cpi->ppi->gf_group.ref_frame_list[gf_index][rf] != INVALID_IDX) {
+        remapped_ref_idx[rf - LAST_FRAME] =
+            (int)cpi->ppi->gf_group.ref_frame_list[gf_index][rf];
+      }
+    }
+    for (int i = 0; i < REF_FRAMES; ++i) {
+      if (remapped_ref_idx[i] == INVALID_IDX) {
+        remapped_ref_idx[i] = 0;
+      }
+    }
+    return;
+  }
 
 #if !CONFIG_REALTIME_ONLY
   if (cpi->use_ducky_encode &&
@@ -1123,7 +1156,7 @@ void av1_get_ref_frames(RefFrameMapPair ref_frame_map_pairs[REF_FRAMES],
 
   // Do not map GOLDEN and ALTREF based on their pyramid level if all reference
   // frames have the same level.
-  if (n_min_level_refs <= n_bufs) {
+  if (n_min_level_refs < n_bufs) {
     // Map the GOLDEN_FRAME.
     if (golden_idx > -1)
       add_ref_to_slot(&buffer_map[golden_idx], remapped_ref_idx, GOLDEN_FRAME);
@@ -1142,8 +1175,8 @@ void av1_get_ref_frames(RefFrameMapPair ref_frame_map_pairs[REF_FRAMES],
     // Continue if the current ref slot is already full.
     if (remapped_ref_idx[frame - LAST_FRAME] != INVALID_IDX) continue;
     // Find the next unmapped reference buffer
-    // in decreasing ouptut order relative to current picture.
-    int next_buf_max = 0;
+    // in decreasing output order relative to current picture.
+    int next_buf_max = -1;
     int next_disp_order = INT_MIN;
     for (buf_map_idx = n_bufs - 1; buf_map_idx >= 0; buf_map_idx--) {
       if (!buffer_map[buf_map_idx].used &&
@@ -1164,8 +1197,8 @@ void av1_get_ref_frames(RefFrameMapPair ref_frame_map_pairs[REF_FRAMES],
     // Continue if the current ref slot is already full.
     if (remapped_ref_idx[frame - LAST_FRAME] != INVALID_IDX) continue;
     // Find the next unmapped reference buffer
-    // in increasing ouptut order relative to current picture.
-    int next_buf_max = 0;
+    // in increasing output order relative to current picture.
+    int next_buf_max = -1;
     int next_disp_order = INT_MAX;
     for (buf_map_idx = n_bufs - 1; buf_map_idx >= 0; buf_map_idx--) {
       if (!buffer_map[buf_map_idx].used &&
@@ -1302,8 +1335,7 @@ int av1_encode_strategy(AV1_COMP *const cpi, size_t *const size,
     return -1;
   }
 
-  // TODO(sarahparker) finish bit allocation for one pass pyramid
-  if (has_no_stats_stage(cpi)) {
+  if (has_no_stats_stage(cpi) && !is_one_pass_rt_lag_params(cpi)) {
     gf_cfg->gf_max_pyr_height =
         AOMMIN(gf_cfg->gf_max_pyr_height, USE_ALTREF_FOR_ONE_PASS);
     gf_cfg->gf_min_pyr_height =
@@ -1312,6 +1344,8 @@ int av1_encode_strategy(AV1_COMP *const cpi, size_t *const size,
 
   // Allocation of mi buffers.
   alloc_mb_mode_info_buffers(cpi);
+
+  cpi->cb_delta_rdmult_enabled = 0;
 
   cpi->skip_tpl_setup_stats = 0;
 #if !CONFIG_REALTIME_ONLY
@@ -1494,6 +1528,21 @@ int av1_encode_strategy(AV1_COMP *const cpi, size_t *const size,
                                *frame_flags);
     if (use_rtc_reference_structure_one_layer(cpi))
       av1_set_rtc_reference_structure_one_layer(cpi, cpi->gf_frame_index == 0);
+  } else if (is_one_pass_rt_lag_params(cpi) && oxcf->rc_cfg.mode == AOM_CBR) {
+    // For realtime mode with lookahead in CBR: the current frame buffer_level
+    // is used to update the frame target_bandwidth, so we need to call
+    // av1_calc_i/pframe_target_size_one_pass_cbr() here for every frame.
+    int target;
+    const FRAME_UPDATE_TYPE cur_update_type =
+        gf_group->update_type[cpi->gf_frame_index];
+    if (cur_update_type == KF_UPDATE) {
+      target = av1_calc_iframe_target_size_one_pass_cbr(cpi);
+    } else {
+      target = av1_calc_pframe_target_size_one_pass_cbr(cpi, cur_update_type);
+    }
+    gf_group->bit_allocation[cpi->gf_frame_index] = target;
+    av1_rc_set_frame_target(cpi, target, cm->width, cm->height);
+    cpi->rc.base_frame_target = target;
   }
 #endif
 #if CONFIG_COLLECT_COMPONENT_TIMING

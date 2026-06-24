@@ -50,22 +50,23 @@ function test() {
     });
 
     suite.addTestCase({
-        name: "SiteIsolation.Runtime.ExecutionContextCreated.UniqueIds",
-        description: "Each frame target should have unique execution context ids.",
+        name: "SiteIsolation.Runtime.ExecutionContextCreated.PerTargetContexts",
+        description: "Each frame target should own its own execution context. Context ids are per-target namespaces under site isolation (each frame's InjectedScriptManager counts from 1), so two frame targets in different processes may legitimately share a numeric id; the invariant is that each target has a distinct context object scoped to itself.",
         async test() {
             let frameTargets = WI.targets.filter((t) => t instanceof WI.FrameTarget);
             InspectorTest.expectThat(frameTargets.length >= 2, "Should have at least 2 frame targets (main frame + cross-origin iframe).");
 
-            let contextIds = new Set;
+            let contexts = new Set;
             for (let target of frameTargets) {
                 let context = target.executionContext;
-                if (context) {
-                    InspectorTest.expectThat(!contextIds.has(context.id), "Execution context id should be unique.");
-                    contextIds.add(context.id);
-                }
+                if (!context)
+                    continue;
+                InspectorTest.expectThat(!contexts.has(context), "Each frame target should own a distinct execution context object.");
+                InspectorTest.expectEqual(context.target, target, "An execution context should be scoped to its own frame target.");
+                contexts.add(context);
             }
 
-            InspectorTest.expectThat(contextIds.size >= 2, "Should have at least 2 unique context ids.");
+            InspectorTest.expectThat(contexts.size >= 2, "Should have at least 2 distinct execution contexts (one per frame target).");
         }
     });
 

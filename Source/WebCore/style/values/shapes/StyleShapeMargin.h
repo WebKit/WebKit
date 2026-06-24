@@ -24,18 +24,16 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
 
 // <'shape-margin'> = <length-percentage [0,∞]>
 // https://www.w3.org/TR/css-shapes/#propdef-shape-margin
-struct ShapeMargin : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
-    using Base::Base;
-};
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(ShapeMargin, LengthPercentage<CSS::NonnegativeUnzoomed>);
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ShapeMargin)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::ShapeMargin)

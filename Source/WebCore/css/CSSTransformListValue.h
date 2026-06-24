@@ -43,6 +43,8 @@ public:
     String customCSSText(const CSS::SerializationContext& context) const { return serializeItems(context); }
     bool equals(const CSSTransformListValue& other) const { return itemsEqual(other); }
 
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+
 private:
     explicit CSSTransformListValue(CSSValueListBuilder);
     explicit CSSTransformListValue(Ref<CSSValue>);

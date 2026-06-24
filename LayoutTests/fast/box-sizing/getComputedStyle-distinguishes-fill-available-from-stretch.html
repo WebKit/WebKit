@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<title>getComputedStyle distinguishes -webkit-fill-available from stretch</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="stretch-target" style="min-height: stretch;"></div>
+<div id="fill-available-target" style="min-height: -webkit-fill-available;"></div>
+<script>
+test(() => {
+  const stretchValue = getComputedStyle(document.getElementById('stretch-target')).minHeight;
+  const fillAvailableValue = getComputedStyle(document.getElementById('fill-available-target')).minHeight;
+  assert_not_equals(stretchValue, fillAvailableValue, 'stretch and -webkit-fill-available should serialize differently');
+  assert_equals(stretchValue, 'stretch');
+  assert_equals(fillAvailableValue, '-webkit-fill-available');
+}, '-webkit-fill-available and stretch are distinct keywords in computed style');
+</script>

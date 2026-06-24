@@ -31,7 +31,7 @@
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 
 #include <limits>
 #include <wtf/TZoneMallocInlines.h>
@@ -83,20 +83,20 @@ LazyLoadFrameObserver::LazyLoadFrameObserver(HTMLIFrameElement& element)
 
 void LazyLoadFrameObserver::observe(const AtomString& frameURL, const ReferrerPolicy& referrerPolicy)
 {
-    auto& frameObserver = m_element->lazyLoadFrameObserver();
+    auto& frameObserver = protect(m_element)->lazyLoadFrameObserver();
     RefPtr intersectionObserver = frameObserver.intersectionObserver(protect(m_element->document()));
     if (!intersectionObserver)
         return;
     m_frameURL = frameURL;
     m_referrerPolicy = referrerPolicy;
-    intersectionObserver->observe(m_element);
+    intersectionObserver->observe(protect(m_element));
 }
 
 void LazyLoadFrameObserver::unobserve()
 {
-    auto& frameObserver = m_element->lazyLoadFrameObserver();
+    auto& frameObserver = protect(m_element)->lazyLoadFrameObserver();
     ASSERT(frameObserver.isObserved(m_element));
-    frameObserver.m_observer->unobserve(m_element);
+    protect(frameObserver.m_observer)->unobserve(protect(m_element));
 }
 
 void LazyLoadFrameObserver::update(const AtomString& frameURL, const ReferrerPolicy& referrerPolicy)

@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+Tests that a blob: URL iframe inherits ALL CSP policies from its creator document, not just the last one. When the creator has two enforced CSP headers where one blocks inline scripts, inline scripts inside the blob document should be blocked.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS: Inline script was blocked by CSP.

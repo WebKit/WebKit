@@ -15,15 +15,19 @@
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "api/rtp_header_extension_id.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
 
-void CompareHeaderExtensions(const char* packet1,
-                             size_t packet1_size,
-                             const char* packet2,
-                             size_t packet2_size,
-                             const std::vector<int>& encrypted_headers,
-                             bool expect_equal) {
+namespace webrtc {
+
+void CompareHeaderExtensions(
+    const char* packet1,
+    size_t packet1_size,
+    const char* packet2,
+    size_t packet2_size,
+    const std::vector<RtpHeaderExtensionId>& encrypted_headers,
+    bool expect_equal) {
   // Sanity check: packets must be large enough to contain the RTP header and
   // extensions header.
   RTC_CHECK_GE(packet1_size, 12 + 4);
@@ -55,7 +59,8 @@ void CompareHeaderExtensions(const char* packet1,
 
     // The header extension doesn't get encrypted if the id is not in the
     // list of header extensions to encrypt.
-    if (expect_equal || !absl::c_linear_search(encrypted_headers, id)) {
+    if (expect_equal ||
+        !absl::c_linear_search(encrypted_headers, RtpHeaderExtensionId(id))) {
       EXPECT_EQ(0, memcmp(extension_data1, extension_data2, len));
     } else {
       EXPECT_NE(0, memcmp(extension_data1, extension_data2, len));
@@ -70,3 +75,5 @@ void CompareHeaderExtensions(const char* packet1,
     }
   }
 }
+
+}  // namespace webrtc

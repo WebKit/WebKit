@@ -81,8 +81,8 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     WebCore::FloatBoxExtent obscuredContentInsets;
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    bool hasBannerViewOverlay;
+#if HAVE(NSREFRESHCONTROLLER)
+    bool hasRefreshController;
 #endif
 
     float mediaVolume;
@@ -307,6 +307,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     WebCore::AccessibilityMode accessibilityMode;
     bool shouldForceSiteIsolationAlwaysOnForTesting;
     bool shouldEnableNetworkInstrumentation;
+    bool shouldEnablePageInstrumentation;
 }
 
 [Nested] struct WebKit::RemotePageParameters {

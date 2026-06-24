@@ -80,23 +80,12 @@ static INLINE void highbd_convolve8_8tap_vert_sve2(
     const uint16_t *src, ptrdiff_t src_stride, uint16_t *dst,
     ptrdiff_t dst_stride, int w, int h, const int16x8_t filter, int bd) {
   assert(w >= 4 && h >= 4);
-  uint16x8x3_t merge_tbl_idx = vld1q_u16_x3(kDotProdMergeBlockTbl);
 
-  // Correct indices by the size of vector length.
-  merge_tbl_idx.val[0] = vaddq_u16(
-      merge_tbl_idx.val[0],
-      vreinterpretq_u16_u64(vdupq_n_u64(svcnth() * 0x0001000000000000ULL)));
-  merge_tbl_idx.val[1] = vaddq_u16(
-      merge_tbl_idx.val[1],
-      vreinterpretq_u16_u64(vdupq_n_u64(svcnth() * 0x0001000100000000ULL)));
-  merge_tbl_idx.val[2] = vaddq_u16(
-      merge_tbl_idx.val[2],
-      vreinterpretq_u16_u64(vdupq_n_u64(svcnth() * 0x0001000100010000ULL)));
-
-  if (w == 4) {
+  do {
     const uint16x4_t max = vdup_n_u16((1 << bd) - 1);
     const int16_t *s = (const int16_t *)src;
     uint16_t *d = dst;
+    int height = h;
 
     int16x4_t s0, s1, s2, s3, s4, s5, s6;
     load_s16_4x7(s, src_stride, &s0, &s1, &s2, &s3, &s4, &s5, &s6);
@@ -114,11 +103,10 @@ static INLINE void highbd_convolve8_8tap_vert_sve2(
       load_s16_4x4(s, src_stride, &s7, &s8, &s9, &sA);
 
       int16x8_t s4567[2], s5678[2], s6789[2], s789A[2];
+      transpose_concat_s16_4x4(s4, s5, s6, s7, &s4567[0], &s4567[1]);
+      transpose_concat_s16_4x4(s5, s6, s7, s8, &s5678[0], &s5678[1]);
+      transpose_concat_s16_4x4(s6, s7, s8, s9, &s6789[0], &s6789[1]);
       transpose_concat_s16_4x4(s7, s8, s9, sA, &s789A[0], &s789A[1]);
-
-      vpx_tbl2x2_s16(s3456, s789A, s4567, merge_tbl_idx.val[0]);
-      vpx_tbl2x2_s16(s3456, s789A, s5678, merge_tbl_idx.val[1]);
-      vpx_tbl2x2_s16(s3456, s789A, s6789, merge_tbl_idx.val[2]);
 
       uint16x4_t d0 = highbd_convolve8_4_v(s0123, s4567, filter, max);
       uint16x4_t d1 = highbd_convolve8_4_v(s1234, s5678, filter, max);
@@ -136,77 +124,19 @@ static INLINE void highbd_convolve8_8tap_vert_sve2(
       s3456[0] = s789A[0];
       s3456[1] = s789A[1];
 
+      s4 = s8;
+      s5 = s9;
+      s6 = sA;
+
       s += 4 * src_stride;
       d += 4 * dst_stride;
-      h -= 4;
-    } while (h != 0);
-  } else {
-    const uint16x8_t max = vdupq_n_u16((1 << bd) - 1);
+      height -= 4;
+    } while (height != 0);
 
-    do {
-      const int16_t *s = (const int16_t *)src;
-      uint16_t *d = dst;
-      int height = h;
-
-      int16x8_t s0, s1, s2, s3, s4, s5, s6;
-      load_s16_8x7(s, src_stride, &s0, &s1, &s2, &s3, &s4, &s5, &s6);
-      s += 7 * src_stride;
-
-      int16x8_t s0123[4], s1234[4], s2345[4], s3456[4];
-      transpose_concat_s16_8x4(s0, s1, s2, s3, &s0123[0], &s0123[1], &s0123[2],
-                               &s0123[3]);
-      transpose_concat_s16_8x4(s1, s2, s3, s4, &s1234[0], &s1234[1], &s1234[2],
-                               &s1234[3]);
-      transpose_concat_s16_8x4(s2, s3, s4, s5, &s2345[0], &s2345[1], &s2345[2],
-                               &s2345[3]);
-      transpose_concat_s16_8x4(s3, s4, s5, s6, &s3456[0], &s3456[1], &s3456[2],
-                               &s3456[3]);
-
-      do {
-        int16x8_t s7, s8, s9, sA;
-        load_s16_8x4(s, src_stride, &s7, &s8, &s9, &sA);
-
-        int16x8_t s4567[4], s5678[5], s6789[4], s789A[4];
-        transpose_concat_s16_8x4(s7, s8, s9, sA, &s789A[0], &s789A[1],
-                                 &s789A[2], &s789A[3]);
-
-        vpx_tbl2x4_s16(s3456, s789A, s4567, merge_tbl_idx.val[0]);
-        vpx_tbl2x4_s16(s3456, s789A, s5678, merge_tbl_idx.val[1]);
-        vpx_tbl2x4_s16(s3456, s789A, s6789, merge_tbl_idx.val[2]);
-
-        uint16x8_t d0 = highbd_convolve8_8_v(s0123, s4567, filter, max);
-        uint16x8_t d1 = highbd_convolve8_8_v(s1234, s5678, filter, max);
-        uint16x8_t d2 = highbd_convolve8_8_v(s2345, s6789, filter, max);
-        uint16x8_t d3 = highbd_convolve8_8_v(s3456, s789A, filter, max);
-
-        store_u16_8x4(d, dst_stride, d0, d1, d2, d3);
-
-        s0123[0] = s4567[0];
-        s0123[1] = s4567[1];
-        s0123[2] = s4567[2];
-        s0123[3] = s4567[3];
-        s1234[0] = s5678[0];
-        s1234[1] = s5678[1];
-        s1234[2] = s5678[2];
-        s1234[3] = s5678[3];
-        s2345[0] = s6789[0];
-        s2345[1] = s6789[1];
-        s2345[2] = s6789[2];
-        s2345[3] = s6789[3];
-        s3456[0] = s789A[0];
-        s3456[1] = s789A[1];
-        s3456[2] = s789A[2];
-        s3456[3] = s789A[3];
-
-        s += 4 * src_stride;
-        d += 4 * dst_stride;
-        height -= 4;
-      } while (height != 0);
-      src += 8;
-      dst += 8;
-      w -= 8;
-    } while (w != 0);
-  }
+    src += 4;
+    dst += 4;
+    w -= 4;
+  } while (w != 0);
 }
 
 void vpx_highbd_convolve8_vert_sve2(const uint16_t *src, ptrdiff_t src_stride,

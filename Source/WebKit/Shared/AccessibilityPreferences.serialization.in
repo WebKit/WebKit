@@ -38,6 +38,7 @@ struct WebKit::AccessibilityPreferences {
     WebKit::WebKitAXValueState invertColorsEnabled;
 #endif
     bool imageAnimationEnabled;
+    bool videoAutoplayPreviewsEnabled;
     bool enhanceTextLegibilityOverall;
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     bool prefersNonBlinkingCursor;

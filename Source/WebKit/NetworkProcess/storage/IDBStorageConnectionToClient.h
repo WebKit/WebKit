@@ -29,14 +29,18 @@
 #include <WebCore/IDBConnectionToClient.h>
 #include <WebCore/IDBConnectionToClientDelegate.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
+
+class NetworkStorageManager;
+class WebIDBResult;
 
 class IDBStorageConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate {
     WTF_MAKE_TZONE_ALLOCATED(IDBStorageConnectionToClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBStorageConnectionToClient);
 public:
-    IDBStorageConnectionToClient(IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier);
+    IDBStorageConnectionToClient(IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier, NetworkStorageManager&);
     ~IDBStorageConnectionToClient();
 
     std::optional<WebCore::IDBConnectionIdentifier> identifier() const final { return m_identifier; }
@@ -70,9 +74,14 @@ private:
     void generateIndexKeyForRecord(const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IDBIndexInfo&, const std::optional<WebCore::IDBKeyPath>&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, std::optional<int64_t> recordID);
     void didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBError&) final;
 
+    WebIDBResult prepareGetResult(const WebCore::IDBResultData&);
+    WebIDBResult prepareGetAllResult(const WebCore::IDBResultData&);
+    WebIDBResult prepareCursorResult(const WebCore::IDBResultData&);
+
     IPC::Connection::UniqueID m_connection;
     WebCore::IDBConnectionIdentifier m_identifier;
     const Ref<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
+    ThreadSafeWeakPtr<NetworkStorageManager> m_networkStorageManager;
 };
 
 } // namespace WebKit

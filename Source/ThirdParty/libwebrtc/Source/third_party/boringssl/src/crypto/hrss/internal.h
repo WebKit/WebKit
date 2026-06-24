@@ -18,10 +18,7 @@
 #include <openssl/base.h>
 #include "../internal.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
+BSSL_NAMESPACE_BEGIN
 
 #define HRSS_N 701
 #define BITS_PER_WORD (sizeof(crypto_word_t) * 8)
@@ -43,7 +40,7 @@ OPENSSL_EXPORT void HRSS_poly3_invert(struct poly3 *out,
 
 // On x86-64, we can use the AVX2 code from [HRSS]. (The authors have given
 // explicit permission for this and signed a CLA.) However it's 57KB of object
-// code, so it's not used if |OPENSSL_SMALL| is defined.
+// code, so it's not used if `OPENSSL_SMALL` is defined.
 #if !defined(OPENSSL_NO_ASM) && !defined(OPENSSL_SMALL) && \
     defined(OPENSSL_X86_64) && defined(OPENSSL_LINUX)
 #define POLY_RQ_MUL_ASM
@@ -53,7 +50,7 @@ OPENSSL_EXPORT void HRSS_poly3_invert(struct poly3 *out,
 
 // poly_Rq_mul is defined in assembly. Inputs and outputs must be 16-byte-
 // aligned.
-extern void poly_Rq_mul(
+extern "C" void poly_Rq_mul(
     uint16_t r[HRSS_N + 3], const uint16_t a[HRSS_N + 3],
     const uint16_t b[HRSS_N + 3],
     // The following should be `scratch[POLY_MUL_RQ_SCRATCH_SPACE]` but
@@ -61,9 +58,7 @@ extern void poly_Rq_mul(
     uint8_t scratch[]);
 #endif
 
+BSSL_NAMESPACE_END
 
-#if defined(__cplusplus)
-}  // extern "C"
-#endif
 
 #endif  // !OPENSSL_HEADER_CRYPTO_HRSS_INTERNAL_H

@@ -70,4 +70,9 @@ WI.ObjectPreview = class ObjectPreview
     {
         return this._size !== undefined && (this._subtype === "array" || this._subtype === "set" || this._subtype === "map" || this._subtype === "weakmap" || this._subtype === "weakset");
     }
+
+    isWeakCollection()
+    {
+        return this._subtype === "weakmap" || this._subtype === "weakset";
+    }
 };

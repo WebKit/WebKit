@@ -269,7 +269,7 @@ unsigned CachedMatchFinder::countMatches(const std::optional<SimpleRange>& searc
 
 unsigned CachedMatchFinder::bufferOffsetForBoundaryPoint(StringView buffer, const Vector<TextRun>& runs, const BoundaryPoint& point, FindOptions options)
 {
-    std::optional<unsigned> lastChunkEnd = std::nullopt;
+    std::optional<unsigned> lastChunkEnd;
     for (auto [i, run] : indexedRange(runs)) {
         if (&run.range.start.container.get() != &point.container.get())
             continue;

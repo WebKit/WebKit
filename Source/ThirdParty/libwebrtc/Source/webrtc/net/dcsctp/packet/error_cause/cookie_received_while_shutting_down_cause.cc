@@ -11,10 +11,9 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
-
-#include "api/array_view.h"
 
 namespace dcsctp {
 
@@ -25,8 +24,7 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 std::optional<CookieReceivedWhileShuttingDownCause>
-CookieReceivedWhileShuttingDownCause::Parse(
-    webrtc::ArrayView<const uint8_t> data) {
+CookieReceivedWhileShuttingDownCause::Parse(std::span<const uint8_t> data) {
   if (!ParseTLV(data).has_value()) {
     return std::nullopt;
   }

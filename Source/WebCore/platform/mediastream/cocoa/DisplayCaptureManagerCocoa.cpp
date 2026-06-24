@@ -88,6 +88,7 @@ std::optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersis
 
     case CaptureDevice::DeviceType::SystemAudio:
     case CaptureDevice::DeviceType::Camera:
+    case CaptureDevice::DeviceType::Canvas:
     case CaptureDevice::DeviceType::Microphone:
     case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Unknown:

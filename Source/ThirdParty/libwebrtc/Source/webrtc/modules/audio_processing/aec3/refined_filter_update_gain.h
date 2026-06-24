@@ -16,8 +16,8 @@
 #include <array>
 #include <atomic>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 
@@ -49,7 +49,7 @@ class RefinedFilterUpdateGain {
   void Compute(const std::array<float, kFftLengthBy2Plus1>& render_power,
                const RenderSignalAnalyzer& render_signal_analyzer,
                const SubtractorOutput& subtractor_output,
-               ArrayView<const float> erl,
+               std::span<const float> erl,
                size_t size_partitions,
                bool saturated_capture_signal,
                bool disallow_leakage_diverged,

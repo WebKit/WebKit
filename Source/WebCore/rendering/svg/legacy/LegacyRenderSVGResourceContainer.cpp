@@ -40,7 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceContainer);
 
-LegacyRenderSVGResourceContainer::LegacyRenderSVGResourceContainer(Type type, SVGElement& element, RenderStyle&& style)
+LegacyRenderSVGResourceContainer::LegacyRenderSVGResourceContainer(Type type, SVGElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGHiddenContainer(type, element, WTF::move(style), SVGModelObjectFlag::IsResourceContainer)
     , m_id(element.getIdAttribute())
 {
@@ -63,14 +63,14 @@ void LegacyRenderSVGResourceContainer::willBeDestroyed()
     SVGResourcesCache::resourceDestroyed(*this);
 
     if (m_registered) {
-        treeScopeForSVGReferences().removeSVGResource(m_id, *this);
+        protect(treeScopeForSVGReferences())->removeSVGResource(m_id, *this);
         m_registered = false;
     }
 
     LegacyRenderSVGHiddenContainer::willBeDestroyed();
 }
 
-void LegacyRenderSVGResourceContainer::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void LegacyRenderSVGResourceContainer::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     LegacyRenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 
@@ -86,7 +86,7 @@ void LegacyRenderSVGResourceContainer::idChanged()
     removeAllClientsFromCacheAndMarkForInvalidation();
 
     // Remove old id, that is guaranteed to be present in cache.
-    treeScopeForSVGReferences().removeSVGResource(m_id, *this);
+    protect(treeScopeForSVGReferences())->removeSVGResource(m_id, *this);
     m_id = element().getIdAttribute();
 
     registerResource();

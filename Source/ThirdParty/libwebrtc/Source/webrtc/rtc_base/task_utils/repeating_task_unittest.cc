@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
+#include "absl/strings/string_view.h"
 #include "api/location.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/test/mock_task_queue_base.h"
@@ -58,6 +59,7 @@ class FakeTaskQueue : public TaskQueueBase {
   explicit FakeTaskQueue(SimulatedClock* clock)
       : task_queue_setter_(this), clock_(clock) {}
 
+  absl::string_view queue_name() const override { return "Fake"; }
   void Delete() override {}
 
   void PostTaskImpl(absl::AnyInvocable<void() &&> task,

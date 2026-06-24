@@ -25,8 +25,8 @@
 #include "config.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleZoomPrimitivesInlines.h"
 
@@ -47,12 +47,12 @@ double canonicalizeLength(double value, CSS::LengthUnit unit, const CSSToLengthC
 
 // MARK: ToCSS utilities
 
-float adjustForZoom(float value, const RenderStyle& style)
+float adjustForZoom(float value, const Style::ComputedStyle& style)
 {
     return adjustFloatForAbsoluteZoom(value, style);
 }
 
-bool evaluationTimeZoomEnabled(const RenderStyle& style)
+bool evaluationTimeZoomEnabled(const Style::ComputedStyle& style)
 {
     return style.evaluationTimeZoomEnabled();
 }

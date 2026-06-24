@@ -43,6 +43,7 @@
 #include "SelectorPseudoTypeMap.h"
 #include "UserAgentParts.h"
 #include <memory>
+#include <wtf/MathExtras.h>
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/StringBuilder.h>
@@ -1177,7 +1178,7 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
 {
     const CSSParserToken& token = range.consume();
     if (token.type() == NumberToken && token.numericValueType() == IntegerValueType) {
-        result = std::make_pair(0, static_cast<int>(token.numericValue()));
+        result = std::make_pair(0, clampTo<int>(token.numericValue()));
         return true;
     }
     if (token.type() == IdentToken) {
@@ -1199,7 +1200,7 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
         result.first = 1;
         nString = range.consume().value();
     } else if (token.type() == DimensionToken && token.numericValueType() == IntegerValueType) {
-        result.first = token.numericValue();
+        result.first = clampTo<int>(token.numericValue());
         nString = token.unitString();
     } else if (token.type() == IdentToken) {
         if (token.value()[0] == '-') {
@@ -1245,7 +1246,7 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
         return false;
     if ((b.numericSign() == NoSign) == (sign == NoSign))
         return false;
-    result.second = b.numericValue();
+    result.second = clampTo<int>(b.numericValue());
     if (sign == MinusSign)
         result.second = -result.second;
     return true;
@@ -1550,8 +1551,12 @@ static std::optional<HasCompoundContext> collectHasCompoundContext(const CSSSele
 {
     HasCompoundContext context;
     for (auto* selector = hasPseudoClass.leftmostInCompound(); selector; selector = selector->followingInCompound()) {
-        if (selector != &hasPseudoClass)
-            context.compoundPeers.append(selector);
+        if (selector == &hasPseudoClass)
+            continue;
+        // Skip pseudo-elements (e.g. `.foo:has(...)::before`); the scope is the has-bearer element.
+        if (selector->match() == CSSSelector::Match::PseudoElement)
+            continue;
+        context.compoundPeers.append(selector);
     }
     if (context.compoundPeers.isEmpty())
         return { };

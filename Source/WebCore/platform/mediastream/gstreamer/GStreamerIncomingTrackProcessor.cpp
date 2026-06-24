@@ -414,7 +414,7 @@ void GStreamerIncomingTrackProcessor::trackReady()
 
     m_isReady = true;
     GST_DEBUG_OBJECT(m_bin.get(), "MediaStream %s track %s on pad %" GST_PTR_FORMAT " is ready", m_data.mediaStreamId.utf8().data(), m_data.trackId.utf8().data(), m_pad.get());
-    callOnMainThread([endPoint = Ref { *endPoint }, this] {
+    callOnMainThread([endPoint = protect(*endPoint), this] {
         if (endPoint->isStopped())
             return;
         endPoint->connectIncomingTrack(m_data);
@@ -428,7 +428,7 @@ void GStreamerIncomingTrackProcessor::trackHasReceivedFirstPacket()
         return;
 
     GST_DEBUG_OBJECT(m_bin.get(), "MediaStream %s track %s on pad %" GST_PTR_FORMAT " has received its first packet", m_data.mediaStreamId.utf8().data(), m_data.trackId.utf8().data(), m_pad.get());
-    callOnMainThread([endPoint = Ref { *endPoint }, this] {
+    callOnMainThread([endPoint = protect(*endPoint), this] {
         if (endPoint->isStopped())
             return;
         endPoint->notifyFirstPacketReceived(m_data);

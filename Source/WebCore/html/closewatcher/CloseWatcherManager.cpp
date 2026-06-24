@@ -56,9 +56,11 @@ void CloseWatcherManager::remove(CloseWatcher& watcher)
         group.removeFirstMatching([&watcher] (const Ref<CloseWatcher>& current) {
             return current.ptr() == &watcher;
         });
-        if (group.isEmpty())
-            m_groups.removeFirst(group);
     }
+
+    m_groups.removeAllMatching([] (const Vector<Ref<CloseWatcher>>& group) {
+        return group.isEmpty();
+    });
 }
 
 void CloseWatcherManager::notifyAboutUserActivation()

@@ -9,4 +9,5 @@ PASS customElementRegistry on a builtin element created by calling createElement
 PASS customElementRegistry on an upgarde candidate created by calling createElement on CustomElementRegistry should return the registry
 PASS customElementRegistry on an unknown element created by calling createElement on CustomElementRegistry should return the registry
 PASS customElementRegistry on a defined custom element created by calling createElement on CustomElementRegistry should return the registry
+PASS customElementRegistry inside a custom element constructor should return the correct registry
 

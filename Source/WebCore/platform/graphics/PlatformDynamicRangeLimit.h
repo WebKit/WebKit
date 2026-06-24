@@ -68,7 +68,7 @@ private:
     PlatformDynamicRangeLimit(float standardPercent, float constrainedPercent, float noLimitPercent)
         : m_value(normalizedAverage(standardPercent, constrainedPercent, noLimitPercent)) { }
 
-    static ValueType normalizedAverage(float standardPercent, float constrainedPercent, float noLimitPercent);
+    WEBCORE_EXPORT static ValueType normalizedAverage(float standardPercent, float constrainedPercent, float noLimitPercent);
 
     static constexpr ValueType standardValue = 0;
     static constexpr ValueType constrainedValue = 0.5;

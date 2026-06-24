@@ -1,14 +1,11 @@
 #![no_std]
-
 // unnecessary_transmutes, needed to work around a Rust bug, is not available in
 // older Rusts. Stable lacks any way to condition code on Rust version, so the
 // workaround for a Rust bug below needs this additional Rust workaround.
 #![allow(unknown_lints)]
-
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
-
 // Work around https://github.com/rust-lang/rust-bindgen/issues/2807
 #![allow(unnecessary_transmutes)]
 
@@ -56,15 +53,82 @@ pub const XN_FLAG_DUMP_UNKNOWN_FIELDS: c_ulong = bindgen::XN_FLAG_DUMP_UNKNOWN_F
 pub const XN_FLAG_RFC2253: c_ulong = bindgen::XN_FLAG_RFC2253 as c_ulong;
 pub const XN_FLAG_ONELINE: c_ulong = bindgen::XN_FLAG_ONELINE as c_ulong;
 
-// TODO(crbug.com/boringssl/596): Remove these wrappers.
-#[cfg(unsupported_inline_wrappers)]
-pub use { ERR_GET_LIB_RUST as ERR_GET_LIB,
-          ERR_GET_REASON_RUST as ERR_GET_REASON,
-          ERR_GET_FUNC_RUST as ERR_GET_FUNC,
-          CBS_init_RUST as CBS_init,
-          CBS_len_RUST as CBS_len };
-
 pub fn init() {
     // This function does nothing.
     // TODO(davidben): Remove rust-openssl's dependency on this and remove this.
+}
+
+bssl_macros::bssl_enum! {
+    /// Library code of the BoringSSL errors.
+    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+    pub enum LibCode: i32 {
+        /// No module
+        None = ERR_LIB_NONE as i32,
+        /// Module `SYS`
+        Sys = ERR_LIB_SYS as i32,
+        /// Module `BN`
+        Bn = ERR_LIB_BN as i32,
+        /// Module `RSA`
+        Rsa = ERR_LIB_RSA as i32,
+        /// Module `DH`
+        Dh = ERR_LIB_DH as i32,
+        /// Module `EVP`
+        Evp = ERR_LIB_EVP as i32,
+        /// Module `BUF`
+        Buf = ERR_LIB_BUF as i32,
+        /// Module `OBJ`
+        Obj = ERR_LIB_OBJ as i32,
+        /// Module `PEM`
+        Pem = ERR_LIB_PEM as i32,
+        /// Module `DSA`
+        Dsa = ERR_LIB_DSA as i32,
+        /// Module `X509`
+        X509 = ERR_LIB_X509 as i32,
+        /// Module `ASN1`
+        Asn1 = ERR_LIB_ASN1 as i32,
+        /// Module `CONF`
+        Conf = ERR_LIB_CONF as i32,
+        /// Module `CRYPTO`
+        Crypto = ERR_LIB_CRYPTO as i32,
+        /// Module `EC`
+        Ec = ERR_LIB_EC as i32,
+        /// Module `SSL`
+        Ssl = ERR_LIB_SSL as i32,
+        /// Module `BIO`
+        Bio = ERR_LIB_BIO as i32,
+        /// Module `PKCS7`
+        Pkcs7 = ERR_LIB_PKCS7 as i32,
+        /// Module `PKCS8`
+        Pkcs8 = ERR_LIB_PKCS8 as i32,
+        /// Module `X509V3`
+        X509v3 = ERR_LIB_X509V3 as i32,
+        /// Module `RAND`
+        Rand = ERR_LIB_RAND as i32,
+        /// Module `ENGINE`
+        Engine = ERR_LIB_ENGINE as i32,
+        /// Module `OCSP`
+        Ocsp = ERR_LIB_OCSP as i32,
+        /// Module `UI`
+        Ui = ERR_LIB_UI as i32,
+        /// Module `COMP`
+        Comp = ERR_LIB_COMP as i32,
+        /// Module `ECDSA`
+        Ecdsa = ERR_LIB_ECDSA as i32,
+        /// Module `ECDH`
+        Ecdh = ERR_LIB_ECDH as i32,
+        /// Module `HMAC`
+        Hmac = ERR_LIB_HMAC as i32,
+        /// Module `DIGEST`
+        Digest = ERR_LIB_DIGEST as i32,
+        /// Module `CIPHER`
+        Cipher = ERR_LIB_CIPHER as i32,
+        /// Module `HKDF`
+        Hkdf = ERR_LIB_HKDF as i32,
+        /// Module `TRUST_TOKEN`
+        TrustToken = ERR_LIB_TRUST_TOKEN as i32,
+        /// Module `CMS`
+        Cms = ERR_LIB_CMS as i32,
+        /// User sourced
+        User = ERR_LIB_USER as i32,
+    }
 }

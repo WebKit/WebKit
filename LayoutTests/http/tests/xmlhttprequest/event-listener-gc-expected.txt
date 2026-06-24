@@ -1,3 +1,6 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
 This test checks whether event handlers for outstanding XMLHttpRequests survive garbage collection.
 
 See https://bugs.webkit.org/show_bug.cgi?id=9113 REGRESSION (14581): XMLHttpRequest never calls onreadystatechange with a readystate == 4

@@ -23,13 +23,15 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static void *v2i_EXTENDED_KEY_USAGE(const X509V3_EXT_METHOD *method,
                                     const X509V3_CTX *ctx,
                                     const STACK_OF(CONF_VALUE) *nval);
 static STACK_OF(CONF_VALUE) *i2v_EXTENDED_KEY_USAGE(
     const X509V3_EXT_METHOD *method, void *eku, STACK_OF(CONF_VALUE) *extlist);
 
-const X509V3_EXT_METHOD v3_ext_ku = {
+const X509V3_EXT_METHOD bssl::v3_ext_ku = {
     NID_ext_key_usage,
     0,
     ASN1_ITEM_ref(EXTENDED_KEY_USAGE),

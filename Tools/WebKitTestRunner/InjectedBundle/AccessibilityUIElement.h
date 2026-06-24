@@ -348,6 +348,7 @@ public:
     virtual int textMarkerRangeLength(AccessibilityTextMarkerRange*);
     virtual bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
     virtual int indexForTextMarker(AccessibilityTextMarker*);
+    virtual int relativeIndexForTextMarker(AccessibilityTextMarker*);
     virtual bool isTextMarkerValid(AccessibilityTextMarker*);
     virtual bool isTextMarkerRangeValid(AccessibilityTextMarkerRange*);
     virtual bool isTextMarkerNull(AccessibilityTextMarker*);

@@ -16,10 +16,10 @@
 #include <memory>
 #include <optional>
 #include <queue>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/media_types.h"
 #include "api/test/simulated_network.h"
@@ -142,7 +142,7 @@ void FakeNetworkPipe::RemoveActiveTransport(Transport* transport) {
   }
 }
 
-bool FakeNetworkPipe::SendRtp(ArrayView<const uint8_t> packet,
+bool FakeNetworkPipe::SendRtp(std::span<const uint8_t> packet,
                               const PacketOptions& options,
                               Transport* transport) {
   RTC_DCHECK(transport);
@@ -150,7 +150,7 @@ bool FakeNetworkPipe::SendRtp(ArrayView<const uint8_t> packet,
   return true;
 }
 
-bool FakeNetworkPipe::SendRtcp(ArrayView<const uint8_t> packet,
+bool FakeNetworkPipe::SendRtcp(std::span<const uint8_t> packet,
                                Transport* transport) {
   RTC_DCHECK(transport);
   EnqueuePacket(CopyOnWriteBuffer(packet), std::nullopt, true, transport);
@@ -322,10 +322,10 @@ void FakeNetworkPipe::DeliverNetworkPacket(NetworkPacket* packet) {
       return;
     }
     if (packet->is_rtcp()) {
-      transport->SendRtcp(MakeArrayView(packet->data(), packet->data_length()),
+      transport->SendRtcp(std::span(packet->data(), packet->data_length()),
                           packet->packet_options());
     } else {
-      transport->SendRtp(MakeArrayView(packet->data(), packet->data_length()),
+      transport->SendRtp(std::span(packet->data(), packet->data_length()),
                          packet->packet_options());
     }
   } else if (receiver_) {

@@ -615,6 +615,7 @@ void MediaPlayerPrivateAVFoundation::setViewportVisibility(ViewportVisibility vi
     if (m_viewportVisibility == visibility)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, visibility);
     m_viewportVisibility = visibility;
     platformViewportVisibilityChanged(visibility);
 }

@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestNSBundleExtras.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>

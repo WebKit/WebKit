@@ -253,7 +253,6 @@ private:
     HashCountedSet<WebCore::MediaPlayerClientIdentifier> m_clientCounts;
 #if HAVE(PIP_SKIP_PREROLL)
     WeakPtr<WebCore::MediaSession> m_mediaSession;
-    bool m_canSkipAd { false };
 #endif
 
 #if !RELEASE_LOG_DISABLED

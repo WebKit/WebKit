@@ -11,10 +11,10 @@
 
 #include <algorithm>
 #include <array>
+#include <span>
 #include <tuple>
 #include <vector>
 
-#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -56,7 +56,7 @@ TEST_P(SaturationDetectorParametrizedTest, VerifyLowValueActivityDetection) {
     constexpr int kNumFramesToAnalyze = 10;
     for (int k = 0; k < kNumFramesToAnalyze; ++k) {
       estimator.Update(channel, channel, dc_levels);
-      ArrayView<const int, 2> num_frames_since_activity =
+      std::span<const int, 2> num_frames_since_activity =
           estimator.GetNumFramesSinceActivity();
       EXPECT_EQ(num_frames_since_activity[0], k + 1);
       EXPECT_EQ(num_frames_since_activity[1], k + 1);
@@ -81,7 +81,7 @@ TEST_P(SaturationDetectorParametrizedTest,
     constexpr int kNumFramesToAnalyze = 10;
     for (int k = 0; k < kNumFramesToAnalyze; ++k) {
       estimator.Update(channel, channel, dc_levels);
-      ArrayView<const int, 2> num_frames_since_activity =
+      std::span<const int, 2> num_frames_since_activity =
           estimator.GetNumFramesSinceActivity();
       EXPECT_EQ(num_frames_since_activity[0], 0);
       EXPECT_EQ(num_frames_since_activity[1], 0);
@@ -108,7 +108,7 @@ TEST_P(SaturationDetectorParametrizedTest,
       estimator.Update(channel, channel, dc_levels);
     }
 
-    ArrayView<const int, 2> num_frames_since_activity =
+    std::span<const int, 2> num_frames_since_activity =
         estimator.GetNumFramesSinceActivity();
     EXPECT_EQ(num_frames_since_activity[0], 1);
     EXPECT_EQ(num_frames_since_activity[1], 1);
@@ -153,7 +153,7 @@ TEST_P(SaturationDetectorParametrizedTest,
     constexpr int kNumFramesToAnalyze = 10;
     for (int k = 0; k < kNumFramesToAnalyze; ++k) {
       estimator.Update(channel, channel, dc_levels);
-      ArrayView<const float, 2> saturation_factors =
+      std::span<const float, 2> saturation_factors =
           estimator.GetSaturationFactors();
       EXPECT_EQ(saturation_factors[0], 0.0f);
       EXPECT_EQ(saturation_factors[1], 0.0f);
@@ -179,7 +179,7 @@ TEST_P(SaturationDetectorParametrizedTest,
     std::vector<float> previous_factors(2, 0.0f);
     for (int k = 0; k < kNumFramesToAnalyze; ++k) {
       estimator.Update(channel, channel, dc_levels);
-      ArrayView<const float, 2> saturation_factors =
+      std::span<const float, 2> saturation_factors =
           estimator.GetSaturationFactors();
       EXPECT_GT(saturation_factors[0], 0.0f);
       EXPECT_GT(saturation_factors[1], 0.0f);
@@ -209,7 +209,7 @@ TEST_P(SaturationDetectorParametrizedTest,
     for (int k = 0; k < kNumFramesToAnalyze; ++k) {
       estimator.Update(channel, channel, dc_levels);
     }
-    ArrayView<const float, 2> saturation_factors =
+    std::span<const float, 2> saturation_factors =
         estimator.GetSaturationFactors();
     EXPECT_GT(saturation_factors[0], 0.99f);
     EXPECT_GT(saturation_factors[1], 0.99f);
@@ -233,7 +233,7 @@ TEST_P(SaturationDetectorParametrizedTest, VerifyDecayingSaturationFactor) {
           num_samples_per_channel, dc_level + sign * kSampleValueSaturation);
       estimator.Update(channel, channel, dc_levels);
     }
-    ArrayView<const float, 2> saturation_factors =
+    std::span<const float, 2> saturation_factors =
         estimator.GetSaturationFactors();
     EXPECT_GT(saturation_factors[0], 0.0f);
     EXPECT_GT(saturation_factors[1], 0.0f);

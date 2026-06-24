@@ -15,18 +15,20 @@
 #ifndef OPENSSL_HEADER_TOOL_INTERNAL_H
 #define OPENSSL_HEADER_TOOL_INTERNAL_H
 
-#include <openssl/base.h>
-#include <openssl/span.h>
-
 #include <map>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
+#include <openssl/base.h>
+#include <openssl/span.h>
+
+
+BSSL_NAMESPACE_BEGIN
+
 struct FileCloser {
-  void operator()(FILE *file) {
-    fclose(file);
-  }
+  void operator()(FILE *file) { fclose(file); }
 };
 
 using ScopedFILE = std::unique_ptr<FILE, FileCloser>;
@@ -34,7 +36,7 @@ using ScopedFILE = std::unique_ptr<FILE, FileCloser>;
 // The following functions abstract between POSIX and Windows differences in
 // file descriptor I/O functions.
 
-// CloseFD behaves like |close|.
+// CloseFD behaves like `close`.
 void CloseFD(int fd);
 
 class ScopedFD {
@@ -74,22 +76,22 @@ class ScopedFD {
   int fd_ = -1;
 };
 
-// OpenFD behaves like |open| but handles |EINTR| and works on Windows.
+// OpenFD behaves like `open` but handles `EINTR` and works on Windows.
 ScopedFD OpenFD(const char *path, int flags);
 
-// ReadFromFD reads up to |num| bytes from |fd| and writes the result to |out|.
-// On success, it returns true and sets |*out_bytes_read| to the number of bytes
-// read. Otherwise, it returns false and leaves an error in |errno|. On POSIX,
-// it handles |EINTR| internally.
+// ReadFromFD reads up to `num` bytes from `fd` and writes the result to `out`.
+// On success, it returns true and sets `*out_bytes_read` to the number of bytes
+// read. Otherwise, it returns false and leaves an error in `errno`. On POSIX,
+// it handles `EINTR` internally.
 bool ReadFromFD(int fd, size_t *out_bytes_read, void *out, size_t num);
 
-// WriteToFD writes up to |num| bytes from |in| to |fd|. On success, it returns
-// true and sets |*out_bytes_written| to the number of bytes written. Otherwise,
-// it returns false and leaves an error in |errno|. On POSIX, it handles |EINTR|
+// WriteToFD writes up to `num` bytes from `in` to `fd`. On success, it returns
+// true and sets `*out_bytes_written` to the number of bytes written. Otherwise,
+// it returns false and leaves an error in `errno`. On POSIX, it handles `EINTR`
 // internally.
 bool WriteToFD(int fd, size_t *out_bytes_written, const void *in, size_t num);
 
-// FDToFILE behaves like |fdopen|.
+// FDToFILE behaves like `fdopen`.
 ScopedFILE FDToFILE(ScopedFD fd, const char *mode);
 
 enum ArgumentType {
@@ -104,8 +106,9 @@ struct argument {
   const char *description;
 };
 
-bool ParseKeyValueArguments(std::map<std::string, std::string> *out_args, const
-    std::vector<std::string> &args, const struct argument *templates);
+bool ParseKeyValueArguments(std::map<std::string, std::string> *out_args,
+                            const std::vector<std::string> &args,
+                            const struct argument *templates);
 
 void PrintUsage(const struct argument *templates);
 
@@ -113,8 +116,17 @@ bool GetUnsigned(unsigned *out, const std::string &arg_name,
                  unsigned default_value,
                  const std::map<std::string, std::string> &args);
 
+// SplitString returns `s` split on copies of `sep`. If `sep` does not appear in
+// `s`, it returns a single-element array containing `s`, even if `s` is empty.
+std::vector<std::string_view> SplitString(std::string_view s,
+                                          std::string_view sep);
+
+// TrimSpace returns `s` with leading and trailing spaces removed.
+std::string_view TrimSpace(std::string_view s);
+
 bool ReadAll(std::vector<uint8_t> *out, FILE *in);
 bool WriteToFile(const std::string &path, bssl::Span<const uint8_t> in);
+UniquePtr<EVP_PKEY> LoadPrivateKeyFile(const std::string &file);
 
 bool Ciphers(const std::vector<std::string> &args);
 bool Client(const std::vector<std::string> &args);
@@ -132,7 +144,6 @@ bool SHA512Sum(const std::vector<std::string> &args);
 bool SHA512256Sum(const std::vector<std::string> &args);
 bool Server(const std::vector<std::string> &args);
 bool Sign(const std::vector<std::string> &args);
-bool Speed(const std::vector<std::string> &args);
 
 // These values are DER encoded, RSA private keys.
 extern const uint8_t kDERRSAPrivate2048[];
@@ -142,5 +153,6 @@ extern const size_t kDERRSAPrivate3072Len;
 extern const uint8_t kDERRSAPrivate4096[];
 extern const size_t kDERRSAPrivate4096Len;
 
+BSSL_NAMESPACE_END
 
 #endif  // !OPENSSL_HEADER_TOOL_INTERNAL_H

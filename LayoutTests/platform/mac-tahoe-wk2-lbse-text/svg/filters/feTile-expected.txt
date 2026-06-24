@@ -2,10 +2,20 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGViewportContainer at (0,0) size 800x600
-layer at (10,10) size 372x100
-  RenderSVGTransformableContainer {g} at (10,10) size 372x100
+    RenderSVGViewportContainer at (0,0) size 800x600
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feTile} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feOffset} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feTile} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feOffset} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feTile} at (0,0) size 0x0
+      RenderSVGTransformableContainer {g} at (10,10) size 372x100
 layer at (10,10) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
 layer at (160,10) size 50x50

@@ -22,9 +22,10 @@
 #include <openssl/mem.h>
 #include <openssl/rsa.h>
 
-#include "../fipsmodule/rsa/internal.h"
 #include "../internal.h"
 
+
+using namespace bssl;
 
 static int print_hex(BIO *bp, const uint8_t *data, size_t len, int off) {
   for (size_t i = 0; i < len; i++) {
@@ -101,8 +102,8 @@ static int bn_print(BIO *bp, const char *name, const BIGNUM *num, int off) {
 static int do_rsa_print(BIO *out, const RSA *rsa, int off,
                         int include_private) {
   int mod_len = 0;
-  if (rsa->n != nullptr) {
-    mod_len = BN_num_bits(rsa->n);
+  if (RSA_get0_n(rsa) != nullptr) {
+    mod_len = RSA_bits(rsa);
   }
 
   if (!BIO_indent(out, off, 128)) {
@@ -110,7 +111,7 @@ static int do_rsa_print(BIO *out, const RSA *rsa, int off,
   }
 
   const char *s, *str;
-  if (include_private && rsa->d) {
+  if (include_private && RSA_get0_d(rsa) != nullptr) {
     if (BIO_printf(out, "Private-Key: (%d bit)\n", mod_len) <= 0) {
       return 0;
     }
@@ -123,17 +124,18 @@ static int do_rsa_print(BIO *out, const RSA *rsa, int off,
     str = "Modulus:";
     s = "Exponent:";
   }
-  if (!bn_print(out, str, rsa->n, off) || !bn_print(out, s, rsa->e, off)) {
+  if (!bn_print(out, str, RSA_get0_n(rsa), off) ||
+      !bn_print(out, s, RSA_get0_e(rsa), off)) {
     return 0;
   }
 
   if (include_private) {
-    if (!bn_print(out, "privateExponent:", rsa->d, off) ||
-        !bn_print(out, "prime1:", rsa->p, off) ||
-        !bn_print(out, "prime2:", rsa->q, off) ||
-        !bn_print(out, "exponent1:", rsa->dmp1, off) ||
-        !bn_print(out, "exponent2:", rsa->dmq1, off) ||
-        !bn_print(out, "coefficient:", rsa->iqmp, off)) {
+    if (!bn_print(out, "privateExponent:", RSA_get0_d(rsa), off) ||
+        !bn_print(out, "prime1:", RSA_get0_p(rsa), off) ||
+        !bn_print(out, "prime2:", RSA_get0_q(rsa), off) ||
+        !bn_print(out, "exponent1:", RSA_get0_dmp1(rsa), off) ||
+        !bn_print(out, "exponent2:", RSA_get0_dmq1(rsa), off) ||
+        !bn_print(out, "coefficient:", RSA_get0_iqmp(rsa), off)) {
       return 0;
     }
   }

@@ -94,6 +94,7 @@ if ((is_linux || is_chromeos) && rtc_use_pipewire) {
     sources = [
       "pipewire_utils.cc",
       "pipewire_utils.h",
+      "portal_guard.h",
       "portal_request_response.h",
       "scoped_glib.cc",
       "scoped_glib.h",
@@ -109,10 +110,13 @@ if ((is_linux || is_chromeos) && rtc_use_pipewire) {
     ]
 
     deps = [
+      "../../api:refcountedbase",
+      "../../api:scoped_refptr",
       "../../rtc_base:checks",
       "../../rtc_base:logging",
       "../../rtc_base:sanitizer",
       "../../rtc_base:stringutils",
+      "../../rtc_base/synchronization:mutex",
       "../../rtc_base/system:rtc_export",
       "//third_party/abseil-cpp/absl/strings",
     ]

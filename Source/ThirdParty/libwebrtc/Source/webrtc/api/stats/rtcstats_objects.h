@@ -135,6 +135,7 @@ class RTC_EXPORT RTCIceCandidateStats : public RTCStats {
   // standardizing or removing them.
   std::optional<bool> vpn;
   std::optional<std::string> network_adapter_type;
+  std::optional<std::string> network_slice;
 
  protected:
   RTCIceCandidateStats(std::string id, Timestamp timestamp, bool is_remote);

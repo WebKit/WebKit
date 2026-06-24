@@ -156,7 +156,7 @@ DOMWindow& JSWindowProxy::wrapped() const
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, WindowProxy& windowProxy)
 {
-    auto* jsWindowProxy = windowProxy.jsWindowProxy(currentWorld(*lexicalGlobalObject));
+    auto* jsWindowProxy = windowProxy.jsWindowProxy(protect(currentWorld(*lexicalGlobalObject)));
     return jsWindowProxy ? JSValue(jsWindowProxy) : jsNull();
 }
 

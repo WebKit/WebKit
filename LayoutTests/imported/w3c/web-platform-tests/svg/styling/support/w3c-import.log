@@ -17,3 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/support/a-green.css
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/support/circle-padding-right.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/support/circle.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/support/svg-filter-render-cross-origin-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/support/svg-filter-render-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/support/svg-filter-render-same-origin-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/support/svg-filter-render-util.js

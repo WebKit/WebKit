@@ -16,19 +16,16 @@
 
 #if !defined(OPENSSL_THREADS)
 
-void CRYPTO_MUTEX_init(CRYPTO_MUTEX *lock) {}
 
-void CRYPTO_MUTEX_lock_read(CRYPTO_MUTEX *lock) {}
+using namespace bssl;
 
-void CRYPTO_MUTEX_lock_write(CRYPTO_MUTEX *lock) {}
+void StaticMutex::LockRead() {}
+void StaticMutex::UnlockRead() {}
+void StaticMutex::LockWrite() {}
+void StaticMutex::UnlockWrite() {}
+Mutex::~Mutex() {}
 
-void CRYPTO_MUTEX_unlock_read(CRYPTO_MUTEX *lock) {}
-
-void CRYPTO_MUTEX_unlock_write(CRYPTO_MUTEX *lock) {}
-
-void CRYPTO_MUTEX_cleanup(CRYPTO_MUTEX *lock) {}
-
-void CRYPTO_once(CRYPTO_once_t *once, void (*init)(void)) {
+void bssl::CRYPTO_once(CRYPTO_once_t *once, void (*init)()) {
   if (*once) {
     return;
   }
@@ -38,12 +35,12 @@ void CRYPTO_once(CRYPTO_once_t *once, void (*init)(void)) {
 
 static void *g_thread_locals[NUM_OPENSSL_THREAD_LOCALS];
 
-void *CRYPTO_get_thread_local(thread_local_data_t index) {
+void *bssl::CRYPTO_get_thread_local(thread_local_data_t index) {
   return g_thread_locals[index];
 }
 
-int CRYPTO_set_thread_local(thread_local_data_t index, void *value,
-                            thread_local_destructor_t destructor) {
+int bssl::CRYPTO_set_thread_local(thread_local_data_t index, void *value,
+                                  thread_local_destructor_t destructor) {
   g_thread_locals[index] = value;
   return 1;
 }

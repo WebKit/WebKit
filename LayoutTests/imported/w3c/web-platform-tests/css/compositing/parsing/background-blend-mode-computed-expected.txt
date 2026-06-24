@@ -15,7 +15,7 @@ PASS Property background-blend-mode value 'hue'
 PASS Property background-blend-mode value 'saturation'
 PASS Property background-blend-mode value 'color'
 PASS Property background-blend-mode value 'luminosity'
-FAIL Property background-blend-mode value 'normal, luminosity' assert_equals: expected "normal, luminosity" but got "normal"
-FAIL Property background-blend-mode value 'screen, overlay' assert_equals: expected "screen, overlay" but got "screen"
-FAIL Property background-blend-mode value 'color, saturation' assert_equals: expected "color, saturation" but got "color"
+PASS Property background-blend-mode value 'normal, luminosity'
+PASS Property background-blend-mode value 'screen, overlay'
+PASS Property background-blend-mode value 'color, saturation'
 

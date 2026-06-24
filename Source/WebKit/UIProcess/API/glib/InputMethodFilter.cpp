@@ -162,6 +162,8 @@ static WebKitInputPurpose toWebKitPurpose(InputMethodState::Purpose purpose)
         return WEBKIT_INPUT_PURPOSE_EMAIL;
     case InputMethodState::Purpose::Password:
         return WEBKIT_INPUT_PURPOSE_PASSWORD;
+    case InputMethodState::Purpose::Search:
+        return WEBKIT_INPUT_PURPOSE_SEARCH;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

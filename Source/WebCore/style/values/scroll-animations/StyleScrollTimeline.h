@@ -65,7 +65,6 @@ struct ScrollTimeline {
 
     // CoordinatedValueList interface.
 
-    static constexpr auto computedValueUsesUsedValues = false;
     static constexpr auto baseProperty = PropertyNameConstant<CSSPropertyScrollTimelineName> { };
     static constexpr auto properties = std::tuple { FOR_EACH_SCROLL_TIMELINE_PROPERTY(DECLARE_COORDINATED_VALUE_LIST_PROPERTY) };
     static ScrollTimeline clone(const ScrollTimeline& other) { return ScrollTimeline { Data { other.m_data } }; }

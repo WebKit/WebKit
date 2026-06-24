@@ -15,10 +15,10 @@
 #include <stdint.h>
 
 #include <memory>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_certificate.h"
@@ -53,7 +53,7 @@ struct RTC_EXPORT SSLFingerprint {
       const RTCCertificate& cert);
 
   SSLFingerprint(absl::string_view algorithm,
-                 ArrayView<const uint8_t> digest_view);
+                 std::span<const uint8_t> digest_view);
   // TODO(steveanton): Remove once downstream projects have moved off of this.
   SSLFingerprint(absl::string_view algorithm,
                  const uint8_t* digest_in,

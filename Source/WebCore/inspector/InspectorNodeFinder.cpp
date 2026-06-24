@@ -159,7 +159,7 @@ bool InspectorNodeFinder::matchesElement(const Element& element)
 
 void InspectorNodeFinder::searchUsingXPath(Node& parentNode)
 {
-    auto evaluateResult = parentNode.document().evaluate(m_query, parentNode, nullptr, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, nullptr);
+    auto evaluateResult = protect(parentNode.document())->evaluate(m_query, parentNode, nullptr, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, nullptr);
     if (evaluateResult.hasException())
         return;
     auto result = evaluateResult.releaseReturnValue();
@@ -175,7 +175,7 @@ void InspectorNodeFinder::searchUsingXPath(Node& parentNode)
             return;
         RefPtr node = snapshotItemResult.releaseReturnValue();
 
-        if (auto* attr = dynamicDowncast<Attr>(*node))
+        if (RefPtr attr = dynamicDowncast<Attr>(*node))
             node = attr->ownerElement();
 
         // XPath can get out of the context node that we pass as the starting point to evaluate, so we need to filter for just the nodes we care about.

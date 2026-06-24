@@ -50,7 +50,7 @@ auto CSSValueConversion<Clip>::operator()(BuilderState& state, const CSSValue& v
     return toStyle(clipValue->clip(), state);
 }
 
-Ref<CSSValue> CSSValueCreation<Clip>::operator()(CSSValuePool&, const RenderStyle& style, const Clip& clip)
+Ref<CSSValue> CSSValueCreation<Clip>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Clip& clip)
 {
     return CSSClipValue::create(toCSS(clip, style));
 }

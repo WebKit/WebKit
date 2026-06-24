@@ -85,7 +85,7 @@ constexpr MTLPixelFormat MTLPixelFormatYCBCR12_444_2P_PACKED_PQ = static_cast<MT
 - (kern_return_t)setOwnerWithIdentity:(mach_port_t)task_id_token;
 @end
 
-#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
+#if !PLATFORM(WATCHOS)
 @interface MTLSharedTextureHandle(Private)
 - (instancetype)initWithMachPort:(mach_port_t)machPort;
 @end

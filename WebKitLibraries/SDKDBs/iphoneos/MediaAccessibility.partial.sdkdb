@@ -141,7 +141,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "MACaptionAppearanceBehavior"},
     {"access": "public", "name": "MACaptionAppearanceDisplayType"},
@@ -153,20 +153,20 @@
   },
   {
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$sSo14MAMusicHapticsV18MediaAccessibilityE34enabledStatusDidChangeNotificationSo18NSNotificationNameavgZ"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo14MAMusicHapticsV18MediaAccessibilityE34enabledStatusDidChangeNotificationSo18NSNotificationNameavpZMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE14processSurface_03outG09timestamp7optionsAbCE6ResultVSo12IOSurfaceRefa_AKzSdSDySo0abC9OptionKeyaypGSgtF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV14intensityLevelSfvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV14intensityLevelSfvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV15mitigationLevelSfvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV15mitigationLevelSfvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV16surfaceProcessedSbvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV16surfaceProcessedSbvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultVMa"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultVMn"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultVN"}
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo14MAMusicHapticsV18MediaAccessibilityE34enabledStatusDidChangeNotificationSo18NSNotificationNameavgZ"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo14MAMusicHapticsV18MediaAccessibilityE34enabledStatusDidChangeNotificationSo18NSNotificationNameavpZMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE14processSurface_03outG09timestamp7optionsAbCE6ResultVSo12IOSurfaceRefa_AKzSdSDySo0abC9OptionKeyaypGSgtF"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV14intensityLevelSfvg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV14intensityLevelSfvpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV15mitigationLevelSfvg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV15mitigationLevelSfvpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV16surfaceProcessedSbvg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultV16surfaceProcessedSbvpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultVMa"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultVMn"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25MAFlashingLightsProcessorC18MediaAccessibilityE6ResultVN"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

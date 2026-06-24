@@ -176,19 +176,11 @@ static inline void pas_bitfit_directory_set_unprocessed_max_free(pas_bitfit_dire
     pas_bitfit_directory_set_max_free_not_empty_impl(directory, index, PAS_BITFIT_MAX_FREE_UNPROCESSED);
 }
 
-PAS_API void pas_bitfit_directory_update_biasing_eligibility(pas_bitfit_directory* directory,
-                                                             size_t index);
-
 PAS_API void pas_bitfit_directory_max_free_did_become_unprocessed(pas_bitfit_directory* directory,
                                                                   size_t index,
                                                                   const char* reason);
 
 PAS_API void pas_bitfit_directory_max_free_did_become_unprocessed_unchecked(
-    pas_bitfit_directory* directory,
-    size_t index,
-    const char* reason);
-
-PAS_API void pas_bitfit_directory_max_free_did_become_empty_without_biasing_update(
     pas_bitfit_directory* directory,
     size_t index,
     const char* reason);

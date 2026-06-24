@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/common.js"></script>
 </head>
 <body>
@@ -12,6 +12,7 @@ This tests the behavior of a cancel button in search input forms.
 </p>
 </div>
 <script>
+window.jsTestIsAsync = true;
 async function click(position) {
     if (!eventSender)
         return;
@@ -48,7 +49,6 @@ onload = async () => {
     if (!window.testRunner)
         return;
 
-    testRunner.waitUntilDone();
 
     debug("Test on the input form with disabled=false and readonly=false");
 
@@ -127,9 +127,8 @@ onload = async () => {
 
     debug("");
 
-    testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

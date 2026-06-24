@@ -10,4 +10,16 @@ PASS Setting customelementregistry content attribute after a custom element had 
 PASS Cloning a custom element with null regsitry should create an element with null registry
 FAIL Descendants of an element with customelementregistry should use null registry assert_equals: expected null but got object "[object CustomElementRegistry]"
 PASS Setting customelementregistry content attribute during constructor should not make it use null registry
+FAIL Body with customelementregistry attribute during initial parse should have null registry and propagate to children assert_equals: div child of body with customelementregistry should have null registry expected null but got object "[object CustomElementRegistry]"
+FAIL Custom element candidate child of body with customelementregistry should have null registry during initial parse assert_equals: custom element candidate child of body with customelementregistry should have null registry expected null but got object "[object CustomElementRegistry]"
+FAIL Descendants of body with customelementregistry should all have null registry during initial parse assert_equals: div child should have null registry expected null but got object "[object CustomElementRegistry]"
+FAIL Body with customelementregistry in a complete document structure should have null registry assert_equals: div child should have null registry expected null but got object "[object CustomElementRegistry]"
+PASS Initial parse: built-in element with customelementregistry has null registry
+PASS Initial parse: custom element candidate with customelementregistry has null registry
+PASS Initial parse: built-in element without customelementregistry uses global registry
+PASS Initial parse: custom element candidate without customelementregistry uses global registry
+FAIL Initial parse: child of element with customelementregistry inherits null registry assert_equals: Child of element with customelementregistry should have null registry expected null but got object "[object CustomElementRegistry]"
+FAIL Initial parse: custom element candidate child inherits null registry from parent assert_equals: Custom element candidate child of element with customelementregistry should have null registry expected null but got object "[object CustomElementRegistry]"
+FAIL Initial parse: deeply nested descendant inherits null registry assert_equals: Deeply nested custom element candidate should have null registry expected null but got object "[object CustomElementRegistry]"
+PASS Initial parse: global registry define only upgrades elements without customelementregistry
 

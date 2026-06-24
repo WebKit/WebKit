@@ -31,7 +31,6 @@ set(TestWTF_SOURCES
     Helpers/Utilities.cpp
 
     Tests/WTF/AtomString.cpp
-    Tests/WTF/AutomaticThread.cpp
     Tests/WTF/Base64.cpp
     Tests/WTF/BitSet.cpp
     Tests/WTF/BitVector.cpp
@@ -59,6 +58,7 @@ set(TestWTF_SOURCES
     Tests/WTF/EnumTraits.cpp
     Tests/WTF/Expected.cpp
     Tests/WTF/FileSystem.cpp
+    Tests/WTF/FormattedLogging.cpp
     Tests/WTF/FixedBitVector.cpp
     Tests/WTF/FixedVector.cpp
     Tests/WTF/Function.cpp
@@ -121,6 +121,7 @@ set(TestWTF_SOURCES
     Tests/WTF/SentinelLinkedList.cpp
     Tests/WTF/SetForScope.cpp
     Tests/WTF/Signals.cpp
+    Tests/WTF/SparseBitVector.cpp
     Tests/WTF/StackTraceTest.cpp
     Tests/WTF/StdLibExtrasTests.cpp
     Tests/WTF/StringBuilder.cpp
@@ -178,6 +179,7 @@ if (ENABLE_JAVASCRIPTCORE)
         Tests/JavaScriptCore/InspectorConsoleMessage.cpp
         Tests/JavaScriptCore/MarkedVector.cpp
         Tests/JavaScriptCore/PropertySlot.cpp
+        Tests/JavaScriptCore/RegularExpression.cpp
     )
 
     set(TestJavaScriptCore_LIBRARIES
@@ -222,6 +224,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/GridPosition.cpp
         Tests/WebCore/HTMLParserIdioms.cpp
         Tests/WebCore/HTTPParsers.cpp
+        Tests/WebCore/IDBKeyData.cpp
         Tests/WebCore/IDBSerializationTest.cpp
         Tests/WebCore/ImageBufferTests.cpp
         Tests/WebCore/IntPointTests.cpp
@@ -252,6 +255,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/TransformationMatrix.cpp
         Tests/WebCore/URLParserTextEncoding.cpp
         Tests/WebCore/WritingModeTests.cpp
+        Tests/WebCore/XRCompositionLayer.cpp
     )
 
     if (USE_SKIA)

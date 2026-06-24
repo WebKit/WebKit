@@ -12,10 +12,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <tuple>
 
 #include "absl/algorithm/container.h"
-#include "api/array_view.h"
 #include "api/units/data_rate.h"
 #include "api/video/video_layers_allocation.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
@@ -109,7 +109,7 @@ SpatialLayersBitmasks SpatialLayersBitmasksPerRtpStream(
 // for the description of the format.
 
 bool RtpVideoLayersAllocationExtension::Write(
-    ArrayView<uint8_t> data,
+    std::span<uint8_t> data,
     const VideoLayersAllocation& allocation) {
   RTC_DCHECK(AllocationIsValid(allocation));
   RTC_DCHECK_GE(data.size(), ValueSize(allocation));
@@ -178,7 +178,7 @@ bool RtpVideoLayersAllocationExtension::Write(
 }
 
 bool RtpVideoLayersAllocationExtension::Parse(
-    ArrayView<const uint8_t> data,
+    std::span<const uint8_t> data,
     VideoLayersAllocation* allocation) {
   if (data.empty() || allocation == nullptr) {
     return false;

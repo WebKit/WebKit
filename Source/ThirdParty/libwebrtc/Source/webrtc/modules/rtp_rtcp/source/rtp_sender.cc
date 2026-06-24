@@ -16,13 +16,14 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_packet_sender.h"
 #include "api/units/time_delta.h"
@@ -198,15 +199,15 @@ RTPSender::~RTPSender() {
   // to understand performance attributes and possibly remove locks.
 }
 
-ArrayView<const RtpExtensionSize> RTPSender::FecExtensionSizes() {
+std::span<const RtpExtensionSize> RTPSender::FecExtensionSizes() {
   return kFecOrPaddingExtensionSizes;
 }
 
-ArrayView<const RtpExtensionSize> RTPSender::VideoExtensionSizes() {
+std::span<const RtpExtensionSize> RTPSender::VideoExtensionSizes() {
   return kVideoExtensionSizes;
 }
 
-ArrayView<const RtpExtensionSize> RTPSender::AudioExtensionSizes() {
+std::span<const RtpExtensionSize> RTPSender::AudioExtensionSizes() {
   return kAudioExtensionSizes;
 }
 
@@ -215,7 +216,8 @@ void RTPSender::SetExtmapAllowMixed(bool extmap_allow_mixed) {
   rtp_header_extension_map_.SetExtmapAllowMixed(extmap_allow_mixed);
 }
 
-bool RTPSender::RegisterRtpHeaderExtension(absl::string_view uri, int id) {
+bool RTPSender::RegisterRtpHeaderExtension(absl::string_view uri,
+                                           RtpHeaderExtensionId id) {
   MutexLock lock(&send_mutex_);
   bool registered = rtp_header_extension_map_.RegisterByUri(id, uri);
   supports_bwe_extension_ = HasBweExtension(rtp_header_extension_map_);
@@ -513,7 +515,7 @@ size_t RTPSender::ExpectedPerPacketOverhead() const {
 }
 
 std::unique_ptr<RtpPacketToSend> RTPSender::AllocatePacket(
-    ArrayView<const uint32_t> csrcs) {
+    std::span<const uint32_t> csrcs) {
   MutexLock lock(&send_mutex_);
   RTC_DCHECK_LE(csrcs.size(), kRtpCsrcSize);
   if (csrcs.size() > max_num_csrcs_) {
@@ -649,9 +651,9 @@ static void CopyHeaderAndExtensionsToRtxPacket(const RtpPacketToSend& packet,
       continue;
     }
 
-    ArrayView<const uint8_t> source = packet.FindExtension(extension);
+    std::span<const uint8_t> source = packet.FindExtension(extension);
 
-    ArrayView<uint8_t> destination =
+    std::span<uint8_t> destination =
         rtx_packet->AllocateExtension(extension, source.size());
 
     // Could happen if any:
@@ -662,7 +664,7 @@ static void CopyHeaderAndExtensionsToRtxPacket(const RtpPacketToSend& packet,
       continue;
     }
 
-    std::memcpy(destination.begin(), source.begin(), destination.size());
+    std::memcpy(destination.data(), source.data(), destination.size());
   }
 }
 

@@ -32,6 +32,8 @@ class EGLWaylandTest : public ANGLETest<>
 
         attribs.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         attribs.push_back(GetParam().getRenderer());
+        attribs.push_back(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE);
+        attribs.push_back(EGL_PLATFORM_WAYLAND_EXT);
         attribs.push_back(EGL_NONE);
 
         return attribs;
@@ -39,7 +41,12 @@ class EGLWaylandTest : public ANGLETest<>
 
     void testSetUp() override
     {
-        mOsWindow = WaylandWindow::New();
+        if (!IsWaylandWindowAvailable())
+        {
+            GTEST_SKIP() << "Wayland window unavailable.";
+        }
+
+        mOsWindow = CreateWaylandWindow(nullptr);
         ASSERT_TRUE(mOsWindow->initialize("EGLWaylandTest", 500, 500));
         setWindowVisible(mOsWindow, true);
 
@@ -66,11 +73,14 @@ class EGLWaylandTest : public ANGLETest<>
         mConfigs.clear();
         eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         eglTerminate(mDisplay);
-        OSWindow::Delete(&mOsWindow);
+        if (mOsWindow != nullptr)
+        {
+            OSWindow::Delete(&mOsWindow);
+        }
     }
 
-    OSWindow *mOsWindow;
-    EGLDisplay mDisplay;
+    OSWindow *mOsWindow = nullptr;
+    EGLDisplay mDisplay = EGL_NO_DISPLAY;
     std::vector<EGLConfig> mConfigs;
 };
 

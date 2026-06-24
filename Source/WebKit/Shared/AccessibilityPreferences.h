@@ -75,6 +75,7 @@ inline AXValueState fromWebKitAXValueState(WebKitAXValueState value)
 #endif
 
 inline constexpr bool initialImageAnimationEnabled = true;
+inline constexpr bool initialVideoAutoplayPreviewsEnabled = true;
 inline constexpr bool initialShouldEnhanceTextLegibilityOverall = false;
 inline constexpr bool initialPrefersNonBlinkingCursor = false;
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
@@ -91,6 +92,7 @@ struct AccessibilityPreferences {
 
 #endif
     bool imageAnimationEnabled { initialImageAnimationEnabled };
+    bool videoAutoplayPreviewsEnabled { initialVideoAutoplayPreviewsEnabled };
     bool enhanceTextLegibilityOverall { initialShouldEnhanceTextLegibilityOverall };
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     bool prefersNonBlinkingCursor { initialPrefersNonBlinkingCursor };
@@ -109,6 +111,7 @@ WebKit::WebKitAXValueState invertColorsEnabled();
 #endif // HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
 
 bool imageAnimationEnabled();
+bool videoAutoplayPreviewsEnabled();
 bool enhanceTextLegibilityOverall();
 
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)

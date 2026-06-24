@@ -26,29 +26,10 @@ import OSLog
 import WebKit
 import simd
 
-#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreTextureProcessing, _version: 24) && canImport(_USDKit_RealityKit, _version: 42) && canImport(RealityCoreRenderer, _version: 22) && canImport(ShaderGraph, _version: 156) && arch(arm64)
-@_spi(UsdLoaderAPI) import _USDKit_RealityKit
-@_spi(RealityCoreTextureProcessingAPI) import RealityCoreTextureProcessing
+#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 import USDKit
-@_spi(SwiftAPI) import DirectResource
+import DirectResource
 import RealityKit
-import ShaderGraph
-import RealityCoreDeformation
-
-extension _USDKit_RealityKit._Proto_DeformationData_v1.SkinningData {
-    @_silgen_name("$s18_USDKit_RealityKit25_Proto_DeformationData_v1V08SkinningF0V21geometryBindTransformSo13simd_float4x4avg")
-    func geometryBindTransformCompat() -> simd_float4x4
-}
-
-extension _USDKit_RealityKit._Proto_DeformationData_v1.SkinningData {
-    @_silgen_name("$s18_USDKit_RealityKit25_Proto_DeformationData_v1V08SkinningF0V15jointTransformsSaySo13simd_float4x4aGvg")
-    func jointTransformsCompat() -> [simd_float4x4]
-}
-
-extension _USDKit_RealityKit._Proto_DeformationData_v1.SkinningData {
-    @_silgen_name("$s18_USDKit_RealityKit25_Proto_DeformationData_v1V08SkinningF0V16inverseBindPosesSaySo13simd_float4x4aGvg")
-    func inverseBindPosesCompat() -> [simd_float4x4]
-}
 
 // Safe wrapper of unsafe functions
 extension MTLBuffer {
@@ -76,280 +57,68 @@ extension MTLDevice {
         memoryOwner: task_id_token_t,
         options: MTLResourceOptions = []
     ) -> any MTLBuffer where T: BitwiseCopyable {
+        let buffer = makeBuffer(length: length, memoryOwner: memoryOwner, options: options)
+        buffer.copyMemory(fromSpan: fromSpan, byteOffset: 0)
+        return buffer
+    }
+
+    func makeBuffer(
+        length: Int,
+        memoryOwner: task_id_token_t,
+        options: MTLResourceOptions = []
+    ) -> any MTLBuffer {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let buffer = makeBuffer(length: length, options: options)!
         buffer.__setOwnerWithIdentity(memoryOwner)
-        buffer.copyMemory(fromSpan: fromSpan, byteOffset: 0)
         return buffer
     }
 }
 
-extension WKBridgeSkinningData {
-    func updateDeformerDescription(description: _Proto_LowLevelSkinningDescription_v1) {
-        let skinningDescription = description
-
-        // Only update buffers that have dirty data (non-empty arrays)
-        if !self.jointTransforms.isEmpty {
-            let buffer = skinningDescription.jointTransforms.metalBuffer
-            let byteLength = self.jointTransforms.count * MemoryLayout<simd_float4x4>.size
-            assert(buffer.length >= byteLength, "Buffer too small for joint transforms")
-            buffer.copyMemory(fromSpan: self.jointTransforms.span, byteOffset: skinningDescription.jointTransforms.offset)
-        }
-
-        if !self.inverseBindPoses.isEmpty {
-            let buffer = skinningDescription.inverseBindPoses.metalBuffer
-            let byteLength = self.inverseBindPoses.count * MemoryLayout<simd_float4x4>.size
-            assert(buffer.length >= byteLength, "Buffer too small for inverse bind poses")
-            buffer.copyMemory(fromSpan: self.inverseBindPoses.span, byteOffset: skinningDescription.inverseBindPoses.offset)
-        }
-
-        if !self.influenceJointIndices.isEmpty {
-            let buffer = skinningDescription.influenceJointIndices.metalBuffer
-            let byteLength = self.influenceJointIndices.count * MemoryLayout<UInt32>.size
-            assert(buffer.length >= byteLength, "Buffer too small for influence joint indices")
-            buffer.copyMemory(fromSpan: self.influenceJointIndices.span, byteOffset: skinningDescription.influenceJointIndices.offset)
-        }
-
-        if !self.influenceWeights.isEmpty {
-            let buffer = skinningDescription.influenceWeights.metalBuffer
-            let byteLength = self.influenceWeights.count * MemoryLayout<Float>.size
-            assert(buffer.length >= byteLength, "Buffer too small for influence weights")
-            buffer.copyMemory(fromSpan: self.influenceWeights.span, byteOffset: skinningDescription.influenceWeights.offset)
-        }
-
-        // Note: geometryBindTransform and influencePerVertexCount are properties that can be directly set
-        // These don't require buffer updates, just property assignment
-        // If these need to be updated in the description, that would require API access we may not have
-    }
-
-    func makeDeformerDescription(device: any MTLDevice, memoryOwner: task_id_token_t) -> any _Proto_LowLevelDeformerDescription_v1 {
-        let jointTransformsBuffer = device.makeBuffer(
-            fromSpan: self.jointTransforms.span,
-            length: self.jointTransforms.count * MemoryLayout<simd_float4x4>.size,
-            memoryOwner: memoryOwner,
-            options: .storageModeShared
-        )
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let jointTransformsDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
-            jointTransformsBuffer,
-            offset: 0,
-            occupiedLength: jointTransformsBuffer.length,
-            dataType: .float4x4
-        )!
-        let inverseBindPosesBuffer = device.makeBuffer(
-            fromSpan: self.inverseBindPoses.span,
-            length: self.inverseBindPoses.count * MemoryLayout<simd_float4x4>.size,
-            memoryOwner: memoryOwner,
-            options: .storageModeShared
-        )
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let inverseBindPosesDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
-            inverseBindPosesBuffer,
-            offset: 0,
-            occupiedLength: inverseBindPosesBuffer.length,
-            dataType: .float4x4
-        )!
-
-        let jointIndicesBuffer = device.makeBuffer(
-            fromSpan: self.influenceJointIndices.span,
-            length: self.influenceJointIndices.count * MemoryLayout<UInt32>.size,
-            memoryOwner: memoryOwner,
-            options: .storageModeShared
-        )
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let jointIndicesDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
-            jointIndicesBuffer,
-            offset: 0,
-            occupiedLength: jointIndicesBuffer.length,
-            dataType: .uint
-        )!
-
-        let influenceWeightsBuffer = device.makeBuffer(
-            fromSpan: self.influenceWeights.span,
-            length: self.influenceWeights.count * MemoryLayout<Float>.size,
-            memoryOwner: memoryOwner,
-            options: .storageModeShared
-        )
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let influenceWeightsDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
-            influenceWeightsBuffer,
-            offset: 0,
-            occupiedLength: influenceWeightsBuffer.length,
-            dataType: .float
-        )!
-
-        let deformerDescription = _Proto_LowLevelSkinningDescription_v1(
-            jointTransforms: jointTransformsDescription,
-            inverseBindPoses: inverseBindPosesDescription,
-            influenceJointIndices: jointIndicesDescription,
-            influenceWeights: influenceWeightsDescription,
-            geometryBindTransform: self.geometryBindTransform,
-            influencePerVertexCount: self.influencePerVertexCount
-        )
-
-        return deformerDescription
-    }
+// Copies the prefix of `data` (up to `span.byteCount` bytes) into `span`.
+// Modeled on `copyDataIntoBuffer` from ModelUtils.swift; the `@_lifetime`
+// annotation is required because `MutableRawSpan` is `~Escapable` and the
+// compiler otherwise rejects the inout binding when nested inside the
+// `replaceInfluenceJointIndices`/`replace*Indices`/`replaceAdjacencies` etc.
+// closures used by the v2 deformation API.
+@_lifetime(span: copy span)
+private func writeData(into span: inout MutableRawSpan, from data: Data) {
+    let copyCount = min(data.count, span.byteCount)
+    unsafe span.withUnsafeMutableBytes { unsafe $0.copyBytes(from: data.prefix(copyCount)) }
 }
 
-extension WKBridgeBlendShapeData {
-    func updateDeformerDescription(description: _Proto_LowLevelBlendShapeDescription_v1) {
-        let blendShapeDescription = description
-
-        // Only update if we have dirty data
-        let hasWeights = !self.weights.isEmpty
-        let hasPositionOffsets = !self.positionOffsets.isEmpty && !self.positionOffsets.allSatisfy { $0.isEmpty }
-
-        if hasWeights || hasPositionOffsets {
-            // TODO: This currently only works for the first blend target
-            // rdar://171221610 (`LowLevelBlendShapeDescription` should support multiple blend targets in one deformation compute)
-            if hasWeights {
-                let inputWeights: [Float] = self.weights
-
-                if let blendShapeWeightBuffer = blendShapeDescription.weights {
-                    let buffer = blendShapeWeightBuffer.metalBuffer
-                    let byteLength = inputWeights.count * MemoryLayout<Float>.size
-                    assert(buffer.length >= byteLength, "Buffer too small for blend weights")
-                    buffer.copyMemory(fromSpan: inputWeights.span, byteOffset: blendShapeWeightBuffer.offset)
-                }
-            }
-
-            if hasPositionOffsets {
-                let positionOffsets = self.positionOffsets.flatMap(\.self)
-                let buffer = blendShapeDescription.positionOffsets.metalBuffer
-                let byteLength = positionOffsets.count * MemoryLayout<SIMD3<Float>>.size
-                assert(buffer.length >= byteLength, "Buffer too small for position offsets")
-                buffer.copyMemory(fromSpan: positionOffsets.span, byteOffset: blendShapeDescription.positionOffsets.offset)
-            }
-        }
-    }
-
-    func makeDeformerDescription(device: any MTLDevice, memoryOwner: task_id_token_t) throws -> any _Proto_LowLevelDeformerDescription_v1 {
-        var inputWeights: [Float] = []
-
-        let blendTargetCount = self.weights.count
-        let positionCount = self.positionOffsets[0].count
-        for i in 0..<blendTargetCount {
-            inputWeights += Array(repeating: self.weights[i], count: positionCount)
-        }
-
-        let blendWeightsBuffer = device.makeBuffer(
-            fromSpan: inputWeights.span,
-            length: inputWeights.count * MemoryLayout<Float>.size,
-            memoryOwner: memoryOwner,
-            options: .storageModeShared
-        )
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let blendWeightsDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
-            blendWeightsBuffer,
-            offset: 0,
-            occupiedLength: blendWeightsBuffer.length,
-            dataType: .float
-        )!
-
-        let positionOffsets = self.positionOffsets.flatMap(\.self)
-        let positionOffsetsBuffer = device.makeBuffer(
-            fromSpan: positionOffsets.span,
-            length: positionOffsets.count * MemoryLayout<SIMD3<Float>>.size,
-            memoryOwner: memoryOwner,
-            options: .storageModeShared
-        )
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let positionOffsetsDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
-            positionOffsetsBuffer,
-            offset: 0,
-            occupiedLength: positionOffsetsBuffer.length,
-            dataType: .float3
-        )!
-
-        let deformerDescriptionResult = _Proto_LowLevelBlendShapeDescription_v1.make(
-            weights: blendWeightsDescription,
-            positionOffsets: positionOffsetsDescription,
-            sparseIndices: nil,
-            normalOffsets: nil,
-            tangentOffsets: nil,
-            blendBitangents: false
-        )
-
-        return try deformerDescriptionResult.get()
-    }
-}
-
-extension WKBridgeRenormalizationData {
-    func updateDeformerDescription(description: _Proto_LowLevelRenormalizationDescription_v1) {
-        let renormalizationDescription = description
-
-        // Renormalization data is all-or-nothing, so if we get here, update everything
-        if !vertexAdjacencies.isEmpty {
-            let buffer = renormalizationDescription.adjacencies.metalBuffer
-            let byteLength = vertexAdjacencies.count * MemoryLayout<UInt32>.size
-            assert(buffer.length >= byteLength, "Buffer too small for vertex adjacencies")
-            buffer.copyMemory(fromSpan: vertexAdjacencies.span, byteOffset: renormalizationDescription.adjacencies.offset)
-        }
-
-        if !vertexAdjacencyEndIndices.isEmpty {
-            let buffer = renormalizationDescription.adjacencyEndIndices.metalBuffer
-            let byteLength = vertexAdjacencyEndIndices.count * MemoryLayout<UInt32>.size
-            assert(buffer.length >= byteLength, "Buffer too small for adjacency end indices")
-            buffer.copyMemory(fromSpan: vertexAdjacencyEndIndices.span, byteOffset: renormalizationDescription.adjacencyEndIndices.offset)
-        }
-    }
-
-    func makeDeformerDescription(device: any MTLDevice, memoryOwner: task_id_token_t) throws -> any _Proto_LowLevelDeformerDescription_v1 {
-        // Create adjacency buffer
-        let adjacenciesMetalBuffer = device.makeBuffer(
-            fromSpan: vertexAdjacencies.span,
-            length: vertexAdjacencies.count * MemoryLayout<UInt32>.size,
-            memoryOwner: memoryOwner,
-            options: .storageModeShared
-        )
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let adjacenciesBuffer = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
-            adjacenciesMetalBuffer,
-            offset: 0,
-            occupiedLength: adjacenciesMetalBuffer.length,
-            dataType: .uint
-        )!
-
-        // Create adjacency end indices buffer
-        let adjacencyEndIndicesMetalBuffer = device.makeBuffer(
-            fromSpan: vertexAdjacencyEndIndices.span,
-            length: vertexAdjacencyEndIndices.count * MemoryLayout<UInt32>.size,
-            memoryOwner: memoryOwner,
-            options: .storageModeShared
-        )
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let adjacencyEndIndicesBuffer = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
-            adjacencyEndIndicesMetalBuffer,
-            offset: 0,
-            occupiedLength: adjacencyEndIndicesMetalBuffer.length,
-            dataType: .uint
-        )!
-
-        let deformerDescription = _Proto_LowLevelRenormalizationDescription_v1.make(
-            recalculateNormals: true,
-            recalculateTangents: false,
-            recalculateBitangents: false,
-            adjacencies: adjacenciesBuffer,
-            adjacencyEndIndices: adjacencyEndIndicesBuffer
-        )
-
-        return deformerDescription
-    }
-}
-
+// V2 deformation context. Holds the compiled pipeline, the live LowLevelDeformation
+// instance, and the buffers we own (for residency tracking and in-place updates
+// when only joint transforms / blend weights / etc. change between frames).
 struct DeformationContext {
-    let deformation: _Proto_Deformation_v1
-    var description: _Proto_LowLevelDeformationDescription_v1
+    let pipeline: LowLevelDeformation.Pipeline
+    let deformation: LowLevelDeformation
     var dirty: Bool
+
+    // All MTLBuffers backing this deformation, retained so the residency set can
+    // pin them and so they outlive the GPU's read of them.
+    var mtlBuffers: [any MTLBuffer]
+
+    // Skinning per-stage buffers, kept so we can rewrite joint transforms /
+    // inverse bind poses / influence weights in place between frames.
+    var jointTransformsBuffer: (any MTLBuffer)?
+    var inverseBindPosesBuffer: (any MTLBuffer)?
+    var influenceWeightsBuffer: (any MTLBuffer)?
+
+    // Blend-shape per-stage buffers.
+    var blendShapeWeightsBuffer: (any MTLBuffer)?
+    var blendShapePositionOffsetsBuffer: (any MTLBuffer)?
+
+    // Records the "shape" of the deformation: vertex count, and whether each
+    // optional stage is configured. Used to detect when an in-place rebind
+    // (cheap) suffices vs. when we need to rebuild the pipeline (structural
+    // change, e.g. blend target count).
+    let vertexCount: Int
+    let blendingTargetCount: Int
+    let skinningJointTransformCount: Int
+    let skinningInfluencesPerVertex: Int
+    let renormalizingAdjacenciesCount: Int
+    let renormalizingIndexCount: Int
 }
 
 func configureDeformation(
@@ -359,332 +128,461 @@ func configureDeformation(
     device: any MTLDevice,
     meshResource: LowLevelMeshResource,
     meshResourceToDeformationContext: inout [WKBridgeTypedResourceId: DeformationContext],
-    deformationSystem: _Proto_LowLevelDeformationSystem_v1,
+    deformationContext deformationContextRoot: LowLevelDeformationContext,
     memoryOwner: task_id_token_t
 ) {
-    meshResourceToDeformationContext[identifier] = buildDeformationContext(
-        meshResource: meshResource,
-        deformationData: deformationData,
-        commandBuffer: commandBuffer,
-        device: device,
-        deformationSystem: deformationSystem,
-        existingContext: meshResourceToDeformationContext[identifier],
-        identifierDescription: identifier.description,
-        memoryOwner: memoryOwner
-    )
-}
-
-func updateDeformationContextInPlace(deformationData: WKBridgeDeformationData, context: inout DeformationContext) -> Bool {
-    var updatedInPlace = false
-    for deformerDescription in context.description.deformerDescriptions {
-        if var skinningDescription = deformerDescription as? _Proto_LowLevelSkinningDescription_v1,
-            let skinningData = deformationData.skinningData
-        {
-            skinningData.updateDeformerDescription(description: skinningDescription)
-            updatedInPlace = true
-        }
-
-        if var blendShapeDescription = deformerDescription as? _Proto_LowLevelBlendShapeDescription_v1,
-            let blendShapeData = deformationData.blendShapeData
-        {
-            blendShapeData.updateDeformerDescription(description: blendShapeDescription)
-            updatedInPlace = true
-        }
-
-        if var renormalizationDescription = deformerDescription as? _Proto_LowLevelRenormalizationDescription_v1,
-            let renormalizationData = deformationData.renormalizationData
-        {
-            renormalizationData.updateDeformerDescription(description: renormalizationDescription)
-            updatedInPlace = true
-        }
+    // Try in-place data update if the existing context's shape matches the new data's.
+    if var existing = meshResourceToDeformationContext[identifier],
+        contextShapeMatches(existing, deformationData: deformationData, meshResource: meshResource)
+    {
+        updateDeformationDataInPlace(deformationData: deformationData, context: &existing)
+        existing.dirty = true
+        meshResourceToDeformationContext[identifier] = existing
+        return
     }
 
-    return updatedInPlace
-}
-
-func buildDeformationContext(
-    meshResource: LowLevelMeshResource,
-    deformationData: WKBridgeDeformationData,
-    commandBuffer: any MTLCommandBuffer,
-    device: any MTLDevice,
-    deformationSystem: _Proto_LowLevelDeformationSystem_v1,
-    existingContext: DeformationContext?,
-    identifierDescription: String,
-    memoryOwner: task_id_token_t
-) -> DeformationContext {
-    // If we have an existing context, try to update it in place
-    if var existingContext = existingContext {
-        if updateDeformationContextInPlace(deformationData: deformationData, context: &existingContext) {
-            existingContext.dirty = true
-            return existingContext
-        }
-    }
-
-    // Otherwise, build a new deformation context from scratch
-    var deformers: [any _Proto_LowLevelDeformerDescription_v1] = []
-
-    if let skinningData = deformationData.skinningData {
-        let skinningDeformer = skinningData.makeDeformerDescription(device: device, memoryOwner: memoryOwner)
-        deformers.append(skinningDeformer)
-    }
-
-    if let blendShapeData = deformationData.blendShapeData {
-        do {
-            let blendShapeDeformer = try blendShapeData.makeDeformerDescription(device: device, memoryOwner: memoryOwner)
-            deformers.append(blendShapeDeformer)
-        } catch {
-            print("Error creating blend shape deformer for \(identifierDescription): \(error.localizedDescription)")
-        }
-    }
-
-    if let renormalizationData = deformationData.renormalizationData {
-        do {
-            let renormalization = try renormalizationData.makeDeformerDescription(device: device, memoryOwner: memoryOwner)
-            deformers.append(renormalization)
-        } catch {
-            print("Error creating renormalization deformer for \(identifierDescription): \(error.localizedDescription)")
-        }
-    }
-
-    assert(!deformers.isEmpty)
-
-    let inputMeshDescription: _Proto_LowLevelDeformationDescription_v1.MeshDescription?
-    if let existingContext {
-        inputMeshDescription = existingContext.description.input
-    } else {
-        inputMeshDescription = makeInputMeshDescriptionForDeformation(
+    // Otherwise, build a fresh context from scratch.
+    do {
+        let context = try buildDeformationContext(
             meshResource: meshResource,
             deformationData: deformationData,
             commandBuffer: commandBuffer,
             device: device,
+            deformationContextRoot: deformationContextRoot,
             memoryOwner: memoryOwner
         )
+        meshResourceToDeformationContext[identifier] = context
+    } catch {
+        // A throw here means the deformation pipeline can't be configured —
+        // the mesh will render unskinned at its bind pose, which is almost
+        // always visually wrong.
+        // Assert in debug so it can't go unnoticed during development; in
+        // release we log and continue rather than crashing the GPU process.
+        logError("Failed to configure deformation for \(identifier): \(error)")
+        assertionFailure("Failed to configure deformation for \(identifier): \(error)")
     }
-
-    let outputMeshDescription = makeOutputMeshDescriptionForDeformation(
-        meshResource: meshResource,
-        deformationData: deformationData,
-        commandBuffer: commandBuffer,
-        device: device,
-        memoryOwner: memoryOwner
-    )
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-    // swift-format-ignore: NeverForceUnwrap
-    let deformationDescription =
-        try? _Proto_LowLevelDeformationDescription_v1.make(
-            input: inputMeshDescription!,
-            deformers: deformers,
-            output: outputMeshDescription!
-        )
-        .get()
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-    // swift-format-ignore: NeverForceUnwrap
-    let deformation = try? deformationSystem.make(description: deformationDescription!).get()
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-    // swift-format-ignore: NeverForceUnwrap
-    return DeformationContext(deformation: deformation!, description: deformationDescription!, dirty: true)
 }
 
-struct DeformationMeshDescriptionData {
-    var vertexAttributes: [_Proto_LowLevelDeformationDescription_v1.VertexAttribute] = []
-    var vertexLayouts: [_Proto_LowLevelDeformationDescription_v1.VertexLayout] = []
-    var mtlBuffers: [any MTLBuffer] = []
-}
-
-func makeMeshDescriptionForDeformation(
-    meshResource: LowLevelMeshResource,
+private func contextShapeMatches(
+    _ context: DeformationContext,
     deformationData: WKBridgeDeformationData,
-    commandBuffer: any MTLCommandBuffer,
-    isInput: Bool,
-    device: any MTLDevice,
-    memoryOwner: task_id_token_t
-) -> DeformationMeshDescriptionData {
-    var deformationMeshDescriptionData = DeformationMeshDescriptionData()
+    meshResource: LowLevelMeshResource
+) -> Bool {
+    let vertexCount = meshResource.descriptor.vertexCapacity
+    if context.vertexCount != vertexCount { return false }
 
-    // Table to map mesh resource buffer index to deformation buffer index
-    // They can be different because deformation may not require all vertex buffers
-    // e.g. if position data is in mesh resource buffer 1, its deformation buffer index could be 0
-    // if that's the only attribute data require by deformation
-    var meshResourceBufferIndexToDeformationBufferIndex: [Int: Int] = [:]
-    // Similar usage as the buffer index table. See comment above
-    var meshResourceLayoutIndexToDeformationLayoutIndex: [Int: Int] = [:]
-
-    var inputAttributeSemantics: [LowLevelMeshResource.VertexSemantic] = [.position]
-    if deformationData.renormalizationData != nil {
-        inputAttributeSemantics.append(contentsOf: [.normal, .tangent, .bitangent])
+    if let blend = deformationData.blendShapeData {
+        let targetCount = max(1, blend.weights.count)
+        if context.blendingTargetCount != targetCount { return false }
+    } else {
+        if context.blendingTargetCount != 0 { return false }
     }
 
-    for attribute in meshResource.descriptor.vertexAttributes where inputAttributeSemantics.contains(attribute.semantic) {
-        guard let deformationMeshSemantic = attribute.semantic.toDeformationVertexSemantic() else {
-            fatalError("Invalid semantic for deformation input: \(attribute.semantic)")
+    if let skinning = deformationData.skinningData {
+        let jointCount = max(1, skinning.jointTransforms.count)
+        let influencesPerVertex = Int(skinning.influencePerVertexCount)
+        if context.skinningJointTransformCount != jointCount { return false }
+        if context.skinningInfluencesPerVertex != influencesPerVertex { return false }
+    } else {
+        if context.skinningJointTransformCount != 0 { return false }
+    }
+
+    if let renorm = deformationData.renormalizationData {
+        let adjacenciesCount = max(1, renorm.vertexAdjacencies.count)
+        let indexCount = max(3, renorm.vertexIndicesPerTriangle.count)
+        if context.renormalizingAdjacenciesCount != adjacenciesCount { return false }
+        if context.renormalizingIndexCount != indexCount { return false }
+    } else {
+        if context.renormalizingAdjacenciesCount != 0 { return false }
+    }
+
+    return true
+}
+
+private func updateDeformationDataInPlace(
+    deformationData: WKBridgeDeformationData,
+    context: inout DeformationContext
+) {
+    if let skinningData = deformationData.skinningData {
+        if !skinningData.jointTransforms.isEmpty, let buffer = context.jointTransformsBuffer {
+            buffer.copyMemory(fromSpan: skinningData.jointTransforms.span, byteOffset: 0)
         }
 
-        let layoutIndex = attribute.layoutIndex
-        let layout = meshResource.descriptor.vertexLayouts[layoutIndex]
-        let bufferIndex = layout.bufferIndex
+        if !skinningData.inverseBindPoses.isEmpty, let buffer = context.inverseBindPosesBuffer {
+            buffer.copyMemory(fromSpan: skinningData.inverseBindPoses.span, byteOffset: 0)
+        }
 
-        var deformationBufferIndex = deformationMeshDescriptionData.mtlBuffers.count
-        if let cachedDeformationBufferIndex = meshResourceBufferIndexToDeformationBufferIndex[bufferIndex] {
-            deformationBufferIndex = cachedDeformationBufferIndex
-        } else {
-            meshResourceBufferIndexToDeformationBufferIndex[bufferIndex] = deformationBufferIndex
+        context.deformation.skinning.geometryBindTransform = skinningData.geometryBindTransform
 
-            let vertexBuffer = meshResource.readVertices(at: bufferIndex, commandBuffer: commandBuffer)
-            if isInput {
-                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-                // swift-format-ignore: NeverForceUnwrap
-                let mtlBuffer = device.makeBuffer(length: vertexBuffer.length, options: .storageModeShared)!
-                // Copy data from vertexPositionsBuffer to inputPositionsBuffer
-                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-                // swift-format-ignore: NeverForceUnwrap
-                let blitEncoder = commandBuffer.makeBlitCommandEncoder()!
-                blitEncoder.copy(from: vertexBuffer, sourceOffset: 0, to: mtlBuffer, destinationOffset: 0, size: vertexBuffer.length)
-                deformationMeshDescriptionData.mtlBuffers.append(mtlBuffer)
-                blitEncoder.endEncoding()
-            } else {
-                deformationMeshDescriptionData.mtlBuffers.append(vertexBuffer)
+        if !skinningData.influenceWeights.isEmpty, let buffer = context.influenceWeightsBuffer {
+            buffer.copyMemory(fromSpan: skinningData.influenceWeights.span, byteOffset: 0)
+        }
+
+        if !skinningData.influenceJointIndices.isEmpty {
+            let indicesData = toData(skinningData.influenceJointIndices)
+            try? context.deformation.skinning.replaceInfluenceJointIndices { span in
+                writeData(into: &span, from: indicesData)
+            }
+        }
+    }
+    if let blendShapeData = deformationData.blendShapeData {
+        if !blendShapeData.weights.isEmpty, let buffer = context.blendShapeWeightsBuffer {
+            buffer.copyMemory(fromSpan: blendShapeData.weights.span, byteOffset: 0)
+        }
+
+        let positions = blendShapeData.positionOffsets.flatMap(\.self)
+        if !positions.isEmpty, let buffer = context.blendShapePositionOffsetsBuffer {
+            buffer.copyMemory(fromSpan: positions.span, byteOffset: 0)
+        }
+    }
+    if let renormalizationData = deformationData.renormalizationData {
+        if !renormalizationData.vertexIndicesPerTriangle.isEmpty {
+            let indicesData = toData(renormalizationData.vertexIndicesPerTriangle)
+            try? context.deformation.renormalization.replaceTriangleIndices { span in
+                writeData(into: &span, from: indicesData)
             }
         }
 
-        var deformationLayoutIndex = deformationMeshDescriptionData.vertexLayouts.count
-        if let cachedDeformationLayoutIndex = meshResourceLayoutIndexToDeformationLayoutIndex[layoutIndex] {
-            deformationLayoutIndex = cachedDeformationLayoutIndex
-        } else {
-            meshResourceLayoutIndexToDeformationLayoutIndex[layoutIndex] = deformationLayoutIndex
-            deformationMeshDescriptionData.vertexLayouts.append(
-                .init(bufferIndex: deformationBufferIndex, bufferOffset: layout.bufferOffset, bufferStride: layout.bufferStride)
+        if !renormalizationData.vertexAdjacencies.isEmpty {
+            let adjacenciesData = toData(renormalizationData.vertexAdjacencies)
+            try? context.deformation.renormalization.replaceAdjacencies { span in
+                writeData(into: &span, from: adjacenciesData)
+            }
+        }
+
+        if !renormalizationData.vertexAdjacencyEndIndices.isEmpty {
+            let endIndicesData = toData(renormalizationData.vertexAdjacencyEndIndices)
+            try? context.deformation.renormalization.replaceAdjacencyEndIndices { span in
+                writeData(into: &span, from: endIndicesData)
+            }
+        }
+    }
+}
+
+// Map a mesh-resource semantic to the v2 LowLevelDeformation.VertexSemantic.
+// Returns nil for semantics the deformation pipeline doesn't accept (e.g. color).
+private func toV2VertexSemantic(_ semantic: LowLevelMeshResource.VertexSemantic) -> LowLevelDeformation.VertexSemantic? {
+    switch semantic {
+    case .position: .position
+    case .normal: .normal
+    case .tangent: .tangent
+    case .bitangent: .bitangent
+    case .uv0, .uv1, .uv2, .uv3, .uv4, .uv5, .uv6, .uv7: .uv
+    default: nil
+    }
+}
+
+// Per-attribute binding info: which mesh-resource buffer index, what byte
+// offset within the layout, the v2 attribute (semantic + format + stride).
+private struct BoundAttribute {
+    let v2Attribute: LowLevelDeformation.VertexAttribute
+    let bufferIndex: Int
+    let offset: Int
+}
+
+private func makeBoundAttributes(
+    meshResource: LowLevelMeshResource,
+    needsNormal: Bool,
+    needsTangent: Bool,
+    needsBitangent: Bool,
+    needsUV: Bool
+) -> [BoundAttribute] {
+    var result: [BoundAttribute] = []
+    var addedUV = false // v2 has a single .uv slot
+    let descriptor = meshResource.descriptor
+    for attribute in descriptor.vertexAttributes {
+        guard let v2Semantic = toV2VertexSemantic(attribute.semantic) else { continue }
+        switch v2Semantic {
+        case .position: break
+        case .normal: if !needsNormal { continue }
+        case .tangent: if !needsTangent { continue }
+        case .bitangent: if !needsBitangent { continue }
+        case .uv:
+            if !needsUV { continue }
+            if addedUV { continue }
+            addedUV = true
+        @unknown default: continue
+        }
+        let layout = descriptor.vertexLayouts[attribute.layoutIndex]
+        let format: MTLVertexFormat
+        switch v2Semantic {
+        case .uv: format = .float2
+        case .position, .normal, .tangent, .bitangent: format = .float3
+        @unknown default: format = .float3
+        }
+        let v2Attr = LowLevelDeformation.VertexAttribute(
+            semantic: v2Semantic,
+            format: format,
+            stride: layout.bufferStride
+        )
+        result.append(
+            BoundAttribute(
+                v2Attribute: v2Attr,
+                bufferIndex: layout.bufferIndex,
+                offset: attribute.offset + layout.bufferOffset
             )
-        }
-
-        // Hardcode elementType for now the inputs could only be position or tangent
-        // frame data which are all .float3
-        // TODO: fix this when uv is required for deformation
-        deformationMeshDescriptionData.vertexAttributes.append(
-            .init(elementType: .float3, offset: attribute.offset, layoutIndex: deformationLayoutIndex, semantic: deformationMeshSemantic)
         )
     }
-
-    return deformationMeshDescriptionData
+    return result
 }
 
-func makeInputMeshDescriptionForDeformation(
+private func buildDeformationContext(
     meshResource: LowLevelMeshResource,
     deformationData: WKBridgeDeformationData,
     commandBuffer: any MTLCommandBuffer,
     device: any MTLDevice,
+    deformationContextRoot: LowLevelDeformationContext,
     memoryOwner: task_id_token_t
-) -> _Proto_LowLevelDeformationDescription_v1.MeshDescription? {
-    var inputMeshDescriptionData = makeMeshDescriptionForDeformation(
+) throws -> DeformationContext {
+    let vertexCount = meshResource.descriptor.vertexCapacity
+    let hasSkinning = deformationData.skinningData != nil
+    let hasBlending = deformationData.blendShapeData != nil
+    let hasRenormalizing = deformationData.renormalizationData != nil
+    let meshHasUV = meshResource.descriptor.vertexAttributes.contains { toV2VertexSemantic($0.semantic) == .uv }
+    let meshHasNormal = meshResource.descriptor.vertexAttributes.contains { toV2VertexSemantic($0.semantic) == .normal }
+    let meshHasTangent = meshResource.descriptor.vertexAttributes.contains { toV2VertexSemantic($0.semantic) == .tangent }
+    let meshHasBitangent = meshResource.descriptor.vertexAttributes.contains { toV2VertexSemantic($0.semantic) == .bitangent }
+
+    // ── Pipeline descriptor ──────────────────────────────────────────────
+    var pipelineBlending: LowLevelDeformation.Pipeline.Descriptor.BlendShape? = nil
+    if hasBlending {
+        pipelineBlending = .init(blendsOutputs: [])
+    }
+    var pipelineSkinning: LowLevelDeformation.Pipeline.Descriptor.Skinning? = nil
+    if hasSkinning {
+        pipelineSkinning = .init(jointIndexType: .uint32)
+    }
+    var pipelineRenormalizing: LowLevelDeformation.Pipeline.Descriptor.Renormalization? = nil
+    if hasRenormalizing {
+        // Only request renormalization outputs the mesh actually has — the
+        // pipeline rejects configuration where it would write an output that
+        // doesn't exist on the bound mesh.
+        var outputs: LowLevelDeformation.Pipeline.Descriptor.Renormalization.VertexSemanticOutputs = []
+        if meshHasNormal { outputs.insert(.normal) }
+        if meshHasTangent { outputs.insert(.tangent) }
+        if meshHasBitangent { outputs.insert(.bitangent) }
+        pipelineRenormalizing = .init(
+            outputs: outputs,
+            triangleIndexType: .uint32,
+            adjacencyIndexType: .uint32,
+            adjacencyEndIndexType: .uint32
+        )
+    }
+
+    let inputAttrs = makeBoundAttributes(
         meshResource: meshResource,
-        deformationData: deformationData,
-        commandBuffer: commandBuffer,
-        isInput: true,
-        device: device,
-        memoryOwner: memoryOwner
+        needsNormal: hasRenormalizing && meshHasNormal,
+        needsTangent: hasRenormalizing && meshHasTangent,
+        needsBitangent: hasRenormalizing && meshHasBitangent,
+        needsUV: meshHasUV
     )
-
-    if let renormalizationData = deformationData.renormalizationData {
-        let vertexIndices = renormalizationData.vertexIndicesPerTriangle
-        let inputIndexBuffer = device.makeBuffer(
-            fromSpan: vertexIndices.span,
-            length: vertexIndices.count * MemoryLayout<UInt32>.stride,
-            memoryOwner: memoryOwner,
-            options: .storageModeShared
-        )
-
-        inputMeshDescriptionData.vertexAttributes.append(
-            .init(elementType: .uint, offset: 0, layoutIndex: inputMeshDescriptionData.vertexLayouts.count, semantic: .index)
-        )
-        inputMeshDescriptionData.vertexLayouts.append(
-            .init(bufferIndex: inputMeshDescriptionData.mtlBuffers.count, bufferOffset: 0, bufferStride: MemoryLayout<UInt32>.stride)
-        )
-
-        inputMeshDescriptionData.mtlBuffers.append(inputIndexBuffer)
-    }
-
-    let result = _Proto_LowLevelDeformationDescription_v1.MeshDescription.make(
-        buffers: inputMeshDescriptionData.mtlBuffers,
-        attributes: inputMeshDescriptionData.vertexAttributes,
-        layouts: inputMeshDescriptionData.vertexLayouts,
-        vertexCount: meshResource.descriptor.vertexCapacity,
-        indexCount: meshResource.descriptor.indexCapacity
-    )
-
-    switch result {
-    case .success(let meshDescription):
-        return meshDescription
-    case .failure(let error):
-        print(error)
-        return nil
-    }
-}
-
-func makeOutputMeshDescriptionForDeformation(
-    meshResource: LowLevelMeshResource,
-    deformationData: WKBridgeDeformationData,
-    commandBuffer: any MTLCommandBuffer,
-    device: any MTLDevice,
-    memoryOwner: task_id_token_t
-) -> _Proto_LowLevelDeformationDescription_v1.MeshDescription? {
-    let outputMeshDescriptionData = makeMeshDescriptionForDeformation(
+    let outputAttrs = makeBoundAttributes(
         meshResource: meshResource,
-        deformationData: deformationData,
-        commandBuffer: commandBuffer,
-        isInput: false,
-        device: device,
-        memoryOwner: memoryOwner
+        needsNormal: hasRenormalizing && meshHasNormal,
+        needsTangent: hasRenormalizing && meshHasTangent,
+        needsBitangent: hasRenormalizing && meshHasBitangent,
+        needsUV: meshHasUV
     )
 
-    let result = _Proto_LowLevelDeformationDescription_v1.MeshDescription.make(
-        buffers: outputMeshDescriptionData.mtlBuffers,
-        attributes: outputMeshDescriptionData.vertexAttributes,
-        layouts: outputMeshDescriptionData.vertexLayouts,
-        vertexCount: meshResource.descriptor.vertexCapacity
+    let pipelineDescriptor = LowLevelDeformation.Pipeline.Descriptor(
+        inputAttributes: inputAttrs.map(\.v2Attribute),
+        outputAttributes: outputAttrs.map(\.v2Attribute),
+        blendShape: pipelineBlending,
+        skinning: pipelineSkinning,
+        renormalization: pipelineRenormalizing
     )
+    let pipeline = try deformationContextRoot.makePipeline(pipelineDescriptor)
 
-    switch result {
-    case .success(let meshDescription):
-        return meshDescription
-    case .failure(let error):
-        print(error)
-        return nil
+    // ── Per-frame deformation descriptor ─────────────────────────────────
+    var blendingDesc: LowLevelDeformation.Descriptor.BlendShape? = nil
+    var blendingTargetCount = 0
+    if let blend = deformationData.blendShapeData {
+        blendingTargetCount = max(1, blend.weights.count)
+        blendingDesc = .init(targetCount: blendingTargetCount)
     }
-}
+    var skinningDesc: LowLevelDeformation.Descriptor.Skinning? = nil
+    var skinningJointTransformCount = 0
+    var skinningInfluencesPerVertex = 0
+    if let skinning = deformationData.skinningData {
+        skinningJointTransformCount = max(1, skinning.jointTransforms.count)
+        skinningInfluencesPerVertex = Int(skinning.influencePerVertexCount)
+        skinningDesc = .init(
+            jointTransformCount: skinningJointTransformCount,
+            influencesPerVertex: skinningInfluencesPerVertex
+        )
+    }
+    var renormalizingDesc: LowLevelDeformation.Descriptor.Renormalization? = nil
+    var renormalizingAdjacenciesCount = 0
+    var renormalizingIndexCount = 0
+    if let renorm = deformationData.renormalizationData {
+        renormalizingAdjacenciesCount = max(1, renorm.vertexAdjacencies.count)
+        renormalizingIndexCount = max(3, renorm.vertexIndicesPerTriangle.count)
+        renormalizingDesc = .init(
+            adjacenciesCount: renormalizingAdjacenciesCount,
+            indexCount: renormalizingIndexCount
+        )
+    }
+    let descriptor = LowLevelDeformation.Descriptor(
+        vertexCount: vertexCount,
+        blendShape: blendingDesc,
+        skinning: skinningDesc,
+        renormalization: renormalizingDesc
+    )
+    let deformation = try deformationContextRoot.makeDeformation(pipeline: pipeline, descriptor: descriptor)
 
-extension LowLevelMeshResource.VertexSemantic {
-    func toDeformationVertexSemantic() -> _Proto_LowLevelDeformationDescription_v1.MeshSemantic? {
-        switch self {
-        case .position:
-            return .position
-        case .normal:
-            return .normal
-        case .tangent:
-            return .tangent
-        case .bitangent:
-            return .bitangent
-        case .uv0:
-            return .uv0
-        case .uv1:
-            return .uv1
-        case .uv2:
-            return .uv2
-        case .uv3:
-            return .uv3
-        case .uv4:
-            return .uv4
-        case .uv5:
-            return .uv5
-        case .uv6:
-            return .uv6
-        case .uv7:
-            return .uv7
-        default:
-            return nil
+    // ── Bind input/output mesh vertex buffers (sourced from meshResource) ─
+    var collectedBuffers: [any MTLBuffer] = []
+    for bound in inputAttrs {
+        let resourceBuffer = meshResource.readVertices(at: bound.bufferIndex, commandBuffer: commandBuffer)
+        // Copy the source data into a private buffer so the deformation doesn't
+        // mutate the mesh resource's primary storage.
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
+        // swift-format-ignore: NeverForceUnwrap
+        let copy = device.makeBuffer(length: resourceBuffer.length, options: .storageModeShared)!
+        copy.__setOwnerWithIdentity(memoryOwner)
+        // swift-format-ignore: NeverForceUnwrap
+        let blit = commandBuffer.makeBlitCommandEncoder()!
+        blit.copy(from: resourceBuffer, sourceOffset: 0, to: copy, destinationOffset: 0, size: resourceBuffer.length)
+        blit.endEncoding()
+        try deformation.input.setVertices(copy, offset: bound.offset, semantic: bound.v2Attribute.semantic)
+        collectedBuffers.append(copy)
+    }
+    for bound in outputAttrs {
+        let resourceBuffer = meshResource.readVertices(at: bound.bufferIndex, commandBuffer: commandBuffer)
+        try deformation.output.setVertices(resourceBuffer, offset: bound.offset, semantic: bound.v2Attribute.semantic)
+        collectedBuffers.append(resourceBuffer)
+    }
+
+    // ── Skinning data ────────────────────────────────────────────────────
+    var jointTransformsBuffer: (any MTLBuffer)? = nil
+    var inverseBindPosesBuffer: (any MTLBuffer)? = nil
+    var influenceWeightsBuffer: (any MTLBuffer)? = nil
+    if let skinning = deformationData.skinningData {
+        let jointTransforms = skinning.jointTransforms
+        if !jointTransforms.isEmpty {
+            let buf = device.makeBuffer(
+                fromSpan: jointTransforms.span,
+                length: jointTransforms.count * MemoryLayout<simd_float4x4>.stride,
+                memoryOwner: memoryOwner,
+                options: .storageModeShared
+            )
+            try deformation.skinning.setJointTransforms(buf, offset: 0)
+            jointTransformsBuffer = buf
+            collectedBuffers.append(buf)
+        }
+
+        let inverseBindPoses = skinning.inverseBindPoses
+        if !inverseBindPoses.isEmpty {
+            let buf = device.makeBuffer(
+                fromSpan: inverseBindPoses.span,
+                length: inverseBindPoses.count * MemoryLayout<simd_float4x4>.stride,
+                memoryOwner: memoryOwner,
+                options: .storageModeShared
+            )
+            try deformation.skinning.setInverseBindPoses(buf, offset: 0)
+            inverseBindPosesBuffer = buf
+            collectedBuffers.append(buf)
+        }
+
+        deformation.skinning.geometryBindTransform = skinning.geometryBindTransform
+
+        let influenceWeights = skinning.influenceWeights
+        if !influenceWeights.isEmpty {
+            let buf = device.makeBuffer(
+                fromSpan: influenceWeights.span,
+                length: influenceWeights.count * MemoryLayout<Float>.stride,
+                memoryOwner: memoryOwner,
+                options: .storageModeShared
+            )
+            try deformation.skinning.setInfluenceWeights(buf, offset: 0)
+            influenceWeightsBuffer = buf
+            collectedBuffers.append(buf)
+        }
+
+        let influenceJointIndices = skinning.influenceJointIndices
+        if !influenceJointIndices.isEmpty {
+            let indicesData = toData(influenceJointIndices)
+            try deformation.skinning.replaceInfluenceJointIndices { span in
+                writeData(into: &span, from: indicesData)
+            }
         }
     }
+
+    // ── Blend-shape data ─────────────────────────────────────────────────
+    var blendShapeWeightsBuffer: (any MTLBuffer)? = nil
+    var blendShapePositionOffsetsBuffer: (any MTLBuffer)? = nil
+    if let blend = deformationData.blendShapeData {
+        let weights = blend.weights
+        if !weights.isEmpty {
+            let buf = device.makeBuffer(
+                fromSpan: weights.span,
+                length: weights.count * MemoryLayout<Float>.stride,
+                memoryOwner: memoryOwner,
+                options: .storageModeShared
+            )
+            try deformation.blendShape.setWeights(buf, offset: 0)
+            blendShapeWeightsBuffer = buf
+            collectedBuffers.append(buf)
+        }
+
+        let positions = blend.positionOffsets.flatMap(\.self)
+        if !positions.isEmpty {
+            let buf = device.makeBuffer(
+                fromSpan: positions.span,
+                length: positions.count * MemoryLayout<SIMD3<Float>>.stride,
+                memoryOwner: memoryOwner,
+                options: .storageModeShared
+            )
+            try deformation.blendShape.setPositionOffsets(buf, offset: 0)
+            blendShapePositionOffsetsBuffer = buf
+            collectedBuffers.append(buf)
+        }
+    }
+
+    // ── Renormalization data ─────────────────────────────────────────────
+    if let renorm = deformationData.renormalizationData {
+        let triangleIndices = renorm.vertexIndicesPerTriangle
+        if !triangleIndices.isEmpty {
+            let triangleIndicesData = toData(triangleIndices)
+            try deformation.renormalization.replaceTriangleIndices { span in
+                writeData(into: &span, from: triangleIndicesData)
+            }
+        }
+
+        let adjacencies = renorm.vertexAdjacencies
+        if !adjacencies.isEmpty {
+            let adjacenciesData = toData(adjacencies)
+            try deformation.renormalization.replaceAdjacencies { span in
+                writeData(into: &span, from: adjacenciesData)
+            }
+        }
+
+        let endIndices = renorm.vertexAdjacencyEndIndices
+        if !endIndices.isEmpty {
+            let endIndicesData = toData(endIndices)
+            try deformation.renormalization.replaceAdjacencyEndIndices { span in
+                writeData(into: &span, from: endIndicesData)
+            }
+        }
+    }
+
+    return DeformationContext(
+        pipeline: pipeline,
+        deformation: deformation,
+        dirty: true,
+        mtlBuffers: collectedBuffers,
+        jointTransformsBuffer: jointTransformsBuffer,
+        inverseBindPosesBuffer: inverseBindPosesBuffer,
+        influenceWeightsBuffer: influenceWeightsBuffer,
+        blendShapeWeightsBuffer: blendShapeWeightsBuffer,
+        blendShapePositionOffsetsBuffer: blendShapePositionOffsetsBuffer,
+        vertexCount: vertexCount,
+        blendingTargetCount: blendingTargetCount,
+        skinningJointTransformCount: skinningJointTransformCount,
+        skinningInfluencesPerVertex: skinningInfluencesPerVertex,
+        renormalizingAdjacenciesCount: renormalizingAdjacenciesCount,
+        renormalizingIndexCount: renormalizingIndexCount
+    )
 }
 
 #endif

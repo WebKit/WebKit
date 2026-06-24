@@ -78,7 +78,7 @@ AuthenticationExtensionsClientOutputs AuthenticatorResponse::extensions() const
 
     // Clone ArrayBuffers to prevent detachment issues
     if (result.prf && result.prf->results) {
-        result.prf->results->first = ArrayBuffer::create(result.prf->results->first->span());
+        result.prf->results->first = ArrayBuffer::create(protect(result.prf->results->first)->span());
         if (result.prf->results->second)
             result.prf->results->second = ArrayBuffer::tryCreate(result.prf->results->second.get()->span());
     }

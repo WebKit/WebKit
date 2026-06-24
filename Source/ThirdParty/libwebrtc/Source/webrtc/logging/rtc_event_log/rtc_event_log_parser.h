@@ -388,7 +388,7 @@ class ParsedRtcEventLog {
 
   ~ParsedRtcEventLog();
 
-  // Clears previously parsed events and resets the ParsedRtcEventLogNew to an
+  // Clears previously parsed events and resets the ParsedRtcEventLog to an
   // empty state.
   void Clear();
 

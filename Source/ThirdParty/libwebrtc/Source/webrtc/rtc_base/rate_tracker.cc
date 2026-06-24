@@ -137,4 +137,9 @@ size_t RateTracker::NextBucketIndex(size_t bucket_index) const {
   return (bucket_index + 1u) % (bucket_count_ + 1u);
 }
 
+double RateTracker::Rate(Timestamp current_time) const {
+  return ComputeRateForInterval(
+      current_time, TimeDelta::Millis(bucket_milliseconds_) * bucket_count_);
+}
+
 }  // namespace webrtc

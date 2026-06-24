@@ -356,7 +356,7 @@ class Track {
    private:
     Info(const Info&);
     Info& operator=(const Info&);
-    int CopyStr(char* Info::*str, Info&) const;
+    int CopyStr(char* Info::* str, Info&) const;
   };
 
   long GetFirst(const BlockEntry*&) const;

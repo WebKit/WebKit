@@ -22,18 +22,14 @@
 
 namespace {
 
-class PostprocFiltersTest
-    : public ::libaom_test::CodecTestWith2Params<int, unsigned int>,
-      public ::libaom_test::EncoderTest {
+class PostprocFiltersTest : public ::libaom_test::CodecTestWithParam<int>,
+                            public ::libaom_test::EncoderTest {
  protected:
   PostprocFiltersTest()
       : EncoderTest(GET_PARAM(0)), set_skip_postproc_filtering_(false),
-        frame_number_(0), cpu_used_(GET_PARAM(1)), bd_(GET_PARAM(2)) {}
+        frame_number_(0), cpu_used_(GET_PARAM(1)) {}
 
-  void SetUp() override {
-    InitializeConfig(::libaom_test::kAllIntra);
-    cfg_.g_input_bit_depth = bd_;
-  }
+  void SetUp() override { InitializeConfig(::libaom_test::kAllIntra); }
 
   void PreEncodeFrameHook(::libaom_test::VideoSource *video,
                           ::libaom_test::Encoder *encoder) override {
@@ -121,7 +117,6 @@ class PostprocFiltersTest
   static constexpr int kFrames = 30;
   static constexpr unsigned int kCqLevel = 18;
   int cpu_used_;
-  unsigned int bd_;
 };
 
 class PostprocFiltersTestLarge : public PostprocFiltersTest {};
@@ -130,11 +125,9 @@ TEST_P(PostprocFiltersTest, MD5Match) { DoTest(); }
 
 TEST_P(PostprocFiltersTestLarge, MD5Match) { DoTest(); }
 
-AV1_INSTANTIATE_TEST_SUITE(PostprocFiltersTest, ::testing::Values(9),
-                           ::testing::Values(8, 10));
+AV1_INSTANTIATE_TEST_SUITE(PostprocFiltersTest, ::testing::Values(9));
 
 // Test cpu_used 3 and 6.
-AV1_INSTANTIATE_TEST_SUITE(PostprocFiltersTestLarge, ::testing::Values(3, 6),
-                           ::testing::Values(8, 10));
+AV1_INSTANTIATE_TEST_SUITE(PostprocFiltersTestLarge, ::testing::Values(3, 6));
 
 }  // namespace

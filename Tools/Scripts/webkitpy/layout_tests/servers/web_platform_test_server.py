@@ -181,7 +181,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
             for key in ports:
                 for value in ports[key]:
                     port = {"port": value}
-                    if key == "https":
+                    if key == "https" or key == "wss":
                         port["sslcert"] = True
                     self._mappings.append(port)
 

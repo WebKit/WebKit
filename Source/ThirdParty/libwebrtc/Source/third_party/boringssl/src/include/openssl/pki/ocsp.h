@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !defined(OPENSSL_HEADER_BSSL_PKI_OCSP_H_)  && defined(__cplusplus)
+#ifndef OPENSSL_HEADER_BSSL_PKI_OCSP_H_
 #define OPENSSL_HEADER_BSSL_PKI_OCSP_H_
 
 #include <openssl/base.h>   // IWYU pragma: export
@@ -33,10 +33,10 @@ enum class OCSPRevocationStatus {
 
 // The result of OCSP verification. This always contains a ResponseStatus, which
 // describes whether or not an OCSP response was provided, and response level
-// errors. It optionally contains an OCSPRevocationStatus when |response_status
-// = PROVIDED|. For example, a stapled OCSP response matching the certificate,
-// and indicating a non-revoked status, will have |response_status = PROVIDED|
-// and |revocation_status = GOOD|.
+// errors. It optionally contains an OCSPRevocationStatus when
+// `response_status = PROVIDED`. For example, a stapled OCSP response matching
+// the certificate, and indicating a non-revoked status, will have
+// `response_status = PROVIDED` and `revocation_status = GOOD`.
 struct OPENSSL_EXPORT OCSPVerifyResult {
   bool operator==(const OCSPVerifyResult &other) const {
     if (response_status != other.response_status) {
@@ -44,7 +44,7 @@ struct OPENSSL_EXPORT OCSPVerifyResult {
     }
 
     if (response_status == PROVIDED) {
-      // |revocation_status| is only defined when |response_status| is PROVIDED.
+      // `revocation_status` is only defined when `response_status` is PROVIDED.
       return revocation_status == other.revocation_status;
     }
     return true;
@@ -92,26 +92,26 @@ struct OPENSSL_EXPORT OCSPVerifyResult {
   ResponseStatus response_status = NOT_CHECKED;
 
   // The strictest CertStatus matching the certificate (REVOKED > UNKNOWN >
-  // GOOD). Only valid if |response_status| = PROVIDED.
+  // GOOD). Only valid if `response_status` = PROVIDED.
   OCSPRevocationStatus revocation_status = OCSPRevocationStatus::UNKNOWN;
 };
 
-// Checks the revocation status of the certificate |certificate_der| by using
-// the DER-encoded |raw_response|.
+// Checks the revocation status of the certificate `certificate_der` by using
+// the DER-encoded `raw_response`.
 //
 // Returns GOOD if the OCSP response indicates the certificate is not revoked,
 // REVOKED if it indicates it is revoked, or UNKNOWN for all other cases.
 //
-//  * |raw_response|: A DER encoded OCSPResponse.
-//  * |certificate_der|: The certificate being checked for revocation.
-//  * |issuer_certificate_der|: The certificate that signed |certificate_der|.
+//  * `raw_response`: A DER encoded OCSPResponse.
+//  * `certificate_der`: The certificate being checked for revocation.
+//  * `issuer_certificate_der`: The certificate that signed `certificate_der`.
 //        The caller must have already performed path verification.
-//  * |verify_time_epoch_seconds|: The time as the difference in seconds from
+//  * `verify_time_epoch_seconds`: The time as the difference in seconds from
 //        the POSIX epoch to use when checking revocation status.
-//  * |max_age_seconds|: The maximum age in seconds for a CRL, implemented as
-//        time since the |thisUpdate| field in the CRL TBSCertList. Responses
-//        older than |max_age_seconds| will be considered invalid.
-//  * |response_details|: Additional details about failures.
+//  * `max_age_seconds`: The maximum age in seconds for a CRL, implemented as
+//        time since the `thisUpdate` field in the CRL TBSCertList. Responses
+//        older than `max_age_seconds` will be considered invalid.
+//  * `response_details`: Additional details about failures.
 [[nodiscard]] OPENSSL_EXPORT OCSPRevocationStatus CheckOCSP(
     std::string_view raw_response, std::string_view certificate_der,
     std::string_view issuer_certificate_der, int64_t verify_time_epoch_seconds,
@@ -120,4 +120,4 @@ struct OPENSSL_EXPORT OCSPVerifyResult {
 
 BSSL_NAMESPACE_END
 
-#endif  // OPENSSL_HEADER_BSSL_PKI_OCSP_H_ && __cplusplus
+#endif  // OPENSSL_HEADER_BSSL_PKI_OCSP_H_

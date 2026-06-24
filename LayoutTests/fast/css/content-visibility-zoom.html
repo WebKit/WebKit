@@ -31,8 +31,8 @@
     <script src="../../resources/js-test.js"></script>
     <script src="../../resources/ui-helper.js"></script>
     <script>
-        window.testRunner?.waitUntilDone();
-        
+        window.jsTestIsAsync = true;
+
         let lastSkipped = false;
         window.addEventListener('load', async () => {            
             const target = document.getElementById('target');
@@ -56,7 +56,7 @@
             await UIHelper.renderingUpdate();
             shouldBe('lastSkipped', 'true');
 
-            window.testRunner?.notifyDone()
+            finishJSTest();
         }, false);        
     </script>
 </head>

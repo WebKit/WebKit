@@ -11,11 +11,11 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
@@ -39,7 +39,7 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 std::optional<ReConfigChunk> ReConfigChunk::Parse(
-    webrtc::ArrayView<const uint8_t> data) {
+    std::span<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -55,7 +55,7 @@ std::optional<ReConfigChunk> ReConfigChunk::Parse(
 }
 
 void ReConfigChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  webrtc::ArrayView<const uint8_t> parameters = parameters_.data();
+  std::span<const uint8_t> parameters = parameters_.data();
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, parameters.size());
   writer.CopyToVariableData(parameters);
 }

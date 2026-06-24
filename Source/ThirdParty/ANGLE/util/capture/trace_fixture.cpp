@@ -686,19 +686,69 @@ GLuint CreateEGLImageResource(GLsizei width, GLsizei height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     std::vector<GLubyte> pixels;
-    pixels.reserve(width * height * 3);
+    pixels.reserve(width * height * 4);
     for (int i = 0; i < width * height; i++)
     {
         pixels.push_back(61);
         pixels.push_back(220);
         pixels.push_back(132);
+        pixels.push_back(255);
     }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  pixels.data());
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, previousAlignment);
     glBindTexture(GL_TEXTURE_2D, previousTexId);
     return stagingTexId;
+}
+
+void UpdateEGLImageData(GLuint imageID, GLsizei width, GLsizei height, const void *imageData)
+{
+    GLint restoreTexture;
+    GLint restoreAlignment;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &restoreTexture);
+    glGetIntegerv(GL_UNPACK_ALIGNMENT, &restoreAlignment);
+
+    if (gEGLImageMap2[imageID] != nullptr)
+    {
+        // EGLImage already exists, update backing texture if there is imageData
+        GLuint textureID = gEGLImageMap2Resources[imageID];
+        if ((textureID != 0) && (imageData != nullptr))
+        {
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
+                            imageData);
+        }
+    }
+    else
+    {
+        // First eglImage binding, create eglImage and a staging texture for it
+        GLuint stagingTexture;
+        if (imageData != nullptr)
+        {
+            glGenTextures(1, &stagingTexture);
+            glBindTexture(GL_TEXTURE_2D, stagingTexture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                         imageData);
+        }
+        else
+        {
+            // Fallback is to use a static, solid green placeholder texture
+            stagingTexture = CreateEGLImageResource(width, height);
+        }
+
+        gEGLImageMap2Resources[imageID] = stagingTexture;
+        gEGLImageMap2[imageID] =
+            eglCreateImageKHR(gEGLDisplay, eglGetCurrentContext(), EGL_GL_TEXTURE_2D,
+                              reinterpret_cast<EGLClientBuffer>(stagingTexture), nullptr);
+    }
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, restoreAlignment);
+    glBindTexture(GL_TEXTURE_2D, restoreTexture);
 }
 
 void CreateEGLImage(EGLDisplay dpy,
@@ -712,10 +762,10 @@ void CreateEGLImage(EGLDisplay dpy,
 {
     if (target == EGL_NATIVE_BUFFER_ANDROID || buffer == 0)
     {
-        // If this image was created from an AHB or the backing resource was not
-        // captured, create a new GL texture during replay to use instead.
-        // Substituting a GL texture for an AHB allows the trace to run on
-        // non-Android systems.
+        // If image was created from an AHB or the backing resource wasn't captured, create a new
+        // texture to use instead, which will be filled in an UpdateEGLImageData call we insert just
+        // before the bind call. Substituting a regular texture for the AHB allows the trace to run
+        // on non-Android systems.
         gEGLImageMap2Resources[imageID] = CreateEGLImageResource(width, height);
         gEGLImageMap2[imageID]          = eglCreateImage(
             dpy, eglGetCurrentContext(), EGL_GL_TEXTURE_2D,
@@ -737,6 +787,8 @@ void CreateEGLImageKHR(EGLDisplay dpy,
                        GLsizei height,
                        GLuint imageID)
 {
+    // This function is nearly identical to CreateEGLImage() above, but remains separated
+    // because of a unique function signature. See comments above.
     if (target == EGL_NATIVE_BUFFER_ANDROID || buffer == 0)
     {
         gEGLImageMap2Resources[imageID] = CreateEGLImageResource(width, height);

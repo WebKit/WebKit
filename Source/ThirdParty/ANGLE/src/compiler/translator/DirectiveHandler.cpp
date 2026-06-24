@@ -6,6 +6,8 @@
 
 #include "compiler/translator/DirectiveHandler.h"
 
+#include "compiler/preprocessor/SourceLocation.h"
+
 #include <sstream>
 
 #include "angle_gl.h"
@@ -310,7 +312,8 @@ void TDirectiveHandler::handleVersion(const angle::pp::SourceLocation &loc,
 {
     if (version == 100 || version == 300 || version == 310 || version == 320)
     {
-        mContext.onShaderVersionDeclared(version);
+        TSourceLoc tLoc{loc.file, loc.line, loc.file, loc.line};
+        mContext.onShaderVersionDeclared(tLoc, version);
 
         // Add macros for supported extensions
         for (const auto &iter : mExtensionBehavior)

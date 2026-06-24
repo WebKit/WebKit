@@ -35,6 +35,7 @@
 #include "WebPageTestingMessages.h"
 #include "WebProcess.h"
 #include <WebCore/BackForwardController.h>
+#include <WebCore/Document.h>
 #include <WebCore/DocumentView.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
@@ -71,6 +72,11 @@ WebPageTesting::~WebPageTesting()
 void WebPageTesting::isLayerTreeFrozen(CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(m_page && !!m_page->layerTreeFreezeReasons());
+}
+
+void WebPageTesting::numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    completionHandler(WebCore::Document::allDocuments().size());
 }
 
 void WebPageTesting::setPermissionLevel(const String& origin, bool allowed)

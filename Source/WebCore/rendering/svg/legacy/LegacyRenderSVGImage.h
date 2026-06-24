@@ -36,7 +36,7 @@ class LegacyRenderSVGImage final : public LegacyRenderSVGModelObject {
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGImage);
 public:
-    LegacyRenderSVGImage(SVGImageElement&, RenderStyle&&);
+    LegacyRenderSVGImage(SVGImageElement&, Style::ComputedStyle&&);
     virtual ~LegacyRenderSVGImage();
 
     SVGImageElement& NODELETE imageElement() const;
@@ -85,8 +85,8 @@ private:
 
     AffineTransform localTransform() const override { return m_localTransform; }
 
-    bool m_needsBoundariesUpdate : 1;
-    bool m_needsTransformUpdate : 1;
+    bool m_needsBoundariesUpdate : 1 { true };
+    bool m_needsTransformUpdate : 1 { true };
     AffineTransform m_localTransform;
     FloatRect m_objectBoundingBox;
     FloatRect m_repaintBoundingBox;

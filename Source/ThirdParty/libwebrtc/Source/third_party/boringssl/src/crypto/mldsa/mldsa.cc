@@ -16,6 +16,9 @@
 
 #include "../fipsmodule/bcm_interface.h"
 
+
+using namespace bssl;
+
 int MLDSA65_generate_key(
     uint8_t out_encoded_public_key[MLDSA65_PUBLIC_KEY_BYTES],
     uint8_t out_seed[MLDSA_SEED_BYTES],

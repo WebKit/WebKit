@@ -65,12 +65,7 @@ private:
     static void willPerformClientRedirectForFrame(WKBundlePageRef, WKBundleFrameRef, WKURLRef url, double delay, double date, const void*);
     static void didSameDocumentNavigationForFrame(WKBundlePageRef, WKBundleFrameRef, WKSameDocumentNavigationType, WKTypeRef*, const void*);
     static void didHandleOnloadEventsForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
-    static void didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, bool pageLoadIsProvisional, const void*);
     static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, WKURLResponseRef, const void*);
-    static void didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef, const void*);
-    static void didReceiveContentLengthForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, uint64_t length, const void*);
-    static void didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, const void*);
-    static void didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKErrorRef, const void*);
     static bool shouldCacheResponse(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, const void*);
     static void willInjectUserScriptForFrame(WKBundlePageRef, WKBundleFrameRef, WKBundleScriptWorldRef, const void*);
 
@@ -91,12 +86,7 @@ private:
     void willInjectUserScriptForFrame();
 
     // Resource Load Client
-    void didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, bool pageLoadIsProvisional);
     WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, WKURLResponseRef);
-    void didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef);
-    void didReceiveContentLengthForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, uint64_t length);
-    void didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier);
-    void didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKErrorRef);
     bool shouldCacheResponse(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier);
 
     // Editor client
@@ -128,7 +118,6 @@ private:
     void dumpDOMAsWebArchive(WKBundleFrameRef, WTF::StringBuilder&);
 
     void platformDidStartProvisionalLoadForFrame(WKBundleFrameRef);
-    String platformResponseMimeType(WKURLResponseRef);
 
     void frameDidChangeLocation(WKBundleFrameRef);
 

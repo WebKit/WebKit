@@ -45,7 +45,6 @@ void TestWithSwiftConditionallyMessageForwarder::didReceiveMessage(IPC::Connecti
 void TestWithSwiftConditionally::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 #endif // ENABLE(SWIFT_TEST_CONDITION)
 {
-    Ref protectedThis { *this };
 #if ENABLE(SWIFT_TEST_CONDITION)
     auto target = getMessageTarget();
     if (!target) {
@@ -73,7 +72,6 @@ void TestWithSwiftConditionallyMessageForwarder::didReceiveSyncMessage(IPC::Conn
 void TestWithSwiftConditionally::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 #endif // ENABLE(SWIFT_TEST_CONDITION)
 {
-    Ref protectedThis { *this };
 #if ENABLE(SWIFT_TEST_CONDITION)
     auto target = getMessageTarget();
     if (!target) {

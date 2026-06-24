@@ -29,20 +29,19 @@
 #import <WebCore/GeolocationPositionData.h>
 #import <wtf/RefPtr.h>
 
-using namespace WebCore;
 
 @interface WebGeolocationPositionInternal : NSObject
 {
 @public
-    GeolocationPositionData _position;
+    WebCore::GeolocationPositionData _position;
 }
 
-- (id)initWithCoreGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition;
+- (id)initWithCoreGeolocationPosition:(WebCore::GeolocationPositionData&&)coreGeolocationPosition;
 @end
 
 @implementation WebGeolocationPositionInternal
 
-- (id)initWithCoreGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition
+- (id)initWithCoreGeolocationPosition:(WebCore::GeolocationPositionData&&)coreGeolocationPosition
 {
     self = [super init];
     if (!self)
@@ -55,7 +54,7 @@ using namespace WebCore;
 
 @implementation WebGeolocationPosition
 
-std::optional<GeolocationPositionData> core(WebGeolocationPosition *position)
+std::optional<WebCore::GeolocationPositionData> core(WebGeolocationPosition *position)
 {
     if (!position)
         return std::nullopt;
@@ -67,11 +66,11 @@ std::optional<GeolocationPositionData> core(WebGeolocationPosition *position)
     self = [super init];
     if (!self)
         return nil;
-    _internal = [[WebGeolocationPositionInternal alloc] initWithCoreGeolocationPosition:GeolocationPositionData { timestamp, latitude, longitude, accuracy }];
+    _internal = [[WebGeolocationPositionInternal alloc] initWithCoreGeolocationPosition:WebCore::GeolocationPositionData { timestamp, latitude, longitude, accuracy }];
     return self;
 }
 
-- (id)initWithGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition
+- (id)initWithGeolocationPosition:(WebCore::GeolocationPositionData&&)coreGeolocationPosition
 {
     self = [super init];
     if (!self)

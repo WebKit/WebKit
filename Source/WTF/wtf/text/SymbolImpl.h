@@ -75,9 +75,10 @@ protected:
 
     friend class StringImpl;
 
-    inline SymbolImpl(std::span<const Latin1Character>, Ref<StringImpl>&&, Flags = s_flagDefault);
-    inline SymbolImpl(std::span<const char16_t>, Ref<StringImpl>&&, Flags = s_flagDefault);
-    inline SymbolImpl(Flags = s_flagDefault);
+    SymbolImpl(std::span<const Latin1Character>, Ref<StringImpl>&&, Flags = s_flagDefault);
+    SymbolImpl(std::span<const char16_t>, Ref<StringImpl>&&, Flags = s_flagDefault);
+    SymbolImpl(Flags = s_flagDefault);
+    ~SymbolImpl();
 
     // The pointer to the owner string should be immediately following after the StringImpl layout,
     // since we would like to align the layout of SymbolImpl to the one of BufferSubstring StringImpl.
@@ -86,33 +87,6 @@ protected:
     Flags m_flags { s_flagDefault };
 };
 static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl));
-
-inline SymbolImpl::SymbolImpl(std::span<const Latin1Character> characters, Ref<StringImpl>&& base, Flags flags)
-    : UniquedStringImpl(CreateSymbol, characters)
-    , m_owner(&base.leakRef())
-    , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
-    , m_flags(flags)
-{
-    static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
-}
-
-inline SymbolImpl::SymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base, Flags flags)
-    : UniquedStringImpl(CreateSymbol, characters)
-    , m_owner(&base.leakRef())
-    , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
-    , m_flags(flags)
-{
-    static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
-}
-
-inline SymbolImpl::SymbolImpl(Flags flags)
-    : UniquedStringImpl(CreateSymbol)
-    , m_owner(StringImpl::empty())
-    , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
-    , m_flags(flags | s_flagIsNullSymbol)
-{
-    static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
-}
 
 inline constexpr SymbolImpl::StaticSymbolImpl::StaticSymbolImpl(ASCIILiteral literal, Flags flags)
     : StringImplShape(s_refCountFlagIsStaticString, literal, s_hashFlag8BitBuffer | s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(literal) << s_flagCount), ConstructWithConstExpr)
@@ -134,15 +108,8 @@ public:
     WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> create(StringImpl& rep);
 
 private:
-    PrivateSymbolImpl(std::span<const Latin1Character> characters, Ref<StringImpl>&& base)
-        : SymbolImpl(characters, WTF::move(base), s_flagIsPrivate)
-    {
-    }
-
-    PrivateSymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base)
-        : SymbolImpl(characters, WTF::move(base), s_flagIsPrivate)
-    {
-    }
+    PrivateSymbolImpl(std::span<const Latin1Character>, Ref<StringImpl>&&);
+    PrivateSymbolImpl(std::span<const char16_t>, Ref<StringImpl>&&);
 };
 
 class RegisteredSymbolImpl final : public SymbolImpl {
@@ -157,17 +124,8 @@ private:
     static Ref<RegisteredSymbolImpl> create(StringImpl& rep, SymbolRegistry&);
     static Ref<RegisteredSymbolImpl> createPrivate(StringImpl& rep, SymbolRegistry&);
 
-    RegisteredSymbolImpl(std::span<const Latin1Character> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
-        : SymbolImpl(characters, WTF::move(base), flags)
-        , m_symbolRegistry(&registry)
-    {
-    }
-
-    RegisteredSymbolImpl(std::span<const char16_t> characters, Ref<StringImpl>&& base, SymbolRegistry& registry, Flags flags = s_flagIsRegistered)
-        : SymbolImpl(characters, WTF::move(base), flags)
-        , m_symbolRegistry(&registry)
-    {
-    }
+    RegisteredSymbolImpl(std::span<const Latin1Character>, Ref<StringImpl>&&, SymbolRegistry&, Flags = s_flagIsRegistered);
+    RegisteredSymbolImpl(std::span<const char16_t>, Ref<StringImpl>&&, SymbolRegistry&, Flags = s_flagIsRegistered);
 
     CheckedPtr<SymbolRegistry> m_symbolRegistry;
 };

@@ -12,8 +12,8 @@
 #define API_AUDIO_NEURAL_RESIDUAL_ECHO_ESTIMATOR_H_
 
 #include <array>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 
 namespace webrtc {
@@ -45,17 +45,19 @@ class NeuralResidualEchoEstimator {
   // Other inputs:
   //   * dominant_nearend: True if dominant nearend is active
   virtual void Estimate(const Block& render,
-                        ArrayView<const std::array<float, 64>> y,
-                        ArrayView<const std::array<float, 64>> e,
-                        ArrayView<const std::array<float, 65>> S2,
-                        ArrayView<const std::array<float, 65>> Y2,
-                        ArrayView<const std::array<float, 65>> E2,
+                        std::span<const std::array<float, 64>> y,
+                        std::span<const std::array<float, 64>> e,
+                        std::span<const std::array<float, 65>> S2,
+                        std::span<const std::array<float, 65>> Y2,
+                        std::span<const std::array<float, 65>> E2,
                         bool dominant_nearend,
-                        ArrayView<std::array<float, 65>> R2,
-                        ArrayView<std::array<float, 65>> R2_unbounded) = 0;
+                        std::span<std::array<float, 65>> R2,
+                        std::span<std::array<float, 65>> R2_unbounded) = 0;
 
-  // Returns a recommended AEC3 configuration for this estimator.
-  virtual EchoCanceller3Config GetConfiguration(bool multi_channel) const = 0;
+  // Adjusts the provided AEC3 suppressor configuration based on the estimator's
+  // requirements.
+  virtual EchoCanceller3Config::Suppressor AdjustConfig(
+      const EchoCanceller3Config::Suppressor& config) const = 0;
 
   // Resets the internal state of the estimator.
   virtual void Reset() = 0;

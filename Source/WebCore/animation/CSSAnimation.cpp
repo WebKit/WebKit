@@ -31,7 +31,7 @@
 #include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include "StyleOriginatedTimelinesController.h"
 #include "ViewTimeline.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -40,7 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSAnimation);
 
-Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, Style::Animation&& backingStyleAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
+Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, Style::Animation&& backingStyleAnimation, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
     // CSSAnimation should only ever be created with non-"none" animation names.
     auto name = backingStyleAnimation.name().tryKeyframesName();
@@ -419,7 +419,7 @@ void CSSAnimation::keyframesRuleDidChange()
     owningElement->keyframesRuleDidChange();
 }
 
-void CSSAnimation::updateKeyframesIfNeeded(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
+void CSSAnimation::updateKeyframesIfNeeded(const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
     if (m_overriddenProperties.contains(Property::Keyframes))
         return;

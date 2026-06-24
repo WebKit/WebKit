@@ -285,7 +285,7 @@ RefPtr<BindGroup> DeviceImpl::createBindGroup(const BindGroupDescriptor& descrip
 
     WGPUBindGroupDescriptor backingDescriptor {
         .label = label.data(),
-        .layout = convertToBackingContext->convertToBacking(protect(descriptor.layout).get()),
+        .layout = convertToBackingContext->convertToBacking(protect(descriptor.layout)),
         .entryCount = backingEntries.size(),
         .entries = backingEntries.size() ? backingEntries.span().data() : nullptr,
     };
@@ -309,7 +309,7 @@ RefPtr<ShaderModule> DeviceImpl::createShaderModule(const ShaderModuleDescriptor
         const auto& hint = descriptor.hints[i].value;
         hintsEntries.append(WGPUShaderModuleCompilationHint {
             .entryPoint = entryPoints[i].data(),
-            .layout = convertToBackingContext->convertToBacking(protect(hint.pipelineLayout).get())
+            .layout = convertToBackingContext->convertToBacking(protect(hint.pipelineLayout))
         });
     }
 
@@ -352,7 +352,7 @@ static auto convertToBacking(const ComputePipelineDescriptor& descriptor, Conver
         .label = label.data(),
         .layout = descriptor.layout ? convertToBackingContext.convertToBacking(*protect(descriptor.layout)) : nullptr,
         .compute = WGPUProgrammableStageDescriptor {
-            .module = convertToBackingContext.convertToBacking(protect(descriptor.compute.module).get()),
+            .module = convertToBackingContext.convertToBacking(protect(descriptor.compute.module)),
             .entryPoint = entryPoint ? entryPoint->data() : nullptr,
             .constantCount = backingConstantEntries.size(),
             .constants = backingConstantEntries.size() ? backingConstantEntries.span().data() : nullptr,
@@ -505,7 +505,7 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
     }
 
     WGPUFragmentState fragmentState {
-        .module = descriptor.fragment ? convertToBackingContext.convertToBacking(protect(descriptor.fragment->module).get()) : nullptr,
+        .module = descriptor.fragment ? convertToBackingContext.convertToBacking(protect(descriptor.fragment->module)) : nullptr,
         .entryPoint = fragmentEntryPoint ? fragmentEntryPoint->data() : nullptr,
         .constantCount = fragmentConstantEntries.size(),
         .constants = fragmentConstantEntries.size() ? fragmentConstantEntries.span().data() : nullptr,
@@ -517,7 +517,7 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
         .label = label.data(),
         .layout = descriptor.layout ? convertToBackingContext.convertToBacking(*protect(descriptor.layout)) : nullptr,
         .vertex = {
-            .module = convertToBackingContext.convertToBacking(protect(descriptor.vertex.module).get()),
+            .module = convertToBackingContext.convertToBacking(protect(descriptor.vertex.module)),
             .entryPoint = vertexEntryPoint ? vertexEntryPoint->data() : nullptr,
             .constantCount = vertexConstantEntries.size(),
             .constants = vertexConstantEntries.size() ? vertexConstantEntries.span().data() : nullptr,

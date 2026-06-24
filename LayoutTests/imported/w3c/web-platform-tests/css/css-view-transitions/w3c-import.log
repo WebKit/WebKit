@@ -9,9 +9,9 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+user-select
 Property values requiring vendor prefixes:
-None
+box
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-incoming-expected.html
@@ -50,6 +50,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-captured-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-captured-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-captured.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-while-promise-pending-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-while-promise-pending-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-while-promise-pending.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/block-with-overflowing-text-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/block-with-overflowing-text-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/block-with-overflowing-text.html
@@ -81,6 +84,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/column-span-during-transition-doesnt-skip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/column-span-during-transition-doesnt-skip-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/column-span-during-transition-doesnt-skip.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/composite-accumulate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/computed-style-no-active-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-escapes-clip-with-abspos-child-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-object-fit-fill-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-object-fit-none-ref.html
@@ -90,6 +95,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-visibility-auto-shared-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-visibility-auto-shared-element-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-visibility-auto-shared-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-visibility-hidden-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-with-child-with-transparent-background-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-with-child-with-transparent-background-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/content-with-child-with-transparent-background.html
@@ -145,10 +151,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/element-with-overflow-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/element-with-overflow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/element-with-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/elements-at-point.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/empty-render-target-capture-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/empty-render-target-capture-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/empty-render-target-capture.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/empty-render-target-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/escaped-name-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/escaped-name-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/escaped-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/event-pseudo-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/exit-transition-with-anonymous-layout-object-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/exit-transition-with-anonymous-layout-object-ref.html
@@ -187,6 +197,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/fragmented-during-transition-skips.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/get-computed-style-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/group-animation-for-root-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/group-transform-preserves-subpixel.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-pseudo-element-element-from-point.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element-from-point.html
@@ -195,6 +206,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unrelated-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unrelated-element-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unrelated-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/html-becomes-fixed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/html-becomes-fixed-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/html-becomes-fixed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-new-main-new-iframe-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-new-main-new-iframe-ref.html
@@ -240,7 +254,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/inline-with-offset-from-containing-block-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/inline-with-offset-from-containing-block-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/inline-with-offset-from-containing-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/input-pointer-capture-while-render-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/input-targets-root-while-render-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/input-touch-while-render-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/intrinsic-aspect-ratio-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/japanese-tag-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/japanese-tag-ref.html
@@ -664,6 +680,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/table-caption-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/table-caption-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/table-caption.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/table-root-transition-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/to-keyframe-values.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transform-origin-view-transition-group-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transform-origin-view-transition-group-ref.html
@@ -675,8 +692,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-empty-iframe-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-empty-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-removed-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-skipped-after-animation-started.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-skipped-callback-from-detached-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/transition-skipped-from-invalid-callback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/unhandled-rejection.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/unset-and-initial-view-transition-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/update-callback-called-once-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/update-callback-called-once.html
@@ -720,6 +740,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-reserved.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-stay-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-stay.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-animation-manipulation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-animation-manipulation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-animation-manipulation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-finished-promise.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/web-animation-pseudo-incorrect-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-parse-pseudo-argument-expected.html

@@ -205,11 +205,6 @@ bool WorkerGlobalScope::isSecureContext() const
     return m_topOrigin->isPotentiallyTrustworthy();
 }
 
-void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
-{
-    protect(contentSecurityPolicy())->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
-}
-
 // https://html.spec.whatwg.org/multipage/webappapis.html#parse-a-url
 URL WorkerGlobalScope::parseURL(const String& url) const
 {

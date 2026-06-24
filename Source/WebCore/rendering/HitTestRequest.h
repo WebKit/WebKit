@@ -28,7 +28,9 @@
 
 namespace WebCore {
 
-class RenderStyle;
+namespace Style {
+class ComputedStyle;
+}
 
 class HitTestRequest {
 public:
@@ -112,7 +114,7 @@ public:
 
     OptionSet<Type> type() const { return m_type; }
 
-    bool NODELETE isVisibleForStyle(const RenderStyle&) const;
+    bool NODELETE isVisibleForStyle(const Style::ComputedStyle&) const;
 
 private:
     OptionSet<Type> m_type;

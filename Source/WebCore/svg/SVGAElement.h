@@ -43,6 +43,8 @@ public:
     AtomString target() const final { return AtomString { m_target->currentValue() }; }
     SVGAnimatedString& targetAnimated() { return m_target; }
 
+    URL hrefURL() const;
+
     SharedStringHash visitedLinkHash() const;
 
     DOMTokenList& relList();
@@ -55,7 +57,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
 
     bool isValid() const final { return SVGTests::isValid(); }

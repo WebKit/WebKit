@@ -32,6 +32,10 @@
 
 namespace WebCore {
 
+namespace CSS {
+class UnevaluatedCalcBase;
+}
+
 namespace CSSCalc {
 struct Child;
 struct ChildOrNone;
@@ -84,6 +88,7 @@ public:
 
     virtual std::optional<CSSCalc::Child> toCalcTreeNode() const = 0;
 
+    static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSS::UnevaluatedCalcBase&);
     static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::Tree&);
     static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::Child&);
     static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::ChildOrNone&);

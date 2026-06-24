@@ -40,6 +40,9 @@ class TestCherryPick(testing.PathTestCase):
         super(TestCherryPick, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
         os.mkdir(os.path.join(self.path, '.svn'))
+        patcher = patch.object(Tracker, '_trackers', [])
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def test_none(self):
         with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(), MockTime:

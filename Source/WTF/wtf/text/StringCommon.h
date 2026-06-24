@@ -1188,12 +1188,12 @@ inline size_t NODELETE find(std::span<const CharacterType1> characters, Characte
     return notFound;
 }
 
-ALWAYS_INLINE size_t find(std::span<const char16_t> characters, Latin1Character matchCharacter, size_t index = 0)
+ALWAYS_INLINE size_t NODELETE find(std::span<const char16_t> characters, Latin1Character matchCharacter, size_t index = 0)
 {
     return find(characters, static_cast<char16_t>(matchCharacter), index);
 }
 
-inline size_t find(std::span<const Latin1Character> characters, char16_t matchCharacter, size_t index = 0)
+inline size_t NODELETE find(std::span<const Latin1Character> characters, char16_t matchCharacter, size_t index = 0)
 {
     if (!isLatin1(matchCharacter))
         return notFound;
@@ -1201,19 +1201,19 @@ inline size_t find(std::span<const Latin1Character> characters, char16_t matchCh
 }
 
 template<OneByteCharacterType CharacterType>
-inline size_t find(std::span<const CharacterType> characters, ASCIILiteral matchCharacters)
+inline size_t NODELETE find(std::span<const CharacterType> characters, ASCIILiteral matchCharacters)
 {
     return find(characters, byteCast<CharacterType>(matchCharacters.span()));
 }
 
 template<std::integral CharacterType1, std::integral CharacterType2>
-inline bool contains(std::span<const CharacterType1> characters, CharacterType2 matchCharacter, size_t index = 0)
+inline bool NODELETE contains(std::span<const CharacterType1> characters, CharacterType2 matchCharacter, size_t index = 0)
 {
     return find(characters, matchCharacter, index) != notFound;
 }
 
 template<OneByteCharacterType CharacterType>
-inline bool contains(std::span<const CharacterType> characters, ASCIILiteral matchCharacters)
+inline bool NODELETE contains(std::span<const CharacterType> characters, ASCIILiteral matchCharacters)
 {
     return contains(characters, byteCast<CharacterType>(matchCharacters.span()));
 }
@@ -1894,6 +1894,12 @@ inline NewlinePosition findNextNewline(std::span<const CharacterType> span, size
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+
+inline bool operator==(ASCIILiteral a, const char* b)
+{
+    return equalSpans(a.spanIncludingNullTerminator(), unsafeSpanIncludingNullTerminator(b));
+}
 
 }
 

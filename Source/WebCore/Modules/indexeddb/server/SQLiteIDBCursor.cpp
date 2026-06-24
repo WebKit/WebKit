@@ -540,8 +540,15 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
             return FetchResult::Failure;
         }
 
-        if (m_cursorType == IndexedDB::CursorType::KeyAndValue)
-            record.record.value = { ThreadSafeDataBuffer::create(WTF::move(keyData)), blobURLs, blobFilePaths };
+        if (m_cursorType == IndexedDB::CursorType::KeyAndValue) {
+            auto valueResult = m_transaction->backingStore().buildIDBValueForRecord(record.rowID, ThreadSafeDataBuffer::create(WTF::move(keyData)), WTF::move(blobURLs), WTF::move(blobFilePaths));
+            if (!valueResult) {
+                LOG_ERROR("Unable to fetch FileSystemHandle records from database while advancing cursor");
+                markAsErrored(record);
+                return FetchResult::Failure;
+            }
+            record.record.value = WTF::move(*valueResult);
+        }
     } else {
         if (!deserializeIDBKeyData(keyData.span(), record.record.primaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
@@ -575,7 +582,13 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
                 return FetchResult::Failure;
             }
 
-            record.record.value = { ThreadSafeDataBuffer::create(cachedObjectStoreStatement->columnBlob(1)), WTF::move(blobURLs), WTF::move(blobFilePaths) };
+            auto valueResult = m_transaction->backingStore().buildIDBValueForRecord(recordsRowID, ThreadSafeDataBuffer::create(cachedObjectStoreStatement->columnBlob(1)), WTF::move(blobURLs), WTF::move(blobFilePaths));
+            if (!valueResult) {
+                LOG_ERROR("Unable to fetch FileSystemHandle records from database while advancing cursor");
+                markAsErrored(record);
+                return FetchResult::Failure;
+            }
+            record.record.value = WTF::move(*valueResult);
         } else if (result == SQLITE_DONE) {
             // This indicates that the record we're trying to retrieve has been removed from the object store.
             // Skip over it.

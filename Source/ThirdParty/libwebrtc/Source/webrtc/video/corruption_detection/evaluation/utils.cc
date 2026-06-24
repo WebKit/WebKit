@@ -12,10 +12,10 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/video/video_codec_type.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_codec.h"
@@ -51,7 +51,7 @@ TempY4mFileCreator::~TempY4mFileCreator() {
 }
 
 void TempY4mFileCreator::CreateTempY4mFile(
-    ArrayView<const uint8_t> file_content) {
+    std::span<const uint8_t> file_content) {
   RTC_CHECK_EQ(file_content.size() % frame_size_, 0)
       << "Content size is not a multiple of frame size. Probably some data is "
          "missing.";

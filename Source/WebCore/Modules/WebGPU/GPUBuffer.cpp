@@ -161,7 +161,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(GPUSize64 offset, s
         return Exception { ExceptionCode::OperationError, "getMappedRangeFailed because offset + size > mappedRangeSize + mappedRangeOffset"_s };
 
     if (endOffset > m_bufferSize)
-        return Exception { ExceptionCode::OperationError, "validation failed endOffset > bufferSie"_s };
+        return Exception { ExceptionCode::OperationError, "validation failed endOffset > bufferSize"_s };
 
     if (containsRange(offset, endOffset, m_mappedRanges, m_mappedPoints))
         return Exception { ExceptionCode::OperationError, "validation failed - containsRange"_s };
@@ -195,7 +195,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(GPUSize64 offset, s
 void GPUBuffer::unmap(ScriptExecutionContext& scriptExecutionContext)
 {
     internalUnmap(scriptExecutionContext);
-    if (RefPtr device = m_device.get())
+    if (RefPtr device = m_device)
         device->removeBufferToUnmap(*this);
 }
 

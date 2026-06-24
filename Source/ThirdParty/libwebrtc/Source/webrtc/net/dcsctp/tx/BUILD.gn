@@ -22,7 +22,6 @@ rtc_library("rr_send_queue") {
   deps = [
     ":send_queue",
     ":stream_scheduler",
-    "../../../api:array_view",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
@@ -89,7 +88,6 @@ rtc_library("retransmission_timeout") {
 
 rtc_library("outstanding_data") {
   deps = [
-    "../../../api:array_view",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
@@ -112,7 +110,6 @@ rtc_library("retransmission_queue") {
   deps = [
     ":outstanding_data",
     ":send_queue",
-    "../../../api:array_view",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",

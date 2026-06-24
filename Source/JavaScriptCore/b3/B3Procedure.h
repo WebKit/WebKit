@@ -315,6 +315,9 @@ public:
     AbstractHeapRepository& heaps() { return m_heaps.get(); }
     const AbstractHeapRepository& heaps() const { return m_heaps.get(); }
 
+    void setIsWasm(bool flag) { m_isWasm = flag; }
+    bool isWasm() const { return m_isWasm; }
+
 private:
     friend class BlockInsertionSet;
 
@@ -347,6 +350,7 @@ private:
     bool m_needsPCToOriginMap { false };
     bool m_shouldDumpIR { false };
     bool m_usesSIMD { false };
+    bool m_isWasm { false };
 };
     
 } } // namespace JSC::B3

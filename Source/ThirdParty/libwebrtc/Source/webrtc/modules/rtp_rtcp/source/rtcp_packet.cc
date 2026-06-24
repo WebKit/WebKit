@@ -12,8 +12,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
@@ -24,7 +24,7 @@ namespace rtcp {
 Buffer RtcpPacket::Build() const {
   Buffer packet = Buffer::CreateWithCapacity(BlockLength());
 
-  packet.AppendData(BlockLength(), [&](ArrayView<uint8_t> data) {
+  packet.AppendData(BlockLength(), [&](std::span<uint8_t> data) {
     size_t length = 0;
     bool created = Create(data.data(), &length, data.size(), nullptr);
     RTC_DCHECK(created) << "Invalid packet is not supported.";
@@ -50,7 +50,7 @@ bool RtcpPacket::OnBufferFull(uint8_t* packet,
   if (*index == 0)
     return false;
   RTC_DCHECK(callback) << "Fragmentation not supported.";
-  callback(ArrayView<const uint8_t>(packet, *index));
+  callback(std::span<const uint8_t>(packet, *index));
   *index = 0;
   return true;
 }

@@ -121,7 +121,7 @@ class VideoStreamEncoderResourceManager
                          int64_t time_sent_in_us,
                          std::optional<int> encode_duration_us,
                          DataSize frame_size);
-  void OnFrameDropped(EncodedImageCallback::DropReason reason);
+  void OnFrameDropped(VideoStreamEncoderObserver::DropReason reason);
 
   // Resources need to be mapped to an AdaptReason (kCpu or kQuality) in order
   // to update legacy getStats().

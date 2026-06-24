@@ -1,0 +1,15 @@
+[package]
+name = "bssl-tls-tokio"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+
+[dependencies]
+tokio = { version = "1.0", default-features = false, features = ["net"] }
+bssl-tls = { path = "../bssl-tls" }
+
+[dev-dependencies]
+tokio = { version = "1.0", features = ["full"] }
+futures = "0.3"
+bssl-x509 = { path = "../bssl-x509" }

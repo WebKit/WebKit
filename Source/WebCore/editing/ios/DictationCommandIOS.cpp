@@ -71,7 +71,7 @@ void DictationCommandIOS::doApply()
 
     auto endPosition = endingSelection().visibleEnd();
     auto end = makeBoundaryPoint(endPosition);
-    auto* root = endPosition.rootEditableElement();
+    RefPtr root = endPosition.rootEditableElement();
     if (!end || !root)
         return;
 

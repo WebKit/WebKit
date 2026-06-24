@@ -28,6 +28,7 @@
 #include "NodeConstructors.h"
 
 #include "ExecutableInfo.h"
+#include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
 #include "ModuleScopeData.h"
 #include <wtf/Assertions.h>

@@ -15,9 +15,9 @@
 #include <cstdint>
 #include <deque>
 #include <memory>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
 #include "rtc_base/buffer.h"
@@ -100,7 +100,7 @@ class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
                                const Buffer& packet,
                                bool is_incoming);
   std::string EncodeRtpPacket(int64_t timestamp_us,
-                              ArrayView<const uint8_t> header,
+                              std::span<const uint8_t> header,
                               size_t packet_length,
                               int probe_cluster_id,
                               bool is_incoming);

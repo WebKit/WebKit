@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/serve/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/serve/commands.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/serve/dns.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/serve/requirements_dns.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/serve/serve.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/serve/test_functional.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/serve/test_serve.py

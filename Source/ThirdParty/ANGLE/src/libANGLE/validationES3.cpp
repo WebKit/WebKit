@@ -232,6 +232,7 @@ bool ValidateColorMaskForSharedExponentColorBuffer(const Context *context,
 
     return true;
 }
+
 }  // anonymous namespace
 
 bool ValidateTexImageFormatCombination(const Context *context,
@@ -353,39 +354,6 @@ bool ValidateTexImageFormatCombination(const Context *context,
     return true;
 }
 
-static bool ValidateES3CompressedFormatForTexture2DArray(const Context *context,
-                                                         angle::EntryPoint entryPoint,
-                                                         GLenum format)
-{
-    if ((IsETC1Format(format) && !context->getExtensions().compressedETC1RGB8SubTextureEXT) ||
-        IsPVRTC1Format(format))
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatRequiresTexture2D);
-        return false;
-    }
-
-    return true;
-}
-
-static bool ValidCompressedFormatForTexture3D(GLenum format, const Extensions &extensions)
-{
-    if (IsASTC2DFormat(format))
-    {
-        return extensions.textureCompressionAstcHdrKHR ||
-               extensions.textureCompressionAstcSliced3dKHR;
-    }
-
-    if (IsASTC3DFormat(format) || IsBPTCFormat(format))
-    {
-        return true;
-    }
-
-    // All other compressed formats are specified to not support 3D textures.
-    ASSERT((IsS3TCFormat(format) || IsRGTCFormat(format)) ||
-           (IsETC1Format(format) || IsETC2EACFormat(format)) || IsPVRTC1Format(format));
-    return false;
-}
-
 bool ValidateES3TexImageParametersBase(const Context *context,
                                        angle::EntryPoint entryPoint,
                                        TextureTarget target,
@@ -464,7 +432,6 @@ bool ValidateES3TexImageParametersBase(const Context *context,
     switch (texType)
     {
         case TextureType::_2D:
-        case TextureType::External:
         case TextureType::VideoImage:
             if (width > (caps.max2DTextureSize >> level) ||
                 height > (caps.max2DTextureSize >> level))
@@ -479,11 +446,6 @@ bool ValidateES3TexImageParametersBase(const Context *context,
             if (width > caps.maxRectangleTextureSize || height > caps.maxRectangleTextureSize)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kResourceMaxTextureSize);
-                return false;
-            }
-            if (isCompressed)
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kRectangleTextureCompressed);
                 return false;
             }
             break;
@@ -561,10 +523,20 @@ bool ValidateES3TexImageParametersBase(const Context *context,
         return false;
     }
 
-    if (context->getState().isTextureBoundToActivePLS(texture->id()))
+    if (isSubImage)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kActivePLSBackingTexture);
-        return false;
+        if (context->getState().isTextureBoundToActivePLS(texture->id()))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kActivePLSBackingTexture);
+            return false;
+        }
+    }
+    else
+    {
+        if (!ValidateNoActivePLSConflict(context, entryPoint, texture->id()))
+        {
+            return false;
+        }
     }
 
     if (texture->getImmutableFormat() && !isSubImage)
@@ -610,13 +582,13 @@ bool ValidateES3TexImageParametersBase(const Context *context,
             }
         }
 
-        if (texType == TextureType::_2DArray)
+        if (texType == TextureType::_2DArray || texType == TextureType::CubeMapArray)
         {
             GLenum compressedDataFormat = isSubImage ? format : internalformat;
-            if (!ValidateES3CompressedFormatForTexture2DArray(context, entryPoint,
-                                                              compressedDataFormat))
+            if (!ValidCompressedFormatForTexture2DArray(compressedDataFormat,
+                                                        context->getExtensions()))
             {
-                // Error already generated.
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatRequiresTexture2D);
                 return false;
             }
         }
@@ -658,11 +630,30 @@ bool ValidateES3TexImageParametersBase(const Context *context,
         }
         else
         {
-            if (!ValidCompressedImageSize(context, actualInternalFormat, level, width, height,
-                                          depth))
+            if (actualFormatInfo.compressed)
             {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidCompressedImageSize);
-                return false;
+                if (!ValidCompressedImageSize(context, actualInternalFormat, level, width, height,
+                                              depth))
+                {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidCompressedImageSize);
+                    return false;
+                }
+            }
+            else
+            {
+                ASSERT(actualFormatInfo.paletted);
+                if (texType != TextureType::_2D)
+                {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidTextureTarget);
+                    return false;
+                }
+
+                // TODO(http://anglebug.com/42266155): multi-level paletted images
+                if (level != 0)
+                {
+                    UNIMPLEMENTED();
+                    return false;
+                }
             }
         }
 
@@ -754,7 +745,8 @@ bool ValidateES3TexImageParametersBase(const Context *context,
     Buffer *pixelUnpackBuffer = context->getState().getTargetBuffer(BufferBinding::PixelUnpack);
     if (pixelUnpackBuffer != nullptr)
     {
-        if (pixelUnpackBuffer->hasWebGLXFBBindingConflict(context->isWebGL()))
+        if ((context->isWebGL() || context->isHardenedContext()) &&
+            pixelUnpackBuffer->hasTFBBindingConflict())
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION,
                                    kPixelUnpackBufferBoundForTransformFeedback);
@@ -784,7 +776,7 @@ bool ValidateES3TexImageParametersBase(const Context *context,
         }
     }
 
-    if (context->getExtensions().webglCompatibilityANGLE)
+    if (!isCompressed && (context->isWebGL() || context->isHardenedContext()))
     {
         // Define:
         //   DataStoreWidth  = (GL_UNPACK_ROW_LENGTH ? GL_UNPACK_ROW_LENGTH : width)
@@ -817,6 +809,7 @@ bool ValidateES3TexImageParametersBase(const Context *context,
             }
             if (target == TextureTarget::_3D || target == TextureTarget::_2DArray)
             {
+                // Note that CubeMapArray is not supported as a texture target in WebGL.
                 GLint dataStoreHeight = unpack.imageHeight ? unpack.imageHeight : height;
                 if (unpack.skipRows + height > dataStoreHeight)
                 {
@@ -852,6 +845,12 @@ bool ValidateES3TexImage2DParameters(const Context *context,
     if (!ValidTexture2DDestinationTarget(context, target))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidTextureTarget);
+        return false;
+    }
+
+    if (ANGLE_UNLIKELY(isCompressed && target == TextureTarget::Rectangle))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kRectangleTextureCompressed);
         return false;
     }
 
@@ -1420,6 +1419,11 @@ bool ValidateES3TexStorageParametersTexObject(const Context *context,
         return false;
     }
 
+    if (!ValidateNoActivePLSConflict(context, entryPoint, texture->id()))
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -1482,12 +1486,12 @@ bool ValidateES3TexStorageParametersFormat(const Context *context,
             return false;
         }
 
-        if (target == TextureType::_2DArray)
+        if (target == TextureType::_2DArray || target == TextureType::CubeMapArray)
         {
-            if (!ValidateES3CompressedFormatForTexture2DArray(context, entryPoint,
-                                                              formatInfo.internalFormat))
+            if (!ValidCompressedFormatForTexture2DArray(formatInfo.internalFormat,
+                                                        context->getExtensions()))
             {
-                // Error already generated.
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalFormatRequiresTexture2D);
                 return false;
             }
         }
@@ -1960,6 +1964,11 @@ bool ValidateCompressedTexImage3D(const Context *context,
     const InternalFormat &formatInfo = GetSizedInternalFormatInfo(internalformat);
     if (!formatInfo.compressed)
     {
+        if (formatInfo.paletted)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidTextureTarget);
+            return false;
+        }
         ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidCompressedFormat);
         return false;
     }
@@ -2003,14 +2012,6 @@ bool ValidateBindVertexArray(const Context *context,
                              VertexArrayID array)
 {
     return ValidateBindVertexArrayBase(context, entryPoint, array);
-}
-
-bool ValidateIsVertexArray(const PrivateState &state,
-                           ErrorSet *errors,
-                           angle::EntryPoint entryPoint,
-                           VertexArrayID array)
-{
-    return true;
 }
 
 static bool ValidateBindBufferCommon(const Context *context,
@@ -3244,8 +3245,8 @@ bool ValidateCopyBufferSubData(const Context *context,
         return false;
     }
 
-    if (readBuffer->hasWebGLXFBBindingConflict(context->isWebGL()) ||
-        writeBuffer->hasWebGLXFBBindingConflict(context->isWebGL()))
+    if ((context->isWebGL() || context->isHardenedContext()) &&
+        (readBuffer->hasTFBBindingConflict() || writeBuffer->hasTFBBindingConflict()))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferBoundForTransformFeedback);
         return false;
@@ -3923,11 +3924,6 @@ bool ValidateUniform4uiv(const Context *context,
     return ValidateUniform(context, entryPoint, GL_UNSIGNED_INT_VEC4, location, count);
 }
 
-bool ValidateIsQuery(const Context *context, angle::EntryPoint entryPoint, QueryID id)
-{
-    return true;
-}
-
 bool ValidateUniformMatrix2x3fv(const Context *context,
                                 angle::EntryPoint entryPoint,
                                 UniformLocation location,
@@ -4109,13 +4105,6 @@ bool ValidateBindTransformFeedback(const Context *context,
             return false;
     }
 
-    return true;
-}
-
-bool ValidateIsTransformFeedback(const Context *context,
-                                 angle::EntryPoint entryPoint,
-                                 TransformFeedbackID id)
-{
     return true;
 }
 
@@ -4501,11 +4490,6 @@ bool ValidateFenceSync(const Context *context,
     return true;
 }
 
-bool ValidateIsSync(const Context *context, angle::EntryPoint entryPoint, SyncID syncPacked)
-{
-    return true;
-}
-
 bool ValidateDeleteSync(const Context *context, angle::EntryPoint entryPoint, SyncID syncPacked)
 {
     if (syncPacked.value != 0 && !context->getSync(syncPacked))
@@ -4573,11 +4557,6 @@ bool ValidateGetInteger64v(const Context *context,
                            const GLint64 *data)
 {
     return ValidateStateQuery(context, entryPoint, pname, data, nullptr);
-}
-
-bool ValidateIsSampler(const Context *context, angle::EntryPoint entryPoint, SamplerID sampler)
-{
-    return true;
 }
 
 bool ValidateBindSampler(const Context *context,

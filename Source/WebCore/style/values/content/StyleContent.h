@@ -178,11 +178,11 @@ template<typename... F> decltype(auto) ContentCounter::switchOn(F&&... f) const
 
 // MARK: - Conversion
 
-template<> struct ToCSS<Content> { auto operator()(const Content&, const RenderStyle&) -> CSS::Content; };
+template<> struct ToCSS<Content> { auto operator()(const Content&, const Style::ComputedStyle&) -> CSS::Content; };
 template<> struct ToStyle<CSS::Content> { auto operator()(const CSS::Content&, const BuilderState&) -> Content; };
 
 template<> struct CSSValueConversion<Content> { auto operator()(BuilderState&, const CSSValue&) -> Content; };
-template<> struct CSSValueCreation<Content> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const Content&); };
+template<> struct CSSValueCreation<Content> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const Content&); };
 
 } // namespace Style
 } // namespace WebCore

@@ -27,15 +27,19 @@
 #include "GraphicsContext.h"
 #include "InlineTextBoxStyle.h"
 #include "RenderStyleConstants.h"
+#include "StyleTextDecorationThickness.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 class FontCascade;
 class RenderObject;
-class RenderStyle;
 class TextRun;
-    
+
+namespace Style {
+class ComputedStyle;
+}
+
 class TextDecorationPainter {
 public:
     TextDecorationPainter(GraphicsContext&, const FontCascade&, const Style::TextShadows&, const Style::AppleColorFilter&, bool isPrinting, WritingMode);
@@ -46,6 +50,13 @@ public:
         struct DecorationStyleAndColor {
             Color color;
             TextDecorationStyle decorationStyle { TextDecorationStyle::Solid };
+            // The originating box's text-decoration-thickness, kept unresolved so each painting box can resolve it
+            // against its own font size and zoom. Empty when this Styles has no originator (e.g. a default-constructed
+            // override on a marked text that does not set a decoration); the painter then resolves auto against the
+            // painting box.
+            std::optional<Style::TextDecorationThickness> thickness;
+
+            bool operator==(const DecorationStyleAndColor&) const = default;
         };
         DecorationStyleAndColor underline;
         DecorationStyleAndColor overline;
@@ -62,7 +73,7 @@ public:
         float clippingOffset { 0.f };
         WavyStrokeParameters wavyStrokeParameters;
     };
-    void paintBackgroundDecorations(const RenderStyle&, const TextRun&, const BackgroundDecorationGeometry&, Style::TextDecorationLine, const Styles&, float deviceScaleFactor);
+    void paintBackgroundDecorations(const Style::ComputedStyle&, const TextRun&, const BackgroundDecorationGeometry&, Style::TextDecorationLine, const Styles&, float deviceScaleFactor);
 
     struct ForegroundDecorationGeometry {
         FloatPoint boxOrigin;
@@ -73,7 +84,7 @@ public:
     };
     void paintForegroundDecorations(const ForegroundDecorationGeometry&, const Styles&);
 
-    static Color decorationColor(const RenderStyle&, OptionSet<PaintBehavior> paintBehavior = { });
+    static Color decorationColor(const Style::ComputedStyle&, OptionSet<PaintBehavior> paintBehavior = { });
     static Styles stylesForRenderer(const RenderObject&, Style::TextDecorationLine requestedDecorations, bool firstLineStyle = false, OptionSet<PaintBehavior> paintBehavior = { }, std::optional<PseudoElementType> = { });
     static Style::TextDecorationLine NODELETE textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
 
@@ -83,8 +94,8 @@ private:
     GraphicsContext& m_context;
     bool m_isPrinting { false };
     WritingMode m_writingMode;
-    const Style::TextShadows& m_shadow;
-    const Style::AppleColorFilter& m_shadowColorFilter;
+    SUPPRESS_FORWARD_DECL_MEMBER const Style::TextShadows& m_shadow;
+    SUPPRESS_FORWARD_DECL_MEMBER const Style::AppleColorFilter& m_shadowColorFilter;
     const FontCascade& m_font;
 };
 

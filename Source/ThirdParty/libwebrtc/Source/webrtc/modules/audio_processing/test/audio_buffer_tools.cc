@@ -11,9 +11,9 @@
 #include "modules/audio_processing/test/audio_buffer_tools.h"
 
 #include <cstring>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "rtc_base/checks.h"
@@ -33,7 +33,7 @@ void SetupFrame(const StreamConfig& stream_config,
 }
 
 void CopyVectorToAudioBuffer(const StreamConfig& stream_config,
-                             ArrayView<const float> source,
+                             std::span<const float> source,
                              AudioBuffer* destination) {
   std::vector<float*> input;
   std::vector<float> input_samples;

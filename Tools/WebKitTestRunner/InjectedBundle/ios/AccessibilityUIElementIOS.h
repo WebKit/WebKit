@@ -121,6 +121,7 @@ public:
     bool isOffScreen() const override;
     bool isCollapsed() const override;
     bool isIgnored() const override;
+    bool isRemotePlatformElement() const override;
     bool isSingleLine() const override;
     bool isMultiLine() const override;
     bool hasPopup() const override;

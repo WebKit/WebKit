@@ -22,103 +22,134 @@
 #include <winsock2.h>
 #endif
 
+#include <string_view>
+
+#include <openssl/bytestring.h>
+#include <openssl/digest.h>
 #include <openssl/err.h>
-#include <openssl/pem.h>
 #include <openssl/ssl.h>
 
-#include "../crypto/internal.h"
 #include "internal.h"
 #include "transport_common.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 static const struct argument kArguments[] = {
     {
-        "-connect", kRequiredArgument,
+        "-connect",
+        kRequiredArgument,
         "The hostname and port of the server to connect to, e.g. foo.com:443",
     },
     {
-        "-cipher", kOptionalArgument,
+        "-cipher",
+        kOptionalArgument,
         "An OpenSSL-style cipher suite string that configures the offered "
         "ciphers",
     },
     {
-        "-curves", kOptionalArgument,
+        "-curves",
+        kOptionalArgument,
         "An OpenSSL-style ECDH curves list that configures the offered curves",
     },
     {
-        "-sigalgs", kOptionalArgument,
+        "-sigalgs",
+        kOptionalArgument,
         "An OpenSSL-style signature algorithms list that configures the "
         "signature algorithm preferences",
     },
     {
-        "-max-version", kOptionalArgument,
+        "-max-version",
+        kOptionalArgument,
         "The maximum acceptable protocol version",
     },
     {
-        "-min-version", kOptionalArgument,
+        "-min-version",
+        kOptionalArgument,
         "The minimum acceptable protocol version",
     },
     {
-        "-server-name", kOptionalArgument, "The server name to advertise",
+        "-server-name",
+        kOptionalArgument,
+        "The server name to advertise",
     },
     {
-        "-ech-grease", kBooleanArgument, "Enable ECH GREASE",
+        "-ech-grease",
+        kBooleanArgument,
+        "Enable ECH GREASE",
     },
     {
-        "-ech-config-list", kOptionalArgument,
+        "-ech-config-list",
+        kOptionalArgument,
         "Path to file containing serialized ECHConfigs",
     },
     {
-        "-select-next-proto", kOptionalArgument,
+        "-select-next-proto",
+        kOptionalArgument,
         "An NPN protocol to select if the server supports NPN",
     },
     {
-        "-alpn-protos", kOptionalArgument,
+        "-alpn-protos",
+        kOptionalArgument,
         "A comma-separated list of ALPN protocols to advertise",
     },
     {
-        "-fallback-scsv", kBooleanArgument, "Enable FALLBACK_SCSV",
+        "-fallback-scsv",
+        kBooleanArgument,
+        "Enable FALLBACK_SCSV",
     },
     {
-        "-ocsp-stapling", kBooleanArgument,
+        "-ocsp-stapling",
+        kBooleanArgument,
         "Advertise support for OCSP stabling",
     },
     {
-        "-signed-certificate-timestamps", kBooleanArgument,
+        "-signed-certificate-timestamps",
+        kBooleanArgument,
         "Advertise support for signed certificate timestamps",
     },
     {
-        "-channel-id-key", kOptionalArgument,
+        "-channel-id-key",
+        kOptionalArgument,
         "The key to use for signing a channel ID",
     },
     {
-        "-false-start", kBooleanArgument, "Enable False Start",
+        "-false-start",
+        kBooleanArgument,
+        "Enable False Start",
     },
     {
-        "-session-in", kOptionalArgument,
+        "-session-in",
+        kOptionalArgument,
         "A file containing a session to resume.",
     },
     {
-        "-session-out", kOptionalArgument,
+        "-session-out",
+        kOptionalArgument,
         "A file to write the negotiated session to.",
     },
     {
-        "-key", kOptionalArgument,
+        "-key",
+        kOptionalArgument,
         "PEM-encoded file containing the private key.",
     },
     {
-        "-cert", kOptionalArgument,
+        "-cert",
+        kOptionalArgument,
         "PEM-encoded file containing the leaf certificate and optional "
         "certificate chain. This is taken from the -key argument if this "
         "argument is not provided.",
     },
     {
-        "-starttls", kOptionalArgument,
+        "-starttls",
+        kOptionalArgument,
         "A STARTTLS mini-protocol to run before the TLS handshake. Supported"
         " values: 'smtp'",
     },
     {
-        "-grease", kBooleanArgument, "Enable GREASE",
+        "-grease",
+        kBooleanArgument,
+        "Enable GREASE",
     },
     {
         "-permute-extensions",
@@ -126,52 +157,89 @@ static const struct argument kArguments[] = {
         "Permute extensions in handshake messages",
     },
     {
-        "-test-resumption", kBooleanArgument,
+        "-test-resumption",
+        kBooleanArgument,
         "Connect to the server twice. The first connection is closed once a "
         "session is established. The second connection offers it.",
     },
     {
-        "-root-certs", kOptionalArgument,
+        "-root-certs",
+        kOptionalArgument,
         "A filename containing one or more PEM root certificates. Implies that "
         "verification is required.",
     },
     {
-        "-root-cert-dir", kOptionalArgument,
+        "-root-cert-dir",
+        kOptionalArgument,
         "A directory containing one or more root certificate PEM files in "
         "OpenSSL's hashed-directory format. Implies that verification is "
         "required.",
     },
     {
-        "-early-data", kOptionalArgument, "Enable early data. The argument to "
+        "-early-data",
+        kOptionalArgument,
+        "Enable early data. The argument to "
         "this flag is the early data to send or if it starts with '@', the "
         "file to read from for early data.",
     },
     {
-        "-http-tunnel", kOptionalArgument,
+        "-http-tunnel",
+        kOptionalArgument,
         "An HTTP proxy server to tunnel the TCP connection through",
     },
     {
-        "-renegotiate-freely", kBooleanArgument,
+        "-renegotiate-freely",
+        kBooleanArgument,
         "Allow renegotiations from the peer.",
     },
     {
-        "-debug", kBooleanArgument,
+        "-request-trust-anchors",
+        kOptionalArgument,
+        "A comma-separated list of trust anchor IDs, in text form, to send to "
+        "the server.",
+    },
+    {
+        "-psk-hex",
+        kOptionalArgument,
+        "A hex-encoded pre-shared key to import (RFC 9258)",
+    },
+    {
+        "-psk-identity",
+        kOptionalArgument,
+        "A PSK identity to configure",
+    },
+    {
+        "-psk-context",
+        kOptionalArgument,
+        "A PSK context string to configure",
+    },
+    {
+        "-psk-sha384",
+        kBooleanArgument,
+        "Use a SHA-384 PSK instead of a SHA-256 PSK.",
+    },
+    {
+        "-rpk-key",
+        kOptionalArgument,
+        "PEM-encoded file containing the private key to use for a Raw Public "
+        "Key (RFC 7250) client certificate if the server requests one.",
+    },
+    {
+        "-accept-cert-types",
+        kOptionalArgument,
+        "A comma-separated list of cert types to accept from the server.",
+    },
+    {
+        "-debug",
+        kBooleanArgument,
         "Print debug information about the handshake",
     },
     {
-        "", kOptionalArgument, "",
+        "",
+        kOptionalArgument,
+        "",
     },
 };
-
-static bssl::UniquePtr<EVP_PKEY> LoadPrivateKey(const std::string &file) {
-  bssl::UniquePtr<BIO> bio(BIO_new(BIO_s_file()));
-  if (!bio || !BIO_read_filename(bio.get(), file.c_str())) {
-    return nullptr;
-  }
-  bssl::UniquePtr<EVP_PKEY> pkey(PEM_read_bio_PrivateKey(bio.get(), nullptr,
-                                 nullptr, nullptr));
-  return pkey;
-}
 
 static int NextProtoSelectCallback(SSL* ssl, uint8_t** out, uint8_t* outlen,
                                    const uint8_t* in, unsigned inlen, void* arg) {
@@ -456,22 +524,13 @@ bool Client(const std::vector<std::string> &args) {
   if (args_map.count("-alpn-protos") != 0) {
     const std::string &alpn_protos = args_map["-alpn-protos"];
     std::vector<uint8_t> wire;
-    size_t i = 0;
-    while (i <= alpn_protos.size()) {
-      size_t j = alpn_protos.find(',', i);
-      if (j == std::string::npos) {
-        j = alpn_protos.size();
-      }
-      size_t len = j - i;
-      if (len > 255) {
+    for (std::string_view proto : SplitString(alpn_protos, ",")) {
+      if (proto.empty() || proto.size() > 255) {
         fprintf(stderr, "Invalid ALPN protocols: '%s'\n", alpn_protos.c_str());
         return false;
       }
-      wire.push_back(static_cast<uint8_t>(len));
-      wire.resize(wire.size() + len);
-      OPENSSL_memcpy(wire.data() + wire.size() - len, alpn_protos.data() + i,
-                     len);
-      i = j + 1;
+      wire.push_back(static_cast<uint8_t>(proto.size()));
+      wire.insert(wire.end(), proto.begin(), proto.end());
     }
     if (SSL_CTX_set_alpn_protos(ctx.get(), wire.data(), wire.size()) != 0) {
       return false;
@@ -492,7 +551,7 @@ bool Client(const std::vector<std::string> &args) {
 
   if (args_map.count("-channel-id-key") != 0) {
     bssl::UniquePtr<EVP_PKEY> pkey =
-        LoadPrivateKey(args_map["-channel-id-key"]);
+        LoadPrivateKeyFile(args_map["-channel-id-key"]);
     if (!pkey || !SSL_CTX_set1_tls_channel_id(ctx.get(), pkey.get())) {
       return false;
     }
@@ -513,6 +572,46 @@ bool Client(const std::vector<std::string> &args) {
         args_map.count("-cert") != 0 ? args_map["-cert"] : key;
     if (!SSL_CTX_use_certificate_chain_file(ctx.get(), cert.c_str())) {
       fprintf(stderr, "Failed to load cert chain: %s\n", cert.c_str());
+      return false;
+    }
+  }
+
+  if (args_map.count("-rpk-key") != 0) {
+    UniquePtr<EVP_PKEY> pkey = LoadPrivateKeyFile(args_map["-rpk-key"]);
+    if (!pkey) {
+      return false;
+    }
+    UniquePtr<SSL_CREDENTIAL> cred(
+        SSL_CREDENTIAL_new_raw_public_key(pkey.get()));
+    if (!cred || !SSL_CTX_add1_credential(ctx.get(), cred.get())) {
+      fprintf(stderr, "Failed to add RPK\n");
+      return false;
+    }
+  }
+
+  if (auto psk_hex = args_map.find("-psk-hex"); psk_hex != args_map.end()) {
+    auto psk = DecodeHex(psk_hex->second);
+    if (!psk) {
+      fprintf(stderr, "Could not convert PSK from hex\n");
+      return false;
+    }
+    auto psk_id_arg = args_map.find("-psk-identity");
+    if (psk_id_arg == args_map.end()) {
+      fprintf(stderr, "No PSK identity specified\n");
+      return false;
+    }
+    Span<const uint8_t> psk_id = StringAsBytes(psk_id_arg->second);
+    Span<const uint8_t> psk_context;
+    if (auto it = args_map.find("-psk-context"); it != args_map.end()) {
+      psk_context = StringAsBytes(it->second);
+    }
+    const EVP_MD *psk_md =
+        args_map.count("-psk-sha384") ? EVP_sha384() : EVP_sha256();
+    UniquePtr<SSL_CREDENTIAL> cred(SSL_CREDENTIAL_new_pre_shared_key(
+        psk->data(), psk->size(), psk_id.data(), psk_id.size(), psk_md,
+        psk_context.data(), psk_context.size()));
+    if (!cred || !SSL_CTX_add1_credential(ctx.get(), cred.get())) {
+      fprintf(stderr, "Failed to load PSK\n");
       return false;
     }
   }
@@ -538,6 +637,7 @@ bool Client(const std::vector<std::string> &args) {
     SSL_CTX_set_permute_extensions(ctx.get(), 1);
   }
 
+  // Configure accepted roots.
   if (args_map.count("-root-certs") != 0) {
     if (!SSL_CTX_load_verify_locations(
             ctx.get(), args_map["-root-certs"].c_str(), nullptr)) {
@@ -547,7 +647,6 @@ bool Client(const std::vector<std::string> &args) {
     }
     SSL_CTX_set_verify(ctx.get(), SSL_VERIFY_PEER, nullptr);
   }
-
   if (args_map.count("-root-cert-dir") != 0) {
     if (!SSL_CTX_load_verify_locations(
             ctx.get(), nullptr, args_map["-root-cert-dir"].c_str())) {
@@ -557,9 +656,57 @@ bool Client(const std::vector<std::string> &args) {
     }
     SSL_CTX_set_verify(ctx.get(), SSL_VERIFY_PEER, nullptr);
   }
+  // Otherwise, just require the server to send any cert.
+  if (args_map.count("-root-certs") == 0 &&
+      args_map.count("-root-cert-dir") == 0) {
+    SSL_CTX_set_custom_verify(
+        ctx.get(), SSL_VERIFY_PEER,
+        [](SSL *ssl, uint8_t *out_alert) -> ssl_verify_result_t {
+          return ssl_verify_ok;
+        });
+  }
+
+  if (args_map.count("-request-trust-anchors") != 0) {
+    const std::string &trust_anchors = args_map["-request-trust-anchors"];
+    bssl::ScopedCBB cbb;
+    if (!CBB_init(cbb.get(), 32)) {
+      return false;
+    }
+    // Treat an empty input as requesting no trust anchors, rather than a single
+    // empty string.
+    if (!trust_anchors.empty()) {
+      for (std::string_view trust_anchor : SplitString(trust_anchors, ",")) {
+        trust_anchor = TrimSpace(trust_anchor);
+        CBB id;
+        if (!CBB_add_u8_length_prefixed(cbb.get(), &id) ||
+            !CBB_add_asn1_relative_oid_from_text(&id, trust_anchor.data(),
+                                                 trust_anchor.size()) ||
+            !CBB_flush(cbb.get())) {
+          fprintf(stderr, "Invalid trust anchor ID list: '%s'\n",
+                  trust_anchors.c_str());
+          return false;
+        }
+      }
+    }
+    if (!SSL_CTX_set1_requested_trust_anchors(ctx.get(), CBB_data(cbb.get()),
+                                              CBB_len(cbb.get()))) {
+      return false;
+    }
+  }
 
   if (args_map.count("-early-data") != 0) {
     SSL_CTX_set_early_data_enabled(ctx.get(), 1);
+  }
+
+  if (args_map.count("-accept-cert-types") != 0) {
+    auto accepted_client_cert_types =
+        CertificateTypesFromString(args_map["-accept-cert-types"]);
+    if (!accepted_client_cert_types.has_value() ||
+        !SSL_CTX_set1_accepted_peer_cert_types(
+            ctx.get(), accepted_client_cert_types->data(),
+            accepted_client_cert_types->size())) {
+      return false;
+    }
   }
 
   if (args_map.count("-debug") != 0) {
@@ -580,3 +727,5 @@ bool Client(const std::vector<std::string> &args) {
 
   return DoConnection(ctx.get(), args_map, &TransferData);
 }
+
+BSSL_NAMESPACE_END

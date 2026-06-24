@@ -147,7 +147,7 @@ public:
 
     bool allowJavaScriptURLs(const String& contextURL, const OrdinalNumber& contextLine, const String& code, Element*) const;
     bool allowInlineEventHandlers(const String& contextURL, const OrdinalNumber& contextLine, const String& code, Element*, bool overrideContentSecurityPolicy = false) const;
-    bool allowInlineScript(const String& contextURL, const OrdinalNumber& contextLine, StringView scriptContent, Element&, const String& nonce, bool overrideContentSecurityPolicy = false) const;
+    bool allowInlineScript(const String& contextURL, const TextPosition& contextPosition, StringView scriptContent, Element&, const String& nonce, bool overrideContentSecurityPolicy = false) const;
     bool allowScriptForStrictDynamic(const URL& sourceURL, const URL& contextURL, const OrdinalNumber&, const String& nonce, const String& subResourceIntegrity, const StringView&, ParserInserted) const;
     bool allowInlineStyle(const String& contextURL, const OrdinalNumber& contextLine, StringView styleContent, CheckUnsafeHashes, Element&, const String&, bool overrideContentSecurityPolicy = false) const;
 
@@ -242,6 +242,7 @@ public:
     HashSet<SecurityOriginData> NODELETE takeNavigationRequestsToUpgrade();
     void inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy&);
     void setInsecureNavigationRequestsToUpgrade(HashSet<SecurityOriginData>&&);
+    const HashSet<SecurityOriginData>& insecureNavigationRequestsToUpgrade() const { return m_insecureNavigationRequestsToUpgrade; }
 
     void setClient(ContentSecurityPolicyClient* client) { m_client = client; }
     void updateSourceSelf(const SecurityOrigin&);
@@ -267,6 +268,7 @@ public:
 private:
     void logToConsole(const String& message, const String& contextURL = String(), const OrdinalNumber& contextLine = OrdinalNumber::beforeFirst(), const OrdinalNumber& contextColumn = OrdinalNumber::beforeFirst(), JSC::JSGlobalObject* = nullptr) const;
     void applyPolicyToScriptExecutionContext();
+    void notifyInsecureNavigationRequestsToUpgradeChanged() const;
 
     String createURLForReporting(const URL&, const String&, bool usesReportingAPI) const;
 

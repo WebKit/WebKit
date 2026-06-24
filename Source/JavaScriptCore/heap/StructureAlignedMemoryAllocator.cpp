@@ -32,7 +32,11 @@
 #include "StructureID.h"
 #include <bmalloc/bmalloc.h>
 #include <wtf/BitVector.h>
+#include <wtf/RAMSize.h>
 
+#if OS(DARWIN)
+#include <wtf/cocoa/Entitlements.h>
+#endif
 #if CPU(ADDRESS64)
 #include <wtf/NeverDestroyed.h>
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -94,9 +98,9 @@ class StructureMemoryManager {
 public:
     StructureMemoryManager()
     {
-        uintptr_t preferredStructureHeapSize = structureHeapAddressSize;
+        size_t preferredStructureHeapSize = computePreferredStructureHeapReservationSize();
         if (Options::structureHeapSizeInKB())
-            preferredStructureHeapSize = static_cast<uintptr_t>(Options::structureHeapSizeInKB()) * KB;
+            preferredStructureHeapSize = static_cast<size_t>(Options::structureHeapSizeInKB()) * KB;
         RELEASE_ASSERT(hasOneBitSet(preferredStructureHeapSize));
 
         uintptr_t mappedHeapSize = preferredStructureHeapSize;
@@ -163,7 +167,7 @@ public:
             constexpr size_t startIndex = 0;
             freeIndex = m_usedBlocks.findBit(startIndex, 0);
             ASSERT(freeIndex <= m_usedBlocks.bitCount());
-            RELEASE_ASSERT(g_jscConfig.sizeOfStructureHeap <= structureHeapAddressSize);
+            RELEASE_ASSERT(g_jscConfig.sizeOfStructureHeap <= computePreferredStructureHeapReservationSize());
             if (freeIndex * MarkedBlock::blockSize >= g_jscConfig.sizeOfStructureHeap)
                 return nullptr;
             // If we can't find a free block then `freeIndex == m_usedBlocks.bitCount()` and this set will grow the bit vector.
@@ -222,6 +226,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
 private:
+    static size_t computePreferredStructureHeapReservationSize();
+
+    // The actual preferred size will be the next power-of-two below this value
+    // This value results in a 512MiB reservation on 3GiB devices, 1GiB on 4GiB
+    static constexpr size_t maximumPercentageOfPhysicalMemoryToReserveWhenVAConstrained = 20;
     Lock m_lock;
     bool m_useSystemHeap { true };
     BitVector m_usedBlocks;
@@ -244,6 +253,51 @@ void StructureAlignedMemoryAllocator::freeAlignedMemory(void* block)
 void StructureAlignedMemoryAllocator::initializeStructureAddressSpace()
 {
     s_structureMemoryManager.construct();
+}
+
+size_t StructureMemoryManager::computePreferredStructureHeapReservationSize()
+{
+    static size_t cachedSize;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        size_t baseSize { 0 };
+#if PLATFORM(PLAYSTATION) || OS(QNX)
+        baseSize = 128 * MB;
+#elif (PLATFORM(IOS_FAMILY) && !CPU(ARM64E)) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
+        baseSize = 512 * MB;
+#elif PLATFORM(IOS_FAMILY)
+        baseSize = 2 * GB;
+#else
+        baseSize = 4 * GB;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+        // For larger reservation sizes, its backing mapping can
+        // monopolize a significant fraction of all virtual memory.
+        // Preferably, we only want to do so when we have reason to expect that
+        // this reservation may actually be utilized. On systems with relatively
+        // little physical memory available vs. the size of the reservation, we
+        // should thus reserve less virtual memory to not waste it unnecessarily.
+
+        size_t physicalMemorySize = WTF::ramSizeDisregardingJetsamLimit();
+        RELEASE_ASSERT(physicalMemorySize);
+
+        bool isVaConstrained = !WTF::processHasEntitlement("com.apple.developer.kernel.extended-virtual-addressing");
+        if (isVaConstrained) {
+            size_t sizeBoundedByPhysicalMemory = std::min(baseSize, (physicalMemorySize * maximumPercentageOfPhysicalMemoryToReserveWhenVAConstrained) / 100);
+            RELEASE_ASSERT(sizeBoundedByPhysicalMemory);
+            cachedSize = std::bit_floor(sizeBoundedByPhysicalMemory);
+        } else
+            cachedSize = std::bit_floor(baseSize);
+#else
+        cachedSize = baseSize;
+#endif
+
+#if CPU(ADDRESS64)
+        RELEASE_ASSERT(cachedSize - 1 <= StructureID::structureIDMask, "StructureID relies on only the lower 32 bits of Structure addresses varying");
+#endif
+    });
+    return cachedSize;
 }
 
 #else // not CPU(ADDRESS64)

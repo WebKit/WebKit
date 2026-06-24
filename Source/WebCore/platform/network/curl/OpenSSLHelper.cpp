@@ -184,37 +184,35 @@ WebCore::CertificateInfo::CertificateChain createCertificateChain(X509_STORE_CTX
     return pemDataFromCtx(StackOfX509(ctx));
 }
 
-static String toString(const ASN1_STRING* name)
-{
-    unsigned char* data { nullptr };
-    auto length = ASN1_STRING_to_UTF8(&data, name);
-    if (length <= 0)
-        return String();
-
-    String result({ byteCast<Latin1Character>(data), static_cast<size_t>(length) });
-    OPENSSL_free(data);
-    return result;
-}
-
-static String getCommonName(const X509* x509)
+static String getSubjectEntry(const X509* x509, int nid)
 {
     auto subjectName = X509_get_subject_name(x509);
     if (!subjectName)
         return String();
 
-    auto index = X509_NAME_get_index_by_NID(subjectName, NID_commonName, -1);
+    auto index = X509_NAME_get_index_by_NID(subjectName, nid, -1);
     if (index < 0)
         return String();
 
-    auto commonNameEntry = X509_NAME_get_entry(subjectName, index);
-    if (!commonNameEntry)
+    auto entry = X509_NAME_get_entry(subjectName, index);
+    if (!entry)
         return String();
 
-    auto commonNameEntryData = X509_NAME_ENTRY_get_data(commonNameEntry);
-    if (!commonNameEntryData)
+    auto entryData = X509_NAME_ENTRY_get_data(entry);
+    if (!entryData)
         return String();
 
-    return toString(commonNameEntryData);
+    return toString(entryData);
+}
+
+static String getCommonName(const X509* x509)
+{
+    return getSubjectEntry(x509, NID_commonName);
+}
+
+static String getOrganizationName(const X509* x509)
+{
+    return getSubjectEntry(x509, NID_organizationName);
 }
 
 static String getSubjectName(const X509* x509)
@@ -369,7 +367,10 @@ std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_
 
     WebCore::CertificateSummary summaryInfo;
 
+    // Prefer the CN attribute, then O, to match the behavior of SecCertificateCopySubjectSummary on macOS.
     summaryInfo.subject = getCommonName(x509.get());
+    if (summaryInfo.subject.isNull())
+        summaryInfo.subject = getOrganizationName(x509.get());
     if (summaryInfo.subject.isNull())
         summaryInfo.subject = getSubjectName(x509.get());
 

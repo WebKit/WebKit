@@ -60,17 +60,19 @@ rtc_library("resource_adaptation") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("resource_adaptation_tests") {
-    testonly = true
-
-    sources = [
-      "broadcast_resource_listener_unittest.cc",
-      "resource_adaptation_processor_unittest.cc",
-      "resource_unittest.cc",
-      "video_source_restrictions_unittest.cc",
-      "video_stream_adapter_unittest.cc",
-      "video_stream_input_state_provider_unittest.cc",
+  rtc_cc_test("broadcast_resource_listener_unittest") {
+    sources = [ "broadcast_resource_listener_unittest.cc" ]
+    deps = [
+      ":resource_adaptation",
+      ":resource_adaptation_test_utilities",
+      "../../api:scoped_refptr",
+      "../../api/adaptation:resource_adaptation_api",
+      "../../test:test_support",
     ]
+  }
+
+  rtc_cc_test("resource_adaptation_processor_unittest") {
+    sources = [ "resource_adaptation_processor_unittest.cc" ]
     deps = [
       ":resource_adaptation",
       ":resource_adaptation_test_utilities",
@@ -81,18 +83,72 @@ if (rtc_include_tests) {
       "../../api/adaptation:resource_adaptation_api",
       "../../api/units:time_delta",
       "../../api/video:video_adaptation",
-      "../../api/video:video_frame",
-      "../../api/video_codecs:video_codecs_api",
-      "../../rtc_base:checks",
       "../../rtc_base:macromagic",
       "../../rtc_base:rtc_event",
       "../../rtc_base:task_queue_for_test",
-      "../../rtc_base:threading",
       "../../test:create_test_field_trials",
+      "../../test:run_loop",
       "../../test:test_support",
       "../../test:wait_until",
-      "../../video/config:encoder_config",
+    ]
+  }
+
+  rtc_cc_test("resource_unittest") {
+    sources = [ "resource_unittest.cc" ]
+    deps = [
+      ":resource_adaptation_test_utilities",
+      "../../api:scoped_refptr",
+      "../../api/adaptation:resource_adaptation_api",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("video_source_restrictions_unittest") {
+    sources = [ "video_source_restrictions_unittest.cc" ]
+    deps = [
+      ":resource_adaptation",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("video_stream_adapter_unittest") {
+    sources = [ "video_stream_adapter_unittest.cc" ]
+    deps = [
+      ":resource_adaptation",
+      ":resource_adaptation_test_utilities",
+      "../../api:rtp_parameters",
+      "../../api:scoped_refptr",
+      "../../api/adaptation:resource_adaptation_api",
+      "../../api/video:video_adaptation",
+      "../../api/video:video_frame",
+      "../../api/video_codecs:video_codecs_api",
+      "../../rtc_base:checks",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
       "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+
+  rtc_cc_test("video_stream_input_state_provider_unittest") {
+    sources = [ "video_stream_input_state_provider_unittest.cc" ]
+    deps = [
+      ":resource_adaptation",
+      ":resource_adaptation_test_utilities",
+      "../../api/video:video_frame",
+      "../../api/video_codecs:video_codecs_api",
+      "../../test:test_support",
+      "../../video/config:encoder_config",
+    ]
+  }
+
+  rtc_test_suite("resource_adaptation_tests") {
+    tests = [
+      ":broadcast_resource_listener_unittest",
+      ":resource_adaptation_processor_unittest",
+      ":resource_unittest",
+      ":video_source_restrictions_unittest",
+      ":video_stream_adapter_unittest",
+      ":video_stream_input_state_provider_unittest",
     ]
   }
 

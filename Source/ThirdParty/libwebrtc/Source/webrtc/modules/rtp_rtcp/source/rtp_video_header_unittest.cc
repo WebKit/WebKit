@@ -31,6 +31,7 @@ namespace {
 
 using ::testing::ElementsAre;
 using ::testing::IsEmpty;
+using ::testing::Optional;
 
 TEST(RTPVideoHeaderTest, FrameType_GetAsMetadata) {
   RTPVideoHeader video_header;
@@ -189,21 +190,21 @@ TEST(RTPVideoHeaderTest, FrameDependencies_GetAsMetadata) {
       video_header.generic.emplace();
   generic.dependencies = {5, 6, 7};
   VideoFrameMetadata metadata = video_header.GetAsMetadata();
-  EXPECT_THAT(metadata.GetFrameDependencies(), ElementsAre(5, 6, 7));
+  EXPECT_THAT(metadata.GetDependencies(), Optional(ElementsAre(5, 6, 7)));
 }
 
 TEST(RTPVideoHeaderTest, FrameDependency_GetAsMetadataWhenGenericIsMissing) {
   RTPVideoHeader video_header;
   VideoFrameMetadata metadata = video_header.GetAsMetadata();
   ASSERT_FALSE(video_header.generic);
-  EXPECT_THAT(metadata.GetFrameDependencies(), IsEmpty());
+  EXPECT_EQ(metadata.GetDependencies(), std::nullopt);
 }
 
 TEST(RTPVideoHeaderTest, FrameDependencies_FromMetadata) {
   VideoFrameMetadata metadata;
   absl::InlinedVector<int64_t, 5> dependencies = {5, 6, 7};
   metadata.SetFrameId(123);  // Must have a frame ID for related properties.
-  metadata.SetFrameDependencies(dependencies);
+  metadata.SetDependencies(dependencies);
   RTPVideoHeader video_header = RTPVideoHeader::FromMetadata(metadata);
   EXPECT_TRUE(video_header.generic.has_value());
   EXPECT_THAT(video_header.generic->dependencies, ElementsAre(5, 6, 7));

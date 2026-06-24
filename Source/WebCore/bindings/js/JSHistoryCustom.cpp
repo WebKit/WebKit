@@ -45,7 +45,7 @@ JSValue JSHistory::state(JSGlobalObject& lexicalGlobalObject) const
             propagateException(lexicalGlobalObject, throwScope, wrapped().state().releaseException());
             return jsNull();
         }
-        auto* serialized = wrapped().state().releaseReturnValue();
+        RefPtr serialized = wrapped().state().releaseReturnValue();
         return serialized ? serialized->deserialize(lexicalGlobalObject, realm()) : jsNull();
     });
 }

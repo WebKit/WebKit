@@ -13,8 +13,8 @@
 #include <algorithm>  // min, max
 #include <cstdint>
 #include <cstring>  // memcpy
+#include <span>
 
-#include "api/array_view.h"
 #include "common_audio/signal_processing/dot_product_with_scale.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "common_audio/signal_processing/include/spl_inl.h"
@@ -119,7 +119,7 @@ bool BackgroundNoise::Update(const AudioMultiVector& sync_buffer) {
 }
 
 void BackgroundNoise::GenerateBackgroundNoise(
-    ArrayView<const int16_t> random_vector,
+    std::span<const int16_t> random_vector,
     size_t channel,
     int /* mute_slope */,
     bool /* too_many_expands */,
@@ -194,7 +194,7 @@ const int16_t* BackgroundNoise::FilterState(size_t channel) const {
 }
 
 void BackgroundNoise::SetFilterState(size_t channel,
-                                     ArrayView<const int16_t> input) {
+                                     std::span<const int16_t> input) {
   RTC_DCHECK_LT(channel, num_channels_);
   size_t length = std::min(input.size(), kMaxLpcOrder);
   memcpy(channel_parameters_[channel].filter_state, input.data(),

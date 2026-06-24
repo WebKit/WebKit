@@ -1,0 +1,3 @@
+
+FAIL View transitions: a preview transition runs until its end assert_array_equals: lengths differ, expected array ["navigate-event", "frame-after-navigate-event", "preview-vt", "preview-update-callback-done", "preview-ready", "preview-finished", "pageswap", "cross-doc-vt"] length 8, got ["navigate-event", "pageswap", "null"] length 3
+

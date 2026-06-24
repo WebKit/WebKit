@@ -208,7 +208,7 @@ bool InlineAccess::generateSelfPropertyAccess(PropertyInlineCache& propertyCache
 
 ALWAYS_INLINE static GPRReg getScratchRegister(PropertyInlineCache& propertyCache)
 {
-    ScratchRegisterAllocator allocator(propertyCache.usedRegisters.toRegisterSet());
+    ScratchRegisterAllocator allocator(propertyCache.usedRegisters().toRegisterSet());
     allocator.lock(propertyCache.m_baseGPR);
     allocator.lock(propertyCache.m_valueGPR);
     allocator.lock(propertyCache.m_extraGPR);

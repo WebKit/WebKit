@@ -66,11 +66,11 @@ private:
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<FontVariantAlternates> { auto operator()(BuilderState&, const CSSValue&) -> FontVariantAlternates; };
-template<> struct CSSValueCreation<FontVariantAlternates> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const FontVariantAlternates&); };
+template<> struct CSSValueCreation<FontVariantAlternates> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const FontVariantAlternates&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<FontVariantAlternates> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const FontVariantAlternates&); };
+template<> struct Serialize<FontVariantAlternates> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const FontVariantAlternates&); };
 
 // MARK: - Logging
 

@@ -214,11 +214,36 @@ func addChangeCipherSpecTests() {
 	// Test synchronization between encryption changes and the handshake in
 	// TLS 1.3, where ChangeCipherSpec is implicit.
 	testCases = append(testCases, testCase{
+		name: "PartialEncryptedExtensionsWithServerHello-NoCCS",
+		config: Config{
+			MaxVersion: VersionTLS13,
+			Bugs: ProtocolBugs{
+				SkipChangeCipherSpec:                      true,
+				PartialEncryptedExtensionsWithServerHello: true,
+			},
+		},
+		shouldFail:    true,
+		expectedError: ":EXCESS_HANDSHAKE_DATA:",
+	})
+	testCases = append(testCases, testCase{
 		name: "PartialEncryptedExtensionsWithServerHello",
 		config: Config{
 			MaxVersion: VersionTLS13,
 			Bugs: ProtocolBugs{
 				PartialEncryptedExtensionsWithServerHello: true,
+			},
+		},
+		shouldFail:    true,
+		expectedError: ":EXCESS_HANDSHAKE_DATA:",
+	})
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "PartialClientFinishedWithClientHello-NoCCS",
+		config: Config{
+			MaxVersion: VersionTLS13,
+			Bugs: ProtocolBugs{
+				SkipChangeCipherSpec:                 true,
+				PartialClientFinishedWithClientHello: true,
 			},
 		},
 		shouldFail:    true,
@@ -238,6 +263,21 @@ func addChangeCipherSpecTests() {
 	})
 	testCases = append(testCases, testCase{
 		testType: serverTest,
+		name:     "PartialClientFinishedWithSecondClientHello-NoCCS",
+		config: Config{
+			MaxVersion: VersionTLS13,
+			// Trigger a curve-based HelloRetryRequest.
+			DefaultCurves: []CurveID{},
+			Bugs: ProtocolBugs{
+				SkipChangeCipherSpec:                       true,
+				PartialClientFinishedWithSecondClientHello: true,
+			},
+		},
+		shouldFail:    true,
+		expectedError: ":EXCESS_HANDSHAKE_DATA:",
+	})
+	testCases = append(testCases, testCase{
+		testType: serverTest,
 		name:     "PartialClientFinishedWithSecondClientHello",
 		config: Config{
 			MaxVersion: VersionTLS13,
@@ -247,6 +287,24 @@ func addChangeCipherSpecTests() {
 				PartialClientFinishedWithSecondClientHello: true,
 			},
 		},
+		shouldFail:    true,
+		expectedError: ":EXCESS_HANDSHAKE_DATA:",
+	})
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "PartialEndOfEarlyDataWithClientHello-NoCCS",
+		config: Config{
+			MaxVersion: VersionTLS13,
+		},
+		resumeConfig: &Config{
+			MaxVersion: VersionTLS13,
+			Bugs: ProtocolBugs{
+				SkipChangeCipherSpec:                 true,
+				PartialEndOfEarlyDataWithClientHello: true,
+			},
+		},
+		resumeSession: true,
+		earlyData:     true,
 		shouldFail:    true,
 		expectedError: ":EXCESS_HANDSHAKE_DATA:",
 	})

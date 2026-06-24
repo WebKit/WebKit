@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="../resources/js-test-pre.js"></script>
+        <script src="../resources/js-test.js"></script>
     </head>
     <body>
         <p>
@@ -12,9 +12,9 @@
             Hit Enter to run if not in test runner.
         </p>
         <script>
+            window.jsTestIsAsync = true;
             if (window.testRunner) {
                 testRunner.dumpAsText(false /* runPixelTests */);
-                testRunner.waitUntilDone();
             }
 
             var testElement = document.getElementById('test');
@@ -23,8 +23,7 @@
                 if (document.webkitFullscreenElement) {
                     shouldBe("document.webkitFullscreenElement.id", "'test'");
                     document.webkitCancelFullScreen();
-                    if (window.testRunner)
-                        testRunner.notifyDone();
+                    finishJSTest();
                 }
             }, false /* useCapture */);
             

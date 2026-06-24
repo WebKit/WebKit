@@ -174,6 +174,12 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
         return;
     }
 
+    if (const auto* identifier = g_subprocess_get_identifier(m_browser.get())) {
+        auto processID = g_ascii_strtoull(identifier, nullptr, 10);
+        if (processID > 0)
+            m_capabilities.processID = processID;
+    }
+
     g_subprocess_wait_async(m_browser.get(), m_cancellable.get(), [](GObject* browser, GAsyncResult* result, gpointer userData) {
         GUniqueOutPtr<GError> error;
         g_subprocess_wait_finish(G_SUBPROCESS(browser), result, &error.outPtr());

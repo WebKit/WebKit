@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <array>
 #include <memory>
 #include <optional>
 #include <set>
@@ -43,6 +44,7 @@
 #include "system_wrappers/include/metrics.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 
 namespace webrtc {
@@ -74,8 +76,8 @@ a=rtpmap:101 fake_audio_codec/8000
 
 constexpr char kUsagePatternMetric[] = "WebRTC.PeerConnection.UsagePattern";
 constexpr TimeDelta kDefaultTimeout = TimeDelta::Millis(10000);
-const SocketAddress kLocalAddrs[2] = {SocketAddress("1.1.1.1", 0),
-                                      SocketAddress("2.2.2.2", 0)};
+const std::array kLocalAddrs{SocketAddress("1.1.1.1", 0),
+                             SocketAddress("2.2.2.2", 0)};
 const SocketAddress kPrivateLocalAddress("10.1.1.1", 0);
 const SocketAddress kPrivateIpv6LocalAddress("fd12:3456:789a:1::1", 0);
 
@@ -343,7 +345,7 @@ class PeerConnectionUsageHistogramTest : public ::testing::Test {
 
   int next_local_address_ = 0;
   VirtualSocketServer vss_;
-  AutoSocketServerThread main_;
+  test::RunLoop main_;
 };
 
 TEST_F(PeerConnectionUsageHistogramTest, UsageFingerprintHistogramFromTimeout) {

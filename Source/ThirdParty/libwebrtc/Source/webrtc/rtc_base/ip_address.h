@@ -15,6 +15,7 @@
 #include <cstring>
 #include <string>
 
+#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/net_helpers.h"
@@ -115,6 +116,9 @@ class RTC_EXPORT IPAddress {
   // Returns the same address if this isn't a mapped address.
   IPAddress Normalized() const;
 
+  // Returns an unmapped address from multiple IPv4-embedding formats.
+  IPAddress NormalizeWithCheckForEmbeddedIPv4Address() const;
+
   // Returns this address as an IPv6 address.
   // Maps v4 addresses (as ::ffff:a.b.c.d), returns v6 addresses unchanged.
   IPAddress AsIPv6Address() const;
@@ -127,6 +131,29 @@ class RTC_EXPORT IPAddress {
 
   // Whether this is an unspecified IP address.
   bool IsNil() const;
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const IPAddress& ip) {
+    switch (ip.family_) {
+      case AF_INET:
+        sink.Append("ipv4:");
+        sink.Append(ip.ToString());
+        break;
+      case AF_INET6:
+        sink.Append("ipv6:");
+        sink.Append(ip.ToString());
+        break;
+      case AF_UNSPEC:
+        sink.Append("unspecified");
+        break;
+      default:
+        sink.Append("unknown:");
+        sink.Append(absl::StrCat(ip.family_));
+        sink.Append(":");
+        sink.Append(ip.ToString());
+        break;
+    }
+  }
 
  private:
   int family_;
@@ -189,7 +216,9 @@ size_t HashIP(const IPAddress& ip);
 // These are only really applicable for IPv6 addresses.
 bool IPIs6Bone(const IPAddress& ip);
 bool IPIs6To4(const IPAddress& ip);
+bool IPIsIsatap(const IPAddress& ip);
 RTC_EXPORT bool IPIsMacBased(const IPAddress& ip);
+bool IPIsNat64(const IPAddress& ip);
 bool IPIsSiteLocal(const IPAddress& ip);
 bool IPIsTeredo(const IPAddress& ip);
 bool IPIsULA(const IPAddress& ip);
@@ -202,7 +231,7 @@ int IPAddressPrecedence(const IPAddress& ip);
 // Returns 'ip' truncated to be 'length' bits long.
 RTC_EXPORT IPAddress TruncateIP(const IPAddress& ip, int length);
 
-IPAddress GetLoopbackIP(int family);
+RTC_EXPORT IPAddress GetLoopbackIP(int family);
 IPAddress GetAnyIP(int family);
 
 // Returns the number of contiguously set bits, counting from the MSB in network

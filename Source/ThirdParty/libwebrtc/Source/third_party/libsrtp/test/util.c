@@ -42,14 +42,125 @@
  *
  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "util.h"
 
 #include <string.h>
 #include <stdint.h>
 
+#include <stdlib.h>
+#include <stdio.h>
+
 /* include space for null terminator */
 static char bit_string[MAX_PRINT_STRING_LEN + 1];
+
+#define ERR_STATUS_STRING(STATUS)                                              \
+    case srtp_err_status_##STATUS:                                             \
+        return #STATUS
+
+const char *err_status_string(srtp_err_status_t status)
+{
+    switch (status) {
+        ERR_STATUS_STRING(ok);
+        ERR_STATUS_STRING(fail);
+        ERR_STATUS_STRING(bad_param);
+        ERR_STATUS_STRING(alloc_fail);
+        ERR_STATUS_STRING(dealloc_fail);
+        ERR_STATUS_STRING(init_fail);
+        ERR_STATUS_STRING(terminus);
+        ERR_STATUS_STRING(auth_fail);
+        ERR_STATUS_STRING(cipher_fail);
+        ERR_STATUS_STRING(replay_fail);
+        ERR_STATUS_STRING(replay_old);
+        ERR_STATUS_STRING(algo_fail);
+        ERR_STATUS_STRING(no_such_op);
+        ERR_STATUS_STRING(no_ctx);
+        ERR_STATUS_STRING(cant_check);
+        ERR_STATUS_STRING(key_expired);
+        ERR_STATUS_STRING(socket_err);
+        ERR_STATUS_STRING(signal_err);
+        ERR_STATUS_STRING(nonce_bad);
+        ERR_STATUS_STRING(read_fail);
+        ERR_STATUS_STRING(write_fail);
+        ERR_STATUS_STRING(parse_err);
+        ERR_STATUS_STRING(encode_err);
+        ERR_STATUS_STRING(semaphore_err);
+        ERR_STATUS_STRING(pfkey_err);
+        ERR_STATUS_STRING(bad_mki);
+        ERR_STATUS_STRING(pkt_idx_old);
+        ERR_STATUS_STRING(pkt_idx_adv);
+        ERR_STATUS_STRING(cryptex_err);
+    }
+    return "unkown srtp_err_status";
+}
+
+void check_ok_impl(srtp_err_status_t status, const char *file, int line)
+{
+    if (status != srtp_err_status_ok) {
+        fflush(stdout);
+        fprintf(stderr,
+                "\nerror at %s:%d, unexpected srtp failure: %d (\"%s\")\n",
+                file, line, status, err_status_string(status));
+        fflush(stderr);
+        exit(1);
+    }
+}
+
+void check_return_impl(srtp_err_status_t status,
+                       srtp_err_status_t expected,
+                       const char *file,
+                       int line)
+{
+    if (status != expected) {
+        fflush(stdout);
+        fprintf(stderr,
+                "\nerror at %s:%d, unexpected srtp status: %d != %d (\"%s\" != "
+                "\"%s\")\n",
+                file, line, status, expected, err_status_string(status),
+                err_status_string(expected));
+        fflush(stderr);
+        exit(1);
+    }
+}
+
+void check_impl(int condition,
+                const char *file,
+                int line,
+                const char *condition_str)
+{
+    if (!condition) {
+        fflush(stdout);
+        fprintf(stderr, "\nerror at %s:%d, %s)\n", file, line, condition_str);
+        fflush(stderr);
+        exit(1);
+    }
+}
+
+void check_buffer_equal_impl(const char *buffer1,
+                             const char *buffer2,
+                             int buffer_length,
+                             const char *file,
+                             int line)
+{
+    for (int i = 0; i < buffer_length; i++) {
+        if (buffer1[i] != buffer2[i]) {
+            fflush(stdout);
+            fprintf(stderr,
+                    "\nerror at %s:%d, buffer1 != buffer2 at index: %i (%x != "
+                    "%x)\n",
+                    file, line, i, buffer1[i], buffer2[i]);
+            fprintf(stderr, "buffer1 = %s\n",
+                    octet_string_hex_string(buffer1, buffer_length));
+            fprintf(stderr, "buffer2 = %s\n",
+                    octet_string_hex_string(buffer2, buffer_length));
+            fflush(stderr);
+            exit(1);
+        }
+    }
+}
 
 static inline int hex_char_to_nibble(uint8_t c)
 {

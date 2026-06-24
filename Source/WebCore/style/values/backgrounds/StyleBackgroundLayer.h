@@ -127,7 +127,6 @@ struct BackgroundLayer {
 
     // CoordinatedValueList interface.
 
-    static constexpr auto computedValueUsesUsedValues = true;
     static constexpr auto baseProperty = PropertyNameConstant<CSSPropertyBackgroundImage> { };
     static constexpr auto properties = std::tuple { FOR_EACH_BACKGROUND_LAYER_PROPERTY(DECLARE_COORDINATED_VALUE_LIST_PROPERTY) };
     static BackgroundLayer clone(const BackgroundLayer& other) { return other; }

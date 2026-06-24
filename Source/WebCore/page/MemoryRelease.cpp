@@ -59,7 +59,7 @@
 #include "ScrollingThread.h"
 #include "SelectorChecker.h"
 #include "SelectorQuery.h"
-#include "StyleScope.h"
+#include "StyleDocumentScope.h"
 #include "StyleSheetContentsCache.h"
 #include "StyledElement.h"
 #include "TextBreakingPositionCache.h"

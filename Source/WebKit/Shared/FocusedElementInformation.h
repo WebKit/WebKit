@@ -64,6 +64,35 @@ enum class InputType : uint8_t {
     Color
 };
 
+inline bool isSingleLineInputType(InputType type)
+{
+    switch (type) {
+    case InputType::None:
+    case InputType::ContentEditable:
+    case InputType::TextArea:
+        return false;
+    case InputType::Text:
+    case InputType::Password:
+    case InputType::Search:
+    case InputType::Email:
+    case InputType::URL:
+    case InputType::Phone:
+    case InputType::Number:
+    case InputType::NumberPad:
+    case InputType::Date:
+    case InputType::DateTimeLocal:
+    case InputType::Month:
+    case InputType::Week:
+    case InputType::Time:
+    case InputType::Select:
+    case InputType::Drawing:
+    case InputType::Color:
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 #if PLATFORM(IOS_FAMILY)
 struct OptionItem {
     OptionItem() = default;

@@ -24,11 +24,11 @@
 #include "ContainerNodeInlines.h"
 #include "NodeName.h"
 #include "RenderElement.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGFilterRenderer.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPropertyOwnerRegistry.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -140,6 +140,15 @@ bool SVGFEDropShadowElement::setFilterEffectAttribute(FilterEffect& filterEffect
 bool SVGFEDropShadowElement::isIdentity() const
 {
     return !stdDeviationX() && !stdDeviationY() && !dx() && !dy();
+}
+
+bool SVGFEDropShadowElement::taintsOrigin() const
+{
+    // §16.3: tainted when flood-color depends on currentColor.
+    CheckedPtr renderer = this->renderer();
+    if (!renderer)
+        return false;
+    return renderer->style().floodColor().containsCurrentColor();
 }
 
 IntOutsets SVGFEDropShadowElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const

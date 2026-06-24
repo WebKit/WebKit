@@ -54,15 +54,19 @@ When `-DFUZZ=1` is passed into CMake, BoringSSL builds with `FUZZING_BUILD_MODE_
 
 Additionally, if `CRYPTO_set_fuzzer_mode()` is called to enable fuzzer mode, BoringSSL will:
 
-* Modify the TLS stack to perform all signature checks (CertificateVerify and ServerKeyExchange) and the Finished check, but always act as if the check succeeded.
+* Ignore the result of the PKCS#12 MAC check.
 
-* Treat every cipher as the NULL cipher.
+* Ignore the result of TLS signature checks (CertificateVerify and ServerKeyExchange), Finished checks, and PSK binder checks.
 
-* Tickets are unencrypted and the MAC check is performed but ignored.
+* Treat every TLS cipher as the NULL cipher.
 
-* renegotiation\_info checks are ignored.
+* Skip encrypting TLS EncryptedClientHello payloads.
 
-This is to prevent the fuzzer from getting stuck at a cryptographic invariant in the protocol.
+* Skip TLS ticket encryption and ignore the result of the MAC check.
+
+* Ignore the result of the TLS `renegotiation\_info` check.
+
+This is to prevent the fuzzer from getting stuck on cryptographic invariants.
 
 ## TLS transcripts
 

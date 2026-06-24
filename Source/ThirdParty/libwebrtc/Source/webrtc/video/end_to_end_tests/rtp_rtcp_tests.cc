@@ -15,9 +15,9 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
@@ -74,7 +74,7 @@ void RtpRtcpEndToEndTest::RespectsRtcpMode(RtcpMode rtcp_mode) {
           sent_rtcp_(0) {}
 
    private:
-    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(std::span<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       if (++sent_rtp_ % 3 == 0)
         return DROP_PACKET;
@@ -82,7 +82,7 @@ void RtpRtcpEndToEndTest::RespectsRtcpMode(RtcpMode rtcp_mode) {
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(ArrayView<const uint8_t> packet) override {
+    Action OnReceiveRtcp(std::span<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       ++sent_rtcp_;
       test::RtcpPacketParser parser;
@@ -238,7 +238,7 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
       }
     }
 
-    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(std::span<const uint8_t> packet) override {
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet));
       const uint32_t ssrc = rtp_packet.Ssrc();
@@ -288,7 +288,7 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
       return SEND_PACKET;
     }
 
-    Action OnSendRtcp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtcp(std::span<const uint8_t> packet) override {
       test::RtcpPacketParser rtcp_parser;
       rtcp_parser.Parse(packet);
       if (rtcp_parser.sender_report()->num_packets() > 0) {
@@ -432,7 +432,7 @@ TEST_F(RtpRtcpEndToEndTest, DISABLED_TestFlexfecRtpStatePreservation) {
     }
 
    private:
-    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(std::span<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
 
       RtpPacket rtp_packet;
@@ -545,16 +545,16 @@ TEST_F(RtpRtcpEndToEndTest, DISABLED_TestFlexfecRtpStatePreservation) {
     flexfec_receive_config.remote_ssrc = GetVideoSendConfig()->rtp.flexfec.ssrc;
     flexfec_receive_config.protected_media_ssrcs =
         GetVideoSendConfig()->rtp.flexfec.protected_media_ssrcs;
-    flexfec_receive_config.local_ssrc =
-        test::VideoTestConstants::kReceiverLocalVideoSsrc;
     flexfec_receive_configs_.push_back(flexfec_receive_config);
 
     CreateFlexfecStreams();
     CreateVideoStreams();
 
     // RTCP might be disabled if the network is "down".
-    sender_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
-    receiver_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
+    network_thread()->BlockingCall([this]() {
+      sender_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
+      receiver_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
+    });
 
     CreateFrameGeneratorCapturer(kFrameRate, kFrameMaxWidth, kFrameMaxHeight);
 

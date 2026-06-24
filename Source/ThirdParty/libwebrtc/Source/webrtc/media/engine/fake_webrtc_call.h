@@ -25,18 +25,19 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
 #include "api/adaptation/resource.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/environment/environment.h"
+#include "api/fec_controller.h"
 #include "api/frame_transformer_interface.h"
 #include "api/media_types.h"
 #include "api/rtp_headers.h"
@@ -51,6 +52,7 @@
 #include "api/video/video_frame.h"
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
+#include "api/video/video_stream_encoder_settings.h"
 #include "api/video_codecs/video_codec.h"
 #include "call/audio_receive_stream.h"
 #include "call/audio_send_stream.h"
@@ -123,17 +125,13 @@ class FakeAudioReceiveStream final : public AudioReceiveStreamInterface {
   const AudioReceiveStreamInterface::Config& GetConfig() const;
   void SetStats(const AudioReceiveStreamInterface::Stats& stats);
   int received_packets() const { return received_packets_; }
-  bool VerifyLastPacket(ArrayView<const uint8_t> data) const;
+  bool VerifyLastPacket(std::span<const uint8_t> data) const;
   const AudioSinkInterface* sink() const { return sink_; }
   float gain() const { return gain_; }
-  bool DeliverRtp(ArrayView<const uint8_t> packet, int64_t packet_time_us);
+  bool DeliverRtp(std::span<const uint8_t> packet, int64_t packet_time_us);
   bool started() const { return started_; }
   int base_mininum_playout_delay_ms() const {
     return base_mininum_playout_delay_ms_;
-  }
-
-  void SetLocalSsrc(uint32_t local_ssrc) {
-    config_.rtp.local_ssrc = local_ssrc;
   }
 
   void SetSyncGroup(absl::string_view sync_group) {
@@ -208,7 +206,7 @@ class FakeVideoSendStream final : public VideoSendStream,
   int GetLastHeight() const;
   int64_t GetLastTimestamp() const;
   void SetStats(const VideoSendStream::Stats& stats) override;
-  void SetCsrcs(ArrayView<const uint32_t> csrcs) override;
+  void SetCsrcs(std::span<const uint32_t> csrcs) override;
   int num_encoder_reconfigurations() const {
     return num_encoder_reconfigurations_;
   }
@@ -287,10 +285,6 @@ class FakeVideoReceiveStream final : public VideoReceiveStreamInterface {
     return base_mininum_playout_delay_ms_;
   }
 
-  void SetLocalSsrc(uint32_t local_ssrc) {
-    config_.rtp.local_ssrc = local_ssrc;
-  }
-
   void UpdateRtxSsrc(uint32_t ssrc) override { config_.rtp.rtx_ssrc = ssrc; }
 
   void SetFrameDecryptor(scoped_refptr<FrameDecryptorInterface>
@@ -363,8 +357,6 @@ class FakeVideoReceiveStream final : public VideoReceiveStreamInterface {
 class FakeFlexfecReceiveStream final : public FlexfecReceiveStream {
  public:
   explicit FakeFlexfecReceiveStream(const FlexfecReceiveStream::Config config);
-
-  void SetLocalSsrc(uint32_t local_ssrc) { config_.local_ssrc = local_ssrc; }
 
   void SetRtcpMode(RtcpMode mode) override { config_.rtcp_mode = mode; }
 
@@ -439,6 +431,8 @@ class FakeCall final : public Call, public PacketReceiver {
     return 0;
   }
 
+  void DisconnectFromNetworkThread() override {}
+
  private:
   AudioSendStream* CreateAudioSendStream(
       const AudioSendStream::Config& config) override;
@@ -451,7 +445,15 @@ class FakeCall final : public Call, public PacketReceiver {
 
   VideoSendStream* CreateVideoSendStream(
       VideoSendStream::Config config,
-      VideoEncoderConfig encoder_config) override;
+      VideoEncoderConfig encoder_config,
+      EncoderSwitchRequestCallback encoder_switch_request_callback =
+          nullptr) override;
+
+  VideoSendStream* CreateVideoSendStream(
+      VideoSendStream::Config config,
+      VideoEncoderConfig encoder_config,
+      EncoderSwitchRequestCallback encoder_switch_request_callback,
+      std::unique_ptr<FecController> fec_controller) override;
   void DestroyVideoSendStream(VideoSendStream* send_stream) override;
 
   VideoReceiveStreamInterface* CreateVideoReceiveStream(
@@ -492,12 +494,6 @@ class FakeCall final : public Call, public PacketReceiver {
   void SignalChannelNetworkState(MediaType media, NetworkState state) override;
   void OnAudioTransportOverheadChanged(
       int transport_overhead_per_packet) override;
-  void OnLocalSsrcUpdated(AudioReceiveStreamInterface& stream,
-                          uint32_t local_ssrc) override;
-  void OnLocalSsrcUpdated(VideoReceiveStreamInterface& stream,
-                          uint32_t local_ssrc) override;
-  void OnLocalSsrcUpdated(FlexfecReceiveStream& stream,
-                          uint32_t local_ssrc) override;
   void OnUpdateSyncGroup(AudioReceiveStreamInterface& stream,
                          absl::string_view sync_group) override;
   void OnSentPacket(const SentPacketInfo& sent_packet) override;

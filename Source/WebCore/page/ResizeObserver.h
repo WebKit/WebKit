@@ -28,8 +28,8 @@
 #include "GCReachableRef.h"
 #include "ResizeObservation.h"
 #include "ResizeObserverCallback.h"
-#include <wtf/ListHashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
@@ -111,7 +111,7 @@ private:
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     const JSOrNativeResizeObserverCallback m_JSOrNativeCallback;
-    ListHashSet<Ref<ResizeObservation>, ResizeObservationHashFunctions> m_observations;
+    OrderedHashSet<Ref<ResizeObservation>, ResizeObservationHashFunctions> m_observations;
     WeakHashMap<Element, Ref<ResizeObservation>, WeakPtrImplWithEventTargetData> m_observationMap;
 
     Vector<Ref<ResizeObservation>> m_activeObservations;

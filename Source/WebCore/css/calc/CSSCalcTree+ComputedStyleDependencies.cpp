@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,12 @@ static void collectComputedStyleDependencies(const Child& root, ComputedStyleDep
         },
         [&](const SiblingIndex&) {
             // No potential dependencies.
+        },
+        [&](const IndirectNode<CalcMix>& root) {
+            for (const auto& item : root->children) {
+                collectComputedStyleDependencies(item.value, dependencies);
+                CSS::collectComputedStyleDependencies(dependencies, item.weight);
+            }
         },
         [&](const IndirectNode<Anchor>& anchor) {
             dependencies.anchors = true;

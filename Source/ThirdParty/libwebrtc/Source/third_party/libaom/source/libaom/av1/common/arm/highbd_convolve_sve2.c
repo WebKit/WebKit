@@ -18,17 +18,14 @@
 #include "aom_dsp/aom_dsp_common.h"
 #include "aom_dsp/arm/aom_neon_sve_bridge.h"
 #include "aom_dsp/arm/aom_neon_sve2_bridge.h"
+#include "aom_dsp/arm/highbd_convolve8_sve.h"
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/arm/transpose_neon.h"
 #include "aom_ports/mem.h"
 #include "av1/common/convolve.h"
 #include "av1/common/filter.h"
+#include "av1/common/arm/convolve_sve2.h"
 #include "av1/common/arm/highbd_convolve_sve2.h"
-
-DECLARE_ALIGNED(16, static const uint16_t, kDotProdTbl[32]) = {
-  0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 5, 3, 4, 5, 6,
-  4, 5, 6, 7, 5, 6, 7, 0, 6, 7, 0, 1, 7, 0, 1, 2,
-};
 
 static inline uint16x4_t convolve12_4_x(
     int16x8_t s0, int16x8_t s1, int16x8_t filter_0_7, int16x8_t filter_4_11,
@@ -111,7 +108,7 @@ static inline void highbd_convolve_x_sr_12tap_sve2(
   const int16x8_t y_filter_0_7 = vld1q_s16(y_filter_ptr);
   const int16x8_t y_filter_4_11 = vld1q_s16(y_filter_ptr + 4);
 
-  uint16x8x4_t permute_tbl = vld1q_u16_x4(kDotProdTbl);
+  uint16x8x4_t permute_tbl = vld1q_u16_x4(kHbdDotProdTbl);
   // Scale indices by size of the true vector length to avoid reading from an
   // 'undefined' portion of a vector on a system with SVE vectors > 128-bit.
   uint16x8_t correction0 = vreinterpretq_u16_u64(vcombine_u64(
@@ -253,12 +250,6 @@ static inline void highbd_convolve_x_sr_8tap_sve2(
   } while (height != 0);
 }
 
-// clang-format off
-DECLARE_ALIGNED(16, static const uint16_t, kDeinterleaveTbl[8]) = {
-  0, 2, 4, 6, 1, 3, 5, 7,
-};
-// clang-format on
-
 static inline uint16x4_t convolve4_4_x(int16x8_t s0, int16x8_t filter,
                                        int64x2_t offset,
                                        uint16x8x2_t permute_tbl,
@@ -305,7 +296,7 @@ static inline void highbd_convolve_x_sr_4tap_sve2(
 
   if (width == 4) {
     const uint16x4_t max = vdup_n_u16((1 << bd) - 1);
-    uint16x8x2_t permute_tbl = vld1q_u16_x2(kDotProdTbl);
+    uint16x8x2_t permute_tbl = vld1q_u16_x2(kHbdDotProdTbl);
 
     const int16_t *s = (const int16_t *)(src);
 
@@ -428,21 +419,6 @@ static inline void highbd_convolve_y_sr_12tap_sve2(
   const int16x8_t y_filter_0_7 = vld1q_s16(y_filter_ptr);
   const int16x8_t y_filter_4_11 = vld1q_s16(y_filter_ptr + 4);
 
-  uint16x8x3_t merge_block_tbl = vld1q_u16_x3(kDotProdMergeBlockTbl);
-  // Scale indices by size of the true vector length to avoid reading from an
-  // 'undefined' portion of a vector on a system with SVE vectors > 128-bit.
-  uint16x8_t correction0 =
-      vreinterpretq_u16_u64(vdupq_n_u64(svcnth() * 0x0001000000000000ULL));
-  merge_block_tbl.val[0] = vaddq_u16(merge_block_tbl.val[0], correction0);
-
-  uint16x8_t correction1 =
-      vreinterpretq_u16_u64(vdupq_n_u64(svcnth() * 0x0001000100000000ULL));
-  merge_block_tbl.val[1] = vaddq_u16(merge_block_tbl.val[1], correction1);
-
-  uint16x8_t correction2 =
-      vreinterpretq_u16_u64(vdupq_n_u64(svcnth() * 0x0001000100010000ULL));
-  merge_block_tbl.val[2] = vaddq_u16(merge_block_tbl.val[2], correction2);
-
   const uint16x4_t max = vdup_n_u16((1 << bd) - 1);
 
   do {
@@ -471,13 +447,10 @@ static inline void highbd_convolve_y_sr_12tap_sve2(
       load_s16_4x4(s, src_stride, &sB, &sC, &sD, &sE);
 
       int16x8_t s89AB[2], s9ABC[2], sABCD[2], sBCDE[2];
+      transpose_concat_elems_s16_4x4(s8, s9, sA, sB, s89AB);
+      transpose_concat_elems_s16_4x4(s9, sA, sB, sC, s9ABC);
+      transpose_concat_elems_s16_4x4(sA, sB, sC, sD, sABCD);
       transpose_concat_elems_s16_4x4(sB, sC, sD, sE, sBCDE);
-
-      // Use the above transpose and reuse data from the previous loop to get
-      // the rest.
-      aom_tbl2x2_s16(s789A, sBCDE, merge_block_tbl.val[0], s89AB);
-      aom_tbl2x2_s16(s789A, sBCDE, merge_block_tbl.val[1], s9ABC);
-      aom_tbl2x2_s16(s789A, sBCDE, merge_block_tbl.val[2], sABCD);
 
       uint16x4_t d0 = highbd_convolve12_4_y(s0123, s4567, s89AB, y_filter_0_7,
                                             y_filter_4_11, max);
@@ -508,6 +481,10 @@ static inline void highbd_convolve_y_sr_12tap_sve2(
       s6789[1] = sABCD[1];
       s789A[0] = sBCDE[0];
       s789A[1] = sBCDE[1];
+
+      s8 = sC;
+      s9 = sD;
+      sA = sE;
 
       s += 4 * src_stride;
       d += 4 * dst_stride;
@@ -572,7 +549,7 @@ static void highbd_convolve_y_sr_8tap_sve2(const uint16_t *src,
 
   const int16x8_t y_filter = vld1q_s16(filter_y);
 
-  uint16x8x3_t merge_block_tbl = vld1q_u16_x3(kDotProdMergeBlockTbl);
+  uint16x8x3_t merge_block_tbl = vld1q_u16_x3(kSVEDotProdMergeBlockTbl);
   // Scale indices by size of the true vector length to avoid reading from an
   // 'undefined' portion of a vector on a system with SVE vectors > 128-bit.
   uint16x8_t correction0 =
@@ -945,7 +922,7 @@ static inline void highbd_convolve_2d_sr_horiz_12tap_sve2(
   const int16x8_t y_filter_0_7 = vld1q_s16(y_filter_ptr);
   const int16x8_t y_filter_4_11 = vld1q_s16(y_filter_ptr + 4);
 
-  uint16x8x4_t permute_tbl = vld1q_u16_x4(kDotProdTbl);
+  uint16x8x4_t permute_tbl = vld1q_u16_x4(kHbdDotProdTbl);
   // Scale indices by size of the true vector length to avoid reading from an
   // 'undefined' portion of a vector on a system with SVE vectors > 128-bit.
   uint16x8_t correction0 = vreinterpretq_u16_u64(vcombine_u64(
@@ -1132,7 +1109,7 @@ static inline void highbd_convolve_2d_sr_horiz_4tap_sve2(
   if (width == 4) {
     const int16_t *s = (const int16_t *)(src);
 
-    uint16x8x2_t permute_tbl = vld1q_u16_x2(kDotProdTbl);
+    uint16x8x2_t permute_tbl = vld1q_u16_x2(kHbdDotProdTbl);
 
     do {
       int16x8_t s0, s1, s2, s3;
@@ -1215,7 +1192,7 @@ static inline void highbd_convolve_2d_sr_vert_12tap_sve2(
   const int16x8_t y_filter_0_7 = vld1q_s16(y_filter_ptr);
   const int16x8_t y_filter_4_11 = vld1q_s16(y_filter_ptr + 4);
 
-  uint16x8x3_t merge_block_tbl = vld1q_u16_x3(kDotProdMergeBlockTbl);
+  uint16x8x3_t merge_block_tbl = vld1q_u16_x3(kSVEDotProdMergeBlockTbl);
   // Scale indices by size of the true vector length to avoid reading from an
   // 'undefined' portion of a vector on a system with SVE vectors > 128-bit.
   uint16x8_t correction0 =
@@ -1358,7 +1335,7 @@ static void highbd_convolve_2d_sr_vert_8tap_sve2(
   const int32x4_t shift = vdupq_n_s32(-conv_params->round_1);
   const int16x8_t y_filter = vld1q_s16(filter_y);
 
-  uint16x8x3_t merge_block_tbl = vld1q_u16_x3(kDotProdMergeBlockTbl);
+  uint16x8x3_t merge_block_tbl = vld1q_u16_x3(kSVEDotProdMergeBlockTbl);
   // Scale indices by size of the true vector length to avoid reading from an
   // 'undefined' portion of a vector on a system with SVE vectors > 128-bit.
   uint16x8_t correction0 =

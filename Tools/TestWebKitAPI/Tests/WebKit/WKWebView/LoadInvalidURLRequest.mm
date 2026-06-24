@@ -40,7 +40,7 @@ static bool didFinishTest;
 static bool didFailProvisionalLoad;
 static const char literal[] = "https://www.example.com<>/";
 
-static NSURL *literalURL(const char* literal)
+static NSURL *loadInvalidLiteralURL(const char* literal)
 {
     return WTF::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
 }
@@ -123,7 +123,7 @@ TEST(WebKit, LoadInvalidURLRequest)
 
         RetainPtr<LoadInvalidURLNavigationActionDelegate> delegate = adoptNS([[LoadInvalidURLNavigationActionDelegate alloc] init]);
         [webView setNavigationDelegate:delegate.get()];
-        [webView loadRequest:[NSURLRequest requestWithURL:literalURL(literal)]];
+        [webView loadRequest:[NSURLRequest requestWithURL:loadInvalidLiteralURL(literal)]];
 
         didFinishTest = false;
         didFailProvisionalLoad = false;

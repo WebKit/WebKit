@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MediaElementAudioSourceNode constructor</title>
+<link rel="help" href="https://webaudio.github.io/web-audio-api/#MediaElementAudioSourceNode">
+<link rel="help" href="https://webaudio.github.io/web-audio-api/#dom-mediaelementaudiosourcenode-mediaelementaudiosourcenode">
+<link rel="help" href="https://webaudio.github.io/web-audio-api/#MediaElementAudioSourceOptions">
+<script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+
+test(t => {
+    const context = new AudioContext();
+    t.add_cleanup(() => { context.close(); });
+    const audio = new Audio();
+    const node = new MediaElementAudioSourceNode(context, {mediaElement: audio});
+
+    assert_true(node instanceof MediaElementAudioSourceNode,
+        "constructed instance is a MediaElementAudioSourceNode");
+    assert_equals(node.mediaElement, audio,
+        "options.mediaElement is exposed on the node and is the element re-routed by it");
+    assert_equals(node.context, context,
+        "node is associated with the supplied BaseAudioContext");
+}, "MediaElementAudioSourceNode constructor associates the node with the given context and mediaElement");
+
+test(t => {
+    const context = new AudioContext();
+    t.add_cleanup(() => { context.close(); });
+    const audio = new Audio();
+    const node = new MediaElementAudioSourceNode(context, {mediaElement: audio});
+
+    assert_equals(node.numberOfInputs, 0, "numberOfInputs");
+    assert_equals(node.numberOfOutputs, 1, "numberOfOutputs");
+    assert_equals(node.channelCount, 2, "default channelCount");
+    assert_equals(node.channelCountMode, "max", "default channelCountMode");
+    assert_equals(node.channelInterpretation, "speakers", "default channelInterpretation");
+}, "MediaElementAudioSourceNode constructor sets default AudioNode parameters via 'initialize the AudioNode'");
+
+test(t => {
+    const context = new AudioContext();
+    t.add_cleanup(() => { context.close(); });
+
+    assert_throws_js(TypeError,
+        () => new MediaElementAudioSourceNode(context),
+        "missing options dictionary");
+    assert_throws_js(TypeError,
+        () => new MediaElementAudioSourceNode(context, {}),
+        "options dictionary missing required mediaElement member");
+    assert_throws_js(TypeError,
+        () => new MediaElementAudioSourceNode(context, {mediaElement: null}),
+        "null mediaElement (HTMLMediaElement is non-nullable)");
+    assert_throws_js(TypeError,
+        () => new MediaElementAudioSourceNode(context, {mediaElement: undefined}),
+        "undefined mediaElement");
+}, "MediaElementAudioSourceNode constructor throws TypeError when MediaElementAudioSourceOptions.mediaElement is missing");
+
+test(t => {
+    const context = new AudioContext();
+    t.add_cleanup(() => { context.close(); });
+    const audio1 = new Audio();
+    const audio2 = new Audio();
+
+    const factoryNode = context.createMediaElementSource(audio1);
+    const constructorNode = new MediaElementAudioSourceNode(context, {mediaElement: audio2});
+
+    assert_true(factoryNode instanceof MediaElementAudioSourceNode);
+    assert_true(constructorNode instanceof MediaElementAudioSourceNode);
+    assert_equals(factoryNode.mediaElement, audio1);
+    assert_equals(constructorNode.mediaElement, audio2);
+    assert_equals(factoryNode.context, context);
+    assert_equals(constructorNode.context, context);
+    assert_equals(factoryNode.numberOfInputs, constructorNode.numberOfInputs);
+    assert_equals(factoryNode.numberOfOutputs, constructorNode.numberOfOutputs);
+    assert_equals(factoryNode.channelCount, constructorNode.channelCount);
+    assert_equals(factoryNode.channelCountMode, constructorNode.channelCountMode);
+    assert_equals(factoryNode.channelInterpretation, constructorNode.channelInterpretation);
+}, "createMediaElementSource() and the MediaElementAudioSourceNode constructor produce equivalent nodes");
+</script>
+</body>
+</html>

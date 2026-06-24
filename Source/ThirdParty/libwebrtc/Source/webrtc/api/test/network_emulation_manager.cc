@@ -146,27 +146,14 @@ NetworkEmulationManager::SimulatedNetworkNode
 NetworkEmulationManager::SimulatedNetworkNode::Builder::Build(
     uint64_t random_seed) const {
   RTC_CHECK(net_);
-  return Build(net_, random_seed);
-}
-
-NetworkEmulationManager::SimulatedNetworkNode
-NetworkEmulationManager::SimulatedNetworkNode::Builder::Build(
-    NetworkEmulationManager* net,
-    uint64_t random_seed) const {
-  RTC_CHECK(net);
-  RTC_CHECK(net_ == nullptr || net_ == net);
-  std::unique_ptr<NetworkQueue> network_queue;
-  if (queue_factory_ != nullptr) {
-    network_queue = queue_factory_->CreateQueue();
-  } else {
-    network_queue = std::make_unique<LeakyBucketNetworkQueue>();
-  }
-  SimulatedNetworkNode res;
+  std::unique_ptr<NetworkQueue> network_queue =
+      queue_factory_ ? queue_factory_->CreateQueue()
+                     : std::make_unique<LeakyBucketNetworkQueue>();
   auto behavior = std::make_unique<SimulatedNetwork>(config_, random_seed,
                                                      std::move(network_queue));
-  res.simulation = behavior.get();
-  res.node = net->CreateEmulatedNode(std::move(behavior));
-  return res;
+  return SimulatedNetworkNode{
+      .simulation = behavior.get(),
+      .node = net_->CreateEmulatedNode(std::move(behavior))};
 }
 
 std::pair<EmulatedNetworkManagerInterface*, EmulatedNetworkManagerInterface*>
@@ -177,15 +164,10 @@ NetworkEmulationManager::CreateEndpointPairWithTwoWayRoutes(
   auto* alice_node = CreateEmulatedNode(config);
   auto* bob_node = CreateEmulatedNode(config);
 
-  std::vector<EmulatedEndpoint*> alice_endpoints;
-  for (int i = 0; i < alice_interface_count; i++) {
-    alice_endpoints.push_back(CreateEndpoint(EmulatedEndpointConfig()));
-  }
-
-  std::vector<EmulatedEndpoint*> bob_endpoints;
-  for (int i = 0; i < bob_interface_count; i++) {
-    bob_endpoints.push_back(CreateEndpoint(EmulatedEndpointConfig()));
-  }
+  std::vector<EmulatedEndpoint*> alice_endpoints(
+      alice_interface_count, CreateEndpoint(EmulatedEndpointConfig()));
+  std::vector<EmulatedEndpoint*> bob_endpoints(
+      bob_interface_count, CreateEndpoint(EmulatedEndpointConfig()));
 
   for (auto alice_endpoint : alice_endpoints) {
     for (auto bob_endpoint : bob_endpoints) {

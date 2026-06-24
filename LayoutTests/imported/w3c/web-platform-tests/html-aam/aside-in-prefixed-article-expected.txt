@@ -1,0 +1,4 @@
+x
+
+PASS el-aside-in-prefixed-article
+

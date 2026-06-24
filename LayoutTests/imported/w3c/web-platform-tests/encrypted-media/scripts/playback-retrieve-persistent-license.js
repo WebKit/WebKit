@@ -98,6 +98,8 @@ function runTest(config,qualifier) {
             return access.createMediaKeys();
         }).then(function(mediaKeys) {
             _mediaKeys = mediaKeys;
+            if (config.servercertificate)
+                return _mediaKeys.setServerCertificate(config.servercertificate).then(function() { return _video.setMediaKeys( mediaKeys ); });
             return _video.setMediaKeys( mediaKeys );
         }).then(function() {
             _mediaKeySession = _mediaKeys.createSession('persistent-license');

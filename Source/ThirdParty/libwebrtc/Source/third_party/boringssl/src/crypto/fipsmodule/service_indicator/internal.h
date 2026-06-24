@@ -18,44 +18,46 @@
 #include <openssl/base.h>
 
 
-// FIPS_service_indicator_before_call and |FIPS_service_indicator_after_call|
+BSSL_NAMESPACE_BEGIN
+
+// FIPS_service_indicator_before_call and `FIPS_service_indicator_after_call`
 // both currently return the same local thread counter which is slowly
 // incremented whenever approved services are called. The
-// |CALL_SERVICE_AND_CHECK_APPROVED| macro is strongly recommended over calling
+// `CALL_SERVICE_AND_CHECK_APPROVED` macro is strongly recommended over calling
 // these functions directly.
 //
-// |FIPS_service_indicator_before_call| is intended to be called immediately
-// before an approved service, while |FIPS_service_indicator_after_call| should
+// `FIPS_service_indicator_before_call` is intended to be called immediately
+// before an approved service, while `FIPS_service_indicator_after_call` should
 // be called immediately after. If the values returned from these two functions
 // are not equal, this means that the service called in between is deemed to be
 // approved. If the values are still the same, this means the counter has not
 // been incremented, and the service called is not approved for FIPS.
 //
-// In non-FIPS builds, |FIPS_service_indicator_before_call| always returns zero
-// and |FIPS_service_indicator_after_call| always returns one. Thus calls always
+// In non-FIPS builds, `FIPS_service_indicator_before_call` always returns zero
+// and `FIPS_service_indicator_after_call` always returns one. Thus calls always
 // appear to be approved. This is intended to simplify testing.
-OPENSSL_EXPORT uint64_t FIPS_service_indicator_before_call(void);
-OPENSSL_EXPORT uint64_t FIPS_service_indicator_after_call(void);
+OPENSSL_EXPORT uint64_t FIPS_service_indicator_before_call();
+OPENSSL_EXPORT uint64_t FIPS_service_indicator_after_call();
 
 #if defined(BORINGSSL_FIPS)
 
 // FIPS_service_indicator_update_state records that an approved service has been
 // invoked.
-void FIPS_service_indicator_update_state(void);
+void FIPS_service_indicator_update_state();
 
-// FIPS_service_indicator_lock_state and |FIPS_service_indicator_unlock_state|
-// stop |FIPS_service_indicator_update_state| from actually updating the service
+// FIPS_service_indicator_lock_state and `FIPS_service_indicator_unlock_state`
+// stop `FIPS_service_indicator_update_state` from actually updating the service
 // indicator. This is used when a primitive calls a potentially approved
 // primitive to avoid false positives. For example, just because a key
-// generation calls |BCM_rand_bytes| (and thus the approved DRBG) doesn't mean
+// generation calls `BCM_rand_bytes` (and thus the approved DRBG) doesn't mean
 // that the key generation operation itself is approved.
 //
 // This lock nests: i.e. locking twice is fine so long as each lock is paired
 // with an unlock. If the (64-bit) counter overflows, the process aborts.
-void FIPS_service_indicator_lock_state(void);
-void FIPS_service_indicator_unlock_state(void);
+void FIPS_service_indicator_lock_state();
+void FIPS_service_indicator_unlock_state();
 
-// The following functions may call |FIPS_service_indicator_update_state| if
+// The following functions may call `FIPS_service_indicator_update_state` if
 // their parameter specifies an approved operation.
 
 void AEAD_GCM_verify_service_indicator(const EVP_AEAD_CTX *ctx);
@@ -72,9 +74,9 @@ void TLSKDF_verify_service_indicator(const EVP_MD *dgst);
 
 // Service indicator functions are no-ops in non-FIPS builds.
 
-inline void FIPS_service_indicator_update_state(void) {}
-inline void FIPS_service_indicator_lock_state(void) {}
-inline void FIPS_service_indicator_unlock_state(void) {}
+inline void FIPS_service_indicator_update_state() {}
+inline void FIPS_service_indicator_lock_state() {}
+inline void FIPS_service_indicator_unlock_state() {}
 
 inline void AEAD_GCM_verify_service_indicator(
     [[maybe_unused]] const EVP_AEAD_CTX *ctx) {}
@@ -104,5 +106,7 @@ inline void TLSKDF_verify_service_indicator(
     [[maybe_unused]] const EVP_MD *dgst) {}
 
 #endif  // BORINGSSL_FIPS
+
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_HEADER_CRYPTO_FIPSMODULE_SERVICE_INDICATOR_INTERNAL_H

@@ -304,8 +304,28 @@ TEST(VideoCodecTestLibvpx, VeryLowBitrateVP9) {
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
 
-// TODO(marpan): Add temporal layer test for VP9, once changes are in
-// vp9 wrapper for this.
+TEST(VideoCodecTestLibvpx, Vp9L1T3) {
+  auto config = CreateConfig();
+  config.SetCodecSettings(kVp9CodecName, 1, 1, /*num_temporal_layers=*/3, true,
+                          true, false, kCifWidth, kCifHeight);
+
+  auto fixture = CreateVideoCodecTestFixture(config);
+
+  std::vector<RateControlThresholds> rc_thresholds = {
+      {.max_avg_bitrate_mismatch_percent = 60,
+       .max_time_to_reach_target_bitrate_sec = 3,
+       .max_avg_framerate_mismatch_percent = 75,
+       .max_avg_buffer_level_sec = 1,
+       .max_max_key_frame_delay_sec = 0.5,
+       .max_max_delta_frame_delay_sec = 0.4,
+       .max_num_spatial_resizes = 2,
+       .max_num_key_frames = 1}};
+
+  std::vector<RateProfile> rate_profiles = {
+      {.target_kbps = 500, .input_fps = 30, .frame_num = 0}};
+
+  fixture->RunTest(rate_profiles, &rc_thresholds, nullptr, nullptr);
+}
 
 #endif  // defined(RTC_ENABLE_VP9)
 

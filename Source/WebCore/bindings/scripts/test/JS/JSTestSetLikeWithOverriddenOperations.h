@@ -56,8 +56,12 @@ protected:
 
 class JSTestSetLikeWithOverriddenOperationsOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestSetLikeWithOverriddenOperationsOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestSetLikeWithOverriddenOperationsOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestSetLikeWithOverriddenOperations*)

@@ -88,7 +88,6 @@ private:
     String m_preferredMicrophoneID;
     String m_preferredSpeakerID;
     bool m_isReceiverPreferredSpeaker { false };
-    bool m_recomputeDevices { true };
     mutable RetainPtr<AVAudioSessionPortDescription> m_lastDefaultMicrophone;
 };
 

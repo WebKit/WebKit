@@ -13,8 +13,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_adapters.h"
@@ -34,7 +34,7 @@ AsyncSSLServerSocket::AsyncSSLServerSocket(Socket* socket)
 
 void AsyncSSLServerSocket::ProcessInput(char* data, size_t* len) {
   // We only accept client hello messages.
-  const ArrayView<const uint8_t> client_hello =
+  const std::span<const uint8_t> client_hello =
       AsyncSSLSocket::SslClientHello();
   if (*len < client_hello.size()) {
     return;
@@ -51,7 +51,7 @@ void AsyncSSLServerSocket::ProcessInput(char* data, size_t* len) {
   // Clients should not send more data until the handshake is completed.
   RTC_DCHECK(*len == 0);
 
-  const ArrayView<const uint8_t> server_hello =
+  const std::span<const uint8_t> server_hello =
       AsyncSSLSocket::SslServerHello();
   // Send a server hello back to the client.
   DirectSend(server_hello.data(), server_hello.size());

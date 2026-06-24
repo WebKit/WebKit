@@ -258,6 +258,7 @@ public:
 
     void broadcastConsoleMessage(JSC::MessageSource, JSC::MessageLevel, const String& message);
     RefPtr<NetworkResourceLoader> takeNetworkResourceLoader(WebCore::ResourceLoaderIdentifier);
+    void adoptNetworkResourceLoader(WebCore::ResourceLoaderIdentifier, Ref<NetworkResourceLoader>&&);
 
     NetworkOriginAccessPatterns& originAccessPatterns() LIFETIME_BOUND { return m_originAccessPatterns.get(); }
 
@@ -375,8 +376,6 @@ private:
     void takeAllMessagesForPort(const WebCore::MessagePortIdentifier&, CompletionHandler<void(Vector<WebCore::MessageWithMessagePorts>&&, std::optional<MessageBatchIdentifier>)>&&);
     void postMessageToRemote(WebCore::MessageWithMessagePorts&&, const WebCore::MessagePortIdentifier&);
     void didDeliverMessagePortMessages(MessageBatchIdentifier);
-
-    void setCORSDisablingPatterns(WebCore::PageIdentifier, Vector<String>&&);
 
 #if PLATFORM(MAC)
     void updateActivePages(String&& name, const Vector<String>& activePagesOrigins, CoreIPCAuditToken&&);

@@ -1,7 +1,8 @@
 <html>
     <head>
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/js-test.js"></script>
         <script>
+            window.jsTestIsAsync = true;
             var givenScrollTop = 1;
             var givenScrollLeft = 2;
             var expectedScrollTop = 161;
@@ -9,8 +10,6 @@
             var event;
             var div;
 
-            if (window.testRunner)
-                testRunner.waitUntilDone();
 
             function dispatchWheelEvent()
             {
@@ -32,8 +31,7 @@
                 shouldBe("div.scrollTop", "window.expectedScrollTop");
                 shouldBe("div.scrollLeft", "window.expectedScrollLeft");
 
-                if (window.testRunner)
-                    window.testRunner.notifyDone();
+                finishJSTest();
             }
 
             function mousewheelHandler(e)

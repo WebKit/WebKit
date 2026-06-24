@@ -1,0 +1,7 @@
+
+PASS Author `input { display: block }` must not override UA !important
+PASS Author `input.flex { display: flex }` must not override UA !important
+PASS Author `input#by-id { display: inline-block }` must not override UA !important
+PASS Author `input[type=hidden] { display: grid }` (normal) must not override UA !important
+PASS Inline `style=display:block` (normal) must not override UA !important
+

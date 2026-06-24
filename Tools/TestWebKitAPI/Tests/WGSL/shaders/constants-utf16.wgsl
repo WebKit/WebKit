@@ -75,7 +75,7 @@ fn testVectorConstants() -> i32
 
 fn testAbstractIntPromotion()
 {
-    const f = pow(vec2(0), vec2(0));
+    const f = pow(vec2(1), vec2(1));
 }
 
 fn testMixedConstantValue()

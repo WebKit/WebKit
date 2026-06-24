@@ -27,6 +27,7 @@
 #import "UserActivity.h"
 
 #import "Logging.h"
+#import <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ UserActivity::Impl::Impl(ASCIILiteral descriptionLiteral)
 void UserActivity::Impl::beginActivity()
 {
     if (!m_activity) {
-        RELEASE_LOG(ActivityState, "%p - UserActivity::Impl::beginActivity: description=%" PUBLIC_LOG_STRING, this, [m_description UTF8String]);
+        RELEASE_LOG_FORWARDABLE(ActivityState, UserActivityImplBeginActivity, CString([m_description UTF8String]));
         NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
         m_activity = [[NSProcessInfo processInfo] beginActivityWithOptions:options reason:m_description.get()];
     }
@@ -48,7 +49,7 @@ void UserActivity::Impl::beginActivity()
 
 void UserActivity::Impl::endActivity()
 {
-    RELEASE_LOG(ActivityState, "%p - UserActivity::Impl::endActivity: description=%" PUBLIC_LOG_STRING, this, [m_description UTF8String]);
+    RELEASE_LOG_FORWARDABLE(ActivityState, UserActivityImplEndActivity, CString([m_description UTF8String]));
     [[NSProcessInfo processInfo] endActivity:m_activity.get()];
     m_activity.clear();
 }

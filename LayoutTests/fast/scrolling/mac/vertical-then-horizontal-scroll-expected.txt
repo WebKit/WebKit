@@ -1,0 +1,8 @@
+
+Tests that an L-shaped fingers-down gesture scrolls vertically then horizontally
+PASS window.scrollY != initialScrollY is true
+PASS window.scrollX != initialScrollX is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

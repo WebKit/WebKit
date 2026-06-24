@@ -54,7 +54,7 @@ func (t *Test) parseKeyValue(s string) (key, value string) {
 	}
 	if i := strings.IndexRune(s, t.kvDelim); t.kvDelim != 0 && i != -1 {
 		key, value = s[:i], s[i+1:]
-		if trimmed := strings.TrimSpace(value); len(trimmed) != 0 {
+		if trimmed := strings.TrimSpace(value); trimmed != "" {
 			value = trimmed
 		} else {
 			value = " "
@@ -67,7 +67,7 @@ func (t *Test) parseKeyValue(s string) (key, value string) {
 
 func (t *Test) translateKeyValue(key, value string) (string, string) {
 	if kv, ok := t.translations[kvPair{key, ""}]; ok {
-		if len(kv.value) == 0 && len(value) != 0 {
+		if len(kv.value) == 0 && value != "" {
 			return kv.key, value
 		}
 		return kv.key, kv.value
@@ -98,9 +98,9 @@ func (t *Test) generate(r io.Reader, cmdLineLabelStr string) {
 
 	// Auxiliary labels passed as a flag.
 	cmdLineLabels := make(map[string]string)
-	if len(cmdLineLabelStr) != 0 {
-		pairs := strings.Split(cmdLineLabelStr, ",")
-		for _, p := range pairs {
+	if cmdLineLabelStr != "" {
+		pairs := strings.SplitSeq(cmdLineLabelStr, ",")
+		for p := range pairs {
 			key, value := t.parseKeyValue(p)
 			cmdLineLabels[key] = value
 		}
@@ -149,7 +149,7 @@ func (t *Test) generate(r io.Reader, cmdLineLabelStr string) {
 
 			k, v := t.parseKeyValue(l[1 : len(l)-1])
 			k, v = t.translateKeyValue(k, v)
-			if len(k) != 0 {
+			if k != "" {
 				labels[k] = v
 			}
 
@@ -182,7 +182,7 @@ func (t *Test) generate(r io.Reader, cmdLineLabelStr string) {
 			if *cipher == "tdes" && k == "Key" {
 				v += v + v // Key1=Key2=Key3
 			}
-			if len(k) != 0 {
+			if k != "" {
 				printKeyValue(k, v)
 				currentKv[k] = v
 			}

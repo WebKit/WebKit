@@ -68,9 +68,13 @@ void CorrectionPanel::show(NSView *view, WebViewImpl& webViewImpl, AlternativeTe
     if (!alternativeReplacementStrings.isEmpty())
         alternativeStrings = createNSArray(alternativeReplacementStrings);
 
+    WeakPtr weakWebViewImpl { webViewImpl };
     RetainPtr spellChecker = [NSSpellChecker sharedSpellChecker];
-    [spellChecker showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString.get() alternativeStrings:alternativeStrings.get() forStringInRect:boundingBoxOfReplacedString view:m_view.get() completionHandler:^(NSString* acceptedString) {
-        handleAcceptedReplacement(webViewImpl, acceptedString, replacedStringAsNSString.get(), replacementStringAsNSString.get(), indicatorType);
+    [spellChecker showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString.get() alternativeStrings:alternativeStrings.get() forStringInRect:boundingBoxOfReplacedString view:m_view.get() completionHandler:^(NSString *acceptedString) {
+        CheckedPtr webViewImpl = weakWebViewImpl.get();
+        if (!webViewImpl)
+            return;
+        handleAcceptedReplacement(*webViewImpl, acceptedString, replacedStringAsNSString.get(), replacementStringAsNSString.get(), indicatorType);
     }];
 }
 

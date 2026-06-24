@@ -254,8 +254,6 @@ angle::CallCapture CaptureLogicOpANGLE(const State &glState,
                                        bool isCallValid,
                                        LogicalOperation opcodePacked);
 
-// GL_ANGLE_lossy_etc_decode
-
 // GL_ANGLE_memory_object_flags
 angle::CallCapture CaptureTexStorageMemFlags2DANGLE(const State &glState,
                                                     bool isCallValid,
@@ -815,21 +813,6 @@ angle::CallCapture CaptureGetFramebufferPixelLocalStorageParameteruivANGLE(
 // GL_ANGLE_texture_compression_dxt3
 
 // GL_ANGLE_texture_compression_dxt5
-
-// GL_ANGLE_texture_external_update
-angle::CallCapture CaptureTexImage2DExternalANGLE(const State &glState,
-                                                  bool isCallValid,
-                                                  TextureTarget targetPacked,
-                                                  GLint level,
-                                                  GLint internalformat,
-                                                  GLsizei width,
-                                                  GLsizei height,
-                                                  GLint border,
-                                                  GLenum format,
-                                                  GLenum type);
-angle::CallCapture CaptureInvalidateTextureANGLE(const State &glState,
-                                                 bool isCallValid,
-                                                 TextureType targetPacked);
 
 // GL_ANGLE_texture_multisample
 angle::CallCapture CaptureTexStorage2DMultisampleANGLE(const State &glState,

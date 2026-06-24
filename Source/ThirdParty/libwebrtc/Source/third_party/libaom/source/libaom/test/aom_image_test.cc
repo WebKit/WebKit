@@ -9,6 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <array>
 #include <climits>
 
 #include "aom/aom_image.h"
@@ -49,14 +50,19 @@ TEST(AomImageTest, AomImgSetRectOverflow) {
             0);
 }
 
-TEST(AomImageTest, AomImgAllocNone) {
-  const int kWidth = 128;
-  const int kHeight = 128;
+TEST(AomImageTest, AomImgAllocInvalidImageFormats) {
+  static constexpr std::array<int, 7> kImageFormats = {
+    AOM_IMG_FMT_NONE,       AOM_IMG_FMT_NONE - 1,   AOM_IMG_FMT_NV12 + 1,
+    AOM_IMG_FMT_I42016 - 1, AOM_IMG_FMT_I44416 + 1, AOM_IMG_FMT_AOMYV12,
+    AOM_IMG_FMT_AOMI420
+  };
 
-  aom_image_t img;
-  aom_img_fmt_t format = AOM_IMG_FMT_NONE;
-  unsigned int align = 32;
-  ASSERT_EQ(aom_img_alloc(&img, format, kWidth, kHeight, align), nullptr);
+  for (const auto img_fmt : kImageFormats) {
+    EXPECT_EQ(
+        aom_img_alloc(/*img=*/nullptr, static_cast<aom_img_fmt_t>(img_fmt),
+                      /*d_w=*/32, /*d_h=*/32, /*align=*/1),
+        nullptr);
+  }
 }
 
 TEST(AomImageTest, AomImgAllocNv12) {

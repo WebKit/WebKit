@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleExtractorState.h"
 #include "StyleGridData.h"
 #include <wtf/Vector.h>

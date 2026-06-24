@@ -564,9 +564,18 @@ void UIScriptControllerCocoa::performTextExtractionInteraction(JSStringRef jsAct
         if (!m_context)
             return;
 
-        RetainPtr description = [result.error.userInfo objectForKey:NSDebugDescriptionErrorKey] ?: @"";
-        JSRetainPtr jsDescription = adopt(JSStringCreateWithCFString((__bridge CFStringRef)description.get()));
-        m_context->asyncTaskComplete(callbackID, { JSValueMakeString(m_context->jsContext(), jsDescription.get()) });
+        NSDictionary *resultDict = @{
+            @"error": [result.error.userInfo objectForKey:NSDebugDescriptionErrorKey] ?: @"",
+            @"summary": result.summary ?: @"",
+        };
+
+        RetainPtr data = [NSJSONSerialization dataWithJSONObject:resultDict options:0 error:nil];
+        RetainPtr resultString = data ? adoptNS([[NSString alloc] initWithData:data.get() encoding:NSUTF8StringEncoding]) : nullptr;
+        if (!resultString)
+            resultString = @"{\"error\":\"\",\"summary\":\"\"}";
+
+        JSRetainPtr jsString = adopt(JSStringCreateWithCFString((__bridge CFStringRef)resultString.get()));
+        m_context->asyncTaskComplete(callbackID, { JSValueMakeString(m_context->jsContext(), jsString.get()) });
     }];
 }
 

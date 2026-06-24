@@ -160,6 +160,36 @@ std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> Ini
     return psshBoxes;
 }
 
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+RefPtr<SharedBuffer> InitDataRegistry::extractFairPlayPsshFromCenc(const SharedBuffer& buffer)
+{
+    if (buffer.size() >= kCencMaxBoxSize)
+        return nullptr;
+
+    auto arrayBuffer = buffer.tryCreateArrayBuffer();
+    if (!arrayBuffer)
+        return nullptr;
+
+    auto view = JSC::DataView::create(WTF::move(arrayBuffer), 0, buffer.size());
+    unsigned offset = 0;
+    while (auto optionalBoxType = ISOBox::peekBox(view, offset)) {
+        auto& [boxTypeName, boxSize] = optionalBoxType.value();
+        if (boxTypeName != ISOProtectionSystemSpecificHeaderBox::boxTypeName())
+            return nullptr;
+        if (boxSize > buffer.size() - offset)
+            return nullptr;
+
+        auto systemID = ISOProtectionSystemSpecificHeaderBox::peekSystemID(view, offset);
+        if (systemID == ISOFairPlayStreamingPsshBox::fairPlaySystemID())
+            return SharedBuffer::create(buffer.makeContiguous()->span().subspan(offset, static_cast<size_t>(boxSize)));
+
+        offset += static_cast<unsigned>(boxSize);
+    }
+
+    return nullptr;
+}
+#endif
+
 std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDsCenc(const SharedBuffer& buffer)
 {
     CDMKeyIDs keyIDs;

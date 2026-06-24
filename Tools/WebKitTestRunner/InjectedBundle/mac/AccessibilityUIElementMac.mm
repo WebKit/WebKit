@@ -2867,6 +2867,19 @@ int AccessibilityUIElementMac::indexForTextMarker(AccessibilityTextMarker* marke
     return -1;
 }
 
+int AccessibilityUIElementMac::relativeIndexForTextMarker(AccessibilityTextMarker* marker)
+{
+    if (!marker)
+        return -1;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto indexNumber = attributeValueForParameter(@"AXRelativeIndexForTextMarker", marker->platformTextMarker());
+    return [indexNumber intValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return -1;
+}
+
 bool AccessibilityUIElementMac::isTextMarkerNull(AccessibilityTextMarker* textMarker)
 {
     if (!textMarker)

@@ -11,13 +11,12 @@
 #include "media/engine/webrtc_media_engine.h"
 
 #include <algorithm>
-#include <map>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/field_trials_view.h"
 #include "api/rtp_parameters.h"
 #include "api/transport/bitrate_settings.h"
@@ -31,7 +30,7 @@ namespace {
 // Remove mutually exclusive extensions with lower priority.
 void DiscardRedundantExtensions(
     std::vector<RtpExtension>* extensions,
-    ArrayView<const char* const> extensions_decreasing_prio) {
+    std::span<const char* const> extensions_decreasing_prio) {
   RTC_DCHECK(extensions);
   bool found = false;
   for (const char* uri : extensions_decreasing_prio) {
@@ -47,63 +46,6 @@ void DiscardRedundantExtensions(
 }
 }  // namespace
 
-bool ValidateRtpExtensions(ArrayView<const RtpExtension> extensions,
-                           ArrayView<const RtpExtension> old_extensions) {
-  bool id_used[1 + RtpExtension::kMaxId] = {false};
-  for (const auto& extension : extensions) {
-    if (extension.id < RtpExtension::kMinId ||
-        extension.id > RtpExtension::kMaxId) {
-      RTC_LOG(LS_ERROR) << "Bad RTP extension ID: " << extension.ToString();
-      return false;
-    }
-    if (id_used[extension.id]) {
-      RTC_LOG(LS_ERROR) << "Duplicate RTP extension ID: "
-                        << extension.ToString();
-      return false;
-    }
-    id_used[extension.id] = true;
-  }
-  // Validate the extension list against the already negotiated extensions.
-  // Re-registering is OK, re-mapping (either same URL at new ID or same
-  // ID used with new URL) is an illegal remap.
-
-  // This is required in order to avoid a crash when registering an
-  // extension. A better structure would use the registered extensions
-  // in the RTPSender. This requires spinning through:
-  //
-  // WebRtcVoiceMediaChannel::::WebRtcAudioSendStream::stream_ (pointer)
-  // AudioSendStream::rtp_rtcp_module_ (pointer)
-  // ModuleRtpRtcpImpl2::rtp_sender_ (pointer)
-  // RtpSenderContext::packet_generator (struct member)
-  // RTPSender::rtp_header_extension_map_ (class member)
-  //
-  // Getting at this seems like a hard slog.
-  if (!old_extensions.empty()) {
-    absl::string_view urimap[1 + RtpExtension::kMaxId];
-    std::map<absl::string_view, int> idmap;
-    for (const auto& old_extension : old_extensions) {
-      urimap[old_extension.id] = old_extension.uri;
-      idmap[old_extension.uri] = old_extension.id;
-    }
-    for (const auto& extension : extensions) {
-      if (!urimap[extension.id].empty() &&
-          urimap[extension.id] != extension.uri) {
-        RTC_LOG(LS_ERROR) << "Extension negotiation failure: " << extension.id
-                          << " was mapped to " << urimap[extension.id]
-                          << " but is proposed changed to " << extension.uri;
-        return false;
-      }
-      const auto& it = idmap.find(extension.uri);
-      if (it != idmap.end() && it->second != extension.id) {
-        RTC_LOG(LS_ERROR) << "Extension negotation failure: " << extension.uri
-                          << " was identified by " << it->second
-                          << " but is proposed changed to " << extension.id;
-        return false;
-      }
-    }
-  }
-  return true;
-}
 
 std::vector<RtpExtension> FilterRtpExtensions(
     const std::vector<RtpExtension>& extensions,
@@ -111,7 +53,6 @@ std::vector<RtpExtension> FilterRtpExtensions(
     bool filter_redundant_extensions,
     const FieldTrialsView& trials) {
   // Don't check against old parameters; this should have been done earlier.
-  RTC_DCHECK(ValidateRtpExtensions(extensions, {}));
   RTC_DCHECK(supported);
   std::vector<RtpExtension> result;
 

@@ -163,13 +163,8 @@ public:
         , m_rareData(WTF::move(other.m_rareData))
     {
     }
-    VariableEnvironment(const VariableEnvironment& other)
-        : m_map(other.m_map)
-        , m_isEverythingCaptured(other.m_isEverythingCaptured)
-        , m_hasAwaitUsingDeclaration(other.m_hasAwaitUsingDeclaration)
-        , m_rareData(other.m_rareData ? WTF::makeUnique<VariableEnvironment::RareData>(*other.m_rareData) : nullptr)
-    {
-    }
+    // Defined in VariableEnvironmentInlines.h.
+    VariableEnvironment(const VariableEnvironment& other);
     VariableEnvironment& operator=(const VariableEnvironment& other);
 
     ALWAYS_INLINE Map::iterator begin() { return m_map.begin(); }
@@ -179,14 +174,10 @@ public:
     ALWAYS_INLINE Map::AddResult add(const RefPtr<UniquedStringImpl>& identifier) { return m_map.add(identifier, VariableEnvironmentEntry()); }
     ALWAYS_INLINE Map::AddResult add(const Identifier& identifier) { return add(identifier.impl()); }
 
-    ALWAYS_INLINE PrivateNameEnvironment::AddResult addPrivateName(const Identifier& identifier) { return addPrivateName(identifier.impl()); }
-    ALWAYS_INLINE PrivateNameEnvironment::AddResult addPrivateName(const RefPtr<UniquedStringImpl>& identifier)
-    {
-        if (!m_rareData)
-            m_rareData = makeUnique<VariableEnvironment::RareData>();
-
-        return m_rareData->m_privateNames.add(identifier, PrivateNameEntry());
-    }
+    // Defined in VariableEnvironmentInlines.h.
+    PrivateNameEnvironment::AddResult addPrivateName(const Identifier& identifier);
+    // Defined in VariableEnvironmentInlines.h.
+    PrivateNameEnvironment::AddResult addPrivateName(const RefPtr<UniquedStringImpl>& identifier);
 
     ALWAYS_INLINE unsigned size() const { return m_map.size() + privateNamesSize(); }
     ALWAYS_INLINE unsigned mapSize() const { return m_map.size(); }
@@ -227,9 +218,11 @@ public:
 
     using PrivateNamesRange = WTF::IteratorRange<PrivateNameEnvironment::iterator>;
 
-    ALWAYS_INLINE Map::AddResult declarePrivateField(const Identifier& identifier) { return declarePrivateField(identifier.impl()); }
+    // Defined in VariableEnvironmentInlines.h.
+    Map::AddResult declarePrivateField(const Identifier& identifier);
 
-    bool declarePrivateMethod(const Identifier& identifier) { return declarePrivateMethod(identifier.impl()); }
+    // Defined in VariableEnvironmentInlines.h.
+    bool declarePrivateMethod(const Identifier& identifier);
     bool declarePrivateMethod(const RefPtr<UniquedStringImpl>& identifier, PrivateNameEntry::Traits addionalTraits = PrivateNameEntry::Traits::None);
 
     enum class PrivateDeclarationResult {
@@ -239,18 +232,20 @@ public:
     };
 
     PrivateDeclarationResult declarePrivateAccessor(const RefPtr<UniquedStringImpl>&, PrivateNameEntry accessorTraits);
-    
-    bool declareStaticPrivateMethod(const Identifier& identifier)
-    {
-        return declarePrivateMethod(identifier.impl(), static_cast<PrivateNameEntry::Traits>(PrivateNameEntry::Traits::IsMethod | PrivateNameEntry::Traits::IsStatic));
-    }
 
-    PrivateDeclarationResult declarePrivateSetter(const Identifier& identifier) { return declarePrivateSetter(identifier.impl()); }
-    PrivateDeclarationResult declareStaticPrivateSetter(const Identifier& identifier) { return declarePrivateSetter(identifier.impl(), PrivateNameEntry::Traits::IsStatic); }
+    // Defined in VariableEnvironmentInlines.h.
+    bool declareStaticPrivateMethod(const Identifier& identifier);
+
+    // Defined in VariableEnvironmentInlines.h.
+    PrivateDeclarationResult declarePrivateSetter(const Identifier& identifier);
+    // Defined in VariableEnvironmentInlines.h.
+    PrivateDeclarationResult declareStaticPrivateSetter(const Identifier& identifier);
     PrivateDeclarationResult declarePrivateSetter(const RefPtr<UniquedStringImpl>& identifier, PrivateNameEntry::Traits modifierTraits = PrivateNameEntry::Traits::None);
 
-    PrivateDeclarationResult declarePrivateGetter(const Identifier& identifier) { return declarePrivateGetter(identifier.impl()); }
-    PrivateDeclarationResult declareStaticPrivateGetter(const Identifier& identifier) { return declarePrivateGetter(identifier.impl(), PrivateNameEntry::Traits::IsStatic); }
+    // Defined in VariableEnvironmentInlines.h.
+    PrivateDeclarationResult declarePrivateGetter(const Identifier& identifier);
+    // Defined in VariableEnvironmentInlines.h.
+    PrivateDeclarationResult declareStaticPrivateGetter(const Identifier& identifier);
     PrivateDeclarationResult declarePrivateGetter(const RefPtr<UniquedStringImpl>& identifier, PrivateNameEntry::Traits modifierTraits = PrivateNameEntry::Traits::None);
 
     Map::AddResult declarePrivateField(const RefPtr<UniquedStringImpl>&);
@@ -316,17 +311,8 @@ public:
         return m_rareData->m_privateNames.contains(identifier.impl());
     }
 
-    ALWAYS_INLINE void addPrivateNamesFrom(const PrivateNameEnvironment* privateNameEnvironment)
-    {
-        if (!privateNameEnvironment)
-            return;
-
-        if (!m_rareData)
-            m_rareData = makeUnique<VariableEnvironment::RareData>();
-
-        for (auto entry : *privateNameEnvironment)
-            m_rareData->m_privateNames.add(entry.key, entry.value);
-    }
+    // Defined in VariableEnvironmentInlines.h.
+    void addPrivateNamesFrom(const PrivateNameEnvironment* privateNameEnvironment);
 
     struct RareData {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(RareData);
@@ -350,13 +336,8 @@ private:
     bool m_isEverythingCaptured { false };
     bool m_hasAwaitUsingDeclaration { false };
 
-    PrivateNameEntry& getOrAddPrivateName(UniquedStringImpl* impl)
-    {
-        if (!m_rareData)
-            m_rareData = WTF::makeUnique<VariableEnvironment::RareData>();
-
-        return m_rareData->m_privateNames.add(impl, PrivateNameEntry()).iterator->value;
-    }
+    // Defined in VariableEnvironmentInlines.h.
+    PrivateNameEntry& getOrAddPrivateName(UniquedStringImpl* impl);
 
     std::unique_ptr<VariableEnvironment::RareData> m_rareData;
 };
@@ -381,12 +362,8 @@ public:
 
     static void sortCompact(Compact&);
 
-    TDZEnvironment& toTDZEnvironment() const
-    {
-        if (std::holds_alternative<Inflated>(m_variables))
-            return const_cast<TDZEnvironment&>(std::get<Inflated>(m_variables));
-        return toTDZEnvironmentSlow();
-    }
+    // Defined in VariableEnvironmentInlines.h.
+    TDZEnvironment& toTDZEnvironment() const;
 
 private:
     CompactTDZEnvironment() = default;
@@ -408,7 +385,8 @@ struct CompactTDZEnvironmentKey {
     { }
 
     static unsigned hash(const CompactTDZEnvironmentKey& key) { return key.m_environment->hash(); }
-    static bool equal(const CompactTDZEnvironmentKey& a, const CompactTDZEnvironmentKey& b) { return *a.m_environment == *b.m_environment; }
+    // Defined in VariableEnvironmentInlines.h.
+    static bool equal(const CompactTDZEnvironmentKey& a, const CompactTDZEnvironmentKey& b);
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
     static void makeDeletedValue(CompactTDZEnvironmentKey& key)
     {
@@ -470,20 +448,12 @@ public:
         {
             swap(other);
         }
-        Handle& operator=(Handle&& other)
-        {
-            Handle handle(WTF::move(other));
-            swap(handle);
-            return *this;
-        }
+        // Defined in VariableEnvironmentInlines.h.
+        Handle& operator=(Handle&& other);
 
         Handle(const Handle&);
-        Handle& operator=(const Handle& other)
-        {
-            Handle handle(other);
-            swap(handle);
-            return *this;
-        }
+        // Defined in VariableEnvironmentInlines.h.
+        Handle& operator=(const Handle& other);
 
         ~Handle();
 
@@ -517,18 +487,15 @@ private:
 };
 
 class TDZEnvironmentLink : public RefCounted<TDZEnvironmentLink> {
-    TDZEnvironmentLink(CompactTDZEnvironmentMap::Handle handle, RefPtr<TDZEnvironmentLink> parent)
-        : m_handle(WTF::move(handle))
-        , m_parent(WTF::move(parent))
-    { }
+    // Defined in VariableEnvironmentInlines.h.
+    TDZEnvironmentLink(CompactTDZEnvironmentMap::Handle handle, RefPtr<TDZEnvironmentLink> parent);
 
 public:
-    static RefPtr<TDZEnvironmentLink> create(CompactTDZEnvironmentMap::Handle handle, RefPtr<TDZEnvironmentLink> parent)
-    {
-        return adoptRef(new TDZEnvironmentLink(WTF::move(handle), WTF::move(parent)));
-    }
+    // Defined in VariableEnvironmentInlines.h.
+    static RefPtr<TDZEnvironmentLink> create(CompactTDZEnvironmentMap::Handle handle, RefPtr<TDZEnvironmentLink> parent);
 
-    bool contains(UniquedStringImpl* impl) const { return m_handle.environment().toTDZEnvironment().contains(impl); }
+    // Defined in VariableEnvironmentInlines.h.
+    bool contains(UniquedStringImpl* impl) const;
     TDZEnvironmentLink* parent() { return m_parent.get(); }
 
 private:

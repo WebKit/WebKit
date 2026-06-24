@@ -53,7 +53,7 @@ private:
 
     WeakRef<HTMLIFrameElement, WeakPtrImplWithEventTargetData> m_element;
     AtomString m_frameURL;
-    ReferrerPolicy m_referrerPolicy;
+    ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
     RefPtr<IntersectionObserver> m_observer;
 };
 

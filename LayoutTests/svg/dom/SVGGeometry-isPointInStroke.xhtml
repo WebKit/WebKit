@@ -119,7 +119,7 @@ function run() {
     debug("");
     debug("Test non-scaling-stroke");
     shouldBe("p15.isPointInStroke({})", "true");
-    shouldBe("p15.isPointInStroke({y: 1})", "true");
+    shouldBe("p15.isPointInStroke({y: 1})", "false");
     shouldBe("p15.isPointInStroke({y: 11})", "false");
     finishJSTest();
 }

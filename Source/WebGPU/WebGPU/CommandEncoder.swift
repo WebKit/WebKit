@@ -542,6 +542,20 @@ extension WebGPU.CommandEncoder {
                 clearDescriptor.stencilAttachment.storeAction = .store
                 clearDescriptor.stencilAttachment.clearStencil = stencilClearValue
                 clearDescriptor.stencilAttachment.texture = depthStencilAttachmentToClear
+            } else if depthAttachmentToClear, let dsTexture = depthStencilAttachmentToClear {
+                // Depth is being pre-cleared but stencil has valid data (previously cleared).
+                // Load the stencil to preserve it — without this, the pre-clear pass uses
+                // MTLLoadActionDontCare for stencil, silently discarding what was written.
+                let fmt = dsTexture.pixelFormat
+                let hasStencil =
+                    (fmt == .depth32Float_stencil8
+                        || fmt == .x32_stencil8
+                        || fmt == .stencil8)
+                if hasStencil {
+                    clearDescriptor.stencilAttachment.loadAction = .load
+                    clearDescriptor.stencilAttachment.storeAction = .store
+                    clearDescriptor.stencilAttachment.texture = depthStencilAttachmentToClear
+                }
             }
 
             if attachmentsToClear.count == 0 {
@@ -1014,14 +1028,14 @@ extension WebGPU.CommandEncoder {
         return nil
     }
 
-    private func loadAction(loadOp: WGPULoadOp) -> MTLLoadAction {
+    private func loadAction(loadOp: WGPULoadOp, readOnly: UInt32 = 0) -> MTLLoadAction {
         switch loadOp {
         case WGPULoadOp_Load:
             return .load
         case WGPULoadOp_Clear:
             return .clear
         case WGPULoadOp_Undefined:
-            return .dontCare
+            return readOnly != 0 ? .load : .dontCare
         case WGPULoadOp_Force32:
             assertionFailure()
             return .dontCare
@@ -1309,9 +1323,13 @@ extension WebGPU.CommandEncoder {
         var depthReadOnly = false
         var stencilReadOnly = false
         var hasStencilComponent = false
+        var hasDepthComponent = false
         var depthStencilAttachmentToClear: (any MTLTexture)? = nil
         var depthAttachmentToClear = false
-        if let attachment = wgpuGetRenderPassDescriptorDepthStencilAttachment(descriptorSpan)?[0] {
+        let optionalAttachment = wgpuGetRenderPassDescriptorDepthStencilAttachment(descriptorSpan)?[0]
+        if optionalAttachment != nil {
+            // swift-format-ignore: NeverForceUnwrap
+            let attachment = optionalAttachment!
             let textureView = WebGPU.TextureOrTextureView(attachment)
             if !CxxBridging.isValidToUseWith(textureView, self) {
                 return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "depth stencil texture device mismatch")
@@ -1319,7 +1337,7 @@ extension WebGPU.CommandEncoder {
             let metalDepthStencilTexture = textureView.texture()
             let textureFormat = textureView.format()
             hasStencilComponent = WebGPU.Texture.containsStencilAspect(textureFormat)
-            let hasDepthComponent = WebGPU.Texture.containsDepthAspect(textureFormat)
+            hasDepthComponent = WebGPU.Texture.containsDepthAspect(textureFormat)
             let isDestroyed = textureView.isDestroyed()
             if !isDestroyed {
                 if textureWidth != 0
@@ -1357,7 +1375,7 @@ extension WebGPU.CommandEncoder {
                 mtlAttachment.clearDepth = attachment.depthLoadOp == WGPULoadOp_Clear ? clearDepth : 1.0
                 mtlAttachment.texture = metalDepthStencilTexture
                 mtlAttachment.level = 0
-                mtlAttachment.loadAction = loadAction(loadOp: attachment.depthLoadOp)
+                mtlAttachment.loadAction = loadAction(loadOp: attachment.depthLoadOp, readOnly: attachment.depthReadOnly)
                 mtlAttachment.storeAction = storeAction(storeOp: attachment.depthStoreOp)
 
                 if mtlDescriptor.rasterizationRateMap != nil && metalDepthStencilTexture?.sampleCount ?? 1 > 1 {
@@ -1389,6 +1407,9 @@ extension WebGPU.CommandEncoder {
             }
 
             if zeroColorTargets {
+                if isDestroyed {
+                    return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "no color targets and depth-stencil texture is destroyed")
+                }
                 // FIMXE: (rdar://170907318) This should be changed to `guard let` when possible.
                 guard var metalDepthStencilTexture, metalDepthStencilTexture.sampleCount > 0 else {
                     return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "no color targets and depth-stencil texture is nil")
@@ -1411,7 +1432,7 @@ extension WebGPU.CommandEncoder {
                 mtlAttachment.texture = textureView.texture()
             }
             mtlAttachment.clearStencil = attachment.stencilClearValue
-            mtlAttachment.loadAction = loadAction(loadOp: attachment.stencilLoadOp)
+            mtlAttachment.loadAction = loadAction(loadOp: attachment.stencilLoadOp, readOnly: attachment.stencilReadOnly)
             mtlAttachment.storeAction = storeAction(storeOp: attachment.stencilStoreOp)
             let isDestroyed = textureView.isDestroyed()
             if !isDestroyed {

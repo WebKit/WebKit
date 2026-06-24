@@ -26,7 +26,7 @@
 #pragma once
 
 #include "MatchResult.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include "Timer.h"
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -44,15 +44,15 @@ public:
     explicit MatchedDeclarationsCache(const Resolver&);
     ~MatchedDeclarationsCache();
 
-    static bool isCacheable(const Element&, const RenderStyle&, const RenderStyle& parentStyle);
+    static bool isCacheable(const Element&, const Style::ComputedStyle&, const Style::ComputedStyle& parentStyle);
     static unsigned computeHash(const MatchResult&, const Style::CustomPropertyData& inheritedCustomProperties);
 
     struct Entry {
         RefPtr<const MatchResult> matchResult;
-        std::unique_ptr<const RenderStyle> renderStyle;
-        std::unique_ptr<const RenderStyle> parentRenderStyle;
+        std::unique_ptr<const Style::ComputedStyle> renderStyle;
+        std::unique_ptr<const Style::ComputedStyle> parentRenderStyle;
 
-        bool isUsableAfterHighPriorityProperties(const RenderStyle&) const;
+        bool isUsableAfterHighPriorityProperties(const Style::ComputedStyle&) const;
     };
 
     struct Result {
@@ -60,8 +60,8 @@ public:
         bool inheritedEqual;
     };
 
-    std::optional<Result> find(unsigned hash, const MatchResult&, const Style::CustomPropertyData& inheritedCustomProperties, const RenderStyle&);
-    void add(const RenderStyle&, const RenderStyle& parentStyle,  unsigned hash, const MatchResult&);
+    std::optional<Result> find(unsigned hash, const MatchResult&, const Style::CustomPropertyData& inheritedCustomProperties, const Style::ComputedStyle&);
+    void add(const Style::ComputedStyle&, const Style::ComputedStyle& parentStyle,  unsigned hash, const MatchResult&);
     void remove(unsigned hash);
 
     // Every N additions to the matched declaration cache trigger a sweep where entries holding

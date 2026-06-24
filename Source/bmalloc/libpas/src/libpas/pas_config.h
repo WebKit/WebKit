@@ -165,5 +165,12 @@
 
 #define PAS_ALLOCATOR_INDEX_BYTES        4
 
+// FIXME: Workaround for rdar://119319825
+#if !defined(__swift__)
+#define PAS_ENABLE_MALLOC_STACK_LOGGER 1
+#else
+#define PAS_ENABLE_MALLOC_STACK_LOGGER 0
+#endif
+
 #endif /* PAS_CONFIG_H */
 

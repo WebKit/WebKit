@@ -19,28 +19,28 @@ include_rules = [
 ]
 
 specific_include_rules = {
-  "win32devicemanager\.cc": [
+  "win32devicemanager\\.cc": [
     "+third_party/logitech/files/logitechquickcam.h",
   ],
-  ".*webrtc_video_engine\.h": [
+  ".*webrtc_video_engine\\.h": [
     "+video/config",
   ],
-  ".*webrtc_video_engine\.cc": [
+  ".*webrtc_video_engine\\.cc": [
     "+video/config",
   ],
-  ".*media_channel\.h": [
+  ".*media_channel\\.h": [
     "+video/config",
   ],
-  ".*webrtc_video_engine_unittest\.cc": [
+  ".*webrtc_video_engine_unittest\\.cc": [
     "+video/config",
   ],
-  ".*fake_webrtc_call\.cc": [
+  ".*fake_webrtc_call\\.cc": [
     "+video/config",
   ],
-  ".*fake_webrtc_call\.h": [
+  ".*fake_webrtc_call\\.h": [
     "+video/config",
   ],
-  ".*codec\.h": [
+  ".*codec\\.h": [
     "+absl/strings/str_format.h",
   ],
 }

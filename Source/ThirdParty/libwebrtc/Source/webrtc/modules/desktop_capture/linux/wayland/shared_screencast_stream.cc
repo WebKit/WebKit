@@ -62,13 +62,16 @@
 
 namespace webrtc {
 
-const int kBytesPerPixel = 4;
-const int kVideoDamageRegionCount = 16;
+constexpr int kBytesPerPixel = 4;
+constexpr int kMaxCursorSize = 1024;
+constexpr int kVideoDamageRegionCount = 16;
+// A reasonable maximum size so "width * height * kBytesPerPixel" doesn't
+// overflow
+constexpr int kMaxScreenCastDimension = 16384;
 
-constexpr int kCursorBpp = 4;
 constexpr int CursorMetaSize(int w, int h) {
   return (sizeof(struct spa_meta_cursor) + sizeof(struct spa_meta_bitmap) +
-          w * h * kCursorBpp);
+          w * h * kBytesPerPixel);
 }
 
 constexpr PipeWireVersion kDmaBufModifierMinVersion = {.major = 0,
@@ -98,6 +101,10 @@ class SharedScreenCastStreamPrivate {
   void SetObserver(SharedScreenCastStream::Observer* observer) {
     observer_ = observer;
   }
+  void SetSharedMemoryFactory(
+      std::unique_ptr<webrtc::SharedMemoryFactory> shared_memory_factory) {
+    shared_memory_factory_ = std::move(shared_memory_factory);
+  }
   void StopScreenCastStream();
   std::unique_ptr<SharedDesktopFrame> CaptureFrame();
   std::unique_ptr<MouseCursor> CaptureCursor();
@@ -124,11 +131,13 @@ class SharedScreenCastStreamPrivate {
   Mutex latest_frame_lock_ RTC_ACQUIRED_AFTER(queue_lock_);
   SharedDesktopFrame* latest_available_frame_
       RTC_GUARDED_BY(&latest_frame_lock_) = nullptr;
-  std::unique_ptr<MouseCursor> mouse_cursor_;
-  DesktopVector mouse_cursor_position_ = DesktopVector(-1, -1);
+  std::unique_ptr<MouseCursor> mouse_cursor_ RTC_GUARDED_BY(&latest_frame_lock_);
+  DesktopVector mouse_cursor_position_ RTC_GUARDED_BY(&latest_frame_lock_) =
+      DesktopVector(-1, -1);
 
   int64_t modifier_;
   std::unique_ptr<EglDmaBuf> egl_dmabuf_;
+  std::unique_ptr<SharedMemoryFactory> shared_memory_factory_;
 
   // PipeWire types
   std::unique_ptr<PipeWireInitializer> pw_initializer_;
@@ -313,6 +322,12 @@ void SharedScreenCastStreamPrivate::OnStreamParamChanged(
       has_modifier ? that->spa_video_format_.modifier : DRM_FORMAT_MOD_INVALID;
   that->stream_size_ = DesktopSize(that->spa_video_format_.size.width,
                                    that->spa_video_format_.size.height);
+  if (that->stream_size_.is_empty() ||
+      that->stream_size_.width() > kMaxScreenCastDimension ||
+      that->stream_size_.height() > kMaxScreenCastDimension) {
+    that->stream_size_ = DesktopSize();
+    return;
+  }
 
   if (that->observer_) {
     that->observer_->OnFormatChanged(
@@ -649,12 +664,12 @@ void SharedScreenCastStreamPrivate::StopAndCleanupStream() {
     pw_stream_ = nullptr;
 
     {
-      MutexLock lock(&queue_lock_);
-      queue_.Reset();
-    }
-    {
       MutexLock latest_frame_lock(&latest_frame_lock_);
       latest_available_frame_ = nullptr;
+    }
+    {
+      MutexLock lock(&queue_lock_);
+      queue_.Reset();
     }
   }
 
@@ -676,7 +691,7 @@ std::unique_ptr<SharedDesktopFrame>
 SharedScreenCastStreamPrivate::CaptureFrame() {
   MutexLock latest_frame_lock(&latest_frame_lock_);
 
-  if (!pw_stream_ || !latest_available_frame_) {
+  if (!latest_available_frame_) {
     return std::unique_ptr<SharedDesktopFrame>{};
   }
 
@@ -690,6 +705,7 @@ SharedScreenCastStreamPrivate::CaptureFrame() {
 }
 
 std::unique_ptr<MouseCursor> SharedScreenCastStreamPrivate::CaptureCursor() {
+  MutexLock latest_frame_lock(&latest_frame_lock_);
   if (!mouse_cursor_) {
     return nullptr;
   }
@@ -698,6 +714,7 @@ std::unique_ptr<MouseCursor> SharedScreenCastStreamPrivate::CaptureCursor() {
 }
 
 DesktopVector SharedScreenCastStreamPrivate::CaptureCursorPosition() {
+  MutexLock latest_frame_lock(&latest_frame_lock_);
   return mouse_cursor_position_;
 }
 
@@ -758,7 +775,14 @@ void SharedScreenCastStreamPrivate::ProcessBuffer(pw_buffer* buffer) {
           bitmap =
               SPA_MEMBER(cursor, cursor->bitmap_offset, struct spa_meta_bitmap);
 
-        if (bitmap && bitmap->size.width > 0 && bitmap->size.height > 0) {
+        if (bitmap && bitmap->size.width > 0 &&
+            bitmap->size.width <= kMaxCursorSize && bitmap->size.height > 0 &&
+            bitmap->size.height <= kMaxCursorSize &&
+            bitmap->stride >=
+                static_cast<int32_t>(bitmap->size.width * kBytesPerPixel) &&
+            static_cast<uint64_t>(bitmap->stride) * bitmap->size.height <=
+                static_cast<uint64_t>(kMaxCursorSize) * kMaxCursorSize *
+                    kBytesPerPixel) {
           const uint8_t* bitmap_data =
               SPA_MEMBER(bitmap, bitmap->offset, uint8_t);
           // TODO(bugs.webrtc.org/436974448): Convert `spa_video_format` to
@@ -769,20 +793,28 @@ void SharedScreenCastStreamPrivate::ProcessBuffer(pw_buffer* buffer) {
           mouse_frame->CopyPixelsFrom(
               bitmap_data, bitmap->stride,
               DesktopRect::MakeWH(bitmap->size.width, bitmap->size.height));
-          mouse_cursor_ = std::make_unique<MouseCursor>(
-              mouse_frame, DesktopVector(cursor->hotspot.x, cursor->hotspot.y));
+          {
+            MutexLock latest_frame_lock(&latest_frame_lock_);
+            mouse_cursor_ = std::make_unique<MouseCursor>(
+                mouse_frame,
+                DesktopVector(cursor->hotspot.x, cursor->hotspot.y));
+          }
 
           if (observer_) {
             observer_->OnCursorShapeChanged();
           }
         }
-        mouse_cursor_position_.set(cursor->position.x, cursor->position.y);
+        {
+          MutexLock latest_frame_lock(&latest_frame_lock_);
+          mouse_cursor_position_.set(cursor->position.x, cursor->position.y);
+        }
 
         if (observer_) {
           observer_->OnCursorPositionChanged();
         }
       } else {
         // Indicate an invalid cursor
+        MutexLock latest_frame_lock(&latest_frame_lock_);
         mouse_cursor_position_.set(-1, -1);
       }
     }
@@ -891,8 +923,15 @@ void SharedScreenCastStreamPrivate::ProcessBuffer(pw_buffer* buffer) {
 
   if (!queue_.current_frame() ||
       !queue_.current_frame()->size().equals(frame_size_)) {
-    std::unique_ptr<DesktopFrame> frame(new BasicDesktopFrame(
-        DesktopSize(frame_size_.width(), frame_size_.height()), FOURCC_ARGB));
+    std::unique_ptr<DesktopFrame> frame;
+    if (shared_memory_factory_) {
+      frame = SharedMemoryDesktopFrame::Create(
+          DesktopSize(frame_size_.width(), frame_size_.height()), FOURCC_ARGB,
+          shared_memory_factory_.get());
+    } else {
+      frame = std::make_unique<BasicDesktopFrame>(
+          DesktopSize(frame_size_.width(), frame_size_.height()), FOURCC_ARGB);
+    }
     queue_.ReplaceCurrentFrame(SharedDesktopFrame::Wrap(std::move(frame)));
   }
 
@@ -968,29 +1007,38 @@ bool SharedScreenCastStreamPrivate::ProcessMemFDBuffer(
   ScopedBuf map;
   uint8_t* src = nullptr;
 
+  const uint64_t maxsize = static_cast<uint64_t>(spa_buffer->datas[0].maxsize);
+  const uint64_t mapoffset =
+      static_cast<uint64_t>(spa_buffer->datas[0].mapoffset);
+
   map.initialize(
-      static_cast<uint8_t*>(
-          mmap(nullptr,
-               spa_buffer->datas[0].maxsize + spa_buffer->datas[0].mapoffset,
-               PROT_READ, MAP_PRIVATE, spa_buffer->datas[0].fd, 0)),
-      spa_buffer->datas[0].maxsize + spa_buffer->datas[0].mapoffset,
-      spa_buffer->datas[0].fd);
+      static_cast<uint8_t*>(mmap(nullptr, maxsize + mapoffset, PROT_READ,
+                                 MAP_PRIVATE, spa_buffer->datas[0].fd, 0)),
+      maxsize + mapoffset, spa_buffer->datas[0].fd);
 
   if (!map) {
     RTC_LOG(LS_ERROR) << "Failed to mmap the memory: " << std::strerror(errno);
     return false;
   }
 
-  src = SPA_MEMBER(map.get(), spa_buffer->datas[0].mapoffset, uint8_t);
+  src = SPA_MEMBER(map.get(), mapoffset, uint8_t);
 
-  uint32_t buffer_stride = spa_buffer->datas[0].chunk->stride;
-  uint32_t src_stride = buffer_stride;
+  const uint64_t src_stride = spa_buffer->datas[0].chunk->stride;
+
+  if (src_stride > INT32_MAX ||
+      src_stride < static_cast<uint64_t>(offset.x() + frame.size().width()) *
+                       kBytesPerPixel ||
+      src_stride * (offset.y() + frame.size().height()) > maxsize) {
+    RTC_LOG(LS_ERROR) << "Rejecting MemFd buffer with invalid geometry: stride="
+                      << src_stride << " maxsize=" << maxsize;
+    return false;
+  }
 
   uint8_t* updated_src =
       src + (src_stride * offset.y()) + (kBytesPerPixel * offset.x());
 
   frame.CopyPixelsFrom(
-      updated_src, (src_stride - (kBytesPerPixel * offset.x())),
+      updated_src, static_cast<int>(src_stride),
       DesktopRect::MakeWH(frame.size().width(), frame.size().height()));
 
   return true;
@@ -1117,6 +1165,11 @@ void SharedScreenCastStream::SetUseDamageRegion(bool use_damage_region) {
 void SharedScreenCastStream::SetObserver(
     SharedScreenCastStream::Observer* observer) {
   private_->SetObserver(observer);
+}
+
+void SharedScreenCastStream::SetSharedMemoryFactory(
+    std::unique_ptr<webrtc::SharedMemoryFactory> shared_memory_factory) {
+  private_->SetSharedMemoryFactory(std::move(shared_memory_factory));
 }
 
 void SharedScreenCastStream::StopScreenCastStream() {

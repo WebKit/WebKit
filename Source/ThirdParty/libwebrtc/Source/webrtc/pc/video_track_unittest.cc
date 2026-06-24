@@ -22,6 +22,7 @@
 #include "pc/test/fake_video_track_source.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 namespace {
@@ -38,7 +39,7 @@ class VideoTrackTest : public ::testing::Test {
   }
 
  protected:
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
   scoped_refptr<FakeVideoTrackSource> video_track_source_;
   scoped_refptr<VideoTrack> video_track_;
   FakeFrameSource frame_source_;

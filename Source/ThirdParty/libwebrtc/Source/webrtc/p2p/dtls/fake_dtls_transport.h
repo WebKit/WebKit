@@ -15,12 +15,12 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/dtls_transport_interface.h"
 #include "api/ice_transport_interface.h"
 #include "api/rtc_error.h"
@@ -56,7 +56,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
             ice_transport_ref_->internal())),
         transport_name_(ice_transport_->transport_name()),
         component_(ice_transport_->component()),
-        dtls_fingerprint_("", nullptr) {
+        dtls_fingerprint_("", std::span<const uint8_t>()) {
     RTC_DCHECK(ice_transport_);
     ice_transport_->RegisterReceivedPacketCallback(
         this, [&](PacketTransportInternal* transport,
@@ -69,10 +69,11 @@ class FakeDtlsTransport : public DtlsTransportInternal {
         });
   }
   explicit FakeDtlsTransport(std::unique_ptr<FakeIceTransportInternal> ice)
-      : owned_ice_transport_(std::move(ice)),
+      : DtlsTransportInternal(ice->network_thread()),
+        owned_ice_transport_(std::move(ice)),
         transport_name_(owned_ice_transport_->transport_name()),
         component_(owned_ice_transport_->component()),
-        dtls_fingerprint_("", ArrayView<const uint8_t>()) {
+        dtls_fingerprint_("", std::span<const uint8_t>()) {
     ice_transport_ = owned_ice_transport_.get();
     ice_transport_->RegisterReceivedPacketCallback(
         this, [&](PacketTransportInternal* transport,
@@ -187,7 +188,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   bool SetRemoteFingerprint(absl::string_view alg,
                             const uint8_t* digest,
                             size_t digest_len) {
-    dtls_fingerprint_ = SSLFingerprint(alg, MakeArrayView(digest, digest_len));
+    dtls_fingerprint_ = SSLFingerprint(alg, std::span(digest, digest_len));
     return true;
   }
   bool SetDtlsRole(SSLRole role) override {

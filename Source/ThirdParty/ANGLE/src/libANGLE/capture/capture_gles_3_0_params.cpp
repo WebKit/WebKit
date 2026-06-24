@@ -324,7 +324,7 @@ void CaptureGetInternalformativ_params(const State &glState,
         {
             case GL_SAMPLES:
                 // Maximum case: 1, 2, 4, 8, 16, 32 (IMPLEMENTATION_MAX_SAMPLES)
-                paramCount = rx::Log2(gl::IMPLEMENTATION_MAX_SAMPLES) + 1;
+                paramCount = gl::log2(static_cast<size_t>(gl::IMPLEMENTATION_MAX_SAMPLES)) + 1;
                 break;
             case GL_SURFACE_COMPRESSION_EXT:
                 // From SURFACE_COMPRESSION_FIXED_RATE_1BPC_EXT to

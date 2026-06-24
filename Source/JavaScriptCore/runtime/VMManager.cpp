@@ -32,6 +32,7 @@
 #include "VMEntryScopeInlines.h"
 #include "VMThreadContext.h"
 #include "WasmDebugServerUtilities.h"
+#include <wtf/Condition.h>
 #include <wtf/RunLoop.h>
 
 namespace JSC {

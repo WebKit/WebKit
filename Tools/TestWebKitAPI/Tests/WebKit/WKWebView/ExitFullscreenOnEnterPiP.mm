@@ -37,8 +37,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
 
-static bool didEnterFullscreen;
-static bool didExitFullscreen;
+static bool pipDidEnterFullscreen;
+static bool pipDidExitFullscreen;
 
 @interface ExitFullscreenOnEnterPiPUIDelegate : NSObject <WKUIDelegate, _WKFullscreenDelegate>
 @end
@@ -55,12 +55,12 @@ static bool didExitFullscreen;
 
 - (void)_webViewDidEnterFullscreen:(WKWebView *)webView
 {
-    didEnterFullscreen = true;
+    pipDidEnterFullscreen = true;
 }
 
 - (void)_webViewDidExitFullscreen:(WKWebView *)webView
 {
-    didExitFullscreen = true;
+    pipDidExitFullscreen = true;
 }
 @end
 
@@ -83,16 +83,16 @@ TEST(ExitFullscreenOnEnterPiP, VideoFullscreen)
 
     [webView synchronouslyLoadTestPageNamed:@"ExitFullscreenOnEnterPiP"];
 
-    didEnterFullscreen = false;
+    pipDidEnterFullscreen = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-video-fullscreen').click()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&didEnterFullscreen);
-    ASSERT_TRUE(didEnterFullscreen);
+    TestWebKitAPI::Util::run(&pipDidEnterFullscreen);
+    ASSERT_TRUE(pipDidEnterFullscreen);
 
     didEnterPiP = false;
-    didExitFullscreen = false;
+    pipDidExitFullscreen = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-pip').click()" completionHandler: nil];
     TestWebKitAPI::Util::run(&didEnterPiP);
-    TestWebKitAPI::Util::run(&didExitFullscreen);
+    TestWebKitAPI::Util::run(&pipDidExitFullscreen);
 
     sleep(1_s); // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
 
@@ -123,10 +123,10 @@ TEST(ExitFullscreenOnEnterPiP, DISABLED_ElementFullscreen)
         @"WebKit2Logging": @"",
     }];
 
-    didEnterFullscreen = false;
+    pipDidEnterFullscreen = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-element-fullscreen').click()" completionHandler: nil];
-    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didEnterFullscreen, 10_s));
-    ASSERT_TRUE(didEnterFullscreen);
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&pipDidEnterFullscreen, 10_s));
+    ASSERT_TRUE(pipDidEnterFullscreen);
 
     // Make the video the "main content" by playing with a user gesture.
     __block bool didBeginPlaying = false;
@@ -135,10 +135,10 @@ TEST(ExitFullscreenOnEnterPiP, DISABLED_ElementFullscreen)
     ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didBeginPlaying, 10_s));
 
     didEnterPiP = false;
-    didExitFullscreen = false;
+    pipDidExitFullscreen = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-pip').click()" completionHandler: nil];
     ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didEnterPiP, 10_s));
-    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didExitFullscreen, 10_s));
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&pipDidExitFullscreen, 10_s));
 
     sleep(1_s); // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
 

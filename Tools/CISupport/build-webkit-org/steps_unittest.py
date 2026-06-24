@@ -26,6 +26,7 @@ import os
 import shutil
 import tempfile
 from unittest import skip as skipTest
+from unittest.mock import create_autospec
 
 from buildbot.process.results import SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -988,14 +989,14 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('fullPlatform', 'mac-highsierra')
         self.setProperty('configuration', 'debug')
-        self.setProperty('additionalArguments', ['--site-isolation'])
+        self.setProperty('additionalArguments', ['--site-isolation-enabled-by-default'])
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 timeout=10800,
                 log_environ=False,
                 command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                         f'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --builder-name iOS-14-Simulator-WK2-Tests-EWS --build-number 101 --buildbot-worker ews100 --buildbot-master {CURRENT_HOSTNAME} --exit-after-n-crashes-or-timeouts 300 --exit-after-n-failures 500 --debug --report {RESULTS_WEBKIT_URL} --results-directory layout-test-results --debug-rwt-logging --site-isolation 2>&1 | python3 Tools/Scripts/filter-test-logs layout'],
+                         f'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --builder-name iOS-14-Simulator-WK2-Tests-EWS --build-number 101 --buildbot-worker ews100 --buildbot-master {CURRENT_HOSTNAME} --exit-after-n-crashes-or-timeouts 300 --exit-after-n-failures 500 --debug --report {RESULTS_WEBKIT_URL} --results-directory layout-test-results --debug-rwt-logging --site-isolation-enabled-by-default 2>&1 | python3 Tools/Scripts/filter-test-logs layout'],
                 env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
             ).exit(0)
         )
@@ -1290,8 +1291,8 @@ class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
         return self.successTest('mac', 'mac-highsierra', 'release', expected_command)
 
     def test_success_mac_additional_arguments(self):
-        additional_arguments = ['--no-retry-failures', '--site-isolation']
-        expected_command = f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --json-output={self.jsonFileName} --release --verbose --buildbot-master {CURRENT_HOSTNAME} --builder-name API-Tests --build-number 101 --buildbot-worker bot100 --report https://results.webkit.org --site-isolation'
+        additional_arguments = ['--no-retry-failures', '--site-isolation-enabled-by-default']
+        expected_command = f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --json-output={self.jsonFileName} --release --verbose --buildbot-master {CURRENT_HOSTNAME} --builder-name API-Tests --build-number 101 --buildbot-worker bot100 --report https://results.webkit.org --site-isolation-enabled-by-default'
         return self.successTest('mac', 'mac-highsierra', 'release', expected_command, additional_arguments)
 
     def test_success_gtk(self):
@@ -2118,6 +2119,8 @@ class current_hostname(object):
 
 
 class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
+    SAMPLE_URL = 'https://s3-us-west-2.amazonaws.com/archives.webkit.org/mac-highsierra-x86_64-release/1234.zip?signed=1'
+
     def setUp(self):
         self.longMessage = True
         return self.setup_test_build_step()
@@ -2125,69 +2128,83 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def configureStep(self, identifier='mac-highsierra-x86_64-release', extension='zip', content_type=None, additions=None):
-        self.setup_step(GenerateS3URL(identifier, extension=extension, content_type=content_type, additions=additions))
+    def configureStep(self, identifier='mac-highsierra-x86_64-release', extension='zip', content_type=None, minified=False, additions=None):
+        self.setup_step(GenerateS3URL(identifier, extension=extension, content_type=content_type, minified=minified, additions=additions))
         self.setProperty('archive_revision', '1234')
 
-    def disabled_test_success(self):
-        # TODO: Figure out how to pass logs to unit-test for MasterShellCommand steps
+    def test_success(self):
         self.configureStep()
-        self.expectLocalCommands(
-            ExpectMasterShellCommand(command=['python3',
-                                              '../Shared/generate-s3-url',
-                                              '--revision', '1234',
-                                              '--identifier', 'mac-highsierra-x86_64-release',
-                                              '--extension', 'zip',
-                                              ])
-            .exit(0),
-        )
+        mock_generate = create_autospec(generate_s3_url.generateS3URL, return_value=self.SAMPLE_URL)
+        self.patch(generate_s3_url, 'generateS3URL', mock_generate)
         self.expect_outcome(result=SUCCESS, state_string='Generated S3 URL')
         with current_hostname(BUILD_WEBKIT_HOSTNAMES[0]):
-            return self.run_step()
+            d = self.run_step()
 
-    @expectedFailure
+        def check(_):
+            mock_generate.assert_called_once_with(
+                'archives.webkit.org', 'mac-highsierra-x86_64-release', '1234',
+                additions=None, extension='zip', content_type=None,
+            )
+            self.assertEqual(self.build.s3url, self.SAMPLE_URL)
+            self.assertEqual(
+                self.build.s3_archives,
+                ['https://s3-us-west-2.amazonaws.com/archives.webkit.org/mac-highsierra-x86_64-release/1234.zip'],
+            )
+        d.addCallback(check)
+        return d
+
+    def test_success_minified(self):
+        self.configureStep(minified=True)
+        mock_generate = create_autospec(generate_s3_url.generateS3URL, return_value=self.SAMPLE_URL)
+        self.patch(generate_s3_url, 'generateS3URL', mock_generate)
+        self.expect_outcome(result=SUCCESS, state_string='Generated S3 URL')
+        with current_hostname(BUILD_WEBKIT_HOSTNAMES[0]):
+            d = self.run_step()
+
+        def check(_):
+            mock_generate.assert_called_once_with(
+                'minified-archives.webkit.org', 'mac-highsierra-x86_64-release', '1234',
+                additions=None, extension='zip', content_type=None,
+            )
+            self.assertEqual(
+                self.build.s3_archives,
+                ['https://s3-us-west-2.amazonaws.com/minified-archives.webkit.org/mac-highsierra-x86_64-release/1234.zip'],
+            )
+        d.addCallback(check)
+        return d
+
+    def test_success_with_additions_and_content_type(self):
+        self.configureStep('macos-arm64-release-compile-webkit', extension='txt', content_type='text/plain', additions='123')
+        mock_generate = create_autospec(generate_s3_url.generateS3URL, return_value=self.SAMPLE_URL)
+        self.patch(generate_s3_url, 'generateS3URL', mock_generate)
+        self.expect_outcome(result=SUCCESS, state_string='Generated S3 URL')
+        with current_hostname(BUILD_WEBKIT_HOSTNAMES[0]):
+            d = self.run_step()
+
+        def check(_):
+            mock_generate.assert_called_once_with(
+                'archives.webkit.org', 'macos-arm64-release-compile-webkit', '1234',
+                additions='123', extension='txt', content_type='text/plain',
+            )
+            self.assertEqual(
+                self.build.s3_archives,
+                ['https://s3-us-west-2.amazonaws.com/archives.webkit.org/macos-arm64-release-compile-webkit/1234-123.txt'],
+            )
+        d.addCallback(check)
+        return d
+
     def test_failure(self):
         self.configureStep('ios-simulator-16-x86_64-debug', additions='123')
-        self.expectLocalCommands(
-            ExpectMasterShellCommand(command=['python3',
-                                              '../Shared/generate-s3-url',
-                                              '--revision', '1234',
-                                              '--identifier', 'ios-simulator-16-x86_64-debug',
-                                              '--extension', 'zip',
-                                              '--additions', '123'
-                                              ])
-            .exit(2),
-        )
+        mock_generate = create_autospec(generate_s3_url.generateS3URL, side_effect=RuntimeError('boom'))
+        self.patch(generate_s3_url, 'generateS3URL', mock_generate)
         self.expect_outcome(result=FAILURE, state_string='Failed to generate S3 URL')
+        with current_hostname(BUILD_WEBKIT_HOSTNAMES[0]):
+            d = self.run_step()
 
-        try:
-            with current_hostname(BUILD_WEBKIT_HOSTNAMES[0]), open(os.devnull, 'w') as null:
-                sys.stdout = null
-                return self.run_step()
-        finally:
-            sys.stdout = sys.__stdout__
-
-    @expectedFailure
-    def test_failure_with_extension(self):
-        self.configureStep('macos-arm64-release-compile-webkit', extension='txt', content_type='text/plain')
-        self.expectLocalCommands(
-            ExpectMasterShellCommand(command=['python3',
-                                              '../Shared/generate-s3-url',
-                                              '--revision', '1234',
-                                              '--identifier', 'macos-arm64-release-compile-webkit',
-                                              '--extension', 'txt',
-                                              '--content-type', 'text/plain',
-                                              ])
-            .exit(2),
-        )
-        self.expect_outcome(result=FAILURE, state_string='Failed to generate S3 URL')
-
-        try:
-            with current_hostname(BUILD_WEBKIT_HOSTNAMES[0]), open(os.devnull, 'w') as null:
-                sys.stdout = null
-                return self.run_step()
-        finally:
-            sys.stdout = sys.__stdout__
+        def check(_):
+            self.assertEqual(self.build.s3url, '')
+        d.addCallback(check)
+        return d
 
     def test_skipped(self):
         self.configureStep()

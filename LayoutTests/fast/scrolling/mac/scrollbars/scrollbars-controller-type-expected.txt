@@ -7,4 +7,7 @@ PASS window.internals.scrollbarsControllerTypeForNode(svgScroller) is "Scrollbar
 PASS window.internals.scrollbarsControllerTypeForNode(disabledScroller) is "ScrollbarsControllerMac"
 PASS window.internals.scrollbarsControllerTypeForNode(scroller) is "RemoteScrollbarsController"
 PASS window.internals.scrollbarsControllerTypeForNode() is "RemoteScrollbarsController"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

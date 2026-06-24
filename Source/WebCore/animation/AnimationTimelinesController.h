@@ -97,7 +97,6 @@ private:
 
     Timer m_cachedCurrentTimeClearanceTimer;
     Vector<Ref<ScrollTimeline>> m_updatedScrollTimelines;
-    HashMap<FramesPerSecond, ReducedResolutionSeconds> m_animationFrameRateToLastTickTimeMap;
     WeakHashSet<AnimationTimeline> m_timelines;
     WeakHashSet<WebAnimation, WeakPtrImplWithEventTargetData> m_pendingAnimations;
     TaskCancellationGroup m_pendingAnimationsProcessingTaskCancellationGroup;

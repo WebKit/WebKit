@@ -30,15 +30,16 @@
 namespace WebCore {
 
 class Element;
-class RenderStyle;
 
 namespace Style {
+
+class ComputedStyle;
 
 // https://drafts.csswg.org/css-contain/#containment
 
 class ContainmentChecker {
 public:
-    inline ContainmentChecker(const RenderStyle&, const Element&);
+    inline ContainmentChecker(const Style::ComputedStyle&, const Element&);
     inline ~ContainmentChecker();
 
     inline bool shouldApplyLayoutContainment() const;
@@ -50,7 +51,7 @@ public:
     inline bool isSkippedContentRoot() const;
 
 private:
-    const CheckedRef<const RenderStyle> m_style;
+    const CheckedRef<const Style::ComputedStyle> m_style;
     const Ref<const Element> m_element;
 };
 

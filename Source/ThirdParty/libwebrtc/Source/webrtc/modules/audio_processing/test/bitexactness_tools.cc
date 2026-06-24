@@ -15,10 +15,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <ostream>  // no-presubmit-check TODO(webrtc:8982)
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
@@ -62,7 +62,7 @@ std::string GetApmCaptureTestVectorFileName(int sample_rate_hz) {
 void ReadFloatSamplesFromStereoFile(size_t samples_per_channel,
                                     size_t num_channels,
                                     InputAudioFile* stereo_pcm_file,
-                                    ArrayView<float> data) {
+                                    std::span<float> data) {
   RTC_DCHECK_LE(num_channels, 2);
   RTC_DCHECK_EQ(data.size(), samples_per_channel * num_channels);
   std::vector<int16_t> read_samples(samples_per_channel * 2);
@@ -80,8 +80,8 @@ void ReadFloatSamplesFromStereoFile(size_t samples_per_channel,
 ::testing::AssertionResult VerifyDeinterleavedArray(
     size_t samples_per_channel,
     size_t num_channels,
-    ArrayView<const float> reference,
-    ArrayView<const float> output,
+    std::span<const float> reference,
+    std::span<const float> output,
     float element_error_bound) {
   // Form vectors to compare the reference to. Only the first values of the
   // outputs are compared in order not having to specify all preceeding frames
@@ -100,8 +100,8 @@ void ReadFloatSamplesFromStereoFile(size_t samples_per_channel,
   return VerifyArray(reference, output_to_verify, element_error_bound);
 }
 
-::testing::AssertionResult VerifyArray(ArrayView<const float> reference,
-                                       ArrayView<const float> output,
+::testing::AssertionResult VerifyArray(std::span<const float> reference,
+                                       std::span<const float> output,
                                        float element_error_bound) {
   // The vectors are deemed to be bitexact only if
   // a) output have a size at least as long as the reference.
@@ -127,7 +127,7 @@ void ReadFloatSamplesFromStereoFile(size_t samples_per_channel,
 
   // Lambda function that produces a formatted string with the data in the
   // vector.
-  auto print_vector_in_c_format = [](ArrayView<const float> v,
+  auto print_vector_in_c_format = [](std::span<const float> v,
                                      size_t num_values_to_print) {
     std::string s = "{ ";
     for (size_t k = 0; k < std::min(num_values_to_print, v.size()); ++k) {

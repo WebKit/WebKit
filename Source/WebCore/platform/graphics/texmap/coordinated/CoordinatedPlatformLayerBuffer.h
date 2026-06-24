@@ -50,7 +50,10 @@ public:
         HolePunch,
         Video,
         DMABuf,
-        NativeImage
+        NativeImage,
+#if USE(SKIA)
+        SkiaImage
+#endif
     };
 
     virtual ~CoordinatedPlatformLayerBuffer() = default;

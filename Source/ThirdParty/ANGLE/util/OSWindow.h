@@ -22,7 +22,7 @@
 class ANGLE_UTIL_EXPORT OSWindow
 {
   public:
-    static OSWindow *New();
+    static OSWindow *New(void *nativeDisplay = nullptr);
     static void Delete(OSWindow **osWindow);
 
     bool initialize(const std::string &name, int width, int height);
@@ -53,6 +53,7 @@ class ANGLE_UTIL_EXPORT OSWindow
 
     virtual void setNativeDisplay(EGLNativeDisplayType display) {}
     virtual EGLNativeDisplayType getNativeDisplay() const = 0;
+    virtual EGLenum getNativeDisplayPlatformType() const { return 0; }
 
     virtual void messageLoop() = 0;
 

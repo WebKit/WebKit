@@ -91,7 +91,7 @@ MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Doc
 
 MediaControlTextTrackContainerElement::~MediaControlTextTrackContainerElement() = default;
 
-RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *this, WTF::move(style));
 }

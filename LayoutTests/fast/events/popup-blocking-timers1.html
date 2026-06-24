@@ -1,21 +1,17 @@
 <!DOCTYPE html><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script>
+        window.jsTestIsAsync = true;
         var newWindow;
         
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
     
         function clickHandler() {
             newWindow = window.open("about:blank");
             self.focus();
             debug("Test calling window.open() directly. A popup should be allowed.");
             shouldBeNonNull("newWindow");
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
         
         function clickButton() {

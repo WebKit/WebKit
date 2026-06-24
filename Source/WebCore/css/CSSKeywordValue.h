@@ -43,7 +43,7 @@ public:
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
     bool NODELETE addDerivedHash(Hasher&) const;
 
-    String stringValue() const;
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
 private:
     friend class StaticCSSValuePool;

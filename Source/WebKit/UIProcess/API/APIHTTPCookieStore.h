@@ -86,7 +86,7 @@ public:
 
     void filterAppBoundCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
-    bool NODELETE isOptInCookiePartitioningEnabled() const;
+    bool isOptInCookiePartitioningEnabled() const;
 
 #if USE(SOUP)
     void replaceCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);

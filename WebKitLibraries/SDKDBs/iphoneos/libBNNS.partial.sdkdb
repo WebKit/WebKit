@@ -613,7 +613,7 @@
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_BNNSTileBackward"},
     {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_BNNSTranspose"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "BNNSActivation"},
     {"access": "public", "name": "BNNSActivationFunction"},

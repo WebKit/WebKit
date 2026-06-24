@@ -26,11 +26,17 @@
 #import "config.h"
 #import "EventHandler.h"
 
+#import "AutoscrollController.h"
 #import "DictionaryLookup.h"
+#import "DocumentPage.h"
+#import "DocumentView.h"
 #import "Editor.h"
 #import "EventNames.h"
 #import "HandleUserInputEventResult.h"
 #import "LocalFrameInlines.h"
+#import "LocalFrameView.h"
+#import "Page.h"
+#import "RenderObject.h"
 
 #if PLATFORM(COCOA)
 
@@ -40,7 +46,7 @@ namespace WebCore {
 
 VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult& result)
 {
-    if (!m_frame->editor().behavior().shouldSelectBasedOnDictionaryLookup())
+    if (!protect(m_frame)->editor().behavior().shouldSelectBasedOnDictionaryLookup())
         return { };
 
     auto range = DictionaryLookup::rangeAtHitTestResult(result);
@@ -72,6 +78,51 @@ void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platform
 }
 
 #endif // ENABLE(TWO_PHASE_CLICKS)
+
+void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow)
+{
+    Ref frame = m_frame.get();
+    RefPtr frameView = frame->view();
+    if (!frameView)
+        return;
+
+    m_targetAutoscrollPositionInRootView = roundedIntPoint(positionInWindow);
+
+#if PLATFORM(IOS_FAMILY)
+    m_targetAutoscrollPositionInUnscrolledRootView = m_targetAutoscrollPositionInRootView - toIntSize(frameView->documentScrollPositionRelativeToViewOrigin());
+
+    if (!m_isAutoscrolling)
+        m_initialAutoscrollPositionInUnscrolledRootView = m_targetAutoscrollPositionInUnscrolledRootView;
+#endif // PLATFORM(IOS_FAMILY)
+
+    m_isAutoscrolling = true;
+    m_autoscrollController->startAutoscrollForSelection(renderer);
+}
+
+void EventHandler::cancelSelectionAutoscroll()
+{
+    m_isAutoscrolling = false;
+
+#if PLATFORM(IOS_FAMILY)
+    m_initialAutoscrollPositionInUnscrolledRootView = std::nullopt;
+    m_targetAutoscrollPositionInUnscrolledRootView = { };
+#endif
+
+    m_targetAutoscrollPositionInRootView = { };
+    m_autoscrollController->stopAutoscrollTimer();
+}
+
+bool EventHandler::shouldUpdateAutoscroll()
+{
+    if (m_isAutoscrolling)
+        return true;
+
+#if PLATFORM(MAC)
+    return mousePressed();
+#else
+    return false;
+#endif
+}
 
 }
 

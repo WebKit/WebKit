@@ -32,7 +32,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
 namespace WebCore {
 
@@ -44,9 +44,9 @@ class CSSKeywordValue;
 
 namespace Style {
 
-// FIXME: Make LengthWrapperBase support additional numeric types in addition to the <length-percentage> one and then replace GridTrackBreadth with that.
+// FIXME: Make PrimitiveNumericOrKeyword support additional numeric types in addition to the <length-percentage> one and then replace GridTrackBreadth with that.
 
-struct GridTrackBreadthLength : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::Auto> {
+struct GridTrackBreadthLength : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::Auto> {
     using Base::Base;
 
     ALWAYS_INLINE bool isMinContent() const { return holdsAlternative<CSS::Keyword::MinContent>(); }
@@ -152,13 +152,13 @@ public:
         return WTF::switchOn(m_length, [&](const auto& value) { return visitor(value); });
     }
 
-    template<typename... F> decltype(auto) switchOnUsingSpecified(F&&... f) const
+    template<typename... F> decltype(auto) switchOnUsingNumeric(F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
         if (isFlex())
             return visitor(m_flex);
-        return m_length.switchOnUsingSpecified([&](const auto& value) { return visitor(value); });
+        return m_length.switchOnUsingNumeric([&](const auto& value) { return visitor(value); });
     }
 
     bool operator==(const GridTrackBreadth&) const = default;
@@ -174,7 +174,7 @@ private:
 // MARK: - Conversion
 
 template<> struct ToCSS<GridTrackBreadth> {
-    auto operator()(const GridTrackBreadth&, const RenderStyle&) -> CSS::GridTrackBreadth;
+    auto operator()(const GridTrackBreadth&, const Style::ComputedStyle&) -> CSS::GridTrackBreadth;
 };
 template<> struct ToStyle<CSS::GridTrackBreadth> {
     auto operator()(const CSS::GridTrackBreadth&, const BuilderState&) -> GridTrackBreadth;

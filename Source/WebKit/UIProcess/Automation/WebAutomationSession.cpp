@@ -34,6 +34,7 @@
 #include "APIString.h"
 #include "AutomationProtocolObjects.h"
 #include "CoordinateSystem.h"
+#include "InspectorPassthroughChannel.h"
 #include "PageLoadState.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebAutomationSessionMessages.h"
@@ -44,6 +45,7 @@
 #include "WebFullScreenManagerProxy.h"
 #include "WebInspectorUIProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
+#include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -172,6 +174,9 @@ WebAutomationSession::WebAutomationSession()
 
 WebAutomationSession::~WebAutomationSession()
 {
+#if ENABLE(REMOTE_INSPECTOR)
+    disconnectAllInspectorPassthroughChannels();
+#endif
     ASSERT(!m_client);
     ASSERT(!m_processPool);
 #if ENABLE(REMOTE_INSPECTOR)
@@ -244,6 +249,38 @@ bool WebAutomationSession::isPendingTermination() const
 
 #endif // ENABLE(REMOTE_INSPECTOR)
 
+#if ENABLE(REMOTE_INSPECTOR)
+CommandResult<void> WebAutomationSession::sendInspectorMessage(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const String& message)
+{
+    assertIsMainRunLoop();
+
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!m_client || !m_client->shouldEnableInspectorTesting(*this), NotImplemented);
+
+    RefPtr page = webPageProxyForHandle(browsingContextHandle);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    // The WebPageInspectorController survives provisional page swaps
+    // (didCommitProvisionalPage swaps the PageTarget, not the controller),
+    // so connect-once-per-controller is stable across cross-site navigation.
+    auto& inspectorController = page->inspectorController();
+    auto pageID = page->identifier();
+
+    auto addResult = m_inspectorPassthroughChannels.ensure(pageID, [&] {
+        return makeUnique<InspectorPassthroughChannel>(*this, browsingContextHandle);
+    });
+    if (addResult.isNewEntry)
+        inspectorController.connectFrontend(*addResult.iterator->value);
+
+    inspectorController.dispatchMessageFromFrontend(message);
+    return { };
+}
+
+void WebAutomationSession::sendInspectorMessageToClient(const String& browsingContextHandle, const String& message)
+{
+    m_domainNotifier->receiveInspectorMessage(browsingContextHandle, message);
+}
+#endif // ENABLE(REMOTE_INSPECTOR)
+
 void WebAutomationSession::terminate()
 {
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
@@ -274,11 +311,33 @@ void WebAutomationSession::terminate()
     }
 
     m_debuggable->setIsPaired(false);
+
+    disconnectAllInspectorPassthroughChannels();
 #endif
 
     if (m_client)
         m_client->didDisconnectFromRemote(*this);
 }
+
+#if ENABLE(REMOTE_INSPECTOR)
+void WebAutomationSession::disconnectInspectorPassthroughChannel(WebPageProxyIdentifier pageID)
+{
+    auto entry = m_inspectorPassthroughChannels.take(pageID);
+    if (!entry)
+        return;
+    if (RefPtr page = WebProcessProxy::webPage(pageID))
+        page->inspectorController().disconnectFrontend(*entry);
+}
+
+void WebAutomationSession::disconnectAllInspectorPassthroughChannels()
+{
+    auto channels = std::exchange(m_inspectorPassthroughChannels, { });
+    for (auto& [pageID, channel] : channels) {
+        if (RefPtr page = WebProcessProxy::webPage(pageID))
+            page->inspectorController().disconnectFrontend(*channel);
+    }
+}
+#endif // ENABLE(REMOTE_INSPECTOR)
 
 RefPtr<WebPageProxy> WebAutomationSession::webPageProxyForHandle(const String& handle)
 {
@@ -1318,6 +1377,10 @@ void WebAutomationSession::setViewportForPage(WebPageProxy& page, std::optional<
 
 void WebAutomationSession::willClosePage(const WebPageProxy& page)
 {
+#if ENABLE(REMOTE_INSPECTOR)
+    disconnectInspectorPassthroughChannel(page.identifier());
+#endif
+
     String handle = handleForWebPageProxy(page);
     m_domainNotifier->browsingContextCleared(handle);
 
@@ -2942,15 +3005,11 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
     };
 #endif
 #if PLATFORM(COCOA)
-    // FIXME: <webkit.org/b/242215> We can currently only get viewport snapshots from the UIProcess, so fall back to
-    // taking a snapshot in the WebProcess if we need to snapshot a specific element. This has the side effect of not
-    // accurately showing all CSS transforms in the snapshot.
-    //
-    // There is still a tradeoff by going to the UIProcess for viewport snapshots on macOS. We can not currently get a
-    // snapshot of the entire viewport without the window's rounded corners being excluded. So we trade off those corner
-    // pixels for accurate pixels in the rest of the viewport which help us verify features like CSS transforms are
-    // actually behaving correctly.
-    if (!nodeHandle.isEmpty())
+    // We can only get viewport-bounded snapshots from the UIProcess (the on-screen window capture is physically clipped
+    // to the visible viewport), so fall back to taking the snapshot in the WebProcess whenever we need pixels outside the
+    // viewport: either a specific element (which may be scrolled out of view) or a non-clipped whole-page snapshot, which
+    // must expand to the full document contentsSize() rather than just the viewport. See <webkit.org/b/317220>.
+    if (!nodeHandle.isEmpty() || !clipToViewport)
         return page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::TakeScreenshot(page->webPageIDInMainFrameProcess(), frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport), ipcCompletionHandler(WTF::move(callback)));
 #endif
 #if PLATFORM(GTK) || PLATFORM(COCOA) || PLATFORM(WPE)

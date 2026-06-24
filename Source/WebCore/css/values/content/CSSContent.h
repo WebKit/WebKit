@@ -73,6 +73,13 @@ struct ContentCounterFunctionParameters {
 };
 using ContentCounterFunction = FunctionNotation<CSSValueCounter, ContentCounterFunctionParameters>;
 
+// `ContentCounterFunctionWrapper` exists to allow easily forward declaring `ContentCounterFunction`.
+struct ContentCounterFunctionWrapper {
+    ContentCounterFunction value;
+
+    bool operator==(const ContentCounterFunctionWrapper&) const = default;
+};
+
 struct ContentCountersFunctionParameters {
     CustomIdent identifier;
     String separator;
@@ -81,6 +88,13 @@ struct ContentCountersFunctionParameters {
     bool operator==(const ContentCountersFunctionParameters&) const = default;
 };
 using ContentCountersFunction = FunctionNotation<CSSValueCounters, ContentCountersFunctionParameters>;
+
+// `ContentCountersFunctionWrapper` exists to allow easily forward declaring `ContentCountersFunction`.
+struct ContentCountersFunctionWrapper {
+    ContentCountersFunction value;
+
+    bool operator==(const ContentCountersFunctionWrapper&) const = default;
+};
 
 struct ContentQuote {
     using Value = Variant<Keyword::OpenQuote, Keyword::CloseQuote, Keyword::NoOpenQuote, Keyword::NoCloseQuote>;
@@ -102,6 +116,13 @@ struct ContentLegacyAttrFunctionParameters {
     bool operator==(const ContentLegacyAttrFunctionParameters&) const = default;
 };
 using ContentLegacyAttrFunction = FunctionNotation<CSSValueAttr, ContentLegacyAttrFunctionParameters>;
+
+// `ContentLegacyAttrFunctionWrapper` exists to allow easily forward declaring `ContentLegacyAttrFunction`.
+struct ContentLegacyAttrFunctionWrapper {
+    ContentLegacyAttrFunction value;
+
+    bool operator==(const ContentLegacyAttrFunctionWrapper&) const = default;
+};
 
 struct Content {
     using Text = ContentText;
@@ -184,6 +205,7 @@ template<> struct Serialize<ContentCountersFunctionParameters> { void operator()
 // Specialized to return a `DeprecatedCSSOMPrimitiveValue`.
 template<> struct DeprecatedCSSOMValueCreation<ContentCounterFunction> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const ContentCounterFunction&); };
 template<> struct DeprecatedCSSOMValueCreation<ContentCountersFunction> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const ContentCountersFunction&); };
+template<> struct DeprecatedCSSOMValueCreation<ContentLegacyAttrFunction> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const ContentLegacyAttrFunction&); };
 
 // Specialized to return a `DeprecatedCSSOMValueList` only when both `visible` and `alt` are present.
 template<> struct DeprecatedCSSOMValueCreation<Content::Data> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const Content::Data&); };

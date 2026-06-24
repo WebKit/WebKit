@@ -57,9 +57,9 @@ CrossfadeImage::CrossfadeImage(RefPtr<Image>&& from, RefPtr<Image>&& to, Progres
 CrossfadeImage::~CrossfadeImage()
 {
     if (m_cachedFromImage)
-        m_cachedFromImage->removeClient(*this);
+        protect(m_cachedFromImage)->removeClient(*this);
     if (m_cachedToImage)
-        m_cachedToImage->removeClient(*this);
+        protect(m_cachedToImage)->removeClient(*this);
 }
 
 bool CrossfadeImage::operator==(const Image& other) const
@@ -91,10 +91,10 @@ RefPtr<CrossfadeImage> CrossfadeImage::blend(const CrossfadeImage& from, const B
     return CrossfadeImage::create(m_from, m_to, newProgress, from.m_isPrefixed && m_isPrefixed);
 }
 
-Ref<CSSValue> CrossfadeImage::computedStyleValue(const RenderStyle& style) const
+Ref<CSSValue> CrossfadeImage::computedStyleValue(const Style::ComputedStyle& style) const
 {
-    auto fromComputedValue = m_from ? m_from->computedStyleValue(style) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueNone));
-    auto toComputedValue = m_to ? m_to->computedStyleValue(style) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueNone));
+    auto fromComputedValue = m_from ? protect(m_from)->computedStyleValue(style) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueNone));
+    auto toComputedValue = m_to ? protect(m_to)->computedStyleValue(style) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueNone));
 
     return CSSCrossfadeValue::create(
         WTF::move(fromComputedValue),
@@ -104,16 +104,16 @@ Ref<CSSValue> CrossfadeImage::computedStyleValue(const RenderStyle& style) const
     );
 }
 
-Ref<DeprecatedCSSOMValue> CrossfadeImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CrossfadeImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }
 
 bool CrossfadeImage::isPending() const
 {
-    if (m_from && m_from->isPending())
+    if (m_from && protect(m_from)->isPending())
         return true;
-    if (m_to && m_to->isPending())
+    if (m_to && protect(m_to)->isPending())
         return true;
     return false;
 }
@@ -124,31 +124,33 @@ void CrossfadeImage::load(CachedResourceLoader& loader, const ResourceLoaderOpti
     auto oldCachedToImage = m_cachedToImage;
 
     if (m_from) {
-        if (m_from->isPending())
-            m_from->load(loader, options);
-        m_cachedFromImage = m_from->cachedImage();
+        RefPtr from = m_from;
+        if (from->isPending())
+            from->load(loader, options);
+        m_cachedFromImage = from->cachedImage();
     } else
         m_cachedFromImage = nullptr;
 
     if (m_to) {
-        if (m_to->isPending())
-            m_to->load(loader, options);
-        m_cachedToImage = m_to->cachedImage();
+        RefPtr to = m_to;
+        if (to->isPending())
+            to->load(loader, options);
+        m_cachedToImage = to->cachedImage();
     } else
         m_cachedToImage = nullptr;
 
     if (m_cachedFromImage != oldCachedFromImage) {
         if (oldCachedFromImage)
-            oldCachedFromImage->removeClient(*this);
+            protect(oldCachedFromImage)->removeClient(*this);
         if (m_cachedFromImage)
-            m_cachedFromImage->addClient(*this);
+            protect(m_cachedFromImage)->addClient(*this);
     }
 
     if (m_cachedToImage != oldCachedToImage) {
         if (oldCachedToImage)
-            oldCachedToImage->removeClient(*this);
+            protect(oldCachedToImage)->removeClient(*this);
         if (m_cachedToImage)
-            m_cachedToImage->addClient(*this);
+            protect(m_cachedToImage)->addClient(*this);
     }
 
     m_inputImagesAreReady = true;
@@ -165,8 +167,8 @@ RefPtr<WebCore::Image> CrossfadeImage::image(const RenderElement* renderer, cons
     if (!m_from || !m_to)
         return &WebCore::Image::nullImage();
 
-    auto fromImage = m_from->image(renderer, size, destinationContext, isForFirstLine);
-    auto toImage = m_to->image(renderer, size, destinationContext, isForFirstLine);
+    auto fromImage = protect(m_from)->image(renderer, size, destinationContext, isForFirstLine);
+    auto toImage = protect(m_to)->image(renderer, size, destinationContext, isForFirstLine);
 
     if (!fromImage || !toImage)
         return &WebCore::Image::nullImage();
@@ -175,11 +177,11 @@ RefPtr<WebCore::Image> CrossfadeImage::image(const RenderElement* renderer, cons
     RefPtr protectedToImage = toImage;
 
     if (RefPtr fromSVGImage = dynamicDowncast<SVGImage>(protectedFromImage)) {
-        auto fromURL = m_cachedFromImage ? m_cachedFromImage->url() : WTF::URL();
+        auto fromURL = m_cachedFromImage ? protect(m_cachedFromImage)->url() : WTF::URL();
         protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), size, 1, fromURL);
     }
     if (RefPtr toSVGImage = dynamicDowncast<SVGImage>(protectedToImage)) {
-        auto toURL = m_cachedToImage ? m_cachedToImage->url() : WTF::URL();
+        auto toURL = m_cachedToImage ? protect(m_cachedToImage)->url() : WTF::URL();
         protectedToImage = SVGImageForContainer::create(toSVGImage.get(), size, 1, toURL);
     }
 
@@ -188,18 +190,18 @@ RefPtr<WebCore::Image> CrossfadeImage::image(const RenderElement* renderer, cons
 
 bool CrossfadeImage::currentFrameIsComplete(const RenderElement* renderer) const
 {
-    if (m_from && !m_from->currentFrameIsComplete(renderer))
+    if (m_from && !protect(m_from)->currentFrameIsComplete(renderer))
         return false;
-    if (m_to && !m_to->currentFrameIsComplete(renderer))
+    if (m_to && !protect(m_to)->currentFrameIsComplete(renderer))
         return false;
     return true;
 }
 
 bool CrossfadeImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    if (m_from && !m_from->knownToBeOpaque(renderer))
+    if (m_from && !protect(m_from)->knownToBeOpaque(renderer))
         return false;
-    if (m_to && !m_to->knownToBeOpaque(renderer))
+    if (m_to && !protect(m_to)->knownToBeOpaque(renderer))
         return false;
     return true;
 }
@@ -209,8 +211,8 @@ FloatSize CrossfadeImage::fixedSize(const RenderElement& renderer) const
     if (!m_from || !m_to)
         return { };
 
-    auto fromImageSize = m_from->imageSize(&renderer, 1);
-    auto toImageSize = m_to->imageSize(&renderer, 1);
+    auto fromImageSize = protect(m_from)->imageSize(&renderer, 1);
+    auto toImageSize = protect(m_to)->imageSize(&renderer, 1);
 
     // Rounding issues can cause transitions between images of equal size to return
     // a different fixed size; avoid performing the interpolation if the images are the same size.

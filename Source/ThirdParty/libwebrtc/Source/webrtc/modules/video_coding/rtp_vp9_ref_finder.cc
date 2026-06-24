@@ -85,7 +85,7 @@ RtpFrameReferenceFinder::ReturnVector RtpVp9RefFinder::ManageFrame(
 RtpVp9RefFinder::FrameDecision RtpVp9RefFinder::ManageFrameFlexible(
     RtpFrameObject* frame,
     const RTPVideoHeaderVP9& codec_header) {
-  if (codec_header.num_ref_pics > EncodedFrame::kMaxFrameReferences) {
+  if (codec_header.num_ref_pics > kMaxVp9RefPics) {
     return kDrop;
   }
 
@@ -200,23 +200,25 @@ RtpVp9RefFinder::FrameDecision RtpVp9RefFinder::ManageFrameGof(
                                                         frame->Id());
     size_t gof_idx = diff % info->gof->num_frames_in_gof;
 
-    if (info->gof->num_ref_pics[gof_idx] > EncodedFrame::kMaxFrameReferences) {
+    if (info->gof->num_ref_pics[gof_idx] > kMaxVp9RefPics) {
       return kDrop;
     }
 
     // Populate references according to the scalability structure.
-    frame->num_references = info->gof->num_ref_pics[gof_idx];
-    for (size_t i = 0; i < frame->num_references; ++i) {
-      frame->references[i] = Subtract<kFrameIdLength>(
+    size_t num_references = 0;
+    for (size_t i = 0; i < info->gof->num_ref_pics[gof_idx]; ++i) {
+      int64_t reference = Subtract<kFrameIdLength>(
           frame->Id(), info->gof->pid_diff[gof_idx][i]);
 
       // If this is a reference to a frame earlier than the last up switch
       // point, then ignore this reference.
       if (UpSwitchInIntervalVp9(frame->Id(), codec_header.temporal_idx,
-                                frame->references[i])) {
-        --frame->num_references;
+                                reference)) {
+        continue;
       }
+      frame->references[num_references++] = reference;
     }
+    frame->num_references = num_references;
   } else {
     frame->num_references = 0;
   }

@@ -15,12 +15,22 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-image-gradient-zero-size-transform-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-image-width-interpolation-math-functions.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-radius-currentcolor-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-radius-currentcolor-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-radius-currentcolor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-radius-greater-than-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-radius-greater-than-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape-absolute-coords-shape-ref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape-absolute-coords-shape.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-shape-absolute-coords-shape.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-width-hairline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/border-width-rounding.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/borders-on-sub-unit-sized-elements-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/borders-on-sub-unit-sized-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/outline-offset-rounding.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/subpixel-border-width.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/subpixel-border-width.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/subpixel-borders-with-child-border-box-sizing-expected.html

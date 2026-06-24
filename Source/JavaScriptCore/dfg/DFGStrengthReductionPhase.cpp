@@ -760,6 +760,7 @@ private:
 
             Node* regExpObjectNode = nullptr;
             RegExp* regExp = nullptr;
+            JSGlobalObject* regExpRealm = nullptr;
             bool regExpObjectNodeIsConstant = false;
             if (m_node->op() == RegExpExec || m_node->op() == RegExpTest || m_node->op() == RegExpMatchFast || m_node->op() == RegExpSearch) {
                 regExpObjectNode = m_node->child2().node();
@@ -771,6 +772,7 @@ private:
                     }
                     m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
                     regExp = regExpObject->regExp();
+                    regExpRealm = globalObject;
                     regExpObjectNodeIsConstant = true;
                 } else if (regExpObjectNode->op() == NewRegExp) {
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(regExpObjectNode->origin.semantic);
@@ -780,6 +782,7 @@ private:
                     }
                     m_graph.watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
                     regExp = regExpObjectNode->castOperand<RegExp*>();
+                    regExpRealm = globalObject;
                 } else {
                     dataLogLnIf(verbose, "Giving up because the regexp is unknown.");
                     break;
@@ -1070,7 +1073,28 @@ private:
                 // Because SetRegExpObjectLastIndex may exit and it clobbers exit state, we do that
                 // first.
 
-                if (regExp->globalOrSticky() && !wasSearch) {
+                if (wasSearch) {
+                    ASSERT(regExpObjectNode);
+                    ASSERT(regExpRealm);
+                    WatchpointSet& lastIndexWritableWatchpointSet = regExpRealm->regExpLastIndexWritableWatchpointSet();
+                    if (lastIndexWritableWatchpointSet.isStillValid())
+                        m_graph.watchpoints().addLazily(lastIndexWritableWatchpointSet);
+                    else {
+                        // The watchpoint has already fired, so guard at runtime instead: storing
+                        // lastIndex back to itself is a no-op when it is writable, and exits when
+                        // it is not, so that @@search throws the TypeError the spec requires.
+                        Node* lastIndexNode = m_insertionSet.insertNode(
+                            m_nodeIndex, SpecNone, GetRegExpObjectLastIndex, origin,
+                            Edge(regExpObjectNode, RegExpObjectUse));
+                        m_insertionSet.insertNode(
+                            m_nodeIndex, SpecNone, SetRegExpObjectLastIndex, origin,
+                            OpInfo(false),
+                            Edge(regExpObjectNode, RegExpObjectUse),
+                            Edge(lastIndexNode, UntypedUse));
+
+                        origin = origin.withInvalidExit();
+                    }
+                } else if (regExp->globalOrSticky()) {
                     ASSERT(regExpObjectNode);
                     m_insertionSet.insertNode(
                         m_nodeIndex, SpecNone, SetRegExpObjectLastIndex, origin,
@@ -1343,7 +1367,7 @@ private:
                 break;
 
             int32_t startValue = m_node->child2()->asInt32();
-            std::optional<int32_t> endValue = std::nullopt;
+            std::optional<int32_t> endValue;
             if (m_node->child3()) {
                 if (!m_node->child3()->isInt32Constant())
                     break;
@@ -1386,7 +1410,7 @@ private:
                 break;
 
             int32_t startValue = m_node->child2()->asInt32();
-            std::optional<int32_t> lengthValue = std::nullopt;
+            std::optional<int32_t> lengthValue;
             if (m_node->child3()) {
                 if (!m_node->child3()->isInt32Constant())
                     break;
@@ -1414,6 +1438,17 @@ private:
                 break;
             }
             m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, string.substring(start, span)));
+            break;
+        }
+
+        case ArrayJoin: {
+            Edge& separatorEdge = m_graph.varArgChild(m_node, 1);
+            Node* separator = separatorEdge.node();
+            if (separatorEdge.useKind() == UntypedUse && separator->op() == JSConstant && separator->asJSValue().isUndefined()) {
+                Node* commaNode = m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, vm().smallStrings.singleCharacterString(','));
+                separatorEdge = Edge(commaNode, StringUse);
+                m_changed = true;
+            }
             break;
         }
 

@@ -15,8 +15,8 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/ns/fast_math.h"
 #include "modules/audio_processing/ns/ns_common.h"
 #include "modules/audio_processing/ns/prior_signal_model.h"
@@ -30,10 +30,10 @@ SpeechProbabilityEstimator::SpeechProbabilityEstimator() {
 
 void SpeechProbabilityEstimator::Update(
     int32_t num_analyzed_frames,
-    ArrayView<const float, kFftSizeBy2Plus1> prior_snr,
-    ArrayView<const float, kFftSizeBy2Plus1> post_snr,
-    ArrayView<const float, kFftSizeBy2Plus1> conservative_noise_spectrum,
-    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
+    std::span<const float, kFftSizeBy2Plus1> prior_snr,
+    std::span<const float, kFftSizeBy2Plus1> post_snr,
+    std::span<const float, kFftSizeBy2Plus1> conservative_noise_spectrum,
+    std::span<const float, kFftSizeBy2Plus1> signal_spectrum,
     float signal_spectral_sum,
     float signal_energy) {
   // Update models.

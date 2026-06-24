@@ -25,7 +25,6 @@
 #include "InterpreterInlines.h"
 #include "IntegrityInlines.h"
 #include "JSArray.h"
-#include "JSCBuiltins.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObject.h"
 #include "JSRegExpStringIterator.h"
@@ -62,7 +61,9 @@ static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterFlags);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncTest);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncSearch);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncReplace);
+static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncMatch);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncMatchAll);
+static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncSplit);
 
 const ClassInfo RegExpPrototype::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpPrototype) };
 
@@ -88,20 +89,22 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(vm.propertyNames->unicodeSets, regExpProtoGetterUnicodeSets, PropertyAttribute::DontEnum | PropertyAttribute::Accessor, RegExpUnicodeSetsIntrinsic);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->source, regExpProtoGetterSource, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->flags, regExpProtoGetterFlags, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->matchSymbol, regExpPrototypeMatchCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSFunction* matchFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.match]"_s, regExpProtoFuncMatch, ImplementationVisibility::Public, RegExpMatchIntrinsic);
+    putDirectWithoutTransition(vm, vm.propertyNames->matchSymbol, matchFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSFunction* matchAllFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.matchAll]"_s, regExpProtoFuncMatchAll, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->matchAllSymbol, matchAllFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSFunction* replaceFunction = JSFunction::create(vm, globalObject, 2, "[Symbol.replace]"_s, regExpProtoFuncReplace, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->replaceSymbol, replaceFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSFunction* searchFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.search]"_s, regExpProtoFuncSearch, ImplementationVisibility::Public, RegExpSearchIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->searchSymbol, searchFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->splitSymbol, regExpPrototypeSplitCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSFunction* splitFunction = JSFunction::create(vm, globalObject, 2, "[Symbol.split]"_s, regExpProtoFuncSplit, ImplementationVisibility::Public, RegExpSplitIntrinsic);
+    putDirectWithoutTransition(vm, vm.propertyNames->splitSymbol, splitFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->test, regExpProtoFuncTest, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, RegExpTestIntrinsic);
 }
 
 // ------------------------------ Functions ---------------------------
 
-static inline JSValue regExpExec(JSGlobalObject* globalObject, JSValue thisValue, JSString* str)
+JSValue regExpExec(JSGlobalObject* globalObject, JSValue thisValue, JSString* str)
 {
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -197,11 +200,111 @@ JSValue regExpMatchFast(JSGlobalObject* globalObject, RegExpObject* regExpObject
     return regExpObject->matchGlobal(globalObject, string);
 }
 
-JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatchFast, (JSGlobalObject* globalObject, CallFrame* callFrame))
+// https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.match%
+static JSValue regExpMatchSlow(JSGlobalObject* globalObject, JSObject* thisObject, JSString* string)
 {
-    RegExpObject* thisObject = uncheckedDowncast<RegExpObject>(callFrame->thisValue());
-    JSString* string = uncheckedDowncast<JSString>(callFrame->uncheckedArgument(0));
-    return JSValue::encode(regExpMatchFast(globalObject, thisObject, string));
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 4. Let flags be ? ToString(? Get(regexp, "flags")).
+    JSValue flagsValue = thisObject->get(globalObject, vm.propertyNames->flags);
+    RETURN_IF_EXCEPTION(scope, { });
+    String flags = flagsValue.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // 5. If flags does not contain "g", return ? RegExpExec(regexp, string).
+    if (!flags.contains('g'))
+        RELEASE_AND_RETURN(scope, regExpExec(globalObject, thisObject, string));
+
+    // 6. If flags contains "u" or flags contains "v", let fullUnicode be true; else let fullUnicode be false.
+    bool fullUnicode = flags.contains('u') || flags.contains('v');
+
+    // 7. Perform ? Set(regexp, "lastIndex", +0𝔽, true).
+    PutPropertySlot lastIndexSlot(thisObject, true);
+    thisObject->methodTable()->put(thisObject, globalObject, vm.propertyNames->lastIndex, jsNumber(0), lastIndexSlot);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // 8. Let array be ! ArrayCreate(0).
+    JSArray* resultArray = constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto stringValue = string->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    unsigned stringLength = stringValue->length();
+
+    // 9. Let matchCount be 0.
+    uint64_t matchCount = 0;
+
+    // 10. Repeat,
+    while (true) {
+        // 10.a. Let result be ? RegExpExec(regexp, string).
+        JSValue result = regExpExec(globalObject, thisObject, string);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 10.b. If result is null, then
+        if (result.isNull()) {
+            // 10.b.i. If matchCount = 0, return null.
+            if (!matchCount)
+                return jsNull();
+            // 10.b.ii. Return array.
+            return resultArray;
+        }
+
+        // 10.c. Let matchString be ? ToString(? Get(result, "0")).
+        JSValue matchValue = asObject(result)->get(globalObject, static_cast<unsigned>(0));
+        RETURN_IF_EXCEPTION(scope, { });
+        JSString* matchString = matchValue.toString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 10.d. Perform ! CreateDataPropertyOrThrow(array, ! ToString(𝔽(matchCount)), matchString).
+        resultArray->putDirectIndex(globalObject, matchCount, matchString);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 10.e. If matchString is the empty String, then
+        if (!matchString->length()) {
+            // 10.e.i. Let thisIndex be ℝ(? ToLength(? Get(regexp, "lastIndex"))).
+            JSValue lastIndexValue = thisObject->get(globalObject, vm.propertyNames->lastIndex);
+            RETURN_IF_EXCEPTION(scope, { });
+            uint64_t thisIndex = lastIndexValue.toLength(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            // 10.e.ii. Let nextIndex be AdvanceStringIndex(string, thisIndex, fullUnicode).
+            uint64_t nextIndex = advanceStringIndex(stringValue, stringLength, thisIndex, fullUnicode);
+
+            // 10.e.iii. Perform ? Set(regexp, "lastIndex", 𝔽(nextIndex), true).
+            PutPropertySlot slot(thisObject, true);
+            thisObject->methodTable()->put(thisObject, globalObject, vm.propertyNames->lastIndex, jsNumber(nextIndex), slot);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        // 10.f. Set matchCount to matchCount + 1.
+        ++matchCount;
+    }
+}
+
+// https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.match%
+JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatch, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 1. Let regexp be the this value.
+    // 2. If regexp is not an Object, throw a TypeError exception.
+    JSValue thisValue = callFrame->thisValue();
+    if (!thisValue.isObject()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "RegExp.prototype.@@match requires that |this| be an Object"_s);
+    JSObject* thisObject = asObject(thisValue);
+
+    // 3. Set string to ? ToString(string).
+    JSString* string = callFrame->argument(0).toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Fast path: receiver is a primordial RegExpObject with no observable side effects.
+    auto* regExpObject = dynamicDowncast<RegExpObject>(thisObject);
+    if (regExpObject && regExpObject->isSymbolMatchFastAndNonObservable()) [[likely]]
+        RELEASE_AND_RETURN(scope, JSValue::encode(regExpMatchFast(globalObject, regExpObject, string)));
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(regExpMatchSlow(globalObject, thisObject, string)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -464,6 +567,63 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterSource, (JSGlobalObject* globalObject,
     return JSValue::encode(jsString(vm, regexp->regExp()->escapedPattern()));
 }
 
+JSValue regExpSearchFast(JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* string)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto strView = string->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    scope.release();
+    MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExpObject->regExp(), string, strView, 0);
+    return result ? jsNumber(result.start) : jsNumber(-1);
+}
+
+JSValue regExpSearchGeneric(JSGlobalObject* globalObject, JSObject* thisObject, JSString* str)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (regExpExecWatchpointIsValid(vm, thisObject)) [[likely]] {
+        auto* regExp = dynamicDowncast<RegExpObject>(thisObject);
+        if (!regExp) [[unlikely]] {
+            throwTypeError(globalObject, scope, "Builtin RegExp exec can only be called on a RegExp object"_s);
+            return { };
+        }
+        if (regExp->lastIndexIsWritable() && regExp->getLastIndex().isNumber()) [[likely]]
+            RELEASE_AND_RETURN(scope, regExpSearchFast(globalObject, regExp, str));
+    }
+
+    auto previousLastIndex = thisObject->get(globalObject, vm.propertyNames->lastIndex);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    bool isPreviousLastIndexZero = sameValue(globalObject, previousLastIndex, jsNumber(0));
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!isPreviousLastIndexZero) {
+        PutPropertySlot slot(thisObject, true);
+        thisObject->methodTable()->put(thisObject, globalObject, vm.propertyNames->lastIndex, jsNumber(0), slot);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    JSValue match = regExpExec(globalObject, thisObject, str);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto currentLastIndex = thisObject->get(globalObject, vm.propertyNames->lastIndex);
+    RETURN_IF_EXCEPTION(scope, { });
+    bool isCurrentAndPreviousLastIndexSame = sameValue(globalObject, currentLastIndex, previousLastIndex);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!isCurrentAndPreviousLastIndexSame) {
+        PutPropertySlot slot(thisObject, true);
+        thisObject->methodTable()->put(thisObject, globalObject, vm.propertyNames->lastIndex, previousLastIndex, slot);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    if (match.isNull())
+        return jsNumber(-1);
+
+    RELEASE_AND_RETURN(scope, match.get(globalObject, vm.propertyNames->index));
+}
+
 JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSearch, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -477,54 +637,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSearch, (JSGlobalObject* globalObject, C
     JSString* str = callFrame->argument(0).toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (regExpExecWatchpointIsValid(vm, thisObject)) [[likely]] {
-        auto* regExp = dynamicDowncast<RegExpObject>(thisValue);
-        if (!regExp) [[unlikely]]
-            return throwVMTypeError(globalObject, scope, "Builtin RegExp exec can only be called on a RegExp object"_s);
-        if (regExp->lastIndexIsWritable() && regExp->getLastIndex().isNumber()) [[likely]] {
-            auto strView = str->view(globalObject);
-            RETURN_IF_EXCEPTION(scope, { });
-            scope.release();
-            MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp->regExp(), str, strView, 0);
-            return JSValue::encode(result ? jsNumber(result.start) : jsNumber(-1));
-        }
-    }
-
-    auto previsouLastIndex = thisObject->get(globalObject, vm.propertyNames->lastIndex);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    bool isPreviousLastIndexZero = sameValue(globalObject, previsouLastIndex, jsNumber(0));
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!isPreviousLastIndexZero) {
-        PutPropertySlot slot(thisObject, true);
-        thisObject->methodTable()->put(thisObject, globalObject, vm.propertyNames->lastIndex, jsNumber(0), slot);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-
-    JSValue match = regExpExec(globalObject, thisValue, str);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto currentLastIndex = thisObject->get(globalObject, vm.propertyNames->lastIndex);
-    RETURN_IF_EXCEPTION(scope, { });
-    bool isCurrentAndPreviousLastIndexSame = sameValue(globalObject, currentLastIndex, previsouLastIndex);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!isCurrentAndPreviousLastIndexSame) {
-        PutPropertySlot slot(thisObject, true);
-        thisObject->methodTable()->put(thisObject, globalObject, vm.propertyNames->lastIndex, previsouLastIndex, slot);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-
-    if (match.isNull())
-        return JSValue::encode(jsNumber(-1));
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(match.get(globalObject, vm.propertyNames->index)));
-}
-
-static inline uint64_t NODELETE advanceStringIndex(StringView str, unsigned strSize, uint64_t index, bool isUnicode)
-{
-    if (!isUnicode)
-        return ++index;
-    return advanceStringUnicode(str, strSize, index);
+    RELEASE_AND_RETURN(scope, JSValue::encode(regExpSearchGeneric(globalObject, thisObject, str)));
 }
 
 enum SplitControl {
@@ -621,60 +734,53 @@ void genericSplit(
     }
 }
 
-// ES 21.2.5.11 RegExp.prototype[@@split](string, limit)
+// Fast path used by RegExp.prototype[Symbol.split] and String.prototype.split when the
+// receiver is a primordial RegExpObject. Skips the species construct, custom flags, and
+// custom exec — caller must guarantee non-observability via isSymbolSplitFastAndNonObservable().
+// ES 22.2.5.13 RegExp.prototype[@@split](string, limit)
 JSCell* regExpSplitFast(JSGlobalObject* globalObject, RegExpObject* regexpObject, JSString* inputString, unsigned limit)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 1. [handled by JS builtin] Let rx be the this value.
-    // 2. [handled by JS builtin] If Type(rx) is not Object, throw a TypeError exception.
     RegExp* regexp = regexpObject->regExp();
 
-    // 3. [handled by JS builtin] Let S be ? ToString(string).
     auto input = inputString->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     ASSERT(!input->isNull());
 
-    // 4. [handled by JS builtin] Let C be ? SpeciesConstructor(rx, %RegExp%).
-    // 5. [handled by JS builtin] Let flags be ? ToString(? Get(rx, "flags")).
-    // 6. [handled by JS builtin] If flags contains "u", let unicodeMatching be true.
-    // 7. [handled by JS builtin] Else, let unicodeMatching be false.
-    // 8. [handled by JS builtin] If flags contains "y", let newFlags be flags.
-    // 9. [handled by JS builtin] Else, let newFlags be the string that is the concatenation of flags and "y".
-    // 10. [handled by JS builtin] Let splitter be ? Construct(C, « rx, newFlags »).
+    // Steps 1-10 are handled by the caller / inlined: the primordial species path effectively
+    // constructs a sticky version of |regexpObject|. We pattern-match against the underlying
+    // RegExp directly (no need to rebuild the splitter), since flags are not user-overridden.
 
-    // 11. Let A be ArrayCreate(0).
+    // 11. Let array be ! ArrayCreate(0).
     // 12. Let lengthA be 0.
+    // 13. If limit is undefined, let lim be 2**32 - 1; else let lim be ℝ(? ToUint32(limit)).
     unsigned resultLength = 0;
-
-    // 13. If limit is undefined, let lim be 2^32-1; else let lim be ? ToUint32(limit).
-    // (handled by caller)
-
-    // 14. Let size be the number of elements in S.
     unsigned inputSize = input->length();
-
-    // 15. Let p = 0.
     unsigned position = 0;
 
-    // 16. If lim == 0, return A.
+    // 14. If lim = 0, return array.
     if (!limit)
         RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
 
-    // 17. If size == 0, then
+    // 15. If string is the empty String, then
     if (input->isEmpty()) {
-        // a. Let z be ? RegExpExec(splitter, S).
-        // b. If z is not null, return A.
-        // c. Perform ! CreateDataProperty(A, "0", S).
-        // d. Return A.
+        // 15.a. Let matchResult be ? RegExpExec(splitter, string).
         JSArray* result = constructEmptyArray(globalObject, nullptr);
         RETURN_IF_EXCEPTION(scope, { });
         auto matchResult = globalObject->regExpGlobalData().performMatch(globalObject, regexp, inputString, input, 0);
         RETURN_IF_EXCEPTION(scope, { });
-        if (!matchResult) {
-            result->putDirectIndex(globalObject, 0, inputString);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
+
+        // 15.b. If matchResult is not null, return array.
+        if (matchResult)
+            return result;
+
+        // 15.c. Perform ! CreateDataPropertyOrThrow(array, "0", string).
+        result->putDirectIndex(globalObject, 0, inputString);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 15.d. Return array.
         return result;
     }
 
@@ -727,19 +833,21 @@ JSCell* regExpSplitFast(JSGlobalObject* globalObject, RegExpObject* regexpObject
         return result;
     }
 
-    // 18. Let q = p.
+    // 16. Let size be the length of string.
+    // 17. Let lastMatchEnd be 0.
+    // 18. Let searchIndex be lastMatchEnd.
+    // 19. Repeat, while searchIndex < size,
     unsigned matchPosition = position;
-    // 19. Repeat, while q < size
     bool regExpIsSticky = regexp->sticky();
     bool regExpIsUnicode = regexp->eitherUnicode();
-    
+
     unsigned maxSizeForDirectPath = 100000;
     JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 1);
     if (!result) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
-    
+
     genericSplit(
         globalObject, regexp, inputString, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
         [&] () -> SplitControl {
@@ -758,16 +866,17 @@ JSCell* regExpSplitFast(JSGlobalObject* globalObject, RegExpObject* regexpObject
 
     if (resultLength >= limit)
         return result;
+
     if (resultLength < maxSizeForDirectPath) {
-        // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
-        // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
+        // 20. Let substring be the substring of string from lastMatchEnd to size.
+        // 21. Perform ! CreateDataPropertyOrThrow(array, ! ToString(𝔽(lengthA)), substring).
         scope.release();
         result->putDirectIndex(globalObject, resultLength, jsSubstringOfResolved(vm, inputString, position, inputSize - position));
 
-        // 22. Return A.
+        // 22. Return array.
         return result;
     }
-    
+
     // Now do a dry run to see how big things get. Give up if they get absurd.
     unsigned savedPosition = position;
     unsigned savedMatchPosition = matchPosition;
@@ -813,29 +922,261 @@ JSCell* regExpSplitFast(JSGlobalObject* globalObject, RegExpObject* regexpObject
     if (resultLength >= limit)
         return result;
 
-    // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
-    // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
+    // 20. Let substring be the substring of string from lastMatchEnd to size.
+    // 21. Perform ! CreateDataPropertyOrThrow(array, ! ToString(𝔽(lengthA)), substring).
     scope.release();
     result->putDirectIndex(globalObject, resultLength, jsSubstringOfResolved(vm, inputString, position, inputSize - position));
-    // 22. Return A.
+
+    // 22. Return array.
     return result;
 }
 
-JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplit, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    // https://tc39.es/ecma262/#sec-regexp.prototype-%25symbol.split%25
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 1. Let regexp be the this value.
+    // 2. If regexp is not an Object, throw a TypeError exception.
+    JSValue thisValue = callFrame->thisValue();
+    if (!thisValue.isObject()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "RegExp.prototype.@@split requires that |this| be an Object"_s);
+    JSObject* thisObject = asObject(thisValue);
+
+    // 3. Set string to ? ToString(string).
+    JSString* string = callFrame->argument(0).toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSValue limitValue = callFrame->argument(1);
+
+    auto* regExpObject = dynamicDowncast<RegExpObject>(thisObject);
+    if (regExpObject && regExpObject->isSymbolSplitFastAndNonObservable() && (limitValue.isUndefined() || limitValue.isNumber())) [[likely]] {
+        unsigned limit = 0xFFFFFFFFu;
+        if (!limitValue.isUndefined()) {
+            limit = limitValue.toUInt32(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        RELEASE_AND_RETURN(scope, JSValue::encode(regExpSplitFast(globalObject, regExpObject, string, limit)));
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(regExpSplitSlow(globalObject, thisObject, string, limitValue)));
+}
+
+// https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.split%
+// Spec steps 4-22 — invoked after the C++ fast path declines, either because the
+// receiver isn't a primordial RegExpObject or because some watchpoint guarding the
+// fast path has been invalidated.
+JSValue regExpSplitSlow(JSGlobalObject* globalObject, JSObject* thisObject, JSString* string, JSValue limitValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    RegExpObject* regexp = uncheckedDowncast<RegExpObject>(callFrame->thisValue());
+    JSValue thisValue = thisObject;
 
-    JSString* inputString = callFrame->argument(0).toString(globalObject);
+    // 4. Let speciesCtor be ? SpeciesConstructor(regexp, %RegExp%).
+    JSObject* speciesConstructor;
+    {
+        JSValue constructorValue = thisObject->get(globalObject, vm.propertyNames->constructor);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (constructorValue.isUndefined())
+            speciesConstructor = globalObject->regExpConstructor();
+        else {
+            if (!constructorValue.isObject()) [[unlikely]] {
+                throwTypeError(globalObject, scope, "|this|.constructor is not an Object or undefined"_s);
+                return { };
+            }
+            JSValue speciesValue = asObject(constructorValue)->get(globalObject, vm.propertyNames->speciesSymbol);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (speciesValue.isUndefinedOrNull())
+                speciesConstructor = globalObject->regExpConstructor();
+            else {
+                if (!speciesValue.isConstructor()) [[unlikely]] {
+                    throwTypeError(globalObject, scope, "|this|.constructor[Symbol.species] is not a constructor"_s);
+                    return { };
+                }
+                speciesConstructor = asObject(speciesValue);
+            }
+        }
+    }
+
+    // 5. Let flags be ? ToString(? Get(regexp, "flags")).
+    JSValue flagsValue = thisObject->get(globalObject, vm.propertyNames->flags);
+    RETURN_IF_EXCEPTION(scope, { });
+    String flags = flagsValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSValue limitValue = callFrame->argument(1);
-    unsigned limit = limitValue.isUndefined() ? 0xFFFFFFFFu : limitValue.toUInt32(globalObject);
+    // 6. If flags contains "u" or flags contains "v", let unicodeMatching be true.
+    // 7. Else, let unicodeMatching be false.
+    bool unicodeMatching = flags.contains('u') || flags.contains('v');
+
+    // 8. If flags contains "y", let newFlags be flags.
+    // 9. Else, let newFlags be the string-concatenation of flags and "y".
+    String newFlags = flags.contains('y') ? flags : tryMakeString(flags, 'y');
+    if (newFlags.isNull()) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    // 10. Let splitter be ? Construct(speciesCtor, « regexp, newFlags »).
+    MarkedArgumentBuffer constructorArgs;
+    constructorArgs.append(thisValue);
+    constructorArgs.append(jsString(vm, newFlags));
+    ASSERT(!constructorArgs.hasOverflowed());
+    auto constructData = JSC::getConstructDataInline(speciesConstructor);
+    JSObject* splitter = construct(globalObject, speciesConstructor, constructData, constructorArgs);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(regExpSplitFast(globalObject, regexp, inputString, limit)));
+    // After Construct, re-check whether the splitter is a primordial RegExpObject with non-observable
+    // side effects so RegExp subclasses (whose species is %RegExp%) still take the fast path.
+    if (auto* splitterRegExp = dynamicDowncast<RegExpObject>(splitter); splitterRegExp && splitterRegExp->isSymbolSplitFastAndNonObservable() && (limitValue.isUndefined() || limitValue.isNumber())) {
+        unsigned limit = 0xFFFFFFFFu;
+        if (!limitValue.isUndefined()) {
+            limit = limitValue.toUInt32(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        RELEASE_AND_RETURN(scope, regExpSplitFast(globalObject, splitterRegExp, string, limit));
+    }
+
+    // 11. Let array be ! ArrayCreate(0).
+    JSArray* result = constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+    uint64_t lengthA = 0;
+
+    // 12. Let lengthA be 0.
+    // 13. If limit is undefined, let lim be 2**32 - 1; else let lim be ℝ(? ToUint32(limit)).
+    uint32_t lim = 0xFFFFFFFFu;
+    if (!limitValue.isUndefined()) {
+        lim = limitValue.toUInt32(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    // 14. If lim = 0, return array.
+    if (!lim)
+        return result;
+
+    // 15. If string is the empty String, then
+    auto stringView = string->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    unsigned size = stringView->length();
+    if (!size) {
+        // 15.a. Let matchResult be ? RegExpExec(splitter, string).
+        JSValue matchResult = regExpExec(globalObject, splitter, string);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 15.b. If matchResult is not null, return array.
+        if (!matchResult.isNull())
+            return result;
+
+        // 15.c. Perform ! CreateDataPropertyOrThrow(array, "0", string).
+        result->putDirectIndex(globalObject, 0, string);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 15.d. Return array.
+        return result;
+    }
+
+    // 16. Let size be the length of string.
+    // 17. Let lastMatchEnd be 0.
+    uint64_t lastMatchEnd = 0;
+    // 18. Let searchIndex be lastMatchEnd.
+    uint64_t searchIndex = 0;
+    // 19. Repeat, while searchIndex < size,
+    while (searchIndex < size) {
+        // 19.a. Perform ? Set(splitter, "lastIndex", 𝔽(searchIndex), true).
+        PutPropertySlot lastIndexSlot(splitter, true);
+        splitter->methodTable()->put(splitter, globalObject, vm.propertyNames->lastIndex, jsNumber(searchIndex), lastIndexSlot);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 19.b. Let matchResult be ? RegExpExec(splitter, string).
+        JSValue matchResult = regExpExec(globalObject, splitter, string);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 19.c. If matchResult is null, then
+        if (matchResult.isNull()) {
+            // 19.c.i. Set searchIndex to AdvanceStringIndex(string, searchIndex, unicodeMatching).
+            searchIndex = advanceStringIndex(stringView, size, searchIndex, unicodeMatching);
+            continue;
+        }
+        // 19.d. Else,
+        // 19.d.i. Let matchEnd be ℝ(? ToLength(? Get(splitter, "lastIndex"))).
+        JSValue lastIndexValue = splitter->get(globalObject, vm.propertyNames->lastIndex);
+        RETURN_IF_EXCEPTION(scope, { });
+        uint64_t matchEnd = lastIndexValue.toLength(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 19.d.ii. Set matchEnd to min(matchEnd, size).
+        matchEnd = std::min<uint64_t>(matchEnd, size);
+
+        // 19.d.iii. If matchEnd = lastMatchEnd, then
+        if (matchEnd == lastMatchEnd) {
+            // 19.d.iii.1. Set searchIndex to AdvanceStringIndex(string, searchIndex, unicodeMatching).
+            searchIndex = advanceStringIndex(stringView, size, searchIndex, unicodeMatching);
+            continue;
+        }
+        // 19.d.iv. Else,
+        // 19.d.iv.1. Let substring be the substring of string from lastMatchEnd to searchIndex.
+        auto* substring = jsSubstring(globalObject, string, static_cast<unsigned>(lastMatchEnd), static_cast<unsigned>(searchIndex - lastMatchEnd));
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 19.d.iv.2. Perform ! CreateDataPropertyOrThrow(array, ! ToString(𝔽(lengthA)), substring).
+        result->putDirectIndex(globalObject, lengthA, substring);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 19.d.iv.3. Set lengthA to lengthA + 1.
+        ++lengthA;
+
+        // 19.d.iv.4. If lengthA = lim, return array.
+        if (lengthA == lim)
+            return result;
+
+        // 19.d.iv.5. Set lastMatchEnd to matchEnd.
+        lastMatchEnd = matchEnd;
+
+        // 19.d.iv.6. Let numberOfCaptures be ? LengthOfArrayLike(matchResult).
+        JSObject* matchObject = asObject(matchResult);
+        JSValue lengthValue = matchObject->get(globalObject, vm.propertyNames->length);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        uint64_t numberOfCaptures = lengthValue.toLength(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // 19.d.iv.7. Set numberOfCaptures to max(numberOfCaptures - 1, 0).
+        numberOfCaptures = numberOfCaptures > 1 ? numberOfCaptures - 1 : 0;
+
+        // 19.d.iv.8. Let captureIndex be 1.
+        // 19.d.iv.9. Repeat, while captureIndex ≤ numberOfCaptures,
+        for (uint64_t i = 1; i <= numberOfCaptures; ++i) {
+            // 19.d.iv.9.a. Let nextCapture be ? Get(matchResult, ! ToString(𝔽(captureIndex))).
+            JSValue nextCapture = matchObject->get(globalObject, static_cast<uint64_t>(i));
+            RETURN_IF_EXCEPTION(scope, { });
+
+            // 19.d.iv.9.b. Perform ! CreateDataPropertyOrThrow(array, ! ToString(𝔽(lengthA)), nextCapture).
+            result->putDirectIndex(globalObject, lengthA, nextCapture);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            // 19.d.iv.9.c. Set captureIndex to captureIndex + 1.
+            // 19.d.iv.9.d. Set lengthA to lengthA + 1.
+            ++lengthA;
+
+            // 19.d.iv.9.e. If lengthA = lim, return array.
+            if (lengthA == lim)
+                return result;
+        }
+        // 19.d.iv.10. Set searchIndex to lastMatchEnd.
+        searchIndex = lastMatchEnd;
+    }
+
+    // 20. Let substring be the substring of string from lastMatchEnd to size.
+    auto* substring = jsSubstring(globalObject, string, static_cast<unsigned>(lastMatchEnd), static_cast<unsigned>(size - lastMatchEnd));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // 21. Perform ! CreateDataPropertyOrThrow(array, ! ToString(𝔽(lengthA)), substring).
+    result->putDirectIndex(globalObject, lengthA, substring);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // 22. Return array.
+    return result;
 }
 
 // https://tc39.es/ecma262/#sec-getsubstitution
@@ -955,24 +1296,11 @@ static inline String getSubstitution(JSGlobalObject* globalObject, const String&
     return result.toString();
 }
 
-// 22.2.6.11 RegExp.prototype [ %Symbol.replace% ] ( string, replaceValue )
-// https://tc39.es/ecma262/#sec-regexp.prototype-%25symbol.replace%25
-JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSValue regExpReplaceGeneric(JSGlobalObject* globalObject, JSObject* thisObject, JSString* string, JSValue replaceValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 1. Let rx be the this value.
-    JSValue thisValue = callFrame->thisValue();
-
-    // 2. If Type(rx) is not Object, throw a TypeError exception.
-    if (!thisValue.isObject()) [[unlikely]]
-        return throwVMTypeError(globalObject, scope, "RegExp.prototype.@@replace requires that |this| be an Object"_s);
-    JSObject* thisObject = asObject(thisValue);
-
-    // 3. Let S be ? ToString(string).
-    JSString* string = callFrame->argument(0).toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
     String str = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -980,7 +1308,6 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, 
 
     // 4. Let lengthS be the number of code unit elements in S.
     // 5. Let functionalReplace be IsCallable(replaceValue).
-    JSValue replaceValue = callFrame->argument(1);
     auto callData = JSC::getCallData(replaceValue);
     bool functionalReplace = callData.type != CallData::Type::None;
 
@@ -1019,7 +1346,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, 
     // 12. Repeat, while done is false,
     while (true) {
         // a. Let result be ? RegExpExec(rx, S).
-        JSValue result = regExpExec(globalObject, thisValue, string);
+        JSValue result = regExpExec(globalObject, thisObject, string);
         RETURN_IF_EXCEPTION(scope, { });
 
         // b. If result is null, then
@@ -1075,7 +1402,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, 
     for (unsigned i = 0; i < results.size(); ++i) {
         JSObject* result = asObject(results.at(i));
 
-        // a. Let resultLength be ? LengthOfArrayLike(result).
+        // a. Let resultLength be ? LengthOfArrayLike(result).
         JSValue lengthValue = result->get(globalObject, vm.propertyNames->length);
         RETURN_IF_EXCEPTION(scope, { });
         uint64_t resultLength = lengthValue.toLength(globalObject);
@@ -1125,7 +1452,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, 
                 captures.constructAndAppend(String());
         }
 
-        // j. Let namedCaptures be ? Get(result, "groups").
+        // j. Let namedCaptures be ? Get(result, "groups").
         JSValue namedCapturesValue = result->get(globalObject, vm.propertyNames->groups);
         RETURN_IF_EXCEPTION(scope, { });
 
@@ -1133,7 +1460,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, 
 
         // j. If functionalReplace is true, then
         if (functionalReplace) {
-            // i. Let replacerArgs be the list-concatenation of « matched », captures, and « F(position), S ».
+            // i. Let replacerArgs be the list-concatenation of « matched », captures, and « F(position), S ».
             MarkedArgumentBuffer replacerArgs;
             replacerArgs.append(jsString(vm, matched));
             for (unsigned n = 0; n < captures.size(); ++n) {
@@ -1156,24 +1483,24 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, 
                 return { };
             }
 
-            // iii. Let replacementValue be ? Call(replaceValue, undefined, replacerArgs).
+            // iii. Let replacementValue be ? Call(replaceValue, undefined, replacerArgs).
             JSValue replValue = call(globalObject, replaceValue, callData, jsUndefined(), replacerArgs);
             RETURN_IF_EXCEPTION(scope, { });
 
-            // iv. Let replacementString be ? ToString(replacementValue).
+            // iv. Let replacementString be ? ToString(replacementValue).
             replacement = replValue.toWTFString(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
         } else {
             // k. Else,
             //    i. If namedCaptures is not undefined, then
-            //       1. Set namedCaptures to ? ToObject(namedCaptures).
+            //       1. Set namedCaptures to ? ToObject(namedCaptures).
             JSObject* namedCaptures = nullptr;
             if (!namedCapturesValue.isUndefined()) {
                 namedCaptures = namedCapturesValue.toObject(globalObject);
                 RETURN_IF_EXCEPTION(scope, { });
             }
 
-            //    ii. Let replacementString be ? GetSubstitution(matched, S, position, captures, namedCaptures, replaceValue).
+            //    ii. Let replacementString be ? GetSubstitution(matched, S, position, captures, namedCaptures, replaceValue).
             replacement = getSubstitution(globalObject, matched, str, position, captures, namedCaptures, replacementString);
             RETURN_IF_EXCEPTION(scope, { });
         }
@@ -1199,7 +1526,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, 
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
-        return JSValue::encode(jsString(vm, accumulatedResult.toString()));
+        return jsString(vm, accumulatedResult.toString());
     }
 
     // 17. Return the string-concatenation of accumulatedResult and the substring of S from nextSourcePosition.
@@ -1208,7 +1535,25 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, 
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
-    return JSValue::encode(jsString(vm, accumulatedResult.toString()));
+    return jsString(vm, accumulatedResult.toString());
+}
+
+// 22.2.6.11 RegExp.prototype [ %Symbol.replace% ] ( string, replaceValue )
+// https://tc39.es/ecma262/#sec-regexp.prototype-%25symbol.replace%25
+JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!thisValue.isObject()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "RegExp.prototype.@@replace requires that |this| be an Object"_s);
+    JSObject* thisObject = asObject(thisValue);
+
+    JSString* string = callFrame->argument(0).toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(regExpReplaceGeneric(globalObject, thisObject, string, callFrame->argument(1))));
 }
 
 // https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.matchall%
@@ -1227,7 +1572,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatchAll, (JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, { });
 
     auto* regExpObject = dynamicDowncast<RegExpObject>(thisObject);
-    if (regExpObject && regExpMatchAllWathpointIsValid(regExpObject)) [[likely]] {
+    if (regExpObject && regExpObject->isSymbolMatchAllFastAndNonObservable()) [[likely]] {
         RegExp* regExp = regExpObject->regExp();
 
         bool global = regExp->global();

@@ -1,6 +1,9 @@
-Some element.
-Some other element.
-Some third element.
+In host tree (1)
+In host tree (2)
+In host tree (4)
+In host tree (5)
 
 PASS Host children have sibling-index() and sibling-count() based on the DOM tree order
+FAIL Shadow children have sibling-index() and sibling-count() based on the DOM tree order assert_equals: sibling-index() expected "5" but got "1"
+FAIL Direct shadow root children have correct sibling-index() and sibling-count() assert_equals: sibling-index() for direct shadow root child expected "2" but got "1"
 

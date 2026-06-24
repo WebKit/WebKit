@@ -24,6 +24,7 @@
 #include "DocumentFragment.h"
 
 #include "CSSTokenizerInputStream.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "ElementIterator.h"
 #include "HTMLDocumentParser.h"

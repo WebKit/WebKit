@@ -174,19 +174,20 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
     point.x += indicatorMargin;
     point.y += indicatorMargin;
 
-    bool originMoved = false;
+    // Compute this up front and capture it by value below. The asynchronous animation completion
+    // block outlives this stack frame, so it must not capture a stack variable by reference. The
+    // frame's origin does not change between here and when the animations block runs, so this is
+    // equivalent to computing it inside that block.
+    bool originMoved = !CGPointEqualToPoint([self frame].origin, point);
 
-    auto animations = [view = retainPtr(self), point, &originMoved] {
+    auto animations = [view = retainPtr(self), point] {
         CGRect frame = [view frame];
-        originMoved = !CGPointEqualToPoint(frame.origin, point);
-        if (!originMoved)
-            return;
         frame.origin = point;
         [view setFrame:frame];
     };
 
     if (animated) {
-        [UIView animateWithDuration:indicatorMoveDuration.seconds() animations:animations completion:makeBlockPtr([&originMoved, completionHandler = WTF::move(completionHandler)](BOOL finished) mutable {
+        [UIView animateWithDuration:indicatorMoveDuration.seconds() animations:animations completion:makeBlockPtr([originMoved, completionHandler = WTF::move(completionHandler)](BOOL finished) mutable {
             completionHandler(originMoved, static_cast<bool>(finished));
         }).get()];
     } else {

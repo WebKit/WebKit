@@ -34,12 +34,8 @@ class PropertyName;
 
 class VariableWriteFireDetail final : public FireDetail {
 public:
-    VariableWriteFireDetail(JSObject* object, const PropertyName& name)
-        : m_object(object)
-        , m_name(name)
-    {
-    }
-    
+    inline VariableWriteFireDetail(JSObject*, const PropertyName&); // Defined in VariableWriteFireDetailInlines.h.
+
     JS_EXPORT_PRIVATE void dump(PrintStream&) const final;
     
     JS_EXPORT_PRIVATE static void touch(VM&, WatchpointSet*, JSObject*, const PropertyName&);

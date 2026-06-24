@@ -553,7 +553,7 @@ static void set_bitstream_level_tier(AV1_PRIMARY *const ppi, int width,
       aom_internal_error(
           &ppi->error, AOM_CODEC_UNSUP_BITSTREAM,
           "AV1 does not support this combination of profile, level, and tier.");
-    // Buffer size in bits/s is bitrate in bits/s * 1 s
+    // Buffer size in bits is bitrate in bits/s * 1 s
     seq_params->op_params[i].buffer_size = seq_params->op_params[i].bitrate;
   }
 }
@@ -753,6 +753,7 @@ static void init_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf) {
   cpi->svc.number_temporal_layers = 1;
   cm->spatial_layer_id = 0;
   cm->temporal_layer_id = 0;
+  cpi->src_sad_blk_alloc_size = 0;
   // Init rtc_ref parameters.
   cpi->ppi->rtc_ref.set_ref_frame_config = 0;
   cpi->ppi->rtc_ref.non_reference_frame = 0;
@@ -879,6 +880,7 @@ void av1_change_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf,
   const FrameDimensionCfg *const frm_dim_cfg = &cpi->oxcf.frm_dim_cfg;
   const RateControlCfg *const rc_cfg = &oxcf->rc_cfg;
   FeatureFlags *const features = &cm->features;
+  const int is_highbitdepth = seq_params->use_highbitdepth;
 
   // in case of LAP, lag in frames is set according to number of lap buffers
   // calculated at init time. This stores and restores LAP's lag in frames to
@@ -974,6 +976,14 @@ void av1_change_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf,
         x->e_mbd.tmp_obmc_bufs[i] = x->tmp_pred_bufs[i];
       }
     }
+  }
+
+  if (x->upsample_pred == NULL) {
+    CHECK_MEM_ERROR(
+        cm, x->upsample_pred,
+        aom_memalign(16, (1 + is_highbitdepth) * ((MAX_SB_SIZE + 16) + 16) *
+                             MAX_SB_SIZE * sizeof(*x->upsample_pred)));
+    x->e_mbd.tmp_upsample_pred = x->upsample_pred;
   }
 
   av1_reset_segment_features(cm);
@@ -1750,6 +1760,8 @@ void av1_remove_primary_compressor(AV1_PRIMARY *ppi) {
   for (int frame = 0; frame < MAX_LAG_BUFFERS; ++frame) {
     aom_free(tpl_data->tpl_stats_pool[frame]);
     aom_free_frame_buffer(&tpl_data->tpl_rec_pool[frame]);
+    aom_free_frame_buffer(&tpl_data->prev_gop_arf_src);
+    tpl_data->prev_gop_arf_disp_order = -1;
     tpl_data->tpl_stats_pool[frame] = NULL;
   }
 
@@ -2963,10 +2975,14 @@ static int encode_without_recode(AV1_COMP *cpi) {
   av1_set_size_dependent_vars(cpi, &q, &bottom_index, &top_index);
   av1_set_mv_search_params(cpi);
 
-  if (cm->current_frame.frame_number == 0 &&
-      (cpi->ppi->use_svc || cpi->oxcf.rc_cfg.drop_frames_water_mark > 0) &&
-      cpi->svc.temporal_layer_id == 0) {
-    const SequenceHeader *seq_params = cm->seq_params;
+  const SequenceHeader *seq_params = cm->seq_params;
+  if ((cpi->svc.source_last_TL0.buffer_alloc_sz == 0 ||
+       cpi->svc.source_last_TL0.y_crop_width != cpi->oxcf.frm_dim_cfg.width ||
+       cpi->svc.source_last_TL0.y_crop_height != cpi->oxcf.frm_dim_cfg.height ||
+       cpi->svc.source_last_TL0.subsampling_x != seq_params->subsampling_x ||
+       cpi->svc.source_last_TL0.subsampling_y != seq_params->subsampling_y ||
+       cpi->svc.source_last_TL0.flags != cpi->source->flags) &&
+      (cpi->ppi->use_svc || cpi->oxcf.rc_cfg.drop_frames_water_mark > 0)) {
     if (aom_alloc_frame_buffer(
             &cpi->svc.source_last_TL0, cpi->oxcf.frm_dim_cfg.width,
             cpi->oxcf.frm_dim_cfg.height, seq_params->subsampling_x,
@@ -3146,20 +3162,24 @@ static int encode_without_recode(AV1_COMP *cpi) {
 
   // This is for rtc temporal filtering case.
   if (is_psnr_calc_enabled(cpi) && cpi->sf.rt_sf.use_rtc_tf) {
-    const SequenceHeader *seq_params = cm->seq_params;
-
     if (cpi->orig_source.buffer_alloc_sz == 0 ||
-        cpi->rc.prev_coded_width != cpi->oxcf.frm_dim_cfg.width ||
-        cpi->rc.prev_coded_height != cpi->oxcf.frm_dim_cfg.height) {
-      // Allocate a source buffer to store the true source for psnr calculation.
-      if (aom_alloc_frame_buffer(
-              &cpi->orig_source, cpi->oxcf.frm_dim_cfg.width,
-              cpi->oxcf.frm_dim_cfg.height, seq_params->subsampling_x,
-              seq_params->subsampling_y, seq_params->use_highbitdepth,
-              cpi->oxcf.border_in_pixels, cm->features.byte_alignment, false,
-              0))
+        cpi->orig_source.y_crop_width != cpi->source->y_crop_width ||
+        cpi->orig_source.y_crop_height != cpi->source->y_crop_height ||
+        cpi->orig_source.subsampling_x != cpi->source->subsampling_x ||
+        cpi->orig_source.subsampling_y != cpi->source->subsampling_y ||
+        cpi->orig_source.flags != cpi->source->flags) {
+      // Allocate a source buffer to store the original source for psnr
+      // calculation.
+      const int use_highbitdepth =
+          (cpi->source->flags & YV12_FLAG_HIGHBITDEPTH) != 0;
+      if (aom_alloc_frame_buffer(&cpi->orig_source, cpi->source->y_crop_width,
+                                 cpi->source->y_crop_height,
+                                 cpi->source->subsampling_x,
+                                 cpi->source->subsampling_y, use_highbitdepth,
+                                 cpi->oxcf.border_in_pixels,
+                                 cm->features.byte_alignment, false, 0))
         aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
-                           "Failed to allocate scaled buffer");
+                           "Failed to allocate cpi->orig_source buffer");
     }
 
     aom_yv12_copy_y(cpi->source, &cpi->orig_source, 1);
@@ -3427,6 +3447,36 @@ static int encode_with_recode_loop(AV1_COMP *cpi, size_t *size, uint8_t *dest,
       }
     }
 
+    if (av1_encode_for_extrc(&cpi->ext_ratectrl)) {
+      aom_codec_err_t codec_status;
+      aom_rc_encodeframe_decision_t encode_frame_decision;
+      const int sb_rows = CEIL_POWER_OF_TWO(cm->mi_params.mi_rows,
+                                            cm->seq_params->mib_size_log2);
+      const int sb_cols = CEIL_POWER_OF_TWO(cm->mi_params.mi_cols,
+                                            cm->seq_params->mib_size_log2);
+      // This assumes frame sizes don't change when used with external RC.
+      // cpi->ext_ratectrl is zero'ed at init.
+      if (cpi->ext_ratectrl.sb_params_list == NULL) {
+        CHECK_MEM_ERROR(
+            cm, cpi->ext_ratectrl.sb_params_list,
+            (aom_sb_params *)aom_calloc(
+                sb_rows * sb_cols, sizeof(*cpi->ext_ratectrl.sb_params_list)));
+      }
+      encode_frame_decision.sb_params_list = cpi->ext_ratectrl.sb_params_list;
+      encode_frame_decision.use_delta_q = &cpi->ext_ratectrl.use_delta_q;
+      codec_status = av1_extrc_get_encodeframe_decision(
+          &cpi->ext_ratectrl, cpi->gf_frame_index, &encode_frame_decision);
+      if (codec_status != AOM_CODEC_OK) {
+        aom_internal_error(cm->error, codec_status,
+                           "av1_extrc_get_encodeframe_decision() failed");
+      }
+      // If the external model recommends a reserved value, we use the default
+      // q.
+      if (encode_frame_decision.q_index != AOM_DEFAULT_Q) {
+        q = encode_frame_decision.q_index;
+      }
+    }
+
     av1_set_quantizer(cm, q_cfg->qm_minlevel, q_cfg->qm_maxlevel, q,
                       q_cfg->enable_chroma_deltaq, q_cfg->enable_hdr_deltaq,
                       oxcf->mode == ALLINTRA, oxcf->tune_cfg.tuning);
@@ -3566,6 +3616,11 @@ static int encode_with_recode_loop(AV1_COMP *cpi, size_t *size, uint8_t *dest,
 
     if (cpi->use_ducky_encode) {
       // Ducky encode currently does not support recode loop.
+      loop = 0;
+    }
+
+    // Do not recode if external rate control is used.
+    if (av1_encode_for_extrc(&cpi->ext_ratectrl)) {
       loop = 0;
     }
 #if CONFIG_BITRATE_ACCURACY || CONFIG_RD_COMMAND
@@ -3856,7 +3911,7 @@ static int encode_with_and_without_superres(AV1_COMP *cpi, size_t *size,
     // Note: Both use common rdmult based on base qindex of fullres.
     const int64_t rdmult = av1_compute_rd_mult_based_on_qindex(
         bit_depth, update_type, cm->quant_params.base_qindex,
-        cpi->oxcf.tune_cfg.tuning);
+        cpi->oxcf.tune_cfg.tuning, cpi->oxcf.mode);
 
     // Find the best rdcost among all superres denoms.
     int best_denom = -1;
@@ -3921,7 +3976,7 @@ static int encode_with_and_without_superres(AV1_COMP *cpi, size_t *size,
     // Note: Both use common rdmult based on base qindex of fullres.
     const int64_t rdmult = av1_compute_rd_mult_based_on_qindex(
         bit_depth, update_type, cm->quant_params.base_qindex,
-        cpi->oxcf.tune_cfg.tuning);
+        cpi->oxcf.tune_cfg.tuning, cpi->oxcf.mode);
     proj_rdcost1 =
         RDCOST_DBL_WITH_NATIVE_BD_DIST(rdmult, rate1, sse1, bit_depth);
     const double proj_rdcost2 =
@@ -4518,9 +4573,50 @@ int av1_encode(AV1_COMP *const cpi, uint8_t *const dest, size_t dest_size,
       cpi->ppi->gf_group.layer_depth[cpi->gf_frame_index],
       current_frame->display_order_hint, cpi->ppi->gf_group.max_layer_depth);
 
+  const GF_GROUP *gf_group = &cpi->ppi->gf_group;
+  // Check if this is the last frame in the gop. If so, make a copy of the
+  // source for TPL.
+  if (cpi->oxcf.algo_cfg.enable_tpl_model &&
+      gf_group->update_type[cpi->gf_frame_index] != OVERLAY_UPDATE &&
+      gf_group->update_type[cpi->gf_frame_index] != INTNL_OVERLAY_UPDATE) {
+    int is_last = 1;
+    for (int i = 0; i < gf_group->size; ++i) {
+      if (gf_group->display_idx[i] >
+          (int64_t)current_frame->display_order_hint) {
+        is_last = 0;
+        break;
+      }
+    }
+    if (is_last) {
+      cpi->ppi->tpl_data.prev_gop_arf_disp_order = -1;
+      const AV1EncoderConfig *const oxcf = &cpi->oxcf;
+      int ret = aom_realloc_frame_buffer(
+          &cpi->ppi->tpl_data.prev_gop_arf_src, oxcf->frm_dim_cfg.width,
+          oxcf->frm_dim_cfg.height, cm->seq_params->subsampling_x,
+          cm->seq_params->subsampling_y, cm->seq_params->use_highbitdepth,
+          cpi->oxcf.border_in_pixels, cm->features.byte_alignment, NULL, NULL,
+          NULL, cpi->alloc_pyramid, 0);
+      if (ret)
+        aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
+                           "Failed to allocate tpl prev_gop_arf_src buf.");
+
+      // Currently it is not supported if source/refernece is resized.
+      if (cpi->source->y_width == cpi->ppi->tpl_data.prev_gop_arf_src.y_width &&
+          cpi->source->y_height ==
+              cpi->ppi->tpl_data.prev_gop_arf_src.y_height) {
+        // Copy the content from source to this buffer for next gop.
+        aom_yv12_copy_frame(cpi->source, &cpi->ppi->tpl_data.prev_gop_arf_src,
+                            av1_num_planes(cm));
+
+        cpi->ppi->tpl_data.prev_gop_arf_disp_order =
+            current_frame->display_order_hint;
+      }
+    }
+  }
+
   if (is_stat_generation_stage(cpi)) {
 #if !CONFIG_REALTIME_ONLY
-    if (cpi->oxcf.q_cfg.use_fixed_qp_offsets)
+    if (cpi->oxcf.q_cfg.use_fixed_qp_offsets != 0)
       av1_noop_first_pass_frame(cpi, frame_input->ts_duration);
     else
       av1_first_pass(cpi, frame_input->ts_duration);
@@ -4533,6 +4629,16 @@ int av1_encode(AV1_COMP *const cpi, uint8_t *const dest, size_t dest_size,
     }
   } else {
     return AOM_CODEC_ERROR;
+  }
+
+  if (cpi->ext_ratectrl.ready &&
+      cpi->ext_ratectrl.funcs.update_encodeframe_result != NULL) {
+    aom_codec_err_t codec_status = av1_extrc_update_encodeframe_result(
+        &cpi->ext_ratectrl, (*frame_size) << 3, cm->quant_params.base_qindex);
+    if (codec_status != AOM_CODEC_OK) {
+      aom_internal_error(cm->error, codec_status,
+                         "av1_extrc_update_encodeframe_result() failed");
+    }
   }
 
   return AOM_CODEC_OK;
@@ -4582,6 +4688,33 @@ int av1_receive_raw_frame(AV1_COMP *cpi, aom_enc_frame_flags_t frame_flags,
   const int subsampling_x = sd->subsampling_x;
   const int subsampling_y = sd->subsampling_y;
   const int use_highbitdepth = (sd->flags & YV12_FLAG_HIGHBITDEPTH) != 0;
+
+  // Note: Regarding profile setting, the following checks are added to help
+  // choose a proper profile for the input video. The criterion is that all
+  // bitstreams must be designated as the lowest profile that match its content.
+  // E.G. A bitstream that contains 4:4:4 video must be designated as High
+  // Profile in the seq header, and likewise a bitstream that contains 4:2:2
+  // bitstream must be designated as Professional Profile in the sequence
+  // header.
+  if ((seq_params->profile == PROFILE_0) && !seq_params->monochrome &&
+      (subsampling_x != 1 || subsampling_y != 1)) {
+    aom_set_error(cm->error, AOM_CODEC_INVALID_PARAM,
+                  "Non-4:2:0 color format requires profile 1 or 2");
+    return -1;
+  }
+  if ((seq_params->profile == PROFILE_1) &&
+      !(subsampling_x == 0 && subsampling_y == 0)) {
+    aom_set_error(cm->error, AOM_CODEC_INVALID_PARAM,
+                  "Profile 1 requires 4:4:4 color format");
+    return -1;
+  }
+  if ((seq_params->profile == PROFILE_2) &&
+      (seq_params->bit_depth <= AOM_BITS_10) &&
+      !(subsampling_x == 1 && subsampling_y == 0)) {
+    aom_set_error(cm->error, AOM_CODEC_INVALID_PARAM,
+                  "Profile 2 bit-depth <= 10 requires 4:2:2 color format");
+    return -1;
+  }
 
 #if CONFIG_TUNE_VMAF
   if (!is_stat_generation_stage(cpi) &&
@@ -4644,33 +4777,6 @@ int av1_receive_raw_frame(AV1_COMP *cpi, aom_enc_frame_flags_t frame_flags,
   aom_usec_timer_mark(&timer);
   cpi->ppi->total_time_receive_data += aom_usec_timer_elapsed(&timer);
 #endif
-
-  // Note: Regarding profile setting, the following checks are added to help
-  // choose a proper profile for the input video. The criterion is that all
-  // bitstreams must be designated as the lowest profile that match its content.
-  // E.G. A bitstream that contains 4:4:4 video must be designated as High
-  // Profile in the seq header, and likewise a bitstream that contains 4:2:2
-  // bitstream must be designated as Professional Profile in the sequence
-  // header.
-  if ((seq_params->profile == PROFILE_0) && !seq_params->monochrome &&
-      (subsampling_x != 1 || subsampling_y != 1)) {
-    aom_set_error(cm->error, AOM_CODEC_INVALID_PARAM,
-                  "Non-4:2:0 color format requires profile 1 or 2");
-    res = -1;
-  }
-  if ((seq_params->profile == PROFILE_1) &&
-      !(subsampling_x == 0 && subsampling_y == 0)) {
-    aom_set_error(cm->error, AOM_CODEC_INVALID_PARAM,
-                  "Profile 1 requires 4:4:4 color format");
-    res = -1;
-  }
-  if ((seq_params->profile == PROFILE_2) &&
-      (seq_params->bit_depth <= AOM_BITS_10) &&
-      !(subsampling_x == 1 && subsampling_y == 0)) {
-    aom_set_error(cm->error, AOM_CODEC_INVALID_PARAM,
-                  "Profile 2 bit-depth <= 10 requires 4:2:2 color format");
-    res = -1;
-  }
 
   return res;
 }
@@ -4961,16 +5067,10 @@ static inline void update_frames_till_gf_update(AV1_COMP *cpi) {
 
 static inline void update_gf_group_index(AV1_COMP *cpi) {
   // Increment the gf group index ready for the next frame.
-  if (is_one_pass_rt_params(cpi) &&
-      cpi->svc.spatial_layer_id == cpi->svc.number_spatial_layers - 1) {
-    ++cpi->gf_frame_index;
-    // Reset gf_frame_index in case it reaches MAX_STATIC_GF_GROUP_LENGTH
-    // for real time encoding.
-    if (cpi->gf_frame_index == MAX_STATIC_GF_GROUP_LENGTH)
-      cpi->gf_frame_index = 0;
-  } else {
-    ++cpi->gf_frame_index;
-  }
+  ++cpi->gf_frame_index;
+  // Reset gf_frame_index in case it reaches MAX_STATIC_GF_GROUP_LENGTH.
+  if (cpi->gf_frame_index == MAX_STATIC_GF_GROUP_LENGTH)
+    cpi->gf_frame_index = 0;
 }
 
 static void update_fb_of_context_type(const AV1_COMP *const cpi,
@@ -5246,7 +5346,6 @@ int av1_get_compressed_data(AV1_COMP *cpi, AV1_COMP_DATA *const cpi_data) {
   cpi->is_dropped_frame = false;
   cm->showable_frame = 0;
   cpi_data->frame_size = 0;
-  cpi->available_bs_size = cpi_data->cx_data_sz;
 #if CONFIG_INTERNAL_STATS
   struct aom_usec_timer cmptimer;
   aom_usec_timer_start(&cmptimer);

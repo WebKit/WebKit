@@ -164,7 +164,9 @@ public:
     RefPtr<RemoteSnapshot> snapshot(RemoteSnapshotIdentifier);
 
 #if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+#if HAVE(CORE_RE)
     void requestSharedSimulationConnection(CoreIPCAuditToken&&, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&&);
+#endif
 #if HAVE(TASK_IDENTITY_TOKEN)
     void createMemoryAttributionIDForTask(WebCore::ProcessIdentity, CompletionHandler<void(const std::optional<String>&)>&&);
     void unregisterMemoryAttributionID(const String&, CompletionHandler<void()>&&);

@@ -69,7 +69,7 @@ static String expectedMessage;
 @end
 
 // FIXME: Update the test to do subscription before pushing message.
-static constexpr auto mainBytes = R"SWRESOURCE(
+static constexpr auto pushAPIMainBytes = R"SWRESOURCE(
 <script>
 function log(msg)
 {
@@ -130,7 +130,7 @@ static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 static bool pushMessageProcessed = false;
 static bool pushMessageSuccessful = false;
 
-static bool waitUntilEvaluatesToTrue(const Function<bool()>& f)
+static bool pushAPIWaitUntilEvaluatesToTrue(const Function<bool()>& f)
 {
     unsigned timeout = 0;
     do {
@@ -157,7 +157,7 @@ static RetainPtr<WKWebViewConfiguration> createConfigurationWithNotificationsEna
 TEST(PushAPI, firePushEvent)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
+        { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, scriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
@@ -271,7 +271,7 @@ TEST(PushAPI, notificationPermissionsDelegateInvalidResponse)
 TEST(PushAPI, firePushEventDataStoreDelegate)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
+        { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
@@ -379,7 +379,7 @@ self.addEventListener("push", (event) => {
 TEST(PushAPI, testSilentFlag)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
+        { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, testSilentFlagScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
@@ -537,7 +537,7 @@ static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfigurat
 TEST(PushAPI, firePushEventWithNoPagesSuccessful)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
+        { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, waitOneSecondScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
@@ -572,12 +572,12 @@ TEST(PushAPI, firePushEventWithNoPagesSuccessful)
         pushMessageProcessed = true;
     }];
 
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_TRUE(pushMessageSuccessful);
 
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
@@ -585,7 +585,7 @@ TEST(PushAPI, firePushEventWithNoPagesSuccessful)
 TEST(PushAPI, firePushEventWithNoPagesFail)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
+        { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, waitOneSecondScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
@@ -620,11 +620,11 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
         pushMessageProcessed = true;
     }];
 
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     EXPECT_FALSE(pushMessageSuccessful);
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
@@ -632,7 +632,7 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
 TEST(PushAPI, firePushEventWithNoPagesTimeout)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
+        { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, waitOneSecondScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
@@ -676,12 +676,12 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
         pushMessageProcessed = true;
     }];
 
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
     fprintf(stderr, "totot4\n");
     EXPECT_FALSE(pushMessageSuccessful);
-    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
+    EXPECT_TRUE(pushAPIWaitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
@@ -725,7 +725,7 @@ self.addEventListener("push", (event) => {
 TEST(PushAPI, pushEventsAndInspectedServiceWorker)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
+        { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, pushEventsAndInspectedServiceWorkerScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
@@ -840,7 +840,7 @@ self.addEventListener("push", async (event) => {
 static void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspection)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
+        { "/"_s, { pushAPIMainBytes } },
         { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, inspectedServiceWorkerWithoutPageScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 

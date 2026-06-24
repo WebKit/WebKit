@@ -28,6 +28,7 @@
 
 #if ENABLE(PDF_PLUGIN)
 
+#import "PDFPluginBase.h"
 #import <WebCore/EnterKeyHint.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>

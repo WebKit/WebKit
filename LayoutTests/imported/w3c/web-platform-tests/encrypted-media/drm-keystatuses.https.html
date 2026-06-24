@@ -41,6 +41,7 @@
             var config = {  keysystem:          keysystem,
                             content:            contentitem,
                             messagehandler:     handler.messagehandler,
+                            servercertificate:  handler.servercertificate,
                             initDataType:       contentitem.initDataType,
                             initData:           base64DecodeToUnit8Array( getProprietaryInitDatas(contentitem).initDatas[ 0 ] )
                         };

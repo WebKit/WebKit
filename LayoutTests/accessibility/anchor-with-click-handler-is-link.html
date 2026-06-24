@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<a onclick="this.dataset.clicked = 'true'" id="anchor-with-onclick">Anchor with onclick</a>
+<a id="anchor-without-handler">Anchor without click handler or href</a>
+<a id="click-toggle-anchor">Anchor that gains then loses a click handler</a>
+<a href="#destination" id="href-toggle-anchor">Anchor that loses then regains its href</a>
+
+<script>
+var output = "This test ensures an anchor with a click handler but no href is exposed as a link.\n\n";
+
+function isExposedAsLink(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    return !!element && element.role.toLowerCase().includes("link");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("isExposedAsLink('anchor-with-onclick')", "true");
+    // An anchor with neither an href nor a click handler should not be exposed as a link.
+    output += expect("isExposedAsLink('anchor-without-handler')", "false");
+
+    var clickHandler = () => { };
+
+    setTimeout(async function() {
+        output += "\nDynamically added anchor with onclick is a link:\n";
+        var dynamicAnchor = document.createElement("a");
+        dynamicAnchor.id = "dynamic-anchor-with-onclick";
+        dynamicAnchor.textContent = "Dynamically added anchor with onclick";
+        dynamicAnchor.setAttribute("onclick", "this.dataset.clicked = 'true'");
+        document.body.appendChild(dynamicAnchor);
+        output += await expectAsync("isExposedAsLink('dynamic-anchor-with-onclick')", "true");
+
+        output += "\nAdding a click handler to a hrefless anchor turns it into a link:\n";
+        document.getElementById("click-toggle-anchor").addEventListener("click", clickHandler);
+        output += await expectAsync("isExposedAsLink('click-toggle-anchor')", "true");
+
+        output += "\nRemoving the only click handler reverts it to not being a link:\n";
+        document.getElementById("click-toggle-anchor").removeEventListener("click", clickHandler);
+        output += await expectAsync("isExposedAsLink('click-toggle-anchor')", "false");
+
+        output += "\nRemoving the href from a link with no click handler stops it being a link:\n";
+        document.getElementById("href-toggle-anchor").removeAttribute("href");
+        output += await expectAsync("isExposedAsLink('href-toggle-anchor')", "false");
+
+        output += "\nRestoring the href makes it a link again:\n";
+        document.getElementById("href-toggle-anchor").setAttribute("href", "#destination");
+        output += await expectAsync("isExposedAsLink('href-toggle-anchor')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

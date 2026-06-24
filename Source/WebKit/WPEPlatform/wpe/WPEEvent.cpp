@@ -261,7 +261,7 @@ WPEModifiers wpe_event_get_modifiers(WPEEvent* event)
  * a position, %FALSE is returned.
  *
  * Returns: %TRUE if position is returned in @x and @y,
- *    or %FALSE if @event doesn't have a positon
+ *    or %FALSE if @event doesn't have a position
  */
 gboolean wpe_event_get_position(WPEEvent* event, double* x, double* y)
 {
@@ -346,7 +346,7 @@ guint wpe_event_pointer_button_get_button(WPEEvent* event)
  * wpe_event_pointer_button_get_press_count:
  * @event: a #WPEEvent
  *
- * Get the numbbr of button presses for @event
+ * Get the number of button presses for @event
  * Note that @event must be a pointer button press event (%WPE_EVENT_POINTER_DOWN).
  *
  * Returns: the press count of @event
@@ -368,7 +368,7 @@ guint wpe_event_pointer_button_get_press_count(WPEEvent* event)
  * @modifiers: a #WPEModifiers
  * @x: the x coordinate of the pointer
  * @y: the y coordinate of the pointer
- * @delta_x: the x coordainte movement delta
+ * @delta_x: the x coordinate movement delta
  * @delta_y: the y coordinate movement delta
  *
  * Create a #WPEEvent for a pointer move.
@@ -540,7 +540,7 @@ guint wpe_event_keyboard_get_keyval(WPEEvent* event)
 
 /**
  * wpe_event_touch_new:
- * @type: a #WPEEventType (%WPE_EVENT_TOUCH_DOWN, %WPE_EVENT_TOUCH_UP, %WPE_EVENT_TOUCH_MOVER or %WPE_EVENT_TOUCH_CANCEL)
+ * @type: a #WPEEventType (%WPE_EVENT_TOUCH_DOWN, %WPE_EVENT_TOUCH_UP, %WPE_EVENT_TOUCH_MOVE or %WPE_EVENT_TOUCH_CANCEL)
  * @view: a #WPEView
  * @source: a #WPEInputSource
  * @time: the event timestamp
@@ -566,7 +566,7 @@ WPEEvent* wpe_event_touch_new(WPEEventType type, WPEView* view, WPEInputSource s
  * @event: a #WPEEvent
  *
  * Get the sequence identifier of @event.
- * Note that @event must be a touch event (%WPE_EVENT_TOUCH_DOWN, %WPE_EVENT_TOUCH_UP, %WPE_EVENT_TOUCH_MOVER or %WPE_EVENT_TOUCH_CANCEL)
+ * Note that @event must be a touch event (%WPE_EVENT_TOUCH_DOWN, %WPE_EVENT_TOUCH_UP, %WPE_EVENT_TOUCH_MOVE or %WPE_EVENT_TOUCH_CANCEL)
  *
  * Returns: the event sequence identifier
  */

@@ -121,8 +121,8 @@ private:
 
     void NODELETE setNeedsIconRequest();
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const RenderStyle* = nullptr) const final { return true; }
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    bool isReplaced(const Style::ComputedStyle* = nullptr) const final { return true; }
     bool shouldSelectOnMouseDown() final {
 #if PLATFORM(IOS_FAMILY)
         return false;

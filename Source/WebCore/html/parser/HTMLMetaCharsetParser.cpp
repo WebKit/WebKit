@@ -165,18 +165,18 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(std::span<const uint8_t> data)
             auto knownTagName = AtomString::lookUp(token->name().span());
             if (!isEnd) {
                 m_tokenizer.updateStateFor(knownTagName);
-                if (knownTagName == metaTag && processMeta(*token)) {
+                if (metaTag->hasLocalName(knownTagName) && processMeta(*token)) {
                     m_doneChecking = true;
                     return true;
                 }
             }
 
-            if (knownTagName != scriptTag && knownTagName != noscriptTag
-                && knownTagName != styleTag && knownTagName != linkTag
-                && knownTagName != metaTag && knownTagName != objectTag
-                && knownTagName != titleTag && knownTagName != baseTag
-                && (isEnd || knownTagName != htmlTag)
-                && (isEnd || knownTagName != headTag)) {
+            if (!scriptTag->hasLocalName(knownTagName) && !noscriptTag->hasLocalName(knownTagName)
+                && !styleTag->hasLocalName(knownTagName) && !linkTag->hasLocalName(knownTagName)
+                && !metaTag->hasLocalName(knownTagName) && !objectTag->hasLocalName(knownTagName)
+                && !titleTag->hasLocalName(knownTagName) && !baseTag->hasLocalName(knownTagName)
+                && (isEnd || !htmlTag->hasLocalName(knownTagName))
+                && (isEnd || !headTag->hasLocalName(knownTagName))) {
                 m_inHeadSection = false;
             }
         }

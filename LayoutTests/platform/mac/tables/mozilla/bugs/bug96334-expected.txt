@@ -31,8 +31,8 @@ layer at (0,0) size 800x585
                           RenderTableRow {TR} at (0,2) size 191x22
                             RenderTableCell {TD} at (2,2) size 187x22 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
                               RenderMenuList {SELECT} at (2,2) size 183x18 [bgcolor=#FFFFFF]
-                                RenderSelectFallbackButton {DIV} at (0,0) size 183x18
-                                  RenderText at (8,2) size 152x13
+                                RenderBlock {DIV} at (0,0) size 183x18
+                                  RenderText {#text} at (8,2) size 152x13
                                     text run at (8,2) width 152: "USE THIS JAVASCRIPT HERE"
                               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (215,2) size 756x40 [border: (1px solid #C0C0C0)] [r=0 c=1 rs=1 cs=1]

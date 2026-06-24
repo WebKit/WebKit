@@ -37,7 +37,7 @@ class RenderButton final : public RenderFlexibleBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderButton);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderButton);
 public:
-    RenderButton(HTMLFormControlElement&, RenderStyle&&);
+    RenderButton(HTMLFormControlElement&, Style::ComputedStyle&&);
     virtual ~RenderButton();
 
     HTMLFormControlElement& NODELETE formControlElement() const;
@@ -52,7 +52,7 @@ public:
     bool hasControlClip() const override;
     LayoutRect controlClipRect(const LayoutPoint&) const override;
 
-    void updateAnonymousChildStyle(RenderStyle&) const override;
+    void updateAnonymousChildStyle(Style::ComputedStyle&) const override;
 
     void setText(const String&);
     String NODELETE text() const;

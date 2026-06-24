@@ -13,14 +13,15 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "api/rtp_packet_infos.h"
 #include "api/scoped_refptr.h"
 #include "api/transport/rtp/dependency_descriptor.h"
+#include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame_type.h"
 #include "api/video/video_timing.h"
@@ -161,7 +162,7 @@ RtpVideoFrameAssembler::Impl::RtpFrameVector
 RtpVideoFrameAssembler::Impl::AssembleFrames(
     video_coding::PacketBuffer::InsertResult insert_result) {
   video_coding::PacketBuffer::Packet* first_packet = nullptr;
-  std::vector<ArrayView<const uint8_t>> payloads;
+  std::vector<std::span<const uint8_t>> payloads;
   RtpFrameVector result;
 
   for (auto& packet : insert_result.packets) {
@@ -179,14 +180,16 @@ RtpVideoFrameAssembler::Impl::AssembleFrames(
         continue;
       }
 
+      // TODO: bugs.webrtc.org/42222730 - Propagate actual first/last packet
+      // received time from RtpPacketReceived::arrival_time.
       const video_coding::PacketBuffer::Packet& last_packet = *packet;
       result.push_back(std::make_unique<RtpFrameObject>(
           first_packet->seq_num(),                              //
           last_packet.seq_num(),                                //
           last_packet.marker_bit,                               //
           /*times_nacked=*/0,                                   //
-          /*first_packet_received_time=*/0,                     //
-          /*last_packet_received_time=*/0,                      //
+          /*first_packet_received_time=*/Timestamp::Zero(),     //
+          /*last_packet_received_time=*/Timestamp::Zero(),      //
           first_packet->timestamp,                              //
           /*ntp_time_ms=*/0,                                    //
           /*timing=*/VideoSendTiming(),                         //

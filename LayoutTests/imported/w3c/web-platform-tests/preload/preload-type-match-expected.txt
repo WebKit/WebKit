@@ -34,4 +34,14 @@ PASS Preload with {as=style; type=text/plain} should timeout when retrieved reso
 PASS Preload with {as=track; type=text/vtt} should load when retrieved resource is a track
 PASS Preload with {as=track; type=text/plain} should timeout when retrieved resource is a track
 PASS Preload with {as=track; type=not-a-mime} should timeout when retrieved resource is a track
+PASS Preload with {as=json; type=application/json} should timeout when retrieved resource is a json
+PASS Preload with {as=json; type=text/json} should timeout when retrieved resource is a json
+PASS Preload with {as=json; type=application/geo+json} should timeout when retrieved resource is a json
+PASS Preload with {as=json; type=text/plain} should timeout when retrieved resource is a json
+PASS Preload with {as=json; type=application/javascript} should timeout when retrieved resource is a json
+PASS Preload with {as=text; type=text/plain} should timeout when retrieved resource is a text
+PASS Preload with {as=text; type=application/json} should timeout when retrieved resource is a text
+PASS Preload with {as=text; type=application/javascript} should timeout when retrieved resource is a text
+PASS Preload with {as=text; type=image/png} should timeout when retrieved resource is a text
+PASS Preload with {as=text; type=not-a-mime-type} should timeout when retrieved resource is a text
 

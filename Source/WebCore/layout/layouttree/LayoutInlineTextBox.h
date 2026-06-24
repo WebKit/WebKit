@@ -44,7 +44,7 @@ public:
         HasPositionDependentContentWidth,
         HasStrongDirectionalityContent
     };
-    InlineTextBox(String, bool isCombined, EnumSet<ContentCharacteristic>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    InlineTextBox(String, bool isCombined, EnumSet<ContentCharacteristic>, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
 
     const String& content() const LIFETIME_BOUND { return m_content; }

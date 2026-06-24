@@ -13,12 +13,12 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/test/create_network_emulation_manager.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_logger.h"
@@ -68,7 +68,7 @@ void AddDefaultAudioVideoPeer(absl::string_view peer_name,
 }
 
 std::optional<Metric> FindMeetricByName(absl::string_view name,
-                                        ArrayView<const Metric> metrics) {
+                                        std::span<const Metric> metrics) {
   for (const Metric& metric : metrics) {
     if (metric.name == name) {
       return metric;

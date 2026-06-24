@@ -356,7 +356,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
         DumpContext dumpContext;
         StringPrintStream out;
-        Node* lastNode = nullptr;
+        DFG::Node* lastNode = nullptr;
         for (size_t blockIndex = 0; blockIndex < graph.numBlocks(); ++blockIndex) {
             DFG::BasicBlock* block = graph.block(blockIndex);
             if (!block)
@@ -367,7 +367,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
             out.reset();
 
             for (size_t nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-                Node* node = block->at(nodeIndex);
+                DFG::Node* node = block->at(nodeIndex);
 
                 Profiler::OriginStack stack;
 
@@ -398,7 +398,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
         compilation->addDescription(Profiler::OriginStack(), out.toCString());
         out.reset();
 
-        state.dumpDisassembly(out, *state.b3CodeLinkBuffer, scopedLambda<void(Node*)>([&] (Node*) {
+        state.dumpDisassembly(out, *state.b3CodeLinkBuffer, scopedLambda<void(DFG::Node*)>([&] (DFG::Node*) {
             compilation->addDescription({ }, out.toCString());
             out.reset();
         }));

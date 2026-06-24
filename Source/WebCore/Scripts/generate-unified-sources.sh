@@ -14,7 +14,7 @@ UnifiedSourceCppFileCount=530
 UnifiedSourceCFileCount=0
 UnifiedSourceMmFileCount=1
 UnifiedSourceNonARCMmFileCount=62
-UnifiedSourceHeaderGroupFileCount=77
+UnifiedSourceHeaderGroupFileCount=79
 
 if [ $# -eq 0 ]; then
     echo "Using unified source list files: Sources.txt, SourcesCocoa.txt, platform/SourcesLibWebRTC.txt"

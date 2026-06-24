@@ -28,6 +28,7 @@
 
 #import "APIArray.h"
 #import "APIData.h"
+#import "Logging.h"
 #import "WKBrowsingContextHandle.h"
 #import "WKBundleAPICast.h"
 #import "WKBundleInitialize.h"
@@ -97,14 +98,14 @@ bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
     @try {
         dictionary = [unarchiver.get() decodeObjectOfClasses:classesForCoder().get() forKey:@"parameters"];
         if (![dictionary isKindOfClass:[NSDictionary class]]) {
-            WTFLogAlways("InjectedBundle::decodeBundleParameters failed - Resulting object was not an NSDictionary.\n");
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::decodeBundleParameters failed - Resulting object was not an NSDictionary (was %{public}s)", dictionary ? object_getClassName(dictionary.get()) : "nil");
             return false;
         }
     } @catch (NSException *exception) {
-        LOG_ERROR("InjectedBundle::decodeBundleParameters failed to decode bundle parameters: %@." , exception);
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::decodeBundleParameters failed to decode bundle parameters: %{public}s -- %{public}s. The injected bundle's principal class likely needs to extend additionalClassesForParameterCoder to include the offending class.", exception.name.UTF8String, exception.reason.UTF8String);
         return false;
     }
-    
+
     ASSERT(!m_bundleParameters || m_bundleParameters.get());
     m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary.get()]);
     return true;
@@ -114,14 +115,14 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
 {
     if (auto sandboxExtension = std::exchange(m_sandboxExtension, nullptr)) {
         if (!sandboxExtension->consumePermanently()) {
-            WTFLogAlways("InjectedBundle::load failed - Could not consume bundle sandbox extension for [%s].\n", m_path.utf8().data());
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - Could not consume bundle sandbox extension for [%{public}s]", m_path.utf8().data());
             return false;
         }
     }
 
     m_platformBundle = adoptNS([[NSBundle alloc] initWithPath:m_path.createNSString().get()]);
     if (!m_platformBundle) {
-        WTFLogAlways("InjectedBundle::load failed - Could not create the bundle.\n");
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - Could not create the bundle for [%{public}s]", m_path.utf8().data());
         return false;
     }
 
@@ -137,15 +138,15 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
             }
         }
     }
-        
+
     if (!initializeFunction) {
         NSError *error;
         if (![m_platformBundle preflightAndReturnError:&error]) {
-            NSLog(@"InjectedBundle::load failed - preflightAndReturnError failed, error: %@", error);
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - preflightAndReturnError failed for [%{public}s]: %{public}@", m_path.utf8().data(), error);
             return false;
         }
         if (![m_platformBundle loadAndReturnError:&error]) {
-            NSLog(@"InjectedBundle::load failed - loadAndReturnError failed, error: %@", error);
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - loadAndReturnError failed for [%{public}s]: %{public}@", m_path.utf8().data(), error);
             return false;
         }
         initializeFunction = std::bit_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName(RetainPtr { [m_platformBundle _cfBundle] }.get(), CFSTR("WKBundleInitialize")));
@@ -175,18 +176,18 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     // Otherwise, look to see if the bundle has a principal class
     RetainPtr<Class> principalClass = [m_platformBundle principalClass];
     if (!principalClass) {
-        WTFLogAlways("InjectedBundle::load failed - No initialize function or principal class found in the bundle executable.\n");
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - No initialize function or principal class found in the bundle executable [%{public}s]", m_path.utf8().data());
         return false;
     }
 
     if (![principalClass conformsToProtocol:@protocol(WKWebProcessPlugIn)]) {
-        WTFLogAlways("InjectedBundle::load failed - Principal class does not conform to the WKWebProcessPlugIn protocol.\n");
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - Principal class %{public}s does not conform to the WKWebProcessPlugIn protocol", class_getName(principalClass.get()));
         return false;
     }
 
     auto instance = adoptNS((id <WKWebProcessPlugIn>)[(NSObject *)[principalClass alloc] init]);
     if (!instance) {
-        WTFLogAlways("InjectedBundle::load failed - Could not initialize an instance of the principal class.\n");
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - Could not initialize an instance of the principal class %{public}s", class_getName(principalClass.get()));
         return false;
     }
 
@@ -196,8 +197,10 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     if ([instance respondsToSelector:@selector(additionalClassesForParameterCoder)])
         [plugInController extendClassesForParameterCoder:[instance additionalClassesForParameterCoder]];
 
-    if (!decodeBundleParameters(parameters.bundleParameterData.get()))
+    if (!decodeBundleParameters(parameters.bundleParameterData.get())) {
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - decodeBundleParameters returned false; %{public}s will not receive webProcessPlugIn:didCreateBrowserContextController: callbacks", class_getName(principalClass.get()));
         return false;
+    }
 
     if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)])
         [instance webProcessPlugIn:plugInController.get() initializeWithObject:nil];
@@ -224,14 +227,14 @@ void InjectedBundle::extendClassesForParameterCoder(API::Array& classes)
     for (size_t i = 0; i < size; ++i) {
         RefPtr classNameString = classes.at<API::String>(i);
         if (!classNameString) {
-            WTFLogAlways("InjectedBundle::extendClassesForParameterCoder - No class provided as argument %zu.\n", i);
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::extendClassesForParameterCoder - No class provided as argument %zu", i);
             break;
         }
-    
+
         CString className = classNameString->string().utf8();
         RetainPtr objectClass = objc_lookUpClass(className.data());
         if (!objectClass) {
-            WTFLogAlways("InjectedBundle::extendClassesForParameterCoder - Class %s is not a valid Objective C class.\n", className.data());
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::extendClassesForParameterCoder - Class %{public}s is not a valid Objective C class", className.data());
             break;
         }
 
@@ -256,7 +259,7 @@ void InjectedBundle::setBundleParameter(const String& key, std::span<const uint8
     @try {
         parameter = [unarchiver decodeObjectOfClasses:classesForCoder().get() forKey:@"parameter"];
     } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode bundle parameter: %@", exception);
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::setBundleParameter failed to decode bundle parameter '%{public}s': %{public}s -- %{public}s", key.utf8().data(), exception.name.UTF8String, exception.reason.UTF8String);
         return;
     }
 
@@ -273,7 +276,7 @@ void InjectedBundle::setBundleParameters(std::span<const uint8_t> value)
     @try {
         parameters = [unarchiver decodeObjectOfClasses:classesForCoder().get() forKey:@"parameters"];
     } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode bundle parameter: %@", exception);
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::setBundleParameters failed to decode bundle parameters: %{public}s -- %{public}s", exception.name.UTF8String, exception.reason.UTF8String);
     }
 
     if (!parameters)

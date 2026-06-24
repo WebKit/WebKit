@@ -66,7 +66,7 @@ public:
 
     void updateAfterDescendants(RenderElement&);
     void destroyAndCleanUpAnonymousWrappers(RenderObject& child, const RenderElement* destroyRoot);
-    void normalizeTreeAfterStyleChange(RenderElement&, RenderStyle& oldStyle);
+    void normalizeTreeAfterStyleChange(RenderElement&, Style::ComputedStyle& oldStyle);
 
 private:
     static void markBoxForRelayoutAfterSplit(RenderBoxModelObject&);
@@ -99,7 +99,7 @@ private:
 
     void reportVisuallyNonEmptyContent(const RenderElement& parent, const RenderObject& child);
 
-    static RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAndWithStyle(const RenderBox&, const RenderStyle&);
+    static RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAndWithStyle(const RenderBox&, const Style::ComputedStyle&);
 
     class FirstLetter;
     class List;

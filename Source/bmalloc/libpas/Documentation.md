@@ -1295,8 +1295,8 @@ deallocation is just:
     }
 
 If you look at `pas_deallocate`, you'll see cleverness that ensures that the slow path call is a tail call,
-similarly to how allocators work. However, for deallocation, I haven't had the need to make the slow call
-explicit in the client side (the way that `bmalloc_try_allocate_inline` has to explicitly call the slow path).
+similarly to how allocators work. As with allocation, this is explicitly exposed to the client (i.e. both
+`bmalloc_try_allocate_inline` and `bmalloc_deallocate_inline` must explicitly call the slow path).
 
 This concludes the discussion of libpas design.
 

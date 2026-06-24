@@ -236,6 +236,8 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
         return WGPUFeatureName_CoreFeaturesAndLimits;
     case FeatureName::TextureFormatsTier1:
         return WGPUFeatureName_TextureFormatsTier1;
+    case FeatureName::PrimitiveIndex:
+        return WGPUFeatureName_PrimitiveIndex;
     }
 }
 

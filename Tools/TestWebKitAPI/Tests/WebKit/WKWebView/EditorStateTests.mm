@@ -32,6 +32,7 @@
 #import "TestInputDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/ios/UserInterfaceSwizzler.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKFeature.h>

@@ -13,9 +13,9 @@
 _bn_mul_mont_words:
 	AARCH64_SIGN_LINK_REGISTER
 	tst	x5,#7
-	b.eq	__bn_sqr8x_mont
+	b.eq	Lsqr8x_mont
 	tst	x5,#3
-	b.eq	__bn_mul4x_mont
+	b.eq	Lmul4x_mont
 Lmul_mont:
 	stp	x29,x30,[sp,#-64]!
 	add	x29,sp,#0
@@ -38,6 +38,9 @@ Lmul_mont:
 	umulh	x11,x8,x9
 
 	mul	x15,x6,x4		// "tp[0]"*n0
+	// This can allocate at most 8 * BN_MONTGOMERY_MAX_WORDS on the stack,
+	// or 2 KiB. This fits well within a page, so it is not necessary to
+	// fault pages in the correct order.
 	mov	sp,x22			// alloca
 
 	// (*)	mul	x12,x13,x15	// np[0]*m1
@@ -212,14 +215,13 @@ Lcond_copy:
 	AARCH64_VALIDATE_LINK_REGISTER
 	ret
 
-
 .align	5
-__bn_sqr8x_mont:
-	// Not adding AARCH64_SIGN_LINK_REGISTER here because __bn_sqr8x_mont is jumped to
+Lsqr8x_mont:
+	// Not adding AARCH64_SIGN_LINK_REGISTER here because .Lsqr8x_mont is jumped to
 	// only from bn_mul_mont_words which has already signed the return address.
 	cmp	x1,x2
-	b.ne	__bn_mul4x_mont
-Lsqr8x_mont:
+	b.ne	Lmul4x_mont
+
 	stp	x29,x30,[sp,#-128]!
 	add	x29,sp,#0
 	stp	x19,x20,[sp,#16]
@@ -234,6 +236,19 @@ Lsqr8x_mont:
 	ldp	x10,x11,[x1,#8*4]
 	ldp	x12,x13,[x1,#8*6]
 
+	// This can allocate at most 16 * BN_MONTGOMERY_MAX_WORDS on the stack,
+	// or 4 KiB. The fixed allocation above pushes to just above a page. On
+	// Windows, we must ensure new pages are first accessed in order. See
+	// https://learn.microsoft.com/en-us/cpp/build/arm64-windows-abi-conventions?view=msvc-170#stack
+	//
+	// The order is correct, but precariously so: the code above access as
+	// low as [sp,#16]. This leaves a jump of 16 + 4096 = 4112 bytes. If
+	// [sp,#16] were at page boundary, those 4112 bytes would span two
+	// pages. If [x2] were the next access, we would skip a guard page.
+	//
+	// Fortunately, the first access is [x2,#8*8], at .Lsqr8x_zero_start.
+	// We jump at most 4112 - 64 = 4048 bytes, less than a page. If any of
+	// this changes, we must insert a no-op access or call __chkstk.
 	sub	x2,sp,x5,lsl#4
 	lsl	x5,x5,#3
 	ldr	x4,[x4]		// *n0
@@ -974,10 +989,9 @@ Lsqr8x_done:
 	AARCH64_VALIDATE_LINK_REGISTER
 	ret
 
-
 .align	5
-__bn_mul4x_mont:
-	// Not adding AARCH64_SIGN_LINK_REGISTER here because __bn_mul4x_mont is jumped to
+Lmul4x_mont:
+	// Not adding AARCH64_SIGN_LINK_REGISTER here because .Lmul4x_mont is jumped to
 	// only from bn_mul_mont_words or __bn_mul8x_mont which have already signed the
 	// return address.
 	stp	x29,x30,[sp,#-128]!
@@ -988,6 +1002,9 @@ __bn_mul4x_mont:
 	stp	x25,x26,[sp,#64]
 	stp	x27,x28,[sp,#80]
 
+	// This can allocate at most 8 * BN_MONTGOMERY_MAX_WORDS on the stack,
+	// or 2 KiB. This fits well within a page, so it is not necessary to
+	// fault pages in the correct order.
 	sub	x26,sp,x5,lsl#3
 	lsl	x5,x5,#3
 	ldr	x4,[x4]		// *n0

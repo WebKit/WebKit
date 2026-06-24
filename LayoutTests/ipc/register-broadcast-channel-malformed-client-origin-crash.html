@@ -1,0 +1,34 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+ window.testRunner?.dumpAsText();
+ window.testRunner?.waitUntilDone();
+ if (window.IPC) {
+     import('./coreipc.js').then(({ CoreIPC }) => {
+         const channelIdentifier = 0;
+         const hostString = unescape('nn%01%23KpUJ%21%09%3CC%3Ad0E%12seZVh%3BZ-%5D@%00E%3D%3Ctbl-%04I%08T%25H%07%00%15N1SX%18B%02%18%0EkRg%040%7B%01%7Ck/Q%05%02J');
+         CoreIPC.Networking.NetworkBroadcastChannelRegistry.RegisterChannel(channelIdentifier, {
+             origin : {
+                 topOrigin : {
+                     data : {
+                         variantType : 'WebCore::OpaqueOriginIdentifierProcessQualified',
+                         variant : { object : 262144, processIdentifier : 262145 }
+                     }
+                 },
+                 clientOrigin : {
+                     data : {
+                         variantType : 'WebCore::SecurityOriginData::Tuple',
+                         variant : { protocol : location.href, host : hostString, port : { optionalValue : 54711 } }
+                     }
+                 }
+             },
+             name : null
+         });
+     });
+ }
+ function callDone() {
+     window.testRunner?.notifyDone();
+ }
+</script>
+<body onload="setTimeout(callDone, 200)">
+    <p>This test passes if it doesn't crash.</p>
+</body>

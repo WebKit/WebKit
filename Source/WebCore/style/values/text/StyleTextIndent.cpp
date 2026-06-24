@@ -27,33 +27,34 @@
 
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
-#include "StyleLengthWrapper+Blending.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
 
+using namespace CSS::Literals;
+
 auto CSSValueConversion<TextIndent>::operator()(BuilderState& state, const CSSValue& value) -> TextIndent
 {
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
-        return toStyleFromCSSValue<TextIndentLength>(state, *primitiveValue);
+        return toStyleFromCSSValue<TextIndent::Amount>(state, *primitiveValue);
 
     auto list = requiredListDowncast<CSSValueList, CSSValue>(state, value);
     if (!list)
         return 0_css_px;
 
-    std::optional<TextIndentLength> length;
+    std::optional<TextIndent::Amount> amount;
     std::optional<CSS::Keyword::Hanging> hanging;
     std::optional<CSS::Keyword::EachLine> eachLine;
 
     for (Ref item : *list) {
         if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(item)) {
-            if (length) {
+            if (amount) {
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return 0_css_px;
             }
-            length = toStyleFromCSSValue<TextIndentLength>(state, *primitiveValue);
+            amount = toStyleFromCSSValue<TextIndent::Amount>(state, *primitiveValue);
         } else if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(item)) {
             switch (keywordValue->valueID()) {
             case CSSValueHanging:
@@ -80,12 +81,12 @@ auto CSSValueConversion<TextIndent>::operator()(BuilderState& state, const CSSVa
         }
     }
 
-    if (!length) {
+    if (!amount) {
         state.setCurrentPropertyInvalidAtComputedValueTime();
         return 0_css_px;
     }
 
-    return TextIndent { WTF::move(*length), hanging, eachLine };
+    return TextIndent { WTF::move(*amount), hanging, eachLine };
 }
 
 // MARK: - Blending
@@ -94,7 +95,7 @@ auto Blending<TextIndent>::canBlend(const TextIndent& a, const TextIndent& b) ->
 {
     return a.hanging == b.hanging
         && a.eachLine == b.eachLine
-        && Style::canBlend(a.length, b.length);
+        && Style::canBlend(a.amount, b.amount);
 }
 
 auto Blending<TextIndent>::blend(const TextIndent& a, const TextIndent& b, const BlendingContext& context) -> TextIndent
@@ -106,7 +107,7 @@ auto Blending<TextIndent>::blend(const TextIndent& a, const TextIndent& b, const
 
     ASSERT(a.hanging == b.hanging);
     ASSERT(a.eachLine == b.eachLine);
-    return TextIndent { Style::blend(a.length, b.length, context), a.hanging, a.eachLine };
+    return TextIndent { Style::blend(a.amount, b.amount, context), a.hanging, a.eachLine };
 }
 
 } // namespace Style

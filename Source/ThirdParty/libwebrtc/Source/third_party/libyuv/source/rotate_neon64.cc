@@ -252,16 +252,16 @@ void Transpose4x4_32_NEON(const uint8_t* src,
       "st1         {v2.4s}, [%6], 16             \n"
       "st1         {v3.4s}, [%7], 16             \n"
       "b.gt        1b                            \n"
-      : "+r"(src),                        // %0
-        "+r"(src1),                       // %1
-        "+r"(src2),                       // %2
-        "+r"(src3),                       // %3
-        "+r"(dst),                        // %4
-        "+r"(dst1),                       // %5
-        "+r"(dst2),                       // %6
-        "+r"(dst3),                       // %7
-        "+r"(width)                       // %8
-      : "r"((ptrdiff_t)(src_stride * 4))  // %9
+      : "+r"(src),                      // %0
+        "+r"(src1),                     // %1
+        "+r"(src2),                     // %2
+        "+r"(src3),                     // %3
+        "+r"(dst),                      // %4
+        "+r"(dst1),                     // %5
+        "+r"(dst2),                     // %6
+        "+r"(dst3),                     // %7
+        "+r"(width)                     // %8
+      : "r"((ptrdiff_t)src_stride * 4)  // %9
       : "memory", "cc", "v0", "v1", "v2", "v3");
 }
 

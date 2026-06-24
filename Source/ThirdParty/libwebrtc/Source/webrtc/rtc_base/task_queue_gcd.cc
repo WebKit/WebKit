@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include <memory>
+#include <string>
 
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
@@ -51,6 +52,7 @@ class TaskQueueGcd final : public TaskQueueBase {
  public:
   TaskQueueGcd(absl::string_view queue_name, int gcd_priority);
 
+  absl::string_view queue_name() const override { return name_; }
   void Delete() override;
 
  protected:
@@ -76,13 +78,15 @@ class TaskQueueGcd final : public TaskQueueBase {
   static void SetNotActive(void* task_queue);
   static void DeleteQueue(void* task_queue);
 
+  const std::string name_;
   dispatch_queue_t queue_;
   bool is_active_;
 };
 
 TaskQueueGcd::TaskQueueGcd(absl::string_view queue_name, int gcd_priority)
-    : queue_(RTCDispatchQueueCreateWithTarget(
-          std::string(queue_name).c_str(),
+    : name_(queue_name),
+      queue_(RTCDispatchQueueCreateWithTarget(
+          name_.c_str(),
           DISPATCH_QUEUE_SERIAL,
           dispatch_get_global_queue(gcd_priority, 0))),
       is_active_(true) {
@@ -96,27 +100,22 @@ TaskQueueGcd::TaskQueueGcd(absl::string_view queue_name, int gcd_priority)
 TaskQueueGcd::~TaskQueueGcd() = default;
 
 void TaskQueueGcd::Delete() {
-#if !WEBRTC_WEBKIT_BUILD
-  RTC_DCHECK(!IsCurrent());
-#endif
   // Implementation/behavioral note:
   // Dispatch queues are reference counted via calls to dispatch_retain and
   // dispatch_release. Pending blocks submitted to a queue also hold a
   // reference to the queue until they have finished. Once all references to a
-  // queue have been released, the queue will be deallocated by the system.
-  // This is why we check the is_active_ before running tasks.
+  // queue have been released, the queue will be deallocated by the system. We
+  // check `is_active_` before running tasks to ensure they don't execute after
+  // `Delete()` has been called.
 
-  // Use dispatch_sync to set the is_active_ to guarantee that there's not a
-  // race with checking it from a task.
-#if WEBRTC_WEBKIT_BUILD
   if (IsCurrent()) {
-    is_active_ = false;
+    SetNotActive(this);
   } else {
+    // Use dispatch_sync to set the is_active_ to guarantee that there's not a
+    // race with checking it from a task.
     dispatch_sync_f(queue_, this, &SetNotActive);
   }
-#else
-  dispatch_sync_f(queue_, this, &SetNotActive);
-#endif
+
   dispatch_release(queue_);
 }
 

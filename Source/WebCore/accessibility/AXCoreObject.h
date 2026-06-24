@@ -95,6 +95,7 @@ namespace WebCore {
 
 class AXCoreObject;
 class AXObjectCache;
+class AXTextMarker;
 class AXTextMarkerRange;
 class AccessibilityScrollView;
 class Document;
@@ -1187,6 +1188,7 @@ public:
     }
 
     RefPtr<AXCoreObject> previousInPreOrder(bool updateChildrenIfNeeded = true, AXCoreObject* stayWithin = nullptr);
+    RefPtr<AXCoreObject> previousInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin, bool includeCrossFrame);
     RefPtr<AXCoreObject> previousSiblingIncludingIgnored(bool updateChildrenIfNeeded);
     AXCoreObject* deepestLastChildIncludingIgnored(bool updateChildrenIfNeeded);
 
@@ -1247,6 +1249,13 @@ public:
 #endif
 #if PLATFORM(MAC)
     virtual AXTextMarkerRange selectedTextMarkerRange() const = 0;
+
+    // Character offset of `marker` within this object's textMarkerRange,
+    // 0..numberOfCharacters. Returns std::nullopt when `marker` does not lie
+    // within this object's range, or when the range cannot be determined.
+    // The returned value is the natural counterpart to AXIndexForTextMarker
+    // (which is document-root-relative); this is receiver-relative.
+    std::optional<unsigned> relativeIndexForTextMarker(const AXTextMarker&);
 #endif
 
     virtual IntRect boundsForRange(const SimpleRange&) const = 0;

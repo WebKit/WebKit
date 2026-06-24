@@ -207,6 +207,8 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NewRegExp:
     case NewMap:
     case NewSet:
+    case NewWeakMap:
+    case NewWeakSet:
     case NewArray:
     case NewArrayWithButterfly:
     case NewButterflyWithSize:

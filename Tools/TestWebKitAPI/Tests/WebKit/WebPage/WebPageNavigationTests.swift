@@ -55,6 +55,16 @@ struct WebPageNavigationTests {
     }
 
     @Test
+    func secureCodingExemptClassesAppliedToAuxiliaryProcess() async throws {
+        UserDefaults.standard.register(defaults: [
+            "WebKitCrashOnSecureCodingWithExemptClassesKey": ["NSURLRequest", "NSError"]
+        ])
+
+        let page = WebPage()
+        try await page.load(html: "<body></body>").wait()
+    }
+
+    @Test
     func failedNavigationProducesExpectedNavigationError() async throws {
         let page = WebPage()
 

@@ -28,8 +28,8 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayerScrollableArea.h"
-#include "RenderStyle+SettersInlines.h"
 #include "ShadowRoot.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "TextControlInnerElements.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlMultiLine);
 
-RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, RenderStyle&& style)
+RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, Style::ComputedStyle&& style)
     : RenderTextControl(Type::TextControlMultiLine, element, WTF::move(style))
 {
     ASSERT(isRenderTextControlMultiLine());
@@ -100,7 +100,7 @@ LayoutUnit RenderTextControlMultiLine::computeControlLogicalHeight(LayoutUnit li
 void RenderTextControlMultiLine::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
     RenderTextControl::layoutExcludedChildren(relayoutChildren);
-    RefPtr placeholder = textFormControlElement().placeholderElement();
+    RefPtr placeholder = protect(textFormControlElement())->placeholderElement();
     CheckedPtr placeholderRenderer = placeholder ? placeholder->renderer() : 0;
     if (!placeholderRenderer)
         return;

@@ -31,13 +31,10 @@
 #include "MessageSender.h"
 #include "RemoteMediaSessionState.h"
 #include "SharedPreferencesForWebProcess.h"
-#include "WebPageProxyIdentifier.h"
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakListHashSet.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/MediaSessionManagerIOS.h>
@@ -60,7 +57,7 @@ class RemoteMediaSessionManager
     , public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionManager);
 public:
-    static RefPtr<RemoteMediaSessionManager> create(WebPage& topPage, WebPage& localPage);
+    static RefPtr<RemoteMediaSessionManager> create(WebPage&);
 
     virtual ~RemoteMediaSessionManager();
 
@@ -68,7 +65,7 @@ public:
     void deref() const final { WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::deref(); }
 
 protected:
-    RemoteMediaSessionManager(WebPage& topPage, WebPage& localPage);
+    RemoteMediaSessionManager(WebPage&);
 
     // Messages
     void clientShouldResumeAutoplaying(WebCore::MediaSessionIdentifier);
@@ -121,10 +118,8 @@ private:
     ASCIILiteral logClassName() const final;
 #endif
 
-    WeakPtr<WebPage> m_topPage;
-    WeakPtr<WebPage> m_localPage;
-    WebCore::PageIdentifier m_topPageID;
-    WebCore::PageIdentifier m_localPageID;
+    WeakPtr<WebPage> m_webPage;
+    WebCore::PageIdentifier m_webPageID;
     HashMap<WebCore::MediaSessionIdentifier, UniqueRef<RemoteMediaSessionState>> m_cachedSessionState;
 };
 

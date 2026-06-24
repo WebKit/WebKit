@@ -29,13 +29,13 @@
 #if ENABLE(DFG_JIT)
 
 #include "ButterflyInlines.h"
-#include "DFGBlockMapInlines.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "DFGPreciseLocalClobberize.h"
 #include "DFGSSACalculator.h"
 #include "OperandsInlines.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace DFG {
 
@@ -77,8 +77,8 @@ public:
         InsertionSet insertionSet(m_graph);
         
         // First figure out where various locals are live.
-        BlockMap<Operands<bool>> liveAtHead(m_graph);
-        BlockMap<Operands<bool>> liveAtTail(m_graph);
+        IndexMap<BasicBlock*, Operands<bool>> liveAtHead(m_graph.numBlocks());
+        IndexMap<BasicBlock*, Operands<bool>> liveAtTail(m_graph.numBlocks());
         
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             liveAtHead[block] = Operands<bool>(OperandsLike, block->variablesAtHead, false);
@@ -151,8 +151,8 @@ public:
         //
         // For our purposes here, the imprecision in the aliasing is harmless. It just means that we
         // may not do as much Phi pruning as we wanted.
-        for (size_t i = liveAtHead.atIndex(0).numberOfArguments(); i--;)
-            DFG_ASSERT(m_graph, nullptr, liveAtHead.atIndex(0).argument(i));
+        for (size_t i = liveAtHead.at(static_cast<size_t>(0)).numberOfArguments(); i--;)
+            DFG_ASSERT(m_graph, nullptr, liveAtHead.at(static_cast<size_t>(0)).argument(i));
         
         // Next identify where we would want to sink PutStacks to. We say that there is a deferred
         // flush if we had a PutStack with a given FlushFormat but it hasn't been materialized yet.
@@ -204,8 +204,8 @@ public:
         // sunken PutStack. Inserting such a GetStack could cause us to load garbage and
         // can confuse the AI to claim untrue things (like that the program will exit when
         // it really won't).
-        BlockMap<Operands<FlushFormat>> deferredAtHead(m_graph);
-        BlockMap<Operands<FlushFormat>> deferredAtTail(m_graph);
+        IndexMap<BasicBlock*, Operands<FlushFormat>> deferredAtHead(m_graph.numBlocks());
+        IndexMap<BasicBlock*, Operands<FlushFormat>> deferredAtTail(m_graph.numBlocks());
         
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             deferredAtHead[block] =
@@ -214,8 +214,8 @@ public:
                 Operands<FlushFormat>(OperandsLike, block->variablesAtHead);
         }
 
-        for (unsigned local = deferredAtHead.atIndex(0).numberOfLocals(); local--;)
-            deferredAtHead.atIndex(0).local(local) = ConflictingFlush;
+        for (unsigned local = deferredAtHead.at(static_cast<size_t>(0)).numberOfLocals(); local--;)
+            deferredAtHead.at(static_cast<size_t>(0)).local(local) = ConflictingFlush;
         
         do {
             changed = false;

@@ -13,15 +13,15 @@
 #include <cstddef>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 
 namespace webrtc {
 
-NamesCollection::NamesCollection(ArrayView<const std::string> names) {
+NamesCollection::NamesCollection(std::span<const std::string> names) {
   names_ = std::vector<std::string>(names.begin(), names.end());
   for (size_t i = 0; i < names_.size(); ++i) {
     index_.emplace(names_[i], i);

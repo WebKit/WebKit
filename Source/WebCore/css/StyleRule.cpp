@@ -279,7 +279,7 @@ StyleRule::StyleRule(const StyleRule& o)
     : StyleRuleBase(o)
     , m_isSplitRule(o.m_isSplitRule)
     , m_isLastRuleInSplitRule(o.m_isLastRuleInSplitRule)
-    , m_properties(o.properties().mutableCopy())
+    , m_properties(protect(o.properties())->mutableCopy())
     , m_selectorList(o.m_selectorList)
 {
 }
@@ -304,7 +304,7 @@ void StyleRule::setProperties(Ref<StyleProperties>&& properties)
 MutableStyleProperties& StyleRule::mutableProperties()
 {
     if (!is<MutableStyleProperties>(m_properties))
-        m_properties = m_properties->mutableCopy();
+        m_properties = protect(m_properties)->mutableCopy();
     return uncheckedDowncast<MutableStyleProperties>(m_properties.get());
 }
 
@@ -358,7 +358,7 @@ Vector<Ref<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCompo
 
 String StyleRule::debugDescription() const
 {
-    return makeString(" StyleRule ["_s, " selector: "_s, selectorList().selectorsText(), " properties: "_s, m_properties->asText(CSS::defaultSerializationContext()), ']');
+    return makeString(" StyleRule ["_s, " selector: "_s, selectorList().selectorsText(), " properties: "_s, protect(m_properties)->asText(CSS::defaultSerializationContext()), ']');
 }
 
 StyleRuleWithNesting::~StyleRuleWithNesting() = default;
@@ -422,7 +422,7 @@ StyleRulePage::StyleRulePage(Ref<StyleProperties>&& properties, CSSSelectorList&
 
 StyleRulePage::StyleRulePage(const StyleRulePage& o)
     : StyleRuleBase(o)
-    , m_properties(o.m_properties->mutableCopy())
+    , m_properties(protect(o.m_properties)->mutableCopy())
     , m_selectorList(o.m_selectorList)
 {
 }
@@ -435,7 +435,7 @@ StyleRuleNestedDeclarations::StyleRuleNestedDeclarations(Ref<StyleProperties>&& 
 
 String StyleRuleNestedDeclarations::debugDescription() const
 {
-    return makeString("StyleRuleNestedDeclarations ["_s, properties().asText(CSS::defaultSerializationContext()), ']');
+    return makeString("StyleRuleNestedDeclarations ["_s, protect(properties())->asText(CSS::defaultSerializationContext()), ']');
 }
 
 StyleRulePage::~StyleRulePage() = default;
@@ -448,7 +448,7 @@ Ref<StyleRulePage> StyleRulePage::create(Ref<StyleProperties>&& properties, CSSS
 MutableStyleProperties& StyleRulePage::mutableProperties()
 {
     if (!is<MutableStyleProperties>(m_properties))
-        m_properties = m_properties->mutableCopy();
+        m_properties = protect(m_properties)->mutableCopy();
     return uncheckedDowncast<MutableStyleProperties>(m_properties.get());
 }
 
@@ -460,7 +460,7 @@ StyleRuleFontFace::StyleRuleFontFace(Ref<StyleProperties>&& properties)
 
 StyleRuleFontFace::StyleRuleFontFace(const StyleRuleFontFace& o)
     : StyleRuleBase(o)
-    , m_properties(o.m_properties->mutableCopy())
+    , m_properties(protect(o.m_properties)->mutableCopy())
 {
 }
 
@@ -469,7 +469,7 @@ StyleRuleFontFace::~StyleRuleFontFace() = default;
 MutableStyleProperties& StyleRuleFontFace::mutableProperties()
 {
     if (!is<MutableStyleProperties>(m_properties))
-        m_properties = m_properties->mutableCopy();
+        m_properties = protect(m_properties)->mutableCopy();
     return uncheckedDowncast<MutableStyleProperties>(m_properties.get());
 }
 

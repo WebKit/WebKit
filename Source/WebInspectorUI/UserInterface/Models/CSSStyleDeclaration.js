@@ -131,7 +131,15 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
     }
 
     get locked() { return this._locked; }
-    set locked(value) { this._locked = value; }
+
+    set locked(value) {
+        if (this._locked === value)
+            return;
+
+        this._locked = value;
+
+        this.dispatchEventToListeners(WI.CSSStyleDeclaration.Event.LockedChanged);
+    }
 
     variablesForType(type)
     {
@@ -638,6 +646,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
 WI.CSSStyleDeclaration.Event = {
     PropertiesChanged: "css-style-declaration-properties-changed",
+    LockedChanged: "css-style-declaration-locked-changed",
 };
 
 WI.CSSStyleDeclaration.Type = {

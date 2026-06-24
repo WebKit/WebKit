@@ -78,7 +78,7 @@ static RefPtr<WebGLShader> shaderForType(WebGLProgram& program, Inspector::Proto
 
 String InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::ShaderType shaderType)
 {
-    RefPtr shader = shaderForType(m_program.get(), shaderType);
+    RefPtr shader = shaderForType(protect(m_program).get(), shaderType);
     if (!shader)
         return String();
     return shader->getSource();
@@ -86,7 +86,7 @@ String InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::
 
 bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderType shaderType, const String& source)
 {
-    RefPtr shader = shaderForType(m_program.get(), shaderType);
+    RefPtr shader = shaderForType(protect(m_program).get(), shaderType);
     if (!shader)
         return false;
     RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_canvas->canvasContext());
@@ -98,7 +98,7 @@ bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
     if (!std::holds_alternative<bool>(compileStatus))
         return false;
     if (std::get<bool>(compileStatus))
-        context->linkProgramWithoutInvalidatingAttribLocations(m_program.get());
+        context->linkProgramWithoutInvalidatingAttribLocations(protect(m_program).get());
     else {
         auto errors = context->getShaderInfoLog(*shader);
         RefPtr scriptContext = m_canvas->scriptExecutionContext();

@@ -61,7 +61,6 @@ interface TestRunner {
     undefined dumpTitleChanges();
     undefined dumpFrameLoadCallbacks();
     undefined dumpProgressFinishedCallback();
-    undefined dumpResourceResponseMIMETypes();
     undefined dumpWillCacheResponse();
     undefined dumpApplicationCacheDelegateCallbacks();
     undefined dumpDOMAsWebArchive();

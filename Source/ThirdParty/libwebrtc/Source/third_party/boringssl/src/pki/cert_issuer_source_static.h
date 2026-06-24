@@ -34,7 +34,7 @@ class OPENSSL_EXPORT CertIssuerSourceStatic : public CertIssuerSource {
 
   ~CertIssuerSourceStatic() override;
 
-  // Adds |cert| to the set of certificates that this CertIssuerSource will
+  // Adds `cert` to the set of certificates that this CertIssuerSource will
   // provide.
   void AddCert(std::shared_ptr<const ParsedCertificate> cert);
 

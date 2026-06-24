@@ -37,6 +37,7 @@ from .factories import *
 from . import wkbuild
 
 main_filter = ChangeFilter(branch=["main", None])
+webkitglib_v252_filter = ChangeFilter(branch=["webkitglib/2.52"])
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50

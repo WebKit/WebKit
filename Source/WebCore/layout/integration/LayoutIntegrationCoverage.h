@@ -37,7 +37,7 @@ bool NODELETE canUseForLineLayout(const RenderBlockFlow&);
 bool canUseForFlexLayout(const RenderFlexibleBox&);
 bool canUseForGridLayout(const RenderGrid&);
 
-bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
+bool canUseForIntrinsicWidthComputation(const RenderBlockFlow&);
 
 }
 }

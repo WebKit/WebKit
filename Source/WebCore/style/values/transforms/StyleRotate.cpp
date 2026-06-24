@@ -65,7 +65,7 @@ auto CSSValueConversion<Rotate>::operator()(BuilderState& state, const CSSValue&
 
     // Only an angle was specified.
     if (list->size() == 1)
-        return RotateTransformFunction::create(toStyleFromCSSValue<Angle<>>(state, list->item(0)), TransformFunctionBase::Type::Rotate);
+        return RotateTransformFunction::create(toStyleFromCSSValue<Angle<>>(state, protect(list->item(0))), TransformFunctionBase::Type::Rotate);
 
     // An axis identifier and angle were specified.
     if (list->size() == 2) {
@@ -73,7 +73,7 @@ auto CSSValueConversion<Rotate>::operator()(BuilderState& state, const CSSValue&
         if (!keywordValue)
             return CSS::Keyword::None { };
 
-        auto angle = toStyleFromCSSValue<Angle<>>(state, list->item(1));
+        auto angle = toStyleFromCSSValue<Angle<>>(state, protect(list->item(1)));
 
         switch (keywordValue->valueID()) {
         case CSSValueX:
@@ -91,10 +91,10 @@ auto CSSValueConversion<Rotate>::operator()(BuilderState& state, const CSSValue&
     ASSERT(list->size() == 4);
 
     // An axis vector and angle were specified.
-    auto x = toStyleFromCSSValue<Number<>>(state, list->item(0));
-    auto y = toStyleFromCSSValue<Number<>>(state, list->item(1));
-    auto z = toStyleFromCSSValue<Number<>>(state, list->item(2));
-    auto angle = toStyleFromCSSValue<Angle<>>(state, list->item(3));
+    auto x = toStyleFromCSSValue<Number<>>(state, protect(list->item(0)));
+    auto y = toStyleFromCSSValue<Number<>>(state, protect(list->item(1)));
+    auto z = toStyleFromCSSValue<Number<>>(state, protect(list->item(2)));
+    auto angle = toStyleFromCSSValue<Angle<>>(state, protect(list->item(3)));
 
     return RotateTransformFunction::create(x, y, z, angle, TransformFunctionType::Rotate3D);
 }

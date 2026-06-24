@@ -23,7 +23,7 @@ REAL_SWIFTC=swiftc
 args=()
 
 # CMake's Swift link rule injects <LANGUAGE_COMPILE_FLAGS> into the link
-# command, which includes -g, which causes swiftc to run dsymutil. 
+# command, which includes -g, which causes swiftc to run dsymutil.
 # dsymutil is super expensive, and we don't need it because we have DWARF
 # debug info in our object files.
 linking=
@@ -34,6 +34,18 @@ for arg in "$@"; do
 done
 
 for arg in "$@"; do
+    if [[ "$arg" == @*.platform-swift-args.resp && -f "${arg#@}" ]]; then
+        # Expand our resp in-process: the swift driver doesn't expand @-files
+        # under -explicit-module-build, and emitting tokens directly bypasses
+        # the case-statement's -D doubling — which would otherwise leak
+        # Platform.h-derived defines into the clang importer. Other @-files
+        # (CMake's link/compile rsp) pass through; swiftc expands them.
+        while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            args+=("$line")
+        done < "${arg#@}"
+        continue
+    fi
     if [[ -n "$pass_next_verbatim" ]]; then
         args+=("$arg")
         pass_next_verbatim=
@@ -57,6 +69,17 @@ for arg in "$@"; do
             fi
             ;;
         "-include") skip_next=1 ;;
+        "-fuse-ld="*)
+            args+=("-Xcc" "$arg")
+            ;;
+        # swiftc does not understand clang-specific include flags like
+        # -isystem / -iquote / -idirafter; wrap them (and their following
+        # path argument) as -Xcc so they reach the Clang importer instead
+        # of being rejected at parse time.
+        "-isystem"|"-iquote"|"-idirafter"|"-isysroot")
+            args+=("-Xcc" "$arg" "-Xcc")
+            pass_next_verbatim=1
+            ;;
         # CMake leaks clang linker flags into swiftc; translate them.
         "-compatibility_version"|"-current_version")
             args+=("-Xlinker" "$arg")
@@ -76,21 +99,10 @@ for arg in "$@"; do
         "--original-swift-compiler="*)
             REAL_SWIFTC="${arg#--original-swift-compiler=}"
             ;;
-        "-D"*)
-            # Propagate -D to both swiftc (Swift conditionals) and -Xcc -D
-            # (Clang importer). EXCEPT for cmake-build-mode defines that signal
-            # to our own headers we're building under cmake — propagating those
-            # to the Clang importer makes SDK framework PCMs (e.g. JSC's
-            # config.h) take their cmake-only branches and look for headers
-            # like cmakeconfig.h that don't exist in the SDK build context.
-            case "$arg" in
-                "-DBUILDING_WITH_CMAKE"*|"-DHAVE_CONFIG_H"*)
-                    args+=("$arg")
-                    ;;
-                *)
-                    args+=("$arg" "-Xcc" "$arg")
-                    ;;
-            esac
+        "-D"*"="*)
+            # Swift conditional-compilation flags are valueless; the importer's
+            # -D set comes from _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS, so
+            # valued target_compile_definitions are dropped here.
             ;;
         *)
             if [[ -n "$skip_next" ]]; then

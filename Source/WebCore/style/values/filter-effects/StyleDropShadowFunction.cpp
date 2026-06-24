@@ -30,9 +30,8 @@
 #include "CSSFilterFunctionDescriptor.h"
 #include "FEDropShadow.h"
 #include "FilterOperation.h"
-#include "RenderStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StyleColor.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
@@ -65,7 +64,7 @@ IntOutsets DropShadow::calculateOutsets(ZoomFactor zoom) const
 
 // MARK: - Conversion
 
-auto ToCSS<DropShadow>::operator()(const DropShadow& value, const RenderStyle& style) -> CSS::DropShadow
+auto ToCSS<DropShadow>::operator()(const DropShadow& value, const Style::ComputedStyle& style) -> CSS::DropShadow
 {
     return {
         .color = toCSS(value.color, style),
@@ -87,7 +86,7 @@ auto ToStyle<CSS::DropShadow>::operator()(const CSS::DropShadow& value, const Bu
 
 // MARK: - Evaluation
 
-auto Evaluation<DropShadow, Ref<FilterEffect>>::operator()(const DropShadow& value, const RenderStyle& style) -> Ref<FilterEffect>
+auto Evaluation<DropShadow, Ref<FilterEffect>>::operator()(const DropShadow& value, const Style::ComputedStyle& style) -> Ref<FilterEffect>
 {
     auto zoom = style.usedZoomForLength();
 
@@ -101,7 +100,7 @@ auto Evaluation<DropShadow, Ref<FilterEffect>>::operator()(const DropShadow& val
 
 // MARK: - Platform
 
-auto ToPlatform<DropShadow>::operator()(const DropShadow& value, const RenderStyle& style) -> Ref<FilterOperation>
+auto ToPlatform<DropShadow>::operator()(const DropShadow& value, const Style::ComputedStyle& style) -> Ref<FilterOperation>
 {
     auto zoom = style.usedZoomForLength();
 

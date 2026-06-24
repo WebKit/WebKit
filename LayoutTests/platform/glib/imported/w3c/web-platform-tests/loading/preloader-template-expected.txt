@@ -1,3 +1,0 @@
-
-PASS Things inside templates are not preloaded
-

@@ -81,7 +81,7 @@ RefPtr<HTMLImageElement> HTMLMapElement::imageElement()
 {
     if (m_name.isEmpty())
         return nullptr;
-    return treeScope().imageElementByUsemap(m_name);
+    return protect(treeScope())->imageElementByUsemap(m_name);
 }
 
 void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -103,9 +103,9 @@ void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomStrin
             return;
 
         if (isInTreeScope()) {
-            treeScope().removeImageMap(*this, oldMapName, m_registeredId);
+            protect(treeScope())->removeImageMap(*this, oldMapName, m_registeredId);
             m_registeredId = newId;
-            treeScope().addImageMap(*this, m_name, m_registeredId);
+            protect(treeScope())->addImageMap(*this, m_name, m_registeredId);
         } else
             m_registeredId = newId;
     }
@@ -121,7 +121,7 @@ Node::NeedsPostConnectionSteps HTMLMapElement::insertionSteps(InsertionType inse
     Node::NeedsPostConnectionSteps request = HTMLElement::insertionSteps(insertionType, parentOfInsertedTree);
     if (insertionType.treeScopeChanged) {
         m_registeredId = getIdAttribute();
-        treeScope().addImageMap(*this, m_name, m_registeredId);
+        protect(treeScope())->addImageMap(*this, m_name, m_registeredId);
     }
     return request;
 }
@@ -129,7 +129,7 @@ Node::NeedsPostConnectionSteps HTMLMapElement::insertionSteps(InsertionType inse
 void HTMLMapElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.treeScopeChanged)
-        oldParentOfRemovedTree.treeScope().removeImageMap(*this, m_name, m_registeredId);
+        protect(oldParentOfRemovedTree.treeScope())->removeImageMap(*this, m_name, m_registeredId);
     HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
 }
 

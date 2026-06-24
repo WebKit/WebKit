@@ -42,7 +42,7 @@ public:
     virtual ~LegacyInlineTextBox();
 
     RenderSVGInlineText& NODELETE renderer() const;
-    const RenderStyle& lineStyle() const LIFETIME_BOUND;
+    const Style::ComputedStyle& lineStyle() const LIFETIME_BOUND;
 
     LegacyInlineTextBox* prevTextBox() const LIFETIME_BOUND { return m_prevTextBox; }
     LegacyInlineTextBox* nextTextBox() const LIFETIME_BOUND { return m_nextTextBox; }

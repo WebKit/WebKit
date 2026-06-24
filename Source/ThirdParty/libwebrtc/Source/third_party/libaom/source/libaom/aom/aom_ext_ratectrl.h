@@ -12,6 +12,7 @@
 /*!\file
  * \brief Defines structs and callbacks needed for external rate control.
  *
+ * \attention Experimental. Not part of the stable API.
  */
 #ifndef AOM_AOM_AOM_EXT_RATECTRL_H_
 #define AOM_AOM_AOM_EXT_RATECTRL_H_
@@ -20,8 +21,8 @@
 extern "C" {
 #endif
 
-#include "./aom_integer.h"
-#include "./aom_tpl.h"
+#include "aom/aom_integer.h"
+#include "aom/aom_tpl.h"
 
 /*!\brief Current ABI version number
  *
@@ -31,7 +32,7 @@ extern "C" {
  * types, removing or reassigning enums, adding/removing/rearranging
  * fields to structures.
  */
-#define AOM_EXT_RATECTRL_ABI_VERSION (1 + AOM_TPL_ABI_VERSION)
+#define AOM_EXT_RATECTRL_ABI_VERSION (2 + AOM_TPL_ABI_VERSION)
 
 /*!\brief Corresponds to MAX_STATIC_GF_GROUP_LENGTH defined in ratectrl.h
  */
@@ -42,6 +43,12 @@ extern "C" {
  * Corresponds to REF_FRAMES defined in enums.h.
  */
 #define AOM_RC_MAX_REF_FRAMES 8
+
+/*!\brief Max layer depth.
+ *
+ * Corresponds to MAX_ARF_LAYERS defined in ratectrl.h.
+ */
+#define AOM_RC_MAX_ARF_LAYERS 6
 
 /*!\brief The type of the external rate control.
  *
@@ -138,7 +145,7 @@ typedef void *aom_rc_model_t;
 #define AOM_DEFAULT_RDMULT -1
 
 /*!\brief Superblock quantization parameters
- * Store the superblock quantiztaion parameters
+ * Store the superblock quantization parameters
  */
 typedef struct aom_sb_parameters {
   int q_index; /**< Quantizer step index [0..255]*/
@@ -153,6 +160,11 @@ typedef struct aom_sb_parameters {
 typedef struct aom_rc_encodeframe_decision {
   int q_index; /**< Required: Quantizer step index [0..255]*/
   int rdmult;  /**< Required: Frame level Lagrangian multiplier*/
+  // Whether per-superblock delta Q should be used.
+  // The rate control model should set the value pointed to by this member
+  // to 1 if per-superblock delta-Q is used for this frame, or 0 otherwise.
+  // This is a pointer to the flag in cpi->ext_ratectrl.
+  int *use_delta_q;
   /*!
    * Optional: Superblock quantization parameters
    * It is zero initialized by default. It will be set for key and ARF frames
@@ -229,7 +241,7 @@ typedef struct aom_rc_frame_stats {
   /*!
    * Weight assigned to this frame (or total weight for the collection of
    * frames) currently based on intra factor and brightness factor. This is used
-   * to distribute bits betweeen easier and harder frames.
+   * to distribute bits between easier and harder frames.
    */
   double weight;
   /*!
@@ -392,6 +404,7 @@ typedef struct aom_rc_config {
   int min_base_q_index;      /**< for VBR mode only */
   int max_base_q_index;      /**< for VBR mode only */
   int base_qp;               /**< base QP for leaf frames, 0-255 */
+  int superblock_size;       /**< 64 or 128 */
 } aom_rc_config_t;
 
 /*!\brief Control what ref frame to use and its index.
@@ -407,22 +420,71 @@ typedef struct aom_rc_ref_frame {
   aom_rc_ref_name_t name[AOM_RC_MAX_REF_FRAMES];
 } aom_rc_ref_frame_t;
 
+/*!\brief A single reference frame.
+ */
+typedef struct aom_rc_single_ref_frame {
+  int index;              /**< Ref frame index. */
+  aom_rc_ref_name_t name; /**< Ref frame name. */
+} aom_rc_single_ref_frame_t;
+
+/*!\brief A single frame in the GOP.
+ */
+typedef struct aom_rc_gop_frame {
+  // Basic info
+  int order_idx;   /**< Index in display order within a GOP, starting at 0. */
+  int coding_idx;  /**< Index in coding order within a GOP, starting at 0. */
+  int display_idx; /**< The number of displayed frames preceding this frame in a
+                      GOP. */
+  int order_hint;  /**< Index in display order since a key frame. */
+  int global_order_idx; /**< Index in display order in the whole video chunk. */
+  int global_coding_idx; /**< Index in coding order in the whole video chunk. */
+  int is_key_frame;      /**< Whether this frame is a key frame. */
+  aom_rc_frame_update_type_t update_type; /**< The type of frame. */
+
+  // Reference frame info
+  /**
+   * For an overlay or show_existing frame: index of primary reference frame;
+   * otherwise -1.
+   */
+  int colocated_ref_idx;
+  /**
+   * The reference index that this frame should be updated to. -1 when this
+   * frame will not serve as a reference frame.
+   */
+  int update_ref_idx;
+  /**
+   * Additional bits to set in refresh_frame_flags, to allow extra frames to be
+   * evicted from the DPB. -1 for not set.
+   */
+  int extra_refresh_frame_flags;
+  /**
+   * Candidate reference frames which may be used for coding the current frame.
+   */
+  aom_rc_ref_frame_t ref_frame_list;
+  int layer_depth; /**< Layer depth in the GOP structure. */
+  /**
+   * Primary reference frame (used to update current frame's initial probability
+   * model).
+   */
+  aom_rc_single_ref_frame_t primary_ref_frame;
+} aom_rc_gop_frame_t;
+
 /*!\brief The decision made by the external rate control model to set the
- * group of picture.
+ * group of picture. This struct represents a list of GOPs.
  */
 typedef struct aom_rc_gop_decision {
-  int gop_coding_frames; /**< The number of frames of this GOP */
-  int use_alt_ref;       /**< Whether to use alt ref for this GOP */
-  int use_key_frame;     /**< Whether to set key frame for this GOP */
-  /*!
-   * Frame type for each frame in this GOP.
-   * This will be populated to |update_type| in GF_GROUP defined in firstpass.h
+  int show_frame_count;         /**< Number of visible frames in this GOP. */
+  int order_hint_offset;        /**< Order hint offset for this GOP. */
+  int global_order_idx_offset;  /**< Global order index offset for this GOP. */
+  int global_coding_idx_offset; /**< Global coding index offset for this GOP. */
+  int is_scene_cut; /**< Whether this GOP starts with a scene cut. */
+  /**
+   * The adjustment ratio, based on which the base QP index of this GOP will be
+   * adjusted from RateControlParam::base_q_index.
    */
-  aom_rc_frame_update_type_t update_type[AOM_RC_MAX_STATIC_GF_GROUP_LENGTH + 2];
-  /*! Ref frame buffer index to be updated for each frame in this GOP. */
-  int update_ref_index[AOM_RC_MAX_STATIC_GF_GROUP_LENGTH + 2];
-  /*! Ref frame list to be used for each frame in this GOP. */
-  aom_rc_ref_frame_t ref_frame_list[AOM_RC_MAX_STATIC_GF_GROUP_LENGTH + 2];
+  double base_q_ratio;
+  aom_rc_gop_frame_t *gop_frame_list; /**< List of frames in this GOP. */
+  int gop_frame_count;
 } aom_rc_gop_decision_t;
 
 /*!\brief The decision made by the external rate control model to set the
@@ -469,7 +531,7 @@ typedef aom_rc_status_t (*aom_rc_send_firstpass_stats_cb_fn_t)(
  * \param[in]  tpl_gop_stats    TPL stats for current GOP
  */
 typedef aom_rc_status_t (*aom_rc_send_tpl_gop_stats_cb_fn_t)(
-    aom_rc_model_t rate_ctrl_model, const AomTplGopStats *tpl_gop_stats);
+    aom_rc_model_t rate_ctrl_model, const AomTplGopStats *extrc_tpl_gop_stats);
 
 /*!\brief Receive encode frame decision callback prototype
  *

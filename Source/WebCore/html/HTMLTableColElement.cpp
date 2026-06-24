@@ -87,7 +87,7 @@ void HTMLTableColElement::attributeChanged(const QualifiedName& name, const Atom
             if (CheckedPtr col = dynamicDowncast<RenderTableCol>(renderer())) {
                 int newWidth = parseHTMLInteger(newValue).value_or(0);
                 if (newWidth != col->width())
-                    col->setNeedsLayoutAndPreferredWidthsUpdate();
+                    col->setNeedsLayoutAndInvalidateContentLogicalWidths();
             }
         }
     }

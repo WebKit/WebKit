@@ -259,7 +259,7 @@ TEST(RTCErrorOrTest, BuildString) {
   EXPECT_STREQ(error.message(), "StringyBuilder #2");
 }
 
-// Tests a non macro based alternative to `LOG_AND_RETURN_ERROR`.
+// Tests `RTC_LOG_ERROR`.
 TEST(RTCErrorOrTest, BuildStringLog) {
   class LogSinkImpl : public LogSink {
    public:
@@ -270,7 +270,7 @@ TEST(RTCErrorOrTest, BuildStringLog) {
   } log_monitor;
 
   auto foo = [&]() {
-    return LOG_ERROR(RTCError::InvalidParameter() << "BuildStringLog");
+    return RTC_LOG_ERROR(RTCError::InvalidParameter("BuildStringLog"));
   };
 
   LogMessage::AddLogToStream(&log_monitor, LS_ERROR);

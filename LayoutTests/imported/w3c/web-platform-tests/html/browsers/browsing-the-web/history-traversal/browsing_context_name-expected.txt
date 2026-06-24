@@ -3,8 +3,13 @@ page load
 Step 1
 iframe onload
 Step 2
-iframe onload
 Step 3
+iframe onload
+Step 4
+Step 5
+iframe onload
+Step 6
+Step 7
 
-FAIL Retaining window.name on history traversal assert_equals: expected 2 but got 1
+PASS Retaining window.name on history traversal
 

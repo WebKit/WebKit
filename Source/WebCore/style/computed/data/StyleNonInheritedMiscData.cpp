@@ -58,6 +58,7 @@ NonInheritedMiscData::NonInheritedMiscData()
     , justifyItems(ComputedStyle::initialJustifyItems())
     , justifySelf(ComputedStyle::initialJustifySelf())
     , objectPosition(ComputedStyle::initialObjectPosition())
+    , objectViewBox(ComputedStyle::initialObjectViewBox())
     , order(ComputedStyle::initialOrder())
     , tableLayout(static_cast<unsigned>(ComputedStyle::initialTableLayout()))
     , appearance(static_cast<unsigned>(ComputedStyle::initialAppearance()))
@@ -91,6 +92,7 @@ NonInheritedMiscData::NonInheritedMiscData(const NonInheritedMiscData& o)
     , justifyItems(o.justifyItems)
     , justifySelf(o.justifySelf)
     , objectPosition(o.objectPosition)
+    , objectViewBox(o.objectViewBox)
     , order(o.order)
     , hasAttrContent(o.hasAttrContent)
     , hasDisplayAffectedByAnimations(o.hasDisplayAffectedByAnimations)
@@ -138,6 +140,7 @@ bool NonInheritedMiscData::operator==(const NonInheritedMiscData& o) const
         && justifyItems == o.justifyItems
         && justifySelf == o.justifySelf
         && objectPosition == o.objectPosition
+        && objectViewBox == o.objectViewBox
         && order == o.order
         && hasAttrContent == o.hasAttrContent
         && hasDisplayAffectedByAnimations == o.hasDisplayAffectedByAnimations
@@ -190,6 +193,7 @@ void NonInheritedMiscData::dumpDifferences(TextStream& ts, const NonInheritedMis
     LOG_IF_DIFFERENT(justifyItems);
     LOG_IF_DIFFERENT(justifySelf);
     LOG_IF_DIFFERENT(objectPosition);
+    LOG_IF_DIFFERENT(objectViewBox);
     LOG_IF_DIFFERENT(order);
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasAttrContent);

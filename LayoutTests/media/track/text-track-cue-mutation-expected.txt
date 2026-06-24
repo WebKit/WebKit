@@ -1,0 +1,7 @@
+
+PASS removeCue: throws NotFoundError when cue is not in the track's list
+PASS removeCue: throws NotFoundError when cue belongs to a different track
+PASS removeCue: removes the cue from the list and clears cue.track
+PASS removeCue: removing twice throws NotFoundError on the second call
+PASS removeCue: preserves order of remaining cues
+

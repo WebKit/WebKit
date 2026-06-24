@@ -3,9 +3,6 @@ Test DOMJIT nodeType accessor works.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 PASS (
             function test1(element, result)
             {
@@ -96,4 +93,7 @@ PASS (
                 return true;
             }
         )(target, 11) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

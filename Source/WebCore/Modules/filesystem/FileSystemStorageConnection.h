@@ -93,7 +93,7 @@ public:
     virtual void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) = 0;
     virtual void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleCallback&&) = 0;
     virtual void addGlobalIdentifierReference(ClientOrigin&&, FileSystemHandleGlobalIdentifier) = 0;
-    virtual void removeGlobalIdentifierReference(ClientOrigin&&, FileSystemHandleGlobalIdentifier) = 0;
+    virtual void removeGlobalIdentifierReferences(ClientOrigin&&, Vector<FileSystemHandleGlobalIdentifier>&&) = 0;
     virtual void resolveGlobalIdentifier(ClientOrigin&&, FileSystemHandleGlobalIdentifier, ResolveGlobalIdentifierCallback&&) = 0;
 
     WEBCORE_EXPORT bool errorFileSystemWritable(FileSystemWritableFileStreamIdentifier);
@@ -117,6 +117,10 @@ public:
 
     FileSystemHandleKeepAlive(const FileSystemHandleKeepAlive&) = delete;
     FileSystemHandleKeepAlive& operator=(const FileSystemHandleKeepAlive&) = delete;
+
+    WEBCORE_EXPORT FileSystemHandleKeepAlive copy() const;
+
+    Markable<FileSystemHandleGlobalIdentifier> globalIdentifier() const { return m_globalIdentifier; }
 
 private:
     Markable<FileSystemHandleGlobalIdentifier> m_globalIdentifier;

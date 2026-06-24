@@ -140,11 +140,16 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileFunc, (JSGlobalObject* globalObject, 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (!globalObject->webAssemblyEnabled()) [[unlikely]] {
+        auto error = createJSWebAssemblyCompileError(globalObject, vm, globalObject->webAssemblyDisabledErrorMessage());
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, error)));
+    }
+
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
     RETURN_IF_EXCEPTION(scope, { });
 
     Vector<uint8_t> source = createSourceBufferFromValue(vm, globalObject, callFrame->argument(0));
-    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(vm, scope)));
 
     JSObject* compileOptionsObject = nullptr;
     if (Options::useWasmJSStringBuiltins()) {
@@ -177,14 +182,14 @@ void JSWebAssembly::webAssemblyModuleValidateAsync(JSGlobalObject* globalObject,
 
             if (!result.has_value()) [[unlikely]] {
                 throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
-                promise->rejectWithCaughtException(globalObject, scope);
+                promise->rejectWithCaughtException(vm, scope);
                 return;
             }
             if (compileOptions) {
                 auto errorMessage = compileOptions->validateBuiltinsAndImportedStrings(result.value());
                 if (errorMessage.has_value()) {
                     throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, errorMessage.value()));
-                    promise->rejectWithCaughtException(globalObject, scope);
+                    promise->rejectWithCaughtException(vm, scope);
                     return;
                 }
                 result.value()->applyCompileOptions(compileOptions.value());
@@ -206,13 +211,13 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
     // When called via the module loader, the memory is not available yet at this step, so we skip initializing the memory here.
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::tryCreate(vm, globalObject->webAssemblyInstanceStructure(), globalObject, moduleKey, module, importObject, creationMode, WTF::move(provider));
     if (scope.exception()) [[unlikely]] {
-        promise->rejectWithCaughtException(globalObject, scope);
+        promise->rejectWithCaughtException(vm, scope);
         return;
     }
 
     instance->initializeImports(globalObject, importObject, creationMode);
     if (scope.exception()) [[unlikely]] {
-        promise->rejectWithCaughtException(globalObject, scope);
+        promise->rejectWithCaughtException(vm, scope);
         return;
     }
 
@@ -229,7 +234,7 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
             JSGlobalObject* globalObject = instance->realm();
             instance->finalizeCreation(vm, globalObject, WTF::move(calleeGroup), creationMode);
             if (scope.exception()) [[unlikely]] {
-                promise->rejectWithCaughtException(globalObject, scope);
+                promise->rejectWithCaughtException(vm, scope);
                 return;
             }
 
@@ -271,7 +276,7 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
 
     Vector<uint8_t> source = createSourceBufferFromValue(vm, globalObject, buffer);
     if (scope.exception()) [[unlikely]] {
-        promise->rejectWithCaughtException(globalObject, scope);
+        promise->rejectWithCaughtException(vm, scope);
         return;
     }
 
@@ -287,14 +292,14 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
 
             if (!result.has_value()) [[unlikely]] {
                 throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
-                promise->rejectWithCaughtException(globalObject, scope);
+                promise->rejectWithCaughtException(vm, scope);
                 return;
             }
             if (compileOptions) {
                 auto errorMessage = compileOptions->validateBuiltinsAndImportedStrings(result.value());
                 if (errorMessage.has_value()) {
                     throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, errorMessage.value()));
-                    promise->rejectWithCaughtException(globalObject, scope);
+                    promise->rejectWithCaughtException(vm, scope);
                     return;
                 }
                 result.value()->applyCompileOptions(compileOptions.value());
@@ -304,13 +309,13 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
 
             const Identifier moduleKey = JSValue(moduleKeyCell).toPropertyKey(globalObject);
             if (scope.exception()) [[unlikely]] {
-                promise->rejectWithCaughtException(globalObject, scope);
+                promise->rejectWithCaughtException(vm, scope);
                 return;
             }
 
             instantiate(vm, globalObject, promise, module, importObject, WTF::move(sourceProvider), moduleKey, resolveKind, creationMode, /* alwaysAsync */ false);
             if (scope.exception()) [[unlikely]] {
-                promise->rejectWithCaughtException(globalObject, scope);
+                promise->rejectWithCaughtException(vm, scope);
                 return;
             }
         });
@@ -333,6 +338,11 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateFunc, (JSGlobalObject* globalObje
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!globalObject->webAssemblyEnabled()) [[unlikely]] {
+        auto error = createJSWebAssemblyCompileError(globalObject, vm, globalObject->webAssemblyDisabledErrorMessage());
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, error)));
+    }
 
     auto [taintedness, url] = sourceTaintedOriginFromStack(vm, callFrame);
     RefPtr<SourceProvider> provider = StringSourceProvider::create("[wasm code]"_s, SourceOrigin(url), String(), taintedness, TextPosition(), SourceProviderSourceType::Program);
@@ -433,6 +443,11 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileStreamingFunc, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (!globalObject->webAssemblyEnabled()) [[unlikely]] {
+        auto error = createJSWebAssemblyCompileError(globalObject, vm, globalObject->webAssemblyDisabledErrorMessage());
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, error)));
+    }
+
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
 
     std::optional<WebAssemblyCompileOptions> compileOptions;
@@ -440,20 +455,20 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileStreamingFunc, (JSGlobalObject* globa
         JSValue compileOptionsArgument = callFrame->argument(1);
         JSObject* compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
-            promise->reject(vm, globalObject, createTypeError(globalObject, "second argument to WebAssembly.compileStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)));
+            promise->reject(vm, createTypeError(globalObject, "second argument to WebAssembly.compileStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)));
             RELEASE_AND_RETURN(scope, JSValue::encode(promise));
         }
         compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
         if (scope.exception()) [[unlikely]]
-            RELEASE_AND_RETURN(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
+            RELEASE_AND_RETURN(scope, JSValue::encode(promise->rejectWithCaughtException(vm, scope)));
     }
 
     auto* context = JSWebAssemblyStreamingContext::create(vm, promise, nullptr, WTF::move(compileOptions));
 
     JSPromise* sourcePromise = JSPromise::resolvedPromise(globalObject, callFrame->argument(0));
-    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(vm, scope)));
 
-    sourcePromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::WebAssemblyCompileStreaming, nullptr, context);
+    sourcePromise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::WebAssemblyCompileStreaming, nullptr, context);
     return JSValue::encode(promise);
 }
 
@@ -470,12 +485,17 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingFunc, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (!globalObject->webAssemblyEnabled()) [[unlikely]] {
+        auto error = createJSWebAssemblyCompileError(globalObject, vm, globalObject->webAssemblyDisabledErrorMessage());
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, error)));
+    }
+
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
 
     JSValue importArgument = callFrame->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject) [[unlikely]] {
-        promise->reject(vm, globalObject, createTypeError(globalObject, "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(importArgument)));
+        promise->reject(vm, createTypeError(globalObject, "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(importArgument)));
         RELEASE_AND_RETURN(scope, JSValue::encode(promise));
     }
 
@@ -484,20 +504,20 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingFunc, (JSGlobalObject* g
         JSValue compileOptionsArgument = callFrame->argument(2);
         JSObject* compileOptionsObject = compileOptionsArgument.getObject();
         if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]] {
-            promise->reject(vm, globalObject, createTypeError(globalObject, "third argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)));
+            promise->reject(vm, createTypeError(globalObject, "third argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)));
             RELEASE_AND_RETURN(scope, JSValue::encode(promise));
         }
         compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
         if (scope.exception()) [[unlikely]]
-            RELEASE_AND_RETURN(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
+            RELEASE_AND_RETURN(scope, JSValue::encode(promise->rejectWithCaughtException(vm, scope)));
     }
 
     auto* context = JSWebAssemblyStreamingContext::create(vm, promise, importObject, WTF::move(compileOptions));
 
     JSPromise* sourcePromise = JSPromise::resolvedPromise(globalObject, callFrame->argument(0));
-    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(vm, scope)));
 
-    sourcePromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::WebAssemblyInstantiateStreaming, nullptr, context);
+    sourcePromise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::WebAssemblyInstantiateStreaming, nullptr, context);
     return JSValue::encode(promise);
 }
 

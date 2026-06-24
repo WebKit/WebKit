@@ -77,15 +77,6 @@ TEST(WebKit, ResponsivenessTimerCrash)
         webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
         
         [webView addObserver:observer.get() forKeyPath:@"_webProcessIsResponsive" options:0 context:nullptr];
-
-        auto pageRef = [webView _pageRefForTransitionToWKWebView];
-        
-        for (size_t i = 0; i < 50; ++i) {
-            RetainPtr<id> observableState = adoptNS(WKPageCreateObservableState(pageRef));
-            [observableState.get() addObserver:observer.get() forKeyPath:@"_webProcessIsResponsive" options:0 context:nullptr];
-            observableStates.add(WTF::move(observableState));
-        }
-
         [webView synchronouslyLoadHTMLString:@"<script>document.addEventListener('keydown', function(){while(1){}});</script>"];
         [webView typeCharacter:'a'];
     }

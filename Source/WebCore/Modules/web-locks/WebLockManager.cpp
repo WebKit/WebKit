@@ -33,6 +33,7 @@
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSValueInWrappedObjectInlines.h"
 #include "JSWebLockManagerSnapshot.h"
 #include "NavigatorBase.h"
 #include "Page.h"
@@ -67,8 +68,15 @@ struct WebLockManager::LockRequest {
     WebLockMode mode { WebLockMode::Exclusive };
     RefPtr<WebLockGrantedCallback> grantedCallback;
     RefPtr<AbortSignal> signal;
+    std::optional<uint32_t> signalAlgorithmIdentifier;
 
     bool NODELETE isValid() const { return !!lockIdentifier; }
+
+    void removeSignalAlgorithm()
+    {
+        if (signal && signalAlgorithmIdentifier)
+            protect(signal)->removeAlgorithm(*signalAlgorithmIdentifier);
+    }
 };
 
 class WebLockManager::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main> {
@@ -226,21 +234,22 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
     }
 
     if (options.signal && options.signal->aborted()) {
-        releasePromise->reject(ExceptionCode::AbortError, "WebLockOptions's signal is aborted"_s);
+        releasePromise->reject<IDLAny>(options.signal->reason().getValue());
         return;
     }
 
     WebLockIdentifier lockIdentifier = WebLockIdentifier::generate();
     m_releasePromises.add(lockIdentifier, WTF::move(releasePromise));
 
+    std::optional<uint32_t> signalAlgorithmIdentifier;
     if (RefPtr signal = options.signal) {
-        signal->addAlgorithm([weakThis = WeakPtr { *this }, lockIdentifier](JSC::JSValue reason) mutable {
+        signalAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }, lockIdentifier](JSC::JSValue reason) mutable {
             if (weakThis)
                 weakThis->signalToAbortTheRequest(lockIdentifier, reason);
         });
     }
 
-    m_pendingRequests.add(lockIdentifier, LockRequest { lockIdentifier, name, options.mode, WTF::move(grantedCallback), WTF::move(options.signal) });
+    m_pendingRequests.add(lockIdentifier, LockRequest { lockIdentifier, name, options.mode, WTF::move(grantedCallback), WTF::move(options.signal), signalAlgorithmIdentifier });
 
     m_mainThreadBridge->requestLock(lockIdentifier, name, options, [weakThis = WeakPtr { *this }, lockIdentifier](bool success) mutable {
         if (weakThis)
@@ -257,6 +266,8 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
         auto request = manager.m_pendingRequests.take(lockIdentifier);
         if (!request.isValid())
             return;
+
+        request.removeSignalAlgorithm();
 
         if (success) {
             if (request.signal && request.signal->aborted()) {
@@ -334,8 +345,10 @@ void WebLockManager::signalToAbortTheRequest(WebLockIdentifier lockIdentifier, J
     auto& request = requestsIterator->value;
 
     m_mainThreadBridge->abortLockRequest(*request.lockIdentifier, request.name, [weakThis = WeakPtr { *this }, lockIdentifier](bool wasAborted) {
-        if (wasAborted && weakThis)
-            weakThis->m_pendingRequests.remove(lockIdentifier);
+        if (wasAborted && weakThis) {
+            if (auto request = weakThis->m_pendingRequests.take(lockIdentifier); request.isValid())
+                request.removeSignalAlgorithm();
+        }
     });
     if (RefPtr releasePromise = m_releasePromises.take(lockIdentifier))
         releasePromise->reject<IDLAny>(reason);
@@ -362,6 +375,9 @@ void WebLockManager::clientIsGoingAway()
 {
     if (m_pendingRequests.isEmpty() && m_releasePromises.isEmpty())
         return;
+
+    for (auto& request : m_pendingRequests.values())
+        request.removeSignalAlgorithm();
 
     // Reject all pending promises before clearing
     for (Ref promise : m_releasePromises.values())

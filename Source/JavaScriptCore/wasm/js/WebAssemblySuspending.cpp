@@ -192,9 +192,8 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
 JSFunctionWithFields* createWebAssemblySuspendingFunction(VM& vm, JSGlobalObject* globalObject, JSValue callable)
 {
     const String name = "WebAssembly.Suspending"_s;
-    NativeExecutable* executable = vm.getHostFunction(enterWebAssemblySuspendingFunction, ImplementationVisibility::Private, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
-    constexpr unsigned length = 0;
-    JSFunctionWithFields* function = JSFunctionWithFields::create(vm, globalObject, executable, length, name);
+    NativeExecutable* executable = vm.getHostFunction(enterWebAssemblySuspendingFunction, ImplementationVisibility::Private, NoIntrinsic, callHostFunctionAsConstructor, nullptr, 0, name);
+    JSFunctionWithFields* function = JSFunctionWithFields::create(vm, globalObject, executable);
     function->setField(vm, JSFunctionWithFields::Field::WebAssemblySuspendingWrappedCallable, callable);
     return function;
 }

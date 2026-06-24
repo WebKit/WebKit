@@ -19,3 +19,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/svg-get-bounding-client-rect-in-non-rendered-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/svg-image-intrinsic-size-with-cssstyle-auto-dynamic-image-change.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/geometry/svg-image-intrinsic-size-with-cssstyle-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/svg-length-convert-to-percentage-precision.html

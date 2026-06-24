@@ -54,7 +54,7 @@ auto CSSValueConversion<ScrollFunction>::operator()(BuilderState& state, const C
     };
 }
 
-Ref<CSSValue> CSSValueCreation<ScrollFunction>::operator()(CSSValuePool& pool, const RenderStyle& style, const ScrollFunction& value)
+Ref<CSSValue> CSSValueCreation<ScrollFunction>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const ScrollFunction& value)
 {
     return CSSScrollValue::create(
         createCSSValue(pool, style, value.parameters.scroller),
@@ -64,7 +64,7 @@ Ref<CSSValue> CSSValueCreation<ScrollFunction>::operator()(CSSValuePool& pool, c
 
 // MARK: - Serialization
 
-void Serialize<ScrollFunctionParameters>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const ScrollFunctionParameters& value)
+void Serialize<ScrollFunctionParameters>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const ScrollFunctionParameters& value)
 {
     auto hasScroller = value.scroller != Scroller::Nearest;
     auto hasAxis = value.axis != ScrollAxis::Block;

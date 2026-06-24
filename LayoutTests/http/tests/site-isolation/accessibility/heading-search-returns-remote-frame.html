@@ -1,0 +1,47 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<button>start</button>
+<h1>Local heading</h1>
+<iframe id="iframe" onload="runTest()" src="http://localhost:8000/site-isolation/resources/iframe.html"></iframe>
+
+<script>
+var output = "This test ensures the accessibility search used by the VoiceOver rotor returns a remote frame placeholder for an out-of-process iframe on iOS.\n\n";
+
+var container;
+var startElement;
+
+// The heading rotor search runs in-process and does not descend into out-of-process iframes; instead it
+// returns the iframe as an AXRemoteElement placeholder (in tree order) for VoiceOver to descend into.
+function headingSearchReturnsRemoteFrame() {
+    var results = container.uiElementsForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false, false, 10);
+    for (var index = 0; index < results.length; index++) {
+        if (results[index].isRemotePlatformElement)
+            return true;
+    }
+    return false;
+}
+
+function runTest() {
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        setTimeout(async function() {
+            container = accessibilityController.rootElement;
+            startElement = accessibilityController.focusedElement.childAtIndex(0);
+
+            await waitFor(headingSearchReturnsRemoteFrame);
+            output += expect("headingSearchReturnsRemoteFrame()", "true");
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+}
+</script>
+</body>
+</html>

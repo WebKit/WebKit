@@ -1,15 +1,14 @@
 <!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
 description('Tests that pages that use DeviceOrientation are not put in the page cache.');
+window.jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
-else
+if (!window.testRunner)
     debug('This test can not be run without the TestRunner');
 
 var pageOneOnloadCount = 0;
@@ -24,9 +23,6 @@ function reportPageOneOnload() {
 
 debug("Main page opening resources/cached-page-1.html");
 window.open("resources/cached-page-1.html");
-
-window.jsTestIsAsync = true;
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -31,8 +31,8 @@
 #include "CSSKeywordValueInlines.h"
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
-#include "StyleLengthWrapper+Blending.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
+#include "StylePrimitiveNumericOrKeyword+Blending.h"
+#include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
@@ -43,46 +43,9 @@ namespace Style {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<MaskBorderWidth::Value> { auto operator()(const MaskBorderWidth::Value&, const RenderStyle&) -> CSS::MaskBorderWidth::Value; };
-template<> struct ToStyle<CSS::MaskBorderWidth::Value> { auto operator()(const CSS::MaskBorderWidth::Value&, const BuilderState&) -> MaskBorderWidth::Value; };
+DEFINE_TYPE_MAPPING(CSS::MaskBorderWidth::Value, MaskBorderWidth::Value);
 
-auto ToCSS<MaskBorderWidth::Value>::operator()(const MaskBorderWidth::Value& value, const RenderStyle& style) -> CSS::MaskBorderWidth::Value
-{
-    return WTF::switchOn(value,
-        [&](const CSS::Keyword::Auto& keyword) -> CSS::MaskBorderWidth::Value {
-            return keyword;
-        },
-        [&](const MaskBorderWidth::Value::LengthPercentage& lengthPercentage) -> CSS::MaskBorderWidth::Value {
-            // FIXME: Support direct conversion from Style::LengthWrapperBase<LengthPercentage<...>> to CSS::LengthPercentage<...>.
-            return lengthPercentage.switchOnUsingSpecified(
-                [&](const auto& specified) -> CSS::MaskBorderWidth::Value {
-                    return toCSS(specified, style);
-                }
-            );
-        },
-        [&](const MaskBorderWidth::Value::Number& number) -> CSS::MaskBorderWidth::Value {
-            return toCSS(number, style);
-        }
-    );
-}
-
-auto ToStyle<CSS::MaskBorderWidth::Value>::operator()(const CSS::MaskBorderWidth::Value& value, const BuilderState& state) -> MaskBorderWidth::Value
-{
-    return WTF::switchOn(value,
-        [&](const CSS::Keyword::Auto& keyword) -> MaskBorderWidth::Value {
-            return keyword;
-        },
-        [&](const CSS::MaskBorderWidth::Value::LengthPercentage& lengthPercentage) -> MaskBorderWidth::Value {
-            // FIXME: Support direct conversion from CSS::LengthPercentage<...> to Style::LengthWrapperBase<LengthPercentage<...>>.
-            return MaskBorderWidthValueLength { toStyle(lengthPercentage, state) };
-        },
-        [&](const CSS::MaskBorderWidth::Value::Number& number) -> MaskBorderWidth::Value {
-            return toStyle(number, state);
-        }
-    );
-}
-
-auto ToCSS<MaskBorderWidth>::operator()(const MaskBorderWidth& value, const RenderStyle& style) -> CSS::MaskBorderWidth
+auto ToCSS<MaskBorderWidth>::operator()(const MaskBorderWidth& value, const Style::ComputedStyle& style) -> CSS::MaskBorderWidth
 {
     return { toCSS(value.values, style) };
 }
@@ -110,7 +73,7 @@ auto CSSValueConversion<MaskBorderWidth>::operator()(BuilderState& state, const 
     return toStyleFromCSSValue<MaskBorderWidthValue::LengthPercentage>(state, *primitiveValue);
 }
 
-auto CSSValueCreation<MaskBorderWidth>::operator()(CSSValuePool&, const RenderStyle& style, const MaskBorderWidth& value) -> Ref<CSSValue>
+auto CSSValueCreation<MaskBorderWidth>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const MaskBorderWidth& value) -> Ref<CSSValue>
 {
     return CSSMaskBorderWidthValue::create(toCSS(value, style));
 }

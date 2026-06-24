@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !defined(BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_) && defined(__cplusplus)
+#ifndef BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_
 #define BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_
 
 #include <openssl/base.h>   // IWYU pragma: export
@@ -35,17 +35,17 @@ class OPENSSL_EXPORT SignatureVerifyCache {
   // std::unordered_map or similar can run into problems with std::hash before
   // C++20. (https://en.cppreference.com/w/cpp/container/unordered_map/find)
 
-  // |Store| is called to store the result of a verification for |key| as kValid
+  // `Store` is called to store the result of a verification for `key` as kValid
   // or kInvalid after a signature check.
   virtual void Store(const std::string &key, Value value) = 0;
 
-  // |Check| is called to fetch a cached value for a verification for |key|. If
+  // `Check` is called to fetch a cached value for a verification for `key`. If
   // the result is kValid, or kInvalid, signature checking is skipped and the
   // corresponding cached result is used.  If the result is kUnknown signature
-  // checking is performed and the corresponding result saved using |Store|.
+  // checking is performed and the corresponding result saved using `Store`.
   virtual Value Check(const std::string &key) = 0;
 };
 
 BSSL_NAMESPACE_END
 
-#endif  // BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_ && __cplusplus
+#endif  // BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_

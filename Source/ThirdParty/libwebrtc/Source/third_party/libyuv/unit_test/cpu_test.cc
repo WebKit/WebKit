@@ -48,7 +48,7 @@ TEST_F(LibYUVBaseTest, TestCpuId) {
     printf("Cpu Vendor: %s 0x%x 0x%x 0x%x\n",
            reinterpret_cast<char*>(&cpu_info[0]), cpu_info[0], cpu_info[1],
            cpu_info[2]);
-    EXPECT_EQ(12u, strlen(reinterpret_cast<char*>(&cpu_info[0])));
+    ASSERT_EQ(12u, strlen(reinterpret_cast<char*>(&cpu_info[0])));
 
     // CPU Family and Model
     // 3:0 - Stepping
@@ -327,8 +327,8 @@ TEST_F(LibYUVBaseTest, DISABLED_TestLinuxArm) {
   if (FileExists("../../unit_test/testdata/arm_v7.txt")) {
     printf("Note: testing to load \"../../unit_test/testdata/arm_v7.txt\"\n");
 
-    EXPECT_EQ(0, ArmCpuCaps("../../unit_test/testdata/arm_v7.txt"));
-    EXPECT_EQ(kCpuHasNEON, ArmCpuCaps("../../unit_test/testdata/tegra3.txt"));
+    ASSERT_EQ(0, ArmCpuCaps("../../unit_test/testdata/arm_v7.txt"));
+    ASSERT_EQ(kCpuHasNEON, ArmCpuCaps("../../unit_test/testdata/tegra3.txt"));
   } else {
     printf("WARNING: unable to load \"../../unit_test/testdata/arm_v7.txt\"\n");
   }
@@ -347,23 +347,23 @@ TEST_F(LibYUVBaseTest, DISABLED_TestLinuxArm) {
 #if defined(__linux__) && defined(__aarch64__)
 TEST_F(LibYUVBaseTest, TestLinuxAArch64) {
   // Values taken from a Cortex-A57 machine, only Neon available.
-  EXPECT_EQ(kCpuHasNEON, AArch64CpuCaps(0xffU, 0x0U));
+  ASSERT_EQ(kCpuHasNEON, AArch64CpuCaps(0xffU, 0x0U));
 
   // Values taken from a Google Pixel 7.
   int expected = kCpuHasNEON | kCpuHasNeonDotProd;
-  EXPECT_EQ(expected, AArch64CpuCaps(0x119fffU, 0x0U));
+  ASSERT_EQ(expected, AArch64CpuCaps(0x119fffU, 0x0U));
 
   // Values taken from a Google Pixel 8.
   expected = kCpuHasNEON | kCpuHasNeonDotProd | kCpuHasNeonI8MM | kCpuHasSVE |
              kCpuHasSVE2;
-  EXPECT_EQ(expected, AArch64CpuCaps(0x3fffffffU, 0x2f33fU));
+  ASSERT_EQ(expected, AArch64CpuCaps(0x3fffffffU, 0x2f33fU));
 
   // Values taken from a Neoverse N2 machine.
-  EXPECT_EQ(expected, AArch64CpuCaps(0x3fffffffU, 0x2f3ffU));
+  ASSERT_EQ(expected, AArch64CpuCaps(0x3fffffffU, 0x2f3ffU));
 
   // Check for SME feature detection.
   expected |= kCpuHasSME;
-  EXPECT_EQ(expected, AArch64CpuCaps(0x3fffffffU, 0x82f3ffU));
+  ASSERT_EQ(expected, AArch64CpuCaps(0x3fffffffU, 0x82f3ffU));
 
   // TODO: Check for SME2 feature detection from Apple M4
 }
@@ -373,10 +373,10 @@ TEST_F(LibYUVBaseTest, DISABLED_TestLinuxRVV) {
   if (FileExists("../../unit_test/testdata/riscv64.txt")) {
     printf("Note: testing to load \"../../unit_test/testdata/riscv64.txt\"\n");
 
-    EXPECT_EQ(0, RiscvCpuCaps("../../unit_test/testdata/riscv64.txt"));
-    EXPECT_EQ(kCpuHasRVV,
+    ASSERT_EQ(0, RiscvCpuCaps("../../unit_test/testdata/riscv64.txt"));
+    ASSERT_EQ(kCpuHasRVV,
               RiscvCpuCaps("../../unit_test/testdata/riscv64_rvv.txt"));
-    EXPECT_EQ(kCpuHasRVV | kCpuHasRVVZVFH,
+    ASSERT_EQ(kCpuHasRVV | kCpuHasRVVZVFH,
               RiscvCpuCaps("../../unit_test/testdata/riscv64_rvv_zvfh.txt"));
   } else {
     printf(
@@ -410,15 +410,15 @@ TEST_F(LibYUVBaseTest, MAYBE_TestSetCpuFlags) {
   // Test setting different CPU configurations.
   int cpu_flags = kCpuHasARM | kCpuHasNEON | kCpuInitialized;
   SetCpuFlags(cpu_flags);
-  EXPECT_EQ(cpu_flags, TestCpuFlag(-1));
+  ASSERT_EQ(cpu_flags, TestCpuFlag(-1));
 
   cpu_flags = kCpuHasX86 | kCpuInitialized;
   SetCpuFlags(cpu_flags);
-  EXPECT_EQ(cpu_flags, TestCpuFlag(-1));
+  ASSERT_EQ(cpu_flags, TestCpuFlag(-1));
 
   // Test that setting 0 turns auto-init back on.
   SetCpuFlags(0);
-  EXPECT_EQ(original_cpu_flags, TestCpuFlag(-1));
+  ASSERT_EQ(original_cpu_flags, TestCpuFlag(-1));
 
   // Restore the CPU flag mask.
   MaskCpuFlags(benchmark_cpu_info_);

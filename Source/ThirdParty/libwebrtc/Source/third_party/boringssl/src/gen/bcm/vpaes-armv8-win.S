@@ -1099,7 +1099,7 @@ vpaes_cbc_encrypt:
 	AARCH64_SIGN_LINK_REGISTER
 	cbz	x2, Lcbc_abort
 	cmp	w5, #0			// check direction
-	b.eq	vpaes_cbc_decrypt
+	b.eq	Lcbc_decrypt
 
 	stp	x29,x30,[sp,#-16]!
 	add	x29,sp,#0
@@ -1127,13 +1127,9 @@ Lcbc_abort:
 	AARCH64_VALIDATE_LINK_REGISTER
 	ret
 
-
-.def vpaes_cbc_decrypt
-   .type 32
-.endef
 .align	4
-vpaes_cbc_decrypt:
-	// Not adding AARCH64_SIGN_LINK_REGISTER here because vpaes_cbc_decrypt is jumped to
+Lcbc_decrypt:
+	// Not adding AARCH64_SIGN_LINK_REGISTER here because .Lcbc_decrypt is jumped to
 	// only from vpaes_cbc_encrypt which has already signed the return address.
 	stp	x29,x30,[sp,#-16]!
 	add	x29,sp,#0

@@ -102,7 +102,7 @@ private:
     bool collectSwapchainFormatsIfNeeded();
     enum class PollResult : bool;
     PollResult pollEvents();
-    std::unique_ptr<OpenXRSwapchain> createSwapchain(uint32_t width, uint32_t height, bool alpha) const;
+    std::unique_ptr<OpenXRSwapchain> createSwapchain(uint32_t width, uint32_t height, bool alpha, uint32_t faceCount = 1) const;
     void createReferenceSpacesIfNeeded(Box<RenderState>);
 #if ENABLE(WEBXR_HIT_TEST)
     XrSpace spaceForHitTest(const PlatformXR::NativeOriginInformation&) const;

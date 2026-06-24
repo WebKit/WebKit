@@ -24,7 +24,9 @@
 
 from __future__ import with_statement
 import argparse
+import glob
 import os
+import re
 import sys
 
 import webkit.messages
@@ -36,16 +38,39 @@ def main(argv):
     parser.add_argument('base_dir', help='Base directory for message receiver files')
     parser.add_argument('message_receivers', nargs='+', help='Message receiver files to process')
     parser.add_argument('--output-dir', help='Directory for output files')
+    parser.add_argument('--preserve-subdirs', action='store_true',
+                        help='Write *MessageReceiver.cpp to a subdirectory mirroring the .messages.in path')
+    parser.add_argument('--output-sources', metavar='FILE',
+                        help='Write a unified-source list of generated *MessageReceiver.cpp paths to FILE')
 
     args = parser.parse_args(argv[1:])
+
+    if args.output_sources:
+        attrs_by_name = {}
+        for sources_txt in glob.glob(os.path.join(args.base_dir, 'Sources*.txt')):
+            for line in open(sources_txt):
+                m = re.match(r'^(\w+)MessageReceiver\.cpp\b\s*(.*)', line)
+                if m:
+                    attrs_by_name[m.group(1)] = m.group(2).strip()
+        with open(args.output_sources, 'w') as f:
+            for message_receiver in args.message_receivers:
+                name = message_receiver.rsplit('/', 1).pop()
+                receiver_dir = os.path.dirname(message_receiver) if args.preserve_subdirs else ''
+                path = os.path.join(receiver_dir, '%sMessageReceiver.cpp' % name)
+                attrs = attrs_by_name.get(name, '')
+                f.write('%s %s\n' % (path, attrs) if attrs else '%s\n' % path)
+        return 0
 
     receivers = []
     output_dir = args.output_dir
     base_dir = args.base_dir
     receiver_header_files = []
+    receiver_dirs = {}
 
     for message_receiver in args.message_receivers:
         receiver_name = message_receiver.rsplit('/', 1).pop()
+        if args.preserve_subdirs:
+            receiver_dirs[receiver_name] = os.path.dirname(message_receiver)
 
         if os.path.exists('%s/%s.messages.in' % (os.getcwd(), message_receiver)):
             with open('%s/%s.messages.in' % (os.getcwd(), message_receiver)) as source_file:
@@ -81,7 +106,10 @@ def main(argv):
     for receiver in receivers:
         if receiver.has_attribute(webkit.model.BUILTIN_ATTRIBUTE):
             continue
-        with open(output_path('%sMessageReceiver.cpp' % receiver.name), "w+") as implementation_output:
+        receiver_dir = receiver_dirs.get(receiver.name, '')
+        if receiver_dir and not os.path.isdir(output_path(receiver_dir)):
+            os.makedirs(output_path(receiver_dir))
+        with open(output_path(os.path.join(receiver_dir, '%sMessageReceiver.cpp' % receiver.name)), "w+") as implementation_output:
             implementation_output.write(webkit.messages.generate_message_handler(receiver))
         if receiver.swift_receiver or receiver.swift_receiver_build_enabled_by:
             with open(output_path('%sMessageReceiver.swift' % receiver.name), "w+") as swift_implementation_output:
@@ -100,9 +128,6 @@ def main(argv):
 
     with open(output_path('MessageArgumentDescriptions.cpp'), "w+") as message_descriptions_implementation_output:
         message_descriptions_implementation_output.write(webkit.messages.generate_message_argument_description_implementation(receivers, receiver_header_files))
-
-    with open(output_path('module.private.modulemap'), "w+") as modulemap_output:
-        modulemap_output.write(webkit.messages.generate_modulemap(receiver_header_files))
 
     return 0
 

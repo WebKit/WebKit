@@ -68,25 +68,25 @@ TextStream& operator<<(TextStream& ts, ImageOrientation::Orientation orientation
         ts << "origin-top-left"_s;
         break;
     case Orientation::OriginTopRight:
-        ts << "origin-bottom-right"_s;
-        break;
-    case Orientation::OriginBottomRight:
         ts << "origin-top-right"_s;
         break;
+    case Orientation::OriginBottomRight:
+        ts << "origin-bottom-right"_s;
+        break;
     case Orientation::OriginBottomLeft:
-        ts << "origin-top-left"_s;
+        ts << "origin-bottom-left"_s;
         break;
     case Orientation::OriginLeftTop:
-        ts << "origin-left-bottom"_s;
+        ts << "origin-left-top"_s;
         break;
     case Orientation::OriginRightTop:
-        ts << "origin-right-bottom"_s;
-        break;
-    case Orientation::OriginRightBottom:
         ts << "origin-right-top"_s;
         break;
+    case Orientation::OriginRightBottom:
+        ts << "origin-right-bottom"_s;
+        break;
     case Orientation::OriginLeftBottom:
-        ts << "origin-left-top"_s;
+        ts << "origin-left-bottom"_s;
         break;
     }
     return ts;

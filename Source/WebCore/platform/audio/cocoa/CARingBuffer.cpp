@@ -84,7 +84,7 @@ static void StoreABL(Vector<std::span<Byte>>& channels, size_t destOffset, const
 {
     ASSERT(list->mNumberBuffers == channels.size());
     auto buffers = span(*list);
-    const AudioBuffer* src = list->mBuffers;
+    const ::AudioBuffer* src = list->mBuffers;
     for (auto& channel : channels) {
         if (srcOffset > buffers[0].mDataByteSize)
             continue;

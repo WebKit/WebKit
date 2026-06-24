@@ -111,20 +111,6 @@ void PageClientImplCocoa::sampledPageTopColorDidChange()
     [webView() didChangeValueForKey:@"_sampledPageTopColor"];
 }
 
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-void PageClientImplCocoa::spatialBackdropSourceWillChange()
-{
-    [webView() willChangeValueForKey:@"_spatialBackdropSource"];
-}
-
-void PageClientImplCocoa::spatialBackdropSourceDidChange()
-{
-    RetainPtr webView = m_webView.get();
-    [webView _spatialBackdropSourceDidChange];
-    [webView didChangeValueForKey:@"_spatialBackdropSource"];
-}
-#endif
-
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 void PageClientImplCocoa::allowImmersiveElement(Ref<API::FrameInfo>&& frameInfo, CompletionHandler<void(bool)>&& completion) const
 {

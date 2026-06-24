@@ -25,7 +25,6 @@
 #include "config.h"
 #include "StyleFlexBasis.h"
 
-#include "StyleCalculationValue.h"
 #include "StylePreferredSize.h"
 
 namespace WebCore {

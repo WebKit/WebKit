@@ -466,6 +466,15 @@ enum aom_dec_control_id {
    * be used.
    */
   AV1D_GET_MI_INFO,
+
+  /*!\brief Codec control function to set the maximum frame size, unsigned int
+   * parameter
+   *
+   * - 0 = unlimited (default)
+   * - nonzero = frame size (width * height) must be less than or equal to this
+   *   maximum
+   */
+  AOMD_SET_FRAME_SIZE_LIMIT,
 };
 
 /*!\cond */
@@ -598,6 +607,9 @@ AOM_CTRL_USE_TYPE(AOMD_GET_ORDER_HINT, unsigned int *)
 // The AOM_CTRL_USE_TYPE macro can't be used with AV1D_GET_MI_INFO because
 // AV1D_GET_MI_INFO takes more than one parameter.
 #define AOM_CTRL_AV1D_GET_MI_INFO
+
+AOM_CTRL_USE_TYPE(AOMD_SET_FRAME_SIZE_LIMIT, unsigned int)
+#define AOM_CTRL_AOMD_SET_FRAME_SIZE_LIMIT
 /*!\endcond */
 /*! @} - end defgroup aom_decoder */
 #ifdef __cplusplus

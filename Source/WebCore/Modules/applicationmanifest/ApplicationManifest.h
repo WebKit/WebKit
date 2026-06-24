@@ -82,7 +82,9 @@ struct ApplicationManifest {
     URL startURL;
     URL id;
     Color backgroundColor;
+    Color backgroundColorDark;
     Color themeColor;
+    Color themeColorDark;
     Vector<String> categories;
     Vector<Icon> icons;
     Vector<Shortcut> shortcuts;

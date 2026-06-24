@@ -34,6 +34,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 
+#import <AVFAudio/AVAudioRoutingArbiter.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {

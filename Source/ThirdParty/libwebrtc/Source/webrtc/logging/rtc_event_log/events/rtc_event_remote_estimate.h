@@ -12,11 +12,11 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/units/data_rate.h"
 #include "api/units/timestamp.h"
@@ -48,7 +48,7 @@ class RtcEventRemoteEstimate final : public RtcEvent {
   Type GetType() const override { return kType; }
   bool IsConfigEvent() const override { return false; }
 
-  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(std::span<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

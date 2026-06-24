@@ -1,0 +1,12 @@
+
+PASS Compositing: property <font-weight> underlying [500] from add [100] to add [500] at (-0.3) should be [480]
+PASS Compositing: property <font-weight> underlying [500] from add [100] to add [500] at (0) should be [600]
+PASS Compositing: property <font-weight> underlying [500] from add [100] to add [500] at (0.5) should be [800]
+PASS Compositing: property <font-weight> underlying [500] from add [100] to add [500] at (1) should be [1000]
+PASS Compositing: property <font-weight> underlying [500] from add [100] to add [500] at (1.5) should be [1000]
+FAIL Compositing: property <font-weight> underlying [200] from add [600] to replace [500] at (-0.3) should be [889.75] assert_equals: expected "889.75 " but got "890 "
+PASS Compositing: property <font-weight> underlying [200] from add [600] to replace [500] at (0) should be [800]
+PASS Compositing: property <font-weight> underlying [200] from add [600] to replace [500] at (0.5) should be [650]
+PASS Compositing: property <font-weight> underlying [200] from add [600] to replace [500] at (1) should be [500]
+PASS Compositing: property <font-weight> underlying [200] from add [600] to replace [500] at (1.5) should be [350]
+

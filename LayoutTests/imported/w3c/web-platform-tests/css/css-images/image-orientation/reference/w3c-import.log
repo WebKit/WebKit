@@ -29,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-list-style-image-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-mask-image-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-content-images-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-cross-origin-border-image-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-cross-origin-canvas-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-cross-origin-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/reference/image-orientation-none-cross-origin-svg-ref.html

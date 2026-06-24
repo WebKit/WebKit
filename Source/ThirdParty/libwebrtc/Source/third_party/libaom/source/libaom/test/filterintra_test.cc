@@ -194,4 +194,29 @@ INSTANTIATE_TEST_SUITE_P(
                        ::testing::ValuesIn(kTxSizeNEON)));
 #endif  // HAVE_NEON
 
+#if HAVE_NEON_I8MM
+const PredFuncMode kPredFuncMdArrayNEON_I8MM[] = {
+  make_tuple(&av1_filter_intra_predictor_c,
+             &av1_filter_intra_predictor_neon_i8mm, FILTER_DC_PRED),
+  make_tuple(&av1_filter_intra_predictor_c,
+             &av1_filter_intra_predictor_neon_i8mm, FILTER_V_PRED),
+  make_tuple(&av1_filter_intra_predictor_c,
+             &av1_filter_intra_predictor_neon_i8mm, FILTER_H_PRED),
+  make_tuple(&av1_filter_intra_predictor_c,
+             &av1_filter_intra_predictor_neon_i8mm, FILTER_D157_PRED),
+  make_tuple(&av1_filter_intra_predictor_c,
+             &av1_filter_intra_predictor_neon_i8mm, FILTER_PAETH_PRED),
+};
+
+const TX_SIZE kTxSizeNEON_I8MM[] = { TX_4X4,   TX_8X8,   TX_16X16, TX_32X32,
+                                     TX_4X8,   TX_8X4,   TX_8X16,  TX_16X8,
+                                     TX_16X32, TX_32X16, TX_4X16,  TX_16X4,
+                                     TX_8X32,  TX_32X8 };
+
+INSTANTIATE_TEST_SUITE_P(
+    NEON_I8MM, AV1FilterIntraPredTest,
+    ::testing::Combine(::testing::ValuesIn(kPredFuncMdArrayNEON_I8MM),
+                       ::testing::ValuesIn(kTxSizeNEON_I8MM)));
+#endif  // HAVE_NEON_I8MM
+
 }  // namespace

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,13 @@
 #include "config.h"
 #include "StyleColorMix.h"
 
+#include "CSSColorMix.h"
 #include "CSSColorMixResolver.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorSerialization.h"
 #include "StyleColorResolutionState.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -45,27 +47,20 @@ Color toStyleColor(const CSS::ColorMix& unresolved, ColorResolutionState& state)
 {
     ColorResolutionStateNester nester { state };
 
-    auto component1Color = toStyleColor(unresolved.mixComponents1.color, state);
-    auto component2Color = toStyleColor(unresolved.mixComponents2.color, state);
+    auto components = CommaSeparatedVector<ColorMix::Component>::map(unresolved.components, [&](auto& component) {
+        return ColorMix::Component {
+            toStyleColor(component.color, state),
+            toStyle(component.percentage, state.conversionData),
+        };
+    });
 
-    auto percentage1 = toStyle(unresolved.mixComponents1.percentage, state.conversionData);
-    auto percentage2 = toStyle(unresolved.mixComponents2.percentage, state.conversionData);
-
-    if (!component1Color.isResolvedColor() || !component2Color.isResolvedColor()) {
-        // If the either component is not resolved, we cannot fully resolve the color
-        // yet. Instead, we resolve the calc values using the conversion data, and return
-        // a Style::ColorMix to be resolved at use time.
+    if (std::ranges::any_of(components, [](auto& component) { return !component.color.isResolvedColor(); })) {
+        // If any of the component colors are not resolved, we cannot fully resolve the
+        // color yet. Instead we return a Style::ColorMix to be resolved at use time.
         return Color {
             ColorMix {
-                unresolved.colorInterpolationMethod,
-                ColorMix::Component {
-                    WTF::move(component1Color),
-                    WTF::move(percentage1)
-                },
-                ColorMix::Component {
-                    WTF::move(component2Color),
-                    WTF::move(percentage2)
-                }
+                .colorInterpolationMethod = unresolved.colorInterpolationMethod,
+                .components = WTF::move(components)
             }
         };
     }
@@ -73,14 +68,12 @@ Color toStyleColor(const CSS::ColorMix& unresolved, ColorResolutionState& state)
     return mix(
         CSS::ColorMixResolver {
             unresolved.colorInterpolationMethod,
-            CSS::ColorMixResolver::Component {
-                component1Color.resolvedColor(),
-                WTF::move(percentage1)
-            },
-            CSS::ColorMixResolver::Component {
-                component2Color.resolvedColor(),
-                WTF::move(percentage2)
-            }
+            components.map([&](auto& component) {
+                return CSS::ColorMixResolver::Component {
+                    component.color.resolvedColor(),
+                    component.percentage,
+                };
+            })
         }
     );
 }
@@ -93,14 +86,12 @@ WebCore::Color resolveColor(const ColorMix& colorMix, const WebCore::Color& curr
     return mix(
         CSS::ColorMixResolver {
             colorMix.colorInterpolationMethod,
-            CSS::ColorMixResolver::Component {
-                colorMix.mixComponents1.color.resolveColor(currentColor),
-                colorMix.mixComponents1.percentage
-            },
-            CSS::ColorMixResolver::Component {
-                colorMix.mixComponents2.color.resolveColor(currentColor),
-                colorMix.mixComponents2.percentage
-            }
+            colorMix.components.map([&](auto& component) {
+                return CSS::ColorMixResolver::Component {
+                    component.color.resolveColor(currentColor),
+                    component.percentage,
+                };
+            })
         }
     );
 }
@@ -109,63 +100,21 @@ WebCore::Color resolveColor(const ColorMix& colorMix, const WebCore::Color& curr
 
 bool containsCurrentColor(const ColorMix& colorMix)
 {
-    return WebCore::Style::containsCurrentColor(colorMix.mixComponents1.color)
-        || WebCore::Style::containsCurrentColor(colorMix.mixComponents2.color);
+    return std::ranges::any_of(colorMix.components, [&](auto& component) {
+        return WebCore::Style::containsCurrentColor(component.color);
+    });
 }
 
 // MARK: - Serialization
 
 namespace ColorMixSerializationDetails {
 
-static bool NODELETE sumTo100Percent(const ColorMix::Component::Percentage& a, const ColorMix::Component::Percentage& b)
+static void serializeColorMixPercentage(StringBuilder& builder, const CSS::SerializationContext& context, const std::optional<ColorMix::Component::Percentage>& percentage)
 {
-    return a.value + b.value == 100.0;
-}
-
-static std::optional<ColorMix::Component::Percentage> NODELETE subtractFrom100Percent(const ColorMix::Component::Percentage& percentage)
-{
-    return ColorMix::Component::Percentage { 100.0 - percentage.value };
-}
-
-static void serializeColorMixPercentage(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix::Component::Percentage& percentage)
-{
-    CSS::serializationForCSS(builder, context, CSS::PercentageRaw<> { percentage.value });
-}
-
-static void serializationForColorMixPercentage1(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& value)
-{
-    if (value.mixComponents1.percentage && value.mixComponents2.percentage) {
-        if (*value.mixComponents1.percentage == 50_css_percentage && *value.mixComponents2.percentage == 50_css_percentage)
-            return;
-        builder.append(' ');
-        serializeColorMixPercentage(builder, context, *value.mixComponents1.percentage);
-    } else if (value.mixComponents1.percentage) {
-        if (*value.mixComponents1.percentage == 50_css_percentage)
-            return;
-        builder.append(' ');
-        serializeColorMixPercentage(builder, context, *value.mixComponents1.percentage);
-    } else if (value.mixComponents2.percentage) {
-        if (*value.mixComponents2.percentage == 50_css_percentage)
-            return;
-
-        auto subtractedPercent = subtractFrom100Percent(*value.mixComponents2.percentage);
-        if (!subtractedPercent)
-            return;
-
-        builder.append(' ');
-        serializeColorMixPercentage(builder, context, *subtractedPercent);
-    }
-}
-
-static void serializationForColorMixPercentage2(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& value)
-{
-    if (value.mixComponents1.percentage && value.mixComponents2.percentage) {
-        if (sumTo100Percent(*value.mixComponents1.percentage, *value.mixComponents2.percentage))
-            return;
-
-        builder.append(' ');
-        serializeColorMixPercentage(builder, context, *value.mixComponents2.percentage);
-    }
+    if (!percentage)
+        return;
+    builder.append(' ');
+    CSS::serializationForCSS(builder, context, CSS::PercentageRaw<> { percentage->value });
 }
 
 } // namespace ColorMixSerializationDetails
@@ -178,11 +127,10 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
         WebCore::serializationForCSS(builder, colorMix.colorInterpolationMethod);
         builder.append(", "_s);
     }
-    serializationForCSSTokenization(builder, context, colorMix.mixComponents1.color);
-    ColorMixSerializationDetails::serializationForColorMixPercentage1(builder, context, colorMix);
-    builder.append(", "_s);
-    serializationForCSSTokenization(builder, context, colorMix.mixComponents2.color);
-    ColorMixSerializationDetails::serializationForColorMixPercentage2(builder, context, colorMix);
+    builder.append(interleave(colorMix.components, [&](auto& builder, auto& component) {
+        serializationForCSSTokenization(builder, context, component.color);
+        ColorMixSerializationDetails::serializeColorMixPercentage(builder, context, component.percentage);
+    }, ", "_s));
     builder.append(')');
 }
 
@@ -207,8 +155,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const ColorMix& colorMix)
 {
     ts << "color-mix("_s;
     ts << "in "_s << colorMix.colorInterpolationMethod;
-    ts << ", "_s << colorMix.mixComponents1;
-    ts << ", "_s << colorMix.mixComponents2;
+    ts << ", "_s << colorMix.components;
     ts << ')';
 
     return ts;

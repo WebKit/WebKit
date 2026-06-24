@@ -17,12 +17,12 @@
 #include <cstdio>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "api/audio/audio_processing_statistics.h"
 #include "api/audio/echo_canceller3_config.h"
@@ -104,7 +104,7 @@ class AudioProcessingImpl : public AudioProcessing {
                     const StreamConfig& output_config,
                     float* const* dest) override;
   bool GetLinearAecOutput(
-      ArrayView<std::array<float, 160>> linear_output) const override;
+      std::span<std::array<float, 160>> linear_output) const override;
   void set_output_will_be_muted(bool muted) override;
   void HandleCaptureOutputUsedSetting(bool capture_output_used)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);

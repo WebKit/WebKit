@@ -172,6 +172,7 @@ func addDTLSRetransmitTests() {
 				// Finally release the whole flight to the shim.
 				c.WriteFlight(next)
 			}
+
 			ackFlightBasic := handleNewSessionTicket(func(c *DTLSController, prev, received []DTLSMessage, records []DTLSRecordNumberInfo) {
 				if vers.version >= VersionTLS13 {
 					// In DTLS 1.3, final flights (either handshake or post-handshake)
@@ -190,7 +191,7 @@ func addDTLSRetransmitTests() {
 				// In DTLS 1.2, the final flight is retransmitted on receipt of
 				// the previous flight. Test the peer is willing to retransmit
 				// it several times.
-				for i := 0; i < 5; i++ {
+				for range 5 {
 					c.WriteFlight(prev)
 					c.ReadRetransmit()
 				}
@@ -203,6 +204,98 @@ func addDTLSRetransmitTests() {
 					Bugs: ProtocolBugs{
 						WriteFlightDTLS: writeFlightBasic,
 						ACKFlightDTLS:   ackFlightBasic,
+					},
+				},
+				resumeSession: true,
+				flags:         flags,
+			})
+			testCases = append(testCases, testCase{
+				protocol: dtls,
+				name:     "DTLS-Retransmit-Client-SetTimeout-Decrease" + suffix,
+				config: Config{
+					MaxVersion: vers.version,
+					Bugs: ProtocolBugs{
+						WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+							if len(received) > 0 {
+								t := useTimeouts[0]
+								tn := useTimeouts[0] / 2
+								c.ExpectNextTimeout(t)
+								c.SetTimeout(tn)
+								c.ExpectNextTimeout(tn)
+								c.AdvanceClock(tn)
+								c.ReadRetransmit()
+								// The timer doubles after each retransmit. Timeout updates respect this,
+								// so the effective timeout should be 2 * t.
+								c.SetTimeout(t)
+								c.ExpectNextTimeout(2 * t)
+							}
+							// Finally release the whole flight to the shim.
+							c.WriteFlight(next)
+						},
+						ACKFlightDTLS: ackFlightBasic,
+					},
+				},
+				resumeSession: true,
+				flags:         flags,
+			})
+			testCases = append(testCases, testCase{
+				protocol: dtls,
+				name:     "DTLS-Retransmit-Client-SetTimeout-Fire" + suffix,
+				config: Config{
+					MaxVersion: vers.version,
+					Bugs: ProtocolBugs{
+						WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+							if len(received) > 0 {
+								t := useTimeouts[0]
+								tn := useTimeouts[0] / 2
+								c.ExpectNextTimeout(t)
+								c.AdvanceClock(tn)
+								c.SetTimeout(tn)
+								// After rescaling the timer, the running timer immediately fires,
+								// so the next timeout should be reported as zero.
+								c.ExpectNextTimeout(0)
+								// Triggering the shim to handle the timeouts will cause it to
+								// retransmit.
+								c.AdvanceClock(0)
+								c.ReadRetransmit()
+								// The next timeout is the rescaled second timeout.
+								c.ExpectNextTimeout(useTimeouts[1] / 2)
+								c.SetTimeout(t)
+							}
+							// Finally release the whole flight to the shim.
+							c.WriteFlight(next)
+						},
+						ACKFlightDTLS: ackFlightBasic,
+					},
+				},
+				resumeSession: true,
+				flags:         flags,
+			})
+			testCases = append(testCases, testCase{
+				protocol: dtls,
+				name:     "DTLS-Retransmit-Client-SetTimeout-Increase" + suffix,
+				config: Config{
+					MaxVersion: vers.version,
+					Bugs: ProtocolBugs{
+						WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+							if len(received) > 0 {
+								t := useTimeouts[0]
+								tn := useTimeouts[0] * 2
+								c.ExpectNextTimeout(t)
+								c.SetTimeout(tn)
+								c.ExpectNextTimeout(tn)
+								c.AdvanceClock(t)
+								c.AdvanceClock(t)
+								c.ReadRetransmit()
+								// The timer doubles after each retransmit. Timeout updates respect this,
+								// so the effective timeout should be 2 * t.
+								c.SetTimeout(t)
+								c.ExpectNextTimeout(2 * t)
+							}
+							// Finally release the whole flight to the shim.
+							c.WriteFlight(next)
+						},
+						ACKFlightDTLS: ackFlightBasic,
 					},
 				},
 				resumeSession: true,
@@ -301,6 +394,45 @@ func addDTLSRetransmitTests() {
 					flags: flags,
 				})
 
+				// Same as 'DTLS-Retransmit-PartialProgress-Server' but modifying timeout affecting ACKs.
+				testCases = append(testCases, testCase{
+					testType: serverTest,
+					protocol: dtls,
+					name:     "DTLS-Retransmit-PartialProgress-Server-SetTimeout" + suffix,
+					config: Config{
+						MaxVersion:    vers.version,
+						DefaultCurves: []CurveID{}, // Force HelloRetryRequest.
+						Bugs: ProtocolBugs{
+							WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+								if len(received) == 0 && next[0].Type == typeClientHello {
+									// Send the initial ClientHello as-is.
+									c.WriteFlight(next)
+									return
+								}
+
+								// Send a portion of the first message. The rest was lost.
+								// This makes the shim schedule an ACK timer.
+								split := len(next[0].Data) / 2
+								c.WriteFragments([]DTLSFragment{next[0].Fragment(0, split)})
+
+								// Modify ongoing ACK timer.
+								tn := useTimeouts[0] / 2
+								c.SetTimeout(tn)
+
+								// The ACK timer should have been rescaled with the update.
+								c.ExpectNextTimeout(tn / 4)
+								c.AdvanceClock(tn / 4)
+								c.ReadACK(c.InEpoch())
+
+								// Restore the timeout and continue the test.
+								c.SetTimeout(useTimeouts[0])
+								c.WriteFlight(next)
+							},
+						},
+					},
+					flags: flags,
+				})
+
 				// When the shim is a client, receiving fragments before the version is
 				// known does not trigger this behavior.
 				testCases = append(testCases, testCase{
@@ -365,6 +497,46 @@ func addDTLSRetransmitTests() {
 					},
 					flags: flags,
 				})
+
+				// Same as 'DTLS-Retransmit-PartialProgress-Client' but updating timeout while ACK timer is set.
+				testCases = append(testCases, testCase{
+					protocol: dtls,
+					name:     "DTLS-Retransmit-PartialProgress-Client-SetTimeout" + suffix,
+					config: Config{
+						MaxVersion: vers.version,
+						Bugs: ProtocolBugs{
+							WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+								if next[0].Type != typeServerHello {
+									// Post-handshake is tested separately.
+									c.WriteFlight(next)
+									return
+								}
+
+								// Send the ServerHello and half of EncryptedExtensions. The rest was lost.
+								// This makes the shim schedule an ACK timer. (A partial ServerHello will
+								// not schedule an ACK timer because the shim has not learned the version.)
+								c.WriteFlight(next[:1])
+								split := len(next[1].Data) / 2
+								c.WriteFragments([]DTLSFragment{next[1].Fragment(0, split)})
+
+								// Now modify timeout.
+								tn := useTimeouts[0] / 2
+								c.SetTimeout(tn)
+
+								// The ACK timer should have been rescaled with the update.
+								// The shim hasn't gotten to epoch 3 yet, so the ACK will come in epoch 2.
+								c.ExpectNextTimeout(tn / 4)
+								c.AdvanceClock(tn / 4)
+								c.ReadACK(uint16(encryptionHandshake))
+
+								// Restore the timeout and continue the test.
+								c.SetTimeout(useTimeouts[0])
+								c.WriteFlight(next)
+							},
+						},
+					},
+					flags: flags,
+				})
 			}
 
 			// Test that exceeding the timeout schedule hits a read
@@ -405,6 +577,30 @@ func addDTLSRetransmitTests() {
 							if len(received) > 0 {
 								c.ExpectNextTimeout(useTimeouts[0])
 								c.AdvanceClock(useTimeouts[0] - 10*time.Millisecond)
+								c.ReadRetransmit()
+							}
+							c.WriteFlight(next)
+						},
+					},
+				},
+				resumeSession: true,
+				flags:         flags,
+			})
+
+			// Test attempting to handle a timeout in multiple steps.
+			testCases = append(testCases, testCase{
+				protocol: dtls,
+				name:     "DTLS-Retransmit-HandleTimeoutInSteps" + suffix,
+				config: Config{
+					MaxVersion: vers.version,
+					Bugs: ProtocolBugs{
+						WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+							if len(received) > 0 {
+								c.ExpectNextTimeout(useTimeouts[0])
+								c.AdvanceClock(0)
+								part := useTimeouts[0] / 3
+								c.AdvanceClock(part)
+								c.AdvanceClock(useTimeouts[0] - part)
 								c.ReadRetransmit()
 							}
 							c.WriteFlight(next)
@@ -1409,6 +1605,78 @@ func addDTLSReorderTests() {
 					ReorderHandshakeFragments:       true,
 					MixCompleteMessageWithFragments: true,
 					MaxHandshakeRecordLength:        2,
+				},
+			},
+		})
+	}
+}
+
+func addDTLSFragmentWindowTests() {
+	for _, vers := range allVersions(dtls) {
+		// A handshake fragment with a sequence number exactly at the upper bound
+		// of the sliding window (handshake_read_seq + SSL_MAX_HANDSHAKE_FLIGHT,
+		// which is +7) should be silently discarded rather than triggering a
+		// fatal internal error alert.
+		testCases = append(testCases, testCase{
+			protocol: dtls,
+			testType: serverTest,
+			name:     "DTLS-FragmentWindow-UpperLimit-Discard-Server-" + vers.name,
+			config: Config{
+				MaxVersion: vers.version,
+				Bugs: ProtocolBugs{
+					WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+						for _, msg := range next {
+							if msg.Sequence == 0 && !msg.IsChangeCipherSpec {
+								// Injected future fragment with offset +7.
+								// Since SSL_MAX_HANDSHAKE_FLIGHT is 7, sequence + 7 is at the upper limit.
+								// This must be silently discarded by the shim.
+								shouldDiscard := DTLSFragment{
+									Epoch:         msg.Epoch,
+									Type:          msg.Type,
+									Sequence:      msg.Sequence + 7,
+									Offset:        0,
+									TotalLength:   len(msg.Data),
+									Data:          msg.Data,
+									ShouldDiscard: true,
+								}
+								c.WriteFragments([]DTLSFragment{shouldDiscard, msg.Fragment(0, len(msg.Data))})
+							} else {
+								c.WriteFragments([]DTLSFragment{msg.Fragment(0, len(msg.Data))})
+							}
+						}
+					},
+				},
+			},
+		})
+
+		testCases = append(testCases, testCase{
+			protocol: dtls,
+			testType: clientTest,
+			name:     "DTLS-FragmentWindow-UpperLimit-Discard-Client-" + vers.name,
+			config: Config{
+				MaxVersion: vers.version,
+				Bugs: ProtocolBugs{
+					PackHandshakeFragments: 4096,
+					WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+						for _, msg := range next {
+							if msg.Sequence == 0 && !msg.IsChangeCipherSpec {
+								// Injected future fragment with offset +7.
+								// This must be silently discarded by the shim.
+								shouldDiscard := DTLSFragment{
+									Epoch:         msg.Epoch,
+									Type:          msg.Type,
+									Sequence:      msg.Sequence + 7,
+									Offset:        0,
+									TotalLength:   len(msg.Data),
+									Data:          msg.Data,
+									ShouldDiscard: true,
+								}
+								c.WriteFragments([]DTLSFragment{shouldDiscard, msg.Fragment(0, len(msg.Data))})
+							} else {
+								c.WriteFragments([]DTLSFragment{msg.Fragment(0, len(msg.Data))})
+							}
+						}
+					},
 				},
 			},
 		})

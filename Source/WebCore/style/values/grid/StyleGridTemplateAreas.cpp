@@ -85,7 +85,7 @@ auto CSSValueConversion<GridTemplateAreas>::operator()(BuilderState& state, cons
     return GridTemplateAreas { gridTemplateAreasValue->areas().map };
 }
 
-auto CSSValueCreation<GridTemplateAreas>::operator()(CSSValuePool& pool, const RenderStyle& style, const GridTemplateAreas& value) -> Ref<CSSValue>
+auto CSSValueCreation<GridTemplateAreas>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const GridTemplateAreas& value) -> Ref<CSSValue>
 {
     return WTF::switchOn(value,
         [&](const CSS::Keyword::None& keyword) -> Ref<CSSValue> {
@@ -99,7 +99,7 @@ auto CSSValueCreation<GridTemplateAreas>::operator()(CSSValuePool& pool, const R
 
 // MARK: - Serialization
 
-void Serialize<GridTemplateAreas>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const GridTemplateAreas& value)
+void Serialize<GridTemplateAreas>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const GridTemplateAreas& value)
 {
     WTF::switchOn(value,
         [&](const CSS::Keyword::None& keyword) {

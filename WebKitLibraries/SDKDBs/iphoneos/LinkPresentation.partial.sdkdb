@@ -73,13 +73,61 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "LPErrorCode"}
    ]
   },
   {
-   "target": "arm64e-apple-ios26.1"
+   "globals": [
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV10AttachmentV4iconAEvgZ"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV10AttachmentV4iconAEvpZMV"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV10AttachmentV5imageAEvgZ"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV10AttachmentV5imageAEvpZMV"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV10AttachmentV5videoAEvgZ"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV10AttachmentV5videoAEvpZMV"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV10AttachmentVMa"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV10AttachmentVMn"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV10AttachmentVN"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV11originalURL10Foundation0E0VvM"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV11originalURL10Foundation0E0Vvg"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV11originalURL10Foundation0E0VvpMV"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV11originalURL10Foundation0E0Vvs"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV11remoteVideo10Foundation3URLVSgvM"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV11remoteVideo10Foundation3URLVSgvg"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV11remoteVideo10Foundation3URLVSgvpMV"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV11remoteVideo10Foundation3URLVSgvs"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV13containsMedia_12exportableAsSbAC10AttachmentV_xmt16CoreTransferable0J0RzlF"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV16CoreTransferable0E0AAMc"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV22transferRepresentationQrvgZ"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV22transferRepresentationQrvpZMV"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV22transferRepresentationQrvpZQOMQ"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV3url10Foundation3URLVvM"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV3url10Foundation3URLVvg"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV3url10Foundation3URLVvpMV"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV3url10Foundation3URLVvs"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV3urlAC10Foundation3URLV_tcfC"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV4fromACs7Decoder_p_tKcfC"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV5media_2asxSgAC10AttachmentV_xmtYaK16CoreTransferable0H0RzlF"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV5media_2asxSgAC10AttachmentV_xmtYaK16CoreTransferable0H0RzlFTu"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV5titleSSSgvM"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV5titleSSSgvg"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV5titleSSSgvpMV"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV5titleSSSgvs"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV8fetching7timeout19includeSubresourcesAC10Foundation10URLRequestV_s8DurationVSbtYaKcfC"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV8fetching7timeout19includeSubresourcesAC10Foundation10URLRequestV_s8DurationVSbtYaKcfCTu"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV8fetching7timeout19includeSubresourcesAC10Foundation3URLV_s8DurationVSbtYaKcfC"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV8fetching7timeout19includeSubresourcesAC10Foundation3URLV_s8DurationVSbtYaKcfCTu"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataV8setMedia_3foryx_AC10AttachmentVt16CoreTransferable0I0RzlF"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataVMa"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataVMn"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataVN"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataVSEAAMc"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataVSeAAMc"},
+    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$s16LinkPresentation0A8MetadataVyACSgSo06LPLinkC0CncfC"}
+   ],
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

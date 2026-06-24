@@ -25,7 +25,7 @@
 
 set -e
 
-WEB_CONTENT_RESOURCES_PATH="${BUILT_PRODUCTS_DIR}/WebKit.framework/PrivateHeaders/CustomWebContentResources"
+WEB_CONTENT_RESOURCES_PATH="${BUILT_PRODUCTS_DIR}/WebKit.framework/${WK_FRAMEWORK_VERSION_PREFIX}PrivateHeaders/CustomWebContentResources"
 mkdir -p "${WEB_CONTENT_RESOURCES_PATH}"
 
 echo "Copying WebContent entitlements from ${WK_PROCESSED_XCENT_FILE} to ${WEB_CONTENT_RESOURCES_PATH}/WebContent.entitlements"

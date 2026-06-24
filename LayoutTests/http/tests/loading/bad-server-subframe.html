@@ -1,9 +1,16 @@
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
-    testRunner.dumpFrameLoadCallbacks();
+    testRunner.waitUntilDone();
 }
+
+window.addEventListener("load", () => {
+    document.getElementById("result").textContent = "PASS main frame fired its load event despite the unreachable subframe.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
 </script>
 This is a test of load callbacks. It is only useful inside the regression test tool.<br>
 It also assumes there is no web server running locally on port 54321.<br>
+<span id="result">FAIL main frame load event did not fire.</span><br>
 <iframe name="f1" src="http://localhost:54321"></iframe>

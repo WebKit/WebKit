@@ -13,12 +13,12 @@
 #include <cstdint>
 #include <list>
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "api/candidate.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/test/rtc_error_matchers.h"
 #include "api/units/time_delta.h"
 #include "p2p/base/basic_packet_socket_factory.h"
@@ -34,16 +34,17 @@
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 
 using ::testing::Eq;
 using ::testing::IsTrue;
 using ::webrtc::Connection;
-using ::webrtc::CreateEnvironment;
+using ::webrtc::CreateTestEnvironment;
 using ::webrtc::Environment;
 using ::webrtc::ICE_PWD_LENGTH;
 using ::webrtc::ICE_UFRAG_LENGTH;
@@ -105,7 +106,7 @@ class TCPPortTest : public ::testing::Test {
                                          int port_number = 0) {
     auto port = std::unique_ptr<TCPPort>(
         TCPPort::Create({.env = env_,
-                         .network_thread = &main_,
+                         .network_thread = main_.task_queue(),
                          .socket_factory = &socket_factory_,
                          .network = MakeNetwork(addr),
                          .ice_username_fragment = username_,
@@ -118,7 +119,7 @@ class TCPPortTest : public ::testing::Test {
   std::unique_ptr<TCPPort> CreateTCPPort(const webrtc::Network* network) {
     auto port = std::unique_ptr<TCPPort>(
         TCPPort::Create({.env = env_,
-                         .network_thread = &main_,
+                         .network_thread = main_.task_queue(),
                          .socket_factory = &socket_factory_,
                          .network = network,
                          .ice_username_fragment = username_,
@@ -129,13 +130,13 @@ class TCPPortTest : public ::testing::Test {
   }
 
  protected:
-  const Environment env_ = CreateEnvironment();
+  const Environment env_ = CreateTestEnvironment();
   // When a "create port" helper method is called with an IP, we create a
   // Network with that IP and add it to this list. Using a list instead of a
   // vector so that when it grows, pointers aren't invalidated.
   std::list<webrtc::Network> networks_;
   std::unique_ptr<webrtc::VirtualSocketServer> ss_;
-  webrtc::AutoSocketServerThread main_;
+  webrtc::test::RunLoop main_;
   webrtc::BasicPacketSocketFactory socket_factory_;
   std::string username_;
   std::string password_;
@@ -305,12 +306,10 @@ TEST_F(TCPPortTest, SignalSentPacket) {
 
   SentPacketCounter client_counter(client.get());
   SentPacketCounter server_counter(server.get());
-  static const char kData[] = "hello";
+  static constexpr uint8_t kData[] = {'h', 'e', 'l', 'l', 'o', '\0'};
   for (int i = 0; i < 10; ++i) {
-    client_conn->Send(&kData, sizeof(kData),
-                      webrtc::AsyncSocketPacketOptions());
-    server_conn->Send(&kData, sizeof(kData),
-                      webrtc::AsyncSocketPacketOptions());
+    client_conn->Send(kData, webrtc::AsyncSocketPacketOptions());
+    server_conn->Send(kData, webrtc::AsyncSocketPacketOptions());
   }
   EXPECT_THAT(
       webrtc::WaitUntil([&] { return client_counter.sent_packets(); }, Eq(10),
@@ -363,9 +362,8 @@ TEST_F(TCPPortTest, SignalSentPacketAfterReconnect) {
       webrtc::IsRtcOk());
 
   SentPacketCounter client_counter(client.get());
-  static const char kData[] = "hello";
-  int result = client_conn->Send(&kData, sizeof(kData),
-                                 webrtc::AsyncSocketPacketOptions());
+  static constexpr uint8_t kData[] = {'h', 'e', 'l', 'l', 'o', '\0'};
+  int result = client_conn->Send(kData, webrtc::AsyncSocketPacketOptions());
   EXPECT_EQ(result, 6);
 
   // Deleting the server port should break the current connection.
@@ -383,8 +381,7 @@ TEST_F(TCPPortTest, SignalSentPacketAfterReconnect) {
 
   // Sending a packet from the client will trigger a reconnect attempt but the
   // packet will be discarded.
-  result = client_conn->Send(&kData, sizeof(kData),
-                             webrtc::AsyncSocketPacketOptions());
+  result = client_conn->Send(kData, webrtc::AsyncSocketPacketOptions());
   EXPECT_EQ(result, SOCKET_ERROR);
   ASSERT_THAT(
       webrtc::WaitUntil([&] { return client_conn->connected(); }, IsTrue(),
@@ -394,8 +391,7 @@ TEST_F(TCPPortTest, SignalSentPacketAfterReconnect) {
   EXPECT_TRUE(client_conn->writable());
   for (int i = 0; i < 10; ++i) {
     // All sent packets still fail to send.
-    EXPECT_EQ(client_conn->Send(&kData, sizeof(kData),
-                                webrtc::AsyncSocketPacketOptions()),
+    EXPECT_EQ(client_conn->Send(kData, webrtc::AsyncSocketPacketOptions()),
               SOCKET_ERROR);
   }
   // And are not reported as sent.
@@ -431,14 +427,12 @@ TEST_F(TCPPortTest, SignalSentPacketAfterReconnect) {
                         {.timeout = webrtc::TimeDelta::Millis(kTimeout)}),
       webrtc::IsRtcOk());
   // Wait a bit for the Stun response to be received.
-  webrtc::Thread::Current()->ProcessMessages(100);
+  main_.RunFor(webrtc::TimeDelta::Millis(100));
 
   // After the Stun Ping response has been received, packets can be sent again
   // and SignalSentPacket should be invoked.
   for (int i = 0; i < 5; ++i) {
-    EXPECT_EQ(client_conn->Send(&kData, sizeof(kData),
-                                webrtc::AsyncSocketPacketOptions()),
-              6);
+    EXPECT_EQ(client_conn->Send(kData, webrtc::AsyncSocketPacketOptions()), 6);
   }
   EXPECT_THAT(webrtc::WaitUntil(
                   [&] { return client_counter.sent_packets(); }, Eq(2 + 5),

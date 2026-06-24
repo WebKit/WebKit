@@ -378,6 +378,8 @@ bool doesGC(Graph& graph, Node* node)
     case RegExpExecNonGlobalOrSticky:
     case RegExpMatchFast:
     case RegExpMatchFastGlobal:
+    case RegExpSplitFast:
+    case RegExpStringIteratorNext:
     case RegExpTest:
     case RegExpTestInline:
     case RegExpSearch:
@@ -436,6 +438,8 @@ bool doesGC(Graph& graph, Node* node)
     case NewStringObject:
     case NewMap:
     case NewSet:
+    case NewWeakMap:
+    case NewWeakSet:
     case NewSymbol:
     case MakeRope:
     case MakeAtomString:
@@ -465,6 +469,8 @@ bool doesGC(Graph& graph, Node* node)
     case StringSlice:
     case StringSubstring:
     case StringSubstr:
+    case StringIteratorNext:
+    case StringIteratorNextWithUndefined:
     case StringValueOf:
     case CreateRest:
     case ToUpperCase:
@@ -476,6 +482,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArrayConcatAppendOne:
     case ArrayIncludes:
     case ArrayIndexOf:
+    case ArrayJoin:
     case ParseInt: // We might resolve a rope even though we don't clobber anything.
     case SetAdd:
     case MapSet:
@@ -502,6 +509,7 @@ bool doesGC(Graph& graph, Node* node)
     case StringEndsWith:
     case StringSplit:
     case StringMatch:
+    case StringSearch:
     case ResolvePromiseFirstResolving:
     case RejectPromiseFirstResolving:
     case FulfillPromiseFirstResolving:

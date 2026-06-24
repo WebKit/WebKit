@@ -68,9 +68,9 @@ def main(argv, stdout, stderr):
         return print_expectations(port, options, args, stderr)
 
     # Add site-isolation results report flavor for API tests when ran
-    if options.site_isolation:
+    if options.site_isolation_enabled_by_default:
         if options.result_report_flavor:
-            raise RuntimeError('--site-isolation implicitly sets the result flavor, this should not be overridden')
+            raise RuntimeError('--site-isolation-enabled-by-default implicitly sets the result flavor, this should not be overridden')
         options.result_report_flavor = 'site-isolation'
 
     try:
@@ -133,6 +133,10 @@ def run(port, options, args, logging_stream):
 
     try:
         stream = MeteredStream(logging_stream, options.verbose, logger=logger, number_of_columns=port.host.platform.terminal_width(), print_timestamps=options.timestamps)
+
+        if options.site_isolation_enabled_by_default:
+            _log.info('Enabling site isolation by default')
+
         manager = Manager(port, options, stream)
 
         result = manager.run(args, json_output=options.json_output)
@@ -178,7 +182,7 @@ def parse_args(args):
                              help='Only check and run TestWebKitLegacy.exe (Windows only)'),
         optparse.make_option('--wgsl-only', action='store_const', const='TestWGSL', dest='api_binary',
                              help='Only check and run TestWGSL (Darwin ports only)'),
-        optparse.make_option('-d', '--dump', action='store_true', default=False,
+        optparse.make_option('-d', '--dump', '--list-tests', action='store_true', default=False,
                              help='Dump all test names without running them'),
         optparse.make_option('--build', dest='build', action='store_true', default=False,
                              help='Check to ensure the build is up-to-date.'),
@@ -209,7 +213,7 @@ def parse_args(args):
         optparse.make_option('--test-parallel-safety', type='string', action='append', default=[],
                              help='Run specified test(s) constantly in parallel against all allowlist tests to test parallel safety'),
 
-        optparse.make_option('--site-isolation', action='store_true', default=False,
+        optparse.make_option('--site-isolation-enabled-by-default', action='store_true', default=False,
                              help='Enable Site Isolation'),
         optparse.make_option('--remote-layer-tree', action='store_true', default=False,
                              help='Use the remote layer tree drawing model (macOS WebKit2 only)'),

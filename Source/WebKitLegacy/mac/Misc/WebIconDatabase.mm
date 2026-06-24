@@ -40,7 +40,6 @@
 #import <wtf/RunLoop.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
-using namespace WebCore;
 
 NSString *WebIconDatabaseDidAddIconNotification =          @"WebIconDatabaseDidAddIconNotification";
 NSString *WebIconNotificationUserInfoURLKey =              @"WebIconNotificationUserInfoURLKey";

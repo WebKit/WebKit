@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_AEC3_FFT_H_
 
 #include <array>
+#include <span>
 
-#include "api/array_view.h"
 #include "common_audio/third_party/ooura/fft_size_128/ooura_fft.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/fft_data.h"
@@ -48,19 +48,19 @@ class Aec3Fft {
 
   // Windows the input using a Hanning window, and then adds padding of
   // kFftLengthBy2 initial zeros before computing the Fft.
-  void ZeroPaddedFft(ArrayView<const float> x, Window window, FftData* X) const;
+  void ZeroPaddedFft(std::span<const float> x, Window window, FftData* X) const;
 
   // Concatenates the kFftLengthBy2 values long x and x_old before computing the
   // Fft. After that, x is copied to x_old.
-  void PaddedFft(ArrayView<const float> x,
-                 ArrayView<const float> x_old,
+  void PaddedFft(std::span<const float> x,
+                 std::span<const float> x_old,
                  FftData* X) const {
     PaddedFft(x, x_old, Window::kRectangular, X);
   }
 
   // Padded Fft using a time-domain window.
-  void PaddedFft(ArrayView<const float> x,
-                 ArrayView<const float> x_old,
+  void PaddedFft(std::span<const float> x,
+                 std::span<const float> x_old,
                  Window window,
                  FftData* X) const;
 

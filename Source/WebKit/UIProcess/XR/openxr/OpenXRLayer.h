@@ -54,18 +54,18 @@ public:
 protected:
     OpenXRLayer(UniqueRef<OpenXRSwapchain>&&);
 #if OS(ANDROID)
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureAndroid(WebCore::GLDisplay&, PlatformGLObject);
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureAndroid(WebCore::GLDisplay&, PlatformGLObject, uint32_t width, uint32_t height);
     void blitTexture() const;
     inline bool needsBlitTexture() const { return true; }
 #else
     std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureDMABuf(WebCore::GLDisplay&, WebCore::GLContext&, PlatformGLObject);
 #endif
 #if USE(GBM)
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureGBM(WebCore::GLDisplay&, PlatformGLObject);
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTextureGBM(WebCore::GLDisplay&, PlatformGLObject, uint32_t width, uint32_t height);
     void blitTexture() const;
     inline bool needsBlitTexture() const { return m_gbmDevice; }
 #endif
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTexture(PlatformGLObject);
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTexture(PlatformGLObject, uint32_t width, uint32_t height);
 
     UniqueRef<OpenXRSwapchain> m_swapchain;
 
@@ -159,6 +159,38 @@ private:
     explicit OpenXRCylinderLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
 
     Vector<XrCompositionLayerCylinderKHR> m_layers;
+};
+#endif
+
+#if defined(XR_KHR_composition_layer_cube)
+// The OpenXR cube swapchain is a cubemap (faceCount=6) that cannot be shared cross-process as a 2D DMABuf,
+// so the WebProcess renders into a side-by-side 2D buffer (cubeCount*6 faces laid out horizontally) which
+// this layer reconstructs into the cubemap swapchain(s) each frame. Stereo uses one cube swapchain per eye.
+class OpenXRCubeLayer final : public OpenXRCompositionLayer {
+    WTF_MAKE_TZONE_ALLOCATED(OpenXRCubeLayer);
+    WTF_MAKE_NONCOPYABLE(OpenXRCubeLayer);
+public:
+    static std::unique_ptr<OpenXRCubeLayer> create(std::unique_ptr<OpenXRSwapchain>&&, std::unique_ptr<OpenXRSwapchain>&& rightSwapchain, PlatformXR::LayerLayout);
+    ~OpenXRCubeLayer();
+
+    std::optional<PlatformXR::FrameData::LayerData> startFrame() override;
+    Vector<XrCompositionLayerBaseHeader*> endFrame(const PlatformXR::DeviceLayer&, XrSpace, const Vector<XrView>&) override;
+
+private:
+    OpenXRCubeLayer(UniqueRef<OpenXRSwapchain>&&, std::unique_ptr<OpenXRSwapchain>&& rightSwapchain, PlatformXR::LayerLayout);
+
+    void reconstructCubeFaces();
+    uint32_t cubeCount() const { return m_layout == PlatformXR::LayerLayout::Mono ? 1 : 2; }
+    OpenXRSwapchain& swapchainForCube(uint32_t cube) { return cube && m_rightSwapchain ? *m_rightSwapchain : m_swapchain.get(); }
+
+    static constexpr uint32_t faceCount = 6;
+
+    Vector<XrCompositionLayerCubeKHR> m_layers;
+    std::unique_ptr<OpenXRSwapchain> m_rightSwapchain;
+    // One side-by-side buffer per swapchain image (keyed by the image), so the WebProcess and the
+    // reconstruction don't read/write the same buffer concurrently. Mirrors the per-image reuse of other layers.
+    HashMap<PlatformGLObject, PlatformGLObject> m_sideBySideTextures;
+    std::array<PlatformGLObject, 2> m_reconstructionFBOs { 0, 0 };
 };
 #endif
 

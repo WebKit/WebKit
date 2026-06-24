@@ -12,13 +12,15 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
+#include "libANGLE/renderer/gl/RendererGL.h"
 
 namespace rx
 {
 
-SyncGL::SyncGL(const FunctionsGL *functions) : SyncImpl(), mFunctions(functions), mSyncObject(0)
+SyncGL::SyncGL(const std::shared_ptr<RendererGL> &renderer)
+    : SyncImpl(), mRenderer(renderer), mSyncObject(0)
 {
-    ASSERT(mFunctions);
+    ASSERT(mRenderer);
 }
 
 SyncGL::~SyncGL()
@@ -29,7 +31,7 @@ SyncGL::~SyncGL()
 void SyncGL::onDestroy(const gl::Context *context)
 {
     ASSERT(mSyncObject != 0);
-    mFunctions->deleteSync(mSyncObject);
+    mRenderer->getFunctions()->deleteSync(mSyncObject);
     mSyncObject = 0;
 }
 
@@ -37,7 +39,7 @@ angle::Result SyncGL::set(const gl::Context *context, GLenum condition, GLbitfie
 {
     ASSERT(condition == GL_SYNC_GPU_COMMANDS_COMPLETE && flags == 0);
     ContextGL *contextGL = GetImplAs<ContextGL>(context);
-    mSyncObject          = mFunctions->fenceSync(condition, flags);
+    mSyncObject          = mRenderer->getFunctions()->fenceSync(condition, flags);
     ANGLE_CHECK(contextGL, mSyncObject != 0, "glFenceSync failed to create a GLsync object.",
                 GL_OUT_OF_MEMORY);
     contextGL->markWorkSubmitted();
@@ -50,21 +52,21 @@ angle::Result SyncGL::clientWait(const gl::Context *context,
                                  GLenum *outResult)
 {
     ASSERT(mSyncObject != 0);
-    *outResult = mFunctions->clientWaitSync(mSyncObject, flags, timeout);
+    *outResult = mRenderer->getFunctions()->clientWaitSync(mSyncObject, flags, timeout);
     return angle::Result::Continue;
 }
 
 angle::Result SyncGL::serverWait(const gl::Context *context, GLbitfield flags, GLuint64 timeout)
 {
     ASSERT(mSyncObject != 0);
-    mFunctions->waitSync(mSyncObject, flags, timeout);
+    mRenderer->getFunctions()->waitSync(mSyncObject, flags, timeout);
     return angle::Result::Continue;
 }
 
 angle::Result SyncGL::getStatus(const gl::Context *context, GLint *outResult)
 {
     ASSERT(mSyncObject != 0);
-    mFunctions->getSynciv(mSyncObject, GL_SYNC_STATUS, 1, nullptr, outResult);
+    mRenderer->getFunctions()->getSynciv(mSyncObject, GL_SYNC_STATUS, 1, nullptr, outResult);
     return angle::Result::Continue;
 }
 }  // namespace rx

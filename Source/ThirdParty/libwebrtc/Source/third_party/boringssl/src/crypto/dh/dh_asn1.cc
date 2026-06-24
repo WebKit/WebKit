@@ -25,13 +25,15 @@
 #include "../fipsmodule/dh/internal.h"
 
 
-static int parse_integer(CBS *cbs, BIGNUM **out) {
+using namespace bssl;
+
+static int parse_integer(CBS *cbs, UniquePtr<BIGNUM> *out) {
   assert(*out == nullptr);
-  *out = BN_new();
+  out->reset(BN_new());
   if (*out == nullptr) {
     return 0;
   }
-  return BN_parse_asn1_unsigned(cbs, *out);
+  return BN_parse_asn1_unsigned(cbs, out->get());
 }
 
 static int marshal_integer(CBB *cbb, BIGNUM *bn) {
@@ -44,15 +46,16 @@ static int marshal_integer(CBB *cbb, BIGNUM *bn) {
 }
 
 DH *DH_parse_parameters(CBS *cbs) {
-  bssl::UniquePtr<DH> ret(DH_new());
+  UniquePtr<DH> ret(DH_new());
   if (ret == nullptr) {
     return nullptr;
   }
 
   CBS child;
+  auto *impl = FromOpaque(ret.get());
   if (!CBS_get_asn1(cbs, &child, CBS_ASN1_SEQUENCE) ||
-      !parse_integer(&child, &ret->p) ||
-      !parse_integer(&child, &ret->g)) {
+      !parse_integer(&child, &impl->p) ||  //
+      !parse_integer(&child, &impl->g)) {
     OPENSSL_PUT_ERROR(DH, DH_R_DECODE_ERROR);
     return nullptr;
   }
@@ -64,7 +67,7 @@ DH *DH_parse_parameters(CBS *cbs) {
       OPENSSL_PUT_ERROR(DH, DH_R_DECODE_ERROR);
       return nullptr;
     }
-    ret->priv_length = (unsigned)priv_length;
+    impl->priv_length = (unsigned)priv_length;
   }
 
   if (CBS_len(&child) != 0) {
@@ -82,11 +85,12 @@ DH *DH_parse_parameters(CBS *cbs) {
 
 int DH_marshal_parameters(CBB *cbb, const DH *dh) {
   CBB child;
+  auto *impl = FromOpaque(dh);
   if (!CBB_add_asn1(cbb, &child, CBS_ASN1_SEQUENCE) ||
-      !marshal_integer(&child, dh->p) ||
-      !marshal_integer(&child, dh->g) ||
-      (dh->priv_length != 0 &&
-       !CBB_add_asn1_uint64(&child, dh->priv_length)) ||
+      !marshal_integer(&child, impl->p.get()) ||
+      !marshal_integer(&child, impl->g.get()) ||
+      (impl->priv_length != 0 &&
+       !CBB_add_asn1_uint64(&child, impl->priv_length)) ||
       !CBB_flush(cbb)) {
     OPENSSL_PUT_ERROR(DH, DH_R_ENCODE_ERROR);
     return 0;
@@ -95,11 +99,11 @@ int DH_marshal_parameters(CBB *cbb, const DH *dh) {
 }
 
 DH *d2i_DHparams(DH **out, const uint8_t **inp, long len) {
-  return bssl::D2IFromCBS(out, inp, len, DH_parse_parameters);
+  return D2IFromCBS(out, inp, len, DH_parse_parameters);
 }
 
 int i2d_DHparams(const DH *in, uint8_t **outp) {
-  return bssl::I2DFromCBB(
+  return I2DFromCBB(
       /*initial_capacity=*/256, outp,
       [&](CBB *cbb) -> bool { return DH_marshal_parameters(cbb, in); });
 }

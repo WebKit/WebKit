@@ -12,10 +12,10 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
@@ -73,7 +73,7 @@ bool ReceiverWithPacketLoss::IncomingPacket() {
     if (!PacketLost()) {
       _neteq->InsertPacket(
           _rtpHeader,
-          ArrayView<const uint8_t>(_incomingPayload, _realPayloadSizeBytes),
+          std::span<const uint8_t>(_incomingPayload, _realPayloadSizeBytes),
           Timestamp::Millis(_nextTime));
     }
     packet_counter_++;

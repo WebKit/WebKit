@@ -34,7 +34,6 @@ namespace WebCore {
 
 class CSSToLengthConversionData;
 class Element;
-class RenderStyle;
 struct BlendingContext;
 enum class CompositeOperation : uint8_t;
 
@@ -45,6 +44,7 @@ struct Context;
 }
 
 class BuilderState;
+class ComputedStyle;
 
 // MARK: - ValueRepresentation
 
@@ -87,7 +87,7 @@ template<typename> struct ToCSSMapping;
 // All non-converting and non-tuple-like conforming types must implement the following for conversions:
 //
 //    template<> struct WebCore::Style::ToCSS<StyleType> {
-//        CSSType operator()(const StyleType&, const RenderStyle&);
+//        CSSType operator()(const StyleType&, const Style::ComputedStyle&);
 //    };
 //
 //    template<> struct WebCore::Style::ToStyle<CSSType> {
@@ -107,7 +107,7 @@ template<CSSValueID C> inline constexpr bool TreatAsNonConverting<Constant<C>> =
 // MARK: - Conversion from "Style to "CSS"
 
 struct ToCSSInvoker {
-    template<typename StyleType, typename... Rest> decltype(auto) operator()(const StyleType& styleType, const RenderStyle& style, Rest&&... rest) const
+    template<typename StyleType, typename... Rest> decltype(auto) operator()(const StyleType& styleType, const Style::ComputedStyle& style, Rest&&... rest) const
     {
         return ToCSS<StyleType>{}(styleType, style, std::forward<Rest>(rest)...);
     }
@@ -115,7 +115,7 @@ struct ToCSSInvoker {
 inline constexpr ToCSSInvoker toCSS{};
 
 // Conversion Utility Types
-template<typename StyleType> using CSSType = std::decay_t<decltype(toCSS(std::declval<const StyleType&>(), std::declval<const RenderStyle&>()))>;
+template<typename StyleType> using CSSType = std::decay_t<decltype(toCSS(std::declval<const StyleType&>(), std::declval<const Style::ComputedStyle&>()))>;
 
 template<typename To, typename From, typename... Rest> auto toCSSOnTupleLike(const From& tupleLike, Rest&&... rest) -> To
 {
@@ -156,7 +156,7 @@ template<typename... Ts> struct ToCSSMapping<Variant<Ts...>> {
 
 // Constrained for `TreatAsNonConverting`.
 template<NonConverting StyleType> struct ToCSS<StyleType> {
-    template<typename... Rest> constexpr StyleType operator()(const StyleType& value, const RenderStyle&, Rest&&...)
+    template<typename... Rest> constexpr StyleType operator()(const StyleType& value, const Style::ComputedStyle&, Rest&&...)
     {
         return value;
     }
@@ -166,7 +166,7 @@ template<NonConverting StyleType> struct ToCSS<StyleType> {
 template<EmptyLike StyleType> struct ToCSS<StyleType> {
     using Result = typename ToCSSMapping<StyleType>::type;
 
-    template<typename... Rest> Result operator()(const StyleType&, const RenderStyle&, Rest&&...)
+    template<typename... Rest> Result operator()(const StyleType&, const Style::ComputedStyle&, Rest&&...)
     {
         return { };
     }
@@ -176,7 +176,7 @@ template<EmptyLike StyleType> struct ToCSS<StyleType> {
 template<OptionalLike StyleType> struct ToCSS<StyleType> {
     using Result = typename ToCSSMapping<StyleType>::type;
 
-    template<typename... Rest> Result operator()(const StyleType& value, const RenderStyle& style, Rest&&... rest)
+    template<typename... Rest> Result operator()(const StyleType& value, const Style::ComputedStyle& style, Rest&&... rest)
     {
         if (value)
             return toCSS(*value, style, std::forward<Rest>(rest)...);
@@ -188,7 +188,7 @@ template<OptionalLike StyleType> struct ToCSS<StyleType> {
 template<TupleLike StyleType> struct ToCSS<StyleType> {
     using Result = typename ToCSSMapping<StyleType>::type;
 
-    template<typename... Rest> Result operator()(const StyleType& value, const RenderStyle& style, Rest&&... rest)
+    template<typename... Rest> Result operator()(const StyleType& value, const Style::ComputedStyle& style, Rest&&... rest)
     {
         return toCSSOnTupleLike<Result>(value, style, std::forward<Rest>(rest)...);
     }
@@ -198,7 +198,7 @@ template<TupleLike StyleType> struct ToCSS<StyleType> {
 template<VariantLike StyleType> struct ToCSS<StyleType> {
     using Result = typename ToCSSMapping<StyleType>::type;
 
-    template<typename... Rest> Result operator()(const StyleType& value, const RenderStyle& style, Rest&&... rest)
+    template<typename... Rest> Result operator()(const StyleType& value, const Style::ComputedStyle& style, Rest&&... rest)
     {
         return WTF::switchOn(value, [&](const auto& alternative) { return Result { toCSS(alternative, style, std::forward<Rest>(rest)...) }; });
     }
@@ -208,7 +208,7 @@ template<VariantLike StyleType> struct ToCSS<StyleType> {
 template<typename StyleType, size_t inlineCapacity> struct ToCSS<SpaceSeparatedVector<StyleType, inlineCapacity>> {
     using Result = SpaceSeparatedVector<CSSType<StyleType>, inlineCapacity>;
 
-    template<typename... Rest> Result operator()(const SpaceSeparatedVector<StyleType, inlineCapacity>& value, const RenderStyle& style, Rest&&... rest)
+    template<typename... Rest> Result operator()(const SpaceSeparatedVector<StyleType, inlineCapacity>& value, const Style::ComputedStyle& style, Rest&&... rest)
     {
         return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toCSS(x, style, rest...); }) };
     }
@@ -218,7 +218,7 @@ template<typename StyleType, size_t inlineCapacity> struct ToCSS<SpaceSeparatedV
 template<typename StyleType, size_t inlineCapacity> struct ToCSS<CommaSeparatedVector<StyleType, inlineCapacity>> {
     using Result = CommaSeparatedVector<CSSType<StyleType>, inlineCapacity>;
 
-    template<typename... Rest> Result operator()(const CommaSeparatedVector<StyleType, inlineCapacity>& value, const RenderStyle& style, Rest&&... rest)
+    template<typename... Rest> Result operator()(const CommaSeparatedVector<StyleType, inlineCapacity>& value, const Style::ComputedStyle& style, Rest&&... rest)
     {
         return Result { value.value.template map<typename Result::Container>([&](const auto& x) { return toCSS(x, style, rest...); }) };
     }
@@ -391,13 +391,13 @@ inline constexpr DeprecatedToStyleInvoker deprecatedToStyle{};
 // All leaf types must implement the following:
 //
 //    template<> struct WebCore::Style::CSSValueCreation<StyleType> {
-//        Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const StyleType&);
+//        Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const StyleType&);
 //    };
 
 template<typename StyleType> struct CSSValueCreation;
 
 struct CSSValueCreationInvoker {
-    template<typename StyleType, typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value, Rest&&... rest) const
+    template<typename StyleType, typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest) const
     {
         return CSSValueCreation<StyleType>{}(pool, style, value, std::forward<Rest>(rest)...);
     }
@@ -406,7 +406,7 @@ inline constexpr CSSValueCreationInvoker createCSSValue{};
 
 // Constrained for `TreatAsVariantLike`.
 template<VariantLike StyleType> struct CSSValueCreation<StyleType> {
-    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value, Rest&&... rest)
+    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest)
     {
         return WTF::switchOn(value, [&](const auto& alternative) -> Ref<CSSValue> { return createCSSValue(pool, style, alternative, std::forward<Rest>(rest)...); });
     }
@@ -414,15 +414,15 @@ template<VariantLike StyleType> struct CSSValueCreation<StyleType> {
 
 // Constrained for `TreatAsTupleLike`
 template<TupleLike StyleType> struct CSSValueCreation<StyleType> {
-    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value, Rest&&... rest)
+    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest)
     {
         if constexpr (std::tuple_size_v<StyleType> == 1 && SerializationSeparator<StyleType> == SerializationSeparatorType::None) {
             return createCSSValue(pool, style, get<0>(value), std::forward<Rest>(rest)...);
         } else if constexpr (std::tuple_size_v<StyleType> == 2 && SerializationCoalescing<StyleType> == SerializationCoalescingType::Minimal) {
             return CSS::makeCoalescingPairCSSValue<SerializationSeparator<StyleType>>(createCSSValue(pool, style, get<0>(value), rest...), createCSSValue(pool, style, get<1>(value), rest...));
-        } else if constexpr (std::tuple_size_v<StyleType> == 4 && SerializationCoalescing<StyleType> == SerializationCoalescingType::Minimal) {
-            return CSS::makeCoalescingQuadCSSValue<SerializationSeparator<StyleType>>(createCSSValue(pool, style, get<0>(value), rest...), createCSSValue(pool, style, get<1>(value), rest...), createCSSValue(pool, style, get<2>(value), rest...), createCSSValue(pool, style, get<3>(value), rest...));
         } else {
+            static_assert(SerializationCoalescing<StyleType> == SerializationCoalescingType::None);
+
             CSSValueListBuilder list;
 
             auto caller = WTF::makeVisitor(
@@ -444,7 +444,7 @@ template<TupleLike StyleType> struct CSSValueCreation<StyleType> {
 
 // Constrained for `TreatAsRangeLike`
 template<RangeLike StyleType> struct CSSValueCreation<StyleType> {
-    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value, Rest&&... rest)
+    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest)
     {
         CSSValueListBuilder list;
         for (const auto& element : value)
@@ -456,7 +456,7 @@ template<RangeLike StyleType> struct CSSValueCreation<StyleType> {
 
 // Constrained for `TreatAsNonConverting`.
 template<NonConverting StyleType> struct CSSValueCreation<StyleType> {
-    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle&, const StyleType& value, Rest&&... rest)
+    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle&, const StyleType& value, Rest&&... rest)
     {
         return CSS::createCSSValue(pool, value, std::forward<Rest>(rest)...);
     }
@@ -464,7 +464,7 @@ template<NonConverting StyleType> struct CSSValueCreation<StyleType> {
 
 // Specialization for `FunctionNotation`.
 template<CSSValueID Name, typename StyleType> struct CSSValueCreation<FunctionNotation<Name, StyleType>> {
-    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const FunctionNotation<Name, StyleType>& value, Rest&&... rest)
+    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const FunctionNotation<Name, StyleType>& value, Rest&&... rest)
     {
         return CSS::makeFunctionCSSValue(value.name, createCSSValue(pool, style, value.parameters, std::forward<Rest>(rest)...));
     }
@@ -475,85 +475,19 @@ template<CSSValueID Name, typename StyleType> struct CSSValueCreation<FunctionNo
 // All leaf types must implement the following:
 //
 //    template<> struct WebCore::Style::DeprecatedCSSOMValueCreation<StyleType> {
-//        Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const RenderStyle&, CSSStyleDeclaration&, const StyleType&);
+//        Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&, const StyleType&);
 //    };
 
 template<typename StyleType> struct DeprecatedCSSOMValueCreation;
 
 struct DeprecatedCSSOMValueCreationInvoker {
-    template<typename StyleType, typename... Rest> Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const StyleType& value, Rest&&... rest) const
+    template<typename StyleType, typename... Rest> Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const StyleType& value, Rest&&... rest) const
     {
         return DeprecatedCSSOMValueCreation<StyleType>{}(pool, style, owner, value, std::forward<Rest>(rest)...);
     }
 };
 
 inline constexpr DeprecatedCSSOMValueCreationInvoker createDeprecatedCSSOMValue{};
-
-// Constrained for `TreatAsVariantLike`.
-template<VariantLike StyleType> struct DeprecatedCSSOMValueCreation<StyleType> {
-    template<typename... Rest> Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const StyleType& value, Rest&&... rest)
-    {
-        return WTF::switchOn(value, [&](const auto& alternative) -> Ref<DeprecatedCSSOMValue> { return createDeprecatedCSSOMValue(pool, style, owner,alternative, std::forward<Rest>(rest)...); });
-    }
-};
-
-// Constrained for `TreatAsTupleLike`
-template<TupleLike StyleType> struct DeprecatedCSSOMValueCreation<StyleType> {
-    template<typename... Rest> Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const StyleType& value, Rest&&... rest)
-    {
-        if constexpr (std::tuple_size_v<StyleType> == 1 && SerializationSeparator<StyleType> == SerializationSeparatorType::None) {
-            return createDeprecatedCSSOMValue(pool, style, get<0>(value), std::forward<Rest>(rest)...);
-        } else if constexpr (std::tuple_size_v<StyleType> == 2 && SerializationCoalescing<StyleType> == SerializationCoalescingType::Minimal) {
-            return CSS::makeCoalescingPairDeprecatedCSSOMValue<SerializationSeparator<StyleType>>(owner, createCSSValue(pool, style, get<0>(value), rest...), createCSSValue(pool, style, get<1>(value), rest...));
-        } else if constexpr (std::tuple_size_v<StyleType> == 4 && SerializationCoalescing<StyleType> == SerializationCoalescingType::Minimal) {
-            return CSS::makeCoalescingQuadDeprecatedCSSOMValue<SerializationSeparator<StyleType>>(owner, createCSSValue(pool, style, get<0>(value), rest...), createCSSValue(pool, style, get<1>(value), rest...), createCSSValue(pool, style, get<2>(value), rest...), createCSSValue(pool, style, get<3>(value), rest...));
-        } else {
-            DeprecatedCSSOMValueListBuilder list;
-
-            auto caller = WTF::makeVisitor(
-                [&]<OptionalLike T>(const T& element) {
-                    if (!element)
-                        return;
-                    list.append(createDeprecatedCSSOMValue(pool, style, owner, *element, rest...));
-                },
-                [&](const auto& element) {
-                    list.append(createDeprecatedCSSOMValue(pool, style, owner, element, rest...));
-                }
-            );
-            WTF::apply([&](const auto& ...x) { (..., caller(x)); }, value);
-
-            return CSS::makeListDeprecatedCSSOMValue<SerializationSeparator<StyleType>>(owner, WTF::move(list));
-        }
-    }
-};
-
-// Constrained for `TreatAsRangeLike`
-template<RangeLike StyleType> struct DeprecatedCSSOMValueCreation<StyleType> {
-    template<typename... Rest> Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const StyleType& value, Rest&&... rest)
-    {
-        DeprecatedCSSOMValueListBuilder list;
-        for (const auto& element : value)
-            list.append(createDeprecatedCSSOMValue(pool, owner, style, element, rest...));
-
-        return CSS::makeListDeprecatedCSSOMValue<SerializationSeparator<StyleType>>(owner, WTF::move(list));
-    }
-};
-
-// Constrained for `TreatAsNonConverting`.
-template<NonConverting StyleType> struct DeprecatedCSSOMValueCreation<StyleType> {
-    template<typename... Rest> Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const RenderStyle&, CSSStyleDeclaration& owner, const StyleType& value, Rest&&... rest)
-    {
-        return CSS::createDeprecatedCSSOMValue(owner, value, std::forward<Rest>(rest)...);
-    }
-};
-
-// Specialization for `FunctionNotation`.
-template<CSSValueID Name, typename StyleType> struct DeprecatedCSSOMValueCreation<FunctionNotation<Name, StyleType>> {
-    template<typename... Rest> Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const FunctionNotation<Name, StyleType>& value, Rest&&... rest)
-    {
-        return CSS::makeFunctionDeprecatedCSSOMValue(owner, value.name, createCSSValue(pool, style, value.parameters, std::forward<Rest>(rest)...));
-    }
-};
 
 // MARK: - Conversion directly from "Ref<CSSValue>" to "Style"
 
@@ -653,18 +587,18 @@ template<CSSValueID Name, typename StyleType> struct ToPlatform<FunctionNotation
 // All leaf types must implement the following:
 //
 //    template<> struct WebCore::Style::Serialize<StyleType> {
-//        void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const StyleType&);
+//        void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const StyleType&);
 //    };
 
 template<typename StyleType> struct Serialize;
 
 struct SerializeInvoker {
-    template<typename StyleType, typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, Rest&&... rest) const
+    template<typename StyleType, typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest) const
     {
         Serialize<StyleType>{}(builder, context, style, value, std::forward<Rest>(rest)...);
     }
 
-    template<typename StyleType, typename... Rest> [[nodiscard]] WTF::String operator()(const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, Rest&&... rest) const
+    template<typename StyleType, typename... Rest> [[nodiscard]] WTF::String operator()(const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest) const
     {
         StringBuilder builder;
         this->operator()(builder, context, style, value, std::forward<Rest>(rest)...);
@@ -673,14 +607,14 @@ struct SerializeInvoker {
 };
 inline constexpr SerializeInvoker serializationForCSS{};
 
-template<typename StyleType, typename... Rest> void serializationForCSSOnOptionalLike(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, Rest&&... rest)
+template<typename StyleType, typename... Rest> void serializationForCSSOnOptionalLike(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest)
 {
     if (!value)
         return;
     serializationForCSS(builder, context, style, *value, std::forward<Rest>(rest)...);
 }
 
-template<typename StyleType, typename... Rest> void serializationForCSSOnTupleLike(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, ASCIILiteral separator, Rest&&... rest)
+template<typename StyleType, typename... Rest> void serializationForCSSOnTupleLike(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, ASCIILiteral separator, Rest&&... rest)
 {
     auto swappedSeparator = ""_s;
     auto caller = WTF::makeVisitor(
@@ -699,7 +633,7 @@ template<typename StyleType, typename... Rest> void serializationForCSSOnTupleLi
     WTF::apply([&](const auto& ...x) { (..., caller(x)); }, value);
 }
 
-template<typename StyleType, typename... Rest> void serializationForCSSOnTupleLikeCoalescing(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, ASCIILiteral separator, Rest&&... rest)
+template<typename StyleType, typename... Rest> void serializationForCSSOnTupleLikeCoalescing(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, ASCIILiteral separator, Rest&&... rest)
 {
     if constexpr (std::tuple_size_v<StyleType> == 2) {
         if (get<0>(value) != get<1>(value)) {
@@ -724,7 +658,7 @@ template<typename StyleType, typename... Rest> void serializationForCSSOnTupleLi
     }
 }
 
-template<typename StyleType, typename... Rest> void serializationForCSSOnRangeLike(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, ASCIILiteral separator, Rest&&... rest)
+template<typename StyleType, typename... Rest> void serializationForCSSOnRangeLike(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, ASCIILiteral separator, Rest&&... rest)
 {
     auto swappedSeparator = ""_s;
     for (const auto& element : value) {
@@ -733,21 +667,21 @@ template<typename StyleType, typename... Rest> void serializationForCSSOnRangeLi
     }
 }
 
-template<typename StyleType, typename... Rest> void serializationForCSSOnVariantLike(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, Rest&&... rest)
+template<typename StyleType, typename... Rest> void serializationForCSSOnVariantLike(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest)
 {
     WTF::switchOn(value, [&](const auto& alternative) { serializationForCSS(builder, context, style, alternative, std::forward<Rest>(rest)...); });
 }
 
 // Constrained for `TreatAsEmptyLike`.
 template<EmptyLike StyleType> struct Serialize<StyleType> {
-    template<typename... Rest> void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const StyleType&, Rest&&...)
+    template<typename... Rest> void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const StyleType&, Rest&&...)
     {
     }
 };
 
 // Constrained for `TreatAsOptionalLike`.
 template<OptionalLike StyleType> struct Serialize<StyleType> {
-    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, Rest&&... rest)
+    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest)
     {
         serializationForCSSOnOptionalLike(builder, context, style, value, std::forward<Rest>(rest)...);
     }
@@ -755,7 +689,7 @@ template<OptionalLike StyleType> struct Serialize<StyleType> {
 
 // Constrained for `TreatAsTupleLike`.
 template<TupleLike StyleType> struct Serialize<StyleType> {
-    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, Rest&&... rest)
+    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest)
     {
         if constexpr (SerializationCoalescing<StyleType> == SerializationCoalescingType::Minimal)
             serializationForCSSOnTupleLikeCoalescing(builder, context, style, value, SerializationSeparatorString<StyleType>, std::forward<Rest>(rest)...);
@@ -766,7 +700,7 @@ template<TupleLike StyleType> struct Serialize<StyleType> {
 
 // Constrained for `TreatAsRangeLike`.
 template<RangeLike StyleType> struct Serialize<StyleType> {
-    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, Rest&&... rest)
+    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest)
     {
         serializationForCSSOnRangeLike(builder, context, style, value, SerializationSeparatorString<StyleType>, std::forward<Rest>(rest)...);
     }
@@ -774,7 +708,7 @@ template<RangeLike StyleType> struct Serialize<StyleType> {
 
 // Constrained for `TreatAsVariantLike`.
 template<VariantLike StyleType> struct Serialize<StyleType> {
-    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value, Rest&&... rest)
+    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, Rest&&... rest)
     {
         serializationForCSSOnVariantLike(builder, context, style, value, std::forward<Rest>(rest)...);
     }
@@ -782,7 +716,7 @@ template<VariantLike StyleType> struct Serialize<StyleType> {
 
 // Constrained for `TreatAsNonConverting`.
 template<NonConverting StyleType> struct Serialize<StyleType> {
-    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle&, const StyleType& value, Rest&&... rest)
+    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle&, const StyleType& value, Rest&&... rest)
     {
         CSS::serializationForCSS(builder, context, value, std::forward<Rest>(rest)...);
     }
@@ -790,7 +724,7 @@ template<NonConverting StyleType> struct Serialize<StyleType> {
 
 // Specialization for `FunctionNotation`.
 template<CSSValueID Name, typename StyleType> struct Serialize<FunctionNotation<Name, StyleType>> {
-    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const FunctionNotation<Name, StyleType>& value, Rest&&... rest)
+    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const FunctionNotation<Name, StyleType>& value, Rest&&... rest)
     {
         builder.append(nameLiteralForSerialization(value.name), '(');
         serializationForCSS(builder, context, style, value.parameters, std::forward<Rest>(rest)...);
@@ -867,67 +801,67 @@ template<TupleLike StyleType, typename Result> requires (std::tuple_size_v<Style
 //        StyleType blend(const StyleType&, const StyleType&, const [BlendingContext|Interpolation::Context]&);
 //    };
 //
-// or, if a RenderStyle is needed for blending:
+// or, if a ComputedStyle is needed for blending:
 //
 //    template<> struct WebCore::Style::Blending<StyleType> {
-//        [optional default=(a==b)] bool equals(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&);
-//        [optional default=true] bool canBlend(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&);
-//        [optional default=false] bool requiresInterpolationForAccumulativeIteration(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&);
-//        StyleType blend(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&, const [BlendingContext|Interpolation::Context]&);
+//        [optional default=(a==b)] bool equals(const StyleType&, const StyleType&, const Style::ComputedStyle&, const Style::ComputedStyle&);
+//        [optional default=true] bool canBlend(const StyleType&, const StyleType&, const Style::ComputedStyle&, const Style::ComputedStyle&);
+//        [optional default=false] bool requiresInterpolationForAccumulativeIteration(const StyleType&, const StyleType&, const Style::ComputedStyle&, const Style::ComputedStyle&);
+//        StyleType blend(const StyleType&, const StyleType&, const Style::ComputedStyle&, const Style::ComputedStyle&, const [BlendingContext|Interpolation::Context]&);
 //    };
 
 template<typename> struct Blending;
 
-template<typename StyleType> concept HasEqualsForBlendingWithoutRenderStyle = requires {
+template<typename StyleType> concept HasEqualsForBlendingWithoutComputedStyle = requires {
     { Blending<StyleType>{}.equals(std::declval<const StyleType&>(), std::declval<const StyleType&>()) } -> std::same_as<bool>;
 };
-template<typename StyleType> concept HasEqualsForBlendingWithRenderStyle = requires {
-    { Blending<StyleType>{}.equals(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const RenderStyle&>(), std::declval<const RenderStyle&>()) } -> std::same_as<bool>;
+template<typename StyleType> concept HasEqualsForBlendingWithComputedStyle = requires {
+    { Blending<StyleType>{}.equals(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Style::ComputedStyle&>(), std::declval<const Style::ComputedStyle&>()) } -> std::same_as<bool>;
 };
 
-template<typename StyleType> concept HasCanBlendWithoutRenderStyleAndWithoutCompositeOperation = requires {
+template<typename StyleType> concept HasCanBlendWithoutComputedStyleAndWithoutCompositeOperation = requires {
     { Blending<StyleType>{}.canBlend(std::declval<const StyleType&>(), std::declval<const StyleType&>()) } -> std::same_as<bool>;
 };
-template<typename StyleType> concept HasCanBlendWithRenderStyleAndWithoutCompositeOperation = requires {
-    { Blending<StyleType>{}.canBlend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const RenderStyle&>(), std::declval<const RenderStyle&>()) } -> std::same_as<bool>;
+template<typename StyleType> concept HasCanBlendWithComputedStyleAndWithoutCompositeOperation = requires {
+    { Blending<StyleType>{}.canBlend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Style::ComputedStyle&>(), std::declval<const Style::ComputedStyle&>()) } -> std::same_as<bool>;
 };
-template<typename StyleType> concept HasCanBlendWithoutRenderStyleAndWithCompositeOperation = requires {
+template<typename StyleType> concept HasCanBlendWithoutComputedStyleAndWithCompositeOperation = requires {
     { Blending<StyleType>{}.canBlend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<CompositeOperation>()) } -> std::same_as<bool>;
 };
-template<typename StyleType> concept HasCanBlendWithRenderStyleAndWithCompositeOperation = requires {
-    { Blending<StyleType>{}.canBlend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const RenderStyle&>(), std::declval<const RenderStyle&>(), std::declval<CompositeOperation>()) } -> std::same_as<bool>;
+template<typename StyleType> concept HasCanBlendWithComputedStyleAndWithCompositeOperation = requires {
+    { Blending<StyleType>{}.canBlend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Style::ComputedStyle&>(), std::declval<const Style::ComputedStyle&>(), std::declval<CompositeOperation>()) } -> std::same_as<bool>;
 };
-template<typename StyleType> concept HasRequiresInterpolationForAccumulativeIterationWithoutRenderStyle = requires {
+template<typename StyleType> concept HasRequiresInterpolationForAccumulativeIterationWithoutComputedStyle = requires {
     { Blending<StyleType>{}.requiresInterpolationForAccumulativeIteration(std::declval<const StyleType&>(), std::declval<const StyleType&>()) } -> std::same_as<bool>;
 };
-template<typename StyleType> concept HasRequiresInterpolationForAccumulativeIterationWithRenderStyle = requires {
-    { Blending<StyleType>{}.requiresInterpolationForAccumulativeIteration(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const RenderStyle&>(), std::declval<const RenderStyle&>()) } -> std::same_as<bool>;
+template<typename StyleType> concept HasRequiresInterpolationForAccumulativeIterationWithComputedStyle = requires {
+    { Blending<StyleType>{}.requiresInterpolationForAccumulativeIteration(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Style::ComputedStyle&>(), std::declval<const Style::ComputedStyle&>()) } -> std::same_as<bool>;
 };
-template<typename StyleType> concept HasBlendWithoutRenderStyleAndWithInterpolationContext = requires {
+template<typename StyleType> concept HasBlendWithoutComputedStyleAndWithInterpolationContext = requires {
     { Blending<StyleType>{}.blend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Interpolation::Context&>()) } -> std::same_as<StyleType>;
 };
-template<typename StyleType> concept HasBlendWithoutRenderStyleAndWithBlendingContext = requires {
+template<typename StyleType> concept HasBlendWithoutComputedStyleAndWithBlendingContext = requires {
     { Blending<StyleType>{}.blend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const BlendingContext&>()) } -> std::same_as<StyleType>;
 };
-template<typename StyleType> concept HasBlendWithRenderStyleAndWithInterpolationContext = requires {
-    { Blending<StyleType>{}.blend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const RenderStyle&>(), std::declval<const RenderStyle&>(), std::declval<const Interpolation::Context&>()) } -> std::same_as<StyleType>;
+template<typename StyleType> concept HasBlendWithComputedStyleAndWithInterpolationContext = requires {
+    { Blending<StyleType>{}.blend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Style::ComputedStyle&>(), std::declval<const Style::ComputedStyle&>(), std::declval<const Interpolation::Context&>()) } -> std::same_as<StyleType>;
 };
-template<typename StyleType> concept HasBlendWithRenderStyleAndWithBlendingContext = requires {
-    { Blending<StyleType>{}.blend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const RenderStyle&>(), std::declval<const RenderStyle&>(), std::declval<const BlendingContext&>()) } -> std::same_as<StyleType>;
+template<typename StyleType> concept HasBlendWithComputedStyleAndWithBlendingContext = requires {
+    { Blending<StyleType>{}.blend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Style::ComputedStyle&>(), std::declval<const Style::ComputedStyle&>(), std::declval<const BlendingContext&>()) } -> std::same_as<StyleType>;
 };
 
 struct EqualsForBlendingInvoker {
     template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b) const -> bool
     {
-        if constexpr (HasEqualsForBlendingWithoutRenderStyle<StyleType>)
+        if constexpr (HasEqualsForBlendingWithoutComputedStyle<StyleType>)
             return Blending<StyleType>{}.equals(a, b);
         else
             return a == b;
     }
 
-    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) const -> bool
+    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) const -> bool
     {
-        if constexpr (HasEqualsForBlendingWithRenderStyle<StyleType>)
+        if constexpr (HasEqualsForBlendingWithComputedStyle<StyleType>)
             return Blending<StyleType>{}.equals(a, b, aStyle, bStyle);
         else
             return this->operator()(a, b);
@@ -938,7 +872,7 @@ inline constexpr EqualsForBlendingInvoker equalsForBlending{};
 struct CanBlendInvoker {
     template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b) const -> bool
     {
-        if constexpr (HasCanBlendWithoutRenderStyleAndWithoutCompositeOperation<StyleType>)
+        if constexpr (HasCanBlendWithoutComputedStyleAndWithoutCompositeOperation<StyleType>)
             return Blending<StyleType>{}.canBlend(a, b);
         else
             return true;
@@ -946,27 +880,27 @@ struct CanBlendInvoker {
 
     template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, CompositeOperation compositeOperation) const -> bool
     {
-        if constexpr (HasCanBlendWithoutRenderStyleAndWithCompositeOperation<StyleType>)
+        if constexpr (HasCanBlendWithoutComputedStyleAndWithCompositeOperation<StyleType>)
             return Blending<StyleType>{}.canBlend(a, b, compositeOperation);
         else
             return this->operator()(a, b);
     }
 
-    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) const -> bool
+    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) const -> bool
     {
-        if constexpr (HasCanBlendWithRenderStyleAndWithoutCompositeOperation<StyleType>)
+        if constexpr (HasCanBlendWithComputedStyleAndWithoutCompositeOperation<StyleType>)
             return Blending<StyleType>{}.canBlend(a, b, aStyle, bStyle);
         else
             return this->operator()(a, b);
     }
 
-    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle, CompositeOperation compositeOperation) const -> bool
+    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, CompositeOperation compositeOperation) const -> bool
     {
-        if constexpr (HasCanBlendWithRenderStyleAndWithCompositeOperation<StyleType>)
+        if constexpr (HasCanBlendWithComputedStyleAndWithCompositeOperation<StyleType>)
             return Blending<StyleType>{}.canBlend(a, b, aStyle, bStyle, compositeOperation);
-        else if constexpr (HasCanBlendWithRenderStyleAndWithoutCompositeOperation<StyleType>)
+        else if constexpr (HasCanBlendWithComputedStyleAndWithoutCompositeOperation<StyleType>)
             return Blending<StyleType>{}.canBlend(a, b, aStyle, bStyle);
-        else if constexpr (HasCanBlendWithoutRenderStyleAndWithCompositeOperation<StyleType>)
+        else if constexpr (HasCanBlendWithoutComputedStyleAndWithCompositeOperation<StyleType>)
             return Blending<StyleType>{}.canBlend(a, b, compositeOperation);
         else
             return this->operator()(a, b);
@@ -977,15 +911,15 @@ inline constexpr CanBlendInvoker canBlend{};
 struct RequiresInterpolationForAccumulativeIterationInvoker {
     template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b) const -> bool
     {
-        if constexpr (HasRequiresInterpolationForAccumulativeIterationWithoutRenderStyle<StyleType>)
+        if constexpr (HasRequiresInterpolationForAccumulativeIterationWithoutComputedStyle<StyleType>)
             return Blending<StyleType>{}.requiresInterpolationForAccumulativeIteration(a, b);
         else
             return false;
     }
 
-    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) const -> bool
+    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) const -> bool
     {
-        if constexpr (HasRequiresInterpolationForAccumulativeIterationWithRenderStyle<StyleType>)
+        if constexpr (HasRequiresInterpolationForAccumulativeIterationWithComputedStyle<StyleType>)
             return Blending<StyleType>{}.requiresInterpolationForAccumulativeIteration(a, b, aStyle, bStyle);
         else
             return this->operator()(a, b);
@@ -1004,17 +938,17 @@ struct BlendInvoker {
         return Blending<StyleType>{}.blend(a, b, context);
     }
 
-    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const Interpolation::Context& context) const -> StyleType
+    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const Interpolation::Context& context) const -> StyleType
     {
-        if constexpr (HasBlendWithRenderStyleAndWithInterpolationContext<StyleType> || HasBlendWithRenderStyleAndWithBlendingContext<StyleType>)
+        if constexpr (HasBlendWithComputedStyleAndWithInterpolationContext<StyleType> || HasBlendWithComputedStyleAndWithBlendingContext<StyleType>)
             return Blending<StyleType>{}.blend(a, b, aStyle, bStyle, context);
         else
             return this->operator()(a, b, context);
     }
 
-    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) const -> StyleType
+    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) const -> StyleType
     {
-        if constexpr (HasBlendWithRenderStyleAndWithBlendingContext<StyleType>)
+        if constexpr (HasBlendWithComputedStyleAndWithBlendingContext<StyleType>)
             return Blending<StyleType>{}.blend(a, b, aStyle, bStyle, context);
         else
             return this->operator()(a, b, context);
@@ -1031,7 +965,7 @@ template<typename StyleType> auto equalsForBlendingOnOptionalLike(const StyleTyp
     return !a && !b;
 }
 
-template<typename StyleType> auto equalsForBlendingOnOptionalLike(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+template<typename StyleType> auto equalsForBlendingOnOptionalLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     if (a && b)
         return WebCore::Style::equalsForBlending(*a, *b, aStyle, bStyle);
@@ -1045,7 +979,7 @@ template<typename StyleType> auto canBlendOnOptionalLike(const StyleType& a, con
     return !a && !b;
 }
 
-template<typename StyleType> auto canBlendOnOptionalLike(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+template<typename StyleType> auto canBlendOnOptionalLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     if (a && b)
         return WebCore::Style::canBlend(*a, *b, aStyle, bStyle);
@@ -1059,7 +993,7 @@ template<typename StyleType> auto requiresInterpolationForAccumulativeIterationO
     return false;
 }
 
-template<typename StyleType> auto requiresInterpolationForAccumulativeIterationOnOptionalLike(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+template<typename StyleType> auto requiresInterpolationForAccumulativeIterationOnOptionalLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     if (a && b)
         return WebCore::Style::requiresInterpolationForAccumulativeIteration(*a, *b, aStyle, bStyle);
@@ -1073,7 +1007,7 @@ template<typename StyleType> auto blendOnOptionalLike(const StyleType& a, const 
     return std::nullopt;
 }
 
-template<typename StyleType> auto blendOnOptionalLike(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const auto& context) -> StyleType
+template<typename StyleType> auto blendOnOptionalLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const auto& context) -> StyleType
 {
     if (a && b)
         return WebCore::Style::blend(*a, *b, aStyle, bStyle, context);
@@ -1087,7 +1021,7 @@ template<typename StyleType> auto equalsForBlendingOnTupleLike(const StyleType& 
     }, WTF::tuple_zip(a, b));
 }
 
-template<typename StyleType> auto equalsForBlendingOnTupleLike(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+template<typename StyleType> auto equalsForBlendingOnTupleLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     return WTF::apply([&](const auto& ...pair) {
         return (WebCore::Style::equalsForBlending(std::get<0>(pair), std::get<1>(pair), aStyle, bStyle) && ...);
@@ -1101,7 +1035,7 @@ template<typename StyleType> auto canBlendOnTupleLike(const StyleType& a, const 
     }, WTF::tuple_zip(a, b));
 }
 
-template<typename StyleType> auto canBlendOnTupleLike(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+template<typename StyleType> auto canBlendOnTupleLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     return WTF::apply([&](const auto& ...pair) {
         return (WebCore::Style::canBlend(std::get<0>(pair), std::get<1>(pair), aStyle, bStyle) && ...);
@@ -1115,7 +1049,7 @@ template<typename StyleType> auto requiresInterpolationForAccumulativeIterationO
     }, WTF::tuple_zip(a, b));
 }
 
-template<typename StyleType> auto requiresInterpolationForAccumulativeIterationOnTupleLike(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+template<typename StyleType> auto requiresInterpolationForAccumulativeIterationOnTupleLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     return WTF::apply([&](const auto& ...pair) {
         return (WebCore::Style::requiresInterpolationForAccumulativeIteration(std::get<0>(pair), std::get<1>(pair), aStyle, bStyle) || ...);
@@ -1129,7 +1063,7 @@ template<typename StyleType> auto blendOnTupleLike(const StyleType& a, const Sty
     }, WTF::tuple_zip(a, b));
 }
 
-template<typename StyleType> auto blendOnTupleLike(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const auto& context) -> StyleType
+template<typename StyleType> auto blendOnTupleLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const auto& context) -> StyleType
 {
     return WTF::apply([&](const auto& ...pair) {
         return StyleType { WebCore::Style::blend(std::get<0>(pair), std::get<1>(pair), aStyle, bStyle, context)... };
@@ -1142,7 +1076,7 @@ template<EmptyLike StyleType> struct Blending<StyleType> {
     {
         return { };
     }
-    auto blend(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&, const auto&) -> StyleType
+    auto blend(const StyleType&, const StyleType&, const Style::ComputedStyle&, const Style::ComputedStyle&, const auto&) -> StyleType
     {
         return { };
     }
@@ -1154,7 +1088,7 @@ template<OptionalLike StyleType> struct Blending<StyleType> {
     {
         return equalsForBlendingOnOptionalLike(a, b);
     }
-    constexpr auto equals(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    constexpr auto equals(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         return equalsForBlendingOnOptionalLike(a, b, aStyle, bStyle);
     }
@@ -1162,7 +1096,7 @@ template<OptionalLike StyleType> struct Blending<StyleType> {
     {
         return canBlendOnOptionalLike(a, b);
     }
-    constexpr auto canBlend(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    constexpr auto canBlend(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         return canBlendOnOptionalLike(a, b, aStyle, bStyle);
     }
@@ -1170,7 +1104,7 @@ template<OptionalLike StyleType> struct Blending<StyleType> {
     {
         return requiresInterpolationForAccumulativeIterationOnOptionalLike(a, b);
     }
-    constexpr auto requiresInterpolationForAccumulativeIteration(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    constexpr auto requiresInterpolationForAccumulativeIteration(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         return requiresInterpolationForAccumulativeIterationOnOptionalLike(a, b, aStyle, bStyle);
     }
@@ -1178,7 +1112,7 @@ template<OptionalLike StyleType> struct Blending<StyleType> {
     {
         return blendOnOptionalLike(a, b, context);
     }
-    auto blend(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const auto& context) -> StyleType
+    auto blend(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const auto& context) -> StyleType
     {
         return blendOnOptionalLike(a, b, aStyle, bStyle, context);
     }
@@ -1190,7 +1124,7 @@ template<TupleLike StyleType> struct Blending<StyleType> {
     {
         return equalsForBlendingOnTupleLike(a, b);
     }
-    constexpr auto equals(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    constexpr auto equals(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         return equalsForBlendingOnTupleLike(a, b, aStyle, bStyle);
     }
@@ -1198,7 +1132,7 @@ template<TupleLike StyleType> struct Blending<StyleType> {
     {
         return canBlendOnTupleLike(a, b);
     }
-    constexpr auto canBlend(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    constexpr auto canBlend(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         return canBlendOnTupleLike(a, b, aStyle, bStyle);
     }
@@ -1206,7 +1140,7 @@ template<TupleLike StyleType> struct Blending<StyleType> {
     {
         return requiresInterpolationForAccumulativeIterationOnTupleLike(a, b);
     }
-    constexpr auto requiresInterpolationForAccumulativeIteration(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    constexpr auto requiresInterpolationForAccumulativeIteration(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         return requiresInterpolationForAccumulativeIterationOnTupleLike(a, b, aStyle, bStyle);
     }
@@ -1214,7 +1148,7 @@ template<TupleLike StyleType> struct Blending<StyleType> {
     {
         return blendOnTupleLike(a, b, context);
     }
-    auto blend(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const auto& context) -> StyleType
+    auto blend(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const auto& context) -> StyleType
     {
         return blendOnTupleLike(a, b, aStyle, bStyle, context);
     }
@@ -1226,7 +1160,7 @@ template<CSSValueID C> struct Blending<Constant<C>> {
     {
         return { };
     }
-    auto blend(const Constant<C>&, const Constant<C>&, const RenderStyle&, const RenderStyle&, const auto&) -> Constant<C>
+    auto blend(const Constant<C>&, const Constant<C>&, const Style::ComputedStyle&, const Style::ComputedStyle&, const auto&) -> Constant<C>
     {
         return { };
     }
@@ -1245,7 +1179,7 @@ template<typename... StyleTypes> struct Blending<Variant<StyleTypes...>> {
             }
         ), a, b);
     }
-    auto equals(const Variant<StyleTypes...>& a, const Variant<StyleTypes...>& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    auto equals(const Variant<StyleTypes...>& a, const Variant<StyleTypes...>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         return WTF::visit(WTF::makeVisitor(
             [&]<typename T>(const T& a, const T& b) -> bool {
@@ -1267,7 +1201,7 @@ template<typename... StyleTypes> struct Blending<Variant<StyleTypes...>> {
             }
         ), a, b);
     }
-    auto canBlend(const Variant<StyleTypes...>& a, const Variant<StyleTypes...>& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    auto canBlend(const Variant<StyleTypes...>& a, const Variant<StyleTypes...>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         return WTF::visit(WTF::makeVisitor(
             [&]<typename T>(const T& a, const T& b) -> bool {
@@ -1289,7 +1223,7 @@ template<typename... StyleTypes> struct Blending<Variant<StyleTypes...>> {
             }
         ), a, b);
     }
-    auto requiresInterpolationForAccumulativeIteration(const Variant<StyleTypes...>& a, const Variant<StyleTypes...>& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    auto requiresInterpolationForAccumulativeIteration(const Variant<StyleTypes...>& a, const Variant<StyleTypes...>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         return WTF::visit(WTF::makeVisitor(
             [&]<typename T>(const T& a, const T& b) -> bool {
@@ -1311,7 +1245,7 @@ template<typename... StyleTypes> struct Blending<Variant<StyleTypes...>> {
             }
         ), a, b);
     }
-    auto blend(const Variant<StyleTypes...>& a, const Variant<StyleTypes...>& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const auto& context) -> Variant<StyleTypes...>
+    auto blend(const Variant<StyleTypes...>& a, const Variant<StyleTypes...>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const auto& context) -> Variant<StyleTypes...>
     {
         return WTF::visit(WTF::makeVisitor(
             [&]<typename T>(const T& a, const T& b) -> Variant<StyleTypes...> {
@@ -1325,7 +1259,7 @@ template<typename... StyleTypes> struct Blending<Variant<StyleTypes...>> {
 };
 
 // Specialization for `ValueOrKeyword`, constrained to types whose value is blendable.
-template<ValueOrKeywordDerived T> requires HasBlendWithoutRenderStyleAndWithBlendingContext<typename T::Value> struct Blending<T> {
+template<ValueOrKeywordDerived T> requires HasBlendWithoutComputedStyleAndWithBlendingContext<typename T::Value> struct Blending<T> {
     auto canBlend(const T& a, const T& b) -> bool
     {
         if (a.isKeyword() || b.isKeyword())
@@ -1354,7 +1288,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<SpaceSeparat
         }
         return true;
     }
-    auto equals(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    auto equals(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         if (a.size() != b.size())
             return false;
@@ -1374,7 +1308,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<SpaceSeparat
         }
         return true;
     }
-    auto canBlend(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    auto canBlend(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         if (a.size() != b.size())
             return false;
@@ -1394,7 +1328,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<SpaceSeparat
         }
         return false;
     }
-    auto requiresInterpolationForAccumulativeIteration(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    auto requiresInterpolationForAccumulativeIteration(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         if (a.size() != b.size())
             return false;
@@ -1413,7 +1347,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<SpaceSeparat
             result.append(WebCore::Style::blend(a[i], b[i], context));
         return { WTF::move(result) };
     }
-    auto blend(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const auto& context) -> SpaceSeparatedVector<StyleType, inlineCapacity>
+    auto blend(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const auto& context) -> SpaceSeparatedVector<StyleType, inlineCapacity>
     {
         auto size = a.size();
         typename SpaceSeparatedVector<StyleType, inlineCapacity>::Container result;
@@ -1436,7 +1370,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
         }
         return true;
     }
-    auto equals(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    auto equals(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         if (a.size() != b.size())
             return false;
@@ -1456,7 +1390,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
         }
         return true;
     }
-    auto canBlend(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    auto canBlend(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         if (a.size() != b.size())
             return false;
@@ -1476,7 +1410,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
         }
         return false;
     }
-    auto requiresInterpolationForAccumulativeIteration(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+    auto requiresInterpolationForAccumulativeIteration(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
     {
         if (a.size() != b.size())
             return false;
@@ -1495,7 +1429,7 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
             result.append(WebCore::Style::blend(a[i], b[i], context));
         return { WTF::move(result) };
     }
-    auto blend(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const auto& context) -> CommaSeparatedVector<StyleType, inlineCapacity>
+    auto blend(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const auto& context) -> CommaSeparatedVector<StyleType, inlineCapacity>
     {
         auto size = a.size();
         typename CommaSeparatedVector<StyleType, inlineCapacity>::Container result;

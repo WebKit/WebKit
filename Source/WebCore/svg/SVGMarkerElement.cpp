@@ -165,7 +165,7 @@ void SVGMarkerElement::setOrientToAuto()
 
 void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
 {
-    m_orientAngle->baseVal()->newValueSpecifiedUnits(angle.unitType(), angle.valueInSpecifiedUnits());
+    protect(m_orientAngle)->baseVal()->newValueSpecifiedUnits(angle.unitType(), angle.valueInSpecifiedUnits());
     invalidateMarkerResource();
 }
 
@@ -175,7 +175,7 @@ void SVGMarkerElement::setOrientToAutoStartReverse()
     invalidateMarkerResource();
 }
 
-RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceMarker>(*this, WTF::move(style));

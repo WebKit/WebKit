@@ -14,8 +14,8 @@
 #include <cstdint>
 #include <map>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/voip/voip_base.h"
 #include "api/voip/voip_codec.h"
@@ -69,11 +69,11 @@ class MockVoipNetwork : public VoipNetwork {
  public:
   MOCK_METHOD(VoipResult,
               ReceivedRTPPacket,
-              (ChannelId channel_id, ArrayView<const uint8_t> rtp_packet),
+              (ChannelId channel_id, std::span<const uint8_t> rtp_packet),
               (override));
   MOCK_METHOD(VoipResult,
               ReceivedRTCPPacket,
-              (ChannelId channel_id, ArrayView<const uint8_t> rtcp_packet),
+              (ChannelId channel_id, std::span<const uint8_t> rtcp_packet),
               (override));
 };
 

@@ -8,17 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <cstdint>
 #include <cstring>
-#include <string>
 
 #include "rtc_base/base64.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  std::string str(reinterpret_cast<const char*>(data), size);
-  Base64Decode(str);
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  Base64Decode(fuzz_data.ReadString());
 }
 
 }  // namespace webrtc

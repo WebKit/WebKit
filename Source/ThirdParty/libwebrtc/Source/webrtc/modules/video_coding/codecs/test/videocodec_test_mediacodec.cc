@@ -200,10 +200,9 @@ class VideoCodecTestMediaCodecRateAdaptation
   static std::string ParamInfoToStr(
       const ::testing::TestParamInfo<
           VideoCodecTestMediaCodecRateAdaptation::ParamType>& info) {
-    char buf[512];
-    webrtc::SimpleStringBuilder ss(buf);
+    StringBuilder ss;
     ss << std::get<0>(info.param).name << "_" << std::get<1>(info.param);
-    return ss.str();
+    return ss.Release();
   }
 };
 

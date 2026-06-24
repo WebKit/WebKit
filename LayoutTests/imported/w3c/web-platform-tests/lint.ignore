@@ -9,6 +9,7 @@
 
 INDENT TABS: conformance-checkers/*
 INDENT TABS: encoding/legacy*/*
+INDENT TABS: *w3c-import.log
 
 TRAILING WHITESPACE: html/canvas/tools/current-work-canvas.xhtml
 TRAILING WHITESPACE: conformance-checkers/*

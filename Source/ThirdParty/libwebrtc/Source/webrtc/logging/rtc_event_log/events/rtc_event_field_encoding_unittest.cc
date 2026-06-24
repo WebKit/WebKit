@@ -14,13 +14,13 @@
 #include <cstdio>
 #include <limits>
 #include <optional>
+#include <span>
 #include <string>
 #include <tuple>
 #include <type_traits>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/encoder/var_int.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding_parser.h"
@@ -366,8 +366,8 @@ class RtcEventFieldTest : public ::testing::Test {
     size_t size_before = parser_.RemainingBytes();
     auto result = parser_.ParseOptionalNumericField(params);
     ASSERT_TRUE(result.ok()) << result.message().c_str();
-    ArrayView<uint64_t> values = result.value().values;
-    ArrayView<uint8_t> positions = result.value().positions;
+    std::span<uint64_t> values = result.value().values;
+    std::span<uint8_t> positions = result.value().positions;
     ASSERT_EQ(positions.size(), expected_values.size());
     auto value_it = values.begin();
     for (size_t i = 0; i < expected_values.size(); i++) {
@@ -396,8 +396,8 @@ class RtcEventFieldTest : public ::testing::Test {
     auto result =
         parser_.ParseOptionalNumericField(params, /*required_field=*/false);
     ASSERT_TRUE(result.ok()) << result.message().c_str();
-    ArrayView<uint64_t> values = result.value().values;
-    ArrayView<uint8_t> positions = result.value().positions;
+    std::span<uint64_t> values = result.value().values;
+    std::span<uint8_t> positions = result.value().positions;
     EXPECT_EQ(positions.size(), 0u);
     EXPECT_EQ(values.size(), 0u);
   }

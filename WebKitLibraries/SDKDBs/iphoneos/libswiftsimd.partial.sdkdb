@@ -834,7 +834,7 @@
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E4axiss5SIMD3VySdGvg"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E4axiss5SIMD3VySdGvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E4from2toABs5SIMD3VySdG_AHtcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E4hash4intoys6HasherVz_tF"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E4imags5SIMD3VySdGvM"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E4imags5SIMD3VySdGvg"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E4imags5SIMD3VySdGvpMV"},
@@ -853,8 +853,8 @@
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E7inverseABvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E9conjugateABvg"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E9conjugateABvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E9hashValueSivg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E9hashValueSivpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E9hashValueSivg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo10simd_quatda0A0E9hashValueSivpMV"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0EyABSo0A10_double3x3acfC"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatda0A0EyABSo0A10_double4x4acfC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo10simd_quatdaSH0A0Mc"},
@@ -884,7 +884,7 @@
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E4axiss5SIMD3VySfGvg"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E4axiss5SIMD3VySfGvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E4from2toABs5SIMD3VySfG_AHtcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E4hash4intoys6HasherVz_tF"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E4imags5SIMD3VySfGvM"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E4imags5SIMD3VySfGvg"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E4imags5SIMD3VySfGvpMV"},
@@ -903,8 +903,8 @@
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E7inverseABvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E9conjugateABvg"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E9conjugateABvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E9hashValueSivg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E9hashValueSivpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E9hashValueSivg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0E9hashValueSivpMV"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0EyABSo0A9_float3x3acfC"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10simd_quatfa0A0EyABSo0A9_float4x4acfC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo10simd_quatfaSH0A0Mc"},
@@ -1613,7 +1613,7 @@
     {"access": "public", "linkage": "exported", "name": "_$ss5SIMD4V4simdE19_descriptionAsArraySSvg"},
     {"access": "public", "linkage": "exported", "name": "_$ss5SIMD4V4simdE19_descriptionAsArraySSvpMV"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

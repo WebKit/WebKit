@@ -156,7 +156,7 @@ struct Box {
     Expansion expansion() const { return { m_expansionBehavior, m_horizontalExpansion }; }
 
     const Layout::Box& layoutBox() const { return *m_layoutBox; }
-    const RenderStyle& style() const LIFETIME_BOUND { return isFirstFormattedLine() ? layoutBox().firstLineStyle() : layoutBox().style(); }
+    const Style::ComputedStyle& style() const LIFETIME_BOUND { return isFirstFormattedLine() ? layoutBox().firstLineStyle() : layoutBox().style(); }
     WritingMode writingMode() const { return style().writingMode(); }
 
     void moveToLine(unsigned lineIndex) { m_lineIndex = lineIndex; }

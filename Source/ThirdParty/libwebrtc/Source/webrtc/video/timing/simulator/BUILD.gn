@@ -35,7 +35,6 @@ if (rtc_enable_protobuf) {
       "stream_base.h",
     ]
     deps = [
-      "../../../api:array_view",
       "../../../api:field_trials",
       "../../../api:rtp_headers",
       "../../../api:rtp_packet_info",
@@ -107,6 +106,7 @@ if (rtc_enable_protobuf) {
         "../../../api:rtp_packet_info",
         "../../../api:sequence_checker",
         "../../../api/environment",
+        "../../../api/numerics",
         "../../../api/transport/rtp:dependency_descriptor",
         "../../../api/units:data_size",
         "../../../api/units:time_delta",

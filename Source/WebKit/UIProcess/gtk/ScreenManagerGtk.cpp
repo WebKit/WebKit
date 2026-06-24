@@ -154,7 +154,7 @@ ScreenProperties ScreenManager::collectScreenProperties() const
     }
 
     // FIXME: don't use PlatformScreen from the UI process, better use ScreenManager directly.
-    WebCore::setScreenProperties(properties);
+    WebCore::PlatformScreen::updateSingletonProperties(ScreenProperties { properties });
 
     return properties;
 }

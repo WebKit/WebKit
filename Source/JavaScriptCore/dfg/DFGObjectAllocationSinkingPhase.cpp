@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGBlockMapInlines.h"
 #include "DFGClobbersExitState.h"
 #include "DFGCombinedLiveness.h"
 #include "DFGGraph.h"
@@ -53,6 +52,7 @@
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
 #include "JSWrapForValidIterator.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace DFG {
 
@@ -857,8 +857,8 @@ private:
 
     void performAnalysis()
     {
-        m_heapAtHead = BlockMap<LocalHeap>(m_graph);
-        m_heapAtTail = BlockMap<LocalHeap>(m_graph);
+        m_heapAtHead = IndexMap<BasicBlock*, LocalHeap>(m_graph.numBlocks());
+        m_heapAtTail = IndexMap<BasicBlock*, LocalHeap>(m_graph.numBlocks());
 
         bool changed;
         do {
@@ -2315,14 +2315,6 @@ escapeChildren:
 
                         doLower = true;
 
-                        if (node->op() == PutByVal) {
-                            // We must insert the check before the PutHint inserted below. This is because that both PutHint and PutByVal
-                            // clobber the exit state. Since they have consistent exit state clobberization assumption, an ExitOK wouldn't be
-                            // inserted below which breaks the validation.
-                            Edge value = m_graph.varArgChild(node, 2);
-                            m_insertionSet.insertNode(nodeIndex + 1, SpecNone, Check, node->origin, Edge(value.node(), value.useKind()));
-                        }
-
                         dataLogLnIf(Options::verboseObjectAllocationSinking(), "Creating hint with value ", nodeValue, " before ", node);
                         m_insertionSet.insert(
                             nodeIndex + 1,
@@ -2334,9 +2326,6 @@ escapeChildren:
                     });
 
 
-                // After inserting a PutHint, the next node cannot exit. If the current node does clobber the exit state, then we are fine since
-                // the exit state clobberization are consistent after the insertion. Otherwise, the assumption was broken and an ExitOK is required
-                // to ensure a valid exit state.
                 if (!nextCanExit && desiredNextExitOK) {
                     // We indicate that the exit state is fine now. We need to do this because we
                     // emitted hints that appear to invalidate the exit state.
@@ -3079,8 +3068,8 @@ escapeChildren:
 
     UncheckedKeyHashMap<unsigned, Node*, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_constants;
 
-    BlockMap<LocalHeap> m_heapAtHead;
-    BlockMap<LocalHeap> m_heapAtTail;
+    IndexMap<BasicBlock*, LocalHeap> m_heapAtHead;
+    IndexMap<BasicBlock*, LocalHeap> m_heapAtTail;
     LocalHeap m_heap;
 
     Node* m_bottom { nullptr };

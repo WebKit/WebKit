@@ -14,11 +14,11 @@
 #include <stdint.h>
 
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
@@ -30,7 +30,7 @@ class RtcEventRtcpPacketOutgoing final : public RtcEvent {
  public:
   static constexpr Type kType = Type::RtcpPacketOutgoing;
 
-  explicit RtcEventRtcpPacketOutgoing(ArrayView<const uint8_t> packet);
+  explicit RtcEventRtcpPacketOutgoing(std::span<const uint8_t> packet);
   ~RtcEventRtcpPacketOutgoing() override;
 
   Type GetType() const override { return kType; }
@@ -40,7 +40,7 @@ class RtcEventRtcpPacketOutgoing final : public RtcEvent {
 
   const Buffer& packet() const { return packet_; }
 
-  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(std::span<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

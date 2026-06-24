@@ -44,7 +44,6 @@
 #import <WebCore/WebCoreThread.h>
 #endif
 
-using namespace WebCore;
 
 NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 
@@ -77,7 +76,7 @@ static NSString *databasesDirectoryPath();
 
     WebPlatformStrategies::initializeIfNecessary();
 
-    DatabaseManager& dbManager = DatabaseManager::singleton();
+    WebCore::DatabaseManager& dbManager = WebCore::DatabaseManager::singleton();
 
     // Set the database root path in WebCore
     dbManager.initialize(databasesDirectoryPath());
@@ -90,7 +89,7 @@ static NSString *databasesDirectoryPath();
 
 - (NSArray *)origins
 {
-    return createNSArray(DatabaseTracker::singleton().origins(), [] (auto&& origin) {
+    return createNSArray(WebCore::DatabaseTracker::singleton().origins(), [] (auto&& origin) {
         return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()]);
     }).autorelease();
 }
@@ -99,7 +98,7 @@ static NSString *databasesDirectoryPath();
 {
     if (!origin)
         return nil;
-    return createNSArray(DatabaseTracker::singleton().databaseNames([origin _core]->data())).autorelease();
+    return createNSArray(WebCore::DatabaseTracker::singleton().databaseNames([origin _core]->data())).autorelease();
 }
 
 - (NSDictionary *)detailsForDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
@@ -107,7 +106,7 @@ static NSString *databasesDirectoryPath();
     if (!origin)
         return nil;
 
-    auto details = DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, *[origin _core]);
+    auto details = WebCore::DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, *[origin _core]);
     if (details.name().isNull())
         return nil;
 
@@ -120,7 +119,7 @@ static NSString *databasesDirectoryPath();
 
 - (void)deleteAllDatabases
 {
-    DatabaseTracker::singleton().deleteAllDatabasesImmediately();
+    WebCore::DatabaseTracker::singleton().deleteAllDatabasesImmediately();
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This needs to be removed once DatabaseTrackers in multiple processes
     // are in sync: <rdar://problem/9567500> Remove Website Data pane is not kept in sync with Safari
@@ -130,12 +129,12 @@ static NSString *databasesDirectoryPath();
 
 - (BOOL)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    return origin && DatabaseTracker::singleton().deleteOrigin([origin _core]->data());
+    return origin && WebCore::DatabaseTracker::singleton().deleteOrigin([origin _core]->data());
 }
 
 - (BOOL)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    return origin && DatabaseTracker::singleton().deleteDatabase([origin _core]->data(), databaseIdentifier);
+    return origin && WebCore::DatabaseTracker::singleton().deleteDatabase([origin _core]->data(), databaseIdentifier);
 }
 
 // For DumpRenderTree support only
@@ -193,7 +192,7 @@ static bool isFileHidden(NSString *file)
             if (![fileManager fileExistsAtPath:dbFilePath isDirectory:&isDirectory] || isDirectory)
                 continue;
             
-            if (DatabaseTracker::deleteDatabaseFileIfEmpty(dbFilePath))
+            if (WebCore::DatabaseTracker::deleteDatabaseFileIfEmpty(dbFilePath))
                 ++deletedDatabaseFileCount;
         }
         
@@ -207,11 +206,11 @@ static bool isFileHidden(NSString *file)
 
 + (void)scheduleEmptyDatabaseRemoval
 {
-    DatabaseTracker::emptyDatabaseFilesRemovalTaskWillBeScheduled();
+    WebCore::DatabaseTracker::emptyDatabaseFilesRemovalTaskWillBeScheduled();
     
     dispatch_async(globalDispatchQueueSingleton(0, 0), ^{
         [WebDatabaseManager removeEmptyDatabaseFiles];
-        DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish();
+        WebCore::DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish();
     });
 }
 

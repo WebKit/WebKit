@@ -107,6 +107,7 @@ WTF_EXPORT_PRIVATE bool isHiddenFile(const String&);
 WTF_EXPORT_PRIVATE String pathByAppendingComponent(StringView path, StringView component);
 WTF_EXPORT_PRIVATE String pathByAppendingComponents(StringView path, std::span<const StringView> components);
 WTF_EXPORT_PRIVATE String lastComponentOfPathIgnoringTrailingSlash(const String& path);
+WTF_EXPORT_PRIVATE void removeTrailingSlash(String& path);
 WTF_EXPORT_PRIVATE bool makeAllDirectories(const String& path);
 WTF_EXPORT_PRIVATE String pathFileName(const String&);
 WTF_EXPORT_PRIVATE String parentPath(const String&);

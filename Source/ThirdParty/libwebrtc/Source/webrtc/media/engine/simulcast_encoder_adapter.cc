@@ -19,6 +19,7 @@
 #include <memory>
 #include <numeric>
 #include <optional>
+#include <span>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -26,7 +27,6 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/base/nullability.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/fec_controller_override.h"
 #include "api/field_trials_view.h"
@@ -59,6 +59,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/strings/str_join.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -131,7 +132,7 @@ bool StreamQualityCompare(const SimulcastStream& a, const SimulcastStream& b) {
 }
 
 void GetLowestAndHighestQualityStreamIndixes(
-    ArrayView<const SimulcastStream> streams,
+    std::span<const SimulcastStream> streams,
     int* lowest_quality_stream_idx,
     int* highest_quality_stream_idx) {
   const auto lowest_highest_quality_streams =
@@ -196,9 +197,9 @@ SimulcastEncoderAdapter::StreamContext::StreamContext(
       is_keyframe_needed_(false),
       is_paused_(is_paused) {
   if (parent_) {
+    // If we have a parent, this encoder is not running in bypass mode and we
+    // should funnnel the callbacks back via this stream context.
     encoder_context_->encoder().RegisterEncodeCompleteCallback(this);
-  } else {
-    RTC_LOG(LS_ERROR) << "[SEA] StreamContext ctor parent is null";
   }
 }
 
@@ -212,6 +213,8 @@ SimulcastEncoderAdapter::StreamContext::StreamContext(StreamContext&& rhs)
       is_keyframe_needed_(rhs.is_keyframe_needed_),
       is_paused_(rhs.is_paused_) {
   if (parent_) {
+    // If we have a parent, this encoder is not running in bypass mode and we
+    // should funnel the callbacks back via this stream context.
     encoder_context_->encoder().RegisterEncodeCompleteCallback(this);
   }
 }
@@ -273,9 +276,13 @@ void SimulcastEncoderAdapter::StreamContext::OnFrameDropped(
 int SimulcastEncoderAdapter::StreamContext::Encode(
     const VideoFrame& frame,
     const std::vector<VideoFrameType>* frame_types) {
-  pending_rtp_timestamps_.push_back(frame.rtp_timestamp());
+  {
+    MutexLock lock(&queue_mutex_);
+    pending_rtp_timestamps_.push_back(frame.rtp_timestamp());
+  }
   int ret = encoder().Encode(frame, frame_types);
   if (ret != WEBRTC_VIDEO_CODEC_OK) {
+    MutexLock lock(&queue_mutex_);
     RTC_DCHECK_EQ(pending_rtp_timestamps_.back(), frame.rtp_timestamp());
     pending_rtp_timestamps_.pop_back();
   }
@@ -284,15 +291,24 @@ int SimulcastEncoderAdapter::StreamContext::Encode(
 
 void SimulcastEncoderAdapter::StreamContext::MaybeCullOldTimestamps(
     uint32_t new_rtp_timestamp) {
-  while (!pending_rtp_timestamps_.empty() &&
-         pending_rtp_timestamps_.front() != new_rtp_timestamp &&
-         IsNewerTimestamp(new_rtp_timestamp, pending_rtp_timestamps_.front())) {
-    parent_->OnFrameDropped(pending_rtp_timestamps_.front(), stream_idx_);
-    pending_rtp_timestamps_.pop_front();
+  std::vector<uint32_t> dropped_timestamps;
+  {
+    MutexLock lock(&queue_mutex_);
+    while (
+        !pending_rtp_timestamps_.empty() &&
+        pending_rtp_timestamps_.front() != new_rtp_timestamp &&
+        IsNewerTimestamp(new_rtp_timestamp, pending_rtp_timestamps_.front())) {
+      dropped_timestamps.push_back(pending_rtp_timestamps_.front());
+      pending_rtp_timestamps_.pop_front();
+    }
+    if (!pending_rtp_timestamps_.empty() &&
+        pending_rtp_timestamps_.front() == new_rtp_timestamp) {
+      pending_rtp_timestamps_.pop_front();
+    }
   }
-  if (!pending_rtp_timestamps_.empty() &&
-      pending_rtp_timestamps_.front() == new_rtp_timestamp) {
-    pending_rtp_timestamps_.pop_front();
+  // Make callback outside lock to avoid potential deadlocks.
+  for (uint32_t timestamp : dropped_timestamps) {
+    parent_->OnFrameDropped(timestamp, stream_idx_);
   }
 }
 
@@ -326,7 +342,9 @@ SimulcastEncoderAdapter::SimulcastEncoderAdapter(
 
 SimulcastEncoderAdapter::~SimulcastEncoderAdapter() {
   RTC_DCHECK_RUN_ON(&encoder_queue_checker_);
-  RTC_DCHECK(!Initialized());
+  if (Initialized()) {
+    Release();
+  }
   DestroyStoredEncoders();
 }
 
@@ -385,7 +403,7 @@ int SimulcastEncoderAdapter::InitEncode(
   int highest_quality_stream_idx = 0;
   if (!is_legacy_singlecast) {
     GetLowestAndHighestQualityStreamIndixes(
-        ArrayView<SimulcastStream>(codec_.simulcastStream,
+        std::span<SimulcastStream>(codec_.simulcastStream,
                                    total_streams_count_),
         &lowest_quality_stream_idx, &highest_quality_stream_idx);
   }
@@ -449,11 +467,11 @@ int SimulcastEncoderAdapter::InitEncode(
         encoded_complete_callback_);
     if (total_streams_count_ == 1) {
       RTC_LOG(LS_ERROR) << "[SEA] InitEncode: failed with error code: "
-                        << WebRtcVideoCodecErrorToString(ret);
-      return ret;
+                        << WebRtcVideoCodecErrorToString(result);
+      return result;
     }
     RTC_LOG(LS_WARNING) << "[SEA] InitEncode: failed with error code: "
-                        << WebRtcVideoCodecErrorToString(ret)
+                        << WebRtcVideoCodecErrorToString(result)
                         << ". Falling back to multi-encoder mode.";
   }
 
@@ -490,7 +508,7 @@ int SimulcastEncoderAdapter::InitEncode(
       encoder_context.reset();
       Release();
       RTC_LOG(LS_ERROR) << "[SEA] InitEncode: failed with error code: "
-                        << WebRtcVideoCodecErrorToString(ret);
+                        << WebRtcVideoCodecErrorToString(result);
       return result;
     }
 
@@ -566,35 +584,44 @@ int SimulcastEncoderAdapter::Encode(
     // not reporting the completion of frames via either OnEncodedFrame or
     // OnFrameDropped.
     constexpr size_t kMaxPendingFrames = 15;
-    MutexLock lock(&pending_frames_mutex_);
-    if (pending_frames_.size() >= kMaxPendingFrames) {
-      // Drop the oldest frame.
-      PendingFrame& dropped_frame = pending_frames_.front();
-      RTC_LOG(LS_WARNING) << "Pending frames queue full. Dropping frame with "
-                             "rtp_timestamp="
-                          << dropped_frame.rtp_timestamp;
-      for (size_t stream_idx = 0; stream_idx < kMaxSimulcastStreams;
-           ++stream_idx) {
-        if (dropped_frame.expected_layer_index.test(stream_idx)) {
-          dropped_frame.expected_layer_index.reset(stream_idx);
-          bool is_last = dropped_frame.expected_layer_index.none();
-          encoded_complete_callback_->OnFrameDropped(
-              dropped_frame.rtp_timestamp, stream_idx, is_last);
+    std::vector<std::tuple<uint32_t, int, bool>> frame_drops;
+    {
+      MutexLock lock(&pending_frames_mutex_);
+      if (pending_frames_.size() >= kMaxPendingFrames) {
+        // Drop the oldest frame.
+        PendingFrame& dropped_frame = pending_frames_.front();
+        RTC_LOG(LS_WARNING) << "Pending frames queue full. Dropping frame with "
+                               "rtp_timestamp="
+                            << dropped_frame.rtp_timestamp;
+        for (size_t stream_idx = 0; stream_idx < kMaxSimulcastStreams;
+             ++stream_idx) {
+          if (dropped_frame.expected_layer_index.test(stream_idx)) {
+            dropped_frame.expected_layer_index.reset(stream_idx);
+            bool is_last = dropped_frame.expected_layer_index.none();
+            frame_drops.emplace_back(dropped_frame.rtp_timestamp, stream_idx,
+                                     is_last);
+          }
+        }
+        pending_frames_.pop_front();
+      }
+
+      std::bitset<kMaxSimulcastStreams> expected_layer_index;
+      for (const auto& layer : stream_contexts_) {
+        if (!layer.is_paused()) {
+          expected_layer_index.set(layer.stream_idx());
         }
       }
-      pending_frames_.pop_front();
+      pending_frames_.push_back({
+          .rtp_timestamp = input_image.rtp_timestamp(),
+          .expected_layer_index = expected_layer_index,
+      });
     }
 
-    std::bitset<kMaxSimulcastStreams> expected_layer_index;
-    for (const auto& layer : stream_contexts_) {
-      if (!layer.is_paused()) {
-        expected_layer_index.set(layer.stream_idx());
-      }
+    // Make frame drop callbacks outside of the lock.
+    for (const auto& [rtp_timestamp, stream_idx, is_last] : frame_drops) {
+      encoded_complete_callback_->OnFrameDropped(rtp_timestamp, stream_idx,
+                                                 is_last);
     }
-    pending_frames_.push_back({
-        .rtp_timestamp = input_image.rtp_timestamp(),
-        .expected_layer_index = expected_layer_index,
-    });
   }
 
   for (auto& layer : stream_contexts_) {
@@ -745,7 +772,7 @@ void SimulcastEncoderAdapter::SetRates(
     // the encoder handling the current simulcast stream.
     RateControlParameters stream_parameters = parameters;
     stream_parameters.bitrate = VideoBitrateAllocation();
-    for (int i = 0; i < kMaxTemporalStreams; ++i) {
+    for (int i = 0; checked_cast<size_t>(i) < kMaxTemporalStreams; ++i) {
       if (parameters.bitrate.HasBitrate(stream_idx, i)) {
         stream_parameters.bitrate.SetBitrate(
             0, i, parameters.bitrate.GetBitrate(stream_idx, i));
@@ -979,15 +1006,19 @@ VideoCodec SimulcastEncoderAdapter::MakeStreamCodec(
   std::optional<ScalabilityMode> scalability_mode =
       stream_params.GetScalabilityMode();
   // To support the full set of scalability modes in the event that this is the
-  // only active encoding, prefer VideoCodec::GetScalabilityMode() if all other
-  // encodings are inactive.
-  bool only_active_stream = true;
-  for (int i = 0; i < codec.numberOfSimulcastStreams; ++i) {
-    if (i != stream_idx && codec.simulcastStream[i].active) {
-      only_active_stream = false;
-      break;
+  // only active encoding, prefer VideoCodec::GetScalabilityMode() - but only if
+  // it's the first simulcast layer in the list that is the only active one.
+  bool only_active_stream = false;
+  if (stream_idx == 0 && codec.simulcastStream[0].active) {
+    only_active_stream = true;
+    for (int i = 1; i < codec.numberOfSimulcastStreams; ++i) {
+      if (codec.simulcastStream[i].active) {
+        only_active_stream = false;
+        break;
+      }
     }
   }
+
   if (codec.GetScalabilityMode().has_value() && only_active_stream) {
     scalability_mode = codec.GetScalabilityMode();
   }
@@ -1133,6 +1164,10 @@ VideoEncoder::EncoderInfo SimulcastEncoderAdapter::GetEncoderInfo() const {
     return encoder_info;
   }
 
+  // Default is to not enable CPU overuse detection. Aggregate across
+  // sub-encoders so we enable it if any encoder opts in.
+  encoder_info.enable_cpu_overuse_detection = false;
+
   encoder_info.scaling_settings = VideoEncoder::ScalingSettings::kOff;
   std::vector<std::string> encoder_names;
 
@@ -1182,6 +1217,9 @@ VideoEncoder::EncoderInfo SimulcastEncoderAdapter::GetEncoderInfo() const {
           encoder_info.is_qp_trusted.value_or(true) &&
           encoder_impl_info.is_qp_trusted.value_or(true);
     }
+    // If any encoder wants CPU overuse detection, enable it for all of them
+    encoder_info.enable_cpu_overuse_detection |=
+        encoder_impl_info.enable_cpu_overuse_detection;
     encoder_info.fps_allocation[i] = encoder_impl_info.fps_allocation[0];
     encoder_info.requested_resolution_alignment =
         std::lcm(encoder_info.requested_resolution_alignment,

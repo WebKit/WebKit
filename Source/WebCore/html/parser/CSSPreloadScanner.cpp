@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
  * Copyright (C) 2010-2020 Google Inc. All rights reserved.
  *
@@ -246,7 +246,7 @@ void CSSPreloadScanner::emitRule()
             m_requests->append(makeUnique<PreloadRequest>("css"_s, url, m_predictedBaseElementURL, CachedResource::Type::CSSStyleSheet, String(), ScriptType::Classic, ReferrerPolicy::EmptyString));
         }
         m_state = Initial;
-    } else if (equalLettersIgnoringASCIICase(rule, "charset"_s))
+    } else if (equalLettersIgnoringASCIICase(rule, "charset"_s) || equalLettersIgnoringASCIICase(rule, "layer"_s))
         m_state = Initial;
     else
         m_state = DoneParsingImportRules;

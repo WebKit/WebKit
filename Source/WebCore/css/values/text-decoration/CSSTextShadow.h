@@ -51,11 +51,6 @@ template<size_t I> const auto& get(const TextShadow& value)
         return value.blur;
 }
 
-// MARK: - DeprecatedCSSOMValue Creation
-
-// Specialized to return a `DeprecatedCSSOMLazySerializingCustomValue`.
-template<> struct DeprecatedCSSOMValueCreation<TextShadow> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const TextShadow&); };
-
 } // namespace CSS
 } // namespace WebCore
 

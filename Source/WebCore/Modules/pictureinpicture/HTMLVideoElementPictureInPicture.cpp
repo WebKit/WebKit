@@ -50,9 +50,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLVideoElementPictureInPicture);
 
 HTMLVideoElementPictureInPicture::HTMLVideoElementPictureInPicture(HTMLVideoElement& videoElement)
     : m_videoElement(videoElement)
-    , m_pictureInPictureWindow(PictureInPictureWindow::create(videoElement.document()))
+    , m_pictureInPictureWindow(PictureInPictureWindow::create(protect(videoElement.document())))
 #if !RELEASE_LOG_DISABLED
-    , m_logger(videoElement.document().logger())
+    , m_logger(protect(videoElement)->document().logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
 {
@@ -109,14 +109,14 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
         return;
     }
 
-    bool userActivationRequired = !videoElement.document().pictureInPictureElement();
+    bool userActivationRequired = !protect(videoElement)->document().pictureInPictureElement();
     if (userActivationRequired && !UserGestureIndicator::processingUserGesture()) {
         promise->reject(ExceptionCode::NotAllowedError, "The request is not triggered by a user activation."_s);
         return;
     }
 
     Ref videoElementPictureInPicture = HTMLVideoElementPictureInPicture::from(videoElement);
-    if (videoElement.document().pictureInPictureElement() == &videoElement) {
+    if (protect(videoElement)->document().pictureInPictureElement() == &videoElement) {
         promise->resolve<IDLInterface<PictureInPictureWindow>>(videoElementPictureInPicture->m_pictureInPictureWindow);
         return;
     }
@@ -173,7 +173,7 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
         return;
 
     INFO_LOG(LOGIDENTIFIER);
-    videoElement->document().setPictureInPictureElement(videoElement.get());
+    protect(videoElement)->document().setPictureInPictureElement(videoElement.get());
     m_pictureInPictureWindow->setSize(windowSize);
 
     auto initializer = PictureInPictureEvent::Init {
@@ -183,7 +183,7 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
     videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTF::move(initializer)));
 
     if (m_enterPictureInPicturePromise) {
-        m_enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(m_pictureInPictureWindow);
+        protect(m_enterPictureInPicturePromise)->resolve<IDLInterface<PictureInPictureWindow>>(m_pictureInPictureWindow);
         m_enterPictureInPicturePromise = nullptr;
     }
 }
@@ -196,7 +196,7 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
 
     INFO_LOG(LOGIDENTIFIER);
     m_pictureInPictureWindow->close();
-    videoElement->document().setPictureInPictureElement(nullptr);
+    protect(videoElement)->document().setPictureInPictureElement(nullptr);
 
     auto initializer = PictureInPictureEvent::Init {
         { true, false, false },
@@ -205,7 +205,7 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
     videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().leavepictureinpictureEvent, WTF::move(initializer)));
 
     if (m_exitPictureInPicturePromise) {
-        m_exitPictureInPicturePromise->resolve();
+        protect(m_exitPictureInPicturePromise)->resolve();
         m_exitPictureInPicturePromise = nullptr;
     }
 }

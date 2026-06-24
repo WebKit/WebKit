@@ -52,9 +52,6 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 
-constexpr CGFloat blackColorComponents[4] = { 0, 0, 0, 1 };
-constexpr CGFloat whiteColorComponents[4] = { 1, 1, 1, 1 };
-
 @interface UIView (TestWebKitAPI)
 - (BOOL)_appearsBeforeViewInSubviewOrder:(UIView *)view;
 @end

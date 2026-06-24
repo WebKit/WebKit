@@ -273,6 +273,9 @@ interface UIScriptController {
     readonly attribute boolean isShowingDataListSuggestions;
     undefined activateDataListSuggestion(unsigned long index, object callback);
 
+    // Login credential autofill (UITextAutofillSuggestion).
+    undefined insertAutofillSuggestion(DOMString username, DOMString password, object callback);
+
     // <input type=color>
     undefined setSelectedColorForColorPicker(double red, double green, double blue);
     readonly attribute boolean isShowingColorPicker;

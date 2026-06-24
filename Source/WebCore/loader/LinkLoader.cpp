@@ -147,7 +147,7 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
     }
 }
 
-std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as, Document& document, ShouldLog shouldLogError)
+std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as, Document& document, ShouldLog shouldLogError, IsModulePreload isModulePreload)
 {
     if (equalLettersIgnoringASCIICase(as, "fetch"_s))
         return CachedResource::Type::RawResource;
@@ -181,7 +181,11 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
     case FetchRequestDestination::Iframe:
         return std::nullopt;
     case FetchRequestDestination::Json:
-        return CachedResource::Type::JSON;
+        if (isModulePreload == IsModulePreload::Yes)
+            return CachedResource::Type::JSON;
+        if (shouldLogError == ShouldLog::Yes)
+            document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "<link rel=preload> does not support `json` as `as` value"_s);
+        return std::nullopt;
     case FetchRequestDestination::Manifest:
         return std::nullopt;
     case FetchRequestDestination::Model:
@@ -341,7 +345,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
         return nullptr;
 
     if (params.relAttribute.isLinkModulePreload) {
-        type = LinkLoader::resourceTypeFromAsAttribute(params.as, document, ShouldLog::No);
+        type = LinkLoader::resourceTypeFromAsAttribute(params.as, document, ShouldLog::No, IsModulePreload::Yes);
         if (!type)
             type = CachedResource::Type::Script;
         if (type && type != CachedResource::Type::Script && type != CachedResource::Type::JSON) {
@@ -375,7 +379,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
         return nullptr;
     }
     auto queries = MQ::MediaQueryParser::parse(params.media, document.cssParserContext());
-    if (!MQ::MediaQueryEvaluator { screenAtom(), document, document.renderStyle() }.evaluate(queries))
+    if (!MQ::MediaQueryEvaluator { screenAtom(), document }.evaluate(queries))
         return nullptr;
     if (!isSupportedType(type.value(), params.mimeType, document))
         return nullptr;

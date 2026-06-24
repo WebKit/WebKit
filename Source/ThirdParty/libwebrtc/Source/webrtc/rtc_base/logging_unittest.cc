@@ -12,14 +12,27 @@
 
 #if RTC_LOG_ENABLED()
 
+#include <stdlib.h>
+
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
+#include <memory>
 #include <string>
+#include <string_view>
+#include <utility>
 
+#include "absl/cleanup/cleanup.h"
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
+#include "api/location.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/platform_thread.h"
-#include "rtc_base/time_utils.h"
+#include "rtc_base/thread.h"
+#include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -143,6 +156,36 @@ TEST(LogTest, SingleStream) {
   LogMessage::RemoveLogToStream(&stream);
   EXPECT_EQ(LS_NONE, LogMessage::GetLogToStream(&stream));
   EXPECT_EQ(sev, LogMessage::GetLogToStream(nullptr));
+}
+
+TEST(LogTest, LogStdStringView) {
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+
+  constexpr std::string_view kLongPath =
+      "/a/very/long/path/string/that/exceeds/the/small/string/optimization/"
+      "buffer/size/which/is/typically/around/fifteen/to/twenty/two/characters/"
+      "and/this/is/definitely/longer/than/one/hundred/characters/to/trigger/"
+      "any/potential/asan/errors";
+  RTC_LOG(LS_INFO) << kLongPath;
+
+  EXPECT_THAT(str, HasSubstr(kLongPath));
+
+  LogMessage::RemoveLogToStream(&stream);
+}
+
+TEST(LogTest, LogLongDouble) {
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+
+  long double ld = 123.456789L;
+  RTC_LOG(LS_INFO) << ld;
+
+  EXPECT_THAT(str, HasSubstr("123.456"));
+
+  LogMessage::RemoveLogToStream(&stream);
 }
 
 TEST(LogTest, LogIfLogIfConditionIsTrue) {
@@ -309,6 +352,8 @@ TEST(LogTest, CheckTagAddedToStringInDefaultOnLogMessageAndroid) {
 
 // Test the time required to write 1000 80-character logs to a string.
 TEST(LogTest, Perf) {
+  // This test should probably be turned into a benchmark.
+  Clock& clock = *Clock::GetRealTimeClock();
   std::string str;
   LogSinkImpl stream(&str);
   LogMessage::AddLogToStream(&stream, LS_VERBOSE);
@@ -325,19 +370,17 @@ TEST(LogTest, Perf) {
   str.reserve(120000);
   static const int kRepetitions = 1000;
 
-  int64_t start = TimeMillis(), finish;
+  Timestamp start = clock.CurrentTime();
   for (int i = 0; i < kRepetitions; ++i) {
     LogMessageForTesting(__FILE__, __LINE__, LS_VERBOSE).stream() << message;
   }
-  finish = TimeMillis();
+  Timestamp finish = clock.CurrentTime();
 
   LogMessage::RemoveLogToStream(&stream);
 
   EXPECT_EQ(str.size(), (message.size() + logging_overhead) * kRepetitions);
-  RTC_LOG(LS_INFO) << "Total log time: " << TimeDiff(finish, start)
-                   << " ms "
-                      " total bytes logged: "
-                   << str.size();
+  RTC_LOG(LS_INFO) << "Total log time: " << (finish - start)
+                   << " total bytes logged: " << str.size();
 }
 
 TEST(LogTest, EnumsAreSupported) {
@@ -412,6 +455,225 @@ TEST(LogTest, EnumSupportsAbslStringify) {
   EXPECT_THAT(str, HasSubstr("[kValue1]"));
   LogMessage::RemoveLogToStream(&stream);
 }
+
+#if !defined(WEBRTC_CHROMIUM_BUILD)
+// Logging initialization tests require isolation because they modify global
+// state that can only be set once per process. We use EXPECT_EXIT to run
+// them in a forked child process.
+
+#if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID) && !defined(WEBRTC_IOS)
+TEST(LogTest, ExplicitInitialization) {
+  GTEST_FLAG_SET(death_test_style, "threadsafe");
+#if defined(WEBRTC_WIN)
+  _putenv_s("WEBRTC_TEST_SKIP_LOGGING_INIT", "1");
+#else
+  setenv("WEBRTC_TEST_SKIP_LOGGING_INIT", "1", 1);
+#endif
+  EXPECT_EXIT(
+      {
+        LoggingConfig config;
+        config.set_min_severity(LS_WARNING);
+        config.set_log_prefix("TEST_PREFIX: ");
+        bool success = InitializeLogging(std::move(config));
+        if (!success) {
+          exit(1);
+        }
+
+        if (GetLoggingConfig().min_severity() != LS_WARNING) {
+          exit(2);
+        }
+
+        RTC_LOG(LS_WARNING) << "Test message";
+        exit(0);
+      },
+      ::testing::ExitedWithCode(0), "TEST_PREFIX: .*Test message");
+#if defined(WEBRTC_WIN)
+  _putenv_s("WEBRTC_TEST_SKIP_LOGGING_INIT", "");
+#else
+  unsetenv("WEBRTC_TEST_SKIP_LOGGING_INIT");
+#endif
+}
+
+TEST(LogTest, ImplicitInitialization) {
+  GTEST_FLAG_SET(death_test_style, "threadsafe");
+  EXPECT_EXIT(
+      {
+        RTC_LOG(LS_WARNING) << "Trigger implicit init";
+        LoggingConfig config;
+        if (InitializeLogging(std::move(config))) {
+          exit(1);
+        }
+        exit(0);
+      },
+      ::testing::ExitedWithCode(0), "");
+}
+
+TEST(LogTest, DoubleExplicitInitialization) {
+  GTEST_FLAG_SET(death_test_style, "threadsafe");
+#if defined(WEBRTC_WIN)
+  _putenv_s("WEBRTC_TEST_SKIP_LOGGING_INIT", "1");
+#else
+  setenv("WEBRTC_TEST_SKIP_LOGGING_INIT", "1", 1);
+#endif
+  EXPECT_EXIT(
+      {
+        LoggingConfig config1;
+        if (!InitializeLogging(std::move(config1))) {
+          exit(1);
+        }
+
+        LoggingConfig config2;
+        if (InitializeLogging(std::move(config2))) {
+          exit(2);
+        }
+
+        exit(0);
+      },
+      ::testing::ExitedWithCode(0), "");
+#if defined(WEBRTC_WIN)
+  _putenv_s("WEBRTC_TEST_SKIP_LOGGING_INIT", "");
+#else
+  unsetenv("WEBRTC_TEST_SKIP_LOGGING_INIT");
+#endif
+}
+
+TEST(LogTest, InitializeLoggingTransfersQueueName) {
+  GTEST_FLAG_SET(death_test_style, "threadsafe");
+#if defined(WEBRTC_WIN)
+  _putenv_s("WEBRTC_TEST_SKIP_LOGGING_INIT", "1");
+#else
+  setenv("WEBRTC_TEST_SKIP_LOGGING_INIT", "1", 1);
+#endif
+  EXPECT_EXIT(
+      {
+        LoggingConfig config;
+        config.set_log_queue_name(true);
+
+        struct CustomSink : public LogSink {
+          void OnLogMessage(const LogLineRef& line) override {
+            queue_name = std::string(line.queue_name());
+          }
+          void OnLogMessage(const std::string& message) override {}
+          void OnLogMessage(absl::string_view message) override {}
+          std::string queue_name;
+        };
+
+        auto sink = std::make_unique<CustomSink>();
+        CustomSink* sink_ptr = sink.get();
+        config.AddSink(std::move(sink));
+
+        if (!InitializeLogging(std::move(config))) {
+          exit(2);
+        }
+
+        std::unique_ptr<Thread> thread = Thread::Create();
+        thread->SetName("TestQueue", nullptr);
+        thread->Start();
+
+        thread->BlockingCall([&]() { RTC_LOG(LS_INFO) << "Hello"; });
+
+        if (sink_ptr->queue_name != "TestQueue") {
+          exit(1);
+        }
+        exit(0);
+      },
+      ::testing::ExitedWithCode(0), "");
+#if defined(WEBRTC_WIN)
+  _putenv_s("WEBRTC_TEST_SKIP_LOGGING_INIT", "");
+#else
+  unsetenv("WEBRTC_TEST_SKIP_LOGGING_INIT");
+#endif
+}
+
+#endif  // GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID) &&
+        // !defined(WEBRTC_IOS)
+
+TEST(LogTest, LogQueueNameFromThread) {
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+  LogMessage::SetLogQueueNames(true);
+
+  std::unique_ptr<Thread> thread = Thread::Create();
+  thread->SetName("TName", nullptr);
+  thread->Start();
+  thread->BlockingCall([&]() { RTC_LOG(LS_INFO) << "Hello"; });
+
+  EXPECT_THAT(str, HasSubstr("[TName]"));
+
+  LogMessage::SetLogQueueNames(false);  // Reset
+  LogMessage::RemoveLogToStream(&stream);
+}
+
+class LogTestWithParam : public testing::TestWithParam<bool> {};
+
+TEST_P(LogTestWithParam, LogQueueNameFromTaskQueueOverridingThread) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  bool prev_log_threads = LogMessage::LogThreads(GetParam());
+#pragma clang diagnostic pop
+  bool prev_log_queue_names = LogMessage::SetLogQueueNames(true);
+
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+  absl::Cleanup cleanup = [&] {
+    LogMessage::RemoveLogToStream(&stream);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    LogMessage::LogThreads(prev_log_threads);
+#pragma clang diagnostic pop
+    LogMessage::SetLogQueueNames(prev_log_queue_names);
+  };
+
+  std::unique_ptr<Thread> thread = Thread::Create();
+  thread->SetName("TName", nullptr);
+  thread->Start();
+
+  class CustomTaskQueue : public TaskQueueBase {
+   public:
+    explicit CustomTaskQueue(absl::string_view name) : name_(name) {}
+    void Delete() override {}
+    void PostTaskImpl(absl::AnyInvocable<void() &&> task,
+                      const PostTaskTraits& traits,
+                      const Location& location) override {
+      CurrentTaskQueueSetter set_current(this);
+      std::move(task)();
+    }
+    void PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
+                             TimeDelta delay,
+                             const PostDelayedTaskTraits& traits,
+                             const Location& location) override {
+      RTC_DCHECK_NOTREACHED();
+    }
+    absl::string_view queue_name() const override { return name_; }
+
+   private:
+    std::string name_;
+  };
+
+  thread->BlockingCall([&]() {
+    // 1. Verify thread name is printed first.
+    RTC_LOG(LS_INFO) << "Prints the name of the thread.";
+    EXPECT_THAT(str, HasSubstr("TName]"));
+    str.clear();
+
+    // 2. Set custom task queue.
+    CustomTaskQueue custom_tq("QName");
+    custom_tq.PostTask(
+        [&]() { RTC_LOG(LS_INFO) << "Prints the name of the task queue."; });
+    EXPECT_THAT(str, HasSubstr("QName]"));
+    EXPECT_THAT(str, Not(HasSubstr("TName]")));
+    str.clear();
+
+    // 3. Verify fallback to thread name.
+    RTC_LOG(LS_INFO) << "Prints the name of the thread again.";
+    EXPECT_THAT(str, HasSubstr("TName]"));
+  });
+}
+
+INSTANTIATE_TEST_SUITE_P(All, LogTestWithParam, ::testing::Bool());
+#endif  // !defined(WEBRTC_CHROMIUM_BUILD)
 
 }  // namespace webrtc
 #endif  // RTC_LOG_ENABLED()

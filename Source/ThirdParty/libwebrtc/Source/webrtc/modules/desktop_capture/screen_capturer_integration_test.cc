@@ -14,11 +14,11 @@
 #include <initializer_list>
 #include <iostream>  // TODO(zijiehe): Remove once flaky has been resolved.
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
@@ -216,7 +216,7 @@ class ScreenCapturerIntegrationTest : public ::testing::Test {
           // The else if statement is for debugging purpose only,
           // which should be removed after flakiness of
           // ScreenCapturerIntegrationTest has been resolved.
-          ArrayView<const uint8_t> frame_data(
+          std::span<const uint8_t> frame_data(
               frame->data(), frame->size().height() * frame->stride());
           std::string result = Base64Encode(frame_data);
           std::cout << frame->size().width() << " x " << frame->size().height()

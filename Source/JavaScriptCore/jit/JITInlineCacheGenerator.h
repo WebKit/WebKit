@@ -97,7 +97,7 @@ public:
         } else {
             propertyCache.codeOrigin = codeOrigin;
             propertyCache.callSiteIndex = callSiteIndex;
-            propertyCache.usedRegisters = usedRegisters.toScalarRegisterSet();
+            propertyCache.setUsedRegisters(usedRegisters.toScalarRegisterSet());
         }
         if constexpr (std::is_same_v<std::decay_t<PropertyInlineCache>, JSC::PropertyInlineCache>) {
             if (codeOrigin.inlineCallFrame())
@@ -245,7 +245,7 @@ public:
     {
         JITByIdGenerator::setUpPropertyInlineCacheImpl(propertyCache, codeBlock, accessType, cacheType, codeOrigin, callSiteIndex, usedRegisters, propertyName, baseRegs, valueRegs, propertyCacheGPR);
         if constexpr (!std::is_same_v<std::decay_t<PropertyInlineCache>, BaselineUnlinkedPropertyInlineCache>)
-            propertyCache.usedRegisters.remove(scratchGPR);
+            propertyCache.removeUsedRegister(scratchGPR);
         else
             UNUSED_PARAM(scratchGPR);
     }

@@ -101,7 +101,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
         auto* buffer = gst_sample_get_buffer(sample.get());
         gst_adapter_push(m_adapter.get(), gst_buffer_ref(buffer));
     }
-    LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = Ref { *this }] {
+    LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = protect(*this)] {
         protectedThis->pullAudioData();
     });
 }

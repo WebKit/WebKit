@@ -4,15 +4,25 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (1,1) size 198x118
-  RenderSVGTransformableContainer {g} at (1,1) size 198x118
+    RenderSVGTransformableContainer {g} at (0,0) size 300x180
+    RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x46
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 layer at (0,0) size 300x180 clip at (0,0) size 200x120
-  RenderSVGViewportContainer {svg} at (-1,-1) size 300x180
-layer at (1,1) size 198x118 backgroundClip at (80,110) size 300x180 clip at (80,110) size 300x180
-  RenderSVGRect {rect} at (1,1) size 198x118 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [x=1.00] [y=1.00] [width=198.00] [height=118.00]
-layer at (10,304) size 263x46
-  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 264x46
-      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
-layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGViewportContainer {svg} at (0,0) size 300x180
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+        RenderSVGHiddenContainer {feGaussianBlur} at (0,0) size 0x0
+        RenderSVGHiddenContainer {feOffset} at (0,0) size 0x0
+        RenderSVGHiddenContainer {feComposite} at (0,0) size 0x0
+    RenderSVGRect {rect} at (1,1) size 198x118 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [x=1.00] [y=1.00] [width=198.00] [height=118.00]
+layer at (12.50,30) size 176x60 backgroundClip at (80,110) size 300x180 clip at (80,110) size 300x180
+  RenderSVGTransformableContainer {g} at (12.50,30) size 175x60
+    RenderSVGTransformableContainer {g} at (0,0) size 175x60
+      RenderSVGPath {path} at (0,0) size 175x60 [stroke={[type=SOLID] [color=#D90000] [stroke width=10.00]}] [data="M 50 90 C 0 90 0 30 50 30 L 150 30 C 200 30 200 90 150 90 Z"]
+      RenderSVGPath {path} at (25,10) size 125x40 [fill={[type=SOLID] [color=#D90000]}] [data="M 60 80 C 30 80 30 40 60 40 L 140 40 C 170 40 170 80 140 80 Z"]
+      RenderSVGTransformableContainer {g} at (39.50,0.75) size 96.42x54.70
+        RenderSVGText {text} at (0,0) size 97x55 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 97x55
+            chunk 1 text run 1 at (52.00,76.00) startOffset 0 endOffset 3 width 96.42: "SVG"

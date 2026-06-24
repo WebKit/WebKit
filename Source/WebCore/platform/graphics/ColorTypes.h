@@ -728,6 +728,8 @@ struct RGBA {
     {
     }
 
+    constexpr friend bool operator ==(RGBA lhs, RGBA rhs) { return lhs.value == rhs.value; }
+
     uint32_t value;
 };
 

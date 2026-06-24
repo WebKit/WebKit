@@ -74,9 +74,6 @@ public:
     WEBCORE_EXPORT void cancelPointer(PointerID, const IntPoint&, PointerEvent* existingCancelEvent = nullptr);
     void processPendingPointerCapture(PointerID);
 
-    void resetPointerDownDefaultPrevention() { m_pointerDownDefaultPreventedDuringCurrentHandling = false; }
-    bool wasPointerDownDefaultPrevented() const { return m_pointerDownDefaultPreventedDuringCurrentHandling; }
-
     // Used for mouse presses that trigger contextmenu, causing
     // the matching release to be suppressed.
     WEBCORE_EXPORT void clearUnmatchedMouseDown(PointerID);
@@ -136,7 +133,6 @@ private:
     PointerIdToCapturingDataMap m_activePointerIdsToCapturingData;
     bool m_processingPendingPointerCapture { false };
     bool m_haveAnyCapturingElement { false };
-    bool m_pointerDownDefaultPreventedDuringCurrentHandling { false };
 };
 
 inline void PointerCaptureController::elementWasRemoved(Element& element)

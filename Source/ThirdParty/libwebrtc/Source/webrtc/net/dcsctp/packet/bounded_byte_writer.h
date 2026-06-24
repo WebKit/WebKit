@@ -15,8 +15,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace dcsctp {
@@ -45,7 +45,7 @@ inline void StoreBigEndian32(uint8_t* data, uint32_t val) {
 }
 }  // namespace internal
 
-// BoundedByteWriter wraps an ArrayView and divides it into two parts; A fixed
+// BoundedByteWriter wraps an std::span and divides it into two parts; A fixed
 // size - which is the template parameter - and a variable size, which is what
 // remains in `data` after the `FixedSize`.
 //
@@ -59,7 +59,7 @@ inline void StoreBigEndian32(uint8_t* data, uint32_t val) {
 template <int FixedSize>
 class BoundedByteWriter {
  public:
-  explicit BoundedByteWriter(webrtc::ArrayView<uint8_t> data) : data_(data) {
+  explicit BoundedByteWriter(std::span<uint8_t> data) : data_(data) {
     RTC_CHECK(data.size() >= FixedSize);
   }
 
@@ -91,7 +91,7 @@ class BoundedByteWriter {
         data_.subspan(FixedSize + variable_offset, SubSize));
   }
 
-  void CopyToVariableData(webrtc::ArrayView<const uint8_t> source) {
+  void CopyToVariableData(std::span<const uint8_t> source) {
     size_t copy_size = std::min(source.size(), data_.size() - FixedSize);
     if (source.data() == nullptr || copy_size == 0) {
       return;
@@ -100,7 +100,7 @@ class BoundedByteWriter {
   }
 
  private:
-  webrtc::ArrayView<uint8_t> data_;
+  std::span<uint8_t> data_;
 };
 }  // namespace dcsctp
 

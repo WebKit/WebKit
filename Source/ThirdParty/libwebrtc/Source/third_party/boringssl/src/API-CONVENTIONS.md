@@ -205,7 +205,7 @@ failure. For example:
              EVP_DigestUpdate(&ctx, "hello ", 6) &&
              EVP_DigestUpdate(&ctx, "world", 5) &&
              EVP_DigestFinal_ex(&ctx, md, &md_len);
-    EVP_MD_CTX_cleanup(&ctx);  /* Release |ctx|. */
+    EVP_MD_CTX_cleanup(&ctx);  /* Release `ctx`. */
 
 Note that `EVP_MD_CTX_cleanup` is called whether or not the `EVP_Digest*`
 operations succeeded. More complex C functions may use the `goto err` pattern:
@@ -451,3 +451,44 @@ OPENSSL_EXPORT void SSL_CTX_set_cert_verify_callback(
     SSL_CTX *ctx, int (*callback)(X509_STORE_CTX *store_ctx, void *arg),
     void *arg);
 ```
+
+
+## Contexts
+
+Many types in BoringSSL are named like `FOO_CTX`, where `CTX` is an abbrevation
+for "context". `FOO_CTX` is some object that is related to `FOO`. Due to the
+history of API names in OpenSSL, the relationship between the two can depend on
+context.
+
+Sometimes, `FOO` is a long-lived object and `FOO_CTX` is an individual operation
+on that object. For example:
+
+* An `EVP_MD` is a hash algorithm ("Message Digest"). An `EVP_MD_CTX` for some
+  `EVP_MD` is single streaming hash operation that can accept data.
+
+* An `EVP_AEAD` is an AEAD algorithm. An `EVP_AEAD_CTX` for some `EVP_AEAD` is
+  an AEAD key that can be used to encrypt or decrypt.
+
+* An `EVP_PKEY` is a public or private key. An `EVP_PKEY_CTX` for some
+  `EVP_PKEY` is single signing, verifying, etc., operation on that key.
+
+* An `X509_STORE` carries trusted root certificates, etc., for verifying X.509
+  certificates. An `X509_STORE_CTX` is a single verification operation.
+
+In this case, the operation object may be a separate object, rather than a
+single-shot function, to allow the caller to configure extra parameters (similar
+to [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern)) or perform
+a multi-step, streaming operation.
+
+In other cases, the context object is the broader-scoped one:
+
+* An `SSL_CTX` is shared configuration and state between TLS/DTLS connections.
+  An `SSL` is a single TLS/DTLS connection.
+
+* A `BIGNUM` is a big integer. A `BN_CTX` is a pool for reusing `BIGNUM`
+  allocations.
+
+* An `X509V3_CTX` contains additional parameters for the legacy string-based
+  X.509 extension API. (Do not use this API.)
+
+Consult the documentation if unsure which case a given pair of types falls into.

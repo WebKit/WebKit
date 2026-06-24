@@ -15,9 +15,10 @@
 }
 </style>
 
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="../../resources/ui-helper.js"></script>
 <script>
+window.jsTestIsAsync = true;
 
 var deltaOfZero = false;
 
@@ -28,7 +29,7 @@ function checkForZero()
     else
         testPassed("Wheel events with delta of zero were not sent to the DOM.");
 
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 function didScroll(event)
@@ -90,8 +91,6 @@ function setUp()
     scrolly.addEventListener("mousewheel", didScroll);
 
     if (window.eventSender) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
         setTimeout(scrollTest, 0);
     }
 }

@@ -16,11 +16,11 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/base/nullability.h"
-#include "api/array_view.h"
 #include "api/field_trials_view.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/network_emulation/cross_traffic.h"
@@ -329,7 +329,7 @@ NetworkEmulationManagerImpl::CreateEmulatedNetworkManagerInterface(
 }
 
 void NetworkEmulationManagerImpl::GetStats(
-    ArrayView<EmulatedEndpoint* const> endpoints,
+    std::span<EmulatedEndpoint* const> endpoints,
     std::function<void(EmulatedNetworkStats)> stats_callback) {
   task_queue_.PostTask([endpoints, stats_callback, env = env_,
                         stats_gathering_mode = stats_gathering_mode_]() {
@@ -347,7 +347,7 @@ void NetworkEmulationManagerImpl::GetStats(
 }
 
 void NetworkEmulationManagerImpl::GetStats(
-    ArrayView<EmulatedNetworkNode* const> nodes,
+    std::span<EmulatedNetworkNode* const> nodes,
     std::function<void(EmulatedNetworkNodeStats)> stats_callback) {
   task_queue_.PostTask([nodes, stats_callback, env = env_,
                         stats_gathering_mode = stats_gathering_mode_]() {
@@ -384,12 +384,11 @@ EmulatedTURNServerInterface* NetworkEmulationManagerImpl::CreateTURNServer(
     EmulatedTURNServerConfig config) {
   auto* client = CreateEndpoint(config.client_config);
   auto* peer = CreateEndpoint(config.client_config);
-  char buf[128];
-  SimpleStringBuilder str(buf);
-  str.AppendFormat("turn_server_%u",
-                   static_cast<unsigned>(turn_servers_.size()));
+  StringBuilder thread_name;
+  thread_name << "turn_server_" << turn_servers_.size();
   auto turn = std::make_unique<EmulatedTURNServer>(
-      env_, config, time_controller_->CreateThread(str.str()), client, peer);
+      env_, config, time_controller_->CreateThread(thread_name.Release()),
+      client, peer);
   auto out = turn.get();
   turn_servers_.push_back(std::move(turn));
   return out;

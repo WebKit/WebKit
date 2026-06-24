@@ -7,9 +7,9 @@ function testDeepNesting() {
     try {
         new RegExp(Array(520000).join("(") + "a" + Array(520000).join(")"));
     } catch (e) {
-        if (e instanceof RangeError)
+        if (e instanceof SyntaxError || e instanceof RangeError)
             return;
-        throw new Error("Expected RangeError, got " + e);
+        throw new Error("Expected SyntaxError or RangeError, got " + e);
     }
     // With certain stack configurations the pattern may fit; that's OK.
 }

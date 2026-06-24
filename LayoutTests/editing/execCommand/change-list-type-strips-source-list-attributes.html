@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+    <div contenteditable id="ol-list">
+        <ol start="2" style="list-style-type: decimal" class="Apple-decimal-list">
+            <li id="ol1">two</li>
+            <li>three</li>
+            <li>four</li>
+        </ol>
+    </div>
+
+    <div contenteditable id="ol-reversed-list">
+        <ol reversed style="list-style-type: decimal" class="Apple-decimal-list">
+            <li id="olReversed1">alpha</li>
+            <li>beta</li>
+        </ol>
+    </div>
+
+    <div contenteditable id="ul-list">
+        <ul class="Apple-disc-list">
+            <li id="ul1">alpha</li>
+        </ul>
+    </div>
+
+    <script>
+    Markup.description("Verifies that converting list type strips list-type-specific attributes.");
+    if (!window.internals)
+        Markup.notifyDone();
+
+    Markup.waitUntilDone();
+
+    Markup.dump("ol-list", "Before OL to UL");
+    document.getElementById("ol-list").focus();
+    getSelection().setPosition(ol1, 0);
+    internals.changeSelectionListType();
+    Markup.dump("ol-list", "After OL to UL");
+
+    // Changing from an unordered list to an ordered list should reset the start to 1.
+    getSelection().setPosition(ol1, 0);
+    internals.changeSelectionListType();
+    Markup.dump("ol-list", "After UL back to OL");
+
+    Markup.dump("ol-reversed-list", "Before reversed OL to UL");
+    document.getElementById("ol-list").focus();
+    getSelection().setPosition(olReversed1, 0);
+    internals.changeSelectionListType();
+    Markup.dump("ol-reversed-list", "After reversed OL to UL");
+
+    Markup.dump("ul-list", "Before UL to OL");
+    document.getElementById("ul-list").focus();
+    getSelection().setPosition(ul1, 0);
+    internals.changeSelectionListType();
+    Markup.dump("ul-list", "After UL to OL");
+
+    Markup.notifyDone();
+    </script>
+</body>
+</html>

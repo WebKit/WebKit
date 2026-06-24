@@ -34,6 +34,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkBlendMode.h>
 #include <skia/core/SkRefCnt.h>
 #include <skia/gpu/ganesh/GrBackendSurface.h>
+#include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
 #include <skia/gpu/ganesh/GrDirectContext.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
@@ -82,6 +83,8 @@ std::unique_ptr<GLFence> flushAndSubmitImageWithFence(GrDirectContext*, const sk
 std::unique_ptr<GLFence> flushAndSubmitWithFence(GrDirectContext*);
 
 SkBlendMode toSkiaBlendMode(BlendMode, std::optional<CompositeOperator> = std::nullopt);
+
+sk_sp<SkImage> createPromiseImageIfNeeded(const sk_sp<SkImage>&, const sk_sp<GrContextThreadSafeProxy>&);
 
 } // namespace SkiaUtilities
 } // namespace WebCore

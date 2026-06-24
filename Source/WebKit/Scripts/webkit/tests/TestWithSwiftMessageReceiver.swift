@@ -30,6 +30,7 @@ final class TestWithSwiftWeakRef {
         self.target = target
     }
 
+    @used
     func getMessageTarget() -> TestWithSwift? {
         target
     }

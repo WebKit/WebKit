@@ -65,7 +65,6 @@ template <class T> concept YarrSyntaxCheckable = requires (T& checker, Vector<Ve
     { checker.atomCharacterClassPushNested(bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassPopNested(bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassEnd() } -> std::same_as<void>;
-    { checker.atomParenthesesSubpatternBegin() } -> std::same_as<void>;
     { checker.atomParenthesesSubpatternBegin(bool { }) } -> std::same_as<void>;
     { checker.atomParenthesesSubpatternBegin(bool { }, std::optional<String> { }) } -> std::same_as<void>;
     { checker.atomParentheticalAssertionBegin(bool { }, MatchDirection { }) } -> std::same_as<void>;
@@ -102,7 +101,7 @@ public:
      */
     ErrorCode parse()
     {
-        if (m_size > MAX_PATTERN_SIZE)
+        if (m_size > maxPatternSize)
             return ErrorCode::PatternTooLarge;
 
         parseTokens();
@@ -1557,9 +1556,10 @@ private:
                     }
 
                     auto setAddResult = m_namedCaptureGroups.add(groupName.value());
-                    if (setAddResult.isNewEntry)
+                    if (setAddResult.isNewEntry) {
                         m_delegate.atomParenthesesSubpatternBegin(true, groupName);
-                    else
+                        countCaptures();
+                    } else
                         m_errorCode = ErrorCode::DuplicateGroupName;
                 } else {
                     if (tryConsume('=')) {
@@ -1644,8 +1644,10 @@ private:
             default:
                 m_errorCode = ErrorCode::ParenthesesTypeInvalid;
             }
-        } else
-            m_delegate.atomParenthesesSubpatternBegin();
+        } else {
+            m_delegate.atomParenthesesSubpatternBegin(true);
+            countCaptures();
+        }
 
         if (type == ParenthesesType::Subpattern && !isNonCapturingGroup)
             ++m_numSubpatterns;
@@ -2188,6 +2190,12 @@ private:
         return std::nullopt;
     }
 
+    void countCaptures()
+    {
+        if (++m_numCaptures > maxCapturesCount)
+            m_errorCode = ErrorCode::TooManyCaptures;
+    }
+
     bool isLegacyCompilation() const { return m_compileMode == CompileMode::Legacy; }
     bool isUnicodeCompilation() const { return m_compileMode == CompileMode::Unicode; }
     bool isUnicodeSetsCompilation() const { return m_compileMode == CompileMode::UnicodeSets; }
@@ -2204,14 +2212,15 @@ private:
     unsigned m_backReferenceLimit;
     unsigned m_numSubpatterns { 0 };
     unsigned m_maxSeenBackReference { 0 };
+    unsigned m_numCaptures { 0 };
     bool m_isNamedForwardReferenceAllowed;
     bool m_kIdentityEscapeSeen { false };
     Vector<ParenthesesType, 16> m_parenthesesStack;
     NamedCaptureGroups m_namedCaptureGroups;
     UncheckedKeyHashSet<String> m_forwardReferenceNames;
 
-    // Derived by empirical testing of compile time in PCRE and WREC.
-    static constexpr unsigned MAX_PATTERN_SIZE = 1024 * 1024;
+    static constexpr unsigned maxPatternSize = 1024 * 1024; // Derived by empirical testing of compile time in PCRE and WREC.
+    static constexpr unsigned maxCapturesCount = (1 << 16) / 2; // Derived from V8's configuration.
 };
 
 /*

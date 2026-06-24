@@ -72,20 +72,16 @@ enum {
   // up to 11 search stages. First stage consists of 4 search
   // points and the rest with 8 search points each.
   BIGDIA = 5,
-  // Search 8-points in the square grid around center, up to 11 search stages.
-  SQUARE = 6,
-  // HEX search with up to 2 stages.
-  FAST_HEX = 7,
   // BIGDIA search with up to 2 stages.
-  FAST_DIAMOND = 8,
+  FAST_DIAMOND = 6,
   // BIGDIA search with up to 3 stages.
-  FAST_BIGDIA = 9,
+  FAST_BIGDIA = 7,
   // BIGDIA search with up to 1 stage.
-  VFAST_DIAMOND = 10,
+  VFAST_DIAMOND = 8,
   // Total number of search methods.
   NUM_SEARCH_METHODS,
   // Number of distinct search methods.
-  NUM_DISTINCT_SEARCH_METHODS = SQUARE + 1,
+  NUM_DISTINCT_SEARCH_METHODS = BIGDIA + 1,
 } UENUM1BYTE(SEARCH_METHODS);
 
 typedef struct warp_search_config {

@@ -38,8 +38,8 @@
 static bool shouldGrantPermissionRequest = true;
 static bool permissionRequested = false;
 static bool captureStateDidChange;
-static bool isCapturing;
-static RetainPtr<WKWebView> createdWebView;
+static bool speechRecognitionIsCapturing;
+static RetainPtr<WKWebView> speechRecognitionCreatedWebView;
 
 @interface SpeechRecognitionUIDelegate : NSObject<WKUIDelegatePrivate>
 - (void)_webView:(WKWebView *)webView requestSpeechRecognitionPermissionForOrigin:(WKSecurityOrigin *)origin decisionHandler:(void (^)(BOOL))decisionHandler;
@@ -69,13 +69,13 @@ static RetainPtr<WKWebView> createdWebView;
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
-    createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
-    return createdWebView.get();
+    speechRecognitionCreatedWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    return speechRecognitionCreatedWebView.get();
 }
 
 - (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureStateDeprecated)state
 {
-    isCapturing = state == _WKMediaCaptureStateDeprecatedActiveMicrophone;
+    speechRecognitionIsCapturing = state == _WKMediaCaptureStateDeprecatedActiveMicrophone;
     captureStateDidChange = true;
 }
 @end
@@ -253,7 +253,7 @@ TEST(WebKit2, SpeechRecognitionPageIsDestroyed)
     RetainPtr delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
     RetainPtr navigationDelegate = adoptNS([[SpeechRecognitionNavigationDelegate alloc] init]);
     shouldGrantPermissionRequest = true;
-    createdWebView = nullptr;
+    speechRecognitionCreatedWebView = nullptr;
 
     @autoreleasepool {
         RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -274,7 +274,7 @@ TEST(WebKit2, SpeechRecognitionPageIsDestroyed)
 
     TestWebKitAPI::Util::runFor(0.5_s);
 
-    EXPECT_TRUE(!!createdWebView);
+    EXPECT_TRUE(!!speechRecognitionCreatedWebView);
 }
 
 TEST(WebKit2, SpeechRecognitionMediaCaptureStateChange)
@@ -294,12 +294,12 @@ TEST(WebKit2, SpeechRecognitionMediaCaptureStateChange)
     [webView synchronouslyLoadTestPageNamed:@"speechrecognition-basic"];
     [webView stringByEvaluatingJavaScript:@"start()"];
     TestWebKitAPI::Util::run(&captureStateDidChange);
-    EXPECT_TRUE(isCapturing);
+    EXPECT_TRUE(speechRecognitionIsCapturing);
 
     captureStateDidChange = false;
     [webView stringByEvaluatingJavaScript:@"stop()"];
     TestWebKitAPI::Util::run(&captureStateDidChange);
-    EXPECT_FALSE(isCapturing);
+    EXPECT_FALSE(speechRecognitionIsCapturing);
 }
 
 #endif

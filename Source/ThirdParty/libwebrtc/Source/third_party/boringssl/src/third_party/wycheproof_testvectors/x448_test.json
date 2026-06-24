@@ -810,7 +810,8 @@
           "comment": "public key with low order",
           "flags": [
             "LowOrderPublic",
-            "ZeroSharedSecret"
+            "ZeroSharedSecret",
+            "Twist"
           ],
           "public": "0100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
           "private": "c05bd19c61d1c2c0e79414345cfb9c138eed88054fac8f74b2c4b5e1e817aaad629d159903bef40c10c85a8b90b8433c7f35248d72bea2d1",
@@ -833,7 +834,8 @@
           "tcId": 67,
           "comment": "public key with low order",
           "flags": [
-            "LowOrderPublic"
+            "LowOrderPublic",
+            "Twist"
           ],
           "public": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080",
           "private": "c05bd19c61d1c2c0e79414345cfb9c138eed88054fac8f74b2c4b5e1e817aaad629d159903bef40c10c85a8b90b8433c7f35248d72bea2d1",
@@ -844,7 +846,8 @@
           "tcId": 68,
           "comment": "public key with low order",
           "flags": [
-            "LowOrderPublic"
+            "LowOrderPublic",
+            "Twist"
           ],
           "public": "0100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080",
           "private": "c05bd19c61d1c2c0e79414345cfb9c138eed88054fac8f74b2c4b5e1e817aaad629d159903bef40c10c85a8b90b8433c7f35248d72bea2d1",
@@ -855,7 +858,8 @@
           "tcId": 69,
           "comment": "public key with low order",
           "flags": [
-            "LowOrderPublic"
+            "LowOrderPublic",
+            "Twist"
           ],
           "public": "fefffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffffffffffffffffffffffffffffffffffffffffffffffff7f",
           "private": "c05bd19c61d1c2c0e79414345cfb9c138eed88054fac8f74b2c4b5e1e817aaad629d159903bef40c10c85a8b90b8433c7f35248d72bea2d1",

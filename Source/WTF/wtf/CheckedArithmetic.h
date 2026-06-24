@@ -231,7 +231,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
 
     [[nodiscard]] static inline bool add(LHS lhs, RHS rhs, ResultType& result)
     {
-#if !HAVE(INT128_T)
+#if !HAVE(INT128_T) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
 #endif
             ResultType temp;
@@ -239,7 +239,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
                 return false;
             result = temp;
             return true;
-#if !HAVE(INT128_T)
+#if !HAVE(INT128_T) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         }
 #endif
         if (signsMatch(lhs, rhs)) {
@@ -258,7 +258,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
 
     [[nodiscard]] static inline bool sub(LHS lhs, RHS rhs, ResultType& result)
     {
-#if !HAVE(INT128_T)
+#if !HAVE(INT128_T) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
 #endif
             ResultType temp;
@@ -266,7 +266,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
                 return false;
             result = temp;
             return true;
-#if !HAVE(INT128_T)
+#if !HAVE(INT128_T) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         }
 #endif
         if (!signsMatch(lhs, rhs)) {
@@ -288,7 +288,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
         // Don't use the builtin if the int128 type is WTF::[U]Int128Impl.
         // Also don't use the builtin for __[u]int128_t on Clang/Linux.
         // See https://bugs.llvm.org/show_bug.cgi?id=16404
-#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX))
+#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX)) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
 #endif
             ResultType temp;
@@ -296,7 +296,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
                 return false;
             result = temp;
             return true;
-#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX))
+#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX)) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         }
 #endif
 #endif
@@ -343,14 +343,14 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
     [[nodiscard]] static inline bool add(LHS lhs, RHS rhs, ResultType& result)
     {
         ResultType temp;
-#if !HAVE(INT128_T)
+#if !HAVE(INT128_T) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
 #endif
             if (__builtin_add_overflow(lhs, rhs, &temp))
                 return false;
             result = temp;
             return true;
-#if !HAVE(INT128_T)
+#if !HAVE(INT128_T) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         }
 #endif
         temp = lhs + rhs;
@@ -363,14 +363,14 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
     [[nodiscard]] static inline bool sub(LHS lhs, RHS rhs, ResultType& result)
     {
         ResultType temp;
-#if !HAVE(INT128_T)
+#if !HAVE(INT128_T) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
 #endif
             if (__builtin_sub_overflow(lhs, rhs, &temp))
                 return false;
             result = temp;
             return true;
-#if !HAVE(INT128_T)
+#if !HAVE(INT128_T) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         }
 #endif
         temp = lhs - rhs;
@@ -386,7 +386,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
         // Don't use the builtin if the int128 type is WTF::Int128Impl.
         // Also don't use the builtin for __int128_t on Clang/Linux.
         // See https://bugs.llvm.org/show_bug.cgi?id=16404
-#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX))
+#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX)) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         if constexpr (sizeof(LHS) <= sizeof(uint64_t) || sizeof(RHS) <= sizeof(uint64_t)) {
 #endif
             ResultType temp;
@@ -394,7 +394,7 @@ template<typename LHS, typename RHS, typename ResultType> struct ArithmeticOpera
                 return false;
             result = temp;
             return true;
-#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX))
+#if !HAVE(INT128_T) || (COMPILER(CLANG) && OS(LINUX)) || HAVE(BROKEN_STATIC_ANALYZER_INT128_OVERFLOW)
         }
 #endif
 #endif

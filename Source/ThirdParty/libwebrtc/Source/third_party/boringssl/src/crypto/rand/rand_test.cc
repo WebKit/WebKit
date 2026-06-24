@@ -41,6 +41,9 @@
 #endif
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 // These tests are, strictly speaking, flaky, but we use large enough buffers
 // that the probability of failing when we should pass is negligible.
 
@@ -59,7 +62,7 @@ TEST(RandTest, NotObviouslyBroken) {
 #if !defined(OPENSSL_WINDOWS) && !defined(OPENSSL_IOS) && \
     !defined(OPENSSL_FUCHSIA) &&                          \
     !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
-static bool ForkAndRand(bssl::Span<uint8_t> out, bool fork_unsafe_buffering) {
+static bool ForkAndRand(Span<uint8_t> out, bool fork_unsafe_buffering) {
   int pipefds[2];
   if (pipe(pipefds) < 0) {
     perror("pipe");
@@ -220,3 +223,6 @@ TEST(RandTest, RdrandABI) {
   CHECK_ABI_SEH(CRYPTO_rdrand_multiple8_buf, buf, 32);
 }
 #endif  // OPENSSL_X86_64 && SUPPORTS_ABI_TEST
+
+}  // namespace
+BSSL_NAMESPACE_END

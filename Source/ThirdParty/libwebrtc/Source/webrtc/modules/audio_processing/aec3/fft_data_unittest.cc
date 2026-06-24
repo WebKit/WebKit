@@ -78,7 +78,7 @@ TEST(FftDataDeathTest, NonNullCopyToPackedArrayOutput) {
 
 // Verifies the check for null output in Spectrum.
 TEST(FftDataDeathTest, NonNullSpectrumOutput) {
-  EXPECT_DEATH(FftData().Spectrum(Aec3Optimization::kNone, nullptr), "");
+  EXPECT_DEATH(FftData().Spectrum(Aec3Optimization::kNone, {}), "");
 }
 
 #endif

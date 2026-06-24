@@ -13,6 +13,7 @@
 <div id="target" style="width: 100px; height: 100px; background-color: black;"></div>
 <script src="../resources/js-test.js"></script>
 <script>
+window.jsTestIsAsync = true;
 
 const element = document.getElementById("target");
 const timing = { duration: 1000, iterations: Infinity };
@@ -25,7 +26,6 @@ const shouldBecomeEqualAsync = async (actual, expected) => new Promise(resolve =
         return;
     }
 
-    testRunner.waitUntilDone();
 
     // First, check the initial transform-related CSS Animation can be accelerated.
     await shouldBecomeEqualAsync("internals.acceleratedAnimationsForElement(element).length", "1");
@@ -40,7 +40,7 @@ const shouldBecomeEqualAsync = async (actual, expected) => new Promise(resolve =
     element.style.animationTimingFunction = "linear(0 0%, 0.2 50%, 1 100%)";
     await shouldBecomeEqualAsync("internals.acceleratedAnimationsForElement(element).length", "0");
 
-    testRunner.notifyDone();
+    finishJSTest();
 })();
     
 </script>

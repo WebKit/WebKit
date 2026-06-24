@@ -877,7 +877,7 @@ CSSSelector::CSSSelector(const CSSSelector& other)
 {
     // Manually ref count the m_data union because they are stored as raw ptr, not as Ref.
     if (other.m_hasRareData)
-        m_data.rareData = &other.m_data.rareData->deepCopy().leakRef();
+        m_data.rareData = &protect(other.m_data.rareData)->deepCopy().leakRef();
     else if (other.match() == Match::Tag) {
         m_data.tagQName = other.m_data.tagQName;
         m_data.tagQName->ref();
@@ -1014,7 +1014,7 @@ bool CSSSelector::simpleSelectorEqual(const CSSSelector& other) const
 {
     auto valuesEqual = [&] {
         if (m_hasRareData)
-            return m_data.rareData->equals(*other.m_data.rareData);
+            return protect(m_data.rareData)->equals(*protect(other.m_data.rareData));
         if (match() == Match::Tag)
             return *m_data.tagQName == *other.m_data.tagQName;
         return m_data.value == other.m_data.value;

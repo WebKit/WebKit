@@ -96,7 +96,7 @@ void PointerLockController::requestPointerLock(Element* target, PointerLockOptio
     if (target->document().isSandboxed(SandboxFlag::PointerLock)) {
         auto reason = "Blocked pointer lock on an element because the element's frame is sandboxed and the 'allow-pointer-lock' permission is not set."_s;
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        target->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, reason);
+        protect(target->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, reason);
         enqueueEvent(eventNames().pointerlockerrorEvent, target);
         // If this's node document's active sandboxing flag set has the sandboxed pointer lock browsing context flag set:
         promise->reject(ExceptionCode::SecurityError, reason);
@@ -290,7 +290,7 @@ void PointerLockController::dispatchLockedWheelEvent(const PlatformWheelEvent& e
         return;
 
     OptionSet<EventHandling> defaultHandling;
-    m_element->dispatchWheelEvent(event, defaultHandling);
+    protect(m_element)->dispatchWheelEvent(event, defaultHandling);
 }
 
 void PointerLockController::clearElement()

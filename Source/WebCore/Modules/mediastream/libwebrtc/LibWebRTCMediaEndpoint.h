@@ -56,7 +56,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace webrtc {
 class CreateSessionDescriptionObserver;
 class DataChannelInterface;
-class MediaStreamInterface;
 class PeerConnectionObserver;
 class SessionDescriptionInterface;
 class SetSessionDescriptionObserver;
@@ -202,8 +201,6 @@ private:
 
     bool m_isInitiator { false };
     Timer m_statsLogTimer;
-
-    MemoryCompactRobinHoodHashMap<String, Ref<webrtc::MediaStreamInterface>> m_localStreams;
 
     const std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> m_rtcSocketFactory;
 #if !RELEASE_LOG_DISABLED

@@ -35,7 +35,7 @@ class RenderSVGEllipse final : public RenderSVGShape {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGEllipse);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGEllipse);
 public:
-    RenderSVGEllipse(SVGGraphicsElement&, RenderStyle&&);
+    RenderSVGEllipse(SVGGraphicsElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGEllipse();
 
 private:

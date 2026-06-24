@@ -68,7 +68,7 @@ public:
     {
         if (!m_result || (policy == ExternalResourceDownloadPolicy::Allow
             && (m_fontFace->status() == CSSFontFace::Status::Pending || m_fontFace->status() == CSSFontFace::Status::Loading || m_fontFace->status() == CSSFontFace::Status::TimedOut))) {
-            const auto result = Ref { m_fontFace }->font(m_fontDescription, m_syntheticBold, m_syntheticItalic, policy, m_fontPaletteValues, m_fontFeatureValues);
+            const auto result = protect(m_fontFace)->font(m_fontDescription, m_syntheticBold, m_syntheticItalic, policy, m_fontPaletteValues, m_fontFeatureValues);
             if (!m_result)
                 m_result = result;
         }

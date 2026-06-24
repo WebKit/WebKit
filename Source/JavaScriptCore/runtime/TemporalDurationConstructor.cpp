@@ -80,15 +80,18 @@ void TemporalDurationConstructor::finishCreation(VM& vm, TemporalDurationPrototy
     durationPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.duration
 JSC_DEFINE_HOST_FUNCTION(constructTemporalDuration, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // Step 1: NewTarget check done by JSC engine.
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, durationStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
+    // Steps 2-10: If arg is undefined use 0; else ToIntegerIfIntegral(arg).
     ISO8601::Duration result;
     auto count = std::min<size_t>(callFrame->argumentCount(), numberOfTemporalUnits);
     for (size_t i = 0; i < count; i++) {
@@ -99,11 +102,12 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalDuration, (JSGlobalObject* globalObjec
         double v = value.toNumber(globalObject) + 0.0;
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (!isInteger(v))
+        if (!isInteger(v)) [[unlikely]]
             return throwVMRangeError(globalObject, scope, "Temporal.Duration properties must be integers"_s);
         result.setField(i, v);
     }
 
+    // Steps 11-12: IsValidDuration + CreateTemporalDuration.
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTF::move(result), structure)));
 }
 
@@ -115,14 +119,18 @@ JSC_DEFINE_HOST_FUNCTION(callTemporalDuration, (JSGlobalObject* globalObject, Ca
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Duration"_s));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.duration.from
 JSC_DEFINE_HOST_FUNCTION(temporalDurationConstructorFuncFrom, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
+    // Step 1: Return ? ToTemporalDuration(item).
     return JSValue::encode(TemporalDuration::from(globalObject, callFrame->argument(0)));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.duration.compare
 JSC_DEFINE_HOST_FUNCTION(temporalDurationConstructorFuncCompare, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return JSValue::encode(TemporalDuration::compare(globalObject, callFrame->argument(0), callFrame->argument(1)));
+    // Steps 1-2: ToTemporalDuration(one), ToTemporalDuration(two). Step 3: CompareTemporalDuration.
+    return JSValue::encode(TemporalDuration::compare(globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2)));
 }
 
 } // namespace JSC

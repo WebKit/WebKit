@@ -57,6 +57,10 @@ enum class CTMScope : bool;
 enum class CalcMode : uint8_t;
 enum class SVGParsingError : uint8_t;
 
+namespace Style {
+enum class SVGRendererUpdateType : bool;
+}
+
 template<typename PropertyType>
 class SVGAnimatedPrimitiveProperty;
 
@@ -113,7 +117,7 @@ public:
 
     inline void setAnimatedSVGAttributesAreDirty();
     inline void setPresentationalHintStyleIsDirty();
-    void updateSVGRendererForElementChange();
+    void updateSVGRendererForElementChange(Style::SVGRendererUpdateType = Style::SVGRendererUpdateType { });
 
     // The instances of an element are clones made in shadow trees to implement <use>.
     const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>& NODELETE instances() const;
@@ -135,7 +139,7 @@ public:
 
     void setCorrespondingElement(SVGElement*);
 
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) override;
 
     static QualifiedName animatableAttributeForName(const AtomString&);
 #ifndef NDEBUG
@@ -178,7 +182,7 @@ public:
     void animatorWillBeDeleted(const QualifiedName&);
 
     using Node::computedStyle;
-    const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) final;
+    const Style::ComputedStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) final;
 
     ColorInterpolation colorInterpolation() const;
 
@@ -196,7 +200,7 @@ protected:
     SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, OptionSet<TypeFlag> = { });
     virtual ~SVGElement();
 
-    bool rendererIsNeeded(const RenderStyle&) override;
+    bool rendererIsNeeded(const Style::ComputedStyle&) override;
 
     void finishParsingChildren() override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) override;

@@ -112,11 +112,11 @@ bool WorkerFontLoadRequest::ensureCustomFontData()
     return m_fontCustomPlatformData.get();
 }
 
-RefPtr<Font> WorkerFontLoadRequest::createFont(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext)
+RefPtr<Font> WorkerFontLoadRequest::createFont(const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
 {
     ASSERT(m_fontCustomPlatformData);
     ASSERT(m_context);
-    return Font::create(m_fontCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontCreationContext), Font::Origin::Remote);
+    return Font::create(m_fontCustomPlatformData->fontPlatformData(fontDescription, fontCreationContext), Font::Origin::Remote);
 }
 
 void WorkerFontLoadRequest::setClient(FontLoadRequestClient* client)

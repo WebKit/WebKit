@@ -37,10 +37,13 @@ class RenderBoxModelObject;
 class RenderElement;
 class RenderGeometryMap;
 class RenderLayerModelObject;
-class RenderStyle;
 class LegacyRenderSVGRoot;
 class SVGElement;
 class TransformState;
+
+namespace Style {
+class ComputedStyle;
+}
 
 // SVGRendererSupport is a helper class sharing code between all SVG renderers.
 class SVGRenderSupport {
@@ -98,16 +101,16 @@ public:
     static void NODELETE elementWillBeRemovedFromTree(RenderElement&);
 
     // Shared between SVG renderers and resources.
-    static void applyStrokeStyleToContext(GraphicsContext&, const RenderStyle&, const RenderElement&);
+    static void applyStrokeStyleToContext(GraphicsContext&, const Style::ComputedStyle&, const RenderElement&);
 
     // Determines if any ancestor's transform has changed.
     static bool transformToRootChanged(RenderElement*);
 
     static void clipContextToCSSClippingArea(GraphicsContext&, const RenderElement& renderer);
 
-    static void styleChanged(RenderElement&, const RenderStyle*);
+    static void styleChanged(RenderElement&, const Style::ComputedStyle*);
 
-    static bool isolatesBlending(const RenderStyle&);
+    static bool isolatesBlending(const Style::ComputedStyle&);
     static void updateMaskedAncestorShouldIsolateBlending(const RenderElement&);
 
     static LegacyRenderSVGRoot* NODELETE findTreeRootObject(RenderElement&);

@@ -44,7 +44,16 @@ bool IOSWindow::resize(int width, int height)
 }
 
 // static
-OSWindow *OSWindow::New()
+OSWindow *OSWindow::New(void * /*nativeDisplay*/)
 {
     return new IOSWindow;
+}
+
+// static
+std::string IOSWindow::GetResourcePath()
+{
+    NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
+    if (!resourcePath)
+        return {};
+    return [resourcePath UTF8String];
 }

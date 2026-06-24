@@ -16,10 +16,10 @@
 #include <list>
 #include <map>
 #include <optional>
+#include <span>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "api/units/time_delta.h"
@@ -58,7 +58,7 @@ class RTCPReceiver final {
     virtual void OnReceivedNack(
         const std::vector<uint16_t>& nack_sequence_numbers) = 0;
     virtual void OnReceivedRtcpReportBlocks(
-        ArrayView<const ReportBlockData> report_blocks) = 0;
+        std::span<const ReportBlockData> report_blocks) = 0;
 
    protected:
     virtual ~ModuleRtpRtcp() = default;
@@ -99,7 +99,7 @@ class RTCPReceiver final {
 
   ~RTCPReceiver();
 
-  void IncomingPacket(ArrayView<const uint8_t> packet);
+  void IncomingPacket(std::span<const uint8_t> packet);
 
   int64_t LastReceivedReportBlockMs() const;
 
@@ -231,7 +231,7 @@ class RTCPReceiver final {
     size_t num_rtts_ = 0;
   };
 
-  bool ParseCompoundPacket(ArrayView<const uint8_t> packet,
+  bool ParseCompoundPacket(std::span<const uint8_t> packet,
                            PacketInformation* packet_information);
 
   void TriggerCallbacksFromRtcpPacket(

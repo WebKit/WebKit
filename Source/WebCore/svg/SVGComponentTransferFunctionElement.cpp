@@ -60,7 +60,7 @@ void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& 
         break;
     }
     case AttributeNames::tableValuesAttr:
-        m_tableValues->baseVal()->parse(newValue);
+        protect(m_tableValues)->baseVal()->parse(newValue);
         break;
     case AttributeNames::slopeAttr:
         m_slope->setBaseValInternal(newValue.toFloat());

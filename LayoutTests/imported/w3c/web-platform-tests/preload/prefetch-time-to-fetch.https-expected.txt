@@ -1,0 +1,4 @@
+
+FAIL Changing a prefetch href should trigger a fetch assert_array_equals: expected property 0 to be "load" but got "timeout" (expected array ["load", "load"] got ["timeout", "timeout"])
+FAIL Changing a prefetch crossorigin attribute does not trigger a fetch assert_array_equals: expected property 0 to be "load" but got "timeout" (expected array ["load", "timeout"] got ["timeout", "timeout"])
+

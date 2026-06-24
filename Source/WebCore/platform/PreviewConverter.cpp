@@ -175,7 +175,7 @@ void PreviewConverter::iterateClients(T&& callback)
 void PreviewConverter::didAddClient(PreviewConverterClient& client)
 {
     RunLoop::currentSingleton().dispatch([this, protectedThis = Ref { *this }, weakClient = WeakPtr { client }]() {
-        if (auto client = weakClient.get())
+        if (RefPtr client = weakClient.get())
             replayToClient(*client);
     });
 }
@@ -221,7 +221,7 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
     client.previewConverterDidStartConverting(*this);
 
     if (!m_previewData.isEmpty() && hasClient(client))
-        client.previewConverterDidReceiveData(*this, *m_previewData.buffer());
+        client.previewConverterDidReceiveData(*this, *protect(m_previewData.buffer()));
 
     if (m_state == State::Converting || !hasClient(client))
         return;

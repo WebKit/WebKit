@@ -305,6 +305,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-016-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-016.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-and-alignment.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-explicit-placement-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-explicit-placement-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-explicit-placement.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-003.html

@@ -25,6 +25,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static STACK_OF(CONF_VALUE) *i2v_POLICY_CONSTRAINTS(
     const X509V3_EXT_METHOD *method, void *bcons,
     STACK_OF(CONF_VALUE) *extlist);
@@ -32,7 +34,7 @@ static void *v2i_POLICY_CONSTRAINTS(const X509V3_EXT_METHOD *method,
                                     const X509V3_CTX *ctx,
                                     const STACK_OF(CONF_VALUE) *values);
 
-const X509V3_EXT_METHOD v3_policy_constraints = {
+const X509V3_EXT_METHOD bssl::v3_policy_constraints = {
     NID_policy_constraints,
     0,
     ASN1_ITEM_ref(POLICY_CONSTRAINTS),

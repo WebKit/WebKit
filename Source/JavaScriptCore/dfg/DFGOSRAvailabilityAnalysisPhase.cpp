@@ -28,11 +28,11 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGBlockMapInlines.h"
 #include "DFGMayExit.h"
 #include "DFGPhase.h"
 #include "JSCJSValueInlines.h"
 #include "OperandsInlines.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace DFG {
 
@@ -89,7 +89,7 @@ public:
             
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                 if (verbose) {
-                    dataLogLn("Before changing Block #", block->index);
+                    dataLogLn("Before changing Block #", block->index());
                     dumpAvailability(block);
                 }
 
@@ -110,7 +110,7 @@ public:
                 changed = true;
 
                 if (verbose) {
-                    dataLogLn("After changing Block #", block->index);
+                    dataLogLn("After changing Block #", block->index());
                     dumpAvailability(block);
                 }
 
@@ -124,7 +124,7 @@ public:
                     availabilityAtHead(successor).pruneByLiveness(
                         m_graph, successor->at(0)->origin.forExit);
                     if (verbose) {
-                        dataLogLn("After pruning Block #", successor->index);
+                        dataLogLn("After pruning Block #", successor->index());
                         dumpAvailability(successor);
                         dumpBytecodeLivenessAtHead(successor);
                     }
@@ -189,7 +189,7 @@ public:
                     Availability availability = availabilityMap.m_locals[i];
                     if (availability.isDead() && m_graph.isLiveInBytecode(operand, exitOrigin)) {
                         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-                            dataLogLn("Block #", block->index);
+                            dataLogLn("Block #", block->index());
                             dataLogLn("Availability at head: ", availabilityAtHead(block));
                             dataLogLn("Availability at tail: ", availabilityAtTail(block));
                             dataLogLn();
@@ -257,8 +257,8 @@ bool performOSRAvailabilityAnalysis(Graph& graph)
 
 void validateOSRExitAvailability(Graph& graph)
 {
-    BlockMap<AvailabilityMap> availabilityMapAtHead(graph);
-    BlockMap<AvailabilityMap> availabilityMapAtTail(graph);
+    IndexMap<BasicBlock*, AvailabilityMap> availabilityMapAtHead(graph.numBlocks());
+    IndexMap<BasicBlock*, AvailabilityMap> availabilityMapAtTail(graph.numBlocks());
 
     for (BasicBlock* block : graph.blocksInNaturalOrder()) {
         availabilityMapAtHead[block] = AvailabilityMap(block->ssa->availabilityAtHead);

@@ -199,7 +199,7 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
 {
     auto propertyList = adoptCF(CFDictionaryCreateMutable(0, 3, 0, &kCFTypeDictionaryValueCallBacks));
 
-    auto mainResourceDict = createPropertyListRepresentation(archive.mainResource(), MainResource);
+    auto mainResourceDict = createPropertyListRepresentation(protect(archive.mainResource()), MainResource);
     ASSERT(mainResourceDict);
     if (!mainResourceDict)
         return nullptr;
@@ -673,7 +673,7 @@ static HashMap<Ref<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIfNec
     }
 
     for (auto& [cssStyleSheet, path]  : uniqueCSSStyleSheets) {
-        auto contentString = cssStyleSheet->cssText(serializationContext);
+        auto contentString = protect(cssStyleSheet)->cssText(serializationContext);
         if (auto newResource = ArchiveResource::create(utf8Buffer(contentString), URL { cssStyleSheet->href() }, "text/css"_s, "UTF-8"_s, frameName, ResourceResponse(), path))
             subresources.append(newResource.releaseNonNull());
     }
@@ -691,7 +691,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(Node& node, const Arch
     String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode, &nodeList, ResolveURLs::NoExcludingURLsForPrivacy, std::nullopt, SerializeShadowRoots::AllForInterchange, { }, options.markupExclusionRules);
     auto nodeType = node.nodeType();
     if (nodeType != NodeType::Document && nodeType != NodeType::DocumentType)
-        markupString = makeString(documentTypeString(node.document()), markupString);
+        markupString = makeString(documentTypeString(protect(node.document())), markupString);
 
     return createInternal(markupString, options, *frame, WTF::move(nodeList), frameFilter);
 }
@@ -733,7 +733,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
             if (!localChildFrame)
                 continue;
 
-            if (auto subframeArchive = createInternal(*localChildFrame->document(), options, frameFilter)) {
+            if (auto subframeArchive = createInternal(*protect(localChildFrame->document()), options, frameFilter)) {
                 RefPtr subframeMainResource = subframeArchive->mainResource();
                 auto subframeMainResourceURL = subframeMainResource ? subframeMainResource->url() : URL { };
                 if (!subframeMainResourceURL.isEmpty()) {
@@ -772,7 +772,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
                 auto resource = documentLoader->subresource(subresourceURL);
                 if (!resource) {
                     ResourceRequest request(URL { subresourceURL });
-                    request.setDomainForCachePartition(frame.document()->domainForCachePartition());
+                    request.setDomainForCachePartition(protect(frame.document())->domainForCachePartition());
                     if (RefPtr cachedResource = MemoryCache::singleton().resourceForRequest(request, frame.page()->sessionID()))
                         resource = ArchiveResource::create(cachedResource->resourceBuffer(), subresourceURL, cachedResource->response());
                 }
@@ -807,8 +807,24 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
         RefPtr documentLoader = frame.loader().documentLoader();
         ASSERT(documentLoader);
         for (auto& icon : documentLoader->linkIcons()) {
-            if (auto resource = documentLoader->subresource(icon.url))
-                subresources.append(resource.releaseNonNull());
+            if (uniqueSubresources.contains(icon.url.string()))
+                continue;
+
+            auto resource = documentLoader->subresource(icon.url);
+            if (!resource)
+                continue;
+
+            auto addResult = uniqueSubresources.add(icon.url.string(), emptyString());
+
+            if (!subresourcesDirectoryName.isNull()) {
+                String subresourceFileName = generateValidFileName(icon.url, uniqueFileNames);
+                uniqueFileNames.add(subresourceFileName);
+                String subresourceFilePath = FileSystem::pathByAppendingComponent(subresourcesDirectoryName, subresourceFileName);
+                resource->setRelativeFilePath(subresourceFilePath);
+                addResult.iterator->value = frame.isMainFrame() ? subresourceFilePath : subresourceFileName;
+            }
+
+            subresources.append(resource.releaseNonNull());
         }
     }
 

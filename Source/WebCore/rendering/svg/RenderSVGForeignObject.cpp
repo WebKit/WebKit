@@ -31,11 +31,11 @@
 #include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderSVGBlockInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGRenderSupport.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TransformState.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGForeignObject);
 
-RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
+RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element, Style::ComputedStyle&& style)
     : RenderSVGBlock(Type::SVGForeignObject, element, WTF::move(style))
 {
     ASSERT(isRenderSVGForeignObject());
@@ -129,7 +129,7 @@ void RenderSVGForeignObject::updateFromStyle()
         setHasNonVisibleOverflow();
 }
 
-void RenderSVGForeignObject::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
+void RenderSVGForeignObject::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     applySVGTransform(transform, protect(foreignObjectElement()), style, boundingBox, std::nullopt, std::nullopt, options);
 }

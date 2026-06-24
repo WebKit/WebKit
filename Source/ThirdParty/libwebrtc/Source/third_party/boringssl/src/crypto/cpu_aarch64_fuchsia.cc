@@ -22,7 +22,9 @@
 #include <zircon/types.h>
 
 
-void OPENSSL_cpuid_setup(void) {
+using namespace bssl;
+
+void bssl::OPENSSL_cpuid_setup() {
   uint32_t hwcap;
   zx_status_t rc = zx_system_get_features(ZX_FEATURE_KIND_CPU, &hwcap);
   if (rc != ZX_OK || (hwcap & ZX_ARM64_FEATURE_ISA_ASIMD) == 0) {
@@ -47,6 +49,9 @@ void OPENSSL_cpuid_setup(void) {
   }
   if (hwcap & ZX_ARM64_FEATURE_ISA_SHA512) {
     OPENSSL_armcap_P |= ARMV8_SHA512;
+  }
+  if (hwcap & ZX_ARM64_FEATURE_ISA_SHA3) {
+    OPENSSL_armcap_P |= ARMV8_SHA3;
   }
 }
 

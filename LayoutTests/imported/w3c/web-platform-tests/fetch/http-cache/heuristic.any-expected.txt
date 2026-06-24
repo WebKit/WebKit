@@ -1,5 +1,5 @@
 
-FAIL HTTP cache reuses an unknown response with Last-Modified based upon heuristic freshness when Cache-Control: public is present assert_less_than: Response 2 does not come from cache expected a number less than 2 but got 2
+PASS HTTP cache reuses an unknown response with Last-Modified based upon heuristic freshness when Cache-Control: public is present
 PASS HTTP cache does not reuse an unknown response with Last-Modified based upon heuristic freshness when Cache-Control: public is not present
 PASS HTTP cache does not reuse a redirected response with no max-age and no Last-Modified header
 PASS HTTP cache reuses a 200 OK response with Last-Modified based upon heuristic freshness

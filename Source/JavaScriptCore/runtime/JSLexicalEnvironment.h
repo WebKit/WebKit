@@ -90,24 +90,9 @@ public:
         return allocationSizeForScopeSize(symbolTable->scopeSize());
     }
 
-    static JSLexicalEnvironment* create(
-        VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
-    {
-        JSLexicalEnvironment* result =
-            new (
-                NotNull,
-                allocateCell<JSLexicalEnvironment>(vm, allocationSize(symbolTable)))
-            JSLexicalEnvironment(vm, structure, currentScope, symbolTable, initialValue);
-        result->finishCreation(vm);
-        return result;
-    }
+    static JSLexicalEnvironment* create(VM&, Structure*, JSScope* currentScope, SymbolTable*, JSValue initialValue);
+    static JSLexicalEnvironment* create(VM&, JSGlobalObject*, JSScope* currentScope, SymbolTable*, JSValue initialValue);
 
-    static JSLexicalEnvironment* create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
-    {
-        Structure* structure = globalObject->activationStructure();
-        return create(vm, structure, currentScope, symbolTable, initialValue);
-    }
-        
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
 
@@ -128,16 +113,6 @@ protected:
 
     static void analyzeHeap(JSCell*, HeapAnalyzer&);
 };
-
-inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
-    : Base(vm, structure, currentScope, symbolTable)
-{
-    ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
-    for (unsigned i = this->symbolTable()->scopeSize(); i--;) {
-        // Filling this with undefined/TDZEmptyValue is useful because that's what variables start out as.
-        variableAt(ScopeOffset(i)).setStartingValue(initialValue);
-    }
-}
 
 } // namespace JSC
 

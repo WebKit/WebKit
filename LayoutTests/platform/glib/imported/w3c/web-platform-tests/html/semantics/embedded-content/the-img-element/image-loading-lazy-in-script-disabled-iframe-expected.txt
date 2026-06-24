@@ -1,5 +1,0 @@
-
-
-PASS Images with loading='lazy' in script disabled iframe are not handled
-       as 'lazy'
-

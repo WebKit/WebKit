@@ -1,7 +1,0 @@
-
-PASS Autonomous custom element without ElementInternals.type=button does not support the popovertarget attribute.
-FAIL Custom element with type=button and popovertargetaction='toggle' toggles popover. assert_true: Toggle popover should open after first click expected true got false
-FAIL Custom element with type=button and popovertargetaction='show' only opens popover. assert_true: Show popover should open after first click expected true got false
-FAIL Custom element with type=button and popovertargetaction='hide' only closes popover. assert_false: Hide popover should close after first click expected false got true
-FAIL Custom element with type=button that is disabled does not support popovertarget. assert_true: Enabled button should open popover expected true got false
-

@@ -30,7 +30,6 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
-#include "CSSQuadValue.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSSubstitutionValue.h"
 #include "CSSUnparsedValue.h"

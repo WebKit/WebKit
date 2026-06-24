@@ -161,7 +161,7 @@ public:
         
         void unsweepWithNoNewlyAllocated();
         
-        void shrink();
+        inline void shrink();
             
         // While allocating from a free list, MarkedBlock temporarily has bogus
         // cell liveness data. To restore accurate cell liveness data, call one
@@ -178,8 +178,8 @@ public:
         bool needsDestruction() const;
         HeapCell::Kind cellKind() const;
             
-        size_t markCount();
-        size_t size();
+        inline size_t markCount();
+        inline size_t size();
 
         size_t backingStorageSize() { return std::bit_cast<uintptr_t>(end()) - std::bit_cast<uintptr_t>(pageStart()); }
         
@@ -348,13 +348,14 @@ public:
     inline MarkedSpace* space() const;
 
     static bool isAtomAligned(const void*);
+    static constexpr bool isAtomAligned(uintptr_t);
     static MarkedBlock* blockFor(const void*);
     unsigned atomNumber(const void*);
     size_t candidateAtomNumber(const void*);
         
-    size_t markCount();
+    JS_EXPORT_PRIVATE size_t markCount();
 
-    bool isMarked(const void*);
+    JS_EXPORT_PRIVATE bool isMarked(const void*);
     bool isMarked(HeapVersion markingVersion, const void*);
     bool isMarked(const void*, Dependency);
     bool testAndSetMarked(const void*, Dependency);
@@ -378,9 +379,9 @@ public:
     CellAttributes attributes() const;
 
     bool hasAnyMarked() const;
-    void noteMarked();
+    inline void noteMarked();
 #if ASSERT_ENABLED
-    void assertValidCell(VM&, HeapCell*) const;
+    JS_EXPORT_PRIVATE void assertValidCell(VM&, HeapCell*) const;
 #else
     void assertValidCell(VM&, HeapCell*) const { }
 #endif
@@ -425,7 +426,7 @@ private:
     JS_EXPORT_PRIVATE void aboutToMarkSlow(HeapVersion markingVersion, HeapCell*);
     void NODELETE clearHasAnyMarked();
     
-    void noteMarkedSlow();
+    JS_EXPORT_PRIVATE void noteMarkedSlow();
     
     inline bool marksConveyLivenessDuringMarking(HeapVersion markingVersion);
     inline bool marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion);
@@ -473,7 +474,12 @@ inline MarkedBlock::Atom* MarkedBlock::atoms()
 
 inline bool MarkedBlock::isAtomAligned(const void* p)
 {
-    return !(reinterpret_cast<uintptr_t>(p) & atomAlignmentMask);
+    return isAtomAligned(std::bit_cast<uintptr_t>(p));
+}
+
+inline constexpr bool MarkedBlock::isAtomAligned(uintptr_t p)
+{
+    return !(p & atomAlignmentMask);
 }
 
 inline void* MarkedBlock::Handle::cellAlign(void* p)
@@ -526,11 +532,6 @@ inline WeakSet& MarkedBlock::weakSet()
     return handle().weakSet();
 }
 
-inline void MarkedBlock::Handle::shrink()
-{
-    m_weakSet.shrink();
-}
-
 inline size_t MarkedBlock::Handle::cellSize()
 {
     return m_atomsPerCell * atomSize;
@@ -564,16 +565,6 @@ inline DestructionMode MarkedBlock::Handle::destruction() const
 inline HeapCell::Kind MarkedBlock::Handle::cellKind() const
 {
     return m_attributes.cellKind;
-}
-
-inline size_t MarkedBlock::Handle::markCount()
-{
-    return m_block->markCount();
-}
-
-inline size_t MarkedBlock::Handle::size()
-{
-    return markCount() * cellSize();
 }
 
 inline size_t MarkedBlock::candidateAtomNumber(const void* p)
@@ -690,17 +681,6 @@ inline IterationStatus MarkedBlock::Handle::forEachCell(const Functor& functor)
 inline bool MarkedBlock::hasAnyMarked() const
 {
     return header().m_biasedMarkCount != header().m_markCountBias;
-}
-
-inline void MarkedBlock::noteMarked()
-{
-    // This is racy by design. We don't want to pay the price of an atomic increment!
-    // FIXME: We could probably make this relaxed atomics on Apple ARM64E since it's mostly free for those chips.
-    MarkCountBiasType biasedMarkCount = header().m_biasedMarkCount;
-    ++biasedMarkCount;
-    header().m_biasedMarkCount = biasedMarkCount;
-    if (!biasedMarkCount) [[unlikely]]
-        noteMarkedSlow();
 }
 
 inline void MarkedBlock::setVerifierMemo(void* p)

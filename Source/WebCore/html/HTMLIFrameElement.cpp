@@ -37,10 +37,10 @@
 #include "LocalFrame.h"
 #include "NodeName.h"
 #include "RenderIFrame.h"
-#include "RenderStyle+GettersInlines.h"
 #include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDisplay.h"
 #include "TrustedType.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -160,12 +160,12 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
     }
 }
 
-bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
+bool HTMLIFrameElement::rendererIsNeeded(const Style::ComputedStyle& style)
 {
     return style.display() != Style::DisplayType::None && canLoad();
 }
 
-RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderIFrame>(*this, WTF::move(style));
 }

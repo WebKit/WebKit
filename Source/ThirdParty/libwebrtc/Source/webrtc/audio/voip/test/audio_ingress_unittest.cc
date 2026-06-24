@@ -13,8 +13,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
@@ -24,6 +24,7 @@
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/neteq/neteq.h"
 #include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
 #include "api/units/time_delta.h"
@@ -34,6 +35,7 @@
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/event.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -61,10 +63,10 @@ class AudioIngressTest : public ::testing::Test {
     rtp_config.rtcp_report_interval_ms = 5000;
     rtp_config.outgoing_transport = &transport_;
     rtp_config.local_media_ssrc = 0xdeadc0de;
+    rtp_config.rtcp_mode = RtcpMode::kCompound;
     rtp_rtcp_ = ModuleRtpRtcpImpl2::CreateSendModule(env_, rtp_config);
 
     rtp_rtcp_->SetSendingMediaStatus(false);
-    rtp_rtcp_->SetRTCPStatus(RtcpMode::kCompound);
 
     encoder_factory_ = CreateBuiltinAudioEncoderFactory();
     decoder_factory_ = CreateBuiltinAudioDecoderFactory();
@@ -125,7 +127,7 @@ TEST_F(AudioIngressTest, PlayingAfterStartAndStop) {
 
 TEST_F(AudioIngressTest, GetAudioFrameAfterRtpReceived) {
   Event event;
-  auto handle_rtp = [&](ArrayView<const uint8_t> packet, Unused) {
+  auto handle_rtp = [&](std::span<const uint8_t> packet, Unused) {
     ingress_->ReceivedRTPPacket(packet);
     event.Set();
     return true;
@@ -155,7 +157,7 @@ TEST_F(AudioIngressTest, TestSpeechOutputLevelAndEnergyDuration) {
   constexpr int kNumRtp = 6;
   int rtp_count = 0;
   Event event;
-  auto handle_rtp = [&](ArrayView<const uint8_t> packet, Unused) {
+  auto handle_rtp = [&](std::span<const uint8_t> packet, Unused) {
     ingress_->ReceivedRTPPacket(packet);
     if (++rtp_count == kNumRtp) {
       event.Set();
@@ -186,7 +188,7 @@ TEST_F(AudioIngressTest, TestSpeechOutputLevelAndEnergyDuration) {
 
 TEST_F(AudioIngressTest, PreferredSampleRate) {
   Event event;
-  auto handle_rtp = [&](ArrayView<const uint8_t> packet, Unused) {
+  auto handle_rtp = [&](std::span<const uint8_t> packet, Unused) {
     ingress_->ReceivedRTPPacket(packet);
     event.Set();
     return true;
@@ -215,7 +217,7 @@ TEST_F(AudioIngressTest, GetMutedAudioFrameAfterRtpReceivedAndStopPlay) {
   constexpr int kNumRtp = 6;
   int rtp_count = 0;
   Event event;
-  auto handle_rtp = [&](ArrayView<const uint8_t> packet, Unused) {
+  auto handle_rtp = [&](std::span<const uint8_t> packet, Unused) {
     ingress_->ReceivedRTPPacket(packet);
     if (++rtp_count == kNumRtp) {
       event.Set();
@@ -245,6 +247,25 @@ TEST_F(AudioIngressTest, GetMutedAudioFrameAfterRtpReceivedAndStopPlay) {
   // Now we should still see valid speech output level as StopPlay won't affect
   // the measurement.
   EXPECT_EQ(ingress_->GetOutputAudioLevel(), kAudioLevel);
+}
+
+TEST(AudioIngressConfigTest, UsesFieldTrialConfig) {
+  GlobalSimulatedTimeController time_controller(Timestamp::Micros(123456789));
+  // Create environment with custom NetEqConfig covering all fields.
+  const Environment env =
+      CreateTestEnvironment({.field_trials = "WebRTC-VoIP-NetEqConfig/"
+                                             "max_packets_in_buffer:123,"
+                                             "max_delay_ms:1000,"
+                                             "min_delay_ms:500,"
+                                             "enable_fast_accelerate:true/",
+                             .time = &time_controller});
+
+  NetEq::Config config = CreateNetEqConfigForTesting(env);
+
+  EXPECT_EQ(config.max_packets_in_buffer, 123u);
+  EXPECT_EQ(config.max_delay_ms, 1000);
+  EXPECT_EQ(config.min_delay_ms, 500);
+  EXPECT_TRUE(config.enable_fast_accelerate);
 }
 
 }  // namespace

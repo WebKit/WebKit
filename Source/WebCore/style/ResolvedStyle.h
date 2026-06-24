@@ -20,20 +20,20 @@
 #pragma once
 
 #include "MatchResult.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include "StyleRelations.h"
 
 namespace WebCore {
 namespace Style {
 
 struct UnadjustedStyle {
-    std::unique_ptr<RenderStyle> style;
+    std::unique_ptr<Style::ComputedStyle> style;
     std::unique_ptr<Relations> relations { };
     RefPtr<const MatchResult> matchResult { };
 };
 
 struct ResolvedStyle {
-    std::unique_ptr<RenderStyle> style;
+    std::unique_ptr<Style::ComputedStyle> style;
     std::unique_ptr<Relations> relations { };
     RefPtr<const MatchResult> matchResult { };
 };

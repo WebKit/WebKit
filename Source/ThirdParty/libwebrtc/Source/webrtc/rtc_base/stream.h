@@ -13,10 +13,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
-#include "api/array_view.h"
 #include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/system/no_unique_address.h"
@@ -74,10 +74,10 @@ class RTC_EXPORT StreamInterface {
   //  SR_EOS: the end-of-stream has been reached, or the stream is in the
   //    SS_CLOSED state.
 
-  virtual StreamResult Read(ArrayView<uint8_t> buffer,
+  virtual StreamResult Read(std::span<uint8_t> buffer,
                             size_t& read,
                             int& error) = 0;
-  virtual StreamResult Write(ArrayView<const uint8_t> data,
+  virtual StreamResult Write(std::span<const uint8_t> data,
                              size_t& written,
                              int& error) = 0;
 

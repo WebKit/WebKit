@@ -31,19 +31,23 @@ namespace WebCore {
 
 class Document;
 class RenderElement;
-class RenderStyle;
 
-namespace Style::Interpolation {
+namespace Style {
+
+class ComputedStyle;
+
+namespace Interpolation {
 
 class Client {
 public:
     virtual Document* document() const = 0;
     virtual RenderElement* renderer() const = 0;
-    virtual const RenderStyle& currentStyle() const = 0;
+    virtual const Style::ComputedStyle& currentStyle() const = 0;
     virtual std::optional<unsigned> transformFunctionListPrefix() const = 0;
 
     virtual ~Client() = default;
 };
 
-} // namespace Style::Interpolation
+} // namespace Interpolation
+} // namespace Style
 } // namespace WebCore

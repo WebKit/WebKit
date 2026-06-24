@@ -31,10 +31,8 @@ rtc_source_set("mutex") {
   }
 
   deps = [
-    ":yield",
     "..:checks",
     "..:macromagic",
-    "..:platform_thread_types",
     "../system:no_unique_address",
     "//third_party/abseil-cpp/absl/base:core_headers",
   ]
@@ -69,7 +67,6 @@ rtc_library("yield_policy") {
     "yield_policy.h",
   ]
   deps = [
-    "..:checks",
     "//third_party/abseil-cpp/absl/base:config",
     "//third_party/abseil-cpp/absl/base:core_headers",
   ]
@@ -86,9 +83,7 @@ if (rtc_include_tests && rtc_enable_google_benchmarks) {
       ":mutex",
       ":yield",
       ":yield_policy",
-      "..:checks",
       "..:macromagic",
-      "..:platform_thread",
       "..:rtc_event",
       "..:threading",
       "../../api/units:time_delta",

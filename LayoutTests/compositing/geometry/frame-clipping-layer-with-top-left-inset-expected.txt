@@ -1,15 +1,17 @@
+Layer tree when scrolled to top left
+
 (GraphicsLayer
-  (children 3
+  (children 5
     (GraphicsLayer
-      (position 50.00 50.00)
+      (position 50.00 40.00)
       (anchor 0.00 0.00)
-      (bounds 750.00 550.00)
+      (bounds 750.00 560.00)
       (backgroundColor #FFFFFF)
     )
     (GraphicsLayer
-      (position 50.00 50.00)
+      (position 50.00 40.00)
       (anchor 0.00 0.00)
-      (bounds 735.00 550.00)
+      (bounds 735.00 545.00)
       (clips 1)
       (children 1
         (GraphicsLayer
@@ -17,10 +19,10 @@
           (children 1
             (GraphicsLayer
               (anchor 0.00 0.00)
-              (bounds 735.00 2000.00)
+              (bounds 2000.00 2000.00)
               (children 1
                 (GraphicsLayer
-                  (bounds 735.00 2000.00)
+                  (bounds 2000.00 2000.00)
                   (contentsOpaque 1)
                   (children 1
                     (GraphicsLayer
@@ -36,8 +38,191 @@
       )
     )
     (GraphicsLayer
-      (position 785.00 50.00)
-      (bounds 15.00 550.00)
+      (position 785.00 40.00)
+      (bounds 15.00 545.00)
+      (drawsContent 1)
+    )
+    (GraphicsLayer
+      (position 50.00 585.00)
+      (bounds 735.00 15.00)
+      (drawsContent 1)
+    )
+    (GraphicsLayer
+      (position 785.00 585.00)
+      (bounds 15.00 15.00)
+      (drawsContent 1)
+    )
+  )
+)
+Layer tree when scrolled to top right
+
+(GraphicsLayer
+  (children 5
+    (GraphicsLayer
+      (position 50.00 40.00)
+      (anchor 0.00 0.00)
+      (bounds 750.00 560.00)
+      (backgroundColor #FFFFFF)
+    )
+    (GraphicsLayer
+      (position 0.00 40.00)
+      (anchor 0.00 0.00)
+      (bounds 785.00 545.00)
+      (clips 1)
+      (children 1
+        (GraphicsLayer
+          (position -1265.00 0.00)
+          (anchor 0.00 0.00)
+          (children 1
+            (GraphicsLayer
+              (position 50.00 0.00)
+              (anchor 0.00 0.00)
+              (bounds 2000.00 2000.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 2000.00 2000.00)
+                  (contentsOpaque 1)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 100.00 100.00)
+                      (contentsOpaque 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+    (GraphicsLayer
+      (position 785.00 40.00)
+      (bounds 15.00 545.00)
+      (drawsContent 1)
+    )
+    (GraphicsLayer
+      (position 50.00 585.00)
+      (bounds 735.00 15.00)
+      (drawsContent 1)
+    )
+    (GraphicsLayer
+      (position 785.00 585.00)
+      (bounds 15.00 15.00)
+      (drawsContent 1)
+    )
+  )
+)
+Layer tree when scrolled to bottom left
+
+(GraphicsLayer
+  (children 5
+    (GraphicsLayer
+      (position 50.00 40.00)
+      (anchor 0.00 0.00)
+      (bounds 750.00 560.00)
+      (backgroundColor #FFFFFF)
+    )
+    (GraphicsLayer
+      (position 50.00 0.00)
+      (anchor 0.00 0.00)
+      (bounds 735.00 585.00)
+      (clips 1)
+      (children 1
+        (GraphicsLayer
+          (position 0.00 -1455.00)
+          (anchor 0.00 0.00)
+          (children 1
+            (GraphicsLayer
+              (position 0.00 40.00)
+              (anchor 0.00 0.00)
+              (bounds 2000.00 2000.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 2000.00 2000.00)
+                  (contentsOpaque 1)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 100.00 100.00)
+                      (contentsOpaque 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+    (GraphicsLayer
+      (position 785.00 40.00)
+      (bounds 15.00 545.00)
+      (drawsContent 1)
+    )
+    (GraphicsLayer
+      (position 50.00 585.00)
+      (bounds 735.00 15.00)
+      (drawsContent 1)
+    )
+    (GraphicsLayer
+      (position 785.00 585.00)
+      (bounds 15.00 15.00)
+      (drawsContent 1)
+    )
+  )
+)
+Layer tree when scrolled to bottom right
+
+(GraphicsLayer
+  (children 5
+    (GraphicsLayer
+      (position 50.00 40.00)
+      (anchor 0.00 0.00)
+      (bounds 750.00 560.00)
+      (backgroundColor #FFFFFF)
+    )
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 785.00 585.00)
+      (clips 1)
+      (children 1
+        (GraphicsLayer
+          (position -1265.00 -1455.00)
+          (anchor 0.00 0.00)
+          (children 1
+            (GraphicsLayer
+              (position 50.00 40.00)
+              (anchor 0.00 0.00)
+              (bounds 2000.00 2000.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 2000.00 2000.00)
+                  (contentsOpaque 1)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 100.00 100.00)
+                      (contentsOpaque 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+    (GraphicsLayer
+      (position 785.00 40.00)
+      (bounds 15.00 545.00)
+      (drawsContent 1)
+    )
+    (GraphicsLayer
+      (position 50.00 585.00)
+      (bounds 735.00 15.00)
+      (drawsContent 1)
+    )
+    (GraphicsLayer
+      (position 785.00 585.00)
+      (bounds 15.00 15.00)
       (drawsContent 1)
     )
   )

@@ -51,6 +51,7 @@ public:
 
     virtual void sessionDidEnd(XRDeviceIdentifier) = 0;
     virtual void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState) = 0;
+    virtual void sessionDidInitializeRendering(XRDeviceIdentifier, uint32_t width, uint32_t height, uint32_t arrayLength) = 0;
 };
 
 class PlatformXRCoordinator {

@@ -17,11 +17,11 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/media_types.h"
 #include "api/numerics/samples_stats_counter.h"
@@ -95,10 +95,10 @@ class VideoAnalyzer : public PacketReceiver,
   void PreEncodeOnFrame(const VideoFrame& video_frame);
   void PostEncodeOnFrame(size_t stream_id, uint32_t timestamp);
 
-  bool SendRtp(ArrayView<const uint8_t> packet,
+  bool SendRtp(std::span<const uint8_t> packet,
                const PacketOptions& options) override;
 
-  bool SendRtcp(ArrayView<const uint8_t> packet,
+  bool SendRtcp(std::span<const uint8_t> packet,
                 const PacketOptions& options) override;
   void OnFrame(const VideoFrame& video_frame) override;
   void Wait();

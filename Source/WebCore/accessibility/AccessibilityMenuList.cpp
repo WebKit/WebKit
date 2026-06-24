@@ -149,7 +149,7 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
     }
 
     if (CheckedPtr cache = document->axObjectCache())
-        cache->deferMenuListValueChange(element());
+        cache->deferMenuListValueChange(protect(element()));
 }
 
 } // namespace WebCore

@@ -243,7 +243,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Query and Fence creation
     QueryImpl *createQuery(gl::QueryType type) override;
     FenceNVImpl *createFenceNV() override;
-    SyncImpl *createSync(const gl::Context *context) override;
+    SyncImpl *createSync() override;
 
     // Transform Feedback creation
     TransformFeedbackImpl *createTransformFeedback(
@@ -405,6 +405,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     mtl::BufferManager &getBufferManager() { return mBufferManager; }
 
+    ProvokingVertexHelper &getProvokingVertexHelper() { return mProvokingVertexHelper; }
+
     mtl::PipelineCache &getPipelineCache() { return mPipelineCache; }
 
     const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
@@ -420,6 +422,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
                             GLint firstVertex,
                             GLsizei vertexOrIndexCount,
                             GLsizei instanceCount,
+                            GLuint baseInstance,
                             gl::DrawElementsType indexTypeOrNone,
                             const void *indices,
                             bool xfbPass,
@@ -429,6 +432,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                 GLint firstVertex,
                                 GLsizei vertexOrIndexCount,
                                 GLsizei instanceCount,
+                                GLuint baseInstance,
                                 gl::DrawElementsType indexTypeOrNone,
                                 const void *indices,
                                 bool xfbPass,

@@ -21,6 +21,8 @@ TESTS = \
     TestWithSuperclass \
     TestWithSuperclassAndWantsAsyncDispatch \
     TestWithSuperclassAndWantsDispatch \
+    TestWithSwift \
+    TestWithSwiftConditionally \
     TestWithValidator \
     TestWithWantsAsyncDispatch \
     TestWithWantsDispatch \

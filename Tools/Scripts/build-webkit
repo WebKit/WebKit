@@ -57,10 +57,6 @@ if (shouldBuildForCrossTarget()) {
     print("Enabling cross-build for target machine: '". getCrossTargetName() . "'\n");
     my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "build-webkit"));
     runInCrossTargetEnvironment(@command);
-} elsif (shouldUseFlatpak()) {
-    print "Building flatpak based environment\n";
-    my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "build-webkit"));
-    runInFlatpak(@command);
 }
 maybeUseContainerSDKRootDir();
 

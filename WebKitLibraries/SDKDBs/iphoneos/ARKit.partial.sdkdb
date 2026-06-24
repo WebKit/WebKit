@@ -159,7 +159,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "introduced": "13", "name": "ARCoachingGoal"},
     {"access": "public", "introduced": "11", "name": "ARSCNDebugOptions"}

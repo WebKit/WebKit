@@ -4,7 +4,7 @@
 <form><input></form>
 <div id="editor" contenteditable>world</div>
 <div id="console"></div>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
 
 var eventType;
@@ -46,7 +46,6 @@ checkFlags('log(input, "blur"); form.focus()', {eventType: 'blur', composed: tru
 if (!window.eventSender)
     testFailed('This test requires eventSender');
 else {
-    testRunner.waitUntilDone();
 
     eventSender.dragMode = false;
 
@@ -137,6 +136,5 @@ testLoadEvent();
 jsTestIsAsync = true;
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -36,7 +36,16 @@
 #import "WebPushDaemonConstants.h"
 #import <wtf/darwin/XPCExtras.h>
 
-namespace WebKit::WebPushD { 
+namespace WebKit::WebPushD {
+
+// This destructor must be defined in this .mm file (and not in WebPushDaemonConnection.cpp).
+// As the first non-pure non-inline virtual, it is the key function for Connection, and the
+// vtable is emitted in the same translation unit. WebPushDaemonConnection.h's ConnectionToMachService
+// base declares connectionReceivedEvent(xpc_object_t), and xpc_object_t resolves to OS_xpc_object*
+// in .mm TUs but to void* in .cpp TUs (gated on __OBJC__ via <os/object.h>). Emitting the vtable
+// from a .cpp TU would sign its slot with the void* discriminator, causing arm64e PAC failures at
+// every .mm call site. See https://bugs.webkit.org/show_bug.cgi?id=316390.
+Connection::~Connection() = default;
 
 void Connection::newConnectionWasInitialized() const
 {

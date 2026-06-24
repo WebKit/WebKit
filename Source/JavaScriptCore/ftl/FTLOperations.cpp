@@ -47,7 +47,7 @@
 #include "JSGenerator.h"
 #include "JSGeneratorFunction.h"
 #include "JSIteratorHelper.h"
-#include "JSLexicalEnvironment.h"
+#include "JSLexicalEnvironmentInlines.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
 #include "JSPromiseReaction.h"
@@ -112,11 +112,27 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
             // empty JSValue is not an Int32. Contiguous is also handled here for the debug ASSERT
             // in putDirectIndex that null-derefs on the empty JSValue. Write directly into the
             // butterfly to preserve the indexing type.
-            if (hasDouble(array->indexingType()) && value.isNumber() && std::isnan(value.asNumber())) [[unlikely]]
+            //
+            // If the VM had a bad time between FTL compilation and this OSR exit, the Array was
+            // switched to SlowPutArrayStorage in operationMaterializeObjectInOSR. A hole must then
+            // be cleared in the ArrayStorage vector rather than the contiguous butterfly to match
+            // the rematerialized layout. Note that the hole arrives as the hole sentinel of the
+            // indexing type the Array was sunk with, not of the Array's current indexing type:
+            // boxed NaN if the Array was sunk as Double, the empty JSValue otherwise.
+            // m_numValuesInVector is also decremented because the cleared slot was counted when
+            // the sentinel-filled butterfly was converted to ArrayStorage.
+            bool valueIsHole = hasDouble(materialization->indexingType()) ? value.isNumber() && isHole(value.asNumber()) : !value;
+            if (hasDouble(array->indexingType()) && valueIsHole) [[unlikely]]
                 array->butterfly()->contiguousDouble().atUnsafe(index) = PNaN;
-            else if ((hasInt32(array->indexingType()) || hasContiguous(array->indexingType())) && !value) [[unlikely]]
+            else if ((hasInt32(array->indexingType()) || hasContiguous(array->indexingType())) && valueIsHole) [[unlikely]]
                 array->butterfly()->contiguous().atUnsafe(index).setStartingValue(JSValue());
-            else
+            else if (hasAnyArrayStorage(array->indexingType()) && valueIsHole) [[unlikely]] {
+                ArrayStorage* storage = array->butterfly()->arrayStorage();
+                ASSERT(storage->m_vector[index]);
+                ASSERT(storage->m_numValuesInVector);
+                storage->m_vector[index].clear();
+                storage->m_numValuesInVector--;
+            } else
                 array->putDirectIndex(globalObject, index, value);
 
             scope.assertNoExceptionExceptTermination();
@@ -308,7 +324,13 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
     }
 
     case PhantomNewArrayWithButterfly: {
-        Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(materialization->indexingType());
+        // Rematerialized butterflies are always non-ArrayStorage. However, isHavingABadTime could
+        // have become true between the FTL compilation and the rematerialization, which would have
+        // switched arrayStructureForIndexingTypeDuringAllocation to SlowPutArrayStorage for all
+        // indexing types. To avoid a layout mismatch, the original Array structure is used to
+        // rematerialize the Array initially. If we're having a bad time, the layout is switched to
+        // SlowPutArrayStorage below.
+        Structure* structure = globalObject->originalArrayStructureForIndexingType(materialization->indexingType());
 
         Butterfly* butterfly = nullptr;
         for (unsigned i = 0; i < materialization->properties().size(); ++i) {
@@ -347,6 +369,14 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
                 butterfly->contiguousDouble().atUnsafe(index) = static_cast<double>(sentinel);
             else
                 butterfly->contiguous().atUnsafe(index).setStartingValue(jsNumber(sentinel));
+        }
+
+        if (globalObject->isHavingABadTime()) [[unlikely]] {
+#if ASSERT_ENABLED
+            Structure* originalStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(materialization->indexingType());
+            ASSERT(!originalStructure || hasSlowPutArrayStorage(originalStructure->indexingType()));
+#endif
+            result->switchToSlowPutArrayStorage(vm);
         }
 
         return result;

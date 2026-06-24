@@ -31,6 +31,8 @@
 #include "ModelTypes.h"
 #include "WebKitMesh.h"
 #include <WebCore/IOSurface.h>
+#include <WebCore/NativeImage.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -88,19 +90,14 @@ void MeshImpl::setFOV(float fovY)
     m_backing->setFOV(fovY);
 }
 
-void MeshImpl::setBackgroundColor(const WebModel::Float3& color)
-{
-    m_backing->setBackgroundColor(color);
-}
-
 void MeshImpl::play(bool play)
 {
     m_backing->play(play);
 }
 
-void MeshImpl::setEnvironmentMap(const WebModel::UpdateTextureDescriptor& imageAsset)
+void MeshImpl::setEnvironmentMap(WebModel::UpdateTextureDescriptor&& imageAsset)
 {
-    m_backing->setEnvironmentMap(imageAsset);
+    m_backing->setEnvironmentMap(WTF::move(imageAsset));
 }
 
 void MeshImpl::updateContentsHeadroom(float headroom)
@@ -125,6 +122,19 @@ void MeshImpl::updateRenderBuffers(WebModel::ResizeMeshDescriptor&& descriptor)
 {
     m_backing->updateRenderBuffers(descriptor);
     m_renderBuffers = WTF::move(descriptor.renderBuffers);
+}
+
+RefPtr<WebCore::NativeImage> MeshImpl::getCurrentFrameAsNativeImage(uint32_t bufferIndex)
+{
+    if (bufferIndex >= m_renderBuffers.size())
+        return nullptr;
+
+    RefPtr nativeImage { m_renderBuffers[bufferIndex]->createNativeImage() };
+    if (!nativeImage)
+        return nullptr;
+
+    CGImageSetCachingFlags(nativeImage->platformImage().get(), kCGImageCachingTransient);
+    return nativeImage;
 }
 #endif
 

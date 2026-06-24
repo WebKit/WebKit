@@ -12,8 +12,8 @@
 
 #include "api/audio/audio_processing.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -22,12 +22,12 @@ namespace webrtc {
 using ::testing::NotNull;
 
 TEST(BuiltinAudioProcessingBuilderTest, CreatesWithDefaults) {
-  EXPECT_THAT(BuiltinAudioProcessingBuilder().Build(CreateEnvironment()),
+  EXPECT_THAT(BuiltinAudioProcessingBuilder().Build(CreateTestEnvironment()),
               NotNull());
 }
 
 TEST(BuiltinAudioProcessingBuilderTest, CreatesWithConfig) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   AudioProcessing::Config config;
   // Change a field to make config different to default one.
   config.gain_controller1.enabled = !config.gain_controller1.enabled;

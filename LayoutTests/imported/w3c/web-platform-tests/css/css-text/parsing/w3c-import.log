@@ -50,6 +50,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-autospace-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-autospace-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-autospace-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-fit-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-fit-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-fit-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-group-align-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-group-align-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-indent-computed.html

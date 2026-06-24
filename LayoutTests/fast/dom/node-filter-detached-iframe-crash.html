@@ -1,11 +1,8 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
-    }
+    window.jsTestIsAsync = true;
 
     var dummyFilterCalled = false;
     var foundNode;
@@ -26,8 +23,7 @@
         shouldBeTrue("dummyFilterCalled");
         shouldBe("foundNode.toString()", "\"[object HTMLHtmlElement]\"");
 
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 </script>
 </head>

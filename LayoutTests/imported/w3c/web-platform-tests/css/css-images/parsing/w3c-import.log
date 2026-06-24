@@ -14,11 +14,18 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/conic-gradient-calc-angle-percentage-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/conic-gradient-calc-angle-percentage-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/gradient-interpolation-method-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/gradient-interpolation-method-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/gradient-interpolation-method-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/gradient-position-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/gradient-position-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/gradient-position-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/image-function-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/image-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/image-function-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/image-orientation-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/image-orientation-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/parsing/image-orientation-valid.html

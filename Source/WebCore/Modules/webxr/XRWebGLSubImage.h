@@ -43,7 +43,7 @@ class XRCompositionLayer;
 class XRWebGLSubImage : public XRSubImage {
     WTF_MAKE_TZONE_ALLOCATED(XRWebGLSubImage);
 public:
-    static ExceptionOr<Ref<XRWebGLSubImage>> create(Ref<WebXRViewport>&&, XRCompositionLayer&);
+    static ExceptionOr<Ref<XRWebGLSubImage>> create(Ref<WebXRViewport>&&, XRCompositionLayer&, uint32_t colorTextureIndex = 0);
     virtual ~XRWebGLSubImage();
 
     const WebXRViewport& viewport() const final { return m_viewport.get(); }

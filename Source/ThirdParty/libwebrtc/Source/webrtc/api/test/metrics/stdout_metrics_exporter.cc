@@ -13,11 +13,11 @@
 #include <cstdint>
 #include <cstdio>
 #include <optional>
+#include <span>
 #include <string>
 
 #include "absl/flags/flag.h"
 #include "absl/strings/str_cat.h"
-#include "api/array_view.h"
 #include "api/test/metrics/metric.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/test_flags.h"
@@ -89,7 +89,7 @@ std::string TestCaseAndMetadata(const Metric& metric) {
 
 StdoutMetricsExporter::StdoutMetricsExporter() : output_(stdout) {}
 
-bool StdoutMetricsExporter::Export(ArrayView<const Metric> metrics) {
+bool StdoutMetricsExporter::Export(std::span<const Metric> metrics) {
   for (const Metric& metric : metrics) {
     PrintMetric(metric);
   }

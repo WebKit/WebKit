@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../video-test.js></script>
+        <script>
+
+            async function runTest()
+            {
+                if (!window.internals) {
+                    failTest("This test requires window.internals.");
+                    return;
+                }
+
+                findMediaElement();
+
+                const trackEl = document.querySelector('track');
+                await Promise.all([
+                    video.readyState >= HTMLMediaElement.HAVE_METADATA
+                        ? Promise.resolve()
+                        : new Promise(r => video.addEventListener('loadedmetadata', r, { once: true })),
+                    trackEl.readyState === HTMLTrackElement.LOADED
+                        ? Promise.resolve()
+                        : new Promise(r => trackEl.addEventListener('load', r, { once: true }))
+                ]);
+
+                track = video.textTracks[0];
+                cues = track.cues;
+
+                // findCueMatches only searches tracks that are showing.
+                track.mode = "showing";
+
+                consoleWrite("** Verify track loaded all 100 cues.");
+                testExpected("cues.length", 100);
+
+                consoleWrite("<br>** Search for a string that appears in every cue.");
+                run("matches = internals.findCueMatches('Lorem', [])");
+                testExpected("matches.length", 30);
+
+                consoleWrite("<br>** Verify timestamps for the first 10 seconds.");
+                for (var t = 1; t <= 10; t++)
+                    testExpected("matches.includes(" + t + ")", true);
+
+                consoleWrite("<br>** Verify timestamps at every 10 second interval up to 100.");
+                consoleWrite("** Timestamps after 30 should return false as the cue start time is longer than the duration of the video.");
+                for (var t = 20; t <= 30; t += 10)
+                    testExpected("matches.includes(" + t + ")", true);
+                for (var t = 40; t <= 100; t += 10)
+                    testExpected("matches.includes(" + t + ")", false);
+
+                consoleWrite("<br>** Verify a string that does not appear returns no matches.");
+                run("matches = internals.findCueMatches('zzzzz', [])");
+                testExpected("matches.length", 0);
+
+                consoleWrite("");
+                endTest();
+            }
+
+            setCaptionDisplayMode('Automatic');
+
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p><br/>Tests that internals.findCueMatches finds all matching cues across a text track with Lorem.</p>
+        <video controls width="800">
+            <source src="../content/long-test.mp4" type="video/mp4">
+            <track src="captions-webvtt/captions-long.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

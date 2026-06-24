@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TypeProfiler.h"
 
-#include "TypeLocation.h"
+#include "TypeLocationInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 

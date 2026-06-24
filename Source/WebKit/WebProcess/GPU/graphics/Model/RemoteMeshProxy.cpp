@@ -247,10 +247,10 @@ void RemoteMeshProxy::play(bool playing)
 #endif
 }
 
-void RemoteMeshProxy::setEnvironmentMap(const WebModel::UpdateTextureDescriptor& imageAsset)
+void RemoteMeshProxy::setEnvironmentMap(WebModel::UpdateTextureDescriptor&& imageAsset)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult = send(Messages::RemoteMesh::SetEnvironmentMap(imageAsset));
+    auto sendResult = send(Messages::RemoteMesh::SetEnvironmentMap(WTF::move(imageAsset)));
     UNUSED_PARAM(sendResult);
 #endif
 }
@@ -278,6 +278,17 @@ void RemoteMeshProxy::sizeDidChange(unsigned width, unsigned height, CompletionH
 #endif
 }
 
+void RemoteMeshProxy::paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex)
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    auto sendResult { sendSync(Messages::RemoteMesh::PaintCurrentFrameToImageBuffer(imageBufferIdentifier, bufferIndex)) };
+    UNUSED_VARIABLE(sendResult);
+#else
+    UNUSED_PARAM(imageBufferIdentifier);
+    UNUSED_PARAM(bufferIndex);
+#endif
+}
+
 std::optional<WebModel::Float4x4> RemoteMeshProxy::entityTransform() const
 {
     return m_computedTransform;
@@ -291,16 +302,6 @@ void RemoteMeshProxy::setFOV(float fovY)
     UNUSED_PARAM(sendResult);
 #else
     UNUSED_PARAM(fovY);
-#endif
-}
-
-void RemoteMeshProxy::setBackgroundColor(const WebModel::Float3& color)
-{
-#if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult = send(Messages::RemoteMesh::SetBackgroundColor(color));
-    UNUSED_PARAM(sendResult);
-#else
-    UNUSED_PARAM(color);
 #endif
 }
 
@@ -364,10 +365,13 @@ void RemoteMeshProxy::setViewportSize(float width, float height)
 void RemoteMeshProxy::setStageMode(WebCore::StageModeOperation stageMode)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
+    auto previousStageMode = m_stageMode;
     m_stageMode = stageMode;
     if (m_stageMode == WebCore::StageModeOperation::Orbit)
         m_entityTransformSetByScript = false;
-    computeTransform();
+    bool returningToNoneFromOrbit = m_stageMode == WebCore::StageModeOperation::None && previousStageMode != WebCore::StageModeOperation::None;
+    if (!returningToNoneFromOrbit)
+        computeTransform();
 #else
     UNUSED_PARAM(stageMode);
 #endif

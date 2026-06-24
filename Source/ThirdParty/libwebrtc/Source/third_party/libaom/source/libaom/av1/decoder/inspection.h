@@ -55,6 +55,7 @@ struct insp_mi_data {
   int16_t intrabc;
   int16_t palette;
   int16_t uv_palette;
+  int16_t sb_bits;
 };
 
 typedef struct insp_frame_data insp_frame_data;

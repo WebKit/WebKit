@@ -115,7 +115,7 @@ public:
         static EncodedInfo NODELETE encodeMultiHeader(unsigned numWides, Wide*);
         static EncodedInfo NODELETE encodeBasic(const Diff&);
 
-        void adjustInstPC(EncodedInfo*, unsigned instPCDelta);
+        void adjustInstPC(unsigned infoIndex, unsigned instPCDelta);
 
         template<unsigned bitCount> bool NODELETE fits(Wide);
         template<typename T, unsigned bitCount> bool fits(T);

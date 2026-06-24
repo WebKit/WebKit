@@ -44,7 +44,7 @@ SOFT_LINK_CLASS(PIP, PIPPanel)
 SOFT_LINK_CLASS(PIP, PIPPrerollAttributes)
 SOFT_LINK_CLASS(PIP, PIPViewController)
 
-static bool didEnterPiP = false;
+static bool _didEnterPiP = false;
 
 @interface SkipAdInPiPFullscreenDelegate : NSObject <WKUIDelegate>
 @end
@@ -54,7 +54,7 @@ static bool didEnterPiP = false;
 - (void)_webView:(WKWebView *)webView hasVideoInPictureInPictureDidChange:(BOOL)value
 {
     if (value)
-        didEnterPiP = true;
+        _didEnterPiP = true;
 }
 
 @end
@@ -78,12 +78,12 @@ TEST(SkipAdInPictureInPicture, VideoHasAd)
 
     [webView synchronouslyLoadTestPageNamed:@"SkipAdInPictureInPicture"];
 
-    didEnterPiP = false;
+    _didEnterPiP = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-pip').click()" completionHandler:nil];
     TestWebKitAPI::Util::waitFor([&] {
-        return didEnterPiP;
+        return _didEnterPiP;
     });
-    EXPECT_TRUE(didEnterPiP);
+    EXPECT_TRUE(_didEnterPiP);
 
     __block NSWindow *pipPanel = nil;
     [[NSApplication sharedApplication] enumerateWindowsWithOptions:0 usingBlock:^(NSWindow *window, BOOL *stop) {
@@ -114,12 +114,12 @@ TEST(SkipAdInPictureInPicture, VideoHasNoAd)
 
     [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
 
-    didEnterPiP = false;
+    _didEnterPiP = false;
     [webView evaluateJavaScript:@"document.getElementsByTagName('video')[0].webkitSetPresentationMode('picture-in-picture')" completionHandler:nil];
     TestWebKitAPI::Util::waitFor([&] {
-        return didEnterPiP;
+        return _didEnterPiP;
     });
-    EXPECT_TRUE(didEnterPiP);
+    EXPECT_TRUE(_didEnterPiP);
 
     __block NSWindow *pipPanel = nil;
     [[NSApplication sharedApplication] enumerateWindowsWithOptions:0 usingBlock:^(NSWindow *window, BOOL *stop) {

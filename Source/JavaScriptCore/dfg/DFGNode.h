@@ -963,6 +963,7 @@ public:
     void NODELETE convertToRegExpExecNonGlobalOrStickyWithoutChecks(FrozenValue* regExp);
     void NODELETE convertToRegExpMatchFastGlobalWithoutChecks(FrozenValue* regExp);
     void NODELETE convertToRegExpMatchFast(Node* globalObjectNode);
+    void NODELETE convertToRegExpSearch(Node* globalObjectNode);
     void NODELETE convertToRegExpTestInline(FrozenValue* globalObject, FrozenValue* regExp);
 
     enum DescriptorSlot : unsigned {
@@ -1798,7 +1799,15 @@ public:
 
     bool isTuple() const
     {
-        return op() == EnumeratorNextUpdateIndexAndMode;
+        switch (op()) {
+        case EnumeratorNextUpdateIndexAndMode:
+        case StringIteratorNext:
+        case StringIteratorNextWithUndefined:
+        case MapIteratorNext:
+            return true;
+        default:
+            return false;
+        }
     }
 
     void setTupleOffset(unsigned tupleOffset)
@@ -1835,6 +1844,9 @@ public:
         ASSERT(isTuple());
         switch (op()) {
         case EnumeratorNextUpdateIndexAndMode:
+        case StringIteratorNext:
+        case StringIteratorNextWithUndefined:
+        case MapIteratorNext:
             return 2;
         default:
             break;
@@ -2137,6 +2149,8 @@ public:
         case RegExpMatchFast:
         case RegExpMatchFastGlobal:
         case RegExpSearch:
+        case RegExpSplitFast:
+        case RegExpStringIteratorNext:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case StringReplace:
@@ -2330,6 +2344,7 @@ public:
         case EnumeratorNextUpdateIndexAndMode:
         case ArrayIncludes:
         case ArrayIndexOf:
+        case ArrayJoin:
             return true;
         default:
             break;
@@ -2455,8 +2470,11 @@ public:
         case NewRegExpUntyped:
         case NewMap:
         case NewSet:
+        case NewWeakMap:
+        case NewWeakSet:
         case NewArrayWithSizeAndStructure:
         case NewTypedArrayBuffer:
+        case RegExpStringIteratorNext:
             return true;
         default:
             return false;
@@ -2743,6 +2761,7 @@ public:
         case ArrayUnshift:
         case ArrayIncludes:
         case ArrayIndexOf:
+        case ArrayJoin:
         case HasIndexedProperty:
         case AtomicsAdd:
         case AtomicsAnd:
@@ -3728,7 +3747,7 @@ public:
 
     bool hasBucketOwnerType()
     {
-        return op() == MapIterationNext || op() == MapIterationEntry || op() == MapIterationEntryKey || op() == MapIterationEntryValue || op() == MapStorage || op() == MapStorageOrSentinel;
+        return op() == MapIterationNext || op() == MapIterationEntry || op() == MapIterationEntryKey || op() == MapIterationEntryValue || op() == MapStorage || op() == MapStorageOrSentinel || op() == MapIteratorKey || op() == MapIteratorValue;
     }
 
     unsigned numberOfBoundArguments()

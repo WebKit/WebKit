@@ -37,7 +37,7 @@ SVGResourcesCache::SVGResourcesCache() = default;
 
 SVGResourcesCache::~SVGResourcesCache() = default;
 
-void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const RenderStyle& style)
+void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const Style::ComputedStyle& style)
 {
     // Verify that LBSE does not make use of SVGResourcesCache.
     if (renderer.document().settings().layerBasedSVGEngineEnabled())
@@ -94,7 +94,7 @@ static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderElement&
     if (renderer.document().settings().layerBasedSVGEngineEnabled())
         RELEASE_ASSERT_NOT_REACHED();
 
-    return renderer.document().svgExtensions().resourcesCache();
+    return protect(renderer.document())->svgExtensions().resourcesCache();
 }
 
 SVGResources* SVGResourcesCache::cachedResourcesForRenderer(const RenderElement& renderer)
@@ -138,7 +138,7 @@ static inline bool NODELETE rendererCanHaveResources(RenderObject& renderer)
     return renderer.node() && renderer.node()->isSVGElement() && !renderer.isRenderSVGInlineText();
 }
 
-void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, Style::Difference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, Style::Difference diff, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle)
 {
     // Verify that LBSE does not make use of SVGResourcesCache.
     if (renderer.document().settings().layerBasedSVGEngineEnabled())
@@ -280,12 +280,12 @@ void SVGResourcesCache::resourceDestroyed(LegacyRenderSVGResourceContainer& reso
         if (it.value->resourceDestroyed(resource)) {
             // Mark users of destroyed resources as pending resolution based on the id of the old resource.
             Ref clientElement = *it.key->element();
-            clientElement->treeScopeForSVGReferences().addPendingSVGResource(resource.element().getIdAttribute(), downcast<SVGElement>(clientElement.get()));
+            protect(clientElement)->treeScopeForSVGReferences().addPendingSVGResource(resource.element().getIdAttribute(), downcast<SVGElement>(clientElement.get()));
         }
     }
 }
 
-SVGResourcesCache::SetStyleForScope::SetStyleForScope(RenderElement& renderer, const RenderStyle& scopedStyle, const RenderStyle& newStyle)
+SVGResourcesCache::SetStyleForScope::SetStyleForScope(RenderElement& renderer, const Style::ComputedStyle& scopedStyle, const Style::ComputedStyle& newStyle)
     : m_renderer(renderer)
     , m_scopedStyle(scopedStyle)
     , m_needsNewStyle(scopedStyle != newStyle && rendererCanHaveResources(renderer))
@@ -298,7 +298,7 @@ SVGResourcesCache::SetStyleForScope::~SetStyleForScope()
     setStyle(m_scopedStyle);
 }
 
-void SVGResourcesCache::SetStyleForScope::setStyle(const RenderStyle& style)
+void SVGResourcesCache::SetStyleForScope::setStyle(const Style::ComputedStyle& style)
 {
     if (!m_needsNewStyle)
         return;

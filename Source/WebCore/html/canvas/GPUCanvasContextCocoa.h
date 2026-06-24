@@ -93,7 +93,8 @@ private:
     float computeContentsHeadroom();
     void updateContentsHeadroom();
     void updateScreenHeadroom(float, bool suppressEDR);
-    void updateScreenHeadroomFromScreenProperties();
+    void updateScreenHeadroomFromScreenPropertiesIfNeeded();
+    void updateHeadroomFromScreenProperties();
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
     void updateMemoryCost() const;
 
@@ -122,6 +123,8 @@ private:
     RefPtr<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
     PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
     float m_currentEDRHeadroom { 1 };
+    float m_screenEDRHeadroom { 0.f };
+    bool m_screenSuppressEDR { false };
     bool m_suppressEDR { false };
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
     bool m_compositingResultsNeedsUpdating { false };

@@ -1,16 +1,13 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 description(
     'Test embed youtube plugin without height or width attribute. &lt;<a href="rdar://problem/12134474"> rdar://problem/12134474</a>&gt;'
 );
+window.jsTestIsAsync = true;
 
 function Test()
 {
@@ -40,7 +37,7 @@ function Test()
         shouldBe('getComputedStyle(objectNoWidthHeight).height', '"150px"');
 
         var successfullyParsed = true;
-        testRunner.notifyDone();
+        finishJSTest();
     }, 100);
 }
 </script>
@@ -57,6 +54,5 @@ function Test()
 <p>Object without width:<br><object id='object-no-width' height="350" type="application/x-shockwave-flash" data="http://www.youtube.com/v/N0gb9v4LI4o?version=3&amp;hl=en_US"></object>
 <p>Object without height or width:<br><object id='object-no-width-or-height' type="application/x-shockwave-flash" data="http://www.youtube.com/v/N0gb9v4LI4o?version=3&amp;hl=en_US"></object>
 
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

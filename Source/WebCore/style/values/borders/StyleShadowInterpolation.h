@@ -67,7 +67,7 @@ struct ShadowInterpolation {
         return true;
     }
 
-    static auto interpolate(const ShadowsType& fromShadows, const ShadowsType& toShadows, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> ShadowsType
+    static auto interpolate(const ShadowsType& fromShadows, const ShadowsType& toShadows, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> ShadowsType
     {
         if (context.isDiscrete) {
             ASSERT(!context.progress || context.progress == 1.0);
@@ -93,7 +93,7 @@ struct ShadowInterpolation {
         });
     }
 
-    static auto blendMatchedShadowLists(const ShadowsType& fromShadows, const ShadowsType& toShadows, size_t length, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> ShadowsType
+    static auto blendMatchedShadowLists(const ShadowsType& fromShadows, const ShadowsType& toShadows, size_t length, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> ShadowsType
     {
         // `from` or `to` might be empty in which case we don't want to do additivity, but do replace instead.
         if (!fromShadows.isNone() && !toShadows.isNone() && context.compositeOperation == CompositeOperation::Add)
@@ -104,7 +104,7 @@ struct ShadowInterpolation {
         });
     }
 
-    static auto blendMismatchedShadowLists(const ShadowsType& fromShadows, const ShadowsType& toShadows, size_t fromLength, size_t toLength, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> ShadowsType
+    static auto blendMismatchedShadowLists(const ShadowsType& fromShadows, const ShadowsType& toShadows, size_t fromLength, size_t toLength, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> ShadowsType
     {
         if (!fromShadows.isNone() && !toShadows.isNone() && context.compositeOperation != CompositeOperation::Replace)
             return addShadowLists(fromShadows, toShadows, fromLength, toLength);

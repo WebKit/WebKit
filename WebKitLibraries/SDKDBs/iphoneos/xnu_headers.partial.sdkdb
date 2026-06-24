@@ -151,9 +151,12 @@
       {"access": "public", "name": "kGUARD_EXC_RCV_INVALID_NAME"},
       {"access": "public", "name": "kGUARD_EXC_RCV_GUARDED_DESC"},
       {"access": "public", "name": "kGUARD_EXC_SERVICE_PORT_VIOLATION_NON_FATAL"},
-      {"access": "public", "name": "kGUARD_EXC_PROVISIONAL_REPLY_PORT"},
+      {"access": "public", "name": "kGUARD_EXC_INVALID_NOTIFICATION_PORT"},
+      {"access": "public", "name": "kGUARD_EXC_MACH_EXC_THREAD_SET_STATE"},
+      {"access": "public", "name": "kGUARD_EXC_CV_NOTIFICATION_PORT_REQ"},
+      {"access": "public", "name": "kGUARD_EXC_WEAK_REPLY_PORT"},
       {"access": "public", "name": "kGUARD_EXC_OOL_PORT_ARRAY_CREATION"},
-      {"access": "public", "name": "kGUARD_EXC_MOVE_PROVISIONAL_REPLY_PORT"},
+      {"access": "public", "name": "kGUARD_EXC_MOVE_WEAK_REPLY_PORT"},
       {"access": "public", "name": "kGUARD_EXC_REPLY_PORT_SINGLE_SO_RIGHT"},
       {"access": "public", "name": "kGUARD_EXC_MOD_REFS_NON_FATAL"},
       {"access": "public", "name": "kGUARD_EXC_IMMOVABLE_NON_FATAL"}
@@ -191,7 +194,8 @@
       {"access": "public", "name": "MPO_SERVICE_PORT"},
       {"access": "public", "name": "MPO_CONNECTION_PORT"},
       {"access": "public", "name": "MPO_REPLY_PORT"},
-      {"access": "public", "name": "MPO_PROVISIONAL_REPLY_PORT"},
+      {"access": "public", "name": "MPO_WEAK_REPLY_PORT"},
+      {"access": "public", "name": "MPO_NOTIFICATION_PORT"},
       {"access": "public", "name": "MPO_EXCEPTION_PORT"},
       {"access": "public", "name": "MPO_CONNECTION_PORT_WITH_PORT_ARRAY"}
      ],
@@ -258,13 +262,16 @@
       {"access": "public", "name": "kGUARD_EXC_SEC_IOPL_ON_EXEC_PAGE"},
       {"access": "public", "name": "kGUARD_EXC_SEC_EXEC_ON_IOPL_PAGE"},
       {"access": "public", "name": "kGUARD_EXC_SEC_UPL_WRITE_ON_EXEC_REGION"},
+      {"access": "public", "name": "kGUARD_EXC_LARGE_ALLOCATION_TELEMETRY"},
       {"access": "public", "name": "kGUARD_EXC_SEC_ACCESS_FAULT"},
       {"access": "public", "name": "kGUARD_EXC_SEC_ASYNC_ACCESS_FAULT"},
       {"access": "public", "name": "kGUARD_EXC_SEC_COPY_DENIED"},
       {"access": "public", "name": "kGUARD_EXC_SEC_SHARING_DENIED"},
       {"access": "public", "name": "kGUARD_EXC_MTE_SYNC_FAULT"},
       {"access": "public", "name": "kGUARD_EXC_MTE_ASYNC_USER_FAULT"},
-      {"access": "public", "name": "kGUARD_EXC_MTE_ASYNC_KERN_FAULT"}
+      {"access": "public", "name": "kGUARD_EXC_MTE_ASYNC_KERN_FAULT"},
+      {"access": "public", "name": "kGUARD_EXC_GUARD_OBJECT_ASYNC_USER_FAULT"},
+      {"access": "public", "name": "kGUARD_EXC_GUARD_OBJECT_ASYNC_KERN_FAULT"}
      ],
      "name": "virtual_memory_guard_exception_code_t"
     }
@@ -334,8 +341,8 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_task_for_pid"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_task_name_for_pid"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_task_self_trap"},
-    {"access": "public", "kind": "function", "linkage": "exported", "name": "_thread_switch"},
-    {"access": "public", "kind": "function", "linkage": "exported", "name": "_vm_stats"}
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_thread_set_x86_64_compat"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_thread_switch"}
    ],
    "target": "arm64e-apple-ios",
    "typedefs": [
@@ -436,6 +443,7 @@
     {"access": "public", "name": "labelstr_t"},
     {"access": "public", "name": "ledger_amount_t"},
     {"access": "public", "name": "ledger_array_t"},
+    {"access": "public", "name": "ledger_entry_id_t"},
     {"access": "public", "name": "ledger_item_t"},
     {"access": "public", "name": "ledger_port_array_t"},
     {"access": "public", "name": "ledger_port_t"},
@@ -777,6 +785,7 @@
     {"access": "public", "name": "thread_state_flavor_array_t"},
     {"access": "public", "name": "thread_state_flavor_t"},
     {"access": "public", "name": "thread_state_t"},
+    {"access": "public", "name": "thread_suspension_token_t"},
     {"access": "public", "name": "thread_t"},
     {"access": "public", "name": "thread_throughput_qos_policy_data_t"},
     {"access": "public", "name": "thread_throughput_qos_policy_t"},
@@ -803,6 +812,7 @@
     {"access": "public", "name": "vm_object_id_t"},
     {"access": "public", "name": "vm_object_offset_t"},
     {"access": "public", "name": "vm_object_size_t"},
+    {"access": "public", "name": "vm_page_disposition_t"},
     {"access": "public", "name": "vm_page_info_basic_data_t"},
     {"access": "public", "name": "vm_page_info_basic_t"},
     {"access": "public", "name": "vm_page_info_data_t"},
@@ -901,6 +911,7 @@
       {"access": "public", "name": "IPC_OTYPE_TASK_FATAL"},
       {"access": "public", "name": "IPC_OTYPE_KCDATA"},
       {"access": "public", "name": "IPC_OTYPE_EXCLAVES_RESOURCE"},
+      {"access": "public", "name": "IPC_OTYPE_THREAD_RESUME"},
       {"access": "public", "name": "IPC_OTYPE_UNKNOWN"}
      ],
      "name": "ipc_info_object_type_t"

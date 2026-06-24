@@ -32,10 +32,9 @@ class TextStream;
 }
 
 namespace WebCore {
-
-class RenderStyle;
-
 namespace Style {
+
+class ComputedStyle;
 
 enum class Change : uint8_t {
     NonInherited = 1 << 0,
@@ -47,7 +46,7 @@ enum class Change : uint8_t {
 
 constexpr OptionSet<Change> inheritedChanges() { return { Change::Inherited, Change::FastPathInherited }; }
 
-WEBCORE_EXPORT OptionSet<Change> determineChanges(const RenderStyle&, const RenderStyle&);
+WEBCORE_EXPORT OptionSet<Change> determineChanges(const Style::ComputedStyle&, const Style::ComputedStyle&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, Change);
 WTF::TextStream& operator<<(WTF::TextStream&, OptionSet<Change>);

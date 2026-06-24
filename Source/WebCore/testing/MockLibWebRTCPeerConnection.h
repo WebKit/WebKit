@@ -229,11 +229,11 @@ private:
     void StopInternal() final { }
     webrtc::RTCError StopStandard() final { return { }; }
     bool stopping() const final { return true; }
-    webrtc::RTCError SetCodecPreferences(webrtc::ArrayView<webrtc::RtpCodecCapability>) final { return { }; };
+    webrtc::RTCError SetCodecPreferences(std::span<webrtc::RtpCodecCapability>) final { return { }; };
     std::vector<webrtc::RtpCodecCapability> codec_preferences() const final { return { }; }
     std::vector<webrtc::RtpHeaderExtensionCapability> GetHeaderExtensionsToNegotiate() const final { return { }; }
     std::vector<webrtc::RtpHeaderExtensionCapability> GetNegotiatedHeaderExtensions() const final { return { }; }
-    webrtc::RTCError SetHeaderExtensionsToNegotiate(webrtc::ArrayView<const webrtc::RtpHeaderExtensionCapability> ) final { return { }; }
+    webrtc::RTCError SetHeaderExtensionsToNegotiate(std::span<const webrtc::RtpHeaderExtensionCapability> ) final { return { }; }
 
 private:
     webrtc::scoped_refptr<webrtc::RtpSenderInterface> m_sender;

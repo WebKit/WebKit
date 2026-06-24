@@ -884,7 +884,7 @@
     {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kIIOStereoAggressors_SubTypeURI"},
     {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_kIIOStereoAggressors_Type"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "CGImageAnimationStatus"},
     {"access": "public", "name": "CGImageDestinationRef"},

@@ -46,7 +46,13 @@ bool pas_compute_msl_is_enabled(void)
     return pas_msl_is_enabled_flag_value == pas_msl_is_enabled_flag_enabled;
 }
 
-#if PAS_OS(DARWIN)
+#if PAS_ENABLE_MALLOC_STACK_LOGGER
+
+#if !PAS_OS(DARWIN)
+/* On Darwin the system libmalloc owns this global; elsewhere libpas provides it
+   so an injected tool (e.g. via LD_PRELOAD) can install a logger callback. */
+PAS_API malloc_logger_t* malloc_logger = NULL;
+#endif
 
 PAS_NEVER_INLINE pas_allocation_result pas_msl_malloc_logging_slow(size_t size, pas_allocation_result result)
 {

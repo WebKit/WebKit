@@ -13,6 +13,7 @@
 #include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "api/field_trials_view.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/task_queue_factory.h"
@@ -60,6 +61,20 @@ std::unique_ptr<Thread> RealTimeController::CreateThread(
   if (!socket_server)
     socket_server = std::make_unique<NullSocketServer>();
   auto res = std::make_unique<Thread>(std::move(socket_server));
+  res->SetName(name, nullptr);
+  res->Start();
+  return res;
+}
+
+std::unique_ptr<Thread> RealTimeController::CreateThreadWithSocketServer(
+    absl::string_view name,
+    SocketServer* socket_server) {
+  std::unique_ptr<Thread> res;
+  if (!socket_server) {
+    res = std::make_unique<Thread>(std::make_unique<NullSocketServer>());
+  } else {
+    res = std::make_unique<Thread>(socket_server);
+  }
   res->SetName(name, nullptr);
   res->Start();
   return res;

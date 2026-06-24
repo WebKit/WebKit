@@ -153,7 +153,7 @@ uint64_t Region::totalArea() const
     uint64_t totalArea = 0;
 
     for (auto& rect : rects())
-        totalArea += (rect.width() * rect.height());
+        totalArea += static_cast<uint64_t>(rect.width()) * rect.height();
 
     return totalArea;
 }

@@ -18,6 +18,8 @@
 
 #include <openssl/span.h>
 
+#include "../crypto/test/der_trailing_data.h"
+#include "../crypto/test/test_util.h"
 #include "test_helpers.h"
 
 BSSL_NAMESPACE_BEGIN
@@ -71,6 +73,19 @@ TEST(GeneralNames, OtherName) {
                                   0x04, 0x04, 0xde, 0xad, 0xbe, 0xef};
   ASSERT_EQ(1U, general_names->other_names.size());
   EXPECT_EQ(der::Input(expected_der), general_names->other_names[0]);
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        if (n >= 1) {
+                          // We do not parse OtherName contents.
+                          return;
+                        }
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 TEST(GeneralNames, RFC822Name) {
@@ -84,6 +99,15 @@ TEST(GeneralNames, RFC822Name) {
   EXPECT_EQ(GENERAL_NAME_RFC822_NAME, general_names->present_name_types);
   ASSERT_EQ(1U, general_names->rfc822_names.size());
   EXPECT_EQ("foo@example.com", general_names->rfc822_names[0]);
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 TEST(GeneralNames, CreateFailsOnNonAsciiRFC822Name) {
@@ -105,6 +129,15 @@ TEST(GeneralNames, DnsName) {
   EXPECT_EQ(GENERAL_NAME_DNS_NAME, general_names->present_name_types);
   ASSERT_EQ(1U, general_names->dns_names.size());
   EXPECT_EQ("foo.example.com", general_names->dns_names[0]);
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 TEST(GeneralNames, CreateFailsOnNonAsciiDnsName) {
@@ -128,6 +161,19 @@ TEST(GeneralNames, X400Address) {
   const uint8_t expected_der[] = {0x30, 0x06, 0x61, 0x04,
                                   0x13, 0x02, 0x55, 0x53};
   EXPECT_EQ(der::Input(expected_der), general_names->x400_addresses[0]);
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        if (n >= 1) {
+                          // We do not parse X.400 addresses.
+                          return;
+                        }
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 TEST(GeneralNames, DirectoryName) {
@@ -143,6 +189,20 @@ TEST(GeneralNames, DirectoryName) {
   const uint8_t expected_der[] = {0x31, 0x0b, 0x30, 0x09, 0x06, 0x03, 0x55,
                                   0x04, 0x06, 0x13, 0x02, 0x55, 0x53};
   EXPECT_EQ(der::Input(expected_der), general_names->directory_names[0]);
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        if (n >= 2) {
+                          // The GeneralName parser parses directory names up to
+                          // the SEQUENCE, but not further.
+                          return;
+                        }
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 TEST(GeneralNames, EDIPartyName) {
@@ -157,6 +217,19 @@ TEST(GeneralNames, EDIPartyName) {
   ASSERT_EQ(1U, general_names->edi_party_names.size());
   const uint8_t expected_der[] = {0x81, 0x03, 0x66, 0x6f, 0x6f};
   EXPECT_EQ(der::Input(expected_der), general_names->edi_party_names[0]);
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        if (n >= 1) {
+                          // We do not parse EDIPartyName contents.
+                          return;
+                        }
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 TEST(GeneralNames, URI) {
@@ -172,6 +245,15 @@ TEST(GeneralNames, URI) {
   ASSERT_EQ(1U, general_names->uniform_resource_identifiers.size());
   EXPECT_EQ("http://example.com",
             general_names->uniform_resource_identifiers[0]);
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 TEST(GeneralNames, CreateFailsOnNonAsciiURI) {
@@ -196,6 +278,15 @@ TEST(GeneralNames, IPAddress_v4) {
   static const uint8_t kIP[] = {192, 168, 6, 7};
   EXPECT_EQ(der::Input(kIP), general_names->ip_addresses[0]);
   EXPECT_EQ(0U, general_names->ip_address_ranges.size());
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 TEST(GeneralNames, IPAddress_v6) {
@@ -212,6 +303,15 @@ TEST(GeneralNames, IPAddress_v6) {
                                 7,    8,    9, 10, 11, 12, 13, 14};
   EXPECT_EQ(der::Input(kIP), general_names->ip_addresses[0]);
   EXPECT_EQ(0U, general_names->ip_address_ranges.size());
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 TEST(GeneralNames, CreateFailsOnInvalidLengthIpAddress) {
@@ -234,6 +334,15 @@ TEST(GeneralNames, RegisteredIDs) {
   ASSERT_EQ(1U, general_names->registered_ids.size());
   const uint8_t expected_der[] = {0x2a, 0x03, 0x04};
   EXPECT_EQ(der::Input(expected_der), general_names->registered_ids[0]);
+
+  // Trailing data should be rejected.
+  TestDERTrailingData(StringAsBytes(san_der),
+                      [](Span<const uint8_t> rewritten, size_t n) {
+                        SCOPED_TRACE(n);
+                        SCOPED_TRACE(Bytes(rewritten));
+                        CertErrors unused;
+                        EXPECT_FALSE(GeneralNames::Create(rewritten, &unused));
+                      });
 }
 
 BSSL_NAMESPACE_END

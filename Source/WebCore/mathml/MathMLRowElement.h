@@ -44,7 +44,7 @@ protected:
     bool acceptsLegacyMathVariantAttribute() override;
 
 private:
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
 };
 
 }

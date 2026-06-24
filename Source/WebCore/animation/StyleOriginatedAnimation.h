@@ -37,7 +37,10 @@ namespace WebCore {
 
 class StyleOriginatedAnimationEvent;
 class Element;
-class RenderStyle;
+
+namespace Style {
+class ComputedStyle;
+}
 
 class StyleOriginatedAnimation : public WebAnimation {
     WTF_MAKE_TZONE_ALLOCATED(StyleOriginatedAnimation);
@@ -76,7 +79,7 @@ public:
 protected:
     StyleOriginatedAnimation(const Styleable&);
 
-    void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
+    void initialize(const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext&);
     virtual void syncPropertiesWithBackingAnimation();
     virtual Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) = 0;
 

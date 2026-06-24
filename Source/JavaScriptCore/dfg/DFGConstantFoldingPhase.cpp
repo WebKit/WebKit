@@ -1235,9 +1235,13 @@ private:
                 Edge target = m_graph.child(node, 0);
                 AbstractValue& targetValue = m_state.forNode(target);
                 auto& structureSet = targetValue.m_structure;
-                if (!(targetValue.m_type & ~SpecFunction) && structureSet.isFinite() && structureSet.size() == 1) {
-                    RegisteredStructure structure = structureSet.onlyStructure();
-                    if (JSBoundFunction::canSkipNameAndLengthMaterialization(globalObject, structure.get())) {
+                if (!(targetValue.m_type & ~SpecFunction) && structureSet.isFinite() && structureSet.size() >= 1) {
+                    bool allCanSkip = true;
+                    structureSet.forEach([&](RegisteredStructure structure) {
+                        if (!JSBoundFunction::canSkipNameAndLengthMaterialization(globalObject, structure.get()))
+                            allCanSkip = false;
+                    });
+                    if (allCanSkip) {
                         node->convertToNewBoundFunction(m_graph.freeze(m_graph.m_vm.getBoundFunction(/* isJSFunction */ true, SourceTaintedOrigin::Untainted)));
                         changed = true;
                         break;
@@ -2017,11 +2021,15 @@ private:
 
                         if (argument.isType(SpecPromiseObject)) {
                             if (m_graph.isWatchingPromiseSpeciesWatchpoint(node)) {
-                                m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
-                                alreadyHandled = true; // Don't allow the default constant folder to do things to this.
-                                node->convertToIdentityOn(node->child2().node());
-                                changed = true;
-                                break;
+                                if (auto structure = argument.m_structure.onlyStructure()) {
+                                    if (structure.get() == globalObject->promiseStructure()) {
+                                        m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
+                                        alreadyHandled = true; // Don't allow the default constant folder to do things to this.
+                                        node->convertToIdentityOn(node->child2().node());
+                                        changed = true;
+                                        break;
+                                    }
+                                }
                             }
                         }
 

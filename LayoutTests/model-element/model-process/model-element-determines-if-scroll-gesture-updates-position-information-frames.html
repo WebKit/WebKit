@@ -1,0 +1,160 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/basic-gestures.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+
+        #overflow_container {
+            height: 300px;
+            overflow: scroll;
+            border: 2px solid black;
+        }
+
+        #overflow {
+            background: linear-gradient(180deg, rgba(255, 199, 153, 1) 0%, rgba(255, 0, 102, 1) 100%);
+            height: 600px;
+        }
+    </style>
+</head>
+<script>
+    jsTestIsAsync = true;
+    testRunner.dumpAsText();
+
+    async function scroll() {
+        var fromX = overflow_container.offsetLeft + 50;
+        var fromY = overflow_container.offsetTop + overflow_container.offsetHeight - 5;
+        var toX = fromX;
+        var toY = fromY - 100;
+        await touchAndDragFromPointToPoint(fromX, fromY, toX, toY);
+        await liftUpAtPoint(toX, toY);
+        overflow_container.scrollTop = 0;
+    }
+
+    async function scrollAndCheckIfPositionInformationUpdated(correctValue) {
+        await scroll();
+        didWait = await UIHelper.didCallEnsurePositionInformationIsUpToDateSinceLastCheck();
+        const msg = "didCallEnsurePositionInformationIsUpToDateSinceLastCheck was " + didWait + ", expected " + correctValue;
+        if (didWait == correctValue)
+            testPassed(msg);
+        else
+            testFailed(msg);
+    }
+
+    function sendMessageToFrame(iframe, action, count = 0) {
+        return new Promise((resolve) => {
+            const messageHandler = (event) => {
+                if (event.data.action === action && event.data.completed) {
+                    window.removeEventListener('message', messageHandler);
+                    resolve(event.data);
+                }
+            };
+            window.addEventListener('message', messageHandler);
+            iframe.contentWindow.postMessage({ action, count }, '*');
+        });
+    }
+
+    async function addModelsToFrame(iframe, count) {
+        return await sendMessageToFrame(iframe, 'add', count);
+    }
+
+    async function removeModelsFromFrame(iframe, count) {
+        return await sendMessageToFrame(iframe, 'remove', count);
+    }
+
+    async function clearModelsInFrame(iframe) {
+        return await sendMessageToFrame(iframe, 'clear', 0);
+    }
+
+    async function navigateFrameToEmpty(iframe) {
+        return new Promise((resolve) => {
+            const messageHandler = (event) => {
+                if (event.data.action === 'frameLoaded' && event.data.completed) {
+                    window.removeEventListener('message', messageHandler);
+                    resolve();
+                }
+            };
+            window.addEventListener('message', messageHandler);
+            iframe.contentWindow.postMessage({ action: 'navigate' }, '*');
+        });
+    }
+
+    addEventListener("load", async () => {
+        var modelContainer = document.getElementById("model-container");
+
+        if (window.testRunner) {
+            description(`ensurePositionInformationIsUpToDate should only be called when a scroll gesture occurs if a model
+                element exists in the page, including iframes.`);
+
+            await UIHelper.clearEnsurePositionInformationIsUpToDateTracking();
+
+            modelContainer.innerHTML = "<iframe id='iframe' src='../resources/models-frame.html'></iframe>"; // Page now has one model elements.
+            var newFrame = document.createElement("iframe");
+            newFrame.setAttribute("src", "../resources/models-frame.html");
+            modelContainer.appendChild(newFrame); // Page now has two model elements.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+            newFrame.remove(); // Page now has one model elements.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+            document.getElementById("iframe").remove(); // Page now has zero model elements.
+            await scrollAndCheckIfPositionInformationUpdated(false);
+
+            newFrame = document.createElement("iframe");
+            newFrame.setAttribute("src", "../resources/models-frame.html");
+            newFrame.setAttribute("id", "frame");
+
+            var secondFrame = newFrame.cloneNode(true);
+            var thirdFrame = newFrame.cloneNode(true);
+
+            var frameLoads = [
+                new Promise(resolve => newFrame.addEventListener("load", resolve, { once: true })),
+                new Promise(resolve => secondFrame.addEventListener("load", resolve, { once: true })),
+                new Promise(resolve => thirdFrame.addEventListener("load", resolve, { once: true })),
+            ];
+            modelContainer.appendChild(newFrame); // Page now has one model elements.
+            modelContainer.appendChild(secondFrame); // Page now has two model elements.
+            modelContainer.appendChild(thirdFrame); // Page now has three model elements.
+            await Promise.all(frameLoads);
+            await scrollAndCheckIfPositionInformationUpdated(true);
+
+            await clearModelsInFrame(newFrame); // Page now has two model elements.
+            await clearModelsInFrame(secondFrame); // Page now has one model elements.
+            await clearModelsInFrame(thirdFrame); // Page now has zero model elements.
+
+            await scrollAndCheckIfPositionInformationUpdated(false);
+
+            await addModelsToFrame(newFrame, 3); // Page now has three model elements.
+            await addModelsToFrame(secondFrame, 3); // Page now has six model elements.
+            await addModelsToFrame(thirdFrame, 3); // Page now has nine model elements.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+            newModel = document.createElement("model");
+            modelContainer.appendChild(newModel); // Page now has ten model elements.
+
+            newFrame.remove() // Page now has seven model elements.
+            await clearModelsInFrame(secondFrame); // Page now has four model elements.
+            newModel.remove(); // Page now has three model elements.
+            await removeModelsFromFrame(thirdFrame, 2); // Page now has one model elements.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+
+            await navigateFrameToEmpty(thirdFrame); // Page now has zero model elements.
+            await scrollAndCheckIfPositionInformationUpdated(false);
+
+            finishJSTest();
+        }
+    });
+</script>
+<body>
+    <div id="overflow_container">
+        <div id="overflow"></div>
+    </div>
+    <div id="model-container">
+    </div>
+    <div id="console"></div>
+</body>
+</html>

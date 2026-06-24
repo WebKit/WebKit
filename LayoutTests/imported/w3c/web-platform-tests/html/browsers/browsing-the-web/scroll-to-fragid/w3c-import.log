@@ -21,6 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/005.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/006.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/focus-changes-after-scroll-to-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/forward-triggers-hashchange.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding.html
@@ -28,9 +30,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/replacement-enabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-non-utf8-encoded-document.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-percent-encoded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-inline-nearest.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-lr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-restore-on-reload-non-ascii-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/target-pseudo-after-reinsertion.html

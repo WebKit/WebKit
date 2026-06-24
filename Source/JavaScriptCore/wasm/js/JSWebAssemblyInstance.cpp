@@ -39,6 +39,7 @@
 #include "JSWebAssemblyModule.h"
 #include "JSWebAssemblyStruct.h"
 #include "Register.h"
+#include "VMTrapsInlines.h"
 #include "WasmBaselineData.h"
 #include "WasmConstExprGenerator.h"
 #include "WasmDebugServer.h"
@@ -163,6 +164,11 @@ void JSWebAssemblyInstance::finishCreation(VM& vm)
 
 JSWebAssemblyInstance::~JSWebAssemblyInstance()
 {
+    if (m_anchor) {
+        m_anchor->tearDown();
+        m_anchor = nullptr;
+    }
+
     m_vm->traps().unregisterMirror(m_stackMirror);
     clearJSCallICs(*m_vm);
 
@@ -174,11 +180,6 @@ JSWebAssemblyInstance::~JSWebAssemblyInstance()
 
     for (auto& slot : baselineDatas())
         std::destroy_at(&slot);
-
-    if (m_anchor) {
-        m_anchor->tearDown();
-        m_anchor = nullptr;
-    }
 }
 
 void JSWebAssemblyInstance::destroy(JSCell* cell)

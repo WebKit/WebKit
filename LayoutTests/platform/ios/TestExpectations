@@ -32,14 +32,15 @@ remote-layer-tree [ Pass ]
 swipe [ Pass ]
 webanimations/threaded-animations [ Pass ]
 
-webkit.org/b/271780 fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Pass Timeout ] # change back to pass when bug resolved
 fast/events/ios [ Pass ]
 fast/events/ios/single-tap-verify-user-gesture.html [ Skip ]
 fast/events/ios/ipad [ Skip ]
 fast/forms/ios [ Pass ]
 fast/forms/ios/ipad [ Skip ]
 http/tests/site-isolation/select-in-cross-origin-iframe.html [ Pass ]
+http/tests/site-isolation/autofill-credentials-in-cross-origin-iframe.html [ Pass ]
 http/tests/site-isolation/open-panel-in-cross-origin-iframe.html [ Pass ]
+http/tests/site-isolation/focus-navigation-cross-origin-iframe.html [ Pass ]
 fast/forms/switch [ Pass ]
 fast/snapshot [ Skip ]
 
@@ -222,6 +223,7 @@ scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Skip ]
 scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Skip ]
 
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
+fast/mediastream/captureStream/canvas-rvfc-metadata.html [ Failure ]
 fast/mediastream/getUserMedia-rvfc.html [ Pass ]
 webrtc/peerConnection-rvfc.html [ Pass ]
 # Timing out tests until we add XR session.
@@ -256,6 +258,8 @@ fast/events/touch/ios/touch-event-regions-layer-tree/scrolling [ Skip ]
 # through the iPhone AX API and the OS X AX API.
 accessibility
 perf/accessibility-title-ui-element.html
+
+fast/element-targeting/adjust-region-after-viewport-height-change.html [ Skip ]
 
 # webkit.org/b/240843
 fast/images/heic-as-background-image.html [ Pass ]
@@ -304,6 +308,7 @@ webaudio/suspend-context-while-interrupted.html [ Skip ]
 webaudio/codec-tests/vorbis [ Skip ]
 # vorbis decoder not available on simulator.
 webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
+webaudio/decode-audio-data-ogg-vorbis.html  [ Failure ]
 media/track/audio-track-configuration-webm.html
 
 # ogg not available in simulator
@@ -729,6 +734,7 @@ fast/events/mouse-click-events.html [ Skip ]
 fast/events/mouse-cursor-change.html [ Skip ]
 fast/events/mouse-cursor-image-set.html [ Skip ]
 fast/events/mouse-cursor-image-set-svg.html [ Skip ]
+fast/events/mouse-cursor-light-dark.html [ Skip ]
 fast/events/mouse-cursor-multiframecur.html [ Skip ]
 fast/events/mouse-cursor-no-mousemove.html [ Skip ]
 fast/events/mouse-cursor-update-during-raf.html [ Skip ]
@@ -1477,13 +1483,21 @@ imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-with-sha
 imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-filter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-composited-filter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/inline-with-offset-from-containing-block.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/input-pointer-capture-while-render-blocked.html [ Failure ]
 
 # Needs special fuzziness on iOS.
 imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/table-caption.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-left-of-viewport-offscreen-old.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/new-content-inline-with-offset-from-containing-block-clipped.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/old-content-inline-with-offset-from-containing-block-clipped.html [ ImageOnlyFailure ]
+
 
 # Site isolation testing infrastructure for accessibility doesn't exist on iOS.
 http/tests/site-isolation/accessibility/ [ Skip ]
+# ...except this test, which verifies the in-process rotor search returns a remote-frame placeholder for an out-of-process iframe.
+http/tests/site-isolation/accessibility/heading-search-returns-remote-frame.html [ Pass ]
 
 ###
 # Known failures
@@ -2693,6 +2707,7 @@ media/airplay-target-availability-disableremoteplayback.html
 
 # needs enhanced eventSender.contextMenu() return value
 webkit.org/b/116651 media/context-menu-actions.html
+webkit.org/b/317174 media/context-menu-download-media-uses-media-url.html [ Skip ]
 
 media/crash-closing-page-with-media-as-plugin-fallback.html
 
@@ -2762,8 +2777,6 @@ webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Timeout ]
 
 webkit.org/b/162739 fast/images/gif-loop-count.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/162647 http/tests/xmlhttprequest/onabort-response-getters.html [ Pass Failure ]
-
 webkit.org/b/163755 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure ]
 
 # Variation fonts are not implemented earlier than iOS 11.
@@ -2777,6 +2790,15 @@ webkit.org/b/189483 imported/w3c/web-platform-tests/css/css-fonts/variations/sln
 webkit.org/b/189483 imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-backslant-variable.html [ ImageOnlyFailure ]
 
 webkit.org/b/260972 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-2.html [ ImageOnlyFailure ]
+
+# webkit.org/b/315568 Image-only failures from css-fonts WPT resync
+webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/font-palette-values-relative-colors.html [ ImageOnlyFailure ]
+webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis-weight-webfont-bold.html [ ImageOnlyFailure ]
+webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/font-variation-settings-descriptor-01.html [ ImageOnlyFailure ]
+webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/font-variation-settings-descriptor-03.html [ ImageOnlyFailure ]
+webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/font-variation-settings-descriptor-04.html [ ImageOnlyFailure ]
+webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-warp.html [ ImageOnlyFailure ]
+webkit.org/b/315568 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-avar2.html [ ImageOnlyFailure ]
 
 # Only Mac has implemented DictionaryLookup
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
@@ -2875,7 +2897,6 @@ webkit.org/b/171617 perf/object-keys.html [ Pass Failure ]
 # WebGL tests which need triaging https://bugs.webkit.org/b/174100
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
-fast/canvas/webgl/read-pixels-test.html [ Skip ]
 
 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ]
@@ -2883,9 +2904,6 @@ fast/canvas/webgl/texImage2D-mse-in-dom-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-mse-in-dom-flipY-true.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
-
-# rendering to floating point FBOs not supported on iOS
-fast/canvas/webgl/readPixels-float.html [ Skip ]
 
 # No colorspaces in iOS WebGL yet.
 webkit.org/b/247166 fast/canvas/webgl/colorspaces-test.html [ Failure ]
@@ -2896,6 +2914,8 @@ webkit.org/b/247166 fast/canvas/webgl/match-page-color-space-p3.html [ ImageOnly
 webkit.org/b/174120 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Skip ]
+http/tests/resourceLoadStatistics/user-interaction-keyboard-in-cross-origin-sub-frame.html [ Skip ]
+
 # Skipped in WK2 expectations because cookie partitioning is only available in macOS High Sierra and iOS 11.
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass ]
@@ -2926,11 +2946,16 @@ imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies
 imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.BlobURLSharedWorker.sub.https.tentative.window.html [ Skip ]
 imported/w3c/web-platform-tests/storage-access-api/storage-access-beyond-cookies.thirdPartyBlobStorage.sub.https.window.html [ Skip ]
 
-# Enable on appropriate platforms: rdar://140222322
-http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-with-partitioned-cookies.https.html [ Skip ]
-http/tests/resourceLoadStatistics/only-partitioned-third-party-cookies.https.html [ Skip ]
-http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Skip ]
-http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.https.html [ Skip ]
+http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-with-partitioned-cookies.https.html [ Pass ]
+http/tests/resourceLoadStatistics/only-partitioned-third-party-cookies.https.html [ Pass ]
+http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Pass ]
+http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.https.html [ Pass Slow ]
+http/tests/cookies/multiple-cookies.https.html [ Pass ]
+http/tests/cookies/multiple-cookies-iframes.https.html [ Pass Slow ]
+http/tests/cookies/max-partitioned-cookies.https.html [ Pass ]
+http/tests/cookies/accept-partitioned-first-and-third-party-cookies.https.html [ Pass ]
+http/tests/clear-site-data/set-and-clear-cookies.https.html [ Pass ]
+imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Pass ]
 
 # Enable again when fixing https://bugs.webkit.org/show_bug.cgi?id=208400.
 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.https.html [ Skip ]
@@ -3055,6 +3080,7 @@ imported/w3c/web-platform-tests/selection/user-select-on-input-and-contenteditab
 # accessibilityController.role cannot be tested on iOS
 media/modern-media-controls/time-label/time-label.html [ Skip ]
 media/modern-media-controls/tracks-button [ Pass ]
+media/modern-media-controls/ios-inline-media-controls/touch/ios-inline-media-controls-timeline-scrub-stops-propagation.html [ Pass ]
 
 # AirPlay cannot be tested on iOS
 webkit.org/b/166062 media/modern-media-controls/airplay-support [ Skip ]
@@ -3313,10 +3339,35 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-shape-overflow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-shape.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-multiline-background-image.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/border-image-021.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/border-image-outset-004.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/borders-on-sub-unit-sized-elements.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/subpixel-border-width.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/subpixel-borders-with-child-border-box-sizing.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/subpixel-borders-with-child.html [ ImageOnlyFailure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-circle-hit-test-overflow-clip.html [ Failure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-circle-hit-test-siblings.html [ Failure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-circle-hit-test.html [ Failure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-hit-test-overflow.html [ Failure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-replaced-hit-test.html [ Failure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-stacking-context-hit-test.html [ Failure ]
+
+
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-scaled.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-1a.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-1b.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-1c.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-3.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-4.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-5.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-rounded-image-clip-001.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-image-type-001.htm [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-slice-005.htm [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-slice-007.htm [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/linear-gradient-currentcolor-first-line.html [ ImageOnlyFailure ]
 
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height-viewbox.html [ Skip ]
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Skip ]
@@ -3368,8 +3419,6 @@ webkit.org/b/209885 svg/as-background-image/tiled-background-image.html [ Pass I
 # The line breaking rules changed in ICU 66. We've updated the tests to match, but old platforms won't get updated line breaking rules.
 webkit.org/b/209250 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015a.xht [ ImageOnlyFailure ]
 webkit.org/b/209250 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015a.xht [ ImageOnlyFailure ]
-
-webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/selectors/active-toplayer-001.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-001.html [ Skip ]
@@ -3661,6 +3710,11 @@ webkit.org/b/296195 imported/w3c/web-platform-tests/dom/events/scrolling/scrolle
 webkit.org/b/296195 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-snap.html [ Skip ]
 webkit.org/b/296195 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=subframe-inline-end-block-end-behavior-auto [ Skip ]
 webkit.org/b/296195 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html?include=subframe-inline-start-block-start-behavior-smooth [ Skip ]
+
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollIntoView-in-onscroll-to-sticky.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-for-repeat-key-ending-after-scroll-container-end-is-reached.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-composed.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-no-scroll-after-prevent-default.html [ Skip ]
 
 webkit.org/b/231337 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Pass Failure ]
 
@@ -4016,6 +4070,7 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 # Close Watcher tests rely on sending escape keys from test_driver which doesn't work on iOS webkit.org/b/274832
 webkit.org/b/274832 imported/w3c/web-platform-tests/close-watcher/esc-key [ Skip ]
 webkit.org/b/274832 imported/w3c/web-platform-tests/close-watcher/user-activation [ Skip ]
+webkit.org/b/274832 imported/w3c/web-platform-tests/close-watcher/iframes [ Skip ]
 webkit.org/b/274832 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-closedby-show-stacked.html [ Skip ]
 webkit.org/b/274832 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-closedby-corner-cases.html [ Skip ]
 webkit.org/b/274832 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-closedby-start-open.html [ Skip ]
@@ -4553,11 +4608,12 @@ webgl/1.0.x/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass
 webgl/2.0.y/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 
 webkit.org/b/229934 webgl/1.0.x/conformance/extensions/webgl-depth-texture.html [ Failure ]
+
+webkit.org/b/254398 webgl/1.0.x/conformance/extensions/webgl-compressed-texture-astc.html [ Failure ]
 webkit.org/b/254398 webgl/2.0.y/conformance/extensions/webgl-compressed-texture-astc.html [ Failure ]
 
 # webkit.org/b/255177 Batch mark expectations for newly failing tests introduced with iOS 16.4 update
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-multi-line.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/disabled-elements/event-propagate-disabled.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Failure ]
@@ -4577,10 +4633,8 @@ webkit.org/b/259160 http/tests/privateClickMeasurement/attribution-conversion-th
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html [ Pass Failure ]
 
-# webkit.org/b/259157REGRESSION(264419@Main): [ iOS ] 264419@Main introduced multiple flaky ImageOnlyFailures (259157)
-imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed.html [ Pass ImageOnlyFailure ]
-fast/block/transparent-outline-with-and-without-border-radius.html [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-mixed.html [ Pass ImageOnlyFailure ]
+webkit.org/b/259157 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed.html [ Pass ImageOnlyFailure ]
+webkit.org/b/259157 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-mixed.html [ Pass ImageOnlyFailure ]
 
 # These tests require compile-time flags in WebKit that are only enabled in iOS17. They were marked as Skip in
 # https://bugs.webkit.org/show_bug.cgi?id=248545 — re-enable them here.
@@ -4806,6 +4860,7 @@ imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-scro
 webkit.org/b/310625 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Failure ]
 webkit.org/b/310625 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-input-button.html [ Failure ]
 webkit.org/b/310625 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-input-text.html [ Failure ]
+webkit.org/b/310625 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-disabled-button.html [ Failure ]
 
 # Failing word-break: auto-phrase tests.
 webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase/word-break-auto-phrase-004.html [ ImageOnlyFailure ]
@@ -4898,7 +4953,6 @@ css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
 svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
 svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
 svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
-svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
 svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 
 # SVG tests that time out (these require EventSender)
@@ -6340,6 +6394,7 @@ imported/w3c/web-platform-tests/css/css-values/viewport-units-scrollbars-compute
 
 #1px diff
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-010.html [ ImageOnlyFailure ]
+fast/replaced/replaced-percentage-size-in-aspect-ratio-shrink-to-fit.html [ ImageOnlyFailure ]
 
 webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Pass Failure ]
 
@@ -6393,9 +6448,6 @@ webkit.org/b/215403 imported/w3c/web-platform-tests/css/css-grid/layout-algorith
 webkit.org/b/215476 [ Release ] imported/w3c/web-platform-tests/css/css-grid/abspos/empty-grid-001.html [ Pass Timeout ]
 
 webkit.org/b/215476 [ Release ] imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-long-crash.html [ Pass Timeout ]
-
-webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001.html [ ImageOnlyFailure ]
-webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/215929 compositing/video/poster.html [ Pass Timeout ]
 
@@ -7651,11 +7703,13 @@ webkit.org/b/289005 imported/w3c/web-platform-tests/css/css-anchor-position/anch
 
 webkit.org/b/289020 imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Pass Failure ]
 
-webkit.org/b/289097 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor.html [ Pass Failure ]
+webkit.org/b/289097 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/289094 imported/w3c/web-platform-tests/webcodecs/audio-data.crossOriginIsolated.https.any.html [ Pass Timeout ]
 
 webkit.org/b/289109 imported/w3c/web-platform-tests/css/css-view-transitions/transition-skipped-after-animation-started.html [ Pass Crash ]
+
+webkit.org/b/289092 http/wpt/background-fetch/background-fetch-abort.window.html [ Pass Failure ]
 
 # webkit.org/b/289656 ([iOS-18-Simulator-WK2-Tests-EWS] fast/forms/ios/focus-input-via-button-no-scaling.html is crashing
 fast/forms/ios/focus-input-via-button-no-scaling.html [ Pass Crash ]
@@ -7793,7 +7847,7 @@ imported/w3c/web-platform-tests/css/CSS2/stacking-context/composite-change-after
 
 webkit.org/b/288518 fast/text/emoji-num-glyphs.html [ Failure ]
 
-webkit.org/b/294142 fast/canvas/webgl/gl-teximage.html [ Failure ]
+  fast/canvas/webgl/gl-teximage.html [ Failure ]
 
 webkit.org/b/294152 http/tests/misc/timer-vs-loading.html [ Timeout ]
 
@@ -8041,6 +8095,8 @@ webkit.org/b/297013 [ Debug ] imported/w3c/web-platform-tests/css/css-viewport/z
 
 webkit.org/b/297026 [ Release ] http/tests/app-privacy-report/app-attribution-beacon-isappinitiated.html [ Pass Failure ]
 
+http/tests/ipc/write-web-archive-frame-ancestry-check.html [ Pass ]
+
 webkit.org/b/297056 http/tests/site-isolation/touch-events/touch-event-coordinates.html [ Timeout ]
 
 webkit.org/b/297067 fast/forms/state-restore-form-associated-custom-elements.html [ Pass Timeout ]
@@ -8268,7 +8324,7 @@ webkit.org/b/304298 accessibility/text-stitching-inside-links.html [ Failure ]
 
 webkit.org/b/304427 fast/html/HTMLPluginElement-renderer-destroyed-crash.html [ Skip ]
 
-webkit.org/b/313562 imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-replaceState-crash.html [ Pass Crash Timeout ]
+
 
 webkit.org/b/304851 imported/w3c/web-platform-tests/workers/worker-performance.worker.html [ Pass Failure ]
 
@@ -8388,6 +8444,7 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-co
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-touch-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-self-invoke.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-shadowhost-focus-navigation.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scoping/hover-invalidates-slotted-descendant.html [ Skip ]
 
 # rdar://168334716 (MTLCompilerService crashes when Metal Shader Validation is enabled on iOS Simulator)
 webgl/webgl2-provoking-vertex-primitive-restart-uint16-nocrash.html [ Skip ]
@@ -8395,3 +8452,30 @@ webgl/webgl2-provoking-vertex-primitive-restart-uint16-nocrash.html [ Skip ]
 # iOS UA stylesheet has :checked form-control rules that add self-invalidation, changing
 # traversal counts compared to macOS.
 fast/selectors/has-invalidation-traversal-size.html [ Skip ]
+
+webkit.org/b/316014 [ Debug ] fast/dom/move-embedded-during-update.html [ Pass Failure ]
+
+# webkit.org/b/315796 [iOS Release] 3 tests in imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element are constant failure
+[ Release ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events.html [ Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-preventDefault.html [ Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-canceling.html [ Failure ]
+
+webkit.org/b/316218 fast/scrolling/ios/scroll-into-view-smooth-after-snap.html [ Pass Failure ]
+
+webkit.org/b/316228 fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Failure ]
+
+webkit.org/b/316118 imported/w3c/web-platform-tests/url/IdnaTestV2.any.html [ Failure ]
+
+fast/events/pointerleave-after-ancestor-removal.html [ Skip ]
+
+webkit.org/b/316446 imported/w3c/web-platform-tests/css/css-borders/border-width-rounding.tentative.html [ Failure ]
+
+webkit.org/b/316830 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Pass Timeout ]
+
+webkit.org/b/317667 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-with-types-parsing.html [ Skip ]
+
+webkit.org/b/317753 imported/w3c/web-platform-tests/content-security-policy/sandbox/meta-element.sub.html [ Skip ]
+
+webkit.org/b/317756 imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Skip ]
+
+webkit.org/b/295419 loader/navigation-policy/should-open-external-urls/subframe-navigated-programatically-by-main-frame.html [ Pass Failure ]

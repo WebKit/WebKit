@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  window.setTimeout(async () => {
+    if (!window.IPC)
+      return window.testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const renderingBackendIdentifier = Math.floor(Math.random() * 0x1000000);
+    const streamConnection = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+      renderingBackendIdentifier: renderingBackendIdentifier,
+      connectionHandle: streamConnection
+    });
+    const remoteBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+    // Send CreateImageBuffer with an IndexedColorSpace whose inner colorSpace Box is null.
+    // Without the fix, toCF() dereferences the null Box and the GPU process crashes.
+    remoteBackend.CreateImageBuffer({
+      logicalSize: { width: 1, height: 1 },
+      renderingMode: 1,
+      renderingPurpose: 2,
+      resolutionScale: 1,
+      colorSpace: {
+        serializableColorSpace: {
+          alias: {
+            optionalValue: {
+              m_cgColorSpace: {
+                alias: {
+                  variantType: 'WebKit::IndexedColorSpace',
+                  variant: {
+                    index: 1,
+                    table: [0, 0, 0, 255, 255, 255],
+                    colorSpace: {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      bufferFormat: { pixelFormat: 0, useLosslessCompression: 0 },
+      identifier: Math.floor(Math.random() * 0x1000000),
+      contextIdentifier: Math.floor(Math.random() * 0x1000000)
+    });
+
+    streamConnection.connection.invalidate();
+
+    // Allow time for the GPU process to receive and process the message before
+    // declaring the test done, so a crash is detected as a test failure.
+    setTimeout(() => {
+      window.testRunner?.notifyDone();
+    }, 500);
+  }, 20);
+</script>
+
+This test passes if WebKit does not crash.

@@ -1,5 +1,7 @@
 
-FAIL Decompresion using Brotli with the dictionary works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
-FAIL Decompresion using Zstandard with the dictionary works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
-FAIL Decompresion of a cross origin resource works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Decompression using Brotli with the dictionary works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Decompression using Zstandard with the dictionary works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Decompression of a cross origin resource works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Decompression using Brotli fails when dictionary hash mismatches assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Decompression using Zstandard fails when dictionary hash mismatches assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
 

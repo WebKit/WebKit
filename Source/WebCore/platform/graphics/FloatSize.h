@@ -240,22 +240,22 @@ inline bool areEssentiallyEqual(const FloatSize& a, const FloatSize& b)
 
 inline IntSize roundedIntSize(const FloatSize& p)
 {
-    return IntSize(clampToInteger(roundf(p.width())), clampToInteger(roundf(p.height())));
+    return IntSize(clampTo<int>(roundf(p.width())), clampTo<int>(roundf(p.height())));
 }
 
 inline IntSize flooredIntSize(const FloatSize& p)
 {
-    return IntSize(clampToInteger(floorf(p.width())), clampToInteger(floorf(p.height())));
+    return IntSize(clampTo<int>(floorf(p.width())), clampTo<int>(floorf(p.height())));
 }
 
 inline IntSize expandedIntSize(const FloatSize& p)
 {
-    return IntSize(clampToInteger(ceilf(p.width())), clampToInteger(ceilf(p.height())));
+    return IntSize(clampTo<int>(ceilf(p.width())), clampTo<int>(ceilf(p.height())));
 }
 
 inline IntPoint flooredIntPoint(const FloatSize& p)
 {
-    return IntPoint(clampToInteger(floorf(p.width())), clampToInteger(floorf(p.height())));
+    return IntPoint(clampTo<int>(floorf(p.width())), clampTo<int>(floorf(p.height())));
 }
 
 constexpr FloatSize FloatSize::nanSize()

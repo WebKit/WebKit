@@ -64,7 +64,7 @@ void HTMLImageLoader::dispatchLoadEvent()
     // doesn't normally fire load/error events when loading <object> as plugins. Therefore,
     // firing such events for PDF loads on iOS can cause confusion on some sites.
     // See rdar://107795151.
-    if (auto* objectElement = dynamicDowncast<HTMLObjectElement>(element())) {
+    if (RefPtr objectElement = dynamicDowncast<HTMLObjectElement>(element())) {
         if (MIMETypeRegistry::isPDFMIMEType(objectElement->serviceType()))
             return;
     }

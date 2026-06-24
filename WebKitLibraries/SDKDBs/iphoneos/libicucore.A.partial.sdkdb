@@ -357,6 +357,14 @@
       {"access": "public", "name": "UBLOCK_SYMBOLS_FOR_LEGACY_COMPUTING_SUPPLEMENT"},
       {"access": "public", "name": "UBLOCK_TODHRI"},
       {"access": "public", "name": "UBLOCK_TULU_TIGALARI"},
+      {"access": "public", "name": "UBLOCK_BERIA_ERFE"},
+      {"access": "public", "name": "UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_J"},
+      {"access": "public", "name": "UBLOCK_MISCELLANEOUS_SYMBOLS_SUPPLEMENT"},
+      {"access": "public", "name": "UBLOCK_SHARADA_SUPPLEMENT"},
+      {"access": "public", "name": "UBLOCK_SIDETIC"},
+      {"access": "public", "name": "UBLOCK_TAI_YO"},
+      {"access": "public", "name": "UBLOCK_TANGUT_COMPONENTS_SUPPLEMENT"},
+      {"access": "public", "name": "UBLOCK_TOLONG_SIKI"},
       {"access": "public", "name": "UBLOCK_COUNT"},
       {"access": "public", "name": "UBLOCK_INVALID_CODE"}
      ],
@@ -617,6 +625,7 @@
       {"access": "public", "name": "U_MF_DUPLICATE_DECLARATION_ERROR"},
       {"access": "public", "name": "U_MF_OPERAND_MISMATCH_ERROR"},
       {"access": "public", "name": "U_MF_DUPLICATE_VARIANT_ERROR"},
+      {"access": "public", "name": "U_MF_BAD_OPTION"},
       {"access": "public", "name": "U_FMT_PARSE_ERROR_LIMIT"},
       {"access": "public", "name": "U_BRK_INTERNAL_ERROR"},
       {"access": "public", "name": "U_BRK_ERROR_START"},
@@ -928,6 +937,7 @@
       {"access": "public", "name": "U_JG_THIN_YEH"},
       {"access": "public", "name": "U_JG_VERTICAL_TAIL"},
       {"access": "public", "name": "U_JG_KASHMIRI_YEH"},
+      {"access": "public", "name": "U_JG_THIN_NOON"},
       {"access": "public", "name": "U_JG_COUNT"}
      ],
      "name": "UJoiningGroup"
@@ -997,6 +1007,7 @@
       {"access": "public", "name": "U_LB_AKSARA_START"},
       {"access": "public", "name": "U_LB_VIRAMA_FINAL"},
       {"access": "public", "name": "U_LB_VIRAMA"},
+      {"access": "public", "name": "U_LB_UNAMBIGUOUS_HYPHEN"},
       {"access": "public", "name": "U_LB_COUNT"}
      ],
      "name": "ULineBreak"
@@ -1560,7 +1571,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_utf8_nextCharSafeBody"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_utf8_prevCharSafeBody"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "OldUChar"},
     {"access": "public", "name": "UBidiPairedBracketType"},

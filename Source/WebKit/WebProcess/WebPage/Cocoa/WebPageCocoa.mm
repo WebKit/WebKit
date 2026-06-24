@@ -67,6 +67,7 @@
 #import <WebCore/CSSKeywordValue.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ChromeClient.h>
+#import <WebCore/ContainerNodeInlines.h>
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #import <WebCore/ContentChangeObserver.h>
 #endif
@@ -129,10 +130,9 @@
 #import <WebCore/RemoteFrameGeometryTransformer.h>
 #import <WebCore/RemoteFrameView.h>
 #import <WebCore/RemoteUserInputEventData.h>
-#import <WebCore/RenderBoxInlines.h>
+#import <WebCore/RenderBox.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderLayer.h>
-#import <WebCore/RenderObjectInlines.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/SVGImage.h>
 #import <WebCore/Settings.h>
@@ -2108,6 +2108,17 @@ void WebPage::hasMarkedText(CompletionHandler<void(bool)>&& completionHandler)
     completionHandler(focusedOrMainFrame->editor().hasComposition());
 }
 
+void WebPage::isMarkedTextRequiredForComposition(CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr focusedOrMainFrame = corePage()->focusController().focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return completionHandler(false);
+    RefPtr document = focusedOrMainFrame->document();
+    if (!document)
+        return completionHandler(false);
+    completionHandler(document->quirks().inputMethodMustUseCompositionEvents());
+}
+
 void WebPage::getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&& completionHandler)
 {
     RefPtr frame = corePage()->focusController().focusedOrMainFrame();
@@ -2170,10 +2181,7 @@ void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, 
 
     auto rangeForFirstLine = EditingRange::fromRange(*frame, makeSimpleRange(range->start, WTF::move(endBoundary)));
 
-    rangeForFirstLine.location = std::min(std::max(rangeForFirstLine.location, editingRange.location), editingRange.location + editingRange.length);
-    rangeForFirstLine.length = std::min(rangeForFirstLine.location + rangeForFirstLine.length, editingRange.location + editingRange.length) - rangeForFirstLine.location;
-
-    completionHandler(rect, rangeForFirstLine);
+    completionHandler(rect, EditingRange::clampedFirstLineRange(rangeForFirstLine, editingRange));
 }
 
 void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<CharacterRange>>& annotations, const EditingRange& selection, const EditingRange& replacementEditingRange)
@@ -2595,23 +2603,7 @@ IntRect WebPage::absoluteInteractionBounds(const Node& node)
     if (!renderer)
         return { };
 
-    if (CheckedPtr box = dynamicDowncast<RenderBox>(*renderer)) {
-        FloatRect rect;
-        // FIXME: want borders or not?
-        if (box->style().isOverflowVisible())
-            rect = box->layoutOverflowRect();
-        else
-            rect = box->clientBoxRect();
-        return box->localToAbsoluteQuad(rect).enclosingBoundingBox();
-    }
-
-    CheckedRef style = renderer->style();
-    FloatRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
-    // This is wrong. It's subtracting borders after converting to absolute coords on something that probably doesn't represent a rectangular element.
-    boundingBox.move(WebCore::Style::evaluate<float>(style->usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }), WebCore::Style::evaluate<float>(style->usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
-    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate<float>(style->usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style->usedBorderRightWidth(), WebCore::Style::ZoomNeeded { }));
-    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate<float>(style->usedBorderBottomWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style->usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
-    return enclosingIntRect(boundingBox);
+    return WebCore::absoluteInteractionBounds(*renderer);
 }
 
 static IntRect elementBoundsInFrame(const LocalFrame& frame, const Element& focusedElement)
@@ -2868,6 +2860,38 @@ void WebPage::updateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInt
 #else
     callback(true);
 #endif
+}
+
+void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    if (m_focusedElement && m_focusedElement->renderer()) {
+        frame->eventHandler().startSelectionAutoscroll(protect(m_focusedElement->renderer()), positionInWindow);
+        return;
+    }
+
+    auto& selection = frame->selection().selection();
+    if (!selection.isRange())
+        return;
+
+    auto range = selection.toNormalizedRange();
+    if (!range)
+        return;
+
+    CheckedPtr renderer = range->start.container->renderer();
+    if (!renderer)
+        return;
+
+    frame->eventHandler().startSelectionAutoscroll(renderer, positionInWindow);
+}
+
+void WebPage::cancelAutoscroll()
+{
+    if (RefPtr frame = m_page->focusController().focusedOrMainFrame())
+        frame->eventHandler().cancelSelectionAutoscroll();
 }
 
 void WebPage::selectTextWithGranularityAtPoint(WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
@@ -3213,7 +3237,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
     if (CheckedPtr renderer = updatedNode->renderer()) {
         renderer->absoluteQuads(quads);
 #if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
-        auto highlightColor = renderer->style().tapHighlightColorResolvingCurrentColor();
+        auto highlightColor = WebCore::tapHighlightColor(*renderer);
 #else
         auto highlightColor = Color::transparentBlack;
 #endif
@@ -3384,6 +3408,9 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
     if ((!handledPress && !handledRelease) || !nodeRespondingToClick.isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
 
+#if PLATFORM(IOS_FAMILY)
+    flushPendingFocusedElementUpdateIfNeeded();
+#endif
     send(Messages::WebPageProxy::DidCompleteSyntheticClick());
 
 #if PLATFORM(IOS_FAMILY)

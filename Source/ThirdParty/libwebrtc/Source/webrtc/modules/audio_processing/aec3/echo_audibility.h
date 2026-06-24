@@ -14,8 +14,8 @@
 #include <stddef.h>
 
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/block_buffer.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
 #include "modules/audio_processing/aec3/spectrum_buffer.h"
@@ -33,12 +33,12 @@ class EchoAudibility {
 
   // Feed new render data to the echo audibility estimator.
   void Update(const RenderBuffer& render_buffer,
-              ArrayView<const float> average_reverb,
+              std::span<const float> average_reverb,
               int min_channel_delay_blocks,
               bool external_delay_seen);
   // Get the residual echo scaling.
   void GetResidualEchoScaling(bool filter_has_had_time_to_converge,
-                              ArrayView<float> residual_scaling) const {
+                              std::span<float> residual_scaling) const {
     for (size_t band = 0; band < residual_scaling.size(); ++band) {
       if (render_stationarity_.IsBandStationary(band) &&
           (filter_has_had_time_to_converge ||
@@ -61,7 +61,7 @@ class EchoAudibility {
 
   // Updates the render stationarity flags for the current frame.
   void UpdateRenderStationarityFlags(const RenderBuffer& render_buffer,
-                                     ArrayView<const float> average_reverb,
+                                     std::span<const float> average_reverb,
                                      int delay_blocks);
 
   // Updates the noise estimator with the new render data since the previous

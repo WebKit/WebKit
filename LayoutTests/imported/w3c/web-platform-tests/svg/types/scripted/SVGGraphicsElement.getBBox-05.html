@@ -10,86 +10,86 @@
   <defs>
     <clipPath id="rect01" clip-rule="evenodd" clipPathUnits="objectBoundingBox">
       <rect x="0" y="0" width="0.5" height="1.0"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect02" clip-rule="evenodd" clipPathUnits="objectBoundingBox">
       <rect x="0.5" y="0" width="0.5" height="1.0"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect03" clip-rule="evenodd" clipPathUnits="objectBoundingBox">
       <rect x="0.5" y="0" width="0.5" height="1.0"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect04" clip-rule="evenodd" clipPathUnits="objectBoundingBox">
       <rect x="0" y="0" width="0.5" height="1.0"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect05" clip-rule="evenodd">
       <rect x="0" y="60" width="10px" height="23px"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect06" clip-rule="evenodd">
       <rect x="10" y="60" width="10px" height="23px"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect4" clip-rule="evenodd">
       <rect x="200" y="200" width="200" height="200"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect-none" clip-rule="evenodd">
-    </clippath>
+    </clipPath>
     <clipPath id="rect5" clip-rule="evenodd">
       <rect x="0" y="0" width="100" height="100"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect6" clip-rule="evenodd">
       <rect x="150" y="0" width="100" height="100"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect7" clip-rule="evenodd">
       <rect x="0" y="100" width="100" height="100"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect8" clip-rule="evenodd">
       <rect x="10" y="10" width="180" height="180"/>
-    </clippath>
+    </clipPath>
     <clipPath id="rect9" clip-rule="evenodd">
       <rect x="100" y="100" width="200" height="200"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="circle1" clip-rule="evenodd">
       <circle cx="203" cy="203" r="150"/>
-    </clippath>
+    </clipPath>
     <clipPath id="circle2" clip-rule="evenodd" clipPathUnits="objectBoundingBox">
       <circle cx="0.5" cy="0.5" r="0.25"/>
-    </clippath>
+    </clipPath>
     <clipPath id="circle3" clip-rule="evenodd">
       <circle cx="100" cy="100" r="50"/>
       <circle cx="300" cy="300" r="50"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="circle4" clip-rule="evenodd">
       <circle cx="50" cy="50" r="50"/>
-    </clippath>
+    </clipPath>
     <clipPath id="circle5" clip-rule="evenodd">
       <circle cx="150" cy="50" r="50"/>
-    </clippath>
+    </clipPath>
     <clipPath id="circle6" clip-rule="evenodd">
       <circle cx="50" cy="200" r="50"/>
-    </clippath>
+    </clipPath>
     <clipPath id="circle7" clip-rule="evenodd" clipPathUnits="objectBoundingBox">
       <circle cx="0.5" cy="0.5" r="0.5"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="circle8" clip-rule="evenodd" clipPathUnits="userSpaceOnUse">
       <circle cx="110"  cy="20"  r="90"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="circle9" clip-rule="evenodd" clipPathUnits="userSpaceOnUse">
       <circle cx="290"  cy="20" r="90"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="circle10" clip-rule="evenodd" clipPathUnits="userSpaceOnUse">
       <circle cx="110" cy="200"  r="90"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="circle11" clip-rule="evenodd">
       <circle cx="0" cy="0" r="150"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="star" clip-rule="evenodd">
       <path d="M400,25 L619,703 43,283 757,283 181,703 z" />
-    </clippath>
+    </clipPath>
 
     <marker id="m_atr" markerUnits="strokeWidth" markerWidth="3" markerHeight="3" viewBox="0 0 10 10" refX="5" refY="5">
         <polygon points="0,0 5,5 0,10 10,5" fill="red"/>
@@ -103,15 +103,15 @@
 
     <clipPath id="clipCircle1">
       <circle id="c1" cx="100" cy="100" r="50"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="clipCircle2">
       <circle id="c2" cx="150" cy="150" r="50"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="clipPath1">
       <path id="p1" d="M10 10l100 0 0 100 -100 0ZM50 50l40 0 0 40 -40 0Z" clip-rule="evenodd"/>
-    </clippath>
+    </clipPath>
 
     <!-- "If a valid 'clip-path' reference is placed on one of the children of a 'clipPath' element,
         then the given child element is clipped by the referenced clipping path before OR'ing the
@@ -120,37 +120,37 @@
     <clipPath id="clipRects1">
       <rect x="50" y="30" width="25" height="100"/>
       <rect x="25" y="50" width="10" height="10" clip-path="url(#clipTwoCircles)"/>
-    </clippath>
+    </clipPath>
 
     <!-- Test use in a clipPath -->
     <clipPath id="clipTwoCircles">
       <use xlink:href="#c1"/>
       <use xlink:href="#c2"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="clipInClip1">
       <use xlink:href="#c2" clip-path="url(#clipCircle1)"/>
       <use xlink:href="#p1"/>
-    </clippath>
+    </clipPath>
 
     <clipPath id="clipOnClip1" clip-path="url(#clipCircle1)">
       <use xlink:href="#c2"/>
       <use xlink:href="#p1"/>
-    </clippath>
+    </clipPath>
 
   </defs>
 
   <!-- text -->
-  <text id="text1" font-size="20px" font-familiy="monospace" fill="red"  x="0" y="50" clip-path="url('#rect01')">99</text>
-  <text id="text2" font-size="20px" font-familiy="monospace" fill="blue" x="100" y="120" clip-path="url('#rect02')">99</text>
-  <text id="text3" font-size="20px" font-familiy="monospace" clip-path="url('#rect03')" x="0" y="120">
+  <text id="text1" font-size="20px" font-family="monospace" fill="red"  x="0" y="50" clip-path="url('#rect01')">99</text>
+  <text id="text2" font-size="20px" font-family="monospace" fill="blue" x="100" y="120" clip-path="url('#rect02')">99</text>
+  <text id="text3" font-size="20px" font-family="monospace" clip-path="url('#rect03')" x="0" y="120">
     <tspan x="0" y="50" fill="red">99</tspan>
   </text>
-  <text id="text4" font-size="20px" font-familiy="monospace" clip-path="url('#rect04')" x="0" y="120">
+  <text id="text4" font-size="20px" font-family="monospace" clip-path="url('#rect04')" x="0" y="120">
     <tspan x="100" y="120" fill="blue">99</tspan>
   </text>
-  <text id="text5" font-size="20px" font-familiy="monospace" fill="red"  x="0" y="80" clip-path="url('#rect05')">99</text>
-  <text id="text6" font-size="20px" font-familiy="monospace" fill="blue" x="0" y="80" clip-path="url('#rect06')">99</text>
+  <text id="text5" font-size="20px" font-family="monospace" fill="red"  x="0" y="80" clip-path="url('#rect05')">99</text>
+  <text id="text6" font-size="20px" font-family="monospace" fill="blue" x="0" y="80" clip-path="url('#rect06')">99</text>
 
   <!-- image -->
   <image id="image1" x="150" y="150" width="200" height="200" preserveApectRatio="none" clip="rect(10px,90px,90px,10px)"
@@ -256,46 +256,46 @@
     <div xmlns="http://www.w3.org/1999/xhtml" style="background-color:pink;width:100%;height:100%;">
 There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
     </div>
-  </foreignobject>
+  </foreignObject>
   <foreignObject id="fo2" x="205" y="2" width="200" height="200" clip-path="url('#circle1')" >
     <div xmlns="http://www.w3.org/1999/xhtml" style="background-color:pink;width:100%;height:100%;">
 There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
     </div>
-  </foreignobject>
+  </foreignObject>
   <foreignObject id="fo3" x="2" y="205" width="200" height="200" clip-path="url('#circle1')" >
     <div xmlns="http://www.w3.org/1999/xhtml" style="background-color:pink;width:100%;height:100%;">
 There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
     </div>
-  </foreignobject>
+  </foreignObject>
   <foreignObject id="fo4" x="205" y="205" width="200" height="200" clip-path="url('#circle1')" clip="rect(2px,102px,102px,2px)">
     <div xmlns="http://www.w3.org/1999/xhtml" style="background-color:pink;width:100%;height:100%;">
 There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
     </div>
-  </foreignobject>
+  </foreignObject>
 
   <foreignObject id="fo5" x="250" y="250" width="200" height="200" clip-path="url('#rect8')">
     <div xmlns="http://www.w3.org/1999/xhtml" style="background-color:pink;width:100%;height:100%;">
 There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
     </div>
-  </foreignobject>
+  </foreignObject>
 
   <foreignObject id="fo6" x="0" y="0" width="200" height="200" clip-path="url('#rect9')">
     <div xmlns="http://www.w3.org/1999/xhtml" style="background-color:pink;width:100%;height:100%;">
 There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
     </div>
-  </foreignobject>
+  </foreignObject>
 
   <foreignObject id="fo7" x="0" y="0" width="200" height="200" clip-path="url('#rect8')">
     <div xmlns="http://www.w3.org/1999/xhtml" style="background-color:pink;width:100%;height:100%;">
 There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
     </div>
-  </foreignobject>
+  </foreignObject>
 
   <foreignObject id="fo8" x="0" y="0" width="200" height="200" clip-path="url('#m_atr')">
     <div xmlns="http://www.w3.org/1999/xhtml" style="background-color:pink;width:100%;height:100%;">
 There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
     </div>
-  </foreignobject>
+  </foreignObject>
 
   <!-- -->
   <rect id="rect-1" width="200" height="200" fill="blue" clip-path="url(#clipInClip1)"/>
@@ -396,15 +396,15 @@ test(t => {
 
 test(t => {
   let opt = { fill: true, stroke: true, markers: true, clipped: true };
-  assert_bbox("path1", opt, 6.2, 20.8, 115.8, 91.2, 0.1);
-  assert_bbox("path2", opt, 156.2, 20.8, 115.8, 91.2, 0.1);
-  assert_bbox("path3", opt, 6.2, 120.7, 115.8, 91.2, 0.1);
-  assert_bbox("path4", opt, 6.2, 20.8, 93.8, 79.2, 0.1);
-  assert_bbox("path5", opt, 156.2, 20.8, 43.8, 79.2, 0.1);
+  assert_bbox("path1", opt, 6.2, 21, 115.8, 91, 0.1);
+  assert_bbox("path2", opt, 156.2, 21, 115.8, 91, 0.1);
+  assert_bbox("path3", opt, 6.2, 121, 115.8, 91, 0.1);
+  assert_bbox("path4", opt, 6.2, 21, 93.8, 79, 0.1);
+  assert_bbox("path5", opt, 156.2, 21, 43.8, 79, 0.1);
   assert_bbox("path6", opt, 6.2, 150, 93.8, 62, 0.1);
-  assert_bbox("path7", opt, 6.2, 20.8, 93.8, 79.2, 0.1);
-  assert_bbox("path8", opt, 156.2, 20.8, 93.8, 79.2, 0.1);
-  assert_bbox("path9", opt, 6.2, 120.8, 93.8, 79.2, 0.1);
+  assert_bbox("path7", opt, 6.2, 21, 93.8, 79, 0.1);
+  assert_bbox("path8", opt, 156.2, 21, 93.8, 79, 0.1);
+  assert_bbox("path9", opt, 6.2, 121, 93.8, 79, 0.1);
   assert_bbox("path10", opt, 10, 25, 100, 75);
   assert_bbox("path11", opt, 160, 25, 100, 75);
   assert_bbox("path12", opt, 10, 125, 100, 75);
@@ -445,18 +445,18 @@ test(t => {
 
 test(t => {
   let opt = { fill: false, stroke: true, markers: false, clipped: false };
-  assert_bbox("path1", opt, 6.2, 20.8, 107.8, 83.2, 0.1);
-  assert_bbox("path2", opt, 156.2, 20.8, 107.8, 83.2, 0.1);
-  assert_bbox("path3", opt, 6.2, 120.8, 107.8, 83.2, 0.1);
-  assert_bbox("path4", opt, 6.2, 20.8, 107.8, 83.2, 0.1);
-  assert_bbox("path5", opt, 156.2, 20.8, 107.8, 83.2, 0.1);
-  assert_bbox("path6", opt, 6.2, 120.8, 107.8, 83.2, 0.1);
-  assert_bbox("path7", opt, 6.2, 20.8, 107.8, 83.2, 0.1);
-  assert_bbox("path8", opt, 156.2, 20.8, 107.8, 83.2, 0.1);
-  assert_bbox("path9", opt, 6.2, 120.8, 107.8, 83.2, 0.1);
-  assert_bbox("path10", opt, 6.2, 20.8, 107.8, 83.2, 0.1);
-  assert_bbox("path11", opt, 156.2, 20.8, 107.8, 83.2, 0.1);
-  assert_bbox("path12", opt, 6.2, 120.8, 107.8, 83.2, 0.1);
+  assert_bbox("path1", opt, 6.2, 21, 107.8, 83, 0.1);
+  assert_bbox("path2", opt, 156.2, 21, 107.8, 83, 0.1);
+  assert_bbox("path3", opt, 6.2, 121, 107.8, 83, 0.1);
+  assert_bbox("path4", opt, 6.2, 21, 107.8, 83, 0.1);
+  assert_bbox("path5", opt, 156.2, 21, 107.8, 83, 0.1);
+  assert_bbox("path6", opt, 6.2, 121, 107.8, 83, 0.1);
+  assert_bbox("path7", opt, 6.2, 21, 107.8, 83, 0.1);
+  assert_bbox("path8", opt, 156.2, 21, 107.8, 83, 0.1);
+  assert_bbox("path9", opt, 6.2, 121, 107.8, 83, 0.1);
+  assert_bbox("path10", opt, 6.2, 21, 107.8, 83, 0.1);
+  assert_bbox("path11", opt, 156.2, 21, 107.8, 83, 0.1);
+  assert_bbox("path12", opt, 6.2, 121, 107.8, 83, 0.1);
 }, "path with stroke");
 
 test(t => {

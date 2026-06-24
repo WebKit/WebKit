@@ -49,7 +49,7 @@
     {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_sysdir_get_next_search_path_enumeration"},
     {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_sysdir_start_search_path_enumeration"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "sysdir_search_path_directory_t"},
     {"access": "public", "name": "sysdir_search_path_domain_mask_t"},

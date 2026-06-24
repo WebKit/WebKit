@@ -14,12 +14,12 @@
 #include <deque>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -60,7 +60,7 @@ class MockDcSctpSocketCallbacks : public DcSctpSocketCallbacks {
         random_(internal::GetUniqueSeed()),
         timeout_manager_([this]() { return now_; }) {
     ON_CALL(*this, SendPacketWithStatus)
-        .WillByDefault([this](webrtc::ArrayView<const uint8_t> data) {
+        .WillByDefault([this](std::span<const uint8_t> data) {
           sent_packets_.emplace_back(
               std::vector<uint8_t>(data.begin(), data.end()));
           return SendPacketStatus::kSuccess;
@@ -87,7 +87,7 @@ class MockDcSctpSocketCallbacks : public DcSctpSocketCallbacks {
 
   MOCK_METHOD(SendPacketStatus,
               SendPacketWithStatus,
-              (webrtc::ArrayView<const uint8_t> data),
+              (std::span<const uint8_t> data),
               (override));
 
   std::unique_ptr<Timeout> CreateTimeout(
@@ -116,16 +116,16 @@ class MockDcSctpSocketCallbacks : public DcSctpSocketCallbacks {
   MOCK_METHOD(void, OnConnectionRestarted, (), (override));
   MOCK_METHOD(void,
               OnStreamsResetFailed,
-              (webrtc::ArrayView<const StreamID> outgoing_streams,
+              (std::span<const StreamID> outgoing_streams,
                absl::string_view reason),
               (override));
   MOCK_METHOD(void,
               OnStreamsResetPerformed,
-              (webrtc::ArrayView<const StreamID> outgoing_streams),
+              (std::span<const StreamID> outgoing_streams),
               (override));
   MOCK_METHOD(void,
               OnIncomingStreamsReset,
-              (webrtc::ArrayView<const StreamID> incoming_streams),
+              (std::span<const StreamID> incoming_streams),
               (override));
   MOCK_METHOD(void, OnBufferedAmountLow, (StreamID stream_id), (override));
   MOCK_METHOD(void, OnTotalBufferedAmountLow, (), (override));

@@ -21,16 +21,23 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 static const struct argument kArguments[] = {
     {
-        "-out-public", kRequiredArgument, "The file to write the public key to",
+        "-out-public",
+        kRequiredArgument,
+        "The file to write the public key to",
     },
     {
-        "-out-private", kRequiredArgument,
+        "-out-private",
+        kRequiredArgument,
         "The file to write the private key to",
     },
     {
-        "", kOptionalArgument, "",
+        "",
+        kOptionalArgument,
+        "",
     },
 };
 
@@ -48,3 +55,5 @@ bool GenerateEd25519Key(const std::vector<std::string> &args) {
   return WriteToFile(args_map["-out-public"], public_key) &&
          WriteToFile(args_map["-out-private"], private_key);
 }
+
+BSSL_NAMESPACE_END

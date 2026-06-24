@@ -15,9 +15,9 @@
 
 #include <array>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/environment/environment.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -37,25 +37,25 @@ class SubbandErleEstimator {
   void Reset();
 
   // Updates the ERLE estimate.
-  void Update(ArrayView<const float, kFftLengthBy2Plus1> X2,
-              ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-              ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+  void Update(std::span<const float, kFftLengthBy2Plus1> X2,
+              std::span<const std::array<float, kFftLengthBy2Plus1>> Y2,
+              std::span<const std::array<float, kFftLengthBy2Plus1>> E2,
               const std::vector<bool>& converged_filters);
 
   // Returns the ERLE estimate.
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle(
+  std::span<const std::array<float, kFftLengthBy2Plus1>> Erle(
       bool onset_compensated) const {
     return onset_compensated && use_onset_detection_ ? erle_onset_compensated_
                                                      : erle_;
   }
 
   // Returns the non-capped ERLE estimate.
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> ErleUnbounded() const {
+  std::span<const std::array<float, kFftLengthBy2Plus1>> ErleUnbounded() const {
     return erle_unbounded_;
   }
 
   // Returns the ERLE estimate at onsets (only used for testing).
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> ErleDuringOnsets()
+  std::span<const std::array<float, kFftLengthBy2Plus1>> ErleDuringOnsets()
       const {
     return erle_during_onsets_;
   }
@@ -76,9 +76,9 @@ class SubbandErleEstimator {
   };
 
   void UpdateAccumulatedSpectra(
-      ArrayView<const float, kFftLengthBy2Plus1> X2,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+      std::span<const float, kFftLengthBy2Plus1> X2,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> Y2,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> E2,
       const std::vector<bool>& converged_filters);
 
   void ResetAccumulatedSpectra();

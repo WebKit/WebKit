@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -113,6 +113,8 @@ private:
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) override;
     Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
+
+    bool m_hasInvalidOrderAttribute { false };
 
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     const Ref<SVGAnimatedInteger> m_orderX { SVGAnimatedInteger::create(this, initialOrderValue) };

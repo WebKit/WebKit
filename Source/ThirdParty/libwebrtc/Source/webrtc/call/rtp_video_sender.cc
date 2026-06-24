@@ -17,6 +17,7 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
@@ -24,13 +25,13 @@
 #include "absl/algorithm/container.h"
 #include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/call/bitrate_allocation.h"
 #include "api/crypto/crypto_options.h"
 #include "api/environment/environment.h"
 #include "api/fec_controller.h"
 #include "api/field_trials_view.h"
 #include "api/frame_transformer_interface.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
@@ -447,7 +448,7 @@ RtpVideoSender::RtpVideoSender(
 
   for (size_t i = 0; i < rtp_config_.extensions.size(); ++i) {
     const std::string& extension = rtp_config_.extensions[i].uri;
-    int id = rtp_config_.extensions[i].id;
+    RtpHeaderExtensionId id = rtp_config_.extensions[i].id;
     RTC_DCHECK(RtpExtension::IsSupportedForVideo(extension));
     for (const RtpStreamSender& stream : rtp_streams_) {
       stream.rtp_rtcp->RegisterRtpHeaderExtension(extension, id);
@@ -636,6 +637,10 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
   return Result(Result::OK, rtp_timestamp);
 }
 
+void RtpVideoSender::OnFrameDropped(uint32_t /*rtp_timestamp*/,
+                                    int /*spatial_id*/,
+                                    bool /*is_end_of_temporal_unit*/) {}
+
 void RtpVideoSender::OnBitrateAllocationUpdated(
     const VideoBitrateAllocation& bitrate) {
   RTC_DCHECK_RUN_ON(&transport_checker_);
@@ -691,6 +696,11 @@ void RtpVideoSender::OnVideoLayersAllocationUpdated(
     transport_queue_.PostTask(
         SafeTask(safety_.flag(), [this, sending = std::move(sending)] {
           RTC_DCHECK_RUN_ON(&transport_checker_);
+          // It's possible for another task to be scheduled on the transport
+          // checker ahead of this call that makes the sender not active.
+          if (!IsActive()) {
+            return;
+          }
           RTC_CHECK_EQ(sending.size(), rtp_streams_.size());
           for (size_t i = 0; i < sending.size(); ++i) {
             SetModuleIsActive(sending[i], *rtp_streams_[i].rtp_rtcp);
@@ -715,7 +725,7 @@ DataRate RtpVideoSender::GetPostEncodeOverhead() const {
   return post_encode_overhead;
 }
 
-void RtpVideoSender::DeliverRtcp(ArrayView<const uint8_t> packet) {
+void RtpVideoSender::DeliverRtcp(std::span<const uint8_t> packet) {
   // Runs on a network thread.
   for (const RtpStreamSender& stream : rtp_streams_)
     stream.rtp_rtcp->IncomingRtcpPacket(packet);
@@ -916,7 +926,7 @@ uint32_t RtpVideoSender::GetProtectionBitrateBps() const {
 
 std::vector<RtpSequenceNumberMap::Info> RtpVideoSender::GetSentRtpPacketInfos(
     uint32_t ssrc,
-    ArrayView<const uint16_t> sequence_numbers) const {
+    std::span<const uint16_t> sequence_numbers) const {
   for (const auto& rtp_stream : rtp_streams_) {
     if (ssrc == rtp_stream.rtp_rtcp->SSRC()) {
       return rtp_stream.rtp_rtcp->GetSentRtpPacketInfos(sequence_numbers);
@@ -1011,7 +1021,7 @@ void RtpVideoSender::OnPacketFeedbackVector(
       // clean up anyway.
       continue;
     }
-    ArrayView<const uint16_t> rtp_sequence_numbers(kv.second);
+    std::span<const uint16_t> rtp_sequence_numbers(kv.second);
     it->second->OnPacketsAcknowledged(rtp_sequence_numbers);
   }
 }
@@ -1023,7 +1033,7 @@ void RtpVideoSender::SetEncodingData(size_t width,
                                    rtp_config_.max_packet_size);
 }
 
-void RtpVideoSender::SetCsrcs(ArrayView<const uint32_t> csrcs) {
+void RtpVideoSender::SetCsrcs(std::span<const uint32_t> csrcs) {
   MutexLock lock(&mutex_);
   csrcs_.assign(csrcs.begin(),
                 csrcs.begin() + std::min<size_t>(csrcs.size(), kRtpCsrcSize));

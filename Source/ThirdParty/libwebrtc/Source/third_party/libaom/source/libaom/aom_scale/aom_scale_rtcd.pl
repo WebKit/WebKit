@@ -19,8 +19,6 @@ forward_decls qw/aom_scale_forward_decls/;
 
 add_proto qw/int aom_yv12_realloc_with_new_border/, "struct yv12_buffer_config *ybf, int new_border, int byte_alignment, bool alloc_pyramid, int num_planes";
 
-add_proto qw/void aom_yv12_extend_frame_borders/, "struct yv12_buffer_config *ybf, const int num_planes";
-
 add_proto qw/void aom_yv12_copy_frame/, "const struct yv12_buffer_config *src_bc, struct yv12_buffer_config *dst_bc, const int num_planes";
 
 add_proto qw/void aom_yv12_copy_y/, "const struct yv12_buffer_config *src_ybc, struct yv12_buffer_config *dst_ybc, int use_crop";

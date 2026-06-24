@@ -8,8 +8,9 @@
 <!-- See bug 84674 -->
 <input id="slider" type="range" min="0" max="100" value="50"></input>
 <pre id="console"></pre>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
+window.jsTestIsAsync = true;
 var clickCount = 0;
 var slider;
 
@@ -23,7 +24,6 @@ window.onload = async function()
     if (!window.testRunner)
         return;
 
-    testRunner.waitUntilDone();
 
     slider = document.getElementById("slider");
     slider.addEventListener("click", onClick);
@@ -46,7 +46,7 @@ window.onload = async function()
     await eventSender.asyncMouseUp();
 
     shouldBe("clickCount", "3");
-    testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
 </body>

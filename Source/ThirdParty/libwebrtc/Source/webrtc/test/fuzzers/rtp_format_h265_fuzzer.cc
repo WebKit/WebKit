@@ -19,9 +19,7 @@
 #include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
-
+void FuzzOneInput(FuzzDataHelper fuzz_input) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 1200;
   // Read uint8_t to be sure reduction_lens are much smaller than

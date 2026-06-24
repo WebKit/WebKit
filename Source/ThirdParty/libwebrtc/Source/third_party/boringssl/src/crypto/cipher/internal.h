@@ -20,32 +20,31 @@
 
 #include <openssl/base.h>
 #include <openssl/sha.h>
+#include <openssl/span.h>
 
 #include "../internal.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
+BSSL_NAMESPACE_BEGIN
 
 // EVP_tls_cbc_get_padding determines the padding from the decrypted, TLS, CBC
-// record in |in|. This decrypted record should not include any "decrypted"
+// record in `in`. This decrypted record should not include any "decrypted"
 // explicit IV. If the record is publicly invalid, it returns zero. Otherwise,
-// it returns one and sets |*out_padding_ok| to all ones (0xfff..f) if the
-// padding is valid and zero otherwise. It then sets |*out_len| to the length
-// with the padding removed or |in_len| if invalid.
+// it returns one and sets `*out_padding_ok` to all ones (0xfff..f) if the
+// padding is valid and zero otherwise. It then sets `*out_len` to the length
+// with the padding removed or `in_len` if invalid.
 //
 // If the function returns one, it runs in time independent of the contents of
-// |in|. It is also guaranteed that |*out_len| >= |mac_size|, satisfying
-// |EVP_tls_cbc_copy_mac|'s precondition.
+// `in`. It is also guaranteed that, independent of `*out_padding_ok`, `mac_len`
+// <= `*out_len` <= `in_len`, satisfying `EVP_tls_cbc_copy_mac`'s precondition.
 int EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok, size_t *out_len,
                                const uint8_t *in, size_t in_len,
                                size_t block_size, size_t mac_size);
 
-// EVP_tls_cbc_copy_mac copies |md_size| bytes from the end of the first
-// |in_len| bytes of |in| to |out| in constant time (independent of the concrete
-// value of |in_len|, which may vary within a 256-byte window). |in| must point
-// to a buffer of |orig_len| bytes.
+// EVP_tls_cbc_copy_mac copies `md_size` bytes from the end of the first
+// `in_len` bytes of `in` to `out` in constant time (independent of the concrete
+// value of `in_len`, which may vary within a 256-byte window). `in` must point
+// to a buffer of `orig_len` bytes.
 //
 // On entry:
 //   orig_len >= in_len >= md_size
@@ -53,14 +52,14 @@ int EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok, size_t *out_len,
 void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
                           size_t in_len, size_t orig_len);
 
-// EVP_tls_cbc_record_digest_supported returns 1 iff |md| is a hash function
+// EVP_tls_cbc_record_digest_supported returns 1 iff `md` is a hash function
 // which EVP_tls_cbc_digest_record supports.
 int EVP_tls_cbc_record_digest_supported(const EVP_MD *md);
 
-// EVP_sha1_final_with_secret_suffix computes the result of hashing |len| bytes
-// from |in| to |ctx| and writes the resulting hash to |out|. |len| is treated
-// as secret and must be at most |max_len|, which is treated as public. |in|
-// must point to a buffer of at least |max_len| bytes. It returns one on success
+// EVP_sha1_final_with_secret_suffix computes the result of hashing `len` bytes
+// from `in` to `ctx` and writes the resulting hash to `out`. `len` is treated
+// as secret and must be at most `max_len`, which is treated as public. `in`
+// must point to a buffer of at least `max_len` bytes. It returns one on success
 // and zero if inputs are too long.
 //
 // This function is exported for unit tests.
@@ -69,7 +68,7 @@ OPENSSL_EXPORT int EVP_sha1_final_with_secret_suffix(
     size_t max_len);
 
 // EVP_sha256_final_with_secret_suffix acts like
-// |EVP_sha1_final_with_secret_suffix|, but for SHA-256.
+// `EVP_sha1_final_with_secret_suffix`, but for SHA-256.
 //
 // This function is exported for unit tests.
 OPENSSL_EXPORT int EVP_sha256_final_with_secret_suffix(
@@ -83,23 +82,26 @@ OPENSSL_EXPORT int EVP_sha256_final_with_secret_suffix(
 //     EVP_tls_cbc_record_digest_supported must return true for this hash.
 //   md_out: the digest output. At most EVP_MAX_MD_SIZE bytes will be written.
 //   md_out_size: the number of output bytes is written here.
-//   header: the 13-byte, TLS record header.
-//   data: the record data itself
-//   data_size: the secret, reported length of the data once the padding and MAC
-//     have been removed.
-//   data_plus_mac_plus_padding_size: the public length of the whole
-//     record, including padding.
+//   len_header: the two length bytes of the TLS record header.
+//   aadvecs: the 11-byte TLS record header as it was provided by the caller.
+//   iovecs_without_trailer: the section of the plaintext that does not include
+//     the trailer whose length is secret (typically the entire plaintext with
+//     an upper bound of padding and MAC size removed)
+//   trailer: a buffer, of public length, containing the remainder of the
+//     plaintext as a prefix.
+//   data_in_trailer_size: the secret, reported length of the data portion in
+//     `trailer` once the padding and MAC have been removed.
 //
 // On entry: by virtue of having been through one of the remove_padding
 // functions, above, we know that data_plus_mac_size is large enough to contain
 // a padding byte and MAC. (If the padding was invalid, it might contain the
 // padding too. )
-int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
-                              size_t *md_out_size, const uint8_t header[13],
-                              const uint8_t *data, size_t data_size,
-                              size_t data_plus_mac_plus_padding_size,
-                              const uint8_t *mac_secret,
-                              unsigned mac_secret_length);
+int EVP_tls_cbc_digest_record(
+    const EVP_MD *md, uint8_t *md_out, size_t *md_out_size,
+    const uint8_t len_header[2], bssl::Span<const CRYPTO_IVEC> aadvecs,
+    bssl::Span<const CRYPTO_IOVEC> iovecs_without_trailer,
+    bssl::Span<const uint8_t> trailer, size_t data_in_trailer_size,
+    const uint8_t *mac_secret, unsigned mac_secret_length);
 
 #define POLY1305_TAG_LEN 16
 
@@ -138,7 +140,7 @@ static_assert(sizeof(union chacha20_poly1305_open_data) == 48,
 static_assert(sizeof(union chacha20_poly1305_seal_data) == 48 + 8 + 8,
               "wrong chacha20_poly1305_seal_data size");
 
-inline int chacha20_poly1305_asm_capable(void) {
+inline int chacha20_poly1305_asm_capable() {
 #if defined(OPENSSL_X86_64)
   return CRYPTO_is_SSE4_1_capable();
 #elif defined(OPENSSL_AARCH64)
@@ -147,15 +149,15 @@ inline int chacha20_poly1305_asm_capable(void) {
 }
 
 // chacha20_poly1305_open is defined in chacha20_poly1305_*.pl. It decrypts
-// |plaintext_len| bytes from |ciphertext| and writes them to |out_plaintext|.
-// Additional input parameters are passed in |aead_data->in|. On exit, it will
-// write calculated tag value to |aead_data->out.tag|, which the caller must
+// `plaintext_len` bytes from `ciphertext` and writes them to `out_plaintext`.
+// Additional input parameters are passed in `aead_data->in`. On exit, it will
+// write calculated tag value to `aead_data->out.tag`, which the caller must
 // check.
 #if defined(OPENSSL_X86_64)
-extern void chacha20_poly1305_open_sse41(
+extern "C" void chacha20_poly1305_open_sse41(
     uint8_t *out_plaintext, const uint8_t *ciphertext, size_t plaintext_len,
     const uint8_t *ad, size_t ad_len, union chacha20_poly1305_open_data *data);
-extern void chacha20_poly1305_open_avx2(
+extern "C" void chacha20_poly1305_open_avx2(
     uint8_t *out_plaintext, const uint8_t *ciphertext, size_t plaintext_len,
     const uint8_t *ad, size_t ad_len, union chacha20_poly1305_open_data *data);
 inline void chacha20_poly1305_open(uint8_t *out_plaintext,
@@ -172,23 +174,23 @@ inline void chacha20_poly1305_open(uint8_t *out_plaintext,
   }
 }
 #else
-extern void chacha20_poly1305_open(uint8_t *out_plaintext,
-                                   const uint8_t *ciphertext,
-                                   size_t plaintext_len, const uint8_t *ad,
-                                   size_t ad_len,
-                                   union chacha20_poly1305_open_data *data);
+extern "C" void chacha20_poly1305_open(uint8_t *out_plaintext,
+                                       const uint8_t *ciphertext,
+                                       size_t plaintext_len, const uint8_t *ad,
+                                       size_t ad_len,
+                                       union chacha20_poly1305_open_data *data);
 #endif
 
 // chacha20_poly1305_open is defined in chacha20_poly1305_*.pl. It encrypts
-// |plaintext_len| bytes from |plaintext| and writes them to |out_ciphertext|.
-// Additional input parameters are passed in |aead_data->in|. The calculated tag
-// value is over the computed ciphertext concatenated with |extra_ciphertext|
-// and written to |aead_data->out.tag|.
+// `plaintext_len` bytes from `plaintext` and writes them to `out_ciphertext`.
+// Additional input parameters are passed in `aead_data->in`. The calculated tag
+// value is over the computed ciphertext concatenated with `extra_ciphertext`
+// and written to `aead_data->out.tag`.
 #if defined(OPENSSL_X86_64)
-extern void chacha20_poly1305_seal_sse41(
+extern "C" void chacha20_poly1305_seal_sse41(
     uint8_t *out_ciphertext, const uint8_t *plaintext, size_t plaintext_len,
     const uint8_t *ad, size_t ad_len, union chacha20_poly1305_seal_data *data);
-extern void chacha20_poly1305_seal_avx2(
+extern "C" void chacha20_poly1305_seal_avx2(
     uint8_t *out_ciphertext, const uint8_t *plaintext, size_t plaintext_len,
     const uint8_t *ad, size_t ad_len, union chacha20_poly1305_seal_data *data);
 inline void chacha20_poly1305_seal(uint8_t *out_ciphertext,
@@ -205,16 +207,16 @@ inline void chacha20_poly1305_seal(uint8_t *out_ciphertext,
   }
 }
 #else
-extern void chacha20_poly1305_seal(uint8_t *out_ciphertext,
-                                   const uint8_t *plaintext,
-                                   size_t plaintext_len, const uint8_t *ad,
-                                   size_t ad_len,
-                                   union chacha20_poly1305_seal_data *data);
+extern "C" void chacha20_poly1305_seal(uint8_t *out_ciphertext,
+                                       const uint8_t *plaintext,
+                                       size_t plaintext_len, const uint8_t *ad,
+                                       size_t ad_len,
+                                       union chacha20_poly1305_seal_data *data);
 #endif
 
 #else
 
-inline int chacha20_poly1305_asm_capable(void) { return 0; }
+inline int chacha20_poly1305_asm_capable() { return 0; }
 
 inline void chacha20_poly1305_open(uint8_t *out_plaintext,
                                    const uint8_t *ciphertext,
@@ -233,9 +235,6 @@ inline void chacha20_poly1305_seal(uint8_t *out_ciphertext,
 }
 #endif
 
-
-#if defined(__cplusplus)
-}  // extern C
-#endif
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_HEADER_CRYPTO_CIPHER_INTERNAL_H

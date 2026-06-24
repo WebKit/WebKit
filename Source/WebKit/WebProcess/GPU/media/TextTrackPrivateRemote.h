@@ -92,6 +92,7 @@ public:
     bool isMainProgramContent() const final { return m_isMainProgramContent; }
     bool isEasyToRead() const final { return m_isEasyToRead; }
     bool isDefault() const final { return m_isDefault; }
+    bool isMachineGenerated() const final { return m_isMachineGenerated; }
     MediaTime startTimeVariance() const final { return m_startTimeVariance; }
 
 private:
@@ -113,6 +114,7 @@ private:
     bool m_isMainProgramContent { true };
     bool m_isEasyToRead { false };
     bool m_isDefault { false };
+    bool m_isMachineGenerated { false };
 };
 
 } // namespace WebKit

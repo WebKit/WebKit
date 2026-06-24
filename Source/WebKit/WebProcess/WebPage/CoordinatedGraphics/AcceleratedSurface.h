@@ -132,8 +132,9 @@ public:
     void clear(const OptionSet<WebCore::CompositionReason>&);
 
 #if ENABLE(DAMAGE_TRACKING)
-    void setFrameDamage(WebCore::Damage&&);
-    const std::optional<WebCore::Damage>& frameDamage() const LIFETIME_BOUND { return m_frameDamage; }
+    void setFrameDamage(WebCore::Damage&& damage) { m_damageTracker.recordFrameDamage(WTF::move(damage)); }
+    void setFrameDamageRectangleThreshold(unsigned threshold) { m_damageTracker.setRectangleThreshold(threshold); }
+    const std::optional<WebCore::Damage>& frameDamage() const LIFETIME_BOUND { return m_damageTracker.frameDamage(); }
     const std::optional<WebCore::Damage>& renderTargetDamage();
 #endif
 
@@ -365,7 +366,13 @@ private:
         void releaseUnusedBuffers();
 
 #if ENABLE(DAMAGE_TRACKING)
-        void addDamage(const std::optional<WebCore::Damage>&);
+        template<typename Functor> void forEachTarget(Functor&& functor)
+        {
+            for (auto& target : m_freeTargets)
+                functor(*target);
+            for (auto& target : m_lockedTargets)
+                functor(*target);
+        }
 #endif
 
 #if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || OS(ANDROID))
@@ -400,6 +407,36 @@ private:
 #endif
     };
 
+#if ENABLE(DAMAGE_TRACKING)
+    class SwapChainDamageTracker {
+        WTF_MAKE_NONCOPYABLE(SwapChainDamageTracker);
+    public:
+        explicit SwapChainDamageTracker(SwapChain& swapChain)
+            : m_swapChain(swapChain)
+        {
+        }
+
+        void setRectangleThreshold(unsigned threshold) { m_rectangleThreshold = threshold; }
+        unsigned rectangleThreshold() const { return m_rectangleThreshold; }
+
+        // This frame's content change vs the last presented frame - propagated to the platform.
+        void recordFrameDamage(WebCore::Damage&& damage) { m_frameDamage = WTF::move(damage); }
+        const std::optional<WebCore::Damage>& frameDamage() const LIFETIME_BOUND { return m_frameDamage; }
+        Vector<WebCore::IntRect, 1> takeFrameDamageRects();
+
+        // Propagates this frame's damage into every buffer and returns the given buffer's accumulated damage.
+        const std::optional<WebCore::Damage>& damageForTarget(RenderTarget&);
+
+        // Discards the pending frame damage, e.g. when the swap chain is resized.
+        void reset() { m_frameDamage = std::nullopt; }
+
+    private:
+        SwapChain& m_swapChain;
+        std::optional<WebCore::Damage> m_frameDamage;
+        unsigned m_rectangleThreshold { 4 };
+    };
+#endif
+
     const WeakRef<WebPage> m_webPage;
     Function<void()> m_frameCompleteHandler;
     bool m_useSkia { false };
@@ -417,7 +454,7 @@ private:
     bool m_useExplicitSync { false };
     std::unique_ptr<RunLoop::Timer> m_releaseUnusedBuffersTimer;
 #if ENABLE(DAMAGE_TRACKING)
-    std::optional<WebCore::Damage> m_frameDamage;
+    SwapChainDamageTracker m_damageTracker;
 #endif
 };
 

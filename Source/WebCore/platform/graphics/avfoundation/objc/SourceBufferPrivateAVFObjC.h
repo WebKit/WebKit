@@ -195,7 +195,6 @@ private:
     const MediaSourceConfiguration m_configuration;
 
     std::optional<FloatSize> m_cachedSize WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
-    FloatSize m_currentSize WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     std::atomic<bool> m_waitingForKey { true };
     std::optional<TrackID> m_enabledVideoTrackID WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     std::optional<TrackID> m_protectedTrackID WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());

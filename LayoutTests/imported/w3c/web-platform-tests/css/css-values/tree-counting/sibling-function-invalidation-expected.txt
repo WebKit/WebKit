@@ -1,6 +1,19 @@
+X
+X
+X
+X
+X
 
 PASS Initially 6th sibling
 PASS 5th sibling after removal
 PASS Initially 6 siblings
 PASS 5 siblings after removal
+PASS ::before sibling-count() and sibling-index() initially
+PASS ::before sibling-count() and sibling-index() after removal
+PASS ::after sibling-count() and sibling-index() initially
+PASS ::after sibling-count() and sibling-index() after removal
+PASS ::first-letter sibling-count() and sibling-index() initially
+PASS ::first-letter sibling-count() and sibling-index() after removal
+PASS ::first-line sibling-count() and sibling-index() initially
+PASS ::first-line sibling-count() and sibling-index() after removal
 

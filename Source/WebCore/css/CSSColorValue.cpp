@@ -26,6 +26,8 @@
 #include "CSSColorValue.h"
 
 #include "CSSKeywordValue.h"
+#include "CSSValuePool.h"
+#include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 
 namespace WebCore {
 
@@ -82,6 +84,11 @@ bool CSSColorValue::equals(const CSSColorValue& other) const
 IterationStatus CSSColorValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_color);
+}
+
+Ref<DeprecatedCSSOMValue> CSSColorValue::customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+{
+    return CSS::createDeprecatedCSSOMValue(CSSValuePool::singleton(), owner, m_color);
 }
 
 } // namespace WebCore

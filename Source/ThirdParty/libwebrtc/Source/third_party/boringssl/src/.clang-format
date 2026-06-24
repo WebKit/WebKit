@@ -4,10 +4,29 @@ AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 DerivePointerAlignment: false
 PointerAlignment: Right
-# TODO(davidben): The default for Google style is now Regroup, but the default
-# IncludeCategories does not recognize <openssl/header.h>. We should
-# reconfigure IncludeCategories to match. For now, keep it at Preserve.
+# TODO(davidben): The default for Google style is now Regroup. Now that we've
+# configured IncludeCategories, should we pick up Regroup?
 IncludeBlocks: Preserve
+IncludeCategories:
+  # Our public headers.
+  - Regex: '^<openssl/.*\.h>'
+    Priority: 4
+  # Our private headers.
+  - Regex: '^".*"'
+    Priority: 5
+  # Headers from our dependencies
+  #
+  # TODO(davidben): A strict reading of the the style guide would suggest these
+  # should be grouped with C system headers. Previously we grouped them as if
+  # they were "Other libraries' .h files.". Should we switch?
+  - Regex: '^<(gtest|gmock|benchmark)/.*\.h>'
+    Priority: 3
+  # C system headers, and any other headers in angle brackets with the .h extension.
+  - Regex: '^<.*\.h>'
+    Priority: 1
+  # C++ standard library headers.
+  - Regex: '^<.*>'
+    Priority: 2
 InsertBraces: true
 TypenameMacros: ['LHASH_OF', 'STACK_OF']
 StatementMacros:

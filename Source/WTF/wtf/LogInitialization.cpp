@@ -58,4 +58,4 @@ LogChannels& logChannels()
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-} // namespace WebCore
+} // namespace WTF

@@ -13,6 +13,7 @@
 #include <memory>
 #include <utility>
 
+#include "absl/base/nullability.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/function_view.h"
@@ -51,12 +52,24 @@ class DummySocketServer : public SocketServer {
 
 SimulatedThread::SimulatedThread(
     sim_time_impl::SimulatedTimeControllerImpl* handler,
+    absl::string_view name)
+    : SimulatedThread(handler, name, std::make_unique<DummySocketServer>()) {}
+
+SimulatedThread::SimulatedThread(
+    sim_time_impl::SimulatedTimeControllerImpl* handler,
     absl::string_view name,
-    std::unique_ptr<SocketServer> socket_server)
-    : Thread(socket_server ? std::move(socket_server)
-                           : std::make_unique<DummySocketServer>()),
+    std::unique_ptr<SocketServer> absl_nonnull socket_server)
+    : Thread(std::move(socket_server)),
       handler_(handler),
       name_(new char[name.size()]) {
+  std::copy_n(name.begin(), name.size(), name_);
+}
+
+SimulatedThread::SimulatedThread(
+    sim_time_impl::SimulatedTimeControllerImpl* handler,
+    absl::string_view name,
+    SocketServer* absl_nonnull socket_server)
+    : Thread(socket_server), handler_(handler), name_(new char[name.size()]) {
   std::copy_n(name.begin(), name.size(), name_);
 }
 
@@ -118,7 +131,12 @@ void SimulatedThread::Stop() {
 
 SimulatedMainThread::SimulatedMainThread(
     sim_time_impl::SimulatedTimeControllerImpl* handler)
-    : SimulatedThread(handler, "main", nullptr), current_setter_(this) {}
+    : SimulatedThread(handler, "main"), current_setter_(this) {}
+
+SimulatedMainThread::SimulatedMainThread(
+    sim_time_impl::SimulatedTimeControllerImpl* handler,
+    SocketServer* socket_server)
+    : SimulatedThread(handler, "main", socket_server), current_setter_(this) {}
 
 SimulatedMainThread::~SimulatedMainThread() {
   // Removes pending tasks in case they keep shared pointer references to

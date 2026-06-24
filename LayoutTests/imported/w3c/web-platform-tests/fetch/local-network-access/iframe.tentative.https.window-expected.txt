@@ -1,10 +1,21 @@
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: Server
+Harness Error (TIMEOUT), message = null
 
-FAIL loopback to loopback: no permission required. Can't find variable: iframeTest
-FAIL loopback to local: no permission required. Can't find variable: iframeTest
-FAIL loopback to public: no permission required. Can't find variable: iframeTest
-FAIL local to loopback: no permission required. Can't find variable: iframeTest
-FAIL local to local: no permission required. Can't find variable: iframeTest
-FAIL local to public: no permission required. Can't find variable: iframeTest
+FAIL loopback to loopback: no permission required. assert_equals: expected "loaded" but got "timeout"
+FAIL loopback to local: no permission required. assert_equals: expected "loaded" but got "timeout"
+FAIL loopback to public: no permission required. assert_equals: expected "loaded" but got "timeout"
+FAIL local to loopback: no permission required. assert_equals: expected "loaded" but got "timeout"
+FAIL local to local: no permission required. assert_equals: expected "loaded" but got "timeout"
+FAIL local to public: no permission required. assert_equals: expected "loaded" but got "timeout"
+PASS public to loopback: permission denied.
+FAIL public to loopback: success. assert_equals: expected "loaded" but got "timeout"
+PASS public to local: permission denied.
+FAIL public to local: success. assert_equals: expected "loaded" but got "timeout"
+FAIL public to public: no permission required. assert_equals: expected "loaded" but got "timeout"
+PASS treat-as-public-address to loopback: permission denied.
+FAIL treat-as-public-address to loopback: success. assert_equals: expected "loaded" but got "timeout"
+TIMEOUT treat-as-public-address to local (same-origin): no permission required. Test timed out
+NOTRUN treat-as-public-address to local: permission denied.
+NOTRUN treat-as-public-address to local: success.
+NOTRUN treat-as-public-address to public: no permission required.
 

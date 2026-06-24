@@ -119,7 +119,8 @@ WEBRTC_RTCSTATS_IMPL(RTCIceCandidateStats, RTCStats, "abstract-ice-candidate",
     AttributeInit("usernameFragment", &username_fragment),
     AttributeInit("tcpType", &tcp_type),
     AttributeInit("vpn", &vpn),
-    AttributeInit("networkAdapterType", &network_adapter_type))
+    AttributeInit("networkAdapterType", &network_adapter_type),
+    AttributeInit("networkSlice", &network_slice))
 // clang-format on
 
 RTCIceCandidateStats::RTCIceCandidateStats(std::string id,

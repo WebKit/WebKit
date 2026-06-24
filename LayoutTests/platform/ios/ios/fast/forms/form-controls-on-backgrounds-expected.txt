@@ -42,14 +42,14 @@ layer at (0,0) size 800x825
           RenderText {#text} at (0,1) size 40x19
             text run at (0,1) width 40: "Lists: "
           RenderMenuList {SELECT} at (41,2) size 87x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderSelectFallbackButton {DIV} at (6,3) size 74x14
-              RenderText at (0,0) size 54x14
+            RenderBlock {DIV} at (6,3) size 74x14
+              RenderText {#text} at (0,0) size 54x14
                 text run at (0,0) width 54: "Strawberry"
           RenderText {#text} at (129,1) size 5x19
             text run at (129,1) width 5: " "
           RenderMenuList {SELECT} at (135,2) size 87x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderSelectFallbackButton {DIV} at (6,3) size 74x14
-              RenderText at (0,0) size 0x14
+            RenderBlock {DIV} at (6,3) size 74x14
+              RenderText {#text} at (0,0) size 0x14
                 text run at (0,0) width 0: " "
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (10,194) size 800x71
@@ -93,14 +93,14 @@ layer at (0,0) size 800x825
           RenderText {#text} at (0,1) size 40x19
             text run at (0,1) width 40: "Lists: "
           RenderMenuList {SELECT} at (41,2) size 87x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderSelectFallbackButton {DIV} at (6,3) size 74x14
-              RenderText at (0,0) size 54x14
+            RenderBlock {DIV} at (6,3) size 74x14
+              RenderText {#text} at (0,0) size 54x14
                 text run at (0,0) width 54: "Strawberry"
           RenderText {#text} at (129,1) size 5x19
             text run at (129,1) width 5: " "
           RenderMenuList {SELECT} at (135,2) size 87x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderSelectFallbackButton {DIV} at (6,3) size 74x14
-              RenderText at (0,0) size 0x14
+            RenderBlock {DIV} at (6,3) size 74x14
+              RenderText {#text} at (0,0) size 0x14
                 text run at (0,0) width 0: " "
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (10,194) size 800x71
@@ -144,14 +144,14 @@ layer at (0,0) size 800x825
           RenderText {#text} at (0,1) size 40x19
             text run at (0,1) width 40: "Lists: "
           RenderMenuList {SELECT} at (41,2) size 87x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderSelectFallbackButton {DIV} at (6,3) size 74x14
-              RenderText at (0,0) size 54x14
+            RenderBlock {DIV} at (6,3) size 74x14
+              RenderText {#text} at (0,0) size 54x14
                 text run at (0,0) width 54: "Strawberry"
           RenderText {#text} at (129,1) size 5x19
             text run at (129,1) width 5: " "
           RenderMenuList {SELECT} at (135,2) size 87x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderSelectFallbackButton {DIV} at (6,3) size 74x14
-              RenderText at (0,0) size 0x14
+            RenderBlock {DIV} at (6,3) size 74x14
+              RenderText {#text} at (0,0) size 0x14
                 text run at (0,0) width 0: " "
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (10,194) size 800x71

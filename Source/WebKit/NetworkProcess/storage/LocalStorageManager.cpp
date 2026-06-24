@@ -244,7 +244,7 @@ void LocalStorageManager::cancelConnectToLocalStorageArea(IPC::Connection::Uniqu
 
 void LocalStorageManager::cancelConnectToTransientLocalStorageArea(IPC::Connection::UniqueID connection)
 {
-    connectionClosedForLocalStorageArea(connection);
+    connectionClosedForTransientStorageArea(connection);
 }
 
 void LocalStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID connection, StorageAreaIdentifier identifier)

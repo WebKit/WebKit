@@ -82,7 +82,6 @@ class GeolocationPermissionRequest;
 class MediaKeySystemPermissionCallback;
 class NotificationPermissionRequest;
 class QueryPermissionResultCallback;
-class SpeechRecognitionPermissionCallback;
 class UserMediaPermissionRequestProxy;
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
 class WebBackForwardListWrapper;
@@ -164,7 +163,6 @@ WK_ADD_API_MAPPING(WKProtectionSpaceRef, WebProtectionSpace)
 WK_ADD_API_MAPPING(WKResourceLoadStatisticsManagerRef, WebResourceLoadStatisticsManager)
 WK_ADD_API_MAPPING(WKScriptMessageRef, API::ScriptMessage)
 WK_ADD_API_MAPPING(WKSessionStateRef, API::SessionState)
-WK_ADD_API_MAPPING(WKSpeechRecognitionPermissionCallbackRef, SpeechRecognitionPermissionCallback)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 WK_ADD_API_MAPPING(WKUserContentControllerRef, WebUserContentControllerProxy)
 WK_ADD_API_MAPPING(WKUserContentExtensionStoreRef, API::ContentRuleListStore)

@@ -64,16 +64,6 @@ PAS_API void* bmalloc_try_allocate_auxiliary_with_alignment_casual(
 PAS_API void* bmalloc_allocate_auxiliary_with_alignment_casual(
     pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode);
 
-#if PAS_OS(DARWIN)
-#define PAS_MAR_SHOULD_LOG(allocation_mode, address) (pas_mar_enabled && allocation_mode == pas_non_compact_allocation_mode && pas_mar_is_address_in_qualifying_page(address))
-#define PAS_MAR_TRACK_ALLOCATION(address, size) pas_mar_did_allocate(&pas_mar_global_registry, address, size)
-#define PAS_MAR_TRACK_ALLOCATION_AND_ZERO(address, size) pas_mar_did_allocate_and_zero(&pas_mar_global_registry, address, size)
-#else
-#define PAS_MAR_SHOULD_LOG(allocation_mode, address) false
-#define PAS_MAR_TRACK_ALLOCATION(address, size) address
-#define PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size) ((void*) result.begin)
-#endif
-
 static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_auxiliary_inline(pas_primitive_heap_ref* heap_ref,
                                                                      size_t size,
                                                                      pas_allocation_mode allocation_mode)
@@ -382,9 +372,13 @@ bmalloc_reallocate_inline(void* old_ptr, size_t new_size,
         free_mode).begin;
 }
 
+PAS_API void bmalloc_deallocate_casual(void* ptr);
+
 static PAS_ALWAYS_INLINE void bmalloc_deallocate_inline(void* ptr)
 {
-    pas_deallocate(ptr, BMALLOC_HEAP_CONFIG);
+    if (PAS_LIKELY(pas_try_deallocate_inline_only(ptr, BMALLOC_HEAP_CONFIG, pas_deallocate_mode)))
+        return;
+    bmalloc_deallocate_casual(ptr);
 }
 
 PAS_END_EXTERN_C;

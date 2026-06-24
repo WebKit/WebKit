@@ -56,12 +56,12 @@ public:
     {
     }
 
-    GetterType value(const RenderStyle& style) const
+    GetterType value(const Style::ComputedStyle& style) const
     {
-        return (style.computedStyle().*m_getter)();
+        return (style.*m_getter)();
     }
 
-    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    bool equals(const Style::ComputedStyle& a, const Style::ComputedStyle& b) const override
     {
         if (&a == &b)
             return true;
@@ -69,7 +69,7 @@ public:
     }
 
 #if !LOG_DISABLED
-    void log(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
+    void log(const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Style::ComputedStyle& destination, double progress) const final
     {
         LOG_WITH_STREAM(Animations, stream << "  blending " << property() << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
@@ -89,9 +89,9 @@ public:
     {
     }
 
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
+    void interpolate(Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Context& context) const override
     {
-        (destination.computedStyle().*m_setter)(blendFunc(this->value(from), this->value(to), context));
+        (destination.*m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
 
 protected:
@@ -99,12 +99,12 @@ protected:
 };
 
 // Deduction guide for getter/setters that return and take values.
-template<typename T, typename GetterRenderStyle, typename SetterRenderStyle>
-Wrapper(CSSPropertyID, T (GetterRenderStyle::*getter)() const, void (SetterRenderStyle::*setter)(T)) -> Wrapper<T, T, T>;
+template<typename T, typename GetterComputedStyle, typename SetterComputedStyle>
+Wrapper(CSSPropertyID, T (GetterComputedStyle::*getter)() const, void (SetterComputedStyle::*setter)(T)) -> Wrapper<T, T, T>;
 
 // Deduction guide for getter/setters that return const references and take r-value references.
-template<typename T, typename GetterRenderStyle, typename SetterRenderStyle>
-Wrapper(CSSPropertyID, const T& (GetterRenderStyle::*getter)() const, void (SetterRenderStyle::*setter)(T&&)) -> Wrapper<T, const T&, T&&>;
+template<typename T, typename GetterComputedStyle, typename SetterComputedStyle>
+Wrapper(CSSPropertyID, const T& (GetterComputedStyle::*getter)() const, void (SetterComputedStyle::*setter)(T&&)) -> Wrapper<T, const T&, T&&>;
 
 // MARK: - Typed Wrappers
 
@@ -119,39 +119,39 @@ public:
     {
     }
 
-    bool equals(const RenderStyle& from, const RenderStyle& to) const override
+    bool equals(const Style::ComputedStyle& from, const Style::ComputedStyle& to) const override
     {
         if (&from == &to)
             return true;
         return Style::equalsForBlending(this->value(from), this->value(to), from, to);
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation operation) const override
+    bool canInterpolate(const Style::ComputedStyle& from, const Style::ComputedStyle& to, CompositeOperation operation) const override
     {
         return Style::canBlend(this->value(from), this->value(to), from, to, operation);
     }
 
-    bool requiresInterpolationForAccumulativeIteration(const RenderStyle& from, const RenderStyle& to) const override
+    bool requiresInterpolationForAccumulativeIteration(const Style::ComputedStyle& from, const Style::ComputedStyle& to) const override
     {
         return Style::requiresInterpolationForAccumulativeIteration(this->value(from), this->value(to), from, to);
     }
 
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
+    void interpolate(Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Context& context) const override
     {
-        (destination.computedStyle().*m_setter)(Style::blend(this->value(from), this->value(to), from, to, context));
+        (destination.*m_setter)(Style::blend(this->value(from), this->value(to), from, to, context));
     }
 
 #if !LOG_DISABLED
-    void log(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const override
+    void log(const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Style::ComputedStyle& destination, double progress) const override
     {
         LOG_WITH_STREAM(Animations, stream << "  blending " << property() << " from " << this->value(from) << " to " << this->value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << this->value(destination));
     }
 #endif
 
 private:
-    GetterType value(const RenderStyle& style) const
+    GetterType value(const Style::ComputedStyle& style) const
     {
-        return (style.computedStyle().*m_getter)();
+        return (style.*m_getter)();
     }
 
     GetterType (ComputedStyleProperties::*m_getter)() const;
@@ -159,16 +159,16 @@ private:
 };
 
 // Deduction guide for getter/setters that return and take values.
-template<typename T, typename GetterRenderStyle, typename SetterRenderStyle>
-StyleTypeWrapper(CSSPropertyID, T (GetterRenderStyle::*getter)() const, void (SetterRenderStyle::*setter)(T)) -> StyleTypeWrapper<T, T, T>;
+template<typename T, typename GetterComputedStyle, typename SetterComputedStyle>
+StyleTypeWrapper(CSSPropertyID, T (GetterComputedStyle::*getter)() const, void (SetterComputedStyle::*setter)(T)) -> StyleTypeWrapper<T, T, T>;
 
 // Deduction guide for getter/setters that return const references and take r-value references.
-template<typename T, typename GetterRenderStyle, typename SetterRenderStyle>
-StyleTypeWrapper(CSSPropertyID, const T& (GetterRenderStyle::*getter)() const, void (SetterRenderStyle::*setter)(T&&)) -> StyleTypeWrapper<T, const T&, T&&>;
+template<typename T, typename GetterComputedStyle, typename SetterComputedStyle>
+StyleTypeWrapper(CSSPropertyID, const T& (GetterComputedStyle::*getter)() const, void (SetterComputedStyle::*setter)(T&&)) -> StyleTypeWrapper<T, const T&, T&&>;
 
 // Deduction guide for getter/setters that return values and take r-value references.
-template<typename T, typename GetterRenderStyle, typename SetterRenderStyle>
-StyleTypeWrapper(CSSPropertyID, T (GetterRenderStyle::*getter)() const, void (SetterRenderStyle::*setter)(T&&)) -> StyleTypeWrapper<T, T, T&&>;
+template<typename T, typename GetterComputedStyle, typename SetterComputedStyle>
+StyleTypeWrapper(CSSPropertyID, T (GetterComputedStyle::*getter)() const, void (SetterComputedStyle::*setter)(T&&)) -> StyleTypeWrapper<T, T, T&&>;
 
 template<typename T> class VisitedAffectedStyleTypeWrapper final : public WrapperBase {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VisitedAffectedStyleTypeWrapper, Animation);
@@ -180,24 +180,24 @@ public:
     {
     }
 
-    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    bool equals(const Style::ComputedStyle& a, const Style::ComputedStyle& b) const override
     {
         return m_wrapper.equals(a, b) && m_visitedWrapper.equals(a, b);
     }
 
-    bool canInterpolate(const RenderStyle& a, const RenderStyle& b, CompositeOperation operation) const override
+    bool canInterpolate(const Style::ComputedStyle& a, const Style::ComputedStyle& b, CompositeOperation operation) const override
     {
         const_cast<VisitedAffectedStyleTypeWrapper&>(*this).m_wrapperCanInterpolate = m_wrapper.canInterpolate(a, b, operation);
         const_cast<VisitedAffectedStyleTypeWrapper&>(*this).m_visitedWrapperCanInterpolate = m_visitedWrapper.canInterpolate(a, b, operation);
         return m_wrapperCanInterpolate || m_visitedWrapperCanInterpolate;
     }
 
-    bool requiresInterpolationForAccumulativeIteration(const RenderStyle& a, const RenderStyle& b) const override
+    bool requiresInterpolationForAccumulativeIteration(const Style::ComputedStyle& a, const Style::ComputedStyle& b) const override
     {
         return m_wrapper.requiresInterpolationForAccumulativeIteration(a, b) && m_visitedWrapper.requiresInterpolationForAccumulativeIteration(a, b);
     }
 
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
+    void interpolate(Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Context& context) const override
     {
         bool usesNonNormalizeDiscreteInterpolation = CSSProperty::animationUsesNonNormalizedDiscreteInterpolation(property());
 
@@ -215,7 +215,7 @@ public:
     }
 
 #if !LOG_DISABLED
-    void log(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const override
+    void log(const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Style::ComputedStyle& destination, double progress) const override
     {
         m_wrapper.log(from, to, destination, progress);
         m_visitedWrapper.log(from, to, destination, progress);
@@ -239,15 +239,15 @@ public:
     {
     }
 
-    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final
+    bool canInterpolate(const Style::ComputedStyle&, const Style::ComputedStyle&, CompositeOperation) const final
     {
         return false;
     }
 
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
+    void interpolate(Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Context& context) const override
     {
         ASSERT(!context.progress || context.progress == 1.0);
-        (destination.computedStyle().*this->m_setter)(T { this->value(context.progress ? to : from) });
+        (destination.*this->m_setter)(T { this->value(context.progress ? to : from) });
     }
 
 private:
@@ -255,16 +255,16 @@ private:
 };
 
 // Deduction guide for getter/setters that return and take values.
-template<typename T, typename GetterRenderStyle, typename SetterRenderStyle>
-DiscreteWrapper(CSSPropertyID, T (GetterRenderStyle::*getter)() const, void (SetterRenderStyle::*setter)(T)) -> DiscreteWrapper<T, T, T>;
+template<typename T, typename GetterComputedStyle, typename SetterComputedStyle>
+DiscreteWrapper(CSSPropertyID, T (GetterComputedStyle::*getter)() const, void (SetterComputedStyle::*setter)(T)) -> DiscreteWrapper<T, T, T>;
 
 // Deduction guide for getter/setters that return const references and take r-value references.
-template<typename T, typename GetterRenderStyle, typename SetterRenderStyle>
-DiscreteWrapper(CSSPropertyID, const T& (GetterRenderStyle::*getter)() const, void (SetterRenderStyle::*setter)(T&&)) -> DiscreteWrapper<T, const T&, T&&>;
+template<typename T, typename GetterComputedStyle, typename SetterComputedStyle>
+DiscreteWrapper(CSSPropertyID, const T& (GetterComputedStyle::*getter)() const, void (SetterComputedStyle::*setter)(T&&)) -> DiscreteWrapper<T, const T&, T&&>;
 
 // Deduction guide for getter/setters that return values and take r-value references.
-template<typename T, typename GetterRenderStyle, typename SetterRenderStyle>
-DiscreteWrapper(CSSPropertyID, T (GetterRenderStyle::*getter)() const, void (SetterRenderStyle::*setter)(T&&)) -> DiscreteWrapper<T, T, T&&>;
+template<typename T, typename GetterComputedStyle, typename SetterComputedStyle>
+DiscreteWrapper(CSSPropertyID, T (GetterComputedStyle::*getter)() const, void (SetterComputedStyle::*setter)(T&&)) -> DiscreteWrapper<T, T, T&&>;
 
 template<typename T>
 class NonNormalizedDiscreteWrapper final : public Wrapper<T> {
@@ -275,7 +275,7 @@ public:
     {
     }
 
-    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final
+    bool canInterpolate(const Style::ComputedStyle&, const Style::ComputedStyle&, CompositeOperation) const final
     {
         return false;
     }
@@ -291,7 +291,7 @@ public:
     {
     }
 
-    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    bool equals(const Style::ComputedStyle& a, const Style::ComputedStyle& b) const final
     {
         return a.specifiedFontSize() == b.specifiedFontSize();
     }
@@ -308,9 +308,9 @@ public:
     {
     }
 
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
+    void interpolate(Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Context& context) const override
     {
-        (destination.computedStyle().*m_setter)(blendFunc(value(from), value(to), context));
+        (destination.*m_setter)(blendFunc(value(from), value(to), context));
     }
 
 private:
@@ -327,24 +327,24 @@ public:
     {
     }
 
-    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    bool equals(const Style::ComputedStyle& a, const Style::ComputedStyle& b) const final
     {
         return m_wrapper.equals(a, b) && m_visitedWrapper.equals(a, b);
     }
 
-    bool requiresInterpolationForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const final
+    bool requiresInterpolationForAccumulativeIteration(const Style::ComputedStyle&, const Style::ComputedStyle&) const final
     {
         return true;
     }
 
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
+    void interpolate(Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Context& context) const final
     {
         m_wrapper.interpolate(destination, from, to, context);
         m_visitedWrapper.interpolate(destination, from, to, context);
     }
 
 #if !LOG_DISABLED
-    void log(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
+    void log(const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Style::ComputedStyle& destination, double progress) const final
     {
         m_wrapper.log(from, to, destination, progress);
         m_visitedWrapper.log(from, to, destination, progress);
@@ -365,7 +365,7 @@ public:
     {
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    bool canInterpolate(const Style::ComputedStyle& from, const Style::ComputedStyle& to, CompositeOperation) const final
     {
         // https://drafts.csswg.org/web-animations-1/#animating-visibility
         // If neither value is visible, then discrete animation is used.
@@ -375,60 +375,38 @@ public:
 
 // MARK: - CoordinatedValueList Wrappers
 
-// Wrapper base class for an animatable property in a CoordinatedValueList
-template<typename CoordinatedValueListValueType>
-class CoordinatedValueListPropertyWrapperBase {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CoordinatedValueListPropertyWrapperBase, Animation);
-public:
-    CoordinatedValueListPropertyWrapperBase(CSSPropertyID property)
-        : m_property(property)
-    {
-    }
-    virtual ~CoordinatedValueListPropertyWrapperBase() = default;
-
-    CSSPropertyID property() const { return m_property; }
-
-    virtual bool equals(const CoordinatedValueListValueType&, const CoordinatedValueListValueType&, const RenderStyle&, const RenderStyle&) const = 0;
-    virtual void interpolate(CoordinatedValueListValueType&, const CoordinatedValueListValueType&, const CoordinatedValueListValueType&, const RenderStyle&, const RenderStyle&, const Context&) const = 0;
-    virtual bool canInterpolate(const CoordinatedValueListValueType&, const CoordinatedValueListValueType&, const RenderStyle&, const RenderStyle&, CompositeOperation) const { return true; }
-#if !LOG_DISABLED
-    virtual void log(const CoordinatedValueListValueType& destination, const CoordinatedValueListValueType&, const CoordinatedValueListValueType&, const RenderStyle&, const RenderStyle&, double) const = 0;
-#endif
-
-private:
-    CSSPropertyID m_property;
-};
-
 template<typename StyleType, typename CoordinatedValueListValueType>
-class CoordinatedValueListPropertyStyleTypeWrapper final : public CoordinatedValueListPropertyWrapperBase<CoordinatedValueListValueType> {
+class CoordinatedValueListPropertyStyleTypeWrapper final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CoordinatedValueListPropertyStyleTypeWrapper, Animation);
 public:
+    static constexpr bool supportsInterpolation = true;
+
     CoordinatedValueListPropertyStyleTypeWrapper(CSSPropertyID property, const StyleType& (CoordinatedValueListValueType::*getter)() const, void (CoordinatedValueListValueType::*setter)(StyleType&&))
-        : CoordinatedValueListPropertyWrapperBase<CoordinatedValueListValueType>(property)
+        : m_property(property)
         , m_getter(getter)
         , m_setter(setter)
     {
     }
 
-    bool equals(const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const RenderStyle& fromStyle, const RenderStyle& toStyle) const override
+    bool equals(const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle) const
     {
         if (&from == &to)
             return true;
         return Style::equalsForBlending(value(from), value(to), fromStyle, toStyle);
     }
 
-    bool canInterpolate(const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, CompositeOperation operation) const override final
+    bool canInterpolate(const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, CompositeOperation operation) const
     {
         return Style::canBlend(value(from), value(to), fromStyle, toStyle, operation);
     }
 
-    void interpolate(CoordinatedValueListValueType& destination, const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const Context& context) const override final
+    void interpolate(CoordinatedValueListValueType& destination, const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const Context& context) const
     {
         (destination.*m_setter)(Style::blend(value(from), value(to), fromStyle, toStyle, context));
     }
 
 #if !LOG_DISABLED
-    void log(const CoordinatedValueListValueType& destination, const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const RenderStyle&, const RenderStyle&, double progress) const override final
+    void log(const CoordinatedValueListValueType& destination, const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const Style::ComputedStyle&, const Style::ComputedStyle&, double progress) const
     {
         LOG_WITH_STREAM(Animations, stream << "  blending " << this->property() << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
@@ -440,39 +418,44 @@ private:
         return (value.*m_getter)();
     }
 
+    CSSPropertyID property() const { return m_property; }
+
+    CSSPropertyID m_property;
     const StyleType& (CoordinatedValueListValueType::*m_getter)() const;
     void (CoordinatedValueListValueType::*m_setter)(StyleType&&);
 };
 
 template<typename T, typename CoordinatedValueListValueType, typename GetterType = T, typename SetterType = T>
-class DiscreteCoordinatedValueListPropertyWrapper final : public CoordinatedValueListPropertyWrapperBase<CoordinatedValueListValueType> {
+class DiscreteCoordinatedValueListPropertyWrapper final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DiscreteCoordinatedValueListPropertyWrapper, Animation);
 public:
+    static constexpr bool supportsInterpolation = false;
+
     DiscreteCoordinatedValueListPropertyWrapper(CSSPropertyID property, GetterType (CoordinatedValueListValueType::*getter)() const, void (CoordinatedValueListValueType::*setter)(SetterType))
-        : CoordinatedValueListPropertyWrapperBase<CoordinatedValueListValueType>(property)
+        : m_property(property)
         , m_getter(getter)
         , m_setter(setter)
     {
     }
 
-    bool equals(const CoordinatedValueListValueType& a, const CoordinatedValueListValueType& b, const RenderStyle&, const RenderStyle&) const final
+    bool equals(const CoordinatedValueListValueType& a, const CoordinatedValueListValueType& b, const Style::ComputedStyle&, const Style::ComputedStyle&) const
     {
         return value(a) == value(b);
     }
 
-    bool canInterpolate(const CoordinatedValueListValueType&, const CoordinatedValueListValueType&, const RenderStyle&, const RenderStyle&, CompositeOperation) const final
+    bool canInterpolate(const CoordinatedValueListValueType&, const CoordinatedValueListValueType&, const Style::ComputedStyle&, const Style::ComputedStyle&, CompositeOperation) const
     {
         return false;
     }
 
-    void interpolate(CoordinatedValueListValueType& destination, const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const RenderStyle&, const RenderStyle&, const Context& context) const final
+    void interpolate(CoordinatedValueListValueType& destination, const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const Style::ComputedStyle&, const Style::ComputedStyle&, const Context& context) const
     {
         ASSERT(!context.progress || context.progress == 1.0);
         (destination.*m_setter)(T { context.progress ? value(to) : value(from) });
     }
 
 #if !LOG_DISABLED
-    void log(const CoordinatedValueListValueType& destination, const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const RenderStyle&, const RenderStyle&, double progress) const final
+    void log(const CoordinatedValueListValueType& destination, const CoordinatedValueListValueType& from, const CoordinatedValueListValueType& to, const Style::ComputedStyle&, const Style::ComputedStyle&, double progress) const
     {
         LOG_WITH_STREAM(Animations, stream << "  blending " << this->property() << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
@@ -484,6 +467,9 @@ private:
         return (list.*m_getter)();
     }
 
+    CSSPropertyID property() const { return m_property; }
+
+    CSSPropertyID m_property;
     GetterType (CoordinatedValueListValueType::*m_getter)() const;
     void (CoordinatedValueListValueType::*m_setter)(SetterType);
 };
@@ -500,10 +486,11 @@ DiscreteCoordinatedValueListPropertyWrapper(CSSPropertyID, const T& (Coordinated
 template<typename T, typename CoordinatedValueListValueType>
 DiscreteCoordinatedValueListPropertyWrapper(CSSPropertyID, T (CoordinatedValueListValueType::*getter)() const, void (CoordinatedValueListValueType::*setter)(T&&)) -> DiscreteCoordinatedValueListPropertyWrapper<T, CoordinatedValueListValueType, T, T&&>;
 
-template<typename T, typename RepeatedValueWrapper>
+template<CSSPropertyID ID, typename T, typename RepeatedValueWrapper>
 class CoordinatedValueListPropertyWrapper final : public WrapperBase {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CoordinatedValueListPropertyWrapper, Animation);
 public:
+    static constexpr CSSPropertyID propertyID = ID;
     using List = T;
     using CoordinatedValueListValueType = typename List::value_type;
 
@@ -511,8 +498,8 @@ public:
     using ListAccessor = List& (ComputedStyleBase::*)();
     using ListSetter = void (ComputedStyleBase::*)(List&&);
 
-    CoordinatedValueListPropertyWrapper(CSSPropertyID property, ListGetter getter, ListAccessor accessor, ListSetter setter, RepeatedValueWrapper repeatedValueWrapper)
-        : WrapperBase(property)
+    CoordinatedValueListPropertyWrapper(PropertyNameConstant<ID> property, ListGetter getter, ListAccessor accessor, ListSetter setter, RepeatedValueWrapper repeatedValueWrapper)
+        : WrapperBase(property.value)
         , m_listGetter(getter)
         , m_listAccessor(accessor)
         , m_listSetter(setter)
@@ -520,88 +507,150 @@ public:
     {
     }
 
-    bool equals(const RenderStyle& from, const RenderStyle& to) const final
+    bool equals(const Style::ComputedStyle& from, const Style::ComputedStyle& to) const final
     {
         if (&from == &to)
             return true;
 
-        auto& fromList = (from.computedStyle().*m_listGetter)();
-        auto& toList = (to.computedStyle().*m_listGetter)();
+        auto& fromList = (from.*m_listGetter)();
+        auto& toList = (to.*m_listGetter)();
 
-        auto numberOfFromValues = fromList.computedLength();
-        auto numberOfToValues = toList.computedLength();
-        auto numberOfValues = std::min(numberOfFromValues, numberOfToValues);
+        auto numberOfFromListValues = fromList.computedLength();
+        auto numberOfToListValues = toList.computedLength();
+
+        auto numberOfFromValues = fromList.template computedLengthForProperty<ID>();
+        auto numberOfToValues = toList.template computedLengthForProperty<ID>();
+        auto numberOfValues = std::lcm(numberOfFromValues, numberOfToValues);
 
         for (size_t i = 0; i < numberOfValues; ++i) {
-            auto& fromValue = fromList[i];
-            auto& toValue = toList[i];
-
-            if (!m_repeatedValueWrapper.equals(fromValue, toValue, from, to))
-                return false;
+            if (i < numberOfFromListValues && i < numberOfToListValues) {
+                if (!m_repeatedValueWrapper.equals(fromList[i], toList[i], from, to))
+                    return false;
+            } else if (i < numberOfFromListValues) {
+                if (!m_repeatedValueWrapper.equals(fromList[i], toList.atByRepeating(i), from, to))
+                    return false;
+            } else if (i < numberOfToListValues) {
+                if (!m_repeatedValueWrapper.equals(fromList.atByRepeating(i), toList[i], from, to))
+                    return false;
+            } else {
+                if (!m_repeatedValueWrapper.equals(fromList.atByRepeating(i), toList.atByRepeating(i), from, to))
+                    return false;
+            }
         }
 
         return true;
     }
 
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation operation) const final
+    bool canInterpolate(const Style::ComputedStyle& from, const Style::ComputedStyle& to, CompositeOperation operation) const final
     {
-        auto& fromList = (from.computedStyle().*m_listGetter)();
-        auto& toList = (to.computedStyle().*m_listGetter)();
+        if constexpr (!RepeatedValueWrapper::supportsInterpolation) {
+            return false;
+        } else {
+            auto& fromList = (from.*m_listGetter)();
+            auto& toList = (to.*m_listGetter)();
 
-        auto numberOfFromValues = fromList.computedLength();
-        auto numberOfToValues = toList.computedLength();
-        auto numberOfValues = std::min(numberOfFromValues, numberOfToValues);
+            auto numberOfFromListValues = fromList.computedLength();
+            auto numberOfToListValues = toList.computedLength();
 
-        for (size_t i = 0; i < numberOfValues; ++i) {
-            auto& fromValue = fromList[i];
-            auto& toValue = toList[i];
+            auto numberOfFromValues = fromList.template computedLengthForProperty<ID>();
+            auto numberOfToValues = toList.template computedLengthForProperty<ID>();
+            auto numberOfValues = std::lcm(numberOfFromValues, numberOfToValues);
 
-            // First check if the owner values allow interpolation.
-            if (!Style::canBlend(fromValue, toValue, from, to, operation))
-                return false;
+            auto canInterpolateItem = [&](const auto& fromValue, const auto& toValue) {
+                // First check if the owner values allow interpolation.
+                if (!Style::canBlend(fromValue, toValue, from, to, operation))
+                    return false;
 
-            // Then check if the individual property values allow interpolation.
-            if (!m_repeatedValueWrapper.canInterpolate(fromValue, toValue, from, to, operation))
-                return false;
+                // Then check if the individual property values allow interpolation.
+                if (!m_repeatedValueWrapper.canInterpolate(fromValue, toValue, from, to, operation))
+                    return false;
+
+                return true;
+            };
+
+            for (size_t i = 0; i < numberOfValues; ++i) {
+                if (i < numberOfFromListValues && i < numberOfToListValues) {
+                    if (!canInterpolateItem(fromList[i], toList[i]))
+                        return false;
+                } else if (i < numberOfFromListValues) {
+                    if (!canInterpolateItem(fromList[i], toList.atByRepeating(i)))
+                        return false;
+                } else if (i < numberOfToListValues) {
+                    if (!canInterpolateItem(fromList.atByRepeating(i), toList[i]))
+                        return false;
+                } else {
+                    if (!canInterpolateItem(fromList.atByRepeating(i), toList.atByRepeating(i)))
+                        return false;
+                }
+            }
+
+            return true;
         }
-
-        return true;
     }
 
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
+    void interpolate(Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Context& context) const final
     {
-        auto* fromList = &(from.computedStyle().*m_listGetter)();
-        auto* toList = &(to.computedStyle().*m_listGetter)();
-        auto& destinationList = (destination.computedStyle().*m_listAccessor)();
+        using PropertyAccessor = CoordinatedValueListPropertyAccessor<ID>;
+
+        auto& fromList = (from.*m_listGetter)();
+        auto& toList = (to.*m_listGetter)();
+        auto& destinationList = (destination.*m_listAccessor)();
+        auto numberOfDestinationListValues = destinationList.computedLength();
 
         if (context.isDiscrete) {
             ASSERT(!context.progress || context.progress == 1.0);
-            auto* list = context.progress ? toList : fromList;
-            fromList = list;
-            toList = list;
-        }
+            auto* list = context.progress ? &toList : &fromList;
+            auto numberOfValues = list->template computedLengthForProperty<ID>();
 
-        auto numberOfFromValues = fromList->computedLength();
-        auto numberOfToValues = toList->computedLength();
-        auto numberOfDestinationValues = destinationList.computedLength();
-        auto numberOfValues = std::min(numberOfFromValues, numberOfToValues);
+            for (size_t i = 0; i < numberOfValues; ++i) {
+                if (i >= numberOfDestinationListValues) {
+                    destinationList.append(typename List::value_type { });
+                    ++numberOfDestinationListValues;
+                }
+                m_repeatedValueWrapper.interpolate(destinationList[i], (*list)[i], (*list)[i], from, to, context);
+            }
 
-        for (size_t i = 0; i < numberOfValues; ++i) {
-            if (i >= numberOfDestinationValues)
-                destinationList.append(typename List::value_type { });
+            for (size_t i = numberOfValues; i < numberOfDestinationListValues; ++i)
+                PropertyAccessor { destinationList[i] }.clear();
+        } else {
+            auto numberOfFromListValues = fromList.computedLength();
+            auto numberOfToListValues = toList.computedLength();
 
-            m_repeatedValueWrapper.interpolate(destinationList[i], (*fromList)[i], (*toList)[i], from, to, context);
+            auto numberOfFromValues = fromList.template computedLengthForProperty<ID>();
+            auto numberOfToValues = toList.template computedLengthForProperty<ID>();
+
+            auto numberOfValues = std::lcm(numberOfFromValues, numberOfToValues);
+
+            for (size_t i = 0; i < numberOfValues; ++i) {
+                if (i >= numberOfDestinationListValues) {
+                    destinationList.append(typename List::value_type { });
+                    ++numberOfDestinationListValues;
+                }
+
+                if (i < numberOfFromListValues && i < numberOfToListValues) {
+                    m_repeatedValueWrapper.interpolate(destinationList[i], fromList[i], toList[i], from, to, context);
+                } else if (i < numberOfFromListValues) {
+                    m_repeatedValueWrapper.interpolate(destinationList[i], fromList[i], toList.atByRepeating(i), from, to, context);
+                } else if (i < numberOfToListValues) {
+                    m_repeatedValueWrapper.interpolate(destinationList[i], fromList.atByRepeating(i), toList[i], from, to, context);
+                } else {
+                    m_repeatedValueWrapper.interpolate(destinationList[i], fromList.atByRepeating(i), toList.atByRepeating(i), from, to, context);
+                }
+            }
+
+            for (size_t i = numberOfValues; i < numberOfDestinationListValues; ++i)
+                PropertyAccessor { destinationList[i] }.clear();
         }
 
         destinationList.prepareForUse();
     }
 
 #if !LOG_DISABLED
-    void log(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
+    void log(const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Style::ComputedStyle& destination, double progress) const final
     {
-        auto& fromList = (from.computedStyle().*m_listGetter)();
-        auto& toList = (to.computedStyle().*m_listGetter)();
-        auto& destinationList = (destination.computedStyle().*m_listGetter)();
+        auto& fromList = (from.*m_listGetter)();
+        auto& toList = (to.*m_listGetter)();
+        auto& destinationList = (destination.*m_listGetter)();
 
         auto numberOfFromValues = fromList.computedLength();
         auto numberOfToValues = toList.computedLength();
@@ -631,7 +680,7 @@ public:
     {
     }
 
-    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    bool equals(const Style::ComputedStyle& a, const Style::ComputedStyle& b) const final
     {
         if (&a == &b)
             return true;
@@ -644,14 +693,14 @@ public:
         return true;
     }
 
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
+    void interpolate(Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Context& context) const final
     {
         for (auto& wrapper : m_longhandWrappers)
             wrapper->interpolate(destination, from, to, context);
     }
 
 #if !LOG_DISABLED
-    void log(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
+    void log(const Style::ComputedStyle& from, const Style::ComputedStyle& to, const Style::ComputedStyle& destination, double progress) const final
     {
         for (auto& wrapper : m_longhandWrappers)
             wrapper->log(from, to, destination, progress);

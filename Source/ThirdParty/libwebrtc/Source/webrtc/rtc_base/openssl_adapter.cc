@@ -791,8 +791,7 @@ void OpenSSLAdapter::SSLInfoCallback(const SSL* ssl, int where, int ret) {
     default:
       break;
   }
-  char buf[1024];
-  SimpleStringBuilder ss(buf);
+  StringBuilder ss;
   ss << SSL_state_string_long(ssl);
   if (ret == 0) {
     RTC_LOG(LS_ERROR) << "Error during " << ss.str() << "\n";

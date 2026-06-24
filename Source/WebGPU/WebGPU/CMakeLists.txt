@@ -1,81 +1,33 @@
-set(WebGPU_SOURCES
-    Adapter.mm
-    BindGroup.mm
-    BindGroupLayout.mm
-    Buffer.mm
-    CommandBuffer.mm
-    CommandEncoder.mm
-    CommandsMixin.mm
-    ComputePassEncoder.mm
-    ComputePipeline.mm
-    Device.mm
-    ExternalTexture.mm
-    HardwareCapabilities.mm
-    Instance.mm
-    Pipeline.mm
-    PipelineLayout.mm
-    PresentationContext.mm
-    PresentationContextIOSurface.mm
-    QuerySet.mm
-    Queue.mm
-    RenderBundle.mm
-    RenderBundleEncoder.mm
-    RenderPassEncoder.mm
-    RenderPipeline.mm
-    Sampler.mm
-    ShaderModule.mm
-    Texture.mm
-    TextureView.mm
-    XRBinding.mm
-    XRProjectionLayer.mm
-    XRSubImage.mm
-    XRView.mm
+# FIXME: Use the standard WEBKIT_FRAMEWORK family of macros to describe WebGPU.
+
+list(APPEND WebGPU_UNIFIED_SOURCE_LIST_FILES
+    "Sources.txt"
 )
 
-# WGSL compiler sources are compiled into the WebGPU framework
 set(WGSL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../WGSL)
-set(WebGPU_WGSL_SOURCES
-    ${WGSL_DIR}/AliasAnalysis.cpp
-    ${WGSL_DIR}/AttributeValidator.cpp
-    ${WGSL_DIR}/BoundsCheck.cpp
-    ${WGSL_DIR}/CallGraph.cpp
-    ${WGSL_DIR}/CompilationMessage.cpp
-    ${WGSL_DIR}/CompilationScope.cpp
-    ${WGSL_DIR}/ConstantValue.cpp
-    ${WGSL_DIR}/Constraints.cpp
-    ${WGSL_DIR}/EntryPointRewriter.cpp
-    ${WGSL_DIR}/GlobalSorting.cpp
-    ${WGSL_DIR}/GlobalVariableRewriter.cpp
-    ${WGSL_DIR}/Lexer.cpp
-    ${WGSL_DIR}/MangleNames.cpp
-    ${WGSL_DIR}/Overload.cpp
-    ${WGSL_DIR}/Parser.cpp
-    ${WGSL_DIR}/PointerRewriter.cpp
-    ${WGSL_DIR}/Token.cpp
-    ${WGSL_DIR}/TypeCheck.cpp
-    ${WGSL_DIR}/Types.cpp
-    ${WGSL_DIR}/TypeStore.cpp
-    ${WGSL_DIR}/UniformityAnalysis.cpp
-    ${WGSL_DIR}/VisibilityValidator.cpp
-    ${WGSL_DIR}/WGSL.cpp
-    ${WGSL_DIR}/WGSLEnums.cpp
-    ${WGSL_DIR}/WGSLShaderModule.cpp
-    ${WGSL_DIR}/AST/ASTBinaryExpression.cpp
-    ${WGSL_DIR}/AST/ASTBuilder.cpp
-    ${WGSL_DIR}/AST/ASTDecrementIncrementStatement.cpp
-    ${WGSL_DIR}/AST/ASTStringDumper.cpp
-    ${WGSL_DIR}/AST/ASTUnaryExpression.cpp
-    ${WGSL_DIR}/AST/ASTVisitor.cpp
-    ${WGSL_DIR}/Metal/MetalCodeGenerator.cpp
-    ${WGSL_DIR}/IOValidator.cpp
-    ${WGSL_DIR}/Metal/MetalFunctionWriter.cpp
-)
 
-add_library(WebGPU SHARED ${WebGPU_SOURCES} ${WebGPU_WGSL_SOURCES})
+if (SWIFT_REQUIRED)
+    set(WebGPU_SWIFT_INTEROP_SOURCES
+        Buffer.mm
+        CommandEncoder.mm
+        Queue.mm
+    )
+    foreach (_f IN LISTS WebGPU_SWIFT_INTEROP_SOURCES)
+        cmake_path(GET _f FILENAME _fn)
+        list(APPEND WebGPU_UNIFIED_SOURCE_EXCLUDES "(^|/)${_fn}( |$)")
+    endforeach ()
+endif ()
 
-# WGSL .cpp sources compile as ObjC++ via LANGUAGE OBJCXX so they share the
-# OBJCXX precompiled header with the .mm sources.
-set_source_files_properties(${WebGPU_WGSL_SOURCES} PROPERTIES LANGUAGE OBJCXX)
+WEBKIT_COMPUTE_SOURCES(WebGPU)
+
+if (DEFINED WebGPU_SWIFT_INTEROP_SOURCES)
+    list(REMOVE_ITEM WebGPU_SOURCES ${WebGPU_SWIFT_INTEROP_SOURCES})
+endif ()
+
+# WebGPU compiles uniformly with -fobjc-arc, so the bundler's ARC .mm bundles
+# (WebGPU_ARC_SOURCES) compile directly into the library alongside WebGPU_SOURCES.
+add_library(WebGPU SHARED ${WebGPU_SOURCES} ${WebGPU_ARC_SOURCES})
+
 WEBKIT_ADD_PREFIX_HEADER(WebGPU WebGPUPrefix.h PREFIX_LANGUAGES OBJCXX)
 
 set_target_properties(WebGPU PROPERTIES
@@ -118,6 +70,8 @@ target_link_libraries(WebGPU PRIVATE
     ${QUARTZCORE_FRAMEWORK}
     ICU::uc
     JavaScriptCore
+    WGSLCore
+    INTERFACE WebKitAdditions
 )
 
 target_include_directories(WebGPU PRIVATE
@@ -295,49 +249,8 @@ if (SWIFT_REQUIRED)
         "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-library-level spi>"
         "$<$<COMPILE_LANGUAGE:Swift>:-no-verify-emitted-module-interface>"
         "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -disable-access-control>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -D__WEBGPU__>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DENABLE_WEBGPU_SWIFT=1>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DUCHAR_TYPE=char16_t>"
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fvisibility=hidden>"
     )
 
-    set(WebGPU_SWIFT_INCLUDE_DIRECTORIES "")
-
-    # FIXME: Disable access control until CMake replicates Xcode's DEFINES_MODULE.
-    # https://bugs.webkit.org/show_bug.cgi?id=312083
-    set(WebGPU_SWIFT_EXTRA_OPTIONS
-        "-Xcc" "-DENABLE_WEBGPU_SWIFT=1"
-        "-Xcc" "-DUCHAR_TYPE=char16_t"
-        "-Xcc" "-D__WEBGPU__"
-        "-Xcc" "-fvisibility=hidden"
-        "-Xfrontend" "-disable-access-control"
-        "-Xfrontend" "-emit-clang-header-min-access" "-Xfrontend" "public"
-        "-enable-experimental-feature" "LifetimeDependence"
-        "-enable-experimental-feature" "Lifetimes"
-        "-enable-experimental-feature" "SafeInteropWrappers"
-        "-import-underlying-module"
-        "-library-level" "spi"
-        "-no-verify-emitted-module-interface"
-        "-strict-memory-safety"
-        "-swift-version" "6"
-        "-F" "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
-        "-Xcc" "-I${WebGPU_FRAMEWORK_HEADERS_DIR}"
-        "-Xcc" "-I${WebGPU_PRIVATE_FRAMEWORK_HEADERS_DIR}"
-        "-Xcc" "-I${CMAKE_CURRENT_SOURCE_DIR}/Internal"
-        "-Xcc" "-I${CMAKE_CURRENT_SOURCE_DIR}"
-        "-Xcc" "-I${CMAKE_CURRENT_SOURCE_DIR}/.."
-        "-Xcc" "-I${WGSL_DIR}"
-        "-Xcc" "-I${WGSL_DIR}/AST"
-        "-Xcc" "-I${WGSL_DIR}/Metal"
-        "-Xcc" "-I${CMAKE_CURRENT_BINARY_DIR}/../WGSL"
-        "-Xcc" "-I${CMAKE_BINARY_DIR}/WTF/Headers"
-        "-Xcc" "-I${CMAKE_BINARY_DIR}/bmalloc/Headers"
-        "-Xcc" "-I${CMAKE_BINARY_DIR}"
-        "-Xcc" "-I${CMAKE_CURRENT_BINARY_DIR}"
-    )
-    if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
-        list(APPEND WebGPU_SWIFT_EXTRA_OPTIONS "-Xcc" "-I${CMAKE_BINARY_DIR}/ICU/Headers")
-    endif ()
     if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
         # iOS Swift compiles transitively load UIKit→UIKitCore→WebKit_Private,
         # whose PCM build needs our project -Xcc flags. Explicit modules let
@@ -347,9 +260,27 @@ if (SWIFT_REQUIRED)
 
     set(WebGPU_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS public)
 
+    # FIXME(rdar://177840132): swiftc -emit-dependencies records imported
+    # clang modulemaps, but sometimes skips individual C++ headers.
+    file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/Internal/module.modulemap" _mm_lines REGEX "header \"")
+    foreach (_l IN LISTS _mm_lines)
+        string(REGEX REPLACE ".*header \"(.*)\".*" "\\1" _h "${_l}")
+        cmake_path(ABSOLUTE_PATH _h BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Internal" NORMALIZE)
+        list(APPEND WebGPU_SWIFT_INTEROP_HEADERS "${_h}")
+    endforeach ()
+
     WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebGPU WebGPU
         "${WebGPU_FRAMEWORK_HEADERS_DIR}/WebGPU"
         "WebGPUSwift-Generated.h")
+
+    WEBKIT_DEFINE_SUBTARGET(WebGPU_SwiftInterop WebGPU ${WebGPU_SWIFT_INTEROP_SOURCES})
+    target_precompile_headers(WebGPU_SwiftInterop REUSE_FROM WebGPU)
+    add_dependencies(WebGPU_SwiftInterop WTF_CopyHeaders bmalloc_CopyHeaders wgsl-types)
+    set(_interop_objs "$<FILTER:$<TARGET_OBJECTS:WebGPU_SwiftInterop>,EXCLUDE,\\.(g|p)ch$>")
+    set(_interop_rsp "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/WebGPU_SwiftInterop.dir/objects.rsp")
+    file(GENERATE OUTPUT "${_interop_rsp}" CONTENT "$<JOIN:${_interop_objs},\n>")
+    target_link_options(WebGPU PRIVATE "@${_interop_rsp}")
+    set_property(TARGET WebGPU APPEND PROPERTY LINK_DEPENDS "${_interop_objs};${_interop_rsp}")
 endif ()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "iOS")

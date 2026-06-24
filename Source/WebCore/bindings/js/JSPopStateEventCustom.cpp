@@ -44,22 +44,22 @@ JSValue JSPopStateEvent::state(JSGlobalObject& lexicalGlobalObject) const
 {
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
     return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().cachedState(), [this, &lexicalGlobalObject](ThrowScope&) {
-        PopStateEvent& event = wrapped();
+        Ref event = wrapped();
 
-        if (event.state())
-            return event.state().getValue(jsNull());
+        if (event->state())
+            return event->state().getValue(jsNull());
 
-        History* history = event.history();
-        if (!history || !event.serializedState())
+        RefPtr history = event->history();
+        if (!history || !event->serializedState())
             return jsNull();
 
         // Share the same deserialization with history.state when the state is the current one.
-        if (history->isSameAsCurrentState(event.serializedState())) {
+        if (history->isSameAsCurrentState(event->serializedState())) {
             auto* jsHistory = downcast<JSHistory>(toJS(&lexicalGlobalObject, realm(), *history).asCell());
             return jsHistory->state(lexicalGlobalObject);
         }
 
-        return event.serializedState()->deserialize(lexicalGlobalObject, realm());
+        return event->serializedState()->deserialize(lexicalGlobalObject, realm());
     });
 }
 

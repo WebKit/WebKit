@@ -51,10 +51,5 @@ int X509_REQ_set1_signature_algo(X509_REQ *req, const X509_ALGOR *algo) {
 
 int X509_REQ_set1_signature_value(X509_REQ *req, const uint8_t *sig,
                                   size_t sig_len) {
-  if (!ASN1_STRING_set(req->signature, sig, sig_len)) {
-    return 0;
-  }
-  req->signature->flags &= ~(ASN1_STRING_FLAG_BITS_LEFT | 0x07);
-  req->signature->flags |= ASN1_STRING_FLAG_BITS_LEFT;
-  return 1;
+  return ASN1_STRING_set(req->signature, sig, sig_len);
 }

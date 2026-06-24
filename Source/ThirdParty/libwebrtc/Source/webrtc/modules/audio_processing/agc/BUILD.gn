@@ -24,12 +24,10 @@ rtc_library("agc") {
     "..:apm_logging",
     "..:audio_buffer",
     "..:audio_frame_view",
-    "../../../api:array_view",
     "../../../api:field_trials_view",
     "../../../api/audio:audio_processing",
     "../../../api/environment",
     "../../../common_audio",
-    "../../../common_audio:common_audio_c",
     "../../../rtc_base:checks",
     "../../../rtc_base:gtest_prod",
     "../../../rtc_base:logging",
@@ -38,7 +36,6 @@ rtc_library("agc") {
     "../agc2:clipping_predictor",
     "../agc2:gain_map",
     "../agc2:input_volume_stats_reporter",
-    "../vad",
   ]
 }
 
@@ -52,7 +49,6 @@ rtc_library("level_estimation") {
     "utility.h",
   ]
   deps = [
-    "../../../api:array_view",
     "../../../rtc_base:checks",
     "../vad",
   ]
@@ -75,12 +71,9 @@ rtc_library("legacy_agc") {
   ]
 
   deps = [
-    "../../../common_audio",
     "../../../common_audio:common_audio_c",
     "../../../common_audio:common_audio_cc",
-    "../../../common_audio/third_party/ooura:fft_size_256",
     "../../../rtc_base:checks",
-    "../../../system_wrappers",
   ]
 
   if (rtc_build_with_neon) {
@@ -107,18 +100,13 @@ if (rtc_include_tests) {
       ":gain_control_interface",
       ":level_estimation",
       "..:audio_buffer",
-      "..:mocks",
-      "../../../api:array_view",
-      "../../../api:field_trials",
       "../../../api/audio:audio_processing",
       "../../../api/environment",
       "../../../api/environment:environment_factory",
       "../../../rtc_base:checks",
-      "../../../rtc_base:random",
-      "../../../rtc_base:safe_conversions",
       "../../../rtc_base:safe_minmax",
       "../../../rtc_base:stringutils",
-      "../../../system_wrappers:metrics",
+      "../../../test:create_test_environment",
       "../../../test:create_test_field_trials",
       "../../../test:fileutils",
       "../../../test:test_support",

@@ -6,8 +6,8 @@ from typing import Any, Awaitable, Callable, List, Optional, Mapping, MutableMap
 from urllib.parse import urljoin, urlparse
 
 from . import modules
-from .error import from_error_details
-from .transport import get_running_loop, Transport
+from .error import from_error_details, UnknownErrorException
+from .transport import Transport
 
 
 class BidiSession:
@@ -93,12 +93,14 @@ class BidiSession:
         self.bluetooth = modules.Bluetooth(self)
         self.browser = modules.Browser(self)
         self.browsing_context = modules.BrowsingContext(self)
+        self.emulation = modules.Emulation(self)
         self.input = modules.Input(self)
         self.network = modules.Network(self)
         self.permissions = modules.Permissions(self)
         self.script = modules.Script(self)
         self.session = modules.Session(self)
         self.storage = modules.Storage(self)
+        self.user_agent_client_hints = modules.UserAgentClientHints(self)
         self.web_extension = modules.WebExtension(self)
 
     @property
@@ -143,21 +145,34 @@ class BidiSession:
     async def start_transport(self,
                               loop: Optional[asyncio.AbstractEventLoop] = None) -> None:
         if self.transport is None:
-            if loop is None:
-                loop = get_running_loop()
-
-            self.transport = Transport(self.websocket_url, self.on_message, loop=loop)
+            self.transport = Transport(self.websocket_url,
+                 self.on_message,
+                 loop=loop,
+                                       on_closed=self.on_transport_closed)
             await self.transport.start()
+        elif loop is not None and loop is not self.event_loop:
+            raise ValueError("Transport with a different event loop already exists")
 
     async def start(self,
                     loop: Optional[asyncio.AbstractEventLoop] = None) -> None:
         """Connect to the WebDriver BiDi remote via WebSockets"""
 
-        await self.start_transport(loop)
+        try:
+            await self.start_transport(loop)
 
-        if self.session_id is None:
-            self.session_id, self.capabilities = await self.session.new(  # type: ignore
-                capabilities=self.requested_capabilities)
+            if self.session_id is None:
+                self.session_id, self.capabilities = await self.session.new(  # type: ignore
+                    capabilities=self.requested_capabilities)
+
+        except Exception:
+            # Make sure we end up back in a consistent state.
+            await self.end()
+            raise
+
+    def on_transport_closed(self):
+        for future in self.pending_commands.values():
+            if future is not None and not future.done():
+                future.set_exception(UnknownErrorException("WebSocket connection closed"))
 
     async def send_command(
         self,
@@ -197,7 +212,9 @@ class BidiSession:
                 exception = from_error_details(data["error"],
                                                data["message"],
                                                data.get("stacktrace"))
-                future.set_exception(exception)
+                # Only set the exception if the future is not cancelled.
+                if future.cancelled() is not True:
+                    future.set_exception(exception)
         elif data["type"] == "event":
             # This is an event
             assert isinstance(data["method"], str)

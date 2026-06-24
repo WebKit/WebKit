@@ -125,6 +125,7 @@ private:
     String m_resolvedCacheStoragePath;
     UnifiedOriginStorageLevel m_level;
     RefPtr<BackgroundFetchStoreManager> m_backgroundFetchManager;
+    String m_resolvedBackgroundFetchStoragePath;
     std::unique_ptr<ServiceWorkerStorageManager> m_serviceWorkerStorageManager;
 };
 
@@ -589,10 +590,10 @@ String OriginStorageManager::StorageBucket::resolvedCacheStoragePath()
 
 String OriginStorageManager::StorageBucket::resolvedBackgroundFetchStoragePath()
 {
-    if (m_resolvedCacheStoragePath.isNull())
-        m_resolvedCacheStoragePath = typeStoragePath(StorageType::BackgroundFetchStorage);
+    if (m_resolvedBackgroundFetchStoragePath.isNull())
+        m_resolvedBackgroundFetchStoragePath = typeStoragePath(StorageType::BackgroundFetchStorage);
 
-    return m_resolvedCacheStoragePath;
+    return m_resolvedBackgroundFetchStoragePath;
 }
 
 String OriginStorageManager::StorageBucket::resolvedPath(WebsiteDataType webisteDataType)
@@ -746,11 +747,12 @@ CacheStorageManager* OriginStorageManager::existingCacheStorageManager()
 
 CacheStorageManager& OriginStorageManager::cacheStorageManager(CacheStorageRegistry& registry, const WebCore::ClientOrigin& origin, Ref<WorkQueue>&& queue)
 {
-    return defaultBucket().cacheStorageManager(registry, origin, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
-        if (!quotaManager.get())
+    return defaultBucket().cacheStorageManager(registry, origin, [weakQuotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+        RefPtr quotaManager = weakQuotaManager;
+        if (!quotaManager)
             return completionHandler(false);
 
-        quotaManager.get()->requestSpace(spaceRequested, [completionHandler = WTF::move(completionHandler)](auto decision) mutable {
+        quotaManager->requestSpace(spaceRequested, [completionHandler = WTF::move(completionHandler)](auto decision) mutable {
             completionHandler(decision == OriginQuotaManager::Decision::Grant);
         });
     }, WTF::move(queue));
@@ -758,11 +760,12 @@ CacheStorageManager& OriginStorageManager::cacheStorageManager(CacheStorageRegis
 
 BackgroundFetchStoreManager& OriginStorageManager::backgroundFetchManager(Ref<WorkQueue>&& queue)
 {
-    return defaultBucket().backgroundFetchManager(WTF::move(queue), [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
-        if (!quotaManager.get())
+    return defaultBucket().backgroundFetchManager(WTF::move(queue), [weakQuotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+        RefPtr quotaManager = weakQuotaManager;
+        if (!quotaManager)
             return completionHandler(false);
 
-        quotaManager.get()->requestSpace(spaceRequested, [completionHandler = WTF::move(completionHandler)](auto decision) mutable {
+        quotaManager->requestSpace(spaceRequested, [completionHandler = WTF::move(completionHandler)](auto decision) mutable {
             completionHandler(decision == OriginQuotaManager::Decision::Grant);
         });
     });

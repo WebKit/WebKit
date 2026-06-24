@@ -29,19 +29,13 @@ func addVersionNegotiationTests() {
 
 			// Test configuring the runner's maximum version.
 			for _, runnerVers := range allVersions(protocol) {
-				expectedVersion := shimVers.version
-				if runnerVers.version < shimVers.version {
-					expectedVersion = runnerVers.version
-				}
+				expectedVersion := min(runnerVers.version, shimVers.version)
 
 				suffix := shimVers.name + "-" + runnerVers.name
 				suffix += "-" + protocol.String()
 
 				// Determine the expected initial record-layer versions.
-				clientVers := shimVers.version
-				if clientVers > VersionTLS10 {
-					clientVers = VersionTLS10
-				}
+				clientVers := min(shimVers.version, VersionTLS10)
 				clientVers = recordVersionToWire(clientVers, protocol)
 				serverVers := expectedVersion
 				if expectedVersion >= VersionTLS13 {
@@ -228,6 +222,21 @@ func addVersionNegotiationTests() {
 		},
 		shouldFail:    true,
 		expectedError: ":UNEXPECTED_EXTENSION:",
+	})
+
+	// In TLS 1.3, the protocol version is negotiated with supported_versions. When
+	// this happens, we ignore the legacy version field and tolerate arbitrary
+	// values in there.
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "IgnoreLegacyVersion-TLS13",
+		config: Config{
+			MaxVersion: VersionTLS13,
+			Bugs: ProtocolBugs{
+				SendClientVersion: 0x1234,
+			},
+		},
+		resumeSession: true,
 	})
 
 	// Test that the maximum version is selected regardless of the

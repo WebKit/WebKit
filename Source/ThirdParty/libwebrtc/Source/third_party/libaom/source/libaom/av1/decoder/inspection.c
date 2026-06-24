@@ -156,6 +156,16 @@ int ifd_inspect(insp_frame_data *fd, void *decoder, int skip_not_transform) {
       }
       // delta_q
       mi->current_qindex = mbmi->current_qindex;
+
+      if (pbi->sb_bits) {
+        const int mib_size = cm->seq_params->mib_size;
+        const int sb_cols = (cm->mi_params.mi_cols + mib_size - 1) / mib_size;
+        const int sb_row = j / mib_size;
+        const int sb_col = i / mib_size;
+        mi->sb_bits = (int16_t)pbi->sb_bits[sb_row * sb_cols + sb_col];
+      } else {
+        mi->sb_bits = 0;
+      }
     }
   }
   return 1;

@@ -30,6 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/blue-green-red-yellow-no-size.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/c-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/checkerboard.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-16x8-noSize.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-16x8-parDefault.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-16x8.png
@@ -39,10 +40,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-8x16.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/colors-8x16.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/exif-orientation-6-ru.jpg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/external-images.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/import-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/import-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/intrinsic-size.jpg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/intrinsic-size.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/object-fit-stale-image.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/object-fit-stale-image.py
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/pattern-grg-rgr-grg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/pattern-grg-rrg-rgg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/pattern-rgr-grg-rgr.png
@@ -51,6 +55,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/ruler-h-50px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/ruler-v-100px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/ruler-v-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/scripted.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/small-border.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/square-purple.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/support/square-teal.png

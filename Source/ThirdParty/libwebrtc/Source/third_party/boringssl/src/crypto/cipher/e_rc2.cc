@@ -100,7 +100,7 @@ typedef struct rc2_key_st {
   uint16_t data[64];
 } RC2_KEY;
 
-static void RC2_encrypt(uint32_t *d, RC2_KEY *key) {
+static void rc2_encrypt(uint32_t *d, RC2_KEY *key) {
   int i, n;
   uint16_t *p0, *p1;
   uint16_t x0, x1, x2, x3, t;
@@ -144,7 +144,7 @@ static void RC2_encrypt(uint32_t *d, RC2_KEY *key) {
   d[1] = (uint32_t)(x2 & 0xffff) | ((uint32_t)(x3 & 0xffff) << 16L);
 }
 
-static void RC2_decrypt(uint32_t *d, RC2_KEY *key) {
+static void rc2_decrypt(uint32_t *d, RC2_KEY *key) {
   int i, n;
   uint16_t *p0, *p1;
   uint16_t x0, x1, x2, x3, t;
@@ -189,7 +189,7 @@ static void RC2_decrypt(uint32_t *d, RC2_KEY *key) {
   d[1] = (uint32_t)(x2 & 0xffff) | ((uint32_t)(x3 & 0xffff) << 16L);
 }
 
-static void RC2_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
+static void rc2_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
                             RC2_KEY *ks, uint8_t *iv, int encrypt) {
   uint32_t tin0, tin1;
   uint32_t tout0, tout1, xor0, xor1;
@@ -207,7 +207,7 @@ static void RC2_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
       tin1 ^= tout1;
       tin[0] = tin0;
       tin[1] = tin1;
-      RC2_encrypt(tin, ks);
+      rc2_encrypt(tin, ks);
       tout0 = tin[0];
       l2c(tout0, out);
       tout1 = tin[1];
@@ -219,7 +219,7 @@ static void RC2_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
       tin1 ^= tout1;
       tin[0] = tin0;
       tin[1] = tin1;
-      RC2_encrypt(tin, ks);
+      rc2_encrypt(tin, ks);
       tout0 = tin[0];
       l2c(tout0, out);
       tout1 = tin[1];
@@ -236,7 +236,7 @@ static void RC2_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
       tin[0] = tin0;
       c2l(in, tin1);
       tin[1] = tin1;
-      RC2_decrypt(tin, ks);
+      rc2_decrypt(tin, ks);
       tout0 = tin[0] ^ xor0;
       tout1 = tin[1] ^ xor1;
       l2c(tout0, out);
@@ -249,7 +249,7 @@ static void RC2_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
       tin[0] = tin0;
       c2l(in, tin1);
       tin[1] = tin1;
-      RC2_decrypt(tin, ks);
+      rc2_decrypt(tin, ks);
       tout0 = tin[0] ^ xor0;
       tout1 = tin[1] ^ xor1;
       l2cn(tout0, tout1, out, l + 8);
@@ -287,18 +287,23 @@ static const uint8_t key_table[256] = {
     0xfe, 0x7f, 0xc1, 0xad,
 };
 
-static void RC2_set_key(RC2_KEY *key, int len, const uint8_t *data, int bits) {
-  int i, j;
+static int rc2_set_key(RC2_KEY *key, size_t len, const uint8_t *data,
+                       int bits) {
+  size_t i, j;
   uint8_t *k;
-  uint16_t *ki;
   unsigned int c, d;
 
   k = (uint8_t *)&key->data[0];
   *k = 0;  // for if there is a zero length key
 
+  if (len == 0) {
+    OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_KEY_LENGTH);
+    return 0;
+  }
   if (len > 128) {
     len = 128;
   }
+
   if (bits <= 0) {
     bits = 1024;
   }
@@ -326,16 +331,20 @@ static void RC2_set_key(RC2_KEY *key, int len, const uint8_t *data, int bits) {
 
   d = key_table[k[i] & c];
   k[i] = d;
-  while (i--) {
+
+  while (i > 0) {
+    --i;
     d = key_table[k[i + j] ^ d];
     k[i] = d;
   }
 
   // copy from bytes into uint16_t's
-  ki = &(key->data[63]);
-  for (i = 127; i >= 0; i -= 2) {
-    *(ki--) = ((k[i] << 8) | k[i - 1]) & 0xffff;
+  for (i = 0; i < 64; ++i) {
+    j = 63 - i;
+    key->data[j] = ((k[2 * j + 1] << 8) | k[2 * j]) & 0xffff;
   }
+
+  return 1;
 }
 
 typedef struct {
@@ -346,24 +355,26 @@ typedef struct {
 static int rc2_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
                         const uint8_t *iv, int enc) {
   EVP_RC2_KEY *rc2_key = (EVP_RC2_KEY *)ctx->cipher_data;
-  RC2_set_key(&rc2_key->ks, EVP_CIPHER_CTX_key_length(ctx), key,
-              rc2_key->key_bits);
+  if (!rc2_set_key(&rc2_key->ks, EVP_CIPHER_CTX_key_length(ctx), key,
+                   rc2_key->key_bits)) {
+    return 0;
+  }
   return 1;
 }
 
-static int rc2_cbc_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
-                          size_t inl) {
+static int rc2_cbc_cipher_update(EVP_CIPHER_CTX *ctx, uint8_t *out,
+                                 const uint8_t *in, size_t len) {
   EVP_RC2_KEY *key = (EVP_RC2_KEY *)ctx->cipher_data;
   static const size_t kChunkSize = 0x10000;
 
-  while (inl >= kChunkSize) {
-    RC2_cbc_encrypt(in, out, kChunkSize, &key->ks, ctx->iv, ctx->encrypt);
-    inl -= kChunkSize;
+  while (len >= kChunkSize) {
+    rc2_cbc_encrypt(in, out, kChunkSize, &key->ks, ctx->iv, ctx->encrypt);
+    len -= kChunkSize;
     in += kChunkSize;
     out += kChunkSize;
   }
-  if (inl) {
-    RC2_cbc_encrypt(in, out, inl, &key->ks, ctx->iv, ctx->encrypt);
+  if (len) {
+    rc2_cbc_encrypt(in, out, len, &key->ks, ctx->iv, ctx->encrypt);
   }
   return 1;
 }
@@ -394,12 +405,14 @@ static const EVP_CIPHER rc2_40_cbc = {
     /*ctx_size=*/sizeof(EVP_RC2_KEY),
     /*flags=*/EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH | EVP_CIPH_CTRL_INIT,
     /*init=*/rc2_init_key,
-    /*cipher=*/rc2_cbc_cipher,
+    /*cipher_update=*/rc2_cbc_cipher_update,
+    /*cipher_final=*/nullptr,
+    /*update_aad=*/nullptr,
     /*cleanup=*/nullptr,
     /*ctrl=*/rc2_ctrl,
 };
 
-const EVP_CIPHER *EVP_rc2_40_cbc(void) { return &rc2_40_cbc; }
+const EVP_CIPHER *EVP_rc2_40_cbc() { return &rc2_40_cbc; }
 
 static const EVP_CIPHER rc2_cbc = {
     /*nid=*/NID_rc2_cbc,
@@ -409,9 +422,11 @@ static const EVP_CIPHER rc2_cbc = {
     /*ctx_size=*/sizeof(EVP_RC2_KEY),
     /*flags=*/EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH | EVP_CIPH_CTRL_INIT,
     /*init=*/rc2_init_key,
-    /*cipher=*/rc2_cbc_cipher,
+    /*cipher_update=*/rc2_cbc_cipher_update,
+    /*cipher_final=*/nullptr,
+    /*update_aad=*/nullptr,
     /*cleanup=*/nullptr,
     /*ctrl=*/rc2_ctrl,
 };
 
-const EVP_CIPHER *EVP_rc2_cbc(void) { return &rc2_cbc; }
+const EVP_CIPHER *EVP_rc2_cbc() { return &rc2_cbc; }

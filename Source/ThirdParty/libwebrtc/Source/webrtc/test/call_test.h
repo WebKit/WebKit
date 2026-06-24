@@ -15,10 +15,10 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_processing.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
@@ -52,6 +52,7 @@
 #include "call/video_send_stream.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/thread.h"
 #include "system_wrappers/include/clock.h"
 #include "test/create_test_field_trials.h"
 #include "test/fake_videorenderer.h"
@@ -83,7 +84,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
 
   void RegisterRtpExtension(const RtpExtension& extension);
   // Returns header extensions that can be parsed by the transport.
-  ArrayView<const RtpExtension> GetRegisteredExtensions() {
+  std::span<const RtpExtension> GetRegisteredExtensions() {
     return rtp_extensions_;
   }
 
@@ -100,6 +101,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   void CreateSenderCall(CallConfig config);
   void CreateReceiverCall(CallConfig config);
   void DestroyCalls();
+  Thread* network_thread() const { return network_thread_.get(); }
 
   void CreateVideoSendConfig(VideoSendStream::Config* video_config,
                              size_t num_video_streams,
@@ -270,6 +272,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   void AddRtpExtensionByUri(const std::string& uri,
                             std::vector<RtpExtension>* extensions) const;
 
+  std::unique_ptr<Thread> network_thread_;
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue_;
   std::vector<RtpExtension> rtp_extensions_;
   scoped_refptr<AudioProcessing> apm_send_;

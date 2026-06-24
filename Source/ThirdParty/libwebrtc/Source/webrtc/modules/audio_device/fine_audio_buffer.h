@@ -14,8 +14,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/buffer.h"
 
 namespace webrtc {
@@ -52,7 +52,7 @@ class FineAudioBuffer {
   // silence instead. The provided delay estimate in `playout_delay_ms` should
   // contain an estimate of the latency between when an audio frame is read from
   // WebRTC and when it is played out on the speaker.
-  void GetPlayoutData(ArrayView<int16_t> audio_buffer, int playout_delay_ms);
+  void GetPlayoutData(std::span<int16_t> audio_buffer, int playout_delay_ms);
 
   // Consumes the audio data in `audio_buffer` and sends it to the WebRTC layer
   // in chunks of 10ms. The sum of the provided delay estimate in
@@ -63,11 +63,11 @@ class FineAudioBuffer {
   // Example: buffer size is 5ms => call #1 stores 5ms of data, call #2 stores
   // 5ms of data and sends a total of 10ms to WebRTC and clears the internal
   // cache. Call #3 restarts the scheme above.
-  void DeliverRecordedData(ArrayView<const int16_t> audio_buffer,
+  void DeliverRecordedData(std::span<const int16_t> audio_buffer,
                            int record_delay_ms) {
     DeliverRecordedData(audio_buffer, record_delay_ms, std::nullopt);
   }
-  void DeliverRecordedData(ArrayView<const int16_t> audio_buffer,
+  void DeliverRecordedData(std::span<const int16_t> audio_buffer,
                            int record_delay_ms,
                            std::optional<int64_t> capture_time_ns);
 

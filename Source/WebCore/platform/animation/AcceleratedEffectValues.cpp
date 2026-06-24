@@ -34,7 +34,7 @@
 #include "Path.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayerModelObject.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleOffsetAnchor.h"
 #include "StyleOffsetDistance.h"
 #include "StyleOffsetPath.h"
@@ -52,9 +52,9 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
     auto clonedTransformOrigin = transformOrigin;
     auto clonedTransformBox = transformBox;
     auto clonedTransform = transform.clone();
-    RefPtr clonedTranslate = translate ? RefPtr { translate->clone() } : nullptr;
-    RefPtr clonedScale = scale ? RefPtr { scale->clone() } : nullptr;
-    RefPtr clonedRotate = rotate ? RefPtr { rotate->clone() } : nullptr;
+    RefPtr clonedTranslate = translate ? RefPtr { protect(translate)->clone() } : nullptr;
+    RefPtr clonedScale = scale ? RefPtr { protect(scale)->clone() } : nullptr;
+    RefPtr clonedRotate = rotate ? RefPtr { protect(rotate)->clone() } : nullptr;
     auto clonedOffsetPath = offsetPath;
     auto clonedOffsetDistance = offsetDistance;
     auto clonedOffsetPosition = offsetPosition;
@@ -106,14 +106,14 @@ static constexpr TransformBox NODELETE toTransformBox(AcceleratedEffectTransform
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const IntRect& borderBoxRect, const RenderLayerModelObject* renderer)
+AcceleratedEffectValues::AcceleratedEffectValues(const Style::ComputedStyle& style, const IntRect& borderBoxRect, const RenderLayerModelObject* renderer)
 {
     auto borderBoxSize = borderBoxRect.size();
 
     if (renderer)
         transformOperationData = TransformOperationData(renderer->transformReferenceBoxRect(style), renderer);
 
-    // FIXME: RenderStyle::applyCSSTransform uses `transformOperationData.boundingBox` for all the reference boxes, but this uses a mixture of `transformOperationData.boundingBox` and the passed in `borderBoxSize`. Instead, probably `TransformOperationData` should be passed in directly and `borderBoxRect` removed.
+    // FIXME: Style::ComputedStyle::applyCSSTransform uses `transformOperationData.boundingBox` for all the reference boxes, but this uses a mixture of `transformOperationData.boundingBox` and the passed in `borderBoxSize`. Instead, probably `TransformOperationData` should be passed in directly and `borderBoxRect` removed.
 
     auto zoom = style.usedZoomForLength();
 
@@ -156,20 +156,20 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
 
     // 3. Translate by the computed X, Y, and Z values of translate.
     if (translate)
-        translate->apply(matrix);
+        protect(translate)->apply(matrix);
 
     // 4. Rotate by the computed <angle> about the specified axis of rotate.
     if (rotate)
-        rotate->apply(matrix);
+        protect(rotate)->apply(matrix);
 
     // 5. Scale by the computed X, Y, and Z values of scale.
     if (scale)
-        scale->apply(matrix);
+        protect(scale)->apply(matrix);
 
     // 6. Translate and rotate by the transform specified by offset.
     if (transformOperationData) {
         if (auto path = tryPath(offsetPath, *transformOperationData)) {
-            // FIXME: This transform of `transformOrigin` is not present in the overload of MotionPath::applyMotionPathTransform() that takes a `RenderStyle`.
+            // FIXME: This transform of `transformOrigin` is not present in the overload of MotionPath::applyMotionPathTransform() that takes a `StyleComputedStyle`.
             auto computedTransformOrigin = boundingBox.location() + transformOrigin.value;
 
             // FIXME: It is a layering violation to use `MotionPath::applyMotionPathTransform` here, as it is defined in the rendering directory.

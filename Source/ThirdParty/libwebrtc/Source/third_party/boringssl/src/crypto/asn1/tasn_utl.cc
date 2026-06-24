@@ -27,20 +27,22 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 // Utility functions for manipulating fields and offsets
 
 // Add 'offset' to 'addr'
 #define offset2ptr(addr, offset) (void *)(((char *)(addr)) + (offset))
 
 // Given an ASN1_ITEM CHOICE type return the selector value
-int asn1_get_choice_selector(ASN1_VALUE **pval, const ASN1_ITEM *it) {
+int bssl::asn1_get_choice_selector(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   int *sel = reinterpret_cast<int *>(offset2ptr(*pval, it->utype));
   return *sel;
 }
 
 // Given an ASN1_ITEM CHOICE type set the selector value, return old value.
-int asn1_set_choice_selector(ASN1_VALUE **pval, int value,
-                             const ASN1_ITEM *it) {
+int bssl::asn1_set_choice_selector(ASN1_VALUE **pval, int value,
+                                   const ASN1_ITEM *it) {
   int *sel, ret;
   sel = reinterpret_cast<int *>(offset2ptr(*pval, it->utype));
   ret = *sel;
@@ -61,14 +63,15 @@ static CRYPTO_refcount_t *asn1_get_references(ASN1_VALUE **pval,
       offset2ptr(*pval, aux->ref_offset));
 }
 
-void asn1_refcount_set_one(ASN1_VALUE **pval, const ASN1_ITEM *it) {
+void bssl::asn1_refcount_set_one(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   CRYPTO_refcount_t *references = asn1_get_references(pval, it);
   if (references != nullptr) {
     *references = 1;
   }
 }
 
-int asn1_refcount_dec_and_test_zero(ASN1_VALUE **pval, const ASN1_ITEM *it) {
+int bssl::asn1_refcount_dec_and_test_zero(ASN1_VALUE **pval,
+                                          const ASN1_ITEM *it) {
   CRYPTO_refcount_t *references = asn1_get_references(pval, it);
   if (references != nullptr) {
     return CRYPTO_refcount_dec_and_test_zero(references);
@@ -89,7 +92,7 @@ static ASN1_ENCODING *asn1_get_enc_ptr(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   return reinterpret_cast<ASN1_ENCODING *>(offset2ptr(*pval, aux->enc_offset));
 }
 
-void asn1_enc_init(ASN1_VALUE **pval, const ASN1_ITEM *it) {
+void bssl::asn1_enc_init(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   ASN1_ENCODING *enc = asn1_get_enc_ptr(pval, it);
   if (enc) {
     enc->enc = nullptr;
@@ -97,15 +100,15 @@ void asn1_enc_init(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   }
 }
 
-void asn1_enc_free(ASN1_VALUE **pval, const ASN1_ITEM *it) {
+void bssl::asn1_enc_free(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   ASN1_ENCODING *enc = asn1_get_enc_ptr(pval, it);
   if (enc) {
     asn1_encoding_clear(enc);
   }
 }
 
-int asn1_enc_save(ASN1_VALUE **pval, const uint8_t *in, size_t in_len,
-                  const ASN1_ITEM *it) {
+int bssl::asn1_enc_save(ASN1_VALUE **pval, const uint8_t *in, size_t in_len,
+                        const ASN1_ITEM *it) {
   ASN1_ENCODING *enc;
   enc = asn1_get_enc_ptr(pval, it);
   if (!enc) {
@@ -122,14 +125,14 @@ int asn1_enc_save(ASN1_VALUE **pval, const uint8_t *in, size_t in_len,
   return 1;
 }
 
-void asn1_encoding_clear(ASN1_ENCODING *enc) {
+void bssl::asn1_encoding_clear(ASN1_ENCODING *enc) {
   OPENSSL_free(enc->enc);
   enc->enc = nullptr;
   enc->len = 0;
 }
 
-int asn1_enc_restore(int *len, unsigned char **out, ASN1_VALUE **pval,
-                     const ASN1_ITEM *it) {
+int bssl::asn1_enc_restore(int *len, unsigned char **out, ASN1_VALUE **pval,
+                           const ASN1_ITEM *it) {
   ASN1_ENCODING *enc = asn1_get_enc_ptr(pval, it);
   if (!enc || enc->len == 0) {
     return 0;
@@ -145,7 +148,8 @@ int asn1_enc_restore(int *len, unsigned char **out, ASN1_VALUE **pval,
 }
 
 // Given an ASN1_TEMPLATE get a pointer to a field
-ASN1_VALUE **asn1_get_field_ptr(ASN1_VALUE **pval, const ASN1_TEMPLATE *tt) {
+ASN1_VALUE **bssl::asn1_get_field_ptr(ASN1_VALUE **pval,
+                                      const ASN1_TEMPLATE *tt) {
   ASN1_VALUE **pvaltmp =
       reinterpret_cast<ASN1_VALUE **>(offset2ptr(*pval, tt->offset));
   // NOTE for BOOLEAN types the field is just a plain int so we can't return
@@ -155,8 +159,8 @@ ASN1_VALUE **asn1_get_field_ptr(ASN1_VALUE **pval, const ASN1_TEMPLATE *tt) {
 
 // Handle ANY DEFINED BY template, find the selector, look up the relevant
 // ASN1_TEMPLATE in the table and return it.
-const ASN1_TEMPLATE *asn1_do_adb(ASN1_VALUE **pval, const ASN1_TEMPLATE *tt,
-                                 int nullerr) {
+const ASN1_TEMPLATE *bssl::asn1_do_adb(ASN1_VALUE **pval,
+                                       const ASN1_TEMPLATE *tt, int nullerr) {
   const ASN1_ADB *adb;
   const ASN1_ADB_TABLE *atbl;
   ASN1_VALUE **sfld;

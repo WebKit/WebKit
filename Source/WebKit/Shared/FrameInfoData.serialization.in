@@ -29,6 +29,7 @@ struct WebKit::FrameInfoData {
     WebKit::FrameType frameType;
     WebCore::ResourceRequest request;
     WebCore::SecurityOriginData securityOrigin;
+    WebCore::SecurityOriginData topOrigin;
     String frameName;
     WebCore::FrameIdentifier frameID;
     Markable<WebKit::WebPageProxyIdentifier> webPageProxyID;

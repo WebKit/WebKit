@@ -15,8 +15,8 @@
 #include <cstring>
 #include <memory>
 #include <set>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -64,7 +64,7 @@ void PackAddressForNAT(const SocketAddress& remote_addr, Buffer& buf) {
 // Decodes the remote address from a packet that has been encoded with the nat's
 // quasi-STUN format. Returns the length of the address (i.e., the offset into
 // data where the original packet starts).
-size_t UnpackAddressFromNAT(ArrayView<const uint8_t> buf,
+size_t UnpackAddressFromNAT(std::span<const uint8_t> buf,
                             SocketAddress* remote_addr) {
   RTC_CHECK(buf.size() >= 8);
   RTC_DCHECK(buf.data()[0] == 0);

@@ -121,7 +121,7 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGTextContentElement::svgAttributeChanged(attrName);
 }
 
-RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGTextPath>(*this, WTF::move(style));
 }
@@ -137,7 +137,7 @@ bool SVGTextPathElement::childShouldCreateRenderer(const Node& child) const
     return false;
 }
 
-bool SVGTextPathElement::rendererIsNeeded(const RenderStyle& style)
+bool SVGTextPathElement::rendererIsNeeded(const Style::ComputedStyle& style)
 {
     if (parentNode()
         && (parentNode()->hasTagName(SVGNames::aTag)
@@ -153,7 +153,7 @@ void SVGTextPathElement::buildPendingResource()
     if (!isConnected())
         return;
 
-    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForSVGReferences());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), protect(treeScopeForSVGReferences()));
     if (!target.element) {
         // Do not register as pending if we are already pending this resource.
         Ref treeScope = treeScopeForSVGReferences();

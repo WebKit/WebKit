@@ -47,6 +47,8 @@ bool Parser::Advance() {
   return ret;
 }
 
+Span<const uint8_t> Parser::RemainingBytes() { return cbs_; }
+
 bool Parser::HasMore() { return CBS_len(&cbs_) > 0; }
 
 bool Parser::ReadRawTLV(Input *out) {

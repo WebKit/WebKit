@@ -16,10 +16,10 @@
 #include <cstdlib>
 #include <iterator>
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
@@ -41,7 +41,6 @@
 #endif
 
 namespace webrtc {
-namespace aec3 {
 namespace {
 
 std::string ProduceDebugText(size_t delay, size_t down_sampling_factor) {
@@ -305,7 +304,7 @@ TEST_P(MatchedFilterTest, LagEstimation) {
 
         render_delay_buffer->PrepareCaptureProcessing();
         std::array<float, kBlockSize> downsampled_capture_data;
-        ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
+        std::span<float> downsampled_capture(downsampled_capture_data.data(),
                                              sub_block_size);
         capture_decimator.Decimate(capture[0], downsampled_capture);
         filter.Update(render_delay_buffer->GetDownsampledRenderBuffer(),
@@ -380,7 +379,7 @@ TEST_P(MatchedFilterTest, PreEchoEstimation) {
       }
       render_delay_buffer->PrepareCaptureProcessing();
       std::array<float, kBlockSize> downsampled_capture_data;
-      ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
+      std::span<float> downsampled_capture(downsampled_capture_data.data(),
                                            sub_block_size);
       capture_decimator.Decimate(capture[0], downsampled_capture);
       filter.Update(render_delay_buffer->GetDownsampledRenderBuffer(),
@@ -421,7 +420,7 @@ TEST_P(MatchedFilterTest, LagNotReliableForUncorrelatedRenderAndCapture) {
 
     Block render(kNumBands, kNumChannels);
     std::array<float, kBlockSize> capture_data;
-    ArrayView<float> capture(capture_data.data(), sub_block_size);
+    std::span<float> capture(capture_data.data(), sub_block_size);
     std::fill(capture.begin(), capture.end(), 0.f);
     ApmDataDumper data_dumper(0);
     std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
@@ -486,7 +485,7 @@ TEST_P(MatchedFilterTest, LagNotUpdatedForLowLevelRender) {
       }
       std::copy(render.begin(0, 0), render.end(0, 0), capture[0].begin());
       std::array<float, kBlockSize> downsampled_capture_data;
-      ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
+      std::span<float> downsampled_capture(downsampled_capture_data.data(),
                                            sub_block_size);
       capture_decimator.Decimate(capture[0], downsampled_capture);
       filter.Update(render_delay_buffer->GetDownsampledRenderBuffer(),
@@ -565,5 +564,4 @@ INSTANTIATE_TEST_SUITE_P(_,
 
 #endif
 
-}  // namespace aec3
 }  // namespace webrtc

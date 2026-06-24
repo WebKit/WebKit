@@ -256,8 +256,10 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
         NSString *string = [NSString stringWithFormat:@"%@ - didReceiveResponse %@", identifier, [response _drt_descriptionSuitableForTestResult]];
         gTestRunner->addResourceLoadCallback([string UTF8String]);
     }
-    if (!done && gTestRunner->dumpResourceResponseMIMETypes())
-        printf("%s has MIME type %s\n", [[[[response URL] relativePath] lastPathComponent] UTF8String], [[response MIMEType] UTF8String]);
+    if (!done && !gTestRunner->resourceResponseMIMETypesToDump().empty()) {
+        if (gTestRunner->resourceResponseMIMETypesToDump() == "*" || gTestRunner->resourceResponseMIMETypesToDump().contains([[[[response URL] relativePath] lastPathComponent] UTF8String]))
+            gTestRunner->addResourceLoadCallback([[NSString stringWithFormat:@"%s has MIME type %s\n", [[[[response URL] relativePath] lastPathComponent] UTF8String], [[response MIMEType] UTF8String]] UTF8String]);
+    }
 }
 
 -(void)webView: (WebView *)wv resource:identifier didReceiveContentLength: (NSInteger)length fromDataSource:(WebDataSource *)dataSource

@@ -40,8 +40,8 @@
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
 #include "NodeRareData.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTable.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>

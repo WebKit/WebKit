@@ -185,7 +185,7 @@ void SendAudioStream::SetMuted(bool mute) {
 ColumnPrinter SendAudioStream::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "audio_target_rate",
-      [this](SimpleStringBuilder& sb) {
+      [this](StringBuilder& sb) {
         sender_->SendTask([this, &sb] {
           AudioSendStream::Stats stats = send_stream_->GetStats();
           sb.AppendFormat("%.0lf", stats.target_bitrate_bps / 8.0);
@@ -202,7 +202,6 @@ ReceiveAudioStream::ReceiveAudioStream(
     Transport* feedback_transport)
     : receiver_(receiver), config_(config) {
   AudioReceiveStreamInterface::Config recv_config;
-  recv_config.rtp.local_ssrc = receiver_->GetNextAudioLocalSsrc();
   recv_config.rtcp_send_transport = feedback_transport;
   recv_config.rtp.remote_ssrc = send_stream->ssrc_;
   receiver->ssrc_media_types_[recv_config.rtp.remote_ssrc] = MediaType::AUDIO;

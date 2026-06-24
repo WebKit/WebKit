@@ -16,6 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper/resources/executor-common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper/resources/executor-window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper/resources/executor-window.py
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper/resources/executor-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper/resources/executor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper/resources/remote-context-helper.js

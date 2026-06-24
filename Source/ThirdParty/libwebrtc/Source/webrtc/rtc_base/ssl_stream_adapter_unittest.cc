@@ -25,6 +25,7 @@
 #include <ctime>
 #include <memory>
 #include <set>
+#include <span>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -32,29 +33,27 @@
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/crypto/crypto_options.h"
-#include "api/field_trials.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/test/rtc_error_matchers.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/buffer_queue.h"
 #include "rtc_base/callback_list.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crypto_random.h"
-#include "rtc_base/fake_clock.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/stream.h"
 #include "rtc_base/thread.h"
-#include "rtc_base/time_utils.h"
-#include "test/create_test_field_trials.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/time_controller/simulated_time_controller.h"
 #include "test/wait_until.h"
 
 namespace webrtc {
@@ -237,13 +236,13 @@ class StreamWrapper : public StreamInterface {
   }
   size_t GetFlushCountForTesting() { return flush_count_; }
 
-  StreamResult Read(ArrayView<uint8_t> buffer,
+  StreamResult Read(std::span<uint8_t> buffer,
                     size_t& read,
                     int& error) override {
     return stream_->Read(buffer, read, error);
   }
 
-  StreamResult Write(ArrayView<const uint8_t> data,
+  StreamResult Write(std::span<const uint8_t> data,
                      size_t& written,
                      int& error) override {
     return stream_->Write(data, written, error);
@@ -277,7 +276,7 @@ class SSLDummyStream final : public StreamInterface {
 
   StreamState GetState() const override { return SS_OPEN; }
 
-  StreamResult Read(ArrayView<uint8_t> buffer,
+  StreamResult Read(std::span<uint8_t> buffer,
                     size_t& read,
                     int& error) override {
     StreamResult r;
@@ -318,13 +317,13 @@ class SSLDummyStream final : public StreamInterface {
   }
 
   // Write to the outgoing FifoBuffer
-  StreamResult WriteData(ArrayView<const uint8_t> data,
+  StreamResult WriteData(std::span<const uint8_t> data,
                          size_t& written,
                          int& error) {
     return out_->Write(data, written, error);
   }
 
-  StreamResult Write(ArrayView<const uint8_t> data,
+  StreamResult Write(std::span<const uint8_t> data,
                      size_t& written,
                      int& error) override;
 
@@ -362,7 +361,7 @@ class BufferQueueStream : public StreamInterface {
   StreamState GetState() const override { return SS_OPEN; }
 
   // Reading a buffer queue stream will either succeed or block.
-  StreamResult Read(ArrayView<uint8_t> buffer,
+  StreamResult Read(std::span<uint8_t> buffer,
                     size_t& read,
                     int& error) override {
     const bool was_writable = buffer_.is_writable();
@@ -376,7 +375,7 @@ class BufferQueueStream : public StreamInterface {
   }
 
   // Writing to a buffer queue stream will either succeed or block.
-  StreamResult Write(ArrayView<const uint8_t> data,
+  StreamResult Write(std::span<const uint8_t> data,
                      size_t& written,
                      int& error) override {
     const bool was_readable = buffer_.is_readable();
@@ -410,7 +409,8 @@ class BufferQueueStream : public StreamInterface {
   BufferQueue buffer_;
 };
 
-constexpr int kBufferCapacity = 1;
+// DTLS1.3 can also write ACK message, so we need to have a buffer of 2.
+constexpr int kBufferCapacity = 2;
 constexpr size_t kDefaultBufferSize = 2048;
 
 class SSLStreamAdapterTestBase : public ::testing::Test {
@@ -473,19 +473,16 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
   void InitializeClientAndServerStreams(
       absl::string_view client_experiment = "",
       absl::string_view server_experiment = "") {
-    // Note: `client_ssl_` and `server_ssl_` may be non-nullptr.
+    client_ssl_ = SSLStreamAdapter::Create(
+        CreateTestEnvironment(
+            {.field_trials = client_experiment, .time = &time_controller_}),
+        CreateClientStream(), /*handshake_error=*/nullptr);
 
-    // The field trials are read when the OpenSSLStreamAdapter is initialized.
-    {
-      FieldTrials trial = CreateTestFieldTrials(client_experiment);
-      client_ssl_ =
-          SSLStreamAdapter::Create(CreateClientStream(), nullptr, &trial);
-    }
-    {
-      FieldTrials trial = CreateTestFieldTrials(server_experiment);
-      server_ssl_ =
-          SSLStreamAdapter::Create(CreateServerStream(), nullptr, &trial);
-    }
+    server_ssl_ = SSLStreamAdapter::Create(
+        CreateTestEnvironment(
+            {.field_trials = server_experiment, .time = &time_controller_}),
+        CreateServerStream(), /*handshake_error=*/nullptr);
+
     client_ssl_->SetEventCallback(
         [this](int events, int err) { OnClientEvent(events, err); });
     server_ssl_->SetEventCallback(
@@ -519,8 +516,8 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
   }
 
   void SetPeerIdentitiesByDigest(bool correct, bool expect_success) {
-    Buffer server_digest(0, EVP_MAX_MD_SIZE);
-    Buffer client_digest(0, EVP_MAX_MD_SIZE);
+    Buffer server_digest(Buffer::CreateWithCapacity(EVP_MAX_MD_SIZE));
+    Buffer client_digest(Buffer::CreateWithCapacity(EVP_MAX_MD_SIZE));
     SSLPeerCertificateDigestError err;
     SSLPeerCertificateDigestError expected_err =
         expect_success ? SSLPeerCertificateDigestError::NONE
@@ -591,20 +588,21 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
                                (server_ssl_->GetState() == SS_OPEN);
                       },
                       ::testing::IsTrue(),
-                      {.timeout = handshake_wait_, .clock = &clock_}),
+                      {.timeout = handshake_wait_, .clock = &time_controller_}),
                   IsRtcOk());
     } else {
-      EXPECT_THAT(WaitUntil([&] { return client_ssl_->GetState(); },
-                            ::testing::Eq(SS_CLOSED),
-                            {.timeout = handshake_wait_, .clock = &clock_}),
-                  IsRtcOk());
+      EXPECT_THAT(
+          WaitUntil([&] { return client_ssl_->GetState(); },
+                    ::testing::Eq(SS_CLOSED),
+                    {.timeout = handshake_wait_, .clock = &time_controller_}),
+          IsRtcOk());
     }
   }
 
   // This tests that we give up after one hour.
   // Only works for BoringSSL which allows advancing the fake clock.
   void TestHandshakeTimeout() {
-    int64_t time_start = clock_.TimeNanos();
+    Timestamp time_start = time_controller_.GetClock()->CurrentTime();
     TimeDelta time_increment = TimeDelta::Millis(1000);
 
     if (!dtls_) {
@@ -632,16 +630,16 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
     // Now wait for the handshake to timeout (or fail after an hour of simulated
     // time).
     while (client_ssl_->GetState() == SS_OPENING &&
-           (TimeDiff(clock_.TimeNanos(), time_start) <
-            3600 * kNumNanosecsPerSec)) {
+           (time_controller_.GetClock()->CurrentTime() - time_start <
+            TimeDelta::Minutes(60))) {
       EXPECT_THAT(WaitUntil(
                       [&] {
                         return !((client_ssl_->GetState() == SS_OPEN) &&
                                  (server_ssl_->GetState() == SS_OPEN));
                       },
-                      ::testing::IsTrue(), {.clock = &clock_}),
+                      ::testing::IsTrue(), {.clock = &time_controller_}),
                   IsRtcOk());
-      clock_.AdvanceTime(time_increment);
+      time_controller_.AdvanceTime(time_increment);
     }
     EXPECT_EQ(client_ssl_->GetState(), SS_CLOSED);
   }
@@ -671,7 +669,7 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
                              server_ssl_->IsTlsConnected();
                     },
                     ::testing::IsTrue(),
-                    {.timeout = handshake_wait_, .clock = &clock_}),
+                    {.timeout = handshake_wait_, .clock = &time_controller_}),
                 IsRtcOk());
 
     // Until the identity has been verified, the state should still be
@@ -687,8 +685,8 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
 
     // Collect both of the certificate digests; needs to be done before calling
     // SetPeerCertificateDigest as that may reset the identity.
-    Buffer server_digest(0, EVP_MAX_MD_SIZE);
-    Buffer client_digest(0, EVP_MAX_MD_SIZE);
+    Buffer server_digest(Buffer::CreateWithCapacity(EVP_MAX_MD_SIZE));
+    Buffer client_digest(Buffer::CreateWithCapacity(EVP_MAX_MD_SIZE));
 
     ASSERT_THAT(server_identity(), NotNull());
     ASSERT_TRUE(server_identity()->certificate().ComputeDigest(
@@ -762,12 +760,12 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
       RTC_LOG(LS_VERBOSE) << "Damaging packet";
       memcpy(&buf[0], data, data_len);
       buf[data_len - 1]++;
-      return from->WriteData(MakeArrayView(&buf[0], data_len), written, error);
+      return from->WriteData(std::span(&buf[0], data_len), written, error);
     }
 
     return from->WriteData(
-        MakeArrayView(reinterpret_cast<const uint8_t*>(data), data_len),
-        written, error);
+        std::span(reinterpret_cast<const uint8_t*>(data), data_len), written,
+        error);
   }
 
   void SetDelay(int delay) { delay_ = delay; }
@@ -863,8 +861,7 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
     return server_ssl_->GetIdentityForTesting();
   }
 
-  AutoThread main_thread_;
-  ScopedFakeClock clock_;
+  GlobalSimulatedTimeController time_controller_{Timestamp::Micros(1234567)};
   std::string client_cert_pem_;
   std::string client_private_key_pem_;
   KeyParams client_key_type_;
@@ -926,7 +923,7 @@ class SSLStreamAdapterTestDTLSBase : public SSLStreamAdapterTestBase {
       size_t sent;
       int error;
       StreamResult rv =
-          client_ssl_->Write(MakeArrayView(packet, packet_size_), sent, error);
+          client_ssl_->Write(std::span(packet, packet_size_), sent, error);
       if (rv == SR_SUCCESS) {
         RTC_LOG(LS_VERBOSE) << "Sent: " << sent_;
         sent_++;
@@ -983,19 +980,19 @@ class SSLStreamAdapterTestDTLSBase : public SSLStreamAdapterTestBase {
 
     WriteData();
 
-    EXPECT_THAT(
-        WaitUntil([&] { return sent_; }, ::testing::Eq(count_),
-                  {.timeout = TimeDelta::Millis(10000), .clock = &clock_}),
-        IsRtcOk());
+    EXPECT_THAT(WaitUntil([&] { return sent_; }, ::testing::Eq(count_),
+                          {.timeout = TimeDelta::Millis(10000),
+                           .clock = &time_controller_}),
+                IsRtcOk());
     RTC_LOG(LS_INFO) << "sent_ == " << sent_;
 
     if (damage_) {
-      clock_.AdvanceTime(TimeDelta::Millis(2000));
+      time_controller_.AdvanceTime(TimeDelta::Millis(2000));
       EXPECT_EQ(0U, received_.size());
     } else if (loss_ == 0) {
       EXPECT_THAT(WaitUntil([&] { return received_.size(); },
                             ::testing::Eq(static_cast<size_t>(sent_)),
-                            {.clock = &clock_}),
+                            {.clock = &time_controller_}),
                   IsRtcOk());
     } else {
       RTC_LOG(LS_INFO) << "Sent " << sent_ << " packets; received "
@@ -1016,7 +1013,7 @@ class SSLStreamAdapterTestDTLSBase : public SSLStreamAdapterTestBase {
   std::set<int> received_;
 };
 
-webrtc::StreamResult SSLDummyStream::Write(ArrayView<const uint8_t> data,
+webrtc::StreamResult SSLDummyStream::Write(std::span<const uint8_t> data,
                                            size_t& written,
                                            int& error) {
   RTC_LOG(LS_VERBOSE) << "Writing to loopback " << data.size();

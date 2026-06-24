@@ -24,6 +24,8 @@
 #include "../../../../Configurations/CommonBase.xcconfig"
 
 ALWAYS_SEARCH_USER_PATHS = NO;
+ENABLE_USER_SCRIPT_SANDBOXING = YES;
+EXCLUDED_USER_SCRIPT_SANDBOXING_PHASE_NAMES = $(inherited) "Check .xcfilelists" "Generate <wtf/Platform.h> args" "Generate Derived Sources" "Run Sublaunch Script";
 CLANG_CXX_LANGUAGE_STANDARD = c++2b;
 CLANG_CXX_LIBRARY = libc++;
 CLANG_ENABLE_EXPLICIT_MODULES = NO;

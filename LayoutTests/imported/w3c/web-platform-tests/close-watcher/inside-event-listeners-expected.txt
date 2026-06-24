@@ -1,8 +1,14 @@
 
 PASS destroy() inside oncancel
+PASS destroy() inside oncancel with preventDefault()
 PASS destroy() inside onclose
+PASS destroy() inside onclose with preventDefault()
 PASS close() inside oncancel
+PASS close() inside oncancel with preventDefault()
 PASS close() inside onclose
+PASS close() inside onclose with preventDefault()
 PASS requestClose() inside oncancel
+PASS requestClose() inside oncancel with preventDefault()
 PASS requestClose() inside onclose
+PASS requestClose() inside onclose with preventDefault()
 

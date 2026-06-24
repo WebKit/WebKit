@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLineBreak);
 
-RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
+RenderLineBreak::RenderLineBreak(HTMLElement& element, Style::ComputedStyle&& style)
     : RenderBoxModelObject(Type::LineBreak, element, WTF::move(style), { }, is<HTMLWBRElement>(element) ? OptionSet<LineBreakFlag> { LineBreakFlag::IsWBR } : OptionSet<LineBreakFlag> { })
 {
     ASSERT(isRenderLineBreak());

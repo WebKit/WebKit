@@ -119,25 +119,15 @@ supported.
 
 BoringSSL's build system has experimental support for adding a custom prefix to
 all symbols. This can be useful when linking multiple versions of BoringSSL in
-the same project to avoid symbol conflicts. Symbol prefixing requires the most
-recent stable version of [Go](https://go.dev/).
+the same project to avoid symbol conflicts.
 
 In order to build with prefixed symbols, the `BORINGSSL_PREFIX` CMake variable
-should specify the prefix to add to all symbols, and the
-`BORINGSSL_PREFIX_SYMBOLS` CMake variable should specify the path to a file
-which contains a list of symbols which should be prefixed (one per line;
-comments are supported with `#`). In other words, `cmake -B build
--DBORINGSSL_PREFIX=MY_CUSTOM_PREFIX
--DBORINGSSL_PREFIX_SYMBOLS=/path/to/symbols.txt` will configure the build to add
-the prefix `MY_CUSTOM_PREFIX` to all of the symbols listed in
-`/path/to/symbols.txt`.
+should specify the prefix to add to all symbols. In other words, `cmake -B build
+-DBORINGSSL_PREFIX=MY_CUSTOM_PREFIX` will configure the build to add
+the prefix `MY_CUSTOM_PREFIX` to all of the symbols defined by the library.
 
-It is currently the caller's responsibility to create and maintain the list of
-symbols to be prefixed. Alternatively, `util/read_symbols.go` reads the list of
-exported symbols from a `.a` file, and can be used in a build script to generate
-the symbol list on the fly (by building without prefixing, using
-`read_symbols.go` to construct a symbol list, and then building again with
-prefixing).
+Note that symbol prefixing cannot be used with the combination of FIPS and
+static libraries.
 
 This mechanism is under development and may change over time. Please contact the
 BoringSSL maintainers if making use of it.
@@ -205,6 +195,30 @@ from within `ssl/test/runner`.
 
 Both sets of tests may also be run with `ninja -C build run_tests`, but CMake
 3.2 or later is required to avoid Ninja's output buffering.
+
+# Running Benchmarks
+
+To invoke the benchmarks, execute the `bssl_bench` binary.
+You have the option to enumerate all of the benchmarks first by passing in
+`--benchmark_list_tests`.
+To run specific benchmarks, you may pass in `--benchmark_filter=$regex` where
+`$regex` is an [ECMAScript regular expression].
+
+You can specify a set of input sizes in bytes for relevant cipher suites
+with the repeatable flag `-i` or `--input-size`.
+You can let the benchmark run with a set of various thread counts with the
+repeatable flag `-t` or `--threads`.
+For more benchmark configuration options, you may read the manual by passing in
+`--help` flag on launch.
+For more information on `--benchmark_*` flags, we refer you to the
+[benchmark user guide].
+
+There are also [additional tools] at your disposal to interpret the benchmark
+results.
+
+[ECMAScript regular expression]: https://cppreference.com/w/cpp/regex/ecmascript.html
+[benchmark user guide]: https://google.github.io/benchmark/user_guide.html
+[additional tools]: https://google.github.io/benchmark/tools.html
 
 # Pre-generated Files
 

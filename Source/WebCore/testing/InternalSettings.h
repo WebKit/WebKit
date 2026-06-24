@@ -58,10 +58,7 @@ public:
 
     using EditingBehaviorType = WebCore::EditingBehaviorType;
     ExceptionOr<void> setEditingBehavior(EditingBehaviorType);
-    
-    using StorageBlockingPolicy = WebCore::StorageBlockingPolicy;
-    ExceptionOr<void> setStorageBlockingPolicy(StorageBlockingPolicy);
-    
+
     using UserInterfaceDirectionPolicy = WebCore::UserInterfaceDirectionPolicy;
     ExceptionOr<void> setUserInterfaceDirectionPolicy(UserInterfaceDirectionPolicy);
 
@@ -146,7 +143,6 @@ private:
         Seconds m_minimumDOMTimerInterval;
         Seconds m_originalTimeWithoutMouseMovementBeforeHidingControls;
         WebCore::EditingBehaviorType m_originalEditingBehavior;
-        WebCore::StorageBlockingPolicy m_storageBlockingPolicy;
         WebCore::UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
         WebCore::ForcedAccessibilityValue m_forcedColorsAreInvertedAccessibilityValue;

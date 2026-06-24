@@ -130,8 +130,8 @@ private:
 
     ScrollbarHoverState m_scrollbarHoverState;
 
-    const UniqueRef<ScrollerMac> m_verticalScroller;
-    const UniqueRef<ScrollerMac> m_horizontalScroller;
+    const Ref<ScrollerMac> m_verticalScroller;
+    const Ref<ScrollerMac> m_horizontalScroller;
 
     std::optional<FloatPoint> m_lastScrollOffset;
 

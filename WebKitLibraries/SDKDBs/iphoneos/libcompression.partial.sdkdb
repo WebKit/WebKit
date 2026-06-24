@@ -50,7 +50,7 @@
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_init"},
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_process"}
    ],
-   "target": "arm64-apple-ios26.1",
+   "target": "arm64-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "compression_algorithm"},
     {"access": "public", "name": "compression_status"},
@@ -108,7 +108,7 @@
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_init"},
     {"access": "public", "introduced": "9", "kind": "function", "linkage": "exported", "name": "_compression_stream_process"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "compression_algorithm"},
     {"access": "public", "name": "compression_status"},

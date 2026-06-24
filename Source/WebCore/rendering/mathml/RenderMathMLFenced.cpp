@@ -50,7 +50,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLFenced);
 static constexpr auto gOpeningBraceChar = "("_s;
 static constexpr auto gClosingBraceChar = ")"_s;
 
-RenderMathMLFenced::RenderMathMLFenced(MathMLRowElement& element, RenderStyle&& style)
+RenderMathMLFenced::RenderMathMLFenced(MathMLRowElement& element, Style::ComputedStyle&& style)
     : RenderMathMLRow(Type::MathMLFenced, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLFenced());

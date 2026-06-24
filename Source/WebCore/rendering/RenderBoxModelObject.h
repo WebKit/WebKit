@@ -206,15 +206,15 @@ public:
 
     bool hasRunningAcceleratedAnimations() const;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
 
 protected:
-    RenderBoxModelObject(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
-    RenderBoxModelObject(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderBoxModelObject(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderBoxModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
 
     void willBeDestroyed() override;
 
-    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
+    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
 
     LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
 
@@ -241,7 +241,7 @@ public:
     RenderBlock* containingBlockForAutoHeightDetection(const Style::MinimumSize& logicalHeight) const;
     RenderBlock* containingBlockForAutoHeightDetection(const Style::MaximumSize& logicalHeight) const;
 
-    void removeOutOfFlowBoxesIfNeededOnStyleChange(RenderBlock& delegateBlock, const RenderStyle& oldStyle, const RenderStyle& newStyle);
+    void removeOutOfFlowBoxesIfNeededOnStyleChange(RenderBlock& delegateBlock, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);
 
 
 protected:
@@ -253,6 +253,11 @@ private:
 
     RenderBlock* containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const;
 };
+
+WEBCORE_EXPORT LayoutUnit borderLeft(const RenderBoxModelObject&);
+WEBCORE_EXPORT LayoutUnit borderTop(const RenderBoxModelObject&);
+WEBCORE_EXPORT LayoutUnit paddingLeft(const RenderBoxModelObject&);
+WEBCORE_EXPORT LayoutUnit paddingTop(const RenderBoxModelObject&);
 
 } // namespace WebCore
 

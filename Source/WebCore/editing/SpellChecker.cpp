@@ -52,7 +52,7 @@ SpellCheckRequest::SpellCheckRequest(const SimpleRange& checkingRange, const Sim
     : m_checkingRange(checkingRange)
     , m_automaticReplacementRange(automaticReplacementRange)
     , m_paragraphRange(paragraphRange)
-    , m_rootEditableElement(m_checkingRange.start.container->rootEditableElement())
+    , m_rootEditableElement(protect(m_checkingRange.start.container)->rootEditableElement())
     , m_requestData(std::nullopt, text, options, type)
 {
 }
@@ -78,7 +78,7 @@ void SpellCheckRequest::didSucceed(const Vector<TextCheckingResult>& results)
         return;
 
     Ref<SpellCheckRequest> protectedThis(*this);
-    m_checker->didCheckSucceed(m_requestData.identifier().value(), results, m_existingResults, m_checkingRange);
+    protect(m_checker)->didCheckSucceed(m_requestData.identifier().value(), results, m_existingResults, m_checkingRange);
     m_checker = nullptr;
 }
 
@@ -88,7 +88,7 @@ void SpellCheckRequest::didCancel()
         return;
 
     Ref<SpellCheckRequest> protectedThis(*this);
-    m_checker->didCheckCancel(m_requestData.identifier().value());
+    protect(m_checker)->didCheckCancel(m_requestData.identifier().value());
     m_checker = nullptr;
 }
 
@@ -213,7 +213,7 @@ void SpellChecker::invokeRequest(Ref<SpellCheckRequest>&& request)
     if (!client())
         return;
     m_processingRequest = WTF::move(request);
-    client()->requestCheckingOfString(*m_processingRequest, document().selection().selection());
+    client()->requestCheckingOfString(protect(*m_processingRequest), document().selection().selection());
 }
 
 void SpellChecker::enqueueRequest(Ref<SpellCheckRequest>&& request)
@@ -258,7 +258,7 @@ static bool containsAdditionalGrammarResults(const Vector<TextCheckingResult>& r
 
 void SpellChecker::didCheck(TextCheckingRequestIdentifier identifier, const Vector<TextCheckingResult>& results, const Vector<TextCheckingResult>& existingResults, const std::optional<SimpleRange>& range)
 {
-    if (!m_processingRequest || m_processingRequest->data().identifier() != identifier) {
+    if (!m_processingRequest || protect(m_processingRequest)->data().identifier() != identifier) {
         // This is the extended checking case
         if (!range || !containsAdditionalGrammarResults(results, existingResults))
             return;
@@ -268,7 +268,7 @@ void SpellChecker::didCheck(TextCheckingRequestIdentifier identifier, const Vect
         return;
     }
 
-    protect(document())->editor().markAndReplaceFor(*m_processingRequest, results);
+    protect(document())->editor().markAndReplaceFor(protect(*m_processingRequest), results);
 
     if (!m_lastProcessedIdentifier || *m_lastProcessedIdentifier < identifier)
         m_lastProcessedIdentifier = identifier;
@@ -286,7 +286,7 @@ Document& SpellChecker::document() const
 void SpellChecker::didCheckSucceed(TextCheckingRequestIdentifier identifier, const Vector<TextCheckingResult>& results, const Vector<TextCheckingResult>& existingResults, const std::optional<SimpleRange>& range)
 {
     if (m_processingRequest) {
-        TextCheckingRequestData requestData = m_processingRequest->data();
+        TextCheckingRequestData requestData = protect(m_processingRequest)->data();
         if (requestData.identifier() == identifier) {
             OptionSet<DocumentMarkerType> markerTypes;
             if (requestData.checkingTypes().contains(TextCheckingType::Spelling))

@@ -1,17 +1,57 @@
 
-PASS link rel=modulepreload
+PASS link rel=modulepreload with script shares a cache with <script> tags
 PASS same-origin link rel=modulepreload crossorigin=anonymous
 PASS same-origin link rel=modulepreload crossorigin=use-credentials
 PASS cross-origin link rel=modulepreload
 PASS cross-origin link rel=modulepreload crossorigin=anonymous
 PASS cross-origin link rel=modulepreload crossorigin=use-credentials
 PASS link rel=modulepreload with submodules
-PASS link rel=modulepreload for a module with syntax error
-PASS link rel=modulepreload for a module with network error
 PASS link rel=modulepreload with bad href attribute
 PASS link rel=modulepreload as=script
-PASS link rel=modulepreload with invalid as= value
+PASS link rel=modulepreload with non-script-like as= value (image)
+FAIL link rel=modulepreload with non-script-like as= value (xslt) promise_test: Unhandled rejection with value: object "[object Event]"
+PASS link rel=modulepreload with non-style as= value (style)
+FAIL link rel=modulepreload with non-JSON as= value (JSON) promise_test: Unhandled rejection with value: object "[object Event]"
 PASS link rel=modulepreload with integrity match
 PASS link rel=modulepreload with integrity match2
 FAIL link rel=modulepreload with integrity mismatch promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL link rel=modulepreload with integrity mismatch2 promise_test: Unhandled rejection with value: object "[object Event]"
+PASS link rel=modulepreload with invalid integrity
+PASS multiple link rel=modulepreload with child module before parent
+FAIL link rel=modulepreload with empty href and invalid as= value promise_test: Unhandled rejection with value: object "[object Event]"
+PASS link rel=modulepreload and script with non-matching crossorigin values
+PASS link rel=modulepreload and script with non-matching crossorigin values2
+PASS link rel=modulepreload and non-module script
+PASS link rel=modulepreload with script doesn't re-fetch when imported
+PASS link rel=modulepreload for a script module with syntax error will still load
+PASS link rel=modulepreload for a script module with network error
+PASS link rel=modulepreload with script and matching media
+PASS link rel=modulepreload with script and non-matching media
+PASS link rel=modulepreload with script and empty media
+PASS link rel=modulepreload with script and empty href
+PASS multiple script link rel=modulepreload with same href
+FAIL link rel=modulepreload with style doesn't re-fetch when imported promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL link rel=modulepreload for a style module with syntax error will still load promise_test: Unhandled rejection with value: object "[object Event]"
+PASS link rel=modulepreload for a style module with network error
+FAIL link rel=modulepreload with style and matching media promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL link rel=modulepreload with style and non-matching media promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL link rel=modulepreload with style and empty media promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL link rel=modulepreload with style and empty href promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL multiple style link rel=modulepreload with same href promise_test: Unhandled rejection with value: object "[object Event]"
+PASS link rel=modulepreload with json doesn't re-fetch when imported
+PASS link rel=modulepreload for a json module with syntax error will still load
+PASS link rel=modulepreload for a json module with network error
+PASS link rel=modulepreload with json and matching media
+PASS link rel=modulepreload with json and non-matching media
+PASS link rel=modulepreload with json and empty media
+PASS link rel=modulepreload with json and empty href
+PASS multiple json link rel=modulepreload with same href
+FAIL link rel=modulepreload with text doesn't re-fetch when imported promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+PASS link rel=modulepreload for a text module with syntax error will still load
+PASS link rel=modulepreload for a text module with network error
+PASS link rel=modulepreload with text and matching media
+PASS link rel=modulepreload with text and non-matching media
+PASS link rel=modulepreload with text and empty media
+PASS link rel=modulepreload with text and empty href
+PASS multiple text link rel=modulepreload with same href
 

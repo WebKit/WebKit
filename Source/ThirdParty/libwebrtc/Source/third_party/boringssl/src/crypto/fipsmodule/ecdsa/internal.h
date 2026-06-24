@@ -19,30 +19,28 @@
 
 #include "../ec/internal.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
+BSSL_NAMESPACE_BEGIN
 
 // ECDSA_MAX_FIXED_LEN is the maximum length of an ECDSA signature in the
 // fixed-width, big-endian format from IEEE P1363.
 #define ECDSA_MAX_FIXED_LEN (2 * EC_MAX_BYTES)
 
-// ecdsa_sign_fixed behaves like |ECDSA_sign| but uses the fixed-width,
+// ecdsa_sign_fixed behaves like `ECDSA_sign` but uses the fixed-width,
 // big-endian format from IEEE P1363.
 int ecdsa_sign_fixed(const uint8_t *digest, size_t digest_len, uint8_t *sig,
                      size_t *out_sig_len, size_t max_sig_len,
                      const EC_KEY *key);
 
 // ecdsa_sign_fixed_with_nonce_for_known_answer_test behaves like
-// |ecdsa_sign_fixed| but takes a caller-supplied nonce. This function is used
+// `ecdsa_sign_fixed` but takes a caller-supplied nonce. This function is used
 // as part of known-answer tests in the FIPS module.
 int ecdsa_sign_fixed_with_nonce_for_known_answer_test(
     const uint8_t *digest, size_t digest_len, uint8_t *sig, size_t *out_sig_len,
     size_t max_sig_len, const EC_KEY *key, const uint8_t *nonce,
     size_t nonce_len);
 
-// ecdsa_verify_fixed behaves like |ECDSA_verify| but uses the fixed-width,
+// ecdsa_verify_fixed behaves like `ECDSA_verify` but uses the fixed-width,
 // big-endian format from IEEE P1363.
 int ecdsa_verify_fixed(const uint8_t *digest, size_t digest_len,
                        const uint8_t *sig, size_t sig_len, const EC_KEY *key);
@@ -54,9 +52,6 @@ int ecdsa_verify_fixed_no_self_test(const uint8_t *digest, size_t digest_len,
                                     const uint8_t *sig, size_t sig_len,
                                     const EC_KEY *key);
 
-
-#if defined(__cplusplus)
-}
-#endif
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_HEADER_CRYPTO_FIPSMODULE_ECDSA_INTERNAL_H

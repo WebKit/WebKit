@@ -42,6 +42,7 @@ class UniqueIDBDatabaseTransaction;
 namespace WebKit {
 
 class IDBStorageConnectionToClient;
+class NetworkStorageManager;
 
 class IDBStorageRegistry : public CanMakeThreadSafeCheckedPtr<IDBStorageRegistry> {
     WTF_MAKE_TZONE_ALLOCATED(IDBStorageRegistry);
@@ -49,7 +50,8 @@ class IDBStorageRegistry : public CanMakeThreadSafeCheckedPtr<IDBStorageRegistry
 public:
     IDBStorageRegistry();
     ~IDBStorageRegistry();
-    WebCore::IDBServer::IDBConnectionToClient* ensureConnectionToClient(IPC::Connection&, const WebCore::IDBResourceIdentifier&);
+    WebCore::IDBServer::IDBConnectionToClient* ensureConnectionToClient(IPC::Connection&, const WebCore::IDBResourceIdentifier&, NetworkStorageManager&);
+    WebCore::IDBServer::IDBConnectionToClient* existingConnectionToClient(WebCore::IDBConnectionIdentifier);
     void removeConnectionToClient(IPC::Connection::UniqueID);
     void registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
     void unregisterConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);

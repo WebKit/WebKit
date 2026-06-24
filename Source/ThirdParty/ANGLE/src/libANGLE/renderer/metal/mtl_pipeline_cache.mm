@@ -28,7 +28,7 @@ bool HasDefaultAttribs(const RenderPipelineDesc &rpdesc)
     const VertexDesc &desc = rpdesc.vertexDescriptor;
     for (uint8_t i = 0; i < desc.numAttribs; ++i)
     {
-        if (desc.attributes[i].bufferIndex == kDefaultAttribsBindingIndex)
+        if (desc.attributes[i].getBufferIndex() == kDefaultAttribsBindingIndex)
         {
             return true;
         }
@@ -76,17 +76,22 @@ angle::Result ValidateRenderPipelineState(ContextMtl *context,
                     GL_INVALID_OPERATION);
     }
 
-    // Ensure the device can support the storage requirement for render targets.
-    if (DeviceHasMaximumRenderTargetSize(device))
+    const std::optional<NSUInteger> maxSize =
+        mtl::GetMaxRenderPassColorSizeBytes(context->getDisplay()->getFeatures(), device);
+    if (maxSize)
     {
-        NSUInteger maxSize = GetMaxRenderTargetSizeForDeviceInBytes(device);
         NSUInteger renderTargetSize =
             ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(descriptor, context, device);
-        if (renderTargetSize > maxSize)
+        if (renderTargetSize > *maxSize)
         {
+            // Unreachable: FramebufferMtl::checkStatus rejects color-attachment
+            // configurations whose total byte size exceeds this device's
+            // budget, so the pipeline-time check is defensive only.
+            UNREACHABLE();
             std::stringstream errorStream;
             errorStream << "This set of render targets requires " << renderTargetSize
-                        << " bytes of pixel storage. This device supports " << maxSize << " bytes.";
+                        << " bytes of pixel storage. This device supports " << *maxSize
+                        << " bytes.";
             ANGLE_CHECK(context, false, errorStream.str().c_str(), GL_INVALID_OPERATION);
         }
     }

@@ -41,8 +41,11 @@ namespace WebCore {
 class AnimationTimelinesController;
 class Document;
 class Element;
-class RenderStyle;
 class ScrollableArea;
+
+namespace Style {
+class ComputedStyle;
+}
 
 class ScrollTimeline : public AnimationTimeline {
 public:

@@ -44,6 +44,8 @@ ALWAYS_INLINE bool setIteratorProtocolIsFastAndNonObservable(VM& vm, JSSetIterat
     if (setIterator->hasCustomProperties()) {
         if (setIterator->getDirectOffset(vm, vm.propertyNames->next) != invalidOffset)
             return false;
+        if (setIterator->getDirectOffset(vm, vm.propertyNames->returnKeyword) != invalidOffset)
+            return false;
     }
 
     return true;

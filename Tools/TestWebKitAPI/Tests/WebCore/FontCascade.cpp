@@ -25,7 +25,10 @@
  */
 
 #include "config.h"
+#include <WebCore/FontCache.h>
 #include <WebCore/FontCascade.h>
+#include <WebCore/FontCascadeFonts.h>
+#include <WebCore/TextShapingResultAndDisplayList.h>
 
 namespace TestWebKitAPI {
 
@@ -151,5 +154,29 @@ TEST(FontCascadeTest, characterRangeCodePath_Surrogates)
     testSupplementaryCodePath(0x16B16, CodePath::Complex);
     testSupplementaryCodePath(0x16B30, CodePath::Complex);
     testSupplementaryCodePath(0x16B8F, CodePath::Complex);
+}
+
+// Purging inactive font data must flush the per-FontCascadeFonts shaped text caches.
+// A GlyphBuffer cached there holds only weak Font references, so a Font referenced only by a
+// cached shaped run can be destroyed by FontCache::purgeInactiveFontData (it has one ref); if the
+// cache is not flushed on purge, a later paint may dereference an expired weak pointer in
+// FontCascade::drawGlyphBuffer and crash. rdar://173222307
+TEST(FontCascadeTest, PurgeInactiveFontDataClearsShapedTextCache)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times"_s);
+    description.setComputedSize(16);
+    FontCascade font(WTF::move(description));
+    font.update();
+
+    RefPtr fonts = font.fonts();
+    ASSERT_TRUE(fonts);
+
+    fonts->shapedTextCache().add("hello world"_str, makeUnique<TextShapingResultAndDisplayList>());
+    EXPECT_FALSE(fonts->shapedTextCache().isEmpty());
+
+    FontCache::forCurrentThread().purgeInactiveFontData();
+
+    EXPECT_TRUE(fonts->shapedTextCache().isEmpty());
 }
 }

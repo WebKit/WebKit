@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKNotificationPrivateMac.h"
 
+#import "WKAPICast.h"
 #import "WebNotification.h"
 #import <WebCore/NotificationData.h>
 

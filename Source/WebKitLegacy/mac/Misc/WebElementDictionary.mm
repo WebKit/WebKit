@@ -49,7 +49,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 
-using namespace WebCore;
 
 static RetainPtr<CFMutableDictionaryRef>& NODELETE lookupTable()
 {
@@ -103,13 +102,13 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     addLookupKey(WebElementIsInScrollBarKey, @selector(_isInScrollBar));
 }
 
-- (id)initWithHitTestResult:(const HitTestResult&)result
+- (id)initWithHitTestResult:(const WebCore::HitTestResult&)result
 {
     [[self class] initializeLookupTable];
     self = [super init];
     if (!self)
         return nil;
-    _result = new HitTestResult(result);
+    _result = new WebCore::HitTestResult(result);
     return self;
 }
 
@@ -197,7 +196,7 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSString *)_spellingToolTip
 {
-    TextDirection dir;
+    WebCore::TextDirection dir;
     return NSStringOrNil(_result->spellingToolTip(dir));
 }
 
@@ -205,13 +204,13 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSImage *)_image
 {
-    Image* image = _result->image();
+    WebCore::Image* image = _result->image();
     return image ? image->adapter().nsImage() : nil;
 }
 
 - (NSValue *)_imageRect
 {
-    IntRect rect = _result->imageRect();
+    WebCore::IntRect rect = _result->imageRect();
     return rect.isEmpty() ? nil : [NSValue valueWithRect:rect];
 }
 
@@ -234,7 +233,7 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSString *)_title
 {
-    TextDirection dir;
+    WebCore::TextDirection dir;
     return NSStringOrNil(_result->title(dir));
 }
 
@@ -245,7 +244,7 @@ static NSString* NSStringOrNil(String coreString)
 
 - (WebFrame *)_targetWebFrame
 {
-    return kit(dynamicDowncast<LocalFrame>(_result->targetFrame().get()));
+    return kit(dynamicDowncast<WebCore::LocalFrame>(_result->targetFrame().get()));
 }
 
 - (NSString *)_titleDisplayString
@@ -260,7 +259,7 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSNumber *)_isLiveLink
 {
-    Element* urlElement = _result->URLElement();
+    WebCore::Element* urlElement = _result->URLElement();
     return [NSNumber numberWithBool:(urlElement && isDraggableLink(*urlElement))];
 }
 

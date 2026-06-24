@@ -136,6 +136,12 @@ class RtpDemuxer {
   RtpDemuxer(const RtpDemuxer&) = delete;
   void operator=(const RtpDemuxer&) = delete;
 
+  void set_use_payload_type_demuxing(bool enable) {
+    use_payload_type_demuxing_ = enable;
+  }
+
+  bool IsEmpty() const;
+
   // Registers a sink that will be notified when RTP packets match its given
   // criteria according to the algorithm described in the class description.
   // Returns true if the sink was successfully added.
@@ -160,12 +166,21 @@ class RtpDemuxer {
   // with a given RSID. Null pointer is not allowed.
   void AddSink(absl::string_view rsid, RtpPacketSinkInterface* sink);
 
+  // Removes all sinks from the demuxer.
+  void RemoveAllSinks();
+
   // Removes a sink. Return value reports if anything was actually removed.
   // Null pointer is not allowed.
   bool RemoveSink(const RtpPacketSinkInterface* sink);
 
   // Returns the set of SSRCs associated with a sink.
   flat_set<uint32_t> GetSsrcsForSink(const RtpPacketSinkInterface* sink) const;
+
+  // Runs the demux algorithm on the given packet and returns the sink that
+  // should receive the packet.
+  // Will record any SSRC<->ID associations along the way.
+  // If the packet should be dropped, this method returns null.
+  RtpPacketSinkInterface* ResolveSink(const RtpPacketReceived& packet);
 
   // Demuxes the given packet and forwards it to the chosen sink. Returns true
   // if the packet was forwarded and false if the packet was dropped.
@@ -175,12 +190,6 @@ class RtpDemuxer {
   // Returns true if adding a sink with the given criteria would cause conflicts
   // with the existing criteria and should be rejected.
   bool CriteriaWouldConflict(const RtpDemuxerCriteria& criteria) const;
-
-  // Runs the demux algorithm on the given packet and returns the sink that
-  // should receive the packet.
-  // Will record any SSRC<->ID associations along the way.
-  // If the packet should be dropped, this method returns null.
-  RtpPacketSinkInterface* ResolveSink(const RtpPacketReceived& packet);
 
   // Used by the ResolveSink algorithm.
   RtpPacketSinkInterface* ResolveSinkByMid(absl::string_view mid,
@@ -213,6 +222,7 @@ class RtpDemuxer {
   flat_map<std::pair<std::string, std::string>, RtpPacketSinkInterface*>
       sink_by_mid_and_rsid_;
   flat_map<std::string, RtpPacketSinkInterface*> sink_by_rsid_;
+  flat_set<uint32_t> signaled_ssrcs_;
 
   // Tracks all the MIDs that have been identified in added criteria. Used to
   // determine if a packet should be dropped right away because the MID is
@@ -230,6 +240,7 @@ class RtpDemuxer {
   void AddSsrcSinkBinding(uint32_t ssrc, RtpPacketSinkInterface* sink);
 
   const bool use_mid_;
+  bool use_payload_type_demuxing_ = true;
 };
 
 }  // namespace webrtc

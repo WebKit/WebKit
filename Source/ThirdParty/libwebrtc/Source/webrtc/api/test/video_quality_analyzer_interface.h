@@ -13,16 +13,15 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats_report.h"
 #include "api/test/stats_observer_interface.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
-#include "api/video_codecs/video_encoder.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -88,7 +87,7 @@ class VideoQualityAnalyzerInterface
   // thread in each method, but should remember, that it is the same thread,
   // that is used in video pipeline.
   virtual void Start(std::string /* test_case_name */,
-                     ArrayView<const std::string> /* peer_names */,
+                     std::span<const std::string> /* peer_names */,
                      int /* max_threads_count */) {}
 
   // Will be called when frame was generated from the input stream.
@@ -112,8 +111,7 @@ class VideoQualityAnalyzerInterface
                               bool /* discarded */) {}
   // Will be called for each frame dropped by encoder.
   // `peer_name` is name of the peer on which side frame drop was detected.
-  virtual void OnFrameDropped(absl::string_view /* peer_name */,
-                              EncodedImageCallback::DropReason /* reason */) {}
+  virtual void OnFrameDropped(absl::string_view /* peer_name */) {}
   // Will be called before calling the decoder.
   // `peer_name` is name of the peer on which side frame was received.
   virtual void OnFramePreDecode(absl::string_view /* peer_name */,

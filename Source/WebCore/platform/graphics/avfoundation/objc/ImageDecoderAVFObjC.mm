@@ -331,6 +331,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoderAVFObjC);
 
 RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption, ProcessIdentity resourceOwner)
 {
+    ASSERT(canDecodeType(mimeType));
+
     // AVFoundation may not be available at runtime.
     if (!AVAssetMIMETypeCache::singleton().isAvailable())
         return nullptr;

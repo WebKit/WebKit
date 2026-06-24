@@ -28,6 +28,7 @@
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/MediaRemoteSoftLink.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -40,17 +41,7 @@
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/WTFString.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(MediaRemote)
-SOFT_LINK(MediaRemote, MRMediaRemoteSetWantsNowPlayingNotifications, void, (bool wantsNotifications), (wantsNotifications))
-SOFT_LINK(MediaRemote, MRMediaRemoteGetNowPlayingClient, void, (dispatch_queue_t queue, void(^completion)(MRNowPlayingClientRef, CFErrorRef)), (queue, completion))
-SOFT_LINK(MediaRemote, MRNowPlayingClientGetProcessIdentifier, pid_t, (MRNowPlayingClientRef client), (client))
-SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteNowPlayingApplicationDidChangeNotification, CFStringRef)
-SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteNowPlayingApplicationPIDUserInfoKey, CFStringRef)
-#define MRMediaRemoteSetWantsNowPlayingNotifications softLinkMRMediaRemoteSetWantsNowPlayingNotifications
-#define MRMediaRemoteGetNowPlayingClient softLinkMRMediaRemoteGetNowPlayingClient
-#define MRNowPlayingClientGetProcessIdentifier softLinkMRNowPlayingClientGetProcessIdentifier
-#define kMRMediaRemoteNowPlayingApplicationDidChangeNotification getkMRMediaRemoteNowPlayingApplicationDidChangeNotificationSingleton()
-#define kMRMediaRemoteNowPlayingApplicationPIDUserInfoKey getkMRMediaRemoteNowPlayingApplicationPIDUserInfoKeySingleton()
+namespace TestWebKitAPI {
 
 static bool userInfoHasNowPlayingApplicationPID(CFDictionaryRef userInfo, int32_t pid)
 {
@@ -276,5 +267,7 @@ TEST_F(NowPlayingTest, VideoElementWithoutAudioPlayWithUserGesture)
 
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());
 }
+
+} // namespace TestWebKitAPI
 
 #endif

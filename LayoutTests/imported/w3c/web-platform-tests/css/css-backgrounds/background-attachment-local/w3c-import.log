@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/aqua-yellow-32x32.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-clipping-color-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-clipping-color-1-ref.html

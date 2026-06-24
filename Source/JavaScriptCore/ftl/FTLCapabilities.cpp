@@ -37,7 +37,7 @@ static bool NODELETE verboseCapabilities()
     return verboseCompilationEnabled() || Options::verboseFTLFailure();
 }
 
-inline CapabilityLevel canCompile(Node* node)
+inline CapabilityLevel canCompile(DFG::Node* node)
 {
     // NOTE: If we ever have phantom arguments, we can compile them but we cannot
     // OSR enter.
@@ -59,7 +59,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ExtractFromTuple:
     case SetArgumentDefinitely:
     case SetArgumentMaybe:
-    case Return:
+    case DFG::Return:
     case ArithBitNot:
     case ArithBitAnd:
     case ArithBitOr:
@@ -132,10 +132,10 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithNegate:
     case ArithUnary:
     case UInt32ToNumber:
-    case Jump:
+    case DFG::Jump:
     case ForceOSRExit:
-    case Phi:
-    case Upsilon:
+    case DFG::Phi:
+    case DFG::Upsilon:
     case ExtractOSREntryLocal:
     case ExtractCatchLocal:
     case ClearCatchLocals:
@@ -181,6 +181,7 @@ inline CapabilityLevel canCompile(Node* node)
     case StringEndsWith:
     case StringSplit:
     case StringMatch:
+    case StringSearch:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
     case NukeStructureAndSetButterfly:
@@ -215,14 +216,14 @@ inline CapabilityLevel canCompile(Node* node)
     case VarargsLength:
     case LoadVarargs:
     case ValueToInt32:
-    case Branch:
+    case DFG::Branch:
     case ToBoolean:
     case LogicalNot:
     case AssertInBounds:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case ConstantStoragePointer:
-    case Check:
+    case DFG::Check:
     case CheckVarargs:
     case CheckArray:
     case CheckArrayOrEmpty:
@@ -340,9 +341,9 @@ inline CapabilityLevel canCompile(Node* node)
     case InstanceOfMegamorphic:
     case InstanceOfCustom:
     case DoubleRep:
-    case ValueRep:
+    case DFG::ValueRep:
     case Int52Rep:
-    case PurifyNaN:
+    case DFG::PurifyNaN:
     case DoubleConstant:
     case Int52Constant:
     case BooleanToNumber:
@@ -351,6 +352,8 @@ inline CapabilityLevel canCompile(Node* node)
     case ResolveRope:
     case GetPropertyEnumerator:
     case EnumeratorNextUpdateIndexAndMode:
+    case StringIteratorNext:
+    case StringIteratorNextWithUndefined:
     case EnumeratorNextUpdatePropertyName:
     case EnumeratorGetByVal:
     case EnumeratorInByVal:
@@ -383,8 +386,8 @@ inline CapabilityLevel canCompile(Node* node)
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
     case ForwardVarargs:
-    case EntrySwitch:
-    case Switch:
+    case DFG::EntrySwitch:
+    case DFG::Switch:
     case TypeOf:
     case PutById:
     case PutByIdDirect:
@@ -406,9 +409,13 @@ inline CapabilityLevel canCompile(Node* node)
     case RegExpMatchFast:
     case RegExpMatchFastGlobal:
     case RegExpSearch:
+    case RegExpSplitFast:
+    case RegExpStringIteratorNext:
     case NewRegExp:
     case NewMap:
     case NewSet:
+    case NewWeakMap:
+    case NewWeakSet:
     case StringReplace:
     case StringReplaceAll:
     case StringReplaceRegExp:
@@ -455,6 +462,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ArraySplice:
     case ArrayIncludes:
     case ArrayIndexOf:
+    case ArrayJoin:
     case ArrayPop:
     case ArrayPush:
     case ArrayShift:
@@ -529,7 +537,7 @@ inline CapabilityLevel canCompile(Node* node)
         // These are OK.
         break;
 
-    case Identity:
+    case DFG::Identity:
         // No backend handles this because it will be optimized out. But we may check
         // for capabilities before optimization. It would be a deep error to remove this
         // case because it would prevent us from catching bugs where the FTL backend
@@ -565,7 +573,7 @@ CapabilityLevel canCompile(Graph& graph)
     CapabilityLevel result = CanCompileAndOSREnter;
     
     for (BlockIndex blockIndex = graph.numBlocks(); blockIndex--;) {
-        BasicBlock* block = graph.block(blockIndex);
+        DFG::BasicBlock* block = graph.block(blockIndex);
         if (!block)
             continue;
         
@@ -574,8 +582,8 @@ CapabilityLevel canCompile(Graph& graph)
             continue;
         
         for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-            Node* node = block->at(nodeIndex);
-            
+            DFG::Node* node = block->at(nodeIndex);
+
             for (unsigned childIndex = graph.numChildren(node); childIndex--;) {
                 Edge edge = graph.child(node, childIndex);
                 if (!edge)

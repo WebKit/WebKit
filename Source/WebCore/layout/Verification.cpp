@@ -47,6 +47,7 @@
 #include "RenderTableCell.h"
 #include "RenderTableSection.h"
 #include "RenderView.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

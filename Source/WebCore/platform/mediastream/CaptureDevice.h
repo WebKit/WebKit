@@ -40,6 +40,7 @@ public:
         Screen      = 1 << 4,
         Window      = 1 << 5,
         SystemAudio = 1 << 6,
+        Canvas      = 1 << 7,
     };
     static bool isScreenShareType(DeviceType type) { return type == DeviceType::Screen || type == DeviceType::Window || type == DeviceType::SystemAudio; }
 

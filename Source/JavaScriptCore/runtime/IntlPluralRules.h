@@ -100,6 +100,7 @@ private:
     IntlRoundingType m_roundingType { IntlRoundingType::FractionDigits };
     Type m_type { Type::Cardinal };
     IntlNotation m_notation { IntlNotation::Standard };
+    CompactDisplay m_compactDisplay { CompactDisplay::Short };
 };
 
 } // namespace JSC

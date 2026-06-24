@@ -119,6 +119,33 @@ TEST_F(RtcEventLogDriverTest, LoggedVideoRecvConfigCreatesStream) {
   EXPECT_EQ(stream_factory_.NumStreamsCreated(), 1);
 }
 
+TEST_F(RtcEventLogDriverTest,
+       LoggedVideoRecvConfigCreatesStreamIfIncludedInSsrcFilter) {
+  parsed_log_builder_.LogVideoRecvConfig(kSsrc1, kRtxSsrc1);
+  std::unique_ptr<ParsedRtcEventLog> parsed_log = parsed_log_builder_.Build();
+
+  RtcEventLogDriver driver(RtcEventLogDriver::Config{.ssrc_filter = {kSsrc1}},
+                           parsed_log.get(), kEmptyFieldTrialsString,
+                           BuildStreamFactory());
+  EXPECT_CALL(*stream_factory_.stream1_ptr_, Close());
+  driver.Simulate();
+
+  EXPECT_EQ(stream_factory_.NumStreamsCreated(), 1);
+}
+
+TEST_F(RtcEventLogDriverTest,
+       LoggedVideoRecvConfigDoesNotCreateStreamIfNotIncludedInSsrcFilter) {
+  parsed_log_builder_.LogVideoRecvConfig(kSsrc1, kRtxSsrc1);
+  std::unique_ptr<ParsedRtcEventLog> parsed_log = parsed_log_builder_.Build();
+
+  RtcEventLogDriver driver(RtcEventLogDriver::Config{.ssrc_filter = {kSsrc2}},
+                           parsed_log.get(), kEmptyFieldTrialsString,
+                           BuildStreamFactory());
+  driver.Simulate();
+
+  EXPECT_EQ(stream_factory_.NumStreamsCreated(), 0);
+}
+
 TEST_F(RtcEventLogDriverTest, LoggedVideoRecvConfigsCreateStreams) {
   parsed_log_builder_.LogVideoRecvConfig(kSsrc1, kRtxSsrc1);
   parsed_log_builder_.LogVideoRecvConfig(kSsrc2, kRtxSsrc2);

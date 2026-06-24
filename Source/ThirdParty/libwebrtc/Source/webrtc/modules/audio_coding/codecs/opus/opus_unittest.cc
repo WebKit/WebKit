@@ -16,11 +16,11 @@
 #include <cstdlib>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <tuple>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_coding/codecs/opus/opus_interface.h"
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
 #include "rtc_base/checks.h"
@@ -131,7 +131,7 @@ class OpusTest
   void PrepareSpeechData(int block_length_ms, int loop_length_ms);
 
   int EncodeDecode(WebRtcOpusEncInst* encoder,
-                   ArrayView<const int16_t> input_audio,
+                   std::span<const int16_t> input_audio,
                    WebRtcOpusDecInst* decoder,
                    int16_t* output_audio,
                    int16_t* audio_type);
@@ -217,7 +217,7 @@ void OpusTest::CheckAudioBounded(const int16_t* audio,
 }
 
 int OpusTest::EncodeDecode(WebRtcOpusEncInst* encoder,
-                           ArrayView<const int16_t> input_audio,
+                           std::span<const int16_t> input_audio,
                            WebRtcOpusDecInst* decoder,
                            int16_t* output_audio,
                            int16_t* audio_type) {

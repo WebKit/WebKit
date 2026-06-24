@@ -22,8 +22,8 @@
 #endif
 
 #include <numeric>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -40,7 +40,7 @@ class VectorMath {
       : cpu_features_(cpu_features) {}
 
   // Computes the dot product between two equally sized vectors.
-  float DotProduct(ArrayView<const float> x, ArrayView<const float> y) const {
+  float DotProduct(std::span<const float> x, std::span<const float> y) const {
     RTC_DCHECK_EQ(x.size(), y.size());
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #if !defined(WEBRTC_WEBKIT_BUILD)
@@ -104,8 +104,8 @@ class VectorMath {
   }
 
  private:
-  float DotProductAvx2(ArrayView<const float> x,
-                       ArrayView<const float> y) const;
+  float DotProductAvx2(std::span<const float> x,
+                       std::span<const float> y) const;
 
   const AvailableCpuFeatures cpu_features_;
 };

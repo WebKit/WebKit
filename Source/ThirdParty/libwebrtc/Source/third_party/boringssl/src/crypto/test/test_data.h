@@ -17,7 +17,7 @@
 
 #include <string>
 
-// GetTestData returns the test data for |path|, or aborts on error. |path|
+// GetTestData returns the test data for `path`, or aborts on error. `path`
 // must be a slash-separated path, relative to the BoringSSL source tree. By
 // default, this is implemented by reading from the filesystem, relative to
 // the BORINGSSL_TEST_DATA_ROOT environment variable, or the current working

@@ -94,6 +94,11 @@ bool ResourceErrorBase::compare(const ResourceError& a, const ResourceError& b)
     return ResourceError::platformCompare(a, b);
 }
 
+bool operator==(const ResourceError& a, const ResourceError& b)
+{
+    return ResourceErrorBase::compare(a, b);
+}
+
 ResourceError internalError(const URL& url, std::source_location location)
 {
     // Always print internal errors to stderr so we have some chance to figure out what went wrong

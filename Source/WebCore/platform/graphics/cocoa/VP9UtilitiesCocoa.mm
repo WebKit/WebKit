@@ -291,7 +291,8 @@ static bool isVP9CodecConfigurationRecordSupported(const VPCodecConfigurationRec
         auto screenSize = FloatSize(overrideForTesting->width, overrideForTesting->height).scaled(overrideForTesting->scale);
         has4kScreen = resolutionCategory(screenSize) >= ResolutionCategory::R_4K;
     } else {
-        for (auto& screenData : getScreenProperties().screenDataMap.values()) {
+        Ref screen = PlatformScreen::singleton();
+        for (auto& screenData : screen->screenDatas().values()) {
             if (resolutionCategory(screenData.screenRect.size().scaled(screenData.scaleFactor)) >= ResolutionCategory::R_4K) {
                 has4kScreen = true;
                 break;
@@ -424,7 +425,8 @@ std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformM
         auto screenSize = FloatSize(overrideForTesting->width, overrideForTesting->height).scaled(overrideForTesting->scale);
         has4kScreen = resolutionCategory(screenSize) >= ResolutionCategory::R_4K;
     } else {
-        for (auto& screenData : getScreenProperties().screenDataMap.values()) {
+        Ref screen = PlatformScreen::singleton();
+        for (auto& screenData : screen->screenDatas().values()) {
             if (resolutionCategory(screenData.screenRect.size().scaled(screenData.scaleFactor)) >= ResolutionCategory::R_4K) {
                 has4kScreen = true;
                 break;
@@ -546,10 +548,13 @@ static uint8_t NODELETE convertSubsamplingXYToChromaSubsampling(uint64_t x, uint
     return VPConfigurationChromaSubsampling::Subsampling_420_Colocated;
 }
 
-static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord& record, const FloatSize& size, const FloatSize& displaySize)
+static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord& record, const FloatSize& size, const FloatSize& displaySize, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride = std::nullopt)
 {
     // FIXME: Convert existing struct to an ISOBox and replace the writing code below
     // with a subclass of ISOFullBox.
+
+    auto colorSpace = colorSpaceFromVPCodecConfigurationRecord(record);
+    overrideVideoColorSpaceAsNeeded(colorSpace, colorSpaceOverride);
 
     FourCC codecName = record.codecName == "vp09"_s ? 'vp09' : 'vp08';
     return VideoInfo::create({
@@ -559,7 +564,8 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
         }, {
             .size = size,
             .displaySize = displaySize,
-            .colorSpace = colorSpaceFromVPCodecConfigurationRecord(record),
+            .bitDepth = record.bitDepth,
+            .colorSpace = WTF::move(colorSpace),
             .extensionAtoms = { FillWith { }, 1, { computeBoxType(codecName), SharedBuffer::create(vpcCFromVPCodecConfigurationRecord(record)) } },
         }
     });
@@ -587,8 +593,8 @@ Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderPar
         auto& colorValue = video.colour.value();
         if (colorValue.chroma_subsampling_x.is_present() && colorValue.chroma_subsampling_y.is_present())
             record.chromaSubsampling = convertSubsamplingXYToChromaSubsampling(colorValue.chroma_subsampling_x.value(), colorValue.chroma_subsampling_y.value());
-        if (colorValue.range.is_present() && colorValue.range.value() != Range::kUnspecified)
-            record.videoFullRangeFlag = colorValue.range.value() == Range::kFull ? VPConfigurationRange::FullRange : VPConfigurationRange::VideoRange;
+        if (colorValue.range.is_present() && colorValue.range.value() != webm::Range::kUnspecified)
+            record.videoFullRangeFlag = colorValue.range.value() == webm::Range::kFull ? VPConfigurationRange::FullRange : VPConfigurationRange::VideoRange;
         if (colorValue.bits_per_channel.is_present())
             record.bitDepth = colorValue.bits_per_channel.value();
         if (colorValue.transfer_characteristics.is_present())
@@ -682,8 +688,8 @@ Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const 
         auto& colorValue = video.colour.value();
         if (colorValue.chroma_subsampling_x.is_present() && colorValue.chroma_subsampling_y.is_present())
             record.chromaSubsampling = convertSubsamplingXYToChromaSubsampling(colorValue.chroma_subsampling_x.value(), colorValue.chroma_subsampling_y.value());
-        if (colorValue.range.is_present() && colorValue.range.value() != Range::kUnspecified)
-            record.videoFullRangeFlag = colorValue.range.value() == Range::kFull ? VPConfigurationRange::FullRange : VPConfigurationRange::VideoRange;
+        if (colorValue.range.is_present() && colorValue.range.value() != webm::Range::kUnspecified)
+            record.videoFullRangeFlag = colorValue.range.value() == webm::Range::kFull ? VPConfigurationRange::FullRange : VPConfigurationRange::VideoRange;
         if (colorValue.bits_per_channel.is_present())
             record.bitDepth = colorValue.bits_per_channel.value();
         if (colorValue.transfer_characteristics.is_present())
@@ -697,13 +703,19 @@ Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const 
     return createVideoInfoFromVPCodecConfigurationRecord(record, { static_cast<float>(header.width), static_cast<float>(header.height) }, { static_cast<float>(video.display_width.is_present() ? video.display_width.value() : header.width), static_cast<float>(video.display_height.is_present() ? video.display_height.value() : header.height) });
 }
 
-RetainPtr<CMVideoFormatDescriptionRef> createVP9FormatDescriptionFromRecord(const VPCodecConfigurationRecord& record)
+RetainPtr<CMVideoFormatDescriptionRef> createVP9FormatDescriptionFromRecord(const VPCodecConfigurationRecord& record, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride)
 {
     ASSERT(record.frameWidth);
     ASSERT(record.frameHeight);
 
-    Ref videoInfo = createVideoInfoFromVPCodecConfigurationRecord(record, IntSize { record.frameWidth, record.frameHeight }, IntSize { record.frameWidth, record.frameHeight });
+    Ref videoInfo = createVideoInfoFromVPCodecConfigurationRecord(record, IntSize { record.frameWidth, record.frameHeight }, IntSize { record.frameWidth, record.frameHeight }, colorSpaceOverride);
     return createFormatDescriptionFromTrackInfo(videoInfo.get());
+}
+
+Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord& record, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride)
+{
+    FloatSize size { static_cast<float>(record.frameWidth), static_cast<float>(record.frameHeight) };
+    return createVideoInfoFromVPCodecConfigurationRecord(record, size, size, colorSpaceOverride);
 }
 
 }

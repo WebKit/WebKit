@@ -30,6 +30,7 @@
 #include "pas_all_heaps.h"
 
 #include "bmalloc_heap_innards.h"
+#include "tagged_bmalloc_heap_innards.h"
 #if PAS_ENABLE_HOTBIT
 #include "hotbit_heap_innards.h"
 #endif
@@ -101,6 +102,8 @@ bool pas_all_heaps_for_each_static_heap(pas_all_heaps_for_each_heap_callback cal
 
 #if PAS_ENABLE_BMALLOC
     if (!callback(&bmalloc_common_primitive_heap, arg))
+        return false;
+    if (!callback(&tagged_bmalloc_common_primitive_heap, arg))
         return false;
 #endif
 

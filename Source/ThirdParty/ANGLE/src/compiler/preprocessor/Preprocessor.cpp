@@ -41,6 +41,7 @@ struct PreprocessorImpl
 Preprocessor::Preprocessor(Diagnostics *diagnostics,
                            DirectiveHandler *directiveHandler,
                            const PreprocessorSettings &settings)
+    : mForceEOF(false)
 {
     mImpl = new PreprocessorImpl(diagnostics, directiveHandler, settings);
 }
@@ -67,6 +68,12 @@ void Preprocessor::predefineMacro(const char *name, int value)
 
 void Preprocessor::lex(Token *token)
 {
+    if (mForceEOF)
+    {
+        token->type = Token::LAST;
+        token->text.clear();
+        return;
+    }
     bool validToken = false;
     while (!validToken)
     {
@@ -92,6 +99,11 @@ void Preprocessor::lex(Token *token)
                 break;
         }
     }
+}
+
+void Preprocessor::forceEOF()
+{
+    mForceEOF = true;
 }
 
 void Preprocessor::setMaxTokenSize(size_t maxTokenSize)

@@ -42,7 +42,6 @@
 #import <WebCore/WebCoreThreadMessage.h>
 #endif
 
-using namespace WebCore;
 
 typedef int64_t WebHistoryDateKey;
 typedef HashMap<WebHistoryDateKey, RetainPtr<NSMutableArray>> DateToEntriesMap;
@@ -852,7 +851,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WebHistoryItem *entry = [_historyPrivate visitedURL:url withTitle:title];
 
-    HistoryItem* item = core(entry);
+    WebCore::HistoryItem* item = core(entry);
     item->setLastVisitWasFailure(wasFailure);
 
     entry->_private->_redirectURLs = nullptr;

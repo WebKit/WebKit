@@ -134,10 +134,6 @@ class GitHub(bmocks.GitHub):
             }, 'organization': {
                 'login': self.remote.split('/')[1],
             }, 'html_url': self.remote,
-            'security_and_analysis': {
-                'secret_scanning': dict(status='disabled'),
-                'secret_scanning_push_protection': dict(status='disabled'),
-            },
         }, url=url)
 
     def _list_refs_response(self, url, type):

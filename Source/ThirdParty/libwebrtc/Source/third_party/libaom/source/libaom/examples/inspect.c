@@ -65,7 +65,8 @@ typedef enum {
   INTRABC_LAYER = 1 << 17,
   PALETTE_LAYER = 1 << 18,
   UV_PALETTE_LAYER = 1 << 19,
-  ALL_LAYERS = (1 << 20) - 1
+  BITS_LAYER = 1 << 20,
+  ALL_LAYERS = (1 << 21) - 1
 } LayerType;
 
 static LayerType layers = 0;
@@ -115,6 +116,8 @@ static const arg_def_t dump_palette_arg =
     ARG_DEF("plt", "palette", 0, "Dump Palette Size");
 static const arg_def_t dump_uv_palette_arg =
     ARG_DEF("uvp", "uv_palette", 0, "Dump UV Palette Size");
+static const arg_def_t dump_bits_arg =
+    ARG_DEF("sb", "sb_bits", 0, "Dump Bits of each superblock");
 static const arg_def_t usage_arg = ARG_DEF("h", "help", 0, "Help");
 static const arg_def_t skip_non_transform_arg = ARG_DEF(
     "snt", "skip_non_transform", 1, "Skip is counted as a non transform.");
@@ -149,6 +152,7 @@ static const arg_def_t *main_args[] = { &limit_arg,
                                         &dump_intrabc_arg,
                                         &dump_palette_arg,
                                         &dump_uv_palette_arg,
+                                        &dump_bits_arg,
                                         &usage_arg,
                                         &skip_non_transform_arg,
                                         &combined_arg,
@@ -275,6 +279,7 @@ struct parm_offset parm_offsets[] = {
   { "compound_type", offsetof(insp_mi_data, compound_type) },
   { "referenceFrame", offsetof(insp_mi_data, ref_frame) },
   { "skip", offsetof(insp_mi_data, skip) },
+  { "sb_bits", offsetof(insp_mi_data, sb_bits) },
 };
 int parm_count = sizeof(parm_offsets) / sizeof(parm_offsets[0]);
 
@@ -704,6 +709,10 @@ static void inspect(void *pbi, void *data) {
     buf += put_block_info(buf, palette_map, "uv_palette",
                           offsetof(insp_mi_data, uv_palette), 0);
   }
+  if (layers & BITS_LAYER) {
+    buf += put_block_info(buf, NULL, "sb_bits", offsetof(insp_mi_data, sb_bits),
+                          0);
+  }
   if (combined_parm_count > 0) buf += put_combined(buf);
   if (layers & REFERENCE_FRAME_LAYER) {
     buf += put_block_info(buf, refs_map, "referenceFrame",
@@ -928,6 +937,8 @@ static void parse_args(char **argv) {
       layers |= PALETTE_LAYER;
     else if (arg_match(&arg, &dump_uv_palette_arg, argi))
       layers |= UV_PALETTE_LAYER;
+    else if (arg_match(&arg, &dump_bits_arg, argi))
+      layers |= BITS_LAYER;
     else if (arg_match(&arg, &dump_all_arg, argi))
       layers |= ALL_LAYERS;
     else if (arg_match(&arg, &compress_arg, argi))

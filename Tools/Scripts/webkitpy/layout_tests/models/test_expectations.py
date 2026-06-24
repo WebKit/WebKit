@@ -40,6 +40,8 @@ from webkitpy.layout_tests.models.test_configuration import (
 )
 from webkitpy.port.base import Port
 
+_BUG_TOKEN_RE = re.compile(r'Bug\((\w+)\)$')
+
 MYPY = False
 if MYPY:
     # MYPY is True when running Mypy; typing is stdlib only in Py3
@@ -317,7 +319,7 @@ class TestExpectationParser(object):
         else:
             expectation_line.comment = expectation_string[comment_index + 1:]
 
-        remaining_string = re.sub(r"\s+", " ", expectation_string[:comment_index].strip())
+        remaining_string = " ".join(expectation_string[:comment_index].split())
         if len(remaining_string) == 0:
             return expectation_line
 
@@ -344,7 +346,7 @@ class TestExpectationParser(object):
                 if token.startswith(WEBKIT_BUG_PREFIX):
                     bugs.append(token.replace(WEBKIT_BUG_PREFIX, 'BUGWK'))
                 else:
-                    match = re.match(r'Bug\((\w+)\)$', token)
+                    match = _BUG_TOKEN_RE.match(token)
                     if not match:
                         warnings.append('unrecognized bug identifier "%s"' % token)
                         break

@@ -60,7 +60,7 @@ public:
 
     uint32_t NODELETE bufferCount() const;
     uint32_t channelCount() const { return m_channelCount; }
-    AudioBuffer* NODELETE buffer(uint32_t index) const;
+    ::AudioBuffer* NODELETE buffer(uint32_t index) const;
 
     template <typename T = uint8_t>
     std::span<T> bufferAsSpan(uint32_t index) const
@@ -72,7 +72,7 @@ public:
         return { };
     }
 
-    IteratorRange<AudioBuffer*> NODELETE buffers() const;
+    IteratorRange<::AudioBuffer*> NODELETE buffers() const;
 
     WEBCORE_EXPORT static bool isSupportedDescription(const CAAudioStreamDescription&, size_t sampleCount);
 

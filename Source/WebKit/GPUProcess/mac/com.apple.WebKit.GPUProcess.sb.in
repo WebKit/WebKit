@@ -97,12 +97,12 @@
         (allow iokit-open-user-client
             (iokit-user-client-class "AppleVideoToolboxParavirtualizationUserClient")
             (apply-message-filter
-                (allow iokit-external-method
-                    (iokit-method-number 0 1 2 3 4))
                 (GPU_PROCESS_IOKIT_DEFAULT_FILTER_OPERATION (with telemetry)
                     iokit-async-external-method
                     iokit-external-method
-                    iokit-external-trap)))
+                    iokit-external-trap)
+                (allow iokit-external-method
+                    (iokit-method-number 0 1 2 3 4))))
         ;; else
         (allow iokit-open-user-client
             (iokit-user-client-class "AppleVideoToolboxParavirtualizationUserClient"))))

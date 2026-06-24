@@ -59,13 +59,15 @@ static PlatformDisplayID widgetDisplayID(Widget* widget)
 
 int screenDepth(Widget* widget)
 {
-    auto* data = screenData(widgetDisplayID(widget));
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(widgetDisplayID(widget));
     return data ? data->screenDepth : 24;
 }
 
 int screenDepthPerComponent(Widget* widget)
 {
-    auto* data = screenData(widgetDisplayID(widget));
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(widgetDisplayID(widget));
     return data ? data->screenDepthPerComponent : 8;
 }
 
@@ -90,27 +92,31 @@ double fontDPI()
     if (xftDPI)
         return xftDPI.value() / 1024.0;
 
-    auto* data = screenData(primaryScreenDisplayID());
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(platformScreen->primaryScreenDisplayID());
     return data ? data->dpi : 96.;
 }
 
 double screenDPI(PlatformDisplayID screendisplayID)
 {
-    auto* data = screenData(screendisplayID);
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(screendisplayID);
     return data ? data->dpi : 96.;
 }
 
 
 FloatRect screenRect(Widget* widget)
 {
-    if (auto* data = screenData(widgetDisplayID(widget)))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto* data = platformScreen->screenData(widgetDisplayID(widget)))
         return data->screenRect;
     return { };
 }
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-    if (auto* data = screenData(widgetDisplayID(widget)))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto* data = platformScreen->screenData(widgetDisplayID(widget)))
         return data->screenAvailableRect;
     return { };
 }
@@ -123,7 +129,8 @@ bool screenSupportsExtendedColor(Widget*)
 #if ENABLE(TOUCH_EVENTS)
 bool screenHasTouchDevice()
 {
-    return getScreenProperties().screenHasTouchDevice;
+    Ref platformScreen = PlatformScreen::singleton();
+    return platformScreen->screenProperties().screenHasTouchDevice;
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

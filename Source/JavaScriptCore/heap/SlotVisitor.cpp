@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SlotVisitor.h"
 
+#include "CellContainerInlines.h"
 #include "ConservativeRoots.h"
 #include "GCSegmentedArrayInlines.h"
 #include "HeapAnalyzer.h"

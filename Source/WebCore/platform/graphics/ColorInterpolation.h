@@ -69,10 +69,15 @@ inline float interpolateComponentAccountingForNaN(float componentFromColor1, dou
 template<typename InterpolationMethodColorSpace>
 float interpolateHue(InterpolationMethodColorSpace interpolationMethodColorSpace, float componentFromColor1, double color1Multiplier, float componentFromColor2, double color2Multiplier)
 {
-    if (std::isnan(componentFromColor1))
-        return componentFromColor2;
-    if (std::isnan(componentFromColor2))
+    bool componentFromColor1IsNaN = std::isnan(componentFromColor1);
+    bool componentFromColor2IsNaN = std::isnan(componentFromColor2);
+    if (componentFromColor1IsNaN && componentFromColor2IsNaN)
         return componentFromColor1;
+
+    if (componentFromColor1IsNaN)
+        componentFromColor1 = componentFromColor2;
+    else if (componentFromColor2IsNaN)
+        componentFromColor2 = componentFromColor1;
 
     auto [fixedupComponent1, fixedupComponent2] = fixupHueComponentsPriorToInterpolation(interpolationMethodColorSpace.hueInterpolationMethod, componentFromColor1, componentFromColor2);
     return interpolateComponentWithoutAccountingForNaN(fixedupComponent1, color1Multiplier, fixedupComponent2, color2Multiplier);

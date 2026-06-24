@@ -10,6 +10,7 @@
  */
 
 #include <float.h>
+#include <inttypes.h>
 
 #include "config/aom_config.h"
 
@@ -41,7 +42,9 @@
 #include "av1/encoder/tune_vmaf.h"
 #endif
 
-#define COLLECT_MOTION_SEARCH_FEATURE_SB 0
+#ifndef COLLECT_MOTION_SEARCH_FEATURE_SB
+#define COLLECT_MOTION_SEARCH_FEATURE_SB CONFIG_PARTITION_SEARCH_ORDER
+#endif
 
 #if CONFIG_PARTITION_SEARCH_ORDER
 void av1_reset_part_sf(PARTITION_SPEED_FEATURES *part_sf) {
@@ -96,6 +99,7 @@ void av1_reset_sf_for_ext_part(AV1_COMP *const cpi) {
 #endif  // CONFIG_PARTITION_SEARCH_ORDER
 
 #if !CONFIG_REALTIME_ONLY
+#if COLLECT_MOTION_SEARCH_FEATURE_SB
 // If input |features| is NULL, write tpl stats to file for each super block.
 // Otherwise, store tpl stats to |features|.
 // The tpl stats is computed in the unit of tpl_bsize_1d (16x16).
@@ -204,6 +208,7 @@ static void collect_tpl_stats_sb(const AV1_COMP *const cpi,
     }
   }
 }
+#endif  // COLLECT_MOTION_SEARCH_FEATURE_SB
 #endif  // !CONFIG_REALTIME_ONLY
 
 static void update_txfm_count(MACROBLOCK *x, MACROBLOCKD *xd,
@@ -426,6 +431,11 @@ static void encode_superblock(const AV1_COMP *const cpi, TileDataEnc *tile_data,
 
     xd->cfl.store_y = 0;
     if (av1_allow_palette(cm->features.allow_screen_content_tools, bsize)) {
+      // Gather the stats to determine whether to use screen content tools in
+      // function av1_determine_sc_tools_with_encoding().
+      if (mbmi->palette_mode_info.palette_size[0] > 0 &&
+          dry_run == OUTPUT_ENABLED)
+        x->palette_pixels += (block_size_wide[bsize] * block_size_high[bsize]);
       for (int plane = 0; plane < AOMMIN(2, num_planes); ++plane) {
         if (mbmi->palette_mode_info.palette_size[plane] > 0) {
           if (!dry_run) {
@@ -608,8 +618,7 @@ static void setup_block_rdmult(const AV1_COMP *const cpi, MACROBLOCK *const x,
   }
 
 #if !CONFIG_REALTIME_ONLY
-  if (cpi->common.delta_q_info.delta_q_present_flag &&
-      !cpi->sf.rt_sf.use_nonrd_pick_mode) {
+  if (cpi->cb_delta_rdmult_enabled && !cpi->sf.rt_sf.use_nonrd_pick_mode) {
     x->rdmult = av1_get_cb_rdmult(cpi, x, bsize, mi_row, mi_col);
   }
 #endif  // !CONFIG_REALTIME_ONLY
@@ -4038,12 +4047,80 @@ static void prune_4_partition_using_split_info(
   }
 }
 
+static void prune_part4_using_sms(AV1_COMP *const cpi, MACROBLOCK *x,
+                                  const PartitionSearchState *part_search_state,
+                                  SIMPLE_MOTION_DATA_TREE *sms_tree, int mi_row,
+                                  int mi_col, BLOCK_SIZE bsize,
+                                  int *part4_search_allowed) {
+  if (!part4_search_allowed[HORZ4] || !part4_search_allowed[VERT4]) return;
+
+  unsigned int sms_h_part4_sse[4];
+  unsigned int sms_v_part4_sse[4];
+
+  const BLOCK_SIZE subsize_h4 = get_partition_subsize(bsize, PARTITION_HORZ_4);
+  const BLOCK_SIZE subsize_v4 = get_partition_subsize(bsize, PARTITION_VERT_4);
+
+  const int h_mi = mi_size_high[bsize];
+  const int w_mi = mi_size_wide[bsize];
+
+  const int ref = cpi->rc.is_src_frame_alt_ref ? ALTREF_FRAME : LAST_FRAME;
+  if (!(cpi->ref_frame_flags & av1_ref_frame_flag_list[ref])) return;
+
+  int64_t part4_h_sse_sum = 0;
+  int64_t part4_v_sse_sum = 0;
+
+  // ---- HORZ_4 ----
+  for (int r_idx = 0; r_idx < SUB_PARTITIONS_PART4; r_idx++) {
+    unsigned int part_var;
+    const int sub_mi_row = mi_row + r_idx * h_mi / 4;
+    const int sub_mi_col = mi_col;
+
+    av1_simple_motion_search_sse_var(cpi, x, sub_mi_row, sub_mi_col, subsize_h4,
+                                     ref, sms_tree->start_mvs[ref],
+                                     /*num_planes=*/1, /*use_subpixel=*/1,
+                                     &sms_h_part4_sse[r_idx], &part_var);
+
+    (void)part_var;
+
+    part4_h_sse_sum += sms_h_part4_sse[r_idx];
+  }
+
+  // ---- VERT_4 ----
+  for (int r_idx = 0; r_idx < SUB_PARTITIONS_PART4; r_idx++) {
+    unsigned int part_var;
+    const int sub_mi_row = mi_row;
+    const int sub_mi_col = mi_col + r_idx * w_mi / 4;
+
+    av1_simple_motion_search_sse_var(cpi, x, sub_mi_row, sub_mi_col, subsize_v4,
+                                     ref, sms_tree->start_mvs[ref],
+                                     /*num_planes=*/1, /*use_subpixel=*/1,
+                                     &sms_v_part4_sse[r_idx], &part_var);
+    (void)part_var;
+
+    part4_v_sse_sum += sms_v_part4_sse[r_idx];
+  }
+
+  // ---- Skip RD calculation ----
+  const int64_t part4_h_rd =
+      RDCOST(x->rdmult, part_search_state->partition_cost[PARTITION_HORZ_4],
+             part4_h_sse_sum);
+
+  const int64_t part4_v_rd =
+      RDCOST(x->rdmult, part_search_state->partition_cost[PARTITION_VERT_4],
+             part4_v_sse_sum);
+
+  // ---- pruning ----
+  if (part4_h_rd > part4_v_rd) part4_search_allowed[HORZ4] = 0;
+
+  if (part4_v_rd > part4_h_rd) part4_search_allowed[VERT4] = 0;
+}
+
 // Prune 4-way partition search.
 static void prune_4_way_partition_search(
     AV1_COMP *const cpi, MACROBLOCK *x, PC_TREE *pc_tree,
-    PartitionSearchState *part_search_state, RD_STATS *best_rdc,
-    int pb_source_variance, int prune_ext_part_state,
-    int part4_search_allowed[NUM_PART4_TYPES]) {
+    PartitionSearchState *part_search_state, SIMPLE_MOTION_DATA_TREE *sms_tree,
+    RD_STATS *best_rdc, int pb_source_variance, int prune_ext_part_state,
+    int mi_row, int mi_col, int part4_search_allowed[NUM_PART4_TYPES]) {
   const PartitionBlkParams blk_params = part_search_state->part_blk_params;
   const BLOCK_SIZE bsize = blk_params.bsize;
 
@@ -4122,6 +4199,15 @@ static void prune_4_way_partition_search(
   // in the current block and sub-blocks in PARTITION_SPLIT.
   prune_4_partition_using_split_info(cpi, x, part_search_state,
                                      part4_search_allowed);
+
+  if (cpi->sf.part_sf.prune_h_or_v_4part_using_sms_info && partition4_allowed &&
+      best_rdc->rdcost != INT64_MAX &&
+      av1_is_whole_blk_in_frame(&part_search_state->part_blk_params,
+                                &cpi->common.mi_params) &&
+      !frame_is_intra_only(&cpi->common)) {
+    prune_part4_using_sms(cpi, x, part_search_state, sms_tree, mi_row, mi_col,
+                          bsize, part4_search_allowed);
+  }
 }
 
 // Set params needed for PARTITION_NONE search.
@@ -4560,6 +4646,7 @@ static void split_partition_search(
     av1_restore_context(x, x_ctx, mi_row, mi_col, bsize, av1_num_planes(cm));
 }
 
+#if COLLECT_MOTION_SEARCH_FEATURE_SB
 // The max number of nodes in the partition tree.
 // The number of leaf nodes is (128x128) / (4x4) = 1024.
 // The number of All possible parent nodes is 1 + 2 + ... + 512 = 1023.
@@ -4623,6 +4710,7 @@ static void write_partition_tree(AV1_COMP *const cpi,
 
   fclose(pfile);
 }
+#endif  // COLLECT_MOTION_SEARCH_FEATURE_SB
 
 #if CONFIG_PARTITION_SEARCH_ORDER
 static void verify_write_partition_tree(const AV1_COMP *const cpi,
@@ -4911,18 +4999,77 @@ static void build_pc_tree_from_part_decision(
       node->partitioning = partitioning;
       bsize = node->block_size;
     }
-    if (partitioning == PARTITION_SPLIT) {
-      const BLOCK_SIZE subsize = get_partition_subsize(bsize, PARTITION_SPLIT);
-      for (int i = 0; i < 4; ++i) {
-        if (node != NULL) {  // Suppress warning
-          node->split[i] = av1_alloc_pc_tree_node(subsize);
-          if (!node->split[i])
-            aom_internal_error(error_info, AOM_CODEC_MEM_ERROR,
-                               "Failed to allocate PC_TREE");
-          node->split[i]->index = i;
-          tree_node_queue[last_idx] = node->split[i];
-          ++last_idx;
-        }
+    if (partitioning != PARTITION_NONE) {
+      const BLOCK_SIZE subsize = get_partition_subsize(bsize, partitioning);
+      // Smaller block size for AB partition
+      const BLOCK_SIZE subsize2 = get_partition_subsize(bsize, PARTITION_SPLIT);
+
+      switch (partitioning) {
+        case PARTITION_SPLIT:
+        case PARTITION_HORZ_4:
+        case PARTITION_VERT_4:
+          for (int i = 0; i < 4; ++i) {
+            if (node != NULL) {  // Suppress warning
+              node->split[i] = av1_alloc_pc_tree_node(subsize);
+              if (!node->split[i])
+                aom_internal_error(error_info, AOM_CODEC_MEM_ERROR,
+                                   "Failed to allocate PC_TREE");
+              node->split[i]->index = i;
+              tree_node_queue[last_idx] = node->split[i];
+              ++last_idx;
+            }
+          }
+          break;
+        case PARTITION_HORZ:
+        case PARTITION_VERT:
+          for (int i = 0; i < 2; ++i) {
+            if (node != NULL) {  // Suppress warning
+              node->split[i] = av1_alloc_pc_tree_node(subsize);
+              if (!node->split[i])
+                aom_internal_error(error_info, AOM_CODEC_MEM_ERROR,
+                                   "Failed to allocate PC_TREE");
+              node->split[i]->index = i;
+              tree_node_queue[last_idx] = node->split[i];
+              ++last_idx;
+            }
+          }
+          break;
+        case PARTITION_HORZ_A:
+        case PARTITION_VERT_A:
+          if (node != NULL) {  // Suppress warning
+            node->split[0] = av1_alloc_pc_tree_node(subsize2);
+            node->split[1] = av1_alloc_pc_tree_node(subsize2);
+            node->split[2] = av1_alloc_pc_tree_node(subsize);
+            for (int i = 0; i < 3; ++i) {
+              if (!node->split[i])
+                aom_internal_error(error_info, AOM_CODEC_MEM_ERROR,
+                                   "Failed to allocate PC_TREE");
+              node->split[i]->index = i;
+              tree_node_queue[last_idx] = node->split[i];
+              ++last_idx;
+            }
+          }
+          break;
+        case PARTITION_HORZ_B:
+        case PARTITION_VERT_B:
+          if (node != NULL) {  // Suppress warning
+            node->split[0] = av1_alloc_pc_tree_node(subsize);
+            node->split[1] = av1_alloc_pc_tree_node(subsize2);
+            node->split[2] = av1_alloc_pc_tree_node(subsize2);
+            for (int i = 0; i < 3; ++i) {
+              if (!node->split[i])
+                aom_internal_error(error_info, AOM_CODEC_MEM_ERROR,
+                                   "Failed to allocate PC_TREE");
+              node->split[i]->index = i;
+              tree_node_queue[last_idx] = node->split[i];
+              ++last_idx;
+            }
+          }
+          break;
+        case PARTITION_NONE:
+        default:
+          // Should not hit this case.
+          assert(0);
       }
     }
     --num_nodes;
@@ -5554,16 +5701,6 @@ bool av1_rd_pick_partition(AV1_COMP *const cpi, ThreadData *td,
     part_search_state.partition_rect_allowed[VERT] &= !blk_params.has_cols;
   }
 
-#ifndef NDEBUG
-  // Nothing should rely on the default value of this array (which is just
-  // leftover from encoding the previous block. Setting it to fixed pattern
-  // when debugging.
-  // bit 0, 1, 2 are blk_skip of each plane
-  // bit 4, 5, 6 are initialization checking of each plane
-  memset(x->txfm_search_info.blk_skip, 0x77,
-         sizeof(x->txfm_search_info.blk_skip));
-#endif  // NDEBUG
-
   assert(mi_size_wide[bsize] == mi_size_high[bsize]);
 
   // Set buffers and offsets.
@@ -5594,12 +5731,13 @@ bool av1_rd_pick_partition(AV1_COMP *const cpi, ThreadData *td,
   // external ML model.
   // TODO(chengchen): reduce motion search. This function is similar to
   // av1_get_max_min_partition_features().
-  if (COLLECT_MOTION_SEARCH_FEATURE_SB && !frame_is_intra_only(cm) &&
-      bsize == cm->seq_params->sb_size) {
+#if COLLECT_MOTION_SEARCH_FEATURE_SB
+  if (!frame_is_intra_only(cm) && bsize == cm->seq_params->sb_size) {
     av1_collect_motion_search_features_sb(cpi, td, tile_data, mi_row, mi_col,
                                           bsize, /*features=*/NULL);
     collect_tpl_stats_sb(cpi, bsize, mi_row, mi_col, /*features=*/NULL);
   }
+#endif  // !COLLECT_MOTION_SEARCH_FEATURE_SB
 
   // Update rd cost of the bound using the current multiplier.
   av1_rd_cost_update(x->rdmult, &best_rdc);
@@ -5772,8 +5910,9 @@ BEGIN_PARTITION_SEARCH:
   // 4-way partitions search stage.
   int part4_search_allowed[NUM_PART4_TYPES] = { 1, 1 };
   // Prune 4-way partition search.
-  prune_4_way_partition_search(cpi, x, pc_tree, &part_search_state, &best_rdc,
-                               pb_source_variance, prune_ext_part_state,
+  prune_4_way_partition_search(cpi, x, pc_tree, &part_search_state, sms_tree,
+                               &best_rdc, pb_source_variance,
+                               prune_ext_part_state, mi_row, mi_col,
                                part4_search_allowed);
 
 #if CONFIG_COLLECT_COMPONENT_TIMING
@@ -5861,12 +6000,11 @@ BEGIN_PARTITION_SEARCH:
       const int emit_output = multi_pass_mode != SB_DRY_PASS;
       const RUN_TYPE run_type = emit_output ? OUTPUT_ENABLED : DRY_RUN_NORMAL;
 
+#if COLLECT_MOTION_SEARCH_FEATURE_SB
       // Write partition tree to file. Not used by default.
-      if (COLLECT_MOTION_SEARCH_FEATURE_SB) {
-        write_partition_tree(cpi, pc_tree, bsize, mi_row, mi_col);
-        ++cpi->sb_counter;
-      }
-
+      write_partition_tree(cpi, pc_tree, bsize, mi_row, mi_col);
+      ++cpi->sb_counter;
+#endif  // COLLECT_MOTION_SEARCH_FEATURE_SB
       set_cb_offsets(x->cb_offset, 0, 0);
       encode_sb(cpi, td, tile_data, tp, mi_row, mi_col, run_type, bsize,
                 pc_tree, NULL);

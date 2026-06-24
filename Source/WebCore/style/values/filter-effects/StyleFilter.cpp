@@ -121,7 +121,7 @@ std::optional<IntOutsets> Filter::calculateOutsets(ZoomFactor zoom) const
 
 // MARK: (FilterValueList)
 
-auto ToCSS<FilterValueList>::operator()(const FilterValueList& value, const RenderStyle& style) -> CSS::FilterValueList
+auto ToCSS<FilterValueList>::operator()(const FilterValueList& value, const Style::ComputedStyle& style) -> CSS::FilterValueList
 {
     return CSS::FilterValueList::map(value, [&](const auto& x) -> CSS::FilterValue { return toCSS(x, style); });
 }
@@ -152,7 +152,7 @@ auto CSSValueConversion<Filter>::operator()(BuilderState& state, const CSSValue&
     return toStyle(filter->filter(), state);
 }
 
-Ref<CSSValue> CSSValueCreation<Filter>::operator()(CSSValuePool&, const RenderStyle& style, const Filter& value)
+Ref<CSSValue> CSSValueCreation<Filter>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Filter& value)
 {
     return CSSFilterValue::create(toCSS(value, style));
 }
@@ -168,7 +168,7 @@ auto Blending<Filter>::canBlend(const Filter& from, const Filter& to, CompositeO
     return canBlendFilterLists(from.m_value, to.m_value, compositeOperation);
 }
 
-auto Blending<Filter>::blend(const Filter& from, const Filter& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> Filter
+auto Blending<Filter>::blend(const Filter& from, const Filter& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> Filter
 {
     auto blendedFilterList = blendFilterLists(from.m_value, to.m_value, fromStyle, toStyle, context);
 
@@ -180,7 +180,7 @@ auto Blending<Filter>::blend(const Filter& from, const Filter& to, const RenderS
 
 // MARK: - Platform
 
-auto ToPlatform<FilterValue>::operator()(const FilterValue& value, const RenderStyle& style) -> Ref<FilterOperation>
+auto ToPlatform<FilterValue>::operator()(const FilterValue& value, const Style::ComputedStyle& style) -> Ref<FilterOperation>
 {
     return WTF::switchOn(value,
         [&](const BlurFunction& blurFunction) -> Ref<FilterOperation> {
@@ -198,7 +198,7 @@ auto ToPlatform<FilterValue>::operator()(const FilterValue& value, const RenderS
     );
 }
 
-auto ToPlatform<Filter>::operator()(const Filter& value, const RenderStyle& style) -> FilterOperations
+auto ToPlatform<Filter>::operator()(const Filter& value, const Style::ComputedStyle& style) -> FilterOperations
 {
     return FilterOperations { WTF::map(value, [&](auto& filterValue) -> Ref<FilterOperation> {
         return toPlatform(filterValue, style);

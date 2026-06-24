@@ -37,7 +37,7 @@
 #include <WebCore/IterationCompositeOperation.h>
 #include <WebCore/KeyframeEffectOptions.h>
 #include <WebCore/KeyframeInterpolation.h>
-#include <WebCore/RenderStyle.h>
+#include <WebCore/StyleComputedStyle.h>
 #include <WebCore/StyleInterpolationClient.h>
 #include <WebCore/Styleable.h>
 #include <WebCore/WebAnimationTypes.h>
@@ -51,13 +51,13 @@ class Element;
 class FilterOperations;
 class GraphicsLayerAnimation;
 class MutableStyleProperties;
-class RenderStyle;
 
 #if ENABLE(THREADED_ANIMATIONS)
 class AcceleratedEffect;
 #endif
 
 namespace Style {
+class ComputedStyle;
 struct ResolutionContext;
 }
 
@@ -132,15 +132,15 @@ public:
     CompositeOperation bindingsComposite() const;
     void setBindingsComposite(CompositeOperation);
 
-    void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
-    OptionSet<AnimationImpact> apply(RenderStyle& targetStyle, const Style::ResolutionContext&, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No);
+    void getAnimatedStyle(std::unique_ptr<Style::ComputedStyle>& animatedStyle);
+    OptionSet<AnimationImpact> apply(Style::ComputedStyle& targetStyle, const Style::ResolutionContext&, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No);
     void invalidate();
 
     void animationBecameReady();
     void animationRelevancyDidChange();
     void transformRelatedPropertyDidChange();
     enum class RecomputationReason : uint8_t { LogicalPropertyChange, Other };
-    std::optional<RecomputationReason> recomputeKeyframesIfNecessary(const RenderStyle* previousUnanimatedStyle, const RenderStyle& unanimatedStyle, const Style::ResolutionContext&);
+    std::optional<RecomputationReason> recomputeKeyframesIfNecessary(const Style::ComputedStyle* previousUnanimatedStyle, const Style::ComputedStyle& unanimatedStyle, const Style::ResolutionContext&);
     void recomputeKeyframesAtNextOpportunity();
     void applyPendingAcceleratedActions();
     void applyPendingAcceleratedActionsOrUpdateTimingProperties();
@@ -149,14 +149,14 @@ public:
 
     Document* document() const final;
     RenderElement* renderer() const final;
-    const RenderStyle& currentStyle() const LIFETIME_BOUND final;
+    const Style::ComputedStyle& currentStyle() const LIFETIME_BOUND final;
     bool triggersStackingContext() const { return m_triggersStackingContext; }
     bool isRunningAccelerated() const;
     bool isAboutToRunAccelerated() const;
 
     std::optional<unsigned> transformFunctionListPrefix() const override;
 
-    void computeStyleOriginatedAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
+    void computeStyleOriginatedAnimationBlendingKeyframes(const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext&);
     const BlendingKeyframes& blendingKeyframes() const LIFETIME_BOUND { return m_blendingKeyframes; }
     const HashSet<AnimatableCSSProperty>& animatedProperties() LIFETIME_BOUND;
     bool animatesProperty(const AnimatableCSSProperty&) const;
@@ -185,7 +185,7 @@ public:
     void wasAddedToEffectStack();
     void wasRemovedFromEffectStack();
 
-    void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
+    void lastStyleChangeEventStyleDidChange(const Style::ComputedStyle* previousStyle, const Style::ComputedStyle* currentStyle);
     void acceleratedPropertiesOverriddenByCascadeDidChange();
 
     static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
@@ -227,7 +227,7 @@ private:
     void addPendingAcceleratedAction(AcceleratedAction);
     bool isCompletelyAccelerated() const { return m_acceleratedPropertiesState == AcceleratedProperties::All; }
     void updateAcceleratedActions();
-    void setAnimatedPropertiesInStyle(RenderStyle&, const ComputedEffectTiming&) const;
+    void setAnimatedPropertiesInStyle(Style::ComputedStyle&, const ComputedEffectTiming&) const;
     const TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
     const TimingFunction* timingFunctionForBlendingKeyframe(const BlendingKeyframe&) const;
     Ref<const GraphicsLayerAnimation> backingAnimationForCompositedRenderer();
@@ -235,9 +235,9 @@ private:
     void computeStackingContextImpact();
     void computeSomeKeyframesUseStepsOrLinearTimingFunctionWithPoints();
     void clearBlendingKeyframes();
-    void updateBlendingKeyframes(RenderStyle& elementStyle, const Style::ResolutionContext&);
-    void computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const Style::ResolutionContext&);
-    void computeCSSTransitionBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle);
+    void updateBlendingKeyframes(Style::ComputedStyle& elementStyle, const Style::ResolutionContext&);
+    void computeCSSAnimationBlendingKeyframes(const Style::ComputedStyle& unanimatedStyle, const Style::ResolutionContext&);
+    void computeCSSTransitionBlendingKeyframes(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);
     void computeAcceleratedPropertiesState();
     void setBlendingKeyframes(BlendingKeyframes&&);
     void checkForMatchingTransformFunctionLists();

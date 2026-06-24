@@ -33,6 +33,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSUnits.h"
+#include <limits>
 #include <ranges>
 #include <wtf/text/StringBuilder.h>
 
@@ -92,6 +93,7 @@ template<typename Op> static void serializeMathFunctionPrefix(StringBuilder&, co
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Sum>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Product>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Random>&, SerializationState&);
+static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<CalcMix>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Anchor>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<AnchorSize>&, SerializationState&);
 template<typename Op> static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Op>&, SerializationState&);
@@ -115,6 +117,18 @@ template<typename Op> static void serializeCalculationTree(StringBuilder&, const
 
 // MARK: Sorting
 
+// Sort keys are assigned sequentially via __COUNTER__ rather than hand-numbered,
+// so that adding, removing or reordering a case cannot accidentally collide with
+// or skip a value (which is how 'vmax' came to share 'svb's key and skip its own).
+// The base is captured once so the keys start at 0 regardless of any prior
+// __COUNTER__ use in this translation unit.
+static constexpr unsigned sortPriorityBase = __COUNTER__;
+#define SORT_PRIORITY_NEXT (__COUNTER__ - sortPriorityBase - 1)
+
+// Sentinels that sort after every real unit, independent of how many there are.
+static constexpr unsigned errorSortPriority = std::numeric_limits<unsigned>::max() - 1;
+static constexpr unsigned otherSortPriority = std::numeric_limits<unsigned>::max();
+
 static unsigned NODELETE sortPriority(CSSUnitType unit)
 {
     // Sort order: number, percentage, dimension (by unit, ordered ASCII case-insensitively), other.
@@ -122,73 +136,73 @@ static unsigned NODELETE sortPriority(CSSUnitType unit)
     switch (unit) {
     // number
     case CSSUnitType::CSS_NUMBER:
-    case CSSUnitType::CSS_INTEGER:      return 0;
+    case CSSUnitType::CSS_INTEGER:      return SORT_PRIORITY_NEXT;
     // percentage
-    case CSSUnitType::CSS_PERCENTAGE:   return 1;
+    case CSSUnitType::CSS_PERCENTAGE:   return SORT_PRIORITY_NEXT;
 
     // dimension (by unit, ordered ASCII case-insensitively)
-    case CSSUnitType::CSS_CAP:          return 2;
-    case CSSUnitType::CSS_CH:           return 3;
-    case CSSUnitType::CSS_CM:           return 4;
-    case CSSUnitType::CSS_CQB:          return 5;
-    case CSSUnitType::CSS_CQH:          return 6;
-    case CSSUnitType::CSS_CQI:          return 7;
-    case CSSUnitType::CSS_CQMAX:        return 8;
-    case CSSUnitType::CSS_CQMIN:        return 9;
-    case CSSUnitType::CSS_CQW:          return 10;
-    case CSSUnitType::CSS_DEG:          return 11;
-    case CSSUnitType::CSS_DPCM:         return 12;
-    case CSSUnitType::CSS_DPI:          return 13;
-    case CSSUnitType::CSS_DPPX:         return 14;
-    case CSSUnitType::CSS_DVB:          return 15;
-    case CSSUnitType::CSS_DVH:          return 16;
-    case CSSUnitType::CSS_DVI:          return 17;
-    case CSSUnitType::CSS_DVMAX:        return 18;
-    case CSSUnitType::CSS_DVMIN:        return 19;
-    case CSSUnitType::CSS_DVW:          return 20;
-    case CSSUnitType::CSS_EM:           return 21;
-    case CSSUnitType::CSS_EX:           return 22;
-    case CSSUnitType::CSS_FR:           return 23;
-    case CSSUnitType::CSS_GRAD:         return 24;
-    case CSSUnitType::CSS_HZ:           return 25;
-    case CSSUnitType::CSS_IC:           return 26;
-    case CSSUnitType::CSS_IN:           return 27;
-    case CSSUnitType::CSS_KHZ:          return 28;
-    case CSSUnitType::CSS_LH:           return 29;
-    case CSSUnitType::CSS_LVB:          return 30;
-    case CSSUnitType::CSS_LVH:          return 31;
-    case CSSUnitType::CSS_LVI:          return 32;
-    case CSSUnitType::CSS_LVMAX:        return 33;
-    case CSSUnitType::CSS_LVMIN:        return 34;
-    case CSSUnitType::CSS_LVW:          return 35;
-    case CSSUnitType::CSS_MM:           return 36;
-    case CSSUnitType::CSS_MS:           return 37;
-    case CSSUnitType::CSS_PC:           return 38;
-    case CSSUnitType::CSS_PT:           return 39;
-    case CSSUnitType::CSS_PX:           return 40;
-    case CSSUnitType::CSS_Q:            return 41;
-    case CSSUnitType::CSS_RAD:          return 42;
-    case CSSUnitType::CSS_RCAP:         return 43;
-    case CSSUnitType::CSS_RCH:          return 44;
-    case CSSUnitType::CSS_REM:          return 45;
-    case CSSUnitType::CSS_REX:          return 46;
-    case CSSUnitType::CSS_RIC:          return 47;
-    case CSSUnitType::CSS_RLH:          return 48;
-    case CSSUnitType::CSS_S:            return 49;
-    case CSSUnitType::CSS_SVB:          return 50;
-    case CSSUnitType::CSS_SVH:          return 51;
-    case CSSUnitType::CSS_SVI:          return 52;
-    case CSSUnitType::CSS_SVMAX:        return 53;
-    case CSSUnitType::CSS_SVMIN:        return 54;
-    case CSSUnitType::CSS_SVW:          return 55;
-    case CSSUnitType::CSS_TURN:         return 56;
-    case CSSUnitType::CSS_VB:           return 57;
-    case CSSUnitType::CSS_VH:           return 58;
-    case CSSUnitType::CSS_VI:           return 59;
-    case CSSUnitType::CSS_VMAX:         return 50;
-    case CSSUnitType::CSS_VMIN:         return 61;
-    case CSSUnitType::CSS_VW:           return 62;
-    case CSSUnitType::CSS_X:            return 63;
+    case CSSUnitType::CSS_CAP:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_CH:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_CM:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_CQB:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_CQH:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_CQI:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_CQMAX:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_CQMIN:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_CQW:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DEG:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DPCM:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DPI:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DPPX:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DVB:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DVH:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DVI:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DVMAX:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DVMIN:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_DVW:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_EM:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_EX:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_FR:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_GRAD:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_HZ:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_IC:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_IN:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_KHZ:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_LH:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_LVB:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_LVH:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_LVI:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_LVMAX:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_LVMIN:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_LVW:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_MM:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_MS:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_PC:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_PT:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_PX:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_Q:            return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_RAD:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_RCAP:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_RCH:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_REM:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_REX:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_RIC:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_RLH:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_S:            return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_SVB:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_SVH:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_SVI:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_SVMAX:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_SVMIN:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_SVW:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_TURN:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_VB:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_VH:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_VI:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_VMAX:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_VMIN:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_VW:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::CSS_X:            return SORT_PRIORITY_NEXT;
 
     // Non-numeric types are not supported.
     case CSSUnitType::CSS_CALC:
@@ -200,8 +214,10 @@ static unsigned NODELETE sortPriority(CSSUnitType unit)
     }
 
     ASSERT_NOT_REACHED();
-    return 64;
+    return errorSortPriority;
 }
+
+#undef SORT_PRIORITY_NEXT
 
 static unsigned sortPriority(const Child& child)
 {
@@ -212,7 +228,7 @@ static unsigned sortPriority(const Child& child)
             return sortPriority(toCSSUnit(root));
         },
         [](const auto&) -> unsigned {
-            return 65; // NOTE: 65 is greater than any numeric unit type, even the error case.
+            return otherSortPriority; // Sorts after every numeric unit, even the error case.
         }
     );
 }
@@ -409,6 +425,19 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<R
     if (fn->step) {
         builder.append(", "_s);
         serializeCalculationTree(builder, *fn->step, state);
+    }
+}
+
+void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<CalcMix>& fn, SerializationState& state)
+{
+    auto separator = ""_s;
+    for (const auto& item : fn->children) {
+        builder.append(std::exchange(separator, ", "_s));
+        serializeCalculationTree(builder, item.value, state);
+        if (item.weight) {
+            builder.append(' ');
+            CSS::serializationForCSS(builder, state.serializationContext, *item.weight);
+        }
     }
 }
 

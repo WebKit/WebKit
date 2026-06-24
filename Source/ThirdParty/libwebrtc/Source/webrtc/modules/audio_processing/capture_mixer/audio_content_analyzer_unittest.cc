@@ -13,7 +13,6 @@
 #include <tuple>
 #include <vector>
 
-#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {

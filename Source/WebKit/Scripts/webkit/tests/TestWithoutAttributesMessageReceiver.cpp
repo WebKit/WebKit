@@ -66,7 +66,6 @@ namespace WebKit {
 
 void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithoutAttributes::LoadURL::name()) {
         IPC::handleMessage<Messages::TestWithoutAttributes::LoadURL>(connection, decoder, this, &TestWithoutAttributes::loadURL);
         return;
@@ -174,7 +173,6 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
 
 void TestWithoutAttributes::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithoutAttributes::GetPluginProcessConnection::name()) {
         IPC::handleMessageSynchronous<Messages::TestWithoutAttributes::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithoutAttributes::getPluginProcessConnection);
         return;

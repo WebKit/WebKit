@@ -63,12 +63,8 @@ bool RetryAsync(SSL *ssl, int ret) {
   }
 
   if (test_state->packeted_bio != nullptr &&
-      PacketedBioAdvanceClock(test_state->packeted_bio)) {
-    int timeout_ret = DTLSv1_handle_timeout(ssl);
-    if (timeout_ret >= 0) {
-      return true;
-    }
-    ssl_err = SSL_get_error(ssl, timeout_ret);
+      PacketedBioHasInterrupt(test_state->packeted_bio)) {
+    return PacketedBioHandleInterrupt(test_state->packeted_bio);
   }
 
   // See if we needed to read or write more. If so, allow one byte through on
@@ -99,19 +95,8 @@ bool RetryAsync(SSL *ssl, int ret) {
           fprintf(stderr, "-private-key-delay-ms requires DTLS.\n");
           return false;
         }
-        timeval *clock = PacketedBioGetClock(test_state->packeted_bio);
-        clock->tv_sec += config->private_key_delay_ms / 1000;
-        clock->tv_usec += config->private_key_delay_ms * 1000;
-        if (clock->tv_usec >= 1000000) {
-          clock->tv_usec -= 1000000;
-          clock->tv_sec++;
-        }
-        int timeout_ret = DTLSv1_handle_timeout(ssl);
-        if (timeout_ret < 0) {
-          if (SSL_get_error(ssl, timeout_ret) == SSL_ERROR_WANT_WRITE) {
-            AsyncBioAllowWrite(test_state->async_bio, 1);
-            return true;
-          }
+        if (!PacketedBioAdvanceClock(test_state->packeted_bio,
+                                     config->private_key_delay_ms * 1000)) {
           return false;
         }
       }
@@ -143,9 +128,9 @@ int CheckIdempotentError(const char *name, SSL *ssl,
       fprintf(stderr, "Wanted: %d %d %s\n", ret, ssl_err, buf);
       ERR_error_string_n(err2, buf, sizeof(buf));
       fprintf(stderr, "Got:    %d %d %s\n", ret2, ssl_err2, buf);
-      // runner treats exit code 90 as always failing. Otherwise, it may
+      // runner treats kExitCodeMustFail as always failing. Otherwise, it may
       // accidentally consider the result an expected protocol failure.
-      exit(90);
+      exit(kExitCodeMustFail);
     }
   }
   return ret;
@@ -251,6 +236,8 @@ static bool Proxy(BIO *socket, bool async, int control, int rfd, int wfd) {
         return true;
       case kControlMsgError:
         return false;
+      case kControlMsgUnimplemented:
+        exit(kExitCodeUnimplemented);
       case kControlMsgWantRead:
         break;
       default:
@@ -606,6 +593,8 @@ static bool RequestHandshakeHint(const TestConfig *config, bool is_resume,
     case kControlMsgError:
       *out_has_hints = false;
       break;
+    case kControlMsgUnimplemented:
+      exit(kExitCodeUnimplemented);
     default:
       fprintf(stderr, "Unknown control message from handshaker: %c\n", msg);
       return false;

@@ -64,14 +64,12 @@ void BooleanConstructor::finishCreation(VM& vm, BooleanPrototype* booleanPrototy
 {
     Base::finishCreation(vm);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, booleanPrototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->name, jsString(vm, vm.propertyNames->Boolean.string()), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 BooleanConstructor* BooleanConstructor::create(VM& vm, Structure* structure, BooleanPrototype* booleanPrototype)
 {
     JSGlobalObject* globalObject = structure->realm();
-    NativeExecutable* executable = vm.getHostFunction(callBooleanConstructor, ImplementationVisibility::Public, BooleanConstructorIntrinsic, constructWithBooleanConstructor, nullptr, vm.propertyNames->Boolean.string());
+    NativeExecutable* executable = vm.getHostFunction(callBooleanConstructor, ImplementationVisibility::Public, BooleanConstructorIntrinsic, constructWithBooleanConstructor, nullptr, 1, vm.propertyNames->Boolean.string());
     BooleanConstructor* constructor = new (NotNull, allocateCell<BooleanConstructor>(vm)) BooleanConstructor(vm, executable, globalObject, structure);
     constructor->finishCreation(vm, booleanPrototype);
     return constructor;

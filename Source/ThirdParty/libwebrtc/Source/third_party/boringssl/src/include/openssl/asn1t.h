@@ -26,8 +26,8 @@ extern "C" {
 /* Legacy ASN.1 library template definitions.
  *
  * This header is used to define new types in OpenSSL's ASN.1 implementation. It
- * is deprecated and will be unexported from the library. Use the new |CBS| and
- * |CBB| library in <openssl/bytestring.h> instead. */
+ * is deprecated and will be unexported from the library. Use the new `CBS` and
+ * `CBB` library in <openssl/bytestring.h> instead. */
 
 
 typedef struct ASN1_TEMPLATE_st ASN1_TEMPLATE;
@@ -453,7 +453,7 @@ typedef struct ASN1_AUX_st {
   uint32_t flags;
   int ref_offset; /* Offset of reference value */
   ASN1_aux_cb *asn1_cb;
-  int enc_offset; /* Offset of ASN1_ENCODING structure */
+  int enc_offset; /* Offset of bssl::ASN1_ENCODING structure */
 } ASN1_AUX;
 
 /* Flags in ASN1_AUX */
@@ -578,7 +578,7 @@ DEFINE_STACK_OF(ASN1_VALUE)
 
 
 #if defined(__cplusplus)
-}  // extern "C"
+}  // extern C
 #endif
 
 #endif  // OPENSSL_HEADER_ASN1T_H

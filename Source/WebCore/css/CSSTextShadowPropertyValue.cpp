@@ -27,9 +27,10 @@
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
+#include "CSSPrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSValuePool.h"
-#include "DeprecatedCSSOMValue.h"
+#include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ IterationStatus CSSTextShadowPropertyValue::customVisitChildren(NOESCAPE const F
     return CSS::visitCSSValueChildren(func, m_shadow);
 }
 
-Ref<DeprecatedCSSOMValue> CSSTextShadowPropertyValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CSSTextShadowPropertyValue::customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
 {
     return CSS::createDeprecatedCSSOMValue(CSSValuePool::singleton(), owner, m_shadow);
 }

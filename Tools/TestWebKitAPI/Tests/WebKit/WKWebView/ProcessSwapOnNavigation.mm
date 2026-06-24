@@ -440,29 +440,6 @@ onload = () => {
 </body>
 )PSONRESOURCE"_s;
 
-static constexpr auto navigationWithLockedHistoryBytes = R"PSONRESOURCE(
-<script>
-let shouldNavigate = true;
-window.addEventListener('pageshow', function(event) {
-    if (event.persisted) {
-        window.webkit.messageHandlers.pson.postMessage("Was persisted");
-        shouldNavigate = false;
-    }
-});
-
-onload = function()
-{
-    if (!shouldNavigate)
-        return;
-
-    // JS navigation via window.location
-    setTimeout(() => {
-        location = "pson://www.apple.com/main.html";
-    }, 10);
-}
-</script>
-)PSONRESOURCE"_s;
-
 static constexpr auto pageCache1Bytes = R"PSONRESOURCE(
 <script>
 window.addEventListener('pageshow', function(event) {

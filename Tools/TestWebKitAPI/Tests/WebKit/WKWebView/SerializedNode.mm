@@ -31,7 +31,6 @@
 #import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKJSSerializedNode.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
-#import <WebKit/_WKSerializedNode.h>
 
 namespace TestWebKitAPI {
 

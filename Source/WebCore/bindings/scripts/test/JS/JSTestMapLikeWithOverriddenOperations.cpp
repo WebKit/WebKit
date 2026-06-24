@@ -408,6 +408,8 @@ void JSTestMapLikeWithOverriddenOperations::analyzeHeap(JSCell* cell, HeapAnalyz
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestMapLikeWithOverriddenOperationsOwner::JSTestMapLikeWithOverriddenOperationsOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestMapLikeWithOverriddenOperationsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -420,7 +422,7 @@ void JSTestMapLikeWithOverriddenOperationsOwner::finalize(JSC::Handle<JSC::Unkno
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestMapLikeWithOverriddenOperations = static_cast<JSTestMapLikeWithOverriddenOperations*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestMapLikeWithOverriddenOperations->wrapped()).ptr(), jsTestMapLikeWithOverriddenOperations);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestMapLikeWithOverriddenOperations->wrapped(), jsTestMapLikeWithOverriddenOperations);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

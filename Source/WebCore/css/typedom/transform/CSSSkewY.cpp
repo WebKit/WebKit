@@ -62,7 +62,7 @@ ExceptionOr<Ref<CSSSkewY>> CSSSkewY::create(Ref<const CSSFunctionValue> cssFunct
         return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
     }
 
-    auto valueOrException = CSSNumericValue::reifyValue(document, *cssFunctionValue->item(0));
+    auto valueOrException = CSSNumericValue::reifyValue(document, *protect(cssFunctionValue)->item(0));
     if (valueOrException.hasException())
         return valueOrException.releaseException();
     return CSSSkewY::create(valueOrException.releaseReturnValue());
@@ -87,7 +87,7 @@ void CSSSkewY::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskewy
     builder.append("skewY("_s);
-    m_ay->serialize(builder);
+    protect(m_ay)->serialize(builder);
     builder.append(')');
 }
 
@@ -109,7 +109,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkewY::toMatrix()
 
 RefPtr<CSSValue> CSSSkewY::toCSSValue() const
 {
-    auto ay = m_ay->toCSSValue();
+    auto ay = protect(m_ay)->toCSSValue();
     if (!ay)
         return nullptr;
     CSSValueListBuilder arguments;

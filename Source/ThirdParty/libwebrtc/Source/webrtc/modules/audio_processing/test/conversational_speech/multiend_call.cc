@@ -15,13 +15,13 @@
 #include <iterator>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "modules/audio_processing/test/conversational_speech/timing.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_abstract_factory.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
@@ -34,7 +34,7 @@ namespace test {
 namespace conversational_speech {
 
 MultiEndCall::MultiEndCall(
-    ArrayView<const Turn> timing,
+    std::span<const Turn> timing,
     absl::string_view audiotracks_path,
     std::unique_ptr<WavReaderAbstractFactory> wavreader_abstract_factory)
     : timing_(timing),

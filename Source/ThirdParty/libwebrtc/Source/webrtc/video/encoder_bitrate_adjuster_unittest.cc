@@ -581,6 +581,40 @@ TEST_P(EncoderBitrateAdjusterTest, HonorsMinBitrateWithAv1) {
   ExpectNear(expected_input_allocation, current_adjusted_allocation_, 0.01);
 }
 
+TEST_P(EncoderBitrateAdjusterTest, OnEncodedFrameInvalidLayers) {
+  current_input_allocation_.SetBitrate(0, 0, 300000);
+  target_framerate_fps_ = 30;
+  SetUpAdjuster(1, 1, false);
+
+  // Call OnEncodedFrame with invalid stream indices and make sure it doesn't
+  // crash.
+  adjuster_->OnEncodedFrame(DataSize::Bytes(1000), -1, 0);
+  adjuster_->OnEncodedFrame(DataSize::Bytes(1000), kMaxSpatialLayers, 0);
+
+  // Call OnEncodedFrame with invalid temporal indices and make sure it doesn't
+  // crash.
+  adjuster_->OnEncodedFrame(DataSize::Bytes(1000), 0, -1);
+  adjuster_->OnEncodedFrame(DataSize::Bytes(1000), 0, kMaxTemporalStreams);
+}
+
+TEST_P(EncoderBitrateAdjusterTest,
+       OnEncoderInfoTruncatesTooManyTemporalStreams) {
+  current_input_allocation_.SetBitrate(0, 0, 300000);
+  target_framerate_fps_ = 30;
+  SetUpAdjuster(1, 1, false);
+
+  // Create an EncoderInfo with a temporal allocation larger than
+  // kMaxTemporalStreams.
+  VideoEncoder::EncoderInfo encoder_info;
+  encoder_info.fps_allocation[0].resize(kMaxTemporalStreams + 2);
+  for (size_t ti = 0; ti < kMaxTemporalStreams + 2; ++ti) {
+    encoder_info.fps_allocation[0][ti] = 255;
+  }
+
+  // This should truncate to kMaxTemporalStreams and not crash.
+  adjuster_->OnEncoderInfo(encoder_info);
+}
+
 INSTANTIATE_TEST_SUITE_P(
     AdjustWithHeadroomVariations,
     EncoderBitrateAdjusterTest,

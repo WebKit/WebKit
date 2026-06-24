@@ -49,7 +49,7 @@ bool Grayscale::transformColor(SRGBA<float>& color) const
 
 // MARK: - Conversion
 
-auto ToCSS<Grayscale>::operator()(const Grayscale& value, const RenderStyle& style) -> CSS::Grayscale
+auto ToCSS<Grayscale>::operator()(const Grayscale& value, const Style::ComputedStyle& style) -> CSS::Grayscale
 {
     return { .value = CSS::Grayscale::Parameter { toCSS(value.value, style) } };
 }

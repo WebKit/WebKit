@@ -31,6 +31,7 @@
 @implementation _WKAuthenticationExtensionsClientOutputs {
     RetainPtr<NSData> _prfFirst;
     RetainPtr<NSData> _prfSecond;
+    RetainPtr<_WKAuthenticationExtensionsLargeBlobOutputs> _largeBlob;
 }
 
 - (instancetype)initWithAppid:(BOOL)appid
@@ -55,6 +56,15 @@
     return self;
 }
 
+- (instancetype)initWithAppid:(BOOL)appid prfEnabled:(BOOL)prfEnabled prfFirst:(NSData *)prfFirst prfSecond:(NSData *)prfSecond largeBlob:(_WKAuthenticationExtensionsLargeBlobOutputs *)largeBlob
+{
+    if (!(self = [self initWithAppid:appid prfEnabled:prfEnabled prfFirst:prfFirst prfSecond:prfSecond]))
+        return nil;
+
+    _largeBlob = largeBlob;
+    return self;
+}
+
 - (NSData *)prfFirst
 {
     return _prfFirst.get();
@@ -63,6 +73,38 @@
 - (NSData *)prfSecond
 {
     return _prfSecond.get();
+}
+
+- (id<_WKAuthenticationExtensionsLargeBlobOutputsStaging>)largeBlob
+{
+    return _largeBlob.get();
+}
+
+- (void)dealloc
+{
+    [super dealloc];
+}
+
+@end
+
+@implementation _WKAuthenticationExtensionsLargeBlobOutputs {
+    RetainPtr<NSData> _blob;
+}
+
+- (instancetype)initWithSupported:(BOOL)supported blob:(NSData *)blob written:(BOOL)written
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _supported = supported;
+    _blob = blob;
+    _written = written;
+    return self;
+}
+
+- (NSData *)blob
+{
+    return _blob.get();
 }
 
 - (void)dealloc

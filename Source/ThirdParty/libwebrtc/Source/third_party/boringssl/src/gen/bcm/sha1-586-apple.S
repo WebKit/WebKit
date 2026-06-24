@@ -1424,11 +1424,11 @@ L001pic_point:
 	movdqu	-48(%ebp),%xmm1
 	movdqu	-32(%ebp),%xmm2
 	movdqu	-16(%ebp),%xmm3
-.byte	102,15,56,0,198
-.byte	102,15,56,0,206
-.byte	102,15,56,0,214
+	pshufb	%xmm6,%xmm0
+	pshufb	%xmm6,%xmm1
+	pshufb	%xmm6,%xmm2
 	movdqa	%xmm7,96(%esp)
-.byte	102,15,56,0,222
+	pshufb	%xmm6,%xmm3
 	paddd	%xmm7,%xmm0
 	paddd	%xmm7,%xmm1
 	paddd	%xmm7,%xmm2
@@ -2355,7 +2355,7 @@ L002loop:
 	movdqu	32(%ebp),%xmm2
 	movdqu	48(%ebp),%xmm3
 	addl	$64,%ebp
-.byte	102,15,56,0,198
+	pshufb	%xmm6,%xmm0
 	movl	%ebp,196(%esp)
 	movdqa	%xmm7,96(%esp)
 	addl	16(%esp),%ebx
@@ -2365,7 +2365,7 @@ L002loop:
 	addl	%esi,%ebx
 	xorl	%edi,%ebp
 	rorl	$7,%edx
-.byte	102,15,56,0,206
+	pshufb	%xmm6,%xmm1
 	addl	%ecx,%ebx
 	addl	20(%esp),%eax
 	xorl	%edx,%ebp
@@ -2401,7 +2401,7 @@ L002loop:
 	addl	%esi,%ecx
 	xorl	%eax,%ebp
 	rorl	$7,%edi
-.byte	102,15,56,0,214
+	pshufb	%xmm6,%xmm2
 	addl	%edx,%ecx
 	addl	36(%esp),%ebx
 	xorl	%edi,%ebp
@@ -2437,7 +2437,7 @@ L002loop:
 	addl	%esi,%edx
 	xorl	%ebx,%ebp
 	rorl	$7,%eax
-.byte	102,15,56,0,222
+	pshufb	%xmm6,%xmm3
 	addl	%edi,%edx
 	addl	52(%esp),%ecx
 	xorl	%eax,%ebp

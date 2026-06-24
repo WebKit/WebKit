@@ -37,6 +37,9 @@
 #include "internal.h"
 #include "p256-nistz.h"
 
+
+using namespace bssl;
+
 #if !defined(OPENSSL_NO_ASM) &&                              \
     (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) && \
     !defined(OPENSSL_SMALL)
@@ -715,6 +718,8 @@ static int ecp_nistz256_cmp_x_coordinate(const EC_GROUP *group,
   return 0;
 }
 
+BSSL_NAMESPACE_BEGIN
+
 DEFINE_METHOD_FUNCTION(EC_METHOD, EC_GFp_nistz256_method) {
   out->point_get_affine_coordinates = ecp_nistz256_get_affine;
   out->add = ecp_nistz256_add;
@@ -722,19 +727,13 @@ DEFINE_METHOD_FUNCTION(EC_METHOD, EC_GFp_nistz256_method) {
   out->mul = ecp_nistz256_point_mul;
   out->mul_base = ecp_nistz256_point_mul_base;
   out->mul_public = ecp_nistz256_points_mul_public;
-  out->felem_mul = ec_GFp_mont_felem_mul;
-  out->felem_sqr = ec_GFp_mont_felem_sqr;
-  out->felem_to_bytes = ec_GFp_mont_felem_to_bytes;
-  out->felem_from_bytes = ec_GFp_mont_felem_from_bytes;
-  out->felem_reduce = ec_GFp_mont_felem_reduce;
-  // TODO(davidben): This should use the specialized field arithmetic
-  // implementation, rather than the generic one.
-  out->felem_exp = ec_GFp_mont_felem_exp;
   out->scalar_inv0_montgomery = ecp_nistz256_inv0_mod_ord;
   out->scalar_to_montgomery_inv_vartime =
       ecp_nistz256_scalar_to_montgomery_inv_vartime;
   out->cmp_x_coordinate = ecp_nistz256_cmp_x_coordinate;
 }
+
+BSSL_NAMESPACE_END
 
 #endif /* !defined(OPENSSL_NO_ASM) &&                              \
           (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) && \

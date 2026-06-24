@@ -17,8 +17,6 @@
 BSSL_NAMESPACE_BEGIN
 namespace der {
 
-std::string Input::AsString() const { return std::string(AsStringView()); }
-
 bool operator==(Input lhs, Input rhs) { return Span(lhs) == Span(rhs); }
 
 bool operator!=(Input lhs, Input rhs) { return !(lhs == rhs); }

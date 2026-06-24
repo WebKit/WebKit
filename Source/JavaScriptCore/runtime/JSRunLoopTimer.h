@@ -56,6 +56,8 @@ public:
         void timerDidFire();
 
     public:
+        JS_EXPORT_PRIVATE ~Manager();
+
         static Manager& singleton();
 
         void registerVM(VM&);

@@ -67,8 +67,12 @@ protected:
 
 class JSTestNamedDeleterWithIndexedGetterOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestNamedDeleterWithIndexedGetterOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestNamedDeleterWithIndexedGetterOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedDeleterWithIndexedGetter*)

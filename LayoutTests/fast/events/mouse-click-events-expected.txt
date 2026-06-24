@@ -3,9 +3,6 @@ This tests what mouse events we send.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Left Mouse Button
 PASS eventLog is "mousedown(button: 0 which: 1) mouseup(button: 0 which: 1) click(button: 0 which: 1) mousedown(button: 0 which: 1) mouseup(button: 0 which: 1) click(button: 0 which: 1) dblclick(button: 0 which: 1) "
 Middle Mouse Button
@@ -16,4 +13,7 @@ Back Mouse Button
 PASS eventLog is "mousedown(button: 3 which: 4) mouseup(button: 3 which: 4) auxclick(button: 3 which: 4) mousedown(button: 3 which: 4) mouseup(button: 3 which: 4) auxclick(button: 3 which: 4) "
 Forward Mouse Button
 PASS eventLog is "mousedown(button: 4 which: 5) mouseup(button: 4 which: 5) auxclick(button: 4 which: 5) mousedown(button: 4 which: 5) mouseup(button: 4 which: 5) auxclick(button: 4 which: 5) "
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

@@ -102,7 +102,7 @@ ShareableElementData::ShareableElementData(const UniqueElementData& other)
 
     if (other.m_inlineStyle) {
         ASSERT(!other.m_inlineStyle->hasCSSOMWrapper());
-        m_inlineStyle = other.m_inlineStyle->immutableCopyIfNeeded();
+        m_inlineStyle = protect(other.m_inlineStyle)->immutableCopyIfNeeded();
     }
 
     for (auto [sourceAttribute, destinationAttribute] : zippedRange(other.m_attributeVector.span(), attributes()))
@@ -135,7 +135,7 @@ UniqueElementData::UniqueElementData(const UniqueElementData& other)
     , m_attributeVector(other.m_attributeVector)
 {
     if (other.m_inlineStyle)
-        m_inlineStyle = other.m_inlineStyle->mutableCopy();
+        m_inlineStyle = protect(other.m_inlineStyle)->mutableCopy();
 }
 
 UniqueElementData::UniqueElementData(const ShareableElementData& other)

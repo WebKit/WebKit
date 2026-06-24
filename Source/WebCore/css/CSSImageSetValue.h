@@ -41,6 +41,8 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSImageSetValue& other) const { return itemsEqual(other); }
 
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 
 private:

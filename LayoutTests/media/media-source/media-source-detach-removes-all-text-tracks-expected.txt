@@ -1,0 +1,10 @@
+
+EXPECTED (source.detachable == 'true') OK
+RUN(video.srcObject = source)
+EVENT(sourceopen)
+EVENT(updateend)
+EXPECTED (video.textTracks.length == '2') OK
+RUN(video.srcObject = null)
+EXPECTED (removetrackCount == '2') OK
+END OF TEST
+

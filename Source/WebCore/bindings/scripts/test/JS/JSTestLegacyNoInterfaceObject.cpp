@@ -364,6 +364,8 @@ void JSTestLegacyNoInterfaceObject::analyzeHeap(JSCell* cell, HeapAnalyzer& anal
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestLegacyNoInterfaceObjectOwner::JSTestLegacyNoInterfaceObjectOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestLegacyNoInterfaceObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -376,7 +378,7 @@ void JSTestLegacyNoInterfaceObjectOwner::finalize(JSC::Handle<JSC::Unknown> hand
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestLegacyNoInterfaceObject = static_cast<JSTestLegacyNoInterfaceObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestLegacyNoInterfaceObject->wrapped()).ptr(), jsTestLegacyNoInterfaceObject);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestLegacyNoInterfaceObject->wrapped(), jsTestLegacyNoInterfaceObject);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

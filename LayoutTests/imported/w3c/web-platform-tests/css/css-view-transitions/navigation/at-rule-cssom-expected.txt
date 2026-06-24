@@ -1,9 +1,11 @@
 
 PASS CSSViewTransitionRule is correctly parsed and accessible via CSSOM.
-PASS `navigation: auto` is correctly parsed.
-PASS `navigation: none` is correctly parsed.
+PASS 'navigation: auto' is correctly parsed.
+PASS 'navigation: none' is correctly parsed.
 PASS @view-transition fails parsing with a preamble
-PASS Invalid `navigation` value fails to parse.
-PASS `navigation` with !important flag should fail to parse.
-PASS `navigation` descriptor cannot be set.
+PASS 'navigation: foo' fails to parse.
+PASS 'navigation: auto gunk' fails to parse.
+PASS 'navigation: none !important' fails to parse.
+PASS `navigation` descriptor is readonly.
+PASS `types` descriptor is readonly.
 

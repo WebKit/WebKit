@@ -13,9 +13,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/media_types.h"
 #include "api/ref_count.h"
 
@@ -62,9 +62,9 @@ class FrameDecryptorInterface : public RefCountInterface {
   // cases.
   virtual Result Decrypt(MediaType media_type,
                          const std::vector<uint32_t>& csrcs,
-                         ArrayView<const uint8_t> additional_data,
-                         ArrayView<const uint8_t> encrypted_frame,
-                         ArrayView<uint8_t> frame) = 0;
+                         std::span<const uint8_t> additional_data,
+                         std::span<const uint8_t> encrypted_frame,
+                         std::span<uint8_t> frame) = 0;
 
   // Returns the total required length in bytes for the output of the
   // decryption. This can be larger than the actual number of bytes you need but

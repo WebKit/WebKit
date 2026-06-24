@@ -17,7 +17,7 @@
 #include "test/fuzzers/fuzz_data_helper.h"
 namespace webrtc {
 
-void FuzzAudioProcessing(test::FuzzDataHelper* fuzz_data,
+void FuzzAudioProcessing(FuzzDataHelper* fuzz_data,
                          scoped_refptr<AudioProcessing> apm);
 
 }  // namespace webrtc

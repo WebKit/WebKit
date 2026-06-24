@@ -15,12 +15,12 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment_factory.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
@@ -126,7 +126,7 @@ class MockModuleRtpRtcp : public RTCPReceiver::ModuleRtpRtcp {
   MOCK_METHOD(void, OnReceivedNack, (const std::vector<uint16_t>&), (override));
   MOCK_METHOD(void,
               OnReceivedRtcpReportBlocks,
-              (ArrayView<const ReportBlockData>),
+              (std::span<const ReportBlockData>),
               (override));
 };
 

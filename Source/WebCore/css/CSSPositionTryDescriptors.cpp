@@ -28,7 +28,7 @@
 #include "CSSPositionTryRule.h"
 #include "CSSStyleSheet.h"
 #include "ExceptionOr.h"
-#include "StyleScope.h"
+#include "StyleDocumentScope.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -495,7 +495,7 @@ ExceptionOr<void> CSSPositionTryDescriptors::setPropertyInternal(CSSPropertyID p
 
         if (CheckedPtr parentStyleSheetScope = parentStyleSheet->styleScope()) {
             // FIXME: only invalidate elements that use this position-try rule in position-try-fallbacks
-            parentStyleSheetScope->setLastSuccessfulPositionOptionIndexMap({ });
+            protect(parentStyleSheetScope->documentScope())->setLastSuccessfulPositionOptionIndexMap({ });
         }
     };
 

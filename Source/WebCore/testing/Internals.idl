@@ -669,9 +669,12 @@ enum ContentsFormat {
     Range? rangeOfString(DOMString text, Range? referenceRange, sequence<DOMString> findOptions);
     unsigned long countMatchesForText(DOMString text, sequence<DOMString> findOptions, DOMString markMatches);
     unsigned long countFindMatches(DOMString text, sequence<DOMString> findOptions);
+    [Conditional=VIDEO] sequence<unrestricted double> findCueMatches(DOMString text, sequence<DOMString> findOptions);
 
     DOMString autofillFieldName(Element formControlElement);
     boolean isSpellcheckDisabledExceptTextReplacement(HTMLInputElement inputElement);
+
+    [CallWith=CurrentGlobalObject] undefined allowAutofillForCurrentWorld();
 
     undefined invalidateControlTints();
 
@@ -766,6 +769,7 @@ enum ContentsFormat {
     [Conditional=ACCESSIBILITY_ANIMATION_CONTROL] undefined setImageAnimationEnabled(boolean enabled);
     [Conditional=ACCESSIBILITY_ANIMATION_CONTROL] undefined resumeImageAnimation(HTMLImageElement element);
     [Conditional=ACCESSIBILITY_ANIMATION_CONTROL] undefined pauseImageAnimation(HTMLImageElement element);
+    [Conditional=ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL] undefined setVideoAutoplayPreviewsEnabled(boolean enabled);
     unsigned long imagePendingDecodePromisesCountForTesting(HTMLImageElement element);
     undefined setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement element, boolean enabled);
     unsigned long imageDecodeCount(HTMLImageElement element);
@@ -778,6 +782,7 @@ enum ContentsFormat {
     undefined setHasHDRContentForTesting(HTMLImageElement element);
 
     [Conditional=WEB_CODECS] boolean hasPendingActivity(WebCodecsVideoDecoder decoder);
+    [Conditional=WEB_CODECS] boolean is10bitsVideoFrame(WebCodecsVideoFrame frame);
 
     undefined setGridMaxTracksLimit(unsigned long maxTracksLimit);
 
@@ -1132,6 +1137,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] boolean isPlayerVisibleInViewport(HTMLMediaElement element);
     [Conditional=VIDEO] boolean isPlayerMuted(HTMLMediaElement element);
     [Conditional=VIDEO] boolean isPlayerPaused(HTMLMediaElement element);
+    [Conditional=VIDEO] double effectiveRate(HTMLMediaElement element);
     [Conditional=VIDEO] undefined forceStereoDecoding(HTMLMediaElement element);
 
     MockPageOverlay installMockPageOverlay(PageOverlayType type);
@@ -1169,7 +1175,7 @@ enum ContentsFormat {
     float pageMediaVolume();
     undefined setPageMediaVolume(float volume);
 
-    [Conditional=TOP_BANNER_VIEW_OVERLAYS] undefined setPageHasBannerViewOverlayForTesting(boolean hasFakeBannerViewOverlay);
+    [Conditional=NSREFRESHCONTROLLER_TESTING] undefined setPageHasRefreshControllerForTesting(boolean hasRefreshController);
 
     undefined setShowAllPlugins(boolean showAll);
 
@@ -1314,6 +1320,7 @@ enum ContentsFormat {
     Promise<undefined> terminateServiceWorker(ServiceWorker worker);
     Promise<undefined> whenServiceWorkerIsTerminated(ServiceWorker worker);
     undefined terminateWebContentProcess();
+    unsigned long getpid();
 
     Promise<unsigned long> numberOfWebSocketChannelsInNetworkProcess();
 
@@ -1357,6 +1364,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] boolean elementShouldDisplayPosterImage(HTMLVideoElement element);
     [Conditional=VIDEO] readonly attribute unsigned long mediaElementCount;
     [Conditional=VIDEO] undefined setMediaElementVolumeLocked(HTMLMediaElement element, boolean volumeLocked);
+    [Conditional=VIDEO] DOMString mediaElementViewportVisibility(HTMLMediaElement element);
 
     [Conditional=SPEECH_SYNTHESIS] SpeechSynthesisUtterance? speechSynthesisUtteranceForCue(VTTCue cue);
     [Conditional=SPEECH_SYNTHESIS] VTTCue? mediaElementCurrentlySpokenCue(HTMLMediaElement media);
@@ -1528,11 +1536,6 @@ enum ContentsFormat {
     Promise<ImageBufferResourceLimits> getImageBufferResourceLimits();
 
     undefined setTopDocumentURLForQuirks(DOMString urlString);
-
-#if defined(ENABLE_CONTENT_EXTENSIONS) && ENABLE_CONTENT_EXTENSIONS
-    undefined setResourceMonitorNetworkUsageThreshold(unsigned long threshold, double randomness);
-    attribute boolean shouldSkipResourceMonitorThrottling;
-#endif
 
     [CallWith=CurrentGlobalObject] ReadableStream readableStreamFromMessagePort(MessagePort port);
     [CallWith=CurrentGlobalObject] WritableStream writableStreamFromMessagePort(MessagePort port);

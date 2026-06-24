@@ -1,4 +1,3 @@
-
 /*
  *  Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
  *
@@ -15,10 +14,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <tuple>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "logging/rtc_event_log/encoder/var_int.h"
 #include "logging/rtc_event_log/events/fixed_length_encoding_parameters_v3.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
@@ -27,26 +26,26 @@
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/checks.h"
 
+namespace webrtc {
+
 namespace {
-std::optional<webrtc::FieldType> ConvertFieldType(uint64_t value) {
+std::optional<FieldType> ConvertFieldType(uint64_t value) {
   switch (value) {
-    case static_cast<uint64_t>(webrtc::FieldType::kFixed8):
-      return webrtc::FieldType::kFixed8;
-    case static_cast<uint64_t>(webrtc::FieldType::kFixed32):
-      return webrtc::FieldType::kFixed32;
-    case static_cast<uint64_t>(webrtc::FieldType::kFixed64):
-      return webrtc::FieldType::kFixed64;
-    case static_cast<uint64_t>(webrtc::FieldType::kVarInt):
-      return webrtc::FieldType::kVarInt;
-    case static_cast<uint64_t>(webrtc::FieldType::kString):
-      return webrtc::FieldType::kString;
+    case static_cast<uint64_t>(FieldType::kFixed8):
+      return FieldType::kFixed8;
+    case static_cast<uint64_t>(FieldType::kFixed32):
+      return FieldType::kFixed32;
+    case static_cast<uint64_t>(FieldType::kFixed64):
+      return FieldType::kFixed64;
+    case static_cast<uint64_t>(FieldType::kVarInt):
+      return FieldType::kVarInt;
+    case static_cast<uint64_t>(FieldType::kString):
+      return FieldType::kString;
     default:
       return std::nullopt;
   }
 }
 }  // namespace
-
-namespace webrtc {
 
 uint64_t EventParser::ReadLittleEndian(uint8_t bytes) {
   RTC_DCHECK_LE(bytes, sizeof(uint64_t));
@@ -356,15 +355,15 @@ RtcEventLogParseStatus EventParser::ParseField(const FieldParameters& params) {
   return RtcEventLogParseStatus::Success();
 }
 
-RtcEventLogParseStatusOr<ArrayView<absl::string_view>>
+RtcEventLogParseStatusOr<std::span<absl::string_view>>
 EventParser::ParseStringField(const FieldParameters& params,
                               bool required_field) {
-  using StatusOr = RtcEventLogParseStatusOr<ArrayView<absl::string_view>>;
+  using StatusOr = RtcEventLogParseStatusOr<std::span<absl::string_view>>;
   RTC_DCHECK_EQ(params.field_type, FieldType::kString);
   auto status = ParseField(params);
   if (!status.ok())
     return StatusOr(status);
-  ArrayView<absl::string_view> strings = GetStrings();
+  std::span<absl::string_view> strings = GetStrings();
   if (required_field && strings.size() != NumEventsInBatch()) {
     return StatusOr::Error("Required string field not found", __FILE__,
                            __LINE__);
@@ -372,15 +371,15 @@ EventParser::ParseStringField(const FieldParameters& params,
   return StatusOr(strings);
 }
 
-RtcEventLogParseStatusOr<ArrayView<uint64_t>> EventParser::ParseNumericField(
+RtcEventLogParseStatusOr<std::span<uint64_t>> EventParser::ParseNumericField(
     const FieldParameters& params,
     bool required_field) {
-  using StatusOr = RtcEventLogParseStatusOr<ArrayView<uint64_t>>;
+  using StatusOr = RtcEventLogParseStatusOr<std::span<uint64_t>>;
   RTC_DCHECK_NE(params.field_type, FieldType::kString);
   auto status = ParseField(params);
   if (!status.ok())
     return StatusOr(status);
-  ArrayView<uint64_t> values = GetValues();
+  std::span<uint64_t> values = GetValues();
   if (required_field && values.size() != NumEventsInBatch()) {
     return StatusOr::Error("Required numerical field not found", __FILE__,
                            __LINE__);

@@ -220,7 +220,7 @@ void InlineBoxPainter::paintDecorations()
         paintBoxShadow(Style::ShadowStyle::Normal, paintRect);
 
     auto color = style.visitedDependentBackgroundColor(m_paintInfo.paintBehavior);
-    auto compositeOp = renderer().document().compositeOperatorForBackgroundColor(color, renderer());
+    auto compositeOp = protect(renderer().document())->compositeOperatorForBackgroundColor(color, renderer());
 
     Style::ColorResolver colorResolver { style };
     color = colorResolver.colorApplyingColorFilter(color);
@@ -347,7 +347,7 @@ void InlineBoxPainter::paintBoxShadow(Style::ShadowStyle shadowStyle, const Layo
     backgroundPainter.paintBoxShadow(paintRect, style(), shadowStyle, closedEdges);
 }
 
-const RenderStyle& InlineBoxPainter::style() const
+const Style::ComputedStyle& InlineBoxPainter::style() const
 {
     return m_isFirstLineBox ? renderer().firstLineStyle() : renderer().style();
 }

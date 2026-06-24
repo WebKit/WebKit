@@ -1,0 +1,13 @@
+A base-appearance select's checked option renders a ::checkmark whose user-agent content is a check glyph (content: "\2713"). That generated content is not a valid DOM position, so it must be excluded from the option's text-marker string.
+
+PASS: select.isExpanded === true
+PASS: checkedItem.role.toLowerCase().includes('menuitem') === true
+Checked option's text-marker string: "Banana"
+PASS: markerString.includes('Banana') === true
+PASS: markerString.includes(String.fromCharCode(0x2713)) === false
+PASS: select.isExpanded === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

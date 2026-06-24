@@ -66,6 +66,7 @@ class DrawingAreaProxy;
 class NativeWebMouseEvent;
 class RemotePageDrawingAreaProxy;
 class RemotePageFullscreenManagerProxy;
+class RemotePageMediaSessionManagerProxy;
 class RemotePagePlaybackSessionManagerProxy;
 class RemotePageScreenOrientationManagerProxy;
 class RemotePageVideoPresentationManagerProxy;
@@ -158,6 +159,9 @@ private:
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     RefPtr<RemotePageWebDeviceOrientationUpdateProviderProxy> m_webDeviceOrientationUpdateProvider;
+#endif
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    RefPtr<RemotePageMediaSessionManagerProxy> m_mediaSessionManager;
 #endif
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<RemotePagePlaybackSessionManagerProxy> m_playbackSessionManager;

@@ -40,7 +40,7 @@ private:
     bool isValid() const final { return SVGTests::isValid(); }
 
     bool childShouldCreateRenderer(const Node&) const final;
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 };
 
 } // namespace WebCore

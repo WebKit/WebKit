@@ -63,7 +63,7 @@ DEFINE_TYPE_WRAPPER_GET(OpacityParameters, value);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<OpacityParameters> { auto operator()(const OpacityParameters&, const RenderStyle&) -> CSS::Opacity; };
+template<> struct ToCSS<OpacityParameters> { auto operator()(const OpacityParameters&, const Style::ComputedStyle&) -> CSS::Opacity; };
 template<> struct ToStyle<CSS::Opacity> { auto operator()(const CSS::Opacity&, const BuilderState&) -> OpacityParameters; };
 
 // MARK: - Blending

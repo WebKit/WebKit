@@ -51,7 +51,7 @@ private:
     explicit DataListButtonElement(Document&, DataListButtonOwner&);
 
     bool isDataListButtonElement() const final { return true; }
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
 
     void defaultEventHandler(Event&) final;
     bool isDisabledFormControl() const final;

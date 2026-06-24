@@ -172,6 +172,12 @@ static inline NSInteger gmtToLocalTimeOffset(DateComponentsType type)
 
 @implementation WebAccessibilityObjectWrapper
 
+- (void)dealloc
+{
+    AX_ASSERT(!self.axBackingObject);
+    [super dealloc];
+}
+
 - (void)detach
 {
     AX_ASSERT(isMainThread());
@@ -1962,8 +1968,11 @@ static id handleDisclosedByRowAttribute(WebAccessibilityObjectWrapper*, AXCoreOb
 static id handleStartTextMarkerAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObject& backingObject)
 {
     if (AXObjectCache::useAXThreadTextApis()) {
-        if (RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(backingObject.treeID())))
-            return tree->firstMarker().platformData().bridgingAutorelease();
+        if (RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(backingObject.treeID()))) {
+            AXTextMarker startMarker = tree->firstMarker();
+            AXTextMarker textRunStartMarker = startMarker.toTextRunMarker();
+            return (textRunStartMarker.isValid() ? textRunStartMarker : startMarker).platformData().bridgingAutorelease();
+        }
     }
     return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(wrapper)] () -> RetainPtr<id> {
         RefPtr backingObject = downcast<AccessibilityObject>(protectedSelf.get().axBackingObject);
@@ -2915,7 +2924,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         NSAccessibilityTextOperationParameterizedAttribute,
         NSAccessibilityTextMarkerForIndexAttribute,
         NSAccessibilityTextMarkerIsValidAttribute,
-        NSAccessibilityIndexForTextMarkerAttribute
+        NSAccessibilityIndexForTextMarkerAttribute,
+        NSAccessibilityRelativeIndexForTextMarkerAttribute
     ];
 
     static NeverDestroyed textParamAttrs = [] {
@@ -3415,8 +3425,14 @@ enum class TextUnit {
 {
     if (AXObjectCache::useAXThreadTextApis()) {
         auto rangeType = LineRangeType::Current;
+        auto includeTrailingLineBreak = IncludeTrailingLineBreak::No;
         switch (textUnit) {
         case TextUnit::Line:
+            // Match the live-tree path below (lineRangeForPosition), which returns the current line's
+            // range including its trailing line break. The left/right-line variants intentionally keep
+            // IncludeTrailingLineBreak::No to match leftLineVisiblePositionRange /
+            // rightLineVisiblePositionRange, which end at endOfLine (before the break).
+            includeTrailingLineBreak = IncludeTrailingLineBreak::Yes;
             break;
         case TextUnit::LeftLine:
             rangeType = LineRangeType::Left;
@@ -3428,7 +3444,7 @@ enum class TextUnit {
             AX_ASSERT_NOT_REACHED();
             break;
         }
-        return AXTextMarker { textMarker }.lineRange(rangeType).platformData().bridgingAutorelease();
+        return AXTextMarker { textMarker }.lineRange(rangeType, includeTrailingLineBreak).platformData().bridgingAutorelease();
     }
 
     return (id)Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([textMarker = retainPtr(textMarker), &textUnit, protectedSelf = retainPtr(self)] () ->  RetainPtr<AXTextMarkerRangeRef> {
@@ -3881,6 +3897,13 @@ static id handleIndexForTextMarkerAttribute(WebAccessibilityObjectWrapper*, AXCo
     return [NSNumber numberWithInteger:markerLocation];
 }
 
+static id handleRelativeIndexForTextMarkerAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject, const ParameterizedAttributeContext& context)
+{
+    auto marker = AXTextMarker { context.textMarker };
+    auto offset = backingObject.relativeIndexForTextMarker(marker);
+    return offset.has_value() ? [NSNumber numberWithUnsignedInt:*offset] : @(NSNotFound);
+}
+
 static id handleTextMarkerForIndexAttribute(WebAccessibilityObjectWrapper* wrapper, AXCoreObject& backingObject, const ParameterizedAttributeContext& context)
 {
     if (AXObjectCache::useAXThreadTextApis()) {
@@ -4257,6 +4280,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, ParameterizedAttributeHan
         { NSAccessibilityMisspellingTextMarkerRangeAttribute, { handleMisspellingTextMarkerRangeAttribute } },
         { NSAccessibilityTextMarkerIsValidAttribute, { handleTextMarkerIsValidAttribute } },
         { NSAccessibilityIndexForTextMarkerAttribute, { handleIndexForTextMarkerAttribute } },
+        { NSAccessibilityRelativeIndexForTextMarkerAttribute, { handleRelativeIndexForTextMarkerAttribute } },
         { NSAccessibilityTextMarkerForIndexAttribute, { handleTextMarkerForIndexAttribute } },
         { NSAccessibilityLineForTextMarkerAttribute, { handleLineForTextMarkerAttribute } },
         { NSAccessibilityTextMarkerRangeForLineAttribute, { handleTextMarkerRangeForLineAttribute } },

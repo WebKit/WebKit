@@ -27,6 +27,7 @@
 #include "CachedSpecialPropertyAdaptiveStructureWatchpoint.h"
 
 #include "JSCellInlines.h"
+#include "StructureInlinesLight.h"
 #include "StructureRareData.h"
 
 namespace JSC {

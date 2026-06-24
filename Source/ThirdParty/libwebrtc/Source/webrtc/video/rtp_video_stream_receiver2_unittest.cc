@@ -15,10 +15,10 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/frame_transformer_interface.h"
@@ -155,7 +155,7 @@ class MockOnCompleteFrameCallback
   void ClearExpectedBitstream() { buffer_.Clear(); }
 
   void AppendExpectedBitstream(const uint8_t data[], size_t size_in_bytes) {
-    buffer_.Write(ArrayView<const uint8_t>(data, size_in_bytes));
+    buffer_.Write(std::span<const uint8_t>(data, size_in_bytes));
   }
   ByteBufferWriter buffer_;
 };
@@ -206,7 +206,7 @@ class RtpVideoStreamReceiver2Test : public ::testing::Test,
                                                 /*raw_payload=*/false);
     ON_CALL(mock_transport_, SendRtcp)
         .WillByDefault(
-            [this](ArrayView<const uint8_t> packet, ::testing::Unused) {
+            [this](std::span<const uint8_t> packet, ::testing::Unused) {
               return rtcp_packet_parser_.Parse(packet);
             });
   }
@@ -263,7 +263,6 @@ class RtpVideoStreamReceiver2Test : public ::testing::Test,
   VideoReceiveStreamInterface::Config CreateConfig() {
     VideoReceiveStreamInterface::Config config(nullptr);
     config.rtp.remote_ssrc = 1111;
-    config.rtp.local_ssrc = 2222;
     config.rtp.red_payload_type = kRedPayloadType;
     config.rtp.packet_sink_ = this;
     return config;

@@ -12,7 +12,8 @@
 
 #include <stddef.h>
 
-#include "api/array_view.h"
+#include <span>
+
 #include "modules/audio_processing/capture_mixer/audio_content_analyzer.h"
 #include "modules/audio_processing/capture_mixer/channel_content_remixer.h"
 #include "modules/audio_processing/capture_mixer/remixing_logic.h"
@@ -26,8 +27,8 @@ class CaptureMixer {
   CaptureMixer& operator=(const CaptureMixer&) = delete;
 
   void Mix(size_t num_output_channels,
-           ArrayView<float> channel0,
-           ArrayView<float> channel1);
+           std::span<float> channel0,
+           std::span<float> channel1);
 
  private:
   AudioContentAnalyzer audio_content_analyzer_;

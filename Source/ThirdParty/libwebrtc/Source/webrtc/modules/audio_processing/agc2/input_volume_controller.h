@@ -56,8 +56,7 @@ class InputVolumeController final {
     // adjustments are done based on the speech level. For speech levels below
     // and above the range, the targets `target_range_min_dbfs` and
     // `target_range_max_dbfs` are used, respectively.
-    int target_range_max_dbfs = -30;
-    int target_range_experimental_max_dbfs = -12;
+    int target_range_max_dbfs = -12;
     int target_range_min_dbfs = -50;
     // Number of wait frames between the recommended input volume updates.
     int update_input_volume_wait_frames = 100;

@@ -34,7 +34,6 @@ namespace Style {
 // https://drafts.csswg.org/css-values-4/#coordinating-list-property
 
 template<typename T> concept CoordinatedValueListValue = requires(T value) {
-    { T::computedValueUsesUsedValues } -> std::same_as<const bool&>;
     { T::baseProperty.value } -> std::same_as<const CSSPropertyID&>;
     { value.clone(std::declval<const T&>()) } -> std::same_as<T>;
     { value.isInitial() } -> std::same_as<bool>;

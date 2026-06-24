@@ -12,9 +12,9 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_BLOCK_FRAMER_H_
 
 #include <cstddef>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/block.h"
 
 namespace webrtc {
@@ -37,7 +37,7 @@ class BlockFramer {
   // Adds a 64 sample block and extracts an 80 sample subframe.
   void InsertBlockAndExtractSubFrame(
       const Block& block,
-      std::vector<std::vector<ArrayView<float>>>* sub_frame);
+      std::vector<std::vector<std::span<float>>>* sub_frame);
 
  private:
   const size_t num_bands_;

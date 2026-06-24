@@ -11,13 +11,13 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <variant>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/task_queue/task_queue_base.h"
 #include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
@@ -51,7 +51,7 @@ void CallbackDeferrer::TriggerDeferred() {
 }
 
 SendPacketStatus CallbackDeferrer::SendPacketWithStatus(
-    webrtc::ArrayView<const uint8_t> data) {
+    std::span<const uint8_t> data) {
   // Will not be deferred - call directly.
   return underlying_.SendPacketWithStatus(data);
 }
@@ -140,7 +140,7 @@ void CallbackDeferrer::OnConnectionRestarted() {
 }
 
 void CallbackDeferrer::OnStreamsResetFailed(
-    webrtc::ArrayView<const StreamID> outgoing_streams,
+    std::span<const StreamID> outgoing_streams,
     absl::string_view reason) {
   RTC_DCHECK(prepared_);
   deferred_.emplace_back(
@@ -154,7 +154,7 @@ void CallbackDeferrer::OnStreamsResetFailed(
 }
 
 void CallbackDeferrer::OnStreamsResetPerformed(
-    webrtc::ArrayView<const StreamID> outgoing_streams) {
+    std::span<const StreamID> outgoing_streams) {
   RTC_DCHECK(prepared_);
   deferred_.emplace_back(
       +[](CallbackData data, DcSctpSocketCallbacks& cb) {
@@ -166,7 +166,7 @@ void CallbackDeferrer::OnStreamsResetPerformed(
 }
 
 void CallbackDeferrer::OnIncomingStreamsReset(
-    webrtc::ArrayView<const StreamID> incoming_streams) {
+    std::span<const StreamID> incoming_streams) {
   RTC_DCHECK(prepared_);
   deferred_.emplace_back(
       +[](CallbackData data, DcSctpSocketCallbacks& cb) {

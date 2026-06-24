@@ -1301,48 +1301,36 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     size_t numProperties = properties.size();
-    if (numProperties < MIN_SPARSE_ARRAY_INDEX)  [[likely]] {
-        if (!globalObject->isHavingABadTime()) {
-            auto copyPropertiesToBuffer = [&](WriteBarrier<Unknown>* buffer, JSCell* owner) {
-                for (size_t i = 0; i < numProperties; i++) {
-                    const auto& identifier = properties[i];
-                    if (propertyNameMode != PropertyNameMode::Strings && identifier.isSymbol()) {
-                        ASSERT(!identifier.isPrivateName());
-                        buffer[i].set(vm, owner, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
-                    } else
-                        buffer[i].set(vm, owner, jsOwnedString(vm, identifier.string()));
-                }
-            };
-
-            Structure* structure = object->structure();
-            if (structure->canCacheOwnPropertyNames()) {
-                auto* cachedButterfly = structure->cachedPropertyNamesIgnoringSentinel(kind);
-                if (cachedButterfly == StructureRareData::cachedPropertyNamesSentinel()) {
-                    auto* newButterfly = JSCellButterfly::tryCreate(vm, CopyOnWriteArrayWithContiguous, numProperties);
-                    if (!newButterfly) [[unlikely]] {
-                        throwOutOfMemoryError(globalObject, scope);
-                        return { };
-                    }
-                        copyPropertiesToBuffer(newButterfly->toButterfly()->contiguous().data(), newButterfly);
-
-                    structure->setCachedPropertyNames(vm, kind, newButterfly);
-                    Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(newButterfly->indexingMode());
-                    return JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly());
-                }
-
-                if (cachedButterfly == nullptr)
-                    structure->setCachedPropertyNames(vm, kind, StructureRareData::cachedPropertyNamesSentinel());
+    if (numProperties < MIN_SPARSE_ARRAY_INDEX && !globalObject->isHavingABadTime())  [[likely]] {
+        auto copyPropertiesToBuffer = [&](WriteBarrier<Unknown>* buffer, JSCell* owner) {
+            for (size_t i = 0; i < numProperties; i++) {
+                const auto& identifier = properties[i];
+                if (propertyNameMode != PropertyNameMode::Strings && identifier.isSymbol()) {
+                    ASSERT(!identifier.isPrivateName());
+                    buffer[i].set(vm, owner, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+                } else
+                    buffer[i].set(vm, owner, jsOwnedString(vm, identifier.string()));
             }
+        };
 
-            JSArray* keys = JSArray::tryCreate(vm, globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous), numProperties);
-            if (!keys) [[unlikely]] {
-                throwOutOfMemoryError(globalObject, scope);
-                return { };
-            }
-            copyPropertiesToBuffer(keys->butterfly()->contiguous().data(), keys);
-
-            return keys;
+        auto* newButterfly = JSCellButterfly::tryCreate(vm, CopyOnWriteArrayWithContiguous, numProperties);
+        if (!newButterfly) [[unlikely]] {
+            throwOutOfMemoryError(globalObject, scope);
+            return { };
         }
+        copyPropertiesToBuffer(newButterfly->toButterfly()->contiguous().data(), newButterfly);
+        Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(newButterfly->indexingMode());
+        auto* result = JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly());
+
+        Structure* structure = object->structure();
+        if (structure->canCacheOwnPropertyNames()) {
+            auto* cachedButterfly = structure->cachedPropertyNamesIgnoringSentinel(kind);
+            if (cachedButterfly == StructureRareData::cachedPropertyNamesSentinel())
+                structure->setCachedPropertyNames(vm, kind, newButterfly);
+            if (cachedButterfly == nullptr)
+                structure->setCachedPropertyNames(vm, kind, StructureRareData::cachedPropertyNamesSentinel());
+        }
+        return result;
     }
 
     JSArray* keys = constructEmptyArray(globalObject, nullptr);

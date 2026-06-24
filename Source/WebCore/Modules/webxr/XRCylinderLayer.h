@@ -31,13 +31,10 @@
 #include "XRCompositionLayer.h"
 #include "XRCylinderLayerInit.h"
 #include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebXRRigidTransform;
 class WebXRSession;
-class WebXRSpace;
 class XRLayerBacking;
 
 // https://immersive-web.github.io/layers/#xrcylinderayertype
@@ -51,11 +48,6 @@ public:
 
     virtual ~XRCylinderLayer();
 
-    const WebXRSpace& space() const;
-    void setSpace(WebXRSpace&);
-    const WebXRRigidTransform& transform() const;
-    void setTransform(WebXRRigidTransform&);
-
     float radius() const { return m_radius; }
     void setRadius(float);
     float centralAngle() const { return m_centralAngle; }
@@ -66,18 +58,12 @@ public:
 private:
     XRCylinderLayer(ScriptExecutionContext&, WebXRSession&, Ref<XRLayerBacking>&&, const XRCylinderLayerInit&);
     bool isXRCylinderLayer() const final { return true; }
-    void recomputePose();
 
-    RefPtr<WebXRSpace> m_space;
-    RefPtr<WebXRRigidTransform> m_transform;
+    void fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer&) const final;
+
     float m_radius;
     float m_centralAngle;
     float m_aspectRatio;
-    PlatformXR::FrameData::Pose m_poseInLocalSpace;
-
-    // WebXRLayer.
-    void startFrame(PlatformXR::FrameData&) final;
-    PlatformXR::DeviceLayer endFrame() final;
 };
 
 } // namespace WebCore

@@ -43,7 +43,6 @@ namespace WebCore {
 
 class Document;
 class HTMLCanvasElement;
-class Image;
 
 class CanvasCaptureMediaStreamTrack final : public MediaStreamTrack {
     WTF_MAKE_TZONE_ALLOCATED(CanvasCaptureMediaStreamTrack);
@@ -93,6 +92,7 @@ private:
         void scheduleCaptureCanvas();
         void captureCanvas();
         void NODELETE requestFrameTimerFired();
+        CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Canvas; }
 
         bool m_shouldEmitFrame { true };
         std::optional<double> m_frameRequestRate;
@@ -100,7 +100,6 @@ private:
         Timer m_captureCanvasTimer;
         std::optional<RealtimeMediaSourceSettings> m_currentSettings;
         WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvas;
-        RefPtr<Image> m_currentImage;
 #if USE(GSTREAMER)
         GRefPtr<GstClock> m_clock;
 #endif

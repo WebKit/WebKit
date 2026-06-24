@@ -83,7 +83,6 @@ static void initialize()
     wpe_playstation_process_provider_register_backend();
 #endif
 
-    JSRemoteInspectorServerStart(nullptr, 868);
 }
 
 class ApplicationClient : public Application::Client {
@@ -103,6 +102,7 @@ private:
 int main(int argc, char *argv[])
 {
     WKRunLoopInitializeMain();
+    JSRemoteInspectorServerStart(nullptr, 868);
 
     ApplicationClient applicationClient;
     auto& app = Application::singleton();

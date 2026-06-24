@@ -8,21 +8,6 @@
 
 import("../../../webrtc.gni")
 
-rtc_library("av1_qp_parser") {
-  testonly = true
-  sources = [
-    "av1_qp_parser.cc",
-    "av1_qp_parser.h",
-  ]
-  deps = [
-    "../../../api:array_view",
-    "../../../api/video:video_frame",
-    "../../../api/video:video_frame_type",
-    "//third_party/libgav1:libgav1_parser",
-  ]
-  public_configs = [ "//third_party/libgav1:libgav1_public_config" ]
-}
-
 rtc_library("file_based_decoder") {
   testonly = true
   sources = [ "file_based_decoder.h" ]
@@ -107,13 +92,11 @@ rtc_library("qp_parser") {
     "qp_parser.h",
   ]
   deps = [
-    ":av1_qp_parser",
-    "../../../api:array_view",
     "../../../api/video:video_frame",
+    "../../../modules/video_coding:av1_qp_parser",
     "../../../modules/video_coding:video_coding_utility",
     "../../../rtc_base:checks",
   ]
-  public_configs = [ "//third_party/libgav1:libgav1_public_config" ]
 }
 
 rtc_library("test_clip") {
@@ -138,7 +121,6 @@ rtc_library("utils") {
     "utils.h",
   ]
   deps = [
-    "../../../api:array_view",
     "../../../api/video:video_frame",
     "../../../api/video_codecs:video_codecs_api",
     "../../../rtc_base:checks",
@@ -184,16 +166,6 @@ rtc_library("webrtc_picture_pair_provider") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("av1_qp_parser_unittest") {
-    testonly = true
-    sources = [ "av1_qp_parser_unittest.cc" ]
-    deps = [
-      ":av1_qp_parser",
-      "../../../api/video:video_frame",
-      "../../../test:test_support",
-    ]
-  }
-
   rtc_library("qp_parser_unittest") {
     testonly = true
     sources = [ "qp_parser_unittest.cc" ]
@@ -215,7 +187,12 @@ if (rtc_include_tests) {
       "../../../test:test_support",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]
-    data = [ "../../../resources/ConferenceMotion_1280_720_50.yuv" ]
+
+    if (is_ios) {
+      deps += [ "../../../resources:webrtc_perf_tests_bundle_data" ]
+    } else {
+      deps += [ "../../../resources:webrtc_perf_tests_data" ]
+    }
   }
 
   rtc_library("utils_unittest") {
@@ -235,7 +212,6 @@ if (rtc_include_tests) {
   rtc_library("webrtc_picture_pair_provider_unittest") {
     testonly = true
     sources = [ "webrtc_picture_pair_provider_unittest.cc" ]
-    data = [ "../../../resources/ConferenceMotion_1280_720_50.yuv" ]
     deps = [
       ":picture_pair_provider",
       ":utils",
@@ -263,18 +239,23 @@ if (rtc_include_tests) {
       "../../../modules/video_coding:video_coding_utility",
       "../../../modules/video_coding/svc:svc_rate_allocator",
       "../../../rtc_base:checks",
+      "../../../test:create_test_environment",
       "../../../test:fileutils",
       "../../../test:test_support",
       "../../../video/corruption_detection/evaluation:test_clip",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]
+    if (is_ios) {
+      deps += [ "../../../resources:webrtc_perf_tests_bundle_data" ]
+    } else {
+      deps += [ "../../../resources:webrtc_perf_tests_data" ]
+    }
   }
 
-  rtc_library("corruption_detection_eval_tests") {
+  rtc_cc_test("corruption_detection_eval_unittests") {
     testonly = true
     sources = []
     deps = [
-      ":av1_qp_parser_unittest",
       ":qp_parser_unittest",
       ":test_clip_unittest",
       ":utils_unittest",

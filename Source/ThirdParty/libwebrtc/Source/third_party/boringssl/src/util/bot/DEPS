@@ -16,7 +16,7 @@ vars = {
   'chromium_git': 'https://chromium.googlesource.com',
 
   'checkout_bazel': False,
-  'checkout_clang': False,
+  # 'checkout_clang': True,  # // TODO(crbug.com/42220000): remove.
   'checkout_cmake': True,
   'checkout_go': True,
   'checkout_fuzzer': False,
@@ -34,39 +34,48 @@ vars = {
   # This package does not get updates automatically. To update, bump the version
   # in infra's 3pp/android_ndk/fetch.py (see https://crrev.com/c/6470969), then
   # wait a few hours for the new package to be built.
-  'android_ndk_version': 'version:3@r27d.chromium.1',
-  # infra/3pp/tools/bazel_bootstrap/linux-amd64
-  # Keep this in sync with .bazelversion.
-  'bazel_version': 'version:3@7.5.0.chromium.1',
+  'android_ndk_version': 'version:3@r29.chromium.1',
   # infra/3pp/tools/cmake/linux-amd64
-  'cmake_version': 'version:3@3.31.9.chromium.8',
+  'cmake_version': 'version:3@3.31.11.chromium.8',
   # infra/3pp/tools/go/linux-amd64
-  'go_version': 'version:3@1.25.1',
+  'go_version': 'version:3@1.26.1',
   # infra/3pp/tools/perl/windows-amd64
   'perl_version': 'version:3@5.42.0.1',
   # infra/3pp/tools/qemu_static/linux-amd64
-  'qemu_static_version': 'version:3@10.0.0+ds-1',
+  'qemu_static_version': 'version:3@10.0.8+ds-0+deb13u1+b1',
   # chrome_internal/third_party/sdk/windows, but if an update switches this to a
   # new major VS release, keep some bots at the older version.
-  'windows_sdk_version': 'uploaded:2024-01-11',
+  'windows_sdk_version': 'uploaded:2026-05-06',
+
+  # We test using the latest release of the oldest supported Bazel version
+  # listed in [oss-policies-info]. Browse recent packages in [cipd-bazel] and
+  # pick the latest such release.
+  #
+  # [cipd-bazel]: https://chrome-infra-packages.appspot.com/p/infra/3pp/tools/bazel_bootstrap/linux-amd64
+  # [oss-policies-info]: https://github.com/google/oss-policies-info/blob/main/foundational-cxx-support-matrix.md
+  #
+  # Keep this in sync with .bazelversion and util/bazel-example/.bazelversion.
+  # After updating Bazel, bazelisk mod deps --lockfile_mode=refresh from the
+  # root and util/bazel-example
+  'bazel_version': 'version:3@8.6.0.chromium.1',
 
   # Update the following from
   # https://chromium.googlesource.com/chromium/src/+/main/DEPS
   'android_sdk_platform-tools_version': 'qTD9QdBlBf3dyHsN1lJ0RH6AhHxR42Hmg2Ih-Vj4zIEC',
   'libfuzzer_revision': 'bea408a6e01f0f7e6c82a43121fe3af4506c932e',
-  'libcxx_revision': 'cc5f928de999c9c86202d7eb1d0f8bdc3b53465f',
-  'libcxxabi_revision': '864f61dc9253d56586ada34c388278565ef513f6',
-  'llvm_libc_revision': '761ff0251bf6f14dd19973e7043a8da937925824',
-  'ninja_version': 'version:2@1.12.1.chromium.4',
+  'libcxx_revision': '7ab65651aed6802d2599dcb7a73b1f82d5179d05',
+  'libcxxabi_revision': '8f11bb1d4438d0239d0dfc1bd9456a9f31629dda',
+  'llvm_libc_revision': '2a826f2fda3cf8d75b47cbc3bb1d9b244f13a6ab',
+  'ninja_version': 'version:3@1.12.1.chromium.4',
 
   # Update to the latest revision of
   # https://chromium.googlesource.com/chromium/src/tools/clang
-  'tools_clang_revision': '2fa7ecbf9c164e155c0ce9bfc7d90d14c8291e69',
+  'tools_clang_revision': '956f5b673f981d317e4c5d2d01a43a7f56259557',
 
   # Update to the latest revision of
   # https://chromium.googlesource.com/chromium/src/tools/rust
   # and also ensure that `tools_clang_revision` above is up-to-date.
-  'tools_rust_revision': '0eaaeed1ca501e8beaf0c2d96528827d199dd346',
+  'tools_rust_revision': '69bb79a132d32d67b6f6820226b02e50f1945202',
 }
 
 deps = {
@@ -172,7 +181,7 @@ deps = {
   'boringssl/util/bot/tools/clang': {
     'url': Var('chromium_git') + '/chromium/src/tools/clang.git' + '@' + Var('tools_clang_revision'),
     # tools/rust/update_rust.py depends upon tools/clang/scripts/update.py.
-    'condition': 'checkout_clang or checkout_rust',
+    # Also, on non-Mac builds, packaged clang is needed for pregenerate.
   },
 
   'boringssl/util/bot/tools/rust': {
@@ -202,7 +211,7 @@ hooks = [
     'name': 'clang',
     'pattern': '.',
     # bindgen in the packaged rust-toolchain requires packaged clang.
-    'condition': 'checkout_clang or checkout_rust',
+    # Also, on non-Mac builds, packaged clang is needed for pregenerate.
     'action': [ 'python3',
                 'boringssl/util/bot/tools/clang/scripts/update.py',
                 '--output-dir', 'boringssl/util/bot/llvm-build',

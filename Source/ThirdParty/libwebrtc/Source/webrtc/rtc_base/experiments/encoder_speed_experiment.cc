@@ -44,9 +44,11 @@ std::optional<VideoCodecComplexity> ParseComplexity(absl::string_view s) {
 
 }  // namespace
 
-void EncoderSpeedExperiment::ParseCodecSettings(absl::string_view codec_name,
-                                                absl::string_view trial_string,
-                                                ComplexitySettings& settings) {
+void EncoderSpeedExperiment::ParseCodecSettings(
+    absl::string_view codec_name,
+    absl::string_view trial_string,
+    ComplexitySettings& settings,
+    bool use_low_complexity_for_vp9) {
   FieldTrialParameter<std::string> camera_complexity(
       std::string(codec_name) + "_camera", "");
 
@@ -56,29 +58,51 @@ void EncoderSpeedExperiment::ParseCodecSettings(absl::string_view codec_name,
   ParseFieldTrial({&camera_complexity, &screenshare_complexity}, trial_string);
   if (auto complexity = ParseComplexity(camera_complexity.Get())) {
     settings.camera = *complexity;
+  } else if (use_low_complexity_for_vp9 && codec_name == "vp9") {
+    settings.camera = VideoCodecComplexity::kComplexityLow;
   }
 
   if (auto complexity = ParseComplexity(screenshare_complexity.Get())) {
     settings.screenshare = *complexity;
+  } else if (use_low_complexity_for_vp9 && codec_name == "vp9") {
+    settings.screenshare = VideoCodecComplexity::kComplexityLow;
   }
 }
 
 EncoderSpeedExperiment::EncoderSpeedExperiment(
-    const FieldTrialsView& field_trials) {
+    const FieldTrialsView& field_trials)
+    : EncoderSpeedExperiment(field_trials,
+                             /* use_low_complexity_for_vp9 = */ false) {}
+
+EncoderSpeedExperiment::EncoderSpeedExperiment(
+    const FieldTrialsView& field_trials,
+    bool use_low_complexity_for_vp9)
+    : dynamic_speed_enabled_(true),
+      av1_complexity_({.camera = VideoCodecComplexity::kComplexityHigh,
+                       .screenshare = VideoCodecComplexity::kComplexityLow}) {
   std::string trial_string = field_trials.Lookup(kFieldTrialName);
   if (trial_string.empty()) {
+    if (use_low_complexity_for_vp9) {
+      vp9_complexity_.camera = VideoCodecComplexity::kComplexityLow;
+      vp9_complexity_.screenshare = VideoCodecComplexity::kComplexityLow;
+    }
     return;
   }
 
-  FieldTrialParameter<bool> dynamic_speed_enabled("dynamic_speed", false);
+  FieldTrialParameter<bool> dynamic_speed_enabled("dynamic_speed", true);
   ParseFieldTrial({&dynamic_speed_enabled}, trial_string);
   dynamic_speed_enabled_ = dynamic_speed_enabled.Get();
 
-  ParseCodecSettings("av1", trial_string, av1_complexity_);
-  ParseCodecSettings("vp8", trial_string, vp8_complexity_);
-  ParseCodecSettings("vp9", trial_string, vp9_complexity_);
-  ParseCodecSettings("h264", trial_string, h264_complexity_);
-  ParseCodecSettings("h265", trial_string, h265_complexity_);
+  ParseCodecSettings("av1", trial_string, av1_complexity_,
+                     use_low_complexity_for_vp9);
+  ParseCodecSettings("vp8", trial_string, vp8_complexity_,
+                     use_low_complexity_for_vp9);
+  ParseCodecSettings("vp9", trial_string, vp9_complexity_,
+                     use_low_complexity_for_vp9);
+  ParseCodecSettings("h264", trial_string, h264_complexity_,
+                     use_low_complexity_for_vp9);
+  ParseCodecSettings("h265", trial_string, h265_complexity_,
+                     use_low_complexity_for_vp9);
 }
 
 bool EncoderSpeedExperiment::IsDynamicSpeedEnabled() const {

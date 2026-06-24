@@ -166,11 +166,11 @@ void CommandEncoderImpl::copyBufferToTexture(
             .bytesPerRow = source.bytesPerRow.value_or(WGPU_COPY_STRIDE_UNDEFINED),
             .rowsPerImage = source.rowsPerImage.value_or(WGPU_COPY_STRIDE_UNDEFINED),
         },
-        .buffer = convertToBackingContext->convertToBacking(protect(source.buffer).get()),
+        .buffer = convertToBackingContext->convertToBacking(protect(source.buffer)),
     };
 
     WGPUImageCopyTexture backingDestination {
-        .texture = convertToBackingContext->convertToBacking(protect(destination.texture).get()),
+        .texture = convertToBackingContext->convertToBacking(protect(destination.texture)),
         .mipLevel = destination.mipLevel,
         .origin = destination.origin ? convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
         .aspect = convertToBackingContext->convertToBacking(destination.aspect),
@@ -189,7 +189,7 @@ void CommandEncoderImpl::copyTextureToBuffer(
     Ref convertToBackingContext = m_convertToBackingContext;
 
     WGPUImageCopyTexture backingSource {
-        .texture = convertToBackingContext->convertToBacking(protect(source.texture).get()),
+        .texture = convertToBackingContext->convertToBacking(protect(source.texture)),
         .mipLevel = source.mipLevel,
         .origin = source.origin ? convertToBackingContext->convertToBacking(*source.origin) : WGPUOrigin3D { 0, 0, 0 },
         .aspect = convertToBackingContext->convertToBacking(source.aspect),
@@ -201,7 +201,7 @@ void CommandEncoderImpl::copyTextureToBuffer(
             .bytesPerRow = destination.bytesPerRow.value_or(WGPU_COPY_STRIDE_UNDEFINED),
             .rowsPerImage = destination.rowsPerImage.value_or(WGPU_COPY_STRIDE_UNDEFINED),
         },
-        .buffer = convertToBackingContext->convertToBacking(protect(destination.buffer).get()),
+        .buffer = convertToBackingContext->convertToBacking(protect(destination.buffer)),
     };
 
     WGPUExtent3D backingCopySize = convertToBackingContext->convertToBacking(copySize);
@@ -217,14 +217,14 @@ void CommandEncoderImpl::copyTextureToTexture(
     Ref convertToBackingContext = m_convertToBackingContext;
 
     WGPUImageCopyTexture backingSource {
-        .texture = convertToBackingContext->convertToBacking(protect(source.texture).get()),
+        .texture = convertToBackingContext->convertToBacking(protect(source.texture)),
         .mipLevel = source.mipLevel,
         .origin = source.origin ? convertToBackingContext->convertToBacking(*source.origin) : WGPUOrigin3D { 0, 0, 0 },
         .aspect = convertToBackingContext->convertToBacking(source.aspect),
     };
 
     WGPUImageCopyTexture backingDestination {
-        .texture = convertToBackingContext->convertToBacking(protect(destination.texture).get()),
+        .texture = convertToBackingContext->convertToBacking(protect(destination.texture)),
         .mipLevel = destination.mipLevel,
         .origin = destination.origin ? convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
         .aspect = convertToBackingContext->convertToBacking(destination.aspect),

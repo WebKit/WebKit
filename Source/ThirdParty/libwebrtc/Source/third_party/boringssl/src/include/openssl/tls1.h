@@ -46,7 +46,7 @@ extern "C" {
 #define TLS1_AD_UNKNOWN_PSK_IDENTITY 115
 #define TLS1_AD_CERTIFICATE_REQUIRED 116
 #define TLS1_AD_NO_APPLICATION_PROTOCOL 120
-#define TLS1_AD_ECH_REQUIRED 121  // draft-ietf-tls-esni-13
+#define TLS1_AD_ECH_REQUIRED 121
 
 // ExtensionType values from RFC 6066
 #define TLSEXT_TYPE_server_name 0
@@ -63,6 +63,10 @@ extern "C" {
 
 // ExtensionType value from RFC 7301
 #define TLSEXT_TYPE_application_layer_protocol_negotiation 16
+
+// ExtensionType values from RFC 7250
+#define TLSEXT_TYPE_client_cert_type 19
+#define TLSEXT_TYPE_server_cert_type 20
 
 // ExtensionType value from RFC 7685
 #define TLSEXT_TYPE_padding 21
@@ -81,8 +85,8 @@ extern "C" {
 #define TLSEXT_TYPE_quic_transport_parameters 57
 
 // TLSEXT_TYPE_quic_transport_parameters_standard is an alias for
-// |TLSEXT_TYPE_quic_transport_parameters|. Use
-// |TLSEXT_TYPE_quic_transport_parameters| instead.
+// `TLSEXT_TYPE_quic_transport_parameters`. Use
+// `TLSEXT_TYPE_quic_transport_parameters` instead.
 #define TLSEXT_TYPE_quic_transport_parameters_standard \
   TLSEXT_TYPE_quic_transport_parameters
 
@@ -114,8 +118,7 @@ extern "C" {
 #define TLSEXT_TYPE_application_settings_old 17513
 #define TLSEXT_TYPE_application_settings 17613
 
-// ExtensionType values from draft-ietf-tls-esni-13. This is not an IANA defined
-// extension number.
+// ExtensionType values from RFC 9849.
 #define TLSEXT_TYPE_encrypted_client_hello 0xfe0d
 #define TLSEXT_TYPE_ech_outer_extensions 0xfd00
 
@@ -136,6 +139,11 @@ extern "C" {
 // TODO(crbug.com/398275713): Replace with the final codepoint once
 // standardization completes.
 #define TLSEXT_TYPE_trust_anchors 0xca34
+
+// Extension allowing the server to add additional bytes of padding to
+// EncryptedExtensions.
+// This is not an IANA defined extension number
+#define TLSEXT_TYPE_server_padding 4832
 
 // ExtensionType value from draft-ietf-tls-tlsflags.
 #define TLSEXT_TYPE_tls_flags 62
@@ -172,7 +180,7 @@ extern "C" {
 // The following constants are equal to TLS cipher suite values, OR-d with
 // 0x03000000. This is part of OpenSSL's SSL 2.0 legacy. SSL 2.0 has long since
 // been removed from BoringSSL.
-// TODO(davidben): Define these in terms of |SSL_CIPHER_*| constants. The
+// TODO(davidben): Define these in terms of `SSL_CIPHER_*` constants. The
 // challenge is that existing code expects them to be defined in tls1.h, so we
 // must first merge tls1.h into ssl.h.
 #define TLS1_CK_PSK_WITH_AES_128_CBC_SHA 0x0300008C
@@ -187,6 +195,7 @@ extern "C" {
 #define TLS1_CK_ECDHE_ECDSA_WITH_AES_256_CBC_SHA 0x0300C00A
 #define TLS1_CK_ECDHE_RSA_WITH_AES_128_CBC_SHA 0x0300C013
 #define TLS1_CK_ECDHE_RSA_WITH_AES_256_CBC_SHA 0x0300C014
+#define TLS1_CK_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 0x0300C023
 #define TLS1_CK_ECDHE_RSA_WITH_AES_128_CBC_SHA256 0x0300C027
 #define TLS1_CK_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 0x0300C02B
 #define TLS1_CK_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 0x0300C02C
@@ -199,15 +208,15 @@ extern "C" {
 #define TLS1_3_CK_AES_256_GCM_SHA384 0x03001302
 #define TLS1_3_CK_CHACHA20_POLY1305_SHA256 0x03001303
 
-// The following constants are legacy aliases of |TLS1_3_CK_*|.
+// The following constants are legacy aliases of `TLS1_3_CK_*`.
 // TODO(davidben): Migrate callers to the new name and remove these.
 #define TLS1_CK_AES_128_GCM_SHA256 TLS1_3_CK_AES_128_GCM_SHA256
 #define TLS1_CK_AES_256_GCM_SHA384 TLS1_3_CK_AES_256_GCM_SHA384
 #define TLS1_CK_CHACHA20_POLY1305_SHA256 TLS1_3_CK_CHACHA20_POLY1305_SHA256
 
-// The following constants are the OpenSSL names (see |SSL_CIPHER_get_name|) for
+// The following constants are the OpenSSL names (see `SSL_CIPHER_get_name`) for
 // various TLS ciphers. Prefer the standard name, returned from
-// |SSL_CIPHER_standard_name| and supported by |SSL_CTX_set_cipher_list|.
+// `SSL_CIPHER_standard_name` and supported by `SSL_CTX_set_cipher_list`.
 #define TLS1_TXT_PSK_WITH_AES_128_CBC_SHA "PSK-AES128-CBC-SHA"
 #define TLS1_TXT_PSK_WITH_AES_256_CBC_SHA "PSK-AES256-CBC-SHA"
 #define TLS1_TXT_ECDHE_PSK_WITH_AES_128_CBC_SHA "ECDHE-PSK-AES128-CBC-SHA"
@@ -220,6 +229,7 @@ extern "C" {
 #define TLS1_TXT_ECDHE_ECDSA_WITH_AES_256_CBC_SHA "ECDHE-ECDSA-AES256-SHA"
 #define TLS1_TXT_ECDHE_RSA_WITH_AES_128_CBC_SHA "ECDHE-RSA-AES128-SHA"
 #define TLS1_TXT_ECDHE_RSA_WITH_AES_256_CBC_SHA "ECDHE-RSA-AES256-SHA"
+#define TLS1_TXT_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 "ECDHE-ECDSA-AES128-SHA256"
 #define TLS1_TXT_ECDHE_RSA_WITH_AES_128_CBC_SHA256 "ECDHE-RSA-AES128-SHA256"
 #define TLS1_TXT_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 \
   "ECDHE-ECDSA-AES128-GCM-SHA256"

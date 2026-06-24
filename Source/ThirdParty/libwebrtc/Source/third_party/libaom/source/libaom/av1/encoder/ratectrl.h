@@ -190,10 +190,20 @@ typedef struct {
   int sframe_due;
 
   int high_source_sad;
+  /*!
+   * The high_source_sad flag, which indicates scene change, for each frame [i]
+   * in the lookahead buffer, used for the encoding mode: is_one_pass_rt_lag.
+   */
+  int high_source_sad_lag[MAX_GF_INTERVAL];
   int high_motion_content_screen_rtc;
   uint64_t avg_source_sad;
   uint64_t prev_avg_source_sad;
   uint64_t frame_source_sad;
+  /*!
+   * The frame source sad for each frame [i] in the lookahead buffer,
+   * used for the encoding mode: is_one_pass_rt_lag.
+   */
+  uint64_t frame_source_sad_lag[MAX_GF_INTERVAL];
   unsigned int last_frame_low_source_sad;
   uint64_t frame_spatial_variance;
   int static_since_last_scene_change;
@@ -317,6 +327,11 @@ typedef struct {
    * Boost factor used to calculate the extra bits allocated to ARFs and GFs
    */
   int gfu_boost;
+
+  /*!
+   * Average boost factor of ARFs and GFs within a kf interval
+   */
+  int gfu_boost_average;
 
   /*!
    * Stores the determined gf group lengths for a set of gf groups
@@ -830,6 +845,22 @@ int av1_encodedframe_overshoot_cbr(struct AV1_COMP *cpi, int *q);
  * function returns 1 (frame is dropped).
  */
 int av1_postencode_drop_cbr(struct AV1_COMP *cpi, size_t *size);
+
+/*!\brief Check for scene detection, for 1 pass real-time mode.
+ *
+ * Compute average source sad (temporal sad: between current source and
+ * previous source) over a subset of superblocks. Use this is detect big changes
+ * in content and set the \c cpi->rc.high_source_sad flag.
+ *
+ * \ingroup rate_control
+ * \param[in]       cpi          Top level encoder structure
+ * \param[in]       frame_input  Current and last input source frames
+ *
+ * \remark Nothing is returned. Instead the flag \c cpi->rc.high_source_sad
+ * is set if scene change is detected, and \c cpi->rc.avg_source_sad is updated.
+ */
+void av1_rc_scene_detection_onepass_rt(
+    struct AV1_COMP *cpi, const struct EncodeFrameInput *frame_input);
 
 #ifdef __cplusplus
 }  // extern "C"

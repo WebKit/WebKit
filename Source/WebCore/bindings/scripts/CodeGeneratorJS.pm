@@ -50,6 +50,15 @@ my %headerTrailingIncludes = ();
 my @implContentHeader = ();
 my @implContent = ();
 my %implIncludes = ();
+# Content destined for an auxiliary .cpp split out from the main impl file. Used for interfaces
+# tagged with [StandaloneConstructorAttributes]. The constructor-attribute getter definitions
+# are routed here so the main JS<name>.cpp doesn't sit on the build's critical path.
+my @auxImplContent = ();
+my %auxImplIncludes = ();
+# When set, AddToImplIncludes routes to %auxImplIncludes instead of %implIncludes.
+# Used while emitting the split-out getter definitions so their header
+# dependencies travel with the moved code rather than polluting the main file.
+my $auxImplActive = 0;
 my @depsContent = ();
 my $hasNonTrivialFinishCreation = 0;
 my $hasNonDefaultFinishCreation = 0;
@@ -722,7 +731,18 @@ sub AddToImplIncludes
 {
     my ($header, $conditional) = @_;
 
+    if ($auxImplActive) {
+        AddToIncludes($header, \%auxImplIncludes, $conditional);
+        return;
+    }
     AddToIncludes($header, \%implIncludes, $conditional);
+}
+
+sub AddToAuxImplIncludes
+{
+    my ($header, $conditional) = @_;
+
+    AddToIncludes($header, \%auxImplIncludes, $conditional);
 }
 
 sub AddToIncludes
@@ -746,6 +766,16 @@ sub IsReadonly
 {
     my $attribute = shift;
     return $attribute->isReadOnly && !$attribute->extendedAttributes->{Replaceable} && !$attribute->extendedAttributes->{PutForwards} && !$attribute->extendedAttributes->{LegacyLenientSetter};
+}
+
+# True when an interface opts into emitting its constructor-attribute getter definitions in
+# a sibling JS<name>ConstructorAttributes.cpp instead of the main JS<name>.cpp. CMake's jumbo
+# build can suppress it via --ignoreStandaloneConstructorAttributes
+sub UseStandaloneConstructorAttributes
+{
+    my $interface = shift;
+    return 0 if $codeGenerator->IgnoreStandaloneConstructorAttributes();
+    return $interface->extendedAttributes->{StandaloneConstructorAttributes} ? 1 : 0;
 }
 
 sub AddClassForwardIfNeeded
@@ -3603,8 +3633,15 @@ sub GenerateHeader
         }
         $headerIncludes{"<wtf/NeverDestroyed.h>"} = 1;
         push(@headerContent, "public:\n");
+        push(@headerContent, "    JS${interfaceName}Owner() = default;\n");
         push(@headerContent, "    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) ${overrideDecl};\n");
         push(@headerContent, "    void finalize(JSC::Handle<JSC::Unknown>, void* context) ${overrideDecl};\n");
+        push(@headerContent, "\n");
+        push(@headerContent, "private:\n");
+        # When -fpch-debuginfo is enabled, clang sometimes fails to emit the
+        # vtable (rdar://176736350). This unused out-of-line constructor reminds
+        # clang to emit it. See ClangVTableWorkaroundTag in wtf/Compiler.h.
+        push(@headerContent, "    explicit JS${interfaceName}Owner(ClangVTableWorkaroundTag);\n");
         push(@headerContent, "};\n");
         push(@headerContent, "\n");
         push(@headerContent, "inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, $implType*)\n");
@@ -4531,6 +4568,11 @@ sub GenerateRuntimeEnableConditionalString
 
         my $contextRef = "*" . $jsDOMGlobalObjectExpr . "->scriptExecutionContext()";
         my $name = $context->name;
+        # The ${name}::enabledForContext(...) call needs the implementation type
+        # complete at the call site. Bring in JS${name}.h, which transitively
+        # provides ${name}.h. This used to flow in via the constructor-getter
+        # body, but DOMWindow's bodies now live in a sibling translation unit.
+        AddToImplIncludes("JS${name}.h");
         push(@conjuncts,  "${name}::enabledForContext(" . $contextRef . ")");
     }
 
@@ -5514,6 +5556,10 @@ sub GenerateImplementation
         }
     }
 
+    if (ShouldGenerateWrapperOwnerCode($hasParent, $interface)) {
+        push(@implContent, "JS${interfaceName}Owner::JS${interfaceName}Owner(ClangVTableWorkaroundTag) { }\n\n");
+    }
+
     if (ShouldGenerateWrapperOwnerCode($hasParent, $interface) && !GetCustomIsReachable($interface)) {
         push(@implContent, "bool JS${interfaceName}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)\n");
         push(@implContent, "{\n");
@@ -5630,7 +5676,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    SUPPRESS_MEMORY_UNSAFE_CAST auto* js${interfaceName} = static_cast<JS${interfaceName}*>(handle.slot()->asCell());\n");
         push(@implContent, "    auto& world = *static_cast<DOMWrapperWorld*>(context);\n");
-        push(@implContent, "    uncacheWrapper(world, protect(js${interfaceName}->wrapped()).ptr(), js${interfaceName});\n");
+        push(@implContent, "    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &js${interfaceName}->wrapped(), js${interfaceName});\n");
         push(@implContent, "}\n\n");
     }
 
@@ -5758,7 +5804,13 @@ sub GenerateAttributeGetterAndSetterDeclaration
     my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
     push(@$outputArray, "#if ${conditionalString}\n") if $conditionalString;
     my $getter = GetAttributeGetterName($interface, $className, $attribute);
-    push(@$outputArray, "static JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
+    # When this interface opts into [StandaloneConstructorAttributes], its
+    # constructor-attribute getter definitions live in JS<name>ConstructorAttributes.cpp,
+    # so the forward declaration in JS<name>.cpp must have external linkage to
+    # match the definition in the sibling translation unit. See
+    # GenerateAttributeGetterDefinition / WriteData.
+    my $linkage = (UseStandaloneConstructorAttributes($interface) && $codeGenerator->IsConstructorType($attribute->type)) ? "" : "static ";
+    push(@$outputArray, "${linkage}JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
     unless (IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type)) {
         my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
         if ($readWriteConditional) {
@@ -5997,17 +6049,42 @@ sub GenerateAttributeGetterDefinition
 
     my $attributeGetterName = GetAttributeGetterName($interface, $className, $attribute);
     my $attributeGetterBodyName = $attributeGetterName . "Getter";
-    
+
+    # Interfaces tagged with [StandaloneConstructorAttributes] (e.g. DOMWindow,
+    # whose generated JS<name>.cpp sits on the build's critical path) split
+    # their constructor-attribute getter definitions into a sibling translation
+    # unit. The main file only needs a forward declaration of each getter so
+    # the property hash table can take its address.
+    my $useStandaloneConstructorAttributes = UseStandaloneConstructorAttributes($interface) && $codeGenerator->IsConstructorType($attribute->type);
+
     my $conditional = $attribute->extendedAttributes->{Conditional};
+    my $conditionalString;
     if ($conditional) {
-        my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
-        push(@$outputArray, "#if ${conditionalString}\n");;
+        $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+        push(@$outputArray, "#if ${conditionalString}\n") unless $useStandaloneConstructorAttributes;
+        push(@auxImplContent, "#if ${conditionalString}\n") if $useStandaloneConstructorAttributes;
     }
-    
-    GenerateAttributeGetterBodyDefinition($outputArray, $interface, $className, $attribute, $attributeGetterBodyName, $conditional, $enumerations);
-    GenerateAttributeGetterTrampolineDefinition($outputArray, $interface, $className, $attribute, $attributeGetterName, $attributeGetterBodyName, $conditional);
-    
-    push(@$outputArray, "#endif\n\n") if $conditional;
+
+    if ($useStandaloneConstructorAttributes) {
+        # The forward declaration with external linkage is already emitted in
+        # the main JS<name>.cpp by GenerateAttributeGetterAndSetterDeclaration so
+        # the property hash table can take the function's address. Emit a
+        # matching declaration alongside the moved definition so
+        # -Wmissing-prototypes is satisfied for an externally-linked function.
+        push(@auxImplContent, "JSC_DECLARE_CUSTOM_GETTER(${attributeGetterName});\n");
+        $auxImplActive = 1;
+        GenerateAttributeGetterBodyDefinition(\@auxImplContent, $interface, $className, $attribute, $attributeGetterBodyName, $conditional, $enumerations);
+        GenerateAttributeGetterTrampolineDefinition(\@auxImplContent, $interface, $className, $attribute, $attributeGetterName, $attributeGetterBodyName, $conditional);
+        $auxImplActive = 0;
+    } else {
+        GenerateAttributeGetterBodyDefinition($outputArray, $interface, $className, $attribute, $attributeGetterBodyName, $conditional, $enumerations);
+        GenerateAttributeGetterTrampolineDefinition($outputArray, $interface, $className, $attribute, $attributeGetterName, $attributeGetterBodyName, $conditional);
+    }
+
+    if ($conditional) {
+        push(@$outputArray, "#endif\n\n") unless $useStandaloneConstructorAttributes;
+        push(@auxImplContent, "#endif\n\n") if $useStandaloneConstructorAttributes;
+    }
 }
 
 sub AttributeSetterNeedsPropertyName
@@ -6570,6 +6647,7 @@ sub GenerateDefaultToJSONOperationDefinition
                 if (HasCustomGetter($attribute)) {
                     my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->extendedAttributes->{ImplementedAs} || $attributeName);
                     $toJSExpression = "castedThis->${implGetterFunctionName}(*lexicalGlobalObject)";
+                    $mayThrowException = 1;
                 } else {
                     my ($baseFunctionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $currentInterface->type->name, $attribute);
                     my $functionName = GetFullyQualifiedImplementationCallName($currentInterface, $attribute, $baseFunctionName, "impl", $conditional);
@@ -7321,7 +7399,7 @@ sub GenerateCallbackImplementationOperationBody
     push(@$contentRef, "    if (returnedException) {\n");
     if ($codeGenerator->IsPromiseType($operation->type)) {
         push(@$contentRef, "        auto* jsPromise = JSC::JSPromise::create(vm, globalObject.promiseStructure());\n");
-        push(@$contentRef, "        jsPromise->rejectAsHandled(vm, &globalObject, returnedException->value());\n");
+        push(@$contentRef, "        jsPromise->rejectAsHandled(vm, returnedException->value());\n");
         push(@$contentRef, "        return { DOMPromise::create(globalObject, *jsPromise) };\n");
     } elsif ($isForRethrowingHandler) {
         push(@$contentRef, "        auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
@@ -8472,9 +8550,70 @@ sub WriteData
     $contents .= join "", @implContent;
     $codeGenerator->UpdateFile($implFileName, $contents);
 
+    # Emit the auxiliary impl file (JS<name>ConstructorAttributes.cpp) whenever
+    # the interface opts into [StandaloneConstructorAttributes], so the build
+    # system finds the same set of files regardless of whether
+    # --ignoreStandaloneConstructorAttributes was passed. The file mirrors the
+    # main file's config/copyright/JS<name>.h include scaffolding and brings in
+    # only the headers its moved definitions need (collected via
+    # $auxImplActive). When the marker is being ignored, no definitions are
+    # routed here and the file ends up as an empty TU.
+    if ($interface->extendedAttributes->{StandaloneConstructorAttributes}) {
+        my $auxImplFileName = "$outputDir/JS${name}ConstructorAttributes.cpp";
+        # The aux TU pulls in JSEventTarget.h via JSDOMWindow.h, which transitively
+        # references the toJSDOMGlobalObject<JSClass> template inline. The template's
+        # body lives in JSDOMGlobalObjectInlines.h, so add it explicitly here to
+        # avoid -Wundefined-inline.
+        $auxImplIncludes{"JSDOMGlobalObjectInlines.h"} = 1 unless $auxImplIncludes{"JSDOMGlobalObjectInlines.h"};
+        my $auxContents = join "", GenerateImplementationContentHeader($interface);
+
+        my @auxIncludes = ();
+        my %auxImplIncludeConditions = ();
+        foreach my $include (keys %auxImplIncludes) {
+            next if $headerIncludes{$include};
+            next if $headerTrailingIncludes{$include};
+
+            my $condition = $auxImplIncludes{$include};
+
+            my $checkType = $include;
+            $checkType =~ s/\.h//;
+            next if $codeGenerator->IsSVGAnimatedTypeName($checkType);
+
+            $include = "\"$include\"" unless $include =~ /^["<]/; # "
+
+            if ($condition eq 1) {
+                push @auxIncludes, $include;
+            } else {
+                push @{$auxImplIncludeConditions{$codeGenerator->GenerateConditionalStringFromAttributeValue($condition)}}, $include;
+            }
+        }
+
+        foreach my $include (sort @auxIncludes) {
+            $auxContents .= "#include $include\n";
+        }
+        foreach my $condition (sort keys %auxImplIncludeConditions) {
+            $auxContents .= "\n#if " . $condition . "\n";
+            foreach my $include (sort @{$auxImplIncludeConditions{$condition}}) {
+                $auxContents .= "#include $include\n";
+            }
+            $auxContents .= "#endif\n";
+        }
+
+        $auxContents .= "\nnamespace WebCore {\nusing namespace JSC;\n\n";
+        $auxContents .= join "", @auxImplContent;
+        $auxContents .= "} // namespace WebCore\n";
+
+        my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
+        $auxContents .= "\n#endif\n" if $conditionalString;
+
+        $codeGenerator->UpdateFile($auxImplFileName, $auxContents);
+    }
+
     @implContentHeader = ();
     @implContent = ();
     %implIncludes = ();
+    @auxImplContent = ();
+    %auxImplIncludes = ();
 
     # Update a .h file if the contents are changed.
     $contents = join "", @headerContentHeader;

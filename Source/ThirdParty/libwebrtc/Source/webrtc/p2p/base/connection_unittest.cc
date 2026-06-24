@@ -16,12 +16,12 @@
 #include <list>
 #include <memory>
 #include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/rtc_error.h"
@@ -300,7 +300,6 @@ TEST_F(ConnectionTest, SendReceiveGoogDelta) {
   ASSERT_GT(rport_->last_stun_buf().size(), 0u);
   lconn->OnReadPacket(
       ReceivedIpPacket(rport_->last_stun_buf(), SocketAddress(), std::nullopt));
-
   EXPECT_TRUE(received_goog_delta_ack);
 }
 
@@ -344,6 +343,66 @@ TEST_F(ConnectionTest, SendGoogDeltaNoReply) {
   lconn->OnReadPacket(
       ReceivedIpPacket(rport_->last_stun_buf(), SocketAddress(), std::nullopt));
   EXPECT_TRUE(received_goog_delta_ack_error);
+}
+
+// Test that if StunBinding is sufficiently full, aka DELTA is too big, it is
+// not sent.
+TEST_F(ConnectionTest, TooBigDeltaIsNotSent) {
+  constexpr int64_t ms = 10;
+  Connection* lconn = CreateConnection(ICEROLE_CONTROLLING);
+  Connection* rconn = CreateConnection(ICEROLE_CONTROLLED);
+
+  std::string a_long_string(1200, 'a');
+  std::unique_ptr<StunByteStringAttribute> delta =
+      absl::WrapUnique(new StunByteStringAttribute(STUN_ATTR_GOOG_DELTA));
+  delta->CopyBytes(a_long_string);
+
+  std::unique_ptr<StunAttribute> delta_ack =
+      absl::WrapUnique(new StunUInt64Attribute(STUN_ATTR_GOOG_DELTA_ACK, 133));
+
+  bool received_goog_delta = false;
+  bool received_goog_delta_ack = false;
+  lconn->SetStunDictConsumer(
+      // DeltaReceived
+      [](const StunByteStringAttribute* delta)
+          -> std::unique_ptr<StunAttribute> { return nullptr; },
+      // DeltaAckReceived
+      [&](RTCErrorOr<const StunUInt64Attribute*> error_or_ack) {
+        received_goog_delta_ack = true;
+        EXPECT_TRUE(error_or_ack.ok());
+        EXPECT_EQ(error_or_ack.value()->value(), 133ull);
+      });
+
+  rconn->SetStunDictConsumer(
+      // DeltaReceived
+      [&](const StunByteStringAttribute* delta)
+          -> std::unique_ptr<StunAttribute> {
+        received_goog_delta = true;
+        EXPECT_EQ(delta->string_view(), "DELTA");
+        return std::move(delta_ack);
+      },
+      // DeltaAckReceived
+      [](RTCErrorOr<const StunUInt64Attribute*> error_or__ack) {});
+
+  lconn->Ping(env().clock().CurrentTime(), std::move(delta));
+  ASSERT_THAT(WaitUntil([&] { return lport_->last_stun_msg(); }, IsTrue(),
+                        {.timeout = TimeDelta::Millis(kDefaultTimeout),
+                         .clock = &time_controller_}),
+              IsRtcOk());
+  ASSERT_GT(lport_->last_stun_buf().size(), 0u);
+  rconn->OnReadPacket(
+      ReceivedIpPacket(lport_->last_stun_buf(), SocketAddress(), std::nullopt));
+  EXPECT_FALSE(received_goog_delta);
+
+  time_controller_.SkipForwardBy(TimeDelta::Millis(ms));
+  ASSERT_TRUE(WaitUntil([&] { return rport_->last_stun_msg(); },
+                        {.timeout = TimeDelta::Millis(kDefaultTimeout),
+                         .clock = &time_controller_}));
+  ASSERT_GT(rport_->last_stun_buf().size(), 0u);
+  lconn->OnReadPacket(
+      ReceivedIpPacket(rport_->last_stun_buf(), SocketAddress(), std::nullopt));
+
+  EXPECT_FALSE(received_goog_delta_ack);
 }
 
 }  // namespace

@@ -297,20 +297,25 @@ func addResumptionVersionTests() {
 		name:          "Resume-Server-CipherNotPreferred",
 		resumeSession: true,
 		config: Config{
-			MaxVersion: VersionTLS12,
-			Bugs: ProtocolBugs{
-				ExpectNewTicket: true,
-				FilterTicket: func(in []byte) ([]byte, error) {
-					return SetShimTicketCipherSuite(in, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA)
-				},
-			},
+			MaxVersion:   VersionTLS12,
+			CipherSuites: []uint16{TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA},
 		},
-		flags: []string{
-			"-ticket-key",
-			base64FlagValue(TestShimTicketKey),
+		resumeConfig: &Config{
+			MaxVersion:   VersionTLS12,
+			CipherSuites: []uint16{TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA},
 		},
-		shouldFail:           false,
+		// The first connection should establish a session with a CBC cipher.
+		expectations: connectionExpectations{
+			cipher: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+		},
+		// The second connection will offer GCM (preferred) and CBC, and a
+		// CBC-based session. The shim can either resume with CBC or do a full
+		// handshake with GCM. (It cannot resume a CBC session with GCM.) GCM
+		// should take precedence.
 		expectResumeRejected: true,
+		resumeExpectations: &connectionExpectations{
+			cipher: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+		},
 	})
 
 	// TLS 1.3 allows sessions to be resumed at a different cipher if their
@@ -321,22 +326,24 @@ func addResumptionVersionTests() {
 		resumeSession: true,
 		config: Config{
 			MaxVersion:   VersionTLS13,
-			CipherSuites: []uint16{TLS_CHACHA20_POLY1305_SHA256, TLS_AES_128_GCM_SHA256},
-			Bugs: ProtocolBugs{
-				FilterTicket: func(in []byte) ([]byte, error) {
-					// If the client (runner) offers ChaCha20-Poly1305 first, the
-					// server (shim) always prefers it. Switch it to AES-GCM.
-					return SetShimTicketCipherSuite(in, TLS_AES_128_GCM_SHA256)
-				},
-			},
+			CipherSuites: []uint16{TLS_AES_256_GCM_SHA384},
 		},
-		flags: []string{
-			"-ticket-key",
-			base64FlagValue(TestShimTicketKey),
+		resumeConfig: &Config{
+			MaxVersion:   VersionTLS13,
+			CipherSuites: []uint16{TLS_CHACHA20_POLY1305_SHA256, TLS_AES_256_GCM_SHA384},
 		},
-		shouldFail:           false,
+		// The first connection should establish a session with AES.
+		expectations: connectionExpectations{
+			cipher: TLS_AES_256_GCM_SHA384,
+		},
+		// The second connection will offer ChaCha and AES. ChaCha is listed
+		// first, so the server should, a priori, pick ChaCha. Although the
+		// second connection also offers an AES-based session, the cipher choice
+		// should take predecence.
 		expectResumeRejected: true,
-	})
+		resumeExpectations: &connectionExpectations{
+			cipher: TLS_CHACHA20_POLY1305_SHA256,
+		}})
 
 	// Sessions may not be resumed if they contain another version's cipher.
 	testCases = append(testCases, testCase{
@@ -568,18 +575,18 @@ func addResumptionVersionTests() {
 
 	testCases = append(testCases, testCase{
 		testType:      serverTest,
-		name:          "Resume-Server-OmitPSKsOnSecondClientHello",
+		name:          "Resume-Server-OmitAllPSKsOnSecondClientHello",
 		resumeSession: true,
 		config: Config{
 			MaxVersion:    VersionTLS13,
 			DefaultCurves: []CurveID{},
 			Bugs: ProtocolBugs{
-				OmitPSKsOnSecondClientHello: true,
+				OmitAllPSKsOnSecondClientHello: true,
 			},
 		},
 		shouldFail:         true,
-		expectedLocalError: "remote error: illegal parameter",
-		expectedError:      ":INCONSISTENT_CLIENT_HELLO:",
+		expectedLocalError: "remote error: missing extension",
+		expectedError:      ":MISSING_EXTENSION:",
 	})
 }
 

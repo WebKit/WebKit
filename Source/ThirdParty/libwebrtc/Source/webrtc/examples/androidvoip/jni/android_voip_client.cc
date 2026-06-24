@@ -20,12 +20,12 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "api/array_view.h"
 #include "api/audio/builtin_audio_processing_builder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
@@ -481,7 +481,7 @@ void AndroidVoipClient::SendRtpPacket(const std::vector<uint8_t>& packet_copy) {
   }
 }
 
-bool AndroidVoipClient::SendRtp(webrtc::ArrayView<const uint8_t> packet,
+bool AndroidVoipClient::SendRtp(std::span<const uint8_t> packet,
                                 const webrtc::PacketOptions& options) {
   std::vector<uint8_t> packet_copy(packet.begin(), packet.end());
   voip_thread_->PostTask([this, packet_copy = std::move(packet_copy)] {
@@ -501,7 +501,7 @@ void AndroidVoipClient::SendRtcpPacket(
   }
 }
 
-bool AndroidVoipClient::SendRtcp(webrtc::ArrayView<const uint8_t> packet,
+bool AndroidVoipClient::SendRtcp(std::span<const uint8_t> packet,
                                  const webrtc::PacketOptions& options) {
   std::vector<uint8_t> packet_copy(packet.begin(), packet.end());
   voip_thread_->PostTask([this, packet_copy = std::move(packet_copy)] {
@@ -519,7 +519,7 @@ void AndroidVoipClient::ReadRTPPacket(const std::vector<uint8_t>& packet_copy) {
   }
   webrtc::VoipResult result = voip_engine_->Network().ReceivedRTPPacket(
       *channel_,
-      webrtc::ArrayView<const uint8_t>(packet_copy.data(), packet_copy.size()));
+      std::span<const uint8_t>(packet_copy.data(), packet_copy.size()));
   RTC_CHECK(result == webrtc::VoipResult::kOk);
 }
 
@@ -543,7 +543,7 @@ void AndroidVoipClient::ReadRTCPPacket(
   }
   webrtc::VoipResult result = voip_engine_->Network().ReceivedRTCPPacket(
       *channel_,
-      webrtc::ArrayView<const uint8_t>(packet_copy.data(), packet_copy.size()));
+      std::span<const uint8_t>(packet_copy.data(), packet_copy.size()));
   RTC_CHECK(result == webrtc::VoipResult::kOk);
 }
 

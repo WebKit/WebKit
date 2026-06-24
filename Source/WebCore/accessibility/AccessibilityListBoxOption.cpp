@@ -113,7 +113,7 @@ LayoutRect AccessibilityListBoxOption::elementRect() const
     if (!listBoxRenderer)
         return AccessibilityRenderObject::elementRect();
 
-    WeakPtr cache = listBoxRenderer->document().axObjectCache();
+    WeakPtr cache = protect(listBoxRenderer->document())->axObjectCache();
     RefPtr listbox = cache ? cache->getOrCreate(*listBoxRenderer) : nullptr;
     if (!listbox)
         return { };
@@ -177,7 +177,7 @@ AccessibilityObject* AccessibilityListBoxOption::parentObject() const
     if (!parentNode)
         return nullptr;
 
-    CheckedPtr cache = m_node->document().axObjectCache();
+    CheckedPtr cache = protect(m_node)->document().axObjectCache();
     return cache ? cache->getOrCreate(*parentNode) : nullptr;
 }
 

@@ -1,0 +1,30 @@
+[package]
+name = "bssl-rustls-adapters"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+
+[dependencies.bssl-crypto]
+path = "../bssl-crypto"
+features = ["std"]
+
+[dependencies.bssl-sys]
+path = "../bssl-sys"
+
+[dependencies.rustls]
+version = "0.23.0"
+default-features = false
+features = ["tls12", "std"]
+
+[dev-dependencies]
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+[dev-dependencies.rustls]
+version = "0.23.0"
+default-features = false
+features = ["ring"]
+
+[features]
+default = []

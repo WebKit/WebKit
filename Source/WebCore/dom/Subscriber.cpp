@@ -157,28 +157,20 @@ void Subscriber::reportErrorObject(JSC::JSValue value)
     reportException(globalObject, JSC::Exception::create(vm, value));
 }
 
-Vector<VoidCallback*> Subscriber::teardownCallbacksConcurrently()
+template<typename Visitor>
+void Subscriber::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    Locker locker { m_teardownsLock };
-    return m_teardowns.map([](auto& callback) {
-        return callback.ptr();
-    });
+    // Do not ref anything in this function, which runs in a GC thread concurrently to the main thread.
+    {
+        Locker locker { m_teardownsLock };
+        SUPPRESS_UNCOUNTED_LOCAL for (auto& teardown : m_teardowns)
+            SUPPRESS_UNCOUNTED_ARG teardown->visitJSFunctionInGCThread(visitor);
+    }
+
+    SUPPRESS_UNRETAINED_ARG m_observer->visitAdditionalChildrenInGCThread(visitor);
 }
 
-InternalObserver* Subscriber::observerConcurrently()
-{
-    return &m_observer.get();
-}
-
-void Subscriber::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor)
-{
-    // We cannot ref `teardown` here as this may get called from a GC thread.
-    SUPPRESS_UNRETAINED_ARG for (auto* teardown : teardownCallbacksConcurrently())
-        teardown->visitJSFunctionInGCThread(visitor);
-
-    // We cannot ref the observer here as this may get called from a GC thread.
-    SUPPRESS_UNRETAINED_ARG observerConcurrently()->visitAdditionalChildrenInGCThread(visitor);
-}
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(Subscriber);
 
 Subscriber::~Subscriber() = default;
 

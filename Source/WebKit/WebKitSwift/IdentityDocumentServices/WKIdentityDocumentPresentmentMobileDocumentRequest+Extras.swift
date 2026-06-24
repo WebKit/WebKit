@@ -34,7 +34,7 @@ extension WKIdentityDocumentPresentmentMobileDocumentElementInfo {
 
 extension WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest {
     convenience init(_ source: ISO18013MobileDocumentRequest.DocumentRequest) {
-        #if HAVE_DC_ISSUER_IDENTIFIER_SUPPORT && canImport(IdentityDocumentServices, _version: 9.22.2)
+        #if HAVE_DC_ISSUER_IDENTIFIER_SUPPORT
         self.init(
             documentType: source.documentType,
             namespaces: source.namespaces.mapValues {

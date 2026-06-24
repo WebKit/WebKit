@@ -350,7 +350,7 @@ ALWAYS_INLINE bool URLParser::isForbiddenDomainCodePoint(CharacterType character
     return character <= 0x7F && characterClassTable[character] & ForbiddenDomain;
 }
 
-ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, const bool& urlIsSpecial)
+ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, bool urlIsSpecial)
 {
     if (characterClassTable[byte] & QueryEncode)
         return true;
@@ -2566,7 +2566,7 @@ void URLParser::addNonSpecialDotSlash()
 template<typename CharacterType> std::optional<URLParser::Latin1Buffer> URLParser::domainToASCII(StringImpl& domain, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
     Latin1Buffer ascii;
-    if (domain.containsOnlyASCII() && !subdomainStartsWithXNDashDash(domain)) {
+    if (domain.containsOnlyASCII()) {
         size_t length = domain.length();
         if (domain.is8Bit()) {
             auto characters = domain.span8();
@@ -2673,66 +2673,6 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
     return true;
 }
 
-template<typename CharacterType>
-bool URLParser::subdomainStartsWithXNDashDash(CodePointIterator<CharacterType> iterator)
-{
-    enum class State : uint8_t {
-        NotAtSubdomainBeginOrInXNDashDash,
-        AtSubdomainBegin,
-        AfterX,
-        AfterN,
-        AfterFirstDash,
-    } state { State::AtSubdomainBegin };
-
-    for (; !iterator.atEnd(); advance<CharacterType, ReportSyntaxViolation::No>(iterator)) {
-        CharacterType c = *iterator;
-
-        // These characters indicate the end of the host.
-        if (c == ':' || c == '/' || c == '?' || c == '#')
-            return false;
-
-        switch (state) {
-        case State::NotAtSubdomainBeginOrInXNDashDash:
-            break;
-        case State::AtSubdomainBegin:
-            if (c == 'x' || c == 'X') {
-                state = State::AfterX;
-                continue;
-            }
-            break;
-        case State::AfterX:
-            if (c == 'n' || c == 'N') {
-                state = State::AfterN;
-                continue;
-            }
-            break;
-        case State::AfterN:
-            if (c == '-') {
-                state = State::AfterFirstDash;
-                continue;
-            }
-            break;
-        case State::AfterFirstDash:
-            if (c == '-')
-                return true;
-            break;
-        }
-
-        if (c == '.')
-            state = State::AtSubdomainBegin;
-        else
-            state = State::NotAtSubdomainBeginOrInXNDashDash;
-    }
-    return false;
-}
-
-bool URLParser::subdomainStartsWithXNDashDash(StringImpl& host)
-{
-    if (host.is8Bit())
-        return subdomainStartsWithXNDashDash<Latin1Character>(host.span8());
-    return subdomainStartsWithXNDashDash<char16_t>(host.span16());
-}
-
 static bool dnsNameEndsInNumber(StringView name)
 {
     // https://url.spec.whatwg.org/#ends-in-a-number-checker
@@ -2812,7 +2752,7 @@ auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> H
         return parsePort(iterator) ? HostParsingResult::NonSpecialHostWithPort : HostParsingResult::InvalidHost;
     }
     
-    if (!m_hostHasPercentOrNonASCII && !subdomainStartsWithXNDashDash(iterator)) [[likely]] {
+    if (!m_hostHasPercentOrNonASCII) [[likely]] {
         auto hostIterator = iterator;
         for (; !iterator.atEnd(); ++iterator) {
             if (isTabOrNewline(*iterator))

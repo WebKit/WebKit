@@ -128,7 +128,7 @@ bool PageNetworkAgent::setEmulatedConditionsInternal(std::optional<int>&& bytesP
 
 ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
 {
-    auto* frame = m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
+    RefPtr frame = m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
     if (!frame)
         return nullptr;
 

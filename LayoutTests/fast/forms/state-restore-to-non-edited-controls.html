@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p>Test to NOT save state for non-edited controls</p>
@@ -12,6 +12,8 @@
 </div>
 
 <script>
+
+window.jsTestIsAsync = true;
 
 function makeForm(parent, buttonValue, hiddenValue, imageValue, resetValue, submitValue, textValue0, textValue1, textValue2, textAreaValue) {
     document.write('<form action="data:text/html,<script>history.back()&lt;/script>" id=form1>'
@@ -56,8 +58,7 @@ function runTest()
         shouldBe('document.getElementById("textarea").value', '"2"');
     
         parent.innerHTML = '';
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 }
 

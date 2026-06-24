@@ -35,7 +35,9 @@
 #include "RenderMeter.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleComputedStyleBase+GettersInlines.h"
 #include "UserAgentParts.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -61,7 +63,7 @@ Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Doc
     return meter;
 }
 
-RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     if (!RenderTheme::singleton().supportsMeter(style.usedAppearance()))
         return RenderElement::createFor(*this, WTF::move(style));
@@ -197,7 +199,7 @@ void HTMLMeterElement::didChangeElementValue()
 
     if (RefPtr fillElement = m_fillElement) {
         fillElement->setInlineStyleProperty(CSSPropertyTransform, makeString("translate(-"_s, (1 - valueRatio()) * 100, "%, 0)"_s));
-        fillElement->invalidateStyleInternal();
+        fillElement->invalidateStyle();
     }
 }
 

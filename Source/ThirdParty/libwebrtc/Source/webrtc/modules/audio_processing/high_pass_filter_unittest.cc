@@ -11,9 +11,9 @@
 
 #include <cmath>
 #include <cstddef>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/test/audio_buffer_tools.h"
@@ -124,7 +124,7 @@ void RunBitexactnessTest(int num_channels,
 
 // Method for forming a vector out of an array.
 // TODO(peah): Remove once braced initialization is allowed.
-std::vector<float> CreateVector(const ArrayView<const float>& array_view) {
+std::vector<float> CreateVector(const std::span<const float>& array_view) {
   std::vector<float> v;
   for (auto value : array_view) {
     v.push_back(value);
@@ -230,8 +230,8 @@ TEST(HighPassFilterAccuracyTest, MonoInitial) {
 
   for (bool use_audio_buffer_interface : {true, false}) {
     RunBitexactnessTest(1, use_audio_buffer_interface,
-                        CreateVector(ArrayView<const float>(kReferenceInput)),
-                        CreateVector(ArrayView<const float>(kReference)));
+                        CreateVector(std::span<const float>(kReferenceInput)),
+                        CreateVector(std::span<const float>(kReference)));
   }
 }
 
@@ -324,8 +324,8 @@ TEST(HighPassFilterAccuracyTest, MonoConverged) {
 
   for (bool use_audio_buffer_interface : {true, false}) {
     RunBitexactnessTest(1, use_audio_buffer_interface,
-                        CreateVector(ArrayView<const float>(kReferenceInput)),
-                        CreateVector(ArrayView<const float>(kReference)));
+                        CreateVector(std::span<const float>(kReferenceInput)),
+                        CreateVector(std::span<const float>(kReference)));
   }
 }
 

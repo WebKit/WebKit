@@ -91,7 +91,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_reallocf"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_valloc"}
    ],
-   "target": "arm64-apple-ios26.1",
+   "target": "arm64-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "malloc_introspection_t"},
     {"access": "public", "name": "malloc_statistics_t"},
@@ -199,7 +199,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_reallocf"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_valloc"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "malloc_introspection_t"},
     {"access": "public", "name": "malloc_statistics_t"},

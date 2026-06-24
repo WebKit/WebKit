@@ -15,10 +15,10 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_mixer.h"
 #include "api/rtp_packet_info.h"
@@ -122,7 +122,7 @@ class CustomRateCalculator : public OutputRateCalculator {
  public:
   explicit CustomRateCalculator(int rate) : rate_(rate) {}
   int CalculateOutputRateFromRange(
-      ArrayView<const int> /* preferred_rates */) override {
+      std::span<const int> /* preferred_rates */) override {
     return rate_;
   }
 
@@ -484,7 +484,7 @@ class HighOutputRateCalculator : public OutputRateCalculator {
  public:
   static const int kDefaultFrequency = 76000;
   int CalculateOutputRateFromRange(
-      ArrayView<const int> /* preferred_sample_rates */) override {
+      std::span<const int> /* preferred_sample_rates */) override {
     return kDefaultFrequency;
   }
   ~HighOutputRateCalculator() override {}

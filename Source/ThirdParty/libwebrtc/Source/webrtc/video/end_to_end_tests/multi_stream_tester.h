@@ -18,10 +18,10 @@
 
 #include "api/environment/environment.h"
 #include "api/media_types.h"
-#include "api/task_queue/task_queue_base.h"
 #include "call/call.h"
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
+#include "rtc_base/thread.h"
 #include "test/direct_transport.h"
 #include "test/frame_generator_capturer.h"
 #include "video/config/video_encoder_config.h"
@@ -62,11 +62,11 @@ class MultiStreamTester {
       VideoReceiveStreamInterface::Config* receive_config);
   virtual std::unique_ptr<test::DirectTransport> CreateSendTransport(
       const Environment& env,
-      TaskQueueBase* task_queue,
+      Thread* network_thread,
       Call* sender_call);
   virtual std::unique_ptr<test::DirectTransport> CreateReceiveTransport(
       const Environment& env,
-      TaskQueueBase* task_queue,
+      Thread* network_thread,
       Call* receiver_call);
 };
 }  // namespace webrtc

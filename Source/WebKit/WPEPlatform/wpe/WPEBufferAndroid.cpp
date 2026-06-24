@@ -37,6 +37,10 @@
 /**
  * WPEBufferAndroid:
  *
+ * A #WPEBuffer backed by an AHardwareBuffer.
+ *
+ * #WPEBufferAndroid is a #WPEBuffer that wraps an Android `AHardwareBuffer`.
+ * It is only available on Android builds of the WPE platform library.
  */
 struct _WPEBufferAndroidPrivate {
     AHardwareBuffer* ahb;

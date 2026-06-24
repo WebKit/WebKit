@@ -15,6 +15,7 @@
 #include <string>
 
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_frame_buffer.h"
 #include "rtc_base/checks.h"
@@ -42,8 +43,9 @@ void WriteVideoToFile(const scoped_refptr<Video>& video,
   }
   for (size_t i = 0; i < video->number_of_frames(); ++i) {
     if (isY4m) {
-      std::string frame = "FRAME\n";
-      fwrite(frame.c_str(), 1, 6, output_file);
+      absl::string_view frame = "FRAME\n";
+      RTC_CHECK_EQ(fwrite(frame.data(), 1, frame.length(), output_file),
+                   frame.length());
     }
     scoped_refptr<I420BufferInterface> buffer = video->GetFrame(i);
     RTC_CHECK(buffer) << "Frame: " << i
@@ -51,17 +53,17 @@ void WriteVideoToFile(const scoped_refptr<Video>& video,
     const uint8_t* data_y = buffer->DataY();
     int stride = buffer->StrideY();
     for (int j = 0; j < video->height(); ++j) {
-      fwrite(data_y + j * stride, /*size=*/1, stride, output_file);
+      RTC_CHECK_EQ(fwrite(data_y + j * stride, 1, stride, output_file), stride);
     }
     const uint8_t* data_u = buffer->DataU();
     stride = buffer->StrideU();
     for (int j = 0; j < buffer->ChromaHeight(); ++j) {
-      fwrite(data_u + j * stride, /*size=*/1, stride, output_file);
+      RTC_CHECK_EQ(fwrite(data_u + j * stride, 1, stride, output_file), stride);
     }
     const uint8_t* data_v = buffer->DataV();
     stride = buffer->StrideV();
     for (int j = 0; j < buffer->ChromaHeight(); ++j) {
-      fwrite(data_v + j * stride, /*size=*/1, stride, output_file);
+      RTC_CHECK_EQ(fwrite(data_v + j * stride, 1, stride, output_file), stride);
     }
   }
   if (ferror(output_file) != 0) {

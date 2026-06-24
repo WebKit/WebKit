@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "WebAuthenticationFlags.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
@@ -76,23 +77,68 @@ std::optional<SharedPreferencesForWebProcess> WebAuthenticatorCoordinatorProxy::
     return webPageProxy ? webPageProxy->legacyMainFrameProcess().sharedPreferencesForWebProcess() : std::nullopt;
 }
 
-void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connection, FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
     if (!webPageProxy) {
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotSupportedError, "This request is not supported at this time."_s });
         RELEASE_LOG_ERROR(WebAuthn, "WebPageProxy had been released");
+        return;
     }
+
+    RefPtr frame = WebFrameProxy::webFrame(frameId);
+    if (!frame) {
+        RELEASE_LOG_ERROR(WebAuthn, "Frame not found for WebAuthn MakeCredential request");
+        return handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError });
+    }
+    if (frame->url().protocolIsInHTTPFamily()) {
+        auto expectedOrigin = SecurityOriginData::fromURLWithoutStrictOpaqueness(frame->url());
+        MESSAGE_CHECK_COMPLETION_BASE(frameInfo.securityOrigin == expectedOrigin, connection,
+            handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError }));
+    }
+
     handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), String(), nullptr, mediation, std::nullopt }, WTF::move(handler));
 }
 
-void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getAssertion(IPC::Connection& connection, FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, RequestCompletionHandler&& handler)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
     if (!webPageProxy) {
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotSupportedError, "This request is not supported at this time."_s });
         RELEASE_LOG_ERROR(WebAuthn, "WebPageProxy had been released");
+        return;
     }
+
+    RefPtr frame = WebFrameProxy::webFrame(frameId);
+    if (!frame) {
+        RELEASE_LOG_ERROR(WebAuthn, "Frame not found for WebAuthn GetAssertion request");
+        return handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError });
+    }
+    if (frame->url().protocolIsInHTTPFamily()) {
+        auto expectedOrigin = SecurityOriginData::fromURLWithoutStrictOpaqueness(frame->url());
+        MESSAGE_CHECK_COMPLETION_BASE(frameInfo.securityOrigin == expectedOrigin, connection,
+            handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError }));
+    }
+
+    if (parentOrigin) {
+        bool foundMatchingAncestor = false;
+        bool hasHTTPAncestor = false;
+        for (RefPtr ancestor = frame->parentFrame(); ancestor; ancestor = ancestor->parentFrame()) {
+            if (!ancestor->url().protocolIsInHTTPFamily())
+                continue;
+            hasHTTPAncestor = true;
+            auto ancestorOrigin = SecurityOriginData::fromURLWithoutStrictOpaqueness(ancestor->url());
+            if (*parentOrigin == ancestorOrigin) {
+                foundMatchingAncestor = true;
+                break;
+            }
+        }
+        if (hasHTTPAncestor) {
+            MESSAGE_CHECK_COMPLETION_BASE(foundMatchingAncestor, connection,
+                handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError }));
+        }
+    }
+
     handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), String(), nullptr, mediation, parentOrigin }, WTF::move(handler));
 }
 

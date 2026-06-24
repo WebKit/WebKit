@@ -27,19 +27,19 @@
 build_variant_xcodebuild() {
     variant=$1
     target=$2
-    extra_xcodebuild_options="EXTRA_DEFINES=$3"
-    
+    extra_defines=$3
+
     build_dir=build-$sdk-$variant
     mkdir -p $build_dir
-    
-    xcodebuild_options="-project libpas.xcodeproj -configuration $config -sdk $sdk OBJROOT=$build_dir SYMROOT=$build_dir $extra_xcodebuild_options"
+
+    xcodebuild_options="-project libpas.xcodeproj -configuration $config -sdk $sdk OBJROOT=$build_dir SYMROOT=$build_dir"
 
     if [ "x$archs" != "xblank" ]
     then
         xcodebuild_options="$xcodebuild_options ARCHS=$archs"
     fi
-    
-    xcodebuild $xcodebuild_options -target $target
+
+    xcodebuild $xcodebuild_options "EXTRA_DEFINES=$extra_defines" -target $target
             
     case $target in
         mbmalloc|all)
@@ -93,10 +93,10 @@ build_variant_cmake() {
 build_variant() {
     case $sdk in
         cmake)
-            build_variant_cmake $@
+            build_variant_cmake "$@"
             ;;
         *)
-            build_variant_xcodebuild $@
+            build_variant_xcodebuild "$@"
             ;;
     esac
 }
@@ -106,12 +106,12 @@ build_variants() {
 
     case $variants in
         all|testing)
-            build_variant testing $target "ENABLE_PAS_TESTING"
+            build_variant testing $target "ENABLE_PAS_TESTING PAS_BMALLOC_HIDDEN=0"
             ;;
     esac
     case $variants in
         all|default)
-            build_variant default $target ""
+            build_variant default $target "PAS_BMALLOC_HIDDEN=0"
             ;;
     esac
 }

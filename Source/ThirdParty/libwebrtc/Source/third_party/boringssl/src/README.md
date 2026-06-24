@@ -28,6 +28,7 @@ Project links:
     * [Filing new (public) issues](https://crbug.com/boringssl/new)
   * [CI](https://ci.chromium.org/p/boringssl/g/main/console)
   * [Code review](https://boringssl-review.googlesource.com)
+  * [Security Advisories](./docs/advisories/)
 
 To file a security issue, use the [Chromium process](https://www.chromium.org/Home/chromium-security/reporting-security-bugs/) and mention in the report this is for BoringSSL. You can ignore the parts of the process that are specific to Chromium/Chrome.
 

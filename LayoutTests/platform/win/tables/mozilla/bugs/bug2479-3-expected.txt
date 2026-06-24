@@ -67,8 +67,8 @@ layer at (0,0) size 785x718
           RenderText {#text} at (0,3) size 254x19
             text run at (0,3) width 254: "How does your browser fare on this test? "
           RenderMenuList {SELECT} at (256,3) size 263x20 [bgcolor=#FFFFFF]
-            RenderSelectFallbackButton {DIV} at (4,2) size 238x16
-              RenderText at (0,0) size 154x16
+            RenderBlock {DIV} at (4,2) size 238x16
+              RenderText {#text} at (0,0) size 154x16
                 text run at (0,0) width 154: "The test renders correctly."
           RenderText {#text} at (521,3) size 4x19
             text run at (521,3) width 4: " "

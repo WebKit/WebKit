@@ -96,13 +96,13 @@ inline constexpr uint8_t kDocumentSigning[] = {0x2b, 0x06, 0x01, 0x05,
 // In dotted notation: 2.23.146.2.1.3
 inline constexpr uint8_t kRcsMlsClient[] = {0x67, 0x81, 0x12, 0x02, 0x01, 0x03};
 
-// Parses |extension_value|, which contains the extnValue field of an X.509v3
-// Extended Key Usage extension, and populates |eku_oids| with the list of
+// Parses `extension_value`, which contains the extnValue field of an X.509v3
+// Extended Key Usage extension, and populates `eku_oids` with the list of
 // DER-encoded OID values (that is, without tag and length). Returns false if
-// |extension_value| is improperly encoded.
+// `extension_value` is improperly encoded.
 //
 // Note: The returned OIDs are only as valid as long as the data pointed to by
-// |extension_value| is valid.
+// `extension_value` is valid.
 OPENSSL_EXPORT bool ParseEKUExtension(der::Input extension_value,
                                       std::vector<der::Input> *eku_oids);
 

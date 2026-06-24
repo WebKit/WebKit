@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,13 +55,30 @@ inline std::pair<double, double> getNearestMultiples(double a, double b)
     return { lower, upper };
 }
 
+// IEEE 754 / CSS signed-zero aware min and max. Unlike std::min / std::max, these
+// distinguish +0 from -0 when the values compare equal: minimum(+0, -0) is -0 and
+// maximum(+0, -0) is +0. See https://drafts.csswg.org/css-values-4/#calc-ieee
+template<std::floating_point T> inline T minWithSignedZero(T a, T b)
+{
+    if (a == b)
+        return std::signbit(a) ? a : b;
+    return std::min(a, b);
+}
+
+template<std::floating_point T> inline T maxWithSignedZero(T a, T b)
+{
+    if (a == b)
+        return std::signbit(a) ? b : a;
+    return std::max(a, b);
+}
+
 template<typename Range> concept FloatingPointRange = requires(Range range) {
     { *range.begin() } -> std::floating_point;
     { *range.end() } -> std::floating_point;
 };
 
 template<> struct OperatorExecutor<Operator::Sum> {
-    template<typename Range> double operator()(Range&& range)
+    double operator()(auto&& range)
     {
         double sum = 0;
         for (double value : range)
@@ -88,7 +105,7 @@ template<> struct OperatorExecutor<Operator::Negate> {
 };
 
 template<> struct OperatorExecutor<Operator::Product> {
-    template<typename Range> double operator()(Range&& range)
+    double operator()(auto&& range)
     {
         double product = 1;
         for (double value : range)
@@ -130,7 +147,7 @@ template<> struct OperatorExecutor<Operator::Min> {
             auto value = *it;
             if (std::isnan(value))
                 return value;
-            minimum = std::min(minimum, value);
+            minimum = minWithSignedZero(minimum, value);
         }
         return minimum;
     }
@@ -141,7 +158,7 @@ template<> struct OperatorExecutor<Operator::Min> {
             return val;
         if (std::isnan(min))
             return min;
-        return std::min(val, min);
+        return minWithSignedZero(val, min);
     }
 
     template<typename T, std::invocable<const T&> Functor> double operator()(const Vector<T>& range, Functor&& functor)
@@ -166,7 +183,7 @@ template<> struct OperatorExecutor<Operator::Max> {
             auto value = *it;
             if (std::isnan(value))
                 return value;
-            maximum = std::max(maximum, value);
+            maximum = maxWithSignedZero(maximum, value);
         }
         return maximum;
     }
@@ -177,7 +194,7 @@ template<> struct OperatorExecutor<Operator::Max> {
             return val;
         if (std::isnan(max))
             return max;
-        return std::max(val, max);
+        return maxWithSignedZero(val, max);
     }
 
     template<typename T, std::invocable<const T&> Functor> double operator()(const Vector<T>& range, Functor&& functor)
@@ -193,7 +210,7 @@ template<> struct OperatorExecutor<Operator::Clamp> {
     {
         if (std::isnan(min) || std::isnan(val) || std::isnan(max))
             return std::numeric_limits<T>::quiet_NaN();
-        return std::max(min, std::min(val, max));
+        return maxWithSignedZero(min, minWithSignedZero(val, max));
     }
 
     template<std::floating_point T> T operator()(Variant<T, CSS::Keyword::None> min, T val, Variant<T, CSS::Keyword::None> max)
@@ -290,9 +307,13 @@ template<> struct OperatorExecutor<Operator::Mod> {
         if (std::isinf(b) && std::signbit(a) != std::signbit(b))
             return std::numeric_limits<double>::quiet_NaN();
         auto result = std::fmod(a, b);
+        // A zero remainder takes the sign of B (the result is "on B's side of
+        // zero"), rather than the sign std::fmod inherits from A.
+        // https://drafts.csswg.org/css-values/#round-func
+        if (!result)
+            return std::signbit(b) ? -0.0 : +0.0;
         // If the result is on opposite side of zero from B,
         // put it between 0 and B.
-        // https://drafts.csswg.org/css-values/#round-func
         if (std::signbit(result) != std::signbit(b))
             result += b;
         return result;
@@ -381,7 +402,7 @@ template<> struct OperatorExecutor<Operator::Sqrt> {
 };
 
 template<> struct OperatorExecutor<Operator::Hypot> {
-    template<typename Range> double operator()(Range&& range)
+    double operator()(auto&& range)
     {
         if (range.empty())
             return std::numeric_limits<double>::quiet_NaN();
@@ -449,6 +470,21 @@ template<> struct OperatorExecutor<Operator::Progress> {
     {
         // (progress value - start value) / (end value - start value)
         return executeOperation<Operator::Clamp>(0.0, (progress - from) / (to - from), 1.0);
+    }
+};
+
+template<> struct OperatorExecutor<Operator::CalcMix> {
+    double operator()(auto&& range)
+    {
+        double total = 0;
+        for (auto [value, percentage] : range)
+            total += value * (percentage / 100);
+        return total;
+    }
+
+    template<typename Functor> double operator()(auto&& range, Functor&& functor)
+    {
+        return executeOperation<Operator::CalcMix>(range | std::views::transform(std::forward<Functor>(functor)));
     }
 };
 

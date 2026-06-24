@@ -517,11 +517,12 @@ void BBQJIT::emitShuffleMove(Vector<Value, N, OverflowHandler>& srcVector, Vecto
     if (srcLocation == dst)
         return; // Easily eliminate redundant moves here.
 
+    uint32_t dstSize = srcVector[index].size();
     statusVector[index] = ShuffleStatus::BeingMoved;
     for (unsigned i = 0; i < srcVector.size(); i ++) {
         // This check should handle constants too - constants always have location None, and no
         // dst should ever be a constant. But we assume that's asserted in the caller.
-        if (locationOf(srcVector[i]) == dst) {
+        if (Location::rangesOverlap(locationOf(srcVector[i]), srcVector[i].size(), dst, dstSize)) {
             switch (statusVector[i]) {
             case ShuffleStatus::ToMove:
                 emitShuffleMove(srcVector, dstVector, statusVector, i);

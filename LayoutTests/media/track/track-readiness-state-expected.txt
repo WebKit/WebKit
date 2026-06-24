@@ -1,0 +1,6 @@
+
+PASS readyState: constants exposed and initial value is NONE
+PASS readyState: transitions NONE -> LOADING -> LOADED for a valid VTT resource
+PASS readyState: transitions to ERROR for an unfetchable src
+PASS readyState: LOADED is preserved across mode toggles after load
+

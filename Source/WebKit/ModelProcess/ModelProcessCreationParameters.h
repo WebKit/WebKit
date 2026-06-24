@@ -38,6 +38,7 @@ struct ModelProcessCreationParameters {
     String applicationVisibleName;
     bool restrictiveRenderingMode { false };
     std::optional<int> debugEntityMemoryLimit;
+    std::optional<int> debugImmersiveEntityMemoryLimit;
 };
 
 } // namespace WebKit

@@ -32,6 +32,7 @@
 #include <openssl/ssl.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakRandomNumber.h>
@@ -734,7 +735,7 @@ StatsTimestampConverter& StatsTimestampConverter::singleton()
     return sharedInstance;
 }
 
-Seconds StatsTimestampConverter::convertFromMonotonicTime(Seconds value) const
+ReducedResolutionSeconds StatsTimestampConverter::convertFromMonotonicTime(Seconds value) const
 {
     auto monotonicOffset = value - m_initialMonotonicTime;
     auto newTimestamp = m_epoch.secondsSinceEpoch() + monotonicOffset;

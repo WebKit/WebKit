@@ -61,10 +61,10 @@
 #import <WebCore/NodeTraversal.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
-#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/RenderText.h>
 #import <WebCore/ScriptDisallowedScope.h>
 #import <WebCore/Settings.h>
+#import <WebCore/StyleComputedStyle+GettersInlines.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKitLegacy/DOMHTMLInputElement.h>
 #import <wtf/Assertions.h>
@@ -74,8 +74,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
 
-using namespace WebCore;
-using namespace HTMLNames;
+using namespace WebCore::HTMLNames;
 using JSC::Yarr::RegularExpression;
 
 @interface WebHTMLRepresentationPrivate : NSObject {
@@ -104,25 +103,25 @@ using JSC::Yarr::RegularExpression;
 
 + (NSArray *)supportedMediaMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedMediaMIMETypes = createNSArray(MIMETypeRegistry::supportedMediaMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedMediaMIMETypes = createNSArray(WebCore::MIMETypeRegistry::supportedMediaMIMETypes());
     return staticSupportedMediaMIMETypes.get().get();
 }
 
 + (NSArray *)supportedNonImageMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedNonImageMIMETypes = createNSArray(MIMETypeRegistry::supportedNonImageMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedNonImageMIMETypes = createNSArray(WebCore::MIMETypeRegistry::supportedNonImageMIMETypes());
     return staticSupportedNonImageMIMETypes.get().get();
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedImageMIMETypes = createNSArray(MIMETypeRegistry::supportedImageMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedImageMIMETypes = createNSArray(WebCore::MIMETypeRegistry::supportedImageMIMETypes());
     return staticSupportedImageMIMETypes.get().get();
 }
 
 + (NSArray *)unsupportedTextMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticUnsupportedTextMIMETypes = createNSArray(MIMETypeRegistry::unsupportedTextMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticUnsupportedTextMIMETypes = createNSArray(WebCore::MIMETypeRegistry::unsupportedTextMIMETypes());
     return staticUnsupportedTextMIMETypes.get().get();
 }
 
@@ -236,10 +235,10 @@ using JSC::Yarr::RegularExpression;
     auto* coreFrame = core([_private->dataSource webFrame]);
     if (!coreFrame)
         return nil;
-    Document* document = coreFrame->document();
+    WebCore::Document* document = coreFrame->document();
     if (!document)
         return nil;
-    TextResourceDecoder* decoder = document->decoder();
+    WebCore::TextResourceDecoder* decoder = document->decoder();
     if (!decoder)
         return nil;
     NSData *data = [_private->dataSource data];
@@ -269,25 +268,25 @@ using JSC::Yarr::RegularExpression;
 {
     if (!startNode || !endNode)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
-    auto range = SimpleRange { { *core(startNode), static_cast<unsigned>(startOffset) }, { *core(endNode), static_cast<unsigned>(endOffset) } };
+    auto range = WebCore::SimpleRange { { *core(startNode), static_cast<unsigned>(startOffset) }, { *core(endNode), static_cast<unsigned>(endOffset) } };
     return editingAttributedString(range).nsAttributedString().autorelease();
 }
 
 #endif
 
-static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
+static WebCore::HTMLFormElement* formElementFromDOMElement(DOMElement *element)
 {
-    Element* node = core(element);
-    return node && node->hasTagName(formTag) ? static_cast<HTMLFormElement*>(node) : nullptr;
+    WebCore::Element* node = core(element);
+    return node && node->hasTagName(formTag) ? static_cast<WebCore::HTMLFormElement*>(node) : nullptr;
 }
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form
 {
-    HTMLFormElement* formElement = formElementFromDOMElement(form);
+    WebCore::HTMLFormElement* formElement = formElementFromDOMElement(form);
     if (!formElement)
         return nil;
 
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    WebCore::ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     AtomString targetName = name;
     for (auto& weakElement : formElement->unsafeListedElements()) {
         RefPtr element { weakElement.get() };
@@ -297,15 +296,15 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
     return nil;
 }
 
-static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
+static WebCore::HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 {
-    Element* node = core(element);
-    return dynamicDowncast<HTMLInputElement>(node);
+    WebCore::Element* node = core(element);
+    return dynamicDowncast<WebCore::HTMLInputElement>(node);
 }
 
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element
 {
-    HTMLInputElement* inputElement = inputElementFromDOMElement(element);
+    WebCore::HTMLInputElement* inputElement = inputElementFromDOMElement(element);
     return inputElement
         && inputElement->isTextField()
         && !inputElement->isPasswordField()
@@ -314,7 +313,7 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 
 - (BOOL)elementIsPassword:(DOMElement *)element
 {
-    HTMLInputElement* inputElement = inputElementFromDOMElement(element);
+    WebCore::HTMLInputElement* inputElement = inputElementFromDOMElement(element);
     return inputElement && inputElement->isPasswordField();
 }
 
@@ -335,7 +334,7 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
     if (!formElement)
         return nil;
 
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    WebCore::ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     auto result = createNSArray(formElement->unsafeListedElements(), [] (auto& weakElement) -> DOMElement * {
         RefPtr coreElement { weakElement.get() };
         if (!coreElement || !coreElement->asFormListedElement()->isEnumeratable()) // Skip option elements, other duds
@@ -409,7 +408,7 @@ static RegularExpression* regExpForLabels(NSArray *labels)
 }
 
 // FIXME: This should take an Element&.
-static RetainPtr<NSString> searchForLabelsBeforeElement(LocalFrame* frame, NSArray* labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
+static RetainPtr<NSString> searchForLabelsBeforeElement(WebCore::LocalFrame* frame, NSArray* labels, WebCore::Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
 {
     ASSERT(element);
     RegularExpression* regExp = regExpForLabels(labels);
@@ -419,7 +418,7 @@ static RetainPtr<NSString> searchForLabelsBeforeElement(LocalFrame* frame, NSArr
     // charsSearchedThreshold, to make it more likely that we'll search whole nodes.
     constexpr unsigned maxCharsSearched = 600;
     // If the starting element is within a table, the cell that contains it
-    HTMLTableCellElement* startingTableCell = nullptr;
+    WebCore::HTMLTableCellElement* startingTableCell = nullptr;
     bool searchedCellAbove = false;
     
     if (resultDistance)
@@ -429,14 +428,14 @@ static RetainPtr<NSString> searchForLabelsBeforeElement(LocalFrame* frame, NSArr
 
     // walk backwards in the node tree, until another element, or form, or end of tree
     unsigned lengthSearched = 0;
-    Node* n;
-    for (n = NodeTraversal::previous(*element); n && lengthSearched < charsSearchedThreshold; n = NodeTraversal::previous(*n)) {
-        if (is<HTMLFormElement>(*n) || is<HTMLFormControlElement>(*n)) {
+    WebCore::Node* n;
+    for (n = WebCore::NodeTraversal::previous(*element); n && lengthSearched < charsSearchedThreshold; n = WebCore::NodeTraversal::previous(*n)) {
+        if (is<WebCore::HTMLFormElement>(*n) || is<WebCore::HTMLFormControlElement>(*n)) {
             // We hit another form element or the start of the form - bail out
             break;
         }
         if (n->hasTagName(tdTag) && !startingTableCell) {
-            startingTableCell = downcast<HTMLTableCellElement>(n);
+            startingTableCell = downcast<WebCore::HTMLTableCellElement>(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
             RetainPtr result = frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance).createNSString();
             if ([result length]) {
@@ -445,7 +444,7 @@ static RetainPtr<NSString> searchForLabelsBeforeElement(LocalFrame* frame, NSArr
                 return result;
             }
             searchedCellAbove = true;
-        } else if (auto* renderText = dynamicDowncast<RenderText>(n->renderer()); renderText && renderText->style().usedVisibility() == Visibility::Visible) {
+        } else if (auto* renderText = dynamicDowncast<WebCore::RenderText>(n->renderer()); renderText && renderText->style().usedVisibility() == WebCore::Visibility::Visible) {
             // For each text chunk, run the regexp
             String nodeString = n->nodeValue();
             // add 100 for slop, to make it more likely that we'll search whole nodes
@@ -510,7 +509,7 @@ static RetainPtr<NSString> matchLabelsAgainstString(NSArray *labels, const Strin
     return nil;
 }
 
-static RetainPtr<NSString> matchLabelsAgainstElement(NSArray *labels, Element* element)
+static RetainPtr<NSString> matchLabelsAgainstElement(NSArray *labels, WebCore::Element* element)
 {
     if (!element)
         return nil;

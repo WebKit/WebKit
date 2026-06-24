@@ -31,6 +31,12 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 
     "Platform/SourcesCocoa.txt"
 )
+# FIXME: Test building on iOS and then enable on iOS.
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
+        "SourcesCMakeCocoa.txt"
+    )
+endif ()
 
 list(APPEND WebKit_SOURCES
     GPUProcess/media/RemoteAudioDestinationManager.cpp

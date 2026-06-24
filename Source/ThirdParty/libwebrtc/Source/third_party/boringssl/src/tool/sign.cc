@@ -22,6 +22,8 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 static const struct argument kArguments[] = {
     {"-key", kRequiredArgument, "The private key, in PEM format, to sign with"},
     {"-digest", kOptionalArgument, "The digest algorithm to use"},
@@ -81,3 +83,5 @@ bool Sign(const std::vector<std::string> &args) {
 
   return true;
 }
+
+BSSL_NAMESPACE_END

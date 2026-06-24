@@ -46,8 +46,6 @@
 
 namespace bmalloc { namespace api {
 
-static bool (*hasDisableTZoneEntitlement)();
-
 #define BUSE_BUCKETS_FOR_SIZE_CLASSES_FROM_ENVVAR 0
 
 TZoneHeapManager* tzoneHeapManager;
@@ -95,11 +93,6 @@ static TypeNameTemplate typeNameTemplate;
 static void dumpRegisteredTypesAtExit(void)
 {
     TZoneHeapManager::singleton().dumpRegisteredTypes();
-}
-
-void TZoneHeapManager::setHasDisableTZoneEntitlementCallback(bool (*disableTZoneEntitlementCheck)())
-{
-    hasDisableTZoneEntitlement = disableTZoneEntitlementCheck;
 }
 
 TZoneHeapManager::TZoneHeapManager()

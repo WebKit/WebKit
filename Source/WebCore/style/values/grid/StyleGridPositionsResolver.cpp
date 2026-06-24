@@ -36,7 +36,7 @@
 #include "GridArea.h"
 #include "RenderBox.h"
 #include "RenderGrid.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleGridData.h"
 #include "StyleGridPositionSide.h"
 #include "StyleGridTrackSizingDirection.h"
@@ -120,7 +120,7 @@ static inline GridPositionSide NODELETE transposedSide(GridPositionSide side)
     }
 }
 
-static std::optional<int> clampedImplicitLineForArea(const RenderStyle& style, const CustomIdent& name, int min, int max, GridTrackSizingDirection direction, bool isStartSide)
+static std::optional<int> clampedImplicitLineForArea(const Style::ComputedStyle& style, const CustomIdent& name, int min, int max, GridTrackSizingDirection direction, bool isStartSide)
 {
     auto& areas = style.gridTemplateAreas().map.map;
     auto gridAreaIt = areas.find(name.value);

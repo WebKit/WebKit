@@ -36,6 +36,11 @@
 #include "ImageOrientation.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <pal/cf/CoreMediaSoftLink.h>
+#include "CoreVideoSoftLink.h"
+#endif
+
 namespace WebCore {
 
 VideoFrame::VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
@@ -61,6 +66,16 @@ Ref<VideoFrame> VideoFrame::updateTimestamp(MediaTime mediaTime, ShouldCloneWith
     Ref updatedVideoFrame = shouldCloneWithDifferentTimestamp == ShouldCloneWithDifferentTimestamp::Yes ? clone() : Ref { *this };
     const_cast<MediaTime&>(updatedVideoFrame->m_presentationTime) = mediaTime;
     return updatedVideoFrame;
+}
+
+bool VideoFrame::is10bits() const
+{
+#if PLATFORM(COCOA)
+    auto pixelFormat = this->pixelFormat();
+    return pixelFormat == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange || pixelFormat == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+#else
+    return false;
+#endif
 }
 
 #if !PLATFORM(COCOA) && !USE(GSTREAMER)

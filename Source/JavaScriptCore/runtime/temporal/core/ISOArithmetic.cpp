@@ -57,17 +57,31 @@ ISO8601::PlainYearMonth balanceISOYearMonth(int64_t year, int64_t month)
     return ISO8601::PlainYearMonth(static_cast<int32_t>(year), static_cast<unsigned>(month));
 }
 
-// BalanceISODate — temporal_rs: IsoDate::balance
-// Equivalent to AddDaysToISODate in current spec (days already folded into the day parameter by callers).
+// AddDaysToISODate — temporal_rs: IsoDate::balance (with implicit day fold-in)
 // https://tc39.es/proposal-temporal/#sec-temporal-adddaystoisodate
 // NOTE: Returns { outOfRangeYear, 1, 1 } for out-of-bounds dates instead of throwing (callers check).
-ISO8601::PlainDate balanceISODate(int32_t year, int32_t month, int64_t day)
+ISO8601::PlainDate addDaysToISODate(const ISO8601::PlainDate& date, int64_t days)
 {
+    int32_t year = date.year();
+    int32_t month = static_cast<int32_t>(date.month());
     if (year == ISO8601::outOfRangeYear) [[unlikely]]
         return ISO8601::PlainDate { ISO8601::outOfRangeYear, 1, 1 };
+
+    // PlainDate's month invariant (set by regulateISODate / balanceISOYearMonth at every
+    // construction site reachable from public Temporal entry points) is [1, 12]. We rely
+    // on it for the daysInMonth bound below and for the makeDay(month-1) slow-path math.
+    ASSERT(month >= 1 && month <= 12);
+
+    int64_t newDay = static_cast<int64_t>(date.day()) + days;
+
+    // The new day-of-month already lands in [1, daysInMonth(year, month)] - no overflow into
+    // adjacent months/years, so skip the days-from-1970 + yearMonthDayFromDays roundtrip.
+    if (newDay >= 1 && (newDay <= 31 && newDay <= ISO8601::daysInMonth(year, static_cast<uint8_t>(month)))) [[likely]]
+        return ISO8601::PlainDate { year, static_cast<unsigned>(month), static_cast<unsigned>(newDay) };
+
     // 1. Let epochDays be ISODateToEpochDays(year, month - 1, day).
     // (WTF makeDay takes 0-based month, matching ISODateToEpochDays(year, month-1, day))
-    auto epochDays = makeDay(static_cast<double>(year), static_cast<double>(month - 1), static_cast<double>(day));
+    auto epochDays = makeDay(static_cast<double>(year), static_cast<double>(month - 1), static_cast<double>(newDay));
     // 2. Let ms be EpochDaysToEpochMs(epochDays, 0).
     double ms = makeDate(epochDays, 0);
     double daysToUse = msToDays(ms);
@@ -76,7 +90,7 @@ ISO8601::PlainDate balanceISODate(int32_t year, int32_t month, int64_t day)
     // 3. Return CreateISODateRecord(EpochTimeToEpochYear(ms), EpochTimeToMonthInYear(ms) + 1, EpochTimeToDate(ms)).
     auto [y, m, d] = WTF::yearMonthDayFromDays(static_cast<int32_t>(daysToUse));
     if (!ISO8601::isYearWithinLimits(y)) [[unlikely]]
-        return ISO8601::PlainDate { ISO8601::outOfRangeYear, static_cast<unsigned>(m + 1), static_cast<unsigned>(d) };
+        return ISO8601::PlainDate { ISO8601::outOfRangeYear, 1, 1 };
     return ISO8601::PlainDate { y, static_cast<unsigned>(m + 1), static_cast<unsigned>(d) };
 }
 
@@ -123,8 +137,8 @@ TemporalResult<ISO8601::PlainDate> isoDateAdd(const ISO8601::PlainDate& plainDat
         return makeUnexpected(rangeError("date time is out of range of ECMAScript representation"_s));
     // 1.c. Let days be duration.[[Days]] + 7 × duration.[[Weeks]].
     // 1.d. Let result be AddDaysToISODate(intermediate, days).
-    int64_t day = static_cast<int64_t>(intermediate1->day()) + duration.days() + static_cast<int64_t>(ISO8601::daysPerWeek) * duration.weeks();
-    auto result = balanceISODate(intermediate1->year(), static_cast<int32_t>(intermediate1->month()), day);
+    int64_t days = duration.days() + static_cast<int64_t>(ISO8601::daysPerWeek) * duration.weeks();
+    auto result = addDaysToISODate(*intermediate1, days);
     // 3. If ISODateWithinLimits(result) is false, throw a RangeError exception.
     if (!ISO8601::isDateTimeWithinLimits(result.year(), result.month(), result.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]]
         return makeUnexpected(rangeError("date time is out of range of ECMAScript representation"_s));
@@ -287,7 +301,7 @@ ISO8601::InternalDuration diffISODateTime(const ISO8601::PlainDate& d1, const IS
     // 7. If timeSign = dateSign, then
     if (dateSign && timeSign && dateSign == timeSign) {
         // a. Set adjustedDate to AddDaysToISODate(adjustedDate, timeSign).
-        adjustedD2 = balanceISODate(adjustedD2.year(), static_cast<int32_t>(adjustedD2.month()), static_cast<int64_t>(adjustedD2.day()) + timeSign);
+        adjustedD2 = addDaysToISODate(adjustedD2, timeSign);
         // b. Set timeDuration to ! Add24HourDaysToTimeDuration(timeDuration, -timeSign).
         timeDiff -= Int128(timeSign) * ISO8601::ExactTime::nsPerDay;
     }
@@ -319,8 +333,6 @@ ISO8601::InternalDuration diffISODateTime(const ISO8601::PlainDate& d1, const IS
 
 // RoundTime steps 1–6 (quantity only) — temporal_rs: IsoTime::round (src/iso.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-roundtime
-// Returns {quantity, baseOffset} in ns; caller does RoundNumberToIncrement + BalanceTime in Int128
-// to avoid double precision loss. Day unit omitted — caller handles overflow via nsPerDay bounds.
 static std::pair<Int128, Int128> roundTime(const ISO8601::PlainTime& t, TemporalUnit unit)
 {
     using ET = ISO8601::ExactTime;
@@ -331,23 +343,24 @@ static std::pair<Int128, Int128> roundTime(const ISO8601::PlainTime& t, Temporal
     const Int128 lUs = Int128(t.microsecond());
     const Int128 lNs = Int128(t.nanosecond());
     switch (unit) {
+    // Step 1: If unit is ~day~ or ~hour~, quantity = full time from midnight in nanoseconds.
+    case TemporalUnit::Day:
     case TemporalUnit::Hour:
-        // Step 1: quantity = full time from midnight in ns.
         return { lH * ET::nsPerHour + lMi * ET::nsPerMinute + lS * ET::nsPerSecond + lMs * ET::nsPerMillisecond + lUs * ET::nsPerMicrosecond + lNs, 0 };
+    // Step 2: If unit is ~minute~, quantity = time within the current hour.
     case TemporalUnit::Minute:
-        // Step 2: quantity = minute-relative; baseOffset = hours.
         return { lMi * ET::nsPerMinute + lS * ET::nsPerSecond + lMs * ET::nsPerMillisecond + lUs * ET::nsPerMicrosecond + lNs, lH * ET::nsPerHour };
+    // Step 3: If unit is ~second~, quantity = time within the current minute.
     case TemporalUnit::Second:
-        // Step 3: quantity = second-relative; baseOffset = hours+minutes.
         return { lS * ET::nsPerSecond + lMs * ET::nsPerMillisecond + lUs * ET::nsPerMicrosecond + lNs, lH * ET::nsPerHour + lMi * ET::nsPerMinute };
+    // Step 4: If unit is ~millisecond~, quantity = time within the current second.
     case TemporalUnit::Millisecond:
-        // Step 4: quantity = ms-relative; baseOffset = hours+minutes+seconds.
         return { lMs * ET::nsPerMillisecond + lUs * ET::nsPerMicrosecond + lNs, lH * ET::nsPerHour + lMi * ET::nsPerMinute + lS * ET::nsPerSecond };
+    // Step 5: If unit is ~microsecond~, quantity = time within the current millisecond.
     case TemporalUnit::Microsecond:
-        // Step 5: quantity = us-relative; baseOffset = hours+minutes+seconds+ms.
         return { lUs * ET::nsPerMicrosecond + lNs, lH * ET::nsPerHour + lMi * ET::nsPerMinute + lS * ET::nsPerSecond + lMs * ET::nsPerMillisecond };
-    default: // Nanosecond
-        // Step 6: Assert unit is nanosecond. quantity = ns; baseOffset = everything else.
+    // Step 6: Assert unit is ~nanosecond~. quantity = nanosecond value.
+    default:
         return { lNs, lH * ET::nsPerHour + lMi * ET::nsPerMinute + lS * ET::nsPerSecond + lMs * ET::nsPerMillisecond + lUs * ET::nsPerMicrosecond };
     }
 }

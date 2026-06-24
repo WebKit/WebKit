@@ -29,12 +29,15 @@ namespace WebCore {
 
 class LayoutUnit;
 class RenderBox;
-class RenderStyle;
 class WritingMode;
+
+namespace Style {
+class ComputedStyle;
+}
 
 namespace BlockStepSizing {
 
-bool NODELETE childHasSupportedStyle(const RenderStyle& childStyle);
+bool NODELETE childHasSupportedStyle(const Style::ComputedStyle& childStyle);
 
 LayoutUnit NODELETE computeExtraSpace(LayoutUnit stepSize, LayoutUnit boxOuterSize);
 

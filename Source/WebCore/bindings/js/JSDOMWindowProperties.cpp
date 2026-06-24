@@ -53,7 +53,7 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
 {
     if (RefPtr frame = window.frame()) {
         if (RefPtr scopedChild = frame->tree().scopedChildBySpecifiedName(propertyNameToAtomString(propertyName))) {
-            slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontEnum), toJS(lexicalGlobalObject, scopedChild->window()));
+            slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontEnum), toJS(lexicalGlobalObject, protect(scopedChild->window())));
             return true;
         }
     }

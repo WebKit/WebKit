@@ -41,7 +41,7 @@ constexpr uint32_t PackTypeInfo(GLuint bytes, bool specialized)
 {
     // static_assert within constexpr requires c++17
     // static_assert(isPow2(bytes));
-    return bytes | (rx::Log2(bytes) << 8) | (specialized << 16);
+    return bytes | (log2(bytes) << 8) | (specialized << 16);
 }
 
 }  // anonymous namespace
@@ -1187,7 +1187,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     AddDepthStencilFormat(&map, GL_DEPTH_COMPONENT32F,    true, 32, 0,  0, GL_DEPTH_COMPONENT, GL_FLOAT,                          GL_FLOAT,               RequireES<3, 0>,                                                                               RequireESOrExt<3, 0, &Extensions::depthTextureANGLE>,                                    RequireES<3, 0>,                                                                               RequireES<3, 0>,                                                                                             NeverSupported);
     AddDepthStencilFormat(&map, GL_DEPTH_COMPONENT32_OES, true, 32, 0,  0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT,                   GL_UNSIGNED_NORMALIZED, RequireExtOrExt<&Extensions::depthTextureANGLE, &Extensions::depthTextureOES>,                 AlwaysSupported,                                                                         RequireExtOrExt<&Extensions::depthTextureANGLE, &Extensions::depthTextureOES>,                 RequireExtOrExtOrExt<&Extensions::depthTextureANGLE, &Extensions::depthTextureOES, &Extensions::depth32OES>, NeverSupported);
     AddDepthStencilFormat(&map, GL_DEPTH24_STENCIL8,      true, 24, 8,  0, GL_DEPTH_STENCIL,   GL_UNSIGNED_INT_24_8,              GL_UNSIGNED_NORMALIZED, RequireESOrExtOrExt<3, 0, &Extensions::depthTextureANGLE, &Extensions::packedDepthStencilOES>, AlwaysSupported,                                                                         RequireESOrExtOrExt<3, 0, &Extensions::depthTextureANGLE, &Extensions::packedDepthStencilOES>, RequireESOrExtOrExt<3, 0, &Extensions::depthTextureANGLE, &Extensions::packedDepthStencilOES>,               NeverSupported);
-    AddDepthStencilFormat(&map, GL_DEPTH32F_STENCIL8,     true, 32, 8, 24, GL_DEPTH_STENCIL,   GL_FLOAT_32_UNSIGNED_INT_24_8_REV, GL_FLOAT,               RequireESOrExt<3, 0, &Extensions::depthBufferFloat2NV>,                                        AlwaysSupported,                                                                         RequireESOrExt<3, 0, &Extensions::depthBufferFloat2NV>,                                        RequireESOrExt<3, 0, &Extensions::depthBufferFloat2NV>,                                                      NeverSupported);
+    AddDepthStencilFormat(&map, GL_DEPTH32F_STENCIL8,     true, 32, 8, 24, GL_DEPTH_STENCIL,   GL_FLOAT_32_UNSIGNED_INT_24_8_REV, GL_FLOAT,               RequireES<3, 0>,                                                                               AlwaysSupported,                                                                         RequireES<3, 0>,                                                                               RequireES<3, 0>,                                                                                             NeverSupported);
     // STENCIL_INDEX8 is special-cased, see around the bottom of the list.
 
     // Luminance alpha formats
@@ -1338,14 +1338,6 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     // - It affects only validation of internalformat in RenderbufferStorageMultisample.
     //                         | Internal format  |sized|D |S |X | Format          | Type            | Component type        | Texture supported                                    | Filterable    | Texture attachment                                   | Renderbuffer   | Blend
     AddDepthStencilFormat(&map, GL_STENCIL_INDEX8, true, 0, 8, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, GL_UNSIGNED_NORMALIZED, RequireESOrExt<3, 2, &Extensions::textureStencil8OES>, NeverSupported, RequireESOrExt<3, 2, &Extensions::textureStencil8OES>, RequireES<1, 0>, NeverSupported);
-
-    // From GL_ANGLE_lossy_etc_decode
-    //                       | Internal format                                                |W |H |D |BS |CC| SRGB | Texture supported                      | Filterable     | Texture attachment | Renderbuffer  | Blend
-    AddCompressedFormat(&map, GL_ETC1_RGB8_LOSSY_DECODE_ANGLE,                                 4, 4, 1, 64, 3, false, RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE,                      4, 4, 1, 64, 3, false, RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE,                     4, 4, 1, 64, 3, true,  RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE,  4, 4, 1, 64, 3, false, RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_LOSSY_DECODE_ETC2_ANGLE, 4, 4, 1, 64, 3, true,  RequireExt<&Extensions::lossyEtcDecodeANGLE>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
 
     // From GL_EXT_texture_norm16
     //                 | Internal format    |sized| R | G | B | A |S | Format | Type             | Component type        | SRGB | Texture supported                        | Filterable     | Texture attachment                                                          | Renderbuffer                                                                | Blend
@@ -1960,12 +1952,12 @@ bool InternalFormat::computeCompressedImageRowPitch(GLsizei width, GLuint *resul
 
     CheckedNumeric<GLuint> checkedWidth(width);
     CheckedNumeric<GLuint> checkedBlockWidth(compressedBlockWidth);
-    const GLuint minBlockWidth = getCompressedImageMinBlocks().first;
+    const GLuint minBlocks = getCompressedImageMinBlocks();
 
     auto numBlocksWide = (checkedWidth + checkedBlockWidth - 1u) / checkedBlockWidth;
-    if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlockWidth)
+    if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlocks)
     {
-        numBlocksWide = minBlockWidth;
+        numBlocksWide = minBlocks;
     }
     return CheckedMathResult(numBlocksWide * pixelBytes, resultOut);
 }
@@ -1975,17 +1967,17 @@ bool InternalFormat::computeCompressedImageDepthPitch(GLsizei height,
                                                       GLuint *resultOut) const
 {
     ASSERT(compressed);
-    ASSERT(rowPitch > 0 && rowPitch % pixelBytes == 0);
+    ASSERT(rowPitch % pixelBytes == 0);
 
     CheckedNumeric<GLuint> checkedHeight(height);
     CheckedNumeric<GLuint> checkedRowPitch(rowPitch);
     CheckedNumeric<GLuint> checkedBlockHeight(compressedBlockHeight);
-    const GLuint minBlockHeight = getCompressedImageMinBlocks().second;
+    const GLuint minBlocks = getCompressedImageMinBlocks();
 
     auto numBlocksHigh = (checkedHeight + checkedBlockHeight - 1u) / checkedBlockHeight;
-    if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlockHeight)
+    if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlocks)
     {
-        numBlocksHigh = minBlockHeight;
+        numBlocksHigh = minBlocks;
     }
     return CheckedMathResult(numBlocksHigh * checkedRowPitch, resultOut);
 }
@@ -2023,20 +2015,19 @@ bool InternalFormat::computeCompressedImageSize(const Extents &size, GLuint *res
     CheckedNumeric<GLuint> checkedBlockWidth(compressedBlockWidth);
     CheckedNumeric<GLuint> checkedBlockHeight(compressedBlockHeight);
     CheckedNumeric<GLuint> checkedBlockDepth(compressedBlockDepth);
-    GLuint minBlockWidth, minBlockHeight;
-    std::tie(minBlockWidth, minBlockHeight) = getCompressedImageMinBlocks();
+    const GLuint minBlocks = getCompressedImageMinBlocks();
 
     ASSERT(compressed);
     auto numBlocksWide = (checkedWidth + checkedBlockWidth - 1u) / checkedBlockWidth;
     auto numBlocksHigh = (checkedHeight + checkedBlockHeight - 1u) / checkedBlockHeight;
     auto numBlocksDeep = (checkedDepth + checkedBlockDepth - 1u) / checkedBlockDepth;
-    if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlockWidth)
+    if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlocks)
     {
-        numBlocksWide = minBlockWidth;
+        numBlocksWide = minBlocks;
     }
-    if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlockHeight)
+    if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlocks)
     {
-        numBlocksHigh = minBlockHeight;
+        numBlocksHigh = minBlocks;
     }
     auto bytes = numBlocksWide * numBlocksHigh * numBlocksDeep * pixelBytes;
     return CheckedMathResult(bytes, resultOut);
@@ -2061,23 +2052,15 @@ bool InternalFormat::computeImageSize(const Extents &size, GLsizei samples, GLui
     }
 }
 
-std::pair<GLuint, GLuint> InternalFormat::getCompressedImageMinBlocks() const
+GLuint InternalFormat::getCompressedImageMinBlocks() const
 {
-    GLuint minBlockWidth  = 0;
-    GLuint minBlockHeight = 0;
-
     // Per the specification, a PVRTC block needs information from the 3 nearest blocks.
     // GL_IMG_texture_compression_pvrtc specifies the minimum size requirement in pixels, but
     // ANGLE's texture tables are written in terms of blocks. The 4BPP formats use 4x4 blocks, and
     // the 2BPP formats, 8x4 blocks. Therefore, both kinds of formats require a minimum of 2x2
     // blocks.
-    if (IsPVRTC1Format(internalFormat))
-    {
-        minBlockWidth  = 2;
-        minBlockHeight = 2;
-    }
 
-    return std::make_pair(minBlockWidth, minBlockHeight);
+    return IsPVRTC1Format(internalFormat) ? 2 : 0;
 }
 
 bool InternalFormat::computeSkipBytes(GLenum formatType,
@@ -2088,6 +2071,11 @@ bool InternalFormat::computeSkipBytes(GLenum formatType,
                                       GLuint skipImages,
                                       GLuint *resultOut) const
 {
+    if (compressed || paletted)
+    {
+        *resultOut = 0;
+        return true;
+    }
     auto skipBytes = CheckedNumeric<GLuint>{skipImages} * depthPitch +
                      CheckedNumeric<GLuint>{skipRows} * rowPitch +
                      CheckedNumeric<GLuint>{skipPixels} * computePixelBytes(formatType);

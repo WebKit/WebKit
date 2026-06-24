@@ -11,15 +11,19 @@
 #include "media/engine/internal_decoder_factory.h"
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "absl/strings/match.h"
 #include "api/environment/environment.h"
+#include "api/video/resolution.h"
 #include "api/video/video_codec_type.h"
+#include "api/video_codecs/h264_profile_level_id.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_decoder_factory.h"
+#include "media/base/codec_comparators.h"
 #include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
@@ -63,7 +67,8 @@ std::vector<SdpVideoFormat> InternalDecoderFactory::GetSupportedFormats()
 
 VideoDecoderFactory::CodecSupport InternalDecoderFactory::QueryCodecSupport(
     const SdpVideoFormat& format,
-    bool reference_scaling) const {
+    bool reference_scaling,
+    std::optional<Resolution> resolution) const {
   // Query for supported formats and check if the specified format is supported.
   // Return unsupported if an invalid combination of format and
   // reference_scaling is specified.
@@ -75,14 +80,28 @@ VideoDecoderFactory::CodecSupport InternalDecoderFactory::QueryCodecSupport(
   }
 
   CodecSupport codec_support;
-  codec_support.is_supported = format.IsCodecInList(GetSupportedFormats());
+  const std::vector<SdpVideoFormat>& supported_formats = GetSupportedFormats();
+  // For H.264, stream profile can be subset of supported profile.
+  if (absl::EqualsIgnoreCase(format.name, kH264CodecName)) {
+    for (const SdpVideoFormat& supported : supported_formats) {
+      if (absl::EqualsIgnoreCase(supported.name, kH264CodecName) &&
+          IsSameH264PacketizationMode(format.parameters,
+                                      supported.parameters) &&
+          H264IsProfileSubsetOf(format.parameters, supported.parameters)) {
+        codec_support.is_supported = true;
+        break;
+      }
+    }
+  } else {
+    codec_support.is_supported = format.IsCodecInList(supported_formats);
+  }
   return codec_support;
 }
 
 std::unique_ptr<VideoDecoder> InternalDecoderFactory::Create(
     const Environment& env,
     const SdpVideoFormat& format) {
-  if (!format.IsCodecInList(GetSupportedFormats())) {
+  if (!QueryCodecSupport(format, false, std::nullopt).is_supported) {
     RTC_LOG(LS_WARNING) << "Trying to create decoder for unsupported format. "
                         << format.ToString();
     return nullptr;

@@ -78,7 +78,7 @@ static void I420TestRotate(int src_width,
 
   // Rotation should be exact.
   for (int i = 0; i < dst_i420_size; ++i) {
-    EXPECT_EQ(dst_i420_c[i], dst_i420_opt[i]);
+    ASSERT_EQ(dst_i420_c[i], dst_i420_opt[i]);
   }
 
   free_aligned_buffer_page_end(dst_i420_c);
@@ -197,7 +197,7 @@ static void I422TestRotate(int src_width,
 
   // Rotation should be exact.
   for (int i = 0; i < dst_i422_size; ++i) {
-    EXPECT_EQ(dst_i422_c[i], dst_i422_opt[i]);
+    ASSERT_EQ(dst_i422_c[i], dst_i422_opt[i]);
   }
 
   free_aligned_buffer_page_end(dst_i422_c);
@@ -283,7 +283,7 @@ static void I444TestRotate(int src_width,
 
   // Rotation should be exact.
   for (int i = 0; i < dst_i444_size; ++i) {
-    EXPECT_EQ(dst_i444_c[i], dst_i444_opt[i]);
+    ASSERT_EQ(dst_i444_c[i], dst_i444_opt[i]);
   }
 
   free_aligned_buffer_page_end(dst_i444_c);
@@ -401,7 +401,7 @@ static void NV12TestRotate(int src_width,
 
   // Rotation should be exact.
   for (int i = 0; i < dst_i420_size; ++i) {
-    EXPECT_EQ(dst_i420_c[i], dst_i420_opt[i]);
+    ASSERT_EQ(dst_i420_c[i], dst_i420_opt[i]);
   }
 
   free_aligned_buffer_page_end(dst_i420_c);
@@ -550,18 +550,18 @@ TEST_F(LibYUVRotateTest, NV12Rotate270_Invert) {
     }                                                                         \
     for (int i = 0; i < kHeight; ++i) {                                       \
       for (int j = 0; j < kWidth; ++j) {                                      \
-        EXPECT_EQ(dst_y_c[i * kWidth + j], dst_y_opt[i * kWidth + j]);        \
+        ASSERT_EQ(dst_y_c[i * kWidth + j], dst_y_opt[i * kWidth + j]);        \
       }                                                                       \
     }                                                                         \
     for (int i = 0; i < SUBSAMPLE(kHeight, SUBSAMP_Y); ++i) {                 \
       for (int j = 0; j < SUBSAMPLE(kWidth, SUBSAMP_X); ++j) {                \
-        EXPECT_EQ(dst_u_c[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j],              \
+        ASSERT_EQ(dst_u_c[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j],              \
                   dst_u_opt[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j]);           \
       }                                                                       \
     }                                                                         \
     for (int i = 0; i < SUBSAMPLE(kHeight, SUBSAMP_Y); ++i) {                 \
       for (int j = 0; j < SUBSAMPLE(kWidth, SUBSAMP_X); ++j) {                \
-        EXPECT_EQ(dst_v_c[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j],              \
+        ASSERT_EQ(dst_v_c[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j],              \
                   dst_v_opt[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j]);           \
       }                                                                       \
     }                                                                         \
@@ -656,7 +656,7 @@ static void I010TestRotate(int src_width,
 
   // Rotation should be exact.
   for (int i = 0; i < dst_i010_size; ++i) {
-    EXPECT_EQ(dst_i010_c[i], dst_i010_opt[i]);
+    ASSERT_EQ(dst_i010_c[i], dst_i010_opt[i]);
   }
 
   free_aligned_buffer_page_end_16(dst_i010_c);
@@ -744,7 +744,7 @@ static void I210TestRotate(int src_width,
 
   // Rotation should be exact.
   for (int i = 0; i < dst_i210_size; ++i) {
-    EXPECT_EQ(dst_i210_c[i], dst_i210_opt[i]);
+    ASSERT_EQ(dst_i210_c[i], dst_i210_opt[i]);
   }
 
   free_aligned_buffer_page_end_16(dst_i210_c);
@@ -830,7 +830,7 @@ static void I410TestRotate(int src_width,
 
   // Rotation should be exact.
   for (int i = 0; i < dst_i410_size; ++i) {
-    EXPECT_EQ(dst_i410_c[i], dst_i410_opt[i]);
+    ASSERT_EQ(dst_i410_c[i], dst_i410_opt[i]);
   }
 
   free_aligned_buffer_page_end_16(dst_i410_c);
@@ -906,8 +906,8 @@ TEST_F(LibYUVRotateTest, Transpose4x4_Test) {
 
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
-      EXPECT_EQ(dst_pixels_c[i][j], src_pixels[j][i]);
-      EXPECT_EQ(dst_pixels_c[i][j], dst_pixels_opt[i][j]);
+      ASSERT_EQ(dst_pixels_c[i][j], src_pixels[j][i]);
+      ASSERT_EQ(dst_pixels_c[i][j], dst_pixels_opt[i][j]);
     }
   }
 }
@@ -949,7 +949,7 @@ TEST_F(LibYUVRotateTest, Transpose4x4_Opt) {
   }
 
   for (int i = 0; i < width * height; ++i) {
-    EXPECT_EQ(dst_pixels_c[i], dst_pixels_opt[i]);
+    ASSERT_EQ(dst_pixels_c[i], dst_pixels_opt[i]);
   }
 
   free_aligned_buffer_page_end(src_pixels);

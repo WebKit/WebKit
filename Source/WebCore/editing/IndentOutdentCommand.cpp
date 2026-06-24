@@ -99,7 +99,7 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
     auto nodeToSplitTo = [&]() -> RefPtr<Node> {
         if (enclosingCell)
             return enclosingCell;
-        if (enclosingList(start.containerNode()))
+        if (enclosingList(protect(start.containerNode())))
             return enclosingBlock(protect(start.containerNode()));
         return editableRootForPosition(start);
     }();
@@ -107,7 +107,7 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
     if (!nodeToSplitTo)
         return;
 
-    RefPtr<Node> outerBlock = (start.containerNode() == nodeToSplitTo) ? protect(start.containerNode()) : splitTreeToNode(*start.containerNode(), *nodeToSplitTo);
+    RefPtr<Node> outerBlock = (start.containerNode() == nodeToSplitTo) ? protect(start.containerNode()) : splitTreeToNode(*protect(start.containerNode()), *nodeToSplitTo);
     if (!outerBlock)
         return;
 
@@ -139,7 +139,7 @@ void IndentOutdentCommand::outdentParagraph()
     VisiblePosition visibleEndOfParagraph = endOfParagraph(visibleStartOfParagraph);
 
     RefPtr enclosingNode = downcast<HTMLElement>(enclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), &isListOrIndentBlockquote));
-    if (!enclosingNode || !enclosingNode->parentNode() || !enclosingNode->parentNode()->hasEditableStyle()) // We can't outdent if there is no place to go!
+    if (!enclosingNode || !enclosingNode->parentNode() || !protect(enclosingNode->parentNode())->hasEditableStyle()) // We can't outdent if there is no place to go!
         return;
 
     // Use InsertListCommand to remove the selection from the list
@@ -171,7 +171,7 @@ void IndentOutdentCommand::outdentParagraph()
                 if (splitPointParent->hasTagName(blockquoteTag)
                     && !splitPoint->hasTagName(blockquoteTag)
                     && splitPointParent->parentNode()
-                    && splitPointParent->parentNode()->hasEditableStyle()) // We can't outdent if there is no place to go!
+                    && protect(splitPointParent->parentNode())->hasEditableStyle()) // We can't outdent if there is no place to go!
                     splitElement(*splitPointParent, *splitPoint);
             }
         }
@@ -195,7 +195,7 @@ void IndentOutdentCommand::outdentParagraph()
     else {
         // We split the blockquote at where we start outdenting.
         RefPtr highestInlineNode = highestEnclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), isInline, CannotCrossEditingBoundary, enclosingBlockFlow.get());
-        splitElement(*enclosingNode, highestInlineNode ? *highestInlineNode : *visibleStartOfParagraph.deepEquivalent().deprecatedNode());
+        splitElement(*enclosingNode, highestInlineNode ? *highestInlineNode : *protect(visibleStartOfParagraph.deepEquivalent().deprecatedNode()));
     }
 
     Ref placeholder = HTMLBRElement::create(document());

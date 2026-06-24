@@ -489,6 +489,11 @@ RTCPeerConnection& GStreamerPeerConnectionBackend::connection()
     return m_peerConnection.get();
 }
 
+void GStreamerPeerConnectionBackend::trackWasReplaced(const String& previousId, const String& newId)
+{
+    m_endpoint->trackWasReplaced(previousId, newId);
+}
+
 void GStreamerPeerConnectionBackend::tearDown()
 {
     for (auto& transceiver : connection().currentTransceivers()) {

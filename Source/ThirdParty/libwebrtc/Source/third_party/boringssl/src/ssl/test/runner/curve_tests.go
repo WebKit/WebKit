@@ -34,6 +34,8 @@ var testCurves = []struct {
 
 const bogusCurve = 0x1234
 
+const curveEqualPreferenceWithNextFlag = 0x01
+
 func isPqGroup(r CurveID) bool {
 	return r == CurveX25519Kyber768 || isMLKEMGroup(r)
 }
@@ -269,8 +271,9 @@ func addCurveTests() {
 				NoSupportedCurves: true,
 			},
 		},
-		shouldFail:    true,
-		expectedError: ":NO_SHARED_GROUP:",
+		shouldFail:         true,
+		expectedError:      ":NO_SHARED_GROUP:",
+		expectedLocalError: "remote error: missing extension",
 	})
 
 	// The server must fall back to another cipher when there are no
@@ -761,5 +764,26 @@ func addCurveTests() {
 			CurvePreferences: []CurveID{CurveP384},
 		},
 		shimCertificate: &ecdsaP256Certificate,
+	})
+
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "CurveTest-Server-EqualPreference-TLS13",
+		config: Config{
+			MinVersion:       VersionTLS13,
+			MaxVersion:       VersionTLS13,
+			CurvePreferences: []CurveID{CurveX25519, CurveMLKEM1024, CurveX25519MLKEM768},
+		},
+		flags: append(append(
+			[]string{
+				// Set the -cipher flag to force SSL_OP_CIPHER_SERVER_PREFERENCE.
+				"-cipher", "ALL:3DES",
+				"-expect-curve-id", strconv.Itoa(int(CurveMLKEM1024))},
+			flagCurves("-curves", []CurveID{CurveX25519MLKEM768, CurveMLKEM1024, CurveX25519})...),
+			flagInts("-curves-flags", []int{curveEqualPreferenceWithNextFlag, 0, 0})...,
+		),
+		expectations: connectionExpectations{
+			curveID: CurveMLKEM1024,
+		},
 	})
 }

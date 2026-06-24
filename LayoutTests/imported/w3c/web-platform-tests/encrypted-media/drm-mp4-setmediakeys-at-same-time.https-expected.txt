@@ -1,0 +1,3 @@
+
+PASS drm, setmediakeys at same time
+

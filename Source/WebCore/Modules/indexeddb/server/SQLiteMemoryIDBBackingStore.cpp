@@ -132,6 +132,12 @@ IDBError SQLiteMemoryIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo
         return error;
     }
 
+    error = ensureValidFileSystemHandleRecordsTable();
+    if (!error.isNull()) {
+        closeSQLiteDB();
+        return error;
+    }
+
     auto result = extractExistingDatabaseInfo();
     if (!result) {
         ASSERT(!result.error().isNull());

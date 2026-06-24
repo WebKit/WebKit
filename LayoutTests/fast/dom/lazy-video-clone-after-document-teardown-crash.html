@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<p id="result">FAIL</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function createVideoInDetachedDocument() {
+    const document = Document.parseHTMLUnsafe("");
+    return document.createElementNS("http://www.w3.org/1999/xhtml", "video");
+}
+
+(async function () {
+    const video = createVideoInDetachedDocument();
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    if (typeof GCController !== "undefined")
+        GCController.collect();
+    else if (typeof $vm !== "undefined")
+        $vm.gc();
+
+    video.cloneNode(false);
+
+    document.getElementById("result").textContent = "PASS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>

@@ -576,7 +576,7 @@ static inline void get_16n_coeff_contexts_hor(const uint8_t *levels,
 
 // Note: levels[] must be in the range [0, 127], inclusive.
 void av1_get_nz_map_contexts_neon(const uint8_t *const levels,
-                                  const int16_t *const scan, const uint16_t eob,
+                                  const int16_t *const scan, const int eob,
                                   const TX_SIZE tx_size,
                                   const TX_CLASS tx_class,
                                   int8_t *const coeff_contexts) {

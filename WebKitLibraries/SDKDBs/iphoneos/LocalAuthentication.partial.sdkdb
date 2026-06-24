@@ -428,7 +428,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "LAAccessControlOperation"},
     {"access": "public", "name": "LABiometryType"},
@@ -441,12 +441,12 @@
   },
   {
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$sSo22LADomainStateCompanionC19LocalAuthenticationE09availableC5TypesShySo15LACompanionTypeVGvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22LADomainStateCompanionC19LocalAuthenticationE09availableC5TypesShySo15LACompanionTypeVGvpMV"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo22LADomainStateCompanionC19LocalAuthenticationE09availableC5TypesShySo15LACompanionTypeVGvg"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo22LADomainStateCompanionC19LocalAuthenticationE09availableC5TypesShySo15LACompanionTypeVGvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo9LAContextC11Observation10Observable19LocalAuthenticationMc"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo9LAContextC7Combine16ObservableObject19LocalAuthenticationMc"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

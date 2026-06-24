@@ -73,7 +73,6 @@ rtc_library("utility_function") {
   ]
   deps = [
     ":monitor_interval",
-    "../../../api/transport:network_control",
     "../../../api/units:data_rate",
     "../../../rtc_base:checks",
   ]
@@ -87,7 +86,6 @@ rtc_library("bitrate_controller") {
   deps = [
     ":monitor_interval",
     ":utility_function",
-    "../../../api/transport:network_control",
     "../../../api/units:data_rate",
   ]
 }
@@ -116,6 +114,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../../api/units:data_size",
       "../../../api/units:time_delta",
       "../../../api/units:timestamp",
+      "../../../test:create_test_environment",
       "../../../test:test_support",
       "../../../test/scenario",
     ]

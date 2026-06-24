@@ -60,16 +60,16 @@ void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomS
     case AttributeNames::gradientUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
         if (propertyValue > 0)
-            Ref { m_gradientUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+            protect(m_gradientUnits)->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         break;
     }
     case AttributeNames::gradientTransformAttr:
-        m_gradientTransform->baseVal()->parse(newValue);
+        protect(m_gradientTransform)->baseVal()->parse(newValue);
         break;
     case AttributeNames::spreadMethodAttr: {
         auto propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(*this, newValue);
         if (propertyValue > 0)
-            Ref { m_spreadMethod }->setBaseValInternal<SVGSpreadMethodType>(propertyValue);
+            protect(m_spreadMethod)->setBaseValInternal<SVGSpreadMethodType>(propertyValue);
         break;
     }
     default:

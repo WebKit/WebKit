@@ -75,7 +75,7 @@ public:
     using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<const FormSubmission>&&, NavigationPolicyDecision)>;
     using NewWindowPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<const FormSubmission>&&, const AtomString& frameName, const NavigationAction&, ShouldContinuePolicyCheck)>;
 
-    void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, DocumentLoader*, RefPtr<const FormSubmission>&&, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous, std::optional<NavigationNavigationType> = std::nullopt);
+    void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, DocumentLoader*, RefPtr<const FormSubmission>&&, NavigationPolicyDecisionFunction&&, IsSameDocumentNavigation, PolicyDecisionMode = PolicyDecisionMode::Asynchronous, std::optional<NavigationNavigationType> = std::nullopt);
     void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, NavigationPolicyDecisionFunction&&);
     void checkNewWindowPolicy(NavigationAction&&, ResourceRequest&&, RefPtr<const FormSubmission>&&, const AtomString& frameName, NewWindowPolicyDecisionFunction&&);
 

@@ -39,7 +39,6 @@ class MediaDescription;
 class VideoTrack;
 class VideoTrackClient;
 class VideoTrackConfiguration;
-class VideoTrackList;
 class VideoTrackPrivate;
 
 class VideoTrack final : public MediaTrackBase, private VideoTrackPrivateClient {
@@ -101,7 +100,6 @@ private:
     ASCIILiteral logClassName() const final { return "VideoTrack"_s; }
 #endif
 
-    WeakPtr<VideoTrackList> m_videoTrackList;
     WeakHashSet<VideoTrackClient> m_clients;
     Ref<VideoTrackPrivate> m_private;
     const Ref<VideoTrackConfiguration> m_configuration;

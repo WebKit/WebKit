@@ -27,6 +27,9 @@
 
 #include "CSSPropertySourceData.h"
 #include "CSSStyleDeclaration.h"
+#include "CSSStyleRule.h"
+#include "ExceptionOr.h"
+#include "InspectorHistory.h"
 #include "Settings.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/CheckedPtr.h>
@@ -34,7 +37,9 @@
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 
 namespace Inspector {
 class IdentifierRegistry;
@@ -274,4 +279,241 @@ private:
     mutable bool m_isStyleTextValid;
 };
 
+class StyleSheetAction : public InspectorHistory::Action {
+    WTF_MAKE_NONCOPYABLE(StyleSheetAction);
+public:
+    explicit StyleSheetAction(InspectorStyleSheet* styleSheet)
+        : InspectorHistory::Action()
+        , m_styleSheet(styleSheet)
+    {
+    }
+
+protected:
+    WeakPtr<InspectorStyleSheet> m_styleSheet;
+};
+
+class SetStyleSheetTextAction final : public StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(SetStyleSheetTextAction);
+public:
+    SetStyleSheetTextAction(InspectorStyleSheet* styleSheet, const String& text)
+        : StyleSheetAction(styleSheet)
+        , m_text(text)
+    {
+    }
+
+private:
+    bool isSetStyleSheetTextAction() const final { return true; }
+
+    ExceptionOr<void> perform() final
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        auto result = styleSheet->text();
+        if (result.hasException())
+            return result.releaseException();
+        m_oldText = result.releaseReturnValue();
+        return redo();
+    }
+
+    ExceptionOr<void> undo() final
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        auto result = styleSheet->setText(m_oldText);
+        if (result.hasException())
+            return result.releaseException();
+        styleSheet->reparseStyleSheet(m_oldText);
+        return { };
+    }
+
+    ExceptionOr<void> redo() final
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        auto result = styleSheet->setText(m_text);
+        if (result.hasException())
+            return result.releaseException();
+        styleSheet->reparseStyleSheet(m_text);
+        return { };
+    }
+
+    String mergeId() final
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        return makeString("SetStyleSheetText "_s, styleSheet->id());
+    }
+
+    void merge(std::unique_ptr<Action> action) override
+    {
+        ASSERT(action->mergeId() == mergeId());
+        m_text = downcast<SetStyleSheetTextAction>(*action).m_text;
+    }
+
+    String m_text;
+    String m_oldText;
+};
+
+class SetStyleTextAction final : public StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(SetStyleTextAction);
+public:
+    SetStyleTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& text)
+        : StyleSheetAction(styleSheet)
+        , m_cssId(cssId)
+        , m_newStyleDeclarationText(text)
+    {
+    }
+
+    ExceptionOr<void> perform() override
+    {
+        return redo();
+    }
+
+    ExceptionOr<void> undo() override
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        return styleSheet->setRuleStyleText(
+            m_cssId,
+            m_oldStyleDeclarationText,
+            nullptr, /* outOldStyleDeclarationText */
+            &m_oldRuleText,
+            nullptr /* outOldRuleText */);
+    }
+
+    ExceptionOr<void> redo() override
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        return styleSheet->setRuleStyleText(
+            m_cssId,
+            m_newStyleDeclarationText,
+            &m_oldStyleDeclarationText,
+            nullptr, /* newRuleText */
+            &m_oldRuleText);
+    }
+
+    String mergeId() override
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        ASSERT(styleSheet->id() == m_cssId.styleSheetId());
+        return makeString("SetStyleText "_s, styleSheet->id(), ':', m_cssId.ordinal());
+    }
+
+    void merge(std::unique_ptr<Action> action) override
+    {
+        ASSERT(action->mergeId() == mergeId());
+
+        SetStyleTextAction* other = static_cast<SetStyleTextAction*>(action.get());
+        m_newStyleDeclarationText = other->m_newStyleDeclarationText;
+    }
+
+private:
+    InspectorCSSId m_cssId;
+    String m_newStyleDeclarationText;
+    String m_oldStyleDeclarationText;
+    String m_oldRuleText;
+};
+
+class SetRuleHeaderTextAction final : public StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(SetRuleHeaderTextAction);
+public:
+    SetRuleHeaderTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& newHeaderText)
+        : StyleSheetAction(styleSheet)
+        , m_cssId(cssId)
+        , m_newHeaderText(newHeaderText)
+    {
+    }
+
+private:
+    ExceptionOr<void> perform() final
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        auto result = styleSheet->ruleHeaderText(m_cssId);
+        if (result.hasException())
+            return result.releaseException();
+        m_oldHeaderText = result.releaseReturnValue();
+        return redo();
+    }
+
+    ExceptionOr<void> undo() final
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        return styleSheet->setRuleHeaderText(m_cssId, m_oldHeaderText);
+    }
+
+    ExceptionOr<void> redo() final
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        return styleSheet->setRuleHeaderText(m_cssId, m_newHeaderText);
+    }
+
+    InspectorCSSId m_cssId;
+    String m_newHeaderText;
+    String m_oldHeaderText;
+};
+
+class AddRuleAction final : public StyleSheetAction {
+    WTF_MAKE_NONCOPYABLE(AddRuleAction);
+public:
+    AddRuleAction(InspectorStyleSheet* styleSheet, const String& selector)
+        : StyleSheetAction(styleSheet)
+        , m_selector(selector)
+    {
+    }
+
+    InspectorCSSId NODELETE newRuleId() const { return m_newId; }
+
+private:
+    ExceptionOr<void> perform() final
+    {
+        return redo();
+    }
+
+    ExceptionOr<void> undo() final
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        return styleSheet->deleteRule(m_newId);
+    }
+
+    ExceptionOr<void> redo() final
+    {
+        RefPtr styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return { };
+        auto result = styleSheet->addRule(m_selector);
+        if (result.hasException())
+            return result.releaseException();
+        m_newId = styleSheet->ruleOrStyleId(result.releaseReturnValue());
+        return { };
+    }
+
+    InspectorCSSId m_newId;
+    String m_selector;
+    String m_oldSelector;
+};
+
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SetStyleSheetTextAction)
+    static bool isType(const WebCore::InspectorHistory::Action& action)
+    {
+        return action.isSetStyleSheetTextAction();
+    }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -25,13 +25,15 @@
 #include <cstddef>
 #include <initializer_list>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/downsampled_render_buffer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+
+namespace webrtc {
 
 namespace {
 
@@ -41,8 +43,8 @@ namespace {
 constexpr int kAccumulatedErrorSubSampleRate = 4;
 
 void UpdateAccumulatedError(
-    const webrtc::ArrayView<const float> instantaneous_accumulated_error,
-    const webrtc::ArrayView<float> accumulated_error,
+    const std::span<const float> instantaneous_accumulated_error,
+    const std::span<float> accumulated_error,
     float one_over_error_sum_anchor) {
   static constexpr float kSmoothConstantIncreases = 0.015f;
   for (size_t k = 0; k < instantaneous_accumulated_error.size(); ++k) {
@@ -57,7 +59,7 @@ void UpdateAccumulatedError(
   }
 }
 
-size_t ComputePreEchoLag(const webrtc::ArrayView<const float> accumulated_error,
+size_t ComputePreEchoLag(const std::span<const float> accumulated_error,
                          size_t lag,
                          size_t alignment_shift_winner) {
   static constexpr float kPreEchoThreshold = 0.5f;
@@ -77,9 +79,6 @@ size_t ComputePreEchoLag(const webrtc::ArrayView<const float> accumulated_error,
 
 }  // namespace
 
-namespace webrtc {
-namespace aec3 {
-
 #if defined(WEBRTC_HAS_NEON)
 
 inline float SumAllElements(float32x4_t elements) {
@@ -92,13 +91,13 @@ void MatchedFilterCoreWithAccumulatedError_NEON(
     size_t x_start_index,
     float x2_sum_threshold,
     float smoothing,
-    webrtc::ArrayView<const float> x,
-    webrtc::ArrayView<const float> y,
-    webrtc::ArrayView<float> h,
+    std::span<const float> x,
+    std::span<const float> y,
+    std::span<float> h,
     bool* filters_updated,
     float* error_sum,
-    webrtc::ArrayView<float> accumulated_error,
-    webrtc::ArrayView<float> scratch_memory) {
+    std::span<float> accumulated_error,
+    std::span<float> scratch_memory) {
   const int h_size = static_cast<int>(h.size());
   const int x_size = static_cast<int>(x.size());
   RTC_DCHECK_EQ(0, h_size % 4);
@@ -172,14 +171,14 @@ void MatchedFilterCoreWithAccumulatedError_NEON(
 void MatchedFilterCore_NEON(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            webrtc::ArrayView<const float> x,
-                            webrtc::ArrayView<const float> y,
-                            webrtc::ArrayView<float> h,
+                            std::span<const float> x,
+                            std::span<const float> y,
+                            std::span<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            webrtc::ArrayView<float> accumulated_error,
-                            webrtc::ArrayView<float> scratch_memory) {
+                            std::span<float> accumulated_error,
+                            std::span<float> scratch_memory) {
   const int h_size = static_cast<int>(h.size());
   const int x_size = static_cast<int>(x.size());
   RTC_DCHECK_EQ(0, h_size % 4);
@@ -289,13 +288,13 @@ void MatchedFilterCore_NEON(size_t x_start_index,
 void MatchedFilterCore_AccumulatedError_SSE2(size_t x_start_index,
                                              float x2_sum_threshold,
                                              float smoothing,
-                                             ArrayView<const float> x,
-                                             ArrayView<const float> y,
-                                             ArrayView<float> h,
+                                             std::span<const float> x,
+                                             std::span<const float> y,
+                                             std::span<float> h,
                                              bool* filters_updated,
                                              float* error_sum,
-                                             ArrayView<float> accumulated_error,
-                                             ArrayView<float> scratch_memory) {
+                                             std::span<float> accumulated_error,
+                                             std::span<float> scratch_memory) {
   const int h_size = static_cast<int>(h.size());
   const int x_size = static_cast<int>(x.size());
   RTC_DCHECK_EQ(0, h_size % 8);
@@ -385,14 +384,14 @@ void MatchedFilterCore_AccumulatedError_SSE2(size_t x_start_index,
 void MatchedFilterCore_SSE2(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            ArrayView<const float> x,
-                            ArrayView<const float> y,
-                            ArrayView<float> h,
+                            std::span<const float> x,
+                            std::span<const float> y,
+                            std::span<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            ArrayView<float> accumulated_error,
-                            ArrayView<float> scratch_memory) {
+                            std::span<float> accumulated_error,
+                            std::span<float> scratch_memory) {
   if (compute_accumulated_error) {
     return MatchedFilterCore_AccumulatedError_SSE2(
         x_start_index, x2_sum_threshold, smoothing, x, y, h, filters_updated,
@@ -497,13 +496,13 @@ void MatchedFilterCore_SSE2(size_t x_start_index,
 void MatchedFilterCore(size_t x_start_index,
                        float x2_sum_threshold,
                        float smoothing,
-                       ArrayView<const float> x,
-                       ArrayView<const float> y,
-                       ArrayView<float> h,
+                       std::span<const float> x,
+                       std::span<const float> y,
+                       std::span<float> h,
                        bool* filters_updated,
                        float* error_sum,
                        bool compute_accumulated_error,
-                       ArrayView<float> accumulated_error) {
+                       std::span<float> accumulated_error) {
   if (compute_accumulated_error) {
     std::fill(accumulated_error.begin(), accumulated_error.end(), 0.0f);
   }
@@ -555,7 +554,7 @@ void MatchedFilterCore(size_t x_start_index,
   }
 }
 
-size_t MaxSquarePeakIndex(ArrayView<const float> h) {
+size_t MaxSquarePeakIndex(std::span<const float> h) {
   if (h.size() < 2) {
     return 0;
   }
@@ -589,8 +588,6 @@ size_t MaxSquarePeakIndex(ArrayView<const float> h) {
   }
   return lag_estimate1;
 }
-
-}  // namespace aec3
 
 MatchedFilter::MatchedFilter(ApmDataDumper* data_dumper,
                              Aec3Optimization optimization,
@@ -655,7 +652,7 @@ void MatchedFilter::Reset(bool full_reset) {
 }
 
 void MatchedFilter::Update(const DownsampledRenderBuffer& render_buffer,
-                           ArrayView<const float> capture,
+                           std::span<const float> capture,
                            bool use_slow_smoothing) {
   RTC_DCHECK_EQ(sub_block_size_, capture.size());
   auto& y = capture;
@@ -693,14 +690,14 @@ void MatchedFilter::Update(const DownsampledRenderBuffer& render_buffer,
     switch (optimization_) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
       case Aec3Optimization::kSse2:
-        aec3::MatchedFilterCore_SSE2(
+        MatchedFilterCore_SSE2(
             x_start_index, x2_sum_threshold, smoothing, render_buffer.buffer, y,
             filters_[n], &filters_updated, &error_sum, compute_pre_echo,
             instantaneous_accumulated_error_, scratch_memory_);
         break;
 #if !defined(WEBRTC_WEBKIT_BUILD)
       case Aec3Optimization::kAvx2:
-        aec3::MatchedFilterCore_AVX2(
+        MatchedFilterCore_AVX2(
             x_start_index, x2_sum_threshold, smoothing, render_buffer.buffer, y,
             filters_[n], &filters_updated, &error_sum, compute_pre_echo,
             instantaneous_accumulated_error_, scratch_memory_);
@@ -709,23 +706,23 @@ void MatchedFilter::Update(const DownsampledRenderBuffer& render_buffer,
 #endif
 #if defined(WEBRTC_HAS_NEON)
       case Aec3Optimization::kNeon:
-        aec3::MatchedFilterCore_NEON(
+        MatchedFilterCore_NEON(
             x_start_index, x2_sum_threshold, smoothing, render_buffer.buffer, y,
             filters_[n], &filters_updated, &error_sum, compute_pre_echo,
             instantaneous_accumulated_error_, scratch_memory_);
         break;
 #endif
       default:
-        aec3::MatchedFilterCore(x_start_index, x2_sum_threshold, smoothing,
-                                render_buffer.buffer, y, filters_[n],
-                                &filters_updated, &error_sum, compute_pre_echo,
-                                instantaneous_accumulated_error_);
+        MatchedFilterCore(x_start_index, x2_sum_threshold, smoothing,
+                          render_buffer.buffer, y, filters_[n],
+                          &filters_updated, &error_sum, compute_pre_echo,
+                          instantaneous_accumulated_error_);
     }
 
     // Estimate the lag in the matched filter as the distance to the portion in
     // the filter that contributes the most to the matched filter output. This
     // is detected as the peak of the matched filter.
-    const size_t lag_estimate = aec3::MaxSquarePeakIndex(filters_[n]);
+    const size_t lag_estimate = MaxSquarePeakIndex(filters_[n]);
     const bool reliable =
         lag_estimate > 2 && lag_estimate < (filters_[n].size() - 10) &&
         error_sum < matching_filter_threshold_ * error_sum_anchor;
@@ -799,7 +796,7 @@ void MatchedFilter::LogFilterProperties(int /* sample_rate_hz */,
 
 void MatchedFilter::Dump() {
   for (size_t n = 0; n < filters_.size(); ++n) {
-    const size_t lag_estimate = aec3::MaxSquarePeakIndex(filters_[n]);
+    const size_t lag_estimate = MaxSquarePeakIndex(filters_[n]);
     std::string dumper_filter = "aec3_correlator_" + std::to_string(n) + "_h";
     data_dumper_->DumpRaw(dumper_filter.c_str(), filters_[n]);
     std::string dumper_lag = "aec3_correlator_lag_" + std::to_string(n);

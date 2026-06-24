@@ -164,6 +164,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
 
     m_inspector.didCreateWebSocket(url);
     m_url = request->url();
+    m_inspector.willSendWebSocketHandshakeRequest(*request);
     Ref mainFrame = frame->mainFrame();
 
     Ref policySourceFrame = [&] -> Ref<Frame> {
@@ -378,7 +379,7 @@ void WebSocketChannel::resume()
 
 void WebSocketChannel::didSendHandshakeRequest(ResourceRequest&& request)
 {
-    m_inspector.willSendWebSocketHandshakeRequest(request);
+    m_inspector.didSendWebSocketHandshakeRequest(request);
     m_handshakeRequest = WTF::move(request);
 }
 

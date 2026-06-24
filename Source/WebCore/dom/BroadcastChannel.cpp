@@ -127,7 +127,7 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Page*)
 
 void BroadcastChannel::MainThreadBridge::registerChannel()
 {
-    ensureOnMainThread([this, protectedThis = Ref { *this }, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->identifier()](auto* page) mutable {
+    ensureOnMainThread([this, protectedThis = Ref { *this }, contextIdentifier = protect(m_broadcastChannel->scriptExecutionContext())->identifier()](auto* page) mutable {
         if (page)
             protect(page->broadcastChannelRegistry())->registerChannel(m_origin, m_name, identifier());
         channelToContextIdentifier().add(identifier(), contextIdentifier);

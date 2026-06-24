@@ -57,7 +57,7 @@ PositionIterator::operator Position() const
         // FIXME: This check is inadaquete because any ancestor could be ignored by editing
         if (positionBeforeOrAfterNodeIsCandidate(*anchorNode))
             return positionBeforeNode(*anchorNode);
-        return positionInParentBeforeNode(*m_nodeAfterPositionInAnchor);
+        return positionInParentBeforeNode(protect(*m_nodeAfterPositionInAnchor));
     }
     if (positionBeforeOrAfterNodeIsCandidate(*anchorNode))
         return atStartOfNode() ? positionBeforeNode(*anchorNode) : positionAfterNode(*anchorNode);
@@ -109,7 +109,7 @@ void PositionIterator::decrement()
     
     if (m_anchorNode->hasChildNodes()) {
         m_anchorNode = m_anchorNode->lastChild();
-        m_offsetInAnchor = m_anchorNode->hasChildNodes()? 0: lastOffsetForEditing(*m_anchorNode);
+        m_offsetInAnchor = m_anchorNode->hasChildNodes()? 0: lastOffsetForEditing(*protect(m_anchorNode));
     } else {
         if (m_offsetInAnchor && m_anchorNode->renderer())
             m_offsetInAnchor = Position::uncheckedPreviousOffset(m_anchorNode.get(), m_offsetInAnchor);

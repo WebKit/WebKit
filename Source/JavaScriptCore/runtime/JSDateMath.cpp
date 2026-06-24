@@ -518,6 +518,21 @@ Ref<DateInstanceData> DateCache::cachedDateInstanceData(double millisecondsFromE
     return *m_dateInstanceCache.add(millisecondsFromEpoch);
 }
 
+OpaqueICUTimeZone* DateCache::timeZoneCache()
+{
+    if (!m_timeZoneCache)
+        timeZoneCacheSlow();
+    return m_timeZoneCache.get();
+}
+
+LocalTimeOffset DateCache::localTimeOffset(int64_t millisecondsFromEpoch, TimeType inputTimeType)
+{
+    using Underlying = std::underlying_type_t<TimeType>;
+    static_assert(!static_cast<Underlying>(TimeType::UTCTime));
+    static_assert(static_cast<Underlying>(TimeType::LocalTime) == 1);
+    return m_caches[static_cast<unsigned>(inputTimeType)].localTimeOffset(*this, millisecondsFromEpoch, inputTimeType);
+}
+
 void DateCache::timeZoneCacheSlow()
 {
     ASSERT(!m_timeZoneCache);

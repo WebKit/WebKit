@@ -1,0 +1,109 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.NodeCommands.FrameTarget");
+
+        let childFrameTarget;
+        let targetNodeId;
+
+        // FIXME <https://webkit.org/b/317663>: Simplify this by using DOM.querySelector once it's implemented for frame targets.
+        async function findParagraphInFrame(target) {
+            let frameDoc = WI.domManager.frameTargetDocumentForTarget(target);
+            if (!frameDoc) {
+                let event = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = event.data.document;
+            }
+            await target.DOMAgent.requestChildNodes(frameDoc.backendNodeId, -1);
+            let body = frameDoc.children[0].children[1]; // html > body
+            return body.children.find((node) => node.nodeName() === "P");
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.NodeCommands.FrameTarget.Setup",
+            description: "Find the child frame target and get a nodeId for the target element.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                InspectorTest.assert(frameTargets.length === 2, "Should have exactly main and child frame targets.");
+
+                let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+                let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+                childFrameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+                InspectorTest.expectNotNull(childFrameTarget, "Should find a child frame target.");
+                InspectorTest.assert(!childFrameTarget.isProvisional, "Child frame should not be still loading.");
+
+                let targetNode = await findParagraphInFrame(childFrameTarget);
+                InspectorTest.expectNotNull(targetNode, "Should find the target element.");
+                targetNodeId = targetNode.backendNodeId;
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.NodeCommands.FrameTarget.GetComputedStyleForNode",
+            description: "getComputedStyleForNode should return computed style properties.",
+            async test() {
+                let { computedStyle } = await childFrameTarget.CSSAgent.getComputedStyleForNode(targetNodeId);
+                InspectorTest.expectGreaterThan(computedStyle.length, 0, "Should have computed style properties.");
+                let fontWeight = computedStyle.find((property) => property.name === "font-weight");
+                InspectorTest.expectNotNull(fontWeight, "Should have a font-weight property.");
+                InspectorTest.expectEqual(fontWeight.value, "700", "font-weight should be '700' (computed from 'bold').");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.NodeCommands.FrameTarget.GetInlineStylesForNode",
+            description: "getInlineStylesForNode should return the element's inline style.",
+            async test() {
+                let { inlineStyle } = await childFrameTarget.CSSAgent.getInlineStylesForNode(targetNodeId);
+                InspectorTest.expectNotNull(inlineStyle, "Should have an inline style.");
+                let properties = inlineStyle.cssProperties;
+                let fontWeight = properties.find((property) => property.name === "font-weight");
+                InspectorTest.expectNotNull(fontWeight, "Inline style should contain font-weight.");
+                InspectorTest.expectEqual(fontWeight.value, "bold", "font-weight value should be 'bold'.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.NodeCommands.FrameTarget.GetMatchedStylesForNode",
+            description: "getMatchedStylesForNode should return matched CSS rules.",
+            async test() {
+                let { matchedCSSRules } = await childFrameTarget.CSSAgent.getMatchedStylesForNode(targetNodeId);
+                InspectorTest.expectGreaterThan(matchedCSSRules.length, 0, "Should have matched CSS rules.");
+                let ruleSelectors = matchedCSSRules.map((match) => match.rule.selectorList.selectors.map((s) => s.text).join(", "));
+                InspectorTest.expectThat(ruleSelectors.some((s) => s.includes(".test-class")), "Should have a rule matching .test-class.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.NodeCommands.FrameTarget.GetFontDataForNode",
+            description: "getFontDataForNode should return font information.",
+            async test() {
+                let { primaryFont } = await childFrameTarget.CSSAgent.getFontDataForNode(targetNodeId);
+                InspectorTest.expectNotNull(primaryFont, "Should get font data.");
+                InspectorTest.expectNotNull(primaryFont.displayName, "Font should have a display name.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.NodeCommands.FrameTarget.ForcePseudoState",
+            description: "forcePseudoState should force :hover and affect matched styles.",
+            async test() {
+                await childFrameTarget.CSSAgent.forcePseudoState(targetNodeId, ["hover"]);
+
+                let { matchedCSSRules } = await childFrameTarget.CSSAgent.getMatchedStylesForNode(targetNodeId);
+                let ruleSelectors = matchedCSSRules.map((match) => match.rule.selectorList.selectors.map((s) => s.text).join(", "));
+                InspectorTest.expectThat(ruleSelectors.some((s) => s.includes(":hover")), "Should have a :hover rule in matched styles after forcing.");
+
+                // Clear forced state.
+                await childFrameTarget.CSSAgent.forcePseudoState(targetNodeId, []);
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that CSS node-dependent commands work correctly on frame targets under site isolation.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-stylesheet.html"></iframe>
+</body>

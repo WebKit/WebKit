@@ -17,7 +17,8 @@
 
 // TODO(bugs.webrtc.org/8948): Add when the issue is fixed.
 // #include "test/fpe_observer.h"
-#include "api/array_view.h"
+#include <span>
+
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -58,11 +59,11 @@ constexpr FloatArraySequence kBiQuadOutputSeq = {
      {{24.84286614f, -62.18094158f, 57.91488056f, -106.65685933f, 13.38760103f,
        -36.60367134f, -94.44880104f, -3.59920354f}}}};
 
-// Fails for every pair from two equally sized ArrayView<float> views
+// Fails for every pair from two equally sized std::span<float> views
 // such that their relative error is above a given threshold. If the expected
 // value of a pair is 0, `tolerance` is used to check the absolute error.
-void ExpectNearRelative(ArrayView<const float> expected,
-                        ArrayView<const float> computed,
+void ExpectNearRelative(std::span<const float> expected,
+                        std::span<const float> computed,
                         const float tolerance) {
   // The relative error is undefined when the expected value is 0.
   // When that happens, check the absolute error instead. `safe_den` is used

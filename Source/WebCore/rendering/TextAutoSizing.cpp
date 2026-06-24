@@ -36,11 +36,11 @@
 #include "RenderBlock.h"
 #include "RenderListMarker.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
 #include "Settings.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
 #include "StyleTextSizeAdjust.h"
@@ -53,10 +53,10 @@
 namespace WebCore {
 
 struct TextAutoSizingHashTranslator {
-    static unsigned hash(const RenderStyle&);
-    static bool equal(const RenderStyle&, const RenderStyle&);
-    static bool equal(const TextAutoSizingKey&, const RenderStyle&);
-    static void translate(TextAutoSizingKey&, const RenderStyle&, unsigned hash);
+    static unsigned hash(const Style::ComputedStyle&);
+    static bool equal(const Style::ComputedStyle&, const Style::ComputedStyle&);
+    static bool equal(const TextAutoSizingKey&, const Style::ComputedStyle&);
+    static void translate(TextAutoSizingKey&, const Style::ComputedStyle&, unsigned hash);
 };
 
 class TextAutoSizingValue {
@@ -83,11 +83,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TextAutoSizing);
 
 TextAutoSizingKey::TextAutoSizingKey(DeletedTag)
 {
-    HashTraits<std::unique_ptr<RenderStyle>>::constructDeletedValue(m_style);
+    HashTraits<std::unique_ptr<Style::ComputedStyle>>::constructDeletedValue(m_style);
 }
 
-TextAutoSizingKey::TextAutoSizingKey(const RenderStyle& style, unsigned hash)
-    : m_style(RenderStyle::clonePtr(style)) // FIXME: This seems very inefficient.
+TextAutoSizingKey::TextAutoSizingKey(const Style::ComputedStyle& style, unsigned hash)
+    : m_style(Style::ComputedStyle::clonePtr(style)) // FIXME: This seems very inefficient.
     , m_hash(hash)
 {
 }
@@ -112,7 +112,7 @@ static unsigned computeFontHash(const FontCascade& font)
     );
 }
 
-unsigned TextAutoSizingHashTranslator::hash(const RenderStyle& style)
+unsigned TextAutoSizingHashTranslator::hash(const Style::ComputedStyle& style)
 {
     // FIXME: Not a very smart hash. Could be improved upon. See <https://bugs.webkit.org/show_bug.cgi?id=121131>.
     unsigned hash = std::to_underlying(style.usedAppearance());
@@ -133,12 +133,12 @@ unsigned TextAutoSizingHashTranslator::hash(const RenderStyle& style)
     return hash;
 }
 
-bool TextAutoSizingHashTranslator::equal(const TextAutoSizingKey& key, const RenderStyle& styleB)
+bool TextAutoSizingHashTranslator::equal(const TextAutoSizingKey& key, const Style::ComputedStyle& styleB)
 {
     return !key.isDeleted() && key.style() && equal(*key.style(), styleB);
 }
 
-bool TextAutoSizingHashTranslator::equal(const RenderStyle& styleA, const RenderStyle& styleB)
+bool TextAutoSizingHashTranslator::equal(const Style::ComputedStyle& styleA, const Style::ComputedStyle& styleB)
 {
     return styleA.usedAppearance() == styleB.usedAppearance()
         && styleA.lineClamp() == styleB.lineClamp()
@@ -158,20 +158,20 @@ bool TextAutoSizingHashTranslator::equal(const RenderStyle& styleA, const Render
         && styleA.textOverflow() == styleB.textOverflow();
 }
 
-void TextAutoSizingHashTranslator::translate(TextAutoSizingKey& key, const RenderStyle& style, unsigned hash)
+void TextAutoSizingHashTranslator::translate(TextAutoSizingKey& key, const Style::ComputedStyle& style, unsigned hash)
 {
     key = { style, hash };
 }
 
 // MARK: - TextAutoSizingValue
 
-static RenderStyle cloneRenderStyleWithState(const RenderStyle& currentStyle)
+static Style::ComputedStyle cloneRenderStyleWithState(const Style::ComputedStyle& currentStyle)
 {
-    auto newStyle = RenderStyle::clone(currentStyle);
+    auto newStyle = Style::ComputedStyle::clone(currentStyle);
 
     // FIXME: This should probably handle at least ::first-line too.
-    if (auto* firstLetterStyle = currentStyle.getCachedPseudoStyle({ PseudoElementType::FirstLetter }))
-        newStyle.addCachedPseudoStyle(makeUnique<RenderStyle>(RenderStyle::clone(*firstLetterStyle)));
+    if (auto* firstLetterStyle = currentStyle.pseudoElementStyle({ PseudoElementType::FirstLetter }))
+        newStyle.addPseudoElementStyle(makeUnique<Style::ComputedStyle>(Style::ComputedStyle::clone(*firstLetterStyle)));
 
     if (currentStyle.lastChildState())
         newStyle.setLastChildState();
@@ -296,7 +296,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         auto [firstLetter, firstLetterContainer] = block->firstLetterAndContainer();
         if (firstLetter && firstLetter->parent() && firstLetter->parent()->parent()) {
             auto& parentStyle = firstLetter->parent()->parent()->style();
-            auto* firstLetterStyle = parentStyle.getCachedPseudoStyle({ PseudoElementType::FirstLetter });
+            auto* firstLetterStyle = parentStyle.pseudoElementStyle({ PseudoElementType::FirstLetter });
             if (!firstLetterStyle)
                 continue;
             auto fontDescription = firstLetterStyle->fontDescription();

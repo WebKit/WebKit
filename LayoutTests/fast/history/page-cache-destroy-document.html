@@ -2,15 +2,13 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
 description('Tests that page can safely remove an iframe durin pagehide event.');
-if (window.testRunner)
-    window.testRunner.waitUntilDone();
 
 window.addEventListener("pagehide", function(event) {
     debug("pagehide - entering cache");
@@ -18,7 +16,7 @@ window.addEventListener("pagehide", function(event) {
     var iframe = document.getElementById("removeThis");
     iframe.parentNode.removeChild(iframe);
     finishJSTest();
-    window.testRunner.notifyDone();
+    finishJSTest();
 }, false);
 
 function runTest() {

@@ -1,4 +1,7 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Normalize spaces
+FAIL No value - invalid, serializes as <general-enclosed> assert_equals: expected "scroll-STate(scrolled:    )" but got "scroll-state(scrolled: )"
+PASS Boolean context
+PASS Logical with 'or'
+PASS Not a scroll-state function with space before '('
 

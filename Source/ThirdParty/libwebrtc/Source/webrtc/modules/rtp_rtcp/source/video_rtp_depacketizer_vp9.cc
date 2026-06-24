@@ -13,9 +13,9 @@
 #include <cstdint>
 #include <cstring>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame_type.h"
@@ -167,7 +167,7 @@ VideoRtpDepacketizerVp9::Parse(CopyOnWriteBuffer rtp_payload) {
 }
 
 int VideoRtpDepacketizerVp9::ParseRtpPayload(
-    ArrayView<const uint8_t> rtp_payload,
+    std::span<const uint8_t> rtp_payload,
     RTPVideoHeader* video_header) {
   RTC_DCHECK(video_header);
   // Parse mandatory first byte of payload descriptor.

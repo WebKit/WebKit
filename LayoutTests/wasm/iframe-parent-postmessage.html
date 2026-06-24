@@ -4,14 +4,12 @@
 <script src="./resources/load_wasm.js"></script>
 <script>
 description("Test that expected Wasm Module can be sent over window.parent.postMessage from iframe.");
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
 
 function finish(value) {
     shouldBe(() => value, () => 35010);
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 window.addEventListener("message", value =>  run(), { once:true }, false);

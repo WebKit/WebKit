@@ -70,10 +70,6 @@
       "bugType": "MODIFIED_PARAMETER",
       "description": "The cofactor is larger than the limits specified in FIPS-PUB 186-4 table 1, p.36."
     },
-    "Modified curve parameter": {
-      "bugType": "MODIFIED_PARAMETER",
-      "description": "The parameters a and b of the curve have been modified. The parameters haven been chosen so that public key or generator still are also valid points on the new curve."
-    },
     "ModifiedCofactor": {
       "bugType": "MODIFIED_PARAMETER",
       "description": "The cofactor has been modified. ",
@@ -126,6 +122,14 @@
       "bugType": "MODIFIED_PARAMETER",
       "description": "The order of the public key has been modified.",
       "effect": "If this order is used in a cryptographic primitive instead of the correct order then an invalid curve attack is possible and the private keys may leak. E.g. ECDHC in BC 1.52 suffered from this."
+    },
+    "NoCofactor": {
+      "bugType": "MISSING_PARAMETER",
+      "description": "The cofactor field is absent from the ECParameters. RFC 3279 Section 2.3.5 requires the cofactor to be present."
+    },
+    "ModifiedCurveParameter": {
+      "bugType": "MODIFIED_PARAMETER",
+      "description": "The parameters a and b of the curve have been modified. The parameters haven been chosen so that public key or generator still are also valid points on the new curve."
     }
   },
   "testGroups": [
@@ -4095,9 +4099,9 @@
         },
         {
           "tcId": 359,
-          "comment": "cofactor = 0",
+          "comment": "no cofactor",
           "flags": [
-            "NegativeCofactor",
+            "NoCofactor",
             "InvalidPublic",
             "UnnamedCurve"
           ],
@@ -4134,9 +4138,9 @@
         },
         {
           "tcId": 362,
-          "comment": "cofactor = None",
+          "comment": "no cofactor",
           "flags": [
-            "ModifiedCofactor",
+            "NoCofactor",
             "UnusedParam",
             "UnnamedCurve"
           ],
@@ -4186,7 +4190,7 @@
           "tcId": 366,
           "comment": "a = 0",
           "flags": [
-            "Modified curve parameter",
+            "ModifiedCurveParameter",
             "UnusedParam",
             "UnnamedCurve"
           ],

@@ -27,8 +27,7 @@
 <script type="text/javascript">
     description("Test to make sure that if prefixed transition events are modified we correctly modify unprefixed events.");
 
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
 
     var testContainer = document.createElement("div");
     document.body.appendChild(testContainer);
@@ -43,9 +42,8 @@
         e.stopPropagation();
         transitionEventBox = e;
         shouldBe("transitionEventBox.currentTarget", "transitionEventBox.target");
-        if (window.testRunner)
-            testRunner.notifyDone();
         document.body.removeChild(testContainer);
+        finishJSTest();
     }
 
     testContainer.addEventListener('webkitTransitionEnd', transitionEndEvent, false);

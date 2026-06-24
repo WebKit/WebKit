@@ -61,7 +61,7 @@ void PropertyParserResult::addProperty([[maybe_unused]] CSS::PropertyParserState
         addProperty(CSSProperty(property, value.releaseNonNull(), important, setFromShorthand, shorthandIndex, implicit));
     else {
         ASSERT(setFromShorthand);
-        addProperty(CSSProperty(property, Ref { CSSKeywordValue::implicitInitialValue() }, important, setFromShorthand, shorthandIndex, IsImplicit::Yes));
+        addProperty(CSSProperty(property, protect(CSSKeywordValue::implicitInitialValue()), important, setFromShorthand, shorthandIndex, IsImplicit::Yes));
     }
 }
 

@@ -18,13 +18,12 @@
 #include <list>
 #include <numeric>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_device_defines.h"
 #include "api/audio/create_audio_device_module.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/units/time_delta.h"
@@ -33,12 +32,12 @@
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/time_utils.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -113,8 +112,8 @@ enum class TransportType {
 // measurements.
 class AudioStream {
  public:
-  virtual void Write(ArrayView<const int16_t> source) = 0;
-  virtual void Read(ArrayView<int16_t> destination) = 0;
+  virtual void Write(std::span<const int16_t> source) = 0;
+  virtual void Read(std::span<int16_t> destination) = 0;
 
   virtual ~AudioStream() = default;
 };
@@ -141,7 +140,7 @@ int IndexToMilliseconds(size_t index, size_t frames_per_10ms_buffer) {
 // change over time and that both sides will in most cases use the same size.
 class FifoAudioStream : public AudioStream {
  public:
-  void Write(ArrayView<const int16_t> source) override {
+  void Write(std::span<const int16_t> source) override {
     RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
     const size_t size = [&] {
       MutexLock lock(&lock_);
@@ -158,7 +157,7 @@ class FifoAudioStream : public AudioStream {
     written_elements_ += size;
   }
 
-  void Read(ArrayView<int16_t> destination) override {
+  void Read(std::span<int16_t> destination) override {
     MutexLock lock(&lock_);
     if (fifo_.empty()) {
       std::fill(destination.begin(), destination.end(), 0);
@@ -227,7 +226,7 @@ class LatencyAudioStream : public AudioStream {
   }
 
   // Insert periodic impulses in first two samples of `destination`.
-  void Read(ArrayView<int16_t> destination) override {
+  void Read(std::span<int16_t> destination) override {
     RTC_DCHECK_RUN_ON(&read_thread_checker_);
     if (read_count_ == 0) {
       PRINT("[");
@@ -249,7 +248,7 @@ class LatencyAudioStream : public AudioStream {
 
   // Detect received impulses in `source`, derive time between transmission and
   // detection and add the calculated delay to list of latencies.
-  void Write(ArrayView<const int16_t> source) override {
+  void Write(std::span<const int16_t> source) override {
     RTC_DCHECK_RUN_ON(&write_thread_checker_);
     RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
     MutexLock lock(&lock_);
@@ -402,9 +401,8 @@ class MockAudioTransport : public test::MockAudioTransport {
     }
     // Write audio data to audio stream object if one has been injected.
     if (audio_stream_) {
-      audio_stream_->Write(
-          MakeArrayView(static_cast<const int16_t*>(audio_buffer),
-                        samples_per_channel * channels));
+      audio_stream_->Write(std::span(static_cast<const int16_t*>(audio_buffer),
+                                     samples_per_channel * channels));
     }
     // Signal the event after given amount of callbacks.
     if (event_ && ReceivedEnoughCallbacks()) {
@@ -443,8 +441,8 @@ class MockAudioTransport : public test::MockAudioTransport {
     samples_out = samples_per_channel * channels;
     // Read audio data from audio stream object if one has been injected.
     if (audio_stream_) {
-      audio_stream_->Read(MakeArrayView(static_cast<int16_t*>(audio_buffer),
-                                        samples_per_channel * channels));
+      audio_stream_->Read(std::span(static_cast<int16_t*>(audio_buffer),
+                                    samples_per_channel * channels));
     } else {
       // Fill the audio buffer with zeros to avoid disturbing audio.
       const size_t num_bytes = samples_per_channel * bytes_per_frame;
@@ -525,11 +523,7 @@ class MAYBE_AudioDeviceTest
     : public ::testing::TestWithParam<AudioDeviceModule::AudioLayer> {
  protected:
   MAYBE_AudioDeviceTest()
-      : audio_layer_(GetParam()), env_(CreateEnvironment()) {
-    LogMessage::LogToDebug(LS_INFO);
-    // Add extra logging fields here if needed for debugging.
-    LogMessage::LogTimestamps();
-    LogMessage::LogThreads();
+      : audio_layer_(GetParam()), env_(CreateTestEnvironment()) {
     audio_device_ = CreateAudioDevice();
     EXPECT_NE(audio_device_.get(), nullptr);
     AudioDeviceModule::AudioLayer audio_layer;
@@ -673,7 +667,7 @@ class MAYBE_AudioDeviceTest
 // Instead of using the test fixture, verify that the different factory methods
 // work as intended.
 TEST(MAYBE_AudioDeviceTestWin, ConstructDestructWithFactory) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   scoped_refptr<AudioDeviceModule> audio_device;
   // The default environment should work for all platforms when a default ADM is
   // requested.

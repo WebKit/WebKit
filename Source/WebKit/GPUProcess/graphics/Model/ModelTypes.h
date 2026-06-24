@@ -26,7 +26,10 @@
 
 #include <wtf/Platform.h>
 
+#if PLATFORM(COCOA)
+
 #ifdef __cplusplus
+#include <WebCore/SharedMemory.h>
 #include <WebCore/WebGPUPrimitiveTopology.h>
 #include <WebCore/WebGPUTextureFormat.h>
 #include <WebCore/WebGPUTextureUsage.h>
@@ -263,6 +266,9 @@ typedef NS_ENUM(NSInteger, WKBridgeConstant) {
     WKBridgeConstantMatrix2f,
     WKBridgeConstantMatrix3f,
     WKBridgeConstantMatrix4f,
+    WKBridgeConstantMatrix2h,
+    WKBridgeConstantMatrix3h,
+    WKBridgeConstantMatrix4h,
     WKBridgeConstantQuatf,
     WKBridgeConstantQuath,
     WKBridgeConstantFloat2,
@@ -321,9 +327,10 @@ typedef NS_ENUM(NSInteger, WKBridgeNodeType) {
 @property (nonatomic, readonly) WKBridgeConstant constant;
 @property (nonatomic, readonly, strong) NSArray<WKBridgeValueString *> *constantValues;
 @property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly, nullable) NSString *colorSpaceName;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithConstant:(WKBridgeConstant)constant constantValues:(NSArray<WKBridgeValueString *> *)constantValues name:(NSString *)name NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithConstant:(WKBridgeConstant)constant constantValues:(NSArray<WKBridgeValueString *> *)constantValues name:(NSString *)name colorSpaceName:(nullable NSString *)colorSpaceName NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -478,7 +485,12 @@ NS_SWIFT_SENDABLE
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithDevice:(id<MTLDevice>)device memoryOwner:(task_id_token_t)memoryOwner NS_DESIGNATED_INITIALIZER;
 
-- (void)createMaterialCompiler:(void (^)(void))completionHandler;
+@property (nonatomic) BOOL standardDynamicRange;
+
+- (void)makeStandaloneResourcesWithCompletionHandler:(void (^)(void))completionHandler;
+- (void)createMaterialCompiler;
+- (void)makeRendererResourcesWithCompletionHandler:(void (^)(void))completionHandler;
+- (void)createRenderer;
 
 @end
 
@@ -486,13 +498,12 @@ NS_SWIFT_SENDABLE
 
 - (nullable id<MTLCommandBuffer>)commandBuffer;
 - (void)renderWithTexture:(id<MTLTexture>)texture commandBuffer:(id<MTLCommandBuffer>)commandBuffer;
-- (void)updateMesh:(NSArray<WKBridgeUpdateMesh *> *)descriptor completionHandler:(void (^)(void))completionHandler;
+- (void)updateMesh:(NSArray<WKBridgeUpdateMesh *> *)descriptor;
 - (void)updateTexture:(NSArray<WKBridgeUpdateTexture *> *)descriptor;
-- (void)updateMaterial:(NSArray<WKBridgeUpdateMaterial *> *)descriptor completionHandler:(void (^)(void))completionHandler;
+- (void)updateMaterial:(NSArray<WKBridgeUpdateMaterial *> *)descriptor;
 - (BOOL)processRemovals:(NSArray<WKBridgeTypedResourceId *> *)meshRemovals materialRemovals:(NSArray<WKBridgeTypedResourceId *> *)materialRemovals  textureRemovals:(NSArray<WKBridgeTypedResourceId *> *)textureRemovals;
 - (void)setTransform:(simd_float4x4)transform;
 - (void)setFOV:(float)fovY;
-- (void)setBackgroundColor:(simd_float3)color;
 - (void)setPlaying:(BOOL)play;
 - (void)setEnvironmentMap:(WKBridgeUpdateTexture *)imageAsset;
 
@@ -509,8 +520,8 @@ NS_SWIFT_SENDABLE
 - (double)currentTime;
 - (void)setCurrentTime:(double)newTime;
 - (double)duration;
-- (void)loadModelFrom:(NSURL *)url;
-- (BOOL)loadModel:(NSData *)data;
+- (BOOL)treatZAsUpAxis;
+- (BOOL)loadModel:(NSData *)data mimeType:(NSString *)mimeType;
 - (nullable WKBridgeUpdateTexture *)loadEnvironmentMap:(NSData *)data;
 - (void)update:(double)deltaTime;
 - (void)setLoop:(BOOL)loop;
@@ -542,7 +553,7 @@ struct ImageAssetSwizzle {
 };
 
 struct ImageAsset {
-    Vector<uint8_t> data;
+    std::optional<WebCore::SharedMemory::Handle> dataHandle;
     long width { 0 };
     long height { 0 };
     long depth { 0 };
@@ -669,6 +680,9 @@ enum class Constant : uint8_t {
     kMatrix2f,
     kMatrix3f,
     kMatrix4f,
+    kMatrix2h,
+    kMatrix3h,
+    kMatrix4h,
     kQuatf,
     kQuath,
     kFloat2,
@@ -707,6 +721,7 @@ struct ConstantContainer {
     Constant constant;
     Vector<Variant<String, double>> constantValues;
     String name;
+    std::optional<String> colorSpaceName;
 };
 
 struct InputOutput {
@@ -820,9 +835,12 @@ typedef struct WebModelCreateMeshDescriptor {
     unsigned width;
     unsigned height;
     Vector<RetainPtr<IOSurfaceRef>> ioSurfaces;
-    const WebModel::ImageAsset& diffuseTexture;
-    const WebModel::ImageAsset& specularTexture;
+    WebModel::ImageAsset&& diffuseTexture;
+    WebModel::ImageAsset&& specularTexture;
     const WebCore::ProcessIdentity* processIdentity;
+    bool standardDynamicRange { false };
 } WebModelCreateMeshDescriptor;
+
+#endif
 
 #endif

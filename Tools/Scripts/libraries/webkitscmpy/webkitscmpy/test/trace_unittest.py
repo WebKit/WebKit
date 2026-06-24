@@ -148,6 +148,12 @@ class TestRelationship(TestCase):
 
 
 class TestCommitsStory(TestCase):
+    def setUp(self):
+        super(TestCommitsStory, self).setUp()
+        patcher = patch('webkitbugspy.Tracker._trackers', [])
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def test_cherry_pick(self):
         with bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
             commit = Commit(
@@ -203,6 +209,9 @@ class TestTrace(testing.PathTestCase):
         super(TestTrace, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
         os.mkdir(os.path.join(self.path, '.svn'))
+        patcher = patch('webkitbugspy.Tracker._trackers', [])
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def test_none(self):
         with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(), Terminal.override_atty(sys.stdin, isatty=False):

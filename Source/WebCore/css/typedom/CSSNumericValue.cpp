@@ -165,6 +165,11 @@ template<typename Op> static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpressi
 }
 
 // https://drafts.css-houdini.org/css-typed-om/#reify-a-math-expression
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyMathExpression(const CSS::UnevaluatedCalcBase& calc)
+{
+    return CSSNumericValue::reifyMathExpression(calc.calcValue().tree().root);
+}
+
 ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyMathExpression(const CSSCalc::Tree& tree)
 {
     return CSSNumericValue::reifyMathExpression(tree.root);
@@ -197,7 +202,7 @@ static ExceptionOr<Ref<CSSNumericValue>> invert(Ref<CSSNumericValue>&& value)
 {
     // https://drafts.css-houdini.org/css-typed-om/#cssmath-invert-a-cssnumericvalue
     if (auto* mathInvert = dynamicDowncast<CSSMathInvert>(value.get()))
-        return Ref { mathInvert->value() };
+        return protect(mathInvert->value());
 
     if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get())) {
         if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER) {
@@ -358,7 +363,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyValue(Document&, const C
 {
     return WTF::switchOn(primitiveValue,
         [&](const CSSPrimitiveValue::Calc& calc) -> ExceptionOr<Ref<CSSNumericValue>> {
-            return reifyMathExpression(calc.tree());
+            return reifyMathExpression(calc);
         },
         [&](const CSSPrimitiveValue::Raw& raw) -> ExceptionOr<Ref<CSSNumericValue>> {
             if (raw.unit == CSSUnitType::CSS_INTEGER) {

@@ -13,9 +13,9 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 #include "rtc_base/checks.h"
@@ -52,7 +52,7 @@ std::unique_ptr<PostFilter> PostFilter::CreateIfNeeded(int sample_rate_hz,
 }
 
 PostFilter::PostFilter(
-    ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients> coefficients,
+    std::span<const CascadedBiQuadFilter::BiQuadCoefficients> coefficients,
     size_t num_channels) {
   RTC_DCHECK(!coefficients.empty());
 
@@ -65,8 +65,8 @@ PostFilter::PostFilter(
 void PostFilter::Process(AudioBuffer& audio) {
   RTC_DCHECK_EQ(filters_.size(), audio.num_channels());
   for (size_t k = 0; k < audio.num_channels(); ++k) {
-    ArrayView<float> channel_data =
-        ArrayView<float>(&audio.channels()[k][0], audio.num_frames());
+    std::span<float> channel_data =
+        std::span<float>(&audio.channels()[k][0], audio.num_frames());
     filters_[k]->Process(channel_data);
   }
 }

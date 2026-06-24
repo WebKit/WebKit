@@ -90,7 +90,7 @@
     auto flags = (type == AVAudioSessionInterruptionTypeEnded && [[[notification userInfo] objectForKey:AVAudioSessionInterruptionOptionKey] unsignedIntegerValue] == AVAudioSessionInterruptionOptionShouldResume) ? WebCore::AudioSession::MayResume::Yes : WebCore::AudioSession::MayResume::No;
 
     callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self), type, flags]() mutable {
-        auto* callback = protectedSelf->_callback;
+        RefPtr callback = protectedSelf->_callback;
         if (!callback)
             return;
 
@@ -105,7 +105,7 @@
 - (void)sessionMediaServicesWereReset:(NSNotification *)notification
 {
     if (_callback)
-        _callback->sessionMediaServicesWereReset();
+        protect(_callback)->sessionMediaServicesWereReset();
 }
 @end
 

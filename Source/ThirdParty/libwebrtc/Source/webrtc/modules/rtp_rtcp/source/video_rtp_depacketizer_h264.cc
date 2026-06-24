@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame_type.h"
 #include "common_video/h264/h264_common.h"
@@ -40,9 +40,9 @@ constexpr size_t kNalHeaderSize = 1;
 constexpr size_t kFuAHeaderSize = 2;
 constexpr size_t kLengthFieldSize = 2;
 
-std::vector<ArrayView<const uint8_t>> ParseStapA(
-    ArrayView<const uint8_t> data) {
-  std::vector<ArrayView<const uint8_t>> nal_units;
+std::vector<std::span<const uint8_t>> ParseStapA(
+    std::span<const uint8_t> data) {
+  std::vector<std::span<const uint8_t>> nal_units;
   ByteBufferReader reader(data);
   if (!reader.Consume(kNalHeaderSize)) {
     return nal_units;
@@ -64,7 +64,7 @@ std::vector<ArrayView<const uint8_t>> ParseStapA(
 
 std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
     CopyOnWriteBuffer rtp_payload) {
-  ArrayView<const uint8_t> payload_data(rtp_payload);
+  std::span<const uint8_t> payload_data(rtp_payload);
   std::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed_payload(
       std::in_place);
   bool modified_buffer = false;
@@ -79,7 +79,7 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
                           .emplace<RTPVideoHeaderH264>();
 
   uint8_t nal_type = payload_data[0] & kH264TypeMask;
-  std::vector<ArrayView<const uint8_t>> nal_units;
+  std::vector<std::span<const uint8_t>> nal_units;
   if (nal_type == H264::NaluType::kStapA) {
     nal_units = ParseStapA(payload_data);
     if (nal_units.empty()) {
@@ -96,12 +96,12 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
 
   parsed_payload->video_header.frame_type = VideoFrameType::kVideoFrameDelta;
 
-  for (const ArrayView<const uint8_t>& nal_unit : nal_units) {
+  for (const std::span<const uint8_t>& nal_unit : nal_units) {
     NaluInfo nalu;
     nalu.type = nal_unit[0] & kH264TypeMask;
     nalu.sps_id = -1;
     nalu.pps_id = -1;
-    ArrayView<const uint8_t> nalu_data = nal_unit.subspan(H264::kNaluTypeSize);
+    std::span<const uint8_t> nalu_data = nal_unit.subspan(H264::kNaluTypeSize);
 
     if (nalu_data.empty()) {
       RTC_LOG(LS_WARNING) << "Skipping empty NAL unit.";
@@ -246,7 +246,7 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ParseFuaNalu(
     if (original_nal_type == H264::NaluType::kIdr ||
         original_nal_type == H264::NaluType::kSlice) {
       std::optional<PpsParser::SliceHeader> slice_header =
-          PpsParser::ParseSliceHeader(ArrayView<const uint8_t>(rtp_payload)
+          PpsParser::ParseSliceHeader(std::span<const uint8_t>(rtp_payload)
                                           .subspan(2 * kNalHeaderSize));
       if (slice_header) {
         nalu.pps_id = slice_header->pic_parameter_set_id;

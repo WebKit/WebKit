@@ -25,6 +25,9 @@
 #include "../../crypto/test/test_util.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 struct RIPEMDTestCase {
   const char *input;
   uint8_t expected[RIPEMD160_DIGEST_LENGTH];
@@ -101,3 +104,6 @@ TEST(RIPEMDTest, RunTest) {
   EXPECT_EQ(Bytes(digest), Bytes(kMillionADigest))
       << "Digest incorrect for \"million a's\" test";
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

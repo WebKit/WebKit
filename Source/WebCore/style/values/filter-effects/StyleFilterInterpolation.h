@@ -38,7 +38,7 @@ namespace Style {
 // https://drafts.fxtf.org/filter-effects/#interpolation-of-filters
 
 template<typename FilterValue>
-auto blendFilterValue(const FilterValue& from, const FilterValue& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> FilterValue
+auto blendFilterValue(const FilterValue& from, const FilterValue& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> FilterValue
 {
     ASSERT(from.index() == to.index());
 
@@ -53,7 +53,7 @@ auto blendFilterValue(const FilterValue& from, const FilterValue& to, const Rend
 }
 
 template<typename FilterValue>
-auto blendFilterValueFromOnly(const FilterValue& from, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> FilterValue
+auto blendFilterValueFromOnly(const FilterValue& from, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> FilterValue
 {
     return WTF::visit(WTF::makeVisitor(
         [&]<CSSValueID C, typename T>(const FunctionNotation<C, T>& fromValue) -> FilterValue {
@@ -66,7 +66,7 @@ auto blendFilterValueFromOnly(const FilterValue& from, const RenderStyle& fromSt
 }
 
 template<typename FilterValue>
-auto blendFilterValueToOnly(const FilterValue& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> FilterValue
+auto blendFilterValueToOnly(const FilterValue& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> FilterValue
 {
     return WTF::visit(WTF::makeVisitor(
         [&]<CSSValueID C, typename T>(const FunctionNotation<C, T>& toValue) -> FilterValue {
@@ -101,7 +101,7 @@ auto canBlendFilterLists(const FilterList& from, const FilterList& to, Composite
 }
 
 template<typename FilterList>
-auto blendFilterLists(const FilterList& from, const FilterList& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> FilterList
+auto blendFilterLists(const FilterList& from, const FilterList& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> FilterList
 {
     using FilterValue = typename FilterList::value_type;
 

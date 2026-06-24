@@ -58,7 +58,7 @@ TransformOperations TransformOperations::clone() const
 void TransformOperations::apply(TransformationMatrix& matrix, unsigned start) const
 {
     for (unsigned i = start; i < m_operations.size(); ++i)
-        m_operations[i]->apply(matrix);
+        protect(m_operations[i])->apply(matrix);
 }
 
 bool TransformOperations::isInvertible() const

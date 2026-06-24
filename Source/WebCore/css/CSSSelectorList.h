@@ -29,6 +29,7 @@
 #include <iterator>
 #include <memory>
 #include <wtf/FixedVector.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -117,5 +118,19 @@ private:
 };
 
 void NODELETE add(Hasher&, const CSSSelectorList&);
+
+class RefCountedCSSSelectorList : public RefCounted<RefCountedCSSSelectorList> {
+public:
+    static Ref<RefCountedCSSSelectorList> create(CSSSelectorList&& selectorList) { return adoptRef(*new RefCountedCSSSelectorList(WTF::move(selectorList))); }
+
+    const CSSSelectorList& selectorList() const LIFETIME_BOUND { return m_selectorList; }
+
+private:
+    explicit RefCountedCSSSelectorList(CSSSelectorList&& selectorList)
+        : m_selectorList(WTF::move(selectorList))
+    { }
+
+    CSSSelectorList m_selectorList;
+};
 
 } // namespace WebCore

@@ -1,3 +1,7 @@
 
 PASS SVGAnimatedRect interface - utilizing the viewBox property of SVGSVGElement
+PASS baseVal/animVal are zero rects when the viewBox attribute is unset
+PASS baseVal/animVal return the same SVGRect across reads
+PASS setAttribute('viewBox', ...) is reflected in baseVal/animVal
+PASS removeAttribute('viewBox') resets baseVal/animVal to a zero rect
 

@@ -23,16 +23,16 @@ layer at (0,0) size 800x600
         text run at (0,273) width 93: "initial selected:"
       RenderBR {BR} at (93,273) size 0x18
       RenderMenuList {SELECT} at (0,291) size 191x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 189x28
-          RenderText at (5,5) size 163x18
+        RenderBlock {DIV} at (1,1) size 189x28
+          RenderText {#text} at (5,5) size 163x18
             text run at (5,5) width 163: "this should be selected"
       RenderBR {BR} at (191,297) size 0x18
       RenderText {#text} at (0,321) size 161x18
         text run at (0,321) width 161: "dynamic selected change:"
       RenderBR {BR} at (161,321) size 0x18
       RenderMenuList {SELECT} at (0,339) size 191x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 189x28
-          RenderText at (5,5) size 163x18
+        RenderBlock {DIV} at (1,1) size 189x28
+          RenderText {#text} at (5,5) size 163x18
             text run at (5,5) width 163: "this should be selected"
       RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (191,345) size 0x18
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
         text run at (0,369) width 211: "dynamic insert of selected option:"
       RenderBR {BR} at (211,369) size 0x18
       RenderMenuList {SELECT} at (0,387) size 191x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 189x28
-          RenderText at (5,5) size 163x18
+        RenderBlock {DIV} at (1,1) size 189x28
+          RenderText {#text} at (5,5) size 163x18
             text run at (5,5) width 163: "this should be selected"
       RenderText {#text} at (0,0) size 0x0

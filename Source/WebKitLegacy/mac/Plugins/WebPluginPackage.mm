@@ -30,6 +30,7 @@
 
 #import <WebKitLegacy/WebKitLogging.h>
 #import <WebKitLegacy/WebKitNSStringExtras.h>
+#import <WebKitLegacy/WebPluginViewFactory.h>
 
 NSString *WebPlugInBaseURLKey =                 @"WebPlugInBaseURLKey";
 NSString *WebPlugInAttributesKey =              @"WebPlugInAttributesKey";
@@ -117,6 +118,11 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 
 @end
 
+// This category supplies default implementations for only the two `isExcluded`
+// halves of the WebScripting informal protocol; the remaining methods declared
+// in WebScriptObject.h are intentionally left to subclasses.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation NSObject (WebScripting)
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
@@ -130,3 +136,4 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 }
 
 @end
+#pragma clang diagnostic pop

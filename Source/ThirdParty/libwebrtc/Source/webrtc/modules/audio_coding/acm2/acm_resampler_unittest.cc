@@ -24,30 +24,33 @@ TEST(ResamplerHelperTest, MaybeResampleCheckForMaxSize) {
   ResamplerHelper resampler;
   AudioFrame audio_frame;
 
-  // Create an audio frame that requires resampling from 32kHz to 48kHz
-  // with a very high number of channels (24).
-  const int kCurrentSampleRateHz = 32000;
-  const int kDesiredSampleRateHz = 48000;
-  const size_t kChannels = 24;
+  // Create an audio frame that requires resampling from 48kHz to 96kHz
+  // with a high number of channels (16) to exceed the buffer size.
+  const int kCurrentSampleRateHz = 48000;
+  const int kDesiredSampleRateHz = 96000;
+  const size_t kChannels = 16;
 
-  // 10 ms of data at 32kHz = 320 samples per channel.
-  std::vector<int16_t> dummy_data(320 * 24, 0);
-  audio_frame.UpdateFrame(0, dummy_data.data(), 320, kCurrentSampleRateHz,
+  // 10 ms of data at 48kHz = 480 samples per channel.
+  std::vector<int16_t> dummy_data(480 * 16, 0);
+  audio_frame.UpdateFrame(0, dummy_data.data(), 480, kCurrentSampleRateHz,
                           AudioFrame::kNormalSpeech, AudioFrame::kVadActive,
                           kChannels);
 
   // The resampler prime path will attempt to allocate a buffer that is
-  // kChannels * (kDesiredSampleRateHz / 100) = 24 * 480 = 11520 samples,
+  // kChannels * (kDesiredSampleRateHz / 100) = 16 * 960 = 15360 samples,
   // which exceeds AudioFrame::kMaxDataSizeSamples (7680).
   const bool resample_success =
       resampler.MaybeResample(kDesiredSampleRateHz, &audio_frame);
 
   // Verify that MaybeResample correctly detects the buffer size condition and
-  // safely aborts the operation by returning false and muting the frame.
+  // safely aborts the operation by returning false, muting the frame, and
+  // capping the channel count to avoid a buffer overflow in the muted data
+  // array.
   EXPECT_FALSE(resample_success);
   EXPECT_TRUE(audio_frame.muted());
   EXPECT_EQ(audio_frame.sample_rate_hz_, kDesiredSampleRateHz);
-  EXPECT_EQ(audio_frame.num_channels_, kChannels);
+  EXPECT_EQ(audio_frame.num_channels_, AudioFrame::kMaxDataSizeSamples /
+                                           audio_frame.samples_per_channel());
 }
 
 TEST(ResamplerHelperTest, MaybeResampleValidMaxSize) {

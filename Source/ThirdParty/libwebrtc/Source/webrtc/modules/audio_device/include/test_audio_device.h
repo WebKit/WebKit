@@ -13,9 +13,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
@@ -59,7 +59,7 @@ class TestAudioDeviceModule {
     virtual int NumChannels() const = 0;
     // Renders the passed audio data and returns true if the renderer wants
     // to keep receiving data, or false otherwise.
-    virtual bool Render(ArrayView<const int16_t> data) = 0;
+    virtual bool Render(std::span<const int16_t> data) = 0;
   };
 
   // A fake capturer that generates pulses with random samples between

@@ -85,7 +85,7 @@ EffectiveRateChangedListener::~EffectiveRateChangedListener()
 
 void EffectiveRateChangedListener::effectiveRateChanged()
 {
-    m_callback(PAL::CMTimebaseGetRate(m_timebase.get()));
+    m_callback(PAL::CMTimebaseGetEffectiveRate(m_timebase.get()));
 }
 
 void EffectiveRateChangedListener::stop()

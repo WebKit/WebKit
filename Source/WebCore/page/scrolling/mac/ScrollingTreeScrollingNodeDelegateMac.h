@@ -91,9 +91,9 @@ private:
     void didStopRubberBandAnimation() final;
     void rubberBandingStateChanged(bool) final;
     FloatSize rubberBandTargetOffset() const final;
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    bool hasBannerViewOverlay() const final;
-    float bannerViewMaximumHeight() const final;
+#if HAVE(NSREFRESHCONTROLLER)
+    bool hasRefreshController() const final;
+    float refreshControllerSnappingThreshold() const final;
 #endif
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
 

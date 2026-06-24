@@ -244,9 +244,9 @@ void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, con
         return;
     }
 
-    runOrDelayTaskForImport([weakThis = WeakPtr { *this }, callback = WTF::move(callback), topOrigin = WTF::move(topOrigin), clientURL]() mutable {
+    runOrDelayTaskForImport([weakThis = WeakPtr { *this }, completionHandler = CompletionHandlerWithFinalizer<void(Vector<ServiceWorkerRegistrationData>&&)>(WTF::move(callback), [](auto& callback) { callback({ }); }), topOrigin = WTF::move(topOrigin), clientURL]() mutable {
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendWithAsyncReply(Messages::WebSWServerConnection::GetRegistrations { topOrigin, clientURL }, WTF::move(callback));
+            protectedThis->sendWithAsyncReply(Messages::WebSWServerConnection::GetRegistrations { topOrigin, clientURL }, WTF::move(completionHandler));
     });
 }
 
@@ -259,6 +259,14 @@ void WebSWClientConnection::connectionToServerLost()
 void WebSWClientConnection::clear()
 {
     clearPendingJobs();
+
+    auto retrieveRecordResponseBodyCallbacks = std::exchange(m_retrieveRecordResponseBodyCallbacks, { });
+    for (auto& callback : retrieveRecordResponseBodyCallbacks.values())
+        callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Connection to network process lost"_s }));
+
+    // Destroying these tasks fires their captured CompletionHandlerWithFinalizer
+    // objects, which resolves the corresponding JS-visible promises with default values.
+    m_tasksPendingOriginImport.clear();
 }
 
 void WebSWClientConnection::terminateWorkerForTesting(ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
@@ -420,14 +428,14 @@ void WebSWClientConnection::retrieveRecordResponseBody(BackgroundFetchRecordIden
 
 void WebSWClientConnection::notifyRecordResponseBodyChunk(RetrieveRecordResponseBodyCallbackIdentifier identifier, IPC::SharedBufferReference&& data)
 {
-    auto iterator = m_retrieveRecordResponseBodyCallbacks.find(identifier);
-    if (iterator == m_retrieveRecordResponseBodyCallbacks.end())
+    auto callback = m_retrieveRecordResponseBodyCallbacks.take(identifier);
+    if (!callback)
         return;
     auto buffer = data.unsafeBuffer();
     bool isDone = !buffer;
-    iterator->value(WTF::move(buffer));
-    if (isDone)
-        m_retrieveRecordResponseBodyCallbacks.remove(iterator);
+    callback(WTF::move(buffer));
+    if (!isDone)
+        m_retrieveRecordResponseBodyCallbacks.add(identifier, WTF::move(callback));
 }
 
 void WebSWClientConnection::notifyRecordResponseBodyEnd(RetrieveRecordResponseBodyCallbackIdentifier identifier, WebCore::ResourceError&& error)

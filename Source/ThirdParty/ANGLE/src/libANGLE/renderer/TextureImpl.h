@@ -111,17 +111,14 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
 
     virtual angle::Result copyRenderbufferSubData(const gl::Context *context,
                                                   const gl::Renderbuffer *srcBuffer,
-                                                  GLint srcLevel,
                                                   GLint srcX,
                                                   GLint srcY,
-                                                  GLint srcZ,
                                                   GLint dstLevel,
                                                   GLint dstX,
                                                   GLint dstY,
                                                   GLint dstZ,
                                                   GLsizei srcWidth,
-                                                  GLsizei srcHeight,
-                                                  GLsizei srcDepth);
+                                                  GLsizei srcHeight);
 
     virtual angle::Result copyTextureSubData(const gl::Context *context,
                                              const gl::Texture *srcTexture,
@@ -192,13 +189,6 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                                    GLbitfield usageFlags,
                                                    const void *imageCreateInfoPNext) = 0;
 
-    virtual angle::Result setImageExternal(const gl::Context *context,
-                                           const gl::ImageIndex &index,
-                                           GLenum internalFormat,
-                                           const gl::Extents &size,
-                                           GLenum format,
-                                           GLenum type);
-
     virtual angle::Result setEGLImageTarget(const gl::Context *context,
                                             gl::TextureType type,
                                             egl::Image *image) = 0;
@@ -234,8 +224,6 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
     // Override if accurate native memory size information is available
     virtual GLint getMemorySize() const;
     virtual GLint getLevelMemorySize(gl::TextureTarget target, GLint level);
-
-    virtual GLint getNativeID() const;
 
     virtual GLint getImageCompressionRate(const gl::Context *context);
     virtual GLint getFormatSupportedCompressionRates(const gl::Context *context,

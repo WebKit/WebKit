@@ -55,3 +55,9 @@ if (("$ENV{WEBKIT_USE_SCCACHE}" STREQUAL "1") OR DEFINED ENV{SCCACHE_REDIS} OR D
         set(CMAKE_CXX_COMPILER_LAUNCHER ${SCCACHE_FOUND})
     endif ()
 endif ()
+
+if (APPLE AND CMAKE_GENERATOR STREQUAL "Ninja")
+    set(_clang_wrapper "${CMAKE_SOURCE_DIR}/Source/cmake/clang-wrapper")
+    list(INSERT CMAKE_CXX_COMPILER_LAUNCHER 0 "${_clang_wrapper}")
+    list(INSERT CMAKE_OBJCXX_COMPILER_LAUNCHER 0 "${_clang_wrapper}")
+endif ()

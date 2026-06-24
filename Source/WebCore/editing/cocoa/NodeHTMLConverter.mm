@@ -72,8 +72,8 @@
 #import "LocalizedStrings.h"
 #import "NodeName.h"
 #import "RenderImage.h"
-#import "RenderStyle+GettersInlines.h"
 #import "RenderText.h"
+#import "StyleComputedStyle+GettersInlines.h"
 #import "StyleExtractor.h"
 #import "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
 #import "StyleProperties.h"
@@ -266,7 +266,7 @@ HTMLConverter::HTMLConverter(const SimpleRange& range, IgnoreUserSelectNone trea
     : m_start(makeContainerOffsetPosition(range.start))
     , m_end(makeContainerOffsetPosition(range.end))
     , m_userSelectNoneStateCache(ComposedTree)
-    , m_ignoreUserSelectNoneContent(treatment == IgnoreUserSelectNone::Yes && !range.start.document().quirks().needsToCopyUserSelectNoneQuirk())
+    , m_ignoreUserSelectNoneContent(treatment == IgnoreUserSelectNone::Yes && !protect(range.start.document())->quirks().needsToCopyUserSelectNoneQuirk())
 {
     _attrStr = adoptNS([[NSMutableAttributedString alloc] init]);
     _documentAttrs = adoptNS([[NSMutableDictionary alloc] init]);
@@ -779,7 +779,7 @@ RefPtr<Element> HTMLConverter::_blockLevelElementForNode(Node* node)
     if (!element)
         element = node->parentElement();
     if (element && !_caches->isBlockElement(*element))
-        element = _blockLevelElementForNode(element->parentInComposedTree());
+        element = _blockLevelElementForNode(protect(element->parentInComposedTree()));
     return element;
 }
 
@@ -788,7 +788,7 @@ static Color normalizedColor(Color color, bool ignoreDefaultColor, Element& elem
     if (!ignoreDefaultColor)
         return color;
 
-    bool useDarkAppearance = element.document().useDarkAppearance(element.existingComputedStyle());
+    bool useDarkAppearance = protect(element.document())->useDarkAppearance(element.existingComputedStyle());
     if (useDarkAppearance && Color::isWhiteColor(color))
         return Color();
 
@@ -1625,9 +1625,9 @@ void HTMLConverter::_addLinkForElement(Element& element, NSRange range)
     RetainPtr urlString = element.getAttribute(hrefAttr).createNSString();
     RetainPtr strippedString = [urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (urlString && [urlString length] > 0 && strippedString && [strippedString length] > 0 && ![strippedString hasPrefix:@"#"]) {
-        RetainPtr url = element.document().encodingParseURL(urlString.get()).createNSURL();
+        RetainPtr url = protect(element.document())->encodingParseURL(urlString.get()).createNSURL();
         if (!url)
-            url = element.document().encodingParseURL(strippedString.get()).createNSURL();
+            url = protect(element.document())->encodingParseURL(strippedString.get()).createNSURL();
         if (!url)
             url = [NSURL _web_URLWithString:strippedString.get() relativeToURL:nil];
         [_attrStr addAttribute:NSLinkAttributeName value:url ? (id)url.get() : (id)urlString.get() range:range];
@@ -1752,7 +1752,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         RefPtr tableElement = &element;
         if (displayValue == "table-row-group"_s) {
             // If we are starting in medias res, the first thing we see may be the tbody, so go up to the table
-            tableElement = _blockLevelElementForNode(element.parentInComposedTree());
+            tableElement = _blockLevelElementForNode(protect(element.parentInComposedTree()));
             if (!tableElement || _caches->propertyValueForNode(*tableElement, CSSPropertyDisplay) != "table"_s)
                 tableElement = &element;
         }
@@ -1787,7 +1787,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
 #endif
         RetainPtr urlString = element.imageSourceURL().createNSString();
         if (retval && urlString && [urlString length] > 0) {
-            RetainPtr url = element.document().encodingParseURL(urlString.get()).createNSURL();
+            RetainPtr url = protect(element.document())->encodingParseURL(urlString.get()).createNSURL();
             if (!url)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
 #if PLATFORM(IOS_FAMILY)
@@ -1807,14 +1807,14 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             RetainPtr<NSURL> baseURL;
             RetainPtr<NSURL> url;
             if (baseString && [baseString length] > 0) {
-                baseURL = element.document().encodingParseURL(baseString.get()).createNSURL();
+                baseURL = protect(element.document())->encodingParseURL(baseString.get()).createNSURL();
                 if (!baseURL)
                     baseURL = [NSURL _web_URLWithString:[baseString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
             }
             if (baseURL)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:baseURL.get()];
             if (!url)
-                url = element.document().encodingParseURL(urlString.get()).createNSURL();
+                url = protect(element.document())->encodingParseURL(urlString.get()).createNSURL();
             if (!url)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:nil];
             if (url)
@@ -1826,7 +1826,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             retval = NO;
         }
     } else if (element.hasTagName(brTag)) {
-        RefPtr blockElement = _blockLevelElementForNode(element.parentInComposedTree());
+        RefPtr blockElement = _blockLevelElementForNode(protect(element.parentInComposedTree()));
         RetainPtr breakClass = element.getAttribute(classAttr).createNSString();
         RetainPtr blockTag = blockElement ? blockElement->tagName().createNSString() : nil;
         BOOL isExtraBreak = [AppleInterchangeNewline.createNSString() isEqualToString:breakClass.get()];

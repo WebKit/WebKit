@@ -1,3 +1,7 @@
 
-PASS script-src-wasm-unsafe-eval-allows-wasm
+PASS WebAssembly.instantiate() is allowed
+PASS WebAssembly.compile() is allowed
+PASS new WebAssembly.Module() is allowed
+PASS WebAssembly.compileStreaming() is allowed
+PASS WebAssembly.instantiateStreaming() is allowed
 

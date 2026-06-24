@@ -92,7 +92,7 @@
                 },
                 "CMAKE_MAKE_PROGRAM": {
                     "type": "FILEPATH",
-                    "value": "${sourceDir}/Tools/Scripts/caffeinate-ninja"
+                    "value": "${sourceDir}/Source/cmake/ninja-wrapper"
                 }
             },
             "environment": {

@@ -569,7 +569,7 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
         return Position();
 
     ASSERT(position.document());
-    position.document()->updateLayoutIgnorePendingStylesheets();
+    protect(position.document())->updateLayoutIgnorePendingStylesheets();
 
     RefPtr node = position.containerNode();
 

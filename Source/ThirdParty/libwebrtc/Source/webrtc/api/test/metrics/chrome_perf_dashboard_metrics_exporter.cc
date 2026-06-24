@@ -11,12 +11,12 @@
 
 #include <cstdio>
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/test/metrics/metric.h"
 #include "test/testsupport/file_utils.h"
 #include "test/testsupport/perf_test.h"
@@ -101,7 +101,7 @@ ChromePerfDashboardMetricsExporter::ChromePerfDashboardMetricsExporter(
     : export_file_path_(export_file_path) {}
 
 bool ChromePerfDashboardMetricsExporter::Export(
-    ArrayView<const Metric> metrics) {
+    std::span<const Metric> metrics) {
   std::unique_ptr<PerfTestResultWriter> writer =
       absl::WrapUnique<PerfTestResultWriter>(CreateHistogramWriter());
   for (const Metric& metric : metrics) {

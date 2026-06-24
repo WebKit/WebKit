@@ -111,8 +111,8 @@ public:
     virtual void rubberBandingStateChanged(bool) { }
 
     virtual FloatSize rubberBandTargetOffset() const { return { }; }
-    virtual bool hasBannerViewOverlay() const { return false; }
-    virtual float bannerViewMaximumHeight() const { return 0; }
+    virtual bool hasRefreshController() const { return false; }
+    virtual float refreshControllerSnappingThreshold() const { return 0; }
 #endif
 
     virtual void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
@@ -206,7 +206,7 @@ public:
     std::optional<RubberbandingState> captureRubberbandingState() const;
     bool restoreRubberbandingState(const RubberbandingState&);
     bool NODELETE shouldAttemptRubberbandingRestoration(const RubberbandingState&);
-    FloatSize NODELETE deltaWithAdditionalAdjustments(const FloatSize& adjustedDelta, bool);
+    FloatSize NODELETE deltaAdjustedForRefreshController(const FloatSize& adjustedDelta, bool);
 #endif
 
 private:
@@ -228,6 +228,8 @@ private:
 
     bool modifyScrollDeltaForStretching(const PlatformWheelEvent&, FloatSize&, bool isHorizontallyStretched, bool isVerticallyStretched);
     bool applyScrollDeltaWithStretching(const PlatformWheelEvent&, FloatSize, bool isHorizontallyStretched, bool isVerticallyStretched);
+
+    FloatSize deltaAlignedToPredominantGestureAxis(MonotonicTime, FloatSize);
 
     void startRubberBandAnimationIfNecessary();
 
@@ -298,7 +300,11 @@ private:
     bool m_momentumScrollInProgress { false };
     bool m_ignoreMomentumScrolls { false };
     bool m_isRubberBanding { false };
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
+
+    FloatSize m_cumulativeGestureDelta;
+    MonotonicTime m_lastGestureEventTime;
+
+#if HAVE(NSREFRESHCONTROLLER)
     bool m_skipAdditionalDeltaAdjustments { false };
 #endif
 

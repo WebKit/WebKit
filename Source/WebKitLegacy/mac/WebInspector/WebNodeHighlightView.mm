@@ -41,7 +41,6 @@
 #import <WebCore/WebCoreThread.h>
 #endif
 
-using namespace WebCore;
 
 @implementation WebNodeHighlightView
 
@@ -98,13 +97,20 @@ using namespace WebCore;
 
         ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-        GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
+        WebCore::GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
         if (CheckedPtr controller = [_webNodeHighlight inspectorController].get())
             controller->drawHighlight(context);
         [NSGraphicsContext restoreGraphicsState];
     }
 }
 #else
+
+using WebCore::FloatPoint;
+using WebCore::FloatQuad;
+using WebCore::InspectorOverlay;
+using WebCore::cachedCGColor;
+using WebCore::findIntersection;
+
 - (void)_attach:(CALayer *)parent numLayers:(NSUInteger)numLayers
 {
     ASSERT(numLayers);

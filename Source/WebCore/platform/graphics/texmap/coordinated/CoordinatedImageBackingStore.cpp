@@ -28,6 +28,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedPlatformLayerBufferNativeImage.h"
+#include "CoordinatedPlatformLayerBufferSkiaImage.h"
 #include "NativeImage.h"
 
 namespace WebCore {
@@ -39,15 +40,30 @@ Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<Nativ
 
 CoordinatedImageBackingStore::CoordinatedImageBackingStore(Ref<NativeImage>&& nativeImage)
     : m_buffer(CoordinatedPlatformLayerBufferNativeImage::create(WTF::move(nativeImage), nullptr))
+    , m_uniqueID(downcast<CoordinatedPlatformLayerBufferNativeImage>(*m_buffer).image()->uniqueID())
 {
 }
+
+#if USE(SKIA)
+Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<NativeImage>&& nativeImage, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+{
+    if (!threadSafeGrContext)
+        return CoordinatedImageBackingStore::create(WTF::move(nativeImage));
+    return adoptRef(*new CoordinatedImageBackingStore(WTF::move(nativeImage), threadSafeGrContext));
+}
+
+CoordinatedImageBackingStore::CoordinatedImageBackingStore(Ref<NativeImage>&& nativeImage, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+    : m_buffer(CoordinatedPlatformLayerBufferSkiaImage::create(nativeImage->platformImage(), threadSafeGrContext))
+    , m_uniqueID(nativeImage->uniqueID())
+{
+}
+#endif
 
 CoordinatedImageBackingStore::~CoordinatedImageBackingStore() = default;
 
 bool CoordinatedImageBackingStore::isSameNativeImage(const NativeImage& nativeImage)
 {
-    auto* image = downcast<CoordinatedPlatformLayerBufferNativeImage>(*m_buffer).image();
-    return image && nativeImage.uniqueID() == image->uniqueID();
+    return nativeImage.uniqueID() == m_uniqueID;
 }
 
 } // namespace WebCore

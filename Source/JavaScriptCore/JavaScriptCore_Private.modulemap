@@ -92,6 +92,11 @@ framework module JavaScriptCore_Private [system] {
         export *
     }
 
+    explicit module JSExportMacros {
+        header "JSExportMacros.h"
+        export *
+    }
+
     explicit module Cxx {
         // This Cxx module is essentially "PrivateHeaders" minus any headers that do not actually require C++.
 

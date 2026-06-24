@@ -1,0 +1,10 @@
+Tests that the certificate subject is a human-readable name, not a raw RFC 2253 distinguished name.
+
+
+== Running test suite: Resource.Security.Certificate.Subject
+-- Running test case: Resource.Security.Certificate.Subject.Format
+PASS: Resource should have been loaded securely.
+PASS: Resource should have certificate information.
+Subject: WebKit Layout Tests
+PASS: Subject should not contain raw RFC 2253 attribute types.
+

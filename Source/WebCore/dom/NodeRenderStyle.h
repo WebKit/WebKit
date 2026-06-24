@@ -26,11 +26,11 @@
 
 #include <WebCore/Node.h>
 #include <WebCore/RenderObjectStyle.h>
-#include <WebCore/RenderStyle.h>
+#include <WebCore/StyleComputedStyle.h>
 
 namespace WebCore {
 
-inline const RenderStyle* Node::renderStyle() const
+inline const Style::ComputedStyle* Node::renderStyle() const
 {
     auto* renderer = this->renderer();
     if (!renderer)

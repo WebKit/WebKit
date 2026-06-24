@@ -108,8 +108,8 @@ public:
     WebCore::FloatSize NODELETE contentsSize() const;
     WebCore::FloatSize NODELETE scaledContentsSize() const;
 
-    void setDisplayMode(PDFDisplayMode displayMode) { m_displayMode = displayMode; }
-    PDFDisplayMode displayMode() const { return m_displayMode; }
+    void setDisplayMode(PDFPluginDisplayMode displayMode) { m_displayMode = displayMode; }
+    PDFPluginDisplayMode displayMode() const { return m_displayMode; }
 
     void setShouldLeftAlignTrailingTwoUpPage(bool value) { m_shouldLeftAlignTrailingTwoUpPage = value; }
     bool shouldLeftAlignTrailingTwoUpPage() const { return m_shouldLeftAlignTrailingTwoUpPage; }
@@ -148,7 +148,7 @@ private:
     Vector<PageGeometry> m_pageGeometry;
     WebCore::FloatRect m_documentBounds;
     float m_scale { 1 };
-    PDFDisplayMode m_displayMode { PDFDisplayMode::SinglePageContinuous };
+    PDFPluginDisplayMode m_displayMode { PDFPluginDisplayMode::SinglePageContinuous };
     bool m_shouldLeftAlignTrailingTwoUpPage { false };
 };
 

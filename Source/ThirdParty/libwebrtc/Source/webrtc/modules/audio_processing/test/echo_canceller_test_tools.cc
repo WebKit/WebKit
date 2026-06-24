@@ -12,20 +12,20 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 
 namespace webrtc {
 
-void RandomizeSampleVector(Random* random_generator, ArrayView<float> v) {
+void RandomizeSampleVector(Random* random_generator, std::span<float> v) {
   RandomizeSampleVector(random_generator, v,
                         /*amplitude=*/32767.f);
 }
 
 void RandomizeSampleVector(Random* random_generator,
-                           ArrayView<float> v,
+                           std::span<float> v,
                            float amplitude) {
   for (auto& v_k : v) {
     v_k = 2 * amplitude * random_generator->Rand<float>() - amplitude;
@@ -33,7 +33,7 @@ void RandomizeSampleVector(Random* random_generator,
 }
 
 template <typename T>
-void DelayBuffer<T>::Delay(ArrayView<const T> x, ArrayView<T> x_delayed) {
+void DelayBuffer<T>::Delay(std::span<const T> x, std::span<T> x_delayed) {
   RTC_DCHECK_EQ(x.size(), x_delayed.size());
   if (buffer_.empty()) {
     std::copy(x.begin(), x.end(), x_delayed.begin());

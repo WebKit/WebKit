@@ -93,4 +93,6 @@ void FidoService::continueAfterGetInfo(CtapDriver& inputDriver, Vector<uint8_t>&
 
 } // namespace WebKit
 
+#undef CTAP_RELEASE_LOG
+
 #endif // ENABLE(WEB_AUTHN)

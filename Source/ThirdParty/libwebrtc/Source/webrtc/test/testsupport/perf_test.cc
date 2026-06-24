@@ -15,12 +15,12 @@
 #include <cstdio>
 #include <ostream>
 #include <set>
+#include <span>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
@@ -49,7 +49,7 @@ std::string UnitWithDirection(absl::string_view units,
 
 std::vector<SamplesStatsCounter::StatsSample> GetSortedSamples(
     const SamplesStatsCounter& counter) {
-  ArrayView<const SamplesStatsCounter::StatsSample> view =
+  std::span<const SamplesStatsCounter::StatsSample> view =
       counter.GetTimedSamples();
   std::vector<SamplesStatsCounter::StatsSample> out(view.begin(), view.end());
   std::stable_sort(out.begin(), out.end(),
@@ -182,7 +182,7 @@ class ResultsLinePrinter {
 
   void PrintResultList(absl::string_view graph_name,
                        absl::string_view trace_name,
-                       const ArrayView<const double> values,
+                       const std::span<const double> values,
                        absl::string_view units,
                        const bool important,
                        test::ImproveDirection improve_direction) {
@@ -339,7 +339,7 @@ void PrintResultMeanAndError(absl::string_view measurement,
 void PrintResultList(absl::string_view measurement,
                      absl::string_view modifier,
                      absl::string_view trace,
-                     const ArrayView<const double> values,
+                     const std::span<const double> values,
                      absl::string_view units,
                      bool important,
                      ImproveDirection improve_direction) {

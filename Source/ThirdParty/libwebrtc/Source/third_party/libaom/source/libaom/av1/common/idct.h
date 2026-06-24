@@ -12,6 +12,8 @@
 #ifndef AOM_AV1_COMMON_IDCT_H_
 #define AOM_AV1_COMMON_IDCT_H_
 
+#include <assert.h>
+
 #include "config/aom_config.h"
 
 #include "av1/common/blockd.h"
@@ -40,7 +42,7 @@ void av1_highbd_iwht4x4_add(const tran_low_t *input, uint8_t *dest, int stride,
                             int eob, int bd);
 
 static inline const int32_t *cast_to_int32(const tran_low_t *input) {
-  assert(sizeof(int32_t) == sizeof(tran_low_t));
+  static_assert(sizeof(int32_t) == sizeof(tran_low_t), "");
   return (const int32_t *)input;
 }
 

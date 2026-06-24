@@ -16,3 +16,4 @@
 *.pjt        -crlf
 *.vcp        -crlf
 *.inf        -crlf
+*.patch      -whitespace

@@ -37,7 +37,7 @@ private:
     SVGFontFaceSrcElement(const QualifiedName&, Document&);
     
     void childrenChanged(const ChildChange&) final;
-    bool rendererIsNeeded(const RenderStyle&) final { return false; }
+    bool rendererIsNeeded(const Style::ComputedStyle&) final { return false; }
 };
 
 } // namespace WebCore

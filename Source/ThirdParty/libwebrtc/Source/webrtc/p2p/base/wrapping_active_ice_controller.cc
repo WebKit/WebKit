@@ -30,11 +30,6 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 
-namespace {
-using ::webrtc::SafeTask;
-using ::webrtc::TimeDelta;
-}  // unnamed namespace
-
 namespace webrtc {
 
 WrappingActiveIceController::WrappingActiveIceController(

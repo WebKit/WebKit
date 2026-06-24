@@ -58,7 +58,7 @@ bool RenderingUpdateScheduler::scheduleAnimation()
 
 void RenderingUpdateScheduler::adjustRenderingUpdateFrequency()
 {
-    auto renderingUpdateFramesPerSecond = m_page->preferredRenderingUpdateFramesPerSecond();
+    auto renderingUpdateFramesPerSecond = protect(m_page)->preferredRenderingUpdateFramesPerSecond();
     if (renderingUpdateFramesPerSecond) {
         setPreferredFramesPerSecond(renderingUpdateFramesPerSecond.value());
         m_useTimer = false;
@@ -87,11 +87,11 @@ void RenderingUpdateScheduler::scheduleRenderingUpdate()
     tracePoint(ScheduleRenderingUpdate);
 
     if (!scheduleAnimation()) {
-        LOG_WITH_STREAM(DisplayLink, stream << "RenderingUpdateScheduler::scheduleRenderingUpdate for interval " << m_page->preferredRenderingUpdateInterval() << " falling back to timer");
-        startTimer(m_page->preferredRenderingUpdateInterval());
+        LOG_WITH_STREAM(DisplayLink, stream << "RenderingUpdateScheduler::scheduleRenderingUpdate for interval " << protect(m_page)->preferredRenderingUpdateInterval() << " falling back to timer");
+        startTimer(protect(m_page)->preferredRenderingUpdateInterval());
     }
     
-    m_page->didScheduleRenderingUpdate();
+    protect(m_page)->didScheduleRenderingUpdate();
 }
 
 bool RenderingUpdateScheduler::isScheduled() const

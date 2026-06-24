@@ -14,6 +14,7 @@
 #include "config/aom_config.h"
 
 #include <assert.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <math.h>
 #include <stdarg.h>
@@ -470,6 +471,7 @@ static const arg_def_t *const av1_key_val_args[] = {
   &g_av1_codec_arg_defs.screen_detection_mode,
   &g_av1_codec_arg_defs.sharpness,
   &g_av1_codec_arg_defs.enable_adaptive_sharpness,
+  &g_av1_codec_arg_defs.validate_hbd_input,
   NULL,
 };
 
@@ -872,6 +874,13 @@ static void set_config_arg_ctrls(struct stream_config *config, int key,
     return;
   }
 
+#if CONFIG_TUNE_VMAF
+  if (key == AV1E_SET_VMAF_MODEL_PATH) {
+    config->vmaf_model_path = arg->val;
+    return;
+  }
+#endif
+
   // For target level, the settings should accumulate rather than overwrite,
   // so we simply append it.
   if (key == AV1E_SET_TARGET_SEQ_LEVEL_IDX) {
@@ -958,13 +967,9 @@ static int parse_stream_params(struct AvxEncoderConfig *global,
   } else if (strcmp(get_short_name_by_aom_encoder(global->codec), "av1") == 0) {
     // TODO(jingning): Reuse AV1 specific encoder configuration parameters.
     // Consider to expand this set for AV1 encoder control.
-#if __STDC_VERSION__ >= 201112L
-    _Static_assert(NELEMENTS(av1_ctrl_args) == NELEMENTS(av1_arg_ctrl_map),
-                   "The av1_ctrl_args and av1_arg_ctrl_map arrays must be of "
-                   "the same size.");
-#else
-    assert(NELEMENTS(av1_ctrl_args) == NELEMENTS(av1_arg_ctrl_map));
-#endif
+    static_assert(NELEMENTS(av1_ctrl_args) == NELEMENTS(av1_arg_ctrl_map),
+                  "The av1_ctrl_args and av1_arg_ctrl_map arrays must be of "
+                  "the same size.");
     ctrl_args = av1_ctrl_args;
     ctrl_args_map = av1_arg_ctrl_map;
     key_val_args = av1_key_val_args;
@@ -1142,10 +1147,6 @@ static int parse_stream_params(struct AvxEncoderConfig *global,
     } else if (arg_match(&arg, &g_av1_codec_arg_defs.tile_height, argi)) {
       config->cfg.tile_height_count =
           arg_parse_list(&arg, config->cfg.tile_heights, MAX_TILE_HEIGHTS);
-#if CONFIG_TUNE_VMAF
-    } else if (arg_match(&arg, &g_av1_codec_arg_defs.vmaf_model_path, argi)) {
-      config->vmaf_model_path = arg.val;
-#endif
     } else if (arg_match(&arg, &g_av1_codec_arg_defs.partition_info_path,
                          argi)) {
       config->partition_info_path = arg.val;
@@ -1206,10 +1207,12 @@ static int parse_stream_params(struct AvxEncoderConfig *global,
   }
   config->use_16bit_internal |= config->cfg.g_bit_depth > AOM_BITS_8;
 
+#if CONFIG_REALTIME_ONLY
   if (global->usage == AOM_USAGE_REALTIME && config->cfg.g_lag_in_frames != 0) {
     aom_tools_warn("non-zero lag-in-frames option ignored in realtime mode.\n");
     config->cfg.g_lag_in_frames = 0;
   }
+#endif
 
   if (global->usage == AOM_USAGE_ALL_INTRA) {
     if (config->cfg.g_lag_in_frames != 0) {

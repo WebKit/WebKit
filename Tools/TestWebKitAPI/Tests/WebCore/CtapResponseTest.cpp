@@ -33,12 +33,14 @@
 
 #include "FidoTestData.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <WebCore/AuthenticationExtensionsClientOutputs.h>
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/BufferSource.h>
 #include <WebCore/CBORReader.h>
 #include <WebCore/CBORValue.h>
 #include <WebCore/CBORWriter.h>
+#include <WebCore/CredentialPropertiesOutput.h>
 #include <WebCore/DeviceResponseConverter.h>
 #include <WebCore/FidoConstants.h>
 #include <WebCore/U2fResponseConverter.h>
@@ -666,6 +668,36 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponseWithHmacSecret)
     ASSERT_TRUE(extensions.prf);
     ASSERT_TRUE(extensions.prf->enabled);
     EXPECT_TRUE(*extensions.prf->enabled);
+}
+
+static Vector<uint8_t> encodeExtensionOutputs(cbor::CBORValue::MapValue&& map)
+{
+    auto encoded = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(map)));
+    return encoded.value();
+}
+
+static Vector<uint8_t> encodeCredPropsExtensionOutputs(cbor::CBORValue::MapValue&& credPropsMap)
+{
+    cbor::CBORValue::MapValue root;
+    root[cbor::CBORValue("credProps")] = cbor::CBORValue(WTF::move(credPropsMap));
+    return encodeExtensionOutputs(WTF::move(root));
+}
+
+TEST(CTAPResponseTest, TestExtensionOutputsCredPropsWithoutRk)
+{
+    {
+        auto outputs = AuthenticationExtensionsClientOutputs::fromCBOR(encodeCredPropsExtensionOutputs({ }));
+        ASSERT_TRUE(outputs);
+        EXPECT_TRUE(outputs->credProps.has_value());
+    }
+
+    {
+        cbor::CBORValue::MapValue credProps;
+        credProps[cbor::CBORValue("unknownKey")] = cbor::CBORValue(true);
+        auto outputs = AuthenticationExtensionsClientOutputs::fromCBOR(encodeCredPropsExtensionOutputs(WTF::move(credProps)));
+        ASSERT_TRUE(outputs);
+        EXPECT_TRUE(outputs->credProps.has_value());
+    }
 }
 
 } // namespace TestWebKitAPI

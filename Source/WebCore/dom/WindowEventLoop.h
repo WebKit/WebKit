@@ -41,6 +41,7 @@ class Document;
 class HTMLSlotElement;
 class MutationObserver;
 class Page;
+class ScriptExecutionContext;
 class SecurityOrigin;
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
@@ -56,6 +57,7 @@ public:
     Vector<GCReachableRef<HTMLSlotElement>>& signalSlotList() LIFETIME_BOUND { return m_signalSlotList; }
     HashSet<Ref<MutationObserver>>& activeMutationObservers() LIFETIME_BOUND { return m_activeObservers; }
     HashSet<Ref<MutationObserver>>& suspendedMutationObservers() LIFETIME_BOUND { return m_suspendedObservers; }
+    void removeMutationObserversForContext(ScriptExecutionContext&);
 
     CustomElementQueue& backupElementQueue();
 

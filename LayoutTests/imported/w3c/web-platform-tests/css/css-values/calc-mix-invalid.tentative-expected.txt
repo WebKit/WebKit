@@ -1,0 +1,20 @@
+
+PASS e.style['scale'] = "calc-mix()" should not set the property value
+PASS e.style['scale'] = "calc-mix( )" should not set the property value
+PASS e.style['scale'] = "calc-mix(,)" should not set the property value
+PASS e.style['scale'] = "calc-mix(1, )" should not set the property value
+PASS e.style['scale'] = "calc-mix(0,1,)" should not set the property value
+PASS e.style['scale'] = "calc-mix(0,, 0)" should not set the property value
+PASS e.style['scale'] = "calc-mix(1 50, 3)" should not set the property value
+PASS e.style['scale'] = "calc-mix(1 150%, 3)" should not set the property value
+PASS e.style['scale'] = "calc-mix(1 -50%, 3)" should not set the property value
+PASS e.style['scale'] = "calc-mix(1px 50%, 3px 50%)" should not set the property value
+PASS e.style['scale'] = "calc-mix(1deg 50%, 3turn 50%)" should not set the property value
+PASS e.style['scale'] = "calc-mix(1% 50%, 3 50%)" should not set the property value
+PASS e.style['transform-origin-z'] = "calc-mix(1 50%, 3 50%)" should not set the property value
+PASS e.style['transform-origin-z'] = "calc-mix(1deg 50%, 3turn 50%)" should not set the property value
+PASS e.style['transform-origin-z'] = "calc-mix(1% 50%, 3 50%)" should not set the property value
+PASS e.style['text-indent'] = "calc-mix(1 50%, 3 50%)" should not set the property value
+PASS e.style['text-indent'] = "calc-mix(1deg 50%, 3turn 50%)" should not set the property value
+PASS e.style['text-indent'] = "calc-mix(1% 50%, 3 50%)" should not set the property value
+

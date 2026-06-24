@@ -36,7 +36,7 @@
 #import <wtf/RetainPtr.h>
 
 static bool decidedPolicy;
-static bool finishedNavigation;
+static bool shouldOpenExternalURLsFinishedNavigation;
 static RetainPtr<WKNavigationAction> action;
 static RetainPtr<WKWebView> newWebView;
 
@@ -55,7 +55,7 @@ static RetainPtr<WKWebView> newWebView;
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    finishedNavigation = true;
+    shouldOpenExternalURLsFinishedNavigation = true;
 }
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
@@ -81,8 +81,8 @@ TEST(WebKit, ShouldOpenExternalURLsInWindowOpen)
     [webView setUIDelegate:controller.get()];
 
     [webView loadHTMLString:@"<body onclick=\"window.open('https://webkit.org/destination')\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    TestWebKitAPI::Util::run(&finishedNavigation);
-    finishedNavigation = false;
+    TestWebKitAPI::Util::run(&shouldOpenExternalURLsFinishedNavigation);
+    shouldOpenExternalURLsFinishedNavigation = false;
 
     NSPoint clickPoint = NSMakePoint(100, 100);
 
@@ -105,8 +105,8 @@ TEST(WebKit, ShouldOpenExternalURLsInWindowOpen)
     ASSERT_FALSE([action _shouldOpenAppLinks]);
 
     [webView loadHTMLString:@"<body onclick=\"window.open('http://apple.com/destination')\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    TestWebKitAPI::Util::run(&finishedNavigation);
-    finishedNavigation = false;
+    TestWebKitAPI::Util::run(&shouldOpenExternalURLsFinishedNavigation);
+    shouldOpenExternalURLsFinishedNavigation = false;
 
     [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
@@ -142,8 +142,8 @@ TEST(WebKit, ShouldOpenExternalURLsInTargetedLink)
     [webView setUIDelegate:controller.get()];
 
     [webView loadHTMLString:@"<a style=\"display: block; height: 100%\" href=\"https://webkit.org/destination.html\" target=\"_blank\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    TestWebKitAPI::Util::run(&finishedNavigation);
-    finishedNavigation = false;
+    TestWebKitAPI::Util::run(&shouldOpenExternalURLsFinishedNavigation);
+    shouldOpenExternalURLsFinishedNavigation = false;
 
     NSPoint clickPoint = NSMakePoint(100, 100);
 
@@ -174,8 +174,8 @@ TEST(WebKit, ShouldOpenExternalURLsInTargetedLink)
     ASSERT_FALSE([action _shouldOpenAppLinks]);
 
     [webView loadHTMLString:@"<a style=\"display: block; height: 100%\" href=\"http://apple.com/destination.html\" target=\"_blank\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    TestWebKitAPI::Util::run(&finishedNavigation);
-    finishedNavigation = false;
+    TestWebKitAPI::Util::run(&shouldOpenExternalURLsFinishedNavigation);
+    shouldOpenExternalURLsFinishedNavigation = false;
 
     decidedPolicy = false;
     [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
@@ -216,11 +216,11 @@ TEST(WebKit, RestoreShouldOpenExternalURLsPolicyAfterCrash)
     [webView setNavigationDelegate:controller.get()];
     [webView setUIDelegate:controller.get()];
 
-    finishedNavigation = false;
+    shouldOpenExternalURLsFinishedNavigation = false;
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"should-open-external-schemes" withExtension:@"html"]];
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&finishedNavigation);
-    finishedNavigation = false;
+    TestWebKitAPI::Util::run(&shouldOpenExternalURLsFinishedNavigation);
+    shouldOpenExternalURLsFinishedNavigation = false;
 
     // Before crash
     decidedPolicy = false;
@@ -235,9 +235,9 @@ TEST(WebKit, RestoreShouldOpenExternalURLsPolicyAfterCrash)
     [webView _killWebContentProcessAndResetState];
     [webView reload];
 
-    finishedNavigation = false;
-    TestWebKitAPI::Util::run(&finishedNavigation);
-    finishedNavigation = false;
+    shouldOpenExternalURLsFinishedNavigation = false;
+    TestWebKitAPI::Util::run(&shouldOpenExternalURLsFinishedNavigation);
+    shouldOpenExternalURLsFinishedNavigation = false;
 
     // After crash
     decidedPolicy = false;

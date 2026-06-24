@@ -8,9 +8,7 @@
 use crate::ir::*;
 use crate::*;
 
-pub struct State {
-    base_instance: Option<TypedId>,
-}
+pub struct State {}
 
 pub fn init(ir_meta: &mut IRMeta) -> State {
     // If gl_VertexID or gl_InstanceID are defined, replace them with gl_VertexIndex and
@@ -21,57 +19,44 @@ pub fn init(ir_meta: &mut IRMeta) -> State {
     }
     if let Some(instance_id) = ir_meta.get_built_in_variable(BuiltIn::InstanceID) {
         ir_meta.get_variable_mut(instance_id).built_in = Some(BuiltIn::InstanceIndex);
-
-        // If angle_BaseInstance is defined, find it.
-        let base_instance = ir_meta
-            .all_global_variables()
-            .iter()
-            .find(|&id| {
-                ir_meta
-                    .get_variable(*id)
-                    .decorations
-                    .has(Decoration::EmulatedMultiDrawBuiltIn(EmulatedMultiDraw::BaseInstance))
-            })
-            .map(|&id| TypedId::from_variable_id(ir_meta, id));
-
-        State { base_instance }
-    } else {
-        State { base_instance: None }
     }
+
+    State {}
 }
 
 pub fn transform_instance_index_load(
     ir_meta: &mut IRMeta,
-    state: &State,
+    _state: &State,
     instance_index: TypedId,
-    result: TypedRegisterId,
+    _result: TypedRegisterId,
 ) -> Vec<traverser::Transform> {
     debug_assert!(matches!(
         ir_meta.get_variable(instance_index.id.get_variable()).built_in,
         Some(BuiltIn::InstanceIndex)
     ));
 
-    let mut transforms = vec![];
+    let transforms = vec![];
 
-    if let Some(base_instance) = state.base_instance {
-        // Generate the following:
-        //
-        //     base_instance'   = Load base_instance
-        //     instance_index'  = Load instance_index
-        //     result           = Sub instance_index' base_instance'
-        let base_instance = traverser::add_typed_instruction(
-            &mut transforms,
-            instruction::make!(load, ir_meta, base_instance),
-        );
-        let instance_index = traverser::add_typed_instruction(
-            &mut transforms,
-            instruction::make!(load, ir_meta, instance_index),
-        );
-        traverser::add_typed_instruction(
-            &mut transforms,
-            instruction::make_with_result_id!(sub, ir_meta, result, instance_index, base_instance),
-        );
-    }
+    // Note: when driver uniforms are added by the IR, need to subtract base_instance here.
+    // Currently, that's done by ShaderBuiltinsWorkaround():
+    //
+    //     // Generate the following:
+    //     //
+    //     //     base_instance'   = Load base_instance
+    //     //     instance_index'  = Load instance_index
+    //     //     result           = Sub instance_index' base_instance'
+    //     let base_instance = traverser::add_typed_instruction(
+    //         &mut transforms,
+    //         instruction::make!(load, ir_meta, base_instance),
+    //     );
+    //     let instance_index = traverser::add_typed_instruction(
+    //         &mut transforms,
+    //         instruction::make!(load, ir_meta, instance_index),
+    //     );
+    //     traverser::add_typed_instruction(
+    //         &mut transforms,
+    //         instruction::make_with_result_id!(sub, ir_meta, result, instance_index,
+    //         base_instance));
 
     transforms
 }

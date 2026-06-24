@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "trust_store_in_memory.h"
 #include "verify_certificate_chain.h"
 
 #include <openssl/pool.h>
@@ -60,9 +61,10 @@ class VerifyCertificateChainPkitsTestDelegate {
     std::set<der::Input> user_constrained_policy_set;
 
     CertPathErrors path_errors;
+    TrustAnchor trust_anchor(CertificateTrust::ForTrustAnchor());
     VerifyCertificateChain(
-        input_chain, CertificateTrust::ForTrustAnchor(), &path_builder_delegate,
-        info.time, KeyPurpose::ANY_EKU, info.initial_explicit_policy,
+        input_chain, trust_anchor, &path_builder_delegate, info.time,
+        KeyPurpose::ANY_EKU, info.initial_explicit_policy,
         info.initial_policy_set, info.initial_policy_mapping_inhibit,
         info.initial_inhibit_any_policy, &user_constrained_policy_set,
         &path_errors);

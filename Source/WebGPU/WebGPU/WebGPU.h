@@ -390,10 +390,11 @@ typedef enum WGPUFeatureName {
     WGPUFeatureName_Float32Blendable = 0x0000000E,
     WGPUFeatureName_ClipDistances = 0x0000000F,
     WGPUFeatureName_DualSourceBlending = 0x00000010,
-    WGPUFeatureName_Float16Renderable = 0x00000011,
-    WGPUFeatureName_Float32Renderable = 0x00000012,
-    WGPUFeatureName_CoreFeaturesAndLimits = 0x00000013,
-    WGPUFeatureName_TextureFormatsTier1 = 0x00000014,
+    WGPUFeatureName_PrimitiveIndex = 0x00000011,
+    WGPUFeatureName_Float16Renderable = 0x00000012,
+    WGPUFeatureName_Float32Renderable = 0x00000013,
+    WGPUFeatureName_CoreFeaturesAndLimits = 0x00000014,
+    WGPUFeatureName_TextureFormatsTier1 = 0x00000015,
     WGPUFeatureName_Force32 = 0x7FFFFFFF
 } WGPUFeatureName WGPU_ENUM_ATTRIBUTE;
 

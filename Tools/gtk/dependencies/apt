@@ -12,6 +12,8 @@ PACKAGES+=(
     libgl1-mesa-dev
     libgtk-3-dev
     libgudev-1.0-dev
+    libharfbuzz-dev
+    libicu-dev
     libmount-dev
     libmpg123-dev
     libnotify-dev

@@ -38,7 +38,7 @@ enum CharsetEnforcement {
   ENFORCE_ASCII,
 };
 
-// Normalizes |output|, a UTF-8 encoded string, as if it contained
+// Normalizes `output`, a UTF-8 encoded string, as if it contained
 // only ASCII characters.
 //
 // This could be considered a partial subset of RFC 5280 rules, and
@@ -49,7 +49,7 @@ enum CharsetEnforcement {
 // profile of RFC 4518, with case folding and whitespace compression.
 // However, because it is optional for 2459/3280 implementations and because
 // it's desirable to avoid the size cost of the StringPrep tables,
-// this function treats |output| as if it was composed of ASCII.
+// this function treats `output` as if it was composed of ASCII.
 //
 // That is, rather than folding all whitespace characters, it only
 // folds ' '. Rather than case folding using locale-aware handling,
@@ -60,10 +60,10 @@ enum CharsetEnforcement {
 // required by RFC 3280), and is sufficient for those certificates
 // publicly deployed.
 //
-// If |charset_enforcement| is not NO_ENFORCEMENT and |output| contains any
+// If `charset_enforcement` is not NO_ENFORCEMENT and `output` contains any
 // characters not allowed in the specified charset, returns false.
 //
-// NOTE: |output| will be modified regardless of the return.
+// NOTE: `output` will be modified regardless of the return.
 [[nodiscard]] bool NormalizeDirectoryString(
     CharsetEnforcement charset_enforcement, std::string *output) {
   // Normalized version will always be equal or shorter than input.
@@ -117,14 +117,14 @@ enum CharsetEnforcement {
   return true;
 }
 
-// Converts the value of X509NameAttribute |attribute| to UTF-8, normalizes it,
-// and stores in |output|. The type of |attribute| must be one of the types for
+// Converts the value of X509NameAttribute `attribute` to UTF-8, normalizes it,
+// and stores in `output`. The type of `attribute` must be one of the types for
 // which IsNormalizableDirectoryString is true.
 //
-// If the value of |attribute| can be normalized, returns true and sets
-// |output| to the case folded, normalized value. If the value of |attribute|
+// If the value of `attribute` can be normalized, returns true and sets
+// `output` to the case folded, normalized value. If the value of `attribute`
 // is invalid, returns false.
-// NOTE: |output| will be modified regardless of the return.
+// NOTE: `output` will be modified regardless of the return.
 [[nodiscard]] bool NormalizeValue(X509NameAttribute attribute,
                                   std::string *output, CertErrors *errors) {
   BSSL_CHECK(errors);
@@ -162,7 +162,7 @@ enum CharsetEnforcement {
   return success;
 }
 
-// Returns true if |tag| is a string type that NormalizeValue can handle.
+// Returns true if `tag` is a string type that NormalizeValue can handle.
 bool IsNormalizableDirectoryString(CBS_ASN1_TAG tag) {
   switch (tag) {
     case CBS_ASN1_PRINTABLESTRING:
@@ -183,7 +183,7 @@ bool IsNormalizableDirectoryString(CBS_ASN1_TAG tag) {
   }
 }
 
-// Returns true if the value of X509NameAttribute |a| matches |b|.
+// Returns true if the value of X509NameAttribute `a` matches `b`.
 bool VerifyValueMatch(X509NameAttribute a, X509NameAttribute b) {
   if (IsNormalizableDirectoryString(a.value_tag) &&
       IsNormalizableDirectoryString(b.value_tag)) {
@@ -204,9 +204,9 @@ bool VerifyValueMatch(X509NameAttribute a, X509NameAttribute b) {
   return a.value == b.value;
 }
 
-// Verifies that |a_parser| and |b_parser| are the same length and that every
-// AttributeTypeAndValue in |a_parser| has a matching AttributeTypeAndValue in
-// |b_parser|.
+// Verifies that `a_parser` and `b_parser` are the same length and that every
+// AttributeTypeAndValue in `a_parser` has a matching AttributeTypeAndValue in
+// `b_parser`.
 bool VerifyRdnMatch(der::Parser *a_parser, der::Parser *b_parser) {
   RelativeDistinguishedName a_type_and_values, b_type_and_values;
   if (!ReadRdn(a_parser, &a_type_and_values) ||
@@ -243,8 +243,8 @@ bool VerifyRdnMatch(der::Parser *a_parser, der::Parser *b_parser) {
     b_type_and_values.erase(b_iter);
   }
 
-  // Every element in |a_type_and_values| had a matching element in
-  // |b_type_and_values|.
+  // Every element in `a_type_and_values` had a matching element in
+  // `b_type_and_values`.
   return true;
 }
 
@@ -253,12 +253,12 @@ enum NameMatchType {
   SUBTREE_MATCH,
 };
 
-// Verify that |a| matches |b|. If |match_type| is EXACT_MATCH, returns true if
-// they are an exact match as defined by RFC 5280 7.1. If |match_type| is
-// SUBTREE_MATCH, returns true if |a| is within the subtree defined by |b| as
+// Verify that `a` matches `b`. If `match_type` is EXACT_MATCH, returns true if
+// they are an exact match as defined by RFC 5280 7.1. If `match_type` is
+// SUBTREE_MATCH, returns true if `a` is within the subtree defined by `b` as
 // defined by RFC 5280 7.1.
 //
-// |a| and |b| are ASN.1 RDNSequence values (not including the Sequence tag),
+// `a` and `b` are ASN.1 RDNSequence values (not including the Sequence tag),
 // defined in RFC 5280 section 4.1.2.4:
 //
 // Name ::= CHOICE { -- only one possibility for now --
@@ -299,7 +299,7 @@ bool VerifyNameMatchInternal(der::Input a, der::Input b,
     return false;
   }
 
-  // Verify that RDNs in |a| and |b| match.
+  // Verify that RDNs in `a` and `b` match.
   der::Parser a_rdn_sequence(a);
   der::Parser b_rdn_sequence(b);
   while (a_rdn_sequence.HasMore() && b_rdn_sequence.HasMore()) {

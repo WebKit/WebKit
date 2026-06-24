@@ -27,7 +27,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourcePaintServer);
 
-RenderSVGResourcePaintServer::RenderSVGResourcePaintServer(Type type, SVGElement& element, RenderStyle&& style)
+RenderSVGResourcePaintServer::RenderSVGResourcePaintServer(Type type, SVGElement& element, Style::ComputedStyle&& style)
     : RenderSVGResourceContainer(type, element, WTF::move(style))
 {
     ASSERT(isRenderSVGResourcePaintServer());

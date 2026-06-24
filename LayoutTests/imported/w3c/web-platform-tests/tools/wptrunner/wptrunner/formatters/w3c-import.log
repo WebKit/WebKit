@@ -15,6 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/formatters/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/formatters/chromium.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/formatters/wptreport.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/formatters/wptscreenshot.py

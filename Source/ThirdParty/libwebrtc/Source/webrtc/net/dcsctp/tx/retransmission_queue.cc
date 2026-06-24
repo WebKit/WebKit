@@ -19,7 +19,6 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "net/dcsctp/common/internal_types.h"
@@ -251,6 +250,14 @@ bool RetransmissionQueue::IsSackValid(const SackChunk& sack) const {
   } else if (cumulative_tsn_ack > outstanding_data_.highest_outstanding_tsn()) {
     return false;
   }
+
+  for (const auto& block : sack.gap_ack_blocks()) {
+    if (UnwrappedTSN::AddTo(cumulative_tsn_ack, block.end) >
+        outstanding_data_.highest_outstanding_tsn()) {
+      return false;
+    }
+  }
+
   return true;
 }
 

@@ -15,11 +15,11 @@
 #include <list>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/rtp_parameters.h"
 #include "api/units/data_rate.h"
@@ -89,7 +89,7 @@ FlexfecSender::FlexfecSender(
     uint32_t protected_media_ssrc,
     absl::string_view mid,
     const std::vector<RtpExtension>& rtp_header_extensions,
-    ArrayView<const RtpExtensionSize> extension_sizes,
+    std::span<const RtpExtensionSize> extension_sizes,
     const RtpState* rtp_state)
     : env_(env),
       random_(env_.clock().TimeInMicroseconds()),

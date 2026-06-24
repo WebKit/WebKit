@@ -38,7 +38,6 @@
 #include "Logging.h"
 #include "MediaOverridesForTesting.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
-#include "MediaSourcePrivateRemoteMessageReceiverMessages.h"
 #include "RemoteAudioHardwareListenerMessages.h"
 #include "RemoteAudioSourceProviderManager.h"
 #include "RemoteAudioSourceProviderManagerMessages.h"
@@ -115,7 +114,7 @@ using namespace WebCore;
 Ref<GPUProcessConnection> GPUProcessConnection::create(Ref<IPC::Connection>&& connection)
 {
     Ref instance = adoptRef(*new GPUProcessConnection(WTF::move(connection)));
-    RELEASE_LOG(Process, "GPUProcessConnection::create - %p", instance.ptr());
+    RELEASE_LOG_FORWARDABLE(Process, GpuProcessConnectionCreate, instance->identifier().toUInt64());
     return instance;
 }
 
@@ -275,11 +274,6 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    if (decoder.messageReceiverName() == Messages::MediaSourcePrivateRemoteMessageReceiver::messageReceiverName()) {
-        RELEASE_LOG_ERROR(Media, "The MediaSourcePrivateRemote object has beed destroyed");
-        return true;
-    }
-
     if (decoder.messageReceiverName() == Messages::SourceBufferPrivateRemoteMessageReceiver::messageReceiverName()) {
         RELEASE_LOG_ERROR(Media, "The SourceBufferPrivateRemote object has beed destroyed");
         return true;
@@ -312,7 +306,7 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
         return;
     }
     m_hasInitialized = true;
-    RELEASE_LOG(Process, "%p - GPUProcessConnection::didInitialize", this);
+    RELEASE_LOG_FORWARDABLE(Process, GpuProcessConnectionDidInitialize, identifier().toUInt64());
 
 #if PLATFORM(COCOA)
 #if USE(LIBWEBRTC)

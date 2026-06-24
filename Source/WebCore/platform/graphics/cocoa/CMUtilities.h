@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA)
 
 #include <CoreAudio/CoreAudioTypes.h>
+#include <CoreMedia/CMSampleBuffer.h>
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/TrackInfo.h>
 #include <memory>
@@ -106,7 +107,31 @@ private:
 
 Vector<AudioStreamPacketDescription> getPacketDescriptions(CMSampleBufferRef);
 
+// Read the sample timing info array out of a CMSampleBufferRef. Returns an
+// empty Vector on failure or if the buffer carries no timing entries.
+Vector<CMSampleTimingInfo> getSampleTimingInfoArray(CMSampleBufferRef);
+
 RetainPtr<CMSampleBufferRef> sampleBufferFromVideoData(std::span<const uint8_t>, CMVideoFormatDescriptionRef);
+
+// Iterate over each sub-sample contained in a CMSampleBufferRef.
+// Transparently handles the kCMSampleBufferError_BufferHasNoSampleSizes shape
+// (e.g. compressed audio that carries per-packet sizes in the audio stream
+// packet description array, such as ADTS framing) by walking the packet
+// description array and synthesizing per-packet sub-CMSampleBuffers that
+// reference the source block buffer (zero-copy). For the normal shape this
+// delegates to PAL::CMSampleBufferCallBlockForEachSample.
+//
+// The callback is invoked once per sub-sample with the synthesized
+// CMSampleBufferRef and its zero-based index. Returning a non-noErr status
+// from the callback stops iteration; that status is returned to the caller.
+// Returns noErr after a complete walk.
+OSStatus forEachSample(CMSampleBufferRef, NOESCAPE const Function<OSStatus(CMSampleBufferRef, CMItemCount)>&);
+
+// Copy a contiguous range of sub-samples out of a CMSampleBufferRef into a new
+// CMSampleBufferRef. Transparently handles the BufferHasNoSampleSizes shape by
+// slicing the packet description array; otherwise delegates to
+// PAL::CMSampleBufferCopySampleBufferForRange. Returns nullptr on failure.
+RetainPtr<CMSampleBufferRef> copySampleBufferForRange(CMSampleBufferRef, CFRange);
 
 WEBCORE_EXPORT bool isCMSampleBufferRandomAccess(CMSampleBufferRef);
 

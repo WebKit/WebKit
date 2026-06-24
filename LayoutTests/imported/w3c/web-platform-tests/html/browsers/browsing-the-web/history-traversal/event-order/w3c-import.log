@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/event-order/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/event-order/after-load-hash-twice.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/event-order/after-load-hash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/event-order/after-load-pushState.html

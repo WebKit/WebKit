@@ -12,15 +12,14 @@
 #include <math.h>
 
 #include <cstddef>
-
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
 namespace {
 
 void AnalyzeChannel(float one_by_num_samples_per_channel,
-                    ArrayView<const float> audio,
+                    std::span<const float> audio,
                     float dc_level,
                     int& num_frames_since_activity,
                     float& saturation_factors) {
@@ -59,9 +58,9 @@ SaturationEstimator::SaturationEstimator(size_t num_samples_per_channel)
   saturation_factors_.fill(0.0f);
 }
 
-void SaturationEstimator::Update(ArrayView<const float> channel0,
-                                 ArrayView<const float> channel1,
-                                 ArrayView<const float, 2> dc_levels) {
+void SaturationEstimator::Update(std::span<const float> channel0,
+                                 std::span<const float> channel1,
+                                 std::span<const float, 2> dc_levels) {
   AnalyzeChannel(one_by_num_samples_per_channel_, channel0, dc_levels[0],
                  num_frames_since_activity_[0], saturation_factors_[0]);
   AnalyzeChannel(one_by_num_samples_per_channel_, channel1, dc_levels[1],

@@ -4,7 +4,6 @@
 <script>
 async function runTest()
 {
-    testRunner?.waitUntilDone();
     await testRunner?.clearBackForwardList();
     try {
         history.pushState(null, null, 'some-other.html');
@@ -52,7 +51,7 @@ onpopstate = function(event)
     if (event.state != "OriginalEntry")
         setTimeout("history.back();", 0);
     else if (window.testRunner)
-        testRunner.notifyDone();
+        finishJSTest();
 }
 
 onhashchange = function(event)

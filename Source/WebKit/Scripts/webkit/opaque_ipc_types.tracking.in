@@ -263,7 +263,6 @@
     [Legacy] StructureParam WebCore::WrappedCryptoKey.encryptedKey
     [Legacy] StructureParam JSC::ArrayBuffer.toVector()
     [Legacy] StructureParam WebCore::MockWebAuthenticationConfiguration::HidConfiguration.pinProtocols
-    [Legacy] StructureParam WebModel::ImageAsset.data
     [Legacy] StructureParam WebModel::UpdateMeshDescriptor.indexData
     [Legacy] StructureParam WebCore::CustomFontCreationData.fontFaceData
 
@@ -389,7 +388,9 @@
 # Shared Memory
 [SafeWrapper] StructureParam WebCore::ShareableCVPixelBufferBytesHandle.m_handle WebCore::SharedMemoryHandle
 [SafeWrapper] StructureParam WebCore::ShareableBitmapHandle.m_handle WebCore::SharedMemoryHandle
+[NotSentFromWebContent] StructureParam WebCore::SharedTimebaseHandle.memory WebCore::SharedMemoryHandle
 [SafeWrapper] StructureParam IPC::StreamServerConnectionHandle.buffer WebCore::SharedMemoryHandle
+[SafeWrapper] StructureParam WebModel::ImageAsset.dataHandle std::optional<WebCore::SharedMemory::Handle>
 
 [UnsafeWrapper] std::optional<IPC::SharedBufferReference> {
     [Legacy] MessageParamReply WebPage.GetMainResourceDataOfFrame buffer
@@ -442,6 +443,8 @@
     [Legacy] StructureParam WebKit::FullScreenMediaDetails.imageHandle
 
     [DebugOnly] MessageParamReply IPCStreamTester.SyncMessageReturningSharedMemory1 handle
+
+    [NotSentFromWebContent] MessageParamReply RemoteAudioVideoRendererProxyManager.Create handle SharedTimebaseHandle
 }
 
 [UnsafeWrapper] WebCore::SharedMemoryHandle {

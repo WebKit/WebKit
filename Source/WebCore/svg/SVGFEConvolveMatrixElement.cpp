@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -71,15 +71,15 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         break;
     case AttributeNames::orderAttr: {
         auto result = parseNumberOptionalNumber(newValue);
-        if (!result) {
+        if (!result || result->first < 1 || result->second < 1) {
             m_orderX->setBaseValInternal(initialOrderValue);
             m_orderY->setBaseValInternal(initialOrderValue);
+            m_hasInvalidOrderAttribute = true;
+            protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing order=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         } else {
             m_orderX->setBaseValInternal(result->first);
             m_orderY->setBaseValInternal(result->second);
-
-            if (result->first < 1 || result->second < 1)
-                protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing order=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+            m_hasInvalidOrderAttribute = false;
         }
         break;
     }
@@ -92,7 +92,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         break;
     }
     case AttributeNames::kernelMatrixAttr:
-        m_kernelMatrix->baseVal()->parse(newValue);
+        protect(m_kernelMatrix)->baseVal()->parse(newValue);
         break;
     case AttributeNames::divisorAttr: {
         auto result = parseNumber(newValue);
@@ -238,6 +238,8 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
 RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     auto filterOrder = [&] () {
+        if (m_hasInvalidOrderAttribute)
+            return IntSize();
         return IntSize(orderX(), orderY());
     };
 

@@ -374,11 +374,11 @@ JSPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, const Identi
 
     JSPromise* intermediatePromise = JSPromise::create(vm, globalObject->promiseStructure());
     intermediatePromise->markAsHandled();
-    promise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadTopSettled, intermediatePromise, context);
+    promise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ModuleLoadTopSettled, intermediatePromise, context);
 
     JSPromise* resultPromise = JSPromise::create(vm, globalObject->promiseStructure());
     resultPromise->markAsHandled();
-    intermediatePromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadTopRejected, resultPromise, context);
+    intermediatePromise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ModuleLoadTopRejected, resultPromise, context);
 
     return resultPromise;
 }
@@ -443,7 +443,7 @@ JSPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, con
 
     JSPromise* resultPromise = JSPromise::create(vm, globalObject->promiseStructure());
     resultPromise->markAsHandled();
-    promise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ImportModuleNamespace, resultPromise, jsUndefined());
+    promise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ImportModuleNamespace, resultPromise, jsUndefined());
 
     return resultPromise;
 }
@@ -470,10 +470,10 @@ JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* 
 
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
     auto moduleNameString = moduleName->value(globalObject);
-    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(vm, scope));
 
     scope.release();
-    promise->reject(vm, globalObject, createError(globalObject, makeString("Could not import the module '"_s, moduleNameString.data, "'."_s)));
+    promise->reject(vm, createError(globalObject, makeString("Could not import the module '"_s, moduleNameString.data, "'."_s)));
     return promise;
 }
 
@@ -512,10 +512,10 @@ JSPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue key, RefP
 
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
     String moduleKey = key.toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(vm, scope));
 
     scope.release();
-    promise->reject(vm, globalObject, createError(globalObject, makeString("Could not open the module '"_s, moduleKey, "'."_s)));
+    promise->reject(vm, createError(globalObject, makeString("Could not open the module '"_s, moduleKey, "'."_s)));
     return promise;
 }
 
@@ -610,7 +610,7 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
         JSValue errorValue = error.get();
         ASSERT(errorValue);
         JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
-        promise->reject(vm, globalObject, errorValue);
+        promise->reject(vm, errorValue);
         // 9.1. If loadState is not undefined and loadState.[[ErrorToRethrow]] is null, set loadState.[[ErrorToRethrow]] to resolutionError.
         // (Unused.)
         // 9.2. Perform FinishLoadingImportedModule(referrer, moduleRequest, payload, ThrowCompletion(resolutionError)).
@@ -632,7 +632,7 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
             addResolutionFailure(vm, resolutionKey, errorValue);
 
             JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
-            promise->rejectWithCaughtException(globalObject, scope);
+            promise->rejectWithCaughtException(vm, scope);
             // 9.1. If loadState is not undefined and loadState.[[ErrorToRethrow]] is null, set loadState.[[ErrorToRethrow]] to resolutionError.
             // (Unused.)
             // 9.2. Perform FinishLoadingImportedModule(referrer, moduleRequest, payload, ThrowCompletion(resolutionError)).
@@ -674,7 +674,7 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
                 auto* context = ModuleLoadingContext::create(vm, ModuleLoadingContext::Step::Cached, referrer, moduleRequest, payload, mapEntry, scriptFetcher);
                 JSPromise* resultPromise = JSPromise::create(vm, globalObject->promiseStructure());
                 resultPromise->markAsHandled();
-                promise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadStep, resultPromise, context);
+                promise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ModuleLoadStep, resultPromise, context);
                 promise = resultPromise;
             }
 
@@ -701,7 +701,7 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
     JSPromise* loadPromise = JSPromise::create(vm, globalObject->promiseStructure());
     loadPromise->markAsHandled();
 
-    modulePromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadStep, loadPromise, context);
+    modulePromise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ModuleLoadStep, loadPromise, context);
 
     mapEntry->setLoadPromise(vm, loadPromise);
 
@@ -723,8 +723,8 @@ JSPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, const Module
     JSPromise* resultPromise = JSPromise::create(vm, globalObject->promiseStructure());
     resultPromise->markAsHandled();
 
-    promise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadLinkEvaluateSettled, resultPromise, context);
-    resultPromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadStoreError, nullptr, context);
+    promise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ModuleLoadLinkEvaluateSettled, resultPromise, context);
+    resultPromise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ModuleLoadStoreError, nullptr, context);
 
     return resultPromise;
 }
@@ -782,7 +782,7 @@ void JSModuleLoader::innerModuleLoading(JSGlobalObject* globalObject, ModuleGrap
                 ASSERT(module->loadedModules().size() <= loadedModulesCountBefore + 1);
                 ASSERT(needsErrorReaction != module->loadedModules().contains(ModuleMapKey { request.m_specifier.impl(), request.type() }));
                 if (needsErrorReaction)
-                    promise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleGraphLoadingError, nullptr, state);
+                    promise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ModuleGraphLoadingError, nullptr, state);
             }
             // 2.d.iv. If state.[[IsLoading]] is false, return UNUSED.
             if (!state->isLoading())
@@ -804,7 +804,7 @@ void JSModuleLoader::innerModuleLoading(JSGlobalObject* globalObject, ModuleGrap
                 loaded->setStatus(CyclicModuleRecord::Status::Unlinked);
         });
         // 5.c. Perform ! Call(state.[[PromiseCapability]].[[Resolve]], undefined, « undefined »).
-        state->promise()->fulfill(vm, globalObject, module);
+        state->promise()->fulfill(vm, module);
     }
     // 6. Return UNUSED.
     scope.release();
@@ -888,7 +888,7 @@ void JSModuleLoader::continueModuleLoading(JSGlobalObject* globalObject, ModuleG
         // 3.a. Set state.[[IsLoading]] to false.
         state->setIsLoading(false);
         // 3.b. Perform ! Call(state.[[PromiseCapability]].[[Reject]], undefined, « moduleCompletion.[[Value]] »).
-        state->promise()->reject(vm, globalObject, std::get<Exception*>(moduleCompletion)->value());
+        state->promise()->reject(vm, std::get<Exception*>(moduleCompletion)->value());
     }
     // 4. Return UNUSED.
     scope.release();
@@ -905,7 +905,7 @@ void JSModuleLoader::continueDynamicImport(JSGlobalObject* globalObject, JSPromi
     // 1. If moduleCompletion is an abrupt completion, then
     if (Exception** exception = std::get_if<Exception*>(&completion)) {
         // 1.a. Perform ! Call(promiseCapability.[[Reject]], undefined, « moduleCompletion.[[Value]] »).
-        promise->reject(vm, globalObject, (*exception)->value());
+        promise->reject(vm, (*exception)->value());
         // 1.b. Return UNUSED.
         scope.assertNoException();
         return;
@@ -916,7 +916,7 @@ void JSModuleLoader::continueDynamicImport(JSGlobalObject* globalObject, JSPromi
     JSPromise* loadPromise = loadRequestedModules(globalObject, module, WTF::move(scriptFetcher));
     RETURN_IF_EXCEPTION(scope, void());
     // 4-8. Link and evaluate using microtask dispatch instead of closures.
-    loadPromise->performPromiseThenWithInternalMicrotask(vm, globalObject, deferred ? InternalMicrotask::DynamicImportDeferLoadSettled : InternalMicrotask::DynamicImportLoadSettled, promise, module);
+    loadPromise->performPromiseThenWithInternalMicrotask(vm, deferred ? InternalMicrotask::DynamicImportDeferLoadSettled : InternalMicrotask::DynamicImportLoadSettled, promise, module);
     // 9. Return UNUSED.
     scope.release();
 }
@@ -1037,9 +1037,9 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
     if (sourceCode.provider()->sourceType() == SourceProviderSourceType::JSON) {
         auto* moduleRecord = SyntheticModuleRecord::parseJSONModule(globalObject, moduleKey, SourceCode { sourceCode });
         attachErrorInfo(globalObject, scope, moduleRecord, moduleKey, ScriptFetchParameters::JSON, ModuleFailure::Kind::Evaluation);
-        RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+        RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(vm, scope));
         scope.release();
-        promise->fulfill(vm, globalObject, moduleRecord);
+        promise->fulfill(vm, moduleRecord);
         return promise;
     }
 
@@ -1050,7 +1050,7 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
     if (error.isValid()) {
         auto* errorInstance = uncheckedDowncast<ErrorInstance>(error.toErrorObject(globalObject, sourceCode));
         attachErrorInfo(globalObject, errorInstance, nullptr, moduleKey, ScriptFetchParameters::JavaScript, ModuleFailure::Kind::Evaluation);
-        promise->reject(vm, globalObject, errorInstance);
+        promise->reject(vm, errorInstance);
         RELEASE_AND_RETURN(scope, promise);
     }
     ASSERT(moduleProgramNode);
@@ -1063,11 +1063,11 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
         auto [errorType, message] = WTF::move(result.error());
         auto* errorInstance = uncheckedDowncast<ErrorInstance>(createError(globalObject, errorType, message));
         attachErrorInfo(globalObject, errorInstance, nullptr, moduleKey, ScriptFetchParameters::JavaScript, ModuleFailure::Kind::Evaluation);
-        promise->reject(vm, globalObject, errorInstance);
+        promise->reject(vm, errorInstance);
         RELEASE_AND_RETURN(scope, promise);
     }
 
-    promise->fulfill(vm, globalObject, result.value());
+    promise->fulfill(vm, result.value());
     RELEASE_AND_RETURN(scope, promise);
 }
 

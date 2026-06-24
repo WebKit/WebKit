@@ -15,12 +15,12 @@
 #include "api/environment/environment.h"
 #include "api/test/rtc_error_matchers.h"
 #include "rtc_base/random.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_tools/network_tester/test_controller.h"
 #include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/testsupport/file_utils.h"
 #include "test/wait_until.h"
 
@@ -33,7 +33,7 @@ TEST(NetworkTesterTest, ServerClient) {
   const int MAX_PORT = 65535;
   int port = Random(TimeMicros()).Rand(MIN_PORT, MAX_PORT);
 
-  AutoThread main_thread;
+  test::RunLoop main_thread;
   Environment env = CreateTestEnvironment();
 
   TestController client(

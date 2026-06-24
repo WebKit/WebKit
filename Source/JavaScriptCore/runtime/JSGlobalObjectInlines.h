@@ -36,6 +36,7 @@
 #include <JavaScriptCore/JSGlobalLexicalEnvironment.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSWeakObjectMapRefInternal.h>
+#include <JavaScriptCore/LazyClassStructureInlines.h>
 #include <JavaScriptCore/LinkTimeConstant.h>
 #include <JavaScriptCore/ObjectInitializationScope.h>
 #include <JavaScriptCore/ObjectPrototype.h>
@@ -692,6 +693,22 @@ template<typename Type> inline Type JSGlobalObject::linkTimeConstantConcurrently
         return nullptr;
     return uncheckedDowncast<std::remove_pointer_t<Type>>(result);
 }
+
+inline void JSGlobalObject::notifyArrayBufferDetaching()
+{
+    if (!m_arrayBufferDetachWatchpointSet->isStillValid())
+        return;
+    notifyArrayBufferDetachingSlow();
+}
+
+inline JSObject* JSGlobalObject::booleanPrototype() const { return m_booleanObjectStructure.prototypeInitializedOnMainThread(this); }
+inline JSObject* JSGlobalObject::numberPrototype() const { return m_numberObjectStructure.prototypeInitializedOnMainThread(this); }
+inline JSObject* JSGlobalObject::datePrototype() const { return m_dateStructure.prototype(this); }
+inline JSObject* JSGlobalObject::errorPrototype() const { return m_errorStructure.prototype(this); }
+inline JSObject* JSGlobalObject::mapPrototype() const { return m_mapStructure.prototype(this); }
+inline JSObject* JSGlobalObject::jsSetPrototype() const { return m_setStructure.prototype(this); }
+inline JSObject* JSGlobalObject::dateTimeFormatPrototype() { return m_dateTimeFormatStructure.prototype(this); }
+inline JSObject* JSGlobalObject::numberFormatPrototype() { return m_numberFormatStructure.prototype(this); }
 
 } // namespace JSC
 

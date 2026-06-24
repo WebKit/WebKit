@@ -92,7 +92,7 @@ std::unique_ptr<FrameSelector> CreateFrameSelector(
     return nullptr;
   }
   return std::make_unique<FrameSelector>(
-      scalability_mode.value_or(ScalabilityMode::kL1T1),
+      *environment, scalability_mode.value_or(ScalabilityMode::kL1T1),
       FrameSelector::Timespan{
           .lower_bound = settings.low_overhead_lower_bound(),
           .upper_bound = settings.low_overhead_upper_bound()},
@@ -142,6 +142,10 @@ FrameInstrumentationGeneratorImpl::OnEncodedImage(
       return std::nullopt;
     }
     captured_frame = captured_frames_.front();
+
+    if (encoded_image.is_end_of_temporal_unit()) {
+      captured_frames_.pop();
+    }
 
     layer_id = GetSpatialLayerId(encoded_image);
 
@@ -240,6 +244,18 @@ FrameInstrumentationGeneratorImpl::OnEncodedImage(
   RTC_CHECK(data.SetSampleValues(std::move(plain_values)));
 
   return data;
+}
+
+void FrameInstrumentationGeneratorImpl::OnFrameReleased(
+    uint32_t rtp_timestamp) {
+  MutexLock lock(&mutex_);
+  // Remove the frame and any preceding ones from the queue.
+  while (!captured_frames_.empty() &&
+         (IsNewerTimestamp(rtp_timestamp,
+                           captured_frames_.front().rtp_timestamp()) ||
+          rtp_timestamp == captured_frames_.front().rtp_timestamp())) {
+    captured_frames_.pop();
+  }
 }
 
 std::optional<int> FrameInstrumentationGeneratorImpl::GetHaltonSequenceIndex(

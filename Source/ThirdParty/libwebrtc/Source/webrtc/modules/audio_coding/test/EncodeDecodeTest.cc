@@ -15,10 +15,10 @@
 #include <cstdlib>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
@@ -182,7 +182,7 @@ bool Receiver::IncomingPacket() {
 
     EXPECT_GE(
         0, _neteq->InsertPacket(_rtpHeader,
-                                ArrayView<const uint8_t>(_incomingPayload,
+                                std::span<const uint8_t>(_incomingPayload,
                                                          _realPayloadSizeBytes),
                                 /*receive_time=*/Timestamp::Millis(_nextTime)));
     _realPayloadSizeBytes = _rtpStream->Read(&_rtpHeader, _incomingPayload,

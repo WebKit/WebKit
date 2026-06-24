@@ -26,7 +26,10 @@
 #include "../bytestring/internal.h"
 #include "../fipsmodule/ecdsa/internal.h"
 #include "../internal.h"
+#include "../mem_internal.h"
 
+
+using namespace bssl;
 
 static ECDSA_SIG *ecdsa_sig_from_fixed(const EC_KEY *key, const uint8_t *in,
                                        size_t len) {
@@ -73,9 +76,10 @@ static int ecdsa_sig_to_fixed(const EC_KEY *key, uint8_t *out, size_t *out_len,
 
 int ECDSA_sign(int type, const uint8_t *digest, size_t digest_len, uint8_t *sig,
                unsigned int *out_sig_len, const EC_KEY *eckey) {
-  if (eckey->ecdsa_meth && eckey->ecdsa_meth->sign) {
-    return eckey->ecdsa_meth->sign(digest, digest_len, sig, out_sig_len,
-                                   (EC_KEY *)eckey /* cast away const */);
+  const ECKey *eckey_impl = FromOpaque(eckey);
+  if (eckey_impl->ecdsa_meth && eckey_impl->ecdsa_meth->sign) {
+    return eckey_impl->ecdsa_meth->sign(digest, digest_len, sig, out_sig_len,
+                                        (EC_KEY *)eckey /* cast away const */);
   }
 
   *out_sig_len = 0;
@@ -88,7 +92,7 @@ int ECDSA_sign(int type, const uint8_t *digest, size_t digest_len, uint8_t *sig,
 
   // TODO(davidben): We can actually do better and go straight from the DER
   // format to the fixed-width format without a malloc.
-  bssl::UniquePtr<ECDSA_SIG> s(ecdsa_sig_from_fixed(eckey, fixed, fixed_len));
+  UniquePtr<ECDSA_SIG> s(ecdsa_sig_from_fixed(eckey, fixed, fixed_len));
   if (s == nullptr) {
     return 0;
   }
@@ -112,7 +116,7 @@ int ECDSA_verify(int type, const uint8_t *digest, size_t digest_len,
   // format to the fixed-width format without a malloc.
   int ret = 0;
   uint8_t *der = nullptr;
-  bssl::UniquePtr<ECDSA_SIG> s(ECDSA_SIG_from_bytes(sig, sig_len));
+  UniquePtr<ECDSA_SIG> s(ECDSA_SIG_from_bytes(sig, sig_len));
   if (s == nullptr) {
     goto err;
   }
@@ -151,9 +155,8 @@ size_t ECDSA_size(const EC_KEY *key) {
   return ECDSA_SIG_max_len(group_order_size);
 }
 
-ECDSA_SIG *ECDSA_SIG_new(void) {
-  ECDSA_SIG *sig =
-      reinterpret_cast<ECDSA_SIG *>(OPENSSL_malloc(sizeof(ECDSA_SIG)));
+ECDSA_SIG *ECDSA_SIG_new() {
+  ECDSA_SIG *sig = New<ECDSA_SIG>();
   if (sig == nullptr) {
     return nullptr;
   }
@@ -173,7 +176,7 @@ void ECDSA_SIG_free(ECDSA_SIG *sig) {
 
   BN_free(sig->r);
   BN_free(sig->s);
-  OPENSSL_free(sig);
+  Delete(sig);
 }
 
 const BIGNUM *ECDSA_SIG_get0_r(const ECDSA_SIG *sig) { return sig->r; }
@@ -324,11 +327,11 @@ size_t ECDSA_SIG_max_len(size_t order_len) {
 }
 
 ECDSA_SIG *d2i_ECDSA_SIG(ECDSA_SIG **out, const uint8_t **inp, long len) {
-  return bssl::D2IFromCBS(out, inp, len, ECDSA_SIG_parse);
+  return D2IFromCBS(out, inp, len, ECDSA_SIG_parse);
 }
 
 int i2d_ECDSA_SIG(const ECDSA_SIG *sig, uint8_t **outp) {
-  return bssl::I2DFromCBB(
+  return I2DFromCBB(
       /*initial_capacity=*/64, outp,
       [&](CBB *cbb) -> bool { return ECDSA_SIG_marshal(cbb, sig); });
 }

@@ -47,9 +47,9 @@ static double performanceNow(ScriptExecutionContext& scriptExecutionContext)
 
     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
         if (RefPtr window = document->window())
-            return window->performance().now();
+            return protect(window->performance())->now();
     } else if (RefPtr workerGlobal = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
-        return workerGlobal->performance().now();
+        return protect(workerGlobal->performance())->now();
 
     return 0;
 }

@@ -195,6 +195,11 @@ void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifi
         return;
     }
 
+    if (storageSizeOf(serializedData) > webExtensionStorageAreaMaximumBytesPerCall) {
+        *outExceptionString = toErrorString(nullString(), nullString(), @"it exceeded maximum data size allowed per call").createNSString().autorelease();
+        return;
+    }
+
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSet(webPageProxyIdentifier, m_type, encodeJSONString(serializedData)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result)
             callback->reportError(result.error().createNSString().get());

@@ -13,9 +13,9 @@
 #include <algorithm>
 #include <array>
 #include <numeric>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
 #include "modules/audio_processing/utility/pffft_wrapper.h"
@@ -73,7 +73,7 @@ TEST(RnnVadTest, DISABLED_TestOpusScaleWeights) {
   int i = 0;
   for (int band_size : GetOpusScaleNumBins24kHz20ms()) {
     SCOPED_TRACE(band_size);
-    ArrayView<float> band_weights(weights.data() + i, band_size);
+    std::span<float> band_weights(weights.data() + i, band_size);
     float prev = -1.f;
     for (float weight : band_weights) {
       EXPECT_LT(prev, weight);

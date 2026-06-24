@@ -26,6 +26,7 @@
 
 #include <WebCore/Node.h>
 #include <WebCore/QualifiedName.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -54,6 +55,8 @@ public:
 
     void attachToElement(Element&);
     void detachFromElementWithValue(const AtomString&);
+    
+    template<typename Visitor> void visitOwnerElementInGCThread(Visitor&);
 
     const AtomString& NODELETE namespaceURI() const LIFETIME_BOUND final { return m_name.namespaceURI(); }
     const AtomString& NODELETE localName() const LIFETIME_BOUND final { return m_name.localName(); }
@@ -68,8 +71,6 @@ private:
     String nodeValue() const final { return value(); }
     ExceptionOr<void> setNodeValue(const String&) final;
 
-    ExceptionOr<void> setPrefix(const AtomString&) final;
-
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const final;
     SerializedNode serializeNode(CloningOperation) const final;
 
@@ -77,11 +78,11 @@ private:
 
     // Attr wraps either an element/name, or a name/value pair (when it's a standalone Node.)
     // Note that m_name is always set, but m_element/m_standaloneValue may be null.
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
+    CheckedPtr<Element> m_element;
     QualifiedName m_name;
     AtomString m_standaloneValue;
-
     RefPtr<MutableStyleProperties> m_style;
+    mutable Lock m_elementLockForGC;
 };
 
 } // namespace WebCore

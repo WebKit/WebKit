@@ -433,6 +433,12 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 
     m_pagesWithRelaxedThirdPartyCookieBlocking.addAll(parameters.pagesWithRelaxedThirdPartyCookieBlocking);
 
+    // Apply CORS-disabling patterns supplied by the UIProcess at connection-creation time. This covers the case
+    // where _corsDisablingPatterns was set on a WebPageProxy before the NetworkProcess was launched, so no
+    // SetCORSDisablingPatternsForPage IPC could reach this process.
+    for (auto& [pageIdentifier, patterns] : parameters.corsDisablingPatternsPerPage)
+        setCORSDisablingPatternsForPage(identifier, pageIdentifier, WTF::move(patterns));
+
     if (CheckedPtr session = networkSession(sessionID)) {
         std::optional<HashSet<WebCore::RegistrableDomain>> allowedSites = HashSet<WebCore::RegistrableDomain> { };
         auto iter = m_allowedFirstPartiesForCookies.find(identifier);
@@ -578,15 +584,24 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 #if PLATFORM(IOS_FAMILY)
     if (auto& handle = parameters.cookieStorageDirectoryExtensionHandle)
         SandboxExtension::consumePermanently(*handle);
+#if !USE(EXTENSIONKIT)
     if (auto& handle = parameters.containerCachesDirectoryExtensionHandle)
         SandboxExtension::consumePermanently(*handle);
+#endif
     if (auto& handle = parameters.parentBundleDirectoryExtensionHandle)
         SandboxExtension::consumePermanently(*handle);
+#if !USE(EXTENSIONKIT)
     if (auto& handle = parameters.tempDirectoryExtensionHandle)
-        grantAccessToContainerTempDirectory(*handle);
-    if (auto& handle = parameters.tempDirectoryRootExtensionHandle)
         SandboxExtension::consumePermanently(*handle);
 #endif
+    if (auto& handle = parameters.tempDirectoryRootExtensionHandle)
+        SandboxExtension::consumePermanently(*handle);
+#if ENABLE(LLVM_PROFILE_GENERATION)
+    WebKit::initializeLLVMProfiling();
+    WebCore::initializeLLVMProfiling();
+    JSC::initializeLLVMProfiling();
+#endif // ENABLE(LLVM_PROFILE_GENERATION)
+#endif // PLATFORM(IOS_FAMILY)
 
     addStorageSession(sessionID, parameters);
 
@@ -1964,7 +1979,7 @@ void NetworkProcess::deleteWebsiteDataForOrigin(PAL::SessionID sessionID, Option
         if (CheckedPtr networkStorageSession = storageSession(sessionID))
             networkStorageSession->deleteCookies(origin, [clearTasksHandler] { });
     }
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral()) {
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral() && session) {
         if (RefPtr cache = session->cache()) {
             Vector<NetworkCache::Key> cacheKeysToDelete;
             String cachePartition = origin.clientOrigin == origin.topOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host());
@@ -3204,6 +3219,16 @@ void NetworkProcess::terminateIdleServiceWorkers(WebCore::ProcessIdentifier proc
     callback();
 }
 
+void NetworkProcess::setWebProcessSuspended(WebCore::ProcessIdentifier processIdentifier, bool isSuspended)
+{
+    RefPtr connection = webProcessConnection(processIdentifier);
+    if (!connection)
+        return;
+
+    if (CheckedPtr session = networkSession(connection->sessionID()))
+        session->storageManager().setWebProcessSuspended(processIdentifier, isSuspended);
+}
+
 Seconds NetworkProcess::randomClosedPortDelay()
 {
     // Random delay in the range [10ms, 110ms).
@@ -3263,15 +3288,18 @@ bool NetworkProcess::shouldDisableCORSForRequestTo(PageIdentifier pageIdentifier
     });
 }
 
-void NetworkProcess::setCORSDisablingPatterns(NetworkConnectionToWebProcess& connection, PageIdentifier pageIdentifier, Vector<String>&& patterns)
+void NetworkProcess::setCORSDisablingPatternsForPage(WebCore::ProcessIdentifier webProcessIdentifier, PageIdentifier pageIdentifier, Vector<String>&& patterns)
 {
+    // This message is sent directly from the UIProcess rather than from the WebProcess because a compromised
+    // WebContent process must not be able to disable CORS on the NetworkProcess side; that would let it read
+    // the content of arbitrary cross-origin sites.
     auto parsedPatterns = WTF::compactMap(WTF::move(patterns), [&](auto&& pattern) -> std::optional<UserContentURLPattern> {
         UserContentURLPattern parsedPattern(WTF::move(pattern));
-        if (parsedPattern.isValid()) {
-            connection.originAccessPatterns().allowAccessTo(parsedPattern);
-            return parsedPattern;
-        }
-        return std::nullopt;
+        if (!parsedPattern.isValid())
+            return std::nullopt;
+        if (RefPtr connection = webProcessConnection(webProcessIdentifier))
+            connection->originAccessPatterns().allowAccessTo(parsedPattern);
+        return parsedPattern;
     });
 
     parsedPatterns.shrinkToFit();

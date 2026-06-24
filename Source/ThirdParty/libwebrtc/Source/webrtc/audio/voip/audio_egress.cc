@@ -13,9 +13,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
@@ -132,7 +132,7 @@ int32_t AudioEgress::SendData(AudioFrameType frame_type,
                               size_t payload_size) {
   RTC_DCHECK_RUN_ON(&encoder_queue_checker_);
 
-  ArrayView<const uint8_t> payload(payload_data, payload_size);
+  std::span<const uint8_t> payload(payload_data, payload_size);
 
   // Currently we don't get a capture time from downstream modules (ADM,
   // AudioTransportImpl).

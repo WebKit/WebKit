@@ -42,7 +42,7 @@ auto CSSValueConversion<OffsetPath>::operator()(BuilderState& state, const CSSVa
     return OffsetPath { toStyleFromCSSValue<RefPtr<PathOperation>>(state, value, SupportRayPathOperation::Yes) };
 }
 
-Ref<CSSValue> CSSValueCreation<OffsetPath>::operator()(CSSValuePool& pool, const RenderStyle& style, const OffsetPath& value)
+Ref<CSSValue> CSSValueCreation<OffsetPath>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const OffsetPath& value)
 {
     return WTF::switchOn(value,
         [&](const BasicShapePath& path) {
@@ -56,7 +56,7 @@ Ref<CSSValue> CSSValueCreation<OffsetPath>::operator()(CSSValuePool& pool, const
 
 // MARK: - Serialization
 
-void Serialize<OffsetPath>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const OffsetPath& value)
+void Serialize<OffsetPath>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const OffsetPath& value)
 {
     return WTF::switchOn(value,
         [&](const BasicShapePath& path) {
@@ -117,7 +117,7 @@ AcceleratedEffectOffsetPath Evaluation<OffsetPath, AcceleratedEffectOffsetPath>:
             return { .value = evaluate<AcceleratedEffectOffsetPath::ReferencePath>(path, data, zoom) };
         },
         [&](const BasicShapePath& path) -> AcceleratedEffectOffsetPath {
-            return { .value = evaluate<AcceleratedEffectOffsetPath::BasicShapePath>(path, data, zoom) };
+            return { .value = evaluate<AcceleratedEffectOffsetPath::BasicShapePath>(path, data.motionPathData->offsetRect().rect(), zoom) };
         },
         [&](const BoxPath& path) -> AcceleratedEffectOffsetPath {
             return { .value = evaluate<AcceleratedEffectOffsetPath::BoxPath>(path, data, zoom) };

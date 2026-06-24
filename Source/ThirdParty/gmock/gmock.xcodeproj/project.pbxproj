@@ -343,7 +343,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					44E750C12AC7291000828AC4 = {
 						CreatedOnToolsVersion = 15.0;

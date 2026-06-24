@@ -78,10 +78,10 @@ public:
     RemoteFrame* NODELETE remoteFrame() const;
 
 protected:
-    RenderWidget(Type, HTMLFrameOwnerElement&, RenderStyle&&);
+    RenderWidget(Type, HTMLFrameOwnerElement&, Style::ComputedStyle&&);
 
     void willBeDestroyed() override;
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
@@ -90,7 +90,7 @@ protected:
 private:
     void element() const = delete;
 
-    bool shouldInvalidatePreferredWidths() const final;
+    bool shouldInvalidateContentWidths() const final;
     RenderReplaced* embeddedSVGRoot() const final;
     FloatSize preferredAspectRatioAsSize() const final;
 

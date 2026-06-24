@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-in-scroller.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-in-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-not-rendered.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-source-deferred.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-to-eager.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-window-onload.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-load-deferred.html

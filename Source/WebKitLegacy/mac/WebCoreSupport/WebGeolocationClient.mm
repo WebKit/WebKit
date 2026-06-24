@@ -45,31 +45,30 @@
 #import <WebKitLegacy/WebCoreThreadRun.h>
 #endif
 
-using namespace WebCore;
 
 #if !PLATFORM(IOS_FAMILY)
 @interface WebGeolocationPolicyListener : NSObject <WebAllowDenyPolicyListener>
 {
-    RefPtr<Geolocation> _geolocation;
+    RefPtr<WebCore::Geolocation> _geolocation;
 }
-- (id)initWithGeolocation:(std::reference_wrapper<Geolocation>)geolocation;
+- (id)initWithGeolocation:(std::reference_wrapper<WebCore::Geolocation>)geolocation;
 @end
 #else
 @interface WebGeolocationPolicyListener : NSObject <WebAllowDenyPolicyListener>
 {
-    RefPtr<Geolocation> _geolocation;
+    RefPtr<WebCore::Geolocation> _geolocation;
     RetainPtr<WebView> _webView;
 }
-- (id)initWithGeolocation:(NakedPtr<Geolocation>)geolocation forWebView:(WebView*)webView;
+- (id)initWithGeolocation:(NakedPtr<WebCore::Geolocation>)geolocation forWebView:(WebView*)webView;
 @end
 #endif
 
 #if PLATFORM(IOS_FAMILY)
 @interface WebGeolocationProviderInitializationListener : NSObject <WebGeolocationProviderInitializationListener> {
 @private
-    RefPtr<Geolocation> m_geolocation;
+    RefPtr<WebCore::Geolocation> m_geolocation;
 }
-- (id)initWithGeolocation:(std::reference_wrapper<Geolocation>)geolocation;
+- (id)initWithGeolocation:(std::reference_wrapper<WebCore::Geolocation>)geolocation;
 @end
 #endif
 
@@ -107,7 +106,7 @@ void WebGeolocationClient::setEnableHighAccuracy(bool wantsHighAccuracy)
 }
 #endif
 
-void WebGeolocationClient::requestPermission(Geolocation& geolocation)
+void WebGeolocationClient::requestPermission(WebCore::Geolocation& geolocation)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -136,7 +135,7 @@ void WebGeolocationClient::requestPermission(Geolocation& geolocation)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
+std::optional<WebCore::GeolocationPositionData> WebGeolocationClient::lastPosition()
 {
     return core([[m_webView _geolocationProvider] lastPosition]);
 }
@@ -144,7 +143,7 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 #if !PLATFORM(IOS_FAMILY)
 @implementation WebGeolocationPolicyListener
 
-- (id)initWithGeolocation:(std::reference_wrapper<Geolocation>)geolocation
+- (id)initWithGeolocation:(std::reference_wrapper<WebCore::Geolocation>)geolocation
 {
     if (!(self = [super init]))
         return nil;
@@ -166,7 +165,7 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 
 #else
 @implementation WebGeolocationPolicyListener
-- (id)initWithGeolocation:(NakedPtr<Geolocation>)geolocation forWebView:(WebView*)webView
+- (id)initWithGeolocation:(NakedPtr<WebCore::Geolocation>)geolocation forWebView:(WebView*)webView
 {
     self = [super init];
     if (!self)
@@ -210,7 +209,7 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 @end
 
 @implementation WebGeolocationProviderInitializationListener
-- (id)initWithGeolocation:(std::reference_wrapper<Geolocation>)geolocation
+- (id)initWithGeolocation:(std::reference_wrapper<WebCore::Geolocation>)geolocation
 {
     self = [super init];
     if (self)

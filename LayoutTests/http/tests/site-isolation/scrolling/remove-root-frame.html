@@ -8,10 +8,6 @@
 description("Verifies that root frames are successfully removed from scrolling trees when removed from the DOM.");
 jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();            
-}
 
 window.addEventListener('load', async () => {
     if (!window.internals)
@@ -21,8 +17,7 @@ window.addEventListener('load', async () => {
         GCController.collect();
     document.getElementById('scrollingTree').innerText = await UIHelper.getScrollingTree();
     setTimeout(function() {
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }, 500);
 }, false);
 </script>

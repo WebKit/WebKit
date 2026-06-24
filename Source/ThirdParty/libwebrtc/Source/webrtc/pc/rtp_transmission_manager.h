@@ -43,6 +43,7 @@
 #include "pc/rtp_sender.h"
 #include "pc/rtp_sender_proxy.h"
 #include "pc/rtp_transceiver.h"
+#include "pc/simulcast_description.h"
 #include "pc/transceiver_list.h"
 #include "pc/usage_pattern.h"
 #include "rtc_base/system/plan_b_only.h"
@@ -111,6 +112,8 @@ class RtpTransmissionManager : public RtpSenderBase::SetStreamsObserver {
       const std::vector<RtpEncodingParameters>& init_send_encodings,
       const std::vector<RtpHeaderExtensionCapability>&
           header_extensions_to_negotiate,
+      bool simulcast_rejected,
+      const std::vector<SimulcastLayer>& initial_simulcast_layers,
       absl::string_view sender_id,
       absl::string_view receiver_id = "");
 
@@ -180,7 +183,7 @@ class RtpTransmissionManager : public RtpSenderBase::SetStreamsObserver {
       absl::string_view sender_id) const;
 
   // Return the RtpReceiver with the given id, or null if none exists.
-  scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>
+  PLAN_B_ONLY scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>
   FindReceiverById(absl::string_view receiver_id) const;
 
   TransceiverList* transceivers() { return &transceivers_; }

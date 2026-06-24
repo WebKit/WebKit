@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="test-input" type="text" value="click me" style="display:block; width:200px; height:50px;">
+<script>
+
+description("Tests that PerformanceEventTiming.target is retargeted out of user-agent shadow DOM even without event listeners.");
+window.jsTestIsAsync = true;
+
+function busyWait(ms) {
+    const target = performance.now() + ms;
+    while (performance.now() < target);
+}
+
+async function test()
+{
+    const input = document.getElementById('test-input');
+    const collectedEntries = [];
+
+    // Register a click listener with busy-wait to ensure all entries in the
+    // same interaction (including pointerup which has no listener) exceed the
+    // duration threshold. click fires after pointerup in the same task, so
+    // the busy-wait delays the rendering update for all entries.
+    input.addEventListener('click', () => {
+        busyWait(50);
+    });
+
+    const observerReady = new Promise(resolve => {
+        const observer = new PerformanceObserver(list => {
+            for (const entry of list.getEntries())
+                collectedEntries.push(entry);
+
+            const types = new Set(collectedEntries.map(e => e.name));
+            if (types.has('click'))
+                resolve();
+        });
+        observer.observe({ type: 'event', durationThreshold: 16 });
+    });
+
+    if (window.testRunner)
+        await UIHelper.activateElement(input);
+    await observerReady;
+
+    for (const entry of collectedEntries) {
+        if (!entry.target || !['mouseup', 'click'].includes(entry.name))
+            continue;
+        if (entry.target !== input)
+            testFailed("'" + entry.name + "' entry has wrong target: " + entry.target + " (expected the <input> element)");
+        else if (entry.target.getRootNode() !== document)
+            testFailed("'" + entry.name + "' entry target's root node is not the document (got " + entry.target.getRootNode() + ")");
+        else
+            testPassed("'" + entry.name + "' entry has correctly retargeted target: " + entry.target.tagName + "#" + entry.target.id);
+    }
+
+    finishJSTest();
+}
+
+test();
+
+</script>
+</body>
+</html>

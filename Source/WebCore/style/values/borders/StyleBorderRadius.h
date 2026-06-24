@@ -72,7 +72,7 @@ template<size_t I> const auto& get(const BorderRadius& value)
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderRadius> { auto operator()(const BorderRadius&, const RenderStyle&) -> CSS::BorderRadius; };
+template<> struct ToCSS<BorderRadius> { auto operator()(const BorderRadius&, const Style::ComputedStyle&) -> CSS::BorderRadius; };
 template<> struct ToStyle<CSS::BorderRadius> { auto operator()(const CSS::BorderRadius&, const BuilderState&) -> BorderRadius; };
 
 template<> struct CSSValueConversion<BorderRadiusValue> { auto operator()(BuilderState&, const CSSValue&) -> BorderRadiusValue; };

@@ -55,6 +55,10 @@ function runTest(config)
             debugMessage = 'createMediaKeys()';
             return access.createMediaKeys();
         }).then(function (mediaKeys) {
+              if (config.servercertificate)
+                  return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+              return mediaKeys;
+        }).then(function (mediaKeys) {
               debugMessage = 'setMediaKeys()';
               return video.setMediaKeys(mediaKeys);
         }).then(function () {

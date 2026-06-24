@@ -25,8 +25,6 @@
         async function doTest()
         {
             description('Ensure scrollbars controller state is correct for scroller type');
-            if (window.testRunner)
-                testRunner.waitUntilDone();
             await UIHelper.renderingUpdate();
             svgScroller = document.getElementById('svgScroller');
             shouldBeEqualToString('window.internals.scrollbarsControllerTypeForNode(svgScroller)', 'ScrollbarsControllerMac');
@@ -38,7 +36,7 @@
             shouldBeEqualToString('window.internals.scrollbarsControllerTypeForNode(scroller)', window.internals.isUsingUISideCompositing() ? 'RemoteScrollbarsController' : 'ScrollbarsControllerMac');
             shouldBeEqualToString('window.internals.scrollbarsControllerTypeForNode()', window.internals.isUsingUISideCompositing() ? 'RemoteScrollbarsController' : 'ScrollbarsControllerMac');
 
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         window.addEventListener('load', () => {

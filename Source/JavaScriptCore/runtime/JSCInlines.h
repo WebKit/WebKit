@@ -57,6 +57,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/ThrowScope.h>
+#include <JavaScriptCore/VariableWriteFireDetailInlines.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WeakGCSetInlines.h>
 

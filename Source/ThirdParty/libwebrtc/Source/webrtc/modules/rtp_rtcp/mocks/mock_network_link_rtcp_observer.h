@@ -11,7 +11,8 @@
 #ifndef MODULES_RTP_RTCP_MOCKS_MOCK_NETWORK_LINK_RTCP_OBSERVER_H_
 #define MODULES_RTP_RTCP_MOCKS_MOCK_NETWORK_LINK_RTCP_OBSERVER_H_
 
-#include "api/array_view.h"
+#include <span>
+
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -45,7 +46,7 @@ class MockNetworkLinkRtcpObserver : public NetworkLinkRtcpObserver {
   MOCK_METHOD(void,
               OnReport,
               (Timestamp receive_time,
-               ArrayView<const ReportBlockData> report_blocks),
+               std::span<const ReportBlockData> report_blocks),
               (override));
 };
 

@@ -34,7 +34,7 @@
 #include "NodeName.h"
 #include "RenderMathMLOperator.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -119,7 +119,7 @@ Property MathMLOperatorElement::computeDictionaryProperty()
     Property dictionaryProperty;
 
     // We first determine the form attribute and use the default spacing and properties.
-    const auto& value = attributeWithoutSynchronization(formAttr);
+    const auto& value = attributeWithoutSynchronization(MathMLNames::formAttr);
     bool explicitForm = true;
     if (value == "prefix"_s)
         dictionaryProperty.form = Form::Prefix;
@@ -267,7 +267,7 @@ void MathMLOperatorElement::setOperatorFormDirty()
     m_properties.dirtyFlags = MathMLOperatorDictionary::allFlags;
     if (CheckedPtr renderOperator = dynamicDowncast<RenderMathMLOperator>(renderer())) {
         renderOperator->updateFromElement();
-        renderOperator->setNeedsLayoutAndPreferredWidthsUpdate();
+        renderOperator->setNeedsLayoutAndInvalidateContentLogicalWidths();
     }
 }
 
@@ -329,14 +329,14 @@ void MathMLOperatorElement::attributeChanged(const QualifiedName& name, const At
     if (affectsLayout) {
         if (CheckedPtr renderOperator = dynamicDowncast<RenderMathMLOperator>(renderer())) {
             renderOperator->updateFromElement();
-            renderOperator->setNeedsLayoutAndPreferredWidthsUpdate();
+            renderOperator->setNeedsLayoutAndInvalidateContentLogicalWidths();
         }
     }
 
     MathMLTokenElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderMathMLOperator>(RenderObject::Type::MathMLOperator, *this, WTF::move(style));
 }

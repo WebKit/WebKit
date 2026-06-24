@@ -17,6 +17,7 @@
 
 #include <openssl/base.h>
 
+
 #if defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 #define OPENSSL_RAND_DETERMINISTIC
 #elif defined(OPENSSL_TRUSTY)
@@ -34,22 +35,33 @@
 #define OPENSSL_RAND_GETENTROPY
 #endif
 
-#if defined(OPENSSL_LINUX)
+#if defined(OPENSSL_LINUX) || defined(OPENSSL_FREEBSD) || \
+    defined(OPENSSL_OPENBSD)
+
 // On linux we use MADVISE instead of pthread_atfork(), due
 // to concerns about clone() being used for address space
 // duplication.
 #define OPENSSL_FORK_DETECTION
-#define OPENSSL_FORK_DETECTION_MADVISE
-#elif defined(OPENSSL_MACOS) || defined(OPENSSL_IOS) || \
-    defined(OPENSSL_OPENBSD) || defined(OPENSSL_FREEBSD)
+#define OPENSSL_FORK_DETECTION_WIPEONFORK
+
+#elif defined(OPENSSL_MACOS) || defined(OPENSSL_IOS)
+
 // These platforms may detect address space duplication with pthread_atfork.
 // iOS doesn't normally allow fork in apps, but it's there.
 #define OPENSSL_FORK_DETECTION
 #define OPENSSL_FORK_DETECTION_PTHREAD_ATFORK
+
 #elif defined(OPENSSL_WINDOWS) || defined(OPENSSL_TRUSTY) || \
     defined(__ZEPHYR__) || defined(CROS_EC)
+
 // These platforms do not fork.
 #define OPENSSL_DOES_NOT_FORK
+
+#else
+
+// Other platforms may fork, but BoringSSL cannot reliably detect it happening.
+// So instead, new entropy will be drawn on every RNG call.
+
 #endif
 
 #endif  // OPENSSL_HEADER_CRYPTO_RAND_INTERNAL_H

@@ -709,6 +709,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     _impl->hasMarkedTextWithCompletionHandler(completionHandlerPtr);
 }
 
+- (void)isMarkedTextRequiredForCompositionWithCompletionHandler:(void(^)(BOOL isMarkedTextRequiredForComposition))completionHandlerPtr
+{
+    _impl->isMarkedTextRequiredForCompositionWithCompletionHandler(completionHandlerPtr);
+}
+
 - (void)attributedSubstringForProposedRange:(NSRange)nsRange completionHandler:(void(^)(NSAttributedString *attrString, NSRange actualRange))completionHandlerPtr
 {
     _impl->attributedSubstringForProposedRange(nsRange, completionHandlerPtr);
@@ -772,7 +777,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     _impl->showWritingTools(tool);
 }
 
-#endif
+- (BOOL)allowsWritingToolsAffordance
+{
+    return _impl->shouldAllowWritingToolsAffordance();
+}
+
+#endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(DRAG_SUPPORT)
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -866,6 +876,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return;
 
     WebCore::CornerRadii newRadii;
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if (RetainPtr<NSViewCornerRadii> radii = self._effectiveCornerRadii) {
         newRadii = WebCore::CornerRadii {
             static_cast<float>([radii topLeft]),
@@ -874,6 +885,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             static_cast<float>([radii bottomRight])
         };
     }
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     if (_lastViewCornerRadii == newRadii)
         return;
@@ -882,13 +894,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _page->setScrollbarAvoidanceCornerRadii(WTF::move(newRadii));
 }
 
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 - (NSViewCornerConfiguration *)_cornerConfiguration
 {
     if (self.enclosingScrollView)
         return [super _cornerConfiguration];
 
-    return [NSViewCornerConfiguration configurationWithRadius:_NSCornerRadius.containerConcentricRadius];
+    return [NSViewCornerConfiguration configurationWithRadius:(id)_NSCornerRadius.containerConcentricRadius];
 }
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #endif
 
@@ -1181,6 +1195,41 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _impl->hasScrolledContentsUnderTitlebar();
 }
 
+- (BOOL)respondsToSelector:(SEL)selector
+{
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    if (selector == @selector(setFullScreenTitlebarOverlayHeight:))
+        return [self _scrollPocketInFullscreenEnabled];
+#endif
+    return [super respondsToSelector:selector];
+}
+
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+
+- (CGFloat)fullScreenTitlebarOverlayHeight
+{
+    if (![self _scrollPocketInFullscreenEnabled])
+        return 0;
+
+    if (!_impl)
+        return 0;
+
+    return _impl->fullScreenTitlebarOverlayHeight();
+}
+
+- (void)setFullScreenTitlebarOverlayHeight:(CGFloat)fullScreenTitlebarOverlayHeight
+{
+    if (![self _scrollPocketInFullscreenEnabled])
+        return;
+
+    if (!_impl)
+        return;
+
+    _impl->setFullScreenTitlebarOverlayHeight(fullScreenTitlebarOverlayHeight);
+}
+
+#endif
+
 #pragma mark – NSAdaptiveImageGlyph
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
@@ -1235,6 +1284,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return;
 
     _impl->effectiveAppearanceDidChange();
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    [self _updateAppearanceForSystemBackgroundColorExtensionViews];
+#endif
 }
 
 @end

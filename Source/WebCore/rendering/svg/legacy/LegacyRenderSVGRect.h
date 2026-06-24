@@ -36,7 +36,7 @@ class LegacyRenderSVGRect final : public LegacyRenderSVGShape {
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGRect);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGRect);
 public:
-    LegacyRenderSVGRect(SVGRectElement&, RenderStyle&&);
+    LegacyRenderSVGRect(SVGRectElement&, Style::ComputedStyle&&);
     virtual ~LegacyRenderSVGRect();
 
     SVGRectElement& NODELETE rectElement() const;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,6 +79,7 @@ struct Abs;
 struct Sign;
 struct Random;
 struct Progress;
+struct CalcMix;
 
 // CSS Anchor Positioning functions.
 struct Anchor;
@@ -230,6 +231,7 @@ using Node = Variant<
     IndirectNode<Sign>,
     IndirectNode<Random>,
     IndirectNode<Progress>,
+    IndirectNode<CalcMix>,
     IndirectNode<Anchor>,
     IndirectNode<AnchorSize>
 >;
@@ -785,7 +787,7 @@ struct Random {
     bool operator==(const Random&) const = default;
 };
 
-// Progress-Related Functions - https://drafts.csswg.org/css-values-5/#progress
+// Progress Function - https://drafts.csswg.org/css-values-5/#progress
 struct Progress {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Progress);
     static constexpr auto id = CSSValueProgress;
@@ -802,6 +804,33 @@ struct Progress {
     Child end;
 
     bool operator==(const Progress&) const = default;
+};
+
+// CalcMix Function - https://drafts.csswg.org/css-values-5/#calc-mix
+
+struct CalcMix {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(CalcMix);
+    static constexpr auto id = CSSValueCalcMix;
+
+    struct Item {
+        using Weight = CSS::Percentage<CSS::ClosedPercentageRange>;
+
+        Child value;
+        std::optional<Weight> weight;
+
+        bool operator==(const Item&) const = default;
+    };
+
+    // <calc-mix()> = calc-mix( [ <calc-sum> <percentage [0,100]>? ]# )
+    //     - INPUT: "consistent" <number>, <dimension>, or <percentage> (referring to <calc-sum> arguments)
+    //     - OUTPUT: consistent type
+    static constexpr auto input = AllowedTypes::Any;
+    static constexpr auto merge = MergePolicy::Consistent;
+    static constexpr auto output = OutputTransform::None;
+
+    Vector<Item> children;
+
+    bool operator==(const CalcMix&) const = default;
 };
 
 // Anchor Positioning Related Functions - https://drafts.csswg.org/css-anchor-position-1/
@@ -930,6 +959,7 @@ std::optional<Type> toType(const Abs&);
 std::optional<Type> toType(const Sign&);
 std::optional<Type> toType(const Random&);
 std::optional<Type> toType(const Progress&);
+std::optional<Type> toType(const CalcMix&);
 
 // MARK: CSSUnitType Evaluation
 
@@ -1189,6 +1219,12 @@ template<size_t I> const auto& get(const Progress& root)
         return root.end;
 }
 
+template<size_t I> const auto& get(const CalcMix& root)
+{
+    static_assert(!I);
+    return root.children;
+}
+
 // MARK: Child Definition
 
 template<typename T>
@@ -1241,6 +1277,7 @@ OP_TUPLE_LIKE_CONFORMANCE(Abs, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Progress, 3);
 OP_TUPLE_LIKE_CONFORMANCE(Random, 4);
+OP_TUPLE_LIKE_CONFORMANCE(CalcMix, 1);
 // FIXME (webkit.org/b/280798): make Anchor and AnchorSize tuple-like
 OP_TUPLE_LIKE_CONFORMANCE(Anchor, 0);
 OP_TUPLE_LIKE_CONFORMANCE(AnchorSize, 0);

@@ -5,6 +5,7 @@
         <script src="../../../resources/js-test.js"></script>
         <script src="../../../resources/ui-helper.js"></script>
         <script>
+            window.jsTestIsAsync = true;
             async function drag()
             {
                 if (!window.testRunner)
@@ -12,8 +13,6 @@
 
                 const slider = document.getElementById("slider");
 
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
 
                 shouldBe("slider.value", "'0'");
 
@@ -37,7 +36,7 @@
 
                 shouldBe("slider.value", "'0'");
 
-                testRunner.notifyDone();
+                finishJSTest();
             }
         </script>
     </head>

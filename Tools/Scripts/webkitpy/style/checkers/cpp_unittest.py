@@ -6047,6 +6047,35 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [build/using_namespace] [4]",
             'foo.h')
 
+        self.assert_lint(
+            'using namespace WebCore;',
+            "Do not use 'using namespace WebCore;' at file or namespace scope; "
+            "global using namespace is likely to cause name collisions in the unified build."
+            "  [build/using_namespace] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'using namespace WebKit;',
+            "Do not use 'using namespace WebKit;' at file or namespace scope; "
+            "global using namespace is likely to cause name collisions in the unified build."
+            "  [build/using_namespace] [4]",
+            'foo.mm')
+
+        # Function-scope (indented) using-directives are fine.
+        self.assert_lint('    using namespace WebCore;', '', 'foo.cpp')
+
+        # Inside a namespace body the directive is contained, which is the
+        # recommended fix for unified-build collisions.
+        self.assert_multi_line_lint(
+            'namespace WebCore {\n'
+            'using namespace JSC;\n'
+            '}\n',
+            '', 'foo.cpp')
+
+        # std::literals namespaces are exempt at file scope.
+        self.assert_lint('using namespace std::literals;', '', 'foo.cpp')
+        self.assert_lint('using namespace std::literals::chrono_literals;', '', 'foo.cpp')
+
     def test_max_macro(self):
         self.assert_lint(
             'int i = MAX(0, 1);',

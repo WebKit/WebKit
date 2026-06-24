@@ -30,9 +30,8 @@
 #include "CSSRayValue.h"
 #include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGPathData.h"
 #include "SVGPathElement.h"
-#include "StyleLengthWrapper+Blending.h"
+#include "SVGPathFromElement.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 

@@ -66,6 +66,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkBitmap.h>
 #include <skia/core/SkColorSpace.h>
+#include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
@@ -578,7 +579,24 @@ RendererBufferDescription AcceleratedBackingStore::BufferGBM::description() cons
 
 RefPtr<NativeImage> AcceleratedBackingStore::BufferGBM::asNativeImageForTesting() const
 {
-    return nullptr;
+#if GTK_CHECK_VERSION(4, 16, 0)
+    return nativeImageFromGdkTexture(m_texture.get());
+#else
+    if (!m_surface)
+        return nullptr;
+
+    auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(m_surface.get()), cairo_image_surface_get_height(m_surface.get()), SkColorSpace::MakeSRGB());
+    SkBitmap bitmap;
+    if (!bitmap.tryAllocPixels(imageInfo))
+        return nullptr;
+
+    SkPixmap pixmap(imageInfo, cairo_image_surface_get_data(m_surface.get()), cairo_image_surface_get_stride(m_surface.get()));
+    if (!bitmap.writePixels(pixmap))
+        return nullptr;
+
+    bitmap.setImmutable();
+    return NativeImage::create(bitmap.asImage());
+#endif
 }
 
 void AcceleratedBackingStore::BufferGBM::release()

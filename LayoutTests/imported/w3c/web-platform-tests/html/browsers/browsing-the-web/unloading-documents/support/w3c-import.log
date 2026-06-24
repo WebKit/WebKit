@@ -31,3 +31,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/005b.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/beforeunload-sticky-destination.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/beforeunload-sticky-start.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/navigation-during-beforeunload-container.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/navigation-target.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support/navigation-target2.html

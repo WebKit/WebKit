@@ -164,7 +164,11 @@
             (literal "/dev/dtracehelper"))
         (allow file-write-data (with report) (with telemetry)
             (literal "/dev/dtracehelper"))
-        (allow nvram-get (nvram-variable "emu")))) ;; <rdar://problem/78363040>
+        (allow nvram-get (nvram-variable "emu"))) ;; <rdar://problem/78363040>
+
+    (allow file-read*
+           (literal "/dev/random")
+           (literal "/dev/urandom")))
 
 (define required-etc-files
   (literal "/private/etc/fstab"

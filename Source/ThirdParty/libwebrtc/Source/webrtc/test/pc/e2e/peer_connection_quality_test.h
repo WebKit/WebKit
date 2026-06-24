@@ -86,6 +86,8 @@ class PeerConnectionE2EQualityTest
     return real_test_duration_;
   }
 
+  void SetStatsPollingDelay(TimeDelta delay) { stats_polling_delay_ = delay; }
+
  private:
   class PeerHandleImpl : public PeerHandle {
    public:
@@ -114,6 +116,7 @@ class PeerConnectionE2EQualityTest
   Timestamp Now() const;
 
   TimeController& time_controller_;
+  TimeDelta stats_polling_delay_ = TimeDelta::Zero();
   const std::unique_ptr<TaskQueueFactory> task_queue_factory_;
   std::string test_case_name_;
   std::unique_ptr<VideoQualityAnalyzerInjectionHelper>

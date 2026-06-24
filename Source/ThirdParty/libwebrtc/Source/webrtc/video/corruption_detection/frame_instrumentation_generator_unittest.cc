@@ -809,5 +809,94 @@ TEST(FrameInstrumentationGeneratorTest, UsesFrameSelectorWhenEnabled) {
   EXPECT_TRUE(generator.OnEncodedImage(encoded_image2).has_value());
 }
 
+TEST(FrameInstrumentationGeneratorTest, FrameReleasedRemovesFramesFromQueue) {
+  const Environment env = CreateTestEnvironment();
+  auto generator = std::make_unique<FrameInstrumentationGeneratorImpl>(
+      &env, VideoCodecType::kVideoCodecVP8, ScalabilityMode::kL1T1);
+
+  bool frames_destroyed[2] = {};
+  class TestBuffer : public I420Buffer {
+   public:
+    TestBuffer(int width, int height, bool* frame_destroyed_indicator)
+        : I420Buffer(width, height),
+          frame_destroyed_indicator_(frame_destroyed_indicator) {
+      SetBlack(this);
+    }
+
+   private:
+    friend class RefCountedObject<TestBuffer>;
+    ~TestBuffer() override { *frame_destroyed_indicator_ = true; }
+
+    bool* frame_destroyed_indicator_;
+  };
+
+  generator->OnCapturedFrame(
+      VideoFrame::Builder()
+          .set_video_frame_buffer(make_ref_counted<TestBuffer>(
+              kDefaultScaledWidth, kDefaultScaledHeight, &frames_destroyed[0]))
+          .set_rtp_timestamp(1)
+          .build());
+  generator->OnCapturedFrame(
+      VideoFrame::Builder()
+          .set_video_frame_buffer(make_ref_counted<TestBuffer>(
+              kDefaultScaledWidth, kDefaultScaledHeight, &frames_destroyed[1]))
+          .set_rtp_timestamp(2)
+          .build());
+
+  EXPECT_FALSE(frames_destroyed[0]);
+  EXPECT_FALSE(frames_destroyed[1]);
+
+  // Releasing the first frame should destroy it.
+  generator->OnFrameReleased(1);
+  EXPECT_TRUE(frames_destroyed[0]);
+  EXPECT_FALSE(frames_destroyed[1]);
+
+  // Releasing the second frame should destroy it.
+  generator->OnFrameReleased(2);
+  EXPECT_TRUE(frames_destroyed[1]);
+}
+
+TEST(FrameInstrumentationGeneratorTest,
+     EndOfTemporalUnitRemovesFrameFromQueue) {
+  const Environment env = CreateTestEnvironment();
+  auto generator = std::make_unique<FrameInstrumentationGeneratorImpl>(
+      &env, VideoCodecType::kVideoCodecVP8, ScalabilityMode::kL1T1);
+
+  bool frame_destroyed = false;
+  class TestBuffer : public I420Buffer {
+   public:
+    TestBuffer(int width, int height, bool* frame_destroyed_indicator)
+        : I420Buffer(width, height),
+          frame_destroyed_indicator_(frame_destroyed_indicator) {
+      SetBlack(this);
+    }
+
+   private:
+    friend class RefCountedObject<TestBuffer>;
+    ~TestBuffer() override { *frame_destroyed_indicator_ = true; }
+
+    bool* frame_destroyed_indicator_;
+  };
+
+  generator->OnCapturedFrame(
+      VideoFrame::Builder()
+          .set_video_frame_buffer(make_ref_counted<TestBuffer>(
+              kDefaultScaledWidth, kDefaultScaledHeight, &frame_destroyed))
+          .set_rtp_timestamp(1)
+          .build());
+
+  EncodedImage encoded_image;
+  encoded_image.SetRtpTimestamp(1);
+  encoded_image.set_frame_type(VideoFrameType::kVideoFrameKey);
+  encoded_image.qp_ = 10;
+  encoded_image._encodedWidth = kDefaultScaledWidth;
+  encoded_image._encodedHeight = kDefaultScaledHeight;
+  encoded_image.set_end_of_temporal_unit(true);
+
+  EXPECT_FALSE(frame_destroyed);
+  ASSERT_TRUE(generator->OnEncodedImage(encoded_image).has_value());
+  EXPECT_TRUE(frame_destroyed);
+}
+
 }  // namespace
 }  // namespace webrtc

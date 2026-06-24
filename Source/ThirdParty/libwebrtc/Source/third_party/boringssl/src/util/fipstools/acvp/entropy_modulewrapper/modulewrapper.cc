@@ -23,7 +23,7 @@
 #include "../modulewrapper/modulewrapper.h"
 
 
-namespace bssl {
+BSSL_NAMESPACE_BEGIN
 namespace acvp {
 
 static bool GetConfig(const Span<const uint8_t> args[],
@@ -42,16 +42,16 @@ static bool GetConfig(const Span<const uint8_t> args[],
         }]
       }
     ])";
-  return write_reply({bssl::StringAsBytes(kConfig)});
+  return write_reply({StringAsBytes(kConfig)});
 }
 
 constexpr size_t DigestLength = 48;
 
 static void HashSHA384(uint8_t *out_digest, Span<const uint8_t> input) {
-  bssl::entropy::SHA512_CTX ctx;
-  bssl::entropy::SHA384_Init(&ctx);
-  bssl::entropy::SHA384_Update(&ctx, input.data(), input.size());
-  bssl::entropy::SHA384_Final(out_digest, &ctx);
+  entropy::SHA512_CTX ctx;
+  entropy::SHA384_Init(&ctx);
+  entropy::SHA384_Update(&ctx, input.data(), input.size());
+  entropy::SHA384_Final(out_digest, &ctx);
 }
 
 static bool SHA384(const Span<const uint8_t> args[],
@@ -93,7 +93,7 @@ static constexpr struct {
 };
 
 Handler FindHandler(Span<const Span<const uint8_t>> args) {
-  auto algorithm = bssl::BytesAsStringView(args[0]);
+  auto algorithm = BytesAsStringView(args[0]);
   for (const auto &func : kFunctions) {
     if (algorithm == func.name) {
       if (args.size() - 1 != func.num_expected_args) {
@@ -112,4 +112,4 @@ Handler FindHandler(Span<const Span<const uint8_t>> args) {
 }
 
 }  // namespace acvp
-}  // namespace bssl
+BSSL_NAMESPACE_END

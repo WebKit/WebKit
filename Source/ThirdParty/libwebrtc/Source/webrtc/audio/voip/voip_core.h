@@ -15,9 +15,9 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <unordered_map>
 
-#include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio/audio_processing.h"
@@ -81,9 +81,9 @@ class VoipCore : public VoipEngine,
 
   // Implements VoipNetwork interfaces.
   VoipResult ReceivedRTPPacket(ChannelId channel_id,
-                               ArrayView<const uint8_t> rtp_packet) override;
+                               std::span<const uint8_t> rtp_packet) override;
   VoipResult ReceivedRTCPPacket(ChannelId channel_id,
-                                ArrayView<const uint8_t> rtcp_packet) override;
+                                std::span<const uint8_t> rtcp_packet) override;
 
   // Implements VoipCodec interfaces.
   VoipResult SetSendCodec(ChannelId channel_id,

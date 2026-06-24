@@ -137,7 +137,7 @@ static bool isValidEncoderConfig(const WebCodecsAudioEncoderConfig& config)
 
 static ExceptionOr<AudioEncoder::Config> createAudioEncoderConfig(const WebCodecsAudioEncoderConfig& config)
 {
-    std::optional<AudioEncoder::OpusConfig> opusConfig = std::nullopt;
+    std::optional<AudioEncoder::OpusConfig> opusConfig;
     if (config.opus) {
         opusConfig = {
             .isOggBitStream = config.opus->format == OpusBitstreamFormat::Ogg,
@@ -149,11 +149,11 @@ static ExceptionOr<AudioEncoder::Config> createAudioEncoderConfig(const WebCodec
         };
     }
 
-    std::optional<bool> isAacADTS = std::nullopt;
+    std::optional<bool> isAacADTS;
     if (config.aac)
         isAacADTS = config.aac->format == AacBitstreamFormat::Adts;
 
-    std::optional<AudioEncoder::FlacConfig> flacConfig = std::nullopt;
+    std::optional<AudioEncoder::FlacConfig> flacConfig;
     if (config.flac)
         flacConfig = { config.flac->blockSize, config.flac->compressLevel };
 
@@ -183,7 +183,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
         queueControlMessageAndProcess({ *this, [this, config]() mutable {
             blockControlMessageQueue();
 
-            protect(scriptExecutionContext())->enqueueTaskWhenSettled(Ref { *m_internalEncoder }->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, config = WTF::move(config)] (auto&&) mutable {
+            protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalEncoder)->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, config = WTF::move(config)] (auto&&) mutable {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
@@ -281,7 +281,7 @@ WebCodecsEncodedAudioChunkMetadata WebCodecsAudioEncoder::createEncodedChunkMeta
 
         if (m_activeConfiguration.description && m_activeConfiguration.description->size()) {
             auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(m_activeConfiguration.description->size(), 1);
-            RELEASE_LOG_ERROR_IF(!!arrayBuffer, Media, "Cannot create array buffer for WebCodecs encoder description");
+            RELEASE_LOG_ERROR_IF(!arrayBuffer, Media, "Cannot create array buffer for WebCodecs encoder description");
             if (arrayBuffer) {
                 memcpySpan(arrayBuffer->mutableSpan(), m_activeConfiguration.description->span());
                 metadata.decoderConfig->description = arrayBuffer.releaseNonNull();
@@ -315,7 +315,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::encode(Ref<WebCodecsAudioData>&& frame)
         }
 
         incrementCodecOperationCount();
-        protect(scriptExecutionContext())->enqueueTaskWhenSettled(Ref { *m_internalEncoder }->encode({ WTF::move(audioData), timestamp, duration }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalEncoder)->encode({ WTF::move(audioData), timestamp, duration }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -342,7 +342,7 @@ void WebCodecsAudioEncoder::flush(Ref<DeferredPromise>&& promise)
 
     m_pendingFlushPromises.append(promise);
     queueControlMessageAndProcess({ *this, [this, promise = WTF::move(promise)]() mutable {
-        protect(scriptExecutionContext())->enqueueTaskWhenSettled(Ref { *m_internalEncoder }->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTF::move(promise)] (auto&&) {
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalEncoder)->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTF::move(promise)] (auto&&) {
             promise->resolve();
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->m_pendingFlushPromises.removeFirstMatching([&](auto& flushPromise) { return promise.ptr() == flushPromise.ptr(); });

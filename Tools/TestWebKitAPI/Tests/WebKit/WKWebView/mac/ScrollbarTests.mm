@@ -49,7 +49,7 @@
 
 @implementation ContainerView
 
-- (void)setCustomCornerRadius:(WebCore::CornerRadii)cornerRadii
+- (void)setCustomCornerRadius:(::WebCore::CornerRadii)cornerRadii
 {
     _topLeftRadius = cornerRadii.topLeft().width();
     _topRightRadius = cornerRadii.topRight().width();
@@ -58,14 +58,16 @@
     [self _invalidateCornerConfiguration];
 }
 
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 - (NSViewCornerConfiguration *)_cornerConfiguration
 {
     return [NSViewCornerConfiguration
-        configurationWithTopLeftRadius:[_NSCornerRadius fixedRadius:self.topLeftRadius]
-        topRightRadius:[_NSCornerRadius fixedRadius:self.topRightRadius]
-        bottomLeftRadius:[_NSCornerRadius fixedRadius:self.bottomLeftRadius]
-        bottomRightRadius:[_NSCornerRadius fixedRadius:self.bottomRightRadius]];
+        configurationWithTopLeftRadius:(id)[_NSCornerRadius fixedRadius:self.topLeftRadius]
+        topRightRadius:(id)[_NSCornerRadius fixedRadius:self.topRightRadius]
+        bottomLeftRadius:(id)[_NSCornerRadius fixedRadius:self.bottomLeftRadius]
+        bottomRightRadius:(id)[_NSCornerRadius fixedRadius:self.bottomRightRadius]];
 }
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 @end
 
@@ -139,10 +141,12 @@ static std::optional<CGRect> scrollbarFrameRect(TestWKWebView *webView, Scrollba
 
 static void verifyVerticalScrollbarFrameRectIsCorrect(RetainPtr<TestWKWebView> webView)
 {
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto topLeftRadius = [webView _effectiveCornerRadii].topLeft;
     auto topRightRadius = [webView _effectiveCornerRadii].topRight;
     auto bottomLeftRadius = [webView _effectiveCornerRadii].bottomLeft;
     auto bottomRightRadius = [webView _effectiveCornerRadii].bottomRight;
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     auto topObscuredContentInset = [webView obscuredContentInsets].top;
     auto bottomObscuredContentInset = [webView obscuredContentInsets].bottom;
@@ -199,8 +203,10 @@ static void verifyVerticalScrollbarFrameRectIsCorrect(RetainPtr<TestWKWebView> w
 
 static void verifyHorizontalScrollbarFrameRectIsCorrect(RetainPtr<TestWKWebView> webView)
 {
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto bottomLeftRadius = [webView _effectiveCornerRadii].bottomLeft;
     auto bottomRightRadius = [webView _effectiveCornerRadii].bottomRight;
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     auto leftObscuredContentInset = webView.get().obscuredContentInsets.left;
     auto rightObscuredContentInset = webView.get().obscuredContentInsets.right;
@@ -238,6 +244,7 @@ static void verifyScrollbarFrameRectsAreCorrect(RetainPtr<TestWKWebView> webView
     verifyHorizontalScrollbarFrameRectIsCorrect(webView);
 }
 
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 static void verifyWebViewHasExpectedCornerRadii(RetainPtr<TestWKWebView> webView, WebCore::CornerRadii cornerRadii)
 {
     auto topLeftRadius = [webView _effectiveCornerRadii].topLeft;
@@ -250,6 +257,7 @@ static void verifyWebViewHasExpectedCornerRadii(RetainPtr<TestWKWebView> webView
     EXPECT_EQ(bottomLeftRadius, cornerRadii.bottomLeft().width());
     EXPECT_EQ(bottomRightRadius, cornerRadii.bottomRight().width());
 }
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 static RetainPtr<TestWKWebView> scrollbarAvoidanceTestWebView()
 {
@@ -271,7 +279,9 @@ TEST(ScrollbarTests, ScrollbarAvoidanceForTitledWindow)
     RetainPtr window = scrollbarAvoidanceTestWindow();
     [[window contentView] addSubview:webView.get()];
 
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     EXPECT_TRUE([webView _effectiveCornerRadii].bottomRight);
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     verifyScrollbarFrameRectsAreCorrect(webView);
 }
 
@@ -285,7 +295,9 @@ TEST(ScrollbarTests, ScrollbarAvoidanceForWindowWithUnifiedCompactToolbar)
     [window setToolbarStyle:NSWindowToolbarStyleUnifiedCompact];
     [[window contentView] addSubview:webView.get()];
 
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     EXPECT_TRUE([webView _effectiveCornerRadii].bottomRight);
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     verifyScrollbarFrameRectsAreCorrect(webView);
 }
 
@@ -299,7 +311,9 @@ TEST(ScrollbarTests, ScrollbarAvoidanceForWindowWithUnifiedToolbar)
     [window setToolbarStyle:NSWindowToolbarStyleUnified];
     [[window contentView] addSubview:webView.get()];
 
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     EXPECT_TRUE([webView _effectiveCornerRadii].bottomRight);
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     verifyScrollbarFrameRectsAreCorrect(webView);
 }
 

@@ -117,17 +117,17 @@ public:
     JS_EXPORT_PRIVATE static JSPromise* rejectedPromise(JSGlobalObject*, JSValue);
 
     JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, VM&, JSValue);
-    JS_EXPORT_PRIVATE void reject(VM&, JSGlobalObject*, JSValue);
-    JS_EXPORT_PRIVATE void fulfill(VM&, JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE void reject(VM&, JSValue);
+    JS_EXPORT_PRIVATE void fulfill(VM&, JSValue);
     // Pipes its settlement to this promise via internal microtask. Otherwise directly
     // fulfills. Never triggers user-observable behavior.
     JS_EXPORT_PRIVATE void pipeFrom(VM&, JSPromise* from);
-    JS_EXPORT_PRIVATE void rejectAsHandled(VM&, JSGlobalObject*, JSValue);
-    JS_EXPORT_PRIVATE void reject(VM&, JSGlobalObject*, Exception*);
-    JS_EXPORT_PRIVATE void rejectAsHandled(VM&, JSGlobalObject*, Exception*);
+    JS_EXPORT_PRIVATE void rejectAsHandled(VM&, JSValue);
+    JS_EXPORT_PRIVATE void reject(VM&, Exception*);
+    JS_EXPORT_PRIVATE void rejectAsHandled(VM&, Exception*);
     JS_EXPORT_PRIVATE void performPromiseThenExported(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue);
 
-    JS_EXPORT_PRIVATE JSPromise* rejectWithCaughtException(JSGlobalObject*, ThrowScope&);
+    JS_EXPORT_PRIVATE JSPromise* rejectWithCaughtException(VM&, ThrowScope&);
 
     // https://webidl.spec.whatwg.org/#mark-a-promise-as-handled
     void markAsHandled() { m_packed.setType(flags() | isHandledFlag); }
@@ -146,8 +146,8 @@ public:
 
     // This is abstract operations defined in the spec.
     void performPromiseThen(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue);
-    void rejectPromise(VM&, JSGlobalObject*, JSValue);
-    void fulfillPromise(VM&, JSGlobalObject*, JSValue);
+    void rejectPromise(VM&, JSValue);
+    void fulfillPromise(VM&, JSValue);
     void resolvePromise(JSGlobalObject*, VM&, JSValue);
 
     static void resolveWithInternalMicrotaskForAsyncAwait(JSGlobalObject*, VM&, JSValue resolution, InternalMicrotask, JSValue context);
@@ -155,7 +155,7 @@ public:
     static void rejectWithInternalMicrotask(VM&, JSGlobalObject*, JSValue argument, InternalMicrotask, JSValue context);
     static void fulfillWithInternalMicrotask(VM&, JSGlobalObject*, JSValue argument, InternalMicrotask, JSValue context);
 
-    void performPromiseThenWithInternalMicrotask(VM&, JSGlobalObject*, InternalMicrotask, JSCell*, JSValue context);
+    void performPromiseThenWithInternalMicrotask(VM&, InternalMicrotask, JSCell*, JSValue context);
 
     bool isThenFastAndNonObservable();
 

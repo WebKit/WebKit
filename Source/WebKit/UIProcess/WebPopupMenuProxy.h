@@ -57,7 +57,7 @@ public:
 #if !PLATFORM(COCOA)
     virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) = 0;
 #endif
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     virtual void failedToShowPopupMenu() = 0;
 #endif
 };

@@ -17,8 +17,8 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/test/simulated_network.h"
 #include "call/simulated_packet_receiver.h"
@@ -133,10 +133,10 @@ class FakeNetworkPipe : public SimulatedPacketReceiverInterface {
   // Methods for use with Transport interface. When/if packets are delivered,
   // they will be passed to the instance specified by the `transport` parameter.
   // Note that that instance must be in the map of active transports.
-  bool SendRtp(ArrayView<const uint8_t> packet,
+  bool SendRtp(std::span<const uint8_t> packet,
                const PacketOptions& options,
                Transport* transport);
-  bool SendRtcp(ArrayView<const uint8_t> packet, Transport* transport);
+  bool SendRtcp(std::span<const uint8_t> packet, Transport* transport);
 
   // Implements the PacketReceiver interface. When/if packets are delivered,
   // they will be passed directly to the receiver instance given in

@@ -8,3 +8,4 @@ layer at (8,8) size 618x344
   RenderSVGRoot {svg} at (0,0) size 618x344
 layer at (8,8) size 618x344
   RenderSVGViewportContainer at (0,0) size 618x344
+    RenderSVGPath {path} at (2172732,0.09) size 0x0.16 [stroke={[type=SOLID] [color=#000000]}] [data="M 2.17273e+6 0.1 L 2.17273e+6 0.25"]

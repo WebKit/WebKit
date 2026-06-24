@@ -110,7 +110,7 @@
                     break;
                 default:
                     cue.align = 'center';
-                    cue.positionAlign = = 'center';
+                    cue.positionAlign = 'center';
                 }
                 var topPercent = parseFloat(captionWindow.style.top);
                 var bottomPercent = parseFloat(captionWindow.style.bottom);
@@ -162,8 +162,14 @@
             });
         }
 
+        _getIsInline() {
+            if (typeof this._video.webkitPresentationMode === 'undefined')
+                return !this._video.webkitDisplayingFullscreen;
+            return this._video.webkitPresentationMode == 'inline';
+        }
+
         _handlePresentationModeChanged() {
-            if (this._video.webkitPresentationMode == 'inline') {
+            if (this._getIsInline()) {
                 this._mirrorTrack.mode = 'hidden';
                 return;
             }

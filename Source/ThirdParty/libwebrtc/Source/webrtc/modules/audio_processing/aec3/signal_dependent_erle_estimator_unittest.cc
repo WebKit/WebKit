@@ -14,10 +14,10 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <tuple>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
@@ -56,14 +56,14 @@ class TestInputs {
              size_t num_capture_channels);
   ~TestInputs();
   const RenderBuffer& GetRenderBuffer() { return *render_buffer_; }
-  ArrayView<const float, kFftLengthBy2Plus1> GetX2() { return X2_; }
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetY2() const {
+  std::span<const float, kFftLengthBy2Plus1> GetX2() { return X2_; }
+  std::span<const std::array<float, kFftLengthBy2Plus1>> GetY2() const {
     return Y2_;
   }
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetE2() const {
+  std::span<const std::array<float, kFftLengthBy2Plus1>> GetE2() const {
     return E2_;
   }
-  ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>> GetH2()
+  std::span<const std::vector<std::array<float, kFftLengthBy2Plus1>>> GetH2()
       const {
     return H2_;
   }

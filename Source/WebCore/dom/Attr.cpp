@@ -38,9 +38,14 @@
 #include "TextNodeTraversal.h"
 #include "TreeScopeInlines.h"
 #include "TrustedType.h"
-#include "XMLNSNames.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
+
+namespace JSC {
+class AbstractSlotVisitor;
+class SlotVisitor;
+}
 
 namespace WebCore {
 
@@ -81,33 +86,15 @@ Attr::~Attr()
     willBeDeletedFrom(document());
 }
 
-ExceptionOr<void> Attr::setPrefix(const AtomString& prefix)
-{
-    auto result = checkSetPrefix(prefix);
-    if (result.hasException())
-        return result.releaseException();
-
-    if ((prefix == xmlnsAtom() && namespaceURI() != XMLNSNames::xmlnsNamespaceURI) || qualifiedName() == xmlnsAtom())
-        return Exception { ExceptionCode::NamespaceError };
-
-    const AtomString& newPrefix = prefix.isEmpty() ? nullAtom() : prefix;
-    if (RefPtr element = m_element.get())
-        element->ensureUniqueElementData().findAttributeByName(qualifiedName())->setPrefix(newPrefix);
-
-    m_name.setPrefix(newPrefix);
-
-    return { };
-}
-
 ExceptionOr<void> Attr::setValue(const AtomString& value)
 {
     if (RefPtr element = m_element.get()) {
         auto verifiedValue = value;
-        if (document().contextDocument().requiresTrustedTypes()) {
+        if (protect(document())->contextDocument().requiresTrustedTypes()) {
             auto type = trustedTypeForAttribute(element->nodeName(), qualifiedName().localName(),
                 element->namespaceURI(), qualifiedName().namespaceURI());
             if (!type.attributeType.isNull()) {
-                auto compliantValue = trustedTypesCompliantAttributeValue(document().contextDocument(), type.attributeType, value,
+                auto compliantValue = trustedTypesCompliantAttributeValue(protect(document())->contextDocument(), type.attributeType, value,
                     type.sink);
                 if (compliantValue.hasException())
                     return compliantValue.releaseException();
@@ -169,16 +156,33 @@ void Attr::detachFromElementWithValue(const AtomString& value)
     ASSERT(m_element);
     ASSERT(m_standaloneValue.isNull());
     m_standaloneValue = value;
-    m_element = nullptr;
+    {
+        Locker locker { m_elementLockForGC };
+        m_element = nullptr;
+    }
     setTreeScopeRecursively(Ref<Document> { document() });
 }
 
 void Attr::attachToElement(Element& element)
 {
     ASSERT(!m_element);
-    m_element = element;
+    {
+        Locker locker { m_elementLockForGC };
+        m_element = &element;
+    }
     m_standaloneValue = nullAtom();
-    setTreeScopeRecursively(element.treeScope());
+    setTreeScopeRecursively(protect(element)->treeScope());
 }
+
+template<typename Visitor>
+void Attr::visitOwnerElementInGCThread(Visitor& visitor)
+{
+    Locker locker { m_elementLockForGC };
+    if (m_element)
+        addWebCoreOpaqueRoot(visitor, *m_element);
+}
+
+template void Attr::visitOwnerElementInGCThread(JSC::AbstractSlotVisitor&);
+template void Attr::visitOwnerElementInGCThread(JSC::SlotVisitor&);
 
 }

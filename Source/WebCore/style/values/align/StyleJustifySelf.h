@@ -74,7 +74,7 @@ struct JustifySelf {
 
     constexpr bool operator==(const JustifySelf&) const = default;
 
-    StyleSelfAlignmentData resolve(const RenderStyle* containerStyle = nullptr) const; // Resolves 'auto' against containerStyle's justify-items.
+    StyleSelfAlignmentData resolve(const Style::ComputedStyle* containerStyle = nullptr) const; // Resolves 'auto' against containerStyle's justify-items.
 
 private:
     enum class PrimaryKind : uint8_t {

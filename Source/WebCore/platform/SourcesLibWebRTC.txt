@@ -46,4 +46,5 @@ platform/mediastream/libwebrtc/LibWebRTCDav1dDecoder.cpp
 platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.cpp
 platform/mediastream/libwebrtc/LibWebRTCLogSink.cpp
 platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
+platform/mediastream/libwebrtc/LibWebRTCVideoFrameUtilities.cpp
 platform/mediastream/libwebrtc/VideoFrameLibWebRTC.cpp

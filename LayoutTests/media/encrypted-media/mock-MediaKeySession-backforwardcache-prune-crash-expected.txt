@@ -1,0 +1,1 @@
+PASS: pruning a back/forward-cached MediaKeySession page does not crash.

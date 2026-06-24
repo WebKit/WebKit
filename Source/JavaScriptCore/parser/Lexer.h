@@ -33,8 +33,6 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
 
-#define CACHE_LINE_ALIGNED alignas(64)
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
@@ -50,7 +48,7 @@ enum class LexerFlags : uint8_t {
 bool isLexerKeyword(const Identifier&);
 
 template <typename T>
-class CACHE_LINE_ALIGNED Lexer {
+class JSC_CACHE_LINE_ALIGNED Lexer {
     WTF_MAKE_NONCOPYABLE(Lexer);
     WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(Lexer);
 public:
@@ -209,34 +207,47 @@ private:
 
     static constexpr size_t initialReadBufferCapacity = 32;
 
-    // Hot fields, grouped to share a cache line.
+    // Fields up to m_sourceURLDirective are arranged according to access frequency
+    // and affinity; do not rearrange without careful analysis.
     VM& m_vm;
     IdentifierArena* m_arena;
     const T* m_code;
     const T* m_codeStart;
     const T* m_codeEnd;
     const T* m_lineStart;
+    String m_lexErrorMessage;
     int m_lineNumber;
     T m_current;
     bool m_hasLineTerminatorBeforeToken;
     bool m_atLineStart;
     bool m_parsingBuiltinFunction;
 
-
-    JSTextPosition m_positionBeforeLastNewline;
-    JSParserScriptMode m_scriptMode;
+    // offset 64 if T == Latin1Character
     Vector<Latin1Character> m_buffer8;
     Vector<char16_t> m_buffer16;
     Vector<char16_t> m_bufferForRawTemplateString16;
+    JSTextPosition m_positionBeforeLastNewline;
     bool m_isReparsingFunction;
     bool m_error;
-    String m_lexErrorMessage;
+
+    // offset 128 if T == Latin1Character
     String m_sourceURLDirective;
     String m_sourceMappingURLDirective;
+    JSParserScriptMode m_scriptMode;
     const SourceCode* m_source;
     unsigned m_sourceOffset;
     const T* m_codeStartPlusOffset;
+
+    static void verifyLayout();
 };
+
+template<>
+inline void Lexer<Latin1Character>::verifyLayout()
+{
+#if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64) && CPU(ADDRESS64)
+    static_assert(OBJECT_OFFSETOF(Lexer<Latin1Character>, m_buffer8) == JSC_CACHE_LINE_SIZE, "Lexer hot field layout drifted.");
+#endif
+}
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename T>, Lexer<T>);
 

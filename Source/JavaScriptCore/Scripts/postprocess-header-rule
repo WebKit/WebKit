@@ -28,19 +28,24 @@ if [[ -z "${SCRIPT_HEADER_VISIBILITY}" ]]; then
     exit 0
 fi
 
-function process_definitions () {
-    local DEFINITIONS_FILE=$1
-
-    if [[ ! -f "${DEFINITIONS_FILE}" ]]; then
-        return 1
-    fi
-
-    source "${DEFINITIONS_FILE}"
-}
-
-DEFINITIONS_PATH=${WK_LIBRARY_HEADERS_FOLDER_PATH}/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
-
-process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
+# Source the per-build cache produced by generate-header-postprocess-config.sh
+# in the Derived Sources aggregate target. The cache holds OSX_VERSION /
+# IOS_VERSION / XROS_VERSION / WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED and
+# similar constants that are stable within one build, so we can skip the
+# expensive perl + JSON parsing of branch_config.json on every per-header
+# invocation. The producer phase is wired up in JavaScriptCore.xcodeproj's
+# Derived Sources aggregate target and is a target dependency of the
+# JavaScriptCore framework, so the cache file is always present by the time
+# this rule runs.
+WK_HEADER_POSTPROCESS_CACHE_FILE="${SHARED_DERIVED_FILE_DIR}/JavaScriptCore-header-postprocess-config.sh"
+if [[ ! -f "${WK_HEADER_POSTPROCESS_CACHE_FILE}" ]]; then
+    echo "$0: ${WK_HEADER_POSTPROCESS_CACHE_FILE} not found." >&2
+    echo "    The 'Generate Header Postprocess Config' phase in the Derived" >&2
+    echo "    Sources aggregate target must run before this rule." >&2
+    exit 1
+fi
+# shellcheck disable=SC1090
+source "${WK_HEADER_POSTPROCESS_CACHE_FILE}"
 
 # WebKitAdditions may set WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED=YES when
 # postprocessing should be disabled based on the deployment target version

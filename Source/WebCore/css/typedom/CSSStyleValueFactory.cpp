@@ -34,7 +34,6 @@
 #include "CSSAppleColorFilterValue.h"
 #include "CSSBorderImageSourceValue.h"
 #include "CSSBoxShadowPropertyValue.h"
-#include "CSSCalcValue.h"
 #include "CSSClipValue.h"
 #include "CSSContentValue.h"
 #include "CSSCustomIdentValue.h"
@@ -60,13 +59,14 @@
 #include "CSSTransformListValue.h"
 #include "CSSTransformValue.h"
 #include "CSSURLValue.h"
+#include "CSSUnevaluatedCalc.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "ExceptionOr.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include "ScriptWrappableInlines.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
@@ -172,7 +172,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValueFor
         if (CSSProperty::isListValuedProperty(propertyID)) {
             if (auto* values = dynamicDowncast<CSSValueContainingVector>(*cssValue)) {
                 for (Ref value : *values)
-                    cssValues.append(Ref { const_cast<CSSValue&>(value.get()) });
+                    cssValues.append(protect(const_cast<CSSValue&>(value.get())));
             }
         }
         if (cssValues.isEmpty())
@@ -223,7 +223,7 @@ static ExceptionOr<Ref<CSSStyleValue>> reifyValue(const T& numeric)
 {
     return WTF::switchOn(numeric,
         [&](const typename T::Calc& calc) -> ExceptionOr<Ref<CSSStyleValue>> {
-            auto result = CSSNumericValue::reifyMathExpression(calc.calcValue().tree());
+            auto result = CSSNumericValue::reifyMathExpression(calc);
             if (result.hasException())
                 return result.releaseException();
             return upcast<CSSStyleValue>(result.releaseReturnValue());
@@ -243,7 +243,7 @@ static ExceptionOr<Ref<CSSStyleValue>> reifyValue(const CSSPrimitiveValue& primi
 {
     return WTF::switchOn(primitiveValue,
         [&](const CSSPrimitiveValue::Calc& calc) -> ExceptionOr<Ref<CSSStyleValue>> {
-            auto result = CSSNumericValue::reifyMathExpression(calc.tree());
+            auto result = CSSNumericValue::reifyMathExpression(calc);
             if (result.hasException())
                 return result.releaseException();
             return upcast<CSSStyleValue>(result.releaseReturnValue());

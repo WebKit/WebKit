@@ -41,7 +41,6 @@ class Element;
 class MutableStyleProperties;
 class Node;
 class RenderElement;
-class RenderStyle;
 
 enum CSSPropertyID : uint16_t;
 enum CSSValueID : uint16_t;
@@ -51,6 +50,8 @@ struct SerializationContext;
 }
 
 namespace Style {
+
+class ComputedStyle;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Extractor);
 class Extractor {
@@ -73,11 +74,11 @@ public:
     // Extract a serialized value for the specified property.
     WTF::String propertyValueSerialization(CSSPropertyID, const CSS::SerializationContext&, UpdateLayout = UpdateLayout::Yes, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
 
-    // Extract a CSSValue for the specified property using the provided RenderStyle and RenderElement.
-    RefPtr<CSSValue> propertyValueInStyle(const RenderStyle&, CSSPropertyID, CSSValuePool&, const RenderElement* = nullptr, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
+    // Extract a CSSValue for the specified property using the provided ComputedStyle and RenderElement.
+    RefPtr<CSSValue> propertyValueInStyle(const Style::ComputedStyle&, CSSPropertyID, CSSValuePool&, const RenderElement* = nullptr, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
 
-    // Extract a serialized value for the specified property using the provided RenderStyle and RenderElement.
-    WTF::String propertyValueSerializationInStyle(const RenderStyle&, CSSPropertyID, const CSS::SerializationContext&, CSSValuePool&, const RenderElement* = nullptr, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
+    // Extract a serialized value for the specified property using the provided ComputedStyle and RenderElement.
+    WTF::String propertyValueSerializationInStyle(const Style::ComputedStyle&, CSSPropertyID, const CSS::SerializationContext&, CSSValuePool&, const RenderElement* = nullptr, ExtractorState::PropertyValueType = ExtractorState::PropertyValueType::Resolved) const;
 
     // Extract a CSSValue for the specified custom property.
     RefPtr<CSSValue> customPropertyValue(const AtomString& propertyName) const;
@@ -88,8 +89,8 @@ public:
     // Extract a serialized value for the specified custom property.
     WTF::String customPropertyValueSerialization(const AtomString& propertyName, const CSS::SerializationContext&) const;
 
-    // Extract a serialized value for the specified custom property using the provided RenderStyle and RenderElement.
-    WTF::String customPropertyValueSerializationInStyle(const RenderStyle&, const AtomString& propertyName, const CSS::SerializationContext&) const;
+    // Extract a serialized value for the specified custom property using the provided ComputedStyle and RenderElement.
+    WTF::String customPropertyValueSerializationInStyle(const Style::ComputedStyle&, const AtomString& propertyName, const CSS::SerializationContext&) const;
 
     // Helper methods for HTML editing.
     Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>) const;
@@ -105,11 +106,11 @@ private:
     // The renderer we should use for resolving layout-dependent properties.
     const RenderElement* computeRenderer() const;
 
-    // The RenderStyle we should use for resolving non-layout-dependent properties.
-    const RenderStyle* computeStyle(CSSPropertyID, UpdateLayout, std::unique_ptr<RenderStyle>&) const;
+    // The ComputedStyle we should use for resolving non-layout-dependent properties.
+    const Style::ComputedStyle* computeStyle(CSSPropertyID, UpdateLayout, std::unique_ptr<Style::ComputedStyle>&) const;
 
-    // The RenderStyle we should use for resolving custom properties.
-    const RenderStyle* computeStyleForCustomProperty(std::unique_ptr<RenderStyle>&) const;
+    // The ComputedStyle we should use for resolving custom properties.
+    const Style::ComputedStyle* computeStyleForCustomProperty(std::unique_ptr<Style::ComputedStyle>&) const;
 
     RefPtr<Element> m_element;
     std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;

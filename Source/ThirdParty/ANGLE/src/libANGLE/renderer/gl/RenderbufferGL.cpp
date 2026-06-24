@@ -48,6 +48,11 @@ angle::Result RenderbufferGL::setStorage(const gl::Context *context,
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
+    if (features.reattachFboDepthStencilOnReallocation.enabled)
+    {
+        onStateChange(angle::SubjectMessage::ObjectReallocated);
+    }
+
     stateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 
     nativegl::RenderbufferFormat renderbufferFormat =
@@ -71,6 +76,11 @@ angle::Result RenderbufferGL::setStorageMultisample(const gl::Context *context,
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    if (features.reattachFboDepthStencilOnReallocation.enabled)
+    {
+        onStateChange(angle::SubjectMessage::ObjectReallocated);
+    }
 
     stateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 

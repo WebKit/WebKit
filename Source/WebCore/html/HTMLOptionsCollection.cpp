@@ -41,22 +41,22 @@ Ref<HTMLOptionsCollection> HTMLOptionsCollection::create(HTMLSelectElement& sele
 
 ExceptionOr<void> HTMLOptionsCollection::add(const OptionOrOptGroupElement& element, const std::optional<HTMLElementOrInt>& before)
 {
-    return selectElement().add(element, before);
+    return protect(selectElement())->add(element, before);
 }
 
 void HTMLOptionsCollection::remove(int index)
 {
-    selectElement().remove(index);
+    protect(selectElement())->remove(index);
 }
 
 int HTMLOptionsCollection::selectedIndex() const
 {
-    return selectElement().selectedIndex();
+    return protect(selectElement())->selectedIndex();
 }
 
 void HTMLOptionsCollection::setSelectedIndex(int index)
 {
-    selectElement().setSelectedIndex(index);
+    protect(selectElement())->setSelectedIndex(index);
 }
 
 unsigned HTMLOptionsCollection::length() const
@@ -66,7 +66,7 @@ unsigned HTMLOptionsCollection::length() const
 
 ExceptionOr<void> HTMLOptionsCollection::setLength(unsigned length)
 {
-    return selectElement().setLength(length);
+    return protect(selectElement())->setLength(length);
 }
 
 HTMLOptionElement* HTMLOptionsCollection::item(unsigned offset) const
@@ -81,7 +81,7 @@ HTMLOptionElement* HTMLOptionsCollection::namedItem(const AtomString& name) cons
 
 ExceptionOr<void> HTMLOptionsCollection::setItem(unsigned index, HTMLOptionElement* optionElement)
 {
-    return selectElement().setItem(index, optionElement);
+    return protect(selectElement())->setItem(index, optionElement);
 }
 
 } //namespace

@@ -39,7 +39,7 @@
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
 #import "LocalizedStrings.h"
-#import "RenderObjectInlines.h"
+#import "RenderObject.h"
 #import "Settings.h"
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"

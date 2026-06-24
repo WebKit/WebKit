@@ -158,12 +158,12 @@ public:
     SplitResult split(char16_t) const;
     SplitResult splitAllowingEmptyEntries(char16_t) const;
 
-    size_t find(char16_t, unsigned start = 0) const;
-    size_t find(Latin1Character, unsigned start = 0) const;
+    size_t NODELETE find(char16_t, unsigned start = 0) const;
+    size_t NODELETE find(Latin1Character, unsigned start = 0) const;
     ALWAYS_INLINE size_t find(char c, unsigned start = 0) const { return find(byteCast<Latin1Character>(c), start); }
     template<typename CodeUnitMatchFunction>
         requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)
-    size_t find(CodeUnitMatchFunction&&, unsigned start = 0) const;
+    size_t NODELETE find(CodeUnitMatchFunction&&, unsigned start = 0) const;
     ALWAYS_INLINE size_t find(ASCIILiteral literal, unsigned start = 0) const { return find(literal.span8(), start); }
     WTF_EXPORT_PRIVATE size_t NODELETE find(StringView, unsigned start = 0) const;
     WTF_EXPORT_PRIVATE size_t NODELETE find(AdaptiveStringSearcherTables&, StringView, unsigned start = 0) const;
@@ -181,17 +181,17 @@ public:
 
     WTF_EXPORT_PRIVATE std::optional<char32_t> NODELETE convertToSingleCodePoint() const;
 
-    bool contains(char16_t) const;
+    bool NODELETE contains(char16_t) const;
     template<typename CodeUnitMatchFunction>
         requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)
-    bool contains(CodeUnitMatchFunction&&) const;
+    bool NODELETE contains(CodeUnitMatchFunction&&) const;
     bool contains(ASCIILiteral literal) const { return find(literal) != notFound; }
     bool contains(StringView string) const { return find(string) != notFound; }
 
     WTF_EXPORT_PRIVATE bool NODELETE containsIgnoringASCIICase(StringView) const;
     WTF_EXPORT_PRIVATE bool NODELETE containsIgnoringASCIICase(StringView, unsigned start) const;
 
-    template<bool isSpecialCharacter(char16_t)> bool containsOnly() const;
+    template<bool isSpecialCharacter(char16_t)> bool NODELETE containsOnly() const;
 
     WTF_EXPORT_PRIVATE bool NODELETE startsWith(char16_t) const;
     WTF_EXPORT_PRIVATE bool NODELETE startsWith(StringView) const;
@@ -1322,7 +1322,7 @@ inline size_t findCommon(StringView haystack, StringView needle, unsigned start)
     return findInner(haystack.span16().subspan(start), needle.span16(), start);
 }
 
-SUPPRESS_NODELETE inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, unsigned start)
+SUPPRESS_NODELETE inline size_t NODELETE findIgnoringASCIICase(StringView source, StringView stringToFind, unsigned start)
 {
     unsigned sourceStringLength = source.length();
     unsigned matchLength = stringToFind.length();
@@ -1347,7 +1347,7 @@ SUPPRESS_NODELETE inline size_t findIgnoringASCIICase(StringView source, StringV
     return WTF::findIgnoringASCIICase(source.span16(), stringToFind.span16(), static_cast<size_t>(start));
 }
 
-inline bool startsWith(StringView reference, StringView prefix)
+inline bool NODELETE startsWith(StringView reference, StringView prefix)
 {
     if (prefix.length() > reference.length())
         return false;
@@ -1377,7 +1377,7 @@ inline bool NODELETE startsWithIgnoringASCIICase(StringView reference, StringVie
     return equalIgnoringASCIICaseWithLength(reference.span16(), prefix.span16(), prefix.length());
 }
 
-inline bool endsWith(StringView reference, StringView suffix)
+inline bool NODELETE endsWith(StringView reference, StringView suffix)
 {
     unsigned suffixLength = suffix.length();
     unsigned referenceLength = reference.length();

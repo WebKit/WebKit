@@ -11,8 +11,7 @@
 #define MODULES_AUDIO_PROCESSING_CAPTURE_MIXER_CHANNEL_CONTENT_REMIXER_H_
 
 #include <cstddef>
-
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
@@ -50,8 +49,8 @@ class ChannelContentRemixer {
   // crossfades are completed.
   bool Mix(size_t num_output_channels,
            StereoMixingVariant mixing_variant,
-           ArrayView<float> channel0,
-           ArrayView<float> channel1);
+           std::span<float> channel0,
+           std::span<float> channel1);
 
  private:
   const size_t num_samples_per_channel_;
@@ -67,63 +66,63 @@ class ChannelContentRemixer {
   bool IsCrossfadeCompleted();
 
   // Copies content from source to destination.
-  void CopyChannelContent(ArrayView<const float> source,
-                          ArrayView<float> destination) const;
+  void CopyChannelContent(std::span<const float> source,
+                          std::span<float> destination) const;
 
   // Calculates the average of channel0 and channel1 and writes it to both.
-  void StoreChannelAverageIntoBothChannels(ArrayView<float> channel0,
-                                           ArrayView<float> channel1) const;
+  void StoreChannelAverageIntoBothChannels(std::span<float> channel0,
+                                           std::span<float> channel1) const;
 
   // Performs a linear cross-fade from `crossfade_from` to `crossfade_to` into
   // `destination`.
   void CrossFadeFromSingleChannelToSingleChannel(
-      ArrayView<const float> crossfade_from,
-      ArrayView<const float> crossfade_to,
-      ArrayView<float> destination,
+      std::span<const float> crossfade_from,
+      std::span<const float> crossfade_to,
+      std::span<float> destination,
       size_t& crossfade_sample_counter) const;
 
   // Cross-fades from a single channel to the average of both channels.
   void CrossFadeFromSingleChannelContentToAverage(
-      ArrayView<const float> crossfade_from,
-      ArrayView<float> channel0,
-      ArrayView<float> channel1,
+      std::span<const float> crossfade_from,
+      std::span<float> channel0,
+      std::span<float> channel1,
       size_t& crossfade_sample_counter) const;
 
   // Cross-fades from the average of both channels to a single channel.
   void CrossFadeFromAverageToSingleChannelContent(
-      ArrayView<const float> crossfade_to,
-      ArrayView<float> channel0,
-      ArrayView<float> channel1,
+      std::span<const float> crossfade_to,
+      std::span<float> channel0,
+      std::span<float> channel1,
       size_t& crossfade_sample_counter) const;
 
   // Cross-fades from the average of both channels to using both channels
   // independently.
   void CrossFadeFromAverageToBothChannels(
-      ArrayView<float> channel0,
-      ArrayView<float> channel1,
+      std::span<float> channel0,
+      std::span<float> channel1,
       size_t& crossfade_sample_counter) const;
 
   // Cross-fades from using both channels independently to their average.
   void CrossFadeFromBothChannelsToAverage(
-      ArrayView<float> channel0,
-      ArrayView<float> channel1,
+      std::span<float> channel0,
+      std::span<float> channel1,
       size_t& crossfade_sample_counter) const;
 
   // specific helper for Mix when num_output_channels == 1.
-  void CrossFadeFromAverageInToChannel0(ArrayView<const float> crossfade_to,
-                                        ArrayView<float> channel0,
-                                        ArrayView<float> channel1,
+  void CrossFadeFromAverageInToChannel0(std::span<const float> crossfade_to,
+                                        std::span<float> channel0,
+                                        std::span<float> channel1,
                                         size_t& crossfade_sample_counter) const;
 
   // specific helper for Mix when num_output_channels == 1.
-  void CrossFadeChannel0ToAverage(ArrayView<const float> crossfade_from,
-                                  ArrayView<float> channel0,
-                                  ArrayView<const float> channel1,
+  void CrossFadeChannel0ToAverage(std::span<const float> crossfade_from,
+                                  std::span<float> channel0,
+                                  std::span<const float> channel1,
                                   size_t& crossfade_sample_counter) const;
 
   // specific helper for Mix when num_output_channels == 1.
-  void StoreChannelAverageIntoChannel0(ArrayView<float> channel0,
-                                       ArrayView<const float> channel1) const;
+  void StoreChannelAverageIntoChannel0(std::span<float> channel0,
+                                       std::span<const float> channel1) const;
 };
 
 }  // namespace webrtc

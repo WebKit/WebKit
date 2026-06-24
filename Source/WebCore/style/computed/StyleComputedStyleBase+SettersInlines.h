@@ -83,11 +83,6 @@ inline void ComputedStyleBase::setIsLink(bool isLink)
     m_nonInheritedFlags.isLink = isLink;
 }
 
-inline void ComputedStyleBase::setEmptyState(bool emptyState)
-{
-    m_nonInheritedFlags.emptyState = emptyState;
-}
-
 inline void ComputedStyleBase::setFirstChildState()
 {
     m_nonInheritedFlags.firstChildState = true;
@@ -254,6 +249,11 @@ inline bool ComputedStyleBase::setUsedZoom(float zoomLevel)
     m_inheritedFlags.isZoomed = zoomLevel != 1.0f;
     m_inheritedRareData.access().usedZoom = zoomLevel;
     return true;
+}
+
+inline void ComputedStyleBase::setDeviceScaleFactor(float scaleFactor)
+{
+    SET(m_inheritedRareData, deviceScaleFactor, scaleFactor);
 }
 
 // MARK: - Aggregates

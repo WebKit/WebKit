@@ -213,7 +213,7 @@ void PropertyCascade::setDelayingForRuleRollback(CSSPropertyID propertyID, CSSVa
         return;
 
     auto last = delayedValues.takeLast();
-    set(propertyID, last.value, last.properties, last.origin);
+    SUPPRESS_UNCOUNTED_ARG set(propertyID, last.value, last.properties, last.origin);
 }
 
 bool PropertyCascade::hasProperty(CSSPropertyID propertyID, const CSSValue& value)
@@ -341,11 +341,11 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Origi
             continue;
 
         if (m_ruleRollbackDepth) {
-            setDelayingForRuleRollback(propertyID, *current.value(), matchedProperties, origin);
+            setDelayingForRuleRollback(propertyID, protect(*current.value()), matchedProperties, origin);
             continue;
         }
 
-        set(propertyID, *current.value(), matchedProperties, origin);
+        SUPPRESS_UNCOUNTED_ARG set(propertyID, *current.value(), matchedProperties, origin);
     }
 
     return hasImportantProperties;
@@ -378,7 +378,7 @@ bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyR
 
     // Check for 'em' units and similar property dependencies.
     if (m_animationLayer->hasFontSize || m_animationLayer->hasLineHeight) {
-        auto dependencies = property.value()->computedStyleDependencies();
+        auto dependencies = protect(property.value())->computedStyleDependencies();
         if (m_animationLayer->hasFontSize && dependencies.properties.contains(CSSPropertyFontSize))
             return true;
         if (m_animationLayer->hasLineHeight && dependencies.properties.contains(CSSPropertyLineHeight))

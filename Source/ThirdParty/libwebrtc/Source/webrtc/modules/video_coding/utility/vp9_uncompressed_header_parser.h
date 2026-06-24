@@ -17,9 +17,9 @@
 #include <array>
 #include <bitset>
 #include <optional>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "modules/video_coding/utility/vp9_constants.h"
 
 namespace webrtc {
@@ -151,7 +151,7 @@ struct Vp9UncompressedHeader {
 // Parses the uncompressed header and populates (most) values in a
 // UncompressedHeader struct. Returns nullopt on failure.
 std::optional<Vp9UncompressedHeader> ParseUncompressedVp9Header(
-    ArrayView<const uint8_t> buf);
+    std::span<const uint8_t> buf);
 
 }  // namespace webrtc
 

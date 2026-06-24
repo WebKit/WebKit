@@ -112,3 +112,24 @@ git-svn-id: https://svn.webkit.org/repository/webkit/trunk@95188 268f45cc-cd09-0
         suggest_nominations._init_options(options=options)
         suggest_nominations._recent_commit_messages = lambda: [self.mock_non_committer_commit_message for _ in range(88)]
         self.assert_execute_outputs(suggest_nominations, [], expected_stdout=expected_stdout, options=options)
+
+    def test_basic_with_space_canonical_link(self):
+        commit_line = "  commit: https://commits.webkit.org/84070@main on 2009-09-15 by Xianzhu Wang (wangxianzhu@chromium.org)\n"
+        expected_stdout = "COMMITTER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n" + commit_line * 88 + "\n"
+        options = self._make_options(show_commits=True)
+        suggest_nominations = SuggestNominations()
+        suggest_nominations._init_options(options=options)
+        self.assertIn('Canonical link:', self.mock_non_committer_commit_message)
+        suggest_nominations._recent_commit_messages = lambda: [self.mock_non_committer_commit_message for _ in range(88)]
+        self.assert_execute_outputs(suggest_nominations, [], expected_stdout=expected_stdout, options=options)
+
+    def test_basic_with_hyphenated_canonical_link(self):
+        commit_line = "  commit: https://commits.webkit.org/84070@main on 2009-09-15 by Xianzhu Wang (wangxianzhu@chromium.org)\n"
+        expected_stdout = "COMMITTER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n" + commit_line * 88 + "\n"
+        options = self._make_options(show_commits=True)
+        suggest_nominations = SuggestNominations()
+        suggest_nominations._init_options(options=options)
+        self.assertIn('Canonical link:', self.mock_non_committer_commit_message)
+        message = self.mock_non_committer_commit_message.replace('Canonical link:', 'Canonical-link:')
+        suggest_nominations._recent_commit_messages = lambda: [message for _ in range(88)]
+        self.assert_execute_outputs(suggest_nominations, [], expected_stdout=expected_stdout, options=options)

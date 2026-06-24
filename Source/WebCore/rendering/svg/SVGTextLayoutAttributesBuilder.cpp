@@ -24,17 +24,12 @@
 
 #include "RenderChildIterator.h"
 #include "RenderSVGInline.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
 #include "SVGTextPositioningElement.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
-
-SVGTextLayoutAttributesBuilder::SVGTextLayoutAttributesBuilder()
-    : m_textLength(0)
-{
-}
 
 void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer(RenderSVGInlineText& text)
 {
@@ -85,16 +80,24 @@ static inline void NODELETE processRenderSVGInlineText(const RenderSVGInlineText
 {
     auto& string = text.text();
     auto length = string.length();
+
+    // The value list position advances once per character (code point), so a non-BMP character
+    // encoded as a UTF-16 surrogate pair must count once, not once per code unit. This keeps the
+    // value list keys consistent with the per-character lookup in measureTextRendererWithIterator().
     if (text.style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve) {
-        atCharacter += length;
+        for (unsigned i = 0; i < length;) {
+            U16_FWD_1(string, i, length);
+            ++atCharacter;
+        }
         if (length)
             lastCharacterWasSpace = string[length - 1] == ' ';
         return;
     }
 
     // FIXME: This is not a complete whitespace collapsing implementation; it doesn't handle newlines or tabs.
-    for (unsigned i = 0; i < length; ++i) {
-        char16_t character = string[i];
+    for (unsigned i = 0; i < length;) {
+        char32_t character;
+        U16_NEXT(string, i, length, character);
         if (character == ' ' && lastCharacterWasSpace)
             continue;
 

@@ -28,7 +28,7 @@ namespace webrtc {
                              WaitUntilSettings settings) {
   if (std::holds_alternative<std::monostate>(settings.clock)) {
     RTC_CHECK(Thread::Current()) << "A current thread is required. An "
-                                    "webrtc::AutoThread can work for tests.";
+                                    "webrtc::test::RunLoop can work for tests.";
   }
 
   auto now = [&] {

@@ -36,6 +36,7 @@
 #include <WebCore/ElementInlines.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/HTMLElement.h>
+#include <WebCore/HTMLInterchange.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/MutableStyleProperties.h>
 #include <WebCore/RenderElement.h>
@@ -188,14 +189,14 @@ static AtomString classNameForSmartList(const TextList& textList)
 {
     if (textList.ordered) {
         ASSERT(textList.styleType.isDecimal());
-        return "Apple-decimal-list"_s;
+        return AppleDecimalListClass;
     }
 
     if (textList.styleType.isDisc())
-        return "Apple-disc-list"_s;
+        return AppleDiscListClass;
 
     ASSERT(textList.styleType.isString());
-    return "Apple-dash-list"_s;
+    return AppleDashListClass;
 }
 
 static AtomString startingOrdinalForList(const StyledElement& element, const TextList& textList)

@@ -11,10 +11,10 @@
 #ifndef API_TEST_METRICS_CHROME_PERF_DASHBOARD_METRICS_EXPORTER_H_
 #define API_TEST_METRICS_CHROME_PERF_DASHBOARD_METRICS_EXPORTER_H_
 
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_exporter.h"
 
@@ -29,7 +29,7 @@ class ChromePerfDashboardMetricsExporter : public MetricsExporter {
       absl::string_view export_file_path);
   ~ChromePerfDashboardMetricsExporter() override = default;
 
-  bool Export(ArrayView<const Metric> metrics) override;
+  bool Export(std::span<const Metric> metrics) override;
 
  private:
   const std::string export_file_path_;

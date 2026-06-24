@@ -38,7 +38,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<CustomIdent>::operator()(const CustomIdent& value, const RenderStyle&) -> CSS::CustomIdent
+auto ToCSS<CustomIdent>::operator()(const CustomIdent& value, const Style::ComputedStyle&) -> CSS::CustomIdent
 {
     return { .value = value.value };
 }
@@ -48,7 +48,7 @@ auto ToStyle<CSS::CustomIdent>::operator()(const CSS::CustomIdent& value, const 
     return { .value = value.value };
 }
 
-Ref<CSSValue> CSSValueCreation<CustomIdent>::operator()(CSSValuePool& pool, const RenderStyle& style, const CustomIdent& value)
+Ref<CSSValue> CSSValueCreation<CustomIdent>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const CustomIdent& value)
 {
     return CSS::createCSSValue(pool, toCSS(value, style));
 }
@@ -65,14 +65,14 @@ auto CSSValueConversion<CustomIdent>::operator()(BuilderState& state, const CSSV
     return { .value = nullAtom() };
 }
 
-Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<CustomIdent>::operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const CustomIdent& value)
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<CustomIdent>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const CustomIdent& value)
 {
     return CSS::createDeprecatedCSSOMValue(pool, owner, toCSS(value, style));
 }
 
 // MARK: - Serialization
 
-void Serialize<CustomIdent>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const RenderStyle&, const CustomIdent& value)
+void Serialize<CustomIdent>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle&, const CustomIdent& value)
 {
     WebCore::serializeIdentifier(builder, value.value);
 }

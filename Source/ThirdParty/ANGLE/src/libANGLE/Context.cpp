@@ -3933,14 +3933,7 @@ Extensions Context::generateSupportedExtensions() const
         supportedExtensions.textureFormatSRGBOverrideEXT            = false;
         supportedExtensions.renderSharedExponentQCOM                = false;
         supportedExtensions.renderSnormEXT                          = false;
-
-        // Support GL_EXT_texture_norm16 on non-WebGL ES2 contexts. This is needed for R16/RG16
-        // texturing for HDR video playback in Chromium which uses ES2 for compositor contexts.
-        // Remove this workaround after Chromium migrates to ES3 for compositor contexts.
-        if (mWebGLContext || getClientVersion() < ES_2_0)
-        {
-            supportedExtensions.textureNorm16EXT = false;
-        }
+        supportedExtensions.textureNorm16EXT                        = false;
 
         // Requires immutable textures
         supportedExtensions.yuvInternalFormatANGLE = false;
@@ -4307,12 +4300,18 @@ void Context::initCaps()
         }                                      \
     } while (0)
 
-    // Apply/Verify implementation limits
-    ANGLE_LIMIT_CAP(caps->maxDrawBuffers, IMPLEMENTATION_MAX_DRAW_BUFFERS);
+    // Apply/Verify implementation limits.
+    //
+    // GLES requires that draw buffers are mapped to color attachments with an identical index (in
+    // glDrawBuffers), and so draw buffers and color attachments are frequently interchanged in the
+    // codebase.  The same limit is thus used for both.
+    const GLint maxDrawBuffersAndColorAttachments = std::min<GLint>(
+        std::min(caps->maxDrawBuffers, caps->maxColorAttachments), IMPLEMENTATION_MAX_DRAW_BUFFERS);
+    ANGLE_LIMIT_CAP(caps->maxDrawBuffers, maxDrawBuffersAndColorAttachments);
     ANGLE_LIMIT_CAP(caps->maxFramebufferWidth, IMPLEMENTATION_MAX_FRAMEBUFFER_SIZE);
     ANGLE_LIMIT_CAP(caps->maxFramebufferHeight, IMPLEMENTATION_MAX_FRAMEBUFFER_SIZE);
     ANGLE_LIMIT_CAP(caps->maxRenderbufferSize, IMPLEMENTATION_MAX_RENDERBUFFER_SIZE);
-    ANGLE_LIMIT_CAP(caps->maxColorAttachments, IMPLEMENTATION_MAX_DRAW_BUFFERS);
+    ANGLE_LIMIT_CAP(caps->maxColorAttachments, maxDrawBuffersAndColorAttachments);
     ANGLE_LIMIT_CAP(caps->maxVertexAttributes, MAX_VERTEX_ATTRIBS);
     if (mDisplay->getFrontendFeatures().forceMinimumMaxVertexAttributes.enabled &&
         getClientVersion() <= Version(2, 0))
@@ -5378,6 +5377,9 @@ void Context::copyImageSubData(GLuint srcName,
         return;
     }
 
+    ASSERT(srcTarget != GL_RENDERER || (srcLevel == 0 && srcZ == 0 && srcDepth == 1));
+    ASSERT(dstTarget != GL_RENDERER || (dstLevel == 0 && dstZ == 0 && srcDepth == 1));
+
     if (srcTarget == GL_RENDERBUFFER)
     {
         // Source target is a Renderbuffer
@@ -5389,8 +5391,7 @@ void Context::copyImageSubData(GLuint srcName,
 
             // Copy Renderbuffer to Renderbuffer
             ANGLE_CONTEXT_TRY(writeBuffer->copyRenderbufferSubData(
-                this, readBuffer, srcLevel, srcX, srcY, srcZ, dstLevel, dstX, dstY, dstZ, srcWidth,
-                srcHeight, srcDepth));
+                this, readBuffer, srcX, srcY, dstX, dstY, srcWidth, srcHeight));
         }
         else
         {
@@ -5404,8 +5405,7 @@ void Context::copyImageSubData(GLuint srcName,
 
             // Copy Renderbuffer to Texture
             ANGLE_CONTEXT_TRY(writeTexture->copyRenderbufferSubData(
-                this, readBuffer, srcLevel, srcX, srcY, srcZ, dstLevel, dstX, dstY, dstZ, srcWidth,
-                srcHeight, srcDepth));
+                this, readBuffer, srcX, srcY, dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight));
         }
     }
     else
@@ -5426,9 +5426,8 @@ void Context::copyImageSubData(GLuint srcName,
             Renderbuffer *writeBuffer = getRenderbuffer(PackParam<RenderbufferID>(dstName));
 
             // Copy Texture to Renderbuffer
-            ANGLE_CONTEXT_TRY(writeBuffer->copyTextureSubData(this, readTexture, srcLevel, srcX,
-                                                              srcY, srcZ, dstLevel, dstX, dstY,
-                                                              dstZ, srcWidth, srcHeight, srcDepth));
+            ANGLE_CONTEXT_TRY(writeBuffer->copyTextureSubData(
+                this, readTexture, srcLevel, srcX, srcY, srcZ, dstX, dstY, srcWidth, srcHeight));
         }
         else
         {
@@ -6632,27 +6631,6 @@ void Context::texStorage3DMultisample(TextureType target,
                                                      ConvertToBool(fixedsamplelocations)));
 }
 
-void Context::texImage2DExternal(TextureTarget target,
-                                 GLint level,
-                                 GLint internalformat,
-                                 GLsizei width,
-                                 GLsizei height,
-                                 GLint border,
-                                 GLenum format,
-                                 GLenum type)
-{
-    Extents size(width, height, 1);
-    Texture *texture = getTextureByTarget(target);
-    ANGLE_CONTEXT_TRY(
-        texture->setImageExternal(this, target, level, internalformat, size, format, type));
-}
-
-void Context::invalidateTexture(TextureType target)
-{
-    mImplementation->invalidateTexture(target);
-    mState.invalidateTextureBindings(target);
-}
-
 void Context::getMultisamplefv(GLenum pname, GLuint index, GLfloat *val)
 {
     // According to spec 3.1 Table 20.49: Framebuffer Dependent Values,
@@ -7141,11 +7119,8 @@ GLenum Context::checkFramebufferStatus(GLenum target)
 
 void Context::compileShader(ShaderProgramID shader)
 {
-    Shader *shaderObject = GetValidShader(this, angle::EntryPoint::GLCompileShader, shader);
-    if (!shaderObject)
-    {
-        return;
-    }
+    Shader *shaderObject = getShaderNoResolveCompile(shader);
+    ASSERT(shaderObject != nullptr);
     shaderObject->compile(this, angle::JobResultExpectancy::Future);
 }
 
@@ -8146,7 +8121,7 @@ void Context::uniformBlockBinding(ShaderProgramID program,
 GLsync Context::fenceSync(GLenum condition, GLbitfield flags)
 {
     SyncID syncHandle;
-    if (!mState.mSyncManager->createSync(mImplementation.get(), this, &syncHandle))
+    if (!mState.mSyncManager->createSync(mImplementation.get(), &syncHandle))
     {
         handleExhaustionError(angle::EntryPoint::GLFenceSync);
         return nullptr;

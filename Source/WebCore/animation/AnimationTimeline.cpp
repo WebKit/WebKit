@@ -59,7 +59,7 @@ void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
             controller->addPendingAnimation(animation);
     }
 
-    if (m_animations.add(animation)) {
+    if (m_animations.add(animation).isNewEntry) {
         RefPtr timeline = animation.timeline();
         if (timeline && timeline.get() != this)
             timeline->removeAnimation(animation);

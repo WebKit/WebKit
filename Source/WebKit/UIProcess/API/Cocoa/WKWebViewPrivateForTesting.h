@@ -158,6 +158,8 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 - (void)_isLayerTreeFrozenForTesting:(void (^)(BOOL frozen))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
+- (void)_numberOfLiveDocumentsForTesting:(void (^)(NSUInteger count))completionHandler;
+
 - (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
@@ -205,6 +207,16 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 - (bool)_displayLinkWantsHighFrameRate;
 
 - (void)_lastPageLoadNetworkActivityCompletionCodeForTesting:(void(^)(NSNumber * _Nullable completionCode))completionHandler;
+
+#if TARGET_OS_IPHONE
++ (void)_setVisibilityEndowmentForTesting:(BOOL)isVisible;
+#endif
+
+#if defined(ENABLE_HORIZONTAL_BANNER_VIEW_OVERLAYS) && ENABLE_HORIZONTAL_BANNER_VIEW_OVERLAYS
+- (void)_enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting;
+- (void)_disableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting;
+- (void)_clearColorExtensionBehaviorOverridesForHorizontalBannerViewOverlaysForTesting;
+#endif
 
 @end
 

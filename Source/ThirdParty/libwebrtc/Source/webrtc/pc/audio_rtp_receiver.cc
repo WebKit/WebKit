@@ -17,12 +17,12 @@
 #include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
-#include "api/crypto/frame_decryptor_interface.h"
 #include "api/dtls_transport_interface.h"
-#include "api/frame_transformer_interface.h"
 #include "api/make_ref_counted.h"
 #include "api/media_stream_interface.h"
+#include "api/rtc_error.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
@@ -33,6 +33,7 @@
 #include "pc/audio_track.h"
 #include "pc/media_stream_track_proxy.h"
 #include "pc/remote_audio_source.h"
+#include "pc/rtp_receiver.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/thread.h"
 
@@ -42,10 +43,12 @@ AudioRtpReceiver::AudioRtpReceiver(
     Thread* worker_thread,
     absl::string_view receiver_id,
     std::vector<std::string> stream_ids,
+    absl::AnyInvocable<RTCError()> enable_sframe_at_owner,
     VoiceMediaReceiveChannelInterface* voice_channel)
     : AudioRtpReceiver(worker_thread,
                        receiver_id,
                        CreateStreamsFromIds(std::move(stream_ids)),
+                       std::move(enable_sframe_at_owner),
                        voice_channel,
                        RemoteAudioSource::OnAudioChannelGoneAction::kSurvive) {}
 
@@ -58,6 +61,7 @@ AudioRtpReceiver::AudioRtpReceiver(
     : AudioRtpReceiver(worker_thread,
                        receiver_id,
                        streams,
+                       nullptr,
                        media_channel,
                        RemoteAudioSource::OnAudioChannelGoneAction::kEnd) {
   RTC_DCHECK(!is_unified_plan);
@@ -71,6 +75,7 @@ AudioRtpReceiver::AudioRtpReceiver(
     : AudioRtpReceiver(worker_thread,
                        receiver_id,
                        streams,
+                       nullptr,
                        media_channel,
                        RemoteAudioSource::OnAudioChannelGoneAction::kSurvive) {}
 
@@ -78,9 +83,10 @@ AudioRtpReceiver::AudioRtpReceiver(
     Thread* worker_thread,
     absl::string_view receiver_id,
     const std::vector<scoped_refptr<MediaStreamInterface>>& streams,
+    absl::AnyInvocable<RTCError()> enable_sframe_at_owner,
     VoiceMediaReceiveChannelInterface* voice_channel,
     RemoteAudioSource::OnAudioChannelGoneAction source_gone_action)
-    : worker_thread_(worker_thread),
+    : RtpReceiverBase(worker_thread, std::move(enable_sframe_at_owner)),
       id_(receiver_id),
       source_(make_ref_counted<RemoteAudioSource>(worker_thread,
                                                   source_gone_action)),
@@ -178,40 +184,26 @@ RtpParameters AudioRtpReceiver::GetParameters() const {
              : media_channel_->GetDefaultRtpReceiveParameters();
 }
 
-void AudioRtpReceiver::SetFrameDecryptor(
-    scoped_refptr<FrameDecryptorInterface> frame_decryptor) {
-  RTC_DCHECK_RUN_ON(worker_thread_);
-  frame_decryptor_ = std::move(frame_decryptor);
-  // Special Case: Set the frame decryptor to any value on any existing channel.
-  if (media_channel_ && signaled_ssrc_) {
-    media_channel_->SetFrameDecryptor(*signaled_ssrc_, frame_decryptor_);
-  }
-}
-
-scoped_refptr<FrameDecryptorInterface> AudioRtpReceiver::GetFrameDecryptor()
-    const {
-  RTC_DCHECK_RUN_ON(worker_thread_);
-  return frame_decryptor_;
-}
-
 void AudioRtpReceiver::Stop() {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
   source_->SetState(MediaSourceInterface::kEnded);
   track_->internal()->set_ended();
 }
 
-void AudioRtpReceiver::RestartMediaChannel(std::optional<uint32_t> ssrc) {
+absl::AnyInvocable<void() &&>
+AudioRtpReceiver::GetRestartFunctionForMediaChannel(
+    std::optional<uint32_t> ssrc) {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
   bool enabled = track_->internal()->enabled();
   MediaSourceInterface::SourceState state = source_->state();
-  worker_thread_->BlockingCall([&]() {
-    RTC_DCHECK_RUN_ON(worker_thread_);
-    RestartMediaChannel_w(std::move(ssrc), enabled, state);
-  });
   source_->SetState(MediaSourceInterface::kLive);
+  return [this, ssrc = std::move(ssrc), enabled, state]() mutable {
+    RTC_DCHECK_RUN_ON(worker_thread_);
+    GetRestartFunctionForMediaChannel_w(std::move(ssrc), enabled, state);
+  };
 }
 
-void AudioRtpReceiver::RestartMediaChannel_w(
+void AudioRtpReceiver::GetRestartFunctionForMediaChannel_w(
     std::optional<uint32_t> ssrc,
     bool track_enabled,
     MediaSourceInterface::SourceState state) {
@@ -240,22 +232,21 @@ void AudioRtpReceiver::RestartMediaChannel_w(
   Reconfigure(track_enabled);
 }
 
-void AudioRtpReceiver::SetupMediaChannel(uint32_t ssrc) {
+absl::AnyInvocable<void() &&> AudioRtpReceiver::GetSetupForMediaChannel(
+    uint32_t ssrc) {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
-  RestartMediaChannel(ssrc);
+  return GetRestartFunctionForMediaChannel(ssrc);
 }
 
-void AudioRtpReceiver::SetupUnsignaledMediaChannel() {
+absl::AnyInvocable<void() &&>
+AudioRtpReceiver::GetSetupForUnsignaledMediaChannel() {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
-  RestartMediaChannel(std::nullopt);
+  return GetRestartFunctionForMediaChannel(std::nullopt);
 }
 
-std::optional<uint32_t> AudioRtpReceiver::ssrc() const {
+MediaReceiveChannelInterface* AudioRtpReceiver::media_channel() const {
   RTC_DCHECK_RUN_ON(worker_thread_);
-  if (!signaled_ssrc_.has_value() && media_channel_) {
-    return media_channel_->GetUnsignaledSsrc();
-  }
-  return signaled_ssrc_;
+  return media_channel_;
 }
 
 void AudioRtpReceiver::set_stream_ids(std::vector<std::string> stream_ids) {
@@ -312,16 +303,6 @@ std::vector<RtpSource> AudioRtpReceiver::GetSources() const {
   return media_channel_->GetSources(current_ssrc.value());
 }
 
-void AudioRtpReceiver::SetFrameTransformer(
-    scoped_refptr<FrameTransformerInterface> frame_transformer) {
-  RTC_DCHECK_RUN_ON(worker_thread_);
-  if (media_channel_) {
-    media_channel_->SetDepacketizerToDecoderFrameTransformer(
-        signaled_ssrc_.value_or(0), frame_transformer);
-  }
-  frame_transformer_ = std::move(frame_transformer);
-}
-
 void AudioRtpReceiver::Reconfigure(bool track_enabled) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   RTC_DCHECK(media_channel_);
@@ -371,7 +352,7 @@ void AudioRtpReceiver::SetMediaChannel(
       static_cast<VoiceMediaReceiveChannelInterface*>(media_channel);
 }
 
-void AudioRtpReceiver::NotifyFirstPacketReceived() {
+void AudioRtpReceiver::NotifyFirstPacketReceived(uint32_t ssrc) {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
   if (observer_) {
     observer_->OnFirstPacketReceived(media_type());
@@ -379,7 +360,8 @@ void AudioRtpReceiver::NotifyFirstPacketReceived() {
   received_first_packet_ = true;
 }
 
-void AudioRtpReceiver::NotifyFirstPacketReceivedAfterReceptiveChange() {
+void AudioRtpReceiver::NotifyFirstPacketReceivedAfterReceptiveChange(
+    uint32_t ssrc) {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
   if (observer_) {
     observer_->OnFirstPacketReceivedAfterReceptiveChange(media_type());

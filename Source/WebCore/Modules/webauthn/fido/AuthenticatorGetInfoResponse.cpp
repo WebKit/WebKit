@@ -117,7 +117,6 @@ Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
     CBORValue::ArrayValue versionArray;
     for (const auto& version : response.versions())
         versionArray.append(toString(version));
-    deviceInfoMap.emplace(CBORValue(1), CBORValue(WTF::move(versionArray)));
     deviceInfoMap.emplace(CBORValue(kCtapAuthenticatorGetInfoVersionsKey), CBORValue(WTF::move(versionArray)));
 
     if (response.extensions())

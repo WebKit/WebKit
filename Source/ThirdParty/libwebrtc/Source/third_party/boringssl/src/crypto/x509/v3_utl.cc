@@ -18,12 +18,15 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <utility>
+
 #include <openssl/bn.h>
 #include <openssl/bytestring.h>
 #include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
 #include <openssl/obj.h>
+#include <openssl/stack.h>
 #include <openssl/x509.h>
 
 #include "../conf/internal.h"
@@ -31,12 +34,14 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static char *strip_spaces(char *name);
 static int sk_strcmp(const char *const *a, const char *const *b);
-static STACK_OF(OPENSSL_STRING) *get_email(const X509_NAME *name,
-                                           const GENERAL_NAMES *gens);
+static UniquePtr<STACK_OF(OPENSSL_STRING)> get_email(const X509_NAME *name,
+                                                     const GENERAL_NAMES *gens);
 static void str_free(OPENSSL_STRING str);
-static int append_ia5(STACK_OF(OPENSSL_STRING) **sk,
+static int append_ia5(UniquePtr<STACK_OF(OPENSSL_STRING)> *sk,
                       const ASN1_IA5STRING *email);
 
 static int ipv4_from_asc(uint8_t v4[4], const char *in);
@@ -90,14 +95,15 @@ err:
   return 0;
 }
 
-int X509V3_add_value(const char *name, const char *value,
-                     STACK_OF(CONF_VALUE) **extlist) {
+int bssl::X509V3_add_value(const char *name, const char *value,
+                           STACK_OF(CONF_VALUE) **extlist) {
   return x509V3_add_len_value(name, value, value != nullptr ? strlen(value) : 0,
                               /*omit_value=*/value == nullptr, extlist);
 }
 
-int x509V3_add_value_asn1_string(const char *name, const ASN1_STRING *value,
-                                 STACK_OF(CONF_VALUE) **extlist) {
+int bssl::x509V3_add_value_asn1_string(const char *name,
+                                       const ASN1_STRING *value,
+                                       STACK_OF(CONF_VALUE) **extlist) {
   return x509V3_add_len_value(name, (const char *)value->data, value->length,
                               /*omit_value=*/0, extlist);
 }
@@ -114,8 +120,8 @@ void X509V3_conf_free(CONF_VALUE *conf) {
   OPENSSL_free(conf);
 }
 
-int X509V3_add_value_bool(const char *name, int asn1_bool,
-                          STACK_OF(CONF_VALUE) **extlist) {
+int bssl::X509V3_add_value_bool(const char *name, int asn1_bool,
+                                STACK_OF(CONF_VALUE) **extlist) {
   if (asn1_bool) {
     return X509V3_add_value(name, "TRUE", extlist);
   }
@@ -236,8 +242,8 @@ ASN1_INTEGER *s2i_ASN1_INTEGER(const X509V3_EXT_METHOD *method,
   return aint;
 }
 
-int X509V3_add_value_int(const char *name, const ASN1_INTEGER *aint,
-                         STACK_OF(CONF_VALUE) **extlist) {
+int bssl::X509V3_add_value_int(const char *name, const ASN1_INTEGER *aint,
+                               STACK_OF(CONF_VALUE) **extlist) {
   char *strtmp;
   int ret;
   if (!aint) {
@@ -251,7 +257,7 @@ int X509V3_add_value_int(const char *name, const ASN1_INTEGER *aint,
   return ret;
 }
 
-int X509V3_bool_from_string(const char *str, ASN1_BOOLEAN *out_bool) {
+int bssl::X509V3_bool_from_string(const char *str, ASN1_BOOLEAN *out_bool) {
   if (!strcmp(str, "TRUE") || !strcmp(str, "true") || !strcmp(str, "Y") ||
       !strcmp(str, "y") || !strcmp(str, "YES") || !strcmp(str, "yes")) {
     *out_bool = ASN1_BOOLEAN_TRUE;
@@ -266,7 +272,8 @@ int X509V3_bool_from_string(const char *str, ASN1_BOOLEAN *out_bool) {
   return 0;
 }
 
-int X509V3_get_value_bool(const CONF_VALUE *value, ASN1_BOOLEAN *out_bool) {
+int bssl::X509V3_get_value_bool(const CONF_VALUE *value,
+                                ASN1_BOOLEAN *out_bool) {
   const char *btmp = value->value;
   if (btmp == nullptr) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_INVALID_BOOLEAN_STRING);
@@ -282,7 +289,7 @@ err:
   return 0;
 }
 
-int X509V3_get_value_int(const CONF_VALUE *value, ASN1_INTEGER **aint) {
+int bssl::X509V3_get_value_int(const CONF_VALUE *value, ASN1_INTEGER **aint) {
   ASN1_INTEGER *itmp;
   if (!(itmp = s2i_ASN1_INTEGER(nullptr, value->value))) {
     X509V3_conf_err(value);
@@ -298,7 +305,7 @@ int X509V3_get_value_int(const CONF_VALUE *value, ASN1_INTEGER **aint) {
 
 // #define DEBUG
 
-STACK_OF(CONF_VALUE) *X509V3_parse_list(const char *line) {
+STACK_OF(CONF_VALUE) *bssl::X509V3_parse_list(const char *line) {
   char *p, *q, c;
   char *ntmp, *vtmp;
   STACK_OF(CONF_VALUE) *values = nullptr;
@@ -414,7 +421,7 @@ static char *strip_spaces(char *name) {
 
 // hex string utilities
 
-char *x509v3_bytes_to_hex(const uint8_t *in, size_t len) {
+char *bssl::x509v3_bytes_to_hex(const uint8_t *in, size_t len) {
   CBB cbb;
   if (!CBB_init(&cbb, len * 3 + 1)) {
     goto err;
@@ -440,7 +447,7 @@ err:
   return nullptr;
 }
 
-unsigned char *x509v3_hex_to_bytes(const char *str, size_t *len) {
+unsigned char *bssl::x509v3_hex_to_bytes(const char *str, size_t *len) {
   unsigned char *hexbuf, *q;
   unsigned char ch, cl, *p;
   uint8_t high, low;
@@ -488,7 +495,7 @@ badhex:
   return nullptr;
 }
 
-int x509v3_conf_name_matches(const char *name, const char *cmp) {
+int bssl::x509v3_conf_name_matches(const char *name, const char *cmp) {
   // |name| must begin with |cmp|.
   size_t len = strlen(cmp);
   if (strncmp(name, cmp, len) != 0) {
@@ -503,60 +510,43 @@ static int sk_strcmp(const char *const *a, const char *const *b) {
 }
 
 STACK_OF(OPENSSL_STRING) *X509_get1_email(const X509 *x) {
-  GENERAL_NAMES *gens;
-  STACK_OF(OPENSSL_STRING) *ret;
-
-  gens = reinterpret_cast<GENERAL_NAMES *>(
-      X509_get_ext_d2i(x, NID_subject_alt_name, nullptr, nullptr));
-  ret = get_email(X509_get_subject_name(x), gens);
-  sk_GENERAL_NAME_pop_free(gens, GENERAL_NAME_free);
-  return ret;
+  UniquePtr<GENERAL_NAMES> gens(reinterpret_cast<GENERAL_NAMES *>(
+      X509_get_ext_d2i(x, NID_subject_alt_name, nullptr, nullptr)));
+  return get_email(X509_get_subject_name(x), gens.get()).release();
 }
 
 STACK_OF(OPENSSL_STRING) *X509_get1_ocsp(const X509 *x) {
-  AUTHORITY_INFO_ACCESS *info;
-  STACK_OF(OPENSSL_STRING) *ret = nullptr;
-  size_t i;
-
-  info = reinterpret_cast<AUTHORITY_INFO_ACCESS *>(
-      X509_get_ext_d2i(x, NID_info_access, nullptr, nullptr));
+  UniquePtr<AUTHORITY_INFO_ACCESS> info(
+      reinterpret_cast<AUTHORITY_INFO_ACCESS *>(
+          X509_get_ext_d2i(x, NID_info_access, nullptr, nullptr)));
   if (!info) {
     return nullptr;
   }
-  for (i = 0; i < sk_ACCESS_DESCRIPTION_num(info); i++) {
-    ACCESS_DESCRIPTION *ad = sk_ACCESS_DESCRIPTION_value(info, i);
+  UniquePtr<STACK_OF(OPENSSL_STRING)> ret;
+  for (const ACCESS_DESCRIPTION *ad : info.get()) {
     if (OBJ_obj2nid(ad->method) == NID_ad_OCSP) {
       if (ad->location->type == GEN_URI) {
         if (!append_ia5(&ret, ad->location->d.uniformResourceIdentifier)) {
-          break;
+          return nullptr;
         }
       }
     }
   }
-  AUTHORITY_INFO_ACCESS_free(info);
-  return ret;
+  sk_OPENSSL_STRING_sort_and_dedup(ret.get(), str_free);
+  return ret.release();
 }
 
 STACK_OF(OPENSSL_STRING) *X509_REQ_get1_email(const X509_REQ *x) {
-  GENERAL_NAMES *gens;
-  STACK_OF(X509_EXTENSION) *exts;
-  STACK_OF(OPENSSL_STRING) *ret;
-
-  exts = X509_REQ_get_extensions(x);
-  gens = reinterpret_cast<GENERAL_NAMES *>(
-      X509V3_get_d2i(exts, NID_subject_alt_name, nullptr, nullptr));
-  ret = get_email(X509_REQ_get_subject_name(x), gens);
-  sk_GENERAL_NAME_pop_free(gens, GENERAL_NAME_free);
-  sk_X509_EXTENSION_pop_free(exts, X509_EXTENSION_free);
-  return ret;
+  UniquePtr<STACK_OF(X509_EXTENSION)> exts(X509_REQ_get_extensions(x));
+  UniquePtr<GENERAL_NAMES> gens(reinterpret_cast<GENERAL_NAMES *>(
+      X509V3_get_d2i(exts.get(), NID_subject_alt_name, nullptr, nullptr)));
+  return get_email(X509_REQ_get_subject_name(x), gens.get()).release();
 }
 
-static STACK_OF(OPENSSL_STRING) *get_email(const X509_NAME *name,
-                                           const GENERAL_NAMES *gens) {
-  STACK_OF(OPENSSL_STRING) *ret = nullptr;
-  // Now add any email address(es) to STACK
+static UniquePtr<STACK_OF(OPENSSL_STRING)> get_email(
+    const X509_NAME *name, const GENERAL_NAMES *gens) {
+  UniquePtr<STACK_OF(OPENSSL_STRING)> ret;
   int i = -1;
-  // First supplied X509_NAME
   while ((i = X509_NAME_get_index_by_NID(name, NID_pkcs9_emailAddress, i)) >=
          0) {
     const X509_NAME_ENTRY *ne = X509_NAME_get_entry(name, i);
@@ -565,21 +555,18 @@ static STACK_OF(OPENSSL_STRING) *get_email(const X509_NAME *name,
       return nullptr;
     }
   }
-  for (size_t j = 0; j < sk_GENERAL_NAME_num(gens); j++) {
-    const GENERAL_NAME *gen = sk_GENERAL_NAME_value(gens, j);
-    if (gen->type != GEN_EMAIL) {
-      continue;
-    }
-    if (!append_ia5(&ret, gen->d.ia5)) {
+  for (const GENERAL_NAME *gen : gens) {
+    if (gen->type == GEN_EMAIL && !append_ia5(&ret, gen->d.ia5)) {
       return nullptr;
     }
   }
+  sk_OPENSSL_STRING_sort_and_dedup(ret.get(), str_free);
   return ret;
 }
 
 static void str_free(OPENSSL_STRING str) { OPENSSL_free(str); }
 
-static int append_ia5(STACK_OF(OPENSSL_STRING) **sk,
+static int append_ia5(UniquePtr<STACK_OF(OPENSSL_STRING)> *sk,
                       const ASN1_IA5STRING *email) {
   // First some sanity checks
   if (email->type != V_ASN1_IA5STRING) {
@@ -594,37 +581,19 @@ static int append_ia5(STACK_OF(OPENSSL_STRING) **sk,
     return 1;
   }
 
-  char *emtmp = nullptr;
   if (!*sk) {
-    *sk = sk_OPENSSL_STRING_new(sk_strcmp);
+    sk->reset(sk_OPENSSL_STRING_new(sk_strcmp));
   }
   if (!*sk) {
-    goto err;
+    return 0;
   }
 
-  emtmp = OPENSSL_strndup((char *)email->data, email->length);
-  if (emtmp == nullptr) {
-    goto err;
-  }
-
-  // Don't add duplicates
-  sk_OPENSSL_STRING_sort(*sk);
-  if (sk_OPENSSL_STRING_find(*sk, nullptr, emtmp)) {
-    OPENSSL_free(emtmp);
-    return 1;
-  }
-  if (!sk_OPENSSL_STRING_push(*sk, emtmp)) {
-    goto err;
+  UniquePtr<char> emtmp(
+      OPENSSL_strndup((const char *)email->data, email->length));
+  if (emtmp == nullptr || !PushToStack(sk->get(), std::move(emtmp))) {
+    return 0;
   }
   return 1;
-
-err:
-  // TODO(davidben): Fix the error-handling in this file. It currently relies
-  // on |append_ia5| leaving |*sk| at NULL on error.
-  OPENSSL_free(emtmp);
-  X509_email_free(*sk);
-  *sk = nullptr;
-  return 0;
 }
 
 void X509_email_free(STACK_OF(OPENSSL_STRING) *sk) {
@@ -826,7 +795,7 @@ static int equal_wildcard(const unsigned char *pattern, size_t pattern_len,
                         subject_len, flags);
 }
 
-int x509v3_looks_like_dns_name(const unsigned char *in, size_t len) {
+int bssl::x509v3_looks_like_dns_name(const unsigned char *in, size_t len) {
   // This function is used as a heuristic for whether a common name is a
   // hostname to be matched, or merely a decorative name to describe the
   // subject. This heuristic must be applied to both name constraints and the
@@ -945,11 +914,11 @@ static int do_x509_check(const X509 *x, const char *chk, size_t chklen,
     equal = equal_case;
   }
 
-  GENERAL_NAMES *gens = reinterpret_cast<GENERAL_NAMES *>(
-      X509_get_ext_d2i(x, NID_subject_alt_name, nullptr, nullptr));
+  int critical;
+  UniquePtr<GENERAL_NAMES> gens(reinterpret_cast<GENERAL_NAMES *>(
+      X509_get_ext_d2i(x, NID_subject_alt_name, &critical, nullptr)));
   if (gens) {
-    for (size_t i = 0; i < sk_GENERAL_NAME_num(gens); i++) {
-      const GENERAL_NAME *gen = sk_GENERAL_NAME_value(gens, i);
+    for (const GENERAL_NAME *gen : gens.get()) {
       if (gen->type != check_type) {
         continue;
       }
@@ -967,8 +936,10 @@ static int do_x509_check(const X509 *x, const char *chk, size_t chklen,
         break;
       }
     }
-    GENERAL_NAMES_free(gens);
     return rv;
+  } else if (critical != -1) {
+    // Syntax error in the subjectAltName extension.
+    return 0;
   }
 
   // We're done if CN-ID is not pertinent
@@ -1107,7 +1078,7 @@ err:
   return nullptr;
 }
 
-int x509v3_a2i_ipadd(uint8_t ipout[16], const char *ipasc) {
+int bssl::x509v3_a2i_ipadd(uint8_t ipout[16], const char *ipasc) {
   // If string contains a ':' assume IPv6
 
   if (strchr(ipasc, ':')) {
@@ -1308,8 +1279,9 @@ static int ipv6_hex(uint8_t *out, const char *in, size_t inlen) {
   return 1;
 }
 
-int X509V3_NAME_from_section(X509_NAME *nm, const STACK_OF(CONF_VALUE) *dn_sk,
-                             int chtype) {
+int bssl::X509V3_NAME_from_section(X509_NAME *nm,
+                                   const STACK_OF(CONF_VALUE) *dn_sk,
+                                   int chtype) {
   if (!nm) {
     return 0;
   }

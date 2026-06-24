@@ -1,3 +1,15 @@
 
-PASS Make sure that the `as` value reflects only known values
+PASS Link preload "as" value for "Image" should be "image".
+PASS Link preload "as" value for "images" should be "".
+PASS Link preload "as" value for "scripT" should be "script".
+PASS Link preload "as" value for "style" should be "style".
+PASS Link preload "as" value for "" should be "".
+PASS Link preload "as" value for "foNt" should be "font".
+PASS Link preload "as" value for "foobar" should be "".
+PASS Link preload "as" value for "video" should be "video".
+PASS Link preload "as" value for "audio" should be "audio".
+PASS Link preload "as" value for "track" should be "track".
+PASS Link preload "as" value for "fetch" should be "fetch".
+FAIL Link preload "as" value for "json" should be "json". assert_equals: expected "json" but got ""
+FAIL Link preload "as" value for "text" should be "text". assert_equals: expected "text" but got ""
 

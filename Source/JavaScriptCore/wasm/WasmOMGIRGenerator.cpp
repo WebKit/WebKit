@@ -485,7 +485,6 @@ public:
     }
 
     // SIMD
-    bool NODELETE usesSIMD() { return m_info.usesSIMD(m_functionIndex); }
     void NODELETE notifyFunctionUsesSIMD() { ASSERT(m_info.usesSIMD(m_functionIndex)); }
     [[nodiscard]] PartialResult addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result, uint8_t memoryIndex);
     [[nodiscard]] PartialResult addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t offset, uint8_t memoryIndex);
@@ -810,41 +809,41 @@ public:
 
     // Control flow
     [[nodiscard]] ControlData addTopLevel(BlockSignature&&);
-    [[nodiscard]] PartialResult addBlock(BlockSignature&&, Stack& enclosingStack, ControlType& newBlock, Stack& newStack);
-    [[nodiscard]] PartialResult addLoop(BlockSignature&&, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex);
-    [[nodiscard]] PartialResult addIf(ExpressionType condition, BlockSignature&&, Stack& enclosingStack, ControlType& result, Stack& newStack);
-    [[nodiscard]] PartialResult addElse(ControlData&, const Stack&);
+    [[nodiscard]] PartialResult addBlock(BlockSignature&&, std::span<TypedExpression> args, ControlType& newBlock);
+    [[nodiscard]] PartialResult addLoop(BlockSignature&&, std::span<TypedExpression> args, ControlType& block, uint32_t loopIndex);
+    [[nodiscard]] PartialResult addIf(ExpressionType condition, BlockSignature&&, std::span<TypedExpression> args, ControlType& result);
+    [[nodiscard]] PartialResult addElse(ControlData&, std::span<const TypedExpression>);
     [[nodiscard]] PartialResult addElseToUnreachable(ControlData&);
 
-    [[nodiscard]] PartialResult addTry(BlockSignature&&, Stack& enclosingStack, ControlType& result, Stack& newStack);
-    [[nodiscard]] PartialResult addTryTable(BlockSignature&&, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
-    [[nodiscard]] PartialResult addCatch(unsigned exceptionIndex, const RTT&, Stack&, ControlType&, ResultList&);
+    [[nodiscard]] PartialResult addTry(BlockSignature&&, std::span<TypedExpression> args, ControlType& result);
+    [[nodiscard]] PartialResult addTryTable(BlockSignature&&, std::span<TypedExpression> args, const Vector<CatchHandler>& targets, ControlType& result);
+    [[nodiscard]] PartialResult addCatch(unsigned exceptionIndex, const RTT&, std::span<const TypedExpression>, ControlType&, ResultList&);
     [[nodiscard]] PartialResult addCatchToUnreachable(unsigned exceptionIndex, const RTT&, ControlType&, ResultList&);
-    [[nodiscard]] PartialResult addCatchAll(Stack&, ControlType&);
+    [[nodiscard]] PartialResult addCatchAll(std::span<const TypedExpression>, ControlType&);
     [[nodiscard]] PartialResult addCatchAllToUnreachable(ControlType&);
     [[nodiscard]] PartialResult addDelegate(ControlType&, ControlType&);
     [[nodiscard]] PartialResult addDelegateToUnreachable(ControlType&, ControlType&);
-    [[nodiscard]] PartialResult addThrow(unsigned exceptionIndex, ArgumentList& args, Stack&);
+    [[nodiscard]] PartialResult addThrow(unsigned exceptionIndex, ArgumentList& args, std::span<const TypedExpression>);
     [[nodiscard]] PartialResult addRethrow(unsigned, ControlType&);
-    [[nodiscard]] PartialResult addThrowRef(TypedExpression exception, Stack&);
+    [[nodiscard]] PartialResult addThrowRef(TypedExpression exception, std::span<const TypedExpression>);
 
     [[nodiscard]] PartialResult addInlinedReturn(const auto& returnValues);
 
-    [[nodiscard]] PartialResult addReturn(const ControlData&, const Stack& returnValues);
-    [[nodiscard]] PartialResult addBranch(ControlData&, ExpressionType condition, const Stack& returnValues);
-    [[nodiscard]] PartialResult addBranchNull(ControlType&, ExpressionType, const Stack&, bool, ExpressionType&);
-    [[nodiscard]] PartialResult addBranchCast(ControlType&, TypedExpression, const Stack&, bool, int32_t, bool);
-    [[nodiscard]] PartialResult addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, const Stack& expressionStack);
-    [[nodiscard]] PartialResult endBlock(ControlEntry&, Stack& expressionStack);
-    [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry&, const Stack& = { });
+    [[nodiscard]] PartialResult addReturn(const ControlData&, std::span<const TypedExpression> returnValues);
+    [[nodiscard]] PartialResult addBranch(ControlData&, ExpressionType condition, std::span<const TypedExpression> returnValues);
+    [[nodiscard]] PartialResult addBranchNull(ControlType&, ExpressionType, std::span<const TypedExpression>, bool, ExpressionType&);
+    [[nodiscard]] PartialResult addBranchCast(ControlType&, TypedExpression, std::span<const TypedExpression>, bool, int32_t, bool);
+    [[nodiscard]] PartialResult addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, std::span<const TypedExpression> expressionStack);
+    [[nodiscard]] PartialResult endBlock(ControlEntry&, std::span<TypedExpression> enclosedStack);
+    [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry&, std::span<TypedExpression> enclosedStack);
 
-    [[nodiscard]] PartialResult NODELETE endTopLevel(const Stack&) { return { }; }
+    [[nodiscard]] PartialResult NODELETE endTopLevel(std::span<const TypedExpression>) { return { }; }
 
     // Fused comparison stubs (B3 will do this for us later).
-    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     // Calls
     [[nodiscard]] PartialResult addCall(unsigned, FunctionSpaceIndex functionIndexSpace, const RTT&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
@@ -1016,7 +1015,7 @@ private:
     }
 
     void unify(Value* phi, const ExpressionType& source);
-    void unifyValuesWithBlock(const Stack& resultStack, const ControlData& block);
+    void unifyValuesWithBlock(std::span<const TypedExpression> resultStack, const ControlData& block);
 
     void emitChecksForModOrDiv(B3::Opcode, Value* left, Value* right);
 
@@ -1029,7 +1028,7 @@ private:
 
     void materializeExpressionStackIntoVariables();
     Value* loadFromScratchBuffer(unsigned& indexInBuffer, Value* pointer, B3::Type);
-    void connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* pointer, Stack& expressionStack);
+    void connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* pointer, std::span<const TypedExpression> expressionStack);
     Value* emitCatchImpl(CatchKind, ControlType&, unsigned exceptionIndex = 0);
     void emitCatchTableImpl(ControlData& entryData, const ControlData::TryTableTarget&);
     RefPtr<PatchpointExceptionHandle> preparePatchpointForExceptions(BasicBlock*, PatchpointValue*);
@@ -1108,13 +1107,8 @@ private:
     const unsigned m_loopIndexForOSREntry { UINT_MAX };
     InliningNode* m_inlining { nullptr };
 
-    struct RootBlock {
-        BasicBlock* block;
-        bool usesSIMD;
-    };
-
     Procedure& m_proc;
-    Vector<RootBlock> m_rootBlocks;
+    Vector<BasicBlock*> m_rootBlocks;
     BasicBlock* m_topLevelBlock;
     BasicBlock* m_currentBlock { nullptr };
 
@@ -1274,8 +1268,8 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
     , m_callSiteIndex(0)
 {
     m_topLevelBlock = m_proc.addBlock();
-    m_rootBlocks.append({ m_proc.addBlock(), m_info.usesSIMD(m_functionIndex) });
-    m_currentBlock = m_rootBlocks[0].block;
+    m_rootBlocks.append(m_proc.addBlock());
+    m_currentBlock = m_rootBlocks[0];
     m_instanceValue = rootCaller.m_instanceValue;
     m_vmValue = rootCaller.m_vmValue;
     m_baseMemoryValue = rootCaller.m_baseMemoryValue;
@@ -1307,8 +1301,8 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
     , m_numImportFunctions(info.importFunctionCount())
 {
     m_topLevelBlock = m_proc.addBlock();
-    m_rootBlocks.append({ m_proc.addBlock(), m_info.usesSIMD(m_functionIndex) });
-    m_currentBlock = m_rootBlocks[0].block;
+    m_rootBlocks.append(m_proc.addBlock());
+    m_currentBlock = m_rootBlocks[0];
 
     // FIXME we don't really need to pin registers here if there's no memory. It makes wasm -> wasm thunks simpler for now. https://bugs.webkit.org/show_bug.cgi?id=166623
 
@@ -1541,7 +1535,7 @@ void OMGIRGenerator::insertEntrySwitch()
 
     m_currentBlock = m_topLevelBlock;
     m_currentBlock->appendNew<Value>(m_proc, EntrySwitch, Origin());
-    for (auto [block, _] : m_rootBlocks)
+    for (auto block : m_rootBlocks)
         m_currentBlock->appendSuccessor(FrequentedBlock(block));
 }
 
@@ -1971,6 +1965,8 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         unsigned patchArgsIndex = patchpoint->reps().size();
         patchpoint->append(calleeCode, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0));
         patchpoint->append(calleeInstance, ValueRep::SomeRegister);
+        // Cross-instance setup below reloads pinned registers before the tail-call shuffle consumes late inputs.
+        patchpoint->clobberLate(RegisterSet::wasmPinnedRegisters());
         // emitRestoreInstanceFrameIfNeeded needs two scratches. wasmBaseMemoryPointer is
         // always pinned so B3 won't allocate it. wasmBoundsCheckingSizeRegister
         // is only pinned in BoundsChecking mode, so in Signaling mode we need B3 to give us a
@@ -4539,10 +4535,10 @@ Value* OMGIRGenerator::loadFromScratchBuffer(unsigned& indexInBuffer, Value* poi
     return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, type, origin(), pointer, offset);
 }
 
-void OMGIRGenerator::connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* pointer, Stack& expressionStack)
+void OMGIRGenerator::connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* pointer, std::span<const TypedExpression> expressionStack)
 {
     TRACE_CF("Connect values at entrypoint");
-    for (TypedExpression& expr : expressionStack) {
+    for (const TypedExpression& expr : expressionStack) {
         if (!expr.value().isMaterialized()) {
             RELEASE_ASSERT(expr.value().b3Value()->isConstant());
             indexInBuffer++;
@@ -4554,23 +4550,23 @@ void OMGIRGenerator::connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* p
     }
 };
 
-auto OMGIRGenerator::addLoop(BlockSignature&& signature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex) -> PartialResult
+auto OMGIRGenerator::addLoop(BlockSignature&& signature, std::span<TypedExpression> args, ControlType& block, uint32_t loopIndex) -> PartialResult
 {
+    auto enclosingStack = m_parser->expressionStack();
     TRACE_CF("LOOP: entering loop index: ", loopIndex, " signature: ", signature);
     BasicBlock* body = m_proc.addBlock();
     BasicBlock* continuation = m_proc.addBlock();
 
     block = ControlData(m_proc, origin(), WTF::move(signature), BlockType::Loop, continuation, body);
 
-    unsigned offset = enclosingStack.size() - block.signature().argumentCount();
     for (unsigned i = 0; i < block.signature().argumentCount(); ++i) {
-        TypedExpression value = enclosingStack.at(offset + i);
+        TypedExpression value = args[i];
         Value* phi = block.phis[i];
         m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), get(value), phi);
         body->append(phi);
-        newStack.constructAndAppend(block.signature().argumentType(i), phi);
+        // Replace args in place: the parser keeps them as the new block's stack.
+        args[i] = TypedExpression(block.signature().argumentType(i), phi);
     }
-    enclosingStack.shrink(offset);
 
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
     if (loopIndex == m_loopIndexForOSREntry) {
@@ -4580,8 +4576,8 @@ auto OMGIRGenerator::addLoop(BlockSignature&& signature, Stack& enclosingStack, 
         ASSERT(!m_inlineParent);
         materializeExpressionStackIntoVariables();
 
-        m_currentBlock = m_rootBlocks[0].block;
-        Value* pointer = m_rootBlocks[0].block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR0);
+        m_currentBlock = m_rootBlocks[0];
+        Value* pointer = m_rootBlocks[0]->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR0);
 
         unsigned indexInBuffer = 0;
 
@@ -4597,14 +4593,16 @@ auto OMGIRGenerator::addLoop(BlockSignature&& signature, Stack& enclosingStack, 
                 ++indexInBuffer;
         }
 
-        for (auto& control : m_parser->controlStack()) {
-            ASSERT(&control.controlData != &block);
-            connectValuesAtEntrypoint(indexInBuffer, pointer, control.enclosedExpressionStack);
+        for (size_t controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
+            ASSERT(&m_parser->controlStack()[controlIndex].controlData != &block);
+            connectValuesAtEntrypoint(indexInBuffer, pointer, m_parser->enclosedSliceOf(controlIndex));
         }
-        connectValuesAtEntrypoint(indexInBuffer, pointer, enclosingStack);
+        // Args are loaded separately into the loop's phis below; trim them off here.
+        ASSERT(enclosingStack.size() >= args.size());
+        connectValuesAtEntrypoint(indexInBuffer, pointer, enclosingStack.first(enclosingStack.size() - args.size()));
         // The loop's stack can be read by the loop body, so the restored values should join using the loop-back phi nodes.
-        for (unsigned i = 0; i < newStack.size(); i++) {
-            auto* load = loadFromScratchBuffer(indexInBuffer, pointer, newStack[i].value().type());
+        for (unsigned i = 0; i < args.size(); i++) {
+            auto* load = loadFromScratchBuffer(indexInBuffer, pointer, args[i].value().type());
             m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), load, block.phis[i]);
         }
 
@@ -4625,18 +4623,19 @@ OMGIRGenerator::ControlData OMGIRGenerator::addTopLevel(BlockSignature&& signatu
     return topLevel;
 }
 
-auto OMGIRGenerator::addBlock(BlockSignature&& signature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack) -> PartialResult
+auto OMGIRGenerator::addBlock(BlockSignature&& signature, std::span<TypedExpression> args, ControlType& newBlock) -> PartialResult
 {
+    UNUSED_PARAM(args);
     TRACE_CF("Block: ", signature);
     BasicBlock* continuation = m_proc.addBlock();
 
-    splitStack(signature, enclosingStack, newStack);
     newBlock = ControlData(m_proc, origin(), WTF::move(signature), BlockType::Block, continuation);
     return { };
 }
 
-auto OMGIRGenerator::addIf(ExpressionType condition, BlockSignature&& signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
+auto OMGIRGenerator::addIf(ExpressionType condition, BlockSignature&& signature, std::span<TypedExpression> args, ControlType& result) -> PartialResult
 {
+    UNUSED_PARAM(args);
     // FIXME: This needs to do some kind of stack passing.
 
     BasicBlock* taken = m_proc.addBlock();
@@ -4664,12 +4663,11 @@ auto OMGIRGenerator::addIf(ExpressionType condition, BlockSignature&& signature,
 
     m_currentBlock = taken;
     TRACE_CF("IF");
-    splitStack(signature, enclosingStack, newStack);
     result = ControlData(m_proc, origin(), WTF::move(signature), BlockType::If, continuation, notTaken);
     return { };
 }
 
-auto OMGIRGenerator::addElse(ControlData& data, const Stack& currentStack) -> PartialResult
+auto OMGIRGenerator::addElse(ControlData& data, std::span<const TypedExpression> currentStack) -> PartialResult
 {
     unifyValuesWithBlock(currentStack, data);
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), data.continuation);
@@ -4685,20 +4683,21 @@ auto OMGIRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
     return { };
 }
 
-auto OMGIRGenerator::addTry(BlockSignature&& signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
+auto OMGIRGenerator::addTry(BlockSignature&& signature, std::span<TypedExpression> args, ControlType& result) -> PartialResult
 {
+    UNUSED_PARAM(args);
     ++m_tryCatchDepth;
     TRACE_CF("TRY");
 
     BasicBlock* continuation = m_proc.addBlock();
-    splitStack(signature, enclosingStack, newStack);
     materializeExpressionStackIntoVariables();
     result = ControlData(m_proc, origin(), WTF::move(signature), BlockType::Try, continuation, advanceCallSiteIndex(), m_tryCatchDepth);
     return { };
 }
 
-auto OMGIRGenerator::addTryTable(BlockSignature&& signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack) -> PartialResult
+auto OMGIRGenerator::addTryTable(BlockSignature&& signature, std::span<TypedExpression> args, const Vector<CatchHandler>& targets, ControlType& result) -> PartialResult
 {
+    UNUSED_PARAM(args);
     ++m_tryCatchDepth;
     TRACE_CF("TRY");
 
@@ -4714,7 +4713,6 @@ auto OMGIRGenerator::addTryTable(BlockSignature&& signature, Stack& enclosingSta
     );
 
     BasicBlock* continuation = m_proc.addBlock();
-    splitStack(signature, enclosingStack, newStack);
     materializeExpressionStackIntoVariables();
     result = ControlData(m_proc, origin(), WTF::move(signature), BlockType::TryTable, continuation, advanceCallSiteIndex(), m_tryCatchDepth);
     result.setTryTableTargets(WTF::move(targetList));
@@ -4722,7 +4720,7 @@ auto OMGIRGenerator::addTryTable(BlockSignature&& signature, Stack& enclosingSta
     return { };
 }
 
-auto OMGIRGenerator::addCatch(unsigned exceptionIndex, const RTT& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
+auto OMGIRGenerator::addCatch(unsigned exceptionIndex, const RTT& signature, std::span<const TypedExpression> currentStack, ControlType& data, ResultList& results) -> PartialResult
 {
     TRACE_CF("CATCH: ", signature);
     unifyValuesWithBlock(currentStack, data);
@@ -4776,8 +4774,7 @@ RefPtr<PatchpointExceptionHandle> OMGIRGenerator::preparePatchpointForExceptions
         unsigned end = currentFrame == innerTryFrame ? innerTryControlStackIndex + 1 : currentFrame->m_parser->controlStack().size();
         for (unsigned controlIndex = 0; controlIndex < end; ++controlIndex) {
             ControlData& data = currentFrame->m_parser->controlStack()[controlIndex].controlData;
-            Stack& expressionStack = currentFrame->m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-            for (ExpressionType expr : expressionStack)
+            for (ExpressionType expr : currentFrame->m_parser->enclosedSliceOf(controlIndex))
                 liveValues.append(get(block, expr));
             if (ControlType::isAnyCatch(data))
                 liveValues.append(get(block, data.exception()));
@@ -4856,13 +4853,12 @@ void OMGIRGenerator::materializeExpressionStackIntoVariables()
     for (auto* currentFrame : frames) {
         auto* parser = currentFrame->m_parser;
 
-        for (auto& control : parser->controlStack()) {
-            for (auto& expr : control.enclosedExpressionStack)
+        for (size_t controlIndex = 0; controlIndex < parser->controlStack().size(); ++controlIndex) {
+            for (auto& expr : parser->enclosedSliceOf(controlIndex))
                 materializer.convertToVariable(expr.value(), m_proc.addVariable(expr.value().type()));
         }
-        // Note that this is the not yet (but soon to be) enclosedExpressionStack for the Try/TryTable/Loop.
-        auto& topExpressionStack = parser->expressionStack();
-        for (auto& expr : topExpressionStack)
+        // Note that this is the not yet (but soon to be) enclosed slice for the Try/TryTable/Loop.
+        for (auto& expr : parser->expressionStack())
             materializer.convertToVariable(expr.value(), m_proc.addVariable(expr.value().type()));
     }
 }
@@ -4881,10 +4877,9 @@ void OMGIRGenerator::connectValuesForCatchEntrypoint(ControlData& catchData, Val
         for (auto& local : currentFrame->m_locals)
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(indexInBuffer, pointer, local->type()));
 
-        for (auto& control : currentFrame->m_parser->controlStack()) {
-            auto& controlData = control.controlData;
-            auto& expressionStack = control.enclosedExpressionStack;
-            connectValuesAtEntrypoint(indexInBuffer, pointer, expressionStack);
+        for (size_t controlIndex = 0; controlIndex < currentFrame->m_parser->controlStack().size(); ++controlIndex) {
+            auto& controlData = currentFrame->m_parser->controlStack()[controlIndex].controlData;
+            connectValuesAtEntrypoint(indexInBuffer, pointer, currentFrame->m_parser->enclosedSliceOf(controlIndex));
             if (ControlType::isAnyCatch(controlData) && &controlData != &catchData) {
                 auto* load = loadFromScratchBuffer(indexInBuffer, pointer, pointerType());
                 m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), controlData.exception(), load);
@@ -4892,8 +4887,7 @@ void OMGIRGenerator::connectValuesForCatchEntrypoint(ControlData& catchData, Val
         }
         // inlineParent frames only
         if (currentFrame != this) {
-            auto& topExpressionStack = currentFrame->m_parser->expressionStack();
-            connectValuesAtEntrypoint(indexInBuffer, pointer, topExpressionStack);
+            connectValuesAtEntrypoint(indexInBuffer, pointer, currentFrame->m_parser->expressionStack());
         }
     }
 }
@@ -4912,7 +4906,7 @@ auto OMGIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const RTT& s
     return { };
 }
 
-auto OMGIRGenerator::addCatchAll(Stack& currentStack, ControlType& data) -> PartialResult
+auto OMGIRGenerator::addCatchAll(std::span<const TypedExpression> currentStack, ControlType& data) -> PartialResult
 {
     unifyValuesWithBlock(currentStack, data);
     TRACE_CF("CATCH_ALL");
@@ -4929,7 +4923,7 @@ auto OMGIRGenerator::addCatchAllToUnreachable(ControlType& data) -> PartialResul
 Value* OMGIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned exceptionIndex)
 {
     m_currentBlock = m_proc.addBlock();
-    m_rootBlocks.append({ m_currentBlock, usesSIMD() });
+    m_rootBlocks.append(m_currentBlock);
 
     if (ControlType::isTry(data)) {
         if (kind == CatchKind::Catch)
@@ -4960,7 +4954,7 @@ Value* OMGIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned
 auto OMGIRGenerator::emitCatchTableImpl(ControlData& data, const ControlData::TryTableTarget& target) -> void
 {
     auto block = m_proc.addBlock();
-    m_rootBlocks.append({ block, usesSIMD() });
+    m_rootBlocks.append(block);
     auto oldBlock = m_currentBlock;
     m_currentBlock = block;
 
@@ -5033,7 +5027,7 @@ auto OMGIRGenerator::addDelegateToUnreachable(ControlType& target, ControlType& 
     return { };
 }
 
-auto OMGIRGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, Stack&) -> PartialResult
+auto OMGIRGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, std::span<const TypedExpression>) -> PartialResult
 {
     TRACE_CF("THROW");
 
@@ -5061,7 +5055,7 @@ auto OMGIRGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, Stack
     return { };
 }
 
-[[nodiscard]] auto OMGIRGenerator::addThrowRef(TypedExpression exnref, Stack&) -> PartialResult
+[[nodiscard]] auto OMGIRGenerator::addThrowRef(TypedExpression exnref, std::span<const TypedExpression>) -> PartialResult
 {
     TRACE_CF("THROW_REF");
 
@@ -5128,7 +5122,7 @@ auto OMGIRGenerator::addInlinedReturn(const auto& returnValues) -> PartialResult
     return { };
 }
 
-auto OMGIRGenerator::addReturn(const ControlData&, const Stack& returnValues) -> PartialResult
+auto OMGIRGenerator::addReturn(const ControlData&, std::span<const TypedExpression> returnValues) -> PartialResult
 {
     TRACE_CF("RETURN");
     if (m_returnContinuation)
@@ -5164,7 +5158,7 @@ auto OMGIRGenerator::addReturn(const ControlData&, const Stack& returnValues) ->
     return { };
 }
 
-auto OMGIRGenerator::addBranch(ControlData& data, ExpressionType condition, const Stack& returnValues) -> PartialResult
+auto OMGIRGenerator::addBranch(ControlData& data, ExpressionType condition, std::span<const TypedExpression> returnValues) -> PartialResult
 {
     unifyValuesWithBlock(returnValues, data);
 
@@ -5201,7 +5195,7 @@ auto OMGIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
     return { };
 }
 
-auto OMGIRGenerator::addBranchNull(ControlData& data, ExpressionType reference, const Stack& returnValues, bool shouldNegate, ExpressionType& result) -> PartialResult
+auto OMGIRGenerator::addBranchNull(ControlData& data, ExpressionType reference, std::span<const TypedExpression> returnValues, bool shouldNegate, ExpressionType& result) -> PartialResult
 {
     auto condition = push(m_currentBlock->appendNew<Value>(m_proc, shouldNegate ? B3::NotEqual : B3::Equal, origin(), get(reference), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
 
@@ -5213,7 +5207,7 @@ auto OMGIRGenerator::addBranchNull(ControlData& data, ExpressionType reference, 
     return { };
 }
 
-auto OMGIRGenerator::addBranchCast(ControlData& data, TypedExpression reference, const Stack& returnValues, bool allowNull, int32_t heapType, bool shouldNegate) -> PartialResult
+auto OMGIRGenerator::addBranchCast(ControlData& data, TypedExpression reference, std::span<const TypedExpression> returnValues, bool allowNull, int32_t heapType, bool shouldNegate) -> PartialResult
 {
     ExpressionType condition;
     emitRefTestOrCast(CastKind::Test, reference, allowNull, heapType, shouldNegate, condition);
@@ -5223,7 +5217,7 @@ auto OMGIRGenerator::addBranchCast(ControlData& data, TypedExpression reference,
     return { };
 }
 
-auto OMGIRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const Stack& expressionStack) -> PartialResult
+auto OMGIRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, std::span<const TypedExpression> expressionStack) -> PartialResult
 {
     TRACE_CF("SWITCH");
     UNUSED_PARAM(expressionStack);
@@ -5239,23 +5233,61 @@ auto OMGIRGenerator::addSwitch(ExpressionType condition, const Vector<ControlDat
     return { };
 }
 
-auto OMGIRGenerator::endBlock(ControlEntry& entry, Stack& expressionStack) -> PartialResult
+auto OMGIRGenerator::endBlock(ControlEntry& entry, std::span<TypedExpression> enclosedStack) -> PartialResult
 {
     ControlData& data = entry.controlData;
+    const auto& blockSignature = data.signature();
+    unsigned returnCount = blockSignature.returnCount();
 
-    ASSERT(expressionStack.size() == data.signature().returnCount());
+    ASSERT(enclosedStack.size() >= returnCount);
+    auto blockResults = enclosedStack.last(returnCount);
+
     if (data.blockType() != BlockType::Loop)
-        unifyValuesWithBlock(expressionStack, data);
+        unifyValuesWithBlock(blockResults, data);
 
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), data.continuation);
     data.continuation->addPredecessor(m_currentBlock);
 
-    return addEndToUnreachable(entry, expressionStack);
+    m_currentBlock = data.continuation;
+
+    if (data.blockType() == BlockType::If) {
+        data.special->appendNewControlValue(m_proc, Jump, origin(), m_currentBlock);
+        m_currentBlock->addPredecessor(data.special);
+    } else if (data.blockType() == BlockType::Try || data.blockType() == BlockType::Catch)
+        --m_tryCatchDepth;
+    else if (data.blockType() == BlockType::TryTable) {
+        data.endTryTable(advanceCallSiteIndex());
+        auto targets = data.m_tryTableTargets;
+        for (auto& target : targets)
+            emitCatchTableImpl(data, target);
+        --m_tryCatchDepth;
+    }
+
+    if (data.blockType() != BlockType::Loop) {
+        // Replace block result entries with phi-derived values; the parser keeps these
+        // as the resumed parent's stack top.
+        for (unsigned i = 0; i < returnCount; ++i) {
+            Value* result = data.phis[i];
+            m_currentBlock->append(result);
+            blockResults[i] = TypedExpression(blockSignature.returnType(i), push(result));
+        }
+    }
+    // For Loop, blockResults already holds the loop's exit values; no replacement needed.
+
+    if (data.blockType() == BlockType::TopLevel)
+        return addReturn(entry.controlData, std::span<const TypedExpression>(blockResults));
+
+    return { };
 }
 
-auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expressionStack) -> PartialResult
+auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, std::span<TypedExpression> enclosedStack) -> PartialResult
 {
     ControlData& data = entry.controlData;
+    const auto& blockSignature = data.signature();
+    unsigned returnCount = blockSignature.returnCount();
+    ASSERT(enclosedStack.size() >= returnCount);
+    auto resultSlots = enclosedStack.last(returnCount);
+
     m_currentBlock = data.continuation;
 
     if (data.blockType() == BlockType::If) {
@@ -5272,33 +5304,23 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
         --m_tryCatchDepth;
     }
 
-    const auto& blockSignature = data.signature();
     if (data.blockType() != BlockType::Loop) {
-        for (unsigned i = 0; i < blockSignature.returnCount(); ++i) {
+        for (unsigned i = 0; i < returnCount; ++i) {
             Value* result = data.phis[i];
             m_currentBlock->append(result);
-            entry.enclosedExpressionStack.constructAndAppend(blockSignature.returnType(i), push(result));
+            resultSlots[i] = TypedExpression(blockSignature.returnType(i), push(result));
         }
     } else {
-        for (unsigned i = 0; i < blockSignature.returnCount(); ++i) {
-            if (i < expressionStack.size()) {
-                entry.enclosedExpressionStack.append(expressionStack[i]);
-            } else {
-                Type returnType = blockSignature.returnType(i);
-                entry.enclosedExpressionStack.constructAndAppend(returnType, push(constant(toB3Type(returnType), 0xbbadbeef)));
-            }
+        // Loop: any incoming values would have come from the now-unreachable body.
+        for (unsigned i = 0; i < returnCount; ++i) {
+            Type returnType = blockSignature.returnType(i);
+            resultSlots[i] = TypedExpression(returnType, push(constant(toB3Type(returnType), 0xbbadbeef)));
         }
-    }
-
-    if constexpr (WasmOMGIRGeneratorInternal::traceStackValues) {
-        m_parser->expressionStack().swap(entry.enclosedExpressionStack);
-        TRACE_CF("END: ", blockSignature, " block type ", (int) data.blockType());
-        m_parser->expressionStack().swap(entry.enclosedExpressionStack);
     }
 
     // TopLevel does not have any code after this so we need to make sure we emit a return here.
     if (data.blockType() == BlockType::TopLevel)
-        return addReturn(entry.controlData, entry.enclosedExpressionStack);
+        return addReturn(entry.controlData, std::span<const TypedExpression>(resultSlots));
 
     return { };
 }
@@ -6031,15 +6053,15 @@ auto OMGIRGenerator::emitInlineDirectCall(InliningNode* inlining, FunctionCodeIn
     irGenerator.insertConstants();
     for (unsigned i = 1; i < irGenerator.m_rootBlocks.size(); ++i) {
         auto block = irGenerator.m_rootBlocks[i];
-        dataLogLnIf(WasmOMGIRGeneratorInternal::verboseInlining, "Block (", i, ")", block.block, " is an inline catch handler");
-        m_rootBlocks.append({ block.block, block.usesSIMD || irGenerator.usesSIMD() });
+        dataLogLnIf(WasmOMGIRGeneratorInternal::verboseInlining, "Block (", i, ")", block, " is an inline catch handler");
+        m_rootBlocks.append(block);
     }
     m_exceptionHandlers.appendVector(WTF::move(irGenerator.m_exceptionHandlers));
     if (irGenerator.m_exceptionHandlers.size())
         m_hasExceptionHandlers = true;
     RELEASE_ASSERT(!irGenerator.m_callSiteIndex);
 
-    irGenerator.m_topLevelBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(irGenerator.m_rootBlocks[0].block));
+    irGenerator.m_topLevelBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(irGenerator.m_rootBlocks[0]));
     m_makesCalls |= irGenerator.m_makesCalls;
     ASSERT(&irGenerator.m_proc == &m_proc);
 
@@ -6391,10 +6413,10 @@ auto OMGIRGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIn
     // FIXME: when we have trap handlers, we can just let the call fail because RTT is nullptr.
     // https://bugs.webkit.org/show_bug.cgi?id=177210
     static_assert(sizeof(WasmToWasmImportableFunction::rtt) == sizeof(uintptr_t), "Load codegen assumes ptr");
-    Value* calleeCallee = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfBoxedCallee()));
+    Value* calleeCallee = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfBoxedCallee()));
     m_heaps.decorateMemory(&m_heaps.WasmFuncRefTableFunction_boxedCallee, calleeCallee);
 
-    Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfTargetInstance()));
+    Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfTargetInstance()));
     m_heaps.decorateMemory(&m_heaps.WasmFuncRefTableFunction_targetInstance, calleeInstance);
 
     auto inliningResult = tryInliningPolymorphicCalls(callProfileIndex, calleeInstance, calleeCallee, signature, args, callType, isTailCallRootCaller, continuation);
@@ -6403,10 +6425,10 @@ auto OMGIRGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIn
 
     auto fastValuesList = WTF::move(inliningResult.value());
 
-    Value* calleeCodeLocation = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()));
+    Value* calleeCodeLocation = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfEntrypointLoadLocation()));
     m_heaps.decorateMemory(&m_heaps.WasmFuncRefTableFunction_entrypointLoadLocation, calleeCodeLocation);
 
-    Value* calleeRTT = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfRTT()));
+    Value* calleeRTT = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfRTT()));
     m_heaps.decorateMemory(&m_heaps.WasmFuncRefTableFunction_rtt, calleeRTT);
 
     Value* expectedRTT = constant(pointerType(), std::bit_cast<uintptr_t>(&signature));
@@ -6578,7 +6600,7 @@ void OMGIRGenerator::unify(Value* phi, const ExpressionType& source)
     m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), get(source), phi);
 }
 
-void OMGIRGenerator::unifyValuesWithBlock(const Stack& resultStack, const ControlData& block)
+void OMGIRGenerator::unifyValuesWithBlock(std::span<const TypedExpression> resultStack, const ControlData& block)
 {
     const Vector<Value*>& phis = block.phis;
     size_t resultSize = phis.size();
@@ -6586,10 +6608,10 @@ void OMGIRGenerator::unifyValuesWithBlock(const Stack& resultStack, const Contro
     ASSERT(resultSize <= resultStack.size());
 
     for (size_t i = 0; i < resultSize; ++i)
-        unify(phis[resultSize - 1 - i], resultStack.at(resultStack.size() - 1 - i));
+        unify(phis[resultSize - 1 - i], resultStack[resultStack.size() - 1 - i]);
 }
 
-static void dumpExpressionStack(const CommaPrinter& comma, const OMGIRGenerator::Stack& expressionStack)
+static void dumpExpressionStack(const CommaPrinter& comma, std::span<const OMGIRGenerator::TypedExpression> expressionStack)
 {
     dataLog(comma, "ExpressionStack:");
     for (const auto& expression : expressionStack)
@@ -6598,6 +6620,7 @@ static void dumpExpressionStack(const CommaPrinter& comma, const OMGIRGenerator:
 
 void OMGIRGenerator::dump(const ControlStack& controlStack, const Stack* expressionStack)
 {
+    UNUSED_PARAM(expressionStack);
     dataLogLn("Constants:");
     for (const auto& constant : m_constantPool)
         dataLogLn(deepDump(m_proc, constant.value));
@@ -6607,11 +6630,12 @@ void OMGIRGenerator::dump(const ControlStack& controlStack, const Stack* express
     dataLogLn("With current block:", *m_currentBlock);
     dataLogLn("Control stack:");
     ASSERT(controlStack.size());
+    std::span<const TypedExpression> currentSlice = m_parser->expressionStack();
     for (size_t i = controlStack.size(); i--;) {
         dataLog("  ", controlStack[i].controlData, ": ");
         CommaPrinter comma(", "_s, ""_s);
-        dumpExpressionStack(comma, *expressionStack);
-        expressionStack = &controlStack[i].enclosedExpressionStack;
+        dumpExpressionStack(comma, currentSlice);
+        currentSlice = m_parser->enclosedSliceOf(i);
         dataLogLn();
     }
     dataLogLn();
@@ -6677,6 +6701,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(Compilati
     compilationContext.procedure = makeUniqueWithoutFastMallocCheck<Procedure>(info.usesSIMD(functionIndex));
 
     Procedure& procedure = *compilationContext.procedure;
+    procedure.setIsWasm(true);
     procedure.setName(callee.nameWithHash());
     if (shouldDumpIRFor(functionIndex + info.importFunctionCount()))
         procedure.setShouldDumpIR();

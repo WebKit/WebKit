@@ -62,7 +62,7 @@ void write(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTextFlag> = 
 void writeDebugInfo(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTextFlag> = { });
 
 class RenderTreeAsText {
-// FIXME: This is a cheesy hack to allow easy access to RenderStyle colors.  It won't be needed if we convert
+// FIXME: This is a cheesy hack to allow easy access to Style::ComputedStyle colors. It won't be needed if we convert
 // it to use visitedDependentColor instead. (This just involves rebaselining many results though, so for now it's
 // not being done).
 public:

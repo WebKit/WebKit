@@ -16,9 +16,9 @@
 #include <memory>
 #include <numeric>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
@@ -60,9 +60,9 @@ void FullBandErleEstimator::Reset() {
 }
 
 void FullBandErleEstimator::Update(
-    ArrayView<const float> X2,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+    std::span<const float> X2,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> Y2,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> E2,
     const std::vector<bool>& converged_filters) {
   for (size_t ch = 0; ch < Y2.size(); ++ch) {
     if (converged_filters[ch]) {

@@ -212,9 +212,12 @@ TEST(ObscuredContentInsets, ScrollViewFrameWithObscuredInsets)
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
-TEST(ObscuredContentInsets, ResizeScrollPocket)
+TEST(ObscuredContentInsets, ResizeScrollPocketWithoutHorizontalBannerView)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 600)]);
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    [webView _disableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
+#endif
     [webView setObscuredContentInsets:NSEdgeInsetsMake(100, 100, 0, 0)];
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView waitForNextPresentationUpdate];
@@ -225,6 +228,25 @@ TEST(ObscuredContentInsets, ResizeScrollPocket)
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ(NSMakeRect(0, 0, 800, 100), [webView _topScrollPocket].frame);
 }
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+
+TEST(ObscuredContentInsets, ResizeScrollPocketWithHorizontalBannerView)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 600)]);
+    [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(100, 100, 0, 0)];
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(NSMakeRect(100, 0, 300, 100), [webView _topScrollPocket].frame);
+
+    [webView setFrame:NSMakeRect(0, 0, 800, 600)];
+    [webView waitForNextVisibleContentRectUpdate];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(NSMakeRect(100, 0, 700, 100), [webView _topScrollPocket].frame);
+}
+
+#endif
 
 TEST(ObscuredContentInsets, ScrollPocketCaptureColor)
 {
@@ -363,7 +385,11 @@ TEST(ObscuredContentInsets, PreferSolidColorHardPocket)
 
     RetainPtr topScrollPocket = [webView _topScrollPocket];
     EXPECT_NOT_NULL(topScrollPocket);
+#if HAVE(LIQUID_GLASS_ADJUSTMENTS)
+    EXPECT_FALSE([topScrollPocket prefersSolidColorHardPocket]);
+#else
     EXPECT_TRUE([topScrollPocket prefersSolidColorHardPocket]); // Solid color is preferred when the page is not scrolled.
+#endif
 
     [webView objectByEvaluatingJavaScript:@"scrollTo(0, 100)"];
     Util::waitForConditionWithLogging([topScrollPocket] {
@@ -504,6 +530,499 @@ TEST(ObscuredContentInsets, TopOverhangColorExtensionLayerRemovedQuicklyAfterNav
 
     EXPECT_NULL([webView firstLayerWithNameContaining:@"top overhang"]);
 }
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+
+namespace HorizontalBannerOverlays {
+
+static constexpr CGFloat viewWidth = 800;
+static constexpr CGFloat viewHeight = 600;
+static constexpr CGFloat topInset = 60;
+static constexpr CGFloat leftInset = 200;
+static constexpr CGFloat rightInset = 100;
+static constexpr CGFloat overflowPageWidth = 3000;
+
+static RetainPtr<TestWKWebView> setUpWebView(NSString *html)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(topInset, leftInset, 0, rightInset)];
+    [webView setAllowsMagnification:YES];
+    [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
+    [webView synchronouslyLoadHTMLString:html];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+    return webView;
+}
+
+struct PageState {
+    double scrollXCSS;
+    double minScrollXCSS;
+    double scrollWidthCSS;
+    double scale;
+    BOOL isRTL;
+};
+
+static PageState capturePageState(TestWKWebView *webView)
+{
+    static constexpr NSString *script = @(R"(
+        (() => {
+            let dir = getComputedStyle(document.documentElement).direction;
+            let scrollLeft = document.scrollingElement.scrollLeft;
+            let scrollWidth = document.documentElement.scrollWidth;
+            let clientWidth = document.scrollingElement.clientWidth;
+            let minScrollLeft = dir === 'rtl' ? -(scrollWidth - clientWidth) : 0;
+            return JSON.stringify([scrollLeft, minScrollLeft, scrollWidth, dir === 'rtl']);
+        })()
+        )");
+
+    RetainPtr json = [webView objectByEvaluatingJavaScript:script];
+    RetainPtr data = [json dataUsingEncoding:NSUTF8StringEncoding];
+    RetainPtr values = [NSJSONSerialization JSONObjectWithData:data.get() options:0 error:nil];
+    return PageState {
+        [[values objectAtIndex:0] doubleValue],
+        [[values objectAtIndex:1] doubleValue],
+        [[values objectAtIndex:2] doubleValue],
+        [webView magnification],
+        [[values objectAtIndex:3] boolValue],
+    };
+}
+
+static void scrollTo(TestWKWebView *webView, double xCSS)
+{
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(%f, 0)", xCSS]];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+}
+
+struct ExpectedFrames {
+    CGRect leftSystemBackground;
+    std::optional<CGRect> leftFixed;
+    CGRect topScrollPocket;
+    CGRect rightSystemBackground;
+    std::optional<CGRect> rightFixed;
+};
+
+static ExpectedFrames computeExpectedFrames(const PageState& state, bool leftFixedEdge, bool rightFixedEdge)
+{
+    auto scrollOffsetView = std::trunc((state.scrollXCSS - state.minScrollXCSS) * state.scale);
+    auto contentsWidthView = std::trunc(state.scrollWidthCSS * state.scale);
+
+    auto distLeft = leftInset - scrollOffsetView;
+    auto distRight = viewWidth - leftInset - contentsWidthView + scrollOffsetView;
+
+    auto clampedLeft = std::clamp<CGFloat>(distLeft, 0, leftInset);
+    auto clampedRight = std::clamp<CGFloat>(distRight, 0, rightInset);
+
+    ExpectedFrames frames;
+    frames.leftSystemBackground = CGRectMake(std::min<CGFloat>(distLeft - leftInset, 0), 0, leftInset, viewHeight);
+    frames.rightSystemBackground = CGRectMake(viewWidth - rightInset + std::max<CGFloat>(rightInset - distRight, 0), 0, rightInset, viewHeight);
+    frames.topScrollPocket = CGRectMake(clampedLeft, 0, viewWidth - clampedLeft - clampedRight, topInset);
+
+    if (leftFixedEdge) {
+        CGFloat width = std::clamp<CGFloat>(leftInset - distLeft, 0, leftInset);
+        frames.leftFixed = CGRectMake(leftInset - width, 0, width, viewHeight);
+    }
+
+    if (rightFixedEdge) {
+        CGFloat width = std::clamp<CGFloat>(rightInset - distRight, 0, rightInset);
+        frames.rightFixed = CGRectMake(viewWidth - rightInset, 0, width, viewHeight);
+    }
+
+    return frames;
+}
+
+static void expectFrameEqualWithTolerance(CGRect actual, CGRect expected, CGFloat tolerance, NSString *fieldLabel)
+{
+    bool match = std::fabs(actual.origin.x - expected.origin.x) <= tolerance
+        && std::fabs(actual.origin.y - expected.origin.y) <= tolerance
+        && std::fabs(actual.size.width - expected.size.width) <= tolerance
+        && std::fabs(actual.size.height - expected.size.height) <= tolerance;
+    EXPECT_TRUE(match) << fieldLabel.UTF8String << ": actual=" << NSStringFromRect(actual).UTF8String
+        << " expected=" << NSStringFromRect(expected).UTF8String
+        << " (tolerance=" << tolerance << ")";
+}
+
+static void verifyFrames(TestWKWebView *webView, const ExpectedFrames& expected, NSString *label, CGFloat tolerance = 0)
+{
+    SCOPED_TRACE(label.UTF8String);
+
+    RetainPtr leftSystemBackground = [webView firstLayerWithNameContaining:@"Left system background color extension"];
+    EXPECT_NOT_NULL(leftSystemBackground.get());
+    if (leftSystemBackground)
+        expectFrameEqualWithTolerance([leftSystemBackground frame], expected.leftSystemBackground, tolerance, @"leftSystemBackground");
+
+    RetainPtr leftFixed = [webView firstLayerWithNameContaining:@"Fixed color extension fill (Left)"];
+    if (expected.leftFixed) {
+        EXPECT_NOT_NULL(leftFixed.get());
+        if (leftFixed)
+            expectFrameEqualWithTolerance([leftFixed frame], *expected.leftFixed, tolerance, @"leftFixed");
+    } else
+        EXPECT_NULL(leftFixed.get());
+
+    RetainPtr topScrollPocket = [webView _topScrollPocket];
+    EXPECT_NOT_NULL(topScrollPocket.get());
+    if (topScrollPocket)
+        expectFrameEqualWithTolerance([topScrollPocket frame], expected.topScrollPocket, tolerance, @"topScrollPocket");
+
+    RetainPtr rightSystemBackground = [webView firstLayerWithNameContaining:@"Right system background color extension"];
+    EXPECT_NOT_NULL(rightSystemBackground.get());
+    if (rightSystemBackground)
+        expectFrameEqualWithTolerance([rightSystemBackground frame], expected.rightSystemBackground, tolerance, @"rightSystemBackground");
+
+    RetainPtr rightFixed = [webView firstLayerWithNameContaining:@"Fixed color extension fill (Right)"];
+    if (expected.rightFixed) {
+        EXPECT_NOT_NULL(rightFixed.get());
+        if (rightFixed)
+            expectFrameEqualWithTolerance([rightFixed frame], *expected.rightFixed, tolerance, @"rightFixed");
+    } else
+        EXPECT_NULL(rightFixed.get());
+}
+
+static void runSubcases(TestWKWebView *webView, bool leftFixedEdge, bool rightFixedEdge)
+{
+    auto initialState = capturePageState(webView);
+    // For LTR, scrolling toward trailing means increasing scrollLeft; for RTL it means decreasing it.
+    auto trailingDirection = initialState.isRTL ? -1.0 : 1.0;
+    auto initialScrollLeft = initialState.scrollXCSS;
+    auto contentsWidthCSS = initialState.scrollWidthCSS;
+    // We need a couple pixels of tolerance to avoid rounding issues.
+    auto tolerance = initialState.isRTL ? 2.0 : 0.0;
+    auto scrollByOffsetFromLeading = [&](double offsetCSS) {
+        scrollTo(webView, initialScrollLeft + trailingDirection * offsetCSS);
+    };
+    auto verifyAtCurrentState = [&](NSString *label) {
+        verifyFrames(webView, computeExpectedFrames(capturePageState(webView), leftFixedEdge, rightFixedEdge), label, tolerance);
+    };
+
+    verifyAtCurrentState(@"A: page load");
+
+    scrollByOffsetFromLeading(leftInset / 2);
+    verifyAtCurrentState(@"B: scrolled half-leading-inset");
+
+    static constexpr auto zoomScale = 1.5;
+    auto zoomCenterX = initialState.isRTL ? (viewWidth - rightInset) : leftInset;
+    [webView setMagnification:zoomScale centeredAtPoint:NSMakePoint(zoomCenterX, topInset)];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+    scrollByOffsetFromLeading((leftInset * 3.0 / 4.0) / zoomScale);
+    verifyAtCurrentState(@"C: zoom + scroll for 25% visible");
+
+    scrollByOffsetFromLeading(contentsWidthCSS / 2);
+    verifyAtCurrentState(@"D: middle of page");
+
+    scrollByOffsetFromLeading(contentsWidthCSS);
+    verifyAtCurrentState(@"E: trailing edge of page");
+}
+
+} // namespace HorizontalBannerOverlays
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysNoOverflow)
+{
+    using namespace HorizontalBannerOverlays;
+
+    static constexpr NSString *html = @(R"(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+            <style>
+                html, body { margin: 0; padding: 0 } 
+                body { background: red; height: 1000px }
+            </style>
+        </head>
+        <body>
+        </body>
+        </html>
+        )");
+
+    RetainPtr webView = setUpWebView(html);
+    runSubcases(webView.get(), false, false);
+}
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysLeftToRightOverflow)
+{
+    using namespace HorizontalBannerOverlays;
+
+    RetainPtr html = [@(R"(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+            <style>
+                html, body { margin: 0; padding: 0 }
+                body { background: red; height: 1000px; width: __WIDTH__px }
+            </style>
+        </head>
+        <body>
+        </body>
+        </html>
+        )") stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
+
+    RetainPtr webView = setUpWebView(html.get());
+    runSubcases(webView.get(), false, false);
+}
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysLeftToRightOverflowWithFixedHeader)
+{
+    using namespace HorizontalBannerOverlays;
+
+    static constexpr NSString *unformattedHTML = @(R"(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+            <style>
+                html, body { margin:0; padding:0 }
+                body { background: red; height: 1000px; width: __WIDTH__px }
+                header { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: rgb(255,215,215) }
+            </style>
+        </head>
+        <body>
+            <header></header>
+        </body>
+        </html>
+        )");
+
+    RetainPtr html = [unformattedHTML stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
+
+    RetainPtr webView = setUpWebView(html.get());
+    runSubcases(webView.get(), false, false);
+}
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysLeftToRightOverflowWithFixedHeaderAndSidebar)
+{
+    using namespace HorizontalBannerOverlays;
+
+    static constexpr NSString *unformattedHTML = @(R"(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+            <style>
+                html, body { margin: 0; padding: 0 }
+                body { background: red; height: 1000px; width: __WIDTH__px }
+                header { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: rgb(255,215,215) }
+                aside { position: fixed; top: 0; left: 0; width: 200px; height: 100%; background: rgb(215,255,215) }
+            </style>
+        </head>
+        <body>
+            <header></header><aside></aside>
+        </body>
+        </html>
+        )");
+
+    RetainPtr html = [unformattedHTML stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
+
+    RetainPtr webView = setUpWebView(html.get());
+    runSubcases(webView.get(), true, false);
+}
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysRightToLeftOverflow)
+{
+    using namespace HorizontalBannerOverlays;
+
+    RetainPtr html = [@(R"(
+        <!DOCTYPE html>
+        <html dir='rtl'>
+        <head>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+            <style>
+                html, body { margin: 0; padding: 0 }
+                body { background: red; height: 1000px; width: __WIDTH__px }
+            </style>
+        </head>
+        <body>
+        </body>
+        </html>
+        )") stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
+
+    RetainPtr webView = setUpWebView(html.get());
+    runSubcases(webView.get(), false, false);
+}
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysRightToLeftOverflowWithFixedHeader)
+{
+    using namespace HorizontalBannerOverlays;
+
+    static constexpr NSString *unformattedHTML = @(R"(
+        <!DOCTYPE html>
+        <html dir='rtl'>
+        <head>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+            <style>
+                html, body { margin:0; padding:0 }
+                body { background: red; height: 1000px; width: __WIDTH__px }
+                header { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: rgb(255,215,215) }
+            </style>
+        </head>
+        <body>
+            <header></header>
+        </body>
+        </html>
+        )");
+
+    RetainPtr html = [unformattedHTML stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
+
+    RetainPtr webView = setUpWebView(html.get());
+    runSubcases(webView.get(), false, false);
+}
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysRightToLeftOverflowWithFixedHeaderAndSidebar)
+{
+    using namespace HorizontalBannerOverlays;
+
+    static constexpr NSString *unformattedHTML = @(R"(
+        <!DOCTYPE html>
+        <html dir='rtl'>
+        <head>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+            <style>
+                html, body { margin: 0; padding: 0 }
+                body { background: red; height: 1000px; width: __WIDTH__px }
+                header { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: rgb(255,215,215) }
+                aside { position: fixed; top: 0; right: 0; width: 100px; height: 100%; background: rgb(215,255,215) }
+            </style>
+        </head>
+        <body>
+            <header></header><aside></aside>
+        </body>
+        </html>
+        )");
+
+    RetainPtr html = [unformattedHTML stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
+
+    RetainPtr webView = setUpWebView(html.get());
+    runSubcases(webView.get(), false, true);
+}
+
+TEST(ObscuredContentInsets, HorizontalBannerOverlaysSystemBackgroundColorTracksAppearance)
+{
+    using namespace HorizontalBannerOverlays;
+
+    RetainPtr html = [@(R"(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+            <style>
+                html, body { margin: 0; padding: 0 }
+                body { background: red; height: 1000px; width: __WIDTH__px }
+            </style>
+        </head>
+        <body>
+        </body>
+        </html>
+        )") stringByReplacingOccurrencesOfString:@"__WIDTH__" withString:[NSString stringWithFormat:@"%f", overflowPageWidth]];
+
+    auto resolveWindowBackgroundColor = [](NSAppearance *appearance) {
+        __block RetainPtr<NSColor> resolved;
+        [appearance performAsCurrentDrawingAppearance:^{
+            resolved = [NSColor colorWithCGColor:[NSColor windowBackgroundColor].CGColor];
+        }];
+        return resolved;
+    };
+
+    auto leftSystemBackgroundColor = [](TestWKWebView *webView) {
+        RetainPtr layer = [webView firstLayerWithNameContaining:@"Left system background color extension"];
+        EXPECT_NOT_NULL(layer.get());
+        if (!layer)
+            return RetainPtr<NSColor> { };
+        return RetainPtr { [NSColor colorWithCGColor:[layer backgroundColor]] };
+    };
+
+    RetainPtr aquaAppearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    RetainPtr darkAquaAppearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(topInset, leftInset, 0, rightInset)];
+    [webView _enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting];
+    [webView setAppearance:aquaAppearance.get()];
+    [webView synchronouslyLoadHTMLString:html.get()];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    auto expectedAquaColor = resolveWindowBackgroundColor(aquaAppearance.get());
+    EXPECT_TRUE(Util::compareColors(leftSystemBackgroundColor(webView.get()).get(), expectedAquaColor.get()));
+
+    [webView _cancelFixedColorExtensionFadeAnimationsForTesting];
+    [webView setAppearance:darkAquaAppearance.get()];
+    [webView waitForNextPresentationUpdate];
+    [webView _cancelFixedColorExtensionFadeAnimationsForTesting];
+
+    auto expectedDarkColor = resolveWindowBackgroundColor(darkAquaAppearance.get());
+    EXPECT_TRUE(Util::compareColors(leftSystemBackgroundColor(webView.get()).get(), expectedDarkColor.get()));
+    // Sanity check to ensure this test is actually meaningful.
+    EXPECT_FALSE(Util::compareColors(expectedAquaColor.get(), expectedDarkColor.get()));
+}
+
+#endif // ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+
+TEST(ObscuredContentInsets, ScrollPocketCoversFullScreenTitlebar)
+{
+    constexpr CGFloat topInset = 20;
+
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    [NSApp activateIgnoringOtherApps:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(topInset, 0, 0, 0)];
+    [webView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
+    auto styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
+    RetainPtr toolbar = adoptNS([[NSToolbar alloc] initWithIdentifier:@"ScrollPocketTestToolbar"]);
+    RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO]);
+
+    [window setCollectionBehavior:[window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary];
+    [window setToolbar:toolbar.get()];
+    [[window contentView] addSubview:webView.get()];
+    [webView setFrame:[[window contentView] bounds]];
+    [window makeKeyAndOrderFront:nil];
+
+    [webView synchronouslyLoadTestPageNamed:@"top-fixed-element"];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_NOT_NULL([webView _topScrollPocket]);
+    EXPECT_EQ(0, [webView _fullScreenTitlebarOverlayHeightForTesting]);
+    EXPECT_EQ(topInset, NSHeight([[webView _topScrollPocket] frame]));
+
+    __block bool didEnter = false;
+    __block bool didExit = false;
+    RetainPtr enterObserver = [NSNotificationCenter.defaultCenter addObserverForName:NSWindowDidEnterFullScreenNotification object:window.get() queue:nil usingBlock:^(NSNotification *) {
+        didEnter = true;
+    }];
+    RetainPtr exitObserver = [NSNotificationCenter.defaultCenter addObserverForName:NSWindowDidExitFullScreenNotification object:window.get() queue:nil usingBlock:^(NSNotification *) {
+        didExit = true;
+    }];
+
+    [window toggleFullScreen:nil];
+    EXPECT_TRUE(Util::runFor(&didEnter, 10_s));
+    [webView waitForNextPresentationUpdate];
+
+    auto overlayHeight = [webView _fullScreenTitlebarOverlayHeightForTesting];
+    EXPECT_GT(overlayHeight, topInset);
+    EXPECT_EQ(overlayHeight, NSHeight([[webView _topScrollPocket] frame]));
+
+    RetainPtr expectedColor = [webView _sampledTopFixedPositionContentColor];
+    EXPECT_NOT_NULL(expectedColor.get());
+    EXPECT_TRUE(Util::compareColors([[webView _topScrollPocket] captureColor], expectedColor.get()));
+
+    [window toggleFullScreen:nil];
+    EXPECT_TRUE(Util::runFor(&didExit, 10_s));
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(0, [webView _fullScreenTitlebarOverlayHeightForTesting]);
+    EXPECT_EQ(topInset, NSHeight([[webView _topScrollPocket] frame]));
+
+    [NSNotificationCenter.defaultCenter removeObserver:enterObserver.get()];
+    [NSNotificationCenter.defaultCenter removeObserver:exitObserver.get()];
+}
+
+#endif // ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
 
 #endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 

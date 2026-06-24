@@ -115,8 +115,10 @@ bool RegExpObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObj
             regExp->setLastIndex(globalObject, descriptor.value(), false);
             RETURN_IF_EXCEPTION(scope, false);
         }
-        if (descriptor.writablePresent() && !descriptor.writable())
+        if (descriptor.writablePresent() && !descriptor.writable()) {
             regExp->setLastIndexIsNotWritable();
+            regExp->realm()->regExpLastIndexWritableWatchpointSet().fireAll(vm, "RegExp lastIndex was made non-writable");
+        }
         return true;
     }
 

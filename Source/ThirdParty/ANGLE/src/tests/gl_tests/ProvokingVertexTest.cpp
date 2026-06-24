@@ -364,6 +364,19 @@ TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
     }
 }
 
+TEST_P(ProvokingVertexTest, ANGLEProvokingVertexIsAvailable)
+{
+    const bool hasExt = IsGLExtensionEnabled("GL_ANGLE_provoking_vertex");
+    if (IsD3D11())
+    {
+        EXPECT_TRUE(hasExt);
+    }
+    else if (IsMetal())
+    {
+        EXPECT_TRUE(hasExt);
+    }
+}
+
 // Test with FRONT_CONVENTION if we have ANGLE_provoking_vertex.
 TEST_P(ProvokingVertexTest, ANGLEProvokingVertex)
 {
@@ -395,10 +408,6 @@ TEST_P(ProvokingVertexTest, ANGLEProvokingVertex)
     fnExpectId(2);
 
     const bool hasExt = IsGLExtensionEnabled("GL_ANGLE_provoking_vertex");
-    if (IsD3D11())
-    {
-        EXPECT_TRUE(hasExt);
-    }
     if (hasExt)
     {
         GLint mode;

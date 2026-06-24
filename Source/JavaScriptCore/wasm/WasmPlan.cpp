@@ -134,7 +134,7 @@ CString Plan::signpostMessage(CompilationMode compilationMode, uint32_t function
     CString signpostMessage;
     const FunctionData& function = m_moduleInformation->functions[functionIndexSpace - m_moduleInformation->importFunctionTypeSignatureIndices.size()];
     StringPrintStream stream;
-    stream.print(compilationMode, " ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))), " instructions size = ", function.data.size());
+    stream.print(compilationMode, " ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection().get(functionIndexSpace))), " instructions size = ", function.data.size());
     return stream.toCString();
 }
 

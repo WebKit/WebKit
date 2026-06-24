@@ -9,8 +9,8 @@ layer at (0,0) size 800x586
           text run at (484,0) width 209: "the one below the pop-up button."
       RenderBlock {DIV} at (0,34) size 784x264
         RenderMenuList {SELECT} at (0,0) size 500x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 498x28
-            RenderText at (5,5) size 181x18
+          RenderBlock {DIV} at (1,1) size 498x28
+            RenderText {#text} at (5,5) size 181x18
               text run at (5,5) width 36: "First "
               text run at (40,5) width 57 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
               text run at (96,5) width 19: "03"
@@ -24,8 +24,8 @@ layer at (0,0) size 800x586
             text run at (89,10) width 30 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
             text run at (118,10) width 27: " fifth"
         RenderMenuList {SELECT} at (0,66) size 500x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 498x28
-            RenderText at (5,5) size 181x18
+          RenderBlock {DIV} at (1,1) size 498x28
+            RenderText {#text} at (5,5) size 181x18
               text run at (5,5) width 25: "fifth"
               text run at (30,5) width 5 RTL: " "
               text run at (34,5) width 48 RTL: "\x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
@@ -45,15 +45,15 @@ layer at (0,0) size 800x586
             text run at (88,10) width 33 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
             text run at (120,10) width 25: "First"
         RenderMenuList {SELECT} at (0,132) size 500x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 498x28
-            RenderText at (5,5) size 180x18
+          RenderBlock {DIV} at (1,1) size 498x28
+            RenderText {#text} at (5,5) size 180x18
               text run at (5,5) width 180: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
         RenderBlock {DIV} at (0,162) size 470x36
           RenderText {#text} at (10,10) size 134x15
             text run at (10,10) width 134: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
         RenderMenuList {SELECT} at (0,198) size 500x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 498x28
-            RenderText at (5,5) size 180x18
+          RenderBlock {DIV} at (1,1) size 498x28
+            RenderText {#text} at (5,5) size 180x18
               text run at (5,5) width 25 RTL: "fifth"
               text run at (30,5) width 5 RTL: " "
               text run at (34,5) width 48 RTL: "\x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
@@ -68,8 +68,8 @@ layer at (0,0) size 800x586
             text run at (10,10) width 134 RTL: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
       RenderBlock {DIV} at (0,298) size 784x264
         RenderMenuList {SELECT} at (0,0) size 500x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 498x28
-            RenderText at (312,5) size 181x18
+          RenderBlock {DIV} at (1,1) size 498x28
+            RenderText {#text} at (312,5) size 181x18
               text run at (312,5) width 36: "First "
               text run at (347,5) width 58 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
               text run at (404,5) width 19: "03"
@@ -83,8 +83,8 @@ layer at (0,0) size 800x586
             text run at (405,10) width 29 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
             text run at (433,10) width 27: " fifth"
         RenderMenuList {SELECT} at (0,66) size 500x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 498x28
-            RenderText at (312,5) size 181x18
+          RenderBlock {DIV} at (1,1) size 498x28
+            RenderText {#text} at (312,5) size 181x18
               text run at (312,5) width 26: "fifth"
               text run at (337,5) width 5 RTL: " "
               text run at (341,5) width 48 RTL: "\x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
@@ -104,15 +104,15 @@ layer at (0,0) size 800x586
             text run at (404,10) width 32 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
             text run at (436,10) width 24: "First"
         RenderMenuList {SELECT} at (0,132) size 500x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 498x28
-            RenderText at (313,5) size 180x18
+          RenderBlock {DIV} at (1,1) size 498x28
+            RenderText {#text} at (313,5) size 180x18
               text run at (313,5) width 180: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
         RenderBlock {DIV} at (0,162) size 470x36
           RenderText {#text} at (326,10) size 134x15
             text run at (326,10) width 134: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
         RenderMenuList {SELECT} at (0,198) size 500x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 498x28
-            RenderText at (313,5) size 180x18
+          RenderBlock {DIV} at (1,1) size 498x28
+            RenderText {#text} at (313,5) size 180x18
               text run at (313,5) width 25 RTL: "fifth"
               text run at (338,5) width 5 RTL: " "
               text run at (342,5) width 48 RTL: "\x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"

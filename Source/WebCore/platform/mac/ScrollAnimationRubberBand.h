@@ -39,8 +39,8 @@ public:
     virtual ~ScrollAnimationRubberBand();
 
     // targetOffset is the scroll offset when the animation has finished (i.e. scrolled to an edge).
-    // The optional targetOverscroll parameter specifies where the animation should snap to (defaults to zero).
-    // This is used so that rubber banding does not obscure banner view overlays.
+    // The optional targetOverscroll parameter specifies where the animation should snap to,
+    // allowing us to adjust the animation as needed if an NSRefreshController is present.
     bool startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll, const FloatSize& targetOverscroll = { });
 
     bool startRubberBandAnimationWithElapsedTime(const FloatSize& initialVelocity, const FloatSize& initialOverscroll, Seconds alreadyElapsed, const FloatSize& targetOverscroll = { });

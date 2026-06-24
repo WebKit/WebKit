@@ -15,9 +15,9 @@
 
 #include <atomic>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/block.h"
 
@@ -40,13 +40,13 @@ class FilterAnalyzer {
   void Reset();
 
   // Updates the estimates with new input data.
-  void Update(ArrayView<const std::vector<float>> filters_time_domain,
+  void Update(std::span<const std::vector<float>> filters_time_domain,
               const RenderBuffer& render_buffer,
               bool* any_filter_consistent,
               float* max_echo_path_gain);
 
   // Returns the delay in blocks for each filter.
-  ArrayView<const int> FilterDelaysBlocks() const {
+  std::span<const int> FilterDelaysBlocks() const {
     return filter_delays_blocks_;
   }
 
@@ -59,7 +59,7 @@ class FilterAnalyzer {
   }
 
   // Returns the preprocessed filter.
-  ArrayView<const std::vector<float>> GetAdjustedFilters() const {
+  std::span<const std::vector<float>> GetAdjustedFilters() const {
     return h_highpass_;
   }
 
@@ -69,13 +69,13 @@ class FilterAnalyzer {
  private:
   struct FilterAnalysisState;
 
-  void AnalyzeRegion(ArrayView<const std::vector<float>> filters_time_domain,
+  void AnalyzeRegion(std::span<const std::vector<float>> filters_time_domain,
                      const RenderBuffer& render_buffer);
 
-  void UpdateFilterGain(ArrayView<const float> filters_time_domain,
+  void UpdateFilterGain(std::span<const float> filters_time_domain,
                         FilterAnalysisState* st);
   void PreProcessFilters(
-      ArrayView<const std::vector<float>> filters_time_domain);
+      std::span<const std::vector<float>> filters_time_domain);
 
   void ResetRegion();
 
@@ -90,7 +90,7 @@ class FilterAnalyzer {
    public:
     explicit ConsistentFilterDetector(const EchoCanceller3Config& config);
     void Reset();
-    bool Detect(ArrayView<const float> filter_to_analyze,
+    bool Detect(std::span<const float> filter_to_analyze,
                 const FilterRegion& region,
                 const Block& x_block,
                 size_t peak_index,

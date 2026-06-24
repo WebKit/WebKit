@@ -36,11 +36,13 @@ struct EncodeFrameParams;
  * the group. It does this primarily by updateing entries in
  * cpi->twopass.gf_group.update_type[].
  *
- * \param[in]    cpi          Top - level encoder instance structure
+ * \param[in]    cpi            Top - level encoder instance structure
+ * \param[in]    is_final_pass  Whether it is the second call to
+ *                              define_gf_group().
  *
  * \remark No return value but this function updates group data structures.
  */
-void av1_gop_setup_structure(struct AV1_COMP *cpi);
+void av1_gop_setup_structure(struct AV1_COMP *cpi, const int is_final_pass);
 
 /*!\brief Check whether a frame in the GOP is a forward key frame
  *

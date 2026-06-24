@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
 #include "logging/rtc_event_log/rtc_event_log2_proto_include.h"  // IWYU pragma: keep
 
@@ -25,7 +25,7 @@ namespace webrtc {
 class RtcEventLogDependencyDescriptorEncoderDecoder {
  public:
   static std::optional<rtclog2::DependencyDescriptorsWireInfo> Encode(
-      const std::vector<ArrayView<const uint8_t>>& raw_dd_data);
+      const std::vector<std::span<const uint8_t>>& raw_dd_data);
   static RtcEventLogParseStatusOr<std::vector<std::vector<uint8_t>>> Decode(
       const rtclog2::DependencyDescriptorsWireInfo& dd_wire_info,
       size_t num_packets);

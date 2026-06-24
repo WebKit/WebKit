@@ -41,7 +41,7 @@ auto GridTrackSizeDefaulter::operator()() const -> const GridTrackSize&
 
 // MARK: - Conversion
 
-auto ToCSS<GridTrackSizes>::operator()(const GridTrackSizes& value, const RenderStyle& style) -> CSS::GridTrackSizes
+auto ToCSS<GridTrackSizes>::operator()(const GridTrackSizes& value, const Style::ComputedStyle& style) -> CSS::GridTrackSizes
 {
     return { CSS::GridTrackSizeList::map(value, [&](auto& trackSize) -> CSS::GridTrackSize {
         return toCSS(trackSize, style);
@@ -69,7 +69,7 @@ auto CSSValueConversion<GridTrackSizes>::operator()(BuilderState& state, const C
     return GridTrackSizes { toStyle(gridTrackSizesValue->list(), state) };
 }
 
-auto CSSValueCreation<GridTrackSizes>::operator()(CSSValuePool&, const RenderStyle& style, const GridTrackSizes& value) -> Ref<CSSValue>
+auto CSSValueCreation<GridTrackSizes>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const GridTrackSizes& value) -> Ref<CSSValue>
 {
     return CSSGridTrackSizesValue::create(toCSS(value, style));
 }

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
 namespace WebCore {
 namespace Style {
@@ -33,7 +33,7 @@ struct PreferredSize;
 
 // <'flex-basis'> = content | <‘width’>
 // https://drafts.csswg.org/css-flexbox/#propdef-flex-basis
-struct FlexBasis : LengthWrapperBase<LengthPercentage<CSS::NonnegativeLayoutUnitClampedUnzoomed>, CSS::Keyword::Content, CSS::Keyword::Auto, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::FitContent, CSS::Keyword::Stretch, CSS::Keyword::Intrinsic, CSS::Keyword::MinIntrinsic> {
+struct FlexBasis : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeLayoutUnitClampedUnzoomed>, CSS::Keyword::Content, CSS::Keyword::Auto, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::FitContent, CSS::Keyword::Stretch, CSS::Keyword::WebkitFillAvailable, CSS::Keyword::Intrinsic, CSS::Keyword::MinIntrinsic> {
     using Base::Base;
 
     // `FlexBasis` is a superset of `PreferredSize` and therefore this conversion can fail when type is `content`.
@@ -44,7 +44,8 @@ struct FlexBasis : LengthWrapperBase<LengthPercentage<CSS::NonnegativeLayoutUnit
     ALWAYS_INLINE bool isMinContent() const { return holdsAlternative<CSS::Keyword::MinContent>(); }
     ALWAYS_INLINE bool isMaxContent() const { return holdsAlternative<CSS::Keyword::MaxContent>(); }
     ALWAYS_INLINE bool isFitContent() const { return holdsAlternative<CSS::Keyword::FitContent>(); }
-    ALWAYS_INLINE bool isStretch() const { return holdsAlternative<CSS::Keyword::Stretch>(); }
+    ALWAYS_INLINE bool isStretch() const { return holdsAlternative<CSS::Keyword::Stretch>() || holdsAlternative<CSS::Keyword::WebkitFillAvailable>(); }
+    ALWAYS_INLINE bool isFillAvailable() const { return holdsAlternative<CSS::Keyword::WebkitFillAvailable>(); }
     ALWAYS_INLINE bool isIntrinsicKeyword() const { return holdsAlternative<CSS::Keyword::Intrinsic>(); }
     ALWAYS_INLINE bool isMinIntrinsic() const { return holdsAlternative<CSS::Keyword::MinIntrinsic>(); }
 

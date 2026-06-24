@@ -16,10 +16,10 @@
 #include <limits>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
@@ -62,7 +62,7 @@ MATCHER(IsValidFeedback, "") {
          feedback.Parse(rtcp_header);
 }
 
-TransportFeedback Parse(ArrayView<const uint8_t> buffer) {
+TransportFeedback Parse(std::span<const uint8_t> buffer) {
   rtcp::CommonHeader header;
   EXPECT_TRUE(header.Parse(buffer.data(), buffer.size()));
   EXPECT_EQ(header.type(), TransportFeedback::kPacketType);
@@ -86,8 +86,8 @@ class FeedbackTester {
 
   void WithDefaultDelta(TimeDelta delta) { default_delta_ = delta; }
 
-  void WithInput(ArrayView<const uint16_t> received_seq,
-                 ArrayView<const Timestamp> received_ts = {}) {
+  void WithInput(std::span<const uint16_t> received_seq,
+                 std::span<const Timestamp> received_ts = {}) {
     std::vector<Timestamp> temp_timestamps;
     if (received_ts.empty()) {
       temp_timestamps = GenerateReceiveTimestamps(received_seq);
@@ -153,7 +153,7 @@ class FeedbackTester {
   }
 
   std::vector<Timestamp> GenerateReceiveTimestamps(
-      ArrayView<const uint16_t> seq_nums) {
+      std::span<const uint16_t> seq_nums) {
     RTC_CHECK(!seq_nums.empty());
     uint16_t last_seq = seq_nums[0];
     Timestamp time = Timestamp::Zero();

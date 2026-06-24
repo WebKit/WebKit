@@ -12,11 +12,11 @@
 #define API_DATA_CHANNEL_EVENT_OBSERVER_INTERFACE_H_
 
 #include <cstdint>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 
 namespace webrtc {
 
@@ -55,7 +55,7 @@ class DataChannelEventObserverInterface {
     void set_data_type(DataType type) { data_type_ = type; }
 
     const std::vector<uint8_t>& data() const { return data_; }
-    void set_data(ArrayView<const uint8_t> d) {
+    void set_data(std::span<const uint8_t> d) {
       data_.assign(d.begin(), d.end());
     }
 

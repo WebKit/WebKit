@@ -37,6 +37,7 @@
 #include "IntrinsicGetterAccessCase.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "PropertyInlineCache.h"
+#include "PropertyNameInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -493,6 +494,9 @@ GetByStatus GetByStatus::computeFor(JSGlobalObject* globalObject, const Structur
     auto attempToFold = [&]() -> std::optional<GetByStatus> {
         Structure* structure = set.onlyStructure();
         if (!structure)
+            return std::nullopt;
+
+        if (structure->isDictionary())
             return std::nullopt;
 
         JSObject* prototype = nullptr;

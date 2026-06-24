@@ -32,13 +32,10 @@
 #include "XRCompositionLayer.h"
 #include "XRQuadLayerInit.h"
 #include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebXRRigidTransform;
 class WebXRSession;
-class WebXRSpace;
 class XRLayerBacking;
 
 // https://immersive-web.github.io/layers/#xrquadlayertype
@@ -51,11 +48,6 @@ public:
     }
     virtual ~XRQuadLayer();
 
-    const WebXRSpace& space() const;
-    void setSpace(WebXRSpace&);
-    const WebXRRigidTransform& transform() const;
-    void setTransform(WebXRRigidTransform&);
-
     float width() const { return m_worldSize.width(); }
     void setWidth(float width) { m_worldSize.setWidth(width); }
     float height() const { return m_worldSize.height(); }
@@ -64,16 +56,10 @@ public:
 private:
     XRQuadLayer(ScriptExecutionContext&, WebXRSession&, Ref<XRLayerBacking>&&, const XRQuadLayerInit&);
     bool isXRQuadLayer() const final { return true; }
-    void recomputePose();
 
-    RefPtr<WebXRSpace> m_space;
-    RefPtr<WebXRRigidTransform> m_transform;
+    void fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer&) const final;
+
     FloatSize m_worldSize;
-    PlatformXR::FrameData::Pose m_poseInLocalSpace;
-
-    // WebXRLayer.
-    void startFrame(PlatformXR::FrameData&) final;
-    PlatformXR::DeviceLayer endFrame() final;
 };
 
 } // namespace WebCore

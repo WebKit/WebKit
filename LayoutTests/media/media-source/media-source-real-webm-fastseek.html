@@ -53,21 +53,25 @@
 
         // Seek to 1 (exact)
         run('video.currentTime = 1');
+        await waitFor(video, 'seeking', true);
         await waitFor(video, 'seeked');
         testExpected('video.currentTime.toFixed(1)', 1);
 
         // fastSeek(5) should snap to sync frame at 4
         run('video.fastSeek(5)');
+        await waitFor(video, 'seeking', true);
         await waitFor(video, 'seeked');
         testExpected('video.currentTime.toFixed(1)', 4);
 
         // Seek to 3 (exact)
         run('video.currentTime = 3');
+        await waitFor(video, 'seeking', true);
         await waitFor(video, 'seeked');
         testExpected('video.currentTime.toFixed(1)', 3);
 
         // fastSeek(2) should snap to sync frame at 0
         run('video.fastSeek(2)');
+        await waitFor(video, 'seeking', true);
         await waitFor(video, 'seeked');
         testExpected('video.currentTime.toFixed(1)', 0);
     }

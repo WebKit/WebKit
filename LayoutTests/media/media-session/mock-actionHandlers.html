@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ MediaSessionExtendedActionsEnabled=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,7 +27,7 @@
             return;
         }
 
-        let actions = ["play", "pause", "seekbackward", "seekforward", "previoustrack", "nexttrack", "skipad", "stop", "seekto"];
+        let actions = ["play", "pause", "seekbackward", "seekforward", "previoustrack", "nexttrack", "skipad", "stop", "seekto", "previousslide", "nextslide"];
 
         for (action of actions) {
             navigator.mediaSession.setActionHandler(action, actionDetails => {
@@ -72,6 +73,24 @@
 
         run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1, fastSeek: true})');
         testExpectedActionDetails('actionDetails', {action: 'seekto', seekTime: 1, fastSeek: true});
+
+        consoleWrite('Test that nexttrack handler takes priority over nextslide when both are registered');
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "nexttrack"})');
+        testExpectedActionDetails('actionDetails', {action: 'nexttrack'});
+
+        consoleWrite('Test that nexttrack falls back to nextslide handler when only nextslide is registered');
+        navigator.mediaSession.setActionHandler('nexttrack', null);
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "nexttrack"})');
+        testExpectedActionDetails('actionDetails', {action: 'nextslide'});
+
+        consoleWrite('Test that previoustrack handler takes priority over previousslide when both are registered');
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "previoustrack"})');
+        testExpectedActionDetails('actionDetails', {action: 'previoustrack'});
+
+        consoleWrite('Test that previoustrack falls back to previousslide handler when only previousslide is registered');
+        navigator.mediaSession.setActionHandler('previoustrack', null);
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "previoustrack"})');
+        testExpectedActionDetails('actionDetails', {action: 'previousslide'});
 
         endTest();
     }, {once: true});

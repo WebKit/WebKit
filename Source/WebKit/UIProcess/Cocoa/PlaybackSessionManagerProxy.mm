@@ -852,7 +852,7 @@ void PlaybackSessionManagerProxy::immersiveVideoMetadataChanged(PlaybackSessionC
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(PlaybackSessionContextIdentifier contextId, String identifier) const
 {
 #if PLATFORM(MAC)
-    if (RefPtr page = m_page.get(); contextId == m_controlsManagerContextId)
+    if (RefPtr page = m_page.get(); page && contextId == m_controlsManagerContextId)
         page->handleControlledElementIDResponse(identifier);
 #else
     UNUSED_PARAM(contextId);
@@ -1147,7 +1147,7 @@ bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
 
 void PlaybackSessionManagerProxy::requestControlledElementID()
 {
-    if (RefPtr page = m_page.get(); m_controlsManagerContextId)
+    if (RefPtr page = m_page.get(); page && m_controlsManagerContextId)
         protect(page->legacyMainFrameProcess())->send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId->object()), page->webPageIDInMainFrameProcess());
 }
 

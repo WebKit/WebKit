@@ -4,6 +4,7 @@
 <style>
     body {
         height: 2000px;
+        width: 2000px;
         margin: 0;
     }
 
@@ -20,12 +21,38 @@
         testRunner.waitUntilDone();
     }
 
+    function addLayerTreeText(header, layerTreeText) {
+        document.body.insertAdjacentHTML("beforeend", `
+        <div>
+            <h1>${header}</h1>
+            <pre>${layerTreeText}</pre>
+        </div>
+        `);
+    }
+
     async function doTest()
     {
-        await testRunner.setObscuredContentInsets(0, 50, 50, 0);
+        await testRunner.setObscuredContentInsets(0, 40, 50, 0);
         await testRunner.updatePresentation();
+        const topLeftLayerTree = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_ROOT_LAYERS | internals.LAYER_TREE_INCLUDES_CLIPPING);
 
-        document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_ROOT_LAYERS | internals.LAYER_TREE_INCLUDES_CLIPPING);
+        window.scrollTo(document.body.scrollWidth, 0);
+        await testRunner.updatePresentation();
+        const topRightLayerTree = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_ROOT_LAYERS | internals.LAYER_TREE_INCLUDES_CLIPPING);
+
+        window.scrollTo(0, document.body.scrollHeight);
+        await testRunner.updatePresentation();
+        const bottomLeftLayerTree = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_ROOT_LAYERS | internals.LAYER_TREE_INCLUDES_CLIPPING);
+
+        window.scrollTo(document.body.scrollWidth, document.body.scrollHeight);
+        await testRunner.updatePresentation();
+        const bottomRightLayerTree = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_ROOT_LAYERS | internals.LAYER_TREE_INCLUDES_CLIPPING);
+
+        addLayerTreeText("Layer tree when scrolled to top left", topLeftLayerTree);
+        addLayerTreeText("Layer tree when scrolled to top right", topRightLayerTree);
+        addLayerTreeText("Layer tree when scrolled to bottom left", bottomLeftLayerTree);
+        addLayerTreeText("Layer tree when scrolled to bottom right", bottomRightLayerTree);
+
         testRunner.notifyDone();
     }
 
@@ -34,6 +61,5 @@
 </head>
 <body>
 <div class="composited"></div>
-<pre id="layerTree"></pre>
 </body>
 </html>

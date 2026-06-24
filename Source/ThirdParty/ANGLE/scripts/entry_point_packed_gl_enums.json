@@ -1027,9 +1027,6 @@
     "glInvalidateTexSubImage": {
         "texture": "TextureID"
     },
-    "glInvalidateTexture": {
-        "target": "TextureType"
-    },
     "glIsBuffer": {
         "buffer": "BufferID"
     },
@@ -1261,6 +1258,9 @@
     },
     "glPointAlongPath": {
         "path": "PathID"
+    },
+    "glPixelStorei": {
+        "pname": "PackUnpackParameter"
     },
     "glPointParameterf": {
         "pname": "PointParameter"

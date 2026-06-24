@@ -1,18 +1,17 @@
 <!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="../../resources/ui-helper.js"></script>
 </head>
 
 <body>
 <div id="editor" contenteditable="true"></div>
 <script>
+window.jsTestIsAsync = true;
 
 const incorrectPhrase = "aaaa bbbb cccc dddd";
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 if (window.internals)
     internals.setContinuousSpellCheckingEnabled(true);
@@ -42,8 +41,7 @@ function runTest()
 
     editor.blur();
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 UIHelper.setSpellCheckerResults({

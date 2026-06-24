@@ -1,4 +1,4 @@
 
 
-PASS navigation.activation interaction with initial about:blank
+FAIL navigation.activation interaction with initial about:blank assert_equals: expected null but got object "[object NavigationHistoryEntry]"
 

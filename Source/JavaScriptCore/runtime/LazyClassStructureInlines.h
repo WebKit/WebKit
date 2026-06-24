@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "LazyClassStructure.h"
-#include "LazyPropertyInlines.h"
+#include <JavaScriptCore/LazyClassStructure.h>
+#include <JavaScriptCore/LazyPropertyInlines.h>
+#include <JavaScriptCore/StructureInlinesLight.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -43,6 +44,17 @@ void LazyClassStructure::initLater(const Callback&)
             Initializer init(structureInit.vm, structureInit.owner, *thisStructure, structureInit);
             callStatelessLambda<void, Callback>(init);
         });
+}
+
+inline JSObject* LazyClassStructure::prototype(const JSGlobalObject* global) const
+{
+    ASSERT(!isCompilationThread());
+    return get(global)->storedPrototypeObject();
+}
+
+inline JSObject* LazyClassStructure::prototypeInitializedOnMainThread(const JSGlobalObject* global) const
+{
+    return getInitializedOnMainThread(global)->storedPrototypeObject();
 }
 
 } // namespace JSC

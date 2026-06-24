@@ -47,11 +47,11 @@ Ref<ServiceWorkerNavigationPreloader> ServiceWorkerNavigationPreloader::create(N
     return adoptRef(*new ServiceWorkerNavigationPreloader(session, WTF::move(parameters), state, shouldCaptureExtraNetworkLoadMetrics));
 }
 
-ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSession& session, NetworkLoadParameters&& parameters, const WebCore::NavigationPreloadState& state, bool shouldCaptureExtraNetworkLoadMetric)
+ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSession& session, NetworkLoadParameters&& parameters, const WebCore::NavigationPreloadState& state, bool shouldCaptureExtraNetworkLoadMetrics)
     : m_session(session)
     , m_parameters(WTF::move(parameters))
     , m_state(state)
-    , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics())
+    , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
     , m_startTime(MonotonicTime::now())
 {
     relaxAdoptionRequirement();

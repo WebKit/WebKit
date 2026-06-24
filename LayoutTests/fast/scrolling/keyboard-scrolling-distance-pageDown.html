@@ -4,19 +4,19 @@
 
 <head>
     <script src="../../resources/ui-helper.js"></script>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
     <script>
-        if (window.testRunner) {
+        window.jsTestIsAsync = true;
+
+        if (window.testRunner)
             testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
-        
+
         function checkSuccessfulScroll(scrollObj)
         {
             if (window.scrollY <= scrollObj.offset) {
                 debug("Unsuccessful Scroll - offset does not increase with each scroll event.");
-                testRunner.notifyDone();
+                finishJSTest();
             }
             
             scrollObj.offset = window.scrollY;
@@ -24,7 +24,7 @@
             
             if (scrollObj.count == 2) {
                 debug("Successful Scroll");
-                testRunner.notifyDone();
+                finishJSTest();
             }
         }
         
@@ -56,7 +56,6 @@
 <body style="margin: 0;" onload="runTest()">
     <div id="placeholder">
     <div id="console"></div>
-    <script src="../../../resources/js-test-post.js"></script>
 </body>
 
 </html>

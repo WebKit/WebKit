@@ -140,6 +140,18 @@ void RtcEventLogDriver::OnLoggedVideoRecvConfig(
   uint32_t rtx_ssrc = config.config.rtx_ssrc;
   HandleEvent(config.log_time(), [this, ssrc, rtx_ssrc]() {
     RTC_DCHECK_RUN_ON(simulator_queue_.get());
+
+    all_known_ssrcs_.insert(ssrc);
+
+    // Skip setting up stream if not included in the filter.
+    if (!config_.ssrc_filter.empty() && !config_.ssrc_filter.contains(ssrc)) {
+      RTC_LOG(LS_INFO) << "OnLoggedVideoRecvConfig being skipped for "
+                       << "ssrc=" << ssrc << ", rtx_ssrc=" << rtx_ssrc
+                       << " (simulated_ts=" << env_.clock().CurrentTime()
+                       << ")";
+      return;
+    }
+
     RTC_LOG(LS_INFO) << "OnLoggedVideoRecvConfig for "
                      << "ssrc=" << ssrc << ", rtx_ssrc=" << rtx_ssrc
                      << " (simulated_ts=" << env_.clock().CurrentTime() << ")";
@@ -183,7 +195,7 @@ void RtcEventLogDriver::OnLoggedRtpPacketIncoming(
                     packet.log_time());
       RTC_DCHECK_EQ(env_.clock().CurrentTime(), packet.log_time());
       it->second->InsertSimulatedPacket(simulated_packet);
-    } else {
+    } else if (!all_known_ssrcs_.contains(ssrc)) {
       RTC_LOG(LS_WARNING) << "Received packet for unknown ssrc=" << ssrc
                           << " (simulated_ts=" << env_.clock().CurrentTime()
                           << ")";

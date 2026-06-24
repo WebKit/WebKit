@@ -9,6 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <assert.h>
 #include <emmintrin.h>
 
 #include "aom/aom_integer.h"
@@ -125,7 +126,7 @@ static inline int16_t accumulate_eob(__m128i eob) {
 }
 
 static inline __m128i load_coefficients(const tran_low_t *coeff_ptr) {
-  assert(sizeof(tran_low_t) == 4);
+  static_assert(sizeof(tran_low_t) == 4, "");
   const __m128i coeff1 = _mm_load_si128((__m128i *)(coeff_ptr));
   const __m128i coeff2 = _mm_load_si128((__m128i *)(coeff_ptr + 4));
   return _mm_packs_epi32(coeff1, coeff2);
@@ -133,7 +134,7 @@ static inline __m128i load_coefficients(const tran_low_t *coeff_ptr) {
 
 static inline void store_coefficients(__m128i coeff_vals,
                                       tran_low_t *coeff_ptr) {
-  assert(sizeof(tran_low_t) == 4);
+  static_assert(sizeof(tran_low_t) == 4, "");
 
   __m128i one = _mm_set1_epi16(1);
   __m128i coeff_vals_hi = _mm_mulhi_epi16(coeff_vals, one);

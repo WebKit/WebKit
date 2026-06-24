@@ -19,6 +19,7 @@
 #include "api/environment/environment_factory.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/test/create_network_emulation_manager.h"
 #include "api/test/network_emulation_manager.h"
@@ -73,7 +74,7 @@ FeedbackGeneratorWithoutNetworkImpl::FeedbackGeneratorWithoutNetworkImpl(
   RtpExtension transport_sequence_number_extension;
   transport_sequence_number_extension.uri =
       RtpExtension::kTransportSequenceNumberUri;
-  transport_sequence_number_extension.id = 1;
+  transport_sequence_number_extension.id = RtpHeaderExtensionId(1);
   transport_sequence_number_extension.encrypt = false;
   rtp_extensions_.RegisterByUri(transport_sequence_number_extension.id,
                                 transport_sequence_number_extension.uri);

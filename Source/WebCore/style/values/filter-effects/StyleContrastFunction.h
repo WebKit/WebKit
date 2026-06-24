@@ -63,7 +63,7 @@ DEFINE_TYPE_WRAPPER_GET(Contrast, value);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<Contrast> { auto operator()(const Contrast&, const RenderStyle&) -> CSS::Contrast; };
+template<> struct ToCSS<Contrast> { auto operator()(const Contrast&, const Style::ComputedStyle&) -> CSS::Contrast; };
 template<> struct ToStyle<CSS::Contrast> { auto operator()(const CSS::Contrast&, const BuilderState&) -> Contrast; };
 
 // MARK: - Blending

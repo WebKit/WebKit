@@ -359,5 +359,6 @@ void RemoteAudioDestinationManager::setSceneIdentifier(RemoteAudioDestinationIde
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_COMPLETION
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)

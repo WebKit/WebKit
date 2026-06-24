@@ -164,7 +164,7 @@ public:
 
     BasicBlock* nextBlock()
     {
-        for (BlockIndex resultIndex = m_block->index + 1; ; resultIndex++) {
+        for (BlockIndex resultIndex = m_block->index() + 1; ; resultIndex++) {
             if (resultIndex >= m_graph.numBlocks())
                 return nullptr;
             if (BasicBlock* result = m_graph.block(resultIndex))
@@ -956,6 +956,35 @@ public:
         }
     }
 
+#if USE(JSVALUE64)
+    void jsValueTupleResultWithoutUsingChildren(GPRReg reg, Node* node, unsigned index, DataFormat format = DataFormatJS)
+    {
+        ASSERT(index < node->tupleSize());
+        unsigned refCount = m_graph.m_tupleData.at(node->tupleOffset() + index).refCount;
+        if (!refCount)
+            return;
+        ASSERT(refCount == 1);
+        ASSERT(format & DataFormatJS);
+        VirtualRegister virtualRegister = m_graph.m_tupleData.at(node->tupleOffset() + index).virtualRegister;
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+        m_gprs.retain(reg, virtualRegister, SpillOrderJS);
+        info.initJSValue(node, refCount, reg, format);
+    }
+#endif
+
+    void cellTupleResultWithoutUsingChildren(GPRReg reg, Node* node, unsigned index)
+    {
+        ASSERT(index < node->tupleSize());
+        unsigned refCount = m_graph.m_tupleData.at(node->tupleOffset() + index).refCount;
+        if (!refCount)
+            return;
+        ASSERT(refCount == 1);
+        VirtualRegister virtualRegister = m_graph.m_tupleData.at(node->tupleOffset() + index).virtualRegister;
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+        m_gprs.retain(reg, virtualRegister, SpillOrderCell);
+        info.initCell(node, refCount, reg);
+    }
+
     template<typename OperationType>
     void operationExceptionCheck()
     {
@@ -1456,6 +1485,8 @@ public:
     void compileNewSymbol(Node*);
     void compileNewMap(Node*);
     void compileNewSet(Node*);
+    void compileNewWeakMap(Node*);
+    void compileNewWeakSet(Node*);
     void compileNewRegExpUntyped(Node*);
 
     void emitNewTypedArrayWithSizeInRegister(Node*, TypedArrayType, RegisteredStructure, GPRReg sizeGPR);
@@ -1532,6 +1563,9 @@ public:
 
     // We use a scopedLambda to placate register allocation validation.
     void compileGetByVal(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
+
+    void compileMultiGetByVal(Node*);
+    void compileMultiPutByVal(Node*);
 
     void compileGetCharCodeAt(Node*);
     void compileGetByValOnString(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
@@ -1688,6 +1722,7 @@ public:
     void compileArrayConcatAppendOne(Node*);
     void compileArraySplice(Node*);
     void compileArrayIndexOfOrArrayIncludes(Node*);
+    void compileArrayJoin(Node*);
     void compileArrayPush(Node*);
     void compileArrayUnshift(Node*);
     void compileNotifyWrite(Node*);
@@ -1695,9 +1730,11 @@ public:
     void compileRegExpExecNonGlobalOrSticky(Node*);
     void compileRegExpMatchFast(Node*);
     void compileRegExpMatchFastGlobal(Node*);
+    void compileRegExpSplitFast(Node*);
     void compileRegExpTest(Node*);
     void compileRegExpTestInline(Node*);
     void compileRegExpSearch(Node*);
+    void compileRegExpStringIteratorNext(Node*);
     void compileStringReplace(Node*);
     void compileStringReplaceAll(Node*);
     void compileStringReplaceString(Node*);
@@ -1743,6 +1780,7 @@ public:
     void compileThrowStaticError(Node*);
 
     void NODELETE compileExtractFromTuple(Node*);
+    void compileStringIteratorNext(Node*);
     void compileEnumeratorNextUpdateIndexAndMode(Node*);
     void compileEnumeratorNextUpdatePropertyName(Node*);
     void compileEnumeratorGetByVal(Node*);
@@ -1811,6 +1849,7 @@ public:
 #endif
     void compileStringSplit(Node*);
     void compileStringMatch(Node*);
+    void compileStringSearch(Node*);
     void compileDateNow(Node*);
     void compileDateGet(Node*);
     void compileDateSet(Node*);
@@ -1836,6 +1875,8 @@ public:
     void compileCreateInternalFieldObject(Node*, Operation);
     template<typename JSClass, typename Operation>
     void compileNewInternalFieldObjectImpl(Node*, Operation);
+
+    void compileClampIntegerToByte(GPRReg srcGPR, GPRReg resultGPR);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

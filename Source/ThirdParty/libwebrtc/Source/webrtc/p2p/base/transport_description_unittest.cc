@@ -16,8 +16,6 @@
 #include "api/rtc_error.h"
 #include "test/gtest.h"
 
-using webrtc::RTCErrorType;
-
 namespace webrtc {
 
 TEST(IceParameters, SuccessfulParse) {

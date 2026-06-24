@@ -27,10 +27,11 @@
 #include "../../test/wycheproof_util.h"
 
 
+BSSL_NAMESPACE_BEGIN
 namespace {
 
 struct HKDFTestVector {
-  const EVP_MD *(*md_func)(void);
+  const EVP_MD *(*md_func)();
   const uint8_t ikm[80];
   const size_t ikm_len;
   const uint8_t salt[80];
@@ -276,8 +277,7 @@ TEST(HKDFTest, TestVectors) {
     EXPECT_EQ(Bytes(test->out, test->out_len), Bytes(buf, test->out_len));
 
     // Repeat the test with the OpenSSL compatibility |EVP_PKEY_derive| API.
-    bssl::UniquePtr<EVP_PKEY_CTX> ctx(
-        EVP_PKEY_CTX_new_id(EVP_PKEY_HKDF, nullptr));
+    UniquePtr<EVP_PKEY_CTX> ctx(EVP_PKEY_CTX_new_id(EVP_PKEY_HKDF, nullptr));
     ASSERT_TRUE(ctx);
     ASSERT_TRUE(EVP_PKEY_derive_init(ctx.get()));
     ASSERT_TRUE(
@@ -289,7 +289,7 @@ TEST(HKDFTest, TestVectors) {
         EVP_PKEY_CTX_set1_hkdf_salt(ctx.get(), test->salt, test->salt_len));
     for (bool copy_ctx : {false, true}) {
       SCOPED_TRACE(copy_ctx);
-      bssl::UniquePtr<EVP_PKEY_CTX> copy;
+      UniquePtr<EVP_PKEY_CTX> copy;
       EVP_PKEY_CTX *use_ctx = ctx.get();
       if (copy_ctx) {
         copy.reset(EVP_PKEY_CTX_dup(ctx.get()));
@@ -335,7 +335,7 @@ TEST(HKDFTest, TestVectors) {
                                             test->info_len - half));
     for (bool copy_ctx : {false, true}) {
       SCOPED_TRACE(copy_ctx);
-      bssl::UniquePtr<EVP_PKEY_CTX> copy;
+      UniquePtr<EVP_PKEY_CTX> copy;
       EVP_PKEY_CTX *use_ctx = ctx.get();
       if (copy_ctx) {
         copy.reset(EVP_PKEY_CTX_dup(ctx.get()));
@@ -364,7 +364,7 @@ TEST(HKDFTest, TestVectors) {
                                             test->info_len - half));
     for (bool copy_ctx : {false, true}) {
       SCOPED_TRACE(copy_ctx);
-      bssl::UniquePtr<EVP_PKEY_CTX> copy;
+      UniquePtr<EVP_PKEY_CTX> copy;
       EVP_PKEY_CTX *use_ctx = ctx.get();
       if (copy_ctx) {
         copy.reset(EVP_PKEY_CTX_dup(ctx.get()));
@@ -424,3 +424,4 @@ TEST(HKDFTest, WycheproofSHA512) {
 }
 
 }  // namespace
+BSSL_NAMESPACE_END

@@ -313,6 +313,8 @@ void JSTestIterable::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestIterableOwner::JSTestIterableOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestIterableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -325,7 +327,7 @@ void JSTestIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* conte
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestIterable = static_cast<JSTestIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestIterable->wrapped()).ptr(), jsTestIterable);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestIterable->wrapped(), jsTestIterable);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

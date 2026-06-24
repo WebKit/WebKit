@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/field_trials.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/frame_buffer.h"
@@ -24,7 +23,9 @@ namespace webrtc {
 namespace {
 class FuzzyFrameObject : public EncodedFrame {
  public:
-  int64_t ReceivedTime() const override { return 0; }
+  std::optional<Timestamp> ReceivedTimestamp() const override {
+    return Timestamp::Zero();
+  }
   int64_t RenderTime() const override { return 0; }
 };
 
@@ -32,19 +33,18 @@ constexpr int kFrameIdLength = 1 << 15;
 
 }  // namespace
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  if (size > 10000) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  if (fuzz_data.size() > 10'000) {
     return;
   }
 
   FieldTrials field_trials("");
   FrameBuffer buffer(/*max_frame_slots=*/100, /*max_decode_history=*/1000,
                      field_trials);
-  test::FuzzDataHelper helper(webrtc::MakeArrayView(data, size));
   SeqNumUnwrapper<uint16_t, kFrameIdLength> unwrapper;
 
-  while (helper.BytesLeft() > 0) {
-    int action = helper.ReadOrDefaultValue<uint8_t>(0) % 6;
+  while (fuzz_data.BytesLeft() > 0) {
+    int action = fuzz_data.ReadOrDefaultValue<uint8_t>(0) % 6;
 
     switch (action) {
       case 0: {
@@ -69,17 +69,18 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       }
       case 5: {
         auto frame = std::make_unique<FuzzyFrameObject>();
-        frame->SetRtpTimestamp(helper.ReadOrDefaultValue<uint32_t>(0));
+        frame->SetRtpTimestamp(fuzz_data.ReadOrDefaultValue<uint32_t>(0));
         int64_t wire_id =
-            helper.ReadOrDefaultValue<uint16_t>(0) & (kFrameIdLength - 1);
+            fuzz_data.ReadOrDefaultValue<uint16_t>(0) & (kFrameIdLength - 1);
         frame->SetId(unwrapper.Unwrap(wire_id));
-        frame->is_last_spatial_layer = helper.ReadOrDefaultValue<bool>(false);
+        frame->is_last_spatial_layer =
+            fuzz_data.ReadOrDefaultValue<bool>(false);
 
-        frame->num_references = helper.ReadOrDefaultValue<uint8_t>(0) %
+        frame->num_references = fuzz_data.ReadOrDefaultValue<uint8_t>(0) %
                                 EncodedFrame::kMaxFrameReferences;
 
         for (uint8_t i = 0; i < frame->num_references; ++i) {
-          frame->references[i] = helper.ReadOrDefaultValue<int64_t>(0);
+          frame->references[i] = fuzz_data.ReadOrDefaultValue<int64_t>(0);
         }
 
         buffer.InsertFrame(std::move(frame));

@@ -1,0 +1,10 @@
+
+FAIL point inside child bounds but outside circle does not hit child or target assert_not_equals: corner of child outside circle must not hit child got disallowed value Element node <div id="child"></div>
+FAIL bottom-right corner outside circle does not hit target assert_not_equals: bottom-right corner must not hit target got disallowed value Element node <div id="target">
+  <div id="child"></div>
+</div>
+PASS point inside circle and inside child hits child
+PASS point inside circle but outside child hits target
+FAIL :hover not triggered at corner of stacking-context child outside border-shape circle assert_false: target must not be :hover when pointer is inside child bounds but outside circle expected false got true
+PASS :hover triggered at circle centre
+

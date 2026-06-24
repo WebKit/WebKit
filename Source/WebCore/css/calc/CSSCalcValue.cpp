@@ -82,11 +82,8 @@ RefPtr<Value> Value::parse(CSSParserTokenRange& tokens, CSS::PropertyParserState
     return result;
 }
 
-Ref<Value> Value::create(const Style::Calculation::Value& value, const RenderStyle& style)
+Ref<Value> Value::create(CSS::Category category, CSS::Range range, const Style::Calculation::Value& value, const Style::ComputedStyle& style)
 {
-    auto category = value.category();
-    auto range = value.range();
-
     auto toCSSOptions = Style::Calculation::ToCSSOptions {
         .category = category,
         .range = range,
@@ -192,6 +189,11 @@ CSSUnitType Value::primitiveType() const
     return CSSUnitType::CSS_NUMBER;
 }
 
+bool Value::rootNodeIsPercentage() const
+{
+    return WTF::holdsAlternative<Percentage>(m_tree.root);
+}
+
 void Value::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
     WebCore::CSSCalc::collectComputedStyleDependencies(m_tree, dependencies);
@@ -216,6 +218,10 @@ inline double Value::clampToPermittedRange(double value) const
     // If a top-level calculation would produce a value whose numeric part is NaN,
     // it instead act as though the numeric part is 0.
     value = std::isnan(value) ? 0 : value;
+
+    // Signed zeros do not escape a top-level calculation; they are censored into the
+    // "unsigned" (positive) zero. https://drafts.csswg.org/css-values-4/#calc-ieee
+    value = value ? value : 0.0;
 
     // If an <angle> must be converted due to exceeding the implementation-defined range of supported values,
     // it must be clamped to the nearest supported multiple of 360deg.
@@ -298,7 +304,7 @@ Ref<Style::Calculation::Value> Value::createCalculationValue(const CSSToLengthCo
         .symbolTable = symbolTable
     };
 
-    return Style::Calculation::Value::create(m_category, m_range, Style::Calculation::toStyle(m_tree, toStyleOptions));
+    return Style::Calculation::Value::create(Style::Calculation::toStyle(m_tree, toStyleOptions));
 }
 
 Ref<Style::Calculation::Value> Value::createCalculationValue(NoConversionDataRequiredToken token) const
@@ -316,7 +322,7 @@ Ref<Style::Calculation::Value> Value::createCalculationValue(NoConversionDataReq
         .conversionData = std::nullopt,
         .symbolTable = symbolTable
     };
-    return Style::Calculation::Value::create(m_category, m_range, Style::Calculation::toStyle(m_tree, toStyleOptions));
+    return Style::Calculation::Value::create(Style::Calculation::toStyle(m_tree, toStyleOptions));
 }
 
 void Value::dump(TextStream& ts) const

@@ -35,6 +35,11 @@ namespace JSC {
 
 using TimeZoneID = unsigned;
 
+// Sentinel TimeZoneID used by TimeZone instances that represent a numeric UTC
+// offset rather than a named IANA zone. No real entry in the time zone table is
+// ever assigned this value.
+inline constexpr TimeZoneID offsetTimeZoneID = std::numeric_limits<TimeZoneID>::max();
+
 extern JS_EXPORT_PRIVATE TimeZoneID utcTimeZoneIDStorage;
 JS_EXPORT_PRIVATE TimeZoneID utcTimeZoneIDSlow();
 
@@ -46,9 +51,15 @@ inline TimeZoneID utcTimeZoneID()
     return value;
 }
 
-// Look up the IANA primary identifier for a TimeZoneID. id must have been
-// produced by intlResolveTimeZoneID() or utcTimeZoneID().
+// Look up the as-stored, case-normalized identifier for a TimeZoneID. For Backward-link
+// aliases this returns the alias's own identifier (e.g. "Asia/Calcutta"); the primary's
+// identifier can be reached by chaining through intlPrimaryTimeZoneID. id must have been
+// produced by intlResolveTimeZoneID() or utcTimeZoneID(), and must not be offsetTimeZoneID.
 JS_EXPORT_PRIVATE const String& intlTimeZoneIDToString(TimeZoneID);
+
+// Map an alias's TimeZoneID to its primary's TimeZoneID (returns the input id unchanged
+// if it is already a primary).
+JS_EXPORT_PRIVATE TimeZoneID intlPrimaryTimeZoneID(TimeZoneID);
 
 class TimeZone final {
 public:
@@ -58,16 +69,16 @@ public:
     }
 
     static TimeZone fromID(TimeZoneID id) { return TimeZone(id, 0); }
-    static TimeZone fromUTCOffset(int64_t offsetNanoseconds) { return TimeZone(utcTimeZoneID(), offsetNanoseconds); }
+    static TimeZone fromUTCOffset(int64_t offsetNanoseconds) { return TimeZone(offsetTimeZoneID, offsetNanoseconds); }
 
-    bool isUTCOffset() const { return m_id == utcTimeZoneID(); }
+    bool isUTCOffset() const { return m_id == offsetTimeZoneID; }
     bool isID() const { return !isUTCOffset(); }
 
     TimeZoneID id() const { ASSERT(isID()); return m_id; }
     int64_t utcOffsetNanoseconds() const { ASSERT(isUTCOffset()); return m_offset; }
 
-    // IANA primary identifier for non-UTC named zones, "UTC" for offset 0, or formatted
-    // "+HH:MM[:SS[.fff...]]" for non-zero UTC offsets.
+    // As-stored, case-normalized IANA identifier for named zones (alias-preserving),
+    // or formatted "+HH:MM[:SS[.fff...]]" for UTC offsets.
     JS_EXPORT_PRIVATE String toString() const;
 
     // ICU accepts named identifiers as-is, and offsets only in "GMT+HHMM" form.

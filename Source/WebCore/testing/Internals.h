@@ -278,6 +278,7 @@ public:
     void setImageAnimationEnabled(bool);
     void resumeImageAnimation(HTMLImageElement&);
     void pauseImageAnimation(HTMLImageElement&);
+    void NODELETE setVideoAutoplayPreviewsEnabled(bool);
     unsigned NODELETE imagePendingDecodePromisesCountForTesting(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool enabled);
     unsigned imageDecodeCount(HTMLImageElement&);
@@ -291,6 +292,7 @@ public:
 
 #if ENABLE(WEB_CODECS)
     bool hasPendingActivity(const WebCodecsVideoDecoder&) const;
+    bool is10bitsVideoFrame(const WebCodecsVideoFrame&) const;
 #endif
 
     void NODELETE setGridMaxTracksLimit(unsigned);
@@ -443,6 +445,8 @@ public:
 
     ExceptionOr<String> autofillFieldName(Element&);
 
+    void allowAutofillForCurrentWorld(JSC::JSGlobalObject&);
+
     ExceptionOr<void> invalidateControlTints();
 
     RefPtr<Range> rangeFromLocationAndLength(Element& scope, unsigned rangeLocation, unsigned rangeLength);
@@ -535,6 +539,9 @@ public:
     ExceptionOr<RefPtr<Range>> rangeOfString(const String&, RefPtr<Range>&&, const Vector<String>& findOptions);
     ExceptionOr<unsigned> countMatchesForText(const String&, const Vector<String>& findOptions, const String& markMatches);
     ExceptionOr<unsigned> countFindMatches(const String&, const Vector<String>& findOptions);
+#if ENABLE(VIDEO)
+    ExceptionOr<Vector<double>> findCueMatches(const String&, const Vector<String>& findOptions);
+#endif
 
     unsigned numberOfScrollableAreas();
 
@@ -935,6 +942,7 @@ public:
     bool NODELETE isPlayerVisibleInViewport(const HTMLMediaElement&) const;
     bool isPlayerMuted(const HTMLMediaElement&) const;
     bool isPlayerPaused(const HTMLMediaElement&) const;
+    double effectiveRate(const HTMLMediaElement&) const;
     void NODELETE forceStereoDecoding(HTMLMediaElement&);
     void beginAudioSessionInterruption();
     void endAudioSessionInterruption();
@@ -1000,8 +1008,8 @@ public:
     float NODELETE pageMediaVolume();
     void setPageMediaVolume(float);
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    void setPageHasBannerViewOverlayForTesting(bool);
+#if ENABLE(NSREFRESHCONTROLLER_TESTING)
+    void setPageHasRefreshControllerForTesting(bool);
 #endif
 
     String userVisibleString(const DOMURL&);
@@ -1169,6 +1177,7 @@ public:
     void terminateServiceWorker(ServiceWorker&, DOMPromiseDeferred<void>&&);
     void whenServiceWorkerIsTerminated(ServiceWorker&, DOMPromiseDeferred<void>&&);
     NO_RETURN_DUE_TO_CRASH void terminateWebContentProcess();
+    unsigned getpid() const;
 
     void numberOfWebSocketChannelsInNetworkProcess(DOMPromiseDeferred<IDLUnsignedLong>&&);
 
@@ -1320,6 +1329,7 @@ public:
     size_t mediaElementCount() const;
 
     void setMediaElementVolumeLocked(HTMLMediaElement&, bool);
+    String mediaElementViewportVisibility(HTMLMediaElement&);
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisUtterance* NODELETE speechSynthesisUtteranceForCue(const VTTCue&);
@@ -1661,12 +1671,6 @@ public:
 
     void NODELETE setResourceCachingDisabledByWebInspector(bool);
     ExceptionOr<void> lowerAllFrameMemoryMonitorLimits();
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    void setResourceMonitorNetworkUsageThreshold(size_t threshold, double randomness = ResourceMonitorChecker::defaultNetworkUsageThresholdRandomness);
-    bool NODELETE shouldSkipResourceMonitorThrottling() const;
-    void NODELETE setShouldSkipResourceMonitorThrottling(bool);
-#endif
 
 #if ENABLE(DAMAGE_TRACKING)
     struct FrameDamage {

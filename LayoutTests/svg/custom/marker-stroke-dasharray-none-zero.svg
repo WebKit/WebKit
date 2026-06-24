@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" overflow="visible">
-<meta name="fuzzy" content="maxDifference=44-255; totalPixels=2-121" />
+<meta name="fuzzy" content="maxDifference=32-255; totalPixels=2-121" />
   <defs>
     <marker id="my-marker" orient="auto" overflow="visible" markerUnits="userSpaceOnUse" >
       <path stroke="black" fill="white" d="M 0 -5 -10 0 0 5 z"></path>

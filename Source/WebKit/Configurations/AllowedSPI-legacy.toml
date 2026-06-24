@@ -32,7 +32,7 @@ selectors = [
     { name = "_transitionCoordinator", class = "?" },
     { name = "accessibilityElementsWithPlugin:", class = "?" },
     { name = "accessibilityHitTest:withPlugin:", class = "?" },
-    { name = "auditToken", class = "?" },
+    { name = "auditToken", class = "RBSProcessHandle" },
     { name = "canPerformAuthorizationWithURL:responseCode:callerBundleIdentifier:useInternalExtensions:completion:", class = "?" },
     { name = "canSendResponse", class = "?" },
     { name = "cancelExtensionRequestWithIdentifier:", class = "?" },
@@ -184,7 +184,6 @@ selectors = [
     { name = "_cfBundle", class = "?" },
     { name = "_checkmarkOffset", class = "?" },
     { name = "_classForObjectAtArgumentIndex:", class = "?" },
-    { name = "_cloneEvent", class = "?" },
     { name = "_completeStoppedInteractiveTransition", class = "?" },
     { name = "_connectionIdentifier", class = "?" },
     { name = "_containsCJScripts", class = "?" },
@@ -205,7 +204,6 @@ selectors = [
     { name = "_enqueueHIDEvent:", class = "?" },
     { name = "_existingPresentationControllerImmediate:effective:", class = "?" },
     { name = "_flashScrollIndicatorsForAxes:persistingPreviousFlashes:", class = "?" },
-    { name = "_gsModifierFlags", class = "?" },
     { name = "_hidEvent", class = "?" },
     { name = "_holdLiveResizeSnapshotForReason:", class = "?" },
     { name = "_hostApplicationBundleIdentifier", class = "?" },
@@ -226,7 +224,6 @@ selectors = [
     { name = "_keyCode", class = "?" },
     { name = "_legacy_sizeWithFont:minFontSize:actualFontSize:forWidth:lineBreakMode:", class = "?" },
     { name = "_lp_simplifiedDisplayString", class = "?" },
-    { name = "_modifiedInput", class = "?" },
     { name = "_networkContext", class = "?" },
     { name = "_nsTextAlternative", class = "?" },
     { name = "_pageContentRect:", class = "?" },
@@ -894,7 +891,6 @@ symbols = [
     "SecTrustSetClientAuditToken",
     "_AXSEnhanceTextLegibilityEnabled",
     "_CFNetworkHTTPConnectionCacheSetLimit",
-    "_CFNetworkIsKnownHSTSHostWithSession",
     "_CFURLStorageSessionCopyCookieStorage",
     "_kCFURLConnectionPropertyShouldSniff",
     "kAXSEnhanceTextLegibilityChangedNotification",
@@ -1112,3 +1108,9 @@ swift-decls = [
     { name = "UIIntelligenceSupport.UIIntelligenceElementCollector.context" },
 ]
 allow-unused = true
+
+[[legacy]]
+symbols = [
+    "CGImageSetCachingFlags",
+]
+requires = ["ENABLE_GPU_PROCESS_MODEL"]

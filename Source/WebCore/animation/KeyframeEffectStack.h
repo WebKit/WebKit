@@ -32,22 +32,14 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-#if ENABLE(THREADED_ANIMATIONS)
-#include <wtf/WeakListHashSet.h>
-#endif
-
 namespace WebCore {
 
 class Document;
 class KeyframeEffect;
-class RenderStyle;
 class Settings;
 
-#if ENABLE(THREADED_ANIMATIONS)
-class AcceleratedEffect;
-#endif
-
 namespace Style {
+class ComputedStyle;
 struct ResolutionContext;
 }
 
@@ -66,7 +58,7 @@ public:
     bool containsProperty(CSSPropertyID) const;
     bool isCurrentlyAffectingProperty(CSSPropertyID) const;
     bool requiresPseudoElement() const;
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
+    OptionSet<AnimationImpact> applyKeyframeEffects(Style::ComputedStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const Style::ComputedStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
     bool hasMatchingEffect(NOESCAPE const Function<bool(const KeyframeEffect&)>&) const;
 
     void effectAbilityToBeAcceleratedDidChange(const KeyframeEffect&);
@@ -77,7 +69,7 @@ public:
     bool containsInvalidCSSAnimationName(const String&) const;
     void addInvalidCSSAnimationName(const String&);
 
-    void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
+    void lastStyleChangeEventStyleDidChange(const Style::ComputedStyle* previousStyle, const Style::ComputedStyle* currentStyle);
     void cascadeDidOverrideProperties(const HashSet<AnimatableCSSProperty>&, const Document&);
 
     const HashSet<AnimatableCSSProperty>& acceleratedPropertiesOverriddenByCascade() const LIFETIME_BOUND { return m_acceleratedPropertiesOverriddenByCascade; }

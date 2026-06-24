@@ -11,6 +11,7 @@
 #include "video/unique_timestamp_counter.h"
 
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <set>
 
@@ -25,6 +26,9 @@ UniqueTimestampCounter::UniqueTimestampCounter()
     : latest_(std::make_unique<uint32_t[]>(kMaxHistory)) {}
 
 void UniqueTimestampCounter::Add(uint32_t value) {
+  if (unique_seen_ == std::numeric_limits<decltype(unique_seen_)>::max()) {
+    return;
+  }
   if (value == last_ || !search_index_.insert(value).second) {
     // Already known.
     return;

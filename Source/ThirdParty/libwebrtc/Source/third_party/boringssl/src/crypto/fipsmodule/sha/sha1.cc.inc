@@ -24,7 +24,9 @@
 #include "internal.h"
 
 
-bcm_infallible BCM_sha1_init(SHA_CTX *sha) {
+using namespace bssl;
+
+bcm_infallible bssl::BCM_sha1_init(SHA_CTX *sha) {
   OPENSSL_memset(sha, 0, sizeof(SHA_CTX));
   sha->h[0] = 0x67452301UL;
   sha->h[1] = 0xefcdab89UL;
@@ -39,7 +41,8 @@ static void sha1_block_data_order(uint32_t state[5], const uint8_t *data,
                                   size_t num);
 #endif
 
-bcm_infallible BCM_sha1_transform(SHA_CTX *c, const uint8_t data[SHA_CBLOCK]) {
+bcm_infallible bssl::BCM_sha1_transform(SHA_CTX *c,
+                                        const uint8_t data[SHA_CBLOCK]) {
   sha1_block_data_order(c->h, data, 1);
   return bcm_infallible::approved;
 }
@@ -56,9 +59,9 @@ struct SHA1Traits {
 };
 }  // namespace
 
-bcm_infallible BCM_sha1_update(SHA_CTX *c, const void *data, size_t len) {
-  bssl::crypto_md32_update<SHA1Traits>(
-      c, bssl::Span(static_cast<const uint8_t *>(data), len));
+bcm_infallible bssl::BCM_sha1_update(SHA_CTX *c, const void *data, size_t len) {
+  crypto_md32_update<SHA1Traits>(c,
+                                 Span(static_cast<const uint8_t *>(data), len));
   return bcm_infallible::approved;
 }
 
@@ -71,15 +74,16 @@ static void sha1_output_state(uint8_t out[SHA_DIGEST_LENGTH],
   CRYPTO_store_u32_be(out + 16, ctx->h[4]);
 }
 
-bcm_infallible BCM_sha1_final(uint8_t out[SHA_DIGEST_LENGTH], SHA_CTX *c) {
-  bssl::crypto_md32_final<SHA1Traits>(c);
+bcm_infallible bssl::BCM_sha1_final(uint8_t out[SHA_DIGEST_LENGTH],
+                                    SHA_CTX *c) {
+  crypto_md32_final<SHA1Traits>(c);
   sha1_output_state(out, c);
   FIPS_service_indicator_update_state();
   return bcm_infallible::approved;
 }
 
-bcm_infallible BCM_fips_186_2_prf(uint8_t *out, size_t out_len,
-                                  const uint8_t xkey[SHA_DIGEST_LENGTH]) {
+bcm_infallible bssl::BCM_fips_186_2_prf(uint8_t *out, size_t out_len,
+                                        const uint8_t xkey[SHA_DIGEST_LENGTH]) {
   // XKEY and XVAL are 160-bit values, but are internally right-padded up to
   // block size. See FIPS 186-2, Appendix 3.3. This buffer maintains both the
   // current value of XKEY and the padding.

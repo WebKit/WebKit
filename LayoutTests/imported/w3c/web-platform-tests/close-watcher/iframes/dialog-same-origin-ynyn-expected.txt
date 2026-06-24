@@ -1,0 +1,4 @@
+
+
+PASS dialog-same-origin-ynyn
+

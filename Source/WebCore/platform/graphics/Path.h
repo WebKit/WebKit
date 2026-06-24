@@ -242,7 +242,7 @@ inline FloatPoint Path::currentPoint() const
         FloatPoint lastMoveToPoint;
         return segment->calculateEndPoint({ }, lastMoveToPoint);
     }
-    return protect(asImpl())->currentPoint();
+    SUPPRESS_UNCOUNTED_ARG return asImpl()->currentPoint();
 }
 
 inline std::optional<FloatPoint> Path::initialMoveToPoint() const

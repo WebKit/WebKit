@@ -12,8 +12,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 #include "./crc32c_internal.h"
+#include "./crc32c_read_le.h"
 #include "crc32c/crc32c_config.h"
 
 #if HAVE_ARM64_CRC32C
@@ -25,16 +27,12 @@
 #define SEGMENTBYTES 256
 
 // compute 8bytes for each segment parallelly
-#define CRC32C32BYTES(P, IND)                                             \
-  do {                                                                    \
-    crc1 = __crc32cd(                                                     \
-        crc1, *((const uint64_t *)(P) + (SEGMENTBYTES / 8) * 1 + (IND))); \
-    crc2 = __crc32cd(                                                     \
-        crc2, *((const uint64_t *)(P) + (SEGMENTBYTES / 8) * 2 + (IND))); \
-    crc3 = __crc32cd(                                                     \
-        crc3, *((const uint64_t *)(P) + (SEGMENTBYTES / 8) * 3 + (IND))); \
-    crc0 = __crc32cd(                                                     \
-        crc0, *((const uint64_t *)(P) + (SEGMENTBYTES / 8) * 0 + (IND))); \
+#define CRC32C32BYTES(P, IND)                                               \
+  do {                                                                      \
+    crc1 = __crc32cd(crc1, ReadUint64LE((P) + SEGMENTBYTES * 1 + (IND)*8)); \
+    crc2 = __crc32cd(crc2, ReadUint64LE((P) + SEGMENTBYTES * 2 + (IND)*8)); \
+    crc3 = __crc32cd(crc3, ReadUint64LE((P) + SEGMENTBYTES * 3 + (IND)*8)); \
+    crc0 = __crc32cd(crc0, ReadUint64LE((P) + SEGMENTBYTES * 0 + (IND)*8)); \
   } while (0);
 
 // compute 8*8 bytes for each segment parallelly
@@ -86,7 +84,7 @@ uint32_t ExtendArm64(uint32_t crc, const uint8_t *data, size_t size) {
     t2 = (uint64_t)vmull_p64(crc2, k2);
     t1 = (uint64_t)vmull_p64(crc1, k1);
     t0 = (uint64_t)vmull_p64(crc0, k0);
-    crc = __crc32cd(crc3, *(uint64_t *)data);
+    crc = __crc32cd(crc3, ReadUint64LE(data));
     data += sizeof(uint64_t);
     crc ^= __crc32cd(0, t2);
     crc ^= __crc32cd(0, t1);
@@ -96,18 +94,18 @@ uint32_t ExtendArm64(uint32_t crc, const uint8_t *data, size_t size) {
   }
 
   while (length >= 8) {
-    crc = __crc32cd(crc, *(uint64_t *)data);
+    crc = __crc32cd(crc, ReadUint64LE(data));
     data += 8;
     length -= 8;
   }
 
   if (length & 4) {
-    crc = __crc32cw(crc, *(uint32_t *)data);
+    crc = __crc32cw(crc, ReadUint32LE(data));
     data += 4;
   }
 
   if (length & 2) {
-    crc = __crc32ch(crc, *(uint16_t *)data);
+    crc = __crc32ch(crc, ReadUint16LE(data));
     data += 2;
   }
 

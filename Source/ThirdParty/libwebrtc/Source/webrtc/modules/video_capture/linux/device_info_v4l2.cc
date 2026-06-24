@@ -128,6 +128,7 @@ int32_t DeviceInfoV4l2::GetDeviceName(uint32_t deviceNumber,
 
   char cameraName[64];
   memset(deviceNameUTF8, 0, deviceNameLength);
+  memset(deviceUniqueIdUTF8, 0, deviceUniqueIdUTF8Length);
   memcpy(cameraName, cap.card, sizeof(cap.card));
 
   if (deviceNameLength > strlen(cameraName)) {
@@ -141,7 +142,6 @@ int32_t DeviceInfoV4l2::GetDeviceName(uint32_t deviceNumber,
     // copy device id
     size_t len = strlen(reinterpret_cast<const char*>(cap.bus_info));
     if (deviceUniqueIdUTF8Length > len) {
-      memset(deviceUniqueIdUTF8, 0, deviceUniqueIdUTF8Length);
       memcpy(deviceUniqueIdUTF8, cap.bus_info, len);
     } else {
       RTC_LOG(LS_INFO) << "buffer passed is too small";

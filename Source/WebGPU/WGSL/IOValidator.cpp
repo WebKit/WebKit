@@ -321,6 +321,24 @@ case Builtin::__case: \
     CASE(LocalInvocationId, VEC_CHECK(3, u32), Compute, Input)
     CASE(LocalInvocationIndex, TYPE_CHECK(u32), Compute, Input)
     CASE(NumWorkgroups, VEC_CHECK(3, u32), Compute, Input)
+    case Builtin::PrimitiveIndex: {
+        // primitive_index requires the extension to be enabled
+        if (!m_shaderModule.enabledExtensions().contains(Extension::PrimitiveIndex)) [[unlikely]] {
+            error(span, "@builtin(primitive_index) requires the 'primitive_index' extension to be enabled"_s);
+            return;
+        }
+        // Type check: must be u32
+        if (type != m_shaderModule.types().u32Type()) [[unlikely]] {
+            error(span, "store type of @builtin(primitive_index) must be 'u32'"_s);
+            return;
+        }
+        // Stage and direction check: must be fragment shader input
+        if (stage != ShaderStage::Fragment || direction != Direction::Input) [[unlikely]] {
+            error(span, "@builtin(primitive_index) can only be used for fragment shader input"_s);
+            return;
+        }
+        break;
+    }
     CASE(SampleIndex, TYPE_CHECK(u32), Fragment, Input)
     CASE(VertexIndex, TYPE_CHECK(u32), Vertex, Input)
     CASE(WorkgroupId, VEC_CHECK(3, u32), Compute, Input)
@@ -421,3 +439,8 @@ std::optional<FailedCheck> validateIO(ShaderModule& shaderModule)
 } // namespace WGSL
 
 #undef CHECK
+#undef TYPE_CHECK
+#undef VEC_CHECK
+#undef CASE_
+#undef CASE
+#undef CASE2

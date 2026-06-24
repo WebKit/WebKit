@@ -28,6 +28,17 @@ import os
 @_spi(CrossImportOverlay) import WebKit
 import WebKit_Private.WKPreferencesPrivate
 
+#if ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
+internal import WebKit_Private.WKWebViewPrivate
+
+#if os(macOS)
+import AppKit.NSRefreshController
+typealias PlatformRefreshControl = NSRefreshController
+#else
+typealias PlatformRefreshControl = UIRefreshControl
+#endif
+#endif
+
 extension Logger {
     fileprivate static let webView = Logger(subsystem: "com.apple.WebKit", category: "SwiftUIWebView")
 }
@@ -58,8 +69,8 @@ struct WebViewRepresentable {
         let webView = page.backingWebView
         let environment = context.environment
 
-        #if ENABLE_WEBVIEW_ADDITIONAL_SETUP
-        performAdditionalPlatformViewUpdates(context: context)
+        #if ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
+        setupRefreshControl(context: context)
         #endif
 
         #if os(iOS)
@@ -177,8 +188,8 @@ final class WebViewCoordinator {
     }
 
     var configuration: WebViewRepresentable
-    #if ENABLE_WEBVIEW_ADDITIONAL_SETUP
-    var additionalInformation: Information?
+    #if ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
+    var refreshAction: RefreshAction?
     #endif
 
     #if ENABLE_MODEL_ELEMENT_IMMERSIVE
@@ -200,8 +211,8 @@ final class WebViewCoordinator {
 
     func update(_ view: CocoaWebViewAdapter, configuration: WebViewRepresentable, context: WebViewRepresentable.Context) {
         self.configuration = configuration
-        #if ENABLE_WEBVIEW_ADDITIONAL_SETUP
-        performAdditionalCoordinatorUpdates(context: context)
+        #if ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
+        self.refreshAction = context.environment.refresh
         #endif
 
         #if canImport(SwiftUI, _version: "7.0.57")
@@ -274,6 +285,47 @@ final class WebViewCoordinator {
     }
     #endif // canImport(SwiftUI, _version: "7.0.57")
 }
+
+#if ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
+extension WebViewRepresentable {
+    func setupRefreshControl(context: Context) {
+        let webView = page.backingWebView
+        let environment = context.environment
+
+        let action = #selector(WebViewCoordinator.handleRefresh(_:))
+        let target = context.coordinator
+
+        if environment.refresh != nil {
+            if webView._platformRefreshControl == nil {
+                let control = PlatformRefreshControl()
+                #if os(macOS)
+                control.target = target
+                control.action = action
+                #else
+                control.addTarget(target, action: action, for: .valueChanged)
+                #endif
+                webView._platformRefreshControl = control
+            }
+        } else {
+            webView._platformRefreshControl = nil
+        }
+    }
+}
+
+extension WebViewCoordinator {
+    @objc
+    func handleRefresh(_ sender: PlatformRefreshControl) {
+        guard let refreshAction else {
+            return
+        }
+        Task { @MainActor in
+            sender.beginRefreshing()
+            await refreshAction()
+            sender.endRefreshing()
+        }
+    }
+}
+#endif
 
 #if canImport(UIKit)
 extension WebViewRepresentable: UIViewRepresentable {

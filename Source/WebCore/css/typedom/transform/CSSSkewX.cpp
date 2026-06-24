@@ -62,7 +62,7 @@ ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<const CSSFunctionValue> cssFunct
         return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
     }
 
-    auto valueOrException = CSSNumericValue::reifyValue(document, *cssFunctionValue->item(0));
+    auto valueOrException = CSSNumericValue::reifyValue(document, protect(*cssFunctionValue->item(0)));
     if (valueOrException.hasException())
         return valueOrException.releaseException();
     return CSSSkewX::create(valueOrException.releaseReturnValue());
@@ -87,7 +87,7 @@ void CSSSkewX::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskewx
     builder.append("skewX("_s);
-    m_ax->serialize(builder);
+    protect(m_ax)->serialize(builder);
     builder.append(')');
 }
 
@@ -109,7 +109,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkewX::toMatrix()
 
 RefPtr<CSSValue> CSSSkewX::toCSSValue() const
 {
-    auto ax = m_ax->toCSSValue();
+    auto ax = protect(m_ax)->toCSSValue();
     if (!ax)
         return nullptr;
     return CSSFunctionValue::create(CSSValueSkewX, ax.releaseNonNull());

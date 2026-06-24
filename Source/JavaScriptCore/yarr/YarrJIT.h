@@ -59,7 +59,6 @@ enum class JITFailureReason : uint8_t {
     DecodeSurrogatePair,
     BackReference,
     Lookbehind,
-    VariableCountedParenthesisWithNonZeroMinimum,
     ParenthesizedSubpattern,
     ParenthesisNestedTooDeep,
     ExecutableMemoryAllocationFailure,

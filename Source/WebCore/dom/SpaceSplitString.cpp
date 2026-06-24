@@ -196,7 +196,7 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
 
     RELEASE_ASSERT(tokenCount < (std::numeric_limits<unsigned>::max() - sizeof(SpaceSplitStringData)) / sizeof(AtomString));
     size_t sizeToAllocate = sizeof(SpaceSplitStringData) + tokenCount * sizeof(AtomString);
-    auto* rawPointer = static_cast<SpaceSplitStringData*>(fastMalloc(sizeToAllocate));
+    SUPPRESS_UNCOUNTED_LOCAL auto* rawPointer = static_cast<SpaceSplitStringData*>(fastMalloc(sizeToAllocate));
 
     new (NotNull, rawPointer) SpaceSplitStringData(keyString, tokenCount);
     Ref spaceSplitStringData = adoptRef(*rawPointer);

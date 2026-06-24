@@ -13,11 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
@@ -41,7 +41,7 @@ class ErrorChunk : public Chunk, public TLVTrait<ErrorChunkConfig> {
   ErrorChunk(ErrorChunk&& other) = default;
   ErrorChunk& operator=(ErrorChunk&& other) = default;
 
-  static std::optional<ErrorChunk> Parse(webrtc::ArrayView<const uint8_t> data);
+  static std::optional<ErrorChunk> Parse(std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

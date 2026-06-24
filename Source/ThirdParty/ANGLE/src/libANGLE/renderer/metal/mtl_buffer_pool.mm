@@ -152,10 +152,10 @@ angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
     return angle::Result::Continue;
 }
 
-angle::Result BufferPool::allocate(ContextMtl *contextMtl,
-                                   size_t sizeInBytes,
-                                   angle::Span<uint8_t> *mappedOut,
-                                   BufferSlice *outBuffer)
+angle::Result BufferPool::allocateAndMap(ContextMtl *contextMtl,
+                                         size_t sizeInBytes,
+                                         angle::Span<uint8_t> *mappedOut,
+                                         BufferSlice *outBuffer)
 {
     ANGLE_TRY(allocate(contextMtl, sizeInBytes, outBuffer));
     // We don't need to synchronize with GPU access, since allocation should return a

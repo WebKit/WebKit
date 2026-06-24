@@ -29,15 +29,15 @@
 #include "LegacyRenderSVGRect.h"
 
 #include "LegacyRenderSVGShapeInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGRect);
 
-LegacyRenderSVGRect::LegacyRenderSVGRect(SVGRectElement& element, RenderStyle&& style)
+LegacyRenderSVGRect::LegacyRenderSVGRect(SVGRectElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGShape(Type::LegacySVGRect, element, WTF::move(style))
 {
 }

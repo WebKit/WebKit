@@ -30,55 +30,56 @@
 namespace WebCore {
 namespace Style {
 
-// <'container-type'> = normal | size | inline-size
+// <'container-type'> = normal | [ [ size | inline-size ] || scroll-state ]
 // https://drafts.csswg.org/css-conditional-5/#container-type
+
+// The combinable container-type flags. `normal` is intentionally not a value here:
+// it is represented by the empty set (see ContainerType::isNormal()).
+enum class ContainerTypeValue : uint8_t {
+    Size,
+    InlineSize,
+    ScrollState,
+};
+
+using ContainerTypeValueEnumSet = SpaceSeparatedEnumSet<ContainerTypeValue>;
+
 struct ContainerType {
-    constexpr ContainerType(CSS::Keyword::Normal)
-        : m_type { Type::Normal }
-    {
-    }
+    using EnumSet = ContainerTypeValueEnumSet;
+    using value_type = ContainerTypeValueEnumSet::value_type;
 
-    constexpr ContainerType(CSS::Keyword::Size)
-        : m_type { Type::Size }
-    {
-    }
+    constexpr ContainerType(CSS::Keyword::Normal) : m_value { } { }
+    constexpr ContainerType(CSS::Keyword::Size) : m_value { ContainerTypeValue::Size } { }
+    constexpr ContainerType(CSS::Keyword::InlineSize) : m_value { ContainerTypeValue::InlineSize } { }
+    constexpr ContainerType(CSS::Keyword::ScrollState) : m_value { ContainerTypeValue::ScrollState } { }
+    constexpr ContainerType(EnumSet&& set) : m_value { WTF::move(set) } { }
+    constexpr ContainerType(value_type value) : ContainerType { EnumSet { value } } { }
+    constexpr ContainerType(std::initializer_list<value_type> initializerList) : ContainerType { EnumSet { initializerList } } { }
 
-    constexpr ContainerType(CSS::Keyword::InlineSize)
-        : m_type { Type::InlineSize }
-    {
-    }
-
-    constexpr bool isNormal() const { return m_type == Type::Normal; }
-    constexpr bool hasSize() const { return m_type == Type::Size; }
-    constexpr bool hasInlineSize() const { return m_type == Type::InlineSize; }
+    constexpr bool isNormal() const { return m_value.isEmpty(); }
+    constexpr bool hasSize() const { return m_value.contains(ContainerTypeValue::Size); }
+    constexpr bool hasInlineSize() const { return m_value.contains(ContainerTypeValue::InlineSize); }
+    constexpr bool hasScrollState() const { return m_value.contains(ContainerTypeValue::ScrollState); }
     constexpr bool hasSizeContainment() const { return hasSize() || hasInlineSize(); }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
-        switch (m_type) {
-        case Type::Normal:
+        if (isNormal())
             return visitor(CSS::Keyword::Normal { });
-        case Type::Size:
-            return visitor(CSS::Keyword::Size { });
-        case Type::InlineSize:
-            return visitor(CSS::Keyword::InlineSize { });
-        }
-        RELEASE_ASSERT_NOT_REACHED();
+        return visitor(m_value);
     }
 
     constexpr bool operator==(const ContainerType&) const = default;
 
 private:
-    enum Type : uint8_t { Normal, Size, InlineSize };
-    Type m_type;
+    EnumSet m_value;
 };
 
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<ContainerType> {
-    ContainerType NODELETE operator()(BuilderState&, const CSSValue&);
+    auto operator()(BuilderState&, const CSSValue&) -> ContainerType;
 };
 
 } // namespace Style

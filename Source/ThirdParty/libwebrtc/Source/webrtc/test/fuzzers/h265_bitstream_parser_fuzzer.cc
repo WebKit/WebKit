@@ -11,14 +11,13 @@
 
 #include <cstddef>
 
-#include "api/array_view.h"
 #include "common_video/h265/h265_bitstream_parser.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
-void FuzzOneInput(const uint8_t* data, size_t size) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
   H265BitstreamParser h265_bitstream_parser;
-  h265_bitstream_parser.ParseBitstream(
-      webrtc::ArrayView<const uint8_t>(data, size));
+  h265_bitstream_parser.ParseBitstream(fuzz_data.ReadRemaining());
   h265_bitstream_parser.GetLastSliceQp();
 }
 }  // namespace webrtc

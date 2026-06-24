@@ -1,0 +1,22 @@
+[package]
+name = "bssl-x509"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bitflags = "2.0"
+
+[dependencies.bssl-crypto]
+path = "../bssl-crypto"
+
+[dependencies.bssl-macros]
+path = "../bssl-macros"
+
+[dependencies.bssl-sys]
+path = "../bssl-sys"
+
+[features]
+default = ["std"]
+# `std` depends on the Rust `std` crate, but adds some useful trait impls if
+# available.
+std = ["bssl-crypto/std"]

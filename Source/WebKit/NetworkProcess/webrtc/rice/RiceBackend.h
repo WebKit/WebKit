@@ -122,7 +122,6 @@ private:
     Vector<GRefPtr<RiceTcpListener>> m_tcpListeners;
 
     HashMap<String, GUniquePtr<RiceAddress>> m_addressCache;
-    HashMap<unsigned, Vector<String>, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_udpSocketAddressesCache;
 
     const RiceAddress* ensureRiceAddressFromCache(const String&);
 };

@@ -13,8 +13,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/crypto/frame_encryptor_interface.h"
 #include "api/media_types.h"
 #include "test/gmock.h"
@@ -27,9 +27,9 @@ class MockFrameEncryptor : public FrameEncryptorInterface {
               Encrypt,
               (MediaType,
                uint32_t,
-               ArrayView<const uint8_t>,
-               ArrayView<const uint8_t>,
-               ArrayView<uint8_t>,
+               std::span<const uint8_t>,
+               std::span<const uint8_t>,
+               std::span<uint8_t>,
                size_t*),
               (override));
 

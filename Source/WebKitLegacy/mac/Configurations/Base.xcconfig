@@ -28,7 +28,7 @@ AD_HOC_CODE_SIGNING_ALLOWED = YES;
 
 ALWAYS_SEARCH_USER_PATHS = NO;
 ENABLE_USER_SCRIPT_SANDBOXING = YES;
-EXCLUDED_USER_SCRIPT_SANDBOXING_PHASE_NAMES = $(inherited) "Generate Unified Sources" "Generate Derived Sources" "Generate <wtf/Platform.h> args" "Check For Inappropriate Files In Framework" "Check For Inappropriate Macros in External Headers" "Check For Weak VTables and Externals" "Check For Inappropriate Objective-C Class Names" "Check .xcfilelists" "Migrate WebCore Headers and Generate Export List" "Generate Preferences" "Audit SPI use" "Work around rdar://109484516";
+EXCLUDED_USER_SCRIPT_SANDBOXING_PHASE_NAMES = $(inherited) "Generate Unified Sources" "Generate Derived Sources" "Generate <wtf/Platform.h> args" "Check For Inappropriate Files In Framework" "Check For Inappropriate Macros in External Headers" "Check .xcfilelists" "Migrate WebCore Headers and Generate Export List" "Generate Preferences" "Audit SPI use" "Work around rdar://109484516";
 
 CLANG_CXX_LANGUAGE_STANDARD = c++2b;
 CLANG_CXX_LIBRARY = libc++;

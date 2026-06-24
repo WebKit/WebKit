@@ -17,12 +17,17 @@
     </style>
 </head>
 <body>
-    <p>This test verifies that clicking an offscreen element via text extraction focuses it without requiring scrolling.</p>
+    <p>This test verifies that clicking an offscreen element via text extraction scrolls it into view and dispatches the click.</p>
     <div class="spacer"></div>
     <button id="offscreen-button" aria-label="Offscreen Button">Click Me</button>
     <input id="offscreen-input" type="text" aria-label="Offscreen Input" placeholder="Type here" />
     <script>
     jsTestIsAsync = true;
+
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return rect.bottom >= 0 && rect.top <= window.innerHeight;
+    }
 
     addEventListener("load", async () => {
         offscreenButton = document.getElementById("offscreen-button");
@@ -48,6 +53,7 @@
         });
 
         scrollTopAfterButtonClick = document.scrollingElement.scrollTop;
+        buttonInViewportAfterClick = isInViewport(offscreenButton);
 
         clickInputError = await UIHelper.performTextExtractionInteraction("click", {
             nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Offscreen Input")
@@ -55,13 +61,16 @@
 
         scrollTopAfterInputClick = document.scrollingElement.scrollTop;
         activeElementAfterInputClick = document.activeElement;
+        inputInViewportAfterClick = isInViewport(offscreenInput);
 
         shouldBe("scrollTopBeforeClick", "0");
         shouldBeEqualToString("clickButtonError", "");
         shouldBeTrue("buttonClicked");
-        shouldBe("scrollTopAfterButtonClick", "0");
+        shouldBeTrue("scrollTopAfterButtonClick > 0");
+        shouldBeTrue("buttonInViewportAfterClick");
         shouldBeEqualToString("clickInputError", "");
-        shouldBe("scrollTopAfterInputClick", "0");
+        shouldBeTrue("scrollTopAfterInputClick > 0");
+        shouldBeTrue("inputInViewportAfterClick");
         shouldBe("activeElementAfterInputClick", "offscreenInput");
 
         finishJSTest();

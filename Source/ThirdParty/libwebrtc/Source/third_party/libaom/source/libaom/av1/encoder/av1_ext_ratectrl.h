@@ -20,10 +20,16 @@
 typedef struct AOM_EXT_RATECTRL {
   int ready;
   int ext_rdmult;
+  // Whether per-superblock delta Q should be used. This is set on frame basis.
+  // Key, golden and regular ARF frames use delta Q. All other frames do not.
+  // This flag is added so the sb_params_list array doesn't have to be freed
+  // and allocated repeatedly.
+  int use_delta_q;
   aom_rc_model_t model;
   aom_rc_funcs_t funcs;
   aom_rc_config_t ratectrl_config;
   aom_rc_firstpass_stats_t rc_firstpass_stats;
+  aom_sb_params *sb_params_list;
 } AOM_EXT_RATECTRL;
 
 aom_codec_err_t av1_extrc_init(AOM_EXT_RATECTRL *ext_ratectrl);
@@ -37,8 +43,8 @@ aom_codec_err_t av1_extrc_delete(AOM_EXT_RATECTRL *ext_ratectrl);
 aom_codec_err_t av1_extrc_send_firstpass_stats(
     AOM_EXT_RATECTRL *ext_ratectrl, const FIRSTPASS_INFO *first_pass_info);
 
-aom_codec_err_t av1_extrc_send_tpl_stats(AOM_EXT_RATECTRL *ext_ratectrl,
-                                         const AomTplGopStats *tpl_gop_stats);
+aom_codec_err_t av1_extrc_send_tpl_stats(
+    AOM_EXT_RATECTRL *ext_ratectrl, const AomTplGopStats *extrc_tpl_gop_stats);
 
 aom_codec_err_t av1_extrc_get_encodeframe_decision(
     AOM_EXT_RATECTRL *ext_ratectrl, int gop_index,

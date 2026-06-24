@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 780x82
             RenderTableCell {TD} at (0,0) size 131x82 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 129x80 [color=#000000D8] [bgcolor=#FFFFFF] [border: (40px solid #FF0000)]
-                RenderSelectFallbackButton {DIV} at (40,40) size 49x16
-                  RenderText at (8,1) size 20x13
+                RenderBlock {DIV} at (40,40) size 49x16
+                  RenderText {#text} at (8,1) size 20x13
                     text run at (8,1) width 20: "Foo"
             RenderTableCell {TD} at (131,40) size 649x2 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
       RenderBlock {P} at (0,160) size 784x25

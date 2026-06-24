@@ -49,7 +49,6 @@ OBJC_CLASS NSURLSessionDownloadTask;
 
 namespace WebCore {
 class AuthenticationChallenge;
-class BlobDataFileReference;
 class Credential;
 class ResourceError;
 class ResourceRequest;
@@ -128,7 +127,6 @@ private:
     DownloadID m_downloadID;
     const Ref<DownloadManager::Client> m_client;
 
-    Vector<Ref<WebCore::BlobDataFileReference>> m_blobFileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;
 
     const RefPtr<NetworkDataTask> m_download;
@@ -149,7 +147,6 @@ private:
     IgnoreDidFailCallback m_ignoreDidFailCallback { IgnoreDidFailCallback::No };
     DownloadMonitor m_monitor { *this };
     unsigned m_testSpeedMultiplier { 1 };
-    CompletionHandler<void(std::span<const uint8_t>)> m_cancelCompletionHandler;
 };
 
 } // namespace WebKit

@@ -17,7 +17,6 @@ rtc_library("media_configuration") {
   ]
 
   deps = [
-    "../..:array_view",
     "../..:audio_options_api",
     "../..:media_stream_interface",
     "../..:rtp_parameters",

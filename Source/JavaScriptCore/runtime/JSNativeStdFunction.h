@@ -60,10 +60,10 @@ public:
     static JSNativeStdFunction* create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeStdFunction&& nativeFunction, auto... captures)
         requires (sizeof...(captures) > 0)
     {
-        NativeExecutable* executable = getHostFunction(vm, NoIntrinsic, callHostFunctionAsConstructor, name);
+        NativeExecutable* executable = getHostFunction(vm, NoIntrinsic, callHostFunctionAsConstructor, length, name);
         Structure* structure = globalObject->nativeStdFunctionStructure();
         JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm)) JSNativeStdFunction(vm, executable, globalObject, structure, WTF::move(nativeFunction), captures...);
-        function->finishCreation(vm, executable, length, name);
+        function->finishCreation(vm);
         return function;
     }
 
@@ -79,8 +79,7 @@ private:
     {
     }
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
-    JS_EXPORT_PRIVATE static NativeExecutable* getHostFunction(VM&, Intrinsic, NativeFunction, const String& name);
+    JS_EXPORT_PRIVATE static NativeExecutable* getHostFunction(VM&, Intrinsic, NativeFunction, unsigned length, const String& name);
 
     NativeStdFunction m_function;
     FixedVector<WriteBarrier<Unknown>> m_captures;

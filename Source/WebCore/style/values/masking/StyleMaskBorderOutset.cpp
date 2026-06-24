@@ -42,7 +42,7 @@ namespace Style {
 
 DEFINE_TYPE_MAPPING(CSS::MaskBorderOutset::Value, MaskBorderOutset::Value);
 
-auto ToCSS<MaskBorderOutset>::operator()(const MaskBorderOutset& value, const RenderStyle& style) -> CSS::MaskBorderOutset
+auto ToCSS<MaskBorderOutset>::operator()(const MaskBorderOutset& value, const Style::ComputedStyle& style) -> CSS::MaskBorderOutset
 {
     return { toCSS(value.values, style) };
 }
@@ -69,7 +69,7 @@ auto CSSValueConversion<MaskBorderOutset>::operator()(BuilderState& state, const
     return toStyleFromCSSValue<MaskBorderOutsetValue::Length>(state, *primitiveValue);
 }
 
-auto CSSValueCreation<MaskBorderOutset>::operator()(CSSValuePool&, const RenderStyle& style, const MaskBorderOutset& value) -> Ref<CSSValue>
+auto CSSValueCreation<MaskBorderOutset>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const MaskBorderOutset& value) -> Ref<CSSValue>
 {
     return CSSMaskBorderOutsetValue::create(toCSS(value, style));
 }

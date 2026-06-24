@@ -173,6 +173,10 @@ extension WebPage {
         @_spi(Testing)
         public var requiresUserActionForEditingControlsManager: Bool = false
         #endif
+
+        /// Indicates whether the page is controlled by automation, used for testing.
+        @_spi(Testing)
+        public var isControlledByAutomation: Bool = false
     }
 }
 

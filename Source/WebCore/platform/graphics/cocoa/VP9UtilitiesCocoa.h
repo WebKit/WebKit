@@ -51,7 +51,8 @@ bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
 std::optional<PlatformMediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
 std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformMediaCapabilitiesVideoConfiguration&, bool vp9HardwareDecoderAvailable);
 bool NODELETE isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
-RetainPtr<CMVideoFormatDescriptionRef> createVP9FormatDescriptionFromRecord(const VPCodecConfigurationRecord&);
+RetainPtr<CMVideoFormatDescriptionRef> createVP9FormatDescriptionFromRecord(const VPCodecConfigurationRecord&, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride = std::nullopt);
+WEBCORE_EXPORT Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride = std::nullopt);
 
 struct VP8FrameHeader {
     bool keyframe { false };

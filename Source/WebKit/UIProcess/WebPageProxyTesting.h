@@ -46,6 +46,7 @@ public:
     static Ref<WebPageProxyTesting> create(WebPageProxy& page) { return adoptRef(*new WebPageProxyTesting(page)); }
 
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
+    void numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&&);
     void dispatchActivityStateUpdate();
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
     void setPermissionLevel(const String& origin, bool allowed);

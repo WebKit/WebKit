@@ -15,9 +15,9 @@
 #include <string.h>
 
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_view.h"
 #include "modules/audio_coding/neteq/audio_vector.h"
 
@@ -55,7 +55,7 @@ class AudioMultiVector {
   // is assumed to be channel-interleaved. The length must be an even multiple
   // of this object's number of channels. The length of this object is increased
   // with the length of the array divided by the number of channels.
-  void PushBackInterleaved(ArrayView<const int16_t> append_this);
+  void PushBackInterleaved(std::span<const int16_t> append_this);
 
   // Appends the contents of AudioMultiVector `append_this` to this object. The
   // length of this object is increased with the length of `append_this`.

@@ -1,0 +1,67 @@
+select:not(.unstyled) {
+    appearance: base-select;
+    align-items: center;
+    border: none;
+    background-color: color-mix(var(--accent) 30%, var(--bg));
+    color: inherit;
+    border-radius: 9px;
+    padding: .6em 1em;
+    &:hover {
+        background-color: color-mix(var(--accent) 40%, var(--bg));
+    }
+    &:open {
+        background-color: var(--accent);
+        color: white;
+    }
+    &::picker(select) {
+        appearance: base-select;
+        border: none;
+        box-shadow: var(--dropdown-shadow);
+        border-radius: 9px;
+        background-color: light-dark(white, #444);
+        padding: 4px;
+        margin-top: .5em;
+        transition: ease-in 0.1s;        
+
+        @starting-style {
+            opacity: 0;
+            translate: 0 -.5em;
+        }
+    }
+    &::picker-icon {
+        content: url(icons/chevron.down.svg);
+        width: .56em;
+        translate: 0 -3px;
+        margin-left: 0em;
+
+        @media (prefers-color-scheme: dark) {
+            filter: invert();
+        }
+    }
+    &:open::picker-icon {
+        filter: invert();
+    }
+    option {
+        border-radius: 7px;
+        padding: .6em;
+        color: light-dark(#666, #ccc);
+        &:hover {
+            background-color: color-mix(currentColor 15%, transparent);
+            color: currentColor;
+        }
+        &:checked {
+            font-weight: 600;
+            color: currentColor;
+        }
+        &::checkmark {
+            content: url(icons/checkmark.svg);
+            height: .65em;
+            width: .65em;
+            translate: -1px -6px;
+            @media (prefers-color-scheme: dark) {
+                filter: invert();
+            }
+        }
+    }
+
+}

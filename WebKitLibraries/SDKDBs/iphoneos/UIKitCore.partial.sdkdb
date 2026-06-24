@@ -20095,7 +20095,8 @@
       {"access": "public", "getter": "selectionAffinity", "name": "selectionAffinity", "optional": true, "setter": "setSelectionAffinity:"},
       {"access": "public", "attr": [ "readonly" ], "getter": "insertDictationResultPlaceholder", "name": "insertDictationResultPlaceholder", "optional": true},
       {"access": "public", "getter": "supportsAdaptiveImageGlyph", "introduced": "18", "name": "supportsAdaptiveImageGlyph", "optional": true, "setter": "setSupportsAdaptiveImageGlyph:"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "isEditable", "introduced": "18", "name": "editable", "optional": true}
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEditable", "introduced": "18", "name": "editable", "optional": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "unobscuredContentRect", "introduced": "26.4", "name": "unobscuredContentRect", "optional": true}
      ],
      "protocols": [
       "UIKeyInput"

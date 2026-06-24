@@ -17,6 +17,8 @@
 #include "rtc_base/ssl_stream_adapter.h"
 #include "test/gtest.h"
 
+namespace webrtc {
+
 namespace {
 // Use methods that avoid X509 objects if possible.
 SSL_CTX* NewDtlsContext() {
@@ -43,8 +45,6 @@ SSL_SESSION* NewSslSession(SSL_CTX* ssl_ctx) {
 }
 
 }  // namespace
-
-namespace webrtc {
 
 TEST(OpenSSLSessionCache, DTLSModeSetCorrectly) {
   SSL_CTX* ssl_ctx = NewDtlsContext();

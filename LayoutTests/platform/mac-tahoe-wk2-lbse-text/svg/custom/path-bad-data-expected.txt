@@ -17,7 +17,5 @@ layer at (0,0) size 785x600
       RenderBlock (anonymous) at (0,152.88) size 769x604
 layer at (8,169) size 769x600
   RenderSVGRoot {svg} at (0,0) size 769x600
-layer at (8,168.88) size 769x600
-  RenderSVGViewportContainer at (0,0) size 769x600
-layer at (8,168.88) size 200x200
-  RenderSVGPath {path} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 200 0 L 200 200 L 0 200"]
+    RenderSVGViewportContainer at (0,0) size 769x600
+      RenderSVGPath {path} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 200 0 L 200 200 L 0 200"]

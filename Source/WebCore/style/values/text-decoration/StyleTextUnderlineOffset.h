@@ -24,26 +24,26 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
 namespace WebCore {
 namespace Style {
 
 // <'text-underline-offset'> = auto | <length-percentage>
 // https://drafts.csswg.org/css-text-decor-4/#propdef-text-underline-offset
-struct TextUnderlineOffset : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>, CSS::Keyword::Auto> {
+struct TextUnderlineOffset : PrimitiveNumericOrKeyword<LengthPercentage<CSS::AllUnzoomed>, CSS::Keyword::Auto> {
     using Base::Base;
 
     ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }
 
-    float resolve(const RenderStyle&, float autoValue = 0.0f) const;
+    float resolve(const Style::ComputedStyle&, float autoValue = 0.0f) const;
 };
 
 // MARK: - Blending
 
 template<> struct Blending<TextUnderlineOffset> {
-    auto canBlend(const TextUnderlineOffset&, const TextUnderlineOffset&, const RenderStyle&, const RenderStyle&) -> bool;
-    auto blend(const TextUnderlineOffset&, const TextUnderlineOffset&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> TextUnderlineOffset;
+    auto canBlend(const TextUnderlineOffset&, const TextUnderlineOffset&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
+    auto blend(const TextUnderlineOffset&, const TextUnderlineOffset&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> TextUnderlineOffset;
 };
 
 } // namespace Style

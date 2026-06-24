@@ -68,7 +68,7 @@ class CaretBase {
     WTF_MAKE_TZONE_ALLOCATED(CaretBase);
     WTF_MAKE_NONCOPYABLE(CaretBase);
 public:
-    WEBCORE_EXPORT static Color computeCaretColor(const RenderStyle& elementStyle, const Node*);
+    WEBCORE_EXPORT static Color computeCaretColor(const Style::ComputedStyle& elementStyle, const Node*);
 protected:
     explicit CaretBase(CaretVisibility = CaretVisibility::Hidden);
 

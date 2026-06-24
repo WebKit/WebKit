@@ -48,10 +48,17 @@ function stringToUint8Array(str)
     }
     return result;
 }
+
+// Encodes |data| (Uint8Array) into a standard base64 string (with '=' padding
+// and '+'/'/' characters), suitable for transports that don't accept the
+// base64url variant.
+function base64Encode(data) {
+    return btoa(String.fromCharCode.apply(null, data));
+}
 // Encodes |data| into base64url string. There is no '=' padding, and the
 // characters '-' and '_' must be used instead of '+' and '/', respectively.
 function base64urlEncode(data) {
-    var result = btoa(String.fromCharCode.apply(null, data));
+    var result = base64Encode(data)
     return result.replace(/=+$/g, '').replace(/\+/g, "-").replace(/\//g, "_");
 }
 // Decode |encoded| using base64url decoding.
@@ -82,6 +89,10 @@ function getSupportedKeySystem() {
         keysystem = 'com.microsoft.playready';
     } else if ( userAgent.indexOf('chrome') > -1 || userAgent.indexOf('firefox') > -1 ) {
         keysystem = 'com.widevine.alpha';
+    } else if (userAgent.indexOf('safari') > -1 || userAgent.indexOf('applewebkit') > -1) {
+        // Safari sets "Safari/" in its UA; WebKitTestRunner ships the bare WebKit UA
+        // ("AppleWebKit/…") with no application name suffix. Both should use FairPlay.
+        keysystem = 'com.apple.fps';
     }
     return keysystem;
 }

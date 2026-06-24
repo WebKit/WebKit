@@ -341,6 +341,15 @@ VideoStreamEncoderResourceManager::degradation_preference() const {
 void VideoStreamEncoderResourceManager::ConfigureEncodeUsageResource() {
   RTC_DCHECK_RUN_ON(encoder_queue_);
   RTC_DCHECK(encoder_settings_.has_value());
+  if (!encoder_settings_->encoder_info().enable_cpu_overuse_detection) {
+    if (encode_usage_resource_->is_started()) {
+      encode_usage_resource_->StopCheckForOveruse();
+    }
+    if (resources_.find(encode_usage_resource_) != resources_.end()) {
+      RemoveResource(encode_usage_resource_);
+    }
+    return;
+  }
   if (encode_usage_resource_->is_started()) {
     encode_usage_resource_->StopCheckForOveruse();
   } else {
@@ -496,7 +505,7 @@ void VideoStreamEncoderResourceManager::OnEncodeCompleted(
 }
 
 void VideoStreamEncoderResourceManager::OnFrameDropped(
-    EncodedImageCallback::DropReason reason) {
+    VideoStreamEncoderObserver::DropReason reason) {
   RTC_DCHECK_RUN_ON(encoder_queue_);
   quality_scaler_resource_->OnFrameDropped(reason);
 }

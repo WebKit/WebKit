@@ -208,4 +208,38 @@ extension CGRect {
     }
 }
 
+/// A coordinate position.
+public struct DOMPoint: Sendable {
+    /// The x coordinate.
+    public let x: Double
+
+    /// The y coordinate.
+    public let y: Double
+}
+
+extension DOMPoint: WebPage.JavaScriptDecodable {
+    // Protocol conformance.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public init?(decodedRepresentation: [String: Any?]) {
+        guard let x = decodedRepresentation["x"] as? Double else {
+            return nil
+        }
+
+        guard let y = decodedRepresentation["y"] as? Double else {
+            return nil
+        }
+
+        self = .init(x: x, y: y)
+    }
+}
+
+extension CGPoint {
+    /// Converts a DOMPoint to a CGPoint.
+    ///
+    /// - Parameter point: The value to convert.
+    public init(_ point: DOMPoint) {
+        self = .init(x: point.x, y: point.y)
+    }
+}
+
 #endif // ENABLE_SWIFTUI

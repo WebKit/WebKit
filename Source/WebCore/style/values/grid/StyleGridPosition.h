@@ -148,7 +148,7 @@ private:
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<GridPosition> { auto operator()(BuilderState&, const CSSValue&) -> GridPosition; };
-template<> struct CSSValueCreation<GridPosition> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const GridPosition&); };
+template<> struct CSSValueCreation<GridPosition> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const GridPosition&); };
 
 } // namespace Style
 } // namespace WebCore

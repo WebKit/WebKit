@@ -18,10 +18,13 @@
 
 #include <gtest/gtest.h>
 
-#include "internal.h"
 #include "../../test/abi_test.h"
 #include "../../test/test_util.h"
+#include "internal.h"
 
+
+BSSL_NAMESPACE_BEGIN
+namespace {
 
 TEST(SHATest, FIPS1862PRF) {
   // From "Multiple Examples of DSA", section 2.2, fetched from archived copy at
@@ -150,3 +153,6 @@ TEST(SHATest, SHA512ABI) {
 }
 
 #endif  // SUPPORTS_ABI_TEST
+
+}  // namespace
+BSSL_NAMESPACE_END

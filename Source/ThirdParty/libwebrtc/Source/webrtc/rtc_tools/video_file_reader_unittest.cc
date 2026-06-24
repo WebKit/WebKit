@@ -124,5 +124,23 @@ TEST_F(YuvFileReaderTest, TestPixelContent) {
   }
 }
 
+TEST(VideoFileReaderTest, OpenY4mFileAbortsOnLargeHeader) {
+  const std::string file_name =
+      TempFilename(test::OutputPath(), "temp_large_header.y4m");
+
+  FILE* file = fopen(file_name.c_str(), "wb");
+  ASSERT_TRUE(file != nullptr);
+
+  fprintf(file, "YUV4MPEG2 ");
+
+  // Write 2000 'A's without a newline (Simulate the attack)
+  for (int i = 0; i < 2000; ++i) {
+    fputc('A', file);
+  }
+  fclose(file);
+  EXPECT_EQ(nullptr, OpenY4mFile(file_name));
+
+  remove(file_name.c_str());
+}
 }  // namespace test
 }  // namespace webrtc

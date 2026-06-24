@@ -72,7 +72,6 @@ class RenderGeometryMap;
 class RenderLayer;
 class RenderLayerModelObject;
 class RenderFragmentContainer;
-class RenderStyle;
 class RenderTheme;
 class RenderTreeBuilder;
 class RenderView;
@@ -96,6 +95,7 @@ class Box;
 }
 
 namespace Style {
+class ComputedStyle;
 class PseudoElementRequest;
 enum class MarginTrimSide : uint8_t;
 }
@@ -159,7 +159,6 @@ public:
         Replica,
         ScrollbarPart,
         SearchField,
-        SelectFallbackButton,
         Slider,
         SliderContainer,
         Table,
@@ -478,7 +477,6 @@ public:
     bool isRenderTextControlMultiLine() const { return type() == Type::TextControlMultiLine; }
     bool isRenderTextControlSingleLine() const { return isRenderTextControl() && !isRenderTextControlMultiLine(); }
     bool isRenderSearchField() const { return type() == Type::SearchField; }
-    bool isRenderSelectFallbackButton() const { return type() == Type::SelectFallbackButton; }
     bool isRenderTextControlInnerBlock() const { return type() == Type::TextControlInnerBlock; }
     bool isRenderTextControlInnerContainer() const { return type() == Type::TextControlInnerContainer; }
     bool isRenderVideo() const { return type() == Type::Video; }
@@ -704,7 +702,7 @@ public:
     bool hasVisibleBoxDecorations() const { return boxDecorationState() != BoxDecorationState::None; }
 
     bool needsLayout() const;
-    bool needsPreferredLogicalWidthsUpdate() const { return m_stateBitfields.hasFlag(StateFlag::PreferredLogicalWidthsNeedUpdate); }
+    bool hasInvalidContentLogicalWidths() const { return m_stateBitfields.hasFlag(StateFlag::ContentLogicalWidthsInvalidated); }
 
     bool selfNeedsLayout() const { return m_stateBitfields.hasFlag(StateFlag::NeedsLayout); }
     bool needsOutOfFlowMovementLayout() const { return m_stateBitfields.hasFlag(StateFlag::NeedsOutOfFlowMovementLayout); }
@@ -746,7 +744,7 @@ public:
 
     inline Document& document() const; // Defined in RenderObjectDocument.h
     inline TreeScope& treeScopeForSVGReferences() const; // Defined in RenderObjectInlines.h
-    inline LocalFrame& frame() const; // Defined in RenderObjectInlines.h
+    inline LocalFrame& frame() const; // Defined in RenderObjectDocument.h
     inline Page& page() const; // Defined in RenderObjectInlines.h
     inline const Settings& settings() const; // Defined in RenderObjectDocument.h
 
@@ -761,10 +759,10 @@ public:
     inline void setNeedsLayout(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain);
     enum class HadSkippedLayout { No, Yes };
     void clearNeedsLayout(HadSkippedLayout = HadSkippedLayout::No);
-    void setNeedsPreferredWidthsUpdate(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain, const RenderBlock* ancestorUpdateBoundary = nullptr);
-    void clearNeedsPreferredWidthsUpdate() { m_stateBitfields.setFlag(StateFlag::PreferredLogicalWidthsNeedUpdate, { }); }
+    void invalidateContentLogicalWidths(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain, const RenderBlock* ancestorUpdateBoundary = nullptr);
+    void clearContentLogicalWidthsInvalidation() { m_stateBitfields.setFlag(StateFlag::ContentLogicalWidthsInvalidated, { }); }
     
-    inline void setNeedsLayoutAndPreferredWidthsUpdate();
+    inline void setNeedsLayoutAndInvalidateContentLogicalWidths();
 
     void setPositionState(PositionType);
     void clearPositionedState() { m_stateBitfields.clearPositionedState(); }
@@ -863,12 +861,12 @@ public:
     // the rect that will be painted if this object is passed as the paintingRoot
     WEBCORE_EXPORT LayoutRect paintingRootRect(LayoutRect& topLevelRect);
 
-    inline const RenderStyle& style() const LIFETIME_BOUND; // Defined in RenderObjectStyle.h.
-    inline CheckedRef<const RenderStyle> firstLineStyle() const LIFETIME_BOUND;
+    inline const Style::ComputedStyle& style() const LIFETIME_BOUND; // Defined in RenderObjectStyle.h.
+    inline CheckedRef<const Style::ComputedStyle> firstLineStyle() const LIFETIME_BOUND;
     inline WritingMode writingMode() const; // Defined in RenderObjectStyle.h.
     // writingMode().isHorizontal() is cached by isHorizontalWritingMode() above.
 
-    virtual const RenderStyle& outlineStyleForRepaint() const LIFETIME_BOUND;
+    virtual const Style::ComputedStyle& outlineStyleForRepaint() const LIFETIME_BOUND;
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
@@ -1154,6 +1152,7 @@ private:
         void didRemoveCachedImageClient(CachedImage&) final;
         void imageContentChanged(CachedImage&) final;
         void scheduleRenderingUpdateForImage(CachedImage&) final;
+        bool isRendererClient() const final { return true; }
 
         explicit CachedImageListener(RenderObject&);
 
@@ -1166,7 +1165,7 @@ private:
     void NODELETE setLayerNeedsFullRepaint();
     void NODELETE setLayerNeedsFullRepaintForOutOfFlowMovementLayout();
 
-    void invalidateContainerPreferredLogicalWidths(const RenderBlock* ancestorUpdateBoundary = nullptr);
+    void invalidateContainerContentLogicalWidths(const RenderBlock* ancestorUpdateBoundary = nullptr);
 
     struct SelectionGeometriesInternal {
         Vector<SelectionGeometry> geometries;
@@ -1202,7 +1201,7 @@ private:
         IsExcludedFromNormalLayout                          = 1 << 10,
         Floating                                            = 1 << 11,
         VerticalWritingMode                                 = 1 << 12,
-        PreferredLogicalWidthsNeedUpdate                    = 1 << 13,
+        ContentLogicalWidthsInvalidated                    = 1 << 13,
         HasRareData                                         = 1 << 14,
         HasLayer                                            = 1 << 15,
         HasNonVisibleOverflow                               = 1 << 16,
@@ -1288,7 +1287,7 @@ private:
         bool hasReflection { false };
         bool hasOutlineAutoAncestor { false };
         // Dirty bit was set with MarkingBehavior::MarkOnlyThis
-        bool preferredLogicalWidthsNeedUpdateIsMarkOnlyThis { false };
+        bool contentLogicalWidthsInvalidationIsMarkOnlyThis { false };
         bool isYouTubeReplacement { false };
         EnumSet<Style::MarginTrimSide> trimmedMargins;
 
@@ -1482,6 +1481,13 @@ std::partial_ordering renderTreeOrder(const RenderObject&, const RenderObject&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject::RepaintRects&);
+
+enum class ScrollbarWidth : uint8_t;
+WEBCORE_EXPORT IntRect absoluteInteractionBounds(const RenderObject&);
+WEBCORE_EXPORT ScrollbarWidth scrollbarWidth(const RenderObject&);
+#if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
+WEBCORE_EXPORT Color tapHighlightColor(const RenderObject&);
+#endif
 
 #if ENABLE(TREE_DEBUGGING)
 void printAccessibilityTreeForLiveDocuments();

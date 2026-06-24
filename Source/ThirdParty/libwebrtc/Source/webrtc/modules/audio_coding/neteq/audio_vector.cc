@@ -70,12 +70,12 @@ bool AudioVector::CopyTo(size_t position, MonoView<int16_t> dst) const {
   const size_t copy_index = (begin_index_ + position) % capacity_;
   const size_t first_chunk_length =
       std::min(dst.size(), capacity_ - copy_index);
-  auto first_chunk = dst.subview(0, first_chunk_length);
+  auto first_chunk = dst.subspan(0, first_chunk_length);
   CopySamples(first_chunk,
               MonoView<const int16_t>(&array_[copy_index], first_chunk_length));
   const size_t remaining_length = dst.size() - first_chunk_length;
   if (remaining_length > 0) {
-    auto second_chunk = dst.subview(first_chunk_length, remaining_length);
+    auto second_chunk = dst.subspan(first_chunk_length);
     CopySamples(second_chunk, MonoView<int16_t>(&array_[0], remaining_length));
   }
   return true;

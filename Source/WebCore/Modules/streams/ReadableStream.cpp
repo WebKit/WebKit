@@ -782,7 +782,7 @@ Ref<DOMPromise> ReadableStream::Iterator::next(JSDOMGlobalObject& globalObject)
     return promise;
 }
 
-bool ReadableStream::Iterator::isFinished() const
+SUPPRESS_NODELETE bool ReadableStream::Iterator::isFinished() const
 {
     return !m_reader->stream();
 }
@@ -809,8 +809,11 @@ Ref<DOMPromise> ReadableStream::Iterator::returnSteps(JSDOMGlobalObject& globalO
 // https://streams.spec.whatwg.org/#rs-asynciterator
 ExceptionOr<Ref<ReadableStream::Iterator>> ReadableStream::createIterator(ScriptExecutionContext* context, std::optional<IteratorOptions>&& options)
 {
-    auto& globalObject = *downcast<JSDOMGlobalObject>(context->globalObject());
-    auto readerOrException = ReadableStreamDefaultReader::create(globalObject, *this);
+    auto* globalObject = context ? downcast<JSDOMGlobalObject>(context->globalObject()) : nullptr;
+    if (!globalObject)
+        return Exception { ExceptionCode::InvalidStateError, "Context is detached"_s };
+
+    auto readerOrException = ReadableStreamDefaultReader::create(*globalObject, *this);
     if (readerOrException.hasException())
         return readerOrException.releaseException();
 

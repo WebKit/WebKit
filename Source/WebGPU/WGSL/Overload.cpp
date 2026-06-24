@@ -111,7 +111,7 @@ OverloadResolver::OverloadResolver(TypeStore& types, const Vector<OverloadCandid
 std::optional<SelectedOverload> OverloadResolver::resolve()
 {
     auto candidates = considerCandidates();
-    std::optional<ViableOverload> selectedCandidate = std::nullopt;
+    std::optional<ViableOverload> selectedCandidate;
 
     for (auto& candidate : candidates) {
         if (!candidate.has_value())

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/IDBDatabaseConnectionIdentifier.h>
 #include <WebCore/IDBDatabaseInfo.h>
 #include <WebCore/IDBError.h>
@@ -80,12 +81,12 @@ public:
     static IDBResultData deleteIndexSuccess(const IDBResourceIdentifier&);
     static IDBResultData renameIndexSuccess(const IDBResourceIdentifier&);
     static IDBResultData putOrAddSuccess(const IDBResourceIdentifier&, const IDBKeyData&);
-    static IDBResultData getRecordSuccess(const IDBResourceIdentifier&, const IDBGetResult&);
-    static IDBResultData getAllRecordsSuccess(const IDBResourceIdentifier&, const IDBGetAllResult&);
+    static IDBResultData getRecordSuccess(const IDBResourceIdentifier&, const IDBGetResult&, ClientOrigin&&);
+    static IDBResultData getAllRecordsSuccess(const IDBResourceIdentifier&, const IDBGetAllResult&, ClientOrigin&&);
     static IDBResultData getCountSuccess(const IDBResourceIdentifier&, uint64_t count);
     static IDBResultData deleteRecordSuccess(const IDBResourceIdentifier&);
-    static IDBResultData openCursorSuccess(const IDBResourceIdentifier&, const IDBGetResult&);
-    static IDBResultData iterateCursorSuccess(const IDBResourceIdentifier&, const IDBGetResult&);
+    static IDBResultData openCursorSuccess(const IDBResourceIdentifier&, const IDBGetResult&, ClientOrigin&&);
+    static IDBResultData iterateCursorSuccess(const IDBResourceIdentifier&, const IDBGetResult&, ClientOrigin&&);
 
     WEBCORE_EXPORT IDBResultData(const IDBResultData&);
     IDBResultData(IDBResultData&&) = default;
@@ -110,6 +111,12 @@ public:
     WEBCORE_EXPORT const IDBGetResult& NODELETE getResult() const;
     WEBCORE_EXPORT const IDBGetAllResult& NODELETE getAllResult() const;
 
+    // NetworkProcess-internal: set by UniqueIDBDatabaseTransaction before delegate dispatch so
+    // IDBStorageConnectionToClient can route per-origin work without a side map. Never encoded
+    // for IPC; stays empty on the WebProcess side.
+    WEBCORE_EXPORT const ClientOrigin* clientOrigin() const LIFETIME_BOUND;
+    void setClientOrigin(ClientOrigin&&);
+
     WEBCORE_EXPORT IDBResultData();
 
 private:
@@ -131,6 +138,7 @@ private:
     std::unique_ptr<IDBGetResult> m_getResult;
     std::unique_ptr<IDBGetAllResult> m_getAllResult;
     uint64_t m_resultInteger { 0 };
+    std::unique_ptr<ClientOrigin> m_clientOrigin;
 };
 
 } // namespace WebCore

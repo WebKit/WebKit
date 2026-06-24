@@ -177,18 +177,12 @@ FOR_EACH_WASM_BUILTIN(DECLARE_WASM_BUILTIN_ENTRY)
         LLINT_OP_EXTRAS(BUILTIN_WASM_ENTRY_VALIDATE_NAME(setName, builtinName)) \
     },
 
-struct LLIntOperations {
-    const JITOperationAnnotation* operations;
-    size_t numberOfOperations;
-};
-
-static LLIntOperations llintOperations()
+static std::span<const JITOperationAnnotation> llintOperations()
 {
-    static const JITOperationAnnotation* operations = nullptr;
-    static size_t numberOfOperations = 0;
+    static std::span<const JITOperationAnnotation> operations;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        static const JITOperationAnnotation operationsStorage[] = {
+        static const auto operationsStorage = WTF::toArray<JITOperationAnnotation>({
             LLINT_ROUTINE(llint_function_for_call_prologue)
             LLINT_ROUTINE(llint_function_for_construct_prologue)
             LLINT_ROUTINE(llint_function_for_call_arity_check)
@@ -224,11 +218,10 @@ static LLIntOperations llintOperations()
 
             JSC_JS_GATE_OPCODES(LLINT_RETURN_LOCATION)
             JSC_WASM_GATE_OPCODES(LLINT_RETURN_LOCATION)
-        };
+        });
         operations = operationsStorage;
-        numberOfOperations = std::size(operationsStorage);
     });
-    return { operations, numberOfOperations };
+    return operations;
 }
 
 #undef LLINT_ROUTINE
@@ -245,7 +238,7 @@ void JITOperationList::populatePointersInJavaScriptCoreForLLInt()
     std::call_once(onceKey, [] {
         if (Options::useJIT()) {
             auto list = llintOperations();
-            jitOperationList->addPointers(list.operations, list.operations + list.numberOfOperations);
+            jitOperationList->addPointers(list.data(), list.data() + list.size());
         }
 #if ENABLE(JIT_OPERATION_DISASSEMBLY)
         if (Options::needDisassemblySupport()) [[unlikely]]
@@ -296,7 +289,7 @@ void JITOperationList::populateDisassemblyLabelsInJavaScriptCoreForLLInt()
     std::call_once(onceKey, [] {
         if (Options::useJIT()) {
             auto list = llintOperations();
-            addDisassemblyLabels(list.operations, list.operations + list.numberOfOperations);
+            addDisassemblyLabels(list.data(), list.data() + list.size());
         }
     });
 }

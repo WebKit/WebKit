@@ -48,7 +48,7 @@ def callfunc(obj, method_name, *args, **kwargs):
 
 class WebDriverTests():
 
-    def __init__(self, browser_path, webdriver_path, platform_name, number_retries):
+    def __init__(self, browser_path, webdriver_path, platform_name, number_retries, headless):
         self.started = False
         if platform_name == 'gtk':
             from selenium.webdriver import WebKitGTKOptions as WebKitOptions
@@ -63,7 +63,7 @@ class WebDriverTests():
         options = WebKitOptions()
         options.binary_location = browser_path
         options.add_argument('--automation')
-        if platform_name == 'wpe':
+        if headless and platform_name == 'wpe':
             options.add_argument('--headless')
         service = Service(executable_path=webdriver_path, service_args=['--host=127.0.0.1'])
         self.driver = WebKitDriver(options=options, service=service)
@@ -264,7 +264,7 @@ class WebDriverTests():
         return self.do_test(test_name, html_test_url)
 
 
-def run_all_tests(bundle_dir, platform_name, number_retries):
+def run_all_tests(bundle_dir, platform_name, number_retries, headless):
     assert (platform_name in ['gtk', 'wpe'])
     if not os.path.isdir(bundle_dir):
         raise ValueError(f'{bundle_dir} is not a valid directory')
@@ -274,7 +274,7 @@ def run_all_tests(bundle_dir, platform_name, number_retries):
     for binary_path in [browser_path, webdriver_path]:
         if not (os.path.isfile(binary_path) and os.access(binary_path, os.X_OK)):
             raise ValueError(f'Can not find an executable at: {binary_path}')
-    tester = WebDriverTests(browser_path, webdriver_path, platform_name, number_retries)
+    tester = WebDriverTests(browser_path, webdriver_path, platform_name, number_retries, headless)
     total_tests_failed = 0
     for test in ['test_dynamic_rendering', 'test_video_playback', 'test_css_animations', 'test_webgl_support', 'test_webgl_rainbow']:
         total_tests_failed += tester.do_local_test(test)
@@ -295,9 +295,10 @@ def main():
                         help='The WebKit port to test the bundle')
     parser.add_argument('--number-retries-test', dest='number_retries', default=3, type=int,
                         help='The number of retries per test before marking it as a failure.')
+    parser.add_argument("--headless", dest="headless", action="store_true", help="Run in headless mode")
     parser.add_argument('bundle_dir', help='Directory path where the bundle is uncompressed.')
     options = parser.parse_args()
-    return run_all_tests(options.bundle_dir, options.platform, options.number_retries)
+    return run_all_tests(options.bundle_dir, options.platform, options.number_retries, options.headless)
 
 
 if __name__ == '__main__':

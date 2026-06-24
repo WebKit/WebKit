@@ -15,4 +15,7 @@ PASS Property background-position-y value 'center, top, bottom'
 PASS Property background-position-y value '0.5em, y-start, y-end'
 PASS Property background-position-y value 'calc(10px - 0.5em), -20%, 10px'
 PASS Property background-position-y value 'calc(10px - 0.5em), top -20%, bottom 10px'
+PASS Property background-position-y value 'center' multiple base values
+PASS Property background-position-y value 'center, top' multiple base values
+PASS Property background-position-y value 'center, top, bottom' multiple base values
 

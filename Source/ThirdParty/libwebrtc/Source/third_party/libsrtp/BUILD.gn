@@ -24,8 +24,8 @@ config("external_ssl_library") {
 config("libsrtp_config") {
   defines = [
     # Package identity
-    "PACKAGE_STRING=\"860492290f7d1f25e2bd45da6471bfd4cd4d7add\"",
-    "PACKAGE_VERSION=\"860492290f7d1f25e2bd45da6471bfd4cd4d7add\"",
+    "PACKAGE_STRING=\"24b3bf8f19b6f5ab4cd2bcceb4f4064e\"",
+    "PACKAGE_VERSION=\"24b3bf8f19b6f5ab4cd2bcceb4f4064e\"",
 
     # Config
     "HAVE_CONFIG_H",
@@ -57,6 +57,8 @@ config("libsrtp_config") {
   if (is_win) {
     defines += [ "HAVE_WINSOCK2_H" ]
   }
+  # cryptex is supported since v2.8.0.
+  defines += [ "LIBSRTP_HAVE_CRYPTEX" ]
 
   # Supports clients depending on SRTP_RELATIVE_PATH.
   # TODO(mattdr): Remove SRTP_RELATIVE_PATH and this config.

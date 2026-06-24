@@ -91,7 +91,7 @@ impl PrivateKey {
         unsafe {
             bssl_sys::SLHDSA_SHA2_128S_public_from_private(
                 public_key.as_mut_ptr(),
-                self.0.as_ptr(),
+                self.0.as_ffi_ptr(),
             );
         }
 
@@ -116,7 +116,7 @@ impl PrivateKey {
             with_output_vec_fallible(SIGNATURE_BYTES, |signature| {
                 if bssl_sys::SLHDSA_SHA2_128S_sign(
                     signature,
-                    self.0.as_ptr(),
+                    self.0.as_ffi_ptr(),
                     msg.as_ffi_ptr(),
                     msg.len(),
                     context.as_ffi_ptr(),
@@ -163,7 +163,7 @@ impl PublicKey {
             bssl_sys::SLHDSA_SHA2_128S_verify(
                 signature.as_ffi_ptr(),
                 signature.len(),
-                self.0.as_ptr(),
+                self.0.as_ffi_ptr(),
                 msg.as_ffi_ptr(),
                 msg.len(),
                 context.as_ffi_ptr(),

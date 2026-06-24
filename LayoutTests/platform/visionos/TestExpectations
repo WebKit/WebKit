@@ -83,12 +83,21 @@ overlay-region [ Pass ]
 platform/visionos/transforms [ Pass ]
 fast/images/spatial-image-controls-rtl.html [ Pass ]
 
+http/tests/security/model-element [ Pass ]
+http/wpt/model-element [ Pass ]
+http/tests/security/model-element/model-element-crossorigin-allowed-with-all-access-header.html [ Slow ]
+model-element [ Pass ]
+model-element/model-element-animations-loop.html [ Slow ]
+model-element/model-element-lazy-loading-unloading.html [ Slow ]
+model-element/model-element-suspend-before-ready.html [ Slow ]
+
 imported/w3c/web-platform-tests/webxr [ Pass ]
 http/wpt/webxr [ Pass ]
 webxr [ Pass ]
 http/tests/iframe-monitor [ Pass ]
 
 media/modern-media-controls/visionos-inline-media-controls [ Pass ]
+media/modern-media-controls/icon-service/icon-service-bundle-load.html [ Pass ]
 
 http/tests/pdf [ Pass ]
 pdf [ Pass ]
@@ -104,6 +113,9 @@ editing/selection/ios/scrolling-to-focused-element-inside-iframe.html [ Skip ]
 fast/events/ios/do-not-show-keyboard-when-focusing-after-blur.html [ Skip ]
 fast/forms/ios/inputmode-removing-none.html [ Skip ]
 fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
+
+model-element/gpup [ Skip ]
+model-element/immersive [ Skip ]
 
 # WebXR - Missing modules.
 imported/w3c/web-platform-tests/webxr/anchors [ Skip ]
@@ -140,7 +152,6 @@ pdf/pdf-in-iframe-with-text-annotation.html [ Skip ]
 
 # rdar://125739629 [ visionOS ] Multiple tests in imported/w3c/web-platform-tests/webxr are consistent failing
 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html [ Failure ]
-imported/w3c/web-platform-tests/webxr/webxr_feature_policy.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Failure ]
 
@@ -185,8 +196,6 @@ platform/visionos/transforms/separated-video.html [ Failure ]
 overlay-region/full-page-scrolling.html [ Failure ]
 overlay-region/overlay-element.html [ Failure ]
 overlay-region/sticky.html [ Failure ]
-
-webkit.org/b/313782 interaction-region/paused-video-regions.html [ Failure ]
 
 ### END OF Triaged failures
 ###################################################################################################

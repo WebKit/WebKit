@@ -28,11 +28,12 @@
 
 #if USE(THEME_ADWAITA)
 
+#include "Damage.h"
 #include "GraphicsContext.h"
 
 namespace WebCore::AdwaitaScrollbarPainter {
 
-void paint(GraphicsContext& graphicsContext, const IntRect& damageRect, const State& scrollbar)
+void paint(GraphicsContext& graphicsContext, const IntRect& damageRect, const State& scrollbar, Damage* damageOut)
 {
     if (graphicsContext.paintingDisabled())
         return;
@@ -109,6 +110,11 @@ void paint(GraphicsContext& graphicsContext, const IntRect& damageRect, const St
         } else
             frame.setHeight(scrollbarBorderSize);
         graphicsContext.fillRect(frame, scrollbarBorderColor);
+
+        if (damageOut && opacity) {
+            frame.intersect(damageRect);
+            damageOut->add(frame);
+        }
     } else if (scrollbar.hoveredPart != NoPart) {
         int thumbCornerSize = thumbSize / 2;
         FloatSize corner(thumbCornerSize, thumbCornerSize);
@@ -143,6 +149,11 @@ void paint(GraphicsContext& graphicsContext, const IntRect& damageRect, const St
         graphicsContext.setFillRule(WindRule::EvenOdd);
         graphicsContext.setFillColor(overlayTroughBorderColor);
         graphicsContext.fillPath(path);
+
+        if (damageOut && opacity) {
+            troughBorder.intersect(damageRect);
+            damageOut->add(troughBorder);
+        }
     }
 
     int thumbCornerSize;
@@ -206,6 +217,11 @@ void paint(GraphicsContext& graphicsContext, const IntRect& damageRect, const St
         graphicsContext.setFillRule(WindRule::EvenOdd);
         graphicsContext.setFillColor(overlayThumbBorderColor);
         graphicsContext.fillPath(path);
+
+        if (damageOut && opacity) {
+            thumbBorder.intersect(damageRect);
+            damageOut->add(thumbBorder);
+        }
     }
 
     if (opacity != 1)

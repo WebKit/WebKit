@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Element.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "StyleInvalidator.h"
 #include "StyleScope.h"
 #include <wtf/HashSet.h>
@@ -46,11 +47,12 @@ private:
     void invalidateAfterChange();
     void checkForSiblingStyleChanges();
     using MatchingHasSelectors = HashSet<const CSSSelector*>;
-    enum class ChangedElementRelation : uint8_t { SelfOrDescendant, Sibling };
-    enum class EmptyInvalidation : bool { No, Yes };
+    enum class ChangedElementRelation : uint8_t { SelfOrDescendant, Sibling, FirstOrLastChild };
     enum class MutationPhase : bool { Before, After };
-    void invalidateForChangedElement(Element&, MatchingHasSelectors&, ChangedElementRelation, EmptyInvalidation = EmptyInvalidation::No);
+    void invalidateForChangedElement(Element&, MatchingHasSelectors&, ChangedElementRelation);
     void invalidateForHasSiblings(MatchingHasSelectors&, MutationPhase);
+
+    bool emptyStateMayChange() const;
 
     template<typename Function> void traverseRemovedElements(Function&&);
     template<typename Function> void traverseAddedElements(Function&&);
@@ -62,6 +64,8 @@ private:
 
     const bool m_isEnabled;
     const bool m_needsHasInvalidation;
+
+    std::optional<PseudoClassChangeInvalidation> m_emptyInvalidation;
 };
 
 inline ChildChangeInvalidation::ChildChangeInvalidation(ContainerNode& container, const ContainerNode::ChildChange& childChange)
@@ -72,6 +76,9 @@ inline ChildChangeInvalidation::ChildChangeInvalidation(ContainerNode& container
 {
     if (!m_isEnabled)
         return;
+
+    if (m_parentElement->styleAffectedByEmpty() && emptyStateMayChange())
+        m_emptyInvalidation.emplace(*m_parentElement, CSSSelector::PseudoClass::Empty, PseudoClassChangeInvalidation::AnyValue);
 
     if (m_needsHasInvalidation)
         invalidateForHasBeforeMutation();

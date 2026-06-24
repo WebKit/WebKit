@@ -44,6 +44,7 @@ namespace webrtc {
 
 struct SdpVideoFormat;
 class VideoDecoderFactory;
+class ColorSpace;
 
 struct WebKitVideoDecoder {
     using Value = void*;
@@ -52,7 +53,7 @@ struct WebKitVideoDecoder {
 };
 using VideoDecoderCreateCallback = WebKitVideoDecoder(*)(const SdpVideoFormat& format);
 using VideoDecoderReleaseCallback = int32_t(*)(WebKitVideoDecoder::Value);
-using VideoDecoderDecodeCallback = int32_t(*)(WebKitVideoDecoder::Value, uint32_t timeStamp, const uint8_t*, size_t length, uint16_t width, uint16_t height);
+using VideoDecoderDecodeCallback = int32_t(*)(WebKitVideoDecoder::Value, uint32_t timeStamp, const uint8_t*, size_t length, uint16_t width, uint16_t height, const ColorSpace* colorSpace);
 using VideoDecoderRegisterDecodeCompleteCallback = int32_t(*)(WebKitVideoDecoder::Value, void* decodedImageCallback);
 
 void setVideoDecoderCallbacks(VideoDecoderCreateCallback, VideoDecoderReleaseCallback, VideoDecoderDecodeCallback, VideoDecoderRegisterDecodeCompleteCallback);

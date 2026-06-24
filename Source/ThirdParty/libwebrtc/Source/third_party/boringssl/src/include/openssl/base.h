@@ -42,7 +42,7 @@
 #include <openssl/target.h>  // IWYU pragma: export
 
 #if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols.h>
+#include <openssl/prefix_symbols.h>  // IWYU pragma: export
 #endif
 
 #if defined(__cplusplus)
@@ -51,7 +51,7 @@ extern "C" {
 
 
 #if defined(__APPLE__)
-// Note |TARGET_OS_MAC| is set for all Apple OS variants. |TARGET_OS_OSX|
+// Note `TARGET_OS_MAC` is set for all Apple OS variants. `TARGET_OS_OSX`
 // targets macOS specifically.
 #if defined(TARGET_OS_OSX) && TARGET_OS_OSX
 #define OPENSSL_MACOS
@@ -73,7 +73,7 @@ extern "C" {
 // A consumer may use this symbol in the preprocessor to temporarily build
 // against multiple revisions of BoringSSL at the same time. It is not
 // recommended to do so for longer than is necessary.
-#define BORINGSSL_API_VERSION 37
+#define BORINGSSL_API_VERSION 41
 
 #if defined(BORINGSSL_SHARED_LIBRARY)
 
@@ -180,33 +180,13 @@ extern "C" {
 #define OPENSSL_UNUSED
 #endif
 
-// C and C++ handle inline functions differently. In C++, an inline function is
-// defined in just the header file, potentially emitted in multiple compilation
-// units (in cases the compiler did not inline), but each copy must be identical
-// to satisfy ODR. In C, a non-static inline must be manually emitted in exactly
-// one compilation unit with a separate extern inline declaration.
-//
-// In both languages, exported inline functions referencing file-local symbols
-// are problematic. C forbids this altogether (though GCC and Clang seem not to
-// enforce it). It works in C++, but ODR requires the definitions be identical,
-// including all names in the definitions resolving to the "same entity". In
-// practice, this is unlikely to be a problem, but an inline function that
-// returns a pointer to a file-local symbol
-// could compile oddly.
-//
-// Historically, we used static inline in headers. However, to satisfy ODR, use
-// plain inline in C++, to allow inline consumer functions to call our header
-// functions. Plain inline would also work better with C99 inline, but that is
-// not used much in practice, extern inline is tedious, and there are conflicts
-// with the old gnu89 model:
-// https://stackoverflow.com/questions/216510/extern-inline
-#if defined(__cplusplus)
-#define OPENSSL_INLINE inline
-#else
+#if defined(BORINGSSL_ALWAYS_USE_STATIC_INLINE)
 // Add OPENSSL_UNUSED so that, should an inline function be emitted via macro
-// (e.g. a |STACK_OF(T)| implementation) in a source file without tripping
+// (e.g. a `STACK_OF(T)` implementation) in a source file without tripping
 // clang's -Wunused-function.
 #define OPENSSL_INLINE static inline OPENSSL_UNUSED
+#else
+#define OPENSSL_INLINE inline
 #endif
 
 #if defined(__cplusplus)
@@ -228,23 +208,23 @@ enum ssl_verify_result_t BORINGSSL_ENUM_INT;
 #endif
 
 // ossl_ssize_t is a signed type which is large enough to fit the size of any
-// valid memory allocation. We prefer using |size_t|, but sometimes we need a
+// valid memory allocation. We prefer using `size_t`, but sometimes we need a
 // signed type for OpenSSL API compatibility. This type can be used in such
 // cases to avoid overflow.
 //
-// Not all |size_t| values fit in |ossl_ssize_t|, but all |size_t| values that
+// Not all `size_t` values fit in `ossl_ssize_t`, but all `size_t` values that
 // are sizes of or indices into C objects, can be converted without overflow.
 typedef ptrdiff_t ossl_ssize_t;
 
-// CBS_ASN1_TAG is the type used by |CBS| and |CBB| for ASN.1 tags. See that
+// CBS_ASN1_TAG is the type used by `CBS` and `CBB` for ASN.1 tags. See that
 // header for details. This type is defined in base.h as a forward declaration.
 typedef uint32_t CBS_ASN1_TAG;
 
 // CRYPTO_THREADID is a dummy value.
 typedef int CRYPTO_THREADID;
 
-// An |ASN1_NULL| is an opaque type. asn1.h represents the ASN.1 NULL value as
-// an opaque, non-NULL |ASN1_NULL*| pointer.
+// An `ASN1_NULL` is an opaque type. asn1.h represents the ASN.1 NULL value as
+// an opaque, non-NULL `ASN1_NULL*` pointer.
 typedef struct asn1_null_st ASN1_NULL;
 
 // CRYPTO_MUST_BE_NULL is an opaque type that is never returned from BoringSSL.
@@ -309,6 +289,8 @@ typedef struct conf_st CONF;
 typedef struct conf_value_st CONF_VALUE;
 typedef struct crypto_buffer_pool_st CRYPTO_BUFFER_POOL;
 typedef struct crypto_buffer_st CRYPTO_BUFFER;
+typedef struct crypto_ivec_st CRYPTO_IVEC;
+typedef struct crypto_iovec_st CRYPTO_IOVEC;
 typedef struct ctr_drbg_state_st CTR_DRBG_STATE;
 typedef struct dh_st DH;
 typedef struct dsa_st DSA;
@@ -330,6 +312,7 @@ typedef struct evp_hpke_ctx_st EVP_HPKE_CTX;
 typedef struct evp_hpke_kdf_st EVP_HPKE_KDF;
 typedef struct evp_hpke_kem_st EVP_HPKE_KEM;
 typedef struct evp_hpke_key_st EVP_HPKE_KEY;
+typedef struct evp_kem_st EVP_KEM;
 typedef struct evp_pkey_alg_st EVP_PKEY_ALG;
 typedef struct evp_pkey_ctx_st EVP_PKEY_CTX;
 typedef struct evp_pkey_st EVP_PKEY;
@@ -337,6 +320,8 @@ typedef struct hmac_ctx_st HMAC_CTX;
 typedef struct md4_state_st MD4_CTX;
 typedef struct md5_state_st MD5_CTX;
 typedef struct ossl_init_settings_st OPENSSL_INIT_SETTINGS;
+typedef struct ossl_lib_ctx_st OSSL_LIB_CTX;
+typedef struct ossl_param_st OSSL_PARAM;
 typedef struct pkcs12_st PKCS12;
 typedef struct pkcs8_priv_key_info_st PKCS8_PRIV_KEY_INFO;
 typedef struct private_key_st X509_PKEY;
@@ -380,7 +365,7 @@ typedef struct x509_store_st X509_STORE;
 
 typedef void *OPENSSL_BLOCK;
 
-// BSSL_CHECK aborts if |condition| is not true.
+// BSSL_CHECK aborts if `condition` is not true.
 #define BSSL_CHECK(condition) \
   do {                        \
     if (!(condition)) {       \
@@ -406,27 +391,6 @@ typedef void *OPENSSL_BLOCK;
 #define BSSL_NAMESPACE_END }
 #endif
 
-// MSVC doesn't set __cplusplus to 201103 to indicate C++11 support (see
-// https://connect.microsoft.com/VisualStudio/feedback/details/763051/a-value-of-predefined-macro-cplusplus-is-still-199711l)
-// so MSVC is just assumed to support C++11.
-#if !defined(BORINGSSL_NO_CXX) && __cplusplus < 201103L && !defined(_MSC_VER)
-#define BORINGSSL_NO_CXX
-#endif
-
-#if !defined(BORINGSSL_NO_CXX)
-
-extern "C++" {
-
-#include <memory>
-
-// STLPort, used by some Android consumers, not have std::unique_ptr.
-#if defined(_STLPORT_VERSION)
-#define BORINGSSL_NO_CXX
-#endif
-
-}  // extern C++
-#endif  // !BORINGSSL_NO_CXX
-
 #if defined(BORINGSSL_NO_CXX)
 
 #define BORINGSSL_MAKE_DELETER(type, deleter)
@@ -434,7 +398,10 @@ extern "C++" {
 
 #else
 
+// Work around consumers including our headers under extern "C".
 extern "C++" {
+
+#include <memory>
 
 BSSL_NAMESPACE_BEGIN
 

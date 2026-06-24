@@ -527,8 +527,8 @@ RenderPipelineDesc GetComputingVertexShaderOnlyRenderPipelineDesc(RenderCommandE
     const RenderPassDesc &renderPassDesc = cmdEncoder->renderPassDesc();
 
     renderPassDesc.populateRenderPipelineOutputDesc(&pipelineDesc.outputDescriptor);
-    pipelineDesc.rasterizationType      = RenderPipelineRasterization::Disabled;
-    pipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
+    pipelineDesc.setRasterizationType(RenderPipelineRasterization::Disabled);
+    pipelineDesc.setInputPrimitiveTopology(MTLPrimitiveTopologyClassPoint);
 
     return pipelineDesc;
 }
@@ -1063,25 +1063,13 @@ id<MTLDepthStencilState> ClearUtils::getClearDepthStencilState(const gl::Context
             contextMtl->getMetalDevice());
     }
 
-    DepthStencilDesc desc;
-    desc.reset();
-
-    if (params.clearDepth.valid())
-    {
-        // Clear depth state
-        desc.depthWriteEnabled = true;
-    }
-    else
-    {
-        desc.depthWriteEnabled = false;
-    }
-
+    DepthStencilDesc desc(MTLCompareFunctionAlways, params.clearDepth.valid());
     if (params.clearStencil.valid())
     {
         // Clear stencil state
-        desc.frontFaceStencil.depthStencilPassOperation = MTLStencilOperationReplace;
+        desc.frontFaceStencil.setDepthStencilPassOperation(MTLStencilOperationReplace);
         desc.frontFaceStencil.writeMask                 = contextMtl->getStencilMask();
-        desc.backFaceStencil.depthStencilPassOperation  = MTLStencilOperationReplace;
+        desc.backFaceStencil.setDepthStencilPassOperation(MTLStencilOperationReplace);
         desc.backFaceStencil.writeMask                  = contextMtl->getStencilMask();
     }
 
@@ -1118,7 +1106,7 @@ angle::Result ClearUtils::getClearRenderPipelineState(
     renderPassDesc.populateRenderPipelineOutputDesc(clearWriteMaskArray,
                                                     &pipelineDesc.outputDescriptor);
 
-    pipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassTriangle;
+    pipelineDesc.setInputPrimitiveTopology(MTLPrimitiveTopologyClassTriangle);
 
     ANGLE_TRY(ensureShadersInitialized(contextMtl, renderPassDesc.numColorAttachments));
 
@@ -1289,7 +1277,7 @@ angle::Result ColorBlitUtils::getColorBlitRenderPipelineState(
     // Disable blit for some outputs that are not enabled
     pipelineDesc.outputDescriptor.updateEnabledDrawBuffers(params.enabledBuffers);
 
-    pipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassTriangle;
+    pipelineDesc.setInputPrimitiveTopology(MTLPrimitiveTopologyClassTriangle);
 
     ShaderKey key(GetShaderTextureType(params.src), renderPassDesc.numColorAttachments,
                   params.unpackUnmultiplyAlpha, params.unpackPremultiplyAlpha,
@@ -1324,8 +1312,8 @@ angle::Result ColorBlitUtils::setupColorBlitWithDraw(const gl::Context *context,
 
     // Set sampler state
     SamplerDesc samplerDesc;
-    samplerDesc.reset();
-    samplerDesc.minFilter = samplerDesc.magFilter = GetFilter(params.filter);
+    samplerDesc.setMinFilter(GetFilter(params.filter));
+    samplerDesc.setMagFilter(GetFilter(params.filter));
 
     cmdEncoder->setFragmentSamplerState(contextMtl->getDisplay()->getStateCache().getSamplerState(
                                             contextMtl->getMetalDevice(), samplerDesc),
@@ -1465,7 +1453,7 @@ angle::Result DepthStencilBlitUtils::getDepthStencilBlitRenderPipelineState(
     // Disable all color outputs
     pipelineDesc.outputDescriptor.updateEnabledDrawBuffers(gl::DrawBufferMask());
 
-    pipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassTriangle;
+    pipelineDesc.setInputPrimitiveTopology(MTLPrimitiveTopologyClassTriangle);
 
     angle::ObjCPtr<id<MTLFunction>> *fragmentShader = nullptr;
     int depthTextureType                            = GetShaderTextureType(params.src);
@@ -1512,20 +1500,8 @@ angle::Result DepthStencilBlitUtils::setupDepthStencilBlitWithDraw(
     cmdEncoder->setRenderPipelineState(renderPipelineState);
 
     // Depth stencil state
-    mtl::DepthStencilDesc dsStateDesc;
-    dsStateDesc.reset();
-    dsStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
-
-    if (params.src)
-    {
-        // Enable depth write
-        dsStateDesc.depthWriteEnabled = true;
-    }
-    else
-    {
-        // Disable depth write
-        dsStateDesc.depthWriteEnabled = false;
-    }
+    mtl::DepthStencilDesc dsStateDesc(MTLCompareFunctionAlways,
+                                      /*depthWriteEnabled*/ params.src != nullptr);
 
     if (params.srcStencil)
     {
@@ -1537,11 +1513,11 @@ angle::Result DepthStencilBlitUtils::setupDepthStencilBlitWithDraw(
             UNREACHABLE();
         }
         // Enable stencil write to framebuffer
-        dsStateDesc.frontFaceStencil.stencilCompareFunction = MTLCompareFunctionAlways;
-        dsStateDesc.backFaceStencil.stencilCompareFunction  = MTLCompareFunctionAlways;
+        dsStateDesc.frontFaceStencil.setStencilCompareFunction(MTLCompareFunctionAlways);
+        dsStateDesc.backFaceStencil.setStencilCompareFunction(MTLCompareFunctionAlways);
 
-        dsStateDesc.frontFaceStencil.depthStencilPassOperation = MTLStencilOperationReplace;
-        dsStateDesc.backFaceStencil.depthStencilPassOperation  = MTLStencilOperationReplace;
+        dsStateDesc.frontFaceStencil.setDepthStencilPassOperation(MTLStencilOperationReplace);
+        dsStateDesc.backFaceStencil.setDepthStencilPassOperation(MTLStencilOperationReplace);
 
         dsStateDesc.frontFaceStencil.writeMask = kStencilMaskAll;
         dsStateDesc.backFaceStencil.writeMask  = kStencilMaskAll;
@@ -1813,26 +1789,26 @@ angle::Result IndexGeneratorUtils::convertIndexBufferGPU(ContextMtl *contextMtl,
 {
     ComputeCommandEncoder *cmdEncoder = contextMtl->getIndexPreprocessingCommandEncoder();
     ASSERT(cmdEncoder);
-
-    uint32_t srcOffset = static_cast<uint32_t>(srcBuffer.offset());
-    uint32_t dstOffset = static_cast<uint32_t>(dstBuffer.offset());
+    uint32_t conversionSourceOffset =
+        static_cast<uint32_t>(srcBuffer.offset() % kConstantBufferOffsetAlignment);
 
     angle::ObjCPtr<id<MTLComputePipelineState>> pipelineState;
-    ANGLE_TRY(getIndexConversionPipeline(contextMtl, srcType, srcOffset, &pipelineState));
+    ANGLE_TRY(
+        getIndexConversionPipeline(contextMtl, srcType, conversionSourceOffset, &pipelineState));
 
     ASSERT(pipelineState);
 
     cmdEncoder->setComputePipelineState(pipelineState);
 
-    ASSERT((dstOffset % kIndexBufferOffsetAlignment) == 0);
+    ASSERT((dstBuffer.offset() % kIndexBufferOffsetAlignment) == 0);
 
     IndexConversionUniform uniform;
-    uniform.srcOffset               = srcOffset;
+    uniform.srcOffset               = conversionSourceOffset;
     uniform.indexCount              = indexCount;
     uniform.primitiveRestartEnabled = primitiveRestartEnabled;
 
     cmdEncoder->setData(uniform, 0);
-    cmdEncoder->setBuffer(srcBuffer.buffer(), 0, 1);
+    cmdEncoder->setBuffer(srcBuffer.buffer(), srcBuffer.offset() - conversionSourceOffset, 1);
     cmdEncoder->setBufferForWrite(dstBuffer.buffer(), dstBuffer.offset(), 2);
 
     DispatchCompute(contextMtl, cmdEncoder, pipelineState, indexCount);
@@ -2489,7 +2465,7 @@ angle::Result CopyPixelsUtils::getB2TRenderPipeline(
     const RenderPassDesc &renderPassDesc = cmdEncoder->renderPassDesc();
     renderPassDesc.populateRenderPipelineOutputDesc(&pipelineDesc.outputDescriptor);
 
-    pipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassTriangle;
+    pipelineDesc.setInputPrimitiveTopology(MTLPrimitiveTopologyClassTriangle);
 
     return contextMtl->getPipelineCache().getRenderPipeline(
         contextMtl, mB2TVertexShader, fragmentShader, pipelineDesc, outRenderPipeline);

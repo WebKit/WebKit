@@ -32,7 +32,7 @@ class RenderTextControlSingleLine : public RenderTextControl {
     WTF_MAKE_TZONE_ALLOCATED(RenderTextControlSingleLine);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControlSingleLine);
 public:
-    RenderTextControlSingleLine(Type, HTMLInputElement&, RenderStyle&&);
+    RenderTextControlSingleLine(Type, HTMLInputElement&, Style::ComputedStyle&&);
     virtual ~RenderTextControlSingleLine();
 
     RenderTextControlInnerBlock* innerTextRenderer() const;
@@ -72,7 +72,7 @@ private:
     LayoutUnit preferredContentLogicalWidth(float charWidth) const override;
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     HTMLElement* innerSpinButtonElement() const;
 };
@@ -93,7 +93,7 @@ class RenderTextControlInnerBlock final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderTextControlInnerBlock);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControlInnerBlock);
 public:
-    RenderTextControlInnerBlock(Element&, RenderStyle&&);
+    RenderTextControlInnerBlock(Element&, Style::ComputedStyle&&);
     virtual ~RenderTextControlInnerBlock();
 
 private:

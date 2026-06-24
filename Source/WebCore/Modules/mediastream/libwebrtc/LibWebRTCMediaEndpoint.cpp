@@ -58,6 +58,7 @@
 #include "RealtimeOutgoingVideoSource.h"
 #include "RegistrableDomain.h"
 #include "Settings.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/stats/rtcstats_objects.h>
 #include <webrtc/rtc_base/physical_socket_server.h>
 #include <webrtc/p2p/base/basic_packet_socket_factory.h>
@@ -65,6 +66,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 #include <webrtc/p2p/client/basic_port_allocator.h>
 IGNORE_CLANG_WARNINGS_END
 #include <webrtc/pc/peer_connection_factory.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/MainThread.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>

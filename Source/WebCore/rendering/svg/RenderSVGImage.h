@@ -36,7 +36,7 @@ class RenderSVGImage final : public RenderSVGModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGImage);
 public:
-    RenderSVGImage(SVGImageElement&, RenderStyle&&);
+    RenderSVGImage(SVGImageElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGImage();
 
     SVGImageElement& NODELETE imageElement() const;
@@ -80,7 +80,7 @@ private:
 
     bool needsHasSVGTransformFlags() const final;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
 
     CachedImage* cachedImage() const { return imageResource().cachedImage(); }
 

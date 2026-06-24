@@ -28,9 +28,9 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGBasicBlock.h"
-#include "DFGBlockMapInlines.h"
 #include "DFGBlockSet.h"
 #include "DFGGraph.h"
+#include <wtf/IndexMap.h>
 #include <wtf/SingleRootGraph.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -42,7 +42,7 @@ class CFG {
 public:
     typedef BasicBlock* Node;
     typedef BlockSet Set;
-    template<typename T> using Map = BlockMap<T>;
+    template<typename T> using Map = IndexMap<BasicBlock*, T>;
     typedef BlockList List;
 
     CFG(Graph& graph)
@@ -65,12 +65,12 @@ public:
     }
 
     template<typename T>
-    Map<T> newMap() { return BlockMap<T>(m_graph); }
+    Map<T> newMap() { return IndexMap<BasicBlock*, T>(m_graph.numBlocks()); }
 
     DFG::Node::SuccessorsIterable successors(Node node) { return node->successors(); }
     PredecessorList& predecessors(Node node) { return node->predecessors; }
 
-    unsigned index(Node node) const { return node->index; }
+    unsigned index(Node node) const { return node->index(); }
     Node node(unsigned index) const { return m_graph.block(index); }
     unsigned numNodes() const { return m_graph.numBlocks(); }
     

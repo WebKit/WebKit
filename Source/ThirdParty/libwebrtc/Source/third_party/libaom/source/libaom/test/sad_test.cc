@@ -139,16 +139,12 @@ class SADTestBase : public ::testing::Test {
       source_data_ = source_data8_;
       reference_data_ = reference_data8_;
       second_pred_ = second_pred8_;
-      comp_pred_ = comp_pred8_;
-      comp_pred_test_ = comp_pred8_test_;
     } else {
       use_high_bit_depth_ = true;
       bit_depth_ = static_cast<aom_bit_depth_t>(bd_);
       source_data_ = CONVERT_TO_BYTEPTR(source_data16_);
       reference_data_ = CONVERT_TO_BYTEPTR(reference_data16_);
       second_pred_ = CONVERT_TO_BYTEPTR(second_pred16_);
-      comp_pred_ = CONVERT_TO_BYTEPTR(comp_pred16_);
-      comp_pred_test_ = CONVERT_TO_BYTEPTR(comp_pred16_test_);
     }
     mask_ = (1 << bit_depth_) - 1;
     source_stride_ = (width_ + 31) & ~31;
@@ -336,10 +332,8 @@ class SADTestBase : public ::testing::Test {
   static uint16_t *reference_data16_;
   static uint16_t *second_pred16_;
   int reference_stride_;
-  static uint8_t *comp_pred_;
   static uint8_t *comp_pred8_;
   static uint16_t *comp_pred16_;
-  static uint8_t *comp_pred_test_;
   static uint8_t *comp_pred8_test_;
   static uint16_t *comp_pred16_test_;
   DIST_WTD_COMP_PARAMS jcp_param_;
@@ -529,8 +523,6 @@ class SADavgTest : public ::testing::WithParamInterface<SadMxNAvgParam>,
 uint8_t *SADTestBase::source_data_ = nullptr;
 uint8_t *SADTestBase::reference_data_ = nullptr;
 uint8_t *SADTestBase::second_pred_ = nullptr;
-uint8_t *SADTestBase::comp_pred_ = nullptr;
-uint8_t *SADTestBase::comp_pred_test_ = nullptr;
 uint8_t *SADTestBase::source_data8_ = nullptr;
 uint8_t *SADTestBase::reference_data8_ = nullptr;
 uint8_t *SADTestBase::second_pred8_ = nullptr;

@@ -26,8 +26,8 @@
 #pragma once
 
 #include <WebCore/RenderStyleConstants.h>
-#include <WebCore/StyleLengthWrapper.h>
 #include <WebCore/StyleMaskBorder.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 
@@ -37,13 +37,9 @@ struct WebkitBoxReflect;
 
 namespace Style {
 
-struct WebkitBoxReflectionOffset : LengthWrapperBase<LengthPercentage<CSS::All, float>> {
-    using Base::Base;
-};
-
 struct WebkitBoxReflection {
     using Direction = ReflectionDirection;
-    using Offset = WebkitBoxReflectionOffset;
+    using Offset = LengthPercentage<>;
     using Mask = MaskBorder;
 
     Direction direction { Direction::Below };
@@ -98,15 +94,14 @@ private:
 DEFINE_TYPE_MAPPING(CSS::WebkitBoxReflect, WebkitBoxReflect);
 
 template<> struct CSSValueConversion<WebkitBoxReflect> { auto operator()(BuilderState&, const CSSValue&) -> WebkitBoxReflect; };
-template<> struct CSSValueCreation<WebkitBoxReflect> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const WebkitBoxReflect&); };
+template<> struct CSSValueCreation<WebkitBoxReflect> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const WebkitBoxReflect&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<WebkitBoxReflection> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const WebkitBoxReflection&); };
+template<> struct Serialize<WebkitBoxReflection> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const WebkitBoxReflection&); };
 
 } // namespace Style
 } // namespace WebCore
 
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::WebkitBoxReflection, 3)
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WebkitBoxReflectionOffset);
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WebkitBoxReflect);

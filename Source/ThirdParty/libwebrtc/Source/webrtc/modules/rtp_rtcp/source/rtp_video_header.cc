@@ -48,7 +48,7 @@ VideoFrameMetadata RTPVideoHeader::GetAsMetadata() const {
     metadata.SetFrameId(generic->frame_id);
     metadata.SetSpatialIndex(generic->spatial_index);
     metadata.SetTemporalIndex(generic->temporal_index);
-    metadata.SetFrameDependencies(generic->dependencies);
+    metadata.SetDependencies(generic->dependencies);
     metadata.SetDecodeTargetIndications(generic->decode_target_indications);
   }
   metadata.SetIsLastFrameInPicture(is_last_frame_in_picture);
@@ -89,8 +89,9 @@ void RTPVideoHeader::SetFromMetadata(const VideoFrameMetadata& metadata) {
     generic->frame_id = metadata.GetFrameId().value();
     generic->spatial_index = metadata.GetSpatialIndex();
     generic->temporal_index = metadata.GetTemporalIndex();
-    generic->dependencies.assign(metadata.GetFrameDependencies().begin(),
-                                 metadata.GetFrameDependencies().end());
+    if (auto deps = metadata.GetDependencies()) {
+      generic->dependencies.assign(deps->begin(), deps->end());
+    }
     generic->decode_target_indications.assign(
         metadata.GetDecodeTargetIndications().begin(),
         metadata.GetDecodeTargetIndications().end());

@@ -45,8 +45,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFieldSetElement);
 
 using namespace HTMLNames;
 
-inline HTMLFieldSetElement::HTMLFieldSetElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+inline HTMLFieldSetElement::HTMLFieldSetElement(const QualifiedName& tagName, Document& document)
+    : HTMLFormControlElement(tagName, document)
 {
     ASSERT(hasTagName(fieldsetTag));
 }
@@ -57,9 +57,9 @@ HTMLFieldSetElement::~HTMLFieldSetElement()
         document().removeDisabledFieldsetElement();
 }
 
-Ref<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new HTMLFieldSetElement(tagName, document, form));
+    return adoptRef(*new HTMLFieldSetElement(tagName, document));
 }
 
 bool HTMLFieldSetElement::isDisabledFormControl() const
@@ -180,7 +180,7 @@ const AtomString& HTMLFieldSetElement::formControlType() const
     return fieldset;
 }
 
-RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     // Fieldsets should make a block flow if display: inline, table types, or deprecated flex types are set.
     return RenderElement::createFor(*this, WTF::move(style), { RenderElement::ConstructBlockLevelRendererFor::Inline, RenderElement::ConstructBlockLevelRendererFor::TableOrTablePart, RenderElement::ConstructBlockLevelRendererFor::DeprecatedFlexBox });

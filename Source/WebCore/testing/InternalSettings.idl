@@ -27,7 +27,6 @@
 enum EditingBehaviorType { "mac", "windows", "unix", "ios" };
 enum FontLoadTimingOverride { "None", "Block", "Swap", "Failure" };
 enum ForcedAccessibilityValue { "system", "on", "off" };
-enum StorageBlockingPolicy { "AllowAll", "BlockThirdParty", "BlockAll" };
 enum SystemLayoutDirection { "LTR", "RTL" };
 enum TrackKind { "Subtitles", "Captions", "TextDescriptions" };
 enum UserInterfaceDirectionPolicy { "Content", "System" };
@@ -50,7 +49,6 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     undefined setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double intervalInSeconds);
     undefined setMinimumTimerInterval(unrestricted double intervalInSeconds);
     undefined setEditingBehavior(EditingBehaviorType behavior);
-    undefined setStorageBlockingPolicy(StorageBlockingPolicy policy);
     undefined setUserInterfaceDirectionPolicy(UserInterfaceDirectionPolicy policy);
     undefined setSystemLayoutDirection(SystemLayoutDirection direction);
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;

@@ -11,8 +11,8 @@
 
 #include <cstddef>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/capture_mixer/channel_content_remixer.h"
 #include "rtc_base/checks.h"
 
@@ -33,7 +33,7 @@ bool ChoiceOfChannelMatchesSingleChannelMixing(int channel,
 }
 
 bool EnoughContentForUpdatingMixing(
-    ArrayView<const int, 2> num_frames_since_activity) {
+    std::span<const int, 2> num_frames_since_activity) {
   const bool channel0_inactive =
       num_frames_since_activity[0] > kInactivityThresholdFrames;
   const bool channel1_inactive =
@@ -44,8 +44,8 @@ bool EnoughContentForUpdatingMixing(
 
 bool SingleSilentChannelDetected(
     size_t num_samples_per_channel,
-    ArrayView<const float, 2> average_energies,
-    ArrayView<const int, 2> num_frames_since_activity) {
+    std::span<const float, 2> average_energies,
+    std::span<const int, 2> num_frames_since_activity) {
   RTC_DCHECK(EnoughContentForUpdatingMixing(num_frames_since_activity));
 
   const bool channel0_inactive =
@@ -72,7 +72,7 @@ bool SingleSilentChannelDetected(
 }
 
 std::optional<int> IdentifyLargelyImbalancedChannel(
-    ArrayView<const float, 2> average_energies) {
+    std::span<const float, 2> average_energies) {
   constexpr float kEnergyRatioThreshold = 50.0f;
   const float& energy0 = average_energies[0];
   const float& energy1 = average_energies[1];
@@ -87,8 +87,8 @@ std::optional<int> IdentifyLargelyImbalancedChannel(
 }
 
 std::optional<int> IdentifyModerateImbalancedAndSaturatedChannel(
-    ArrayView<const float, 2> average_energies,
-    ArrayView<const float, 2> saturation_factors) {
+    std::span<const float, 2> average_energies,
+    std::span<const float, 2> saturation_factors) {
   constexpr float kEnergyRatioModerateThreshold = 4.0f;
   constexpr float kSignificantSaturationThreshold = 0.8f;
   constexpr float kNoSaturationThreshold = 0.1f;
@@ -127,9 +127,9 @@ RemixingLogic::RemixingLogic(size_t num_samples_per_channel,
     : settings_(settings), num_samples_per_channel_(num_samples_per_channel) {}
 
 StereoMixingVariant RemixingLogic::SelectStereoChannelMixing(
-    ArrayView<const float, 2> average_energies,
-    ArrayView<const int, 2> num_frames_since_activity,
-    ArrayView<const float, 2> saturation_factors) {
+    std::span<const float, 2> average_energies,
+    std::span<const int, 2> num_frames_since_activity,
+    std::span<const float, 2> saturation_factors) {
   // Only update the mixing when there is sufficient audio activity.
   if (!EnoughContentForUpdatingMixing(num_frames_since_activity)) {
     return mixing_;
@@ -173,8 +173,8 @@ StereoMixingVariant RemixingLogic::SelectStereoChannelMixing(
 }
 
 bool RemixingLogic::HandleAnySilentChannels(
-    ArrayView<const float, 2> average_energies,
-    ArrayView<const int, 2> num_frames_since_activity) {
+    std::span<const float, 2> average_energies,
+    std::span<const int, 2> num_frames_since_activity) {
   RTC_DCHECK(mode_ != Mode::kSilentChannel ||
              mixing_ == StereoMixingVariant::kUseAverage);
 
@@ -209,8 +209,8 @@ bool RemixingLogic::HandleAnySilentChannels(
 }
 
 bool RemixingLogic::HandleAnyImbalancedAndSaturatedChannels(
-    ArrayView<const float, 2> average_energies,
-    ArrayView<const float, 2> saturation_factors) {
+    std::span<const float, 2> average_energies,
+    std::span<const float, 2> saturation_factors) {
   RTC_DCHECK(mode_ != Mode::kSaturatedChannel ||
              (mixing_ == StereoMixingVariant::kUseChannel0 ||
               mixing_ == StereoMixingVariant::kUseChannel1));
@@ -257,7 +257,7 @@ bool RemixingLogic::HandleAnyImbalancedAndSaturatedChannels(
 }
 
 bool RemixingLogic::HandleAnyLargelyImbalancedChannels(
-    ArrayView<const float, 2> average_energies) {
+    std::span<const float, 2> average_energies) {
   RTC_DCHECK(mode_ != Mode::kImbalancedChannels ||
              (mixing_ == StereoMixingVariant::kUseChannel0 ||
               mixing_ == StereoMixingVariant::kUseChannel1));

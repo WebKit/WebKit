@@ -46,6 +46,10 @@ list(APPEND AOM_DSP_COMMON_SOURCES
             "${AOM_ROOT}/aom_dsp/txfm_common.h"
             "${AOM_ROOT}/aom_dsp/x86/convolve_common_intrin.h")
 
+if(CONFIG_HIGHWAY)
+  list(APPEND AOM_DSP_COMMON_SOURCES "${AOM_ROOT}/aom_dsp/convolve_hwy.h")
+endif()
+
 list(APPEND AOM_DSP_COMMON_ASM_SSE2
             "${AOM_ROOT}/aom_dsp/x86/intrapred_asm_sse2.asm")
 if(CONFIG_AV1_HIGHBITDEPTH)
@@ -97,13 +101,12 @@ list(APPEND AOM_DSP_COMMON_INTRIN_AVX2
             "${AOM_ROOT}/aom_dsp/x86/blend_a64_mask_avx2.c"
             "${AOM_ROOT}/aom_dsp/x86/bitdepth_conversion_avx2.h")
 
-if(CONFIG_SVT_AV1)
+if(CONFIG_HIGHWAY)
   list(APPEND AOM_DSP_COMMON_INTRIN_AVX2
-              "${AOM_ROOT}/third_party/SVT-AV1/convolve_2d_avx2.h"
-              "${AOM_ROOT}/third_party/SVT-AV1/convolve_avx2.h"
-              "${AOM_ROOT}/third_party/SVT-AV1/EbMemory_AVX2.h"
-              "${AOM_ROOT}/third_party/SVT-AV1/EbMemory_SSE4_1.h"
-              "${AOM_ROOT}/third_party/SVT-AV1/synonyms.h")
+              "${AOM_ROOT}/aom_dsp/x86/convolve_vert_hwy_avx2.cc")
+  list(APPEND AOM_DSP_COMMON_INTRIN_AVX512
+              "${AOM_ROOT}/aom_dsp/x86/convolve_hwy_avx512.cc"
+              "${AOM_ROOT}/aom_dsp/x86/convolve_vert_hwy_avx512.cc")
 endif()
 
 list(APPEND AOM_DSP_COMMON_INTRIN_NEON
@@ -312,6 +315,7 @@ if(CONFIG_AV1_ENCODER)
               "${AOM_ROOT}/aom_dsp/arm/sad_neon_dotprod.c"
               "${AOM_ROOT}/aom_dsp/arm/sadxd_neon_dotprod.c"
               "${AOM_ROOT}/aom_dsp/arm/sse_neon_dotprod.c"
+              "${AOM_ROOT}/aom_dsp/arm/subpel_variance_neon_dotprod.c"
               "${AOM_ROOT}/aom_dsp/arm/sum_squares_neon_dotprod.c"
               "${AOM_ROOT}/aom_dsp/arm/variance_neon_dotprod.c")
 
@@ -499,6 +503,12 @@ function(setup_aom_dsp_targets)
     add_intrinsics_object_library("-march=skylake-avx512" "avx512"
                                   "aom_dsp_encoder"
                                   "AOM_DSP_ENCODER_INTRIN_AVX512")
+  endif()
+
+  if(HAVE_AVX512 AND CONFIG_HIGHWAY)
+    add_intrinsics_object_library("-march=skylake-avx512" "avx512"
+                                  "aom_dsp_common"
+                                  "AOM_DSP_COMMON_INTRIN_AVX512")
   endif()
 
   if(HAVE_NEON)

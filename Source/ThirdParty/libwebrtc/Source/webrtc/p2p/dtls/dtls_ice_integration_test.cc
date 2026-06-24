@@ -31,6 +31,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/random.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/ssl_stream_adapter.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/wait_until.h"
@@ -84,6 +85,32 @@ class DtlsIceIntegrationTest : public dtls_ice_integration_fixture::Base,
     return CountConnectionsWithFilter(ice,
                                       [](auto con) { return con.writable; });
   }
+
+  void CheckRetransmissions() {
+    if (!server_.config.ice_lite) {
+      EXPECT_EQ(client_.dtls->GetRetransmissionCount(), 0);
+      EXPECT_EQ(server_.dtls->GetRetransmissionCount(), 0);
+      return;
+    }
+    if (client_.config.ssl_role == SSL_CLIENT) {
+      EXPECT_EQ(client_.dtls->GetRetransmissionCount(), 0);
+      EXPECT_EQ(server_.dtls->GetRetransmissionCount(), 0);
+      return;
+    }
+
+    // TODO: bugs.webrtc.org/367395350 - Investigate retransmissions
+    // from in fake ice lite scenarios. Very few remaining!
+    // - server is (fake) ICE lite but SSL_CLIENT
+    if (client_.config.dtls_in_stun == server_.config.dtls_in_stun) {
+      const bool pqc = client_.config.pqc && server_.config.pqc;
+      EXPECT_EQ(client_.dtls->GetRetransmissionCount(), 0);
+      EXPECT_LE(server_.dtls->GetRetransmissionCount(), !pqc ? 0 : 1);
+      return;
+    }
+
+    EXPECT_LE(client_.dtls->GetRetransmissionCount(), 1);
+    EXPECT_LE(server_.dtls->GetRetransmissionCount(), 1);
+  }
 };
 
 TEST_P(DtlsIceIntegrationTest, SmokeTest) {
@@ -117,8 +144,7 @@ TEST_P(DtlsIceIntegrationTest, SmokeTest) {
     EXPECT_GE(dtls_server().dtls->GetStunDataCount(), 0);
   }
 
-  EXPECT_EQ(client_.dtls->GetRetransmissionCount(), 0);
-  EXPECT_EQ(server_.dtls->GetRetransmissionCount(), 0);
+  CheckRetransmissions();
 }
 
 TEST_P(DtlsIceIntegrationTest, AddCandidates) {
@@ -195,19 +221,12 @@ TEST_P(DtlsIceIntegrationTest, ClientLateCertificate) {
               client_.config.dtls_in_stun && server_.config.dtls_in_stun);
   });
 
-  EXPECT_EQ(client_.dtls->GetRetransmissionCount(), 0);
-  EXPECT_EQ(server_.dtls->GetRetransmissionCount(), 0);
+  CheckRetransmissions();
 }
 
 TEST_P(DtlsIceIntegrationTest, TestWithPacketLoss) {
   if (!IsBoringSsl()) {
     GTEST_SKIP() << "Needs boringssl.";
-  }
-
-  if (client_.config.dtls_in_stun != server_.config.dtls_in_stun) {
-    // TODO jonaso, webrtc:404763475 : re-enable once
-    // boringssl has been merged and test cases updated.
-    GTEST_SKIP() << "TODO jonaso.";
   }
 
   ConfigureEmulatedNetwork();
@@ -240,12 +259,6 @@ TEST_P(DtlsIceIntegrationTest, TestWithPacketLoss) {
 TEST_P(DtlsIceIntegrationTest, LongRunningTestWithPacketLoss) {
   if (!IsBoringSsl()) {
     GTEST_SKIP() << "Needs boringssl.";
-  }
-
-  if (client_.config.dtls_in_stun != server_.config.dtls_in_stun) {
-    // TODO jonaso, webrtc:404763475 : re-enable once
-    // boringssl has been merged and test cases updated.
-    GTEST_SKIP() << "TODO jonaso.";
   }
 
   int seed = absl::GetFlag(FLAGS_long_running_seed);
@@ -381,8 +394,16 @@ TEST_P(DtlsIceIntegrationTest, AlmostFullSTUN_BINDING) {
               client_.config.dtls_in_stun && server_.config.dtls_in_stun);
   });
 
-  EXPECT_EQ(client_.dtls->GetRetransmissionCount(), 0);
-  EXPECT_EQ(server_.dtls->GetRetransmissionCount(), 0);
+  if (client_.config.dtls_in_stun && server_.config.dtls_in_stun &&
+      (client_.config.pqc || server_.config.pqc)) {
+    // TODO: bugs.webrtc.org/367395350 - Investigate why there is
+    // retransmissions in the scenario where the STUN packet is almost full,
+    // e.g. will the issue be solved by our effort to smooth BoringSSL packets ?
+    EXPECT_LE(client_.dtls->GetRetransmissionCount(), 1);
+    EXPECT_LE(server_.dtls->GetRetransmissionCount(), 1);
+  } else {
+    CheckRetransmissions();
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(DtlsStunPiggybackingIntegrationTest,
@@ -449,16 +470,6 @@ INSTANTIATE_TEST_SUITE_P(
 TEST_P(DtlsIceIntegrationPerformanceTest, ConnectTime) {
   if (!dtls_ice_integration_fixture::Base::IsBoringSsl()) {
     GTEST_SKIP() << "Needs boringssl.";
-  }
-
-  {
-    TestConfig config = GetParam();
-    if (config.client_config.pqc == 1 && config.server_config.pqc &&
-        config.server_config.ice_lite) {
-      // TODO jonaso, webrtc:404763475 : re-enable once
-      // boringssl has been merged and test cases updated.
-      GTEST_SKIP() << "TODO jonaso.";
-    }
   }
 
   int iter = 50;

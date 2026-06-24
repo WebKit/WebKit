@@ -42,6 +42,9 @@ import webkitpy.port.config as config
 
 
 class ConfigTest(unittest.TestCase):
+    def setUp(self):
+        config.Config._clear_cache_for_testing()
+
     def make_config(self, output='', files=None, exit_code=0, exception=None, run_command_fn=None, stderr='', port_implementation=None, use_cmake=False):
         e = MockExecutive2(output=output, exit_code=exit_code, exception=exception, run_command_fn=run_command_fn, stderr=stderr)
         fs = MockFileSystem(files)
@@ -84,6 +87,7 @@ class ConfigTest(unittest.TestCase):
         self.assertRaises(KeyError, c.build_directory, 'Unknown')
 
         # Test that stderr output from webkit-build-directory won't mangle the build dir
+        config.Config._clear_cache_for_testing()
         c = self.make_config(output='/WebKitBuild/', stderr="mock stderr output from webkit-build-directory")
         self.assertEqual(c.build_directory(None), '/WebKitBuild/')
 

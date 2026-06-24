@@ -22,6 +22,8 @@
 #include "../../internal.h"
 
 
+using namespace bssl;
+
 static int bn_cmp_words_consttime(const BN_ULONG *a, size_t a_len,
                                   const BN_ULONG *b, size_t b_len) {
   static_assert(sizeof(BN_ULONG) <= sizeof(crypto_word_t),
@@ -82,7 +84,7 @@ int BN_cmp(const BIGNUM *a, const BIGNUM *b) {
   return a->neg ? -ret : ret;
 }
 
-int bn_less_than_words(const BN_ULONG *a, const BN_ULONG *b, size_t len) {
+int bssl::bn_less_than_words(const BN_ULONG *a, const BN_ULONG *b, size_t len) {
   return bn_cmp_words_consttime(a, len, b, len) < 0;
 }
 

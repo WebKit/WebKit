@@ -142,7 +142,7 @@ std::vector<std::string> translateArgv(int argc, char** argv)
             continue;
         }
 
-        if (token == "--site-isolation") {
+        if (token == "--site-isolation-enabled-by-default") {
             forceSiteIsolation();
             continue;
         }

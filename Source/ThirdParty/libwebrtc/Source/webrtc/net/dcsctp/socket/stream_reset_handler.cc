@@ -12,9 +12,9 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/units/time_delta.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/reconfig_chunk.h"
@@ -355,7 +355,7 @@ ReConfigChunk StreamResetHandler::MakeReconfigChunk() {
 }
 
 void StreamResetHandler::ResetStreams(
-    webrtc::ArrayView<const StreamID> outgoing_streams) {
+    std::span<const StreamID> outgoing_streams) {
   for (StreamID stream_id : outgoing_streams) {
     retransmission_queue_->PrepareResetStream(stream_id);
   }

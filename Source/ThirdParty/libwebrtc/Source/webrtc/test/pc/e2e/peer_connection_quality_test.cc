@@ -371,7 +371,8 @@ void PeerConnectionE2EQualityTest::Run(RunParams run_params) {
   StatsPoller stats_poller(observers,
                            std::map<std::string, StatsProvider*>{
                                {*alice_->params().name, alice_.get()},
-                               {*bob_->params().name, bob_.get()}});
+                               {*bob_->params().name, bob_.get()}},
+                           stats_polling_delay_);
   executor_->ScheduleActivity(TimeDelta::Zero(), kStatsUpdateInterval,
                               [&stats_poller](TimeDelta) {
                                 stats_poller.PollStatsAndNotifyObservers();
@@ -415,6 +416,11 @@ void PeerConnectionE2EQualityTest::Run(RunParams run_params) {
     // Get final end-of-call stats.
     stats_poller.PollStatsAndNotifyObservers();
   });
+
+  // Wait until the final stats collection is fully resolved across all peers.
+  ASSERT_TRUE(time_controller_.Wait(
+      [&stats_poller]() { return !stats_poller.IsPolling(); },
+      kDefaultTimeout));
   // We need to detach AEC dumping from peers, because dump uses `task_queue_`
   // inside.
   alice_->DetachAecDump();

@@ -387,6 +387,8 @@ namespace WebCore {
     String addTextTrackKindEasyReaderSuffix(const String&);
     String textTrackKindForcedDisplayName();
     String addTextTrackKindForcedSuffix(const String&);
+    String textTrackKindGeneratedDisplayName();
+    String addTextTrackKindGeneratedSuffix(const String&);
     String audioTrackKindDescriptionsDisplayName();
     String addAudioTrackKindDescriptionsSuffix(const String&);
     String audioTrackKindCommentaryDisplayName();

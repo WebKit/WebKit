@@ -12,8 +12,8 @@
 #include <array>
 #include <cstddef>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
@@ -67,7 +67,7 @@ std::optional<DelayEstimate> EchoPathDelayEstimator::EstimateDelay(
     const DownsampledRenderBuffer& render_buffer,
     const Block& capture) {
   std::array<float, kBlockSize> downsampled_capture_data;
-  ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
+  std::span<float> downsampled_capture(downsampled_capture_data.data(),
                                        sub_block_size_);
 
   std::array<float, kBlockSize> downmixed_capture;

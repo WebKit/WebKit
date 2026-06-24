@@ -8,4 +8,5 @@ PASS Serializing a scoped registry ShadowRoot with a null registry host (documen
 PASS Serializing a null registry ShadowRoot with a scoped registry host (document)
 PASS Serializing a scoped registry ShadowRoot with a scoped registry host (document)
 PASS A declarative shadow root gets its default registry from its node document
+PASS Custom element upgrades inside a declarative shadow root parsed via template.setHTMLUnsafe()
 

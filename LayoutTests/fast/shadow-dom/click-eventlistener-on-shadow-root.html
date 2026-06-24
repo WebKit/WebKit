@@ -14,8 +14,6 @@ host.addEventListener('click', () => {
     alert('PASS');
 });
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 let shadowRoot = host.attachShadow({mode: 'closed'});
 shadowRoot.addEventListener('click', () => { });

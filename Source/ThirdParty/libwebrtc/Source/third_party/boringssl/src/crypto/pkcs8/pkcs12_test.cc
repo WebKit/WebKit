@@ -350,9 +350,8 @@ static void TestRoundTrip(const char *password, const char *name,
   ASSERT_TRUE(certs2);
   ASSERT_TRUE(PKCS12_get_key_and_certs(&key2, certs2.get(), &cbs, password));
   bssl::UniquePtr<EVP_PKEY> free_key2(key2);
-  // Note |EVP_PKEY_cmp| returns one for equality while |X509_cmp| returns zero.
   if (key) {
-    EXPECT_EQ(1, EVP_PKEY_cmp(key2, key.get()));
+    EXPECT_EQ(1, EVP_PKEY_eq(key2, key.get()));
   } else {
     EXPECT_FALSE(key2);
   }
@@ -539,7 +538,7 @@ static void ExpectPKCS12Parse(bssl::Span<const uint8_t> in,
     EXPECT_FALSE(key);
   } else {
     ASSERT_TRUE(key);
-    EXPECT_EQ(1, EVP_PKEY_cmp(key, expect_key));
+    EXPECT_EQ(1, EVP_PKEY_eq(key, expect_key));
   }
 
   if (expect_cert == nullptr) {

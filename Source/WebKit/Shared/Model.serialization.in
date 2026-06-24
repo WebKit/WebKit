@@ -67,7 +67,7 @@ header: <WebKit/ModelTypes.h>
 };
 
 header: <WebKit/ModelTypes.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateTextureDescriptor {
+[CustomHeader, RValue] struct WebModel::UpdateTextureDescriptor {
     WebModel::ImageAsset imageAsset;
     WebModel::TypedResourceId identifier;
     String hashString;
@@ -184,8 +184,8 @@ header: <WebKit/ModelTypes.h>
 };
 
 header: <WebKit/ModelTypes.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::ImageAsset {
-    Vector<uint8_t> data;
+[CustomHeader, RValue] struct WebModel::ImageAsset {
+    std::optional<WebCore::SharedMemory::Handle> dataHandle;
     long width;
     long height;
     long depth;
@@ -273,6 +273,9 @@ header: <WebKit/ModelTypes.h>
     kMatrix2f,
     kMatrix3f,
     kMatrix4f,
+    kMatrix2h,
+    kMatrix3h,
+    kMatrix4h,
     kQuatf,
     kQuath,
     kFloat2,
@@ -313,6 +316,7 @@ header: <WebKit/ModelTypes.h>
     WebModel::Constant constant;
     Vector<Variant<String, double>> constantValues;
     String name;
+    std::optional<String> colorSpaceName;
 };
 
 header: <WebKit/ModelTypes.h>

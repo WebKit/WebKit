@@ -89,6 +89,7 @@ public:
     WEBCORE_EXPORT ~DetachedOffscreenCanvas();
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
     bool originClean() const { return m_originClean; }
+    const RefPtr<PlaceholderRenderingContextSource>& placeholderSource() const LIFETIME_BOUND { return m_placeholderSource; }
     RefPtr<PlaceholderRenderingContextSource> NODELETE takePlaceholderSource();
 
 private:

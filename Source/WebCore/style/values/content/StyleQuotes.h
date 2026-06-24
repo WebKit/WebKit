@@ -74,11 +74,11 @@ private:
 
 // MARK: - Conversion
 
-template<> struct ToCSS<Quotes> { auto operator()(const Quotes&, const RenderStyle&) -> CSS::Quotes; };
+template<> struct ToCSS<Quotes> { auto operator()(const Quotes&, const Style::ComputedStyle&) -> CSS::Quotes; };
 template<> struct ToStyle<CSS::Quotes> { auto operator()(const CSS::Quotes&, const BuilderState&) -> Quotes; };
 
 template<> struct CSSValueConversion<Quotes> { auto operator()(BuilderState&, const CSSValue&) -> Quotes; };
-template<> struct CSSValueCreation<Quotes> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const Quotes&); };
+template<> struct CSSValueCreation<Quotes> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const Quotes&); };
 
 } // namespace Style
 } // namespace WebCore

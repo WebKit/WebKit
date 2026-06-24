@@ -6,12 +6,9 @@
 div { -webkit-column-count: 1; }
 h2 { -webkit-column-span: all; }
 </style>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 
 function runTest()
 {
@@ -22,13 +19,11 @@ function runTest()
     gc();
     document.body.innerHTML = "PASS";
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 onload = function() { setTimeout(runTest, 0); }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 <div>
 <span id="test"><h2></span>
 </div>

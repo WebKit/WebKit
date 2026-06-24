@@ -19,8 +19,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (177,9) size 5x20
                   text run at (177,2) width 5: " "
                 RenderMenuList {SELECT} at (181,10) size 75x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                  RenderSelectFallbackButton {DIV} at (6,3) size 62x14
-                    RenderText at (0,0) size 50x14
+                  RenderBlock {DIV} at (6,3) size 62x14
+                    RenderText {#text} at (0,0) size 50x14
                       text run at (0,0) width 50: "Netscape"
                 RenderTextControl {INPUT} at (255,10) size 225x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
                 RenderText {#text} at (479,9) size 5x20

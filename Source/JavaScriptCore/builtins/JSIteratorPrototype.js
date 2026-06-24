@@ -114,12 +114,20 @@ function take(limit)
         }
     }
 
+    if (@isFinite(numLimit) && numLimit > @MAX_SAFE_INTEGER) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.take argument must be non-negative safe integer or +Infinity");
+        }
+    }
+
     var intLimit = @toIntegerOrInfinity(numLimit);
     if (intLimit < 0) {
         try {
             @iteratorGenericClose(this);
         } finally {
-            @throwRangeError("Iterator.prototype.take argument must be non-negative.");
+            @throwRangeError("Iterator.prototype.take argument must be non-negative safe integer or +Infinity");
         }
     }
 
@@ -169,12 +177,20 @@ function drop(limit)
         }
     }
 
+    if (@isFinite(numLimit) && numLimit > @MAX_SAFE_INTEGER) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.drop argument must be non-negative safe integer or +Infinity");
+        }
+    }
+
     var intLimit = @toIntegerOrInfinity(numLimit);
     if (intLimit < 0) {
         try {
             @iteratorGenericClose(this);
         } finally {
-            @throwRangeError("Iterator.prototype.drop argument must be non-negative.");
+            @throwRangeError("Iterator.prototype.drop argument must be non-negative safe integer or +Infinity");
         }
     }
 

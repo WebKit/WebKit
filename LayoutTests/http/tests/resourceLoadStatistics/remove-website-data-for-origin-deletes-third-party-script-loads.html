@@ -8,6 +8,7 @@
 </head>
 <body onload="runTest()">
 <script>
+    window.jsTestIsAsync = true;
     const host = "localhost";
     const thirdPartyOrigin = "http://localhost:8000";
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
@@ -16,7 +17,7 @@
         testRunner.clearStatisticsDataForDomain(host);
         testRunner.dumpResourceLoadStatistics();
         setEnableFeature(false, function() {
-            testRunner.notifyDone();
+            finishJSTest();
         });
     }
 
@@ -24,7 +25,6 @@
         switch (document.location.hash) {
             case "":
                 if (window.testRunner && window.internals) {
-                    testRunner.waitUntilDone();
                     setEnableFeature(true, function() {
                         document.location.hash = "step1";
                         runTest();

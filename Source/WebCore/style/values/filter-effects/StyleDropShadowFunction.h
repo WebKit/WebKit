@@ -74,16 +74,16 @@ template<size_t I> const auto& get(const DropShadow& value)
 
 // MARK: - Conversion
 
-template<> struct ToCSS<DropShadow> { auto operator()(const DropShadow&, const RenderStyle&) -> CSS::DropShadow; };
+template<> struct ToCSS<DropShadow> { auto operator()(const DropShadow&, const Style::ComputedStyle&) -> CSS::DropShadow; };
 template<> struct ToStyle<CSS::DropShadow> { auto operator()(const CSS::DropShadow&, const BuilderState&) -> DropShadow; };
 
 // MARK: - Evaluation
 
-template<> struct Evaluation<DropShadow, Ref<FilterEffect>> { auto operator()(const DropShadow&, const RenderStyle&) -> Ref<FilterEffect>; };
+template<> struct Evaluation<DropShadow, Ref<FilterEffect>> { auto operator()(const DropShadow&, const Style::ComputedStyle&) -> Ref<FilterEffect>; };
 
 // MARK: - Platform
 
-template<> struct ToPlatform<DropShadow> { auto operator()(const DropShadow&, const RenderStyle&) -> Ref<FilterOperation>; };
+template<> struct ToPlatform<DropShadow> { auto operator()(const DropShadow&, const Style::ComputedStyle&) -> Ref<FilterOperation>; };
 
 } // namespace Style
 } // namespace WebCore

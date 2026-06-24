@@ -48,7 +48,7 @@ JSC::JSValue NavigationDestination::getState(JSDOMGlobalObject& globalObject) co
     if (!m_stateObject)
         return JSC::jsUndefined();
 
-    return m_stateObject->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
+    return protect(m_stateObject)->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
 }
 
 NavigationDestination::~NavigationDestination() = default;

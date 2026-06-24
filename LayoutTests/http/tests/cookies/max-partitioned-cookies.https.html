@@ -8,6 +8,7 @@
 <body>
 <script>
     description("Tests that an upper-bound is enforced on the number of partitioned cookies that can be set.");
+    window.jsTestIsAsync = true;
 
     const partitionHost = "127.0.0.1:8443";
     const thirdPartyOrigin = "https://localhost:8443";
@@ -80,7 +81,7 @@
             case "#step5":
                 testRunner.setStatisticsShouldBlockThirdPartyCookies(false, () => {
                     setEnableFeature(false, () => {
-                        testRunner.notifyDone();
+                        finishJSTest();
                     });
                 }, false, true);
                 break;
@@ -90,7 +91,6 @@
     if (document.location.hash === "") {
         setEnableFeature(true, function () {
             testRunner.dumpChildFramesAsText();
-            testRunner.waitUntilDone();
             document.location.hash = "step1";
             testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest, false, true);
         });

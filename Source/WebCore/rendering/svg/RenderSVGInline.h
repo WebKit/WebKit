@@ -31,12 +31,12 @@ class RenderSVGInline : public RenderInline {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGInline);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInline);
 public:
-    RenderSVGInline(Type, SVGGraphicsElement&, RenderStyle&&);
+    RenderSVGInline(Type, SVGGraphicsElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGInline();
 
     inline SVGGraphicsElement& graphicsElement() const;
 
-    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
 
 private:
     void element() const = delete;
@@ -73,7 +73,7 @@ private:
     std::unique_ptr<LegacyInlineFlowBox> createInlineFlowBox() final;
 
     void willBeDestroyed() final;
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 };
 
 } // namespace WebCore

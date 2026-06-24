@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Style {
 
-CSS::SpringEasingFunction toCSSSpringEasingFunction(const SpringTimingFunction& function, const RenderStyle& style)
+CSS::SpringEasingFunction toCSSSpringEasingFunction(const SpringTimingFunction& function, const Style::ComputedStyle& style)
 {
     return CSS::SpringEasingFunction {
         .parameters = {

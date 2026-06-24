@@ -46,8 +46,8 @@
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "Position.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SimpleRange.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TextBoundaries.h"
 #include "TextIterator.h"
 
@@ -302,12 +302,6 @@ static std::optional<SimpleRange> advanceRangeStartToNextNonWhitespace(SimpleRan
 
         auto string = node->textContent();
 
-        if (string.substringSharingImpl(offset, 6) == "&nbsp;"_s)
-            offset += 6;
-
-        if (string.substringSharingImpl(offset, 5) == "&nbsp"_s)
-            offset += 5;
-        
         if (!isUnicodeWhitespace(string[offset]))
             return newRange;
         offset++;

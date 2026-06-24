@@ -78,7 +78,6 @@ VideoReceiveStreamInterface::Config ParseVideoReceiveStreamJsonConfig(
 #else
   receive_config.render_delay_ms = json["render_delay_ms"].asInt64();
   receive_config.rtp.remote_ssrc = json["rtp"]["remote_ssrc"].asInt64();
-  receive_config.rtp.local_ssrc = json["rtp"]["local_ssrc"].asInt64();
   receive_config.rtp.rtcp_mode =
       json["rtp"]["rtcp_mode"].asString() == "RtcpMode::kCompound"
           ? RtcpMode::kCompound
@@ -150,7 +149,6 @@ Json::Value GenerateVideoReceiveStreamJsonConfig(
 
   Json::Value rtp_json;
   rtp_json["remote_ssrc"] = config.rtp.remote_ssrc;
-  rtp_json["local_ssrc"] = config.rtp.local_ssrc;
   rtp_json["rtcp_mode"] = config.rtp.rtcp_mode == RtcpMode::kCompound
                               ? "RtcpMode::kCompound"
                               : "RtcpMode::kReducedSize";

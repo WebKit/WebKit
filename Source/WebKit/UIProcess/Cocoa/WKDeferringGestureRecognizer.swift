@@ -36,12 +36,14 @@ extension WKDeferringGestureRecognizer {
         super.init(target: nil, action: nil)
     }
 
+    // -initWithCoder: is only a designated initializer for NSGestureRecognizer
+#if WTF_PLATFORM_MAC
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     @objc
-    @available(*, unavailable)
     public required dynamic init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
     }
+#endif
 
     @objc
     override init(target: Any?, action: Selector?) {

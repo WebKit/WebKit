@@ -51,14 +51,28 @@ enum class AutoscrollType : uint8_t {
 #endif
 };
 
-// When the autoscroll or the panScroll is triggered when do the scroll every 50ms to make it smooth.
-constexpr Seconds autoscrollInterval { 50_ms };
-
-// AutscrollController handles autoscroll and pan scroll for EventHandler.
+// AutoscrollController handles autoscroll and pan scroll for EventHandler.
 class AutoscrollController final : public CanMakeCheckedPtr<AutoscrollController> {
     WTF_MAKE_TZONE_ALLOCATED(AutoscrollController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AutoscrollController);
 public:
+    // When the autoscroll or the panScroll is triggered when do the scroll every 50ms to make it smooth.
+    constexpr static Seconds autoscrollInterval = 50_ms;
+
+    // The band, in root-view points, within which a selection-extend drag autoscrolls.
+    constexpr static float selectionAutoscrollEdgeDistance = 100;
+
+    // This bounds how far past a visible edge the autoscroll target is pushed (and thus the per-tick scroll speed.
+    constexpr static float selectionAutoscrollMaximumSpeed = 40;
+
+    // Maps how far a point reaches into the edge band (`distancePastBandEdge`, root-view points) to how far
+    // past the visible edge the autoscroll target should sit, scaling by the band size so the resulting
+    // scroll speed is independent of the band's size.
+    static inline float rampedSelectionAutoscrollDistance(float distancePastBandEdge, float edgeDistance, float maximumSpeed)
+    {
+        return (distancePastBandEdge / edgeDistance) * maximumSpeed;
+    }
+
     AutoscrollController();
     RenderBox* NODELETE autoscrollRenderer() const;
     bool NODELETE autoscrollInProgress() const;

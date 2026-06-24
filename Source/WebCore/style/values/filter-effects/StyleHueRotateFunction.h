@@ -63,7 +63,7 @@ DEFINE_TYPE_WRAPPER_GET(HueRotate, value);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<HueRotate> { CSS::HueRotate NODELETE operator()(const HueRotate&, const RenderStyle&); };
+template<> struct ToCSS<HueRotate> { CSS::HueRotate NODELETE operator()(const HueRotate&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::HueRotate> { auto operator()(const CSS::HueRotate&, const BuilderState&) -> HueRotate; };
 
 // MARK: - Evaluation

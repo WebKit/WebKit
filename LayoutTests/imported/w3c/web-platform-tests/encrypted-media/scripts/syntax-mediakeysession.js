@@ -74,6 +74,10 @@ function runTest(config) {
                 }).then(function (access) {
                     return access.createMediaKeys();
                 }).then(function (mediaKeys) {
+                    if (config.servercertificate)
+                        return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+                    return mediaKeys;
+                }).then(function (mediaKeys) {
                     var mp4SessionPromises = kTypeSpecificGenerateRequestExceptionsTestCases.map(function (testCase) {
                         return test_exception(testCase, mediaKeys, initDataType, initData);
                     });
@@ -130,6 +134,10 @@ function runTest(config) {
                     return navigator.requestMediaKeySystemAccess(keysystem, [configuration]);
                 }).then(function (access) {
                     return access.createMediaKeys();
+                }).then(function (mediaKeys) {
+                    if (config.servercertificate)
+                        return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+                    return mediaKeys;
                 }).then(function (mediaKeys) {
                     var sessionPromises = kLoadExceptionsTestCases.map(function (testCase) {
                         return test_exception(testCase, mediaKeys);
@@ -205,6 +213,10 @@ function runTest(config) {
                 }).then(function (access) {
                     return access.createMediaKeys();
                 }).then(function (mediaKeys) {
+                    if (config.servercertificate)
+                        return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+                    return mediaKeys;
+                }).then(function (mediaKeys) {
                     var mp4SessionPromises = kCreateSessionTestCases.map(function (testCase) {
                         return test_generateRequest(testCase, mediaKeys, initDataType, initData);
                     });
@@ -276,6 +288,10 @@ function runTest(config) {
                     return navigator.requestMediaKeySystemAccess(keysystem, [configuration]);
                 }).then(function (access) {
                     return access.createMediaKeys();
+                }).then(function (mediaKeys) {
+                    if (config.servercertificate)
+                        return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+                    return mediaKeys;
                 }).then(function (mediaKeys) {
                     var mp4SessionPromises = kUpdateSessionExceptionsTestCases.map(function (testCase) {
                         var mediaKeySession = mediaKeys.createSession();

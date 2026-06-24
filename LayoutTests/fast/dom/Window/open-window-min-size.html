@@ -1,8 +1,9 @@
 <!-- webkit-test-runner [ ShowModalDialogEnabled=true ] -->
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script>
+window.jsTestIsAsync = true;
 function validate(msg) {
     shouldBeGreaterThanOrEqual(msg["width"].toString(), "100");
     shouldBeGreaterThanOrEqual(msg["height"].toString(), "100");
@@ -15,18 +16,13 @@ function test() {
     window.addEventListener('message', function(e) {
         validate(e.data);
         e.source.close();
-        testRunner.notifyDone();
+        finishJSTest();
     }, false);
     window.open("resources/report-size-and-close.html", "non-empty-argument", "width=10, height=10");
 }
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </head>
 <body onload="test()">
 </body>

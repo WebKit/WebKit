@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
 <meta charset="utf-8">
 <title>&lt;model> update transform after resize</title>
 <script src="../resources/testharness.js"></script>
@@ -33,9 +33,9 @@ promise_test(async t => {
 
     model1.setAttribute("height", "300px");
     await sleepForSeconds(0.1);
-    assert_3d_matrix_not_equals(model1.entityTransform, model2.entityTransform);
-    assert_3d_matrix_approx_equals(model1.entityTransform, originalTransformForModel1);
-}, `<model> should not update entity transform after resize if stagemode=none`);
+    assert_3d_matrix_approx_equals(model1.entityTransform, model2.entityTransform);
+    assert_3d_matrix_not_equals(model1.entityTransform, originalTransformForModel1);
+}, `<model> should update entity transform after resize if stagemode=none`);
 
 promise_test(async t => {
     const model1 = document.createElement("model");
@@ -63,6 +63,26 @@ promise_test(async t => {
     assert_3d_matrix_approx_equals(model1.entityTransform, model2.entityTransform);
     assert_3d_matrix_not_equals(model1.entityTransform, originalTransformForModel1);
 }, `<model> should update entity transform after resize if stagemode=orbit`);
+
+promise_test(async t => {
+    const model = document.createElement("model");
+    model.setAttribute("stagemode", "none");
+    model.setAttribute("width", "300px");
+    model.setAttribute("height", "150px");
+    document.body.appendChild(model);
+    model.appendChild(makeSource("resources/flat-rectangle.usdz"));
+
+    await model.ready;
+
+    let scaledTransform = model.entityTransform.scale(2, 2, 2);
+    model.entityTransform = scaledTransform;
+    assert_3d_matrix_equals(model.entityTransform, scaledTransform);
+
+    model.setAttribute("height", "300px");
+    await sleepForSeconds(0.1);
+
+    assert_3d_matrix_equals(model.entityTransform, scaledTransform);
+}, `<model> with stagemode=none preserves a script-set entityTransform across resize`);
 
 </script>
 </body>

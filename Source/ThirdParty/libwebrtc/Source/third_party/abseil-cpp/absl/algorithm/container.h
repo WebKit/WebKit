@@ -52,6 +52,8 @@
 
 #include "absl/algorithm/algorithm.h"
 #include "absl/base/config.h"
+#include "absl/base/internal/hardening.h"
+#include "absl/base/internal/iterator_traits.h"
 #include "absl/base/macros.h"
 #include "absl/meta/type_traits.h"
 
@@ -106,6 +108,42 @@ ABSL_INTERNAL_CONSTEXPR_SINCE_CXX17 ContainerIter<C> c_end(C& c) {
   return end(c);
 }
 
+// Helper to check that the `OutputRange` has enough space.
+// Only performs the check if the iterators are ForwardIterators or better.
+template <typename InputSequence, typename Size, typename OutputRange>
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX17 void AssertCopyNSize(InputSequence& input,
+                                                        Size n,
+                                                        OutputRange& output) {
+  using InputIter = ContainerIter<InputSequence>;
+  using OutputIter = ContainerIter<OutputRange>;
+
+  if constexpr (base_internal::IsAtLeastForwardIterator<InputIter>::value) {
+    base_internal::HardeningAssert(
+        n <= std::distance(container_algorithm_internal::c_begin(input),
+                           container_algorithm_internal::c_end(input)));
+  }
+  if constexpr (base_internal::IsAtLeastForwardIterator<OutputIter>::value) {
+    base_internal::HardeningAssert(
+        n <= std::distance(container_algorithm_internal::c_begin(output),
+                           container_algorithm_internal::c_end(output)));
+  }
+}
+
+template <typename InputSequence, typename OutputRange>
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX17 void AssertCopySize(InputSequence& input,
+                                                       OutputRange& output) {
+  using InputIter = ContainerIter<InputSequence>;
+  using OutputIter = ContainerIter<OutputRange>;
+  if constexpr (base_internal::IsAtLeastForwardIterator<InputIter>::value &&
+                base_internal::IsAtLeastForwardIterator<OutputIter>::value) {
+    base_internal::HardeningAssert(
+        std::distance(container_algorithm_internal::c_begin(input),
+                      container_algorithm_internal::c_end(input)) <=
+        std::distance(container_algorithm_internal::c_begin(output),
+                      container_algorithm_internal::c_end(output)));
+  }
+}
+
 template <typename T>
 struct IsUnorderedContainer : std::false_type {};
 
@@ -117,6 +155,27 @@ template <class Key, class Hash, class KeyEqual, class Allocator>
 struct IsUnorderedContainer<std::unordered_set<Key, Hash, KeyEqual, Allocator>>
     : std::true_type {};
 
+template <typename T, typename = void>
+struct HasBeginEnd : std::false_type {};
+
+template <typename T>
+struct HasBeginEnd<T, std::void_t<decltype(container_algorithm_internal::begin(
+                                      std::declval<T (*)()>()())),
+                                  decltype(container_algorithm_internal::end(
+                                      std::declval<T (*)()>()()))>>
+    : std::true_type {};
+
+// We don't support multidimensional arrays yet
+template <class T>
+using IsMultidimensionalArray = std::is_array<std::remove_extent_t<T>>;
+
+template <typename Iter, typename = void>
+struct IsIterator : std::false_type {};
+
+template <typename Iter>
+struct IsIterator<
+    Iter, std::void_t<typename std::iterator_traits<Iter>::iterator_category>>
+    : std::true_type {};
 }  // namespace container_algorithm_internal
 
 // PUBLIC API
@@ -197,8 +256,8 @@ ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 bool c_none_of(const C& c, Pred&& pred) {
 // Container-based version of the <algorithm> `std::for_each()` function to
 // apply a function to a container's elements.
 template <typename C, typename Function>
-ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 decay_t<Function> c_for_each(C&& c,
-                                                                 Function&& f) {
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 std::decay_t<Function> c_for_each(
+    C&& c, Function&& f) {
   return std::for_each(container_algorithm_internal::c_begin(c),
                        container_algorithm_internal::c_end(c),
                        std::forward<Function>(f));
@@ -521,10 +580,41 @@ ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20
 // Container-based version of the <algorithm> `std::copy()` function to copy a
 // container's elements into an iterator.
 template <typename InputSequence, typename OutputIterator>
-ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 OutputIterator
-c_copy(const InputSequence& input, OutputIterator output) {
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20
+    std::enable_if_t<container_algorithm_internal::IsIterator<
+                         absl::remove_cvref_t<OutputIterator>>::value &&
+                         !container_algorithm_internal::IsMultidimensionalArray<
+                             InputSequence>::value,
+                     std::decay_t<OutputIterator>>
+    c_copy(const InputSequence& input, OutputIterator&& output) {
   return std::copy(container_algorithm_internal::c_begin(input),
-                   container_algorithm_internal::c_end(input), output);
+                   container_algorithm_internal::c_end(input),
+                   std::forward<OutputIterator>(output));
+}
+
+// Copies elements from `input` to `output`. `absl::c_copy(input, output)` is
+// equivalent to `std::copy(std::begin(input), std::end(input),
+// std::begin(output))`.
+//
+// The `output` container must be large enough to hold all elements of `input`;
+// this function does not resize `output`.
+
+// If `std::size(input) > std::size(output)`, behavior is undefined.
+// If `std::size(output) > std::size(input)`, only `std::size(input)` elements
+// are copied, and `output` is not truncated.
+template <typename InputSequence, typename OutputRange>
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20
+    std::enable_if_t<container_algorithm_internal::HasBeginEnd<
+                         std::add_lvalue_reference_t<OutputRange>>::value &&
+                         !container_algorithm_internal::IsMultidimensionalArray<
+                             std::remove_reference_t<OutputRange>>::value &&
+                         !container_algorithm_internal::IsMultidimensionalArray<
+                             InputSequence>::value,
+                     void>
+    c_copy(const InputSequence& input, OutputRange&& output) {
+  container_algorithm_internal::AssertCopySize(input, output);
+  absl::c_copy(input, container_algorithm_internal::c_begin(
+                          std::forward<OutputRange>(output)));
 }
 
 // c_copy_n()
@@ -532,9 +622,40 @@ c_copy(const InputSequence& input, OutputIterator output) {
 // Container-based version of the <algorithm> `std::copy_n()` function to copy a
 // container's first N elements into an iterator.
 template <typename C, typename Size, typename OutputIterator>
-ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 OutputIterator
-c_copy_n(const C& input, Size n, OutputIterator output) {
-  return std::copy_n(container_algorithm_internal::c_begin(input), n, output);
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 std::enable_if_t<
+    container_algorithm_internal::IsIterator<
+        absl::remove_cvref_t<OutputIterator>>::value &&
+        !container_algorithm_internal::IsMultidimensionalArray<C>::value,
+    std::decay_t<OutputIterator>>
+c_copy_n(const C& input, Size n, OutputIterator&& output) {
+  return std::copy_n(container_algorithm_internal::c_begin(input), n,
+                     std::forward<OutputIterator>(output));
+}
+
+// Copies the first `n` elements from `input` to `output`.
+// `absl::c_copy_n(input, n, output)` is equivalent to
+// `std::copy_n(std::begin(input), n, std::begin(output))`.
+//
+// The `output` container must be large enough to hold N elements; this function
+// does not resize `output`.
+//
+// If `n > std::size(output)` or `n > std::size(input)`, behavior is
+// undefined.
+// If `std::size(output) > n`, only `n` elements are copied, and `output` is not
+// truncated.
+template <typename C, typename Size, typename OutputRange>
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 std::enable_if_t<
+    container_algorithm_internal::HasBeginEnd<
+        std::add_lvalue_reference_t<OutputRange>>::value &&
+        !container_algorithm_internal::IsMultidimensionalArray<
+            std::remove_reference_t<OutputRange>>::value &&
+        !container_algorithm_internal::IsMultidimensionalArray<C>::value,
+    void>
+c_copy_n(const C& input, Size n, OutputRange&& output) {
+  container_algorithm_internal::AssertCopyNSize(input, n, output);
+  absl::c_copy_n(
+      input, n,
+      container_algorithm_internal::c_begin(std::forward<OutputRange>(output)));
 }
 
 // c_copy_if()
@@ -1758,10 +1879,10 @@ ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 void c_iota(Sequence& sequence,
 // accumulation by value.
 //
 // Note: Due to a language technicality this function has return type
-// absl::decay_t<T>. As a user of this function you can casually read
+// std::decay_t<T>. As a user of this function you can casually read
 // this as "returns T by value" and assume it does the right thing.
 template <typename Sequence, typename T>
-ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 decay_t<T> c_accumulate(
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 std::decay_t<T> c_accumulate(
     const Sequence& sequence, T&& init) {
   return std::accumulate(container_algorithm_internal::c_begin(sequence),
                          container_algorithm_internal::c_end(sequence),
@@ -1771,7 +1892,7 @@ ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 decay_t<T> c_accumulate(
 // Overload of c_accumulate() for using a binary operations other than
 // addition for computing the accumulation.
 template <typename Sequence, typename T, typename BinaryOp>
-ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 decay_t<T> c_accumulate(
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 std::decay_t<T> c_accumulate(
     const Sequence& sequence, T&& init, BinaryOp&& binary_op) {
   return std::accumulate(container_algorithm_internal::c_begin(sequence),
                          container_algorithm_internal::c_end(sequence),
@@ -1785,10 +1906,10 @@ ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 decay_t<T> c_accumulate(
 // to compute the cumulative inner product of container element pairs.
 //
 // Note: Due to a language technicality this function has return type
-// absl::decay_t<T>. As a user of this function you can casually read
+// std::decay_t<T>. As a user of this function you can casually read
 // this as "returns T by value" and assume it does the right thing.
 template <typename Sequence1, typename Sequence2, typename T>
-ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 decay_t<T> c_inner_product(
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 std::decay_t<T> c_inner_product(
     const Sequence1& factors1, const Sequence2& factors2, T&& sum) {
   return std::inner_product(container_algorithm_internal::c_begin(factors1),
                             container_algorithm_internal::c_end(factors1),
@@ -1801,7 +1922,7 @@ ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 decay_t<T> c_inner_product(
 // the product between the two container's element pair).
 template <typename Sequence1, typename Sequence2, typename T,
           typename BinaryOp1, typename BinaryOp2>
-ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 decay_t<T> c_inner_product(
+ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 std::decay_t<T> c_inner_product(
     const Sequence1& factors1, const Sequence2& factors2, T&& sum,
     BinaryOp1&& op1, BinaryOp2&& op2) {
   return std::inner_product(container_algorithm_internal::c_begin(factors1),

@@ -325,7 +325,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "SWAttributionViewBackgroundStyle"},
     {"access": "public", "name": "SWAttributionViewDisplayContext"},
@@ -619,7 +619,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "SWCollaborationIdentifier"},
     {"access": "public", "name": "SWLocalCollaborationIdentifier"}
@@ -627,31 +627,31 @@
   },
   {
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV12itemProvider11listContentACyxGSo06NSItemH0C_xyXEtcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV12itemProvider12contentTitle13collaborators11listContentACyxGSo06NSItemH0C_SSSaySo8SWPersonCGSgxyXEtcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV4bodyQrvg"},
-    {"access": "public", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV4bodyQrvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV4bodyQrvpQOMQ"},
-    {"access": "public", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewVAA7SwiftUI05EmptyF0VRszrlE12itemProviderACyAFGSo06NSItemK0C_tcfC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV12itemProvider11listContentACyxGSo06NSItemH0C_xyXEtcfC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV12itemProvider12contentTitle13collaborators11listContentACyxGSo06NSItemH0C_SSSaySo8SWPersonCGSgxyXEtcfC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV4bodyQrvg"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV4bodyQrvpMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewV4bodyQrvpQOMQ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewVAA7SwiftUI05EmptyF0VRszrlE12itemProviderACyAFGSo06NSItemK0C_tcfC"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewVMa"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewVMn"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s13SharedWithYou24_CollaborationDetailViewVyxG7SwiftUI0F0AAMc"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo17SWHighlightCenterC13SharedWithYouE22collaborationHighlight13forIdentifierSo015SWCollaborationG0CSS_tKF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo19SWCollaborationViewC13SharedWithYouE09setDetailB11ListContentyyx7SwiftUI0B0RzlF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo19SWCollaborationViewC13SharedWithYouE09setDetailB11ListContentyyxyXE7SwiftUI0B0RzlF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC13SharedWithYouE22transferRepresentationQrvgZ"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC13SharedWithYouE22transferRepresentationQrvpZMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC13SharedWithYouE22transferRepresentationQrvpZQOMQ"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC16CoreTransferable0D013SharedWithYouMc"}
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo17SWHighlightCenterC13SharedWithYouE22collaborationHighlight13forIdentifierSo015SWCollaborationG0CSS_tKF"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo19SWCollaborationViewC13SharedWithYouE09setDetailB11ListContentyyx7SwiftUI0B0RzlF"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo19SWCollaborationViewC13SharedWithYouE09setDetailB11ListContentyyxyXE7SwiftUI0B0RzlF"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC13SharedWithYouE22transferRepresentationQrvgZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC13SharedWithYouE22transferRepresentationQrvpZMV"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC13SharedWithYouE22transferRepresentationQrvpZQOMQ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo23SWCollaborationMetadataC16CoreTransferable0D013SharedWithYouMc"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   },
   {
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$sSo21SWCollaborationOptionC17SharedWithYouCoreE5title10identifier8subtitle8selected26requiredOptionsIdentifiersABSS_S2SSbSaySSGtcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo21SWCollaborationOptionC17SharedWithYouCoreE5title10identifier8subtitle8selected26requiredOptionsIdentifiersABSS_S2SSbSaySSGtcfc"}
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo21SWCollaborationOptionC17SharedWithYouCoreE5title10identifier8subtitle8selected26requiredOptionsIdentifiersABSS_S2SSbSaySSGtcfC"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo21SWCollaborationOptionC17SharedWithYouCoreE5title10identifier8subtitle8selected26requiredOptionsIdentifiersABSS_S2SSbSaySSGtcfc"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

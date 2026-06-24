@@ -1,6 +1,3 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Base
 PASS event.clientX is 100
 PASS event.clientY is 100
@@ -24,4 +21,7 @@ PASS event.clientX is 83
 PASS event.clientY is 83
 PASS event.pageX is 133
 PASS event.pageY is 133
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/scripted-random.js"></script>
 <script src="resources/viewspec-parser.js"></script>
 </head>
@@ -47,8 +47,7 @@
         tests.push("svgView(" + attribute + String.fromCharCode(0));
     }
 
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
 
     startViewspecTests(tests);
 

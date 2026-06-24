@@ -49,6 +49,7 @@
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SetForScope.h>
+#import <wtf/SystemTracing.h>
 #import <wtf/TZoneMallocInlines.h>
 
 @interface WKScrollingNodeScrollViewDelegate () <WKBaseScrollViewDelegate>
@@ -82,6 +83,16 @@
     if (RetainPtr baseScrollView = dynamic_objc_cast<WKBaseScrollView>(scrollView))
         [baseScrollView updateInteractiveScrollVelocity];
 
+    if (_scrollPerfIntervalState != ScrollPerfIntervalState::Inactive) {
+        if ([scrollView _wk_isScrolledBeyondExtents]) {
+            if (_scrollPerfIntervalState == ScrollPerfIntervalState::FingerDown)
+                WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES;");
+            else
+                WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+            _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
+        }
+    }
+
     scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
 }
 
@@ -90,6 +101,17 @@
     CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
     if (!scrollingTreeNodeDelegate) [[unlikely]]
         return;
+
+    if (scrollingTreeNodeDelegate->isScrollingPerformanceTestingEnabled()) {
+        if (_scrollPerfIntervalState == ScrollPerfIntervalState::Momentum) {
+            WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+            _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
+        }
+        if (_scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
+            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES;");
+            _scrollPerfIntervalState = ScrollPerfIntervalState::FingerDown;
+        }
+    }
 
     _inUserInteraction = YES;
 
@@ -149,6 +171,17 @@
     if (!scrollingTreeNodeDelegate) [[unlikely]]
         return;
 
+    if (scrollingTreeNodeDelegate->isScrollingPerformanceTestingEnabled()) {
+        if (_scrollPerfIntervalState == ScrollPerfIntervalState::FingerDown) {
+            WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES;");
+            _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
+        }
+        if (willDecelerate && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
+            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+            _scrollPerfIntervalState = ScrollPerfIntervalState::Momentum;
+        }
+    }
+
     if (_inUserInteraction && !willDecelerate) {
         _inUserInteraction = NO;
         scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
@@ -161,6 +194,13 @@
     CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
     if (!scrollingTreeNodeDelegate) [[unlikely]]
         return;
+
+    if (scrollingTreeNodeDelegate->isScrollingPerformanceTestingEnabled()) {
+        if (_scrollPerfIntervalState == ScrollPerfIntervalState::Momentum) {
+            WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+            _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
+        }
+    }
 
     if (_inUserInteraction) {
         _inUserInteraction = NO;
@@ -510,6 +550,11 @@ void ScrollingTreeScrollingNodeDelegateIOS::scrollDidEnd()
 void ScrollingTreeScrollingNodeDelegateIOS::scrollViewWillStartPanGesture() const
 {
     scrollingTree()->scrollingTreeNodeWillStartPanGesture(scrollingNode()->scrollingNodeID());
+}
+
+bool ScrollingTreeScrollingNodeDelegateIOS::isScrollingPerformanceTestingEnabled() const
+{
+    return scrollingTree()->scrollingPerformanceTestingEnabled();
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint& scrollOffset, bool inUserInteraction)

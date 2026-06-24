@@ -28,9 +28,9 @@
 
 #include "CSSContentValue.h"
 #include "CSSKeywordValue.h"
-#include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+SettersInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleInvalidImage.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
@@ -46,10 +46,10 @@ WTF::String Content::altText() const
 
 // MARK: - Conversion
 
-template<> struct ToCSS<Content::Data> { auto operator()(const Content::Data&, const RenderStyle&) -> CSS::Content::Data; };
+template<> struct ToCSS<Content::Data> { auto operator()(const Content::Data&, const Style::ComputedStyle&) -> CSS::Content::Data; };
 template<> struct ToStyle<CSS::Content::Data> { auto operator()(const CSS::Content::Data&, const BuilderState&) -> Content::Data; };
 
-auto ToCSS<Content::Data>::operator()(const Content::Data& value, const RenderStyle& style) -> CSS::Content::Data
+auto ToCSS<Content::Data>::operator()(const Content::Data& value, const Style::ComputedStyle& style) -> CSS::Content::Data
 {
     auto computeVisibleContentList = [&] -> CSS::Content::VisibleContentList {
         return CSS::Content::VisibleContentList::map(value.visible, [&](const auto& item) -> CSS::Content::VisibleContentListItem {
@@ -196,7 +196,7 @@ auto ToStyle<CSS::Content::Data>::operator()(const CSS::Content::Data& value, co
     };
 }
 
-auto ToCSS<Content>::operator()(const Content& value, const RenderStyle& style) -> CSS::Content
+auto ToCSS<Content>::operator()(const Content& value, const Style::ComputedStyle& style) -> CSS::Content
 {
     return WTF::switchOn(value, [&](const auto& alternative) -> CSS::Content { return toCSS(alternative, style); });
 }
@@ -229,7 +229,7 @@ auto CSSValueConversion<Content>::operator()(BuilderState& state, const CSSValue
     return toStyle(contentValue->content(), state);
 }
 
-Ref<CSSValue> CSSValueCreation<Content>::operator()(CSSValuePool&, const RenderStyle& style, const Content& value)
+Ref<CSSValue> CSSValueCreation<Content>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Content& value)
 {
     return CSSContentValue::create(toCSS(value, style));
 }

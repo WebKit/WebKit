@@ -35,6 +35,7 @@ extern "C" {
 struct aom_writer {
   unsigned int pos;
   uint8_t *buffer;
+  size_t size;
   od_ec_enc ec;
   uint8_t allow_update_cdf;
 };
@@ -60,7 +61,7 @@ static inline void init_token_stats(TOKEN_STATS *token_stats) {
   token_stats->cost = 0;
 }
 
-void aom_start_encode(aom_writer *w, uint8_t *buffer);
+void aom_start_encode(aom_writer *w, uint8_t *buffer, size_t size);
 
 // Returns a negative number on error. Caller must check the return value and
 // handle error.

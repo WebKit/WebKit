@@ -58,6 +58,10 @@
 #import <pal/spi/mac/NSEventSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+#import <WebKitAdditions/AppKitUtilities.h>
+#endif
+
 static const double zoomOutBoost = 1.6;
 static const double zoomOutResistance = 0.10;
 
@@ -277,7 +281,13 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanEndSwipe(NativeWe
 
 bool ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe(NativeWebWheelEvent event)
 {
-    return event.hasPreciseScrollingDeltas() && [NSEvent isSwipeTrackingFromScrollEventsEnabled];
+    if (!event.hasPreciseScrollingDeltas())
+        return false;
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    return isSwipeTrackingFromScrollEventsEnabled(event);
+#else
+    return NSEvent.isSwipeTrackingFromScrollEventsEnabled;
+#endif
 }
 
 FloatSize ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas(NativeWebWheelEvent event)

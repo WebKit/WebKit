@@ -13,16 +13,16 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 
 namespace webrtc {
 
 std::string Base64Encode(absl::string_view data);
 
-inline std::string Base64Encode(ArrayView<const uint8_t> data) {
+inline std::string Base64Encode(std::span<const uint8_t> data) {
   return Base64Encode(absl::string_view(
       reinterpret_cast<const char*>(data.data()), data.size()));
 }

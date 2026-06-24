@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <span>
 #include <utility>
 #include <vector>
 
@@ -103,10 +104,19 @@ class RTC_EXPORT AsyncPacketSocket {
   virtual int Send(const void* pv,
                    size_t cb,
                    const AsyncSocketPacketOptions& options) = 0;
+  int Send(std::span<const uint8_t> data,
+           const AsyncSocketPacketOptions& options) {
+    return Send(data.data(), data.size(), options);
+  }
   virtual int SendTo(const void* pv,
                      size_t cb,
                      const SocketAddress& addr,
                      const AsyncSocketPacketOptions& options) = 0;
+  int SendTo(std::span<const uint8_t> data,
+             const SocketAddress& addr,
+             const AsyncSocketPacketOptions& options) {
+    return SendTo(data.data(), data.size(), addr, options);
+  }
 
   // Close the socket.
   virtual int Close() = 0;

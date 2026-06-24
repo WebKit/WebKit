@@ -343,6 +343,7 @@ NetworkProcessProxy& WebsiteDataStore::networkProcess()
         Ref networkProcess = networkProcessForSession(m_sessionID);
         m_networkProcess = networkProcess.copyRef();
         networkProcess->addSession(*this, NetworkProcessProxy::SendParametersToNetworkProcess::Yes);
+        propagateSettingUpdates();
     }
 
     return *m_networkProcess;
@@ -355,7 +356,7 @@ NetworkProcessProxy& WebsiteDataStore::networkProcess() const
 
 void WebsiteDataStore::registerProcess(WebProcessProxy& process)
 {
-    ASSERT(process.pageCount() || process.provisionalPageCount());
+    ASSERT(process.pageCount() || process.provisionalPageCount() || process.remotePageCount());
     m_processes.add(process);
 }
 
@@ -363,6 +364,7 @@ void WebsiteDataStore::unregisterProcess(WebProcessProxy& process)
 {
     ASSERT(!process.pageCount());
     ASSERT(!process.provisionalPageCount());
+    ASSERT(!process.remotePageCount());
     m_processes.remove(process);
 }
 
@@ -1078,7 +1080,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                     websitesToRemove.add(origin.toURL());
             }
         }
-        ScreenTimeWebsiteDataSupport::removeScreenTimeData(websitesToRemove, configuration());
+        ScreenTimeWebsiteDataSupport::removeScreenTimeData(websitesToRemove, configuration(), [callbackAggregator] { });
     }
 #endif
     if (dataTypes.contains(WebsiteDataType::EnhancedSecurityRecord) && isPersistent())
@@ -2073,7 +2075,7 @@ bool WebsiteDataStore::computeIsOptInCookiePartitioningEnabled() const
         return *m_cachedIsOptInCookiePartitioningEnabled;
 
     for (Ref page : m_pages) {
-        if (page->preferences().optInPartitionedCookiesEnabled())
+        if (protect(page->preferences())->optInPartitionedCookiesEnabled())
             return true;
     }
 #endif
@@ -2287,16 +2289,18 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         createHandleFromResolvedPathIfPossible(resolvedCookieStorageDirectory(), cookieStorageDirectoryExtensionHandle);
         parameters.cookieStorageDirectoryExtensionHandle = WTF::move(cookieStorageDirectoryExtensionHandle);
 
+#if !USE(EXTENSIONKIT)
         SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
         createHandleFromResolvedPathIfPossible(resolvedContainerCachesNetworkingDirectory(), containerCachesDirectoryExtensionHandle);
         parameters.containerCachesDirectoryExtensionHandle = WTF::move(containerCachesDirectoryExtensionHandle);
 
+        if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(networkingServiceName, SandboxExtension::Type::ReadWrite))
+            parameters.tempDirectoryExtensionHandle = WTF::move(handleAndFilePath->first);
+#endif
         SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
         createHandleFromResolvedPathIfPossible(parentBundleDirectory(), parentBundleDirectoryExtensionHandle, SandboxExtension::Type::ReadOnly);
         parameters.parentBundleDirectoryExtensionHandle = WTF::move(parentBundleDirectoryExtensionHandle);
 
-        if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(networkingServiceName, SandboxExtension::Type::ReadWrite))
-            parameters.tempDirectoryExtensionHandle = WTF::move(handleAndFilePath->first);
         if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(emptyString(), SandboxExtension::Type::ReadOnly))
             parameters.tempDirectoryRootExtensionHandle = WTF::move(handleAndFilePath->first);
     }
@@ -2847,12 +2851,16 @@ void WebsiteDataStore::addPage(WebPageProxy& page)
 {
     m_pages.add(page);
 
+    propagateSettingUpdates();
+
     updateServiceWorkerInspectability();
 }
 
 void WebsiteDataStore::removePage(WebPageProxy& page)
 {
     m_pages.remove(page);
+
+    propagateSettingUpdates();
 
     updateServiceWorkerInspectability();
 }

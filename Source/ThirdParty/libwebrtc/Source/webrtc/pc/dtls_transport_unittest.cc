@@ -25,9 +25,9 @@
 #include "rtc_base/fake_ssl_identity.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_identity.h"
-#include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 
 namespace webrtc {
@@ -99,7 +99,7 @@ class DtlsTransportTest : public ::testing::Test {
     fake_dtls1->SetDestination(fake_dtls2.get());
   }
 
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
   scoped_refptr<DtlsTransport> transport_;
   std::unique_ptr<FakeDtlsTransport> internal_transport_;
   TestDtlsTransportObserver observer_;

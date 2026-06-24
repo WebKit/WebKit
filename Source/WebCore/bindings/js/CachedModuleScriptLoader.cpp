@@ -53,7 +53,7 @@ CachedModuleScriptLoader::CachedModuleScriptLoader(ModuleScriptLoaderClient& cli
 CachedModuleScriptLoader::~CachedModuleScriptLoader()
 {
     if (m_cachedScript) {
-        m_cachedScript->removeClient(*this);
+        protect(m_cachedScript)->removeClient(*this);
         m_cachedScript = nullptr;
     }
 }
@@ -64,13 +64,13 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
     ASSERT(!m_cachedScript);
     String integrity = m_parameters ? m_parameters->integrity() : String { };
     auto destination = m_parameters && m_parameters->type() == JSC::ScriptFetchParameters::Type::JSON ? FetchOptionsDestination::Json : FetchOptionsDestination::Script;
-    m_cachedScript = scriptFetcher().requestModuleScript(document, sourceURL, destination, WTF::move(integrity), serviceWorkersMode);
+    m_cachedScript = protect(scriptFetcher())->requestModuleScript(document, sourceURL, destination, WTF::move(integrity), serviceWorkersMode);
     if (!m_cachedScript)
         return false;
     m_sourceURL = WTF::move(sourceURL);
 
     // If the content is already cached, this immediately calls notifyFinished.
-    m_cachedScript->addClient(*this);
+    protect(m_cachedScript)->addClient(*this);
     return true;
 }
 
@@ -86,7 +86,7 @@ void CachedModuleScriptLoader::notifyFinished(CachedResource& resource, const Ne
 
     // Remove the client after calling notifyFinished to keep the data buffer in
     // CachedResource alive while notifyFinished processes the resource.
-    m_cachedScript->removeClient(*this);
+    protect(m_cachedScript)->removeClient(*this);
     m_cachedScript = nullptr;
 }
 

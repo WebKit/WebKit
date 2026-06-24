@@ -34,6 +34,7 @@
 
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
+#import "MessageSenderInlines.h"
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxyMessages.h"

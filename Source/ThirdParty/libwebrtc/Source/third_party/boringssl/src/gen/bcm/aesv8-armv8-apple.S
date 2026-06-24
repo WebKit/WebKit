@@ -6,6 +6,7 @@
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_AARCH64) && defined(__APPLE__)
 #if __ARM_MAX_ARCH__>=7
 .text
+.arch_extension crypto
 
 .section	__TEXT,__const
 .align	5

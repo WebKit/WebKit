@@ -27,6 +27,7 @@
 
 #include "CSSKeywordValue.h"
 #include "CSSValuePool.h"
+#include "DeprecatedCSSOMPrimitiveValue.h"
 #include <wtf/Hasher.h>
 #include <wtf/text/TextStream.h>
 
@@ -38,6 +39,11 @@ namespace CSS {
 Ref<CSSValue> CSSValueCreation<Keyword>::operator()(CSSValuePool&, const Keyword& value)
 {
     return CSSKeywordValue::create(value);
+}
+
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<Keyword>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const Keyword& value)
+{
+    return DeprecatedCSSOMPrimitiveValue::create(value, owner);
 }
 
 // MARK: - Serialization

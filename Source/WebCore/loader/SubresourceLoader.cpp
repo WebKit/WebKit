@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -519,7 +519,7 @@ void SubresourceLoader::didReceiveResponse(ResourceResponse&& response, Completi
 
     bool isResponseMultipart = response.isMultipart();
     if (options().mode != FetchOptions::Mode::Navigate && frame && frame->document())
-        LinkLoader::loadLinksFromHeader(response.httpHeaderField(HTTPHeaderName::Link), protect(documentLoader())->url(), *protect(frame->document()), LinkLoader::MediaAttributeCheck::SkipMediaAttributeCheck);
+        LinkLoader::loadLinksFromHeader(response.httpHeaderField(HTTPHeaderName::Link), response.url(), *protect(frame->document()), LinkLoader::MediaAttributeCheck::SkipMediaAttributeCheck);
 
     // https://wicg.github.io/nav-speculation/prefetch.html#clear-prefetch-cache
     if (frame && frame->settings().clearSiteDataHTTPHeaderEnabled()) {

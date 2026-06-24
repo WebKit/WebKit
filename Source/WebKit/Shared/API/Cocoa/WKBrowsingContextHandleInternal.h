@@ -26,6 +26,7 @@
 #import "WKBrowsingContextHandlePrivate.h"
 #import "WebPageProxyIdentifier.h"
 #import <WebCore/PageIdentifier.h>
+#import <wtf/Markable.h>
 
 namespace WebKit {
 class WebPage;

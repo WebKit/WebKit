@@ -369,7 +369,9 @@ FetchBody FetchBody::clone(JSDOMGlobalObject& globalObject)
         ASSERT(!clones.hasException());
         if (!clones.hasException()) {
             auto pair = clones.releaseReturnValue();
+            m_data = pair[0];
             m_readableStream = WTF::move(pair[0]);
+            clone.m_data = pair[1];
             clone.m_readableStream = WTF::move(pair[1]);
         }
     }

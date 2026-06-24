@@ -626,7 +626,7 @@ void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
         options.textureMapper.setPatternTransform(patternTransform);
     }
 
-    bool shouldClip = m_state.contentsClippingRect.isRounded() || !m_state.contentsClippingRect.rect().contains(m_state.contentsRect);
+    bool shouldClip = m_state.contentsClippingRect.hasNonZeroRadii() || !m_state.contentsClippingRect.rect().contains(m_state.contentsRect);
     if (shouldClip) {
         options.textureMapper.beginClip(transform, m_state.contentsClippingRect);
     }

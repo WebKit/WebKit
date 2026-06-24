@@ -728,9 +728,13 @@ void WebExtensionController::updateWebsitePoliciesForNavigation(API::WebsitePoli
         if (!context->hasPermission(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess))
             continue;
 
+        OptionSet<WebExtensionMatchPattern::Options> expandOptions;
+        if (context->hasAccessToFileURLs())
+            expandOptions.add(WebExtensionMatchPattern::Options::AllowFileScheme);
+
         Vector<String> patterns;
         for (Ref pattern : context->currentPermissionMatchPatterns())
-            patterns.appendVector(pattern->expandedStrings());
+            patterns.appendVector(pattern->expandedStrings(expandOptions));
 
         actionPatterns.set(context->uniqueIdentifier(), WTF::move(patterns));
     }

@@ -36,6 +36,8 @@ static auto copy(double) -> double;
 static auto copy(const std::optional<Child>& root) -> std::optional<Child>;
 static auto copy(const Random::Fixed&) -> Random::Fixed;
 static auto copy(const CSS::Keyword::None&) -> CSS::Keyword::None;
+static auto copy(const CalcMix::Item&) -> CalcMix::Item;
+static auto copy(const Vector<CalcMix::Item>&) -> Vector<CalcMix::Item>;
 static auto copy(const ChildOrNone&) -> ChildOrNone;
 static auto copy(const Children&) -> Children;
 static auto copy(const Child&) -> Child;
@@ -71,6 +73,16 @@ Random::Fixed NODELETE copy(const Random::Fixed& root)
 CSS::Keyword::None NODELETE copy(const CSS::Keyword::None& none)
 {
     return none;
+}
+
+CalcMix::Item copy(const CalcMix::Item& item)
+{
+    return { copy(item.value), item.weight };
+}
+
+Vector<CalcMix::Item> copy(const Vector<CalcMix::Item>& children)
+{
+    return WTF::map(children, [&](const auto& child) { return copy(child); });
 }
 
 ChildOrNone copy(const ChildOrNone& root)

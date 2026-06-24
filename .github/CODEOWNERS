@@ -57,6 +57,7 @@ AllowedSPI*.toml @emw-apple
 /Tools/TestWebKitAPI/Tests/WebKitGtk/ @WebKit/glib-reviewers
 /Tools/TestWebKitAPI/WebKitGLib/ @WebKit/glib-reviewers
 /Tools/TestWebKitAPI/WebKitGtk/ @WebKit/glib-reviewers
+/Tools/TestWebKitAPI/Tests/WebKit/WKWebView/ScreenTime.mm @jesxilin
 
 /Tools/gstreamer/ @WebKit/glib-reviewers
 /Tools/jhbuild/ @WebKit/glib-reviewers
@@ -127,6 +128,8 @@ AllowedSPI*.toml @emw-apple
 /Source/WebCore/worklets @cdumez
 /Source/WebCore/xml @cdumez
 /Source/WebCore/page @cdumez
+/Source/WebCore/page/PointerCaptureController.cpp @lilyspiniolas
+/Source/WebCore/page/PointerCaptureController.h @lilyspiniolas
 ./Source/WebCore/page/Navigator.* @marcoscaceres
 
 /Source/WebCore/animation @graouts
@@ -166,6 +169,7 @@ AllowedSPI*.toml @emw-apple
 /Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle @burg
 /Source/WebKit/WebKitSwift @rr-codes
 /Source/WebKit/UIProcess/DigitalCredentials @marcoscaceres
+/Source/WebKit/UIProcess/WebsiteData/Cocoa/ScreenTimeWebsiteDataSupport.* @jesxilin
 /Source/WebKit/WebProcess @cdumez
 /Source/WebKit/WebProcess/DigitalCredentials @marcoscaceres
 /Source/WebKit/WebKitSwift/IdentityDocumentServices @marcoscaceres
@@ -183,6 +187,7 @@ AllowedSPI*.toml @emw-apple
 # ================================================================================
 # CMake
 
+/Source/cmake/OptionsCommon.cmake @mcatanzaro
 /Source/cmake/WebKitCompilerFlags.cmake @mcatanzaro
 
 # ================================================================================
@@ -222,7 +227,7 @@ gstreamer/ @philn
 # WPE WebKit and WebKitGTK
 
 /Source/ThirdParty/xdgmime/ @WebKit/glib-reviewers
-/Source/cmake/OptionsGTK.cmake @WebKit/glib-reviewers
+/Source/cmake/OptionsGTK.cmake @WebKit/glib-reviewers @mcatanzaro
 /Source/cmake/OptionsWPE.cmake @WebKit/glib-reviewers
 
 adwaita/ @WebKit/glib-reviewers

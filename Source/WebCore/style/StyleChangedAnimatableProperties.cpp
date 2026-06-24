@@ -27,19 +27,19 @@
 #include "config.h"
 #include "StyleChangedAnimatableProperties.h"
 
-#include "RenderStyle+GettersInlines.h"
 #include "StyleChangedAnimatablePropertiesGenerated.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Style {
 
-void conservativelyCollectChangedAnimatableProperties(const RenderStyle& a, const RenderStyle& b, CSSPropertiesBitSet& changingProperties, EnumSet<AnimatablePropertiesCollectionQuirks> quirks)
+void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle& a, const Style::ComputedStyle& b, CSSPropertiesBitSet& changingProperties, EnumSet<AnimatablePropertiesCollectionQuirks> quirks)
 {
-    // Check property values on RenderStyle for changes.
+    // Check property values on ComputedStyle for changes.
 
-    ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(a.computedStyle(), b.computedStyle(), changingProperties);
+    ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(a, b, changingProperties);
 
-    // Also, check some non-property and/or derived values on RenderStyle for changes.
+    // Also, check some non-property and/or derived values on ComputedStyle for changes.
 
     // `writingMode` changes conversion of logical -> physical properties, thus, we need to add all physical properties.
     if (a.writingMode() != b.writingMode()) {

@@ -63,7 +63,7 @@ Ref<MathMLPresentationElement> MathMLPresentationElement::create(const Qualified
     return adoptRef(*new MathMLPresentationElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLPresentationElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> MathMLPresentationElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
 {
     if (hasTagName(mtableTag))
         return createRenderer<RenderMathMLTable>(*this, WTF::move(style));

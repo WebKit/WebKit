@@ -25,6 +25,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static void bn_mul_normal(BN_ULONG *r, const BN_ULONG *a, size_t na,
                           const BN_ULONG *b, size_t nb) {
   if (na < nb) {
@@ -126,18 +128,19 @@ static BN_ULONG bn_abs_sub_part_words(BN_ULONG *r, const BN_ULONG *a,
   return borrow;
 }
 
-int bn_abs_sub_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
-                         BN_CTX *ctx) {
+int bssl::bn_abs_sub_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
+                               BN_CTX *ctx) {
   int cl = a->width < b->width ? a->width : b->width;
   int dl = a->width - b->width;
   int r_len = a->width < b->width ? b->width : a->width;
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
   if (tmp == nullptr || !bn_wexpand(r, r_len) || !bn_wexpand(tmp, r_len)) {
     return 0;
   }
   bn_abs_sub_part_words(r->d, a->d, b->d, cl, dl, tmp->d);
   r->width = r_len;
+  r->neg = 0;
   return 1;
 }
 
@@ -155,7 +158,7 @@ static int bn_mul_impl(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
 
   int i, top;
   BIGNUM *rr;
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   if (r == a || r == b) {
     rr = BN_CTX_get(ctx);
     if (rr == nullptr) {
@@ -202,7 +205,8 @@ int BN_mul(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
   return 1;
 }
 
-int bn_mul_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
+int bssl::bn_mul_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
+                           BN_CTX *ctx) {
   // Prevent negative zeros.
   if (a->neg || b->neg) {
     OPENSSL_PUT_ERROR(BN, BN_R_NEGATIVE_NUMBER);
@@ -212,8 +216,8 @@ int bn_mul_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
   return bn_mul_impl(r, a, b, ctx);
 }
 
-void bn_mul_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a, size_t num_a,
-                  const BN_ULONG *b, size_t num_b) {
+void bssl::bn_mul_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a,
+                        size_t num_a, const BN_ULONG *b, size_t num_b) {
   if (num_r != num_a + num_b) {
     abort();
   }
@@ -282,7 +286,7 @@ int BN_mul_word(BIGNUM *bn, BN_ULONG w) {
   return 1;
 }
 
-int bn_sqr_consttime(BIGNUM *r, const BIGNUM *a, BN_CTX *ctx) {
+int bssl::bn_sqr_consttime(BIGNUM *r, const BIGNUM *a, BN_CTX *ctx) {
   int al = a->width;
   if (al <= 0) {
     r->width = 0;
@@ -290,7 +294,7 @@ int bn_sqr_consttime(BIGNUM *r, const BIGNUM *a, BN_CTX *ctx) {
     return 1;
   }
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *rr = (a != r) ? r : BN_CTX_get(ctx);
   if (!rr) {
     return 0;
@@ -327,7 +331,8 @@ int BN_sqr(BIGNUM *r, const BIGNUM *a, BN_CTX *ctx) {
   return 1;
 }
 
-void bn_sqr_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a, size_t num_a) {
+void bssl::bn_sqr_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a,
+                        size_t num_a) {
   assert(r != a);
   if (num_r != 2 * num_a) {
     abort();

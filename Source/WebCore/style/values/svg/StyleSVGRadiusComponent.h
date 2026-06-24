@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
 namespace WebCore {
 namespace Style {
@@ -32,7 +32,7 @@ namespace Style {
 // <'rx'/'ry'> = <length-percentage [0,∞]> | auto
 // https://svgwg.org/svg2-draft/geometry.html#RX
 // https://svgwg.org/svg2-draft/geometry.html#RY
-struct SVGRadiusComponent : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Auto> {
+struct SVGRadiusComponent : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Auto> {
     using Base::Base;
 
     ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }

@@ -3,9 +3,6 @@ Test consuming transient activation.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 PASS navigator.userActivation.isActive is false
 PASS frame.contentWindow.navigator.userActivation.isActive is false
 PASS innerFrame.contentWindow.navigator.userActivation.isActive is false
@@ -20,4 +17,7 @@ PASS navigator.userActivation.isActive is false
 PASS frame.contentWindow.navigator.userActivation.isActive is false
 PASS innerFrame.contentWindow.navigator.userActivation.isActive is false
 PASS innerFrame2.contentWindow.navigator.userActivation.isActive is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

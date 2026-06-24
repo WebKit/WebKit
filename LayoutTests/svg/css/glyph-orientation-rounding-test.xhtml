@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<script src="../../resources/js-test-pre.js"/>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <svg display="none" xmlns="http://www.w3.org/2000/svg"><text id="text"/></svg>
@@ -28,19 +28,16 @@ function parseGlyphOrientationHelper(property, angleValue, expectedValue)
 
 function parseGlyphOrientation(angleValue, expectedValue)
 {
-    if (expectedValue == undefined) {
-        parseGlyphOrientationHelper("glyph-orientation-horizontal", angleValue, 0.0);
+    if (expectedValue == undefined)
         parseGlyphOrientationHelper("glyph-orientation-vertical", angleValue, "auto");
-    } else {
-        parseGlyphOrientationHelper("glyph-orientation-horizontal", angleValue, expectedValue);
+    else
         parseGlyphOrientationHelper("glyph-orientation-vertical", angleValue, expectedValue);
-    }
 }
 
-description('Stress test glyph-orientation SVG CSS properties');
+description('Stress test glyph-orientation-vertical SVG CSS property');
 debug('');
 
-debug('Strings that fail to parse, and hence parse as "0" for horziontal and "auto" as vertical.');
+debug('Strings that fail to parse, and hence parse as "auto" for vertical.');
 debug('');
 
 parseGlyphOrientation(" 0,1");
@@ -119,7 +116,5 @@ parseGlyphOrientation("135.001", 180.0);
 
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
-
 </body>
 </html>

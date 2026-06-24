@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <map>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -38,7 +38,7 @@ class H264SpsPpsTracker {
   ~H264SpsPpsTracker() = default;
 
   // Returns fixed bitstream and modifies `video_header`.
-  FixedBitstream CopyAndFixBitstream(ArrayView<const uint8_t> bitstream,
+  FixedBitstream CopyAndFixBitstream(std::span<const uint8_t> bitstream,
                                      RTPVideoHeader* video_header);
 
   void InsertSpsPpsNalus(const std::vector<uint8_t>& sps,

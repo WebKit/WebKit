@@ -1,0 +1,10 @@
+abc
+abc
+هيabc
+هيabc
+
+PASS latin text
+PASS latin text and tspan
+PASS mixed-rtl text and tspan
+PASS mixed-rtl text and tested tspan
+

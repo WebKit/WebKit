@@ -29,11 +29,11 @@
 
 #if ENABLE(TEXT_AUTOSIZING)
 
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 
-auto AutosizeStatus::compute(const RenderStyle& style) -> AutosizeStatus
+auto AutosizeStatus::compute(const Style::ComputedStyle& style) -> AutosizeStatus
 {
     auto result = style.autosizeStatus().fields();
 
@@ -70,7 +70,7 @@ auto AutosizeStatus::compute(const RenderStyle& style) -> AutosizeStatus
     return AutosizeStatus(result);
 }
 
-auto AutosizeStatus::isIdempotentTextAutosizingCandidate(const RenderStyle& style) -> bool
+auto AutosizeStatus::isIdempotentTextAutosizingCandidate(const Style::ComputedStyle& style) -> bool
 {
     // Refer to <rdar://problem/51826266> for more information regarding how this function was generated.
     auto fields = this->fields();
@@ -142,7 +142,7 @@ auto AutosizeStatus::isIdempotentTextAutosizingCandidate(const RenderStyle& styl
     return true;
 }
 
-bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const RenderStyle& style)
+bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const Style::ComputedStyle& style)
 {
     auto& lineHeightAsLength = style.specifiedLineHeight();
     auto lineHeightAsFixed = lineHeightAsLength.tryFixed();

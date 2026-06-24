@@ -281,7 +281,6 @@ void RampUpTester::ModifyFlexfecConfigs(
   (*receive_configs)[0].remote_ssrc =
       test::VideoTestConstants::kFlexfecSendSsrc;
   (*receive_configs)[0].protected_media_ssrcs = {video_ssrcs_[0]};
-  (*receive_configs)[0].local_ssrc = video_ssrcs_[0];
 }
 
 void RampUpTester::OnCallsCreated(Call* sender_call,

@@ -26,7 +26,7 @@ macro_rules! unsafe_iuf_algo {
             const OUTPUT_LEN: usize = $output_len as usize;
             const BLOCK_LEN: usize = $block_len as usize;
 
-            fn get_md(_: sealed::Sealed) -> &'static MdRef {
+            fn get_md(_: sealed::SealedType) -> &'static MdRef {
                 // Safety:
                 // - this always returns a valid pointer to an EVP_MD.
                 unsafe { MdRef::from_ptr(bssl_sys::$evp_md() as *mut _) }

@@ -28,4 +28,7 @@ PASS Property background-position value 'bottom right 19%'
 PASS Property background-position value 'calc(10px + 0.5em) calc(10px - 0.5em)'
 PASS Property background-position value 'calc(10px - 0.5em) calc(10px + 0.5em)'
 PASS Property background-position value '12px 13px, 50% 6px, 30px -10px'
+PASS Property background-position value 'center' multiple base values
+PASS Property background-position value 'center, left' multiple base values
+PASS Property background-position value 'center, left, bottom' multiple base values
 

@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            async function start()
+            {
+                findMediaElement();
+
+                waitForEvent('canplay');
+                waitForEvent('seeking');
+                waitForEvent('seeked');
+                waitForEvent('error', failTest);
+
+                video.src = 'content/vp9-opus-good-3tracks.webm';
+                await waitFor(video, "loadedmetadata", true);
+
+                // The asset has 1 video + 2 audio tracks. WebKit auto-selects/enables
+                // only the first of each kind.
+                testExpected('video.videoTracks.length', 1);
+                testExpected('video.audioTracks.length', 2);
+                testExpected('video.audioTracks[0].enabled', true);
+                testExpected('video.audioTracks[1].enabled', false);
+
+                await waitFor(video, "canplay", true);
+
+                video.currentTime = 1;
+                await waitFor(video, "seeked", true);
+
+                video.currentTime = 0;
+                await waitFor(video, "seeked", true);
+
+                video.currentTime = 0.5;
+                await waitFor(video, "seeked", true);
+
+                consoleWrite("PASS: seek with extra unselected audio track did not crash");
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that seeking does not crash when a multi-audio-track WebM has more TrackBuffers than enabled track identifiers.</p>
+        <video controls></video>
+    </body>
+</html>

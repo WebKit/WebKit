@@ -31,7 +31,9 @@
 #include "../../test/wycheproof_util.h"
 #include "internal.h"
 
+BSSL_NAMESPACE_BEGIN
 namespace {
+
 void TestRaw(FileTest *t) {
   std::vector<uint8_t> key, plaintext, ciphertext;
   ASSERT_TRUE(t->GetBytes(&key, "Key"));
@@ -291,6 +293,7 @@ TEST(AESTest, ABI) {
       block_counts = {0, 1, 8};
     }
 
+#if defined(BSAES)
     if (bsaes_capable()) {
       ASSERT_EQ(vpaes_set_encrypt_key(kKey, bits, &key), 0);
       CHECK_ABI(vpaes_encrypt_key_to_bsaes, &key, &key);
@@ -309,6 +312,7 @@ TEST(AESTest, ABI) {
                   block, AES_DECRYPT);
       }
     }
+#endif
 
     if (vpaes_capable()) {
       ASSERT_EQ(CHECK_ABI(vpaes_set_encrypt_key, kKey, bits, &key), 0);
@@ -330,7 +334,7 @@ TEST(AESTest, ABI) {
         CHECK_ABI(vpaes_cbc_encrypt, buf, buf, AES_BLOCK_SIZE * blocks, &key,
                   block, AES_DECRYPT);
       }
-#endif  // VPAES_CBC
+#endif
     }
 
     if (hwaes_capable()) {
@@ -622,3 +626,4 @@ TEST(AESTest, VPAESToBSAESConvert) {
 #endif  // BSAES && !SHARED_LIBRARY
 
 }  // namespace
+BSSL_NAMESPACE_END

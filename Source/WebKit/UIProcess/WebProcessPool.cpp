@@ -268,6 +268,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #if ENABLE(CONTENT_EXTENSIONS)
     , m_resourceMonitorRuleListRefreshTimer(RunLoop::mainSingleton(), "WebProcessPool::ResourceMonitorRuleListRefreshTimer"_s, this, &WebProcessPool::loadOrUpdateResourceMonitorRuleList)
 #endif
+#if PLATFORM(COCOA)
+    , m_screenPropertiesUpdateTimer(RunLoop::mainSingleton(), "WebProcessPool::ScreenPropertiesUpdateTimer"_s, this, &WebProcessPool::screenPropertiesUpdateTimerFired)
+#endif
 #if ENABLE(IPC_TESTING_API)
     , m_ipcTester(IPCTester::create())
 #endif
@@ -298,9 +301,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     addMessageReceiver(Messages::IPCTester::messageReceiverName(), m_ipcTester.get());
 #endif
 
+    addSupplement<WebNotificationManagerProxy>();
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
     addSupplement<WebGeolocationManagerProxy>();
-    addSupplement<WebNotificationManagerProxy>();
 
     processPools().append(*this);
 
@@ -1338,8 +1341,14 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 
     RefPtr relatedPage = pageConfiguration->relatedPage();
     bool siteIsolationEnabled = protect(pageConfiguration->preferences())->siteIsolationEnabled();
-    if (siteIsolationEnabled)
-        protect(pageConfiguration->preferences())->setUseUIProcessForBackForwardItemLoading(true);
+    if (siteIsolationEnabled) {
+        Ref<WebPreferences> preferences = pageConfiguration->preferences();
+        // FIXME: we should enable UseUIProcessForBackForwardItemLoading not only here but also in test infrastructure
+        // when site isolation is enabled, but doing that causes a lot of test failures that we need to investigate.
+        // https://bugs.webkit.org/show_bug.cgi?id=316588
+        preferences->setUseUIProcessForBackForwardItemLoading(true);
+        preferences->setMultiProcessBackForwardCacheEnabled(true);
+    }
     RefPtr preferredBrowsingContextGroup = pageConfiguration->preferredBrowsingContextGroup();
     RefPtr preferredFrameProcess = preferredBrowsingContextGroup ? preferredBrowsingContextGroup->processForSite(pageConfiguration->openedSite()) : nullptr;
     if (auto& openerInfo = pageConfiguration->openerInfo(); openerInfo && siteIsolationEnabled) {
@@ -2161,7 +2170,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         return completionHandler(sourceProcess.copyRef(), nullptr, "Navigation is treated as same-site (archive load)"_s);
     }
 
-    if (siteIsolationEnabled && !site.isEmpty()) {
+    if (siteIsolationEnabled) {
         if (RefPtr targetItem = navigation.targetItem(); targetItem && frame.isMainFrame()) {
             if (RefPtr suspendedPage = targetItem->suspendedPage()) {
                 Ref process = suspendedPage->process();
@@ -2175,7 +2184,9 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                 }
             }
         }
+    }
 
+    if (siteIsolationEnabled && !site.isEmpty()) {
         ASSERT(frameInfo.isMainFrame ? site == mainFrameSite : Site(URL(protect(page.pageLoadState())->activeURL())) == mainFrameSite);
         if (!frame.isMainFrame() && site == mainFrameSite) {
             Ref mainFrameProcess = Ref { page.mainFrame()->process() };
@@ -2186,7 +2197,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         if (RefPtr frameProcess = browsingContextGroup.processForSite(site))
             process = &frameProcess->process();
         if (process && process->websiteDataStore() == dataStore.ptr() && process->websiteDataStore() == &page.websiteDataStore() && !process->isInProcessCache() && process->lockdownMode() == lockdownMode && enhancedSecurityStatesAreConsistent(process->enhancedSecurity(), enhancedSecurity)) {
-            protect(dataStore->networkProcess())->addAllowedFirstPartyForCookies(*process, mainFrameSite.domain(), LoadedWebArchive::No, [completionHandler = WTF::move(completionHandler), process] () mutable {
+            protect(dataStore->networkProcess())->addAllowedFirstPartyForCookies(*process, mainFrameSite.domain(), LoadedWebArchive::No, [completionHandler = WTF::move(completionHandler), process, preventProcessShutdownScope = process->shutdownPreventingScope()] () mutable {
                 completionHandler(process.releaseNonNull(), nullptr, "Found process for the same site"_s);
             });
             return;
@@ -2360,11 +2371,13 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
             return { createNewProcess(), nullptr, "Process swap because this is a first navigation in a DOM popup without opener"_s };
     }
 
-    const bool treatAsSameOriginNavigation = [&targetURL, &navigation, &siteIsolationEnabled] {
-        if (siteIsolationEnabled
-            && targetURL.protocolIsAbout()
-            && !SecurityPolicy::shouldInheritSecurityOriginFromOwner(targetURL))
-            return false;
+    const bool treatAsSameOriginNavigation = [&targetURL, &navigation, &siteIsolationEnabled, &frame] {
+        if (siteIsolationEnabled) {
+            if (targetURL.protocolIsAbout() && !SecurityPolicy::shouldInheritSecurityOriginFromOwner(targetURL))
+                return false;
+            if (frame.isMainFrame() && targetURL.protocolIsData())
+                return false;
+        }
 
         return navigation.treatAsSameOriginNavigation();
     }();
@@ -2761,11 +2774,11 @@ void WebProcessPool::observeScriptTrackingPrivacyUpdatesIfNeeded()
 
 void WebProcessPool::observeConsistentQueryParameterFilteringQuirkUpdatesIfNeeded()
 {
-    if (m_scriptTrackingPrivacyDataUpdateObserver)
+    if (m_consistentPrivacyQuirkDataUpdateObserver)
         return;
 
     Ref controller = ConsistentPrivacyQuirkController::sharedSingleton();
-    m_scriptTrackingPrivacyDataUpdateObserver = controller->observeUpdates([weakThis = WeakPtr { *this }] {
+    m_consistentPrivacyQuirkDataUpdateObserver = controller->observeUpdates([weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

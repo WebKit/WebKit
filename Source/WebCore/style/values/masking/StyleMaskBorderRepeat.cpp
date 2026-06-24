@@ -55,7 +55,7 @@ static auto toStyleMaskBorderRepeatValue(const CSS::MaskBorderRepeat::Value& val
     );
 }
 
-auto ToCSS<MaskBorderRepeat>::operator()(const MaskBorderRepeat& value, const RenderStyle&) -> CSS::MaskBorderRepeat
+auto ToCSS<MaskBorderRepeat>::operator()(const MaskBorderRepeat& value, const Style::ComputedStyle&) -> CSS::MaskBorderRepeat
 {
     return { {
         toCSSMaskBorderRepeatValue(value.values.width()),
@@ -80,7 +80,7 @@ auto CSSValueConversion<MaskBorderRepeat>::operator()(BuilderState& state, const
     return toStyleFromCSSValue<NinePieceImageRule>(state, value);
 }
 
-auto CSSValueCreation<MaskBorderRepeat>::operator()(CSSValuePool&, const RenderStyle& style, const MaskBorderRepeat& value) -> Ref<CSSValue>
+auto CSSValueCreation<MaskBorderRepeat>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const MaskBorderRepeat& value) -> Ref<CSSValue>
 {
     return CSSMaskBorderRepeatValue::create(toCSS(value, style));
 }

@@ -11,9 +11,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <ostream>
+#include <span>
 
 #include "absl/flags/flag.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/rtp_parameters.h"
 #include "modules/audio_coding/codecs/opus/opus_inst.h"
@@ -161,7 +161,7 @@ int NetEqOpusQualityTest::EncodeBlock(int16_t* in_data,
   int value;
   opus_repacketizer_init(repacketizer_);
   for (int idx = 0; idx < sub_packets_; idx++) {
-    payload->AppendData(max_bytes, [&](ArrayView<uint8_t> payload) {
+    payload->AppendData(max_bytes, [&](std::span<uint8_t> payload) {
       value = WebRtcOpus_Encode(opus_encoder_, pointer, sub_block_size_samples_,
                                 max_bytes, payload.data());
 

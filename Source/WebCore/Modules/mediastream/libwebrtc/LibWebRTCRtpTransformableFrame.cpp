@@ -57,14 +57,13 @@ std::span<const uint8_t> LibWebRTCRtpTransformableFrame::data() const
 {
     if (!m_rtcFrame)
         return { };
-    auto data = m_rtcFrame->GetData();
-    return unsafeMakeSpan(data.begin(), data.size());
+    return m_rtcFrame->GetData();
 }
 
 void LibWebRTCRtpTransformableFrame::setData(std::span<const uint8_t> data)
 {
     if (m_rtcFrame)
-        m_rtcFrame->SetData({ data.data(), data.size() });
+        m_rtcFrame->SetData(data);
 }
 
 bool LibWebRTCRtpTransformableFrame::isKeyFrame() const
@@ -152,7 +151,7 @@ void LibWebRTCRtpTransformableFrame::setOptions(const RTCEncodedVideoFrameMetada
     if (newMetadata.frameId)
         rtcMetadata.SetFrameId(*newMetadata.frameId);
     if (newMetadata.dependencies)
-        rtcMetadata.SetFrameDependencies({ newMetadata.dependencies->span().data(), newMetadata.dependencies->size() });
+        rtcMetadata.SetFrameDependencies(newMetadata.dependencies->span());
     if (newMetadata.width)
         rtcMetadata.SetWidth(*newMetadata.width);
     if (newMetadata.height)

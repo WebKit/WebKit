@@ -484,7 +484,7 @@ TEST(WKHTTPCookieStore, ObserveCookiesReceivedFromHTTP)
     runTest([WKWebsiteDataStore nonPersistentDataStore]);
 }
 
-static bool finished;
+static bool cookieStoreFinished;
 
 @interface CookieUIDelegate : NSObject <WKUIDelegate>
 @end
@@ -493,7 +493,7 @@ static bool finished;
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
     EXPECT_STREQ("PersistentCookieName=CookieValue; SessionCookieName=CookieValue", message.UTF8String);
-    finished = true;
+    cookieStoreFinished = true;
     completionHandler();
 }
 @end
@@ -519,25 +519,25 @@ void runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming should
     // NonPersistentDataStore
     RetainPtr<WKWebsiteDataStore> ephemeralStoreWithCookies = [WKWebsiteDataStore nonPersistentDataStore];
 
-    finished = false;
+    cookieStoreFinished = false;
     [ephemeralStoreWithCookies.get().httpCookieStore setCookie:persistentCookie.get() completionHandler:^{
         WKWebsiteDataStore *ephemeralStoreWithIndependentCookieStorage = [WKWebsiteDataStore nonPersistentDataStore];
         [ephemeralStoreWithIndependentCookieStorage.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
             ASSERT_EQ(0u, cookies.count);
-            finished = true;
+            cookieStoreFinished = true;
         }];
     }];
-    TestWebKitAPI::Util::run(&finished);
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
 
-    finished = false;
+    cookieStoreFinished = false;
     [ephemeralStoreWithCookies.get().httpCookieStore setCookie:sessionCookie.get() completionHandler:^{
         [ephemeralStoreWithCookies.get().httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
             ASSERT_EQ(2u, cookies.count);
-            finished = true;
+            cookieStoreFinished = true;
         }];
     }];
-    TestWebKitAPI::Util::run(&finished);
-    finished = false;
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
+    cookieStoreFinished = false;
 
     RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().prewarmsProcessesAutomatically = shouldEnableProcessPrewarming == ShouldEnableProcessPrewarming::Yes;
@@ -550,50 +550,50 @@ void runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming should
     RetainPtr delegate = adoptNS([[CookieUIDelegate alloc] init]);
     webView.get().UIDelegate = delegate.get();
     [webView loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
-    TestWebKitAPI::Util::run(&finished);
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
 
-    finished = false;
+    cookieStoreFinished = false;
     [ephemeralStoreWithCookies.get().httpCookieStore deleteCookie:sessionCookie.get() completionHandler:^{
         [ephemeralStoreWithCookies.get().httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
             ASSERT_EQ(1u, cookies.count);
-            finished = true;
+            cookieStoreFinished = true;
         }];
     }];
-    TestWebKitAPI::Util::run(&finished);
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
     
     // DefaultDataStore
     auto defaultStore = [WKWebsiteDataStore defaultDataStore];
-    finished = false;
+    cookieStoreFinished = false;
     [defaultStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:[] {
-        finished = true;
+        cookieStoreFinished = true;
     }];
-    TestWebKitAPI::Util::run(&finished);
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
 
-    finished = false;
+    cookieStoreFinished = false;
     [defaultStore.httpCookieStore setCookie:persistentCookie.get() completionHandler:^{
         [defaultStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
             ASSERT_EQ(1u, cookies.count);
-            finished = true;
+            cookieStoreFinished = true;
         }];
     }];
-    TestWebKitAPI::Util::run(&finished);
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
 
-    finished = false;
+    cookieStoreFinished = false;
     [defaultStore.httpCookieStore setCookie:sessionCookie.get() completionHandler:^{
         [defaultStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
             ASSERT_EQ(2u, cookies.count);
-            finished = true;
+            cookieStoreFinished = true;
         }];
     }];
-    TestWebKitAPI::Util::run(&finished);
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
 
-    finished = false;
+    cookieStoreFinished = false;
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = defaultStore;
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();
     [webView loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
-    TestWebKitAPI::Util::run(&finished);
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
 }
 
 TEST(WKHTTPCookieStore, WithoutProcessPoolWithoutPrewarming)
@@ -618,7 +618,7 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolWithPrewarming)
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
     _message = message;
-    finished = true;
+    cookieStoreFinished = true;
     completionHandler();
 }
 
@@ -685,10 +685,10 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolEphemeralSession)
     }];
     
     [ephemeralStoreWithCookies.get().httpCookieStore setCookie:sessionCookie.get() completionHandler:^{
-        finished = true;
+        cookieStoreFinished = true;
     }];
-    TestWebKitAPI::Util::run(&finished);
-    finished = false;
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
+    cookieStoreFinished = false;
     
     [webView loadHTMLString:[delegate alertCookieHTML] baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     EXPECT_WK_STREQ([delegate waitForMessage], "SessionCookieName=CookieValue");
@@ -714,27 +714,27 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolDuplicates)
     RetainPtr<NSHTTPCookie> sessionCookieDifferentDomain = [NSHTTPCookie cookieWithProperties:properties.get()];
     properties.get()[NSHTTPCookieValue] = @"OtherCookieValue";
     RetainPtr<NSHTTPCookie> sessionCookieDifferentValue = [NSHTTPCookie cookieWithProperties:properties.get()];
-    finished = false;
+    cookieStoreFinished = false;
 
     clearCookies([WKWebsiteDataStore defaultDataStore]);
 
     [httpCookieStore.get() setCookie:sessionCookie.get() completionHandler:^{
-        finished = true;
+        cookieStoreFinished = true;
     }];
-    TestWebKitAPI::Util::run(&finished);
-    finished = false;
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
+    cookieStoreFinished = false;
 
     [httpCookieStore.get() setCookie:sessionCookieDifferentDomain.get() completionHandler:^{
-        finished = true;
+        cookieStoreFinished = true;
     }];
-    TestWebKitAPI::Util::run(&finished);
-    finished = false;
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
+    cookieStoreFinished = false;
 
     [httpCookieStore.get() setCookie:sessionCookieDifferentValue.get() completionHandler:^{
-        finished = true;
+        cookieStoreFinished = true;
     }];
-    TestWebKitAPI::Util::run(&finished);
-    finished = false;
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
+    cookieStoreFinished = false;
 
     [httpCookieStore.get() getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
         EXPECT_EQ(2u, cookies.count);
@@ -746,9 +746,9 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolDuplicates)
                 otherSessionCookieExists = true;
         }
         EXPECT_TRUE(sessionCookieExists && otherSessionCookieExists);
-        finished = true;
+        cookieStoreFinished = true;
     }];
-    TestWebKitAPI::Util::run(&finished);
+    TestWebKitAPI::Util::run(&cookieStoreFinished);
 }
 
 TEST(WKHTTPCookieStore, CookiesForURL)
@@ -796,7 +796,7 @@ TEST(WKHTTPCookieStore, CookieAccessAfterNetworkProcessTermination)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.cookie"], "key=value");
 }
 
-TEST(WKHTTPCookieStore, WebSocketCookies)
+TEST(WKHTTPCookieStore, DISABLED_WebSocketCookies)
 {
     using namespace TestWebKitAPI;
     bool receivedThirdRequest { false };
@@ -1227,3 +1227,62 @@ TEST(WKHTTPCookieStore, DeletePartitionedCookie)
     Util::run(&done);
 }
 #endif // ENABLE(OPT_IN_PARTITIONED_COOKIES)
+
+TEST(WKHTTPCookieStore, SameSiteStrictCookieNotSentOnCrossSiteNavigation)
+{
+    using namespace TestWebKitAPI;
+    bool receivedSameSiteCheck { false };
+    bool sameSiteCheckHasCookie { false };
+    bool receivedCrossSiteCheck { false };
+    bool crossSiteCheckHasCookie { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            request.append(0);
+
+            if (path.endsWith("/setcookie"_s)) {
+                co_await connection.awaitableSend(
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 4\r\n"
+                    "Set-Cookie: id=secret; Path=/; SameSite=Strict\r\n"
+                    "\r\n"
+                    "Done"_s);
+            } else if (path.endsWith("/attacker"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<html><body>attacker page</body></html>"_s).serialize());
+            } else if (path.endsWith("/same-site-check"_s)) {
+                sameSiteCheckHasCookie = contains(request.span(), "id=secret"_span);
+                co_await connection.awaitableSend(HTTPResponse("checked"_s).serialize());
+                receivedSameSiteCheck = true;
+            } else if (path.endsWith("/cross-site-check"_s)) {
+                crossSiteCheckHasCookie = contains(request.span(), "id=secret"_span);
+                co_await connection.awaitableSend(HTTPResponse("checked"_s).serialize());
+                receivedCrossSiteCheck = true;
+            }
+        }
+    });
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port()),
+    }];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://victim.example:%d/setcookie", server.port()]]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://victim.example:%d/same-site-check", server.port()]]]];
+    Util::run(&receivedSameSiteCheck);
+    EXPECT_TRUE(sameSiteCheckHasCookie);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://attacker.example:%d/attacker", server.port()]]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://victim.example:%d/cross-site-check", server.port()]]]];
+    Util::run(&receivedCrossSiteCheck);
+    EXPECT_FALSE(crossSiteCheckHasCookie);
+}

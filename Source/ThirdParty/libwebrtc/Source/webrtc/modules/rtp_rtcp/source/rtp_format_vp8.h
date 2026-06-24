@@ -28,10 +28,10 @@
 #include <stddef.h>
 
 #include <cstdint>
+#include <span>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
@@ -43,7 +43,7 @@ class RtpPacketizerVp8 : public RtpPacketizer {
  public:
   // Initialize with payload from encoder.
   // The payload_data must be exactly one encoded VP8 frame.
-  RtpPacketizerVp8(ArrayView<const uint8_t> payload,
+  RtpPacketizerVp8(std::span<const uint8_t> payload,
                    PayloadSizeLimits limits,
                    const RTPVideoHeaderVP8& hdr_info);
 
@@ -65,7 +65,7 @@ class RtpPacketizerVp8 : public RtpPacketizer {
   static RawHeader BuildHeader(const RTPVideoHeaderVP8& header);
 
   RawHeader hdr_;
-  ArrayView<const uint8_t> remaining_payload_;
+  std::span<const uint8_t> remaining_payload_;
   std::vector<int> payload_sizes_;
   std::vector<int>::const_iterator current_packet_;
 };

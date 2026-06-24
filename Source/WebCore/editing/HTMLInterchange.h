@@ -40,6 +40,10 @@ constexpr auto ApplePasteAsQuotation = "Apple-paste-as-quotation"_s;
 constexpr auto AppleStyleSpanClass = "Apple-style-span"_s;
 constexpr auto AppleTabSpanClass = "Apple-tab-span"_s;
 
+constexpr auto AppleDashListClass = "Apple-dash-list"_s;
+constexpr auto AppleDecimalListClass = "Apple-decimal-list"_s;
+constexpr auto AppleDiscListClass = "Apple-disc-list"_s;
+
 // Controls whether a special BR which is removed upon paste in ReplaceSelectionCommand needs to be inserted
 // and making sequence of spaces not collapsible by inserting non-breaking spaces.
 // See https://trac.webkit.org/r8087 and https://trac.webkit.org/r8096.

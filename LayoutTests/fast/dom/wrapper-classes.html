@@ -10,8 +10,6 @@
 <body>
 <script>
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 function jsWrapperClass(node)
 {
@@ -54,6 +52,7 @@ function runTest()
 {
     // NOTE: This is a sister test to platform/mac/fast/dom/wrapper-class-objc.html which test the Objective-C wrapper classes.  Update accordingly.
     description("This tests wrapper class names for JavaScript.");
+    window.jsTestIsAsync = true;
 
     stylesheet = document.getElementById("style").sheet;
     root = document.documentElement;
@@ -259,8 +258,7 @@ function runTest()
 
     // what else is missing?
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 function frameLoaded()

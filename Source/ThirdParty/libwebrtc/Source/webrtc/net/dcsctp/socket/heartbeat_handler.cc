@@ -13,12 +13,12 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/functional/bind_front.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
@@ -66,7 +66,7 @@ class HeartbeatInfo {
   }
 
   static std::optional<HeartbeatInfo> Deserialize(
-      webrtc::ArrayView<const uint8_t> data) {
+      std::span<const uint8_t> data) {
     if (data.size() != kBufferSize) {
       RTC_LOG(LS_WARNING) << "Invalid heartbeat info: " << data.size()
                           << " bytes";

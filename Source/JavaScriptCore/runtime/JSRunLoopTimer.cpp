@@ -65,6 +65,8 @@ JSRunLoopTimer::Manager::PerVMData::~PerVMData()
     });
 }
 
+JSRunLoopTimer::Manager::~Manager() = default;
+
 void JSRunLoopTimer::Manager::timerDidFire()
 {
     Vector<Ref<JSRunLoopTimer>> timersToFire;

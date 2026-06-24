@@ -183,13 +183,8 @@ ReadableStreamBYOBRequest* ReadableByteStreamController::getByobRequest() const
 {
     if (!m_byobRequest && !m_pendingPullIntos.isEmpty()) {
         auto& firstDescriptor = m_pendingPullIntos.first();
-        auto view = JSC::Uint8Array::create(firstDescriptor.buffer.ptr(), firstDescriptor.byteOffset + firstDescriptor.bytesFilled, firstDescriptor.byteLength - firstDescriptor.bytesFilled);
-        Ref byobRequest = ReadableStreamBYOBRequest::create();
-
-        byobRequest->setController(const_cast<ReadableByteStreamController*>(this));
-        byobRequest->setView(view.ptr());
-
-        m_byobRequest = WTF::move(byobRequest);
+        Ref view = JSC::Uint8Array::create(firstDescriptor.buffer.ptr(), firstDescriptor.byteOffset + firstDescriptor.bytesFilled, firstDescriptor.byteLength - firstDescriptor.bytesFilled);
+        m_byobRequest = ReadableStreamBYOBRequest::create(*const_cast<ReadableByteStreamController*>(this), WTF::move(view));
     }
 
     return m_byobRequest.get();
@@ -434,8 +429,8 @@ void ReadableByteStreamController::invalidateByobRequest()
     if (!byobRequest)
         return;
 
-    byobRequest->setController(nullptr);
-    byobRequest->setView(nullptr);
+    byobRequest->clearController();
+    byobRequest->clearView();
     m_byobRequest = nullptr;
 }
 

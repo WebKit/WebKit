@@ -35,7 +35,7 @@ namespace WebCore {
 Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createEmpty(const AtomString& name)
 {
     static NeverDestroyed<Ref<CSSVariableData>> empty { CSSVariableData::create({ }) };
-    return createSyntaxAll(name, Ref { empty.get() });
+    return createSyntaxAll(name, protect(empty.get()));
 }
 
 Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createUnresolved(const AtomString& name, Ref<CSSSubstitutionValue>&& value)

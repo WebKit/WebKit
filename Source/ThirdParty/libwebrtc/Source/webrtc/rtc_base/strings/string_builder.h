@@ -16,136 +16,54 @@
 #include <utility>
 
 #include "absl/strings/has_absl_stringify.h"
-#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
-// This is a minimalistic string builder class meant to cover the most cases of
-// when you might otherwise be tempted to use a stringstream (discouraged for
-// anything except logging). It uses a fixed-size buffer provided by the caller
-// and concatenates strings and numbers into it, allowing the results to be
-// read via `str()`.
-class SimpleStringBuilder {
- public:
-  explicit SimpleStringBuilder(ArrayView<char> buffer);
-  SimpleStringBuilder(const SimpleStringBuilder&) = delete;
-  SimpleStringBuilder& operator=(const SimpleStringBuilder&) = delete;
+namespace string_builder_internal {
 
-  SimpleStringBuilder& operator<<(char ch);
-  SimpleStringBuilder& operator<<(absl::string_view str);
-  SimpleStringBuilder& operator<<(int i);
-  SimpleStringBuilder& operator<<(unsigned i);
-  SimpleStringBuilder& operator<<(long i);                // NOLINT
-  SimpleStringBuilder& operator<<(long long i);           // NOLINT
-  SimpleStringBuilder& operator<<(unsigned long i);       // NOLINT
-  SimpleStringBuilder& operator<<(unsigned long long i);  // NOLINT
-  SimpleStringBuilder& operator<<(float f);
-  SimpleStringBuilder& operator<<(double f);
-  SimpleStringBuilder& operator<<(long double f);
-
-  template <typename T>
-    requires absl::HasAbslStringify<T>::value
-  SimpleStringBuilder& operator<<(const T& value) {
-    return *this << absl::StrCat(value);
-  }
-
-  // Returns a pointer to the built string. The name `str()` is borrowed for
-  // compatibility reasons as we replace usage of stringstream throughout the
-  // code base.
-  const char* str() const { return buffer_.data(); }
-
-  // Returns the length of the string. The name `size()` is picked for STL
-  // compatibility reasons.
-  size_t size() const { return size_; }
-
-// Allows appending a printf style formatted string.
-#if defined(__GNUC__)
-  __attribute__((__format__(__printf__, 2, 3)))
-#endif
-  SimpleStringBuilder&
-  AppendFormat(const char* fmt, ...);
-
- private:
-  bool IsConsistent() const {
-    return size_ <= buffer_.size() - 1 && buffer_[size_] == '\0';
-  }
-
-  // An always-zero-terminated fixed-size buffer that we write to. The fixed
-  // size allows the buffer to be stack allocated, which helps performance.
-  // Having a fixed size is furthermore useful to avoid unnecessary resizing
-  // while building it.
-  const ArrayView<char> buffer_;
-
-  // Represents the number of characters written to the buffer.
-  // This does not include the terminating '\0'.
-  size_t size_ = 0;
+struct StringBuilderSink {
+  std::string& s;
+  void Append(absl::string_view part) { s.append(part); }
 };
+
+// AbslFormatFlush is a customization point called by Abseil's formatting
+// library (via ADL). Providing this direct implementation avoids intermediate
+// std::string allocations or buffering overhead (e.g. from absl::StrCat),
+// allowing Abseil to append formatted pieces directly to the sink's string.
+inline void AbslFormatFlush(StringBuilderSink* sink, absl::string_view part) {
+  sink->Append(part);
+}
+
+}  // namespace string_builder_internal
 
 // A string builder that supports dynamic resizing while building a string.
 // The class is based around an instance of std::string and allows moving
 // ownership out of the class once the string has been built.
-// Note that this class uses the heap for allocations, so SimpleStringBuilder
-// might be more efficient for some use cases.
-class StringBuilder {
+class RTC_EXPORT StringBuilder {
  public:
   StringBuilder() = default;
   explicit StringBuilder(absl::string_view s) : str_(s) {}
   StringBuilder(const StringBuilder&) = default;
   StringBuilder& operator=(const StringBuilder&) = default;
 
-  StringBuilder& operator<<(const absl::string_view str) {
-    str_.append(str.data(), str.length());
-    return *this;
-  }
-
-  StringBuilder& operator<<(char c) = delete;
-
-  StringBuilder& operator<<(int i) {
-    str_ += absl::StrCat(i);
-    return *this;
-  }
-
-  StringBuilder& operator<<(unsigned i) {
-    str_ += absl::StrCat(i);
-    return *this;
-  }
-
-  StringBuilder& operator<<(long i) {  // NOLINT
-    str_ += absl::StrCat(i);
-    return *this;
-  }
-
-  StringBuilder& operator<<(long long i) {  // NOLINT
-    str_ += absl::StrCat(i);
-    return *this;
-  }
-
-  StringBuilder& operator<<(unsigned long i) {  // NOLINT
-    str_ += absl::StrCat(i);
-    return *this;
-  }
-
-  StringBuilder& operator<<(unsigned long long i) {  // NOLINT
-    str_ += absl::StrCat(i);
-    return *this;
-  }
-
-  StringBuilder& operator<<(float f) {
-    str_ += absl::StrCat(f);
-    return *this;
-  }
-
-  StringBuilder& operator<<(double f) {
-    str_ += absl::StrCat(f);
-    return *this;
-  }
+  StringBuilder& operator<<(absl::string_view str);
+  StringBuilder& operator<<(char c);
+  StringBuilder& operator<<(int i);
+  StringBuilder& operator<<(unsigned i);
+  StringBuilder& operator<<(long i);                // NOLINT
+  StringBuilder& operator<<(long long i);           // NOLINT
+  StringBuilder& operator<<(unsigned long i);       // NOLINT
+  StringBuilder& operator<<(unsigned long long i);  // NOLINT
+  StringBuilder& operator<<(float f);
+  StringBuilder& operator<<(double f);
 
   template <typename T>
     requires absl::HasAbslStringify<T>::value
   StringBuilder& operator<<(const T& value) {
-    str_ += absl::StrCat(value);
+    string_builder_internal::StringBuilderSink sink{str_};
+    AbslStringify(sink, value);
     return *this;
   }
 
@@ -155,11 +73,8 @@ class StringBuilder {
 
   size_t size() const { return str_.size(); }
 
-  std::string Release() {
-    std::string ret = std::move(str_);
-    str_.clear();
-    return ret;
-  }
+  // Moves out the internal std::string.
+  std::string Release() { return std::move(str_); }
 
   // Allows appending a printf style formatted string.
   StringBuilder& AppendFormat(const char* fmt, ...)

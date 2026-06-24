@@ -61,8 +61,8 @@ void Editor::removeUnchangeableStyles()
 {
     // This function removes styles that the user cannot modify by applying their default values.
     
-    auto editingStyle = EditingStyle::create(document().bodyOrFrameset());
-    auto defaultStyle = editingStyle->style()->mutableCopy();
+    auto editingStyle = EditingStyle::create(protect(protect(document())->bodyOrFrameset()));
+    auto defaultStyle = protect(editingStyle->style())->mutableCopy();
     
     // Text widgets implement background color via the UIView property. Their body element will not have one.
     defaultStyle->setProperty(CSSPropertyBackgroundColor, "rgba(255, 255, 255, 0.0)"_s);
@@ -109,7 +109,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         return;
     ASSERT(cachedImage);
 
-    auto imageSourceURL = imageElement.document().encodingParseURL(imageElement.imageSourceURL());
+    auto imageSourceURL = protect(imageElement.document())->encodingParseURL(imageElement.imageSourceURL());
 
     auto pasteboardImageURL = url.isEmpty() ? imageSourceURL : url;
     if (!pasteboardImageURL.protocolIsFile()) {
@@ -119,7 +119,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.suggestedName = imageSourceURL.lastPathComponent().toString();
     pasteboardImage.imageSize = image->size();
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType().createNSString().get());
-    if (auto* buffer = cachedImage->resourceBuffer())
+    if (RefPtr buffer = cachedImage->resourceBuffer())
         pasteboardImage.resourceData = buffer->makeContiguous();
 
     if (!pasteboard.isStatic())

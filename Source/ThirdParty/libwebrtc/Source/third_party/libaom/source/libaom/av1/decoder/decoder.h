@@ -233,6 +233,17 @@ typedef struct AV1DecTileMTData {
 #include "aom_ports/aom_timer.h"
 // Adjust the following to add new components.
 enum {
+  decode_mbmi_block_time,
+  decode_token_recon_block_intra_time,
+  predict_inter_block_time,
+  decode_reconstruct_tx_inter_time,
+  decode_token_recon_block_inter_time,
+  decode_token_recon_block_time,
+  parse_decode_block_time,
+  decode_tile_time,
+  decode_tiles_time,
+  av1_loop_filter_frame_time,
+  cdef_and_lr_time,
   av1_decode_tg_tiles_and_wrapup_time,
   aom_decode_frame_from_obus_time,
   kTimingComponents,
@@ -240,6 +251,20 @@ enum {
 
 static inline char const *get_component_name(int index) {
   switch (index) {
+    case decode_mbmi_block_time: return "decode_mbmi_block_time";
+    case decode_token_recon_block_intra_time:
+      return "decode_token_recon_block_intra_time";
+    case predict_inter_block_time: return "predict_inter_block_time";
+    case decode_reconstruct_tx_inter_time:
+      return "decode_reconstruct_tx_inter_time";
+    case decode_token_recon_block_inter_time:
+      return "decode_token_recon_block_inter_time";
+    case decode_token_recon_block_time: return "decode_token_recon_block_time";
+    case parse_decode_block_time: return "parse_decode_block_time";
+    case decode_tile_time: return "decode_tile_time";
+    case decode_tiles_time: return "decode_tiles_time";
+    case av1_loop_filter_frame_time: return "av1_loop_filter_frame_time";
+    case cdef_and_lr_time: return "cdef_and_lr_time";
     case av1_decode_tg_tiles_and_wrapup_time:
       return "av1_decode_tg_tiles_and_wrapup_time";
     case aom_decode_frame_from_obus_time:
@@ -309,9 +334,13 @@ typedef struct AV1Decoder {
 #if CONFIG_INSPECTION
   aom_inspect_cb inspect_cb;
   void *inspect_ctx;
+  int *sb_bits;
+  int sb_bits_alloc_size;
 #endif
   int operating_point;
   int current_operating_point;
+  // If nonzero, the maximum frame size (width * height). 0 means unlimited.
+  unsigned int frame_size_limit;
   int seen_frame_header;
   // The expected start_tile (tg_start syntax element) of the next tile group.
   int next_start_tile;

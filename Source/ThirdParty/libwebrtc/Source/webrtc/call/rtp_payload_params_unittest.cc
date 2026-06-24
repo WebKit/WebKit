@@ -10,6 +10,7 @@
 
 #include "call/rtp_payload_params.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <optional>
@@ -1012,7 +1013,8 @@ TEST(RtpPayloadParamsVp9ToGenericTest, SpatialScalabilityKSvc) {
   headers[3] = params.GetRtpVideoHeader(image, &info, /*shared_frame_id=*/7);
 
   ASSERT_TRUE(headers[0].generic);
-  int num_decode_targets = headers[0].generic->decode_target_indications.size();
+  size_t num_decode_targets =
+      headers[0].generic->decode_target_indications.size();
   // Rely on implementation detail there are always kMaxTemporalStreams temporal
   // layers assumed, in particular assume Decode Target#0 matches layer S0T0,
   // and Decode Target#kMaxTemporalStreams matches layer S1T0.

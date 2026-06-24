@@ -13,8 +13,8 @@
 #include <cstdint>
 #include <iterator>
 #include <limits>
+#include <span>
 
-#include "api/array_view.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -121,17 +121,15 @@ TEST(Leb128Test, WriteTwoByteValue) {
 TEST(Leb128Test, WriteNearlyMaxValue) {
   uint8_t buffer[16];
   EXPECT_EQ(WriteLeb128(0x7fff'ffff'ffff'ffff, buffer), 9);
-  EXPECT_THAT(
-      MakeArrayView(buffer, 9),
-      ElementsAre(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f));
+  EXPECT_THAT(std::span(buffer, 9), ElementsAre(0xff, 0xff, 0xff, 0xff, 0xff,
+                                                0xff, 0xff, 0xff, 0x7f));
 }
 
 TEST(Leb128Test, WriteMaxValue) {
   uint8_t buffer[16];
   EXPECT_EQ(WriteLeb128(0xffff'ffff'ffff'ffff, buffer), 10);
-  EXPECT_THAT(
-      MakeArrayView(buffer, 10),
-      ElementsAre(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01));
+  EXPECT_THAT(std::span(buffer, 10), ElementsAre(0xff, 0xff, 0xff, 0xff, 0xff,
+                                                 0xff, 0xff, 0xff, 0xff, 0x01));
 }
 
 }  // namespace

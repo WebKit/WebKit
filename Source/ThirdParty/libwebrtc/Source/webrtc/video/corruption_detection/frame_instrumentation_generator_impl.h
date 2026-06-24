@@ -48,6 +48,8 @@ class FrameInstrumentationGeneratorImpl : public FrameInstrumentationGenerator {
   void OnCapturedFrame(VideoFrame frame) override RTC_LOCKS_EXCLUDED(mutex_);
   std::optional<FrameInstrumentationData> OnEncodedImage(
       const EncodedImage& encoded_image) override RTC_LOCKS_EXCLUDED(mutex_);
+  void OnFrameReleased(uint32_t rtp_timestamp) override
+      RTC_LOCKS_EXCLUDED(mutex_);
 
   std::optional<int> GetHaltonSequenceIndex(int layer_id) const override
       RTC_LOCKS_EXCLUDED(mutex_);

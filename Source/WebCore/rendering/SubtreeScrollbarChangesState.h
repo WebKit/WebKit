@@ -25,17 +25,28 @@
 
 #pragma once
 
+#include <WebCore/BoxSides.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/CheckedRef.h>
-#include <wtf/ListHashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class RenderBlock;
 
+struct RendererScrollbarChange {
+    CheckedRef<RenderBlock> renderer;
+    // Relative to the subtree root.
+    EnumSet<LogicalBoxAxis> sizesAffectedFromScrollbarChanges;
+};
+
 struct SubtreeScrollbarChangesState {
     CheckedRef<RenderBlock> subtreeRoot;
-    ListHashSet<CheckedRef<RenderBlock>> renderersWithScrollbarChange;
+    EnumSet<LogicalBoxAxis> sizesAffectedForSubtreeRoot;
+    Vector<RendererScrollbarChange> rendererScrollbarChanges;
 
+    EnumSet<LogicalBoxAxis> sizesAffectedForSubtreeRootFromScrollbarChanges(const RenderBlock& rendererWithScrollbarChanges, EnumSet<ScrollbarOrientation> orientationsForChangedScrollbars) const;
+    void addRendererWithScrollbarChange(RenderBlock&, EnumSet<LogicalBoxAxis> sizesAffectedFromScrollbarChanges);
     static bool isEligibleForScrollbarHandlingByAncestor(const RenderBlock&);
 };
 
@@ -44,7 +55,7 @@ class LocalFrameViewLayoutContext;
 class SubtreeScrollbarChangesStateScope {
     WTF_MAKE_NONCOPYABLE(SubtreeScrollbarChangesStateScope);
 public:
-    SubtreeScrollbarChangesStateScope(LocalFrameViewLayoutContext&, RenderBlock& subtreeRoot);
+    SubtreeScrollbarChangesStateScope(LocalFrameViewLayoutContext&, RenderBlock& subtreeRoot, EnumSet<LogicalBoxAxis>);
     ~SubtreeScrollbarChangesStateScope();
 private:
     const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;
@@ -56,7 +67,7 @@ public:
     ~SubtreeScrollbarChangesHandler();
 private:
     const CheckedRef<RenderBlock> m_rendererHandlingScrollbarChanges;
-    ListHashSet<CheckedRef<RenderBlock>> m_renderersWithScrollbarChangesHandledByAncestor;
+    Vector<RendererScrollbarChange> m_rendererScrollbarChangesHandledByAncestor;
 };
 
 } // namespace WebCore

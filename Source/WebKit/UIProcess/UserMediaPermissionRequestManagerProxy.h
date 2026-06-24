@@ -231,7 +231,6 @@ private:
     HashSet<WebCore::FrameIdentifier> m_grantedAudioFrames;
     HashSet<WebCore::FrameIdentifier> m_grantedVideoFrames;
 #if PLATFORM(COCOA)
-    HashCountedSet<String> m_monitoredDeviceIds;
     RetainPtr<WKRotationCoordinatorObserver> m_objcObserver;
 #endif
     std::optional<MonotonicTime> m_lastCaptureTime;

@@ -48,4 +48,5 @@
     "float32-renderable",
     "core-features-and-limits",
     "texture-formats-tier1",
+    "primitive-index",
 };

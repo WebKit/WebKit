@@ -57,13 +57,13 @@ void RealtimeOutgoingAudioSource::observeSource()
 {
     ASSERT(!m_audioSource->hasObserver(*this));
     m_audioSource->addObserver(*this);
-    m_audioSource->source().addAudioSampleObserver(*this);
+    protect(m_audioSource->source())->addAudioSampleObserver(*this);
     initializeConverter();
 }
 
 void RealtimeOutgoingAudioSource::unobserveSource()
 {
-    m_audioSource->source().removeAudioSampleObserver(*this);
+    protect(m_audioSource->source())->removeAudioSampleObserver(*this);
     m_audioSource->removeObserver(*this);
 }
 

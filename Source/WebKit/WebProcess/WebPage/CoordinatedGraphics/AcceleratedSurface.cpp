@@ -123,6 +123,9 @@ AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& fram
     , m_swapChain(*this)
     , m_isVisible(webPage.activityState().contains(ActivityState::IsVisible))
     , m_useExplicitSync(usesGL() && useExplicitSync())
+#if ENABLE(DAMAGE_TRACKING)
+    , m_damageTracker(m_swapChain)
+#endif
 {
 }
 
@@ -896,12 +899,20 @@ uint64_t AcceleratedSurface::SwapChain::window()
 #endif
 
 #if ENABLE(DAMAGE_TRACKING)
-void AcceleratedSurface::SwapChain::addDamage(const std::optional<Damage>& damage)
+Vector<IntRect, 1> AcceleratedSurface::SwapChainDamageTracker::takeFrameDamageRects()
 {
-    for (auto& renderTarget : m_freeTargets)
-        renderTarget->addDamage(damage);
-    for (auto& renderTarget : m_lockedTargets)
-        renderTarget->addDamage(damage);
+    if (!m_frameDamage)
+        return { };
+
+    return std::exchange(m_frameDamage, std::nullopt)->rects();
+}
+
+const std::optional<Damage>& AcceleratedSurface::SwapChainDamageTracker::damageForTarget(RenderTarget& target)
+{
+    m_swapChain.forEachTarget([&](RenderTarget& candidate) {
+        candidate.addDamage(m_frameDamage);
+    });
+    return target.damage();
 }
 #endif
 
@@ -1025,7 +1036,7 @@ void AcceleratedSurface::willRenderFrame(const IntSize& size)
     if (sizeDidChange || bufferFormatChanged) {
         m_pendingFrameNotifyTargets.clear();
 #if ENABLE(DAMAGE_TRACKING)
-        m_frameDamage = std::nullopt;
+        m_damageTracker.reset();
 #endif
     }
 
@@ -1088,11 +1099,9 @@ void AcceleratedSurface::didRenderFrame()
     // For GL targets we use bounding box damage for render target damage, as its only 2 consumers so far
     // (CoordinatedBackingStore & ThreadedCompositor) only fetch bounds. Thus having damage with
     // better resolution is pointless as the bounds are the same in such case.
-    m_target->setDamage(Damage(m_swapChain.size(), usesGL() ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles, 4));
-    if (m_frameDamage) {
-        damageRects = m_frameDamage->rects();
-        m_frameDamage = std::nullopt;
-    }
+    // FIXME: If we start to consume fine-grained damage in the Skia compositor, we will need to relax the usesGL condition.
+    m_target->setDamage(Damage(m_swapChain.size(), usesGL() ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles, m_damageTracker.rectangleThreshold()));
+    damageRects = m_damageTracker.takeFrameDamageRects();
 #endif
 
     m_target->didRenderFrame();
@@ -1110,16 +1119,10 @@ void AcceleratedSurface::sendFrame()
 }
 
 #if ENABLE(DAMAGE_TRACKING)
-void AcceleratedSurface::setFrameDamage(Damage&& damage)
-{
-    m_frameDamage = WTF::move(damage);
-}
-
 const std::optional<Damage>& AcceleratedSurface::renderTargetDamage()
 {
-    m_swapChain.addDamage(m_frameDamage);
     static std::optional<Damage> nulloptDamage;
-    return m_target ? m_target->damage() : nulloptDamage;
+    return m_target ? m_damageTracker.damageForTarget(*m_target) : nulloptDamage;
 }
 #endif
 

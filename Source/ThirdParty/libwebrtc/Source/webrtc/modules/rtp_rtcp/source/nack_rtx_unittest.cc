@@ -15,13 +15,14 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <span>
 
 #include "absl/algorithm/container.h"
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/rtp_headers.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_codec_type.h"
@@ -37,9 +38,9 @@
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "modules/rtp_rtcp/source/rtp_sender_video.h"
 #include "rtc_base/rate_limiter.h"
-#include "rtc_base/thread.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 
@@ -67,16 +68,28 @@ class VerifyingMediaStream : public RtpPacketSinkInterface {
   std::list<uint16_t> sequence_numbers_;
 };
 
+class DummySinkValidator : public RtpSinkValidator {
+ public:
+  void OnSinkAdded(RtpPacketSinkInterface* sink) override {}
+  void OnSinkRemoved(RtpPacketSinkInterface* sink) override {}
+  bool IsValidSink(RtpPacketSinkInterface* sink) const override { return true; }
+};
+
 class RtxLoopBackTransport : public Transport {
  public:
-  explicit RtxLoopBackTransport(uint32_t rtx_ssrc)
+  RtxLoopBackTransport(TaskQueueBase* network_thread,
+                       TaskQueueBase* worker_thread,
+                       uint32_t rtx_ssrc)
       : count_(0),
         packet_loss_(0),
         consecutive_drop_start_(0),
         consecutive_drop_end_(0),
         rtx_ssrc_(rtx_ssrc),
         count_rtx_ssrc_(0),
-        module_(nullptr) {}
+        module_(nullptr),
+        stream_receiver_controller_(network_thread,
+                                    worker_thread,
+                                    &dummy_validator_) {}
 
   void SetSendModule(RtpRtcpInterface* rtpRtcpModule) {
     module_ = rtpRtcpModule;
@@ -90,7 +103,7 @@ class RtxLoopBackTransport : public Transport {
     packet_loss_ = 0;
   }
 
-  bool SendRtp(ArrayView<const uint8_t> data,
+  bool SendRtp(std::span<const uint8_t> data,
                const PacketOptions& /* options */) override {
     count_++;
     RtpPacketReceived packet;
@@ -115,7 +128,7 @@ class RtxLoopBackTransport : public Transport {
     return true;
   }
 
-  bool SendRtcp(ArrayView<const uint8_t> data,
+  bool SendRtcp(std::span<const uint8_t> data,
                 const PacketOptions& /* options */) override {
     module_->IncomingRtcpPacket(data);
     return true;
@@ -127,6 +140,7 @@ class RtxLoopBackTransport : public Transport {
   uint32_t rtx_ssrc_;
   int count_rtx_ssrc_;
   RtpRtcpInterface* module_;
+  DummySinkValidator dummy_validator_;
   RtpStreamReceiverController stream_receiver_controller_;
   std::set<uint16_t> expected_sequence_numbers_;
 };
@@ -136,7 +150,9 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
   RtpRtcpRtxNackTest()
       : fake_clock_(123456),
         env_(CreateEnvironment(&fake_clock_)),
-        transport_(kTestRtxSsrc),
+        transport_(main_thread_.task_queue(),
+                   main_thread_.task_queue(),
+                   kTestRtxSsrc),
         rtx_stream_(env_,
                     &media_stream_,
                     rtx_associated_payload_types_,
@@ -153,6 +169,7 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
     configuration.retransmission_rate_limiter = &retransmission_rate_limiter_;
     configuration.local_media_ssrc = kTestSsrc;
     configuration.rtx_send_ssrc = kTestRtxSsrc;
+    configuration.rtcp_mode = RtcpMode::kCompound;
     rtp_rtcp_module_ =
         ModuleRtpRtcpImpl2::CreateSendModule(env_, configuration);
     RTPSenderVideo::Config video_config;
@@ -160,7 +177,6 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
     video_config.rtp_sender = rtp_rtcp_module_->RtpSender();
     video_config.field_trials = &env_.field_trials();
     rtp_sender_video_ = std::make_unique<RTPSenderVideo>(video_config);
-    rtp_rtcp_module_->SetRTCPStatus(RtcpMode::kCompound);
     rtp_rtcp_module_->SetStorePacketsStatus(true, 600);
     EXPECT_EQ(0, rtp_rtcp_module_->SetSendingStatus(true));
     rtp_rtcp_module_->SetSequenceNumber(kTestSequenceNumber);
@@ -240,7 +256,7 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
     media_stream_.sequence_numbers_.sort();
   }
 
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
   SimulatedClock fake_clock_;
   const Environment env_;
   std::unique_ptr<ReceiveStatistics> receive_statistics_;

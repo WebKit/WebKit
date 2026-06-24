@@ -9,6 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <assert.h>
 #include <string.h>
 
 #include "aom/aomcx.h"
@@ -525,7 +526,8 @@ void av1_apply_roi_map(AV1_COMP *cpi) {
           qindex, cm->seq_params->bit_depth,
           cpi->ppi->gf_group.update_type[cpi->gf_frame_index], 0, 15,
           INTER_FRAME, cpi->oxcf.q_cfg.use_fixed_qp_offsets,
-          is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning);
+          is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning,
+          cpi->oxcf.mode);
     }
   } else {
     av1_disable_segmentation(seg);
@@ -681,55 +683,65 @@ void av1_set_size_dependent_vars(AV1_COMP *cpi, int *q, int *bottom_index,
   }
 #endif
 
-  // Decide q and q bounds.
-  *q = av1_rc_pick_q_and_bounds(cpi, cm->width, cm->height, cpi->gf_frame_index,
-                                bottom_index, top_index);
+  if (cpi->oxcf.q_cfg.use_fixed_qp_offsets == 2 &&
+      cpi->oxcf.rc_cfg.mode == AOM_Q) {
+    // Disable scaling, and use the same q for all frames of the pyramid
+    *q = cpi->oxcf.rc_cfg.cq_level;
+    *top_index = *bottom_index = *q;
+    cpi->ppi->p_rc.arf_q = *q;
+  } else {
+    // Decide q and q bounds.
+    *q = av1_rc_pick_q_and_bounds(cpi, cm->width, cm->height,
+                                  cpi->gf_frame_index, bottom_index, top_index);
 
-  if (cpi->oxcf.rc_cfg.mode == AOM_CBR && cpi->rc.force_max_q) {
-    *q = cpi->rc.worst_quality;
-    cpi->rc.force_max_q = 0;
-  }
+    if (cpi->oxcf.rc_cfg.mode == AOM_CBR && cpi->rc.force_max_q) {
+      *q = cpi->rc.worst_quality;
+      cpi->rc.force_max_q = 0;
+    }
 
 #if !CONFIG_REALTIME_ONLY
-  if (cpi->oxcf.rc_cfg.mode == AOM_Q &&
-      cpi->ppi->tpl_data.tpl_frame[cpi->gf_frame_index].is_valid &&
-      !is_lossless_requested(&cpi->oxcf.rc_cfg)) {
-    const RateControlCfg *const rc_cfg = &cpi->oxcf.rc_cfg;
-    const int tpl_q = av1_tpl_get_q_index(
-        &cpi->ppi->tpl_data, cpi->gf_frame_index, cpi->rc.active_worst_quality,
-        cm->seq_params->bit_depth);
-    *q = clamp(tpl_q, rc_cfg->best_allowed_q, rc_cfg->worst_allowed_q);
-    *top_index = *bottom_index = *q;
-    if (gf_group->update_type[cpi->gf_frame_index] == ARF_UPDATE)
-      cpi->ppi->p_rc.arf_q = *q;
-  }
-
-  if (cpi->oxcf.q_cfg.use_fixed_qp_offsets && cpi->oxcf.rc_cfg.mode == AOM_Q) {
-    if (is_frame_tpl_eligible(gf_group, cpi->gf_frame_index)) {
-      const double qratio_grad =
-          cpi->ppi->p_rc.baseline_gf_interval > 20 ? 0.2 : 0.3;
-      const double qstep_ratio =
-          0.2 +
-          (1.0 - (double)cpi->rc.active_worst_quality / MAXQ) * qratio_grad;
-      *q = av1_get_q_index_from_qstep_ratio(
-          cpi->rc.active_worst_quality, qstep_ratio, cm->seq_params->bit_depth);
+    if (cpi->oxcf.rc_cfg.mode == AOM_Q &&
+        cpi->ppi->tpl_data.tpl_frame[cpi->gf_frame_index].is_valid &&
+        !is_lossless_requested(&cpi->oxcf.rc_cfg)) {
+      const RateControlCfg *const rc_cfg = &cpi->oxcf.rc_cfg;
+      const int tpl_q = av1_tpl_get_q_index(
+          &cpi->ppi->tpl_data, cpi->gf_frame_index,
+          cpi->rc.active_worst_quality, cm->seq_params->bit_depth);
+      *q = clamp(tpl_q, rc_cfg->best_allowed_q, rc_cfg->worst_allowed_q);
       *top_index = *bottom_index = *q;
-      if (gf_group->update_type[cpi->gf_frame_index] == ARF_UPDATE ||
-          gf_group->update_type[cpi->gf_frame_index] == KF_UPDATE ||
-          gf_group->update_type[cpi->gf_frame_index] == GF_UPDATE)
+      if (gf_group->update_type[cpi->gf_frame_index] == ARF_UPDATE)
         cpi->ppi->p_rc.arf_q = *q;
-    } else if (gf_group->layer_depth[cpi->gf_frame_index] <
-               gf_group->max_layer_depth) {
-      int this_height = gf_group->layer_depth[cpi->gf_frame_index];
-      int arf_q = cpi->ppi->p_rc.arf_q;
-      while (this_height > 1) {
-        arf_q = (arf_q + cpi->oxcf.rc_cfg.cq_level + 1) / 2;
-        --this_height;
-      }
-      *top_index = *bottom_index = *q = arf_q;
     }
-  }
+
+    if (cpi->oxcf.q_cfg.use_fixed_qp_offsets == 1 &&
+        cpi->oxcf.rc_cfg.mode == AOM_Q) {
+      if (is_frame_tpl_eligible(gf_group, cpi->gf_frame_index)) {
+        const double qratio_grad =
+            cpi->ppi->p_rc.baseline_gf_interval > 20 ? 0.2 : 0.3;
+        const double qstep_ratio =
+            0.2 +
+            (1.0 - (double)cpi->rc.active_worst_quality / MAXQ) * qratio_grad;
+        *q = av1_get_q_index_from_qstep_ratio(cpi->rc.active_worst_quality,
+                                              qstep_ratio,
+                                              cm->seq_params->bit_depth);
+        *top_index = *bottom_index = *q;
+        if (gf_group->update_type[cpi->gf_frame_index] == ARF_UPDATE ||
+            gf_group->update_type[cpi->gf_frame_index] == KF_UPDATE ||
+            gf_group->update_type[cpi->gf_frame_index] == GF_UPDATE)
+          cpi->ppi->p_rc.arf_q = *q;
+      } else if (gf_group->layer_depth[cpi->gf_frame_index] <
+                 gf_group->max_layer_depth) {
+        int this_height = gf_group->layer_depth[cpi->gf_frame_index];
+        int arf_q = cpi->ppi->p_rc.arf_q;
+        while (this_height > 1) {
+          arf_q = (arf_q + cpi->oxcf.rc_cfg.cq_level + 1) / 2;
+          --this_height;
+        }
+        *top_index = *bottom_index = *q = arf_q;
+      }
+    }
 #endif
+  }
 
   // Configure experimental use of segmentation for enhanced coding of
   // static regions if indicated.
@@ -738,6 +750,9 @@ void av1_set_size_dependent_vars(AV1_COMP *cpi, int *q, int *bottom_index,
   if (is_stat_consumption_stage_twopass(cpi) &&
       cpi->sf.hl_sf.static_segmentation)
     configure_static_seg_features(cpi);
+
+  if (cpi->oxcf.rc_cfg.over_shoot_pct == 0) *top_index = MAXQ;
+  if (cpi->oxcf.rc_cfg.under_shoot_pct == 0) *bottom_index = MINQ;
 }
 
 #if !CONFIG_REALTIME_ONLY
@@ -1116,25 +1131,18 @@ static void screen_content_tools_determination(
     const int allow_intrabc_orig_decision,
     const int use_screen_content_tools_orig_decision,
     const int is_screen_content_type_orig_decision, const int pass,
-    int *projected_size_pass, PSNR_STATS *psnr) {
+    PSNR_STATS *psnr) {
   AV1_COMMON *const cm = &cpi->common;
   FeatureFlags *const features = &cm->features;
 
-#if CONFIG_FPMT_TEST
-  projected_size_pass[pass] =
-      ((cpi->ppi->gf_group.frame_parallel_level[cpi->gf_frame_index] > 0) &&
-       (cpi->ppi->fpmt_unit_test_cfg == PARALLEL_SIMULATION_ENCODE))
-          ? cpi->ppi->p_rc.temp_projected_frame_size
-          : cpi->rc.projected_frame_size;
-#else
-  projected_size_pass[pass] = cpi->rc.projected_frame_size;
-#endif
-
 #if CONFIG_AV1_HIGHBITDEPTH
-  const uint32_t in_bit_depth = cpi->oxcf.input_cfg.input_bit_depth;
   const uint32_t bit_depth = cpi->td.mb.e_mbd.bd;
+  // The decision to enable screen content tools is based on PSNR evaluated only
+  // at the stream bit-depth. Hence, PSNR computation against the actual input
+  // source is skipped by passing the codec bit-depth instead of the source
+  // bit-depth in the final arg.
   aom_calc_highbd_psnr(cpi->source, &cpi->common.cur_frame->buf, &psnr[pass],
-                       bit_depth, in_bit_depth);
+                       bit_depth, bit_depth);
 #else
   aom_calc_psnr(cpi->source, &cpi->common.cur_frame->buf, &psnr[pass]);
 #endif
@@ -1198,8 +1206,7 @@ void av1_determine_sc_tools_with_encoding(AV1_COMP *cpi, const int q_orig) {
   const AV1EncoderConfig *const oxcf = &cpi->oxcf;
   const QuantizationCfg *const q_cfg = &oxcf->q_cfg;
   // Variables to help determine if we should allow screen content tools.
-  int projected_size_pass[3] = { 0 };
-  PSNR_STATS psnr[3];
+  PSNR_STATS psnr[2];
   const int is_key_frame = cm->current_frame.frame_type == KEY_FRAME;
   const int allow_screen_content_tools_orig_decision =
       cm->features.allow_screen_content_tools;
@@ -1272,7 +1279,7 @@ void av1_determine_sc_tools_with_encoding(AV1_COMP *cpi, const int q_orig) {
     screen_content_tools_determination(
         cpi, allow_screen_content_tools_orig_decision,
         allow_intrabc_orig_decision, use_screen_content_tools_orig_decision,
-        is_screen_content_type_orig_decision, pass, projected_size_pass, psnr);
+        is_screen_content_type_orig_decision, pass, psnr);
   }
 
   // Set partition speed feature back.
@@ -1314,6 +1321,8 @@ void av1_finalize_encoded_frame(AV1_COMP *const cpi) {
 
   if (!cm->seq_params->reduced_still_picture_hdr &&
       encode_show_existing_frame(cm)) {
+    assert(cpi->existing_fb_idx_to_show >= 0 &&
+           cpi->existing_fb_idx_to_show < REF_FRAMES);
     RefCntBuffer *const frame_to_show =
         cm->ref_frame_map[cpi->existing_fb_idx_to_show];
 

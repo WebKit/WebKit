@@ -21,6 +21,7 @@
 #include <openssl/bio.h>
 #include <openssl/buf.h>
 #include <openssl/bytestring.h>
+#include <openssl/cipher.h>
 #include <openssl/digest.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
@@ -32,11 +33,14 @@
 
 #include "../bytestring/internal.h"
 #include "../internal.h"
+#include "../mem_internal.h"
 #include "../x509/internal.h"
 #include "internal.h"
 
 
-int pkcs12_iterations_acceptable(uint64_t iterations) {
+using namespace bssl;
+
+int bssl::pkcs12_iterations_acceptable(uint64_t iterations) {
 #if defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
   static const uint64_t kIterationsLimit = 2048;
 #else
@@ -56,7 +60,8 @@ ASN1_SEQUENCE(PKCS8_PRIV_KEY_INFO) = {
     ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, version, ASN1_INTEGER),
     ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, pkeyalg, X509_ALGOR),
     ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, pkey, ASN1_OCTET_STRING),
-    ASN1_IMP_SET_OF_OPT(PKCS8_PRIV_KEY_INFO, attributes, X509_ATTRIBUTE, 0),
+    ASN1_IMP_SET_OF_OPT(PKCS8_PRIV_KEY_INFO, attributes, bssl::X509_ATTRIBUTE,
+                        0),
 } ASN1_SEQUENCE_END(PKCS8_PRIV_KEY_INFO)
 
 IMPLEMENT_ASN1_FUNCTIONS_const(PKCS8_PRIV_KEY_INFO)
@@ -687,7 +692,7 @@ err:
   return ret;
 }
 
-void PKCS12_PBE_add(void) {}
+void PKCS12_PBE_add() {}
 
 struct pkcs12_st {
   uint8_t *ber_bytes;
@@ -696,7 +701,7 @@ struct pkcs12_st {
 
 PKCS12 *d2i_PKCS12(PKCS12 **out_p12, const uint8_t **ber_bytes,
                    size_t ber_len) {
-  PKCS12 *p12 = reinterpret_cast<PKCS12 *>(OPENSSL_malloc(sizeof(PKCS12)));
+  PKCS12 *p12 = New<PKCS12>();
   if (!p12) {
     return nullptr;
   }
@@ -704,7 +709,7 @@ PKCS12 *d2i_PKCS12(PKCS12 **out_p12, const uint8_t **ber_bytes,
   p12->ber_bytes =
       reinterpret_cast<uint8_t *>(OPENSSL_memdup(*ber_bytes, ber_len));
   if (!p12->ber_bytes) {
-    OPENSSL_free(p12);
+    Delete(p12);
     return nullptr;
   }
 
@@ -1019,7 +1024,7 @@ static int add_encrypted_data(CBB *out, int pbe_nid,
     return 0;
   }
 
-  bssl::ScopedEVP_CIPHER_CTX ctx;
+  ScopedEVP_CIPHER_CTX ctx;
   CBB content_info, wrapper, encrypted_data, encrypted_content_info,
       encrypted_content;
   if (  // Add the ContentInfo wrapping.
@@ -1054,10 +1059,10 @@ static int add_encrypted_data(CBB *out, int pbe_nid,
   }
 
   uint8_t *ptr;
-  int n1, n2;
+  size_t n1, n2;
   if (!CBB_reserve(&encrypted_content, &ptr, max_out) ||
-      !EVP_CipherUpdate(ctx.get(), ptr, &n1, in, in_len) ||
-      !EVP_CipherFinal_ex(ctx.get(), ptr + n1, &n2) ||
+      !EVP_CipherUpdate_ex(ctx.get(), ptr, &n1, max_out, in, in_len) ||
+      !EVP_CipherFinal_ex2(ctx.get(), ptr + n1, &n2, max_out - n1) ||
       !CBB_did_write(&encrypted_content, n1 + n2) || !CBB_flush(out)) {
     return 0;
   }
@@ -1300,9 +1305,9 @@ PKCS12 *PKCS12_create(const char *password, const char *name,
       goto err;
     }
 
-    ret = reinterpret_cast<PKCS12 *>(OPENSSL_malloc(sizeof(PKCS12)));
+    ret = New<PKCS12>();
     if (ret == nullptr || !CBB_finish(&cbb, &ret->ber_bytes, &ret->ber_len)) {
-      OPENSSL_free(ret);
+      Delete(ret);
       ret = nullptr;
       goto err;
     }
@@ -1319,5 +1324,5 @@ void PKCS12_free(PKCS12 *p12) {
     return;
   }
   OPENSSL_free(p12->ber_bytes);
-  OPENSSL_free(p12);
+  Delete(p12);
 }

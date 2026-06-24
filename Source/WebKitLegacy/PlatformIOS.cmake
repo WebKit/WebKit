@@ -613,6 +613,11 @@ set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
     mac/WebView/WebWindowAnimation.h
 )
 
+# Add these to the project header map.
+# FIXME: The "forwarding" step can probably be replaced with this headermap,
+# since it makes the headers available via a framework-style import.
+set(WebKitLegacy_PROJECT_HEADERS ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
+
 list(APPEND WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS
     ${WEBCORE_DIR}/bridge/objc/WebScriptObject.h
     ${WEBCORE_DIR}/platform/cocoa/WebKitAvailability.h
@@ -973,13 +978,14 @@ set(_wkl_excluded_for_ios
     WebWindowAnimation.h
 )
 
-# Apply the same exclusion to WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS, which is
-# what WEBKIT_COPY_FILES(WebKitLegacy_CopyHeaders) in CMakeLists.txt actually
-# stages. (The foreach below adds forwarding stubs in addition to the copies.)
+# Apply the same exclusion to WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS so
+# WEBKIT_COPY_FILES doesn't stage them. Also drop ${WEBCORE_DIR} entries: the
+# foreach below stages forwarding stubs instead.
 set(_wkl_filtered "")
 foreach (_path IN LISTS WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS)
     get_filename_component(_pathname "${_path}" NAME)
-    if (NOT _pathname IN_LIST _wkl_excluded_for_ios)
+    cmake_path(IS_PREFIX WEBCORE_DIR "${_path}" NORMALIZE _is_from_webcore)
+    if (NOT _pathname IN_LIST _wkl_excluded_for_ios AND NOT _is_from_webcore)
         list(APPEND _wkl_filtered "${_path}")
     endif ()
 endforeach ()

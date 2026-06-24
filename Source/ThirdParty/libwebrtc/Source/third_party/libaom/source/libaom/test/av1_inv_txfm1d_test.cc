@@ -152,4 +152,15 @@ TEST(av1_inv_txfm1d, round_trip) {
   }
 }
 
+TEST(av1_inv_txfm1d, iadst4_overflow_bug471847850) {
+  // Test case to trigger integer overflow in av1_iadst4
+  int32_t input[4] = { 300000, 0, 300000, 300000 };
+  int32_t output[4];
+
+  av1_iadst4(input, output, 12, range_bit);
+
+  // Verify that the transform completes and the output is greater than zero.
+  EXPECT_GT(output[0], 0);
+}
+
 }  // namespace

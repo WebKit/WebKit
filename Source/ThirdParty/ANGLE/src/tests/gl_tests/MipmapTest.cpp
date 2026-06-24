@@ -2223,6 +2223,31 @@ TEST_P(MipmapTestES3, GenerateMipmapWithRedefineLevelAndTexture)
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::black);
 }
 
+// Test that generating mipmaps after defining an incompatible image out of base-max range
+// does not cause problems. At the time of writing with Metal backend, defining images
+// after one state sync would cause problems upon subsequent GenerateMipmaps().
+TEST_P(MipmapTestES3, GenerateMipmapWithOutOfRangeLevelDefinition)
+{
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    std::vector<GLColor> data(2 * 2, GLColor::green);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 data.data());
+    glGenerateMipmap(GL_TEXTURE_2D); // Sync state.
+    glTexImage2D(GL_TEXTURE_2D, 10, GL_DEPTH_COMPONENT32F, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                 nullptr); // Trigger the bug.
+    EXPECT_GL_NO_ERROR();
+    glGenerateMipmap(GL_TEXTURE_2D); // At the time, this would fail.
+    EXPECT_GL_NO_ERROR();
+
+    clearAndDrawQuad(m2DProgram, getWindowWidth(), getWindowHeight());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
+}
+
 // Test that manually generating mipmaps using draw calls is functional
 TEST_P(MipmapTestES31, GenerateMipmapWithDraw)
 {
@@ -2530,6 +2555,140 @@ TEST_P(MipmapTestES3, MismatchingLevelFormats)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test glGenerateMipmap in the presence of mismatching level format, after a separate mutable
+// texture has been used.
+TEST_P(MipmapTestES3, MismatchingLevelFormats2)
+{
+    const std::vector<GLColor> kAllGreen(1000, GLColor::green);
+    const std::vector<GLColor> kAllBlue(1000, GLColor::blue);
+    const std::vector<GLColor> kAllCyan(1000, GLColor::cyan);
+
+    // Create an unrelated texture and draw with it to ensure it's synced.  This test uses a
+    // mutable texture.
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 20, 20, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 10, 10, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllCyan.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+
+    ANGLE_GL_PROGRAM(verify, essl3_shaders::vs::Texture2DLod(), essl3_shaders::fs::Texture2DLod());
+    glUseProgram(verify);
+    const GLint lodLoc = glGetUniformLocation(verify, essl3_shaders::LodUniform());
+
+    glUniform1i(glGetUniformLocation(verify, essl3_shaders::Texture2DUniform()), 0);
+    glUniform1f(lodLoc, 0);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Switch to the texture that whose mipmaps are going to be generated.
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Create level 0 as RGBA.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllGreen.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    // Ensure this texture is also synced.
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Switch back to the already-synced unrelated texture and draw with it to ensure it's bound in
+    // the GL backend.
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Now switch to the original texture and generate mipmaps
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify that mipmap generation worked
+    for (uint32_t lod = 0; lod <= 2; ++lod)
+    {
+        glUniform1f(lodLoc, 0);
+        drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+
+    // Verify that the unrelated texture is untouched.
+    glBindTexture(GL_TEXTURE_2D, texture2);
+
+    glUniform1f(lodLoc, 0);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glUniform1f(lodLoc, 1);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+}
+
+// Test glGenerateMipmap in the presence of mismatching level format, after a separate mutable
+// texture has been used.
+TEST_P(MipmapTestES3, MismatchingLevelFormats3)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_rgtc"));
+
+    const std::vector<GLColor> kAllGreen(1000, GLColor::green);
+    const std::vector<GLColor> kAllBlue(1000, GLColor::blue);
+    const std::vector<GLColor> kAllCyan(1000, GLColor::cyan);
+
+    // Create an unrelated texture and draw with it to ensure it's synced.  This test uses an
+    // immutable texture.
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_RGBA8, 20, 20);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 20, 20, GL_RGBA, GL_UNSIGNED_BYTE, kAllBlue.data());
+    glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 10, 10, GL_RGBA, GL_UNSIGNED_BYTE, kAllCyan.data());
+
+    ANGLE_GL_PROGRAM(verify, essl3_shaders::vs::Texture2DLod(), essl3_shaders::fs::Texture2DLod());
+    glUseProgram(verify);
+    const GLint lodLoc = glGetUniformLocation(verify, essl3_shaders::LodUniform());
+
+    glUniform1i(glGetUniformLocation(verify, essl3_shaders::Texture2DUniform()), 0);
+    glUniform1f(lodLoc, 0);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Switch to the texture that whose mipmaps are going to be generated.
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Create level 0 as RGBA.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kAllGreen.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    // Ensure this texture is also synced.
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Switch back to the already-synced unrelated texture and draw with it to ensure it's bound in
+    // the GL backend.
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Now switch to the original texture and generate mipmaps
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify that mipmap generation worked
+    for (uint32_t lod = 0; lod <= 2; ++lod)
+    {
+        glUniform1f(lodLoc, 0);
+        drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+
+    // Verify that the unrelated texture is untouched.
+    glBindTexture(GL_TEXTURE_2D, texture2);
+
+    glUniform1f(lodLoc, 0);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glUniform1f(lodLoc, 1);
+    drawQuad(verify, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+}
+
 // Verifies texture uploads work correctly after size transitions that change mipmap dimensions.
 TEST_P(MipmapTest, UploadAfterSizeTransition)
 {
@@ -2604,6 +2763,7 @@ TEST_P(MipmapTest, GeneratedMipmapsInvalidatedAfterSizeChange)
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::green);
 }
+
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.

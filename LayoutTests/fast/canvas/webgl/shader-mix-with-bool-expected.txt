@@ -7,4 +7,7 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 PASS getError was expected value: NO_ERROR : no error from using mix function
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

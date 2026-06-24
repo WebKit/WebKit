@@ -696,8 +696,6 @@ BASE_OPTIONS = ["--validateOptions=true", "--useFTLJIT=false", "--useFunctionDot
 EAGER_OPTIONS = ["--validateOptions=true", "--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--thresholdForOMGOptimizeAfterWarmUp=20", "--thresholdForOMGOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000", "--useEagerCodeBlockJettisonTiming=true", "--repatchBufferingCountdown=0"]
 # NOTE: Tests rely on this using scribbleFreeCells.
 NO_CJIT_OPTIONS = ["--validateOptions=true", "--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
-B3O1_OPTIONS = ["--defaultB3OptLevel=1", "--useHandlerICInFTL=1", "--forceUnlinkedDFG=1"]
-B3O0_OPTIONS = ["--maxDFGNodesInBasicBlockForPreciseAnalysis=100", "--defaultB3OptLevel=0"]
 FTL_OPTIONS = ["--validateOptions=true", "--useFTLJIT=true"]
 FORCE_LLINT_EXIT_OPTIONS = ["--forceOSRExitToLLInt=true"]
 EXECUTABLE_FUZZER_OPTIONS = ["--useExecutableAllocationFuzz=true", "--fireExecutableAllocationFuzzRandomly=true"]
@@ -1195,19 +1193,6 @@ BASE_MODES = [
         NO_CJIT_OPTIONS
     ],
     [
-        "FTLNoCJITB3O0",
-        "ftl-no-cjit-b3o0",
-        [
-            "--useArrayAllocationProfiling=false",
-            "--forcePolyProto=true",
-            "--useRandomizingExecutableIslandAllocation=true",
-        ] +
-        FTL_OPTIONS +
-        NO_CJIT_OPTIONS +
-        B3O0_OPTIONS +
-        FORCE_LLINT_EXIT_OPTIONS
-    ],
-    [
         "FTLNoCJITValidate",
         "ftl-no-cjit-validate-sampling-profiler",
         [
@@ -1304,17 +1289,6 @@ BASE_MODES = [
         EXECUTABLE_FUZZER_OPTIONS
     ],
     [
-        "FTLEagerNoCJITB3O1",
-        "ftl-eager-no-cjit-b3o1",
-        [
-            "--validateGraph=true",
-        ] +
-        FTL_OPTIONS +
-        NO_CJIT_OPTIONS +
-        EAGER_OPTIONS +
-        B3O1_OPTIONS
-    ],
-    [
         "FTLEagerNoCJITOSRValidation",
         "ftl-eager-no-cjit-osr-validation",
         [
@@ -1356,6 +1330,8 @@ BASE_MODES = [
         "ftl-no-cjit-small-pool",
         [
             $buildType == "debug" ? "--jitMemoryReservationSize=4194304" : "--jitMemoryReservationSize=1048576",
+            "--maxDFGNodesInBasicBlockForPreciseAnalysis=100",
+            "--useArrayAllocationProfiling=false",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1631,12 +1607,8 @@ def defaultRunConfig(config, subsetOptions, *optionalTestSpecificOptions)
             return if $mode == :basic
 
             runFTLNoCJITValidateConfig(config, *optionalTestSpecificOptions)
-            runFTLNoCJITB3O0Config(config, *optionalTestSpecificOptions)
             runFTLNoCJITNoPutStackValidateConfig(config, *optionalTestSpecificOptions)
             runFTLNoCJITNoInlineValidateConfig(config, *optionalTestSpecificOptions)
-            if not subsetOptions.has_key?(:skipEager)
-                runFTLEagerNoCJITB3O1Config(config, *optionalTestSpecificOptions)
-            end
         end
     end
 end
@@ -1674,7 +1646,6 @@ def defaultSpotCheckNoMaximalFlush
     return if !$isFTLPlatform
     runFTLNoCJITOSRValidation
     runFTLNoCJITNoAccessInlining
-    runFTLNoCJITB3O0
 end
 
 def defaultSpotCheck
@@ -2218,10 +2189,6 @@ end
 
 def runLayoutTestFTLEagerNoCJIT
     runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
-end
-
-def runLayoutTestFTLEagerNoCJITB3O1
-    runLayoutTest("ftl-eager-no-cjit-b3o1", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + B3O1_OPTIONS))
 end
 
 def noFTLRunLayoutTest

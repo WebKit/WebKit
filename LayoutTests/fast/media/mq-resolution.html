@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 
 <div id="detector"></div>
 
@@ -18,8 +18,6 @@
     description("CSS3 media query test: resolution query with dppx. Using style element, @media css rule.")
 
     if (window.testRunner && window.internals) {
-        window.testRunner.dumpAsText();
-        window.testRunner.waitUntilDone();
         window.jsTestIsAsync = true;
 
         function setBackingScaleFactorPromise(factor) {
@@ -103,6 +101,5 @@
     }
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

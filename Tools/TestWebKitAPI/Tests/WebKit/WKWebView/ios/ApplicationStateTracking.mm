@@ -34,6 +34,7 @@
 #import "Helpers/cocoa/TestProtocol.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <WebKit/WKWebViewPrivateForTesting.h>
 
 namespace TestWebKitAPI {
 
@@ -100,6 +101,89 @@ TEST(ApplicationStateTracking, NavigatingFromPDFDoesNotLeaveWebViewInactive)
 }
 
 #endif // HAVE(PDFKIT)
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+
+class EndowmentStateTrackingTestHarness {
+public:
+    EndowmentStateTrackingTestHarness()
+    {
+        m_configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+        m_webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568) configuration:m_configuration.get() addToWindow:NO]);
+        m_window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
+        [m_window addSubview:m_webView.get()];
+        [m_webView synchronouslyLoadHTMLString:@"<body>Foo</body>"];
+        [m_webView waitForNextPresentationUpdate];
+    }
+
+    ~EndowmentStateTrackingTestHarness()
+    {
+        [WKWebView _setVisibilityEndowmentForTesting:YES];
+    }
+
+    void postWithScene(NSNotificationName name)
+    {
+        [NSNotificationCenter.defaultCenter postNotificationName:name object:[m_window windowScene] userInfo:nil];
+    }
+
+    void waitForActivityStateUpdate()
+    {
+        __block bool done = false;
+        [m_webView _doAfterActivityStateUpdate:^{
+            done = true;
+        }];
+        Util::run(&done);
+    }
+
+    bool isPageActive()
+    {
+        return [[m_webView objectByEvaluatingJavaScript:@"internals.isPageActive()"] boolValue];
+    }
+
+private:
+    RetainPtr<WKWebViewConfiguration> m_configuration;
+    RetainPtr<TestWKWebView> m_webView;
+    RetainPtr<UIWindow> m_window;
+};
+
+TEST(ApplicationStateTracking, EndowmentKeepsPageActiveAfterSceneBackgrounds)
+{
+    [WKWebView _setVisibilityEndowmentForTesting:YES];
+    EndowmentStateTrackingTestHarness harness;
+    EXPECT_TRUE(harness.isPageActive());
+
+    harness.postWithScene(UISceneDidEnterBackgroundNotification);
+    harness.waitForActivityStateUpdate();
+    EXPECT_TRUE(harness.isPageActive());
+}
+
+TEST(ApplicationStateTracking, RevokingEndowmentDeactivatesBackgroundedScene)
+{
+    [WKWebView _setVisibilityEndowmentForTesting:YES];
+    EndowmentStateTrackingTestHarness harness;
+    harness.postWithScene(UISceneDidEnterBackgroundNotification);
+    harness.waitForActivityStateUpdate();
+    EXPECT_TRUE(harness.isPageActive());
+
+    [WKWebView _setVisibilityEndowmentForTesting:NO];
+    harness.waitForActivityStateUpdate();
+    EXPECT_FALSE(harness.isPageActive());
+}
+
+TEST(ApplicationStateTracking, SceneForegroundReactivatesEvenWithoutEndowment)
+{
+    [WKWebView _setVisibilityEndowmentForTesting:NO];
+    EndowmentStateTrackingTestHarness harness;
+    harness.postWithScene(UISceneDidEnterBackgroundNotification);
+    harness.waitForActivityStateUpdate();
+    EXPECT_FALSE(harness.isPageActive());
+
+    harness.postWithScene(UISceneWillEnterForegroundNotification);
+    harness.waitForActivityStateUpdate();
+    EXPECT_TRUE(harness.isPageActive());
+}
+
+#endif // ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
 
 } // namespace TestWebKitAPI
 

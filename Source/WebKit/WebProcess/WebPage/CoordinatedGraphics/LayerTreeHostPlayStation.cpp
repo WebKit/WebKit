@@ -111,7 +111,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
         if (settings.useDamagingInformationForCompositing())
             damagePropagationFlags->add(ThreadedCompositor::DamagePropagationFlags::UseForCompositing);
     }
-    m_compositor->setDamagePropagationFlags(damagePropagationFlags);
+    m_compositor->setDamagePropagationSettings(damagePropagationFlags, settings.damageRectangleThreshold());
 #endif
     m_layerTreeContext.contextID = m_compositor->surfaceID();
 }
@@ -409,6 +409,7 @@ void LayerTreeHost::requestComposition(CompositionReason)
 {
 #if ENABLE(SCROLLING_THREAD)
     if (ScrollingThread::isCurrentThread()) {
+        m_sceneState->flushPendingState();
         if (!m_compositionRequiredInScrollingThread)
             return;
         m_compositionRequiredInScrollingThread = false;

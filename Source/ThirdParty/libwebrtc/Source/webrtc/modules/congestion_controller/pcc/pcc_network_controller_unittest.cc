@@ -11,13 +11,13 @@
 #include "modules/congestion_controller/pcc/pcc_network_controller.h"
 
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/congestion_controller/pcc/pcc_factory.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/scenario/scenario.h"
@@ -50,7 +50,7 @@ inline Matcher<TargetTransferRate> TargetRateCloseTo(DataRate rate) {
 }  // namespace
 
 TEST(PccNetworkControllerTest, SendsConfigurationOnFirstProcess) {
-  Environment env = CreateEnvironment();
+  Environment env = CreateTestEnvironment();
   NetworkControllerConfig config(env);
   config.constraints.at_time = kDefaultStartTime;
   config.constraints.min_data_rate = DataRate::Zero();

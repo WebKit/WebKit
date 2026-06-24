@@ -1947,7 +1947,7 @@
     {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kCFVietnameseCalendar"},
     {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kCFVikramCalendar"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "CFAbsoluteTime"},
     {"access": "public", "name": "CFAllocatorAllocateCallBack"},

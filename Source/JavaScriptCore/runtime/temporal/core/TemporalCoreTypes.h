@@ -56,6 +56,16 @@ inline TemporalError rangeError(ASCIILiteral msg) { return { TemporalErrorKind::
 inline TemporalError rangeError(String msg) { return { TemporalErrorKind::RangeError, WTF::move(msg) }; }
 inline TemporalError typeError(ASCIILiteral msg) { return { TemporalErrorKind::TypeError, String(msg) }; }
 inline TemporalError typeError(String msg) { return { TemporalErrorKind::TypeError, WTF::move(msg) }; }
+
+// Shared error messages for ICU failure paths in the calendar/time-zone bridges.
+inline constexpr ASCIILiteral icuOpenCalendarFailed = "Failed to open ICU calendar"_s;
+inline constexpr ASCIILiteral icuOpenTimeZoneFailed = "Failed to open ICU calendar for time zone"_s;
+inline constexpr ASCIILiteral icuSetCalendarFailed = "Failed to set ICU calendar"_s;
+inline constexpr ASCIILiteral icuReadCalendarFailed = "Failed to read calendar fields from ICU"_s;
+inline constexpr ASCIILiteral icuCalendarArithmeticFailed = "Failed to perform ICU calendar arithmetic"_s;
+inline constexpr ASCIILiteral icuTimeZoneOffsetFailed = "Failed to get time zone offset from ICU"_s;
+inline constexpr ASCIILiteral icuTransitionFailed = "Failed to get time zone transition date from ICU"_s;
+inline constexpr ASCIILiteral epochNanosecondsOutOfRange = "Epoch nanoseconds out of valid Temporal range"_s;
 } // namespace TemporalCore
 
 // TransitionDirection — temporal_rs: TransitionDirection (timezone_provider crate, src/provider.rs)

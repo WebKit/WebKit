@@ -230,7 +230,7 @@ RefPtr<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormCon
         formData = FormData::createMultiPart(domFormData);
         boundary = String(byteCast<Latin1Character>(formData->boundary().span()));
     } else {
-        formData = FormData::create(domFormData, attributes.method() == Method::Get ? FormData::EncodingType::FormURLEncoded : FormData::parseEncodingType(encodingType));
+        formData = FormData::create(domFormData, copiedAttributes.method() == Method::Get ? FormData::EncodingType::FormURLEncoded : FormData::parseEncodingType(encodingType));
         if (copiedAttributes.method() == Method::Post && isMailtoForm) {
             // Convert the form data into a string that we put into the URL.
             appendMailtoPostFormDataToURL(actionURL, *formData, encodingType);

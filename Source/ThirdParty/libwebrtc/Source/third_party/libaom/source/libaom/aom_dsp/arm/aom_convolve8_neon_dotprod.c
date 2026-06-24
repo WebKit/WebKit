@@ -25,24 +25,10 @@
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/arm/transpose_neon.h"
 #include "aom_ports/mem.h"
+#include "av1/common/arm/convolve_neon_dotprod.h"
 
 // Filter values always sum to 128.
 #define FILTER_WEIGHT 128
-
-DECLARE_ALIGNED(16, static const uint8_t, kDotProdPermuteTbl[48]) = {
-  0, 1, 2,  3,  1, 2,  3,  4,  2,  3,  4,  5,  3,  4,  5,  6,
-  4, 5, 6,  7,  5, 6,  7,  8,  6,  7,  8,  9,  7,  8,  9,  10,
-  8, 9, 10, 11, 9, 10, 11, 12, 10, 11, 12, 13, 11, 12, 13, 14
-};
-
-DECLARE_ALIGNED(16, static const uint8_t, kDotProdMergeBlockTbl[48]) = {
-  // Shift left and insert new last column in transposed 4x4 block.
-  1, 2, 3, 16, 5, 6, 7, 20, 9, 10, 11, 24, 13, 14, 15, 28,
-  // Shift left and insert two new columns in transposed 4x4 block.
-  2, 3, 16, 17, 6, 7, 20, 21, 10, 11, 24, 25, 14, 15, 28, 29,
-  // Shift left and insert three new columns in transposed 4x4 block.
-  3, 16, 17, 18, 7, 20, 21, 22, 11, 24, 25, 26, 15, 28, 29, 30
-};
 
 static inline int16x4_t convolve8_4_h(const uint8x16_t samples,
                                       const int8x8_t filters,

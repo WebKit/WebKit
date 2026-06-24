@@ -33,6 +33,7 @@ TestMixinInterface.idl:
 JSTestConditionallyReadWrite.h: 
 JSTestDOMJIT.h: 
 JSTestDefaultToJSON.h: 
+JSTestDefaultToJSONCustomGetter.h: 
 JSTestDefaultToJSONEnum.h: 
 JSTestDefaultToJSONFilteredByExposed.h: 
 JSTestDefaultToJSONIndirectInheritance.h: 

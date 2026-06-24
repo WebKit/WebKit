@@ -36,7 +36,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<MaskBorderSource>::operator()(const MaskBorderSource& value, const RenderStyle& style) -> CSS::MaskBorderSource
+auto ToCSS<MaskBorderSource>::operator()(const MaskBorderSource& value, const Style::ComputedStyle& style) -> CSS::MaskBorderSource
 {
     return WTF::switchOn(value,
         [&](const CSS::Keyword::None& keyword) -> CSS::MaskBorderSource {
@@ -85,7 +85,7 @@ auto CSSValueConversion<MaskBorderSource>::operator()(BuilderState& state, const
     return ImageWrapper { image.releaseNonNull() };
 }
 
-auto CSSValueCreation<MaskBorderSource>::operator()(CSSValuePool&, const RenderStyle& style, const MaskBorderSource& value) -> Ref<CSSValue>
+auto CSSValueCreation<MaskBorderSource>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const MaskBorderSource& value) -> Ref<CSSValue>
 {
     return CSSMaskBorderSourceValue::create(toCSS(value, style));
 }
@@ -97,7 +97,7 @@ auto Blending<MaskBorderSource>::canBlend(const MaskBorderSource& a, const MaskB
     return !a.isNone() && !b.isNone();
 }
 
-auto Blending<MaskBorderSource>::blend(const MaskBorderSource& a, const MaskBorderSource& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> MaskBorderSource
+auto Blending<MaskBorderSource>::blend(const MaskBorderSource& a, const MaskBorderSource& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> MaskBorderSource
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1);

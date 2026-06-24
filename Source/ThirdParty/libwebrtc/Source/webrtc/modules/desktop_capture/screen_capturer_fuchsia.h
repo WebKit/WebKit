@@ -21,12 +21,13 @@
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 class ScreenCapturerFuchsia final : public DesktopCapturer {
  public:
-  ScreenCapturerFuchsia();
+  explicit ScreenCapturerFuchsia(const DesktopCaptureOptions& options);
   ~ScreenCapturerFuchsia() override;
 
   // DesktopCapturer interface.
@@ -56,6 +57,7 @@ class ScreenCapturerFuchsia final : public DesktopCapturer {
   // Dimensions of the screen we are capturing
   uint32_t width_;
   uint32_t height_;
+  Clock& clock_;
 };
 
 }  // namespace webrtc

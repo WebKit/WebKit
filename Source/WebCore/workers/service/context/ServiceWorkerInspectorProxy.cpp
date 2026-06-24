@@ -58,11 +58,13 @@ ServiceWorkerInspectorProxy::~ServiceWorkerInspectorProxy()
 
 void ServiceWorkerInspectorProxy::serviceWorkerTerminated()
 {
+    ASSERT(isMainThread());
     m_channel = nullptr;
 }
 
 void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
 {
+    ASSERT(isMainThread());
     m_channel = &channel;
 
     RefPtr serviceWorkerThreadProxy = m_serviceWorkerThreadProxy.get();
@@ -74,6 +76,7 @@ void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel, bool
 
 void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
 {
+    ASSERT(isMainThread());
     ASSERT_UNUSED(channel, &channel == m_channel);
     m_channel = nullptr;
 
@@ -90,6 +93,7 @@ void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
 
 void ServiceWorkerInspectorProxy::sendMessageToWorker(String&& message)
 {
+    ASSERT(isMainThread());
     m_serviceWorkerThreadProxy.get()->thread().runLoop().postDebuggerTask([message = WTF::move(message).isolatedCopy()] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().dispatchMessageFromFrontend(message);
     });
@@ -97,6 +101,7 @@ void ServiceWorkerInspectorProxy::sendMessageToWorker(String&& message)
 
 void ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend(String&& message)
 {
+    ASSERT(isMainThread());
     if (!m_channel)
         return;
 

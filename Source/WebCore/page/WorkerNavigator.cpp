@@ -86,7 +86,7 @@ GPU* WorkerNavigator::gpu()
 #endif
 }
 
-void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
+void WorkerNavigator::setAppBadge(ScriptExecutionContext&, std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
 {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     if (auto* context = dynamicDowncast<ServiceWorkerGlobalScope>(scriptExecutionContext())) {
@@ -108,9 +108,9 @@ void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<D
     promise->resolve();
 }
 
-void WorkerNavigator::clearAppBadge(Ref<DeferredPromise>&& promise)
+void WorkerNavigator::clearAppBadge(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
 {
-    setAppBadge(0, WTF::move(promise));
+    setAppBadge(context, 0, WTF::move(promise));
 }
 
 NavigatorUAData& WorkerNavigator::userAgentData() const

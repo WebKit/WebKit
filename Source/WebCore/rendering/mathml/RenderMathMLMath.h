@@ -37,7 +37,7 @@ class RenderMathMLMath final : public RenderMathMLRow {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLMath);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLMath);
 public:
-    RenderMathMLMath(MathMLRowElement&, RenderStyle&&);
+    RenderMathMLMath(MathMLRowElement&, Style::ComputedStyle&&);
     virtual ~RenderMathMLMath();
 
 private:

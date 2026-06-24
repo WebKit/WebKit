@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -13,6 +13,7 @@
 <div id="console"></div>
 <script>
 description("Tests that the cancel touch event is sent correctly.");
+window.jsTestIsAsync = true;
 
 var touchX = 25;
 var touchY = 25;
@@ -26,13 +27,10 @@ function touchcancelHandler() {
     shouldBe("cancelEvent.pageX", touchX.toString());
     shouldBe("cancelEvent.pageY", touchY.toString());
     if (window.testRunner) {
-        testRunner.notifyDone();
-        isSuccessfullyParsed(); 
+        finishJSTest();
     }
 }
     
-if (window.testRunner)
-    window.testRunner.waitUntilDone();
 
 window.onload = function() {
     if (window.eventSender) {

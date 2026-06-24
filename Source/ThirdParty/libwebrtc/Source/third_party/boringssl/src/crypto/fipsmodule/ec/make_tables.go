@@ -307,7 +307,7 @@ static const fiat_p256_felem fiat_p256_g_pre_comp[2][15][2] = `
 func makeMultiples(curve elliptic.Curve, n, shift int) [][2]*big.Int {
 	ret := make([][2]*big.Int, n)
 	x, y := curve.Params().Gx, curve.Params().Gy
-	for j := 0; j < shift; j++ {
+	for range shift {
 		x, y = curve.Double(x, y)
 	}
 	ret[1-1] = [2]*big.Int{x, y}
@@ -330,14 +330,14 @@ func makeMultiples(curve elliptic.Curve, n, shift int) [][2]*big.Int {
 func makeComb(curve elliptic.Curve, stride, size, shift int) [][2]*big.Int {
 	ret := make([][2]*big.Int, 1<<size-1)
 	x, y := curve.Params().Gx, curve.Params().Gy
-	for j := 0; j < shift; j++ {
+	for range shift {
 		x, y = curve.Double(x, y)
 	}
 	ret[1<<0-1] = [2]*big.Int{x, y}
 	for i := 1; i < size; i++ {
 		// Entry 2^i is entry 2^(i-1) doubled stride times.
 		x, y = ret[1<<(i-1)-1][0], ret[1<<(i-1)-1][1]
-		for j := 0; j < stride; j++ {
+		for range stride {
 			x, y = curve.Double(x, y)
 		}
 		ret[1<<i-1] = [2]*big.Int{x, y}
@@ -427,7 +427,7 @@ func (c *columnWriter) Write(p []byte) (n int, err error) {
 }
 
 func writeIndent(w io.Writer, indent int) error {
-	for i := 0; i < indent; i++ {
+	for range indent {
 		if _, err := io.WriteString(w, " "); err != nil {
 			return err
 		}

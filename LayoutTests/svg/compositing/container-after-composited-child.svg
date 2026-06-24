@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
 <svg xmlns="http://www.w3.org/2000/svg">
     <rect style="will-change: transform" x="10" y="10" width="10" height="10"/>
     <g>

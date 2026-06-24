@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class WebGLOpaqueTexture;
+class WebXRRigidTransform;
 class WebXRSession;
 class WebXRSpace;
 class XRLayerBacking;
@@ -88,16 +89,34 @@ public:
     const Vector<RefPtr<WebGLOpaqueTexture>>& depthStencilTextures() const { return m_depthStencilTextures; }
     void setDepthStencilTextures(Vector<RefPtr<WebGLOpaqueTexture>>&&);
 
+    const WebXRSpace& space() const;
+    void setSpace(WebXRSpace&);
+    const WebXRRigidTransform& transform() const;
+    void setTransform(WebXRRigidTransform&);
+
 protected:
-    explicit XRCompositionLayer(ScriptExecutionContext*, WebXRSession&, Ref<XRLayerBacking>&&, const WebXRLayerInit&);
+    // Used by XRProjectionLayer, which has no associated reference space or transform.
+    XRCompositionLayer(ScriptExecutionContext*, WebXRSession&, Ref<XRLayerBacking>&&, const WebXRLayerInit&);
+    // Used by non-projection composition layers.
+    XRCompositionLayer(ScriptExecutionContext*, WebXRSession&, Ref<XRLayerBacking>&&, const WebXRLayerInit&, Ref<WebXRSpace>, RefPtr<WebXRRigidTransform>);
 
     void fillInCommonDeviceLayerData(PlatformXR::DeviceLayer&) const;
+
+    void startFrame(PlatformXR::FrameData&) override;
+    PlatformXR::DeviceLayer endFrame() override;
+
+    // Composition layers fill in their specific data in their overrides.
+    virtual void fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer&) const { }
+
+    const PlatformXR::FrameData::Pose& poseInLocalSpace() const { return m_poseInLocalSpace; }
 
     const Ref<XRLayerBacking> m_backing;
     const WebXRLayerInit m_init;
 
 private:
     bool isXRCompositionLayer() const final { return true; }
+
+    void recomputePose();
 
     WeakPtr<WebXRSession> m_session;
 
@@ -109,6 +128,10 @@ private:
 
     Vector<RefPtr<WebGLOpaqueTexture>> m_colorTextures;
     Vector<RefPtr<WebGLOpaqueTexture>> m_depthStencilTextures;
+
+    RefPtr<WebXRSpace> m_space;
+    RefPtr<WebXRRigidTransform> m_transform;
+    PlatformXR::FrameData::Pose m_poseInLocalSpace;
 };
 
 } // namespace WebCore

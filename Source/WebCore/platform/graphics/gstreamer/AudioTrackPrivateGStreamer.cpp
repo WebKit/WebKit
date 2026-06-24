@@ -61,8 +61,8 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
     ensureDebugCategoryInitialized();
 }
 
-AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
-    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Audio, this, index, stream)
+AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstStream>&& stream)
+    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Audio, this, index, WTF::move(stream))
 {
     ensureDebugCategoryInitialized();
 

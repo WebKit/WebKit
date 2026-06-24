@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
 
@@ -36,17 +36,17 @@ class UnresolvableAddressCause
   static constexpr int kType = UnresolvableAddressCauseConfig::kType;
 
   explicit UnresolvableAddressCause(
-      webrtc::ArrayView<const uint8_t> unresolvable_address)
+      std::span<const uint8_t> unresolvable_address)
       : unresolvable_address_(unresolvable_address.begin(),
                               unresolvable_address.end()) {}
 
   static std::optional<UnresolvableAddressCause> Parse(
-      webrtc::ArrayView<const uint8_t> data);
+      std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
-  webrtc::ArrayView<const uint8_t> unresolvable_address() const {
+  std::span<const uint8_t> unresolvable_address() const {
     return unresolvable_address_;
   }
 

@@ -13,6 +13,7 @@
 #include <string>
 
 #include "modules/desktop_capture/desktop_capturer.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -24,15 +25,18 @@ RestoreTokenManager& RestoreTokenManager::GetInstance() {
 
 void RestoreTokenManager::AddToken(DesktopCapturer::SourceId id,
                                    const std::string& token) {
+  MutexLock lock(&mutex_);
   restore_tokens_.insert({id, token});
 }
 
 std::string RestoreTokenManager::GetToken(DesktopCapturer::SourceId id) {
+  MutexLock lock(&mutex_);
   const std::string token = restore_tokens_[id];
   return token;
 }
 
 DesktopCapturer::SourceId RestoreTokenManager::GetUnusedId() {
+  MutexLock lock(&mutex_);
   return ++last_source_id_;
 }
 

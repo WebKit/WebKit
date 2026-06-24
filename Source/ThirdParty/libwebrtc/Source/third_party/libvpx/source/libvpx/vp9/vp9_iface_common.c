@@ -7,6 +7,7 @@
  *  All contributing  project authors may be  found in the AUTHORS  file in
  *  the root of the source tree.
  */
+#include <assert.h>
 
 #include "vp9/vp9_iface_common.h"
 void yuvconfig2image(vpx_image_t *img, const YV12_BUFFER_CONFIG *yv12,
@@ -97,6 +98,7 @@ vpx_codec_err_t image2yuvconfig(const vpx_image_t *img,
   yv12->uv_crop_height = yv12->uv_height;
 
   yv12->y_stride = img->stride[VPX_PLANE_Y];
+  assert(img->stride[VPX_PLANE_U] == img->stride[VPX_PLANE_V]);
   yv12->uv_stride = img->stride[VPX_PLANE_U];
   yv12->color_space = img->cs;
   yv12->color_range = img->range;

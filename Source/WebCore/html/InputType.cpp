@@ -617,7 +617,7 @@ bool InputType::shouldSubmitImplicitly(Event& event)
     return keyboardEvent && event.type() == eventNames().keypressEvent && keyboardEvent->charCode() == '\r';
 }
 
-RenderPtr<RenderElement> InputType::createInputRenderer(RenderStyle&& style)
+RenderPtr<RenderElement> InputType::createInputRenderer(Style::ComputedStyle&& style)
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
@@ -811,7 +811,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
     element->setValueInternal(sanitizedValue, eventBehavior);
 
     if (oldDirection.value_or(TextDirection::LTR) != computeTextDirectionIfDirIsAuto(*element).value_or(TextDirection::LTR))
-        element->invalidateStyleInternal();
+        element->invalidateStyle();
 
     switch (eventBehavior) {
     case DispatchChangeEvent:

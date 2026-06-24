@@ -31,6 +31,7 @@
 
 #include "HeapAnalyzer.h"
 #include "JSCInlines.h"
+#include "JSSymbolTableObjectInlines.h"
 
 namespace JSC {
 

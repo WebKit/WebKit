@@ -73,7 +73,7 @@ bool AccessibilityMenuListOption::isVisible() const
         return false;
 
     // In a single-option select with the popup collapsed, only the selected item is considered visible.
-    RefPtr ownerSelectElement = optionElement->document().axObjectCache()->getOrCreate(optionElement->ownerSelectElement());
+    RefPtr ownerSelectElement = optionElement->document().axObjectCache()->getOrCreate(protect(optionElement->ownerSelectElement()));
     return ownerSelectElement && (!ownerSelectElement->isOffScreen() || isSelected());
 }
 

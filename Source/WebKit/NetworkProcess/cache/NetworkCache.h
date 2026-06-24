@@ -129,7 +129,7 @@ enum class StoreDecision {
     NoDueToProtocol,
     NoDueToHTTPMethod,
     NoDueToNoStoreResponse,
-    NoDueToHTTPStatusCode,
+    NoDueToMissingExpirationHeaders,
     NoDueToNoStoreRequest,
     NoDueToUnlikelyToReuse,
     NoDueToStreamingMedia,

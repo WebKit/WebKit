@@ -696,7 +696,7 @@ CallbackResult<typename IDLPromise<IDLUndefined>::CallbackReturnType> JSTestCall
     auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackThatTreatsExceptionAsRejectedPromise"_s), returnedException);
     if (returnedException) {
         auto* jsPromise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
-        jsPromise->rejectAsHandled(vm, &globalObject, returnedException->value());
+        jsPromise->rejectAsHandled(vm, returnedException->value());
         return { DOMPromise::create(globalObject, *jsPromise) };
      }
 

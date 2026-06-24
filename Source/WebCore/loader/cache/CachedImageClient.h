@@ -58,6 +58,8 @@ public:
 
     virtual bool allowsAnimation() const { return true; }
 
+    virtual bool isRendererClient() const { return false; }
+
 protected:
     WEBCORE_EXPORT CachedImageClient();
 };

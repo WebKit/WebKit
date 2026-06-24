@@ -54,7 +54,10 @@ class LegacyRenderSVGResourceSolidColor;
 class Path;
 class RenderElement;
 class RenderObject;
-class RenderStyle;
+
+namespace Style {
+class ComputedStyle;
+}
 
 class LegacyRenderSVGResource {
 public:
@@ -72,15 +75,15 @@ public:
         ClipContainsRendererContent = 1 << 1
     };
 
-    virtual OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) = 0;
+    virtual OptionSet<ApplyResult> applyResource(RenderElement&, const Style::ComputedStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) = 0;
     virtual void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement* /* shape */) { }
     virtual FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) = 0;
 
     virtual RenderSVGResourceType resourceType() const = 0;
 
     // Helper utilities used in the render tree to access resources used for painting shapes/text (gradients & patterns & solid colors only)
-    static LegacyRenderSVGResource* fillPaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
-    static LegacyRenderSVGResource* strokePaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
+    static LegacyRenderSVGResource* fillPaintingResource(RenderElement&, const Style::ComputedStyle&, Color& fallbackColor);
+    static LegacyRenderSVGResource* strokePaintingResource(RenderElement&, const Style::ComputedStyle&, Color& fallbackColor);
     static LegacyRenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
     static void markForLayoutAndParentResourceInvalidation(RenderObject&, bool needsLayout = true);

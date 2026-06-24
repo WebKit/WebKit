@@ -136,7 +136,7 @@ public:
     const MarkStackArray& collectorMarkStack() const LIFETIME_BOUND { return m_collectorStack; }
     const MarkStackArray& mutatorMarkStack() const LIFETIME_BOUND { return m_mutatorStack; }
 
-    bool isEmpty() { return m_collectorStack.isEmpty() && m_mutatorStack.isEmpty(); }
+    inline bool isEmpty(); // Defined in AbstractSlotVisitorInlines.h
 
     VM& vm();
     const VM& vm() const;

@@ -283,7 +283,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "xpc_activity_handler_t"},
     {"access": "public", "name": "xpc_activity_state_t"},

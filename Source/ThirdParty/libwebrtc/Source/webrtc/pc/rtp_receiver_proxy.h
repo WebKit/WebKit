@@ -20,9 +20,12 @@
 #include "api/frame_transformer_interface.h"
 #include "api/media_stream_interface.h"
 #include "api/media_types.h"
+#include "api/rtc_error.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/sframe/sframe_decrypter_interface.h"
+#include "api/sframe/sframe_types.h"
 #include "api/transport/rtp/rtp_source.h"
 #include "pc/proxy.h"
 
@@ -55,6 +58,9 @@ PROXY_SECONDARY_CONSTMETHOD0(scoped_refptr<FrameDecryptorInterface>,
 PROXY_SECONDARY_METHOD1(void,
                         SetFrameTransformer,
                         scoped_refptr<FrameTransformerInterface>)
+PROXY_METHOD1(RTCErrorOr<scoped_refptr<SframeDecrypterInterface>>,
+              CreateSframeDecrypterOrError,
+              SframeCipherSuite)
 #if defined(WEBRTC_WEBKIT_BUILD)
 PROXY_METHOD0(void, GenerateKeyFrame)
 #endif

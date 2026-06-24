@@ -351,12 +351,13 @@
             (xpc-service-name "com.apple.MTLCompilerService"))))
 #endif
 
-(with-filter (system-attribute apple-internal)
-    (allow mach-lookup (global-name "com.apple.diagnosticd")))
-
+#if !RC_XBS
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
-        (global-name "com.apple.osanalytics.osanalyticshelper")))
+        (global-name
+            "com.apple.diagnosticd"
+            "com.apple.osanalytics.osanalyticshelper")))
+#endif
 
 (disable-syscall-inference)
 

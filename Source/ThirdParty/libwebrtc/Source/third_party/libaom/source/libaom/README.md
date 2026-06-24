@@ -116,7 +116,7 @@ enables ccache and disables the AV1 encoder:
 The available configuration options are too numerous to list here. Build system
 configuration options can be found at the top of the CMakeLists.txt file found
 in the root of the AV1 repository, and AV1 codec configuration options can
-currently be found in the file `build/cmake/aom_config_defaults.cmake`.
+currently be found in the file `cmake/aom_config_defaults.cmake`.
 
 ### Dylib builds {#dylib-builds}
 
@@ -189,7 +189,7 @@ a x86\_64 MacOS host:
 
 ~~~
     $ cmake path/to/aom \
-      -DCMAKE_TOOLCHAIN_FILE=path/to/aom/build/cmake/toolchains/x86-macos.cmake
+      -DCMAKE_TOOLCHAIN_FILE=path/to/aom/cmake/toolchains/x86-macos.cmake
     $ make
 ~~~
 
@@ -471,9 +471,13 @@ with the necessary access permissions to do this for you.
 NOTE: When a new test data file is added to the `aom-test-data` bucket, its
 "Public access" is initially "Not public". We need to change its
 "Public access" to "Public" by using the following
-[`gsutil`](https://cloud.google.com/storage/docs/gsutil_install) command:
+[`gcloud storage`](https://docs.cloud.google.com/sdk/docs/install-sdk)
+command:
 ~~~
-    $ gsutil acl ch -g all:R gs://aom-test-data/test-data-file-name
+    $ gcloud storage objects add-iam-policy-binding \
+         gs://aom-test-data/test-data-file-name \
+         --member="allUsers" \
+         --role="roles/storage.objectViewer"
 ~~~
 This command grants the `AllUsers` group READ access to the file named
 "test-data-file-name" in the `aom-test-data` bucket.

@@ -29,7 +29,7 @@
 #include <WebCore/PixelBufferFormat.h>
 #include <optional>
 #include <span>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
 class TextStream;
@@ -39,7 +39,7 @@ namespace WebCore {
 
 // Type for holding pixel buffers data.
 // For functions that source pixel buffers, see PixelBufferSourceView.
-class PixelBuffer : public RefCounted<PixelBuffer> {
+class PixelBuffer : public ThreadSafeRefCounted<PixelBuffer> {
     WTF_MAKE_NONCOPYABLE(PixelBuffer);
 public:
     static constexpr uint32_t bytesPerPixelComponent(PixelFormat);

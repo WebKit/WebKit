@@ -131,7 +131,6 @@ struct Animation {
 
     // CoordinatedValueList interface.
 
-    static constexpr auto computedValueUsesUsedValues = false;
     static constexpr auto baseProperty = PropertyNameConstant<CSSPropertyAnimationName> { };
     static constexpr auto properties = std::tuple { FOR_EACH_ANIMATION_PROPERTY(DECLARE_COORDINATED_VALUE_LIST_PROPERTY) };
     static Animation clone(const Animation& other) { return Animation { Data::create(other.m_data) }; }

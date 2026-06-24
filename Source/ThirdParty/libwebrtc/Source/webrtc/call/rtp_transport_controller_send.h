@@ -16,11 +16,11 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/fec_controller.h"
 #include "api/frame_transformer_interface.h"
@@ -52,7 +52,6 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/congestion_control_feedback.h"
 #include "rtc_base/containers/flat_map.h"
-#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/network_route.h"
 #include "rtc_base/rate_limiter.h"
 #include "rtc_base/task_utils/repeating_task.h"
@@ -129,7 +128,7 @@ class RtpTransportControllerSend final
   void OnReceiverEstimatedMaxBitrate(Timestamp receive_time,
                                      DataRate bitrate) override;
   void OnReport(Timestamp receive_time,
-                ArrayView<const ReportBlockData> report_blocks) override;
+                std::span<const ReportBlockData> report_blocks) override;
   void OnRttUpdate(Timestamp receive_time, TimeDelta rtt) override;
   void OnTransportFeedback(Timestamp receive_time,
                            const rtcp::TransportFeedback& feedback) override;
@@ -171,7 +170,6 @@ class RtpTransportControllerSend final
   void StartProcessPeriodicTasks() RTC_RUN_ON(sequence_checker_);
   void UpdateControllerWithTimeInterval() RTC_RUN_ON(sequence_checker_);
 
-  std::optional<BitrateConstraints> ApplyOrLiftRelayCap(bool is_relayed);
   bool IsRelevantRouteChange(const NetworkRoute& old_route,
                              const NetworkRoute& new_route) const;
   void UpdateBitrateConstraints(const BitrateConstraints& updated);
@@ -234,11 +232,8 @@ class RtpTransportControllerSend final
   NetworkControllerConfig initial_config_ RTC_GUARDED_BY(sequence_checker_);
   StreamsConfig streams_config_ RTC_GUARDED_BY(sequence_checker_);
 
-  const bool reset_feedback_on_route_change_;
   const bool add_pacing_to_cwin_;
   const bool reset_bwe_on_adapter_id_change_;
-
-  FieldTrialParameter<DataRate> relay_bandwidth_cap_;
 
   size_t transport_overhead_bytes_per_packet_ RTC_GUARDED_BY(sequence_checker_);
   bool network_available_ RTC_GUARDED_BY(sequence_checker_);

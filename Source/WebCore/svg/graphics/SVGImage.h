@@ -51,7 +51,7 @@ public:
     RenderReplaced* embeddedSVGRoot() const;
     LocalFrameView* NODELETE frameView() const;
 
-    bool isSVGImage() const final { return true; }
+    bool NODELETE isSVGImage() const final { return true; }
 
     void subresourcesAreFinished(Document*, CompletionHandler<void()>&&) final;
 

@@ -72,6 +72,7 @@ namespace JSC {
     macro(ModuleLoaderPayloadType, SpecCellOther) \
     macro(ModuleGraphLoadingStateType, SpecCellOther) \
     macro(JSModuleLoaderType, SpecCellOther) \
+    macro(SentinelType, SpecCellOther) \
     \
     /* The ObjectType value must come before any JSType that is a subclass of JSObject. */ \
     macro(ObjectType, SpecObjectOther) \

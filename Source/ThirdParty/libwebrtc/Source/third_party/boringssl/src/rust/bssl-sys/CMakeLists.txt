@@ -1,3 +1,17 @@
+# Copyright 2023 The BoringSSL Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 # Generate architecture-specific wrappers. bindgen must be called from
 # ${CMAKE_BINARY_DIR}, with the output path as a relative path. bindgen writes
 # the depfile using the same syntax as the command-line argument, and ninja
@@ -7,6 +21,12 @@ set(wrapper_rs_relative "${CMAKE_CURRENT_BINARY_DIR}/${wrapper_rs}")
 set(depfile_relative "${CMAKE_CURRENT_BINARY_DIR}/${wrapper_rs}.d")
 cmake_path(RELATIVE_PATH wrapper_rs_relative BASE_DIRECTORY "${CMAKE_BINARY_DIR}")
 cmake_path(RELATIVE_PATH depfile_relative BASE_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+if(BORINGSSL_PREFIX)
+  set(BINDGEN_FLAGS "-DBORINGSSL_PREFIX=${BORINGSSL_PREFIX}")
+else()
+  set(BINDGEN_FLAGS "")
+endif(BORINGSSL_PREFIX)
 
 add_custom_command(
   OUTPUT ${wrapper_rs} wrapper.c
@@ -39,9 +59,12 @@ add_custom_command(
           --wrap-static-fns
           --wrap-static-fns-path="${CMAKE_CURRENT_BINARY_DIR}/wrapper.c"
           -- # these are LLVM arg passthroughs
-          -I${PROJECT_SOURCE_DIR}/include
+          ${BINDGEN_FLAGS}
+          $<LIST:TRANSFORM,$<TARGET_PROPERTY:crypto,INCLUDE_DIRECTORIES>,PREPEND,-I>
+          $<LIST:TRANSFORM,$<TARGET_PROPERTY:ssl,INCLUDE_DIRECTORIES>,PREPEND,-I>
           # https://doc.rust-lang.org/nightly/rustc/platform-support.html
           --target=${RUST_BINDINGS}
+  COMMAND_EXPAND_LISTS
   DEPENDS wrapper.h
   DEPFILE ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_rs}.d
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}

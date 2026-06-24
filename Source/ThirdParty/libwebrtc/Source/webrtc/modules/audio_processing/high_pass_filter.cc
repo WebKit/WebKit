@@ -12,9 +12,9 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 #include "rtc_base/checks.h"
@@ -54,23 +54,23 @@ constexpr std::array<CascadedBiQuadFilter::BiQuadCoefficients, 3>
          .a = {-1.9983570340145236f, 0.9984928491805198f}},
     }};
 
-ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients> ChooseCoefficients(
+std::span<const CascadedBiQuadFilter::BiQuadCoefficients> ChooseCoefficients(
     int sample_rate_hz) {
   switch (sample_rate_hz) {
     case 16000:
-      return ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+      return std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
           kHighPassFilterCoefficients16kHz);
     case 32000:
-      return ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+      return std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
           kHighPassFilterCoefficients32kHz);
     case 48000:
-      return ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+      return std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
           kHighPassFilterCoefficients48kHz);
     default:
       RTC_DCHECK_NOTREACHED();
   }
   RTC_DCHECK_NOTREACHED();
-  return ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+  return std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
       kHighPassFilterCoefficients16kHz);
 }
 
@@ -92,14 +92,14 @@ void HighPassFilter::Process(AudioBuffer* audio, bool use_split_band_data) {
   RTC_DCHECK_EQ(filters_.size(), audio->num_channels());
   if (use_split_band_data) {
     for (size_t k = 0; k < audio->num_channels(); ++k) {
-      ArrayView<float> channel_data = ArrayView<float>(
+      std::span<float> channel_data = std::span<float>(
           audio->split_bands(k)[0], audio->num_frames_per_band());
       filters_[k]->Process(channel_data);
     }
   } else {
     for (size_t k = 0; k < audio->num_channels(); ++k) {
-      ArrayView<float> channel_data =
-          ArrayView<float>(&audio->channels()[k][0], audio->num_frames());
+      std::span<float> channel_data =
+          std::span<float>(&audio->channels()[k][0], audio->num_frames());
       filters_[k]->Process(channel_data);
     }
   }

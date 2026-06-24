@@ -52,7 +52,7 @@ $0 =~ m/(.*[\/\\])[^\/\\]+$/; $dir=$1;
 ( $xlate="${dir}../../../perlasm/arm-xlate.pl" and -f $xlate) or
 die "can't locate arm-xlate.pl";
 
-open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
+open OUT, "|-", $^X, $xlate, $flavour, $output;
 *STDOUT=*OUT;
 
 $code.=<<___;
@@ -1134,7 +1134,7 @@ vpaes_cbc_encrypt:
 	AARCH64_SIGN_LINK_REGISTER
 	cbz	$len, .Lcbc_abort
 	cmp	w5, #0			// check direction
-	b.eq	vpaes_cbc_decrypt
+	b.eq	.Lcbc_decrypt
 
 	stp	x29,x30,[sp,#-16]!
 	add	x29,sp,#0
@@ -1161,12 +1161,10 @@ vpaes_cbc_encrypt:
 .Lcbc_abort:
 	AARCH64_VALIDATE_LINK_REGISTER
 	ret
-.size	vpaes_cbc_encrypt,.-vpaes_cbc_encrypt
 
-.type	vpaes_cbc_decrypt,%function
 .align	4
-vpaes_cbc_decrypt:
-	// Not adding AARCH64_SIGN_LINK_REGISTER here because vpaes_cbc_decrypt is jumped to
+.Lcbc_decrypt:
+	// Not adding AARCH64_SIGN_LINK_REGISTER here because .Lcbc_decrypt is jumped to
 	// only from vpaes_cbc_encrypt which has already signed the return address.
 	stp	x29,x30,[sp,#-16]!
 	add	x29,sp,#0
@@ -1211,7 +1209,7 @@ vpaes_cbc_decrypt:
 	ldp	x29,x30,[sp],#16
 	AARCH64_VALIDATE_LINK_REGISTER
 	ret
-.size	vpaes_cbc_decrypt,.-vpaes_cbc_decrypt
+.size	vpaes_cbc_encrypt,.-vpaes_cbc_encrypt
 ___
 # We omit vpaes_ecb_* in BoringSSL. They are unused.
 if (0) {

@@ -37,6 +37,14 @@ namespace WTF {
 
 using namespace Unicode;
 
+IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
+// Always destroyed via StringImpl::destroy().
+AtomStringImpl::~AtomStringImpl()
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+IGNORE_CLANG_WARNINGS_END
+
 #if USE(WEB_THREAD)
 
 class AtomStringTableLocker : public Locker<Lock> {

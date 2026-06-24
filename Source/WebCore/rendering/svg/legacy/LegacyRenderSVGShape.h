@@ -58,7 +58,7 @@ public:
         GlobalCoordinateSpace,
         LocalCoordinateSpace
     };
-    LegacyRenderSVGShape(Type, SVGGraphicsElement&, RenderStyle&&);
+    LegacyRenderSVGShape(Type, SVGGraphicsElement&, Style::ComputedStyle&&);
     virtual ~LegacyRenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;
@@ -138,9 +138,9 @@ private:
     
     std::unique_ptr<Path> createPath() const;
 
-    void fillShape(const RenderStyle&, GraphicsContext&);
-    void strokeShapeInternal(const RenderStyle&, GraphicsContext&);
-    void strokeShape(const RenderStyle&, GraphicsContext&);
+    void fillShape(const Style::ComputedStyle&, GraphicsContext&);
+    void strokeShapeInternal(const Style::ComputedStyle&, GraphicsContext&);
+    void strokeShape(const Style::ComputedStyle&, GraphicsContext&);
     void fillStrokeMarkers(PaintInfo&);
 
     virtual void drawMarkers(PaintInfo&) { }
@@ -152,9 +152,9 @@ protected:
 private:
     FloatRect m_repaintBoundingBox;
 
-    bool m_needsBoundariesUpdate : 1;
-    bool m_needsShapeUpdate : 1;
-    bool m_needsTransformUpdate : 1;
+    bool m_needsBoundariesUpdate : 1 { false }; // Default is false, the cached rects are empty from the beginning.
+    bool m_needsShapeUpdate : 1 { true }; // Default is true, so we grab a Path object once from SVGGraphicsElement.
+    bool m_needsTransformUpdate : 1 { true }; // Default is true, so we grab a AffineTransform object once from SVGGraphicsElement.
     bool m_fillRequiresClip : 1 { true };
 protected:
     ShapeType m_shapeType : 3 { ShapeType::Empty };

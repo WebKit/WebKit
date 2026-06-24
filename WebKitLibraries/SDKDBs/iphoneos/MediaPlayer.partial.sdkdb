@@ -1591,7 +1591,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "MPChangeLanguageOptionSetting"},
     {"access": "public", "name": "MPErrorCode"},
@@ -1626,13 +1626,13 @@
    "globals": [
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo26MPMediaItemAnimatedArtworkC11MediaPlayerE9artworkID26previewImageRequestHandler024videoAssetFileURLRequestL0ABSS_So7UIImageCSgSo6CGSizeVYac10Foundation3URLVSgAKYactcfC"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo26MPMediaItemAnimatedArtworkC11MediaPlayerE9artworkID26previewImageRequestHandler024videoAssetFileURLRequestL0ABSS_So7UIImageCSgSo6CGSizeVYac10Foundation3URLVSgAKYactcfc"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E4fromABs7Decoder_p_tKcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E4fromABs7Decoder_p_tKcfc"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E4fromABs7Decoder_p_tKcfC"},
+    {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E4fromABs7Decoder_p_tKcfc"},
+    {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersC05MediaB0E6encode2toys7Encoder_p_tKF"},
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersCSE05MediaB0Mc"},
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo27MPMusicPlayerPlayParametersCSe05MediaB0Mc"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

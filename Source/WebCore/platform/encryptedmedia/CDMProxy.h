@@ -175,6 +175,7 @@ public:
     }
 
     unsigned numKeys() const { return m_keys.size(); }
+    bool isEmpty() const { return m_keys.isEmpty(); }
     auto values() const { return m_keys.values(); }
     KeyStoreIDType id() const { return m_id; }
 
@@ -242,7 +243,7 @@ class CDMProxyDecryptionClient;
 // from background threads (i.e. decryptors).
 class CDMProxy : public ThreadSafeRefCounted<CDMProxy> {
 public:
-    static constexpr Seconds MaxKeyWaitTimeSeconds = 7_s;
+    static constexpr Seconds MaxKeyWaitTimeSeconds = 10_s;
 
     virtual ~CDMProxy() = default;
 

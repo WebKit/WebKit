@@ -1,5 +1,5 @@
+PASS Load event fired after switching to a local frame.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS Load event fired after switching to a local frame.
 

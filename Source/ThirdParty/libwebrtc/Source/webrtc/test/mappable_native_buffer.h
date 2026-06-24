@@ -12,9 +12,9 @@
 #define TEST_MAPPABLE_NATIVE_BUFFER_H_
 
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
@@ -64,7 +64,7 @@ class MappableNativeBuffer : public VideoFrameBuffer {
 
   scoped_refptr<I420BufferInterface> ToI420() override;
   scoped_refptr<VideoFrameBuffer> GetMappedFrameBuffer(
-      ArrayView<VideoFrameBuffer::Type> types) override;
+      std::span<VideoFrameBuffer::Type> types) override;
 
   // Gets all the buffers that have been mapped so far, including mappings of
   // cropped and scaled buffers.
@@ -94,7 +94,7 @@ class MappableNativeBuffer : public VideoFrameBuffer {
 
     scoped_refptr<I420BufferInterface> ToI420() override;
     scoped_refptr<VideoFrameBuffer> GetMappedFrameBuffer(
-        ArrayView<VideoFrameBuffer::Type> types) override;
+        std::span<VideoFrameBuffer::Type> types) override;
 
    private:
     friend class RefCountedObject<ScaledBuffer>;

@@ -84,7 +84,9 @@ int PASCAL wWinMain(HINSTANCE instance,
                     int cmd_show) {
   webrtc::WinsockInitializer winsock_init;
   webrtc::PhysicalSocketServer ss;
-  webrtc::AutoSocketServerThread main_thread(&ss);
+  std::unique_ptr<webrtc::Thread> main_thread =
+      std::make_unique<webrtc::Thread>(&ss);
+  webrtc::ThreadManager::Instance()->SetCurrentThread(main_thread.get());
 
   WindowsCommandLineArguments win_args;
   int argc = win_args.argc();
@@ -140,5 +142,6 @@ int PASCAL wWinMain(HINSTANCE instance,
   }
 
   webrtc::CleanupSSL();
+  webrtc::ThreadManager::Instance()->SetCurrentThread(nullptr);
   return 0;
 }

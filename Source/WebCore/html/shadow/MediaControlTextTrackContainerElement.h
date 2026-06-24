@@ -82,7 +82,7 @@ private:
     explicit MediaControlTextTrackContainerElement(Document&, HTMLMediaElement&);
 
     // Element
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     // TextTrackRepresentationClient
     RefPtr<NativeImage> createTextTrackRepresentationImage() final;

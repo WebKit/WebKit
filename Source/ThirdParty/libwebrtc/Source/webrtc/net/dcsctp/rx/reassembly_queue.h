@@ -14,12 +14,12 @@
 #include <deque>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/common/sequence_numbers.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
@@ -93,17 +93,15 @@ class ReassemblyQueue {
   // partial reliability.
   void HandleForwardTsn(
       TSN new_cumulative_tsn,
-      webrtc::ArrayView<const AnyForwardTsnChunk::SkippedStream>
-          skipped_streams);
+      std::span<const AnyForwardTsnChunk::SkippedStream> skipped_streams);
 
   // Resets the provided streams and leaves deferred reset processing, if
   // enabled.
-  void ResetStreamsAndLeaveDeferredReset(
-      webrtc::ArrayView<const StreamID> stream_ids);
+  void ResetStreamsAndLeaveDeferredReset(std::span<const StreamID> stream_ids);
 
   // Enters deferred reset processing.
   void EnterDeferredReset(TSN sender_last_assigned_tsn,
-                          webrtc::ArrayView<const StreamID> streams);
+                          std::span<const StreamID> streams);
 
   // The number of payload bytes that have been queued. Note that the actual
   // memory usage is higher due to additional overhead of tracking received
@@ -142,7 +140,7 @@ class ReassemblyQueue {
   };
 
   bool IsConsistent() const;
-  void AddReassembledMessage(webrtc::ArrayView<const UnwrappedTSN> tsns,
+  void AddReassembledMessage(std::span<const UnwrappedTSN> tsns,
                              DcSctpMessage message);
 
   const absl::string_view log_prefix_;

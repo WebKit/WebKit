@@ -48,7 +48,7 @@ public:
     void NODELETE atomCharacterClassPushNested(bool) { }
     void NODELETE atomCharacterClassPopNested(bool) { }
     void NODELETE atomCharacterClassEnd() { }
-    void NODELETE atomParenthesesSubpatternBegin(bool = true, std::optional<String> = std::nullopt) { }
+    void NODELETE atomParenthesesSubpatternBegin(bool, std::optional<String> = std::nullopt) { }
     void NODELETE atomParentheticalAssertionBegin(bool, MatchDirection) { }
     void NODELETE atomParentheticalModifierBegin(OptionSet<Flags>, OptionSet<Flags>) { }
     void NODELETE atomParenthesesEnd() { }

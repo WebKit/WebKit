@@ -20,8 +20,7 @@ namespace utils {
 
 // Generates a human-readable string from a COM error.
 std::string ComErrorToString(const _com_error& error) {
-  char buffer[1024];
-  webrtc::SimpleStringBuilder string_builder(buffer);
+  webrtc::StringBuilder string_builder;
   // Use _bstr_t to simplify the wchar to char conversion for ErrorMessage().
   _bstr_t error_message(error.ErrorMessage());
   string_builder.AppendFormat("HRESULT: 0x%08X, Message: %s", error.Error(),

@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import re
 import unittest
 
 from resultsdbpy.controller.configuration import Configuration
@@ -95,4 +97,45 @@ class ConfigurationUnittest(unittest.TestCase):
         self.assertEqual(
             Configuration(platform='iOS', version='12', is_simulator=False, architecture='arm64', style='Release').to_query(),
             'platform=iOS&is_simulator=False&version=12.0.0&architecture=arm64&style=Release',
+        )
+
+    def test_javascript_to_params_emits_every_member(self):
+        '''The JS Configuration.toParams() literal must round-trip every member that the
+        Python Configuration model exposes. Drift here under-specifies URLs consumed by
+        @configuration_for_query routes, which then collide on shared (uuid, suite)
+        partitions and fail with "Query too broad" when reconstructing archives.
+
+        Specifically guards two regressions:
+          1. sdk dropped entirely from the literal.
+          2. architecture passed through a DEFAULT_ARCHITECTURE-based stripping helper,
+             which substring-matches and silently collapses arm64 / arm64e / arm64_32.
+        '''
+        js_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            'view', 'static', 'js', 'configuration.js',
+        )
+        with open(js_path) as source_file:
+            source = source_file.read()
+
+        match = re.search(r'toParams\s*\(\s*\)\s*\{(.*?)\n    \}', source, re.DOTALL)
+        self.assertIsNotNone(match, 'Could not locate toParams() in configuration.js')
+        body = match.group(1)
+
+        for member in Configuration.REQUIRED_MEMBERS + Configuration.OPTIONAL_MEMBERS + Configuration.FILTERING_MEMBERS:
+            self.assertRegex(
+                body,
+                rf'\b{re.escape(member)}\s*:',
+                f"configuration.js toParams() is missing key '{member}'",
+            )
+
+        self.assertRegex(
+            body,
+            r'sdk\s*:\s*\[\s*this\.sdk\s*\]',
+            'toParams() must emit sdk: [this.sdk] so SDK builds disambiguate archives sharing a uuid',
+        )
+        self.assertRegex(
+            body,
+            r'architecture\s*:\s*\[\s*this\.architecture\s*\]',
+            'toParams() must emit architecture: [this.architecture] without DEFAULT_ARCHITECTURE-based stripping; '
+            'stripping substring-matches and collapses arm64, arm64e, and arm64_32',
         )

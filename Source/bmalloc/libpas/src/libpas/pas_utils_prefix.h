@@ -56,6 +56,11 @@ __PAS_BEGIN_EXTERN_C;
 #define __PAS_NEVER_INLINE __attribute__((__noinline__))
 #define __PAS_NO_RETURN __attribute((__noreturn__))
 
+// build.sh defines this for freestanding builds
+#if !defined(PAS_BMALLOC_HIDDEN)
+#define PAS_BMALLOC_HIDDEN 1
+#endif
+
 #if defined(PAS_LIBMALLOC) && PAS_LIBMALLOC || defined(PAS_BMALLOC_HIDDEN) && PAS_BMALLOC_HIDDEN
 #define __PAS_API __attribute__((visibility("hidden")))
 #else

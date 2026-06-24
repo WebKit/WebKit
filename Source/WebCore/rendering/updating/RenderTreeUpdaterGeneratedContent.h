@@ -49,14 +49,14 @@ public:
     static void removeBeforePseudoElement(Element&, RenderTreeBuilder&);
     static void removeAfterPseudoElement(Element&, RenderTreeBuilder&);
 
-    static void createContentRenderers(RenderTreeBuilder&, RenderElement&, const RenderStyle&, PseudoElementType);
-    static void updateStyleForContentRenderers(RenderElement&, const RenderStyle&);
+    static void createContentRenderers(RenderTreeBuilder&, RenderElement&, const Style::ComputedStyle&, PseudoElementType);
+    static void updateStyleForContentRenderers(RenderElement&, const Style::ComputedStyle&);
 
 private:
     void updateQuotesUpTo(RenderQuote*);
     RenderElement* popExitedQuoteScopes(const RenderQuote&);
 
-    bool needsPseudoElement(const RenderStyle*);
+    bool needsPseudoElement(const Style::ComputedStyle*);
 
     struct QuoteScopeEntry {
         SingleThreadWeakPtr<RenderElement> scopeRoot;

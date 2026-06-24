@@ -55,6 +55,11 @@ PAS_NEVER_INLINE void* bmalloc_try_allocate_auxiliary_with_alignment_casual(
     return (void*)bmalloc_try_allocate_auxiliary_impl_casual_case(heap_ref, size, alignment, allocation_mode).begin;
 }
 
+PAS_NEVER_INLINE void bmalloc_deallocate_casual(void* ptr)
+{
+    pas_deallocate_casual_case(ptr, BMALLOC_HEAP_CONFIG);
+}
+
 PAS_NEVER_INLINE void* bmalloc_allocate_auxiliary_with_alignment_casual(
     pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode)
 {

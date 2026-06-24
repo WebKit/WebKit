@@ -27,29 +27,27 @@
 
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
-#include "StyleCalculationValue.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
 
-using namespace CSS::Literals;
-
 // MARK: - Conversion
 
 auto CSSValueConversion<SVGStrokeDashoffset>::operator()(BuilderState& state, const CSSValue& value) -> SVGStrokeDashoffset
 {
+    using namespace CSS::Literals;
+
     RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
     if (!primitiveValue)
         return 0_css_px;
 
     if (primitiveValue->isNumberOrInteger()) {
-        return SVGStrokeDashoffsetLength { SVGStrokeDashoffsetLength::Fixed {
+        return SVGStrokeDashoffset::LengthPercentage { SVGStrokeDashoffset::LengthPercentage::Fixed {
             toStyleFromCSSValue<Number<CSS::All, float>>(state, *primitiveValue).value
         } };
     }
-    return toStyleFromCSSValue<SVGStrokeDashoffsetLength>(state, *primitiveValue);
+    return toStyleFromCSSValue<SVGStrokeDashoffset::LengthPercentage>(state, *primitiveValue);
 }
 
 } // namespace Style

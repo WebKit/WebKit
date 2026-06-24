@@ -1,0 +1,8 @@
+Tests that a horizontal deviation during a vertical scroll does not cause horizontal rubberbanding or halt vertical scrolling
+PASS sawHorizontalRubberband is false
+PASS window.scrollY != initialScrollY is true
+PASS scrolledVerticallyAfterHorizontalDeltas is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

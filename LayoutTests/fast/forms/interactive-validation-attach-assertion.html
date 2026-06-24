@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -13,15 +13,13 @@
 <div id=console></div>
 
 <script>
+window.jsTestIsAsync = true;
 function check() {
     testPassed('Not crashed.');
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
     setTimeout(check, 10);
     document.getElementsByTagName('input')[1].click();
 } else {

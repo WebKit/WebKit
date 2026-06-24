@@ -158,13 +158,13 @@ public:
     Scope(const VM& vm, Scope* containingScope, ImplementationVisibility implementationVisibility, LexicallyScopedFeatures lexicallyScopedFeatures, bool isFunction, bool isGeneratorFunction, bool isArrowFunction, bool isAsyncFunction, bool isStaticBlock)
         : m_vm(vm)
         , m_containingScope(containingScope)
-        , m_implementationVisibility(implementationVisibility)
-        , m_lexicallyScopedFeatures(lexicallyScopedFeatures)
         , m_isFunction(isFunction)
         , m_isGeneratorFunction(isGeneratorFunction)
         , m_isArrowFunction(isArrowFunction)
         , m_isAsyncFunction(isAsyncFunction)
         , m_isStaticBlock(isStaticBlock)
+        , m_implementationVisibility(implementationVisibility)
+        , m_lexicallyScopedFeatures(lexicallyScopedFeatures)
     {
         m_usedVariables.append(UniquedStringImplPtrSet());
     }
@@ -977,10 +977,10 @@ private:
         m_isModuleCode = true;
     }
 
+    // Fields up to m_lexicalVariables are arranged to share a cache line.
     const VM& m_vm;
     Scope* m_containingScope;
-    ImplementationVisibility m_implementationVisibility;
-    LexicallyScopedFeatures m_lexicallyScopedFeatures;
+    DeclarationStacks::FunctionStack m_functionDeclarations;
     bool m_shadowsArguments : 1 { false };
     bool m_usesEval : 1 { false };
     bool m_usesImportMeta : 1 { false };
@@ -1011,25 +1011,37 @@ private:
     bool m_isClassScope : 1 { false };
     bool m_asyncFunctionBodyDoesNotUseAwait : 1 { false };
     bool m_usesAwait : 1 { false };
-    EvalContextType m_evalContextType { EvalContextType::None };
-    ConstructorKind m_constructorKind { ConstructorKind::None };
-    DerivedContextType m_derivedContextType { DerivedContextType::None };
-    SuperBinding m_expectedSuperBinding { SuperBinding::NotNeeded };
-    InnerArrowFunctionCodeFeatures m_innerArrowFunctionFeatures { 0 };
     int m_loopDepth { 0 };
-    int m_switchDepth { 0 };
-
-    typedef Vector<ScopeLabelInfo, 2> LabelStack;
-    std::unique_ptr<LabelStack> m_labels;
-    UniquedStringImplPtrSet m_declaredParameters;
-    VariableEnvironment m_declaredVariables;
-    VariableEnvironment m_lexicalVariables;
-    Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
-    UniquedStringImplPtrSet m_variablesBeingHoisted;
+    SuperBinding m_expectedSuperBinding { SuperBinding::NotNeeded };
+    ImplementationVisibility m_implementationVisibility;
+    LexicallyScopedFeatures m_lexicallyScopedFeatures;
+    ConstructorKind m_constructorKind { ConstructorKind::None };
+    InnerArrowFunctionCodeFeatures m_innerArrowFunctionFeatures { 0 };
     UncheckedKeyHashMap<FunctionMetadataNode*, NeedsDuplicateDeclarationCheck> m_sloppyModeFunctionHoistingCandidates;
     UncheckedKeyHashSet<UniquedStringImpl*> m_closedVariableCandidates;
-    DeclarationStacks::FunctionStack m_functionDeclarations;
+
+    // offset 64 in release mode
+    VariableEnvironment m_lexicalVariables;
+    VariableEnvironment m_declaredVariables;
+    UniquedStringImplPtrSet m_declaredParameters;
+    UniquedStringImplPtrSet m_variablesBeingHoisted;
+    typedef Vector<ScopeLabelInfo, 2> LabelStack;
+    std::unique_ptr<LabelStack> m_labels;
+    int m_switchDepth { 0 };
+    EvalContextType m_evalContextType { EvalContextType::None };
+    DerivedContextType m_derivedContextType { DerivedContextType::None };
+
+    Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
+
+    static void verifyLayout();
 };
+
+inline void Scope::verifyLayout()
+{
+#if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64) && CPU(ADDRESS64)
+    static_assert(OBJECT_OFFSETOF(Scope, m_lexicalVariables) == JSC_CACHE_LINE_SIZE, "Scope hot field layout drifted.");
+#endif
+}
 
 typedef SegmentedVector<Scope, 20, 10> ScopeStack;
 
@@ -1037,7 +1049,7 @@ enum class ArgumentType { Normal, Spread };
 enum class ParsingContext { Normal, FunctionConstructor };
 
 template <typename LexerType>
-class CACHE_LINE_ALIGNED Parser {
+class JSC_CACHE_LINE_ALIGNED Parser {
     WTF_MAKE_NONCOPYABLE(Parser);
     WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(Parser);
 
@@ -2073,46 +2085,71 @@ private:
         m_errorMessage = String();
     }
 
-    // Cache line 0 (hot)
+    // Fields up to m_parserState are arranged according to access frequency and affinity;
+    // do not rearrange without careful analysis.
     VM& m_vm;
-    Scope* m_currentScope { nullptr };
+    JSToken m_token;
+    // offset 64
+    const SourceCode* m_source;
+    ParserArena m_parserArena;
+    // offset 128
+    std::unique_ptr<LexerType> m_lexer;
     JSTokenLocation m_lastTokenLocation;
+    Scope* m_currentScope { nullptr };
+    String m_errorMessage;
+    DebuggerParseData* m_debuggerParseData;
     JSTokenType m_lastTokenType { ERRORTOK };
+    int m_statementDepth;
+    FunctionMode m_functionMode;
     bool m_allowsIn;
     bool m_immediateParentAllowsFunctionDeclarationInStatement;
-    SourceParseMode m_parseMode;
-    int m_statementDepth;
-    JSParserScriptMode m_scriptMode;
-    const SourceCode* m_source;
-    RefPtr<SourceProviderCache> m_functionCache;
-    FunctionMode m_functionMode;
-    SuperBinding m_superBinding;
-
-    // Cache line 1 (hot)
-    std::unique_ptr<LexerType> m_lexer;
-    JSToken m_token;
-
-    // Cache line 2 (m_parserState is hot)
-    ParserState m_parserState;
-
-    ConstructorKind m_constructorKindForTopLevelFunctionExpressions { ConstructorKind::None };
     ImplementationVisibility m_implementationVisibility;
-    bool m_parsingBuiltin;
-    bool m_isEvalContext;
-    bool m_isInsideOrdinaryFunction;
     bool m_insideSwitchCaseBody { false };
-
-    ParserArena m_parserArena;
-    CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };
-    ScopeStack m_scopeStack;
-    bool m_hasStackOverflow;
-    String m_errorMessage;
-    RefPtr<ModuleScopeData> m_moduleScopeData;
-    DebuggerParseData* m_debuggerParseData;
+    // offset 192
+    ParserState m_parserState;
+    SourceParseMode m_parseMode;
+    ConstructorKind m_constructorKindForTopLevelFunctionExpressions { ConstructorKind::None };
+    bool m_isInsideOrdinaryFunction;
     bool m_seenTaggedTemplateInNonReparsingFunctionMode { false };
     bool m_seenPrivateNameUseInNonReparsingFunctionMode { false };
     bool m_seenArgumentsDotLength { false };
+    bool m_parsingBuiltin;
+    bool m_isEvalContext;
+
+    RefPtr<SourceProviderCache> m_functionCache;
+    CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };
+    RefPtr<ModuleScopeData> m_moduleScopeData;
+    JSParserScriptMode m_scriptMode;
+    SuperBinding m_superBinding;
+    bool m_hasStackOverflow;
+    ScopeStack m_scopeStack;
+
+    static void verifyLayout();
 };
+
+#define LAYOUT_DRIFTED_ERROR "Parser hot field layout drifted."
+
+template<>
+inline void Parser<Lexer<Latin1Character>>::verifyLayout()
+{
+#if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64) && CPU(ADDRESS64)
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<Latin1Character>>, m_source) == JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<Latin1Character>>, m_lexer) == 2 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<Latin1Character>>, m_parserState) == 3 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+#endif
+}
+
+template<>
+inline void Parser<Lexer<char16_t>>::verifyLayout()
+{
+#if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64) && CPU(ADDRESS64)
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<char16_t>>, m_source) == JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<char16_t>>, m_lexer) == 2 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<char16_t>>, m_parserState) == 3 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+#endif
+}
+
+#undef LAYOUT_DRIFTED_ERROR
 
 template <typename LexerType>
 template <class ParsedNode>

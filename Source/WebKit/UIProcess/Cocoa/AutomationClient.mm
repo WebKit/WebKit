@@ -38,9 +38,8 @@
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/text/WTFString.h>
 
-using namespace Inspector;
-
 namespace WebKit {
+using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AutomationClient);
 

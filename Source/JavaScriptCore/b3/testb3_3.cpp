@@ -86,6 +86,142 @@ void testCSEStoreWithLoop()
     CHECK_EQ(num, 5);
 }
 
+void testCSELoadAfterStoreDiamond(bool flag)
+{
+    // Two predecessors each store a distinct value to the same address, then a
+    // load at the merge point reads it. CSE has more than one reaching store, so
+    // it must build a Phi of the stored values and forward the load to it (rather
+    // than re-reading memory). This exercises the multi-match Phi/Upsilon path.
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* condition = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNewControlValue(proc, Branch, Origin(), condition, FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    Value* fortyTwo = thenCase->appendIntConstant(proc, Origin(), Int64, 42);
+    thenCase->appendNew<MemoryValue>(proc, Store, Origin(), fortyTwo, address);
+    thenCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(done));
+
+    Value* seven = elseCase->appendIntConstant(proc, Origin(), Int64, 7);
+    elseCase->appendNew<MemoryValue>(proc, Store, Origin(), seven, address);
+    elseCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(done));
+
+    Value* loaded = done->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    done->appendNewControlValue(proc, Return, Origin(), loaded);
+
+    auto code = compileProc(proc);
+    int64_t storage = -1;
+    int64_t result = invoke<int64_t>(*code, std::bit_cast<intptr_t>(&storage), flag ? 1 : 0);
+    CHECK_EQ(result, flag ? 42 : 7);
+    // The store still wrote through to memory regardless of forwarding.
+    CHECK_EQ(storage, flag ? 42 : 7);
+}
+
+void testCSELoadAcrossLoopBackEdge(unsigned count)
+{
+    // The load and one of its reaching stores live in the same block (the loop
+    // body), but the store is logically *after* the load on the next iteration,
+    // reached via the back edge. So the load's def-block equals its use-block,
+    // yet the in-block store must not be forwarded directly: it has to flow
+    // through a loop-header Phi. This is the loop analogue of the old Get/Set
+    // interleaving in one block.
+    //
+    //   *p = 1
+    //   for (i = 0; i < count; ++i) {
+    //       acc = load(p)   // reaches: header store (1) and body store below
+    //       store(acc + 1, p)
+    //   }
+    //   return load(p)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loop = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* tripCount = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* one = root->appendIntConstant(proc, Origin(), Int64, 1);
+    Value* zero = root->appendIntConstant(proc, Origin(), Int64, 0);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), one, address);
+    UpsilonValue* initialCounter = root->appendNew<UpsilonValue>(proc, Origin(), zero);
+    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loop));
+
+    Value* counter = loop->appendNew<Value>(proc, Phi, Int64, Origin());
+    initialCounter->setPhi(counter);
+    Value* loaded = loop->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* incremented = loop->appendNew<Value>(proc, Add, Origin(), loaded, one);
+    loop->appendNew<MemoryValue>(proc, Store, Origin(), incremented, address);
+    Value* nextCounter = loop->appendNew<Value>(proc, Add, Origin(), counter, one);
+    loop->appendNew<UpsilonValue>(proc, Origin(), nextCounter)->setPhi(counter);
+    loop->appendNewControlValue(proc, Branch, Origin(),
+        loop->appendNew<Value>(proc, LessThan, Origin(), nextCounter, tripCount),
+        FrequentedBlock(loop), FrequentedBlock(done));
+
+    Value* result = done->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    done->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc);
+    int64_t storage = -1;
+    int64_t value = invoke<int64_t>(*code, std::bit_cast<intptr_t>(&storage), static_cast<int64_t>(count));
+    int64_t expected = 1 + std::max(1u, count);
+    CHECK_EQ(value, expected);
+    CHECK_EQ(storage, expected);
+}
+
+void testCSELoopHeaderLoadFromBackEdgeStore(unsigned count)
+{
+    // The redundant load sits in the loop *header*, but one of its reaching
+    // stores lives in a separate *body* block reached via the back edge. In
+    // reverse-post-order the header is processed before the body, so on the
+    // first sweep the header's backward query can't yet see the post-edit body
+    // summary. This is exactly the case the loop re-sweep exists to catch; the
+    // test pins down that it stays correct regardless of which sweep fires.
+    //
+    //   *p = 1
+    //   for (i = 0; i < count; ++i)   // header: acc = load(p)
+    //       *p = acc + 1              // body (separate block)
+    //   return load(p)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* body = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* tripCount = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* one = root->appendIntConstant(proc, Origin(), Int64, 1);
+    Value* zero = root->appendIntConstant(proc, Origin(), Int64, 0);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), one, address);
+    UpsilonValue* initialCounter = root->appendNew<UpsilonValue>(proc, Origin(), zero);
+    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(header));
+
+    Value* counter = header->appendNew<Value>(proc, Phi, Int64, Origin());
+    initialCounter->setPhi(counter);
+    Value* loaded = header->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    header->appendNewControlValue(proc, Branch, Origin(),
+        header->appendNew<Value>(proc, LessThan, Origin(), counter, tripCount),
+        FrequentedBlock(body), FrequentedBlock(done));
+
+    Value* incremented = body->appendNew<Value>(proc, Add, Origin(), loaded, one);
+    body->appendNew<MemoryValue>(proc, Store, Origin(), incremented, address);
+    Value* nextCounter = body->appendNew<Value>(proc, Add, Origin(), counter, one);
+    body->appendNew<UpsilonValue>(proc, Origin(), nextCounter)->setPhi(counter);
+    body->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(header));
+
+    Value* result = done->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    done->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc);
+    int64_t storage = -1;
+    int64_t value = invoke<int64_t>(*code, std::bit_cast<intptr_t>(&storage), static_cast<int64_t>(count));
+    int64_t expected = static_cast<int64_t>(count) + 1;
+    CHECK_EQ(value, expected);
+    CHECK_EQ(storage, expected);
+}
+
 void testLoadPreIndex32()
 {
     if (Options::defaultB3OptLevel() < 2)
@@ -4436,6 +4572,14 @@ void addShrTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
 #if !CPU(ARM)
     RUN(testCSEStoreWithLoop());
 #endif
+    RUN(testCSELoadAfterStoreDiamond(true));
+    RUN(testCSELoadAfterStoreDiamond(false));
+    RUN(testCSELoadAcrossLoopBackEdge(0));
+    RUN(testCSELoadAcrossLoopBackEdge(1));
+    RUN(testCSELoadAcrossLoopBackEdge(5));
+    RUN(testCSELoopHeaderLoadFromBackEdgeStore(0));
+    RUN(testCSELoopHeaderLoadFromBackEdgeStore(1));
+    RUN(testCSELoopHeaderLoadFromBackEdgeStore(5));
 
     RUN(testLoadPreIndex32());
     RUN(testLoadPreIndex64());

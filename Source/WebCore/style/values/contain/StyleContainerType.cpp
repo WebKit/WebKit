@@ -27,6 +27,7 @@
 #include "StyleContainerType.h"
 
 #include "CSSKeywordValue.h"
+#include "CSSValuePair.h"
 #include "StyleBuilderChecking.h"
 
 namespace WebCore {
@@ -36,17 +37,46 @@ namespace Style {
 
 auto CSSValueConversion<ContainerType>::operator()(BuilderState& state, const CSSValue& value) -> ContainerType
 {
-    if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
+    if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
         case CSSValueNormal:
             return CSS::Keyword::Normal { };
         case CSSValueSize:
-            return CSS::Keyword::Size { };
+            return { ContainerTypeValue::Size };
         case CSSValueInlineSize:
-            return CSS::Keyword::InlineSize { };
+            return { ContainerTypeValue::InlineSize };
+        case CSSValueScrollState:
+            return { ContainerTypeValue::ScrollState };
         default:
             break;
         }
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::Normal { };
+    }
+
+    // The `[ size | inline-size ] || scroll-state` combination arrives as a CSSValuePair.
+    if (RefPtr pair = dynamicDowncast<CSSValuePair>(value)) {
+        ContainerType::EnumSet result;
+        auto addComponent = [&](const CSSValue& component) -> bool {
+            RefPtr keyword = dynamicDowncast<CSSKeywordValue>(component);
+            if (!keyword)
+                return false;
+            switch (keyword->valueID()) {
+            case CSSValueSize:
+                result.value.add(ContainerTypeValue::Size);
+                return true;
+            case CSSValueInlineSize:
+                result.value.add(ContainerTypeValue::InlineSize);
+                return true;
+            case CSSValueScrollState:
+                result.value.add(ContainerTypeValue::ScrollState);
+                return true;
+            default:
+                return false;
+            }
+        };
+        if (addComponent(pair->first()) && addComponent(pair->second()))
+            return result;
     }
 
     state.setCurrentPropertyInvalidAtComputedValueTime();

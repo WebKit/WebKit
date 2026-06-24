@@ -1227,7 +1227,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					5325BDD921DFF4F500A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
@@ -1301,7 +1301,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5325BDDE21DFF4F800A0DEE1 /* ShellScript */ = {
+		5325BDDE21DFF4F800A0DEE1 /* Run Sublaunch Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1310,6 +1310,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Sublaunch Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (

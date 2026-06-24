@@ -54,6 +54,11 @@ static inline __m128i xx_loadu_2x64(const void *hi, const void *lo) {
                             _mm_loadl_epi64((const __m128i *)hi));
 }
 
+static inline void xx_storel_16(void *const a, const __m128i v) {
+  const uint16_t val = (uint16_t)_mm_cvtsi128_si32(v);
+  memcpy(a, &val, sizeof(val));
+}
+
 static inline void xx_storel_32(void *const a, const __m128i v) {
   const int val = _mm_cvtsi128_si32(v);
   memcpy(a, &val, sizeof(val));

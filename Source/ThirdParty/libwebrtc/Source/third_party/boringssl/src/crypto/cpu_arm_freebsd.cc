@@ -22,7 +22,9 @@
 #include <openssl/mem.h>
 
 
-void OPENSSL_cpuid_setup(void) {
+using namespace bssl;
+
+void bssl::OPENSSL_cpuid_setup() {
   unsigned long hwcap = 0, hwcap2 = 0;
 
   // |elf_aux_info| may fail, in which case |hwcap| and |hwcap2| will be

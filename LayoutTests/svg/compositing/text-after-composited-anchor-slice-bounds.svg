@@ -1,0 +1,11 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+    <meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-50000" />
+    <!-- A non-composited <text> following a composited anchor lands in the anchor's overlay segment,
+         cropped to the text's slice by the enclosing non-transformed opacity group. The text must render
+         fully at (200,120), matching the reference where nothing composites. -->
+    <g style="opacity: 0.99">
+        <g style="transform: translateZ(0)"><rect x="10" y="10" width="60" height="60" fill="blue"/></g>
+        <text x="200" y="120" font-family="Ahem" font-size="40" fill="green">XXXX</text>
+    </g>
+</svg>

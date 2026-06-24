@@ -14,10 +14,10 @@
 #include <cstdint>
 #include <cstdio>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/field_trials_view.h"
 #include "api/units/data_rate.h"
 #include "api/video/resolution.h"
@@ -296,7 +296,7 @@ SimulcastFormat InterpolateSimulcastFormat(
 }
 
 std::vector<VideoStream> GetNormalSimulcastLayers(
-    ArrayView<const Resolution> resolutions,
+    std::span<const Resolution> resolutions,
     bool temporal_layers_supported,
     bool base_heavy_tl3_rate_alloc,
     const FieldTrialsView& trials,
@@ -469,7 +469,7 @@ DataRate GetTotalMaxBitrate(const std::vector<VideoStream>& layers) {
 }
 
 std::vector<VideoStream> GetSimulcastConfig(
-    ArrayView<const Resolution> resolutions,
+    std::span<const Resolution> resolutions,
     bool is_screenshare_with_conference_mode,
     bool temporal_layers_supported,
     const FieldTrialsView& trials,

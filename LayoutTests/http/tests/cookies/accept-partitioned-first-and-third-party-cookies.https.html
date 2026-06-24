@@ -42,35 +42,80 @@
                     break;
                 case "#2":
                     document.location.hash = "3";
-                    // Should see one cookie.
-                    injectThirdPartyIframe(`https://localhost:8443/cookies/resources/set-cookie-and-redirect-back.py?isPartitioned=True&redirectBackTo=${iframeUrls.echoCookies}`);
+                    // frame 1: Should not have cookies.
+                    injectThirdPartyIframe(iframeUrls.echoCookies);
                     break;
                 case "#3":
                     document.location.hash = "4";
                     testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
-                        // Should not have cookies.
+                        // frame 2: Should not have cookies.
                         injectThirdPartyIframe(iframeUrls.echoCookies);
                     }, true);
                     break;
                 case "#4":
                     document.location.hash = "5";
                     testRunner.setStatisticsHasHadUserInteraction("https://127.0.0.1:8443", true, () => {
-                        // Should see one cookie.
+                        // frame 3: Should not have cookies.
                         injectThirdPartyIframe(iframeUrls.echoCookies);
                     });
                     break;
                 case "#5":
                     document.location.hash = "6";
-                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, () => {
-                        // Should see one cookie.
-                        injectThirdPartyIframe(iframeUrls.echoCookies);
-                    }, true);
+                    testRunner.setStatisticsHasHadUserInteraction("https://127.0.0.1:8443", false, () => {
+                        // frame 4: Should see one cookie.
+                        injectThirdPartyIframe(`https://localhost:8443/cookies/resources/set-cookie-and-redirect-back.py?isPartitioned=True&redirectBackTo=${iframeUrls.echoCookies}`);
+                    });
                     break;
                 case "#6":
                     document.location.hash = "7";
-                    injectThirdPartyIframe(iframeUrls.resetCookies);
+                    testRunner.setStatisticsHasHadUserInteraction("https://127.0.0.1:8443", true, () => {
+                        // frame 5: Should see one cookie.
+                        injectThirdPartyIframe(iframeUrls.echoCookies);
+                    });
                     break;
                 case "#7":
+                    document.location.hash = "8";
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+                        // frame 6: Should see one cookie.
+                        injectThirdPartyIframe(iframeUrls.echoCookies);
+                    }, true);
+                    break;
+                case "#8":
+                    document.location.hash = "9";
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+                        // frame 7: Should not have cookies.
+                        injectThirdPartyIframe(iframeUrls.echoCookies);
+                    }, false, false);
+                    break;
+                case "#9":
+                    document.location.hash = "10";
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+                        testRunner.setStatisticsHasHadUserInteraction("https://127.0.0.1:8443", false, () => {
+                            // frame 8: Should see one cookie.
+                            injectThirdPartyIframe(`https://localhost:8443/cookies/resources/set-cookie-and-redirect-back.py?isPartitioned=True&redirectBackTo=${iframeUrls.echoCookies}`);
+                        });
+                    }, true, true);
+                    break;
+                case "#10":
+                    document.location.hash = "11";
+                    testRunner.setStatisticsHasHadUserInteraction("https://127.0.0.1:8443", true, () => {
+                        // frame 9: Should see one cookie.
+                        injectThirdPartyIframe(iframeUrls.echoCookies);
+                    });
+                    break;
+                case "#11":
+                    document.location.hash = "12";
+                    testRunner.setStatisticsShouldBlockThirdPartyCookies(false, () => {
+                        // frame 10: Should see one cookie.
+                        injectThirdPartyIframe(iframeUrls.echoCookies);
+                    }, true);
+                    break;
+                case "#12":
+                    document.location.hash = "13";
+                    // frame 11
+                    injectThirdPartyIframe(iframeUrls.resetCookies);
+                    break;
+                case "#13":
                     internals.setTrackingPreventionEnabled(false);
                     testRunner.setStatisticsIsRunningTest(false);
                     finishJSTest();

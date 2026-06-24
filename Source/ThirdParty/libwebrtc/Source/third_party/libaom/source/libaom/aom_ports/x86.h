@@ -179,6 +179,7 @@ static inline uint64_t xgetbv(void) {
 #define SSE3_BITS BIT(0)
 #define SSSE3_BITS BIT(9)
 #define SSE4_1_BITS BIT(19)
+#define SSE4_2_BITS BIT(20)
 // Bits 27 (OSXSAVE) & 28 (256-bit AVX)
 #define AVX_BITS (BIT(27) | BIT(28))
 #define AVX2_BITS BIT(5)
@@ -221,6 +222,7 @@ static inline int x86_simd_caps(void) {
   flags |= FEATURE_SET(reg_ecx, SSE3) ? HAS_SSE3 : 0;
   flags |= FEATURE_SET(reg_ecx, SSSE3) ? HAS_SSSE3 : 0;
   flags |= FEATURE_SET(reg_ecx, SSE4_1) ? HAS_SSE4_1 : 0;
+  flags |= FEATURE_SET(reg_ecx, SSE4_2) ? HAS_SSE4_2 : 0;
 
   // bits 27 (OSXSAVE) & 28 (256-bit AVX)
   if (FEATURE_SET(reg_ecx, AVX)) {

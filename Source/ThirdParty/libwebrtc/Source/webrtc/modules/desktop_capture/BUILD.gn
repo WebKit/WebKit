@@ -28,6 +28,8 @@ rtc_library("primitives") {
     "desktop_geometry.h",
     "desktop_region.cc",
     "desktop_region.h",
+    "frame_texture.cc",
+    "frame_texture.h",
     "shared_desktop_frame.cc",
     "shared_desktop_frame.h",
     "shared_memory.cc",
@@ -41,6 +43,7 @@ rtc_library("primitives") {
     "../../rtc_base:refcount",
     "../../rtc_base:stringutils",
     "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/libyuv",
   ]
 }
@@ -66,7 +69,6 @@ if (rtc_include_tests) {
         ":desktop_capture_mock",
         ":primitives",
         ":screen_drawer",
-        "../../api:array_view",
         "../../rtc_base:base64",
         "../../rtc_base:threading",
         "../../test:test_support",
@@ -140,6 +142,7 @@ if (rtc_include_tests) {
       "desktop_and_cursor_composer_unittest.cc",
       "desktop_capturer_differ_wrapper_unittest.cc",
       "desktop_frame_rotation_unittest.cc",
+      "desktop_frame_texture_unittest.cc",
       "desktop_frame_unittest.cc",
       "desktop_geometry_unittest.cc",
       "desktop_region_unittest.cc",
@@ -159,7 +162,6 @@ if (rtc_include_tests) {
       ":desktop_capture",
       ":desktop_capture_mock",
       ":primitives",
-      "../../api:array_view",
       "../../api/units:time_delta",
       "../../api/units:timestamp",
       "../../rtc_base:checks",
@@ -284,9 +286,14 @@ rtc_library("desktop_capture") {
   visibility = [ "*" ]
   defines = []
   deps = [
+    "../../api/environment",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
     "../../media:video_common",
     "../../rtc_base/containers:flat_map",
     "../../rtc_base/containers:flat_set",
+    "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/strings:string_view",
@@ -591,6 +598,8 @@ rtc_library("desktop_capture") {
 
   if (rtc_enable_win_wgc) {
     sources += [
+      "win/dxgi_desktop_frame.cc",
+      "win/dxgi_desktop_frame.h",
       "win/wgc_capture_session.cc",
       "win/wgc_capture_session.h",
       "win/wgc_capture_source.cc",
@@ -663,6 +672,7 @@ if (is_mac) {
       "../../api:refcountedbase",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
+      "../../api/environment",
       "../../rtc_base:checks",
       "../../rtc_base:event_tracer",
       "../../rtc_base:logging",
@@ -672,7 +682,9 @@ if (is_mac) {
       "../../rtc_base/synchronization:mutex",
       "../../rtc_base/system:rtc_export",
       "../../sdk:helpers_objc",
+      "../../system_wrappers",
       "//third_party/abseil-cpp/absl/base:core_headers",
+      "//third_party/abseil-cpp/absl/base:nullability",
       "//third_party/abseil-cpp/absl/strings:str_format",
     ]
     frameworks = [

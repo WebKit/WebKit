@@ -32,13 +32,13 @@
 #import "VideoLayerRemote.h"
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
+#import <WebCore/IntSize.h>
+#import <WebCore/MediaPlayer.h>
 #import <WebCore/Timer.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
-#if ENABLE(MACH_PORT_LAYER_HOSTING)
 #import <wtf/MachSendRightAnnotated.h>
-#endif
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
@@ -213,7 +213,7 @@ static const Seconds PostAnimationDelay { 100_ms };
 
 namespace WebKit {
 
-PlatformLayerContainer createVideoLayerRemote(VideoLayerRemoteParent& parent, LayerHostingContextID contextId, WebCore::MediaPlayerEnums::VideoGravity videoGravity, IntSize contentSize)
+PlatformLayerContainer createVideoLayerRemote(VideoLayerRemoteParent& parent, LayerHostingContextID contextId, WebCore::MediaPlayerEnums::VideoGravity videoGravity, WebCore::IntSize contentSize)
 {
     // Initially, all the layers will be empty (both width and height are 0) and invisible.
     // The renderer will change the sizes of WKVideoLayerRemote to trigger layout of sublayers and make them visible.

@@ -442,7 +442,9 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 
     constexpr JSValueRegs nextJSR = baseJSR; // Used as temporary register
     emitGetVirtualRegister(bytecode.m_next, nextJSR);
-    Jump genericCase = branchIfNotEmpty(nextJSR);
+    JumpList genericCases;
+    genericCases.append(branchIfNotCell(nextJSR));
+    genericCases.append(branchIfNotType(nextJSR.payloadGPR(), SentinelType));
 
     JumpList doneCases;
 #if CPU(ARM64) || CPU(X86_64)
@@ -469,10 +471,10 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 #endif
     doneCases.append(jump());
 
-    genericCase.link(this);
-    load8FromMetadata(bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), regT0);
-    or32(TrustedImm32(static_cast<uint8_t>(IterationMode::Generic)), regT0);
-    store8ToMetadata(regT0, bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
+    genericCases.link(this);
+    load16FromMetadata(bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), regT0);
+    or32(TrustedImm32(static_cast<uint16_t>(IterationMode::Generic)), regT0);
+    store16ToMetadata(regT0, bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
     compileOpCall<OpIteratorNext>(instruction);
     advanceToNextCheckpoint();
 

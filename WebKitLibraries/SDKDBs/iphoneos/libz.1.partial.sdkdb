@@ -85,7 +85,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_zlibCompileFlags"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_zlibVersion"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "Byte"},
     {"access": "public", "name": "Bytef"},

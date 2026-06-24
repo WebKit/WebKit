@@ -401,22 +401,29 @@ void MediaSessionManagerCocoa::clearNowPlayingInfo()
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
-    if (canLoad_MediaRemote_MRMediaRemoteSetNowPlayingVisibility())
-        MRMediaRemoteSetNowPlayingVisibility(MRMediaRemoteGetLocalOrigin(), MRNowPlayingClientVisibilityNeverVisible);
+    // Swallow ObjC exceptions raised inside MediaRemote (e.g. crash from
+    // MRMediaRemotePlaybackQueueDataSourceContentItemChangedWithRequestForPlayer
+    // building an NSArray with a nil element)
+    @try {
+        if (canLoad_MediaRemote_MRMediaRemoteSetNowPlayingVisibility())
+            MRMediaRemoteSetNowPlayingVisibility(MRMediaRemoteGetLocalOrigin(), MRNowPlayingClientVisibilityNeverVisible);
 
-    if (canLoad_MediaRemote_MRMediaRemoteSetParentApplication())
-        MRMediaRemoteSetParentApplication(MRMediaRemoteGetLocalOrigin(), nullptr);
+        if (canLoad_MediaRemote_MRMediaRemoteSetParentApplication())
+            MRMediaRemoteSetParentApplication(MRMediaRemoteGetLocalOrigin(), nullptr);
 
-    MRMediaRemoteSetCanBeNowPlayingApplication(false);
-    MRMediaRemoteSetNowPlayingInfo(nullptr);
-    MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MRMediaRemoteGetLocalOrigin(), kMRPlaybackStateStopped, mainDispatchQueueSingleton(), ^(MRMediaRemoteError error) {
+        MRMediaRemoteSetCanBeNowPlayingApplication(false);
+        MRMediaRemoteSetNowPlayingInfo(nullptr);
+        MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MRMediaRemoteGetLocalOrigin(), kMRPlaybackStateStopped, mainDispatchQueueSingleton(), ^(MRMediaRemoteError error) {
 #if LOG_DISABLED
-        UNUSED_PARAM(error);
+            UNUSED_PARAM(error);
 #else
-        if (error)
-            WTFLogAlways("MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error %d", error);
+            if (error)
+                WTFLogAlways("MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error %d", error);
 #endif
-    });
+        });
+    } @catch (NSException *exception) {
+        WTFLogAlways("MediaSessionManagerCocoa::clearNowPlayingInfo swallowed exception: %s", [[exception description] UTF8String]);
+    }
 
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
     updateNowPlayingSuppression(nullptr);
@@ -435,6 +442,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
     ASSERT_UNUSED(shouldUpdateNowPlayingSuppression, !shouldUpdateNowPlayingSuppression);
 #endif
 
+    @try {
     if (setAsNowPlayingApplication)
         MRMediaRemoteSetCanBeNowPlayingApplication(true);
 
@@ -493,6 +501,9 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
     if (canLoad_MediaRemote_MRMediaRemoteSetNowPlayingVisibility()) {
         MRNowPlayingClientVisibility visibility = nowPlayingInfo.allowsNowPlayingControlsVisibility ? MRNowPlayingClientVisibilityAlwaysVisible : MRNowPlayingClientVisibilityNeverVisible;
         MRMediaRemoteSetNowPlayingVisibility(MRMediaRemoteGetLocalOrigin(), visibility);
+    }
+    } @catch (NSException *exception) {
+        WTFLogAlways("MediaSessionManagerCocoa::setNowPlayingInfo swallowed exception: %s", [[exception description] UTF8String]);
     }
 }
 

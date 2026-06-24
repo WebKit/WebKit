@@ -20,6 +20,8 @@
 #include "../../internal.h"
 
 
+using namespace bssl;
+
 static uint64_t bn_neg_inv_mod_u64(uint64_t n);
 
 static_assert(BN_MONT_CTX_N0_LIMBS == 1 || BN_MONT_CTX_N0_LIMBS == 2,
@@ -27,7 +29,7 @@ static_assert(BN_MONT_CTX_N0_LIMBS == 1 || BN_MONT_CTX_N0_LIMBS == 2,
 static_assert(sizeof(BN_ULONG) * BN_MONT_CTX_N0_LIMBS == sizeof(uint64_t),
               "uint64_t is insufficient precision for n0");
 
-uint64_t bn_mont_n0(const BIGNUM *n) {
+uint64_t bssl::bn_mont_n0(const BIGNUM *n) {
   // These conditions are checked by the caller, |BN_MONT_CTX_set| or
   // |BN_MONT_CTX_new_consttime|.
   assert(!BN_is_zero(n));
@@ -114,7 +116,7 @@ static uint64_t bn_neg_inv_mod_u64(uint64_t n) {
 #endif
 }
 
-int bn_mont_ctx_set_RR_consttime(BN_MONT_CTX *mont, BN_CTX *ctx) {
+int bssl::bn_mont_ctx_set_RR_consttime(BN_MONT_CTX *mont, BN_CTX *ctx) {
   assert(!BN_is_zero(&mont->N));
   assert(!BN_is_negative(&mont->N));
   assert(BN_is_odd(&mont->N));

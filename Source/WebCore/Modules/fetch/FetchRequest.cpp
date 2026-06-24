@@ -274,7 +274,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     }
 
     if (RefPtr document = dynamicDowncast<Document>(context); document && document->settings().localNetworkAccessEnabled())
-        m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(*init.targetAddressSpace, m_request.url());
+        m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(init.targetAddressSpace.value_or(input.m_targetAddressSpace), m_request.url());
 
     auto setBodyResult = init.body && init.body.value() ? setBody(WTF::move(*init.body.value())) : setBody(input);
     if (setBodyResult.hasException())

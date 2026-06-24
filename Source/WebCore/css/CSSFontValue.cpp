@@ -32,19 +32,19 @@ String CSSFontValue::customCSSText(const CSS::SerializationContext& context) con
     // font variant weight size / line-height family
     StringBuilder result;
     if (style)
-        result.append(style->cssText(context));
+        result.append(protect(style)->cssText(context));
     if (variant)
-        result.append(result.isEmpty() ? ""_s : " "_s, variant->cssText(context));
+        result.append(result.isEmpty() ? ""_s : " "_s, protect(variant)->cssText(context));
     if (weight)
-        result.append(result.isEmpty() ? ""_s : " "_s, weight->cssText(context));
+        result.append(result.isEmpty() ? ""_s : " "_s, protect(weight)->cssText(context));
     if (width)
-        result.append(result.isEmpty() ? ""_s : " "_s, width->cssText(context));
+        result.append(result.isEmpty() ? ""_s : " "_s, protect(width)->cssText(context));
     if (size)
-        result.append(result.isEmpty() ? ""_s : " "_s, size->cssText(context));
+        result.append(result.isEmpty() ? ""_s : " "_s, protect(size)->cssText(context));
     if (lineHeight)
-        result.append(size ? " / "_s : result.isEmpty() ? ""_s : " "_s, lineHeight->cssText(context));
+        result.append(size ? " / "_s : result.isEmpty() ? ""_s : " "_s, protect(lineHeight)->cssText(context));
     if (family)
-        result.append(result.isEmpty() ? ""_s : " "_s, family->cssText(context));
+        result.append(result.isEmpty() ? ""_s : " "_s, protect(family)->cssText(context));
     return result.toString();
 }
 
@@ -62,31 +62,31 @@ bool CSSFontValue::equals(const CSSFontValue& other) const
 IterationStatus CSSFontValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     if (style) {
-        if (func(*style) == IterationStatus::Done)
+        if (func(protect(*style)) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     if (variant) {
-        if (func(*variant) == IterationStatus::Done)
+        if (func(protect(*variant)) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     if (weight) {
-        if (func(*weight) == IterationStatus::Done)
+        if (func(protect(*weight)) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     if (width) {
-        if (func(*width) == IterationStatus::Done)
+        if (func(protect(*width)) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     if (size) {
-        if (func(*size) == IterationStatus::Done)
+        if (func(protect(*size)) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     if (lineHeight) {
-        if (func(*lineHeight) == IterationStatus::Done)
+        if (func(protect(*lineHeight)) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     if (family) {
-        if (func(*family) == IterationStatus::Done)
+        if (func(protect(*family)) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     return IterationStatus::Continue;

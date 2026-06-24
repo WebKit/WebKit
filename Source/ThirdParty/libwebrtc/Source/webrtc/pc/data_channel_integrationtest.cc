@@ -42,7 +42,6 @@
 #include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/crypto_random.h"
-#include "rtc_base/fake_clock.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/socket_address.h"
@@ -102,25 +101,6 @@ class DataChannelIntegrationTest
  private:
   // True if media is allowed to be added
   const bool allow_media_;
-};
-
-// Fake clock must be set before threads are started to prevent race on
-// Set/GetClockForTesting().
-// To achieve that, multiple inheritance is used as a mixin pattern
-// where order of construction is finely controlled.
-// This also ensures peerconnection is closed before switching back to non-fake
-// clock, avoiding other races and DCHECK failures such as in rtp_sender.cc.
-class FakeClockForTest : public ScopedFakeClock {
- protected:
-  FakeClockForTest() {
-    // Some things use a time of "0" as a special value, so we need to start out
-    // the fake clock at a nonzero time.
-    // TODO(deadbeef): Fix this.
-    AdvanceTime(TimeDelta::Seconds(1));
-  }
-
-  // Explicit handle.
-  ScopedFakeClock& FakeClock() { return *this; }
 };
 
 class DataChannelIntegrationTestPlanB
@@ -1479,8 +1459,7 @@ TEST_P(DataChannelIntegrationTest, ChangingSctpPortIsNotAllowed) {
   caller()->CreateAndSetAndSignalOffer();
   ASSERT_THAT(answer, NotNull());
 
-  // Currently SRD succeeds.
-  EXPECT_TRUE(caller()->SetRemoteDescription(std::move(answer)));
+  EXPECT_FALSE(caller()->SetRemoteDescription(std::move(answer)));
   // Check the state of the SCTP transport.
   VerifySctpState(caller(), SctpTransportState::kClosed);
 }
@@ -1878,6 +1857,72 @@ INSTANTIATE_TEST_SUITE_P(DataChannelIntegrationTestUnifiedPlanFieldTrials,
                                  ValuesIn(kTrialsVariants),
                                  ValuesIn(kTrialsVariants)));
 
+struct SpedV1TestConfig {
+  bool caller_enabled;
+  bool callee_enabled;
+};
+
+class SdpNegotiationGoogSpedV1Test
+    : public DataChannelIntegrationTestUnifiedPlan,
+      public ::testing::WithParamInterface<SpedV1TestConfig> {};
+
+TEST_P(SdpNegotiationGoogSpedV1Test, VerifySdp) {
+  const auto& param = GetParam();
+  SetFieldTrials(
+      "Caller", param.caller_enabled ? "WebRTC-IceHandshakeDtls/Enabled/" : "");
+  SetFieldTrials(
+      "Callee", param.callee_enabled ? "WebRTC-IceHandshakeDtls/Enabled/" : "");
+
+  ASSERT_TRUE(CreatePeerConnectionWrappers());
+  ConnectFakeSignaling();
+  caller()->CreateDataChannel();
+
+  std::unique_ptr<SessionDescriptionInterface> offer;
+  caller()->SetGeneratedSdpMunger(
+      [&](std::unique_ptr<SessionDescriptionInterface>& sdp) {
+        offer = sdp->Clone();
+      });
+
+  std::unique_ptr<SessionDescriptionInterface> answer;
+  callee()->SetGeneratedSdpMunger(
+      [&](std::unique_ptr<SessionDescriptionInterface>& sdp) {
+        answer = sdp->Clone();
+      });
+
+  caller()->CreateAndSetAndSignalOffer();
+
+  ASSERT_THAT(offer, NotNull());
+  std::string offer_sdp;
+  offer->ToString(&offer_sdp);
+
+  if (param.caller_enabled) {
+    EXPECT_THAT(offer_sdp, testing::HasSubstr(ICE_OPTION_GOOG_SPED_V1));
+  } else {
+    EXPECT_THAT(offer_sdp,
+                testing::Not(testing::HasSubstr(ICE_OPTION_GOOG_SPED_V1)));
+  }
+
+  ASSERT_THAT(WaitUntil([&] { return answer.get() != nullptr; }, IsTrue()),
+              IsRtcOk());
+
+  std::string answer_sdp;
+  answer->ToString(&answer_sdp);
+
+  if (param.callee_enabled && param.caller_enabled) {
+    EXPECT_THAT(answer_sdp, testing::HasSubstr(ICE_OPTION_GOOG_SPED_V1));
+  } else {
+    EXPECT_THAT(answer_sdp,
+                testing::Not(testing::HasSubstr(ICE_OPTION_GOOG_SPED_V1)));
+  }
+}
+
+INSTANTIATE_TEST_SUITE_P(SdpNegotiationGoogSpedV1Test,
+                         SdpNegotiationGoogSpedV1Test,
+                         testing::Values(SpedV1TestConfig{false, false},
+                                         SpedV1TestConfig{false, true},
+                                         SpedV1TestConfig{true, false},
+                                         SpedV1TestConfig{true, true}));
+
 TEST_P(DataChannelIntegrationTestUnifiedPlanFieldTrials,
        DtlsRestartOneCalleAtATime) {
   if (auto msg = CheckSupported()) {
@@ -2041,7 +2086,13 @@ TEST_P(DataChannelIntegrationTestUnifiedPlanFieldTrials,
       IsRtcOk());
 
   VerifyDtlsRoles(caller(), callee());
-  ASSERT_THAT(callee2->dtls_transport_role(), Eq(std::nullopt));
+  if (callee_active) {
+    ASSERT_THAT(callee2->dtls_transport_role(),
+                Eq(DtlsTransportTlsRole::kClient));
+  } else {
+    ASSERT_THAT(callee2->dtls_transport_role(),
+                Eq(DtlsTransportTlsRole::kServer));
+  }
 
   std::atomic<int> caller_sent_on_dc(0);
   std::atomic<int> callee2_sent_on_dc(0);

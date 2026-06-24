@@ -19,13 +19,15 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 // TODO(crbug.com/42290417): While we need |ASN1_ITEM|s, the exposed new, free,
 // i2d, and d2i functions should call the underlying implementations directly.
 
-#define IMPLEMENT_ASN1_STRING_FUNCTIONS(sname)                         \
-  IMPLEMENT_ASN1_TYPE(sname)                                           \
-  IMPLEMENT_ASN1_ENCODE_FUNCTIONS_const_fname(sname, sname, sname)     \
-  sname *sname##_new(void) { return ASN1_STRING_type_new(V_##sname); } \
+#define IMPLEMENT_ASN1_STRING_FUNCTIONS(sname)                     \
+  IMPLEMENT_ASN1_TYPE(sname)                                       \
+  IMPLEMENT_ASN1_ENCODE_FUNCTIONS_const_fname(sname, sname, sname) \
+  sname *sname##_new() { return ASN1_STRING_type_new(V_##sname); } \
   void sname##_free(sname *x) { ASN1_STRING_free(x); }
 
 IMPLEMENT_ASN1_STRING_FUNCTIONS(ASN1_OCTET_STRING)
@@ -55,10 +57,20 @@ IMPLEMENT_ASN1_TYPE(ASN1_SEQUENCE)
 
 IMPLEMENT_ASN1_FUNCTIONS_const_fname(ASN1_TYPE, ASN1_ANY, ASN1_TYPE)
 
+BSSL_NAMESPACE_BEGIN
+
 IMPLEMENT_ASN1_MSTRING(DISPLAYTEXT, B_ASN1_DISPLAYTEXT)
+
+BSSL_NAMESPACE_END
+
 IMPLEMENT_ASN1_FUNCTIONS_const_fname(ASN1_STRING, DISPLAYTEXT, DISPLAYTEXT)
 
+BSSL_NAMESPACE_BEGIN
+
 IMPLEMENT_ASN1_MSTRING(DIRECTORYSTRING, B_ASN1_DIRECTORYSTRING)
+
+BSSL_NAMESPACE_END
+
 IMPLEMENT_ASN1_FUNCTIONS_const_fname(ASN1_STRING, DIRECTORYSTRING,
                                      DIRECTORYSTRING)
 

@@ -28,9 +28,11 @@ import (
 	"fmt"
 	"math/bits"
 	"os"
+	"slices"
 	"sync/atomic"
 	"time"
 
+	"filippo.io/mldsa"
 	"golang.org/x/crypto/cryptobyte"
 	cbasn1 "golang.org/x/crypto/cryptobyte/asn1"
 )
@@ -45,6 +47,10 @@ var (
 	oidECDSAWithSHA256         = asn1.ObjectIdentifier{1, 2, 840, 10045, 4, 3, 2}
 	oidEd25519                 = asn1.ObjectIdentifier{1, 3, 101, 112}
 	oidPSS                     = asn1.ObjectIdentifier{1, 2, 840, 113549, 1, 1, 10}
+
+	oidMLDSA44 = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 17}
+	oidMLDSA65 = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 18}
+	oidMLDSA87 = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 3, 19}
 
 	oidSHA256 = asn1.ObjectIdentifier{2, 16, 840, 1, 101, 3, 4, 2, 1}
 
@@ -68,6 +74,9 @@ const (
 	X509SignRSAWithSHA256
 	X509SignECDSAWithSHA256
 	X509SignEd25519
+	X509SignMLDSA44
+	X509SignMLDSA65
+	X509SignMLDSA87
 )
 
 func (alg X509SignatureAlgorithm) Marshal(bb *cryptobyte.Builder) error {
@@ -85,10 +94,35 @@ func (alg X509SignatureAlgorithm) Marshal(bb *cryptobyte.Builder) error {
 		bb.AddASN1(cbasn1.SEQUENCE, func(algID *cryptobyte.Builder) {
 			algID.AddASN1ObjectIdentifier(oidEd25519)
 		})
+	case X509SignMLDSA44:
+		bb.AddASN1(cbasn1.SEQUENCE, func(algID *cryptobyte.Builder) {
+			algID.AddASN1ObjectIdentifier(oidMLDSA44)
+		})
+	case X509SignMLDSA65:
+		bb.AddASN1(cbasn1.SEQUENCE, func(algID *cryptobyte.Builder) {
+			algID.AddASN1ObjectIdentifier(oidMLDSA65)
+		})
+	case X509SignMLDSA87:
+		bb.AddASN1(cbasn1.SEQUENCE, func(algID *cryptobyte.Builder) {
+			algID.AddASN1ObjectIdentifier(oidMLDSA87)
+		})
 	default:
 		return errors.New("unknown algorithm")
 	}
 	return nil
+}
+
+func mldsaX509SignatureAlgorithm(key *mldsa.PrivateKey) (X509SignatureAlgorithm, error) {
+	params := key.PublicKey().Parameters()
+	switch params {
+	case mldsa.MLDSA44():
+		return X509SignMLDSA44, nil
+	case mldsa.MLDSA65():
+		return X509SignMLDSA65, nil
+	case mldsa.MLDSA87():
+		return X509SignMLDSA87, nil
+	}
+	return 0, fmt.Errorf("unsupported ML-DSA Parameters: %v", params)
 }
 
 func chooseDefaultX509SignatureAlgorithm(signer crypto.Signer) (X509SignatureAlgorithm, error) {
@@ -100,6 +134,9 @@ func chooseDefaultX509SignatureAlgorithm(signer crypto.Signer) (X509SignatureAlg
 	}
 	if _, ok := signer.(ed25519.PrivateKey); ok {
 		return X509SignEd25519, nil
+	}
+	if mldsaKey, ok := signer.(*mldsa.PrivateKey); ok {
+		return mldsaX509SignatureAlgorithm(mldsaKey)
 	}
 	return 0, fmt.Errorf("unsupported key type: %T", signer)
 }
@@ -127,17 +164,20 @@ func signX509(signer crypto.Signer, alg X509SignatureAlgorithm, in []byte) ([]by
 		default:
 			return nil, errors.New("unknown algorithm")
 		}
+	} else if mldsaKey, ok := signer.(*mldsa.PrivateKey); ok {
+		params := mldsaKey.PublicKey().Parameters()
+		algMatchesParams := (alg == X509SignMLDSA44 && params == mldsa.MLDSA44()) ||
+			(alg == X509SignMLDSA65 && params == mldsa.MLDSA65()) ||
+			(alg == X509SignMLDSA87 && params == mldsa.MLDSA87())
+		if !algMatchesParams {
+			return nil, errors.New("unknown algorithm")
+		}
+		opts = crypto.Hash(0)
 	} else {
 		return nil, fmt.Errorf("unsupported key type: %T", signer)
 	}
 
-	digest := in
-	if hash := opts.HashFunc(); hash != crypto.Hash(0) {
-		h := hash.New()
-		h.Write(in)
-		digest = h.Sum(nil)
-	}
-	return signer.Sign(rand.Reader, digest, opts)
+	return crypto.SignMessage(signer, rand.Reader, in, opts)
 }
 
 func addX509Time(bb *cryptobyte.Builder, t time.Time) {
@@ -156,6 +196,24 @@ func addASN1ImplicitString(bb *cryptobyte.Builder, tag cbasn1.Tag, b []byte) {
 func addASN1ExplicitTag(bb *cryptobyte.Builder, outerTag, innerTag cbasn1.Tag, cb func(*cryptobyte.Builder)) {
 	bb.AddASN1(outerTag.Constructed().ContextSpecific(), func(child *cryptobyte.Builder) {
 		child.AddASN1(innerTag, cb)
+	})
+}
+
+func addMLDSASubjectPublicKeyInfo(bb *cryptobyte.Builder, key *mldsa.PublicKey) {
+	bb.AddASN1(cbasn1.SEQUENCE, func(spki *cryptobyte.Builder) {
+		spki.AddASN1(cbasn1.SEQUENCE, func(algID *cryptobyte.Builder) {
+			switch key.Parameters() {
+			case mldsa.MLDSA44():
+				algID.AddASN1ObjectIdentifier(oidMLDSA44)
+			case mldsa.MLDSA65():
+				algID.AddASN1ObjectIdentifier(oidMLDSA65)
+			case mldsa.MLDSA87():
+				algID.AddASN1ObjectIdentifier(oidMLDSA87)
+			default:
+				panic("Unknown ML-DSA parameter set")
+			}
+		})
+		spki.AddASN1BitString(key.Bytes())
 	})
 }
 
@@ -263,7 +321,11 @@ func (issuer *X509ChainBuilder) Issue(subject X509Info) *X509ChainBuilder {
 			return
 		}
 		tbs.AddBytes(subjectDER)
-		if subject.EncodeSPKIAsRSAPSS {
+		if mldsaKey, ok := subject.PrivateKey.Public().(*mldsa.PublicKey); ok {
+			// TODO(crbug.com/505771670): Once crypto/x509 supports ML-DSA, remove
+			// this and use x509.MarshalPKIXPublicKey (below) directly.
+			addMLDSASubjectPublicKeyInfo(tbs, mldsaKey)
+		} else if subject.EncodeSPKIAsRSAPSS {
 			addRSAPSSSubjectPublicKeyInfo(tbs, subject.PrivateKey.Public().(*rsa.PublicKey))
 		} else {
 			spki, err := x509.MarshalPKIXPublicKey(subject.PrivateKey.Public())
@@ -372,14 +434,67 @@ func (issuer *X509ChainBuilder) Issue(subject X509Info) *X509ChainBuilder {
 }
 
 func (b *X509ChainBuilder) ToCredential() Credential {
+	chain := slices.Clone(b.chain)
+	slices.Reverse(chain)
 	return Credential{
-		Certificate:     b.chain,
-		ChainPath:       writeTempCertFile(b.chain),
+		Certificate:     chain,
+		ChainPath:       writeTempCertFile(chain),
 		PrivateKey:      b.privateKey,
 		KeyPath:         writeTempKeyFile(b.privateKey),
 		RootCertificate: b.rootCert,
 		RootPath:        b.rootPath,
 	}
+}
+
+func reparseSPKI(cert *x509.Certificate) {
+	spkiSeq := cryptobyte.String(cert.RawSubjectPublicKeyInfo)
+	var spki, alg cryptobyte.String
+	var algOID asn1.ObjectIdentifier
+	if !spkiSeq.ReadASN1(&spki, cbasn1.SEQUENCE) ||
+		!spki.ReadASN1(&alg, cbasn1.SEQUENCE) ||
+		!alg.ReadASN1ObjectIdentifier(&algOID) {
+		return
+	}
+	// This function only supports ML-DSA SPKIs
+	var mldsaParams *mldsa.Parameters
+	if algOID.Equal(oidMLDSA44) {
+		mldsaParams = mldsa.MLDSA44()
+	} else if algOID.Equal(oidMLDSA65) {
+		mldsaParams = mldsa.MLDSA65()
+	} else if algOID.Equal(oidMLDSA87) {
+		mldsaParams = mldsa.MLDSA87()
+	} else {
+		// Not an ML-DSA OID
+		return
+	}
+	// The AlgorithmIdentifier (for ML-DSA) should have empty params
+	if !alg.Empty() {
+		return
+	}
+	var publicKey []byte
+	if !spki.ReadASN1BitStringAsBytes(&publicKey) {
+		return
+	}
+	mldsaPubKey, err := mldsa.NewPublicKey(mldsaParams, publicKey)
+	if err != nil {
+		return
+	}
+	cert.PublicKey = mldsaPubKey
+}
+
+// ParseX509Certificate is a wrapper around x509.ParseCertificate, but it also
+// handles parsing ML-DSA public keys.
+//
+// TODO(crbug.com/505771670): Remove this once crypto/x509 supports ML-DSA.
+func ParseX509Certificate(der []byte) (*x509.Certificate, error) {
+	cert, err := x509.ParseCertificate(der)
+	if err != nil {
+		return nil, err
+	}
+	if cert.PublicKey == nil {
+		reparseSPKI(cert)
+	}
+	return cert, nil
 }
 
 func writeTempCertFile(certs [][]byte) string {
@@ -404,9 +519,32 @@ func writeTempKeyFile(privKey crypto.PrivateKey) string {
 	if err != nil {
 		panic(fmt.Sprintf("failed to create temp file: %s", err))
 	}
-	keyDER, err := x509.MarshalPKCS8PrivateKey(privKey)
-	if err != nil {
-		panic(fmt.Sprintf("failed to marshal test key: %s", err))
+	var keyDER []byte
+	// TODO(crbug.com/505771670): Remove this once crypto/x509 supports ML-DSA.
+	if mldsaKey, ok := privKey.(*mldsa.PrivateKey); ok {
+		sigAlg, err := mldsaX509SignatureAlgorithm(mldsaKey)
+		if err != nil {
+			panic(fmt.Sprintf("failed to get SignatureAlgorithm for ML-DSA key: %s", err))
+		}
+		bb := cryptobyte.NewBuilder(make([]byte, 0, 54))
+		bb.AddASN1(cbasn1.SEQUENCE, func(pkcs8 *cryptobyte.Builder) {
+			pkcs8.AddASN1Uint64(0)
+			sigAlg.Marshal(pkcs8)
+			pkcs8.AddASN1(cbasn1.OCTET_STRING, func(privKey *cryptobyte.Builder) {
+				privKey.AddASN1(cbasn1.Tag(0).ContextSpecific(), func(b *cryptobyte.Builder) {
+					b.AddBytes(mldsaKey.Bytes())
+				})
+			})
+		})
+		keyDER, err = bb.Bytes()
+		if err != nil {
+			panic(fmt.Sprintf("Failed to marshal test ML-DSA key: %s", err))
+		}
+	} else {
+		keyDER, err = x509.MarshalPKCS8PrivateKey(privKey)
+		if err != nil {
+			panic(fmt.Sprintf("failed to marshal test key: %s", err))
+		}
 	}
 	if err := pem.Encode(f, &pem.Block{Type: "PRIVATE KEY", Bytes: keyDER}); err != nil {
 		panic(fmt.Sprintf("failed to write test key: %s", err))

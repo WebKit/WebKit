@@ -452,7 +452,11 @@ Thread& Thread::initializeCurrentTLS()
 {
     // Not a WTF-created thread, Thread is not established yet.
     WTF::initialize();
+#if PLATFORM(COCOA)
+    Ref thread = adoptRef(*new Thread(SchedulingPolicy::Other, pthread_main_np() ? IsMain::Yes : IsMain::No));
+#else
     Ref thread = adoptRef(*new Thread(SchedulingPolicy::Other));
+#endif
     thread->establishPlatformSpecificHandle(pthread_self());
     thread->initializeInThread();
     initializeCurrentThreadEvenIfNonWTFCreated();

@@ -1,4 +1,6 @@
 include_rules = [
+  "+absl/strings/numbers.h",
+  "+absl/strings/str_split.h",
   "+logging/rtc_event_log",
   "+system_wrappers",
   # Avoid directly using field_trial. Instead use FieldTrialsView.

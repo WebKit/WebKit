@@ -55,6 +55,9 @@ public:
     bool typeMismatch() const final;
     bool hasBadInput() const final;
 
+    void ref() const final { InputType::ref(); }
+    void deref() const final { InputType::deref(); }
+
 protected:
     enum class DateTimeFormatValidationResults : uint8_t {
         HasYear = 1 << 0,

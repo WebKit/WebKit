@@ -1,4 +1,8 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS e.style['container-type'] = "scroll-state" should set the property value
+PASS e.style['container-type'] = "size scroll-state" should set the property value
+PASS e.style['container-type'] = "scroll-state inline-size" should set the property value
+PASS e.style['container-type'] = "scroll-state scroll-state" should not set the property value
+PASS e.style['container-type'] = "normal scroll-state" should not set the property value
+PASS e.style['container-type'] = "inline-size block-size scroll-state" should not set the property value
 

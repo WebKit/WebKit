@@ -884,4 +884,10 @@ uint64_t TestController::responseHeaderCount(WKURLResponseRef response)
     return [[httpResponse allHeaderFields] count];
 }
 
+String TestController::platformResponseMIMEType(WKURLResponseRef response)
+{
+    RetainPtr nsURLResponse = adoptNS(WKURLResponseCopyNSURLResponse(response));
+    return [nsURLResponse.get() MIMEType];
+}
+
 } // namespace WTR

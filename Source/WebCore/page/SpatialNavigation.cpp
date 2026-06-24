@@ -46,8 +46,8 @@
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 
@@ -352,7 +352,7 @@ bool scrollInDirection(LocalFrame* frame, FocusDirection direction)
             return false;
         }
 
-        frame->view()->scrollBy(IntSize(dx, dy));
+        protect(frame->view())->scrollBy(IntSize(dx, dy));
         return true;
     }
     return false;
@@ -471,14 +471,14 @@ bool canScrollInDirection(const LocalFrame* frame, FocusDirection direction)
         return false;
     ScrollbarMode verticalMode;
     ScrollbarMode horizontalMode;
-    frame->view()->calculateScrollbarModesForLayout(horizontalMode, verticalMode);
+    protect(frame->view())->calculateScrollbarModesForLayout(horizontalMode, verticalMode);
     if ((direction == FocusDirection::Left || direction == FocusDirection::Right) && ScrollbarMode::AlwaysOff == horizontalMode)
         return false;
     if ((direction == FocusDirection::Up || direction == FocusDirection::Down) &&  ScrollbarMode::AlwaysOff == verticalMode)
         return false;
     LayoutSize size = frame->view()->totalContentsSize();
-    LayoutPoint scrollPosition = frame->view()->scrollPosition();
-    LayoutRect rect = frame->view()->unobscuredContentRectIncludingScrollbars();
+    LayoutPoint scrollPosition = protect(frame->view())->scrollPosition();
+    LayoutRect rect = protect(frame->view())->unobscuredContentRectIncludingScrollbars();
 
     // FIXME: wrong in RTL documents.
     switch (direction) {
@@ -505,7 +505,7 @@ static LayoutRect rectToAbsoluteCoordinates(LocalFrame* initialFrame, const Layo
             do {
                 rect.move(LayoutUnit(element->offsetLeft()), LayoutUnit(element->offsetTop()));
             } while ((element = element->offsetParent()));
-            rect.moveBy((-frame->virtualView()->scrollPosition()));
+            rect.moveBy((-protect(frame->virtualView())->scrollPosition()));
         }
     }
     return rect;

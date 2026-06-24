@@ -277,9 +277,6 @@ private:
     HashMap<RegistrableDomain, std::pair<IsLoggedIn, std::optional<WebCore::LoginStatus>>> m_loginStatus;
     HashMap<WebPageProxyIdentifier, HashSet<std::pair<TopFrameDomain, SubFrameDomain>>> m_domainsGrantedStorageAccessPermissionInPage;
 
-    bool m_hasScheduledProcessStats { false };
-    bool m_firstNetworkProcessCreated { false };
-
     struct StorageAccessRequestRecordValue {
         Markable<WebPageProxyIdentifier> webPageProxyID;
         Markable<WallTime> lastRequestTime;

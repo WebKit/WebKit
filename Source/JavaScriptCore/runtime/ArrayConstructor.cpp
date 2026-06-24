@@ -455,32 +455,35 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!mapIterator->entry())
+    JSMap* map = mapIterator->iteratedObject();
+    if (!map) [[unlikely]]
         return nullptr;
 
-    JSMap* map = mapIterator->iteratedObject();
     IterationKind kind = mapIterator->kind();
     ASSERT(kind == IterationKind::Keys || kind == IterationKind::Values);
-    unsigned length = map->size();
 
-    if (!length)
-        RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
-
-    JSCell* storageCell = map->storageOrSentinel(vm);
+    JSCell* storageCell = mapIterator->tryGetStorage();
     if (storageCell == vm.orderedHashTableSentinel())
         RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+    if (!storageCell) {
+        storageCell = map->storageOrSentinel(vm);
+        if (storageCell == vm.orderedHashTableSentinel())
+            RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+    }
 
+    JSMap::Helper::Entry startEntry = mapIterator->entry();
     auto* storage = uncheckedDowncast<JSMap::Storage>(storageCell);
 
     IndexingType indexingType = IsArray;
-    JSMap::Helper::Entry entry = 0;
+    JSMap::Helper::Entry entry = startEntry;
+    unsigned length = 0;
 
     while (true) {
-        storageCell = JSMap::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
-        if (storageCell == vm.orderedHashTableSentinel())
+        JSCell* nextCell = JSMap::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+        if (nextCell == vm.orderedHashTableSentinel())
             break;
 
-        auto* currentStorage = uncheckedDowncast<JSMap::Storage>(storageCell);
+        auto* currentStorage = uncheckedDowncast<JSMap::Storage>(nextCell);
         entry = JSMap::Helper::iterationEntry(*currentStorage) + 1;
 
         JSValue entryValue;
@@ -490,8 +493,12 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
             entryValue = JSMap::Helper::getIterationEntryValue(*currentStorage);
 
         indexingType = leastUpperBoundOfIndexingTypeAndValue(indexingType, entryValue);
+        ++length;
         storage = currentStorage;
     }
+
+    if (!length)
+        RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
 
     Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
     IndexingType resultIndexingType = resultStructure->indexingType();
@@ -512,21 +519,20 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
     resultButterfly->setVectorLength(vectorLength);
     resultButterfly->setPublicLength(length);
 
-    storageCell = map->storageOrSentinel(vm);
-    if (storageCell == vm.orderedHashTableSentinel()) [[unlikely]]
-        return nullptr;
+    storageCell = mapIterator->tryGetStorage();
+    if (!storageCell)
+        storageCell = map->storageOrSentinel(vm);
     storage = uncheckedDowncast<JSMap::Storage>(storageCell);
-
-    entry = 0;
+    entry = startEntry;
     size_t i = 0;
 
     if (hasDouble(resultIndexingType)) {
         while (true) {
-            storageCell = JSMap::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
-            if (storageCell == vm.orderedHashTableSentinel())
+            JSCell* nextCell = JSMap::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+            if (nextCell == vm.orderedHashTableSentinel())
                 break;
 
-            auto* currentStorage = uncheckedDowncast<JSMap::Storage>(storageCell);
+            auto* currentStorage = uncheckedDowncast<JSMap::Storage>(nextCell);
             entry = JSMap::Helper::iterationEntry(*currentStorage) + 1;
 
             JSValue value;
@@ -542,11 +548,11 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
         }
     } else if (hasInt32(resultIndexingType) || hasContiguous(resultIndexingType)) {
         while (true) {
-            storageCell = JSMap::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
-            if (storageCell == vm.orderedHashTableSentinel())
+            JSCell* nextCell = JSMap::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+            if (nextCell == vm.orderedHashTableSentinel())
                 break;
 
-            auto* currentStorage = uncheckedDowncast<JSMap::Storage>(storageCell);
+            auto* currentStorage = uncheckedDowncast<JSMap::Storage>(nextCell);
             entry = JSMap::Helper::iterationEntry(*currentStorage) + 1;
 
             JSValue value;
@@ -563,6 +569,9 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
         RELEASE_ASSERT_NOT_REACHED();
 
     Butterfly::clearRange(resultIndexingType, resultButterfly, length, vectorLength);
+
+    mapIterator->close(vm);
+
     return JSArray::createWithButterfly(vm, nullptr, resultStructure, resultButterfly);
 }
 

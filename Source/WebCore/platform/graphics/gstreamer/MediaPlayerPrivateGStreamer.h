@@ -300,6 +300,8 @@ protected:
         Ok,
         Rejected,
         Failed,
+        // Pipeline is suspended, and the requested state change was saved to be executed when it resumes.
+        SavedUntilResume,
     };
     ChangePipelineStateResult changePipelineState(GstState);
 
@@ -407,8 +409,8 @@ protected:
     GRefPtr<GstElement> m_source { nullptr };
     bool m_areVolumeAndMuteInitialized { false };
 
-    // Reflects whether the pipeline was paused due to the HTMLMediaElement being both muted and invisible in the viewport.
-    bool isPausedByViewport() const { return m_stateToRestoreWhenVisible != GST_STATE_VOID_PENDING; };
+    // Reflects whether the pipeline was suspended due to the HTMLMediaElement being both muted and invisible in the viewport.
+    bool isSuspended() const { return m_isSuspended; };
 
 #if USE(TEXTURE_MAPPER)
     OptionSet<TextureMapperFlags> m_textureMapperFlags;
@@ -524,6 +526,8 @@ private:
     void finishSeek();
     virtual void didPreroll() { }
 
+    void managePlayerSuspend();
+
     void createGSTPlayBin(const URL&);
 
     bool loadNextLocation();
@@ -620,7 +624,12 @@ private:
     RefPtr<MediaStreamPrivate> m_streamPrivate;
 #endif
 
+    // Only notifyPlayerOfMute uses this to avoid sending redundant notifications.
+    // Since it's updated by a callback, this will be incorrect right after un/muting the player,
+    // use isMuted() instead.
     bool m_isMuted { false };
+
+    bool m_isVisibleInViewport { true };
 
     // Whether the page containing the HTMLMediaElement is visible, reflects: setPageIsVisible()
     bool m_pageIsVisible { false };
@@ -683,8 +692,9 @@ private:
 
     bool m_didTryToRecoverPlayingState { false };
 
-    // The state the pipeline should be set back to after the player becomes visible in the viewport again.
-    GstState m_stateToRestoreWhenVisible { GST_STATE_VOID_PENDING };
+    bool m_isSuspended { false };
+    // The state the pipeline should be set back to after the player is resumed.
+    GstState m_stateToResume { GST_STATE_VOID_PENDING };
 
     // Specific to MediaStream playback.
     MediaTime m_startTime;
@@ -692,6 +702,8 @@ private:
     String m_videoDecoderName;
 
     void setupCodecProbe(GstElement*);
+    Lock m_decoderConfigurationLock;
+    Vector<RefPtr<PadProbeHandle<MediaPlayerPrivateGStreamer>>> m_codecProbes WTF_GUARDED_BY_LOCK(m_decoderConfigurationLock);
     Lock m_codecsLock;
     TrackIDHashMap<String> m_codecs WTF_GUARDED_BY_LOCK(m_codecsLock);
 
@@ -701,6 +713,8 @@ private:
     HashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
 
     std::optional<VideoFrameGStreamer::Info> m_videoInfo;
+    RefPtr<PadProbeHandle<MediaPlayerPrivateGStreamer>> m_videoFrameInputProbe WTF_GUARDED_BY_LOCK(m_decoderConfigurationLock);
+    RefPtr<PadProbeHandle<MediaPlayerPrivateGStreamer>> m_videoFrameOutputProbe WTF_GUARDED_BY_LOCK(m_decoderConfigurationLock);
 
     bool m_volumeLocked { false };
 

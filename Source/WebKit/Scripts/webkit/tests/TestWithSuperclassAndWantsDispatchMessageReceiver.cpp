@@ -39,7 +39,6 @@ namespace WebKit {
 
 void TestWithSuperclassAndWantsDispatch::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithSuperclassAndWantsDispatch::LoadURL::name()) {
         IPC::handleMessage<Messages::TestWithSuperclassAndWantsDispatch::LoadURL>(connection, decoder, this, &TestWithSuperclassAndWantsDispatch::loadURL);
         return;
@@ -51,7 +50,6 @@ void TestWithSuperclassAndWantsDispatch::didReceiveMessage(IPC::Connection& conn
 
 void TestWithSuperclassAndWantsDispatch::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithSuperclassAndWantsDispatch::TestSyncMessage::name()) {
         IPC::handleMessageSynchronous<Messages::TestWithSuperclassAndWantsDispatch::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclassAndWantsDispatch::testSyncMessage);
         return;

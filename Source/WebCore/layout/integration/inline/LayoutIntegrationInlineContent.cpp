@@ -28,8 +28,8 @@
 
 #include "InlineIteratorBox.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGTextFragment.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TextPainter.h"
 
 namespace WebCore {

@@ -126,7 +126,7 @@ void FlexLayout::updateFormattingContexGeometries()
     boxGeometryUpdater.setFormattingContextContentGeometry(layoutState().geometryForBox(flexBox()).contentBoxWidth(), { });
 }
 
-void FlexLayout::updateStyle(const RenderBlock&, const RenderStyle&)
+void FlexLayout::updateStyle(const RenderBlock&, const Style::ComputedStyle&)
 {
 }
 

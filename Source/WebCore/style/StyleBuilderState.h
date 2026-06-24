@@ -30,9 +30,9 @@
 #include "Document.h"
 #include "FontTaggedSettings.h"
 #include "PropertyCascade.h"
-#include "RenderStyle.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
+#include "StyleComputedStyle.h"
 #include "StyleForVisitedLink.h"
 #include "StyleSubstitutionContext.h"
 #include "TextFlags.h"
@@ -93,8 +93,8 @@ struct RegisteredSubstitutionAttribute {
 
 struct BuilderContext {
     const RefPtr<const Document> document { };
-    const RenderStyle* parentStyle { };
-    const RenderStyle* rootElementStyle { };
+    const Style::ComputedStyle* parentStyle { };
+    const Style::ComputedStyle* rootElementStyle { };
     RefPtr<const Element> element { };
     CheckedPtr<TreeResolutionState> treeResolutionState { };
     std::optional<BuilderPositionTryFallback> positionTryFallback { };
@@ -108,27 +108,27 @@ class BuilderState : public CanMakeCheckedPtr<BuilderState> {
 public:
     template<typename T, class... Args> friend WTF::UniqueRef<T> WTF::makeUniqueRefWithoutFastMallocCheck(Args&&...);
 
-    static UniqueRef<BuilderState> create(RenderStyle& renderStyle)
+    static UniqueRef<BuilderState> create(Style::ComputedStyle& renderStyle)
     {
         return makeUniqueRefWithoutRefCountedCheck<BuilderState>(renderStyle);
     }
 
-    static UniqueRef<BuilderState> create(RenderStyle& renderStyle, BuilderContext&& builderContext)
+    static UniqueRef<BuilderState> create(Style::ComputedStyle& renderStyle, BuilderContext&& builderContext)
     {
         return makeUniqueRefWithoutRefCountedCheck<BuilderState>(renderStyle, WTF::move(builderContext));
     }
 
-    ComputedStyle& style() { return m_style.computedStyle(); }
-    const ComputedStyle& style() const { return m_style.computedStyle(); }
+    ComputedStyle& style() { return m_style; }
+    const ComputedStyle& style() const { return m_style; }
 
-    RenderStyle& renderStyle() LIFETIME_BOUND { return m_style; }
-    const RenderStyle& renderStyle() const LIFETIME_BOUND { return m_style; }
+    Style::ComputedStyle& renderStyle() LIFETIME_BOUND { return m_style; }
+    const Style::ComputedStyle& renderStyle() const LIFETIME_BOUND { return m_style; }
 
-    const ComputedStyle& parentStyle() const { return m_context.parentStyle->computedStyle(); }
-    const RenderStyle& parentRenderStyle() const LIFETIME_BOUND { return *m_context.parentStyle; }
+    const ComputedStyle& parentStyle() const { return *m_context.parentStyle; }
+    const Style::ComputedStyle& parentRenderStyle() const LIFETIME_BOUND { return *m_context.parentStyle; }
 
-    const ComputedStyle* rootElementStyle() const { return m_context.rootElementStyle ? &m_context.rootElementStyle->computedStyle() : nullptr; }
-    const RenderStyle* rootElementRenderStyle() const LIFETIME_BOUND { return m_context.rootElementStyle; }
+    const ComputedStyle* rootElementStyle() const { return m_context.rootElementStyle; }
+    const Style::ComputedStyle* rootElementRenderStyle() const LIFETIME_BOUND { return m_context.rootElementStyle; }
 
     const Document& document() const { return *m_context.document; }
     const Element* element() const { return m_context.element.get(); }
@@ -248,8 +248,8 @@ private:
     friend class Builder;
     friend class SubstitutionResolver;
 
-    BuilderState(RenderStyle&);
-    BuilderState(RenderStyle&, BuilderContext&&);
+    BuilderState(Style::ComputedStyle&);
+    BuilderState(Style::ComputedStyle&, BuilderContext&&);
 
     void NODELETE adjustStyleForInterCharacterRuby();
 
@@ -262,7 +262,7 @@ private:
     void updateFontForOrientationChange();
     void updateFontForSizeChange();
 
-    RenderStyle& m_style;
+    Style::ComputedStyle& m_style;
     BuilderContext m_context;
 
     const CSSToLengthConversionData m_cssToLengthConversionData;

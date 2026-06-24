@@ -14,10 +14,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/buffer.h"
@@ -54,7 +54,7 @@ class AudioEncoderPcm : public AudioEncoder {
   AudioEncoderPcm(const Config& config, int sample_rate_hz);
 
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,
-                         ArrayView<const int16_t> audio,
+                         std::span<const int16_t> audio,
                          Buffer* encoded) override;
 
   virtual size_t EncodeCall(const int16_t* audio,

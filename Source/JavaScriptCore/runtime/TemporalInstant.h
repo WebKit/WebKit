@@ -27,6 +27,7 @@
 #pragma once
 
 #include <JavaScriptCore/ISO8601.h>
+#include <JavaScriptCore/InstantCore.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/TemporalDuration.h>
 #include <JavaScriptCore/TemporalObject.h>
@@ -47,38 +48,28 @@ public:
     }
 
     static TemporalInstant* create(VM&, Structure*, ISO8601::ExactTime);
-    static TemporalInstant* tryCreateIfValid(JSGlobalObject*, ISO8601::ExactTime, Structure* = nullptr);
-    static TemporalInstant* tryCreateIfValid(JSGlobalObject*, JSValue, Structure* = nullptr);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
     static TemporalInstant* toInstant(JSGlobalObject*, JSValue);
-    static TemporalInstant* from(JSGlobalObject*, JSValue);
     static TemporalInstant* fromEpochMilliseconds(JSGlobalObject*, JSValue);
     static TemporalInstant* fromEpochNanoseconds(JSGlobalObject*, JSValue);
     static JSValue compare(JSGlobalObject*, JSValue, JSValue);
 
     ISO8601::ExactTime exactTime() const { return m_exactTime; }
 
-    ISO8601::Duration difference(JSGlobalObject*, TemporalInstant*, JSValue options) const;
-    ISO8601::ExactTime round(JSGlobalObject*, JSValue options) const;
-    String toString(JSGlobalObject*, JSValue options) const;
-    String toString(JSObject* timeZone = nullptr, PrecisionData precision = { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 }) const
+    String toString(PrecisionData precision = { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 }) const
     {
-        return toString(exactTime(), timeZone, precision);
+        return TemporalCore::instantToString(exactTime(), std::nullopt, precision);
     }
 
 private:
     TemporalInstant(VM&, Structure*, ISO8601::ExactTime);
 
-    template<typename CharacterType>
-    static std::optional<ISO8601::ExactTime> parse(StringParsingBuffer<CharacterType>&);
-    static ISO8601::ExactTime fromObject(JSGlobalObject*, JSObject*);
-
-    static String toString(ISO8601::ExactTime, JSObject* timeZone, PrecisionData);
-
     ISO8601::ExactTime m_exactTime;
 };
+
+JS_EXPORT_PRIVATE std::optional<ISO8601::ExactTime> bigIntValueToExactTime(JSGlobalObject*, JSValue bigIntValue, ASCIILiteral typeName);
 
 } // namespace JSC

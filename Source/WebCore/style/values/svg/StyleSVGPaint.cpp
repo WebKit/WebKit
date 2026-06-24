@@ -28,8 +28,8 @@
 #include "AnimationUtilities.h"
 #include "CSSKeywordValue.h"
 #include "CSSURLValue.h"
-#include "RenderStyle+SettersInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleForVisitedLink.h"
 
 namespace WebCore {
@@ -97,7 +97,7 @@ auto CSSValueConversion<SVGPaint>::operator()(BuilderState& state, const CSSValu
 
 // MARK: - Blending
 
-auto Blending<SVGPaint>::equals(const SVGPaint& a, const SVGPaint& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+auto Blending<SVGPaint>::equals(const SVGPaint& a, const SVGPaint& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     if (!a.hasSameType(b))
         return false;
@@ -119,7 +119,7 @@ auto Blending<SVGPaint>::canBlend(const SVGPaint& a, const SVGPaint& b) -> bool
     return Style::canBlend(a.colorDisregardingType(), b.colorDisregardingType());
 }
 
-auto Blending<SVGPaint>::blend(const SVGPaint& a, const SVGPaint& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> SVGPaint
+auto Blending<SVGPaint>::blend(const SVGPaint& a, const SVGPaint& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> SVGPaint
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1);

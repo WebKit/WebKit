@@ -11,10 +11,48 @@
 #include "util/shader_utils.h"
 #include "util/test_utils.h"
 
+// Check AHB test support availability
+#if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 26
+#    define CAPTURE_TESTS_AHB_SUPPORT
+#    include <android/hardware_buffer.h>
+#    include "common/android_util.h"
+#endif
+
 using namespace angle;
 
 namespace
 {
+#if defined(CAPTURE_TESTS_AHB_SUPPORT)
+// Helper to allocate RGBA8 AHB and upload image data
+AHardwareBuffer *AllocateRGBA8AHB(size_t width, size_t height, const GLubyte *rgbaData)
+{
+    AHardwareBuffer_Desc desc = {};
+    desc.width                = width;
+    desc.height               = height;
+    desc.layers               = 1;
+    desc.format               = AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM;
+    desc.usage = AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE | AHARDWAREBUFFER_USAGE_CPU_WRITE_RARELY;
+
+    AHardwareBuffer *ahb = nullptr;
+    EXPECT_EQ(0, AHardwareBuffer_allocate(&desc, &ahb));
+
+    void *mapped = nullptr;
+    EXPECT_EQ(
+        0, AHardwareBuffer_lock(ahb, AHARDWAREBUFFER_USAGE_CPU_WRITE_RARELY, -1, nullptr, &mapped));
+
+    AHardwareBuffer_describe(ahb, &desc);
+    const size_t rowBytes = width * 4;
+    for (size_t row = 0; row < height; row++)
+    {
+        memcpy(static_cast<uint8_t *>(mapped) + row * desc.stride * 4, rgbaData + row * rowBytes,
+               rowBytes);
+    }
+
+    EXPECT_EQ(0, AHardwareBuffer_unlock(ahb, nullptr));
+    return ahb;
+}
+#endif
+
 class CapturedTest : public ANGLETest<>
 {
   protected:
@@ -647,6 +685,120 @@ void main()
         swapBuffers();
     }
 }
+
+#if defined(CAPTURE_TESTS_AHB_SUPPORT)
+// Test capture and replay of external AHBs on Android platforms. On other platforms
+// not supporting AHBs, the test will be skipped and the outtput will not be
+// compared to the expected results
+TEST_P(CapturedTest, ExternalAHB)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_EGL_image_external"));
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(), "EGL_KHR_image_base"));
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(),
+                                                     "EGL_ANDROID_image_native_buffer"));
+
+    static constexpr char kVS[] = R"(attribute vec4 a_position;
+attribute vec2 a_texCoord;
+varying vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = a_texCoord;
+})";
+
+    static constexpr char kFS[] = R"(#extension GL_OES_EGL_image_external : require
+precision mediump float;
+varying vec2 v_texCoord;
+uniform samplerExternalOES s_texture;
+void main()
+{
+    gl_FragColor = texture2D(s_texture, v_texCoord);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    GLint samplerLoc = glGetUniformLocation(program, "s_texture");
+    glUniform1i(samplerLoc, 0);
+
+    constexpr size_t kSize                 = 2;
+    GLubyte redPixels[kSize * kSize * 4]   = {255, 0, 0, 255, 255, 0, 0, 255,
+                                              255, 0, 0, 255, 255, 0, 0, 255};
+    GLubyte greenPixels[kSize * kSize * 4] = {0, 255, 0, 255, 0, 255, 0, 255,
+                                              0, 255, 0, 255, 0, 255, 0, 255};
+    GLubyte bluePixels[kSize * kSize * 4]  = {0, 0, 255, 255, 0, 0, 255, 255,
+                                              0, 0, 255, 255, 0, 0, 255, 255};
+
+    // First frame before capture starts, we create an AHB filled with red and bind it
+    AHardwareBuffer *redAHB = AllocateRGBA8AHB(kSize, kSize, redPixels);
+    EGLImageKHR redImage =
+        eglCreateImageKHR(getEGLWindow()->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                          angle::android::AHardwareBufferToClientBuffer(redAHB), nullptr);
+    ASSERT_EGL_SUCCESS();
+
+    GLTexture externalTexture;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, externalTexture);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    // External image binding
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, redImage);
+    ASSERT_GL_NO_ERROR();
+    swapBuffers();
+
+    // Capture begins on this frame. Draw using binding from before caapture start.
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
+    swapBuffers();
+
+    // Second captured frame -- create green AHB and rebind
+    AHardwareBuffer *greenAHB = AllocateRGBA8AHB(kSize, kSize, greenPixels);
+    EGLImageKHR greenImage =
+        eglCreateImageKHR(getEGLWindow()->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                          angle::android::AHardwareBufferToClientBuffer(greenAHB), nullptr);
+    ASSERT_EGL_SUCCESS();
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, externalTexture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, greenImage);
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_EQ(0, 0, 0, 255, 0, 255);
+    swapBuffers();
+
+    // Third captured frame -- create blue AHB and rebind
+    AHardwareBuffer *blueAHB = AllocateRGBA8AHB(kSize, kSize, bluePixels);
+    EGLImageKHR blueImage =
+        eglCreateImageKHR(getEGLWindow()->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                          angle::android::AHardwareBufferToClientBuffer(blueAHB), nullptr);
+    ASSERT_EGL_SUCCESS();
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, externalTexture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, blueImage);
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_EQ(0, 0, 0, 0, 255, 255);
+    swapBuffers();
+
+    // Fourth captured frame -- draw again without rebinding reusing the blue
+    // binding from the previous frame
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_EQ(0, 0, 0, 0, 255, 255);
+    swapBuffers();
+
+    // Fifth captured frame -- destroy the green EGLImage during capture
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), greenImage);
+    AHardwareBuffer_release(greenAHB);
+
+    // Empty frames to reach capture end.
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
+
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), redImage);
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), blueImage);
+    AHardwareBuffer_release(redAHB);
+    AHardwareBuffer_release(blueAHB);
+}
+#endif  // defined(CAPTURE_TESTS_AHB_SUPPORT)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CapturedTest);
 // Capture is only supported on the Vulkan backend

@@ -30,7 +30,7 @@ extern "C" {
  * types, removing or reassigning enums, adding/removing/rearranging
  * fields to structures
  */
-#define VPX_TPL_ABI_VERSION 4 /**<\hideinitializer*/
+#define VPX_TPL_ABI_VERSION 5 /**<\hideinitializer*/
 
 /*!\brief Temporal dependency model stats for each block before propagation */
 typedef struct VpxTplBlockStats {

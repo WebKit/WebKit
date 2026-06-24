@@ -2,7 +2,7 @@
 ; source tree. Do not edit by hand.
 
 %ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
+%include "boringssl_prefix_symbols_internal_x86_win_asm.inc"
 %endif
 %ifidn __OUTPUT_FORMAT__, win32
 %ifidn __OUTPUT_FORMAT__,obj
@@ -29,7 +29,7 @@ L$000pic_point:
 	pop	eax
 	movdqa	xmm7,[(L$reverse_bytes-L$000pic_point)+eax]
 	movdqa	xmm2,[(L$low4_mask-L$000pic_point)+eax]
-db	102,15,56,0,199
+	pshufb	xmm0,xmm7
 	movdqa	xmm1,xmm2
 	pandn	xmm1,xmm0
 	psrld	xmm1,4
@@ -41,12 +41,12 @@ L$001loop_row_1:
 	movdqu	xmm4,[esi]
 	lea	esi,[16+esi]
 	movdqa	xmm6,xmm2
-db	102,15,58,15,243,1
+	palignr	xmm6,xmm3,1
 	movdqa	xmm3,xmm6
 	psrldq	xmm2,1
 	movdqa	xmm5,xmm4
-db	102,15,56,0,224
-db	102,15,56,0,233
+	pshufb	xmm4,xmm0
+	pshufb	xmm5,xmm1
 	pxor	xmm2,xmm5
 	movdqa	xmm5,xmm4
 	psllq	xmm5,60
@@ -72,12 +72,12 @@ L$002loop_row_2:
 	movdqu	xmm4,[esi]
 	lea	esi,[16+esi]
 	movdqa	xmm6,xmm2
-db	102,15,58,15,243,1
+	palignr	xmm6,xmm3,1
 	movdqa	xmm3,xmm6
 	psrldq	xmm2,1
 	movdqa	xmm5,xmm4
-db	102,15,56,0,224
-db	102,15,56,0,233
+	pshufb	xmm4,xmm0
+	pshufb	xmm5,xmm1
 	pxor	xmm2,xmm5
 	movdqa	xmm5,xmm4
 	psllq	xmm5,60
@@ -103,12 +103,12 @@ L$003loop_row_3:
 	movdqu	xmm4,[esi]
 	lea	esi,[16+esi]
 	movdqa	xmm6,xmm2
-db	102,15,58,15,243,1
+	palignr	xmm6,xmm3,1
 	movdqa	xmm3,xmm6
 	psrldq	xmm2,1
 	movdqa	xmm5,xmm4
-db	102,15,56,0,224
-db	102,15,56,0,233
+	pshufb	xmm4,xmm0
+	pshufb	xmm5,xmm1
 	pxor	xmm2,xmm5
 	movdqa	xmm5,xmm4
 	psllq	xmm5,60
@@ -129,7 +129,7 @@ db	102,15,56,0,233
 	psrlq	xmm3,5
 	pxor	xmm2,xmm3
 	pxor	xmm3,xmm3
-db	102,15,56,0,215
+	pshufb	xmm2,xmm7
 	movdqu	[edi],xmm2
 	pxor	xmm0,xmm0
 	pxor	xmm1,xmm1
@@ -161,12 +161,12 @@ L$004pic_point:
 	pop	ebx
 	movdqa	xmm7,[(L$reverse_bytes-L$004pic_point)+ebx]
 	and	ecx,-16
-db	102,15,56,0,199
+	pshufb	xmm0,xmm7
 	pxor	xmm3,xmm3
 L$005loop_ghash:
 	movdqa	xmm2,[(L$low4_mask-L$004pic_point)+ebx]
 	movdqu	xmm1,[edx]
-db	102,15,56,0,207
+	pshufb	xmm1,xmm7
 	pxor	xmm0,xmm1
 	movdqa	xmm1,xmm2
 	pandn	xmm1,xmm0
@@ -178,12 +178,12 @@ L$006loop_row_4:
 	movdqu	xmm4,[esi]
 	lea	esi,[16+esi]
 	movdqa	xmm6,xmm2
-db	102,15,58,15,243,1
+	palignr	xmm6,xmm3,1
 	movdqa	xmm3,xmm6
 	psrldq	xmm2,1
 	movdqa	xmm5,xmm4
-db	102,15,56,0,224
-db	102,15,56,0,233
+	pshufb	xmm4,xmm0
+	pshufb	xmm5,xmm1
 	pxor	xmm2,xmm5
 	movdqa	xmm5,xmm4
 	psllq	xmm5,60
@@ -209,12 +209,12 @@ L$007loop_row_5:
 	movdqu	xmm4,[esi]
 	lea	esi,[16+esi]
 	movdqa	xmm6,xmm2
-db	102,15,58,15,243,1
+	palignr	xmm6,xmm3,1
 	movdqa	xmm3,xmm6
 	psrldq	xmm2,1
 	movdqa	xmm5,xmm4
-db	102,15,56,0,224
-db	102,15,56,0,233
+	pshufb	xmm4,xmm0
+	pshufb	xmm5,xmm1
 	pxor	xmm2,xmm5
 	movdqa	xmm5,xmm4
 	psllq	xmm5,60
@@ -240,12 +240,12 @@ L$008loop_row_6:
 	movdqu	xmm4,[esi]
 	lea	esi,[16+esi]
 	movdqa	xmm6,xmm2
-db	102,15,58,15,243,1
+	palignr	xmm6,xmm3,1
 	movdqa	xmm3,xmm6
 	psrldq	xmm2,1
 	movdqa	xmm5,xmm4
-db	102,15,56,0,224
-db	102,15,56,0,233
+	pshufb	xmm4,xmm0
+	pshufb	xmm5,xmm1
 	pxor	xmm2,xmm5
 	movdqa	xmm5,xmm4
 	psllq	xmm5,60
@@ -271,7 +271,7 @@ db	102,15,56,0,233
 	lea	edx,[16+edx]
 	sub	ecx,16
 	jnz	NEAR L$005loop_ghash
-db	102,15,56,0,199
+	pshufb	xmm0,xmm7
 	movdqu	[edi],xmm0
 	pxor	xmm0,xmm0
 	pxor	xmm1,xmm1

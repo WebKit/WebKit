@@ -96,9 +96,11 @@ ISO8601::PlainTime JS_EXPORT_PRIVATE plainTimeFromSubdayNs(Int128 ns);
 
 double JS_EXPORT_PRIVATE totalTimeDuration(Int128, TemporalUnit);
 
-ISO8601::Duration JS_EXPORT_PRIVATE temporalDurationFromInternal(ISO8601::InternalDuration, TemporalUnit largestUnit);
+TemporalResult<ISO8601::Duration> JS_EXPORT_PRIVATE temporalDurationFromInternal(ISO8601::InternalDuration, TemporalUnit largestUnit);
 
 ISO8601::InternalDuration JS_EXPORT_PRIVATE toInternalDuration(ISO8601::Duration);
+
+ISO8601::InternalDuration JS_EXPORT_PRIVATE toInternalDurationRecord(ISO8601::Duration);
 
 TemporalResult<Int128> JS_EXPORT_PRIVATE add24HourDaysToTimeDuration(Int128 timeDuration, double days);
 
@@ -112,7 +114,7 @@ constexpr int32_t unitIndexInTable(TemporalUnit);
 
 constexpr TemporalUnit unitInTable(int32_t);
 
-TemporalResult<ISO8601::Duration> JS_EXPORT_PRIVATE adjustDateDurationRecord(const ISO8601::Duration& dateDuration, double days, std::optional<double> weeks, std::optional<double> months);
+TemporalResult<ISO8601::Duration> JS_EXPORT_PRIVATE adjustDateDurationRecord(const ISO8601::Duration& dateDuration, int64_t days, std::optional<int64_t> weeks, std::optional<int64_t> months);
 
 TemporalResult<Nudged> JS_EXPORT_PRIVATE nudgeToCalendarUnit(int32_t sign,
     const ISO8601::InternalDuration&, Int128 originEpochNs, Int128 destEpochNs,

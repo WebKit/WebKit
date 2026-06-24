@@ -55,6 +55,7 @@
     _eventListenerCategories = _WKTextExtractionEventListenerCategoryAll;
     _includeAccessibilityAttributes = YES;
     _includeTextInAutoFilledControls = NO;
+    _skipNearlyTransparentContent = YES;
     _targetRect = CGRectNull;
     _maxWordsPerParagraph = NSUIntegerMax;
     _maxWordsPerParagraphPolicy = _WKTextExtractionWordLimitPolicyAlways;

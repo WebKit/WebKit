@@ -14,5 +14,3 @@ foreach my $file (@import_files) {
 }
 
 close($fh);
-
-print "Generated $output_file with #import statements for provided files.\n";

@@ -6,15 +6,14 @@ API/JSRetainPtr.h
 API/tests/testapi.cpp
 BytecodeStructs.h
 bytecode/InlineCacheHandler.h
-bytecode/SharedJITStubSet.h
 bytecode/PropertyInlineCacheClearingWatchpoint.h
+bytecode/SharedJITStubSet.h
 bytecompiler/BytecodeGenerator.h
 bytecompiler/Label.h
 debugger/Debugger.cpp
 dfg/DFGFinalizer.h
 dfg/DFGLazyJSValue.h
 dfg/DFGNode.h
-dfg/DFGPropertyTypeKey.h
 dfg/DFGSpeculativeJIT.h
 ftl/FTLLowerDFGToB3.cpp
 ftl/FTLOSRExitHandle.h
@@ -37,7 +36,7 @@ runtime/PropertyName.h
 runtime/PropertySlot.h
 runtime/Structure.h
 wasm/WasmBBQJIT.h
-wasm/WasmConstExprGenerator.cpp
+[ macOS ] wasm/WasmConstExprGenerator.cpp
 wasm/WasmEntryPlan.cpp
 wasm/WasmFormat.h
 wasm/WasmFunctionParser.h

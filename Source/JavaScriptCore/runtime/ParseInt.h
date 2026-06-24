@@ -132,11 +132,30 @@ template <typename CharType>
 ALWAYS_INLINE
 static double parseInt(std::span<const CharType> data, int radix)
 {
+    static constexpr size_t numberOfDigitsForSafeInt32 = 9;
+
+    size_t length = data.size();
+
+    if ((radix == 10 || !radix) && length && length <= numberOfDigitsForSafeInt32) {
+        auto first = data[0];
+        if (first >= '1' && first <= '9') {
+            int32_t intNumber = first - '0';
+            for (size_t i = 1; i < length; ++i) {
+                auto c = data[i];
+                if (!isASCIIDigit(c))
+                    return intNumber;
+                intNumber = intNumber * 10 + (c - '0');
+            }
+            return intNumber;
+        }
+        if (first == '0' && length == 1)
+            return 0;
+    }
+
     // 1. Let inputString be ToString(string).
     // 2. Let S be a newly created substring of inputString consisting of the first character that is not a
     //    StrWhiteSpaceChar and all characters following that character. (In other words, remove leading white
     //    space.) If inputString does not contain any such characters, let S be the empty string.
-    size_t length = data.size();
     size_t p = 0;
     while (p < length && isStrWhiteSpace(data[p]))
         ++p;
@@ -175,6 +194,30 @@ static double parseInt(std::span<const CharType> data, int radix)
     if (radix < 2 || radix > 36)
         return PNaN;
 
+    if (radix == 10) {
+        size_t firstDigitPosition = p;
+        int32_t intNumber = 0;
+        size_t intEnd = std::min(length, p + numberOfDigitsForSafeInt32);
+        while (p < intEnd && isASCIIDigit(data[p])) {
+            intNumber = intNumber * 10 + (data[p] - '0');
+            ++p;
+        }
+        if (p == firstDigitPosition)
+            return PNaN;
+        if (p == length || !isASCIIDigit(data[p]))
+            return sign * intNumber;
+        double number = intNumber;
+        do {
+            number = number * 10 + (data[p] - '0');
+            ++p;
+        } while (p < length && isASCIIDigit(data[p]));
+        if (number >= mantissaOverflowLowerBound) [[unlikely]] {
+            size_t parsedLength;
+            number = parseDouble(data.subspan(firstDigitPosition, p - firstDigitPosition), parsedLength);
+        }
+        return sign * number;
+    }
+
     // 13. Let mathInt be the mathematical integer value that is represented by Z in radix-R notation, using the letters
     //     A-Z and a-z for digits with values 10 through 35. (However, if R is 10 and Z contains more than 20 significant
     //     digits, every significant digit after the 20th may be replaced by a 0 digit, at the option of the implementation;
@@ -199,13 +242,8 @@ static double parseInt(std::span<const CharType> data, int radix)
         return PNaN;
 
     // Alternate code path for certain large numbers.
-    if (number >= mantissaOverflowLowerBound) {
-        if (radix == 10) {
-            size_t parsedLength;
-            number = parseDouble(data.subspan(firstDigitPosition, p - firstDigitPosition), parsedLength);
-        } else if (radix == 2 || radix == 4 || radix == 8 || radix == 16 || radix == 32)
-            number = parseIntOverflow(data.subspan(firstDigitPosition, p - firstDigitPosition), radix);
-    }
+    if (number >= mantissaOverflowLowerBound && (radix == 2 || radix == 4 || radix == 8 || radix == 16 || radix == 32))
+        number = parseIntOverflow(data.subspan(firstDigitPosition, p - firstDigitPosition), radix);
 
     // 15. Return sign x number.
     return sign * number;

@@ -28,13 +28,13 @@ class BitString;
 class Input;
 }  // namespace der
 
-// Verifies that |signature_value| is a valid signature of |signed_data| using
-// the algorithm |algorithm| and the public key |public_key|.
+// Verifies that `signature_value` is a valid signature of `signed_data` using
+// the algorithm `algorithm` and the public key `public_key`.
 //
-//   |algorithm| - The parsed AlgorithmIdentifier
-//   |signed_data| - The blob of data to verify
-//   |signature_value| - The BIT STRING for the signature's value
-//   |public_key| - The parsed (non-null) public key.
+//   `algorithm` - The parsed AlgorithmIdentifier
+//   `signed_data` - The blob of data to verify
+//   `signature_value` - The BIT STRING for the signature's value
+//   `public_key` - The parsed (non-null) public key.
 //
 // Returns true if verification was successful.
 [[nodiscard]] OPENSSL_EXPORT bool VerifySignedData(

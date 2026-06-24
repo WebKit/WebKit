@@ -40,7 +40,6 @@
 - (void)_setForceActiveControls:(BOOL)flag;
 @end
 
-using namespace WebCore;
 
 // This class handles the complete: operation.
 // It counts on its host view to call endRevertingChange: whenever the current completion needs to be aborted.
@@ -171,8 +170,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // Get preceeding word stem
         WebFrame *frame = [_htmlView _frame];
         RetainPtr selection = kit(core(frame)->selection().selection().toNormalizedRange());
-        DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:FrameSelection::Alteration::Extend
-            direction:SelectionDirection::Backward granularity:TextGranularity::WordGranularity];
+        DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:WebCore::FrameSelection::Alteration::Extend
+            direction:WebCore::SelectionDirection::Backward granularity:WebCore::TextGranularity::WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
         [prefix setEnd:[selection.get() startContainer] offset:[selection.get() startOffset]];
 
@@ -202,7 +201,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             ASSERT(!_originalString);       // this should only be set IFF we have a popup window
             _originalString = [[frame _stringForRange:selection.get()] retain];
             [self _buildUI];
-            NSRect wordRect = [frame _caretRectAtPosition:Position(core([wholeWord startContainer]), [wholeWord startOffset], Position::PositionIsOffsetInAnchor) affinity:NSSelectionAffinityDownstream];
+            NSRect wordRect = [frame _caretRectAtPosition:WebCore::Position(core([wholeWord startContainer]), [wholeWord startOffset], WebCore::Position::PositionIsOffsetInAnchor) affinity:NSSelectionAffinityDownstream];
             // +1 to be under the word, not the caret
             // FIXME - 3769652 - Wrong positioning for right to left languages.  We should line up the upper
             // right corner with the caret instead of upper left, and the +1 would be a -1.

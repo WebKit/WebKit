@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>glyph-orientation-vertical: auto should handle surrogate pairs (UTR#50)</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#GlyphOrientationVerticalProperty">
+<link rel="help" href="https://www.unicode.org/reports/tr50/">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<svg id="container" width="800" height="600" style="writing-mode: tb; glyph-orientation-vertical: auto;"></svg>
+<script>
+const container = document.querySelector('#container');
+
+function createText(content) {
+  const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  text.setAttribute('x', '50');
+  text.setAttribute('y', '50');
+  text.textContent = content;
+  container.appendChild(text);
+  return text;
+}
+
+// Supplementary characters with VO=U (Upright) — should be 0 degrees
+
+// U+1F600 GRINNING FACE (1F600..1F64F ; U)
+test(() => {
+  const el = createText('😀');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+1F600 GRINNING FACE should be upright');
+}, 'U+1F600 GRINNING FACE is upright (VO=U, surrogate pair)');
+
+// U+20000 CJK UNIFIED IDEOGRAPH-20000 (20000..2A6DF ; U)
+test(() => {
+  const el = createText('𠀀');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+20000 CJK ext-B ideograph should be upright');
+}, 'U+20000 CJK Ext-B ideograph is upright (VO=U, surrogate pair)');
+
+// U+1D11E MUSICAL SYMBOL G CLEF (1D100..1D1FF ; U)
+test(() => {
+  const el = createText('𝄞');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+1D11E MUSICAL SYMBOL G CLEF should be upright');
+}, 'U+1D11E MUSICAL SYMBOL G CLEF is upright (VO=U, surrogate pair)');
+
+// Supplementary characters with VO=R (Rotated) — should be 90 degrees
+
+// U+1D400 MATHEMATICAL BOLD CAPITAL A (1D400..1D7FF ; R)
+test(() => {
+  const el = createText('𝐀');
+  assert_equals(el.getRotationOfChar(0), 90, 'U+1D400 MATH BOLD A should be sideways');
+}, 'U+1D400 MATHEMATICAL BOLD CAPITAL A is sideways (VO=R, surrogate pair)');
+
+// U+10000 LINEAR B SYLLABLE B008 A (10000..1007F ; R)
+test(() => {
+  const el = createText('𐀀');
+  assert_equals(el.getRotationOfChar(0), 90, 'U+10000 LINEAR B SYLLABLE should be sideways');
+}, 'U+10000 LINEAR B SYLLABLE B008 A is sideways (VO=R, surrogate pair)');
+
+// getRotationOfChar() uses UTF-16 code unit indices, not code point indices.
+// Surrogate pairs occupy 2 indices, so offsets must account for that.
+
+// Mixed: BMP(1) + surrogate(2) + surrogate(2) = 5 code units
+// 一 at 0, 😀 at 1, 𝐀 at 3
+test(() => {
+  const el = createText('一😀𝐀');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+4E00 CJK ideograph should be upright');
+  assert_equals(el.getRotationOfChar(1), 0, 'U+1F600 emoji should be upright');
+  assert_equals(el.getRotationOfChar(3), 90, 'U+1D400 math bold A should be sideways');
+}, 'Mixed string with BMP and surrogate pair characters');
+
+// Consecutive surrogate pairs: surrogate(2) + surrogate(2) + surrogate(2) = 6 code units
+// 😀 at 0, 𠀀 at 2, 𝐀 at 4
+test(() => {
+  const el = createText('😀𠀀𝐀');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+1F600 emoji should be upright');
+  assert_equals(el.getRotationOfChar(2), 0, 'U+20000 CJK ext-B should be upright');
+  assert_equals(el.getRotationOfChar(4), 90, 'U+1D400 math bold A should be sideways');
+}, 'Consecutive surrogate pairs: offset arithmetic across back-to-back pairs');
+
+// BMP(1) + surrogate(2) + BMP(1) + surrogate(2) = 6 code units
+// 一 at 0, 😀 at 1, A at 3, 𝐀 at 4
+test(() => {
+  const el = createText('一😀A𝐀');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+4E00 CJK ideograph should be upright');
+  assert_equals(el.getRotationOfChar(1), 0, 'U+1F600 emoji should be upright');
+  assert_equals(el.getRotationOfChar(3), 90, 'Latin A should be sideways');
+  assert_equals(el.getRotationOfChar(4), 90, 'U+1D400 math bold A should be sideways');
+}, 'Interleaved BMP and surrogate pairs: BMP-surrogate-BMP-surrogate');
+</script>

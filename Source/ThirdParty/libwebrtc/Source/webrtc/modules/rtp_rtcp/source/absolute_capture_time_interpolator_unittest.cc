@@ -31,7 +31,7 @@ using testing::Le;
 TEST(AbsoluteCaptureTimeInterpolatorTest, GetSourceWithoutCsrcs) {
   constexpr uint32_t kSsrc = 12;
 
-  EXPECT_EQ(AbsoluteCaptureTimeInterpolator::GetSource(kSsrc, nullptr), kSsrc);
+  EXPECT_EQ(AbsoluteCaptureTimeInterpolator::GetSource(kSsrc, {}), kSsrc);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest, GetSourceWithCsrcs) {

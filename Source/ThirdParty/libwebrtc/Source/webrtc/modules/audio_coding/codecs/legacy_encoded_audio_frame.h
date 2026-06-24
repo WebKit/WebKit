@@ -15,9 +15,9 @@
 #include <stdint.h>
 
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "rtc_base/buffer.h"
 
@@ -37,7 +37,7 @@ class LegacyEncodedAudioFrame final : public AudioDecoder::EncodedAudioFrame {
 
   size_t Duration() const override;
 
-  std::optional<DecodeResult> Decode(ArrayView<int16_t> decoded) const override;
+  std::optional<DecodeResult> Decode(std::span<int16_t> decoded) const override;
 
   // For testing:
   const Buffer& payload() const { return payload_; }

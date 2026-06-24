@@ -25,14 +25,15 @@
 #include "../internal.h"
 
 
-int CBB_finish_i2d(CBB *cbb, uint8_t **outp) {
+using namespace bssl;
+
+int bssl::CBB_finish_i2d(CBB *cbb, uint8_t **outp) {
   assert(!cbb->is_child);
   assert(cbb->u.base.can_resize);
 
   uint8_t *der;
   size_t der_len;
   if (!CBB_finish(cbb, &der, &der_len)) {
-    CBB_cleanup(cbb);
     return -1;
   }
   if (der_len > INT_MAX) {

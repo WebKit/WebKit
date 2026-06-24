@@ -57,8 +57,8 @@ private:
     explicit CursorImage(Ref<Image>&&, std::optional<HotSpot>, URL&&);
 
     void setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& = WTF::URL()) final;
-    Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
-    Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle&, CSSStyleDeclaration&) const final;
+    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
+    Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
     ImageWithScale selectBestFitImage(const Document&) final;
 
     const Ref<Image> m_image;

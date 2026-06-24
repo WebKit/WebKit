@@ -34,40 +34,32 @@
 
 namespace WebCore {
 
-SkiaReplayCanvas::SkiaReplayCanvas(const IntSize& size, const RefPtr<SkiaRecordingResult>& recording)
+SkiaReplayCanvas::SkiaReplayCanvas(const IntSize& size, const Ref<SkiaRecordingResult>& recording, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
     : SkNWayCanvas(size.width(), size.height())
     , m_recording(recording)
+    , m_threadSafeGrContext(threadSafeGrContext)
 {
     // Create atlas wrappers from pre-prepared GPU atlases.
     // GPU atlases were uploaded on main thread; we just rewrap for this worker's context.
-    if (m_recording && m_recording->hasGPUAtlases()) {
-        auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
-        if (!glContext || !glContext->makeContextCurrent())
-            return;
-
-        m_recording->waitForUploadCondition();
-        m_recording->waitForUploadFence();
-
+    if (m_recording->hasGPUAtlases()) {
         const auto& gpuAtlases = m_recording->gpuAtlases();
         m_atlases.reserveInitialCapacity(gpuAtlases.size());
 
-        for (const auto& gpuAtlas : gpuAtlases) {
-            if (auto atlas = SkiaReplayAtlas::create(gpuAtlas))
-                m_atlases.append(WTF::move(atlas));
-        }
+        for (const auto& gpuAtlas : gpuAtlases)
+            m_atlases.append(SkiaReplayAtlas::create(gpuAtlas));
     }
 }
 
 SkiaReplayCanvas::~SkiaReplayCanvas() = default;
 
-Ref<SkiaReplayCanvas> SkiaReplayCanvas::create(const IntSize& size, const RefPtr<SkiaRecordingResult>& recordingResult)
+Ref<SkiaReplayCanvas> SkiaReplayCanvas::create(const IntSize& size, const Ref<SkiaRecordingResult>& recordingResult, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
-    return adoptRef(*new SkiaReplayCanvas(size, recordingResult));
+    return adoptRef(*new SkiaReplayCanvas(size, recordingResult, threadSafeGrContext));
 }
 
 sk_sp<SkImage> SkiaReplayCanvas::waitForRenderingCompletionAndRewrapImageIfNeeded(const SkImage* image)
 {
-    if (!image || !image->isTextureBacked())
+    if (!image || !image->isTextureBacked() || m_threadSafeGrContext)
         return nullptr;
 
     auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
@@ -189,10 +181,10 @@ void SkiaReplayCanvas::onDrawImage2(const SkImage* image, SkScalar x, SkScalar y
         for (auto& atlas : m_atlases) {
             if (auto atlasRect = atlas->rectForImage(*image)) {
                 // Draw from atlas instead of original image.
-                const auto& atlasTexture = atlas->atlasTexture();
-                ASSERT(atlasTexture);
+                const auto& atlasImage = atlas->atlasImage();
+                ASSERT(atlasImage);
                 auto dst = SkRect::MakeXYWH(x, y, atlasRect->width(), atlasRect->height());
-                SkNWayCanvas::onDrawImageRect2(atlasTexture.get(), *atlasRect, dst, sampling, paint, SkCanvas::kStrict_SrcRectConstraint);
+                SkNWayCanvas::onDrawImageRect2(atlasImage.get(), *atlasRect, dst, sampling, paint, SkCanvas::kStrict_SrcRectConstraint);
                 return;
             }
         }
@@ -217,8 +209,8 @@ void SkiaReplayCanvas::onDrawImageRect2(const SkImage* image, const SkRect& src,
         for (auto& atlas : m_atlases) {
             if (auto atlasRect = atlas->rectForImage(*image)) {
                 // Draw from atlas instead of original image.
-                const auto& atlasTexture = atlas->atlasTexture();
-                ASSERT(atlasTexture);
+                const auto& atlasImage = atlas->atlasImage();
+                ASSERT(atlasImage);
 
                 // Map src rect from image coordinates to atlas coordinates.
                 SkScalar atlasX = atlasRect->x() + src.x();
@@ -238,11 +230,11 @@ void SkiaReplayCanvas::onDrawImageRect2(const SkImage* image, const SkRect& src,
                     SkScalar scaleY = dst.height() / src.height();
 
                     auto adjustedDst = SkRect::MakeXYWH(dst.x() + leftClip * scaleX, dst.y() + topClip * scaleY, atlasSrc.width() * scaleX, atlasSrc.height() * scaleY);
-                    SkNWayCanvas::onDrawImageRect2(atlasTexture.get(), atlasSrc, adjustedDst, sampling, paint, SkCanvas::kStrict_SrcRectConstraint);
+                    SkNWayCanvas::onDrawImageRect2(atlasImage.get(), atlasSrc, adjustedDst, sampling, paint, SkCanvas::kStrict_SrcRectConstraint);
                     return;
                 }
 
-                SkNWayCanvas::onDrawImageRect2(atlasTexture.get(), atlasSrc, dst, sampling, paint, SkCanvas::kStrict_SrcRectConstraint);
+                SkNWayCanvas::onDrawImageRect2(atlasImage.get(), atlasSrc, dst, sampling, paint, SkCanvas::kStrict_SrcRectConstraint);
                 return;
             }
         }

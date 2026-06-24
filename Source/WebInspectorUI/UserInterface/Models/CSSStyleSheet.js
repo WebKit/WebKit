@@ -25,13 +25,14 @@
 
 WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 {
-    constructor(id)
+    constructor(id, owningTarget)
     {
         super();
 
         console.assert(id);
 
         this._id = id || null;
+        this._owningTarget = owningTarget || null;
         this._parentFrame = null;
         this._origin = null;
         this._startLineNumber = 0;
@@ -55,6 +56,11 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
     get id()
     {
         return this._id;
+    }
+
+    get owningTarget()
+    {
+        return this._owningTarget;
     }
 
     get parentFrame()
@@ -173,15 +179,14 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         if (!this._id)
             return;
 
-        let target = WI.assumingMainTarget();
+        let target = this._owningTarget || WI.assumingMainTarget();
 
         function contentDidChange(error)
         {
             if (error)
                 return;
 
-            if (target.hasCommand("DOM.markUndoableState"))
-                target.DOMAgent.markUndoableState();
+            WI.domUndoCoordinator.markUndoableState(target);
 
             this.dispatchEventToListeners(WI.CSSStyleSheet.Event.ContentDidChange);
         }
@@ -203,7 +208,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
             return Promise.reject(new Error("There is no identifier to request content with."));
         }
 
-        let target = WI.assumingMainTarget();
+        let target = this._owningTarget || WI.assumingMainTarget();
         return target.CSSAgent.getStyleSheetText(this._id);
     }
 

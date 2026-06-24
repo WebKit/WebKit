@@ -23,7 +23,7 @@ endif()
 
 # VERSION is the release version of the library. It should be updated at the
 # same time as the LT_* variables.
-project(AOM LANGUAGES C CXX VERSION 3.13.1)
+project(AOM LANGUAGES C CXX VERSION 3.14.1)
 
 # GENERATED source property global visibility.
 if(POLICY CMP0118)
@@ -58,9 +58,9 @@ endif()
 # We set SO_FILE_VERSION = [c-a].a.r
 #
 # The VERSION number in project() should be updated when these variables are.
-set(LT_CURRENT 16)
+set(LT_CURRENT 17)
 set(LT_REVISION 1)
-set(LT_AGE 13)
+set(LT_AGE 14)
 math(EXPR SO_VERSION "${LT_CURRENT} - ${LT_AGE}")
 set(SO_FILE_VERSION "${SO_VERSION}.${LT_AGE}.${LT_REVISION}")
 unset(LT_CURRENT)
@@ -70,7 +70,7 @@ unset(LT_AGE)
 # Enable generators like Xcode and Visual Studio to place projects in folders.
 set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
 
-include("${AOM_ROOT}/build/cmake/aom_configure.cmake")
+include("${AOM_ROOT}/cmake/aom_configure.cmake")
 if(CONFIG_THREE_PASS)
   include("${AOM_ROOT}/common/ivf_dec.cmake")
 endif()
@@ -80,9 +80,9 @@ include("${AOM_ROOT}/aom_ports/aom_ports.cmake")
 include("${AOM_ROOT}/aom_scale/aom_scale.cmake")
 include("${AOM_ROOT}/aom_util/aom_util.cmake")
 include("${AOM_ROOT}/av1/av1.cmake")
-include("${AOM_ROOT}/build/cmake/aom_install.cmake")
-include("${AOM_ROOT}/build/cmake/sanitizers.cmake")
-include("${AOM_ROOT}/build/cmake/util.cmake")
+include("${AOM_ROOT}/cmake/aom_install.cmake")
+include("${AOM_ROOT}/cmake/sanitizers.cmake")
+include("${AOM_ROOT}/cmake/util.cmake")
 include("${AOM_ROOT}/test/test.cmake")
 
 list(APPEND AOM_RTCD_SOURCES
@@ -95,7 +95,7 @@ list(APPEND AOM_RTCD_SOURCES
             "${AOM_ROOT}/aom_scale/aom_scale_rtcd.c"
             "${AOM_ROOT}/av1/common/av1_rtcd_defs.pl"
             "${AOM_ROOT}/av1/common/av1_rtcd.c"
-            "${AOM_ROOT}/build/cmake/rtcd.pl")
+            "${AOM_ROOT}/cmake/rtcd.pl")
 
 list(APPEND AOM_LIBWEBM_SOURCES
             "${AOM_ROOT}/third_party/libwebm/common/hdr_util.cc"
@@ -230,29 +230,27 @@ add_custom_command(OUTPUT "${AOM_CONFIG_DIR}/config/aom_version.h"
                            -DAOM_ROOT=${AOM_ROOT}
                            -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
                            -DPERL_EXECUTABLE=${PERL_EXECUTABLE} -P
-                           "${AOM_ROOT}/build/cmake/version.cmake"
+                           "${AOM_ROOT}/cmake/version.cmake"
                    COMMENT "Writing aom_version.h"
                    VERBATIM)
 
 add_custom_target(aom_version_check
-                  COMMAND ${CMAKE_COMMAND}
-                          -DAOM_CONFIG_DIR=${AOM_CONFIG_DIR}
-                          -DAOM_ROOT=${AOM_ROOT}
-                          -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
-                          -DPERL_EXECUTABLE=${PERL_EXECUTABLE} -P
-                          "${AOM_ROOT}/build/cmake/version.cmake"
+                  COMMAND ${CMAKE_COMMAND} -DAOM_CONFIG_DIR=${AOM_CONFIG_DIR}
+                                           -DAOM_ROOT=${AOM_ROOT}
+                                           -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
+                                           -DPERL_EXECUTABLE=${PERL_EXECUTABLE}
+                                           -P "${AOM_ROOT}/cmake/version.cmake"
                   COMMENT "Updating version info if necessary."
                   VERBATIM)
 
 if(BUILD_SHARED_LIBS AND NOT MSVC)
   # Generate version file immediately for non-MSVC shared builds: The version
   # string is needed for the aom target.
-  execute_process(COMMAND ${CMAKE_COMMAND}
-                          -DAOM_CONFIG_DIR=${AOM_CONFIG_DIR}
-                          -DAOM_ROOT=${AOM_ROOT}
-                          -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
-                          -DPERL_EXECUTABLE=${PERL_EXECUTABLE} -P
-                          "${AOM_ROOT}/build/cmake/version.cmake")
+  execute_process(COMMAND ${CMAKE_COMMAND} -DAOM_CONFIG_DIR=${AOM_CONFIG_DIR}
+                                           -DAOM_ROOT=${AOM_ROOT}
+                                           -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
+                                           -DPERL_EXECUTABLE=${PERL_EXECUTABLE}
+                                           -P "${AOM_ROOT}/cmake/version.cmake")
 endif()
 
 add_dependencies(aom_version aom_version_check)
@@ -801,6 +799,15 @@ if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER AND CONFIG_AV1_DECODER)
   list(APPEND AOM_APP_TARGETS lightfield_bitstream_parsing)
 endif()
 
+if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER)
+  add_executable(low_complexity_mode_encoder
+                 "${AOM_ROOT}/examples/low_complexity_mode_encoder.c"
+                 $<TARGET_OBJECTS:aom_common_app_util>
+                 $<TARGET_OBJECTS:aom_encoder_app_util>)
+  list(APPEND AOM_EXAMPLE_TARGETS low_complexity_mode_encoder)
+  list(APPEND AOM_APP_TARGETS low_complexity_mode_encoder)
+endif()
+
 foreach(aom_app ${AOM_APP_TARGETS})
   target_link_libraries(${aom_app} ${AOM_LIB_LINK_TYPE} aom)
 endforeach()
@@ -919,7 +926,7 @@ if(BUILD_SHARED_LIBS)
     endif()
   endif()
 
-  include("${AOM_ROOT}/build/cmake/exports.cmake")
+  include("${AOM_ROOT}/cmake/exports.cmake")
   setup_exports_target()
 endif()
 
@@ -1006,7 +1013,7 @@ add_custom_target(dist
                           -DAOM_DIST_INCLUDES="${AOM_INSTALL_INCS}"
                           -DAOM_DIST_LIBS=$<TARGET_FILE:aom>
                           -DENABLE_DOCS=${ENABLE_DOCS} -P
-                          "${AOM_ROOT}/build/cmake/dist.cmake"
+                          "${AOM_ROOT}/cmake/dist.cmake"
                   DEPENDS ${AOM_INSTALL_BINS} ${AOM_INSTALL_LIBS}
                           ${AOM_INSTALL_INCS} ${AOM_EXAMPLE_TARGETS}
                           ${AOM_TOOL_TARGETS})

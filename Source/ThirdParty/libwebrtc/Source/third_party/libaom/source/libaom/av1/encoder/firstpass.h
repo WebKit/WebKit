@@ -397,6 +397,9 @@ typedef struct GF_GROUP {
   int skip_frame_as_ref[MAX_STATIC_GF_GROUP_LENGTH];
   // Indicates whether a switch frame is due.
   bool is_sframe_due;
+  // Indicates whether the ref frame map is overridden by the external rate
+  // control.
+  int use_ext_ref_frame_map[MAX_STATIC_GF_GROUP_LENGTH];
   /*!\endcond */
 } GF_GROUP;
 /*!\cond */

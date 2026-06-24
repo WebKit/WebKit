@@ -26,11 +26,11 @@ namespace der {
 struct GeneralizedTime;
 }
 
-// Returns true if a revocation status with |this_update| field and potentially
-// a |next_update| field, is valid at POSIX time |verify_time_epoch_seconds| and
-// not older than |max_age_seconds| seconds, if specified. Expressed
-// differently, returns true if |this_update <= verify_time < next_update|, and
-// |this_update >= verify_time - max_age|.
+// Returns true if a revocation status with `this_update` field and potentially
+// a `next_update` field, is valid at POSIX time `verify_time_epoch_seconds` and
+// not older than `max_age_seconds` seconds, if specified. Expressed
+// differently, returns true if `this_update <= verify_time < next_update`, and
+// `this_update >= verify_time - max_age`.
 [[nodiscard]] OPENSSL_EXPORT bool CheckRevocationDateValid(
     const der::GeneralizedTime &this_update,
     const der::GeneralizedTime *next_update, int64_t verify_time_epoch_seconds,

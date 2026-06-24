@@ -43,9 +43,6 @@ bool isValidElementName(const QualifiedName&);
 // https://dom.spec.whatwg.org/#valid-attribute-name
 bool NODELETE isValidAttributeName(StringView);
 
-// https://dom.spec.whatwg.org/#valid-namespace-prefix
-bool NODELETE isValidNamespacePrefix(StringView);
-
 // https://dom.spec.whatwg.org/#valid-doctype-name
 bool NODELETE isValidDoctypeName(StringView);
 

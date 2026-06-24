@@ -38,9 +38,9 @@
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/TopExceptionScope.h>
 
-using namespace JSC;
-
 namespace WebCore {
+
+using namespace JSC;
 
 auto DOMPromise::whenSettledWithResult(Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&& callback) -> IsCallbackRegistered
 {

@@ -1,0 +1,4 @@
+
+PASS insertRule places an @namespace rule after a single @import rule
+PASS insertRule places an @namespace rule after two @import rules
+

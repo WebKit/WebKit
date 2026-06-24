@@ -13,7 +13,6 @@
 #include <array>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
 #include "modules/audio_processing/test/performance_timer.h"
@@ -57,7 +56,7 @@ TEST_P(RnnFcParametrization, CheckFullyConnectedLayerOutput) {
                          /*cpu_features=*/GetParam(),
                          /*layer_name=*/"FC");
   fc.ComputeOutput(kFullyConnectedInputVector);
-  ExpectNearAbsolute(kFullyConnectedExpectedOutput, fc, 1e-5f);
+  ExpectNearAbsolute(kFullyConnectedExpectedOutput, fc.output(), 1e-5f);
 }
 
 TEST_P(RnnFcParametrization, DISABLED_BenchmarkFullyConnectedLayer) {

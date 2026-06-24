@@ -95,10 +95,6 @@ constexpr uint32_t kMaxRenderTargets = 8;
 // Metal Apple1 iOS devices only support 4 render targets
 constexpr uint32_t kMaxRenderTargetsOlderGPUFamilies = 4;
 
-constexpr uint32_t kMaxColorTargetBitsApple1To3      = 256;
-constexpr uint32_t kMaxColorTargetBitsApple4Plus     = 512;
-constexpr uint32_t kMaxColorTargetBitsMacAndCatalyst = std::numeric_limits<uint32_t>::max();
-
 constexpr uint32_t kMaxShaderUBOs = 16;
 constexpr uint32_t kMaxUBOSize    = 16384;
 
@@ -139,6 +135,7 @@ constexpr uint32_t kUniformBufferSettingOffsetMinAlignment = 4;
 constexpr uint32_t kIndexBufferOffsetAlignment       = 4;
 constexpr uint32_t kArgumentBufferOffsetAlignment    = kUniformBufferSettingOffsetMinAlignment;
 constexpr uint32_t kTextureToBufferBlittingAlignment = 256;
+constexpr size_t kConstantBufferOffsetAlignment = 32;  // Metal3 minimum constant buffer alignment.
 
 // Front end binding limits
 constexpr uint32_t kMaxGLSamplerBindings = 2 * kMaxShaderSamplers;

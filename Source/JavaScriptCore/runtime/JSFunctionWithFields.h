@@ -71,7 +71,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    static JSFunctionWithFields* create(VM&, JSGlobalObject*, NativeExecutable*, unsigned length, const String& name);
+    static JSFunctionWithFields* create(VM&, JSGlobalObject*, NativeExecutable*);
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)

@@ -92,8 +92,6 @@
     [animation setFromValue:(__bridge id)fromColor.get()];
     [animation setToValue:(__bridge id)toColor.get()];
     [animation setDuration:animationDuration];
-    [animation setFillMode:kCAFillModeForwards];
-    [animation setRemovedOnCompletion:NO];
     [animation setDelegate:self];
 
     [self.layer addAnimation:animation.get() forKey:@"WKColorExtensionViewFade"];

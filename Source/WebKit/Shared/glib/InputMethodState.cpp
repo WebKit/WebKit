@@ -58,6 +58,7 @@ void InputMethodState::setPurposeOrHintForInputMode(WebCore::InputMode inputMode
         purpose = Purpose::Number;
         break;
     case WebCore::InputMode::Search:
+        purpose = Purpose::Search;
         break;
     }
 }
@@ -82,6 +83,8 @@ void InputMethodState::setPurposeForInputElement(WebCore::HTMLInputElement& elem
         purpose = Purpose::Url;
     else if (element.isText() && inputElementHasDigitsPattern(element))
         purpose = Purpose::Digits;
+    else if (element.isSearchField())
+        purpose = Purpose::Search;
 }
 
 void InputMethodState::addHintsForAutocapitalizeType(WebCore::AutocapitalizeType autocapitalizeType)

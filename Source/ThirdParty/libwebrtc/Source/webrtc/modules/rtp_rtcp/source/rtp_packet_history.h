@@ -16,8 +16,8 @@
 #include <deque>
 #include <memory>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/function_view.h"
 #include "api/units/time_delta.h"
@@ -116,7 +116,7 @@ class RtpPacketHistory {
           encapsulate);
 
   // Cull packets that have been acknowledged as received by the remote end.
-  void CullAcknowledgedPackets(ArrayView<const uint16_t> sequence_numbers);
+  void CullAcknowledgedPackets(std::span<const uint16_t> sequence_numbers);
 
   // Remove all pending packets from the history, but keep storage mode and
   // capacity.

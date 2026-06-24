@@ -121,68 +121,68 @@ mac/DOM/DOMHTMLTitleElement.mm @nonARC
 mac/DOM/DOMHTMLUListElement.mm @nonARC
 mac/DOM/DOMHTMLVideoElement.mm @nonARC
 mac/DOM/DOMImplementation.mm @nonARC
-mac/DOM/DOMInternal.mm @nonARC
-mac/DOM/DOMKeyboardEvent.mm @nonARC
-mac/DOM/DOMMediaError.mm @nonARC
-mac/DOM/DOMMediaList.mm @nonARC
-mac/DOM/DOMMouseEvent.mm @nonARC
-mac/DOM/DOMMutationEvent.mm @nonARC
-mac/DOM/DOMNamedNodeMap.mm @nonARC
-mac/DOM/DOMNode.mm @nonARC
-mac/DOM/DOMNodeIterator.mm @nonARC
-mac/DOM/DOMNodeList.mm @nonARC
+mac/DOM/DOMInternal.mm @nonARC @cost:4
+mac/DOM/DOMKeyboardEvent.mm @nonARC @cost:3
+mac/DOM/DOMMediaError.mm @nonARC @cost:3
+mac/DOM/DOMMediaList.mm @nonARC @cost:3
+mac/DOM/DOMMouseEvent.mm @nonARC @cost:3
+mac/DOM/DOMMutationEvent.mm @nonARC @cost:3
+mac/DOM/DOMNamedNodeMap.mm @nonARC @cost:3
+mac/DOM/DOMNode.mm @nonARC @cost:4
+mac/DOM/DOMNodeIterator.mm @nonARC @cost:3
+mac/DOM/DOMNodeList.mm @nonARC @cost:3
 mac/DOM/DOMObject.mm @nonARC
-mac/DOM/DOMOverflowEvent.mm @nonARC
-mac/DOM/DOMProcessingInstruction.mm @nonARC
-mac/DOM/DOMProgressEvent.mm @nonARC
-mac/DOM/DOMRGBColor.mm @nonARC
-mac/DOM/DOMRange.mm @nonARC
-mac/DOM/DOMRect.mm @nonARC
-mac/DOM/DOMStyleSheet.mm @nonARC
-mac/DOM/DOMStyleSheetList.mm @nonARC
-mac/DOM/DOMText.mm @nonARC
-mac/DOM/DOMTextEvent.mm @nonARC
-mac/DOM/DOMTimeRanges.mm @nonARC
-mac/DOM/DOMTokenList.mm @nonARC
-mac/DOM/DOMTreeWalker.mm @nonARC
-mac/DOM/DOMUIEvent.mm @nonARC
+mac/DOM/DOMOverflowEvent.mm @nonARC @cost:3
+mac/DOM/DOMProcessingInstruction.mm @nonARC @cost:3
+mac/DOM/DOMProgressEvent.mm @nonARC @cost:3
+mac/DOM/DOMRGBColor.mm @nonARC @cost:3
+mac/DOM/DOMRange.mm @nonARC @cost:5
+mac/DOM/DOMRect.mm @nonARC @cost:3
+mac/DOM/DOMStyleSheet.mm @nonARC @cost:3
+mac/DOM/DOMStyleSheetList.mm @nonARC @cost:3
+mac/DOM/DOMText.mm @nonARC @cost:3
+mac/DOM/DOMTextEvent.mm @nonARC @cost:3
+mac/DOM/DOMTimeRanges.mm @nonARC @cost:3
+mac/DOM/DOMTokenList.mm @nonARC @cost:3
+mac/DOM/DOMTreeWalker.mm @nonARC @cost:3
+mac/DOM/DOMUIEvent.mm @nonARC @cost:3
 mac/DOM/DOMUIKitExtensions.mm @nonARC
-mac/DOM/DOMUtility.mm @nonARC
-mac/DOM/DOMWheelEvent.mm @nonARC
+mac/DOM/DOMUtility.mm @nonARC @cost:5
+mac/DOM/DOMWheelEvent.mm @nonARC @cost:3
 mac/DOM/DOMXPath.mm @nonARC
-mac/DOM/DOMXPathExpression.mm @nonARC
-mac/DOM/DOMXPathResult.mm @nonARC
+mac/DOM/DOMXPathExpression.mm @nonARC @cost:3
+mac/DOM/DOMXPathResult.mm @nonARC @cost:3
 mac/DOM/ExceptionHandlers.mm @nonARC
-mac/DOM/ObjCEventListener.mm @nonARC
+mac/DOM/ObjCEventListener.mm @nonARC @cost:3
 mac/DOM/ObjCNodeFilterCondition.mm @nonARC
-mac/DOM/WebDOMOperations.mm @nonARC
+mac/DOM/WebDOMOperations.mm @nonARC @cost:11
 
-mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm @nonARC
+mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm @nonARC @cost:4
 
-mac/Misc/WebSharingServicePickerController.mm @nonARC
+mac/Misc/WebSharingServicePickerController.mm @nonARC @cost:3
 
 mac/Plugins/WebBasePluginPackage.mm @nonARC
-mac/Plugins/WebPluginContainerCheck.mm @nonARC
-mac/Plugins/WebPluginController.mm @nonARC
+mac/Plugins/WebPluginContainerCheck.mm @nonARC @cost:5
+mac/Plugins/WebPluginController.mm @nonARC @cost:4
 mac/Plugins/WebPluginDatabase.mm @nonARC
 
-mac/History/WebBackForwardList.mm @nonARC
+mac/History/WebBackForwardList.mm @nonARC @cost:4
 mac/WebCoreSupport/TextIndicatorWindow.mm @nonARC
-mac/WebCoreSupport/WebFrameLoaderClient.mm @nonARC
+mac/WebCoreSupport/WebFrameLoaderClient.mm @nonARC @cost:7
 
-mac/WebInspector/WebInspector.mm @nonARC
+mac/WebInspector/WebInspector.mm @nonARC @cost:4
 
-mac/WebView/WebClipView.mm @nonARC
-mac/WebView/WebDataSource.mm @nonARC
-mac/WebView/WebFrame.mm @nonARC
-mac/WebView/WebFrameView.mm @nonARC
-mac/WebView/WebFullScreenController.mm @nonARC
-mac/WebView/WebHTMLView.mm @nonARC
-mac/WebView/WebImmediateActionController.mm @nonARC
+mac/WebView/WebClipView.mm @nonARC @cost:4
+mac/WebView/WebDataSource.mm @nonARC @cost:4
+mac/WebView/WebFrame.mm @nonARC @cost:14
+mac/WebView/WebFrameView.mm @nonARC @cost:5
+mac/WebView/WebFullScreenController.mm @nonARC @cost:8
+mac/WebView/WebHTMLView.mm @nonARC @cost:10
+mac/WebView/WebImmediateActionController.mm @nonARC @cost:9
 mac/WebView/WebPDFRepresentation.mm @nonARC
-mac/WebView/WebPDFView.mm @nonARC
-mac/WebView/WebScriptDebugger.mm @nonARC
-mac/WebView/WebScriptDebugDelegate.mm @nonARC
-mac/WebView/WebScriptWorld.mm @nonARC
-mac/WebView/WebView.mm @nonARC
+mac/WebView/WebPDFView.mm @nonARC @cost:5
+mac/WebView/WebScriptDebugger.mm @nonARC @cost:4
+mac/WebView/WebScriptDebugDelegate.mm @nonARC @cost:4
+mac/WebView/WebScriptWorld.mm @nonARC @cost:3
+mac/WebView/WebView.mm @nonARC @cost:16
 mac/WebView/WebViewRenderingUpdateScheduler.mm @nonARC

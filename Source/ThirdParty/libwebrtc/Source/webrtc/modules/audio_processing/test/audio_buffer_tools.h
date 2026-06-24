@@ -11,9 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_AUDIO_BUFFER_TOOLS_H_
 #define MODULES_AUDIO_PROCESSING_TEST_AUDIO_BUFFER_TOOLS_H_
 
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "modules/audio_processing/audio_buffer.h"
 
@@ -22,7 +22,7 @@ namespace test {
 
 // Copies a vector into an audiobuffer.
 void CopyVectorToAudioBuffer(const StreamConfig& stream_config,
-                             ArrayView<const float> source,
+                             std::span<const float> source,
                              AudioBuffer* destination);
 
 // Extracts a vector from an audiobuffer.

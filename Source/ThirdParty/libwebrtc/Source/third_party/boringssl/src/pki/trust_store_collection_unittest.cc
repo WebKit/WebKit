@@ -14,7 +14,14 @@
 
 #include "trust_store_collection.h"
 
+#include <algorithm>
+#include <string_view>
+#include <vector>
+
 #include <gtest/gtest.h>
+
+#include <openssl/pool.h>
+
 #include "test_helpers.h"
 #include "trust_store_in_memory.h"
 
@@ -191,6 +198,99 @@ TEST_F(TrustStoreCollectionTest, DistrustTakesPriority) {
   trust = collection.GetTrust(newrootrollover_.get());
   EXPECT_EQ(CertificateTrust::ForUnspecified().ToDebugString(),
             trust.ToDebugString());
+}
+
+class TrustStoreCollectionMtcTest : public testing::Test {
+ public:
+  void SetUp() override {
+    ParsedCertificateList chain;
+    ASSERT_TRUE(
+        ReadCertChainFromFile("testdata/verify_unittest/mtc-leaf.pem", &chain));
+
+    ASSERT_EQ(1U, chain.size());
+    mtc_leaf_ = chain[0];
+    ASSERT_TRUE(mtc_leaf_);
+
+    // Create modified versions of `mtc_leaf_` with different issuers. These
+    // don't need to be able to verify, we just need certs with different
+    // issuers to test the issuer lookup in GetTrustedMTCIssuerOf.
+    constexpr char kLogId2Str[] = "32473.2";
+    mtc_leaf2_ = ModifyLeafWithIssuerLogId(kLogId2Str);
+    ASSERT_TRUE(mtc_leaf2_);
+
+    constexpr char kLogId3Str[] = "32473.3";
+    mtc_leaf3_ = ModifyLeafWithIssuerLogId(kLogId3Str);
+    ASSERT_TRUE(mtc_leaf3_);
+  }
+
+  std::shared_ptr<const ParsedCertificate> ModifyLeafWithIssuerLogId(
+      std::string_view new_log_id) {
+    // The log_id encoded in the issuer name of mtc-leaf.pem.
+    constexpr std::string_view log_id_str = "32473.1";
+
+    if (new_log_id.size() != log_id_str.size()) {
+      ADD_FAILURE() << "invalid replacement string";
+      return nullptr;
+    }
+
+    std::vector<uint8_t> leaf_der2(mtc_leaf_->der_cert().begin(),
+                                   mtc_leaf_->der_cert().end());
+
+    // find the log_id_str in leaf_der2 and replace the bytes with
+    // new log id.
+    auto it = std::search(leaf_der2.begin(), leaf_der2.end(),
+                          log_id_str.begin(), log_id_str.end());
+    if (it == leaf_der2.end()) {
+      ADD_FAILURE() << "log id not found";
+      return nullptr;
+    }
+    std::copy(new_log_id.begin(), new_log_id.end(), it);
+
+    CertErrors errors;
+    std::shared_ptr<const ParsedCertificate> mtc_leaf2 =
+        ParsedCertificate::Create(
+            bssl::UniquePtr<CRYPTO_BUFFER>(
+                CRYPTO_BUFFER_new(leaf_der2.data(), leaf_der2.size(), nullptr)),
+            {}, &errors);
+    EXPECT_TRUE(mtc_leaf2) << errors.ToDebugString();
+    return mtc_leaf2;
+  }
+
+ protected:
+  std::shared_ptr<const ParsedCertificate> mtc_leaf_;
+  std::shared_ptr<const ParsedCertificate> mtc_leaf2_;
+  std::shared_ptr<const ParsedCertificate> mtc_leaf3_;
+};
+
+TEST_F(TrustStoreCollectionMtcTest, MtcNoStores) {
+  TrustStoreCollection collection;
+  EXPECT_EQ(nullptr, collection.GetTrustedMTCIssuerOf(mtc_leaf_.get()));
+}
+
+TEST_F(TrustStoreCollectionMtcTest, MtcTwoStores) {
+  constexpr uint8_t kLogid1[] = {0x81, 0xfd, 0x59, 0x01};
+  constexpr uint8_t kLogid2[] = {0x81, 0xfd, 0x59, 0x02};
+  constexpr uint8_t kLogid3[] = {0x81, 0xfd, 0x59, 0x03};
+
+  Span<const TrustedSubtree> trusted_subtrees;
+  std::shared_ptr<const MTCAnchor> mtc_anchor1 =
+      std::make_shared<MTCAnchor>(MakeSpan(kLogid1), trusted_subtrees);
+  std::shared_ptr<const MTCAnchor> mtc_anchor2 =
+      std::make_shared<MTCAnchor>(MakeSpan(kLogid2), trusted_subtrees);
+  std::shared_ptr<const MTCAnchor> mtc_anchor3 =
+      std::make_shared<MTCAnchor>(MakeSpan(kLogid3), trusted_subtrees);
+
+  TrustStoreCollection collection;
+  TrustStoreInMemory in_memory1;
+  TrustStoreInMemory in_memory2;
+  ASSERT_TRUE(in_memory1.AddMTCTrustAnchor(mtc_anchor1));
+  ASSERT_TRUE(in_memory2.AddMTCTrustAnchor(mtc_anchor2));
+  collection.AddTrustStore(&in_memory1);
+  collection.AddTrustStore(&in_memory2);
+
+  EXPECT_EQ(mtc_anchor1, collection.GetTrustedMTCIssuerOf(mtc_leaf_.get()));
+  EXPECT_EQ(mtc_anchor2, collection.GetTrustedMTCIssuerOf(mtc_leaf2_.get()));
+  EXPECT_EQ(nullptr, collection.GetTrustedMTCIssuerOf(mtc_leaf3_.get()));
 }
 
 }  // namespace

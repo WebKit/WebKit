@@ -491,10 +491,12 @@ enum class CompositionLayerType : uint8_t {
     Quad,
     Equirect,
     Cylinder,
+    Cube,
 };
 
 enum class LayerLayout : uint8_t {
     Mono,
+    Stereo,
     StereoLeftRight,
     StereoTopBottom,
 };
@@ -534,6 +536,11 @@ struct DeviceLayer {
         FrameData::Pose poseInLocalSpace;
     };
     std::optional<CylinderLayerData> cylinderLayerData;
+    struct CubeLayerData {
+        // Cube layers are mono and positioned solely by their orientation relative to the layer's space.
+        FrameData::FloatQuaternion orientation;
+    };
+    std::optional<CubeLayerData> cubeLayerData;
 #endif
 };
 
@@ -633,6 +640,7 @@ public:
     virtual void sessionDidInitializeInputSources(Vector<FrameData::InputSource>&&) = 0;
     virtual void sessionDidEnd() = 0;
     virtual void updateSessionVisibilityState(VisibilityState) = 0;
+    virtual void sessionDidInitializeRendering(uint32_t /* width */, uint32_t /* height */, uint32_t /* arrayLength */) { }
     // FIXME: handle frame update
 };
 

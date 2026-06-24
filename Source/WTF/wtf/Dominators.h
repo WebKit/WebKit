@@ -26,11 +26,11 @@
 #pragma once
 
 #include <ranges>
-#include <wtf/BitSet.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/DataLog.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/GraphNodeWorklist.h>
+#include <wtf/GraphOrdering.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -343,39 +343,17 @@ private:
 
         void computeReversePostorder()
         {
-            BitSet<std::numeric_limits<int16_t>::max()> visited;
-            visited.clearAll();
+            // Any valid DFS reverse-post-order works for the iterative dominance fixpoint: a node's
+            // dominator always precedes it. We reuse the shared graph-ordering utility rather than
+            // hand-rolling the traversal.
+            BitVector visited(m_graph.numNodes());
+            appendNodeIndicesInOrder(m_graph, GraphOrder::PostOrder, visited, m_reversePostorderedNodes);
 
-            Vector<int16_t, 64> workList;
-            int16_t rootIndex = m_graph.index(m_graph.root());
-            workList.append(rootIndex);
-            visited.set(rootIndex);
-
-            while (workList.size()) {
-                int16_t index = workList.takeLast();
-                if (index < 0) {
-                    // Negative indices mark nodes we're revisiting.
-                    m_reversePostorderedNodes.append(~index);
-                    continue;
-                }
-                const auto& successors = m_graph.successors(m_graph.node(index));
-                if (!successors.size()) {
-                    m_reversePostorderedNodes.append(index);
-                    continue;
-                }
-                workList.append(~index); // Revisit this index later to add it after visiting all successors.
-                for (unsigned i = 0; i < successors.size(); i ++) {
-                    int16_t index = m_graph.index(successors[i]);
-                    if (!visited.get(index)) {
-                        visited.set(index);
-                        workList.append(index);
-                    }
-                }
-            }
+            // postorder number = position in post-order = mirror of the position in reverse-post-order.
             m_postorderNumbers.fill(0, m_graph.numNodes());
             for (unsigned i = 0; i < m_reversePostorderedNodes.size(); i ++)
                 m_postorderNumbers[m_reversePostorderedNodes[i]] = i;
-            std::ranges::reverse(m_reversePostorderedNodes);
+            m_reversePostorderedNodes.reverse();
         }
 
         uint16_t intersect(uint16_t a, uint16_t b)

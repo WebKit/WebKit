@@ -44,9 +44,9 @@ BSSL_NAMESPACE_BEGIN
 // any truncation (e.g. 64 for SHA-224 and SHA-256, 128 for SHA-384 and
 // SHA-512).
 //
-// |h| is the hash state and is updated by a function of type
-// |crypto_md32_block_func|. |data| is the partial unprocessed block and has
-// |num| bytes. |Nl| and |Nh| maintain the number of bits processed so far.
+// `h` is the hash state and is updated by a function of type
+// `crypto_md32_block_func`. `data` is the partial unprocessed block and has
+// `num` bytes. `Nl` and `Nh` maintain the number of bits processed so far.
 //
 // The template parameter is then a traits struct defined as follows:
 //
@@ -61,8 +61,8 @@ BSSL_NAMESPACE_BEGIN
 //       // big or little endian.
 //       static constexpr bool kLengthIsBigEndian = ...;
 //
-//       // HashBlocks incorporates |num_blocks| blocks of input from |data|
-//       // into |state|. It is assumed the caller has sized |state| and |data|
+//       // HashBlocks incorporates `num_blocks` blocks of input from `data`
+//       // into `state`. It is assumed the caller has sized `state` and `data`
 //       // for the hash function.
 //       static void HashBlocks(uint32_t *state, const uint8_t *data,
 //                              size_t num_blocks) {
@@ -73,7 +73,7 @@ BSSL_NAMESPACE_BEGIN
 // The reason for this formulation is to encourage the compiler to specialize
 // all the code for the block size and block function.
 
-// crypto_md32_update hashes |in| to |ctx|.
+// crypto_md32_update hashes `in` to `ctx`.
 template <typename Traits>
 inline void crypto_md32_update(typename Traits::HashContext *ctx,
                                Span<const uint8_t> in) {
@@ -98,7 +98,7 @@ inline void crypto_md32_update(typename Traits::HashContext *ctx,
       Traits::HashBlocks(ctx->h, ctx->data, 1);
       in = in.subspan(Traits::kBlockSize - n);
       ctx->num = 0;
-      // Keep |data| zeroed when unused.
+      // Keep `data` zeroed when unused.
       OPENSSL_memset(ctx->data, 0, Traits::kBlockSize);
     } else {
       OPENSSL_memcpy(ctx->data + n, in.data(), in.size());
@@ -120,19 +120,19 @@ inline void crypto_md32_update(typename Traits::HashContext *ctx,
 }
 
 // crypto_md32_final incorporates the partial block and trailing length into the
-// digest state in |ctx|. The trailing length is encoded in little-endian if
-// |is_big_endian| is zero and big-endian otherwise. |data| must be a buffer of
-// length |block_size| with the first |*num| bytes containing a partial block.
-// |Nh| and |Nl| contain the total number of bits processed. On return, this
-// function clears the partial block in |data| and
-// |*num|.
+// digest state in `ctx`. The trailing length is encoded in little-endian if
+// `is_big_endian` is zero and big-endian otherwise. `data` must be a buffer of
+// length `block_size` with the first `*num` bytes containing a partial block.
+// `Nh` and `Nl` contain the total number of bits processed. On return, this
+// function clears the partial block in `data` and
+// `*num`.
 //
-// This function does not serialize |h| into a final digest. This is the
+// This function does not serialize `h` into a final digest. This is the
 // responsibility of the caller.
 template <typename Traits>
 inline void crypto_md32_final(typename Traits::HashContext *ctx) {
   static_assert(Traits::kBlockSize == sizeof(ctx->data), "block size is wrong");
-  // |data| always has room for at least one byte. A full block would have
+  // `data` always has room for at least one byte. A full block would have
   // been consumed.
   size_t n = ctx->num;
   assert(n < Traits::kBlockSize);

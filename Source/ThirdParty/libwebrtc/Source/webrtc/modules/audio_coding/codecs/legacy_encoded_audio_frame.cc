@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
@@ -37,7 +37,7 @@ size_t LegacyEncodedAudioFrame::Duration() const {
 }
 
 std::optional<AudioDecoder::EncodedAudioFrame::DecodeResult>
-LegacyEncodedAudioFrame::Decode(ArrayView<int16_t> decoded) const {
+LegacyEncodedAudioFrame::Decode(std::span<int16_t> decoded) const {
   AudioDecoder::SpeechType speech_type = AudioDecoder::kSpeech;
   const int ret = decoder_->Decode(
       payload_.data(), payload_.size(), decoder_->SampleRateHz(),

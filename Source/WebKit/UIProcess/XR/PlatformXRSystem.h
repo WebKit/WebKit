@@ -118,6 +118,7 @@ private:
     // PlatformXRCoordinatorSessionEventClient
     void sessionDidEnd(XRDeviceIdentifier) final;
     void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState) final;
+    void sessionDidInitializeRendering(XRDeviceIdentifier, uint32_t width, uint32_t height, uint32_t arrayLength) final;
 
     std::optional<PlatformXR::SessionMode> m_immersiveSessionMode;
     std::optional<WebCore::SecurityOriginData> m_immersiveSessionSecurityOriginData;

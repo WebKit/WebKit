@@ -29,7 +29,7 @@
 #include "NodeDocument.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

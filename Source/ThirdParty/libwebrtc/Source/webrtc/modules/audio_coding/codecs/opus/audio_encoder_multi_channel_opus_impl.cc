@@ -25,12 +25,12 @@
 #include <iterator>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/match.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_encoder_multi_channel_opus_config.h"
@@ -339,12 +339,12 @@ int AudioEncoderMultiChannelOpusImpl::GetTargetBitrate() const {
 
 AudioEncoder::EncodedInfo AudioEncoderMultiChannelOpusImpl::EncodeImpl(
     uint32_t rtp_timestamp,
-    ArrayView<const int16_t> audio,
+    std::span<const int16_t> audio,
     Buffer* encoded) {
   if (input_buffer_.empty())
     first_timestamp_in_buffer_ = rtp_timestamp;
 
-  input_buffer_.insert(input_buffer_.end(), audio.cbegin(), audio.cend());
+  input_buffer_.insert(input_buffer_.end(), audio.begin(), audio.end());
   if (input_buffer_.size() <
       (Num10msFramesPerPacket() * SamplesPer10msFrame())) {
     return EncodedInfo();
@@ -355,7 +355,7 @@ AudioEncoder::EncodedInfo AudioEncoderMultiChannelOpusImpl::EncodeImpl(
   const size_t max_encoded_bytes = SufficientOutputBufferSize();
   EncodedInfo info;
   info.encoded_bytes =
-      encoded->AppendData(max_encoded_bytes, [&](ArrayView<uint8_t> encoded) {
+      encoded->AppendData(max_encoded_bytes, [&](std::span<uint8_t> encoded) {
         int status = WebRtcOpus_Encode(
             inst_, &input_buffer_[0],
             CheckedDivExact(input_buffer_.size(), config_.num_channels),

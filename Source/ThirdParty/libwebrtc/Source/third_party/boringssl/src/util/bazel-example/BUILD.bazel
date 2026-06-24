@@ -12,8 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
 cc_binary(
     name = "example",
     srcs = ["example.cc"],
     deps = ["@boringssl//:crypto"],
+)
+
+cc_binary(
+    name = "example_ssl",
+    srcs = ["example_ssl.cc"],
+    deps = ["@boringssl//:ssl"],
 )

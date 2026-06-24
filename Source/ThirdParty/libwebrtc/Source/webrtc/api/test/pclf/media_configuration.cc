@@ -16,12 +16,12 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/test/video/video_frame_writer.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
@@ -229,7 +229,7 @@ VideoCodecConfig::VideoCodecConfig(
     : name(name), required_params(std::move(required_params)) {}
 
 std::optional<VideoResolution> VideoSubscription::GetMaxResolution(
-    ArrayView<const VideoConfig> video_configs) {
+    std::span<const VideoConfig> video_configs) {
   std::vector<VideoResolution> resolutions;
   for (const auto& video_config : video_configs) {
     resolutions.push_back(video_config.GetResolution());
@@ -238,7 +238,7 @@ std::optional<VideoResolution> VideoSubscription::GetMaxResolution(
 }
 
 std::optional<VideoResolution> VideoSubscription::GetMaxResolution(
-    ArrayView<const VideoResolution> resolutions) {
+    std::span<const VideoResolution> resolutions) {
   if (resolutions.empty()) {
     return std::nullopt;
   }

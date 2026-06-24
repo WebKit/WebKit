@@ -12,10 +12,10 @@
 #define API_TEST_MOCK_RTP_TRANSCEIVER_H_
 
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/make_ref_counted.h"
 #include "api/media_types.h"
 #include "api/rtc_error.h"
@@ -68,7 +68,7 @@ class MockRtpTransceiver : public RtpTransceiverInterface {
   MOCK_METHOD(void, Stop, (), (override));
   MOCK_METHOD(RTCError,
               SetCodecPreferences,
-              (ArrayView<RtpCodecCapability> codecs),
+              (std::span<RtpCodecCapability> codecs),
               (override));
   MOCK_METHOD(std::vector<RtpCodecCapability>,
               codec_preferences,
@@ -84,8 +84,9 @@ class MockRtpTransceiver : public RtpTransceiverInterface {
               (const, override));
   MOCK_METHOD(RTCError,
               SetHeaderExtensionsToNegotiate,
-              (ArrayView<const RtpHeaderExtensionCapability> header_extensions),
+              (std::span<const RtpHeaderExtensionCapability> header_extensions),
               (override));
+  MOCK_METHOD(std::optional<bool>, SframeEnabled, (), (const, override));
 };
 
 }  // namespace webrtc

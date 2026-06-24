@@ -57,6 +57,7 @@ public:
     bool requestToClose(RequireHistoryActionActivation);
     void close();
     void destroy();
+    void setEnabled(bool enabled) { m_enabled = enabled; }
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
@@ -76,12 +77,13 @@ private:
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
 
-    bool canBeClosed() const;
+    bool enabled() const { return m_enabled; }
 
     bool m_active { true };
     bool m_isRunningCancelAction { false };
     bool m_hasCancelEventListener { false };
     bool m_hasCloseEventListener { false };
+    bool m_enabled { true };
     RefPtr<AbortSignal> m_signal;
     uint32_t m_signalAlgorithm { };
 };

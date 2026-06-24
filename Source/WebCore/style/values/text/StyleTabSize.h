@@ -24,8 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
-#include <WebCore/StyleValueTypes.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 

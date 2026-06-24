@@ -13,84 +13,57 @@ layer at (0,0) size 800x328
             RenderSVGRoot {svg} at (0,0) size 40x40
           layer at (0,0) size 40x40
             RenderSVGViewportContainer at (0,0) size 40x40
-          layer at (22,0) size 6x15
-            RenderSVGHiddenContainer {symbol} at (22,0) size 6x15
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (0,0) size 6x15 [fill={[type=SOLID] [color=#000000]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {g} at (22,0) size 6x15
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+              RenderSVGHiddenContainer {symbol} at (22,0) size 6x15
+                RenderSVGPath {polygon} at (0,0) size 6x15 [fill={[type=SOLID] [color=#000000]}] [points="22 0 28 0 23 15 23 15"]
+              RenderSVGTransformableContainer {g} at (0,0) size 50x50
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
       RenderBlock {p} at (50,60) size 750x34
         RenderText {#text} at (0,16) size 135x18
           text run at (0,16) width 135: "SVG in an IMG tag: "
@@ -108,84 +81,57 @@ layer at (0,0) size 800x328
             RenderSVGRoot {svg} at (0,0) size 40x40
           layer at (0,0) size 40x40
             RenderSVGViewportContainer at (0,0) size 40x40
-          layer at (22,0) size 6x15
-            RenderSVGHiddenContainer {symbol} at (22,0) size 6x15
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (0,0) size 6x15 [fill={[type=SOLID] [color=#000000]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {g} at (22,0) size 6x15
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+              RenderSVGHiddenContainer {symbol} at (22,0) size 6x15
+                RenderSVGPath {polygon} at (0,0) size 6x15 [fill={[type=SOLID] [color=#000000]}] [points="22 0 28 0 23 15 23 15"]
+              RenderSVGTransformableContainer {g} at (0,0) size 50x50
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 23 15 23 15"]
-          layer at (22,0) size 6x15
-            RenderSVGTransformableContainer {use} at (0,0) size 6x15
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 23 15 23 15"]
           layer at (0,0) size 50x50 backgroundClip at (0,0) size 40x40 clip at (0,0) size 40x40
-            RenderSVGViewportContainer {svg} at (-22,0) size 50x50
-          layer at (22,0) size 6x15
-            RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
+            RenderSVGTransformableContainer {use} at (0,0) size 50x50
+              RenderSVGViewportContainer {svg} at (0,0) size 50x50
+                RenderSVGPath {polygon} at (22,0) size 6x15 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
       RenderBlock {p} at (50,262) size 750x34
         RenderText {#text} at (0,16) size 42x18
           text run at (0,16) width 42: "Inline "
@@ -196,29 +142,16 @@ layer at (91,278) size 30x30
   RenderSVGRoot {svg:svg} at (41.31,0) size 30x30
 layer at (91.31,278) size 30x30
   RenderSVGViewportContainer at (0,0) size 30x30
-layer at (113.31,278) size 6x12
-  RenderSVGTransformableContainer {svg:g} at (22,0) size 6x12
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.04]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113.31,278) size 6x12
-  RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 27 12 23 12"]
+    RenderSVGTransformableContainer {svg:g} at (22,0) size 6x12
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.04]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 27 12 23 12"]
+      RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 27 12 23 12"]

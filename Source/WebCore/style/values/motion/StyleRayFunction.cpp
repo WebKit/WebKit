@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Style {
 
-void Serialize<Ray>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const Ray& value)
+void Serialize<Ray>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const Ray& value)
 {
     // ray() = ray( <angle> && <ray-size>? && contain? && [at <position>]? )
     // https://drafts.fxtf.org/motion-1/#ray-function

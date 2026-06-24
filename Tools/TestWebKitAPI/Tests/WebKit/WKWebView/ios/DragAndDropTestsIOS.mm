@@ -1453,6 +1453,37 @@ TEST(DragAndDropTests, WebProcessTerminationDuringDrag)
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(300, 50)];
 }
 
+TEST(DragAndDropTests, PerformDropAfterWebProcessTermination)
+{
+    // Regression test: -[WKContentView dropInteraction:performDrop:] schedules a
+    // doAfterLoadingProvidedContentIntoFileURLs: callback whose body calls
+    // WebPageProxy::createSandboxExtensionsIfNeeded, which dereferences the
+    // legacyMainFrameProcess connection. If the WebProcess is gone by the time
+    // the callback fires, this used to RELEASE_ASSERT in
+    // AuxiliaryProcessProxy::connection().
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    RetainPtr itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
+    [itemProvider registerDataRepresentationForTypeIdentifier:UTTypeJPEG.identifier withData:imageData];
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+
+    // Tear down the WebProcess connection synchronously, just before
+    // -[WKContentView dropInteraction:performDrop:] schedules its file-loading
+    // callback. The callback then fires asynchronously after the connection is
+    // gone, exercising the early-return path in dropInteraction:performDrop:.
+    [simulator setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id<UIDropSession> session) {
+        [webView _killWebContentProcessAndResetState];
+        return session.items;
+    }];
+
+    [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+}
+
 TEST(DragAndDropTests, WebViewRemovedFromViewHierarchyDuringDrag)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -2217,7 +2248,7 @@ TEST(DragAndDropTests, CanStartDragOnModel)
     EXPECT_WK_STREQ("com.pixar.universal-scene-description-mobile", [registeredTypes firstObject]);
 }
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) && USE(APPLE_INTERNAL_SDK)
 TEST(DragAndDropTests, CheckModelDragPreview)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

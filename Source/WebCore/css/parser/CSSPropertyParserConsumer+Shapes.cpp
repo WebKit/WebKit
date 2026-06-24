@@ -63,6 +63,18 @@ template<CSSValueID Name, typename T> std::optional<CSS::BasicShape> toBasicShap
     return toBasicShape<Name>(WTF::move(*parameters));
 }
 
+template<CSSValueID Name, typename T> CSS::BasicShapeRect toBasicShapeRect(T&& parameters)
+{
+    return CSS::BasicShapeRect { FunctionNotation<Name, T> { WTF::move(parameters) } };
+}
+
+template<CSSValueID Name, typename T> std::optional<CSS::BasicShapeRect> toBasicShapeRect(std::optional<T>&& parameters)
+{
+    if (!parameters)
+        return { };
+    return toBasicShapeRect<Name>(WTF::move(*parameters));
+}
+
 static std::optional<CSS::FillRule> peekFillRule(CSSParserTokenRange& range)
 {
     // <'fill-rule'> = nonzero | evenodd
@@ -1005,6 +1017,37 @@ RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, CSS::PropertyPars
 
     range = rangeCopy;
     return CSSBasicShapeValue::create(WTF::move(*result));
+}
+
+// MARK: - <basic-shape-rect>
+
+RefPtr<CSSValue> consumeBasicShapeRect(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <basic-shape-rect> = <inset()> | <rect()> | <xywh()>
+    // https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape-rect
+
+    if (range.peek().type() != FunctionToken)
+        return { };
+
+    auto rangeCopy = range;
+    auto id = rangeCopy.peek().functionId();
+    auto args = consumeFunction(rangeCopy);
+
+    std::optional<CSS::BasicShapeRect> result;
+    if (id == CSSValueInset)
+        result = toBasicShapeRect<CSSValueInset>(consumeBasicShapeInsetFunctionParameters(args, state));
+    else if (id == CSSValueRect)
+        result = toBasicShapeRect<CSSValueRect>(consumeBasicShapeRectFunctionParameters(args, state));
+    else if (id == CSSValueXywh)
+        result = toBasicShapeRect<CSSValueXywh>(consumeBasicShapeXywhFunctionParameters(args, state));
+
+    if (!result || !args.atEnd())
+        return { };
+
+    range = rangeCopy;
+    return CSSBasicShapeValue::create(WTF::switchOn(WTF::move(*result), [](auto&& shape) -> CSS::BasicShape {
+        return { WTF::move(shape) };
+    }));
 }
 
 RefPtr<CSSValue> consumePath(CSSParserTokenRange& range, CSS::PropertyParserState& state)

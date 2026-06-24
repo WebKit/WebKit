@@ -106,6 +106,8 @@ RetainPtr<CGColorSpaceRef> CoreIPCCGColorSpace::toCF() const
         return adoptCF(CGColorSpaceCreateWithPropertyList(propertyList.get()));
     },
     [](const IndexedColorSpace& colorSpace) -> RetainPtr<CGColorSpaceRef> {
+        if (!colorSpace.colorSpace)
+            return nullptr;
         RetainPtr innerColorSpace = colorSpace.colorSpace->toCF();
         RetainPtr innerPropertyList = adoptCF(CGColorSpaceCopyPropertyList(innerColorSpace.get()));
         RetainPtr lastIndex = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt8Type, &colorSpace.index));

@@ -1,3 +1,1 @@
-non-existant-1 has MIME type text/html
-non-existant-2 has MIME type text/html
 ");

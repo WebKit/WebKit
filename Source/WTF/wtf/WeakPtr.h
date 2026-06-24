@@ -70,6 +70,8 @@ template<typename T, typename WeakPtrImpl, typename PtrTraits> class WeakPtr {
 public:
     WeakPtr() { }
     WeakPtr(std::nullptr_t) { }
+    WeakPtr(const WeakPtr&) = default;
+    WeakPtr(WeakPtr&&) = default;
     template<typename U> WeakPtr(const WeakPtr<U, WeakPtrImpl, PtrTraits>&);
     template<typename U> WeakPtr(WeakPtr<U, WeakPtrImpl, PtrTraits>&&);
 
@@ -152,11 +154,13 @@ public:
     bool operator!() const { return !m_impl || !*m_impl; }
     explicit operator bool() const { return m_impl && *m_impl; }
 
-    WeakPtr& operator=(std::nullptr_t) { m_impl = nullptr; return *this; }
-    template<typename U> WeakPtr& operator=(const WeakPtr<U, WeakPtrImpl, PtrTraits>&);
-    template<typename U> WeakPtr& operator=(WeakPtr<U, WeakPtrImpl, PtrTraits>&&);
-    template<typename U> WeakPtr& operator=(const WeakRef<U, WeakPtrImpl>&);
-    template<typename U> WeakPtr& operator=(WeakRef<U, WeakPtrImpl>&&);
+    SUPPRESS_NODELETE WeakPtr& NODELETE operator=(const WeakPtr&) = default;
+    SUPPRESS_NODELETE WeakPtr& NODELETE operator=(WeakPtr&&) = default;
+    SUPPRESS_NODELETE WeakPtr& NODELETE operator=(std::nullptr_t) { m_impl = nullptr; return *this; }
+    template<typename U> WeakPtr& NODELETE operator=(const WeakPtr<U, WeakPtrImpl, PtrTraits>&);
+    template<typename U> WeakPtr& NODELETE operator=(WeakPtr<U, WeakPtrImpl, PtrTraits>&&);
+    template<typename U> WeakPtr& NODELETE operator=(const WeakRef<U, WeakPtrImpl>&);
+    template<typename U> WeakPtr& NODELETE operator=(WeakRef<U, WeakPtrImpl>&&);
 
     T* operator->() const
     {
@@ -280,7 +284,7 @@ template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename
 {
 }
 
-template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename U> inline WeakPtr<T, WeakPtrImpl, PtrTraits>& WeakPtr<T, WeakPtrImpl, PtrTraits>::operator=(const WeakPtr<U, WeakPtrImpl, PtrTraits>& o)
+template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename U> SUPPRESS_NODELETE inline WeakPtr<T, WeakPtrImpl, PtrTraits>& WeakPtr<T, WeakPtrImpl, PtrTraits>::operator=(const WeakPtr<U, WeakPtrImpl, PtrTraits>& o)
 {
     m_impl = weak_ptr_impl_cast<T, U>(o.m_impl.get());
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
@@ -289,7 +293,7 @@ template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename
     return *this;
 }
 
-template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename U> inline WeakPtr<T, WeakPtrImpl, PtrTraits>& WeakPtr<T, WeakPtrImpl, PtrTraits>::operator=(WeakPtr<U, WeakPtrImpl, PtrTraits>&& o)
+template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename U> SUPPRESS_NODELETE inline WeakPtr<T, WeakPtrImpl, PtrTraits>& WeakPtr<T, WeakPtrImpl, PtrTraits>::operator=(WeakPtr<U, WeakPtrImpl, PtrTraits>&& o)
 {
     m_impl = adoptRef(weak_ptr_impl_cast<T, U>(o.m_impl.leakRef()));
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
@@ -298,7 +302,7 @@ template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename
     return *this;
 }
 
-template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename U> inline WeakPtr<T, WeakPtrImpl, PtrTraits>& WeakPtr<T, WeakPtrImpl, PtrTraits>::operator=(const WeakRef<U, WeakPtrImpl>& o)
+template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename U> SUPPRESS_NODELETE inline WeakPtr<T, WeakPtrImpl, PtrTraits>& WeakPtr<T, WeakPtrImpl, PtrTraits>::operator=(const WeakRef<U, WeakPtrImpl>& o)
 {
     m_impl = &weak_ptr_impl_cast<T, U>(o.impl());
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
@@ -307,7 +311,7 @@ template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename
     return *this;
 }
 
-template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename U> inline WeakPtr<T, WeakPtrImpl, PtrTraits>& WeakPtr<T, WeakPtrImpl, PtrTraits>::operator=(WeakRef<U, WeakPtrImpl>&& o)
+template<typename T, typename WeakPtrImpl, typename PtrTraits> template<typename U> SUPPRESS_NODELETE inline WeakPtr<T, WeakPtrImpl, PtrTraits>& WeakPtr<T, WeakPtrImpl, PtrTraits>::operator=(WeakRef<U, WeakPtrImpl>&& o)
 {
     m_impl = weak_ptr_impl_cast<T, U>(o.releaseImpl());
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED

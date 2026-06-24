@@ -35,11 +35,7 @@ rtc_library("frame_delay_variation_kalman_filter") {
     "frame_delay_variation_kalman_filter.cc",
     "frame_delay_variation_kalman_filter.h",
   ]
-  deps = [
-    "../../../api/units:data_size",
-    "../../../api/units:time_delta",
-    "../../../rtc_base:checks",
-  ]
+  deps = [ "../../../rtc_base:checks" ]
   visibility = [
     ":jitter_estimator",
     ":timing_unittests",
@@ -63,7 +59,6 @@ rtc_library("jitter_estimator") {
     "../../../rtc_base:logging",
     "../../../rtc_base:rolling_accumulator",
     "../../../rtc_base:rtc_numerics",
-    "../../../rtc_base:safe_conversions",
     "../../../rtc_base/experiments:field_trial_parser",
     "../../../system_wrappers",
     "//third_party/abseil-cpp/absl/strings:string_view",
@@ -92,7 +87,6 @@ rtc_library("timestamp_extrapolator") {
     "../../../api:field_trials_view",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
-    "../../../modules:module_api_public",
     "../../../rtc_base:logging",
     "../../../rtc_base:rtc_numerics",
     "../../../rtc_base/experiments:field_trial_parser",
@@ -117,8 +111,6 @@ rtc_library("timing_module") {
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../rtc_base:macromagic",
-    "../../../rtc_base:rtc_numerics",
-    "../../../rtc_base/experiments:field_trial_parser",
     "../../../rtc_base/synchronization:mutex",
     "../../../system_wrappers",
   ]
@@ -127,6 +119,7 @@ rtc_library("timing_module") {
 rtc_library("timing_unittests") {
   testonly = true
   sources = [
+    "decode_time_percentile_filter_unittest.cc",
     "frame_delay_variation_kalman_filter_unittest.cc",
     "inter_frame_delay_variation_calculator_unittest.cc",
     "jitter_estimator_unittest.cc",
@@ -135,20 +128,19 @@ rtc_library("timing_unittests") {
     "timing_unittest.cc",
   ]
   deps = [
+    ":decode_time_percentile_filter",
     ":frame_delay_variation_kalman_filter",
     ":inter_frame_delay_variation_calculator",
     ":jitter_estimator",
     ":rtt_filter",
     ":timestamp_extrapolator",
     ":timing_module",
-    "../../../api:array_view",
     "../../../api:field_trials",
     "../../../api/units:data_size",
     "../../../api/units:frequency",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../rtc_base:histogram_percentile_counter",
-    "../../../rtc_base:timeutils",
     "../../../system_wrappers",
     "../../../system_wrappers:metrics",
     "../../../test:create_test_field_trials",

@@ -12,19 +12,27 @@
 #define MODULES_RTP_RTCP_SOURCE_RTP_UTIL_H_
 
 #include <cstdint>
-
-#include "api/array_view.h"
+#include <optional>
+#include <span>
 
 namespace webrtc {
 
-bool IsRtcpPacket(ArrayView<const uint8_t> packet);
-bool IsRtpPacket(ArrayView<const uint8_t> packet);
+bool IsRtcpPacket(std::span<const uint8_t> packet);
+bool IsRtpPacket(std::span<const uint8_t> packet);
 
 // Returns base rtp header fields of the rtp packet.
 // Behaviour is undefined when `!IsRtpPacket(rtp_packet)`.
-int ParseRtpPayloadType(ArrayView<const uint8_t> rtp_packet);
-uint16_t ParseRtpSequenceNumber(ArrayView<const uint8_t> rtp_packet);
-uint32_t ParseRtpSsrc(ArrayView<const uint8_t> rtp_packet);
+int ParseRtpPayloadType(std::span<const uint8_t> rtp_packet);
+uint16_t ParseRtpSequenceNumber(std::span<const uint8_t> rtp_packet);
+uint32_t ParseRtpSsrc(std::span<const uint8_t> rtp_packet);
+
+// Parses the RTP header extension "defined by profile" field from
+// https://datatracker.ietf.org/doc/html/rfc3550#section-5.3.1
+// Used to indicate the format of RTP header extension. In WebRTC
+// that means RFC 5285, RFC 8285 and RFC 9335.
+// Returns std::nullopt if the packet does not have an extension.
+std::optional<uint16_t> ParseRtpExtensionProfile(
+    std::span<const uint8_t> rtp_packet);
 
 }  // namespace webrtc
 

@@ -390,10 +390,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
                 let logEditor = consoleSettingsView.addGroupWithCustomSetting(label, WI.SettingEditor.Type.Select, {values: logLevels});
                 logEditor.value = channel.level;
                 logEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, function(event) {
-                    for (let target of WI.targets) {
-                        if (target.hasDomain("Console"))
-                            target.ConsoleAgent.setLoggingChannelLevel(channel.source, this.value);
-                    }
+                    channel.level = this.value;
                 }, logEditor);
             }
         }

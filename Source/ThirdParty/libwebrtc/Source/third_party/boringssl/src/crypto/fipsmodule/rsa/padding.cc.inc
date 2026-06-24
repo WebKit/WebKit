@@ -29,8 +29,10 @@
 #include "internal.h"
 
 
-int RSA_padding_add_PKCS1_type_1(uint8_t *to, size_t to_len,
-                                 const uint8_t *from, size_t from_len) {
+using namespace bssl;
+
+int bssl::RSA_padding_add_PKCS1_type_1(uint8_t *to, size_t to_len,
+                                       const uint8_t *from, size_t from_len) {
   // See RFC 8017, section 9.2.
   if (to_len < RSA_PKCS1_PADDING_SIZE) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_KEY_SIZE_TOO_SMALL);
@@ -50,9 +52,9 @@ int RSA_padding_add_PKCS1_type_1(uint8_t *to, size_t to_len,
   return 1;
 }
 
-int RSA_padding_check_PKCS1_type_1(uint8_t *out, size_t *out_len,
-                                   size_t max_out, const uint8_t *from,
-                                   size_t from_len) {
+int bssl::RSA_padding_check_PKCS1_type_1(uint8_t *out, size_t *out_len,
+                                         size_t max_out, const uint8_t *from,
+                                         size_t from_len) {
   // See RFC 8017, section 9.2. This is part of signature verification and thus
   // does not need to run in constant-time.
   if (from_len < 2) {
@@ -102,8 +104,8 @@ int RSA_padding_check_PKCS1_type_1(uint8_t *out, size_t *out_len,
   return 1;
 }
 
-int RSA_padding_add_none(uint8_t *to, size_t to_len, const uint8_t *from,
-                         size_t from_len) {
+int bssl::RSA_padding_add_none(uint8_t *to, size_t to_len, const uint8_t *from,
+                               size_t from_len) {
   if (from_len > to_len) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE_FOR_KEY_SIZE);
     return 0;
@@ -118,10 +120,10 @@ int RSA_padding_add_none(uint8_t *to, size_t to_len, const uint8_t *from,
   return 1;
 }
 
-int PKCS1_MGF1(uint8_t *out, size_t len, const uint8_t *seed, size_t seed_len,
-               const EVP_MD *md) {
+int bssl::PKCS1_MGF1(uint8_t *out, size_t len, const uint8_t *seed,
+                     size_t seed_len, const EVP_MD *md) {
   int ret = 0;
-  bssl::ScopedEVP_MD_CTX ctx;
+  ScopedEVP_MD_CTX ctx;
   FIPS_service_indicator_lock_state();
 
   size_t md_len = EVP_MD_size(md);
@@ -173,7 +175,7 @@ int RSA_verify_PKCS1_PSS_mgf1(const RSA *rsa, const uint8_t *mHash,
   int ret = 0;
   uint8_t *DB = nullptr;
   const uint8_t *H;
-  bssl::ScopedEVP_MD_CTX ctx;
+  ScopedEVP_MD_CTX ctx;
   unsigned MSBits;
   size_t emLen, maskedDBLen, salt_start;
   FIPS_service_indicator_lock_state();
@@ -190,7 +192,7 @@ int RSA_verify_PKCS1_PSS_mgf1(const RSA *rsa, const uint8_t *mHash,
     goto err;
   }
 
-  MSBits = (BN_num_bits(rsa->n) - 1) & 0x7;
+  MSBits = (RSA_bits(rsa) - 1) & 0x7;
   emLen = RSA_size(rsa);
   if (EM[0] & (0xFF << MSBits)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_FIRST_OCTET_INVALID);
@@ -267,7 +269,7 @@ int RSA_padding_add_PKCS1_PSS_mgf1(const RSA *rsa, unsigned char *EM,
                                    const EVP_MD *Hash, const EVP_MD *mgf1Hash,
                                    int sLenRequested) {
   int ret = 0;
-  bssl::ScopedEVP_MD_CTX ctx;
+  ScopedEVP_MD_CTX ctx;
   size_t maskedDBLen, MSBits, emLen;
   size_t hLen;
   unsigned char *H, *salt = nullptr, *p;
@@ -279,12 +281,13 @@ int RSA_padding_add_PKCS1_PSS_mgf1(const RSA *rsa, unsigned char *EM,
   FIPS_service_indicator_lock_state();
   hLen = EVP_MD_size(Hash);
 
-  if (BN_is_zero(rsa->n)) {
+  unsigned rsa_bits = RSA_bits(rsa);
+  if (rsa_bits == 0) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_EMPTY_PUBLIC_KEY);
     goto err;
   }
 
-  MSBits = (BN_num_bits(rsa->n) - 1) & 0x7;
+  MSBits = (rsa_bits - 1) & 0x7;
   emLen = RSA_size(rsa);
   if (MSBits == 0) {
     assert(emLen >= 1);

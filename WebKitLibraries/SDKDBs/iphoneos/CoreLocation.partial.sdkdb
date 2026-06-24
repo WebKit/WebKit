@@ -823,7 +823,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "introduced": "15", "name": "CMAbsoluteAltitudeHandler"},
     {"access": "public", "name": "CMAcceleration"},
@@ -1606,7 +1606,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "CLAccuracyAuthorization"},
     {"access": "public", "name": "CLActivityType"},
@@ -1631,32 +1631,32 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo14CMOdometerDataC10CoreMotionE11maxAbsSlopeSdSgvpMV"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo14CMOdometerDataC10CoreMotionE5slopeSdSgvg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo14CMOdometerDataC10CoreMotionE5slopeSdSgvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV17makeAsyncIteratorAE0J0VyF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorV4nextSaySo08CMDeviceE0CGSgyYaKF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorV4nextSaySo08CMDeviceE0CGSgyYaKFTu"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVMa"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVMn"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVN"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVScIACMc"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVMa"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVMn"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVN"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVSciACMc"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06deviceE7UpdatesAbCE06DeviceeG0VyF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV17makeAsyncIteratorAE0J0VyF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorV4nextSaySo19CMAccelerometerDataCGSgyYaKF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorV4nextSaySo19CMAccelerometerDataCGSgyYaKFTu"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVMa"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVMn"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVN"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVScIACMc"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVMa"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVMn"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVN"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVSciACMc"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20accelerometerUpdatesAbCE013AccelerometerG0VyF"}
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV17makeAsyncIteratorAE0J0VyF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorV4nextSaySo08CMDeviceE0CGSgyYaKF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorV4nextSaySo08CMDeviceE0CGSgyYaKFTu", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVScIACMc", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVSciACMc", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06deviceE7UpdatesAbCE06DeviceeG0VyF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV17makeAsyncIteratorAE0J0VyF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorV4nextSaySo19CMAccelerometerDataCGSgyYaKF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorV4nextSaySo19CMAccelerometerDataCGSgyYaKFTu", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVScIACMc", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVSciACMc", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20accelerometerUpdatesAbCE013AccelerometerG0VyF", "unavailable": true}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

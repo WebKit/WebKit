@@ -55,6 +55,7 @@
 #include "WebEvent.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
+#include "WebFrameProxyMessages.h"
 #include "WebFullScreenManager.h"
 #include "WebHitTestResultData.h"
 #include "WebInspectorBackend.h"
@@ -465,6 +466,13 @@ void WebLocalFrameLoaderClient::dispatchDidChangeMainDocument()
     webPage->send(Messages::WebPageProxy::DidChangeMainDocument(m_frame->frameID(), navigationID));
 }
 
+void WebLocalFrameLoaderClient::dispatchDidChangeCSPOriginsThatUpgradeInsecureNavigations(const HashSet<WebCore::SecurityOriginData>& cspOriginsThatUpgradeInsecureNavigations)
+{
+    if (!siteIsolationEnabled())
+        return;
+    m_frame->send(Messages::WebFrameProxy::DidChangeCSPOriginsThatUpgradeInsecureNavigations(cspOriginsThatUpgradeInsecureNavigations));
+}
+
 void WebLocalFrameLoaderClient::dispatchWillChangeDocument(const URL& currentURL, const URL& newURL)
 {
     if (m_frame->isMainFrame())
@@ -671,8 +679,18 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureC
 #endif
 
     RefPtr<Frame> coreLocalFrame = m_localFrame.ptr();
+    auto& cspOriginsThatUpgradeInsecureNavigations = protect(protect(m_localFrame->document())->contentSecurityPolicy())->insecureNavigationRequestsToUpgrade();
+
+    RefPtr<FrameState> redirectReplaceFrameState;
+    if (RefPtr page = m_localFrame->page(); page && page->settings().useUIProcessForBackForwardItemLoading() && m_localFrame->loader().shouldReplaceHistoryItemInChildFrame()) {
+        if (RefPtr currentItem = m_localFrame->loader().history().currentItem()) {
+            redirectReplaceFrameState = toFrameState(*currentItem);
+            redirectReplaceFrameState->children.clear();
+        }
+    }
+
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(frame->frameID(), frame->info(), documentLoader->request(), documentLoader->navigationID(), documentLoader->response().mimeType(), m_frameHasCustomContentProvider, m_localFrame->loader().loadType(), certificateInfo, usedLegacyTLS, wasPrivateRelayed, documentLoader->response().proxyName(), documentLoader->response().source(), m_localFrame->document()->isPluginDocument(), *hasInsecureContent, documentLoader->mouseEventPolicy(), *coreLocalFrame->frameDocumentSecurityPolicy(),  UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(frame->frameID(), frame->info(), documentLoader->request(), documentLoader->navigationID(), documentLoader->response().mimeType(), m_frameHasCustomContentProvider, m_localFrame->loader().loadType(), certificateInfo, usedLegacyTLS, wasPrivateRelayed, documentLoader->response().proxyName(), documentLoader->response().source(), m_localFrame->document()->isPluginDocument(), *hasInsecureContent, documentLoader->mouseEventPolicy(), *coreLocalFrame->frameDocumentSecurityPolicy(), cspOriginsThatUpgradeInsecureNavigations, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), m_localFrame->loader().loadingFromCachedPage() ? RestoredFromBackForwardCache::Yes : RestoredFromBackForwardCache::No, WTF::move(redirectReplaceFrameState)));
     webPage->didCommitLoad(m_frame.ptr());
 }
 
@@ -1068,9 +1086,15 @@ WebCore::AllowsContentJavaScript WebLocalFrameLoaderClient::allowsContentJavaScr
 void WebLocalFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse,
     FormState* formState, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {
-    if (auto requestor = navigationAction.requester()) {
-        if (requestor->frameID && *requestor->frameID != m_frame->frameID() && Site(requestor->url) != Site(m_frame->url()))
+    if (auto requestor = navigationAction.requester(); requestor && requestor->frameID) {
+        // another frame initiated navigation
+        if (*requestor->frameID != m_frame->frameID() && Site(requestor->url) != Site(m_frame->url()))
             removeStorageAccess();
+        // this frame navigated itself
+        else if (*requestor->frameID == m_frame->frameID()) {
+            if (redirectResponse.isNull() && !SecurityOrigin::create(m_frame->url())->isSameOriginAs(SecurityOrigin::create(request.url())))
+                removeStorageAccess();
+        }
     }
 
     WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, clientRedirectSourceForHistory, navigationID, WTF::move(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags, policyDecisionMode, WTF::move(function));
@@ -1223,9 +1247,9 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForBackForwardNavigationActi
                 return;
 
             if (action == PolicyAction::Ignore) {
-                // Reset the pending async state and re-check completeness
-                // on the parent since this child won't be loading.
-                localFrame->loader().cancelPendingAsyncBackForwardNavigation();
+                // The async back/forward navigation won't proceed; clear the wait state
+                // so the parent can run checkCompleted() without being blocked by this child.
+                localFrame->loader().clearAsyncBackForwardNavigationState();
                 return;
             }
 
@@ -1239,12 +1263,15 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForBackForwardNavigationActi
                 return;
             }
 
-            // The async wait is over — UIProcess has resolved the HistoryItem
-            // and the actual loading begins via normal DocumentLoader mechanisms.
-            // Clear the async state so that frame completion tracking behaves
-            // identically to the non-flag path.
-            if (localFrame->loader().shouldProceedWithAsyncBackForwardNavigation())
-                localFrame->loader().loadRequestedHistoryItem(loadType, PolicyAlreadyDecided::Yes);
+            if (localFrame->loader().asyncBackForwardNavigationWasCancelled()) {
+                localFrame->loader().clearAsyncBackForwardNavigationState();
+                return;
+            }
+
+            // Keep the async-wait state set across the load: the freshly created child still
+            // reports isComplete() until its document begins, so clearing it here would let the
+            // parent fire its load event early. didBeginDocument() clears it once loading starts.
+            localFrame->loader().loadRequestedHistoryItem(loadType, PolicyAlreadyDecided::Yes);
         }
     );
 }
@@ -2157,12 +2184,12 @@ void WebLocalFrameLoaderClient::didExceedNetworkUsageThreshold()
     ASSERT(!m_frame->isMainFrame());
 
     RefPtr webPage = m_frame->page();
-    RefPtr localMainFrame = webPage ? dynamicDowncast<LocalFrame>(webPage->mainFrame()) : nullptr;
-    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
-    if (!document)
+    RefPtr coreFrame = m_frame->coreLocalFrame();
+    RefPtr corePage = coreFrame ? coreFrame->page() : nullptr;
+    if (!webPage || !corePage)
         return;
 
-    auto url = document->url();
+    URL url = corePage->mainFrameURL();
     if (url.isEmpty())
         return;
 
@@ -2178,13 +2205,18 @@ void WebLocalFrameLoaderClient::didExceedNetworkUsageThreshold()
             frame->reportResourceMonitoringWarning();
     };
 
-    if (document->shouldSkipResourceMonitorThrottling())
-        action(true);
-    else
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ShouldOffloadIFrameForHost(url.host().toStringWithoutCopying()), WTF::move(action), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ShouldOffloadIFrameForHost(url.host().toStringWithoutCopying()), WTF::move(action), 0);
 }
 
 #endif
+
+void WebLocalFrameLoaderClient::applyMonitorUnloadToOwnerFrame(WebCore::IFrameUnloadReason reason)
+{
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return;
+    webPage->send(Messages::WebPageProxy::ApplyMonitorUnloadToFrameOwner(m_frame->frameID(), reason));
+}
 
 void WebLocalFrameLoaderClient::removeStorageAccess()
 {

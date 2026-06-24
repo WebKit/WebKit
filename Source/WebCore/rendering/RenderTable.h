@@ -48,8 +48,8 @@ class RenderTable : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderTable);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTable);
 public:
-    RenderTable(Type, Element&, RenderStyle&&);
-    RenderTable(Type, Document&, RenderStyle&&);
+    RenderTable(Type, Element&, Style::ComputedStyle&&);
+    RenderTable(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderTable();
 
     // Per CSS 3 writing-mode: "The first and second values of the 'border-spacing' property represent spacing between columns
@@ -57,7 +57,7 @@ public:
     LayoutUnit hBorderSpacing() const { return m_hSpacing; }
     LayoutUnit vBorderSpacing() const { return m_vSpacing; }
     
-    bool collapseBorders() const { return style().borderCollapse() == BorderCollapse::Collapse; }
+    bool collapseBorders() const;
 
     LayoutUnit borderStart() const final { return m_borderStart; }
     LayoutUnit borderEnd() const final { return m_borderEnd; }
@@ -69,8 +69,6 @@ public:
     inline LayoutUnit borderRight() const final;
     inline LayoutUnit borderTop() const final;
     inline LayoutUnit borderBottom() const final;
-
-    Color bgColor() const { return protect(style())->visitedDependentBackgroundColorApplyingColorFilter(); }
 
     LayoutUnit outerBorderBefore() const;
     LayoutUnit outerBorderAfter() const;
@@ -104,10 +102,6 @@ public:
         m_columnLogicalWidthChanged |= m_columnPos[index] != position;
         m_columnPos[index] = position;
     }
-
-    RenderTableSection* NODELETE header() const;
-    RenderTableSection* NODELETE footer() const;
-    RenderTableSection* NODELETE firstBody() const;
 
     // This function returns 0 if the table has no section.
     RenderTableSection* NODELETE topSection() const;
@@ -166,11 +160,11 @@ public:
     // Return the first column or column-group.
     RenderTableCol* firstColumn() const;
 
-    RenderTableCol* colElement(unsigned col, bool* startEdge = 0, bool* endEdge = 0) const
+    RenderTableCol* colElement(unsigned col, bool* startEdge = nullptr, bool* endEdge = nullptr) const
     {
         // The common case is to not have columns, make that case fast.
         if (!m_hasColElements)
-            return 0;
+            return nullptr;
         return slowColElement(col, startEdge, endEdge);
     }
 
@@ -185,10 +179,10 @@ public:
     RenderTableCell* cellBefore(const RenderTableCell*) const;
     RenderTableCell* cellAfter(const RenderTableCell*) const;
  
-    typedef Vector<CollapsedBorderValue> CollapsedBorderValues;
+    using CollapsedBorderValues = Vector<CollapsedBorderValue>;
     bool collapsedBordersAreValid() const { return m_collapsedBordersValid; }
     void invalidateCollapsedBorders(RenderTableCell* cellWithStyleChange = nullptr);
-    void invalidateCollapsedBordersAfterStyleChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle, RenderTableCell* cellWithStyleChange = nullptr);
+    void invalidateCollapsedBordersAfterStyleChangeIfNeeded(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, RenderTableCell* cellWithStyleChange = nullptr);
     void collapsedEmptyBorderIsPresent() { m_collapsedEmptyBorderIsPresent = true; }
     const CollapsedBorderValue* currentBorderValue() const LIFETIME_BOUND { return m_currentBorder; }
     void paintCollapsedBordersForRow(PaintInfo&, RenderTableRow&, const LayoutPoint& paintOffset);
@@ -223,7 +217,7 @@ public:
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect&, unsigned) const override { return false; }
 
 protected:
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
     void simplifiedNormalFlowLayout() final;
 
     ASCIILiteral renderName() const override { return "RenderTable"_s; }
@@ -233,10 +227,10 @@ protected:
     void paintBoxDecorations(PaintInfo&, const LayoutPoint&) final;
     void paintMask(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
-    void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics) const;
-    void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const final;
-    void computeIntrinsicKeywordLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const final;
-    void computePreferredLogicalWidths() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths(TableIntrinsics) const;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const final;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicKeywordLogicalWidths() const final;
+    void computeIntrinsicLogicalWidthContributions() override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     std::optional<LayoutUnit> firstLineBaseline() const override;
@@ -285,16 +279,16 @@ protected:
     std::unique_ptr<TableLayout> m_tableLayout;
 
     CollapsedBorderValues m_collapsedBorders;
-    const CollapsedBorderValue* m_currentBorder;
-    bool m_collapsedBordersValid : 1;
-    bool m_collapsedEmptyBorderIsPresent : 1;
+    const CollapsedBorderValue* m_currentBorder { nullptr };
+    bool m_collapsedBordersValid : 1 { false };
+    bool m_collapsedEmptyBorderIsPresent : 1 { false };
 
-    mutable bool m_hasColElements : 1;
-    mutable bool m_needsSectionRecalc : 1;
+    mutable bool m_hasColElements : 1 { false };
+    mutable bool m_needsSectionRecalc : 1 { false };
 
-    bool m_columnLogicalWidthChanged : 1;
-    mutable bool m_columnRenderersValid: 1;
-    mutable bool m_hasCellColspanThatDeterminesTableWidth : 1;
+    bool m_columnLogicalWidthChanged : 1 { false };
+    mutable bool m_columnRenderersValid : 1 { false };
+    mutable bool m_hasCellColspanThatDeterminesTableWidth : 1 { false };
 
     bool hasCellColspanThatDeterminesTableWidth() const
     {
@@ -311,8 +305,8 @@ protected:
     LayoutUnit m_vSpacing;
     LayoutUnit m_borderStart;
     LayoutUnit m_borderEnd;
-    mutable LayoutUnit m_columnOffsetTop;
-    mutable LayoutUnit m_columnOffsetHeight;
+    mutable LayoutUnit m_columnOffsetTop { -1 };
+    mutable LayoutUnit m_columnOffsetHeight { -1 };
     unsigned m_recursiveSectionMovedWithPaginationLevel { 0 };
 };
 

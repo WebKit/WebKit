@@ -1,3 +1,0 @@
-
-FAIL Makes sure that preloaded resources trigger the onerror event Error: assert_true: video triggered error event expected true got false
-

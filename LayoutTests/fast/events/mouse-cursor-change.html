@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -21,8 +21,6 @@ if (!window.eventSender) {
 }
 
 if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
     window.jsTestIsAsync = true;
 }
 
@@ -75,6 +73,5 @@ onload = async () => {
 }
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -16,7 +16,6 @@
 #include <memory>
 #include <vector>
 
-#include "api/environment/environment_factory.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
@@ -28,6 +27,7 @@
 #include "modules/video_coding/codecs/vp8/libvpx_vp8_encoder.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "third_party/libvpx/source/libvpx/vpx/vp8cx.h"
@@ -107,7 +107,7 @@ std::vector<uint32_t> GetTemporalLayerRates(int target_bitrate_kbps,
   codec.simulcastStream[0].maxBitrate = target_bitrate_kbps;
   codec.simulcastStream[0].numberOfTemporalLayers = num_temporal_layers;
   codec.simulcastStream[0].active = true;
-  SimulcastRateAllocator allocator(CreateEnvironment(), codec);
+  SimulcastRateAllocator allocator(CreateTestEnvironment(), codec);
   return allocator
       .Allocate(
           VideoBitrateAllocationParameters(target_bitrate_kbps, framerate_fps))
@@ -441,7 +441,7 @@ class TemporalLayersReferenceTest : public TemporalLayersTest,
 
 INSTANTIATE_TEST_SUITE_P(DefaultTemporalLayersTest,
                          TemporalLayersReferenceTest,
-                         ::testing::Range(1, kMaxTemporalStreams + 1));
+                         ::testing::Range(1, int{kMaxTemporalStreams} + 1));
 
 TEST_P(TemporalLayersReferenceTest, ValidFrameConfigs) {
   const int num_layers = GetParam();

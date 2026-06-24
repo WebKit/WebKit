@@ -14,8 +14,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "rtc_base/checks.h"
@@ -56,7 +56,7 @@ StreamState FifoBuffer::GetState() const {
   return state_;
 }
 
-StreamResult FifoBuffer::Read(ArrayView<uint8_t> buffer,
+StreamResult FifoBuffer::Read(std::span<uint8_t> buffer,
                               size_t& bytes_read,
                               int& error) {
   RTC_DCHECK_RUN_ON(&callback_sequence_);
@@ -79,7 +79,7 @@ StreamResult FifoBuffer::Read(ArrayView<uint8_t> buffer,
   return result;
 }
 
-StreamResult FifoBuffer::Write(ArrayView<const uint8_t> buffer,
+StreamResult FifoBuffer::Write(std::span<const uint8_t> buffer,
                                size_t& bytes_written,
                                int& error) {
   RTC_DCHECK_RUN_ON(&callback_sequence_);

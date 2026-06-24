@@ -26,13 +26,13 @@
 #include "config.h"
 #include "InsertNestedListCommand.h"
 
+#include "Document.h"
 #include "Editing.h"
 #include "HTMLLIElement.h"
 #include "HTMLNames.h"
 #include "InsertListCommand.h"
 #include "ModifySelectionListLevel.h"
 #include "SimpleRange.h"
-#include "RenderObjectInlines.h"
 
 namespace WebCore {
 

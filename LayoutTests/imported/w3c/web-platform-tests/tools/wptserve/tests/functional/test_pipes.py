@@ -86,8 +86,9 @@ sha512: r8eLGRTc7ZznZkFjeVLyo6/FyQdra9qmlYCwKKxm3kfQAswRS9+3HsYk3thLUhcFmmWhK4dX
         self.assertEqual(resp.read().rstrip(), expected.strip())
 
     def test_sub_file_hash_unrecognized(self):
-        with self.assertRaises(urllib.error.HTTPError):
+        with self.assertRaises(urllib.error.HTTPError) as cm:
             self.request("/sub_file_hash_unrecognized.sub.txt")
+        cm.exception.close()
 
     def test_sub_headers(self):
         resp = self.request("/sub_headers.txt", query="pipe=sub", headers={"X-Test": "PASS"})
@@ -146,14 +147,16 @@ server: http://localhost:{0}""".format(self.server.port).encode("ascii")
 
 class TestTrickle(TestUsingServer):
     def test_trickle(self):
-        #Actually testing that the response trickles in is not that easy
-        t0 = time.time()
-        resp = self.request("/document.txt", query="pipe=trickle(1:d2:5:d1:r2)")
-        t1 = time.time()
-        with open(os.path.join(doc_root, "document.txt"), 'rb') as f:
+        # Actually testing that the response trickles in is not that easy
+        clock_info = time.get_clock_info("monotonic")
+        t0 = time.monotonic()
+        with self.request("/document.txt", query="pipe=trickle(1:d2:5:d1:r2)") as resp:
+            actual = resp.read()
+        t1 = time.monotonic()
+        with open(os.path.join(doc_root, "document.txt"), "rb") as f:
             expected = f.read()
-        self.assertEqual(resp.read(), expected)
-        self.assertGreater(6, t1-t0)
+        self.assertEqual(actual, expected)
+        self.assertGreater(t1 - t0, 6 - clock_info.resolution)
 
     def test_headers(self):
         resp = self.request("/document.txt", query="pipe=trickle(d0.01)")

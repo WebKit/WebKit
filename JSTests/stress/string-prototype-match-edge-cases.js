@@ -176,5 +176,3 @@ shouldBe("ab".match(/(?<x>a)(?<y>b)/).groups, { x: "a", y: "b" });
     if (log.indexOf("exec") === -1)
         throw new Error("custom exec must be invoked");
 }
-
-print("PASSED");

@@ -59,6 +59,7 @@
 #include <gst/sdp/sdp.h>
 #include <wtf/MainThread.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/UniqueRef.h>
@@ -714,13 +715,16 @@ void GStreamerMediaEndpoint::linkOutgoingSources(GstSDPMessage* sdpMessage)
 
         GST_DEBUG_OBJECT(m_pipeline.get(), "Looking-up outgoing source with msid %s in %zu unlinked sources", msid.utf8(), m_unlinkedOutgoingSources.size());
         m_unlinkedOutgoingSources.removeFirstMatching([&, msid = String(msid.span())](auto& source) -> bool {
-            if (source->type() != sourceType)
+            if (source->type() != sourceType) {
+                GST_DEBUG_OBJECT(pipeline(), "Un-matched source type");
                 return false;
-
+            }
             if (const auto& track = source->track()) {
                 auto sourceMsid = makeString(source->mediaStreamID(), ' ', track->id());
-                if (!msid.isEmpty() && sourceMsid != msid)
+                if (!msid.isEmpty() && sourceMsid != msid) {
+                    GST_DEBUG_OBJECT(pipeline(), "Un-matched outgoing source msid: %s", sourceMsid.utf8().data());
                     return false;
+                }
             }
 
             auto allowedCaps = capsFromSDPMedia(media);
@@ -2333,6 +2337,57 @@ void GStreamerMediaEndpoint::onNegotiationNeeded()
 
         GST_DEBUG_OBJECT(m_pipeline.get(), "Negotiation needed!");
         peerConnectionBackend->markAsNeedingNegotiation(m_negotiationNeededEventId);
+    });
+}
+
+void GStreamerMediaEndpoint::trackWasReplaced(const String& previousId, const String& newId)
+{
+    struct TrackIds {
+        String previousId;
+        String newId;
+        bool wasTrackFound;
+    };
+
+    TrackIds ids { previousId, newId, false };
+    forEachTransceiver(m_webrtcBin, [&](auto&& transceiver) -> bool {
+        GRefPtr<GstCaps> caps;
+        g_object_get(transceiver.get(), "codec-preferences", &caps.outPtr(), nullptr);
+
+        if (!caps)
+            return false;
+
+        auto newCaps = adoptGRef(gst_caps_make_writable(caps.leakRef()));
+        gst_caps_map_in_place(newCaps.get(), [](auto*, auto* structure, gpointer userData) -> gboolean {
+            auto msid = gstStructureGetString(structure, "a-msid"_s);
+            if (msid.isEmpty())
+                return TRUE;
+
+            String msidString = msid.span();
+            auto parts = msidString.split(' ');
+            if (parts.size() != 2)
+                return TRUE;
+
+            auto ids = static_cast<TrackIds*>(userData);
+            if (parts[1] != ids->previousId)
+                return TRUE;
+
+            ids->wasTrackFound = true;
+            if (ids->newId.isEmpty())
+                gst_structure_remove_field(structure, "a-msid");
+            else {
+                auto newMsid = makeString(parts[0], ' ', ids->newId);
+                gst_structure_set(structure, "a-msid", G_TYPE_STRING, newMsid.utf8().data(), nullptr);
+            }
+
+            return TRUE;
+        }, &ids);
+
+        if (ids.wasTrackFound) {
+            g_object_freeze_notify(G_OBJECT(transceiver.get()));
+            g_object_set(transceiver.get(), "codec-preferences", newCaps.get(), nullptr);
+            g_object_thaw_notify(G_OBJECT(transceiver.get()));
+        }
+        return ids.wasTrackFound;
     });
 }
 

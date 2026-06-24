@@ -156,7 +156,7 @@ static bool NODELETE hasSignatureForWebM(std::span<const uint8_t> sequence)
             //  5. If iter is less than length - 4, abort these steps.
             // TODO: this is a spec error. It will always be less than length - 4 unless an error occurred.
             //  6. Let matched be the result of matching a padded sequence 0x77 0x65 0x62 0x6D ("webm") on sequence at offset iter.
-            while (!sequence[iter] && iter < length)
+            while (iter < length && !sequence[iter])
                 iter++;
             if (iter >= length - 4)
                 break;
@@ -308,9 +308,9 @@ static String mimeTypeFromSnifferEntries(std::span<const uint8_t> sequence)
         // The string "OggS" followed by NUL, the Ogg container signature.
         { span8("\x4F\x67\x67\x53\x00"), span8("\xFF\xFF\xFF\xFF\xFF"), "application/ogg"_s },
         // The string "MThd" followed by four bytes representing the number 6 in 32 bits (big-endian), the MIDI signature.
-        { span8("\0x4D\x54\x68\x64\x00\x00\x00\x06"), span8("\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"), "audio/midi"_s },
+        { span8("\x4D\x54\x68\x64\x00\x00\x00\x06"), span8("\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"), "audio/midi"_s },
         // The string "RIFF" followed by four bytes followed by the string "AVI ", the AVI signature.
-        { span8("\0x52\x49\x46\x46\x00\x00\x00\x00\x41\x56\x49\x20"), span8("\xFF\xFF\xFF\xFF\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "video/avi"_s },
+        { span8("\x52\x49\x46\x46\x00\x00\x00\x00\x41\x56\x49\x20"), span8("\xFF\xFF\xFF\xFF\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "video/avi"_s },
         // The string "RIFF" followed by four bytes followed by the string "WAVE", the WAVE signature.
         { span8("\x52\x49\x46\x46\x00\x00\x00\x00\x57\x41\x56\x45"), span8("\xFF\xFF\xFF\xFF\x00\x00\x00\x00\xFF\xFF\xFF\xFF"), "audio/wave"_s },
         // Out of W3C spec, fLaC signature

@@ -70,15 +70,15 @@ public:
     virtual bool isCrossfadeGeneratedImage() const { return false; }
     virtual bool isNamedImageGeneratedImage() const { return false; }
     virtual bool isGradientImage() const { return false; }
-    virtual bool isSVGImage() const { return false; }
-    virtual bool isSVGImageForContainer() const { return false; }
+    virtual bool NODELETE isSVGImage() const { return false; }
+    virtual bool NODELETE isSVGImageForContainer() const { return false; }
     virtual bool isSVGResourceImage() const { return false; }
     virtual bool isPDFDocumentImage() const { return false; }
     virtual bool isCustomPaintImage() const { return false; }
 
     virtual void subresourcesAreFinished(Document*, CompletionHandler<void()>&&);
 
-    bool drawsSVGImage() const { return isSVGImage() || isSVGImageForContainer(); }
+    bool NODELETE drawsSVGImage() const { return isSVGImage() || isSVGImageForContainer(); }
 
     virtual unsigned frameCount() const { return 1; }
 
@@ -209,7 +209,7 @@ private:
     // A value of true or false will override the default Page::imageAnimationEnabled state.
     std::optional<bool> m_allowsAnimation { std::nullopt };
     std::unique_ptr<Timer> m_animationStartTimer;
-    static bool gSystemAllowsAnimationControls;
+    WEBCORE_EXPORT static bool gSystemAllowsAnimationControls;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Image&);

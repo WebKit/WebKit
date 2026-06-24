@@ -11,15 +11,15 @@
 #include "p2p/dtls/dtls_utils.h"
 
 #include <cstdint>
+#include <span>
 #include <vector>
 
 #include "absl/container/flat_hash_set.h"
-#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
-std::vector<uint8_t> ToVector(ArrayView<const uint8_t> array) {
+std::vector<uint8_t> ToVector(std::span<const uint8_t> array) {
   return std::vector<uint8_t>(array.begin(), array.end());
 }
 
@@ -175,7 +175,8 @@ TEST(PacketStash, PruneSome) {
   absl::flat_hash_set<uint32_t> remove;
   remove.insert(PacketStash::Hash(packet1));
   remove.insert(PacketStash::Hash(packet2));
-  stash.Prune(remove);
+  EXPECT_EQ(stash.Prune(remove), 2u);
+  EXPECT_EQ(stash.Prune(remove), 0u);
 
   EXPECT_EQ(ToVector(stash.GetNext()), packet3);
 }

@@ -422,8 +422,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(static_cast<UIUserInterfaceIdiom>(overrideUserInterfaceIdiom), overrideScaleFactor);
 #endif
 
-    populateMobileGestaltCache(WTF::move(parameters.mobileGestaltExtensionHandle));
-
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
@@ -500,7 +498,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     setCurrentUserInterfaceIdiom(parameters.currentUserInterfaceIdiom);
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
     setContentSizeCategory(parameters.contentSizeCategory);
-    m_containerTemporaryDirectory = WTF::move(parameters.containerTemporaryDirectory);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     setSupportsPictureInPicture(parameters.supportsPictureInPicture);
 #endif
@@ -591,7 +588,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     });
 #endif
 
-    WebCore::setScreenProperties(parameters.screenProperties);
+    WebCore::PlatformScreen::updateSingletonProperties(WTF::move(parameters.screenProperties));
 
 #if PLATFORM(MAC)
     scrollerStylePreferenceChanged(parameters.useOverlayScrollbars);
@@ -926,24 +923,22 @@ static void registerLogClient(bool isDebugLoggingEnabled, std::unique_ptr<LogCli
         if (Thread::currentThreadIsRealtime())
             return;
 
-        auto logChannel = unsafeSpanIncludingNullTerminator(msg->subsystem);
-        if (logChannel.size() > logSubsystemMaxSize)
+        auto logChannel = unsafeSpan(msg->subsystem);
+        if (logChannel.size() >= logSubsystemMaxSize)
             return;
         if (shouldIgnoreLogMessage(logChannel))
             return;
-        auto logCategory = unsafeSpanIncludingNullTerminator(msg->category);
-        if (logCategory.size() > logCategoryMaxSize)
+        auto logCategory = unsafeSpan(msg->category);
+        if (logCategory.size() >= logCategoryMaxSize)
             return;
 
         if (type == OS_LOG_TYPE_FAULT)
             type = OS_LOG_TYPE_ERROR;
 
         if (auto messageString = adoptSystemMalloc(os_log_copy_message_string(msg))) {
-            auto logString = spanConstCast<char>(unsafeSpanIncludingNullTerminator(messageString.get()));
-            if (logString.size() > logStringMaxSize) {
-                logString = logString.first(logStringMaxSize);
-                logString.back() = 0;
-            }
+            auto logString = spanConstCast<char>(unsafeSpan(messageString.get()));
+            if (logString.size() >= logStringMaxSize)
+                logString = logString.first(logStringMaxSize - 1);
             logClient()->log(byteCast<uint8_t>(logChannel), byteCast<uint8_t>(logCategory), byteCast<uint8_t>(logString), type);
         }
     }).get());
@@ -1349,6 +1344,9 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     m_imageAnimationEnabled = preferences.imageAnimationEnabled;
 #endif
+#if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
+    m_videoAutoplayPreviewsEnabled = preferences.videoAutoplayPreviewsEnabled;
+#endif
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     m_prefersNonBlinkingCursor = preferences.prefersNonBlinkingCursor;
 #endif
@@ -1366,6 +1364,26 @@ void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreference
             captionPreferences->captionPreferencesChanged();
     }
 }
+
+void WebProcess::setMediaAccessibilityPreferredLanguages(const Vector<String>& preferredLanguages)
+{
+    WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(preferredLanguages);
+
+    for (auto& pageGroup : m_pageGroupMap.values()) {
+        if (RefPtr captionPreferences = pageGroup->corePageGroup()->captionPreferences())
+            captionPreferences->captionPreferencesChanged();
+    }
+}
+
+void WebProcess::setMediaAccessibilityPreferredCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode captionDisplayMode)
+{
+    WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(captionDisplayMode);
+
+    for (auto& pageGroup : m_pageGroupMap.values()) {
+        if (RefPtr captionPreferences = pageGroup->corePageGroup()->captionPreferences())
+            captionPreferences->captionPreferencesChanged();
+    }
+}
 #endif
 
 void WebProcess::updatePageAccessibilitySettings()
@@ -1374,17 +1392,20 @@ void WebProcess::updatePageAccessibilitySettings()
     Image::setSystemAllowsAnimationControls(!imageAnimationEnabled());
 #endif
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) || ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) || ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL) || ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     for (auto& page : m_pageMap.values()) {
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
         page->updateImageAnimationEnabled();
+#endif
+#if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
+        page->updateVideoAutoplayPreviewsEnabled();
 #endif
 
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
         page->updatePrefersNonBlinkingCursor();
 #endif
     }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) || ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) || ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL) || ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
 }
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -1515,7 +1536,7 @@ void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::S
 }
 #endif // !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
 
-void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
+void WebProcess::setScreenProperties(WebCore::ScreenProperties&& properties)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
     auto propertiesWithStyleAffectingOnly = [](auto properties) {
@@ -1526,12 +1547,12 @@ void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties
         }
         return properties;
     };
-    bool affectsStyle = propertiesWithStyleAffectingOnly(properties) != propertiesWithStyleAffectingOnly(WebCore::getScreenProperties());
+    bool affectsStyle = propertiesWithStyleAffectingOnly(properties) != propertiesWithStyleAffectingOnly(WebCore::PlatformScreen::singleton()->screenProperties());
 #else
     constexpr bool affectsStyle = true;
 #endif
 
-    WebCore::setScreenProperties(properties);
+    WebCore::PlatformScreen::updateSingletonProperties(WTF::move(properties));
     for (auto& page : m_pageMap.values())
         page->screenPropertiesDidChange(affectsStyle);
 #if PLATFORM(MAC)

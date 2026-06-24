@@ -23,7 +23,9 @@
 #include "../fipsmodule/dh/internal.h"
 
 
-static BIGNUM *get_params(BIGNUM *ret, bssl::Span<const BN_ULONG> words) {
+using namespace bssl;
+
+static BIGNUM *get_params(BIGNUM *ret, Span<const BN_ULONG> words) {
   BIGNUM *alloc = nullptr;
   if (ret == nullptr) {
     alloc = BN_new();
@@ -306,16 +308,17 @@ int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator,
   }
 
   // Make sure |dh| has the necessary elements
-  if (dh->p == nullptr) {
-    dh->p = BN_new();
-    if (dh->p == nullptr) {
+  auto *impl = FromOpaque(dh);
+  if (impl->p == nullptr) {
+    impl->p.reset(BN_new());
+    if (impl->p == nullptr) {
       OPENSSL_PUT_ERROR(DH, ERR_R_BN_LIB);
       return 0;
     }
   }
-  if (dh->g == nullptr) {
-    dh->g = BN_new();
-    if (dh->g == nullptr) {
+  if (impl->g == nullptr) {
+    impl->g.reset(BN_new());
+    if (impl->g == nullptr) {
       OPENSSL_PUT_ERROR(DH, ERR_R_BN_LIB);
       return 0;
     }
@@ -343,14 +346,14 @@ int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator,
     g = generator;
   }
 
-  bssl::UniquePtr<BIGNUM> t1_bn(BN_new()), t2_bn(BN_new());
+  UniquePtr<BIGNUM> t1_bn(BN_new()), t2_bn(BN_new());
   if (t1_bn == nullptr || t2_bn == nullptr ||
       !BN_set_word(t1_bn.get(), t1) ||  //
       !BN_set_word(t2_bn.get(), t2) ||  //
-      !BN_generate_prime_ex(dh->p, prime_bits, 1, t1_bn.get(), t2_bn.get(),
-                            cb) ||
+      !BN_generate_prime_ex(impl->p.get(), prime_bits, 1, t1_bn.get(),
+                            t2_bn.get(), cb) ||
       !BN_GENCB_call(cb, 3, 0) ||  //
-      !BN_set_word(dh->g, g)) {
+      !BN_set_word(impl->g.get(), g)) {
     OPENSSL_PUT_ERROR(DH, ERR_R_BN_LIB);
     return 0;
   }
@@ -358,27 +361,27 @@ int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator,
   return 1;
 }
 
-static int int_dh_bn_cpy(BIGNUM **dst, const BIGNUM *src) {
-  BIGNUM *a = nullptr;
-
+static bool copy_bn(UniquePtr<BIGNUM> *dst, const BIGNUM *src) {
+  UniquePtr<BIGNUM> copy;
   if (src) {
-    a = BN_dup(src);
-    if (!a) {
-      return 0;
+    copy.reset(BN_dup(src));
+    if (!copy) {
+      return false;
     }
   }
-
-  BN_free(*dst);
-  *dst = a;
-  return 1;
+  *dst = std::move(copy);
+  return true;
 }
 
 static int int_dh_param_copy(DH *to, const DH *from, int is_x942) {
+  auto *to_impl = FromOpaque(to);
+  const auto *from_impl = FromOpaque(from);
+
   if (is_x942 == -1) {
-    is_x942 = !!from->q;
+    is_x942 = !!from_impl->q;
   }
-  if (!int_dh_bn_cpy(&to->p, from->p) ||
-      !int_dh_bn_cpy(&to->g, from->g)) {
+  if (!copy_bn(&to_impl->p, from_impl->p.get()) ||
+      !copy_bn(&to_impl->g, from_impl->g.get())) {
     return 0;
   }
 
@@ -386,7 +389,7 @@ static int int_dh_param_copy(DH *to, const DH *from, int is_x942) {
     return 1;
   }
 
-  if (!int_dh_bn_cpy(&to->q, from->q)) {
+  if (!copy_bn(&to_impl->q, from_impl->q.get())) {
     return 0;
   }
 

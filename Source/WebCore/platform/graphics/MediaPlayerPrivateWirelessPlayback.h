@@ -130,6 +130,7 @@ private:
     void timeRangeDidChange(MediaDeviceRoute&) final;
     void readyDidChange(MediaDeviceRoute&) final;
     void playbackErrorDidChange(MediaDeviceRoute&) final;
+    void audioOptionsDidChange(MediaDeviceRoute&) final;
     void currentPlaybackPositionDidChange(MediaDeviceRoute&) final;
 
     CMTimebaseRef ensureTimebase();

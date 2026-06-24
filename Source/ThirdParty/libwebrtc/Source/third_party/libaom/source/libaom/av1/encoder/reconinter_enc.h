@@ -12,6 +12,8 @@
 #ifndef AOM_AV1_ENCODER_RECONINTER_ENC_H_
 #define AOM_AV1_ENCODER_RECONINTER_ENC_H_
 
+#include <stdbool.h>
+
 #include "aom/aom_integer.h"
 #include "av1/common/av1_common_int.h"
 #include "av1/common/blockd.h"
@@ -23,6 +25,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// Returns true if the function built one inter predictor in comp_pred.
+bool aom_upsampled_pred_scaled(MACROBLOCKD *xd, const AV1_COMMON *const cm,
+                               int mi_row, int mi_col, const MV *const mv,
+                               uint8_t *comp_pred, int width, int height);
 
 void aom_comp_mask_upsampled_pred(MACROBLOCKD *xd, const AV1_COMMON *const cm,
                                   int mi_row, int mi_col, const MV *const mv,

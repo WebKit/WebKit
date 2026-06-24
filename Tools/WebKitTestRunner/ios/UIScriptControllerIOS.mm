@@ -1464,6 +1464,20 @@ void UIScriptControllerIOS::activateDataListSuggestion(unsigned index, JSValueRe
     }).get());
 }
 
+void UIScriptControllerIOS::insertAutofillSuggestion(JSStringRef username, JSStringRef password, JSValueRef callback)
+{
+    RetainPtr contentView = static_cast<id<UITextInputPrivate>>(platformContentView());
+    RetainPtr suggestion = [UITextAutofillSuggestion autofillSuggestionWithUsername:toWTFString(username).createNSString().get() password:toWTFString(password).createNSString().get()];
+    [contentView insertTextSuggestion:suggestion];
+
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    [webView() _doAfterNextPresentationUpdate:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }).get()];
+}
+
 bool UIScriptControllerIOS::isShowingDataListSuggestions() const
 {
     return [webView() _isShowingDataListSuggestions];

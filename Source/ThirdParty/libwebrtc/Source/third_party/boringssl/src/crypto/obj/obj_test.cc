@@ -22,6 +22,9 @@
 #include "../internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 TEST(ObjTest, TestBasic) {
   static const int kNID = NID_sha256WithRSAEncryption;
   static const char kShortName[] = "RSA-SHA256";
@@ -79,7 +82,7 @@ TEST(ObjTest, TestSignatureAlgorithms) {
 
 static bool ExpectObj2Txt(const uint8_t *der, size_t der_len,
                           bool always_return_oid, const char *expected) {
-  bssl::UniquePtr<ASN1_OBJECT> obj(
+  UniquePtr<ASN1_OBJECT> obj(
       ASN1_OBJECT_create(NID_undef, der, static_cast<int>(der_len),
                          /*sn=*/nullptr, /*ln=*/nullptr));
   if (!obj) {
@@ -175,7 +178,7 @@ TEST(ObjTest, TestObj2Txt) {
   // kNonMinimalOID is kBasicConstraints with the final component non-minimally
   // encoded.
   static const uint8_t kNonMinimalOID[] = {0x55, 0x1d, 0x80, 0x13};
-  bssl::UniquePtr<ASN1_OBJECT> obj(
+  UniquePtr<ASN1_OBJECT> obj(
       ASN1_OBJECT_create(NID_undef, kNonMinimalOID, sizeof(kNonMinimalOID),
                          /*sn=*/nullptr, /*ln=*/nullptr));
   ASSERT_TRUE(obj);
@@ -200,3 +203,6 @@ TEST(ObjTest, TestObj2Txt) {
   ASSERT_TRUE(obj);
   ASSERT_EQ(-1, OBJ_obj2txt(nullptr, 0, obj.get(), 0));
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

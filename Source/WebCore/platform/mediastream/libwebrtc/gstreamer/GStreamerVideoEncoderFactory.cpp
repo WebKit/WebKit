@@ -25,6 +25,7 @@
 
 #include "FloatSize.h"
 #include "GStreamerRegistryScanner.h"
+#include "GStreamerVideoCommon.h"
 #include "GStreamerVideoFrameLibWebRTC.h"
 #include "LibWebRTCUtils.h"
 #include "LibWebRTCVideoFrameUtilities.h"
@@ -313,8 +314,10 @@ std::vector<webrtc::SdpVideoFormat> GStreamerVideoEncoderFactory::GetSupportedFo
     if (scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, "vp8"_s))
         supportedFormats.push_back(webrtc::SdpVideoFormat::VP8());
 
-    if (scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, "avc1"_s))
-        supportedFormats.push_back(webrtc::SdpVideoFormat::H264());
+    if (scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, "avc1"_s)) {
+        for (auto& format : supportedH264Formats())
+            supportedFormats.push_back(WTF::move(format));
+    }
 
     if (m_isSupportingVP9Profile0)
         supportedFormats.push_back(webrtc::SdpVideoFormat::VP9Profile0());

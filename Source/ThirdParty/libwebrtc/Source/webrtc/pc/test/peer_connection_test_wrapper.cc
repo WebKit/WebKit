@@ -97,10 +97,12 @@ class FuzzyMatchedVideoEncoderFactory : public VideoEncoderFactory {
     return nullptr;
   }
 
+  using VideoEncoderFactory::QueryCodecSupport;
   CodecSupport QueryCodecSupport(
       const SdpVideoFormat& format,
-      std::optional<std::string> scalability_mode) const override {
-    return factory_.QueryCodecSupport(format, scalability_mode);
+      std::optional<std::string> scalability_mode,
+      std::optional<Resolution> resolution) const override {
+    return factory_.QueryCodecSupport(format, scalability_mode, resolution);
   }
 
  private:

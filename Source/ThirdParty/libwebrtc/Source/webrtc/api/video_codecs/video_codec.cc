@@ -78,8 +78,7 @@ VideoCodec::VideoCodec()
       complexity_(VideoCodecComplexity::kComplexityNormal) {}
 
 std::string VideoCodec::ToString() const {
-  char string_buf[2048];
-  SimpleStringBuilder ss(string_buf);
+  StringBuilder ss;
 
   ss << "VideoCodec {" << "type: " << CodecTypeToPayloadString(codecType)
      << ", mode: "
@@ -100,7 +99,7 @@ std::string VideoCodec::ToString() const {
     ss << "}";
   }
   ss << "}";
-  return ss.str();
+  return ss.Release();
 }
 
 VideoCodecVP8* VideoCodec::VP8() {

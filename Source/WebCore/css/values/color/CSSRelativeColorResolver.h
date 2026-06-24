@@ -59,7 +59,7 @@ WebCore::Color resolve(const RelativeColorResolver<Descriptor>& relative, const 
         { std::get<3>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
-    // Replace any symbol value (e.g. CSSValueR) to their corresponding channel value.
+    // Replace any symbol value (e.g. CSSValueR) with their corresponding channel value.
     auto componentsWithUnevaluatedCalc = CSSColorParseTypeWithCalc<Descriptor> {
         replaceSymbol(std::get<0>(relative.components), symbolTable),
         replaceSymbol(std::get<1>(relative.components), symbolTable),
@@ -67,7 +67,7 @@ WebCore::Color resolve(const RelativeColorResolver<Descriptor>& relative, const 
         replaceSymbol(std::get<3>(relative.components), symbolTable)
     };
 
-    // Evaluated any calc values to their corresponding channel value.
+    // Evaluate any calc values to their corresponding channel value.
     auto components = StyleColorParseType<Descriptor> {
         Style::toStyle(std::get<0>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
         Style::toStyle(std::get<1>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
@@ -78,7 +78,7 @@ WebCore::Color resolve(const RelativeColorResolver<Descriptor>& relative, const 
     // Normalize values into their numeric form, forming a validated typed color.
     auto typedColor = convertToTypedColor<Descriptor>(components, originColorAsColorType.unresolved().alpha);
 
-    // Convert the validated typed color into a `Color`,
+    // Convert the validated typed color into a `Color`.
     return convertToColor<Descriptor, CSSColorFunctionForm::Relative>(typedColor);
 }
 
@@ -99,7 +99,7 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeColorResolver<Descr
         { std::get<3>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
-    // Replace any symbol value (e.g. CSSValueR) to their corresponding channel value.
+    // Replace any symbol value (e.g. CSSValueR) with their corresponding channel value.
     auto componentsWithUnevaluatedCalc = CSSColorParseTypeWithCalc<Descriptor> {
         replaceSymbol(std::get<0>(relative.components), symbolTable),
         replaceSymbol(std::get<1>(relative.components), symbolTable),
@@ -107,7 +107,7 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeColorResolver<Descr
         replaceSymbol(std::get<3>(relative.components), symbolTable)
     };
 
-    // Evaluated any calc values to their corresponding channel value.
+    // Evaluate any calc values to their corresponding channel value.
     auto components = StyleColorParseType<Descriptor> {
         Style::toStyleNoConversionDataRequired(std::get<0>(componentsWithUnevaluatedCalc), symbolTable),
         Style::toStyleNoConversionDataRequired(std::get<1>(componentsWithUnevaluatedCalc), symbolTable),
@@ -118,7 +118,7 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeColorResolver<Descr
     // Normalize values into their numeric form, forming a validated typed color.
     auto typedColor = convertToTypedColor<Descriptor>(components, originColorAsColorType.unresolved().alpha);
 
-    // Convert the validated typed color into a `Color`,
+    // Convert the validated typed color into a `Color`.
     return convertToColor<Descriptor, CSSColorFunctionForm::Relative>(typedColor);
 }
 

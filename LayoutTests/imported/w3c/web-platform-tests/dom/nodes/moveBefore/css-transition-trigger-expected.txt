@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Node.moveBefore should trigger CSS transition state (left) if needed Test timed out
+PASS Node.moveBefore should trigger CSS transition state (left) if needed
 

@@ -64,6 +64,13 @@ bool MediaSourceInterfaceWorker::isClosed() const
     return true;
 }
 
+bool MediaSourceInterfaceWorker::isEnded() const
+{
+    if (RefPtr mediaSourcePrivate = m_handle->mediaSourcePrivate())
+        return mediaSourcePrivate->readyState() == MediaSource::ReadyState::Ended;
+    return true;
+}
+
 MediaTime MediaSourceInterfaceWorker::duration() const
 {
     if (RefPtr mediaSourcePrivate = m_handle->mediaSourcePrivate(); mediaSourcePrivate && !isClosed())

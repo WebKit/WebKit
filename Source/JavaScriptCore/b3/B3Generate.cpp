@@ -86,10 +86,17 @@ void generateToAir(Procedure& procedure)
         reduceStrength(procedure, ReduceStrengthPass::Initial);
         if (Options::useB3HoistLoopInvariantValues())
             hoistLoopInvariantValues(procedure);
-        if (eliminateCommonSubexpressions(procedure))
-            eliminateCommonSubexpressions(procedure);
+        eliminateCommonSubexpressions(procedure);
         eliminateDeadCode(procedure);
-        inferSwitches(procedure);
+
+        // Wasm has br_table instruction, so intent of the switch is already represented
+        // and OMG generates Switch nodes directly.
+        // In JS, switch can involve variables (non-constant values) and bytecode can fail
+        // to be in op_switch. Thus after FTL with type speculation & constant folding,
+        // we can infer a switch from if-else chain.
+        if (!procedure.isWasm())
+            inferSwitches(procedure);
+
         if (Options::useB3TailDup())
             duplicateTails(procedure);
         fixSSA(procedure);

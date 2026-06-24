@@ -114,7 +114,7 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
             return;
         }
 
-        if (!m_pushSubscriptionOwner->isActive()) {
+        if (!protect(m_pushSubscriptionOwner)->isActive()) {
             // Only PushSubscriptionOwner objects related to service workers will ever return `false` for isActive(),
             // so this error message is correct.
             promise.reject(Exception { ExceptionCode::InvalidStateError, "Subscribing for push requires an active service worker"_s });
@@ -163,20 +163,20 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
                     return;
                 }
 
-                protectedThis->m_pushSubscriptionOwner->subscribeToPushService(WTF::move(keyData), WTF::move(promise));
+                protect(protectedThis->m_pushSubscriptionOwner)->subscribeToPushService(WTF::move(keyData), WTF::move(promise));
             });
             return;
         }
 
         RELEASE_ASSERT(permission == NotificationPermission::Granted);
-        m_pushSubscriptionOwner->subscribeToPushService(keyDataResult.releaseReturnValue(), WTF::move(promise));
+        protect(m_pushSubscriptionOwner)->subscribeToPushService(keyDataResult.releaseReturnValue(), WTF::move(promise));
     });
 }
 
 void PushManager::getSubscription(ScriptExecutionContext& context, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
 {
     context.eventLoop().queueTask(TaskSource::Networking, [protectedThis = protect(*this), promise = WTF::move(promise)] mutable {
-        protectedThis->m_pushSubscriptionOwner->getPushSubscription(WTF::move(promise));
+        protect(protectedThis->m_pushSubscriptionOwner)->getPushSubscription(WTF::move(promise));
     });
 }
 

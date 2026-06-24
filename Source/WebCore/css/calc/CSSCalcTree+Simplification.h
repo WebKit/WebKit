@@ -46,6 +46,7 @@ struct AnchorSize;
 struct Asin;
 struct Atan2;
 struct Atan;
+struct CalcMix;
 struct CanonicalDimension;
 struct Clamp;
 struct Cos;
@@ -147,6 +148,7 @@ std::optional<Child> simplify(Abs&, const SimplificationOptions&);
 std::optional<Child> simplify(Sign&, const SimplificationOptions&);
 std::optional<Child> simplify(Random&, const SimplificationOptions&);
 std::optional<Child> simplify(Progress&, const SimplificationOptions&);
+std::optional<Child> simplify(CalcMix&, const SimplificationOptions&);
 std::optional<Child> simplify(Anchor&, const SimplificationOptions&);
 std::optional<Child> simplify(AnchorSize&, const SimplificationOptions&);
 

@@ -21,6 +21,7 @@
 #include "modules/video_coding/utility/quality_scaler.h"
 #include "rtc_base/thread_annotations.h"
 #include "video/adaptation/video_stream_encoder_resource.h"
+#include "video/video_stream_encoder_observer.h"
 
 namespace webrtc {
 
@@ -41,7 +42,7 @@ class QualityScalerResource : public VideoStreamEncoderResource,
   void SetQpThresholds(VideoEncoder::QpThresholds qp_thresholds);
   void OnEncodeCompleted(const EncodedImage& encoded_image,
                          int64_t time_sent_in_us);
-  void OnFrameDropped(EncodedImageCallback::DropReason reason);
+  void OnFrameDropped(VideoStreamEncoderObserver::DropReason reason);
 
   // QualityScalerQpUsageHandlerInterface implementation.
   void OnReportQpUsageHigh() override;

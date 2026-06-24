@@ -34,7 +34,7 @@ class RenderSVGPath final : public RenderSVGShape {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGPath);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGPath);
 public:
-    RenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
+    RenderSVGPath(SVGGraphicsElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGPath();
 
     FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;
@@ -50,10 +50,9 @@ private:
     void strokeShape(GraphicsContext&) const override;
     bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace) override;
 
-    void styleDidChange(Style::Difference, const RenderStyle*) final;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle*) final;
 
     bool NODELETE shouldStrokeZeroLengthSubpath() const;
-    Path* zeroLengthLinecapPath(const FloatPoint&) const;
     FloatRect NODELETE zeroLengthSubpathRect(const FloatPoint&, float) const;
     void updateZeroLengthSubpaths();
     void strokeZeroLengthSubpaths(GraphicsContext&) const;

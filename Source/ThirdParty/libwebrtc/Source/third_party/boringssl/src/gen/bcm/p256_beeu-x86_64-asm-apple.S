@@ -6,10 +6,9 @@
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__APPLE__)
 .text	
 
-
-.private_extern	_beeu_mod_inverse_vartime
 .globl	_beeu_mod_inverse_vartime
 .private_extern _beeu_mod_inverse_vartime
+
 .p2align	5
 _beeu_mod_inverse_vartime:
 

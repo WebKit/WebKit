@@ -42,25 +42,15 @@ struct BorderData {
 
     BorderData();
 
-    bool hasBorder() const
-    {
-        return edges.anyOf([](const auto& edge) { return edge.nonZero(); });
-    }
-
-    bool hasVisibleBorder() const
-    {
-        return edges.anyOf([](const auto& edge) { return edge.isVisible(); });
-    }
+    bool hasBorder() const;
+    bool hasVisibleBorder() const;
 
     bool hasBorderImage() const
     {
         return !borderImage->borderImage.borderImageSource.isNone();
     }
 
-    bool hasBorderRadius() const
-    {
-        return radii.anyOf([](auto& corner) { return !Style::isKnownEmpty(corner); });
-    }
+    bool hasBorderRadius() const;
 
     bool hasVisibleBorderDecoration() const
     {

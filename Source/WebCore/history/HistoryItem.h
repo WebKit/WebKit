@@ -35,8 +35,10 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PolicyContainer.h>
 #include <memory>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Platform.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/Scope.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
@@ -57,6 +59,7 @@ class Document;
 class FormData;
 class HistoryItem;
 class Image;
+class LocalFrame;
 class ResourceRequest;
 class SerializedScriptValue;
 
@@ -66,6 +69,12 @@ public:
     virtual ~HistoryItemClient() = default;
     virtual void historyItemChanged(const HistoryItem&) = 0;
     virtual void clearChildren(const HistoryItem&) const = 0;
+
+    virtual ScopeExit<CompletionHandler<void()>> ignoreChangesForScopeDuringRedirect(const LocalFrame&)
+    {
+        return makeScopeExit(CompletionHandler<void()> { [] { } });
+    }
+
 protected:
     HistoryItemClient() = default;
 };

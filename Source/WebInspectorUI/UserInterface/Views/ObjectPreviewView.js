@@ -166,11 +166,11 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
             var keyPreviewLossless = true;
             var entry = preview.collectionEntryPreviews[i];
             if (entry.keyPreview) {
-                keyPreviewLossless = this._appendPreview(element, entry.keyPreview);
+                keyPreviewLossless = this._appendCollectionEntryNodePreview(element, entry.keyPreview, preview, i, true);
                 element.append(" => ");
             }
 
-            var valuePreviewLossless = this._appendPreview(element, entry.valuePreview);
+            var valuePreviewLossless = this._appendCollectionEntryNodePreview(element, entry.valuePreview, preview, i, false);
 
             if (!keyPreviewLossless || !valuePreviewLossless)
                 lossless = false;
@@ -190,6 +190,24 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
         element.append(isIterator ? "]" : "}");
 
         return lossless;
+    }
+
+    _appendCollectionEntryNodePreview(element, entryPreview, collectionPreview, entryIndex, isKey)
+    {
+        if (entryPreview.subtype === "node" && collectionPreview === this._preview && this._object && !this._preview.isWeakCollection()) {
+            let options = {
+                remoteObjectAccessor: (callback) => {
+                    this._object.getCollectionEntries((entries) => {
+                        let remoteObject = isKey ? entries[0].key : entries[0].value;
+                        WI.consoleManager.releaseRemoteObjectWithConsoleClear(remoteObject);
+                        callback(remoteObject);
+                    }, {fetchStart: entryIndex, fetchCount: 1});
+                },
+            };
+            element.appendChild(WI.FormattedValue.createElementForNodePreview(entryPreview, options));
+            return false;
+        }
+        return this._appendPreview(element, entryPreview);
     }
 
     _appendPropertyPreviews(element, preview)

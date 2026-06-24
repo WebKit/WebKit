@@ -17,9 +17,9 @@
 #include <atomic>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/environment/environment.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -67,7 +67,7 @@ class AecState {
 
   // Returns the appropriate scaling of the residual echo to match the
   // audibility.
-  void GetResidualEchoScaling(ArrayView<float> residual_scaling) const;
+  void GetResidualEchoScaling(std::span<float> residual_scaling) const;
 
   // Returns whether the stationary properties of the signals are used in the
   // aec.
@@ -76,13 +76,13 @@ class AecState {
   }
 
   // Returns the ERLE.
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle(
+  std::span<const std::array<float, kFftLengthBy2Plus1>> Erle(
       bool onset_compensated) const {
     return erle_estimator_.Erle(onset_compensated);
   }
 
   // Returns the non-capped ERLE.
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> ErleUnbounded() const {
+  std::span<const std::array<float, kFftLengthBy2Plus1>> ErleUnbounded() const {
     return erle_estimator_.ErleUnbounded();
   }
 
@@ -129,7 +129,7 @@ class AecState {
   }
 
   // Return the frequency response of the reverberant echo.
-  ArrayView<const float> GetReverbFrequencyResponse() const {
+  std::span<const float> GetReverbFrequencyResponse() const {
     return reverb_model_estimator_.GetReverbFrequencyResponse();
   }
 
@@ -143,13 +143,13 @@ class AecState {
   // TODO(bugs.webrtc.org/10913): Compute multi-channel ERL.
   void Update(
       const std::optional<DelayEstimate>& external_delay,
-      ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+      std::span<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
           adaptive_filter_frequency_responses,
-      ArrayView<const std::vector<float>> adaptive_filter_impulse_responses,
+      std::span<const std::vector<float>> adaptive_filter_impulse_responses,
       const RenderBuffer& render_buffer,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2_refined,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-      ArrayView<const SubtractorOutput> subtractor_output);
+      std::span<const std::array<float, kFftLengthBy2Plus1>> E2_refined,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> Y2,
+      std::span<const SubtractorOutput> subtractor_output);
 
   // Returns filter length in blocks.
   int FilterLengthBlocks() const {
@@ -166,8 +166,6 @@ class AecState {
   std::unique_ptr<ApmDataDumper> data_dumper_;
   const EchoCanceller3Config config_;
   const size_t num_capture_channels_;
-  const bool deactivate_initial_state_reset_at_echo_path_change_;
-  const bool full_reset_at_echo_path_change_;
   const bool subtractor_analyzer_reset_at_echo_path_change_;
 
   // Class for controlling the transition from the intial state, which in turn
@@ -215,7 +213,7 @@ class AecState {
 
     // Returns the delay in blocks relative to the beginning of the filter that
     // corresponds to the direct path of the echo.
-    ArrayView<const int> DirectPathFilterDelays() const {
+    std::span<const int> DirectPathFilterDelays() const {
       return filter_delays_blocks_;
     }
 
@@ -224,7 +222,7 @@ class AecState {
     int MinDirectPathFilterDelay() const { return min_filter_delay_; }
 
     // Updates the delay estimates based on new data.
-    void Update(ArrayView<const int> analyzer_filter_delay_estimates_blocks,
+    void Update(std::span<const int> analyzer_filter_delay_estimates_blocks,
                 const std::optional<DelayEstimate>& external_delay,
                 size_t blocks_with_proper_filter_adaptation);
 
@@ -287,7 +285,7 @@ class AecState {
     void Update(const Block& x,
                 bool saturated_capture,
                 bool usable_linear_estimate,
-                ArrayView<const SubtractorOutput> subtractor_output,
+                std::span<const SubtractorOutput> subtractor_output,
                 float echo_path_gain);
 
    private:

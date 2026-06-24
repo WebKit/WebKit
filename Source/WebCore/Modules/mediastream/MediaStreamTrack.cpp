@@ -452,6 +452,14 @@ MediaProducerMediaStateFlags MediaStreamTrack::captureState(const RealtimeMediaS
         if (source.isProducingData())
             return MediaProducerMediaState::HasActiveVideoCaptureDevice;
         break;
+    case CaptureDevice::DeviceType::Canvas:
+        if (source.muted())
+            return MediaProducerMediaState::HasMutedVideoCaptureDevice;
+        if (source.interrupted())
+            return MediaProducerMediaState::HasInterruptedVideoCaptureDevice;
+        if (source.isProducingData())
+            return MediaProducerMediaState::HasActiveVideoCaptureDevice;
+        break;
     case CaptureDevice::DeviceType::Screen:
         if (source.muted())
             return MediaProducerMediaState::HasMutedScreenCaptureDevice;

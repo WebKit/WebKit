@@ -1,0 +1,58 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/resource-tree-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.NetworkManager.CrossOriginFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.NetworkManager.CrossOriginFrame.AppearsInFrameModel",
+        description: "A cross-origin child frame should appear in WI.networkManager.frames under Site Isolation, driven by the live Page.frameNavigated event from the cross-origin process, and must not be removed by the spurious frameDetached fired when it swaps out of its original process.",
+        async test() {
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let frameTarget = (await targetAddedPromise).data.target;
+
+            // The cross-origin child commits in its own process (CommitTiming::WaitForLoad); its
+            // Page.frameNavigated arrives shortly after. Drive/await the child's execution context
+            // (created right after commit) and poll the frame model until it appears.
+            let child;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                if (!frameTarget.executionContext) {
+                    await Promise.race([
+                        frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                        new Promise((resolve) => setTimeout(resolve, 100)),
+                    ]);
+                }
+                child = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/resource-tree-frame.html"));
+                if (child)
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 20));
+            }
+
+            InspectorTest.expectThat(!!WI.networkManager.mainFrame, "There should be a main frame.");
+            InspectorTest.expectThat(!!child, "Cross-origin child frame should appear in WI.networkManager.frames.");
+            if (!child)
+                return;
+
+            InspectorTest.expectThat(child.parentFrame === WI.networkManager.mainFrame, "Cross-origin child's parent should be the main frame.");
+            InspectorTest.expectEqual(child.name, "child-frame", "Cross-origin child's name attribute should be reported.");
+            InspectorTest.expectThat(child.url.endsWith("/resource-tree-frame.html"), "Cross-origin child's url should point at the iframe document.");
+            InspectorTest.expectThat(child.securityOrigin !== WI.networkManager.mainFrame.securityOrigin, "Cross-origin child should have a different security origin from the main frame.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that a cross-origin child frame appears in the frontend frame model under Site Isolation.</p>
+</body>

@@ -14,12 +14,12 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 #include <string>
 #include <utility>
 
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
@@ -78,7 +78,7 @@ int32_t TestPackStereo::SendData(const AudioFrameType frame_type,
 
   if (lost_packet_ == false) {
     status = neteq_->InsertPacket(
-        rtp_header, ArrayView<const uint8_t>(payload_data, payload_size),
+        rtp_header, std::span<const uint8_t>(payload_data, payload_size),
         /*receive_time=*/Timestamp::MinusInfinity());
 
     if (frame_type != AudioFrameType::kAudioFrameCN) {

@@ -819,7 +819,7 @@
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_vImageVerticalShear_PlanarF"},
     {"access": "public", "introduced": "10", "kind": "function", "linkage": "exported", "name": "_vImageVerticalShear_XRGB2101010W"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "GammaFunction"},
     {"access": "public", "name": "Pixel_16F"},

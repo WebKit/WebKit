@@ -31,7 +31,6 @@ class MockEncodedImageCallback : public EncodedImageCallback {
               OnEncodedImage,
               (const EncodedImage&, const CodecSpecificInfo*),
               (override));
-  MOCK_METHOD(void, OnDroppedFrame, (DropReason reason), (override));
   MOCK_METHOD(void,
               OnFrameDropped,
               (uint32_t rtp_timestamp,

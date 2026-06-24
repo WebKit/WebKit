@@ -22,6 +22,9 @@
 #include "../internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 // kEncryptedPBES2WithDESAndSHA1 is a PKCS#8 encrypted private key using PBES2
 // with DES-EDE3-CBC and HMAC-SHA-1 and a password of "testing". It was
 // generated with:
@@ -196,11 +199,11 @@ static const uint8_t kExplicitHMACWithSHA1[] = {
 static void TestDecrypt(const uint8_t *der, size_t der_len,
                         const char *password) {
   const uint8_t *data = der;
-  bssl::UniquePtr<X509_SIG> sig(d2i_X509_SIG(nullptr, &data, der_len));
+  UniquePtr<X509_SIG> sig(d2i_X509_SIG(nullptr, &data, der_len));
   ASSERT_TRUE(sig.get());
   ASSERT_EQ(der + der_len, data);
 
-  bssl::UniquePtr<PKCS8_PRIV_KEY_INFO> keypair(
+  UniquePtr<PKCS8_PRIV_KEY_INFO> keypair(
       PKCS8_decrypt(sig.get(), password, -1));
   ASSERT_TRUE(keypair);
 }
@@ -224,22 +227,22 @@ static void TestRoundTrip(int pbe_nid, const EVP_CIPHER *cipher,
   };
 
   const uint8_t *ptr = kSampleKey;
-  bssl::UniquePtr<PKCS8_PRIV_KEY_INFO> key(
+  UniquePtr<PKCS8_PRIV_KEY_INFO> key(
       d2i_PKCS8_PRIV_KEY_INFO(nullptr, &ptr, sizeof(kSampleKey)));
   ASSERT_TRUE(key);
   ASSERT_EQ(kSampleKey + sizeof(kSampleKey), ptr);
 
-  bssl::UniquePtr<X509_SIG> encrypted(PKCS8_encrypt(
+  UniquePtr<X509_SIG> encrypted(PKCS8_encrypt(
       pbe_nid, cipher, password, -1, salt, salt_len, iterations, key.get()));
   ASSERT_TRUE(encrypted);
 
-  bssl::UniquePtr<PKCS8_PRIV_KEY_INFO> key2(
+  UniquePtr<PKCS8_PRIV_KEY_INFO> key2(
       PKCS8_decrypt(encrypted.get(), password, -1));
   ASSERT_TRUE(key2);
 
   uint8_t *encoded = nullptr;
   int len = i2d_PKCS8_PRIV_KEY_INFO(key2.get(), &encoded);
-  bssl::UniquePtr<uint8_t> free_encoded(encoded);
+  UniquePtr<uint8_t> free_encoded(encoded);
   ASSERT_GE(len, 0);
   ASSERT_EQ(static_cast<size_t>(len), sizeof(kSampleKey));
   ASSERT_EQ(0, OPENSSL_memcmp(encoded, kSampleKey, sizeof(kSampleKey)));
@@ -326,13 +329,13 @@ TEST(PKCS8Test, InvalidPBES1NIDs) {
   };
 
   const uint8_t *ptr = kSampleKey;
-  bssl::UniquePtr<PKCS8_PRIV_KEY_INFO> key(
+  UniquePtr<PKCS8_PRIV_KEY_INFO> key(
       d2i_PKCS8_PRIV_KEY_INFO(nullptr, &ptr, sizeof(kSampleKey)));
   ASSERT_TRUE(key);
   ASSERT_EQ(kSampleKey + sizeof(kSampleKey), ptr);
 
-  bssl::UniquePtr<X509_SIG> encrypted(PKCS8_encrypt(
-      NID_pbes2, nullptr, "password", -1, nullptr, 0, 0, key.get()));
+  UniquePtr<X509_SIG> encrypted(PKCS8_encrypt(NID_pbes2, nullptr, "password",
+                                              -1, nullptr, 0, 0, key.get()));
   EXPECT_FALSE(encrypted);
 
   encrypted.reset(PKCS8_encrypt(NID_undef, nullptr, "password", -1, nullptr, 0,
@@ -343,3 +346,6 @@ TEST(PKCS8Test, InvalidPBES1NIDs) {
                                 nullptr, 0, 0, key.get()));
   EXPECT_FALSE(encrypted);
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

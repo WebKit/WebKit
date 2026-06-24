@@ -174,7 +174,7 @@ std::optional<std::unique_ptr<WebCore::ModelPlayerTransformState>> ModelProcessM
     return ModelProcessModelPlayerTransformState::create(m_entityTransform, m_boundingBoxCenter, m_boundingBoxExtents, m_hasPortal, m_stageModeOperation);
 }
 
-void ModelProcessModelPlayer::load(WebCore::Model& model, WebCore::LayoutSize size)
+void ModelProcessModelPlayer::load(WebCore::Model& model, WebCore::LayoutSize size, bool isForImmersive)
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer load model id=%" PRIu64, this, m_id.toUInt64());
 
@@ -184,7 +184,7 @@ void ModelProcessModelPlayer::load(WebCore::Model& model, WebCore::LayoutSize si
             client->logWarning(*this, makeString("Unexpected USDZ MIME type \""_s, model.mimeType(), "\" in <model> element. Expected \"model/vnd.usdz+zip\". Some features of <model> may not work properly. The model may fail to render in a future release."_s));
     }
 
-    send(Messages::ModelProcessModelPlayerProxy::LoadModel(model, size));
+    send(Messages::ModelProcessModelPlayerProxy::LoadModel(model, size, isForImmersive));
 }
 
 void ModelProcessModelPlayer::didUnload()

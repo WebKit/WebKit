@@ -743,6 +743,27 @@ static RetainPtr<NSString> menuItemIdentifier(const WebCore::ContextMenuAction a
         return _WKMenuItemIdentifierPauseAnimation;
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
+    case ContextMenuItemTagSubstitutionsMenu:
+        return _WKMenuItemIdentifierSubstitutionsMenu;
+
+    case ContextMenuItemTagShowSubstitutions:
+        return _WKMenuItemIdentifierShowSubstitutions;
+
+    case ContextMenuItemTagSmartCopyPaste:
+        return _WKMenuItemIdentifierSmartCopyPaste;
+
+    case ContextMenuItemTagSmartQuotes:
+        return _WKMenuItemIdentifierSmartQuotes;
+
+    case ContextMenuItemTagSmartDashes:
+        return _WKMenuItemIdentifierSmartDashes;
+
+    case ContextMenuItemTagSmartLinks:
+        return _WKMenuItemIdentifierSmartLinks;
+
+    case ContextMenuItemTagTextReplacement:
+        return _WKMenuItemIdentifierTextReplacement;
+
     default:
         return nil;
     }

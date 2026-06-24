@@ -127,7 +127,7 @@ bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
         .reportValidationErrors = canvasConfiguration.reportValidationErrors
     };
 
-    m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(convertToBackingContext->convertToBacking(protect(canvasConfiguration.device).get()), m_backing.get(), &backingDescriptor));
+    m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(convertToBackingContext->convertToBacking(protect(canvasConfiguration.device)), m_backing.get(), &backingDescriptor));
     return true;
 }
 

@@ -29,9 +29,11 @@ DesktopFrame::DesktopFrame(DesktopSize size,
                            int stride,
                            FourCC pixel_format,
                            uint8_t* data,
-                           SharedMemory* shared_memory)
+                           SharedMemory* shared_memory,
+                           FrameTexture* texture)
     : data_(data),
       shared_memory_(shared_memory),
+      texture_(texture),
       size_(size),
       stride_(stride),
       pixel_format_(pixel_format),
@@ -134,6 +136,7 @@ float DesktopFrame::scale_factor() const {
 }
 
 uint8_t* DesktopFrame::GetFrameDataAtPos(const DesktopVector& pos) const {
+  RTC_DCHECK(data());
   return data() + stride() * pos.y() + DesktopFrame::kBytesPerPixel * pos.x();
 }
 
@@ -160,6 +163,7 @@ void DesktopFrame::MoveFrameInfoFrom(DesktopFrame* other) {
 }
 
 bool DesktopFrame::FrameDataIsBlack() const {
+  RTC_DCHECK(data());
   if (size().is_empty())
     return false;
 
@@ -172,6 +176,7 @@ bool DesktopFrame::FrameDataIsBlack() const {
 }
 
 void DesktopFrame::SetFrameDataToBlack() {
+  RTC_DCHECK(data());
   const uint8_t kBlackPixelValue = 0x00;
   memset(data(), kBlackPixelValue, stride() * size().height());
 }

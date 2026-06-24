@@ -129,6 +129,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-outer-cb-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-outer-cb-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-outer-cb-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-outer-cb-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-outer-cb-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-outer-cb-002.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-outer-cb-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-outer-cb-003.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-outer-cb-003.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-self-end-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-self-end-large-border-padding-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-self-end-large-border-padding-ref.html
@@ -431,6 +440,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-025-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-025-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-025.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-026-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-026-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-026.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-001-ref.html

@@ -14,13 +14,13 @@
 
 #include "api/environment/environment.h"
 #include "p2p/base/basic_packet_socket_factory.h"
-#include "p2p/base/port_interface.h"
 #include "rtc_base/async_packet_socket.h"
+#include "rtc_base/net_helper.h"
 #include "rtc_base/socket_address.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "test/create_test_environment.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 // NOTE: This is a work in progress. Currently this file only has tests for
 // TurnServerConnection, a primitive class used by TurnServer.
@@ -48,7 +48,7 @@ class TurnServerConnectionTest : public ::testing::Test {
 
  protected:
   VirtualSocketServer vss_;
-  AutoSocketServerThread thread_;
+  test::RunLoop thread_;
   BasicPacketSocketFactory socket_factory_;
 };
 

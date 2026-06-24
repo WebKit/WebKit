@@ -1,0 +1,12 @@
+
+PASS e.style['color'] = "alpha(red / 0.5)" should not set the property value
+PASS e.style['color'] = "alpha()" should not set the property value
+PASS e.style['color'] = "alpha(from / 0.5)" should not set the property value
+PASS e.style['color'] = "alpha(from)" should not set the property value
+PASS e.style['color'] = "alpha(from red / 0.5 0.5)" should not set the property value
+PASS e.style['color'] = "alpha(from red 0.5)" should not set the property value
+PASS e.style['color'] = "alpha(from red r g b / 0.5)" should not set the property value
+PASS e.style['color'] = "alpha(from 42 / 0.5)" should not set the property value
+PASS e.style['color'] = "alpha(from none / 0.5)" should not set the property value
+PASS e.style['color'] = "alpha(from red /)" should not set the property value
+

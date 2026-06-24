@@ -28,8 +28,8 @@
 #include "RenderIterator.h"
 #include "RenderObjectInlines.h"
 #include "RenderMultiColumnFlow.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTreeBuilder.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include <wtf/TZoneMallocInlines.h>
 

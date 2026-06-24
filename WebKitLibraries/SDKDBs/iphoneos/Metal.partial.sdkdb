@@ -701,6 +701,15 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "MTLDeviceErrorNone"},
+      {"access": "public", "name": "MTLDeviceErrorNotSupported"}
+     ],
+     "introduced": "26.4",
+     "name": "MTLDeviceError"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "MTLDispatchTypeSerial"},
       {"access": "public", "name": "MTLDispatchTypeConcurrent"}
      ],
@@ -1534,7 +1543,9 @@
       {"access": "public", "name": "MTLTensorDataTypeInt16"},
       {"access": "public", "name": "MTLTensorDataTypeUInt16"},
       {"access": "public", "name": "MTLTensorDataTypeInt32"},
-      {"access": "public", "name": "MTLTensorDataTypeUInt32"}
+      {"access": "public", "name": "MTLTensorDataTypeUInt32"},
+      {"access": "public", "introduced": "26.4", "name": "MTLTensorDataTypeInt4"},
+      {"access": "public", "introduced": "26.4", "name": "MTLTensorDataTypeUInt4"}
      ],
      "introduced": "26",
      "name": "MTLTensorDataType"
@@ -1811,6 +1822,7 @@
     {"access": "public", "introduced": "18", "kind": "function", "linkage": "exported", "name": "_MTLCopyAllDevices"},
     {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_MTLCounterErrorDomain"},
     {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_MTLCreateSystemDefaultDevice"},
+    {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_MTLDeviceErrorDomain"},
     {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_MTLDynamicLibraryDomain"},
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_MTLIOCompressionContextAppendData"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_MTLIOCompressionContextDefaultChunkSize"},
@@ -5340,6 +5352,7 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "counterSets", "introduced": "14", "name": "counterSets"},
       {"access": "public", "attr": [ "readonly" ], "getter": "supportsDynamicLibraries", "introduced": "14", "name": "supportsDynamicLibraries"},
       {"access": "public", "attr": [ "readonly" ], "getter": "supportsRenderDynamicLibraries", "introduced": "15", "name": "supportsRenderDynamicLibraries"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsPlacementSparse", "introduced": "26.4", "name": "supportsPlacementSparse"},
       {"access": "public", "attr": [ "readonly" ], "getter": "supportsRaytracing", "introduced": "14", "name": "supportsRaytracing"},
       {"access": "public", "attr": [ "readonly" ], "getter": "supportsFunctionPointers", "introduced": "14", "name": "supportsFunctionPointers"},
       {"access": "public", "attr": [ "readonly" ], "getter": "supportsFunctionPointersFromRender", "introduced": "15", "name": "supportsFunctionPointersFromRender"},
@@ -6224,7 +6237,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "MTL4AlphaToCoverageState"},
     {"access": "public", "name": "MTL4AlphaToOneState"},
@@ -6300,6 +6313,7 @@
     {"access": "public", "name": "MTLCurveType"},
     {"access": "public", "name": "MTLDataType"},
     {"access": "public", "name": "MTLDepthClipMode"},
+    {"access": "public", "name": "MTLDeviceError"},
     {"access": "public", "name": "MTLDispatchThreadgroupsIndirectArguments"},
     {"access": "public", "name": "MTLDispatchThreadsIndirectArguments"},
     {"access": "public", "name": "MTLDispatchType"},

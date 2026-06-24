@@ -12,13 +12,12 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/matched_filter.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
-namespace aec3 {
 
 // Let ha denote the horizontal of a, and hb the horizontal sum of b
 // returns [ha, hb, ha, hb]
@@ -35,13 +34,13 @@ inline __m128 hsum_ab(__m256 a, __m256 b) {
 void MatchedFilterCore_AccumulatedError_AVX2(size_t x_start_index,
                                              float x2_sum_threshold,
                                              float smoothing,
-                                             ArrayView<const float> x,
-                                             ArrayView<const float> y,
-                                             ArrayView<float> h,
+                                             std::span<const float> x,
+                                             std::span<const float> y,
+                                             std::span<float> h,
                                              bool* filters_updated,
                                              float* error_sum,
-                                             ArrayView<float> accumulated_error,
-                                             ArrayView<float> scratch_memory) {
+                                             std::span<float> accumulated_error,
+                                             std::span<float> scratch_memory) {
   const int h_size = static_cast<int>(h.size());
   const int x_size = static_cast<int>(x.size());
   RTC_DCHECK_EQ(0, h_size % 16);
@@ -141,14 +140,14 @@ void MatchedFilterCore_AccumulatedError_AVX2(size_t x_start_index,
 void MatchedFilterCore_AVX2(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            ArrayView<const float> x,
-                            ArrayView<const float> y,
-                            ArrayView<float> h,
+                            std::span<const float> x,
+                            std::span<const float> y,
+                            std::span<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            ArrayView<float> accumulated_error,
-                            ArrayView<float> scratch_memory) {
+                            std::span<float> accumulated_error,
+                            std::span<float> scratch_memory) {
   if (compute_accumulated_error) {
     return MatchedFilterCore_AccumulatedError_AVX2(
         x_start_index, x2_sum_threshold, smoothing, x, y, h, filters_updated,
@@ -259,5 +258,4 @@ void MatchedFilterCore_AVX2(size_t x_start_index,
   }
 }
 
-}  // namespace aec3
 }  // namespace webrtc

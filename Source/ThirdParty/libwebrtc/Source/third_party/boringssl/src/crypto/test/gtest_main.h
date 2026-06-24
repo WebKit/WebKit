@@ -76,7 +76,7 @@ inline void SetupGoogleTest() {
   }
 #else
   // Some tests create pipes. We check return values, so avoid being killed by
-  // |SIGPIPE|.
+  // `SIGPIPE`.
   signal(SIGPIPE, SIG_IGN);
 #endif
 

@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
 
@@ -36,17 +36,17 @@ class UnrecognizedParametersCause
   static constexpr int kType = UnrecognizedParametersCauseConfig::kType;
 
   explicit UnrecognizedParametersCause(
-      webrtc::ArrayView<const uint8_t> unrecognized_parameters)
+      std::span<const uint8_t> unrecognized_parameters)
       : unrecognized_parameters_(unrecognized_parameters.begin(),
                                  unrecognized_parameters.end()) {}
 
   static std::optional<UnrecognizedParametersCause> Parse(
-      webrtc::ArrayView<const uint8_t> data);
+      std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
-  webrtc::ArrayView<const uint8_t> unrecognized_parameters() const {
+  std::span<const uint8_t> unrecognized_parameters() const {
     return unrecognized_parameters_;
   }
 

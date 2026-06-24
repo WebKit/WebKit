@@ -13,6 +13,7 @@
 #include <cstring>
 #include <string>
 
+#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/net_helpers.h"
@@ -633,6 +634,28 @@ TEST(IPAddressTest, TestIsAny) {
   EXPECT_TRUE(IPIsAny(IPAddress(kIPv4MappedAnyAddr)));
 }
 
+TEST(IPAddressTest, TestMappedLocalAddresses) {
+  // IPv4 loopback: 127.0.0.1
+  IPAddress v4_loopback(0x7f000001);
+  // IPv4-mapped IPv6 loopback: ::ffff:127.0.0.1
+  IPAddress mapped_loopback = v4_loopback.AsIPv6Address();
+  EXPECT_TRUE(IPIsLoopback(mapped_loopback));
+
+  // IPv4 private: 192.168.1.1
+  IPAddress v4_private;
+  EXPECT_TRUE(IPFromString("192.168.1.1", &v4_private));
+  // IPv4-mapped IPv6 private: ::ffff:192.168.1.1
+  IPAddress mapped_private = v4_private.AsIPv6Address();
+  EXPECT_TRUE(IPIsPrivate(mapped_private));
+
+  // IPv4 link-local: 169.254.1.1
+  IPAddress v4_linklocal;
+  EXPECT_TRUE(IPFromString("169.254.1.1", &v4_linklocal));
+  // IPv4-mapped IPv6 link-local: ::ffff:169.254.1.1
+  IPAddress mapped_linklocal = v4_linklocal.AsIPv6Address();
+  EXPECT_TRUE(IPIsLinkLocal(mapped_linklocal));
+}
+
 TEST(IPAddressTest, TestIsEui64) {
   IPAddress addr;
   EXPECT_TRUE(IPFromString(kIPv6EuiAddrString, &addr));
@@ -649,6 +672,57 @@ TEST(IPAddressTest, TestIsEui64) {
 
   EXPECT_TRUE(IPFromString(kIPv6LoopbackAddrString, &addr));
   EXPECT_FALSE(IPIsMacBased(addr));
+}
+
+TEST(IPAddressTest, TestFromStringRFC4291) {
+  IPAddress addr, addr2;
+
+  // RFC 4291 Section 2.2, item 1
+  EXPECT_TRUE(IPFromString("ABCD:EF01:2345:6789:ABCD:EF01:2345:6789", &addr));
+  EXPECT_TRUE(IPFromString("2001:DB8:0:0:8:800:200C:417A", &addr));
+
+  // RFC 4291 Section 2.2, item 2 (Compressed)
+  EXPECT_TRUE(IPFromString("2001:DB8::8:800:200C:417A", &addr2));
+  EXPECT_EQ(addr, addr2);
+
+  EXPECT_TRUE(IPFromString("FF01:0:0:0:0:0:0:101", &addr));
+  EXPECT_TRUE(IPFromString("FF01::101", &addr2));
+  EXPECT_EQ(addr, addr2);
+
+  EXPECT_TRUE(IPFromString("0:0:0:0:0:0:0:1", &addr));
+  EXPECT_TRUE(IPFromString("::1", &addr2));
+  EXPECT_EQ(addr, addr2);
+
+  EXPECT_TRUE(IPFromString("0:0:0:0:0:0:0:0", &addr));
+  EXPECT_TRUE(IPFromString("::", &addr2));
+  EXPECT_EQ(addr, addr2);
+
+  // RFC 4291 Section 2.2, item 3 (Hybrid)
+  // 13.1.68.3 is 0D 01 44 03
+  EXPECT_TRUE(IPFromString("0:0:0:0:0:0:13.1.68.3", &addr));
+  EXPECT_TRUE(IPFromString("::13.1.68.3", &addr2));
+  EXPECT_EQ(addr, addr2);
+  EXPECT_TRUE(IPFromString("::0:13.1.68.3", &addr2));
+  EXPECT_EQ(addr, addr2);
+
+  // 129.144.52.38 is 81 90 34 26
+  EXPECT_TRUE(IPFromString("0:0:0:0:0:FFFF:129.144.52.38", &addr));
+  EXPECT_TRUE(IPFromString("::FFFF:129.144.52.38", &addr2));
+  EXPECT_EQ(addr, addr2);
+
+  // NAT64 (RFC 6052) Well-Known Prefix (not in RFC 4291 but uses hybrid)
+  EXPECT_TRUE(IPFromString("64:ff9b::192.168.7.1", &addr));
+  EXPECT_TRUE(IPFromString("64:ff9b::c0a8:0701", &addr2));
+  EXPECT_EQ(addr, addr2);
+
+  // ISATAP (RFC 5214) (not in RFC 4291 but uses hybrid)
+  EXPECT_TRUE(IPFromString("fe80::5efe:192.168.7.1", &addr));
+  EXPECT_TRUE(IPFromString("fe80::5efe:c0a8:0701", &addr2));
+  EXPECT_EQ(addr, addr2);
+
+  EXPECT_TRUE(IPFromString("fe80::200:5efe:192.168.7.1", &addr));
+  EXPECT_TRUE(IPFromString("fe80::200:5efe:c0a8:0701", &addr2));
+  EXPECT_EQ(addr, addr2);
 }
 
 TEST(IPAddressTest, TestNormalized) {
@@ -686,11 +760,62 @@ TEST(IPAddressTest, TestNormalized) {
   addr2 = addr;
   addr = addr.Normalized();
   EXPECT_EQ(addr, addr2);
+}
 
+TEST(IPAddressTest, TestNormalizeWithCheckForEmbeddedIPv4Address) {
+  IPAddress addr, addr2;
+
+  // IPv4-mapped
+  EXPECT_TRUE(IPFromString(kIPv4MappedV4StyleAddrString, &addr));
+  addr = addr.NormalizeWithCheckForEmbeddedIPv4Address();
+  EXPECT_EQ(addr, IPAddress(kIPv4RFC1918Addr));
+
+  // IPv4-compatible
+  EXPECT_TRUE(IPFromString("::0102:0304", &addr));
+  addr = addr.NormalizeWithCheckForEmbeddedIPv4Address();
+  EXPECT_EQ(addr, IPAddress(kIPv4PublicAddr));
+
+  EXPECT_TRUE(IPFromString("::192.168.7.1", &addr));
+  addr = addr.NormalizeWithCheckForEmbeddedIPv4Address();
+  EXPECT_EQ(addr, IPAddress(kIPv4RFC1918Addr));
+
+  // NAT64 (RFC 6052) Well-Known Prefix normalization
+  EXPECT_TRUE(IPFromString("64:ff9b::192.168.7.1", &addr));
+  addr = addr.NormalizeWithCheckForEmbeddedIPv4Address();
+  EXPECT_EQ(addr, IPAddress(kIPv4RFC1918Addr));
+
+  // 6to4 (RFC 3056) normalization: 2002:c0a8:0701::
+  EXPECT_TRUE(IPFromString("2002:c0a8:0701::", &addr));
+  addr = addr.NormalizeWithCheckForEmbeddedIPv4Address();
+  // TODO: crbug.com/497635018 - consider reenabling if 6to4 addresses
+  // should be mapped.
+  // EXPECT_EQ(addr, IPAddress(kIPv4RFC1918Addr));
+
+  // Teredo (RFC 4380) normalization: 2001:0000:....:3f57:f8fe
+  // Embedded IPv4 is at the end, bit-flipped.
+  // 192.168.7.1 is c0 a8 07 01. Bit-flipped: 3f 57 f8 fe.
+  EXPECT_TRUE(IPFromString("2001:0000:4112:1:2831:3421:3f57:f8fe", &addr));
+  addr = addr.NormalizeWithCheckForEmbeddedIPv4Address();
+  EXPECT_EQ(addr, IPAddress(kIPv4RFC1918Addr));
+
+  // ISATAP (RFC 5214) normalization: fe80::5efe:c0a8:0701
+  EXPECT_TRUE(IPFromString("fe80::5efe:192.168.7.1", &addr));
+  addr = addr.NormalizeWithCheckForEmbeddedIPv4Address();
+  EXPECT_EQ(addr, IPAddress(kIPv4RFC1918Addr));
+
+  EXPECT_TRUE(IPFromString("fe80::200:5efe:192.168.7.1", &addr));
+  addr = addr.NormalizeWithCheckForEmbeddedIPv4Address();
+  EXPECT_EQ(addr, IPAddress(kIPv4RFC1918Addr));
+}
+
+TEST(IPAddressTest, TestV4NotAltered) {
+  IPAddress addr, addr2;
   // Check that v4 addresses aren't altered.
   addr = IPAddress(htonl(kIPv4PublicAddr));
   addr2 = IPAddress(htonl(kIPv4PublicAddr));
   addr = addr.Normalized();
+  EXPECT_EQ(addr, addr2);
+  addr = addr.NormalizeWithCheckForEmbeddedIPv4Address();
   EXPECT_EQ(addr, addr2);
 }
 
@@ -981,6 +1106,17 @@ TEST(IPAddressTest, TestInterfaceAddress) {
 
   InterfaceAddress addr5(kIPv6LinkLocalAddr, IPV6_ADDRESS_FLAG_TEMPORARY);
   EXPECT_NE(addr1, addr5);
+}
+
+TEST(IPAddressTest, AbslStringify) {
+  IPAddress addr_v4(kIPv4PublicAddr);
+  EXPECT_EQ(absl::StrCat(addr_v4), "ipv4:" + kIPv4PublicAddrString);
+
+  IPAddress addr_v6(kIPv6PublicAddr);
+  EXPECT_EQ(absl::StrCat(addr_v6), "ipv6:" + kIPv6PublicAddrString);
+
+  IPAddress addr_unspec;
+  EXPECT_EQ(absl::StrCat(addr_unspec), "unspecified");
 }
 
 }  // namespace webrtc

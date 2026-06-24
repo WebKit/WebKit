@@ -11,10 +11,10 @@
 #define NET_DCSCTP_PUBLIC_DCSCTP_MESSAGE_H_
 
 #include <cstdint>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/public/types.h"
 
 namespace dcsctp {
@@ -39,7 +39,7 @@ class DcSctpMessage {
   PPID ppid() const { return ppid_; }
 
   // The payload of the message.
-  webrtc::ArrayView<const uint8_t> payload() const { return payload_; }
+  std::span<const uint8_t> payload() const { return payload_; }
 
   // When destructing the message, extracts the payload.
   std::vector<uint8_t> ReleasePayload() && { return std::move(payload_); }

@@ -11,10 +11,8 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/include/recovered_packet_receiver.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/ulpfec_receiver.h"
 #include "system_wrappers/include/clock.h"
@@ -28,21 +26,20 @@ class DummyCallback : public RecoveredPacketReceiver {
 };
 }  // namespace
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
   constexpr size_t kMinDataNeeded = 12;
-  if (size < kMinDataNeeded || size > 2000) {
+  if (fuzz_data.size() < kMinDataNeeded || fuzz_data.size() > 2'000) {
     return;
   }
 
-  uint32_t ulpfec_ssrc = ByteReader<uint32_t>::ReadLittleEndian(data + 0);
-  uint16_t ulpfec_seq_num = ByteReader<uint16_t>::ReadLittleEndian(data + 4);
-  uint32_t media_ssrc = ByteReader<uint32_t>::ReadLittleEndian(data + 6);
-  uint16_t media_seq_num = ByteReader<uint16_t>::ReadLittleEndian(data + 10);
+  uint32_t ulpfec_ssrc = fuzz_data.Read<uint32_t>();
+  uint16_t ulpfec_seq_num = fuzz_data.Read<uint16_t>();
+  uint32_t media_ssrc = fuzz_data.Read<uint32_t>();
+  uint16_t media_seq_num = fuzz_data.Read<uint16_t>();
 
   DummyCallback callback;
   UlpfecReceiver receiver(ulpfec_ssrc, 0, &callback, Clock::GetRealTimeClock());
 
-  test::FuzzDataHelper fuzz_data(webrtc::MakeArrayView(data, size));
   while (fuzz_data.CanReadBytes(kMinDataNeeded)) {
     size_t packet_length = kRtpHeaderSize + fuzz_data.Read<uint8_t>();
     auto raw_packet = fuzz_data.ReadByteArray(packet_length);

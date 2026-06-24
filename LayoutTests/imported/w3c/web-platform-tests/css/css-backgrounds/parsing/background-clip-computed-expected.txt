@@ -4,4 +4,10 @@ PASS Property background-clip value 'padding-box'
 PASS Property background-clip value 'content-box'
 PASS Property background-clip value 'border-area'
 PASS Property background-clip value 'border-box, padding-box, content-box, border-area'
+PASS Property background-clip value 'text'
+FAIL Property background-clip value 'border-area text' assert_true: 'border-area text' is a supported value for background-clip. expected true got false
+FAIL Property background-clip value 'text border-area' assert_true: 'text border-area' is a supported value for background-clip. expected true got false
+PASS Property background-clip value 'border-box' multiple base values
+PASS Property background-clip value 'border-box, padding-box' multiple base values
+PASS Property background-clip value 'border-box, padding-box, content-box' multiple base values
 

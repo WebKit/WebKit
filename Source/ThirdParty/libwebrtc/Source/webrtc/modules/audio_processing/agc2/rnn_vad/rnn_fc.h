@@ -13,10 +13,10 @@
 
 #include <array>
 #include <cstdint>
+#include <span>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/function_view.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/vector_math.h"
@@ -37,8 +37,8 @@ class FullyConnectedLayer {
   // Ctor. `output_size` cannot be greater than `kFullyConnectedLayerMaxUnits`.
   FullyConnectedLayer(int input_size,
                       int output_size,
-                      ArrayView<const int8_t> bias,
-                      ArrayView<const int8_t> weights,
+                      std::span<const int8_t> bias,
+                      std::span<const int8_t> weights,
                       ActivationFunction activation_function,
                       const AvailableCpuFeatures& cpu_features,
                       absl::string_view layer_name);
@@ -53,8 +53,13 @@ class FullyConnectedLayer {
   // Returns the size of the output buffer.
   int size() const { return output_size_; }
 
+  // Returns the output buffer.
+  std::span<const float> output() const {
+    return std::span(output_.data(), output_size_);
+  }
+
   // Computes the fully-connected layer output.
-  void ComputeOutput(ArrayView<const float> input);
+  void ComputeOutput(std::span<const float> input);
 
  private:
   const int input_size_;

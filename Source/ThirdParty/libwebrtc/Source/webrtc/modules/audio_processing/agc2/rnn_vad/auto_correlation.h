@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_AUTO_CORRELATION_H_
 
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/utility/pffft_wrapper.h"
 
@@ -32,8 +32,8 @@ class AutoCorrelationCalculator {
 
   // Computes the auto-correlation coefficients for a target pitch interval.
   // `auto_corr` indexes are inverted lags.
-  void ComputeOnPitchBuffer(ArrayView<const float, kBufSize12kHz> pitch_buf,
-                            ArrayView<float, kNumLags12kHz> auto_corr);
+  void ComputeOnPitchBuffer(std::span<const float, kBufSize12kHz> pitch_buf,
+                            std::span<float, kNumLags12kHz> auto_corr);
 
  private:
   Pffft fft_;

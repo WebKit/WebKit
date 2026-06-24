@@ -27,12 +27,13 @@
 #include "SimplifyMarkupCommand.h"
 
 #include "ContainerNodeInlines.h"
+#include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
-#include "RenderObjectInlines.h"
 #include "RenderInline.h"
 #include "RenderObject.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include "StyleDifference.h"
 
 namespace WebCore {

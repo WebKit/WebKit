@@ -140,11 +140,11 @@ class Commit {
 
         this.repository_id = json.repository_id;
         this.branch = json.branch;
-        this.message = json.message;
+        this.message = json.message ? json.message : '?';
 
         //FIXME: Need to create a more general solution for tracking bugs  
-        this.bugUrls = json.message.match(/\b(https?):\/{2}[^\s<>&]+[^\.\s<>&,)]/gmi);
-        this.radarUrls = json.message.match(/\b(rdar):\/{2}[^\s<>&]+[^\.\s<>&,)]/gmi);
+        this.bugUrls = json.message ? json.message.match(/\b(https?):\/{2}[^\s<>&]+[^\.\s<>&,)]/gmi) : null;
+        this.radarUrls = json.message ? json.message.match(/\b(rdar):\/{2}[^\s<>&]+[^\.\s<>&,)]/gmi) : null;
 
         this.timestamp = json.timestamp;
         this.order = json.order;

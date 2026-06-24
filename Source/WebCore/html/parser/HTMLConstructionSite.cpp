@@ -141,9 +141,9 @@ static inline void insert(HTMLConstructionSiteTask& task)
 
     ASSERT(!task.child->parentNode());
     if (task.nextChild)
-        task.parent->parserInsertBefore(protect(*task.child), protect(*task.nextChild));
+        SUPPRESS_UNCOUNTED_ARG task.parent->parserInsertBefore(protect(*task.child), protect(*task.nextChild));
     else
-        task.parent->parserAppendChild(protect(*task.child));
+        SUPPRESS_UNCOUNTED_ARG task.parent->parserAppendChild(protect(*task.child));
 }
 
 static inline void executeInsertTask(HTMLConstructionSiteTask& task)
@@ -167,12 +167,12 @@ static inline void executeReparentTask(HTMLConstructionSiteTask& task)
     ASSERT(!task.nextChild);
 
     if (RefPtr parent = task.child->parentNode())
-        parent->parserRemoveChild(*task.child);
+        parent->parserRemoveChild(protect(*task.child));
 
     if (task.child->parentNode() || task.child->contains(task.parent.get()))
         return;
 
-    task.parent->parserAppendChild(protect(*task.child));
+    protect(task.parent)->parserAppendChild(protect(*task.child));
 }
 
 static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask& task)
@@ -180,7 +180,7 @@ static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask&
     ASSERT(task.operation == HTMLConstructionSiteTask::InsertAlreadyParsedChild);
 
     if (RefPtr<ContainerNode> parent = task.child->parentNode())
-        parent->parserRemoveChild(*task.child);
+        parent->parserRemoveChild(protect(*task.child));
 
     if (task.child->parentNode() || task.child->contains(task.parent.get()))
         return;
@@ -197,7 +197,7 @@ static inline void executeTakeAllChildrenAndReparentTask(HTMLConstructionSiteTas
     ASSERT(!task.nextChild);
 
     RefPtr furthestBlock = task.oldParent();
-    task.parent->takeAllChildrenFrom(furthestBlock.get());
+    protect(task.parent)->takeAllChildrenFrom(furthestBlock.get());
 
     RELEASE_ASSERT(!task.parent->parentNode());
     furthestBlock->parserAppendChild(protect(*task.parent));
@@ -345,12 +345,12 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagInBody(AtomHTMLToken&& token)
     if (m_isParsingFragment)
         return;
 
-    mergeAttributesFromTokenIntoElement(WTF::move(token), m_openElements.htmlElement());
+    mergeAttributesFromTokenIntoElement(WTF::move(token), protect(m_openElements.htmlElement()));
 }
 
 void HTMLConstructionSite::insertHTMLBodyStartTagInBody(AtomHTMLToken&& token)
 {
-    mergeAttributesFromTokenIntoElement(WTF::move(token), m_openElements.bodyElement());
+    mergeAttributesFromTokenIntoElement(WTF::move(token), protect(m_openElements.bodyElement()));
 }
 
 void HTMLConstructionSite::setDefaultCompatibilityMode()
@@ -575,7 +575,7 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
                 registryKind = Element::CustomElementRegistryKind::Null;
         }
         if (mode && is<Element>(currentNode())) {
-            auto exceptionOrShadowRoot = currentElement().attachDeclarativeShadow(*mode, delegatesFocus, clonable, serializable, slotAssignment, referenceTarget, registryKind);
+            auto exceptionOrShadowRoot = protect(currentElement())->attachDeclarativeShadow(*mode, delegatesFocus, clonable, serializable, slotAssignment, referenceTarget, registryKind);
             if (!exceptionOrShadowRoot.hasException()) {
                 Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
                 auto element = createHTMLElement(token);
@@ -638,7 +638,7 @@ void HTMLConstructionSite::insertScriptElement(AtomHTMLToken&& token)
     // those flags or effects thereof.
     const bool parserInserted = !m_parserContentPolicy.contains(ParserContentPolicy::DoNotMarkAlreadyStarted);
     const bool alreadyStarted = m_isParsingFragment && parserInserted;
-    auto element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), parserInserted, alreadyStarted);
+    SUPPRESS_UNCOUNTED_ARG auto element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), parserInserted, alreadyStarted);
     setAttributes(element, token, m_parserContentPolicy);
     if (scriptingContentIsAllowed(m_parserContentPolicy))
         attachLater(protect(currentNode()), element.copyRef());
@@ -735,7 +735,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
 
         unsigned substringLength = breakIndex - currentPosition;
         auto substring = characters.substring(currentPosition, substringLength);
-        auto textNode = Text::create(task.parent->document(), WTF::move(substring));
+        auto textNode = Text::create(protect(task.parent->document()), WTF::move(substring));
 
         currentPosition += textNode->length();
         ASSERT(currentPosition <= characters.length());
@@ -792,7 +792,7 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
 
 Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
 {
-    auto element = ownerDocumentForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
+    SUPPRESS_UNCOUNTED_ARG auto element = ownerDocumentForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
     setAttributes(element, token, m_parserContentPolicy);
     return element;
 }
@@ -823,15 +823,10 @@ static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScop
 
 std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomElementRegistry>> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomHTMLToken& token)
 {
-    // FIXME: This can't use HTMLConstructionSite::createElement because we
-    // have to pass the current form element.  We should rework form association
-    // to occur after construction to allow better code sharing here.
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#create-an-element-for-the-token
     Ref treeScope = treeScopeForCurrentNode();
     Ref ownerDocument = treeScope->documentScope();
-    bool insideTemplateElement = m_openElements.containsTemplateElement();
-    RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, insideTemplateElement ? nullptr : form(), true);
-    RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? RefPtr { registryForCurrentNode(currentNode(), treeScope) } : m_registry;
+    RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, true);
+    RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? RefPtr { registryForCurrentNode(protect(currentNode()), treeScope) } : m_registry;
     if (!element) [[unlikely]] {
         RefPtr elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
         if (elementInterface) [[unlikely]] {
@@ -865,6 +860,11 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
     ASSERT(element);
     if (registry && registry->isScoped() && registry != treeScope->customElementRegistry()) [[unlikely]]
         CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
+
+    if (form() && !m_openElements.containsTemplateElement()) {
+        if (auto* formAssociated = element->asFormAssociatedElement())
+            formAssociated->setFormSetByParser(form());
+    }
 
     // FIXME: This is a hack to connect images to pictures before the image has
     // been inserted into the document. It can be removed once asynchronous image

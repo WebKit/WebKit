@@ -158,7 +158,10 @@ inline double JSFunction::originalLength(VM& vm)
         return uncheckedDowncast<JSBoundFunction>(this)->length(vm);
     if (inherits<JSRemoteFunction>())
         return uncheckedDowncast<JSRemoteFunction>(this)->length(vm);
-    ASSERT(!isHostFunction());
+    if (isHostFunction()) {
+        // The original length is captured in NativeExecutable at creation time.
+        return uncheckedDowncast<NativeExecutable>(executable())->length();
+    }
     return jsExecutable()->parameterCount();
 }
 
@@ -192,7 +195,14 @@ inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
         return jsEmptyString(vm);
     }
 
-    ASSERT(!isHostFunction());
+    if (isHostFunction()) {
+        // Mirror the JS path below: build a fresh JSString from the original name stored on
+        // NativeExecutable. NativeExecutable is shared and uniquely keyed by name, so this
+        // always returns the original (creation-time) value even after the JSFunction's "name"
+        // property has been reified or mutated.
+        return uncheckedDowncast<NativeExecutable>(executable())->nameJSString(vm);
+    }
+
     const Identifier& ecmaName = jsExecutable()->ecmaName();
     String name;
     // https://tc39.github.io/ecma262/#sec-exports-runtime-semantics-evaluation
@@ -215,9 +225,12 @@ inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
 
 inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
 {
-    // Bound functions are not eagerly generating name and length.
-    // Thus, we can use FunctionRareData's tracking. This is useful to optimize func.bind().bind() case.
-    if (isNonBoundHostFunction())
+    // Plain host, builtin, and JS functions all reify length/name lazily; the original value is
+    // recoverable via originalLength()/originalName() (from NativeExecutable for hosts, from
+    // FunctionExecutable for JS), so the only thing we have to refuse is bound functions
+    // (which set their length/name at bind time, not via FunctionRareData tracking) and any
+    // function whose length or name has since been user-mutated.
+    if (this->inherits<JSBoundFunction>())
         return false;
     FunctionRareData* rareData = this->rareData();
     if (!rareData)

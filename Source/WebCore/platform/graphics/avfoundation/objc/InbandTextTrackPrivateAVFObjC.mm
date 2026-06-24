@@ -138,6 +138,12 @@ bool InbandTextTrackPrivateAVFObjC::isEasyToRead() const
     return hasMediaCharacteristic(AVMediaCharacteristicEasyToRead);
 }
 
+bool InbandTextTrackPrivateAVFObjC::isMachineGenerated() const
+{
+    return PAL::canLoad_AVFoundation_AVMediaCharacteristicMachineGenerated()
+        && hasMediaCharacteristic(AVMediaCharacteristicMachineGenerated);
+}
+
 String InbandTextTrackPrivateAVFObjC::label() const
 {
     NSArray<AVMetadataItem*>* commonMetadata = nil;

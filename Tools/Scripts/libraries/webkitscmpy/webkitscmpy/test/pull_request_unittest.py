@@ -1662,6 +1662,7 @@ No pre-PR checks to run""")
             captured.stdout.getvalue(),
             "Created 'PR 1 | [Testing] Existing commit'!\n"
             'Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n'
+            'Updated rdar://1 to Analyze/Review\n'
             'https://github.example.com/WebKit/WebKit/pull/1\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -1738,6 +1739,7 @@ No pre-PR checks to run""")
             captured.stdout.getvalue(),
             "Created 'PR 1 | [Testing] Existing commit'!\n"
             'Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n'
+            'Updated rdar://1 to Analyze/Review\n'
             'https://github.example.com/WebKit/WebKit/pull/1\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -1817,6 +1819,7 @@ No pre-PR checks to run""")
             captured.stdout.getvalue(),
             "Created 'PR 1 | [Testing] Existing commit'!\n"
             'Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n'
+            'Updated rdar://1 to Analyze/Review\n'
             'https://github.example.com/WebKit/WebKit/pull/1\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -1887,6 +1890,7 @@ No pre-PR checks to run""")
             captured.stdout.getvalue(),
             "Created 'PR 1 | [Testing] Existing commit'!\n"
             'Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n'
+            'Updated rdar://1 to Analyze/Review\n'
             'https://github.example.com/WebKit/WebKit/pull/1\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -1909,6 +1913,76 @@ No pre-PR checks to run""")
                 'Synced PR labels with issue component!',
             ],
         )
+
+    def test_update_radar(self):
+        def run(args, substate='Investigate', message=None):
+            issues = list(bmocks.ISSUES)
+            issues[0] = dict(bmocks.ISSUES[0], substate=substate)
+            if message is None:
+                message = '[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1\n<rdar://problem/1>\n'
+
+            with mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+                self.BUGZILLA.split('://')[-1],
+                projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+                environment=Environment(
+                    BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                    BUGS_EXAMPLE_COM_PASSWORD='password',
+                ),
+            ), bmocks.Radar(issues=issues), patch(
+                'webkitbugspy.Tracker._trackers', [
+                    bugzilla.Tracker(self.BUGZILLA, radar_importer=bmocks.USERS['Radar WebKit Bug Importer']),
+                    radar.Tracker(),
+                ],
+            ), mocks.local.Git(
+                self.path, remote='https://{}'.format(remote.remote),
+                remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+            ) as repo, mocks.local.Svn():
+
+                repo.commits['eng/pr-branch'] = [
+                    repo.commits[repo.default_branch][-1],
+                    Commit(
+                        hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                        branch='eng/pr-branch',
+                        author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                        identifier="5.1@eng/pr-branch",
+                        timestamp=int(time.time()),
+                        message=message
+                    )
+                ]
+
+                repo.head = repo.commits['eng/pr-branch'][-1]
+                result = program.main(args=args, path=self.path)
+                rdar_tracker = next(t for t in Tracker._trackers if isinstance(t, radar.Tracker))
+                return result, rdar_tracker.issue(1).substate
+
+        # on by default: Investigate → Review
+        result, substate = run(('pull-request', '--no-history'))
+        self.assertEqual(0, result)
+        self.assertEqual('Review', substate)
+
+        # on by default: Fix → Review
+        result, substate = run(('pull-request', '--no-history'), substate='Fix')
+        self.assertEqual(0, result)
+        self.assertEqual('Review', substate)
+
+        # --no-update-radar: no change
+        result, substate = run(('pull-request', '--no-history', '--no-update-radar'))
+        self.assertEqual(0, result)
+        self.assertEqual('Investigate', substate)
+
+        # substate not Investigate or Fix: no change
+        result, substate = run(('pull-request', '--no-history'), substate='Screen')
+        self.assertEqual(0, result)
+        self.assertEqual('Screen', substate)
+
+        # new radar: no change
+        result, substate = run(
+            ('pull-request', '--no-history'),
+            substate='Screen',
+            message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1\n'
+        )
+        self.assertEqual(0, result)
+        self.assertEqual('Screen', substate)
 
     def test_no_update_issue(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
@@ -2209,6 +2283,7 @@ No pre-PR checks to run""")
             captured.stdout.getvalue(),
             "Created 'PR 1 | <rdar://problem/1> [Testing] Existing commit'!\n"
             'Posted pull request link to rdar://1\n'
+            'Updated rdar://1 to Analyze/Review\n'
             'https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -2261,6 +2336,7 @@ No pre-PR checks to run""")
             captured.stdout.getvalue(),
             "Created 'PR 1 | <rdar://problem/1> [Testing] Existing commit'!\n"
             'Posted pull request link to rdar://1\n'
+            'Updated rdar://1 to Analyze/Review\n'
             'https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')

@@ -113,7 +113,7 @@ String WorkletGlobalScope::userAgent(const URL& url) const
 {
     if (!m_document)
         return emptyString();
-    return m_document->userAgent(url);
+    return protect(m_document)->userAgent(url);
 }
 
 void WorkletGlobalScope::evaluate()
@@ -144,7 +144,7 @@ void WorkletGlobalScope::logExceptionToConsole(const String& errorMessage, const
 
     if (!m_document || isJSExecutionForbidden())
         return;
-    m_document->logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, WTF::move(stack));
+    protect(m_document)->logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, WTF::move(stack));
 }
 
 void WorkletGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
@@ -154,21 +154,21 @@ void WorkletGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMes
 
     if (!m_document || isJSExecutionForbidden() || !message)
         return;
-    m_document->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(message->source(), message->type(), message->level(), message->message(), 0));
+    protect(m_document)->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(message->source(), message->type(), message->level(), message->message(), 0));
 }
 
 void WorkletGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     if (!m_document || isJSExecutionForbidden())
         return;
-    m_document->addConsoleMessage(source, level, message, requestIdentifier);
+    protect(m_document)->addConsoleMessage(source, level, message, requestIdentifier);
 }
 
 void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject*, unsigned long requestIdentifier)
 {
     if (!m_document || isJSExecutionForbidden())
         return;
-    m_document->addMessage(source, level, messageText, sourceURL, lineNumber, columnNumber, WTF::move(callStack), nullptr, requestIdentifier);
+    protect(m_document)->addMessage(source, level, messageText, sourceURL, lineNumber, columnNumber, WTF::move(callStack), nullptr, requestIdentifier);
 }
 
 void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)

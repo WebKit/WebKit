@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2023 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,147 +44,122 @@ WebCore::Color createColor(const ColorMix& unresolved, PlatformColorResolutionSt
 {
     PlatformColorResolutionStateNester nester { state };
 
-    auto component1Color = createColor(unresolved.mixComponents1.color, state);
-    if (!component1Color.isValid())
+    bool hasInvalidValue = false;
+    auto components = unresolved.components.map([&](const auto& component) -> ColorMixResolver::Component {
+        auto color = createColor(component.color, state);
+        if (!color.isValid()) {
+            hasInvalidValue = true;
+            return ColorMixResolver::Component { WebCore::Color(), std::nullopt };
+        }
+
+        std::optional<Style::Percentage<Range{0, 100}>> percentage;
+        if (requiresConversionData(component.percentage)) {
+            if (!state.conversionData) {
+                hasInvalidValue = true;
+                return ColorMixResolver::Component { WebCore::Color(), std::nullopt };
+            }
+            percentage = Style::toStyle(component.percentage, *state.conversionData);
+        } else
+            percentage = Style::toStyleNoConversionDataRequired(component.percentage);
+
+        return ColorMixResolver::Component { WTF::move(color), WTF::move(percentage) };
+    });
+    if (hasInvalidValue)
         return { };
-
-    auto component2Color = createColor(unresolved.mixComponents2.color, state);
-    if (!component2Color.isValid())
-        return { };
-
-    std::optional<Style::Percentage<Range{0, 100}>> percentage1;
-    std::optional<Style::Percentage<Range{0, 100}>> percentage2;
-    if (requiresConversionData(unresolved.mixComponents1.percentage) || requiresConversionData(unresolved.mixComponents2.percentage)) {
-        if (!state.conversionData)
-            return { };
-
-        percentage1 = Style::toStyle(unresolved.mixComponents1.percentage, *state.conversionData);
-        percentage2 = Style::toStyle(unresolved.mixComponents2.percentage, *state.conversionData);
-    } else {
-        percentage1 = Style::toStyleNoConversionDataRequired(unresolved.mixComponents1.percentage);
-        percentage2 = Style::toStyleNoConversionDataRequired(unresolved.mixComponents2.percentage);
-    }
 
     return mix(
         ColorMixResolver {
             unresolved.colorInterpolationMethod,
-            ColorMixResolver::Component {
-                WTF::move(component1Color),
-                WTF::move(percentage1),
-            },
-            ColorMixResolver::Component {
-                WTF::move(component2Color),
-                WTF::move(percentage2),
-            }
+            WTF::move(components),
         }
     );
 }
 
 bool containsCurrentColor(const ColorMix& unresolved)
 {
-    return containsCurrentColor(unresolved.mixComponents1.color)
-        || containsCurrentColor(unresolved.mixComponents2.color);
+    return std::ranges::any_of(unresolved.components, [](const auto& component) {
+        return containsCurrentColor(component.color);
+    });
 }
 
 bool containsColorSchemeDependentColor(const ColorMix& unresolved)
 {
-    return containsColorSchemeDependentColor(unresolved.mixComponents1.color)
-        || containsColorSchemeDependentColor(unresolved.mixComponents2.color);
+    return std::ranges::any_of(unresolved.components, [](const auto& component) {
+        return containsColorSchemeDependentColor(component.color);
+    });
 }
-
-namespace ColorMixSerializationDetails {
-
-static bool NODELETE sumTo100Percent(const ColorMix::Component::Percentage& a, const ColorMix::Component::Percentage& b)
-{
-    return a.isRaw() && b.isRaw() && a.raw()->value + b.raw()->value == 100.0;
-}
-
-static std::optional<PercentageRaw<>> NODELETE subtractFrom100Percent(const ColorMix::Component::Percentage& percentage)
-{
-    return percentage.isRaw() ? std::make_optional(PercentageRaw<> { 100.0 - percentage.raw()->value }) : std::nullopt;
-}
-
-static void serializationForColorMixPercentage1(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& value)
-{
-    if (value.mixComponents1.percentage && value.mixComponents2.percentage) {
-        if (*value.mixComponents1.percentage == 50_css_percentage && *value.mixComponents2.percentage == 50_css_percentage)
-            return;
-        builder.append(' ');
-        serializationForCSS(builder, context, *value.mixComponents1.percentage);
-    } else if (value.mixComponents1.percentage) {
-        if (*value.mixComponents1.percentage == 50_css_percentage)
-            return;
-        builder.append(' ');
-        serializationForCSS(builder, context, *value.mixComponents1.percentage);
-    } else if (value.mixComponents2.percentage) {
-        if (*value.mixComponents2.percentage == 50_css_percentage)
-            return;
-
-        auto subtractedPercent = subtractFrom100Percent(*value.mixComponents2.percentage);
-        if (!subtractedPercent)
-            return;
-
-        builder.append(' ');
-        serializationForCSS(builder, context, *subtractedPercent);
-    }
-}
-
-static void serializationForColorMixPercentage2(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& value)
-{
-    if (value.mixComponents1.percentage && value.mixComponents2.percentage) {
-        if (sumTo100Percent(*value.mixComponents1.percentage, *value.mixComponents2.percentage))
-            return;
-
-        builder.append(' ');
-        serializationForCSS(builder, context, *value.mixComponents2.percentage);
-    } else if (value.mixComponents2.percentage) {
-        if (*value.mixComponents2.percentage == 50_css_percentage)
-            return;
-        if (!value.mixComponents2.percentage->isCalc())
-            return;
-
-        builder.append(' ');
-        serializationForCSS(builder, context, *value.mixComponents2.percentage);
-    }
-}
-
-} // namespace ColorMixSerializationDetails
 
 void Serialize<ColorMix>::operator()(StringBuilder& builder, const SerializationContext& context, const ColorMix& value)
 {
-
     builder.append("color-mix("_s);
     if (value.colorInterpolationMethod != CSS::defaultInterpolationMethodForColorMix) {
         builder.append("in "_s);
         WebCore::serializationForCSS(builder, value.colorInterpolationMethod);
         builder.append(", "_s);
     }
-    serializationForCSS(builder, context, value.mixComponents1.color);
-    ColorMixSerializationDetails::serializationForColorMixPercentage1(builder, context, value);
-    builder.append(", "_s);
-    serializationForCSS(builder, context, value.mixComponents2.color);
-    ColorMixSerializationDetails::serializationForColorMixPercentage2(builder, context, value);
+
+    bool anyComponentHasCalcPercentage = false;
+    double specifiedSum = 0;
+    size_t numberOfOmittedPercentages = 0;
+
+    double valueToMatch = 100.0 / value.components.size();
+    bool canOmitAllPercentages = true;
+
+    for (auto& component : value.components) {
+        if (component.percentage) {
+            WTF::switchOn(*component.percentage,
+                [&](const ColorMix::Component::Percentage::Raw& raw) {
+                    if (raw.value != valueToMatch)
+                        canOmitAllPercentages = false;
+                    specifiedSum += raw.value;
+                },
+                [&](const ColorMix::Component::Percentage::Calc&) {
+                    anyComponentHasCalcPercentage = true;
+                    canOmitAllPercentages = false;
+                }
+            );
+        } else
+            ++numberOfOmittedPercentages;
+    }
+
+    double omittedPercentageValue = 0;
+    if (numberOfOmittedPercentages > 0 && !anyComponentHasCalcPercentage) {
+        omittedPercentageValue = (100.0 - specifiedSum) / numberOfOmittedPercentages;
+        if (omittedPercentageValue != valueToMatch)
+            canOmitAllPercentages = false;
+    }
+
+    builder.append(interleave(value.components, [&](auto& builder, auto& component) {
+        serializationForCSS(builder, context, component.color);
+        if (!canOmitAllPercentages) {
+            if (component.percentage) {
+                builder.append(' ');
+                serializationForCSS(builder, context, *component.percentage);
+            } else if (!anyComponentHasCalcPercentage) {
+                builder.append(' ');
+                serializationForCSS(builder, context, ColorMix::Component::Percentage::Raw { omittedPercentageValue });
+            }
+        }
+    }, ", "_s));
     builder.append(')');
 }
 
 void ComputedStyleDependenciesCollector<ColorMix>::operator()(ComputedStyleDependencies& dependencies, const ColorMix& value)
 {
-    collectComputedStyleDependencies(dependencies, value.mixComponents1.color);
-    collectComputedStyleDependencies(dependencies, value.mixComponents1.percentage);
-    collectComputedStyleDependencies(dependencies, value.mixComponents2.color);
-    collectComputedStyleDependencies(dependencies, value.mixComponents2.percentage);
+    for (auto& component : value.components) {
+        collectComputedStyleDependencies(dependencies, component.color);
+        collectComputedStyleDependencies(dependencies, component.percentage);
+    }
 }
 
 IterationStatus CSSValueChildrenVisitor<ColorMix>::operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>& func, const ColorMix& value)
 {
-    if (visitCSSValueChildren(func, value.mixComponents1.color) == IterationStatus::Done)
-        return IterationStatus::Done;
-    if (visitCSSValueChildren(func, value.mixComponents1.percentage) == IterationStatus::Done)
-        return IterationStatus::Done;
-    if (visitCSSValueChildren(func, value.mixComponents2.color) == IterationStatus::Done)
-        return IterationStatus::Done;
-    if (visitCSSValueChildren(func, value.mixComponents2.percentage) == IterationStatus::Done)
-        return IterationStatus::Done;
+    for (auto& component : value.components) {
+        if (visitCSSValueChildren(func, component.color) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (visitCSSValueChildren(func, component.percentage) == IterationStatus::Done)
+            return IterationStatus::Done;
+    }
     return IterationStatus::Continue;
 }
 

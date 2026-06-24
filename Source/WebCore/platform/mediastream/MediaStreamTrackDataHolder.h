@@ -65,6 +65,8 @@ public:
     MediaStreamTrackDataHolder(const MediaStreamTrackDataHolder&) = delete;
     MediaStreamTrackDataHolder& operator=(const MediaStreamTrackDataHolder&) = delete;
 
+    WEBCORE_EXPORT std::unique_ptr<MediaStreamTrackDataHolder> copy() const;
+
     MediaStreamTrackData& data() { return m_data; }
     Ref<RealtimeMediaSource>& source() { return m_source; }
 

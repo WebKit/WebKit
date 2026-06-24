@@ -35,6 +35,9 @@ bool RetryAsync(SSL *ssl, int ret);
 // errors are idempotent.
 int CheckIdempotentError(const char *name, SSL *ssl, std::function<int()> func);
 
+inline constexpr int kExitCodeUnimplemented = 89;
+inline constexpr int kExitCodeMustFail = 90;
+
 #if defined(HANDSHAKER_SUPPORTED)
 // DoSplitHandshake delegates the SSL handshake to a separate process, called
 // the handshaker.  This process proxies I/O between the handshaker and the
@@ -53,15 +56,17 @@ bool GetHandshakeHint(SSL *ssl, SettingsWriter *writer, bool is_resume,
 // The protocol between the proxy and the handshaker is defined by these
 // single-character prefixes. |kControlMsgDone| uses 'H' for compatibility with
 // older binaries.
-constexpr char kControlMsgWantRead = 'R';        // Handshaker wants data
-constexpr char kControlMsgWriteCompleted = 'W';  // Proxy has sent data
-constexpr char kControlMsgDone = 'H';            // Proxy should resume control
-constexpr char kControlMsgError = 'E';           // Handshaker hit an error
+inline constexpr char kControlMsgWantRead = 'R';        // Handshaker wants data
+inline constexpr char kControlMsgWriteCompleted = 'W';  // Proxy has sent data
+inline constexpr char kControlMsgDone = 'H';   // Proxy should resume control
+inline constexpr char kControlMsgError = 'E';  // Handshaker hit an error
+inline constexpr char kControlMsgUnimplemented = 'U';  // Could not parse flags
 
 // The protocol between the proxy and handshaker uses these file descriptors.
-constexpr int kFdControl = 3;            // Bi-directional dgram socket.
-constexpr int kFdProxyToHandshaker = 4;  // Uni-directional pipe.
-constexpr int kFdHandshakerToProxy = 5;  // Uni-directional pipe.
+inline constexpr int kFdControl = 3;            // Bi-directional dgram socket.
+inline constexpr int kFdProxyToHandshaker = 4;  // Uni-directional pipe.
+inline constexpr int kFdHandshakerToProxy = 5;  // Uni-directional pipe.
+
 #endif  // HANDSHAKER_SUPPORTED
 
 #endif  // HEADER_TEST_HANDSHAKE

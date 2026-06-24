@@ -217,40 +217,6 @@ int inet_pton_v6(const char* src, void* dst) {
   uint16_t* addr_end = reinterpret_cast<uint16_t*>(&an_addr.s6_addr[16]);
   bool seencompressed = false;
 
-  // Addresses that start with "::" (i.e., a run of initial zeros) or
-  // "::ffff:" can potentially be IPv4 mapped or compatibility addresses.
-  // These have dotted-style IPv4 addresses on the end (e.g. "::192.168.7.1").
-  if (*readcursor == ':' && *(readcursor + 1) == ':' &&
-      *(readcursor + 2) != 0) {
-    // Check for periods, which we'll take as a sign of v4 addresses.
-    const char* addrstart = readcursor + 2;
-    if (strchr(addrstart, '.')) {
-      const char* colon = strchr(addrstart, ':');
-      if (colon) {
-        uint16_t a_short;
-        int bytesread = 0;
-        if (sscanf(addrstart, "%hx%n", &a_short, &bytesread) != 1 ||
-            a_short != 0xFFFF || bytesread != 4) {
-          // Colons + periods means has to be ::ffff:a.b.c.d. But it wasn't.
-          return 0;
-        } else {
-          an_addr.s6_addr[10] = 0xFF;
-          an_addr.s6_addr[11] = 0xFF;
-          addrstart = colon + 1;
-        }
-      }
-      struct in_addr v4;
-      if (inet_pton_v4(addrstart, &v4.s_addr)) {
-        memcpy(&an_addr.s6_addr[12], &v4, sizeof(v4));
-        memcpy(dst, &an_addr, sizeof(an_addr));
-        return 1;
-      } else {
-        // Invalid v4 address.
-        return 0;
-      }
-    }
-  }
-
   // For addresses without a trailing IPv4 component ('normal' IPv6 addresses).
   while (*readcursor != 0 && addr_cursor < addr_end) {
     if (*readcursor == ':') {
@@ -268,25 +234,43 @@ int inet_pton_v6(const char* src, void* dst) {
           // Special case - trailing ::.
           addr_cursor = addr_end;
         } else {
+          bool has_dot = false;
           while (*coloncounter) {
             if (*coloncounter == ':') {
               ++coloncount;
+            } else if (*coloncounter == '.') {
+              has_dot = true;
             }
             ++coloncounter;
           }
           // (coloncount + 1) is the number of shorts left in the address.
+          // If there's a dot, the last part is an IPv4 address, which is 2
+          // shorts but has no internal colon.
+          int expected_shorts = coloncount + 1;
+          if (has_dot) {
+            expected_shorts++;
+          }
           // If this number is greater than the number of available shorts, the
           // address is malformed.
-          if (coloncount + 1 > addr_end - addr_cursor) {
+          if (expected_shorts > addr_end - addr_cursor) {
             return 0;
           }
-          addr_cursor = addr_end - (coloncount + 1);
+          addr_cursor = addr_end - expected_shorts;
           seencompressed = true;
         }
       } else {
         ++readcursor;
       }
     } else {
+      if (strchr(readcursor, '.') && addr_cursor + 2 <= addr_end) {
+        struct in_addr v4;
+        if (inet_pton_v4(readcursor, &v4.s_addr)) {
+          memcpy(addr_cursor, &v4, sizeof(v4));
+          addr_cursor += 2;
+          readcursor += strlen(readcursor);
+          break;
+        }
+      }
       uint16_t word;
       int bytesread = 0;
       if (sscanf(readcursor, "%4hx%n", &word, &bytesread) != 1) {

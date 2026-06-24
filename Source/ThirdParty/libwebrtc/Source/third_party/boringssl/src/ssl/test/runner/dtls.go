@@ -202,7 +202,7 @@ func (c *Conn) readDTLS13RecordHeader(epoch *epochState, b []byte) (headerLen in
 // indicated in the header (if it contains the type). The connection's internal
 // sequence number is updated to the value from the header.
 func (c *Conn) readDTLSRecordHeader(epoch *epochState, b []byte) (headerLen int, recordLen int, typ recordType, err error) {
-	if epoch.cipher != nil && c.in.version >= VersionTLS13 {
+	if epoch.cipher != nil && c.in.version.protocolVersion() >= VersionTLS13 {
 		return c.readDTLS13RecordHeader(epoch, b)
 	}
 
@@ -223,13 +223,13 @@ func (c *Conn) readDTLSRecordHeader(epoch *epochState, b []byte) (headerLen int,
 	// the peer may not know the version yet.
 	if typ != recordTypeAlert && !c.skipRecordVersionCheck {
 		if c.haveVers {
-			wireVersion := c.wireVersion
-			if c.vers >= VersionTLS13 {
+			wireVersion := c.vers.wire
+			if c.vers.protocolVersion() >= VersionTLS13 {
 				wireVersion = VersionDTLS12
 			}
 			if vers != wireVersion {
 				c.sendAlert(alertProtocolVersion)
-				return 0, 0, 0, c.in.setErrorLocked(fmt.Errorf("dtls: received record with version %x when expecting version %x", vers, c.wireVersion))
+				return 0, 0, 0, c.in.setErrorLocked(fmt.Errorf("dtls: received record with version %x when expecting version %x", vers, c.vers.wire))
 			}
 		} else {
 			if expect := c.config.Bugs.ExpectInitialRecordVersion; expect != 0 && vers != expect {
@@ -370,9 +370,9 @@ func (c *Conn) dtlsWriteRecord(typ recordType, data []byte) (n int, err error) {
 
 	if typ == recordTypeChangeCipherSpec {
 		// Don't send ChangeCipherSpec in DTLS 1.3.
-		// TODO(crbug.com/42290594): Add an option to send them anyway and test
+		// TODO(crbug.com/383078468): Add an option to send them anyway and test
 		// what our implementation does with unexpected ones.
-		if c.vers >= VersionTLS13 {
+		if c.vers.protocolVersion() >= VersionTLS13 {
 			return
 		}
 		c.nextFlight = append(c.nextFlight, DTLSMessage{
@@ -492,7 +492,7 @@ func (c *Conn) dtlsACKHandshake() error {
 	if c.config.Bugs.ACKFlightDTLS != nil {
 		c.config.Bugs.ACKFlightDTLS(&controller, prev, received, records)
 	} else {
-		if c.vers >= VersionTLS13 {
+		if c.vers.protocolVersion() >= VersionTLS13 {
 			controller.WriteACK(controller.OutEpoch(), records)
 		}
 	}
@@ -552,21 +552,17 @@ func (c *Conn) dtlsPackRecord(epoch *epochState, typ recordType, data []byte, mu
 		maxLen = 1024
 	}
 
-	vers := c.wireVersion
+	vers := c.vers.wire
 	if vers == 0 {
 		// Some TLS servers fail if the record version is greater than
 		// TLS 1.0 for the initial ClientHello.
-		if c.isDTLS {
-			vers = VersionDTLS10
-		} else {
-			vers = VersionTLS10
-		}
+		vers = VersionDTLS10
 	}
-	if c.vers >= VersionTLS13 || c.out.version >= VersionTLS13 {
+	if c.vers.protocolVersion() >= VersionTLS13 || c.out.version.protocolVersion() >= VersionTLS13 {
 		vers = VersionDTLS12
 	}
 
-	useDTLS13RecordHeader := c.out.version >= VersionTLS13 && epoch.cipher != nil && !c.useDTLSPlaintextHeader()
+	useDTLS13RecordHeader := c.out.version.protocolVersion() >= VersionTLS13 && epoch.cipher != nil && !c.useDTLSPlaintextHeader()
 	headerHasLength := true
 	record := make([]byte, 0, dtlsMaxRecordHeaderLen+len(data)+c.out.maxEncryptOverhead(epoch, len(data)))
 	seq := c.out.sequenceNumberForOutput(epoch)
@@ -926,15 +922,25 @@ func (c *DTLSController) InEpoch() uint16 {
 	return c.conn.in.epoch.epoch
 }
 
+// flush flushes the current outgoing packet. Packets are buffered so tests can
+// exercise cases when one flight is packed with the next flight, but any
+// non-write DTLSController methods must implicitly flush so they are testing
+// against a shim in the expected state.
+func (c *DTLSController) flush() error {
+	if c.err != nil {
+		return c.err
+	}
+	if err := c.conn.dtlsFlushPacket(); err != nil {
+		c.err = err
+		return err
+	}
+	return nil
+}
+
 // AdvanceClock advances the shim's clock by duration. It is a test failure if
 // the shim sends anything before picking up the command.
 func (c *DTLSController) AdvanceClock(duration time.Duration) {
-	if c.err != nil {
-		return
-	}
-
-	c.err = c.conn.dtlsFlushPacket()
-	if c.err != nil {
+	if c.flush() != nil {
 		return
 	}
 
@@ -953,7 +959,7 @@ func (c *DTLSController) AdvanceClock(duration time.Duration) {
 
 // SetMTU updates the shim's MTU to mtu.
 func (c *DTLSController) SetMTU(mtu int) {
-	if c.err != nil {
+	if c.flush() != nil {
 		return
 	}
 
@@ -964,6 +970,19 @@ func (c *DTLSController) SetMTU(mtu int) {
 
 	c.conn.maxPacketLen = mtu
 	c.err = adaptor.SetPeerMTU(mtu)
+}
+
+// SetTimeout updates the shim's timeout to mtu.
+func (c *DTLSController) SetTimeout(d time.Duration) {
+	if c.flush() != nil {
+		return
+	}
+	adaptor := c.conn.config.Bugs.PacketAdaptor
+	if adaptor == nil {
+		panic("tls: no PacketAdapter set")
+	}
+
+	c.err = adaptor.SetPeerTimeout(d)
 }
 
 // WriteFlight writes msgs to the shim, using the default fragmenting logic.
@@ -1335,12 +1354,7 @@ func (c *DTLSController) WriteAppData(epoch uint16, data []byte) {
 // data record. This may be used to test that post-handshake retransmits may
 // interleave with application data.
 func (c *DTLSController) ReadAppData(epoch uint16, expected []byte) {
-	if c.err != nil {
-		return
-	}
-
-	if err := c.conn.dtlsFlushPacket(); err != nil {
-		c.err = err
+	if c.flush() != nil {
 		return
 	}
 
@@ -1361,11 +1375,7 @@ func (c *DTLSController) ReadAppData(epoch uint16, expected []byte) {
 
 // ExpectNextTimeout indicates the shim's next timeout should be d from now.
 func (c *DTLSController) ExpectNextTimeout(d time.Duration) {
-	if c.err != nil {
-		return
-	}
-	if err := c.conn.dtlsFlushPacket(); err != nil {
-		c.err = err
+	if c.flush() != nil {
 		return
 	}
 	c.err = c.conn.config.Bugs.PacketAdaptor.ExpectNextTimeout(d)
@@ -1373,11 +1383,7 @@ func (c *DTLSController) ExpectNextTimeout(d time.Duration) {
 
 // ExpectNoNext indicates the shim should not have a next timeout.
 func (c *DTLSController) ExpectNoNextTimeout() {
-	if c.err != nil {
-		return
-	}
-	if err := c.conn.dtlsFlushPacket(); err != nil {
-		c.err = err
+	if c.flush() != nil {
 		return
 	}
 	c.err = c.conn.config.Bugs.PacketAdaptor.ExpectNoNextTimeout()

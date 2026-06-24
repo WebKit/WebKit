@@ -84,7 +84,7 @@ void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
     });
     m_backing->submit(WTF::move(result));
 
-    if (RefPtr device = m_device.get()) {
+    if (RefPtr device = m_device) {
         for (Ref commandBuffer : commandBuffers) {
             commandBuffer->setOverrideLabel(commandBuffer->label());
             commandBuffer->setBacking(device->invalidCommandEncoder(), device->invalidCommandBuffer());
@@ -413,10 +413,10 @@ static void clampDimension(WebGPU::Extent3D& extent3D, size_t dimension, WebGPU:
 
 static void getImageBytesFromVideoFrame(WebGPU::Queue& backing, const RefPtr<VideoFrame>& videoFrame, WebGPU::Extent3D& backingCopySize, NOESCAPE const ImageDataCallback& callback)
 {
-    if (!videoFrame.get())
+    if (!videoFrame)
         return callback({ }, 0, 0);
 
-    RefPtr<NativeImage> nativeImage = backing.getNativeImage(*videoFrame.get());
+    RefPtr<NativeImage> nativeImage = backing.getNativeImage(*videoFrame);
     if (!nativeImage)
         return callback({ }, 0, 0);
 
@@ -669,11 +669,11 @@ static bool isOriginClean(const auto& source, [[maybe_unused]] ScriptExecutionCo
             return true;
         },
         [&](const Ref<HTMLImageElement>& imageElement) -> ResultType {
-            return imageElement->originClean(*protect(context.securityOrigin()).get());
+            return imageElement->originClean(*protect(context.securityOrigin()));
         },
         [&]([[maybe_unused]] const Ref<HTMLVideoElement>& videoElement) -> ResultType {
 #if PLATFORM(COCOA)
-            return !videoElement->taintsOrigin(*protect(context.securityOrigin()).get());
+            return !videoElement->taintsOrigin(*protect(context.securityOrigin()));
 #else
             return true;
 #endif

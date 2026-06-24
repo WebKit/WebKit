@@ -55,7 +55,6 @@ private:
 
     const Ref<WebXRFrame> m_frame;
     const Ref<WebXRInputSource> m_inputSource;
-    std::optional<int> m_buttonIndex;
 };
 
 } // namespace WebCore

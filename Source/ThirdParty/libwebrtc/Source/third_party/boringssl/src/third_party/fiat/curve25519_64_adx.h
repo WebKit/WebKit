@@ -14,14 +14,20 @@ static __inline__ uint64_t fiat_value_barrier_u64(uint64_t a) {
   return a;
 }
 
-__attribute__((target("adx,bmi2")))
-static inline void fe4_mul(fe4 out, const fe4 x, const fe4 y) { fiat_curve25519_adx_mul(out, x, y); }
+__attribute__((target("adx,bmi2"))) static inline void fe4_mul(fe4 out,
+                                                               const fe4 x,
+                                                               const fe4 y) {
+  bssl::fiat_curve25519_adx_mul(out, x, y);
+}
 
-__attribute__((target("adx,bmi2")))
-static inline void fe4_sq(fe4 out, const fe4 x) { fiat_curve25519_adx_square(out, x); }
+__attribute__((target("adx,bmi2"))) static inline void fe4_sq(fe4 out,
+                                                              const fe4 x) {
+  bssl::fiat_curve25519_adx_square(out, x);
+}
 
 /*
- * The function fiat_mulx_u64 is a multiplication, returning the full double-width result.
+ * The function fiat_mulx_u64 is a multiplication, returning the full
+ * double-width result.
  *
  * Postconditions:
  *   out1 = (arg1 * arg2) mod 2^64
@@ -79,9 +85,7 @@ static inline void fiat_addcarryx_u64(uint64_t* out1, fiat_uint1* out2, fiat_uin
   *out2 = addcarry64(arg1, arg2, arg3, &t);
   *out1 = t;
 #elif defined(_M_X64)
-  long long unsigned int t;
   *out2 = _addcarry_u64(arg1, arg2, arg3, out1);
-  *out1 = t;
 #else
   arg2 += arg1;
   arg1 = arg2 < arg1;
@@ -466,11 +470,10 @@ static void fe4_invert(fe4 out, const fe4 z) {
   fe4_mul(out, t1, t0);
 }
 
-__attribute__((target("adx,bmi2")))
-void x25519_scalar_mult_adx(uint8_t out[32], const uint8_t scalar[32],
-                            const uint8_t point[32]) {
+__attribute__((target("adx,bmi2"))) void bssl::x25519_scalar_mult_adx(
+    uint8_t out[32], const uint8_t scalar[32], const uint8_t point[32]) {
   uint8_t e[32];
-  OPENSSL_memcpy(e, scalar, 32);
+  bssl::OPENSSL_memcpy(e, scalar, 32);
   e[0] &= 248;
   e[31] &= 127;
   e[31] |= 64;
@@ -493,9 +496,9 @@ void x25519_scalar_mult_adx(uint8_t out[32], const uint8_t scalar[32],
   // <https://github.com/mit-plv/fiat-crypto/blob/2456d821825521f7e03e65882cc3521795b0320f/src/Curves/Montgomery/XZProofs.v#L278>
   // preconditions: 0 <= e < 2^255 (not necessarily e < order), fe_invert(0) = 0
   fe4 x1, x2 = {1}, z2 = {0}, x3, z3 = {1}, tmp0, tmp1;
-  OPENSSL_memcpy(x1, point, sizeof(fe4));
+  bssl::OPENSSL_memcpy(x1, point, sizeof(fe4));
   x1[3] &= (uint64_t)(-1)>>1;
-  OPENSSL_memcpy(x3, x1, sizeof(fe4));
+  bssl::OPENSSL_memcpy(x3, x1, sizeof(fe4));
 
   unsigned swap = 0;
   int pos;
@@ -542,7 +545,7 @@ void x25519_scalar_mult_adx(uint8_t out[32], const uint8_t scalar[32],
   fe4_invert(z2, z2);
   fe4_mul(x2, x2, z2);
   fe4_canon(x2, x2);
-  OPENSSL_memcpy(out, x2, sizeof(fe4));
+  bssl::OPENSSL_memcpy(out, x2, sizeof(fe4));
 }
 
 typedef struct {
@@ -607,36 +610,37 @@ ge_p3_add_p3_precomp_4(ge_p3_4 *r, const ge_p3_4 *p, const ge_precomp_4 *q) {
 __attribute__((always_inline)) // 25% speedup with clang14 and zen2
 static inline void table_select_4(ge_precomp_4 *t, const int pos,
                                   const signed char b) {
-  uint8_t bnegative = constant_time_msb_w(b);
+  uint8_t bnegative = bssl::constant_time_msb_w(b);
   uint8_t babs = b - ((bnegative & b) << 1);
 
   uint8_t t_bytes[3][32] = {
-    {static_cast<uint8_t>(constant_time_is_zero_w(b) & 1)},
-    {static_cast<uint8_t>(constant_time_is_zero_w(b) & 1)},
-    {0},
+      {static_cast<uint8_t>(bssl::constant_time_is_zero_w(b) & 1)},
+      {static_cast<uint8_t>(bssl::constant_time_is_zero_w(b) & 1)},
+      {0},
   };
 #if defined(__clang__)
   __asm__("" : "+m" (t_bytes) : /*no inputs*/);
 #endif
-  static_assert(sizeof(t_bytes) == sizeof(k25519Precomp[pos][0]), "");
+  static_assert(sizeof(t_bytes) == sizeof(bssl::k25519Precomp[pos][0]), "");
   for (int i = 0; i < 8; i++) {
-    constant_time_conditional_memxor(t_bytes, k25519Precomp[pos][i],
-                                     sizeof(t_bytes),
-                                     constant_time_eq_w(babs, 1 + i));
+    bssl::constant_time_conditional_memxor(
+        t_bytes, bssl::k25519Precomp[pos][i], sizeof(t_bytes),
+        bssl::constant_time_eq_w(babs, 1 + i));
   }
 
   static_assert(sizeof(t_bytes) == sizeof(ge_precomp_4), "");
 
   // fe4 uses saturated 64-bit limbs, so converting from bytes is just a copy.
-  OPENSSL_memcpy(t, t_bytes, sizeof(ge_precomp_4));
+  bssl::OPENSSL_memcpy(t, t_bytes, sizeof(ge_precomp_4));
 
   fe4 xy2d_neg = {0};
   fe4_sub(xy2d_neg, xy2d_neg, t->xy2d);
-  constant_time_conditional_memcpy(t->yplusx, t_bytes[1], sizeof(fe4),
-                                   bnegative);
-  constant_time_conditional_memcpy(t->yminusx, t_bytes[0], sizeof(fe4),
-                                   bnegative);
-  constant_time_conditional_memcpy(t->xy2d, xy2d_neg, sizeof(fe4), bnegative);
+  bssl::constant_time_conditional_memcpy(t->yplusx, t_bytes[1], sizeof(fe4),
+                                         bnegative);
+  bssl::constant_time_conditional_memcpy(t->yminusx, t_bytes[0], sizeof(fe4),
+                                         bnegative);
+  bssl::constant_time_conditional_memcpy(t->xy2d, xy2d_neg, sizeof(fe4),
+                                         bnegative);
 }
 
 // h = a * B
@@ -645,8 +649,8 @@ static inline void table_select_4(ge_precomp_4 *t, const int pos,
 //
 // Preconditions:
 //   a[31] <= 127
-__attribute__((target("adx,bmi2")))
-void x25519_ge_scalarmult_base_adx(uint8_t h[4][32], const uint8_t a[32]) {
+__attribute__((target("adx,bmi2"))) void bssl::x25519_ge_scalarmult_base_adx(
+    uint8_t h[4][32], const uint8_t a[32]) {
   signed char e[64];
   signed char carry;
 
@@ -692,5 +696,5 @@ void x25519_ge_scalarmult_base_adx(uint8_t h[4][32], const uint8_t a[32]) {
   fe4_canon(r.Z, r.Z);
   fe4_canon(r.T, r.T);
   static_assert(sizeof(ge_p3_4) == sizeof(uint8_t[4][32]), "");
-  OPENSSL_memcpy(h, &r, sizeof(ge_p3_4));
+  bssl::OPENSSL_memcpy(h, &r, sizeof(ge_p3_4));
 }

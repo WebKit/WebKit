@@ -26,8 +26,11 @@
 
 #include "../fipsmodule/bn/internal.h"
 #include "../internal.h"
+#include "../mem_internal.h"
 #include "./internal.h"
 
+
+using namespace bssl;
 
 // The following precomputation tables are for the following
 // points used in the SPAKE2 protocol.
@@ -278,8 +281,7 @@ static const uint8_t kSpakeMSmallPrecomp[15 * 2 * 32] = {
 SPAKE2_CTX *SPAKE2_CTX_new(enum spake2_role_t my_role, const uint8_t *my_name,
                            size_t my_name_len, const uint8_t *their_name,
                            size_t their_name_len) {
-  SPAKE2_CTX *ctx =
-      reinterpret_cast<SPAKE2_CTX *>(OPENSSL_zalloc(sizeof(SPAKE2_CTX)));
+  SPAKE2_CTX *ctx = New<SPAKE2_CTX>();
   if (ctx == nullptr) {
     return nullptr;
   }
@@ -305,7 +307,7 @@ void SPAKE2_CTX_free(SPAKE2_CTX *ctx) {
 
   OPENSSL_free(ctx->my_name);
   OPENSSL_free(ctx->their_name);
-  OPENSSL_free(ctx);
+  Delete(ctx);
 }
 
 // left_shift_3 sets |n| to |n|*8, where |n| is represented in little-endian

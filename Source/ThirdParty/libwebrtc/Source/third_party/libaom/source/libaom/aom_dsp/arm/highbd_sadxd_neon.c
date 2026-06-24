@@ -19,11 +19,10 @@
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/arm/sum_neon.h"
 
-static inline void highbd_sad4xhx4d_small_neon(const uint8_t *src_ptr,
-                                               int src_stride,
-                                               const uint8_t *const ref_ptr[4],
-                                               int ref_stride, uint32_t res[4],
-                                               int h) {
+static inline void highbd_sad4xhx4d_neon(const uint8_t *src_ptr, int src_stride,
+                                         const uint8_t *const ref_ptr[4],
+                                         int ref_stride, uint32_t res[4],
+                                         int h) {
   const uint16_t *src16_ptr = CONVERT_TO_SHORTPTR(src_ptr);
   const uint16_t *ref16_ptr0 = CONVERT_TO_SHORTPTR(ref_ptr[0]);
   const uint16_t *ref16_ptr1 = CONVERT_TO_SHORTPTR(ref_ptr[1]);
@@ -51,306 +50,252 @@ static inline void highbd_sad4xhx4d_small_neon(const uint8_t *src_ptr,
   vst1q_u32(res, horizontal_add_4d_u32x4(sum));
 }
 
-static inline void highbd_sad8xhx4d_small_neon(const uint8_t *src_ptr,
-                                               int src_stride,
-                                               const uint8_t *const ref_ptr[4],
-                                               int ref_stride, uint32_t res[4],
-                                               int h) {
+static inline void highbd_sad8xhx4d_neon(const uint8_t *src_ptr, int src_stride,
+                                         const uint8_t *const ref_ptr[4],
+                                         int ref_stride, uint32_t res[4],
+                                         int h) {
   const uint16_t *src16_ptr = CONVERT_TO_SHORTPTR(src_ptr);
   const uint16_t *ref16_ptr0 = CONVERT_TO_SHORTPTR(ref_ptr[0]);
   const uint16_t *ref16_ptr1 = CONVERT_TO_SHORTPTR(ref_ptr[1]);
   const uint16_t *ref16_ptr2 = CONVERT_TO_SHORTPTR(ref_ptr[2]);
   const uint16_t *ref16_ptr3 = CONVERT_TO_SHORTPTR(ref_ptr[3]);
 
-  uint16x8_t sum[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
-                        vdupq_n_u16(0) };
-  uint32x4_t sum_u32[4];
+  // 'h_overflow' is the number of 8-wide rows we can process before 16-bit
+  // accumulators overflow. After hitting this limit accumulate into 32-bit
+  // elements. 65535 / 4095 ~= 16, so 16 8-wide rows.
+  const int h_overflow = 16;
+  // If block height 'h' is smaller than this limit, use 'h' instead.
+  const int h_limit = h < h_overflow ? h : h_overflow;
+  assert(h % h_limit == 0);
 
+  uint32x4_t sum_u32[4] = { vdupq_n_u32(0), vdupq_n_u32(0), vdupq_n_u32(0),
+                            vdupq_n_u32(0) };
+
+  int h_tmp = h_limit;
   int i = 0;
   do {
-    uint16x8_t s = vld1q_u16(src16_ptr + i * src_stride);
+    uint16x8_t sum_u16[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
+                              vdupq_n_u16(0) };
 
-    sum[0] = vabaq_u16(sum[0], s, vld1q_u16(ref16_ptr0 + i * ref_stride));
-    sum[1] = vabaq_u16(sum[1], s, vld1q_u16(ref16_ptr1 + i * ref_stride));
-    sum[2] = vabaq_u16(sum[2], s, vld1q_u16(ref16_ptr2 + i * ref_stride));
-    sum[3] = vabaq_u16(sum[3], s, vld1q_u16(ref16_ptr3 + i * ref_stride));
+    do {
+      uint16x8_t s0 = vld1q_u16(src16_ptr + i * src_stride);
 
-  } while (++i < h);
+      sum_u16[0] =
+          vabaq_u16(sum_u16[0], s0, vld1q_u16(ref16_ptr0 + i * ref_stride));
+      sum_u16[1] =
+          vabaq_u16(sum_u16[1], s0, vld1q_u16(ref16_ptr1 + i * ref_stride));
+      sum_u16[2] =
+          vabaq_u16(sum_u16[2], s0, vld1q_u16(ref16_ptr2 + i * ref_stride));
+      sum_u16[3] =
+          vabaq_u16(sum_u16[3], s0, vld1q_u16(ref16_ptr3 + i * ref_stride));
+    } while (++i < h_tmp);
 
-  sum_u32[0] = vpaddlq_u16(sum[0]);
-  sum_u32[1] = vpaddlq_u16(sum[1]);
-  sum_u32[2] = vpaddlq_u16(sum[2]);
-  sum_u32[3] = vpaddlq_u16(sum[3]);
+    sum_u32[0] = vpadalq_u16(sum_u32[0], sum_u16[0]);
+    sum_u32[1] = vpadalq_u16(sum_u32[1], sum_u16[1]);
+    sum_u32[2] = vpadalq_u16(sum_u32[2], sum_u16[2]);
+    sum_u32[3] = vpadalq_u16(sum_u32[3], sum_u16[3]);
+
+    h_tmp += h_limit;
+    h -= h_limit;
+  } while (h != 0);
+
   vst1q_u32(res, horizontal_add_4d_u32x4(sum_u32));
 }
 
-static inline void sad8_neon(uint16x8_t src, uint16x8_t ref,
-                             uint32x4_t *const sad_sum) {
-  uint16x8_t abs_diff = vabdq_u16(src, ref);
-  *sad_sum = vpadalq_u16(*sad_sum, abs_diff);
-}
-
-#if !CONFIG_REALTIME_ONLY
-static inline void highbd_sad8xhx4d_large_neon(const uint8_t *src_ptr,
-                                               int src_stride,
-                                               const uint8_t *const ref_ptr[4],
-                                               int ref_stride, uint32_t res[4],
-                                               int h) {
+static inline void highbd_sadwxhx4d_neon(const uint8_t *src_ptr, int src_stride,
+                                         const uint8_t *const ref_ptr[4],
+                                         int ref_stride, uint32_t res[4], int w,
+                                         int h, const int h_overflow) {
   const uint16_t *src16_ptr = CONVERT_TO_SHORTPTR(src_ptr);
   const uint16_t *ref16_ptr0 = CONVERT_TO_SHORTPTR(ref_ptr[0]);
   const uint16_t *ref16_ptr1 = CONVERT_TO_SHORTPTR(ref_ptr[1]);
   const uint16_t *ref16_ptr2 = CONVERT_TO_SHORTPTR(ref_ptr[2]);
   const uint16_t *ref16_ptr3 = CONVERT_TO_SHORTPTR(ref_ptr[3]);
 
-  uint32x4_t sum[4] = { vdupq_n_u32(0), vdupq_n_u32(0), vdupq_n_u32(0),
-                        vdupq_n_u32(0) };
+  const int h_limit = h < h_overflow ? h : h_overflow;
+  assert(h % h_limit == 0);
 
-  int i = 0;
+  uint32x4_t sum_u32[4] = { vdupq_n_u32(0), vdupq_n_u32(0), vdupq_n_u32(0),
+                            vdupq_n_u32(0) };
+
   do {
-    uint16x8_t s = vld1q_u16(src16_ptr + i * src_stride);
-    sad8_neon(s, vld1q_u16(ref16_ptr0 + i * ref_stride), &sum[0]);
-    sad8_neon(s, vld1q_u16(ref16_ptr1 + i * ref_stride), &sum[1]);
-    sad8_neon(s, vld1q_u16(ref16_ptr2 + i * ref_stride), &sum[2]);
-    sad8_neon(s, vld1q_u16(ref16_ptr3 + i * ref_stride), &sum[3]);
+    uint16x8_t sum_u16[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
+                              vdupq_n_u16(0) };
 
-  } while (++i < h);
-
-  vst1q_u32(res, horizontal_add_4d_u32x4(sum));
-}
-#endif  // !CONFIG_REALTIME_ONLY
-
-static inline void highbd_sad16xhx4d_large_neon(const uint8_t *src_ptr,
-                                                int src_stride,
-                                                const uint8_t *const ref_ptr[4],
-                                                int ref_stride, uint32_t res[4],
-                                                int h) {
-  const uint16_t *src16_ptr = CONVERT_TO_SHORTPTR(src_ptr);
-  const uint16_t *ref16_ptr0 = CONVERT_TO_SHORTPTR(ref_ptr[0]);
-  const uint16_t *ref16_ptr1 = CONVERT_TO_SHORTPTR(ref_ptr[1]);
-  const uint16_t *ref16_ptr2 = CONVERT_TO_SHORTPTR(ref_ptr[2]);
-  const uint16_t *ref16_ptr3 = CONVERT_TO_SHORTPTR(ref_ptr[3]);
-
-  uint32x4_t sum_lo[4] = { vdupq_n_u32(0), vdupq_n_u32(0), vdupq_n_u32(0),
-                           vdupq_n_u32(0) };
-  uint32x4_t sum_hi[4] = { vdupq_n_u32(0), vdupq_n_u32(0), vdupq_n_u32(0),
-                           vdupq_n_u32(0) };
-  uint32x4_t sum[4];
-
-  int i = 0;
-  do {
-    uint16x8_t s0 = vld1q_u16(src16_ptr + i * src_stride);
-    sad8_neon(s0, vld1q_u16(ref16_ptr0 + i * ref_stride), &sum_lo[0]);
-    sad8_neon(s0, vld1q_u16(ref16_ptr1 + i * ref_stride), &sum_lo[1]);
-    sad8_neon(s0, vld1q_u16(ref16_ptr2 + i * ref_stride), &sum_lo[2]);
-    sad8_neon(s0, vld1q_u16(ref16_ptr3 + i * ref_stride), &sum_lo[3]);
-
-    uint16x8_t s1 = vld1q_u16(src16_ptr + i * src_stride + 8);
-    sad8_neon(s1, vld1q_u16(ref16_ptr0 + i * ref_stride + 8), &sum_hi[0]);
-    sad8_neon(s1, vld1q_u16(ref16_ptr1 + i * ref_stride + 8), &sum_hi[1]);
-    sad8_neon(s1, vld1q_u16(ref16_ptr2 + i * ref_stride + 8), &sum_hi[2]);
-    sad8_neon(s1, vld1q_u16(ref16_ptr3 + i * ref_stride + 8), &sum_hi[3]);
-
-  } while (++i < h);
-
-  sum[0] = vaddq_u32(sum_lo[0], sum_hi[0]);
-  sum[1] = vaddq_u32(sum_lo[1], sum_hi[1]);
-  sum[2] = vaddq_u32(sum_lo[2], sum_hi[2]);
-  sum[3] = vaddq_u32(sum_lo[3], sum_hi[3]);
-
-  vst1q_u32(res, horizontal_add_4d_u32x4(sum));
-}
-
-static inline void highbd_sadwxhx4d_large_neon(const uint8_t *src_ptr,
-                                               int src_stride,
-                                               const uint8_t *const ref_ptr[4],
-                                               int ref_stride, uint32_t res[4],
-                                               int w, int h) {
-  const uint16_t *src16_ptr = CONVERT_TO_SHORTPTR(src_ptr);
-  const uint16_t *ref16_ptr0 = CONVERT_TO_SHORTPTR(ref_ptr[0]);
-  const uint16_t *ref16_ptr1 = CONVERT_TO_SHORTPTR(ref_ptr[1]);
-  const uint16_t *ref16_ptr2 = CONVERT_TO_SHORTPTR(ref_ptr[2]);
-  const uint16_t *ref16_ptr3 = CONVERT_TO_SHORTPTR(ref_ptr[3]);
-
-  uint32x4_t sum_lo[4] = { vdupq_n_u32(0), vdupq_n_u32(0), vdupq_n_u32(0),
-                           vdupq_n_u32(0) };
-  uint32x4_t sum_hi[4] = { vdupq_n_u32(0), vdupq_n_u32(0), vdupq_n_u32(0),
-                           vdupq_n_u32(0) };
-  uint32x4_t sum[4];
-
-  int i = 0;
-  do {
-    int j = 0;
+    int i = h_limit;
     do {
-      uint16x8_t s0 = vld1q_u16(src16_ptr + i * src_stride + j);
-      sad8_neon(s0, vld1q_u16(ref16_ptr0 + i * ref_stride + j), &sum_lo[0]);
-      sad8_neon(s0, vld1q_u16(ref16_ptr1 + i * ref_stride + j), &sum_lo[1]);
-      sad8_neon(s0, vld1q_u16(ref16_ptr2 + i * ref_stride + j), &sum_lo[2]);
-      sad8_neon(s0, vld1q_u16(ref16_ptr3 + i * ref_stride + j), &sum_lo[3]);
+      int j = 0;
+      do {
+        uint16x8_t s0 = vld1q_u16(src16_ptr + j);
 
-      uint16x8_t s1 = vld1q_u16(src16_ptr + i * src_stride + j + 8);
-      sad8_neon(s1, vld1q_u16(ref16_ptr0 + i * ref_stride + j + 8), &sum_hi[0]);
-      sad8_neon(s1, vld1q_u16(ref16_ptr1 + i * ref_stride + j + 8), &sum_hi[1]);
-      sad8_neon(s1, vld1q_u16(ref16_ptr2 + i * ref_stride + j + 8), &sum_hi[2]);
-      sad8_neon(s1, vld1q_u16(ref16_ptr3 + i * ref_stride + j + 8), &sum_hi[3]);
+        sum_u16[0] = vabaq_u16(sum_u16[0], s0, vld1q_u16(ref16_ptr0 + j));
+        sum_u16[1] = vabaq_u16(sum_u16[1], s0, vld1q_u16(ref16_ptr1 + j));
+        sum_u16[2] = vabaq_u16(sum_u16[2], s0, vld1q_u16(ref16_ptr2 + j));
+        sum_u16[3] = vabaq_u16(sum_u16[3], s0, vld1q_u16(ref16_ptr3 + j));
 
-      uint16x8_t s2 = vld1q_u16(src16_ptr + i * src_stride + j + 16);
-      sad8_neon(s2, vld1q_u16(ref16_ptr0 + i * ref_stride + j + 16),
-                &sum_lo[0]);
-      sad8_neon(s2, vld1q_u16(ref16_ptr1 + i * ref_stride + j + 16),
-                &sum_lo[1]);
-      sad8_neon(s2, vld1q_u16(ref16_ptr2 + i * ref_stride + j + 16),
-                &sum_lo[2]);
-      sad8_neon(s2, vld1q_u16(ref16_ptr3 + i * ref_stride + j + 16),
-                &sum_lo[3]);
+        uint16x8_t s1 = vld1q_u16(src16_ptr + j + 8);
+        sum_u16[0] = vabaq_u16(sum_u16[0], s1, vld1q_u16(ref16_ptr0 + j + 8));
+        sum_u16[1] = vabaq_u16(sum_u16[1], s1, vld1q_u16(ref16_ptr1 + j + 8));
+        sum_u16[2] = vabaq_u16(sum_u16[2], s1, vld1q_u16(ref16_ptr2 + j + 8));
+        sum_u16[3] = vabaq_u16(sum_u16[3], s1, vld1q_u16(ref16_ptr3 + j + 8));
 
-      uint16x8_t s3 = vld1q_u16(src16_ptr + i * src_stride + j + 24);
-      sad8_neon(s3, vld1q_u16(ref16_ptr0 + i * ref_stride + j + 24),
-                &sum_hi[0]);
-      sad8_neon(s3, vld1q_u16(ref16_ptr1 + i * ref_stride + j + 24),
-                &sum_hi[1]);
-      sad8_neon(s3, vld1q_u16(ref16_ptr2 + i * ref_stride + j + 24),
-                &sum_hi[2]);
-      sad8_neon(s3, vld1q_u16(ref16_ptr3 + i * ref_stride + j + 24),
-                &sum_hi[3]);
+        j += 16;
+      } while (j < w);
 
-      j += 32;
-    } while (j < w);
+      src16_ptr += src_stride;
+      ref16_ptr0 += ref_stride;
+      ref16_ptr1 += ref_stride;
+      ref16_ptr2 += ref_stride;
+      ref16_ptr3 += ref_stride;
+    } while (--i != 0);
 
-  } while (++i < h);
+    sum_u32[0] = vpadalq_u16(sum_u32[0], sum_u16[0]);
+    sum_u32[1] = vpadalq_u16(sum_u32[1], sum_u16[1]);
+    sum_u32[2] = vpadalq_u16(sum_u32[2], sum_u16[2]);
+    sum_u32[3] = vpadalq_u16(sum_u32[3], sum_u16[3]);
 
-  sum[0] = vaddq_u32(sum_lo[0], sum_hi[0]);
-  sum[1] = vaddq_u32(sum_lo[1], sum_hi[1]);
-  sum[2] = vaddq_u32(sum_lo[2], sum_hi[2]);
-  sum[3] = vaddq_u32(sum_lo[3], sum_hi[3]);
+    h -= h_limit;
+  } while (h != 0);
 
-  vst1q_u32(res, horizontal_add_4d_u32x4(sum));
+  vst1q_u32(res, horizontal_add_4d_u32x4(sum_u32));
 }
 
-static inline void highbd_sad128xhx4d_large_neon(
-    const uint8_t *src_ptr, int src_stride, const uint8_t *const ref_ptr[4],
-    int ref_stride, uint32_t res[4], int h) {
-  highbd_sadwxhx4d_large_neon(src_ptr, src_stride, ref_ptr, ref_stride, res,
-                              128, h);
+static inline void highbd_sad16xhx4d_neon(const uint8_t *src_ptr,
+                                          int src_stride,
+                                          const uint8_t *const ref_ptr[4],
+                                          int ref_stride, uint32_t res[4],
+                                          int h) {
+  // 'h_overflow' is the number of 16-wide rows we can process before 16-bit
+  // accumulators overflow. After hitting this limit accumulate into 32-bit
+  // elements. 65535 / 4095 ~= 16, so 8 16-wide rows.
+  const int h_overflow = 8;
+  highbd_sadwxhx4d_neon(src_ptr, src_stride, ref_ptr, ref_stride, res, 16, h,
+                        h_overflow);
 }
 
-static inline void highbd_sad64xhx4d_large_neon(const uint8_t *src_ptr,
-                                                int src_stride,
-                                                const uint8_t *const ref_ptr[4],
-                                                int ref_stride, uint32_t res[4],
-                                                int h) {
-  highbd_sadwxhx4d_large_neon(src_ptr, src_stride, ref_ptr, ref_stride, res, 64,
-                              h);
+static inline void highbd_sad32xhx4d_neon(const uint8_t *src_ptr,
+                                          int src_stride,
+                                          const uint8_t *const ref_ptr[4],
+                                          int ref_stride, uint32_t res[4],
+                                          int h) {
+  // 'h_overflow' is the number of 32-wide rows we can process before 16-bit
+  // accumulators overflow. After hitting this limit accumulate into 32-bit
+  // elements. 65535 / 4095 ~= 16, so 4 32-wide rows.
+  const int h_overflow = 4;
+  highbd_sadwxhx4d_neon(src_ptr, src_stride, ref_ptr, ref_stride, res, 32, h,
+                        h_overflow);
 }
 
-static inline void highbd_sad32xhx4d_large_neon(const uint8_t *src_ptr,
-                                                int src_stride,
-                                                const uint8_t *const ref_ptr[4],
-                                                int ref_stride, uint32_t res[4],
-                                                int h) {
-  highbd_sadwxhx4d_large_neon(src_ptr, src_stride, ref_ptr, ref_stride, res, 32,
-                              h);
+static inline void highbd_sad64xhx4d_neon(const uint8_t *src_ptr,
+                                          int src_stride,
+                                          const uint8_t *const ref_ptr[4],
+                                          int ref_stride, uint32_t res[4],
+                                          int h) {
+  // 'h_overflow' is the number of 64-wide rows we can process before 16-bit
+  // accumulators overflow. After hitting this limit accumulate into 32-bit
+  // elements. 65535 / 4095 ~= 16, so 2 64-wide rows.
+  const int h_overflow = 2;
+  highbd_sadwxhx4d_neon(src_ptr, src_stride, ref_ptr, ref_stride, res, 64, h,
+                        h_overflow);
 }
 
-#define HBD_SAD_WXH_4D_SMALL_NEON(w, h)                                      \
+static inline void highbd_sad128xhx4d_neon(const uint8_t *src_ptr,
+                                           int src_stride,
+                                           const uint8_t *const ref_ptr[4],
+                                           int ref_stride, uint32_t res[4],
+                                           int h) {
+  // 'h_overflow' is the number of 128-wide rows we can process before 16-bit
+  // accumulators overflow. After hitting this limit accumulate into 32-bit
+  // elements. 65535 / 4095 ~= 16, so 1 128-wide rows.
+  const int h_overflow = 1;
+  highbd_sadwxhx4d_neon(src_ptr, src_stride, ref_ptr, ref_stride, res, 128, h,
+                        h_overflow);
+}
+
+#define HBD_SAD_WXH_4D_NEON(w, h)                                            \
   void aom_highbd_sad##w##x##h##x4d_neon(                                    \
       const uint8_t *src, int src_stride, const uint8_t *const ref_array[4], \
       int ref_stride, uint32_t sad_array[4]) {                               \
-    highbd_sad##w##xhx4d_small_neon(src, src_stride, ref_array, ref_stride,  \
-                                    sad_array, (h));                         \
+    highbd_sad##w##xhx4d_neon(src, src_stride, ref_array, ref_stride,        \
+                              sad_array, (h));                               \
   }
 
-#define HBD_SAD_WXH_4D_LARGE_NEON(w, h)                                      \
-  void aom_highbd_sad##w##x##h##x4d_neon(                                    \
-      const uint8_t *src, int src_stride, const uint8_t *const ref_array[4], \
-      int ref_stride, uint32_t sad_array[4]) {                               \
-    highbd_sad##w##xhx4d_large_neon(src, src_stride, ref_array, ref_stride,  \
-                                    sad_array, (h));                         \
-  }
+HBD_SAD_WXH_4D_NEON(4, 4)
+HBD_SAD_WXH_4D_NEON(4, 8)
 
-HBD_SAD_WXH_4D_SMALL_NEON(4, 4)
-HBD_SAD_WXH_4D_SMALL_NEON(4, 8)
+HBD_SAD_WXH_4D_NEON(8, 4)
+HBD_SAD_WXH_4D_NEON(8, 8)
+HBD_SAD_WXH_4D_NEON(8, 16)
 
-HBD_SAD_WXH_4D_SMALL_NEON(8, 4)
-HBD_SAD_WXH_4D_SMALL_NEON(8, 8)
-HBD_SAD_WXH_4D_SMALL_NEON(8, 16)
+HBD_SAD_WXH_4D_NEON(16, 8)
+HBD_SAD_WXH_4D_NEON(16, 16)
+HBD_SAD_WXH_4D_NEON(16, 32)
 
-HBD_SAD_WXH_4D_LARGE_NEON(16, 8)
-HBD_SAD_WXH_4D_LARGE_NEON(16, 16)
-HBD_SAD_WXH_4D_LARGE_NEON(16, 32)
+HBD_SAD_WXH_4D_NEON(32, 16)
+HBD_SAD_WXH_4D_NEON(32, 32)
+HBD_SAD_WXH_4D_NEON(32, 64)
 
-HBD_SAD_WXH_4D_LARGE_NEON(32, 16)
-HBD_SAD_WXH_4D_LARGE_NEON(32, 32)
-HBD_SAD_WXH_4D_LARGE_NEON(32, 64)
+HBD_SAD_WXH_4D_NEON(64, 32)
+HBD_SAD_WXH_4D_NEON(64, 64)
+HBD_SAD_WXH_4D_NEON(64, 128)
 
-HBD_SAD_WXH_4D_LARGE_NEON(64, 32)
-HBD_SAD_WXH_4D_LARGE_NEON(64, 64)
-HBD_SAD_WXH_4D_LARGE_NEON(64, 128)
-
-HBD_SAD_WXH_4D_LARGE_NEON(128, 64)
-HBD_SAD_WXH_4D_LARGE_NEON(128, 128)
+HBD_SAD_WXH_4D_NEON(128, 64)
+HBD_SAD_WXH_4D_NEON(128, 128)
 
 #if !CONFIG_REALTIME_ONLY
-HBD_SAD_WXH_4D_SMALL_NEON(4, 16)
+HBD_SAD_WXH_4D_NEON(4, 16)
 
-HBD_SAD_WXH_4D_LARGE_NEON(8, 32)
+HBD_SAD_WXH_4D_NEON(8, 32)
 
-HBD_SAD_WXH_4D_LARGE_NEON(16, 4)
-HBD_SAD_WXH_4D_LARGE_NEON(16, 64)
+HBD_SAD_WXH_4D_NEON(16, 4)
+HBD_SAD_WXH_4D_NEON(16, 64)
 
-HBD_SAD_WXH_4D_LARGE_NEON(32, 8)
+HBD_SAD_WXH_4D_NEON(32, 8)
 
-HBD_SAD_WXH_4D_LARGE_NEON(64, 16)
+HBD_SAD_WXH_4D_NEON(64, 16)
 #endif  // !CONFIG_REALTIME_ONLY
 
-#define HBD_SAD_SKIP_WXH_4D_SMALL_NEON(w, h)                                 \
-  void aom_highbd_sad_skip_##w##x##h##x4d_neon(                              \
-      const uint8_t *src, int src_stride, const uint8_t *const ref_array[4], \
-      int ref_stride, uint32_t sad_array[4]) {                               \
-    highbd_sad##w##xhx4d_small_neon(src, 2 * src_stride, ref_array,          \
-                                    2 * ref_stride, sad_array, ((h) >> 1));  \
-    sad_array[0] <<= 1;                                                      \
-    sad_array[1] <<= 1;                                                      \
-    sad_array[2] <<= 1;                                                      \
-    sad_array[3] <<= 1;                                                      \
+#undef HBD_SAD_WXH_4D_NEON
+
+#define HBD_SAD_SKIP_WXH_4D_NEON(w, h)                                        \
+  void aom_highbd_sad_skip_##w##x##h##x4d_neon(                               \
+      const uint8_t *src, int src_stride, const uint8_t *const ref_array[4],  \
+      int ref_stride, uint32_t sad_array[4]) {                                \
+    highbd_sad##w##xhx4d_neon(src, 2 * src_stride, ref_array, 2 * ref_stride, \
+                              sad_array, ((h) >> 1));                         \
+    sad_array[0] <<= 1;                                                       \
+    sad_array[1] <<= 1;                                                       \
+    sad_array[2] <<= 1;                                                       \
+    sad_array[3] <<= 1;                                                       \
   }
 
-#define HBD_SAD_SKIP_WXH_4D_LARGE_NEON(w, h)                                 \
-  void aom_highbd_sad_skip_##w##x##h##x4d_neon(                              \
-      const uint8_t *src, int src_stride, const uint8_t *const ref_array[4], \
-      int ref_stride, uint32_t sad_array[4]) {                               \
-    highbd_sad##w##xhx4d_large_neon(src, 2 * src_stride, ref_array,          \
-                                    2 * ref_stride, sad_array, ((h) >> 1));  \
-    sad_array[0] <<= 1;                                                      \
-    sad_array[1] <<= 1;                                                      \
-    sad_array[2] <<= 1;                                                      \
-    sad_array[3] <<= 1;                                                      \
-  }
+HBD_SAD_SKIP_WXH_4D_NEON(8, 16)
 
-HBD_SAD_SKIP_WXH_4D_SMALL_NEON(8, 16)
+HBD_SAD_SKIP_WXH_4D_NEON(16, 16)
+HBD_SAD_SKIP_WXH_4D_NEON(16, 32)
 
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(16, 16)
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(16, 32)
+HBD_SAD_SKIP_WXH_4D_NEON(32, 16)
+HBD_SAD_SKIP_WXH_4D_NEON(32, 32)
+HBD_SAD_SKIP_WXH_4D_NEON(32, 64)
 
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(32, 16)
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(32, 32)
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(32, 64)
+HBD_SAD_SKIP_WXH_4D_NEON(64, 32)
+HBD_SAD_SKIP_WXH_4D_NEON(64, 64)
+HBD_SAD_SKIP_WXH_4D_NEON(64, 128)
 
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(64, 32)
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(64, 64)
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(64, 128)
-
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(128, 64)
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(128, 128)
+HBD_SAD_SKIP_WXH_4D_NEON(128, 64)
+HBD_SAD_SKIP_WXH_4D_NEON(128, 128)
 
 #if !CONFIG_REALTIME_ONLY
-HBD_SAD_SKIP_WXH_4D_SMALL_NEON(4, 16)
+HBD_SAD_SKIP_WXH_4D_NEON(4, 16)
 
-HBD_SAD_SKIP_WXH_4D_SMALL_NEON(8, 32)
+HBD_SAD_SKIP_WXH_4D_NEON(8, 32)
 
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(16, 64)
+HBD_SAD_SKIP_WXH_4D_NEON(16, 64)
 
-HBD_SAD_SKIP_WXH_4D_LARGE_NEON(64, 16)
+HBD_SAD_SKIP_WXH_4D_NEON(64, 16)
 #endif  // !CONFIG_REALTIME_ONLY
+
+#undef HBD_SAD_SKIP_WXH_4D_NEON
 
 static inline void highbd_sad4xhx3d_neon(const uint8_t *src_ptr, int src_stride,
                                          const uint8_t *const ref_ptr[4],

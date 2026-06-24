@@ -654,6 +654,12 @@ void webkitGstWebRTCIceAgentClosed(WebKitGstIceAgent* agent)
     priv->closePromise.clear();
 }
 
+static bool webkitGstWebRTCIceAgentIsClosed(WebKitGstIceAgent* agent)
+{
+    Locker locker { agent->priv->stateLock };
+    return agent->priv->state == AgentState::Closed;
+}
+
 #if GST_CHECK_VERSION(1, 28, 0)
 static void webkitGstWebRTCIceAgentClose(GstWebRTCICE* ice, GstPromise* promise)
 {
@@ -691,12 +697,7 @@ static void webkitGstWebRTCIceAgentClose(GstWebRTCICE* ice, GstPromise* promise)
 
     auto timeout = WTF::MonotonicTime::now().secondsSinceEpoch() + 2_s;
     while (WTF::MonotonicTime::now().secondsSinceEpoch() < timeout) {
-        bool isClosed = false;
-        {
-            Locker locker { backend->priv->stateLock };
-            isClosed = backend->priv->state == AgentState::Closed;
-        }
-        if (isClosed)
+        if (webkitGstWebRTCIceAgentIsClosed(backend))
             return;
         g_main_context_iteration(backend->priv->runLoop->mainContext(), FALSE);
     }
@@ -753,6 +754,8 @@ static bool webkitGstWebRTCIceAgentConfigure(WebKitGstIceAgent* backend, RefPtr<
     priv->backendClient->setIncomingDataCallback([weakThis = GThreadSafeWeakPtr(backend)](unsigned streamId, RTCIceProtocol protocol, String&& from, String&& to, SharedMemory::Handle&& data) mutable {
         auto self = weakThis.get();
         if (!self)
+            return;
+        if (webkitGstWebRTCIceAgentIsClosed(self.get()))
             return;
         findStreamAndApply(self.get(), streamId, [protocol, from = WTF::move(from), to = WTF::move(to), data = WTF::move(data)](const auto* stream) mutable {
             webkitGstWebRTCIceStreamHandleIncomingData(stream, protocol, WTF::move(from), WTF::move(to), WTF::move(data));

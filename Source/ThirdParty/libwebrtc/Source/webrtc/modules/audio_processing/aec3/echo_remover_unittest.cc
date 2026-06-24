@@ -21,7 +21,6 @@
 
 #include "api/audio/echo_canceller3_config.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/delay_estimate.h"
@@ -31,6 +30,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -62,7 +62,7 @@ INSTANTIATE_TEST_SUITE_P(MultiChannel,
 TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
   const size_t num_render_channels = std::get<0>(GetParam());
   const size_t num_capture_channels = std::get<1>(GetParam());
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   std::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
@@ -97,8 +97,8 @@ TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
 // tests on test bots has been fixed.
 TEST(EchoRemoverDeathTest, DISABLED_WrongSampleRate) {
   EXPECT_DEATH(
-      EchoRemover::Create(CreateEnvironment(), EchoCanceller3Config(), 8001, 1,
-                          1, /*neural_residual_echo_estimator=*/nullptr),
+      EchoRemover::Create(CreateTestEnvironment(), EchoCanceller3Config(), 8001,
+                          1, 1, /*neural_residual_echo_estimator=*/nullptr),
       "");
 }
 
@@ -106,7 +106,7 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongSampleRate) {
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.c
 TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   std::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
@@ -128,9 +128,9 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
 // Verifies the check for non-null capture block.
 TEST(EchoRemoverDeathTest, NullCapture) {
   std::optional<DelayEstimate> delay_estimate;
-  std::unique_ptr<EchoRemover> remover =
-      EchoRemover::Create(CreateEnvironment(), EchoCanceller3Config(), 16000, 1,
-                          1, /*neural_residual_echo_estimator=*/nullptr);
+  std::unique_ptr<EchoRemover> remover = EchoRemover::Create(
+      CreateTestEnvironment(), EchoCanceller3Config(), 16000, 1, 1,
+      /*neural_residual_echo_estimator=*/nullptr);
   std::unique_ptr<RenderDelayBuffer> render_buffer(
       RenderDelayBuffer::Create(EchoCanceller3Config(), 16000, 1));
   EchoPathVariability echo_path_variability(
@@ -147,7 +147,7 @@ TEST(EchoRemoverDeathTest, NullCapture) {
 // remove echoes.
 TEST(EchoRemover, BasicEchoRemoval) {
   constexpr int kNumBlocksToProcess = 500;
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   Random random_generator(42U);
   std::optional<DelayEstimate> delay_estimate;
   for (size_t num_channels : {1, 2, 4}) {

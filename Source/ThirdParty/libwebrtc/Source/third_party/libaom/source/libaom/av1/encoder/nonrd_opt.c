@@ -433,7 +433,7 @@ void av1_block_yrd_idtx(MACROBLOCK *x, const uint8_t *const pred_buf,
   DECLARE_BLOCK_YRD_BUFFERS()
   DECLARE_BLOCK_YRD_VARS()
   for (int r = 0; r < max_blocks_high; r += block_step) {
-    for (int c = 0, s = 0; c < max_blocks_wide; c += block_step, s += step) {
+    for (int c = 0; c < max_blocks_wide; c += block_step) {
       DECLARE_LOOP_VARS_BLOCK_YRD()
       scale_square_buf_vals(low_coeff, tx_wd, src_diff, diff_stride);
       av1_quantize_lp(low_coeff, tx_wd * tx_wd, p->round_fp_QTX,
@@ -708,7 +708,6 @@ void av1_estimate_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
                              PRED_BUFFER *tmp_buffers,
                              PRED_BUFFER **this_mode_pred, RD_STATS *best_rdc,
                              BEST_PICKMODE *best_pickmode,
-                             PICK_MODE_CONTEXT *ctx,
                              unsigned int *best_sad_norm) {
   AV1_COMMON *const cm = &cpi->common;
   MACROBLOCKD *const xd = &x->e_mbd;
@@ -924,14 +923,8 @@ void av1_estimate_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
       mi->uv_mode = this_mode;
       mi->mv[0].as_int = INVALID_MV;
       mi->mv[1].as_int = INVALID_MV;
-      if (!this_rdc.skip_txfm)
-        memset(ctx->blk_skip, 0,
-               sizeof(x->txfm_search_info.blk_skip[0]) * ctx->num_4x4_blk);
     }
   }
-  if (best_pickmode->best_ref_frame == INTRA_FRAME)
-    memset(ctx->blk_skip, 0,
-           sizeof(x->txfm_search_info.blk_skip[0]) * ctx->num_4x4_blk);
   mi->tx_size = best_pickmode->best_tx_size;
 
   *best_sad_norm = args.best_sad >>

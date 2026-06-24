@@ -61,11 +61,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSCPtrTag.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
-#include "JSLexicalEnvironment.h"
+#include "JSLexicalEnvironmentInlines.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
 #include "JSRemoteFunction.h"
+#include "JSSentinel.h"
 #include "JSSetIterator.h"
+#include "JSStringIteratorInlines.h"
 #include "JSWithScope.h"
 #include "JumpTable.h"
 #include "LLIntEntrypoint.h"
@@ -73,6 +75,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "ObjectConstructor.h"
 #include "PropertyInlineCache.h"
 #include "PropertyName.h"
+#include "PropertyNameInlines.h"
 #include "RegExpObject.h"
 #include "RepatchInlines.h"
 #include "ShadowChicken.h"
@@ -1718,10 +1721,26 @@ static void directPutByVal(JSGlobalObject* globalObject, JSObject* baseObject, J
         case ALL_INT32_INDEXING_TYPES:
         case ALL_DOUBLE_INDEXING_TYPES:
         case ALL_CONTIGUOUS_INDEXING_TYPES:
+            if (arrayProfile) {
+                if (index < baseObject->butterfly()->vectorLength()) {
+                    if (index >= baseObject->butterfly()->publicLength())
+                        arrayProfile->setMayStoreHole();
+                    break;
+                }
+                arrayProfile->setOutOfBounds();
+            }
+            break;
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            if (index < baseObject->butterfly()->vectorLength())
-                break;
-            [[fallthrough]];
+            if (arrayProfile) {
+                ArrayStorage* storage = baseObject->butterfly()->arrayStorage();
+                if (index < storage->vectorLength()) {
+                    if (!storage->m_vector[index])
+                        arrayProfile->setMayStoreHole();
+                    break;
+                }
+                arrayProfile->setOutOfBounds();
+            }
+            break;
         default:
             if (arrayProfile)
                 arrayProfile->setOutOfBounds();
@@ -3418,7 +3437,7 @@ JSC_DEFINE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject* glo
 
 #if CPU(ARM64) || CPU(X86_64)
 
-JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject* globalObject, JSObject* iterator, JSCell* iterable, void* metadataPointer))
+JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject* globalObject, JSObject* iterator, JSCell*, void* metadataPointer))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -3428,13 +3447,28 @@ JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject
     auto& metadata = *std::bit_cast<OpIteratorNext::Metadata*>(metadataPointer);
 
     if (auto* arrayIterator = dynamicDowncast<JSArrayIterator>(iterator)) {
-        auto* array = uncheckedDowncast<JSArray>(iterable);
+        auto* array = downcast<JSArray>(arrayIterator->iteratedObject());
+        ASSERT(isJSArray(array));
+        IterationKind kind = arrayIterator->kind();
+        IterationMode mode = IterationMode::FastArrayValues;
+        switch (kind) {
+        case IterationKind::Values:
+            mode = IterationMode::FastArrayValues;
+            break;
+        case IterationKind::Keys:
+            mode = IterationMode::FastArrayKeys;
+            break;
+        case IterationKind::Entries:
+            mode = IterationMode::FastArrayEntries;
+            break;
+        }
+
         metadata.m_iterableProfile.observeStructureID(array->structureID());
-        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | mode;
 
         auto& indexSlot = arrayIterator->internalField(JSArrayIterator::Field::Index);
         int64_t index = indexSlot.get().asAnyInt();
-        ASSERT(0 <= index && index <= maxSafeInteger());
+        ASSERT(index == JSArrayIterator::doneIndex || (0 <= index && index <= maxSafeInteger()));
 
         JSValue value;
         bool done = index == JSArrayIterator::doneIndex || index >= array->length();
@@ -3442,8 +3476,22 @@ JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject
             // No need for a barrier here because we know this is a primitive.
             indexSlot.setWithoutWriteBarrier(jsNumber(index + 1));
             ASSERT(index == static_cast<unsigned>(index));
-            value = array->getIndex(globalObject, static_cast<unsigned>(index));
-            OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+            switch (kind) {
+            case IterationKind::Values:
+                value = array->getIndex(globalObject, static_cast<unsigned>(index));
+                OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+                break;
+            case IterationKind::Keys:
+                value = jsNumber(static_cast<unsigned>(index));
+                break;
+            case IterationKind::Entries: {
+                JSValue element = array->getIndex(globalObject, static_cast<unsigned>(index));
+                OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+                value = constructArrayPair(globalObject, jsNumber(static_cast<unsigned>(index)), element);
+                OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+                break;
+            }
+            }
         } else {
             // No need for a barrier here because we know this is a primitive.
             indexSlot.setWithoutWriteBarrier(jsNumber(-1));
@@ -3453,22 +3501,79 @@ JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject
     }
 
     if (auto* mapIterator = dynamicDowncast<JSMapIterator>(iterator)) {
-        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastMap;
+        IterationKind kind = mapIterator->kind();
+        IterationMode mode = IterationMode::FastMapEntries;
+        switch (kind) {
+        case IterationKind::Keys:
+            mode = IterationMode::FastMapKeys;
+            break;
+        case IterationKind::Values:
+            mode = IterationMode::FastMapValues;
+            break;
+        case IterationKind::Entries:
+            mode = IterationMode::FastMapEntries;
+            break;
+        }
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | mode;
+
         auto result = mapIterator->nextWithAdvance(vm);
         bool done = result.key.isEmpty();
         JSValue value;
         if (!done) {
-            value = constructArrayPair(globalObject, result.key, result.value);
-            OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+            switch (kind) {
+            case IterationKind::Keys:
+                value = result.key;
+                break;
+            case IterationKind::Values:
+                value = result.value;
+                break;
+            case IterationKind::Entries:
+                value = constructArrayPair(globalObject, result.key, result.value);
+                OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+                break;
+            }
         }
         OPERATION_RETURN(scope, makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value)));
     }
 
     if (auto* setIterator = dynamicDowncast<JSSetIterator>(iterator)) {
-        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastSet;
+        IterationKind kind = setIterator->kind();
+        IterationMode mode = IterationMode::FastSetValues;
+        switch (kind) {
+        case IterationKind::Keys:
+        case IterationKind::Values:
+            mode = IterationMode::FastSetValues;
+            break;
+        case IterationKind::Entries:
+            mode = IterationMode::FastSetEntries;
+            break;
+        }
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | mode;
+
         JSValue nextKey = setIterator->nextWithAdvance(vm);
         bool done = nextKey.isEmpty();
-        JSValue value = done ? JSValue() : nextKey;
+        JSValue value;
+        if (!done) {
+            switch (kind) {
+            case IterationKind::Keys:
+            case IterationKind::Values:
+                value = nextKey;
+                break;
+            case IterationKind::Entries:
+                value = constructArrayPair(globalObject, nextKey, nextKey);
+                OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+                break;
+            }
+        }
+        OPERATION_RETURN(scope, makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value)));
+    }
+
+    if (auto* stringIterator = dynamicDowncast<JSStringIterator>(iterator)) {
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastString;
+        JSString* nextValue = stringIterator->nextWithAdvance(globalObject, vm);
+        OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+        bool done = !nextValue;
+        JSValue value = done ? JSValue() : JSValue(nextValue);
         OPERATION_RETURN(scope, makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value)));
     }
 

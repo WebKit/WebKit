@@ -127,12 +127,12 @@ Ref<HTMLVideoElement> HTMLVideoElement::create(Document& document)
     return create(videoTag, document, false);
 }
 
-bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
+bool HTMLVideoElement::rendererIsNeeded(const Style::ComputedStyle& style)
 {
     return HTMLElement::rendererIsNeeded(style); 
 }
 
-RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderVideo>(*this, WTF::move(style));
 }
@@ -157,7 +157,7 @@ void HTMLVideoElement::acceleratedRenderingStateChanged()
 
 bool HTMLVideoElement::supportsAcceleratedRendering() const
 {
-    return RefPtr { player() } && player()->supportsAcceleratedRendering();
+    return RefPtr { player() } && protect(player())->supportsAcceleratedRendering();
 }
 
 void HTMLVideoElement::mediaPlayerRenderingModeChanged()
@@ -236,7 +236,7 @@ void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomStr
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(WIRELESS_PLAYBACK_TARGET)
         if (name == webkitairplayAttr)
-            mediaSession().setWirelessVideoPlaybackDisabled(isWirelessPlaybackTargetDisabled());
+            protect(mediaSession())->setWirelessVideoPlaybackDisabled(isWirelessPlaybackTargetDisabled());
 #endif
     }
 }
@@ -249,7 +249,7 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
     if (videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
         if (!mediaSession().allowsPictureInPicture())
             return false;
-        if (!player()->supportsPictureInPicture())
+        if (!protect(player())->supportsPictureInPicture())
             return false;
     }
 
@@ -257,7 +257,7 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
     if (!page) 
         return false;
 
-    if (!player()->supportsFullscreen())
+    if (!protect(player())->supportsFullscreen())
         return false;
 
 #if HAVE(AVEXPERIENCECONTROLLER)
@@ -281,7 +281,7 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
         return true;
 #endif
 
-    if (!player()->hasVideo())
+    if (!protect(player())->hasVideo())
         return false;
 
     return page->chrome().client().supportsVideoFullscreen(videoFullscreenMode);
@@ -300,14 +300,14 @@ unsigned HTMLVideoElement::videoWidth() const
 {
     if (!player())
         return 0;
-    return clampToUnsigned(player()->naturalSize().width());
+    return clampToUnsigned(protect(player())->naturalSize().width());
 }
 
 unsigned HTMLVideoElement::videoHeight() const
 {
     if (!player())
         return 0;
-    return clampToUnsigned(player()->naturalSize().height());
+    return clampToUnsigned(protect(player())->naturalSize().height());
 }
 
 void HTMLVideoElement::scheduleResizeEvent(const FloatSize& naturalSize)
@@ -412,7 +412,7 @@ bool HTMLVideoElement::hasAvailableVideoFrame() const
     if (!player())
         return false;
     
-    return player()->hasVideo() && player()->hasAvailableVideoFrame();
+    return protect(player())->hasVideo() && protect(player())->hasAvailableVideoFrame();
 }
 
 bool HTMLVideoElement::shouldGetNativeImageForCanvasDrawing() const
@@ -420,7 +420,7 @@ bool HTMLVideoElement::shouldGetNativeImageForCanvasDrawing() const
     if (!player())
         return false;
 
-    return player()->shouldGetNativeImageForCanvasDrawing();
+    return protect(player())->shouldGetNativeImageForCanvasDrawing();
 }
 
 RefPtr<NativeImage> HTMLVideoElement::nativeImageForCurrentTime() const
@@ -455,7 +455,7 @@ ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
 
     // Generate an exception if this isn't called in response to a user gesture, or if the 
     // element does not support fullscreen, or the element is changing fullscreen mode.
-    if (!mediaSession().fullscreenPermitted() || !supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard) || isChangingVideoFullscreenMode())
+    if (!protect(mediaSession())->fullscreenPermitted() || !supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard) || isChangingVideoFullscreenMode())
         return Exception { ExceptionCode::InvalidStateError };
 
     enterFullscreen();
@@ -495,7 +495,7 @@ void HTMLVideoElement::ancestorWillEnterFullscreen()
 
 bool HTMLVideoElement::webkitWirelessVideoPlaybackDisabled() const
 {
-    return mediaSession().wirelessVideoPlaybackDisabled();
+    return protect(mediaSession())->wirelessVideoPlaybackDisabled();
 }
 
 #endif
@@ -548,7 +548,7 @@ bool HTMLVideoElement::webkitSupportsPresentationMode(VideoPresentationMode mode
     }
 
     if (mode == VideoPresentationMode::Inline)
-        return !mediaSession().requiresFullscreenForVideoPlayback();
+        return !protect(mediaSession())->requiresFullscreenForVideoPlayback();
 
     return false;
 }
@@ -613,7 +613,7 @@ void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
         return;
     }
 
-    if (!mediaSession().fullscreenPermitted() || !supportsFullscreen(videoFullscreenMode))
+    if (!protect(mediaSession())->fullscreenPermitted() || !supportsFullscreen(videoFullscreenMode))
         return;
 
     if (videoFullscreenMode == VideoFullscreenModePictureInPicture)
@@ -819,7 +819,7 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
     if (readyState() < HAVE_CURRENT_DATA)
         return;
 
-    auto videoFrameMetadata = player()->videoFrameMetadata();
+    auto videoFrameMetadata = protect(player())->videoFrameMetadata();
     if (!videoFrameMetadata || !document().window())
         return;
 
@@ -831,7 +831,7 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
     if (script->isPaused())
         return;
 
-    processVideoFrameMetadataTimestamps(*videoFrameMetadata, protect(document().window()->performance()));
+    processVideoFrameMetadataTimestamps(*videoFrameMetadata, protect(protect(document().window())->performance()));
 
     Ref protectedThis { *this };
 

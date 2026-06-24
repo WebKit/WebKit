@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
 
     function test() {
         (function () {
@@ -23,8 +22,7 @@
     }
 
     function finishTesting() {
-        if (window.testRunner)
-            setTimeout(function () { testRunner.notifyDone(); }, 0);
+        setTimeout(function () { finishJSTest(); }, 0);
         return true;
     }
 </script>

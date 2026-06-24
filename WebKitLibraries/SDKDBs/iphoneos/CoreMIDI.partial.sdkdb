@@ -591,6 +591,7 @@
     {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_kMIDIPropertyTransmitsProgramChanges"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kMIDIPropertyUMPActiveGroupBitmap"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_kMIDIPropertyUMPCanTransmitGroupless"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kMIDIPropertyUMPEnabled", "unavailable": true},
     {"access": "public", "introduced": "4.2", "kind": "variable", "linkage": "exported", "name": "_kMIDIPropertyUniqueID"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kMIDIPropertyUserPatchNameFile", "unavailable": true}
    ],
@@ -984,7 +985,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "MIDI2DeviceManufacturer"},
     {"access": "public", "name": "MIDI2DeviceRevisionLevel"},

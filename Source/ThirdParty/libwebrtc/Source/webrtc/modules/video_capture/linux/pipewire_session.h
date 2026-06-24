@@ -72,15 +72,20 @@ class PipeWireNode {
                           uint32_t next,
                           const spa_pod* param);
   static bool ParseFormat(const spa_pod* param, VideoCaptureCapability* cap);
+  static void OnProxyDone(void* data, int seq);
 
   struct pw_proxy* proxy_;
   struct spa_hook node_listener_;
+  struct spa_hook proxy_listener_;
   PipeWireSession* session_;
   uint32_t id_;
   std::string display_name_;
   std::string unique_id_;
   std::string model_id_;
+  struct pw_node_info* info_ = nullptr;
+  int sync_seq_ = 0;
   std::vector<VideoCaptureCapability> capabilities_;
+  std::vector<VideoCaptureCapability> pending_capabilities_;
 };
 
 class CameraPortalNotifier : public CameraPortal::PortalNotifier {

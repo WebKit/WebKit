@@ -39,9 +39,8 @@
 #import <pal/system/mac/PopupMenu.h>
 #import <wtf/BlockObjCExceptions.h>
 
-using namespace WebCore;
 
-PopupMenuMac::PopupMenuMac(PopupMenuClient* client)
+PopupMenuMac::PopupMenuMac(WebCore::PopupMenuClient* client)
     : m_client(client)
 {
 }
@@ -71,8 +70,8 @@ void PopupMenuMac::populate()
     if (m_client && !protect(m_client)->shouldPopOver())
         [m_popup addItemWithTitle:@""];
 
-    TextDirection menuTextDirection = protect(m_client)->menuStyle().textDirection();
-    [m_popup setUserInterfaceLayoutDirection:menuTextDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    WebCore::TextDirection menuTextDirection = protect(m_client)->menuStyle().textDirection();
+    [m_popup setUserInterfaceLayoutDirection:menuTextDirection == WebCore::TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     int size = protect(m_client)->listSize();
 
@@ -82,9 +81,9 @@ void PopupMenuMac::populate()
             continue;
         }
 
-        PopupMenuStyle style = protect(m_client)->itemStyle(i);
+        WebCore::PopupMenuStyle style = protect(m_client)->itemStyle(i);
         RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
-        if (style.font() != FontCascade()) {
+        if (style.font() != WebCore::FontCascade()) {
             RetainPtr font = style.font().primaryFont().ctFont();
             if (!font) {
                 CGFloat size = style.font().primaryFont().platformData().size();
@@ -94,8 +93,8 @@ void PopupMenuMac::populate()
         }
 
         RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
-        [paragraphStyle setAlignment:menuTextDirection == TextDirection::LTR ? NSTextAlignmentLeft : NSTextAlignmentRight];
-        NSWritingDirection writingDirection = style.textDirection() == TextDirection::LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
+        [paragraphStyle setAlignment:menuTextDirection == WebCore::TextDirection::LTR ? NSTextAlignmentLeft : NSTextAlignmentRight];
+        NSWritingDirection writingDirection = style.textDirection() == WebCore::TextDirection::LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
         [paragraphStyle setBaseWritingDirection:writingDirection];
         if (style.hasTextDirectionOverride()) {
             auto writingDirectionValue = static_cast<NSInteger>(writingDirection) + static_cast<NSInteger>(NSWritingDirectionOverride);
@@ -120,7 +119,7 @@ void PopupMenuMac::populate()
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         // Allow the accessible text of the item to be overridden if necessary.
-        if (AXObjectCache::accessibilityEnabled()) {
+        if (WebCore::AXObjectCache::accessibilityEnabled()) {
             RetainPtr accessibilityOverride = protect(m_client)->itemAccessibilityText(i).createNSString();
             if ([accessibilityOverride length])
                 [menuItem accessibilitySetOverrideValue:accessibilityOverride.get() forAttribute:NSAccessibilityDescriptionAttribute];
@@ -129,7 +128,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
-void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selectedIndex)
+void PopupMenuMac::show(const WebCore::IntRect& r, WebCore::LocalFrameView& frameView, int selectedIndex)
 {
     populate();
     int numItems = [m_popup numberOfItems];
@@ -146,14 +145,14 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
 
     RetainPtr view = frameView.documentView();
 
-    TextDirection textDirection = protect(m_client)->menuStyle().textDirection();
+    WebCore::TextDirection textDirection = protect(m_client)->menuStyle().textDirection();
 
     [m_popup attachPopUpWithFrame:r inView:view.get()];
     [m_popup selectItemAtIndex:selectedIndex];
-    [m_popup setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    [m_popup setUserInterfaceLayoutDirection:textDirection == WebCore::TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     NSMenu *menu = [m_popup menu];
-    [menu setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    [menu setUserInterfaceLayoutDirection:textDirection == WebCore::TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     NSPoint location;
 
@@ -172,12 +171,12 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
         auto defaultFont = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, CTFontGetSize(font.get()), nil));
         vertOffset += CTFontGetDescent(font.get()) - CTFontGetDescent(defaultFont.get());
         vertOffset = fminf(NSHeight(r), vertOffset);
-        if (textDirection == TextDirection::LTR)
+        if (textDirection == WebCore::TextDirection::LTR)
             location = NSMakePoint(NSMinX(r) + popOverHorizontalAdjust, NSMaxY(r) - vertOffset);
         else
             location = NSMakePoint(NSMaxX(r) - popOverHorizontalAdjust, NSMaxY(r) - vertOffset);
     } else {
-        if (textDirection == TextDirection::LTR)
+        if (textDirection == WebCore::TextDirection::LTR)
             location = NSMakePoint(NSMinX(r) + popUnderHorizontalAdjust, NSMaxY(r) + popUnderVerticalAdjust);
         else
             location = NSMakePoint(NSMaxX(r) - popUnderHorizontalAdjust, NSMaxY(r) + popUnderVerticalAdjust);
@@ -190,11 +189,11 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
     Ref<PopupMenuMac> protector(*this);
 
     RetainPtr<NSView> dummyView = adoptNS([[NSView alloc] initWithFrame:r]);
-    [dummyView.get() setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    [dummyView.get() setUserInterfaceLayoutDirection:textDirection == WebCore::TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
     [view.get() addSubview:dummyView.get()];
     location = [dummyView convertPoint:location fromView:view.get()];
     
-    if (Page* page = frame->page()) {
+    if (WebCore::Page* page = frame->page()) {
         RetainPtr webView = kit(page);
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         CallUIDelegate(webView.get(), @selector(webView:willPopupMenu:), menu);
@@ -203,16 +202,16 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
 
     NSControlSize controlSize;
     switch (protect(m_client)->menuStyle().menuSize()) {
-    case PopupMenuStyle::Size::Normal:
+    case WebCore::PopupMenuStyle::Size::Normal:
         controlSize = NSControlSizeRegular;
         break;
-    case PopupMenuStyle::Size::Small:
+    case WebCore::PopupMenuStyle::Size::Small:
         controlSize = NSControlSizeSmall;
         break;
-    case PopupMenuStyle::Size::Mini:
+    case WebCore::PopupMenuStyle::Size::Mini:
         controlSize = NSControlSizeMini;
         break;
-    case PopupMenuStyle::Size::Large:
+    case WebCore::PopupMenuStyle::Size::Large:
         controlSize = NSControlSizeLarge;
         break;
     }

@@ -12,8 +12,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/units/data_rate.h"
 #include "api/video/video_layers_allocation.h"
 #include "rtc_base/buffer.h"
@@ -28,7 +28,7 @@ TEST(RtpVideoLayersAllocationExtension, WriteEmptyLayersAllocationReturnsTrue) {
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         EXPECT_TRUE(RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation));
         return buffer_view.size();
@@ -46,7 +46,7 @@ TEST(RtpVideoLayersAllocationExtension,
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         EXPECT_TRUE(RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation));
         return buffer_view.size();
@@ -88,7 +88,7 @@ TEST(RtpVideoLayersAllocationExtension,
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         EXPECT_TRUE(RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation));
         return buffer_view.size();
@@ -130,7 +130,7 @@ TEST(RtpVideoLayersAllocationExtension,
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         EXPECT_TRUE(RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation));
         return buffer_view.size();
@@ -165,7 +165,7 @@ TEST(RtpVideoLayersAllocationExtension,
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         EXPECT_TRUE(RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation));
         return buffer_view.size();
@@ -200,7 +200,7 @@ TEST(RtpVideoLayersAllocationExtension,
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         EXPECT_TRUE(RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation));
         return buffer_view.size();
@@ -240,7 +240,7 @@ TEST(RtpVideoLayersAllocationExtension,
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         EXPECT_TRUE(RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation));
         return buffer_view.size();
@@ -283,7 +283,7 @@ TEST(RtpVideoLayersAllocationExtension,
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         EXPECT_TRUE(RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation));
         return buffer_view.size();
@@ -302,7 +302,7 @@ TEST(RtpVideoLayersAllocationExtension,
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         EXPECT_TRUE(RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation));
         return buffer_view.size();
@@ -336,7 +336,7 @@ TEST(RtpVideoLayersAllocationExtension, DiscardsInvalidHeight) {
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
   size_t written = buffer.AppendData(
       RtpVideoLayersAllocationExtension::ValueSize(written_allocation),
-      [&](ArrayView<uint8_t> buffer_view) {
+      [&](std::span<uint8_t> buffer_view) {
         bool result = RtpVideoLayersAllocationExtension::Write(
             buffer_view, written_allocation);
         EXPECT_TRUE(result);

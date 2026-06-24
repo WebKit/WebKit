@@ -1045,7 +1045,7 @@ void Options::initializeWithOptionsCustomization(const ScopedLambda<void()>& opt
             RELEASE_ASSERT(OptionsHelper::addressOfOption(gcMaxHeapSizeID) ==  &Options::gcMaxHeapSize());
             RELEASE_ASSERT(OptionsHelper::addressOfOption(forceOSRExitToLLIntID) ==  &Options::forceOSRExitToLLInt());
 
-#if ENABLE(JSC_RESTRICTED_OPTIONS_BY_DEFAULT)
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
             Config::enableRestrictedOptions();
 #endif
 

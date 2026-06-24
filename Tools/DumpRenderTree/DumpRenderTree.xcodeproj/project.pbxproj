@@ -932,7 +932,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					5325BDD321DFF4BD00A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
@@ -976,7 +976,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0F18E7011D6B9CC60027E547 /* ShellScript */ = {
+		0F18E7011D6B9CC60027E547 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -986,6 +986,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Generate Derived Sources";
 			outputFileListPaths = (
 				"$(SRCROOT)/DerivedSources-output.xcfilelist",
 			);
@@ -995,7 +996,7 @@
 			shellPath = /bin/sh;
 			shellScript = "Scripts/generate-derived-sources.sh\n";
 		};
-		5325BDD821DFF4C100A0DEE1 /* ShellScript */ = {
+		5325BDD821DFF4C100A0DEE1 /* Run Sublaunch Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1004,6 +1005,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Sublaunch Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (

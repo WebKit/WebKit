@@ -88,6 +88,11 @@ template<typename T> struct ColorSpaceMapping<XYZA<T, WhitePoint::D65>> { static
 
 template<typename ColorType> constexpr ColorSpace ColorSpaceFor = ColorSpaceMapping<CanonicalColorType<ColorType>>::colorSpace;
 
+template<typename ColorType> constexpr ColorSpace colorSpaceFor(const ColorType&)
+{
+    return ColorSpaceFor<ColorType>;
+}
+
 template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(ColorSpace colorSpace, Functor&& functor)
 {
     switch (colorSpace) {

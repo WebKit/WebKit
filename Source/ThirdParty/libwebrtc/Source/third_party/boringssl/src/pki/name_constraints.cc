@@ -53,7 +53,7 @@ const int kSupportedNameTypes =
 // will match "bar.com" but not "foo.bar.com".
 enum WildcardMatchType { WILDCARD_PARTIAL_MATCH, WILDCARD_FULL_MATCH };
 
-// Returns true if |name| falls in the subtree defined by |dns_constraint|.
+// Returns true if `name` falls in the subtree defined by `dns_constraint`.
 // RFC 5280 section 4.2.1.10:
 // DNS name restrictions are expressed as host.example.com. Any DNS
 // name that can be constructed by simply adding zero or more labels
@@ -61,7 +61,7 @@ enum WildcardMatchType { WILDCARD_PARTIAL_MATCH, WILDCARD_FULL_MATCH };
 // example, www.host.example.com would satisfy the constraint but
 // host1.example.com would not.
 //
-// |wildcard_matching| controls handling of wildcard names (|name| starts with
+// `wildcard_matching` controls handling of wildcard names (`name` starts with
 // "*."). Wildcard handling is not specified by RFC 5280, but certificate
 // verification allows it, name constraints must check it similarly.
 bool DNSNameMatches(std::string_view name, std::string_view dns_constraint,
@@ -122,10 +122,10 @@ bool DNSNameMatches(std::string_view name, std::string_view dns_constraint,
   return false;
 }
 
-// Parses a GeneralSubtrees |value| and store the contents in |subtrees|.
-// The individual values stored into |subtrees| are not validated by this
+// Parses a GeneralSubtrees `value` and store the contents in `subtrees`.
+// The individual values stored into `subtrees` are not validated by this
 // function.
-// NOTE: |subtrees| is not pre-initialized by the function(it is expected to be
+// NOTE: `subtrees` is not pre-initialized by the function(it is expected to be
 // a default initialized object), and it will be modified regardless of the
 // return value.
 [[nodiscard]] bool ParseGeneralSubtrees(der::Input value,
@@ -420,7 +420,7 @@ void NameConstraints::IsPermittedCert(der::Input subject_rdn_sequence,
       (constrained_name_types() & GENERAL_NAME_RFC822_NAME)) {
     if (!FindEmailAddressesInName(subject_rdn_sequence,
                                   &subject_email_addresses_to_check)) {
-      // Error parsing |subject_rdn_sequence|.
+      // Error parsing `subject_rdn_sequence`.
       errors->AddError(cert_errors::kNotPermittedByNameConstraints);
       return;
     }
@@ -634,7 +634,7 @@ bool NameConstraints::IsPermittedRfc822Name(
   for (const auto &permitted_name : permitted_subtrees_.rfc822_names) {
     if (Rfc822NameMatches(name_components[0], name_components[1],
                           permitted_name, Rfc822NameMatchType::kPermitted,
-                          /*case_insenitive_local_part=*/false)) {
+                          /*case_insensitive_local_part=*/false)) {
       return true;
     }
   }

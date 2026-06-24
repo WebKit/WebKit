@@ -16,6 +16,7 @@
 
 #include "aom/aom_encoder.h"
 #include "aom/aomcx.h"
+#include "aom/internal/aom_codec_internal.h"
 #include "aom_dsp/aom_dsp_common.h"
 #include "aom_mem/aom_mem.h"
 #include "av1/common/common.h"
@@ -72,6 +73,29 @@ AomAV1RateControlRtcConfig::AomAV1RateControlRtcConfig() {
 
 namespace aom {
 
+// Creates a setjmp target using `CPI->common.error->jmp` and sets
+// `CPI->common.error->setjmp = 1`. Returns false on longjmp. This should be
+// accompanied by a call to DISABLE_SETJMP using the same CPI before going out
+// of scope.
+#define ENABLE_SETJMP(CPI)                                      \
+  do {                                                          \
+    struct aom_internal_error_info *const enable_setjmp_error = \
+        (CPI)->common.error;                                    \
+    if (setjmp(enable_setjmp_error->jmp)) {                     \
+      enable_setjmp_error->setjmp = 0;                          \
+      return false;                                             \
+    }                                                           \
+    enable_setjmp_error->setjmp = 1;                            \
+  } while (0)
+
+// Sets CPI->common.error->setjmp = 0.
+#define DISABLE_SETJMP(CPI)                                     \
+  do {                                                          \
+    struct aom_internal_error_info *const enable_setjmp_error = \
+        (CPI)->common.error;                                    \
+    enable_setjmp_error->setjmp = 0;                            \
+  } while (0)
+
 std::unique_ptr<AV1RateControlRTC> AV1RateControlRTC::Create(
     const AV1RateControlRtcConfig &cfg) {
   std::unique_ptr<AV1RateControlRTC> rc_api(new (std::nothrow)
@@ -84,6 +108,7 @@ std::unique_ptr<AV1RateControlRTC> AV1RateControlRTC::Create(
       static_cast<AV1_PRIMARY *>(aom_memalign(32, sizeof(AV1_PRIMARY)));
   if (!rc_api->cpi_->ppi) return nullptr;
   av1_zero(*rc_api->cpi_->ppi);
+  rc_api->cpi_->common.error = &rc_api->cpi_->ppi->error;
   rc_api->cpi_->common.seq_params = &rc_api->cpi_->ppi->seq_params;
   av1_zero(*rc_api->cpi_->common.seq_params);
   if (!rc_api->InitRateControl(cfg)) return nullptr;
@@ -97,6 +122,7 @@ std::unique_ptr<AV1RateControlRTC> AV1RateControlRTC::Create(
         cpi->common.mi_params.mi_rows, cpi->common.mi_params.mi_cols);
     if (!cpi->cyclic_refresh) return nullptr;
   }
+  rc_api->rc_is_valid_ = true;
   return rc_api;
 }
 
@@ -168,6 +194,7 @@ bool AV1RateControlRTC::InitRateControl(const AV1RateControlRtcConfig &rc_cfg) {
   // Enable external rate control.
   cpi_->rc.rtc_external_ratectrl = 1;
   cpi_->sf.rt_sf.use_nonrd_pick_mode = 1;
+  rc_is_valid_ = true;
   return true;
 }
 
@@ -177,15 +204,26 @@ bool AV1RateControlRTC::UpdateRateControl(
       rc_cfg.ss_number_layers > AOM_MAX_SS_LAYERS ||
       rc_cfg.ts_number_layers < 1 ||
       rc_cfg.ts_number_layers > AOM_MAX_TS_LAYERS) {
+    rc_is_valid_ = false;
     return false;
   }
+  if (cpi_->svc.number_spatial_layers != rc_cfg.ss_number_layers ||
+      cpi_->svc.number_temporal_layers != rc_cfg.ts_number_layers)
+    av1_free_svc_cyclic_refresh(cpi_);
   const int num_layers = rc_cfg.ss_number_layers * rc_cfg.ts_number_layers;
   if (num_layers > 1 && !av1_alloc_layer_context(cpi_, num_layers)) {
+    rc_is_valid_ = false;
     return false;
   }
   AV1_COMMON *cm = &cpi_->common;
   AV1EncoderConfig *oxcf = &cpi_->oxcf;
   RATE_CONTROL *const rc = &cpi_->rc;
+  if (oxcf->frm_dim_cfg.width && oxcf->frm_dim_cfg.height &&
+      (rc_cfg.width > oxcf->frm_dim_cfg.width ||
+       rc_cfg.height > oxcf->frm_dim_cfg.height)) {
+    rc_is_valid_ = false;
+    return false;
+  }
   initial_width_ = rc_cfg.width;
   initial_height_ = rc_cfg.height;
   cm->width = rc_cfg.width;
@@ -224,7 +262,7 @@ bool AV1RateControlRTC::UpdateRateControl(
   av1_new_framerate(cpi_, cpi_->framerate);
   if (cpi_->svc.number_temporal_layers > 1 ||
       cpi_->svc.number_spatial_layers > 1) {
-    int64_t target_bandwidth_svc = 0;
+    volatile int64_t target_bandwidth_svc = 0;
     for (int sl = 0; sl < cpi_->svc.number_spatial_layers; ++sl) {
       for (int tl = 0; tl < cpi_->svc.number_temporal_layers; ++tl) {
         const int layer =
@@ -232,31 +270,56 @@ bool AV1RateControlRTC::UpdateRateControl(
         LAYER_CONTEXT *lc = &cpi_->svc.layer_context[layer];
         RATE_CONTROL *const lrc = &lc->rc;
         lc->layer_target_bitrate = 1000 * rc_cfg.layer_target_bitrate[layer];
+        if (rc_cfg.max_quantizers[layer] > 63 ||
+            rc_cfg.min_quantizers[layer] < 0 ||
+            rc_cfg.min_quantizers[layer] > rc_cfg.max_quantizers[layer]) {
+          rc_is_valid_ = false;
+          return false;
+        }
         lc->max_q = rc_cfg.max_quantizers[layer];
         lc->min_q = rc_cfg.min_quantizers[layer];
         lrc->worst_quality =
             av1_quantizer_to_qindex(rc_cfg.max_quantizers[layer]);
         lrc->best_quality =
             av1_quantizer_to_qindex(rc_cfg.min_quantizers[layer]);
-        lc->scaling_factor_num = rc_cfg.scaling_factor_num[sl];
-        lc->scaling_factor_den = rc_cfg.scaling_factor_den[sl];
+        // spatial scaling (scaling_factor_num[]/den[]) is always to a lower
+        // resolution, so den must be >= num.
+        if (rc_cfg.scaling_factor_den[sl] < rc_cfg.scaling_factor_num[sl]) {
+          rc_is_valid_ = false;
+          return false;
+        }
+        lc->scaling_factor_num = AOMMAX(1, rc_cfg.scaling_factor_num[sl]);
+        lc->scaling_factor_den = AOMMAX(1, rc_cfg.scaling_factor_den[sl]);
         lc->framerate_factor = rc_cfg.ts_rate_decimator[tl];
         if (tl == cpi_->svc.number_temporal_layers - 1)
           target_bandwidth_svc += lc->layer_target_bitrate;
       }
     }
 
-    if (cm->current_frame.frame_number == 0) av1_init_layer_context(cpi_);
+    ENABLE_SETJMP(cpi_);
+    if (cm->current_frame.frame_number == 0) {
+      av1_init_layer_context(cpi_);
+    }
     // This is needed to initialize external RC flag in layer context structure.
     cpi_->rc.rtc_external_ratectrl = 1;
     av1_update_layer_context_change_config(cpi_, target_bandwidth_svc);
+    DISABLE_SETJMP(cpi_);
   }
   check_reset_rc_flag(cpi_);
+  rc_is_valid_ = true;
   return true;
 }
 
 FrameDropDecision AV1RateControlRTC::ComputeQP(
     const AV1FrameParamsRTC &frame_params) {
+  if (!rc_is_valid_) return kFrameDropDecisionDrop;
+  if (frame_params.spatial_layer_id < 0 ||
+      frame_params.spatial_layer_id >= cpi_->svc.number_spatial_layers ||
+      frame_params.temporal_layer_id < 0 ||
+      frame_params.temporal_layer_id >= cpi_->svc.number_temporal_layers ||
+      initial_width_ == 0 || initial_height_ == 0) {
+    return kFrameDropDecisionDrop;
+  }
   AV1_COMMON *const cm = &cpi_->common;
   int width, height;
   GF_GROUP *const gf_group = &cpi_->ppi->gf_group;
@@ -348,30 +411,47 @@ FrameDropDecision AV1RateControlRTC::ComputeQP(
 }
 
 int AV1RateControlRTC::GetQP() const {
-  return cpi_->common.quant_params.base_qindex;
+  if (rc_is_valid_) return cpi_->common.quant_params.base_qindex;
+  return 0;
 }
 
 AV1LoopfilterLevel AV1RateControlRTC::GetLoopfilterLevel() const {
-  av1_pick_filter_level(nullptr, cpi_, LPF_PICK_FROM_Q);
   AV1LoopfilterLevel lpf_level;
-  lpf_level.filter_level[0] = cpi_->common.lf.filter_level[0];
-  lpf_level.filter_level[1] = cpi_->common.lf.filter_level[1];
-  lpf_level.filter_level_u = cpi_->common.lf.filter_level_u;
-  lpf_level.filter_level_v = cpi_->common.lf.filter_level_v;
+  if (rc_is_valid_) {
+    av1_pick_filter_level(nullptr, cpi_, LPF_PICK_FROM_Q);
+    lpf_level.filter_level[0] = cpi_->common.lf.filter_level[0];
+    lpf_level.filter_level[1] = cpi_->common.lf.filter_level[1];
+    lpf_level.filter_level_u = cpi_->common.lf.filter_level_u;
+    lpf_level.filter_level_v = cpi_->common.lf.filter_level_v;
+  } else {
+    lpf_level.filter_level[0] = 0;
+    lpf_level.filter_level[1] = 0;
+    lpf_level.filter_level_u = 0;
+    lpf_level.filter_level_v = 0;
+  }
   return lpf_level;
 }
 
 AV1CdefInfo AV1RateControlRTC::GetCdefInfo() const {
-  av1_pick_cdef_from_qp(&cpi_->common, 0, 0);
   AV1CdefInfo cdef_level;
-  cdef_level.cdef_strength_y = cpi_->common.cdef_info.cdef_strengths[0];
-  cdef_level.cdef_strength_uv = cpi_->common.cdef_info.cdef_uv_strengths[0];
-  cdef_level.damping = cpi_->common.cdef_info.cdef_damping;
+  if (rc_is_valid_) {
+    av1_pick_cdef_from_qp(&cpi_->common, /*skip_cdef=*/0,
+                          /*is_screen_content=*/0,
+                          /*avoid_uv_cdef=*/false);
+    cdef_level.cdef_strength_y = cpi_->common.cdef_info.cdef_strengths[0];
+    cdef_level.cdef_strength_uv = cpi_->common.cdef_info.cdef_uv_strengths[0];
+    cdef_level.damping = cpi_->common.cdef_info.cdef_damping;
+  } else {
+    cdef_level.cdef_strength_y = 0;
+    cdef_level.cdef_strength_uv = 0;
+    cdef_level.damping = 0;
+  }
   return cdef_level;
 }
 
 bool AV1RateControlRTC::GetSegmentationData(
     AV1SegmentationData *segmentation_data) const {
+  if (!rc_is_valid_) return false;
   if (cpi_->oxcf.q_cfg.aq_mode == 0) {
     return false;
   }
@@ -388,6 +468,7 @@ bool AV1RateControlRTC::GetSegmentationData(
 }
 
 void AV1RateControlRTC::PostEncodeUpdate(uint64_t encoded_frame_size) {
+  if (!rc_is_valid_) return;
   cpi_->common.current_frame.frame_number++;
   av1_rc_postencode_update(cpi_, encoded_frame_size);
   if (cpi_->svc.spatial_layer_id == cpi_->svc.number_spatial_layers - 1) {

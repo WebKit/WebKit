@@ -47,14 +47,14 @@
 
 #if USE(APPKIT)
 
-static NSData *readRTFDataFromPasteboard()
+static NSData *readRTFDDataFromPasteboard()
 {
     return [[NSPasteboard generalPasteboard] dataForType:NSPasteboardTypeRTFD];
 }
 
 #else
 
-static NSData *readRTFDataFromPasteboard()
+static NSData *readRTFDDataFromPasteboard()
 {
     id value = [[UIPasteboard generalPasteboard] valueForPasteboardType:UTTypeFlatRTFD.identifier];
     ASSERT([value isKindOfClass:[NSData class]]);
@@ -723,7 +723,7 @@ TEST(AdaptiveImageGlyph, CopyRTF)
     [webView selectAll:nil];
     [webView _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
 
-    NSData *rtfData = readRTFDataFromPasteboard();
+    NSData *rtfData = readRTFDDataFromPasteboard();
     EXPECT_NOT_NULL(rtfData);
 
     RetainPtr attributedString = adoptNS([[NSAttributedString alloc] initWithData:rtfData options:@{ } documentAttributes:nil error:nullptr]);

@@ -350,6 +350,7 @@ ALWAYS_INLINE JSString* fastArrayJoin(JSGlobalObject* globalObject, JSObject* th
                 RETURN_IF_EXCEPTION(scope, { });
                 if (!withoutSideEffect) {
                     genericCase = true;
+                    holesKnownToBeOK = false;
                     if (thisObject->butterfly() == &butterfly && originalLength == butterfly.publicLength()) [[likely]]
                         continue;
                     ++i;

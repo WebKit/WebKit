@@ -46,7 +46,7 @@
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
 
-static unsigned gDidProcessRequestCount = 0;
+static unsigned gImageAnalysisDidProcessRequestCount = 0;
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -78,25 +78,25 @@ static CGPoint swizzledLocationInView(id, SEL, UIView *)
 - (void)waitForImageAnalysisRequests:(unsigned)numberOfRequests
 {
     TestWebKitAPI::Util::waitForConditionWithLogging([&] {
-        return gDidProcessRequestCount == numberOfRequests;
+        return gImageAnalysisDidProcessRequestCount == numberOfRequests;
     }, 3, @"Timed out waiting for %u image analysis requests to complete.", numberOfRequests);
 
     [self waitForNextPresentationUpdate];
-    EXPECT_EQ(gDidProcessRequestCount, numberOfRequests);
+    EXPECT_EQ(gImageAnalysisDidProcessRequestCount, numberOfRequests);
 }
 
 #if PLATFORM(IOS_FAMILY)
 
 - (unsigned)simulateImageAnalysisGesture:(CGPoint)location
 {
-    auto numberOfRequestsAtStart = gDidProcessRequestCount;
+    auto numberOfRequestsAtStart = gImageAnalysisDidProcessRequestCount;
     gSwizzledLocationInView = location;
     InstanceMethodSwizzler gestureLocationSwizzler { UILongPressGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
     [self.textInputContentView imageAnalysisGestureDidBegin:self._imageAnalysisGestureRecognizer];
     // The process of image analysis involves at most 2 round trips to the web process.
     [self waitForNextPresentationUpdate];
     [self waitForNextPresentationUpdate];
-    return gDidProcessRequestCount - numberOfRequestsAtStart;
+    return gImageAnalysisDidProcessRequestCount - numberOfRequestsAtStart;
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -128,14 +128,14 @@ static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
 
 static void processRequestWithError(id, SEL, VKImageAnalyzerRequest *request, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
 {
-    gDidProcessRequestCount++;
+    gImageAnalysisDidProcessRequestCount++;
     processedRequests().append({ request });
     completion(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:nil]);
 }
 
 static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *request, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
 {
-    gDidProcessRequestCount++;
+    gImageAnalysisDidProcessRequestCount++;
     processedRequests().append({ request });
     completion(createImageAnalysisWithSimpleFixedResults().get(), nil);
 }
@@ -146,7 +146,7 @@ static VKImageAnalyzerRequest *makeFakeRequest(id, SEL, CGImageRef image, VKImag
 }
 
 template <typename FunctionType>
-std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMethodSwizzler>> makeImageAnalysisRequestSwizzler(FunctionType function)
+std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMethodSwizzler>> imageAnalysisMakeRequestSwizzler(FunctionType function)
 {
     return std::pair {
         makeUnique<InstanceMethodSwizzler>(PAL::getVKImageAnalyzerClassSingleton(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(function)),
@@ -158,7 +158,7 @@ std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMetho
 
 TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithError);
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView _setEditable:YES];
@@ -168,7 +168,7 @@ TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 
 TEST(ImageAnalysisTests, HandleImageAnalyzerErrors)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithError);
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView synchronouslyLoadTestPageNamed:@"image"];
@@ -178,7 +178,7 @@ TEST(ImageAnalysisTests, HandleImageAnalyzerErrors)
 
 TEST(ImageAnalysisTests, DoNotCrashWhenHitTestingOutsideOfWebView)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithError);
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView synchronouslyLoadTestPageNamed:@"image"];
@@ -189,7 +189,7 @@ TEST(ImageAnalysisTests, DoNotCrashWhenHitTestingOutsideOfWebView)
 
 TEST(ImageAnalysisTests, AvoidRedundantTextRecognitionRequests)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithResults);
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"image"];
@@ -204,7 +204,7 @@ TEST(ImageAnalysisTests, AvoidRedundantTextRecognitionRequests)
 
 TEST(ImageAnalysisTests, StartImageAnalysisWithoutIdentifier)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithResults);
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
@@ -219,7 +219,7 @@ TEST(ImageAnalysisTests, StartImageAnalysisWithoutIdentifier)
 
 TEST(ImageAnalysisTests, AnalyzeImagesInSubframes)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithResults);
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
@@ -236,7 +236,7 @@ TEST(ImageAnalysisTests, AnalyzeImagesInSubframes)
 
 TEST(ImageAnalysisTests, AnalyzeImageAfterChangingSource)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithResults);
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"image"];
@@ -249,7 +249,7 @@ TEST(ImageAnalysisTests, AnalyzeImageAfterChangingSource)
 
 TEST(ImageAnalysisTests, AnalyzeDynamicallyLoadedImages)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithResults);
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
@@ -266,12 +266,12 @@ TEST(ImageAnalysisTests, AnalyzeDynamicallyLoadedImages)
     [webView waitForNextPresentationUpdate];
     [webView objectByEvaluatingJavaScript:@"showAllImages()"];
     [webView waitForNextPresentationUpdate];
-    EXPECT_EQ(gDidProcessRequestCount, 7U);
+    EXPECT_EQ(gImageAnalysisDidProcessRequestCount, 7U);
 }
 
 TEST(ImageAnalysisTests, ResetImageAnalysisAfterNavigation)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithResults);
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
@@ -283,12 +283,12 @@ TEST(ImageAnalysisTests, ResetImageAnalysisAfterNavigation)
 
     [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
     [webView waitForNextPresentationUpdate];
-    EXPECT_EQ(gDidProcessRequestCount, 5U);
+    EXPECT_EQ(gImageAnalysisDidProcessRequestCount, 5U);
 }
 
 TEST(ImageAnalysisTests, ImageAnalysisPrioritizesVisibleImages)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithResults);
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"offscreen-image"];
     [webView _startImageAnalysis:nil target:nil];
@@ -304,7 +304,7 @@ TEST(ImageAnalysisTests, ImageAnalysisPrioritizesVisibleImages)
 
 TEST(ImageAnalysisTests, ImageAnalysisWithTransparentImages)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
+    auto requestSwizzler = imageAnalysisMakeRequestSwizzler(processRequestWithError);
     auto webView = createWebViewWithTextRecognitionEnhancements();
     [webView synchronouslyLoadTestPageNamed:@"fade-in-image"];
     [webView _startImageAnalysis:@"en_US" target:@"zh_TW"];

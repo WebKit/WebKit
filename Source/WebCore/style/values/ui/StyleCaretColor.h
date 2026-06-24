@@ -47,10 +47,10 @@ struct CaretColor : ValueOrKeyword<Color, CSS::Keyword::Auto> {
 // MARK: - Blending
 
 template<> struct Blending<CaretColor> {
-    auto equals(const CaretColor&, const CaretColor&, const RenderStyle&, const RenderStyle&) -> bool;
+    auto equals(const CaretColor&, const CaretColor&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
     auto canBlend(const CaretColor&, const CaretColor&) -> bool;
     constexpr auto requiresInterpolationForAccumulativeIteration(const CaretColor&, const CaretColor&) -> bool { return true; }
-    auto blend(const CaretColor&, const CaretColor&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> CaretColor;
+    auto blend(const CaretColor&, const CaretColor&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> CaretColor;
 };
 
 } // namespace Style

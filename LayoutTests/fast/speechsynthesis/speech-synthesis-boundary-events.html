@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -11,8 +11,6 @@
 
     description("This tests that a speech job will generate the correct boundary events.");
 
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     if (window.internals)
         window.internals.enableMockSpeechSynthesizer();
@@ -37,6 +35,5 @@
 
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -815,6 +815,12 @@ void MediaKeySession::sessionClosed()
     // W3C Editor's Draft 09 November 2016
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    // close(), stop(), and a CDM-reported close during update() each queue a task that lands here. They guard on
+    // m_closed before enqueuing, but it is only set when the task runs, so more than one task can already be queued.
+    // Update m_closed here to ensure the promise is only resolved once, and avoid an assertion in DOMPromiseProxy.
+    if (std::exchange(m_closed, true))
+        return;
+
     // 1. Let session be the associated MediaKeySession object.
     // 2. If session's session type is "persistent-usage-record", execute the following steps in parallel:
     if (m_sessionType == MediaKeySessionType::PersistentUsageRecord) {
@@ -829,11 +835,16 @@ void MediaKeySession::sessionClosed()
     // 4. Run the Update Expiration algorithm on the session, providing NaN.
     updateExpiration(std::numeric_limits<double>::quiet_NaN());
 
-    // Let's consider the session closed before any promise on the 'closed' attribute is resolved.
-    m_closed = true;
-
     // 5. Let promise be the closed attribute of the session.
     // 6. Resolve promise.
+    // Skip if the context is stopping (e.g. a back/forward-cached page being pruned); otherwise resolving the
+    // promise trips DeferredPromise's suspended-context assertion.
+    RefPtr context = scriptExecutionContext();
+    if (!context || context->activeDOMObjectsAreStopped()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Context is stopping; not resolving closed promise");
+        return;
+    }
+
     m_closedPromise->resolve();
 }
 
@@ -877,6 +888,8 @@ void MediaKeySession::stop()
         if (!protectedThis)
             return;
 
+        // Run Session Closed synchronously to avoid the CDM session outliving the page and leaking into the next
+        // navigation.
         ALWAYS_LOG_WITH_THIS(protectedThis, logIdentifier, "::lambda, closed");
         protectedThis->sessionClosed();
     });

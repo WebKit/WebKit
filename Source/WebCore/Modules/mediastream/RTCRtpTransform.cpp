@@ -79,10 +79,10 @@ void RTCRtpTransform::attachToReceiver(RTCRtpReceiver& receiver, RTCRtpTransform
 
     switchOn(m_transform,
         [&](Ref<RTCRtpSFrameTransform>& sframeTransform) {
-            sframeTransform->initializeBackendForReceiver(*m_backend);
+            sframeTransform->initializeBackendForReceiver(protect(*m_backend));
         },
         [&](Ref<RTCRtpScriptTransform>& scriptTransform) {
-            scriptTransform->initializeBackendForReceiver(*m_backend);
+            scriptTransform->initializeBackendForReceiver(protect(*m_backend));
         }
     );
 }
@@ -101,10 +101,10 @@ void RTCRtpTransform::attachToSender(RTCRtpSender& sender, RTCRtpTransform* prev
 
     switchOn(m_transform,
         [&](Ref<RTCRtpSFrameTransform>& sframeTransform) {
-            sframeTransform->initializeBackendForSender(*m_backend);
+            sframeTransform->initializeBackendForSender(protect(*m_backend));
         },
         [&](Ref<RTCRtpScriptTransform>& scriptTransform) {
-            scriptTransform->initializeBackendForSender(*m_backend);
+            scriptTransform->initializeBackendForSender(protect(*m_backend));
             if (previousTransform)
                 previousTransform->backendTransferedToNewTransform();
         }
@@ -128,10 +128,10 @@ void RTCRtpTransform::clearBackend()
 
     switchOn(m_transform,
         [&](Ref<RTCRtpSFrameTransform>& sframeTransform) {
-            sframeTransform->willClearBackend(*m_backend);
+            sframeTransform->willClearBackend(protect(*m_backend));
         },
         [&](Ref<RTCRtpScriptTransform>& scriptTransform) {
-            scriptTransform->willClearBackend(*m_backend);
+            scriptTransform->willClearBackend(protect(*m_backend));
         }
     );
 

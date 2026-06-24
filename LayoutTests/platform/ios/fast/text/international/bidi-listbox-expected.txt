@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 102: "1) direction: rtl;"
         RenderBR {BR} at (101,0) size 1x20
         RenderMenuList {SELECT} at (0,20) size 84x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderSelectFallbackButton {DIV} at (6,3) size 72x14
-            RenderText at (72,0) size 0x14
+          RenderBlock {DIV} at (6,3) size 72x14
+            RenderText {#text} at (72,0) size 0x14
               text run at (72,0) width 0 RTL: " "
         RenderBR {BR} at (84,19) size 0x19
       RenderBlock {DIV} at (0,96) size 100x20
@@ -28,8 +28,8 @@ layer at (0,0) size 800x600
           text run at (0,20) width 102: "2) direction: ltr;"
         RenderBR {BR} at (101,20) size 1x20
         RenderMenuList {SELECT} at (0,40) size 84x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderSelectFallbackButton {DIV} at (6,3) size 72x14
-            RenderText at (0,0) size 0x14
+          RenderBlock {DIV} at (6,3) size 72x14
+            RenderText {#text} at (0,0) size 0x14
               text run at (0,0) width 0: " "
         RenderBR {BR} at (84,39) size 0x19
       RenderBlock {DIV} at (0,176) size 100x20
@@ -42,8 +42,8 @@ layer at (0,0) size 800x600
           text run at (0,20) width 72: "3) No style"
         RenderBR {BR} at (71,20) size 1x20
         RenderMenuList {SELECT} at (0,40) size 84x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderSelectFallbackButton {DIV} at (6,3) size 72x14
-            RenderText at (0,0) size 0x14
+          RenderBlock {DIV} at (6,3) size 72x14
+            RenderText {#text} at (0,0) size 0x14
               text run at (0,0) width 0: " "
         RenderBR {BR} at (84,39) size 0x19
       RenderBlock {DIV} at (0,256) size 100x20

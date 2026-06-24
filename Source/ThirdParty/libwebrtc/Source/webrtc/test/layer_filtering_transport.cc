@@ -14,14 +14,13 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/media_types.h"
 #include "api/rtp_parameters.h"
-#include "api/task_queue/task_queue_base.h"
 #include "api/video/video_codec_type.h"
 #include "call/call.h"
 #include "call/simulated_packet_receiver.h"
@@ -33,6 +32,7 @@
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/thread.h"
 #include "test/direct_transport.h"
 
 namespace webrtc {
@@ -40,7 +40,7 @@ namespace test {
 
 LayerFilteringTransport::LayerFilteringTransport(
     const Environment& env,
-    TaskQueueBase* task_queue,
+    Thread* network_thread,
     std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
     Call* send_call,
     uint8_t vp8_video_payload_type,
@@ -50,10 +50,10 @@ LayerFilteringTransport::LayerFilteringTransport(
     const std::map<uint8_t, MediaType>& payload_type_map,
     uint32_t ssrc_to_filter_min,
     uint32_t ssrc_to_filter_max,
-    ArrayView<const RtpExtension> audio_extensions,
-    ArrayView<const RtpExtension> video_extensions)
+    std::span<const RtpExtension> audio_extensions,
+    std::span<const RtpExtension> video_extensions)
     : DirectTransport(env,
-                      task_queue,
+                      network_thread,
                       std::move(pipe),
                       send_call,
                       payload_type_map,
@@ -71,7 +71,7 @@ LayerFilteringTransport::LayerFilteringTransport(
 
 LayerFilteringTransport::LayerFilteringTransport(
     const Environment& env,
-    TaskQueueBase* task_queue,
+    Thread* network_thread,
     std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
     Call* send_call,
     uint8_t vp8_video_payload_type,
@@ -79,10 +79,10 @@ LayerFilteringTransport::LayerFilteringTransport(
     int selected_tl,
     int selected_sl,
     const std::map<uint8_t, MediaType>& payload_type_map,
-    ArrayView<const RtpExtension> audio_extensions,
-    ArrayView<const RtpExtension> video_extensions)
+    std::span<const RtpExtension> audio_extensions,
+    std::span<const RtpExtension> video_extensions)
     : LayerFilteringTransport(env,
-                              task_queue,
+                              network_thread,
                               std::move(pipe),
                               send_call,
                               vp8_video_payload_type,
@@ -99,7 +99,7 @@ bool LayerFilteringTransport::DiscardedLastPacket() const {
   return discarded_last_packet_;
 }
 
-bool LayerFilteringTransport::SendRtp(ArrayView<const uint8_t> packet,
+bool LayerFilteringTransport::SendRtp(std::span<const uint8_t> packet,
                                       const PacketOptions& options) {
   if (selected_tl_ == -1 && selected_sl_ == -1) {
     // Nothing to change, forward the packet immediately.
@@ -190,7 +190,7 @@ bool LayerFilteringTransport::SendRtp(ArrayView<const uint8_t> packet,
     }
   }
 
-  return test::DirectTransport::SendRtp(rtp_packet, options);
+  return test::DirectTransport::SendRtp(rtp_packet.buffer(), options);
 }
 
 }  // namespace test

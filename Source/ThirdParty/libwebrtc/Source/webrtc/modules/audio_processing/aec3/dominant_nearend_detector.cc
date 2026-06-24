@@ -14,8 +14,8 @@
 #include <array>
 #include <cstddef>
 #include <numeric>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/checks.h"
@@ -24,26 +24,21 @@ namespace webrtc {
 DominantNearendDetector::DominantNearendDetector(
     const EchoCanceller3Config::Suppressor::DominantNearendDetection& config,
     size_t num_capture_channels)
-    : enr_threshold_(config.enr_threshold),
-      enr_exit_threshold_(config.enr_exit_threshold),
-      snr_threshold_(config.snr_threshold),
-      hold_duration_(config.hold_duration),
-      trigger_threshold_(config.trigger_threshold),
-      use_during_initial_phase_(config.use_during_initial_phase),
+    : config_(config),
       num_capture_channels_(num_capture_channels),
       trigger_counters_(num_capture_channels_),
       hold_counters_(num_capture_channels_) {}
 
 void DominantNearendDetector::Update(
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    std::span<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
+    std::span<const std::array<float, kFftLengthBy2Plus1>>
         residual_echo_spectrum,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    std::span<const std::array<float, kFftLengthBy2Plus1>>
         comfort_noise_spectrum,
     bool initial_state) {
   nearend_state_ = false;
 
-  auto low_frequency_energy = [](ArrayView<const float> spectrum) {
+  auto low_frequency_energy = [](std::span<const float> spectrum) {
     RTC_DCHECK_LE(16, spectrum.size());
     return std::accumulate(spectrum.begin() + 1, spectrum.begin() + 16, 0.f);
   };
@@ -55,13 +50,13 @@ void DominantNearendDetector::Update(
 
     // Detect strong active nearend if the nearend is sufficiently stronger than
     // the echo and the nearend noise.
-    if ((!initial_state || use_during_initial_phase_) &&
-        echo_sum < enr_threshold_ * ne_sum &&
-        ne_sum > snr_threshold_ * noise_sum) {
-      if (++trigger_counters_[ch] >= trigger_threshold_) {
+    if ((!initial_state || config_.use_during_initial_phase) &&
+        echo_sum < config_.enr_threshold * ne_sum &&
+        ne_sum > config_.snr_threshold * noise_sum) {
+      if (++trigger_counters_[ch] >= config_.trigger_threshold) {
         // After a period of strong active nearend activity, flag nearend mode.
-        hold_counters_[ch] = hold_duration_;
-        trigger_counters_[ch] = trigger_threshold_;
+        hold_counters_[ch] = config_.hold_duration;
+        trigger_counters_[ch] = config_.trigger_threshold;
       }
     } else {
       // Forget previously detected strong active nearend activity.
@@ -69,8 +64,8 @@ void DominantNearendDetector::Update(
     }
 
     // Exit nearend-state early at strong echo.
-    if (echo_sum > enr_exit_threshold_ * ne_sum &&
-        echo_sum > snr_threshold_ * noise_sum) {
+    if (echo_sum > config_.enr_exit_threshold * ne_sum &&
+        echo_sum > config_.snr_threshold * noise_sum) {
       hold_counters_[ch] = 0;
     }
 
@@ -79,4 +74,10 @@ void DominantNearendDetector::Update(
     nearend_state_ = nearend_state_ || hold_counters_[ch] > 0;
   }
 }
+
+void DominantNearendDetector::SetConfig(
+    const EchoCanceller3Config::Suppressor& config) {
+  config_ = config.dominant_nearend_detection;
+}
+
 }  // namespace webrtc

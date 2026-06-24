@@ -1,0 +1,3 @@
+
+PASS Synthetic bold does not give width to a zero-advance (empty) font
+

@@ -84,7 +84,7 @@ private:
     String m_name;
     String m_displayName;
     String m_group;
-    bool m_synchronizable;
+    bool m_synchronizable { false };
     size_t m_numberOfCredentials { 0 };
     const RetainPtr<SecAccessControlRef> m_accessControl;
     RetainPtr<LAContext> m_laContext;

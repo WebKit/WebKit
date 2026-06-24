@@ -86,6 +86,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-time-content-size-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-time-content-size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/text-control-client-width.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/text-control-flow-root-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/text-control-flow-root-ref.html

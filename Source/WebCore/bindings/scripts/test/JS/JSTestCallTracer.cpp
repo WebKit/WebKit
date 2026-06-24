@@ -549,6 +549,8 @@ void JSTestCallTracer::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestCallTracerOwner::JSTestCallTracerOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestCallTracerOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -561,7 +563,7 @@ void JSTestCallTracerOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* con
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestCallTracer = static_cast<JSTestCallTracer*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestCallTracer->wrapped()).ptr(), jsTestCallTracer);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestCallTracer->wrapped(), jsTestCallTracer);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

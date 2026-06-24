@@ -130,7 +130,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     if (WebProcess::singleton().isLockdownModeEnabled())
         WebPage::adjustSettingsForLockdownMode(page->settings(), m_preferencesStore ? &m_preferencesStore.value() : nullptr);
 
-    if (!initializationData.userAgent.isEmpty())
+    if (initializationData.userAgent.isEmpty())
         initializationData.userAgent = m_userAgent;
 
     if (!initializationData.clientIdentifier)

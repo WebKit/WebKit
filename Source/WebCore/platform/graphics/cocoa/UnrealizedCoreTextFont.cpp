@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,7 @@ void UnrealizedCoreTextFont::addAttributesForOpticalSizing(CFMutableDictionaryRe
     case OpticalSizingType::JustVariation:
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=252592 We should never be enabling just the opsz variation without also enabling trak.
         // We should delete this and use the OpticalSizingType::Everything path instead.
-        variationsToBeApplied.set({ { 'o', 'p', 's', 'z' } }, size);
+        variationsToBeApplied.set(FontVariationAxisTag::opsz, size);
         break;
     case OpticalSizingType::Everything:
         CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("auto"));
@@ -213,7 +213,7 @@ void UnrealizedCoreTextFont::applyVariations(CFMutableDictionaryRef attributes, 
 
 void UnrealizedCoreTextFont::modifyFromContext(CFMutableDictionaryRef attributes, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, ApplyTraitsVariations applyTraitsVariations, float weight, float width, float slope, CGFloat size, const OpticalSizingType& opticalSizingType)
 {
-    auto fontStyleAxis = fontDescription.fontStyleAxis();
+    auto fontStyleAxis = variationStyleAxis(fontDescription, fontCreationContext.fontFaceCapabilities());
     const auto& variations = fontDescription.variationSettings();
     const auto& features = fontDescription.featureSettings();
     const auto& variantSettings = fontDescription.variantSettings();
@@ -226,12 +226,12 @@ void UnrealizedCoreTextFont::modifyFromContext(CFMutableDictionaryRef attributes
 
     // The system font is somewhat magical. Don't mess with its variations.
     if (applyTraitsVariations == ApplyTraitsVariations::Yes) {
-        variationsToBeApplied.set({ { 'w', 'g', 'h', 't' } }, weight);
-        variationsToBeApplied.set({ { 'w', 'd', 't', 'h' } }, width);
+        variationsToBeApplied.set(FontVariationAxisTag::wght, weight);
+        variationsToBeApplied.set(FontVariationAxisTag::wdth, width);
         if (fontStyleAxis == FontStyleAxis::ital)
-            variationsToBeApplied.set({ { 'i', 't', 'a', 'l' } }, 1);
+            variationsToBeApplied.set(FontVariationAxisTag::ital, 1);
         else
-            variationsToBeApplied.set({ { 's', 'l', 'n', 't' } }, slope);
+            variationsToBeApplied.set(FontVariationAxisTag::slnt, -slope);
     }
 
     // FIXME: Implement font-named-instance
@@ -286,12 +286,12 @@ void UnrealizedCoreTextFont::modifyFromContext(const FontDescription& fontDescri
         m_weight = fontSelectionRequest.weight;
         m_width = fontSelectionRequest.width;
         m_slope = fontSelectionRequest.slope.value_or(normalItalicValue());
-        m_fontStyleAxis = fontDescription.fontStyleAxis();
+        m_fontStyleAxis = variationStyleAxis(fontDescription, fontCreationContext.fontFaceCapabilities());
         if (auto weightValue = fontCreationContext.fontFaceCapabilities().weight)
             m_weight = std::max(std::min(m_weight, static_cast<float>(weightValue->maximum)), static_cast<float>(weightValue->minimum));
         if (auto widthValue = fontCreationContext.fontFaceCapabilities().width)
             m_width = std::max(std::min(m_width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
-        if (auto slopeValue = fontCreationContext.fontFaceCapabilities().weight)
+        if (auto slopeValue = fontCreationContext.fontFaceCapabilities().slope)
             m_slope = std::max(std::min(m_slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
         if (shouldEnhanceTextLegibility && fontTypeForPreparation == FontTypeForPreparation::SystemFont) {
             auto ctWeight = denormalizeCTWeight(m_weight);
@@ -351,22 +351,22 @@ RetainPtr<CTFontRef> UnrealizedCoreTextFont::realize() const
     // Once rdar://problem/105483251 is solved, we can delete this section.
     if (m_applyTraitsVariations == ApplyTraitsVariations::Yes && FontInterrogation(font.get()).variationType == FontInterrogation::VariationType::TrueTypeGX) {
         auto variationValues = defaultVariationValues(font.get(), ShouldLocalizeAxisNames::No);
-        if (variationValues.contains({ { 'w', 'g', 'h', 't' } })
-            || variationValues.contains({ { 'w', 'd', 't', 'h' } })
-            || variationValues.contains({ { 'i', 't', 'a', 'l' } })
-            || variationValues.contains({ { 's', 'l', 'n', 't' } })) {
+        if (variationValues.contains(FontVariationAxisTag::wght)
+            || variationValues.contains(FontVariationAxisTag::wdth)
+            || variationValues.contains(FontVariationAxisTag::ital)
+            || variationValues.contains(FontVariationAxisTag::slnt)) {
             VariationsMap variationsToBeApplied;
 
             auto weight = denormalizeGXWeight(m_weight);
             auto width = denormalizeVariationWidth(m_width);
             auto slope = denormalizeSlope(m_slope);
 
-            variationsToBeApplied.set({ { 'w', 'g', 'h', 't' } }, weight);
-            variationsToBeApplied.set({ { 'w', 'd', 't', 'h' } }, width);
+            variationsToBeApplied.set(FontVariationAxisTag::wght, weight);
+            variationsToBeApplied.set(FontVariationAxisTag::wdth, width);
             if (m_fontStyleAxis == FontStyleAxis::ital)
-                variationsToBeApplied.set({ { 'i', 't', 'a', 'l' } }, 1);
+                variationsToBeApplied.set(FontVariationAxisTag::ital, 1);
             else
-                variationsToBeApplied.set({ { 's', 'l', 'n', 't' } }, slope);
+                variationsToBeApplied.set(FontVariationAxisTag::slnt, -slope);
 
             RetainPtr attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 

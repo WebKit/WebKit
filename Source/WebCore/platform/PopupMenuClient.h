@@ -49,6 +49,9 @@ public:
     virtual PopupMenuStyle menuStyle() const = 0;
     virtual int listSize() const = 0;
     virtual void popupDidHide() = 0;
+#if PLATFORM(WPE)
+    virtual void showFallbackPopupMenu() { };
+#endif
     virtual bool itemIsSeparator(unsigned listIndex) const = 0;
     virtual bool itemIsLabel(unsigned listIndex) const = 0;
     virtual bool itemIsSelected(unsigned listIndex) const = 0;

@@ -102,7 +102,7 @@
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderDescendantIterator.h"
-#include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
@@ -132,7 +132,6 @@
 #include "RenderSVGViewportContainer.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
@@ -153,6 +152,7 @@
 #include "ShadowRoot.h"
 #include "SourceGraphic.h"
 #include "StyleAttributeMutationScope.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -625,7 +625,8 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || renderer.shouldApplyPaintContainment()
         || !renderer.style().usedZIndex().isAuto()
         || renderer.style().willChange().canCreateStackingContext()
-        || layer.establishesTopLayer();
+        || layer.establishesTopLayer()
+        || (renderer.isSVGLayerAwareRenderer() && renderer.document().settings().layerBasedSVGEngineEnabled());
 }
 
 bool RenderLayer::shouldBeNormalFlowOnly() const
@@ -1320,7 +1321,9 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
         }
 
         // Only the outermost <svg> and / <foreignObject> are potentially scrollable.
-        ASSERT_IMPLIES(is<RenderSVGModelObject>(renderer()) || is<RenderSVGText>(renderer()) || is<RenderSVGInline>(renderer()), !m_scrollableArea);
+        // An SVG renderer reused as the document element (e.g. after replaceChild) can
+        // scroll via normal block layout, so exclude that case.
+        ASSERT_IMPLIES((is<RenderSVGModelObject>(renderer()) || is<RenderSVGText>(renderer()) || is<RenderSVGInline>(renderer())) && !renderer().isDocumentElementRenderer(), !m_scrollableArea);
     }
 
     auto repaintIfNecessary = [&](bool checkForRepaint) {
@@ -1714,7 +1717,7 @@ FloatRect RenderLayer::referenceBoxRectForClipPath(CSSBoxType boxType, const Lay
     return referenceBoxRect;
 }
 
-void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, const RenderStyle& style, OptionSet<Style::TransformResolverOption> options) const
+void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, const Style::ComputedStyle& style, OptionSet<Style::TransformResolverOption> options) const
 {
     // https://drafts.csswg.org/css-anchor-position-1/#default-scroll-shift
     // > After layout has been performed for abspos, it is additionally shifted by
@@ -1788,7 +1791,7 @@ TransformationMatrix RenderLayer::currentTransform(OptionSet<Style::TransformRes
     // Query the animatedStyle() to obtain the current transformation, when accelerated transform animations are running.
     auto styleable = Styleable::fromRenderer(renderer());
     if ((styleable && styleable->isRunningAcceleratedTransformRelatedAnimation()) || !options.contains(Style::TransformResolverOption::TransformOrigin)) {
-        std::unique_ptr<RenderStyle> animatedStyle = renderer().animatedStyle();
+        std::unique_ptr<Style::ComputedStyle> animatedStyle = renderer().animatedStyle();
 
         TransformationMatrix transform;
         updateTransformFromStyle(transform, *animatedStyle, options);
@@ -2042,9 +2045,6 @@ void RenderLayer::updateDescendantDependentFlags()
 
 bool RenderLayer::computeHasVisibleContent() const
 {
-    if (renderer().isAnonymous() && is<RenderSVGViewportContainer>(renderer()))
-        return false;
-
     if (m_isHiddenByOverflowTruncation)
         return false;
 
@@ -2172,6 +2172,8 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
         while (ancestor && !ancestor->hasLayer()) {
             if (auto* boxRenderer = dynamicDowncast<RenderBox>(ancestor))
                 localPoint += boxRenderer->topLeftLocationOffset();
+            else if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(ancestor))
+                localPoint += svgModelObject->locationOffsetEquivalent();
             ancestor = ancestor->parent();
         }
     }
@@ -3671,7 +3673,7 @@ void RenderLayer::applyFilters(GraphicsContext& originalContext, const LayerPain
     m_filters->applyFilterEffect(originalContext);
 }
 
-void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
+void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, std::optional<WTF::Range<unsigned>> svgPaintOrderItemRange)
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
 
@@ -3684,6 +3686,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     bool isPaintingOverlayScrollbars = localPaintFlags.contains(PaintLayerFlag::PaintingOverlayScrollbars);
     bool isPaintingCompositedForeground = localPaintFlags.contains(PaintLayerFlag::PaintingCompositingForegroundPhase);
     bool isPaintingCompositedBackground = localPaintFlags.contains(PaintLayerFlag::PaintingCompositingBackgroundPhase);
+    // This SVG container layer is painting an overlay paint-order segment, so it paints only its
+    // flat-list slice. The container's own foreground and outline belong to the primary segment (the primary layer).
+    bool isPaintingOverlaySVGSegment = svgPaintOrderItemRange && paintingInfo.rootLayer == this && svgPaintOrderItemRange->begin();
     bool isPaintingOverflowContents = localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContents);
     bool isCollectingEventRegion = localPaintFlags.contains(PaintLayerFlag::CollectingEventRegion);
     bool isCollectingAccessibilityRegion = is<AccessibilityRegionContext>(paintingInfo.regionContext);
@@ -3879,6 +3884,11 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             if (localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContentsRoot))
                 return false;
 
+            // An overlay SVG paint-order segment paints only its child slice. The container's own
+            // outline is painted once by the primary graphics layer (the primary segment).
+            if (isPaintingOverlaySVGSegment)
+                return false;
+
             // Paint outlines in the background phase for a scroll container so that they don't scroll with the content.
             // FIXME: inset outlines will have the wrong z-ordering with scrolled content. See also webkit.org/b/249457.
             if (localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContainer))
@@ -3906,40 +3916,6 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
                 clipRectOptions.add(ClipRectsOption::Temporary);
             collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers, PaintingClipRects, clipRectOptions, offsetFromRoot);
             updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, offsetFromRoot);
-
-            // When non-layer SVG ancestors (e.g. a transformed <g> without its own layer) have
-            // applied transforms to the graphics context, our fragment clip rects — computed in
-            // rootLayer coordinate space — must be inverse-mapped through the accumulated
-            // nonLayerSVGTransform so they end up in our local post-transform space, where the
-            // context is now drawing.
-            //
-            // Skip inverse mapping when rootLayer == this: a prior paintLayerByApplyingTransform
-            // promoted us to be our own rootLayer, so our clip rects (at offsetFromRoot=0 relative
-            // to self) are already in this local space; inverse-mapping would shift them incorrectly.
-            if (localPaintingInfo.nonLayerSVGTransform && localPaintingInfo.rootLayer != this) {
-                if (auto inverse = localPaintingInfo.nonLayerSVGTransform->inverse()) {
-                    float deviceScaleFactor = renderer().document().deviceScaleFactor();
-                    for (auto& fragment : layerFragments) {
-                        if (!fragment.rects.m_foregroundRect.isInfinite()) {
-                            auto mappedForegroundRect = LayoutRect(encloseRectToDevicePixels(inverse->mapRect(FloatRect(fragment.rects.m_foregroundRect.rect())), deviceScaleFactor));
-                            fragment.rects.m_foregroundRect = ClipRect(mappedForegroundRect);
-                        }
-                        if (!fragment.rects.m_backgroundRect.isInfinite()) {
-                            auto mappedBackgroundRect = LayoutRect(encloseRectToDevicePixels(inverse->mapRect(FloatRect(fragment.rects.m_backgroundRect.rect())), deviceScaleFactor));
-                            fragment.rects.m_backgroundRect = ClipRect(mappedBackgroundRect);
-                        }
-                    }
-                }
-            } else if (localPaintingInfo.nonLayerSVGTransform) {
-                // rootLayer == this: our fragment clip rects are at offsetFromRoot=0, already in
-                // this layer's local post-transform space, so the inverse mapping above is
-                // correctly skipped. Descendants will likewise compute their clip rects relative
-                // to rootLayer (=this), in this same local space. The inherited nonLayerSVGTransform
-                // — accumulated from non-layer SVG ancestors above the previous rootLayer — no
-                // longer applies; clear it so descendants do not inverse-map their clip rects
-                // through a stale transform.
-                localPaintingInfo.nonLayerSVGTransform = std::nullopt;
-            }
         }
         
         if (isPaintingCompositedBackground) {
@@ -3959,7 +3935,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             }
         }
 
-        if (isPaintingCompositedForeground && shouldPaintContent)
+        if (isPaintingCompositedForeground && shouldPaintContent && !isPaintingOverlaySVGSegment)
             paintForegroundForFragments(layerFragments, currentContext, context, paintingInfo.paintDirtyRect, haveTransparency, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
 
         if (isCollectingEventRegion && !isInsideSkippedSubtree)
@@ -3973,7 +3949,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         if (isPaintingCompositedForeground) {
             if (m_svgData)
-                paintForegroundChildrenForSVG(currentContext, paintingInfo, localPaintingInfo, localPaintFlags, layerFragments, paintBehavior, subtreePaintRootForRenderer);
+                paintForegroundChildrenForSVG(currentContext, paintingInfo, localPaintingInfo, localPaintFlags, layerFragments, paintBehavior, subtreePaintRootForRenderer, svgPaintOrderItemRange);
             else {
                 // Paint any child layers that have overflow.
                 paintList(normalFlowLayers(), currentContext, paintingInfo, localPaintFlags);
@@ -6216,10 +6192,16 @@ bool RenderLayer::isVisuallyNonEmpty(PaintedContentRequest* request) const
     return request->probablyHasPaintedContent();
 }
 
-void RenderLayer::styleChanged(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderLayer::styleChanged(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     setIsNormalFlowOnly(shouldBeNormalFlowOnly());
     setCanBeBackdropRoot(computeCanBeBackdropRoot());
+
+    // Make every SVG layer a stacking context, so a composited child ("anchor") stays in this layer's
+    // own paint-order lists rather than escaping to an ancestor's, which the paint-order segmentation
+    // relies on. Done here at style time, where mutating the z-order lists is allowed.
+    if (m_svgData)
+        setIsOpportunisticStackingContext(true);
 
     if (setIsCSSStackingContext(shouldBeCSSStackingContext())) {
         if (parent()) {
@@ -6346,23 +6328,18 @@ void RenderLayer::removeReflection()
     m_reflection = nullptr;
 }
 
-RenderStyle RenderLayer::createReflectionStyle()
+Style::ComputedStyle RenderLayer::createReflectionStyle()
 {
-    auto newStyle = RenderStyle::create();
+    auto newStyle = Style::ComputedStyle::create();
     newStyle.inheritFrom(renderer().style());
     
     auto reflection = renderer().style().boxReflect().tryReflection();
-
-    // FIXME: This should be removed when bare LengthPercentage<> is moved off of LengthWrapperBase.
-    auto toTranslateLengthPercentage = [](const auto& boxReflectOffset) {
-        return WTF::switchOn(boxReflectOffset, [](const auto& value) { return Style::TranslateLengthPercentage { value }; });
-    };
 
     switch (reflection->direction) {
     case ReflectionDirection::Below:
         newStyle.setTransform({
             { Style::TranslateTransformFunction::create(0_css_px, 100_css_percentage, Style::TransformFunctionType::Translate) },
-            { Style::TranslateTransformFunction::create(0_css_px, toTranslateLengthPercentage(reflection->offset), Style::TransformFunctionType::Translate) },
+            { Style::TranslateTransformFunction::create(0_css_px, reflection->offset, Style::TransformFunctionType::Translate) },
             { Style::ScaleTransformFunction::create(1_css_number, -1_css_number, Style::TransformFunctionType::Scale) },
         });
         break;
@@ -6370,13 +6347,13 @@ RenderStyle RenderLayer::createReflectionStyle()
         newStyle.setTransform({
             { Style::ScaleTransformFunction::create(1_css_number, -1_css_number, Style::TransformFunctionType::Scale) },
             { Style::TranslateTransformFunction::create(0_css_px, 100_css_percentage, Style::TransformFunctionType::Translate) },
-            { Style::TranslateTransformFunction::create(0_css_px, toTranslateLengthPercentage(reflection->offset), Style::TransformFunctionType::Translate) },
+            { Style::TranslateTransformFunction::create(0_css_px, reflection->offset, Style::TransformFunctionType::Translate) },
         });
         break;
     case ReflectionDirection::Right:
         newStyle.setTransform({
             { Style::TranslateTransformFunction::create(100_css_percentage, 0_css_px, Style::TransformFunctionType::Translate) },
-            { Style::TranslateTransformFunction::create(toTranslateLengthPercentage(reflection->offset), 0_css_px, Style::TransformFunctionType::Translate) },
+            { Style::TranslateTransformFunction::create(reflection->offset, 0_css_px, Style::TransformFunctionType::Translate) },
             { Style::ScaleTransformFunction::create(-1_css_number, 1_css_number, Style::TransformFunctionType::Scale) },
         });
         break;
@@ -6384,7 +6361,7 @@ RenderStyle RenderLayer::createReflectionStyle()
         newStyle.setTransform({
             { Style::ScaleTransformFunction::create(-1_css_number, 1_css_number, Style::TransformFunctionType::Scale) },
             { Style::TranslateTransformFunction::create(100_css_percentage, 0_css_px, Style::TransformFunctionType::Translate) },
-            { Style::TranslateTransformFunction::create(toTranslateLengthPercentage(reflection->offset), 0_css_px, Style::TransformFunctionType::Translate) },
+            { Style::TranslateTransformFunction::create(reflection->offset, 0_css_px, Style::TransformFunctionType::Translate) },
         });
         break;
     }
@@ -6439,7 +6416,7 @@ void RenderLayer::clearLayerScrollableArea()
     }
 }
 
-void RenderLayer::updateFiltersAfterStyleChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderLayer::updateFiltersAfterStyleChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     if (renderer().style().filter().hasReferenceFilter())
         ensureLayerFilters().updateReferenceFilterClients(renderer().style().filter());

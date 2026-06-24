@@ -77,11 +77,7 @@ public:
         return m_structure.get(global);
     }
     
-    JSObject* prototype(const JSGlobalObject* global) const
-    {
-        ASSERT(!isCompilationThread());
-        return get(global)->storedPrototypeObject();
-    }
+    JSObject* prototype(const JSGlobalObject* global) const;
 
     // Almost as an afterthought, we also support getting the original constructor. This turns
     // out to be important for ES6 support.
@@ -108,10 +104,7 @@ public:
         return m_structure.getInitializedOnMainThread(global);
     }
 
-    JSObject* prototypeInitializedOnMainThread(const JSGlobalObject* global) const
-    {
-        return getInitializedOnMainThread(global)->storedPrototypeObject();
-    }
+    JSObject* prototypeInitializedOnMainThread(const JSGlobalObject* global) const;
 
     JSObject* constructorInitializedOnMainThread(const JSGlobalObject* global) const
     {

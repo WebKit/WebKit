@@ -14,8 +14,8 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "modules/audio_processing/agc2/limiter.h"
 
@@ -33,7 +33,7 @@ class FrameCombiner {
   // because 'mix_list' can be empty. The parameter
   // 'number_of_streams' is used for determining whether to pass the
   // data through a limiter.
-  void Combine(ArrayView<AudioFrame* const> mix_list,
+  void Combine(std::span<AudioFrame* const> mix_list,
                size_t number_of_channels,
                int sample_rate,
                size_t number_of_streams,

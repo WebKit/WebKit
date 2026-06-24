@@ -73,6 +73,7 @@ template<typename> class ExceptionOr;
 
 class DetachedImageBitmap {
 public:
+    DetachedImageBitmap(const DetachedImageBitmap&);
     DetachedImageBitmap(DetachedImageBitmap&&);
     WEBCORE_EXPORT ~DetachedImageBitmap();
     DetachedImageBitmap& operator=(DetachedImageBitmap&&);

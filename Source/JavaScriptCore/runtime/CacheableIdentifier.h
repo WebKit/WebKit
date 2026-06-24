@@ -55,15 +55,15 @@ public:
     inline bool isStringCell() const;
     inline void ensureIsCell(VM&);
 
-    bool isSymbol() const { return m_bits && uid()->isSymbol(); }
-    bool isPrivateName() const { return isSymbol() && static_cast<SymbolImpl&>(*uid()).isPrivate(); }
+    inline bool isSymbol() const;
+    inline bool isPrivateName() const;
 
     inline JSCell* cell() const;
     UniquedStringImpl* uid() const;
 
     explicit operator bool() const { return m_bits; }
 
-    unsigned hash() const { return uid()->symbolAwareHash(); }
+    inline unsigned hash() const;
 
     bool operator==(const CacheableIdentifier&) const;
     bool operator==(const Identifier&) const;

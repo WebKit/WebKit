@@ -52,7 +52,7 @@ class StructureShape : public RefCounted<StructureShape> {
     friend class TypeSet;
 
 public:
-    StructureShape();
+    JS_EXPORT_PRIVATE StructureShape();
 
     static Ref<StructureShape> create() { return adoptRef(*new StructureShape); }
     String propertyHash();
@@ -84,7 +84,7 @@ class TypeSet : public ThreadSafeRefCounted<TypeSet> {
 
 public:
     static Ref<TypeSet> create() { return adoptRef(*new TypeSet); }
-    TypeSet();
+    JS_EXPORT_PRIVATE TypeSet();
     void addTypeInformation(RuntimeType, RefPtr<StructureShape>&&, Structure*, bool sawPolyProtoStructure);
     void invalidateCache(VM&);
     String dumpTypes() const;

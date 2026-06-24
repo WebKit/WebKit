@@ -11,14 +11,17 @@
 #include "test/fuzzers/utils/validate_rtp_packetizer.h"
 
 #include <cstddef>
+#include <cstdint>
 
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/checks.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
 
 RtpPacketizer::PayloadSizeLimits ReadPayloadSizeLimits(
-    test::FuzzDataHelper& fuzz_input) {
+    FuzzDataHelper& fuzz_input) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 1200;
 

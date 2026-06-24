@@ -41,7 +41,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/PDF/WKPDFHUDView.mm
     ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/Foundation+Extras.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.swift
 
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
@@ -76,23 +75,6 @@ set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 # once ENABLE_BACK_FORWARD_LIST_SWIFT pulls in C++ interop.
 set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WEBKIT_DIR}/Modules/Internal")
 
-# WebCore_Private.modulemap in-tree is a `framework module` that umbrellas the
-# Xcode framework's PrivateHeaders/. CMake stages those headers as a flat
-# directory instead, and umbrellaing it pulls in headers (ANGLEHeaders.h etc.)
-# whose own dependencies aren't on the Swift Clang importer's search path.
-# Expose only what WebBackForwardList.swift names directly; the rest of the
-# WebCore:: types it uses are reachable transitively via WebKit_Internal headers.
-set(WebKit_CMAKE_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules")
-file(MAKE_DIRECTORY "${WebKit_CMAKE_MODULEMAP_DIR}")
-file(CONFIGURE OUTPUT "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap" CONTENT
-"module WebCore_Private [system] {
-    requires cplusplus
-    header \"${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/DiagnosticLoggingKeys.h\"
-    header \"${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/DiagnosticLoggingClient.h\"
-    export *
-}
-")
-
 # Xcode does not set SWIFT_TREAT_WARNINGS_AS_ERRORS; override CMake's -warnings-as-errors.
 # Must go in WebKit_COMPILE_OPTIONS (applied after -warnings-as-errors in _WEBKIT_TARGET_SETUP).
 list(APPEND WebKit_COMPILE_OPTIONS "$<$<COMPILE_LANGUAGE:Swift>:-no-warnings-as-errors>")
@@ -113,63 +95,16 @@ set(WebKit_SWIFT_CLANG_INCLUDE_DIRS
     ${bmalloc_FRAMEWORK_HEADERS_DIR}
     ${PAL_FRAMEWORK_HEADERS_DIR}
     ${ICU_INCLUDE_DIRS}
-    ${WebKit_CMAKE_MODULEMAP_DIR}
+    ${WebCore_Private_SWIFT_MODULEMAP_DIR}
     ${WebKit_PRIVATE_INCLUDE_DIRECTORIES}
 )
 
-# Module PCMs compile with a clean preprocessor (no -include), so feed
-# cmakeconfig.h's content and the export-macro stubs as -Xcc -D instead. The
-# Clang importer applies -D to every module build. Each pair is kept as a single
-# list element so target_compile_options can wrap it in SHELL: -- otherwise CMake
-# deduplicates the repeated -Xcc and only the first flag reaches the importer.
-set(WebKit_SWIFT_CLANG_FLAG_PAIRS
-    "-Xcc -DBUILDING_WEBKIT"
-    "-Xcc -DJS_EXPORT_PRIVATE="
-    "-Xcc -DPAL_EXPORT="
-    "-Xcc -DWEBCORE_EXPORT="
-    "-Xcc -DWEBCORE_TESTSUPPORT_EXPORT="
-    "-Xcc -DWK_SUPPORTS_SWIFT_OBJCXX_INTEROP=1"
-    "-Xcc -fmodule-map-file=${WTF_FRAMEWORK_HEADERS_DIR}/wtf/module.modulemap"
-    "-Xcc -fmodule-map-file=${PAL_FRAMEWORK_HEADERS_DIR}/pal/module.modulemap"
-)
-# ASSERT_ENABLED (and therefore the layout of RefCountedBase, IPC::MessageReceiver,
-# and many others) is keyed off NDEBUG. CMake adds -DNDEBUG to CXX flags in Release
-# but not to swiftc, so the Clang importer would otherwise see a Debug layout and
-# inline ref()/adoptRef() against the wrong member offsets.
-string(TOUPPER "${CMAKE_BUILD_TYPE}" _build_type_upper)
-if (CMAKE_CXX_FLAGS_${_build_type_upper} MATCHES "NDEBUG" OR CMAKE_CXX_FLAGS MATCHES "NDEBUG")
-    list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc -DNDEBUG" "-Xcc -DRELEASE_WITHOUT_OPTIMIZATIONS")
-endif ()
-unset(_build_type_upper)
-# GET_WEBKIT_CONFIG_VARIABLES filters out falsy entries, so the importer would
-# miss every =0 and fall back to PlatformEnableCocoa.h defaults — which diverges
-# from cmakeconfig.h and shifts member offsets in headers Swift inlines.
-set(_swift_clang_config_vars ${_WEBKIT_CONFIG_FILE_VARIABLES})
-list(REMOVE_DUPLICATES _swift_clang_config_vars)
-foreach (_var IN LISTS _swift_clang_config_vars)
-    if (${${_var}})
-        list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc -D${_var}=1")
-    else ()
-        list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc -D${_var}=0")
-    endif ()
-endforeach ()
-unset(_swift_clang_config_vars)
+# -Xcc -D/-f flags shared with PAL/WebGPU come from
+# _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS so all three targets land in the
+# same SwiftModuleCache hash dir. Only -I (not hashed) remains per-target.
 foreach (_dir IN LISTS WebKit_SWIFT_CLANG_INCLUDE_DIRS)
-    list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc -I${_dir}")
+    target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${_dir}>")
 endforeach ()
-
-# HAVE_MATERIAL_HOSTING is a PlatformHave.h preprocessor flag (macOS 16+),
-# not a CMake define. SWIFT_EXTRA_OPTIONS and SWIFT_INCLUDE_DIRECTORIES only
-# affect the typecheck custom command. Mirror everything to target_compile_options
-# so the actual Swift compilation sees the same flags.
-set(WebKit_SWIFT_EXTRA_OPTIONS -DHAVE_MATERIAL_HOSTING)
-target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_MATERIAL_HOSTING>")
-foreach (_pair IN LISTS WebKit_SWIFT_CLANG_FLAG_PAIRS)
-    target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:${_pair}>")
-    string(REPLACE " " ";" _split "${_pair}")
-    list(APPEND WebKit_SWIFT_EXTRA_OPTIONS ${_split})
-endforeach ()
-list(APPEND WebKit_SWIFT_EXTRA_OPTIONS -Xfrontend -emit-clang-header-min-access -Xfrontend internal)
 foreach (_dir IN LISTS WebKit_SWIFT_INCLUDE_DIRECTORIES)
     target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-I${_dir}>")
 endforeach ()
@@ -670,7 +605,10 @@ set(ObjCForwardingHeaders
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 # -Wl,-u forces a symbol reference so -dead_strip_dylibs won't prune the weak framework.
-target_link_options(WebKit PRIVATE -lsandbox -framework AuthKit -F${CMAKE_BINARY_DIR} -weak_framework WebInspectorUI -Wl,-u,_WebInspectorUIFrameworkLoad)
+target_link_options(WebKit PRIVATE -lsandbox -framework AuthKit -F${CMAKE_BINARY_DIR} -weak_framework WebInspectorUI -Wl,-u,_WebInspectorUIFrameworkLoad
+    "SHELL:-weak_framework CoreML"
+    "SHELL:-weak_framework NaturalLanguage"
+)
 add_dependencies(WebKit WebInspectorUIFramework)
 
 # Match WebKit.xcconfig REEXPORTED_FRAMEWORK_NAMES / REEXPORTED_LIBRARY_NAMES so
@@ -682,9 +620,11 @@ add_dependencies(WebKit WebInspectorUIFramework)
 # WebKitLegacy is intentionally absent from WebKit_PRIVATE_LIBRARIES above: ld64
 # resolves a dylib's load-command type by its last reference on the link line,
 # and a plain target_link_libraries entry would override this LC_REEXPORT_DYLIB
-# with LC_LOAD_DYLIB. Link it solely via -reexport_library here; the explicit
-# add_dependencies preserves build ordering.
-add_dependencies(WebKit WebKitLegacy)
+# with LC_LOAD_DYLIB. Link it solely via -reexport_library here. LINK_DEPENDS
+# orders WebKit's link behind the WebKitLegacy binary without the target-level
+# add_dependencies that would also serialize WebKit's PCH/object compiles.
+add_dependencies(WebKit WebKitLegacy_CopyHeaders)
+set_property(TARGET WebKit APPEND PROPERTY LINK_DEPENDS $<TARGET_LINKER_FILE:WebKitLegacy>)
 target_link_options(WebKit PRIVATE
     "-Wl,-reexport_library,$<TARGET_LINKER_FILE:WebKitLegacy>"
     "-Wl,-reexport-lobjc"
@@ -811,4 +751,10 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         VERBATIM)
     add_custom_target(WebContentProcessNib ALL DEPENDS ${WebKit_XPC_SERVICE_DIR}/com.apple.WebKit.WebContent.xpc/Contents/Resources/WebContentProcess.nib)
     add_dependencies(WebKit WebContentProcessNib)
+
+    add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodel COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodel
+        VERBATIM)
+    add_custom_target(WebKitTextExtractionFilterModel ALL DEPENDS ${WebKit_RESOURCES_DIR}/TextExtractionFilter.mlmodel)
+    add_dependencies(WebKit WebKitTextExtractionFilterModel)
 endfunction()

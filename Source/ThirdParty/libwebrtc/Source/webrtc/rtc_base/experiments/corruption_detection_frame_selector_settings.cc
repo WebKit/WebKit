@@ -33,17 +33,20 @@ CorruptionDetectionFrameSelectorSettings::
       "high_overhead_lower_bound", TimeDelta::Millis(33));
   FieldTrialParameter<TimeDelta> high_overhead_upper_bound(
       "high_overhead_upper_bound", TimeDelta::Millis(5000));
+  FieldTrialParameter<bool> asynchronous_evaluation("asynchronous_evaluation",
+                                                    false);
 
-  ParseFieldTrial(
-      {&enabled, &low_overhead_lower_bound, &low_overhead_upper_bound,
-       &high_overhead_lower_bound, &high_overhead_upper_bound},
-      field_trials.Lookup(kFieldTrialName));
+  ParseFieldTrial({&enabled, &low_overhead_lower_bound,
+                   &low_overhead_upper_bound, &high_overhead_lower_bound,
+                   &high_overhead_upper_bound, &asynchronous_evaluation},
+                  field_trials.Lookup(kFieldTrialName));
 
   enabled_ = enabled.Get();
   low_overhead_lower_bound_ = low_overhead_lower_bound.Get();
   low_overhead_upper_bound_ = low_overhead_upper_bound.Get();
   high_overhead_lower_bound_ = high_overhead_lower_bound.Get();
   high_overhead_upper_bound_ = high_overhead_upper_bound.Get();
+  use_asynchronous_evaluation_ = asynchronous_evaluation.Get();
 
   // Validation
   if (low_overhead_lower_bound_ > low_overhead_upper_bound_) {

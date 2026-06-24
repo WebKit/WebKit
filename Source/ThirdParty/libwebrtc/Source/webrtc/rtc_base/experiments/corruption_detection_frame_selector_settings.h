@@ -26,6 +26,9 @@ class CorruptionDetectionFrameSelectorSettings {
   TimeDelta low_overhead_upper_bound() const;
   TimeDelta high_overhead_lower_bound() const;
   TimeDelta high_overhead_upper_bound() const;
+  bool use_asynchronous_evaluation() const {
+    return use_asynchronous_evaluation_;
+  }
 
  private:
   bool enabled_ = false;
@@ -33,6 +36,7 @@ class CorruptionDetectionFrameSelectorSettings {
   TimeDelta low_overhead_upper_bound_;
   TimeDelta high_overhead_lower_bound_;
   TimeDelta high_overhead_upper_bound_;
+  bool use_asynchronous_evaluation_ = false;
 };
 
 }  // namespace webrtc

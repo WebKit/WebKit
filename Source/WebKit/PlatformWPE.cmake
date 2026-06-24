@@ -510,6 +510,10 @@ else ()
 endif ()
 
 list(APPEND WebKit_MESSAGES_IN_FILES
+    UIProcess/ViewGestureController
+
+    WebProcess/WebPage/ViewGestureGeometryCollector
+
     WebProcess/glib/SystemSettingsManager
 )
 
@@ -519,26 +523,45 @@ if (ENABLE_WPE_PLATFORM)
         "${WEBKIT_DIR}/WPEPlatform"
     )
 
-    list(APPEND WebKit_PRIVATE_LIBRARIES
-        WPEPlatform
-    )
+    # CMake's Swift_SHARED_LIBRARY_LINKER rule writes its inputs and libraries
+    # into an rsp file (`rspfile_content = $in_newline $LINK_PATH
+    # $LINK_LIBRARIES`). For OBJECT libraries, CMake adds the target as an
+    # order-only ninja dependency (after `||`) but does not expand the
+    # underlying .o files into either $in or $LINK_LIBRARIES, so the WPEPlatform
+    # objects are missing from the link and every wpe_* symbol used by
+    # UIProcess/API/wpe/WPEWebViewPlatform.cpp et al. comes back as an
+    # undefined reference. Pass `$<TARGET_OBJECTS:...>` directly (the same
+    # workaround WebKitMacros._WEBKIT_FRAMEWORK_LINK uses for OBJECT
+    # frameworks) so the .o files are listed as explicit link inputs.
+    #
+    # Only do this when Swift is actually in the link — the regular CXX linker
+    # rule already expands an OBJECT library's .o files when you link the
+    # target by name, so adding TARGET_OBJECTS on top produces duplicate
+    # symbols.
+    list(APPEND WebKit_PRIVATE_LIBRARIES WPEPlatform)
+    if (SWIFT_REQUIRED)
+        list(APPEND WebKit_PRIVATE_LIBRARIES "$<TARGET_OBJECTS:WPEPlatform>")
+    endif ()
 
     if (ENABLE_WPE_PLATFORM_DRM)
-        list(APPEND WebKit_PRIVATE_LIBRARIES
-            WPEPlatformDRM
-        )
+        list(APPEND WebKit_PRIVATE_LIBRARIES WPEPlatformDRM)
+        if (SWIFT_REQUIRED)
+            list(APPEND WebKit_PRIVATE_LIBRARIES "$<TARGET_OBJECTS:WPEPlatformDRM>")
+        endif ()
     endif ()
 
     if (ENABLE_WPE_PLATFORM_HEADLESS)
-        list(APPEND WebKit_PRIVATE_LIBRARIES
-            WPEPlatformHeadless
-        )
+        list(APPEND WebKit_PRIVATE_LIBRARIES WPEPlatformHeadless)
+        if (SWIFT_REQUIRED)
+            list(APPEND WebKit_PRIVATE_LIBRARIES "$<TARGET_OBJECTS:WPEPlatformHeadless>")
+        endif ()
     endif ()
 
     if (ENABLE_WPE_PLATFORM_WAYLAND)
-        list(APPEND WebKit_PRIVATE_LIBRARIES
-            WPEPlatformWayland
-        )
+        list(APPEND WebKit_PRIVATE_LIBRARIES WPEPlatformWayland)
+        if (SWIFT_REQUIRED)
+            list(APPEND WebKit_PRIVATE_LIBRARIES "$<TARGET_OBJECTS:WPEPlatformWayland>")
+        endif ()
     endif ()
 
     list(APPEND WebKit_MESSAGES_IN_FILES

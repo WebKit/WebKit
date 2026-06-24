@@ -34,7 +34,8 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
@@ -793,7 +794,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
         addAttributeIfNeeded("invisible"_s, style.visibility() == Visibility::Hidden ? "true"_s : "false"_s);
         addAttributeIfNeeded("editable"_s, m_coreObject->canSetValueAttribute() ? "true"_s : "false"_s);
         addAttributeIfNeeded("direction"_s, style.writingMode().isBidiLTR() ? "ltr"_s : "rtl"_s);
-        addAttributeIfNeeded("indent"_s, makeString(Style::evaluate<float>(style.textIndent().length, m_coreObject->size().width(), style.usedZoomForLength())));
+        addAttributeIfNeeded("indent"_s, makeString(Style::evaluate<float>(style.textIndent().amount, m_coreObject->size().width(), style.usedZoomForLength())));
 
         switch (style.textAlign()) {
         case Style::TextAlign::Start:
@@ -849,7 +850,14 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
     }
 
     VisiblePosition offsetPosition = m_coreObject->visiblePositionForIndex(adjustInputOffset(*utf16Offset, m_hasListMarkerAtStart));
-    RefPtr childNode = offsetPosition.deepEquivalent().deprecatedNode();
+    auto deepPosition = offsetPosition.deepEquivalent();
+    RefPtr childNode = deepPosition.deprecatedNode();
+    // visiblePositionForIndex() may canonicalize to an equivalent position in preceding content; use
+    // the downstream position so childNode stays inside this object.
+    if (childNode && !m_coreObject->node()->contains(*childNode)) {
+        if (RefPtr downstreamNode = deepPosition.downstream().deprecatedNode(); m_coreObject->node()->contains(downstreamNode.get()))
+            childNode = WTF::move(downstreamNode);
+    }
     if (!childNode)
         return { WTF::move(defaultAttributes), -1, -1 };
 

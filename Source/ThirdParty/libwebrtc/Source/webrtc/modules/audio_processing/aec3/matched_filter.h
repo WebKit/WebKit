@@ -14,9 +14,9 @@
 #include <stddef.h>
 
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/system/arch.h"
 
@@ -25,22 +25,20 @@ namespace webrtc {
 class ApmDataDumper;
 struct DownsampledRenderBuffer;
 
-namespace aec3 {
-
 #if defined(WEBRTC_HAS_NEON)
 
 // Filter core for the matched filter that is optimized for NEON.
 void MatchedFilterCore_NEON(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            webrtc::ArrayView<const float> x,
-                            webrtc::ArrayView<const float> y,
-                            webrtc::ArrayView<float> h,
+                            std::span<const float> x,
+                            std::span<const float> y,
+                            std::span<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulation_error,
-                            webrtc::ArrayView<float> accumulated_error,
-                            webrtc::ArrayView<float> scratch_memory);
+                            std::span<float> accumulated_error,
+                            std::span<float> scratch_memory);
 
 #endif
 
@@ -50,27 +48,27 @@ void MatchedFilterCore_NEON(size_t x_start_index,
 void MatchedFilterCore_SSE2(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            ArrayView<const float> x,
-                            ArrayView<const float> y,
-                            ArrayView<float> h,
+                            std::span<const float> x,
+                            std::span<const float> y,
+                            std::span<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            ArrayView<float> accumulated_error,
-                            ArrayView<float> scratch_memory);
+                            std::span<float> accumulated_error,
+                            std::span<float> scratch_memory);
 
 // Filter core for the matched filter that is optimized for AVX2.
 void MatchedFilterCore_AVX2(size_t x_start_index,
                             float x2_sum_threshold,
                             float smoothing,
-                            ArrayView<const float> x,
-                            ArrayView<const float> y,
-                            ArrayView<float> h,
+                            std::span<const float> x,
+                            std::span<const float> y,
+                            std::span<float> h,
                             bool* filters_updated,
                             float* error_sum,
                             bool compute_accumulated_error,
-                            ArrayView<float> accumulated_error,
-                            ArrayView<float> scratch_memory);
+                            std::span<float> accumulated_error,
+                            std::span<float> scratch_memory);
 
 #endif
 
@@ -78,18 +76,16 @@ void MatchedFilterCore_AVX2(size_t x_start_index,
 void MatchedFilterCore(size_t x_start_index,
                        float x2_sum_threshold,
                        float smoothing,
-                       ArrayView<const float> x,
-                       ArrayView<const float> y,
-                       ArrayView<float> h,
+                       std::span<const float> x,
+                       std::span<const float> y,
+                       std::span<float> h,
                        bool* filters_updated,
                        float* error_sum,
                        bool compute_accumulation_error,
-                       ArrayView<float> accumulated_error);
+                       std::span<float> accumulated_error);
 
 // Find largest peak of squared values in array.
-size_t MaxSquarePeakIndex(ArrayView<const float> h);
-
-}  // namespace aec3
+size_t MaxSquarePeakIndex(std::span<const float> h);
 
 // Produces recursively updated cross-correlation estimates for several signal
 // shifts where the intra-shift spacing is uniform.
@@ -125,7 +121,7 @@ class MatchedFilter {
 
   // Updates the correlation with the values in the capture buffer.
   void Update(const DownsampledRenderBuffer& render_buffer,
-              ArrayView<const float> capture,
+              std::span<const float> capture,
               bool use_slow_smoothing);
 
   // Resets the matched filter.

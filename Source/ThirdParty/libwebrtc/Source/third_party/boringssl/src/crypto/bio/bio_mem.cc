@@ -25,6 +25,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 BIO *BIO_new_mem_buf(const void *buf, ossl_ssize_t len) {
   BIO *ret;
   BUF_MEM *b;
@@ -40,18 +42,18 @@ BIO *BIO_new_mem_buf(const void *buf, ossl_ssize_t len) {
     return nullptr;
   }
 
-  b = (BUF_MEM *)ret->ptr;
+  b = (BUF_MEM *)BIO_get_data(ret);
   // BIO_FLAGS_MEM_RDONLY ensures |b->data| is not written to.
   b->data = reinterpret_cast<char *>(const_cast<void *>(buf));
   b->length = size;
   b->max = size;
 
-  ret->flags |= BIO_FLAGS_MEM_RDONLY;
+  BIO_set_flags(ret, BIO_FLAGS_MEM_RDONLY);
 
   // |num| is used to store the value that this BIO will return when it runs
   // out of data. If it's negative then the retry flags will also be set. Since
   // this is static data, retrying won't help
-  ret->num = 0;
+  FromOpaque(ret)->num = 0;
 
   return ret;
 }
@@ -66,25 +68,26 @@ static int mem_new(BIO *bio) {
 
   // |shutdown| is used to store the close flag: whether the BIO has ownership
   // of the BUF_MEM.
-  bio->shutdown = 1;
-  bio->init = 1;
-  bio->num = -1;
-  bio->ptr = (char *)b;
+  BIO_set_shutdown(bio, 1);
+  BIO_set_init(bio, 1);
+  FromOpaque(bio)->num = -1;
+  BIO_set_data(bio, (char *)b);
 
   return 1;
 }
 
 static int mem_free(BIO *bio) {
-  if (!bio->shutdown || !bio->init || bio->ptr == nullptr) {
+  if (!BIO_get_shutdown(bio) || !BIO_get_init(bio) ||
+      BIO_get_data(bio) == nullptr) {
     return 1;
   }
 
-  BUF_MEM *b = (BUF_MEM *)bio->ptr;
-  if (bio->flags & BIO_FLAGS_MEM_RDONLY) {
+  BUF_MEM *b = (BUF_MEM *)BIO_get_data(bio);
+  if (BIO_test_flags(bio, BIO_FLAGS_MEM_RDONLY)) {
     b->data = nullptr;
   }
   BUF_MEM_free(b);
-  bio->ptr = nullptr;
+  BIO_set_data(bio, nullptr);
   return 1;
 }
 
@@ -94,7 +97,7 @@ static int mem_read(BIO *bio, char *out, int outl) {
     return 0;
   }
 
-  BUF_MEM *b = reinterpret_cast<BUF_MEM *>(bio->ptr);
+  BUF_MEM *b = reinterpret_cast<BUF_MEM *>(BIO_get_data(bio));
   int ret = outl;
   if ((size_t)ret > b->length) {
     ret = (int)b->length;
@@ -103,13 +106,13 @@ static int mem_read(BIO *bio, char *out, int outl) {
   if (ret > 0) {
     OPENSSL_memcpy(out, b->data, ret);
     b->length -= ret;
-    if (bio->flags & BIO_FLAGS_MEM_RDONLY) {
+    if (BIO_test_flags(bio, BIO_FLAGS_MEM_RDONLY)) {
       b->data += ret;
     } else {
       OPENSSL_memmove(b->data, &b->data[ret], b->length);
     }
   } else if (b->length == 0) {
-    ret = bio->num;
+    ret = FromOpaque(bio)->num;
     if (ret != 0) {
       BIO_set_retry_read(bio);
     }
@@ -123,12 +126,12 @@ static int mem_write(BIO *bio, const char *in, int inl) {
     return 0;  // Successfully write zero bytes.
   }
 
-  if (bio->flags & BIO_FLAGS_MEM_RDONLY) {
+  if (BIO_test_flags(bio, BIO_FLAGS_MEM_RDONLY)) {
     OPENSSL_PUT_ERROR(BIO, BIO_R_WRITE_TO_READ_ONLY_BIO);
     return -1;
   }
 
-  BUF_MEM *b = reinterpret_cast<BUF_MEM *>(bio->ptr);
+  BUF_MEM *b = reinterpret_cast<BUF_MEM *>(BIO_get_data(bio));
   if (!BUF_MEM_append(b, in, inl)) {
     return -1;
   }
@@ -144,7 +147,7 @@ static int mem_gets(BIO *bio, char *buf, int size) {
 
   // The buffer size includes space for the trailing NUL, so we can read at most
   // one fewer byte.
-  BUF_MEM *b = reinterpret_cast<BUF_MEM *>(bio->ptr);
+  BUF_MEM *b = reinterpret_cast<BUF_MEM *>(BIO_get_data(bio));
   int ret = size - 1;
   if ((size_t)ret > b->length) {
     ret = (int)b->length;
@@ -165,12 +168,12 @@ static int mem_gets(BIO *bio, char *buf, int size) {
 }
 
 static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
-  BUF_MEM *b = static_cast<BUF_MEM *>(bio->ptr);
+  BUF_MEM *b = static_cast<BUF_MEM *>(BIO_get_data(bio));
   switch (cmd) {
     case BIO_CTRL_RESET:
       if (b->data != nullptr) {
         // For read only case reset to the start again
-        if (bio->flags & BIO_FLAGS_MEM_RDONLY) {
+        if (BIO_test_flags(bio, BIO_FLAGS_MEM_RDONLY)) {
           b->data -= b->max - b->length;
           b->length = b->max;
         } else {
@@ -182,7 +185,7 @@ static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
     case BIO_CTRL_EOF:
       return b->length == 0;
     case BIO_C_SET_BUF_MEM_EOF_RETURN:
-      bio->num = static_cast<int>(num);
+      FromOpaque(bio)->num = static_cast<int>(num);
       return 1;
     case BIO_CTRL_INFO:
       if (ptr != nullptr) {
@@ -194,8 +197,8 @@ static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       return static_cast<long>(b->length);
     case BIO_C_SET_BUF_MEM:
       mem_free(bio);
-      bio->shutdown = static_cast<int>(num);
-      bio->ptr = ptr;
+      BIO_set_shutdown(bio, static_cast<int>(num));
+      BIO_set_data(bio, ptr);
       return 1;
     case BIO_C_GET_BUF_MEM_PTR:
       if (ptr != nullptr) {
@@ -204,9 +207,9 @@ static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       }
       return 1;
     case BIO_CTRL_GET_CLOSE:
-      return bio->shutdown;
+      return BIO_get_shutdown(bio);
     case BIO_CTRL_SET_CLOSE:
-      bio->shutdown = static_cast<int>(num);
+      BIO_set_shutdown(bio, static_cast<int>(num));
       return 1;
     case BIO_CTRL_WPENDING:
       return 0;
@@ -226,16 +229,16 @@ static const BIO_METHOD mem_method = {
     mem_new,      mem_free,        /*callback_ctrl=*/nullptr,
 };
 
-const BIO_METHOD *BIO_s_mem(void) { return &mem_method; }
+const BIO_METHOD *BIO_s_mem() { return &mem_method; }
 
 int BIO_mem_contents(const BIO *bio, const uint8_t **out_contents,
                      size_t *out_len) {
   const BUF_MEM *b;
-  if (bio->method != &mem_method) {
+  if (FromOpaque(bio)->method != &mem_method) {
     return 0;
   }
 
-  b = (BUF_MEM *)bio->ptr;
+  b = (BUF_MEM *)BIO_get_data((BIO *)bio);
   *out_contents = (uint8_t *)b->data;
   *out_len = b->length;
   return 1;

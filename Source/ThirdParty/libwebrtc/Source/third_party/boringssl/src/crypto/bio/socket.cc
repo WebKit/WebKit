@@ -29,19 +29,19 @@ OPENSSL_MSVC_PRAGMA(comment(lib, "Ws2_32.lib"))
 #include "internal.h"
 
 
+using namespace bssl;
+
 #if !defined(OPENSSL_WINDOWS)
-static int closesocket(int sock) {
-  return close(sock);
-}
+static int closesocket(int sock) { return close(sock); }
 #endif
 
 static int sock_free(BIO *bio) {
-  if (bio->shutdown) {
-    if (bio->init) {
-      closesocket(bio->num);
+  if (BIO_get_shutdown(bio)) {
+    if (BIO_get_init(bio)) {
+      closesocket(FromOpaque(bio)->num);
     }
-    bio->init = 0;
-    bio->flags = 0;
+    BIO_set_init(bio, 0);
+    BIO_clear_retry_flags(bio);
   }
   return 1;
 }
@@ -53,9 +53,9 @@ static int sock_read(BIO *b, char *out, int outl) {
 
   bio_clear_socket_error();
 #if defined(OPENSSL_WINDOWS)
-  int ret = recv(b->num, out, outl, 0);
+  int ret = recv(FromOpaque(b)->num, out, outl, 0);
 #else
-  int ret = (int)read(b->num, out, outl);
+  int ret = (int)read(FromOpaque(b)->num, out, outl);
 #endif
   BIO_clear_retry_flags(b);
   if (ret <= 0) {
@@ -69,9 +69,9 @@ static int sock_read(BIO *b, char *out, int outl) {
 static int sock_write(BIO *b, const char *in, int inl) {
   bio_clear_socket_error();
 #if defined(OPENSSL_WINDOWS)
-  int ret = send(b->num, in, inl, 0);
+  int ret = send(FromOpaque(b)->num, in, inl, 0);
 #else
-  int ret = (int)write(b->num, in, inl);
+  int ret = (int)write(FromOpaque(b)->num, in, inl);
 #endif
   BIO_clear_retry_flags(b);
   if (ret <= 0) {
@@ -86,23 +86,23 @@ static long sock_ctrl(BIO *b, int cmd, long num, void *ptr) {
   switch (cmd) {
     case BIO_C_SET_FD:
       sock_free(b);
-      b->num = *static_cast<int *>(ptr);
-      b->shutdown = static_cast<int>(num);
-      b->init = 1;
+      FromOpaque(b)->num = *static_cast<int *>(ptr);
+      BIO_set_shutdown(b, static_cast<int>(num));
+      BIO_set_init(b, 1);
       return 1;
     case BIO_C_GET_FD:
-      if (b->init) {
-        int *out = static_cast<int*>(ptr);
+      if (BIO_get_init(b)) {
+        int *out = static_cast<int *>(ptr);
         if (out != nullptr) {
-          *out = b->num;
+          *out = FromOpaque(b)->num;
         }
-        return b->num;
+        return FromOpaque(b)->num;
       }
       return -1;
     case BIO_CTRL_GET_CLOSE:
-      return b->shutdown;
+      return BIO_get_shutdown(b);
     case BIO_CTRL_SET_CLOSE:
-      b->shutdown = static_cast<int>(num);
+      BIO_set_shutdown(b, static_cast<int>(num));
       return 1;
     case BIO_CTRL_FLUSH:
       return 1;
@@ -123,7 +123,7 @@ static const BIO_METHOD methods_sockp = {
     nullptr /* callback_ctrl */,
 };
 
-const BIO_METHOD *BIO_s_socket(void) { return &methods_sockp; }
+const BIO_METHOD *BIO_s_socket() { return &methods_sockp; }
 
 BIO *BIO_new_socket(int fd, int close_flag) {
   BIO *ret;

@@ -50,10 +50,4 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
     setCrashReportApplicationSpecificInformationToURL(testRunner->testURL());
 }
 
-String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef response)
-{
-    auto nsURLResponse = adoptNS(WKURLResponseCopyNSURLResponse(response));
-    return [nsURLResponse.get() MIMEType];
-}
-
 } // namespace WTR

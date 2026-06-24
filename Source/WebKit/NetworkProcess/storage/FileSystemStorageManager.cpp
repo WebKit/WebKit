@@ -280,6 +280,14 @@ void FileSystemStorageManager::removeGlobalIdentifierReference(WebCore::FileSyst
         m_globalIdentifierRegistry.remove(it);
 }
 
+void FileSystemStorageManager::removeGlobalIdentifierReferences(std::span<const WebCore::FileSystemHandleGlobalIdentifier> identifiers)
+{
+    ASSERT(!RunLoop::isMain());
+
+    for (auto& identifier : identifiers)
+        removeGlobalIdentifierReference(identifier);
+}
+
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::resolveGlobalIdentifier(IPC::Connection::UniqueID connection, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
 {
     ASSERT(!RunLoop::isMain());
@@ -301,6 +309,52 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
         handleIt->value->setGlobalIdentifier(globalIdentifier);
     addGlobalIdentifierReference(globalIdentifier);
     return newIdentifier;
+}
+
+std::optional<WebCore::FileSystemHandleRecord> FileSystemStorageManager::lookupHandle(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto it = m_globalIdentifierRegistry.find(globalIdentifier);
+    if (it == m_globalIdentifierRegistry.end())
+        return std::nullopt;
+
+    auto& entry = it->value;
+    return WebCore::FileSystemHandleRecord { globalIdentifier, entry.kind, entry.path, entry.name };
+}
+
+std::optional<Vector<WebCore::FileSystemHandleRecord>> FileSystemStorageManager::lookupHandles(std::span<const WebCore::FileSystemHandleGlobalIdentifier> identifiers)
+{
+    ASSERT(!RunLoop::isMain());
+
+    Vector<WebCore::FileSystemHandleRecord> records;
+    records.reserveInitialCapacity(identifiers.size());
+    for (auto& identifier : identifiers) {
+        auto record = lookupHandle(identifier);
+        if (!record)
+            return std::nullopt;
+        records.append(WTF::move(*record));
+    }
+    return records;
+}
+
+void FileSystemStorageManager::registerPersistedHandle(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier, WebCore::FileSystemHandleKind kind, String&& path, String&& name)
+{
+    ASSERT(!RunLoop::isMain());
+
+    m_globalIdentifierRegistry.ensure(globalIdentifier, [&] {
+        return GlobalIdentifierEntry { kind, WTF::move(path), WTF::move(name), CheckedUint32 { 0 } };
+    });
+}
+
+void FileSystemStorageManager::registerPersistedHandlesAndAddReferences(const Vector<WebCore::FileSystemHandleRecord>& records)
+{
+    ASSERT(!RunLoop::isMain());
+
+    for (auto& record : records) {
+        registerPersistedHandle(record.identifier, record.kind, String { record.path }, String { record.name });
+        addGlobalIdentifierReference(record.identifier);
+    }
 }
 
 } // namespace WebKit

@@ -13,9 +13,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtp_parameters.h"
 #include "api/video/video_layers_allocation.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -30,10 +30,10 @@ class RtpVideoLayersAllocationExtension {
     return RtpExtension::kVideoLayersAllocationUri;
   }
 
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     VideoLayersAllocation* allocation);
   static size_t ValueSize(const VideoLayersAllocation& allocation);
-  static bool Write(ArrayView<uint8_t> data,
+  static bool Write(std::span<uint8_t> data,
                     const VideoLayersAllocation& allocation);
 };
 

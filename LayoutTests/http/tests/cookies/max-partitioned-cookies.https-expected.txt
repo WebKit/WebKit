@@ -3,9 +3,6 @@ Tests that an upper-bound is enforced on the number of partitioned cookies that 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 PASS Found 154 cookies: Cookies are:
 test_cookie_js_100 = 1234
 test_cookie_js_101 = 1234
@@ -162,6 +159,9 @@ test_cookie_js_97 = 1234
 test_cookie_js_98 = 1234
 test_cookie_js_99 = 1234
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
 
 --------

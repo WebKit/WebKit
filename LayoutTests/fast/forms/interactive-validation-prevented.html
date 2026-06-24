@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -15,6 +15,7 @@
 </form>
 <script>
 description('Test if an invalid control prevents interactive form submission, and the first invalid focusable control gets focus.');
+window.jsTestIsAsync = true;
 
 function startOrVerify() {
     var query = window.location.search;
@@ -31,12 +32,9 @@ function startOrVerify() {
         debug('TEST COMPLETE');
     }
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 window.onload = startOrVerify;
 </script>
 </body>

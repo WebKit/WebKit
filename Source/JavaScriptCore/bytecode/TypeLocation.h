@@ -39,13 +39,7 @@ typedef intptr_t GlobalVariableID;
 
 class TypeLocation {
 public:
-    TypeLocation()
-        : m_instructionTypeSet(TypeSet::create())
-        , m_globalTypeSet(nullptr)
-        , m_divotForFunctionOffsetIfReturnStatement(UINT_MAX)
-        , m_lastSeenType(TypeNothing)
-    {
-    }
+    TypeLocation();
 
     GlobalVariableID m_globalVariableID;
     RefPtr<TypeSet> m_instructionTypeSet;

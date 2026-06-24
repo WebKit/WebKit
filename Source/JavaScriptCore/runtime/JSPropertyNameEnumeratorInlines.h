@@ -27,6 +27,9 @@
 
 #include "JSPropertyNameEnumerator.h"
 #include "StructureCreateInlines.h"
+#include "VMInlines.h"
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -35,4 +38,59 @@ inline Structure* JSPropertyNameEnumerator::createStructure(VM& vm, JSGlobalObje
     return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
 }
 
+inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalObject, JSObject* base)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    uint32_t indexedLength = base->getEnumerableLength();
+
+    Structure* structure = base->structure();
+    if (!indexedLength) {
+        uintptr_t enumeratorAndFlag = structure->cachedPropertyNameEnumeratorAndFlag();
+        if (enumeratorAndFlag) {
+            if (!(enumeratorAndFlag & StructureRareData::cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag))
+                return std::bit_cast<JSPropertyNameEnumerator*>(enumeratorAndFlag);
+            structure->prototypeChain(vm, globalObject, base); // Refresh cached structure chain.
+            if (auto* enumerator = structure->cachedPropertyNameEnumerator())
+                return enumerator;
+        }
+    }
+
+    uint32_t numberStructureProperties = 0;
+    PropertyNameArrayBuilder propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+    getEnumerablePropertyNames(globalObject, base, propertyNames, indexedLength, numberStructureProperties);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    ASSERT(propertyNames.size() < UINT32_MAX);
+
+    bool sawPolyProto;
+    bool successfullyNormalizedChain = normalizePrototypeChain(globalObject, base, sawPolyProto) != InvalidPrototypeChain;
+
+    Structure* structureAfterGettingPropertyNames = base->structure();
+    if (!structureAfterGettingPropertyNames->canAccessPropertiesQuicklyForEnumeration()) {
+        indexedLength = 0;
+        numberStructureProperties = 0;
+    }
+
+    JSPropertyNameEnumerator* enumerator = nullptr;
+    if (!indexedLength && !propertyNames.size())
+        enumerator = vm.emptyPropertyNameEnumerator();
+    else {
+        enumerator = JSPropertyNameEnumerator::tryCreate(vm, structureAfterGettingPropertyNames, indexedLength, numberStructureProperties, WTF::move(propertyNames));
+        if (!enumerator) [[unlikely]] {
+            throwOutOfMemoryError(globalObject, scope);
+            return nullptr;
+        }
+    }
+    if (!indexedLength && successfullyNormalizedChain && structureAfterGettingPropertyNames == structure) {
+        StructureChain* chain = structure->prototypeChain(vm, globalObject, base);
+        if (structure->canCachePropertyNameEnumerator(vm))
+            structure->setCachedPropertyNameEnumerator(vm, enumerator, chain);
+    }
+    return enumerator;
+}
+
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -23,6 +23,7 @@ import (
 	"io"
 	"math/big"
 	"os"
+	"slices"
 	"strings"
 )
 
@@ -138,14 +139,7 @@ func checkKeys(t test, keys ...string) bool {
 	}
 
 	for k := range t.Values {
-		var found bool
-		for _, k2 := range keys {
-			if k == k2 {
-				found = true
-				break
-			}
-		}
-		if !found {
+		if !slices.Contains(keys, k) {
 			fmt.Fprintf(os.Stderr, "Line %d: unexpected key %q.\n", t.LineNumber, k)
 			foundErrors = true
 		}

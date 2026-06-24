@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElementNS-customized-builtins.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElementNS-prefix-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElementNS.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/ElementInternals-accessibility.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/ElementInternals-accessibility.tentative.html
@@ -32,8 +33,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/adopted-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/attribute-changed-callback.html
-/LayoutTests/imported/w3c/web-platform-tests/custom-elements/behaves-like-button-with-command.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/custom-elements/behaves-like-button-with-popover.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/builtin-coverage.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks-html-fragment-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks-template.html
@@ -43,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/customized-built-in-constructor-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/disconnected-callbacks.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/element-internals-aria-element-reflection.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/element-internals-behaviors.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/element-internals-shadowroot.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/enqueue-custom-element-callback-reactions-inside-another-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/historical.html

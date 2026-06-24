@@ -46,7 +46,7 @@ class ValidatedFormListedElement : public FormListedElement {
     friend class DelayedUpdateValidityScope;
     friend class HTMLMaybeFormAssociatedCustomElement;
 public:
-    ValidatedFormListedElement(HTMLFormElement*);
+    ValidatedFormListedElement();
     virtual ~ValidatedFormListedElement();
 
     // "willValidate" means "is a candidate for constraint validation".

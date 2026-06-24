@@ -70,13 +70,13 @@ class FilteredCommand(Command):
     HASH = 'hash'
     REVISION = 'revision'
 
-    GIT_HEADER_RE = re.compile(r'^(commit )?(?P<hash>[a-f0-9A-F]+)')
+    GIT_HEADER_RE = re.compile(r'^(commit )?(?P<hash>[a-f0-9A-F]{4,})(?=[ \n])')
     SVN_HEADER_RE = re.compile(r'^(?P<revision>r/d+) | ')
 
     REVISION_RES = (re.compile(r'^(?P<revision>\d+)\s'), re.compile(r'(?P<revision>[rR]\d+)'))
     HASH_RES = (re.compile(r'^(?P<hash>[a-f0-9A-F]{8}[a-f0-9A-F]+)\s'), re.compile(r'(?P<hash>[a-f0-9A-F]{8}[a-f0-9A-F]+)'))
-    IDENTIFIER_RES = (re.compile(r'^(?P<identifier>(\d+\.)?\d+@\S*)'), re.compile(r'(?P<identifier>(\d+\.)?\d+@\S*)'))
-    NO_FILTER_RES = [re.compile(r'    Canonical link:'), re.compile(r'    git-svn-id:')]
+    IDENTIFIER_RES = (re.compile(r'^(?P<identifier>(?:\d+\.)?\d+@\S*)'), re.compile(r'(?P<identifier>(?:\d+\.)?\d+@\S*)'))
+    NO_FILTER_RES = [re.compile(r'    Canonical(?:-| )link:'), re.compile(r'    git-svn-id:')]
     DIFF_RE = re.compile(r'^diff --git ')
 
     REPLACE_MODE = 0
@@ -241,7 +241,7 @@ class FilteredCommand(Command):
                     reference = '{} ({})'.format(match.groups()[-1], reference)
                 if mode == cls.HEADER_MODE:
                     alternates = [] if match.groups()[-1].startswith(reference) else [match.groups()[-1]]
-                    for repr in {'revision', 'hash', 'identifier'} - {'hash' if repository.is_git else 'revision', representation}:
+                    for repr in sorted({'revision', 'hash', 'identifier'} - {'hash' if repository.is_git else 'revision', representation}):
                         if repr in kwargs:
                             continue
                         other = getattr(cache, 'to_{}'.format(repr), lambda **kwargs: None)(**kwargs)

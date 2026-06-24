@@ -50,14 +50,6 @@
 
 namespace WebCore {
 
-// Do not enqueue samples spanning a significant unbuffered gap.
-// NOTE: one second is somewhat arbitrary. MediaSource::monitorSourceBuffers() is run
-// on the playbackTimer, which is effectively every 350ms. Allowing > 350ms gap between
-// enqueued samples allows for situations where we overrun the end of a buffered range
-// but don't notice for 350ms of playback time, and the client can enqueue data for the
-// new current time without triggering this early return.
-// FIXME(135867): Make this gap detection logic less arbitrary.
-static const MediaTime discontinuityTolerance = MediaTime(1, 1);
 static const unsigned evictionAlgorithmInitialTimeChunk = 30000;
 static const unsigned evictionAlgorithmTimeChunkLowThreshold = 3000;
 
@@ -227,6 +219,53 @@ Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
     });
 }
 
+PlatformTimeRanges SourceBufferPrivate::computeBufferedRanges(const Vector<PlatformTimeRanges>& trackBufferedRanges, bool mediaSourceEnded)
+{
+    // 5.1 Attributes - buffered
+    // https://w3c.github.io/media-source/#dom-sourcebuffer-buffered
+    // When the attribute is read the following steps MUST occur:
+
+    // 2. Let highest end time be the largest track buffer ranges end time across
+    //    all the track buffers managed by this SourceBuffer object.
+    MediaTime highestEndTime = MediaTime::negativeInfiniteTime();
+    for (auto& trackRanges : trackBufferedRanges) {
+        if (!trackRanges.length())
+            continue;
+        highestEndTime = std::max(highestEndTime, trackRanges.maximumBufferedTime());
+    }
+
+    // NOTE: Short circuit the following if none of the TrackBuffers have buffered
+    // ranges to avoid generating a single range of {0, 0}.
+    if (highestEndTime.isNegativeInfinite())
+        return { };
+
+    // 3. Let intersection ranges equal a TimeRange object containing a single
+    //    range from 0 to highest end time.
+    PlatformTimeRanges intersectionRanges { MediaTime::zeroTime(), highestEndTime };
+
+    // 4. For each audio and video track buffer managed by this SourceBuffer,
+    //    run the following steps:
+    for (auto& trackRanges : trackBufferedRanges) {
+        if (!trackRanges.length())
+            continue;
+
+        // 4.1 Let track ranges equal the track buffer ranges for the current track buffer.
+        // 4.2 If readyState is "ended", then set the end time on the last range
+        //     in track ranges to highest end time.
+        // 4.3 Let new intersection ranges equal the intersection between the
+        //     intersection ranges and the track ranges.
+        // 4.4 Replace the ranges in intersection ranges with the new intersection ranges.
+        if (mediaSourceEnded) {
+            auto adjusted = trackRanges;
+            adjusted.add(adjusted.maximumBufferedTime(), highestEndTime);
+            intersectionRanges.intersectWith(adjusted);
+        } else
+            intersectionRanges.intersectWith(trackRanges);
+    }
+
+    return intersectionRanges;
+}
+
 bool SourceBufferPrivate::hasReceivedFirstInitializationSegment() const
 {
     assertIsCurrent(m_dispatcher.get());
@@ -249,39 +288,28 @@ void SourceBufferPrivate::reenqueSamples(TrackID trackID, NeedsFlush needsFlush)
     reenqueueMediaForTime(trackBuffer->second, trackID, currentTime(), needsFlush);
 }
 
-Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivate::computeSeekTime(const SeekTarget& target)
+MediaTime SourceBufferPrivate::computeSeekTime(const SeekTarget& target)
 {
-    // Called on SourceBuffer's thread
-    ASSERT(isOnCreationThread());
-    return invokeAsync(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, target] {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return ComputeSeekPromise::createAndReject(PlatformMediaError::BufferRemoved);
-        RefPtr client = protectedThis->client();
-        if (!client)
-            return ComputeSeekPromise::createAndReject(PlatformMediaError::BufferRemoved);
+    assertIsCurrent(m_dispatcher.get());
 
-        auto seekTime = target.time;
+    auto seekTime = target.time;
 
-        if (target.negativeThreshold || target.positiveThreshold) {
-            protectedThis->iterateTrackBuffers([&](auto& trackBuffer) {
-                // Find the sample which contains the target time.
-                auto trackSeekTime = trackBuffer.findSeekTimeForTargetTime(target.time, target.negativeThreshold, target.positiveThreshold);
+    if (target.negativeThreshold || target.positiveThreshold) {
+        iterateTrackBuffers([&](auto& trackBuffer) {
+            // Find the sample which contains the target time.
+            auto trackSeekTime = trackBuffer.findSeekTimeForTargetTime(target.time, target.negativeThreshold, target.positiveThreshold);
 
-                if (trackSeekTime.isValid() && abs(target.time - trackSeekTime) > abs(target.time - seekTime))
-                    seekTime = trackSeekTime;
-            });
-        }
-        // When converting from a double-precision float to a MediaTime, a certain amount of precision is lost. If that
-        // results in a round-trip between `float in -> MediaTime -> float out` where in != out, we will wait forever for
-        // the time jump observer to fire.
-        if (seekTime.hasDoubleValue())
-            seekTime = MediaTime::createWithDouble(seekTime.toDouble(), MediaTime::DefaultTimeScale);
+            if (trackSeekTime.isValid() && abs(target.time - trackSeekTime) > abs(target.time - seekTime))
+                seekTime = trackSeekTime;
+        });
+    }
+    // When converting from a double-precision float to a MediaTime, a certain amount of precision is lost. If that
+    // results in a round-trip between `float in -> MediaTime -> float out` where in != out, we will wait forever for
+    // the time jump observer to fire.
+    if (seekTime.hasDoubleValue())
+        seekTime = MediaTime::createWithDouble(seekTime.toDouble(), MediaTime::DefaultTimeScale);
 
-        protectedThis->computeEvictionData();
-
-        return ComputeSeekPromise::createAndResolve(seekTime);
-    });
+    return seekTime;
 }
 
 void SourceBufferPrivate::reenqueueMediaForTime(const MediaTime& time)
@@ -792,13 +820,14 @@ void SourceBufferPrivate::addTrackBuffer(TrackID trackId, RefPtr<MediaDescriptio
         buffer.m_hasVideo = buffer.m_hasVideo || description->isVideo();
 
         // 5.2.9 Add the track description for this track to the track buffer.
-        auto trackBuffer = TrackBuffer::create(WTF::move(description), discontinuityTolerance);
+        RefPtr mediaSource = buffer.m_mediaSource.get();
+        auto trackBuffer = TrackBuffer::create(WTF::move(description), mediaSource ? mediaSource->timeFudgeFactor() : PlatformTimeRanges::timeFudgeFactor());
 #if !RELEASE_LOG_DISABLED
         // False positive see webkit.org/b/302520
         SUPPRESS_UNCOUNTED_ARG trackBuffer->setLogger(protect(buffer.logger()), buffer.logIdentifier());
 #endif
         buffer.m_trackBufferMap.try_emplace(trackId, WTF::move(trackBuffer));
-        if (RefPtr mediaSource = buffer.m_mediaSource.get()) {
+        if (mediaSource) {
             MediaSourcePrivate::TracksType tracksType;
             if (buffer.m_hasAudio)
                 tracksType |= TrackInfoTrackType::Audio;
@@ -953,7 +982,7 @@ bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivat
     }
 
     if (segment.textTracks.size() >= 2) {
-        for (auto& textTrackInfo : segment.videoTracks) {
+        for (auto& textTrackInfo : segment.textTracks) {
             if (m_trackBufferMap.find(RefPtr { textTrackInfo.track }->id()) == m_trackBufferMap.end())
                 return false;
         }
@@ -1641,6 +1670,10 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, const MediaTime& cur
 
         do {
             auto rangeStartBeforeCurrentTime = minimumBufferedTime();
+            if (!rangeStartBeforeCurrentTime.isValid()) {
+                ASSERT_NOT_REACHED();
+                break;
+            }
             auto rangeEndBeforeCurrentTime = std::min(rangeStartBeforeCurrentTime + timeChunk, maximumRangeEnd);
 
             if (rangeStartBeforeCurrentTime >= rangeEndBeforeCurrentTime)
@@ -1673,6 +1706,10 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, const MediaTime& cur
             });
 
             auto rangeEndAfterCurrentTime = buffered.maximumBufferedTime();
+            if (!rangeEndAfterCurrentTime.isValid()) {
+                ASSERT_NOT_REACHED();
+                break;
+            }
             auto rangeStartAfterCurrentTime = std::max(minimumRangeStartAfterCurrentTime, rangeEndAfterCurrentTime - timeChunk);
 
             if (rangeStartAfterCurrentTime >= rangeEndAfterCurrentTime)

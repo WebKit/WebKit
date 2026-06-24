@@ -38,6 +38,7 @@
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <WebCore/Color.h>
+#import <WebCore/DocumentPage.h>
 #import <WebCore/DocumentQuirks.h>
 #import <WebCore/DocumentView.h>
 #import <WebCore/ElementInlines.h>

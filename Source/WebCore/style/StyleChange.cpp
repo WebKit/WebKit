@@ -27,13 +27,13 @@
 #include "StyleChange.h"
 
 #include "RenderStyleConstants.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 namespace Style {
 
-OptionSet<Change> determineChanges(const RenderStyle& s1, const RenderStyle& s2)
+OptionSet<Change> determineChanges(const Style::ComputedStyle& s1, const Style::ComputedStyle& s2)
 {
     OptionSet<Change> result;
 

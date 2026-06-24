@@ -30,12 +30,12 @@
 
 #include "ButterflyInlines.h"
 #include "DFGAbstractHeap.h"
-#include "DFGBlockMapInlines.h"
 #include "DFGClobberSet.h"
 #include "DFGClobberize.h"
 #include "DFGDominators.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
+#include <wtf/IndexMap.h>
 #include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -526,7 +526,7 @@ private:
     
         bool run(BasicBlock* block)
         {
-            dataLogLnIf(DFGCSEPhaseInternal::verbose, "Starting block: ", block->index);
+            dataLogLnIf(DFGCSEPhaseInternal::verbose, "Starting block: ", block->index());
             m_maps.clear();
             m_changed = false;
             m_block = block;
@@ -680,7 +680,7 @@ class GlobalCSEPhase : public Phase {
 public:
     GlobalCSEPhase(Graph& graph)
         : Phase(graph, "global common subexpression elimination"_s)
-        , m_impureDataMap(graph)
+        , m_impureDataMap(graph.numBlocks())
         , m_insertionSet(graph)
     {
     }
@@ -853,9 +853,9 @@ public:
         
         for (unsigned i = m_block->predecessors.size(); i--;) {
             BasicBlock* predecessor = m_block->predecessors[i];
-            if (!seen.get(predecessor->index)) {
+            if (!seen.get(predecessor->index())) {
                 worklist.append(predecessor);
-                seen.set(predecessor->index);
+                seen.set(predecessor->index());
             }
         }
         
@@ -891,9 +891,9 @@ public:
             
             for (unsigned i = block->predecessors.size(); i--;) {
                 BasicBlock* predecessor = block->predecessors[i];
-                if (!seen.get(predecessor->index)) {
+                if (!seen.get(predecessor->index())) {
                     worklist.append(predecessor);
-                    seen.set(predecessor->index);
+                    seen.set(predecessor->index());
                 }
             }
         }
@@ -971,7 +971,7 @@ public:
     Vector<BasicBlock*> m_preOrder;
 
     PureMultiMap m_pureValues;
-    BlockMap<ImpureBlockData> m_impureDataMap;
+    IndexMap<BasicBlock*, ImpureBlockData> m_impureDataMap;
     
     BasicBlock* m_block;
     Node* m_node;

@@ -16,10 +16,10 @@
 
 #include <list>
 #include <memory>
+#include <span>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -398,7 +398,7 @@ class FecHeaderWriter {
   struct ProtectedStream {
     uint32_t ssrc = 0;
     uint16_t seq_num_base = 0;
-    ArrayView<const uint8_t> packet_mask;
+    std::span<const uint8_t> packet_mask;
   };
 
   virtual ~FecHeaderWriter();
@@ -424,7 +424,7 @@ class FecHeaderWriter {
 
   // Writes FEC header.
   virtual void FinalizeFecHeader(
-      ArrayView<const ProtectedStream> protected_streams,
+      std::span<const ProtectedStream> protected_streams,
       ForwardErrorCorrection::Packet& fec_packet) const = 0;
 
  protected:

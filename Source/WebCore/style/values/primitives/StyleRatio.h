@@ -52,7 +52,7 @@ DEFINE_TYPE_MAPPING(CSS::Ratio, Ratio)
 // MARK: Conversion
 
 // `Ratio` is special-cased to return a `CSSRatioValue`.
-template<> struct CSSValueCreation<Ratio> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const Ratio&); };
+template<> struct CSSValueCreation<Ratio> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const Ratio&); };
 
 } // namespace Style
 } // namespace WebCore

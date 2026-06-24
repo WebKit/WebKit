@@ -107,6 +107,8 @@ struct MockWebAuthenticationConfiguration {
 
     struct CcidConfiguration {
         Vector<String> payloadBase64;
+        String appletSelectionResponseBase64;
+        String u2fVersionResponseBase64;
     };
 
     bool silentFailure { false };

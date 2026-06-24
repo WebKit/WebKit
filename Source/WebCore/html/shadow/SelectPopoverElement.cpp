@@ -28,10 +28,9 @@
 
 #include "Document.h"
 #include "HTMLSelectElement.h"
-#include "RenderStyle.h"
 #include "ShadowRoot.h"
 #include "StyleAppearance.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

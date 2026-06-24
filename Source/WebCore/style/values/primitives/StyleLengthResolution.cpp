@@ -39,9 +39,8 @@
 #include "NodeRenderStyle.h"
 #include "RenderBox.h"
 #include "RenderBoxInlines.h"
-#include "RenderStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLineHeight.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -62,7 +61,7 @@ static double NODELETE adjustValueForPageZoom(double dimension, const CSSToLengt
     return dimension / renderView->pageZoomFactor();
 }
 
-static double NODELETE lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalAxis, const FloatSize& size, const RenderStyle* style)
+static double NODELETE lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalAxis, const FloatSize& size, const Style::ComputedStyle* style)
 {
     if (!style)
         return 0;
@@ -483,7 +482,7 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
     return value * conversionData.zoom();
 }
 
-bool equalForLengthResolution(const RenderStyle& styleA, const RenderStyle& styleB)
+bool equalForLengthResolution(const Style::ComputedStyle& styleA, const Style::ComputedStyle& styleB)
 {
     // These properties affect results of `computeNonCalcLengthDouble` above.
 
@@ -508,7 +507,7 @@ double emToPxDouble(double value, const CSSToLengthConversionData& conversionDat
     return computeNonCalcLengthDouble(value, CSS::LengthUnit::Em, conversionData);
 }
 
-double emToPxDouble(double value, const RenderStyle& style)
+double emToPxDouble(double value, const Style::ComputedStyle& style)
 {
     return computeNonCalcLengthDouble(value, CSS::LengthUnit::Em, CSSToLengthConversionData(style, nullptr, nullptr, nullptr));
 }

@@ -137,6 +137,11 @@ public:
     void flushUpdateLayerPositions();
     void markForUpdateLayerPositionsAfterSVGTransformChange();
 
+    // LBSE: batches synchronous transform-attribute mutations (SMIL, DOM) so the
+    // transform-refresh + delta-repaint runs once per renderer per frame.
+    void addPendingSVGTransformAttributeUpdate(RenderLayerModelObject&);
+    void flushPendingSVGTransformAttributeUpdatesIfNeeded();
+
     bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
     // Returns true if a pending compositing layer update was done.
@@ -185,7 +190,7 @@ public:
     Vector<AnchorScrollAdjuster>& anchorScrollAdjusters() LIFETIME_BOUND { return m_anchorScrollAdjusters; }
     const AnchorScrollAdjuster* anchorScrollAdjusterFor(const RenderBox& anchored) const LIFETIME_BOUND;
     AnchorScrollAdjuster::Diff registerAnchorScrollAdjuster(AnchorScrollAdjuster&&);
-    void unregisterAnchorScrollAdjusterFor(const RenderBox& anchored);
+    void unregisterAnchorScrollAdjusterFor(const RenderBox& anchored, bool clearAnchorScrollAdjustment = true); // If clearAnchorScrollAdjustment is true, removes the layer's anchorScrollAdjustment; otherwise sets it to zero.
     void invalidateAnchorDependenciesForScroller(const RenderBox& scroller);
     void removeScrollerFromAnchorScrollAdjusters(const RenderBox& scroller);
 
@@ -294,6 +299,10 @@ private:
         bool needsFullRepaint { false };
     };
     std::optional<UpdateLayerPositions> m_pendingUpdateLayerPositions;
+
+    // Vector + per-renderer dedup flag chosen over WeakHashSet - ~10x cheaper on the
+    // LBSE MotionMark/Suits rAF hot path (hash + weak-ptr lookup vs. a bit check).
+    Vector<SingleThreadWeakPtr<RenderLayerModelObject>> m_pendingSVGTransformAttributeUpdates;
 
     struct RepaintRectEnvironment {
         float m_deviceScaleFactor { 0 };

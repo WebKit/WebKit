@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
 
@@ -11,8 +11,6 @@
 
     description("This tests that cancelling speech at the right time will not crash due to mismanaging of the queue during a cancel.");
 
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     if (window.internals)
         window.internals.enableMockSpeechSynthesizer();
@@ -31,6 +29,5 @@
      setTimeout("speak(); finishJSTest()", 52);
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

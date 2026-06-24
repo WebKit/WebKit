@@ -59,9 +59,8 @@ template<size_t I> const auto& get(const GridMinMaxFunctionParameters& value)
         return value.max;
 }
 
-struct GridTrackFitContentLength : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
-    using Base::Base;
-};
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(GridTrackFitContentLength, LengthPercentage<CSS::Nonnegative>);
+
 struct GridFitContentFunctionParameters {
     GridTrackFitContentLength value;
 
@@ -282,7 +281,7 @@ template<typename... F> decltype(auto) GridTrackSize::switchOn(F&&... f) const
 
 // MARK: - Conversion
 
-template<> struct ToCSS<GridTrackSize> { auto operator()(const GridTrackSize&, const RenderStyle&) -> CSS::GridTrackSize; };
+template<> struct ToCSS<GridTrackSize> { auto operator()(const GridTrackSize&, const Style::ComputedStyle&) -> CSS::GridTrackSize; };
 template<> struct ToStyle<CSS::GridTrackSize> { auto operator()(const CSS::GridTrackSize&, const BuilderState&) -> GridTrackSize; };
 
 // MARK: - Blending
@@ -300,5 +299,5 @@ WTF::TextStream& operator<<(WTF::TextStream&, const GridTrackSize&);
 
 DEFINE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::GridMinMaxFunctionParameters, 2)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::GridFitContentFunctionParameters)
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::GridTrackFitContentLength)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::GridTrackFitContentLength)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::GridTrackSize)

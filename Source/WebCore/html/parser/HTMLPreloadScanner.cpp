@@ -271,9 +271,8 @@ private:
             if (match(attributeName, mediaAttr) && m_mediaAttribute.isNull()) {
                 m_mediaAttribute = attributeValue.toString();
                 auto mediaQueries = MQ::MediaQueryParser::parse(m_mediaAttribute, m_document->cssParserContext());
-                RefPtr documentElement = m_document->documentElement();
                 LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
-                m_mediaMatched = MQ::MediaQueryEvaluator { m_document->printing() ? printAtom() : screenAtom(), m_document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaQueries);
+                m_mediaMatched = MQ::MediaQueryEvaluator { m_document->printing() ? printAtom() : screenAtom(), m_document }.evaluate(mediaQueries);
             }
             if (match(attributeName, typeAttr) && m_typeAttribute.isNull()) {
                 // when multiple type attributes present: first value wins, ignore subsequent (to match ImageElement parser and Blink behaviours)

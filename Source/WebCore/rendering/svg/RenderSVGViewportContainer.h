@@ -34,8 +34,8 @@ class RenderSVGViewportContainer final : public RenderSVGContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGViewportContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGViewportContainer);
 public:
-    RenderSVGViewportContainer(RenderSVGRoot&, RenderStyle&&);
-    RenderSVGViewportContainer(SVGSVGElement&, RenderStyle&&);
+    RenderSVGViewportContainer(RenderSVGRoot&, Style::ComputedStyle&&);
+    RenderSVGViewportContainer(SVGSVGElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGViewportContainer();
 
     SVGSVGElement& NODELETE svgSVGElement() const;
@@ -56,7 +56,7 @@ private:
     FloatPoint computeViewportLocation() const;
     FloatSize computeViewportSize() const;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
     LayoutRect overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const final;
     void updateLayerTransform() final;
     bool needsHasSVGTransformFlags() const final;

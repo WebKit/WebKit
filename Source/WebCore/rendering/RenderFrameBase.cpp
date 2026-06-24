@@ -39,14 +39,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFrameBase);
 
-RenderFrameBase::RenderFrameBase(Type type, HTMLFrameElementBase& element, RenderStyle&& style)
+RenderFrameBase::RenderFrameBase(Type type, HTMLFrameElementBase& element, Style::ComputedStyle&& style)
     : RenderWidget(type, element, WTF::move(style))
 {
 }
 
 RenderFrameBase::~RenderFrameBase() = default;
 
-void RenderFrameBase::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderFrameBase::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderWidget::styleDidChange(diff, oldStyle);
 

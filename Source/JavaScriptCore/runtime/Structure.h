@@ -181,11 +181,8 @@ inline CompactPropertyTableEntry::CompactPropertyTableEntry(const PropertyTableE
 
 class StructureFireDetail final : public FireDetail {
 public:
-    StructureFireDetail(const Structure* structure)
-        : m_structure(structure)
-    {
-    }
-    
+    inline StructureFireDetail(const Structure*); // Defined in StructureInlines.h.
+
     void dump(PrintStream& out) const final;
 
 private:
@@ -224,18 +221,7 @@ public:
     JS_EXPORT_PRIVATE static bool isValidPrototype(JSValue);
 
 protected:
-    void finishCreation(VM& vm, const Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
-    {
-        this->finishCreation(vm);
-        if (previous->hasRareData()) {
-            const StructureRareData* previousRareData = previous->rareData();
-            if (previousRareData->hasSharedPolyProtoWatchpoint()) {
-                ensureRareData(vm);
-                rareData()->setSharedPolyProtoWatchpoint(previousRareData->copySharedPolyProtoWatchpoint());
-            }
-        }
-        previous->fireStructureTransitionWatchpoint(deferred);
-    }
+    inline void finishCreation(VM& vm, const Structure* previous, DeferredStructureTransitionWatchpointFire* deferred); // Defined in StructureInlines.h
 
     void finishCreation(VM& vm)
     {
@@ -601,36 +587,14 @@ public:
     void forEachProperty(VM&, const Functor&);
 
     IGNORE_RETURN_TYPE_WARNINGS_BEGIN
-    ALWAYS_INLINE PropertyOffset get(VM& vm, Concurrency concurrency, UniquedStringImpl* uid, unsigned& attributes)
-    {
-        switch (concurrency) {
-        case Concurrency::MainThread:
-            ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-            return get(vm, uid, attributes);
-        case Concurrency::ConcurrentThread:
-            return getConcurrently(uid, attributes);
-        }
-    }
+    inline PropertyOffset get(VM&, Concurrency, UniquedStringImpl* uid, unsigned& attributes); // Defined in StructureInlines.h
     IGNORE_RETURN_TYPE_WARNINGS_END
 
     IGNORE_RETURN_TYPE_WARNINGS_BEGIN
-    ALWAYS_INLINE PropertyOffset get(VM& vm, Concurrency concurrency, UniquedStringImpl* uid)
-    {
-        switch (concurrency) {
-        case Concurrency::MainThread:
-            ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-            return get(vm, uid);
-        case Concurrency::ConcurrentThread:
-            return getConcurrently(uid);
-        }
-    }
+    inline PropertyOffset get(VM&, Concurrency, UniquedStringImpl* uid); // Defined in StructureInlines.h
     IGNORE_RETURN_TYPE_WARNINGS_END
-    
-    PropertyOffset getConcurrently(UniquedStringImpl* uid)
-    {
-        unsigned attributesIgnored;
-        return getConcurrently(uid, attributesIgnored);
-    }
+
+    inline PropertyOffset getConcurrently(UniquedStringImpl* uid); // Defined in StructureInlines.h
     PropertyOffset getConcurrently(UniquedStringImpl* uid, unsigned& attributes);
     
     Vector<PropertyTableEntry> getPropertiesConcurrently();
@@ -650,18 +614,8 @@ public:
     bool NODELETE canCachePropertyNameEnumerator(VM&) const;
     bool NODELETE canAccessPropertiesQuicklyForEnumeration() const;
 
-    JSCellButterfly* cachedPropertyNames(CachedPropertyNamesKind kind) const
-    {
-        if (!hasRareData())
-            return nullptr;
-        return rareData()->cachedPropertyNames(kind);
-    }
-    JSCellButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
-    {
-        if (!hasRareData())
-            return nullptr;
-        return rareData()->cachedPropertyNamesIgnoringSentinel(kind);
-    }
+    inline JSCellButterfly* cachedPropertyNames(CachedPropertyNamesKind kind) const; // Defined in StructureInlines.h
+    inline JSCellButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const; // Defined in StructureInlines.h
     void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSCellButterfly*);
     bool canCacheOwnPropertyNames() const
     {
@@ -676,12 +630,7 @@ public:
 
     void getPropertyNamesFromStructure(VM&, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
 
-    JSValue cachedSpecialProperty(CachedSpecialPropertyKey key)
-    {
-        if (!hasRareData())
-            return JSValue();
-        return rareData()->cachedSpecialProperty(key);
-    }
+    inline JSValue cachedSpecialProperty(CachedSpecialPropertyKey key); // Defined in StructureInlines.h
     void cacheSpecialProperty(JSGlobalObject*, VM&, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
 
     static constexpr ptrdiff_t prototypeOffset()
@@ -782,11 +731,7 @@ public:
         return dfgShouldWatch() && !hasPolyProto();
     }
         
-    void addTransitionWatchpoint(Watchpoint* watchpoint) const
-    {
-        ASSERT(transitionWatchpointSetIsStillValid());
-        m_transitionWatchpointSet.add(watchpoint);
-    }
+    inline void addTransitionWatchpoint(Watchpoint* watchpoint) const; // Defined in StructureInlinesLight.h
     
     void NODELETE didTransitionFromThisStructureWithoutFiringWatchpoint() const;
     void fireStructureTransitionWatchpoint(DeferredStructureTransitionWatchpointFire*) const;
@@ -797,10 +742,7 @@ public:
     }
     
     WatchpointSet* ensurePropertyReplacementWatchpointSet(VM&, PropertyOffset);
-    void startWatchingPropertyForReplacements(VM& vm, PropertyOffset offset)
-    {
-        ensurePropertyReplacementWatchpointSet(vm, offset);
-    }
+    inline void startWatchingPropertyForReplacements(VM& vm, PropertyOffset offset); // Defined in StructureInlines.h
     void startWatchingPropertyForReplacements(VM&, PropertyName);
     WatchpointSet* propertyReplacementWatchpointSet(PropertyOffset);
     WatchpointSet* firePropertyReplacementWatchpointSet(VM&, PropertyOffset, const char* reason);
@@ -813,12 +755,7 @@ public:
     }
     void didCachePropertyReplacement(VM&, PropertyOffset);
     
-    void startWatchingInternalPropertiesIfNecessary(VM& vm)
-    {
-        if (didWatchInternalProperties()) [[likely]]
-            return;
-        startWatchingInternalProperties(vm);
-    }
+    inline void startWatchingInternalPropertiesIfNecessary(VM& vm); // Defined in StructureInlines.h
     
     Ref<StructureShape> toStructureShape(JSValue, bool& sawPolyProtoStructure);
     
@@ -1043,13 +980,7 @@ private:
 
     void startWatchingInternalProperties(VM&);
 
-    void clearCachedPrototypeChain()
-    {
-        m_cachedPrototypeChain.clear();
-        if (!hasRareData())
-            return;
-        rareData()->clearCachedPropertyNameEnumerator();
-    }
+    inline void clearCachedPrototypeChain(); // Defined in StructureInlines.h
 
     bool NODELETE holesMustForwardToPrototypeSlow(JSObject*) const;
 
@@ -1100,7 +1031,7 @@ private:
     friend class Integrity::Analyzer;
 };
 
-void dumpTransitionKind(PrintStream&, TransitionKind);
+JS_EXPORT_PRIVATE void dumpTransitionKind(PrintStream&, TransitionKind);
 MAKE_PRINT_ADAPTOR(TransitionKindDump, TransitionKind, dumpTransitionKind);
 
 // Defined here rather than in JSCell.h because it needs Structure to be complete.

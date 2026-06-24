@@ -45,7 +45,7 @@ WPE_API G_DECLARE_FINAL_TYPE (WPEBufferFormats, wpe_buffer_formats, WPE, BUFFER_
  * @WPE_BUFFER_FORMAT_USAGE_MAPPING: format should be used for mapping buffer.
  * @WPE_BUFFER_FORMAT_USAGE_SCANOUT: format should be used for scanout.
  *
- * Enum values to indicate the best usage of a #WPEBufferFormat.
+ * Enum values to indicate the best usage of a buffer format.
  */
 typedef enum {
     WPE_BUFFER_FORMAT_USAGE_RENDERING,

@@ -36,11 +36,6 @@
 
 namespace WGSL {
 
-enum class Direction : uint8_t {
-    Input,
-    Output,
-};
-
 class AttributeValidator : public AST::Visitor {
 public:
     AttributeValidator(ShaderModule&);
@@ -71,12 +66,6 @@ private:
     void validateInterpolation(const SourceSpan&, const std::optional<AST::Interpolation>&, const std::optional<unsigned>&);
     void validateInvariant(const SourceSpan&, const std::optional<Builtin>&, bool);
 
-    using Builtins = HashSet<Builtin, WTF::IntHash<Builtin>, WTF::StrongEnumHashTraits<Builtin>>;
-    using Locations = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
-    void validateBuiltinIO(const SourceSpan&, const Type*, ShaderStage, Builtin, Direction, Builtins&);
-    void validateLocationIO(const SourceSpan&, const Type*, ShaderStage, unsigned, Locations&);
-    void validateStructIO(ShaderStage, const Types::Struct&, Direction, Builtins&, Locations&);
-    void validateInterpolationIO(const SourceSpan&, ShaderStage, Direction, const Type*, const std::optional<AST::Interpolation>&);
     void validateAlignment(const SourceSpan&, AddressSpace, const Type*);
 
     template<typename T>

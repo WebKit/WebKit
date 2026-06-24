@@ -42,8 +42,8 @@ public:
 
 private:
     explicit TextControlInnerContainer(Document&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
 };
 
 class TextControlInnerElement final : public HTMLDivElement {
@@ -54,7 +54,7 @@ public:
 
 private:
     explicit TextControlInnerElement(Document&);
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
 
     bool isMouseFocusable() const final { return false; }
 };
@@ -79,8 +79,8 @@ private:
     void updateInnerTextElementEditabilityImpl(bool isEditable, bool initialization);
 
     explicit TextControlInnerTextElement(Document&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
     bool isMouseFocusable() const final { return false; }
     bool isTextControlInnerTextElement() const final { return true; }
 };
@@ -94,7 +94,7 @@ public:
 private:
     explicit TextControlPlaceholderElement(Document&);
 
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
 };
 
 class SearchFieldResultsButtonElement final : public HTMLDivElement {
@@ -113,7 +113,7 @@ public:
 private:
     explicit SearchFieldResultsButtonElement(Document&);
     bool isMouseFocusable() const final { return false; }
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
     bool isSearchFieldResultsButtonElement() const final { return true; }
 
     bool m_canAdjustStyleForAppearance { true };
@@ -133,7 +133,7 @@ public:
 private:
     explicit SearchFieldCancelButtonElement(Document&);
     bool isMouseFocusable() const final { return false; }
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) final;
 };
 
 } // namespace WebCore

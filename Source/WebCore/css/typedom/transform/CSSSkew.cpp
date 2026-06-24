@@ -107,10 +107,10 @@ void CSSSkew::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskew
     builder.append("skew("_s);
-    m_ax->serialize(builder);
+    protect(m_ax)->serialize(builder);
     if (RefPtr ayUnitValue = dynamicDowncast<CSSUnitValue>(m_ay); !ayUnitValue || ayUnitValue->value()) {
         builder.append(", "_s);
-        m_ay->serialize(builder);
+        protect(m_ay)->serialize(builder);
     }
     builder.append(')');
 }
@@ -136,8 +136,8 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkew::toMatrix()
 
 RefPtr<CSSValue> CSSSkew::toCSSValue() const
 {
-    RefPtr ax = m_ax->toCSSValue();
-    RefPtr ay = m_ay->toCSSValue();
+    RefPtr ax = protect(m_ax)->toCSSValue();
+    RefPtr ay = protect(m_ay)->toCSSValue();
     if (!ax || !ay)
         return nullptr;
     if (RefPtr ayUnitValue = dynamicDowncast<CSSUnitValue>(m_ay); ayUnitValue && !ayUnitValue->value())

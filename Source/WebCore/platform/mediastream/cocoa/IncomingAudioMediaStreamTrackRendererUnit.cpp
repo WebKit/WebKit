@@ -84,7 +84,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
     String deviceID = AudioMediaStreamTrackRendererUnit::supportsPerDeviceRendering() ? identifier : AudioMediaStreamTrackRenderer::defaultDeviceID();
 
 #if !RELEASE_LOG_DISABLED
-    source->logger().logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
+    protect(source->logger())->logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
 #endif
     ASSERT(isMainThread());
 #if !RELEASE_LOG_DISABLED
@@ -151,7 +151,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::removeSource(const String& ident
     String deviceID = AudioMediaStreamTrackRendererUnit::supportsPerDeviceRendering() ? identifier : AudioMediaStreamTrackRenderer::defaultDeviceID();
 
 #if !RELEASE_LOG_DISABLED
-    source.logger().logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
+    protect(source.logger())->logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
 #endif
     ASSERT(isMainThread());
 
@@ -190,7 +190,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::stop(Mixer& mixer)
     RELEASE_LOG(WebRTC, "IncomingAudioMediaStreamTrackRendererUnit::stop");
     ASSERT(isMainThread());
 
-    AudioMediaStreamTrackRendererUnit::singleton().removeSource(mixer.deviceID, *mixer.registeredMixedSource);
+    AudioMediaStreamTrackRendererUnit::singleton().removeSource(mixer.deviceID, protect(*mixer.registeredMixedSource));
     mixer.registeredMixedSource = nullptr;
     m_audioModule.get()->stopIncomingAudioRendering();
 }
@@ -226,7 +226,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::renderAudioChunk(uint64_t curren
 
         CMTime startTime = PAL::CMTimeMake(renderMixer.writeCount, m_outputStreamDescription->sampleRate());
         if (hasCopiedData)
-            renderMixer.mixedSource->pushSamples(PAL::toMediaTime(startTime), *m_audioBufferList, m_sampleCount);
+            protect(renderMixer.mixedSource)->pushSamples(PAL::toMediaTime(startTime), *m_audioBufferList, m_sampleCount);
         renderMixer.writeCount += m_sampleCount;
     }
 }

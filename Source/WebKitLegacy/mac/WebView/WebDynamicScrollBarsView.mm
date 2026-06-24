@@ -36,7 +36,6 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <wtf/StdLibExtras.h>
 
-using namespace WebCore;
 
 #ifndef __OBJC2__
 // In <rdar://problem/7814899> we saw crashes because WebDynamicScrollBarsView increased in size, breaking ABI compatiblity.
@@ -86,7 +85,7 @@ static Class customScrollerClass;
 
 + (Class)_horizontalScrollerClass
 {
-    if (DeprecatedGlobalSettings::mockScrollbarsEnabled() && customScrollerClass)
+    if (WebCore::DeprecatedGlobalSettings::mockScrollbarsEnabled() && customScrollerClass)
         return customScrollerClass;
 
     return [super _horizontalScrollerClass];
@@ -94,7 +93,7 @@ static Class customScrollerClass;
 
 + (Class)_verticalScrollerClass
 {
-    if (DeprecatedGlobalSettings::mockScrollbarsEnabled() && customScrollerClass)
+    if (WebCore::DeprecatedGlobalSettings::mockScrollbarsEnabled() && customScrollerClass)
         return customScrollerClass;
 
     return [super _horizontalScrollerClass];
@@ -135,10 +134,10 @@ static Class customScrollerClass;
 {
     if (_private->hScrollModeLocked)
         return;
-    if (flag && _private->hScroll == ScrollbarMode::AlwaysOff)
-        _private->hScroll = ScrollbarMode::Auto;
-    else if (!flag && _private->hScroll != ScrollbarMode::AlwaysOff)
-        _private->hScroll = ScrollbarMode::AlwaysOff;
+    if (flag && _private->hScroll == WebCore::ScrollbarMode::AlwaysOff)
+        _private->hScroll = WebCore::ScrollbarMode::Auto;
+    else if (!flag && _private->hScroll != WebCore::ScrollbarMode::AlwaysOff)
+        _private->hScroll = WebCore::ScrollbarMode::AlwaysOff;
     [self updateScrollers];
 }
 
@@ -302,12 +301,12 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         newHasVerticalScroller = NO;
     }
 
-    if (_private->hScroll != ScrollbarMode::Auto)
-        newHasHorizontalScroller = (_private->hScroll == ScrollbarMode::AlwaysOn);
-    if (_private->vScroll != ScrollbarMode::Auto)
-        newHasVerticalScroller = (_private->vScroll == ScrollbarMode::AlwaysOn);
+    if (_private->hScroll != WebCore::ScrollbarMode::Auto)
+        newHasHorizontalScroller = (_private->hScroll == WebCore::ScrollbarMode::AlwaysOn);
+    if (_private->vScroll != WebCore::ScrollbarMode::Auto)
+        newHasVerticalScroller = (_private->vScroll == WebCore::ScrollbarMode::AlwaysOn);
 
-    if (!documentView || _private->suppressLayout || _private->suppressScrollers || (_private->hScroll != ScrollbarMode::Auto && _private->vScroll != ScrollbarMode::Auto)) {
+    if (!documentView || _private->suppressLayout || _private->suppressScrollers || (_private->hScroll != WebCore::ScrollbarMode::Auto && _private->vScroll != WebCore::ScrollbarMode::Auto)) {
         _private->horizontalScrollingAllowedButScrollerHidden = newHasHorizontalScroller && _private->alwaysHideHorizontalScroller;
         if (_private->horizontalScrollingAllowedButScrollerHidden)
             newHasHorizontalScroller = NO;
@@ -344,13 +343,13 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     frameSize.width = ceilf(frameSize.width);
     frameSize.height = ceilf(frameSize.height);
 
-    if (_private->hScroll == ScrollbarMode::Auto) {
+    if (_private->hScroll == WebCore::ScrollbarMode::Auto) {
         newHasHorizontalScroller = documentSize.width > visibleSize.width;
         if (newHasHorizontalScroller && !_private->inUpdateScrollersLayoutPass && documentSize.height <= frameSize.height && documentSize.width <= frameSize.width)
             newHasHorizontalScroller = NO;
     }
 
-    if (_private->vScroll == ScrollbarMode::Auto) {
+    if (_private->vScroll == WebCore::ScrollbarMode::Auto) {
         newHasVerticalScroller = documentSize.height > visibleSize.height;
         if (newHasVerticalScroller && !_private->inUpdateScrollersLayoutPass && documentSize.height <= frameSize.height && documentSize.width <= frameSize.width)
             newHasVerticalScroller = NO;
@@ -358,9 +357,9 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
     // Unless in ScrollbarsAlwaysOn mode, if we ever turn one scrollbar off, always turn the other one off too.
     // Never ever try to both gain/lose a scrollbar in the same pass.
-    if (!newHasHorizontalScroller && hasHorizontalScroller && _private->vScroll != ScrollbarMode::AlwaysOn)
+    if (!newHasHorizontalScroller && hasHorizontalScroller && _private->vScroll != WebCore::ScrollbarMode::AlwaysOn)
         newHasVerticalScroller = NO;
-    if (!newHasVerticalScroller && hasVerticalScroller && _private->hScroll != ScrollbarMode::AlwaysOn)
+    if (!newHasVerticalScroller && hasVerticalScroller && _private->hScroll != WebCore::ScrollbarMode::AlwaysOn)
         newHasHorizontalScroller = NO;
 
     _private->horizontalScrollingAllowedButScrollerHidden = newHasHorizontalScroller && _private->alwaysHideHorizontalScroller;
@@ -450,12 +449,12 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
 - (BOOL)allowsHorizontalScrolling
 {
-    return _private->hScroll != ScrollbarMode::AlwaysOff;
+    return _private->hScroll != WebCore::ScrollbarMode::AlwaysOff;
 }
 
 - (BOOL)allowsVerticalScrolling
 {
-    return _private->vScroll != ScrollbarMode::AlwaysOff;
+    return _private->vScroll != WebCore::ScrollbarMode::AlwaysOff;
 }
 
 - (void)scrollingModes:(WebCore::ScrollbarMode*)hMode vertical:(WebCore::ScrollbarMode*)vMode
@@ -464,33 +463,33 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     *vMode = _private->vScroll;
 }
 
-- (ScrollbarMode)horizontalScrollingMode
+- (WebCore::ScrollbarMode)horizontalScrollingMode
 {
     return _private->hScroll;
 }
 
-- (ScrollbarMode)verticalScrollingMode
+- (WebCore::ScrollbarMode)verticalScrollingMode
 {
     return _private->vScroll;
 }
 
-- (void)setHorizontalScrollingMode:(ScrollbarMode)horizontalMode andLock:(BOOL)lock
+- (void)setHorizontalScrollingMode:(WebCore::ScrollbarMode)horizontalMode andLock:(BOOL)lock
 {
     [self setScrollingModes:horizontalMode vertical:[self verticalScrollingMode] andLock:lock];
 }
 
-- (void)setVerticalScrollingMode:(ScrollbarMode)verticalMode andLock:(BOOL)lock
+- (void)setVerticalScrollingMode:(WebCore::ScrollbarMode)verticalMode andLock:(BOOL)lock
 {
     [self setScrollingModes:[self horizontalScrollingMode] vertical:verticalMode andLock:lock];
 }
 
 // Mail uses this method, so we cannot remove it. 
-- (void)setVerticalScrollingMode:(ScrollbarMode)verticalMode 
+- (void)setVerticalScrollingMode:(WebCore::ScrollbarMode)verticalMode 
 { 
     [self setScrollingModes:[self horizontalScrollingMode] vertical:verticalMode andLock:NO]; 
 } 
 
-- (void)setScrollingModes:(ScrollbarMode)horizontalMode vertical:(ScrollbarMode)verticalMode andLock:(BOOL)lock
+- (void)setScrollingModes:(WebCore::ScrollbarMode)horizontalMode vertical:(WebCore::ScrollbarMode)verticalMode andLock:(BOOL)lock
 {
     BOOL update = NO;
     if (verticalMode != _private->vScroll && !_private->vScrollModeLocked) {
@@ -545,7 +544,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     float deltaX;
     float deltaY;
     BOOL isContinuous;
-    getWheelEventDeltas(event, deltaX, deltaY, isContinuous);
+    WebCore::getWheelEventDeltas(event, deltaX, deltaY, isContinuous);
 
     NSEventPhase momentumPhase = [event momentumPhase];
     BOOL isLatchingEvent = momentumPhase & NSEventPhaseBegan || momentumPhase & NSEventPhaseStationary;

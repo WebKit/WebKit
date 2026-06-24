@@ -66,6 +66,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-07.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-08.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-09.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-10.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getCTM-empty-viewBox.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getScreenCTM.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.svg

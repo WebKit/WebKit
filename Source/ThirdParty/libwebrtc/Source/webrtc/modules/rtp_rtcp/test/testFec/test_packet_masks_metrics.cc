@@ -48,9 +48,9 @@
 #include <cstdio>
 #include <cstring>
 #include <memory>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "modules/rtp_rtcp/test/testFec/average_residual_loss_xor_codes.h"
@@ -731,7 +731,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
       for (int num_fec_packets = 1; num_fec_packets <= num_media_packets;
            num_fec_packets++) {
         memset(packet_mask.get(), 0, num_media_packets * mask_bytes_fec_packet);
-        ArrayView<const uint8_t> mask =
+        std::span<const uint8_t> mask =
             mask_table.LookUp(num_media_packets, num_fec_packets);
         memcpy(packet_mask.get(), &mask[0], mask.size());
         // Convert to bit mask.

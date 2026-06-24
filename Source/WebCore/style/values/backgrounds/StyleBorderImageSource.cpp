@@ -36,7 +36,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<BorderImageSource>::operator()(const BorderImageSource& value, const RenderStyle& style) -> CSS::BorderImageSource
+auto ToCSS<BorderImageSource>::operator()(const BorderImageSource& value, const Style::ComputedStyle& style) -> CSS::BorderImageSource
 {
     return WTF::switchOn(value,
         [&](const CSS::Keyword::None& keyword) -> CSS::BorderImageSource {
@@ -85,7 +85,7 @@ auto CSSValueConversion<BorderImageSource>::operator()(BuilderState& state, cons
     return ImageWrapper { image.releaseNonNull() };
 }
 
-auto CSSValueCreation<BorderImageSource>::operator()(CSSValuePool&, const RenderStyle& style, const BorderImageSource& value) -> Ref<CSSValue>
+auto CSSValueCreation<BorderImageSource>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BorderImageSource& value) -> Ref<CSSValue>
 {
     return CSSBorderImageSourceValue::create(toCSS(value, style));
 }
@@ -97,7 +97,7 @@ auto Blending<BorderImageSource>::canBlend(const BorderImageSource& a, const Bor
     return !a.isNone() && !b.isNone();
 }
 
-auto Blending<BorderImageSource>::blend(const BorderImageSource& a, const BorderImageSource& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> BorderImageSource
+auto Blending<BorderImageSource>::blend(const BorderImageSource& a, const BorderImageSource& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> BorderImageSource
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1);

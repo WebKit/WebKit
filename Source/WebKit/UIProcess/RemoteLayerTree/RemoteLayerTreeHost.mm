@@ -189,7 +189,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
         RemoteLayerTreePropertyApplier::applyHierarchyUpdates(*node, properties.get(), m_nodes);
     }
 
-    if (auto contextHostedID = transaction.remoteContextHostedIdentifier()) {
+    if (auto contextHostedID = transaction.remoteContextHostedIdentifier(); contextHostedID && rootNode) {
         m_hostedLayers.set(*contextHostedID, rootNode->layerID());
         m_hostedLayersInProcess.ensure(processIdentifier, [] {
             return HashSet<WebCore::PlatformLayerIdentifier>();

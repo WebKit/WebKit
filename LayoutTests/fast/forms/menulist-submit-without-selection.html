@@ -1,13 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
 description('A unselected option was submitted as fallback. This behavior was removed by the change of webkit.org/b/35056.');
+
+window.jsTestIsAsync = true;
+
+// waitUntilDone() must be called synchronously here: this load submits the form
+// (navigating away) before DOMContentLoaded fires, so js-test.js can't arm it in time.
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var parent = document.createElement('div');
 document.body.appendChild(parent);
@@ -18,8 +25,6 @@ parent.innerHTML = '<form action="">'
     + '</select>'
     + '</form>';
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 var query = window.location.search;
 if (query.indexOf('submitted=true') == -1) {
     var select = document.getElementsByTagName('select')[0];
@@ -27,10 +32,8 @@ if (query.indexOf('submitted=true') == -1) {
     document.forms[0].submit();
 } else {
     shouldBe('query.indexOf("select=Disabled")', '-1');
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

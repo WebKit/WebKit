@@ -3751,5 +3751,5 @@ PASS Property color value 'hsla(60deg 100% 37.5% / calc(50% + (sign(1em - 10px) 
 PASS Property color value 'hsl(60 100 37.5 / calc(0.75 + (sign(1em - 10px) * 0.1)))'
 PASS Property color value 'hsla(60 100 37.5 / calc(0.75 + (sign(1em - 10px) * 0.1)))'
 PASS Property color value 'hsla(calc(50deg + (sign(2cqw - 10px) * 10deg)), 100%, 37.5%, 51%)'
-PASS Property color value 'hsla(calc(50deg + (sign(2cqw - 10px) * 10deg)), 100%, 37.5%, 52%)'
+FAIL Property color value 'hsla(calc(50deg + (sign(2cqw - 10px) * 10deg)), 100%, 37.5%, 52%)' assert_equals: expected "rgba(191, 128, 0, 0.52)" but got "rgba(191, 127, 0, 0.52)"
 

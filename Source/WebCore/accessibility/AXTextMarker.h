@@ -165,7 +165,7 @@ struct TextMarkerData {
 
     unsigned characterStart;
     unsigned characterOffset;
-    bool ignored;
+    bool isRedacted;
     Affinity affinity;
 
     TextMarkerOrigin origin;
@@ -182,7 +182,7 @@ struct TextMarkerData {
         unsigned offsetParam = 0,
         Position::AnchorType anchorTypeParam = Position::PositionIsOffsetInAnchor,
         Affinity affinityParam = Affinity::Downstream,
-        unsigned charStart = 0, unsigned charOffset = 0, bool ignoredParam = false, TextMarkerOrigin originParam = TextMarkerOrigin::Unknown)
+        unsigned charStart = 0, unsigned charOffset = 0, bool isRedactedParam = false, TextMarkerOrigin originParam = TextMarkerOrigin::Unknown)
     {
         zeroBytes(*this);
         treeID = axTreeID ? axTreeID->toUInt64() : 0;
@@ -192,12 +192,12 @@ struct TextMarkerData {
         affinity = affinityParam;
         characterStart = charStart;
         characterOffset = charOffset;
-        ignored = ignoredParam;
+        isRedacted = isRedactedParam;
         origin = originParam;
     }
 
-    TextMarkerData(AXObjectCache&, const VisiblePosition&, int charStart = 0, int charOffset = 0, bool ignoredParam = false, TextMarkerOrigin originParam = TextMarkerOrigin::Unknown);
-    TextMarkerData(AXObjectCache&, const CharacterOffset&, bool ignoredParam = false, TextMarkerOrigin originParam = TextMarkerOrigin::Unknown);
+    TextMarkerData(AXObjectCache&, const VisiblePosition&, int charStart = 0, int charOffset = 0, bool isRedactedParam = false, TextMarkerOrigin originParam = TextMarkerOrigin::Unknown);
+    TextMarkerData(AXObjectCache&, const CharacterOffset&, bool isRedactedParam = false, TextMarkerOrigin originParam = TextMarkerOrigin::Unknown);
 
     friend bool operator==(const TextMarkerData&, const TextMarkerData&) = default;
 
@@ -267,7 +267,7 @@ public:
 #endif
     RefPtr<AXCoreObject> object() const;
     bool isValid() const { return object(); }
-    bool isIgnored() const { return m_data.ignored; }
+    bool isRedacted() const { return m_data.isRedacted; }
     Affinity affinity() const { return m_data.affinity; }
     bool isDownstream() const { return affinity() == Affinity::Downstream; }
     void setAffinity(Affinity affinity) { m_data.affinity = affinity; }

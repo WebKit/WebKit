@@ -30,6 +30,7 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+class GLFence;
 class ImageBuffer;
 class Nativeimage;
 
@@ -45,6 +46,7 @@ private:
 
     Ref<ImageBuffer> m_imageBuffer;
     RefPtr<NativeImage> m_image;
+    std::unique_ptr<GLFence> m_fence;
 };
 
 } // namespace WebCore

@@ -1,17 +1,14 @@
 <!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
 <script src="/js-test-resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 
 addEventListener("message", (event) => {
     if (event.data == "140,140")
         testPassed("Correct mouse coordinates");
     else
         testFailed("Unexpected mouse coordinates: " + event.data);
-    testRunner.notifyDone();
+    finishJSTest();
 });
 
 function onLoad() {

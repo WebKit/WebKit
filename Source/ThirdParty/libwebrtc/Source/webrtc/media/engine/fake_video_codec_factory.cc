@@ -22,13 +22,13 @@
 #include "test/fake_decoder.h"
 #include "test/fake_encoder.h"
 
+namespace webrtc {
+
 namespace {
 
 const char kFakeCodecFactoryCodecName[] = "FakeCodec";
 
-}  // anonymous namespace
-
-namespace webrtc {
+}  // namespace
 
 std::vector<SdpVideoFormat> FakeVideoEncoderFactory::GetSupportedFormats()
     const {

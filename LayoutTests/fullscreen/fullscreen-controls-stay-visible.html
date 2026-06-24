@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="full-screen-test.js"></script>
+<style>
+#target { position: relative; width: 400px; height: 300px; background: #111; }
+#target:fullscreen { width: 100%; height: 100%; }
+#controls { position: absolute; inset: 0; }
+</style>
+</head>
+<body>
+<p>Tests that a controls overlay that stays in the DOM does not receive a
+spurious pointerleave on fullscreen entry.</p>
+<div id="target">
+    <div id="controls">Controls</div>
+</div>
+<script>
+    var target = document.getElementById('target');
+    var controls = document.getElementById('controls');
+    var visible = true;
+
+    controls.addEventListener('pointerleave', function() { visible = false; });
+
+    var callback;
+    waitForEvent(document, 'webkitfullscreenchange', function(event) {
+        if (callback)
+            callback(event);
+    });
+
+    if (window.eventSender) {
+        var r = controls.getBoundingClientRect();
+        eventSender.mouseMoveTo(r.left + r.width / 2, r.top + r.height / 2);
+    }
+
+    callback = function() {
+        testExpected("document.fullscreenElement", target);
+
+        setTimeout(function() {
+            testExpected("visible", true);
+            endTest();
+        }, 300);
+    };
+
+    runWithKeyDown(function() { target.requestFullscreen(); });
+</script>
+</body>
+</html>

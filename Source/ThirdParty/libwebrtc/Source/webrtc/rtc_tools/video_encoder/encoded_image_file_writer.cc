@@ -11,6 +11,7 @@
 
 #include <cstddef>
 #include <optional>
+#include <string>
 #include <utility>
 
 #include "api/video/encoded_image.h"
@@ -45,14 +46,14 @@ EncodedImageFileWriter::EncodedImageFileWriter(
   // Create writer for every decode target.
   for (int i = 0; i < spatial_layers_; ++i) {
     for (int j = 0; j < temporal_layers_; ++j) {
-      char buffer[256];
-      SimpleStringBuilder name(buffer);
+      StringBuilder name;
       name << "output-" << codec_string << "-"
            << ScalabilityModeToString(*scalability_mode) << "-L" << i << "T"
            << j << ".ivf";
-
-      decode_target_writers_.emplace_back(std::make_pair(
-          IvfFileWriter::Wrap(name.str(), /*byte_limit=*/0), name.str()));
+      std::string name_str = name.Release();
+      auto writer = IvfFileWriter::Wrap(name_str, /*byte_limit=*/0);
+      decode_target_writers_.emplace_back(std::move(writer),
+                                          std::move(name_str));
     }
   }
 }

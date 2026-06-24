@@ -23,6 +23,8 @@
 #include "../../crypto/fipsmodule/aes/internal.h"
 
 
+using namespace bssl;
+
 typedef struct xts128_context {
   AES_KEY *key1, *key2;
   block128_f block1, block2;
@@ -159,8 +161,8 @@ static int aes_xts_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
   return 1;
 }
 
-static int aes_xts_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
-                          size_t len) {
+static int aes_xts_cipher_update(EVP_CIPHER_CTX *ctx, uint8_t *out,
+                                 const uint8_t *in, size_t len) {
   EVP_AES_XTS_CTX *xctx = reinterpret_cast<EVP_AES_XTS_CTX *>(ctx->cipher_data);
   if (!xctx->xts.key1 || !xctx->xts.key2 || !out || !in ||
       len < AES_BLOCK_SIZE ||
@@ -205,12 +207,13 @@ static const EVP_CIPHER aes_256_xts = {
     /* iv_len= */ 16,
     /* ctx_size= */ sizeof(EVP_AES_XTS_CTX),
     /* flags= */ EVP_CIPH_XTS_MODE | EVP_CIPH_CUSTOM_IV |
-             EVP_CIPH_ALWAYS_CALL_INIT | EVP_CIPH_CTRL_INIT |
-             EVP_CIPH_CUSTOM_COPY,
+        EVP_CIPH_ALWAYS_CALL_INIT | EVP_CIPH_CTRL_INIT | EVP_CIPH_CUSTOM_COPY,
     /* init= */ aes_xts_init_key,
-    /* cipher= */ aes_xts_cipher,
+    /* cipher_update= */ aes_xts_cipher_update,
+    /* cipher_final= */ nullptr,
+    /* update_aad= */ nullptr,
     /* cleanup= */ nullptr,
     /* ctrl= */ aes_xts_ctrl,
 };
 
-const EVP_CIPHER *EVP_aes_256_xts(void) { return &aes_256_xts; }
+const EVP_CIPHER *EVP_aes_256_xts() { return &aes_256_xts; }

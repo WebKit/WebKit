@@ -216,7 +216,7 @@
     {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_CCrfc3394_iv"},
     {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_CCrfc3394_ivLen"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "CCAlgorithm"},
     {"access": "public", "name": "CCCryptorRef"},

@@ -1,0 +1,13 @@
+Changing the selected option while the picker is open must not crash when an author rule makes ::checkmark content depend on :checked.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "Two"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+One
+Two
+

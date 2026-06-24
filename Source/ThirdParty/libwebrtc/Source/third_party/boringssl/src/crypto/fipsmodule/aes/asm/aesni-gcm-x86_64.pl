@@ -69,7 +69,7 @@ die "can't locate x86_64-xlate.pl";
 # https://marc.info/?l=openssl-dev&m=146567589526984&w=2.
 $avx = 2;
 
-open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
+open OUT, "|-", $^X, $xlate, $flavour, $output;
 *STDOUT=*OUT;
 
 # See the comment above regarding why the condition is ($avx>1) when there are

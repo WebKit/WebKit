@@ -35,12 +35,22 @@ class EncodedFrame : public EncodedImage {
   EncodedFrame(const EncodedFrame&) = default;
   virtual ~EncodedFrame() {}
 
-  // When this frame was received.
-  // TODO(bugs.webrtc.org/13756): Use Timestamp instead of int.
-  virtual int64_t ReceivedTime() const { return -1; }
-  // Returns a Timestamp from `ReceivedTime`, or nullopt if there is no receive
-  // time.
-  std::optional<Timestamp> ReceivedTimestamp() const;
+  // Note that subclasses must override either ReceivedTime or ReceivedTimestamp
+  // to avoid infinite recursion.
+
+  // When this frame was received in milliseconds.
+  virtual int64_t ReceivedTime() const {
+    const std::optional<Timestamp> t = ReceivedTimestamp();
+    return t.has_value() ? t->ms() : -1;
+  }
+  // When this frame was received, or nullopt if there is no receive timestamp.
+  virtual std::optional<Timestamp> ReceivedTimestamp() const {
+    const int64_t received_time_ms = ReceivedTime();
+    if (received_time_ms == -1) {
+      return std::nullopt;
+    }
+    return Timestamp::Millis(received_time_ms);
+  }
 
   // When this frame should be rendered.
   // TODO(bugs.webrtc.org/13756): Use Timestamp instead of int.

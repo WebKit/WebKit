@@ -51,6 +51,14 @@ class CLDeviceVk : public CLDeviceImpl
                                                     const uint32_t maxSize);
     static cl::WorkgroupSize CalculateUniformFitWGS(const cl::NDRange &ndrange,
                                                     const uint32_t maxSize);
+    uint32_t getWorkGroupSizeMultiple() const;
+
+  private:
+    uint32_t getNumComputeUnits() const;
+    cl_ulong getSingleFpConfig() const;
+    cl_ulong getHalfFpConfig() const;
+    cl_ulong getDoubleFpConfig() const;
+    cl_ulong getCacheSize() const;
 
   private:
     vk::Renderer *mRenderer;

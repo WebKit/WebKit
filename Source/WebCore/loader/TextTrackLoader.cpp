@@ -38,6 +38,7 @@
 #include "HTMLTrackElement.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "NodeInlinesLight.h"
 #include "SharedBuffer.h"
 #include "VTTCue.h"
 #include "WebVTTParser.h"

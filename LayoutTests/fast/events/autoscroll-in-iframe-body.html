@@ -9,13 +9,10 @@
                 top: 800px;
             }
         </style>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
         <script>
+        window.jsTestIsAsync = true;
 
-        if (window.testRunner) {
-            testRunner.waitUntilDone();
-            testRunner.dumpAsText();
-        }
 
         function log(msg)
         {
@@ -81,8 +78,7 @@
             else
                 log("FAILED: the page autoscrolled (window.scrollTop is " + mainDocumentTop + ").");
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
         
         window.addEventListener('load', doTest, false);

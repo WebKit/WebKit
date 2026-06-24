@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
 
 #include "api/field_trials.h"
@@ -59,12 +60,14 @@ class TestEncodedFrame : public EncodedFrame {
     received_time_ = received_time;
   }
 
-  int64_t ReceivedTime() const override { return received_time_.ms(); }
+  std::optional<Timestamp> ReceivedTimestamp() const override {
+    return received_time_;
+  }
 
   int64_t RenderTime() const override { return _renderTimeMs; }
 
  private:
-  Timestamp received_time_ = Timestamp::Millis(0);
+  std::optional<Timestamp> received_time_;
 };
 
 class VideoReceiver2Test : public ::testing::Test {

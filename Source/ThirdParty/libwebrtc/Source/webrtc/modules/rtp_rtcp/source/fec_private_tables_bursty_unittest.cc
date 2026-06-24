@@ -12,8 +12,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/source/fec_private_tables_random.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
@@ -30,7 +30,7 @@ namespace fec_private_tables {
 using internal::LookUpInFecTable;
 
 TEST(FecTable, TestBurstyLookup) {
-  ArrayView<const uint8_t> result;
+  std::span<const uint8_t> result;
   result = LookUpInFecTable(&kPacketMaskBurstyTbl[0], 0, 0);
   // Should match kMaskBursty1_1.
   EXPECT_EQ(2u, result.size());
@@ -56,7 +56,7 @@ TEST(FecTable, TestBurstyLookup) {
 }
 
 TEST(FecTable, TestRandomLookup) {
-  ArrayView<const uint8_t> result;
+  std::span<const uint8_t> result;
   result = LookUpInFecTable(&kPacketMaskRandomTbl[0], 0, 0);
   EXPECT_EQ(2u, result.size());
   EXPECT_EQ(0x80u, result[0]);
@@ -75,7 +75,7 @@ TEST(FecTable, TestRandomGenerated) {
   int num_fec_packets = 6;
   size_t mask_size = sizeof(kMaskRandom15_6) / sizeof(uint8_t);
   internal::PacketMaskTable mask_table(fec_mask_type, num_media_packets);
-  ArrayView<const uint8_t> mask =
+  std::span<const uint8_t> mask =
       mask_table.LookUp(num_media_packets, num_fec_packets);
   EXPECT_EQ(mask.size(), mask_size);
   for (size_t i = 0; i < mask_size; ++i) {

@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/function_view.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
@@ -45,6 +46,12 @@ class TimeController {
   virtual std::unique_ptr<Thread> CreateThread(
       const std::string& name,
       std::unique_ptr<SocketServer> socket_server = nullptr) = 0;
+
+  // Creates a Thread instance that uses the provided `socket_server`.
+  // The `socket_server` must outlive the returned thread.
+  virtual std::unique_ptr<Thread> CreateThreadWithSocketServer(
+      absl::string_view name,
+      SocketServer* socket_server) = 0;
 
   // Creates an Thread instance that ensure that it's set as the current
   // thread.

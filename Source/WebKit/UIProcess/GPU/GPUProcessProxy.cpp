@@ -896,10 +896,12 @@ void GPUProcessProxy::setPresentingApplicationAuditToken(WebCore::ProcessIdentif
 #endif
 
 #if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+#if HAVE(CORE_RE)
 void GPUProcessProxy::requestSharedSimulationConnection(audit_token_t modelProcessAuditToken, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::GPUProcess::RequestSharedSimulationConnection { modelProcessAuditToken }, WTF::move(completionHandler));
 }
+#endif
 
 #if HAVE(TASK_IDENTITY_TOKEN)
 void GPUProcessProxy::createMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity, CompletionHandler<void(const std::optional<String>&)>&& completionHandler)

@@ -13,12 +13,14 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/source/fec_private_tables_bursty.h"
 #include "modules/rtp_rtcp/source/fec_private_tables_random.h"
 #include "rtc_base/checks.h"
+
+namespace webrtc {
 
 namespace {
 // Allow for different modes of protection for packets in UEP case.
@@ -141,7 +143,6 @@ void ShiftFitSubMask(int num_mask_bytes,
 
 }  // namespace
 
-namespace webrtc {
 namespace internal {
 
 PacketMaskTable::PacketMaskTable(FecMaskType fec_mask_type,
@@ -150,7 +151,7 @@ PacketMaskTable::PacketMaskTable(FecMaskType fec_mask_type,
 
 PacketMaskTable::~PacketMaskTable() = default;
 
-ArrayView<const uint8_t> PacketMaskTable::LookUp(int num_media_packets,
+std::span<const uint8_t> PacketMaskTable::LookUp(int num_media_packets,
                                                  int num_fec_packets) {
   RTC_DCHECK_GT(num_media_packets, 0);
   RTC_DCHECK_GT(num_fec_packets, 0);
@@ -246,7 +247,7 @@ void RemainingPacketProtection(int num_media_packets,
         PacketMaskSize(num_media_packets - num_fec_for_imp_packets);
 
     auto end_row = (num_fec_for_imp_packets + num_fec_remaining);
-    ArrayView<const uint8_t> packet_mask_sub_21 = mask_table->LookUp(
+    std::span<const uint8_t> packet_mask_sub_21 = mask_table->LookUp(
         num_media_packets - num_fec_for_imp_packets, num_fec_remaining);
 
     ShiftFitSubMask(num_mask_bytes, res_mask_bytes, num_fec_for_imp_packets,
@@ -254,7 +255,7 @@ void RemainingPacketProtection(int num_media_packets,
 
   } else if (mode == kModeOverlap || mode == kModeBiasFirstPacket) {
     // sub_mask22
-    ArrayView<const uint8_t> packet_mask_sub_22 =
+    std::span<const uint8_t> packet_mask_sub_22 =
         mask_table->LookUp(num_media_packets, num_fec_remaining);
 
     FitSubMask(num_mask_bytes, num_mask_bytes, num_fec_remaining,
@@ -281,7 +282,7 @@ void ImportantPacketProtection(int num_fec_for_imp_packets,
   const int num_imp_mask_bytes = PacketMaskSize(num_imp_packets);
 
   // Get sub_mask1 from table
-  ArrayView<const uint8_t> packet_mask_sub_1 =
+  std::span<const uint8_t> packet_mask_sub_1 =
       mask_table->LookUp(num_imp_packets, num_fec_for_imp_packets);
 
   FitSubMask(num_mask_bytes, num_imp_mask_bytes, num_fec_for_imp_packets,
@@ -410,7 +411,7 @@ void UnequalProtectionMask(int num_media_packets,
 //     * For all entries: 2 * fec index (1 based)
 //   * Size for kPacketMaskBurstyTbl: 2 bytes.
 //     * For all entries: 2 * fec index (1 based)
-ArrayView<const uint8_t> LookUpInFecTable(const uint8_t* table,
+std::span<const uint8_t> LookUpInFecTable(const uint8_t* table,
                                           int media_packet_index,
                                           int fec_index) {
   RTC_DCHECK_LT(media_packet_index, table[0]);
@@ -466,7 +467,7 @@ void GeneratePacketMasks(int num_media_packets,
     // Retrieve corresponding mask table directly:for equal-protection case.
     // Mask = (k,n-k), with protection factor = (n-k)/k,
     // where k = num_media_packets, n=total#packets, (n-k)=num_fec_packets.
-    ArrayView<const uint8_t> mask =
+    std::span<const uint8_t> mask =
         mask_table->LookUp(num_media_packets, num_fec_packets);
     memcpy(packet_mask, &mask[0], mask.size());
   } else {  // UEP case

@@ -16,8 +16,8 @@
 #include <cstdint>
 #include <numeric>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -61,7 +61,7 @@ void RmsLevel::Reset() {
   block_size_ = std::nullopt;
 }
 
-void RmsLevel::Analyze(ArrayView<const int16_t> data) {
+void RmsLevel::Analyze(std::span<const int16_t> data) {
   if (data.empty()) {
     return;
   }
@@ -78,7 +78,7 @@ void RmsLevel::Analyze(ArrayView<const int16_t> data) {
   max_sum_square_ = std::max(max_sum_square_, sum_square);
 }
 
-void RmsLevel::Analyze(ArrayView<const float> data) {
+void RmsLevel::Analyze(std::span<const float> data) {
   if (data.empty()) {
     return;
   }

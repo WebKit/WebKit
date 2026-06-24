@@ -109,7 +109,13 @@ class Port(object):
     # Do test runners support alias hostnames such as web-platform.test
     supports_localhost_aliases = False
 
-    helper = None
+    # LayoutTestHelper state. Read/written by start_helper / start_helper_async /
+    # wait_for_helper_ready / stop_helper. _helper_started signals that the spawn was
+    # attempted, so a None _helper_process means spawn failed rather than no spawn.
+    # _helper_ready signals that we've consumed the 'ready' line.
+    _helper_process = None
+    _helper_started = False
+    _helper_ready = False
     _web_platform_test_server = None
     _websocket_secure_server = None
     _websocket_server = None
@@ -588,14 +594,8 @@ class Port(object):
         if self.test_isfile(test_name) or self.test_isdir(test_name):
             return True
         if '?' in test_name or '#' in test_name:
-            fs = self._filesystem
-            ext_parts = fs.splitext(test_name)
-            test_name = ext_parts[0]
-            if len(ext_parts) > 1 and '?' in ext_parts[1]:
-                test_name += ext_parts[1].split('?')[0]
-            if len(ext_parts) > 1 and '#' in ext_parts[1]:
-                test_name += ext_parts[1].split('#')[0]
-            return self.test_isfile(test_name)
+            (base_name, variant) = Port.test_name_and_variant(test_name)
+            return self.test_isfile(base_name)
         return False
 
     def split_test(self, test_name):
@@ -849,6 +849,16 @@ class Port(object):
         method."""
         return True
 
+    def start_helper_async(self, pixel_tests=False, prefer_integrated_gpu=False):
+        """Kick off the helper process without blocking on its readiness.
+        Override along with wait_for_helper_ready to overlap helper warmup
+        with other setup work."""
+        return True
+
+    def wait_for_helper_ready(self):
+        """Block until a previously async-started helper is ready."""
+        return True
+
     def reset_preferences(self):
         """If a port needs to reset platform-specific persistent preference
         storage, it should override this method."""
@@ -966,15 +976,17 @@ class Port(object):
     def stop_helper(self):
         """Shut down the test helper if it is running. Do nothing if
         it isn't, or it isn't available."""
-        if Port.helper:
+        if Port._helper_process:
             _log.debug("Stopping LayoutTestHelper")
             try:
-                Port.helper.stdin.write(b"x\n")
-                Port.helper.stdin.close()
-                Port.helper.wait()
+                Port._helper_process.stdin.write(b"x\n")
+                Port._helper_process.stdin.close()
+                Port._helper_process.wait()
             except IOError as e:
                 _log.debug("IOError raised while stopping helper: %s" % str(e))
-            Port.helper = None
+            Port._helper_process = None
+        Port._helper_started = False
+        Port._helper_ready = False
 
     def stop_http_server(self):
         """Shut down the http server if it is running. Do nothing if it isn't."""
@@ -1528,7 +1540,10 @@ class Port(object):
             try:
                 repos['webkit'] = local.Scm.from_path(self.host.filesystem.getcwd())
             except OSError:
-                repos['webkit'] = local.Scm.from_path(self.host.filesystem.dirname(__file__))
+                try:
+                    repos['webkit'] = local.Scm.from_path(self.host.filesystem.dirname(self.host.filesystem.path_to_module(__name__)))
+                except OSError:
+                    pass
 
         commits = []
         for repo_id, repo in repos.items():

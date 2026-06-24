@@ -10,10 +10,10 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/rtp_parameters.h"
 #include "api/test/video/function_video_encoder_factory.h"
@@ -87,7 +87,7 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
       }
     }
 
-    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(std::span<const uint8_t> packet) override {
       if (MinMetricRunTimePassed() && MinNumberOfFramesReceived())
         observation_complete_.Set();
 

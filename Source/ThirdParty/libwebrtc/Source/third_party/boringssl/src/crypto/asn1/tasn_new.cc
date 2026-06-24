@@ -22,8 +22,11 @@
 #include <openssl/obj.h>
 
 #include "../internal.h"
+#include "../mem_internal.h"
 #include "internal.h"
 
+
+using namespace bssl;
 
 static void asn1_item_clear(ASN1_VALUE **pval, const ASN1_ITEM *it);
 static int ASN1_template_new(ASN1_VALUE **pval, const ASN1_TEMPLATE *tt);
@@ -41,7 +44,7 @@ ASN1_VALUE *ASN1_item_new(const ASN1_ITEM *it) {
 
 // Allocate an ASN1 structure
 
-int ASN1_item_ex_new(ASN1_VALUE **pval, const ASN1_ITEM *it) {
+int bssl::ASN1_item_ex_new(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   const ASN1_TEMPLATE *tt = nullptr;
   const ASN1_EXTERN_FUNCS *ef;
   ASN1_VALUE **pseqval;
@@ -237,8 +240,7 @@ static int ASN1_primitive_new(ASN1_VALUE **pval, const ASN1_ITEM *it) {
       return 1;
 
     case V_ASN1_ANY: {
-      ASN1_TYPE *typ =
-          reinterpret_cast<ASN1_TYPE *>(OPENSSL_malloc(sizeof(ASN1_TYPE)));
+      ASN1_TYPE *typ = New<ASN1_TYPE>();
       if (!typ) {
         return 0;
       }

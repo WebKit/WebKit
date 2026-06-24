@@ -24,9 +24,14 @@ use alloc::{fmt::Debug, vec::Vec};
 use core::ptr::{null, null_mut};
 
 /// An elliptic curve.
-pub trait Curve: Debug {
-    #[doc(hidden)]
-    fn group(_: sealed::Sealed) -> Group;
+///
+/// ## Safety
+/// The current EC implementation are thread-safe.
+/// Implementers should make sure that further additions to the curve family
+/// should respect thread-safety, too.
+pub trait Curve: Debug + Sync + Send + sealed::Sealed {
+    /// Return the underlying [`Group`] of the curve
+    fn group() -> Group;
 
     /// Hash `data` using a hash function suitable for the curve. (I.e.
     /// SHA-256 for P-256 and SHA-384 for P-384.)
@@ -38,8 +43,10 @@ pub trait Curve: Debug {
 #[derive(Debug)]
 pub struct P256;
 
+impl sealed::Sealed for P256 {}
+
 impl Curve for P256 {
-    fn group(_: sealed::Sealed) -> Group {
+    fn group() -> Group {
         Group::P256
     }
 
@@ -52,8 +59,10 @@ impl Curve for P256 {
 #[derive(Debug)]
 pub struct P384;
 
+impl sealed::Sealed for P384 {}
+
 impl Curve for P384 {
-    fn group(_: sealed::Sealed) -> Group {
+    fn group() -> Group {
         Group::P384
     }
 
@@ -62,7 +71,7 @@ impl Curve for P384 {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[doc(hidden)]
 pub enum Group {
     P256,
@@ -160,17 +169,7 @@ impl Point {
         self.point
     }
 
-    /// Create a new point from an uncompressed X9.62 representation.
-    ///
-    /// (X9.62 is the standard representation of an elliptic-curve point that
-    /// starts with an 0x04 byte.)
-    pub fn from_x962_uncompressed(group: Group, x962: &[u8]) -> Option<Self> {
-        const UNCOMPRESSED: u8 =
-            bssl_sys::point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED as u8;
-        if x962.first()? != &UNCOMPRESSED {
-            return None;
-        }
-
+    fn from_x962(group: Group, x962: &[u8]) -> Option<Self> {
         let point = Self::new(group);
         // Safety: `point` is valid by construction. `x962` is a valid memory
         // buffer.
@@ -184,8 +183,9 @@ impl Point {
             )
         };
         if result == 1 {
-            // X9.62 format cannot represent the point at infinity, so this
-            // should be moot, but `Point` must never contain infinity.
+            // The X9.62 encoding of the point at infinity is 0x00, but
+            // BoringSSL will never parse it. So this should be moot,
+            // but `Point` must never contain infinity.
             assert_eq!(0, unsafe {
                 bssl_sys::EC_POINT_is_at_infinity(point.group, point.point)
             });
@@ -195,10 +195,55 @@ impl Point {
         }
     }
 
+    /// Create a new point from an uncompressed X9.62 representation.
+    ///
+    /// (X9.62 is the standard representation of an elliptic-curve point that
+    /// starts with an 0x04 byte.)
+    pub fn from_x962_uncompressed(group: Group, x962: &[u8]) -> Option<Self> {
+        const UNCOMPRESSED: u8 =
+            bssl_sys::point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED as u8;
+        if x962.first()? != &UNCOMPRESSED {
+            return None;
+        }
+
+        Self::from_x962(group, x962)
+    }
+
     pub fn to_x962_uncompressed(&self) -> Buffer {
         // Safety: arguments are valid, `EC_KEY` ensures that the the group is
         // correct for the point, and a `Point` is always finite.
-        unsafe { to_x962_uncompressed(self.group, self.point) }
+        unsafe {
+            to_x962(
+                self.group,
+                self.point,
+                bssl_sys::point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED,
+            )
+        }
+    }
+
+    pub fn from_x962_compressed(group: Group, x962: &[u8]) -> Option<Self> {
+        // The first byte of the compressed format can be either 0x02 or 0x03,
+        // to indicate whether the y coordinate of the point is even or odd.
+        let first_byte = *x962.first()?;
+        if first_byte != 2 && first_byte != 3 {
+            return None;
+        }
+
+        Self::from_x962(group, x962)
+    }
+
+    /// WARNING: compressed form is rarely used and is not as well supported as
+    /// the uncompressed form.
+    pub fn to_x962_compressed(&self) -> Buffer {
+        // Safety: arguments are valid, `EC_KEY` ensures that the the group is
+        // correct for the point, and a `Point` is always finite.
+        unsafe {
+            to_x962(
+                self.group,
+                self.point,
+                bssl_sys::point_conversion_form_t::POINT_CONVERSION_COMPRESSED,
+            )
+        }
     }
 
     pub fn from_der_subject_public_key_info(group: Group, spki: &[u8]) -> Option<Self> {
@@ -247,7 +292,7 @@ impl Point {
 //
 // An `EC_POINT` can be used concurrently from multiple threads so long as no
 // mutating operations are performed. The mutating operations used here are
-// `EC_POINT_mul` and `EC_POINT_oct2point` (which can be observed by setting
+// `EC_POINT_mul` and `EC_POINT_oct2point`, which can be observed by setting
 // `point` to be `*const` in the struct and seeing what errors trigger.
 //
 // Both those operations are done internally, however, before a `Point` is
@@ -342,7 +387,9 @@ impl Key {
         }
     }
 
-    /// Parses an ECPrivateKey structure (from RFC 5915).
+    /// Parses an ECPrivateKey structure from [RFC 5915].
+    ///
+    /// [RFC 5915]: <https://datatracker.ietf.org/doc/html/rfc5915>
     pub fn from_der_ec_private_key(group: Group, der: &[u8]) -> Option<Self> {
         let key = parse_with_cbs(
             der,
@@ -356,37 +403,73 @@ impl Key {
         Some(Self(key))
     }
 
-    /// Serializes this private key as an ECPrivateKey structure from RFC 5915.
+    /// Parses an ECPrivateKey structure from [RFC 5915], whose curve is specified by
+    /// the `ECParameters`.
+    ///
+    /// Unless the curve group is one of the variants of [`Group`], this method returns [`None`].
+    ///
+    /// [RFC 5915]: <https://datatracker.ietf.org/doc/html/rfc5915>
+    pub fn from_der_ec_private_key_with_curve_names(der: &[u8]) -> Option<Self> {
+        let key = parse_with_cbs(
+            der,
+            // Safety: in this context, `key` is the non-null result of
+            // `EC_KEY_parse_private_key`.
+            |key| unsafe { bssl_sys::EC_KEY_free(key) },
+            // Safety: `cbs` is valid per `parse_with_cbs`.
+            |cbs| unsafe { bssl_sys::EC_KEY_parse_private_key(cbs, null()) },
+        )?;
+        let key = Self(key);
+        if key.get_group().is_none() {
+            None
+        } else {
+            Some(key)
+        }
+    }
+
+    /// Serializes this private key as an ECPrivateKey structure from [RFC 5915].
+    ///
+    /// This method also **serialise** known curve names as `ECParameters`.
+    ///
+    /// [RFC 5915]: <https://datatracker.ietf.org/doc/html/rfc5915>
     pub fn to_der_ec_private_key(&self) -> Buffer {
         cbb_to_buffer(64, |cbb| unsafe {
             // Safety: the `EC_KEY` is always valid so `EC_KEY_marshal_private_key`
             // should only fail if out of memory, which this crate doesn't handle.
-            assert_eq!(
-                1,
-                bssl_sys::EC_KEY_marshal_private_key(
-                    cbb,
-                    self.0,
-                    bssl_sys::EC_PKEY_NO_PARAMETERS as u32
-                )
-            );
+            assert_eq!(1, bssl_sys::EC_KEY_marshal_private_key(cbb, self.0, 0));
         })
     }
 
     /// Parses a PrivateKeyInfo structure (from RFC 5208).
     pub fn from_der_private_key_info(group: Group, der: &[u8]) -> Option<Self> {
         let alg = group.as_evp_pkey_alg();
-        let mut pkey =
-            scoped::EvpPkey::from_der_private_key_info(der, core::slice::from_ref(&alg))?;
-        let ec_key = unsafe { bssl_sys::EVP_PKEY_get1_EC_KEY(pkey.as_ffi_ptr()) };
-        // We only passed in one allowed algorithm, an EC algorithm.
-        assert!(!ec_key.is_null());
-        // Safety: `ec_key` is now owned by this function.
-        let parsed_group = unsafe { bssl_sys::EC_KEY_get0_group(ec_key) };
+        let pkey = scoped::EvpPkey::from_der_private_key_info(der, core::slice::from_ref(&alg))?;
+        // Safety: the pkey is not aliased
+        let ec_key = Self::from_evp_pkey(pkey)?;
         // We only passed in one allowed algorithm, this EC group.
-        assert!(parsed_group == group.as_ffi_ptr());
-        // Safety: `EVP_PKEY_get1_EC_KEY` returned ownership, which we can move
-        // into the returned object.
+        (ec_key.get_group()? == group).then_some(ec_key)
+    }
+
+    // Safety: the pkey must not be aliased via `as_ffi_ptr`
+    pub(crate) fn from_evp_pkey(mut pkey: scoped::EvpPkey) -> Option<Self> {
+        let ec_key = unsafe { bssl_sys::EVP_PKEY_get1_EC_KEY(pkey.as_ffi_ptr()) };
+        if ec_key.is_null() {
+            return None;
+        }
+        // Safety: `EVP_PKEY_get1_EC_KEY` returned owned key, which we can move
+        // into the returned object and whose lifetime is independent of the EVP pkey.
         Some(Self(ec_key))
+    }
+
+    pub(crate) fn get_group(&self) -> Option<Group> {
+        // Safety: we own the `EC_KEY`
+        let id = unsafe { bssl_sys::EC_KEY_get0_group(self.0) };
+        if id == Group::P256.as_ffi_ptr() {
+            Some(Group::P256)
+        } else if id == Group::P384.as_ffi_ptr() {
+            Some(Group::P384)
+        } else {
+            None
+        }
     }
 
     /// Serializes this private key as a PrivateKeyInfo structure from RFC 5208.
@@ -422,7 +505,30 @@ impl Key {
         let point = unsafe { bssl_sys::EC_KEY_get0_public_key(self.0) };
         // Safety: arguments are valid, `EC_KEY` ensures that the the group is
         // correct for the point, and a `Key` always holds a finite public point.
-        unsafe { to_x962_uncompressed(group, point) }
+        unsafe {
+            to_x962(
+                group,
+                point,
+                bssl_sys::point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED,
+            )
+        }
+    }
+
+    /// WARNING: compressed form is rarely used and is not as well supported as
+    /// the uncompressed form.
+    pub fn to_x962_compressed(&self) -> Buffer {
+        // Safety: `self.0` is valid by construction.
+        let group = unsafe { bssl_sys::EC_KEY_get0_group(self.0) };
+        let point = unsafe { bssl_sys::EC_KEY_get0_public_key(self.0) };
+        // Safety: arguments are valid, `EC_KEY` ensures that the the group is
+        // correct for the point, and a `Key` always holds a finite public point.
+        unsafe {
+            to_x962(
+                group,
+                point,
+                bssl_sys::point_conversion_form_t::POINT_CONVERSION_COMPRESSED,
+            )
+        }
     }
 
     pub fn to_der_subject_public_key_info(&self) -> Buffer {
@@ -452,27 +558,40 @@ impl Drop for Key {
     }
 }
 
-/// Serialize a finite point to uncompressed X9.62 format.
+impl Clone for Key {
+    fn clone(&self) -> Self {
+        unsafe {
+            bssl_sys::EC_KEY_up_ref(self.0);
+        }
+        Self(self.0)
+    }
+}
+
+/// Serialize a finite point to X9.62 format.
 ///
 /// Callers must ensure that the arguments are valid, that the point has the
 /// specified group, and that the point is finite.
-unsafe fn to_x962_uncompressed(
+unsafe fn to_x962(
     group: *const bssl_sys::EC_GROUP,
     point: *const bssl_sys::EC_POINT,
+    form: bssl_sys::point_conversion_form_t,
 ) -> Buffer {
-    cbb_to_buffer(65, |cbb| unsafe {
-        // Safety: the caller must ensure that the arguments are valid.
-        let result = bssl_sys::EC_POINT_point2cbb(
-            cbb,
-            group,
-            point,
-            bssl_sys::point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED,
-            /*bn_ctx=*/ null_mut(),
-        );
-        // The public key is always finite, so `EC_POINT_point2cbb` only fails
-        // if out of memory, which isn't handled by this crate.
-        assert_eq!(result, 1);
-    })
+    cbb_to_buffer(
+        // This length is just a hint and is tuned for P-256's output length.
+        if form == bssl_sys::point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED {
+            1 + 32 + 32
+        } else {
+            1 + 32
+        },
+        |cbb| unsafe {
+            // Safety: the caller must ensure that the arguments are valid.
+            let result =
+                bssl_sys::EC_POINT_point2cbb(cbb, group, point, form, /*bn_ctx=*/ null_mut());
+            // The public key is always finite, so `EC_POINT_point2cbb` only fails
+            // if out of memory, which isn't handled by this crate.
+            assert_eq!(result, 1);
+        },
+    )
 }
 
 unsafe fn to_der_subject_public_key_info(ec_key: *mut bssl_sys::EC_KEY) -> Buffer {
@@ -481,23 +600,37 @@ unsafe fn to_der_subject_public_key_info(ec_key: *mut bssl_sys::EC_KEY) -> Buffe
     assert_eq!(1, unsafe {
         bssl_sys::EVP_PKEY_set1_EC_KEY(pkey.as_ffi_ptr(), ec_key)
     });
-    cbb_to_buffer(65, |cbb| unsafe {
-        // The arguments are valid so this will only fail if out of memory,
-        // which this crate doesn't handle.
-        assert_eq!(1, bssl_sys::EVP_marshal_public_key(cbb, pkey.as_ffi_ptr()));
-    })
+    cbb_to_buffer(
+        // This length is just a hint and is tuned for P-256's output length.
+        65,
+        |cbb| unsafe {
+            // The arguments are valid so this will only fail if out of memory,
+            // which this crate doesn't handle.
+            assert_eq!(1, bssl_sys::EVP_marshal_public_key(cbb, pkey.as_ffi_ptr()));
+        },
+    )
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
 
-    fn test_point_format<Serialize, Parse>(serialize_func: Serialize, parse_func: Parse)
-    where
+    #[derive(PartialEq)]
+    enum Corruption {
+        ShouldBeDetected,
+        DontTest,
+    }
+
+    fn test_point_format<Serialize, Parse>(
+        group: Group,
+        serialize_func: Serialize,
+        parse_func: Parse,
+        corruption: Corruption,
+    ) where
         Serialize: FnOnce(&Point) -> Buffer,
         Parse: Fn(&[u8]) -> Option<Point>,
     {
-        let key = Key::generate(Group::P256);
+        let key = Key::generate(group);
         let point = key.to_point();
 
         let mut vec = serialize_func(&point).as_ref().to_vec();
@@ -509,9 +642,16 @@ mod test {
 
         assert!(parse_func(&vec.as_slice()[0..16]).is_none());
 
-        vec[10] ^= 1;
+        // Messing with the first byte should always cause an error.
+        vec[0] ^= 64;
         assert!(parse_func(vec.as_slice()).is_none());
-        vec[10] ^= 1;
+        vec[0] ^= 64;
+
+        if corruption == Corruption::ShouldBeDetected {
+            vec[11] ^= 1;
+            assert!(parse_func(vec.as_slice()).is_none());
+            vec[11] ^= 1;
+        }
 
         assert!(parse_func(b"").is_none());
     }
@@ -522,25 +662,93 @@ mod test {
         assert!(Point::from_x962_uncompressed(Group::P256, x962).is_some());
 
         test_point_format(
+            Group::P256,
             |point| point.to_x962_uncompressed(),
             |buf| Point::from_x962_uncompressed(Group::P256, buf),
+            Corruption::ShouldBeDetected,
         );
+
+        test_point_format(
+            Group::P384,
+            |point| point.to_x962_uncompressed(),
+            |buf| Point::from_x962_uncompressed(Group::P384, buf),
+            Corruption::ShouldBeDetected,
+        );
+
+        test_point_format(
+            Group::P256,
+            |point| point.to_x962_compressed(),
+            |buf| Point::from_x962_compressed(Group::P256, buf),
+            // Flipping a bit in a compressed point has a reasonable chance of
+            // producing another valid point, so we can't run a bit-flip test
+            // in this case.
+            Corruption::DontTest,
+        );
+
+        test_point_format(
+            Group::P384,
+            |point| point.to_x962_compressed(),
+            |buf| Point::from_x962_compressed(Group::P384, buf),
+            // Flipping a bit in a compressed point has a reasonable chance of
+            // producing another valid point, so we can't run a bit-flip test
+            // in this case.
+            Corruption::DontTest,
+        );
+    }
+
+    #[test]
+    fn x962_crossing_formats() {
+        let point = Key::generate(Group::P256).to_point();
+        let uncompressed = point.to_x962_uncompressed();
+        let compressed = point.to_x962_compressed();
+
+        // Compressed points won't be accepted by the uncompressed function and
+        // vice-versa.
+        assert!(Point::from_x962_uncompressed(Group::P256, compressed.as_ref()).is_none());
+        assert!(Point::from_x962_compressed(Group::P256, uncompressed.as_ref()).is_none());
+    }
+
+    #[test]
+    fn x962_infinity_not_accepted() {
+        // 0x00 is the X9.62 encoding of the point at infinity.
+        let infinity = &[0];
+        assert!(Point::from_x962_uncompressed(Group::P256, infinity).is_none());
+        assert!(Point::from_x962_compressed(Group::P256, infinity).is_none());
+    }
+
+    #[test]
+    fn x962_empty() {
+        // The X9.62 functions look at the first byte to check the type. They
+        // must handle the case of an empty input correctly.
+        let empty = b"";
+        assert!(Point::from_x962_uncompressed(Group::P256, empty).is_none());
+        assert!(Point::from_x962_compressed(Group::P256, empty).is_none());
     }
 
     #[test]
     fn spki() {
         test_point_format(
+            Group::P256,
             |point| point.to_der_subject_public_key_info(),
             |buf| Point::from_der_subject_public_key_info(Group::P256, buf),
+            Corruption::ShouldBeDetected,
+        );
+
+        test_point_format(
+            Group::P384,
+            |point| point.to_der_subject_public_key_info(),
+            |buf| Point::from_der_subject_public_key_info(Group::P384, buf),
+            Corruption::ShouldBeDetected,
         );
     }
 
-    fn test_key_format<Serialize, Parse>(serialize_func: Serialize, parse_func: Parse)
+    fn test_key_format<Serialize, Parse>(group: Group, serialize_func: Serialize, parse_func: Parse)
     where
         Serialize: FnOnce(&Key) -> Buffer,
         Parse: Fn(&[u8]) -> Option<Key>,
     {
-        let key = Key::generate(Group::P256);
+        let key = Key::generate(group);
+        assert_eq!(key.get_group().unwrap(), group);
 
         let vec = serialize_func(&key).as_ref().to_vec();
         let key2 = parse_func(vec.as_slice()).unwrap();
@@ -548,6 +756,7 @@ mod test {
             key.to_x962_uncompressed().as_ref(),
             key2.to_x962_uncompressed().as_ref()
         );
+        assert_eq!(key.get_group(), key2.get_group());
 
         assert!(parse_func(&vec.as_slice()[0..16]).is_none());
         assert!(parse_func(b"").is_none());
@@ -555,25 +764,39 @@ mod test {
 
     #[test]
     fn der_ec_private_key() {
-        test_key_format(
-            |key| key.to_der_ec_private_key(),
-            |buf| Key::from_der_ec_private_key(Group::P256, buf),
-        );
+        for group in [Group::P256, Group::P384] {
+            test_key_format(
+                group,
+                |key| key.to_der_ec_private_key(),
+                |buf| Key::from_der_ec_private_key(group, buf),
+            );
+            test_key_format(
+                group,
+                |key| key.to_der_ec_private_key(),
+                |buf| Key::from_der_ec_private_key_with_curve_names(buf),
+            );
+        }
     }
 
     #[test]
     fn der_private_key_info() {
-        test_key_format(
-            |key| key.to_der_private_key_info(),
-            |buf| Key::from_der_private_key_info(Group::P256, buf),
-        );
+        for group in [Group::P256, Group::P384] {
+            test_key_format(
+                group,
+                |key| key.to_der_private_key_info(),
+                |buf| Key::from_der_private_key_info(group, buf),
+            );
+        }
     }
 
     #[test]
     fn big_endian() {
-        test_key_format(
-            |key| key.to_big_endian(),
-            |buf| Key::from_big_endian(Group::P256, buf),
-        );
+        for group in [Group::P256, Group::P384] {
+            test_key_format(
+                group,
+                |key| key.to_big_endian(),
+                |buf| Key::from_big_endian(group, buf),
+            );
+        }
     }
 }

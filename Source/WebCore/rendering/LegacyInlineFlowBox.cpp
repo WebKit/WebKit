@@ -35,11 +35,11 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include "TextBoxPainter.h"
 #include <math.h>
@@ -211,7 +211,7 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     auto leftGlyphEdge = glyphOverflow ? glyphOverflow->left : 0_lu;
     auto rightGlyphEdge = glyphOverflow ? glyphOverflow->right : 0_lu;
 
-    auto viewportSize = textBox.renderer().frame().view() ? textBox.renderer().frame().view()->size() : IntSize();
+    auto viewportSize = textBox.renderer().frame().view() ? protect(textBox.renderer().frame())->view()->size() : IntSize();
     LayoutUnit strokeOverflow(std::ceil(lineStyle.usedStrokeWidth(viewportSize) / 2.0f));
     auto topGlyphOverflow = -strokeOverflow - topGlyphEdge;
     auto bottomGlyphOverflow = strokeOverflow + bottomGlyphEdge;

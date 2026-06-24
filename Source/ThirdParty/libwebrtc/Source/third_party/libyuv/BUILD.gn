@@ -22,16 +22,12 @@ declare_args() {
 
 config("libyuv_config") {
   include_dirs = [ "include" ]
-  if (is_android) {
-    if (target_cpu == "arm" || target_cpu == "x86") {
-      ldflags = [ "-Wl,--dynamic-linker,/system/bin/linker" ]
-    } else {
-      ldflags = [ "-Wl,--dynamic-linker,/system/bin/linker64" ]
-    }
-  }
 
   # Define CHROMIUM to tell cpu_id to avoid sandbox unsafe system calls.
   defines = [ "CHROMIUM" ]
+  if (libyuv_enable_rowwin) {
+    defines += [ "LIBYUV_ENABLE_ROWWIN=1" ]
+  }
   if (!libyuv_use_neon) {
     defines += [ "LIBYUV_DISABLE_NEON" ]
   }
@@ -229,13 +225,12 @@ if (libyuv_use_neon) {
 
     public_configs = [ ":libyuv_config" ]
 
-    # The -march arguments below are incompatible with libc++ modules.
-    use_libcxx_modules = false
     if (current_cpu == "arm64") {
+      # The -march arguments below are incompatible with libc++ modules.
+      use_libcxx_modules = false
+
+      # TODO(thakis): Do we get this from global flags already? Is this needed?
       cflags = [ "-march=armv8-a+dotprod+i8mm" ]
-    } else {
-      configs -= [ "//build/config/compiler:compiler_arm_fpu" ]
-      cflags = [ "-mfpu=neon" ]
     }
   }
 }
@@ -395,9 +390,7 @@ if (libyuv_include_tests) {
 
     # TODO(YangZhang): These lines can be removed when high accuracy
     # YUV to RGB to Neon is ported.
-    if ((target_cpu == "armv7" || target_cpu == "armv7s" ||
-         (target_cpu == "arm" && arm_version >= 7) || target_cpu == "arm64") &&
-        (arm_use_neon || arm_optionally_use_neon)) {
+    if (target_cpu == "arm" || target_cpu == "arm64") {
       defines += [ "LIBYUV_NEON" ]
     }
 

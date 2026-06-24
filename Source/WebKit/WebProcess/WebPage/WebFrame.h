@@ -116,7 +116,7 @@ class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public 
 public:
     static Ref<WebFrame> create(WebPage& page, WebCore::FrameIdentifier frameID) { return adoptRef(*new WebFrame(page, frameID)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
-    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, const String& frameName, std::optional<WebCore::FrameIdentifier> openerFrameID, Ref<WebCore::FrameTreeSyncData>&&);
+    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, const String& frameName, std::optional<WebCore::FrameIdentifier> openerFrameID, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData>&&);
     ~WebFrame();
 
     void ref() const final { API::ObjectImpl<API::Object::Type::BundleFrame>::ref(); }
@@ -139,7 +139,7 @@ public:
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
     void commitProvisionalFrame();
     void destroyProvisionalFrame();
-    void loadDidCommitInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
+    void loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier>);
     WebCore::LocalFrame* provisionalFrame() { return m_provisionalFrame.get(); }
 
     Awaitable<std::optional<FrameInfoData>> getFrameInfo();
@@ -224,8 +224,9 @@ public:
     bool allowsFollowingLink(const URL&) const;
 
     String provisionalURL() const;
-    String suggestedFilenameForResourceWithURL(const URL&) const;
-    String mimeTypeForResourceWithURL(const URL&) const;
+    enum class ResourceType : uint8_t { Generic, Image };
+    String suggestedFilenameForResourceWithURL(const URL&, ResourceType = ResourceType::Generic) const;
+    String mimeTypeForResourceWithURL(const URL&, ResourceType = ResourceType::Generic) const;
 
     void setTextDirection(const String&);
     void updateFrameRectFromRemote(WebCore::IntRect);
@@ -270,7 +271,7 @@ public:
 
     String frameTextForTesting(bool);
 
-    std::pair<Ref<WebCore::WebKitJSHandle>, JSHandleInfo> createAndPrepareToSendJSHandle(WebCore::Node&) const;
+    std::optional<std::pair<Ref<WebCore::WebKitJSHandle>, JSHandleInfo>> createAndPrepareToSendJSHandle(WebCore::Node&) const;
 
     void markAsRemovedInAnotherProcess() { m_wasRemovedInAnotherProcess = true; }
     bool wasRemovedInAnotherProcess() const { return m_wasRemovedInAnotherProcess; }

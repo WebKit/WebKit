@@ -220,13 +220,13 @@ class GitHubEWS(GitHub):
                           ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', 'win-tests'],
                           ['webkitperl', 'ios-wk2', 'api-mac', 'api-wpe', ''],
                           ['webkitpy', 'ios-wk2-wpt', 'api-mac-debug', 'gtk3-libwebrtc', ''],
-                          ['jsc-x86-64', 'api-ios', 'mac-wk1', 'gtk', ''],
-                          ['jsc-debug-arm64', 'ios-safer-cpp', 'mac-wk2', 'gtk-wk2', ''],
-                          ['services', 'vision', 'mac-AS-debug-wk2', 'api-gtk', ''],
-                          ['merge', 'vision-sim', 'mac-wk2-stress', 'playstation', ''],
-                          ['unsafe-merge', 'vision-wk2', 'mac-intel-wk2', 'jsc-armv7', ''],
-                          ['', 'tv', 'mac-safer-cpp', 'jsc-armv7-tests', ''],
-                          ['', 'tv-sim', 'mac-site-isolation', '', ''],
+                          ['jsc-x86-64', 'api-ios', 'mac-wk2', 'gtk', ''],
+                          ['jsc-debug-arm64', 'ios-safer-cpp', 'mac-AS-debug-wk2', 'gtk-wk2', ''],
+                          ['services', 'vision', 'mac-wk2-stress', 'api-gtk', ''],
+                          ['merge', 'vision-sim', 'mac-intel-wk2', 'playstation', ''],
+                          ['unsafe-merge', 'vision-wk2', 'mac-safer-cpp', 'jsc-armv7', ''],
+                          ['', 'tv', 'mac-site-isolation', 'jsc-armv7-tests', ''],
+                          ['', 'tv-sim', '', '', ''],
                           ['', 'watch', '', '', ''],
                           ['', 'watch-sim', '', '', '']]
     approved_user_list_for_apple_internal_builds = []
@@ -357,11 +357,11 @@ class GitHubEWS(GitHub):
             if Buildbot.get_parent_queue(queue):
                 queue = Buildbot.get_parent_queue(queue)
             queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
-            url = None
             if queue_full_name:
                 url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
-            hover_over_text = 'Waiting in queue, processing has not started yet'
-            return u'| [{icon} {name} ]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
+                hover_over_text = 'Waiting in queue, processing has not started yet'
+                return f'| [{icon} {name}]({url} "{hover_over_text}") '
+            return f'| {icon} {name} '
 
         url = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
 

@@ -122,18 +122,6 @@
           'include',
           '.',
         ],
-        'conditions': [
-          ['OS == "android" and target_arch == "arm64"', {
-            'ldflags': [
-              '-Wl,--dynamic-linker,/system/bin/linker64',
-            ],
-          }],
-          ['OS == "android" and target_arch != "arm64"', {
-            'ldflags': [
-              '-Wl,--dynamic-linker,/system/bin/linker',
-            ],
-          }],
-        ], #conditions
       },
       'sources': [
         '<@(libyuv_sources)',

@@ -175,7 +175,7 @@ namespace JSC {
             return block;
         }
 
-        template<typename T, typename = std::enable_if_t<std::is_base_of<ParserArenaDeletable, T>::value>>
+        template<std::derived_from<ParserArenaDeletable> T>
         void* allocateDeletable(size_t size)
         {
             // T may extend ParserArenaDeletable via multiple inheritance, but not as T's first

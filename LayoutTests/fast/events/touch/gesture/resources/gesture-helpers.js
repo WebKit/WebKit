@@ -14,10 +14,7 @@ function recordScroll(event)
         if (gesturesOccurred == expectedGesturesTotal) {
             shouldBe('scrollEventsOccurred', expectedScrollEventsOccurred);
             // If we've got here, we've passed.
-            successfullyParsed = true;
-            isSuccessfullyParsed();
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
     }
 }
@@ -25,10 +22,7 @@ function recordScroll(event)
 function exitIfNecessary()
 {
     debug('gesture events not implemented on this platform or gesture event scrolling of a document is broken');
-    successfullyParsed = true;
-    isSuccessfullyParsed();
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 function checkTestDependencies()

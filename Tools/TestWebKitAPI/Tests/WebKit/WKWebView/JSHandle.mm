@@ -32,6 +32,9 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKJSHandle.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
 #import <WebKit/_WKFeature.h>
@@ -56,6 +59,7 @@ TEST(JSHandle, Basic)
     HTTPServer server({
         { "/example"_s, { "<iframe id=onlyframe src='https://webkit.org/webkit'></iframe><div id=onlydiv></div>"_s } },
         { "/webkit"_s, { "hi"_s } },
+        { "/foobar"_s, { "<p>after navigation</p>"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     RetainPtr configuration = server.httpsProxyConfiguration();
@@ -104,9 +108,23 @@ TEST(JSHandle, Basic)
 
     result = [webView objectByEvaluatingJavaScript:@"function returnThirty() { return '30'; }; window.webkit.createJSHandle(returnThirty)" inFrame:nil inContentWorld:world.get()];
     EXPECT_WK_STREQ([webView objectByCallingAsyncFunction:@"return n()" withArguments:@{ @"n" : result.get() } inFrame:nil inContentWorld:world.get()], "30");
+    RetainPtr<WKJSHandle> funcRef = (WKJSHandle *)result.get();
+
+    result = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle({greeting: 'hi'})" inFrame:nil inContentWorld:world.get()];
+    EXPECT_WK_STREQ([webView objectByCallingAsyncFunction:@"return n.greeting" withArguments:@{ @"n" : result.get() } inFrame:nil inContentWorld:world.get()], "hi");
+    RetainPtr<WKJSHandle> plainObjectRef = (WKJSHandle *)result.get();
 
     result = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle(window.parent)" inFrame:[webView firstChildFrame] inContentWorld:world.get()];
     EXPECT_WK_STREQ(getWindowFrameInfo(result).request.URL.absoluteString, "https://example.com/example");
+
+    // After top-level navigation, old JSHandles should be undefined.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/foobar"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView.get().configuration.processPool _garbageCollectJavaScriptObjectsForTesting];
+
+    EXPECT_TRUE([[webView objectByCallingAsyncFunction:@"return n === undefined" withArguments:@{ @"n" : iframeRef.get() } inFrame:nil inContentWorld:world.get()] boolValue]);
+    EXPECT_TRUE([[webView objectByCallingAsyncFunction:@"return n === undefined" withArguments:@{ @"n" : funcRef.get() } inFrame:nil inContentWorld:world.get()] boolValue]);
+    EXPECT_TRUE([[webView objectByCallingAsyncFunction:@"return n === undefined" withArguments:@{ @"n" : plainObjectRef.get() } inFrame:nil inContentWorld:world.get()] boolValue]);
 }
 
 TEST(JSHandle, Equality)
@@ -218,6 +236,51 @@ TEST(JSHandle, Reuse)
     }
     WKJSHandle *fun = [webView objectByEvaluatingJavaScript:@"f" inFrame:nil inContentWorld:world.get()];
     EXPECT_TRUE([[webView objectByCallingAsyncFunction:@"return fun()" withArguments:@{ @"fun":fun } inFrame:nil inContentWorld:world.get()] isEqual:@42]);
+}
+
+TEST(JSHandle, HandleDoesNotKeepDocumentAliveAfterNavigation)
+{
+    HTTPServer server({
+        { "/page1"_s, { "<div id=mydiv></div>"_s } },
+        { "/page2"_s, { "<p>after navigation</p>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration.get().preferences _setUsesPageCache:NO];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/page1"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto liveDocumentsCount = [&] {
+        __block NSUInteger count = 0;
+        __block bool done = false;
+        [webView _numberOfLiveDocumentsForTesting:^(NSUInteger value) {
+            count = value;
+            done = true;
+        }];
+        Util::run(&done);
+        return count;
+    };
+
+    auto baselineDocuments = liveDocumentsCount();
+
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    worldConfiguration.get().jsHandleCreationEnabled = YES;
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+
+    RetainPtr<WKJSHandle> divHandle = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle(mydiv)" inFrame:nil inContentWorld:world.get()];
+    EXPECT_TRUE([divHandle isKindOfClass:WKJSHandle.class]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/page2"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView.get().configuration.processPool _garbageCollectJavaScriptObjectsForTesting];
+
+    EXPECT_EQ(baselineDocuments, liveDocumentsCount());
 }
 
 }

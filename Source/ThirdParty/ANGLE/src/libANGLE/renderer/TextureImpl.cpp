@@ -46,17 +46,14 @@ angle::Result TextureImpl::copySubTexture(const gl::Context *context,
 
 angle::Result TextureImpl::copyRenderbufferSubData(const gl::Context *context,
                                                    const gl::Renderbuffer *srcBuffer,
-                                                   GLint srcLevel,
                                                    GLint srcX,
                                                    GLint srcY,
-                                                   GLint srcZ,
                                                    GLint dstLevel,
                                                    GLint dstX,
                                                    GLint dstY,
                                                    GLint dstZ,
                                                    GLsizei srcWidth,
-                                                   GLsizei srcHeight,
-                                                   GLsizei srcDepth)
+                                                   GLsizei srcHeight)
 {
     UNREACHABLE();
     return angle::Result::Stop;
@@ -112,17 +109,6 @@ angle::Result TextureImpl::copy3DSubTexture(const gl::Context *context,
                                             bool unpackPremultiplyAlpha,
                                             bool unpackUnmultiplyAlpha,
                                             const gl::Texture *source)
-{
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
-
-angle::Result TextureImpl::setImageExternal(const gl::Context *context,
-                                            const gl::ImageIndex &index,
-                                            GLenum internalFormat,
-                                            const gl::Extents &size,
-                                            GLenum format,
-                                            GLenum type)
 {
     UNREACHABLE();
     return angle::Result::Stop;
@@ -186,12 +172,6 @@ GLint TextureImpl::getFormatSupportedCompressionRates(const gl::Context *context
                                                       GLenum internalformat,
                                                       GLsizei bufSize,
                                                       GLint *rates)
-{
-    UNREACHABLE();
-    return 0;
-}
-
-GLint TextureImpl::getNativeID() const
 {
     UNREACHABLE();
     return 0;

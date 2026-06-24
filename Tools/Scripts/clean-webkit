@@ -72,8 +72,6 @@ def removeDerivedSources(fs):
             fs.remove(each)
 
 def getKeepDirs():
-    if os.environ.get('WEBKIT_FLATPAK') == '1':
-        return ["Toolchains", "UserFlatpak"]
     if os.environ.get('WEBKIT_JHBUILD') == '1':
         return ["DependenciesGTK", "DependenciesWPE"]
     return []

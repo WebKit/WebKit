@@ -20,18 +20,19 @@
 #include <openssl/mem.h>
 
 #include "../internal.h"
+#include "../mem_internal.h"
 
 
-BUF_MEM *BUF_MEM_new(void) {
-  return reinterpret_cast<BUF_MEM *>(OPENSSL_zalloc(sizeof(BUF_MEM)));
-}
+using namespace bssl;
+
+BUF_MEM *BUF_MEM_new() { return New<BUF_MEM>(); }
 
 void BUF_MEM_free(BUF_MEM *buf) {
   if (buf == nullptr) {
     return;
   }
   OPENSSL_free(buf->data);
-  OPENSSL_free(buf);
+  Delete(buf);
 }
 
 int BUF_MEM_reserve(BUF_MEM *buf, size_t cap) {

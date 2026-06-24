@@ -57,9 +57,9 @@
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderSVGModelObject.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGElement.h"
 #include "SVGLengthContext.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleExtractorState.h"
 #include "StyleInterpolation.h"
@@ -70,6 +70,7 @@
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
@@ -281,7 +282,7 @@ public:
 
 // MARK: - Shared Adaptor
 
-// Shared adaptors are used by adaptors to further adapt a value that has been partially extracted from a RenderStyle. Like adaptors, they use a provided functor to allow them to be used for both CSSValue creation and serialization.
+// Shared adaptors are used by adaptors to further adapt a value that has been partially extracted from a ComputedStyle. Like adaptors, they use a provided functor to allow them to be used for both CSSValue creation and serialization.
 
 template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, const InsetEdge& value, F&& functor) const
@@ -436,7 +437,7 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
         };
 
         auto toMarginTrimSide = [](const RenderBox& renderer) -> Style::MarginTrimSide {
-            auto formattingContextRootStyle = [](const RenderBox& renderer) -> const RenderStyle& {
+            auto formattingContextRootStyle = [](const RenderBox& renderer) -> const Style::ComputedStyle& {
                 if (auto* ancestorToUse = (renderer.isFlexItem() || renderer.isGridItem()) ? renderer.parent() : renderer.containingBlock())
                     return ancestorToUse->style();
                 ASSERT_NOT_REACHED();
@@ -507,7 +508,7 @@ template<CSSPropertyID propertyID> struct PaddingEdgeSharedAdaptor {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, const PaddingEdge& value, F&& functor) const
     {
         auto* renderBox = dynamicDowncast<RenderBox>(state.renderer);
-        if (!renderBox || value.isFixed())
+        if (!renderBox || value.value.isFixed())
             return functor(value);
 
         if constexpr (propertyID == CSSPropertyPaddingTop)
@@ -678,7 +679,7 @@ template<CSSPropertyID> struct WebkitColumnBreakSharedAdaptor {
 
 // MARK: - Adaptors
 
-// Adaptors are used to implement the logic for extracting a value from a RenderStyle and performing some operation of the CSS value equivalent. This allows the same code to be used for CSS creation and serialization.
+// Adaptors are used to implement the logic for extracting a value from a ComputedStyle and performing some operation of the CSS value equivalent. This allows the same code to be used for CSS creation and serialization.
 
 template<CSSPropertyID> struct PropertyExtractorAdaptor;
 
@@ -1339,7 +1340,6 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyCaretColor> {
     }
 };
 
-
 // MARK: - Adaptor Invokers
 
 template<CSSPropertyID propertyID> Ref<CSSValue> extractCSSValue(ExtractorState& state)
@@ -1364,18 +1364,11 @@ template<CSSPropertyID propertyID, typename List, typename Mapper> Ref<CSSValue>
 
     CSSValueListBuilder resultListBuilder;
 
-    if constexpr (List::value_type::computedValueUsesUsedValues) {
-        for (auto& value : list.usedValues())
+    if (!list.isInitial()) {
+        for (auto& value : list.template computedValuesForProperty<propertyID>())
             resultListBuilder.append(mapper(state, PropertyAccessor { value }.get(), value, list));
-    } else {
-        if (!list.isInitial()) {
-            for (auto& value : list.computedValues()) {
-                if (!PropertyAccessor { value }.isFilled())
-                    resultListBuilder.append(mapper(state, PropertyAccessor { value }.get(), value, list));
-            }
-        } else
-            resultListBuilder.append(mapper(state, PropertyAccessor::initial(), std::nullopt, list));
-    }
+    } else
+        resultListBuilder.append(mapper(state, PropertyAccessor::initial(), std::nullopt, list));
 
     return CSSValueList::createCommaSeparated(WTF::move(resultListBuilder));
 }
@@ -1386,26 +1379,15 @@ template<CSSPropertyID propertyID, typename List, typename Mapper> void extractC
 
     bool includeComma = false;
 
-    if constexpr (List::value_type::computedValueUsesUsedValues) {
-        for (auto& value : list.usedValues()) {
+    if (!list.isInitial()) {
+        for (auto& value : list.template computedValuesForProperty<propertyID>()) {
             if (includeComma)
                 builder.append(", "_s);
             mapper(state, builder, context, PropertyAccessor { value }.get(), value, list);
             includeComma = true;
         }
-    } else {
-        if (!list.isInitial()) {
-            for (auto& value : list.computedValues()) {
-                if (!PropertyAccessor { value }.isFilled()) {
-                    if (includeComma)
-                        builder.append(", "_s);
-                    mapper(state, builder, context, PropertyAccessor { value }.get(), value, list);
-                    includeComma = true;
-                }
-            }
-        } else
-            mapper(state, builder, context, PropertyAccessor::initial(), std::nullopt, list);
-    }
+    } else
+        mapper(state, builder, context, PropertyAccessor::initial(), std::nullopt, list);
 }
 
 template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateValue(ExtractorState& state)
@@ -1883,12 +1865,12 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
 {
     static_assert(property == CSSPropertyBackground || property == CSSPropertyMask);
 
-    auto computeRenderStyle = [&](std::unique_ptr<RenderStyle>& ownedStyle) -> const RenderStyle* {
+    auto computeRenderStyle = [&](std::unique_ptr<Style::ComputedStyle>& ownedStyle) -> const Style::ComputedStyle* {
         if (auto renderer = state.element->renderer(); renderer && renderer->isComposited() && Interpolation::isAccelerated(property, state.element->document().settings())) {
             ownedStyle = renderer->animatedStyle();
             if (state.pseudoElementIdentifier) {
                 // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
-                return ownedStyle->getCachedPseudoStyle(*state.pseudoElementIdentifier);
+                return ownedStyle->pseudoElementStyle(*state.pseudoElementIdentifier);
             }
             return ownedStyle.get();
         }
@@ -1899,7 +1881,7 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
     auto layerCount = [&] -> size_t {
         // FIXME: Why does this not use state.style?
 
-        std::unique_ptr<RenderStyle> ownedStyle;
+        std::unique_ptr<Style::ComputedStyle> ownedStyle;
         auto style = computeRenderStyle(ownedStyle);
         if (!style)
             return 0;
@@ -1930,20 +1912,26 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
     // The computed properties are returned as lists of properties, with a list of layers in each.
     // We want to swap that around to have a list of layers, with a list of properties in each.
 
+    // A coordinated list longhand only serializes its specified values, which may be fewer
+    // than layerCount. The used value for a given layer repeats those values (modulo their
+    // count), so index into the longhand list by the layer index modulo its size.
+    auto valueForLayer = [&](const CSSValue& shorthandValue, size_t layerIndex) -> CSSValue& {
+        if (layerCount == 1)
+            return const_cast<CSSValue&>(shorthandValue);
+        auto& list = downcast<CSSValueList>(shorthandValue);
+        return const_cast<CSSValue&>(*list.item(layerIndex % list.size()));
+    };
+
     CSSValueListBuilder layers;
     for (size_t i = 0; i < layerCount; i++) {
         CSSValueListBuilder beforeList;
         if (i == layerCount - 1 && lastValue)
             beforeList.append(*lastValue);
-        for (size_t j = 0; j < propertiesBeforeSlashSeparator.length(); j++) {
-            auto& value = *before->item(j);
-            beforeList.append(const_cast<CSSValue&>(layerCount == 1 ? value : *downcast<CSSValueList>(value).item(i)));
-        }
+        for (size_t j = 0; j < propertiesBeforeSlashSeparator.length(); j++)
+            beforeList.append(valueForLayer(*before->item(j), i));
         CSSValueListBuilder afterList;
-        for (size_t j = 0; j < propertiesAfterSlashSeparator.length(); j++) {
-            auto& value = *after->item(j);
-            afterList.append(const_cast<CSSValue&>(layerCount == 1 ? value : *downcast<CSSValueList>(value).item(i)));
-        }
+        for (size_t j = 0; j < propertiesAfterSlashSeparator.length(); j++)
+            afterList.append(valueForLayer(*after->item(j), i));
         auto list = CSSValueList::createSlashSeparated(CSSValueList::createSpaceSeparated(WTF::move(beforeList)), CSSValueList::createSpaceSeparated(WTF::move(afterList)));
         if (layerCount == 1)
             return list;

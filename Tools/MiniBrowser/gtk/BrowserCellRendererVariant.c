@@ -24,7 +24,6 @@
  */
 
 #include "BrowserCellRendererVariant.h"
-#include "BrowserMarshal.h"
 #include <errno.h>
 
 enum {
@@ -346,8 +345,7 @@ static void browser_cell_renderer_variant_class_init(BrowserCellRendererVariantC
         g_signal_new("changed",
                      G_TYPE_FROM_CLASS(gobjectClass),
                      G_SIGNAL_RUN_LAST,
-                     0, NULL, NULL,
-                     browser_marshal_VOID__STRING_BOXED,
+                     0, NULL, NULL, NULL,
                      G_TYPE_NONE, 2,
                      G_TYPE_STRING, G_TYPE_VALUE);
 }

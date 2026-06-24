@@ -34,11 +34,10 @@
 
 (define webcontent_gpu_sandbox_extensions_blocking?
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140400 && defined(RC_XBS) && RC_XBS == 1
-    TRUE
+    TRUE)
 #else
-    FALSE
+    FALSE)
 #endif
-)
 
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
@@ -122,9 +121,7 @@
     (subpath "/System/Library/SubFrameworks/RealityCoreTextureProcessing.framework")
     (subpath "/usr/lib")
     (subpath "/usr/local/lib/sanitizers") ;; FIXME(209820)
-    (subpath "/usr/appleinternal/lib") ;; <rdar://problem/72317112>
-
-)
+    (subpath "/usr/appleinternal/lib")) ;; <rdar://problem/72317112>
 
 (allow file-read-metadata
     (literal "/etc")
@@ -266,8 +263,7 @@
         "vm.footprint_suspend")
     (sysctl-name-prefix "net.routetable")
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
-    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
-)
+    (sysctl-name-prefix "hw.perflevel")) ;; <rdar://problem/76783596>
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (webcontent-process-launched))
@@ -555,8 +551,7 @@
     (iokit-property "PanicOnGPUHang")
     (iokit-property "TelemetryDisable")
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
-    (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
-)
+    (iokit-property "IOAVDHEVCDecodeCapabilities")) ;; <rdar://problem/71100188>
 
 ;; <rdar://97677559>
 (deny iokit-get-properties
@@ -631,8 +626,7 @@
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow mach-lookup
     (global-name "com.apple.cfprefsd.agent")
-    (global-name "com.apple.cfprefsd.daemon")
-)
+    (global-name "com.apple.cfprefsd.daemon"))
 #endif
 
 (deny mach-lookup (with no-report)
@@ -769,8 +763,7 @@
 ;; Allow the OpenGL Profiler to attach.
 (with-filter (system-attribute apple-internal)
     (allow mach-register
-        (global-name-regex #"^_oglprof_attach_<[0-9]+>$"))
-)
+        (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
 #if USE(SANDBOX_PARAMS)
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
@@ -794,8 +787,7 @@
 
 #if !ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
 (allow mach-lookup
-    (global-name "com.apple.coreservices.launchservicesd")
-)
+    (global-name "com.apple.coreservices.launchservicesd"))
 #endif
 
 (deny mach-lookup (with no-report)
@@ -880,8 +872,7 @@
         (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
     (allow mach-lookup
        (global-name "com.apple.system.opendirectoryd.libinfo")
-       (global-name "com.apple.system.opendirectoryd.membership"))
-)
+       (global-name "com.apple.system.opendirectoryd.membership")))
 
 #if ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
 (deny mach-lookup (with telemetry-backtrace)
@@ -900,8 +891,7 @@
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 #if !HAVE(CSCHECKFIXDISABLE)
 (allow mach-lookup
-    (global-name "com.apple.CoreServices.coreservicesd")
-)
+    (global-name "com.apple.CoreServices.coreservicesd"))
 #endif
 
 (deny mach-lookup (with no-report)
@@ -918,9 +908,7 @@
 ;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
 (with-filter (system-attribute apple-internal)
     (allow network-outbound
-       (literal "/private/var/run/syslog")
-    )
-)
+       (literal "/private/var/run/syslog")))
 
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
@@ -949,8 +937,7 @@
     (with no-report))
 (with-filter (uid 0)
     (allow mach-lookup
-        (global-name "com.apple.system.logger"))
-)
+        (global-name "com.apple.system.logger")))
 
 (deny file-write-create (vnode-type SYMLINK))
 
@@ -1035,8 +1022,7 @@
     (with no-report))
 
 (deny mach-lookup (with no-report)
-    (xpc-service-name "com.apple.audio.toolbox.reporting.service")
-)
+    (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.audio.SystemSoundServer-OSX")
@@ -1045,10 +1031,12 @@
     (global-name "com.apple.coreservices.launchservicesd")
     (global-name "com.apple.linkd.autoShortcut"))
 
+#if !RC_XBS
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
         (global-name "com.apple.analyticsd")
         (global-name "com.apple.diagnosticd")))
+#endif
 
 (deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.webinspector"))
@@ -1107,8 +1095,7 @@
             F_RDADVISE ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
             F_SETCONFINED
             F_SETFD ;; libwebrtc.dylib (no backtrace)
-            F_SETPROTECTIONCLASS))
-)
+            F_SETPROTECTIONCLASS)))
 
 (when (defined? 'process-codesigning*)
     ;; csops/csops_audittoken
@@ -1120,18 +1107,15 @@
     (allow process-codesigning-entitlements-blob-get) ;; WK reading entitlments via SecTaskCopyValueForEntitlement and _getSelfParsedEntitlements (accessibility)
     (allow process-codesigning-status-get) ;; _xpc_get_entitlements
     (allow process-codesigning-status-set (target self))
-    (deny process-info-codesignature (with no-report)) ;; SecTaskCopyValueForEntitlement - granting this grants all the process-codesign-* checks
-)
+    (deny process-info-codesignature (with no-report))) ;; SecTaskCopyValueForEntitlement - granting this grants all the process-codesign-* checks
 
 (when (defined? 'socket-option-get)
     ;; getsockopt
-    (deny socket-option-get)
-)
+    (deny socket-option-get))
 
 (when (defined? 'socket-option-set)
     ;; setsockopt
-    (deny socket-option-set)
-)
+    (deny socket-option-set))
 
 (disable-syscall-inference)
 
@@ -1679,12 +1663,11 @@
         "com.apple.webinspectord.availability_check"))
 
 (deny file-read* (with no-report)
-    (home-literal "/Library/Preferences/com.apple.CFNetwork.plist")
 #if PLATFORM(MAC)
     (home-literal "/Library/Preferences/com.apple.networkd.plist")
     (literal "/Library/Preferences/com.apple.networkd.plist")
 #endif
-)
+    (home-literal "/Library/Preferences/com.apple.CFNetwork.plist"))
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
 (with-filter (webcontent-process-launched)

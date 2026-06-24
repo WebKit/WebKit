@@ -28,6 +28,7 @@
 #include "modules/desktop_capture/shared_desktop_frame.h"
 #include "modules/desktop_capture/shared_memory.h"
 #include "modules/desktop_capture/win/scoped_thread_desktop.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -44,7 +45,7 @@ class DesktopRect;
 // be used if that functionality is necessary.
 class ScreenCapturerWinMagnifier : public DesktopCapturer {
  public:
-  ScreenCapturerWinMagnifier();
+  explicit ScreenCapturerWinMagnifier(const DesktopCaptureOptions& options);
   ~ScreenCapturerWinMagnifier() override;
 
   ScreenCapturerWinMagnifier(const ScreenCapturerWinMagnifier&) = delete;
@@ -139,6 +140,7 @@ class ScreenCapturerWinMagnifier : public DesktopCapturer {
   // True if the last OnMagImageScalingCallback was called and handled
   // successfully. Reset at the beginning of each CaptureImage call.
   bool magnifier_capture_succeeded_ = true;
+  Clock& clock_;
 };
 
 }  // namespace webrtc

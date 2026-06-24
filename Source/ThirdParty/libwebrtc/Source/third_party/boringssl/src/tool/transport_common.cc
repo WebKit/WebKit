@@ -22,7 +22,9 @@
 
 #include <openssl/base.h>
 
+#include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <errno.h>
@@ -57,6 +59,7 @@ OPENSSL_MSVC_PRAGMA(comment(lib, "Ws2_32.lib"))
 #endif
 
 #include <openssl/err.h>
+#include <openssl/evp.h>
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
 
@@ -64,6 +67,8 @@ OPENSSL_MSVC_PRAGMA(comment(lib, "Ws2_32.lib"))
 #include "internal.h"
 #include "transport_common.h"
 
+
+BSSL_NAMESPACE_BEGIN
 
 #if defined(OPENSSL_WINDOWS)
 using socket_result_t = int;
@@ -279,6 +284,52 @@ bool VersionFromString(uint16_t *out_version, const std::string &version) {
   return false;
 }
 
+std::optional<std::vector<uint8_t>> CertificateTypesFromString(
+    std::string_view s) {
+  std::vector<uint8_t> cert_types;
+  for (std::string_view type : SplitString(s, ",")) {
+    type = TrimSpace(type);
+    if (type == "x509") {
+      cert_types.push_back(TLSEXT_cert_type_x509);
+    } else if (type == "rpk") {
+      cert_types.push_back(TLSEXT_cert_type_rpk);
+    } else {
+      fprintf(stderr, "Invalid cert type: '%s'\n", std::string(type).c_str());
+      return std::nullopt;
+    }
+  }
+  return cert_types;
+}
+
+static std::optional<uint8_t> DecodeHexChar(char c) {
+  if ('0' <= c && c <= '9') {
+    return c - '0';
+  } else if ('a' <= c && c <= 'f') {
+    return c - 'a' + 10;
+  } else if ('A' <= c && c <= 'F') {
+    return c - 'A' + 10;
+  } else {
+    return std::nullopt;
+  }
+}
+
+std::optional<std::vector<uint8_t>> DecodeHex(std::string_view hex) {
+  if (hex.size() % 2 != 0) {
+    return std::nullopt;
+  }
+  std::vector<uint8_t> ret;
+  ret.reserve(hex.size() / 2);
+  for (size_t i = 0; i < hex.size(); i += 2) {
+    auto hi = DecodeHexChar(hex[i]);
+    auto lo = DecodeHexChar(hex[i + 1]);
+    if (!hi.has_value() || !lo.has_value()) {
+      return std::nullopt;
+    }
+    ret.push_back((*hi << 4) | *lo);
+  }
+  return ret;
+}
+
 void PrintConnectionInfo(BIO *bio, const SSL *ssl) {
   const SSL_CIPHER *cipher = SSL_get_current_cipher(ssl);
 
@@ -337,7 +388,7 @@ void PrintConnectionInfo(BIO *bio, const SSL *ssl) {
              SSL_ech_accepted(ssl) ? "yes" : "no");
 
   // Print the server cert subject and issuer names.
-  bssl::UniquePtr<X509> peer(SSL_get_peer_certificate(ssl));
+  UniquePtr<X509> peer(SSL_get_peer_certificate(ssl));
   if (peer != nullptr) {
     BIO_printf(bio, "  Cert subject: ");
     X509_NAME_print_ex(bio, X509_get_subject_name(peer.get()), 0,
@@ -346,6 +397,15 @@ void PrintConnectionInfo(BIO *bio, const SSL *ssl) {
     X509_NAME_print_ex(bio, X509_get_issuer_name(peer.get()), 0,
                        XN_FLAG_ONELINE);
     BIO_printf(bio, "\n");
+  }
+
+  // Print the peer RPK.
+  const EVP_PKEY *peer_rpk = SSL_get0_peer_rpk(ssl);
+  if (peer_rpk != nullptr) {
+    BIO_printf(bio, "  Peer RPK params: \n");
+    EVP_PKEY_print_params(bio, peer_rpk, 4, nullptr);
+    BIO_printf(bio, "  Peer RPK pubkey: \n");
+    EVP_PKEY_print_public(bio, peer_rpk, 4, nullptr);
   }
 }
 
@@ -980,3 +1040,5 @@ bool DoHTTPTunnel(int sock, const std::string &hostname_and_port) {
     fprintf(stderr, "%s\n", line.c_str());
   }
 }
+
+BSSL_NAMESPACE_END

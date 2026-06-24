@@ -55,11 +55,11 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderLineBreak.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleKeyword+Mappings.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
@@ -124,8 +124,8 @@ static unsigned innerTextLengthFrom(TextControlInnerTextElement& innerText)
     return length;
 }
 
-HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document)
+    : HTMLFormControlElement(tagName, document)
     , m_cachedSelectionDirection(document.frame() && document.frame()->editor().behavior().shouldConsiderSelectionAsDirectional() ? SelectionHasForwardDirection : SelectionHasNoDirection)
 {
 }
@@ -664,9 +664,9 @@ void HTMLTextFormControlElement::effectiveSpellcheckAttributeChanged(bool isSpel
 
     auto selection = VisibleSelection::selectionFromContentsOfNode(innerTextElement.get());
     if (isSpellcheckEnabled)
-        document().editor().markMisspellingsAndBadGrammar(selection);
+        protect(document())->editor().markMisspellingsAndBadGrammar(selection);
     else
-        document().editor().clearMisspellingsAndBadGrammar(selection);
+        protect(document())->editor().clearMisspellingsAndBadGrammar(selection);
 }
 
 void HTMLTextFormControlElement::disabledStateChanged()
@@ -742,12 +742,12 @@ void HTMLTextFormControlElement::setInnerTextValue(String&& value)
             innerText->setInnerText(WTF::move(value));
 
             if (endsWithNewLine)
-                innerText->appendChild(HTMLBRElement::create(document()));
+                innerText->appendChild(HTMLBRElement::create(protect(document())));
         }
 
 #if PLATFORM(COCOA) || USE(ATSPI)
         if (textIsChanged && renderer()) {
-            if (CheckedPtr cache = document().existingAXObjectCache())
+            if (CheckedPtr cache = protect(document())->existingAXObjectCache())
                 cache->deferTextReplacementNotificationForTextControl(*this, previousValue);
         }
 #endif
@@ -936,7 +936,7 @@ ExceptionOr<void> HTMLTextFormControlElement::setMinLength(int minLength)
     return { };
 }
 
-void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentStyle, RenderStyle& textBlockStyle) const
+void HTMLTextFormControlElement::adjustInnerTextStyle(const Style::ComputedStyle& parentStyle, Style::ComputedStyle& textBlockStyle) const
 {
     // The inner block, if present, always has its direction set to LTR,
     // so we need to inherit the direction and unicode-bidi style from the element.
@@ -982,8 +982,8 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
 
 bool HTMLTextFormControlElement::shouldApplyScriptTrackingPrivacyProtection() const
 {
-    return (wasEverChangedByUserEdit() || !wasCreatedByTaintedScript())
-        && protect(document())->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::FormControls);
+    SUPPRESS_UNCOUNTED_ARG return (wasEverChangedByUserEdit() || !wasCreatedByTaintedScript())
+        && document().requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::FormControls);
 }
 
 } // namespace WebCore

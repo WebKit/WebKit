@@ -24,8 +24,8 @@ if (rtc_enable_protobuf) {
     ]
     deps = [
       ":network_config_schedule_proto",
+      ":network_queue",
       "../..:network_emulation_manager_api",
-      "../../../rtc_base:timeutils",
       "../../../test/network:schedulable_network_behavior",
       "../../units:timestamp",
       "//third_party/abseil-cpp/absl/functional:any_invocable",
@@ -93,7 +93,6 @@ rtc_library("network_queue") {
     "../..:simulated_network_api",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
-    "../../../rtc_base:macromagic",
     "../../../rtc_base:random",
     "../../transport:ecn_marking",
     "../../units:data_rate",

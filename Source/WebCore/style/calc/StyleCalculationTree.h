@@ -73,6 +73,7 @@ struct Abs;
 struct Sign;
 struct Progress;
 struct Random;
+struct CalcMix;
 
 // Non-standard
 struct Blend;
@@ -162,6 +163,7 @@ using Node = Variant<
     IndirectNode<Sign>,
     IndirectNode<Progress>,
     IndirectNode<Random>,
+    IndirectNode<CalcMix>,
     IndirectNode<Blend>
 >;
 
@@ -528,6 +530,23 @@ struct Random {
     bool operator==(const Random&) const = default;
 };
 
+// CalcMix Function - https://drafts.csswg.org/css-values-5/#calc-mix
+struct CalcMix {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(CalcMix);
+    static constexpr auto op = CSSCalc::Operator::CalcMix;
+
+    struct Item {
+        Child value;
+        double weight;
+
+        bool operator==(const Item&) const = default;
+    };
+
+    Vector<Item> children;
+
+    bool operator==(const CalcMix&) const = default;
+};
+
 // Non-standard
 struct Blend {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Blend);
@@ -781,6 +800,12 @@ template<size_t I> const auto& get(const Random& root)
         return root.step;
 }
 
+template<size_t I> const auto& get(const CalcMix& root)
+{
+    static_assert(!I);
+    return root.children;
+}
+
 template<size_t I> const auto& get(const Blend& root)
 {
     if constexpr (!I)
@@ -843,6 +868,7 @@ OP_TUPLE_LIKE_CONFORMANCE(Abs, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Progress, 3);
 OP_TUPLE_LIKE_CONFORMANCE(Random, 4);
+OP_TUPLE_LIKE_CONFORMANCE(CalcMix, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Blend, 3);
 
 #undef OP_TUPLE_LIKE_CONFORMANCE

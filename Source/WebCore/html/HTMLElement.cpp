@@ -135,6 +135,17 @@ Ref<HTMLElement> HTMLElement::create(const QualifiedName& tagName, Document& doc
     return adoptRef(*new HTMLElement(tagName, document));
 }
 
+HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> type)
+    : StyledElement(tagName, document, type | TypeFlag::IsHTMLElement)
+{
+    ASSERT(tagName.localName().impl());
+}
+
+HTMLElement::HTMLElement(ClangVTableWorkaroundTag, const QualifiedName& name, Document& document)
+    : HTMLElement(name, document)
+{
+}
+
 String HTMLElement::nodeName() const
 {
     // FIXME: Would be nice to have an AtomString lookup based off uppercase
@@ -383,7 +394,7 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
             setTabIndexExplicitly(std::nullopt);
         return;
     case AttributeNames::inertAttr:
-        invalidateStyleInternal();
+        invalidateStyle();
         return;
     case AttributeNames::inputmodeAttr:
         if (Ref document = this->document(); this == document->focusedElement()) {
@@ -605,10 +616,8 @@ void HTMLElement::applyAlignmentAttributeToStyle(const AtomString& alignment, Mu
         verticalAlignValue = CSSValueTop;
     } else if (equalLettersIgnoringASCIICase(alignment, "top"_s))
         verticalAlignValue = CSSValueTop;
-    else if (equalLettersIgnoringASCIICase(alignment, "middle"_s))
+    else if (equalLettersIgnoringASCIICase(alignment, "middle"_s) || equalLettersIgnoringASCIICase(alignment, "center"_s))
         verticalAlignValue = CSSValueWebkitBaselineMiddle;
-    else if (equalLettersIgnoringASCIICase(alignment, "center"_s))
-        verticalAlignValue = CSSValueMiddle;
     else if (equalLettersIgnoringASCIICase(alignment, "bottom"_s))
         verticalAlignValue = CSSValueBaseline;
     else if (equalLettersIgnoringASCIICase(alignment, "texttop"_s))

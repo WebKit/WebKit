@@ -509,10 +509,10 @@ void WorkerFileSystemStorageConnection::addGlobalIdentifierReference(ClientOrigi
     });
 }
 
-void WorkerFileSystemStorageConnection::removeGlobalIdentifierReference(ClientOrigin&& origin, FileSystemHandleGlobalIdentifier globalIdentifier)
+void WorkerFileSystemStorageConnection::removeGlobalIdentifierReferences(ClientOrigin&& origin, Vector<FileSystemHandleGlobalIdentifier>&& globalIdentifiers)
 {
-    callOnMainThread([mainThreadConnection = m_mainThreadConnection, origin = crossThreadCopy(WTF::move(origin)), globalIdentifier] mutable {
-        mainThreadConnection->removeGlobalIdentifierReference(WTF::move(origin), globalIdentifier);
+    callOnMainThread([mainThreadConnection = m_mainThreadConnection, origin = crossThreadCopy(WTF::move(origin)), globalIdentifiers = WTF::move(globalIdentifiers)] mutable {
+        mainThreadConnection->removeGlobalIdentifierReferences(WTF::move(origin), WTF::move(globalIdentifiers));
     });
 }
 

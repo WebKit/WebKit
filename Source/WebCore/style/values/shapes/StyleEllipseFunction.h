@@ -32,7 +32,6 @@
 namespace WebCore {
 
 struct AcceleratedEffectEllipseFunction;
-struct TransformOperationData;
 
 namespace Style {
 
@@ -73,7 +72,7 @@ template<> struct Blending<Ellipse> {
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-template<> struct Evaluation<EllipseFunction, AcceleratedEffectEllipseFunction> { AcceleratedEffectEllipseFunction operator()(const EllipseFunction&, const TransformOperationData&, ZoomFactor); };
+template<> struct Evaluation<EllipseFunction, AcceleratedEffectEllipseFunction> { AcceleratedEffectEllipseFunction operator()(const EllipseFunction&, const FloatSize&, ZoomFactor); };
 
 #endif
 

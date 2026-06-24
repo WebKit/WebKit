@@ -30,6 +30,7 @@
 #include "rtc_base/virtual_socket_server.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 
 namespace webrtc {
@@ -291,7 +292,7 @@ class SSLAdapterTestBase : public ::testing::Test {
 
  protected:
   std::unique_ptr<VirtualSocketServer> vss_;
-  AutoSocketServerThread thread_;
+  test::RunLoop thread_;
   std::unique_ptr<SSLAdapterTestDummyServer> server_;
   std::unique_ptr<SSLAdapterTestDummyClient> client_;
   std::unique_ptr<SSLCertificateVerifier> cert_verifier_;

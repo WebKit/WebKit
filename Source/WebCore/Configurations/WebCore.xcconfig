@@ -177,6 +177,14 @@ OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_SHARED_CACHE) $(JSC_SEC_LD_FLAGS) -
 
 OTHER_LDFLAGS_PLATFORM_macosx = -sub_library libobjc $(WK_PGO_USE_LDFLAGS) $(WK_PGO_GEN_FLAGS);
 
+// Use order files from WebKitAdditions for internal SDK macOS production builds
+WK_ORDER_FILE = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/OrderFiles/WebCore.order.txt;
+WK_ENABLE_ORDER_FILE = $(WK_ENABLE_ORDER_FILE_$(USE_INTERNAL_SDK)_$(CONFIGURATION)_$(WK_PLATFORM_NAME));
+WK_ENABLE_ORDER_FILE_YES_Production_macosx = YES;
+WK_ORDER_FILE_LDFLAGS = $(WK_ORDER_FILE_LDFLAGS_$(WK_ENABLE_ORDER_FILE));
+WK_ORDER_FILE_LDFLAGS_YES = -Wl,-order_file,$(WK_ORDER_FILE);
+SECTORDER_FLAGS = $(WK_ORDER_FILE_LDFLAGS);
+
 EXCLUDED_SOURCE_FILE_NAMES = pdfjs*/*;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = $(inherited) *.tiff *Cursor.png npapi.h npfunctions.h npruntime.h npruntime_internal.h;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=xr*] = $(inherited) *.tiff *Cursor.png npapi.h npfunctions.h npruntime.h npruntime_internal.h modelDefaultDiffuseData modelDefaultSpecularData;

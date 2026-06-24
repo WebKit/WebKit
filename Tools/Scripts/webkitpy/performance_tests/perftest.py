@@ -271,7 +271,7 @@ class PerfTest(object):
         re.compile(r"^vulkan:"),
         re.compile(r"^Note:"),
         re.compile(r"^MESA"),
-        re.compile(r"^[0-9:.]+\s.+0x[0-9A-Fa-f]+\s.+msdkcontext")
+        re.compile(r"^[0-9:.]+\s.*msdkcontext")
     ]
 
     def _filter_output(self, output):

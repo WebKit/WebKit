@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "common_video/h264/h264_common.h"
 #include "common_video/h265/h265_common.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
@@ -26,7 +26,7 @@
 
 namespace webrtc {
 
-RtpPacketizerH265::RtpPacketizerH265(ArrayView<const uint8_t> payload,
+RtpPacketizerH265::RtpPacketizerH265(std::span<const uint8_t> payload,
                                      PayloadSizeLimits limits)
     : limits_(limits), num_packets_left_(0) {
   for (const H264::NaluIndex& nalu : H264::FindNaluIndices(payload)) {
@@ -90,7 +90,7 @@ bool RtpPacketizerH265::GeneratePackets() {
 bool RtpPacketizerH265::PacketizeFu(size_t fragment_index) {
   // Fragment payload into packets (FU).
   // Strip out the original header and leave room for the FU header.
-  ArrayView<const uint8_t> fragment = input_fragments_[fragment_index];
+  std::span<const uint8_t> fragment = input_fragments_[fragment_index];
   PayloadSizeLimits limits = limits_;
   // Refer to section 4.4.3 in RFC7798, each FU fragment will have a 2-bytes
   // payload header and a one-byte FU header. DONL is not supported so ignore
@@ -150,7 +150,7 @@ int RtpPacketizerH265::PacketizeAp(size_t fragment_index) {
   size_t payload_size_left = limits_.max_payload_len;
   int aggregated_fragments = 0;
   size_t fragment_headers_length = 0;
-  ArrayView<const uint8_t> fragment = input_fragments_[fragment_index];
+  std::span<const uint8_t> fragment = input_fragments_[fragment_index];
   RTC_CHECK_GE(payload_size_left, fragment.size());
   ++num_packets_left_;
 
@@ -263,7 +263,7 @@ void RtpPacketizerH265::NextAggregatePacket(RtpPacketToSend* rtp_packet) {
   uint8_t temporal_id_min = kH265MaxTemporalId;
   while (packet->aggregated) {
     // Add NAL unit length field.
-    ArrayView<const uint8_t> fragment = packet->source_fragment;
+    std::span<const uint8_t> fragment = packet->source_fragment;
 #if WEBRTC_WEBKIT_BUILD
     RTC_DCHECK(fragment.size() > 1);
     if (fragment.size() == 1) {
@@ -335,7 +335,7 @@ void RtpPacketizerH265::NextFragmentPacket(RtpPacketToSend* rtp_packet) {
   // Now update payload_hdr_h with FU type.
   payload_hdr_h = (payload_hdr_h & kH265TypeMaskN) |
                   (H265::NaluType::kFu << 1) | layer_id_h;
-  ArrayView<const uint8_t> fragment = packet->source_fragment;
+  std::span<const uint8_t> fragment = packet->source_fragment;
   uint8_t* buffer = rtp_packet->AllocatePayload(
       kH265FuHeaderSizeBytes + kH265PayloadHeaderSizeBytes + fragment.size());
   RTC_CHECK(buffer);

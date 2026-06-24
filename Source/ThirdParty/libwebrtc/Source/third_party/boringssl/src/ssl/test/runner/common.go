@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+	"slices"
 	"sync"
 	"time"
 
@@ -47,6 +48,56 @@ var allDTLSWireVersions = []uint16{
 	VersionDTLS10,
 }
 
+// A version represents a TLS or DTLS version, represented as its 16-bit
+// codepoint sent on the wire. Wire codepoints are not ordered.
+type version struct {
+	wire uint16
+}
+
+func wireToVersionAny(v uint16) (version, bool) {
+	if slices.Contains(allTLSWireVersions, v) || slices.Contains(allDTLSWireVersions, v) {
+		return version{v}, true
+	}
+	return version{}, false
+}
+
+func wireToVersion(v uint16, isDTLS bool) (version, bool) {
+	vers, ok := wireToVersionAny(v)
+	if !ok || isDTLS != vers.isDTLS() {
+		return version{}, false
+	}
+	return vers, true
+}
+
+func (v version) isDTLS() bool {
+	if v.wire == 0 {
+		panic("version not initialized")
+	}
+	return slices.Contains(allDTLSWireVersions, v.wire)
+}
+
+// protocolVersion returns the protocol version corresponding to the version.
+// Protocol versions can be compared numerically, but do not capture TLS vs DTLS
+// or specific draft versions of protocols. If v is the zero version, it returns
+// zero.
+func (v version) protocolVersion() uint16 {
+	switch v.wire {
+	case 0:
+		// The record layer often interacts with an uninitialized version, before
+		// the version is set yet.
+		return 0
+	case VersionTLS13, VersionTLS12, VersionTLS11, VersionTLS10, VersionSSL30:
+		return v.wire
+	case VersionDTLS13:
+		return VersionTLS13
+	case VersionDTLS12:
+		return VersionTLS12
+	case VersionDTLS10:
+		return VersionTLS10
+	}
+	panic("invalid version object")
+}
+
 const (
 	maxPlaintext           = 16384        // maximum plaintext payload length
 	maxCiphertext          = 16384 + 2048 // maximum ciphertext payload length
@@ -62,12 +113,11 @@ const (
 type recordType uint8
 
 const (
-	recordTypeChangeCipherSpec   recordType = 20
-	recordTypeAlert              recordType = 21
-	recordTypeHandshake          recordType = 22
-	recordTypeApplicationData    recordType = 23
-	recordTypePlaintextHandshake recordType = 24
-	recordTypeACK                recordType = 26
+	recordTypeChangeCipherSpec recordType = 20
+	recordTypeAlert            recordType = 21
+	recordTypeHandshake        recordType = 22
+	recordTypeApplicationData  recordType = 23
+	recordTypeACK              recordType = 26
 )
 
 // TLS handshake message types.
@@ -155,6 +205,8 @@ const (
 	extensionUseSRTP                    uint16 = 14
 	extensionALPN                       uint16 = 16
 	extensionSignedCertificateTimestamp uint16 = 18
+	extensionClientCertificateType      uint16 = 19
+	extensionServerCertificateType      uint16 = 20
 	extensionPadding                    uint16 = 21
 	extensionExtendedMasterSecret       uint16 = 23
 	extensionCompressedCertAlgs         uint16 = 27
@@ -171,6 +223,7 @@ const (
 	extensionQUICTransportParams        uint16 = 57
 	extensionTLSFlags                   uint16 = 62
 	extensionCustom                     uint16 = 1234  // not IANA assigned
+	extensionServerPaddingRequest       uint16 = 4832  // not IANA assigned
 	extensionNextProtoNeg               uint16 = 13172 // not IANA assigned
 	extensionApplicationSettingsOld     uint16 = 17513 // not IANA assigned
 	extensionApplicationSettings        uint16 = 17613 // not IANA assigned
@@ -218,6 +271,14 @@ const (
 const (
 	pointFormatUncompressed    uint8 = 0
 	pointFormatCompressedPrime uint8 = 1
+)
+
+// TLS certificate types (RFC 7250).
+type CertificateType uint8
+
+const (
+	certTypeX509         CertificateType = 0
+	certTypeRawPublicKey CertificateType = 2
 )
 
 // TLS CertificateStatusType (RFC 3546)
@@ -269,7 +330,12 @@ const (
 	signatureEd25519 signatureAlgorithm = 0x0807
 	signatureEd448   signatureAlgorithm = 0x0808
 
-	// draft-ietf-tls-tls13-pkcs1-00
+	// ML-DSA algorithms (draft-ietf-tls-mldsa-02)
+	signatureMLDSA44 signatureAlgorithm = 0x0904
+	signatureMLDSA65 signatureAlgorithm = 0x0905
+	signatureMLDSA87 signatureAlgorithm = 0x0906
+
+	// RFC 9963
 	signatureRSAPKCS1WithSHA256Legacy signatureAlgorithm = 0x0420
 
 	// signatureRSAPKCS1WithMD5AndSHA1 is the internal value BoringSSL uses to
@@ -311,11 +377,17 @@ const (
 	keyUpdateRequested    = 1
 )
 
-// draft-ietf-tls-esni-13, sections 7.2 and 7.2.1.
+// RFC 9849, sections 7.2 and 7.2.1.
 const echAcceptConfirmationLength = 8
 
 // Temporary value; pre RFC.
 const spakeID uint16 = 0x7d96
+
+// KDF identifiers (RFC 9258)
+const (
+	kdfHKDFWithSHA256 uint16 = 0x0001
+	kdfHKDFWithSHA384 uint16 = 0x0002
+)
 
 // ConnectionState records basic TLS details about the connection.
 type ConnectionState struct {
@@ -345,6 +417,8 @@ type ConnectionState struct {
 	HasApplicationSettingsOld  bool                  // whether ALPS old codepoint was negotiated
 	PeerApplicationSettingsOld []byte                // the old application settings received from the peer
 	ECHAccepted                bool                  // whether ECH was accepted on this connection
+	SelectedPSK                *Credential           // the selected PSK, if any
+	PeerRawPublicKey           []byte                // the SubjectPublicKeyInfo bytes of a RPK received from the peer
 }
 
 // ClientAuthType declares the policy the server will follow for
@@ -364,8 +438,7 @@ const (
 type ClientSessionState struct {
 	sessionID                   []uint8             // Session ID supplied by the server. nil if the session has a ticket.
 	sessionTicket               []uint8             // Encrypted ticket used for session resumption with server
-	vers                        uint16              // SSL/TLS version negotiated for the session
-	wireVersion                 uint16              // Wire SSL/TLS version negotiated for the session
+	vers                        version             // SSL/TLS version negotiated for the session
 	cipherSuite                 *cipherSuite        // Ciphersuite negotiated for the session
 	secret                      []byte              // Secret associated with the session
 	handshakeHash               []byte              // Handshake hash for Channel ID purposes.
@@ -386,6 +459,7 @@ type ClientSessionState struct {
 	localApplicationSettingsOld []byte
 	peerApplicationSettingsOld  []byte
 	resumptionAcrossNames       bool
+	serverRawPublicKey          []byte
 }
 
 // ClientSessionCache is a cache of ClientSessionState objects that can be used
@@ -506,7 +580,11 @@ type Config struct {
 	Time func() time.Time
 
 	// Credential contains the credential to present to the other side of
-	// the connection. Server configurations must include this field.
+	// the connection. Server configurations must include this field. We only
+	// support one credential because, except for PSKs, offered credentials do
+	// not appear on the wire, and tests already know which credential to
+	// expect to use. For offering multiple PSKs, use the PSKCredentials
+	// field.
 	Credential *Credential
 
 	// RootCAs defines the set of root certificate authorities
@@ -642,12 +720,16 @@ type Config struct {
 	RequestChannelID bool
 
 	// PreSharedKey, if not nil, is the pre-shared key to use with
-	// the PSK cipher suites.
+	// TLS 1.2 PSK cipher suites.
 	PreSharedKey []byte
 
 	// PreSharedKeyIdentity, if not empty, is the identity to use
-	// with the PSK cipher suites.
+	// with TLS 1.2 PSK cipher suites.
 	PreSharedKeyIdentity string
+
+	// PSKCredentials, if not empty, is a list of TLS 1.3 PSK credentials to
+	// offer as a client.
+	PSKCredentials []*Credential
 
 	// MaxEarlyDataSize controls the maximum number of bytes that the
 	// server will accept in early data and advertise in a
@@ -699,6 +781,10 @@ type Config struct {
 	// ResumptionAcrossNames specifies whether session tickets issued by the TLS
 	// server should be marked as compatible with cross-name resumption.
 	ResumptionAcrossNames bool
+
+	// RequestServerPadding, if not nil, configures a client to request the
+	// specified number of bytes of padding from the server.
+	RequestServerPadding *uint16
 
 	// Bugs specifies optional misbehaviour to be used for testing other
 	// implementations.
@@ -797,6 +883,10 @@ type ProtocolBugs struct {
 	// EmptyHelloVerifyRequestCookie, if true, causes a DTLS server to request
 	// an empty cookie in HelloVerifyRequest.
 	EmptyHelloVerifyRequestCookie bool
+
+	// SendLegacyDTLSCookie, if not nil, contains the legacy DTLS 1.2 cookie
+	// to be sent in the ClientHello (not the TLS 1.3 cookie extension).
+	SendLegacyDTLSCookie []byte
 
 	// SkipCertificateStatus, if true, causes the server to skip the
 	// CertificateStatus message. This is legal because CertificateStatus is
@@ -1456,8 +1546,9 @@ type ProtocolBugs struct {
 	// advertise all configured cipher suite values.
 	AdvertiseAllConfiguredCiphers bool
 
-	// EmptyCertificateList, if true, causes the server to send an empty
-	// certificate list in the Certificate message.
+	// EmptyCertificateList, if true, causes the server or client to send an empty
+	// certificate list in the Certificate message. For a TLS 1.2 RawPublicKey
+	// Certificate (RFC 7250), this causes the SubjectPublicKeyInfo to be empty.
 	EmptyCertificateList bool
 
 	// ExpectNewTicket, if true, causes the client to abort if it does not
@@ -1665,13 +1756,9 @@ type ProtocolBugs struct {
 	// resumption.
 	NegotiatePSKResumption bool
 
-	// AlwaysSelectPSKIdentity, if true, causes the server in TLS 1.3 to
-	// always acknowledge a session, regardless of one was offered.
-	AlwaysSelectPSKIdentity bool
-
-	// SelectPSKIdentityOnResume, if non-zero, causes the server to select
-	// the specified PSK identity index rather than the actual value.
-	SelectPSKIdentityOnResume uint16
+	// AlwaysSelectPSKIdentity, if not nil, causes the server in TLS 1.3 to
+	// select the specified PSK identity index.
+	AlwaysSelectPSKIdentity *uint16
 
 	// ExtraPSKIdentity, if true, causes the client to send an extra PSK
 	// identity.
@@ -1889,9 +1976,13 @@ type ProtocolBugs struct {
 	// rejected. See RFC 8701.
 	ExpectGREASE bool
 
-	// OmitPSKsOnSecondClientHello, if true, causes the client to omit the
+	// OmitPSKsOnSecondClientHello causes the client to delete the specified
+	// number of PSKs, from the front, on the second ClientHello.
+	OmitPSKsOnSecondClientHello int
+
+	// OmitAllPSKsOnSecondClientHello, if true, causes the client to omit the
 	// PSK extension on the second ClientHello.
-	OmitPSKsOnSecondClientHello bool
+	OmitAllPSKsOnSecondClientHello bool
 
 	// OnlyCorruptSecondPSKBinder, if true, causes the options below to
 	// only apply to the second PSK binder.
@@ -2172,6 +2263,47 @@ type ProtocolBugs struct {
 	// NewSessionTicket messages to have or not have the resumption_across_names
 	// flag set.
 	ExpectResumptionAcrossNames *bool
+
+	// ExpectClientCertificateTypes, if not nil, causes the server or client to
+	// expect the client_certificate_type extension sent by the peer to contain
+	// exactly the given values.
+	ExpectClientCertificateTypes []CertificateType
+
+	// ExpectServerCertificateTypes, if not nil, causes the server or client to
+	// expect the server_certificate_type extension sent by the peer to contain
+	// exactly the given values.
+	ExpectServerCertificateTypes []CertificateType
+
+	// SendClientCertificateTypes, if not nil, causes the server or client to
+	// send a client_certificate_type extension containing the given values.
+	// For a server, this may not contain more than 1 value.
+	SendClientCertificateTypes []CertificateType
+
+	// SendServerCertificateTypes, if not nil, causes the server or client to
+	// send a server_certificate_type extension containing the given values.
+	// For a server, this may not contain more than 1 value.
+	SendServerCertificateTypes []CertificateType
+
+	// SendEmptyCertificateAuthorities, if true, causes a TLS 1.3 client or
+	// server to send an empty certificate_authorities extension, instead of
+	// omitting the extension.
+	SendEmptyCertificateAuthorities bool
+
+	// ExtensionsWithTrailingData specifies a list of extensions to include
+	// trailing data in.
+	// TODO(crbug.com/505803427): Currently only implemented for ClientHello and
+	// CertificateRequest.
+	ExtensionsWithTrailingData []uint16
+
+	// If SendServerPaddingLength, if not nil, sends the amount of padding
+	// specified in the server padding extension. If this is not set, the
+	// server padding extension will not be sent.
+	SendServerPaddingLength *uint16
+
+	// ExpectedServerPadding, if true, will expect that the server sent back
+	// exactly the amount of padding requested by the client through server
+	// padding extension.
+	ExpectedServerPadding bool
 }
 
 func (c *Config) serverInit() {
@@ -2215,34 +2347,18 @@ func (c *Config) cipherSuites() []uint16 {
 	return s
 }
 
-func (c *Config) minVersion(isDTLS bool) uint16 {
+func (c *Config) minVersion() uint16 {
 	ret := uint16(minVersion)
 	if c != nil && c.MinVersion != 0 {
 		ret = c.MinVersion
 	}
-	if isDTLS {
-		// The lowest version of DTLS is 1.0. There is no DSSL 3.0.
-		if ret < VersionTLS10 {
-			return VersionTLS10
-		}
-		// There is no such thing as DTLS 1.1.
-		if ret == VersionTLS11 {
-			return VersionTLS12
-		}
-	}
 	return ret
 }
 
-func (c *Config) maxVersion(isDTLS bool) uint16 {
+func (c *Config) maxVersion() uint16 {
 	ret := uint16(maxVersion)
 	if c != nil && c.MaxVersion != 0 {
 		ret = c.MaxVersion
-	}
-	if isDTLS {
-		// There is no such thing as DTLS 1.1.
-		if ret == VersionTLS11 {
-			return VersionTLS10
-		}
 	}
 	return ret
 }
@@ -2281,33 +2397,12 @@ func (c *Config) echCipherSuitePreferences() []HPKECipherSuite {
 	return c.ECHCipherSuites
 }
 
-func wireToVersion(vers uint16, isDTLS bool) (uint16, bool) {
-	if isDTLS {
-		switch vers {
-		case VersionDTLS13:
-			return VersionTLS13, true
-		case VersionDTLS12:
-			return VersionTLS12, true
-		case VersionDTLS10:
-			return VersionTLS10, true
-		}
-	} else {
-		switch vers {
-		case VersionSSL30, VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13:
-			return vers, true
-		}
-	}
-
-	return 0, false
-}
-
 // isSupportedVersion checks if the specified wire version is acceptable. If so,
-// it returns true and the corresponding protocol version. Otherwise, it returns
-// false.
-func (c *Config) isSupportedVersion(wireVers uint16, isDTLS bool) (uint16, bool) {
+// it returns true and the corresponding version. Otherwise, it returns false.
+func (c *Config) isSupportedVersion(wireVers uint16, isDTLS bool) (version, bool) {
 	vers, ok := wireToVersion(wireVers, isDTLS)
-	if !ok || c.minVersion(isDTLS) > vers || vers > c.maxVersion(isDTLS) {
-		return 0, false
+	if !ok || c.minVersion() > vers.protocolVersion() || vers.protocolVersion() > c.maxVersion() {
+		return version{}, false
 	}
 	return vers, true
 }
@@ -2323,7 +2418,7 @@ func (c *Config) supportedVersions(isDTLS, requireTLS13 bool) []uint16 {
 		if !ok {
 			continue
 		}
-		if requireTLS13 && vers < VersionTLS13 {
+		if requireTLS13 && vers.protocolVersion() < VersionTLS13 {
 			continue
 		}
 		ret = append(ret, wireVers)
@@ -2344,13 +2439,28 @@ const (
 	CredentialTypeX509 CredentialType = iota
 	CredentialTypeDelegated
 	CredentialTypeSPAKE2PlusV1
+	CredentialTypePreSharedKey
+	CredentialTypeRawPublicKey
 )
+
+func (c CredentialType) CertificateType() CertificateType {
+	switch c {
+	case CredentialTypeX509, CredentialTypeDelegated:
+		return certTypeX509
+	case CredentialTypeRawPublicKey:
+		return certTypeRawPublicKey
+	default:
+		panic("Unexpected credential type")
+	}
+}
 
 // A Credential is a certificate chain and private key that a TLS endpoint may
 // use to authenticate.
 type Credential struct {
 	Type CredentialType
 	// Certificate is a chain of one or more certificates, leaf first.
+	// For a RawPublicKey credential, this contains exactly one element, which
+	// holds the SubjectPublicKeyInfo data of the raw public key.
 	Certificate [][]byte
 	// RootCertificate is the certificate that issued this chain.
 	RootCertificate []byte
@@ -2396,6 +2506,22 @@ type Credential struct {
 	// OverridePAKECodepoint, if non-zero, causes the runner to send the
 	// specified value instead of the actual PAKE codepoint.
 	OverridePAKECodepoint uint16
+	// The following fields are used for PSK credentials.
+	PreSharedKey []byte
+	PSKIdentity  []byte
+	PSKHash      crypto.Hash
+	PSKContext   []byte
+	// ImportTargetPSKHashes, if not empty, causes the PSK to be imported
+	// with the specified set of target PSK hashes, instead of the default
+	// set. To test unknown hashes, zero is interpreted as SHA-256 with the
+	// wrong codepoint.
+	ImportTargetPSKHashes []crypto.Hash
+	// ImportTargetPSKProtocol, if non-zero, causes the imported PSK
+	// identity use the specified value instead of the protocol.
+	ImportTargetPSKProtocol uint16
+	// AppendToImportedPSKIdentity is a byte string that is appended to the
+	// imported PSK identity.
+	AppendToImportedPSKIdentity []byte
 	// TrustAnchorID, if not empty, is the trust anchor ID for the issuer
 	// of the certificate chain.
 	TrustAnchorID []byte
@@ -2616,12 +2742,7 @@ var (
 )
 
 func containsGREASE(values []uint16) bool {
-	for _, v := range values {
-		if isGREASEValue(v) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(values, isGREASEValue)
 }
 
 func isAllZero(v []byte) bool {

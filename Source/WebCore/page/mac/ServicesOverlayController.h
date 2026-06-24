@@ -109,7 +109,6 @@ private:
     RefPtr<DataDetectorHighlight> m_activeHighlight;
     RefPtr<DataDetectorHighlight> m_nextActiveHighlight;
     HashSet<Ref<DataDetectorHighlight>> m_potentialHighlights;
-    HashSet<Ref<DataDetectorHighlight>> m_animatingHighlights;
     WeakHashSet<DataDetectorHighlight> m_highlights;
 
     Vector<LayoutRect> m_currentSelectionRects;

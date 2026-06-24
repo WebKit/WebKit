@@ -50,7 +50,7 @@ class JSSegmentedVariableObject : public JSSymbolTableObject {
 public:
     using Base = JSSymbolTableObject;
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 
     static constexpr DestructionMode needsDestruction = NeedsDestruction;
     template<typename CellType, SubspaceAccess>

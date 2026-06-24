@@ -34,8 +34,8 @@
 #include "Page.h"
 #include "RenderBoxModelObject.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -105,7 +105,7 @@ void ImageQualityController::restartTimer()
     m_timer.restart();
 }
 
-std::optional<InterpolationQuality> ImageQualityController::interpolationQualityFromStyle(const RenderStyle& style)
+std::optional<InterpolationQuality> ImageQualityController::interpolationQualityFromStyle(const Style::ComputedStyle& style)
 {
     switch (style.imageRendering()) {
     case ImageRendering::OptimizeSpeed:

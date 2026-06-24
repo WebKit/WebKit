@@ -1,0 +1,3 @@
+
+PASS Setting the same location.hash twice must not fire hashchange the second time
+

@@ -10,8 +10,6 @@
 // As a workaround for https://bugs.webkit.org/show_bug.cgi?id=87448, this code needs to
 // be run from an inline script in a main resource.
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 function testPrologue(gl) {
     return true;

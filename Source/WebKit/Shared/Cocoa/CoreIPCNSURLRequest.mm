@@ -216,7 +216,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
 
     RetainPtr<id> attribution = dict.get()[@"attribution"];
     if ([attribution isKindOfClass:[NSNumber class]]) {
-        auto val = [allowedProtocolTypes unsignedCharValue];
+        auto val = [attribution unsignedCharValue];
         if (isValidEnum<NSURLRequestAttribution>(val))
             m_data.attribution = static_cast<NSURLRequestAttribution>(val);
     }

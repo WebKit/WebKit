@@ -104,6 +104,16 @@
     },
     {
      "access": "public",
+     "interface": "AVCaptureDevice",
+     "introduced": "26.2",
+     "name": "AVCaptureDeviceEdgeLight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isEdgeLightEnabled", "introduced": "26.2", "name": "edgeLightEnabled"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isEdgeLightActive", "introduced": "26.2", "name": "edgeLightActive"}
+     ]
+    },
+    {
+     "access": "public",
      "instanceMethods": [
       {"access": "public", "name": "isExposureModeSupported:"},
       {"access": "public", "introduced": "26", "name": "defaultRectForExposurePointOfInterest:"},
@@ -224,6 +234,15 @@
      "name": "AVCaptureDeviceFormatDepthDataAdditions",
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "isPortraitEffectsMatteStillImageDeliverySupported", "introduced": "12", "name": "portraitEffectsMatteStillImageDeliverySupported"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVCaptureDeviceFormat",
+     "introduced": "26.2",
+     "name": "AVCaptureDeviceFormatEdgeLight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEdgeLightSupported", "introduced": "26.2", "name": "edgeLightSupported"}
      ]
     },
     {
@@ -1477,6 +1496,7 @@
       "AVCaptureDeviceSmartFraming",
       "AVCaptureDeviceNominalFocalLengthIn35mmFilm",
       "AVCaptureDeviceStudioLight",
+      "AVCaptureDeviceEdgeLight",
       "CameraLensSmudgeDetection"
      ],
      "classMethods": [
@@ -1553,6 +1573,7 @@
       "AVCaptureDeviceFormatStudioLight",
       "AVCaptureDeviceFormatReactionEffects",
       "AVCaptureDeviceFormatBackgroundReplacement",
+      "AVCaptureDeviceFormatEdgeLight",
       "AVCaptureDeviceFormatCinematicVideoSupport",
       "DynamicAspectRatio",
       "AVCaptureDeviceFormatSmartFraming",
@@ -1636,6 +1657,8 @@
       {"access": "public", "getter": "multichannelAudioMode", "introduced": "18", "name": "multichannelAudioMode", "setter": "setMultichannelAudioMode:"},
       {"access": "public", "attr": [ "readonly" ], "getter": "isWindNoiseRemovalSupported", "introduced": "18", "name": "windNoiseRemovalSupported"},
       {"access": "public", "getter": "isWindNoiseRemovalEnabled", "introduced": "18", "name": "windNoiseRemovalEnabled", "setter": "setWindNoiseRemovalEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAudioZoomSupported", "introduced": "26.4", "name": "audioZoomSupported"},
+      {"access": "public", "getter": "isAudioZoomEnabled", "introduced": "26.4", "name": "audioZoomEnabled", "setter": "setAudioZoomEnabled:"},
       {"access": "public", "attr": [ "readonly" ], "getter": "isCinematicVideoCaptureSupported", "introduced": "26", "name": "cinematicVideoCaptureSupported"},
       {"access": "public", "getter": "isCinematicVideoCaptureEnabled", "introduced": "26", "name": "cinematicVideoCaptureEnabled", "setter": "setCinematicVideoCaptureEnabled:"},
       {"access": "public", "getter": "simulatedAperture", "introduced": "26", "name": "simulatedAperture", "setter": "setSimulatedAperture:"}

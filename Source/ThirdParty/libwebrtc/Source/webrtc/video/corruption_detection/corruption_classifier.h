@@ -11,9 +11,9 @@
 #ifndef VIDEO_CORRUPTION_DETECTION_CORRUPTION_CLASSIFIER_H_
 #define VIDEO_CORRUPTION_DETECTION_CORRUPTION_CLASSIFIER_H_
 
+#include <span>
 #include <variant>
 
-#include "api/array_view.h"
 #include "video/corruption_detection/halton_frame_sampler.h"
 
 namespace webrtc {
@@ -42,8 +42,8 @@ class CorruptionClassifier {
   // or by applying a logistic function to the loss. The method is chosen
   // depending on the used constructor.
   double CalculateCorruptionProbability(
-      ArrayView<const FilteredSample> filtered_original_samples,
-      ArrayView<const FilteredSample> filtered_compressed_samples,
+      std::span<const FilteredSample> filtered_original_samples,
+      std::span<const FilteredSample> filtered_compressed_samples,
       int luma_threshold,
       int chroma_threshold) const;
 
@@ -61,8 +61,8 @@ class CorruptionClassifier {
 
   // Returns the non-normalized score between the original and the compressed
   // frames' samples.
-  double GetScore(ArrayView<const FilteredSample> filtered_original_samples,
-                  ArrayView<const FilteredSample> filtered_compressed_samples,
+  double GetScore(std::span<const FilteredSample> filtered_original_samples,
+                  std::span<const FilteredSample> filtered_compressed_samples,
                   int luma_threshold,
                   int chroma_threshold) const;
 

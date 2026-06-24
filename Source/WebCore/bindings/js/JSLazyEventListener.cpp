@@ -78,7 +78,7 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const UR
     , m_sourceURL(sourceURL)
     , m_sourcePosition(convertZeroToOne(sourcePosition))
     , m_originalNode(WTF::move(arguments.node))
-    , m_sourceTaintedOrigin(JSC::computeNewSourceTaintedOriginFromStack(arguments.document.vm(), arguments.document.vm().topCallFrame))
+    , m_sourceTaintedOrigin(JSC::computeNewSourceTaintedOriginFromStack(protect(arguments.document)->vm(), protect(arguments.document)->vm().topCallFrame))
 {
 }
 
@@ -172,7 +172,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
         if (!wrapper()) {
             // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.
             // FIXME: Should pass the global object associated with the node
-            setWrapperWhenInitializingJSFunction(vm, asObject(toJS(lexicalGlobalObject, globalObject, *m_originalNode)));
+            setWrapperWhenInitializingJSFunction(vm, asObject(toJS(lexicalGlobalObject, globalObject, protect(*m_originalNode))));
         }
 
         if (listenerHasEventHandlerScope) {
@@ -193,14 +193,14 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& argu
     // FIXME: We should be able to provide source information for frameless documents too (e.g. for importing nodes from XMLHttpRequest.responseXML).
     TextPosition position;
     URL sourceURL;
-    if (auto* frame = arguments.document.frame()) {
+    if (RefPtr frame = arguments.document.frame()) {
         if (!frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToCreateEventListener))
             return nullptr;
         position = frame->script().eventHandlerPosition();
         sourceURL = arguments.document.url();
     }
 
-    JSLockHolder locker(arguments.document.vm());
+    JSLockHolder locker(protect(arguments.document)->vm());
     return adoptRef(*new JSLazyEventListener(WTF::move(arguments), sourceURL, position));
 }
 
@@ -221,7 +221,7 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(LocalDOMWindow& window, 
     ASSERT(window.document());
     CheckedRef document = *window.document();
     ASSERT(document->frame());
-    return create({ attributeName, attributeValue, document, nullptr, toJSDOMWindow(document->frame(), mainThreadNormalWorldSingleton()), document->isSVGDocument() });
+    return create({ attributeName, attributeValue, document, nullptr, toJSDOMWindow(protect(document->frame()), mainThreadNormalWorldSingleton()), document->isSVGDocument() });
 }
 
 } // namespace WebCore

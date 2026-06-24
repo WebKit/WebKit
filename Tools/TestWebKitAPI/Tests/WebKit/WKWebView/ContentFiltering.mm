@@ -35,6 +35,7 @@
 #import <WebCore/MockContentFilterSettings.h>
 #import <WebKit/WKErrorRef.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -42,6 +43,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/_WKDownloadDelegate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
@@ -157,6 +159,12 @@ static RetainPtr<WKWebViewConfiguration> configurationWithContentFilterSettings(
 {
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ContentFilteringPlugIn"]);
     RetainPtr contentFilterEnabler = adoptNS([[MockContentFilterEnabler alloc] initWithDecision:decision decisionPoint:decisionPoint]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"AllowTestOnlyMockContentFilterIPC"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
     [[configuration processPool] _setObject:contentFilterEnabler.get() forBundleParameter:NSStringFromClass([MockContentFilterEnabler class])];
     return configuration;
 }

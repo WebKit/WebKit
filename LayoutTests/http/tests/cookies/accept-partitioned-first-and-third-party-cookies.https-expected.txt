@@ -11,7 +11,7 @@ TEST COMPLETE
 --------
 Frame: '<!--frame1-->'
 --------
-Cookies are: test_cookie = 1
+Cookies are:
 
 --------
 Frame: '<!--frame2-->'
@@ -21,7 +21,7 @@ Cookies are:
 --------
 Frame: '<!--frame3-->'
 --------
-Cookies are: test_cookie = 1
+Cookies are:
 
 --------
 Frame: '<!--frame4-->'
@@ -30,5 +30,35 @@ Cookies are: test_cookie = 1
 
 --------
 Frame: '<!--frame5-->'
+--------
+Cookies are: test_cookie = 1
+
+--------
+Frame: '<!--frame6-->'
+--------
+Cookies are: test_cookie = 1
+
+--------
+Frame: '<!--frame7-->'
+--------
+Cookies are:
+
+--------
+Frame: '<!--frame8-->'
+--------
+Cookies are: test_cookie = 1
+
+--------
+Frame: '<!--frame9-->'
+--------
+Cookies are: test_cookie = 1
+
+--------
+Frame: '<!--frame10-->'
+--------
+Cookies are: test_cookie = 1
+
+--------
+Frame: '<!--frame11-->'
 --------
 

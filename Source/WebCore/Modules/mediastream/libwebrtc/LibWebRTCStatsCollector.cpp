@@ -37,6 +37,7 @@
 #include <webrtc/api/stats/rtcstats_objects.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
+#include <wtf/ReducedResolutionSeconds.h>
 
 namespace WebCore {
 

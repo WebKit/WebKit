@@ -31,7 +31,7 @@
 #include "ArrayPrototype.h"
 #include "ClonedArguments.h"
 #include "DFGArgumentsUtilities.h"
-#include "DFGBlockMapInlines.h"
+#include <wtf/IndexMap.h>
 #include "DFGClobberize.h"
 #include "DFGForAllKills.h"
 #include "DFGGraph.h"
@@ -503,7 +503,7 @@ private:
         m_graph.initializeNodeOwners();
         CombinedLiveness combinedLiveness(m_graph);
 
-        BlockMap<Operands<bool>> clobberedByBlock(m_graph);
+        IndexMap<BasicBlock*, Operands<bool>> clobberedByBlock(m_graph.numBlocks());
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             Operands<bool>& clobberedByThisBlock = clobberedByBlock[block];
             clobberedByThisBlock = Operands<bool>(OperandsLike, m_graph.block(0)->variablesAtHead);

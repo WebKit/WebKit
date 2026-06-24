@@ -36,6 +36,7 @@
 #include <openssl/rand.h>
 #include <openssl/sha2.h>
 
+#include "../crypto/bytestring/internal.h"
 #include "../crypto/internal.h"
 #include "internal.h"
 
@@ -222,27 +223,13 @@ bool ssl_add_client_hello(SSL_HANDSHAKE *hs) {
   ssl_client_hello_type_t type = hs->selected_ech_config
                                      ? ssl_client_hello_outer
                                      : ssl_client_hello_unencrypted;
-  bool needs_psk_binder;
   Array<uint8_t> msg;
   if (!ssl->method->init_message(ssl, cbb.get(), &body, SSL3_MT_CLIENT_HELLO) ||
       !ssl_write_client_hello_without_extensions(hs, &body, type,
                                                  /*empty_session_id=*/false) ||
-      !ssl_add_clienthello_tlsext(hs, &body, /*out_encoded=*/nullptr,
-                                  &needs_psk_binder, type, CBB_len(&body)) ||
+      !ssl_add_clienthello_tlsext(hs, &body, /*out_encoded=*/nullptr, type) ||
       !ssl->method->finish_message(ssl, cbb.get(), &msg)) {
     return false;
-  }
-
-  // Now that the length prefixes have been computed, fill in the placeholder
-  // PSK binder.
-  if (needs_psk_binder) {
-    // ClientHelloOuter cannot have a PSK binder. Otherwise the
-    // ClientHellOuterAAD computation would break.
-    assert(type != ssl_client_hello_outer);
-    if (!tls13_write_psk_binder(hs, hs->transcript, Span(msg),
-                                /*out_binder_len=*/nullptr)) {
-      return false;
-    }
   }
 
   return ssl->method->add_message(ssl, std::move(msg));
@@ -340,6 +327,29 @@ void ssl_done_writing_client_hello(SSL_HANDSHAKE *hs) {
   hs->pake_share_bytes.Reset();
 }
 
+bool ssl_accepts_server_certificate_auth(const SSL_HANDSHAKE *hs) {
+  assert(!hs->ssl->server);
+  // In PAKE mode, the server must respond with a PAKE. We do not support
+  // accepting both PAKE and certificates together.
+  if (hs->pake_prover != nullptr) {
+    return false;
+  }
+
+  // If the caller has explicitly asked for certificate verification, it is
+  // willing to accept a certificate, even if it has non-certificate
+  // credentials, such as a PSK.
+  if (hs->config->verify_mode != SSL_VERIFY_NONE) {
+    return true;
+  }
+
+  // Otherwise, we fall back to default behavior: if there is at least one
+  // non-certificate credential configured, assume by default that the caller is
+  // only willing to use that non-certificate mode.
+  return std::none_of(hs->config->cert->credentials.begin(),
+                      hs->config->cert->credentials.end(),
+                      [](const auto &cred) { return !cred->UsesPrivateKey(); });
+}
+
 static enum ssl_hs_wait_t do_start_connect(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
 
@@ -431,7 +441,9 @@ static enum ssl_hs_wait_t do_start_connect(SSL_HANDSHAKE *hs) {
     hs->early_data_offered = true;
   }
 
-  if (!ssl_setup_key_shares(hs, /*override_group_id=*/0) ||
+  ssl_setup_client_certificate_type(hs);
+  if (!ssl_setup_pre_shared_keys(hs) ||  //
+      !ssl_setup_key_shares(hs, /*override_group_id=*/0) ||
       !ssl_setup_extension_permutation(hs) ||
       !ssl_encrypt_client_hello(hs, Span(ech_enc, ech_enc_len)) ||
       !ssl_add_client_hello(hs)) {
@@ -656,9 +668,9 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
     return ssl_hs_ok;
   }
 
-  // If this client is configured to use a PAKE, then the server must support
-  // TLS 1.3.
-  if (hs->pake_prover) {
+  // If this client only accepts non-certificate modes, then the server must
+  // support TLS 1.3.
+  if (!ssl_accepts_server_certificate_auth(hs)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_UNSUPPORTED_PROTOCOL);
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_PROTOCOL_VERSION);
     return ssl_hs_error;
@@ -666,6 +678,7 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
 
   // Clear some TLS 1.3 state that no longer needs to be retained.
   hs->key_shares.clear();
+  hs->pre_shared_keys.clear();
   ssl_done_writing_client_hello(hs);
 
   // TLS 1.2 handshakes cannot accept ECH.
@@ -847,13 +860,26 @@ static enum ssl_hs_wait_t do_read_server_certificate(SSL_HANDSHAKE *hs) {
 
   CBS body = msg.body;
   uint8_t alert = SSL_AD_DECODE_ERROR;
-  if (!ssl_parse_cert_chain(&alert, &hs->new_session->certs, &hs->peer_pubkey,
-                            nullptr, &body, ssl->ctx->pool)) {
+
+  bool parse_ok;
+  if (hs->peer_cert_type == TLSEXT_cert_type_rpk) {
+    hs->new_session->peer_cert_type = TLSEXT_cert_type_rpk;
+    parse_ok = ssl_parse_rpk_cert(&alert, &hs->new_session->peer_raw_public_key,
+                                  &hs->peer_pubkey, nullptr, &body);
+  } else {
+    assert(hs->new_session->peer_cert_type == TLSEXT_cert_type_x509);
+    hs->new_session->peer_cert_type = TLSEXT_cert_type_x509;
+    parse_ok =
+        ssl_parse_cert_chain(&alert, &hs->new_session->certs, &hs->peer_pubkey,
+                             nullptr, &body, ssl->ctx->pool.get());
+  }
+
+  if (!parse_ok) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
     return ssl_hs_error;
   }
 
-  if (sk_CRYPTO_BUFFER_num(hs->new_session->certs.get()) == 0 ||
+  if (!ssl_session_has_peer_cred(hs->new_session.get()) ||
       CBS_len(&body) != 0 ||
       !ssl->ctx->x509_method->session_cache_objects(hs->new_session.get())) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
@@ -911,7 +937,7 @@ static enum ssl_hs_wait_t do_read_certificate_status(SSL_HANDSHAKE *hs) {
   }
 
   hs->new_session->ocsp_response.reset(
-      CRYPTO_BUFFER_new_from_CBS(&ocsp_response, ssl->ctx->pool));
+      CRYPTO_BUFFER_new_from_CBS(&ocsp_response, ssl->ctx->pool.get()));
   if (hs->new_session->ocsp_response == nullptr) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
     return ssl_hs_error;
@@ -1238,9 +1264,15 @@ static enum ssl_hs_wait_t do_read_server_hello_done(SSL_HANDSHAKE *hs) {
   return ssl_hs_ok;
 }
 
-static bool check_credential(SSL_HANDSHAKE *hs, const SSL_CREDENTIAL *cred,
+static bool check_credential(SSL_HANDSHAKE *hs, const SSLCredential *cred,
                              uint16_t *out_sigalg) {
-  if (cred->type != SSLCredentialType::kX509) {
+  bool cert_type_ok = false;
+  if (hs->client_cert_type == TLSEXT_cert_type_x509) {
+    cert_type_ok = cred->type == SSLCredentialType::kX509;
+  } else if (hs->client_cert_type == TLSEXT_cert_type_rpk) {
+    cert_type_ok = cred->type == SSLCredentialType::kRawPublicKey;
+  }
+  if (!cert_type_ok) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_CERTIFICATE_TYPE);
     return false;
   }
@@ -1300,32 +1332,42 @@ static enum ssl_hs_wait_t do_send_client_certificate(SSL_HANDSHAKE *hs) {
     }
   }
 
-  Array<SSL_CREDENTIAL *> creds;
+  Array<SSLCredential *> creds;
   if (!ssl_get_full_credential_list(hs, &creds)) {
     return ssl_hs_error;
   }
 
-  if (creds.empty()) {
-    // If there were no credentials, proceed without a client certificate. In
-    // this case, the handshake buffer may be released early.
-    hs->transcript.FreeBuffer();
-  } else {
-    // Select the credential to use.
-    for (SSL_CREDENTIAL *cred : creds) {
-      ERR_clear_error();
-      uint16_t sigalg;
-      if (check_credential(hs, cred, &sigalg)) {
-        hs->credential = UpRef(cred);
-        hs->signature_algorithm = sigalg;
-        break;
-      }
+  // Select the credential, if any, to use.
+  bool may_proceed_anonymously = true;
+  for (SSLCredential *cred : creds) {
+    if (!cred->UsesPrivateKey()) {
+      // Non-certificate credentials (e.g. PSKs) do not participate in deciding
+      // whether to error or proceed anonymously.
+      continue;
     }
-    if (hs->credential == nullptr) {
+
+    ERR_clear_error();
+    may_proceed_anonymously = false;
+    uint16_t sigalg;
+    if (check_credential(hs, cred, &sigalg)) {
+      hs->credential = UpRef(cred);
+      hs->signature_algorithm = sigalg;
+      break;
+    }
+  }
+
+  // Fail the connection if no credentials matched, but only if the caller
+  // configured at least one certificate credential. If there were no
+  // candidates, proceed anonymously.
+  if (hs->credential == nullptr) {
+    if (!may_proceed_anonymously) {
       // The error from the last attempt is in the error queue.
       assert(ERR_peek_error() != 0);
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE);
       return ssl_hs_error;
     }
+    // Without CertificateVerify, we can release the handshake buffer.
+    hs->transcript.FreeBuffer();
   }
 
   if (!ssl_send_tls12_certificate(hs)) {
@@ -1351,7 +1393,8 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
   Array<uint8_t> pms;
   uint32_t alg_k = hs->new_cipher->algorithm_mkey;
   uint32_t alg_a = hs->new_cipher->algorithm_auth;
-  if (ssl_cipher_uses_certificate_auth(hs->new_cipher)) {
+  if (ssl_cipher_uses_certificate_auth(hs->new_cipher) &&
+      hs->new_session->peer_cert_type == TLSEXT_cert_type_x509) {
     const CRYPTO_BUFFER *leaf =
         sk_CRYPTO_BUFFER_value(hs->new_session->certs.get(), 0);
     CBS leaf_cbs;
@@ -1362,6 +1405,8 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
     // certificates, which we do not support, from ECDSA certificates.
     // Historically, we have not checked RSA key usages, so it is controlled by
     // a flag for now. See https://crbug.com/795089.
+    // Key usage is only checked for X.509 certs. (RPKs have no keyUsage to
+    // enforce.)
     ssl_key_usage_t intended_use = (alg_k & SSL_kRSA)
                                        ? key_usage_encipherment
                                        : key_usage_digital_signature;

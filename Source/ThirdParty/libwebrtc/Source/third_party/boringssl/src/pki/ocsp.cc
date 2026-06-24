@@ -86,8 +86,8 @@ bool ParseOCSPCertID(der::Input raw_tlv, OCSPCertID *out) {
 
 namespace {
 
-// Parses |raw_tlv| to extract an OCSP RevokedInfo (RFC 6960) and stores the
-// result in the OCSPCertStatus |out|. Returns whether the parsing was
+// Parses `raw_tlv` to extract an OCSP RevokedInfo (RFC 6960) and stores the
+// result in the OCSPCertStatus `out`. Returns whether the parsing was
 // successful.
 //
 // RevokedInfo ::= SEQUENCE {
@@ -132,8 +132,8 @@ bool ParseRevokedInfo(der::Input raw_tlv, OCSPCertStatus *out) {
   return !parser.HasMore();
 }
 
-// Parses |raw_tlv| to extract an OCSP CertStatus (RFC 6960) and stores the
-// result in the OCSPCertStatus |out|. Returns whether the parsing was
+// Parses `raw_tlv` to extract an OCSP CertStatus (RFC 6960) and stores the
+// result in the OCSPCertStatus `out`. Returns whether the parsing was
 // successful.
 //
 // CertStatus ::= CHOICE {
@@ -169,7 +169,7 @@ bool ParseCertStatus(der::Input raw_tlv, OCSPCertStatus *out) {
   return !parser.HasMore();
 }
 
-// Writes the hash of |value| as an OCTET STRING to |cbb|, using |hash_type| as
+// Writes the hash of `value` as an OCTET STRING to `cbb`, using `hash_type` as
 // the algorithm. Returns true on success.
 bool AppendHashAsOctetString(const EVP_MD *hash_type, CBB *cbb,
                              der::Input value) {
@@ -243,8 +243,8 @@ bool ParseOCSPSingleResponse(der::Input raw_tlv, OCSPSingleResponse *out) {
 
 namespace {
 
-// Parses |raw_tlv| to extract a ResponderID (RFC 6960) and stores the
-// result in the ResponderID |out|. Returns whether the parsing was successful.
+// Parses `raw_tlv` to extract a ResponderID (RFC 6960) and stores the
+// result in the ResponderID `out`. Returns whether the parsing was successful.
 //
 // ResponderID ::= CHOICE {
 //      byName               [1] Name,
@@ -363,8 +363,8 @@ bool ParseOCSPResponseData(der::Input raw_tlv, OCSPResponseData *out) {
 
 namespace {
 
-// Parses |raw_tlv| to extract a BasicOCSPResponse (RFC 6960) and stores the
-// result in the OCSPResponse |out|. Returns whether the parsing was
+// Parses `raw_tlv` to extract a BasicOCSPResponse (RFC 6960) and stores the
+// result in the OCSPResponse `out`. Returns whether the parsing was
 // successful.
 //
 // BasicOCSPResponse       ::= SEQUENCE {
@@ -492,7 +492,7 @@ bool ParseOCSPResponse(der::Input raw_tlv, OCSPResponse *out) {
       return false;
     }
 
-    // As per RFC 6960 Section 4.2.1, the value of |response| SHALL be the DER
+    // As per RFC 6960 Section 4.2.1, the value of `response` SHALL be the DER
     // encoding of BasicOCSPResponse.
     der::Input response;
     if (!bytes_parser.ReadTag(CBS_ASN1_OCTETSTRING, &response)) {
@@ -511,7 +511,7 @@ bool ParseOCSPResponse(der::Input raw_tlv, OCSPResponse *out) {
 
 namespace {
 
-// Checks that the |type| hash of |value| is equal to |hash|
+// Checks that the `type` hash of `value` is equal to `hash`
 bool VerifyHash(const EVP_MD *type, der::Input hash, der::Input value) {
   unsigned value_hash_len;
   uint8_t value_hash[EVP_MAX_MD_SIZE];
@@ -527,7 +527,7 @@ bool VerifyHash(const EVP_MD *type, der::Input hash, der::Input value) {
 // to say, the value of subjectPublicKey without the leading unused bit
 // count octet.
 //
-// Returns true on success and fills |*spk_tlv| with the result.
+// Returns true on success and fills `*spk_tlv` with the result.
 //
 // From RFC 5280, Section 4.1
 //   SubjectPublicKeyInfo  ::=  SEQUENCE  {
@@ -545,7 +545,7 @@ bool GetSubjectPublicKeyBytes(der::Input spki_tlv, der::Input *spk_tlv) {
   //   The subjectPublicKey field includes the unused bit count. For this
   //   application, the unused bit count must be zero, and is not included in
   //   the result. We extract the subjectPubicKey bit string, verify the first
-  //   byte is 0, and if so set |spk_tlv| to the remaining bytes.
+  //   byte is 0, and if so set `spk_tlv` to the remaining bytes.
   if (!CBS_get_asn1(&outer, &inner, CBS_ASN1_SEQUENCE) ||
       !CBS_get_asn1(&inner, &alg, CBS_ASN1_SEQUENCE) ||
       !CBS_get_asn1(&inner, &spk, CBS_ASN1_BITSTRING) ||
@@ -556,7 +556,7 @@ bool GetSubjectPublicKeyBytes(der::Input spki_tlv, der::Input *spk_tlv) {
   return true;
 }
 
-// Checks the OCSPCertID |id| identifies |certificate|.
+// Checks the OCSPCertID `id` identifies `certificate`.
 bool CheckCertIDMatchesCertificate(
     const OCSPCertID &id, const ParsedCertificate *certificate,
     const ParsedCertificate *issuer_certificate) {
@@ -618,7 +618,7 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
       {}, &errors);
 }
 
-// Checks that the ResponderID |id| matches the certificate |cert| either
+// Checks that the ResponderID `id` matches the certificate `cert` either
 // by verifying the name matches that of the certificate or that the hash
 // matches the certificate's public key hash (RFC 6960, 4.2.2.3).
 [[nodiscard]] bool CheckResponderIDMatchesCertificate(
@@ -646,8 +646,8 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
   return false;
 }
 
-// Verifies that |responder_certificate| has been authority for OCSP signing,
-// delegated to it by |issuer_certificate|.
+// Verifies that `responder_certificate` has been authority for OCSP signing,
+// delegated to it by `issuer_certificate`.
 //
 // TODO(eroman): No revocation checks are done (see id-pkix-ocsp-nocheck in the
 //     spec). extension).
@@ -694,8 +694,8 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
 }
 
 // Verifies that the OCSP response has a valid signature using
-// |issuer_certificate|, or an authorized responder issued by
-// |issuer_certificate| for OCSP signing.
+// `issuer_certificate`, or an authorized responder issued by
+// `issuer_certificate` for OCSP signing.
 [[nodiscard]] bool VerifyOCSPResponseSignature(
     const OCSPResponse &response, const OCSPResponseData &response_data,
     const ParsedCertificate *issuer_certificate) {
@@ -712,7 +712,7 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
   // Otherwise search through the provided certificates for the Authorized
   // Responder. Want a certificate that:
   //  (1) Matches the OCSP Responder ID.
-  //  (2) Has been given authority for OCSP signing by |issuer_certificate|.
+  //  (2) Has been given authority for OCSP signing by `issuer_certificate`.
   //  (3) Has signed the OCSP response using its public key.
   for (const auto &responder_cert_tlv : response.certs) {
     std::shared_ptr<const ParsedCertificate> cur_responder_certificate =
@@ -809,7 +809,7 @@ bool ParseOCSPSingleResponseExtensions(
   return true;
 }
 
-// Loops through the OCSPSingleResponses to find the best match for |cert|.
+// Loops through the OCSPSingleResponses to find the best match for `cert`.
 OCSPRevocationStatus GetRevocationStatusForCert(
     const OCSPResponseData &response_data, const ParsedCertificate *cert,
     const ParsedCertificate *issuer_certificate,
@@ -895,7 +895,7 @@ OCSPRevocationStatus CheckOCSP(
     return OCSPRevocationStatus::UNKNOWN;
   }
 
-  // RFC 6960 defines all responses |response_status| != SUCCESSFUL as error
+  // RFC 6960 defines all responses `response_status` != SUCCESSFUL as error
   // responses. No revocation information is provided on error responses, and
   // the OCSPResponseData structure is not set.
   if (response.status != OCSPResponse::ResponseStatus::SUCCESSFUL) {

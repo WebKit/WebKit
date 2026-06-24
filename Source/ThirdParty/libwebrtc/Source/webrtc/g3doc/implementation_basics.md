@@ -157,3 +157,20 @@ Before uploading changes to gerrit for review, make sure to complete the followi
 * Ensure that a *full build* of all binaries passes. This will save time and resources.
 * If at any of the above steps changes had to be made, go back the first step and repeat
   until no changes are required at every step.
+
+## Pointer Nullability Annotations
+To ensure high-quality, machine-checkable C++ code in WebRTC, adhere to the following rules regarding pointer nullability.
+
+* **Core Principle**: Prevent accidental use of invalid null values by explicitly declaring the nullability contract of all raw and smart pointers.
+
+* **Classify Every Pointer**: Avoid leaving pointers in the "Unknown" (unannotated) state. Actively classify whether null is a valid semantic state for every pointer you write or modify.
+
+* **Annotate Nullable Exceptions (`absl_nullable`)**: When null is a valid and expected value at the point of use, you must explicitly annotate the pointer.
+    * Raw Pointers: Use the format `T* absl_nullable` (e.g., `Widget* absl_nullable widget`).
+    * Smart Pointers: Use the format `absl_nullable std::unique_ptr<T>` (e.g., `absl_nullable std::unique_ptr<Widget> widget`).
+
+* **Enforce Strict Requirements (`absl_nonnull`)**: When a pointer must fundamentally never be null, enforce this contract explicitly.
+    * Raw Pointers: Use the format `T* absl_nonnull` but for non-null raw pointers prefer to use a reference instead.
+    * Smart Pointers: Use the format `absl_nonnull std::unique_ptr<T>`.
+
+* **Leverage Machine Checking**: Treat these annotations as strict contracts. Rely on them to surface potential null-dereference errors or contract violations during static analysis and compilation.

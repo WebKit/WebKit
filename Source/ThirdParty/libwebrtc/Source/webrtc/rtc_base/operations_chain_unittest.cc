@@ -25,6 +25,7 @@
 #include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 
 namespace webrtc {
@@ -397,7 +398,7 @@ TEST(OperationsChainTest, IsEmpty) {
 }
 
 TEST(OperationsChainTest, OnChainEmptyCallback) {
-  AutoThread main_thread;
+  test::RunLoop main_thread;
   OperationTrackerProxy operation_tracker_proxy;
   operation_tracker_proxy.Initialize()->Wait(Event::kForever);
 

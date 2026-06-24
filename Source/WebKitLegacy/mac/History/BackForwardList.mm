@@ -28,7 +28,6 @@
 
 #import <WebCore/BackForwardCache.h>
 
-using namespace WebCore;
 
 static const unsigned DefaultCapacity = 100;
 static const unsigned NoCurrentItemIndex = UINT_MAX;
@@ -47,7 +46,7 @@ BackForwardList::~BackForwardList()
     ASSERT(m_closed);
 }
 
-void BackForwardList::addItem(Ref<HistoryItem>&& newItem)
+void BackForwardList::addItem(Ref<WebCore::HistoryItem>&& newItem)
 {
     if (!m_capacity || !m_enabled)
         return;
@@ -56,19 +55,19 @@ void BackForwardList::addItem(Ref<HistoryItem>&& newItem)
     if (m_current != NoCurrentItemIndex) {
         unsigned targetSize = m_current + 1;
         while (m_entries.size() > targetSize) {
-            Ref<HistoryItem> item = m_entries.takeLast();
+            Ref<WebCore::HistoryItem> item = m_entries.takeLast();
             m_entryHash.remove(item.ptr());
-            BackForwardCache::singleton().remove(item);
+            WebCore::BackForwardCache::singleton().remove(item);
         }
     }
 
     // Toss the first item if the list is getting too big, as long as we're not using it
     // (or even if we are, if we only want 1 entry).
     if (m_entries.size() == m_capacity && (m_current || m_capacity == 1)) {
-        Ref<HistoryItem> item = WTF::move(m_entries[0]);
+        Ref<WebCore::HistoryItem> item = WTF::move(m_entries[0]);
         m_entries.removeAt(0);
         m_entryHash.remove(item.ptr());
-        BackForwardCache::singleton().remove(item);
+        WebCore::BackForwardCache::singleton().remove(item);
         --m_current;
     }
 
@@ -91,7 +90,7 @@ void BackForwardList::goForward()
         m_current++;
 }
 
-void BackForwardList::goToItem(HistoryItem& item)
+void BackForwardList::goToItem(WebCore::HistoryItem& item)
 {
     if (!m_entries.size())
         return;
@@ -106,28 +105,28 @@ void BackForwardList::goToItem(HistoryItem& item)
         m_current = index;
 }
 
-RefPtr<HistoryItem> BackForwardList::backItem()
+RefPtr<WebCore::HistoryItem> BackForwardList::backItem()
 {
     if (m_current && m_current != NoCurrentItemIndex)
         return m_entries[m_current - 1].copyRef();
     return nullptr;
 }
 
-RefPtr<HistoryItem> BackForwardList::currentItem()
+RefPtr<WebCore::HistoryItem> BackForwardList::currentItem()
 {
     if (m_current != NoCurrentItemIndex)
         return m_entries[m_current].copyRef();
     return nullptr;
 }
 
-RefPtr<HistoryItem> BackForwardList::forwardItem()
+RefPtr<WebCore::HistoryItem> BackForwardList::forwardItem()
 {
     if (m_entries.size() && m_current < m_entries.size() - 1)
         return m_entries[m_current + 1].copyRef();
     return nullptr;
 }
 
-void BackForwardList::backListWithLimit(int limit, Vector<Ref<HistoryItem>>& list)
+void BackForwardList::backListWithLimit(int limit, Vector<Ref<WebCore::HistoryItem>>& list)
 {
     list.clear();
     if (m_current != NoCurrentItemIndex) {
@@ -137,7 +136,7 @@ void BackForwardList::backListWithLimit(int limit, Vector<Ref<HistoryItem>>& lis
     }
 }
 
-void BackForwardList::forwardListWithLimit(int limit, Vector<Ref<HistoryItem>>& list)
+void BackForwardList::forwardListWithLimit(int limit, Vector<Ref<WebCore::HistoryItem>>& list)
 {
     ASSERT(limit > -1);
     list.clear();
@@ -161,9 +160,9 @@ int BackForwardList::capacity()
 void BackForwardList::setCapacity(int size)
 {    
     while (size < static_cast<int>(m_entries.size())) {
-        Ref<HistoryItem> item = m_entries.takeLast();
+        Ref<WebCore::HistoryItem> item = m_entries.takeLast();
         m_entryHash.remove(item.ptr());
-        BackForwardCache::singleton().remove(item);
+        WebCore::BackForwardCache::singleton().remove(item);
     }
 
     if (!size)
@@ -199,7 +198,7 @@ unsigned BackForwardList::forwardListCount() const
     return m_current == NoCurrentItemIndex ? 0 : m_entries.size() - m_current - 1;
 }
 
-RefPtr<HistoryItem> BackForwardList::itemAtIndex(int index, WebCore::FrameIdentifier)
+RefPtr<WebCore::HistoryItem> BackForwardList::itemAtIndex(int index, WebCore::FrameIdentifier)
 {
     // Do range checks without doing math on index to avoid overflow.
     if (index < -static_cast<int>(m_current))
@@ -236,7 +235,7 @@ bool BackForwardList::closed()
     return m_closed;
 }
 
-void BackForwardList::removeItem(HistoryItem& item)
+void BackForwardList::removeItem(WebCore::HistoryItem& item)
 {
     for (unsigned i = 0; i < m_entries.size(); ++i) {
         if (m_entries[i].ptr() == &item) {
@@ -256,7 +255,7 @@ void BackForwardList::removeItem(HistoryItem& item)
     }
 }
 
-bool BackForwardList::containsItem(const HistoryItem& entry) const
+bool BackForwardList::containsItem(const WebCore::HistoryItem& entry) const
 {
-    return m_entryHash.contains(const_cast<HistoryItem*>(&entry));
+    return m_entryHash.contains(const_cast<WebCore::HistoryItem*>(&entry));
 }

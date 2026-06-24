@@ -9,6 +9,8 @@ PASS Property background-clip value 'border-box, padding-box, content-box'
 PASS Property background-clip value 'content-box, border-box, padding-box, content-box'
 PASS Property background-clip value 'content-box, border-box, padding-box'
 PASS Property background-clip value 'content-box, border-box, border-area'
+FAIL Property background-clip value 'border-area text' assert_true: 'border-area text' is a supported value for background-clip. expected true got false
+FAIL Property background-clip value 'border-area text, content-box' assert_true: 'border-area text, content-box' is a supported value for background-clip. expected true got false
 PASS Property background-color value 'rgb(255, 0, 0)'
 PASS Property background-origin value 'border-box'
 PASS Property background-origin value 'content-box, border-box'
@@ -34,4 +36,6 @@ PASS Property background-size value 'contain'
 PASS Property background-size value 'auto 1px, 2% 3%'
 PASS Property background-size value 'auto 1px, 2% 3%, contain'
 PASS Property background-size value 'auto 1px, 2% 3%, contain, 7px 8px'
+FAIL background shorthand with 'border-area text' computes background-clip correctly assert_equals: expected "border-area text" but got "border-area"
+FAIL background shorthand with 'text border-area' computes background-clip correctly assert_equals: expected "border-area text" but got "border-box"
 

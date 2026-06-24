@@ -11,13 +11,12 @@
 #include "test/pc/e2e/analyzer/video/example_video_quality_analyzer.h"
 
 #include <cstdint>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
-#include "api/video_codecs/video_encoder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -28,7 +27,7 @@ ExampleVideoQualityAnalyzer::ExampleVideoQualityAnalyzer() = default;
 ExampleVideoQualityAnalyzer::~ExampleVideoQualityAnalyzer() = default;
 
 void ExampleVideoQualityAnalyzer::Start(std::string test_case_name,
-                                        ArrayView<const std::string> peer_names,
+                                        std::span<const std::string> peer_names,
                                         int max_threads_count) {}
 
 uint16_t ExampleVideoQualityAnalyzer::OnFrameCaptured(
@@ -75,9 +74,7 @@ void ExampleVideoQualityAnalyzer::OnFrameEncoded(
   ++frames_encoded_;
 }
 
-void ExampleVideoQualityAnalyzer::OnFrameDropped(
-    absl::string_view peer_name,
-    EncodedImageCallback::DropReason reason) {
+void ExampleVideoQualityAnalyzer::OnFrameDropped(absl::string_view peer_name) {
   RTC_LOG(LS_INFO) << "Frame dropped by encoder";
   MutexLock lock(&lock_);
   ++frames_dropped_;

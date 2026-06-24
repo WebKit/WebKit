@@ -41,10 +41,10 @@ public:
     virtual ~CachedSVGFont();
 
     bool ensureCustomFontData() final;
-    RefPtr<Font> createFont(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontCreationContext&) final;
+    RefPtr<Font> createFont(const FontDescription&, const FontCreationContext&) final;
 
 private:
-    FontPlatformData platformDataFromCustomData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
+    FontPlatformData platformDataFromCustomData(const FontDescription&, const FontCreationContext&);
 
     SVGFontElement* NODELETE getSVGFontById(const AtomString&) const;
 

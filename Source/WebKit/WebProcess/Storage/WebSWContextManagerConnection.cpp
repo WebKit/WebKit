@@ -28,6 +28,7 @@
 
 #include "FormDataReference.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessMessages.h"
 #include "RemoteWebLockRegistry.h"
@@ -641,23 +642,39 @@ void WebSWContextManagerConnection::removeNavigationFetch(WebCore::SWServerConne
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
 void WebSWContextManagerConnection::connectToInspector(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool isAutomaticConnection, bool immediatelyPause)
 {
-    Ref channel = ServiceWorkerDebuggableFrontendChannel::create(serviceWorkerIdentifier);
-    m_channels.add(serviceWorkerIdentifier, channel);
-    if (RefPtr serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
-        serviceWorkerThreadProxy->inspectorProxy().connectToWorker(channel, isAutomaticConnection, immediatelyPause);
+    assertIsCurrent(m_queue.get());
+
+    callOnMainRunLoop([protectedThis = Ref { *this }, serviceWorkerIdentifier, isAutomaticConnection, immediatelyPause] {
+        assertIsMainRunLoop();
+        Ref channel = ServiceWorkerDebuggableFrontendChannel::create(serviceWorkerIdentifier);
+        protectedThis->m_channels.add(serviceWorkerIdentifier, channel);
+        if (RefPtr serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
+            serviceWorkerThreadProxy->inspectorProxy().connectToWorker(channel.get(), isAutomaticConnection, immediatelyPause);
+    });
 }
 
 void WebSWContextManagerConnection::disconnectFromInspector(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    RefPtr channel = m_channels.take(serviceWorkerIdentifier);
-    if (RefPtr serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
-        serviceWorkerThreadProxy->inspectorProxy().disconnectFromWorker(*channel);
+    assertIsCurrent(m_queue.get());
+
+    callOnMainRunLoop([protectedThis = Ref { *this }, serviceWorkerIdentifier] {
+        assertIsMainRunLoop();
+        RefPtr channel = protectedThis->m_channels.take(serviceWorkerIdentifier);
+        if (!channel)
+            return;
+        if (RefPtr serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
+            serviceWorkerThreadProxy->inspectorProxy().disconnectFromWorker(*channel);
+    });
 }
 
 void WebSWContextManagerConnection::dispatchMessageFromInspector(WebCore::ServiceWorkerIdentifier identifier, String&& message)
 {
-    if (RefPtr serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(identifier))
-        serviceWorkerThreadProxy->inspectorProxy().sendMessageToWorker(WTF::move(message));
+    assertIsCurrent(m_queue.get());
+
+    callOnMainRunLoop([identifier, message = WTF::move(message).isolatedCopy()]() mutable {
+        if (RefPtr serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(identifier))
+            serviceWorkerThreadProxy->inspectorProxy().sendMessageToWorker(WTF::move(message));
+    });
 }
 
 #if ENABLE(REMOTE_INSPECTOR_SERVICE_WORKER_AUTO_INSPECTION)

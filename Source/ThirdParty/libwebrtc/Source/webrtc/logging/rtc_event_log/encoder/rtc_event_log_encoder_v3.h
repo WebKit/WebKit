@@ -16,9 +16,9 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
 
@@ -39,7 +39,7 @@ class RtcEventLogEncoderV3 final : public RtcEventLogEncoder {
 
  private:
   std::map<RtcEvent::Type,
-           std::function<std::string(webrtc::ArrayView<const RtcEvent*>)>>
+           std::function<std::string(std::span<const RtcEvent*>)>>
       encoders_;
 };
 

@@ -850,15 +850,19 @@ ALWAYS_INLINE Identifier JSRopeString::toIdentifier(JSGlobalObject* globalObject
 
 ALWAYS_INLINE void JSString::swapToAtomString(VM& vm, RefPtr<AtomStringImpl>&& atom) const
 {
-    // We replace currently held string with new AtomString. But the old string can be accessed from concurrent compilers and GC threads at any time.
-    // So, we keep the old string alive by appending it to Heap::m_possiblyAccessedStringsFromConcurrentThreads. And GC clears that list when GC finishes.
-    // This is OK since (1) when finishing GC concurrent compiler threads and GC threads are stopped, and (2) AtomString is already held in the atom table,
-    // and we anyway keep this old string until this JSString* is GC-ed. So it does not increase any memory pressure, we release at the same timing.
+    // When we swap a JSString's value to an AtomString, the old StringImpl can still be accessed
+    // by concurrent JIT compiler threads, GC threads, or via GCOwnedDataScope references on the stack.
+    // We keep the old string alive by appending it (paired with its owning JSString*) to
+    // Heap::m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.
+    // During GC, conservative root scanning discovers which JSStrings are still on the stack; at GC
+    // end we prune entries whose JSString was not discovered. Between GCs,
+    // Heap::clearConcurrentRetainedDataIfPossible clears the vector entirely when no JS is executing
+    // and no JIT compilations are in progress.
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
     String target(WTF::move(atom));
     WTF::storeStoreFence(); // Ensure AtomStringImpl's string is fully initialized when it is exposed to concurrent threads.
     valueInternal().swap(target);
-    vm.heap.appendPossiblyAccessedStringFromConcurrentThreads(WTF::move(target));
+    vm.heap.appendPossiblyAccessedStringFromConcurrentThreadsOrGCOwnedDataScope(this, WTF::move(target));
 }
 
 ALWAYS_INLINE Identifier JSString::toIdentifier(JSGlobalObject* globalObject) const

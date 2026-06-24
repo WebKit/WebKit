@@ -63,12 +63,24 @@ class WgcCaptureSession final {
     return is_capture_started_;
   }
 
+  // Returns true if the captured frame may contain the cursor. Reads the
+  // actual IsCursorCaptureEnabled state from the WGC capture session.
+  bool MayContainCursor() const;
+
   // We keep 2 buffers in the frame pool since it results in a good compromise
   // between latency/capture-rate and the rate at which
   // Direct3D11CaptureFramePool.TryGetNextFrame returns NULL and we have to fall
   // back to providing a copy from our external queue instead.
   // We make this public for tests.
   static constexpr int kNumBuffers = 2;
+
+  // When using the texture path (allow_using_texture_), each in-flight frame
+  // holds a reference to the WGC capture frame (via prevent_release) to prevent
+  // the frame pool from recycling the texture. We need more buffers so that the
+  // frame pool has free slots for new captures while downstream consumers still
+  // hold older frames. The queue holds 2 frames, and the downstream consumer
+  // (encoder) may hold 1-2 more, so we use 5 to provide sufficient headroom.
+  static constexpr int kNumBuffersForTexture = 5;
 
  private:
   class RefCountedEvent : public RefCountedNonVirtual<RefCountedEvent>,
@@ -135,6 +147,13 @@ class WgcCaptureSession final {
   // Process the captured frame and copy it to the `queue_`.
   HRESULT ProcessFrame();
 
+  // Process texture and copy frame with texture to the `queue_`.
+  // `capture_frame` is stored in the DXGIDesktopFrame's FrameTexture to keep
+  // the WGC frame alive, preventing the frame pool from recycling the texture
+  // while downstream consumers still reference this frame.
+  HRESULT ProcessTexture(Microsoft::WRL::ComPtr<ID3D11Texture2D> texture,
+                         Microsoft::WRL::ComPtr<IUnknown> capture_frame);
+
   void RemoveEventHandlers();
   void RemoveItemClosedEventHandler();
   void RemoveFrameArrivedEventHandler();
@@ -143,6 +162,10 @@ class WgcCaptureSession final {
   bool FrameContentCanBeCompared();
 
   bool allow_zero_hertz() const { return allow_zero_hertz_; }
+
+  int num_buffers() const {
+    return allow_using_texture_ ? kNumBuffersForTexture : kNumBuffers;
+  }
 
   std::unique_ptr<EventRegistrationToken> item_closed_token_;
   std::unique_ptr<EventRegistrationToken> frame_arrived_token_;
@@ -196,6 +219,12 @@ class WgcCaptureSession final {
   // StartCapture(). Adds 0Hz detection in ProcessFrame() when enabled which
   // adds complexity since memcmp() is performed on two successive frames.
   bool allow_zero_hertz_ = false;
+
+  // Caches the value of DesktopCaptureOptions.allow_wgc_using_texture() in
+  // StartCapture(). Store texture handle of captured frame in DesktopFrame
+  // instead of mapping texture data which can reduce copy if clients process
+  // textures directly.
+  bool allow_using_texture_ = false;
 
   // Tracks damage region updates that were reported since the last time a frame
   // was captured. Currently only supports either the complete rect being

@@ -1,0 +1,41 @@
+<!-- webkit-test-runner [ MoveBeforeEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<section id="section"></section>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('Tests that connectedMoveCallback is kept alive by the garbage collector. The callback is stored as a JSC::Weak, so JSCustomElementInterface::visitJSFunctionsInGCThread() must visit it. Otherwise it is collected once removed from the prototype, and moveBefore() fires disconnected/connected instead of connectedMove.');
+
+jsTestIsAsync = true;
+
+let reactions = [];
+
+class MoveElement extends HTMLElement {
+    connectedMoveCallback() { reactions.push('connectedMove'); }
+    connectedCallback() { reactions.push('connected'); }
+    disconnectedCallback() { reactions.push('disconnected'); }
+}
+customElements.define('move-element', MoveElement);
+
+// Leave m_connectedMoveCallback as the function's only reference, so it survives GC only if visited.
+delete MoveElement.prototype.connectedMoveCallback;
+
+const element = document.createElement('move-element');
+document.body.appendChild(element);
+
+(async () => {
+    await Promise.resolve();
+    reactions = [];
+
+    gc();
+
+    document.getElementById('section').moveBefore(element, null);
+    await Promise.resolve();
+
+    shouldBeEqualToString('reactions.join()', 'connectedMove');
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

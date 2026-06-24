@@ -18,14 +18,14 @@
 #include <memory>
 #include <numeric>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/dominant_nearend_detector.h"
-#include "modules/audio_processing/aec3/moving_average.h"
+#include "modules/audio_processing/aec3/moving_average_spectrum.h"
 #include "modules/audio_processing/aec3/render_signal_analyzer.h"
 #include "modules/audio_processing/aec3/subband_nearend_detector.h"
 #include "modules/audio_processing/aec3/vector_math.h"
@@ -41,14 +41,16 @@ void LimitLowFrequencyGains(std::array<float, kFftLengthBy2Plus1>* gain) {
   (*gain)[0] = (*gain)[1] = std::min((*gain)[1], (*gain)[2]);
 }
 
-void LimitHighFrequencyGains(const EchoCanceller3Config::Suppressor& config,
-                             std::array<float, kFftLengthBy2Plus1>* gain) {
+void LimitHighFrequencyGains(
+    const EchoCanceller3Config::Suppressor::HighFrequencySuppression&
+        high_frequency_suppression,
+    bool conservative_hf_suppression,
+    std::array<float, kFftLengthBy2Plus1>* gain) {
   // Limit the high frequency gains to avoid echo leakage due to an imperfect
   // filter.
-  const int limiting_gain_band =
-      config.high_frequency_suppression.limiting_gain_band;
+  const int limiting_gain_band = high_frequency_suppression.limiting_gain_band;
   const int bands_in_limiting_gain =
-      config.high_frequency_suppression.bands_in_limiting_gain;
+      high_frequency_suppression.bands_in_limiting_gain;
   if (bands_in_limiting_gain > 0) {
     RTC_DCHECK_GE(limiting_gain_band, 0);
     RTC_DCHECK_LE(limiting_gain_band + bands_in_limiting_gain, gain->size());
@@ -63,7 +65,7 @@ void LimitHighFrequencyGains(const EchoCanceller3Config::Suppressor& config,
   }
   (*gain)[kFftLengthBy2] = (*gain)[kFftLengthBy2Minus1];
 
-  if (config.conservative_hf_suppression) {
+  if (conservative_hf_suppression) {
     // Limits the gain in the frequencies for which the adaptive filter has not
     // converged.
     // TODO(peah): Make adaptive to take the actual filter error into account.
@@ -83,14 +85,15 @@ void LimitHighFrequencyGains(const EchoCanceller3Config::Suppressor& config,
 }
 
 // Scales the echo according to assessed audibility at the other end.
-void WeightEchoForAudibility(const EchoCanceller3Config& config,
-                             ArrayView<const float> echo,
-                             ArrayView<float> weighted_echo) {
+void WeightEchoForAudibility(
+    const EchoCanceller3Config::EchoAudibility& echo_audibility,
+    std::span<const float> echo,
+    std::span<float> weighted_echo) {
   RTC_DCHECK_EQ(kFftLengthBy2Plus1, echo.size());
   RTC_DCHECK_EQ(kFftLengthBy2Plus1, weighted_echo.size());
 
   auto weigh = [](float threshold, float normalizer, size_t begin, size_t end,
-                  ArrayView<const float> echo, ArrayView<float> weighted_echo) {
+                  std::span<const float> echo, std::span<float> weighted_echo) {
     for (size_t k = begin; k < end; ++k) {
       if (echo[k] < threshold) {
         float tmp = (threshold - echo[k]) * normalizer;
@@ -101,19 +104,19 @@ void WeightEchoForAudibility(const EchoCanceller3Config& config,
     }
   };
 
-  float threshold = config.echo_audibility.floor_power *
-                    config.echo_audibility.audibility_threshold_lf;
-  float normalizer = 1.f / (threshold - config.echo_audibility.floor_power);
+  float threshold =
+      echo_audibility.floor_power * echo_audibility.audibility_threshold_lf;
+  float normalizer = 1.f / (threshold - echo_audibility.floor_power);
   weigh(threshold, normalizer, 0, 3, echo, weighted_echo);
 
-  threshold = config.echo_audibility.floor_power *
-              config.echo_audibility.audibility_threshold_mf;
-  normalizer = 1.f / (threshold - config.echo_audibility.floor_power);
+  threshold =
+      echo_audibility.floor_power * echo_audibility.audibility_threshold_mf;
+  normalizer = 1.f / (threshold - echo_audibility.floor_power);
   weigh(threshold, normalizer, 3, 7, echo, weighted_echo);
 
-  threshold = config.echo_audibility.floor_power *
-              config.echo_audibility.audibility_threshold_hf;
-  normalizer = 1.f / (threshold - config.echo_audibility.floor_power);
+  threshold =
+      echo_audibility.floor_power * echo_audibility.audibility_threshold_hf;
+  normalizer = 1.f / (threshold - echo_audibility.floor_power);
   weigh(threshold, normalizer, 7, kFftLengthBy2Plus1, echo, weighted_echo);
 }
 
@@ -122,8 +125,9 @@ void WeightEchoForAudibility(const EchoCanceller3Config& config,
 std::atomic<int> SuppressionGain::instance_count_(0);
 
 float SuppressionGain::UpperBandsGain(
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    const EchoCanceller3Config::Suppressor& suppressor_config,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
+    std::span<const std::array<float, kFftLengthBy2Plus1>>
         comfort_noise_spectrum,
     const std::optional<int>& narrow_peak_band,
     bool saturated_echo,
@@ -172,7 +176,7 @@ float SuppressionGain::UpperBandsGain(
   // upper bands.
   float anti_howling_gain;
   const float activation_threshold =
-      kBlockSize * config_.suppressor.high_bands_suppression
+      kBlockSize * suppressor_config.high_bands_suppression
                        .anti_howling_activation_threshold;
   if (high_band_energy < std::max(low_band_energy, activation_threshold)) {
     anti_howling_gain = 1.f;
@@ -181,15 +185,15 @@ float SuppressionGain::UpperBandsGain(
     RTC_DCHECK_LE(low_band_energy, high_band_energy);
     RTC_DCHECK_NE(0.f, high_band_energy);
     anti_howling_gain =
-        config_.suppressor.high_bands_suppression.anti_howling_gain *
+        suppressor_config.high_bands_suppression.anti_howling_gain *
         sqrtf(low_band_energy / high_band_energy);
   }
 
   float gain_bound = 1.f;
   if (!dominant_nearend_detector_->IsNearendState()) {
     // Bound the upper gain during significant echo activity.
-    const auto& cfg = config_.suppressor.high_bands_suppression;
-    auto low_frequency_energy = [](ArrayView<const float> spectrum) {
+    const auto& cfg = suppressor_config.high_bands_suppression;
+    auto low_frequency_energy = [](std::span<const float> spectrum) {
       RTC_DCHECK_LE(16, spectrum.size());
       return std::accumulate(spectrum.begin() + 1, spectrum.begin() + 16, 0.f);
     };
@@ -230,16 +234,18 @@ void SuppressionGain::GainToNoAudibleEcho(
 
 // Compute the minimum gain as the attenuating gain to put the signal just
 // above the zero sample values.
-void SuppressionGain::GetMinGain(ArrayView<const float> weighted_residual_echo,
-                                 ArrayView<const float> last_nearend,
-                                 ArrayView<const float> last_echo,
-                                 bool low_noise_render,
-                                 bool saturated_echo,
-                                 ArrayView<float> min_gain) const {
+void SuppressionGain::GetMinGain(
+    const EchoCanceller3Config::Suppressor& suppressor_config,
+    std::span<const float> weighted_residual_echo,
+    std::span<const float> last_nearend,
+    std::span<const float> last_echo,
+    bool low_noise_render,
+    bool saturated_echo,
+    std::span<float> min_gain) const {
   if (!saturated_echo) {
     const float min_echo_power =
-        low_noise_render ? config_.echo_audibility.low_render_limit
-                         : config_.echo_audibility.normal_render_limit;
+        low_noise_render ? echo_audibility_config_.low_render_limit
+                         : echo_audibility_config_.normal_render_limit;
 
     for (size_t k = 0; k < min_gain.size(); ++k) {
       min_gain[k] = weighted_residual_echo[k] > 0.f
@@ -249,16 +255,16 @@ void SuppressionGain::GetMinGain(ArrayView<const float> weighted_residual_echo,
     }
 
     if (!initial_state_ ||
-        config_.suppressor.lf_smoothing_during_initial_phase) {
+        suppressor_config.lf_smoothing_during_initial_phase) {
       const float& dec = dominant_nearend_detector_->IsNearendState()
                              ? nearend_params_.max_dec_factor_lf
                              : normal_params_.max_dec_factor_lf;
 
-      for (int k = 0; k <= config_.suppressor.last_lf_smoothing_band; ++k) {
+      for (int k = 0; k <= suppressor_config.last_lf_smoothing_band; ++k) {
         // Make sure the gains of the low frequencies do not decrease too
         // quickly after strong nearend.
         if (last_nearend[k] > last_echo[k] ||
-            k <= config_.suppressor.last_permanent_lf_smoothing_band) {
+            k <= suppressor_config.last_permanent_lf_smoothing_band) {
           min_gain[k] = std::max(min_gain[k], last_gain_[k] * dec);
           min_gain[k] = std::min(min_gain[k], 1.f);
         }
@@ -271,28 +277,30 @@ void SuppressionGain::GetMinGain(ArrayView<const float> weighted_residual_echo,
 
 // Compute the maximum gain by limiting the gain increase from the previous
 // gain.
-void SuppressionGain::GetMaxGain(ArrayView<float> max_gain) const {
+void SuppressionGain::GetMaxGain(float floor_first_increase,
+                                 std::span<float> max_gain) const {
   const auto& inc = dominant_nearend_detector_->IsNearendState()
                         ? nearend_params_.max_inc_factor
                         : normal_params_.max_inc_factor;
-  const auto& floor = config_.suppressor.floor_first_increase;
   for (size_t k = 0; k < max_gain.size(); ++k) {
-    max_gain[k] = std::min(std::max(last_gain_[k] * inc, floor), 1.f);
+    max_gain[k] =
+        std::min(std::max(last_gain_[k] * inc, floor_first_increase), 1.f);
   }
 }
 
 void SuppressionGain::LowerBandGain(
+    const EchoCanceller3Config::Suppressor& suppressor_config,
     bool low_noise_render,
     const AecState& aec_state,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> suppressor_input,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> residual_echo,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> comfort_noise,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> suppressor_input,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> residual_echo,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> comfort_noise,
     bool clock_drift,
     std::array<float, kFftLengthBy2Plus1>* gain) {
   gain->fill(1.f);
   const bool saturated_echo = aec_state.SaturatedEcho();
   std::array<float, kFftLengthBy2Plus1> max_gain;
-  GetMaxGain(max_gain);
+  GetMaxGain(suppressor_config.floor_first_increase, max_gain);
 
   for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
     std::array<float, kFftLengthBy2Plus1> G;
@@ -301,11 +309,12 @@ void SuppressionGain::LowerBandGain(
 
     // Weight echo power in terms of audibility.
     std::array<float, kFftLengthBy2Plus1> weighted_residual_echo;
-    WeightEchoForAudibility(config_, residual_echo[ch], weighted_residual_echo);
+    WeightEchoForAudibility(echo_audibility_config_, residual_echo[ch],
+                            weighted_residual_echo);
 
     std::array<float, kFftLengthBy2Plus1> min_gain;
-    GetMinGain(weighted_residual_echo, last_nearend_[ch], last_echo_[ch],
-               low_noise_render, saturated_echo, min_gain);
+    GetMinGain(suppressor_config, weighted_residual_echo, last_nearend_[ch],
+               last_echo_[ch], low_noise_render, saturated_echo, min_gain);
 
     GainToNoAudibleEcho(nearend, weighted_residual_echo, comfort_noise[0], &G);
 
@@ -325,15 +334,17 @@ void SuppressionGain::LowerBandGain(
   // Use conservative high-frequency gains during clock-drift or when not in
   // dominant nearend.
   if (!dominant_nearend_detector_->IsNearendState() || clock_drift ||
-      config_.suppressor.conservative_hf_suppression) {
-    LimitHighFrequencyGains(config_.suppressor, gain);
+      suppressor_config.conservative_hf_suppression) {
+    LimitHighFrequencyGains(suppressor_config.high_frequency_suppression,
+                            suppressor_config.conservative_hf_suppression,
+                            gain);
   }
 
   // Store computed gains.
   std::copy(gain->begin(), gain->end(), last_gain_.begin());
 
   // Transform gains to amplitude domain.
-  aec3::VectorMath(optimization_).Sqrt(*gain);
+  VectorMath(optimization_).Sqrt(*gain);
 }
 
 SuppressionGain::SuppressionGain(const EchoCanceller3Config& config,
@@ -342,32 +353,29 @@ SuppressionGain::SuppressionGain(const EchoCanceller3Config& config,
                                  size_t num_capture_channels)
     : data_dumper_(new ApmDataDumper(instance_count_.fetch_add(1) + 1)),
       optimization_(optimization),
-      config_(config),
       num_capture_channels_(num_capture_channels),
-      state_change_duration_blocks_(
-          static_cast<int>(config_.filter.config_change_duration_blocks)),
+      echo_audibility_config_(config.echo_audibility),
+      use_subband_nearend_detection_(
+          config.suppressor.use_subband_nearend_detection),
       last_nearend_(num_capture_channels_, {0}),
       last_echo_(num_capture_channels_, {0}),
       nearend_smoothers_(
           num_capture_channels_,
-          aec3::MovingAverage(kFftLengthBy2Plus1,
-                              config.suppressor.nearend_average_blocks)),
-      nearend_params_(config_.suppressor.last_lf_band,
-                      config_.suppressor.first_hf_band,
-                      config_.suppressor.nearend_tuning),
-      normal_params_(config_.suppressor.last_lf_band,
-                     config_.suppressor.first_hf_band,
-                     config_.suppressor.normal_tuning),
-      use_unbounded_echo_spectrum_(config.suppressor.dominant_nearend_detection
-                                       .use_unbounded_echo_spectrum) {
-  RTC_DCHECK_LT(0, state_change_duration_blocks_);
+          MovingAverageSpectrum(kFftLengthBy2Plus1,
+                                config.suppressor.nearend_average_blocks)),
+      nearend_params_(config.suppressor.last_lf_band,
+                      config.suppressor.first_hf_band,
+                      config.suppressor.nearend_tuning),
+      normal_params_(config.suppressor.last_lf_band,
+                     config.suppressor.first_hf_band,
+                     config.suppressor.normal_tuning) {
   last_gain_.fill(1.f);
-  if (config_.suppressor.use_subband_nearend_detection) {
+  if (config.suppressor.use_subband_nearend_detection) {
     dominant_nearend_detector_ = std::make_unique<SubbandNearendDetector>(
-        config_.suppressor.subband_nearend_detection, num_capture_channels_);
+        config.suppressor, num_capture_channels_);
   } else {
     dominant_nearend_detector_ = std::make_unique<DominantNearendDetector>(
-        config_.suppressor.dominant_nearend_detection, num_capture_channels_);
+        config.suppressor.dominant_nearend_detection, num_capture_channels_);
   }
   RTC_DCHECK(dominant_nearend_detector_);
 }
@@ -375,13 +383,15 @@ SuppressionGain::SuppressionGain(const EchoCanceller3Config& config,
 SuppressionGain::~SuppressionGain() = default;
 
 void SuppressionGain::GetGain(
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    const EchoCanceller3Config::Suppressor& suppressor_config,
+    bool config_changed,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> echo_spectrum,
+    std::span<const std::array<float, kFftLengthBy2Plus1>>
         residual_echo_spectrum,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    std::span<const std::array<float, kFftLengthBy2Plus1>>
         residual_echo_spectrum_unbounded,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    std::span<const std::array<float, kFftLengthBy2Plus1>>
         comfort_noise_spectrum,
     const RenderSignalAnalyzer& render_signal_analyzer,
     const AecState& aec_state,
@@ -392,10 +402,15 @@ void SuppressionGain::GetGain(
   RTC_DCHECK(high_bands_gain);
   RTC_DCHECK(low_band_gain);
 
+  if (config_changed) {
+    UpdateStateDependingOnConfig(suppressor_config);
+  }
+
   // Choose residual echo spectrum for dominant nearend detection.
-  const auto echo = use_unbounded_echo_spectrum_
-                        ? residual_echo_spectrum_unbounded
-                        : residual_echo_spectrum;
+  const auto echo =
+      suppressor_config.dominant_nearend_detection.use_unbounded_echo_spectrum
+          ? residual_echo_spectrum_unbounded
+          : residual_echo_spectrum;
 
   // Update the nearend state selection.
   dominant_nearend_detector_->Update(nearend_spectrum, echo,
@@ -403,17 +418,17 @@ void SuppressionGain::GetGain(
 
   // Compute gain for the lower band.
   bool low_noise_render = low_render_detector_.Detect(render);
-  LowerBandGain(low_noise_render, aec_state, nearend_spectrum,
-                residual_echo_spectrum, comfort_noise_spectrum, clock_drift,
-                low_band_gain);
+  LowerBandGain(suppressor_config, low_noise_render, aec_state,
+                nearend_spectrum, residual_echo_spectrum,
+                comfort_noise_spectrum, clock_drift, low_band_gain);
 
   // Compute the gain for the upper bands.
   const std::optional<int> narrow_peak_band =
       render_signal_analyzer.NarrowPeakBand();
 
-  *high_bands_gain =
-      UpperBandsGain(echo_spectrum, comfort_noise_spectrum, narrow_peak_band,
-                     aec_state.SaturatedEcho(), render, *low_band_gain);
+  *high_bands_gain = UpperBandsGain(
+      suppressor_config, echo_spectrum, comfort_noise_spectrum,
+      narrow_peak_band, aec_state.SaturatedEcho(), render, *low_band_gain);
 
   data_dumper_->DumpRaw("aec3_dominant_nearend",
                         dominant_nearend_detector_->IsNearendState());
@@ -421,11 +436,24 @@ void SuppressionGain::GetGain(
 
 void SuppressionGain::SetInitialState(bool state) {
   initial_state_ = state;
-  if (state) {
-    initial_state_change_counter_ = state_change_duration_blocks_;
-  } else {
-    initial_state_change_counter_ = 0;
+}
+
+void SuppressionGain::UpdateStateDependingOnConfig(
+    const EchoCanceller3Config::Suppressor& suppressor_config) {
+  RTC_DCHECK_EQ(suppressor_config.use_subband_nearend_detection,
+                use_subband_nearend_detection_);
+  // Update nearend average blocks.
+  for (auto& smoother : nearend_smoothers_) {
+    smoother.UpdateMemoryLength(suppressor_config.nearend_average_blocks);
   }
+  dominant_nearend_detector_->SetConfig(suppressor_config);
+  nearend_params_.SetConfig(suppressor_config.last_lf_band,
+                            suppressor_config.first_hf_band,
+                            suppressor_config.nearend_tuning);
+
+  normal_params_.SetConfig(suppressor_config.last_lf_band,
+                           suppressor_config.first_hf_band,
+                           suppressor_config.normal_tuning);
 }
 
 // Detects when the render signal can be considered to have low power and
@@ -452,9 +480,16 @@ bool SuppressionGain::LowNoiseRenderDetector::Detect(const Block& render) {
 SuppressionGain::GainParameters::GainParameters(
     int last_lf_band,
     int first_hf_band,
-    const EchoCanceller3Config::Suppressor::Tuning& tuning)
-    : max_inc_factor(tuning.max_inc_factor),
-      max_dec_factor_lf(tuning.max_dec_factor_lf) {
+    const EchoCanceller3Config::Suppressor::Tuning& tuning) {
+  SetConfig(last_lf_band, first_hf_band, tuning);
+}
+
+void SuppressionGain::GainParameters::SetConfig(
+    int last_lf_band,
+    int first_hf_band,
+    const EchoCanceller3Config::Suppressor::Tuning& tuning) {
+  max_inc_factor = tuning.max_inc_factor;
+  max_dec_factor_lf = tuning.max_dec_factor_lf;
   // Compute per-band masking thresholds.
   RTC_DCHECK_LT(last_lf_band, first_hf_band);
   auto& lf = tuning.mask_lf;

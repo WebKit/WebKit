@@ -583,6 +583,17 @@
    },
    {
       "emails" : [
+         "alice_tang2@apple.com",
+         "tang.alice.000@gmail.com"
+      ],
+      "github" : "tangalice",
+      "name" : "Alice Tang",
+      "nicks" : [
+         "tangalice"
+      ]
+   },
+   {
+      "emails" : [
          "aboya@igalia.com",
          "ntrrgc@gmail.com"
       ],
@@ -658,7 +669,8 @@
          "anand_srinivasan@apple.com"
       ],
       "github" : "asworkjsc",
-      "name" : "Anand Srinivasan"
+      "name" : "Anand Srinivasan",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -1950,7 +1962,7 @@
       ],
       "github" : "colelao",
       "name" : "Cole Carley",
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -3889,6 +3901,14 @@
    },
    {
       "emails" : [
+         "iroy@apple.com",
+         "issacroy05@gmail.com"
+      ],
+      "github" : "TheBoyRoy05",
+      "name" : "Issac Roy"
+   },
+   {
+      "emails" : [
          "ike@apple.com"
       ],
       "name" : "Ivan Ivan Krsti\u0107"
@@ -4289,6 +4309,13 @@
       "nicks" : [
          "jpfau"
       ]
+   },
+   {
+      "emails" : [
+         "jeffrey_xu2@apple.com"
+      ],
+      "github" : "jeffreyhxu",
+      "name" : "Jeffrey Xu"
    },
    {
       "emails" : [
@@ -4805,6 +4832,13 @@
    },
    {
       "emails" : [
+         "jhernandez89@apple.com"
+      ],
+      "github" : "Joshua-XIV",
+      "name" : "Josh Hernandez"
+   },
+   {
+      "emails" : [
          "jsbell@chromium.org",
          "jsbell@google.com"
       ],
@@ -5031,7 +5065,8 @@
       "name" : "Kate Lee",
       "nicks" : [
          "klee"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -5569,6 +5604,14 @@
          "liachen@rim.com"
       ],
       "name" : "Lia Chen"
+   },
+   {
+      "emails" : [
+         "info.aeslilly@gmail.com",
+         "lilly_le@apple.com"
+      ],
+      "github" : "codedbycupidity",
+      "name" : "Lilly Le"
    },
    {
       "emails" : [
@@ -7469,7 +7512,7 @@
       "nicks" : [
          "rkonda"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -8039,7 +8082,7 @@
       ],
       "github" : "nullhook",
       "name" : "Taher Ali",
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -8476,7 +8519,7 @@
       "expertise" : "JavaScriptCore",
       "github" : "ast-hugger",
       "name" : "Vassili Bykov",
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [

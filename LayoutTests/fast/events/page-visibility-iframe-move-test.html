@@ -1,7 +1,7 @@
 <html>
 <body onload="startTest()">
 
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 
 <script>
 
@@ -15,7 +15,6 @@ var isWindow2VisibilityChangeListenerAdded = false;
 function startTest() {
     if (!window.testRunner)
         return;
-    testRunner.waitUntilDone();
 
     debug("Window 1 is loaded");
 
@@ -95,7 +94,6 @@ function finishTest() {
 
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 
 </body>
 </html>

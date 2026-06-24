@@ -55,6 +55,11 @@ bool MediaSourceInterfaceMainThread::isClosed() const
     return m_mediaSource->isClosed();
 }
 
+bool MediaSourceInterfaceMainThread::isEnded() const
+{
+    return m_mediaSource->isEnded();
+}
+
 MediaTime MediaSourceInterfaceMainThread::duration() const
 {
     return m_mediaSource->duration();

@@ -56,8 +56,12 @@ protected:
 
 class JSTestInterfaceLeadingUnderscoreOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestInterfaceLeadingUnderscoreOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestInterfaceLeadingUnderscoreOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestInterfaceLeadingUnderscore*)

@@ -112,6 +112,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-auto-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-minimum-size-single-axis-scroll-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-minmax-img-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-minmax-img-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-minmax-img-002-expected.html

@@ -40,8 +40,6 @@ list(APPEND PAL_PUBLIC_HEADERS
 
 )
 
-list(APPEND PAL_SOURCES
-    system/mac/SoundMac.mm
-
-    text/mac/KillRingMac.mm
+list(APPEND PAL_UNIFIED_SOURCE_LIST_FILES
+    "SourcesMac.txt"
 )

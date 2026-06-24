@@ -85,7 +85,7 @@ Ref<ARKitBadgeSystemImage> ARKitBadgeSystemImage::createWithoutImage()
 std::optional<RenderingResourceIdentifier> ARKitBadgeSystemImage::imageIdentifier() const
 {
     if (m_image) {
-        if (RefPtr nativeImage = m_image->nativeImage())
+        if (RefPtr nativeImage = protect(m_image)->nativeImage())
             return nativeImage->renderingResourceIdentifier();
         return std::nullopt;
     }
@@ -112,7 +112,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
     CGRect insetBadgeRect = CGRectMake(rect.width() - badgeDimension - badgeOffset, badgeOffset, badgeDimension, badgeDimension);
     CGRect badgeRect = CGRectMake(0, 0, badgeDimension, badgeDimension);
 
-    RefPtr nativeImage = m_image ? m_image->nativeImage() : nullptr;
+    RefPtr nativeImage = m_image ? protect(m_image)->nativeImage() : nullptr;
     bool hasBackdropImage = !!nativeImage;
 
     // Create a circle to be used for the clipping path in the badge, as well as the drop shadow.

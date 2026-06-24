@@ -24,6 +24,8 @@
 #include "../fipsmodule/ecdsa/internal.h"
 
 
+using namespace bssl;
+
 int ECDSA_sign_p1363(const uint8_t *digest, size_t digest_len, uint8_t *sig,
                      size_t *out_sig_len, size_t max_sig_len,
                      const EC_KEY *eckey) {

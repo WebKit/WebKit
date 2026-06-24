@@ -104,11 +104,11 @@ extension JavaScriptMessages {
             case .selection(let selection):
                 [
                     "selection": selection.encoded(),
-                    "elementID": NSNull(),
+                    "elementID": nil,
                 ]
             case .element(let id):
                 [
-                    "selection": NSNull(),
+                    "selection": nil,
                     "elementID": id,
                 ]
             }
@@ -174,6 +174,33 @@ extension JavaScriptMessages {
             [
                 "selection": selection.encoded()
             ]
+        }
+    }
+}
+
+extension JavaScriptMessages {
+    /// Gets the scroll position of the window.
+    public struct ScrollPosition: WebPage.JavaScriptExpression {
+        // Protocol conformance.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+        public typealias Output = DOMPoint
+
+        // Protocol conformance.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+        public static var expression: String {
+            """
+            return { "x": window.scrollX, "y": window.scrollY };
+            """
+        }
+
+        /// Create a new `ScrollPosition`.
+        public init() {
+        }
+
+        // Protocol conformance.
+        // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+        public func encoded() -> [String: Any?] {
+            [:]
         }
     }
 }

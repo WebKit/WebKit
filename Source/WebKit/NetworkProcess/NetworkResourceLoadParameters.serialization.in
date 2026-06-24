@@ -111,6 +111,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     bool isInitiatorPrefetch;
     bool isInitiatedByDedicatedWorker;
     bool globalPrivacyControlEnabled;
+    bool shouldConsiderEnhancedSecurityForInsecureResponse;
 };
 
 using WebCore::FetchingWorkerIdentifier = Variant<std::monostate, WebCore::SharedWorkerIdentifier, WebCore::ServiceWorkerIdentifier>;

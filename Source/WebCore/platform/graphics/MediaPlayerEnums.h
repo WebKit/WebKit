@@ -125,6 +125,8 @@ enum class MediaPlayerViewportVisibility : uint8_t {
     NotVisible,
     IntersectingViewport,
     VisibleInViewport,
+    VisibleInFullscreen,
+    VisibleInPictureInPicture,
 };
 
 class MediaPlayerEnums {

@@ -27,12 +27,11 @@
 #import <WebCore/UserContentURLPattern.h>
 #import <wtf/URL.h>
 
-using namespace WebCore;
 
 @interface WebUserContentURLPatternPrivate : NSObject
 {
 @public
-    UserContentURLPattern pattern;
+    WebCore::UserContentURLPattern pattern;
 }
 @end
 
@@ -48,7 +47,7 @@ using namespace WebCore;
         return nil;
 
     _private = [[WebUserContentURLPatternPrivate alloc] init];
-    _private->pattern = UserContentURLPattern(String(patternString));
+    _private->pattern = WebCore::UserContentURLPattern(String(patternString));
 
     return self;
 }

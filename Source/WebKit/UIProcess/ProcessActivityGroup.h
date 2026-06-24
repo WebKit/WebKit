@@ -42,8 +42,8 @@ class ProcessActivityGroupContext
     WTF_MAKE_NONCOPYABLE(ProcessActivityGroupContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProcessActivityGroupContext);
 public:
-    ProcessActivityGroupContext() = default;
-    virtual ~ProcessActivityGroupContext() { }
+    ProcessActivityGroupContext();
+    virtual ~ProcessActivityGroupContext();
 
     Ref<ProcessActivityGroup> foregroundProcessActivityGroup(ASCIILiteral name, std::optional<Seconds> timeout = std::nullopt);
 

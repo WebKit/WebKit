@@ -14,8 +14,9 @@
 #include <stddef.h>  // For size_t.
 #include <stdint.h>  // For integer types.
 
+#include <span>
+
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/units/data_size.h"
 
 namespace webrtc {
@@ -29,7 +30,7 @@ class BitBufferWriter {
   static constexpr DataSize kMaxLeb128Length = DataSize::Bytes(10);
 
   // Constructs a bit buffer for the writable buffer of `bytes`.
-  explicit BitBufferWriter(ArrayView<uint8_t> bytes);
+  explicit BitBufferWriter(std::span<uint8_t> bytes);
   BitBufferWriter(uint8_t* bytes, size_t byte_count);
 
   BitBufferWriter(const BitBufferWriter&) = delete;

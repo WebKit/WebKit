@@ -288,7 +288,7 @@ decltype(auto) dynamicRangecast(const T& value)
             return Replacement { typename Replacement::Raw { raw.value } };
         },
         [](const typename T::Calc& calc) -> std::optional<Replacement> {
-            return Replacement { typename Replacement::Calc { calc.calcValue() } };
+            return Replacement { typename Replacement::Calc { calc } };
         }
     );
 }

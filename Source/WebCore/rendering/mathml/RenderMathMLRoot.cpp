@@ -50,7 +50,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLRoot);
 
-RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, RenderStyle&& style)
+RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, Style::ComputedStyle&& style)
     : RenderMathMLRow(Type::MathMLRoot, element, WTF::move(style))
 {
     m_radicalOperator.setOperator(RenderMathMLRoot::style(), gRadicalCharacter, MathOperator::Type::VerticalOperator);
@@ -99,7 +99,7 @@ RenderBox& RenderMathMLRoot::getIndex() const
     return *firstInFlowChildBox()->nextInFlowSiblingBox();
 }
 
-void RenderMathMLRoot::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderMathMLRoot::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderMathMLRow::styleDidChange(diff, oldStyle);
     resetRadicalOperator();
@@ -159,12 +159,12 @@ RenderMathMLRoot::VerticalParameters RenderMathMLRoot::verticalParameters() cons
     return parameters;
 }
 
-void RenderMathMLRoot::computePreferredLogicalWidths()
+void RenderMathMLRoot::computeIntrinsicLogicalWidthContributions()
 {
-    ASSERT(needsPreferredLogicalWidthsUpdate());
+    ASSERT(hasInvalidContentLogicalWidths());
 
     if (!isValid()) {
-        RenderMathMLRow::computePreferredLogicalWidths();
+        RenderMathMLRow::computeIntrinsicLogicalWidthContributions();
         return;
     }
 
@@ -174,23 +174,23 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
         preferredWidth += preferredLogicalWidthOfRowItems();
     } else {
         ASSERT(rootType() == RootType::RootWithIndex);
-        LayoutUnit indexPreferredWidth = getIndex().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(getIndex());
+        LayoutUnit indexPreferredWidth = getIndex().maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(getIndex());
         auto horizontal = horizontalParameters(indexPreferredWidth);
         preferredWidth += horizontal.kernBeforeDegree;
         preferredWidth += indexPreferredWidth;
         preferredWidth += horizontal.kernAfterDegree;
         preferredWidth += m_radicalOperator.maxPreferredWidth();
-        preferredWidth += getBase().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(getBase());
+        preferredWidth += getBase().maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(getBase());
     }
-    m_maxPreferredLogicalWidth = preferredWidth;
-    m_minPreferredLogicalWidth = preferredWidth;
+    m_maxContentLogicalWidthContribution = preferredWidth;
+    m_minContentLogicalWidthContribution = preferredWidth;
 
     auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
     applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
 
-    adjustPreferredLogicalWidthsForBorderAndPadding();
+    adjustContentLogicalWidthsForBorderAndPadding();
 
-    clearNeedsPreferredWidthsUpdate();
+    clearContentLogicalWidthsInvalidation();
 }
 
 void RenderMathMLRoot::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)

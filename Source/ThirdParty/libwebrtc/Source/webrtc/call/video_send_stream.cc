@@ -63,7 +63,7 @@ std::string VideoSendStream::StreamStats::ToString() const {
   ss << "nack: " << rtcp_packet_type_counts.nack_packets << ", ";
   ss << "fir: " << rtcp_packet_type_counts.fir_packets << ", ";
   ss << "pli: " << rtcp_packet_type_counts.pli_packets;
-  return ss.str();
+  return ss.Release();
 }
 
 VideoSendStream::Stats::Stats() = default;
@@ -97,7 +97,7 @@ std::string VideoSendStream::Stats::ToString(int64_t time_ms) const {
       ss << "}";
     }
   }
-  return ss.str();
+  return ss.Release();
 }
 
 VideoSendStream::Config::Config(const Config&) = default;
@@ -122,7 +122,7 @@ std::string VideoSendStream::Config::ToString() const {
   ss << ", suspend_below_min_bitrate: "
      << (suspend_below_min_bitrate ? "on" : "off");
   ss << "}";
-  return ss.str();
+  return ss.Release();
 }
 
 }  // namespace webrtc

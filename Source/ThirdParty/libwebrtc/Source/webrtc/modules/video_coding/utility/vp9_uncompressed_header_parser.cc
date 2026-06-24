@@ -12,10 +12,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "modules/video_coding/utility/vp9_constants.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/logging.h"
@@ -257,14 +257,13 @@ const Vp9InterpolationFilter kLiteralToType[4] = {
 }  // namespace
 
 std::string Vp9UncompressedHeader::ToString() const {
-  char buf[1024];
-  SimpleStringBuilder oss(buf);
+  StringBuilder oss;
 
   oss << "Vp9UncompressedHeader { " << "profile = " << profile;
 
   if (show_existing_frame) {
     oss << ", show_existing_frame = " << *show_existing_frame << " }";
-    return oss.str();
+    return oss.Release();
   }
 
   oss << ", frame type = " << (is_keyframe ? "key" : "delta")
@@ -383,7 +382,7 @@ std::string Vp9UncompressedHeader::ToString() const {
   oss << ", compressed_header_size_bytes = " << compressed_header_size;
 
   oss << " }";
-  return oss.str();
+  return oss.Release();
 }
 
 void Parse(BitstreamReader& br,
@@ -513,7 +512,7 @@ void Parse(BitstreamReader& br,
 }
 
 std::optional<Vp9UncompressedHeader> ParseUncompressedVp9Header(
-    ArrayView<const uint8_t> buf) {
+    std::span<const uint8_t> buf) {
   BitstreamReader reader(buf);
   Vp9UncompressedHeader frame_info;
   Parse(reader, &frame_info, /*qp_only=*/false);
@@ -526,7 +525,7 @@ std::optional<Vp9UncompressedHeader> ParseUncompressedVp9Header(
 namespace vp9 {
 
 bool GetQp(const uint8_t* buf, size_t length, int* qp) {
-  BitstreamReader reader(MakeArrayView(buf, length));
+  BitstreamReader reader(std::span(buf, length));
   Vp9UncompressedHeader frame_info;
   Parse(reader, &frame_info, /*qp_only=*/true);
   if (!reader.Ok()) {

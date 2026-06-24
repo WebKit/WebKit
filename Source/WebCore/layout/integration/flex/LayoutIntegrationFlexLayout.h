@@ -38,8 +38,11 @@ class HitTestRequest;
 class HitTestResult;
 class RenderBlock;
 class RenderFlexibleBox;
-class RenderStyle;
 struct PaintInfo;
+
+namespace Style {
+class ComputedStyle;
+}
 
 namespace LayoutIntegration {
 
@@ -51,7 +54,7 @@ public:
     ~FlexLayout();
 
     void updateFormattingContexGeometries();
-    void NODELETE updateStyle(const RenderBlock&, const RenderStyle& oldStyle);
+    void NODELETE updateStyle(const RenderBlock&, const Style::ComputedStyle& oldStyle);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 

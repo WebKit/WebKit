@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractInterpreterInlines.h"
-#include "DFGBlockMapInlines.h"
 #include "DFGClobberize.h"
 #include "DFGDoesGC.h"
 #include "DFGGraph.h"
@@ -40,6 +39,7 @@
 #include "StructureID.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashSet.h>
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace DFG {
 
@@ -106,8 +106,8 @@ public:
             // towards believing that all nodes need barriers. "Needing a barrier" is like
             // saying that the node is in a past epoch. "Not needing a barrier" is like saying
             // that the node is in the current epoch.
-            m_stateAtHead = makeUniqueWithoutFastMallocCheck<BlockMap<UncheckedKeyHashSet<Node*>>>(m_graph);
-            m_stateAtTail = makeUniqueWithoutFastMallocCheck<BlockMap<UncheckedKeyHashSet<Node*>>>(m_graph);
+            m_stateAtHead = makeUniqueWithoutFastMallocCheck<IndexMap<BasicBlock*, UncheckedKeyHashSet<Node*>>>(m_graph.numBlocks());
+            m_stateAtTail = makeUniqueWithoutFastMallocCheck<IndexMap<BasicBlock*, UncheckedKeyHashSet<Node*>>>(m_graph.numBlocks());
             
             BlockList postOrder = m_graph.blocksInPostOrder();
             
@@ -422,6 +422,8 @@ private:
             case NewStringObject:
             case NewMap:
             case NewSet:
+            case NewWeakMap:
+            case NewWeakSet:
             case NewSymbol:
             case MaterializeNewObject:
             case MaterializeNewArrayWithButterfly:
@@ -691,8 +693,8 @@ private:
     // Things we only use in Global mode.
     std::unique_ptr<InPlaceAbstractState> m_state;
     std::unique_ptr<AbstractInterpreter<InPlaceAbstractState>> m_interpreter;
-    std::unique_ptr<BlockMap<UncheckedKeyHashSet<Node*>>> m_stateAtHead;
-    std::unique_ptr<BlockMap<UncheckedKeyHashSet<Node*>>> m_stateAtTail;
+    std::unique_ptr<IndexMap<BasicBlock*, UncheckedKeyHashSet<Node*>>> m_stateAtHead;
+    std::unique_ptr<IndexMap<BasicBlock*, UncheckedKeyHashSet<Node*>>> m_stateAtTail;
     bool m_isConverged;
 };
 

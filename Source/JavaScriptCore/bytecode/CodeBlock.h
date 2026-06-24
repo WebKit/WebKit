@@ -1023,21 +1023,8 @@ private:
     ApproximateTime m_creationTime;
 
     std::unique_ptr<RareData> m_rareData;
-#if OS(WINDOWS) && !ENABLE(CODEBLOCK_CRASH_ANALYSIS)
-    CrashChecker& checker()
-    {
-        // This is needed because the Windows build appears to be using more space
-        // in CodeBlock than other ports for unknown reasons. The addition of
-        // m_checker appears to push it pass 224 bytes and fails the static_assert
-        // below. NO_UNIQUE_ADDRESS appears to not be supported on the Windows build
-        // as well. So, we'll apply this workaround of using a static stub instead.
-        static CrashChecker noOpCheckerStub;
-        return noOpCheckerStub;
-    }
-#else
     NO_UNIQUE_ADDRESS CrashChecker m_checker;
     ALWAYS_INLINE CrashChecker& checker() { return m_checker; }
-#endif
 
 #if ASSERT_ENABLED
     Lock m_cachedIdentifierUidsLock;

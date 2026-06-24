@@ -261,14 +261,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         FontRenderOptions::singleton().disableHintingForTesting();
 
 #if PLATFORM(GTK)
-    WebCore::setScreenProperties(parameters.screenProperties);
+    WebCore::PlatformScreen::updateSingletonProperties(WTF::move(parameters.screenProperties));
 
     WebCore::SystemSoundManager::singleton().setSystemSoundDelegate(makeUnique<WebSystemSoundDelegate>());
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (!m_rendererBufferTransportMode.isEmpty())
-        WebCore::setScreenProperties(parameters.screenProperties);
+        WebCore::PlatformScreen::updateSingletonProperties(WTF::move(parameters.screenProperties));
 #endif
 }
 
@@ -315,10 +315,10 @@ void WebProcess::releaseSystemMallocMemory()
 }
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
+void WebProcess::setScreenProperties(WebCore::ScreenProperties&& properties)
 {
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
-    WebCore::setScreenProperties(properties);
+    WebCore::PlatformScreen::updateSingletonProperties(WTF::move(properties));
 #endif
     for (auto& page : m_pageMap.values())
         page->screenPropertiesDidChange();

@@ -71,8 +71,8 @@ root
 
 root
     'Hello world'
-    select
-    select multiple
+    select selected=three
+    select selected=banana,pear multiple
 
 -- json (includeSelectOptions: false)
 
@@ -85,11 +85,18 @@ root
     },
     {
       "type": "select",
-      "nodeName": "select"
+      "nodeName": "select",
+      "selected": [
+        "three"
+      ]
     },
     {
       "type": "select",
       "nodeName": "select",
+      "selected": [
+        "banana",
+        "pear"
+      ],
       "multiple": true
     }
   ],

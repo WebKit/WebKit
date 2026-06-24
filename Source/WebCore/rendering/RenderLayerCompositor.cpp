@@ -66,7 +66,6 @@
 #include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "RenderViewTransitionCapture.h"
@@ -76,6 +75,7 @@
 #include "ScaleTransformOperation.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleOffsetRotate.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
@@ -1245,6 +1245,30 @@ bool RenderLayerCompositor::allowBackingStoreDetachingForFixedPosition(RenderLay
     return allowDetaching;
 }
 
+void RenderLayerCompositor::updateRepaintRectsAfterCompositingChange(RenderLayer& layer, bool wasComposited, BackingSharingState& backingSharingState)
+{
+    // Repaint rects (and the repaint container) are cached relative to the repaint container, so they
+    // must be recomputed when compositing status changes.
+
+    // Repaint in the old container before we recompute the repaint container.
+    if (!wasComposited && layer.repaintContainer() && layer.repaintContainer()->isComposited())
+        repaintOnCompositingChange(layer, layer.repaintContainer());
+
+    // Compute the new repaint container and repaint in it, unless newly compositing (a new
+    // compositing layer fully repaints anyway).
+    if (!layer.isComposited()) {
+        // Defer until backing sharing completes, since repaint container computation needs all that
+        // state in place.
+        if (layerRepaintTargetsBackingSharingLayer(layer, backingSharingState))
+            backingSharingState.addLayerNeedingRepaint(layer);
+        else {
+            layer.compositingStatusChanged(LayoutUpToDate::Yes);
+            repaintOnCompositingChange(layer, layer.repaintContainer());
+        }
+    } else
+        layer.compositingStatusChanged(LayoutUpToDate::Yes);
+}
+
 void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer& layer, LayerOverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState)
 {
 #if !LOG_DISABLED
@@ -1527,26 +1551,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     // Update the cached repaint rects now that we've finished updating backing
     // sharing state on descendants
-    if (needsCompositingStatusUpdate) {
-        // Repaint in the old container before we recompute the repaint container.
-        if (!wasComposited && layer.repaintContainer() && layer.repaintContainer()->isComposited())
-            repaintOnCompositingChange(layer, layer.repaintContainer());
-
-        // Compute the new repaint container, and repaint our bounds in it (unless
-        // this layer is newly compositing, in which case the layer will fully repaint already).
-        if (!layer.isComposited()) {
-            // If this layer is going to participate in backing sharing, defer until that's
-            // complete, since repaint container computation depends on all the state being
-            // in-place.
-            if (layerRepaintTargetsBackingSharingLayer(layer, backingSharingState))
-                backingSharingState.addLayerNeedingRepaint(layer);
-            else {
-                layer.compositingStatusChanged(LayoutUpToDate::Yes);
-                repaintOnCompositingChange(layer, layer.repaintContainer());
-            }
-        } else
-            layer.compositingStatusChanged(LayoutUpToDate::Yes);
-    }
+    if (needsCompositingStatusUpdate)
+        updateRepaintRectsAfterCompositingChange(layer, wasComposited, backingSharingState);
 
     layer.setBackingProviderLayerAtEndOfCompositingUpdate(providedBackingLayer.get());
 
@@ -1793,17 +1799,35 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         }
     };
 
+    // After recursing into a composited SVG child, add the overlay "(svg segment N)" layer that paints the
+    // non-composited content after it on top. The order is set by matching each composited child exactly,
+    // giving [primary segment][child0][segment 1][child1][segment 2]... A composited child that only has a
+    // composited descendant works too, because that descendant is added to childList during the same
+    // recursion, just before its segment.
+    auto appendSVGSegmentLayerIfNecessary = [&](const RenderLayer& childLayer) {
+        if (!layerBacking || !layerBacking->hasSVGPaintOrderSegments())
+            return;
+        if (GraphicsLayer* segmentLayer = layerBacking->svgSegmentLayerAfterCompositedChild(childLayer))
+            childList.append(Ref { *segmentLayer });
+    };
+
     if (requireDescendantTraversal) {
-        for (CheckedPtr renderLayer : layer.negativeZOrderLayers())
+        for (CheckedPtr renderLayer : layer.negativeZOrderLayers()) {
             updateBackingAndHierarchy(*renderLayer, childList, traversalStateForDescendants, scrollingStateForDescendants, updateLevel);
+            appendSVGSegmentLayerIfNecessary(*renderLayer);
+        }
 
         appendForegroundLayerIfNecessary();
 
-        for (CheckedPtr renderLayer : layer.normalFlowLayers())
+        for (CheckedPtr renderLayer : layer.normalFlowLayers()) {
             updateBackingAndHierarchy(*renderLayer, childList, traversalStateForDescendants, scrollingStateForDescendants, updateLevel);
+            appendSVGSegmentLayerIfNecessary(*renderLayer);
+        }
 
-        for (CheckedPtr renderLayer : layer.positiveZOrderLayers())
+        for (CheckedPtr renderLayer : layer.positiveZOrderLayers()) {
             updateBackingAndHierarchy(*renderLayer, childList, traversalStateForDescendants, scrollingStateForDescendants, updateLevel);
+            appendSVGSegmentLayerIfNecessary(*renderLayer);
+        }
 
         // Pass needSynchronousScrollingReasonsUpdate back up.
         scrollingTreeState.needSynchronousScrollingReasonsUpdate |= scrollingStateForDescendants.needSynchronousScrollingReasonsUpdate;
@@ -2111,21 +2135,21 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, ASCIILiteral 
 }
 #endif
 
-static bool NODELETE clippingChanged(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+static bool NODELETE clippingChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     return oldStyle.overflowX() != newStyle.overflowX()
         || oldStyle.overflowY() != newStyle.overflowY()
         || oldStyle.clip() != newStyle.clip();
 }
 
-static bool styleAffectsLayerGeometry(const RenderStyle& style)
+static bool styleAffectsLayerGeometry(const Style::ComputedStyle& style)
 {
     return !style.clip().isAuto()
         || !style.clipPath().isNone()
         || style.border().hasBorderRadius();
 }
 
-static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+static bool recompositeChangeRequiresGeometryUpdate(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     return oldStyle.transform() != newStyle.transform()
         || oldStyle.translate() != newStyle.translate()
@@ -2149,7 +2173,7 @@ static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle,
         || oldStyle.overscrollBehaviorY() != newStyle.overscrollBehaviorY();
 }
 
-static bool NODELETE recompositeChangeRequiresChildrenGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+static bool NODELETE recompositeChangeRequiresChildrenGeometryUpdate(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     return oldStyle.perspective().isNone() != newStyle.perspective().isNone()
         || oldStyle.usedTransformStyle3D() != newStyle.usedTransformStyle3D();
@@ -2169,7 +2193,7 @@ void RenderLayerCompositor::layerGainedCompositedScrollableOverflow(RenderLayer&
     backing->updateConfigurationAfterStyleChange();
 }
 
-void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLayer& layer, const RenderStyle* oldStyle)
+void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLayer& layer, const Style::ComputedStyle* oldStyle)
 {
     if (diff == Style::DifferenceResult::Equal)
         return;
@@ -2210,7 +2234,7 @@ void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLaye
             }
 
             // This ensures that the viewport anchor layer will be updated when updating compositing layers upon style change
-            auto styleChangeAffectsAnchorLayer = [](const RenderStyle* oldStyle, const RenderStyle& newStyle) {
+            auto styleChangeAffectsAnchorLayer = [](const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle) {
                 if (!oldStyle)
                     return false;
 
@@ -2243,7 +2267,7 @@ void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLaye
         return;
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    auto styleChangeAffectsSeparatedProperties = [](const RenderStyle* oldStyle, const RenderStyle& newStyle) {
+    auto styleChangeAffectsSeparatedProperties = [](const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle) {
         if (!oldStyle)
             return newStyle.usedTransformStyle3D() == TransformStyle3D::Separated;
 
@@ -2484,6 +2508,10 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
         // Ancestor layers that composited for indirect reasons (things listed in styleChangeMayAffectIndirectCompositingReasons()) need to get updated.
         // This could be optimized by only setting this flag on layers with the relevant styles.
         layer.setNeedsPostLayoutCompositingUpdateOnAncestors();
+
+        // This change can make the layer start or stop being a composited child that splits its enclosing
+        // SVG container, so re-run that container's segmentation.
+        layer.invalidateEnclosingSVGContainerSegmentation();
     }
 
     return repaintRequired;
@@ -2862,7 +2890,7 @@ void RenderLayerCompositor::updateScrollLayerClipping()
     if (layerForClipping == m_clipLayer) {
         EventRegion eventRegion;
         auto eventRegionContext = eventRegion.makeContext();
-        eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, layerRect.size())), m_renderView, RenderStyle::defaultStyleSingleton());
+        eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, layerRect.size())), m_renderView, Style::ComputedStyle::defaultStyleSingleton());
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
         eventRegionContext.copyInteractionRegionsToEventRegion(m_renderView.settings().interactionRegionMinimumCornerRadius());
 #endif
@@ -2875,7 +2903,7 @@ FloatRect RenderLayerCompositor::insetClipLayerRect() const
 {
     Ref frameView = m_renderView.frameView();
 
-    auto insetClipLayerRect = LocalFrameView::insetClipLayerRect(frameView->scrollPosition(), frameView->obscuredContentInsets(), frameView->sizeForVisibleContent());
+    auto insetClipLayerRect = LocalFrameView::insetClipLayerRect(frameView->scrollPosition(), frameView->totalContentsSize(), frameView->obscuredContentInsets(), frameView->sizeForVisibleContent());
     insetClipLayerRect.move(frameView->insetForLeftScrollbarSpace(), 0);
     return insetClipLayerRect;
 }
@@ -3292,6 +3320,9 @@ bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
 {
     if (m_hasAcceleratedCompositing && layer.isSelfPaintingLayer()) {
         if (layer.renderer().isSkippedContent())
+            return false;
+
+        if (layer.renderer().isSVGLayerAwareRenderer() && layer.isFlattenedByEnclosingSVGReferenceFilter())
             return false;
 
         if (!layer.isInsideFragmentedFlow())
@@ -3817,8 +3848,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
         if (styleable->hasRunningAcceleratedAnimations())
             return true;
         if (auto* effectsStack = styleable->keyframeEffectStack()) {
-            return (effectsStack->isCurrentlyAffectingProperty(CSSPropertyOpacity)
-                && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
+            return (effectsStack->isCurrentlyAffectingProperty(CSSPropertyOpacity) && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyFilter)
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyBackdropFilter)
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyWebkitBackdropFilter)
@@ -3837,15 +3867,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     return false;
 }
 
-static bool styleHas3DTransformOperation(const RenderStyle& style)
-{
-    return style.transform().has3DOperation()
-        || style.translate().is3DOperation()
-        || style.scale().is3DOperation()
-        || style.rotate().is3DOperation();
-}
-
-static bool styleTransformOperationsAreRepresentableIn2D(const RenderStyle& style)
+static bool styleTransformOperationsAreRepresentableIn2D(const Style::ComputedStyle& style)
 {
     return style.transform().isRepresentableIn2D()
         && style.translate().isRepresentableIn2D()
@@ -3874,10 +3896,10 @@ bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObje
     
     switch (compositingPolicy) {
     case CompositingPolicy::Normal:
-        return styleHas3DTransformOperation(renderer.style());
+        return renderer.style().has3DTransformOperation();
     case CompositingPolicy::Conservative:
         // Continue to allow pages to avoid the very slow software filter path.
-        if (styleHas3DTransformOperation(renderer.style()) && renderer.hasFilter())
+        if (renderer.style().has3DTransformOperation() && renderer.hasFilter())
             return true;
         return !styleTransformOperationsAreRepresentableIn2D(renderer.style());
     }
@@ -4122,8 +4144,8 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
         return false;
     }
 
-    bool intersectsViewport = fixedLayerIntersectsViewport(layer);
-    if (!intersectsViewport) {
+    // Scroll-adjusted boxes can be scrolled into view, so don't check viewport intersection on them.
+    if (!layer.anchorScrollAdjustment() && !fixedLayerIntersectsViewport(layer)) {
         queryData.nonCompositedForPositionReason = RenderLayer::NotCompositedForBoundsOutOfView;
         LOG_WITH_STREAM(Compositing, stream << "Layer " << &layer << " is outside the viewport");
         return false;
@@ -4183,7 +4205,7 @@ IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReaso
     return IndirectCompositingReason::None;
 }
 
-bool RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+bool RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     if (RenderElement::createsGroupForStyle(newStyle) != RenderElement::createsGroupForStyle(oldStyle))
         return true;
@@ -4467,6 +4489,14 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
 // layer background, so we need an extra 'contents' layer for the foreground of the layer object.
 bool RenderLayerCompositor::needsContentsCompositingLayer(const RenderLayer& layer) const
 {
+    // An SVG container paints its children in DOM order from one flat list, so a composited negative-z
+    // child is just an ordinary composited child that splits the list (it gets a following overlay segment
+    // layer, and the primary segment may then be empty). It must not also pull out a foreground layer, which would
+    // double-parent it. RenderSVGForeignObject is an SVG layer but paints its HTML subtree with HTML-style
+    // z-order and keeps the foreground-layer path.
+    if (layer.isSVGLayer() && !layer.renderer().isRenderSVGForeignObject())
+        return false;
+
     for (auto* negativeZOrderLayer : layer.negativeZOrderLayers()) {
         if (negativeZOrderLayer->isComposited() || negativeZOrderLayer->hasCompositingDescendant())
             return true;
@@ -4907,7 +4937,7 @@ bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor)
 
 // We can't rely on getting layerStyleChanged() for a style change that affects the root background, because the style change may
 // be on the body which has no RenderLayer.
-void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle)
+void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, const Style::ComputedStyle* oldStyle)
 {
     if (!usesCompositing())
         return;
@@ -5360,7 +5390,7 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer& layer) const
 {
     auto& style = layer.renderer().style();
 
-    if (style.usedTransformStyle3D() == TransformStyle3D::Preserve3D || !style.perspective().isNone() || styleHas3DTransformOperation(style))
+    if (style.usedTransformStyle3D() == TransformStyle3D::Preserve3D || !style.perspective().isNone() || style.has3DTransformOperation())
         return true;
 
     const_cast<RenderLayer&>(layer).updateLayerListsIfNeeded();
@@ -5420,7 +5450,7 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
     constraints.setViewportRectAtLastLayout(m_renderView.frameView().rectForFixedPositionLayout());
     constraints.setAlignmentOffset(scrollingNodeLayer->pixelAlignmentOffset());
 
-    const RenderStyle& style = layer.renderer().style();
+    const Style::ComputedStyle& style = layer.renderer().style();
     if (!style.left().isAuto())
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
 

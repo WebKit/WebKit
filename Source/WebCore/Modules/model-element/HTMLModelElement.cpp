@@ -35,6 +35,7 @@
 #include "DOMMatrixReadOnly.h"
 #include "DOMPointReadOnly.h"
 #include "DOMPromiseProxy.h"
+#include "DiagnosticLoggingClient.h"
 #include "DocumentEventLoop.h"
 #include "DocumentPage.h"
 #include "DocumentResourceLoader.h"
@@ -45,7 +46,9 @@
 #include "EventNames.h"
 #include "Exception.h"
 #include "FloatPoint3D.h"
+#include "FloatRect.h"
 #include "FrameDestructionObserverInlines.h"
+#include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerCA.h"
 #include "HTMLAnchorElement.h"
@@ -53,6 +56,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
+#include "ImageBuffer.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMPromiseDeferred.h"
@@ -144,11 +148,12 @@ HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& docum
 #endif
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     , m_screenPropertiesChangedObserver(ScreenPropertiesChangedObserver::create([weakThis = WeakPtr { *this }](PlatformDisplayID displayID) {
-        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedThis { weakThis };
         if (!protectedThis)
             return;
-        if (auto* screenData = WebCore::screenData(displayID))
-            protectedThis->updateScreenHeadroom(screenData->currentEDRHeadroom, screenData->suppressEDR);
+        auto platformScreen = PlatformScreen::singleton();
+        if (auto* data = platformScreen->screenData(displayID))
+            protectedThis->updateScreenHeadroom(data->currentEDRHeadroom, data->suppressEDR);
     }))
 #endif
 {
@@ -271,6 +276,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
     m_dataMemoryCost.store(0, std::memory_order_relaxed);
     m_dataComplete = false;
     m_model = nullptr;
+    m_originalMIMEType = String();
 
     if (RefPtr resource = std::exchange(m_resource, nullptr))
         resource->removeClient(*this);
@@ -346,8 +352,12 @@ void HTMLModelElement::didMoveToNewDocument(Document& oldDocument, Document& new
 
 // MARK: - Rendering overrides.
 
-RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
 {
+    if (RefPtr page = document().page()) {
+        if (RefPtr provider = page->modelPlayerProvider(); provider && !provider->isAvailable())
+            return HTMLElement::createElementRenderer(WTF::move(style), position);
+    }
     return createRenderer<RenderModel>(*this, WTF::move(style));
 }
 
@@ -417,7 +427,7 @@ void HTMLModelElement::didFinishLoading(ModelPlayer& modelPlayer)
             renderer->updateFromElement();
 
         if (oldPlayer) {
-            if (RefPtr provider = m_modelPlayerProvider.get())
+            if (RefPtr provider = m_modelPlayerProvider)
                 provider->deleteModelPlayer(*oldPlayer);
         }
 
@@ -654,7 +664,7 @@ void HTMLModelElement::createModelPlayer()
 #if ENABLE(GPU_PROCESS_MODEL)
     RefPtr<ModelPlayer> modelPlayer;
 #endif
-    if (RefPtr modelPlayerProvider = m_modelPlayerProvider.get()) {
+    if (RefPtr modelPlayerProvider = m_modelPlayerProvider) {
         modelPlayer = modelPlayerProvider->createModelPlayer(*this);
 #if ENABLE(GPU_PROCESS_MODEL)
         if (routingToPending)
@@ -675,7 +685,7 @@ void HTMLModelElement::createModelPlayer()
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
     modelPlayer->setAutoplay(autoplay());
     modelPlayer->setLoop(loop());
-    modelPlayer->setPlaybackRate(m_playbackRate, [&](double) { });
+    modelPlayer->setPlaybackRate(m_playbackRate, [](double) { });
 #endif
 
 #if ENABLE(MODEL_ELEMENT_PORTAL)
@@ -692,7 +702,11 @@ void HTMLModelElement::createModelPlayer()
 
     // FIXME: We need to tell the player if the size changes as well, so passing this
     // in with load probably doesn't make sense.
-    modelPlayer->load(*model, contentSize());
+    bool isForImmersive = false;
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    isForImmersive = m_detachedForImmersive;
+#endif
+    modelPlayer->load(*model, contentSize(), isForImmersive);
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     if (m_environmentMapData)
@@ -715,14 +729,15 @@ void HTMLModelElement::deleteModelPlayer()
         if (modelPlayerProvider && modelPlayer)
             modelPlayerProvider->deleteModelPlayer(*modelPlayer);
 
-        RefPtr protectedThis = weakThis.get();
-        if (protectedThis)
+        RefPtr protectedThis { weakThis };
+        if (protectedThis && protectedThis->m_modelPlayer == modelPlayer)
             protectedThis->m_modelPlayer = nullptr;
     };
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     // Let the document trigger the model player deletion after transitioning out the immersive element if needed
-    if (RefPtr documentImmersive = document().immersiveIfExists())
+    RefPtr documentImmersive = document().immersiveIfExists();
+    if (m_detachedForImmersive && documentImmersive)
         return documentImmersive->exitRemovedImmersiveElementIfNeeded(this, WTF::move(deleteModelPlayerBlock));
 #endif
     deleteModelPlayerBlock();
@@ -734,7 +749,7 @@ void HTMLModelElement::deletePendingModelPlayer()
     RefPtr pendingPlayer = std::exchange(m_pendingModelPlayer, nullptr);
     if (!pendingPlayer)
         return;
-    if (RefPtr provider = m_modelPlayerProvider.get())
+    if (RefPtr provider = m_modelPlayerProvider)
         provider->deleteModelPlayer(*pendingPlayer);
 #endif
 }
@@ -790,10 +805,10 @@ void HTMLModelElement::reloadModelPlayer()
     auto transformState = modelPlayer->currentTransformState();
     ASSERT(animationState && transformState);
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_PROCESS) || ENABLE(GPU_PROCESS_MODEL)
     if (!m_modelPlayerProvider)
         m_modelPlayerProvider = document().page()->modelPlayerProvider();
-    if (RefPtr modelPlayerProvider = m_modelPlayerProvider.get()) {
+    if (RefPtr modelPlayerProvider = m_modelPlayerProvider) {
         modelPlayer = modelPlayerProvider->createModelPlayer(*this);
         m_modelPlayer = modelPlayer.copyRef();
     }
@@ -850,6 +865,19 @@ void HTMLModelElement::sizeMayHaveChanged()
         modelPlayer->sizeDidChange(contentSize());
     else
         createModelPlayer();
+}
+
+void HTMLModelElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destinationRect)
+{
+    if (destinationRect.isEmpty() || context.paintingDisabled())
+        return;
+
+    RefPtr modelPlayer { m_modelPlayer };
+    if (!modelPlayer)
+        return;
+
+    if (RefPtr imageBuffer { modelPlayer->snapshotCurrentFrame(destinationRect.size().scaled(protect(document())->deviceScaleFactor()), context.colorSpace()) })
+        context.drawImageBuffer(*imageBuffer, destinationRect);
 }
 
 void HTMLModelElement::configureGraphicsLayer(GraphicsLayer& graphicsLayer, Color backgroundColor)
@@ -941,6 +969,8 @@ void HTMLModelElement::beginStageModeTransform(const TransformationMatrix& trans
 {
     if (m_modelPlayer)
         m_modelPlayer->beginStageModeTransform(transform);
+
+    logInteractionDiagnostic();
 }
 
 void HTMLModelElement::updateStageModeTransform(const TransformationMatrix& transform)
@@ -1148,6 +1178,28 @@ bool HTMLModelElement::isPointInSystemPreviewBadge(const FloatPoint& localPoint)
 }
 #endif
 
+void HTMLModelElement::logInteractionDiagnostic()
+{
+    RefPtr page = document().page();
+    if (!page)
+        return;
+
+    // Models may be converted at runtime so we classify analytics based on the original resource MIME type
+    // We log model type for analytics as:
+    // Unknown = 0
+    int64_t modelType = 0;
+    // USD = 1
+    if (MIMETypeRegistry::isUSDMIMEType(m_originalMIMEType))
+        modelType = 1;
+    // GLTF = 2
+    else if (MIMETypeRegistry::isGLTFMIMEType(m_originalMIMEType))
+        modelType = 2;
+
+    DiagnosticLoggingClient::ValueDictionary dictionary;
+    dictionary.set("type"_s, modelType);
+    protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary("ModelElementInteraction"_s, "Safari"_s, dictionary, ShouldSample::No);
+}
+
 void HTMLModelElement::dragDidStart(WebCore::MouseRelatedEvent& event)
 {
     ASSERT(!m_isDragging);
@@ -1159,6 +1211,8 @@ void HTMLModelElement::dragDidStart(WebCore::MouseRelatedEvent& event)
     frame->eventHandler().setCapturingMouseEventsElement(this);
     event.setDefaultHandled();
     m_isDragging = true;
+
+    logInteractionDiagnostic();
 
     if (RefPtr modelPlayer = m_modelPlayer)
         modelPlayer->handleMouseDown(flippedLocationInElementForMouseEvent(event), event.timeStamp());
@@ -1245,7 +1299,7 @@ void HTMLModelElement::setPlaybackRate(double playbackRate)
     m_playbackRate = playbackRate;
 
     if (m_modelPlayer)
-        m_modelPlayer->setPlaybackRate(playbackRate, [&](double) { });
+        m_modelPlayer->setPlaybackRate(playbackRate, [](double) { });
 }
 
 double HTMLModelElement::duration() const
@@ -1313,7 +1367,7 @@ double HTMLModelElement::currentTime() const
 void HTMLModelElement::setCurrentTime(double currentTime)
 {
     if (m_modelPlayer)
-        m_modelPlayer->setCurrentTime(Seconds(currentTime), [&] { });
+        m_modelPlayer->setCurrentTime(Seconds(currentTime), [] { });
 }
 
 #endif
@@ -1516,6 +1570,7 @@ void HTMLModelElement::modelResourceFinished()
 
     m_dataComplete = true;
     m_dataMemoryCost.store(m_data.size(), std::memory_order_relaxed);
+    m_originalMIMEType = resource->mimeType();
     m_model = Model::create(m_data.takeBufferAsContiguous().get(), resource->mimeType(), resource->url());
 
     ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -1670,7 +1725,7 @@ void HTMLModelElement::ensureImmersivePresentation(CompletionHandler<void(Except
 {
     setDetachedForImmersive(true);
     ensureModelPlayer([weakThis = WeakPtr { *this }, completion = WTF::move(completion)](auto result) mutable {
-        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedThis { weakThis };
         if (!protectedThis)
             return completion(Exception { ExceptionCode::AbortError });
 
@@ -1688,7 +1743,7 @@ void HTMLModelElement::ensureImmersivePresentation(CompletionHandler<void(Except
         }
 
         modelPlayer->ensureImmersivePresentation([weakThis, completion = WTF::move(completion)](auto contextID) mutable {
-            RefPtr protectedThis = weakThis.get();
+            RefPtr protectedThis { weakThis };
             if (!protectedThis)
                 return completion(Exception { ExceptionCode::AbortError });
 
@@ -1714,7 +1769,7 @@ void HTMLModelElement::exitImmersivePresentation(CompletionHandler<void()>&& com
 
     auto generation = m_immersiveDetachGeneration;
     modelPlayer->exitImmersivePresentation([weakThis = WeakPtr { *this }, generation, completion = WTF::move(completion)] mutable {
-        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedThis { weakThis };
         if (!protectedThis)
             return completion();
 
@@ -1739,8 +1794,10 @@ void HTMLModelElement::setDetachedForImmersive(bool detachedForImmersive)
 void HTMLModelElement::ensureModelPlayer(CompletionHandler<void(ExceptionOr<RefPtr<ModelPlayer>>)>&& completion)
 {
     RefPtr modelPlayer = m_modelPlayer;
-    if (modelPlayer && modelPlayer->isPlaceholder())
+    if (modelPlayer && modelPlayer->isPlaceholder()) {
         reloadModelPlayer();
+        modelPlayer = m_modelPlayer;
+    }
 
     if (modelPlayer && !modelPlayer->isPlaceholder())
         return completion(protect(modelPlayer));
@@ -1811,8 +1868,8 @@ ModelPlayerAccessibilityChildren HTMLModelElement::accessibilityChildren()
 
 LayoutSize HTMLModelElement::contentSize() const
 {
-    if (CheckedPtr renderer = this->renderer())
-        return downcast<RenderReplaced>(*renderer).replacedContentRect().size();
+    if (CheckedPtr model = dynamicDowncast<RenderModel>(renderer()))
+        return model->replacedContentRect().size();
 
     return LayoutSize();
 }
@@ -1861,8 +1918,10 @@ Node::NeedsPostConnectionSteps HTMLModelElement::insertionSteps(InsertionType in
     if (insertionType.connectedToDocument) {
         Ref document = this->document();
         document->registerForVisibilityStateChangedCallbacks(*this);
-        m_modelPlayerProvider = document->page()->modelPlayerProvider();
-        LazyLoadModelObserver::observe(*this);
+        if (RefPtr page = document->page()) {
+            m_modelPlayerProvider = page->modelPlayerProvider();
+            LazyLoadModelObserver::observe(*this);
+        }
     }
 
     return insertResult;

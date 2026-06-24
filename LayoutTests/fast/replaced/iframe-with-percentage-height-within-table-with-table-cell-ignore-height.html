@@ -2,12 +2,8 @@
 <html>
 <head>
 
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function getComputedStyleForElement(element, cssPropertyName)
 {
@@ -40,13 +36,13 @@ function getHeight(id)
 function test()
 {
     description("This test checks that iframe with percentage height within table cell ignores the table cell height attribute (strict mode).");
+    window.jsTestIsAsync = true;
 
     shouldBe("getHeight('iframe-100')", "window.innerHeight");
 
-    isSuccessfullyParsed();
 
     if (window.testRunner) {
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 </script>

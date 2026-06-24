@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<input type="text" id="outerInput" placeholder="Outer frame input">
+<script>
+description("Test that blurring a focused element in a cross-origin iframe works correctly when site isolation is enabled.");
+jsTestIsAsync = true;
+
+let iframe;
+
+window.addEventListener("message", async (event) => {
+    if (event.data.type === "focused") {
+        // The input inside the cross-origin iframe is focused.
+        // Focus the outer input to trigger blur on the iframe's input.
+        await UIHelper.activateElement(document.getElementById("outerInput"));
+    } else if (event.data.type === "blurred") {
+        testPassed("Blur event fired on input inside cross-origin iframe");
+
+        // Verify the iframe's activeElement is no longer the input.
+        iframe.contentWindow.postMessage({ type: "checkActiveElement" }, "http://localhost:8000");
+    } else if (event.data.type === "activeElementResult") {
+        window.activeElementTag = event.data.tagName;
+        shouldBeEqualToString("activeElementTag", "BODY");
+        finishJSTest();
+    }
+});
+
+async function runTest() {
+    iframe = document.getElementById("frame");
+    const iframeRect = iframe.getBoundingClientRect();
+
+    const clickX = iframeRect.left + 50;
+    const clickY = iframeRect.top + 15;
+    await UIHelper.activateAndWaitForInputSessionAt(clickX, clickY);
+}
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/blur-input-iframe.html" onload="runTest()"></iframe>
+</body>
+</html>

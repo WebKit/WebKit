@@ -23,6 +23,8 @@
 #include "../internal.h"
 
 
+using namespace bssl;
+
 uint8_t *MD4(const uint8_t *data, size_t len, uint8_t out[MD4_DIGEST_LENGTH]) {
   MD4_CTX ctx;
   MD4_Init(&ctx);
@@ -63,13 +65,13 @@ struct MD4Traits {
 }  // namespace
 
 int MD4_Update(MD4_CTX *c, const void *data, size_t len) {
-  bssl::crypto_md32_update<MD4Traits>(
-      c, bssl::Span(static_cast<const uint8_t *>(data), len));
+  crypto_md32_update<MD4Traits>(c,
+                                Span(static_cast<const uint8_t *>(data), len));
   return 1;
 }
 
 int MD4_Final(uint8_t out[MD4_DIGEST_LENGTH], MD4_CTX *c) {
-  bssl::crypto_md32_final<MD4Traits>(c);
+  crypto_md32_final<MD4Traits>(c);
   CRYPTO_store_u32_le(out, c->h[0]);
   CRYPTO_store_u32_le(out + 4, c->h[1]);
   CRYPTO_store_u32_le(out + 8, c->h[2]);

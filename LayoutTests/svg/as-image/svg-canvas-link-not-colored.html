@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
 </head>
 <body>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        window.jsTestIsAsync = true;
 
         var svg = new Image();
         svg.src = "resources/link.svg";
@@ -31,8 +28,7 @@
             shouldBe("window.colorChannels[1]", "128");
             shouldBe("window.colorChannels[2]", "0");
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         };
     </script>
 </body>

@@ -23,7 +23,7 @@
 #include <WebCore/RenderBox.h>
 #include <WebCore/RenderObjectDocument.h>
 #include <WebCore/RenderObjectNode.h>
-#include <WebCore/RenderStyle+GettersInlines.h>
+#include <WebCore/StyleComputedStyle+GettersInlines.h>
 #include <WebCore/StyleOpacity.h>
 #include <WebCore/StyleShapeOutside.h>
 

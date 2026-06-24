@@ -24,25 +24,22 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
 
-struct SVGStrokeDashoffsetLength : LengthWrapperBase<LengthPercentage<>> {
-    using Base::Base;
-};
-
 // <'stroke-dashoffset'> = <length-percentage> | <number>@(converted-to-px)
 // https://svgwg.org/svg2-draft/painting.html#StrokeDashoffsetProperty
 struct SVGStrokeDashoffset {
-    using Fixed = SVGStrokeDashoffsetLength::Fixed;
-    using Percentage = SVGStrokeDashoffsetLength::Percentage;
-    using Calc = SVGStrokeDashoffsetLength::Calc;
+    using LengthPercentage = Style::LengthPercentage<>;
+    using Fixed = LengthPercentage::Fixed;
+    using Percentage = LengthPercentage::Percentage;
+    using Calc = LengthPercentage::Calc;
 
-    SVGStrokeDashoffsetLength value;
+    LengthPercentage value;
 
-    SVGStrokeDashoffset(SVGStrokeDashoffsetLength&& length) : value { WTF::move(length) } { }
+    SVGStrokeDashoffset(LengthPercentage&& value) : value { WTF::move(value) } { }
     SVGStrokeDashoffset(CSS::ValueLiteral<CSS::NumberUnit::Number> literal) : value { Fixed { static_cast<float>(literal.value) } } { }
     SVGStrokeDashoffset(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : value { literal } { }
     SVGStrokeDashoffset(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal) : value { literal } { }
@@ -63,5 +60,4 @@ template<> struct CSSValueConversion<SVGStrokeDashoffset> { auto operator()(Buil
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGStrokeDashoffsetLength)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SVGStrokeDashoffset)

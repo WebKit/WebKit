@@ -54,12 +54,12 @@
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "RenderViewTransitionCapture.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleDocumentScope.h"
 #include "StyleExtractor.h"
 #include "StyleResolver.h"
-#include "StyleScope.h"
 #include "StyleTransformFunction.h"
 #include "StyleZoomPrimitivesInlines.h"
 #include "Styleable.h"
@@ -118,6 +118,12 @@ RefPtr<ViewTransition> ViewTransition::resolveInboundCrossDocumentViewTransition
         return nullptr;
 
     if (MonotonicTime::now() - inboundViewTransitionParams->startTime > defaultTimeout)
+        return nullptr;
+
+    // Re-check against the new document's final origin, which may differ from the URL-derived
+    // origin used by DocumentLoader::navigationCanTriggerCrossDocumentViewTransition.
+    if (!inboundViewTransitionParams->oldDocumentOrigin
+        || !inboundViewTransitionParams->oldDocumentOrigin->isSameOriginAs(document.securityOrigin()))
         return nullptr;
 
     if (document.activeViewTransition())
@@ -785,7 +791,7 @@ void ViewTransition::activateViewTransition()
     }
 
     if (RefPtr documentElement = document()->documentElement())
-        documentElement->invalidateStyleInternal();
+        documentElement->invalidateStyle();
 
     m_phase = ViewTransitionPhase::Animating;
 
@@ -875,7 +881,7 @@ void ViewTransition::clearViewTransition()
     document->setActiveViewTransition(nullptr);
 
     if (RefPtr documentElement = document->documentElement())
-        documentElement->invalidateStyleInternal();
+        documentElement->invalidateStyle();
 }
 
 // https://drafts.csswg.org/css-view-transitions-1/#snapshot-containing-block
@@ -1015,7 +1021,7 @@ void ViewTransition::updatePseudoElementStylesWrite()
 
     if (changed) {
         if (RefPtr documentElement = document->documentElement())
-            documentElement->invalidateStyleInternal();
+            documentElement->invalidateStyle();
     }
 }
 

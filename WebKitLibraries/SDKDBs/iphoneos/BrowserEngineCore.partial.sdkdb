@@ -28,37 +28,37 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   },
   {
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfCTj"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfCTq"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfc"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC15preferredOutputSo07AVAudioE15PortDescriptionCSgvgTj"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC15preferredOutputSo07AVAudioE15PortDescriptionCSgvgTq"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC15preferredOutputSo07AVAudioE15PortDescriptionCSgvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC16availableOutputsSaySo07AVAudioE15PortDescriptionCGvgTj"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC16availableOutputsSaySo07AVAudioE15PortDescriptionCGvgTq"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC16availableOutputsSaySo07AVAudioE15PortDescriptionCGvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC18setPreferredOutputyySo07AVAudioE15PortDescriptionCSgKFTj"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC18setPreferredOutputyySo07AVAudioE15PortDescriptionCSgKFTq"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfC"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfCTj"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfCTq"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC05audioE0ACSo07AVAudioE0C_tcfc"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC15preferredOutputSo07AVAudioE15PortDescriptionCSgvgTj"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC15preferredOutputSo07AVAudioE15PortDescriptionCSgvgTq"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC15preferredOutputSo07AVAudioE15PortDescriptionCSgvpMV"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC16availableOutputsSaySo07AVAudioE15PortDescriptionCGvgTj"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC16availableOutputsSaySo07AVAudioE15PortDescriptionCGvgTq"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC16availableOutputsSaySo07AVAudioE15PortDescriptionCGvpMV"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC18setPreferredOutputyySo07AVAudioE15PortDescriptionCSgKFTj"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionC18setPreferredOutputyySo07AVAudioE15PortDescriptionCSgKFTq"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCMa"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCMo"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCMu"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCN"},
-    {"access": "public", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCfD"}
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s17BrowserEngineCore14BEAudioSessionCfD"}
    ],
    "interfaces": [
     {
      "access": "public",
      "instanceMethods": [
-      {"access": "public", "name": "initWithAudioSession:"},
-      {"access": "public", "name": "availableOutputs"},
-      {"access": "public", "name": "setPreferredOutput:error:"},
-      {"access": "public", "name": "preferredOutput"}
+      {"access": "public", "introduced": "26", "name": "initWithAudioSession:"},
+      {"access": "public", "introduced": "26", "name": "availableOutputs"},
+      {"access": "public", "introduced": "26", "name": "setPreferredOutput:error:"},
+      {"access": "public", "introduced": "26", "name": "preferredOutput"}
      ],
      "introduced": "26",
      "linkage": "exported",
@@ -66,7 +66,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

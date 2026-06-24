@@ -15,12 +15,9 @@
             background-color: silver;
         }
     </style>
-    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/js-test.js"></script>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        window.jsTestIsAsync = true;
 
         function doTest()
         {
@@ -53,8 +50,7 @@
             iframe = undefined;
 
             gc();
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
 
         window.addEventListener('load', doTest, false);

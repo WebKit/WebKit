@@ -140,7 +140,7 @@ PASS HTMLElement interface: attribute accessKeyLabel
 PASS HTMLElement interface: attribute draggable
 PASS HTMLElement interface: attribute spellcheck
 PASS HTMLElement interface: attribute writingSuggestions
-PASS HTMLElement interface: attribute autocapitalize
+FAIL HTMLElement interface: attribute autocapitalize assert_true: The prototype object must have a property "autocapitalize" expected true got false
 PASS HTMLElement interface: attribute autocorrect
 PASS HTMLElement interface: attribute innerText
 PASS HTMLElement interface: attribute outerText
@@ -149,6 +149,8 @@ PASS HTMLElement interface: operation showPopover(optional ShowPopoverOptions)
 PASS HTMLElement interface: operation hidePopover()
 PASS HTMLElement interface: operation togglePopover(optional (TogglePopoverOptions or boolean))
 PASS HTMLElement interface: attribute popover
+FAIL HTMLElement interface: attribute headingOffset assert_true: The prototype object must have a property "headingOffset" expected true got false
+FAIL HTMLElement interface: attribute headingReset assert_true: The prototype object must have a property "headingReset" expected true got false
 PASS HTMLElement interface: attribute onabort
 PASS HTMLElement interface: attribute onauxclick
 PASS HTMLElement interface: attribute onbeforeinput
@@ -249,7 +251,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "draggable" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "spellcheck" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "writingSuggestions" with the proper type
-PASS HTMLElement interface: document.createElement("noscript") must inherit property "autocapitalize" with the proper type
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "autocapitalize" with the proper type assert_inherits: property "autocapitalize" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "autocorrect" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "innerText" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "outerText" with the proper type
@@ -260,6 +262,8 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "togglePopover(optional (TogglePopoverOptions or boolean))" with the proper type
 PASS HTMLElement interface: calling togglePopover(optional (TogglePopoverOptions or boolean)) on document.createElement("noscript") with too few arguments must throw TypeError
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "popover" with the proper type
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "headingOffset" with the proper type assert_inherits: property "headingOffset" not found in prototype chain
+FAIL HTMLElement interface: document.createElement("noscript") must inherit property "headingReset" with the proper type assert_inherits: property "headingReset" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onauxclick" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onbeforeinput" with the proper type

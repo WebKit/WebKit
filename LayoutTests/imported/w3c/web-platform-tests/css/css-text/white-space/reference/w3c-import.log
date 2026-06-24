@@ -111,6 +111,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-intrinsic-size-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-intrinsic-size-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-intrinsic-size-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-intrinsic-size-024-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-intrinsic-size-025-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-letter-spacing-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-normal-011-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/reference/white-space-nowrap-011-ref.html

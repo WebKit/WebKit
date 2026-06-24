@@ -84,7 +84,10 @@ elseif (APPLE)
             ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
         MAIN_DEPENDENCY mac/MachExceptions.defs
         WORKING_DIRECTORY ${WTF_DERIVED_SOURCES_DIR}
-        COMMAND mig -DMACH_EXC_SERVER_TASKIDTOKEN_STATE -sheader MachExceptionsServer.h MachExceptions.defs
+        COMMAND ${Mig_EXECUTABLE} -header mach_exc.h -user mach_excUser.c
+            -sheader MachExceptionsServer.h -server mach_excServer.c
+            -DMACH_EXC_SERVER_TASKIDTOKEN_STATE -isysroot ${CMAKE_OSX_SYSROOT}
+            MachExceptions.defs
         VERBATIM)
     list(APPEND WTF_SOURCES
         cocoa/MemoryFootprintCocoa.cpp

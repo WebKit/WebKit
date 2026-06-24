@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/field_trials_view.h"
 #include "modules/audio_coding/codecs/opus/audio_coder_opus_common.h"
@@ -141,7 +141,7 @@ void AudioDecoderOpusImpl::GeneratePlc(
     return;
   }
   int plc_size = WebRtcOpus_PlcDuration(dec_state_) * channels_;
-  concealment_audio->AppendData(plc_size, [&](ArrayView<int16_t> decoded) {
+  concealment_audio->AppendData(plc_size, [&](std::span<int16_t> decoded) {
     int16_t temp_type = 1;
     int ret =
         WebRtcOpus_Decode(dec_state_, nullptr, 0, decoded.data(), &temp_type);

@@ -1,5 +1,6 @@
 
 PASS CSSPositionTryRule attribute values
+FAIL CSSPositionTryRule escaped ident name assert_equals: expected "--\\{" but got "--{"
 PASS CSSPositionTryRule.style.setProperty setting allowed and disallowed properties
 PASS CSSPositionTryDescriptors.item
 PASS CSSPositionTryDescriptors.cssText

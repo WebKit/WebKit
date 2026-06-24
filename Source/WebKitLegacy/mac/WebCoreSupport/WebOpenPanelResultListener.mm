@@ -33,11 +33,10 @@
 #import <WebCore/Icon.h>
 #endif
 
-using namespace WebCore;
 
 @implementation WebOpenPanelResultListener
 
-- (id)initWithChooser:(FileChooser&)chooser
+- (id)initWithChooser:(WebCore::FileChooser&)chooser
 {
     self = [super init];
     if (!self)
@@ -82,7 +81,7 @@ using namespace WebCore;
     if (!_chooser)
         return;
 
-    _chooser->chooseMediaFiles(makeVector<String>(filenames), displayString, Icon::create(imageRef).get());
+    _chooser->chooseMediaFiles(makeVector<String>(filenames), displayString, WebCore::Icon::create(imageRef).get());
     _chooser = nullptr;
 }
 

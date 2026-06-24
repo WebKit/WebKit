@@ -25,9 +25,11 @@
 #include "../internal.h"
 
 
+using namespace bssl;
+
 int main(int argc, char **argv) {
   testing::InitGoogleMock(&argc, argv);
-  bssl::SetupGoogleTest();
+  SetupGoogleTest();
 
   bool unwind_tests = true;
   for (int i = 1; i < argc; i++) {

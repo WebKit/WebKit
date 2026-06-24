@@ -53,9 +53,5 @@ rtc_source_set("video_frame_matchers") {
   visibility = [ "*" ]
   sources = [ "video_frame_matchers.h" ]
 
-  deps = [
-    "..:video_frame",
-    "../..:rtp_packet_info",
-    "../../../test:test_support",
-  ]
+  deps = [ "../../../test:test_support" ]
 }

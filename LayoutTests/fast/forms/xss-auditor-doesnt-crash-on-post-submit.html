@@ -1,22 +1,18 @@
 <!DOCTYPE html><!-- webkit-test-runner [ XSSAuditorEnabled=true ] -->
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script>
+    window.jsTestIsAsync = true;
     function test() {
         if (document.location.hash !== '#submitted') {
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
 
             var form = document.getElementById('form');
             // Shouldn't trigger any assertions.
             form.submit();
         } else {
             testPassed('No assertions raised.');
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
     }
     </script>

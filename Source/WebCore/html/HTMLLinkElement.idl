@@ -42,9 +42,6 @@
     [Reflect] attribute boolean disabled;
     [CEReactions=NotNeeded, ImplementedAs=fetchPriorityForBindings, ReflectSetter] attribute [AtomString] DOMString fetchPriority;
 
-    // Non-standard.
-    [CEReactions=NotNeeded, Conditional=WEB_PAGE_SPATIAL_BACKDROP, EnabledBySetting=WebPageSpatialBackdropEnabled, ReflectURL] attribute USVString environmentMap;
-
     // https://html.spec.whatwg.org/multipage/obsolete.html#HTMLLinkElement-partial
     // FIXME: Move these to their own IDL file HTMLLinkElement+Obsolete.idl.
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;

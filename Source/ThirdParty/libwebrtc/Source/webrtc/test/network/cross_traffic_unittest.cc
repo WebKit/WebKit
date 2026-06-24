@@ -91,8 +91,8 @@ TEST(CrossTrafficTest, PulsedPeaksCrossTraffic) {
     fixture.clock.AdvanceTimeMilliseconds(1);
   }
 
-  RTC_LOG(LS_INFO) << fixture.counter.packets_count_ << " packets; "
-                   << fixture.counter.total_packets_size_ << " bytes";
+  RTC_LOG(LS_INFO) << fixture.counter.packets_count_.load() << " packets; "
+                   << fixture.counter.total_packets_size_.load() << " bytes";
   // Using 50% duty cycle.
   const auto kExpectedDataSent = kRunTime * config.peak_rate * 0.5;
   EXPECT_NEAR(fixture.counter.total_packets_size_, kExpectedDataSent.bytes(),
@@ -119,8 +119,8 @@ TEST(CrossTrafficTest, RandomWalkCrossTraffic) {
     fixture.clock.AdvanceTimeMilliseconds(1);
   }
 
-  RTC_LOG(LS_INFO) << fixture.counter.packets_count_ << " packets; "
-                   << fixture.counter.total_packets_size_ << " bytes";
+  RTC_LOG(LS_INFO) << fixture.counter.packets_count_.load() << " packets; "
+                   << fixture.counter.total_packets_size_.load() << " bytes";
   // Sending at peak rate since bias = 1.
   const auto kExpectedDataSent = kRunTime * config.peak_rate;
   EXPECT_NEAR(fixture.counter.total_packets_size_, kExpectedDataSent.bytes(),

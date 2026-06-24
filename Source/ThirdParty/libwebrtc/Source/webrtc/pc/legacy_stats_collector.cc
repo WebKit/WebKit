@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "absl/base/nullability.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
@@ -61,6 +62,7 @@
 #include "rtc_base/socket_address.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_stream_adapter.h"
+#include "rtc_base/system/plan_b_only.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
@@ -791,8 +793,13 @@ StatsReport* LegacyStatsCollector::AddCertificateReports(
 
   StatsReport* first_report = nullptr;
   StatsReport* prev_report = nullptr;
+  absl::flat_hash_set<std::string> visited_fingerprints;
   for (SSLCertificateStats* stats = cert_stats.get(); stats;
        stats = stats->issuer.get()) {
+    if (!visited_fingerprints.insert(stats->fingerprint).second) {
+      break;
+    }
+
     StatsReport::Id id(StatsReport::NewTypedId(
         StatsReport::kStatsReportTypeCertificate, stats->fingerprint));
 
@@ -1156,8 +1163,19 @@ namespace {
 
 class ChannelStatsGatherer {
  public:
+  static std::vector<
+      scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>>
+  GetReceiversSnapshot(RtpTransceiver* transceiver) {
+    RTC_ALLOW_PLAN_B_DEPRECATION_BEGIN()
+    return transceiver->receivers();
+    RTC_ALLOW_PLAN_B_DEPRECATION_END()
+  }
+
   explicit ChannelStatsGatherer(RtpTransceiver* absl_nonnull transceiver)
-      : transceiver_(transceiver) {
+      : mid(transceiver->mid().value_or("")),
+        transport_name(transceiver->transport_name().value_or("")),
+        receivers_(GetReceiversSnapshot(transceiver)),
+        transceiver_(transceiver) {
     RTC_DCHECK(transceiver_);
   }
   virtual ~ChannelStatsGatherer() = default;
@@ -1168,8 +1186,14 @@ class ChannelStatsGatherer {
 
   virtual bool HasRemoteAudio() const = 0;
 
-  std::string mid;
-  std::string transport_name;
+  const std::vector<
+      scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>>&
+  receivers() const {
+    return receivers_;
+  }
+
+  const std::string mid;
+  const std::string transport_name;
   std::map<uint32_t, std::string> sender_track_id_by_ssrc;
   std::map<uint32_t, std::string> receiver_track_id_by_ssrc;
 
@@ -1190,6 +1214,9 @@ class ChannelStatsGatherer {
   RtpTransceiver* transceiver() { return transceiver_; }
 
  private:
+  const std::vector<
+      scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>>
+      receivers_;
   RtpTransceiver* const transceiver_;
 };
 
@@ -1295,19 +1322,14 @@ void LegacyStatsCollector::ExtractMediaInfo(
       }
       std::unique_ptr<ChannelStatsGatherer> gatherer =
           CreateChannelStatsGatherer(transceiver->internal());
-      if (transceiver->mid()) {
-        gatherer->mid = *transceiver->mid();
-      }
-      auto it = transport_names_by_mid.find(gatherer->mid);
-      if (it != transport_names_by_mid.end()) {
-        gatherer->transport_name = it->second;
-      }
+      RTC_ALLOW_PLAN_B_DEPRECATION_BEGIN()
       for (const auto& sender : transceiver->internal()->senders()) {
         auto track = sender->track();
         std::string track_id = (track ? track->id() : "");
         gatherer->sender_track_id_by_ssrc.insert(
             std::make_pair(sender->ssrc(), track_id));
       }
+      RTC_ALLOW_PLAN_B_DEPRECATION_END()
 
       // Populating `receiver_track_id_by_ssrc` will be done on the worker
       // thread as the `ssrc` property of the receiver needs to be accessed
@@ -1320,15 +1342,13 @@ void LegacyStatsCollector::ExtractMediaInfo(
   pc_->worker_thread()->BlockingCall([&] {
     Thread::ScopedDisallowBlockingCalls no_blocking_calls;
     // Populate `receiver_track_id_by_ssrc` for the gatherers.
-    int i = 0;
-    for (const auto& transceiver : transceivers) {
-      if (!transceiver->internal()->HasChannel())
-        continue;
-      ChannelStatsGatherer* gatherer = gatherers[i++].get();
-      for (const auto& receiver : transceiver->internal()->receivers()) {
+    for (const std::unique_ptr<ChannelStatsGatherer>& gatherer : gatherers) {
+      RTC_ALLOW_PLAN_B_DEPRECATION_BEGIN()
+      for (const auto& receiver : gatherer->receivers()) {
         gatherer->receiver_track_id_by_ssrc.insert(std::make_pair(
             receiver->internal()->ssrc().value_or(0), receiver->track()->id()));
       }
+      RTC_ALLOW_PLAN_B_DEPRECATION_END()
     }
 
     for (auto it = gatherers.begin(); it != gatherers.end();

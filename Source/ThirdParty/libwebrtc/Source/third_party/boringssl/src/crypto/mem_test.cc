@@ -24,8 +24,112 @@
 
 
 #if !defined(BORINGSSL_SHARED_LIBRARY)
+DECLARE_OPAQUE_STRUCT(SimpleOpaqueType, SimpleImplType)
+
 BSSL_NAMESPACE_BEGIN
+
+class SimpleImplType : public SimpleOpaqueType {
+public:
+  SimpleImplType() = default;
+  int x;
+};
+
 namespace {
+
+// New should default-initialize, which means it implicitly zero-initializes in
+// a lot of cases.
+TEST(NewTest, DefaultInit) {
+  // Non-user-provided constructors should zero-initialize.
+  {
+    struct Foo {
+      int x;
+    };
+    Foo *foo = New<Foo>();
+    ASSERT_TRUE(foo);
+    EXPECT_EQ(foo->x, 0);
+    Delete(foo);
+  }
+
+  // Defaulted constructors don't count as user-provided and still
+  // zero-initialize.
+  {
+    struct Foo {
+      Foo() = default;
+      int x;
+    };
+    Foo *foo = New<Foo>();
+    ASSERT_TRUE(foo);
+    EXPECT_EQ(foo->x, 0);
+    Delete(foo);
+  }
+
+  // The presence of a different user-provided constructor does not suppress
+  // zero initialization of the default constructor.
+  {
+    struct Foo {
+      Foo() = default;
+      Foo(int) { /* This constructor leaves |x| uninitialized. */ }
+      int x;
+    };
+    Foo *foo = New<Foo>();
+    ASSERT_TRUE(foo);
+    EXPECT_EQ(foo->x, 0);
+    Delete(foo);
+  }
+
+  // Fields with initializers does not suppress zero initialization of other
+  // fields.
+  {
+    struct Foo {
+      int x;
+      int y = 2;
+    };
+    Foo *foo = New<Foo>();
+    ASSERT_TRUE(foo);
+    EXPECT_EQ(foo->x, 0);
+    EXPECT_EQ(foo->y, 2);
+    Delete(foo);
+  }
+
+  // Complex types do not suppress zero-initialization of other fields.
+  {
+    struct Complex {
+      Complex() : value(42) {}
+      ~Complex() {}
+      int value;
+    };
+    struct Foo {
+      int x;
+      Complex y;
+    };
+    Foo *foo = New<Foo>();
+    ASSERT_TRUE(foo);
+    EXPECT_EQ(foo->x, 0);
+    EXPECT_EQ(foo->y.value, 42);
+    Delete(foo);
+  }
+
+  // User-provided constructors run.
+  {
+    struct Foo {
+      Foo() : x(42) {}
+      int x;
+    };
+    Foo *foo = New<Foo>();
+    ASSERT_TRUE(foo);
+    EXPECT_EQ(foo->x, 42);
+    Delete(foo);
+  }
+
+  // The public/opaque struct split pattern still performs zero initialization
+  // if the constructor is not user-provided.
+  {
+    SimpleImplType *foo = New<SimpleImplType>();
+    ASSERT_TRUE(foo);
+    EXPECT_EQ(foo->x, 0);
+    Delete(foo);
+  }
+}
 
 TEST(ArrayTest, Basic) {
   Array<int> array;
@@ -95,6 +199,119 @@ TEST(VectorTest, Resize) {
   EXPECT_EQ(vec[0], 42u);
   EXPECT_EQ(vec.front(), 42u);
   EXPECT_EQ(vec.back(), 42u);
+}
+
+TEST(VectorTest, AppendSimpleType) {
+  Vector<size_t> vec;
+  ASSERT_TRUE(vec.empty());
+
+  // Append through the initial capacity and small growth cases.
+  for (size_t i = 0; i < 32; i++) {
+    size_t in[2] = {2 * i, 2 * i + 1};
+    ASSERT_TRUE(vec.Append(in));
+  }
+  EXPECT_EQ(vec.size(), 64u);
+  for (size_t i = 0; i < 64; i++) {
+    EXPECT_EQ(vec[i], i);
+  }
+
+  // Append a large buffer to test when we more than double the capacity.
+  size_t buf[512];
+  for (size_t i = 0; i < std::size(buf); i++) {
+    buf[i] = 64 + i;
+  }
+  ASSERT_TRUE(vec.Append(buf));
+  EXPECT_EQ(vec.size(), 512u + 64u);
+  for (size_t i = 0; i < 512u + 64u; i++) {
+    EXPECT_EQ(vec[i], i);
+  }
+}
+
+TEST(VectorTest, AppendMoveSimpleType) {
+  Vector<size_t> vec;
+  ASSERT_TRUE(vec.empty());
+
+  // Append-move through the initial capacity and small growth cases.
+  for (size_t i = 0; i < 32; i++) {
+    size_t in[2] = {2 * i, 2 * i + 1};
+    ASSERT_TRUE(vec.AppendMove(in));
+  }
+  EXPECT_EQ(vec.size(), 64u);
+  for (size_t i = 0; i < 64; i++) {
+    EXPECT_EQ(vec[i], i);
+  }
+
+  // Append-move a large buffer to test when we more than double the capacity.
+  size_t buf[512];
+  for (size_t i = 0; i < std::size(buf); i++) {
+    buf[i] = 64 + i;
+  }
+  ASSERT_TRUE(vec.AppendMove(buf));
+  EXPECT_EQ(vec.size(), 512u + 64u);
+  for (size_t i = 0; i < 512u + 64u; i++) {
+    EXPECT_EQ(vec[i], i);
+  }
+}
+
+TEST(VectorTest, AppendComplexType) {
+  Vector<std::shared_ptr<size_t>> vec;
+  ASSERT_TRUE(vec.empty());
+
+  // Append through the initial capacity and small growth cases.
+  for (size_t i = 0; i < 32; i++) {
+    std::shared_ptr<size_t> in[2] = {std::make_shared<size_t>(2 * i),
+                                     std::make_shared<size_t>(2 * i + 1)};
+    ASSERT_TRUE(vec.Append(in));
+  }
+  EXPECT_EQ(vec.size(), 64u);
+  for (size_t i = 0; i < 64; i++) {
+    EXPECT_EQ(*vec[i], i);
+  }
+
+  // Append a large buffer to test when we more than double the capacity.
+  std::shared_ptr<size_t> buf[512];
+  for (size_t i = 0; i < std::size(buf); i++) {
+    buf[i] = std::make_shared<size_t>(64 + i);
+  }
+  ASSERT_TRUE(vec.Append(buf));
+  EXPECT_EQ(vec.size(), 512u + 64u);
+  for (size_t i = 0; i < 512u + 64u; i++) {
+    EXPECT_EQ(*vec[i], i);
+  }
+}
+
+TEST(VectorTest, AppendMoveComplexType) {
+  Vector<std::unique_ptr<size_t>> vec;
+  ASSERT_TRUE(vec.empty());
+
+  // Append through the initial capacity and small growth cases.
+  for (size_t i = 0; i < 32; i++) {
+    std::unique_ptr<size_t> in[2] = {std::make_unique<size_t>(2 * i),
+                                     std::make_unique<size_t>(2 * i + 1)};
+    ASSERT_TRUE(vec.AppendMove(in));
+    // Should have moved from the source.
+    EXPECT_EQ(in[0], nullptr);
+    EXPECT_EQ(in[1], nullptr);
+  }
+  EXPECT_EQ(vec.size(), 64u);
+  for (size_t i = 0; i < 64; i++) {
+    EXPECT_EQ(*vec[i], i);
+  }
+
+  // Append a large buffer to test when we more than double the capacity.
+  std::unique_ptr<size_t> buf[512];
+  for (size_t i = 0; i < std::size(buf); i++) {
+    buf[i] = std::make_unique<size_t>(64 + i);
+  }
+  ASSERT_TRUE(vec.AppendMove(buf));
+  for (const auto &ptr : buf) {
+    // Should have moved from the source.
+    EXPECT_EQ(ptr, nullptr);
+  }
+  EXPECT_EQ(vec.size(), 512u + 64u);
+  for (size_t i = 0; i < 512u + 64u; i++) {
+    EXPECT_EQ(*vec[i], i);
+  }
 }
 
 TEST(VectorTest, MoveConstructor) {
@@ -170,6 +387,81 @@ TEST(VectorTest, NotDefaultConstructible) {
   EXPECT_EQ(3u, vec[3].array.size());
 }
 
+TEST(VectorTest, EraseIf) {
+  // Test that EraseIf never causes a self-move, and also correctly works with
+  // a move-only type that cannot be default-constructed.
+  class NoSelfMove {
+   public:
+    explicit NoSelfMove(int v) : v_(std::make_unique<int>(v)) {}
+    NoSelfMove(NoSelfMove &&other) { *this = std::move(other); }
+    NoSelfMove &operator=(NoSelfMove &&other) {
+      BSSL_CHECK(this != &other);
+      v_ = std::move(other.v_);
+      return *this;
+    }
+
+    int value() const { return *v_; }
+
+   private:
+    std::unique_ptr<int> v_;
+  };
+
+  Vector<NoSelfMove> vec;
+  auto reset = [&] {
+    vec.clear();
+    for (int i = 0; i < 8; i++) {
+      ASSERT_TRUE(vec.Push(NoSelfMove(i)));
+    }
+  };
+  auto expect = [&](const std::vector<int> &expected) {
+    ASSERT_EQ(vec.size(), expected.size());
+    for (size_t i = 0; i < vec.size(); i++) {
+      SCOPED_TRACE(i);
+      EXPECT_EQ(vec[i].value(), expected[i]);
+    }
+  };
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &) { return false; });
+  expect({0, 1, 2, 3, 4, 5, 6, 7});
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &) { return true; });
+  expect({});
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &v) { return v.value() < 4; });
+  expect({4, 5, 6, 7});
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &v) { return v.value() >= 4; });
+  expect({0, 1, 2, 3});
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &v) { return v.value() % 2 == 0; });
+  expect({1, 3, 5, 7});
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &v) { return v.value() % 2 == 1; });
+  expect({0, 2, 4, 6});
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &v) { return 2 <= v.value() && v.value() <= 5; });
+  expect({0, 1, 6, 7});
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &v) { return v.value() == 0; });
+  expect({1, 2, 3, 4, 5, 6, 7});
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &v) { return v.value() == 4; });
+  expect({0, 1, 2, 3, 5, 6, 7});
+
+  ASSERT_NO_FATAL_FAILURE(reset());
+  vec.EraseIf([](const auto &v) { return v.value() == 7; });
+  expect({0, 1, 2, 3, 4, 5, 6});
+}
+
 TEST(VectorDeathTest, BoundsChecks) {
   Vector<int> vec;
   EXPECT_DEATH_IF_SUPPORTED(vec.front(), "");
@@ -189,7 +481,8 @@ TEST(InplaceVector, Basic) {
   EXPECT_EQ(vec.begin(), vec.end());
 
   int data3[] = {1, 2, 3};
-  ASSERT_TRUE(vec.TryCopyFrom(data3));
+  ASSERT_TRUE(vec.TryCopyFrom(Span(data3).first(1)));
+  ASSERT_TRUE(vec.TryAppend(Span(data3).subspan(1)));
   EXPECT_FALSE(vec.empty());
   EXPECT_EQ(3u, vec.size());
   auto iter = vec.begin();
@@ -241,7 +534,8 @@ TEST(InplaceVector, Basic) {
 TEST(InplaceVectorTest, ComplexType) {
   InplaceVector<std::vector<int>, 4> vec_of_vecs;
   const std::vector<int> data[] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-  vec_of_vecs.CopyFrom(data);
+  vec_of_vecs.CopyFrom(Span(data).first(1));
+  vec_of_vecs.Append(Span(data).subspan(1));
   EXPECT_EQ(Span(vec_of_vecs), Span(data));
 
   vec_of_vecs.Resize(2);
@@ -438,8 +732,10 @@ TEST(InplaceVectorDeathTest, BoundsChecks) {
   EXPECT_DEATH_IF_SUPPORTED(vec.ResizeForOverwrite(5), "");
   int too_much_data[] = {1, 2, 3, 4, 5};
   EXPECT_DEATH_IF_SUPPORTED(vec.CopyFrom(too_much_data), "");
+  EXPECT_DEATH_IF_SUPPORTED(vec.Append(Span(too_much_data).first(2)), "");
   vec.Resize(4);
   EXPECT_DEATH_IF_SUPPORTED(vec.PushBack(42), "");
+  EXPECT_DEATH_IF_SUPPORTED(vec.Append(Span(too_much_data).first(1)), "");
 }
 
 }  // namespace

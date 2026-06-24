@@ -51,6 +51,7 @@ struct Options {
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
     bool enableAllExperimentalFeatures { true };
     bool lockdownModeEnabled { false };
+    bool siteIsolationEnabledByDefault { false };
 #if PLATFORM(WPE)
     bool useWPELegacyAPI { false };
 #endif

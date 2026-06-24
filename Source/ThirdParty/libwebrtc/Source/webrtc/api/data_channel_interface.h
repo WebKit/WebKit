@@ -103,6 +103,7 @@ class DataChannelObserver {
   virtual void OnMessage(const DataBuffer& buffer) = 0;
   // The data channel's buffered_amount has changed.
   virtual void OnBufferedAmountChange(uint64_t /* sent_data_size */) {}
+  virtual void OnMaxMessageSize(int /* max_message_size */) {}
 
   // Override this to get callbacks directly on the network thread.
   // An implementation that does that must not block the network thread

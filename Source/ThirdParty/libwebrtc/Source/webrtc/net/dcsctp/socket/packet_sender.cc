@@ -11,17 +11,17 @@
 
 #include <cstdint>
 #include <functional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/sctp_packet.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
 
 namespace dcsctp {
 
 PacketSender::PacketSender(DcSctpSocketCallbacks& callbacks,
-                           std::function<void(webrtc::ArrayView<const uint8_t>,
+                           std::function<void(std::span<const uint8_t>,
                                               SendPacketStatus)> on_sent_packet)
     : callbacks_(callbacks), on_sent_packet_(std::move(on_sent_packet)) {}
 

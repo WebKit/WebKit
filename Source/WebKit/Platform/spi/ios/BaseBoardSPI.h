@@ -31,6 +31,7 @@ DECLARE_SYSTEM_HEADER
 
 #import <BaseBoard/BSAction.h>
 #import <BaseBoard/BSInvalidatable.h>
+#import <BoardServices/BSServiceConnectionEndpointInjector.h>
 
 #else
 
@@ -63,6 +64,22 @@ typedef void(^BSActionResponseHandler)(BSActionResponse *response);
 - (BOOL)canSendResponse;
 - (void)sendResponse:(BSActionResponse *)response;
 @property (nonatomic, copy, readonly) BSSettings *info;
+@end
+
+@class RBSAttribute;
+@class RBSTarget;
+
+@protocol BSServiceConnectionEndpointInjectorConfiguring
+- (void)setTarget:(RBSTarget *)target;
+- (void)setInheritingEnvironment:(NSString *)inheritingEnvironment;
+- (void)setAdditionalAttributes:(NSArray<RBSAttribute *> *)attributes;
+@end
+
+typedef void(^BSServiceConnectionEndpointInjectorConfigurator)(id<BSServiceConnectionEndpointInjectorConfiguring> config);
+
+@interface BSServiceConnectionEndpointInjector : NSObject <BSInvalidatable>
++ (nullable BSServiceConnectionEndpointInjector *)injectorWithConfigurator:(NS_NOESCAPE BSServiceConnectionEndpointInjectorConfigurator)block;
+- (void)invalidate;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

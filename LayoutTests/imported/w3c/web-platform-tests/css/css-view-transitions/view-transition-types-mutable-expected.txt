@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: Old view transition aborted by new view transition.
-
 PASS ViewTransition.types is a ViewTransitionTypeSet
 PASS ViewTransitionTypeSet behaves like an ordinary Set of strings
 PASS ViewTransitionTypeSet should reflect its members for a non-active transition

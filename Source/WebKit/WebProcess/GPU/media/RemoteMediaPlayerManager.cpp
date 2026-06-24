@@ -49,7 +49,6 @@
 
 namespace WebKit {
 
-using namespace PAL;
 using namespace WebCore;
 
 class MediaPlayerRemoteFactory final : public MediaPlayerFactory {

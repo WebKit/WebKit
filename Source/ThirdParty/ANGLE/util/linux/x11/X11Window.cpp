@@ -290,6 +290,7 @@ class ANGLE_UTIL_EXPORT X11Window : public OSWindow
     EGLNativeWindowType getNativeWindow() const override;
     void *getPlatformExtension() override;
     EGLNativeDisplayType getNativeDisplay() const override;
+    EGLenum getNativeDisplayPlatformType() const override;
 
     void messageLoop() override;
 
@@ -481,6 +482,11 @@ void *X11Window::getPlatformExtension()
 EGLNativeDisplayType X11Window::getNativeDisplay() const
 {
     return reinterpret_cast<EGLNativeDisplayType>(mDisplay);
+}
+
+EGLenum X11Window::getNativeDisplayPlatformType() const
+{
+    return EGL_PLATFORM_X11_EXT;
 }
 
 void X11Window::messageLoop()

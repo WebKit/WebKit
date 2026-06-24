@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +38,11 @@ namespace WebCore {
 
 class ScrollableArea;
 class RenderBox;
-class RenderStyle;
 class Element;
+
+namespace Style {
+class ComputedStyle;
+}
 
 template <typename T>
 struct SnapOffset {
@@ -75,6 +78,12 @@ struct ScrollSnapOffsetsInfo {
         return axis == ScrollEventAxis::Vertical ? verticalSnapOffsets : horizontalSnapOffsets;
     }
 
+    // From https://drafts.csswg.org/css-scroll-snap-1/#snap-overflow: if a snap area is larger than
+    // the snapport in an axis, then any scroll position in which the snap area covers the snapport is
+    // a valid snap position in that axis. Returns true if any of the snap offset's areas is larger
+    // than the snapport and covers it at the given offset.
+    bool snapOffsetCoversSnapport(const SnapOffset<UnitType>&, ScrollEventAxis, UnitType axisOffset, UnitType viewportLength) const;
+
     template<typename OutputType> OutputType convertUnits(float deviceScaleFactor = 0.0) const;
     template<typename SizeType, typename PointType>
     WEBCORE_EXPORT std::pair<UnitType, std::optional<unsigned>> closestSnapOffset(ScrollEventAxis, const SizeType& viewportSize, PointType scrollDestinationOffset, float velocity, std::optional<UnitType> originalPositionForDirectionalSnapping = std::nullopt) const;
@@ -100,11 +109,11 @@ FloatScrollSnapOffsetsInfo LayoutScrollSnapOffsetsInfo::convertUnits(float devic
 template <> template <>
 WEBCORE_EXPORT std::pair<LayoutUnit, std::optional<unsigned>> LayoutScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis, const LayoutSize& viewportSize, LayoutPoint scrollDestinationOffset, float velocity, std::optional<LayoutUnit> originalPositionForDirectionalSnapping) const;
 
-// Update the snap offsets for this scrollable area, given the RenderBox of the scroll container, the RenderStyle
+// Update the snap offsets for this scrollable area, given the RenderBox of the scroll container, the StyleComputedStyle
 // which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
 // the scrolling container's border box.
 bool NODELETE mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox);
-void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode, Element*);
+void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const Style::ComputedStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode, Element*);
 
 template <typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, SnapOffset<T> offset)
 {

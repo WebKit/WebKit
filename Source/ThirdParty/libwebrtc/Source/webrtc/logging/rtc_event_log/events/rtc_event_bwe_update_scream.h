@@ -14,11 +14,11 @@
 #include <stdint.h>
 
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
@@ -82,7 +82,7 @@ class RtcEventBweUpdateScream final : public RtcEvent {
   uint32_t avg_queue_delay_ms() const { return avg_queue_delay_ms_; }
   uint32_t l4s_marked_permille() const { return l4s_marked_permille_; }
 
-  static std::string Encode(ArrayView<const RtcEvent*> batch) {
+  static std::string Encode(std::span<const RtcEvent*> batch) {
     // TODO(terelius): Implement
     return "";
   }

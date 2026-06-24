@@ -14,11 +14,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
@@ -91,8 +91,8 @@ class TransformableOutgoingAudioFrame
         sequence_number_(sequence_number),
         audio_level_dbov_(audio_level_dbov) {}
   ~TransformableOutgoingAudioFrame() override = default;
-  ArrayView<const uint8_t> GetData() const override { return payload_; }
-  void SetData(ArrayView<const uint8_t> data) override {
+  std::span<const uint8_t> GetData() const override { return payload_; }
+  void SetData(std::span<const uint8_t> data) override {
     payload_.SetData(data.data(), data.size());
   }
   uint32_t GetTimestamp() const override { return rtp_timestamp_with_offset_; }
@@ -110,7 +110,7 @@ class TransformableOutgoingAudioFrame
   Direction GetDirection() const override { return Direction::kSender; }
   std::string GetMimeType() const override { return codec_mime_type_; }
 
-  ArrayView<const uint32_t> GetContributingSources() const override {
+  std::span<const uint32_t> GetContributingSources() const override {
     return csrcs_;
   }
 

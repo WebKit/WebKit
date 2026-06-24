@@ -2044,7 +2044,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "BLASParamErrorProc"},
     {"access": "public", "name": "__CLPK_L_fp"},

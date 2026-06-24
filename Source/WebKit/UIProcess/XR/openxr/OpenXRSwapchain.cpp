@@ -31,7 +31,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRSwapchain);
 std::unique_ptr<OpenXRSwapchain> OpenXRSwapchain::create(XrSession session, const XrSwapchainCreateInfo& info, HasAlpha hasAlpha)
 {
     ASSERT(session != XR_NULL_HANDLE);
-    ASSERT(info.faceCount == 1);
+    // faceCount is 1 for regular swapchains and 6 for cube (cubemap) swapchains.
+    ASSERT(info.faceCount == 1 || info.faceCount == 6);
 
     XrSwapchain swapchain { XR_NULL_HANDLE };
     CHECK_XRCMD(xrCreateSwapchain(session, &info, &swapchain));

@@ -53,8 +53,10 @@ class JITCode;
 class JITCompiler;
 
 struct UnlinkedPropertyInlineCache : JSC::UnlinkedPropertyInlineCache {
+    void setUsedRegisters(ScalarRegisterSet value) { m_usedRegisters = value; }
+    void removeUsedRegister(GPRReg reg) { m_usedRegisters.remove(reg); }
+
     CodeOrigin codeOrigin;
-    ScalarRegisterSet usedRegisters;
     CallSiteIndex callSiteIndex;
     GPRReg m_baseGPR { InvalidGPRReg };
     GPRReg m_valueGPR { InvalidGPRReg };
@@ -67,6 +69,9 @@ struct UnlinkedPropertyInlineCache : JSC::UnlinkedPropertyInlineCache {
     GPRReg m_extraTagGPR { InvalidGPRReg };
     GPRReg m_extra2TagGPR { InvalidGPRReg };
 #endif
+
+private:
+    ScalarRegisterSet m_usedRegisters;
 };
 
 struct UnlinkedCallLinkInfo : JSC::UnlinkedCallLinkInfo {
@@ -102,10 +107,12 @@ public:
         StringToStringWatchpointSet,
         StringValueOfWatchpointSet,
         StringSymbolMatchWatchpointSet,
+        StringSymbolSearchWatchpointSet,
         StringSymbolReplaceWatchpointSet,
         StringSymbolSplitWatchpointSet,
         StringSymbolToPrimitiveWatchpointSet,
         RegExpPrimordialPropertiesWatchpointSet,
+        RegExpSpeciesWatchpointSet,
         PromiseThenWatchpointSet,
         ArraySpeciesWatchpointSet,
         ArrayPrototypeChainIsSaneWatchpointSet,

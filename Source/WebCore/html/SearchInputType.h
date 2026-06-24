@@ -87,7 +87,7 @@ private:
 
     void addSearchResult() final;
     void attributeChanged(const QualifiedName&) final;
-    RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
+    RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
     const AtomString& formControlType() const final;
     bool needsContainer() const final;
     void createShadowSubtree() final;

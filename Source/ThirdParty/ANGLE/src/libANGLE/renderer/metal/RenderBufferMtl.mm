@@ -108,36 +108,25 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
         // For emulated channels that GL texture intends to not have,
         // we need to initialize their content.
         bool emulatedChannels = mtl::IsFormatEmulated(mFormat);
-        if (emulatedChannels)
-        {
-            gl::ImageIndex index;
+        bool isDepthStencil   = mFormat.hasDepthOrStencilBits();
+        bool toNonZero = contextMtl->getDisplay()->getFeatures().allocateNonZeroTextures.enabled;
 
-            if (mTexture->samples() > 1)
+        if (toNonZero || emulatedChannels || isDepthStencil)
+        {
+            gl::ImageIndex index = mTexture->samples() > 1 ? gl::ImageIndex::Make2DMultisample()
+                                                           : gl::ImageIndex::Make2D(0);
+            auto nativeIndex     = mtl::ImageNativeIndex(index, 0);
+
+            if (isDepthStencil)
             {
-                index = gl::ImageIndex::Make2DMultisample();
+                ANGLE_TRY(mtl::InitializeDepthStencilTextureContentsGPU(context, mTexture, mFormat,
+                                                                        nativeIndex, toNonZero));
             }
             else
             {
-                index = gl::ImageIndex::Make2D(0);
+                ANGLE_TRY(mtl::InitializeTextureContents(context, mTexture, mFormat, nativeIndex,
+                                                         toNonZero));
             }
-
-            ANGLE_TRY(mtl::InitializeTextureContents(context, mTexture, mFormat,
-                                                     mtl::ImageNativeIndex(index, 0)));
-        }  // if (emulatedChannels)
-        bool isDepthStencil = mFormat.hasDepthOrStencilBits();
-        if (isDepthStencil)
-        {
-            gl::ImageIndex index;
-            if (mTexture->samples() > 1)
-            {
-                index = gl::ImageIndex::Make2DMultisample();
-            }
-            else
-            {
-                index = gl::ImageIndex::Make2D(0);
-            }
-            ANGLE_TRY(mtl::InitializeDepthStencilTextureContentsGPU(
-                context, mTexture, mFormat, mtl::ImageNativeIndex(index, 0)));
         }
     }
 

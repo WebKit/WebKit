@@ -13,9 +13,9 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_util.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -87,7 +87,7 @@ class TestPcapFileReader : public ::testing::Test {
     PacketsPerSsrc pps;
     test::RtpPacket packet;
     while (rtp_packet_source_->NextPacket(&packet)) {
-      ArrayView<const uint8_t> raw(packet.data, packet.length);
+      std::span<const uint8_t> raw(packet.data, packet.length);
       if (IsRtpPacket(raw)) {
         pps[ParseRtpSsrc(raw)]++;
       }

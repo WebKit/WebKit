@@ -18,6 +18,8 @@ load(
     "bcm_internal_headers",
     "bcm_sources",
     "bcm_sources_asm",
+    "bench_internal_headers",
+    "bench_sources",
     "bssl_internal_headers",
     "bssl_sources",
     "crypto_headers",
@@ -26,6 +28,7 @@ load(
     "crypto_sources_asm",
     "crypto_test_data",
     "crypto_test_sources",
+    "crypto_test_internal_headers",
     "decrepit_internal_headers",
     "decrepit_sources",
     "decrepit_test_sources",
@@ -47,10 +50,8 @@ load(":util/util.bzl", "bssl_cc_binary", "bssl_cc_library", "bssl_cc_test")
 
 package(
     default_applicable_licenses = [":license"],
-    # Disable the parse_headers feature. It does not work well in C right now.
-    # See https://github.com/bazelbuild/bazel/issues/23460 for details. When
-    # that is fixed, if enabled, we likely also need to rename some headers to
-    # .inc per
+    # TODO(crbug.com/399387924): Enable parse_headers feature. Not all of our
+    # headers are self-contained. We may need to rename or fix some of them per
     # https://google.github.io/styleguide/cppguide.html#Self_contained_Headers
     features = ["-parse_headers"],
 )
@@ -89,9 +90,12 @@ bssl_cc_library(
     srcs = ssl_sources,
     hdrs = ssl_headers,
     copts = ["-DBORINGSSL_IMPLEMENTATION"],
+    # ssl_sources also depend on :crypto's internal headers.
+    implementation_deps = [":crypto_internal"],
     internal_hdrs = ssl_internal_headers,
     visibility = ["//visibility:public"],
-    deps = [":crypto_internal"],
+    # ssl_headers depend on :crypto's exported headers.
+    deps = [":crypto"],
 )
 
 bssl_cc_library(
@@ -111,7 +115,7 @@ bssl_cc_library(
 bssl_cc_test(
     name = "crypto_test",
     size = "large",
-    srcs = crypto_test_sources,
+    srcs = crypto_test_sources + crypto_test_internal_headers,
     data = crypto_test_data,
     # crypto_test references assembly symbols directly and thus must be linked
     # statically.
@@ -152,6 +156,16 @@ bssl_cc_binary(
     deps = [
         ":crypto_internal",
         ":ssl_internal",
+    ],
+)
+
+bssl_cc_binary(
+    name = "bssl_bench",
+    srcs = bench_sources + bench_internal_headers,
+    visibility = ["//visibility:public"],
+    deps = [
+        ":crypto_internal",
+        "@google_benchmark//:benchmark",
     ],
 )
 

@@ -549,7 +549,7 @@ TEST_F(WKContentRuleListStoreTest, NonASCIISource)
 }
 
 static size_t alertCount { 0 };
-static bool receivedAlert { false };
+static bool contentExtensionReceivedAlert { false };
 
 @interface ContentRuleListDelegate : NSObject <WKUIDelegate>
 @end
@@ -570,7 +570,7 @@ static bool receivedAlert { false };
     default:
         EXPECT_TRUE(false);
     }
-    receivedAlert = true;
+    contentExtensionReceivedAlert = true;
     completionHandler();
 }
 
@@ -601,15 +601,15 @@ TEST_F(WKContentRuleListStoreTest, AddRemove)
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"contentBlockerCheck" withExtension:@"html"]];
     alertCount = 0;
-    receivedAlert = false;
+    contentExtensionReceivedAlert = false;
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&receivedAlert);
+    TestWebKitAPI::Util::run(&contentExtensionReceivedAlert);
 
     [[configuration userContentController] removeContentRuleList:ruleList.get()];
 
-    receivedAlert = false;
+    contentExtensionReceivedAlert = false;
     [webView reload];
-    TestWebKitAPI::Util::run(&receivedAlert);
+    TestWebKitAPI::Util::run(&contentExtensionReceivedAlert);
 }
 
 #if PLATFORM(IOS_FAMILY)

@@ -1021,23 +1021,26 @@ public:
 private:
     explicit ScriptExecutionContextDispatcher(ScriptExecutionContext& context)
         : m_identifier(context.identifier())
-        , m_threadId(context.isWorkerGlobalScope() ? Thread::currentSingleton().uid() : 1)
+        , m_workerThreadId(context.isWorkerGlobalScope() ? std::optional { Thread::currentSingleton().uid() } : std::nullopt)
     {
     }
 
     // GuaranteedSerialFunctionDispatcher
     void dispatch(Function<void()>&& callback) final
     {
-        if (m_threadId == 1) {
+        if (!m_workerThreadId) {
             callOnMainThread(WTF::move(callback));
             return;
         }
         ScriptExecutionContext::postTaskTo(m_identifier, WTF::move(callback));
     }
-    bool isCurrent() const final { return m_threadId == Thread::currentSingleton().uid(); }
+    bool isCurrent() const final
+    {
+        return m_workerThreadId ? *m_workerThreadId == Thread::currentSingleton().uid() : isMainThread();
+    }
 
     ScriptExecutionContextIdentifier m_identifier;
-    const uint32_t m_threadId { 1 };
+    const std::optional<uint32_t> m_workerThreadId;
 };
 
 GuaranteedSerialFunctionDispatcher& ScriptExecutionContext::nativePromiseDispatcher()
@@ -1066,7 +1069,7 @@ bool ScriptExecutionContext::requiresScriptTrackingPrivacyProtection(ScriptTrack
         break;
     }
 
-    RefPtr document = dynamicDowncast<Document>(*this);
+    auto* document = dynamicDowncast<Document>(*this);
     if (!document)
         return true;
 

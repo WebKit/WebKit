@@ -44,7 +44,7 @@ Ref<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGTextElement(tagName, document));
 }
 
-RenderPtr<RenderElement> SVGTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGTextElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGText>(*this, WTF::move(style));
 }

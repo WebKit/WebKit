@@ -13,8 +13,8 @@
 
 #include <array>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/ns/ns_common.h"
 #include "modules/audio_processing/ns/suppression_params.h"
 
@@ -30,10 +30,10 @@ class WienerFilter {
   // Updates the filter estimate.
   void Update(
       int32_t num_analyzed_frames,
-      ArrayView<const float, kFftSizeBy2Plus1> noise_spectrum,
-      ArrayView<const float, kFftSizeBy2Plus1> prev_noise_spectrum,
-      ArrayView<const float, kFftSizeBy2Plus1> parametric_noise_spectrum,
-      ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum);
+      std::span<const float, kFftSizeBy2Plus1> noise_spectrum,
+      std::span<const float, kFftSizeBy2Plus1> prev_noise_spectrum,
+      std::span<const float, kFftSizeBy2Plus1> parametric_noise_spectrum,
+      std::span<const float, kFftSizeBy2Plus1> signal_spectrum);
 
   // Compute an overall gain scaling factor.
   float ComputeOverallScalingFactor(int32_t num_analyzed_frames,
@@ -42,7 +42,7 @@ class WienerFilter {
                                     float energy_after_filtering) const;
 
   // Returns the filter.
-  ArrayView<const float, kFftSizeBy2Plus1> get_filter() const {
+  std::span<const float, kFftSizeBy2Plus1> get_filter() const {
     return filter_;
   }
 

@@ -97,6 +97,7 @@ PACKAGES=(
     gdb
     libcgi-pm-perl
     psmisc
+    $(aptIfExists python3-legacy-cgi)
     pulseaudio-utils
     python3-gi
     ruby-highline

@@ -14,10 +14,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
@@ -73,7 +73,7 @@ class MockAudioEncoder : public AudioEncoder {
   MOCK_METHOD(EncodedInfo,
               EncodeImpl,
               (uint32_t timestamp,
-               webrtc::ArrayView<const int16_t> audio,
+               std::span<const int16_t> audio,
                webrtc::Buffer*),
               (override));
 
@@ -88,7 +88,7 @@ class MockAudioEncoder : public AudioEncoder {
     explicit FakeEncoding(size_t encoded_bytes);
 
     AudioEncoder::EncodedInfo operator()(uint32_t timestamp,
-                                         ArrayView<const int16_t> audio,
+                                         std::span<const int16_t> audio,
                                          Buffer* encoded);
 
    private:
@@ -102,23 +102,23 @@ class MockAudioEncoder : public AudioEncoder {
     // Creates a functor that will return `info` and append the data in the
     // payload to the buffer given as input to it. Up to info.encoded_bytes are
     // appended - make sure the payload is big enough!  Since it uses an
-    // ArrayView, it _does not_ copy the payload. Make sure it doesn't fall out
+    // std::span, it _does not_ copy the payload. Make sure it doesn't fall out
     // of scope!
     CopyEncoding(AudioEncoder::EncodedInfo info,
-                 ArrayView<const uint8_t> payload);
+                 std::span<const uint8_t> payload);
 
     // Shorthand version of the constructor above, for when you wish to append
     // the whole payload and do not care about any EncodedInfo attribute other
     // than encoded_bytes.
-    explicit CopyEncoding(ArrayView<const uint8_t> payload);
+    explicit CopyEncoding(std::span<const uint8_t> payload);
 
     AudioEncoder::EncodedInfo operator()(uint32_t timestamp,
-                                         ArrayView<const int16_t> audio,
+                                         std::span<const int16_t> audio,
                                          Buffer* encoded);
 
    private:
     AudioEncoder::EncodedInfo info_;
-    ArrayView<const uint8_t> payload_;
+    std::span<const uint8_t> payload_;
   };
 };
 

@@ -58,15 +58,15 @@ template<typename T> concept ShapeWithCenterCoordinate = std::same_as<T, CircleF
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BasicShape> { auto operator()(const BasicShape&, const RenderStyle&, PathConversion = PathConversion::None) -> CSS::BasicShape; };
+template<> struct ToCSS<BasicShape> { auto operator()(const BasicShape&, const Style::ComputedStyle&, PathConversion = PathConversion::None) -> CSS::BasicShape; };
 template<> struct ToStyle<CSS::BasicShape> { auto operator()(const CSS::BasicShape&, const BuilderState&, std::optional<float> zoom = 1.0f) -> BasicShape; };
 
-template<> struct CSSValueCreation<BasicShape> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const BasicShape&, PathConversion = PathConversion::None); };
+template<> struct CSSValueCreation<BasicShape> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const BasicShape&, PathConversion = PathConversion::None); };
 template<> struct CSSValueConversion<BasicShape> { BasicShape operator()(BuilderState&, const CSSValue&, std::optional<float> zoom = 1.0f); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<BasicShape> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const BasicShape&, PathConversion = PathConversion::None); };
+template<> struct Serialize<BasicShape> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const BasicShape&, PathConversion = PathConversion::None); };
 
 // MARK: - Blending
 
@@ -88,7 +88,7 @@ template<> struct WindRuleComputation<BasicShape> { WebCore::WindRule operator()
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-template<> struct Evaluation<BasicShape, AcceleratedEffectBasicShape> { AcceleratedEffectBasicShape operator()(const BasicShape&, const TransformOperationData&, ZoomFactor); };
+template<> struct Evaluation<BasicShape, AcceleratedEffectBasicShape> { AcceleratedEffectBasicShape operator()(const BasicShape&, const FloatRect&, ZoomFactor); };
 
 #endif
 

@@ -105,7 +105,7 @@ String ModuleDebugInfo::debugName() const
             result.append(sourceURL);
     }
 
-    const auto& rawName = moduleInfo->nameSection->moduleName;
+    const auto& rawName = moduleInfo->nameSection().moduleName;
     if (!rawName.isEmpty()) {
         if (!result.isEmpty())
             result.append(':');

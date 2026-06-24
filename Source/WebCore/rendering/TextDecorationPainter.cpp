@@ -31,9 +31,9 @@
 #include "RenderBlock.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "StyleAppleColorFilter.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTextDecorationLine.h"
 #include "TextBoxPainter.h"
 #include "TextRun.h"
@@ -177,7 +177,8 @@ static void strokeWavyTextDecoration(GraphicsContext& context, const FloatRect& 
 bool TextDecorationPainter::Styles::operator==(const Styles& other) const
 {
     return underline.color == other.underline.color && overline.color == other.overline.color && linethrough.color == other.linethrough.color
-        && underline.decorationStyle == other.underline.decorationStyle && overline.decorationStyle == other.overline.decorationStyle && linethrough.decorationStyle == other.linethrough.decorationStyle;
+        && underline.decorationStyle == other.underline.decorationStyle && overline.decorationStyle == other.overline.decorationStyle && linethrough.decorationStyle == other.linethrough.decorationStyle
+        && underline.thickness == other.underline.thickness && overline.thickness == other.overline.thickness && linethrough.thickness == other.linethrough.thickness;
 }
 
 TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const FontCascade& font, const Style::TextShadows& shadow, const Style::AppleColorFilter& colorFilter, bool isPrinting, WritingMode writingMode)
@@ -191,7 +192,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const Fon
 }
 
 // Paint text-shadow, underline, overline
-void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, Style::TextDecorationLine decorationType, const Styles& decorationStyle, float deviceScaleFactor)
+void TextDecorationPainter::paintBackgroundDecorations(const Style::ComputedStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, Style::TextDecorationLine decorationType, const Styles& decorationStyle, float deviceScaleFactor)
 {
     auto paintDecoration = [&] (auto decoration, auto underlineStyle, auto& color, auto& rect) {
         m_context.setStrokeColor(color);
@@ -321,35 +322,39 @@ void TextDecorationPainter::paintLineThrough(const ForegroundDecorationGeometry&
 
 static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, Style::TextDecorationLine remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, std::optional<PseudoElementType> pseudoElementType)
 {
-    auto extractDecorations = [&] (const RenderStyle& style, Style::TextDecorationLine decorations) {
+    auto extractDecorations = [&] (const Style::ComputedStyle& style, Style::TextDecorationLine decorations) {
         if (!decorations.containsAny({ Style::TextDecorationLine::Flag::Underline, Style::TextDecorationLine::Flag::Overline, Style::TextDecorationLine::Flag::LineThrough }))
             return;
 
         auto color = TextDecorationPainter::decorationColor(style, paintBehavior);
         auto decorationStyle = style.textDecorationStyle();
+        auto thickness = style.textDecorationThickness();
 
         if (decorations.hasUnderline()) {
             remainingDecorations.remove(Style::TextDecorationLine::Flag::Underline);
             result.underline.color = color;
             result.underline.decorationStyle = decorationStyle;
+            result.underline.thickness = thickness;
         }
         if (decorations.hasOverline()) {
             remainingDecorations.remove(Style::TextDecorationLine::Flag::Overline);
             result.overline.color = color;
             result.overline.decorationStyle = decorationStyle;
+            result.overline.thickness = thickness;
         }
         if (decorations.hasLineThrough()) {
             remainingDecorations.remove(Style::TextDecorationLine::Flag::LineThrough);
             result.linethrough.color = color;
             result.linethrough.decorationStyle = decorationStyle;
+            result.linethrough.thickness = thickness;
         }
     };
 
-    auto styleForRenderer = [&] (const RenderObject& renderer) -> CheckedRef<const RenderStyle> {
+    auto styleForRenderer = [&] (const RenderObject& renderer) -> CheckedRef<const Style::ComputedStyle> {
         if (pseudoElementType && renderer.style().hasPseudoStyle(*pseudoElementType)) {
             if (auto textRenderer = dynamicDowncast<RenderText>(renderer))
-                return *textRenderer->getCachedPseudoStyle({ *pseudoElementType });
-            return *downcast<RenderElement>(renderer).getCachedPseudoStyle({ *pseudoElementType });
+                return *textRenderer->lazyPseudoElementStyle({ *pseudoElementType });
+            return *downcast<RenderElement>(renderer).lazyPseudoElementStyle({ *pseudoElementType });
         }
         return firstLineStyle ? renderer.firstLineStyle() : CheckedRef { renderer.style() };
     };
@@ -374,7 +379,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         extractDecorations(styleForRenderer(*current), remainingDecorations);
 }
 
-Color TextDecorationPainter::decorationColor(const RenderStyle& style, OptionSet<PaintBehavior> paintBehavior)
+Color TextDecorationPainter::decorationColor(const Style::ComputedStyle& style, OptionSet<PaintBehavior> paintBehavior)
 {
     if (paintBehavior.contains(PaintBehavior::ForceBlackText))
         return Color::black;

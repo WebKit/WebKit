@@ -299,7 +299,7 @@ String createVPCodecParametersString(const VPCodecConfigurationRecord& configura
         return resultBuilder.toString();
 
     resultBuilder.append(".0"_s, numberToStringUnsigned<String>(configuration.profile), '.', numberToStringUnsigned<String>(configuration.level), '.');
-    if (configuration.transferCharacteristics < 10)
+    if (configuration.bitDepth < 10)
         resultBuilder.append('0');
     resultBuilder.append(numberToStringUnsigned<String>(configuration.bitDepth));
 
@@ -497,7 +497,7 @@ void setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord& rec
     }
 }
 
-std::optional<VPCodecConfigurationRecord> vPCodecConfigurationRecordFromVPXByteStream(VPXCodec codec, std::span<const uint8_t> data)
+std::optional<VPCodecConfigurationRecord> vpCodecConfigurationRecordFromVPXByteStream(VPXCodec codec, std::span<const uint8_t> data)
 {
     if (data.size() < 11)
         return { };

@@ -13,9 +13,9 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
@@ -189,7 +189,7 @@ void TestAudioDevice::ProcessAudio() {
     size_t samples_out = samples_per_channel * renderer_->NumChannels();
     RTC_CHECK_LE(samples_out, playout_buffer_.size());
     const bool keep_rendering = renderer_->Render(
-        ArrayView<const int16_t>(playout_buffer_.data(), samples_out));
+        std::span<const int16_t>(playout_buffer_.data(), samples_out));
     if (!keep_rendering) {
       rendering_ = false;
     }

@@ -12,6 +12,7 @@
 
 #include <deque>
 #include <map>
+#include <string>
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
@@ -43,6 +44,7 @@ class SimulatedTaskQueue : public TaskQueueBase,
   TaskQueueBase* GetAsTaskQueue() override { return this; }
 
   // TaskQueueBase interface
+  absl::string_view queue_name() const override { return name_; }
   void Delete() override;
   void PostTaskImpl(absl::AnyInvocable<void() &&> task,
                     const PostTaskTraits& traits,
@@ -54,8 +56,7 @@ class SimulatedTaskQueue : public TaskQueueBase,
 
  private:
   sim_time_impl::SimulatedTimeControllerImpl* const handler_;
-  // Using char* to be debugger friendly.
-  char* name_;
+  const std::string name_;
 
   mutable Mutex lock_;
 

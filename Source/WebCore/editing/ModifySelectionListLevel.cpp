@@ -35,9 +35,8 @@
 #include "HTMLUListElement.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
-#include "RenderObject.h"
+#include "RenderObjectNode.h"
 #include "SimpleRange.h"
-#include "RenderObjectInlines.h"
 
 namespace WebCore {
 
@@ -58,12 +57,12 @@ static bool getStartEndListChildren(const VisibleSelection& selection, RefPtr<No
         return false;
 
     // start must be in a list child
-    RefPtr startListChild = enclosingListChild(selection.start().anchorNode());
+    RefPtr startListChild = enclosingListChild(protect(selection.start().anchorNode()));
     if (!startListChild || !startListChild->renderer())
         return false;
 
     // end must be in a list child
-    RefPtr endListChild = selection.isRange() ? enclosingListChild(selection.end().anchorNode()) : startListChild;
+    RefPtr endListChild = selection.isRange() ? enclosingListChild(protect(selection.end().anchorNode())) : startListChild;
     if (!endListChild || !endListChild->renderer())
         return false;
     

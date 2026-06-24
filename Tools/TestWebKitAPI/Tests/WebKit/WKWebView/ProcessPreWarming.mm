@@ -32,7 +32,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-static NSString *loadableURL = @"data:text/html,no%20error%20A";
+static NSString *preWarmingLoadableURL = @"data:text/html,no%20error%20A";
 
 TEST(WKProcessPool, WarmInitialProcess)
 {
@@ -68,7 +68,7 @@ static void runInitialWarmedProcessUsedTest(ShouldUseEphemeralStore shouldUseEph
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:preWarmingLoadableURL]]];
 
     EXPECT_FALSE([pool _hasPrewarmedWebProcess]);
     EXPECT_EQ(1U, [pool _webPageContentProcessCount]);
@@ -106,7 +106,7 @@ static void runAutomaticProcessWarmingTest(unsigned prewarmedProcessCountLimit)
     EXPECT_FALSE([pool _hasPrewarmedWebProcess]);
     EXPECT_EQ(1U, [pool _webPageContentProcessCount]);
 
-    [webView1 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+    [webView1 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:preWarmingLoadableURL]]];
     [webView1 _test_waitForDidFinishNavigation];
 
     RetainPtr<NSSet> prewarmedProcessIdentifiers;
@@ -118,7 +118,7 @@ static void runAutomaticProcessWarmingTest(unsigned prewarmedProcessCountLimit)
     EXPECT_EQ(1U + prewarmedProcessCountLimit, [pool _webPageContentProcessCount]);
 
     RetainPtr webView2 = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+    [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:preWarmingLoadableURL]]];
     [webView2 _test_waitForDidFinishNavigation];
 
     auto webView2ProcessIdentifier = [webView2 _webProcessIdentifier];
@@ -192,10 +192,10 @@ TEST(WKProcessPool, TryUsingPrewarmedProcessThatJustCrashed)
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
     delegate.get().webContentProcessDidTerminate = ^(WKWebView *view, _WKProcessTerminationReason) {
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:preWarmingLoadableURL]]];
     };
     [webView setNavigationDelegate:delegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:preWarmingLoadableURL]]];
     [delegate waitForDidFinishNavigation];
 }

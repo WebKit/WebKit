@@ -152,16 +152,13 @@ int av1_txfm_uvrd(const AV1_COMP *const cpi, MACROBLOCK *x, RD_STATS *rd_stats,
  * \param[in]    tx_size        The given transform size
  * \param[in]    ftxs_mode      Transform search mode specifying desired speed
                                 and quality tradeoff
- * \param[in]    skip_trellis   Binary flag indicating if trellis optimization
-                                should be skipped
  *
  * \remark       Nothing is returned. The RD results will be saved in rd_stats.
  */
 void av1_txfm_rd_in_plane(MACROBLOCK *x, const AV1_COMP *cpi,
                           RD_STATS *rd_stats, int64_t ref_best_rd,
                           int64_t current_rd, int plane, BLOCK_SIZE plane_bsize,
-                          TX_SIZE tx_size, FAST_TX_SEARCH_MODE ftxs_mode,
-                          int skip_trellis);
+                          TX_SIZE tx_size, FAST_TX_SEARCH_MODE ftxs_mode);
 
 /*!\brief Recursive transform size and type search.
  *

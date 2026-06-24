@@ -7,6 +7,8 @@
 <script>
 description("This tests the `buttons` property for mouse events we send.");
 
+window.jsTestIsAsync = true;
+
 var div = document.createElement("div");
 div.style.width = "100px";
 div.style.height = "100px";
@@ -80,8 +82,6 @@ async function testChordedEvents(description, buttons, expectedString) {
 }
 
 onload = async () => {
-    testRunner?.waitUntilDone();
-
     div.addEventListener("auxclick", appendEventLog, false);
     div.addEventListener("click", appendEventLog, false);
     div.addEventListener("dblclick", appendEventLog, false);
@@ -100,7 +100,7 @@ onload = async () => {
         await testChordedEvents("Left, Right, and Middle Mouse Buttons", [0, 2, 1], "mousedown(1) mousedown(3) mousedown(7) mouseup(3) auxclick(3) mouseup(1) mouseup(0) ");
         await testChordedEvents("Left, Right, Middle, Back, and Forward Mouse Buttons", [0, 2, 1, 3, 4], "mousedown(1) mousedown(3) mousedown(7) mousedown(15) mousedown(31) mouseup(15) auxclick(15) mouseup(7) mouseup(3) mouseup(1) mouseup(0) ");
     }
-    testRunner?.notifyDone();
+    finishJSTest();
 }
 </script>
 </body>

@@ -20,63 +20,59 @@
 #include "../internal.h"
 
 
+#if defined(BORINGSSL_PREFIX)
+#define BCM_ADD_PREFIX(name) BORINGSSL_ADD_PREFIX(bcm_##name)
+#else
+#define BCM_ADD_PREFIX(name) bcm_##name
+#endif
+
 #if !defined(BORINGSSL_SHARED_LIBRARY) && defined(BORINGSSL_FIPS) && \
     !defined(OPENSSL_ASAN) && !defined(OPENSSL_MSAN)
-#define DEFINE_BSS_GET(type, name, init_value)                                 \
-  /* delocate needs C linkage and for |name| to be unique across BCM. */       \
+#define DEFINE_BSS_GET(type, name, init_expr)                                  \
+  /* delocate needs C linkage and for `name` to be unique across BCM. */       \
   extern "C" {                                                                 \
-  extern type bcm_##name;                                                      \
-  type bcm_##name = init_value;                                                \
-  type *bcm_##name##_bss_get(void) __attribute__((const));                     \
+  extern type BCM_ADD_PREFIX(name);                                            \
+  type BCM_ADD_PREFIX(name) init_expr;                                         \
+  type *BCM_ADD_PREFIX(name##_bss_get)() __attribute__((const));               \
   } /* extern "C" */                                                           \
                                                                                \
   /* The getter functions are exported, but static variables are usually named \
    * with short names. Define a static wrapper function so the caller can use  \
    * a short name, while the symbol itself is prefixed. */                     \
-  static type *name##_bss_get(void) { return bcm_##name##_bss_get(); }
-// For FIPS builds we require that CRYPTO_ONCE_INIT be zero.
-#define DEFINE_STATIC_ONCE(name) \
-  DEFINE_BSS_GET(CRYPTO_once_t, name, CRYPTO_ONCE_INIT)
-// For FIPS builds we require that CRYPTO_MUTEX_INIT be zero.
-#define DEFINE_STATIC_MUTEX(name) \
-  DEFINE_BSS_GET(CRYPTO_MUTEX, name, CRYPTO_MUTEX_INIT)
-// For FIPS builds we require that CRYPTO_EX_DATA_CLASS_INIT be zero.
-#define DEFINE_STATIC_EX_DATA_CLASS(name) \
-  DEFINE_BSS_GET(CRYPTO_EX_DATA_CLASS, name, CRYPTO_EX_DATA_CLASS_INIT)
+  static type *name##_bss_get() { return BCM_ADD_PREFIX(name##_bss_get)(); }
 #else
-#define DEFINE_BSS_GET(type, name, init_value) \
-  static type name = init_value;               \
-  static type *name##_bss_get(void) { return &name; }
-#define DEFINE_STATIC_ONCE(name)                \
-  static CRYPTO_once_t name = CRYPTO_ONCE_INIT; \
-  static CRYPTO_once_t *name##_bss_get(void) { return &name; }
-#define DEFINE_STATIC_MUTEX(name)               \
-  static CRYPTO_MUTEX name = CRYPTO_MUTEX_INIT; \
-  static CRYPTO_MUTEX *name##_bss_get(void) { return &name; }
-#define DEFINE_STATIC_EX_DATA_CLASS(name)                       \
-  static CRYPTO_EX_DATA_CLASS name = CRYPTO_EX_DATA_CLASS_INIT; \
-  static CRYPTO_EX_DATA_CLASS *name##_bss_get(void) { return &name; }
+#define DEFINE_BSS_GET(type, name, init_expr) \
+  static type name init_expr;                 \
+  static type *name##_bss_get() { return &name; }
 #endif
 
-#define DEFINE_DATA(type, name, accessor_decorations)                         \
-  DEFINE_BSS_GET(type, name##_storage, {})                                    \
-  DEFINE_STATIC_ONCE(name##_once)                                             \
-  static void name##_do_init(type *out);                                      \
-  static void name##_init(void) { name##_do_init(name##_storage_bss_get()); } \
-  accessor_decorations type *name(void) {                                     \
-    CRYPTO_once(name##_once_bss_get(), name##_init);                          \
-    /* See http://c-faq.com/ansi/constmismatch.html for why the following     \
-     * cast is needed. */                                                     \
-    return (const type *)name##_storage_bss_get();                            \
-  }                                                                           \
+// For FIPS builds we require each of these objects be all zero.
+#define DEFINE_STATIC_ONCE(name) \
+  DEFINE_BSS_GET(bssl::CRYPTO_once_t, name, = CRYPTO_ONCE_INIT)
+#define DEFINE_STATIC_MUTEX(name) \
+  DEFINE_BSS_GET(bssl::StaticMutex, name, /* default ctor */)
+#define DEFINE_STATIC_EX_DATA_CLASS(name) \
+  DEFINE_BSS_GET(bssl::ExDataClass, name, /* default ctor */)
+
+#define DEFINE_DATA(type, name, accessor_decorations)                     \
+  DEFINE_BSS_GET(type, name##_storage, {})                                \
+  DEFINE_STATIC_ONCE(name##_once)                                         \
+  static void name##_do_init(type *out);                                  \
+  static void name##_init() { name##_do_init(name##_storage_bss_get()); } \
+  accessor_decorations type *name() {                                     \
+    bssl::CRYPTO_once(name##_once_bss_get(), name##_init);                \
+    /* See http://c-faq.com/ansi/constmismatch.html for why the following \
+     * cast is needed. */                                                 \
+    return (const type *)name##_storage_bss_get();                        \
+  }                                                                       \
   static void name##_do_init(type *out)
 
-// DEFINE_METHOD_FUNCTION defines a function named |name| which returns a
-// method table of type const |type|*. In FIPS mode, to avoid rel.ro data, it
+// DEFINE_METHOD_FUNCTION defines a function named `name` which returns a
+// method table of type const `type`*. In FIPS mode, to avoid rel.ro data, it
 // is split into a CRYPTO_once_t-guarded initializer in the module and
 // unhashed, non-module accessor functions to space reserved in the BSS. The
 // method table is initialized by a caller-supplied function which takes a
-// parameter named |out| of type |type|*. The caller should follow the macro
+// parameter named `out` of type `type`*. The caller should follow the macro
 // invocation with the body of this function:
 //
 //     DEFINE_METHOD_FUNCTION(EVP_MD, EVP_md4) {

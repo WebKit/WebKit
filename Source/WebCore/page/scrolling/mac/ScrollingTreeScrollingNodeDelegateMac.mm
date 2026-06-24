@@ -63,8 +63,8 @@ void ScrollingTreeScrollingNodeDelegateMac::nodeWillBeDestroyed()
 
 void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingStateScrollingNode& scrollingStateNode)
 {
-    CheckedRef horizontalScroller = m_scrollerPair->horizontalScroller();
-    CheckedRef verticalScroller = m_scrollerPair->verticalScroller();
+    Ref horizontalScroller = m_scrollerPair->horizontalScroller();
+    Ref verticalScroller = m_scrollerPair->verticalScroller();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::PainterForScrollbar)) {
         auto horizontalScrollbar = scrollingStateNode.horizontalScrollerImp();
@@ -358,10 +358,10 @@ void ScrollingTreeScrollingNodeDelegateMac::rubberBandingStateChanged(bool inRub
 
 FloatSize ScrollingTreeScrollingNodeDelegateMac::rubberBandTargetOffset() const
 {
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    // Only the main frame supports banner views.
+#if HAVE(NSREFRESHCONTROLLER)
+    // NSRefreshController will only affect the rubberbanding of the main frame.
     if (scrollingNode()->nodeType() == ScrollingNodeType::MainFrame) {
-        auto topOffset = scrollingTree()->bannerViewHeight();
+        auto topOffset = scrollingTree()->topScrollStretchForRefreshController();
         if (topOffset)
             return FloatSize(0, -topOffset);
     }
@@ -369,19 +369,19 @@ FloatSize ScrollingTreeScrollingNodeDelegateMac::rubberBandTargetOffset() const
     return { };
 }
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
+#if HAVE(NSREFRESHCONTROLLER)
 
-float ScrollingTreeScrollingNodeDelegateMac::bannerViewMaximumHeight() const
+float ScrollingTreeScrollingNodeDelegateMac::refreshControllerSnappingThreshold() const
 {
     if (scrollingNode()->nodeType() != ScrollingNodeType::MainFrame)
         return 0;
 
-    return scrollingTree()->bannerViewMaximumHeight();
+    return scrollingTree()->refreshControllerSnappingThreshold();
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::hasBannerViewOverlay() const
+bool ScrollingTreeScrollingNodeDelegateMac::hasRefreshController() const
 {
-    return scrollingNode()->nodeType() == ScrollingNodeType::MainFrame && scrollingTree()->hasBannerViewOverlay();
+    return scrollingNode()->nodeType() == ScrollingNodeType::MainFrame && scrollingTree()->hasRefreshController();
 }
 
 #endif

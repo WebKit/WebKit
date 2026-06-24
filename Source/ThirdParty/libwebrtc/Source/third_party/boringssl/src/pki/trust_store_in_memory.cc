@@ -14,14 +14,21 @@
 
 #include "trust_store_in_memory.h"
 
+#include <openssl/span.h>
+
 BSSL_NAMESPACE_BEGIN
 
 TrustStoreInMemory::TrustStoreInMemory() = default;
 TrustStoreInMemory::~TrustStoreInMemory() = default;
 
-bool TrustStoreInMemory::IsEmpty() const { return entries_.empty(); }
+bool TrustStoreInMemory::IsEmpty() const {
+  return entries_.empty() && trusted_mtc_anchors_.empty();
+}
 
-void TrustStoreInMemory::Clear() { entries_.clear(); }
+void TrustStoreInMemory::Clear() {
+  entries_.clear();
+  trusted_mtc_anchors_.clear();
+}
 
 void TrustStoreInMemory::AddTrustAnchor(
     std::shared_ptr<const ParsedCertificate> cert) {
@@ -54,6 +61,18 @@ void TrustStoreInMemory::AddCertificateWithUnspecifiedTrust(
     std::shared_ptr<const ParsedCertificate> cert) {
   AddCertificate(std::move(cert), CertificateTrust::ForUnspecified());
 }
+bool TrustStoreInMemory::AddMTCTrustAnchor(
+    std::shared_ptr<const MTCAnchor> mtc_anchor) {
+  if (!mtc_anchor->IsValid()) {
+    return false;
+  }
+  std::string_view subject = BytesAsStringView(mtc_anchor->NormalizedSubject());
+  if (trusted_mtc_anchors_.find(subject) != trusted_mtc_anchors_.end()) {
+    return false;
+  }
+  trusted_mtc_anchors_.emplace(subject, std::move(mtc_anchor));
+  return true;
+}
 
 void TrustStoreInMemory::SyncGetIssuersOf(const ParsedCertificate *cert,
                                           ParsedCertificateList *issuers) {
@@ -75,8 +94,24 @@ CertificateTrust TrustStoreInMemory::GetTrust(const ParsedCertificate *cert) {
   return entry ? entry->trust : CertificateTrust::ForUnspecified();
 }
 
+std::shared_ptr<const MTCAnchor> TrustStoreInMemory::GetTrustedMTCIssuerOf(
+    const ParsedCertificate *cert) {
+  auto entry =
+      trusted_mtc_anchors_.find(BytesAsStringView(cert->normalized_issuer()));
+  if (entry == trusted_mtc_anchors_.end()) {
+    return nullptr;
+  }
+  return entry->second;
+}
+
 bool TrustStoreInMemory::Contains(const ParsedCertificate *cert) const {
   return GetEntry(cert) != nullptr;
+}
+
+bool TrustStoreInMemory::ContainsMTCAnchor(const MTCAnchor *anchor) const {
+  auto entry =
+      trusted_mtc_anchors_.find(BytesAsStringView(anchor->NormalizedSubject()));
+  return entry != trusted_mtc_anchors_.end();
 }
 
 TrustStoreInMemory::Entry::Entry() = default;

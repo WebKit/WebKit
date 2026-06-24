@@ -143,20 +143,15 @@ std::optional<int> SctpTransport::MaxChannels() {
 
 std::optional<SSLRole> SctpTransport::DtlsRole() {
   RTC_DCHECK_RUN_ON(owner_thread_);
-  if (!dtls_transport_) {
+  if (!internal_sctp_transport_ ||
+      !internal_sctp_transport_->dtls_transport()) {
     return std::nullopt;
   }
-  std::optional<DtlsTransportTlsRole> role =
-      dtls_transport_->Information().role();
-  if (!role.has_value()) {
-    return std::nullopt;
+  SSLRole role;
+  if (internal_sctp_transport_->dtls_transport()->GetDtlsRole(&role)) {
+    return role;
   }
-  switch (*role) {
-    case DtlsTransportTlsRole::kServer:
-      return SSL_SERVER;
-    case DtlsTransportTlsRole::kClient:
-      return SSL_CLIENT;
-  }
+  return std::nullopt;
 }
 
 scoped_refptr<DtlsTransportInterface> SctpTransport::dtls_transport() const {
@@ -176,7 +171,7 @@ void SctpTransport::Clear() {
   UpdateInformation(SctpTransportState::kClosed);
 }
 
-void SctpTransport::Start(const SctpOptions& options) {
+bool SctpTransport::Start(const SctpOptions& options) {
   RTC_DCHECK_RUN_ON(owner_thread_);
   info_ =
       SctpTransportInformation(info_.state(), info_.dtls_transport(),
@@ -185,7 +180,9 @@ void SctpTransport::Start(const SctpOptions& options) {
   if (!internal()->Start(options)) {
     RTC_LOG(LS_ERROR) << "Failed to push down SCTP parameters, closing.";
     UpdateInformation(SctpTransportState::kClosed);
+    return false;
   }
+  return true;
 }
 
 void SctpTransport::UpdateInformation(SctpTransportState state) {

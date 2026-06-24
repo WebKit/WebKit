@@ -860,26 +860,38 @@ public:
 
         dataLogLnIf(verbose() || shouldDumpFunction(), "Greedy register allocator: function ", m_code.proc().name(), " input IR:\n", m_code);
 
+        // Many functions do not have any FPs. We can easily reduce the cost by skipping FP version of setup completely when we have zero FP tmps.
+        bool hasFPTmps = m_code.numTmps(FP);
+        dataLogLnIf(Options::airGreedyRegAllocVerbose(), "Greedy: ", m_code.proc().name(), " GP tmps=", m_code.numTmps(GP), " FP tmps=", m_code.numTmps(FP), " (FP path ", hasFPTmps ? "RUN" : "SKIPPED", ")");
+
         // FIXME: reconsider use of padIntereference, https://bugs.webkit.org/show_bug.cgi?id=288122
         padInterference(m_code);
         buildRegisterSets();
         buildIndices();
-        buildLiveRanges();
-        initSpillCosts<GP>();
-        initSpillCosts<FP>();
+        {
+            IndexSet<Tmp::AbsolutelyIndexed<GP>> cannotSpillInPlaceGP;
+            IndexSet<Tmp::AbsolutelyIndexed<FP>> cannotSpillInPlaceFP;
+            buildLiveRanges(cannotSpillInPlaceGP, cannotSpillInPlaceFP);
+            initSpillCosts<GP>(cannotSpillInPlaceGP);
+            if (hasFPTmps)
+                initSpillCosts<FP>(cannotSpillInPlaceFP);
+        }
         coalesceWithPinnedRegisters();
         coalesceTmps<GP>();
-        coalesceTmps<FP>();
+        if (hasFPTmps)
+            coalesceTmps<FP>();
 
         dataLogLnIf(verbose() || shouldDumpFunction(), "Greedy register allocator: function ", m_code.proc().name(), " state before allocate registers:\n", *this, "IR:\n", m_code);
 
         allocateRegisters<GP>();
-        allocateRegisters<FP>();
+        if (hasFPTmps)
+            allocateRegisters<FP>();
 
         insertFixupCode();
 
         validateAssignments<GP>();
-        validateAssignments<FP>();
+        if (hasFPTmps)
+            validateAssignments<FP>();
 
         dataLogLnIf(verbose() || shouldDumpFunction(), "Greedy register allocator: function ", m_code.proc().name(), " about to assign registers:\n", *this, "IR:\n", m_code);
 
@@ -1246,7 +1258,7 @@ private:
         }
     }
 
-    void buildLiveRanges()
+    void buildLiveRanges(IndexSet<Tmp::AbsolutelyIndexed<GP>>& cannotSpillInPlaceGP, IndexSet<Tmp::AbsolutelyIndexed<FP>>& cannotSpillInPlaceFP)
     {
         CompilerTimingScope timingScope("Air"_s, "GreedyRegAlloc::buildLiveRanges"_s);
         UnifiedTmpLiveness liveness(m_code);
@@ -1341,9 +1353,21 @@ private:
             activeEnds[tmp] = 0;
         };
 
-        // First pass: collect all the potential coalescable pairs of Tmps.
+        // First pass: collect coalescable pairs and the cannot-spill-in-place set.
         for (BasicBlock* block : m_code) {
             for (Inst& inst : block->insts()) {
+                inst.forEachArg([&](Arg& arg, Arg::Role, Bank, Width) {
+                    if (arg.isTmp() && inst.admitsStack(arg))
+                        return;
+
+                    // Arg cannot be spilled in-place.
+                    arg.forEachTmpFast([&](Tmp& tmp) {
+                        if (tmp.bank() == GP)
+                            cannotSpillInPlaceGP.add(tmp);
+                        else
+                            cannotSpillInPlaceFP.add(tmp);
+                    });
+                });
                 if (mayBeCoalescable(inst)) {
                     ASSERT(inst.args.size() == 2);
                     if (inst.args[0].isReg() || inst.args[1].isReg()) {
@@ -2102,29 +2126,10 @@ private:
         }
     }
 
-    template<Bank bank>
-    void initSpillCosts()
+    template <Bank bank>
+    void initSpillCosts(const IndexSet<Tmp::AbsolutelyIndexed<bank>>& cannotSpillInPlace)
     {
         CompilerTimingScope timingScope("Air"_s, "GreedyRegAlloc::initSpillCosts"_s);
-
-        IndexSet<Tmp::AbsolutelyIndexed<bank>> cannotSpillInPlace;
-        for (BasicBlock* block : m_code) {
-            for (Inst& inst : block->insts()) {
-                inst.forEachArg([&](Arg& arg, Arg::Role, Bank, Width) {
-                    if (arg.isTmp() && (arg.tmp().bank() != bank || inst.admitsStack(arg)))
-                        return;
-                    // Arg cannot be spilled in-place.
-                    arg.forEachTmpFast([&](Tmp& tmp) {
-                        if (tmp.bank() != bank)
-                            return;
-                        if (!cannotSpillInPlace.contains(tmp)) {
-                            dataLogLnIf(verbose(), tmp, " cannot be spilled in-place: ", inst);
-                            cannotSpillInPlace.add(tmp);
-                        }
-                    });
-                });
-            }
-        }
 
         for (Reg reg : m_allowedRegistersInPriorityOrder[bank])
             m_map.get<bank>(Tmp(reg)).spillability = TmpData::Spillability::Unspillable;

@@ -108,7 +108,7 @@ struct ResourceInfo {
     const char* data;
 };
 
-static bool receivedMessage;
+static bool storageQuotaReceivedMessage;
 
 @interface QuotaMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)setExpectedMessage:(NSString *)message;
@@ -127,7 +127,7 @@ static bool receivedMessage;
     }
 
     if (_expectedMessages.isEmpty())
-        receivedMessage = true;
+        storageQuotaReceivedMessage = true;
 }
 
 - (void)setExpectedMessage:(NSString *)message
@@ -281,10 +281,10 @@ TEST(WebKit, QuotaDelegateHidden)
     NSLog(@"QuotaDelegateHidden 1");
 
     receivedQuotaDelegateCalled = false;
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     [messageHandler setExpectedMessage: @"put failed"];
     [webView loadRequest:server.request()];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 
     NSLog(@"QuotaDelegateHidden 2");
 
@@ -293,7 +293,7 @@ TEST(WebKit, QuotaDelegateHidden)
     [hostWindow deminiaturize:hostWindow];
 
     receivedQuotaDelegateCalled = false;
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     [messageHandler setExpectedMessage: @"put succeeded"];
     [webView reload];
     Util::run(&receivedQuotaDelegateCalled);
@@ -301,7 +301,7 @@ TEST(WebKit, QuotaDelegateHidden)
     NSLog(@"QuotaDelegateHidden 3");
 
     [delegate grantQuota];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 
     NSLog(@"QuotaDelegateHidden 4");
 }
@@ -350,17 +350,17 @@ TEST(WebKit, QuotaDelegate)
     [webView2 setUIDelegate:delegate2.get()];
     setVisible(webView2.get());
 
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     [webView2 loadRequest:server.requestWithLocalhost()];
     [messageHandler setExpectedMessage: @"start"];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 
     EXPECT_FALSE(delegate2.get().quotaDelegateCalled);
     [delegate1 grantQuota];
 
     [messageHandler setExpectedMessage: @"pass"];
-    receivedMessage = false;
-    Util::run(&receivedMessage);
+    storageQuotaReceivedMessage = false;
+    Util::run(&storageQuotaReceivedMessage);
 
     while (!delegate2.get().quotaDelegateCalled)
         TestWebKitAPI::Util::runFor(0.1_s);
@@ -368,8 +368,8 @@ TEST(WebKit, QuotaDelegate)
     [delegate2 denyQuota];
 
     [messageHandler setExpectedMessage: @"fail"];
-    receivedMessage = false;
-    Util::run(&receivedMessage);
+    storageQuotaReceivedMessage = false;
+    Util::run(&storageQuotaReceivedMessage);
 
     NSLog(@"QuotaDelegate 6");
 }
@@ -404,25 +404,25 @@ TEST(WebKit, QuotaDelegateReload)
     setVisible(webView.get());
 
     [messageHandler setExpectedMessages: @[@"start", @"fail"]];
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     receivedQuotaDelegateCalled = false;
     [webView loadRequest:server.request()];
     Util::run(&receivedQuotaDelegateCalled);
 
     [delegate denyQuota];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 
     while (!receivedQuotaDelegateCalled)
         TestWebKitAPI::Util::spinRunLoop();
     
     [messageHandler setExpectedMessages: @[@"start", @"pass"]];
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     receivedQuotaDelegateCalled = false;
     [webView reload];
     Util::run(&receivedQuotaDelegateCalled);
 
     [delegate grantQuota];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 }
 
 TEST(WebKit, QuotaDelegateNavigateFragment)
@@ -455,18 +455,18 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     setVisible(webView.get());
 
     [messageHandler setExpectedMessage: @"start"];
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     receivedQuotaDelegateCalled = false;
     [webView loadRequest:server.request("/main.html"_s)];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 
     while (!receivedQuotaDelegateCalled)
         TestWebKitAPI::Util::spinRunLoop();
 
     [messageHandler setExpectedMessage: @"fail"];
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     [delegate denyQuota];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 
     receivedQuotaDelegateCalled = false;
     [webView loadRequest:server.request("/main.html#fragment"_s)];
@@ -475,12 +475,12 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     [webView evaluateJavaScript:@"doTestAgain()" completionHandler:nil];
 
     [messageHandler setExpectedMessage: @"start"];
-    receivedMessage = false;
-    Util::run(&receivedMessage);
+    storageQuotaReceivedMessage = false;
+    Util::run(&storageQuotaReceivedMessage);
 
     [messageHandler setExpectedMessage: @"fail"];
-    receivedMessage = false;
-    Util::run(&receivedMessage);
+    storageQuotaReceivedMessage = false;
+    Util::run(&storageQuotaReceivedMessage);
 
     EXPECT_FALSE(receivedQuotaDelegateCalled);
 }
@@ -527,8 +527,8 @@ TEST(WebKit, DefaultQuota)
     for (int i = 0; i < 10; ++i) {
         [webView stringByEvaluatingJavaScript:@"doTest(10)"];
         [messageHandler setExpectedMessage: @"pass"];
-        receivedMessage = false;
-        Util::run(&receivedMessage);
+        storageQuotaReceivedMessage = false;
+        Util::run(&storageQuotaReceivedMessage);
     }
     EXPECT_FALSE(receivedQuotaDelegateCalled);
 }
@@ -580,21 +580,21 @@ TEST(StorageQuota, OriginQuotaSharedByCacheStorageAndIndexedDB)
         request.onsuccess = function() { sendMessage('Unexpected success'); }; \
         request.onerror = function(event) { sendMessage(event.target.error.name); }; \
     </script>";
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     [messageHandler setExpectedMessage: @"Continue"];
     [webView loadHTMLString:cacheScriptString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     [messageHandler setExpectedMessage: @"QuotaExceededError"];
     [webView loadHTMLString:indexedDBString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 
     // Terminate network process to ensure storage usage is read from disk.
     [websiteDataStore _terminateNetworkProcess];
 
-    receivedMessage = false;
+    storageQuotaReceivedMessage = false;
     [messageHandler setExpectedMessage: @"QuotaExceededError"];
     [webView loadHTMLString:indexedDBString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
-    Util::run(&receivedMessage);
+    Util::run(&storageQuotaReceivedMessage);
 }

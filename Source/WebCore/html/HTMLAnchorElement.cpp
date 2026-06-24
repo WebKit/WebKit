@@ -265,7 +265,8 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
 
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute.name().localName() == hrefAttr || HTMLElement::isURLAttribute(attribute);
+    // FIXME: Should this be attribute.name().matches(hrefAttr) to also enforce the namespace?
+    return hrefAttr->hasLocalName(attribute.name().localName()) || HTMLElement::isURLAttribute(attribute);
 }
 
 bool HTMLAnchorElement::canStartSelection() const
@@ -379,10 +380,10 @@ bool HTMLAnchorElement::isSystemPreviewLink()
 
     static MainThreadNeverDestroyed<const AtomString> systemPreviewRelValue("ar"_s);
 
-    if (!relList().contains(systemPreviewRelValue))
+    if (!protect(relList())->contains(systemPreviewRelValue))
         return false;
 
-    if (auto* child = firstElementChild()) {
+    if (RefPtr child = firstElementChild()) {
 #if ENABLE(GPU_PROCESS_MODEL) || ENABLE(MODEL_PROCESS)
         if (isAnyOf<HTMLImageElement, HTMLPictureElement, HTMLModelElement>(child)) {
 #else
@@ -599,7 +600,7 @@ void HTMLAnchorElement::handleClick(Event& event)
         systemPreviewInfo.element.nodeIdentifier = nodeIdentifier();
         systemPreviewInfo.element.documentIdentifier = document->identifier();
         systemPreviewInfo.element.webPageIdentifier = document->pageID();
-        if (auto* child = firstElementChild())
+        if (RefPtr child = firstElementChild())
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
 
         if (RefPtr page = document->page())

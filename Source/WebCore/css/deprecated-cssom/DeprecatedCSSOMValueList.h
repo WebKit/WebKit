@@ -25,46 +25,30 @@
 
 #pragma once
 
-#include <WebCore/CSSValueList.h>
 #include <WebCore/DeprecatedCSSOMValue.h>
 
 namespace WebCore {
 
+class CSSValueContainingVector;
 using DeprecatedCSSOMValueListBuilder = Vector<Ref<DeprecatedCSSOMValue>, 4>;
 
-class DeprecatedCSSOMValueList : public DeprecatedCSSOMValue {
+class DeprecatedCSSOMValueList final : public DeprecatedCSSOMValue {
 public:
-    static Ref<DeprecatedCSSOMValueList> create(DeprecatedCSSOMValueListBuilder&& values, CSSValue::ValueSeparator separator, CSSStyleDeclaration& owner)
-    {
-        return adoptRef(*new DeprecatedCSSOMValueList(WTF::move(values), separator, owner));
-    }
+    static Ref<DeprecatedCSSOMValueList> create(DeprecatedCSSOMValueListBuilder&&, CSSValue::ValueSeparator, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMValueList> create(const CSSValueContainingVector&, CSSStyleDeclaration&);
 
-    static Ref<DeprecatedCSSOMValueList> create(const CSSValueContainingVector& values, CSSStyleDeclaration& owner)
-    {
-        return adoptRef(*new DeprecatedCSSOMValueList(values, owner));
-    }
-
-    String cssText() const;
+    String cssText() const override;
+    unsigned short NODELETE cssValueType() const override;
+    bool isValueList() const override { return true; }
 
     size_t length() const { return m_values.size(); }
     DeprecatedCSSOMValue* item(size_t index) { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_values.size(); }
 
 private:
-    DeprecatedCSSOMValueList(DeprecatedCSSOMValueListBuilder&& values, CSSValue::ValueSeparator separator, CSSStyleDeclaration& owner)
-        : DeprecatedCSSOMValue(ClassType::List, owner)
-        , m_values { WTF::move(values) }
-    {
-        m_valueSeparator = separator;
-    }
+    DeprecatedCSSOMValueList(DeprecatedCSSOMValueListBuilder&&, CSSValue::ValueSeparator, CSSStyleDeclaration&);
 
-    DeprecatedCSSOMValueList(const CSSValueContainingVector& values, CSSStyleDeclaration& owner)
-        : DeprecatedCSSOMValue(ClassType::List, owner)
-        , m_values(WTF::map(values, [&](auto& value) { return value.createDeprecatedCSSOMWrapper(owner); }))
-    {
-        m_valueSeparator = values.separator();
-    }
-
+    CSSValue::ValueSeparator m_valueSeparator;
     Vector<Ref<DeprecatedCSSOMValue>, 4> m_values;
 };
 

@@ -13,10 +13,10 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/transport/ecn_marking.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -166,7 +166,7 @@ bool CongestionControlFeedback::Create(uint8_t* buffer,
   //   |R|ECN|  Arrival time offset    | ...                           .
   //   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   //   .                                                               .
-  auto write_report_for_ssrc = [&](ArrayView<const PacketInfo> packets) {
+  auto write_report_for_ssrc = [&](std::span<const PacketInfo> packets) {
     // SSRC of nth RTP stream.
     ByteWriter<uint32_t>::WriteBigEndian(&buffer[*position], packets[0].ssrc);
     *position += 4;
@@ -211,7 +211,7 @@ bool CongestionControlFeedback::Create(uint8_t* buffer,
     }
   };
 
-  ArrayView<const PacketInfo> remaining(packets_);
+  std::span<const PacketInfo> remaining(packets_);
   while (!remaining.empty()) {
     int number_of_packets_for_ssrc = 0;
     uint32_t ssrc = remaining[0].ssrc;

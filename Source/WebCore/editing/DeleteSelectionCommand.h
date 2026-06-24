@@ -103,7 +103,6 @@ private:
     RefPtr<Node> m_endRoot;
     RefPtr<Node> m_startTableRow;
     RefPtr<Node> m_endTableRow;
-    RefPtr<Node> m_temporaryPlaceholder;
 };
 
 } // namespace WebCore

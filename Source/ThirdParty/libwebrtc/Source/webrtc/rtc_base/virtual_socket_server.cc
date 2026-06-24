@@ -32,7 +32,6 @@
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/fake_clock.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
@@ -685,11 +684,8 @@ size_t VirtualSocket::PurgeNetworkPackets(int64_t cur_time) {
   return network_size_;
 }
 
-VirtualSocketServer::VirtualSocketServer() : VirtualSocketServer(nullptr) {}
-
-VirtualSocketServer::VirtualSocketServer(ThreadProcessingFakeClock* fake_clock)
-    : fake_clock_(fake_clock),
-      msg_queue_(nullptr),
+VirtualSocketServer::VirtualSocketServer()
+    : msg_queue_(nullptr),
       stop_on_idle_(false),
       next_ipv4_(kInitialNextIPv4),
       next_ipv6_(kInitialNextIPv6),
@@ -787,14 +783,7 @@ bool VirtualSocketServer::ProcessMessagesUntilIdle() {
   RTC_DCHECK_RUN_ON(msg_queue_);
   stop_on_idle_ = true;
   while (!msg_queue_->empty()) {
-    if (fake_clock_) {
-      // If using a fake clock, advance it in millisecond increments until the
-      // queue is empty.
-      fake_clock_->AdvanceTime(TimeDelta::Millis(1));
-    } else {
-      // Otherwise, run a normal message loop.
-      msg_queue_->ProcessMessages(Thread::kForever);
-    }
+    msg_queue_->ProcessMessages(Thread::kForever);
   }
   stop_on_idle_ = false;
   return !msg_queue_->IsQuitting();

@@ -61,7 +61,7 @@ void writeToDisk(std::unique_ptr<KeyedEncoder>&& encoder, String&& path)
 
     auto writtenBytes = handle.write(rawData->span());
     if (writtenBytes != rawData->size())
-        RELEASE_LOG_ERROR(DiskPersistency, "Disk persistency: We only wrote %" PRIu64 " out of %zu bytes to disk", *writtenBytes, rawData->size());
+        RELEASE_LOG_ERROR(DiskPersistency, "Disk persistency: We only wrote %" PRIu64 " out of %zu bytes to disk", writtenBytes.value_or(0), rawData->size());
 }
 
 } // namespace WebKit

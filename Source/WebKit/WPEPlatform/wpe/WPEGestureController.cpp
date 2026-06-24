@@ -100,7 +100,7 @@ WPEGesture wpe_gesture_controller_get_gesture(WPEGestureController* controller)
  * a position, %FALSE is returned.
  *
  * Returns: %TRUE if position is returned in @x and @y,
- *    or %FALSE if currently detected gesture doesn't have a positon
+ *    or %FALSE if currently detected gesture doesn't have a position
  */
 gboolean wpe_gesture_controller_get_gesture_position(WPEGestureController* controller, double* x, double* y)
 {

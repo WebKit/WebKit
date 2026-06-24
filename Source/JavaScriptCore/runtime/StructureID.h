@@ -34,29 +34,12 @@ namespace JSC {
 
 class Structure;
 
-#if CPU(ADDRESS64)
-
-#if defined(STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB) && STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB > 0
-constexpr uintptr_t structureHeapAddressSize = STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB * MB;
-#elif PLATFORM(PLAYSTATION) || OS(QNX)
-constexpr uintptr_t structureHeapAddressSize = 128 * MB;
-#elif (PLATFORM(IOS_FAMILY) && !CPU(ARM64E)) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
-constexpr uintptr_t structureHeapAddressSize = 512 * MB;
-#elif PLATFORM(IOS_FAMILY)
-constexpr uintptr_t structureHeapAddressSize = 2 * GB;
-#else
-constexpr uintptr_t structureHeapAddressSize = 4 * GB;
-#endif
-
-#endif // CPU(ADDRESS64)
-
 class StructureID {
 public:
     static constexpr uint32_t nukedStructureIDBit = 1;
 
 #if CPU(ADDRESS64)
     static constexpr uintptr_t structureIDMask = static_cast<uintptr_t>(UINT_MAX);
-    static_assert(structureHeapAddressSize - 1 <= structureIDMask, "StructureID relies on only the lower 32 bits of Structure addresses varying");
 #endif
 
     constexpr StructureID() = default;
@@ -107,7 +90,7 @@ ALWAYS_INLINE Structure* StructureID::tryDecode() const
 ALWAYS_INLINE StructureID StructureID::encode(const Structure* structure)
 {
     ASSERT(structure);
-    ASSERT(startOfStructureHeap() <= reinterpret_cast<uintptr_t>(structure) && reinterpret_cast<uintptr_t>(structure) < startOfStructureHeap() + structureHeapAddressSize);
+    ASSERT(startOfStructureHeap() <= reinterpret_cast<uintptr_t>(structure) && reinterpret_cast<uintptr_t>(structure) < startOfStructureHeap() + g_jscConfig.sizeOfStructureHeap);
     auto result = StructureID(reinterpret_cast<uintptr_t>(structure));
     ASSERT(result.decode() == structure);
     return result;

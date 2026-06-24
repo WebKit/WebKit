@@ -197,7 +197,7 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
     annotationContainer->appendChild(annotationStyleElement);
     installAnnotationContainer();
 
-    setDisplayMode(PDFDisplayMode::SinglePageContinuous);
+    setDisplayMode(PDFPluginDisplayMode::SinglePageContinuous);
 
     lazyInitialize(m_accessibilityDocumentObject, adoptNS([[WKAccessibilityPDFDocumentObject alloc] initWithPDFDocument:m_pdfDocument andElement:&element]));
     [m_accessibilityDocumentObject setPDFPlugin:this];
@@ -1073,7 +1073,8 @@ double UnifiedPDFPlugin::scaleForActualSize() const
     if (!webPage)
         return 1;
 
-    auto* screenData = WebCore::screenData(webPage->corePage()->displayID());
+    Ref screen = PlatformScreen::singleton();
+    auto* screenData = screen->screenData(webPage->corePage()->displayID());
     if (!screenData)
         return 1;
 
@@ -1817,12 +1818,12 @@ WebCore::OverscrollBehavior UnifiedPDFPlugin::overscrollBehavior() const
 
 bool UnifiedPDFPlugin::isInDiscreteDisplayMode() const
 {
-    return m_documentLayout.displayMode() == PDFDisplayMode::SinglePageDiscrete || m_documentLayout.displayMode() == PDFDisplayMode::TwoUpDiscrete;
+    return m_documentLayout.displayMode() == PDFPluginDisplayMode::SinglePageDiscrete || m_documentLayout.displayMode() == PDFPluginDisplayMode::TwoUpDiscrete;
 }
 
 bool UnifiedPDFPlugin::isShowingTwoPages() const
 {
-    return m_documentLayout.displayMode() == PDFDisplayMode::TwoUpContinuous || m_documentLayout.displayMode() == PDFDisplayMode::TwoUpDiscrete;
+    return m_documentLayout.displayMode() == PDFPluginDisplayMode::TwoUpContinuous || m_documentLayout.displayMode() == PDFPluginDisplayMode::TwoUpDiscrete;
 }
 
 FloatRect UnifiedPDFPlugin::pageBoundsInContentsSpace(PDFDocumentLayout::PageIndex index) const
@@ -2422,26 +2423,26 @@ void UnifiedPDFPlugin::revealFragmentIfNeeded()
 #pragma mark Context Menu
 
 #if ENABLE(CONTEXT_MENUS)
-UnifiedPDFPlugin::ContextMenuItemTag UnifiedPDFPlugin::contextMenuItemTagFromDisplayMode(const PDFDisplayMode& displayMode) const
+UnifiedPDFPlugin::ContextMenuItemTag UnifiedPDFPlugin::contextMenuItemTagFromDisplayMode(const PDFPluginDisplayMode& displayMode) const
 {
     switch (displayMode) {
-    case PDFDisplayMode::SinglePageDiscrete: return ContextMenuItemTag::SinglePage;
-    case PDFDisplayMode::SinglePageContinuous: return ContextMenuItemTag::SinglePageContinuous;
-    case PDFDisplayMode::TwoUpDiscrete: return ContextMenuItemTag::TwoPages;
-    case PDFDisplayMode::TwoUpContinuous: return ContextMenuItemTag::TwoPagesContinuous;
+    case PDFPluginDisplayMode::SinglePageDiscrete: return ContextMenuItemTag::SinglePage;
+    case PDFPluginDisplayMode::SinglePageContinuous: return ContextMenuItemTag::SinglePageContinuous;
+    case PDFPluginDisplayMode::TwoUpDiscrete: return ContextMenuItemTag::TwoPages;
+    case PDFPluginDisplayMode::TwoUpContinuous: return ContextMenuItemTag::TwoPagesContinuous;
     }
 }
 
-PDFDisplayMode UnifiedPDFPlugin::displayModeFromContextMenuItemTag(const ContextMenuItemTag& tag) const
+PDFPluginDisplayMode UnifiedPDFPlugin::displayModeFromContextMenuItemTag(const ContextMenuItemTag& tag) const
 {
     switch (tag) {
-    case ContextMenuItemTag::SinglePage: return PDFDisplayMode::SinglePageDiscrete;
-    case ContextMenuItemTag::SinglePageContinuous: return PDFDisplayMode::SinglePageContinuous;
-    case ContextMenuItemTag::TwoPages: return PDFDisplayMode::TwoUpDiscrete;
-    case ContextMenuItemTag::TwoPagesContinuous: return PDFDisplayMode::TwoUpContinuous;
+    case ContextMenuItemTag::SinglePage: return PDFPluginDisplayMode::SinglePageDiscrete;
+    case ContextMenuItemTag::SinglePageContinuous: return PDFPluginDisplayMode::SinglePageContinuous;
+    case ContextMenuItemTag::TwoPages: return PDFPluginDisplayMode::TwoUpDiscrete;
+    case ContextMenuItemTag::TwoPagesContinuous: return PDFPluginDisplayMode::TwoUpContinuous;
     default:
         ASSERT_NOT_REACHED();
-        return PDFDisplayMode::SinglePageContinuous;
+        return PDFPluginDisplayMode::SinglePageContinuous;
     }
 }
 
@@ -3283,7 +3284,7 @@ FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *selection) 
 void UnifiedPDFPlugin::beginAutoscroll()
 {
     if (!std::exchange(m_inActiveAutoscroll, true))
-        m_autoscrollTimer.startRepeating(WebCore::autoscrollInterval);
+        m_autoscrollTimer.startRepeating(WebCore::AutoscrollController::autoscrollInterval);
 }
 
 void UnifiedPDFPlugin::autoscrollTimerFired()
@@ -4356,23 +4357,23 @@ void UnifiedPDFPlugin::setPDFDisplayModeForTesting(const String& mode)
 {
     setDisplayModeAndUpdateLayout([mode] {
         if (mode == "SinglePageDiscrete"_s)
-            return PDFDisplayMode::SinglePageDiscrete;
+            return PDFPluginDisplayMode::SinglePageDiscrete;
 
         if (mode == "SinglePageContinuous"_s)
-            return PDFDisplayMode::SinglePageContinuous;
+            return PDFPluginDisplayMode::SinglePageContinuous;
 
         if (mode == "TwoUpDiscrete"_s)
-            return PDFDisplayMode::TwoUpDiscrete;
+            return PDFPluginDisplayMode::TwoUpDiscrete;
 
         if (mode == "TwoUpContinuous"_s)
-            return PDFDisplayMode::TwoUpContinuous;
+            return PDFPluginDisplayMode::TwoUpContinuous;
 
         ASSERT_NOT_REACHED();
-        return PDFDisplayMode::SinglePageContinuous;
+        return PDFPluginDisplayMode::SinglePageContinuous;
     }());
 }
 
-void UnifiedPDFPlugin::setDisplayMode(PDFDisplayMode mode)
+void UnifiedPDFPlugin::setDisplayMode(PDFPluginDisplayMode mode)
 {
 #if PLATFORM(IOS_FAMILY)
     if (RefPtr frame = m_frame.get()) {
@@ -4391,7 +4392,7 @@ void UnifiedPDFPlugin::setDisplayMode(PDFDisplayMode mode)
     setPresentationController(PDFPresentationController::createForMode(mode, *this));
 }
 
-void UnifiedPDFPlugin::setDisplayModeAndUpdateLayout(PDFDisplayMode mode)
+void UnifiedPDFPlugin::setDisplayModeAndUpdateLayout(PDFPluginDisplayMode mode)
 {
     auto shouldAdjustPageScale = m_shouldUpdateAutoSizeScale == ShouldUpdateAutoSizeScale::Yes ? AdjustScaleAfterLayout::No : AdjustScaleAfterLayout::Yes;
     Ref presentationController = *m_presentationController;
@@ -4589,8 +4590,8 @@ CursorContext UnifiedPDFPlugin::cursorContext(FloatPoint pointInRootView) const
         return context;
 
     auto elementTypes = pdfElementTypesForPagePoint(roundedIntPoint(pointInPage), page.get());
-    if (toWebCoreCursorType(elementTypes) == Cursor::Type::IBeam)
-        context.cursor = Cursor::fromType(Cursor::Type::IBeam);
+    if (toWebCoreCursorType(elementTypes) == WebCore::Cursor::Type::IBeam)
+        context.cursor = WebCore::Cursor::fromType(WebCore::Cursor::Type::IBeam);
 
     RetainPtr lineUnderCursor = selectionAtPoint(pointInPage, page.get(), TextGranularity::LineGranularity);
     auto pageRectForLine = FloatRect { [lineUnderCursor boundsForPage:page.get()] };

@@ -1,4 +1,0 @@
-
-PASS window.onerror - runtime error in <script src=//www1...>
-PASS window.onerror - runtime error in <script src=//www1...> (column)
-

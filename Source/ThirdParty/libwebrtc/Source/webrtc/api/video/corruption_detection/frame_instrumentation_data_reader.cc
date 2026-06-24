@@ -11,8 +11,8 @@
 #include "api/video/corruption_detection/frame_instrumentation_data_reader.h"
 
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/transport/rtp/corruption_detection_message.h"
 #include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "rtc_base/logging.h"
@@ -45,7 +45,7 @@ FrameInstrumentationDataReader::ParseMessage(
   // The sequence index field of the message refers to the halton sequence index
   // for the first sample in the message. In order to figure out the next
   // expected sequence index we must increment it by the number of samples.
-  ArrayView<const double> sample_values = message.sample_values();
+  std::span<const double> sample_values = message.sample_values();
   last_seen_sequence_index_ = data.sequence_index() + sample_values.size();
 
   if (!sample_values.empty()) {

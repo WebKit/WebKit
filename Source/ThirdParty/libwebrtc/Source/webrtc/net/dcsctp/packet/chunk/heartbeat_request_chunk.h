@@ -13,11 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
 #include "net/dcsctp/packet/parameter/heartbeat_info_parameter.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
@@ -43,7 +43,7 @@ class HeartbeatRequestChunk : public Chunk,
   HeartbeatRequestChunk& operator=(HeartbeatRequestChunk&& other) = default;
 
   static std::optional<HeartbeatRequestChunk> Parse(
-      webrtc::ArrayView<const uint8_t> data);
+      std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

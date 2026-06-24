@@ -4,8 +4,7 @@
 <script src="./resources/load_wasm.js"></script>
 <script>
 description("Test that expected Wasm Module can be sent over window.postMessage.");
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
 
 window.addEventListener("message", (answer) => finish(answer.data), false);
 
@@ -14,8 +13,7 @@ function finish(module) {
     var value = i.exports.calc(1);
     shouldBe(() => value, () => 7002);
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 var run = async function () {

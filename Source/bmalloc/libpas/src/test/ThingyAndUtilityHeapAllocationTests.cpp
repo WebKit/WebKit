@@ -3257,15 +3257,18 @@ void addThingyAndUtilityHeapAllocationTests()
     // pas API outside of ADD_TEST().
     CHECK(!pas_bootstrap_free_heap.num_mapped_bytes);
 
-    ForceTLAs forceTLAs;
-    EpochIsCounter epochIsCounter;
-
     {
         InstallVerifier installVerifier;
+        ForceTLAs forceTLAs;
+        EpochIsCounter epochIsCounter;
         addAllTests();
     }
-
-    addAllTests();
+    {
+        NoVerifier noVerifier;
+        ForceTLAs forceTLAs;
+        EpochIsCounter epochIsCounter;
+        addAllTests();
+    }
 #endif // PAS_ENABLE_THINGY
 }
 

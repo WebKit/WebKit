@@ -42,7 +42,7 @@ public:
 
 private:
     MathMLUnderOverElement(const QualifiedName& tagName, Document&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     std::optional<BooleanValue> m_accent;

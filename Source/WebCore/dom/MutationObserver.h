@@ -109,7 +109,9 @@ private:
     Vector<Ref<MutationRecord>> m_records;
     HashSet<GCReachableRef<Node>> m_pendingTargets;
     WeakHashSet<MutationObserverRegistration> m_registrations;
-    unsigned m_priority;
+    unsigned m_priority : 30;
+    unsigned m_isInNonNormalWorld : 1;
+    unsigned m_isAutoFillWorld : 1;
 };
 
 } // namespace WebCore

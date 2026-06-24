@@ -59,11 +59,11 @@ add_custom_command(
     COMMAND_EXPAND_LISTS
     VERBATIM)
 
-list(APPEND WebKitTestRunner_SOURCES
-    ${WebKitTestRunner_DERIVED_SOURCES_DIR}/TestOptionsGeneratedKeys.h
+add_custom_target(WebKitTestRunnerGeneratedPreferences
+    DEPENDS ${WebKitTestRunner_DERIVED_SOURCES_DIR}/TestOptionsGeneratedKeys.h
 )
 
-set(WebKitTestRunner_DEPENDENCIES TestRunnerInjectedBundle)
+set(WebKitTestRunner_DEPENDENCIES TestRunnerInjectedBundle WebKitTestRunnerGeneratedPreferences)
 
 set(TestRunnerInjectedBundle_SOURCES
     InjectedBundle/AccessibilityController.cpp

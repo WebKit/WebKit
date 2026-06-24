@@ -373,7 +373,7 @@ func (server *Server) newRequestWithToken(method, endpoint string, body io.Reade
 	if err != nil {
 		return nil, err
 	}
-	if len(token) != 0 && endpoint != loginEndpoint {
+	if token != "" && endpoint != loginEndpoint {
 		req.Header.Add("Authorization", "Bearer "+token)
 	}
 	return req, nil
@@ -514,7 +514,7 @@ func (server *Server) GetPaged(out any, endPoint string, condition Query) error 
 		if err != nil {
 			return err
 		}
-		if len(token) != 0 {
+		if token != "" {
 			req.Header.Add("Authorization", "Bearer "+token)
 		}
 		resp, err := server.client.Do(req)

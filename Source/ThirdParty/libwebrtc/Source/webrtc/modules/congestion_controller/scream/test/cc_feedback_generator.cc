@@ -10,6 +10,8 @@
 
 #include "modules/congestion_controller/scream/test/cc_feedback_generator.h"
 
+#include <algorithm>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -23,7 +25,6 @@
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
@@ -50,10 +51,7 @@ CcFeedbackGenerator::CcFeedbackGenerator(Config config)
       send_as_ect1_(config.send_as_ect1),
       network_(config.network_config,
                /*random_seed=*/1,
-               std::move(config.queue)) {
-  RTC_CHECK(!config.network_config.allow_reordering)
-      << "Reordering is not supported";
-}
+               std::move(config.queue)) {}
 
 TransportPacketsFeedback CcFeedbackGenerator::ProcessUntilNextFeedback(
     DataRate send_rate,
@@ -95,40 +93,59 @@ std::optional<SentPacket> CcFeedbackGenerator::MaybeSendPackets(
   if (send_budget_ < packet_size_) {
     return std::nullopt;
   }
-    send_budget_ -= packet_size_;
-    PacketInFlightInfo packet_info(
-        packet_size_, time,
-        /*packet_id=*/next_packet_id_++,
-        send_as_ect1_ ? EcnMarking::kEct1 : EcnMarking::kNotEct);
-    packets_in_flight_.push_back(packet_info);
-    bool packet_sent = network_.EnqueuePacket(packet_info);
-    if (!packet_sent) {
-      RTC_LOG(LS_VERBOSE) << "Packet " << (next_packet_id_ - 1)
-                          << " dropped by queueu ";
+  send_budget_ -= packet_size_;
+  int64_t packet_id = next_packet_id_++;
+  EcnMarking ecn = send_as_ect1_ ? EcnMarking::kEct1 : EcnMarking::kNotEct;
+  DataSize bytes_in_flight = DataSize::Zero();
+  for (const auto& [id, tracked] : sent_packets_) {
+    if (!last_acked_sequence_number_.has_value() ||
+        id > *last_acked_sequence_number_) {
+      bytes_in_flight += tracked.sent_packet.size;
     }
+  }
+  bytes_in_flight += packet_size_;
 
-    DataSize bytes_in_flight = DataSize::Zero();
-    for (const PacketInFlightInfo& in_flight : packets_in_flight_) {
-      bytes_in_flight += in_flight.packet_size();
-    }
-    SentPacket sent_packet;
-    sent_packet.send_time = packet_info.send_time();
-    sent_packet.size = packet_info.packet_size();
-    sent_packet.data_in_flight = bytes_in_flight;
-    return sent_packet;
+  SentPacket sent_packet;
+  sent_packet.send_time = time;
+  sent_packet.size = packet_size_;
+  sent_packet.sequence_number = packet_id;
+  sent_packet.data_in_flight = bytes_in_flight;
+
+  PacketResult packet_result;
+  packet_result.sent_packet = sent_packet;
+  packet_result.sent_with_ect1 = send_as_ect1_;
+
+  sent_packets_.emplace(packet_id, packet_result);
+  bool packet_sent = network_.EnqueuePacket(
+      PacketInFlightInfo(packet_size_, time, packet_id, ecn));
+  if (!packet_sent) {
+    RTC_LOG(LS_VERBOSE) << "Packet " << (next_packet_id_ - 1)
+                        << " dropped by queueu ";
+  }
+  return sent_packet;
 }
 
 void CcFeedbackGenerator::ProcessNetwork(Timestamp time) {
   std::vector<PacketDeliveryInfo> received_packets =
       network_.DequeueDeliverablePackets(time.us());
-  packets_received_.insert(packets_received_.end(), received_packets.begin(),
-                           received_packets.end());
+  for (const PacketDeliveryInfo& packet : received_packets) {
+    if (packet.receive_time_us != PacketDeliveryInfo::kNotReceived) {
+      packets_received_.push_back(packet);
+    }
+  }
 }
 
 std::optional<TransportPacketsFeedback>
 CcFeedbackGenerator::MaybeSendFeedback(Timestamp time) {
-  if (last_feedback_time_.IsFinite() &&
-      time - last_feedback_time_ < time_between_feedback_) {
+  if (packets_received_.empty()) {
+    return std::nullopt;
+  }
+  if (last_feedback_time_.IsInfinite()) {
+    last_feedback_time_ =
+        Timestamp::Micros(packets_received_.front().receive_time_us) +
+        one_way_delay_;
+  }
+  if (time - last_feedback_time_ < time_between_feedback_) {
     return std::nullopt;
   }
   // Time to deliver feedback if there are packets to deliver.
@@ -141,36 +158,61 @@ CcFeedbackGenerator::MaybeSendFeedback(Timestamp time) {
     PacketDeliveryInfo delivery_info = packets_received_.front();
     packets_received_.pop_front();
 
-    while (packets_in_flight_.front().packet_id != delivery_info.packet_id) {
-      // Reordering of packets is not supported, so the packet is lost.
-      PacketResult packet_result;
-      packet_result.sent_packet.send_time =
-          packets_in_flight_.front().send_time();
-      packet_result.sent_packet.size = packets_in_flight_.front().packet_size();
-      packets_in_flight_.pop_front();
-      feedback.packet_feedbacks.push_back(packet_result);
+    if (!last_acked_sequence_number_.has_value() ||
+        static_cast<int64_t>(delivery_info.packet_id) >
+            *last_acked_sequence_number_) {
+      last_acked_sequence_number_ = delivery_info.packet_id;
     }
-    RTC_CHECK_EQ(packets_in_flight_.front().packet_id, delivery_info.packet_id);
-    PacketResult packet_result;
-    packet_result.sent_packet.send_time =
-        packets_in_flight_.front().send_time();
-    packet_result.sent_packet.sequence_number =
-        packets_in_flight_.front().packet_id;
-    packet_result.sent_packet.size = packets_in_flight_.front().packet_size();
 
-    packet_result.receive_time =
-        Timestamp::Micros(delivery_info.receive_time_us);
-    packet_result.arrival_time_offset =
-        time - packet_result.receive_time - one_way_delay_;
-    packet_result.ecn = delivery_info.ecn;
-    packets_in_flight_.pop_front();
-    feedback.packet_feedbacks.push_back(packet_result);
+    auto it = sent_packets_.find(delivery_info.packet_id);
+    if (it != sent_packets_.end()) {
+      PacketResult packet_result = it->second;
+      packet_result.receive_time =
+          Timestamp::Micros(delivery_info.receive_time_us);
+      packet_result.arrival_time_offset =
+          time - packet_result.receive_time - one_way_delay_;
+      packet_result.ecn = delivery_info.ecn;
+      if (packet_result.reported_lost_for_the_first_time) {
+        packet_result.reported_recovered_for_the_first_time = true;
+        packet_result.reported_lost_for_the_first_time = false;
+      }
+      feedback.packet_feedbacks.push_back(packet_result);
+      sent_packets_.erase(it);
+    }
   }
+
+  if (last_acked_sequence_number_.has_value()) {
+    for (auto it = sent_packets_.begin();
+         it != sent_packets_.end() &&
+         it->first < *last_acked_sequence_number_;) {
+      if (!it->second.reported_lost_for_the_first_time) {
+        it->second.reported_lost_for_the_first_time = true;
+        PacketResult packet_result = it->second;
+        feedback.packet_feedbacks.push_back(packet_result);
+      }
+      if (time - it->second.sent_packet.send_time > TimeDelta::Seconds(2)) {
+        it = sent_packets_.erase(it);
+      } else {
+        ++it;
+      }
+    }
+  }
+
   if (feedback.packet_feedbacks.empty()) {
     return std::nullopt;
   }
-  for (const PacketInFlightInfo& in_flight : packets_in_flight_) {
-    feedback.data_in_flight += in_flight.packet_size();
+
+  std::sort(feedback.packet_feedbacks.begin(), feedback.packet_feedbacks.end(),
+            [](const PacketResult& lhs, const PacketResult& rhs) {
+              return lhs.sent_packet.sequence_number <
+                     rhs.sent_packet.sequence_number;
+            });
+
+  for (const auto& [id, tracked] : sent_packets_) {
+    if (!last_acked_sequence_number_.has_value() ||
+        id > *last_acked_sequence_number_) {
+      feedback.data_in_flight += tracked.sent_packet.size;
+    }
   }
   feedback.feedback_time = time;
   last_feedback_time_ = time;

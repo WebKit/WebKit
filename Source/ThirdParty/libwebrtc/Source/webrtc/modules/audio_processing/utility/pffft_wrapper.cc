@@ -12,8 +12,8 @@
 
 #include <cstddef>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "third_party/pffft/src/pffft.h"
 
@@ -38,11 +38,11 @@ Pffft::FloatBuffer::~FloatBuffer() {
   pffft_aligned_free(data_);
 }
 
-ArrayView<const float> Pffft::FloatBuffer::GetConstView() const {
+std::span<const float> Pffft::FloatBuffer::GetConstView() const {
   return {data_, size_};
 }
 
-ArrayView<float> Pffft::FloatBuffer::GetView() {
+std::span<float> Pffft::FloatBuffer::GetView() {
   return {data_, size_};
 }
 

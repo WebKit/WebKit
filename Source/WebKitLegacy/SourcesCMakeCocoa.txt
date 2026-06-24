@@ -1,0 +1,153 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+// CMake-only unified source list for the Cocoa ports. The Xcode build compiles
+// these files individually via WebKitLegacy.xcodeproj; folding them into the
+// shared SourcesCocoa.txt would require coordinated bundle-count and pbxproj
+// updates. https://bugs.webkit.org/show_bug.cgi?id=TBD
+//
+// Registered Mac-only for now (see PlatformCocoa.cmake). When iOS adopts,
+// the entries below that PlatformIOS.cmake does not currently compile —
+// CorrectionPanel.mm, PopupMenuMac.mm, SearchPopupMenuMac.mm,
+// WebInspectorClient.mm, WebDynamicScrollBarsView.mm, WebIconDatabase.mm,
+// WebNSPasteboardExtras.mm, WebStringTruncator.mm,
+// WebTextCompletionController.mm, WebVideoFullscreenController.mm,
+// WebWindowAnimation.mm — will need #if PLATFORM(MAC) self-guards or a
+// separate Mac-only list.
+
+Storage/InProcessIDBServer.cpp
+Storage/StorageAreaImpl.cpp
+Storage/StorageAreaSync.cpp
+Storage/StorageNamespaceImpl.cpp
+Storage/StorageSyncManager.cpp
+Storage/StorageThread.cpp
+Storage/StorageTracker.cpp
+Storage/WebDatabaseProvider.cpp
+Storage/WebStorageNamespaceProvider.cpp
+
+WebCoreSupport/LegacySocketProvider.cpp
+WebCoreSupport/LegacyWebPageDebuggable.cpp
+WebCoreSupport/LegacyWebPageInspectorController.cpp
+WebCoreSupport/NetworkStorageSessionMap.cpp
+WebCoreSupport/WebBroadcastChannelRegistry.cpp
+WebCoreSupport/WebCryptoClient.mm @nonARC
+WebCoreSupport/WebResourceLoadScheduler.cpp
+WebCoreSupport/WebViewGroup.mm @nonARC
+
+cf/WebCoreSupport/WebInspectorClientCF.cpp
+
+mac/DefaultDelegates/WebDefaultPolicyDelegate.mm @nonARC
+mac/DefaultDelegates/WebDefaultUIDelegate.mm @nonARC
+
+mac/History/BackForwardList.mm @nonARC
+mac/History/BinaryPropertyList.cpp
+mac/History/HistoryPropertyList.mm @nonARC
+mac/History/WebHistory.mm @nonARC
+mac/History/WebHistoryItem.mm @nonARC
+
+mac/Misc/WebCache.mm @nonARC
+mac/Misc/WebCoreStatistics.mm @nonARC
+mac/Misc/WebDownload.mm @nonARC
+mac/Misc/WebElementDictionary.mm @nonARC
+mac/Misc/WebIconDatabase.mm @nonARC
+mac/Misc/WebKitLogInitialization.mm @nonARC
+mac/Misc/WebKitNSStringExtras.mm @nonARC
+mac/Misc/WebKitVersionChecks.mm @nonARC
+mac/Misc/WebLocalizableStrings.mm @nonARC
+mac/Misc/WebLocalizableStringsInternal.mm @nonARC
+mac/Misc/WebNSDataExtras.mm @nonARC
+mac/Misc/WebNSFileManagerExtras.mm @nonARC
+mac/Misc/WebNSObjectExtras.mm @nonARC
+mac/Misc/WebNSPasteboardExtras.mm @nonARC
+mac/Misc/WebNSURLExtras.mm @nonARC
+mac/Misc/WebNSUserDefaultsExtras.mm @nonARC
+mac/Misc/WebStringTruncator.mm @nonARC
+mac/Misc/WebUserContentURLPattern.mm @nonARC
+
+mac/Plugins/WebPluginPackage.mm @nonARC
+
+mac/Storage/WebDatabaseManager.mm @nonARC
+mac/Storage/WebDatabaseManagerClient.mm @nonARC
+mac/Storage/WebDatabaseProvider.mm @nonARC
+mac/Storage/WebDatabaseQuotaManager.mm @nonARC
+mac/Storage/WebStorageManager.mm @nonARC
+mac/Storage/WebStorageTrackerClient.mm @nonARC
+
+mac/WebCoreSupport/CorrectionPanel.mm @nonARC
+mac/WebCoreSupport/LegacyHistoryItemClient.mm @nonARC
+mac/WebCoreSupport/PopupMenuMac.mm @nonARC
+mac/WebCoreSupport/SearchPopupMenuMac.mm @nonARC
+mac/WebCoreSupport/WebAlternativeTextClient.mm @nonARC
+mac/WebCoreSupport/WebChromeClient.mm @nonARC
+mac/WebCoreSupport/WebContextMenuClient.mm @nonARC
+mac/WebCoreSupport/WebDragClient.mm @nonARC
+mac/WebCoreSupport/WebEditorClient.mm @nonARC
+mac/WebCoreSupport/WebFrameNetworkingContext.mm @nonARC
+mac/WebCoreSupport/WebGeolocationClient.mm @nonARC
+mac/WebCoreSupport/WebInspectorClient.mm @nonARC
+mac/WebCoreSupport/WebKitFullScreenListener.mm @nonARC
+mac/WebCoreSupport/WebMediaKeySystemClient.mm @nonARC
+mac/WebCoreSupport/WebNotificationClient.mm @nonARC
+mac/WebCoreSupport/WebOpenPanelResultListener.mm @nonARC
+mac/WebCoreSupport/WebPaymentCoordinatorClient.mm @nonARC
+mac/WebCoreSupport/WebPlatformStrategies.mm @nonARC
+mac/WebCoreSupport/WebPluginInfoProvider.mm @nonARC
+mac/WebCoreSupport/WebProgressTrackerClient.mm @nonARC
+mac/WebCoreSupport/WebSecurityOrigin.mm @nonARC
+mac/WebCoreSupport/WebSelectionServiceController.mm @nonARC
+mac/WebCoreSupport/WebValidationMessageClient.mm @nonARC
+mac/WebCoreSupport/WebVisitedLinkStore.mm @nonARC
+
+mac/WebInspector/WebInspectorFrontend.mm @nonARC
+mac/WebInspector/WebNodeHighlight.mm @nonARC
+mac/WebInspector/WebNodeHighlighter.mm @nonARC
+mac/WebInspector/WebNodeHighlightView.mm @nonARC
+
+mac/WebView/WebArchive.mm @nonARC
+mac/WebView/WebDelegateImplementationCaching.mm @nonARC
+mac/WebView/WebDeviceOrientation.mm @nonARC
+mac/WebView/WebDeviceOrientationProviderMock.mm @nonARC
+mac/WebView/WebDocumentLoaderMac.mm @nonARC
+mac/WebView/WebDynamicScrollBarsView.mm @nonARC
+mac/WebView/WebGeolocationPosition.mm @nonARC
+mac/WebView/WebHTMLRepresentation.mm @nonARC
+mac/WebView/WebIndicateLayer.mm @nonARC
+mac/WebView/WebJSPDFDoc.mm @nonARC
+mac/WebView/WebMediaPlaybackTargetPicker.mm @nonARC
+mac/WebView/WebNavigationData.mm @nonARC
+mac/WebView/WebNotification.mm @nonARC
+mac/WebView/WebPDFDocumentExtras.mm @nonARC
+mac/WebView/WebPolicyDelegate.mm @nonARC
+mac/WebView/WebPreferences.mm @nonARC
+mac/WebView/WebPreferencesDefaultValues.mm @nonARC
+mac/WebView/WebResource.mm @nonARC
+mac/WebView/WebTextCompletionController.mm @nonARC
+mac/WebView/WebTextIterator.mm @nonARC
+mac/WebView/WebVideoFullscreenController.mm @nonARC
+mac/WebView/WebViewData.mm @nonARC
+mac/WebView/WebWindowAnimation.mm @nonARC
+
+// DerivedSources
+WebViewPreferencesChangedGenerated.mm @nonARC
+WebPreferencesInternalFeatures.mm @nonARC
+WebPreferencesExperimentalFeatures.mm @nonARC

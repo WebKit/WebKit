@@ -32,16 +32,22 @@
 #include "../../test/test_util.h"
 
 
-// Though we do not support secp160r1, it is reachable from the deprecated
+// Though we do not support secp224k1, it is reachable from the deprecated
 // custom curve APIs and has some unique properties (n is larger than p with the
 // difference crossing a word boundary on 32-bit), so test it explicitly.
-static bssl::UniquePtr<EC_GROUP> NewSecp160r1Group() {
-  static const char kP[] = "ffffffffffffffffffffffffffffffff7fffffff";
-  static const char kA[] = "ffffffffffffffffffffffffffffffff7ffffffc";
-  static const char kB[] = "1c97befc54bd7a8b65acf89f81d4d4adc565fa45";
-  static const char kX[] = "4a96b5688ef573284664698968c38bb913cbfc82";
-  static const char kY[] = "23a628553168947d59dcc912042351377ac5fb32";
-  static const char kN[] = "0100000000000000000001f4c8f927aed3ca752257";
+static bssl::UniquePtr<EC_GROUP> NewSecp224k1Group() {
+  static const char kP[] =
+      "fffffffffffffffffffffffffffffffffffffffffffffffeffffe56d";
+  static const char kA[] =
+      "00000000000000000000000000000000000000000000000000000000";
+  static const char kB[] =
+      "00000000000000000000000000000000000000000000000000000005";
+  static const char kX[] =
+      "a1455b334df099df30fc28a169a467e9e47075a90f7e650eb6b7a45c";
+  static const char kY[] =
+      "7e089fed7fba344282cafbd6f7e319f7c0b0bd59e2ca4bdb556d61a5";
+  static const char kN[] =
+      "010000000000000000000000000001dce8d2ec6184caf0a971769fb1f7";
 
   bssl::UniquePtr<BIGNUM> p = HexToBIGNUM(kP), a = HexToBIGNUM(kA),
                           b = HexToBIGNUM(kB), x = HexToBIGNUM(kX),
@@ -150,15 +156,15 @@ TEST(ECDSATest, BuiltinCurves) {
       { NID_X9_62_prime256v1, "secp256r1" },
       { NID_secp384r1, "secp384r1" },
       { NID_secp521r1, "secp521r1" },
-      { NID_secp160r1, "secp160r1" },
+      { NID_secp224k1, "secp224k1" },
   };
 
   for (const auto &curve : kCurves) {
     SCOPED_TRACE(curve.name);
 
     bssl::UniquePtr<EC_GROUP> group;
-    if (curve.nid == NID_secp160r1) {
-      group = NewSecp160r1Group();
+    if (curve.nid == NID_secp224k1) {
+      group = NewSecp224k1Group();
     } else {
       group.reset(EC_GROUP_new_by_curve_name(curve.nid));
     }
@@ -297,8 +303,8 @@ static bssl::UniquePtr<EC_GROUP> GetCurve(FileTest *t, const char *key) {
   if (curve_name == "P-521") {
     return bssl::UniquePtr<EC_GROUP>(const_cast<EC_GROUP *>(EC_group_p521()));
   }
-  if (curve_name == "secp160r1") {
-    return NewSecp160r1Group();
+  if (curve_name == "secp224k1") {
+    return NewSecp224k1Group();
   }
 
   ADD_FAILURE() << "Unknown curve: " << curve_name;

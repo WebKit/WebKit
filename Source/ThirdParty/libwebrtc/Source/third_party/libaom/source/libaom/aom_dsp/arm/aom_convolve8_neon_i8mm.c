@@ -24,35 +24,8 @@
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/arm/transpose_neon.h"
 #include "aom_ports/mem.h"
-
-DECLARE_ALIGNED(16, static const uint8_t, kMatMul6PermuteTbl[32]) = {
-  // clang-format off
-  0,  1,  2,  3,  4,  5,  6,  7,  2,  3,  4,  5,  6,  7,  8,  9,
-  4,  5,  6,  7,  8,  9, 10, 11,  6,  7,  8,  9, 10, 11, 12, 13
-  // clang-format on
-};
-
-DECLARE_ALIGNED(16, static const uint8_t, kMatMul8PermuteTbl[32]) = {
-  // clang-format off
-  1,  2,  3,  4,  5,  6,  7,  8,  3,  4,  5,  6,  7,  8,  9, 10,
-  5,  6,  7,  8,  9, 10, 11, 12,  7,  8,  9, 10, 11, 12, 13, 14
-  // clang-format on
-};
-
-DECLARE_ALIGNED(16, static const uint8_t, kMatMul8FilterPermuteTbl[16]) = {
-  // clang-format off
-  1,  2,  3,  4,  5,  6,  7, 16, 16,  1,  2,  3,  4,  5,  6,  7
-  // clang-format on
-};
-
-DECLARE_ALIGNED(16, static const uint8_t, kDotProdMergeBlockTbl[48]) = {
-  // Shift left and insert new last column in transposed 4x4 block.
-  1, 2, 3, 16, 5, 6, 7, 20, 9, 10, 11, 24, 13, 14, 15, 28,
-  // Shift left and insert two new columns in transposed 4x4 block.
-  2, 3, 16, 17, 6, 7, 20, 21, 10, 11, 24, 25, 14, 15, 28, 29,
-  // Shift left and insert three new columns in transposed 4x4 block.
-  3, 16, 17, 18, 7, 20, 21, 22, 11, 24, 25, 26, 15, 28, 29, 30
-};
+#include "av1/common/arm/convolve_neon_dotprod.h"
+#include "av1/common/arm/convolve_neon_i8mm.h"
 
 static inline int16x4_t convolve8_4_h(const uint8x16_t samples,
                                       const int8x16_t filters,
@@ -101,7 +74,7 @@ static inline void convolve8_horiz_8tap_neon_i8mm(
   const int8x8_t filter_s8 = vshrn_n_s16(vld1q_s16(filter_x), 1);
   // Stagger the filter for use with the matrix multiply instructions.
   // { f1, f2, f3, f4, f5, f6, f7, 0, 0, f1, f2, f3, f4, f5, f6, f7 }
-  const uint8x16_t filter_idx = vld1q_u8(kMatMul8FilterPermuteTbl);
+  const uint8x16_t filter_idx = vld1q_u8(kFilterPermuteTbl);
   const int8x16_t filter =
       vqtbl1q_s8(vcombine_s8(filter_s8, vdup_n_s8(0)), filter_idx);
 

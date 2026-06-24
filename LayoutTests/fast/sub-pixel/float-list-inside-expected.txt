@@ -1,4 +1,7 @@
 PASS Links are on the same line.
 PASS First link didn't move after layout.
 PASS Last link didn't move after layout.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 About UsContact Us

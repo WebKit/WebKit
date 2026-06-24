@@ -297,11 +297,6 @@ void RemoteSourceBufferProxy::setMaximumBufferSize(uint64_t size, CompletionHand
     protect(m_sourceBufferPrivate)->setMaximumBufferSize(size)->whenSettled(RunLoop::currentSingleton(), WTF::move(completionHandler));
 }
 
-void RemoteSourceBufferProxy::computeSeekTime(const SeekTarget& target, CompletionHandler<void(SourceBufferPrivate::ComputeSeekPromise::Result&&)>&& completionHandler)
-{
-    protect(m_sourceBufferPrivate)->computeSeekTime(target)->whenSettled(RunLoop::currentSingleton(), WTF::move(completionHandler));
-}
-
 void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs)
 {
     if (!trackIdPairs.isEmpty())

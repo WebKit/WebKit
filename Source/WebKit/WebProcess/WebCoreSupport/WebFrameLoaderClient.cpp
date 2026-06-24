@@ -117,6 +117,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         FrameType::Local,
         ResourceRequest { URL { requester.url } },
         requester.securityOrigin->data(),
+        requester.topOrigin->data(),
         { },
         WTF::move(originatingFrameID),
         originatingPageID,

@@ -34,6 +34,7 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSObjectInlines.h"
 #include <wtf/Range.h>
+#include <wtf/StdLibExtras.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -70,9 +71,9 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
 
     unsigned roundingIncrement = intlNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1, 5000, 1);
     RETURN_IF_EXCEPTION(scope, void());
-    static constexpr const unsigned roundingIncrementCandidates[] = {
+    static constexpr auto roundingIncrementCandidates = WTF::toArray<unsigned>({
         1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000
-    };
+    });
     if (std::ranges::none_of(roundingIncrementCandidates, [&](auto candidate) {
         return candidate == roundingIncrement;
     })) {
@@ -300,19 +301,13 @@ void appendNumberFormatNotationOptionsToSkeleton(IntlType* intlInstance, StringB
         skeletonBuilder.append(" engineering"_s);
         break;
     case IntlNotation::Compact:
-        if constexpr (std::is_same_v<IntlType, JSC::IntlPluralRules>) {
-            // Intl.PluralRules does not support `compactDisplay` option
-            // https://github.com/tc39/ecma402/issues/1013
+        switch (intlInstance->m_compactDisplay) {
+        case CompactDisplay::Short:
             skeletonBuilder.append(" compact-short"_s);
-        } else {
-            switch (intlInstance->m_compactDisplay) {
-            case IntlNumberFormat::CompactDisplay::Short:
-                skeletonBuilder.append(" compact-short"_s);
-                break;
-            case IntlNumberFormat::CompactDisplay::Long:
-                skeletonBuilder.append(" compact-long"_s);
-                break;
-            }
+            break;
+        case CompactDisplay::Long:
+            skeletonBuilder.append(" compact-long"_s);
+            break;
         }
         break;
     }

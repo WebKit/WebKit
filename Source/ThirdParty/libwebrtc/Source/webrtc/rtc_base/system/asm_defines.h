@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_SYSTEM_ASM_DEFINES_H_
 #define RTC_BASE_SYSTEM_ASM_DEFINES_H_
 
+#ifdef __ASSEMBLER__
+
 // clang-format off
 // clang formatting breaks everything here, e.g. concatenating directives,
 // due to absence of context via asm keyword.
@@ -68,5 +70,7 @@ strheq \reg1, \reg2, \num
 .text
 
 // clang-format on
+
+#endif  // __ASSEMBLER__
 
 #endif  // RTC_BASE_SYSTEM_ASM_DEFINES_H_

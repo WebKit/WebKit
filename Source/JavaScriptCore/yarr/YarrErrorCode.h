@@ -77,6 +77,8 @@ enum class ErrorCode : uint8_t {
     NegatedClassSetMayContainStrings,
     InvalidClassSetCharacter,
     InvalidRegularExpressionModifier,
+    TooManyCaptures,
+    FrameTooLarge,
 
     // The following are NOT hard errors.
     TooManyDisjunctions, // we ran out stack compiling.

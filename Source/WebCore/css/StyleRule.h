@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -270,6 +270,7 @@ public:
     static Ref<StyleRuleFontFeatureValues> create(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&&);
 
     const Vector<AtomString>& fontFamilies() const LIFETIME_BOUND { return m_fontFamilies; }
+    void setFontFamilies(Vector<AtomString>&& fontFamilies) { m_fontFamilies = WTF::move(fontFamilies); }
 
     Ref<FontFeatureValues> value() const { return m_value; }
 

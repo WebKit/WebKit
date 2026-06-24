@@ -24,7 +24,7 @@
 
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_API_=
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited);
 
 PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/Cocoa $(SRCROOT)/../../Source/WebKit/Shared/cf $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC $(inherited);
 

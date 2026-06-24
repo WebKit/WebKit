@@ -1,5 +1,0 @@
-test implicit port number matching (requires port 80)
-
-
-PASS Test that script does not fire violation event
-

@@ -37,9 +37,10 @@
 #include "LayoutBoxInlines.h"
 #include "LayoutElementBox.h"
 #include "RenderObjectDocument.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RubyFormattingContext.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <ranges>
 
 namespace WebCore {
@@ -164,17 +165,17 @@ InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode 
     if (!shouldIndent)
         return { };
 
-    auto& textIndentLength = root->style().textIndent().length;
-    if (textIndentLength == 0_css_px)
+    auto& textIndentAmount = root->style().textIndent().amount;
+    if (textIndentAmount == 0_css_px)
         return { };
-    if (isIntrinsicWidthMode == IsIntrinsicWidthMode::Yes && textIndentLength.isPercentOrCalculated()) {
+    if (isIntrinsicWidthMode == IsIntrinsicWidthMode::Yes && textIndentAmount.isPercentOrCalculated()) {
         // Percentages and calc() expressions containing percentages must be treated as 0
         // for the purpose of calculating intrinsic size contributions, with a zero percentage
         // basis so fixed-length components in calc() are still preserved.
         // https://drafts.csswg.org/css-text/#text-indent-property
-        return Style::evaluate<InlineLayoutUnit>(textIndentLength, 0, root->style().usedZoomForLength());
+        return Style::evaluate<InlineLayoutUnit>(textIndentAmount, 0, root->style().usedZoomForLength());
     }
-    return Style::evaluate<InlineLayoutUnit>(textIndentLength, availableWidth, root->style().usedZoomForLength());
+    return Style::evaluate<InlineLayoutUnit>(textIndentAmount, availableWidth, root->style().usedZoomForLength());
 }
 
 InlineLayoutUnit InlineFormattingUtils::initialLineHeight(bool isFirstLine) const
@@ -194,7 +195,7 @@ FloatingContext::Constraints InlineFormattingUtils::floatConstraintsForLine(Inli
     return floatingContext.constraints(logicalTopCandidate, logicalBottomCandidate, FloatingContext::MayBeAboveLastFloat::Yes);
 }
 
-InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit hangingTrailingWidth, bool isLastLineOrLineEndsWithForcedLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride)
+InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const Style::ComputedStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit hangingTrailingWidth, bool isLastLineOrLineEndsWithForcedLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride)
 {
     // Depending on the line's alignment/justification, the hanging glyph can be placed outside the line box.
     if (hangingTrailingWidth) {
@@ -586,7 +587,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 
-LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const RenderStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful)
+LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful)
 {
     if (numberOfVisibleLinesAllowed) {
         // text-overflow: ellipsis should not apply inside clamping content.

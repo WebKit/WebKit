@@ -28,7 +28,7 @@ function next()
     "use strict";
 
     if (!@isMapIterator(this))
-        @throwTypeError("%MapIteratorPrototype%.next requires that |this| be an Map Iterator instance");
+        @throwTypeError("%MapIteratorPrototype%.next requires that |this| be a Map Iterator instance");
 
     var value;
     var done = @mapIteratorNext(this);

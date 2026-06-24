@@ -59,7 +59,7 @@ BorderImage::BorderImage(BorderImageSource&& source, BorderImageSlice&& slice, B
 
 // MARK: - Conversion
 
-auto ToCSS<BorderImage>::operator()(const BorderImage& value, const RenderStyle& style) -> CSS::BorderImage
+auto ToCSS<BorderImage>::operator()(const BorderImage& value, const Style::ComputedStyle& style) -> CSS::BorderImage
 {
     return {
         .borderImageSource = toCSS(value.borderImageSource, style),
@@ -88,14 +88,14 @@ auto ToStyle<CSS::BorderImage>::operator()(const CSS::BorderImage& value, const 
     return result;
 }
 
-auto CSSValueCreation<BorderImage>::operator()(CSSValuePool& pool, const RenderStyle& style, const BorderImage& value) -> Ref<CSSValue>
+auto CSSValueCreation<BorderImage>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const BorderImage& value) -> Ref<CSSValue>
 {
     return CSS::createCSSValue(pool, toCSS(value, style));
 }
 
 // MARK: - Serialization
 
-void Serialize<BorderImage>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const BorderImage& value)
+void Serialize<BorderImage>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const BorderImage& value)
 {
     if (value.borderImageSource.isNone()) {
         serializationForCSS(builder, context, style, value.borderImageSource);

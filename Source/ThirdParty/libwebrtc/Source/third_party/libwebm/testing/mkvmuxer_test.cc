@@ -39,6 +39,87 @@ using mkvmuxer::VideoTrack;
 
 namespace test {
 
+class FailingWriter : public mkvmuxer::IMkvWriter {
+ public:
+  mkvmuxer::int32 Write(const void* /*buf*/, mkvmuxer::uint32 len) override {
+    if (fail_ && len >= fail_min_len_) {
+      return -1;
+    }
+    pos_ += len;
+    return 0;
+  }
+  mkvmuxer::int64 Position() const override { return pos_; }
+  mkvmuxer::int32 Position(mkvmuxer::int64 position) override {
+    pos_ = position;
+    return 0;
+  }
+  bool Seekable() const override { return true; }
+  void ElementStartNotify(mkvmuxer::uint64, mkvmuxer::int64) override {}
+
+  void StartFailing(mkvmuxer::uint32 min_len) {
+    fail_ = true;
+    fail_min_len_ = min_len;
+  }
+
+ private:
+  mkvmuxer::int64 pos_ = 0;
+  bool fail_ = false;
+  mkvmuxer::uint32 fail_min_len_ = 0;
+};
+
+constexpr uint64_t kMs = 1000000ULL;  // 1 ms in ns (default timecode_scale).
+constexpr uint64_t kAudioFrameLen = 100;  // > all EBML metadata writes.
+constexpr uint64_t kVideoFrameLen = 8;
+
+// Test case from crbug.com/504660052.
+TEST(MkvmuxerUafTest, WriteFramesLessThanDanglingSlot_UseAfterFreeRead) {
+  FailingWriter writer;
+  mkvmuxer::Segment segment;
+  ASSERT_TRUE(segment.Init(&writer));
+
+  const uint64_t vtrack = segment.AddVideoTrack(320, 240, 1);
+  const uint64_t atrack = segment.AddAudioTrack(48000, 2, 2);
+  ASSERT_NE(vtrack, 0u);
+  ASSERT_NE(atrack, 0u);
+
+  uint8_t vdata[kVideoFrameLen] = {};
+  uint8_t adata[kAudioFrameLen] = {};
+
+  ASSERT_TRUE(segment.AddFrame(vdata, kVideoFrameLen, vtrack, 0 * kMs, true));
+  ASSERT_TRUE(segment.AddFrame(adata, kAudioFrameLen, atrack, 10 * kMs, true));
+  ASSERT_TRUE(segment.AddFrame(adata, kAudioFrameLen, atrack, 20 * kMs, true));
+  ASSERT_TRUE(segment.AddFrame(adata, kAudioFrameLen, atrack, 30 * kMs, true));
+
+  writer.StartFailing(/*min_len=*/50);
+
+  // It does not matter whether this succeeds or fails, it should not crash.
+  segment.AddFrame(vdata, kVideoFrameLen, vtrack, 40 * kMs, true);
+}
+
+// Test case from crbug.com/504660052.
+TEST(MkvmuxerUafTest, WriteFramesLessThanDanglingSlot_DoubleFree) {
+  FailingWriter writer;
+  mkvmuxer::Segment segment;
+  ASSERT_TRUE(segment.Init(&writer));
+
+  const uint64_t vtrack = segment.AddVideoTrack(320, 240, 1);
+  const uint64_t atrack = segment.AddAudioTrack(48000, 2, 2);
+  ASSERT_NE(vtrack, 0u);
+  ASSERT_NE(atrack, 0u);
+
+  uint8_t vdata[kVideoFrameLen] = {};
+  uint8_t adata[kAudioFrameLen] = {};
+
+  ASSERT_TRUE(segment.AddFrame(vdata, kVideoFrameLen, vtrack, 0 * kMs, true));
+  ASSERT_TRUE(segment.AddFrame(adata, kAudioFrameLen, atrack, 10 * kMs, true));
+  ASSERT_TRUE(segment.AddFrame(adata, kAudioFrameLen, atrack, 20 * kMs, true));
+  ASSERT_TRUE(segment.AddFrame(adata, kAudioFrameLen, atrack, 30 * kMs, true));
+
+  writer.StartFailing(/*min_len=*/0);
+
+  EXPECT_FALSE(segment.AddFrame(vdata, kVideoFrameLen, vtrack, 40 * kMs, true));
+}
+
 // Base class containing boiler plate stuff.
 class MuxerTest : public testing::Test {
  public:
@@ -181,6 +262,26 @@ TEST_F(MuxerTest, AddTracks) {
   CloseWriter();
 
   EXPECT_TRUE(CompareFiles(GetTestFilePath("tracks.webm"), filename_));
+}
+
+TEST_F(MuxerTest, AddTracksWithBlockAdditionMapping) {
+  EXPECT_TRUE(SegmentInit(false, false, false));
+
+  AddVideoTrack();
+  VideoTrack* const video =
+      dynamic_cast<VideoTrack*>(segment_.GetTrackByNumber(kVideoTrackNumber));
+  ASSERT_TRUE(video != NULL);
+  EXPECT_TRUE(video->AddBlockAdditionMapping(4, "itut35", 4, NULL, 0));
+
+  AddDummyFrameAndFinalize(kVideoTrackNumber);
+  CloseWriter();
+
+  EXPECT_TRUE(CompareFiles(
+      GetTestFilePath("tracks_with_block_addition_mapping.webm"), filename_));
+
+  // Ensure that the created file is valid.
+  MkvParser parser;
+  EXPECT_TRUE(ParseMkvFileReleaseParser(filename_, &parser));
 }
 
 TEST_F(MuxerTest, AddChapters) {

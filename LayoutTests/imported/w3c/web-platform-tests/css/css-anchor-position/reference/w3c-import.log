@@ -14,6 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-abspos-to-fixedpos-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-abspos-to-fixedpos-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-abspos-to-fixedpos-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-css-zoom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-in-css-min-max-function-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-name-005-ref.html
@@ -27,6 +30,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-fixedpos-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-fixedpos-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-fixedpos-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-fixedpos-nested-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-fixedpos-nested-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-fixedpos-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-nested-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-ref.html
@@ -44,4 +49,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-size-css-zoom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/position-area-inset-one-side-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/position-area-visibility-change-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/pseudo-element-chain-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/sticky-anchor-position-invalid-ref.html

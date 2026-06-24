@@ -10,4 +10,9 @@ PASS Property background-size value 'cover'
 PASS Property background-size value 'calc(10px + 0.5em) calc(10px - 0.5em)'
 PASS Property background-size value 'calc(10px - 0.5em) calc(10px + 0.5em)'
 PASS Property background-size value 'auto 1px, 2% 3%, contain'
+PASS Property background-size value 'auto' multiple base values
+PASS Property background-size value 'auto, auto' multiple base values
+PASS Property background-size value 'auto, auto, auto' multiple base values
+PASS Property background-size value 'auto, 100%' multiple base values
+PASS Property background-size value '100%' multiple base values
 

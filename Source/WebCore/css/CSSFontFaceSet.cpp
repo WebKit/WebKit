@@ -110,7 +110,7 @@ bool CSSFontFaceSet::hasFace(const CSSFontFace& face) const
 void CSSFontFaceSet::updateStyleIfNeeded()
 {
     if (m_owningFontSelector)
-        Ref { *m_owningFontSelector }->updateStyleIfNeeded();
+        protect(*m_owningFontSelector)->updateStyleIfNeeded();
 }
 
 void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const AtomString& familyName)

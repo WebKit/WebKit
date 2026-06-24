@@ -55,7 +55,6 @@ if (is_android) {
 
     deps = [
       ":generated_jni",
-      "../../api:array_view",
       "../../api:sequence_checker",
       "../../api/audio:builtin_audio_processing_builder",
       "../../api/environment",

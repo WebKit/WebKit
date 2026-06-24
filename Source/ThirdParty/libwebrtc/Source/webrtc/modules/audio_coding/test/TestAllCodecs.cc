@@ -14,11 +14,11 @@
 #include <cstdio>
 #include <cstring>
 #include <limits>
+#include <span>
 #include <string>
 
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
@@ -48,11 +48,11 @@
     EXPECT_GE(f, 0) << "Error Calling API"; \
   } while (0)
 
+namespace webrtc {
+
 namespace {
 const size_t kVariableSize = std::numeric_limits<size_t>::max();
 }  // namespace
-
-namespace webrtc {
 
 // Class for simulating packet handling.
 TestPack::TestPack()
@@ -93,7 +93,7 @@ int32_t TestPack::SendData(AudioFrameType frame_type,
   memcpy(payload_data_, payload_data, payload_size);
 
   status = neteq_->InsertPacket(
-      rtp_header, ArrayView<const uint8_t>(payload_data_, payload_size),
+      rtp_header, std::span<const uint8_t>(payload_data_, payload_size),
       /*receive_time=*/Timestamp::MinusInfinity());
 
   payload_size_ = payload_size;

@@ -1,5 +1,26 @@
 Test passes if border widths are rounded up when they are greater than 0 and less than 1, and rounded down when they are greater than 1.
 
 
-PASS Test that border widths are rounded up when they are greater than 0px but less than 1px, and rounded down when they are greater than 1px.
+PASS border-width: 0px
+PASS outline-width: 0px
+PASS border-width: 0.1px
+PASS outline-width: 0.1px
+PASS border-width: 0.25px
+PASS outline-width: 0.25px
+PASS border-width: 0.5px
+PASS outline-width: 0.5px
+PASS border-width: 0.9px
+PASS outline-width: 0.9px
+PASS border-width: 1px
+PASS outline-width: 1px
+PASS border-width: 1.25px
+PASS outline-width: 1.25px
+PASS border-width: 1.5px
+PASS outline-width: 1.5px
+PASS border-width: 2px
+PASS outline-width: 2px
+PASS border-width: 2.75px
+PASS outline-width: 2.75px
+PASS border-width: 2.999px
+PASS outline-width: 2.999px
 

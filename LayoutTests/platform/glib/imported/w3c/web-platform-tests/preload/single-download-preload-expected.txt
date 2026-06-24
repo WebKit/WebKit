@@ -1,4 +1,0 @@
-  PASS - this text is here just so that the browser will download the font.
-
-PASS Makes sure that preloaded resources are not downloaded again when used
-

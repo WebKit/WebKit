@@ -15,4 +15,7 @@ PASS Property background-position-x value 'center, left, right'
 PASS Property background-position-x value '0.5em, x-start, x-end'
 PASS Property background-position-x value 'calc(10px - 0.5em), -20%, 10px'
 PASS Property background-position-x value 'calc(10px - 0.5em), left -20%, right 10px'
+PASS Property background-position-x value 'center' multiple base values
+PASS Property background-position-x value 'center, left' multiple base values
+PASS Property background-position-x value 'center, left, right' multiple base values
 

@@ -33,9 +33,9 @@ struct BorderImageWidthValue {
     using LengthPercentage = CSS::LengthPercentage<CSS::Nonnegative, float>;
     using Number = CSS::Number<CSS::Nonnegative, float>;
 
-    BorderImageWidthValue(Keyword::Auto keyword) : m_value { keyword } { }
-    BorderImageWidthValue(LengthPercentage&& lengthPercentage) : m_value { WTF::move(lengthPercentage) } { }
-    BorderImageWidthValue(Number&& number) : m_value { WTF::move(number) } { }
+    BorderImageWidthValue(Keyword::Auto value) : m_value { value } { }
+    BorderImageWidthValue(LengthPercentage&& value) : m_value { WTF::move(value) } { }
+    BorderImageWidthValue(Number&& value) : m_value { WTF::move(value) } { }
 
     bool isLength() const;
 

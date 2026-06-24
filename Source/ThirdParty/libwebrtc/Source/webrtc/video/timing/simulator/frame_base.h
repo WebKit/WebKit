@@ -18,6 +18,7 @@
 #include "absl/algorithm/container.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc::video_timing_simulator {
 
@@ -35,9 +36,7 @@ struct FrameBase {
   // the derived class.
   Timestamp DepartureTimestamp(Timestamp offset = Timestamp::Zero()) const {
     int64_t unwrapped_rtp_timestamp = self().unwrapped_rtp_timestamp;
-    if (unwrapped_rtp_timestamp < 0) {
-      return Timestamp::PlusInfinity();
-    }
+    RTC_DCHECK_GE(unwrapped_rtp_timestamp, 0);
     constexpr int64_t kMicrosPerMillis = 1'000;
     constexpr int64_t kRtpVideoTicksPerMillis = 90;
     // Convert from RTP ticks to microseconds using integer division with
@@ -122,24 +121,36 @@ std::optional<int64_t> InterFrameSizeBytes(const FrameT& cur,
 // Difference in departure timestamp between two frames.
 template <typename FrameT>
 TimeDelta InterDepartureTime(const FrameT& cur, const FrameT& prev) {
+  RTC_DCHECK(cur.DepartureTimestamp().IsFinite());
+  RTC_DCHECK(prev.DepartureTimestamp().IsFinite());
   return cur.DepartureTimestamp() - prev.DepartureTimestamp();
 }
 
 // Difference in arrival timestamp between two frames.
 template <typename FrameT>
 TimeDelta InterArrivalTime(const FrameT& cur, const FrameT& prev) {
-  return cur.ArrivalTimestamp() - prev.ArrivalTimestamp();
+  Timestamp cur_arrival = cur.ArrivalTimestamp();
+  Timestamp prev_arrival = prev.ArrivalTimestamp();
+  if (!cur_arrival.IsFinite() && !prev_arrival.IsFinite()) {
+    return TimeDelta::PlusInfinity();
+  }
+  return cur_arrival - prev_arrival;
 }
 
 // https://datatracker.ietf.org/doc/html/rfc5481#section-1
 template <typename FrameT>
 TimeDelta InterFrameDelayVariation(const FrameT& cur, const FrameT& prev) {
-  return InterArrivalTime(cur, prev) - InterDepartureTime(cur, prev);
+  TimeDelta iat = InterArrivalTime(cur, prev);
+  TimeDelta idt = InterDepartureTime(cur, prev);
+  RTC_DCHECK(idt.IsFinite());
+  return iat - idt;
 }
 
 // Difference in assembled timestamp between two frames.
 template <typename FrameT>
 TimeDelta InterAssembledTime(const FrameT& cur, const FrameT& prev) {
+  RTC_DCHECK(cur.assembled_timestamp.IsFinite());
+  RTC_DCHECK(prev.assembled_timestamp.IsFinite());
   return cur.assembled_timestamp - prev.assembled_timestamp;
 }
 

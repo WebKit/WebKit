@@ -231,11 +231,10 @@
        (literal "/private/var/run/syslog"))
 
 (allow ipc-posix-shm-read*
-    (ipc-posix-name "apple.shm.notification_center")
 #if !ENABLE(CFPREFS_DIRECT_MODE)
     (ipc-posix-name-prefix "apple.cfprefs.")
 #endif
-)
+    (ipc-posix-name "apple.shm.notification_center"))
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
 (allow mach-lookup (global-name "com.apple.coreservices.launchservicesd"))
@@ -244,8 +243,7 @@
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow mach-lookup
     (global-name "com.apple.cfprefsd.agent")
-    (global-name "com.apple.cfprefsd.daemon")
-)
+    (global-name "com.apple.cfprefsd.daemon"))
 #endif
 
 (allow mach-lookup
@@ -329,9 +327,7 @@
         "Removable"
         "acpi-pmcap-offset"
         "driver-child-bundle"
-        "iommu-selection"
-    )
-)
+        "iommu-selection"))
 
 (deny mach-lookup (xpc-service-name-prefix ""))
 
@@ -382,8 +378,7 @@
     (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
 
 (allow file-read-data
-    (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
-)
+    (literal "/usr/local/lib/log")) ; <rdar://problem/36629495>
 
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
@@ -463,8 +458,7 @@
 (allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 (with-filter (uid 0)
     (allow file-write* 
-        (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
-)
+        (subpath "/private/var/db/mds/system"))) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 
 (shared-preferences-read
     "com.apple.crypto"
@@ -883,6 +877,9 @@
 
 #if HAVE(WEBCONTENTRESTRICTIONS) && PLATFORM(MAC)
 (allow mach-lookup
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+    (global-name "com.apple.DeviceConfigurationAgent.consumer")
+#endif
     (global-name "com.apple.familycontrols"))
 #endif
 

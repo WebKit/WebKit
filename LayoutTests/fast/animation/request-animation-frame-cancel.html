@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <span id="e"></span>
 <span id="f"></span>
 <script>
 description("This tests cancelling a requestAnimationFrame callback");
+
+window.jsTestIsAsync = true;
 
 var callbackFired = false;
 var e = document.getElementById("e");
@@ -17,17 +19,14 @@ var id = window.requestAnimationFrame(function() {
 onload = async () => {
     window.cancelAnimationFrame(id);
 
-    testRunner?.waitUntilDone();
     await testRunner?.displayAndTrackRepaints();
-    
+
     setTimeout(function() {
         shouldBeFalse("callbackFired");
     }, 100);
-    
+
     setTimeout(function() {
-        isSuccessfullyParsed();
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }, 200);
 }
 

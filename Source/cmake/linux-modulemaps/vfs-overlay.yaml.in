@@ -2,7 +2,7 @@
   "version": 0,
   "roots": [
     {
-      "name": "/usr/include/glib-2.0",
+      "name": "@GLib_INCLUDE_DIR@",
       "type": "directory",
       "contents": [
         { "name": "module.modulemap", "type": "file",
@@ -10,7 +10,7 @@
       ]
     },
     {
-      "name": "/usr/include/libsoup-3.0",
+      "name": "@Soup3_INCLUDE_DIR@",
       "type": "directory",
       "contents": [
         { "name": "module.modulemap", "type": "file",

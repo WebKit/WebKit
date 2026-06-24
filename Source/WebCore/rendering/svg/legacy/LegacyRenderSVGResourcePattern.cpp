@@ -29,12 +29,12 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrameView.h"
 #include "NativeImage.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourcePattern);
 
-LegacyRenderSVGResourcePattern::LegacyRenderSVGResourcePattern(SVGPatternElement& element, RenderStyle&& style)
+LegacyRenderSVGResourcePattern::LegacyRenderSVGResourcePattern(SVGPatternElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourcePattern, element, WTF::move(style))
 {
 }
@@ -150,7 +150,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     return m_patternMap.set(renderer, WTF::move(patternData)).iterator->value.get();
 }
 
-auto LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
+auto LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, const Style::ComputedStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -215,7 +215,7 @@ void LegacyRenderSVGResourcePattern::postApplyResource(RenderElement&, GraphicsC
     context->restore();
 }
 
-static inline FloatRect calculatePatternBoundaries(const PatternAttributes& attributes,
+static inline FloatRect legacyCalculatePatternBoundaries(const PatternAttributes& attributes,
                                                    const FloatRect& objectBoundingBox,
                                                    const SVGPatternElement& patternElement)
 {
@@ -229,7 +229,7 @@ bool LegacyRenderSVGResourcePattern::buildTileImageTransform(RenderElement& rend
                                                        AffineTransform& tileImageTransform) const
 {
     FloatRect objectBoundingBox = renderer.objectBoundingBox();
-    patternBoundaries = calculatePatternBoundaries(attributes, objectBoundingBox, patternElement); 
+    patternBoundaries = legacyCalculatePatternBoundaries(attributes, objectBoundingBox, patternElement);
     if (patternBoundaries.width() <= 0 || patternBoundaries.height() <= 0)
         return false;
 

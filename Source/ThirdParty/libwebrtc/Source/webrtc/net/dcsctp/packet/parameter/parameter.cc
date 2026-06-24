@@ -12,9 +12,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/math.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "rtc_base/logging.h"
@@ -37,7 +37,7 @@ Parameters::Builder& Parameters::Builder::Add(const Parameter& p) {
 }
 
 std::vector<ParameterDescriptor> Parameters::descriptors() const {
-  webrtc::ArrayView<const uint8_t> span(data_);
+  std::span<const uint8_t> span(data_);
   std::vector<ParameterDescriptor> result;
   while (!span.empty()) {
     BoundedByteReader<kParameterHeaderSize> header(span);
@@ -53,10 +53,9 @@ std::vector<ParameterDescriptor> Parameters::descriptors() const {
   return result;
 }
 
-std::optional<Parameters> Parameters::Parse(
-    webrtc::ArrayView<const uint8_t> data) {
+std::optional<Parameters> Parameters::Parse(std::span<const uint8_t> data) {
   // Validate the parameter descriptors
-  webrtc::ArrayView<const uint8_t> span(data);
+  std::span<const uint8_t> span(data);
   while (!span.empty()) {
     if (span.size() < kParameterHeaderSize) {
       RTC_DLOG(LS_WARNING) << "Insufficient parameter length";

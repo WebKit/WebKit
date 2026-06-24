@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -37,17 +37,14 @@ var checkPosition = (function() {
 
 function onKeyDown() {
     checkPosition();
-    testRunner.notifyDone();
-    isSuccessfullyParsed();
+    finishJSTest();
 }
 
 document.addEventListener('keydown', onKeyDown);
 
 description("Tests to ensure that touch events are delivered to an input element with type=range even when there are no touch event handlers in Javascript. This test is only expected to pass if ENABLE_TOUCH_SLIDER is defined.");
+window.jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-}
 
 if (window.eventSender) {
     var x = slider.offsetLeft;

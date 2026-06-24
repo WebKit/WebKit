@@ -37,6 +37,9 @@ class TestTurnCustomizer : public TurnCustomizer {
 
     ASSERT_NE(0, message->type());
     if (add_counter_) {
+      // TODO: crbug.com/504567957 - redo authentication so that
+      // attribute will not be ignored, or move caller to do
+      // modification before authentication.
       message->AddAttribute(std::make_unique<StunUInt32Attribute>(
           STUN_ATTR_COUNTER, modify_cnt_));
     }

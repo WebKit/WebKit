@@ -35,7 +35,6 @@
 #include "RenderLayerModelObject.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGPath.h"
-#include "RenderStyle.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
@@ -43,6 +42,7 @@
 #include "SVGMaskElement.h"
 #include "SVGResourceElementClient.h"
 #include "Settings.h"
+#include "StyleComputedStyle.h"
 #include "StyleFilterReference.h"
 #include "StyleImage.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -145,7 +145,7 @@ void ReferencedSVGResources::removeClientForTarget(const AtomString& targetID)
         targetElement->removeReferencingCSSClient(protect(*entry.client));
 }
 
-ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style, const Document& document)
+ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::referencedSVGResourceIDs(const Style::ComputedStyle& style, const Document& document)
 {
     SVGElementIdentifierAndTagPairs referencedResources;
     WTF::switchOn(style.clipPath(),

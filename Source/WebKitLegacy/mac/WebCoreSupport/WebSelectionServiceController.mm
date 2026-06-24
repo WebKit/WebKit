@@ -36,7 +36,6 @@
 #import <pal/spi/mac/NSSharingServiceSPI.h>
 #import <wtf/TZoneMallocInlines.h>
 
-using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSelectionServiceController);
 
@@ -47,7 +46,7 @@ WebSelectionServiceController::WebSelectionServiceController(WebView *webView)
 
 void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSelection& selection, const Vector<String>& /*telephoneNumbers*/, const WebCore::IntPoint& point)
 {
-    Page* page = [m_webView page];
+    WebCore::Page* page = [m_webView page];
     if (!page)
         return;
 

@@ -330,7 +330,7 @@ def amended_message(full_message, combined_changes, amend_changes, update_change
         else:
             commit_message_parser = CommitMessageParser()
         commit_message_parser.parse_message(full_message)
-        updated_changelog_lines = commit_message_parser.apply_comments_to_modified_files_lines(combined_changes)
+        updated_changelog_lines = commit_message_parser.reconcile_with_changed_files(combined_changes)
         reviewed_by_lines = (commit_message_parser.reviewed_by_lines or ['Reviewed by NOBODY (OOPS!).'])
         description_lines = (commit_message_parser.description_lines or ['Explanation of why this fixes the bug (OOPS!).'])
         tests_lines = commit_message_parser.tests_lines + [''] if commit_message_parser.tests_lines else []

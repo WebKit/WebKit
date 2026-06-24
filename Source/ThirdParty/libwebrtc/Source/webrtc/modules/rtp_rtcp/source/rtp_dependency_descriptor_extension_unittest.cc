@@ -14,8 +14,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -64,7 +64,7 @@ TEST(RtpDependencyDescriptorExtensionTest, WriteZeroInUnusedBits) {
   const uint8_t* unused_bytes = buffer + value_size;
   size_t num_unused_bytes = buffer + sizeof(buffer) - unused_bytes;
   // Check remaining bytes are zeroed.
-  EXPECT_THAT(MakeArrayView(unused_bytes, num_unused_bytes), Each(0));
+  EXPECT_THAT(std::span(unused_bytes, num_unused_bytes), Each(0));
 }
 
 // In practice chain diff for inactive chain will grow uboundly because no

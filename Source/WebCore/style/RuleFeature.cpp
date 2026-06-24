@@ -37,6 +37,7 @@
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRule.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 namespace Style {
@@ -344,7 +345,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             idsInRules.add(selector->value());
             if (matchElement.relation == MatchElement::Relation::Parent || matchElement.relation == MatchElement::Relation::Ancestor)
                 idsMatchingAncestorsInRules.add(selector->value());
-            else if (matchElement.hasRelation || matchElement.relation == MatchElement::Relation::AnySibling || matchElement.relation == MatchElement::Relation::Host || matchElement.relation == MatchElement::Relation::HostChild)
+            else if (matchElement.hasRelation || matchElement.relation != MatchElement::Relation::Subject)
                 selectorFeatures.ids.append({ selector, matchElement, context.isNegation, scopeSourcesForFeature() });
         } else if (selector->match() == CSSSelector::Match::Class)
             selectorFeatures.classes.append({ selector, matchElement, context.isNegation, scopeSourcesForFeature() });
@@ -463,6 +464,8 @@ static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::Ps
 
 void RuleFeatureSet::collectFeatures(CollectionContext& collectionContext, const RuleData& ruleData, const Vector<Ref<const StyleRuleScope>>& scopeRules)
 {
+    RELEASE_ASSERT(isMainThread());
+
     // Empty rules don't affect style so we never need to invalidate for them.
     if (ruleData.styleRule().properties().isEmpty())
         return;
@@ -613,6 +616,8 @@ void RuleFeatureSet::collectPseudoElementFeatures(const RuleData& ruleData)
 
 void RuleFeatureSet::add(const RuleFeatureSet& other)
 {
+    RELEASE_ASSERT(isMainThread());
+
     idsInRules.addAll(other.idsInRules);
     idsMatchingAncestorsInRules.addAll(other.idsMatchingAncestorsInRules);
     attributeLowercaseLocalNamesInRules.addAll(other.attributeLowercaseLocalNamesInRules);
@@ -668,6 +673,8 @@ void RuleFeatureSet::registerSubstitutionAttribute(const AtomString& attributeNa
 
 void RuleFeatureSet::clear()
 {
+    RELEASE_ASSERT(isMainThread());
+
     idsInRules.clear();
     idsMatchingAncestorsInRules.clear();
     attributeLowercaseLocalNamesInRules.clear();

@@ -99,6 +99,9 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         // See WI.Target.prototype.initialize.
 
         this._setConsoleClearAPIEnabled(target);
+
+        for (let channel of this._customLoggingChannels)
+            target.ConsoleAgent.setLoggingChannelLevel(channel.source, channel.level);
     }
 
     // Public

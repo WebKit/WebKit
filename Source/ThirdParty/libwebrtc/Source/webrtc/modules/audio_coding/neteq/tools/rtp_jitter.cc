@@ -13,11 +13,11 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
@@ -32,7 +32,7 @@ constexpr size_t kRtpDumpHeaderLength = 8;
 Buffer ReadNextPacket(FILE* file) {
   // Read the rtpdump header for the next packet.
   Buffer buffer;
-  buffer.SetData(kRtpDumpHeaderLength, [&](ArrayView<uint8_t> x) {
+  buffer.SetData(kRtpDumpHeaderLength, [&](std::span<uint8_t> x) {
     return fread(x.data(), 1, x.size(), file);
   });
   if (buffer.size() != kRtpDumpHeaderLength) {
@@ -45,7 +45,7 @@ Buffer ReadNextPacket(FILE* file) {
   RTC_CHECK_GE(len, kRtpDumpHeaderLength);
 
   // Read remaining data from file directly into buffer.
-  buffer.AppendData(len - kRtpDumpHeaderLength, [&](ArrayView<uint8_t> x) {
+  buffer.AppendData(len - kRtpDumpHeaderLength, [&](std::span<uint8_t> x) {
     return fread(x.data(), 1, x.size(), file);
   });
   if (buffer.size() != len) {

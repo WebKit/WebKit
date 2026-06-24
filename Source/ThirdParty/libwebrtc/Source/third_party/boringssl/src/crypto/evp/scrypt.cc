@@ -31,6 +31,8 @@
 // Salsa20 blocks. This implementation refers to them as Salsa20 blocks and
 // scrypt blocks, respectively.
 
+using namespace bssl;
+
 // A block_t is a Salsa20 block.
 typedef struct {
   uint32_t words[16];

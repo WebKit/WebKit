@@ -105,6 +105,9 @@ public:
     enum class ShouldCancel : uint8_t { No, Yes };
     virtual ShouldCancel adjustForNewBackForwardEntry() { return ShouldCancel::No; }
 
+    enum class AccumulateResult : uint8_t { NotHandled, Accumulated, CancelPending };
+    virtual AccumulateResult accumulateHistorySteps(Frame& /*frame*/, int /*additionalSteps*/) { return AccumulateResult::NotHandled; }
+
     double NODELETE delay() const { return m_delay; }
     LockHistory NODELETE lockHistory() const { return m_lockHistory; }
     LockBackForwardList NODELETE lockBackForwardList() const { return m_lockBackForwardList; }
@@ -214,7 +217,7 @@ public:
 
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
-        bool refresh = equalIgnoringFragmentIdentifier(localFrame->document()->url(), url());
+        bool refresh = equalIgnoringFragmentIdentifier(protect(localFrame->document())->url(), url());
         ResourceRequest resourceRequest { URL { url() }, String { referrer() }, refresh ? ResourceRequestCachePolicy::ReloadIgnoringCacheData : ResourceRequestCachePolicy::UseProtocolCachePolicy };
         if (initiatedByMainFrame() == InitiatedByMainFrame::Yes)
             resourceRequest.setRequester(ResourceRequestRequester::Main);
@@ -314,7 +317,7 @@ public:
 
         // history.go(0) is a reload, not a back-forward navigation.
         if (!m_steps) {
-            localFrame->loader().changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+            localFrame->loader().changeLocation(protect(localFrame->document())->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
             return;
         }
 
@@ -358,6 +361,20 @@ public:
         return ShouldCancel::No;
     }
 
+    AccumulateResult accumulateHistorySteps(Frame& frame, int additionalSteps) final
+    {
+        // history.go(0) is reload per spec, not a delta-traversal — fall through to normal scheduling.
+        if (!additionalSteps)
+            return AccumulateResult::NotHandled;
+        if (isSameDocumentNavigation(frame))
+            return AccumulateResult::NotHandled;
+        m_steps += additionalSteps;
+        if (!m_steps)
+            return AccumulateResult::CancelPending;
+        m_historyItem = nullptr;
+        return AccumulateResult::Accumulated;
+    }
+
 private:
     HistoryItem* targetHistoryItem(LocalFrame& localFrame) const
     {
@@ -394,7 +411,7 @@ public:
 
     std::optional<Ref<HistoryItem>> findBackForwardItemByKey(const LocalFrame& localFrame) const
     {
-        RefPtr entry = protect(localFrame.window()->navigation())->findEntryByKey(m_key);
+        RefPtr entry = protect(protect(localFrame.window())->navigation())->findEntryByKey(m_key);
         if (!entry)
             return std::nullopt;
 
@@ -404,7 +421,7 @@ public:
             return historyItem;
 
         // FIXME: heuristic to fix disambigaute-* tests, we should find something more exact.
-        bool backwards = entry->index() < localFrame.window()->navigation().currentEntry()->index();
+        bool backwards = entry->index() < protect(localFrame.window()->navigation())->currentEntry()->index();
 
         RefPtr page { localFrame.page() };
         auto items = protect(page->backForward())->allItems();
@@ -440,14 +457,14 @@ public:
 
         if (RefPtr currentItem = protect(page->backForward())->currentItem(); currentItem && currentItem->itemID() == (*historyItem)->itemID()) {
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-                localFrame->loader().changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+                localFrame->loader().changeLocation(protect(localFrame->document())->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
             return;
         }
 
         auto completionHandler = std::exchange(m_completionHandler, nullptr);
 
         Ref rootFrame = localFrame->rootFrame();
-        RefPtr upcomingTraverseMethodTracker = localFrame->window()->navigation().upcomingTraverseMethodTracker(m_key);
+        RefPtr upcomingTraverseMethodTracker = protect(localFrame->window()->navigation())->upcomingTraverseMethodTracker(m_key);
         page->goToItemForNavigationAPI(rootFrame, *historyItem, FrameLoadType::IndexedBackForward, *localFrame, upcomingTraverseMethodTracker.get());
 
         completionHandler(ScheduleHistoryNavigationResult::Completed);
@@ -467,8 +484,8 @@ public:
         if (!historyItem)
             return false;
 
-        URL url { (*historyItem)->url() };
-        return equalIgnoringFragmentIdentifier(localFrame->document()->url(), url);
+        URL url { protect(*historyItem)->url() };
+        return equalIgnoringFragmentIdentifier(protect(localFrame->document())->url(), url);
     }
 
 private:
@@ -613,7 +630,7 @@ bool NavigationScheduler::redirectScheduledDuringLoad()
 
 bool NavigationScheduler::locationChangePending()
 {
-    return m_redirect && m_redirect->isLocationChange() && m_redirect->targetIsCurrentFrame() && !m_redirect->isSameDocumentNavigation(m_frame);
+    return m_redirect && m_redirect->isLocationChange() && m_redirect->targetIsCurrentFrame() && !m_redirect->isSameDocumentNavigation(protect(m_frame));
 }
 
 void NavigationScheduler::clear()
@@ -648,7 +665,7 @@ void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double 
     // We want a new back/forward list item if the refresh timeout is > 1 second.
     if (!m_redirect || delay <= m_redirect->delay()) {
         auto lockBackForwardList = delay <= 1 ? LockBackForwardList::Yes : LockBackForwardList::No;
-        schedule(makeUnique<ScheduledRedirect>(initiatingDocument, delay, protect(downcast<LocalFrame>(m_frame.get()).document()->securityOrigin()).ptr(), url, LockHistory::Yes, lockBackForwardList, isMetaRefresh));
+        schedule(makeUnique<ScheduledRedirect>(initiatingDocument, delay, protect(protect(downcast<LocalFrame>(m_frame.get()).document())->securityOrigin()).ptr(), url, LockHistory::Yes, lockBackForwardList, isMetaRefresh));
     }
 }
 
@@ -673,7 +690,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
         return completionHandler(ScheduleLocationChangeResult::Stopped);
 
     if (lockBackForwardList == LockBackForwardList::No)
-        lockBackForwardList = mustLockBackForwardList(m_frame);
+        lockBackForwardList = mustLockBackForwardList(protect(m_frame));
 
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame.get());
     RefPtr loader = localFrame ? &localFrame->loader() : nullptr;
@@ -682,7 +699,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
     // fragment part, we don't need to schedule the location change.
     if (url.hasFragmentIdentifier()
         && localFrame
-        && equalIgnoringFragmentIdentifier(localFrame->document()->url(), url)) {
+        && equalIgnoringFragmentIdentifier(protect(localFrame->document())->url(), url)) {
         ResourceRequest resourceRequest { protect(localFrame->document())->encodingParseURL(url.string()), referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
         RefPtr frame = lexicalFrameFromCommonVM();
         auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
@@ -704,7 +721,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
     bool hasDispatchedNavigateEvent = false;
     if (localFrame && !url.protocolIsJavaScript()) {
         RefPtr document = localFrame->document();
-        if (document && document->settings().navigationAPIEnabled() && document->securityOrigin().isSameOriginAs(securityOrigin)) {
+        if (document && document->settings().navigationAPIEnabled() && protect(document->securityOrigin())->isSameOriginAs(securityOrigin)) {
             if (RefPtr window = document->window()) {
                 if (RefPtr navigation = window->navigation()) {
                     auto navigationType = (historyHandling == NavigationHistoryBehavior::Replace) ? NavigationNavigationType::Replace : NavigationNavigationType::Push;
@@ -778,7 +795,8 @@ void NavigationScheduler::scheduleRefresh(Document& initiatingDocument)
     if (!shouldScheduleNavigation())
         return;
     Ref frame = downcast<LocalFrame>(m_frame.get());
-    const URL& url = frame->document()->url();
+    RefPtr document = frame->document();
+    const URL& url = document->url();
     if (url.isEmpty())
         return;
 
@@ -790,6 +808,39 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
     LOG(History, "NavigationScheduler %p scheduleHistoryNavigation(%d) - shouldSchedule %d", this, steps, shouldScheduleNavigation());
     if (!shouldScheduleNavigation())
         return;
+
+    scheduleHistoryNavigation(m_frame.get(), steps);
+}
+
+void NavigationScheduler::scheduleHistoryNavigation(Frame& originatingFrame, int steps)
+{
+    if (!shouldScheduleNavigation())
+        return;
+
+    if (steps) {
+        if (Ref top = m_frame->tree().top(); top.ptr() != m_frame.ptr()) {
+            if (RefPtr localTop = dynamicDowncast<LocalFrame>(top.get())) {
+                if (RefPtr localOriginating = dynamicDowncast<LocalFrame>(originatingFrame); localOriginating && !localOriginating->loader().isComplete())
+                    localOriginating->loader().completed();
+                if (m_redirect)
+                    cancel();
+                protect(localTop->navigationScheduler())->scheduleHistoryNavigation(originatingFrame, steps);
+                return;
+            }
+        }
+    }
+
+    if (m_redirect) {
+        switch (m_redirect->accumulateHistorySteps(originatingFrame, steps)) {
+        case ScheduledNavigation::AccumulateResult::Accumulated:
+            return;
+        case ScheduledNavigation::AccumulateResult::CancelPending:
+            cancel();
+            return;
+        case ScheduledNavigation::AccumulateResult::NotHandled:
+            break;
+        }
+    }
 
     // Invalid history navigations (such as history.forward() during a new load) have the side effect of cancelling any scheduled
     // redirects. We also avoid the possibility of cancelling the current load by avoiding the scheduled redirection altogether.
@@ -903,6 +954,14 @@ void NavigationScheduler::startTimer()
 
 void NavigationScheduler::adjustPendingHistoryNavigationForNewBackForwardEntry()
 {
+    if (Ref top = m_frame->tree().top(); top.ptr() != m_frame.ptr()) {
+        if (RefPtr localTop = dynamicDowncast<LocalFrame>(top.get())) {
+            // After forwarding, this frame's m_redirect (if any) is some
+            // other ScheduledNavigation, not the queued traversal.
+            protect(localTop->navigationScheduler())->adjustPendingHistoryNavigationForNewBackForwardEntry();
+            return;
+        }
+    }
     if (!m_redirect)
         return;
     if (m_redirect->adjustForNewBackForwardEntry() == ScheduledNavigation::ShouldCancel::Yes)

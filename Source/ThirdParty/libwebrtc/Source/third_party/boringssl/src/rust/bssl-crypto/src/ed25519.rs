@@ -54,6 +54,7 @@ pub const SIGNATURE_LEN: usize = bssl_sys::ED25519_SIGNATURE_LEN as usize;
 const KEYPAIR_LEN: usize = bssl_sys::ED25519_PRIVATE_KEY_LEN as usize;
 
 /// An Ed25519 private key.
+#[derive(Clone)]
 pub struct PrivateKey([u8; KEYPAIR_LEN]);
 
 /// An Ed25519 public key used to verify a signature + message.
@@ -138,6 +139,24 @@ impl PrivateKey {
                 .expect("The slice is always the correct size for a public key"),
         )
     }
+
+    // Safety: caller must make sure that the key type is ED25519
+    pub(crate) unsafe fn from_evp_pkey(mut pkey: scoped::EvpPkey) -> Self {
+        let mut seed = [0; SEED_LEN];
+        let len = &mut { SEED_LEN };
+        // Safety: pkey is now owned and len is set
+        let ret = unsafe {
+            bssl_sys::EVP_PKEY_get_raw_private_key(
+                pkey.as_ffi_ptr(),
+                seed.as_mut_ptr(),
+                len as *mut _,
+            )
+        };
+        // Sanity check, in case the seed is not as long as expected.
+        assert_eq!(ret, 1);
+        assert_eq!(*len, SEED_LEN);
+        Self::from_seed(&seed)
+    }
 }
 
 impl PublicKey {
@@ -182,6 +201,7 @@ impl PublicKey {
                 PUBLIC_KEY_LEN,
             )
         });
+        // Safety: we are only testing pointer nullness, we do not mutate the data
         assert!(!pkey.as_ffi_ptr().is_null());
 
         cbb_to_buffer(PUBLIC_KEY_LEN + 32, |cbb| unsafe {

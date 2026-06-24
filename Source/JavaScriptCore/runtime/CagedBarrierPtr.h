@@ -66,8 +66,8 @@ public:
 
     // We need the template here so that the type of U is deduced at usage time rather than class time. U should always be T.
     template<typename U = T>
-    typename std::enable_if<!std::is_same<void, U>::value, T>::type&
-    /* T& */ at(size_t index) const { return get()[index]; }
+        requires (!std::is_void_v<U>)
+    U& at(size_t index) const { return get()[index]; }
 
     bool operator==(const CagedBarrierPtr& other) const
     {

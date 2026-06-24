@@ -91,7 +91,7 @@ ParsedCertificate::~ParsedCertificate() = default;
 std::shared_ptr<const ParsedCertificate> ParsedCertificate::Create(
     bssl::UniquePtr<CRYPTO_BUFFER> backing_data,
     const ParseCertificateOptions &options, CertErrors *errors) {
-  // |errors| is an optional parameter, but to keep the code simpler, use a
+  // `errors` is an optional parameter, but to keep the code simpler, use a
   // dummy object when one wasn't provided.
   CertErrors unused_errors;
   if (!errors) {

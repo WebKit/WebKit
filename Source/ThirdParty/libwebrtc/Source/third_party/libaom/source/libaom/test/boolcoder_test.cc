@@ -54,7 +54,7 @@ TEST(AV1, TestBitIO) {
         ACMRandom bit_rnd(random_seed);
         aom_writer bw;
         uint8_t bw_buffer[kBufferSize];
-        aom_start_encode(&bw, bw_buffer);
+        aom_start_encode(&bw, bw_buffer, sizeof(bw_buffer));
 
         int bit = (bit_method == 0) ? 0 : (bit_method == 1) ? 1 : 0;
         for (int i = 0; i < kBitsToTest; ++i) {
@@ -96,7 +96,7 @@ TEST(AV1, TestTell) {
   // Coders are noisier at low probabilities, so we start at p = 4.
   for (int p = 4; p < 256; p++) {
     double probability = p / 256.;
-    aom_start_encode(&bw, bw_buffer);
+    aom_start_encode(&bw, bw_buffer, sizeof(bw_buffer));
     for (int i = 0; i < kSymbols; i++) {
       aom_write(&bw, 0, p);
     }
@@ -142,7 +142,7 @@ TEST(AV1, TestHasOverflowed) {
   const int kSymbols = 1024;
   // Coders are noisier at low probabilities, so we start at p = 4.
   for (int p = 4; p < 256; p++) {
-    aom_start_encode(&bw, bw_buffer);
+    aom_start_encode(&bw, bw_buffer, sizeof(bw_buffer));
     for (int i = 0; i < kSymbols; i++) {
       aom_write(&bw, 1, p);
     }

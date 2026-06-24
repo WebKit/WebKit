@@ -45,6 +45,13 @@ namespace WebCore {
 static constexpr std::array headersToIgnoreAfterRevalidation {
     "allow"_s,
     "connection"_s,
+    "content-disposition"_s,
+    "content-encoding"_s,
+    "content-language"_s,
+    "content-length"_s,
+    "content-location"_s,
+    "content-range"_s,
+    "content-type"_s,
     "etag"_s,
     "keep-alive"_s,
     "last-modified"_s,
@@ -62,7 +69,6 @@ static constexpr std::array headersToIgnoreAfterRevalidation {
 // Rather than listing all the relevant headers, we can consolidate them into
 // this list, also grabbed from Chromium's net/http/http_response_headers.cc.
 static constexpr std::array headerPrefixesToIgnoreAfterRevalidation {
-    "content-"_s,
     "x-content-"_s,
     "x-webkit-"_s
 };
@@ -132,6 +138,10 @@ Seconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, 
     auto effectiveDate = date.value_or(responseTime);
     if (auto expires = response.expires())
         return *expires - effectiveDate;
+
+    // Check if the expires header is present but invalid.
+    if (response.httpHeaderFields().contains(HTTPHeaderName::Expires))
+        return 0_us;
 
     // Implicit lifetime.
     switch (response.httpStatusCode()) {
@@ -296,6 +306,8 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                 result.noCache = true;
             else if (equalLettersIgnoringASCIICase(directives[i].first, "no-store"_s))
                 result.noStore = true;
+            else if (equalLettersIgnoringASCIICase(directives[i].first, "public"_s))
+                result.isPublic = true;
             else if (equalLettersIgnoringASCIICase(directives[i].first, "must-revalidate"_s))
                 result.mustRevalidate = true;
             else if (equalLettersIgnoringASCIICase(directives[i].first, "max-age"_s)) {
@@ -322,6 +334,13 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                 double maxStale = directives[i].second.toDouble(ok);
                 if (ok)
                     result.maxStale = Seconds { maxStale };
+            } else if (equalLettersIgnoringASCIICase(directives[i].first, "min-fresh"_s)) {
+                if (result.minFresh)
+                    continue;
+                bool ok;
+                double minFresh = directives[i].second.toDouble(ok);
+                if (ok)
+                    result.minFresh = Seconds { minFresh };
             } else if (equalLettersIgnoringASCIICase(directives[i].first, "immutable"_s)) {
                 result.immutable = true;
             } else if (equalLettersIgnoringASCIICase(directives[i].first, "stale-while-revalidate"_s)) {
@@ -452,24 +471,6 @@ bool isStatusCodeCacheableByDefault(int statusCode)
     case 410: // Gone
     case 414: // URI Too Long
     case 501: // Not Implemented
-        return true;
-    default:
-        return false;
-    }
-}
-
-bool isStatusCodePotentiallyCacheable(int statusCode)
-{
-    switch (statusCode) {
-    case 201: // Created
-    case 202: // Accepted
-    case 205: // Reset Content
-    case 302: // Found
-    case 303: // See Other
-    case 307: // Temporary redirect
-    case 403: // Forbidden
-    case 406: // Not Acceptable
-    case 415: // Unsupported Media Type
         return true;
     default:
         return false;

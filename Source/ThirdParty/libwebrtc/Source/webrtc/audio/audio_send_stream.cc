@@ -15,13 +15,13 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_processing.h"
 #include "api/audio_codecs/audio_encoder.h"
@@ -33,6 +33,7 @@
 #include "api/function_view.h"
 #include "api/rtc_error.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_sender_interface.h"
 #include "api/scoped_refptr.h"
@@ -222,7 +223,8 @@ AudioSendStream::ExtensionIds AudioSendStream::FindExtensionIds(
   return ids;
 }
 
-int AudioSendStream::TransportSeqNumId(const AudioSendStream::Config& config) {
+RtpHeaderExtensionId AudioSendStream::TransportSeqNumId(
+    const AudioSendStream::Config& config) {
   return FindExtensionIds(config.rtp.extensions).transport_sequence_number;
 }
 
@@ -273,14 +275,13 @@ void AudioSendStream::ConfigureStream(
 
   // Audio level indication
   if (first_time || new_ids.audio_level != old_ids.audio_level) {
-    channel_send_->SetSendAudioLevelIndicationStatus(new_ids.audio_level != 0,
-                                                     new_ids.audio_level);
+    channel_send_->SetSendAudioLevelIndicationStatus(new_ids.audio_level);
   }
 
   if (first_time || new_ids.abs_send_time != old_ids.abs_send_time) {
     absl::string_view uri = AbsoluteSendTime::Uri();
     rtp_rtcp_module_->DeregisterSendRtpHeaderExtension(uri);
-    if (new_ids.abs_send_time) {
+    if (new_ids.abs_send_time.IsSet()) {
       rtp_rtcp_module_->RegisterRtpHeaderExtension(uri, new_ids.abs_send_time);
     }
   }
@@ -297,7 +298,7 @@ void AudioSendStream::ConfigureStream(
     rtp_rtcp_module_->DeregisterSendRtpHeaderExtension(uri);
 
     if (!allocate_audio_without_feedback_ &&
-        new_ids.transport_sequence_number != 0) {
+        new_ids.transport_sequence_number.IsSet()) {
       rtp_rtcp_module_->RegisterRtpHeaderExtension(
           uri, new_ids.transport_sequence_number);
       // Probing in application limited region is only used in combination with
@@ -314,7 +315,7 @@ void AudioSendStream::ConfigureStream(
   // MID RTP header extension.
   if ((first_time || new_ids.mid != old_ids.mid ||
        new_config.rtp.mid != old_config.rtp.mid) &&
-      new_ids.mid != 0 && !new_config.rtp.mid.empty()) {
+      new_ids.mid.IsSet() && !new_config.rtp.mid.empty()) {
     rtp_rtcp_module_->RegisterRtpHeaderExtension(RtpMid::Uri(), new_ids.mid);
     rtp_rtcp_module_->SetMid(new_config.rtp.mid);
   }
@@ -322,7 +323,7 @@ void AudioSendStream::ConfigureStream(
   if (first_time || new_ids.abs_capture_time != old_ids.abs_capture_time) {
     absl::string_view uri = AbsoluteCaptureTimeExtension::Uri();
     rtp_rtcp_module_->DeregisterSendRtpHeaderExtension(uri);
-    if (new_ids.abs_capture_time) {
+    if (new_ids.abs_capture_time.IsSet()) {
       rtp_rtcp_module_->RegisterRtpHeaderExtension(uri,
                                                    new_ids.abs_capture_time);
     }
@@ -495,7 +496,7 @@ webrtc::AudioSendStream::Stats AudioSendStream::GetStats(
   return stats;
 }
 
-void AudioSendStream::DeliverRtcp(ArrayView<const uint8_t> packet) {
+void AudioSendStream::DeliverRtcp(std::span<const uint8_t> packet) {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
   channel_send_->ReceivedRTCPPacket(packet.data(), packet.size());
   // Poll if overhead has changed, which it can do if ack triggers us to stop

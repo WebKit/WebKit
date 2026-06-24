@@ -13,8 +13,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/async_socket.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
@@ -59,8 +59,8 @@ class BufferedReadAdapter : public AsyncSocketAdapter {
 // fake SSL handshake. Used for "ssltcp" P2P functionality.
 class AsyncSSLSocket : public BufferedReadAdapter {
  public:
-  static ArrayView<const uint8_t> SslClientHello();
-  static ArrayView<const uint8_t> SslServerHello();
+  static std::span<const uint8_t> SslClientHello();
+  static std::span<const uint8_t> SslServerHello();
 
   explicit AsyncSSLSocket(Socket* socket);
 

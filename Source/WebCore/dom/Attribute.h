@@ -65,7 +65,6 @@ public:
     bool matches(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI) const;
 
     void setValue(const AtomString& value) { m_value = value; }
-    void setPrefix(const AtomString& prefix) { m_name.setPrefix(prefix); }
 
     // Note: This API is only for HTMLTreeBuilder.  It is not safe to change the
     // name of an attribute once parseAttribute has been called as DOM

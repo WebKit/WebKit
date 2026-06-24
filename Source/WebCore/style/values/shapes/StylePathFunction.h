@@ -33,7 +33,6 @@
 namespace WebCore {
 
 struct AcceleratedEffectPathFunction;
-struct TransformOperationData;
 
 namespace Style {
 
@@ -69,17 +68,17 @@ template<size_t I> const auto& get(const Path& value)
 
 // Non-standard parameters, `conversion` and `zoom`, are needed in some instances of Style <-> CSS conversions for Path.
 
-template<> struct ToCSS<Path> { auto operator()(const Path&, const RenderStyle&, PathConversion = PathConversion::None) -> CSS::Path; };
+template<> struct ToCSS<Path> { auto operator()(const Path&, const Style::ComputedStyle&, PathConversion = PathConversion::None) -> CSS::Path; };
 template<> struct ToStyle<CSS::Path> { auto operator()(const CSS::Path&, const BuilderState&, std::optional<float> zoom = 1.0f) -> Path; };
 
-template<> struct ToCSS<Path::Data> { auto operator()(const Path::Data&, const RenderStyle&, PathConversion = PathConversion::None) -> CSS::Path::Data; };
+template<> struct ToCSS<Path::Data> { auto operator()(const Path::Data&, const Style::ComputedStyle&, PathConversion = PathConversion::None) -> CSS::Path::Data; };
 template<> struct ToStyle<CSS::Path::Data> { auto operator()(const CSS::Path::Data&, const BuilderState&) -> Path::Data; };
 
-template<> struct CSSValueCreation<PathFunction> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const PathFunction&, PathConversion = PathConversion::None); };
+template<> struct CSSValueCreation<PathFunction> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const PathFunction&, PathConversion = PathConversion::None); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<Path> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const Path&, PathConversion = PathConversion::None); };
+template<> struct Serialize<Path> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const Path&, PathConversion = PathConversion::None); };
 
 // MARK: - Path
 
@@ -100,7 +99,7 @@ template<> struct Blending<Path> {
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-template<> struct Evaluation<PathFunction, AcceleratedEffectPathFunction> { AcceleratedEffectPathFunction operator()(const PathFunction&, const TransformOperationData&, ZoomFactor); };
+template<> struct Evaluation<PathFunction, AcceleratedEffectPathFunction> { AcceleratedEffectPathFunction operator()(const PathFunction&, const FloatSize&, ZoomFactor); };
 
 #endif
 

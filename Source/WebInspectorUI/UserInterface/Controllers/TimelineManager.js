@@ -843,16 +843,22 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, stackTrace, sourceCodeLocation);
+            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, stackTrace, sourceCodeLocation, {
+                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+            });
 
         case InspectorBackend.Enum.Timeline.EventType.RecalculateStyles:
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, stackTrace, sourceCodeLocation);
+            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, stackTrace, sourceCodeLocation, {
+                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+            });
 
         case InspectorBackend.Enum.Timeline.EventType.InvalidateLayout:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, stackTrace, sourceCodeLocation);
+            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, stackTrace, sourceCodeLocation, {
+                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+            });
 
         case InspectorBackend.Enum.Timeline.EventType.Layout:
             var layoutRecordType = sourceCodeLocation ? WI.LayoutTimelineRecord.EventType.ForcedLayout : WI.LayoutTimelineRecord.EventType.Layout;
@@ -864,10 +870,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         case InspectorBackend.Enum.Timeline.EventType.Paint:
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Paint, startTime, endTime, stackTrace, sourceCodeLocation, {
                 quad: new WI.Quad(recordPayload.data.clip),
+                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.Composite:
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Composite, startTime, endTime, stackTrace, sourceCodeLocation);
+            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Composite, startTime, endTime, stackTrace, sourceCodeLocation, {
+                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+            });
 
         case InspectorBackend.Enum.Timeline.EventType.FirstContentfulPaint:
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.FirstContentfulPaint, startTime, startTime, stackTrace, sourceCodeLocation);

@@ -56,6 +56,13 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)attributeWithDomain:(NSString *)domain name:(NSString *)name;
 @end
 
+@interface RBSGrant : RBSAttribute
+@end
+
+@interface RBSHereditaryGrant : RBSGrant
++ (instancetype)grantWithNamespace:(NSString *)endowmentNamespace sourceEnvironment:(NSString *)sourceEnvironment attributes:(nullable NSArray<RBSAttribute *> *)attributes;
+@end
+
 @interface RBSTarget : NSObject
 + (RBSTarget *)targetWithPid:(pid_t)pid;
 + (RBSTarget *)targetWithPid:(pid_t)pid environmentIdentifier:(NSString *)environment;
@@ -94,9 +101,15 @@ typedef NS_ENUM(uint8_t, RBSTaskState) {
     RBSTaskStateRunningScheduled        = 4,
 };
 
+@interface RBSProcessEndowmentInfo : NSObject
+@property (nonatomic, readonly, copy) NSString *endowmentNamespace;
+@property (nonatomic, readonly, copy, nullable) NSString *environment;
+@end
+
 @interface RBSProcessState : NSObject
 @property (nonatomic, readonly, assign) RBSTaskState taskState;
 @property (nonatomic, readonly, copy) NSSet<NSString *> *endowmentNamespaces;
+@property (nonatomic, readonly, copy, nullable) NSSet<RBSProcessEndowmentInfo *> *endowmentInfos;
 @end
 
 extern const NSTimeInterval RBSProcessTimeLimitationNone;
@@ -152,6 +165,7 @@ typedef NS_OPTIONS(NSUInteger, RBSProcessStateValues) {
     RBSProcessStateValueTerminationResistance   = (1 << 2),
     RBSProcessStateValueLegacyAssertions        = (1 << 3),
     RBSProcessStateValueModernAssertions        = (1 << 4),
+    RBSProcessStateValueEndowmentInfos          = (1 << 5),
 };
 @end
 

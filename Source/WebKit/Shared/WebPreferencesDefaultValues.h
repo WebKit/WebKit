@@ -173,6 +173,10 @@ bool NODELETE defaultWebRTCSocketsServiceClassEnabled();
 bool NODELETE defaultBuiltInNotificationsEnabled();
 #endif
 
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+bool defaultHorizontalBannerViewOverlaysEnabled();
+#endif
+
 #if ENABLE(DEVICE_ORIENTATION)
 bool NODELETE defaultDeviceOrientationPermissionAPIEnabled();
 #endif

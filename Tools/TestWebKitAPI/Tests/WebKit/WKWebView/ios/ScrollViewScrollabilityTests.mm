@@ -52,6 +52,8 @@ static RetainPtr<TestWKWebView> webViewWithAutofocusedInput(const RetainPtr<Test
         return _WKFocusStartsInputSessionPolicyAllow;
     }];
     [webView _setInputDelegate:inputDelegate.get()];
+    [webView focusInWindow];
+    [webView waitForNextPresentationUpdate];
     [webView synchronouslyLoadHTMLString:nonScrollableWithInputDocumentMarkup];
 
     TestWebKitAPI::Util::run(&doneWaiting);

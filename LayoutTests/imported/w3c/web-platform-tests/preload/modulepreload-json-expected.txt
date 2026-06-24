@@ -1,0 +1,3 @@
+
+PASS link rel=modulepreload with as=json should preload JSON module
+

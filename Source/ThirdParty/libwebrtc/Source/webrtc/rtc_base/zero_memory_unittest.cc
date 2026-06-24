@@ -12,8 +12,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -30,13 +30,13 @@ TEST(ZeroMemoryTest, TestZeroMemory) {
   }
 }
 
-TEST(ZeroMemoryTest, TestZeroArrayView) {
+TEST(ZeroMemoryTest, TestZeroSpan) {
   static const size_t kBufferSize = 32;
   uint8_t buffer[kBufferSize];
   for (size_t i = 0; i < kBufferSize; i++) {
     buffer[i] = static_cast<uint8_t>(i + 1);
   }
-  ExplicitZeroMemory(ArrayView<uint8_t>(buffer, sizeof(buffer)));
+  ExplicitZeroMemory(std::span<uint8_t>(buffer, sizeof(buffer)));
   for (size_t i = 0; i < kBufferSize; i++) {
     EXPECT_EQ(buffer[i], 0);
   }

@@ -135,10 +135,13 @@ cc_test(
         "//absl/base",
         "//absl/base:config",
         "//absl/base:core_headers",
+        "//absl/base:malloc_internal",
+        "//absl/cleanup",
         "//absl/log",
         "//absl/log:check",
         "//absl/memory",
         "//absl/strings",
+        "//absl/strings:str_format",
         "@googletest//:gtest",
     ],
 )
@@ -153,7 +156,10 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
-    visibility = ["//absl/log/internal:__pkg__"],
+    visibility = [
+        "//absl:friends",
+        "//absl/log/internal:__pkg__",
+    ],
     deps = [
         ":stacktrace",
         ":symbolize",
@@ -215,7 +221,7 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
-    visibility = ["//visibility:private"],
+    visibility = ["//absl:friends"],
     deps = [
         "//absl/base:config",
         "//absl/base:core_headers",
@@ -232,6 +238,7 @@ cc_library(
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
     visibility = [
+        "//absl:friends",
         "//absl/container:__pkg__",
         "//absl/debugging:__pkg__",
     ],
@@ -448,6 +455,7 @@ cc_binary(
         ":stacktrace",
         "//absl/base:config",
         "//absl/base:core_headers",
+        "//absl/cleanup",
         "@google_benchmark//:benchmark_main",
     ],
 )

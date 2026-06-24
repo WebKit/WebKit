@@ -12,6 +12,7 @@
 #define API_TASK_QUEUE_TEST_MOCK_TASK_QUEUE_BASE_H_
 
 #include "absl/functional/any_invocable.h"
+#include "absl/strings/string_view.h"
 #include "api/location.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
@@ -38,6 +39,7 @@ class MockTaskQueueBase : public TaskQueueBase {
                const PostDelayedTaskTraits&,
                const Location&),
               (override));
+  MOCK_METHOD(absl::string_view, queue_name, (), (const, override));
 };
 
 }  // namespace webrtc

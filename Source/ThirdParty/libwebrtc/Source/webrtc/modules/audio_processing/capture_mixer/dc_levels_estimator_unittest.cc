@@ -13,10 +13,10 @@
 
 #include <algorithm>
 #include <numbers>
+#include <span>
 #include <tuple>
 #include <vector>
 
-#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -25,8 +25,8 @@ namespace {
 void PopulateStereoChannelsWithSinusoid(int sample_rate_hz,
                                         float dc_level,
                                         int& generated_sample_counter,
-                                        ArrayView<float> channel0,
-                                        ArrayView<float> channel1) {
+                                        std::span<float> channel0,
+                                        std::span<float> channel1) {
   constexpr float kPi = std::numbers::pi;
   constexpr float kApmlitudeScaling = 1000.0f;
   constexpr float kBaseSinusoidFrequencyHz = 100.0f;
@@ -78,7 +78,7 @@ TEST_P(DcLevelsEstimatorParametrizedTest, VerifyEstimates) {
     estimator.Update(channel0, channel1);
   }
 
-  ArrayView<const float> levels = estimator.GetLevels();
+  std::span<const float> levels = estimator.GetLevels();
 
   for (const float level : levels) {
     EXPECT_NEAR(level, true_dc_level,

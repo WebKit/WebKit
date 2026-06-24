@@ -30,6 +30,7 @@
 
 #import "LayerHostingContext.h"
 #import "LayerHostingContextManager.h"
+#import "Logging.h"
 #import "MediaPlayerPrivateRemoteMessages.h"
 #import "RemoteVideoFrameObjectHeap.h"
 #import <QuartzCore/QuartzCore.h>

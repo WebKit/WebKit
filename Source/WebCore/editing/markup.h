@@ -30,6 +30,7 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/HTMLInterchange.h>
 #include <WebCore/MarkupExclusionRule.h>
+#include <WebCore/PageConfiguration.h>
 #include <WebCore/ParserContentPolicy.h>
 #include <WebCore/ShadowRoot.h>
 #include <wtf/Forward.h>
@@ -59,7 +60,7 @@ template<typename> class ExceptionOr;
 void replaceSubresourceURLs(Ref<DocumentFragment>&&, HashMap<AtomString, AtomString>&&);
 void removeSubresourceURLAttributes(Ref<DocumentFragment>&&, Function<bool(const URL&)> shouldRemoveURL);
 
-Ref<Page> createPageForSanitizingWebContent(Document* destinationDocument);
+Ref<Page> createPageForSanitizingWebContent(Document* destinationDocument, std::optional<PageConfiguration>&& = { });
 enum class MSOListQuirks : bool { CheckIfNeeded, Disabled };
 String sanitizeMarkup(const String&, Document* destinationDocument, MSOListQuirks = MSOListQuirks::Disabled, std::optional<Function<void(DocumentFragment&)>> fragmentSanitizer = std::nullopt);
 String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&&, Document&, MSOListQuirks, const String& originalMarkup);

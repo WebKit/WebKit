@@ -17,10 +17,10 @@
 #include <memory>
 #include <optional>
 
-#include "absl/strings/string_view.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_factory.h"
 #include "api/scoped_refptr.h"
@@ -92,7 +92,7 @@ class NetEqTest : public NetEqSimulator {
             std::unique_ptr<NetEqInput> input,
             std::unique_ptr<AudioSink> output,
             Callbacks callbacks,
-            absl::string_view field_trials = "");
+            const FieldTrialsView* field_trials = nullptr);
 
   ~NetEqTest() override;
 

@@ -41,7 +41,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #endif
 
-using namespace WebCore;
 
 #if !PLATFORM(IOS_FAMILY)
 @interface WebNodeHighlight (FileInternal)
@@ -81,7 +80,7 @@ using namespace WebCore;
 
 @implementation WebNodeHighlight
 
-- (id)initWithTargetView:(NSView *)targetView inspectorController:(NakedPtr<PageInspectorController>)inspectorController
+- (id)initWithTargetView:(NSView *)targetView inspectorController:(NakedPtr<WebCore::PageInspectorController>)inspectorController
 {
     self = [super init];
     if (!self)
@@ -252,7 +251,7 @@ using namespace WebCore;
     return _targetView;
 }
 
-- (NakedPtr<PageInspectorController>)inspectorController
+- (NakedPtr<WebCore::PageInspectorController>)inspectorController
 {
     return _inspectorController;
 }

@@ -21,7 +21,6 @@ if (!build_with_chromium) {
       ":lib",
       "../../../../rtc_base:checks",
       "../../../../test:fileutils",
-      "../../../../test:test_support",
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
     ]
@@ -45,7 +44,6 @@ rtc_library("lib") {
     "wavreader_interface.h",
   ]
   deps = [
-    "../../../../api:array_view",
     "../../../../common_audio",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:logging",
@@ -68,7 +66,6 @@ rtc_library("unittest") {
   ]
   deps = [
     ":lib",
-    "../../../../api:array_view",
     "../../../../common_audio",
     "../../../../rtc_base:logging",
     "../../../../rtc_base:safe_conversions",

@@ -16,8 +16,8 @@
 
 #include <array>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/audio_view.h"
 #include "api/audio/channel_layout.h"
 #include "api/rtp_packet_infos.h"
@@ -199,7 +199,7 @@ class AudioFrame {
   // A permanently zeroed out buffer to represent muted frames. This is a
   // header-only class, so the only way to avoid creating a separate zeroed
   // buffer per translation unit is to wrap a static in an inline function.
-  static ArrayView<const int16_t> zeroed_data();
+  static std::span<const int16_t> zeroed_data();
 
   std::array<int16_t, kMaxDataSizeSamples> data_;
   bool muted_ = true;

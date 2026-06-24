@@ -27,10 +27,12 @@
 #include "config.h"
 #include "RegExpStringIteratorPrototype.h"
 
-#include "JSCBuiltins.h"
 #include "JSCInlines.h"
+#include "JSRegExpStringIterator.h"
 
 namespace JSC {
+
+static JSC_DECLARE_HOST_FUNCTION(regExpStringIteratorPrototypeFuncNext);
 
 const ClassInfo RegExpStringIteratorPrototype::s_info = { "RegExp String Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpStringIteratorPrototype) };
 
@@ -38,8 +40,28 @@ void RegExpStringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globa
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, regExpStringIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, regExpStringIteratorPrototypeFuncNext, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, RegExpStringIteratorNextIntrinsic);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+}
+
+// https://tc39.es/ecma262/#sec-%regexpstringiteratorprototype%.next
+JSC_DEFINE_HOST_FUNCTION(regExpStringIteratorPrototypeFuncNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 1. Let O be the this value.
+    // 2. If O is not an Object, throw a TypeError exception.
+    // 3. If O does not have all of the internal slots of a RegExp String Iterator Object Instance, throw a TypeError exception.
+    JSValue thisValue = callFrame->thisValue();
+    auto* iterator = dynamicDowncast<JSRegExpStringIterator>(thisValue);
+    if (!iterator) [[unlikely]] {
+        if (!thisValue.isObject())
+            return throwVMTypeError(globalObject, scope, "%RegExpStringIteratorPrototype%.next requires |this| to be an Object"_s);
+        return throwVMTypeError(globalObject, scope, "%RegExpStringIteratorPrototype%.next requires |this| to be a RegExp String Iterator instance"_s);
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(iterator->next(globalObject)));
 }
 
 } // namespace JSC

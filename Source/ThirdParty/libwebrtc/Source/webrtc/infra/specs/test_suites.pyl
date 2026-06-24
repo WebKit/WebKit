@@ -19,10 +19,12 @@
       'android_sdk_junit_tests': {},
     },
     'android_tests': {
+      # keep-sorted start block=yes
       'AppRTCMobile_test_apk': {},
       'android_instrumentation_test_apk': {},
       'audio_decoder_unittests': {},
       'audio_engine_tests': {},
+      'call_tests': {},
       'common_audio_unittests': {},
       'common_video_unittests': {},
       'dcsctp_unittests': {},
@@ -35,6 +37,7 @@
       'peerconnection_unittests': {
         'mixins': ['shards-4'],
       },
+      'resource_adaptation_tests': {},
       'rtc_media_unittests': {},
       'rtc_p2p_unittests': {},
       'rtc_pc_unittests': {},
@@ -44,18 +47,21 @@
       },
       'slow_peer_connection_unittests': {},
       'svc_tests': {
-        'remove_mixins': ['walleye'],
-        'mixins': ['shards-8', 'crosshatch'],
+        'mixins': ['shards-8'],
       },
       'system_wrappers_unittests': {},
       'test_support_unittests': {},
       'tools_unittests': {},
-      'video_engine_tests': {
+      'video_adaptation_tests': {},
+      'video_tests': {
         'mixins': ['shards-4'],
       },
       'video_timing_tests': {},
       'voip_unittests': {},
       'webrtc_nonparallel_tests': {},
+      # keep-sorted end
+      # rust_tests don't work on android yet. See crbug.com/40809974.
+      # 'rust_tests': {},
     },
     'android_tests_tryserver_specific': {
       'video_codec_perf_tests': {
@@ -66,8 +72,10 @@
       }
     },
     'desktop_tests': {
+      # keep-sorted start block=yes
       'audio_decoder_unittests': {},
       'audio_engine_tests': {},
+      'call_tests': {},
       'common_audio_unittests': {},
       'common_video_unittests': {},
       'dcsctp_unittests': {},
@@ -80,6 +88,7 @@
       'peerconnection_unittests': {
         'mixins': ['shards-4'],
       },
+      'resource_adaptation_tests': {},
       'rtc_media_unittests': {},
       'rtc_p2p_unittests': {},
       'rtc_pc_unittests': {},
@@ -87,6 +96,7 @@
       'rtc_unittests': {
         'mixins': ['shards-6'],
       },
+      'rust_tests': {},
       'slow_peer_connection_unittests': {},
       'svc_tests': {
         'mixins': ['shards-4'],
@@ -96,12 +106,12 @@
         'mixins': ['shards-2'],
       },
       'tools_unittests': {},
-      'video_engine_tests': {
-        'mixins': ['shards-4'],
-      },
+      'video_adaptation_tests': {},
+      'video_tests': {},
       'video_timing_tests': {},
       'voip_unittests': {},
       'webrtc_nonparallel_tests': {},
+      # keep-sorted end
     },
     'desktop_tests_linux_specific': {
       'shared_screencast_stream_test': {},
@@ -117,67 +127,45 @@
       }
     },
     'fuchsia_compatible_tests': {
+      # keep-sorted start block=yes
       'audio_decoder_unittests': {},
+      'call_tests': {},
       'common_audio_unittests': {},
       'common_video_unittests': {},
       'dcsctp_unittests': {},
+      'resource_adaptation_tests': {},
       'rtc_media_unittests': {},
-      # TODO(bugs.webrtc.org/14705): Enable when NonGlobalFieldTrialsInstanceDoesNotModifyGlobalString is fixed.
-      # TODO(bugs.webrtc.org/14700):  Enable when NetworkTest tests are fixed.
-      # 'rtc_unittests': {},
       'rtc_p2p_unittests': {},
       'rtc_pc_unittests': {},
       'svc_tests': {
         'mixins': ['shards-4'],
       },
       'system_wrappers_unittests': {},
-      # TODO(bugs.webrtc.org/14712):  Enable once network issue is fixed.
-      # 'peerconnection_unittests': {},
-      'video_engine_tests': {
+      'video_adaptation_tests': {},
+      'video_tests': {
         'mixins': ['shards-4'],
       },
       'voip_unittests': {},
       'webrtc_nonparallel_tests': {},
+      # keep-sorted end
+      # TODO(bugs.webrtc.org/14705): Enable when NonGlobalFieldTrialsInstanceDoesNotModifyGlobalString is fixed.
+      # TODO(bugs.webrtc.org/14700):  Enable when NetworkTest tests are fixed.
+      # 'rtc_unittests': {},
       # TODO(bugs.fuchsia.dev/115601): Enable when cpu time API's are implemented in Fuchsia
       # 'test_support_unittests': {},
       # TODO(bugs.webrtc.org/14707): chromium.test component needs to allow creating listening ports.
       # 'tools_unittests': {},
-      #
-    },
-    'ios_device_tests': {
-      # TODO(bugs.webrtc.org/11362): Real XCTests fail to start on devices.
-      #'apprtcmobile_tests': {'mixins': ['xcodebuild-device-runner']},
-      'common_audio_unittests': {},
-      'common_video_unittests': {},
-      'modules_tests': {
-        'mixins': ['shards-2', 'timeout-2h'],
-        'args': [
-          # Some tests exceed the default 180 seconds readline timeout.
-          '--readline-timeout=1200',
-        ]
-      },
-      'modules_unittests': {
-        'mixins': ['shards-6'],
-      },
-      'rtc_p2p_unittests': {},
-      'rtc_pc_unittests': {},
-      'rtc_stats_unittests': {},
-      # TODO(bugs.webrtc.org/11362): Real XCTests fail to start on devices.
-      #'sdk_framework_unittests': {'mixins': ['xcodebuild-device-runner']},
-      #'sdk_unittests': {'mixins': ['xcodebuild-device-runner']},
-      'system_wrappers_unittests': {},
-      'test_support_unittests': {},
-      'tools_unittests': {},
-      'video_engine_tests': {
-        'mixins': ['shards-4'],
-      },
+      # TODO(bugs.webrtc.org/416446214): Determine how to get rust test runner working on Fuchsia.
+      # 'rust_tests': {},
     },
     'ios_simulator_tests': {
+      # keep-sorted start block=yes
       'apprtcmobile_tests': {
         'mixins': ['xcodebuild_sim_runner']
       },
       'audio_decoder_unittests': {},
       'audio_engine_tests': {},
+      'call_tests': {},
       'common_audio_unittests': {},
       'common_video_unittests': {},
       'dcsctp_unittests': {},
@@ -187,6 +175,7 @@
       'modules_unittests': {
         'mixins': ['shards-6', 'cores-12'],
       },
+      'resource_adaptation_tests': {},
       'rtc_media_unittests': {},
       'rtc_p2p_unittests': {},
       'rtc_pc_unittests': {},
@@ -207,12 +196,16 @@
       'system_wrappers_unittests': {},
       'test_support_unittests': {},
       'tools_unittests': {},
-      'video_engine_tests': {
+      'video_adaptation_tests': {},
+      'video_tests': {
         'mixins': ['shards-4'],
       },
       'video_timing_tests': {},
       'voip_unittests': {},
       'webrtc_nonparallel_tests': {},
+      # keep-sorted end
+      # TODO(bugs.webrtc.org/416446214): Determine how to get rust test runner working on iOS.
+      # 'rust_tests': {},
     },
     'more_configs_tests': {
       'peerconnection_unittests': {
@@ -225,11 +218,6 @@
       'video_codec_perf_tests': {
         'mixins': ['perf-video-codec-perf-tests'],
       },
-      'webrtc_perf_tests': {
-        'mixins': ['perf-webrtc-perf-tests'],
-      },
-    },
-    'perf_tests_no_video_codec': {
       'webrtc_perf_tests': {
         'mixins': ['perf-webrtc-perf-tests'],
       },

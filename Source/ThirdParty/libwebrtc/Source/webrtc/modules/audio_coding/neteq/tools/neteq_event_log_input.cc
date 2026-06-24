@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
@@ -130,7 +130,7 @@ class NetEqEventLogInput : public NetEqInput {
     packet_data->SetTimestamp(logged.header.timestamp);
     packet_data->SetSsrc(logged.header.ssrc);
     packet_data->SetCsrcs(
-        MakeArrayView(logged.header.arrOfCSRCs, logged.header.numCSRCs));
+        std::span(logged.header.arrOfCSRCs, logged.header.numCSRCs));
     packet_data->set_arrival_time(logged.log_time());
 
     // This is a header-only "dummy" packet. Set the payload to all zeros, with

@@ -232,7 +232,7 @@ WI.DOMNode = class DOMNode extends WI.Object
     // Public
 
     get destroyed() { return this._destroyed; }
-    get frame() { return this._frame; }
+    get frame() { return this._frame || this.parentNode?.frame || null; }
     get owningTarget() { return this._owningTarget || this.parentNode?.owningTarget || null; }
     get backendNodeId() { return this._rawNodeId ?? this.id; }
     get nextSibling() { return this._nextSibling; }
@@ -445,8 +445,8 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.setNodeName(this.id, name, this._makeUndoableCallback(callback));
+        let target = this.owningTarget || WI.assumingMainTarget();
+        target.DOMAgent.setNodeName(this.backendNodeId, name, this._makeUndoableCallback(callback));
     }
 
     localName()
@@ -507,8 +507,8 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.setNodeValue(this.id, value, this._makeUndoableCallback(callback));
+        let target = this.owningTarget || WI.assumingMainTarget();
+        target.DOMAgent.setNodeValue(this.backendNodeId, value, this._makeUndoableCallback(callback));
     }
 
     getAttribute(name)
@@ -525,8 +525,8 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.setAttributesAsText(this.id, text, name, this._makeUndoableCallback(callback));
+        let target = this.owningTarget || WI.assumingMainTarget();
+        target.DOMAgent.setAttributesAsText(this.backendNodeId, text, name, this._makeUndoableCallback(callback));
     }
 
     setAttributeValue(name, value, callback)
@@ -540,15 +540,15 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        let target = WI.assumingMainTarget();
+        let target = this.owningTarget || WI.assumingMainTarget();
 
         if (!callback) {
-            return target.DOMAgent.setAttributeValue(this.id, name, value).then(() => {
+            return target.DOMAgent.setAttributeValue(this.backendNodeId, name, value).then(() => {
                 this._markUndoableState();
             });
         }
 
-        target.DOMAgent.setAttributeValue(this.id, name, value, this._makeUndoableCallback(callback));
+        target.DOMAgent.setAttributeValue(this.backendNodeId, name, value, this._makeUndoableCallback(callback));
     }
 
     attributes()
@@ -579,8 +579,8 @@ WI.DOMNode = class DOMNode extends WI.Object
             this._makeUndoableCallback(callback)(error);
         }
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.removeAttribute(this.id, name, mycallback.bind(this));
+        let target = this.owningTarget || WI.assumingMainTarget();
+        target.DOMAgent.removeAttribute(this.backendNodeId, name, mycallback.bind(this));
     }
 
     toggleClass(className, flag)
@@ -610,12 +610,12 @@ WI.DOMNode = class DOMNode extends WI.Object
     {
         console.assert(!this._destroyed, this);
 
-        let target = WI.assumingMainTarget();
+        let target = this.owningTarget || WI.assumingMainTarget();
 
         if (typeof callback !== "function") {
             if (this._destroyed)
                 return Promise.reject("ERROR: node is destroyed");
-            return target.DOMAgent.querySelector(this.id, selector).then(({nodeId}) => nodeId);
+            return target.DOMAgent.querySelector(this.backendNodeId, selector).then(({nodeId}) => nodeId);
         }
 
         if (this._destroyed) {
@@ -623,19 +623,19 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        target.DOMAgent.querySelector(this.id, selector, WI.DOMManager.wrapClientCallback(callback));
+        target.DOMAgent.querySelector(this.backendNodeId, selector, WI.DOMManager.wrapClientCallback(callback));
     }
 
     querySelectorAll(selector, callback)
     {
         console.assert(!this._destroyed, this);
 
-        let target = WI.assumingMainTarget();
+        let target = this.owningTarget || WI.assumingMainTarget();
 
         if (typeof callback !== "function") {
             if (this._destroyed)
                 return Promise.reject("ERROR: node is destroyed");
-            return target.DOMAgent.querySelectorAll(this.id, selector).then(({nodeIds}) => nodeIds);
+            return target.DOMAgent.querySelectorAll(this.backendNodeId, selector).then(({nodeIds}) => nodeIds);
         }
 
         if (this._destroyed) {
@@ -643,7 +643,7 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        target.DOMAgent.querySelectorAll(this.id, selector, WI.DOMManager.wrapClientCallback(callback));
+        target.DOMAgent.querySelectorAll(this.backendNodeId, selector, WI.DOMManager.wrapClientCallback(callback));
     }
 
     highlight(mode)
@@ -672,6 +672,10 @@ WI.DOMNode = class DOMNode extends WI.Object
         console.assert(!this._destroyed, this);
         if (this._destroyed)
             return Promise.reject("ERROR: node is destroyed");
+
+        // FIXME: <https://webkit.org/b/298980> Layout overlays for cross-origin frame nodes are not yet supported.
+        if (this.owningTarget)
+            return Promise.reject("ERROR: not supported on cross-origin frame nodes");
 
         console.assert(Object.values(WI.DOMNode._LayoutContextTypes).includes(this.layoutContextType), this);
 
@@ -746,6 +750,10 @@ WI.DOMNode = class DOMNode extends WI.Object
         console.assert(!this._destroyed, this);
         if (this._destroyed)
             return Promise.reject("ERROR: node is destroyed");
+
+        // FIXME: <https://webkit.org/b/298980> Layout overlays for cross-origin frame nodes are not yet supported.
+        if (this.owningTarget)
+            return Promise.reject("ERROR: not supported on cross-origin frame nodes");
 
         console.assert(Object.values(WI.DOMNode._LayoutContextTypes).includes(this.layoutContextType), this);
 
@@ -883,12 +891,12 @@ WI.DOMNode = class DOMNode extends WI.Object
     {
         console.assert(!this._destroyed, this);
 
-        let target = WI.assumingMainTarget();
+        let target = this.owningTarget || WI.assumingMainTarget();
 
         if (typeof callback !== "function") {
             if (this._destroyed)
                 return Promise.reject("ERROR: node is destroyed");
-            return target.DOMAgent.getOuterHTML(this.id).then(({outerHTML}) => outerHTML);
+            return target.DOMAgent.getOuterHTML(this.backendNodeId).then(({outerHTML}) => outerHTML);
         }
 
         if (this._destroyed) {
@@ -896,7 +904,7 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        target.DOMAgent.getOuterHTML(this.id, callback);
+        target.DOMAgent.getOuterHTML(this.backendNodeId, callback);
     }
 
     setOuterHTML(html, callback)
@@ -907,8 +915,8 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.setOuterHTML(this.id, html, this._makeUndoableCallback(callback));
+        let target = this.owningTarget || WI.assumingMainTarget();
+        target.DOMAgent.setOuterHTML(this.backendNodeId, html, this._makeUndoableCallback(callback));
     }
 
     insertAdjacentHTML(position, html)
@@ -920,8 +928,8 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this.nodeType() !== Node.ELEMENT_NODE)
             return;
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.insertAdjacentHTML(this.id, position, html, this._makeUndoableCallback());
+        let target = this.owningTarget || WI.assumingMainTarget();
+        target.DOMAgent.insertAdjacentHTML(this.backendNodeId, position, html, this._makeUndoableCallback());
     }
 
     removeNode(callback)
@@ -932,8 +940,8 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.removeNode(this.id, this._makeUndoableCallback(callback));
+        let target = this.owningTarget || WI.assumingMainTarget();
+        target.DOMAgent.removeNode(this.backendNodeId, this._makeUndoableCallback(callback));
     }
 
     getEventListeners({includeAncestors} = {})
@@ -946,9 +954,9 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         console.assert(WI.domManager.inspectedNode === this || !includeAncestors, this, includeAncestors);
 
-        let target = WI.assumingMainTarget();
+        let target = this.owningTarget || WI.assumingMainTarget();
         return target.DOMAgent.getEventListenersForNode.invoke({
-            nodeId: this.id,
+            nodeId: this.backendNodeId,
             includeAncestors,
         });
     }
@@ -957,6 +965,12 @@ WI.DOMNode = class DOMNode extends WI.Object
     {
         console.assert(!this._destroyed, this);
         if (this._destroyed) {
+            callback({});
+            return;
+        }
+
+        // FIXME: <https://webkit.org/b/298980> Accessibility properties for cross-origin frame nodes are not yet supported.
+        if (this.owningTarget) {
             callback({});
             return;
         }
@@ -1265,8 +1279,15 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, this._makeUndoableCallback(callback));
+        // moveTo requires source, target, and anchor to live in the same agent. Cross-target
+        // moves cannot resolve nodeIds across processes; reject up front.
+        if (this.owningTarget !== targetNode.owningTarget || (anchorNode && anchorNode.owningTarget !== this.owningTarget)) {
+            callback("ERROR: cannot move nodes across frame targets");
+            return;
+        }
+
+        let target = this.owningTarget || WI.assumingMainTarget();
+        target.DOMAgent.moveTo(this.backendNodeId, targetNode.backendNodeId, anchorNode ? anchorNode.backendNodeId : undefined, this._makeUndoableCallback(callback));
     }
 
     isXMLNode()
@@ -1298,15 +1319,13 @@ WI.DOMNode = class DOMNode extends WI.Object
                 this.dispatchEventToListeners(WI.DOMNode.Event.EnabledPseudoClassesChanged);
         }
 
-        let target = WI.assumingMainTarget();
-        target.CSSAgent.forcePseudoState(this.id, pseudoClasses, changed.bind(this));
+        let target = this.owningTarget || WI.assumingMainTarget();
+        target.CSSAgent.forcePseudoState(this.backendNodeId, pseudoClasses, changed.bind(this));
     }
 
     _markUndoableState()
     {
-        let target = WI.assumingMainTarget();
-        if (target.hasCommand("DOM.markUndoableState"))
-            target.DOMAgent.markUndoableState();
+        WI.domUndoCoordinator.markUndoableState(this.owningTarget);
     }
 
     _makeUndoableCallback(callback)
@@ -1393,6 +1412,10 @@ WI.DOMNode = class DOMNode extends WI.Object
     // COMPATIBILITY (macOS 14.4, iOS 17.4): `DOM.getMediaStats` did not exist yet.
     async getMediaStats()
     {
+        // FIXME: <https://webkit.org/b/298980> Media stats for cross-origin frame nodes are not yet supported.
+        if (this.owningTarget)
+            return null;
+
         let target = WI.assumingMainTarget();
         let {mediaStats} = await target.DOMAgent.getMediaStats(this.id);
         return mediaStats;

@@ -52,7 +52,7 @@ bool OpacityParameters::transformColor(SRGBA<float>& color) const
 
 // MARK: - Conversion
 
-auto ToCSS<OpacityParameters>::operator()(const OpacityParameters& value, const RenderStyle& style) -> CSS::Opacity
+auto ToCSS<OpacityParameters>::operator()(const OpacityParameters& value, const Style::ComputedStyle& style) -> CSS::Opacity
 {
     return { .value = CSS::Opacity::Parameter { toCSS(value.value, style) } };
 }

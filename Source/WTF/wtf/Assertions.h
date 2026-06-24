@@ -276,7 +276,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #if ASAN_ENABLED
 #define WTF_FATAL_CRASH_CODE 0x0
 #else
-#define WTF_FATAL_CRASH_CODE 0xc471
+#define WTF_FATAL_CRASH_CODE 0xbb08
 #endif
 #endif
 
@@ -284,7 +284,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #if ASAN_ENABLED
 #define WTF_FATAL_CRASH_INST "brk #0x0"
 #else
-#define WTF_FATAL_CRASH_INST "brk #0xc471"
+#define WTF_FATAL_CRASH_INST "brk #0xbb08"
 #endif
 #endif
 
@@ -817,8 +817,11 @@ inline void wtfCompileTimeCheckPrintfSpecifier(const char* format, ...)
 
 #define LOGF(channel, priority, fmt, ...) do { \
     auto& logChannel = LOG_CHANNEL(channel); \
-    if (logChannel.state != WTFLogChannelState::Off) \
+    if (logChannel.state != WTFLogChannelState::Off) { \
+        IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call") \
         fprintf(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:%u] " fmt "\n", logChannel.name, static_cast<unsigned>(priority), ##__VA_ARGS__); \
+        IGNORE_WARNINGS_END \
+    } \
 } while (0)
 
 #define RELEASE_LOG(channel, ...) LOGF(channel, 4, __VA_ARGS__)

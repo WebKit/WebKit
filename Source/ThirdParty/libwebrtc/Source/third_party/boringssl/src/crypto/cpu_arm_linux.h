@@ -17,14 +17,15 @@
 
 #include <openssl/base.h>
 
-#include <string.h>
+#include <assert.h>
+
+#include <string_view>
 
 #include "internal.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
+BSSL_NAMESPACE_BEGIN
+namespace armcap {
 
 // The cpuinfo parser lives in a header file so it may be accessible from
 // cross-platform fuzzers without adding code to those platforms normally.
@@ -40,126 +41,101 @@ extern "C" {
 #define CRYPTO_HWCAP2_SHA1 (1 << 2)
 #define CRYPTO_HWCAP2_SHA2 (1 << 3)
 
-typedef struct {
-  const char *data;
-  size_t len;
-} STRING_PIECE;
-
-static int STRING_PIECE_equals(const STRING_PIECE *a, const char *b) {
-  size_t b_len = strlen(b);
-  return a->len == b_len && OPENSSL_memcmp(a->data, b, b_len) == 0;
+// SplitStringView finds the first occurrence of `sep` in `in` and, if found,
+// sets `*out_left` and `*out_right` to `in` split before and after `sep`, and
+// returns true. If not found, it returns false.
+inline bool SplitStringView(std::string_view *out_left,
+                            std::string_view *out_right, std::string_view in,
+                            char sep) {
+  auto pos = in.find(sep);
+  if (pos == std::string_view::npos) {
+    return false;
+  }
+  *out_left = in.substr(0, pos);
+  *out_right = in.substr(pos + 1);
+  return true;
 }
 
-// STRING_PIECE_split finds the first occurrence of |sep| in |in| and, if found,
-// sets |*out_left| and |*out_right| to |in| split before and after it. It
-// returns one if |sep| was found and zero otherwise.
-static int STRING_PIECE_split(STRING_PIECE *out_left, STRING_PIECE *out_right,
-                              const STRING_PIECE *in, char sep) {
-  const char *p = (const char *)OPENSSL_memchr(in->data, sep, in->len);
-  if (p == nullptr) {
-    return 0;
+// GetDelimited reads a `sep`-delimited entry from `s`, writing it to `out` and
+// updating `s` to point beyond it. It returns true on success and false if `s`
+// is empty. If `s` has no copies of `sep` and is non-empty, it reads the entire
+// string to `out`.
+inline bool GetDelimited(std::string_view *s, std::string_view *out, char sep) {
+  if (s->empty()) {
+    return false;
   }
-  // |out_left| or |out_right| may alias |in|, so make a copy.
-  STRING_PIECE in_copy = *in;
-  out_left->data = in_copy.data;
-  out_left->len = p - in_copy.data;
-  out_right->data = in_copy.data + out_left->len + 1;
-  out_right->len = in_copy.len - out_left->len - 1;
-  return 1;
-}
-
-// STRING_PIECE_get_delimited reads a |sep|-delimited entry from |s|, writing it
-// to |out| and updating |s| to point beyond it. It returns one on success and
-// zero if |s| is empty. If |s| is has no copies of |sep| and is non-empty, it
-// reads the entire string to |out|.
-static int STRING_PIECE_get_delimited(STRING_PIECE *s, STRING_PIECE *out, char sep) {
-  if (s->len == 0) {
-    return 0;
-  }
-  if (!STRING_PIECE_split(out, s, s, sep)) {
-    // |s| had no instances of |sep|. Return the entire string.
+  if (!SplitStringView(out, s, *s, sep)) {
+    // `s` had no instances of `sep`. Return the entire string.
     *out = *s;
-    s->data += s->len;
-    s->len = 0;
+    *s = std::string_view();
   }
-  return 1;
+  return true;
 }
 
-// STRING_PIECE_trim removes leading and trailing whitespace from |s|.
-static void STRING_PIECE_trim(STRING_PIECE *s) {
-  while (s->len != 0 && (s->data[0] == ' ' || s->data[0] == '\t')) {
-    s->data++;
-    s->len--;
+// TrimStringView removes leading and trailing whitespace from `s`.
+inline std::string_view TrimStringView(std::string_view s) {
+  size_t pos = s.find_first_not_of(" \t");
+  if (pos == std::string_view::npos) {
+    return {};
   }
-  while (s->len != 0 &&
-         (s->data[s->len - 1] == ' ' || s->data[s->len - 1] == '\t')) {
-    s->len--;
-  }
+  s = s.substr(pos);
+  pos = s.find_last_not_of(" \t");
+  assert(pos != std::string_view::npos);
+  return s.substr(0, pos + 1);
 }
 
-// extract_cpuinfo_field extracts a /proc/cpuinfo field named |field| from
-// |in|. If found, it sets |*out| to the value and returns one. Otherwise, it
-// returns zero.
-static int extract_cpuinfo_field(STRING_PIECE *out, const STRING_PIECE *in,
-                                 const char *field) {
-  // Process |in| one line at a time.
-  STRING_PIECE remaining = *in, line;
-  while (STRING_PIECE_get_delimited(&remaining, &line, '\n')) {
-    STRING_PIECE key, value;
-    if (!STRING_PIECE_split(&key, &value, &line, ':')) {
+// ExtractCpuinfoField extracts a /proc/cpuinfo field named `field` from `in`.
+// If found, it returns the value. Otherwise, it returns the empty string.
+inline std::string_view ExtractCpuinfoField(std::string_view in,
+                                            std::string_view field) {
+  // Process `in` one line at a time.
+  std::string_view line;
+  while (GetDelimited(&in, &line, '\n')) {
+    std::string_view key, value;
+    if (!SplitStringView(&key, &value, line, ':')) {
       continue;
     }
-    STRING_PIECE_trim(&key);
-    if (STRING_PIECE_equals(&key, field)) {
-      STRING_PIECE_trim(&value);
-      *out = value;
-      return 1;
+    if (TrimStringView(key) == field) {
+      return TrimStringView(value);
     }
   }
 
-  return 0;
+  return {};
 }
 
-// has_list_item treats |list| as a space-separated list of items and returns
-// one if |item| is contained in |list| and zero otherwise.
-static int has_list_item(const STRING_PIECE *list, const char *item) {
-  STRING_PIECE remaining = *list, feature;
-  while (STRING_PIECE_get_delimited(&remaining, &feature, ' ')) {
-    if (STRING_PIECE_equals(&feature, item)) {
-      return 1;
+// HasListItem treats `list` as a space-separated list of items and returns
+// whether `item` is contained in `list`.
+inline bool HasListItem(std::string_view list, std::string_view item) {
+  std::string_view feature;
+  while (GetDelimited(&list, &feature, ' ')) {
+    if (feature == item) {
+      return true;
     }
   }
-  return 0;
+  return false;
 }
 
-// crypto_get_arm_hwcap2_from_cpuinfo returns an equivalent ARM |AT_HWCAP2|
-// value from |cpuinfo|.
-static unsigned long crypto_get_arm_hwcap2_from_cpuinfo(
-    const STRING_PIECE *cpuinfo) {
-  STRING_PIECE features;
-  if (!extract_cpuinfo_field(&features, cpuinfo, "Features")) {
-    return 0;
-  }
-
+// GetHWCAP2FromCpuinfo returns an equivalent ARM `AT_HWCAP2` value from
+// `cpuinfo`.
+inline unsigned long GetHWCAP2FromCpuinfo(std::string_view cpuinfo) {
+  std::string_view features = ExtractCpuinfoField(cpuinfo, "Features");
   unsigned long ret = 0;
-  if (has_list_item(&features, "aes")) {
+  if (HasListItem(features, "aes")) {
     ret |= CRYPTO_HWCAP2_AES;
   }
-  if (has_list_item(&features, "pmull")) {
+  if (HasListItem(features, "pmull")) {
     ret |= CRYPTO_HWCAP2_PMULL;
   }
-  if (has_list_item(&features, "sha1")) {
+  if (HasListItem(features, "sha1")) {
     ret |= CRYPTO_HWCAP2_SHA1;
   }
-  if (has_list_item(&features, "sha2")) {
+  if (HasListItem(features, "sha2")) {
     ret |= CRYPTO_HWCAP2_SHA2;
   }
   return ret;
 }
 
-
-#if defined(__cplusplus)
-}  // extern C
-#endif
+}  // namespace armcap
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_HEADER_CRYPTO_CPU_ARM_LINUX_H

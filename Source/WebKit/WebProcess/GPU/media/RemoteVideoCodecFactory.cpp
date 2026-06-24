@@ -142,7 +142,8 @@ void RemoteVideoCodecFactory::createDecoder(const String& codec, const WebCore::
         WebCore::VideoDecoder::createLocalDecoder(codec, config, WTF::move(createCallback), WTF::move(outputCallback));
         return;
     }
-    libWebRTCCodecs->createDecoderAndWaitUntilReady(*type, codec, [width = config.width, height = config.height, description = Vector<uint8_t> { config.description }, createCallback = WTF::move(createCallback), outputCallback = WTF::move(outputCallback)](auto* internalDecoder) mutable {
+    auto colorSpace = config.colorSpace;
+    libWebRTCCodecs->createDecoderAndWaitUntilReady(*type, codec, WTF::move(colorSpace), [width = config.width, height = config.height, description = Vector<uint8_t> { config.description }, createCallback = WTF::move(createCallback), outputCallback = WTF::move(outputCallback)](auto* internalDecoder) mutable {
         if (!internalDecoder) {
             createCallback(makeUnexpected("Decoder creation failed"_s));
             return;
@@ -275,7 +276,9 @@ Ref<RemoteVideoEncoder::EncodePromise> RemoteVideoEncoder::encode(RawFrame&& raw
 Ref<GenericPromise> RemoteVideoEncoder::setRates(uint64_t bitRate, double frameRate)
 {
     auto bitRateInKbps = bitRate / 1000;
-    return protect(WebProcess::singleton().libWebRTCCodecs())->setEncodeRates(m_internalEncoder, bitRateInKbps, frameRate);
+    RefPtr promise = protect(WebProcess::singleton().libWebRTCCodecs())->setEncodeRates(m_internalEncoder, bitRateInKbps, frameRate);
+    ASSERT(promise);
+    return promise ? promise.releaseNonNull() : GenericPromise::createAndResolve();
 }
 
 Ref<GenericPromise> RemoteVideoEncoder::flush()

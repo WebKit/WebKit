@@ -26,7 +26,11 @@
 #include "config.h"
 #include "IPCTesterReceiver.h"
 
+#include <wtf/CompletionHandler.h>
+
 #if ENABLE(IPC_TESTING_API) && !ENABLE(IPC_TESTING_SWIFT)
+
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 

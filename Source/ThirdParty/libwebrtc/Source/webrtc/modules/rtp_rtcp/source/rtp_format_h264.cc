@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "api/array_view.h"
 #include "common_video/h264/h264_common.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
@@ -33,7 +33,7 @@ constexpr size_t kLengthFieldSize = 2;
 
 }  // namespace
 
-RtpPacketizerH264::RtpPacketizerH264(ArrayView<const uint8_t> payload,
+RtpPacketizerH264::RtpPacketizerH264(std::span<const uint8_t> payload,
                                      PayloadSizeLimits limits,
                                      H264PacketizationMode packetization_mode)
     : limits_(limits), num_packets_left_(0) {
@@ -47,7 +47,7 @@ RtpPacketizerH264::RtpPacketizerH264(ArrayView<const uint8_t> payload,
   }
   bool has_empty_fragments = absl::c_any_of(
       input_fragments_,
-      [](const ArrayView<const uint8_t> fragment) { return fragment.empty(); });
+      [](const std::span<const uint8_t> fragment) { return fragment.empty(); });
   if (has_empty_fragments || !GeneratePackets(packetization_mode)) {
     // If empty fragments were found or we failed to generate all the packets,
     // discard already generated packets in case the caller would ignore the
@@ -100,7 +100,7 @@ bool RtpPacketizerH264::GeneratePackets(
 
 bool RtpPacketizerH264::PacketizeFuA(size_t fragment_index) {
   // Fragment payload into packets (FU-A).
-  ArrayView<const uint8_t> fragment = input_fragments_[fragment_index];
+  std::span<const uint8_t> fragment = input_fragments_[fragment_index];
 
   PayloadSizeLimits limits = limits_;
   // Leave room for the FU-A header.
@@ -151,7 +151,7 @@ size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
   size_t payload_size_left = limits_.max_payload_len;
   int aggregated_fragments = 0;
   size_t fragment_headers_length = 0;
-  ArrayView<const uint8_t> fragment = input_fragments_[fragment_index];
+  std::span<const uint8_t> fragment = input_fragments_[fragment_index];
   RTC_CHECK_GE(payload_size_left, fragment.size());
   ++num_packets_left_;
 
@@ -205,7 +205,7 @@ bool RtpPacketizerH264::PacketizeSingleNalu(size_t fragment_index) {
     payload_size_left -= limits_.first_packet_reduction_len;
   else if (fragment_index + 1 == input_fragments_.size())
     payload_size_left -= limits_.last_packet_reduction_len;
-  ArrayView<const uint8_t> fragment = input_fragments_[fragment_index];
+  std::span<const uint8_t> fragment = input_fragments_[fragment_index];
   if (payload_size_left < fragment.size()) {
     RTC_LOG(LS_ERROR) << "Failed to fit a fragment to packet in SingleNalu "
                          "packetization mode. Payload size left "
@@ -257,7 +257,7 @@ void RtpPacketizerH264::NextAggregatePacket(RtpPacketToSend* rtp_packet) {
   size_t index = kNalHeaderSize;
   bool is_last_fragment = packet->last_fragment;
   while (packet->aggregated) {
-    ArrayView<const uint8_t> fragment = packet->source_fragment;
+    std::span<const uint8_t> fragment = packet->source_fragment;
     RTC_CHECK_LE(index + kLengthFieldSize + fragment.size(), payload_capacity);
     // Add NAL unit length field.
     ByteWriter<uint16_t>::WriteBigEndian(&buffer[index], fragment.size());
@@ -290,7 +290,7 @@ void RtpPacketizerH264::NextFragmentPacket(RtpPacketToSend* rtp_packet) {
   fu_header |= (packet->last_fragment ? kH264EBit : 0);
   uint8_t type = packet->header & kH264TypeMask;
   fu_header |= type;
-  ArrayView<const uint8_t> fragment = packet->source_fragment;
+  std::span<const uint8_t> fragment = packet->source_fragment;
   uint8_t* buffer =
       rtp_packet->AllocatePayload(kFuAHeaderSize + fragment.size());
   buffer[0] = fu_indicator;

@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAvailabilityMap.h"
-#include "DFGBlockMapInlines.h"
 #include "JSCJSValueInlines.h"
 
 namespace JSC { namespace DFG {
@@ -63,8 +62,8 @@ NodeSet liveNodesAtHead(Graph& graph, BasicBlock* block)
 }
 
 CombinedLiveness::CombinedLiveness(Graph& graph)
-    : liveAtHead(graph)
-    , liveAtTail(graph)
+    : liveAtHead(graph.numBlocks())
+    , liveAtTail(graph.numBlocks())
 {
     // First compute 
     // - The liveAtHead for each block.

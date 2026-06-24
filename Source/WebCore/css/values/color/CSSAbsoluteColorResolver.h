@@ -45,7 +45,7 @@ template<typename D> struct AbsoluteColorResolver {
 
 template<typename D> WebCore::Color resolve(const AbsoluteColorResolver<D>& absolute, const CSSToLengthConversionData& conversionData)
 {
-    // Evaluated any calc values to their corresponding channel value.
+    // Evaluate any calc values to their corresponding channel value.
     auto components = StyleColorParseType<D> {
         Style::toStyle(std::get<0>(absolute.components), conversionData),
         Style::toStyle(std::get<1>(absolute.components), conversionData),
@@ -56,7 +56,7 @@ template<typename D> WebCore::Color resolve(const AbsoluteColorResolver<D>& abso
     // Normalize values into their numeric form, forming a validated typed color.
     auto typedColor = convertToTypedColor<D>(components, 1.0);
 
-    // Convert the validated typed color into a `WebCore::Color`,
+    // Convert the validated typed color into a `WebCore::Color`.
     return convertToColor<D, CSSColorFunctionForm::Absolute>(typedColor, absolute.nestingLevel);
 }
 
@@ -65,7 +65,7 @@ template<typename D> WebCore::Color resolveNoConversionDataRequired(const Absolu
 {
     ASSERT(!componentsRequireConversionData<D>(absolute.components));
 
-    // Evaluated any calc values to their corresponding channel value.
+    // Evaluate any calc values to their corresponding channel value.
     auto components = StyleColorParseType<D> {
         Style::toStyleNoConversionDataRequired(std::get<0>(absolute.components)),
         Style::toStyleNoConversionDataRequired(std::get<1>(absolute.components)),
@@ -76,7 +76,7 @@ template<typename D> WebCore::Color resolveNoConversionDataRequired(const Absolu
     // Normalize values into their numeric form, forming a validated typed color.
     auto typedColor = convertToTypedColor<D>(components, 1.0);
 
-    // Convert the validated typed color into a `WebCore::Color`,
+    // Convert the validated typed color into a `WebCore::Color`.
     return convertToColor<D, CSSColorFunctionForm::Absolute>(typedColor, absolute.nestingLevel);
 }
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SuppressedError.h"
 
+#include "ErrorInstanceInlines.h"
 #include "ExceptionScope.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObjectInlines.h"

@@ -34,7 +34,7 @@ class RenderSVGResourceRadialGradient final : public RenderSVGResourceGradient {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceRadialGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceRadialGradient);
 public:
-    RenderSVGResourceRadialGradient(SVGRadialGradientElement&, RenderStyle&&);
+    RenderSVGResourceRadialGradient(SVGRadialGradientElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGResourceRadialGradient();
 
     inline SVGRadialGradientElement& radialGradientElement() const;
@@ -51,7 +51,7 @@ public:
 
 private:
     void collectGradientAttributesIfNeeded() final;
-    RefPtr<Gradient> createGradient(const RenderStyle&) final;
+    RefPtr<Gradient> createGradient(const Style::ComputedStyle&) final;
 
     void element() const = delete;
     ASCIILiteral renderName() const final { return "RenderSVGResourceRadialGradient"_s; }

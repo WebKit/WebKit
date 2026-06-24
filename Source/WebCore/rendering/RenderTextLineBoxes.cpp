@@ -29,9 +29,9 @@
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderSVGInlineText.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {

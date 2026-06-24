@@ -19,7 +19,7 @@
       var test = async_test(name)
       test.step(function() {
         var client = new XMLHttpRequest()
-        var url = "/resources/load-then-wait.cgi?name=../xmlhttprequest/" + fileName + "&waitFor=1&mimeType=" + mimeType
+        var url = "/resources/nph-load-then-wait.cgi?name=../xmlhttprequest/" + fileName + "&waitFor=1&mimeType=" + mimeType
         client.open("GET", url, true)
         setupClient(test, client)
         client.isAborting = false
@@ -56,7 +56,7 @@
       var test2 = async_test(name + " (aborting in loadend)")
       test2.step(function() {
         var client = new XMLHttpRequest()
-        var url = "/resources/load-then-wait.cgi?name=../xmlhttprequest/" + fileName + "&waitFor=1&mimeType=" + mimeType
+        var url = "/resources/nph-load-then-wait.cgi?name=../xmlhttprequest/" + fileName + "&waitFor=1&mimeType=" + mimeType
         client.open("GET", url, true)
         setupClient(test2, client)
 

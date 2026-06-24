@@ -140,31 +140,84 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate_not_small_exclusive_segregated(
     return pas_try_deallocate_slow(begin, config.config_ptr, deallocation_mode);
 }
 
-static PAS_ALWAYS_INLINE bool pas_try_deallocate_impl(pas_thread_local_cache* thread_local_cache,
-                                                      void* ptr,
-                                                      pas_heap_config config,
-                                                      pas_deallocation_mode deallocation_mode)
+/* The deallocation fast path is split into an inline-only entry and a casual (slow)
+   case, mirroring how allocation works. The inline-only path handles only the
+   single most common case: we have a TLC, and the object lives in a small-exclusive-
+   segregated fast megapage. Anything else returns false so the client can tail-call
+   into the casual case. This keeps the inline path frame-free and lets clients that
+   need to dispatch across multiple heap configs do that in their own casual function
+   without bloating the inline body. */
+static PAS_ALWAYS_INLINE bool pas_try_deallocate_inline_only(void* ptr,
+                                                             pas_heap_config config,
+                                                             pas_deallocation_mode deallocation_mode)
 {
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
+
+    pas_thread_local_cache* thread_local_cache;
+    uintptr_t begin;
+    pas_fast_megapage_kind megapage_kind;
+
+    (void)deallocation_mode;
+
+    begin = (uintptr_t)ptr;
+    PAS_PROFILE(TRY_DEALLOCATE, &config, begin);
+
+    if (verbose)
+        pas_log("try_deallocate_inline_only for %p\n", (void*)begin);
+
+    thread_local_cache = pas_thread_local_cache_try_get();
+    if (PAS_UNLIKELY(!thread_local_cache)) {
+        if (verbose)
+            pas_log("Bailing to casual: no TLC.\n");
+        return false;
+    }
+
+    megapage_kind = config.fast_megapage_kind_func(begin);
+    if (PAS_UNLIKELY(megapage_kind != pas_small_exclusive_segregated_fast_megapage_kind)) {
+        if (verbose)
+            pas_log("Bailing to casual: megapage_kind = %d.\n", (int)megapage_kind);
+        return false;
+    }
+
+    pas_segregated_page_log_or_deallocate(
+        begin, thread_local_cache, config.small_segregated_config);
+    return true;
+}
+
+static PAS_ALWAYS_INLINE bool pas_try_deallocate_casual_case(void* ptr,
+                                                             pas_heap_config config,
+                                                             pas_deallocation_mode deallocation_mode)
+{
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
+
+    pas_thread_local_cache* thread_local_cache;
     uintptr_t begin;
     pas_fast_megapage_kind megapage_kind;
 
     begin = (uintptr_t)ptr;
-    
-    megapage_kind = config.fast_megapage_kind_func(begin);
-    if (PAS_LIKELY(megapage_kind == pas_small_exclusive_segregated_fast_megapage_kind)) {
-        pas_segregated_page_log_or_deallocate(
-            begin, thread_local_cache, config.small_segregated_config);
-        return true;
-    }
 
+    if (verbose)
+        pas_log("try_deallocate_casual_case for %p\n", (void*)begin);
+
+    thread_local_cache = pas_thread_local_cache_try_get();
+    if (PAS_UNLIKELY(!thread_local_cache))
+        return pas_try_deallocate_slow_no_cache((void*)begin, config.config_ptr, deallocation_mode);
+
+    megapage_kind = config.fast_megapage_kind_func(begin);
     return config.specialized_try_deallocate_not_small_exclusive_segregated(
         thread_local_cache, begin, deallocation_mode, megapage_kind);
 }
 
+static PAS_ALWAYS_INLINE void pas_deallocate_casual_case(void* ptr,
+                                                         pas_heap_config config)
+{
+    pas_try_deallocate_casual_case(ptr, config, pas_deallocate_mode);
+}
+
 /* This returns true if the object was successfully deallocated.
-   
+
    This returns false if the object pointer definitely does not into any heap for this config.
-   
+
    This may crash or return false if the object pointer points into a heap of this config, but not
    to a valid object start address. Specifically, this currently will crash if it's an invalid
    object pointer with an address inside pages managed by segregated or bitfit, but returns false
@@ -176,29 +229,9 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate(void* ptr,
                                                  pas_heap_config config,
                                                  pas_deallocation_mode deallocation_mode)
 {
-    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
-
-    pas_thread_local_cache* thread_local_cache;
-    uintptr_t begin;
-
-    begin = (uintptr_t)ptr;
-    PAS_PROFILE(TRY_DEALLOCATE, &config, begin);
-    ptr = (void*)begin;
-
-    if (verbose)
-        pas_log("try_deallocate for %p\n", ptr);
-    
-    thread_local_cache = pas_thread_local_cache_try_get();
-    if (PAS_UNLIKELY(!thread_local_cache)) {
-        if (verbose)
-            pas_log("Going slow because no TLC.\n");
-        return pas_try_deallocate_slow_no_cache(ptr, config.config_ptr, deallocation_mode);
-    }
-
-    if (verbose)
-        pas_log("Going fast because have TLC = %p\n", thread_local_cache);
-    
-    return pas_try_deallocate_impl(thread_local_cache, ptr, config, deallocation_mode);
+    if (PAS_LIKELY(pas_try_deallocate_inline_only(ptr, config, deallocation_mode)))
+        return true;
+    return pas_try_deallocate_casual_case(ptr, config, deallocation_mode);
 }
 
 static PAS_ALWAYS_INLINE void pas_deallocate(void* ptr,

@@ -13,10 +13,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/checks.h"
@@ -24,7 +24,7 @@
 namespace webrtc {
 
 RtpDependencyDescriptorReader::RtpDependencyDescriptorReader(
-    ArrayView<const uint8_t> raw_data,
+    std::span<const uint8_t> raw_data,
     const FrameDependencyStructure* structure,
     DependencyDescriptor* descriptor)
     : descriptor_(descriptor), buffer_(raw_data) {

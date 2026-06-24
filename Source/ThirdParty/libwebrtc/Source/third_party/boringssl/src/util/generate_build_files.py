@@ -241,6 +241,8 @@ class Bazel(object):
       self.PrintVariableSection(out, 'pki_sources', files['pki'])
       self.PrintVariableSection(out, 'rust_bssl_sys', files['rust_bssl_sys'])
       self.PrintVariableSection(out, 'rust_bssl_crypto', files['rust_bssl_crypto'])
+      self.PrintVariableSection(out, 'rust_bssl_macros', files['rust_bssl_macros'])
+      self.PrintVariableSection(out, 'rust_bssl_x509', files['rust_bssl_x509'])
       self.PrintVariableSection(out, 'tool_sources', files['tool'])
       self.PrintVariableSection(out, 'tool_headers', files['tool_headers'])
 
@@ -336,6 +338,8 @@ class GN(object):
       self.PrintVariableSection(out, 'rust_bssl_sys', files['rust_bssl_sys'])
       self.PrintVariableSection(out, 'rust_bssl_crypto',
                                 files['rust_bssl_crypto'])
+      self.PrintVariableSection(out, 'rust_bssl_macros', files['rust_bssl_macros'])
+      self.PrintVariableSection(out, 'rust_bssl_x509', files['rust_bssl_x509'])
       self.PrintVariableSection(out, 'ssl_sources',
                                 files['ssl'] + files['ssl_internal_headers'])
       self.PrintVariableSection(out, 'ssl_headers', files['ssl_headers'])
@@ -643,6 +647,8 @@ def main(platforms):
       'pki_test_data': PrefixWithSrc(sources['pki_test']['data']),
       'rust_bssl_crypto': PrefixWithSrc(sources['rust_bssl_crypto']['srcs']),
       'rust_bssl_sys': PrefixWithSrc(sources['rust_bssl_sys']['srcs']),
+      'rust_bssl_macros': PrefixWithSrc(sources['rust_bssl_macros']['srcs']),
+      'rust_bssl_x509': PrefixWithSrc(sources['rust_bssl_x509']['srcs']),
       'ssl': PrefixWithSrc(sources['ssl']['srcs']),
       'ssl_headers': PrefixWithSrc(sources['ssl']['hdrs']),
       'ssl_internal_headers': PrefixWithSrc(sources['ssl']['internal_hdrs']),

@@ -28,9 +28,20 @@ struct ScreamV2Parameters {
   FieldTrialParameter<double> l4s_avg_g_up;
   FieldTrialParameter<double> l4s_avg_g_down;
 
+  // The number of consecutive RTTs with loss required to trigger a backoff.
+  // Used as the step-up value (1.0 / rtts_with_loss_before_backoff) in the
+  // short-term congestion level step filter.
+  FieldTrialParameter<int> rtts_with_loss_before_backoff;
+
+  // The number of consecutive lossless RTTs required to fully clear the
+  // congestion level from maximum congestion (1.0) back to 0.0.
+  // Used as the step-down value (1.0 / lossless_rtts_before_clear) in the
+  // short-term congestion level step filter.
+  FieldTrialParameter<int> lossless_rtts_before_clear;
+
   // Exponentially Weighted Moving Average (EWMA) factor for smoothed rtt.
-  FieldTrialParameter<double> smoothed_rtt_avg_g_up;
-  FieldTrialParameter<double> smoothed_rtt_avg_g_down;
+  FieldTrialParameter<double> smoothed_rtt_avg_g;
+  FieldTrialParameter<double> smoothed_rtt_avg_in_alr_g;
 
   // Maximum Segment Size (MSS)
   // Size of the largest data segment that a sender is able to transmit. I.e
@@ -74,10 +85,16 @@ struct ScreamV2Parameters {
   // Exponentially Weighted Moving Average (EWMA) factor for updating queue
   // delay.
   FieldTrialParameter<double> queue_delay_avg_g;
-  FieldTrialParameter<double> queue_delay_dev_avg_g;
+  // Exponentially Weighted Moving Average (EWMA) factor for updating average
+  // min queue delay and average latency difference.
+  FieldTrialParameter<double> delay_min_and_latency_diff_avg_g;
 
-  // Normalization factor for queue delay variation.
-  FieldTrialParameter<TimeDelta> queue_delay_dev_normalization;
+  // Thresholds for average min queue delay. Used for limiting ref_window
+  // increase.
+  FieldTrialParameter<TimeDelta> queue_delay_min_threshold;
+  // Thresholds for average latency difference. Used for limiting ref_window
+  // increase.
+  FieldTrialParameter<TimeDelta> latency_diff_threshold;
 
   // Determines the length of the base delay history when estimating one way
   // delay (owd)
@@ -102,8 +119,9 @@ struct ScreamV2Parameters {
   FieldTrialParameter<int> queue_delay_drain_rtts;
 
   // Padding is periodically used in order to increase target rate even if a
-  // stream does not produce a high enough rate.
-  FieldTrialParameter<TimeDelta> periodic_padding_interval;
+  // stream does not produce a high enough rate. Time between periodic padding
+  // is at least this long.
+  FieldTrialParameter<TimeDelta> time_between_periodic_padding;
   // Max duration padding is used when periodic padding start.
   // Padding is stopped if congestion occur.
   FieldTrialParameter<TimeDelta> periodic_padding_duration;
@@ -111,6 +129,9 @@ struct ScreamV2Parameters {
   // time reference window was reduced but at least `periodic_padding_interval`
   // must have passed since last time padding was used.
   FieldTrialParameter<TimeDelta> allow_padding_after_last_congestion_time;
+  // If initial BWE probing is allowed, allow periodic probing for this duration
+  // even of no streams have been configured.
+  FieldTrialParameter<TimeDelta> initial_probing_duration;
 
   // Factor multiplied by the current target rate to decide the pacing rate.
   FieldTrialParameter<double> pacing_factor;
@@ -119,6 +140,16 @@ struct ScreamV2Parameters {
   // time feedback is delayed by the receiver. I.e the time from a packet is
   // received until feedback is sent. If zero, this delay is ignored.
   FieldTrialParameter<double> feedback_hold_time_avg_g;
+
+  // If the time since last reaction to congestion is larger than this, the
+  // pacing window is increased. I.e. packets are allowed to be sent in larger
+  // bursts.
+  FieldTrialParameter<TimeDelta>
+      allow_large_pacing_bursts_after_congestion_time;
+
+  // Enable application-limited (ALR) state tracking.
+  // In ALR, reference window can not increase, and RTT is updated slower.
+  FieldTrialParameter<bool> enable_alr;
 };
 
 }  // namespace webrtc

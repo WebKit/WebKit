@@ -13,8 +13,8 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -43,7 +43,7 @@ class AbsoluteCaptureTimeInterpolator {
   explicit AbsoluteCaptureTimeInterpolator(Clock* clock);
 
   // Returns the source (i.e. SSRC or CSRC) of the capture system.
-  static uint32_t GetSource(uint32_t ssrc, ArrayView<const uint32_t> csrcs);
+  static uint32_t GetSource(uint32_t ssrc, std::span<const uint32_t> csrcs);
 
   // Returns a received header extension, an interpolated header extension, or
   // `std::nullopt` if it's not possible to interpolate a header extension.

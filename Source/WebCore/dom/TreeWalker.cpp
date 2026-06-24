@@ -55,7 +55,10 @@ void TreeWalker::setCurrentNode(Node& node)
 
 inline Node* TreeWalker::setCurrent(Ref<Node>&& node)
 {
-    m_current = WTF::move(node);
+    {
+        Locker locker { m_currentLock };
+        m_current = WTF::move(node);
+    }
     return m_current.ptr();
 }
 

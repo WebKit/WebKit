@@ -3406,7 +3406,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "AU3DMixerAttenuationCurve"},
     {"access": "public", "name": "AU3DMixerRenderingFlags"},
@@ -3707,7 +3707,7 @@
    ]
   },
   {
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

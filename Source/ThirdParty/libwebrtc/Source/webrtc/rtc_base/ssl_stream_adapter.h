@@ -17,12 +17,16 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "absl/base/macros.h"
+#include "absl/base/nullability.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
@@ -121,13 +125,26 @@ enum class SSLHandshakeError { UNKNOWN, INCOMPATIBLE_CIPHERSUITE, MAX_VALUE };
 
 class SSLStreamAdapter : public StreamInterface {
  public:
-  // Instantiate an SSLStreamAdapter wrapping the given stream,
-  // (using the selected implementation for the platform).
-  // Caller is responsible for freeing the returned object.
+  ABSL_DEPRECATE_AND_INLINE()
   static std::unique_ptr<SSLStreamAdapter> Create(
       std::unique_ptr<StreamInterface> stream,
-      absl::AnyInvocable<void(SSLHandshakeError)> handshake_error = nullptr,
-      const FieldTrialsView* field_trials = nullptr);
+      absl::AnyInvocable<void(SSLHandshakeError)> handshake_error,
+#if WEBRTC_WEBKIT_BUILD
+      std::nullptr_t /*field_trials*/) {
+#else
+      nullptr_t /*field_trials*/) {
+#endif
+    return Create(std::move(stream), std::move(handshake_error));
+  }
+
+  static absl_nonnull std::unique_ptr<SSLStreamAdapter> Create(
+      std::unique_ptr<StreamInterface> stream,
+      absl::AnyInvocable<void(SSLHandshakeError)> handshake_error = nullptr);
+
+  static absl_nonnull std::unique_ptr<SSLStreamAdapter> Create(
+      const Environment& env,
+      std::unique_ptr<StreamInterface> stream,
+      absl::AnyInvocable<void(SSLHandshakeError)> handshake_error);
 
   SSLStreamAdapter() = default;
   ~SSLStreamAdapter() override = default;
@@ -191,9 +208,9 @@ class SSLStreamAdapter : public StreamInterface {
   // Returns SSLPeerCertificateDigestError::NONE if successful.
   virtual SSLPeerCertificateDigestError SetPeerCertificateDigest(
       absl::string_view digest_alg,
-      ArrayView<const uint8_t> digest_val) = 0;
+      std::span<const uint8_t> digest_val) = 0;
   [[deprecated(
-      "Use SetPeerCertificateDigest with ArrayView instead")]] virtual bool
+      "Use SetPeerCertificateDigest with std::span instead")]] virtual bool
   SetPeerCertificateDigest(absl::string_view digest_alg,
                            const unsigned char* digest_val,
                            size_t digest_len,

@@ -19,6 +19,8 @@
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_adaptation_counters.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/adaptation/adaptation_constraint.h"
 #include "call/adaptation/test/fake_frame_rate_provider.h"
@@ -910,6 +912,191 @@ TEST_F(VideoStreamAdapterTest, AdaptationConstraintDisallowsAdaptationsUp) {
             adapter_.GetAdaptationUp().status());
   adapter_.RemoveAdaptationConstraint(&adaptation_constraint);
 }
+
+using VideoStreamAdapterGetSingleActiveLayerPixelsSvcTest =
+    ::testing::TestWithParam<VideoCodecType>;
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsSvcTest,
+       SimulcastNoActiveStreams) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 3;
+  codec.simulcastStream[0].active = false;
+  codec.simulcastStream[0].width = 320;
+  codec.simulcastStream[0].height = 180;
+  codec.simulcastStream[1].active = false;
+  codec.simulcastStream[1].width = 640;
+  codec.simulcastStream[1].height = 360;
+  codec.simulcastStream[2].active = false;
+  codec.simulcastStream[2].width = 1280;
+  codec.simulcastStream[2].height = 720;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec),
+            std::nullopt);
+}
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsSvcTest,
+       SimulcastOneActiveStream) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 3;
+  codec.simulcastStream[0].active = false;
+  codec.simulcastStream[0].width = 320;
+  codec.simulcastStream[0].height = 180;
+  codec.simulcastStream[1].active = true;
+  codec.simulcastStream[1].width = 640;
+  codec.simulcastStream[1].height = 360;
+  codec.simulcastStream[2].active = false;
+  codec.simulcastStream[2].width = 1280;
+  codec.simulcastStream[2].height = 720;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec), 640 * 360u);
+}
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsSvcTest,
+       SimulcastMultipleActiveStreams) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 3;
+  codec.simulcastStream[0].active = true;
+  codec.simulcastStream[0].width = 320;
+  codec.simulcastStream[0].height = 180;
+  codec.simulcastStream[1].active = true;
+  codec.simulcastStream[1].width = 640;
+  codec.simulcastStream[1].height = 360;
+  codec.simulcastStream[2].active = false;
+  codec.simulcastStream[2].width = 1280;
+  codec.simulcastStream[2].height = 720;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec),
+            std::nullopt);
+}
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsSvcTest,
+       SinglecastOneActiveSpatialLayer) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 1;
+  codec.spatialLayers[0].active = false;
+  codec.spatialLayers[0].width = 320;
+  codec.spatialLayers[0].height = 180;
+  codec.spatialLayers[1].active = true;
+  codec.spatialLayers[1].width = 640;
+  codec.spatialLayers[1].height = 360;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec), 640 * 360u);
+}
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsSvcTest,
+       SinglecastMultipleActiveSpatialLayers) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 1;
+  codec.spatialLayers[0].active = true;
+  codec.spatialLayers[0].width = 320;
+  codec.spatialLayers[0].height = 180;
+  codec.spatialLayers[1].active = true;
+  codec.spatialLayers[1].width = 640;
+  codec.spatialLayers[1].height = 360;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec),
+            std::nullopt);
+}
+
+INSTANTIATE_TEST_SUITE_P(VideoStreamAdapterGetSingleActiveLayerPixelsTest,
+                         VideoStreamAdapterGetSingleActiveLayerPixelsSvcTest,
+                         ::testing::Values(VideoCodecType::kVideoCodecVP9,
+                                           VideoCodecType::kVideoCodecAV1));
+
+using VideoStreamAdapterGetSingleActiveLayerPixelsNonSvcTest =
+    ::testing::TestWithParam<VideoCodecType>;
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsNonSvcTest,
+       SimulcastNoActiveStreams) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 3;
+  codec.simulcastStream[0].active = false;
+  codec.simulcastStream[0].width = 320;
+  codec.simulcastStream[0].height = 180;
+  codec.simulcastStream[1].active = false;
+  codec.simulcastStream[1].width = 640;
+  codec.simulcastStream[1].height = 360;
+  codec.simulcastStream[2].active = false;
+  codec.simulcastStream[2].width = 1280;
+  codec.simulcastStream[2].height = 720;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec),
+            std::nullopt);
+}
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsNonSvcTest,
+       SimulcastOneActiveStream) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 3;
+  codec.simulcastStream[0].active = false;
+  codec.simulcastStream[0].width = 320;
+  codec.simulcastStream[0].height = 180;
+  codec.simulcastStream[1].active = true;
+  codec.simulcastStream[1].width = 640;
+  codec.simulcastStream[1].height = 360;
+  codec.simulcastStream[2].active = false;
+  codec.simulcastStream[2].width = 1280;
+  codec.simulcastStream[2].height = 720;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec), 640 * 360u);
+}
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsNonSvcTest,
+       SimulcastMultipleActiveStreams) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 3;
+  codec.simulcastStream[0].active = true;
+  codec.simulcastStream[0].width = 320;
+  codec.simulcastStream[0].height = 180;
+  codec.simulcastStream[1].active = true;
+  codec.simulcastStream[1].width = 640;
+  codec.simulcastStream[1].height = 360;
+  codec.simulcastStream[2].active = false;
+  codec.simulcastStream[2].width = 1280;
+  codec.simulcastStream[2].height = 720;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec),
+            std::nullopt);
+}
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsNonSvcTest,
+       SinglecastOneActiveStream) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 1;
+  codec.simulcastStream[0].active = true;
+  codec.simulcastStream[0].width = 640;
+  codec.simulcastStream[0].height = 360;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec), 640 * 360u);
+}
+
+TEST_P(VideoStreamAdapterGetSingleActiveLayerPixelsNonSvcTest,
+       SinglecastSpatialLayersAreIgnored) {
+  VideoCodec codec;
+  codec.codecType = GetParam();
+  codec.numberOfSimulcastStreams = 1;
+  codec.spatialLayers[0].active = true;
+  codec.spatialLayers[0].width = 640;
+  codec.spatialLayers[0].height = 360;
+
+  EXPECT_EQ(VideoStreamAdapter::GetSingleActiveLayerPixels(codec),
+            std::nullopt);
+}
+
+INSTANTIATE_TEST_SUITE_P(VideoStreamAdapterGetSingleActiveLayerPixelsTest,
+                         VideoStreamAdapterGetSingleActiveLayerPixelsNonSvcTest,
+                         ::testing::Values(VideoCodecType::kVideoCodecVP8,
+                                           VideoCodecType::kVideoCodecH264,
+                                           VideoCodecType::kVideoCodecH265));
 
 // Death tests.
 // Disabled on Android because death tests misbehave on Android, see

@@ -22,18 +22,18 @@
 #pragma once
 
 #include "RenderSVGResourceGradient.h"
-#include "RenderStyle+GettersInlines.h"
 #include "LocalFrameView.h"
 #include "RenderView.h"
 #include "SVGPaintServerHandling.h"
 #include "SVGRenderSupport.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 
 template<SVGPaintServerHandling::Operation op>
-bool SVGPaintServerHandling::preparePaintOperation(const RenderLayerModelObject& renderer, const RenderStyle& style) const
+bool SVGPaintServerHandling::preparePaintOperation(const RenderLayerModelObject& renderer, const Style::ComputedStyle& style) const
 {
     auto paintServerResult = requestPaintServer<op>(renderer, style);
     if (std::holds_alternative<std::monostate>(paintServerResult))
@@ -68,7 +68,7 @@ bool SVGPaintServerHandling::preparePaintOperation(const RenderLayerModelObject&
 }
 
 template<SVGPaintServerHandling::Operation op, SVGPaintServerHandling::URIResolving allowPaintServerURIResolving>
-SVGPaintServerOrColor SVGPaintServerHandling::requestPaintServer(const RenderLayerModelObject& targetRenderer, const RenderStyle& style)
+SVGPaintServerOrColor SVGPaintServerHandling::requestPaintServer(const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style)
 {
     // When rendering the mask for a RenderSVGResourceClipper, always use the initial fill paint server.
     if (targetRenderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
@@ -122,7 +122,7 @@ SVGPaintServerOrColor SVGPaintServerHandling::requestPaintServer(const RenderLay
     return { };
 }
 
-inline void SVGPaintServerHandling::prepareFillOperation(const RenderLayerModelObject& renderer, const RenderStyle& style, const Color& fillColor) const
+inline void SVGPaintServerHandling::prepareFillOperation(const RenderLayerModelObject& renderer, const Style::ComputedStyle& style, const Color& fillColor) const
 {
     if (renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
         m_context.setAlpha(1);
@@ -136,7 +136,7 @@ inline void SVGPaintServerHandling::prepareFillOperation(const RenderLayerModelO
     m_context.setFillColor(colorResolver.colorApplyingColorFilter(fillColor));
 }
 
-inline void SVGPaintServerHandling::prepareStrokeOperation(const RenderLayerModelObject& renderer, const RenderStyle& style, const Color& strokeColor) const
+inline void SVGPaintServerHandling::prepareStrokeOperation(const RenderLayerModelObject& renderer, const Style::ComputedStyle& style, const Color& strokeColor) const
 {
     m_context.setAlpha(Style::evaluate<float>(style.strokeOpacity()));
 
@@ -146,7 +146,7 @@ inline void SVGPaintServerHandling::prepareStrokeOperation(const RenderLayerMode
 }
 
 template<SVGPaintServerHandling::Operation op>
-Color SVGPaintServerHandling::resolveColorFromStyle(const RenderStyle& style)
+Color SVGPaintServerHandling::resolveColorFromStyle(const Style::ComputedStyle& style)
 {
     if constexpr (op == Operation::Fill)
         return resolveColorFromStyle(style, style.fill(), style.visitedLinkFill());
@@ -154,7 +154,7 @@ Color SVGPaintServerHandling::resolveColorFromStyle(const RenderStyle& style)
         return resolveColorFromStyle(style, style.stroke(), style.visitedLinkStroke());
 }
 
-inline Color SVGPaintServerHandling::resolveColorFromStyle(const RenderStyle& style, const Style::SVGPaint& paint, const Style::SVGPaint& visitedLinkPaint)
+inline Color SVGPaintServerHandling::resolveColorFromStyle(const Style::ComputedStyle& style, const Style::SVGPaint& paint, const Style::SVGPaint& visitedLinkPaint)
 {
     // All paint types except `none` / `url` / `url none` handle solid colors.
     ASSERT(!paint.isNone());

@@ -35,6 +35,12 @@
 
 namespace WebCore {
 
+static bool booleanValue(const cbor::CBORValue::MapValue& map, ASCIILiteral key)
+{
+    auto iterator = map.find(cbor::CBORValue(key));
+    return iterator != map.end() && iterator->second.isBool() && iterator->second.getBool();
+}
+
 std::optional<AuthenticationExtensionsClientOutputs> AuthenticationExtensionsClientOutputs::fromCBOR(const Vector<uint8_t>& buffer)
 {
     std::optional<cbor::CBORValue> decodedValue = cbor::CBORReader::read(buffer);
@@ -49,9 +55,7 @@ std::optional<AuthenticationExtensionsClientOutputs> AuthenticationExtensionsCli
     it = decodedMap.find(cbor::CBORValue("credProps"));
     if (it != decodedMap.end() && it->second.isMap()) {
         CredentialPropertiesOutput credProps;
-        it = it->second.getMap().find(cbor::CBORValue("rk"));
-        if (it != decodedMap.end() && it->second.isBool())
-            credProps.rk = it->second.getBool();
+        credProps.rk = booleanValue(it->second.getMap(), "rk"_s);
         clientOutputs.credProps = credProps;
     }
 

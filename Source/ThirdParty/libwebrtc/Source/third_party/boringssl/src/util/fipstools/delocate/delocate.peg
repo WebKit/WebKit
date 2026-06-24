@@ -32,6 +32,7 @@ Statement <- WS? (Label / ((GlobalDirective /
                             LocationDirective /
                             SymbolDefiningDirective /
                             LabelContainingDirective /
+                            PrefAlignDirective /
                             Instruction /
                             Directive /
                             Comment / ) WS? ((Comment? '\n') / ';')))
@@ -45,10 +46,15 @@ Args <- Arg ((WS? ',' WS?) Arg)*
 Arg <- QuotedArg / [[0-9a-z%+\-*_@.$]]*
 QuotedArg <- '"' QuotedText '"'
 QuotedText <- (EscapedChar / [^"])*
-SymbolDefiningDirective <- SymbolDefiningDirectiveName WS (LocalSymbol / SymbolName) WS? ',' WS? SymbolArg
+SymbolDefiningDirective <- (SymbolDefiningDirectiveName WS (LocalSymbol / SymbolName) WS? ',' WS? SymbolArg /
+                            (LocalSymbol / SymbolName) WS? '=' WS? SymbolArg)
 SymbolDefiningDirectiveName <- ".equiv" / ".equ" / ".set"
 LabelContainingDirective <- LabelContainingDirectiveName WS SymbolArgs
 LabelContainingDirectiveName <- ".xword" / ".word" / ".hword" / ".long" / ".byte" / ".8byte" / ".4byte" / ".quad" / ".tc" / ".localentry" / ".size" / ".type" / ".uleb128" / ".sleb128"
+# Prior to https://github.com/llvm/llvm-project/commit/193d7a6ace9f7016e03c90c63626fdb7fdf99bc0,
+# .prefalign took a single integer. Afterwards, it took three parameters with a
+# symbol as the second argument. Parse both forms.
+PrefAlignDirective <- ".prefalign" WS Arg (WS? ',' WS? SymbolArg WS? ',' WS? Arg)?
 SymbolArgs <- SymbolArg ((WS? ',' WS?) SymbolArg)*
 
 SymbolArg <- SymbolExpr

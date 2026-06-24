@@ -198,6 +198,8 @@ void JSTestClassWithJSBuiltinConstructor::analyzeHeap(JSCell* cell, HeapAnalyzer
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestClassWithJSBuiltinConstructorOwner::JSTestClassWithJSBuiltinConstructorOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestClassWithJSBuiltinConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -210,7 +212,7 @@ void JSTestClassWithJSBuiltinConstructorOwner::finalize(JSC::Handle<JSC::Unknown
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestClassWithJSBuiltinConstructor = static_cast<JSTestClassWithJSBuiltinConstructor*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestClassWithJSBuiltinConstructor->wrapped()).ptr(), jsTestClassWithJSBuiltinConstructor);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestClassWithJSBuiltinConstructor->wrapped(), jsTestClassWithJSBuiltinConstructor);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

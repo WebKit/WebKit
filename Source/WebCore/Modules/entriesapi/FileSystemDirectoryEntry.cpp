@@ -60,7 +60,7 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
     if (!successCallback && !errorCallback)
         return;
 
-    filesystem().getEntry(context, *this, path, flags, [pendingActivity = makePendingActivity(*this), matches = WTF::move(matches), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback)](auto&& result) mutable {
+    protect(filesystem())->getEntry(context, *this, path, flags, [pendingActivity = makePendingActivity(*this), matches = WTF::move(matches), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback)](auto&& result) mutable {
         RefPtr document = pendingActivity->object().document();
         if (result.hasException()) {
             if (errorCallback && document) {

@@ -58,7 +58,7 @@ public:
 
     void reap();
     void sweep();
-    void shrink();
+    JS_EXPORT_PRIVATE void shrink();
     void resetAllocator();
 
     static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(WeakSet, m_vm); }
@@ -118,20 +118,6 @@ inline bool WeakSet::isTriviallyDestructible() const
 ALWAYS_INLINE void WeakSet::deallocate(WeakImpl* weakImpl)
 {
     weakImpl->clear();
-}
-
-inline void WeakSet::lastChanceToFinalize()
-{
-    forEachBlock([](WeakBlock& block) {
-        block.lastChanceToFinalize();
-    });
-}
-
-inline void WeakSet::reap()
-{
-    forEachBlock([](WeakBlock& block) {
-        block.reap();
-    });
 }
 
 inline void WeakSet::resetAllocator()

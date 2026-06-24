@@ -64,8 +64,8 @@
 #import "RenderObjectInlines.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
-#import "RenderStyle+GettersInlines.h"
-#import "RenderStyle+SettersInlines.h"
+#import "StyleComputedStyle+GettersInlines.h"
+#import "StyleComputedStyle+SettersInlines.h"
 #import "RenderView.h"
 #import "SliderThumbElement.h"
 #import "StringTruncator.h"
@@ -762,7 +762,7 @@ bool RenderThemeMac::usesTestModeFocusRingColor() const
     return WebCore::usesTestModeFocusRingColor();
 }
 
-bool RenderThemeMac::searchFieldShouldAppearAsTextField(const RenderStyle& style, const Settings& settings) const
+bool RenderThemeMac::searchFieldShouldAppearAsTextField(const Style::ComputedStyle& style, const Settings& settings) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (settings.formControlRefreshEnabled())
@@ -774,7 +774,7 @@ bool RenderThemeMac::searchFieldShouldAppearAsTextField(const RenderStyle& style
     return !style.writingMode().isHorizontal();
 }
 
-bool RenderThemeMac::isControlStyled(const RenderStyle& style) const
+bool RenderThemeMac::isControlStyled(const Style::ComputedStyle& style) const
 {
     auto appearance = style.usedAppearance();
     if (appearance == StyleAppearance::TextField || appearance == StyleAppearance::TextArea || appearance == StyleAppearance::SearchField || appearance == StyleAppearance::Listbox)
@@ -1169,7 +1169,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderElement& renderer) const
     return true;
 }
 
-static NSControlSize controlSizeForSystemFont(const RenderStyle& style)
+static NSControlSize controlSizeForSystemFont(const Style::ComputedStyle& style)
 {
     auto fontSize = style.computedFontSize();
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && supportsLargeFormControls())
@@ -1181,7 +1181,7 @@ static NSControlSize controlSizeForSystemFont(const RenderStyle& style)
     return NSControlSizeMini;
 }
 
-static NSControlSize controlSizeForFont(const RenderStyle& style)
+static NSControlSize controlSizeForFont(const Style::ComputedStyle& style)
 {
     auto fontSize = style.computedFontSize();
     if (fontSize >= 21 && supportsLargeFormControls())
@@ -1193,7 +1193,7 @@ static NSControlSize controlSizeForFont(const RenderStyle& style)
     return NSControlSizeMini;
 }
 
-static IntSize sizeForFont(const RenderStyle& style, std::span<const IntSize, 4> sizes)
+static IntSize sizeForFont(const Style::ComputedStyle& style, std::span<const IntSize, 4> sizes)
 {
     if (style.usedZoom() != 1.0f && !style.evaluationTimeZoomEnabled()) {
         IntSize result = sizes[controlSizeForFont(style)];
@@ -1202,7 +1202,7 @@ static IntSize sizeForFont(const RenderStyle& style, std::span<const IntSize, 4>
     return sizes[controlSizeForFont(style)];
 }
 
-static IntSize sizeForSystemFont(const RenderStyle& style, std::span<const IntSize, 4> sizes)
+static IntSize sizeForSystemFont(const Style::ComputedStyle& style, std::span<const IntSize, 4> sizes)
 {
     if (style.usedZoom() != 1.0f) {
         IntSize result = sizes[controlSizeForSystemFont(style)];
@@ -1211,7 +1211,7 @@ static IntSize sizeForSystemFont(const RenderStyle& style, std::span<const IntSi
     return sizes[controlSizeForSystemFont(style)];
 }
 
-static void setSizeFromFont(RenderStyle& style, std::span<const IntSize, 4> sizes)
+static void setSizeFromFont(Style::ComputedStyle& style, std::span<const IntSize, 4> sizes)
 {
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     IntSize size = sizeForFont(style, sizes);
@@ -1221,7 +1221,7 @@ static void setSizeFromFont(RenderStyle& style, std::span<const IntSize, 4> size
         style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height()) });
 }
 
-static void setFontFromControlSize(RenderStyle& style, NSControlSize controlSize)
+static void setFontFromControlSize(Style::ComputedStyle& style, NSControlSize controlSize)
 {
     FontCascadeDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
@@ -1236,7 +1236,7 @@ static void setFontFromControlSize(RenderStyle& style, NSControlSize controlSize
     style.setFontDescription(WTF::move(fontDescription));
 }
 
-void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustListButtonStyle(Style::ComputedStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -1253,7 +1253,7 @@ void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element* el
 }
 
 #if ENABLE(SERVICE_CONTROLS)
-void RenderThemeMac::adjustImageControlsButtonStyle(RenderStyle& style, const Element*) const
+void RenderThemeMac::adjustImageControlsButtonStyle(Style::ComputedStyle& style, const Element*) const
 {
     style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(imageControlsButtonSize().height()) });
     style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(imageControlsButtonSize().width()) });
@@ -1323,7 +1323,7 @@ static std::span<const IntSize, 4> NODELETE menuListButtonSizes()
     return sizes;
 }
 
-void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustMenuListStyle(Style::ComputedStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -1362,7 +1362,7 @@ static Style::PaddingEdge NODELETE toTruncatedPaddingEdge(auto value)
     return Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(value)) };
 }
 
-Style::PaddingBox RenderThemeMac::platformPopupInternalPaddingBox(const RenderStyle& style) const
+Style::PaddingBox RenderThemeMac::platformPopupInternalPaddingBox(const Style::ComputedStyle& style) const
 {
     if (style.usedAppearance() == StyleAppearance::Menulist) {
         auto padding = popupButtonPadding(controlSizeForFont(style));
@@ -1390,7 +1390,7 @@ Style::PaddingBox RenderThemeMac::platformPopupInternalPaddingBox(const RenderSt
     return { 0_css_px };
 }
 
-PopupMenuStyle::Size RenderThemeMac::popupMenuSize(const RenderStyle& style, IntRect& rect) const
+PopupMenuStyle::Size RenderThemeMac::popupMenuSize(const Style::ComputedStyle& style, IntRect& rect) const
 {
     auto size = controlSizeFromPixelSize(popupButtonSizes(), rect.size(), style.usedZoom());
     switch (size) {
@@ -1407,7 +1407,7 @@ PopupMenuStyle::Size RenderThemeMac::popupMenuSize(const RenderStyle& style, Int
     }
 }
 
-void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustMenuListButtonStyle(Style::ComputedStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled())
@@ -1435,18 +1435,18 @@ std::span<const IntSize, 4> RenderThemeMac::menuListSizes() const
     return sizes;
 }
 
-int RenderThemeMac::minimumMenuListSize(const RenderStyle& style) const
+int RenderThemeMac::minimumMenuListSize(const Style::ComputedStyle& style) const
 {
     return sizeForSystemFont(style, menuListSizes()).width();
 }
 
-void RenderThemeMac::adjustSliderTrackStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustSliderTrackStyle(Style::ComputedStyle& style, const Element* element) const
 {
     RenderThemeCocoa::adjustSliderTrackStyle(style, element);
     style.setBoxShadow(CSS::Keyword::None { });
 }
 
-void RenderThemeMac::adjustSliderThumbStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustSliderThumbStyle(Style::ComputedStyle& style, const Element* element) const
 {
     RenderThemeCocoa::adjustSliderThumbStyle(style, element);
     style.setBoxShadow(CSS::Keyword::None { });
@@ -1458,7 +1458,7 @@ std::span<const IntSize, 4> RenderThemeMac::searchFieldSizes() const
     return sizes;
 }
 
-void RenderThemeMac::setSearchFieldSize(RenderStyle& style) const
+void RenderThemeMac::setSearchFieldSize(Style::ComputedStyle& style) const
 {
     // If the width and height are both specified, then we have nothing to do.
     if (!style.width().isSizingKeywordOrAuto() && !style.height().isAuto())
@@ -1468,7 +1468,7 @@ void RenderThemeMac::setSearchFieldSize(RenderStyle& style) const
     setSizeFromFont(style, searchFieldSizes());
 }
 
-void RenderThemeMac::adjustSearchFieldStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustSearchFieldStyle(Style::ComputedStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -1511,7 +1511,7 @@ std::span<const IntSize, 4> RenderThemeMac::cancelButtonSizes() const
     return sizes;
 }
 
-void RenderThemeMac::adjustSearchFieldCancelButtonStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustSearchFieldCancelButtonStyle(Style::ComputedStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -1536,7 +1536,7 @@ std::span<const IntSize, 4> RenderThemeMac::resultsButtonSizes() const
 }
 
 constexpr int emptyResultsOffset = 9;
-void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustSearchFieldDecorationPartStyle(Style::ComputedStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -1566,7 +1566,7 @@ void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     style.setBoxShadow(CSS::Keyword::None { });
 }
 
-void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(Style::ComputedStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -1583,7 +1583,7 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& st
     style.setBoxShadow(CSS::Keyword::None { });
 }
 
-void RenderThemeMac::adjustSearchFieldResultsButtonStyle(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustSearchFieldResultsButtonStyle(Style::ComputedStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -1614,7 +1614,7 @@ int RenderThemeMac::sliderTickOffsetFromTrackCenter() const
 // However, the method currently returns an incorrect value, both with and without a control view associated with the cell.
 constexpr int sliderThumbThickness = 17;
 
-void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element* element) const
+void RenderThemeMac::adjustSliderThumbSize(Style::ComputedStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {

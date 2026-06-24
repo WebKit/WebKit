@@ -1192,7 +1192,17 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
 void JSObject::enterDictionaryIndexingMode(VM& vm)
 {
     switch (indexingType()) {
-    case ALL_BLANK_INDEXING_TYPES:
+    case NonArray:
+        // No indexed properties to convert. Once the caller makes the structure
+        // non-extensible, indexingShouldBeSparse() lazily handles later indexed
+        // writes; staying blank also keeps for-in enumerator caching usable.
+        // JSArray code paths (e.g. setLengthWritable) assume this method
+        // allocated ArrayStorage, so do not skip for JSArray subclasses that
+        // use NonArray indexing (e.g. $vm RuntimeArray with DerivedArrayType).
+        if (!inherits<JSArray>()) [[likely]]
+            return;
+        [[fallthrough]];
+    case ArrayClass:
     case ALL_UNDECIDED_INDEXING_TYPES:
     case ALL_INT32_INDEXING_TYPES:
     case ALL_DOUBLE_INDEXING_TYPES:
@@ -2857,6 +2867,7 @@ void JSObject::seal(VM& vm)
 {
     if (isSealed(vm))
         return;
+    materializeLazyOwnProperties(vm);
     enterDictionaryIndexingMode(vm);
     {
         Structure* oldStructure = structure();
@@ -2869,12 +2880,28 @@ void JSObject::freeze(VM& vm)
 {
     if (isFrozen(vm))
         return;
+    materializeLazyOwnProperties(vm);
     enterDictionaryIndexingMode(vm);
     {
         Structure* oldStructure = structure();
         DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
         setStructure(vm, Structure::freezeTransition(vm, oldStructure, &deferred));
     }
+}
+
+void JSObject::materializeLazyOwnProperties(VM& vm)
+{
+    if (!structure()->typeInfo().overridesGetOwnSpecialPropertyNames())
+        return;
+
+    // Force reifying lazy properties. Special properties (e.g. function "length" / "name",
+    // or "arguments" / "caller") are materialized onto the object as a side effect of
+    // enumerating them via getOwnPropertyNames, so the call below is what does the reification.
+    JSGlobalObject* globalObject = this->realm();
+    PropertyNameArrayBuilder propertyNames(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+    methodTable()->getOwnPropertyNames(this, globalObject, propertyNames, DontEnumPropertiesMode::Include);
+    scope.releaseAssertNoExceptionExceptTermination();
 }
 
 bool JSObject::preventExtensions(JSObject* object, JSGlobalObject* globalObject)

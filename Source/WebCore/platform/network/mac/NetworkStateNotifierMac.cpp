@@ -64,8 +64,14 @@ void NetworkStateNotifier::updateStateWithoutNotifying()
         if (CFStringHasPrefix(interfaceName.get(), CFSTR("vmnet")))
             continue;
 
-        auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interfaceName.get(), kSCEntNetIPv4));
-        if (auto value = adoptCF(SCDynamicStoreCopyValue(m_store.get(), key.get()))) {
+        RetainPtr ipv4Key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interfaceName.get(), kSCEntNetIPv4));
+        if (RetainPtr value = adoptCF(SCDynamicStoreCopyValue(m_store.get(), ipv4Key.get()))) {
+            m_isOnLine = true;
+            return;
+        }
+
+        RetainPtr ipv6Key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interfaceName.get(), kSCEntNetIPv6));
+        if (RetainPtr value = adoptCF(SCDynamicStoreCopyValue(m_store.get(), ipv6Key.get()))) {
             m_isOnLine = true;
             return;
         }
@@ -92,10 +98,12 @@ void NetworkStateNotifier::startObserving()
 
     auto keys = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
     CFArrayAppendValue(keys.get(), adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetIPv4)).get());
+    CFArrayAppendValue(keys.get(), adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetIPv6)).get());
     CFArrayAppendValue(keys.get(), adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetDNS)).get());
 
     auto patterns = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
     CFArrayAppendValue(patterns.get(), adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, kSCCompAnyRegex, kSCEntNetIPv4)).get());
+    CFArrayAppendValue(patterns.get(), adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, kSCCompAnyRegex, kSCEntNetIPv6)).get());
 
     SCDynamicStoreSetNotificationKeys(m_store.get(), keys.get(), patterns.get());
 }

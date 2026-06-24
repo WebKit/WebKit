@@ -72,12 +72,12 @@ class RenderGrid final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderGrid);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderGrid);
 public:
-    RenderGrid(Element&, RenderStyle&&);
+    RenderGrid(Element&, Style::ComputedStyle&&);
     virtual ~RenderGrid();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 
     bool canDropAnonymousBlockChild() const override { return false; }
@@ -107,7 +107,7 @@ public:
     bool isBaselineAlignmentForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContext) const;
 
     StyleContentAlignmentData contentAlignment(Style::GridTrackSizingDirection) const;
-    StyleSelfAlignmentData selfAlignmentForGridItem(const RenderBox&, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal, const RenderStyle* = nullptr) const;
+    StyleSelfAlignmentData selfAlignmentForGridItem(const RenderBox&, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal, const Style::ComputedStyle* = nullptr) const;
     bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 
     // These functions handle the actual implementation of layoutBlock based on if
@@ -166,6 +166,7 @@ private:
     friend class GridTrackSizingAlgorithmStrategy;
     friend class GridMasonryLayout;
     friend class PositionedLayoutConstraints;
+    friend class LayoutIntegration::GridLayout;
 
     inline void updateGridAreaWithEstimate(RenderBox& gridItem, const GridTrackSizingAlgorithm&) const;
     inline void updateGridAreaIncludingAlignment(RenderBox& gridItem) const;
@@ -174,15 +175,15 @@ private:
     bool canSetColumnAxisStretchRequirementForItem(const RenderBox&) const;
 
     ASCIILiteral renderName() const override;
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
 
-    bool selfAlignmentChangedToStretch(LogicalBoxAxis containingAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& gridItem) const;
-    bool selfAlignmentChangedFromStretch(LogicalBoxAxis containingAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& gridItem) const;
+    bool selfAlignmentChangedToStretch(LogicalBoxAxis containingAxis, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, const RenderBox& gridItem) const;
+    bool selfAlignmentChangedFromStretch(LogicalBoxAxis containingAxis, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, const RenderBox& gridItem) const;
 
-    SubgridDidChange NODELETE subgridDidChange(const RenderStyle& oldStyle) const;
-    bool NODELETE explicitGridDidResize(const RenderStyle&) const;
-    bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
-    bool implicitGridLinesDefinitionDidChange(const RenderStyle&) const;
+    SubgridDidChange NODELETE subgridDidChange(const Style::ComputedStyle& oldStyle) const;
+    bool NODELETE explicitGridDidResize(const Style::ComputedStyle&) const;
+    bool namedGridLinesDefinitionDidChange(const Style::ComputedStyle&) const;
+    bool implicitGridLinesDefinitionDidChange(const Style::ComputedStyle&) const;
 
     unsigned computeAutoRepeatTracksCount(Style::GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
@@ -217,7 +218,7 @@ private:
     void layoutOutOfFlowBox(RenderBox&, RelayoutChildren, bool fixedPositionObjectsOnly) override;
 
     void computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection, LayoutUnit availableSpace, RenderGridLayoutState&);
-    void computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, RenderGridLayoutState&, LayoutUnit* minIntrinsicSize = nullptr, LayoutUnit* maxIntrinsicSize = nullptr) const;
+    std::pair<LayoutUnit, LayoutUnit> computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, RenderGridLayoutState&) const;
     LayoutUnit computeTrackBasedLogicalHeight() const;
 
     void repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, RenderGridLayoutState&);

@@ -38,6 +38,7 @@ private:
     SVGFEFloodElement(const QualifiedName&, Document&);
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName& attrName) override;
+    bool taintsOrigin() const override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 };
 

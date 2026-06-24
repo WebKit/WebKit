@@ -159,7 +159,8 @@ class RTC_EXPORT SimulcastEncoderAdapter : public VideoEncoder {
     SimulcastEncoderAdapter* const parent_;
     std::unique_ptr<EncoderContext> encoder_context_;
     std::unique_ptr<FramerateController> framerate_controller_;
-    std::deque<uint32_t> pending_rtp_timestamps_;
+    mutable Mutex queue_mutex_;
+    std::deque<uint32_t> pending_rtp_timestamps_ RTC_GUARDED_BY(queue_mutex_);
     const int stream_idx_;
     const uint16_t width_;
     const uint16_t height_;

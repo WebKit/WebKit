@@ -28,6 +28,7 @@
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/environment/environment.h"
+#include "api/field_trials.h"
 #include "api/make_ref_counted.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_factory.h"
@@ -347,10 +348,10 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
   neteq_config.sample_rate_hz = *sample_rate_hz;
   neteq_config.max_packets_in_buffer = config.max_nr_packets_in_buffer;
   neteq_config.enable_fast_accelerate = config.enable_fast_accelerate;
-  return std::make_unique<NetEqTest>(neteq_config, decoder_factory, codecs,
-                                     std::move(text_log), factory,
-                                     std::move(input), std::move(output),
-                                     callbacks, config.field_trial_string);
+  FieldTrials field_trials_view(config.field_trial_string);
+  return std::make_unique<NetEqTest>(
+      neteq_config, decoder_factory, codecs, std::move(text_log), factory,
+      std::move(input), std::move(output), callbacks, &field_trials_view);
 }
 
 }  // namespace test

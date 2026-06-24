@@ -13,9 +13,9 @@
 
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 
@@ -39,7 +39,7 @@ class PostFilter {
 
  private:
   PostFilter(
-      ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients> coefficients,
+      std::span<const CascadedBiQuadFilter::BiQuadCoefficients> coefficients,
       size_t num_channels);
 
   std::vector<std::unique_ptr<CascadedBiQuadFilter>> filters_;

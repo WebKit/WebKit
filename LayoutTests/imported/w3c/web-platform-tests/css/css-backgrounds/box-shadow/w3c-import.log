@@ -14,7 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/box-shadow-blur-definition-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/box-shadow-table-row-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/box-shadow-table-row-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/box-shadow-table-row-display.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001.html

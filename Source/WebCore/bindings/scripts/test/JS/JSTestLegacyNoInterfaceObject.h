@@ -64,8 +64,12 @@ protected:
 
 class JSTestLegacyNoInterfaceObjectOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestLegacyNoInterfaceObjectOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestLegacyNoInterfaceObjectOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestLegacyNoInterfaceObject*)

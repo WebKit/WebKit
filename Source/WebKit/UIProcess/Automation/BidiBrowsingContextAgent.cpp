@@ -223,7 +223,7 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    std::optional<uint64_t> maxDepth = std::nullopt;
+    std::optional<uint64_t> maxDepth;
     if (optionalMaxDepth) {
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*optionalMaxDepth < 0, InvalidParameter);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(std::floor(*optionalMaxDepth) != *optionalMaxDepth, InvalidParameter);

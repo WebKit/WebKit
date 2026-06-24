@@ -58,11 +58,11 @@ InlineCacheHandler::InlineCacheHandler()
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 InlineCacheHandler::InlineCacheHandler(bool makesJSCalls, Ref<InlineCacheHandler>&& previous, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<PropertyInlineCacheClearingWatchpoint>&& watchpoint, CacheType cacheType)
-    : m_callTarget(stubRoutine->code().code().template retagged<JITStubRoutinePtrTag>())
+    : m_next(WTF::move(previous))
+    , m_callTarget(stubRoutine->code().code().template retagged<JITStubRoutinePtrTag>())
     , m_jumpTarget(CodePtr<NoPtrTag> { m_callTarget.retagged<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>())
     , m_cacheType(cacheType)
     , m_makesJSCalls(makesJSCalls)
-    , m_next(WTF::move(previous))
     , m_stubRoutine(WTF::move(stubRoutine))
     , m_watchpoint(WTF::move(watchpoint))
 {

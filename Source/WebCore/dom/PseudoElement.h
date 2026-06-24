@@ -43,7 +43,7 @@ public:
 
     PseudoElementType pseudoElementType() const { return m_pseudoElementType; }
 
-    bool rendererIsNeeded(const RenderStyle&) override;
+    bool rendererIsNeeded(const Style::ComputedStyle&) override;
 
     bool canStartSelection() const override { return false; }
     bool canContainRangeEndPoint() const override { return false; }

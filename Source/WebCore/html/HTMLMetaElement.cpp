@@ -42,8 +42,8 @@
 #include "MediaQueryParserContext.h"
 #include "NodeName.h"
 #include "Quirks.h"
-#include "RenderStyle.h"
 #include "Settings.h"
+#include "StyleComputedStyle.h"
 #include "StyleResolveForDocument.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -85,17 +85,13 @@ bool HTMLMetaElement::mediaAttributeMatches()
         m_mediaQueryList = MQ::MediaQueryParser::parse(mediaText, document->cssParserContext());
     }
 
-    std::optional<RenderStyle> documentStyle;
-    if (document->hasLivingRenderTree())
-        documentStyle = Style::resolveForDocument(document);
-
     AtomString mediaType;
     if (RefPtr frame = document->frame()) {
         if (RefPtr frameView = frame->view())
             mediaType = frameView->mediaType();
     }
 
-    auto evaluator = MQ::MediaQueryEvaluator { mediaType, document, documentStyle ? &*documentStyle : nullptr };
+    auto evaluator = MQ::MediaQueryEvaluator { mediaType, document };
     return evaluator.evaluate(*m_mediaQueryList);
 }
 

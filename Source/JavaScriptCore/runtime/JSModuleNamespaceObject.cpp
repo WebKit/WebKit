@@ -280,8 +280,10 @@ void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, JSGlobalObject
         if (mode == DontEnumPropertiesMode::Exclude) {
             // Perform [[GetOwnProperty]] to throw ReferenceError if binding is uninitialized.
             PropertySlot slot(cell, PropertySlot::InternalMethodType::GetOwnProperty);
-            thisObject->getOwnPropertySlotCommon(globalObject, name.get(), slot);
+            bool hasProperty = thisObject->getOwnPropertySlotCommon(globalObject, name.get(), slot);
             RETURN_IF_EXCEPTION(scope, void());
+            if (!hasProperty)
+                continue;
         }
         propertyNames.add(name);
     }

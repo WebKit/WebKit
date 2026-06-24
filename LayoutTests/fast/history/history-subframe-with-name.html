@@ -1,20 +1,17 @@
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <pre id="console"></pre>
 <script>
 description('Verifies that we can go back and forward from the top level of a frame set where a window changes its name after the initial load.');
+window.jsTestIsAsync = true;
 
 var testWindow;
 
 onload = function()
 {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
     
     testWindow = window.open('resources/history-subframe-with-name-container.html');
     if (!testWindow)
@@ -63,8 +60,7 @@ function onFrameLoaded(pageId)
     
     if (currentState == 4) {
         testPassed('Complete: navigated through all the states');
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 }
 </script>

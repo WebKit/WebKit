@@ -289,6 +289,9 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
         displayAttributes.push_back(reinterpret_cast<EGLAttrib>(enabledFeatureOverrides.data()));
     }
 
+    displayAttributes.push_back(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE);
+    displayAttributes.push_back(osWindow->getNativeDisplayPlatformType());
+
     displayAttributes.push_back(EGL_NONE);
 
     if (driverType == angle::GLESDriverType::SystemWGL)

@@ -25,6 +25,8 @@
 #endif
 
 
+using namespace bssl;
+
 // This file contains a constant-time implementation of AES, bitsliced with
 // 32-bit, 64-bit, or 128-bit words, operating on two-, four-, and eight-block
 // batches, respectively. The 128-bit implementation requires SSE2 intrinsics.
@@ -81,19 +83,19 @@ typedef __m128i aes_word_t;
 #define AES_NOHW_COL3_MASK \
   _mm_set_epi32(0xffffffff, 0x00000000, 0x00000000, 0x00000000)
 
-static inline aes_word_t aes_nohw_and(aes_word_t a, aes_word_t b) {
+static aes_word_t aes_nohw_and(aes_word_t a, aes_word_t b) {
   return _mm_and_si128(a, b);
 }
 
-static inline aes_word_t aes_nohw_or(aes_word_t a, aes_word_t b) {
+static aes_word_t aes_nohw_or(aes_word_t a, aes_word_t b) {
   return _mm_or_si128(a, b);
 }
 
-static inline aes_word_t aes_nohw_xor(aes_word_t a, aes_word_t b) {
+static aes_word_t aes_nohw_xor(aes_word_t a, aes_word_t b) {
   return _mm_xor_si128(a, b);
 }
 
-static inline aes_word_t aes_nohw_not(aes_word_t a) {
+static aes_word_t aes_nohw_not(aes_word_t a) {
   return _mm_xor_si128(
       a, _mm_set_epi32(0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff));
 }
@@ -129,25 +131,19 @@ typedef uint32_t aes_word_t;
 #define AES_NOHW_COL3_MASK 0xff000000
 #endif  // OPENSSL_64_BIT
 
-static inline aes_word_t aes_nohw_and(aes_word_t a, aes_word_t b) {
-  return a & b;
-}
+static aes_word_t aes_nohw_and(aes_word_t a, aes_word_t b) { return a & b; }
 
-static inline aes_word_t aes_nohw_or(aes_word_t a, aes_word_t b) {
-  return a | b;
-}
+static aes_word_t aes_nohw_or(aes_word_t a, aes_word_t b) { return a | b; }
 
-static inline aes_word_t aes_nohw_xor(aes_word_t a, aes_word_t b) {
-  return a ^ b;
-}
+static aes_word_t aes_nohw_xor(aes_word_t a, aes_word_t b) { return a ^ b; }
 
-static inline aes_word_t aes_nohw_not(aes_word_t a) { return ~a; }
+static aes_word_t aes_nohw_not(aes_word_t a) { return ~a; }
 
-static inline aes_word_t aes_nohw_shift_left(aes_word_t a, aes_word_t i) {
+static aes_word_t aes_nohw_shift_left(aes_word_t a, aes_word_t i) {
   return a << (i * AES_NOHW_BATCH_SIZE);
 }
 
-static inline aes_word_t aes_nohw_shift_right(aes_word_t a, aes_word_t i) {
+static aes_word_t aes_nohw_shift_right(aes_word_t a, aes_word_t i) {
   return a >> (i * AES_NOHW_BATCH_SIZE);
 }
 #endif  // OPENSSL_SSE2
@@ -227,9 +223,9 @@ typedef struct {
 
 // aes_nohw_batch_set sets the |i|th block of |batch| to |in|. |batch| is in
 // compact form.
-static inline void aes_nohw_batch_set(AES_NOHW_BATCH *batch,
-                                      const aes_word_t in[AES_NOHW_BLOCK_WORDS],
-                                      size_t i) {
+static void aes_nohw_batch_set(AES_NOHW_BATCH *batch,
+                               const aes_word_t in[AES_NOHW_BLOCK_WORDS],
+                               size_t i) {
   // Note the words are interleaved. The order comes from |aes_nohw_transpose|.
   // If |i| is zero and this is the 64-bit implementation, in[0] contains bits
   // 0-3 and in[1] contains bits 4-7. We place in[0] at w[0] and in[1] at
@@ -252,9 +248,8 @@ static inline void aes_nohw_batch_set(AES_NOHW_BATCH *batch,
 
 // aes_nohw_batch_get writes the |i|th block of |batch| to |out|. |batch| is in
 // compact form.
-static inline void aes_nohw_batch_get(const AES_NOHW_BATCH *batch,
-                                      aes_word_t out[AES_NOHW_BLOCK_WORDS],
-                                      size_t i) {
+static void aes_nohw_batch_get(const AES_NOHW_BATCH *batch,
+                               aes_word_t out[AES_NOHW_BLOCK_WORDS], size_t i) {
   assert(i < AES_NOHW_BATCH_SIZE);
 #if defined(OPENSSL_SSE2)
   out[0] = batch->w[i];
@@ -272,8 +267,8 @@ static inline void aes_nohw_batch_get(const AES_NOHW_BATCH *batch,
 #if !defined(OPENSSL_SSE2)
 // aes_nohw_delta_swap returns |a| with bits |a & mask| and
 // |a & (mask << shift)| swapped. |mask| and |mask << shift| may not overlap.
-static inline aes_word_t aes_nohw_delta_swap(aes_word_t a, aes_word_t mask,
-                                             aes_word_t shift) {
+static aes_word_t aes_nohw_delta_swap(aes_word_t a, aes_word_t mask,
+                                      aes_word_t shift) {
   // See
   // https://reflectionsonsecurity.wordpress.com/2014/05/11/efficient-bit-permutation-using-delta-swaps/
   aes_word_t b = (a ^ (a >> shift)) & mask;
@@ -288,7 +283,7 @@ static inline aes_word_t aes_nohw_delta_swap(aes_word_t a, aes_word_t mask,
 // These transformations are generalizations of the output of
 // http://programming.sirrida.de/calcperm.php on smaller inputs.
 #if defined(OPENSSL_64_BIT)
-static inline uint64_t aes_nohw_compact_word(uint64_t a) {
+static uint64_t aes_nohw_compact_word(uint64_t a) {
   // Numbering the 64/2 = 16 4-bit chunks, least to most significant, we swap
   // quartets of those chunks:
   //   0 1 2 3 | 4 5 6 7 | 8  9 10 11 | 12 13 14 15 =>
@@ -305,7 +300,7 @@ static inline uint64_t aes_nohw_compact_word(uint64_t a) {
   return a;
 }
 
-static inline uint64_t aes_nohw_uncompact_word(uint64_t a) {
+static uint64_t aes_nohw_uncompact_word(uint64_t a) {
   // Reverse the steps of |aes_nohw_uncompact_word|.
   a = aes_nohw_delta_swap(a, UINT64_C(0x00000000ffff0000), 16);
   a = aes_nohw_delta_swap(a, UINT64_C(0x0000ff000000ff00), 8);
@@ -313,7 +308,7 @@ static inline uint64_t aes_nohw_uncompact_word(uint64_t a) {
   return a;
 }
 #else   // !OPENSSL_64_BIT
-static inline uint32_t aes_nohw_compact_word(uint32_t a) {
+static uint32_t aes_nohw_compact_word(uint32_t a) {
   // Numbering the 32/2 = 16 pairs of bits, least to most significant, we swap:
   //   0 1 2 3 | 4 5 6 7 | 8  9 10 11 | 12 13 14 15 =>
   //   0 4 2 6 | 1 5 3 7 | 8 12 10 14 |  9 13 11 15
@@ -328,23 +323,23 @@ static inline uint32_t aes_nohw_compact_word(uint32_t a) {
   return a;
 }
 
-static inline uint32_t aes_nohw_uncompact_word(uint32_t a) {
+static uint32_t aes_nohw_uncompact_word(uint32_t a) {
   // Reverse the steps of |aes_nohw_uncompact_word|.
   a = aes_nohw_delta_swap(a, 0x0000f0f0, 12);
   a = aes_nohw_delta_swap(a, 0x00cc00cc, 6);
   return a;
 }
 
-static inline uint32_t aes_nohw_word_from_bytes(uint8_t a0, uint8_t a1,
-                                                uint8_t a2, uint8_t a3) {
+static uint32_t aes_nohw_word_from_bytes(uint8_t a0, uint8_t a1, uint8_t a2,
+                                         uint8_t a3) {
   return (uint32_t)a0 | ((uint32_t)a1 << 8) | ((uint32_t)a2 << 16) |
          ((uint32_t)a3 << 24);
 }
 #endif  // OPENSSL_64_BIT
 #endif  // !OPENSSL_SSE2
 
-static inline void aes_nohw_compact_block(aes_word_t out[AES_NOHW_BLOCK_WORDS],
-                                          const uint8_t in[16]) {
+static void aes_nohw_compact_block(aes_word_t out[AES_NOHW_BLOCK_WORDS],
+                                   const uint8_t in[16]) {
   memcpy(out, in, 16);
 #if defined(OPENSSL_SSE2)
   // No conversions needed.
@@ -370,7 +365,7 @@ static inline void aes_nohw_compact_block(aes_word_t out[AES_NOHW_BLOCK_WORDS],
 #endif
 }
 
-static inline void aes_nohw_uncompact_block(
+static void aes_nohw_uncompact_block(
     uint8_t out[16], const aes_word_t in[AES_NOHW_BLOCK_WORDS]) {
 #if defined(OPENSSL_SSE2)
   memcpy(out, in, 16);  // No conversions needed.
@@ -428,8 +423,8 @@ static inline void aes_nohw_uncompact_block(
                                                                           \
   } while (0)
 #else
-static inline void aes_nohw_swap_bits(aes_word_t *a, aes_word_t *b,
-                                      uint32_t mask, aes_word_t shift) {
+static void aes_nohw_swap_bits(aes_word_t *a, aes_word_t *b, uint32_t mask,
+                               aes_word_t shift) {
 #if defined(OPENSSL_64_BIT)
   aes_word_t mask_w = (((uint64_t)mask) << 32) | mask;
 #else
@@ -736,7 +731,7 @@ static void aes_nohw_inv_shift_rows(AES_NOHW_BATCH *batch) {
 
 // aes_nohw_rotate_rows_down returns |v| with the rows in each column rotated
 // down by one.
-static inline aes_word_t aes_nohw_rotate_rows_down(aes_word_t v) {
+static aes_word_t aes_nohw_rotate_rows_down(aes_word_t v) {
 #if defined(OPENSSL_SSE2)
   return _mm_or_si128(_mm_srli_epi32(v, 8), _mm_slli_epi32(v, 24));
 #elif defined(OPENSSL_64_BIT)
@@ -749,7 +744,7 @@ static inline aes_word_t aes_nohw_rotate_rows_down(aes_word_t v) {
 
 // aes_nohw_rotate_rows_twice returns |v| with the rows in each column rotated
 // by two.
-static inline aes_word_t aes_nohw_rotate_rows_twice(aes_word_t v) {
+static aes_word_t aes_nohw_rotate_rows_twice(aes_word_t v) {
 #if defined(OPENSSL_SSE2)
   return _mm_or_si128(_mm_srli_epi32(v, 16), _mm_slli_epi32(v, 16));
 #elif defined(OPENSSL_64_BIT)
@@ -917,7 +912,7 @@ static const uint8_t aes_nohw_rcon[10] = {0x01, 0x02, 0x04, 0x08, 0x10,
 
 // aes_nohw_rcon_slice returns the |i|th group of |AES_NOHW_BATCH_SIZE| bits in
 // |rcon|, stored in a |aes_word_t|.
-static inline aes_word_t aes_nohw_rcon_slice(uint8_t rcon, size_t i) {
+static aes_word_t aes_nohw_rcon_slice(uint8_t rcon, size_t i) {
   rcon = (rcon >> (i * AES_NOHW_BATCH_SIZE)) & ((1 << AES_NOHW_BATCH_SIZE) - 1);
 #if defined(OPENSSL_SSE2)
   return _mm_set_epi32(0, 0, 0, rcon);
@@ -1121,8 +1116,8 @@ static void aes_nohw_setup_key_256(AES_KEY *key, const uint8_t in[32]) {
 
 // External API.
 
-int aes_nohw_set_encrypt_key(const uint8_t *key, unsigned bits,
-                             AES_KEY *aeskey) {
+int bssl::aes_nohw_set_encrypt_key(const uint8_t *key, unsigned bits,
+                                   AES_KEY *aeskey) {
   switch (bits) {
     case 128:
       aes_nohw_setup_key_128(aeskey, key);
@@ -1137,12 +1132,13 @@ int aes_nohw_set_encrypt_key(const uint8_t *key, unsigned bits,
   return 1;
 }
 
-int aes_nohw_set_decrypt_key(const uint8_t *key, unsigned bits,
-                             AES_KEY *aeskey) {
+int bssl::aes_nohw_set_decrypt_key(const uint8_t *key, unsigned bits,
+                                   AES_KEY *aeskey) {
   return aes_nohw_set_encrypt_key(key, bits, aeskey);
 }
 
-void aes_nohw_encrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key) {
+void bssl::aes_nohw_encrypt(const uint8_t *in, uint8_t *out,
+                            const AES_KEY *key) {
   AES_NOHW_SCHEDULE sched;
   aes_nohw_expand_round_keys(&sched, key);
   AES_NOHW_BATCH batch;
@@ -1151,7 +1147,8 @@ void aes_nohw_encrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key) {
   aes_nohw_from_batch(out, /*num_blocks=*/1, &batch);
 }
 
-void aes_nohw_decrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key) {
+void bssl::aes_nohw_decrypt(const uint8_t *in, uint8_t *out,
+                            const AES_KEY *key) {
   AES_NOHW_SCHEDULE sched;
   aes_nohw_expand_round_keys(&sched, key);
   AES_NOHW_BATCH batch;
@@ -1160,8 +1157,8 @@ void aes_nohw_decrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key) {
   aes_nohw_from_batch(out, /*num_blocks=*/1, &batch);
 }
 
-static inline void aes_nohw_xor_block(uint8_t out[16], const uint8_t a[16],
-                                      const uint8_t b[16]) {
+static void aes_nohw_xor_block(uint8_t out[16], const uint8_t a[16],
+                               const uint8_t b[16]) {
   for (size_t i = 0; i < 16; i += sizeof(aes_word_t)) {
     aes_word_t x, y;
     memcpy(&x, a + i, sizeof(aes_word_t));
@@ -1171,9 +1168,9 @@ static inline void aes_nohw_xor_block(uint8_t out[16], const uint8_t a[16],
   }
 }
 
-void aes_nohw_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
-                                   size_t blocks, const AES_KEY *key,
-                                   const uint8_t ivec[16]) {
+void bssl::aes_nohw_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
+                                         size_t blocks, const AES_KEY *key,
+                                         const uint8_t ivec[16]) {
   if (blocks == 0) {
     return;
   }
@@ -1216,8 +1213,9 @@ void aes_nohw_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
   }
 }
 
-void aes_nohw_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t len,
-                          const AES_KEY *key, uint8_t *ivec, const int enc) {
+void bssl::aes_nohw_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t len,
+                                const AES_KEY *key, uint8_t *ivec,
+                                const int enc) {
   assert(len % 16 == 0);
   size_t blocks = len / 16;
   if (blocks == 0) {

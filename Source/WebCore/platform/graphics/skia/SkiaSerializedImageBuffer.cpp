@@ -27,6 +27,8 @@
 #include "SkiaSerializedImageBuffer.h"
 
 #if USE(SKIA)
+#include "GLContext.h"
+#include "GLFence.h"
 #include "GraphicsContext.h"
 #include "NativeImage.h"
 #include "PlatformDisplay.h"
@@ -44,6 +46,7 @@ SkiaSerializedImageBuffer::SkiaSerializedImageBuffer(ImageBuffer& imageBuffer)
 
     m_imageBuffer->flushDrawingContext();
     m_image = m_imageBuffer->createNativeImageReference();
+    m_fence = GLFence::create(PlatformDisplay::sharedDisplay().glDisplay());
 }
 
 SkiaSerializedImageBuffer::~SkiaSerializedImageBuffer() = default;
@@ -64,6 +67,11 @@ RefPtr<ImageBuffer> SkiaSerializedImageBuffer::sinkIntoImageBuffer()
         m_imageBuffer->colorSpace(), RenderingMode::Accelerated, std::nullopt, { m_imageBuffer->pixelFormat() });
     if (!copiedImageBuffer)
         return nullptr;
+
+    if (m_fence) {
+        m_fence->serverWait();
+        m_fence = nullptr;
+    }
 
     FloatRect destination({ }, m_imageBuffer->logicalSize());
     FloatRect source = destination;

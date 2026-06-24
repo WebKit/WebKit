@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-// A timestamp that has gone through privacy-driven coarsening via Seconds::reduceTimeResolution.
+// A timestamp that has gone through privacy-driven coarsening via ReducedResolutionSeconds::reduce.
 // Unit-conversion methods round at microsecond precision so that callers observe consistent
 // DOMHighResTimeStamp values regardless of the conversion path they take, absorbing the
 // sub-microsecond IEEE-754 noise introduced by seconds-double ↔ milliseconds-double conversion.
@@ -45,6 +45,11 @@ public:
     static constexpr ReducedResolutionSeconds fromSeconds(Seconds value)
     {
         return fromRawSeconds(value.value());
+    }
+
+    static constexpr ReducedResolutionSeconds reduce(Seconds value, Seconds resolution)
+    {
+        return fromRawSeconds(std::floor(value.value() / resolution.value()) * resolution.value());
     }
 
     double seconds() const { return std::round(m_value * 1000000.0) / 1000000.0; }

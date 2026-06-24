@@ -136,7 +136,7 @@ std::optional<VPCodecConfigurationRecord> createVPCodecConfigurationRecordFromVP
 void NODELETE setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord&, uint8_t);
 
 enum class VPXCodec : uint8_t { Vp8, Vp9 };
-std::optional<VPCodecConfigurationRecord> vPCodecConfigurationRecordFromVPXByteStream(VPXCodec, std::span<const uint8_t>);
+std::optional<VPCodecConfigurationRecord> vpCodecConfigurationRecordFromVPXByteStream(VPXCodec, std::span<const uint8_t>);
 Vector<uint8_t> vpcCFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&);
 
 PlatformVideoColorSpace NODELETE colorSpaceFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&);

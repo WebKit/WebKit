@@ -27,8 +27,8 @@
 #include "TableFormattingState.h"
 
 #include "LayoutBoxInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderObject.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TableFormattingContext.h"
 #include <wtf/TZoneMallocInlines.h>

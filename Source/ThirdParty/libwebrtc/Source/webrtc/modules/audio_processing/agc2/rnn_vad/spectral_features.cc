@@ -15,8 +15,8 @@
 #include <cmath>
 #include <limits>
 #include <numeric>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/ring_buffer.h"
 #include "modules/audio_processing/agc2/rnn_vad/spectral_features_internal.h"
@@ -34,7 +34,7 @@ constexpr float kSilenceThreshold = 0.04f;
 // Computes the new cepstral difference stats and pushes them into the passed
 // symmetric matrix buffer.
 void UpdateCepstralDifferenceStats(
-    ArrayView<const float, kNumBands> new_cepstral_coeffs,
+    std::span<const float, kNumBands> new_cepstral_coeffs,
     const RingBuffer<float, kNumBands, kCepstralCoeffsHistorySize>& ring_buf,
     SymmetricMatrixBuffer<float, kCepstralCoeffsHistorySize>* sym_matrix_buf) {
   RTC_DCHECK(sym_matrix_buf);
@@ -71,7 +71,7 @@ std::array<float, kFrameSize20ms24kHz / 2> ComputeScaledHalfVorbisWindow(
 // applied. The Fourier coefficient corresponding to the Nyquist frequency is
 // set to zero (it is never used and this allows to simplify the code).
 void ComputeWindowedForwardFft(
-    ArrayView<const float, kFrameSize20ms24kHz> frame,
+    std::span<const float, kFrameSize20ms24kHz> frame,
     const std::array<float, kFrameSize20ms24kHz / 2>& half_window,
     Pffft::FloatBuffer* fft_input_buffer,
     Pffft::FloatBuffer* fft_output_buffer,
@@ -109,13 +109,13 @@ void SpectralFeaturesExtractor::Reset() {
 }
 
 bool SpectralFeaturesExtractor::CheckSilenceComputeFeatures(
-    ArrayView<const float, kFrameSize20ms24kHz> reference_frame,
-    ArrayView<const float, kFrameSize20ms24kHz> lagged_frame,
-    ArrayView<float, kNumBands - kNumLowerBands> higher_bands_cepstrum,
-    ArrayView<float, kNumLowerBands> average,
-    ArrayView<float, kNumLowerBands> first_derivative,
-    ArrayView<float, kNumLowerBands> second_derivative,
-    ArrayView<float, kNumLowerBands> bands_cross_corr,
+    std::span<const float, kFrameSize20ms24kHz> reference_frame,
+    std::span<const float, kFrameSize20ms24kHz> lagged_frame,
+    std::span<float, kNumBands - kNumLowerBands> higher_bands_cepstrum,
+    std::span<float, kNumLowerBands> average,
+    std::span<float, kNumLowerBands> first_derivative,
+    std::span<float, kNumLowerBands> second_derivative,
+    std::span<float, kNumLowerBands> bands_cross_corr,
     float* variability) {
   // Compute the Opus band energies for the reference frame.
   ComputeWindowedForwardFft(reference_frame, half_window_, fft_buffer_.get(),
@@ -161,9 +161,9 @@ bool SpectralFeaturesExtractor::CheckSilenceComputeFeatures(
 }
 
 void SpectralFeaturesExtractor::ComputeAvgAndDerivatives(
-    ArrayView<float, kNumLowerBands> average,
-    ArrayView<float, kNumLowerBands> first_derivative,
-    ArrayView<float, kNumLowerBands> second_derivative) const {
+    std::span<float, kNumLowerBands> average,
+    std::span<float, kNumLowerBands> first_derivative,
+    std::span<float, kNumLowerBands> second_derivative) const {
   auto curr = cepstral_coeffs_ring_buf_.GetArrayView(0);
   auto prev1 = cepstral_coeffs_ring_buf_.GetArrayView(1);
   auto prev2 = cepstral_coeffs_ring_buf_.GetArrayView(2);
@@ -181,7 +181,7 @@ void SpectralFeaturesExtractor::ComputeAvgAndDerivatives(
 }
 
 void SpectralFeaturesExtractor::ComputeNormalizedCepstralCorrelation(
-    ArrayView<float, kNumLowerBands> bands_cross_corr) {
+    std::span<float, kNumLowerBands> bands_cross_corr) {
   spectral_correlator_.ComputeCrossCorrelation(
       reference_frame_fft_->GetConstView(), lagged_frame_fft_->GetConstView(),
       bands_cross_corr_);

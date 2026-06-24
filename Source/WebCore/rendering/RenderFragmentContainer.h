@@ -47,7 +47,7 @@ class RenderFragmentContainer : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderFragmentContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentContainer);
 public:
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     void setFragmentedFlowPortionRect(const LayoutRect& rect) { m_fragmentedFlowPortionRect = rect; }
     LayoutRect fragmentedFlowPortionRect() const { return m_fragmentedFlowPortionRect; }
@@ -123,14 +123,14 @@ public:
     virtual bool contentRectSpansFragments(const LayoutRect&) const { return false; }
 
 protected:
-    RenderFragmentContainer(Type, Element&, RenderStyle&&, RenderFragmentedFlow*);
-    RenderFragmentContainer(Type, Document&, RenderStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Element&, Style::ComputedStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Document&, Style::ComputedStyle&&, RenderFragmentedFlow*);
     virtual ~RenderFragmentContainer();
 
     RenderOverflow* overflowForBox(const RenderBox&) const;
 
-    void computePreferredLogicalWidths() override;
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    void computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
 
     LayoutRect overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion) const;
     void repaintFragmentedFlowContentRectangle(const LayoutRect& repaintRect, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect = 0) const;

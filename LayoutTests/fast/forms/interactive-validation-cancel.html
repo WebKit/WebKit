@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -13,6 +13,7 @@
 </form>
 <script>
 description('Test if the form is not submitted even if an "invalid" event for a control is canceled.');
+window.jsTestIsAsync = true;
 
 function cancel(event) {
     event.preventDefault();
@@ -30,12 +31,9 @@ function startOrVerify() {
         testPassed('The form was not submitted.');
     }
     debug('TEST COMPLETE');
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 window.onload = startOrVerify;
 </script>
 </body>

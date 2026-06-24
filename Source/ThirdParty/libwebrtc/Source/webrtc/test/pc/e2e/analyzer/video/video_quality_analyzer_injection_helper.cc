@@ -12,13 +12,13 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats_report.h"
 #include "api/test/pclf/media_configuration.h"
@@ -152,7 +152,7 @@ VideoQualityAnalyzerInjectionHelper::CreateVideoSink(
 
 void VideoQualityAnalyzerInjectionHelper::Start(
     std::string test_case_name,
-    ArrayView<const std::string> peer_names,
+    std::span<const std::string> peer_names,
     int max_threads_count) {
   analyzer_->Start(std::move(test_case_name), peer_names, max_threads_count);
   extractor_->Start(peer_names.size());

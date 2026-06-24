@@ -14,6 +14,7 @@
 #include <map>
 #include <memory>
 #include <queue>
+#include <string>
 #include <tuple>
 #include <utility>
 
@@ -23,13 +24,13 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/numerics/divide_round.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/system/system_time.h"
 #include "rtc_base/thread_annotations.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 namespace {
@@ -55,6 +56,7 @@ class TaskQueueStdlib final : public TaskQueueBase {
   TaskQueueStdlib(absl::string_view queue_name, ThreadPriority priority);
   ~TaskQueueStdlib() override = default;
 
+  absl::string_view queue_name() const override { return name_; }
   void Delete() override;
 
  protected:
@@ -70,13 +72,11 @@ class TaskQueueStdlib final : public TaskQueueBase {
   using OrderId = uint64_t;
 
   struct DelayedEntryTimeout {
-    // TODO(bugs.webrtc.org/13756): Migrate to Timestamp.
-    int64_t next_fire_at_us{};
+    Timestamp next_fire_at;
     OrderId order{};
 
     bool operator<(const DelayedEntryTimeout& o) const {
-      return std::tie(next_fire_at_us, order) <
-             std::tie(o.next_fire_at_us, o.order);
+      return std::tie(next_fire_at, order) < std::tie(o.next_fire_at, o.order);
     }
   };
 
@@ -126,12 +126,15 @@ class TaskQueueStdlib final : public TaskQueueBase {
   // tasks (including delayed tasks).
   // Placing this last ensures the thread doesn't touch uninitialized attributes
   // throughout it's lifetime.
+  const std::string name_;
+
   PlatformThread thread_;
 };
 
 TaskQueueStdlib::TaskQueueStdlib(absl::string_view queue_name,
                                  ThreadPriority priority)
     : flag_notify_(/*manual_reset=*/false, /*initially_signaled=*/false),
+      name_(queue_name),
       thread_(InitializeThread(this, queue_name, priority)) {}
 
 // static
@@ -179,8 +182,7 @@ void TaskQueueStdlib::PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
                                           TimeDelta delay,
                                           const PostDelayedTaskTraits& traits,
                                           const Location& location) {
-  DelayedEntryTimeout delayed_entry;
-  delayed_entry.next_fire_at_us = TimeMicros() + delay.us();
+  DelayedEntryTimeout delayed_entry = {.next_fire_at = SystemTime() + delay};
 
   {
     MutexLock lock(&pending_lock_);
@@ -194,7 +196,7 @@ void TaskQueueStdlib::PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
 TaskQueueStdlib::NextTask TaskQueueStdlib::GetNextTask() {
   NextTask result;
 
-  const int64_t tick_us = TimeMicros();
+  const Timestamp now = SystemTime();
 
   MutexLock lock(&pending_lock_);
 
@@ -207,7 +209,7 @@ TaskQueueStdlib::NextTask TaskQueueStdlib::GetNextTask() {
     auto delayed_entry = delayed_queue_.begin();
     const auto& delay_info = delayed_entry->first;
     auto& delay_run = delayed_entry->second;
-    if (tick_us >= delay_info.next_fire_at_us) {
+    if (now >= delay_info.next_fire_at) {
       if (!pending_queue_.empty()) {
         auto& entry = pending_queue_.front();
         auto& entry_order = entry.first;
@@ -224,8 +226,7 @@ TaskQueueStdlib::NextTask TaskQueueStdlib::GetNextTask() {
       return result;
     }
 
-    result.sleep_time = TimeDelta::Millis(
-        DivideRoundUp(delay_info.next_fire_at_us - tick_us, 1'000));
+    result.sleep_time = delay_info.next_fire_at - now;
   }
 
   if (!pending_queue_.empty()) {

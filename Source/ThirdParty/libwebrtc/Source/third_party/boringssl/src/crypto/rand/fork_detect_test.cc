@@ -15,11 +15,13 @@
 #include <openssl/base.h>
 
 #include "../bcm_support.h"
+#include "internal.h"
 
 // TSAN cannot cope with this test and complains that "starting new threads
 // after multi-threaded fork is not supported".
 #if defined(OPENSSL_FORK_DETECTION) && !defined(OPENSSL_TSAN) && \
     !defined(OPENSSL_IOS)
+
 #include <errno.h>
 #include <inttypes.h>
 #include <stdio.h>
@@ -28,14 +30,28 @@
 #include <unistd.h>
 
 #include <functional>
+#include <tuple>
 
 #if defined(OPENSSL_THREADS)
 #include <thread>
 #include <vector>
 #endif
 
+#if defined(OPENSSL_LINUX)
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <sys/utsname.h>
+#endif
+
 #include <gtest/gtest.h>
 
+#include <openssl/mem.h>
+
+#include "../internal.h"
+
+
+BSSL_NAMESPACE_BEGIN
+namespace {
 
 static pid_t WaitpidEINTR(pid_t pid, int *out_status, int options) {
   pid_t ret;
@@ -67,20 +83,7 @@ static void CheckGenerationAtLeastInChild(const char *name,
   }
 }
 
-// ForkInChild forks a child which runs |f|. If the child exits unsuccessfully,
-// this function will also exit unsuccessfully.
-static void ForkInChild(std::function<void()> f) {
-  fflush(stderr);  // Avoid duplicating any buffered output.
-
-  const pid_t pid = fork();
-  if (pid < 0) {
-    perror("fork");
-    _exit(1);
-  } else if (pid == 0) {
-    f();
-    _exit(0);
-  }
-
+static void WaitForChildOrDie(pid_t pid) {
   // Wait for the child and pass its exit code up.
   int status;
   if (WaitpidEINTR(pid, &status, 0) < 0) {
@@ -95,6 +98,111 @@ static void ForkInChild(std::function<void()> f) {
     // Pass the failure up.
     _exit(WEXITSTATUS(status));
   }
+}
+
+// ForkInChild forks a child which runs |f|. If the child exits unsuccessfully,
+// this function will also exit unsuccessfully.
+static void ForkInChild(std::function<void()> f) {
+  fflush(stderr);  // Avoid duplicating any buffered output.
+  const pid_t pid = fork();
+  if (pid < 0) {
+    perror("fork");
+    _exit(1);
+  }
+  if (pid == 0) {
+    f();
+    _exit(0);
+  }
+  WaitForChildOrDie(pid);
+}
+
+// Many systems provide an alternate API to create a child process and run code
+// in it.
+static bool AlternateForkInChild(std::function<void()> f) {
+  fflush(stderr);  // Avoid duplicating any buffered output.
+#if defined(OPENSSL_LINUX)
+  // On Linux, clone() can make new processes, too (even by default).
+  const size_t kAlign = 16;
+  const size_t kStackSize = 65536;
+  void *temp_stack = OPENSSL_malloc(kStackSize + kAlign - 1);
+  void *stack_top =
+      static_cast<char *>(align_pointer(temp_stack, kAlign)) + kStackSize;
+  pid_t pid = clone(
+      +[](void *fp) {
+        (*static_cast<std::function<void()> *>(fp))();
+        return 0;
+      },
+      stack_top, SIGCHLD, &f);
+  if (pid < 0) {
+    perror("clone");
+    _exit(1);
+  }
+  OPENSSL_free(temp_stack);
+  WaitForChildOrDie(pid);
+  return true;
+#elif defined(OPENSSL_FREEBSD)
+  // On FreeBSD, rfork() can be used to simulate fork().
+  const pid_t pid = rfork(RFFDG | RFPROC);
+  if (pid < 0) {
+    perror("fork");
+    _exit(1);
+  }
+  if (pid == 0) {
+    f();
+    _exit(0);
+  }
+  WaitForChildOrDie(pid);
+  return true;
+#else
+  // No alternate methods known.
+  return false;
+#endif
+}
+
+
+TEST(ForkDetect, OSSupport) {
+  uint64_t start = CRYPTO_get_fork_generation();
+#if defined(OPENSSL_LINUX)
+  if (start == 0) {
+    struct utsname u;
+    if (uname(&u) == 0) {
+      const char *dot = strchr(u.release, '.');
+      if (dot != nullptr) {
+        auto version = std::tuple(atoi(u.release), atoi(dot + 1));
+        if (version < std::tuple(4, 14)) {
+          GTEST_SKIP() << "Fork detection not supported on Linux " << u.release
+                       << " which is < 4.14. Skipping test.\n";
+        }
+      }
+    }
+
+    // Qemu claims support for any unsupported MADV_ flags, so the production
+    // code currently always disables reliance on MADV_WIPEONFORK when on qemu.
+    // Detect this situation explicitly here too so the test does not fail.
+    long page_size = sysconf(_SC_PAGESIZE);
+    ASSERT_GT(page_size, 0) << "System does not provide its page size. Expect "
+                               "reduced performance, but no security impact.";
+    void *addr =
+        mmap(nullptr, static_cast<size_t>(page_size), PROT_READ | PROT_WRITE,
+             MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    ASSERT_NE(addr, nullptr)
+        << "mmap() cannot produce a private anonymous mapping. Expect reduced "
+           "performance, but no security impact.";
+    int madvise_broken = madvise(addr, page_size, -1) == 0;
+    munmap(addr, page_size);
+    if (madvise_broken) {
+      GTEST_SKIP()
+          << "System claims support for madvise() with invalid flags (typical "
+             "of qemu), which means return values are unreliable. Expect even "
+             "more reduced performance at runtime.\n";
+    }
+  }
+#endif
+  EXPECT_NE(start, uint64_t{0})
+      << "Fork detection not supported, but support is configured to be "
+         "expected on this platform in crypto/rand/internal.h. Typically this "
+         "means your OS or kernel is too old. Expect reduced performance, but "
+         "no security impact.";
 }
 
 TEST(ForkDetect, Test) {
@@ -173,5 +281,26 @@ TEST(ForkDetect, Test) {
   // We still observe |start|.
   EXPECT_EQ(start, CRYPTO_get_fork_generation());
 }
+
+TEST(ForkDetect, TestAlternateFork) {
+  uint64_t start = CRYPTO_get_fork_generation();
+  if (start == 0) {
+    GTEST_SKIP() << "Fork detection not supported. Skipping test.\n";
+  }
+
+  // The fork generation should be stable.
+  EXPECT_EQ(start, CRYPTO_get_fork_generation());
+
+  if (!AlternateForkInChild(
+          [&] { CheckGenerationAtLeastInChild("Child", start + 1); })) {
+    GTEST_SKIP() << "No alternate fork method detected. Skipping test.\n";
+  }
+
+  // We still observe |start|.
+  EXPECT_EQ(start, CRYPTO_get_fork_generation());
+}
+
+}  // namespace
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_FORK_DETECTION && !OPENSSL_TSAN && !OPENSSL_IOS

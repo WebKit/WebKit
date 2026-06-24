@@ -122,24 +122,24 @@ template<typename T> bool Filter::hasFilterOfType() const
 
 // MARK: - Conversion
 
-template<> struct ToCSS<FilterValueList> { auto operator()(const FilterValueList&, const RenderStyle&) -> CSS::FilterValueList; };
+template<> struct ToCSS<FilterValueList> { auto operator()(const FilterValueList&, const Style::ComputedStyle&) -> CSS::FilterValueList; };
 template<> struct ToStyle<CSS::FilterValueList> { auto operator()(const CSS::FilterValueList&, const BuilderState&) -> FilterValueList; };
 
 template<> struct CSSValueConversion<Filter> { auto operator()(BuilderState&, const CSSValue&) -> Filter; };
-template<> struct CSSValueCreation<Filter> { auto operator()(CSSValuePool&, const RenderStyle&, const Filter&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<Filter> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const Filter&) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 
 template<> struct Blending<Filter> {
     auto canBlend(const Filter&, const Filter&, CompositeOperation) -> bool;
     constexpr auto requiresInterpolationForAccumulativeIteration(const Filter&, const Filter&) -> bool { return true; }
-    auto blend(const Filter&, const Filter&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> Filter;
+    auto blend(const Filter&, const Filter&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> Filter;
 };
 
 // MARK: - Platform
 
-template<> struct ToPlatform<FilterValue> { auto operator()(const FilterValue&, const RenderStyle&) -> Ref<FilterOperation>; };
-template<> struct ToPlatform<Filter> { auto operator()(const Filter&, const RenderStyle&) -> FilterOperations; };
+template<> struct ToPlatform<FilterValue> { auto operator()(const FilterValue&, const Style::ComputedStyle&) -> Ref<FilterOperation>; };
+template<> struct ToPlatform<Filter> { auto operator()(const Filter&, const Style::ComputedStyle&) -> FilterOperations; };
 
 } // namespace Style
 } // namespace WebCore

@@ -187,7 +187,7 @@ static bool NODELETE cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolic
     return false;
 }
 
-static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, const WebCore::ResourceResponse& response, WallTime timestamp, std::optional<Seconds> maxStale)
+static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, const WebCore::ResourceResponse& response, WallTime timestamp, const WebCore::CacheControlDirectives& requestDirectives)
 {
     if (response.cacheControlContainsNoCache())
         return UseDecision::Validate;
@@ -195,6 +195,19 @@ static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, con
     auto age = WebCore::computeCurrentAge(response, timestamp);
     auto lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(response, timestamp);
 
+    // Request max-age=0 (like no-cache) always forces revalidation.
+    if (requestDirectives.maxAge && requestDirectives.maxAge.value() == 0_ms)
+        return UseDecision::Validate;
+
+    if (age <= lifetime) {
+        if (requestDirectives.maxAge && age > requestDirectives.maxAge.value())
+            return UseDecision::Validate;
+
+        if (requestDirectives.minFresh && age + requestDirectives.minFresh.value() > lifetime)
+            return UseDecision::Validate;
+    }
+
+    auto maxStale = requestDirectives.maxStale;
     auto maximumStaleness = maxStale ? maxStale.value() : 0_ms;
     bool hasExpired = age - lifetime > maximumStaleness;
     if (hasExpired && !maxStale && networkSession.isStaleWhileRevalidateEnabled()) {
@@ -220,11 +233,11 @@ static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, con
     auto requestDirectives = WebCore::parseCacheControlDirectives(request.httpHeaderFields());
     if (requestDirectives.noCache)
         return UseDecision::Validate;
-    // For requests we ignore max-age values other than zero.
-    if (requestDirectives.maxAge && requestDirectives.maxAge.value() == 0_ms)
+    // A request carrying no-store must not be satisfied from cache.
+    if (requestDirectives.noStore)
         return UseDecision::Validate;
 
-    return responseNeedsRevalidation(networkSession, response, timestamp, requestDirectives.maxStale);
+    return responseNeedsRevalidation(networkSession, response, timestamp, requestDirectives);
 }
 
 static UseDecision makeUseDecision(NetworkProcess& networkProcess, PAL::SessionID sessionID, const Entry& entry, const WebCore::ResourceRequest& request)
@@ -292,9 +305,8 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     if (!WebCore::isStatusCodeCacheableByDefault(response.httpStatusCode())) {
         // http://tools.ietf.org/html/rfc7234#section-4.3.2
         bool hasExpirationHeaders = response.expires() || response.cacheControlMaxAge();
-        bool expirationHeadersAllowCaching = WebCore::isStatusCodePotentiallyCacheable(response.httpStatusCode()) && hasExpirationHeaders;
-        if (!expirationHeadersAllowCaching)
-            return StoreDecision::NoDueToHTTPStatusCode;
+        if (!hasExpirationHeaders && !response.cacheControlContainsPublic())
+            return StoreDecision::NoDueToMissingExpirationHeaders;
     }
 
     // FIXME: We are not correctly computing the redirected request URL in case original request

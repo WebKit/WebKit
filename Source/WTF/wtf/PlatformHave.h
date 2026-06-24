@@ -138,62 +138,59 @@
 #define HAVE_MISSING_U8STRING 1
 #endif
 
-/* FIXME: Remove after CMake build enabled on Darwin */
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if OS(DARWIN)
+#if !defined(HAVE_ERRNO_H)
 #define HAVE_ERRNO_H 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_LANGINFO_H)
 #define HAVE_LANGINFO_H 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_LOCALTIME_R)
 #define HAVE_LOCALTIME_R 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_MMAP)
 #define HAVE_MMAP 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_REGEX_H)
 #define HAVE_REGEX_H 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_SIGNAL_H)
 #define HAVE_SIGNAL_H 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_STAT_BIRTHTIME)
 #define HAVE_STAT_BIRTHTIME 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_SYS_PARAM_H)
 #define HAVE_SYS_PARAM_H 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_SYS_TIME_H)
 #define HAVE_SYS_TIME_H 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_TM_GMTOFF)
 #define HAVE_TM_GMTOFF 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_TM_ZONE)
 #define HAVE_TM_ZONE 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_TIMEGM)
 #define HAVE_TIMEGM 1
 #endif
-
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if !defined(HAVE_PTHREAD_MAIN_NP)
 #define HAVE_PTHREAD_MAIN_NP 1
 #endif
+#endif // OS(DARWIN)
 
 /* watchOS (ARM64_32) must not use int128_t because of wrong behavior. */
 #if (OS(DARWIN) || OS(LINUX)) && CPU(ADDRESS64)
 #define HAVE_INT128_T 1
+#endif
+
+// Work around a clang static analyzer crash modeling __builtin_*_overflow on a
+// 128-bit result type (llvm/llvm-project#173795; fixed in
+// apple-clang-2100.3.6.4 / macOS 27 / Xcode 27). Set only for older analyzers,
+// so CheckedArithmetic.h takes its manual (non-builtin) 128-bit overflow path.
+#if defined(__clang_analyzer__) && defined(__apple_build_version__) && __apple_build_version__ < 21000323
+#define HAVE_BROKEN_STATIC_ANALYZER_INT128_OVERFLOW 1
 #endif
 
 #if OS(UNIX) && !OS(FUCHSIA)
@@ -228,7 +225,7 @@
 #define HAVE_READLINE 1
 #endif
 
-#if OS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if OS(DARWIN)
 #define HAVE_SYS_TIMEB_H 1
 #endif
 
@@ -477,6 +474,15 @@
 
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(WATCHOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 #define HAVE_SAFE_BROWSING 1
+#endif
+
+#if HAVE(SAFE_BROWSING) \
+    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000) \
+    || ((PLATFORM(MACCATALYST) || PLATFORM(IOS)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 270000) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 270000) \
+    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 270000) \
+    || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 270000))
+#define HAVE_SAFARI_SAFE_BROWSING_NAMESPACED_LISTS 1
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
@@ -1628,6 +1634,14 @@
 #define HAVE_CONTENT_SWIPE_GESTURE_RECOGNIZER 1
 #endif
 
+#if !defined(HAVE_CORE_RE)
+#if __has_include(<CoreRE/CoreRE.h>)
+#define HAVE_CORE_RE 1
+#else
+#define HAVE_CORE_RE 0
+#endif
+#endif
+
 #if PLATFORM(VISION) && __has_include(<CoreRE/CoreRE_SPI_WebKit.h>)
 #define HAVE_RE_STEREO_CONTENT_SUPPORT RE_FEATURE_EMBEDDED_STEREO_CONTENT_COMPONENT
 #else
@@ -1844,9 +1858,46 @@
 #define HAVE_UICONTEXTMENUCONFIGURATION_ALLOWTYPESELECT_SUPPORT 0
 #endif
 
+#if !defined(HAVE_ALLOW_ONLY_PARTITIONED_COOKIES) \
+    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260200) \
+    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 260200) \
+    || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 260200) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 260200) \
+    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 260200))
+#define HAVE_ALLOW_ONLY_PARTITIONED_COOKIES 1
+
+#if !defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION)
+#define CFN_COOKIE_ACCEPTS_POLICY_PARTITION 1
+#endif
+
+#endif
+
+#if !defined(HAVE_NSREFRESHCONTROLLER) \
+    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000))
+#define HAVE_NSREFRESHCONTROLLER 1
+#endif
+
 #if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260400) \
     || (PLATFORM(IOS) || (PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 260400) \
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 260400) \
     || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 260400))
 #define HAVE_CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION 1
+#endif
+
+#if !defined(HAVE_PASSKIT_DELEGATED_REQUEST) \
+    && (((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 260400) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 260400) \
+    || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 260400) \
+    || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260400))
+#define HAVE_PASSKIT_DELEGATED_REQUEST 1
+#endif
+
+#if !defined(HAVE_DC_ISSUER_IDENTIFIER_SUPPORT) \
+    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000) \
+    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 270000))
+#define HAVE_DC_ISSUER_IDENTIFIER_SUPPORT 1
+#endif
+
+#if !defined(HAVE_NSGLASSEFFECTVIEW_EFFECT_IS_INTERACTIVE) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000
+#define HAVE_NSGLASSEFFECTVIEW_EFFECT_IS_INTERACTIVE 1
 #endif

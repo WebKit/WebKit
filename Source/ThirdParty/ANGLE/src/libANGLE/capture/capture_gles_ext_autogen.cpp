@@ -3877,42 +3877,6 @@ CallCapture CaptureGetFramebufferPixelLocalStorageParameteruivANGLE(const State 
                        std::move(paramBuffer));
 }
 
-CallCapture CaptureTexImage2DExternalANGLE(const State &glState,
-                                           bool isCallValid,
-                                           TextureTarget targetPacked,
-                                           GLint level,
-                                           GLint internalformat,
-                                           GLsizei width,
-                                           GLsizei height,
-                                           GLint border,
-                                           GLenum format,
-                                           GLenum type)
-{
-    ParamBuffer paramBuffer;
-
-    paramBuffer.addValueParam("targetPacked", ParamType::TTextureTarget, targetPacked);
-    paramBuffer.addValueParam("level", ParamType::TGLint, level);
-    paramBuffer.addValueParam("internalformat", ParamType::TGLint, internalformat);
-    paramBuffer.addValueParam("width", ParamType::TGLsizei, width);
-    paramBuffer.addValueParam("height", ParamType::TGLsizei, height);
-    paramBuffer.addValueParam("border", ParamType::TGLint, border);
-    paramBuffer.addEnumParam("format", GLESEnum::PixelFormat, ParamType::TGLenum, format);
-    paramBuffer.addEnumParam("type", GLESEnum::PixelType, ParamType::TGLenum, type);
-
-    return CallCapture(angle::EntryPoint::GLTexImage2DExternalANGLE, std::move(paramBuffer));
-}
-
-CallCapture CaptureInvalidateTextureANGLE(const State &glState,
-                                          bool isCallValid,
-                                          TextureType targetPacked)
-{
-    ParamBuffer paramBuffer;
-
-    paramBuffer.addValueParam("targetPacked", ParamType::TTextureType, targetPacked);
-
-    return CallCapture(angle::EntryPoint::GLInvalidateTextureANGLE, std::move(paramBuffer));
-}
-
 CallCapture CaptureTexStorage2DMultisampleANGLE(const State &glState,
                                                 bool isCallValid,
                                                 TextureType targetPacked,

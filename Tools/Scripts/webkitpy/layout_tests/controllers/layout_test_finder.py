@@ -67,6 +67,7 @@ assert set(supported_reference_extensions) < set(supported_test_extensions)
 skipped_directories = {
     ".svn",
     "_svn",
+    "_venv3",
     "resources",
     "support",
     "script-tests",

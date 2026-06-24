@@ -93,6 +93,10 @@ PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(bmalloc_small_segregated,
                                        BMALLOC_HEAP_CONFIG.small_segregated_config)
 PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(bmalloc_medium_segregated,
                                        BMALLOC_HEAP_CONFIG.medium_segregated_config)
+PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(tagged_bmalloc_small_segregated,
+                                       TAGGED_BMALLOC_HEAP_CONFIG.small_segregated_config)
+PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(tagged_bmalloc_medium_segregated,
+                                       TAGGED_BMALLOC_HEAP_CONFIG.medium_segregated_config)
 #endif
 
 #if PAS_ENABLE_HOTBIT

@@ -1,2 +1,5 @@
 PASS internals.hasSpellingMarker(0, 4) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
 aaaa bbbb dddd 

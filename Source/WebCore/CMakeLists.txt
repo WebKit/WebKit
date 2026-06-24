@@ -2156,6 +2156,33 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     xml/XPathEvaluatorBase.idl
 )
 
+# Apple Internal build uses separate touch events IDLs.
+if (USE_APPLE_INTERNAL_SDK)
+    list(REMOVE_ITEM WebCore_NON_SVG_IDL_FILES
+        dom/Touch.idl
+        dom/TouchEvent.idl
+        dom/TouchList.idl
+    )
+    list(REMOVE_ITEM WebCore_SUPPLEMENTAL_IDL_FILES
+        dom/Document+Touch.idl
+    )
+    list(APPEND WebCore_NON_SVG_IDL_FILES
+        ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/GestureEvent.idl
+        ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/Touch.idl
+        ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/TouchEvent.idl
+        ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/TouchList.idl
+    )
+    list(APPEND WebCore_SUPPLEMENTAL_IDL_FILES
+        ${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions/DocumentTouch.idl
+    )
+    set(WebCore_UNIFIED_SOURCE_EXCLUDES
+        dom/DocumentTouch.cpp
+        dom/Touch.cpp
+        dom/TouchEvent.cpp
+        dom/TouchList.cpp
+    )
+endif ()
+
 set(WebCore_IDL_FILES
     ${WebCore_NON_SVG_IDL_FILES}
     ${WebCore_SVG_IDL_FILES}
@@ -2206,12 +2233,16 @@ set(WebCore_FRAMEWORKS
     WTF
     bmalloc
 )
+if (USE_APPLE_INTERNAL_SDK)
+    list(APPEND WebCore_FRAMEWORKS WebKitAdditions)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions")
+endif ()
 
 if (ENABLE_XSLT)
     list(APPEND WebCore_LIBRARIES LibXslt::LibXslt)
 endif ()
 
-if (UNIX)
+if (UNIX AND NOT APPLE)
     check_function_exists(shm_open SHM_OPEN_EXISTS)
     if (NOT SHM_OPEN_EXISTS)
         set(CMAKE_REQUIRED_LIBRARIES rt)
@@ -2568,6 +2599,7 @@ set(WebCoreTestSupport_IDL_FILES
 )
 
 list(APPEND WebCoreTestSupport_SOURCES
+    bindings/js/JSMallocStatisticsCustom.cpp
     testing/EventTargetForTesting.cpp
     testing/GCObservation.cpp
     testing/InternalSettings.cpp
@@ -2815,7 +2847,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/ColorData.cpp)
 # Generate DOMJITAbstractHeapRepository.h
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h
-    MAIN_DEPENDENCY domjit/DOMJITAbstractHeapRepository.yaml
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/domjit/DOMJITAbstractHeapRepository.yaml
     DEPENDS ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb
     COMMAND ${Ruby_EXECUTABLE} ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb ${WEBCORE_DIR}/domjit/DOMJITAbstractHeapRepository.yaml ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h
     VERBATIM)
@@ -2824,7 +2856,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRep
 # Generate XMLViewerCSS.h
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/XMLViewerCSS.h ${WebCore_DERIVED_SOURCES_DIR}/XMLViewer.min.css
-    MAIN_DEPENDENCY xml/XMLViewer.css
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/xml/XMLViewer.css
     DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl ${JavaScriptCore_SCRIPTS_DIR}/cssmin.py
     COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/cssmin.py < ${WEBCORE_DIR}/xml/XMLViewer.css > ${WebCore_DERIVED_SOURCES_DIR}/XMLViewer.min.css
     COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl XMLViewer_css ${WebCore_DERIVED_SOURCES_DIR}/XMLViewer.min.css ${WebCore_DERIVED_SOURCES_DIR}/XMLViewerCSS.h
@@ -2834,7 +2866,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/XMLViewerCSS.h)
 # Generate XMLViewerJS.h
 add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/XMLViewerJS.h ${WebCore_DERIVED_SOURCES_DIR}/XMLViewer.min.js
-    MAIN_DEPENDENCY xml/XMLViewer.js
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/xml/XMLViewer.js
     DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py
     COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py < ${WEBCORE_DIR}/xml/XMLViewer.js > ${WebCore_DERIVED_SOURCES_DIR}/XMLViewer.min.js
     COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl XMLViewer_js ${WebCore_DERIVED_SOURCES_DIR}/XMLViewer.min.js ${WebCore_DERIVED_SOURCES_DIR}/XMLViewerJS.h
@@ -2872,8 +2904,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/WebCoreLogDefinitions
 
 # Generate CSS property names
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyInitialValuesGeneratedInlines.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp 
-${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.h ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.cpp ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties+ConstructionInlines.h ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties+GettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties+SettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleChangedAnimatablePropertiesGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+GettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+InitialInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+SettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleExtractorGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.h ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.h ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleProperties+PropertyNames.idl
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyInitialValuesGeneratedInlines.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleChangedAnimatablePropertiesGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+ConstructionInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+GettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+InitialInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+SettersInlines.h ${WebCore_DERIVED_SOURCES_DIR}/StyleExtractorGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.h ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.h ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleProperties+PropertyNames.idl
     MAIN_DEPENDENCY ${WEBCORE_DIR}/css/scripts/process-css-properties.py
     DEPENDS ${WebCore_CSS_PROPERTY_NAMES}
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
@@ -2882,7 +2913,6 @@ ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.h ${WebCore_DERIVED_SOURCES
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp)
-list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StyleChangedAnimatablePropertiesGenerated.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.cpp)
@@ -2982,6 +3012,10 @@ GENERATE_BINDINGS(WebCoreBindings
     DESTINATION ${WebCore_DERIVED_SOURCES_DIR}
     GENERATOR JS
     SUPPLEMENTAL_DEPFILE ${SUPPLEMENTAL_DEPENDENCY_FILE}
+    # Auxiliary translation unit emitted alongside JSDOMWindow.cpp by
+    # CodeGeneratorJS.pm to keep JSDOMWindow.cpp's compile time off the build's
+    # critical path.
+    EXTRA_OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/JSDOMWindowConstructorAttributes.cpp
     PP_EXTRA_OUTPUT
     ${ISO_SUBSPACES_HEADER_FILE} ${CLIENT_ISO_SUBSPACES_HEADER_FILE} ${CONSTRUCTORS_HEADER_FILE} ${WINDOW_CONSTRUCTORS_FILE} ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE} ${SHADOWREALMGLOBALSCOPE_CONSTRUCTORS_FILE} ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
     PP_EXTRA_ARGS
@@ -2997,6 +3031,7 @@ GENERATE_BINDINGS(WebCoreBindings
         --workletGlobalScopeConstructorsFile ${WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE}
         --paintWorkletGlobalScopeConstructorsFile ${PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE}
         --audioWorkletGlobalScopeConstructorsFile ${AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE})
+
 list(APPEND WebCore_DEPENDENCIES WebCoreBindings WebCore_CopyPrivateHeaders)
 
 if (ENABLE_WEBINSPECTORUI)
@@ -3143,6 +3178,14 @@ WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebCore WebCoreJSBindings
     PREFIX WebCoreJSBindingsPrefix.h
     PREFIX_LANGUAGES CXX
     DIRS JSBindings bindings)
+# WebCoreStyle takes precedence but only has a C++ prefix header. So, when a
+# folder appears in both WebCoreStyle and WebCoreDOMAndRendering, WebCoreStyle
+# claims its .cpp files and WebCoreDOMAndRendering claims its .mm files.
+WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebCore WebCoreStyle
+    PREFIX WebCoreStylePrefix.h
+    PREFIX_LANGUAGES CXX
+    DIRS css cssjit layout rendering style
+    CHAIN_PARENT WebCoreDOMAndRendering)
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebCore WebCoreDOMAndRendering
     PREFIX WebCoreDOMAndRenderingPrefix.h
     PREFIX_LANGUAGES CXX OBJCXX
@@ -3177,6 +3220,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/PlatformScreen.serialization.in
     platform/PlatformWheelEvent.serialization.in
     platform/ScrollTypes.serialization.in
+    platform/SharedTimebase.serialization.in
 
     platform/audio/PlatformMediaSession.serialization.in
 
@@ -3191,12 +3235,30 @@ WEBKIT_SYMLINK_FILES(WebCore_CopyPrivateHeaders
     FILES ${WebCore_PRIVATE_FRAMEWORK_HEADERS}
     FLATTENED
 )
-list(APPEND WebCore_INTERFACE_DEPENDENCIES WebCore_CopyPrivateHeaders)
-if (ENABLE_WEBCORE_TEST_SUPPORT)
-    list(APPEND WebCoreTestSupport_INTERFACE_DEPENDENCIES WebCore_CopyPrivateHeaders)
+if (NOT USE_HEADER_MAPS)
+    list(APPEND WebCore_INTERFACE_DEPENDENCIES WebCore_CopyPrivateHeaders)
+    if (ENABLE_WEBCORE_TEST_SUPPORT)
+        list(APPEND WebCoreTestSupport_INTERFACE_DEPENDENCIES WebCore_CopyPrivateHeaders)
+    endif ()
 endif ()
 
 WEBKIT_FRAMEWORK(WebCore)
+
+# Specify dependencies explicitly so we can generate derived sources before our
+# upstream targets finish linking.
+set(_WebCore_generated_sources ${WebCore_SOURCES})
+string(REPLACE "." "\\." _WebCore_derived_re "${WebCore_DERIVED_SOURCES_DIR}")
+list(FILTER _WebCore_generated_sources INCLUDE REGEX "^${_WebCore_derived_re}/")
+add_custom_target(WebCoreGeneratedSources DEPENDS
+    ${_WebCore_generated_sources}
+    ${WebCore_DERIVED_BUILTIN_HEADERS}
+    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
+    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
+)
+unset(_WebCore_generated_sources)
+unset(_WebCore_derived_re)
+add_dependencies(WebCoreGeneratedSources JavaScriptCoreSharedScripts WTF_CopyPreferences)
+add_dependencies(WebCore WebCoreGeneratedSources)
 
 if (DEFINED WebCore_EXTRA_LINK_OPTIONS)
     target_link_options(WebCore PRIVATE ${WebCore_EXTRA_LINK_OPTIONS})
@@ -3237,7 +3299,7 @@ endif ()
 # These files are very large and exhaust virtual memory on 32-bit ARM.
 if (WTF_CPU_ARM AND NOT CMAKE_CROSSCOMPILING)
     set(DerivedSources_COMPILE_OPTIONS -O0 -DRELEASE_WITHOUT_OPTIMIZATIONS=ON)
-    set_source_files_properties(${WebCore_DERIVED_SOURCES_DIR}/JSDOMWindow.cpp PROPERTIES
+    set_source_files_properties(${WebCore_DERIVED_SOURCES_DIR}/JSDOMWindow.cpp ${WebCore_DERIVED_SOURCES_DIR}/JSDOMWindowConstructorAttributes.cpp PROPERTIES
         COMPILE_OPTIONS "${DerivedSources_COMPILE_OPTIONS}"
         SKIP_PRECOMPILE_HEADERS ON)
 endif ()
@@ -3250,7 +3312,9 @@ if (ENABLE_WEBCORE_TEST_SUPPORT)
         FILES ${WebCoreTestSupport_PRIVATE_HEADERS}
         FLATTENED
     )
-    list(APPEND WebCoreTestSupport_INTERFACE_DEPENDENCIES Copy_WebCoreTestSupportPrivateHeaders)
+    if (NOT USE_HEADER_MAPS)
+        list(APPEND WebCoreTestSupport_INTERFACE_DEPENDENCIES Copy_WebCoreTestSupportPrivateHeaders)
+    endif ()
 
     list(APPEND WebCoreTestSupport_INCLUDE_DIRECTORIES ${WebCore_INCLUDE_DIRECTORIES})
     list(APPEND WebCoreTestSupport_PRIVATE_INCLUDE_DIRECTORIES ${WebCore_PRIVATE_INCLUDE_DIRECTORIES})

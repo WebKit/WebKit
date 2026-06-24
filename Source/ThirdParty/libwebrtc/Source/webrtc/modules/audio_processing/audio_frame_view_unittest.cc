@@ -86,8 +86,10 @@ TEST(AudioFrameTest, FromDeinterleavedView) {
   AudioFrameView<float> frame_view(view);
   EXPECT_EQ(static_cast<size_t>(frame_view.num_channels()),
             view.num_channels());
-  EXPECT_EQ(frame_view[0], view[0]);
-  EXPECT_EQ(frame_view[1], view[1]);
+  EXPECT_EQ(frame_view[0].size(), view[0].size());
+  EXPECT_EQ(frame_view[0].data(), view[0].data());
+  EXPECT_EQ(frame_view[1].size(), view[1].size());
+  EXPECT_EQ(frame_view[1].data(), view[1].data());
 }
 
 }  // namespace webrtc

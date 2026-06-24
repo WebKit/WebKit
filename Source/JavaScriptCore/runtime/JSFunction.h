@@ -192,13 +192,7 @@ public:
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*);
     JSFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
-
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
-#if ASSERT_ENABLED
-    void finishCreation(VM&);
-#else
-    using Base::finishCreation;
-#endif
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);

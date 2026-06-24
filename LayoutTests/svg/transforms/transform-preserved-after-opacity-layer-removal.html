@@ -1,0 +1,26 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html class="reftest-wait">
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+</style>
+<script>
+    // A 2D-transformed leaf shape has a layer only for its opacity. Removing the opacity drops the
+    // layer -> the plain 2D transform must survive (it needs no layer), so the rect stays rotated.
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            document.getElementById('shape').removeAttribute('opacity');
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                document.documentElement.classList.remove('reftest-wait');
+            }));
+        }));
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <rect id="shape" x="60" y="90" width="80" height="20" fill="green" opacity="0.5" transform="rotate(45 100 100)"/>
+</svg>
+</body>
+</html>

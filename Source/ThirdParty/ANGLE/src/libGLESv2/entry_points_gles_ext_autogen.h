@@ -188,8 +188,6 @@ ANGLE_EXPORT void GL_APIENTRY GL_VertexAttribDivisorANGLE(GLuint index, GLuint d
 // GL_ANGLE_logic_op
 ANGLE_EXPORT void GL_APIENTRY GL_LogicOpANGLE(GLenum opcode);
 
-// GL_ANGLE_lossy_etc_decode
-
 // GL_ANGLE_memory_object_flags
 ANGLE_EXPORT void GL_APIENTRY GL_TexStorageMemFlags2DANGLE(GLenum target,
                                                            GLsizei levels,
@@ -602,17 +600,6 @@ ANGLE_EXPORT void GL_APIENTRY GL_GetFramebufferPixelLocalStorageParameteruivANGL
 // GL_ANGLE_texture_compression_dxt3
 
 // GL_ANGLE_texture_compression_dxt5
-
-// GL_ANGLE_texture_external_update
-ANGLE_EXPORT void GL_APIENTRY GL_TexImage2DExternalANGLE(GLenum target,
-                                                         GLint level,
-                                                         GLint internalformat,
-                                                         GLsizei width,
-                                                         GLsizei height,
-                                                         GLint border,
-                                                         GLenum format,
-                                                         GLenum type);
-ANGLE_EXPORT void GL_APIENTRY GL_InvalidateTextureANGLE(GLenum target);
 
 // GL_ANGLE_texture_multisample
 ANGLE_EXPORT void GL_APIENTRY GL_TexStorage2DMultisampleANGLE(GLenum target,

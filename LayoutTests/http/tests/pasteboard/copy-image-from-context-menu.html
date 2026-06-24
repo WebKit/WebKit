@@ -5,6 +5,7 @@
 <script src="/js-test-resources/ui-helper.js"></script>
 <script>
 description("This tests that using the 'Copy Image' context menu item codepath does not copy the image URL.");
+window.jsTestIsAsync = true;
 
 async function runTest()
 {
@@ -23,16 +24,11 @@ async function runTest()
     shouldBe("event.clipboardData.items[0].type", "'text/html'");
     shouldBe("event.clipboardData.items[1].type", "'image/png'");
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 window.onload = function()
 {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
 
     runTest();
 };

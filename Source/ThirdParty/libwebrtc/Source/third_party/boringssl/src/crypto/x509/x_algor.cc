@@ -28,18 +28,20 @@
 #include "internal.h"
 
 
-void x509_algor_init(X509_ALGOR *alg) {
+using namespace bssl;
+
+void bssl::x509_algor_init(X509_ALGOR *alg) {
   OPENSSL_memset(alg, 0, sizeof(X509_ALGOR));
   alg->algorithm = const_cast<ASN1_OBJECT *>(OBJ_get_undef());
 }
 
-void x509_algor_cleanup(X509_ALGOR *alg) {
+void bssl::x509_algor_cleanup(X509_ALGOR *alg) {
   ASN1_OBJECT_free(alg->algorithm);
   ASN1_TYPE_free(alg->parameter);
 }
 
-X509_ALGOR *X509_ALGOR_new(void) {
-  bssl::UniquePtr<X509_ALGOR> ret = bssl::MakeUnique<X509_ALGOR>();
+X509_ALGOR *X509_ALGOR_new() {
+  UniquePtr<X509_ALGOR> ret = MakeUnique<X509_ALGOR>();
   if (ret == nullptr) {
     return nullptr;
   }
@@ -54,14 +56,14 @@ void X509_ALGOR_free(X509_ALGOR *alg) {
   }
 }
 
-int x509_parse_algorithm(CBS *cbs, X509_ALGOR *out) {
+int bssl::x509_parse_algorithm(CBS *cbs, X509_ALGOR *out) {
   CBS seq;
   if (!CBS_get_asn1(cbs, &seq, CBS_ASN1_SEQUENCE)) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
     return 0;
   }
 
-  bssl::UniquePtr<ASN1_OBJECT> obj(asn1_parse_object(&seq, /*tag=*/0));
+  UniquePtr<ASN1_OBJECT> obj(asn1_parse_object(&seq, /*tag=*/0));
   if (obj == nullptr) {
     return 0;
   }
@@ -86,7 +88,7 @@ int x509_parse_algorithm(CBS *cbs, X509_ALGOR *out) {
   return 1;
 }
 
-int x509_marshal_algorithm(CBB *out, const X509_ALGOR *in) {
+int bssl::x509_marshal_algorithm(CBB *out, const X509_ALGOR *in) {
   CBB seq;
   return CBB_add_asn1(out, &seq, CBS_ASN1_SEQUENCE) &&
          asn1_marshal_object(&seq, in->algorithm, /*tag=*/0) &&
@@ -95,18 +97,17 @@ int x509_marshal_algorithm(CBB *out, const X509_ALGOR *in) {
 }
 
 X509_ALGOR *d2i_X509_ALGOR(X509_ALGOR **out, const uint8_t **inp, long len) {
-  return bssl::D2IFromCBS(
-      out, inp, len, [](CBS *cbs) -> bssl::UniquePtr<X509_ALGOR> {
-        bssl::UniquePtr<X509_ALGOR> ret(X509_ALGOR_new());
-        if (ret == nullptr || !x509_parse_algorithm(cbs, ret.get())) {
-          return nullptr;
-        }
-        return ret;
-      });
+  return D2IFromCBS(out, inp, len, [](CBS *cbs) -> UniquePtr<X509_ALGOR> {
+    UniquePtr<X509_ALGOR> ret(X509_ALGOR_new());
+    if (ret == nullptr || !x509_parse_algorithm(cbs, ret.get())) {
+      return nullptr;
+    }
+    return ret;
+  });
 }
 
 int i2d_X509_ALGOR(const X509_ALGOR *in, uint8_t **outp) {
-  return bssl::I2DFromCBB(/*initial_capacity=*/32, outp, [&](CBB *cbb) -> bool {
+  return I2DFromCBB(/*initial_capacity=*/32, outp, [&](CBB *cbb) -> bool {
     return x509_marshal_algorithm(cbb, in);
   });
 }
@@ -116,7 +117,7 @@ IMPLEMENT_EXTERN_ASN1_SIMPLE(X509_ALGOR, X509_ALGOR_new, X509_ALGOR_free,
                              i2d_X509_ALGOR)
 
 X509_ALGOR *X509_ALGOR_dup(const X509_ALGOR *alg) {
-  bssl::UniquePtr<X509_ALGOR> copy(X509_ALGOR_new());
+  UniquePtr<X509_ALGOR> copy(X509_ALGOR_new());
   if (copy == nullptr || !X509_ALGOR_copy(copy.get(), alg)) {
     return nullptr;
   }
@@ -124,11 +125,11 @@ X509_ALGOR *X509_ALGOR_dup(const X509_ALGOR *alg) {
 }
 
 int X509_ALGOR_copy(X509_ALGOR *dst, const X509_ALGOR *src) {
-  bssl::UniquePtr<ASN1_OBJECT> algorithm(OBJ_dup(src->algorithm));
+  UniquePtr<ASN1_OBJECT> algorithm(OBJ_dup(src->algorithm));
   if (algorithm == nullptr) {
     return 0;
   }
-  bssl::UniquePtr<ASN1_TYPE> parameter;
+  UniquePtr<ASN1_TYPE> parameter;
   if (src->parameter != nullptr) {
     parameter.reset(ASN1_TYPE_new());
     if (parameter == nullptr ||

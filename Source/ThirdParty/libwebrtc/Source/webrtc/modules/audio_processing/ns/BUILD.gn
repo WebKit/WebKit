@@ -49,19 +49,9 @@ rtc_static_library("ns") {
   }
 
   deps = [
-    "..:apm_logging",
     "..:audio_buffer",
-    "..:high_pass_filter",
-    "../../../api:array_view",
-    "../../../common_audio:common_audio_c",
-    "../../../common_audio/third_party/ooura:fft_size_128",
     "../../../common_audio/third_party/ooura:fft_size_256",
     "../../../rtc_base:checks",
-    "../../../rtc_base:safe_minmax",
-    "../../../rtc_base/system:arch",
-    "../../../system_wrappers",
-    "../../../system_wrappers:metrics",
-    "../utility:cascaded_biquad_filter",
   ]
 }
 
@@ -74,18 +64,9 @@ if (rtc_include_tests) {
 
     deps = [
       ":ns",
-      "..:apm_logging",
       "..:audio_buffer",
-      "..:audio_processing",
-      "..:high_pass_filter",
-      "../../../api:array_view",
-      "../../../rtc_base:checks",
-      "../../../rtc_base:safe_minmax",
       "../../../rtc_base:stringutils",
-      "../../../rtc_base/system:arch",
-      "../../../system_wrappers",
       "../../../test:test_support",
-      "../utility:cascaded_biquad_filter",
     ]
 
     defines = []

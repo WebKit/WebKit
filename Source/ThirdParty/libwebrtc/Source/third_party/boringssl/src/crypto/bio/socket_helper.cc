@@ -38,11 +38,13 @@
 #include "../internal.h"
 
 
-int bio_ip_and_port_to_socket_and_addr(int *out_sock,
-                                       struct sockaddr_storage *out_addr,
-                                       socklen_t *out_addr_length,
-                                       const char *hostname,
-                                       const char *port_str) {
+using namespace bssl;
+
+int bssl::bio_ip_and_port_to_socket_and_addr(int *out_sock,
+                                             struct sockaddr_storage *out_addr,
+                                             socklen_t *out_addr_length,
+                                             const char *hostname,
+                                             const char *port_str) {
   struct addrinfo hint, *result, *cur;
   int ret;
 
@@ -88,7 +90,7 @@ out:
   return ret;
 }
 
-int bio_socket_nbio(int sock, int on) {
+int bssl::bio_socket_nbio(int sock, int on) {
 #if defined(OPENSSL_WINDOWS)
   u_long arg = on;
 
@@ -107,9 +109,9 @@ int bio_socket_nbio(int sock, int on) {
 #endif
 }
 
-void bio_clear_socket_error(void) {}
+void bssl::bio_clear_socket_error() {}
 
-int bio_sock_error(int sock) {
+int bssl::bio_sock_error(int sock) {
   int error;
   socklen_t error_size = sizeof(error);
 
@@ -119,7 +121,7 @@ int bio_sock_error(int sock) {
   return error;
 }
 
-int bio_socket_should_retry(int return_value) {
+int bssl::bio_socket_should_retry(int return_value) {
 #if defined(OPENSSL_WINDOWS)
   return return_value == -1 && WSAGetLastError() == WSAEWOULDBLOCK;
 #else

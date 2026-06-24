@@ -122,7 +122,7 @@ private:
     uint64_t m_logIdentifier { 0 };
 #endif
     WeakPtr<TrackListBase, WeakPtrImplWithEventTargetData> m_trackList;
-    size_t m_clientRegistrationId;
+    size_t m_clientRegistrationId { 0 };
 };
 
 class MediaTrackBase : public TrackBase {

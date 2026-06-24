@@ -47,7 +47,22 @@ WI.LoggingChannel = class LoggingChannel
     // Public
 
     get source() { return this._source; }
+
     get level() { return this._level; }
+    set level(level)
+    {
+        console.assert(Object.values(WI.LoggingChannel.Level).includes(level), level);
+
+        if (level === this._level)
+            return;
+
+        this._level = level;
+
+        for (let target of WI.targets) {
+            if (target.hasDomain("Console"))
+                target.ConsoleAgent.setLoggingChannelLevel(this._source, this._level);
+        }
+    }
 };
 
 WI.LoggingChannel.Level = {

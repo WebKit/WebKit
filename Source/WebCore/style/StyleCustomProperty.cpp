@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 #include "config.h"
 #include "StyleCustomProperty.h"
 
-#include "CSSCalcValue.h"
+#include "CSSPrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSSerializationContext.h"
 #include "CSSStringValue.h"
@@ -33,10 +33,8 @@
 #include "CSSTokenizer.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
-#include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
-#include "RenderStyle.h"
-#include "StyleCalculationValue.h"
+#include "StyleComputedStyle.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
@@ -74,7 +72,7 @@ bool CustomProperty::valueEquals(const CustomProperty& other) const
     );
 }
 
-Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const RenderStyle& style) const
+Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const Style::ComputedStyle& style) const
 {
     auto convertValue = [&](const Value& value) {
         return WTF::switchOn(value,
@@ -111,7 +109,7 @@ Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const RenderStyl
     );
 }
 
-Ref<DeprecatedCSSOMValue> CustomProperty::propertyValueDeprecatedCSSOMWrapper(CSSValuePool& pool, CSSStyleDeclaration& owner, const RenderStyle& style) const
+Ref<DeprecatedCSSOMValue> CustomProperty::propertyValueDeprecatedCSSOMWrapper(CSSValuePool& pool, CSSStyleDeclaration& owner, const Style::ComputedStyle& style) const
 {
     auto convertValue = [&](const Value& value) {
         return WTF::switchOn(value,
@@ -126,7 +124,9 @@ Ref<DeprecatedCSSOMValue> CustomProperty::propertyValueDeprecatedCSSOMWrapper(CS
             return CSS::createDeprecatedCSSOMValue(pool, owner, CSS::String { emptyString() });
         },
         [&](const Ref<CSSVariableData>& variableData) -> Ref<DeprecatedCSSOMValue> {
-            return DeprecatedCSSOMComplexValue::create(CSSSubstitutionValue::create(variableData.copyRef()), owner);
+            return CSS::makeCustomDeprecatedCSSOMValue([copy = variableData.copyRef()](const CSS::SerializationContext&) {
+                return copy->serialize();
+            }, owner);
         },
         [&](const Value& value) -> Ref<DeprecatedCSSOMValue> {
             return convertValue(value);
@@ -140,14 +140,14 @@ Ref<DeprecatedCSSOMValue> CustomProperty::propertyValueDeprecatedCSSOMWrapper(CS
     );
 }
 
-WTF::String CustomProperty::propertyValueSerialization(const CSS::SerializationContext& context, const RenderStyle& style) const
+WTF::String CustomProperty::propertyValueSerialization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
 {
     StringBuilder builder;
     propertyValueSerialization(builder, context, style);
     return builder.toString();
 }
 
-void CustomProperty::propertyValueSerialization(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style) const
+void CustomProperty::propertyValueSerialization(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
 {
     auto serializeValue = [&](StringBuilder& builder, const Value& value) {
         WTF::switchOn(value,
@@ -177,14 +177,14 @@ void CustomProperty::propertyValueSerialization(StringBuilder& builder, const CS
     );
 }
 
-WTF::String CustomProperty::propertyValueSerializationForTokenization(const CSS::SerializationContext& context, const RenderStyle& style) const
+WTF::String CustomProperty::propertyValueSerializationForTokenization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
 {
     StringBuilder builder;
     propertyValueSerializationForTokenization(builder, context, style);
     return builder.toString();
 }
 
-void CustomProperty::propertyValueSerializationForTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style) const
+void CustomProperty::propertyValueSerializationForTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
 {
     // `propertyValueSerializationForTokenization` differs from `propertyValueSerialization` only in how it handles custom `color`
     // values:
@@ -233,7 +233,7 @@ const Vector<CSSParserToken>& CustomProperty::tokens() const
         },
         [&](auto&) -> const Vector<CSSParserToken>& {
             if (!m_cachedTokens) {
-                CSSTokenizer tokenizer { propertyValueSerializationForTokenization(CSS::defaultSerializationContext(), RenderStyle::defaultStyleSingleton()) };
+                CSSTokenizer tokenizer { propertyValueSerializationForTokenization(CSS::defaultSerializationContext(), Style::ComputedStyle::defaultStyleSingleton()) };
                 m_cachedTokens = CSSVariableData::create(tokenizer.tokenRange(), m_isAttrTainted);
             }
             return m_cachedTokens->tokens();

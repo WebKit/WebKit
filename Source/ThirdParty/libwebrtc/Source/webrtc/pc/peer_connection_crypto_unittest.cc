@@ -19,7 +19,6 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
-#include "api/environment/environment_factory.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
 #include "api/peer_connection_interface.h"
@@ -50,8 +49,10 @@
 #include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/ssl_fingerprint.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
@@ -107,8 +108,8 @@ class PeerConnectionCryptoBaseTest : public ::testing::Test {
   WrapperPtr CreatePeerConnection(
       const RTCConfiguration& config,
       std::unique_ptr<RTCCertificateGeneratorInterface> cert_gen) {
-    auto fake_port_allocator =
-        std::make_unique<FakePortAllocator>(CreateEnvironment(), vss_.get());
+    auto fake_port_allocator = std::make_unique<FakePortAllocator>(
+        CreateTestEnvironment(), vss_.get());
     auto observer = std::make_unique<MockPeerConnectionObserver>();
     RTCConfiguration modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
@@ -156,7 +157,7 @@ class PeerConnectionCryptoBaseTest : public ::testing::Test {
   }
 
   std::unique_ptr<VirtualSocketServer> vss_;
-  AutoSocketServerThread main_;
+  test::RunLoop main_;
   scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;
   const SdpSemantics sdp_semantics_;
 };

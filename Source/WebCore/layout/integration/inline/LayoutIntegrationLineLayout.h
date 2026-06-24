@@ -75,7 +75,7 @@ public:
     static const LineLayout* containing(const RenderObject&);
 
     static bool NODELETE canUseFor(const RenderBlockFlow&);
-    static bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
+    static bool canUseForIntrinsicWidthComputation(const RenderBlockFlow&);
     static bool shouldInvalidateLineLayoutAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
     static bool shouldInvalidateLineLayoutAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
 
@@ -87,8 +87,8 @@ public:
     bool insertedIntoTree(const RenderElement& parent, RenderObject& child);
     bool removedFromTree(const RenderElement& parent, RenderObject& child);
     bool updateTextContent(const RenderText&, std::optional<size_t> offset, size_t oldLength);
-    bool rootStyleWillChange(const RenderBlockFlow&, const RenderStyle& newStyle);
-    bool styleWillChange(const RenderElement&, const RenderStyle& newStyle, Style::Difference);
+    bool rootStyleWillChange(const RenderBlockFlow&, const Style::ComputedStyle& newStyle);
+    bool styleWillChange(const RenderElement&, const Style::ComputedStyle& newStyle, Style::Difference);
     bool boxContentWillChange(const RenderBox&);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();

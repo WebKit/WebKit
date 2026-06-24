@@ -58,7 +58,7 @@ private:
     StepRange createStepRange(AnyStepHandling) const final;
     void handleMouseDownEvent(MouseEvent&) final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
-    RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
+    RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
     void createShadowSubtree() final;
     Decimal parseToNumber(StringView, const Decimal&) const final;
     String serialize(const Decimal&) const final;

@@ -32,7 +32,6 @@
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorInterpolation.h"
-#include "StyleCalculationValue.h"
 #include "StyleGradientImage.h"
 #include "StyleKeyword+Mappings.h"
 #include "StylePosition.h"

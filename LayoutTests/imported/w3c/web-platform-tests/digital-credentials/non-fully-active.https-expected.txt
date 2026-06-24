@@ -1,5 +1,0 @@
-
-PASS non-fully active document behavior for CredentialsContainer
-FAIL Promise rejects with DOMException when the document becomes non-fully active promise_rejects_dom: Expect promise to reject if the document becomes non-fully active function "function() { throw e; }" threw object "TypeError: No supported document requests to present." that is not a DOMException AbortError: property "code" is equal to undefined, expected 20
-PASS Aborted Digital Credentials requests do not leave a subsequent request stuck in an invalid state.
-

@@ -76,8 +76,8 @@ public:
     const Document* NODELETE document() const;
     Document* document();
 
-    void setAppBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
-    void clearAppBadge(Ref<DeferredPromise>&&);
+    void setAppBadge(ScriptExecutionContext&, std::optional<unsigned long long>, Ref<DeferredPromise>&&);
+    void clearAppBadge(ScriptExecutionContext&, Ref<DeferredPromise>&&);
 
 private:
     void showShareData(ExceptionOr<ShareDataWithParsedURL&>, Ref<DeferredPromise>&&);

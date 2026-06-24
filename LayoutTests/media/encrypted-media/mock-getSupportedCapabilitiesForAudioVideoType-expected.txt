@@ -1,0 +1,24 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["mock"])
+RUN(mock.unsupportedVideoCodecs = ["bad"])
+
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" }, { "contentType": "video/mock; codecs=\"bad\"" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().videoCapabilities.length == '1') OK
+EXPECTED (access.getConfiguration().videoCapabilities[0].contentType == 'video/mock; codecs="mock"') OK
+
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"bad\"" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+RUN(mock.unsupportedVideoCodecs = ["bad", "worse"])
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"bad\"" }, { "contentType": "video/mock; codecs=\"mock\"" }, { "contentType": "video/mock; codecs=\"worse\"" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().videoCapabilities.length == '1') OK
+EXPECTED (access.getConfiguration().videoCapabilities[0].contentType == 'video/mock; codecs="mock"') OK
+END OF TEST
+

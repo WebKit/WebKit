@@ -96,6 +96,12 @@ header: <WebCore/PathSegmentData.h>
     std::span<const float, 4> span();
 };
 
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataLineColorThickness {
+    WebCore::PathDataLine line;
+    WebCore::PackedColor::RGBA color;
+    float thickness;
+};
+
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataQuadCurve {
     WebCore::FloatPoint start;
     WebCore::FloatPoint controlPoint;

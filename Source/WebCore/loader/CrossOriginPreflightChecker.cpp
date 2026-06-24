@@ -88,7 +88,7 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
         return;
     }
 
-    auto result = WebCore::validatePreflightResponse(page->sessionID(), request, response, loader.options().storedCredentialsPolicy, loader.topOrigin(), loader.securityOrigin(), &CrossOriginAccessControlCheckDisabler::singleton());
+    auto result = WebCore::validatePreflightResponse(page->sessionID(), request, response, loader.options().storedCredentialsPolicy, loader.topOrigin(), protect(loader.securityOrigin()), &CrossOriginAccessControlCheckDisabler::singleton());
     if (!result) {
         loaderDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, result.error());
         loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), result.error(), ResourceError::Type::AccessControl));
@@ -127,7 +127,7 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource& resource, const
         loader->preflightFailure(m_resource->resourceLoaderIdentifier(), preflightError);
         return;
     }
-    validatePreflightResponse(*loader, WTF::move(m_request), *m_resource->resourceLoaderIdentifier(), m_resource->response());
+    validatePreflightResponse(*loader, WTF::move(m_request), *m_resource->resourceLoaderIdentifier(), protect(m_resource.get())->response());
 }
 
 void CrossOriginPreflightChecker::redirectReceived(CachedResource& resource, ResourceRequest&&, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -152,7 +152,7 @@ void CrossOriginPreflightChecker::startPreflight()
     options.initiatorContext = loader->options().initiatorContext;
 
     bool includeFetchMetadata = !loaderDocument->quirks().shouldDisableFetchMetadata();
-    CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, loader->securityOrigin(), loader->referrer(), includeFetchMetadata), options);
+    CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, protect(loader->securityOrigin()), loader->referrer(), includeFetchMetadata), options);
     preflightRequest.setInitiatorType(AtomString { loader->options().initiatorType });
 
     ASSERT(!m_resource);
@@ -174,7 +174,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
         return;
 
     bool includeFetchMetadata = !loaderDocument->quirks().shouldDisableFetchMetadata();
-    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, loader.securityOrigin(), loader.referrer(), includeFetchMetadata);
+    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, protect(loader.securityOrigin()), loader.referrer(), includeFetchMetadata);
     ResourceError error;
     ResourceResponse response;
     RefPtr<SharedBuffer> data;

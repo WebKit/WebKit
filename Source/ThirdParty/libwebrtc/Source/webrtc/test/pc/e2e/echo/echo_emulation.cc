@@ -13,9 +13,9 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/sequence_checker.h"
 #include "api/test/pclf/media_configuration.h"
 #include "modules/audio_device/include/test_audio_device.h"
@@ -47,7 +47,7 @@ EchoEmulatingCapturer::EchoEmulatingCapturer(
   capturer_thread_.Detach();
 }
 
-void EchoEmulatingCapturer::OnAudioRendered(ArrayView<const int16_t> data) {
+void EchoEmulatingCapturer::OnAudioRendered(std::span<const int16_t> data) {
   RTC_DCHECK_RUN_ON(&renderer_thread_);
   if (!recording_started_) {
     // Because rendering can start before capturing in the beginning we can have
@@ -114,7 +114,7 @@ EchoEmulatingRenderer::EchoEmulatingRenderer(
   RTC_DCHECK(echo_emulating_capturer_);
 }
 
-bool EchoEmulatingRenderer::Render(ArrayView<const int16_t> data) {
+bool EchoEmulatingRenderer::Render(std::span<const int16_t> data) {
   if (!data.empty()) {
     echo_emulating_capturer_->OnAudioRendered(data);
   }

@@ -31,14 +31,14 @@ struct PkitsTestInfo {
   PkitsTestInfo(const PkitsTestInfo &other);
   ~PkitsTestInfo();
 
-  // Sets |initial_policy_set| to the specified policies. The
+  // Sets `initial_policy_set` to the specified policies. The
   // policies are described as comma-separated symbolic strings like
   // "anyPolicy" and "NIST-test-policy-1".
   //
   // If this isn't called, the default is "anyPolicy".
   void SetInitialPolicySet(const char *const policy_names);
 
-  // Sets |user_constrained_policy_set| to the specified policies. The
+  // Sets `user_constrained_policy_set` to the specified policies. The
   // policies are described as comma-separated symbolic strings like
   // "anyPolicy" and "NIST-test-policy-1".
   //

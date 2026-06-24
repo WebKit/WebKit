@@ -27,6 +27,9 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
+// FIXME: rdar://178753306
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
 #import <WebKitAdditions/WebMockMediaDeviceRouteAdditions.h>
 
 typedef NS_ENUM(NSInteger, WebMockMediaDeviceRouteErrorCode) {
@@ -43,14 +46,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSErrorDomain const WebMockMediaDeviceRouteErrorDomain;
 
-@interface WebMockMediaDeviceRoute : NSObject <AVMediaSource, WebMediaDevicePlatformRoute>
+@interface WebMockMediaDeviceRoute : NSObject <AVPlaybackControl, WebMediaDevicePlatformRoute>
 @property (nonatomic, nullable, setter=setURLCallback:) WebCore::MockMediaDeviceRouteURLCallback* urlCallback;
 @property (copy) NSString *routeDisplayName;
 @property (nonatomic, getter=isReady) BOOL ready;
-@property (nonatomic, strong, nullable) NSError *playbackError;
+@property (nonatomic, strong, nullable) NSError *error;
 @property (nonatomic) CMTimeRange timeRange;
+@property (nonatomic, copy) NSArray<AVPlaybackUserInterfaceMediaSelectionOption *> *audioOptions;
 @end
 
 NS_ASSUME_NONNULL_END
+
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)

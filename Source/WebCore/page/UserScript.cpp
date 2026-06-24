@@ -115,7 +115,7 @@ String UserScript::debugDescription() const
     auto truncated = view.left(64);
     if (size_t pos = truncated.find('\n'); pos != notFound) {
         if (truncated.startsWith("//# sourceURL="_s))
-            truncated = truncated.substring(14, pos);
+            truncated = truncated.substring(14, pos - 14);
         else
             truncated = truncated.substring(0, pos);
     }

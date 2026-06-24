@@ -93,16 +93,16 @@ void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, const Scop
         out.print("Generated ", graph.m_plan.mode(), " code for ", CodeBlockWithJITType(graph.m_codeBlock, JITType::FTLJIT), ", instructions size = ", graph.m_codeBlock->instructionsSize(), ":\n");
 
         B3::Value* currentB3Value = nullptr;
-        Node* currentDFGNode = nullptr;
+        DFG::Node* currentDFGNode = nullptr;
 
         UncheckedKeyHashSet<B3::Value*> printedValues;
-        UncheckedKeyHashSet<Node*> printedNodes;
+        UncheckedKeyHashSet<DFG::Node*> printedNodes;
         const char* dfgPrefix = "DFG " "    ";
         const char* b3Prefix  = "b3  " "          ";
         const char* airPrefix = "Air " "              ";
         const char* asmPrefix = "asm " "                ";
 
-        auto printDFGNode = [&] (Node* node) {
+        auto printDFGNode = [&] (DFG::Node* node) {
             if (currentDFGNode == node)
                 return;
 
@@ -112,8 +112,8 @@ void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, const Scop
 
             perDFGNodeCallback(node);
 
-            UncheckedKeyHashSet<Node*> localPrintedNodes;
-            WTF::Function<void(Node*)> printNodeRecursive = [&] (Node* node) {
+            UncheckedKeyHashSet<DFG::Node*> localPrintedNodes;
+            WTF::Function<void(DFG::Node*)> printNodeRecursive = [&] (DFG::Node* node) {
                 if (printedNodes.contains(node) || localPrintedNodes.contains(node))
                     return;
 

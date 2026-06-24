@@ -19,16 +19,18 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
+#include "absl/base/macros.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/span_helpers.h"
 
 namespace webrtc {
 
@@ -255,12 +257,21 @@ class StunMessage {
 
   // Verify that a buffer has stun magic cookie and one of the specified
   // methods. Note that it does not check for the existance of FINGERPRINT.
-  static bool IsStunMethod(ArrayView<int> methods,
+  static bool IsStunMethod(std::span<int> methods,
+                           std::span<const uint8_t> data);
+  ABSL_DEPRECATE_AND_INLINE()
+  static bool IsStunMethod(std::span<int> methods,
                            const char* data,
-                           size_t size);
+                           size_t size) {
+    return IsStunMethod(methods, AsUint8Span(std::span(data, size)));
+  }
 
   // Verifies that a given buffer is STUN by checking for a correct FINGERPRINT.
-  static bool ValidateFingerprint(const char* data, size_t size);
+  static bool ValidateFingerprint(std::span<const uint8_t> data);
+  ABSL_DEPRECATE_AND_INLINE()
+  static bool ValidateFingerprint(const char* data, size_t size) {
+    return ValidateFingerprint(AsUint8Span(std::span(data, size)));
+  }
 
   // Generates a new 12 byte (RFC5389) transaction id.
   static std::string GenerateTransactionId();
@@ -295,13 +306,28 @@ class StunMessage {
                        std::function<bool(int type)> attribute_type_mask) const;
 
   // Expose raw-buffer ValidateMessageIntegrity function for testing.
+  static bool ValidateMessageIntegrityForTesting(const std::string& password,
+                                                 std::span<const uint8_t> data);
+  ABSL_DEPRECATE_AND_INLINE()
   static bool ValidateMessageIntegrityForTesting(const char* data,
                                                  size_t size,
-                                                 const std::string& password);
+                                                 const std::string& password) {
+    return ValidateMessageIntegrityForTesting(
+        password, AsUint8Span(std::span(data, size)));
+  }
+
   // Expose raw-buffer ValidateMessageIntegrity function for testing.
-  static bool ValidateMessageIntegrity32ForTesting(const char* data,
-                                                   size_t size,
-                                                   const std::string& password);
+  static bool ValidateMessageIntegrity32ForTesting(
+      const std::string& password,
+      std::span<const uint8_t> data);
+  ABSL_DEPRECATE_AND_INLINE()
+  static bool ValidateMessageIntegrity32ForTesting(
+      const char* data,
+      size_t size,
+      const std::string& password) {
+    return ValidateMessageIntegrity32ForTesting(
+        password, AsUint8Span(std::span(data, size)));
+  }
 
  protected:
   // Verifies that the given attribute is allowed for this message.
@@ -318,8 +344,7 @@ class StunMessage {
                                  absl::string_view key);
   static bool ValidateMessageIntegrityOfType(int mi_attr_type,
                                              size_t mi_attr_size,
-                                             const char* data,
-                                             size_t size,
+                                             std::span<const uint8_t> data,
                                              const std::string& password);
 
   uint16_t type_ = STUN_INVALID_MESSAGE_TYPE;
@@ -328,7 +353,7 @@ class StunMessage {
   uint32_t reduced_transaction_id_ = 0;
   uint32_t stun_magic_cookie_ = kStunMagicCookie;
   // The original buffer for messages created by Read().
-  std::string buffer_;
+  std::vector<uint8_t> buffer_;
   IntegrityStatus integrity_ = IntegrityStatus::kNotSet;
   std::string password_;
 };
@@ -506,7 +531,12 @@ class StunByteStringAttribute : public StunAttribute {
  public:
   explicit StunByteStringAttribute(uint16_t type);
   StunByteStringAttribute(uint16_t type, absl::string_view str);
-  StunByteStringAttribute(uint16_t type, const void* bytes, size_t length);
+  StunByteStringAttribute(uint16_t type, std::span<const uint8_t> bytes);
+  ABSL_DEPRECATE_AND_INLINE()
+  StunByteStringAttribute(uint16_t type, const void* bytes, size_t length)
+      : StunByteStringAttribute(
+            type,
+            AsUint8Span(std::span(static_cast<const char*>(bytes), length))) {}
   StunByteStringAttribute(uint16_t type, const std::vector<uint32_t>& values);
   StunByteStringAttribute(uint16_t type, uint16_t length);
   ~StunByteStringAttribute() override;
@@ -523,17 +553,15 @@ class StunByteStringAttribute : public StunAttribute {
   }
   // Returns the attribute value as an uint8_t view.
   // Use this function for values that are not text.
-  ArrayView<uint8_t> array_view() const {
-    return MakeArrayView(bytes_, length());
-  }
-
-  [[deprecated]] std::string GetString() const {
-    return std::string(reinterpret_cast<const char*>(bytes_), length());
-  }
+  std::span<uint8_t> array_view() const { return std::span(bytes_, length()); }
 
   std::optional<std::vector<uint32_t>> GetUInt32Vector() const;
 
-  void CopyBytes(const void* bytes, size_t length);
+  void CopyBytes(std::span<const uint8_t> bytes);
+  ABSL_DEPRECATE_AND_INLINE()
+  void CopyBytes(const void* bytes, size_t length) {
+    CopyBytes(AsUint8Span(std::span(static_cast<const char*>(bytes), length)));
+  }
   void CopyBytes(absl::string_view bytes);
 
   uint8_t GetByte(size_t index) const;

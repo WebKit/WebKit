@@ -1,0 +1,17 @@
+
+PASS Setup
+PASS VP9 profile 2 isConfigSupported [prefer-hardware]
+PASS VP9 (no override) [prefer-hardware]: bitstream colorSpace surfaces
+PASS VP9 colorSpace override [prefer-hardware]: primaries
+PASS VP9 colorSpace override [prefer-hardware]: matrix
+PASS VP9 colorSpace override [prefer-hardware]: transfer (pq)
+PASS VP9 colorSpace override [prefer-hardware]: fullRange (true)
+PASS VP9 colorSpace override [prefer-hardware]: fullRange (false)
+PASS VP9 profile 2 isConfigSupported [prefer-software]
+PASS VP9 (no override) [prefer-software]: bitstream colorSpace surfaces
+PASS VP9 colorSpace override [prefer-software]: primaries
+PASS VP9 colorSpace override [prefer-software]: matrix
+PASS VP9 colorSpace override [prefer-software]: transfer (pq)
+PASS VP9 colorSpace override [prefer-software]: fullRange (true)
+PASS VP9 colorSpace override [prefer-software]: fullRange (false)
+

@@ -64,7 +64,8 @@ public:
 
     void loadLink(const LinkLoadParameters&, Document&);
     enum class ShouldLog : bool { No, Yes };
-    static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String&, Document&, ShouldLog = ShouldLog::No);
+    enum class IsModulePreload : bool { No, Yes };
+    static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String&, Document&, ShouldLog = ShouldLog::No, IsModulePreload = IsModulePreload::No);
 
     enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };
     static void loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document&, MediaAttributeCheck);

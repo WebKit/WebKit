@@ -107,7 +107,6 @@ void SVGData::setBitDefaults()
     inheritedFlags.textAnchor = static_cast<unsigned>(ComputedStyle::initialTextAnchor());
     inheritedFlags.colorInterpolation = static_cast<unsigned>(ComputedStyle::initialColorInterpolation());
     inheritedFlags.colorInterpolationFilters = static_cast<unsigned>(ComputedStyle::initialColorInterpolationFilters());
-    inheritedFlags.glyphOrientationHorizontal = static_cast<unsigned>(ComputedStyle::initialGlyphOrientationHorizontal());
     inheritedFlags.glyphOrientationVertical = static_cast<unsigned>(ComputedStyle::initialGlyphOrientationVertical());
 
     nonInheritedFlags.alignmentBaseline = static_cast<unsigned>(ComputedStyle::initialAlignmentBaseline());
@@ -160,7 +159,6 @@ void SVGData::InheritedFlags::dumpDifferences(TextStream& ts, const SVGData::Inh
     LOG_IF_DIFFERENT_WITH_CAST(TextAnchor, textAnchor);
     LOG_IF_DIFFERENT_WITH_CAST(ColorInterpolation, colorInterpolation);
     LOG_IF_DIFFERENT_WITH_CAST(ColorInterpolation, colorInterpolationFilters);
-    LOG_IF_DIFFERENT_WITH_CAST(SVGGlyphOrientationHorizontal, glyphOrientationHorizontal);
     LOG_IF_DIFFERENT_WITH_CAST(SVGGlyphOrientationVertical, glyphOrientationVertical);
 }
 

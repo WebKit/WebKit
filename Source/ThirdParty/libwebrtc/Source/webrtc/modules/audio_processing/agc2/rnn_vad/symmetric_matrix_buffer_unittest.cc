@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <array>
+#include <span>
 #include <utility>
 
 #include "modules/audio_processing/agc2/rnn_vad/ring_buffer.h"
@@ -61,7 +62,7 @@ TEST(RnnVadTest, SymmetricMatrixBufferUseCase) {
   for (int t = 1; t <= 100; ++t) {  // Evolution steps.
     SCOPED_TRACE(t);
     const int t_removed = ring_buf.GetArrayView(kRingBufSize - 1)[0];
-    ring_buf.Push({&t, 1});
+    ring_buf.Push(std::span<int, 1>(&t, 1));
     // The head of the ring buffer is `t`.
     ASSERT_EQ(t, ring_buf.GetArrayView(0)[0]);
     // Create the comparisons between `t` and the older elements in the ring
@@ -77,7 +78,7 @@ TEST(RnnVadTest, SymmetricMatrixBufferUseCase) {
       new_comparions[i].second = t;
     }
     // Push the new comparisons in the symmetric matrix buffer.
-    sym_matrix_buf.Push({new_comparions.data(), new_comparions.size()});
+    sym_matrix_buf.Push(new_comparions);
     // Tests.
     CheckSymmetry(&sym_matrix_buf);
     // Check that the pairs resulting from the content in the ring buffer are

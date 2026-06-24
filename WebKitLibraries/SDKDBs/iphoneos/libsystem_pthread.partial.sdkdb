@@ -147,7 +147,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_sched_get_priority_min"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_sched_yield"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "__darwin_pthread_attr_t"},
     {"access": "public", "name": "__darwin_pthread_cond_t"},

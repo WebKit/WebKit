@@ -1,6 +1,0 @@
-
-PASS cross-origin, setting src
-PASS cross-origin, setting location.href
-PASS cross-origin-domain but same-origin, setting src
-PASS cross-origin-domain but same-origin, setting location.href
-

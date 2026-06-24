@@ -31,6 +31,7 @@
 #include "DocumentEditingContext.h"
 #include "FrameInfoData.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "PDFPlugin.h"
 #include "UnifiedPDFPlugin.h"
 #include "WebFrame.h"
@@ -75,7 +76,6 @@
 #include <WebCore/PageInlines.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ProtectionSpace.h>
-#include <WebCore/RenderBoxModelObjectInlines.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/ScrollView.h>
@@ -1027,7 +1027,7 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
         return;
 
     auto contentRect = dirtyRect;
-    contentRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
+    contentRect.move(borderLeft(*renderer) + paddingLeft(*renderer), borderTop(*renderer) + paddingTop(*renderer));
     renderer->repaintRectangle(contentRect);
 }
 
@@ -1156,7 +1156,7 @@ PDFPluginIdentifier PluginView::pdfPluginIdentifier() const
     return m_plugin->identifier();
 }
 
-void PluginView::setPDFDisplayMode(PDFDisplayMode mode)
+void PluginView::setPDFDisplayMode(PDFPluginDisplayMode mode)
 {
     m_plugin->setDisplayModeAndUpdateLayout(mode);
 }

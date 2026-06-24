@@ -1,3 +1,6 @@
+# FIXME: Remove once source files are fixed. https://bugs.webkit.org/show_bug.cgi?id=312034
+WEBKIT_ADD_TARGET_CXX_FLAGS(DumpRenderTree -Wno-unused-parameter)
+
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(CARBON_LIBRARY Carbon)
 find_library(CORESERVICES_LIBRARY CoreServices)

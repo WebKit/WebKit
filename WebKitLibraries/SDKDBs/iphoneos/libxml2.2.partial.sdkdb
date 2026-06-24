@@ -3156,7 +3156,7 @@
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_xmlXPtrRangeToFunction"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_xmlXPtrWrapLocationSet"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "UConverter"},
     {"access": "public", "name": "attributeDeclSAXFunc"},

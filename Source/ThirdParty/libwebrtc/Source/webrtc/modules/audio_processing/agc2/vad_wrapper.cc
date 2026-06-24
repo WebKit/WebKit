@@ -42,7 +42,7 @@ class MonoVadImpl : public VoiceActivityDetectorWrapper::MonoVad {
     RTC_DCHECK_EQ(frame.size(), rnn_vad::kFrameSize10ms24kHz);
     std::array<float, rnn_vad::kFeatureVectorSize> feature_vector;
     const bool is_silence = features_extractor_.CheckSilenceComputeFeatures(
-        /*samples=*/{frame.data(), rnn_vad::kFrameSize10ms24kHz},
+        /*samples=*/frame.first<rnn_vad::kFrameSize10ms24kHz>(),
         feature_vector);
     return rnn_vad_.ComputeVadProbability(feature_vector, is_silence);
   }

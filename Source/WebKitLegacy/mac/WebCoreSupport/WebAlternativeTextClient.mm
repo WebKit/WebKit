@@ -28,7 +28,6 @@
 #import "WebViewInternal.h"
 #import <wtf/TZoneMallocInlines.h>
 
-using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAlternativeTextClient);
 
@@ -40,27 +39,27 @@ WebAlternativeTextClient::WebAlternativeTextClient(WebView* webView)
 WebAlternativeTextClient::~WebAlternativeTextClient()
 {
 #if USE(AUTOCORRECTION_PANEL)
-    dismissAlternative(ReasonForDismissingAlternativeText::Ignored);
+    dismissAlternative(WebCore::ReasonForDismissingAlternativeText::Ignored);
 #endif
 }
 
 #if USE(AUTOCORRECTION_PANEL)
-void WebAlternativeTextClient::showCorrectionAlternative(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings, WebCore::FrameIdentifier)
+void WebAlternativeTextClient::showCorrectionAlternative(WebCore::AlternativeTextType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings, WebCore::FrameIdentifier)
 {
     m_correctionPanel.show(m_webView, type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 }
 
-void WebAlternativeTextClient::dismissAlternative(ReasonForDismissingAlternativeText reason)
+void WebAlternativeTextClient::dismissAlternative(WebCore::ReasonForDismissingAlternativeText reason)
 {
     m_correctionPanel.dismiss(reason);
 }
 
-String WebAlternativeTextClient::dismissAlternativeSoon(ReasonForDismissingAlternativeText reason)
+String WebAlternativeTextClient::dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText reason)
 {
     return m_correctionPanel.dismiss(reason);
 }
 
-static inline NSCorrectionResponse NODELETE toCorrectionResponse(AutocorrectionResponse response)
+static inline NSCorrectionResponse NODELETE toCorrectionResponse(WebCore::AutocorrectionResponse response)
 {
     switch (response) {
     case WebCore::AutocorrectionResponse::Reverted:
@@ -75,23 +74,23 @@ static inline NSCorrectionResponse NODELETE toCorrectionResponse(AutocorrectionR
     return NSCorrectionResponseAccepted;
 }
 
-void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, const String& replacementString)
+void WebAlternativeTextClient::recordAutocorrectionResponse(WebCore::AutocorrectionResponse response, const String& replacedString, const String& replacementString)
 {
     CorrectionPanel::recordAutocorrectionResponse([m_webView spellCheckerDocumentTag], toCorrectionResponse(response), replacedString, replacementString);
 }
 #endif
 
-void WebAlternativeTextClient::removeDictationAlternatives(DictationContext dictationContext)
+void WebAlternativeTextClient::removeDictationAlternatives(WebCore::DictationContext dictationContext)
 {
     [m_webView _removeDictationAlternatives:dictationContext];
 }
 
-void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, DictationContext dictationContext)
+void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext dictationContext)
 {
     [m_webView _showDictationAlternativeUI:boundingBoxOfDictatedText forDictationContext:dictationContext];
 }
 
-Vector<String> WebAlternativeTextClient::dictationAlternatives(DictationContext dictationContext)
+Vector<String> WebAlternativeTextClient::dictationAlternatives(WebCore::DictationContext dictationContext)
 {
     return [m_webView _dictationAlternatives:dictationContext];
 }

@@ -30,7 +30,6 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "MotionPath.h"
-#include "RenderStyle.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TransformOperationData.h"
@@ -45,23 +44,12 @@ TransformResolver::TransformResolver(TransformationMatrix& transform, const Comp
 {
 }
 
-TransformResolver::TransformResolver(TransformationMatrix& transform, const RenderStyle& style)
-    : TransformResolver { transform, style.computedStyle() }
-{
-}
-
 bool TransformResolver::affectedByTransformOrigin(const ComputedStyle& style)
 {
     return style.rotate().affectedByTransformOrigin()
         || style.scale().affectedByTransformOrigin()
         || style.transform().affectedByTransformOrigin()
         || style.offsetPath().affectedByTransformOrigin();
-}
-
-bool TransformResolver::affectedByTransformOrigin(const RenderStyle& style)
-{
-    CheckedRef computedStyle = style.computedStyle();
-    return affectedByTransformOrigin(computedStyle);
 }
 
 bool TransformResolver::affectedByTransformOrigin() const
@@ -79,12 +67,6 @@ FloatPoint3D TransformResolver::computeTransformOrigin(const ComputedStyle& styl
     return originTranslate;
 }
 
-FloatPoint3D TransformResolver::computeTransformOrigin(const RenderStyle& style, const FloatRect& boundingBox)
-{
-    CheckedRef computedStyle = style.computedStyle();
-    return computeTransformOrigin(computedStyle, boundingBox);
-}
-
 FloatPoint3D TransformResolver::computeTransformOrigin(const FloatRect& boundingBox) const
 {
     return computeTransformOrigin(m_style, boundingBox);
@@ -93,12 +75,6 @@ FloatPoint3D TransformResolver::computeTransformOrigin(const FloatRect& bounding
 FloatPoint TransformResolver::computePerspectiveOrigin(const ComputedStyle& style, const FloatRect& boundingBox)
 {
     return boundingBox.location() + evaluate<FloatPoint>(style.perspectiveOrigin(), boundingBox.size(), style.usedZoomForLength());
-}
-
-FloatPoint TransformResolver::computePerspectiveOrigin(const RenderStyle& style, const FloatRect& boundingBox)
-{
-    CheckedRef computedStyle = style.computedStyle();
-    return computePerspectiveOrigin(computedStyle, boundingBox);
 }
 
 FloatPoint TransformResolver::computePerspectiveOrigin(const FloatRect& boundingBox) const
@@ -185,23 +161,11 @@ void TransformResolver::applyTransform(TransformationMatrix& transform, const Co
     TransformResolver { transform, style }.applyTransform(transformData, options);
 }
 
-void TransformResolver::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const TransformOperationData& transformData, OptionSet<Option> options)
-{
-    CheckedRef computedStyle = style.computedStyle();
-    applyTransform(transform, computedStyle, transformData, options);
-}
-
 TransformationMatrix TransformResolver::computeTransform(const ComputedStyle& style, const TransformOperationData& transformData, OptionSet<Option> options)
 {
     TransformationMatrix transform;
     TransformResolver::applyTransform(transform, style, transformData, options);
     return transform;
-}
-
-TransformationMatrix TransformResolver::computeTransform(const RenderStyle& style, const TransformOperationData& transformData, OptionSet<Option> options)
-{
-    CheckedRef computedStyle = style.computedStyle();
-    return computeTransform(computedStyle, transformData, options);
 }
 
 void TransformResolver::applyMotionPathTransform(const TransformOperationData& transformData, ZoomFactor zoom)

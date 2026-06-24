@@ -40,13 +40,18 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 static const struct argument kArguments[] = {
     {
-     "-dump", kOptionalArgument,
-     "Dump the key and contents of the given file to stdout",
+        "-dump",
+        kOptionalArgument,
+        "Dump the key and contents of the given file to stdout",
     },
     {
-     "", kOptionalArgument, "",
+        "",
+        kOptionalArgument,
+        "",
     },
 };
 
@@ -116,14 +121,14 @@ bool DoPKCS12(const std::vector<std::string> &args) {
   CBS_init(&pkcs12, contents.get(), size);
 
   EVP_PKEY *key;
-  bssl::UniquePtr<STACK_OF(X509)> certs(sk_X509_new_null());
+  UniquePtr<STACK_OF(X509)> certs(sk_X509_new_null());
 
   if (!PKCS12_get_key_and_certs(&key, certs.get(), &pkcs12, password)) {
     fprintf(stderr, "Failed to parse PKCS#12 data:\n");
     ERR_print_errors_fp(stderr);
     return false;
   }
-  bssl::UniquePtr<EVP_PKEY> key_owned(key);
+  UniquePtr<EVP_PKEY> key_owned(key);
 
   if (key != NULL) {
     PEM_write_PrivateKey(stdout, key, NULL, NULL, 0, NULL, NULL);
@@ -135,3 +140,5 @@ bool DoPKCS12(const std::vector<std::string> &args) {
 
   return true;
 }
+
+BSSL_NAMESPACE_END

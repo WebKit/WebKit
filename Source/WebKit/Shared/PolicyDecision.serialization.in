@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 enum class WebKit::SafeBrowsingCheckOngoing : bool;
+enum class WebCore::OriginKeyed : bool;
 
 [RValue] struct WebKit::PolicyDecision {
     std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
@@ -32,6 +33,7 @@ enum class WebKit::SafeBrowsingCheckOngoing : bool;
     std::optional<WebKit::PolicyDecisionConsoleMessage> consoleMessage;
     WebKit::SafeBrowsingCheckOngoing isSafeBrowsingCheckOngoing;
     RefPtr<WebKit::FrameState> backForwardFrameState;
+    WebCore::OriginKeyed isOriginKeyed;
 }
 
 [CustomHeader] struct WebKit::PolicyDecisionConsoleMessage {

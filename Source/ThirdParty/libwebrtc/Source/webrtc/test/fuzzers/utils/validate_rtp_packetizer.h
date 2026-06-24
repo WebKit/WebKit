@@ -18,7 +18,7 @@ namespace webrtc {
 
 // Generates valid `RtpPacketizer::PayloadSizeLimits` from the `fuzz_input`.
 RtpPacketizer::PayloadSizeLimits ReadPayloadSizeLimits(
-    test::FuzzDataHelper& fuzz_input);
+    FuzzDataHelper& fuzz_input);
 
 // RTC_CHECKs if `rtp_packetizer` created packets with respect to the `limits`.
 void ValidateRtpPacketizer(const RtpPacketizer::PayloadSizeLimits& limits,

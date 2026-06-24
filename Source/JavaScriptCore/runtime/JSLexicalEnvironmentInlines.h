@@ -29,9 +29,39 @@
 #pragma once
 
 #include "JSLexicalEnvironment.h"
+#include "JSSymbolTableObjectInlines.h"
 #include "StructureCreateInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
+
+inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
+    : Base(vm, structure, currentScope, symbolTable)
+{
+    ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
+    for (unsigned i = this->symbolTable()->scopeSize(); i--;) {
+        // Filling this with undefined/TDZEmptyValue is useful because that's what variables start out as.
+        variableAt(ScopeOffset(i)).setStartingValue(initialValue);
+    }
+}
+
+inline JSLexicalEnvironment* JSLexicalEnvironment::create(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
+{
+    JSLexicalEnvironment* result =
+        new (
+            NotNull,
+            allocateCell<JSLexicalEnvironment>(vm, allocationSize(symbolTable)))
+        JSLexicalEnvironment(vm, structure, currentScope, symbolTable, initialValue);
+    result->finishCreation(vm);
+    return result;
+}
+
+inline JSLexicalEnvironment* JSLexicalEnvironment::create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
+{
+    Structure* structure = globalObject->activationStructure();
+    return create(vm, structure, currentScope, symbolTable, initialValue);
+}
 
 inline Structure* JSLexicalEnvironment::createStructure(VM& vm, JSGlobalObject* globalObject)
 {
@@ -39,3 +69,5 @@ inline Structure* JSLexicalEnvironment::createStructure(VM& vm, JSGlobalObject* 
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

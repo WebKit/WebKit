@@ -90,6 +90,7 @@ class VerifyModuleTask:
             "-Werror=module-import-in-extern-c",
             "-ferror-limit=0",
             "-Wno-private-header",
+            "-Wno-nullability-completeness"
         ]
 
         self.other_verifier_flags = shlex.split(

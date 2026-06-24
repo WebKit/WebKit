@@ -9,4 +9,7 @@ PASS 3 is currentPageId
 PASS 2 is currentPageId
 PASS 3 is currentPageId
 PASS Complete: navigated through all the states
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true MediaContainmentEnabled=true ] -->
+<html>
+<head>
+    <title>ManagedMediaSource ADTS-framed AAC partial-sample remove()</title>
+    <script src="../video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+    // Regression coverage for webkit.org/b/316467.
+    // AVStreamDataParser emits ADTS-framed AAC as multi-packet CMSampleBuffers
+    // (~0.49s each) that report kCMSampleBufferError_BufferHasNoSampleSizes.
+    // SourceBuffer.remove(start, end) needs MediaSampleAVFObjC::divide(time) to
+    // split those at packet boundaries; without that, removing a sub-range
+    // that lands inside a multi-packet sample erases the whole sample and
+    // leaves a gap larger than the requested range.
+    var source;
+    var sourceBuffer;
+    var buffer;
+    var fullEnd;
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            if (!ManagedMediaSource.isTypeSupported('audio/aac')) {
+                consoleWrite('audio/aac not supported by ManagedMediaSource on this platform; skipping.');
+                endTest();
+                return;
+            }
+
+            run('video.disableRemotePlayback = true');
+            source = new ManagedMediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(\'audio/aac\')');
+
+            const response = await fetch('./content/test-adts.aac');
+            buffer = await response.arrayBuffer();
+            run('sourceBuffer.appendBuffer(buffer)');
+            await waitFor(sourceBuffer, 'updateend');
+
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.start(0)', '0');
+            fullEnd = sourceBuffer.buffered.end(0);
+            testExpected('fullEnd > 1.0', true);
+
+            // Remove [0, 1.0). AVStreamDataParser emits ADTS as multi-packet
+            // CMSampleBuffers (each ~0.49s long) that report
+            // kCMSampleBufferError_BufferHasNoSampleSizes. Without divide(time)
+            // handling that shape the multi-packet sample straddling 1.0s
+            // could not be split, so the entire sample (ending around 1.47s)
+            // was erased and buffered.start(0) jumped to ~1.47. With the fix
+            // the sample is split at ~1.0, so buffered.start(0) lands close
+            // to the requested boundary.
+            run('sourceBuffer.remove(0, 1.0)');
+            await waitFor(sourceBuffer, 'updateend');
+
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.start(0) >= 1.0', true);
+            testExpected('sourceBuffer.buffered.start(0) < 1.1', true);
+            testExpected('Math.abs(sourceBuffer.buffered.end(0) - fullEnd) < 0.05', true);
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls disableremoteplayback></video>
+</body>
+</html>

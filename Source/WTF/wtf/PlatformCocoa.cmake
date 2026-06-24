@@ -123,19 +123,24 @@ list(APPEND WTF_PUBLIC_HEADERS
     text/cf/TextBreakIteratorCF.h
 )
 
-file(COPY mac/MachExceptions.defs DESTINATION ${WTF_DERIVED_SOURCES_DIR})
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR USE_APPLE_INTERNAL_SDK)
+    file(COPY mac/MachExceptions.defs DESTINATION ${WTF_DERIVED_SOURCES_DIR})
 
-add_custom_command(
-    OUTPUT
+    add_custom_command(
+        OUTPUT
         ${WTF_DERIVED_SOURCES_DIR}/MachExceptionsServer.h
         ${WTF_DERIVED_SOURCES_DIR}/mach_exc.h
         ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
         ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
-    MAIN_DEPENDENCY mac/MachExceptions.defs
-    WORKING_DIRECTORY ${WTF_DERIVED_SOURCES_DIR}
-    COMMAND mig -DMACH_EXC_SERVER_TASKIDTOKEN_STATE -sheader MachExceptionsServer.h MachExceptions.defs
-    VERBATIM)
-list(APPEND WTF_SOURCES
-    ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
-    ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
-)
+        MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/mac/MachExceptions.defs
+        WORKING_DIRECTORY ${WTF_DERIVED_SOURCES_DIR}
+        COMMAND ${Mig_EXECUTABLE} -header mach_exc.h -user mach_excUser.c
+            -sheader MachExceptionsServer.h -server mach_excServer.c
+            -DMACH_EXC_SERVER_TASKIDTOKEN_STATE -isysroot ${CMAKE_OSX_SYSROOT}
+            MachExceptions.defs
+        VERBATIM)
+    list(APPEND WTF_SOURCES
+        ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
+        ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
+    )
+endif ()

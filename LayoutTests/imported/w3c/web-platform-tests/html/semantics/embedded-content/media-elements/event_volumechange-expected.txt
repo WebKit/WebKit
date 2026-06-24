@@ -4,9 +4,15 @@ PASS setting audio.muted fires volumechange
 PASS setting audio.volume/muted to the same value does not fire volumechange
 PASS setting audio.volume/muted repeatedly fires volumechange repeatedly
 PASS setting audio.volume/muted before load will not fire volumechange
+PASS adding/removing audio muted content attribute will not fire volumechange
+PASS setting audio.muted to false when false by default will not fire volumechange
+FAIL setting audio.muted to true when true by default will not fire volumechange assert_unreached: Reached unreachable code
 PASS setting video.volume fires volumechange
 PASS setting video.muted fires volumechange
 PASS setting video.volume/muted to the same value does not fire volumechange
 PASS setting video.volume/muted repeatedly fires volumechange repeatedly
 PASS setting video.volume/muted before load will not fire volumechange
+PASS adding/removing video muted content attribute will not fire volumechange
+PASS setting video.muted to false when false by default will not fire volumechange
+FAIL setting video.muted to true when true by default will not fire volumechange assert_unreached: Reached unreachable code
 

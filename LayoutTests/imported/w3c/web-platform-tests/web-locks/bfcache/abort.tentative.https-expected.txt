@@ -1,0 +1,6 @@
+
+NOTRUN An immediately aborted lock on main thread should not prevent bfcache Could have been BFCached but actually wasn't
+NOTRUN An immediately aborted lock on a worker should not prevent bfcache Could have been BFCached but actually wasn't
+NOTRUN An immediately aborted lock on a nested worker should not prevent bfcache Could have been BFCached but actually wasn't
+NOTRUN An immediately aborted lock on a shared worker should not prevent bfcache Could have been BFCached but actually wasn't
+

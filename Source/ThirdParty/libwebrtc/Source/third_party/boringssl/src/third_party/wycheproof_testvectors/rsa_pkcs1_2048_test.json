@@ -7,20 +7,6 @@
     "of RSA encrypted ciphertexts."
   ],
   "notes": {
-    "CVE 2020-14967": {
-      "bugType": "KNOWN_BUG",
-      "description": "jsrsasign package before 8.0.18 for Node.js. Its RSA PKCS1 v1.5 decryption implementation does not detect ciphertext modification by prepending 0-bytes to ciphertexts.",
-      "cves": [
-        "CVE 2020-14967"
-      ]
-    },
-    "CVE 2021-3580": {
-      "bugType": "KNOWN_BUG",
-      "description": "Some implementations fail when the ciphertext is too long.",
-      "cves": [
-        "CVE 2021-3580"
-      ]
-    },
     "InvalidCiphertextFormat": {
       "bugType": "CONFIDENTIALITY",
       "description": "This is a test vector with an invalid ciphertext. "
@@ -45,6 +31,20 @@
     "Sslv23Padding": {
       "bugType": "FUNCTIONALITY",
       "description": "SSL v3 would use this padding if rolled back to version 2. The padding is valid, it is simply a special case that was used to detect rollback attacks."
+    },
+    "CVE-2020-14967": {
+      "bugType": "KNOWN_BUG",
+      "description": "jsrsasign package before 8.0.18 for Node.js. Its RSA PKCS1 v1.5 decryption implementation does not detect ciphertext modification by prepending 0-bytes to ciphertexts.",
+      "cves": [
+        "CVE-2020-14967"
+      ]
+    },
+    "CVE-2021-3580": {
+      "bugType": "KNOWN_BUG",
+      "description": "Some implementations fail when the ciphertext is too long.",
+      "cves": [
+        "CVE-2021-3580"
+      ]
     }
   },
   "testGroups": [
@@ -375,7 +375,7 @@
           "tcId": 30,
           "comment": "c = n",
           "flags": [
-            "CVE 2021-3580",
+            "CVE-2021-3580",
             "InvalidCiphertextFormat"
           ],
           "msg": "54657374",
@@ -406,7 +406,7 @@
           "tcId": 33,
           "comment": "Prepended bytes to ciphertext",
           "flags": [
-            "CVE 2020-14967",
+            "CVE-2020-14967",
             "InvalidCiphertextFormat"
           ],
           "msg": "54657374",

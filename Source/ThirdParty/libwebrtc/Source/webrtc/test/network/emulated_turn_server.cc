@@ -34,67 +34,65 @@
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
 
+namespace webrtc {
+namespace test {
+
 namespace {
 
 const char kTestRealm[] = "example.org";
 const char kTestSoftware[] = "TestTurnServer";
 
 // A wrapper class for webrtc::TurnServer to allocate sockets.
-class PacketSocketFactoryWrapper : public webrtc::PacketSocketFactory {
+class PacketSocketFactoryWrapper : public PacketSocketFactory {
  public:
-  explicit PacketSocketFactoryWrapper(
-      webrtc::test::EmulatedTURNServer* turn_server)
+  explicit PacketSocketFactoryWrapper(EmulatedTURNServer* turn_server)
       : turn_server_(turn_server) {}
   ~PacketSocketFactoryWrapper() override {}
 
   // This method is called from TurnServer when making a TURN ALLOCATION.
   // It will create a socket on the `peer_` endpoint.
-  std::unique_ptr<webrtc::AsyncPacketSocket> CreateUdpSocket(
-      const webrtc::Environment& env,
-      const webrtc::SocketAddress& address,
+  std::unique_ptr<AsyncPacketSocket> CreateUdpSocket(
+      const Environment& env,
+      const SocketAddress& address,
       uint16_t min_port,
       uint16_t max_port) override {
     return turn_server_->CreatePeerSocket();
   }
 
-  std::unique_ptr<webrtc::AsyncListenSocket> CreateServerTcpSocket(
-      const webrtc::Environment& env,
-      const webrtc::SocketAddress& local_address,
+  std::unique_ptr<AsyncListenSocket> CreateServerTcpSocket(
+      const Environment& env,
+      const SocketAddress& local_address,
       uint16_t min_port,
       uint16_t max_port,
       int opts) override {
     return nullptr;
   }
-  std::unique_ptr<webrtc::AsyncPacketSocket> CreateClientTcpSocket(
-      const webrtc::Environment& env,
-      const webrtc::SocketAddress& local_address,
-      const webrtc::SocketAddress& remote_address,
-      const webrtc::PacketSocketTcpOptions& tcp_options) override {
+  std::unique_ptr<AsyncPacketSocket> CreateClientTcpSocket(
+      const Environment& env,
+      const SocketAddress& local_address,
+      const SocketAddress& remote_address,
+      const PacketSocketTcpOptions& tcp_options) override {
     return nullptr;
   }
-  std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver()
-      override {
+  std::unique_ptr<AsyncDnsResolverInterface> CreateAsyncDnsResolver() override {
     return nullptr;
   }
 
-  std::unique_ptr<webrtc::AsyncPacketSocket> CreateClientUdpSocket(
-      const webrtc::Environment& env,
-      const webrtc::SocketAddress& local_address,
-      const webrtc::SocketAddress& remote_address,
+  std::unique_ptr<AsyncPacketSocket> CreateClientUdpSocket(
+      const Environment& env,
+      const SocketAddress& local_address,
+      const SocketAddress& remote_address,
       uint16_t min_port,
       uint16_t max_port,
-      const webrtc::PacketSocketTcpOptions& udp_options) override {
+      const PacketSocketTcpOptions& udp_options) override {
     return nullptr;
   }
 
  private:
-  webrtc::test::EmulatedTURNServer* turn_server_;
+  EmulatedTURNServer* turn_server_;
 };
 
 }  //  namespace
-
-namespace webrtc {
-namespace test {
 
 // A wrapper class for copying data between an AsyncPacketSocket and a
 // EmulatedEndpoint. This is used by the webrtc::TurnServer when
@@ -166,11 +164,9 @@ EmulatedTURNServer::EmulatedTURNServer(const Environment& env,
     turn_server_->AddInternalSocket(std::move(client_socket), PROTO_UDP);
     turn_server_->SetExternalSocketFactory(new PacketSocketFactoryWrapper(this),
                                            SocketAddress());
-    char buf[256];
-    SimpleStringBuilder str(buf);
-    str.AppendFormat("turn:%s?transport=udp",
-                     client_address_.ToString().c_str());
-    ice_config_.url = str.str();
+    StringBuilder sb;
+    sb << "turn:" << client_address_.ToString() << "?transport=udp";
+    ice_config_.url = sb.Release();
   });
 }
 

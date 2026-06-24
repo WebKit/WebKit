@@ -58,11 +58,11 @@ namespace JSC { namespace B3 {
 
 class Kind {
 public:
-    Kind(Opcode opcode)
+    constexpr Kind(Opcode opcode)
         : m_opcode(opcode)
     {
     }
-    
+
     Kind()
         : Kind(Oops)
     {
@@ -113,7 +113,7 @@ public:
     // in the Procedure the trap happened. If you try to work it out using Origin, you'll have a bad
     // time because the instruction selector is too sloppy with Origin().
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=162688
-    bool hasTraps() const
+    constexpr bool hasTraps() const
     {
         switch (m_opcode) {
         case Load8Z:

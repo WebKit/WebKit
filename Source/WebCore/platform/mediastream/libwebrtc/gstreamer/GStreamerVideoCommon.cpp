@@ -53,8 +53,28 @@ std::vector<webrtc::SdpVideoFormat> supportedH264Formats()
     return {
         createH264Format(webrtc::H264Profile::kProfileBaseline, webrtc::H264Level::kLevel3_1, "1"),
         createH264Format(webrtc::H264Profile::kProfileBaseline, webrtc::H264Level::kLevel3_1, "0"),
+        createH264Format(webrtc::H264Profile::kProfileBaseline, webrtc::H264Level::kLevel4, "1"),
+        createH264Format(webrtc::H264Profile::kProfileBaseline, webrtc::H264Level::kLevel4, "0"),
         createH264Format(webrtc::H264Profile::kProfileConstrainedBaseline, webrtc::H264Level::kLevel3_1, "1"),
         createH264Format(webrtc::H264Profile::kProfileConstrainedBaseline, webrtc::H264Level::kLevel3_1, "0"),
+        createH264Format(webrtc::H264Profile::kProfileConstrainedBaseline, webrtc::H264Level::kLevel4, "1"),
+        createH264Format(webrtc::H264Profile::kProfileConstrainedBaseline, webrtc::H264Level::kLevel4, "0"),
+        createH264Format(webrtc::H264Profile::kProfileMain, webrtc::H264Level::kLevel3_1, "1"),
+        createH264Format(webrtc::H264Profile::kProfileMain, webrtc::H264Level::kLevel3_1, "0"),
+        createH264Format(webrtc::H264Profile::kProfileMain, webrtc::H264Level::kLevel4, "1"),
+        createH264Format(webrtc::H264Profile::kProfileMain, webrtc::H264Level::kLevel4, "0"),
+        createH264Format(webrtc::H264Profile::kProfileConstrainedHigh, webrtc::H264Level::kLevel3_1, "1"),
+        createH264Format(webrtc::H264Profile::kProfileConstrainedHigh, webrtc::H264Level::kLevel3_1, "0"),
+        createH264Format(webrtc::H264Profile::kProfileConstrainedHigh, webrtc::H264Level::kLevel4, "1"),
+        createH264Format(webrtc::H264Profile::kProfileConstrainedHigh, webrtc::H264Level::kLevel4, "0"),
+        createH264Format(webrtc::H264Profile::kProfileHigh, webrtc::H264Level::kLevel3_1, "1"),
+        createH264Format(webrtc::H264Profile::kProfileHigh, webrtc::H264Level::kLevel3_1, "0"),
+        createH264Format(webrtc::H264Profile::kProfileHigh, webrtc::H264Level::kLevel4, "1"),
+        createH264Format(webrtc::H264Profile::kProfileHigh, webrtc::H264Level::kLevel4, "0"),
+        createH264Format(webrtc::H264Profile::kProfilePredictiveHigh444, webrtc::H264Level::kLevel3_1, "1"),
+        createH264Format(webrtc::H264Profile::kProfilePredictiveHigh444, webrtc::H264Level::kLevel3_1, "0"),
+        createH264Format(webrtc::H264Profile::kProfilePredictiveHigh444, webrtc::H264Level::kLevel4, "1"),
+        createH264Format(webrtc::H264Profile::kProfilePredictiveHigh444, webrtc::H264Level::kLevel4, "0"),
     };
 }
 

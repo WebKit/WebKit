@@ -44,8 +44,8 @@
 #include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderedPosition.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include "TextBoundaries.h"
 #include "TextIterator.h"
@@ -320,7 +320,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     if (visiblePosition.isNull() || !visiblePosition.deepEquivalent().document())
         return VisiblePosition();
 
-    visiblePosition.deepEquivalent().document()->updateLayoutIgnorePendingStylesheets();
+    protect(visiblePosition.deepEquivalent().document())->updateLayoutIgnorePendingStylesheets();
 
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
     InlineIterator::LeafBoxIterator previouslyVisitedBox;

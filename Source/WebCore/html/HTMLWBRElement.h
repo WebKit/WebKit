@@ -42,7 +42,7 @@ public:
 private:
     HTMLWBRElement(const QualifiedName&, Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 };
 
 } // namespace WebCore

@@ -13,9 +13,9 @@
 
 #include <array>
 #include <cstring>
+#include <span>
 #include <type_traits>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -37,7 +37,7 @@ class RingBuffer {
   // Set the ring buffer values to zero.
   void Reset() { buffer_.fill(0); }
   // Replace the least recently pushed array in the buffer with `new_values`.
-  void Push(ArrayView<const T, S> new_values) {
+  void Push(std::span<const T, S> new_values) {
     std::memcpy(buffer_.data() + S * tail_, new_values.data(), S * sizeof(T));
     tail_ += 1;
     if (tail_ == N)
@@ -46,13 +46,13 @@ class RingBuffer {
   // Return an array view onto the array with a given delay. A view on the last
   // and least recently push array is returned when `delay` is 0 and N - 1
   // respectively.
-  ArrayView<const T, S> GetArrayView(int delay) const {
+  std::span<const T, S> GetArrayView(int delay) const {
     RTC_DCHECK_LE(0, delay);
     RTC_DCHECK_LT(delay, N);
     int offset = tail_ - 1 - delay;
     if (offset < 0)
       offset += N;
-    return {buffer_.data() + S * offset, S};
+    return std::span<const T, S>(buffer_.data() + S * offset, S);
   }
 
  private:

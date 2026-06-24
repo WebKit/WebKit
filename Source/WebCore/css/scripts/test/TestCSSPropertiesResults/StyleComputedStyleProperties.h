@@ -16,8 +16,8 @@ public:
     inline decltype(auto) testColorResolver() const;
     WebCore::Color testColorResolvingCurrentColor() const;
     WebCore::Color testColorResolvingCurrentColorApplyingColorFilter() const;
-    WebCore::Color visitedDependentTestColor(OptionSet<PaintBehavior>) const;
-    WebCore::Color visitedDependentTestColorApplyingColorFilter(OptionSet<PaintBehavior>) const;
+    WebCore::Color visitedDependentTestColor(OptionSet<PaintBehavior> = { }) const;
+    WebCore::Color visitedDependentTestColorApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
 
     // 'test-color-allows-types-absolute'
     inline const Style::Color& testColorAllowsTypesAbsolute() const;
@@ -26,8 +26,8 @@ public:
     inline decltype(auto) testColorAllowsTypesAbsoluteResolver() const;
     WebCore::Color testColorAllowsTypesAbsoluteResolvingCurrentColor() const;
     WebCore::Color testColorAllowsTypesAbsoluteResolvingCurrentColorApplyingColorFilter() const;
-    WebCore::Color visitedDependentTestColorAllowsTypesAbsolute(OptionSet<PaintBehavior>) const;
-    WebCore::Color visitedDependentTestColorAllowsTypesAbsoluteApplyingColorFilter(OptionSet<PaintBehavior>) const;
+    WebCore::Color visitedDependentTestColorAllowsTypesAbsolute(OptionSet<PaintBehavior> = { }) const;
+    WebCore::Color visitedDependentTestColorAllowsTypesAbsoluteApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
 
     // 'test-color-property-with-visited-link-support'
     inline const Style::Color& testColorPropertyWithVisitedLinkSupport() const;
@@ -40,8 +40,8 @@ public:
     WebCore::Color testColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const;
     WebCore::Color visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const;
     WebCore::Color visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const;
-    WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupport(OptionSet<PaintBehavior>) const;
-    WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior>) const;
+    WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupport(OptionSet<PaintBehavior> = { }) const;
+    WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
 
     // 'test-render-style-has-explicitly-set-policy-all-author-origin'
     inline Style::Number<> testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
@@ -116,20 +116,20 @@ public:
 
     // Logical getters and setters for 'test-group' properties of type 'axis'.
     inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalHorizontal(WritingMode) const;
-    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalVertical(WritingMode) const;
     inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalHorizontal() const;
-    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalVertical() const;
     inline void setLogicalTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<>);
+    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalVertical(WritingMode) const;
+    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalVertical() const;
     inline void setLogicalTestLogicalPropertyGroupPhysicalVertical(Style::Number<>);
 
 protected:
     ComputedStyleProperties(ComputedStyleProperties&&) = default;
     ComputedStyleProperties& operator=(ComputedStyleProperties&&) = default;
 
-    ComputedStyleProperties(CreateDefaultStyleTag tag) : ComputedStyleBase { tag } { }
-    ComputedStyleProperties(const ComputedStyleProperties& other, CloneTag tag) : ComputedStyleBase { other, tag } { }
+    inline ComputedStyleProperties(CreateDefaultStyleTag);
+    inline ComputedStyleProperties(const ComputedStyleProperties&, CloneTag);
 
-    ComputedStyleProperties(ComputedStyleProperties& a, ComputedStyleProperties&& b) : ComputedStyleBase { a, WTF::move(b) } { }
+    inline ComputedStyleProperties(ComputedStyleProperties&, ComputedStyleProperties&&);
 };
 
 template<> struct ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColor>> {

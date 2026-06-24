@@ -186,7 +186,8 @@ int main(int argc, char **argv) {
 
   aom_codec_ctx_t codec;
   res = aom_codec_enc_config_default(encoder, &cfg, 0);
-  if (res) die_codec(&codec, "Failed to get default codec config.");
+  if (res)
+    die("Failed to get default codec config: %s", aom_codec_err_to_string(res));
 
   cfg.g_w = info.frame_width;
   cfg.g_h = info.frame_height;

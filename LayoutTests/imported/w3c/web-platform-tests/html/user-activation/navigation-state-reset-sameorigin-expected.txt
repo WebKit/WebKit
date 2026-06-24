@@ -5,5 +5,5 @@ Tests that navigating a same-origin child frame resets its activation states.
 Click inside the yellow area.
 
 
-PASS Post-navigation state reset.
+FAIL Post-navigation state reset. assert_true: child-two sticky user activation state after loaded expected true got false
 

@@ -29,6 +29,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/abspos/column-grid-lanes-out-of-flow-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/abspos/column-grid-lanes-out-of-flow-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/abspos/column-grid-lanes-out-of-flow-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/abspos/column-grid-lanes-out-of-flow-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/abspos/column-grid-lanes-out-of-flow-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/abspos/column-grid-lanes-out-of-flow-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/abspos/column-grid-lanes-positioned-item-dynamic-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/abspos/column-grid-lanes-positioned-item-dynamic-change-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/abspos/column-grid-lanes-positioned-item-dynamic-change.html

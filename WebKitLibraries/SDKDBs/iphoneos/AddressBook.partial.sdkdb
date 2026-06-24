@@ -249,7 +249,7 @@
     {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kABSourceTypeProperty"},
     {"access": "public", "introduced": "2", "kind": "variable", "linkage": "exported", "name": "_kABWorkLabel"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "introduced": "2", "name": "ABAddressBookRef"},
     {"access": "public", "introduced": "2", "name": "ABAddressBookRequestAccessCompletionHandler"},

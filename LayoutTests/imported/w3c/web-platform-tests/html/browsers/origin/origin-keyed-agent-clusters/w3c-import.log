@@ -25,5 +25,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/insecure-http.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/insecure-http.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/popups-crash.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/regression-1399759.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/removing-iframes.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/removing-iframes.sub.https.html.headers

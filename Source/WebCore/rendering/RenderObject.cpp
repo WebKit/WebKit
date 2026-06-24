@@ -91,6 +91,7 @@
 #include "SelectionGeometry.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "StyleTransformResolver.h"
 #include "TransformState.h"
 #include "ViewTransition.h"
 #include <algorithm>
@@ -653,32 +654,32 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
     return { };
 }
 
-void RenderObject::setNeedsPreferredWidthsUpdate(MarkingBehavior markParents, const RenderBlock* ancestorUpdateBoundary)
+void RenderObject::invalidateContentLogicalWidths(MarkingBehavior markParents, const RenderBlock* ancestorUpdateBoundary)
 {
     ASSERT_IMPLIES(ancestorUpdateBoundary, markParents == MarkingBehavior::MarkContainingBlockChain);
 
-    if (needsPreferredLogicalWidthsUpdate() && (!hasRareData() || !rareData().preferredLogicalWidthsNeedUpdateIsMarkOnlyThis)) {
+    if (hasInvalidContentLogicalWidths() && (!hasRareData() || !rareData().contentLogicalWidthsInvalidationIsMarkOnlyThis)) {
         // Both this and our ancestor chain are already marked dirty.
         return;
     }
 
-    m_stateBitfields.setFlag(StateFlag::PreferredLogicalWidthsNeedUpdate, true);
+    m_stateBitfields.setFlag(StateFlag::ContentLogicalWidthsInvalidated, true);
     if (isOutOfFlowPositioned()) {
         // A positioned object has no effect on the min/max width of its containing block ever. No need to mark ancestor chain.
         return;
     }
 
     if (markParents == MarkingBehavior::MarkOnlyThis) {
-        ensureRareData().preferredLogicalWidthsNeedUpdateIsMarkOnlyThis = true;
+        ensureRareData().contentLogicalWidthsInvalidationIsMarkOnlyThis = true;
         return;
     }
 
-    invalidateContainerPreferredLogicalWidths(ancestorUpdateBoundary);
+    invalidateContainerContentLogicalWidths(ancestorUpdateBoundary);
     if (hasRareData())
-        ensureRareData().preferredLogicalWidthsNeedUpdateIsMarkOnlyThis = false;
+        ensureRareData().contentLogicalWidthsInvalidationIsMarkOnlyThis = false;
 }
 
-void RenderObject::invalidateContainerPreferredLogicalWidths(const RenderBlock* ancestorUpdateBoundary)
+void RenderObject::invalidateContainerContentLogicalWidths(const RenderBlock* ancestorUpdateBoundary)
 {
     // In order to avoid pathological behavior when inlines are deeply nested, we do include them
     // in the chain that we mark dirty (even though they're kind of irrelevant).
@@ -686,7 +687,7 @@ void RenderObject::invalidateContainerPreferredLogicalWidths(const RenderBlock* 
     while (ancestor) {
         if (ancestor.get() == ancestorUpdateBoundary)
             break;
-        if (ancestor->needsPreferredLogicalWidthsUpdate() && (!ancestor->hasRareData() || !ancestor->rareData().preferredLogicalWidthsNeedUpdateIsMarkOnlyThis))
+        if (ancestor->hasInvalidContentLogicalWidths() && (!ancestor->hasRareData() || !ancestor->rareData().contentLogicalWidthsInvalidationIsMarkOnlyThis))
             break;
         // Don't invalidate the outermost object of an unrooted subtree. That object will be
         // invalidated when the subtree is added to the document.
@@ -694,7 +695,7 @@ void RenderObject::invalidateContainerPreferredLogicalWidths(const RenderBlock* 
         if (!container && !ancestor->isRenderView())
             break;
 
-        ancestor->m_stateBitfields.setFlag(StateFlag::PreferredLogicalWidthsNeedUpdate, true);
+        ancestor->m_stateBitfields.setFlag(StateFlag::ContentLogicalWidthsInvalidated, true);
         if (ancestor->style().hasOutOfFlowPosition()) {
             // A positioned object has no effect on the min/max width of its containing block ever.
             // We can optimize this case and not go up any further.
@@ -815,7 +816,7 @@ void RenderObject::collectSelectionGeometries(Vector<SelectionGeometry>& geometr
     }
 
     for (auto& quad : quads)
-        geometries.append(SelectionGeometry(quad, HTMLElement::selectionRenderingBehavior(node()), isHorizontalWritingMode(), view().pageNumberForBlockProgressionOffset(quad.enclosingBoundingBox().x())));
+        geometries.append(SelectionGeometry(quad, HTMLElement::selectionRenderingBehavior(protect(node())), isHorizontalWritingMode(), view().pageNumberForBlockProgressionOffset(quad.enclosingBoundingBox().x())));
 }
 
 IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms, bool* wasFixed) const
@@ -850,7 +851,7 @@ void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
     // descendants.
     FloatPoint absolutePoint = localToAbsolute();
     auto rects = OutlinePainter::collectFocusRingRects(*elementRenderer, flooredLayoutPoint(absolutePoint), nullptr);
-    float deviceScaleFactor = document().deviceScaleFactor();
+    float deviceScaleFactor = protect(document())->deviceScaleFactor();
     for (auto rect : rects) {
         rect.moveBy(LayoutPoint(-absolutePoint));
         quads.append(localToAbsoluteQuad(FloatQuad(snapRectToDevicePixels(rect, deviceScaleFactor))));
@@ -1085,7 +1086,7 @@ void RenderObject::repaintSlowRepaintObject() const
     // If this is the root background, we need to check if there is an extended background rect. If
     // there is, then we should not allow painting to clip to the layer size.
     if (isDocumentElementRenderer() || isBody()) {
-        shouldClipToLayer = !view->frameView().hasExtendedBackgroundRectForPainting();
+        shouldClipToLayer = !protect(view->frameView())->hasExtendedBackgroundRectForPainting();
         repaintRect = snappedIntRect(view->backgroundRect());
     } else
         repaintRect = snappedIntRect(clippedOverflowRectForRepaint(repaintContainer.get()));
@@ -1119,7 +1120,7 @@ auto RenderObject::rectsForRepaintingAfterLayout(const RenderLayerModelObject* r
 
     auto result = computeRects(localRects, repaintContainer, visibleRectContextForRepaint());
     if (result.outlineBoundsRect)
-        result.outlineBoundsRect = LayoutRect(snapRectToDevicePixels(*result.outlineBoundsRect, document().deviceScaleFactor()));
+        result.outlineBoundsRect = LayoutRect(snapRectToDevicePixels(*result.outlineBoundsRect, protect(document())->deviceScaleFactor()));
 
     return result;
 }
@@ -1541,12 +1542,11 @@ void RenderObject::getTransformFromContainer(const LayoutSize& offsetInContainer
     CheckedPtr<RenderLayer> layer;
     if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform())
         transform.multiply(layer->currentTransform());
-    else if (document().settings().layerBasedSVGEngineEnabled()) {
-        // Non-layered SVG elements: use the renderer's cached local SVG transform.
-        if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(*this)) {
-            if (auto svgTransform = svgModel->localTransform(); !svgTransform.isIdentity())
-                transform.multiply(TransformationMatrix(svgTransform));
-        }
+    else if (document().settings().layerBasedSVGEngineEnabled() && isSVGLayerAwareRenderer()) {
+        // Non-layered SVG elements: use the cached local transform. localTransform() is virtual,
+        // returning m_localTransform for RenderSVGModelObject and RenderSVGText, identity otherwise.
+        if (auto svgTransform = localTransform(); !svgTransform.isIdentity())
+            transform.multiply(TransformationMatrix(svgTransform));
     }
 
     CheckedPtr perspectiveObject = parent();
@@ -1642,7 +1642,7 @@ bool RenderObject::participatesInPreserve3D() const
 
 HostWindow* RenderObject::hostWindow() const
 {
-    return view().frameView().root() ? view().frameView().root()->hostWindow() : nullptr;
+    return view().frameView().root() ? protect(view().frameView().root())->hostWindow() : nullptr;
 }
 
 bool RenderObject::isRooted() const
@@ -1779,7 +1779,7 @@ void RenderObject::willBeDestroyed()
     ASSERT(!m_parent);
     ASSERT(renderTreeBeingDestroyed() || !is<RenderElement>(*this) || !view().frameView().hasSlowRepaintObject(downcast<RenderElement>(*this)));
 
-    if (CheckedPtr cache = document().existingAXObjectCache())
+    if (SUPPRESS_UNCOUNTED_ARG CheckedPtr cache = document().existingAXObjectCache())
         cache->remove(*this);
 
     setCapturedInViewTransition(false);
@@ -1939,10 +1939,10 @@ PositionWithAffinity RenderObject::createPositionWithAffinity(int offset, Affini
             // If it can be found, we prefer a visually equivalent position that is editable. 
             Position position = makeDeprecatedLegacyPosition(node.get(), convertOffsetInTextFragmentToNodeOffset(*this, offset));
             Position candidate = position.downstream(CanCrossEditingBoundary);
-            if (candidate.deprecatedNode()->hasEditableStyle())
+            if (protect(candidate.deprecatedNode())->hasEditableStyle())
                 return PositionWithAffinity(candidate, affinity);
             candidate = position.upstream(CanCrossEditingBoundary);
-            if (candidate.deprecatedNode()->hasEditableStyle())
+            if (protect(candidate.deprecatedNode())->hasEditableStyle())
                 return PositionWithAffinity(candidate, affinity);
         }
         // FIXME: Eliminate legacy editing positions
@@ -1994,7 +1994,7 @@ PositionWithAffinity RenderObject::createPositionWithAffinity(const Position& po
     return createPositionWithAffinity(0, Affinity::Downstream);
 }
 
-const RenderStyle& RenderObject::outlineStyleForRepaint() const
+const Style::ComputedStyle& RenderObject::outlineStyleForRepaint() const
 {
     return style();
 }
@@ -2006,12 +2006,12 @@ CursorDirective RenderObject::getCursor(const LayoutPoint&, Cursor&) const
 
 bool RenderObject::useDarkAppearance() const
 {
-    return document().useDarkAppearance(&style());
+    return protect(document())->useDarkAppearance(&style());
 }
 
 OptionSet<StyleColorOptions> RenderObject::styleColorOptions() const
 {
-    return document().styleColorOptions(&style());
+    return protect(document())->styleColorOptions(&style());
 }
 
 void RenderObject::setSelectionState(HighlightState state)
@@ -2279,7 +2279,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
 {
     Vector<FloatRect> rects;
 
-    range.start.document().updateLayoutIgnorePendingStylesheets();
+    protect(range.start.document())->updateLayoutIgnorePendingStylesheets();
 
     bool useVisibleBounds = behavior.contains(RenderObject::BoundingRectBehavior::UseVisibleBounds);
 
@@ -2319,7 +2319,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
                     );
                     if (!rootClippedBounds)
                         continue;
-                    auto snappedBounds = snapRectToDevicePixels(rootClippedBounds->clippedOverflowRect, node->document().deviceScaleFactor());
+                    auto snappedBounds = snapRectToDevicePixels(rootClippedBounds->clippedOverflowRect, protect(node->document())->deviceScaleFactor());
                     if (space == CoordinateSpace::Client)
                         protect(node->document())->convertAbsoluteToClientRect(snappedBounds, renderer->style());
                     rects.append(snappedBounds);
@@ -2402,7 +2402,7 @@ bool RenderObject::effectiveCapturedInViewTransition() const
     if (isDocumentElementRenderer())
         return false;
     if (isRenderView())
-        return document().activeViewTransitionCapturedDocumentElement();
+        return protect(document())->activeViewTransitionCapturedDocumentElement();
     return capturedInViewTransition();
 }
 
@@ -2509,7 +2509,7 @@ static void makeBidiSelectionVisuallyContiguousIfNeeded(const SelectionEndpointD
     UNUSED_PARAM(range);
     UNUSED_PARAM(geometries);
 #else
-    if (!range.startContainer().document().editor().shouldDrawVisuallyContiguousBidiSelection())
+    if (!protect(range.startContainer().document())->editor().shouldDrawVisuallyContiguousBidiSelection())
         return;
 
     FloatPoint selectionStartTop;
@@ -3003,7 +3003,7 @@ String RenderObject::description() const
 
     builder.append(renderName(), ' ');
     if (node())
-        builder.append(' ', node()->description());
+        builder.append(' ', protect(node())->description());
     
     return builder.toString();
 }
@@ -3014,7 +3014,7 @@ String RenderObject::debugDescription() const
 
     builder.append(renderName(), " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
     if (node())
-        builder.append(' ', node()->debugDescription());
+        builder.append(' ', protect(node())->debugDescription());
     
     return builder.toString();
 }

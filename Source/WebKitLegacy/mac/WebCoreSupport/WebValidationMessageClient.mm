@@ -31,7 +31,6 @@
 #import <WebCore/NodeDocument.h>
 #import <wtf/TZoneMallocInlines.h>
 
-using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebValidationMessageClient);
 
@@ -46,7 +45,7 @@ WebValidationMessageClient::~WebValidationMessageClient()
         hideValidationMessage(*m_currentAnchor);
 }
 
-void WebValidationMessageClient::documentDetached(Document& document)
+void WebValidationMessageClient::documentDetached(WebCore::Document& document)
 {
     if (!m_currentAnchor)
         return;
@@ -54,7 +53,7 @@ void WebValidationMessageClient::documentDetached(Document& document)
         hideValidationMessage(*m_currentAnchor);
 }
 
-void WebValidationMessageClient::showValidationMessage(const Element& anchor, String&& message)
+void WebValidationMessageClient::showValidationMessage(const WebCore::Element& anchor, String&& message)
 {
     if (m_currentAnchor)
         hideValidationMessage(*m_currentAnchor);
@@ -64,7 +63,7 @@ void WebValidationMessageClient::showValidationMessage(const Element& anchor, St
     [m_view showFormValidationMessage:message.createNSString().get() withAnchorRect:m_currentAnchorRect];
 }
 
-void WebValidationMessageClient::hideValidationMessage(const Element& anchor)
+void WebValidationMessageClient::hideValidationMessage(const WebCore::Element& anchor)
 {
     if (!isValidationMessageVisible(anchor))
         return;
@@ -84,7 +83,7 @@ void WebValidationMessageClient::hideAnyValidationMessage()
     [m_view hideFormValidationMessage];
 }
 
-bool WebValidationMessageClient::isValidationMessageVisible(const Element& anchor)
+bool WebValidationMessageClient::isValidationMessageVisible(const WebCore::Element& anchor)
 {
     return m_currentAnchor == &anchor;
 }

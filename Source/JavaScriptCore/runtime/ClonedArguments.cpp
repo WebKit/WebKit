@@ -334,7 +334,7 @@ void ClonedArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* fir
             }
             firstElementDest[i - offset] = value;
         }
-        for (; i < length; ++i) {
+        for (; i < length + offset; ++i) {
             firstElementDest[i - offset] = get(globalObject, i);
             RETURN_IF_EXCEPTION(scope, void());
         }

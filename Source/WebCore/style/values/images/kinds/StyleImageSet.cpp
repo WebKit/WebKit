@@ -68,7 +68,7 @@ bool ImageSet::equals(const ImageSet& other) const
     return m_images == other.m_images && MultiImage::equals(other);
 }
 
-Ref<CSSValue> ImageSet::computedStyleValue(const RenderStyle& style) const
+Ref<CSSValue> ImageSet::computedStyleValue(const Style::ComputedStyle& style) const
 {
     auto builder = WTF::map<CSSValueListBuilderInlineCapacity>(m_images, [&](auto& image) -> Ref<CSSValue> {
         return CSSImageSetOptionValue::create(
@@ -80,7 +80,7 @@ Ref<CSSValue> ImageSet::computedStyleValue(const RenderStyle& style) const
     return CSSImageSetValue::create(WTF::move(builder));
 }
 
-Ref<DeprecatedCSSOMValue> ImageSet::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> ImageSet::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }

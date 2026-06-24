@@ -33,6 +33,7 @@
 
 #include "CSSCalcRandomCachingKey.h"
 #include "CSSCanvasValue.h"
+#include "CSSColorImageValue.h"
 #include "CSSColorValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
@@ -42,6 +43,7 @@
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
+#include "CSSLightDarkImageValue.h"
 #include "CSSNamedImageValue.h"
 #include "CSSPaintImageValue.h"
 #include "DocumentInlines.h"
@@ -52,7 +54,6 @@
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLElement.h"
 #include "LocalFrame.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
@@ -61,6 +62,7 @@
 #include "StyleCachedImage.h"
 #include "StyleCanvasImage.h"
 #include "StyleColor.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleCrossfadeImage.h"
 #include "StyleCursorImage.h"
 #include "StyleCustomPropertyRegistry.h"
@@ -81,12 +83,12 @@ namespace Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BuilderState);
 
-BuilderState::BuilderState(RenderStyle& style)
+BuilderState::BuilderState(Style::ComputedStyle& style)
     : m_style(style)
 {
 }
 
-BuilderState::BuilderState(RenderStyle& style, BuilderContext&& context)
+BuilderState::BuilderState(Style::ComputedStyle& style, BuilderContext&& context)
     : m_style(style)
     , m_context(WTF::move(context))
     , m_cssToLengthConversionData(style, *this)
@@ -115,7 +117,7 @@ float BuilderState::zoomWithTextZoomFactor()
 // multiplies each resolved length with the zoom multiplier - so for SVG we need to disable that.
 // Though all CSS values that can be applied to outermost <svg> elements (width/height/border/padding...)
 // need to respect the scaling. RenderBox (the parent class of LegacyRenderSVGRoot) grabs values like
-// width/height/border/padding/... from the RenderStyle -> for SVG these values would never scale,
+// width/height/border/padding/... from the ComputedStyle -> for SVG these values would never scale,
 // if we'd pass a 1.0 zoom factor everywhere. So we only pass a zoom factor of 1.0 for specific
 // properties that are NOT allowed to scale within a zoomed SVG document (letter/word-spacing/font-size).
 bool BuilderState::useSVGZoomRules() const
@@ -146,6 +148,10 @@ RefPtr<Image> BuilderState::createStyleImage(const CSSValue& value) const
         return filterImageValue->createStyleImage(*this);
     if (auto* gradientValue = dynamicDowncast<CSSGradientValue>(value))
         return gradientValue->createStyleImage(*this);
+    if (auto* colorImageValue = dynamicDowncast<CSSColorImageValue>(value))
+        return colorImageValue->createStyleImage(*this);
+    if (auto* lightDarkImageValue = dynamicDowncast<CSSLightDarkImageValue>(value))
+        return lightDarkImageValue->createStyleImage(*this);
     if (auto* paintImageValue = dynamicDowncast<CSSPaintImageValue>(value))
         return paintImageValue->createStyleImage(*this);
     return nullptr;
@@ -320,7 +326,7 @@ void BuilderState::setUsesContainerUnits()
 double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key, std::optional<CSS::Keyword::ElementScoped> elementScoped) const
 {
     if (elementScoped)
-        return element()->lookupCSSRandomBaseValue(style().pseudoElementIdentifier(), key);
+        return protect(element())->lookupCSSRandomBaseValue(style().pseudoElementIdentifier(), key);
 
     return document().lookupCSSRandomBaseValue(key);
 }
@@ -388,7 +394,7 @@ void BuilderState::disableNativeAppearanceIfNeeded(CSSPropertyID propertyID, Pro
             return false;
         if (!applyPropertyToRegularStyle())
             return false;
-        return element()->isDevolvableWidget() || RenderTheme::hasAppearanceForElementTypeFromUAStyle(*element());
+        SUPPRESS_UNCOUNTED_ARG return element()->isDevolvableWidget() || RenderTheme::hasAppearanceForElementTypeFromUAStyle(*element());
     };
 
     if (shouldDisable())

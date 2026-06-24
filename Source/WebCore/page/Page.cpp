@@ -55,6 +55,7 @@
 #include "CookieJar.h"
 #include "CredentialRequestCoordinator.h"
 #include "CryptoClient.h"
+#include "CueMatch.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMTimer.h"
@@ -190,8 +191,8 @@
 #include "StorageProvider.h"
 #include "StringCallback.h"
 #include "StyleAdjuster.h"
+#include "StyleDocumentScope.h"
 #include "StyleResolver.h"
-#include "StyleScope.h"
 #include "SubframeLoader.h"
 #include "SubresourceLoader.h"
 #include "TextExtraction.h"
@@ -551,7 +552,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 
 #if ENABLE(IMAGE_ANALYSIS)
     if (pageConfiguration.imageTranslationLanguageIdentifiers)
-        imageAnalysisQueue().setTranslationLanguageIdentifiers(WTF::move(*pageConfiguration.imageTranslationLanguageIdentifiers));
+        protect(imageAnalysisQueue())->setTranslationLanguageIdentifiers(WTF::move(*pageConfiguration.imageTranslationLanguageIdentifiers));
 #endif
 }
 
@@ -1034,7 +1035,7 @@ void NODELETE Page::setOpenedByDOM()
     m_openedByDOM = true;
 }
 
-void Page::goToItem(LocalFrame& frame, HistoryItem& item, FrameLoadType type, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
+void Page::goToItem(LocalFrame& frame, HistoryItem& item, FrameLoadType type, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache)
 {
     // stopAllLoaders may end up running onload handlers, which could cause further history traversals that may lead to the passed in HistoryItem
     // being deref()-ed. Make sure we can still use it with HistoryController::goToItem later.
@@ -1042,7 +1043,7 @@ void Page::goToItem(LocalFrame& frame, HistoryItem& item, FrameLoadType type, Sh
 
     if (frame.loader().history().shouldStopLoadingForHistoryItem(item))
         frame.loader().stopAllLoadersAndCheckCompleteness();
-    frame.loader().history().goToItem(item, type, shouldTreatAsContinuingLoad);
+    frame.loader().history().goToItem(item, type, shouldTreatAsContinuingLoad, shouldRestoreFromBackForwardCache);
 }
 
 void Page::goToItemForNavigationAPI(LocalFrame& frame, HistoryItem& item, FrameLoadType type, LocalFrame& triggeringFrame, NavigationAPIMethodTracker* tracker)
@@ -1291,6 +1292,28 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
 
     return result;
 }
+
+#if ENABLE(VIDEO)
+Vector<CueMatch> Page::findCueMatches(const String& target, FindOptions options)
+{
+    Vector<CueMatch> results;
+    if (target.isEmpty())
+        return results;
+
+    // Walk frames in document order and searches each document independently. Cue ordering is therefore correct within a document
+    // and grouped by frame across documents, matching how DOM text matches are ordered.
+    RefPtr frame { &mainFrame() };
+    do {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get())) {
+            if (RefPtr document = localFrame->document())
+                results.appendVector(document->findCueMatches(target, options));
+        }
+        frame = incrementFrame(frame.get(), true, CanWrap::No);
+    } while (frame);
+
+    return results;
+}
+#endif // ENABLE(VIDEO)
 
 std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::optional<SimpleRange>& referenceRange, FindOptions options)
 {
@@ -1968,13 +1991,13 @@ void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
     m_suppressScrollbarAnimations = suppressAnimations;
 }
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-void Page::setHasBannerViewOverlay(bool hasBannerViewOverlay)
+#if HAVE(NSREFRESHCONTROLLER)
+void Page::setHasRefreshController(bool hasRefreshController)
 {
-    if (m_hasBannerViewOverlay == hasBannerViewOverlay)
+    if (m_hasRefreshController == hasRefreshController)
         return;
 
-    m_hasBannerViewOverlay = hasBannerViewOverlay;
+    m_hasRefreshController = hasRefreshController;
 
     RefPtr localMainFrame = this->localMainFrame();
     if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
@@ -2189,23 +2212,19 @@ void Page::syncLocalFrameInfoToRemote()
 
         frameView->updateLayoutViewportRect();
 
-        {
-            HashMap<FrameIdentifier, RemoteFrameLayoutInfo> childrenFrameLayoutInfo;
-
-            for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-                auto visibleRect = frameView->visibleRectOfChild(*child.get());
-                float usedZoom = frame.usedZoomForChild(*child);
-                auto frameOwnerElementAppearance = frameView->appearanceOfOwnerElementOfChildFrame(*child);
-
-                childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo {
-                    .visibleRectInParent = visibleRect,
-                    .usedZoom = usedZoom,
-                    .ownerElementAppearance = frameOwnerElementAppearance
-                });
-            }
-
-            frame.loader().client().broadcastChildrenFrameLayoutInfoToOtherProcesses(childrenFrameLayoutInfo);
+        HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
+        for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+            childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo::create(
+                frameView->visibleRectOfChild(*child.get()),
+                frameView->childFrameOwnerToRootContentTransform(*child),
+                frameView->absoluteToChildFrameOwnerLocalTransform(*child),
+                frame.usedZoomForChild(*child),
+                frameView->childFrameOwnerContentBoxLocation(*child),
+                frameView->appearanceOfOwnerElementOfChildFrame(*child)
+            ));
         }
+
+        frame.loader().client().broadcastChildrenFrameLayoutInfoToOtherProcesses(childrenFrameLayoutInfo);
     });
 }
 
@@ -2699,6 +2718,13 @@ void Page::setImageAnimationEnabled(bool enabled)
     chrome().client().isAnyAnimationAllowedToPlayDidChange(enabled);
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+
+#if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
+void Page::setVideoAutoplayPreviewsEnabled(bool enabled)
+{
+    m_videoAutoplayPreviewsEnabled = enabled;
+}
+#endif // ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
 
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
 void Page::setPrefersNonBlinkingCursor(bool enabled)
@@ -3623,18 +3649,6 @@ Color Page::themeColor() const
     return { };
 }
 
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-std::optional<SpatialBackdropSource> Page::spatialBackdropSource() const
-{
-    RefPtr localMainFrame = this->localMainFrame();
-    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
-    if (!document)
-        return std::nullopt;
-
-    return document->spatialBackdropSource();
-}
-#endif
-
 Color Page::pageExtendedBackgroundColor() const
 {
     RefPtr localMainFrame = this->localMainFrame();
@@ -4272,6 +4286,7 @@ void Page::appearanceDidChange()
         document.updateElementsAffectedByMediaQueries();
         document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
         document.invalidateScrollbars();
+        document.appearanceDidChange();
     });
 }
 
@@ -4476,6 +4491,15 @@ Document* Page::localTopDocument() const
 bool Page::hasLocalMainFrame()
 {
     return dynamicDowncast<LocalFrame>(mainFrame());
+}
+
+bool Page::hasAnyLocalFrame() const
+{
+    for (RefPtr frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (is<LocalFrame>(*frame))
+            return true;
+    }
+    return false;
 }
 
 void Page::didChangeMainDocument(Document* newDocument)
@@ -4869,7 +4893,7 @@ void Page::recomputeTextAutoSizingInAllFrames()
                 if (RefPtr element = renderer->element()) {
                     CheckedRef style = renderer->style();
                     if (auto adjustment = Style::Adjuster::adjustmentForTextAutosizing(style, *element)) {
-                        auto newStyle = RenderStyle::clone(style);
+                        auto newStyle = Style::ComputedStyle::clone(style);
                         Style::Adjuster::adjustForTextAutosizing(newStyle, adjustment);
                         renderer->setStyle(WTF::move(newStyle));
                     }

@@ -1,0 +1,11 @@
+This test ensures we do not stitch text across a line break.
+
+PASS: platformStaticTextValue(text).includes("Hello world!") === true
+PASS: platformStaticTextValue(text).includes("It's me, here to chat.") === false
+PASS: platformStaticTextValue(text).includes("It's me, here to chat.") === true
+PASS: platformStaticTextValue(text).includes("Hello world!") === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world!It's me, here to chat.

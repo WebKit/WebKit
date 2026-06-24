@@ -1,6 +1,6 @@
 <html> <!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
     <head>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
     </head>
     <body>
         <button id="button1" onclick="testButton1()">Click Here</button>
@@ -8,6 +8,7 @@
         <button id="test" onclick="popup()" style="display:none"></button>
         <div id="console"></div>
         <script>
+            window.jsTestIsAsync = true;
             var testNum = 0;
             var win;
 
@@ -54,15 +55,13 @@
                     eventSender.mouseDown();
                     eventSender.mouseUp();
                 } else {
-                    testRunner.notifyDone();
+                    finishJSTest();
                 }
                 ++testNum;
                 closeWindowAndRunNextTest();
             }
 
             if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
 
                 nextTest();
             }

@@ -33,6 +33,7 @@
 #include <WebCore/BaselineAlignment.h>
 #include <WebCore/OrderIterator.h>
 #include <WebCore/RenderBlock.h>
+#include <wtf/SetForScope.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -45,8 +46,8 @@ class RenderFlexibleBox : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderFlexibleBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFlexibleBox);
 public:
-    RenderFlexibleBox(Type, Element&, RenderStyle&&);
-    RenderFlexibleBox(Type, Document&, RenderStyle&&);
+    RenderFlexibleBox(Type, Element&, Style::ComputedStyle&&);
+    RenderFlexibleBox(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderFlexibleBox();
 
     using Direction = FlowDirection;
@@ -59,7 +60,7 @@ public:
     std::optional<LayoutUnit> firstLineBaseline() const override;
     std::optional<LayoutUnit> lastLineBaseline() const override;
 
-    void styleDidChange(Style::Difference, const RenderStyle*) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
     bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction) override;
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 
@@ -100,7 +101,7 @@ public:
 
     bool isComputingFlexBaseSizes() const { return m_isComputingFlexBaseSizes; }
 
-    static std::optional<TextDirection> NODELETE leftRightAxisDirectionFromStyle(const RenderStyle&);
+    static std::optional<TextDirection> NODELETE leftRightAxisDirectionFromStyle(const Style::ComputedStyle&);
 
     bool hasModernLayout() const { return m_hasFlexFormattingContextLayout && *m_hasFlexFormattingContextLayout; }
 
@@ -117,12 +118,39 @@ public:
     bool hasDefiniteLogicalWidthForAspectRatioCrossSize() const;
     bool hasStretchedFlexItemWithAspectRatio() const;
 
+    class OverridingSizesScope {
+    public:
+        enum class Axis { Inline, Block, Both };
+
+        OverridingSizesScope(RenderBox&, Axis, std::optional<LayoutUnit> size = std::nullopt);
+        ~OverridingSizesScope();
+
+    private:
+        RenderBox& m_box;
+        Axis m_axis;
+        std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalWidth;
+        std::optional<LayoutUnit> m_previousOverridingBorderBoxLogicalHeight;
+    };
+
+    class ScopedCrossAxisOverrideForFlexItem {
+    public:
+        enum class InvalidateContentWidths : bool { No, Yes };
+        ScopedCrossAxisOverrideForFlexItem(const RenderFlexibleBox&, RenderBox& flexItem, InvalidateContentWidths);
+        ~ScopedCrossAxisOverrideForFlexItem();
+
+    private:
+        SetForScope<bool> m_intrinsicWidthComputation;
+        std::optional<OverridingSizesScope> m_overridingScope;
+#if ASSERT_ENABLED
+        RenderBox& m_flexItem;
+        bool m_didInvalidateContentLogicalWidths { false };
+#endif
+    };
+
 protected:
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
 
 private:
-    friend class ScopedCrossAxisOverrideForFlexItem;
-
     struct FlexBaseAndHypotheticalMainSize {
         LayoutUnit flexBaseContentSize;
         LayoutUnit hypotheticalMainContentSize;
@@ -136,7 +164,7 @@ private:
         LayoutUnit NODELETE hypotheticalMainAxisMarginBoxSize() const;
         LayoutUnit NODELETE flexBaseMarginBoxSize() const;
         LayoutUnit NODELETE flexedMarginBoxSize() const;
-        const RenderStyle& NODELETE style() const LIFETIME_BOUND;
+        const Style::ComputedStyle& NODELETE style() const LIFETIME_BOUND;
         LayoutUnit constrainSizeByMinMax(const LayoutUnit size) const;
 
         CheckedRef<RenderBox> renderer;
@@ -212,7 +240,6 @@ private:
     bool crossAxisIsLogicalWidth() const;
     void clearFlexItemOverridingSizes();
     LayoutUnit innerCrossSizeForFlexItem(const RenderBox& flexItem) const;
-    void computeChildIntrinsicLogicalWidths(RenderBox&, LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& flexItem, const SizeType& crossSizeLength) const;
     void NODELETE setFlowAwareLocationForFlexItem(RenderBox& flexItem, const LayoutPoint&);
     LayoutUnit flexBaseSizeForFlexItem(RenderBox& flexItem);

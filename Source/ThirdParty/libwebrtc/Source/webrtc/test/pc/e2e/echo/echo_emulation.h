@@ -13,9 +13,9 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/sequence_checker.h"
 #include "api/test/pclf/media_configuration.h"
 #include "modules/audio_device/include/test_audio_device.h"
@@ -34,7 +34,7 @@ class EchoEmulatingCapturer : public TestAudioDeviceModule::Capturer {
       std::unique_ptr<TestAudioDeviceModule::Capturer> capturer,
       EchoEmulationConfig config);
 
-  void OnAudioRendered(ArrayView<const int16_t> data);
+  void OnAudioRendered(std::span<const int16_t> data);
 
   int SamplingFrequency() const override {
     return delegate_->SamplingFrequency();
@@ -69,7 +69,7 @@ class EchoEmulatingRenderer : public TestAudioDeviceModule::Renderer {
     return delegate_->SamplingFrequency();
   }
   int NumChannels() const override { return delegate_->NumChannels(); }
-  bool Render(ArrayView<const int16_t> data) override;
+  bool Render(std::span<const int16_t> data) override;
 
  private:
   std::unique_ptr<TestAudioDeviceModule::Renderer> delegate_;

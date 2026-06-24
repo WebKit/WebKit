@@ -127,7 +127,8 @@ template<typename, size_t = 0> class Deque;
 template<typename Key, typename, Key> class EnumeratedArray;
 template<typename> class EnumSet;
 template<typename, typename = EmbeddedFixedVectorMalloc> class FixedVector;
-template<typename, size_t = 8, size_t = 0, typename = SegmentedVectorMalloc> class SegmentedVector;
+enum class SegmentedVectorGrowthPolicy : uint8_t { Constant, Doubling };
+template<typename, size_t = 8, size_t = 0, SegmentedVectorGrowthPolicy = SegmentedVectorGrowthPolicy::Constant, typename = SegmentedVectorMalloc> class SegmentedVector;
 template<typename> class Function;
 template<typename> struct FlatteningVariantTraits;
 template<typename> struct IsSmartPtr;
@@ -162,7 +163,7 @@ template<typename, size_t = 0> class VariantList;
 template<typename, size_t = 0> struct VariantListConstIterator;
 template<typename> struct VariantListProxy;
 template<typename> struct VariantListSizer;
-template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename = VectorBufferMalloc> class Vector;
+template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename Malloc = VectorBufferMalloc> class Vector;
 template<typename, typename WeakPtrImpl = DefaultWeakPtrImpl, typename = RawPtrTraits<WeakPtrImpl>> class WeakPtr;
 template<typename, typename = DefaultWeakPtrImpl> class WeakRef;
 template<typename T> class InlineWeakPtr;
@@ -171,7 +172,7 @@ template<typename T, typename = NoTaggingTraits<T>> class ThreadSafeWeakPtr;
 template<typename T, typename = NoTaggingTraits<T>> class ThreadSafeWeakRef;
 
 template <typename T>
-using SaSegmentedVector = SegmentedVector<T, 8, 0, SequesteredArenaMalloc>;
+using SaSegmentedVector = SegmentedVector<T, 8, 0, SegmentedVectorGrowthPolicy::Constant, SequesteredArenaMalloc>;
 template <typename T>
 using SaFixedVector = FixedVector<T, SequesteredArenaMalloc>;
 template <typename T>

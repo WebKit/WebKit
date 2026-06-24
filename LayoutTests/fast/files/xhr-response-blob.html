@@ -1,14 +1,13 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
 description("Test that XHR.responseType = 'blob' gives you back a Blob.");
+window.jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 function testBlob(blobURL, blobType, doneFunction) {
     window.xhr = new XMLHttpRequest();
@@ -35,12 +34,10 @@ function testBlob(blobURL, blobType, doneFunction) {
 testBlob("resources/UTF8.txt", "text/plain", function() {
     testBlob("resources/does_not_exist.txt", "", function() {
         testBlob("resources/empty-file", "application/octet-stream", function() {
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         })
     })
 });
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

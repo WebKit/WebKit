@@ -51,7 +51,7 @@ def bundle_prefix_and_size_for_path(path: Path, args) -> tuple[str, int]:
     for filt in args.dense_bundle_filter:
         pattern, _, name = filt.partition('=')
         if fnmatch.fnmatch(path, pattern):
-            return name or sanitize(pattern), MAX_DENSE_BUNDLE_SIZE
+            return name or sanitize(pattern), max(MAX_DENSE_BUNDLE_SIZE, args.max_bundle_size)
     return sanitize(str(top_level_directory)), args.max_bundle_size
 
 
@@ -64,6 +64,7 @@ class SourceFile:
 
     def __init__(self, file_line: str, file_index: int, args):
         self.unifiable = True
+        self.cost = 1
         self.file_index = file_index
         self._non_arc = False
         self._header_group: Optional[str] = None
@@ -77,10 +78,20 @@ class SourceFile:
                 attribute = attribute.strip()
                 if attribute == 'no-unify':
                     self.unifiable = False
+                elif attribute.startswith('no-unify-when('):
+                    m = re.fullmatch(r'no-unify-when\(bundle<=(\d+)\)', attribute)
+                    if not m:
+                        raise RuntimeError("malformed attribute: @" + attribute)
+                    if args.max_bundle_size <= int(m.group(1)):
+                        self.unifiable = False
                 elif attribute == 'nonARC':
                     self._non_arc = True
                 elif attribute.startswith('header:'):
-                    self._header_group = attribute[7:]
+                    if not args.ignore_header_groups:
+                        self._header_group = attribute[7:]
+                elif attribute.startswith('cost:'):
+                    if args.enforce_cost:
+                        self.cost = int(attribute[5:])
                 else:
                     raise RuntimeError("unknown attribute: " + attribute)
             file_line = file_line[:attribute_start]
@@ -117,6 +128,13 @@ class SourceFile:
             return str(self.path)
         else:
             return str(self._args.derived_sources_path / self.path)
+
+    def bundled_source_form(self) -> str:
+        # String form for the --print-bundled-sources list: derived sources are
+        # rooted under derived_sources_path, source-tree files stay relative.
+        if self.derived:
+            return str(self._args.derived_sources_path / self.path)
+        return str(self.path)
 
 
 class BundleManager:
@@ -179,11 +197,11 @@ class BundleManager:
                     self._bundle_count_by_prefix[self._last_bundling_prefix] = self.bundle_count
                 self.bundle_count = self._bundle_count_by_prefix.get(bundle_prefix, 0)
             self._last_bundling_prefix = bundle_prefix
-        if self.file_count >= bundle_size:
+        if self.file_count > 0 and self.file_count + source_file.cost > bundle_size:
             log(self._args, "Flushing because new bundle is full ({} sources)".format(self.file_count))
             self.flush()
         self.current_bundle_text += '#include "{}"\n'.format(source_file)
-        self.file_count += 1
+        self.file_count += source_file.cost
 
 
 def process_file_for_unified_source_generation(source_file: SourceFile, args, bundle_managers: dict[str, BundleManager], generated_sources: list[str], input_sources: list[str]) -> None:
@@ -213,8 +231,9 @@ def parse_args():
                         help='Path to the root of the source directory.')
 
     mode_group = parser.add_mutually_exclusive_group()
-    mode_group.add_argument('--print-bundled-sources', action='store_true', default=False,
-                            help='Print bundled sources rather than generating sources.')
+    mode_group.add_argument('--print-bundled-sources', type=Path, metavar='PATH',
+                            help='While generating bundles, also write the bundled member '
+                                 'sources (one per line) to PATH.')
     mode_group.add_argument('--print-all-sources', action='store_true', default=False,
                             help='Print all sources rather than generating sources.')
     mode_group.add_argument('--generate-xcfilelists', action='store_true', default=False,
@@ -236,6 +255,11 @@ def parse_args():
                         help='Use global sequential numbers for header-grouped bundle filenames and set the limit on the number.')
     parser.add_argument('--max-bundle-size', type=int, default=8,
                         help='The number of files to merge into a single bundle (default: 8).')
+    parser.add_argument('--enforce-cost', action='store_true', default=False,
+                        help='Honor @cost annotations when packing bundles.')
+    parser.add_argument('--ignore-header-groups', action='store_true', default=False,
+                        help='Ignore @header annotations and bundle those files by directory '
+                             '(the prefix they need is carried by the build PCH instead).')
     parser.add_argument('--dense-bundle-filter', action='append', default=[],
                         help='Densely bundle files matching the given path glob (repeatable). '
                              'Use GLOB=NAME to set the bundle filename tag explicitly.')
@@ -250,9 +274,7 @@ def parse_args():
         parser.error("Source tree {} does not exist.".format(args.source_tree_path))
 
     # Determine mode from flags
-    if args.print_bundled_sources:
-        args.mode = 'PrintBundledSources'
-    elif args.print_all_sources:
+    if args.print_all_sources:
         args.mode = 'PrintAllSources'
     elif args.generate_xcfilelists:
         args.mode = 'GenerateXCFilelists'
@@ -281,6 +303,7 @@ def main() -> None:
     generated_sources: list[str] = []
     input_sources: list[str] = []
     output_sources: list[str] = []
+    bundled_members: list[str] = []
 
     bundle_managers = {
         '.cpp': BundleManager('cpp', '.cpp', args.max_cpp_bundle_count, args, generated_sources, output_sources),
@@ -335,11 +358,11 @@ def main() -> None:
     for source_file in sorted(source_files, key=SourceFile.sort_key):
         if args.mode in ('GenerateBundles', 'GenerateXCFilelists'):
             process_file_for_unified_source_generation(source_file, args, bundle_managers, generated_sources, input_sources)
+            if args.mode == 'GenerateBundles' and args.print_bundled_sources \
+                    and bundle_managers.get(source_file.bundle_manager_key) and source_file.unifiable:
+                bundled_members.append(source_file.bundled_source_form())
         elif args.mode == 'PrintAllSources':
             generated_sources.append(str(source_file))
-        elif args.mode == 'PrintBundledSources':
-            if bundle_managers.get(source_file.bundle_manager_key) and source_file.unifiable:
-                generated_sources.append(str(source_file))
 
     if args.mode != 'PrintAllSources':
         for manager in bundle_managers.values():
@@ -366,6 +389,12 @@ def main() -> None:
         if args.output_xcfilelist_path:
             with open(args.output_xcfilelist_path, 'w') as f:
                 f.write("\n".join(sorted(output_sources)) + "\n")
+
+    if args.mode == 'GenerateBundles' and args.print_bundled_sources:
+        with open(args.print_bundled_sources, 'w') as f:
+            f.write("\n".join(bundled_members))
+            if bundled_members:
+                f.write("\n")
 
     # We use stdout to report our unified source list to CMake.
     # Add trailing semicolon and avoid a trailing newline for CMake's sake.

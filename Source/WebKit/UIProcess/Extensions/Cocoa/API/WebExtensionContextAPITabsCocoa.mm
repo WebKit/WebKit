@@ -576,24 +576,21 @@ void WebExtensionContext::tabsSetZoom(WebPageProxyIdentifier webPageProxyIdentif
 
 void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdentifiers, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    auto tabs = tabIdentifiers.map([&](auto& tabIdentifier) -> RefPtr<WebExtensionTab> {
-        RefPtr tab = getTab(tabIdentifier);
-        if (!tab) {
+    Vector<Ref<WebExtensionTab>> tabs;
+    tabs.reserveInitialCapacity(tabIdentifiers.size());
+
+    for (auto& tabIdentifier : tabIdentifiers) {
+        if (RefPtr tab = getTab(tabIdentifier))
+            tabs.append(tab.releaseNonNull());
+        else {
             completionHandler(toWebExtensionError(@"tabs.remove()", nullString(), makeString("tab '"_s, tabIdentifier.toUInt64(), "' was not found"_s)));
-            return nullptr;
+            return;
         }
-
-        return tab;
-    });
-
-    if (tabs.contains(nullptr)) {
-        // The completionHandler was called with an error in map() when returning nullptr.
-        return;
     }
 
     Ref callbackAggregator = EagerCallbackAggregator<void(Expected<void, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
-    for (RefPtr tab : tabs) {
+    for (Ref tab : tabs) {
         tab->close([callbackAggregator](Expected<void, WebExtensionError>&& result) mutable {
             if (!result)
                 callbackAggregator.get()(makeUnexpected(result.error()));

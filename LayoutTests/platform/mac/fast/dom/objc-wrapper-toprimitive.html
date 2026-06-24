@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 function runTest()
 {
     description("This tests ToPrimitive performed on Objective-C wrapper object.");
+    window.jsTestIsAsync = true;
     if (!window.objCController) {
         testFailed("window.objCController does not exist. Run with --dump-render-tree.");
         return;
@@ -51,8 +50,7 @@ function runTest()
     debug("\nObjcFallbackObjectImp (redefined Symbol.toPrimitive)\n");
     testDefineOwnProperty(fallbackObject);
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 function testDefineOwnProperty(_object)

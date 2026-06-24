@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
 </head>
 <body>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        window.jsTestIsAsync = true;
 
         var svg = new Image();
         svg.src = "resources/svg-with-image-with-link.svg";
@@ -25,8 +22,7 @@
 
                 shouldThrow("window.ctx.getImageData(0, 0, 1, 1)");
 
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                finishJSTest();
             }, 50);
         };
     </script>

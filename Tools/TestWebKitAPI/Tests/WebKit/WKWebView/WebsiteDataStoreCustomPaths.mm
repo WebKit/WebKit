@@ -73,12 +73,12 @@
 
 @end
 
-enum class ShouldEnableProcessPrewarming : bool { No, Yes };
+enum class CustomPathsShouldEnableProcessPrewarming : bool { No, Yes };
 
-static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldEnableProcessPrewarming)
+static void runWebsiteDataStoreCustomPaths(CustomPathsShouldEnableProcessPrewarming shouldEnableProcessPrewarming)
 {
     RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().prewarmsProcessesAutomatically = shouldEnableProcessPrewarming == ShouldEnableProcessPrewarming::Yes ? YES : NO;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = shouldEnableProcessPrewarming == CustomPathsShouldEnableProcessPrewarming::Yes ? YES : NO;
     RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     RetainPtr handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
@@ -276,12 +276,12 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
 
 TEST(WebKit, WebsiteDataStoreCustomPathsWithoutPrewarming)
 {
-    runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming::No);
+    runWebsiteDataStoreCustomPaths(CustomPathsShouldEnableProcessPrewarming::No);
 }
 
 TEST(WebKit, WebsiteDataStoreCustomPathsWithPrewarming)
 {
-    runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming::Yes);
+    runWebsiteDataStoreCustomPaths(CustomPathsShouldEnableProcessPrewarming::Yes);
 }
 
 TEST(WebKit, CustomDataStoreDestroyWhileFetchingNetworkProcessData)
@@ -1633,7 +1633,7 @@ TEST(WKWebsiteDataStore, MigrateCacheStorageDataToGeneralStorageDirectory)
     EXPECT_TRUE([fileManager fileExistsAtPath:newCacheStorageCachesListFile.path]);
 }
 
-static constexpr auto mainBytes = R"SWRESOURCE(
+static constexpr auto customPathsMainBytes = R"SWRESOURCE(
 <script>
 function log(message)
 {
@@ -1665,7 +1665,7 @@ navigator.serviceWorker.getRegistration('/migratetest/').then((registration) => 
 </script>
 )SWRESOURCE"_s;
 
-static constexpr auto scriptBytes = R"SWRESOURCE(
+static constexpr auto customPathsScriptBytes = R"SWRESOURCE(
 
 self.addEventListener('message', (event) => {
     event.source.postMessage(event.data);
@@ -1684,8 +1684,8 @@ TEST(WKWebsiteDataStore, MigrateServiceWorkerRegistrationToGeneralStorageDirecto
     [fileManager removeItemAtURL:generalStorageDirectory error:nil];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/migratetest/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/"_s, { customPathsMainBytes } },
+        { "/migratetest/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, customPathsScriptBytes } },
     });
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
@@ -1778,8 +1778,8 @@ static RetainPtr<WKWebsiteDataStore> createCustomWebsiteDataStoreForServiceWorke
 TEST(WKWebsiteDataStore, RemoveServiceWorkerData)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/migratetest/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/"_s, { customPathsMainBytes } },
+        { "/migratetest/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, customPathsScriptBytes } },
     });
 
     RetainPtr websiteDataStore = createCustomWebsiteDataStoreForServiceWorker(&server);
@@ -1812,8 +1812,8 @@ TEST(WKWebsiteDataStore, RemoveServiceWorkerData)
 TEST(WKWebsiteDataStore, RemoveServiceWorkerDataByOrigin)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/migratetest/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/"_s, { customPathsMainBytes } },
+        { "/migratetest/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, customPathsScriptBytes } },
     });
     auto websiteDataStore = createCustomWebsiteDataStoreForServiceWorker(&server);
 

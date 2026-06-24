@@ -21,8 +21,11 @@
 #include <openssl/mem.h>
 
 #include "../../internal.h"
+#include "../../mem_internal.h"
 #include "../service_indicator/internal.h"
 
+
+using namespace bssl;
 
 uint8_t *HMAC(const EVP_MD *evp_md, const void *key, size_t key_len,
               const uint8_t *data, size_t data_len, uint8_t *out,
@@ -55,9 +58,8 @@ void HMAC_CTX_init(HMAC_CTX *ctx) {
   EVP_MD_CTX_init(&ctx->md_ctx);
 }
 
-HMAC_CTX *HMAC_CTX_new(void) {
-  HMAC_CTX *ctx =
-      reinterpret_cast<HMAC_CTX *>(OPENSSL_malloc(sizeof(HMAC_CTX)));
+HMAC_CTX *HMAC_CTX_new() {
+  HMAC_CTX *ctx = New<HMAC_CTX>();
   if (ctx != nullptr) {
     HMAC_CTX_init(ctx);
   }
@@ -84,7 +86,7 @@ void HMAC_CTX_free(HMAC_CTX *ctx) {
   }
 
   HMAC_CTX_cleanup(ctx);
-  OPENSSL_free(ctx);
+  Delete(ctx);
 }
 
 int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, size_t key_len,

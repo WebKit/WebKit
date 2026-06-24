@@ -43,7 +43,6 @@ int aom_rb_read_literal(struct aom_read_bit_buffer *rb, int bits) {
   return value;
 }
 
-#if CONFIG_AV1_DECODER
 uint32_t aom_rb_read_unsigned_literal(struct aom_read_bit_buffer *rb,
                                       int bits) {
   assert(bits <= 32);
@@ -54,6 +53,7 @@ uint32_t aom_rb_read_unsigned_literal(struct aom_read_bit_buffer *rb,
   return value;
 }
 
+#if CONFIG_AV1_DECODER
 int aom_rb_read_inv_signed_literal(struct aom_read_bit_buffer *rb, int bits) {
   const int nbits = sizeof(unsigned) * 8 - bits - 1;
   const unsigned value = (unsigned)aom_rb_read_literal(rb, bits + 1) << nbits;

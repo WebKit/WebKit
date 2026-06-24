@@ -27,12 +27,9 @@
 
 #include "CSSFunctionValue.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSQuadValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
-#include "DeprecatedCSSOMPrimitiveValue.h"
-#include "DeprecatedCSSOMValueList.h"
 
 namespace WebCore {
 namespace CSS {
@@ -54,11 +51,6 @@ template<> Ref<CSSValue> makeCoalescingPairCSSValue<SerializationSeparatorType::
     return CSSValuePair::create(WTF::move(first), WTF::move(second));
 }
 
-template<> Ref<CSSValue> makeCoalescingQuadCSSValue<SerializationSeparatorType::Space>(Ref<CSSValue>&& first, Ref<CSSValue>&& second, Ref<CSSValue>&& third, Ref<CSSValue>&& fourth)
-{
-    return CSSQuadValue::create(WTF::move(first), WTF::move(second), WTF::move(third), WTF::move(fourth));
-}
-
 template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Space>(CSSValueListBuilder&& builder)
 {
     return CSSValueList::createSpaceSeparated(WTF::move(builder));
@@ -72,43 +64,6 @@ template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Comma>(CSS
 template<> Ref<CSSValue> makeListCSSValue<SerializationSeparatorType::Slash>(CSSValueListBuilder&& builder)
 {
     return CSSValueList::createSlashSeparated(WTF::move(builder));
-}
-
-// MARK: - DeprecatedCSSOMValue Creation
-
-Ref<DeprecatedCSSOMValue> makePrimitiveDeprecatedCSSOMValue(CSSStyleDeclaration& owner, CSSValueID value)
-{
-    return DeprecatedCSSOMPrimitiveValue::create(makePrimitiveCSSValue(value), owner);
-}
-
-Ref<DeprecatedCSSOMValue> makeFunctionDeprecatedCSSOMValue(CSSStyleDeclaration& owner, CSSValueID name, Ref<CSSValue>&& value)
-{
-    return DeprecatedCSSOMComplexValue::create(makeFunctionCSSValue(name, WTF::move(value)), owner);
-}
-
-template<> Ref<DeprecatedCSSOMValue> makeCoalescingPairDeprecatedCSSOMValue<SerializationSeparatorType::Space>(CSSStyleDeclaration& owner, Ref<CSSValue>&& first, Ref<CSSValue>&& second)
-{
-    return DeprecatedCSSOMPrimitiveValue::create(makeCoalescingPairCSSValue<SerializationSeparatorType::Space>(WTF::move(first), WTF::move(second)), owner);
-}
-
-template<> Ref<DeprecatedCSSOMValue> makeCoalescingQuadDeprecatedCSSOMValue<SerializationSeparatorType::Space>(CSSStyleDeclaration& owner, Ref<CSSValue>&& first, Ref<CSSValue>&& second, Ref<CSSValue>&& third, Ref<CSSValue>&& fourth)
-{
-    return DeprecatedCSSOMPrimitiveValue::create(makeCoalescingQuadCSSValue<SerializationSeparatorType::Space>(WTF::move(first), WTF::move(second), WTF::move(third), WTF::move(fourth)), owner);
-}
-
-template<> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue<SerializationSeparatorType::Space>(CSSStyleDeclaration& owner, DeprecatedCSSOMValueListBuilder&& builder)
-{
-    return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::SpaceSeparator, owner);
-}
-
-template<> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue<SerializationSeparatorType::Comma>(CSSStyleDeclaration& owner, DeprecatedCSSOMValueListBuilder&& builder)
-{
-    return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::CommaSeparator, owner);
-}
-
-template<> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue<SerializationSeparatorType::Slash>(CSSStyleDeclaration& owner, DeprecatedCSSOMValueListBuilder&& builder)
-{
-    return DeprecatedCSSOMValueList::create(WTF::move(builder), CSSValue::ValueSeparator::SlashSeparator, owner);
 }
 
 } // namespace CSS

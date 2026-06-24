@@ -74,7 +74,7 @@ void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEn
     UNUSED_PARAM(expectMomentumEnd);
 #endif
 
-    m_page->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
+    protect(m_page)->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
 
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::setTestCallbackAndStartMonitoring - expect end/cancel " << expectWheelEndOrCancel << ", expect momentum end " << expectMomentumEnd);
 }
@@ -135,7 +135,7 @@ void WheelEventTestMonitor::scheduleCallbackCheck()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->m_page->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
+        protect(protectedThis->m_page)->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
     });
 }
 

@@ -230,6 +230,8 @@ void JSTestStringifierReadOnlyAttribute::analyzeHeap(JSCell* cell, HeapAnalyzer&
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestStringifierReadOnlyAttributeOwner::JSTestStringifierReadOnlyAttributeOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestStringifierReadOnlyAttributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -242,7 +244,7 @@ void JSTestStringifierReadOnlyAttributeOwner::finalize(JSC::Handle<JSC::Unknown>
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestStringifierReadOnlyAttribute = static_cast<JSTestStringifierReadOnlyAttribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestStringifierReadOnlyAttribute->wrapped()).ptr(), jsTestStringifierReadOnlyAttribute);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestStringifierReadOnlyAttribute->wrapped(), jsTestStringifierReadOnlyAttribute);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

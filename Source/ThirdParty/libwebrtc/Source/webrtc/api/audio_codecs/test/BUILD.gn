@@ -24,6 +24,7 @@ if (rtc_include_tests) {
       "../..:make_ref_counted",
       "../..:scoped_refptr",
       "../../../test:audio_codec_mocks",
+      "../../../test:create_test_environment",
       "../../../test:test_support",
       "../../environment",
       "../../environment:environment_factory",

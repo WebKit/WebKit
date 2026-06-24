@@ -22,6 +22,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 ASN1_SEQUENCE(OTHERNAME) = {
     ASN1_SIMPLE(OTHERNAME, type_id, ASN1_OBJECT),
     // Maybe have a true ANY DEFINED BY later
@@ -38,6 +40,8 @@ ASN1_SEQUENCE(EDIPARTYNAME) = {
 
 IMPLEMENT_ASN1_ALLOC_FUNCTIONS(EDIPARTYNAME)
 
+BSSL_NAMESPACE_BEGIN
+
 ASN1_CHOICE(GENERAL_NAME) = {
     ASN1_IMP(GENERAL_NAME, d.otherName, OTHERNAME, GEN_OTHERNAME),
     ASN1_IMP(GENERAL_NAME, d.rfc822Name, ASN1_IA5STRING, GEN_EMAIL),
@@ -53,12 +57,18 @@ ASN1_CHOICE(GENERAL_NAME) = {
     ASN1_IMP(GENERAL_NAME, d.registeredID, ASN1_OBJECT, GEN_RID),
 } ASN1_CHOICE_END(GENERAL_NAME)
 
+BSSL_NAMESPACE_END
+
 IMPLEMENT_ASN1_FUNCTIONS_const(GENERAL_NAME)
+
+BSSL_NAMESPACE_BEGIN
 
 ASN1_ITEM_TEMPLATE(GENERAL_NAMES) = ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_SEQUENCE_OF,
                                                           0, GeneralNames,
                                                           GENERAL_NAME)
 ASN1_ITEM_TEMPLATE_END(GENERAL_NAMES)
+
+BSSL_NAMESPACE_END
 
 IMPLEMENT_ASN1_FUNCTIONS_const(GENERAL_NAMES)
 
@@ -98,7 +108,7 @@ static int othername_cmp(const OTHERNAME *a, const OTHERNAME *b) {
 }
 
 // Returns 0 if they are equal, != 0 otherwise.
-int GENERAL_NAME_cmp(const GENERAL_NAME *a, const GENERAL_NAME *b) {
+int bssl::GENERAL_NAME_cmp(const GENERAL_NAME *a, const GENERAL_NAME *b) {
   if (!a || !b || a->type != b->type) {
     return -1;
   }

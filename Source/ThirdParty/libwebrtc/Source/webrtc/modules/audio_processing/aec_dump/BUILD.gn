@@ -33,8 +33,6 @@ if (rtc_include_tests) {
     deps = [
       "..:aec_dump_interface",
       "..:audio_frame_view",
-      "..:audioproc_test_utils",
-      "../",
       "../../../api/audio:audio_frame_api",
       "../../../api/audio:audio_processing",
       "../../../test:test_support",
@@ -48,8 +46,6 @@ if (rtc_include_tests) {
 
     deps = [
       ":mock_aec_dump",
-      "..:audioproc_test_utils",
-      "../",
       "../../../api:scoped_refptr",
       "../../../api/audio:audio_processing",
       "../../../api/audio:builtin_audio_processing_builder",
@@ -98,10 +94,7 @@ if (rtc_enable_protobuf) {
       defines = []
       deps = [
         ":aec_dump",
-        ":aec_dump_impl",
         "..:aec_dump_interface",
-        "..:audioproc_debug_proto",
-        "../",
         "../../../api/audio:audio_processing",
         "../../../rtc_base:task_queue_for_test",
         "../../../test:fileutils",

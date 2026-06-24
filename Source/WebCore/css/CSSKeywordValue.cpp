@@ -25,6 +25,9 @@
 #include "config.h"
 #include "CSSKeywordValue.h"
 
+#include "CSSValueKeywords.h"
+#include "CSSValuePool.h"
+#include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 #include <wtf/Hasher.h>
 
 namespace WebCore {
@@ -63,9 +66,9 @@ bool CSSKeywordValue::addDerivedHash(Hasher& hasher) const
     return true;
 }
 
-String CSSKeywordValue::stringValue() const
+Ref<DeprecatedCSSOMValue> CSSKeywordValue::customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
 {
-    return nameStringForSerialization(m_keyword.value);
+    return CSS::createDeprecatedCSSOMValue(CSSValuePool::singleton(), owner, m_keyword);
 }
 
 } // namespace WebCore

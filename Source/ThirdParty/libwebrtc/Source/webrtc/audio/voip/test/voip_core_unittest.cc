@@ -17,13 +17,13 @@
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "api/voip/voip_base.h"
 #include "api/voip/voip_dtmf.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -53,7 +53,7 @@ class VoipCoreTest : public ::testing::Test {
         make_ref_counted<NiceMock<test::MockAudioProcessing>>();
 
     voip_core_ = std::make_unique<VoipCore>(
-        CreateEnvironment(), std::move(encoder_factory),
+        CreateTestEnvironment(), std::move(encoder_factory),
         std::move(decoder_factory), audio_device_, std::move(audio_processing));
   }
 

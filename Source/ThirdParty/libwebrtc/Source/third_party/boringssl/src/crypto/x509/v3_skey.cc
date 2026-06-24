@@ -25,6 +25,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 char *i2s_ASN1_OCTET_STRING(const X509V3_EXT_METHOD *method,
                             const ASN1_OCTET_STRING *oct) {
   return x509v3_bytes_to_hex(oct->data, oct->length);
@@ -89,7 +91,7 @@ static void *s2i_skey_id(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
   if (ctx->subject_req) {
     pk = &ctx->subject_req->req_info->pubkey->public_key;
   } else {
-    pk = &ctx->subject_cert->key.public_key;
+    pk = X509_get0_pubkey_bitstr(ctx->subject_cert);
   }
 
   if (!EVP_Digest(pk->data, pk->length, pkey_dig, &diglen, EVP_sha1(),
@@ -108,7 +110,7 @@ err:
   return nullptr;
 }
 
-const X509V3_EXT_METHOD v3_skey_id = {
+const X509V3_EXT_METHOD bssl::v3_skey_id = {
     NID_subject_key_identifier,
     0,
     ASN1_ITEM_ref(ASN1_OCTET_STRING),

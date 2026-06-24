@@ -157,7 +157,7 @@ private:
         return m_smallIntCache[i];
     }
 
-    void initializeDoubleCache();
+    JS_EXPORT_PRIVATE void initializeDoubleCache();
 
     std::array<StringWithJSString, cacheSize> m_smallIntCache { };
     std::array<CacheEntryWithJSString<int>, cacheSize> m_intCache { };

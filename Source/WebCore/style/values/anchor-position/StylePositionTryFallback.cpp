@@ -160,14 +160,14 @@ static Ref<CSSValue> computedPositionAreaValue(const PositionTryFallback::Positi
     return cssValue.releaseNonNull();
 }
 
-auto CSSValueCreation<PositionTryFallback::PositionArea>::operator()(CSSValuePool&, const RenderStyle&, const PositionTryFallback::PositionArea& value) -> Ref<CSSValue>
+auto CSSValueCreation<PositionTryFallback::PositionArea>::operator()(CSSValuePool&, const Style::ComputedStyle&, const PositionTryFallback::PositionArea& value) -> Ref<CSSValue>
 {
     return computedPositionAreaValue(value);
 }
 
 // MARK: - Serialization
 
-void Serialize<PositionTryFallback::PositionArea>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle&, const PositionTryFallback::PositionArea& value)
+void Serialize<PositionTryFallback::PositionArea>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle&, const PositionTryFallback::PositionArea& value)
 {
     builder.append(computedPositionAreaValue(value)->cssText(context));
 }

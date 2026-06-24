@@ -12,8 +12,8 @@
 
 #include <cstdint>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
@@ -111,7 +111,7 @@ size_t UlpfecHeaderWriter::FecHeaderSize(size_t packet_mask_size) const {
 }
 
 void UlpfecHeaderWriter::FinalizeFecHeader(
-    ArrayView<const ProtectedStream> protected_streams,
+    std::span<const ProtectedStream> protected_streams,
     ForwardErrorCorrection::Packet& fec_packet) const {
   RTC_CHECK_EQ(protected_streams.size(), 1);
   uint16_t seq_num_base = protected_streams[0].seq_num_base;

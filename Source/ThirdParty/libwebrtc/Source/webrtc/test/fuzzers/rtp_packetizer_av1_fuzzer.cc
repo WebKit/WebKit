@@ -10,7 +10,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "api/array_view.h"
 #include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
@@ -23,18 +22,15 @@
 #include "test/fuzzers/utils/validate_rtp_packetizer.h"
 
 namespace webrtc {
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  test::FuzzDataHelper fuzz_input(MakeArrayView(data, size));
-
-  RtpPacketizer::PayloadSizeLimits limits = ReadPayloadSizeLimits(fuzz_input);
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  RtpPacketizer::PayloadSizeLimits limits = ReadPayloadSizeLimits(fuzz_data);
 
   const VideoFrameType kFrameTypes[] = {VideoFrameType::kVideoFrameKey,
                                         VideoFrameType::kVideoFrameDelta};
-  VideoFrameType frame_type = fuzz_input.SelectOneOf(kFrameTypes);
+  VideoFrameType frame_type = fuzz_data.SelectOneOf(kFrameTypes);
 
   // Main function under test: RtpPacketizerAv1's constructor.
-  RtpPacketizerAv1 packetizer(fuzz_input.ReadByteArray(fuzz_input.BytesLeft()),
-                              limits, frame_type,
+  RtpPacketizerAv1 packetizer(fuzz_data.ReadRemaining(), limits, frame_type,
                               /*is_last_frame_in_picture=*/true);
 
   size_t num_packets = packetizer.NumPackets();

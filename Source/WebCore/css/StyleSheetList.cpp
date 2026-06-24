@@ -26,7 +26,7 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "ShadowRoot.h"
-#include "StyleScope.h"
+#include "StyleDocumentScope.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

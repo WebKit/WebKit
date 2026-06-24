@@ -27,6 +27,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 ASN1_INTEGER *ASN1_INTEGER_dup(const ASN1_INTEGER *x) {
   return ASN1_STRING_dup(x);
 }
@@ -74,7 +76,8 @@ static int is_all_zeros(const uint8_t *in, size_t len) {
   return 1;
 }
 
-int asn1_marshal_integer(CBB *out, const ASN1_INTEGER *in, CBS_ASN1_TAG tag) {
+int bssl::asn1_marshal_integer(CBB *out, const ASN1_INTEGER *in,
+                               CBS_ASN1_TAG tag) {
   int len = i2c_ASN1_INTEGER(in, nullptr);
   if (len <= 0) {
     return 0;
@@ -147,7 +150,7 @@ int i2c_ASN1_INTEGER(const ASN1_INTEGER *in, unsigned char **outp) {
   return len;
 }
 
-static int asn1_parse_integer_contents(bssl::Span<const uint8_t> in,
+static int asn1_parse_integer_contents(Span<const uint8_t> in,
                                        ASN1_INTEGER *out) {
   CBS cbs = in;
   int is_negative;
@@ -192,7 +195,7 @@ static int asn1_parse_integer_contents(bssl::Span<const uint8_t> in,
   return 1;
 }
 
-int asn1_parse_integer(CBS *cbs, ASN1_INTEGER *out, CBS_ASN1_TAG tag) {
+int bssl::asn1_parse_integer(CBS *cbs, ASN1_INTEGER *out, CBS_ASN1_TAG tag) {
   tag = tag == 0 ? CBS_ASN1_INTEGER : tag;
   CBS child;
   if (!CBS_get_asn1(cbs, &child, tag)) {
@@ -202,7 +205,8 @@ int asn1_parse_integer(CBS *cbs, ASN1_INTEGER *out, CBS_ASN1_TAG tag) {
   return asn1_parse_integer_contents(child, out);
 }
 
-int asn1_parse_enumerated(CBS *cbs, ASN1_ENUMERATED *out, CBS_ASN1_TAG tag) {
+int bssl::asn1_parse_enumerated(CBS *cbs, ASN1_ENUMERATED *out,
+                                CBS_ASN1_TAG tag) {
   tag = tag == 0 ? CBS_ASN1_ENUMERATED : tag;
   if (!asn1_parse_integer(cbs, out, tag)) {
     return 0;
@@ -230,7 +234,7 @@ ASN1_INTEGER *c2i_ASN1_INTEGER(ASN1_INTEGER **out, const unsigned char **inp,
     ret = *out;
   }
 
-  if (!asn1_parse_integer_contents(bssl::Span(*inp, len), ret)) {
+  if (!asn1_parse_integer_contents(Span(*inp, len), ret)) {
     if (ret != nullptr && (out == nullptr || *out != ret)) {
       ASN1_INTEGER_free(ret);
     }

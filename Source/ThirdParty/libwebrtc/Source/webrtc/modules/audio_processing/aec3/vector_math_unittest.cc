@@ -34,9 +34,9 @@ TEST(VectorMath, Sqrt) {
   }
 
   std::copy(x.begin(), x.end(), z.begin());
-  aec3::VectorMath(Aec3Optimization::kNone).Sqrt(z);
+  VectorMath(Aec3Optimization::kNone).Sqrt(z);
   std::copy(x.begin(), x.end(), z_neon.begin());
-  aec3::VectorMath(Aec3Optimization::kNeon).Sqrt(z_neon);
+  VectorMath(Aec3Optimization::kNeon).Sqrt(z_neon);
   for (size_t k = 0; k < z.size(); ++k) {
     EXPECT_NEAR(z[k], z_neon[k], 0.0001f);
     EXPECT_NEAR(sqrtf(x[k]), z_neon[k], 0.0001f);
@@ -54,8 +54,8 @@ TEST(VectorMath, Multiply) {
     y[k] = (2.f / 3.f) * k;
   }
 
-  aec3::VectorMath(Aec3Optimization::kNone).Multiply(x, y, z);
-  aec3::VectorMath(Aec3Optimization::kNeon).Multiply(x, y, z_neon);
+  VectorMath(Aec3Optimization::kNone).Multiply(x, y, z);
+  VectorMath(Aec3Optimization::kNeon).Multiply(x, y, z_neon);
   for (size_t k = 0; k < z.size(); ++k) {
     EXPECT_FLOAT_EQ(z[k], z_neon[k]);
     EXPECT_FLOAT_EQ(x[k] * y[k], z_neon[k]);
@@ -72,8 +72,8 @@ TEST(VectorMath, Accumulate) {
     z[k] = z_neon[k] = 2.f * k;
   }
 
-  aec3::VectorMath(Aec3Optimization::kNone).Accumulate(x, z);
-  aec3::VectorMath(Aec3Optimization::kNeon).Accumulate(x, z_neon);
+  VectorMath(Aec3Optimization::kNone).Accumulate(x, z);
+  VectorMath(Aec3Optimization::kNeon).Accumulate(x, z_neon);
   for (size_t k = 0; k < z.size(); ++k) {
     EXPECT_FLOAT_EQ(z[k], z_neon[k]);
     EXPECT_FLOAT_EQ(x[k] + 2.f * x[k], z_neon[k]);
@@ -94,9 +94,9 @@ TEST(VectorMath, Sse2Sqrt) {
     }
 
     std::copy(x.begin(), x.end(), z.begin());
-    aec3::VectorMath(Aec3Optimization::kNone).Sqrt(z);
+    VectorMath(Aec3Optimization::kNone).Sqrt(z);
     std::copy(x.begin(), x.end(), z_sse2.begin());
-    aec3::VectorMath(Aec3Optimization::kSse2).Sqrt(z_sse2);
+    VectorMath(Aec3Optimization::kSse2).Sqrt(z_sse2);
     EXPECT_EQ(z, z_sse2);
     for (size_t k = 0; k < z.size(); ++k) {
       EXPECT_FLOAT_EQ(z[k], z_sse2[k]);
@@ -116,9 +116,9 @@ TEST(VectorMath, Avx2Sqrt) {
     }
 
     std::copy(x.begin(), x.end(), z.begin());
-    aec3::VectorMath(Aec3Optimization::kNone).Sqrt(z);
+    VectorMath(Aec3Optimization::kNone).Sqrt(z);
     std::copy(x.begin(), x.end(), z_avx2.begin());
-    aec3::VectorMath(Aec3Optimization::kAvx2).Sqrt(z_avx2);
+    VectorMath(Aec3Optimization::kAvx2).Sqrt(z_avx2);
     EXPECT_EQ(z, z_avx2);
     for (size_t k = 0; k < z.size(); ++k) {
       EXPECT_FLOAT_EQ(z[k], z_avx2[k]);
@@ -139,8 +139,8 @@ TEST(VectorMath, Sse2Multiply) {
       y[k] = (2.f / 3.f) * k;
     }
 
-    aec3::VectorMath(Aec3Optimization::kNone).Multiply(x, y, z);
-    aec3::VectorMath(Aec3Optimization::kSse2).Multiply(x, y, z_sse2);
+    VectorMath(Aec3Optimization::kNone).Multiply(x, y, z);
+    VectorMath(Aec3Optimization::kSse2).Multiply(x, y, z_sse2);
     for (size_t k = 0; k < z.size(); ++k) {
       EXPECT_FLOAT_EQ(z[k], z_sse2[k]);
       EXPECT_FLOAT_EQ(x[k] * y[k], z_sse2[k]);
@@ -160,8 +160,8 @@ TEST(VectorMath, Avx2Multiply) {
       y[k] = (2.f / 3.f) * k;
     }
 
-    aec3::VectorMath(Aec3Optimization::kNone).Multiply(x, y, z);
-    aec3::VectorMath(Aec3Optimization::kAvx2).Multiply(x, y, z_avx2);
+    VectorMath(Aec3Optimization::kNone).Multiply(x, y, z);
+    VectorMath(Aec3Optimization::kAvx2).Multiply(x, y, z_avx2);
     for (size_t k = 0; k < z.size(); ++k) {
       EXPECT_FLOAT_EQ(z[k], z_avx2[k]);
       EXPECT_FLOAT_EQ(x[k] * y[k], z_avx2[k]);
@@ -180,8 +180,8 @@ TEST(VectorMath, Sse2Accumulate) {
       z[k] = z_sse2[k] = 2.f * k;
     }
 
-    aec3::VectorMath(Aec3Optimization::kNone).Accumulate(x, z);
-    aec3::VectorMath(Aec3Optimization::kSse2).Accumulate(x, z_sse2);
+    VectorMath(Aec3Optimization::kNone).Accumulate(x, z);
+    VectorMath(Aec3Optimization::kSse2).Accumulate(x, z_sse2);
     for (size_t k = 0; k < z.size(); ++k) {
       EXPECT_FLOAT_EQ(z[k], z_sse2[k]);
       EXPECT_FLOAT_EQ(x[k] + 2.f * x[k], z_sse2[k]);
@@ -200,8 +200,8 @@ TEST(VectorMath, Avx2Accumulate) {
       z[k] = z_avx2[k] = 2.f * k;
     }
 
-    aec3::VectorMath(Aec3Optimization::kNone).Accumulate(x, z);
-    aec3::VectorMath(Aec3Optimization::kAvx2).Accumulate(x, z_avx2);
+    VectorMath(Aec3Optimization::kNone).Accumulate(x, z);
+    VectorMath(Aec3Optimization::kAvx2).Accumulate(x, z_avx2);
     for (size_t k = 0; k < z.size(); ++k) {
       EXPECT_FLOAT_EQ(z[k], z_avx2[k]);
       EXPECT_FLOAT_EQ(x[k] + 2.f * x[k], z_avx2[k]);

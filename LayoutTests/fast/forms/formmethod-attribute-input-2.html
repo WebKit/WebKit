@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/common.js"></script>
 <form method="get" action="?">
     <input type="hidden" name="hidden" value="I am hidden">
@@ -10,6 +10,10 @@
 <script>
 description("Test for the formmethod attribute in input tags.");
 
+jsTestIsAsync = true;
+
+// waitUntilDone() must be called synchronously here: this load submits the form
+// (navigating away) before DOMContentLoaded fires, so js-test.js can't arm it in time.
 if (window.testRunner)
     testRunner.waitUntilDone();
 
@@ -24,12 +28,10 @@ if (document.URL.substring(0, 4) == "file") {
         else
             testFailed('The formmethod attribute was not used');
 
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 }
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

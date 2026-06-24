@@ -47,10 +47,10 @@ struct AccentColor : ValueOrKeyword<Color, CSS::Keyword::Auto> {
 // MARK: - Blending
 
 template<> struct Blending<AccentColor> {
-    auto equals(const AccentColor&, const AccentColor&, const RenderStyle&, const RenderStyle&) -> bool;
+    auto equals(const AccentColor&, const AccentColor&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
     auto canBlend(const AccentColor&, const AccentColor&) -> bool;
     constexpr auto requiresInterpolationForAccumulativeIteration(const AccentColor&, const AccentColor&) -> bool { return true; }
-    auto blend(const AccentColor&, const AccentColor&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> AccentColor;
+    auto blend(const AccentColor&, const AccentColor&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> AccentColor;
 };
 
 } // namespace Style

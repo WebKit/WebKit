@@ -40,6 +40,7 @@
 #import "CocoaAccessibilityConstants.h"
 #import "DeprecatedGlobalSettings.h"
 #import "DocumentView.h"
+#import "LocalFrameInlines.h"
 #import "LocalFrameView.h"
 #import "RenderObject.h"
 #import "RenderView.h"
@@ -110,85 +111,85 @@ typedef CF_ENUM(UInt32, AXTextSelectionGranularity)
 
 #endif // AXTextStateChangeDefined
 
-static AXTextStateChangeType NODELETE platformChangeTypeForWebCoreChangeType(WebCore::AXTextStateChangeType changeType)
+static NSNumber *platformChangeTypeForWebCoreChangeType(WebCore::AXTextStateChangeType changeType)
 {
     switch (changeType) {
     case WebCore::AXTextStateChangeType::Unknown:
-        return kAXTextStateChangeTypeUnknown;
+        return @(kAXTextStateChangeTypeUnknown);
     case WebCore::AXTextStateChangeType::Edit:
-        return kAXTextStateChangeTypeEdit;
+        return @(kAXTextStateChangeTypeEdit);
     case WebCore::AXTextStateChangeType::SelectionMove:
-        return kAXTextStateChangeTypeSelectionMove;
+        return @(kAXTextStateChangeTypeSelectionMove);
     case WebCore::AXTextStateChangeType::SelectionExtend:
-        return kAXTextStateChangeTypeSelectionExtend;
+        return @(kAXTextStateChangeTypeSelectionExtend);
     case WebCore::AXTextStateChangeType::SelectionBoundary:
-        return kAXTextStateChangeTypeSelectionBoundary;
+        return @(kAXTextStateChangeTypeSelectionBoundary);
     }
 }
 
-static AXTextEditType NODELETE platformEditTypeForWebCoreEditType(WebCore::AXTextEditType changeType)
+static NSNumber *platformEditTypeForWebCoreEditType(WebCore::AXTextEditType changeType)
 {
     switch (changeType) {
     case WebCore::AXTextEditType::Unknown:
-        return kAXTextEditTypeUnknown;
+        return @(kAXTextEditTypeUnknown);
     case WebCore::AXTextEditType::Delete:
-        return kAXTextEditTypeDelete;
+        return @(kAXTextEditTypeDelete);
     case WebCore::AXTextEditType::Insert:
-        return kAXTextEditTypeInsert;
+        return @(kAXTextEditTypeInsert);
     case WebCore::AXTextEditType::Typing:
-        return kAXTextEditTypeTyping;
+        return @(kAXTextEditTypeTyping);
     case WebCore::AXTextEditType::Dictation:
-        return kAXTextEditTypeDictation;
+        return @(kAXTextEditTypeDictation);
     case WebCore::AXTextEditType::Cut:
-        return kAXTextEditTypeCut;
+        return @(kAXTextEditTypeCut);
     case WebCore::AXTextEditType::Paste:
-        return kAXTextEditTypePaste;
+        return @(kAXTextEditTypePaste);
     case WebCore::AXTextEditType::Replace:
-        return kAXTextEditTypeUnknown; // Does not exist in platform enum.
+        return @(kAXTextEditTypeUnknown); // Does not exist in platform enum.
     case WebCore::AXTextEditType::AttributesChange:
-        return kAXTextEditTypeAttributesChange;
+        return @(kAXTextEditTypeAttributesChange);
     }
 }
 
-static AXTextSelectionDirection NODELETE platformDirectionForWebCoreDirection(WebCore::AXTextSelectionDirection direction)
+static NSNumber *platformDirectionForWebCoreDirection(WebCore::AXTextSelectionDirection direction)
 {
     switch (direction) {
     case WebCore::AXTextSelectionDirection::Unknown:
-        return kAXTextSelectionDirectionUnknown;
+        return @(kAXTextSelectionDirectionUnknown);
     case WebCore::AXTextSelectionDirection::Beginning:
-        return kAXTextSelectionDirectionBeginning;
+        return @(kAXTextSelectionDirectionBeginning);
     case WebCore::AXTextSelectionDirection::End:
-        return kAXTextSelectionDirectionEnd;
+        return @(kAXTextSelectionDirectionEnd);
     case WebCore::AXTextSelectionDirection::Previous:
-        return kAXTextSelectionDirectionPrevious;
+        return @(kAXTextSelectionDirectionPrevious);
     case WebCore::AXTextSelectionDirection::Next:
-        return kAXTextSelectionDirectionNext;
+        return @(kAXTextSelectionDirectionNext);
     case WebCore::AXTextSelectionDirection::Discontiguous:
-        return kAXTextSelectionDirectionDiscontiguous;
+        return @(kAXTextSelectionDirectionDiscontiguous);
     }
 }
 
-static AXTextSelectionGranularity NODELETE platformGranularityForWebCoreGranularity(WebCore::AXTextSelectionGranularity granularity)
+static NSNumber *platformGranularityForWebCoreGranularity(WebCore::AXTextSelectionGranularity granularity)
 {
     switch (granularity) {
     case WebCore::AXTextSelectionGranularity::Unknown:
-        return kAXTextSelectionGranularityUnknown;
+        return @(kAXTextSelectionGranularityUnknown);
     case WebCore::AXTextSelectionGranularity::Character:
-        return kAXTextSelectionGranularityCharacter;
+        return @(kAXTextSelectionGranularityCharacter);
     case WebCore::AXTextSelectionGranularity::Word:
-        return kAXTextSelectionGranularityWord;
+        return @(kAXTextSelectionGranularityWord);
     case WebCore::AXTextSelectionGranularity::Line:
-        return kAXTextSelectionGranularityLine;
+        return @(kAXTextSelectionGranularityLine);
     case WebCore::AXTextSelectionGranularity::Sentence:
-        return kAXTextSelectionGranularitySentence;
+        return @(kAXTextSelectionGranularitySentence);
     case WebCore::AXTextSelectionGranularity::Paragraph:
-        return kAXTextSelectionGranularityParagraph;
+        return @(kAXTextSelectionGranularityParagraph);
     case WebCore::AXTextSelectionGranularity::Page:
-        return kAXTextSelectionGranularityPage;
+        return @(kAXTextSelectionGranularityPage);
     case WebCore::AXTextSelectionGranularity::Document:
-        return kAXTextSelectionGranularityDocument;
+        return @(kAXTextSelectionGranularityDocument);
     case WebCore::AXTextSelectionGranularity::All:
-        return kAXTextSelectionGranularityAll;
+        return @(kAXTextSelectionGranularityAll);
     }
 }
 
@@ -530,12 +531,12 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
     if (m_isSynchronizingSelection)
         [userInfo setObject:@YES forKey:NSAccessibilityTextStateSyncKey];
     if (intent.type != AXTextStateChangeType::Unknown) {
-        [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(intent.type)) forKey:NSAccessibilityTextStateChangeTypeKey];
+        [userInfo setObject:platformChangeTypeForWebCoreChangeType(intent.type) forKey:NSAccessibilityTextStateChangeTypeKey];
         switch (intent.type) {
         case AXTextStateChangeType::SelectionMove:
         case AXTextStateChangeType::SelectionExtend:
         case AXTextStateChangeType::SelectionBoundary:
-            [userInfo setObject:@(platformDirectionForWebCoreDirection(intent.selection.direction)) forKey:NSAccessibilityTextSelectionDirection];
+            [userInfo setObject:platformDirectionForWebCoreDirection(intent.selection.direction) forKey:NSAccessibilityTextSelectionDirection];
             switch (intent.selection.direction) {
             case AXTextSelectionDirection::Unknown:
                 break;
@@ -543,7 +544,7 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
             case AXTextSelectionDirection::End:
             case AXTextSelectionDirection::Previous:
             case AXTextSelectionDirection::Next:
-                [userInfo setObject:@(platformGranularityForWebCoreGranularity(intent.selection.granularity)) forKey:NSAccessibilityTextSelectionGranularity];
+                [userInfo setObject:platformGranularityForWebCoreGranularity(intent.selection.granularity) forKey:NSAccessibilityTextSelectionGranularity];
                 break;
             case AXTextSelectionDirection::Discontiguous:
                 break;
@@ -596,7 +597,7 @@ static NSDictionary *textReplacementChangeDictionary(AXObjectCache& cache, Acces
         return nil;
 
     auto change = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
-    [change setObject:@(platformEditTypeForWebCoreEditType(type)) forKey:NSAccessibilityTextEditType];
+    [change setObject:platformEditTypeForWebCoreEditType(type) forKey:NSAccessibilityTextEditType];
     if (length > AXValueChangeTruncationLength) {
         [change setObject:@(length) forKey:NSAccessibilityTextChangeValueLength];
         text = [text substringToIndex:AXValueChangeTruncationLength];
@@ -621,7 +622,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
 void AXObjectCache::postUserInfoForChanges(AccessibilityObject& rootWebArea, AccessibilityObject& object, RetainPtr<NSMutableArray> changes)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
-    [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(AXTextStateChangeType::Edit)) forKey:NSAccessibilityTextStateChangeTypeKey];
+    [userInfo setObject:platformChangeTypeForWebCoreChangeType(AXTextStateChangeType::Edit) forKey:NSAccessibilityTextStateChangeTypeKey];
     auto changesArray = changes.autorelease();
     if (changesArray.count)
         [userInfo setObject:changesArray forKey:NSAccessibilityTextChangeValues];
@@ -1074,7 +1075,7 @@ AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache* cache, const Charact
         return nil;
 
     auto textMarkerData = cache->textMarkerDataForCharacterOffset(characterOffset, origin);
-    if (!textMarkerData.objectID || textMarkerData.ignored)
+    if (!textMarkerData.objectID || textMarkerData.isRedacted)
         return nil;
     return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
 }

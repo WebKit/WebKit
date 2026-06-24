@@ -69,7 +69,7 @@ public:
     virtual void unregisterForInvalidationCallbacks(FontSelectorClient&) = 0;
 
     virtual unsigned uniqueId() const = 0;
-    virtual unsigned version() const = 0;
+    virtual unsigned NODELETE version() const = 0;
 
     virtual bool isSimpleFontSelectorForDescription() const = 0;
 

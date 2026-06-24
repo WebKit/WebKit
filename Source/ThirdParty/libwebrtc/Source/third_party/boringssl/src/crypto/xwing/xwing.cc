@@ -23,6 +23,8 @@
 #include "../fipsmodule/keccak/internal.h"
 
 
+using namespace bssl;
+
 struct private_key {
   MLKEM768_private_key mlkem_private_key;
   uint8_t x25519_private_key[32];

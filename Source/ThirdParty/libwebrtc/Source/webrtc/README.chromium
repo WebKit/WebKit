@@ -6,6 +6,7 @@ License: BSD-3-Clause
 License File: LICENSE
 Shipped: yes
 Security Critical: yes
+Update Mechanism: Manual
 Mitigated: CVE-2022-2294
 CVE-2022-2294: Fixed by https://crbug.com/40060120.
 

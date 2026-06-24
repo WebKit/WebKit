@@ -1,7 +1,7 @@
 
+PASS input.value became 'A'
+PASS isShowingDataListSuggestions is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS input.value became 'A'
-PASS isShowingDataListSuggestions is true
 

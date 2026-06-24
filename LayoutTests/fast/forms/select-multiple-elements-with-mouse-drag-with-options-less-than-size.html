@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <title></title>
 </head>
 <body>
@@ -27,13 +27,13 @@
 
 <div id="console"></div>
 <script>
+window.jsTestIsAsync = true;
 onload = async () => {
     if (!window.testRunner || !window.eventSender) {
         debug("Test manually if options are getting selected by dragging on the select element.");
         return;
     }
 
-    testRunner.waitUntilDone();
 
     debug("Test for select element with multiple attribute");
     var selectObject = document.getElementById("selectId");
@@ -117,7 +117,7 @@ onload = async () => {
     testOptionSelection(0, 1, "true", "nonmultiple");
     testOptionSelection(1, 4, "false", "nonmultiple");
 
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 function testOptionSelection(start, end, criteria, element) {
@@ -128,6 +128,5 @@ function testOptionSelection(start, end, criteria, element) {
 
 successfullyParsed = true;
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

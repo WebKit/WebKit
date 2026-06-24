@@ -78,7 +78,7 @@ CSSStyleRule::~CSSStyleRule()
 CSSStyleProperties& CSSStyleRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(m_styleRule->mutableProperties(), *this);
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(protect(protect(m_styleRule)->mutableProperties()), protect(*this));
     return *m_propertiesCSSOMWrapper;
 }
 
@@ -117,7 +117,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         return;
 
     RefPtr sheet = parentStyleSheet();
-    auto selectorList = CSSSelectorParser::parseSelectorList(selectorText, parserContext(), sheet ? &sheet->contents() : nullptr, nestedContext());
+    auto selectorList = CSSSelectorParser::parseSelectorList(selectorText, parserContext(), sheet ? protect(sheet->contents()).ptr() : nullptr, nestedContext());
     if (!selectorList)
         return;
 
@@ -130,7 +130,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     if (RefPtr styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
         styleRule->wrapperAdoptOriginalSelectorList(WTF::move(*selectorList));
     else
-        m_styleRule->wrapperAdoptSelectorList(WTF::move(*selectorList));
+        protect(m_styleRule)->wrapperAdoptSelectorList(WTF::move(*selectorList));
 
     if (hasCachedSelectorText()) {
         selectorTextCache().remove(this);
@@ -149,7 +149,7 @@ Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
 // https://w3c.github.io/csswg-drafts/cssom-1/#serialize-a-css-rule
 String CSSStyleRule::cssText() const
 {
-    auto declarationsString = m_styleRule->properties().asText(CSS::defaultSerializationContext());
+    auto declarationsString = protect(m_styleRule)->properties().asText(CSS::defaultSerializationContext());
     StringBuilder declarations;
     StringBuilder rules;
     declarations.append(declarationsString);
@@ -161,7 +161,7 @@ String CSSStyleRule::cssText() const
 void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
 {
     for (unsigned index = 0; index < length(); ++index) {
-        auto ruleText = item(index)->cssText();
+        auto ruleText = protect(item(index))->cssText();
         if (!ruleText.isEmpty())
             rules.append("\n  "_s, WTF::move(ruleText));
     }
@@ -172,7 +172,7 @@ String CSSStyleRule::cssText(const CSS::SerializationContext& context) const
     StringBuilder declarations;
     StringBuilder rules;
 
-    auto declarationsString = m_styleRule->properties().asText(context);
+    auto declarationsString = protect(m_styleRule)->properties().asText(context);
     declarations.append(declarationsString);
 
     cssTextForRulesWithReplacementURLs(rules, context);
@@ -183,7 +183,7 @@ String CSSStyleRule::cssText(const CSS::SerializationContext& context) const
 void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const CSS::SerializationContext& context) const
 {
     for (unsigned index = 0; index < length(); index++)
-        rules.append("\n  "_s, item(index)->cssText(context));
+        rules.append("\n  "_s, protect(item(index))->cssText(context));
 }
 
 String CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const
@@ -226,7 +226,7 @@ void CSSStyleRule::reattach(StyleRuleBase& rule)
         m_styleRule = downcast<StyleRule>(rule);
         
     if (m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
+        protect(m_propertiesCSSOMWrapper)->reattach(protect(protect(m_styleRule)->mutableProperties()));
 }
 
 ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigned index)
@@ -237,7 +237,7 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
         return Exception { ExceptionCode::IndexSizeError };
 
     RefPtr styleSheet = parentStyleSheet();
-    RefPtr newRule = CSSParser::parseRule(ruleString, parserContext(), styleSheet ? &styleSheet->contents() : nullptr, CSSParser::AllowedRules::ImportRules, CSSParserEnum::NestedContextType::Style);
+    RefPtr newRule = CSSParser::parseRule(ruleString, parserContext(), styleSheet ? protect(styleSheet->contents()).ptr() : nullptr, CSSParser::AllowedRules::ImportRules, CSSParserEnum::NestedContextType::Style);
     if (!newRule) {
         newRule = CSSParser::parseNestedDeclarations(parserContext(), ruleString);
         if (!newRule)
@@ -302,7 +302,7 @@ CSSRule* CSSStyleRule::item(unsigned index) const
 
     auto& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
-        rule = nestedRules()[index]->createCSSOMWrapper(const_cast<CSSStyleRule&>(*this));
+        rule = protect(nestedRules()[index])->createCSSOMWrapper(const_cast<CSSStyleRule&>(*this));
 
     return rule.get();
 }
@@ -318,7 +318,7 @@ CSSRuleList& CSSStyleRule::cssRules() const
 void CSSStyleRule::getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>& childStyleSheets)
 {
     for (unsigned index = 0; index < length(); ++index)
-        item(index)->getChildStyleSheets(childStyleSheets);
+        protect(item(index))->getChildStyleSheets(childStyleSheets);
 }
 
 } // namespace WebCore

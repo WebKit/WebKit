@@ -26,7 +26,7 @@
 
 #include "FontCascade.h"
 #include "RenderBlock.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include <optional>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct WordTrailingSpace {
-    WordTrailingSpace(const RenderStyle& style, bool measuringWithTrailingWhitespaceEnabled = true)
+    WordTrailingSpace(const Style::ComputedStyle& style, bool measuringWithTrailingWhitespaceEnabled = true)
         : m_style(style)
     {
         if (!measuringWithTrailingWhitespaceEnabled || !m_style->fontCascade().enableKerning())
@@ -54,7 +54,7 @@ struct WordTrailingSpace {
 
 private:
     enum class WordTrailingSpaceState { Uninitialized, Initialized };
-    const CheckedRef<const RenderStyle> m_style;
+    const CheckedRef<const Style::ComputedStyle> m_style;
     WordTrailingSpaceState m_state { WordTrailingSpaceState::Uninitialized };
     std::optional<float> m_width;
 };

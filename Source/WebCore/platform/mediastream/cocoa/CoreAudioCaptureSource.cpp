@@ -282,7 +282,7 @@ const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities()
         capabilities.setGroupId(hashedGroupId());
         capabilities.setEchoCancellation(m_echoCancellationCapability ? (*m_echoCancellationCapability ? RealtimeMediaSourceCapabilities::EchoCancellation::On : RealtimeMediaSourceCapabilities::EchoCancellation::Off) : RealtimeMediaSourceCapabilities::EchoCancellation::OnOrOff);
         capabilities.setVolume({ 0.0, 1.0 });
-        capabilities.setSampleRate(m_unit->sampleRateCapacities());
+        capabilities.setSampleRate(protect(m_unit)->sampleRateCapacities());
         m_capabilities = WTF::move(capabilities);
     }
     return m_capabilities.value();

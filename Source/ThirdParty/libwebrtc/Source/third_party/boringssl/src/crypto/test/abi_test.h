@@ -26,6 +26,7 @@
 #include "../internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
 // abi_test provides routines for verifying that functions satisfy platform ABI
 // requirements.
 namespace abi_test {
@@ -39,7 +40,7 @@ struct Result {
 
 namespace internal {
 
-// DeductionGuard wraps |T| in a template, so that template argument deduction
+// DeductionGuard wraps `T` in a template, so that template argument deduction
 // does not apply to it. This may be used to force C++ to deduce template
 // arguments from another parameter.
 template <typename T>
@@ -201,9 +202,9 @@ struct CallerState {
 #undef CALLER_STATE_REGISTER
 };
 
-// RunTrampoline runs |func| on |argv|, recording ABI errors in |out|. It does
-// not perform any type-checking. If |unwind| is true and unwind tests have been
-// enabled, |func| is single-stepped under an unwind test.
+// RunTrampoline runs `func` on `argv`, recording ABI errors in `out`. It does
+// not perform any type-checking. If `unwind` is true and unwind tests have been
+// enabled, `func` is single-stepped under an unwind test.
 crypto_word_t RunTrampoline(Result *out, crypto_word_t func,
                             const crypto_word_t *argv, size_t argc,
                             bool unwind);
@@ -212,7 +213,7 @@ template <typename T>
 inline crypto_word_t ToWord(T t) {
   // ABIs typically pass floats and structs differently from integers and
   // pointers. We only need to support the latter.
-  static_assert(std::is_integral<T>::value || std::is_pointer<T>::value,
+  static_assert(std::is_integral_v<T> || std::is_pointer_v<T>,
                 "parameter types must be integral or pointer types");
   // We only support types which fit in registers.
   static_assert(sizeof(T) <= sizeof(crypto_word_t),
@@ -223,7 +224,7 @@ inline crypto_word_t ToWord(T t) {
   // word. When parameters are padded in memory or passed in a larger register,
   // the unused bits may be undefined or sign- or zero-extended.
   //
-  // We could simply cast to |crypto_word_t| everywhere but, on platforms where
+  // We could simply cast to `crypto_word_t` everywhere but, on platforms where
   // padding is undefined, we perturb the bits to test the function accounts for
   // for this.
 #if defined(OPENSSL_32_BIT)
@@ -273,14 +274,14 @@ inline crypto_word_t ToWord(T t) {
 #endif
 }
 
-// CheckImpl runs |func| on |args|, recording ABI errors in |out|. If |unwind|
-// is true and unwind tests have been enabled, |func| is single-stepped under an
+// CheckImpl runs `func` on `args`, recording ABI errors in `out`. If `unwind`
+// is true and unwind tests have been enabled, `func` is single-stepped under an
 // unwind test.
 //
-// It returns the value as a |crypto_word_t| to work around problems when |R| is
-// void. |args| is wrapped in a |DeductionGuard| so |func| determines the
-// template arguments. Otherwise, |args| may deduce |Args| incorrectly. For
-// instance, if |func| takes const int *, and the caller passes an int *, the
+// It returns the value as a `crypto_word_t` to work around problems when `R` is
+// void. `args` is wrapped in a `DeductionGuard` so `func` determines the
+// template arguments. Otherwise, `args` may deduce `Args` incorrectly. For
+// instance, if `func` takes const int *, and the caller passes an int *, the
 // compiler will complain the deduced types do not match.
 template <typename R, typename... Args>
 inline crypto_word_t CheckImpl(Result *out, bool unwind, R (*func)(Args...),
@@ -301,9 +302,9 @@ inline crypto_word_t CheckImpl(Result *out, bool unwind, R (*func)(Args...),
 #else
 // To simplify callers when ABI testing support is unavoidable, provide a backup
 // CheckImpl implementation. It must be specialized for void returns because we
-// call |func| directly.
+// call `func` directly.
 template <typename R, typename... Args>
-inline std::enable_if_t<!std::is_void<R>::value, crypto_word_t> CheckImpl(
+inline std::enable_if_t<!std::is_void_v<R>, crypto_word_t> CheckImpl(
     Result *out, bool /* unwind */, R (*func)(Args...),
     typename DeductionGuard<Args>::Type... args) {
   *out = Result();
@@ -323,16 +324,16 @@ inline crypto_word_t CheckImpl(Result *out, bool /* unwind */,
 // FixVAArgsString takes a string like "f, 1, 2" and returns a string like
 // "f(1, 2)".
 //
-// This is needed because the |CHECK_ABI| macro below cannot be defined as
+// This is needed because the `CHECK_ABI` macro below cannot be defined as
 // CHECK_ABI(func, ...). The C specification requires that variadic macros bind
 // at least one variadic argument. Clang, GCC, and MSVC all ignore this, but
 // there are issues with trailing commas and different behaviors across
 // compilers.
 std::string FixVAArgsString(const char *str);
 
-// CheckGTest behaves like |CheckImpl|, but it returns the correct type and
-// raises GTest assertions on failure. If |unwind| is true and unwind tests are
-// enabled, |func| is single-stepped under an unwind test.
+// CheckGTest behaves like `CheckImpl`, but it returns the correct type and
+// raises GTest assertions on failure. If `unwind` is true and unwind tests are
+// enabled, `func` is single-stepped under an unwind test.
 template <typename R, typename... Args>
 inline R CheckGTest(const char *va_args_str, const char *file, int line,
                     bool unwind, R (*func)(Args...),
@@ -352,8 +353,8 @@ inline R CheckGTest(const char *va_args_str, const char *file, int line,
 
 }  // namespace internal
 
-// Check runs |func| on |args| and returns the result. If ABI-testing is
-// supported in this build configuration, it writes any ABI failures to |out|.
+// Check runs `func` on `args` and returns the result. If ABI-testing is
+// supported in this build configuration, it writes any ABI failures to `out`.
 // Otherwise, it runs the function transparently.
 template <typename R, typename... Args>
 inline R Check(Result *out, R (*func)(Args...),
@@ -375,7 +376,7 @@ bool UnwindTestsEnabled();
 // result. If ABI-testing is supported in this build configuration, it adds a
 // non-fatal GTest failure if the call did not satisfy ABI requirements.
 //
-// |CHECK_ABI| does return the value and thus may replace any function call,
+// `CHECK_ABI` does return the value and thus may replace any function call,
 // provided it takes only simple parameters. However, it is recommended to test
 // ABI separately from functional tests of assembly. Fully instrumenting a
 // function for ABI checking requires single-stepping the function, which is
@@ -386,24 +387,24 @@ bool UnwindTestsEnabled();
 // only a few instrumented calls are necessary.
 //
 // TODO(https://crbug.com/boringssl/259): Most of Windows assembly currently
-// fails SEH testing. For now, |CHECK_ABI| behaves like |CHECK_ABI_NO_UNWIND|
+// fails SEH testing. For now, `CHECK_ABI` behaves like `CHECK_ABI_NO_UNWIND`
 // on Windows. Functions which work with unwind testing on Windows should use
-// |CHECK_ABI_SEH|.
+// `CHECK_ABI_SEH`.
 #if defined(OPENSSL_WINDOWS)
 #define CHECK_ABI(...) CHECK_ABI_NO_UNWIND(__VA_ARGS__)
 #else
 #define CHECK_ABI(...) CHECK_ABI_SEH(__VA_ARGS__)
 #endif
 
-// CHECK_ABI_SEH behaves like |CHECK_ABI| but enables unwind testing on Windows.
-#define CHECK_ABI_SEH(...)                                               \
-  abi_test::internal::CheckGTest(#__VA_ARGS__, __FILE__, __LINE__, true, \
-                                 __VA_ARGS__)
+// CHECK_ABI_SEH behaves like `CHECK_ABI` but enables unwind testing on Windows.
+#define CHECK_ABI_SEH(...)                                                     \
+  bssl::abi_test::internal::CheckGTest(#__VA_ARGS__, __FILE__, __LINE__, true, \
+                                       __VA_ARGS__)
 
-// CHECK_ABI_NO_UNWIND behaves like |CHECK_ABI| but disables unwind testing.
-#define CHECK_ABI_NO_UNWIND(...)                                          \
-  abi_test::internal::CheckGTest(#__VA_ARGS__, __FILE__, __LINE__, false, \
-                                 __VA_ARGS__)
+// CHECK_ABI_NO_UNWIND behaves like `CHECK_ABI` but disables unwind testing.
+#define CHECK_ABI_NO_UNWIND(...)                                         \
+  bssl::abi_test::internal::CheckGTest(#__VA_ARGS__, __FILE__, __LINE__, \
+                                       false, __VA_ARGS__)
 
 
 // Internal functions.
@@ -415,12 +416,12 @@ struct Uncallable {
 
 extern "C" {
 
-// abi_test_trampoline loads callee-saved registers from |state|, calls |func|
-// with |argv|, then saves the callee-saved registers into |state|. It returns
-// the result of |func|. If |unwind| is non-zero, this function triggers unwind
+// abi_test_trampoline loads callee-saved registers from `state`, calls `func`
+// with `argv`, then saves the callee-saved registers into `state`. It returns
+// the result of `func`. If `unwind` is non-zero, this function triggers unwind
 // instrumentation.
 //
-// We give |func| type |crypto_word_t| to avoid tripping MSVC's warning 4191.
+// We give `func` type `crypto_word_t` to avoid tripping MSVC's warning 4191.
 crypto_word_t abi_test_trampoline(crypto_word_t func,
                                   abi_test::internal::CallerState *state,
                                   const crypto_word_t *argv, size_t argc,
@@ -428,55 +429,57 @@ crypto_word_t abi_test_trampoline(crypto_word_t func,
 
 #if defined(OPENSSL_X86_64)
 // abi_test_unwind_start points at the instruction that starts unwind testing in
-// |abi_test_trampoline|. This is the value of the instruction pointer at the
-// first |SIGTRAP| during unwind testing.
+// `abi_test_trampoline`. This is the value of the instruction pointer at the
+// first `SIGTRAP` during unwind testing.
 //
 // This symbol is not a function and should not be called.
 void abi_test_unwind_start(Uncallable);
 
 // abi_test_unwind_return points at the instruction immediately after the call in
-// |abi_test_trampoline|. When unwinding the function under test, this is the
-// expected address in the |abi_test_trampoline| frame. After this address, the
-// unwind tester should ignore |SIGTRAP| until |abi_test_unwind_stop|.
+// `abi_test_trampoline`. When unwinding the function under test, this is the
+// expected address in the `abi_test_trampoline` frame. After this address, the
+// unwind tester should ignore `SIGTRAP` until `abi_test_unwind_stop`.
 //
 // This symbol is not a function and should not be called.
 void abi_test_unwind_return(Uncallable);
 
 // abi_test_unwind_stop is the value of the instruction pointer at the final
-// |SIGTRAP| during unwind testing.
+// `SIGTRAP` during unwind testing.
 //
 // This symbol is not a function and should not be called.
 void abi_test_unwind_stop(Uncallable);
 
 // abi_test_bad_unwind_wrong_register preserves the ABI, but annotates the wrong
 // register in unwind metadata.
-void abi_test_bad_unwind_wrong_register(void);
+void abi_test_bad_unwind_wrong_register();
 
 // abi_test_bad_unwind_temporary preserves the ABI, but temporarily corrupts the
 // storage space for a saved register, breaking unwind.
-void abi_test_bad_unwind_temporary(void);
+void abi_test_bad_unwind_temporary();
 
 #if defined(OPENSSL_WINDOWS)
 // abi_test_bad_unwind_epilog preserves the ABI, and correctly annotates the
 // prolog, but the epilog does not match Win64's rules, breaking unwind during
 // the epilog.
-void abi_test_bad_unwind_epilog(void);
+void abi_test_bad_unwind_epilog();
 #endif
 #endif  // OPENSSL_X86_64
 
 #if defined(OPENSSL_X86_64) || defined(OPENSSL_X86)
 // abi_test_get_and_clear_direction_flag clears the direction flag. If the flag
 // was previously set, it returns one. Otherwise, it returns zero.
-int abi_test_get_and_clear_direction_flag(void);
+int abi_test_get_and_clear_direction_flag();
 
 // abi_test_set_direction_flag sets the direction flag. This does not conform to
-// ABI requirements and must only be called within a |CHECK_ABI| guard to avoid
+// ABI requirements and must only be called within a `CHECK_ABI` guard to avoid
 // errors later in the program.
-int abi_test_set_direction_flag(void);
+int abi_test_set_direction_flag();
 #endif  // OPENSSL_X86_64 || OPENSSL_X86
 
-}  // extern "C"
+}  // extern C
 #endif  // SUPPORTS_ABI_TEST
+
+BSSL_NAMESPACE_END
 
 
 #endif  // OPENSSL_HEADER_CRYPTO_TEST_ABI_TEST_H

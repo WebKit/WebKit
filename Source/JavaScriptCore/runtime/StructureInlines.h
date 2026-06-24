@@ -33,11 +33,13 @@
 #include <JavaScriptCore/PropertyTable.h>
 #include <JavaScriptCore/StringPrototype.h>
 #include <JavaScriptCore/StructureArrayStorageInlines.h>
+#include <JavaScriptCore/StructureCache.h>
 #include <JavaScriptCore/StructureChain.h>
 #include <JavaScriptCore/StructureCreateInlines.h>
 #include <JavaScriptCore/StructureInlinesLight.h>
 #include <JavaScriptCore/StructureRareDataInlines.h>
 #include <JavaScriptCore/SymbolPrototype.h>
+#include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WebAssemblyGCStructure.h>
 #include <JavaScriptCore/WriteBarrierInlines.h>
 #include <wtf/Threading.h>
@@ -615,6 +617,110 @@ inline void StructureTransitionTable::finalizeUnconditionally(VM& vm, Collection
             m_data = UsingSingleSlotFlag;
     }
 }
+
+inline void Structure::finishCreation(VM& vm, const Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
+{
+    this->finishCreation(vm);
+    if (previous->hasRareData()) {
+        const StructureRareData* previousRareData = previous->rareData();
+        if (previousRareData->hasSharedPolyProtoWatchpoint()) {
+            ensureRareData(vm);
+            rareData()->setSharedPolyProtoWatchpoint(previousRareData->copySharedPolyProtoWatchpoint());
+        }
+    }
+    previous->fireStructureTransitionWatchpoint(deferred);
+}
+
+IGNORE_RETURN_TYPE_WARNINGS_BEGIN
+ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, Concurrency concurrency, UniquedStringImpl* uid, unsigned& attributes)
+{
+    switch (concurrency) {
+    case Concurrency::MainThread:
+        ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+        return get(vm, uid, attributes);
+    case Concurrency::ConcurrentThread:
+        return getConcurrently(uid, attributes);
+    }
+}
+IGNORE_RETURN_TYPE_WARNINGS_END
+
+IGNORE_RETURN_TYPE_WARNINGS_BEGIN
+ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, Concurrency concurrency, UniquedStringImpl* uid)
+{
+    switch (concurrency) {
+    case Concurrency::MainThread:
+        ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+        return get(vm, uid);
+    case Concurrency::ConcurrentThread:
+        return getConcurrently(uid);
+    }
+}
+IGNORE_RETURN_TYPE_WARNINGS_END
+
+inline PropertyOffset Structure::getConcurrently(UniquedStringImpl* uid)
+{
+    unsigned attributesIgnored;
+    return getConcurrently(uid, attributesIgnored);
+}
+
+inline void Structure::startWatchingPropertyForReplacements(VM& vm, PropertyOffset offset)
+{
+    ensurePropertyReplacementWatchpointSet(vm, offset);
+}
+
+inline void Structure::startWatchingInternalPropertiesIfNecessary(VM& vm)
+{
+    if (didWatchInternalProperties()) [[likely]]
+        return;
+    startWatchingInternalProperties(vm);
+}
+
+inline JSCellButterfly* Structure::cachedPropertyNames(CachedPropertyNamesKind kind) const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData()->cachedPropertyNames(kind);
+}
+
+inline JSCellButterfly* Structure::cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData()->cachedPropertyNamesIgnoringSentinel(kind);
+}
+
+inline JSValue Structure::cachedSpecialProperty(CachedSpecialPropertyKey key)
+{
+    if (!hasRareData())
+        return JSValue();
+    return rareData()->cachedSpecialProperty(key);
+}
+
+inline void Structure::clearCachedPrototypeChain()
+{
+    m_cachedPrototypeChain.clear();
+    if (!hasRareData())
+        return;
+    rareData()->clearCachedPropertyNameEnumerator();
+}
+
+inline StructureFireDetail::StructureFireDetail(const Structure* structure)
+    : m_structure(structure)
+{
+}
+
+inline StructureTransitionTable::~StructureTransitionTable()
+{
+    if (!isUsingSingleSlot())
+        delete map();
+}
+
+inline StructureCache::StructureCache(VM& vm)
+    : m_structures(vm)
+{
+}
+
+inline StructureCache::~StructureCache() = default;
 
 } // namespace JSC
 

@@ -52,10 +52,10 @@ maybeEnterWebKitContainerSDK();
 setConfiguration();
 my $configuration = configuration();
 
-if (shouldUseFlatpak()) {
-    my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "run-javascriptcore-tests"));
-    runInFlatpak(@command);
+if (isLinux()) {
+    portName();
 }
+
 maybeUseContainerSDKRootDir();
 
 # These variables are intentionally left undefined.

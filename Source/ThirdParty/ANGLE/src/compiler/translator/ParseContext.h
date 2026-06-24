@@ -86,12 +86,15 @@ class TParseContext : angle::NonCopyable
     void *getScanner() const { return mScanner; }
     void setScanner(void *scanner) { mScanner = scanner; }
     int getShaderVersion() const { return mShaderVersion; }
-    void onShaderVersionDeclared(int version);
+    void onShaderVersionDeclared(const TSourceLoc &loc, int version);
+    bool checkShaderVersion(const TSourceLoc &loc);
+    bool checkCanUseShaderType(const TSourceLoc &loc);
     sh::GLenum getShaderType() const { return mShaderType; }
     ShShaderSpec getShaderSpec() const { return mShaderSpec; }
     int numErrors() const { return mDiagnostics->numErrors(); }
     void error(const TSourceLoc &loc, const char *reason, const char *token);
     void error(const TSourceLoc &loc, const char *reason, const ImmutableString &token);
+    void fatal(const TSourceLoc &loc, const char *reason);
     void warning(const TSourceLoc &loc, const char *reason, const char *token);
 
     // If isError is false, a warning will be reported instead.
@@ -912,6 +915,8 @@ class TParseContext : angle::NonCopyable
     // Keeps track of the total size of shader-private variables, if validating that this size
     // should not exceed a sensible threshold.
     angle::base::CheckedNumeric<size_t> mTotalPrivateVariablesSize;
+    // Tracks if a type has been validated as safe in checkVariableSize.
+    TMap<TType, bool> mValidatedVariableTypeSizes;
 
     // Track state related to control flow, used for various validation:
     //

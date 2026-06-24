@@ -384,6 +384,8 @@ void JSTestNamedSetterNoIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& anal
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestNamedSetterNoIdentifierOwner::JSTestNamedSetterNoIdentifierOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestNamedSetterNoIdentifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -396,7 +398,7 @@ void JSTestNamedSetterNoIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> hand
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedSetterNoIdentifier = static_cast<JSTestNamedSetterNoIdentifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestNamedSetterNoIdentifier->wrapped()).ptr(), jsTestNamedSetterNoIdentifier);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedSetterNoIdentifier->wrapped(), jsTestNamedSetterNoIdentifier);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

@@ -38,11 +38,9 @@ messages -> AudioVideoRendererRemoteMessageReceiver {
     SizeChanged(MediaTime time, WebCore::FloatSize size, struct WebKit::RemoteAudioVideoRendererState state)
     TrackNeedsReenqueuing(WebCore::SamplesRendererTrackIdentifier identifier, MediaTime time, struct WebKit::RemoteAudioVideoRendererState state)
     EffectiveRateChanged(struct WebKit::RemoteAudioVideoRendererState state)
-    StallTimeReached(MediaTime time, struct WebKit::RemoteAudioVideoRendererState state)
     TaskTimeReached(MediaTime time, struct WebKit::RemoteAudioVideoRendererState state)
     ErrorOccurred(WebCore::PlatformMediaError error)
     StateUpdate(struct WebKit::RemoteAudioVideoRendererState state)
-    TimeObserverUpdate(struct WebKit::RemoteAudioVideoRendererState state)
     UpdatePlaybackQualityMetrics(struct WebCore::VideoPlaybackQualityMetrics metrics)
 
 #if PLATFORM(COCOA)

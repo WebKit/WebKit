@@ -59,9 +59,7 @@ public:
     void reportErrorObject(JSC::JSValue);
 
     // JSCustomMarkFunction; for JSSubscriberCustom
-    Vector<VoidCallback*> teardownCallbacksConcurrently();
-    InternalObserver* NODELETE observerConcurrently();
-    void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&);
+    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
     explicit Subscriber(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);

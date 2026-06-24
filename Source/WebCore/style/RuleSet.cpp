@@ -51,6 +51,7 @@
 #include "StyleSheetContents.h"
 #include "UserAgentParts.h"
 #include <ranges>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 namespace Style {
@@ -59,7 +60,11 @@ using namespace HTMLNames;
 
 RuleSet::RuleSet() = default;
 
-RuleSet::~RuleSet() = default;
+RuleSet::~RuleSet()
+{
+    RELEASE_ASSERT(isMainThread());
+    RELEASE_ASSERT(!m_isBuilding);
+}
 
 void RuleSet::addToRuleSet(const AtomString& key, AtomRuleMap& map, const RuleData& ruleData)
 {
@@ -197,6 +202,7 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
     const CSSSelector* pickerPseudoElementSelector = nullptr;
     const CSSSelector* namedPseudoElementSelector = nullptr;
     const CSSSelector* otherPseudoElementSelector = nullptr;
+    const CSSSelector* headingPseudoClassSelector = nullptr;
 #if ENABLE(VIDEO)
     const CSSSelector* cuePseudoElementSelector = nullptr;
 #endif
@@ -300,6 +306,9 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
                 case CSSSelector::PseudoClass::Scope:
                     m_hasHostOrScopePseudoClassRulesInUniversalBucket = true;
                     break;
+                case CSSSelector::PseudoClass::Heading:
+                    headingPseudoClassSelector = current;
+                    break;
                 case CSSSelector::PseudoClass::Is:
                 case CSSSelector::PseudoClass::Where: {
                     auto* selectorList = current->selectorList();
@@ -396,7 +405,7 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
             cueBackgroundSelector->setPseudoElement(CSSSelector::PseudoElement::UserAgentPart);
             cueBackgroundSelector->setValue(UserAgentParts::internalCueBackground());
 
-            Ref cueBackgroundStyleRule = StyleRule::create(ruleData.styleRule().properties().immutableCopyIfNeeded(), ruleData.styleRule().hasDocumentSecurityOrigin(), CSSSelectorList { MutableCSSSelectorList::from(WTF::move(cueBackgroundSelector)) });
+            Ref cueBackgroundStyleRule = StyleRule::create(protect(ruleData.styleRule())->properties().immutableCopyIfNeeded(), ruleData.styleRule().hasDocumentSecurityOrigin(), CSSSelectorList { MutableCSSSelectorList::from(WTF::move(cueBackgroundSelector)) });
 
             // Warning: Recursion!
             addRule(WTF::move(cueBackgroundStyleRule), 0, 0);
@@ -460,6 +469,39 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
         addToRuleSet(tagSelector->tagQName().localName(), m_tagLocalNameRules, ruleData);
         addToRuleSet(tagSelector->tagLowercaseLocalName(), m_tagLowercaseLocalNameRules, ruleData);
         return;
+    }
+
+    if (headingPseudoClassSelector) {
+        std::array<bool, 7> wantedLevel { };
+        if (auto* integerList = headingPseudoClassSelector->integerList()) {
+            for (int level : *integerList) {
+                if (level >= 1 && level <= 6)
+                    wantedLevel[level] = true;
+            }
+        } else {
+            for (unsigned level = 1; level <= 6; ++level)
+                wantedLevel[level] = true;
+        }
+        bool addedToAnyBucket = false;
+        for (unsigned level = 1; level <= 6; ++level) {
+            if (!wantedLevel[level])
+                continue;
+            auto& tag = [&] -> const HTMLQualifiedName& {
+                switch (level) {
+                case 1: return HTMLNames::h1Tag;
+                case 2: return HTMLNames::h2Tag;
+                case 3: return HTMLNames::h3Tag;
+                case 4: return HTMLNames::h4Tag;
+                case 5: return HTMLNames::h5Tag;
+                default: return HTMLNames::h6Tag;
+                }
+            }();
+            addToRuleSet(tag.localName(), m_tagLocalNameRules, ruleData);
+            addToRuleSet(tag.localName(), m_tagLowercaseLocalNameRules, ruleData);
+            addedToAnyBucket = true;
+        }
+        if (addedToAnyBucket)
+            return;
     }
 
     auto addUniversalPseudoElement = [&] {

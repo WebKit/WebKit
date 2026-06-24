@@ -1,4 +1,0 @@
-
-
-PASS using location.href to navigate same-document targeting a same-origin-domain (but cross-origin) window
-

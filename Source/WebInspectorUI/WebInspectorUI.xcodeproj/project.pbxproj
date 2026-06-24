@@ -38,6 +38,7 @@
 		1C60FF1914E73C64006CD77D /* combine-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "combine-resources.pl"; sourceTree = "<group>"; };
 		1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "remove-console-asserts.pl"; sourceTree = "<group>"; };
 		1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "copy-user-interface-resources.pl"; sourceTree = "<group>"; };
+		D1F11E5314E73C64006CD901 /* generate-userinterface-depfile.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "generate-userinterface-depfile.sh"; sourceTree = "<group>"; };
 		1C78EE131760E115002F6AA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C78EE1617611340002F6AA5 /* WebInspectorUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUI.cpp; sourceTree = "<group>"; };
 		BF0A00042E18A0A10063278B /* WebInspectorUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUI.h; sourceTree = "<group>"; };
@@ -71,6 +72,7 @@
 			children = (
 				1C60FF1914E73C64006CD77D /* combine-resources.pl */,
 				1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */,
+				D1F11E5314E73C64006CD901 /* generate-userinterface-depfile.sh */,
 				1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */,
 			);
 			path = Scripts;
@@ -137,7 +139,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 2700;
 				ORGANIZATIONNAME = Apple;
 			};
 			buildConfigurationList = A54C2250148B23DE00373FA3 /* Build configuration list for PBXProject "WebInspectorUI" */;
@@ -183,12 +185,13 @@
 /* Begin PBXShellScriptBuildPhase section */
 		1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
+			dependencyFile = "$(DERIVED_FILE_DIR)/UserInterface.d";
 			files = (
 			);
 			inputPaths = (
 				"$(SRCROOT)/UserInterface",
+				"$(SRCROOT)/Scripts/generate-userinterface-depfile.sh",
 				"$(SRCROOT)/Scripts/copy-user-interface-resources.pl",
 				"$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/InspectorBackendCommands.js",
 			);
@@ -198,7 +201,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${ACTION}\" == \"installapi\" || \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit\nfi\n\n/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"\ntouch \"${DERIVED_FILE_DIR}/copy-user-interface-resources.stamp\"\n";
+			shellScript = "set -e\n\ndepfile=\"${DERIVED_FILE_DIR}/UserInterface.d\"\n\nif [[ \"${ACTION}\" == \"installapi\" || \"${ACTION}\" == \"installhdrs\" ]]; then\n    echo \"dependencies: \" > \"${depfile}\"\n    exit\nfi\n\n\"${SRCROOT}/Scripts/generate-userinterface-depfile.sh\" \"${depfile}\"\n\n/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"\ntouch \"${DERIVED_FILE_DIR}/copy-user-interface-resources.stamp\"\n";
 		};
 		6577FFC9276ACA680011AEC8 /* Create Symlink to Cryptex Path */ = {
 			isa = PBXShellScriptBuildPhase;

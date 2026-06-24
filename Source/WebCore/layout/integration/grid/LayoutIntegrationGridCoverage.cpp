@@ -46,6 +46,7 @@ enum class ReasonCollectionMode : bool {
 
 enum class GridAvoidanceReason : uint8_t {
     GridHasVerticalWritingMode,
+    GridHasRTLDirection, // http://webkit.org/b/317334
     GridHasMarginTrim,
     GridNeedsBaseline,
     GridHasOutOfFlowChild,
@@ -60,12 +61,15 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasContainsSize,
     GridHasUnsupportedGridTemplateColumns,
     GridHasUnsupportedGridTemplateRows,
+    GridHasUnsupportedJustifyContent,
+    GridHasUnsupportedAlignContent,
     GridItemHasNonInitialMaxWidth,
     GridItemHasNonInitialMaxHeight,
     GridItemHasBorder,
     GridItemHasPadding,
     GridItemHasMargin,
     GridItemHasVerticalWritingMode,
+    GridItemHasRTLDirection,
     GridItemHasAspectRatio,
     GridItemHasUnsupportedInlineAxisAlignment,
     GridItemHasUnsupportedBlockAxisAlignment,
@@ -285,6 +289,9 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     if (!renderGridStyle->writingMode().isHorizontal())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasVerticalWritingMode, reasons, reasonCollectionMode);
 
+    if (renderGridStyle->writingMode().bidiDirection() == TextDirection::RTL)
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasRTLDirection, reasons, reasonCollectionMode);
+
     if (!renderGridStyle->marginTrim().isNone())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasMarginTrim, reasons, reasonCollectionMode);
 
@@ -391,6 +398,12 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     if (renderGridStyle->usedContain().contains(Style::ContainValue::Size))
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasContainsSize, reasons, reasonCollectionMode);
+
+    if (!renderGridStyle->justifyContent().isNormal())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedJustifyContent, reasons, reasonCollectionMode);
+
+    if (!renderGridStyle->alignContent().isNormal())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedAlignContent, reasons, reasonCollectionMode);
 
     ASSERT(renderGridStyle->gridAutoFlow().isRow(),
         "If we end up supporting column auto flow before broader implicit grid support then the logic using explicitlyPlacedItemsInRowCount will need to be reworked to be based upon the auto flow direction");
@@ -554,6 +567,9 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (gridItemStyle->writingMode().isVertical())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasVerticalWritingMode, reasons, reasonCollectionMode);
 
+        if (gridItemStyle->writingMode().bidiDirection() == TextDirection::RTL)
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasRTLDirection, reasons, reasonCollectionMode);
+
         if (gridItem->isOutOfFlowPositioned())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasOutOfFlowChild, reasons, reasonCollectionMode);
 
@@ -610,6 +626,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridHasVerticalWritingMode:
         stream << "grid has vertical writing mode";
         break;
+    case GridAvoidanceReason::GridHasRTLDirection:
+        stream << "grid has RTL direction";
+        break;
     case GridAvoidanceReason::GridHasMarginTrim:
         stream << "grid has margin-trim";
         break;
@@ -652,6 +671,12 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridHasUnsupportedGridTemplateRows:
         stream << "grid has unsupported grid-template-rows";
         break;
+    case GridAvoidanceReason::GridHasUnsupportedJustifyContent:
+        stream << "grid has unsupported justify-content";
+        break;
+    case GridAvoidanceReason::GridHasUnsupportedAlignContent:
+        stream << "grid has unsupported align-content";
+        break;
     case GridAvoidanceReason::GridItemHasUnsupportedWidthValue:
         stream << "grid item has unsupported width value";
         break;
@@ -681,6 +706,9 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridItemHasVerticalWritingMode:
         stream << "grid item has vertical writing mode";
+        break;
+    case GridAvoidanceReason::GridItemHasRTLDirection:
+        stream << "grid item has RTL direction";
         break;
     case GridAvoidanceReason::GridItemHasAspectRatio:
         stream << "grid item has aspect-ratio";

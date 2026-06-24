@@ -12,10 +12,9 @@ rtc_source_set("rtp_source") {
   visibility = [ "*" ]
   sources = [ "rtp_source.h" ]
   deps = [
-    "../../../api:rtp_headers",
-    "../../../api/units:time_delta",
-    "../../../api/units:timestamp",
-    "../../../rtc_base:checks",
+    "../..:rtp_headers",
+    "../../units:time_delta",
+    "../../units:timestamp",
     "//third_party/abseil-cpp/absl/strings:str_format",
   ]
 }
@@ -41,7 +40,6 @@ rtc_library("corruption_detection_message") {
     "corruption_detection_message.h",
   ]
   deps = [
-    "../../:array_view",
     "../../../rtc_base:checks",
     "../../video/corruption_detection:frame_instrumentation_data",
     "//third_party/abseil-cpp/absl/container:inlined_vector",

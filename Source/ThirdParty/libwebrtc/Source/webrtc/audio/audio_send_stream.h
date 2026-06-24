@@ -15,13 +15,14 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/call/bitrate_allocation.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_sender_interface.h"
 #include "api/scoped_refptr.h"
@@ -103,7 +104,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   webrtc::AudioSendStream::Stats GetStats(
       bool has_remote_tracks) const override;
 
-  void DeliverRtcp(ArrayView<const uint8_t> packet);
+  void DeliverRtcp(std::span<const uint8_t> packet);
 
   // Implements BitrateAllocatorObserver.
   uint32_t OnBitrateUpdated(BitrateAllocationUpdate update) override;
@@ -193,21 +194,22 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   RtpRtcpInterface* const rtp_rtcp_module_;
   std::optional<RtpState> const suspended_rtp_state_;
 
-  // RFC 5285: Each distinct extension MUST have a unique ID. The value 0 is
-  // reserved for padding and MUST NOT be used as a local identifier.
-  // So it should be safe to use 0 here to indicate "not configured".
+  // RFC 8285: Each distinct extension MUST have a unique ID.
+  // The ID is picked in the SDP offer/answer process; if no ID is
+  // picked, the extension cannot be used.
   struct ExtensionIds {
-    int audio_level = 0;
-    int abs_send_time = 0;
-    int abs_capture_time = 0;
-    int transport_sequence_number = 0;
-    int mid = 0;
-    int rid = 0;
-    int repaired_rid = 0;
+    RtpHeaderExtensionId audio_level = RtpHeaderExtensionId::NotSet();
+    RtpHeaderExtensionId abs_send_time = RtpHeaderExtensionId::NotSet();
+    RtpHeaderExtensionId abs_capture_time = RtpHeaderExtensionId::NotSet();
+    RtpHeaderExtensionId transport_sequence_number =
+        RtpHeaderExtensionId::NotSet();
+    RtpHeaderExtensionId mid = RtpHeaderExtensionId::NotSet();
+    RtpHeaderExtensionId rid = RtpHeaderExtensionId::NotSet();
+    RtpHeaderExtensionId repaired_rid = RtpHeaderExtensionId::NotSet();
   };
   static ExtensionIds FindExtensionIds(
       const std::vector<RtpExtension>& extensions);
-  static int TransportSeqNumId(const Config& config);
+  static RtpHeaderExtensionId TransportSeqNumId(const Config& config);
 
   // Current transport overhead (ICE, TURN, etc.)
   size_t transport_overhead_per_packet_bytes_

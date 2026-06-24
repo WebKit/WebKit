@@ -117,6 +117,8 @@ private:
     void setReconfiguring(bool isReconfiguring) { m_isReconfiguring = isReconfiguring; }
     bool isReconfiguring() const { return m_isReconfiguring; }
 
+    void trackWasReplaced(const String& previousId, const String& newId);
+
     void tearDown();
 
     UDPPortsRange udpPortsRange() const { return m_udpPortsRange; }

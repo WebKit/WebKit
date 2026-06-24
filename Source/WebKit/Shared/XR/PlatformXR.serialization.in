@@ -324,6 +324,11 @@ header: <WebCore/PlatformXR.h>
 };
 
 header: <WebCore/PlatformXR.h>
+[Nested] struct PlatformXR::DeviceLayer::CubeLayerData {
+    PlatformXR::FrameData::FloatQuaternion orientation;
+};
+
+header: <WebCore/PlatformXR.h>
 [CustomHeader] struct PlatformXR::DeviceLayer {
     PlatformXR::LayerHandle handle;
     bool visible;
@@ -335,6 +340,7 @@ header: <WebCore/PlatformXR.h>
     std::optional<PlatformXR::DeviceLayer::QuadLayerData> quadLayerData;
     std::optional<PlatformXR::DeviceLayer::EquirectLayerData> equirectLayerData;
     std::optional<PlatformXR::DeviceLayer::CylinderLayerData> cylinderLayerData;
+    std::optional<PlatformXR::DeviceLayer::CubeLayerData> cubeLayerData;
 #endif
 };
 #endif
@@ -349,10 +355,12 @@ enum class PlatformXR::CompositionLayerType : uint8_t {
     Quad,
     Equirect,
     Cylinder,
+    Cube,
 };
 
 enum class PlatformXR::LayerLayout : uint8_t {
     Mono,
+    Stereo,
     StereoLeftRight,
     StereoTopBottom,
 };

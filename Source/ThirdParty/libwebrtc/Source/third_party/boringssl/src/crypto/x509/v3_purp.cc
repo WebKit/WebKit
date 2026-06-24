@@ -19,11 +19,14 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 #include <openssl/obj.h>
+#include <openssl/stack.h>
 #include <openssl/x509.h>
 
 #include "../internal.h"
 #include "internal.h"
 
+
+using namespace bssl;
 
 struct x509_purpose_st {
   int purpose;
@@ -33,10 +36,12 @@ struct x509_purpose_st {
 } /* X509_PURPOSE */;
 
 #define V1_ROOT (EXFLAG_V1 | EXFLAG_SS)
-#define ku_reject(x, usage) \
-  (((x)->ex_flags & EXFLAG_KUSAGE) && !((x)->ex_kusage & (usage)))
-#define xku_reject(x, usage) \
-  (((x)->ex_flags & EXFLAG_XKUSAGE) && !((x)->ex_xkusage & (usage)))
+#define ku_reject(x, usage)                     \
+  ((FromOpaque(x)->ex_flags & EXFLAG_KUSAGE) && \
+   !(FromOpaque(x)->ex_kusage & (usage)))
+#define xku_reject(x, usage)                     \
+  ((FromOpaque(x)->ex_flags & EXFLAG_XKUSAGE) && \
+   !(FromOpaque(x)->ex_xkusage & (usage)))
 
 static int check_ca(const X509 *x);
 static int check_purpose_ssl_client(const X509_PURPOSE *xp, const X509 *x,
@@ -125,7 +130,7 @@ int X509_PURPOSE_get_by_sname(const char *sname) {
 
 int X509_PURPOSE_get_id(const X509_PURPOSE *xp) { return xp->purpose; }
 
-int X509_PURPOSE_get_trust(const X509_PURPOSE *xp) { return xp->trust; }
+int bssl::X509_PURPOSE_get_trust(const X509_PURPOSE *xp) { return xp->trust; }
 
 int X509_supported_extension(const X509_EXTENSION *ex) {
   int nid = OBJ_obj2nid(X509_EXTENSION_get_object(ex));
@@ -161,169 +166,170 @@ static int setup_dp(X509 *x, DIST_POINT *dp) {
 
 static int setup_crldp(X509 *x) {
   int j;
-  x->crldp = reinterpret_cast<STACK_OF(DIST_POINT) *>(
+  auto *impl = FromOpaque(x);
+  impl->crldp = reinterpret_cast<STACK_OF(DIST_POINT) *>(
       X509_get_ext_d2i(x, NID_crl_distribution_points, &j, nullptr));
-  if (x->crldp == nullptr && j != -1) {
+  if (impl->crldp == nullptr && j != -1) {
     return 0;
   }
-  for (size_t i = 0; i < sk_DIST_POINT_num(x->crldp); i++) {
-    if (!setup_dp(x, sk_DIST_POINT_value(x->crldp, i))) {
+  for (size_t i = 0; i < sk_DIST_POINT_num(impl->crldp); i++) {
+    if (!setup_dp(x, sk_DIST_POINT_value(impl->crldp, i))) {
       return 0;
     }
   }
   return 1;
 }
 
-int x509v3_cache_extensions(X509 *x) {
+int bssl::x509v3_cache_extensions(X509 *x) {
   BASIC_CONSTRAINTS *bs;
   ASN1_BIT_STRING *usage;
   EXTENDED_KEY_USAGE *extusage;
   size_t i;
   int j;
 
-  CRYPTO_MUTEX_lock_read(&x->lock);
-  const int is_set = x->ex_flags & EXFLAG_SET;
-  CRYPTO_MUTEX_unlock_read(&x->lock);
+  auto *impl = FromOpaque(x);
+  impl->lock.LockRead();
+  const int is_set = impl->ex_flags & EXFLAG_SET;
+  impl->lock.UnlockRead();
 
   if (is_set) {
-    return (x->ex_flags & EXFLAG_INVALID) == 0;
+    return (impl->ex_flags & EXFLAG_INVALID) == 0;
   }
 
-  CRYPTO_MUTEX_lock_write(&x->lock);
-  if (x->ex_flags & EXFLAG_SET) {
-    CRYPTO_MUTEX_unlock_write(&x->lock);
-    return (x->ex_flags & EXFLAG_INVALID) == 0;
+  MutexWriteLock lock(&impl->lock);
+  if (impl->ex_flags & EXFLAG_SET) {
+    return (impl->ex_flags & EXFLAG_INVALID) == 0;
   }
 
-  if (!X509_digest(x, EVP_sha256(), x->cert_hash, nullptr)) {
-    x->ex_flags |= EXFLAG_INVALID;
+  if (!X509_digest(x, EVP_sha256(), impl->cert_hash, nullptr)) {
+    impl->ex_flags |= EXFLAG_INVALID;
   }
   // V1 should mean no extensions ...
   if (X509_get_version(x) == X509_VERSION_1) {
-    x->ex_flags |= EXFLAG_V1;
+    impl->ex_flags |= EXFLAG_V1;
   }
   // Handle basic constraints
   if ((bs = reinterpret_cast<BASIC_CONSTRAINTS *>(
            X509_get_ext_d2i(x, NID_basic_constraints, &j, nullptr)))) {
     if (bs->ca) {
-      x->ex_flags |= EXFLAG_CA;
+      impl->ex_flags |= EXFLAG_CA;
     }
     if (bs->pathlen) {
       if ((bs->pathlen->type == V_ASN1_NEG_INTEGER) || !bs->ca) {
-        x->ex_flags |= EXFLAG_INVALID;
-        x->ex_pathlen = 0;
+        impl->ex_flags |= EXFLAG_INVALID;
+        impl->ex_pathlen = 0;
       } else {
         // TODO(davidben): |ASN1_INTEGER_get| returns -1 on overflow,
         // which currently acts as if the constraint isn't present. This
         // works (an overflowing path length constraint may as well be
         // infinity), but Chromium's verifier simply treats values above
         // 255 as an error.
-        x->ex_pathlen = ASN1_INTEGER_get(bs->pathlen);
+        impl->ex_pathlen = ASN1_INTEGER_get(bs->pathlen);
       }
     } else {
-      x->ex_pathlen = -1;
+      impl->ex_pathlen = -1;
     }
     BASIC_CONSTRAINTS_free(bs);
-    x->ex_flags |= EXFLAG_BCONS;
+    impl->ex_flags |= EXFLAG_BCONS;
   } else if (j != -1) {
-    x->ex_flags |= EXFLAG_INVALID;
+    impl->ex_flags |= EXFLAG_INVALID;
   }
   // Handle key usage
   if ((usage = reinterpret_cast<ASN1_BIT_STRING *>(
            X509_get_ext_d2i(x, NID_key_usage, &j, nullptr)))) {
     if (usage->length > 0) {
-      x->ex_kusage = usage->data[0];
+      impl->ex_kusage = usage->data[0];
       if (usage->length > 1) {
-        x->ex_kusage |= usage->data[1] << 8;
+        impl->ex_kusage |= usage->data[1] << 8;
       }
     } else {
-      x->ex_kusage = 0;
+      impl->ex_kusage = 0;
     }
-    x->ex_flags |= EXFLAG_KUSAGE;
+    impl->ex_flags |= EXFLAG_KUSAGE;
     ASN1_BIT_STRING_free(usage);
   } else if (j != -1) {
-    x->ex_flags |= EXFLAG_INVALID;
+    impl->ex_flags |= EXFLAG_INVALID;
   }
-  x->ex_xkusage = 0;
+  impl->ex_xkusage = 0;
   if ((extusage = reinterpret_cast<EXTENDED_KEY_USAGE *>(
            X509_get_ext_d2i(x, NID_ext_key_usage, &j, nullptr)))) {
-    x->ex_flags |= EXFLAG_XKUSAGE;
+    impl->ex_flags |= EXFLAG_XKUSAGE;
     for (i = 0; i < sk_ASN1_OBJECT_num(extusage); i++) {
       switch (OBJ_obj2nid(sk_ASN1_OBJECT_value(extusage, i))) {
         case NID_server_auth:
-          x->ex_xkusage |= XKU_SSL_SERVER;
+          impl->ex_xkusage |= XKU_SSL_SERVER;
           break;
 
         case NID_client_auth:
-          x->ex_xkusage |= XKU_SSL_CLIENT;
+          impl->ex_xkusage |= XKU_SSL_CLIENT;
           break;
 
         case NID_email_protect:
-          x->ex_xkusage |= XKU_SMIME;
+          impl->ex_xkusage |= XKU_SMIME;
           break;
 
         case NID_code_sign:
-          x->ex_xkusage |= XKU_CODE_SIGN;
+          impl->ex_xkusage |= XKU_CODE_SIGN;
           break;
 
         case NID_ms_sgc:
         case NID_ns_sgc:
-          x->ex_xkusage |= XKU_SGC;
+          impl->ex_xkusage |= XKU_SGC;
           break;
 
         case NID_OCSP_sign:
-          x->ex_xkusage |= XKU_OCSP_SIGN;
+          impl->ex_xkusage |= XKU_OCSP_SIGN;
           break;
 
         case NID_time_stamp:
-          x->ex_xkusage |= XKU_TIMESTAMP;
+          impl->ex_xkusage |= XKU_TIMESTAMP;
           break;
 
         case NID_dvcs:
-          x->ex_xkusage |= XKU_DVCS;
+          impl->ex_xkusage |= XKU_DVCS;
           break;
 
         case NID_anyExtendedKeyUsage:
-          x->ex_xkusage |= XKU_ANYEKU;
+          impl->ex_xkusage |= XKU_ANYEKU;
           break;
       }
     }
     sk_ASN1_OBJECT_pop_free(extusage, ASN1_OBJECT_free);
   } else if (j != -1) {
-    x->ex_flags |= EXFLAG_INVALID;
+    impl->ex_flags |= EXFLAG_INVALID;
   }
 
-  x->skid = reinterpret_cast<ASN1_OCTET_STRING *>(
+  impl->skid = reinterpret_cast<ASN1_OCTET_STRING *>(
       X509_get_ext_d2i(x, NID_subject_key_identifier, &j, nullptr));
-  if (x->skid == nullptr && j != -1) {
-    x->ex_flags |= EXFLAG_INVALID;
+  if (impl->skid == nullptr && j != -1) {
+    impl->ex_flags |= EXFLAG_INVALID;
   }
-  x->akid = reinterpret_cast<AUTHORITY_KEYID *>(
+  impl->akid = reinterpret_cast<AUTHORITY_KEYID *>(
       X509_get_ext_d2i(x, NID_authority_key_identifier, &j, nullptr));
-  if (x->akid == nullptr && j != -1) {
-    x->ex_flags |= EXFLAG_INVALID;
+  if (impl->akid == nullptr && j != -1) {
+    impl->ex_flags |= EXFLAG_INVALID;
   }
   // Does subject name match issuer ?
   if (!X509_NAME_cmp(X509_get_subject_name(x), X509_get_issuer_name(x))) {
-    x->ex_flags |= EXFLAG_SI;
+    impl->ex_flags |= EXFLAG_SI;
     // If SKID matches AKID also indicate self signed
-    if (X509_check_akid(x, x->akid) == X509_V_OK &&
+    if (X509_check_akid(x, impl->akid) == X509_V_OK &&
         !ku_reject(x, X509v3_KU_KEY_CERT_SIGN)) {
-      x->ex_flags |= EXFLAG_SS;
+      impl->ex_flags |= EXFLAG_SS;
     }
   }
-  x->altname = reinterpret_cast<STACK_OF(GENERAL_NAME) *>(
+  impl->altname = reinterpret_cast<STACK_OF(GENERAL_NAME) *>(
       X509_get_ext_d2i(x, NID_subject_alt_name, &j, nullptr));
-  if (x->altname == nullptr && j != -1) {
-    x->ex_flags |= EXFLAG_INVALID;
+  if (impl->altname == nullptr && j != -1) {
+    impl->ex_flags |= EXFLAG_INVALID;
   }
-  x->nc = reinterpret_cast<NAME_CONSTRAINTS *>(
+  impl->nc = reinterpret_cast<NAME_CONSTRAINTS *>(
       X509_get_ext_d2i(x, NID_name_constraints, &j, nullptr));
-  if (x->nc == nullptr && j != -1) {
-    x->ex_flags |= EXFLAG_INVALID;
+  if (impl->nc == nullptr && j != -1) {
+    impl->ex_flags |= EXFLAG_INVALID;
   }
   if (!setup_crldp(x)) {
-    x->ex_flags |= EXFLAG_INVALID;
+    impl->ex_flags |= EXFLAG_INVALID;
   }
 
   for (j = 0; j < X509_get_ext_count(x); j++) {
@@ -332,14 +338,13 @@ int x509v3_cache_extensions(X509 *x) {
       continue;
     }
     if (!X509_supported_extension(ex)) {
-      x->ex_flags |= EXFLAG_CRITICAL;
+      impl->ex_flags |= EXFLAG_CRITICAL;
       break;
     }
   }
-  x->ex_flags |= EXFLAG_SET;
+  impl->ex_flags |= EXFLAG_SET;
 
-  CRYPTO_MUTEX_unlock_write(&x->lock);
-  return (x->ex_flags & EXFLAG_INVALID) == 0;
+  return (impl->ex_flags & EXFLAG_INVALID) == 0;
 }
 
 // check_ca returns one if |x| should be considered a CA certificate and zero
@@ -350,11 +355,12 @@ static int check_ca(const X509 *x) {
     return 0;
   }
   // Version 1 certificates are considered CAs and don't have extensions.
-  if ((x->ex_flags & V1_ROOT) == V1_ROOT) {
+  const auto *impl = FromOpaque(x);
+  if ((impl->ex_flags & V1_ROOT) == V1_ROOT) {
     return 1;
   }
   // Otherwise, it's only a CA if basicConstraints says so.
-  return ((x->ex_flags & EXFLAG_BCONS) && (x->ex_flags & EXFLAG_CA));
+  return ((impl->ex_flags & EXFLAG_BCONS) && (impl->ex_flags & EXFLAG_CA));
 }
 
 int X509_check_ca(const X509 *x) {
@@ -432,10 +438,11 @@ static int check_purpose_timestamp_sign(const X509_PURPOSE *xp, const X509 *x,
   // if Key Usage is present, it must be one of digitalSignature
   // and/or nonRepudiation (other values are not consistent and shall
   // be rejected).
-  if ((x->ex_flags & EXFLAG_KUSAGE) &&
-      ((x->ex_kusage &
+  const auto *impl = FromOpaque(x);
+  if ((impl->ex_flags & EXFLAG_KUSAGE) &&
+      ((impl->ex_kusage &
         ~(X509v3_KU_NON_REPUDIATION | X509v3_KU_DIGITAL_SIGNATURE)) ||
-       !(x->ex_kusage &
+       !(impl->ex_kusage &
          (X509v3_KU_NON_REPUDIATION | X509v3_KU_DIGITAL_SIGNATURE)))) {
     return 0;
   }
@@ -443,7 +450,7 @@ static int check_purpose_timestamp_sign(const X509_PURPOSE *xp, const X509 *x,
   // Only time stamp key usage is permitted and it's required.
   //
   // TODO(davidben): Should we check EKUs up the chain like the other cases?
-  if (!(x->ex_flags & EXFLAG_XKUSAGE) || x->ex_xkusage != XKU_TIMESTAMP) {
+  if (!(impl->ex_flags & EXFLAG_XKUSAGE) || impl->ex_xkusage != XKU_TIMESTAMP) {
     return 0;
   }
 
@@ -471,8 +478,9 @@ int X509_check_issued(const X509 *issuer, const X509 *subject) {
     return X509_V_ERR_UNSPECIFIED;
   }
 
-  if (subject->akid) {
-    int ret = X509_check_akid(issuer, subject->akid);
+  const auto *subject_impl = FromOpaque(subject);
+  if (subject_impl->akid) {
+    int ret = X509_check_akid(issuer, subject_impl->akid);
     if (ret != X509_V_OK) {
       return ret;
     }
@@ -484,14 +492,15 @@ int X509_check_issued(const X509 *issuer, const X509 *subject) {
   return X509_V_OK;
 }
 
-int X509_check_akid(const X509 *issuer, const AUTHORITY_KEYID *akid) {
+int bssl::X509_check_akid(const X509 *issuer, const AUTHORITY_KEYID *akid) {
   if (!akid) {
     return X509_V_OK;
   }
 
   // Check key ids (if present)
-  if (akid->keyid && issuer->skid &&
-      ASN1_OCTET_STRING_cmp(akid->keyid, issuer->skid)) {
+  auto *issuer_impl = FromOpaque(issuer);
+  if (akid->keyid && issuer_impl->skid &&
+      ASN1_OCTET_STRING_cmp(akid->keyid, issuer_impl->skid)) {
     return X509_V_ERR_AKID_SKID_MISMATCH;
   }
   // Check serial number
@@ -519,18 +528,20 @@ int X509_check_akid(const X509 *issuer, const AUTHORITY_KEYID *akid) {
 }
 
 uint32_t X509_get_extension_flags(X509 *x) {
-  // Ignore the return value. On failure, |x->ex_flags| will include
+  // Ignore the return value. On failure, |impl->ex_flags| will include
   // |EXFLAG_INVALID|.
   x509v3_cache_extensions(x);
-  return x->ex_flags;
+  const auto *impl = FromOpaque(x);
+  return impl->ex_flags;
 }
 
 uint32_t X509_get_key_usage(X509 *x) {
   if (!x509v3_cache_extensions(x)) {
     return 0;
   }
-  if (x->ex_flags & EXFLAG_KUSAGE) {
-    return x->ex_kusage;
+  const auto *impl = FromOpaque(x);
+  if (impl->ex_flags & EXFLAG_KUSAGE) {
+    return impl->ex_kusage;
   }
   // If there is no extension, key usage is unconstrained, so set all bits to
   // one. Note that, although we use |UINT32_MAX|, |ex_kusage| only contains the
@@ -542,8 +553,9 @@ uint32_t X509_get_extended_key_usage(X509 *x) {
   if (!x509v3_cache_extensions(x)) {
     return 0;
   }
-  if (x->ex_flags & EXFLAG_XKUSAGE) {
-    return x->ex_xkusage;
+  const auto *impl = FromOpaque(x);
+  if (impl->ex_flags & EXFLAG_XKUSAGE) {
+    return impl->ex_xkusage;
   }
   // If there is no extension, extended key usage is unconstrained, so set all
   // bits to one.
@@ -554,33 +566,38 @@ const ASN1_OCTET_STRING *X509_get0_subject_key_id(X509 *x509) {
   if (!x509v3_cache_extensions(x509)) {
     return nullptr;
   }
-  return x509->skid;
+  auto *impl = FromOpaque(x509);
+  return impl->skid;
 }
 
 const ASN1_OCTET_STRING *X509_get0_authority_key_id(X509 *x509) {
   if (!x509v3_cache_extensions(x509)) {
     return nullptr;
   }
-  return x509->akid != nullptr ? x509->akid->keyid : nullptr;
+  auto *impl = FromOpaque(x509);
+  return impl->akid != nullptr ? impl->akid->keyid : nullptr;
 }
 
 const GENERAL_NAMES *X509_get0_authority_issuer(X509 *x509) {
   if (!x509v3_cache_extensions(x509)) {
     return nullptr;
   }
-  return x509->akid != nullptr ? x509->akid->issuer : nullptr;
+  auto *impl = FromOpaque(x509);
+  return impl->akid != nullptr ? impl->akid->issuer : nullptr;
 }
 
 const ASN1_INTEGER *X509_get0_authority_serial(X509 *x509) {
-  if (!x509v3_cache_extensions(x509)) {
+  auto *impl = FromOpaque(x509);
+  if (!x509v3_cache_extensions(impl)) {
     return nullptr;
   }
-  return x509->akid != nullptr ? x509->akid->serial : nullptr;
+  return impl->akid != nullptr ? impl->akid->serial : nullptr;
 }
 
 long X509_get_pathlen(X509 *x509) {
-  if (!x509v3_cache_extensions(x509) || (x509->ex_flags & EXFLAG_BCONS) == 0) {
+  auto *impl = FromOpaque(x509);
+  if (!x509v3_cache_extensions(x509) || (impl->ex_flags & EXFLAG_BCONS) == 0) {
     return -1;
   }
-  return x509->ex_pathlen;
+  return impl->ex_pathlen;
 }

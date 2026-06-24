@@ -34,7 +34,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
 
 @implementation WebIndicateLayer
 
@@ -50,8 +49,8 @@ using namespace WebCore;
     self.contentsScale = [[_webView window] screenScale];
 
     // Blue highlight color.
-    constexpr auto highlightColor = SRGBA<uint8_t> { 111, 168, 220, 168 };
-    self.backgroundColor = cachedCGColor(highlightColor).get();
+    constexpr auto highlightColor = WebCore::SRGBA<uint8_t> { 111, 168, 220, 168 };
+    self.backgroundColor = WebCore::cachedCGColor(highlightColor).get();
 
     return self;
 }

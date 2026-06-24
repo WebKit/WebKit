@@ -49,5 +49,13 @@ using BasicShape = Variant<
     XywhFunction
 >;
 
+// <basic-shape-rect> = <inset()> | <rect()> | <xywh()>
+// https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape-rect
+using BasicShapeRect = Variant<
+    InsetFunction,
+    RectFunction,
+    XywhFunction
+>;
+
 } // namespace CSS
 } // namespace WebCore

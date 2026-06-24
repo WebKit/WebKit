@@ -67,7 +67,7 @@ inline GeneratedImage::CachedGeneratedImage::CachedGeneratedImage(GeneratedImage
 void GeneratedImage::CachedGeneratedImage::evictionTimerFired()
 {
     // NOTE: This is essentially a "delete this", the object is no longer valid after this line.
-    m_owner.evictCachedGeneratedImage(m_size);
+    protect(m_owner)->evictCachedGeneratedImage(m_size);
 }
 
 // MARK: - GeneratedImage.

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+
+<svg opacity="0.5">
+    <rect x="0" y="0" width="100" height="100" fill="green"/>
+</svg>
+
+<g>
+    <text x="0" y="120">Text just below</text>
+</g>
+</svg>

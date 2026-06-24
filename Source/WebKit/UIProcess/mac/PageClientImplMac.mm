@@ -32,6 +32,7 @@
 #import "APIPageConfiguration.h"
 #import "AppKitSPI.h"
 #import "DrawingAreaProxy.h"
+#import "FocusedElementInformation.h"
 #import "Logging.h"
 #import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
@@ -42,6 +43,7 @@
 #import "RemoteLayerTreeCommitBundle.h"
 #import "RemoteLayerTreeNode.h"
 #import "TextExtractionFilter.h"
+#import "TransientZoomState.h"
 #import "UndoOrRedo.h"
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
@@ -369,6 +371,15 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 
     auto mouseLocationInScreen = NSEvent.mouseLocation;
     if (window.get().windowNumber != [NSWindow windowNumberAtPoint:mouseLocationInScreen belowWindowWithWindowNumber:0])
+        return;
+
+    // The web process may have decided this cursor before the mouse moved off the web view onto
+    // a sibling view in the same window. Without this guard, the late-arriving IPC would
+    // override the sibling's cursor.
+    auto mouseLocationInWindow = [window convertPointFromScreen:mouseLocationInScreen];
+    RetainPtr contentView = [window contentView];
+    RetainPtr hitView = [contentView hitTest:[[contentView superview] convertPoint:mouseLocationInWindow fromView:nil]];
+    if (![hitView isDescendantOf:view])
         return;
 
     RetainPtr platformCursor = cursor.platformCursor();
@@ -809,9 +820,9 @@ void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect& boundi
     });
 }
 
-void PageClientImpl::setEditableElementIsFocused(bool editableElementIsFocused)
+void PageClientImpl::setFocusedElementInputType(InputType inputType)
 {
-    protect(m_impl)->setEditableElementIsFocused(editableElementIsFocused);
+    protect(m_impl)->setFocusedElementInputType(inputType);
 }
 
 void PageClientImpl::scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID)
@@ -819,7 +830,7 @@ void PageClientImpl::scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID)
     protect(m_impl)->suppressContentRelativeChildViews(WebViewImpl::ContentRelativeChildViewsSuppressionType::TemporarilyRemove);
 }
 
-#if ENABLE(SCROLL_STRETCH_NOTIFICATIONS)
+#if HAVE(NSREFRESHCONTROLLER)
 void PageClientImpl::topScrollStretchDidChange(CGFloat topScrollStretch)
 {
     [webView() _topScrollStretchDidChange:topScrollStretch];
@@ -1064,10 +1075,22 @@ _WKRemoteObjectRegistry *PageClientImpl::remoteObjectRegistry()
     return protect(m_impl)->remoteObjectRegistry();
 }
 
-void PageClientImpl::pageDidScroll(const WebCore::IntPoint& scrollPosition)
+void PageClientImpl::pageDidScroll(const WebCore::IntPoint& scrollOffset)
 {
-    protect(m_impl)->pageDidScroll(scrollPosition);
+    protect(m_impl)->pageDidScroll(scrollOffset);
 }
+
+void PageClientImpl::didEndSyntheticMomentumScrolling()
+{
+    protect(m_impl)->didEndSyntheticMomentumScrolling();
+}
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+void PageClientImpl::didUpdateTransientZoomStateForScrollPocket(std::optional<TransientZoomState> state)
+{
+    protect(m_impl)->didUpdateTransientZoomStateForScrollPocket(state);
+}
+#endif
 
 void PageClientImpl::didRestoreScrollPosition()
 {
@@ -1131,9 +1154,9 @@ void PageClientImpl::performSwitchHapticFeedback()
     [[NSHapticFeedbackManager defaultPerformer] performFeedbackPattern:NSHapticFeedbackPatternLevelChange performanceTime:NSHapticFeedbackPerformanceTimeDefault];
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier frameID, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
 {
-    protect(m_impl)->requestDOMPasteAccess(pasteAccessCategory, requiresInteraction, elementRect, originIdentifier, WTF::move(completion));
+    protect(m_impl)->requestDOMPasteAccess(pasteAccessCategory, requiresInteraction, frameID, elementRect, originIdentifier, WTF::move(completion));
 }
 
 void PageClientImpl::makeViewBlank(bool makeBlank)

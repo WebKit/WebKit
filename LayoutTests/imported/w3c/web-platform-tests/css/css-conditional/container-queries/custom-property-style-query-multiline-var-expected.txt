@@ -1,0 +1,7 @@
+
+PASS single-line var() fallback
+PASS multi-line var() fallback
+PASS newline after comma in var() fallback
+PASS newline before closing parentheses in var() fallback
+PASS newline before var() and around fallback
+

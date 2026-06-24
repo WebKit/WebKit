@@ -73,6 +73,10 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  */
 - (nullable _WKWebExtensionSidebar *)sidebarForTab:(nullable id <WKWebExtensionTab>)tab NS_SWIFT_NAME(sidebar(for:));
 
+/*! @abstract Whether the extension context has access to file:// URLs.
+ @discussion When YES, the extension can inject content into and interact with file:// pages. Defaults to NO. */
+@property (nonatomic, setter=_setHasAccessToFileURLs:) BOOL _hasAccessToFileURLs;
+
 @end
 
 WK_HEADER_AUDIT_END(nullability, sendability)

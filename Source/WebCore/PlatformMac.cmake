@@ -89,7 +89,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 
 list(APPEND WebCore_SOURCES
     accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm
-
+    accessibility/isolatedtree/mac/AXIsolatedTreeMac.mm
     accessibility/mac/AXObjectCacheMac.mm
     accessibility/mac/AccessibilityObjectMac.mm
     accessibility/mac/WebAccessibilityObjectWrapperMac.mm

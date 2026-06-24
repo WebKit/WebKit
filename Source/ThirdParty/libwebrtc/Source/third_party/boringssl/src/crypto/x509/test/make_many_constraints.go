@@ -114,10 +114,10 @@ func main() {
 		KeyUsage:              x509.KeyUsageCertSign,
 		SignatureAlgorithm:    x509.SHA256WithRSA,
 	}
-	for i := 0; i < 513; i++ {
+	for i := range 513 {
 		caTemplate.ExcludedDNSDomains = append(caTemplate.ExcludedDNSDomains, fmt.Sprintf("x%d.test", i))
 	}
-	for i := 0; i < 513; i++ {
+	for i := range 513 {
 		caTemplate.PermittedDNSDomains = append(caTemplate.PermittedDNSDomains, fmt.Sprintf("t%d.test", i))
 	}
 	caTemplate.PermittedDNSDomains = append(caTemplate.PermittedDNSDomains, ".test")
@@ -166,7 +166,7 @@ func main() {
 					Class:      asn1.ClassUniversal,
 					Tag:        asn1.TagIA5String,
 					IsCompound: false,
-					Bytes:      []byte(fmt.Sprintf("t%d@test", i)),
+					Bytes:      fmt.Appendf(nil, "t%d@test", i),
 				},
 			})
 		}

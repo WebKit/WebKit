@@ -53,11 +53,11 @@ private:
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<FontFeatureSettings> { auto operator()(BuilderState&, const CSSValue&) -> FontFeatureSettings; };
-template<> struct CSSValueCreation<FontFeatureSettings> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const FontFeatureSettings&); };
+template<> struct CSSValueCreation<FontFeatureSettings> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const FontFeatureSettings&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<FontFeatureSettings> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const FontFeatureSettings&); };
+template<> struct Serialize<FontFeatureSettings> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const FontFeatureSettings&); };
 
 // MARK: - Logging
 

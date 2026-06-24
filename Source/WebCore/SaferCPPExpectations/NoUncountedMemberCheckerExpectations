@@ -24,12 +24,10 @@ platform/PODInterval.h
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.h
 platform/graphics/filters/software/FELightingSoftwareApplier.h
-platform/graphics/filters/software/FEMorphologySoftwareApplier.h
 platform/graphics/filters/software/FETurbulenceSoftwareApplier.h
 [ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
 [ iOS ] platform/ios/wak/WAKWindow.h
 [ iOS ] platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm
-rendering/PaintInfo.h
 rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h

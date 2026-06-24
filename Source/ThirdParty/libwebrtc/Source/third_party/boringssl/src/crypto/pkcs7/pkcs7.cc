@@ -24,6 +24,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 // 1.2.840.113549.1.7.1
 static const uint8_t kPKCS7Data[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                      0x0d, 0x01, 0x07, 0x01};
@@ -40,7 +42,7 @@ static const uint8_t kPKCS7SignedData[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
 //
 // It returns one on success or zero on error. On error, |*der_bytes| is
 // NULL.
-int pkcs7_parse_header(uint8_t **der_bytes, CBS *out, CBS *cbs) {
+int bssl::pkcs7_parse_header(uint8_t **der_bytes, CBS *out, CBS *cbs) {
   CBS in, content_info, content_type, wrapped_signed_data, signed_data;
   uint64_t version;
 
@@ -162,11 +164,11 @@ int PKCS7_bundle_raw_certificates(CBB *out,
                                const_cast<STACK_OF(CRYPTO_BUFFER) *>(certs));
 }
 
-int pkcs7_add_signed_data(CBB *out, uint64_t signed_data_version,
-                          int (*digest_algos_cb)(CBB *out, void *arg),
-                          int (*cert_crl_cb)(CBB *out, void *arg),
-                          int (*signer_infos_cb)(CBB *out, void *arg),
-                          void *arg) {
+int bssl::pkcs7_add_signed_data(CBB *out, uint64_t signed_data_version,
+                                int (*digest_algos_cb)(CBB *out, void *arg),
+                                int (*cert_crl_cb)(CBB *out, void *arg),
+                                int (*signer_infos_cb)(CBB *out, void *arg),
+                                void *arg) {
   CBB outer_seq, wrapped_seq, seq, digest_algos_set, content_info, signer_infos;
 
   // See https://tools.ietf.org/html/rfc2315#section-7

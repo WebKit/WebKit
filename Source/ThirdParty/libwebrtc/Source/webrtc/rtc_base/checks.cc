@@ -37,6 +37,8 @@
 
 #include "rtc_base/checks.h"
 
+namespace webrtc {
+
 namespace {
 
 #if defined(__GNUC__)
@@ -59,7 +61,6 @@ void AppendFormat(std::string* s, const char* fmt, ...) {
 }
 }  // namespace
 
-namespace webrtc {
 namespace webrtc_checks_impl {
 
 #if !defined(WEBRTC_CHROMIUM_BUILD)

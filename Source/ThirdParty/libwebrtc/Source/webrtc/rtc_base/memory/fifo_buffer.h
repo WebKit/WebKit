@@ -14,8 +14,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
@@ -42,10 +42,10 @@ class FifoBuffer final : public StreamInterface {
 
   // StreamInterface methods
   StreamState GetState() const override;
-  StreamResult Read(ArrayView<uint8_t> buffer,
+  StreamResult Read(std::span<uint8_t> buffer,
                     size_t& bytes_read,
                     int& error) override;
-  StreamResult Write(ArrayView<const uint8_t> buffer,
+  StreamResult Write(std::span<const uint8_t> buffer,
                      size_t& bytes_written,
                      int& error) override;
   void Close() override;

@@ -36,6 +36,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFullscreen.h>
 #import <WebCore/Element.h>
+#import <WebCore/FloatQuad.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/IntRect.h>
@@ -43,7 +44,7 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerBacking.h>
-#import <WebCore/RenderObjectInlines.h>
+#import <WebCore/RenderObject.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <wtf/RetainPtr.h>
@@ -56,7 +57,7 @@ static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
     ASSERT(element);
     if (element->renderer() && element->renderer()->hasLayer() && element->renderer()->enclosingLayer()->isComposited()) {
         WebCore::FloatQuad contentsBox = static_cast<WebCore::FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
-        contentsBox = element->renderer()->localToAbsoluteQuad(contentsBox);
+        contentsBox = element->renderer()->localToContainerQuad(contentsBox, nullptr);
         return element->renderer()->view().frameView().contentsToScreen(contentsBox.enclosingBoundingBox());
     }
     return element->screenRect();

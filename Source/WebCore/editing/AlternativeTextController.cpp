@@ -457,7 +457,8 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
         return;
 
     bool handled = false;
-    for (auto& marker : markers->markersFor(*node)) {
+    for (auto& marker : markers->markersFor(*node, DocumentMarkerType::Grammar)) {
+        // Grammar markers take precedence.
         ASSERT(marker);
         if (respondToMarkerAtEndOfWord(*marker, position)) {
             handled = true;
@@ -475,9 +476,21 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
             for (auto& marker : markers->markersFor(*node, DocumentMarkerType::Grammar)) {
                 if (static_cast<int>(marker->startOffset()) < selectionDeepPosition.offsetInContainerNode()
                     && selectionDeepPosition.offsetInContainerNode() < static_cast<int>(marker->endOffset())) {
-                    respondToMarkerAtEndOfWord(*marker, makeContainerOffsetPosition(node.copyRef(), marker->endOffset()));
+                    if (respondToMarkerAtEndOfWord(*marker, makeContainerOffsetPosition(node.copyRef(), marker->endOffset())))
+                        handled = true;
                     break;
                 }
+            }
+        }
+    }
+
+    if (!handled) {
+        for (auto& marker : markers->markersFor(*node, DocumentMarker::allMarkers() - DocumentMarkerType::Grammar)) {
+            // Now handle all other markers.
+            ASSERT(marker);
+            if (respondToMarkerAtEndOfWord(*marker, position)) {
+                handled = true;
+                break;
             }
         }
     }

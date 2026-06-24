@@ -14,7 +14,7 @@
 
 //! Hash-based message authentication from <https://datatracker.ietf.org/doc/html/rfc2104>.
 //!
-//! HMAC-SHA256 and HMAC-SHA512 are supported.
+//! HMAC-SHA256, HMAC-SHA384 and HMAC-SHA512 are supported.
 //!
 //! MACs can be computed in a single shot:
 //!
@@ -57,7 +57,7 @@
 
 use crate::{
     digest,
-    digest::{Sha256, Sha512},
+    digest::{Sha256, Sha384, Sha512},
     initialized_struct, sealed, FfiMutSlice, FfiSlice, ForeignTypeRef as _, InvalidSignatureError,
 };
 use core::{ffi::c_uint, marker::PhantomData, ptr};
@@ -126,6 +126,73 @@ impl std::io::Write for HmacSha256 {
 impl Clone for HmacSha256 {
     fn clone(&self) -> Self {
         HmacSha256(self.0.clone())
+    }
+}
+
+/// HMAC-SHA384.
+pub struct HmacSha384(Hmac<48, Sha384>);
+
+impl HmacSha384 {
+    /// Computes the HMAC-SHA384 of `data` as a one-shot operation.
+    pub fn mac(key: &[u8], data: &[u8]) -> [u8; 48] {
+        hmac::<48, Sha384>(key, data)
+    }
+
+    /// Creates a new HMAC-SHA384 operation from a fixed-size key.
+    pub fn new(key: &[u8; 48]) -> Self {
+        Self(Hmac::new(key))
+    }
+
+    /// Creates a new HMAC-SHA384 operation from a variable-length key.
+    pub fn new_from_slice(key: &[u8]) -> Self {
+        Self(Hmac::new_from_slice(key))
+    }
+
+    /// Hashes the provided input into the HMAC operation.
+    pub fn update(&mut self, data: &[u8]) {
+        self.0.update(data)
+    }
+
+    /// Computes the final HMAC value, consuming the object.
+    pub fn digest(self) -> [u8; 48] {
+        self.0.digest()
+    }
+
+    /// Checks that the provided tag value matches the computed HMAC value.
+    pub fn verify_slice(self, tag: &[u8]) -> Result<(), InvalidSignatureError> {
+        self.0.verify_slice(tag)
+    }
+
+    /// Checks that the provided tag value matches the computed HMAC value.
+    pub fn verify(self, tag: &[u8; 48]) -> Result<(), InvalidSignatureError> {
+        self.0.verify(tag)
+    }
+
+    /// Checks that the provided tag value matches the computed HMAC, truncated to the input tag's
+    /// length.
+    ///
+    /// Truncating an HMAC reduces the security of the construction. Callers must ensure `tag`'s
+    /// length matches the desired HMAC length and security level.
+    pub fn verify_truncated_left(self, tag: &[u8]) -> Result<(), InvalidSignatureError> {
+        self.0.verify_truncated_left(tag)
+    }
+}
+
+#[cfg(feature = "std")]
+impl std::io::Write for HmacSha384 {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        self.update(buf);
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+impl Clone for HmacSha384 {
+    fn clone(&self) -> Self {
+        HmacSha384(self.0.clone())
     }
 }
 
@@ -211,7 +278,7 @@ fn hmac<const N: usize, MD: digest::Algorithm>(key: &[u8], data: &[u8]) -> [u8; 
     // - If NULL is returned on error we panic immediately
     let result = unsafe {
         bssl_sys::HMAC(
-            MD::get_md(sealed::Sealed).as_ptr(),
+            MD::get_md(sealed::SealedType).as_ptr(),
             key.as_ffi_void_ptr(),
             key.len(),
             data.as_ffi_ptr(),
@@ -267,7 +334,7 @@ impl<const N: usize, MD: digest::Algorithm> Hmac<N, MD> {
                 &mut ret.ctx,
                 key.as_ffi_void_ptr(),
                 key.len(),
-                MD::get_md(sealed::Sealed).as_ptr(),
+                MD::get_md(sealed::SealedType).as_ptr(),
                 ptr::null_mut(),
             )
         };
@@ -428,6 +495,67 @@ mod tests {
         hmac.update(data);
         let hmac_result: [u8; 32] = hmac.digest();
         assert_eq!(&hmac_result, &expected_hmac);
+    }
+
+    #[test]
+    fn hmac_sha384() {
+        // We test against some Wycheproof test vectors `hmac_sha384_test.json`.
+        let key = &[
+            238, 141, 240, 103, 133, 125, 242, 48, 15, 167, 26, 16, 195, 9, 151, 23, 139, 179, 121,
+            97, 39, 181, 236, 229, 242, 204, 193, 112, 147, 43, 224, 231, 142, 169, 176, 165, 147,
+            108, 9, 21, 126, 103, 28, 231, 236, 159, 197, 16,
+        ];
+        let mut hmac = HmacSha384::new_from_slice(key);
+        hmac.update(b"");
+        let hmac_result: [u8; 48] = hmac.digest();
+        assert_eq!(
+            hmac_result,
+            [
+                166, 85, 24, 77, 175, 51, 70, 255, 198, 98, 157, 73, 60, 132, 66, 100, 78, 73, 150,
+                162, 121, 158, 66, 227, 48, 111, 166, 245, 176, 150, 123, 108, 243, 166, 248, 25,
+                186, 184, 155, 206, 41, 125, 29, 26, 89, 7, 178, 208
+            ]
+        );
+
+        let key = &[
+            151, 102, 150, 192, 220, 151, 24, 44, 167, 113, 151, 92, 57, 40, 255, 145, 104, 239,
+            137, 205, 116, 12, 210, 41, 40, 88, 253, 145, 96, 104, 167, 2, 188, 29, 247, 198, 205,
+            142, 225, 240, 210, 94, 97, 212, 197, 20, 204, 93,
+        ];
+        hmac = HmacSha384::new_from_slice(key);
+        hmac.update(&[43]);
+        let hmac_result: [u8; 48] = hmac.digest();
+        assert_eq!(
+            hmac_result,
+            [
+                54, 62, 137, 115, 254, 220, 247, 137, 32, 19, 223, 174, 11, 112, 101, 214, 29, 128,
+                185, 140, 99, 91, 192, 158, 216, 96, 160, 20, 115, 185, 188, 208, 220, 85, 13, 191,
+                102, 207, 13, 96, 31, 233, 203, 243, 174, 89, 98, 13
+            ]
+        );
+
+        let key = &[
+            188, 49, 11, 195, 145, 61, 159, 229, 158, 32, 18, 160, 88, 201, 225, 80, 83, 77, 37,
+            97, 30, 54, 32, 108, 240, 124, 202, 239, 225, 83, 243, 142, 176, 234, 173, 153, 65,
+            182, 136, 61, 251, 206, 1, 188, 181, 25, 96, 65,
+        ];
+        hmac = HmacSha384::new_from_slice(key);
+        let msg = &[
+            159, 7, 71, 215, 57, 107, 251, 224, 28, 243, 232, 83, 97, 229, 0, 133, 224, 169, 26,
+            116, 144, 185, 148, 3, 29, 129, 133, 27, 114, 80, 101, 153, 63, 69, 218, 208, 214, 13,
+            121, 74, 237, 236, 123, 165, 217, 214, 219, 190, 228,
+        ];
+        hmac.update(&msg[..20]);
+        hmac.update(&msg[20..]);
+        let hmac_result: [u8; 48] = hmac.digest();
+        assert_eq!(
+            hmac_result,
+            [
+                58, 134, 73, 143, 120, 195, 251, 126, 179, 183, 179, 216, 47, 103, 125, 45, 254, 1,
+                22, 111, 231, 110, 35, 32, 131, 51, 77, 116, 241, 21, 136, 253, 8, 150, 55, 201,
+                71, 97, 233, 207, 232, 54, 67, 96, 5, 222, 174, 247
+            ]
+        );
     }
 
     #[test]

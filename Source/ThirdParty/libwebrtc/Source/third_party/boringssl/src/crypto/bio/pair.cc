@@ -21,44 +21,46 @@
 #include <openssl/mem.h>
 
 #include "../internal.h"
+#include "../mem_internal.h"
 #include "internal.h"
 
 
+using namespace bssl;
+
 namespace {
 struct bio_bio_st {
-  BIO *peer;  // NULL if buf == NULL.
-              // If peer != NULL, then peer->ptr is also a bio_bio_st,
-              // and its "peer" member points back to us.
-              // peer != NULL iff init != 0 in the BIO.
+  BIO *peer = nullptr;  // NULL if buf == NULL.
+                        // If peer != NULL, then BIO_get_data(peer) is also a
+                        // bio_bio_st, and its "peer" member points back to us.
+                        // peer != NULL iff init != 0 in the BIO.
 
   // This is for what we write (i.e. reading uses peer's struct):
-  int closed;     // valid iff peer != NULL
-  size_t len;     // valid iff buf != NULL; 0 if peer == NULL
-  size_t offset;  // valid iff buf != NULL; 0 if len == 0
-  size_t size;
-  uint8_t *buf;  // "size" elements (if != NULL)
+  int closed = 0;     // valid iff peer != NULL
+  size_t len = 0;     // valid iff buf != NULL; 0 if peer == NULL
+  size_t offset = 0;  // valid iff buf != NULL; 0 if len == 0
+  size_t size = 0;
+  uint8_t *buf = nullptr;  // "size" elements (if != NULL)
 
-  size_t request;  // valid iff peer != NULL; 0 if len != 0,
-                   // otherwise set by peer to number of bytes
-                   // it (unsuccessfully) tried to read,
-                   // never more than buffer space (size-len) warrants.
+  size_t request = 0;  // valid iff peer != NULL; 0 if len != 0,
+                       // otherwise set by peer to number of bytes
+                       // it (unsuccessfully) tried to read,
+                       // never more than buffer space (size-len) warrants.
 };
 }  // namespace
 
 static int bio_new(BIO *bio) {
-  struct bio_bio_st *b =
-      reinterpret_cast<bio_bio_st *>(OPENSSL_zalloc(sizeof *b));
+  struct bio_bio_st *b = New<struct bio_bio_st>();
   if (b == nullptr) {
     return 0;
   }
 
   b->size = 17 * 1024;  // enough for one TLS record (just a default)
-  bio->ptr = b;
+  BIO_set_data(bio, b);
   return 1;
 }
 
 static void bio_destroy_pair(BIO *bio) {
-  struct bio_bio_st *b = reinterpret_cast<bio_bio_st *>(bio->ptr);
+  struct bio_bio_st *b = reinterpret_cast<bio_bio_st *>(BIO_get_data(bio));
   BIO *peer_bio;
   struct bio_bio_st *peer_b;
 
@@ -71,26 +73,26 @@ static void bio_destroy_pair(BIO *bio) {
     return;
   }
 
-  peer_b = reinterpret_cast<bio_bio_st *>(peer_bio->ptr);
+  peer_b = reinterpret_cast<bio_bio_st *>(BIO_get_data(peer_bio));
 
   assert(peer_b != nullptr);
   assert(peer_b->peer == bio);
 
   peer_b->peer = nullptr;
-  peer_bio->init = 0;
+  BIO_set_init(peer_bio, 0);
   assert(peer_b->buf != nullptr);
   peer_b->len = 0;
   peer_b->offset = 0;
 
   b->peer = nullptr;
-  bio->init = 0;
+  BIO_set_init(bio, 0);
   assert(b->buf != nullptr);
   b->len = 0;
   b->offset = 0;
 }
 
 static int bio_free(BIO *bio) {
-  struct bio_bio_st *b = reinterpret_cast<bio_bio_st *>(bio->ptr);
+  struct bio_bio_st *b = reinterpret_cast<bio_bio_st *>(BIO_get_data(bio));
 
   assert(b != nullptr);
 
@@ -99,7 +101,7 @@ static int bio_free(BIO *bio) {
   }
 
   OPENSSL_free(b->buf);
-  OPENSSL_free(b);
+  Delete(b);
 
   return 1;
 }
@@ -111,14 +113,14 @@ static int bio_read(BIO *bio, char *buf, int size_) {
 
   BIO_clear_retry_flags(bio);
 
-  if (!bio->init) {
+  if (!BIO_get_init(bio)) {
     return 0;
   }
 
-  b = reinterpret_cast<bio_bio_st *>(bio->ptr);
+  b = reinterpret_cast<bio_bio_st *>(BIO_get_data(bio));
   assert(b != nullptr);
   assert(b->peer != nullptr);
-  peer_b = reinterpret_cast<bio_bio_st *>(b->peer->ptr);
+  peer_b = reinterpret_cast<bio_bio_st *>(BIO_get_data(b->peer));
   assert(peer_b != nullptr);
   assert(peer_b->buf != nullptr);
 
@@ -195,11 +197,11 @@ static int bio_write(BIO *bio, const char *buf, int num_) {
 
   BIO_clear_retry_flags(bio);
 
-  if (!bio->init || buf == nullptr || num == 0) {
+  if (!BIO_get_init(bio) || buf == nullptr || num == 0) {
     return 0;
   }
 
-  b = reinterpret_cast<bio_bio_st *>(bio->ptr);
+  b = reinterpret_cast<bio_bio_st *>(BIO_get_data(bio));
   assert(b != nullptr);
   assert(b->peer != nullptr);
   assert(b->buf != nullptr);
@@ -268,8 +270,8 @@ static int bio_make_pair(BIO *bio1, BIO *bio2, size_t writebuf1_len,
   assert(bio1 != nullptr);
   assert(bio2 != nullptr);
 
-  b1 = reinterpret_cast<bio_bio_st *>(bio1->ptr);
-  b2 = reinterpret_cast<bio_bio_st *>(bio2->ptr);
+  b1 = reinterpret_cast<bio_bio_st *>(BIO_get_data(bio1));
+  b2 = reinterpret_cast<bio_bio_st *>(BIO_get_data(bio2));
 
   if (b1->peer != nullptr || b2->peer != nullptr) {
     OPENSSL_PUT_ERROR(BIO, BIO_R_IN_USE);
@@ -307,14 +309,14 @@ static int bio_make_pair(BIO *bio1, BIO *bio2, size_t writebuf1_len,
   b2->closed = 0;
   b2->request = 0;
 
-  bio1->init = 1;
-  bio2->init = 1;
+  BIO_set_init(bio1, 1);
+  BIO_set_init(bio2, 1);
 
   return 1;
 }
 
 static long bio_ctrl(BIO *bio, int cmd, long num, void *ptr) {
-  struct bio_bio_st *b = reinterpret_cast<bio_bio_st *>(bio->ptr);
+  struct bio_bio_st *b = reinterpret_cast<bio_bio_st *>(BIO_get_data(bio));
   assert(b != nullptr);
   switch (cmd) {
     // Specific control codes first:
@@ -356,16 +358,16 @@ static long bio_ctrl(BIO *bio, int cmd, long num, void *ptr) {
 
     // Standard control codes:
     case BIO_CTRL_GET_CLOSE:
-      return bio->shutdown;
+      return BIO_get_shutdown(bio);
 
     case BIO_CTRL_SET_CLOSE:
-      bio->shutdown = static_cast<int>(num);
+      BIO_set_shutdown(bio, static_cast<int>(num));
       return 1;
 
     case BIO_CTRL_PENDING:
       if (b->peer != nullptr) {
         struct bio_bio_st *peer_b =
-            reinterpret_cast<bio_bio_st *>(b->peer->ptr);
+            reinterpret_cast<bio_bio_st *>(BIO_get_data(b->peer));
         // TODO(crbug.com/412584975): This can overflow on 64-bit Windows.
         return static_cast<long>(peer_b->len);
       }
@@ -383,7 +385,7 @@ static long bio_ctrl(BIO *bio, int cmd, long num, void *ptr) {
 
     case BIO_CTRL_EOF: {
       if (b->peer) {
-        auto *peer_b = reinterpret_cast<bio_bio_st *>(b->peer->ptr);
+        auto *peer_b = reinterpret_cast<bio_bio_st *>(BIO_get_data(b->peer));
         assert(peer_b != nullptr);
         return peer_b->len == 0 && peer_b->closed;
       }
@@ -408,7 +410,7 @@ static const BIO_METHOD methods_biop = {
     /*callback_ctrl=*/nullptr,
 };
 
-static const BIO_METHOD *bio_s_bio(void) { return &methods_biop; }
+static const BIO_METHOD *bio_s_bio() { return &methods_biop; }
 
 int BIO_new_bio_pair(BIO **bio1_p, size_t writebuf1_len, BIO **bio2_p,
                      size_t writebuf2_len) {

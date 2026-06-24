@@ -33,6 +33,77 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "UNW_RISCV_X0"},
+      {"access": "public", "name": "UNW_RISCV_X1"},
+      {"access": "public", "name": "UNW_RISCV_X2"},
+      {"access": "public", "name": "UNW_RISCV_X3"},
+      {"access": "public", "name": "UNW_RISCV_X4"},
+      {"access": "public", "name": "UNW_RISCV_X5"},
+      {"access": "public", "name": "UNW_RISCV_X6"},
+      {"access": "public", "name": "UNW_RISCV_X7"},
+      {"access": "public", "name": "UNW_RISCV_X8"},
+      {"access": "public", "name": "UNW_RISCV_X9"},
+      {"access": "public", "name": "UNW_RISCV_X10"},
+      {"access": "public", "name": "UNW_RISCV_X11"},
+      {"access": "public", "name": "UNW_RISCV_X12"},
+      {"access": "public", "name": "UNW_RISCV_X13"},
+      {"access": "public", "name": "UNW_RISCV_X14"},
+      {"access": "public", "name": "UNW_RISCV_X15"},
+      {"access": "public", "name": "UNW_RISCV_X16"},
+      {"access": "public", "name": "UNW_RISCV_X17"},
+      {"access": "public", "name": "UNW_RISCV_X18"},
+      {"access": "public", "name": "UNW_RISCV_X19"},
+      {"access": "public", "name": "UNW_RISCV_X20"},
+      {"access": "public", "name": "UNW_RISCV_X21"},
+      {"access": "public", "name": "UNW_RISCV_X22"},
+      {"access": "public", "name": "UNW_RISCV_X23"},
+      {"access": "public", "name": "UNW_RISCV_X24"},
+      {"access": "public", "name": "UNW_RISCV_X25"},
+      {"access": "public", "name": "UNW_RISCV_X26"},
+      {"access": "public", "name": "UNW_RISCV_X27"},
+      {"access": "public", "name": "UNW_RISCV_X28"},
+      {"access": "public", "name": "UNW_RISCV_X29"},
+      {"access": "public", "name": "UNW_RISCV_X30"},
+      {"access": "public", "name": "UNW_RISCV_X31"},
+      {"access": "public", "name": "UNW_RISCV_F0"},
+      {"access": "public", "name": "UNW_RISCV_F1"},
+      {"access": "public", "name": "UNW_RISCV_F2"},
+      {"access": "public", "name": "UNW_RISCV_F3"},
+      {"access": "public", "name": "UNW_RISCV_F4"},
+      {"access": "public", "name": "UNW_RISCV_F5"},
+      {"access": "public", "name": "UNW_RISCV_F6"},
+      {"access": "public", "name": "UNW_RISCV_F7"},
+      {"access": "public", "name": "UNW_RISCV_F8"},
+      {"access": "public", "name": "UNW_RISCV_F9"},
+      {"access": "public", "name": "UNW_RISCV_F10"},
+      {"access": "public", "name": "UNW_RISCV_F11"},
+      {"access": "public", "name": "UNW_RISCV_F12"},
+      {"access": "public", "name": "UNW_RISCV_F13"},
+      {"access": "public", "name": "UNW_RISCV_F14"},
+      {"access": "public", "name": "UNW_RISCV_F15"},
+      {"access": "public", "name": "UNW_RISCV_F16"},
+      {"access": "public", "name": "UNW_RISCV_F17"},
+      {"access": "public", "name": "UNW_RISCV_F18"},
+      {"access": "public", "name": "UNW_RISCV_F19"},
+      {"access": "public", "name": "UNW_RISCV_F20"},
+      {"access": "public", "name": "UNW_RISCV_F21"},
+      {"access": "public", "name": "UNW_RISCV_F22"},
+      {"access": "public", "name": "UNW_RISCV_F23"},
+      {"access": "public", "name": "UNW_RISCV_F24"},
+      {"access": "public", "name": "UNW_RISCV_F25"},
+      {"access": "public", "name": "UNW_RISCV_F26"},
+      {"access": "public", "name": "UNW_RISCV_F27"},
+      {"access": "public", "name": "UNW_RISCV_F28"},
+      {"access": "public", "name": "UNW_RISCV_F29"},
+      {"access": "public", "name": "UNW_RISCV_F30"},
+      {"access": "public", "name": "UNW_RISCV_F31"},
+      {"access": "public", "name": "UNW_RISCV_VLENB"}
+     ],
+     "name": "enum (unnamed at libunwind.h:10091)"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "UNW_VE_S0"},
       {"access": "public", "name": "UNW_VE_S1"},
       {"access": "public", "name": "UNW_VE_S2"},
@@ -180,7 +251,7 @@
       {"access": "public", "name": "UNW_VE_VIXR"},
       {"access": "public", "name": "UNW_VE_VL"}
      ],
-     "name": "enum (unnamed at libunwind.h:10531)"
+     "name": "enum (unnamed at libunwind.h:10871)"
     },
     {
      "access": "public",
@@ -220,7 +291,7 @@
       {"access": "public", "name": "UNW_S390X_PSWM"},
       {"access": "public", "name": "UNW_S390X_PSWA"}
      ],
-     "name": "enum (unnamed at libunwind.h:12051)"
+     "name": "enum (unnamed at libunwind.h:12391)"
     },
     {
      "access": "public",
@@ -290,7 +361,7 @@
       {"access": "public", "name": "UNW_LOONGARCH_F30"},
       {"access": "public", "name": "UNW_LOONGARCH_F31"}
      ],
-     "name": "enum (unnamed at libunwind.h:12471)"
+     "name": "enum (unnamed at libunwind.h:12811)"
     },
     {
      "access": "public",
@@ -298,7 +369,7 @@
       {"access": "public", "name": "UNW_REG_IP"},
       {"access": "public", "name": "UNW_REG_SP"}
      ],
-     "name": "enum (unnamed at libunwind.h:1521)"
+     "name": "enum (unnamed at libunwind.h:1861)"
     },
     {
      "access": "public",
@@ -312,7 +383,7 @@
       {"access": "public", "name": "UNW_X86_ESI"},
       {"access": "public", "name": "UNW_X86_EDI"}
      ],
-     "name": "enum (unnamed at libunwind.h:1581)"
+     "name": "enum (unnamed at libunwind.h:1921)"
     },
     {
      "access": "public",
@@ -351,7 +422,7 @@
       {"access": "public", "name": "UNW_X86_64_XMM14"},
       {"access": "public", "name": "UNW_X86_64_XMM15"}
      ],
-     "name": "enum (unnamed at libunwind.h:1701)"
+     "name": "enum (unnamed at libunwind.h:2041)"
     },
     {
      "access": "public",
@@ -470,7 +541,7 @@
       {"access": "public", "name": "UNW_PPC_SPE_ACC"},
       {"access": "public", "name": "UNW_PPC_SPEFSCR"}
      ],
-     "name": "enum (unnamed at libunwind.h:2081)"
+     "name": "enum (unnamed at libunwind.h:2421)"
     },
     {
      "access": "public",
@@ -652,7 +723,7 @@
       {"access": "public", "name": "UNW_PPC64_VS62"},
       {"access": "public", "name": "UNW_PPC64_VS63"}
      ],
-     "name": "enum (unnamed at libunwind.h:3251)"
+     "name": "enum (unnamed at libunwind.h:3591)"
     },
     {
      "access": "public",
@@ -796,25 +867,7 @@
       {"access": "public", "name": "UNW_ARM64_D30"},
       {"access": "public", "name": "UNW_ARM64_D31"}
      ],
-     "name": "enum (unnamed at libunwind.h:5091)"
-    },
-    {
-     "access": "public",
-     "constants": [
-      {"access": "public", "name": "UNW_ESUCCESS"},
-      {"access": "public", "name": "UNW_EUNSPEC"},
-      {"access": "public", "name": "UNW_ENOMEM"},
-      {"access": "public", "name": "UNW_EBADREG"},
-      {"access": "public", "name": "UNW_EREADONLYREG"},
-      {"access": "public", "name": "UNW_ESTOPUNWIND"},
-      {"access": "public", "name": "UNW_EINVALIDIP"},
-      {"access": "public", "name": "UNW_EBADFRAME"},
-      {"access": "public", "name": "UNW_EINVAL"},
-      {"access": "public", "name": "UNW_EBADVERSION"},
-      {"access": "public", "name": "UNW_ENOINFO"},
-      {"access": "public", "name": "UNW_ECROSSRASIGNING"}
-     ],
-     "name": "enum (unnamed at libunwind.h:641)"
+     "name": "enum (unnamed at libunwind.h:5431)"
     },
     {
      "access": "public",
@@ -924,7 +977,25 @@
       {"access": "public", "name": "UNW_ARM_D30"},
       {"access": "public", "name": "UNW_ARM_D31"}
      ],
-     "name": "enum (unnamed at libunwind.h:6631)"
+     "name": "enum (unnamed at libunwind.h:6971)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UNW_ESUCCESS"},
+      {"access": "public", "name": "UNW_EUNSPEC"},
+      {"access": "public", "name": "UNW_ENOMEM"},
+      {"access": "public", "name": "UNW_EBADREG"},
+      {"access": "public", "name": "UNW_EREADONLYREG"},
+      {"access": "public", "name": "UNW_ESTOPUNWIND"},
+      {"access": "public", "name": "UNW_EINVALIDIP"},
+      {"access": "public", "name": "UNW_EBADFRAME"},
+      {"access": "public", "name": "UNW_EINVAL"},
+      {"access": "public", "name": "UNW_EBADVERSION"},
+      {"access": "public", "name": "UNW_ENOINFO"},
+      {"access": "public", "name": "UNW_ECROSSRASIGNING"}
+     ],
+     "name": "enum (unnamed at libunwind.h:811)"
     },
     {
      "access": "public",
@@ -963,7 +1034,7 @@
       {"access": "public", "name": "UNW_OR1K_R31"},
       {"access": "public", "name": "UNW_OR1K_EPCR"}
      ],
-     "name": "enum (unnamed at libunwind.h:7881)"
+     "name": "enum (unnamed at libunwind.h:8221)"
     },
     {
      "access": "public",
@@ -1035,7 +1106,7 @@
       {"access": "public", "name": "UNW_MIPS_HI"},
       {"access": "public", "name": "UNW_MIPS_LO"}
      ],
-     "name": "enum (unnamed at libunwind.h:8251)"
+     "name": "enum (unnamed at libunwind.h:8591)"
     },
     {
      "access": "public",
@@ -1073,7 +1144,7 @@
       {"access": "public", "name": "UNW_SPARC_I6"},
       {"access": "public", "name": "UNW_SPARC_I7"}
      ],
-     "name": "enum (unnamed at libunwind.h:8981)"
+     "name": "enum (unnamed at libunwind.h:9321)"
     },
     {
      "access": "public",
@@ -1113,78 +1184,7 @@
       {"access": "public", "name": "UNW_HEXAGON_P3_0"},
       {"access": "public", "name": "UNW_HEXAGON_PC"}
      ],
-     "name": "enum (unnamed at libunwind.h:9341)"
-    },
-    {
-     "access": "public",
-     "constants": [
-      {"access": "public", "name": "UNW_RISCV_X0"},
-      {"access": "public", "name": "UNW_RISCV_X1"},
-      {"access": "public", "name": "UNW_RISCV_X2"},
-      {"access": "public", "name": "UNW_RISCV_X3"},
-      {"access": "public", "name": "UNW_RISCV_X4"},
-      {"access": "public", "name": "UNW_RISCV_X5"},
-      {"access": "public", "name": "UNW_RISCV_X6"},
-      {"access": "public", "name": "UNW_RISCV_X7"},
-      {"access": "public", "name": "UNW_RISCV_X8"},
-      {"access": "public", "name": "UNW_RISCV_X9"},
-      {"access": "public", "name": "UNW_RISCV_X10"},
-      {"access": "public", "name": "UNW_RISCV_X11"},
-      {"access": "public", "name": "UNW_RISCV_X12"},
-      {"access": "public", "name": "UNW_RISCV_X13"},
-      {"access": "public", "name": "UNW_RISCV_X14"},
-      {"access": "public", "name": "UNW_RISCV_X15"},
-      {"access": "public", "name": "UNW_RISCV_X16"},
-      {"access": "public", "name": "UNW_RISCV_X17"},
-      {"access": "public", "name": "UNW_RISCV_X18"},
-      {"access": "public", "name": "UNW_RISCV_X19"},
-      {"access": "public", "name": "UNW_RISCV_X20"},
-      {"access": "public", "name": "UNW_RISCV_X21"},
-      {"access": "public", "name": "UNW_RISCV_X22"},
-      {"access": "public", "name": "UNW_RISCV_X23"},
-      {"access": "public", "name": "UNW_RISCV_X24"},
-      {"access": "public", "name": "UNW_RISCV_X25"},
-      {"access": "public", "name": "UNW_RISCV_X26"},
-      {"access": "public", "name": "UNW_RISCV_X27"},
-      {"access": "public", "name": "UNW_RISCV_X28"},
-      {"access": "public", "name": "UNW_RISCV_X29"},
-      {"access": "public", "name": "UNW_RISCV_X30"},
-      {"access": "public", "name": "UNW_RISCV_X31"},
-      {"access": "public", "name": "UNW_RISCV_F0"},
-      {"access": "public", "name": "UNW_RISCV_F1"},
-      {"access": "public", "name": "UNW_RISCV_F2"},
-      {"access": "public", "name": "UNW_RISCV_F3"},
-      {"access": "public", "name": "UNW_RISCV_F4"},
-      {"access": "public", "name": "UNW_RISCV_F5"},
-      {"access": "public", "name": "UNW_RISCV_F6"},
-      {"access": "public", "name": "UNW_RISCV_F7"},
-      {"access": "public", "name": "UNW_RISCV_F8"},
-      {"access": "public", "name": "UNW_RISCV_F9"},
-      {"access": "public", "name": "UNW_RISCV_F10"},
-      {"access": "public", "name": "UNW_RISCV_F11"},
-      {"access": "public", "name": "UNW_RISCV_F12"},
-      {"access": "public", "name": "UNW_RISCV_F13"},
-      {"access": "public", "name": "UNW_RISCV_F14"},
-      {"access": "public", "name": "UNW_RISCV_F15"},
-      {"access": "public", "name": "UNW_RISCV_F16"},
-      {"access": "public", "name": "UNW_RISCV_F17"},
-      {"access": "public", "name": "UNW_RISCV_F18"},
-      {"access": "public", "name": "UNW_RISCV_F19"},
-      {"access": "public", "name": "UNW_RISCV_F20"},
-      {"access": "public", "name": "UNW_RISCV_F21"},
-      {"access": "public", "name": "UNW_RISCV_F22"},
-      {"access": "public", "name": "UNW_RISCV_F23"},
-      {"access": "public", "name": "UNW_RISCV_F24"},
-      {"access": "public", "name": "UNW_RISCV_F25"},
-      {"access": "public", "name": "UNW_RISCV_F26"},
-      {"access": "public", "name": "UNW_RISCV_F27"},
-      {"access": "public", "name": "UNW_RISCV_F28"},
-      {"access": "public", "name": "UNW_RISCV_F29"},
-      {"access": "public", "name": "UNW_RISCV_F30"},
-      {"access": "public", "name": "UNW_RISCV_F31"},
-      {"access": "public", "name": "UNW_RISCV_VLENB"}
-     ],
-     "name": "enum (unnamed at libunwind.h:9751)"
+     "name": "enum (unnamed at libunwind.h:9681)"
     },
     {
      "access": "public",
@@ -1336,7 +1336,7 @@
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_unw_set_reg"},
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_unw_step"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "_Unwind_Action"},
     {"access": "public", "name": "_Unwind_Context"},

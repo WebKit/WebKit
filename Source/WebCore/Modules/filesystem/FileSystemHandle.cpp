@@ -60,7 +60,7 @@ void FileSystemHandle::close()
     m_isClosed = true;
     if (m_isUnresolved) {
         if (RefPtr connection = m_connection)
-            connection->removeGlobalIdentifierReference(ClientOrigin { m_origin }, m_globalIdentifier);
+            connection->removeGlobalIdentifierReferences(ClientOrigin { m_origin }, { m_globalIdentifier });
         m_isUnresolved = false;
         resolveEnsureIdentifierCallbacks(false);
         return;
@@ -90,7 +90,7 @@ void FileSystemHandle::ensureIdentifier(CompletionHandler<void(bool)>&& callback
     RefPtr context = scriptExecutionContext();
     if (!context) {
         if (RefPtr connection = m_connection)
-            connection->removeGlobalIdentifierReference(ClientOrigin { m_origin }, m_globalIdentifier);
+            connection->removeGlobalIdentifierReferences(ClientOrigin { m_origin }, { m_globalIdentifier });
         m_isUnresolved = false;
         resolveEnsureIdentifierCallbacks(false);
         return;
@@ -108,7 +108,7 @@ void FileSystemHandle::ensureIdentifier(CompletionHandler<void(bool)>&& callback
         if (result.hasException()) {
             m_isClosed = true;
             if (RefPtr connection = m_connection)
-                connection->removeGlobalIdentifierReference(ClientOrigin { m_origin }, m_globalIdentifier);
+                connection->removeGlobalIdentifierReferences(ClientOrigin { m_origin }, { m_globalIdentifier });
             m_isUnresolved = false;
             resolveEnsureIdentifierCallbacks(false);
             return;
@@ -116,7 +116,7 @@ void FileSystemHandle::ensureIdentifier(CompletionHandler<void(bool)>&& callback
 
         m_identifier = result.returnValue();
         m_isUnresolved = false;
-        protect(m_connection)->removeGlobalIdentifierReference(ClientOrigin { m_origin }, m_globalIdentifier);
+        protect(m_connection)->removeGlobalIdentifierReferences(ClientOrigin { m_origin }, { m_globalIdentifier });
         resolveEnsureIdentifierCallbacks(true);
     });
 }

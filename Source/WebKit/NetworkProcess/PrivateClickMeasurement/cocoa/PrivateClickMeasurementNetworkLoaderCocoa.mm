@@ -87,7 +87,7 @@ static HashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>& NODELETE ta
     return map.get();
 }
 
-static NSURLSession *statelessSessionWithoutRedirectsSingleton(const ApplicationBundleIdentifierOrAuditToken& applicationBundleIdentifier)
+static NSURLSession *statelessSessionWithoutRedirectsSingleton(const ApplicationBundleIdentifiersOrAuditToken& applicationBundleIdentifier)
 {
     static NeverDestroyed<RetainPtr<WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON>> delegate = adoptNS([WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON new]);
     static NeverDestroyed<RetainPtr<NSURLSession>> session = [&] {
@@ -100,8 +100,9 @@ static NSURLSession *statelessSessionWithoutRedirectsSingleton(const Application
         configuration.get()._shouldSkipPreferredClientCertificateLookup = YES;
 
         WTF::switchOn(applicationBundleIdentifier,
-            [&] (const String& bundleIdentifier) {
-                configuration.get()._sourceApplicationBundleIdentifier = bundleIdentifier.createNSString().get();
+            [&] (const std::pair<String, String>& bundleIdentifiers) {
+                configuration.get()._sourceApplicationBundleIdentifier = bundleIdentifiers.first.createNSString().get();
+                configuration.get()._sourceApplicationSecondaryIdentifier = bundleIdentifiers.second.createNSString().get();
             }, [&] (const Vector<uint8_t>& auditToken) {
                 configuration.get()._sourceApplicationAuditTokenData = [NSData dataWithBytes:auditToken.span().data() length:auditToken.size()];
             }
@@ -117,7 +118,7 @@ void NetworkLoader::allowTLSCertificateChainForLocalPCMTesting(const WebCore::Ce
     allowedLocalTestServerTrust() = certificateInfo.trust();
 }
 
-void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore::PrivateClickMeasurement::PcmDataCarried pcmDataCarried, const ApplicationBundleIdentifierOrAuditToken& applicationBundleIdentifier, Callback&& callback)
+void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore::PrivateClickMeasurement::PcmDataCarried pcmDataCarried, const ApplicationBundleIdentifiersOrAuditToken& applicationBundleIdentifier, Callback&& callback)
 {
     // Prevent contacting non-local servers when a test certificate chain is used for 127.0.0.1.
     // FIXME: Use a proxy server to have tests cover the reports sent to the destination, too.
@@ -125,12 +126,12 @@ void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore
         return callback({ }, { });
 
     auto request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url.createNSURL().get()]);
-    [request _setPrivacyProxyFailClosed:YES];
     [request setValue:WebCore::HTTPHeaderValues::maxAge0().createNSString().get() forHTTPHeaderField:@"Cache-Control"];
     [request setValue:WebCore::standardUserAgentWithApplicationName({ }).createNSString().get() forHTTPHeaderField:@"User-Agent"];
     RetainPtr crossSiteMainDocument = [NSURLComponents componentsWithURL:request.get().URL resolvingAgainstBaseURL:NO];
     crossSiteMainDocument.get().host = [NSString stringWithFormat:@"not-%@", crossSiteMainDocument.get().host];
     [request setMainDocumentURL:crossSiteMainDocument.get().URL];
+    [request setAttribution:NSURLRequestAttributionUser];
 
     if (jsonPayload) {
         request.get().HTTPMethod = @"POST";

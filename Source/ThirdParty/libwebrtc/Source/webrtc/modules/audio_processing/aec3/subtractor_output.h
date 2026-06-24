@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_H_
 
 #include <array>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 
@@ -44,7 +44,7 @@ struct SubtractorOutput {
   void Reset();
 
   // Updates the powers of the signals.
-  void ComputeMetrics(ArrayView<const float> y);
+  void ComputeMetrics(std::span<const float> y);
 };
 
 }  // namespace webrtc

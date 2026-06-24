@@ -1,0 +1,9 @@
+
+PASS SVG ellipse rx/ry auto resolution affects SVGGeometryElement methods, getTotalLength resolves auto rx/ry.
+PASS SVG ellipse rx/ry auto resolution affects SVGGeometryElement methods, getTotalLength returns 0 when both rx and ry are auto.
+PASS SVG ellipse rx/ry auto resolution affects SVGGeometryElement methods, getPointAtLength(0) at the 3 o'clock starting point.
+PASS SVG ellipse rx/ry auto resolution affects SVGGeometryElement methods, isPointInFill resolves auto rx/ry.
+PASS SVG ellipse rx/ry auto resolution affects SVGGeometryElement methods, isPointInStroke with dasharray resolves auto rx/ry.
+PASS SVG ellipse rx/ry auto resolution affects SVGGeometryElement methods, getTotalLength resolves auto rx/ry against percentage values on the correct axis.
+PASS SVG ellipse rx/ry auto resolution affects SVGGeometryElement methods, getPointAtLength(0) with percentage ry uses height-axis resolution.
+

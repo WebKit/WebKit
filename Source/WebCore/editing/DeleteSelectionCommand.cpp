@@ -143,7 +143,7 @@ static std::pair<Position, RefPtr<HTMLElement>> positionBeforeContainingSpecialE
     if (!element)
         return { position, nullptr };
     auto result = positionInParentBeforeNode(*element);
-    if (result.isNull() || result.containerNode()->rootEditableElement() != position.containerNode()->rootEditableElement())
+    if (result.isNull() || protect(result.containerNode())->rootEditableElement() != protect(position.containerNode())->rootEditableElement())
         return { position, nullptr };
     return { result, WTF::move(element) };
 }
@@ -154,7 +154,7 @@ static std::pair<Position, RefPtr<HTMLElement>> positionAfterContainingSpecialEl
     if (!element)
         return { position, nullptr };
     auto result = positionInParentAfterNode(*element);
-    if (result.isNull() || result.deprecatedNode()->rootEditableElement() != position.containerNode()->rootEditableElement())
+    if (result.isNull() || protect(result.deprecatedNode())->rootEditableElement() != protect(position.containerNode())->rootEditableElement())
         return { position, nullptr };
     return { result, WTF::move(element) };
 }
@@ -196,9 +196,9 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
     // For HRs, we'll get a position at (HR,1) when hitting delete from the beginning of the previous line, or (HR,0) when forward deleting,
     // but in these cases, we want to delete it, so manually expand the selection
     if (start.deprecatedNode()->hasTagName(hrTag))
-        start = positionBeforeNode(*start.deprecatedNode());
+        start = positionBeforeNode(*protect(start.deprecatedNode()));
     else if (end.deprecatedNode()->hasTagName(hrTag))
-        end = positionAfterNode(*end.deprecatedNode());
+        end = positionAfterNode(*protect(end.deprecatedNode()));
     
     // FIXME: This is only used so that moveParagraphs can avoid the bugs in special element expansion.
     if (!m_expandForSpecialElements)
@@ -430,7 +430,7 @@ void DeleteSelectionCommand::saveTypingStyleState()
 
     // Figure out the typing style in effect before the delete is done.
     m_typingStyle = EditingStyle::create(m_selectionToDelete.start(), EditingStyle::PropertiesToInclude::EditingPropertiesInEffect);
-    m_typingStyle->removeStyleAddedByNode(enclosingAnchorElement(m_selectionToDelete.start()).get());
+    protect(m_typingStyle)->removeStyleAddedByNode(enclosingAnchorElement(m_selectionToDelete.start()).get());
 
     // If we're deleting into a Mail blockquote, save the style at end() instead of start()
     // We'll use this later in computeTypingStyleAfterDelete if we end up outside of a Mail blockquote
@@ -528,7 +528,7 @@ void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysE
     Ref protectedNode { node };
     if (m_startRoot != m_endRoot && !(node.isDescendantOf(m_startRoot.get()) && node.isDescendantOf(m_endRoot.get()))) {
         // If a node is not in both the start and end editable roots, remove it only if its inside an editable region.
-        if (!node.parentNode()->hasEditableStyle()) {
+        if (!protect(node.parentNode())->hasEditableStyle()) {
             // Don't remove non-editable atomic nodes.
             if (!node.firstChild())
                 return;
@@ -724,8 +724,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
 
         if (!m_downstreamEnd.isNull() && !m_downstreamEnd.isOrphan() && m_downstreamEnd.deprecatedNode() != startNode
             && !m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode())
-            && m_downstreamEnd.deprecatedEditingOffset() >= caretMinOffset(*m_downstreamEnd.deprecatedNode())) {
-            if (m_downstreamEnd.atLastEditingPositionForNode() && !canHaveChildrenForEditing(*m_downstreamEnd.deprecatedNode())) {
+            && m_downstreamEnd.deprecatedEditingOffset() >= caretMinOffset(*protect(m_downstreamEnd.deprecatedNode()))) {
+            if (m_downstreamEnd.atLastEditingPositionForNode() && !canHaveChildrenForEditing(*protect(m_downstreamEnd.deprecatedNode()))) {
                 // The node itself is fully selected, not just its contents.  Delete it.
                 removeNode(*protect(m_downstreamEnd.deprecatedNode()));
             } else {
@@ -842,7 +842,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     // Block images, tables and horizontal rules cannot be made inline with content at mergeDestination.  If there is 
     // any (!isStartOfParagraph(mergeDestination)), don't merge, just move the caret to just before the selection we deleted.
     // See https://bugs.webkit.org/show_bug.cgi?id=25439
-    if (isRenderedAsNonInlineTableImageOrHR(startOfParagraphToMove.deepEquivalent().deprecatedNode()) && !isStartOfParagraph(mergeDestination)) {
+    if (isRenderedAsNonInlineTableImageOrHR(protect(startOfParagraphToMove.deepEquivalent().deprecatedNode())) && !isStartOfParagraph(mergeDestination)) {
         m_endingPosition = m_upstreamStart;
         return;
     }
@@ -865,7 +865,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     // The endingPosition was likely clobbered by the move, so recompute it (moveParagraph selects the moved paragraph).
 
     // FIXME (Bug 211793): endingSelection() becomes disconnected in moveParagraph
-    if (auto* anchorNode = endingSelection().start().anchorNode(); anchorNode && anchorNode->isConnected())
+    if (RefPtr anchorNode = endingSelection().start().anchorNode(); anchorNode && anchorNode->isConnected())
         m_endingPosition = endingSelection().start();
 }
 
@@ -924,7 +924,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
         m_typingStyle = m_deleteIntoBlockquoteStyle;
     m_deleteIntoBlockquoteStyle = nullptr;
 
-    m_typingStyle->prepareToApplyAt(m_endingPosition);
+    protect(m_typingStyle)->prepareToApplyAt(m_endingPosition);
     if (m_typingStyle->isEmpty())
         m_typingStyle = nullptr;
     // This is where we've deleted all traces of a style but not a whole paragraph (that's handled above).
@@ -1003,7 +1003,7 @@ void DeleteSelectionCommand::doApply()
     // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 
     if (!m_replace) {
         if (RefPtr textControl = enclosingTextFormControl(m_selectionToDelete.start()); textControl && textControl->focused())
-            document().editor().textWillBeDeletedInTextField(*textControl);
+            protect(document())->editor().textWillBeDeletedInTextField(*textControl);
     }
 
     // save this to later make the selection with
@@ -1078,7 +1078,7 @@ void DeleteSelectionCommand::doApply()
     calculateTypingStyleAfterDelete();
 
     if (!originalString.isEmpty())
-        document().editor().deletedAutocorrectionAtPosition(m_endingPosition, originalString);
+        protect(document())->editor().deletedAutocorrectionAtPosition(m_endingPosition, originalString);
 
     setEndingSelection(VisibleSelection(VisiblePosition(m_endingPosition, affinity), endingSelection().directionality()));
     clearTransientState();

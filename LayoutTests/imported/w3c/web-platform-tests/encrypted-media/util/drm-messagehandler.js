@@ -35,6 +35,12 @@ drmconfig = {
         "sessionTypes" : [ "temporary", "persistent-usage-record", "persistent-license" ],
         "merchant" : "w3c-eme-test",
         "secret" : drmtodaysecret
+    } ],
+    "com.apple.fps": [ {
+        "serverURL": (location.protocol === "https:" ? "https://127.0.0.1:8443" : "http://127.0.0.1:8000") + "/media/fairplay/resources/index.py",
+        "servertype" : "fps",
+        "sessionTypes" : [ "temporary", "persistent-usage-record", "persistent-license" ],
+        "certificate" : "MIIEzzCCA7egAwIBAgIIAbMPMUN04ogwDQYJKoZIhvcNAQEFBQAwfzELMAkGA1UEBhMCVVMxEzARBgNVBAoMCkFwcGxlIEluYy4xJjAkBgNVBAsMHUFwcGxlIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MTMwMQYDVQQDDCpBcHBsZSBLZXkgU2VydmljZXMgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMjEwOTEzMjAzMzU1WhcNMjMwOTE0MjAzMzU0WjB4MQswCQYDVQQGEwJVUzEfMB0GA1UECgwWQXBwbGUgSW5jLiAtIENvcmVNZWRpYTETMBEGA1UECwwKR0NUNVk2OUJVVDEzMDEGA1UEAwwqRmFpclBsYXkgU3RyZWFtaW5nOiBBcHBsZSBJbmMuIC0gQ29yZU1lZGlhMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKOSWKpii2sqlJeg0TRHZJF3aocb4j8K7RDmmii2vwrcv2ECiRTnGZp3/giNyj74Ty0/hjf71ck7ldJryHi7iO5dUVjatjmF5giRdyjAPp9dVxj2nMDyQORcCPzGgDTJ8BNt2oM1tOant+/3J9jDcWw3vjWeZURX7QH5+gpQuC0QIDAQABo4IB2DCCAdQwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBRj5EdUy4VxWUYsg6zMRDFkZwMsvjCB4gYDVR0gBIHaMIHXMIHUBgkqhkiG92NkBQEwgcYwgcMGCCsGAQUFBwICMIG2DIGzUmVsaWFuY2Ugb24gdGhpcyBjZXJ0aWZpY2F0ZSBieSBhbnkgcGFydHkgYXNzdW1lcyBhY2NlcHRhbmNlIG9mIHRoZSB0aGVuIGFwcGxpY2FibGUgc3RhbmRhcmQgdGVybXMgYW5kIGNvbmRpdGlvbnMgb2YgdXNlLCBjZXJ0aWZpY2F0ZSBwb2xpY3kgYW5kIGNlcnRpZmljYXRpb24gcHJhY3RpY2Ugc3RhdGVtZW50cy4wNQYDVR0fBC4wLDAqoCigJoYkaHR0cDovL2NybC5hcHBsZS5jb20va2V5c2VydmljZXMuY3JsMB0GA1UdDgQWBBRH6yDSZZCJE1gcuNnWiRBLVZmypzAOBgNVHQ8BAf8EBAMCBSAwKQYLKoZIhvdjZAYNAQMBAf8EFwFxbG9kZHF0ZnFmb3hoZGQ2c2RwY2p3MC0GCyqGSIb3Y2QGDQEEAQH/BBsBamNsaGdiZ3Jjbm52aHdycXlxa20zZWpxZmswDQYJKoZIhvcNAQEFBQADggEBALd/pptUeufI5wFe1kYbQ790XL3LXWJN77n3kEEFBVZAtyrLtsGsE7JvB3X+6CL3JkneaCL5XRr2lbCp+vw0mFtwTxrRlnsOAhLyESffGfrO+0UXJM/v3mB3dQrE0tzGVoXZdXQO3ldWd/sYWYJxRLLc3wKJNMzbbIttaBLEsOWYzPP5tekoGCGz9WpsKBK6cm3jVac0BW13SbmF13Q8rwFebgmZ2buUVwDYiJNk8WhquNYk+Jw98O3u0ttalcFtirAwlDfxIlYApI1Ag+J5dy+iMi0Ho7K5Vf90Dkgb+M2Lb6RDrbGjN41RozTloHWgPptiQJChK9xRiTpkj6jDBjM="
     } ]
 };
 
@@ -86,7 +92,34 @@ var keySystemWrappers = {
         return handler.call(this, messageType, licenseRequest, 'arraybuffer', headers, params).catch(function(response){
             return response.text().then( function( error ) { throw error; } );
         });
-    }
+    },
+
+    'com.apple.fps': function(handler, messageType, message, params) {
+        // FairPlay has two initData types: `sinf` and `cenc`, but the initDataType
+        // is not passed into this function. `cenc` initData is an encoded JSON object
+        // while `sinf` is a binary `sinf` atom. Support both by attempting to JSON.parse
+        // for the `cenc` case and falling back to `sinf` if that method throws.
+        let payload;
+        let keyIDs
+        try {
+            let messageString = utf8decoder.decode(message);
+            let messageObject = JSON.parse(messageString);
+            payload = messageObject.map(item => item.payload)
+            keyIDs = messageObject.map(item => item.keyID)
+
+            return handler.call(this, messageType, payload, 'json', { 'Content-type': 'application/x-www-form-urlencoded' }, params).then(function(response){
+                let responses = response["fairplay-streaming-response"]["streaming-keys"].map((item, i) => ({ keyID: keyIDs[i], payload: item.ckc }));
+                return stringToUint8Array(JSON.stringify(responses));
+            });
+
+        } catch(e) {
+            payload = [base64Encode(new Uint8Array(message))];
+
+            return handler.call(this, messageType, payload, 'json', { 'Content-type': 'application/x-www-form-urlencoded' }, params).then(function(response){
+                return base64DecodeToUnit8Array(response["fairplay-streaming-response"]["streaming-keys"][0].ckc);
+            });
+        }
+    },
 };
 
 const requestConstructors = {
@@ -146,6 +179,25 @@ const requestConstructors = {
 
         // TODO: Include expiration time in URL
         return Promise.resolve({url: url, headers: headers, body: message});
+    },
+
+    'fps': function(config, sessionType, content, messageType, message, headers, params) {
+        let url = config.serverURL;
+        let keys = message.map(item => { return {
+            "id" : 1,
+            "uri" : `skd://${content.assetId}`,
+            "spc" : item,
+        }});
+        let request = {
+            "fairplay-streaming-request" : {
+                "version" : 1,
+                "streaming-keys" : keys,
+            }
+        };
+        if (params?.playDuration > 0)
+            request["fairplay-streaming-request"]["streaming-keys"][0]["playbackDuration"] = params.playDuration / 1000;
+        let body = JSON.stringify(request);
+        return Promise.resolve({url: url, headers: headers, body: body});
     }
 };
 
@@ -174,18 +226,20 @@ MessageHandler = function(keysystem, content, sessionType) {
 MessageHandler.prototype.messagehandler = function messagehandler(messageType, message, responseType, headers, params) {
 
     var variantId = params ? params.variantId : undefined;
-    var key;
+    var key, kid;
     if( variantId ) {
         var keys = this._content.keys.filter(function(k){return k.variantId === variantId;});
-        if (keys[0]) key = keys[0].key;
+        if (keys[0]) { key = keys[0].key; kid = keys[0].kid; }
     }
     if (!key) {
         key = this._content.keys[0].key;
+        kid = this._content.keys[0].kid;
     }
 
     var content = {assetId:    this._content.assetId,
                     variantId:  variantId,
-                    key:        key};
+                    key:        key,
+                    kid:        kid};
 
     return this._requestConstructor(this._drmconfig, this._sessionType, content, messageType, message, headers, params).then(function(request){
         return fetch(request.url, {

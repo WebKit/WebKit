@@ -41,7 +41,7 @@ namespace WebKit {
 
 static constexpr auto cachesListFileName = "cacheslist"_s;
 static constexpr auto sizeFileName = "estimatedsize"_s;
-static constexpr auto originFileName = "origin"_s;
+static constexpr auto cachesOriginFileName = "origin"_s;
 static constexpr auto originSaltFileName = "salt"_s;
 
 static uint64_t nextUpdateNumber()
@@ -187,7 +187,7 @@ HashSet<WebCore::ClientOrigin> CacheStorageManager::originsOfCacheStorageData(co
 {
     HashSet<WebCore::ClientOrigin> result;
     for (auto& originName : FileSystem::listDirectory(rootDirectory)) {
-        auto originFile = FileSystem::pathByAppendingComponents(rootDirectory, std::initializer_list<StringView>({ originName, originFileName }));
+        auto originFile = FileSystem::pathByAppendingComponents(rootDirectory, std::initializer_list<StringView>({ originName, cachesOriginFileName }));
         if (auto origin = WebCore::StorageUtilities::readOriginFromFile(originFile))
             result.add(*origin);
     }
@@ -251,7 +251,7 @@ CacheStorageManager::CacheStorageManager(const String& path, CacheStorageRegistr
     if (m_path.isEmpty() || !origin)
         return;
 
-    auto originFile = FileSystem::pathByAppendingComponent(m_path, originFileName);
+    auto originFile = FileSystem::pathByAppendingComponent(m_path, cachesOriginFileName);
     WebCore::StorageUtilities::writeOriginToFile(originFile, *origin);
 }
 

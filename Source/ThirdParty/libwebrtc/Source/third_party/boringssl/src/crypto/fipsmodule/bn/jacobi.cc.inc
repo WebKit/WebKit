@@ -19,10 +19,12 @@
 #include "internal.h"
 
 
-// least significant word
-#define BN_lsw(n) (((n)->width == 0) ? (BN_ULONG) 0 : (n)->d[0])
+using namespace bssl;
 
-int bn_jacobi(const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
+// least significant word
+#define BN_lsw(n) (((n)->width == 0) ? (BN_ULONG)0 : (n)->d[0])
+
+int bssl::bn_jacobi(const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
   // In 'tab', only odd-indexed entries are relevant:
   // For any odd BIGNUM n,
   //     tab[BN_lsw(n) & 7]
@@ -42,7 +44,7 @@ int bn_jacobi(const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
     return -2;
   }
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *A = BN_CTX_get(ctx);
   BIGNUM *B = BN_CTX_get(ctx);
   if (B == nullptr) {

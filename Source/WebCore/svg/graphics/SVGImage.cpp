@@ -51,7 +51,6 @@
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFEImageElement.h"
@@ -62,6 +61,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SocketProvider.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
@@ -254,7 +254,7 @@ bool SVGImage::hasHDRContent() const
     if (!m_page)
         return false;
 
-    if (RefPtr localTopDocument = m_page->localTopDocument())
+    if (RefPtr localTopDocument = protect(m_page)->localTopDocument())
         return localTopDocument->hasHDRContent();
 #endif
     return false;
@@ -509,7 +509,7 @@ bool SVGImage::isAnimating() const
 
 void SVGImage::reportApproximateMemoryCost() const
 {
-    RefPtr localTopDocument = m_page->localTopDocument();
+    RefPtr localTopDocument = protect(m_page)->localTopDocument();
     if (!localTopDocument)
         return;
 
@@ -556,7 +556,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
                 m_page->settings().setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
             }
-            m_page->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
+            protect(m_page)->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
         }
 
         RefPtr localMainFrame = m_page->localMainFrame();
@@ -577,7 +577,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         activeDocumentLoader->writer().setMIMEType("image/svg+xml"_s);
         activeDocumentLoader->writer().begin(URL()); // create the empty document
         data()->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
-            activeDocumentLoader->writer().addData(buffer);
+            protect(activeDocumentLoader)->writer().addData(buffer);
         });
         activeDocumentLoader->writer().end();
 
@@ -612,7 +612,7 @@ void SVGImage::subresourcesAreFinished(Document* embedderDocument, CompletionHan
     ASSERT(rootElement());
     if (embedderDocument)
         embedderDocument->incrementLoadEventDelayCount();
-    internalPage()->localTopDocument()->whenWindowLoadEventOrDestroyed([embedderDocument = WeakPtr { embedderDocument }, completionHandler = WTF::move(completionHandler)]() mutable {
+    protect(internalPage())->localTopDocument()->whenWindowLoadEventOrDestroyed([embedderDocument = WeakPtr { embedderDocument }, completionHandler = WTF::move(completionHandler)]() mutable {
         if (RefPtr document = embedderDocument.get())
             document->decrementLoadEventDelayCount();
         completionHandler();

@@ -1,7 +1,7 @@
 <!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="../../../resources/ui-helper.js"></script>
 </head>
 <body>
@@ -21,6 +21,7 @@ var events;
 
 async function runTest() {
     description("This tests that clicking on the save button sends a save event.");
+    window.jsTestIsAsync = true;
 
     attachment = document.getElementById("attachment");
     shouldBeType("attachment", "HTMLAttachmentElement");
@@ -78,14 +79,11 @@ async function runTest() {
     await testClick("attachment top", centerX, attachmentClientRect.y + 1, "attachment", "click");
     await testClick("attachment bottom", centerX, attachmentClientRect.y + attachmentClientRect.height - 2, "attachment", "click");
 
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
-testRunner.dumpAsText();
-testRunner.waitUntilDone();
 addEventListener("load", runTest);
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

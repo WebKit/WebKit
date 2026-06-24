@@ -231,12 +231,17 @@ JSC_DECLARE_JIT_OPERATION(operationArraySplice, EncodedJSValue, (JSGlobalObject*
 JSC_DECLARE_JIT_OPERATION(operationArraySpliceIgnoreResult, EncodedJSValue, (JSGlobalObject*, JSArray*, int32_t start, int32_t deleteCount, EncodedJSValue*, unsigned));
 JSC_DECLARE_JIT_OPERATION(operationArrayConcatArray, JSArray*, (JSGlobalObject*, JSArray*, JSArray*));
 JSC_DECLARE_JIT_OPERATION(operationArrayConcatAppendOne, JSArray*, (JSGlobalObject*, JSArray*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationArrayJoin, JSString*, (JSGlobalObject*, JSArray*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationArrayJoinGeneric, JSString*, (JSGlobalObject*, JSArray*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationRegExpExecString, EncodedJSValue, (JSGlobalObject*, RegExpObject*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationRegExpExec, EncodedJSValue, (JSGlobalObject*, RegExpObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationRegExpExecGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationRegExpExecNonGlobalOrSticky, EncodedJSValue, (JSGlobalObject*, RegExp*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationRegExpMatchFastGlobalString, EncodedJSValue, (JSGlobalObject*, RegExp*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationRegExpMatchFastString, EncodedJSValue, (JSGlobalObject*, RegExpObject*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationRegExpSplitFast, EncodedJSValue, (JSGlobalObject*, RegExpObject*, JSString*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationRegExpStringIteratorNext, EncodedJSValue, (JSGlobalObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationCreateIteratorResultObject, JSCell*, (VM*, Structure*, EncodedJSValue, EncodedJSValue));
 // These comparisons return a boolean within a size_t such that the value is zero extended to fill the register.
 JSC_DECLARE_JIT_OPERATION(operationRegExpTestString, size_t, (JSGlobalObject*, RegExpObject*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationRegExpTest, size_t, (JSGlobalObject*, RegExpObject*, EncodedJSValue));
@@ -323,6 +328,8 @@ JSC_DECLARE_JIT_OPERATION(operationStringSplit, JSCell*, (JSGlobalObject*, JSStr
 JSC_DECLARE_JIT_OPERATION(operationStringSplitRegExp, EncodedJSValue, (JSGlobalObject*, JSString*, RegExpObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationStringMatch, EncodedJSValue, (JSGlobalObject*, JSString*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationStringMatchRegExp, EncodedJSValue, (JSGlobalObject*, JSString*, RegExpObject*));
+JSC_DECLARE_JIT_OPERATION(operationStringSearch, EncodedJSValue, (JSGlobalObject*, JSString*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationStringSearchRegExp, EncodedJSValue, (JSGlobalObject*, JSString*, RegExpObject*));
 
 JSC_DECLARE_JIT_OPERATION(operationStringProtoFuncReplaceGeneric, JSCell*, (JSGlobalObject*, EncodedJSValue thisValue, EncodedJSValue searchValue, EncodedJSValue replaceValue));
 JSC_DECLARE_JIT_OPERATION(operationStringProtoFuncReplaceAllGeneric, JSCell*, (JSGlobalObject*, EncodedJSValue thisValue, EncodedJSValue searchValue, EncodedJSValue replaceValue));
@@ -357,11 +364,14 @@ JSC_DECLARE_JIT_OPERATION(operationSetIterationNext, EncodedJSValue, (JSGlobalOb
 JSC_DECLARE_JIT_OPERATION(operationSetIterationEntry, EncodedJSValue, (JSGlobalObject*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationSetIterationEntryKey, EncodedJSValue, (JSGlobalObject*, JSCell*));
 
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMapIteratorNext, EncodedJSValue, (VM*, JSCell*));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationSetIteratorNext, EncodedJSValue, (VM*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationStringIteratorNext, UGPRPair, (JSGlobalObject*, JSString*, int32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMapIteratorNext, UGPRPair, (VM*, JSCell*, JSCell*, int32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationSetIteratorNext, UGPRPair, (VM*, JSCell*, JSCell*, int32_t));
 
 JSC_DECLARE_JIT_OPERATION(operationNewMap, JSMap*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewSet, JSSet*, (VM*, Structure*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewWeakMap, JSWeakMap*, (VM*, Structure*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNewWeakSet, JSWeakSet*, (VM*, Structure*));
 
 JSC_DECLARE_JIT_OPERATION(operationParseIntDoubleNoRadix, EncodedJSValue, (JSGlobalObject*, double));
 JSC_DECLARE_JIT_OPERATION(operationParseIntStringNoRadix, EncodedJSValue, (JSGlobalObject*, JSString*));

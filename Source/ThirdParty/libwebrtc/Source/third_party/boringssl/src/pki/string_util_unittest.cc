@@ -116,17 +116,6 @@ TEST(StringUtilTest, HexEncode) {
   EXPECT_EQ(hex, "01FF02FE038081");
 }
 
-TEST(StringUtilTest, NumberToDecimalString) {
-  std::string number(bssl::string_util::NumberToDecimalString(42));
-  EXPECT_EQ(number, "42");
-  number = bssl::string_util::NumberToDecimalString(-1);
-  EXPECT_EQ(number, "-1");
-  number = bssl::string_util::NumberToDecimalString(0);
-  EXPECT_EQ(number, "0");
-  number = bssl::string_util::NumberToDecimalString(0xFF);
-  EXPECT_EQ(number, "255");
-}
-
 TEST(StringUtilTest, SplitString) {
   EXPECT_EQ(bssl::string_util::SplitString("", ','),
             std::vector<std::string_view>());

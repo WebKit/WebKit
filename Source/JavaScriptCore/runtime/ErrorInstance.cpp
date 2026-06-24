@@ -22,6 +22,7 @@
 #include "ErrorInstance.h"
 
 #include "CodeBlock.h"
+#include "ErrorInstanceInlines.h"
 #include "InlineCallFrame.h"
 #include "IntegrityInlines.h"
 #include "Interpreter.h"

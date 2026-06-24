@@ -33,21 +33,21 @@ namespace WebCore {
 namespace Style {
 
 template<Numeric StyleType> struct CSSValueCreation<StyleType> {
-    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value)
+    Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value)
     {
         return CSS::createCSSValue(pool, toCSS(value, style));
     }
 };
 
 template<DimensionPercentageNumeric StyleType> struct CSSValueCreation<StyleType> {
-    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value)
+    Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value)
     {
         return CSS::createCSSValue(pool, toCSS(value, style));
     }
 };
 
 template<Calc StyleType> struct CSSValueCreation<StyleType> {
-    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value)
+    Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value)
     {
         return CSS::createCSSValue(pool, toCSS(value, style));
     }
@@ -56,7 +56,7 @@ template<Calc StyleType> struct CSSValueCreation<StyleType> {
 template<auto nR, auto pR, typename V> struct CSSValueCreation<NumberOrPercentage<nR, pR, V>> {
     using StyleType = NumberOrPercentage<nR, pR, V>;
 
-    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value)
+    Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value)
     {
         return CSS::createCSSValue(pool, toCSS(value, style));
     }
@@ -65,7 +65,7 @@ template<auto nR, auto pR, typename V> struct CSSValueCreation<NumberOrPercentag
 template<auto nR, auto pR, typename V> struct CSSValueCreation<NumberOrPercentageResolvedToNumber<nR, pR, V>> {
     using StyleType = NumberOrPercentageResolvedToNumber<nR, pR, V>;
 
-    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const StyleType& value)
+    Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const StyleType& value)
     {
         return CSS::createCSSValue(pool, toCSS(value, style));
     }

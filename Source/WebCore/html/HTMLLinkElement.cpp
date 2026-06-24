@@ -63,10 +63,10 @@
 #include "NodeName.h"
 #include "Page.h"
 #include "ParsedContentType.h"
-#include "RenderStyle.h"
 #include "RequestPriority.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "StyleComputedStyle.h"
 #include "StyleResolveForDocument.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
@@ -105,7 +105,7 @@ private:
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ExpectIdTargetObserver);
 
 ExpectIdTargetObserver::ExpectIdTargetObserver(const AtomString& id, HTMLLinkElement& element)
-    : IdTargetObserver(element.treeScope().idTargetObserverRegistry(), id)
+    : IdTargetObserver(protect(element)->treeScope().idTargetObserverRegistry(), id)
     , m_element(element)
 {
 }
@@ -138,10 +138,10 @@ Ref<HTMLLinkElement> HTMLLinkElement::create(const QualifiedName& tagName, Docum
 HTMLLinkElement::~HTMLLinkElement()
 {
     if (m_sheet)
-        m_sheet->clearOwnerNode();
+        protect(m_sheet)->clearOwnerNode();
 
     if (m_cachedSheet)
-        m_cachedSheet->removeClient(*this);
+        protect(m_cachedSheet)->removeClient(*this);
 
     if (CheckedPtr styleScope = m_styleScope)
         styleScope->removeStyleSheetCandidateNode(*this);
@@ -197,20 +197,15 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
 {
     switch (name.nodeName()) {
     case AttributeNames::relAttr: {
+        if (equalLettersIgnoringASCIICase(newValue, "spatial-backdrop"_s))
+            document().addConsoleMessage(MessageSource::Other, MessageLevel::Error, "The \"spatial-backdrop\" link rel value is no longer supported and was ignored. Use the <model> immersive API instead."_s);
         auto parsedRel = LinkRelAttribute(document(), newValue);
         auto didMutateRel = parsedRel != m_relAttribute;
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-        auto wasSpatialBackdrop = m_relAttribute.isSpatialBackdrop;
-#endif
         m_relAttribute = WTF::move(parsedRel);
         if (m_relList)
             m_relList->associatedAttributeValueChanged();
         if (didMutateRel)
             process();
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-        if (wasSpatialBackdrop && !m_relAttribute.isSpatialBackdrop)
-            document().spatialBackdropLinkElementChanged();
-#endif
         break;
     }
     case AttributeNames::hrefAttr: {
@@ -221,16 +216,6 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         process();
         break;
     }
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    case AttributeNames::environmentmapAttr: {
-        URL environmentMapURL = getNonEmptyURLAttribute(environmentmapAttr);
-        if (environmentMapURL == m_environmentMapURL)
-            return;
-        m_environmentMapURL = WTF::move(environmentMapURL);
-        process();
-        break;
-    }
-#endif
     case AttributeNames::typeAttr:
         if (newValue == m_type)
             return;
@@ -244,7 +229,7 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     case AttributeNames::blockingAttr:
         blocking().associatedAttributeValueChanged();
-        if (blocking().contains("render"_s)) {
+        if (protect(blocking())->contains("render"_s)) {
             processInternalResourceLink();
             if (m_loading && mediaAttributeMatches() && !isAlternate())
                 potentiallyBlockRendering();
@@ -266,7 +251,7 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     case AttributeNames::titleAttr:
         if (m_sheet && !isInShadowTree())
-            m_sheet->setTitle(newValue);
+            protect(m_sheet)->setTitle(newValue);
         break;
     default:
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -308,11 +293,6 @@ void HTMLLinkElement::process()
     // Prevent recursive loading of link.
     if (m_isHandlingBeforeLoad)
         return;
-
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    if (m_relAttribute.isSpatialBackdrop)
-        document().spatialBackdropLinkElementChanged();
-#endif
 
     processInternalResourceLink();
     if (m_relAttribute.isInternalResourceLink)
@@ -438,7 +418,7 @@ void HTMLLinkElement::clearSheet()
 {
     ASSERT(m_sheet);
     ASSERT(m_sheet->ownerNode() == this);
-    m_sheet->clearOwnerNode();
+    protect(m_sheet)->clearOwnerNode();
     m_sheet = nullptr;
 }
 
@@ -545,11 +525,6 @@ void HTMLLinkElement::removingSteps(RemovalType removalType, ContainerNode& oldP
 
     bool wasLoading = styleSheetIsLoading();
 
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    if (m_relAttribute.isSpatialBackdrop)
-        oldParentOfRemovedTree.document().spatialBackdropLinkElementChanged();
-#endif
-
     if (m_sheet)
         clearSheet();
 
@@ -575,18 +550,18 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
 {
     if (m_sheet) {
         ASSERT(m_sheet->ownerNode() == this);
-        m_sheet->clearOwnerNode();
+        protect(m_sheet)->clearOwnerNode();
     }
 
     m_sheet = CSSStyleSheet::create(WTF::move(styleSheet), *this, cachedStyleSheet.isCORSSameOrigin());
-    m_sheet->setMediaQueries(MQ::MediaQueryParser::parse(m_media, context.context));
+    protect(m_sheet)->setMediaQueries(MQ::MediaQueryParser::parse(m_media, context.context));
     if (!isInShadowTree())
-        m_sheet->setTitle(title());
+        protect(m_sheet)->setTitle(title());
 
     if (CheckedPtr styleScope = m_styleScope)
-        styleScope->establishPreferredStylesheetSetName(*this, *m_sheet);
+        styleScope->establishPreferredStylesheetSetName(*this, protect(*m_sheet));
 
-    if (!m_sheet->canAccessRules())
+    if (!protect(m_sheet)->canAccessRules())
         m_sheet->contents().setAsLoadedFromOpaqueSource();
 }
 
@@ -633,7 +608,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, A
 
     // FIXME: Set the visibility option based on m_sheet being clean or not.
     // Best approach might be to set it on the style sheet content itself or its context parser otherwise.
-    if (!styleSheet.get().parseAuthorStyleSheet(cachedStyleSheet, &document->securityOrigin())) {
+    if (!styleSheet.get().parseAuthorStyleSheet(cachedStyleSheet, protect(document->securityOrigin()).ptr())) {
         m_loading = false;
         sheetLoaded();
         notifyLoadedSheetAndAllCriticalSubresources(true);
@@ -670,13 +645,10 @@ bool HTMLLinkElement::mediaAttributeMatches() const
         return true;
 
     Ref document = this->document();
-    std::optional<RenderStyle> documentStyle;
-    if (document->hasLivingRenderTree())
-        documentStyle = Style::resolveForDocument(document.get());
     auto mediaQueryList = MQ::MediaQueryParser::parse(m_media, document->cssParserContext());
     LOG(MediaQueries, "HTMLLinkElement::mediaAttributeMatches");
 
-    MQ::MediaQueryEvaluator evaluator(document->frame()->view()->mediaType(), document.get(), documentStyle ? &*documentStyle : nullptr);
+    MQ::MediaQueryEvaluator evaluator(protect(document->frame())->view()->mediaType(), document.get());
     return evaluator.evaluate(mediaQueryList);
 }
 
@@ -750,10 +722,8 @@ void HTMLLinkElement::startLoadingDynamicSheet()
 
 bool HTMLLinkElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute.name().localName() == hrefAttr
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    || attribute.name().localName() == environmentmapAttr
-#endif
+    // FIXME: Should these be attribute.name().matches(...) to also enforce the namespace?
+    return hrefAttr->hasLocalName(attribute.name().localName())
     || HTMLElement::isURLAttribute(attribute);
 }
 
@@ -766,13 +736,6 @@ const AtomString& HTMLLinkElement::rel() const
 {
     return attributeWithoutSynchronization(relAttr);
 }
-
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-URL HTMLLinkElement::environmentMap() const
-{
-    return document().encodingParseURL(attributeWithoutSynchronization(environmentmapAttr));
-}
-#endif
 
 AtomString HTMLLinkElement::target() const
 {
@@ -812,7 +775,7 @@ void HTMLLinkElement::addSubresourceAttributeURLs(OrderedHashSet<URL>& urls) con
     addSubresourceURL(urls, href());
 
     if (RefPtr styleSheet = this->sheet()) {
-        styleSheet->contents().traverseSubresources([&] (auto& resource) {
+        protect(styleSheet->contents())->traverseSubresources([&] (auto& resource) {
             urls.add(resource.url());
             return false;
         });

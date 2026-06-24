@@ -19,12 +19,12 @@
 
 #include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
 #include "modules/audio_coding/neteq/decoder_database.h"
 #include "modules/audio_coding/neteq/packet.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/mock_audio_decoder_factory.h"
 
@@ -292,7 +292,7 @@ TEST(RedPayloadSplitter, TwoPacketsThreePayloads) {
 // is a non-CNG, non-DTMF payload of another type than the first speech payload
 // found in the list (which is PCMu).
 TEST(RedPayloadSplitter, CheckRedPayloads) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   PacketList packet_list;
   for (uint8_t i = 0; i <= 3; ++i) {
     // Create packet with payload type `i`, payload length 10 bytes, all 0.
@@ -328,7 +328,7 @@ TEST(RedPayloadSplitter, CheckRedPayloads) {
 // for RED. That is, some kind of weird nested RED packet. This is not supported
 // and the splitter should discard all packets.
 TEST(RedPayloadSplitter, CheckRedPayloadsRecursiveRed) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   PacketList packet_list;
   for (uint8_t i = 0; i <= 3; ++i) {
     // Create packet with RED payload type, payload length 10 bytes, all 0.

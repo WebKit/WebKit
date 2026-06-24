@@ -55,6 +55,8 @@ public:
         return IterationStatus::Continue;
     }
 
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+
 private:
     friend bool CSSValue::addHash(Hasher&) const;
 

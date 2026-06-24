@@ -12,9 +12,9 @@
 #include <cstdint>
 #include <cstdlib>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "common_video/h264/h264_common.h"
 #include "common_video/h264/pps_parser.h"
 #include "common_video/h264/sps_parser.h"
@@ -34,7 +34,7 @@ H264BitstreamParser::H264BitstreamParser() = default;
 H264BitstreamParser::~H264BitstreamParser() = default;
 
 H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
-    ArrayView<const uint8_t> source,
+    std::span<const uint8_t> source,
     uint8_t nalu_type) {
   if (!sps_ || !pps_)
     return kInvalidStream;
@@ -311,20 +311,20 @@ H264BitstreamParser::Result H264BitstreamParser::ParseNonParameterSetNalu(
   return kOk;
 }
 
-void H264BitstreamParser::ParseSlice(ArrayView<const uint8_t> slice) {
+void H264BitstreamParser::ParseSlice(std::span<const uint8_t> slice) {
   if (slice.empty()) {
     return;
   }
   H264::NaluType nalu_type = H264::ParseNaluType(slice[0]);
   switch (nalu_type) {
     case H264::NaluType::kSps: {
-      sps_ = SpsParser::ParseSps(slice.subview(H264::kNaluTypeSize));
+      sps_ = SpsParser::ParseSps(slice.subspan(H264::kNaluTypeSize));
       if (!sps_)
         RTC_DLOG(LS_WARNING) << "Unable to parse SPS from H264 bitstream.";
       break;
     }
     case H264::NaluType::kPps: {
-      pps_ = PpsParser::ParsePps(slice.subview(H264::kNaluTypeSize));
+      pps_ = PpsParser::ParsePps(slice.subspan(H264::kNaluTypeSize));
       if (!pps_)
         RTC_DLOG(LS_WARNING) << "Unable to parse PPS from H264 bitstream.";
       break;
@@ -343,11 +343,11 @@ void H264BitstreamParser::ParseSlice(ArrayView<const uint8_t> slice) {
   }
 }
 
-void H264BitstreamParser::ParseBitstream(ArrayView<const uint8_t> bitstream) {
+void H264BitstreamParser::ParseBitstream(std::span<const uint8_t> bitstream) {
   std::vector<H264::NaluIndex> nalu_indices = H264::FindNaluIndices(bitstream);
   for (const H264::NaluIndex& index : nalu_indices)
     ParseSlice(
-        bitstream.subview(index.payload_start_offset, index.payload_size));
+        bitstream.subspan(index.payload_start_offset, index.payload_size));
 }
 
 std::optional<int> H264BitstreamParser::GetLastSliceQp() const {

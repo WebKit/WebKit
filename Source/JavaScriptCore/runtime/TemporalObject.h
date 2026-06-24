@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/IntlObject.h>
+#include <JavaScriptCore/JSCTimeZone.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/TemporalCoreTypes.h>
 #include <JavaScriptCore/TemporalEnums.h>
@@ -96,13 +98,16 @@ WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName NODELETE temporalUnitPluralPropertyName(VM&, TemporalUnit);
 PropertyName NODELETE temporalUnitSingularPropertyName(VM&, TemporalUnit);
 std::optional<TemporalUnit> temporalUnitType(StringView);
+
+enum class TemporalUnitDefault : uint8_t { Unset, Required };
 Variant<TemporalAuto, std::optional<TemporalUnit>>
-getTemporalUnitValuedOption(JSGlobalObject*, JSObject*, PropertyName);
+temporalUnitValued(JSGlobalObject*, JSObject*, PropertyName, TemporalUnitDefault = TemporalUnitDefault::Unset);
 void validateTemporalUnitValue(JSGlobalObject*, Variant<TemporalAuto, std::optional<TemporalUnit>>, UnitGroup, AllowedUnit, StringView);
 void validateTemporalRoundingIncrement(JSGlobalObject*, double, std::optional<double>, Inclusivity);
-std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject*, JSValue, UnitGroup, TemporalUnit, TemporalUnit);
+std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject*, JSValue, UnitGroup, TemporalUnit, TemporalUnit, DifferenceOperation = DifferenceOperation::Until);
 std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
-PrecisionData secondsStringPrecision(JSGlobalObject*, JSObject* options);
+// https://tc39.es/proposal-temporal/#sec-temporal-tosecondsstringprecisionrecord
+PrecisionData toSecondsStringPrecisionRecord(std::optional<TemporalUnit> smallestUnit, std::optional<unsigned> fractionalDigitCount);
 RoundingMode temporalRoundingMode(JSGlobalObject*, JSObject*, RoundingMode);
 void formatSecondsStringFraction(StringBuilder&, unsigned fraction, std::tuple<Precision, unsigned>);
 void formatSecondsStringPart(StringBuilder&, unsigned second, unsigned fraction, PrecisionData);
@@ -112,7 +117,10 @@ void rejectObjectWithCalendarOrTimeZone(JSGlobalObject*, JSObject*);
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSValue);
-String toTemporalCalendarName(JSGlobalObject*, JSObject*);
+String temporalShowCalendarName(JSGlobalObject*, JSObject*);
+CalendarID toTemporalCalendarIdentifier(JSGlobalObject*, JSValue);
+TemporalDisambiguation toTemporalDisambiguation(JSGlobalObject*, JSObject*);
+TemporalOffsetDisambiguation toTemporalOffset(JSGlobalObject*, JSObject*, TemporalOffsetDisambiguation fallback);
 
 enum class TemporalDateFormat : uint8_t {
     Date,
@@ -124,5 +132,9 @@ enum class TemporalAnyProperties : bool {
     None,
     Some,
 };
+
+void throwTemporalError(JSGlobalObject*, ThrowScope&, const TemporalError&);
+
+std::optional<TimeZone> toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
 
 } // namespace JSC

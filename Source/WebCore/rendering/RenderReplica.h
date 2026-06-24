@@ -36,7 +36,7 @@ class RenderReplica final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderReplica);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderReplica);
 public:
-    RenderReplica(Document&, RenderStyle&&);
+    RenderReplica(Document&, Style::ComputedStyle&&);
     virtual ~RenderReplica();
 
     ASCIILiteral renderName() const override { return "RenderReplica"_s; }
@@ -49,8 +49,8 @@ public:
 
 private:
     bool canHaveChildren() const override { return false; }
-    void computePreferredLogicalWidths() override;
-    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
+    void computeIntrinsicLogicalWidthContributions() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { ASSERT_NOT_REACHED(); return { }; }
 };
 
 } // namespace WebCore

@@ -23,29 +23,30 @@
 #include <openssl/obj.h>
 #include <openssl/x509.h>
 
+#include "../mem_internal.h"
 #include "internal.h"
 
-DEFINE_STACK_OF(X509V3_EXT_METHOD)
 
-static STACK_OF(X509V3_EXT_METHOD) *ext_list = nullptr;
+using namespace bssl;
 
-static int ext_stack_cmp(const X509V3_EXT_METHOD *const *a,
-                         const X509V3_EXT_METHOD *const *b) {
-  return ((*a)->ext_nid - (*b)->ext_nid);
-}
+// This is indirected though a pointer to avoid a global destructor. If we ever
+// add bssl::NoDestructor, we can avoid this, but this API is already
+// problematic and not thread-safe.
+static bssl::Vector<const X509V3_EXT_METHOD *> *ext_list = nullptr;
 
 int X509V3_EXT_add(X509V3_EXT_METHOD *ext) {
   // We only support |ASN1_ITEM|-based extensions.
   assert(ext->it != nullptr);
 
-  // TODO(davidben): This should be locked. Also check for duplicates.
-  if (!ext_list && !(ext_list = sk_X509V3_EXT_METHOD_new(ext_stack_cmp))) {
+  // TODO(crbug.com/42290461): This API is not locked and doesn't check for
+  // duplicates. Remove it altogether as, even if those issues were fixed, it
+  // would not be possible to use safely anyway.
+  if (ext_list == nullptr) {
+    ext_list = bssl::New<bssl::Vector<const X509V3_EXT_METHOD *>>();
+  }
+  if (ext_list == nullptr || !ext_list->Push(ext)) {
     return 0;
   }
-  if (!sk_X509V3_EXT_METHOD_push(ext_list, ext)) {
-    return 0;
-  }
-  sk_X509V3_EXT_METHOD_sort(ext_list);
   return 1;
 }
 
@@ -119,13 +120,14 @@ const X509V3_EXT_METHOD *X509V3_EXT_get_nid(int nid) {
       return &v3_freshest_crl;
   }
 
-  X509V3_EXT_METHOD tmp;
-  tmp.ext_nid = nid;
-  size_t idx;
-  if (ext_list == nullptr || !sk_X509V3_EXT_METHOD_find(ext_list, &idx, &tmp)) {
-    return nullptr;
+  if (ext_list != nullptr) {
+    for (const X509V3_EXT_METHOD *ext : *ext_list) {
+      if (ext->ext_nid == nid) {
+        return ext;
+      }
+    }
   }
-  return sk_X509V3_EXT_METHOD_value(ext_list, idx);
+  return nullptr;
 }
 
 const X509V3_EXT_METHOD *X509V3_EXT_get(const X509_EXTENSION *ext) {
@@ -157,21 +159,20 @@ int X509V3_EXT_add_alias(int nid_to, int nid_from) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_EXTENSION_NOT_FOUND);
     return 0;
   }
-  if (!(tmpext =
-            (X509V3_EXT_METHOD *)OPENSSL_malloc(sizeof(X509V3_EXT_METHOD)))) {
+  if (!(tmpext = New<X509V3_EXT_METHOD>())) {
     return 0;
   }
   *tmpext = *ext;
   tmpext->ext_nid = nid_to;
   if (!X509V3_EXT_add(tmpext)) {
-    OPENSSL_free(tmpext);
+    Delete(tmpext);
     return 0;
   }
   return 1;
   OPENSSL_END_ALLOW_DEPRECATED
 }
 
-int X509V3_add_standard_extensions(void) { return 1; }
+int X509V3_add_standard_extensions() { return 1; }
 
 // Return an extension internal structure
 

@@ -294,6 +294,8 @@ void JSTestDefaultToJSONFilteredByExposed::analyzeHeap(JSCell* cell, HeapAnalyze
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestDefaultToJSONFilteredByExposedOwner::JSTestDefaultToJSONFilteredByExposedOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestDefaultToJSONFilteredByExposedOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -306,7 +308,7 @@ void JSTestDefaultToJSONFilteredByExposedOwner::finalize(JSC::Handle<JSC::Unknow
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDefaultToJSONFilteredByExposed = static_cast<JSTestDefaultToJSONFilteredByExposed*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestDefaultToJSONFilteredByExposed->wrapped()).ptr(), jsTestDefaultToJSONFilteredByExposed);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDefaultToJSONFilteredByExposed->wrapped(), jsTestDefaultToJSONFilteredByExposed);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

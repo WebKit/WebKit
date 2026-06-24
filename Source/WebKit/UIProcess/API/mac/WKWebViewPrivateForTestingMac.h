@@ -61,6 +61,8 @@
 - (void)_createFlagsChangedEventMonitorForTesting;
 - (BOOL)_hasFlagsChangedEventMonitorForTesting;
 
+@property (nonatomic, readonly) CGFloat _fullScreenTitlebarOverlayHeightForTesting;
+
 @end
 
 #endif // !TARGET_OS_IPHONE

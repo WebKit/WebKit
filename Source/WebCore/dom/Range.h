@@ -27,6 +27,8 @@
 #include <WebCore/AbstractRange.h>
 #include <WebCore/RangeBoundaryPoint.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -99,14 +101,14 @@ public:
     enum CompareResults : uint8_t { NODE_BEFORE, NODE_AFTER, NODE_BEFORE_AND_AFTER, NODE_INSIDE };
     WEBCORE_EXPORT ExceptionOr<CompareResults> compareNode(Node&) const;
 
-    void NODELETE nodeChildrenChanged(ContainerNode&);
+    void nodeChildrenChanged(ContainerNode&);
     void nodeChildrenWillBeRemoved(ContainerNode&);
     void nodeWillBeRemoved(Node&);
     bool NODELETE parentlessNodeMovedToNewDocumentAffectsRange(Node&);
     void updateRangeForParentlessNodeMovedToNewDocument(Node&);
 
-    void NODELETE textInserted(Node&, unsigned offset, unsigned length);
-    void NODELETE textRemoved(Node&, unsigned offset, unsigned length);
+    void textInserted(Node&, unsigned offset, unsigned length);
+    void textRemoved(Node&, unsigned offset, unsigned length);
     void textNodesMerged(NodeWithIndex& oldNode, unsigned offset);
     void textNodeSplit(Text& oldNode);
 
@@ -146,6 +148,7 @@ private:
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;
     RangeBoundaryPoint m_end;
+    mutable Lock m_boundaryPointLock;
     bool m_isAssociatedWithSelection { false };
     bool m_didChangeForHighlight { false };
     bool m_isAssociatedWithHighlight { false };

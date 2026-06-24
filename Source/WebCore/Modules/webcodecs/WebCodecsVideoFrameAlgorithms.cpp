@@ -54,9 +54,9 @@ bool isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit& init)
             return false;
     }
 
-    if (init.displayWidth && !init.displayWidth)
+    if (init.displayWidth && !*init.displayWidth)
         return false;
-    if (init.displayHeight && !init.displayHeight)
+    if (init.displayHeight && !*init.displayHeight)
         return false;
     return true;
 }

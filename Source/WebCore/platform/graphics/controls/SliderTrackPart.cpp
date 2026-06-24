@@ -104,7 +104,7 @@ void SliderTrackPart::drawTicks(GraphicsContext& context, const FloatRect& rect,
 
 std::unique_ptr<PlatformControl> SliderTrackPart::createPlatformControl()
 {
-    return controlFactory().createPlatformSliderTrack(*this);
+    return protect(controlFactory())->createPlatformSliderTrack(*this);
 }
 
 } // namespace WebCore

@@ -18,6 +18,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/audio_options.h"
 #include "api/crypto/crypto_options.h"
@@ -33,6 +34,7 @@
 #include "api/test/rtc_error_matchers.h"
 #include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/sdp_video_format.h"
+#include "call/call.h"
 #include "media/base/codec.h"
 #include "media/base/codec_comparators.h"
 #include "media/base/fake_media_engine.h"
@@ -50,16 +52,22 @@
 #include "pc/rtp_sender_proxy.h"
 #include "pc/rtp_transport.h"
 #include "pc/rtp_transport_internal.h"
+#include "pc/scoped_operations_batcher.h"
 #include "pc/session_description.h"
+#include "pc/simulcast_description.h"
 #include "pc/test/enable_fake_media.h"
 #include "pc/test/fake_codec_lookup_helper.h"
 #include "pc/test/mock_channel_interface.h"
 #include "pc/test/mock_rtp_receiver_internal.h"
 #include "pc/test/mock_rtp_sender_internal.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/network_route.h"
 #include "rtc_base/thread.h"
 #include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 using ::testing::_;
 using ::testing::ElementsAre;
@@ -75,6 +83,64 @@ using ::testing::SizeIs;
 namespace webrtc {
 
 namespace {
+
+scoped_refptr<RtpTransceiver> CreateAudioTransceiverWithChannel(
+    const Environment& env,
+    Call* call,
+    ConnectionContext* context,
+    CodecLookupHelper* codec_lookup_helper,
+    const AudioOptions& audio_options,
+    absl::AnyInvocable<RtpTransportInternal*() &&> transport_lookup = []() {
+      return nullptr;
+    }) {
+  auto transceiver = make_ref_counted<RtpTransceiver>(
+      env, call, MediaConfig(), "sender", "receiver", MediaType::AUDIO, nullptr,
+      std::vector<std::string>(), std::vector<RtpEncodingParameters>(), context,
+      codec_lookup_helper, nullptr, nullptr, audio_options, VideoOptions(),
+      CryptoOptions(), nullptr, std::vector<RtpHeaderExtensionCapability>(),
+      false, std::vector<SimulcastLayer>(), [] {});
+
+  ScopedOperationsBatcher worker_tasks(context->worker_thread());
+  ScopedOperationsBatcher network_tasks(context->network_thread());
+  transceiver->CreateChannel("0", call, MediaConfig(), false, CryptoOptions(),
+                             audio_options, VideoOptions(), nullptr,
+                             std::move(transport_lookup), worker_tasks,
+                             network_tasks);
+
+  RTC_CHECK(worker_tasks.Run().ok());
+  RTC_CHECK(network_tasks.Run().ok());
+
+  return transceiver;
+}
+
+scoped_refptr<RtpTransceiver> CreateVideoTransceiverWithChannel(
+    const Environment& env,
+    Call* call,
+    ConnectionContext* context,
+    CodecLookupHelper* codec_lookup_helper,
+    const VideoOptions& video_options,
+    absl::AnyInvocable<RtpTransportInternal*() &&> transport_lookup = []() {
+      return nullptr;
+    }) {
+  auto transceiver = make_ref_counted<RtpTransceiver>(
+      env, call, MediaConfig(), "sender", "receiver", MediaType::VIDEO, nullptr,
+      std::vector<std::string>(), std::vector<RtpEncodingParameters>(), context,
+      codec_lookup_helper, nullptr, nullptr, AudioOptions(), video_options,
+      CryptoOptions(), nullptr, std::vector<RtpHeaderExtensionCapability>(),
+      false, std::vector<SimulcastLayer>(), [] {});
+
+  ScopedOperationsBatcher worker_tasks(context->worker_thread());
+  ScopedOperationsBatcher network_tasks(context->network_thread());
+  transceiver->CreateChannel("0", call, MediaConfig(), false, CryptoOptions(),
+                             AudioOptions(), video_options, nullptr,
+                             std::move(transport_lookup), worker_tasks,
+                             network_tasks);
+
+  RTC_CHECK(worker_tasks.Run().ok());
+  RTC_CHECK(network_tasks.Run().ok());
+
+  return transceiver;
+}
 
 class RtpTransceiverTest : public testing::Test {
  public:
@@ -98,9 +164,10 @@ class RtpTransceiverTest : public testing::Test {
     return &codec_lookup_helper_;
   }
 
- private:
-  AutoThread main_thread_;
+ protected:
+  test::RunLoop main_thread_;
 
+ private:
   static PeerConnectionFactoryDependencies MakeDependencies() {
     PeerConnectionFactoryDependencies d;
     d.network_thread = Thread::Current();
@@ -117,6 +184,72 @@ class RtpTransceiverTest : public testing::Test {
   FakeCodecLookupHelper codec_lookup_helper_;
 };
 
+class RtpTransceiverDoubleThreadTest : public testing::Test {
+ public:
+  RtpTransceiverDoubleThreadTest()
+      : env_(CreateTestEnvironment()),
+        network_thread_(Thread::Create()),
+        worker_thread_(Thread::Create()),
+        dependencies_(
+            MakeDependencies(network_thread_.get(), worker_thread_.get())),
+        context_(ConnectionContext::Create(env_, &dependencies_)),
+        codec_lookup_helper_(context_.get(), env_.field_trials()) {
+    network_thread_->Start();
+    worker_thread_->Start();
+    context_->worker_thread()->BlockingCall([&]() {
+      media_engine_ref_ =
+          std::make_unique<ConnectionContext::MediaEngineReference>(context_);
+    });
+  }
+
+  ~RtpTransceiverDoubleThreadTest() override {
+    context_->worker_thread()->BlockingCall(
+        [&]() { media_engine_ref_.reset(); });
+  }
+
+ protected:
+  const Environment& env() const { return env_; }
+  FakeMediaEngine* media_engine() {
+    return static_cast<FakeMediaEngine*>(media_engine_ref_->media_engine());
+  }
+  ConnectionContext* context() { return context_.get(); }
+  CodecLookupHelper* codec_lookup_helper() { return &codec_lookup_helper_; }
+
+ private:
+  static PeerConnectionFactoryDependencies MakeDependencies(
+      Thread* network_thread,
+      Thread* worker_thread) {
+    PeerConnectionFactoryDependencies d;
+    d.network_thread = network_thread;
+    d.worker_thread = worker_thread;
+    d.signaling_thread = Thread::Current();
+    RTC_LOG(LS_INFO) << "MakeDependencies signaling_thread="
+                     << d.signaling_thread;
+    EnableFakeMedia(d, std::make_unique<FakeMediaEngine>());
+    return d;
+  }
+
+  test::RunLoop main_thread_;
+  Environment env_;
+  std::unique_ptr<Thread> network_thread_;
+  std::unique_ptr<Thread> worker_thread_;
+  PeerConnectionFactoryDependencies dependencies_;
+  scoped_refptr<ConnectionContext> context_;
+  std::unique_ptr<ConnectionContext::MediaEngineReference> media_engine_ref_;
+  FakeCodecLookupHelper codec_lookup_helper_;
+};
+
+class RtpTransceiverTestWithFakeCall : public RtpTransceiverTest {
+ public:
+  RtpTransceiverTestWithFakeCall()
+      : call_(std::make_unique<FakeCall>(env(),
+                                         Thread::Current(),
+                                         Thread::Current())) {}
+
+ protected:
+  std::unique_ptr<FakeCall> call_;
+};
+
 // Checks that a channel cannot be set on a stopped `RtpTransceiver`.
 TEST_F(RtpTransceiverTest, CannotSetChannelOnStoppedTransceiver) {
   const std::string content_name("my_mid");
@@ -126,13 +259,9 @@ TEST_F(RtpTransceiverTest, CannotSetChannelOnStoppedTransceiver) {
   auto channel1 = std::make_unique<NiceMock<MockChannelInterface>>();
   EXPECT_CALL(*channel1, media_type()).WillRepeatedly(Return(MediaType::AUDIO));
   EXPECT_CALL(*channel1, mid()).WillRepeatedly(ReturnRef(content_name));
-  EXPECT_CALL(*channel1, SetFirstPacketReceivedCallback(_));
   EXPECT_CALL(*channel1, SetRtpTransport(_)).WillRepeatedly(Return(true));
-  auto channel1_ptr = channel1.get();
-  transceiver->SetChannel(std::move(channel1), [&](const std::string& mid) {
-    EXPECT_EQ(mid, content_name);
-    return nullptr;
-  });
+
+  transceiver->SetChannelForTest(std::move(channel1));
   EXPECT_TRUE(transceiver->HasChannel());
 
   // Stop the transceiver.
@@ -142,13 +271,13 @@ TEST_F(RtpTransceiverTest, CannotSetChannelOnStoppedTransceiver) {
   auto channel2 = std::make_unique<NiceMock<MockChannelInterface>>();
   EXPECT_CALL(*channel2, media_type()).WillRepeatedly(Return(MediaType::AUDIO));
 
-  // Clear the current channel - required to allow SetChannel()
-  EXPECT_CALL(*channel1_ptr, SetFirstPacketReceivedCallback(_));
+  // Clear the current channel - required to allow SetChannelForTest()
   transceiver->ClearChannel();
+
   ASSERT_FALSE(transceiver->HasChannel());
+
   // Channel can no longer be set, so this call should be a no-op.
-  transceiver->SetChannel(std::move(channel2),
-                          [](const std::string&) { return nullptr; });
+  transceiver->SetChannelForTest(std::move(channel2));
   EXPECT_FALSE(transceiver->HasChannel());
 }
 
@@ -161,14 +290,9 @@ TEST_F(RtpTransceiverTest, CanUnsetChannelOnStoppedTransceiver) {
   auto channel = std::make_unique<NiceMock<MockChannelInterface>>();
   EXPECT_CALL(*channel, media_type()).WillRepeatedly(Return(MediaType::VIDEO));
   EXPECT_CALL(*channel, mid()).WillRepeatedly(ReturnRef(content_name));
-  EXPECT_CALL(*channel, SetFirstPacketReceivedCallback(_))
-      .WillRepeatedly(testing::Return());
   EXPECT_CALL(*channel, SetRtpTransport(_)).WillRepeatedly(Return(true));
 
-  transceiver->SetChannel(std::move(channel), [&](const std::string& mid) {
-    EXPECT_EQ(mid, content_name);
-    return nullptr;
-  });
+  transceiver->SetChannelForTest(std::move(channel));
   EXPECT_TRUE(transceiver->HasChannel());
 
   // Stop the transceiver.
@@ -180,30 +304,17 @@ TEST_F(RtpTransceiverTest, CanUnsetChannelOnStoppedTransceiver) {
   EXPECT_FALSE(transceiver->HasChannel());
 }
 
-TEST_F(RtpTransceiverTest, TransportNameIsUpdated) {
+TEST_F(RtpTransceiverTestWithFakeCall, TransportNameIsUpdated) {
   const std::string content_name("my_mid");
-  auto transceiver = make_ref_counted<RtpTransceiver>(
-      env(), MediaType::AUDIO, context(), codec_lookup_helper(), nullptr);
-  EXPECT_FALSE(transceiver->transport_name().has_value());
 
   auto fake_dtls = std::make_unique<FakeDtlsTransport>("test_transport", false);
   auto rtp_transport = std::make_unique<RtpTransport>(/*rtcp_mux_enabled=*/true,
                                                       env().field_trials());
   rtp_transport->SetRtpPacketTransport(fake_dtls.get());
 
-  transceiver->set_mid(content_name);
-  auto channel = std::make_unique<NiceMock<MockChannelInterface>>();
-  EXPECT_CALL(*channel, media_type()).WillRepeatedly(Return(MediaType::AUDIO));
-  EXPECT_CALL(*channel, mid()).WillRepeatedly(ReturnRef(content_name));
-  EXPECT_CALL(*channel, SetFirstPacketReceivedCallback(_))
-      .WillRepeatedly(Return());
-  EXPECT_CALL(*channel, SetRtpTransport(_)).WillRepeatedly(Return(true));
-
-  auto result = transceiver->SetChannel(
-      std::move(channel), [&](const std::string& mid) -> RtpTransportInternal* {
-        return rtp_transport.get();
-      });
-  ASSERT_TRUE(result.ok());
+  auto transceiver = CreateAudioTransceiverWithChannel(
+      env(), call_.get(), context(), codec_lookup_helper(), AudioOptions(),
+      [&]() -> RtpTransportInternal* { return rtp_transport.get(); });
 
   EXPECT_TRUE(transceiver->HasChannel());
   EXPECT_EQ(transceiver->transport_name(), "test_transport");
@@ -253,9 +364,6 @@ class RtpTransceiverUnifiedPlanTest : public RtpTransceiverTest {
         media_engine()->voice().GetRtpHeaderExtensions(&env().field_trials()),
         /* on_negotiation_needed= */ [] {});
   }
-
- protected:
-  AutoThread main_thread_;
 };
 
 // Basic tests for Stop()
@@ -271,7 +379,10 @@ TEST_F(RtpTransceiverUnifiedPlanTest, StopSetsDirection) {
   transceiver->StopStandard();
   EXPECT_EQ(RtpTransceiverDirection::kStopped, transceiver->direction());
   EXPECT_FALSE(transceiver->current_direction());
-  transceiver->StopTransceiverProcedure();
+  auto stop_task = transceiver->GetStopTransceiverProcedure();
+  if (stop_task) {
+    std::move(stop_task)();
+  }
   EXPECT_TRUE(transceiver->current_direction());
   EXPECT_EQ(RtpTransceiverDirection::kStopped, transceiver->direction());
   EXPECT_EQ(RtpTransceiverDirection::kStopped,
@@ -750,12 +861,14 @@ TEST_F(RtpTransceiverTestForHeaderExtensions,
   const std::string content_name("my_mid");
   transceiver_->set_mid(content_name);
   auto mock_channel = std::make_unique<NiceMock<MockChannelInterface>>();
+  // Raw ptr for updating expectations later since `mock_channel` will be moved
+  // to `SetChannel`.
   EXPECT_CALL(*mock_channel, media_type())
       .WillRepeatedly(Return(MediaType::AUDIO));
   EXPECT_CALL(*mock_channel, mid()).WillRepeatedly(ReturnRef(content_name));
   EXPECT_CALL(*mock_channel, SetRtpTransport(_)).WillRepeatedly(Return(true));
-  transceiver_->SetChannel(std::move(mock_channel),
-                           [](const std::string&) { return nullptr; });
+
+  transceiver_->SetChannelForTest(std::move(mock_channel));
   EXPECT_THAT(transceiver_->GetNegotiatedHeaderExtensions(),
               ElementsAre(Field(&RtpHeaderExtensionCapability::direction,
                                 RtpTransceiverDirection::kStopped),
@@ -786,8 +899,7 @@ TEST_F(RtpTransceiverTestForHeaderExtensions, ReturnsNegotiatedHdrExts) {
   description.set_rtp_header_extensions(extensions);
   transceiver_->OnNegotiationUpdate(SdpType::kAnswer, &description);
 
-  transceiver_->SetChannel(std::move(mock_channel),
-                           [](const std::string&) { return nullptr; });
+  transceiver_->SetChannelForTest(std::move(mock_channel));
 
   EXPECT_THAT(transceiver_->GetNegotiatedHeaderExtensions(),
               ElementsAre(Field(&RtpHeaderExtensionCapability::direction,
@@ -798,6 +910,7 @@ TEST_F(RtpTransceiverTestForHeaderExtensions, ReturnsNegotiatedHdrExts) {
                                 RtpTransceiverDirection::kStopped),
                           Field(&RtpHeaderExtensionCapability::direction,
                                 RtpTransceiverDirection::kStopped)));
+
   ClearChannel();
 }
 
@@ -819,8 +932,7 @@ TEST_F(RtpTransceiverTestForHeaderExtensions,
   description.set_rtp_header_extensions(extensions);
   transceiver_->OnNegotiationUpdate(SdpType::kPrAnswer, &description);
 
-  transceiver_->SetChannel(std::move(mock_channel),
-                           [](const std::string&) { return nullptr; });
+  transceiver_->SetChannelForTest(std::move(mock_channel));
 
   EXPECT_THAT(transceiver_->GetNegotiatedHeaderExtensions(),
               ElementsAre(Field(&RtpHeaderExtensionCapability::direction,
@@ -831,6 +943,7 @@ TEST_F(RtpTransceiverTestForHeaderExtensions,
                                 RtpTransceiverDirection::kStopped),
                           Field(&RtpHeaderExtensionCapability::direction,
                                 RtpTransceiverDirection::kStopped)));
+
   ClearChannel();
 }
 
@@ -839,14 +952,15 @@ TEST_F(RtpTransceiverTestForHeaderExtensions,
   const std::string content_name("my_mid");
   transceiver_->set_mid(content_name);
   auto mock_channel = std::make_unique<NiceMock<MockChannelInterface>>();
+
   EXPECT_CALL(*mock_channel, media_type())
       .WillRepeatedly(Return(MediaType::AUDIO));
   EXPECT_CALL(*mock_channel, voice_media_send_channel())
       .WillRepeatedly(Return(nullptr));
   EXPECT_CALL(*mock_channel, mid()).WillRepeatedly(ReturnRef(content_name));
   EXPECT_CALL(*mock_channel, SetRtpTransport(_)).WillRepeatedly(Return(true));
-  transceiver_->SetChannel(std::move(mock_channel),
-                           [](const std::string&) { return nullptr; });
+
+  transceiver_->SetChannelForTest(std::move(mock_channel));
 
   AudioContentDescription description_pr_answer;
   description_pr_answer.set_rtp_header_extensions({RtpExtension("uri1", 1)});
@@ -992,41 +1106,13 @@ TEST_F(RtpTransceiverTestForHeaderExtensions,
   EXPECT_EQ(svc_extensions[1].direction, RtpTransceiverDirection::kSendRecv);
 }
 
-class RtpTransceiverTestWithFakeCall : public RtpTransceiverTest {
- public:
-  RtpTransceiverTestWithFakeCall()
-      : call_(std::make_unique<FakeCall>(env(),
-                                         Thread::Current(),
-                                         Thread::Current())) {}
-
- protected:
-  std::unique_ptr<FakeCall> call_;
-};
-
 TEST_F(RtpTransceiverTestWithFakeCall,
        SetChannelAppliesAudioOptionsToSendChannel) {
   AudioOptions audio_options;
   audio_options.audio_network_adaptor = true;
 
-  auto transceiver = make_ref_counted<RtpTransceiver>(
-      env(), call_.get(), MediaConfig(),
-      /*sender_id=*/"sender", /*receiver_id=*/"receiver", MediaType::AUDIO,
-      /*track=*/nullptr,
-      /*stream_ids=*/std::vector<std::string>(),
-      /*init_send_encodings=*/std::vector<RtpEncodingParameters>(), context(),
-      codec_lookup_helper(),
-      /*legacy_stats=*/nullptr, /*set_streams_observer=*/nullptr, audio_options,
-      VideoOptions(), CryptoOptions(),
-      /*video_bitrate_allocator_factory=*/nullptr,
-      /*header_extensions=*/std::vector<RtpHeaderExtensionCapability>(),
-      /*on_negotiation_needed=*/[] {});
-
-  EXPECT_FALSE(transceiver->HasChannel());
-  auto error = transceiver->CreateChannel(
-      "0", call_.get(), MediaConfig(), /*srtp_required=*/false, CryptoOptions(),
-      audio_options, VideoOptions(), nullptr,
-      [](absl::string_view) -> RtpTransportInternal* { return nullptr; });
-  EXPECT_TRUE(error.ok());
+  auto transceiver = CreateAudioTransceiverWithChannel(
+      env(), call_.get(), context(), codec_lookup_helper(), audio_options);
 
   ASSERT_TRUE(transceiver->HasChannel());
   auto* voice_channel = transceiver->voice_media_send_channel();
@@ -1034,8 +1120,231 @@ TEST_F(RtpTransceiverTestWithFakeCall,
   auto* fake_channel = static_cast<FakeVoiceMediaSendChannel*>(voice_channel);
   EXPECT_TRUE(fake_channel->options().audio_network_adaptor);
 
-  transceiver->ClearChannel();
-  transceiver->StopStandard();
+  ScopedOperationsBatcher worker_tasks(context()->worker_thread());
+  ScopedOperationsBatcher network_tasks(context()->network_thread());
+  network_tasks.Add(transceiver->GetClearChannelNetworkTask());
+  worker_tasks.Add(
+      transceiver->GetDeleteChannelWorkerTask(/*stop_senders=*/true));
+}
+
+TEST_F(RtpTransceiverTestWithFakeCall, OnNetworkRouteChangedForwardsToChannel) {
+  const std::string content_name("my_mid");
+
+  auto fake_dtls = std::make_unique<FakeDtlsTransport>("test_transport", false);
+  auto rtp_transport = std::make_unique<RtpTransport>(/*rtcp_mux_enabled=*/true,
+                                                      env().field_trials());
+  rtp_transport->SetRtpPacketTransport(fake_dtls.get());
+
+  auto transceiver = CreateAudioTransceiverWithChannel(
+      env(), call_.get(), context(), codec_lookup_helper(), AudioOptions(),
+      [&]() -> RtpTransportInternal* { return rtp_transport.get(); });
+
+  ASSERT_TRUE(transceiver->HasChannel());
+  auto* voice_channel = transceiver->voice_media_send_channel();
+  ASSERT_TRUE(voice_channel);
+  auto* fake_channel = static_cast<FakeVoiceMediaSendChannel*>(voice_channel);
+
+  NetworkRoute network_route;
+  network_route.connected = true;
+  network_route.local = RouteEndpoint::CreateWithNetworkId(1);
+  network_route.remote = RouteEndpoint::CreateWithNetworkId(2);
+  network_route.last_sent_packet_id = 100;
+  network_route.packet_overhead = 28;
+
+  // Trigger network route change on the transport on the network thread.
+  context()->network_thread()->BlockingCall([&]() {
+    fake_dtls->ice_transport()->NotifyNetworkRouteChanged(
+        std::optional<NetworkRoute>(network_route));
+  });
+
+  // Verify that the channel received it.
+  EXPECT_EQ(1, fake_channel->num_network_route_changes());
+  EXPECT_TRUE(fake_channel->last_network_route().connected);
+  EXPECT_EQ(1, fake_channel->last_network_route().local.network_id());
+  EXPECT_EQ(2, fake_channel->last_network_route().remote.network_id());
+  EXPECT_EQ(100, fake_channel->last_network_route().last_sent_packet_id);
+  EXPECT_EQ(28, fake_channel->transport_overhead_per_packet());
+
+  ScopedOperationsBatcher worker_tasks(context()->worker_thread());
+  ScopedOperationsBatcher network_tasks(context()->network_thread());
+  network_tasks.Add(transceiver->GetClearChannelNetworkTask());
+  worker_tasks.Add(
+      transceiver->GetDeleteChannelWorkerTask(/*stop_senders=*/true));
+}
+
+TEST_F(RtpTransceiverTestWithFakeCall,
+       OnNetworkRouteChangedForwardsToVideoChannel) {
+  const std::string content_name("my_mid");
+
+  auto fake_dtls = std::make_unique<FakeDtlsTransport>("test_transport", false);
+  auto rtp_transport = std::make_unique<RtpTransport>(/*rtcp_mux_enabled=*/true,
+                                                      env().field_trials());
+  rtp_transport->SetRtpPacketTransport(fake_dtls.get());
+
+  auto transceiver = CreateVideoTransceiverWithChannel(
+      env(), call_.get(), context(), codec_lookup_helper(), VideoOptions(),
+      [&]() -> RtpTransportInternal* { return rtp_transport.get(); });
+
+  ASSERT_TRUE(transceiver->HasChannel());
+  auto* video_channel = transceiver->video_media_send_channel();
+  ASSERT_TRUE(video_channel);
+  auto* fake_channel = static_cast<FakeVideoMediaSendChannel*>(video_channel);
+
+  NetworkRoute network_route;
+  network_route.connected = true;
+  network_route.local = RouteEndpoint::CreateWithNetworkId(1);
+  network_route.remote = RouteEndpoint::CreateWithNetworkId(2);
+  network_route.last_sent_packet_id = 100;
+  network_route.packet_overhead = 28;
+
+  // Trigger network route change on the transport on the network thread.
+  context()->network_thread()->BlockingCall([&]() {
+    fake_dtls->ice_transport()->NotifyNetworkRouteChanged(
+        std::optional<NetworkRoute>(network_route));
+  });
+
+  // Verify that the channel received it.
+  EXPECT_EQ(1, fake_channel->num_network_route_changes());
+  EXPECT_TRUE(fake_channel->last_network_route().connected);
+  EXPECT_EQ(1, fake_channel->last_network_route().local.network_id());
+  EXPECT_EQ(2, fake_channel->last_network_route().remote.network_id());
+  EXPECT_EQ(100, fake_channel->last_network_route().last_sent_packet_id);
+  EXPECT_EQ(28, fake_channel->transport_overhead_per_packet());
+
+  ScopedOperationsBatcher worker_tasks(context()->worker_thread());
+  ScopedOperationsBatcher network_tasks(context()->network_thread());
+  network_tasks.Add(transceiver->GetClearChannelNetworkTask());
+  worker_tasks.Add(
+      transceiver->GetDeleteChannelWorkerTask(/*stop_senders=*/true));
+}
+
+TEST_F(RtpTransceiverDoubleThreadTest,
+       OnNetworkRouteChangedForwardsToChannel_DoubleThread) {
+  const std::string content_name("my_mid");
+  RTC_LOG(LS_INFO) << "TestBody current_thread=" << Thread::Current();
+  RTC_LOG(LS_INFO) << "TestBody signaling_thread="
+                   << context()->signaling_thread();
+  RTC_LOG(LS_INFO) << "TestBody network_thread=" << context()->network_thread();
+
+  std::unique_ptr<FakeDtlsTransport> fake_dtls;
+  auto rtp_transport = std::make_unique<RtpTransport>(/*rtcp_mux_enabled=*/true,
+                                                      env().field_trials());
+  context()->network_thread()->BlockingCall([&]() {
+    fake_dtls = std::make_unique<FakeDtlsTransport>(
+        "test_transport", 0, context()->network_thread());
+    rtp_transport->SetRtpPacketTransport(fake_dtls.get());
+  });
+
+  auto call = std::make_unique<FakeCall>(env(), context()->worker_thread(),
+                                         context()->network_thread());
+
+  auto transceiver = CreateAudioTransceiverWithChannel(
+      env(), call.get(), context(), codec_lookup_helper(), AudioOptions(),
+      [&]() -> RtpTransportInternal* { return rtp_transport.get(); });
+
+  ASSERT_TRUE(transceiver->HasChannel());
+  auto* voice_channel = transceiver->voice_media_send_channel();
+  ASSERT_TRUE(voice_channel);
+  auto* fake_channel = static_cast<FakeVoiceMediaSendChannel*>(voice_channel);
+
+  NetworkRoute network_route;
+  network_route.connected = true;
+  network_route.local = RouteEndpoint::CreateWithNetworkId(1);
+  network_route.remote = RouteEndpoint::CreateWithNetworkId(2);
+  network_route.last_sent_packet_id = 100;
+  network_route.packet_overhead = 28;
+
+  // Trigger network route change on the transport on the network thread.
+  context()->network_thread()->BlockingCall([&]() {
+    fake_dtls->ice_transport()->NotifyNetworkRouteChanged(
+        std::optional<NetworkRoute>(network_route));
+  });
+
+  // Verify that the channel received it.
+  int changes = context()->network_thread()->BlockingCall(
+      [&]() { return fake_channel->num_network_route_changes(); });
+  EXPECT_EQ(1, changes);
+
+  NetworkRoute last_route = context()->network_thread()->BlockingCall(
+      [&]() { return fake_channel->last_network_route(); });
+  EXPECT_TRUE(last_route.connected);
+  EXPECT_EQ(1, last_route.local.network_id());
+  EXPECT_EQ(2, last_route.remote.network_id());
+  EXPECT_EQ(100, last_route.last_sent_packet_id);
+
+  int overhead = context()->network_thread()->BlockingCall(
+      [&]() { return fake_channel->transport_overhead_per_packet(); });
+  EXPECT_EQ(28, overhead);
+
+  ScopedOperationsBatcher worker_tasks(context()->worker_thread());
+  ScopedOperationsBatcher network_tasks(context()->network_thread());
+  network_tasks.Add(transceiver->GetClearChannelNetworkTask());
+  worker_tasks.Add(
+      transceiver->GetDeleteChannelWorkerTask(/*stop_senders=*/true));
+
+  RTC_CHECK(network_tasks.Run().ok());
+  RTC_CHECK(worker_tasks.Run().ok());
+
+  context()->network_thread()->BlockingCall([&]() { fake_dtls.reset(); });
+}
+
+// Sframe tests
+
+TEST_F(RtpTransceiverUnifiedPlanTest, SframeEnabledIsNulloptByDefault) {
+  scoped_refptr<RtpTransceiver> transceiver = CreateTransceiver(
+      MockSender(MediaType::AUDIO), MockReceiver(MediaType::AUDIO));
+
+  EXPECT_EQ(transceiver->SframeEnabled(), std::nullopt);
+}
+
+TEST_F(RtpTransceiverUnifiedPlanTest, TryToEnableSframeSetsValueToTrue) {
+  scoped_refptr<RtpTransceiver> transceiver = CreateTransceiver(
+      MockSender(MediaType::AUDIO), MockReceiver(MediaType::AUDIO));
+
+  EXPECT_TRUE(transceiver->TryToEnableSframe().ok());
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(true));
+}
+
+TEST_F(RtpTransceiverUnifiedPlanTest,
+       TryToEnableSframeCanBeCalledMultipleTimes) {
+  scoped_refptr<RtpTransceiver> transceiver = CreateTransceiver(
+      MockSender(MediaType::AUDIO), MockReceiver(MediaType::AUDIO));
+
+  EXPECT_TRUE(transceiver->TryToEnableSframe().ok());
+  EXPECT_TRUE(transceiver->TryToEnableSframe().ok());
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(true));
+}
+
+TEST_F(RtpTransceiverUnifiedPlanTest,
+       TryToEnableSframeFailsAfterExplicitlySetToFalse) {
+  scoped_refptr<RtpTransceiver> transceiver = CreateTransceiver(
+      MockSender(MediaType::AUDIO), MockReceiver(MediaType::AUDIO));
+
+  // Simulate the transceiver having been explicitly set to false (e.g. via
+  // ApplySframeEnabled during SDP application).
+  transceiver->ApplySframeEnabled(false);
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(false));
+
+  RTCError error = transceiver->TryToEnableSframe();
+  EXPECT_FALSE(error.ok());
+  EXPECT_EQ(error.type(), RTCErrorType::INVALID_MODIFICATION);
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(false));
+}
+
+TEST_F(RtpTransceiverUnifiedPlanTest, ApplySframeEnabledTrueSetsState) {
+  scoped_refptr<RtpTransceiver> transceiver = CreateTransceiver(
+      MockSender(MediaType::AUDIO), MockReceiver(MediaType::AUDIO));
+
+  transceiver->ApplySframeEnabled(true);
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(true));
+}
+
+TEST_F(RtpTransceiverUnifiedPlanTest, ApplySframeEnabledFalseSetsState) {
+  scoped_refptr<RtpTransceiver> transceiver = CreateTransceiver(
+      MockSender(MediaType::AUDIO), MockReceiver(MediaType::AUDIO));
+
+  transceiver->ApplySframeEnabled(false);
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(false));
 }
 
 }  // namespace

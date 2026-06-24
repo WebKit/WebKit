@@ -17,6 +17,22 @@
 #include "vpx/vpx_integer.h"
 #include "vpx_mem/vpx_mem.h"
 
+static int is_valid_img_fmt(vpx_img_fmt_t fmt) {
+  switch (fmt) {
+    case VPX_IMG_FMT_YV12:
+    case VPX_IMG_FMT_I420:
+    case VPX_IMG_FMT_I422:
+    case VPX_IMG_FMT_I444:
+    case VPX_IMG_FMT_I440:
+    case VPX_IMG_FMT_NV12:
+    case VPX_IMG_FMT_I42016:
+    case VPX_IMG_FMT_I42216:
+    case VPX_IMG_FMT_I44416:
+    case VPX_IMG_FMT_I44016: return 1;
+    default: return 0;
+  }
+}
+
 static vpx_image_t *img_alloc_helper(vpx_image_t *img, vpx_img_fmt_t fmt,
                                      unsigned int d_w, unsigned int d_h,
                                      unsigned int buf_align,
@@ -29,7 +45,7 @@ static vpx_image_t *img_alloc_helper(vpx_image_t *img, vpx_img_fmt_t fmt,
 
   if (img != NULL) memset(img, 0, sizeof(vpx_image_t));
 
-  if (fmt == VPX_IMG_FMT_NONE) goto fail;
+  if (!is_valid_img_fmt(fmt)) goto fail;
 
   /* Impose maximum values on input parameters so that this function can
    * perform arithmetic operations without worrying about overflows.
@@ -244,9 +260,11 @@ void vpx_img_flip(vpx_image_t *img) {
                               img->stride[VPX_PLANE_V];
   img->stride[VPX_PLANE_V] = -img->stride[VPX_PLANE_V];
 
-  img->planes[VPX_PLANE_ALPHA] +=
-      (signed)(img->d_h - 1) * img->stride[VPX_PLANE_ALPHA];
-  img->stride[VPX_PLANE_ALPHA] = -img->stride[VPX_PLANE_ALPHA];
+  if (img->fmt & VPX_IMG_FMT_HAS_ALPHA) {
+    img->planes[VPX_PLANE_ALPHA] +=
+        (signed)(img->d_h - 1) * img->stride[VPX_PLANE_ALPHA];
+    img->stride[VPX_PLANE_ALPHA] = -img->stride[VPX_PLANE_ALPHA];
+  }
 }
 
 void vpx_img_free(vpx_image_t *img) {

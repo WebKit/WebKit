@@ -25,11 +25,10 @@
 
 #import "WebDeviceOrientationInternal.h"
 
-using namespace WebCore;
 
 @implementation WebDeviceOrientationInternal
 
-- (id)initWithCoreDeviceOrientation:(RefPtr<DeviceOrientationData>&&)coreDeviceOrientation
+- (id)initWithCoreDeviceOrientation:(RefPtr<WebCore::DeviceOrientationData>&&)coreDeviceOrientation
 {
     self = [super init];
     if (!self)
@@ -55,7 +54,7 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientation
 
-DeviceOrientationData* core(WebDeviceOrientation* orientation)
+WebCore::DeviceOrientationData* core(WebDeviceOrientation* orientation)
 {
     return orientation ? orientation->m_internal->m_orientation.get() : 0;
 }
@@ -75,9 +74,9 @@ static std::optional<double> NODELETE convert(bool canProvide, double value)
 #if PLATFORM(IOS_FAMILY)
     // We don't use this API, but make sure that it compiles with the new
     // compass parameters.
-    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(convert(canProvideAlpha, alpha), convert(canProvideBeta, beta), convert(canProvideGamma, gamma), std::nullopt, std::nullopt)];
+    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:WebCore::DeviceOrientationData::create(convert(canProvideAlpha, alpha), convert(canProvideBeta, beta), convert(canProvideGamma, gamma), std::nullopt, std::nullopt)];
 #else
-    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(convert(canProvideAlpha, alpha), convert(canProvideBeta, beta), convert(canProvideGamma, gamma), std::nullopt)];
+    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:WebCore::DeviceOrientationData::create(convert(canProvideAlpha, alpha), convert(canProvideBeta, beta), convert(canProvideGamma, gamma), std::nullopt)];
 #endif
     return self;
 }

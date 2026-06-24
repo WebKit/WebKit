@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class ContentSecurityPolicyResponseHeaders;
 class EventLoopTaskGroup;
 class ScriptModuleLoader;
 class WorkerEventLoop;
@@ -91,6 +92,8 @@ public:
 
 protected:
     WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, ReferrerPolicy, WorkerOrWorkletThread*, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
+
+    void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
     // ScriptExecutionContext.
     bool isJSExecutionForbidden() const final;

@@ -60,10 +60,10 @@
 #include "QualifiedName.h"
 #include "Range.h"
 #include "RenderElement.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SimpleRange.h"
 #include "StyleAppleColorFilter.h"
 #include "StyleColor.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleExtractor.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleFontWeight.h"
@@ -599,7 +599,7 @@ void EditingStyle::init(Node* initialNode, PropertiesToInclude propertiesToInclu
     extractFontSizeDelta();
 }
 
-void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(const RenderStyle* renderStyle)
+void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(const Style::ComputedStyle* renderStyle)
 {
     RefPtr mutableStyle = style();
     if (renderStyle->textFillColor().isCurrentColor())

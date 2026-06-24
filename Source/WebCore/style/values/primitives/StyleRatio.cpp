@@ -31,7 +31,7 @@
 namespace WebCore {
 namespace Style {
 
-Ref<CSSValue> CSSValueCreation<Ratio>::operator()(CSSValuePool&, const RenderStyle& style, const Ratio& ratio)
+Ref<CSSValue> CSSValueCreation<Ratio>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Ratio& ratio)
 {
     return CSSRatioValue::create(toCSS(ratio, style));
 }

@@ -15,8 +15,8 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -33,7 +33,7 @@ class EncodeNetEqInput : public NetEqInput {
    public:
     virtual ~Generator() = default;
     // Returns the next num_samples values from the signal generator.
-    virtual ArrayView<const int16_t> Generate(size_t num_samples) = 0;
+    virtual std::span<const int16_t> Generate(size_t num_samples) = 0;
   };
 
   // The source will end after the given input duration.

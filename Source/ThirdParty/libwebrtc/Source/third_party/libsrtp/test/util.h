@@ -44,6 +44,39 @@
 #ifndef SRTP_TEST_UTIL_H
 #define SRTP_TEST_UTIL_H
 
+#include "srtp.h"
+
+// test check macros and functions
+void check_ok_impl(srtp_err_status_t status, const char *file, int line);
+void check_return_impl(srtp_err_status_t status,
+                       srtp_err_status_t expected,
+                       const char *file,
+                       int line);
+void check_impl(int condition,
+                const char *file,
+                int line,
+                const char *condition_str);
+void check_buffer_equal_impl(const char *buffer1,
+                             const char *buffer2,
+                             int buffer_length,
+                             const char *file,
+                             int line);
+void check_overrun_impl(const char *buffer,
+                        int offset,
+                        int buffer_length,
+                        const char *file,
+                        int line);
+void overrun_check_prepare(char *buffer, int offset, int buffer_len);
+
+#define CHECK_OK(status) check_ok_impl((status), __FILE__, __LINE__)
+#define CHECK_RETURN(status, expected)                                         \
+    check_return_impl((status), (expected), __FILE__, __LINE__)
+#define CHECK(condition) check_impl((condition), __FILE__, __LINE__, #condition)
+#define CHECK_BUFFER_EQUAL(buffer1, buffer2, length)                           \
+    check_buffer_equal_impl((buffer1), (buffer2), (length), __FILE__, __LINE__)
+#define CHECK_OVERRUN(buffer, offset, length)                                  \
+    check_overrun_impl((buffer), (offset), (length), __FILE__, __LINE__)
+
 #define MAX_PRINT_STRING_LEN 1024
 
 int hex_string_to_octet_string(char *raw, char *hex, int len);

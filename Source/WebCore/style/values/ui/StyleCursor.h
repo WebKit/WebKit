@@ -90,11 +90,11 @@ template<size_t I> const auto& get(const Cursor& value)
 
 template<> struct CSSValueConversion<Cursor> { auto operator()(BuilderState&, const CSSValue&) -> Cursor; };
 
-template<> struct CSSValueCreation<CursorImageAndHotSpot> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const CursorImageAndHotSpot&); };
+template<> struct CSSValueCreation<CursorImageAndHotSpot> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const CursorImageAndHotSpot&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<CursorImageAndHotSpot> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const CursorImageAndHotSpot&); };
+template<> struct Serialize<CursorImageAndHotSpot> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const CursorImageAndHotSpot&); };
 
 // MARK: - Logging
 

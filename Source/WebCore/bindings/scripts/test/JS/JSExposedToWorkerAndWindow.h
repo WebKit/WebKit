@@ -57,8 +57,12 @@ protected:
 
 class JSExposedToWorkerAndWindowOwner final : public JSC::WeakHandleOwner {
 public:
+    JSExposedToWorkerAndWindowOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSExposedToWorkerAndWindowOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, ExposedToWorkerAndWindow*)

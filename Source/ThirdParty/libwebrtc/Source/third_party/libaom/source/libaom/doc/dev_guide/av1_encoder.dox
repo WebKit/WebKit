@@ -1335,7 +1335,7 @@ implementation which the SIMD variants can be tested against.
 As different machines with the same nominal architecture may support different
 subsets of SIMD instructions, we have dynamic CPU detection logic which chooses
 the appropriate functions to use at run time. This process is handled by
-`build/cmake/rtcd.pl`, with function definitions in the files
+`cmake/rtcd.pl`, with function definitions in the files
 `*_rtcd_defs.pl` elsewhere in the codebase.
 
 Currently SIMD is supported on the following platforms:

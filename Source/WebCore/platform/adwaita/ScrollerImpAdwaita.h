@@ -33,9 +33,9 @@ namespace WebCore {
 
 class ScrollerImpAdwaita : public ThreadSafeRefCounted<ScrollerImpAdwaita> {
 public:
-    void paint(GraphicsContext& graphicsContext, const IntRect& damageRect, const AdwaitaScrollbarPainter::State& state)
+    void paint(GraphicsContext& graphicsContext, const IntRect& damageRect, const AdwaitaScrollbarPainter::State& state, Damage& damageOut)
     {
-        AdwaitaScrollbarPainter::paint(graphicsContext, damageRect, state);
+        AdwaitaScrollbarPainter::paint(graphicsContext, damageRect, state, &damageOut);
     }
 };
 

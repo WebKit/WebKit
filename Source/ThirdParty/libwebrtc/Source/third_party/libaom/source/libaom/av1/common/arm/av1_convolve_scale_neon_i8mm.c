@@ -23,16 +23,10 @@
 #include "aom_dsp/arm/transpose_neon.h"
 #include "aom_ports/mem.h"
 #include "av1/common/arm/convolve_scale_neon.h"
+#include "av1/common/arm/av1_convolve_scale_neon_dotprod.h"
 #include "av1/common/convolve.h"
 #include "av1/common/enums.h"
 #include "av1/common/filter.h"
-
-// clang-format off
-DECLARE_ALIGNED(16, static const uint8_t, kScale2DotProdPermuteTbl[32]) = {
-  0, 1, 2, 3, 2, 3, 4, 5, 4, 5,  6,  7,  6,  7,  8,  9,
-  4, 5, 6, 7, 6, 7, 8, 9, 8, 9, 10, 11, 10, 11, 12, 13
-};
-// clang-format on
 
 static inline int16x4_t convolve8_4_h(const uint8x8_t s0, const uint8x8_t s1,
                                       const uint8x8_t s2, const uint8x8_t s3,

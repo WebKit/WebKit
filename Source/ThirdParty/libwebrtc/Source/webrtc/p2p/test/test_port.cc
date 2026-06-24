@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/candidate.h"
 #include "api/transport/stun.h"
 #include "p2p/base/connection.h"
@@ -39,9 +39,9 @@ TestPort::TestPort(const PortParametersRef& args,
     : Port(args, IceCandidateType::kHost, min_port, max_port) {}
 TestPort::~TestPort() = default;
 
-ArrayView<const uint8_t> TestPort::last_stun_buf() {
+std::span<const uint8_t> TestPort::last_stun_buf() {
   if (!last_stun_buf_)
-    return ArrayView<const uint8_t>();
+    return std::span<const uint8_t>();
   return *last_stun_buf_;
 }
 IceMessage* TestPort::last_stun_msg() {
@@ -97,15 +97,13 @@ Connection* TestPort::CreateConnection(const Candidate& remote_candidate,
   conn->set_use_candidate_attr(true);
   return conn;
 }
-int TestPort::SendTo(const void* data,
-                     size_t size,
+int TestPort::SendTo(std::span<const uint8_t> data,
                      const SocketAddress& /* addr */,
                      const AsyncSocketPacketOptions& /* options */,
                      bool payload) {
   if (!payload) {
     auto msg = std::make_unique<IceMessage>();
-    auto buf = std::make_unique<BufferT<uint8_t>>(
-        static_cast<const char*>(data), size);
+    auto buf = std::make_unique<BufferT<uint8_t>>(data);
     ByteBufferReader read_buf(*buf);
     if (!msg->Read(&read_buf)) {
       return -1;
@@ -113,8 +111,9 @@ int TestPort::SendTo(const void* data,
     last_stun_buf_ = std::move(buf);
     last_stun_msg_ = std::move(msg);
   }
-  return static_cast<int>(size);
+  return static_cast<int>(data.size());
 }
+
 int TestPort::SetOption(Socket::Option /* opt */, int /* value */) {
   return 0;
 }

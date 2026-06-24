@@ -75,7 +75,7 @@ func DecryptShimTicket(in []byte) ([]byte, error) {
 		return nil, errors.New("tls: bad shim ticket CBC pad")
 	}
 
-	for i := 0; i < pad; i++ {
+	for i := range pad {
 		if out[len(out)-1-i] != byte(pad) {
 			return nil, errors.New("tls: bad shim ticket CBC pad")
 		}
@@ -105,7 +105,7 @@ func EncryptShimTicket(in []byte) []byte {
 	out = append(out, name...)
 	out = append(out, iv...)
 	out = append(out, in...)
-	for i := 0; i < pad; i++ {
+	for range pad {
 		out = append(out, byte(pad))
 	}
 

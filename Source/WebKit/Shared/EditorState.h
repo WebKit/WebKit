@@ -87,6 +87,7 @@ struct EditorState {
 #if PLATFORM(MAC)
     bool canEnableAutomaticSpellingCorrection { true };
     bool inputMethodUsesCorrectKeyEventOrder { false };
+    bool inputMethodMustUseCompositionEvents { false };
 #endif
 
     struct PostLayoutData {

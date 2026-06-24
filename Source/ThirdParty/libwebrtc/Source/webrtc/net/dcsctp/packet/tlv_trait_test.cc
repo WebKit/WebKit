@@ -12,9 +12,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
 #include "test/gmock.h"
@@ -44,11 +44,11 @@ class OneByteChunk : public TLVTrait<OneByteTypeConfig> {
     writer.Store16<10>(0x0708);
 
     uint8_t variable_data[kVariableSize] = {0xDE, 0xAD, 0xBE, 0xEF};
-    writer.CopyToVariableData(webrtc::ArrayView<const uint8_t>(variable_data));
+    writer.CopyToVariableData(std::span<const uint8_t>(variable_data));
   }
 
   static std::optional<BoundedByteReader<OneByteTypeConfig::kHeaderSize>> Parse(
-      webrtc::ArrayView<const uint8_t> data) {
+      std::span<const uint8_t> data) {
     return ParseTLV(data);
   }
 };
@@ -93,11 +93,11 @@ class TwoByteChunk : public TLVTrait<TwoByteTypeConfig> {
     writer.Store32<4>(0x01020304U);
 
     uint8_t variable_data[] = {0x05, 0x06, 0x07, 0x08, 0xDE, 0xAD, 0xBE, 0xEF};
-    writer.CopyToVariableData(webrtc::ArrayView<const uint8_t>(variable_data));
+    writer.CopyToVariableData(std::span<const uint8_t>(variable_data));
   }
 
   static std::optional<BoundedByteReader<TwoByteTypeConfig::kHeaderSize>> Parse(
-      webrtc::ArrayView<const uint8_t> data) {
+      std::span<const uint8_t> data) {
     return ParseTLV(data);
   }
 };

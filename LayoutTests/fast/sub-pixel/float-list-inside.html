@@ -22,7 +22,7 @@
         text-decoration: none;
     }
 </style>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
     <nav>
@@ -32,8 +32,7 @@
         </ul>
     </nav>
     <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
+        window.jsTestIsAsync = true;
 
         var list = document.getElementsByTagName('ul')[0];
         var firstLinkTop = list.firstElementChild.getBoundingClientRect().top;
@@ -59,8 +58,7 @@
             else
                 shouldBe('list.lastElementChild.getBoundingClientRect().top', 'lastLinkTop');
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         };
     </script>
 </body>

@@ -34,6 +34,7 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
+#include "SkiaCompositingLayerImageSetBatch.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
 #include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
@@ -97,6 +98,8 @@ public:
 
     void setUseBackingStore(bool, CoordinatedAnimatedBackingStoreClient* = nullptr);
     void updateBackingStore(CoordinatedBackingStoreProxy::Update&&, float);
+    bool hasPendingBackingStoreTileUpdates() const;
+    void processPendingTileUpdates();
     void setImageBackingStore(CoordinatedImageBackingStore*);
     void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
     CoordinatedPlatformLayerBuffer* contentsBuffer() const { return m_contentsBuffer.get(); }
@@ -109,7 +112,11 @@ public:
 
     bool paint(SkCanvas&, std::optional<Damage>&);
 
+    bool hasDebugIndicators() const { return m_debugBorder.has_value() || m_repaintCount.has_value(); }
+
 private:
+    using ScopedFlush = SkiaCompositingLayerImageSetBatch::ScopedFlush;
+
     SkiaCompositingLayer() = default;
 
     void removeFromParent();
@@ -121,12 +128,17 @@ private:
 
     bool computeTransformsAndAnimations(const TransformationMatrix& parentTransform, const TransformationMatrix& futureParentTransform, MonotonicTime);
 
+    enum class PaintMode : bool {
+        Paint,
+    };
+
     struct PaintContext {
         explicit PaintContext(std::optional<Damage>& damage)
             : frameDamage(damage)
         {
         }
 
+        PaintMode mode { PaintMode::Paint };
         float opacity { 1 };
         std::optional<SkBlendMode> blendMode;
         IntSize offset;
@@ -135,6 +147,7 @@ private:
         RefPtr<SkiaCompositingLayer> paintingBackdropForLayer;
         bool skipAfterBackdrop { false };
         std::optional<Damage>& frameDamage;
+        SkiaCompositingLayerImageSetBatch imageSetBatch;
     };
 
     struct Filter {
@@ -144,18 +157,29 @@ private:
     using PaintFunction = Function<void(SkCanvas&, PaintContext&)>;
 
     void recursivePaint(SkCanvas&, PaintContext&);
+    void paintWithOpacity(SkCanvas&, PaintContext&);
+    void paintWithReplica(SkCanvas&, PaintContext&);
+    void paintWithMaskAndBackdrop(SkCanvas&, PaintContext&);
+    void paintWithBlendMode(SkCanvas&, PaintContext&);
+    void paintWithFilterAndMask(SkCanvas&, PaintContext&);
     void paintSelf(SkCanvas&, PaintContext&);
+    void paintContents(SkCanvas&, PaintContext&);
+    void paintDebugIndicators(SkCanvas&, PaintContext&);
+#if ENABLE(DAMAGE_TRACKING)
+    void collectFrameDamage(SkCanvas&, PaintContext&);
+#endif
     void paintSelfAndChildren(SkCanvas&, PaintContext&);
-    void paintSelfAndChildrenWithReplicaFilterAndMask(SkCanvas&, PaintContext&);
-    void paintSelfAndChildrenWithFilterAndMask(SkCanvas&, PaintContext&);
     void paintWithIntermediateSurface(SkCanvas&, PaintContext&, const IntRect&, SkPaint*, PaintFunction&&);
-    void paintUsingOverlapRegions(SkCanvas&, PaintContext&);
-    void paintUsing3DRenderingContext(SkCanvas&, PaintContext&);
+    void paintWith3DRenderingContext(SkCanvas&, PaintContext&);
+    void paintBackdrop(SkCanvas&, PaintContext&);
     Vector<IntRect, 1> computeConsolidatedOverlapRegionRects(const SkCanvas&, const PaintContext&, ComputeOverlapRegionMode);
     TransformationMatrix replicaTransform() const;
     IntRect clipBounds(const SkCanvas&, const PaintContext&) const;
     sk_sp<SkImage> maskImage();
     void collect3DRenderingContextLayers(Vector<Ref<SkiaCompositingLayer>>&);
+    void recursiveCleanUpAfterPaint();
+
+    void clipRect(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix& = { });
 
     enum class IncludesReplica : bool { No, Yes };
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix& accumulatedReplicaTransform, IncludesReplica = IncludesReplica::Yes);

@@ -230,7 +230,7 @@ static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame
         return jsUndefined();
     }
 
-    if (auto* elementInterface = registry.findInterface(localName)) {
+    if (RefPtr elementInterface = registry.findInterface(localName)) {
         DeferredPromise::create(globalObject, promise)->resolveWithJSValue(elementInterface->constructor());
         return &promise;
     }

@@ -142,7 +142,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
 {
     Ref identifierRegistry = m_inspectedPage->inspectorController().identifierRegistry();
 
-    m_inspectedPage->forEachLocalFrame([&](LocalFrame& frame) {
+    protect(m_inspectedPage)->forEachLocalFrame([&](LocalFrame& frame) {
         if (!frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
             return;
 
@@ -157,7 +157,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
             if (globalObject == &mainGlobalObject)
                 continue;
 
-            Ref securityOrigin = downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
+            Ref securityOrigin = protect(downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document())->securityOrigin();
             notifyContextCreated(frameId, globalObject, jsWindowProxy->world(), securityOrigin.ptr());
         }
     });

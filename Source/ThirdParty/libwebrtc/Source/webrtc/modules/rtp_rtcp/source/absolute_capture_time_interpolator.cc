@@ -13,8 +13,8 @@
 #include <cstdint>
 #include <cstdlib>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -31,7 +31,7 @@ AbsoluteCaptureTimeInterpolator::AbsoluteCaptureTimeInterpolator(Clock* clock)
 
 uint32_t AbsoluteCaptureTimeInterpolator::GetSource(
     uint32_t ssrc,
-    ArrayView<const uint32_t> csrcs) {
+    std::span<const uint32_t> csrcs) {
   if (csrcs.empty()) {
     return ssrc;
   }

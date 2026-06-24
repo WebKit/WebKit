@@ -22,10 +22,10 @@
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/test_echo_server.h"
-#include "rtc_base/thread.h"
 #include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 #define MAYBE_SKIP_IPV4                        \
   if (!::webrtc::HasIPv4Enabled()) {           \
@@ -47,7 +47,7 @@ using ::testing::NotNull;
 void TestUdpInternal(const SocketAddress& loopback) {
   const Environment env = CreateTestEnvironment();
   PhysicalSocketServer socket_server;
-  AutoSocketServerThread main_thread(&socket_server);
+  test::RunLoop main_thread(&socket_server);
   std::unique_ptr<Socket> socket =
       socket_server.Create(loopback.family(), SOCK_DGRAM);
   ASSERT_THAT(socket, NotNull());
@@ -64,8 +64,8 @@ void TestUdpInternal(const SocketAddress& loopback) {
 void TestTcpInternal(const SocketAddress& loopback) {
   const Environment env = CreateTestEnvironment();
   PhysicalSocketServer socket_server;
-  AutoSocketServerThread main_thread(&socket_server);
-  TestEchoServer server(env, &main_thread, loopback);
+  test::RunLoop main_thread(&socket_server);
+  TestEchoServer server(env, &socket_server, loopback);
 
   std::unique_ptr<Socket> socket =
       socket_server.Create(loopback.family(), SOCK_STREAM);

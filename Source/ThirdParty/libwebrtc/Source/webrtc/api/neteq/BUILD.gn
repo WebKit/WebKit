@@ -17,7 +17,6 @@ rtc_library("neteq_api") {
   ]
 
   deps = [
-    "..:array_view",
     "..:rtp_headers",
     "..:rtp_packet_info",
     "..:scoped_refptr",

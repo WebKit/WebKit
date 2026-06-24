@@ -135,13 +135,13 @@ void MathMLFractionElement::attributeChanged(const QualifiedName& name, const At
 
     if (affectsLayout) {
         if (CheckedPtr renderer = this->renderer())
-            renderer->setNeedsLayoutAndPreferredWidthsUpdate();
+            renderer->setNeedsLayoutAndInvalidateContentLogicalWidths();
     }
 
     MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> MathMLFractionElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLFractionElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::mfracTag));
     return createRenderer<RenderMathMLFraction>(*this, WTF::move(style));

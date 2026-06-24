@@ -50,6 +50,8 @@
         source.endOfStream();
 
         run('video.currentTime = 0');
+        await waitFor(video, 'seeking', true);
+        await waitFor(video, 'seeked', true);
         run('video.play()');
         await waitFor(video, 'playing');
 

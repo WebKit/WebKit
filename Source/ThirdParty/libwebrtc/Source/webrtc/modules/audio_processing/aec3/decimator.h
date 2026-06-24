@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_DECIMATOR_H_
 
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 
 namespace webrtc {
@@ -27,7 +27,7 @@ class Decimator {
   Decimator& operator=(const Decimator&) = delete;
 
   // Downsamples the signal.
-  void Decimate(ArrayView<const float> in, ArrayView<float> out);
+  void Decimate(std::span<const float> in, std::span<float> out);
 
  private:
   const size_t down_sampling_factor_;

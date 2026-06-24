@@ -394,7 +394,7 @@ public:
     WEBCORE_EXPORT void tryToBeginDragAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition, CompletionHandler<void(Expected<bool, RemoteFrameGeometryTransformer>)>&&);
 #endif
     
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     WEBCORE_EXPORT void startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow);
     WEBCORE_EXPORT void cancelSelectionAutoscroll();
 #endif
@@ -428,7 +428,6 @@ public:
 
     WEBCORE_EXPORT void updateMouseEventTargetAfterLayoutIfNeeded();
     WEBCORE_EXPORT void scheduleMouseEventTargetUpdateAfterLayout();
-    WEBCORE_EXPORT void dispatchMouseBoundaryEventsAfterFullscreenChange();
 
     ScrollableArea* enclosingScrollableArea(Node*) const;
 
@@ -788,10 +787,13 @@ private:
     int m_activationEventNumber { -1 };
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-    bool m_shouldAllowMouseDownToStartDrag { false };
+#if PLATFORM(COCOA)
     bool m_isAutoscrolling { false };
     IntPoint m_targetAutoscrollPositionInRootView;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    bool m_shouldAllowMouseDownToStartDrag { false };
     IntPoint m_targetAutoscrollPositionInUnscrolledRootView;
     std::optional<IntPoint> m_initialAutoscrollPositionInUnscrolledRootView;
 #endif

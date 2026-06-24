@@ -20,6 +20,8 @@
 
 #include "../internal.h"
 
+using namespace bssl;
+
 // https://tools.ietf.org/html/rfc7693#section-2.6
 static const uint64_t kIV[8] = {
     UINT64_C(0x6a09e667f3bcc908), UINT64_C(0xbb67ae8584caa73b),

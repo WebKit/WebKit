@@ -9,7 +9,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # Preset values are not replayed on auto-reconfigure; if CMake's "compiler
     # changed" path wipes the cache, these silently revert. Stamp them outside
     # the cache and refuse to proceed if any go missing.
-    set(WEBKIT_IDENTITY_VARS CMAKE_BUILD_TYPE PORT DEVELOPER_MODE ENABLE_SANITIZERS CMAKE_IOS_SIMULATOR)
+    set(WEBKIT_IDENTITY_VARS CMAKE_BUILD_TYPE PORT DEVELOPER_MODE ENABLE_SANITIZERS CMAKE_IOS_SIMULATOR CMAKE_OSX_SYSROOT)
     set(_config_stamp "${CMAKE_BINARY_DIR}/.webkit-config-stamp")
     if (EXISTS "${_config_stamp}")
         file(STRINGS "${_config_stamp}" _stamp_lines)
@@ -25,6 +25,11 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
                         "variables that require your cache to be deleted\"). Re-run "
                         "'cmake --preset <name>' to restore your configuration, or "
                         "delete the build directory.")
+                elseif (NOT "$CACHE{${_var}}" STREQUAL "${_prev}")
+                    message(FATAL_ERROR
+                        "${_var} changed from '${_prev}' to '$CACHE{${_var}}'. This build "
+                        "directory's identity variables must not change after the first "
+                        "configure. Delete the build directory and reconfigure.")
                 endif ()
             endif ()
         endforeach ()
@@ -240,11 +245,27 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # Set the variable with uppercase name to keep compatibility with code and users expecting it.
     set(PYTHON_EXECUTABLE ${Python_EXECUTABLE} CACHE FILEPATH "Path to the Python interpreter")
 
-    # We cannot check for Ruby_FOUND because it is set only when the full package is installed and
-    # the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro
-    # for finding only the Ruby interpreter.
+    # We only need the Ruby interpreter (to run .rb generators), not the dev
+    # package, so find the executable and query its version directly instead of
+    # paying find_package(Ruby)'s config probing (a dozen ruby subprocesses).
     message(CHECK_START "Ruby interpreter executable")
-    find_package(Ruby 2.5 QUIET)
+    # Honor a pinned interpreter passed as -DRUBY_EXECUTABLE=... (the legacy name
+    # find_package(Ruby) accepted; some bots use it to avoid a broken PATH ruby).
+    if (RUBY_EXECUTABLE AND NOT Ruby_EXECUTABLE)
+        set(Ruby_EXECUTABLE "${RUBY_EXECUTABLE}" CACHE FILEPATH "Path to the Ruby interpreter")
+    endif ()
+    find_program(Ruby_EXECUTABLE NAMES ruby)
+    if (Ruby_EXECUTABLE)
+        execute_process(
+            COMMAND "${Ruby_EXECUTABLE}" -e "print RUBY_VERSION"
+            OUTPUT_VARIABLE Ruby_VERSION
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            RESULT_VARIABLE _ruby_version_result)
+        if (NOT _ruby_version_result EQUAL 0)
+            set(Ruby_VERSION "")
+        endif ()
+        unset(_ruby_version_result)
+    endif ()
     if (Ruby_EXECUTABLE AND Ruby_VERSION)
         if (Ruby_VERSION VERSION_LESS 2.5)
             message(CHECK_FAIL "${Ruby_EXECUTABLE} (version: ${Ruby_VERSION}, minimum required 2.5)")
@@ -281,12 +302,12 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     include(WebKitPackaging)
     include(WebKitHeaderMap)
     include(WebKitMacros)
+    include(WebKitSwiftPrewarm)
     include(WebKitFS)
     include(WebKitCCache)
     include(WebKitCompilerFlags)
     include(WebKitStaticAnalysis)
     include(WebKitFeatures)
-    include(WebKitFindPackage)
 
     include(OptionsCommon)
     include(Options${PORT})

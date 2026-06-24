@@ -1134,6 +1134,9 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
     case Builtin::Position:
         m_body.append("[[position]]"_s);
         break;
+    case Builtin::PrimitiveIndex:
+        m_body.append("[[primitive_id]]"_s);
+        break;
     case Builtin::SampleIndex:
         m_body.append("[[sample_id]]"_s);
         break;
@@ -1820,6 +1823,7 @@ static void emitTextureSampleGrad(FunctionDefinitionWriter* writer, AST::CallExp
 static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     bool isArray = false;
+    bool is1d = false;
     auto& texture = call.arguments()[0];
     if (auto* textureType = std::get_if<Types::Texture>(texture.inferredType())) {
         switch (textureType->kind) {
@@ -1828,6 +1832,8 @@ static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallEx
             isArray = true;
             break;
         case Types::Texture::Kind::Texture1d:
+            is1d = true;
+            break;
         case Types::Texture::Kind::Texture2d:
         case Types::Texture::Kind::Texture3d:
         case Types::Texture::Kind::TextureCube:
@@ -1840,6 +1846,8 @@ static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallEx
             isArray = true;
             break;
         case Types::TextureStorage::Kind::TextureStorage1d:
+            is1d = true;
+            break;
         case Types::TextureStorage::Kind::TextureStorage2d:
         case Types::TextureStorage::Kind::TextureStorage3d:
             break;
@@ -1866,9 +1874,11 @@ static void emitTextureSampleLevel(FunctionDefinitionWriter* writer, AST::CallEx
             writer->stringBuilder().append(',');
         writer->visit(call.arguments()[i]);
     }
-    writer->stringBuilder().append(", level("_s);
-    writer->visit(call.arguments()[levelIndex]);
-    writer->stringBuilder().append(')');
+    if (!is1d) {
+        writer->stringBuilder().append(", level("_s);
+        writer->visit(call.arguments()[levelIndex]);
+        writer->stringBuilder().append(')');
+    }
     for (unsigned i = levelIndex + 1; i < call.arguments().size(); ++i) {
         writer->stringBuilder().append(',');
         writer->visit(call.arguments()[i]);
@@ -2373,7 +2383,12 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         return;
     }
 
-    visit(type);
+    if (call.isFloatToIntConversion()) {
+        m_body.append("__wgslFtoi<"_s);
+        visit(type);
+        m_body.append(">"_s);
+    } else
+        visit(type);
     visitArguments(this, call);
 }
 

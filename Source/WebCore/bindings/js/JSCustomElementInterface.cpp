@@ -86,8 +86,8 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
 Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, CustomElementRegistry& registry, const QualifiedName& name)
 {
     if (auto element = tryToConstructCustomElement(document, registry, name.localName(), ParserConstructElementWithEmptyStack::No)) {
-        if (!name.prefix().isNull())
-            element->setPrefix(name.prefix());
+        if (!name.prefix().isEmpty())
+            element->setPrefixForCustomElementUpgrade(name.prefix());
         return element.releaseNonNull();
     }
 
@@ -467,6 +467,7 @@ void JSCustomElementInterface::visitJSFunctionsInGCThread(Visitor& visitor) cons
     visitor.append(m_constructor);
     visitor.append(m_connectedCallback);
     visitor.append(m_disconnectedCallback);
+    visitor.append(m_connectedMoveCallback);
     visitor.append(m_adoptedCallback);
     visitor.append(m_attributeChangedCallback);
     visitor.append(m_formAssociatedCallback);

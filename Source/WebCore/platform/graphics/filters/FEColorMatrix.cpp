@@ -41,6 +41,7 @@ namespace WebCore {
 
 Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, Vector<float>&& values, DestinationColorSpace colorSpace)
 {
+    ASSERT(areValuesValidForType(type, values));
     return adoptRef(*new FEColorMatrix(type, WTF::move(values), colorSpace));
 }
 
@@ -77,6 +78,24 @@ bool FEColorMatrix::setValues(const Vector<float>& values)
         return false;
     m_values = values;
     return true;
+}
+
+bool FEColorMatrix::areValuesValidForType(ColorMatrixType type, const Vector<float>& values)
+{
+    switch (type) {
+    case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX:
+        return values.size() == 20;
+    case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE:
+        return values.size() == 1;
+    case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
+        return true;
+    case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void FEColorMatrix::calculateSaturateComponents(std::span<float, 9> components, float value)

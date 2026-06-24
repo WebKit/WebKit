@@ -62,7 +62,7 @@ pub trait Algorithm {
 
     /// Gets a reference to a message digest algorithm to be used by the HKDF implementation.
     #[doc(hidden)]
-    fn get_md(_: sealed::Sealed) -> &'static MdRef;
+    fn get_md(_: sealed::SealedType) -> &'static MdRef;
 
     /// Hashes a message.
     fn hash_to_vec(input: &[u8]) -> Vec<u8>;

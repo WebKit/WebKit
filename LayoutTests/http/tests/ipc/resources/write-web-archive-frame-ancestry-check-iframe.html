@@ -1,0 +1,44 @@
+<html>
+<body>
+<script>
+const u64 = (v) => ({ type: 'uint64_t', value: v });
+const S = (v) => ({ type: 'String', value: v });
+const FrameID = (v) => ({ type: 'FrameID', value: [v] });
+
+function finish(msg) { parent.postMessage(msg, '*'); }
+
+async function go() {
+    if (!window.IPC || !IPC.messages.WebPasteboardProxy_WriteWebArchiveToPasteBoard) {
+        finish({ skipped: true });
+        return;
+    }
+
+    let myFrameID = IPC.frameID[0];
+    let parentFrameID = await new Promise((resolve) => {
+        addEventListener('message', (e) => resolve(BigInt(e.data.parentFrameID)), { once: true });
+        parent.postMessage({ getParentFrameID: true }, '*');
+    });
+
+    let pbName = 'com.apple.WebKit.TestWebArchiveAncestry.' + Date.now();
+
+    // Forge a WriteWebArchiveToPasteBoard IPC that names an out-of-process frame ID (the parent
+    // frame) as a remote subframe. This should fail with the FailureDueToInvalidFrameIdentifiers
+    // error to prevent writing a cross-process DOM to the pasteboard.
+    let result = null;
+    try {
+        let r = IPC.sendSyncMessage('UI', 0, IPC.messages.WebPasteboardProxy_WriteWebArchiveToPasteBoard.name, 1000, [
+            S(pbName),
+            FrameID(myFrameID),
+            u64(0n),
+            u64(1n), FrameID(parentFrameID),
+        ]);
+        if (r && r.arguments && r.arguments.length >= 1 && r.arguments[0])
+            result = Number(r.arguments[0].value);
+    } catch (e) { }
+
+    finish({ result });
+}
+addEventListener('load', () => setTimeout(go, 0));
+</script>
+</body>
+</html>

@@ -33,11 +33,6 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-static NSString *iconURLKey = @"iconURL";
-static NSString *tagKey = @"tag";
-static NSString *languageKey = @"language";
-static NSString *dataKey = @"data";
-
 @interface _WKNotificationData()
 - (instancetype)_init;
 

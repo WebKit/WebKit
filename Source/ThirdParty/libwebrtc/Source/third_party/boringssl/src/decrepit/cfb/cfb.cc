@@ -36,8 +36,8 @@ static int aes_cfb_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
   return 1;
 }
 
-static int aes_cfb128_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out,
-                             const uint8_t *in, size_t len) {
+static int aes_cfb128_cipher_update(EVP_CIPHER_CTX *ctx, uint8_t *out,
+                                    const uint8_t *in, size_t len) {
   if (!out || !in) {
     return 0;
   }
@@ -59,7 +59,9 @@ static const EVP_CIPHER aes_128_cfb128 = {
     /* ctx_size= */ sizeof(EVP_CFB_CTX),
     /* flags= */ EVP_CIPH_CFB_MODE,
     /* init= */ aes_cfb_init_key,
-    /* cipher= */ aes_cfb128_cipher,
+    /* cipher_update= */ aes_cfb128_cipher_update,
+    /* cipher_final= */ nullptr,
+    /* update_aad= */ nullptr,
     /* cleanup= */ nullptr,
     /* ctrl= */ nullptr,
 };
@@ -72,7 +74,9 @@ static const EVP_CIPHER aes_192_cfb128 = {
     /* ctx_size= */ sizeof(EVP_CFB_CTX),
     /* flags= */ EVP_CIPH_CFB_MODE,
     /* init= */ aes_cfb_init_key,
-    /* cipher= */ aes_cfb128_cipher,
+    /* cipher_update= */ aes_cfb128_cipher_update,
+    /* cipher_final= */ nullptr,
+    /* update_aad= */ nullptr,
     /* cleanup= */ nullptr,
     /* ctrl= */ nullptr,
 };
@@ -85,14 +89,16 @@ static const EVP_CIPHER aes_256_cfb128 = {
     /* ctx_size= */ sizeof(EVP_CFB_CTX),
     /* flags= */ EVP_CIPH_CFB_MODE,
     /* init= */ aes_cfb_init_key,
-    /* cipher= */ aes_cfb128_cipher,
+    /* cipher= */ aes_cfb128_cipher_update,
+    /* cipher_final= */ nullptr,
+    /* update_aad= */ nullptr,
     /* cleanup= */ nullptr,
     /* ctrl= */ nullptr,
 };
 
-const EVP_CIPHER *EVP_aes_128_cfb128(void) { return &aes_128_cfb128; }
-const EVP_CIPHER *EVP_aes_128_cfb(void) { return &aes_128_cfb128; }
-const EVP_CIPHER *EVP_aes_192_cfb128(void) { return &aes_192_cfb128; }
-const EVP_CIPHER *EVP_aes_192_cfb(void) { return &aes_192_cfb128; }
-const EVP_CIPHER *EVP_aes_256_cfb128(void) { return &aes_256_cfb128; }
-const EVP_CIPHER *EVP_aes_256_cfb(void) { return &aes_256_cfb128; }
+const EVP_CIPHER *EVP_aes_128_cfb128() { return &aes_128_cfb128; }
+const EVP_CIPHER *EVP_aes_128_cfb() { return &aes_128_cfb128; }
+const EVP_CIPHER *EVP_aes_192_cfb128() { return &aes_192_cfb128; }
+const EVP_CIPHER *EVP_aes_192_cfb() { return &aes_192_cfb128; }
+const EVP_CIPHER *EVP_aes_256_cfb128() { return &aes_256_cfb128; }
+const EVP_CIPHER *EVP_aes_256_cfb() { return &aes_256_cfb128; }

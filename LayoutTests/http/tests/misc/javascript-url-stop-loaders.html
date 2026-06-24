@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
 <script type="text/javascript">
+window.jsTestIsAsync = true;
 var str = "<script type='text/javascript' src='http://127.0.0.1:8000/misc/resources/hang-connection.py'><" + "/script>";
 
 function loadFirst()
@@ -13,8 +14,7 @@ function loadFirst()
 function finish()
 {
     gc();
-    if (window.testRunner)
-        testRunner.notifyDone();    
+    finishJSTest();
 }
 
 function loadSecond()
@@ -22,10 +22,6 @@ function loadSecond()
     document.getElementById("ad").src = "javascript: '<!DOCTYPE html><script>window.parent.finish();<" + "/script>'";
 }
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 setTimeout("loadFirst();", 0);
 setTimeout("loadSecond();", 0);

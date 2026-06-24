@@ -141,7 +141,7 @@ public:
     void noteMarked() { }
     
 #if ASSERT_ENABLED
-    void assertValidCell(VM&, HeapCell*) const;
+    JS_EXPORT_PRIVATE void assertValidCell(VM&, HeapCell*) const;
 #else
     void assertValidCell(VM&, HeapCell*) const { }
 #endif

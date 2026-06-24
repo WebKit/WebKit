@@ -209,7 +209,7 @@ void ThreadedCompositor::setSize(const IntSize& size, float deviceScaleFactor)
 }
 
 #if ENABLE(DAMAGE_TRACKING)
-void ThreadedCompositor::setDamagePropagationFlags(std::optional<OptionSet<DamagePropagationFlags>> flags)
+void ThreadedCompositor::setDamagePropagationSettings(std::optional<OptionSet<DamagePropagationFlags>> flags, unsigned /* rectangleThreshold */)
 {
     m_damage.flags = flags;
     if (m_damage.visualizer && m_damage.flags) {
@@ -231,9 +231,7 @@ void ThreadedCompositor::updateSceneState()
         m_textureMapper = TextureMapper::create();
 
     auto reasons = OptionSet<CompositionReason>::all();
-    m_sceneState->rootLayer().flushCompositingState(reasons);
-    for (auto& layer : m_sceneState->committedLayers())
-        layer->flushCompositingState(reasons);
+    m_sceneState->flushCompositingState(reasons, false);
 }
 
 void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size)

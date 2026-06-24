@@ -172,8 +172,6 @@ static const SEARCH_METHODS search_method_lookup[NUM_SEARCH_METHODS] = {
   CLAMPED_DIAMOND,  // CLAMPED_DIAMOND
   HEX,              // HEX
   BIGDIA,           // BIGDIA
-  SQUARE,           // SQUARE
-  HEX,              // FAST_HEX
   BIGDIA,           // FAST_DIAMOND
   BIGDIA,           // FAST_BIGDIA
   BIGDIA            // VFAST_DIAMOND
@@ -240,12 +238,14 @@ void av1_set_mv_search_range(FullMvLimits *mv_limits, const MV *mv);
 int av1_init_search_range(int size);
 
 int av1_vector_match(const int16_t *ref, const int16_t *src, int bwl,
-                     int search_size, int full_search, int *sad);
+                     int search_size_top, int search_size_bottom,
+                     int full_search, int *sad);
 
 unsigned int av1_int_pro_motion_estimation(
     const struct AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize, int mi_row,
     int mi_col, const MV *ref_mv, unsigned int *y_sad_zero,
-    int me_search_size_col, int me_search_size_row);
+    int me_search_size_col, int me_search_size_row, int is_var_part,
+    int use_larger_search);
 
 int av1_refining_search_8p_c(const FULLPEL_MOTION_SEARCH_PARAMS *ms_params,
                              const FULLPEL_MV start_mv, FULLPEL_MV *best_mv);

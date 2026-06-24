@@ -1,13 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
 description('This tests that deselecting an option won&apos;t cause unnecessary scrolling.');
+window.jsTestIsAsync = true;
 
 async function mouseDownOnSelect(selId, index, modifier) {
     var sl = document.getElementById(selId);
@@ -54,14 +55,12 @@ onload = async () => {
     if (!window.testRunner)
         return;
 
-    testRunner.waitUntilDone();
 
     await mouseDownOnSelect("sl", 3, "addSelectionKey");
     shouldBe('sl.scrollTop', 'scrollBeforeClick');
     shouldBe('selectionPattern(sl)', '"11111110111"');
-    testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -76,6 +76,7 @@ PACKAGES=(
     mod_ssl
     perl-CGI
     psmisc
+    python3-legacy-cgi
     pulseaudio-utils
     python3-psutil
     rubygem-highline

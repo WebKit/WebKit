@@ -19,6 +19,7 @@
 #include "api/scoped_refptr.h"
 #include "api/units/timestamp.h"
 #include "api/video/color_space.h"
+#include "api/video/video_content_type.h"
 #include "api/video/video_frame_buffer.h"
 #include "api/video/video_rotation.h"
 #include "rtc_base/checks.h"
@@ -174,7 +175,8 @@ VideoFrame VideoFrame::Builder::build() {
   return VideoFrame(id_, video_frame_buffer_, timestamp_us_,
                     presentation_timestamp_, reference_time_, timestamp_rtp_,
                     ntp_time_ms_, rotation_, color_space_, render_parameters_,
-                    update_rect_, packet_infos_, is_repeat_frame_);
+                    update_rect_, packet_infos_, is_repeat_frame_,
+                    content_type_);
 }
 
 VideoFrame::Builder& VideoFrame::Builder::set_video_frame_buffer(
@@ -192,12 +194,6 @@ VideoFrame::Builder& VideoFrame::Builder::set_timestamp_ms(
 VideoFrame::Builder& VideoFrame::Builder::set_timestamp_us(
     int64_t timestamp_us) {
   timestamp_us_ = timestamp_us;
-  return *this;
-}
-
-VideoFrame::Builder& VideoFrame::Builder::set_capture_time_identifier(
-    const std::optional<Timestamp>& presentation_timestamp) {
-  presentation_timestamp_ = presentation_timestamp;
   return *this;
 }
 
@@ -267,6 +263,12 @@ VideoFrame::Builder& VideoFrame::Builder::set_packet_infos(
 VideoFrame::Builder& VideoFrame::Builder::set_is_repeat_frame(
     bool is_repeat_frame) {
   is_repeat_frame_ = is_repeat_frame;
+  return *this;
+}
+
+VideoFrame::Builder& VideoFrame::Builder::set_content_type(
+    VideoContentType content_type) {
+  content_type_ = content_type;
   return *this;
 }
 

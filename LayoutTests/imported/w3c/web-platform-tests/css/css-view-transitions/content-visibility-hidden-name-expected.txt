@@ -1,0 +1,3 @@
+
+PASS Ready and finished promises don't reject because of hidden content
+

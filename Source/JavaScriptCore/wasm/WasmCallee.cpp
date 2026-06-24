@@ -413,7 +413,7 @@ unsigned IPIntCallee::computeCodeHashImpl() const
 void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, const Wasm::ModuleInformation& info, uint32_t functionIndex)
 {
     if (!nameSections.size())
-        nameSections.append(info.nameSection);
+        nameSections.append(info.nameSection());
     // The inline frame list is stored in postorder. For example:
     // A { B() C() D { E() } F() } -> B C E D F A
 #if ASSERT_ENABLED
@@ -423,7 +423,7 @@ void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastIn
     for (unsigned i = 0; i < codeOrigins.size(); ++i)
         ASSERT(codeOrigins[i].lastInlineCSI <= lastInlineCSI);
     ASSERT(nameSections.size() == 1);
-    ASSERT(nameSections[0].ptr() == info.nameSection.ptr());
+    ASSERT(nameSections[0].ptr() == &info.nameSection());
 #endif
     codeOrigins.append({ firstInlineCSI, lastInlineCSI, functionIndex, 0 });
 }

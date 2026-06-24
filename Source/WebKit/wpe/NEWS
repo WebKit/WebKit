@@ -1,4 +1,19 @@
 =================
+WPE WebKit 2.53.3
+=================
+
+What's new in WPE WebKit 2.53.3?
+
+  - Switch web process compositor to use Skia instead of TextureMapper.
+  - Fix missing glyph before ZWJ/ZWNJ if no font is found for the cluster.
+  - Improve memory usage by reducing the size of the style matcher cache.
+  - Add support for half width fonts.
+  - Add spell checking support using the Enchant library, which can be toggled
+    at build configuration time using the ENABLE_SPELLCHECKING CMake option.
+  - Support time zone change notifications on Linux.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.53.2
 =================
 

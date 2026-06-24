@@ -1,0 +1,11 @@
+Testing that media controls have correct dimensions when a CSS rotation is applied.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.style.width is "300px"
+PASS mediaControls.style.height is "150px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

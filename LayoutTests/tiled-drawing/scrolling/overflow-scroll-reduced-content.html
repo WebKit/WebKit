@@ -25,9 +25,10 @@
 }
 </style>
 
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="../../resources/ui-helper.js"></script>
 <script>
+window.jsTestIsAsync = true;
 
 function decreaseContentSize()
 {
@@ -42,7 +43,7 @@ function decreaseContentSize()
     else
         testFailed("Re-sizing the content of the scrolled div failed to correctly set a new scroll position. ");
 
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 async function scrollTest()
@@ -94,8 +95,6 @@ async function scrollTest()
 
 function setUp() {
     if (window.eventSender) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
         setTimeout(scrollTest, 0);
     }
 }

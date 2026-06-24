@@ -24,6 +24,14 @@
 #include "../../../Configurations/CommonBase.xcconfig"
 
 ALWAYS_SEARCH_USER_PATHS = NO;
+// The PBXBuildRule for *.appex (Tools/TestRunnerShared/Scripts/install-extensions-rule.sh)
+// runs ditto into a declared-directory output, which the user-script sandbox cannot
+// permit (file-write* on a literal directory path doesn't cover ditto's atomic .BC.T_*
+// temp files written inside). Only fires on iOS where XPC services are repackaged as
+// App Extensions, so gate sandboxing to macOS only.
+ENABLE_USER_SCRIPT_SANDBOXING = NO;
+ENABLE_USER_SCRIPT_SANDBOXING[sdk=macosx*] = YES;
+EXCLUDED_USER_SCRIPT_SANDBOXING_PHASE_NAMES = $(inherited) "Generate Swift platform args" "Check .xcfilelists" "Embed Testing.framework" "Process Entitlements" "Generate Unified Sources" "Run Sublaunch Script";
 CLANG_CXX_LANGUAGE_STANDARD = c++2b;
 CLANG_CXX_LIBRARY = libc++;
 CLANG_ENABLE_EXPLICIT_MODULES = NO;
@@ -46,7 +54,7 @@ SYSTEM_FRAMEWORK_SEARCH_PATHS_NO = $(WK_PRIVATE_SDK_DIR)$(SYSTEM_LIBRARY_DIR)/Pr
 SYSTEM_FRAMEWORK_SEARCH_PATHS_WEBCORE_ = $(SDK_DIR)$(NORMAL_UMBRELLA_FRAMEWORKS_DIR);
 
 GCC_NO_COMMON_BLOCKS = YES;
-GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(WK_OS_UNFAIR_LOCK_INLINE_CFLAGS) U_DISABLE_RENAMING=1 U_SHOW_CPLUSPLUS_API=0 $(GCC_PREPROCESSOR_DEFINITIONS_$(PLATFORM_NAME));
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) $(DEBUG_DEFINES) U_DISABLE_RENAMING=1 U_SHOW_CPLUSPLUS_API=0 $(GCC_PREPROCESSOR_DEFINITIONS_$(PLATFORM_NAME));
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
 ENABLE_BITCODE = NO;
 PREBINDING = NO
@@ -116,6 +124,7 @@ WK_SUPPORTS_SWIFT_OBJCXX_INTEROP = YES;
 WK_SUPPORTS_SWIFT_OBJCXX_INTEROP[sdk=*26.2*] = ;
 WK_SUPPORTS_SWIFT_OBJCXX_INTEROP[sdk=*26.3*] = ;
 WK_SUPPORTS_SWIFT_OBJCXX_INTEROP[sdk=*26.4*] = ;
+WK_SUPPORTS_SWIFT_OBJCXX_INTEROP[sdk=*26.5*] = ;
 
 WK_SUPPORTS_SWIFT_OBJCXX_INTEROP[sdk=macosx*] = YES;
 

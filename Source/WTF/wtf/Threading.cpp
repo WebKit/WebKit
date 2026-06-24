@@ -133,7 +133,16 @@ static std::optional<size_t> NODELETE stackSize(ThreadType threadType)
 #endif
 }
 
-std::atomic<uint32_t> ThreadLike::s_uid;
+#if PLATFORM(COCOA)
+// uid 1 is reserved for the main thread, assigned in Thread::initializeCurrentTLS
+// when pthread_main_np() returns true. ++s_uid yields >= 2 for every non-main thread.
+std::atomic<uint32_t> ThreadLike::s_uid { 1 };
+#else
+// On platforms without a way to detect the main thread before initializeMainThread()
+// has run, ++s_uid yields uids starting at 1 — the first Thread to be lazily
+// constructed gets uid 1 which currently is the main thread.
+std::atomic<uint32_t> ThreadLike::s_uid { 0 };
+#endif
 
 uint32_t ThreadLike::currentSequence()
 {
@@ -259,7 +268,7 @@ Ref<Thread> Thread::create(ASCIILiteral name, Function<void()>&& entryPoint, Thr
 {
     WTF::initialize();
 
-    Ref thread = adoptRef(*new Thread(schedulingPolicy));
+    Ref thread = adoptRef(*new Thread(schedulingPolicy, Thread::IsMain::No));
 
     Ref context = adoptRef(*new NewThreadContext { name, WTF::move(entryPoint), thread.get() });
     {
@@ -456,15 +465,6 @@ void Thread::dump(PrintStream& out) const
 ThreadSpecificKey Thread::s_key = InvalidThreadSpecificKey;
 #endif
 
-#if USE(TZONE_MALLOC)
-#if PLATFORM(COCOA)
-static bool hasDisableTZoneEntitlement()
-{
-    return processHasEntitlement("webkit.tzone.disable"_s);
-}
-#endif
-#endif
-
 void initialize()
 {
     static std::once_flag onceKey;
@@ -475,9 +475,6 @@ void initialize()
         setPermissionsOfConfigPage();
         Config::initialize();
 #if USE(TZONE_MALLOC)
-#if PLATFORM(COCOA)
-        bmalloc::api::TZoneHeapManager::setHasDisableTZoneEntitlementCallback(hasDisableTZoneEntitlement);
-#endif
         bmalloc::api::TZoneHeapManager::ensureSingleton(); // Force initialization.
 #endif
         Gigacage::ensureGigacage();

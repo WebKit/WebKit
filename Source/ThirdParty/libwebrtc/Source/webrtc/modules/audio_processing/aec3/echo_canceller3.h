@@ -16,9 +16,9 @@
 #include <atomic>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
 #include "api/audio/neural_residual_echo_estimator.h"
@@ -220,11 +220,11 @@ class EchoCanceller3 : public EchoControl {
   std::unique_ptr<Block> linear_output_block_
       RTC_GUARDED_BY(capture_race_checker_);
   Block capture_block_ RTC_GUARDED_BY(capture_race_checker_);
-  std::vector<std::vector<ArrayView<float>>> render_sub_frame_view_
+  std::vector<std::vector<std::span<float>>> render_sub_frame_view_
       RTC_GUARDED_BY(capture_race_checker_);
-  std::vector<std::vector<ArrayView<float>>> linear_output_sub_frame_view_
+  std::vector<std::vector<std::span<float>>> linear_output_sub_frame_view_
       RTC_GUARDED_BY(capture_race_checker_);
-  std::vector<std::vector<ArrayView<float>>> capture_sub_frame_view_
+  std::vector<std::vector<std::span<float>>> capture_sub_frame_view_
       RTC_GUARDED_BY(capture_race_checker_);
   std::unique_ptr<BlockDelayBuffer> block_delay_buffer_
       RTC_GUARDED_BY(capture_race_checker_);

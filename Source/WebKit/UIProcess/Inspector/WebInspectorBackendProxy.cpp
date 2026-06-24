@@ -29,6 +29,8 @@
 
 namespace WebKit {
 
+WebInspectorBackendProxy::~WebInspectorBackendProxy() = default;
+
 void WebInspectorBackendProxy::requestOpenLocalInspectorFrontend()
 {
     protect(m_proxy)->requestOpenLocalInspectorFrontend();

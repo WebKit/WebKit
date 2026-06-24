@@ -19,6 +19,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
                        const BIGNUM *n, BN_CTX *ctx) {
   *out_no_inverse = 0;
@@ -34,7 +36,7 @@ int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
   }
 
   int sign;
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *A = BN_CTX_get(ctx);
   BIGNUM *B = BN_CTX_get(ctx);
   BIGNUM *X = BN_CTX_get(ctx);
@@ -179,7 +181,7 @@ int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
 
 BIGNUM *BN_mod_inverse(BIGNUM *out, const BIGNUM *a, const BIGNUM *n,
                        BN_CTX *ctx) {
-  bssl::UniquePtr<BIGNUM> new_out;
+  UniquePtr<BIGNUM> new_out;
   if (out == nullptr) {
     new_out.reset(BN_new());
     if (new_out == nullptr) {
@@ -188,7 +190,7 @@ BIGNUM *BN_mod_inverse(BIGNUM *out, const BIGNUM *a, const BIGNUM *n,
     out = new_out.get();
   }
 
-  bssl::UniquePtr<BIGNUM> a_reduced;
+  UniquePtr<BIGNUM> a_reduced;
   if (a->neg || BN_ucmp(a, n) >= 0) {
     a_reduced.reset(BN_dup(a));
     if (a_reduced == nullptr) {
@@ -225,7 +227,7 @@ int BN_mod_inverse_blinded(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
     return 0;
   }
 
-  bssl::UniquePtr<BIGNUM> blinding_factor(BN_new());
+  UniquePtr<BIGNUM> blinding_factor(BN_new());
   if (blinding_factor == nullptr) {
     return 0;
   }
@@ -259,18 +261,19 @@ int BN_mod_inverse_blinded(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
   return 1;
 }
 
-int bn_mod_inverse_prime(BIGNUM *out, const BIGNUM *a, const BIGNUM *p,
-                         BN_CTX *ctx, const BN_MONT_CTX *mont_p) {
-  bssl::BN_CTXScope scope(ctx);
+int bssl::bn_mod_inverse_prime(BIGNUM *out, const BIGNUM *a, const BIGNUM *p,
+                               BN_CTX *ctx, const BN_MONT_CTX *mont_p) {
+  BN_CTXScope scope(ctx);
   BIGNUM *p_minus_2 = BN_CTX_get(ctx);
   return p_minus_2 != nullptr && BN_copy(p_minus_2, p) &&
          BN_sub_word(p_minus_2, 2) &&
          BN_mod_exp_mont(out, a, p_minus_2, p, ctx, mont_p);
 }
 
-int bn_mod_inverse_secret_prime(BIGNUM *out, const BIGNUM *a, const BIGNUM *p,
-                                BN_CTX *ctx, const BN_MONT_CTX *mont_p) {
-  bssl::BN_CTXScope scope(ctx);
+int bssl::bn_mod_inverse_secret_prime(BIGNUM *out, const BIGNUM *a,
+                                      const BIGNUM *p, BN_CTX *ctx,
+                                      const BN_MONT_CTX *mont_p) {
+  BN_CTXScope scope(ctx);
   BIGNUM *p_minus_2 = BN_CTX_get(ctx);
   return p_minus_2 != nullptr && BN_copy(p_minus_2, p) &&
          BN_sub_word(p_minus_2, 2) &&

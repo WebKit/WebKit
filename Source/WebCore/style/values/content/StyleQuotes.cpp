@@ -64,7 +64,7 @@ const WTF::String& Quotes::closeQuote(unsigned index) const
 
 // MARK: - Conversion
 
-auto ToCSS<Quotes>::operator()(const Quotes& value, const RenderStyle& style) -> CSS::Quotes
+auto ToCSS<Quotes>::operator()(const Quotes& value, const Style::ComputedStyle& style) -> CSS::Quotes
 {
     return WTF::switchOn(value,
         [&](CSS::SpecificKeyword auto const& keyword) -> CSS::Quotes {
@@ -121,7 +121,7 @@ auto CSSValueConversion<Quotes>::operator()(BuilderState& state, const CSSValue&
     return toStyle(quotesValue->quotes(), state);
 }
 
-Ref<CSSValue> CSSValueCreation<Quotes>::operator()(CSSValuePool&, const RenderStyle& style, const Quotes& value)
+Ref<CSSValue> CSSValueCreation<Quotes>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Quotes& value)
 {
     return CSSQuotesValue::create(toCSS(value, style));
 }

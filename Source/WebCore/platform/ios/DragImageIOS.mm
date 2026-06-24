@@ -161,7 +161,7 @@ constexpr OptionSet<TextIndicatorOption> defaultSelectionDragImageTextIndicatorO
 
 DragImageData createDragImageForSelection(LocalFrame& frame, bool forceBlackText)
 {
-    if (auto document = frame.document())
+    if (RefPtr document = frame.document())
         document->updateLayout();
 
     auto options = defaultSelectionDragImageTextIndicatorOptions;
@@ -183,7 +183,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 
 DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range, bool forceBlackText)
 {
-    if (auto document = frame.document())
+    if (RefPtr document = frame.document())
         document->updateLayout();
 
     if (range.collapsed())
@@ -197,8 +197,8 @@ DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range
     if (!textIndicator || !textIndicator->contentImage())
         return nil;
 
-    auto& image = *textIndicator->contentImage();
-    auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image.size()]);
+    Ref image = *textIndicator->contentImage();
+    RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
     UIImage *finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(rendererContext.CGContext);
         context.drawImage(image, FloatPoint());

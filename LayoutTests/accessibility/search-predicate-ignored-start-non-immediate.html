@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- The start sits between a top-level button and a group that contains a nested button. A non-immediate
+     Button search must descend into the group and find the nested button, not jump back to the top button. -->
+<div role="main" id="main">
+    <div id="wrapper" role="presentation">
+        <button id="topButton">Top Button</button>
+        <img id="start" alt="Start" src="resources/cake.png">
+        <div role="group" aria-label="Group X" id="groupX">
+            <button id="deepButton">Deep Button</button>
+        </div>
+    </div>
+</div>
+
+<script>
+var output = "This test ensures that a forward, non-immediate-descendants search whose start element has become ignored resumes from the correct position and descends as usual, instead of jumping back to the container's first match.\n\n";
+
+var main, startElement, next, nextDOMId;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    main = accessibilityController.accessibleElementById("main");
+    startElement = accessibilityController.accessibleElementById("start");
+
+    document.getElementById("start").setAttribute("aria-hidden", "true");
+
+    setTimeout(async () => {
+        await waitFor(() => main.childrenCount === 2);
+
+        // Non-immediate (last argument false) Button search forward from the now-ignored start. The next
+        // element is the group (not a button), so the search descends into it and returns deepButton. Before
+        // the fix it scanned from the start and returned topButton (a jump backward).
+        next = main.uiElementForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false, false);
+        nextDOMId = next ? next.domIdentifier : "null";
+        output += expect("nextDOMId", "'deepButton'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

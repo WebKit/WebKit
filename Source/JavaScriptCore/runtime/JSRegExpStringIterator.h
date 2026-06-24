@@ -64,6 +64,12 @@ public:
     const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
     WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 
+    JSObject* next(JSGlobalObject*);
+    JSValue nextImpl(JSGlobalObject*);
+
+    inline JSObject* regExp() const;
+    inline JSString* iteratedString() const;
+
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {

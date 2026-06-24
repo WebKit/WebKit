@@ -48,7 +48,7 @@ namespace {
 std::optional<std::shared_ptr<const ParsedCertificate>>
 InternalParseCertificate(Span<const uint8_t> cert, std::string *out_diagnostic) {
   ParseCertificateOptions default_options{};
-  // We follow Chromium in setting |allow_invalid_serial_numbers| in order to
+  // We follow Chromium in setting `allow_invalid_serial_numbers` in order to
   // not choke on 21-byte serial numbers, which are common.
   //
   // The reason for the discrepancy is that unsigned numbers with the high bit

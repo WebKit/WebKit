@@ -32,6 +32,7 @@
 #include "JSGlobalLexicalEnvironment.h"
 #include "JSSetInlines.h"
 #include "ScopedArguments.h"
+#include "SymbolTableInlines.h"
 
 namespace JSC {
 

@@ -1089,6 +1089,11 @@ http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
 # Needs site isolation drawing implementation
 http/tests/site-isolation [ Skip ]
 
+# Requires Site Isolation (SiteIsolationEnabled, a WebKit2-only feature), which
+# the Windows port does not yet support (see the http/tests/site-isolation skip
+# above). Without it the test crashes the GPU process, so skip it.
+fast/events/site-isolation [ Skip ]
+
 webkit.org/b/68278  http/tests/history/back-with-fragment-change.py [ Failure Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1834,7 +1839,6 @@ fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ] # Timeout
 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ] # Timeout
 fast/canvas/webgl/texImage2D-mse-in-dom-flipY-false.html [ Skip ] # Timeout
 fast/canvas/webgl/texImage2D-mse-in-dom-flipY-true.html [ Skip ] # Timeout
-fast/canvas/webgl/webgl-compressed-texture-astc.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
@@ -1893,6 +1897,11 @@ webgl/1.0.x/conformance/textures/misc/png-image-types.html [ Failure ]
 webgl/2.0.y/conformance/textures/misc/png-image-types.html [ Failure ]
 webgl/2.0.y/conformance2/glsl3/switch-case.html [ Failure ]
 webgl/2.0.y/conformance2/glsl3/texture-bias.html [ Failure ]
+
+# Relies on Cocoa IOSurface copy-on-write semantics and full OffscreenCanvas+WebGL
+# support, neither of which the Skia-based Windows port has. Fails the same way on
+# glib (which marks it [ Failure ] as well).
+webgl/webgl-modify-after-drawimage.html [ Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Unknown category
@@ -2488,6 +2497,7 @@ fast/events/keydown-numpad-keys.html [ Failure ]
 fast/events/mouseover-button.html [ Failure ]
 fast/events/mouseup-from-button2.html [ Failure ]
 fast/events/option-tab.html [ Failure ]
+fast/events/popup-blocking-timers3.html [ Skip ] # Crash
 fast/events/popup-blocking-timers5.html [ Pass Failure ]
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Skip ] # Timeout
 fast/events/shadow-event-path-2.html [ Failure ]
@@ -2581,8 +2591,6 @@ fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-in
 fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
 
 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
-
-fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
 fast/dynamic/float-from-empty-line.html [ Failure ]
 
@@ -4704,6 +4712,13 @@ fast/text/vertical-quotation-marks.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/generic-family-lang-attr-cascade.html [ ImageOnlyFailure ]
 
 http/tests/security/offscreen-canvas-remote-read-remote-image.html [ Skip ]
+
+http/tests/security/no-javascript-location-percent-escaped.html [ Skip ] # Crash
+http/tests/security/no-javascript-location.html [ Skip ] # Crash
+http/tests/security/no-javascript-refresh-percent-escaped.py [ Skip ] # Crash
+http/tests/security/no-javascript-refresh-spaces.py [ Skip ] # Crash
+
+webkit.org/b/315806 imported/w3c/web-platform-tests/gpc/sec-gpc.https.html [ Pass Failure ] # Flaky harness timeout after serviceworker subtests were added in 314317@main
 
 imported/w3c/web-platform-tests/largest-contentful-paint/broken-image-icon.html [ Skip ] # Flake
 imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text.html [ Skip ] # Flake or perhaps always fails

@@ -6,7 +6,7 @@ PASS HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.
 FAIL HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.: src in empty picture not cached assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.: src in empty picture cached
 FAIL HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.: srcset in empty picture assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.: src in picture with source not cached assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.: src in picture with source cached assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.: srcset in picture with source assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.: src in picture with source not cached
+PASS HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.: src in picture with source cached
+PASS HTMLImageElement.prototype.decode(), attach to DOM before promise resolves.: srcset in picture with source
 

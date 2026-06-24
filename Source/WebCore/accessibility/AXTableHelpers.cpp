@@ -41,10 +41,10 @@
 #include "NodeRenderStyle.h"
 #include "RenderElementInlines.h"
 #include "RenderObject.h"
-#include "RenderStyle.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
+#include "StyleComputedStyle.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <queue>
 
@@ -139,7 +139,7 @@ HTMLTableElement* tableElementIncludingAncestors(Node* node, RenderObject* rende
     if (auto* childTable = dynamicDowncast<HTMLTableElement>(firstChild->node()))
         return childTable;
     // FIXME: This might find an unrelated parent table element.
-    return ancestorsOfType<HTMLTableElement>(*(firstChild->node())).first();
+    return ancestorsOfType<HTMLTableElement>(protect(*(firstChild->node()))).first();
 }
 
 bool tableElementIndicatesAccessibleTable(HTMLTableElement& tableElement)
@@ -176,7 +176,7 @@ bool tableSectionIndicatesAccessibleTable(HTMLTableSectionElement& sectionElemen
     return false;
 }
 
-static const RenderStyle* styleFrom(Element& element)
+static const Style::ComputedStyle* styleFrom(Element& element)
 {
     if (auto* renderStyle = element.renderStyle())
         return renderStyle;
@@ -197,7 +197,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
     Color tableBackgroundColor = Color::white;
     unsigned tableHorizontalBorderSpacing = 0;
     unsigned tableVerticalBorderSpacing = 0;
-    if (CheckedPtr<const RenderStyle> tableStyle = safeStyleFrom(tableElement)) {
+    if (CheckedPtr<const Style::ComputedStyle> tableStyle = safeStyleFrom(tableElement)) {
         tableBackgroundColor = tableStyle->visitedDependentBackgroundColor();
         tableHorizontalBorderSpacing = tableStyle->borderHorizontalSpacing().resolveZoom(tableStyle->usedZoomForLength());
         tableVerticalBorderSpacing = tableStyle->borderVerticalSpacing().resolveZoom(tableStyle->usedZoomForLength());
@@ -259,7 +259,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
 
                 // For the first 5 rows, cache the background color so we can check if this table has zebra-striped rows.
                 if (alternatingRowColorCount < 5) {
-                    if (CheckedPtr<const RenderStyle> rowStyle = styleFrom(*tableRow)) {
+                    if (CheckedPtr<const Style::ComputedStyle> rowStyle = styleFrom(*tableRow)) {
                         alternatingRowColors[alternatingRowColorCount] = rowStyle->visitedDependentBackgroundColor();
                         alternatingRowColorCount++;
                     }
@@ -299,7 +299,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
                     return true;
 
                 Color cellColor = Color::white;
-                if (CheckedPtr<const RenderStyle> cellStyle = styleFrom(*cell)) {
+                if (CheckedPtr<const Style::ComputedStyle> cellStyle = styleFrom(*cell)) {
                     if (cellStyle->emptyCells() == EmptyCell::Hide) {
                         // If the empty-cells style is set, we'll call it a data table.
                         return true;

@@ -39,7 +39,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGEllipse);
 
-RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
+RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, Style::ComputedStyle&& style)
     : RenderSVGShape(Type::SVGEllipse, element, WTF::move(style))
 {
 }

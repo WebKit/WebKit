@@ -41,7 +41,7 @@ public:
         return adoptRef(*new SVGImageForContainer(image, containerSize, containerZoom, initialFragmentURL));
     }
 
-    bool isSVGImageForContainer() const final { return true; }
+    bool NODELETE isSVGImageForContainer() const final { return true; }
 
     FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final;
 

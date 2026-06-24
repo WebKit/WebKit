@@ -29,6 +29,13 @@
 #import <ImageIO/ImageIO.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/UTIRegistry.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
+#if USE(APPKIT)
+#import <AppKit/AppKit.h>
+#else
+#import <UIKit/UIKit.h>
+#endif
 
 namespace WebKit {
 
@@ -56,6 +63,31 @@ std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMET
     }
 
     return { nil, nil };
+}
+
+RetainPtr<CocoaImage> createCocoaImageRestrictedToSupportedTypes(NSData *data, double displayScale)
+{
+    if (!data.length)
+        return nil;
+
+    RetainPtr imageSource = adoptCF(CGImageSourceCreateWithData((__bridge CFDataRef)data, nullptr));
+    if (!imageSource)
+        return nil;
+
+    RetainPtr type = CGImageSourceGetType(imageSource.get());
+    if (!type || !WebCore::isSupportedImageType(type.get()))
+        return nil;
+
+    RetainPtr image = adoptCF(CGImageSourceCreateImageAtIndex(imageSource.get(), 0, nullptr));
+    if (!image)
+        return nil;
+
+#if USE(APPKIT)
+    UNUSED_PARAM(displayScale);
+    return adoptNS([[NSImage alloc] initWithCGImage:image.get() size:NSZeroSize]);
+#else
+    return retainPtr([UIImage imageWithCGImage:image.get() scale:displayScale orientation:UIImageOrientationUp]);
+#endif
 }
 
 } // namespace WebKit

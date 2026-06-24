@@ -159,6 +159,10 @@ PASS: Got no match as expected.
 Searching for ‘กช’ in long string with options [AtWordStarts]:
 PASS: Got no match as expected.
 
+Searching for ‘กร the quick brown fox jumps over the lazy dog’ in ‘prefix กร the quick brown fox jumps over the lazy dog’ with options [AtWordStarts]:
+PASS: Got a match at 7,53 as expected.
+PASS: Got no match as expected.
+
 Searching for ‘ ’ in ‘Spaces, the final frontier’ with options [AtWordStarts]:
 PASS: Got a match at 7,8 as expected.
 PASS: Got a match at 11,12 as expected.

@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+    <title>readyState gated by &quot;text tracks are ready&quot;</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard:
+//   §4.8.13.9 "Media resources with multiple media tracks" -- the
+//   "media resource with text tracks" readyState transition rules:
+//     https://html.spec.whatwg.org/multipage/media.html#media-resource-with-text-tracks
+//   §4.8.13.7 "Text tracks" -- "text tracks are ready" definition:
+//     https://html.spec.whatwg.org/multipage/media.html#text-tracks-are-ready
+//
+// HAVE_FUTURE_DATA (and HAVE_ENOUGH_DATA) require BOTH the underlying
+// media data conditions AND that "the text tracks are ready", i.e. the
+// media element's list of pending text tracks is empty.
+//
+// A <track> element with mode="hidden" or "showing" is placed on the
+// pending list while its readiness state is "loading"; the element is
+// removed from the pending list when loading completes (or fails).
+//
+// To exercise the gating we slow-serve a VTT resource so the track is
+// still LOADING while the video element would otherwise reach
+// HAVE_FUTURE_DATA. We poll readyState during the stall window and
+// confirm the video never exceeds HAVE_CURRENT_DATA before the track loads.
+
+const stallEndpoint = "http://127.0.0.1:8000/resources/load-and-stall.py";
+const vttPath = "../../../media/track/captions-webvtt/captions-multiline-lf.vtt";
+// Stall for 3 seconds after byte 49 (past the WEBVTT signature and first
+// cue header). 3s gives ample headroom for the small mp4 to buffer past
+// HAVE_CURRENT_DATA on any reasonable test environment, so the gating
+// assertion is exercised.
+const slowVttSrc = `${stallEndpoint}?name=${encodeURIComponent(vttPath)}&mimeType=text%2Fvtt&stallAt=49&stallFor=3`;
+const mediaSrc = "/media/resources/test-25fps.mp4";
+
+promise_test(async t => {
+    const video = document.createElement("video");
+    video.muted = true;
+    video.preload = "auto";
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.srclang = "en";
+    track.src = slowVttSrc;
+    video.appendChild(track);
+    track.track.mode = "hidden";
+
+    const trackLoaded = new Promise((resolve, reject) => {
+        track.addEventListener("load", resolve, { once: true });
+        track.addEventListener("error",
+            () => reject(new Error("track failed to load")), { once: true });
+    });
+
+    // Kick off media load. The video should buffer past HAVE_CURRENT_DATA
+    // (loadeddata event) well before the 3-second VTT stall completes.
+    video.src = mediaSrc;
+
+    // Wait for the video to have media data buffered. If the track-ready
+    // gating works, the video must NOT advance past HAVE_CURRENT_DATA
+    // here -- it must stall at HAVE_CURRENT_DATA waiting for the track.
+    await new Promise((resolve, reject) => {
+        video.addEventListener("loadeddata", resolve, { once: true });
+        video.addEventListener("error",
+            () => reject(new Error("video failed to load")), { once: true });
+        // Bound the wait — if loadeddata never fires within 2s, the test
+        // can't assert anything meaningful.
+        t.step_timeout(
+            () => reject(new Error("video did not reach HAVE_CURRENT_DATA in 2s")),
+            2000);
+    });
+
+    // The video has media data buffered (HAVE_CURRENT_DATA). The track
+    // must still be loading at this point — otherwise we can't observe
+    // the gating. If track already loaded, the test environment was too
+    // fast / our stall too short.
+    assert_equals(track.readyState, track.LOADING,
+        "track is still LOADING at loadeddata (gating window is being exercised)");
+
+    // Hard assertion: while the track is LOADING, the video must NOT have
+    // advanced past HAVE_CURRENT_DATA. This is the spec-mandated gating.
+    assert_less_than_equal(video.readyState, video.HAVE_CURRENT_DATA,
+        "video.readyState must not exceed HAVE_CURRENT_DATA while track is LOADING");
+
+    // Now wait for the track to finish loading.
+    await trackLoaded;
+    assert_equals(track.readyState, track.LOADED, "track is LOADED");
+
+    // After the track is ready, the video should be able to advance.
+    if (video.readyState < video.HAVE_FUTURE_DATA) {
+        await new Promise(resolve => {
+            const check = () => {
+                if (video.readyState >= video.HAVE_FUTURE_DATA)
+                    resolve();
+            };
+            video.addEventListener("canplay", check);
+            video.addEventListener("progress", check);
+            check();
+        });
+    }
+    assert_greater_than_equal(video.readyState, video.HAVE_FUTURE_DATA,
+        "video can advance to HAVE_FUTURE_DATA once track is ready");
+}, "HAVE_FUTURE_DATA gated by 'text tracks are ready'");
+</script>
+</body>
+</html>

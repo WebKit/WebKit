@@ -32,7 +32,6 @@
 namespace WebCore {
 
 struct AcceleratedEffectCircleFunction;
-struct TransformOperationData;
 
 namespace Style {
 
@@ -73,7 +72,7 @@ template<> struct Blending<Circle> {
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-template<> struct Evaluation<CircleFunction, AcceleratedEffectCircleFunction> { AcceleratedEffectCircleFunction operator()(const CircleFunction&, const TransformOperationData&, ZoomFactor); };
+template<> struct Evaluation<CircleFunction, AcceleratedEffectCircleFunction> { AcceleratedEffectCircleFunction operator()(const CircleFunction&, const FloatSize&, ZoomFactor); };
 
 #endif
 

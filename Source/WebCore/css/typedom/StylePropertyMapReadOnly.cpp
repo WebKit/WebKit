@@ -84,7 +84,7 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(Docum
     if (RefPtr valueList = dynamicDowncast<CSSValueList>(*value)) {
         if (CSSProperty::isListValuedProperty(propertyID)) {
             return WTF::map(*valueList, [&](auto& item) {
-                return StylePropertyMapReadOnly::reifyValue(document, Ref { const_cast<CSSValue&>(item) }, propertyID);
+                return StylePropertyMapReadOnly::reifyValue(document, protect(const_cast<CSSValue&>(item)), propertyID);
             });
         }
     }
@@ -99,7 +99,7 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(Docum
 
     if (RefPtr valueList = dynamicDowncast<CSSValueList>(*value)) {
         return WTF::map(*valueList, [&](auto& item) {
-            return StylePropertyMapReadOnly::reifyValue(document, Ref { const_cast<CSSValue&>(item) }, AtomString { customPropertyName });
+            return StylePropertyMapReadOnly::reifyValue(document, protect(const_cast<CSSValue&>(item)), AtomString { customPropertyName });
         });
     }
 

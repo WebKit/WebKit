@@ -13,8 +13,7 @@
 #include <stddef.h>
 
 #include <array>
-
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
@@ -30,10 +29,10 @@ class DcLevelsEstimator {
 
   // Updates the DC level estimates.
   // `channel0` and `channel1` contain the samples of the two channels.
-  void Update(ArrayView<const float> channel0, ArrayView<const float> channel1);
+  void Update(std::span<const float> channel0, std::span<const float> channel1);
 
   // Returns the current DC level estimates for the two channels.
-  ArrayView<const float, 2> GetLevels() const { return dc_levels_; }
+  std::span<const float, 2> GetLevels() const { return dc_levels_; }
 
  private:
   const float one_by_num_samples_per_channel_;

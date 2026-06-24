@@ -290,16 +290,36 @@ TEST(WKWebViewThemeColor, ApplicationManifest)
 {
     RetainPtr sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     RetainPtr redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    RetainPtr blueColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blueColorComponents));
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView forceLightMode];
     EXPECT_TRUE(![webView themeColor]);
 
-    NSDictionary *manifestObject = @{ @"name": @"Test", @"theme_color": @"red" };
+    NSDictionary *manifestObject = @{
+        @"name": @"Test",
+        @"theme_color": @"red",
+        @"color_scheme_dark": @{
+            @"theme_color": @"blue",
+        }
+    };
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:[NSString stringWithFormat:@"<link rel='manifest' href='data:application/manifest+json;charset=utf-8;base64,%@'>", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
 
     static bool didGetApplicationManifest = false;
     [webView _getApplicationManifestWithCompletionHandler:[&] (_WKApplicationManifest *manifest) {
-        EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+        auto checkLightColor = ^{
+            EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+        };
+        auto checkDarkColor = ^{
+            EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, blueColor.get()));
+        };
+#if PLATFORM(IOS_FAMILY)
+        [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight] performAsCurrentTraitCollection:checkLightColor];
+        [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark] performAsCurrentTraitCollection:checkDarkColor];
+#else
+        [[NSAppearance appearanceNamed:NSAppearanceNameAqua] performAsCurrentDrawingAppearance:checkLightColor];
+        [[NSAppearance appearanceNamed:NSAppearanceNameDarkAqua] performAsCurrentDrawingAppearance:checkDarkColor];
+#endif
 
         didGetApplicationManifest = true;
     }];
@@ -307,18 +327,57 @@ TEST(WKWebViewThemeColor, ApplicationManifest)
 
     [webView waitForNextPresentationUpdate];
     EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, blueColor.get()));
 }
 
 TEST(WKWebViewThemeColor, MetaElementOverridesApplicationManifest)
 {
+    RetainPtr sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    RetainPtr blackColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blackColorComponents));
+    RetainPtr redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    RetainPtr whiteColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), whiteColorComponents));
+
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView forceLightMode];
     EXPECT_TRUE(![webView themeColor]);
 
-    NSDictionary *manifestObject = @{ @"name": @"Test", @"theme_color": @"blue" };
+    NSDictionary *manifestObject = @{
+        @"name": @"Test",
+        @"theme_color": @"black",
+        @"color_scheme_dark": @{
+            @"theme_color": @"white",
+        }
+    };
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:[NSString stringWithFormat:@"<link rel='manifest' href='data:application/manifest+json;charset=utf-8;base64,%@'><meta name='theme-color' content='red'>", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
 
-    RetainPtr sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-    RetainPtr redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    static bool didGetApplicationManifest = false;
+    [webView _getApplicationManifestWithCompletionHandler:[&] (_WKApplicationManifest *manifest) {
+        auto checkLightColor = ^{
+            EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, blackColor.get()));
+        };
+        auto checkDarkColor = ^{
+            EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, whiteColor.get()));
+        };
+#if PLATFORM(IOS_FAMILY)
+        [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight] performAsCurrentTraitCollection:checkLightColor];
+        [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark] performAsCurrentTraitCollection:checkDarkColor];
+#else
+        [[NSAppearance appearanceNamed:NSAppearanceNameAqua] performAsCurrentDrawingAppearance:checkLightColor];
+        [[NSAppearance appearanceNamed:NSAppearanceNameDarkAqua] performAsCurrentDrawingAppearance:checkDarkColor];
+#endif
+
+        didGetApplicationManifest = true;
+    }];
+    TestWebKitAPI::Util::run(&didGetApplicationManifest);
+
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
     EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
 }
 

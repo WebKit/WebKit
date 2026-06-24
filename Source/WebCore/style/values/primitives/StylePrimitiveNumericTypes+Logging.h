@@ -26,17 +26,11 @@
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSSerializationContext.h"
-#include "StyleCalculationValue.h"
 #include "StylePrimitiveNumericTypes.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
-
-WTF::TextStream& operator<<(WTF::TextStream& ts, Calc auto const& value)
-{
-    return ts << protect(value.calculation()).get();
-}
 
 template<auto R, typename V> WTF::TextStream& operator<<(WTF::TextStream& ts, const Length<R, V>& value)
 {

@@ -34,11 +34,10 @@
 #include "LegacyInlineTextBox.h"
 #include "RenderCombineText.h"
 #include "RenderLayer.h"
-#include "RenderStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 #include "StyleAppleColorFilter.h"
 #include "StyleColorResolver.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTextShadow.h"
 #include "TextBoxPainter.h"
 #include <wtf/NeverDestroyed.h>
@@ -46,7 +45,7 @@
 
 namespace WebCore {
 
-ShadowApplier::ShadowApplier(const RenderStyle& style, GraphicsContext& context, const Style::TextShadow* shadow, const Style::AppleColorFilter& colorFilter, const FloatRect& textRect, bool isLastShadowIteration, bool lastShadowIterationShouldDrawText, bool opaque, bool ignoreWritingMode)
+ShadowApplier::ShadowApplier(const Style::ComputedStyle& style, GraphicsContext& context, const Style::TextShadow* shadow, const Style::AppleColorFilter& colorFilter, const FloatRect& textRect, bool isLastShadowIteration, bool lastShadowIterationShouldDrawText, bool opaque, bool ignoreWritingMode)
     : m_context { context }
     , m_shadow { shadow }
     , m_onlyDrawsShadow { !isLastShadowIteration || !lastShadowIterationShouldDrawText }
@@ -105,7 +104,7 @@ ShadowApplier::~ShadowApplier()
         m_context.clearDropShadow();
 }
 
-TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const RenderStyle& renderStyle, const TextPaintStyle& textPaintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter, const AtomString& emphasisMark, float emphasisMarkOffset, const RenderCombineText* combinedText)
+TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const Style::ComputedStyle& renderStyle, const TextPaintStyle& textPaintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter, const AtomString& emphasisMark, float emphasisMarkOffset, const RenderCombineText* combinedText)
     : m_context(context)
     , m_font(font)
     , m_renderStyle(renderStyle)
@@ -221,7 +220,7 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
         return;
 
     FloatPoint boxOrigin = boxRect.location();
-    updateGraphicsContext(m_context, paintStyle, UseEmphasisMarkColor);
+    updateGraphicsContext(m_context, paintStyle, FillColorType::EmphasisMark);
     static NeverDestroyed<TextRun> objectReplacementCharacterTextRun(StringView { span(objectReplacementCharacter) });
     CheckedRef emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun.get() : textRun;
     auto emphasisMarkTextOrigin = textOrigin;
@@ -246,7 +245,7 @@ void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, c
     paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, start, end, m_style, m_shadow, m_shadowColorFilter);
 }
 
-bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo, const RenderStyle& style)
+bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo, const Style::ComputedStyle& style)
 {
     return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer() && FontCascade::canUseGlyphDisplayList(style);
 }

@@ -11,8 +11,8 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -28,8 +28,8 @@ ChannelContentRemixer::ChannelContentRemixer(size_t num_samples_per_channel,
 
 bool ChannelContentRemixer::Mix(size_t num_output_channels,
                                 StereoMixingVariant mixing_variant,
-                                ArrayView<float> channel0,
-                                ArrayView<float> channel1) {
+                                std::span<float> channel0,
+                                std::span<float> channel1) {
   RTC_DCHECK_EQ(channel0.size(), num_samples_per_channel_);
   RTC_DCHECK_EQ(channel1.size(), num_samples_per_channel_);
 
@@ -304,14 +304,14 @@ bool ChannelContentRemixer::IsCrossfadeCompleted() {
 }
 
 void ChannelContentRemixer::CopyChannelContent(
-    ArrayView<const float> source,
-    ArrayView<float> destination) const {
+    std::span<const float> source,
+    std::span<float> destination) const {
   std::copy(source.begin(), source.end(), destination.begin());
 }
 
 void ChannelContentRemixer::StoreChannelAverageIntoBothChannels(
-    ArrayView<float> channel0,
-    ArrayView<float> channel1) const {
+    std::span<float> channel0,
+    std::span<float> channel1) const {
   for (size_t k = 0; k < channel0.size(); ++k) {
     float average = (channel0[k] + channel1[k]) * 0.5f;
     channel0[k] = average;
@@ -320,9 +320,9 @@ void ChannelContentRemixer::StoreChannelAverageIntoBothChannels(
 }
 
 void ChannelContentRemixer::CrossFadeFromSingleChannelToSingleChannel(
-    ArrayView<const float> crossfade_from,
-    ArrayView<const float> crossfade_to,
-    ArrayView<float> destination,
+    std::span<const float> crossfade_from,
+    std::span<const float> crossfade_to,
+    std::span<float> destination,
     size_t& crossfade_sample_counter) const {
   for (size_t k = 0; k < destination.size(); ++k, ++crossfade_sample_counter) {
     const float scaling =
@@ -333,9 +333,9 @@ void ChannelContentRemixer::CrossFadeFromSingleChannelToSingleChannel(
 }
 
 void ChannelContentRemixer::CrossFadeFromSingleChannelContentToAverage(
-    ArrayView<const float> crossfade_from,
-    ArrayView<float> channel0,
-    ArrayView<float> channel1,
+    std::span<const float> crossfade_from,
+    std::span<float> channel0,
+    std::span<float> channel1,
     size_t& crossfade_sample_counter) const {
   for (size_t k = 0; k < channel0.size(); ++k, ++crossfade_sample_counter) {
     const float scaling =
@@ -350,9 +350,9 @@ void ChannelContentRemixer::CrossFadeFromSingleChannelContentToAverage(
 }
 
 void ChannelContentRemixer::CrossFadeFromAverageToSingleChannelContent(
-    ArrayView<const float> crossfade_to,
-    ArrayView<float> channel0,
-    ArrayView<float> channel1,
+    std::span<const float> crossfade_to,
+    std::span<float> channel0,
+    std::span<float> channel1,
     size_t& crossfade_sample_counter) const {
   for (size_t k = 0; k < channel0.size(); ++k, ++crossfade_sample_counter) {
     const float scaling =
@@ -366,8 +366,8 @@ void ChannelContentRemixer::CrossFadeFromAverageToSingleChannelContent(
 }
 
 void ChannelContentRemixer::CrossFadeFromAverageToBothChannels(
-    ArrayView<float> channel0,
-    ArrayView<float> channel1,
+    std::span<float> channel0,
+    std::span<float> channel1,
     size_t& crossfade_sample_counter) const {
   for (size_t k = 0; k < channel0.size(); ++k, ++crossfade_sample_counter) {
     const float scaling =
@@ -381,8 +381,8 @@ void ChannelContentRemixer::CrossFadeFromAverageToBothChannels(
 }
 
 void ChannelContentRemixer::CrossFadeFromBothChannelsToAverage(
-    ArrayView<float> channel0,
-    ArrayView<float> channel1,
+    std::span<float> channel0,
+    std::span<float> channel1,
     size_t& crossfade_sample_counter) const {
   for (size_t k = 0; k < channel0.size(); ++k, ++crossfade_sample_counter) {
     const float scaling =
@@ -395,9 +395,9 @@ void ChannelContentRemixer::CrossFadeFromBothChannelsToAverage(
 }
 
 void ChannelContentRemixer::CrossFadeFromAverageInToChannel0(
-    ArrayView<const float> crossfade_to,
-    ArrayView<float> channel0,
-    ArrayView<float> channel1,
+    std::span<const float> crossfade_to,
+    std::span<float> channel0,
+    std::span<float> channel1,
     size_t& crossfade_sample_counter) const {
   for (size_t k = 0; k < channel0.size(); ++k, ++crossfade_sample_counter) {
     const float scaling =
@@ -409,9 +409,9 @@ void ChannelContentRemixer::CrossFadeFromAverageInToChannel0(
 }
 
 void ChannelContentRemixer::CrossFadeChannel0ToAverage(
-    ArrayView<const float> crossfade_from,
-    ArrayView<float> channel0,
-    ArrayView<const float> channel1,
+    std::span<const float> crossfade_from,
+    std::span<float> channel0,
+    std::span<const float> channel1,
     size_t& crossfade_sample_counter) const {
   for (size_t k = 0; k < channel0.size(); ++k, ++crossfade_sample_counter) {
     const float scaling =
@@ -423,8 +423,8 @@ void ChannelContentRemixer::CrossFadeChannel0ToAverage(
 }
 
 void ChannelContentRemixer::StoreChannelAverageIntoChannel0(
-    ArrayView<float> channel0,
-    ArrayView<const float> channel1) const {
+    std::span<float> channel0,
+    std::span<const float> channel1) const {
   for (size_t k = 0; k < channel0.size(); ++k) {
     float average = (channel0[k] + channel1[k]) * 0.5f;
     channel0[k] = average;

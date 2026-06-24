@@ -32,9 +32,12 @@ namespace WebCore {
 
 class HTMLPlugInElement;
 class RenderElement;
-class RenderStyle;
 class RenderTreePosition;
 class ShadowRoot;
+
+namespace Style {
+class ComputedStyle;
+}
 
 class PluginReplacement : public RefCounted<PluginReplacement> {
 public:
@@ -43,7 +46,7 @@ public:
     virtual void installReplacement(ShadowRoot&) = 0;
 
     virtual bool willCreateRenderer() { return false; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, RenderStyle&&, const RenderTreePosition&) = 0;
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Style::ComputedStyle&&, const RenderTreePosition&) = 0;
 };
 
 typedef Ref<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);

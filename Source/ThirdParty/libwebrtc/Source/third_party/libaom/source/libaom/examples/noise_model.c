@@ -38,6 +38,7 @@
  *    --auto-alt-ref=2 --bit-depth=8 --film-grain-table=film_grain.tbl \
  *    -o denoised_with_grain_params.ivf denoised.854_480.yuv
  */
+#include <inttypes.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

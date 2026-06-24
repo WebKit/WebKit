@@ -29,11 +29,6 @@ struct TestFrame : public FrameBase<TestFrame> {
   Timestamp ArrivalTimestampInternal() const { return assembled_timestamp; }
 };
 
-TEST(FrameBaseTest, DepartureTimestampIsInvalidForUnsetRtpTimestamp) {
-  TestFrame frame;
-  EXPECT_FALSE(frame.DepartureTimestamp().IsFinite());
-}
-
 TEST(FrameBaseTest, DepartureTimestamp) {
   TestFrame frame{.unwrapped_rtp_timestamp = 3000};
   EXPECT_EQ(frame.DepartureTimestamp(), Timestamp::Micros(33333));
@@ -48,7 +43,7 @@ TEST(FrameBaseTest, DepartureTimestampWithOffset) {
             Timestamp::Micros(33333));
 }
 
-TEST(FrameBaseTest, ArrivalTimestampIsInvalidForUnsetRtpTimestamp) {
+TEST(FrameBaseTest, ArrivalTimestampIsInfiniteForUnsetRtpTimestamp) {
   TestFrame frame;
   EXPECT_FALSE(frame.ArrivalTimestamp().IsFinite());
 }

@@ -116,17 +116,17 @@ static inline int aom_get_qmlevel_luma_ssimulacra2(int qindex, int first,
     qm_level = 10;
   } else if (qindex <= 60) {
     qm_level = 9;
-  } else if (qindex <= 100) {
+  } else if (qindex <= 90) {
     qm_level = 8;
   } else if (qindex <= 120) {
     qm_level = 7;
-  } else if (qindex <= 140) {
+  } else if (qindex <= 130) {
     qm_level = 6;
-  } else if (qindex <= 160) {
+  } else if (qindex <= 140) {
     qm_level = 5;
-  } else if (qindex <= 200) {
+  } else if (qindex <= 160) {
     qm_level = 4;
-  } else if (qindex <= 220) {
+  } else if (qindex <= 200) {
     qm_level = 3;
   } else {
     qm_level = 2;

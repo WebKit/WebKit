@@ -27,7 +27,6 @@ TEST(CallConfigUtils, MarshalUnmarshalProcessSameObject) {
   recv_config.decoders.push_back(decoder);
   recv_config.render_delay_ms = 10;
   recv_config.rtp.remote_ssrc = 100;
-  recv_config.rtp.local_ssrc = 101;
   recv_config.rtp.rtcp_mode = RtcpMode::kCompound;
   recv_config.rtp.lntf.enabled = false;
   recv_config.rtp.nack.rtp_history_ms = 150;
@@ -47,7 +46,6 @@ TEST(CallConfigUtils, MarshalUnmarshalProcessSameObject) {
             unmarshaled_config.decoders[0].video_format.parameters);
   EXPECT_EQ(recv_config.render_delay_ms, unmarshaled_config.render_delay_ms);
   EXPECT_EQ(recv_config.rtp.remote_ssrc, unmarshaled_config.rtp.remote_ssrc);
-  EXPECT_EQ(recv_config.rtp.local_ssrc, unmarshaled_config.rtp.local_ssrc);
   EXPECT_EQ(recv_config.rtp.rtcp_mode, unmarshaled_config.rtp.rtcp_mode);
   EXPECT_EQ(recv_config.rtp.lntf.enabled, unmarshaled_config.rtp.lntf.enabled);
   EXPECT_EQ(recv_config.rtp.nack.rtp_history_ms,

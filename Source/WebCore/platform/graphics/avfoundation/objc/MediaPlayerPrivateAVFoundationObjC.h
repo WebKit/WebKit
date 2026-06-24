@@ -53,7 +53,6 @@ OBJC_CLASS NSArray;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS WebCoreAVFLoaderDelegate;
 OBJC_CLASS WebCoreAVFMovieObserver;
-OBJC_CLASS WebCoreAVFPullDelegate;
 
 typedef struct CGImage *CGImageRef;
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
@@ -437,7 +436,6 @@ private:
 
     RetainPtr<AVAssetImageGenerator> m_imageGenerator;
     RefPtr<QueuedVideoOutput> m_videoOutput;
-    RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
@@ -448,7 +446,6 @@ private:
     HashMap<RetainPtr<AVAssetResourceLoadingRequest>, Ref<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
     const RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
     MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_keyURIToRequestMap;
-    MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_sessionIDToRequestMap;
 
     RetainPtr<AVPlayerItemLegibleOutput> m_legibleOutput;
 
@@ -520,7 +517,6 @@ private:
     bool m_cachedCanPlayFastForward { false };
     bool m_cachedCanPlayFastReverse { false };
     mutable bool m_cachedAssetIsLoaded { false };
-    mutable bool m_cachedTracksAreLoaded { false };
     mutable std::optional<bool> m_cachedAssetIsPlayable;
     mutable std::optional<bool> m_cachedTracksArePlayable;
     mutable std::optional<bool> m_cachedAssetIsHLS;
@@ -529,13 +525,11 @@ private:
     bool m_preservesPitch { true };
     bool m_shouldObserveTimeControlStatus { false };
     bool m_isInFullscreenOrPictureInPicture { false };
-    mutable std::optional<bool> m_tracksArePlayable;
     bool m_automaticallyWaitsToMinimizeStalling { false };
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mutable bool m_allowsWirelessVideoPlayback { true };
     bool m_shouldPlayToPlaybackTarget { false };
 #endif
-    bool m_haveProcessedChapterTracks { false };
     bool m_waitForVideoOutputMediaDataWillChangeTimedOut { false };
     bool m_haveBeenAskedToPaint { false };
     uint64_t m_sampleCount { 0 };

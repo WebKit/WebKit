@@ -66,7 +66,7 @@ void ReportDiscardedDelegateException(SEL delegateSelector, id exception)
 {
     if ([exception isKindOfClass:[NSException class]]) {
         NSLog(@"*** WebKit discarded an uncaught exception in the %s delegate: <%@> %@",
-            sel_getName(delegateSelector), [exception name], [exception reason]);
+            sel_getName(delegateSelector), [(NSException *)exception name], [(NSException *)exception reason]);
     } else {
         NSLog(@"*** WebKit discarded an uncaught exception in the %s delegate: %@",
             sel_getName(delegateSelector), exception);

@@ -35,7 +35,8 @@
             // Try calling connect() method with illegal values: illegal
             // destination, illegal output index, and illegal input index.
             should(
-                () => audioNode.connect(0, 0, 0), 'audioNode.connect(0, 0, 0)')
+                () => audioNode.connect(0, 0, 0),
+                'audioNode.connect(0, 0, 0)')
                 .throw(TypeError);
             should(
                 () => audioNode.connect(context.destination, 5, 0),

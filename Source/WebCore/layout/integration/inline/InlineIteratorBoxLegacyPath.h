@@ -98,7 +98,7 @@ public:
         return m_inlineBox->root().blockFlow();
     }
 
-    CheckedRef<const RenderStyle> style() const
+    CheckedRef<const Style::ComputedStyle> style() const
     {
         return m_inlineBox->lineStyle();
     }

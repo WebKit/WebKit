@@ -13,9 +13,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
@@ -370,7 +370,7 @@ void WriteSps(uint16_t width,
   }
 
   out_buffer->Clear();
-  H265::WriteRbsp(MakeArrayView(rbsp, byte_count), out_buffer);
+  H265::WriteRbsp(std::span(rbsp, byte_count), out_buffer);
 }
 
 class H265SpsParserTest : public ::testing::Test {

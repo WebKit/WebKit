@@ -11,9 +11,9 @@
 #include "api/transport/rtp/corruption_detection_message.h"
 
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "rtc_base/checks.h"
 
@@ -116,8 +116,8 @@ CorruptionDetectionMessage::Builder::WithChromaErrorThreshold(
 
 CorruptionDetectionMessage::Builder&
 CorruptionDetectionMessage::Builder::WithSampleValues(
-    const ArrayView<const double>& sample_values) {
-  message_.sample_values_.assign(sample_values.cbegin(), sample_values.cend());
+    const std::span<const double>& sample_values) {
+  message_.sample_values_.assign(sample_values.begin(), sample_values.end());
   return *this;
 }
 

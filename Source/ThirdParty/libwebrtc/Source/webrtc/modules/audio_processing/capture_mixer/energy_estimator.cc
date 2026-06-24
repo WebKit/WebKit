@@ -9,13 +9,13 @@
  */
 #include "modules/audio_processing/capture_mixer/energy_estimator.h"
 
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
 namespace {
 
-void UpdateChannelEnergyEstimate(ArrayView<const float> audio,
+void UpdateChannelEnergyEstimate(std::span<const float> audio,
                                  float dc_level,
                                  float& channel_energy_estimate) {
   float energy = 0.0f;
@@ -35,9 +35,9 @@ AverageEnergyEstimator::AverageEnergyEstimator() {
   average_energy_in_channels_.fill(0.0f);
 }
 
-void AverageEnergyEstimator::Update(ArrayView<const float> channel0,
-                                    ArrayView<const float> channel1,
-                                    ArrayView<const float, 2> dc_levels) {
+void AverageEnergyEstimator::Update(std::span<const float> channel0,
+                                    std::span<const float> channel1,
+                                    std::span<const float, 2> dc_levels) {
   UpdateChannelEnergyEstimate(channel0, dc_levels[0],
                               average_energy_in_channels_[0]);
   UpdateChannelEnergyEstimate(channel1, dc_levels[1],

@@ -90,7 +90,7 @@ ALWAYS_INLINE JSString* JSONAtomStringCache::makeJSString(std::span<const Charac
     if (characters.empty())
         return jsEmptyString(vm);
 
-    constexpr unsigned maxAtomizeStringLength = 10;
+    constexpr unsigned maxAtomizeStringLength = 16;
     auto firstCharacter = characters.front();
     if (characters.size() == 1) {
         if (firstCharacter <= maxSingleCharacterString)

@@ -183,10 +183,10 @@ public:
     virtual void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) { }
 
     WebCore::FloatBoxExtent obscuredContentInsets() const;
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    void setBannerViewHeight(float);
-    void setBannerViewMaximumHeight(float);
-    void setHasBannerViewOverlay(bool);
+#if HAVE(NSREFRESHCONTROLLER)
+    void setTopScrollStretchForRefreshController(float);
+    void setRefreshControllerSnappingThreshold(float);
+    void setHasRefreshController(bool);
 #endif
     WebCore::FloatPoint currentMainFrameScrollPosition() const;
     WebCore::FloatRect computeVisibleContentRect();

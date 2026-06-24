@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "test/gtest.h"
@@ -24,7 +25,7 @@ TEST(RtpHeaderExtensionTest, RegisterByType) {
   EXPECT_TRUE(map.RegisterByType(3, TransmissionOffset::kId));
 
   EXPECT_TRUE(map.IsRegistered(TransmissionOffset::kId));
-  EXPECT_EQ(3, map.GetId(TransmissionOffset::kId));
+  EXPECT_EQ(RtpHeaderExtensionId(3), map.GetId(TransmissionOffset::kId));
   EXPECT_EQ(TransmissionOffset::kId, map.GetType(3));
 }
 
@@ -34,7 +35,7 @@ TEST(RtpHeaderExtensionTest, RegisterByUri) {
   EXPECT_TRUE(map.RegisterByUri(3, TransmissionOffset::Uri()));
 
   EXPECT_TRUE(map.IsRegistered(TransmissionOffset::kId));
-  EXPECT_EQ(3, map.GetId(TransmissionOffset::kId));
+  EXPECT_EQ(RtpHeaderExtensionId(3), map.GetId(TransmissionOffset::kId));
   EXPECT_EQ(TransmissionOffset::kId, map.GetType(3));
 }
 
@@ -44,7 +45,7 @@ TEST(RtpHeaderExtensionTest, RegisterWithTrait) {
   EXPECT_TRUE(map.Register<TransmissionOffset>(3));
 
   EXPECT_TRUE(map.IsRegistered(TransmissionOffset::kId));
-  EXPECT_EQ(3, map.GetId(TransmissionOffset::kId));
+  EXPECT_EQ(RtpHeaderExtensionId(3), map.GetId(TransmissionOffset::kId));
   EXPECT_EQ(TransmissionOffset::kId, map.GetType(3));
 }
 
@@ -53,8 +54,8 @@ TEST(RtpHeaderExtensionTest, RegisterDuringContruction) {
                                             {AbsoluteSendTime::Uri(), 3}};
   const RtpHeaderExtensionMap map(config);
 
-  EXPECT_EQ(1, map.GetId(TransmissionOffset::kId));
-  EXPECT_EQ(3, map.GetId(AbsoluteSendTime::kId));
+  EXPECT_EQ(RtpHeaderExtensionId(1), map.GetId(TransmissionOffset::kId));
+  EXPECT_EQ(RtpHeaderExtensionId(3), map.GetId(AbsoluteSendTime::kId));
 }
 
 TEST(RtpHeaderExtensionTest, RegisterTwoByteHeaderExtensions) {
@@ -103,7 +104,7 @@ TEST(RtpHeaderExtensionTest, GetId) {
             map.GetId(TransmissionOffset::kId));
   EXPECT_TRUE(map.Register<TransmissionOffset>(3));
 
-  EXPECT_EQ(3, map.GetId(TransmissionOffset::kId));
+  EXPECT_EQ(RtpHeaderExtensionId(3), map.GetId(TransmissionOffset::kId));
 }
 
 TEST(RtpHeaderExtensionTest, RemapFails) {

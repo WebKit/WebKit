@@ -34,7 +34,7 @@ namespace JSC { namespace FTL {
 
 using namespace JSC::DFG;
 
-ExitTimeObjectMaterialization::ExitTimeObjectMaterialization(Node* node, CodeOrigin codeOrigin)
+ExitTimeObjectMaterialization::ExitTimeObjectMaterialization(DFG::Node* node, CodeOrigin codeOrigin)
     : m_type(node->op())
     , m_indexingType(node->hasIndexingType() ? node->indexingType() : NoIndexingShape)
     , m_origin(codeOrigin)

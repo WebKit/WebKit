@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -78,8 +78,7 @@ function declareTouchMove(div_id)
 
         if (++totalTouchMoveCount == 6)
         {
-            testRunner.notifyDone();
-            isSuccessfullyParsed();
+            finishJSTest();
         }
     }
 }
@@ -91,10 +90,8 @@ div2.addEventListener("touchstart", declareTouchStart(), false);
 div2.addEventListener("touchmove", declareTouchMove(), false);
 
 description("Tests that the target of touches match the element where the event originated, not where the touch is currently occurring.");
+window.jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-}
 
 if (window.eventSender) {
     eventSender.clearTouchPoints();

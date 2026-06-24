@@ -24,7 +24,9 @@
 #include "internal.h"
 
 
-bcm_infallible BCM_sha224_init(SHA256_CTX *sha) {
+using namespace bssl;
+
+bcm_infallible bssl::BCM_sha224_init(SHA256_CTX *sha) {
   OPENSSL_memset(sha, 0, sizeof(SHA256_CTX));
   sha->h[0] = 0xc1059ed8UL;
   sha->h[1] = 0x367cd507UL;
@@ -38,7 +40,7 @@ bcm_infallible BCM_sha224_init(SHA256_CTX *sha) {
   return bcm_infallible::approved;
 }
 
-bcm_infallible BCM_sha256_init(SHA256_CTX *sha) {
+bcm_infallible bssl::BCM_sha256_init(SHA256_CTX *sha) {
   OPENSSL_memset(sha, 0, sizeof(SHA256_CTX));
   sha->h[0] = 0x6a09e667UL;
   sha->h[1] = 0xbb67ae85UL;
@@ -57,8 +59,8 @@ static void sha256_block_data_order(uint32_t state[8], const uint8_t *in,
                                     size_t num);
 #endif
 
-bcm_infallible BCM_sha256_transform(SHA256_CTX *c,
-                                    const uint8_t data[SHA256_CBLOCK]) {
+bcm_infallible bssl::BCM_sha256_transform(SHA256_CTX *c,
+                                          const uint8_t data[SHA256_CBLOCK]) {
   sha256_block_data_order(c->h, data, 1);
   return bcm_infallible::approved;
 }
@@ -75,19 +77,20 @@ struct SHA256Traits {
 };
 }  // namespace
 
-bcm_infallible BCM_sha256_update(SHA256_CTX *c, const void *data, size_t len) {
-  bssl::crypto_md32_update<SHA256Traits>(
-      c, bssl::Span(static_cast<const uint8_t *>(data), len));
+bcm_infallible bssl::BCM_sha256_update(SHA256_CTX *c, const void *data,
+                                       size_t len) {
+  crypto_md32_update<SHA256Traits>(
+      c, Span(static_cast<const uint8_t *>(data), len));
   return bcm_infallible::approved;
 }
 
-bcm_infallible BCM_sha224_update(SHA256_CTX *ctx, const void *data,
-                                 size_t len) {
+bcm_infallible bssl::BCM_sha224_update(SHA256_CTX *ctx, const void *data,
+                                       size_t len) {
   return BCM_sha256_update(ctx, data, len);
 }
 
 static void sha256_final_impl(uint8_t *out, size_t md_len, SHA256_CTX *c) {
-  bssl::crypto_md32_final<SHA256Traits>(c);
+  crypto_md32_final<SHA256Traits>(c);
 
   BSSL_CHECK(md_len <= SHA256_DIGEST_LENGTH);
 
@@ -101,8 +104,8 @@ static void sha256_final_impl(uint8_t *out, size_t md_len, SHA256_CTX *c) {
   FIPS_service_indicator_update_state();
 }
 
-bcm_infallible BCM_sha256_final(uint8_t out[SHA256_DIGEST_LENGTH],
-                                SHA256_CTX *c) {
+bcm_infallible bssl::BCM_sha256_final(uint8_t out[SHA256_DIGEST_LENGTH],
+                                      SHA256_CTX *c) {
   // Ideally we would assert |sha->md_len| is |SHA256_DIGEST_LENGTH| tomatch the
   // size hint, but calling code often pairs |SHA224_Init| with |SHA256_Final|
   // and expects |sha->md_len| to carry the size over.
@@ -112,8 +115,8 @@ bcm_infallible BCM_sha256_final(uint8_t out[SHA256_DIGEST_LENGTH],
   return bcm_infallible::approved;
 }
 
-bcm_infallible BCM_sha224_final(uint8_t out[SHA224_DIGEST_LENGTH],
-                                SHA256_CTX *ctx) {
+bcm_infallible bssl::BCM_sha224_final(uint8_t out[SHA224_DIGEST_LENGTH],
+                                      SHA256_CTX *ctx) {
   // This function must be paired with |SHA224_Init|, which sets |ctx->md_len|
   // to |SHA224_DIGEST_LENGTH|.
   assert(ctx->md_len == SHA224_DIGEST_LENGTH);
@@ -293,10 +296,12 @@ static void sha256_block_data_order(uint32_t state[8], const uint8_t *data,
 #endif  // !defined(SHA256_ASM)
 
 
-bcm_infallible BCM_sha256_transform_blocks(uint32_t state[8],
-                                           const uint8_t *data,
-                                           size_t num_blocks) {
-  sha256_block_data_order(state, data, num_blocks);
+bcm_infallible bssl::BCM_sha256_transform_blocks(uint32_t state[8],
+                                                 const uint8_t *data,
+                                                 size_t num_blocks) {
+  if (num_blocks > 0) {
+    sha256_block_data_order(state, data, num_blocks);
+  }
   return bcm_infallible::approved;
 }
 

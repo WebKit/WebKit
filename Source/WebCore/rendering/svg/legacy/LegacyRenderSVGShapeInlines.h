@@ -27,7 +27,7 @@
 
 #include "LegacyRenderSVGModelObjectInlines.h"
 #include "LegacyRenderSVGShape.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "SVGGraphicsElement.h"
 
 namespace WebCore {

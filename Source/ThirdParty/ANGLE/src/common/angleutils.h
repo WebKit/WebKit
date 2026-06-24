@@ -19,6 +19,7 @@
 #    include <sanitizer/msan_interface.h>
 #endif  // defined(ANGLE_WITH_MSAN)
 
+#include <array>
 #include <climits>
 #include <cstdarg>
 #include <cstddef>
@@ -179,6 +180,12 @@ struct VulkanPerfCounters
 
 template <typename T, size_t N>
 constexpr inline size_t ArraySize(T (&)[N])
+{
+    return N;
+}
+
+template <typename T, size_t N>
+constexpr inline size_t ArraySize(const std::array<T, N> &)
 {
     return N;
 }
@@ -426,6 +433,13 @@ inline bool IsLittleEndian()
 #define ANGLE_GL_UNREACHABLE(context) \
     UNREACHABLE();                    \
     ANGLE_CHECK(context, false, "Unreachable code.", GL_INVALID_OPERATION)
+
+#define ANGLE_CHECK_ASSERT(context, result) \
+    do { \
+        bool resultValue = (result); \
+        ASSERT(resultValue); \
+        ANGLE_CHECK(context, resultValue, gl::err::kInternalError, GL_INVALID_OPERATION); \
+    } while (false)
 
 #if defined(ANGLE_WITH_LSAN)
 #    define ANGLE_SCOPED_DISABLE_LSAN() __lsan::ScopedDisabler lsanDisabler

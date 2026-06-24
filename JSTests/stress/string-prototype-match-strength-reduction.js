@@ -97,5 +97,3 @@ for (var i = 0; i < 1e5; ++i) {
     shouldBe(RegExp.leftContext, "abc");
     shouldBe(RegExp.rightContext, "def");
 }
-
-print("PASSED");

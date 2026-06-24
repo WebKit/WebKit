@@ -81,6 +81,7 @@
 #include "SlotVisitorInlines.h"
 #include "SourceProvider.h"
 #include "StackVisitor.h"
+#include "SymbolTableInlines.h"
 #include "TypeLocationCache.h"
 #include "TypeProfiler.h"
 #include "VMInlines.h"
@@ -1080,7 +1081,12 @@ Vector<unsigned> CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<
                         // watchpoint intact and assume the value is still the original constant.
                         SymbolTable* clone = globalObject->symbolTableCache().get(symbolTable);
                         if (!clone) {
-                            clone = symbolTable->cloneScopePart(vm);
+                            // For non-builtin code, link the clone's singleton watchpoint to the master
+                            // SymbolTable held inside the UnlinkedCodeBlock so that all per-realm clones
+                            // share one InferredValue. This avoids re-firing the singleton watchpoint
+                            // independently in every realm (e.g. on navigation) for the same code.
+                            auto propagateCloneInvalidationToOriginal = m_unlinkedCode->isBuiltinFunction() ? SymbolTable::PropagateCloneInvalidationToOriginal::No : SymbolTable::PropagateCloneInvalidationToOriginal::Yes;
+                            clone = symbolTable->cloneScopePart(vm, propagateCloneInvalidationToOriginal);
                             globalObject->symbolTableCache().set(symbolTable, clone);
                         }
                         if (wasCompiledWithDebuggingOpcodes())

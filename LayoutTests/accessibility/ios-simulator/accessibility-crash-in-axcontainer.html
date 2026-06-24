@@ -32,8 +32,9 @@ var successfullyParsed = false;
 
         document.getElementById("backImg").parentNode.removeChild(document.getElementById("backImg"));
 
-        // Should not crash here when asking for parentElement (even though it was removed).
-        shouldBeTrue("link.parentElement() == null || link.parentElement().isValid");
+        // Retrieving the parent should not cause a crash (despite the associated image being removed), and should
+        // return a valid fallback parent.
+        shouldBeTrue("link.parentElement().isValid");
     }
 
     successfullyParsed = true;

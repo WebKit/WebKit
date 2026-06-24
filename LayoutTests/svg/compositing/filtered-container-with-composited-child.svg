@@ -1,0 +1,12 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200">
+    <!-- Test: a reference-filtered <g> containing a composited child. The filter must render the whole
+         group into a single buffer, so the composited child cannot escape it. All three rects must be
+         blurred uniformly, matching the reference where nothing composites. -->
+    <filter id="f" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+    <g filter="url(#f)">
+        <rect style="will-change: transform" x="20" y="60" width="80" height="80" fill="red"/>
+        <rect x="110" y="60" width="80" height="80" fill="green"/>
+        <rect x="200" y="60" width="80" height="80" fill="blue"/>
+    </g>
+</svg>

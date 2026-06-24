@@ -10,7 +10,7 @@
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "__NSConcreteGlobalBlock"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "__NSConcreteStackBlock"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

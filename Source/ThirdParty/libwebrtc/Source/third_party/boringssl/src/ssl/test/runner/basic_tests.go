@@ -14,7 +14,10 @@
 
 package runner
 
-import "strconv"
+import (
+	"slices"
+	"strconv"
+)
 
 func addBasicTests() {
 	basicTests := []testCase{
@@ -1113,6 +1116,34 @@ read alert 1 0
 			expectedError:     ":TOO_MANY_WARNING_ALERTS:",
 		},
 		{
+			name: "AlternateEmptyRecordsAndWarningAlerts",
+			config: Config{
+				MaxVersion: VersionTLS12,
+			},
+			sendEmptyRecords:  32,
+			sendWarningAlerts: 4,
+		},
+		{
+			name: "AlternateTooManyEmptyRecordsAndWarningAlerts",
+			config: Config{
+				MaxVersion: VersionTLS12,
+			},
+			sendEmptyRecords:  33,
+			sendWarningAlerts: 4,
+			shouldFail:        true,
+			expectedError:     ":TOO_MANY_EMPTY_FRAGMENTS:",
+		},
+		{
+			name: "AlternateEmptyRecordsAndTooManyWarningAlerts",
+			config: Config{
+				MaxVersion: VersionTLS12,
+			},
+			sendEmptyRecords:  32,
+			sendWarningAlerts: 5,
+			shouldFail:        true,
+			expectedError:     ":TOO_MANY_WARNING_ALERTS:",
+		},
+		{
 			name:               "SendBogusAlertType",
 			sendBogusAlertType: true,
 			shouldFail:         true,
@@ -1348,9 +1379,17 @@ read alert 1 0
 			config: Config{
 				MaxVersion: VersionTLS12,
 				Bugs: ProtocolBugs{
-					MaxHandshakeRecordLength:  2,
-					ReorderHandshakeFragments: true,
-					SendExtraFinished:         true,
+					SendExtraFinished: true,
+					WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+						if next[len(next)-1].Type == typeFinished {
+							// Reorder such that the extra Finished is sent first.
+							if len(next) < 2 || next[len(next)-2].Type != typeFinished {
+								panic("expected two Finished messages")
+							}
+							slices.Reverse(next[len(next)-2:])
+						}
+						c.WriteFlight(next)
+					},
 				},
 			},
 			shouldFail:         true,
@@ -1390,9 +1429,17 @@ read alert 1 0
 			config: Config{
 				MaxVersion: VersionTLS13,
 				Bugs: ProtocolBugs{
-					MaxHandshakeRecordLength:  2,
-					ReorderHandshakeFragments: true,
-					SendExtraFinished:         true,
+					SendExtraFinished: true,
+					WriteFlightDTLS: func(c *DTLSController, prev, received, next []DTLSMessage, records []DTLSRecordNumberInfo) {
+						if next[len(next)-1].Type == typeFinished {
+							// Reorder such that the extra Finished is sent first.
+							if len(next) < 2 || next[len(next)-2].Type != typeFinished {
+								panic("expected two Finished messages")
+							}
+							slices.Reverse(next[len(next)-2:])
+						}
+						c.WriteFlight(next)
+					},
 				},
 			},
 			shouldFail:         true,
@@ -1769,7 +1816,7 @@ read alert 1 0
 
 	// Test that very large messages can be received.
 	cert := rsaCertificate
-	for i := 0; i < 50; i++ {
+	for range 50 {
 		cert.Certificate = append(cert.Certificate, cert.Certificate[0])
 	}
 	testCases = append(testCases, testCase{

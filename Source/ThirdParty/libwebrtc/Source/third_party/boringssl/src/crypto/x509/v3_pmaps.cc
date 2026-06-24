@@ -23,13 +23,15 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static void *v2i_POLICY_MAPPINGS(const X509V3_EXT_METHOD *method,
                                  const X509V3_CTX *ctx,
                                  const STACK_OF(CONF_VALUE) *nval);
 static STACK_OF(CONF_VALUE) *i2v_POLICY_MAPPINGS(
     const X509V3_EXT_METHOD *method, void *pmps, STACK_OF(CONF_VALUE) *extlist);
 
-const X509V3_EXT_METHOD v3_policy_mappings = {
+const X509V3_EXT_METHOD bssl::v3_policy_mappings = {
     NID_policy_mappings,
     0,
     ASN1_ITEM_ref(POLICY_MAPPINGS),

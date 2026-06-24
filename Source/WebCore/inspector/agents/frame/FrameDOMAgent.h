@@ -40,11 +40,16 @@
 namespace WebCore {
 
 class CharacterData;
+class DOMEditor;
 class Document;
 class Element;
+class EventListener;
+class EventTarget;
+class InspectorHistory;
 class LocalFrame;
 class Node;
 class PseudoElement;
+class RegisteredEventListener;
 class ShadowRoot;
 
 // FrameDOMAgent is the per-frame DOM agent for Site Isolation.
@@ -140,11 +145,13 @@ public:
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
     void frameDocumentUpdated(LocalFrame&);
+    bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
 
     // Public accessors
     Node* nodeForId(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::DOM::NodeId boundNodeId(const Node*);
     Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Node*);
+    InspectorHistory* history() LIFETIME_BOUND { return m_history.get(); }
 
 private:
     Inspector::Protocol::DOM::NodeId bind(Node&);
@@ -153,6 +160,8 @@ private:
 
     RefPtr<Node> assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     RefPtr<Element> assertElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Node> assertEditableNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Element> assertEditableElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
 
     Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth);
     Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
@@ -164,6 +173,43 @@ private:
     void setDocument(Document*);
     void reset();
     void destroyedNodesTimerFired();
+
+    RefPtr<Node> nodeForPath(const String& path);
+
+    struct InspectorEventListener {
+        Inspector::Protocol::DOM::EventListenerId identifier { 1 };
+        RefPtr<EventTarget> eventTarget;
+        RefPtr<EventListener> eventListener;
+        AtomString eventType;
+        bool useCapture { false };
+        bool disabled { false };
+
+        InspectorEventListener() { }
+
+        InspectorEventListener(Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
+            : identifier(identifier)
+            , eventTarget(&target)
+            , eventListener(&listener)
+            , eventType(type)
+            , useCapture(capture)
+        {
+        }
+
+        bool matches(EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
+        {
+            if (eventTarget.get() != &target)
+                return false;
+            if (eventListener.get() != &listener)
+                return false;
+            if (eventType != type)
+                return false;
+            if (useCapture != capture)
+                return false;
+            return true;
+        }
+    };
+
+    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const Ref<RegisteredEventListener>&, Inspector::Protocol::DOM::EventListenerId, EventTarget&, const AtomString& eventType, bool disabled);
 
     const UniqueRef<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::DOMBackendDispatcher> m_backendDispatcher;
@@ -180,8 +226,18 @@ private:
     Vector<std::pair<Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOM::NodeId>> m_destroyedAttachedNodeIdentifiers;
     Timer m_destroyedNodesTimer;
 
+    using SearchResults = HashMap<String, Vector<RefPtr<Node>>>;
+    SearchResults m_searchResults;
+
+    HashMap<Inspector::Protocol::DOM::EventListenerId, InspectorEventListener> m_eventListenerEntries;
+    Inspector::Protocol::DOM::EventListenerId m_lastEventListenerId { 1 };
+
+    std::unique_ptr<InspectorHistory> m_history;
+    std::unique_ptr<DOMEditor> m_domEditor;
+
     bool m_suppressAttributeModifiedEvent { false };
     bool m_documentRequested { false };
+    bool m_allowEditingUserAgentShadowTrees { false };
 };
 
 } // namespace WebCore

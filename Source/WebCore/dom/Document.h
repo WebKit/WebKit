@@ -36,12 +36,14 @@
 #include <WebCore/DocumentEventTiming.h>
 #include <WebCore/Element.h>
 #include <WebCore/ExceptionOr.h>
+#include <WebCore/FindOptions.h>
 #include <WebCore/FocusControllerTypes.h>
 #include <WebCore/FontSelectorClient.h>
 #include <WebCore/FrameDestructionObserver.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HitTestSource.h>
 #include <WebCore/MutationObserverOptions.h>
+#include <WebCore/OriginKeyed.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlaybackTargetClientContextIdentifier.h>
 #include <WebCore/PseudoElementIdentifier.h>
@@ -50,7 +52,6 @@
 #include <WebCore/RenderPtr.h>
 #include <WebCore/ReportingClient.h>
 #include <WebCore/ScriptExecutionContext.h>
-#include <WebCore/SpatialBackdropSource.h>
 #include <WebCore/StringWithDirection.h>
 #include <WebCore/Supplementable.h>
 #include <WebCore/Timer.h>
@@ -64,6 +65,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
 #include <wtf/Observer.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
@@ -295,6 +297,7 @@ struct BoundaryPoint;
 struct CSSParserContext;
 struct CaretPositionFromPointOptions;
 struct ClientOrigin;
+struct CueMatch;
 struct ElementCreationOptions;
 struct FocusOptions;
 struct ImportNodeOptions;
@@ -380,7 +383,9 @@ class ComputedStyle;
 class CustomPropertyRegistry;
 class Resolver;
 class Scope;
+class DocumentScope;
 class Update;
+enum class SVGRendererUpdateType : bool;
 }
 
 enum class PageshowEventPersistence : bool { NotPersisted, Persisted };
@@ -718,8 +723,8 @@ public:
 
     WEBCORE_EXPORT StyleSheetList& styleSheets();
 
-    Style::Scope& styleScope() { return m_styleScope; }
-    const Style::Scope& styleScope() const { return m_styleScope; }
+    Style::DocumentScope& styleScope() { return m_styleScope; }
+    const Style::DocumentScope& styleScope() const { return m_styleScope; }
 
     ExtensionStyleSheets* extensionStyleSheetsIfExists() { return m_extensionStyleSheets.get(); }
     inline ExtensionStyleSheets& extensionStyleSheets(); // Defined in DocumentInlines.h.
@@ -742,7 +747,7 @@ public:
     void setStateForNewFormElements(const Vector<AtomString>&);
 
     inline LocalFrameView* view() const; // Defined in DocumentView.h.
-    inline Page* page() const; // Defined in DocumentPage.h.
+    inline Page* NODELETE page() const; // Defined in DocumentPage.h.
     WEBCORE_EXPORT RefPtr<LocalFrame> localMainFrame() const;
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior NODELETE editingBehavior() const;
@@ -750,16 +755,15 @@ public:
     inline Quirks& quirks(); // Defined in DocumentQuirks.h
     inline const Quirks& quirks() const; // Defined in DocumentQuirks.h
 
-    WEBCORE_EXPORT float deviceScaleFactor() const;
+    WEBCORE_EXPORT float NODELETE deviceScaleFactor() const;
 
     WEBCORE_EXPORT bool NODELETE useElevatedUserInterfaceLevel() const;
-    WEBCORE_EXPORT bool useDarkAppearance(const RenderStyle*) const;
     WEBCORE_EXPORT bool useDarkAppearance(const Style::ComputedStyle*) const;
+    void appearanceDidChange();
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorScheme> resolvedColorScheme(const Style::ComputedStyle*) const;
 #endif
 
-    OptionSet<StyleColorOptions> styleColorOptions(const RenderStyle*) const;
     OptionSet<StyleColorOptions> styleColorOptions(const Style::ComputedStyle*) const;
 
     CompositeOperator compositeOperatorForBackgroundColor(const Color&, const RenderElement&) const;
@@ -796,7 +800,7 @@ public:
     // so calling this may cause a flash of unstyled content (FOUC).
     WEBCORE_EXPORT UpdateLayoutResult updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> = { }, const Element* = nullptr);
 
-    std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, const std::optional<Style::PseudoElementIdentifier>& = std::nullopt);
+    std::unique_ptr<Style::ComputedStyle> styleForElementIgnoringPendingStylesheets(Element&, const Style::ComputedStyle* parentStyle, const std::optional<Style::PseudoElementIdentifier>& = std::nullopt);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     WEBCORE_EXPORT bool isPageBoxVisible(int pageIndex);
@@ -829,7 +833,10 @@ public:
     void suspendFontLoading();
 
     RenderView* renderView() const { return m_renderView.get(); }
-    const RenderStyle* initialContainingBlockStyle() const LIFETIME_BOUND { return m_initialContainingBlockStyle.get(); } // This may end up differing from renderView()->style() due to adjustments.
+    const Style::ComputedStyle* initialContainingBlockStyle() const LIFETIME_BOUND { return m_initialContainingBlockStyle.get(); } // This may end up differing from renderView()->style() due to adjustments.
+
+    const Style::ComputedStyle& initialStyle() const LIFETIME_BOUND;
+    void invalidateCachedInitialStyle();
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
     bool hasLivingRenderTree() const { return renderView() && !renderTreeBeingDestroyed(); }
@@ -878,7 +885,7 @@ public:
 
     bool wellFormed() const { return m_wellFormed; }
 
-    const URL& url() const LIFETIME_BOUND final { return m_url; }
+    const URL& NODELETE url() const LIFETIME_BOUND final { return m_url; }
     WEBCORE_EXPORT void setURL(URL&&);
     WEBCORE_EXPORT const URL& urlForBindings();
 
@@ -971,10 +978,6 @@ public:
 
     const Color& themeColor();
 
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    const std::optional<SpatialBackdropSource>& spatialBackdropSource() const LIFETIME_BOUND { return m_cachedSpatialBackdropSource; }
-#endif
-
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const LIFETIME_BOUND { return m_textColor; }
 
@@ -1062,6 +1065,7 @@ public:
     void nodeChildrenWillBeRemoved(ContainerNode&);
     // nodeWillBeRemoved is only safe when removing one node at a time.
     void nodeWillBeRemoved(Node&);
+    void nodeWillBeMoved(Node&);
     void parentlessNodeMovedToNewDocument(Node&);
 
     enum class AcceptChildOperation : bool { Replace, InsertOrAdd };
@@ -1172,10 +1176,6 @@ public:
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
 
     void metaElementThemeColorChanged(HTMLMetaElement&);
-
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    void spatialBackdropLinkElementChanged();
-#endif
 
 #if ENABLE(DARK_MODE_CSS)
     void processColorScheme(const String& colorScheme);
@@ -1433,6 +1433,7 @@ public:
     bool isContextThread() const final;
     bool isSecureContext() const final;
     bool NODELETE crossOriginIsolated() const final;
+    bool NODELETE originAgentCluster() const;
     String agentClusterID() const final;
     bool isJSExecutionForbidden() const final { return false; }
 
@@ -1590,10 +1591,10 @@ public:
     void suspendScheduledTasks(ReasonForSuspension);
     void resumeScheduledTasks(ReasonForSuspension);
 
-    std::optional<float> NODELETE zoomForClient(const RenderStyle&) const;
-    void convertAbsoluteToClientQuads(Vector<FloatQuad>&, const RenderStyle&);
-    void convertAbsoluteToClientRects(Vector<FloatRect>&, const RenderStyle&);
-    void convertAbsoluteToClientRect(FloatRect&, const RenderStyle&);
+    std::optional<float> NODELETE zoomForClient(const Style::ComputedStyle&) const;
+    void convertAbsoluteToClientQuads(Vector<FloatQuad>&, const Style::ComputedStyle&);
+    void convertAbsoluteToClientRects(Vector<FloatRect>&, const Style::ComputedStyle&);
+    void convertAbsoluteToClientRect(FloatRect&, const Style::ComputedStyle&);
 
     bool hasActiveParser();
     void incrementActiveParserCount() { ++m_activeParserCount; }
@@ -1620,7 +1621,7 @@ public:
     void NODELETE setIsResolvingTreeStyle(bool);
 
     void updateTextRenderer(Text&, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText);
-    void updateSVGRenderer(SVGElement&);
+    void updateSVGRenderer(SVGElement&, Style::SVGRendererUpdateType = Style::SVGRendererUpdateType { });
 
     // Return a Locale for the default locale if the argument is null or empty.
     Locale& getCachedLocale(const AtomString& locale = nullAtom());
@@ -1663,6 +1664,10 @@ public:
     bool shouldForceNoOpenerBasedOnCOOP() const;
 
     WEBCORE_EXPORT CrossOriginOpenerPolicy crossOriginOpenerPolicy() const final;
+
+    // https://html.spec.whatwg.org/multipage/origin.html#origin-keyed-agent-clusters
+    OriginKeyed isOriginKeyed() const { return m_isOriginKeyed; }
+    void setIsOriginKeyed(OriginKeyed value) { m_isOriginKeyed = value; }
 
     void willLoadScriptElement(const URL&);
     void willLoadFrameElement(const URL&);
@@ -1871,15 +1876,14 @@ public:
 
     void addTopLayerElement(Element&);
     void removeTopLayerElement(Element&);
-    const ListHashSet<Ref<Element>>& topLayerElements() const LIFETIME_BOUND { return m_topLayerElements; }
+    const OrderedHashSet<Ref<Element>>& topLayerElements() const LIFETIME_BOUND { return m_topLayerElements; }
     bool hasTopLayerElement() const { return !m_topLayerElements.isEmpty(); }
 
-    const ListHashSet<Ref<HTMLElement>>& autoPopoverList() const LIFETIME_BOUND { return m_autoPopoverList; }
+    const OrderedHashSet<Ref<HTMLElement>>& autoPopoverList() const LIFETIME_BOUND { return m_autoPopoverList; }
 
-    ListHashSet<Ref<HTMLDialogElement>>& openDialogsList() { return m_openDialogsList; }
+    OrderedHashSet<Ref<HTMLDialogElement>>& openDialogsList() { return m_openDialogsList; }
 
     HTMLDialogElement* activeModalDialog() const;
-    HTMLDialogElement* activeCloseableDialog() const;
     HTMLElement* NODELETE topmostAutoPopover() const;
     RefPtr<HTMLDialogElement> nearestClickedDialog(const PointerEvent&, Node&) const;
 
@@ -1910,6 +1914,7 @@ public:
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void forEachMediaElement(NOESCAPE const Function<void(HTMLMediaElement&)>&);
+    WEBCORE_EXPORT Vector<CueMatch> findCueMatches(const String&, FindOptions);
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -1980,7 +1985,7 @@ public:
     LazyLoadModelObserver& lazyLoadModelObserver();
 #endif
 #if ENABLE(VIDEO)
-    LazyLoadVideoObserver& lazyLoadVideoObserver();
+    LazyLoadVideoObserver& lazyLoadVideoObserver() LIFETIME_BOUND;
 #endif
 
     ContentVisibilityDocumentState& contentVisibilityDocumentState();
@@ -2059,8 +2064,6 @@ public:
     ResourceMonitor& resourceMonitor();
     ResourceMonitor* NODELETE parentResourceMonitorIfExists();
 
-    bool shouldSkipResourceMonitorThrottling() const { return m_shouldSkipResourceMonitorThrottling; }
-    void setShouldSkipResourceMonitorThrottling(bool flag) { m_shouldSkipResourceMonitorThrottling = flag; }
 #endif
 
     double lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey&) const;
@@ -2068,8 +2071,8 @@ public:
     // Cache of the first (in tree order) Element with 'attribute'.
     Element* NODELETE cachedFirstElementWithAttribute(const QualifiedName& attribute) const;
     void setCachedFirstElementWithAttribute(const QualifiedName& attribute, Element&);
-    void NODELETE attributeAddedToElement(const QualifiedName& attribute);
-    void NODELETE elementDisconnectedFromDocument(const Element&);
+    void attributeAddedToElement(const QualifiedName& attribute);
+    void elementDisconnectedFromDocument(const Element&);
 
     WEBCORE_EXPORT void prefetch(const URL&, const Vector<String>&, std::optional<ReferrerPolicy>, bool lowPriority = false);
 
@@ -2165,11 +2168,6 @@ private:
     WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData> determineActiveThemeColorMetaElement();
     void themeColorChanged();
 
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    std::optional<SpatialBackdropSource> determineActiveSpatialBackdropSource() const;
-    void spatialBackdropSourceChanged();
-#endif
-
     void NODELETE invalidateAccessKeyCacheSlowCase();
     void buildAccessKeyCache();
 
@@ -2249,7 +2247,7 @@ private:
     RefPtr<ResizeObserver> ensureResizeObserverForContainIntrinsicSize();
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
-    bool NODELETE isObservingContentVisibilityTargets() const;
+    bool isObservingContentVisibilityTargets() const;
 
 #if ENABLE(MEDIA_STREAM)
     void updateCaptureAccordingToMutedState();
@@ -2324,7 +2322,7 @@ private:
     WeakHashSet<NodeIterator> m_nodeIterators;
     HashSet<SingleThreadWeakRef<Range>> m_ranges;
 
-    const UniqueRef<Style::Scope> m_styleScope;
+    const UniqueRef<Style::DocumentScope> m_styleScope;
     const std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
     RefPtr<StyleSheetList> m_styleSheetList;
 
@@ -2334,10 +2332,7 @@ private:
     std::optional<Vector<WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData>>> m_metaThemeColorElements;
     WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData> m_activeThemeColorMetaElement;
     Color m_applicationManifestThemeColor;
-
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    std::optional<SpatialBackdropSource> m_cachedSpatialBackdropSource;
-#endif
+    Color m_applicationManifestThemeColorDark;
 
     Color m_textColor { Color::black };
     Color m_linkColor;
@@ -2430,7 +2425,11 @@ private:
     std::unique_ptr<ConstantPropertyMap> m_constantPropertyMap;
 
     RenderPtr<RenderView> m_renderView;
-    std::unique_ptr<RenderStyle> m_initialContainingBlockStyle;
+    std::unique_ptr<Style::ComputedStyle> m_initialContainingBlockStyle;
+
+    // The `initial style` is used to resolve CSS values used outside of element contexts
+    // such as in media queries.
+    mutable std::unique_ptr<Style::ComputedStyle> m_cachedInitialStyle;
 
     WeakHashSet<MediaCanStartListener> m_mediaCanStartListeners;
     WeakHashSet<DisplayChangedObserver> m_displayChangedObservers;
@@ -2608,9 +2607,9 @@ private:
 
     const Ref<FragmentDirective> m_fragmentDirectiveForBindings;
 
-    ListHashSet<Ref<Element>> m_topLayerElements;
-    ListHashSet<Ref<HTMLElement>> m_autoPopoverList;
-    ListHashSet<Ref<HTMLDialogElement>> m_openDialogsList;
+    OrderedHashSet<Ref<Element>> m_topLayerElements;
+    OrderedHashSet<Ref<HTMLElement>> m_autoPopoverList;
+    OrderedHashSet<Ref<HTMLDialogElement>> m_openDialogsList;
 
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_popoverPointerDownTarget;
     WeakPtr<HTMLDialogElement, WeakPtrImplWithEventTargetData> m_dialogPointerDownTarget;
@@ -2631,7 +2630,6 @@ private:
     std::unique_ptr<SleepDisabler> m_sleepDisabler;
 
 #if ENABLE(MEDIA_STREAM)
-    String m_idHashSalt;
     size_t m_activeMediaElementsWithMediaStreamCount { 0 };
     HashSet<Ref<RealtimeMediaSource>> m_captureSources;
     bool m_isUpdatingCaptureAccordingToMutedState { false };
@@ -2754,9 +2752,7 @@ private:
 
     bool m_hasStyleWithViewportUnits { false };
     bool m_needsDOMWindowResizeEvent { false };
-    bool m_hasDeferredDOMWindowResizeEvent { false };
     bool m_needsVisualViewportResizeEvent { false };
-    bool m_hasDeferredVisualViewportResizeEvent { false };
     bool m_needsVisualViewportScrollEvent { false };
     bool m_isTimerThrottlingEnabled { false };
     bool m_isSuspended { false };
@@ -2767,6 +2763,8 @@ private:
 
     bool m_didEnqueueFirstContentfulPaint { false };
 
+    OriginKeyed m_isOriginKeyed { OriginKeyed::No };
+
     bool m_mayHaveRenderedSVGForeignObjects { false };
     bool m_mayHaveRenderedSVGRootElements { false };
 
@@ -2776,7 +2774,6 @@ private:
 
     bool m_updateTitleTaskScheduled { false };
 
-    bool m_isRunningUserScripts { false };
     bool m_shouldPreventEnteringBackForwardCacheForTesting { false };
     bool m_hasLoadedThirdPartyScript { false };
     bool m_hasLoadedThirdPartyFrame { false };
@@ -2842,7 +2839,6 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     RefPtr<ResourceMonitor> m_resourceMonitor;
-    bool m_shouldSkipResourceMonitorThrottling { false };
 #endif
 
     mutable RefPtr<CSSCalc::RandomCachingKeyMap> m_randomCachingKeyMap;

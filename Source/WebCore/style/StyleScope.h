@@ -69,16 +69,15 @@ class WeakPtrImplWithEventTargetData;
 namespace Style {
 
 class CustomPropertyRegistry;
+class DocumentScope;
 class MatchResultCache;
 class Resolver;
 class RuleSet;
-struct MatchResult;
 
-class Scope final : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr<Scope>, public Identified<ScopeIdentifier> {
+class Scope : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr<Scope>, public Identified<ScopeIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(Scope);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Scope);
 public:
-    explicit Scope(Document&);
     explicit Scope(ShadowRoot&);
 
     ~Scope();
@@ -91,7 +90,6 @@ public:
     void addStyleSheetCandidateNode(Node&, bool createdByParser);
     void removeStyleSheetCandidateNode(Node&);
 
-    void setPreferredStylesheetSetName(const WTF::String&);
     void establishPreferredStylesheetSetName(const Element&, const CSSStyleSheet&);
 
     void addPendingSheet(const Element&);
@@ -110,20 +108,10 @@ public:
 
     bool activeStyleSheetsContains(const CSSStyleSheet&) const;
 
-    void evaluateMediaQueriesForViewportChange();
-    void evaluateMediaQueriesForAccessibilitySettingsChange();
-    void evaluateMediaQueriesForAppearanceChange();
-
     // This is called when some stylesheet becomes newly enabled or disabled.
     void didChangeActiveStyleSheetCandidates();
     // This is called when contents of a stylesheet is mutated.
     void didChangeStyleSheetContents();
-    // This is called when the environment where we intrepret the stylesheets changes (for example switching to printing).
-    // The change is assumed to potentially affect all author and user stylesheets including shadow roots.
-    WEBCORE_EXPORT void didChangeStyleSheetEnvironment();
-
-    // This is called when extension stylesheets change.
-    void didChangeExtensionStyleSheets();
 
     void didChangeViewportSize();
 
@@ -142,14 +130,13 @@ public:
     void clearResolver();
     void releaseMemory();
 
-    void clearViewTransitionStyles();
-
-    MatchResultCache& matchResultCache() LIFETIME_BOUND;
-
     const Document& document() const { return m_document; }
     Document& document() { return m_document; }
     const ShadowRoot* shadowRoot() const { return m_shadowRoot; }
     ShadowRoot* shadowRoot() { return m_shadowRoot; }
+
+    // The document scope for this scope's tree (itself if this is the document scope).
+    DocumentScope& NODELETE documentScope();
 
     CheckedPtr<const Scope> NODELETE hostScope() const;
 
@@ -161,29 +148,17 @@ public:
     // The provided function is called for all the relevant scopes until it finds a name match from a scope and returns a truthy value.
     template<typename F> static auto resolveTreeScopedReference(const Element&, const ScopedName&, const F&&);
 
-    struct LayoutDependencyUpdateContext {
-        HashSet<CheckedRef<const Element>> invalidatedContainers;
-        HashSet<CheckedRef<const Element>> invalidatedAnchorPositioned;
-    };
-    bool invalidateForLayoutDependencies(LayoutDependencyUpdateContext&);
-
     const CustomPropertyRegistry& customPropertyRegistry() const LIFETIME_BOUND { return m_customPropertyRegistry.get(); }
     CustomPropertyRegistry& customPropertyRegistry() LIFETIME_BOUND { return m_customPropertyRegistry.get(); }
     const CSSCounterStyleRegistry& counterStyleRegistry() const LIFETIME_BOUND { return m_counterStyleRegistry.get(); }
     CSSCounterStyleRegistry& counterStyleRegistry() LIFETIME_BOUND { return m_counterStyleRegistry.get(); }
 
-    AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() LIFETIME_BOUND { return m_anchorPositionedToAnchorMap; }
-    const AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() const LIFETIME_BOUND { return m_anchorPositionedToAnchorMap; }
-    void updateAnchorPositioningStateAfterStyleResolution();
-
-    std::optional<size_t> lastSuccessfulPositionOptionIndexFor(const Styleable&);
-    void setLastSuccessfulPositionOptionIndexMap(HashMap<WeakStyleable, size_t>&&);
-    void forgetLastSuccessfulPositionOptionIndex(const Styleable&);
-
-    bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
+protected:
+    explicit Scope(Document&);
 
 private:
-    Scope& NODELETE documentScope();
+    friend class DocumentScope;
+
     bool NODELETE isForUserAgentShadowTree() const;
 
     void didRemovePendingStylesheet();
@@ -191,10 +166,6 @@ private:
     enum class UpdateType : uint8_t { ActiveSet, FullForExtensionStyleSheets, ContentsOrInterpretation };
     void updateActiveStyleSheets(UpdateType);
     void scheduleUpdate(UpdateType);
-
-    using ResolverScopes = HashMap<Ref<Resolver>, Vector<WeakPtr<Scope>>>;
-    ResolverScopes collectResolverScopes();
-    template <typename TestFunction> void evaluateMediaQueries(TestFunction&&);
 
     WEBCORE_EXPORT void flushPendingSelfUpdate();
     WEBCORE_EXPORT void flushPendingDescendantUpdates();
@@ -219,7 +190,6 @@ private:
     void invalidateStyleAfterStyleSheetChange(const StyleSheetChange&);
 
     void updateResolver(std::span<const Ref<CSSStyleSheet>>, ResolverUpdateType);
-    void createDocumentResolver();
     void createOrFindSharedShadowTreeResolver();
     void unshareShadowTreeResolverBeforeMutation();
 
@@ -231,12 +201,6 @@ private:
 
     TreeScope& NODELETE treeScope();
 
-    using MediaQueryViewportState = std::tuple<IntSize, float, bool>;
-    static MediaQueryViewportState mediaQueryViewportStateForDocument(const Document&);
-
-    bool invalidateForContainerDependencies(LayoutDependencyUpdateContext&);
-    bool invalidateForPositionTryFallbacks(LayoutDependencyUpdateContext&);
-
     const CheckedRef<Document> m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
@@ -244,8 +208,6 @@ private:
 
     Vector<Ref<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<Ref<CSSStyleSheet>> m_activeStyleSheets;
-
-    mutable RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
 
     Timer m_pendingUpdateTimer;
 
@@ -261,8 +223,6 @@ private:
 
     WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_styleSheetCandidateNodes;
 
-    WTF::String m_preferredStylesheetSetName;
-
     std::optional<UpdateType> m_pendingUpdate;
 
     bool m_hasDescendantWithPendingUpdate { false };
@@ -270,29 +230,8 @@ private:
     bool m_usesHasPseudoClass { false };
     bool m_isUpdatingStyleResolver { false };
 
-    std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
-    WeakHashMap<Element, LayoutSize, WeakPtrImplWithEventTargetData> m_queryContainerDimensionsOnLastUpdate;
-
-    struct AnchorPosition {
-        LayoutRect absoluteRect;
-        Vector<LayoutSize, 2> containingBlockSizes;
-
-        bool operator==(const AnchorPosition&) const = default;
-    };
-    SingleThreadWeakHashMap<const RenderBoxModelObject, AnchorPosition> m_anchorPositionsOnLastUpdate;
-    // Stores the last successful position option for each anchor-positioned element.
-    // This is recorded when ResizeObserver events are delivered, at Document::updateResizeObservations
-    HashMap<WeakStyleable, size_t> m_lastSuccessfulPositionOptionIndexes;
-
-    std::unique_ptr<MatchResultCache> m_matchResultCache;
-
     const UniqueRef<CustomPropertyRegistry> m_customPropertyRegistry;
     const UniqueRef<CSSCounterStyleRegistry> m_counterStyleRegistry;
-
-    // FIXME: These (and some things above) are only relevant for the root scope.
-    HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
-
-    AnchorPositionedToAnchorMap m_anchorPositionedToAnchorMap;
 };
 
 RefPtr<HTMLSlotElement> assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IncrementalSweeper.h"
 
+#include "BlockDirectoryInlines.h"
 #include "DeferGCInlines.h"
 #include "HeapInlines.h"
 #include "MarkedBlockInlines.h"
@@ -72,6 +73,8 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime deadline, SweepTrigger tr
     std::optional<TraceScope> traceScope;
     if (Options::useTracePoints()) [[unlikely]]
         traceScope.emplace(IncrementalSweepStart, IncrementalSweepEnd, vm.heap.size(), vm.heap.capacity());
+
+    vm.heap.clearConcurrentRetainedDataIfPossible();
 
     while (sweepNextBlock(vm, trigger)) {
         if (MonotonicTime::now() < deadline)

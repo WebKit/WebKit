@@ -1,1 +1,2 @@
 Unknown script types should not be loaded nor executed. If this test fails, an extra line will appear in the output with the script's MIME type.
+dont-load-unknown-type.html has MIME type text/html

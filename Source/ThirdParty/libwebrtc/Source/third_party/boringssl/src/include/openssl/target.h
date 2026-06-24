@@ -48,8 +48,10 @@
 #elif defined(__pnacl__)
 #define OPENSSL_32_BIT
 #define OPENSSL_PNACL
-#elif defined(__wasm__)
+#elif defined(__wasm32__)
 #define OPENSSL_32_BIT
+#elif defined(__wasm64__)
+#define OPENSSL_64_BIT
 #elif defined(__asmjs__)
 #define OPENSSL_32_BIT
 #elif defined(__myriad2__)

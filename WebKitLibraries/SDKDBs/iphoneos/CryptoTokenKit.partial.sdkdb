@@ -6,16 +6,16 @@
     {
      "access": "public",
      "instanceMethods": [
-      {"access": "public", "name": "sendIns:p1:p2:data:le:reply:"},
-      {"access": "public", "name": "inSessionWithError:executeBlock:"},
-      {"access": "public", "name": "sendIns:p1:p2:data:le:sw:error:"}
+      {"access": "public", "introduced": "9", "name": "sendIns:p1:p2:data:le:reply:"},
+      {"access": "public", "introduced": "10", "name": "inSessionWithError:executeBlock:"},
+      {"access": "public", "introduced": "10", "name": "sendIns:p1:p2:data:le:sw:error:"}
      ],
      "interface": "TKSmartCard",
      "name": "APDULevelTransmit",
      "properties": [
-      {"access": "public", "getter": "cla", "name": "cla", "setter": "setCla:"},
-      {"access": "public", "getter": "useExtendedLength", "name": "useExtendedLength", "setter": "setUseExtendedLength:"},
-      {"access": "public", "getter": "useCommandChaining", "name": "useCommandChaining", "setter": "setUseCommandChaining:"}
+      {"access": "public", "getter": "cla", "introduced": "9", "name": "cla", "setter": "setCla:"},
+      {"access": "public", "getter": "useExtendedLength", "introduced": "9", "name": "useExtendedLength", "setter": "setUseExtendedLength:"},
+      {"access": "public", "getter": "useCommandChaining", "introduced": "10", "name": "useCommandChaining", "setter": "setUseCommandChaining:"}
      ]
     }
    ],
@@ -45,6 +45,7 @@
       {"access": "public", "name": "TKSmartCardPINCharsetAlphanumeric"},
       {"access": "public", "name": "TKSmartCardPINCharsetUpperAlphanumeric"}
      ],
+     "introduced": "9",
      "name": "TKSmartCardPINCharset"
     },
     {
@@ -54,6 +55,7 @@
       {"access": "public", "name": "TKSmartCardPINCompletionKey"},
       {"access": "public", "name": "TKSmartCardPINCompletionTimeout"}
      ],
+     "introduced": "9",
      "name": "TKSmartCardPINCompletion"
     },
     {
@@ -63,6 +65,7 @@
       {"access": "public", "name": "TKSmartCardPINConfirmationNew"},
       {"access": "public", "name": "TKSmartCardPINConfirmationCurrent"}
      ],
+     "introduced": "9",
      "name": "TKSmartCardPINConfirmation"
     },
     {
@@ -72,6 +75,7 @@
       {"access": "public", "name": "TKSmartCardPINEncodingASCII"},
       {"access": "public", "name": "TKSmartCardPINEncodingBCD"}
      ],
+     "introduced": "9",
      "name": "TKSmartCardPINEncoding"
     },
     {
@@ -80,6 +84,7 @@
       {"access": "public", "name": "TKSmartCardPINJustificationLeft"},
       {"access": "public", "name": "TKSmartCardPINJustificationRight"}
      ],
+     "introduced": "9",
      "name": "TKSmartCardPINJustification"
     },
     {
@@ -91,6 +96,7 @@
       {"access": "public", "name": "TKSmartCardProtocolT15"},
       {"access": "public", "name": "TKSmartCardProtocolAny"}
      ],
+     "introduced": "9",
      "name": "TKSmartCardProtocol"
     },
     {
@@ -102,6 +108,7 @@
       {"access": "public", "name": "TKSmartCardSlotStateMuteCard"},
       {"access": "public", "name": "TKSmartCardSlotStateValidCard"}
      ],
+     "introduced": "9",
      "name": "TKSmartCardSlotState"
     },
     {
@@ -167,6 +174,7 @@
       {"access": "public", "introduced": "9", "name": "userInteractionForSecurePINVerificationWithPINFormat:APDU:PINByteOffset:"},
       {"access": "public", "introduced": "9", "name": "userInteractionForSecurePINChangeWithPINFormat:APDU:currentPINByteOffset:newPINByteOffset:"}
      ],
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCard",
      "properties": [
@@ -187,18 +195,20 @@
       {"access": "public", "name": "interfaceGroupAtIndex:"},
       {"access": "public", "name": "interfaceGroupForProtocol:"}
      ],
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCardATR",
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "bytes", "name": "bytes"},
       {"access": "public", "attr": [ "readonly" ], "getter": "protocols", "name": "protocols"},
       {"access": "public", "attr": [ "readonly" ], "getter": "historicalBytes", "name": "historicalBytes"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "historicalRecords", "name": "historicalRecords"}
+      {"access": "public", "attr": [ "readonly" ], "getter": "historicalRecords", "introduced": "10", "name": "historicalRecords"}
      ],
      "super": "NSObject"
     },
     {
      "access": "public",
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCardATRInterfaceGroup",
      "properties": [
@@ -211,6 +221,7 @@
     },
     {
      "access": "public",
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCardPINFormat",
      "properties": [
@@ -231,6 +242,7 @@
      "instanceMethods": [
       {"access": "public", "name": "makeSmartCard"}
      ],
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCardSlot",
      "properties": [
@@ -246,10 +258,11 @@
      "access": "public",
      "instanceMethods": [
       {"access": "public", "name": "getSlotWithName:reply:"},
-      {"access": "public", "name": "slotNamed:"},
+      {"access": "public", "introduced": "9", "name": "slotNamed:"},
       {"access": "public", "introduced": "26", "name": "createNFCSlotWithMessage:completion:"},
       {"access": "public", "introduced": "26", "name": "isNFCSupported"}
      ],
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCardSlotManager",
      "properties": [
@@ -329,6 +342,7 @@
       {"access": "public", "name": "runWithReply:"},
       {"access": "public", "name": "cancel"}
      ],
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCardUserInteraction",
      "properties": [
@@ -340,6 +354,7 @@
     },
     {
      "access": "public",
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCardUserInteractionForPINOperation",
      "properties": [
@@ -353,6 +368,7 @@
     },
     {
      "access": "public",
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCardUserInteractionForSecurePINChange",
      "properties": [
@@ -362,6 +378,7 @@
     },
     {
      "access": "public",
+     "introduced": "9",
      "linkage": "exported",
      "name": "TKSmartCardUserInteractionForSecurePINVerification",
      "super": "TKSmartCardUserInteractionForPINOperation"
@@ -653,6 +670,7 @@
       {"access": "public", "name": "newPINRequestedInUserInteraction:", "optional": true},
       {"access": "public", "name": "newPINConfirmationRequestedInUserInteraction:", "optional": true}
      ],
+     "introduced": "9",
      "name": "TKSmartCardUserInteractionDelegate"
     },
     {
@@ -695,7 +713,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "introduced": "9", "name": "TKErrorCode"},
     {"access": "public", "name": "TKSmartCardPINCharset"},
@@ -712,6 +730,14 @@
     {"access": "public", "name": "TKTokenOperation"},
     {"access": "public", "introduced": "10", "name": "TKTokenOperationConstraint"}
    ]
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "10", "linkage": "exported", "name": "_$sSo11TKSmartCardC14CryptoTokenKitE11withSessionyxxyKcKlF"},
+    {"access": "public", "introduced": "9", "linkage": "exported", "name": "_$sSo11TKSmartCardC14CryptoTokenKitE4send3ins2p12p24data2le5replyys5UInt8V_A2L10Foundation4DataVSgSiSgyAP_s6UInt16Vs5Error_pSgtctF"},
+    {"access": "public", "introduced": "10", "linkage": "exported", "name": "_$sSo11TKSmartCardC14CryptoTokenKitE4send3ins2p12p24data2les6UInt16V2sw_10Foundation4DataV8responsets5UInt8V_A2rOSgSiSgtKF"}
+   ],
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

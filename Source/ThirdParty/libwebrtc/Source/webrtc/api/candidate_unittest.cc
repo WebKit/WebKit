@@ -11,11 +11,13 @@
 #include "api/candidate.h"
 
 #include <cstdint>
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
 #include "api/rtc_error.h"
 #include "p2p/base/p2p_constants.h"
+#include "rtc_base/network_constants.h"
 #include "rtc_base/socket_address.h"
 #include "test/gtest.h"
 
@@ -169,6 +171,25 @@ TEST(CandidateTest, StringToType) {
   EXPECT_FALSE(StringToIceCandidateType(""));
 }
 
+TEST(CandidateTest, NetworkSlice) {
+  Candidate default_initialized_candidate;
+  EXPECT_EQ(default_initialized_candidate.network_slice(),
+            NetworkSlice::NO_SLICE);
+
+  SocketAddress address("192.168.1.5", 1234);
+  Candidate candidate(ICE_CANDIDATE_COMPONENT_RTP, "udp", address,
+                      kCandidatePriority, "", "", IceCandidateType::kHost,
+                      kCandidateGeneration, kCandidateFoundation1);
+  EXPECT_EQ(candidate.network_slice(), NetworkSlice::NO_SLICE);
+
+  candidate.set_network_slice(NetworkSlice::UNIFIED_COMMUNICATIONS);
+  EXPECT_EQ(candidate.network_slice(), NetworkSlice::UNIFIED_COMMUNICATIONS);
+
+  Candidate copied_candidate(candidate);
+  EXPECT_EQ(copied_candidate.network_slice(),
+            NetworkSlice::UNIFIED_COMMUNICATIONS);
+}
+
 TEST(CandidateTest, Parse) {
   constexpr char kCand1[] =
       "candidate:a0+B/1 1 udp 2130706432 192.168.1.5 1234 typ host "
@@ -207,6 +228,8 @@ TEST(CandidateTest, Parse) {
     int component;
     uint32_t priority;
     uint32_t generation;
+    std::optional<uint16_t> network_id;
+    std::optional<uint16_t> network_cost;
   } const test_candidates[] = {
       {.candidate_string =
            "candidate:a0+B/1 1 udp 2130706432 192.168.1.5 1234 typ host "
@@ -248,6 +271,30 @@ TEST(CandidateTest, Parse) {
        .component = 1,
        .priority = 2130706432u,
        .generation = 2u},
+      {.candidate_string =
+           "candidate:a0+B/3 1 udp 16785663 74.125.127.126 2345 typ relay "
+           "raddr 192.168.1.5 rport 2346 generation 1 network-id 77",
+       .type = IceCandidateType::kRelay,
+       .foundation = "a0+B/3",
+       .protocol = "udp",
+       .address_str = "74.125.127.126:2345",
+       .related_address_str = "192.168.1.5:2346",
+       .component = 1,
+       .priority = 16785663u,
+       .generation = 1u,
+       .network_id = 77u},
+      {.candidate_string =
+           "candidate:a0+B/3 1 udp 16785663 74.125.127.126 2345 typ relay "
+           "raddr 192.168.1.5 rport 2346 generation 1 network-cost 765",
+       .type = IceCandidateType::kRelay,
+       .foundation = "a0+B/3",
+       .protocol = "udp",
+       .address_str = "74.125.127.126:2345",
+       .related_address_str = "192.168.1.5:2346",
+       .component = 1,
+       .priority = 16785663u,
+       .generation = 1u,
+       .network_cost = 765u},
   };
 
   for (const auto& test : test_candidates) {
@@ -255,6 +302,8 @@ TEST(CandidateTest, Parse) {
     ASSERT_TRUE(ret.ok()) << test.candidate_string;
     c = ret.MoveValue();
     EXPECT_FALSE(c.id().empty());
+
+    // Verify parsed attributes.
     EXPECT_EQ(c.foundation(), test.foundation);
     EXPECT_EQ(c.component(), test.component);
     EXPECT_EQ(c.protocol(), test.protocol);
@@ -265,6 +314,15 @@ TEST(CandidateTest, Parse) {
     if (!test.related_address_str.empty()) {
       EXPECT_EQ(c.related_address().ToString(), test.related_address_str);
     }
+
+    // Verify optional extension attributes.
+    EXPECT_EQ(c.network_id(), test.network_id.value_or(0));
+    EXPECT_EQ(c.network_cost(), test.network_cost.value_or(0));
+
+    // Verify default-initialized attributes.
+    EXPECT_EQ(c.network_type(), AdapterType::ADAPTER_TYPE_UNKNOWN);
+    EXPECT_EQ(c.underlying_type_for_vpn(), AdapterType::ADAPTER_TYPE_UNKNOWN);
+    EXPECT_EQ(c.network_slice(), NetworkSlice::NO_SLICE);
   }
 }
 

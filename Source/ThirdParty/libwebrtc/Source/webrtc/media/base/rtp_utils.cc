@@ -12,108 +12,22 @@
 
 #include <cstdint>
 #include <cstring>
-#include <vector>
+#include <span>
 
 // PacketTimeUpdateParams is defined in asyncpacketsocket.h.
 // TODO(sergeyu): Find more appropriate place for PacketTimeUpdateParams.
+
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
-#include "media/base/turn_utils.h"
 #include "modules/rtp_rtcp/source/rtp_util.h"
-#include "rtc_base/async_packet_socket.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/message_digest.h"
 
 namespace webrtc {
 
 static const size_t kRtcpPayloadTypeOffset = 1;
 static const size_t kRtpExtensionHeaderLen = 4;
-static const size_t kAbsSendTimeExtensionLen = 3;
-static const size_t kOneByteExtensionHeaderLen = 1;
-static const size_t kTwoByteExtensionHeaderLen = 2;
 
 namespace {
-
-// Fake auth tag written by the sender when external authentication is enabled.
-// HMAC in packet will be compared against this value before updating packet
-// with actual HMAC value.
-const uint8_t kFakeAuthTag[10] = {0xba, 0xdd, 0xba, 0xdd, 0xba,
-                                  0xdd, 0xba, 0xdd, 0xba, 0xdd};
-
-void UpdateAbsSendTimeExtensionValue(uint8_t* extension_data,
-                                     size_t length,
-                                     uint64_t time_us) {
-  // Absolute send time in RTP streams.
-  //
-  // The absolute send time is signaled to the receiver in-band using the
-  // general mechanism for RTP header extensions [RFC5285]. The payload
-  // of this extension (the transmitted value) is a 24-bit unsigned integer
-  // containing the sender's current time in seconds as a fixed point number
-  // with 18 bits fractional part.
-  //
-  // The form of the absolute send time extension block:
-  //
-  //    0                   1                   2                   3
-  //    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-  //   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  //   |  ID   | len=2 |              absolute send time               |
-  //   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  if (length != kAbsSendTimeExtensionLen) {
-    RTC_DCHECK_NOTREACHED();
-    return;
-  }
-
-  // Convert microseconds to a 6.18 fixed point value in seconds.
-  uint32_t send_time = ((time_us << 18) / 1000000) & 0x00FFFFFF;
-  extension_data[0] = static_cast<uint8_t>(send_time >> 16);
-  extension_data[1] = static_cast<uint8_t>(send_time >> 8);
-  extension_data[2] = static_cast<uint8_t>(send_time);
-}
-
-// Assumes `length` is actual packet length + tag length. Updates HMAC at end of
-// the RTP packet.
-void UpdateRtpAuthTag(ArrayView<uint8_t> rtp,
-                      const PacketTimeUpdateParams& packet_time_params) {
-  // If there is no key, return.
-  if (packet_time_params.srtp_auth_key.empty()) {
-    return;
-  }
-
-  size_t tag_length = packet_time_params.srtp_auth_tag_len;
-
-  // ROC (rollover counter) is at the beginning of the auth tag.
-  const size_t kRocLength = 4;
-  if (tag_length < kRocLength || tag_length > rtp.size()) {
-    RTC_DCHECK_NOTREACHED();
-    return;
-  }
-
-  uint8_t* auth_tag = rtp.data() + (rtp.size() - tag_length);
-
-  // We should have a fake HMAC value @ auth_tag.
-  RTC_DCHECK_EQ(0, memcmp(auth_tag, kFakeAuthTag, tag_length));
-
-  // Copy ROC after end of rtp packet.
-  memcpy(auth_tag, &packet_time_params.srtp_packet_index, kRocLength);
-  // Authentication of a RTP packet will have RTP packet + ROC size.
-  size_t auth_required_length = rtp.size() - tag_length + kRocLength;
-
-  uint8_t output[64];
-  size_t result =
-      ComputeHmac(DIGEST_SHA_1, &packet_time_params.srtp_auth_key[0],
-                  packet_time_params.srtp_auth_key.size(), rtp.data(),
-                  auth_required_length, output, sizeof(output));
-
-  if (result < tag_length) {
-    RTC_DCHECK_NOTREACHED();
-    return;
-  }
-
-  // Copy HMAC from output to packet. This is required as auth tag length
-  // may not be equal to the actual HMAC length.
-  memcpy(auth_tag, output, tag_length);
-}
 
 bool GetUint8(const void* data, size_t offset, int* value) {
   if (!data || !value) {
@@ -145,7 +59,8 @@ bool GetRtcpSsrc(const void* data, size_t len, uint32_t* value) {
   // SDES packet parsing is not supported.
   if (pl_type == kRtcpTypeSDES)
     return false;
-  *value = GetBE32(static_cast<const uint8_t*>(data) + 4);
+  *value = GetBE32(
+      std::span<const uint8_t>(static_cast<const uint8_t*>(data) + 4, 4));
   return true;
 }
 
@@ -173,7 +88,7 @@ absl::string_view RtpPacketTypeToString(RtpPacketType packet_type) {
   RTC_CHECK_NOTREACHED();
 }
 
-RtpPacketType InferRtpPacketType(ArrayView<const uint8_t> packet) {
+RtpPacketType InferRtpPacketType(std::span<const uint8_t> packet) {
   if (IsRtcpPacket(packet)) {
     return RtpPacketType::kRtcp;
   }
@@ -183,7 +98,7 @@ RtpPacketType InferRtpPacketType(ArrayView<const uint8_t> packet) {
   return RtpPacketType::kUnknown;
 }
 
-bool ValidateRtpHeader(ArrayView<const uint8_t> rtp, size_t* header_length) {
+bool ValidateRtpHeader(std::span<const uint8_t> rtp, size_t* header_length) {
   size_t length = rtp.size();
   if (header_length) {
     *header_length = 0;
@@ -215,7 +130,7 @@ bool ValidateRtpHeader(ArrayView<const uint8_t> rtp, size_t* header_length) {
   // Getting extension profile length.
   // Length is in 32 bit words.
   uint16_t extension_length_in_32bits =
-      GetBE16(&rtp[header_length_without_extension + 2]);
+      GetBE16(rtp.subspan(header_length_without_extension + 2, 2));
   size_t extension_length = extension_length_in_32bits * 4;
 
   size_t rtp_header_length = extension_length +
@@ -232,164 +147,4 @@ bool ValidateRtpHeader(ArrayView<const uint8_t> rtp, size_t* header_length) {
   }
   return true;
 }
-
-// ValidateRtpHeader() must be called before this method to make sure, we have
-// a sane rtp packet.
-bool UpdateRtpAbsSendTimeExtension(ArrayView<uint8_t> packet,
-                                   int extension_id,
-                                   uint64_t time_us) {
-  //  0                   1                   2                   3
-  //  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  // |V=2|P|X|  CC   |M|     PT      |       sequence number         |
-  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  // |                           timestamp                           |
-  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  // |           synchronization source (SSRC) identifier            |
-  // +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-  // |            contributing source (CSRC) identifiers             |
-  // |                             ....                              |
-  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-  // Return if extension bit is not set.
-  if (!(packet[0] & 0x10)) {
-    return true;
-  }
-
-  size_t cc_count = packet[0] & 0x0F;
-  size_t header_length_without_extension = kMinRtpPacketLen + 4 * cc_count;
-
-  uint8_t* rtp = packet.data();
-  rtp += header_length_without_extension;
-
-  // Getting extension profile ID and length.
-  uint16_t profile_id = GetBE16(rtp);
-  // Length is in 32 bit words.
-  uint16_t extension_length_in_32bits = GetBE16(rtp + 2);
-  size_t extension_length = extension_length_in_32bits * 4;
-
-  rtp += kRtpExtensionHeaderLen;  // Moving past extension header.
-
-  constexpr uint16_t kOneByteExtensionProfileId = 0xBEDE;
-  constexpr uint16_t kTwoByteExtensionProfileId = 0x1000;
-
-  bool found = false;
-  if (profile_id == kOneByteExtensionProfileId ||
-      profile_id == kTwoByteExtensionProfileId) {
-    // OneByte extension header
-    //  0
-    //  0 1 2 3 4 5 6 7
-    // +-+-+-+-+-+-+-+-+
-    // |  ID   |length |
-    // +-+-+-+-+-+-+-+-+
-
-    //  0                   1                   2                   3
-    //  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |       0xBE    |    0xDE       |           length=3            |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |  ID   | L=0   |     data      |  ID   |  L=1  |   data...
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    //       ...data   |    0 (pad)    |    0 (pad)    |  ID   | L=3   |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |                          data                                 |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-    // TwoByte extension header
-    //  0
-    //  0 1 2 3 4 5 6 7
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |      ID       |    length     |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-    //  0                   1                   2                   3
-    //  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |     0x10      |     0x00      |           length=3            |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |      ID       |      L=1      |     data      |      ID       |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |      L=2      |             data              |    0 (pad)    |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |      ID       |      L=2      |             data              |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-    size_t extension_header_length = profile_id == kOneByteExtensionProfileId
-                                         ? kOneByteExtensionHeaderLen
-                                         : kTwoByteExtensionHeaderLen;
-
-    const uint8_t* extension_start = rtp;
-    const uint8_t* extension_end = extension_start + extension_length;
-
-    // rtp + 1 since the minimum size per header extension is two bytes for both
-    // one- and two-byte header extensions.
-    while (rtp + 1 < extension_end) {
-      // See RFC8285 Section 4.2-4.3 for more information about one- and
-      // two-byte header extensions.
-      const int id =
-          profile_id == kOneByteExtensionProfileId ? (*rtp & 0xF0) >> 4 : *rtp;
-      const size_t length = profile_id == kOneByteExtensionProfileId
-                                ? (*rtp & 0x0F) + 1
-                                : *(rtp + 1);
-      if (rtp + extension_header_length + length > extension_end) {
-        return false;
-      }
-      if (id == extension_id) {
-        UpdateAbsSendTimeExtensionValue(rtp + extension_header_length, length,
-                                        time_us);
-        found = true;
-        break;
-      }
-      rtp += extension_header_length + length;
-      // Counting padding bytes.
-      while ((rtp < extension_end) && (*rtp == 0)) {
-        ++rtp;
-      }
-    }
-  }
-  return found;
-}
-
-bool ApplyPacketOptions(ArrayView<uint8_t> data,
-                        const PacketTimeUpdateParams& packet_time_params,
-                        uint64_t time_us) {
-  RTC_DCHECK(!data.empty());
-
-  // if there is no valid `rtp_sendtime_extension_id` and `srtp_auth_key` in
-  // PacketOptions, nothing to be updated in this packet.
-  if (packet_time_params.rtp_sendtime_extension_id == -1 &&
-      packet_time_params.srtp_auth_key.empty()) {
-    return true;
-  }
-
-  // If there is a srtp auth key present then the packet must be an RTP packet.
-  // RTP packet may have been wrapped in a TURN Channel Data or TURN send
-  // indication.
-  size_t rtp_start_pos;
-  size_t rtp_length;
-  if (!UnwrapTurnPacket(data.data(), data.size(), &rtp_start_pos,
-                        &rtp_length)) {
-    RTC_DCHECK_NOTREACHED();
-    return false;
-  }
-
-  // Making sure we have a valid RTP packet at the end.
-  auto packet = data.subview(rtp_start_pos, rtp_length);
-  if (!IsRtpPacket(packet) || !ValidateRtpHeader(packet, nullptr)) {
-    RTC_DCHECK_NOTREACHED();
-    return false;
-  }
-
-  // If packet option has non default value (-1) for sendtime extension id,
-  // then we should parse the rtp packet to update the timestamp. Otherwise
-  // just calculate HMAC and update packet with it.
-  if (packet_time_params.rtp_sendtime_extension_id != -1) {
-    UpdateRtpAbsSendTimeExtension(
-        packet, packet_time_params.rtp_sendtime_extension_id, time_us);
-  }
-
-  UpdateRtpAuthTag(packet, packet_time_params);
-  return true;
-}
-
 }  // namespace webrtc

@@ -21,6 +21,8 @@
 #include <string>
 #include <utility>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/desktop_capture/blank_detector_desktop_capturer_wrapper.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
@@ -31,7 +33,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/divide_round.h"
-#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -58,12 +59,15 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
     const DesktopCaptureOptions& options) {
   RTC_LOG(LS_INFO) << "DesktopCapturer::CreateRawScreenCapturer creates "
                       "DesktopCapturer of type ScreenCapturerFuchsia";
-  std::unique_ptr<ScreenCapturerFuchsia> capturer(new ScreenCapturerFuchsia());
+  std::unique_ptr<ScreenCapturerFuchsia> capturer(
+      new ScreenCapturerFuchsia(options));
   return capturer;
 }
 
-ScreenCapturerFuchsia::ScreenCapturerFuchsia()
-    : component_context_(sys::ComponentContext::Create()) {}
+ScreenCapturerFuchsia::ScreenCapturerFuchsia(
+    const DesktopCaptureOptions& options)
+    : component_context_(sys::ComponentContext::Create()),
+      clock_(options.clock()) {}
 
 ScreenCapturerFuchsia::~ScreenCapturerFuchsia() {
   // unmap virtual memory mapped pointers
@@ -95,7 +99,7 @@ void ScreenCapturerFuchsia::CaptureFrame() {
     return;
   }
 
-  int64_t capture_start_time_nanos = TimeNanos();
+  Timestamp capture_start_time = clock_.CurrentTime();
 
   zx::event event;
   zx::event dup;
@@ -150,8 +154,7 @@ void ScreenCapturerFuchsia::CaptureFrame() {
                       << release_result.err();
   }
 
-  int capture_time_ms =
-      (TimeNanos() - capture_start_time_nanos) / kNumNanosecsPerMillisec;
+  int capture_time_ms = (clock_.CurrentTime() - capture_start_time).ms();
   frame->set_capture_time_ms(capture_time_ms);
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 }

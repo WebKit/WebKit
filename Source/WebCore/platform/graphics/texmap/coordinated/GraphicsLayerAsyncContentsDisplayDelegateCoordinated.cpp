@@ -28,6 +28,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedPlatformLayerBufferNativeImage.h"
+#include "CoordinatedPlatformLayerBufferSkiaImage.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
 #include "ImageBuffer.h"
@@ -50,6 +51,12 @@ bool GraphicsLayerAsyncContentsDisplayDelegateCoordinated::tryCopyToLayer(ImageB
     if (!image)
         return false;
 
+#if USE(SKIA)
+    if (m_threadSafeGrContext) {
+        m_delegate->setDisplayBuffer(CoordinatedPlatformLayerBufferSkiaImage::create(image->platformImage(), m_threadSafeGrContext));
+        return true;
+    }
+#endif
     m_delegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), nullptr));
     return true;
 }

@@ -59,4 +59,25 @@ TEST(DecodeAPI, InvalidControlId) {
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&dec));
 }
 
+TEST(DecodeAPI, Buganizer503691210) {
+  aom_codec_iface_t *iface = aom_codec_av1_dx();
+  aom_codec_ctx_t dec;
+  aom_codec_dec_cfg_t cfg = { 1, 424, 144, 1 };
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_dec_init(&dec, iface, &cfg, 0));
+
+  av1_ref_frame_t ref;
+  ref.idx = 0;
+  // These control calls should fail with AOM_CODEC_ERROR because the decoder
+  // is not fully initialized yet (no frames decoded).
+  EXPECT_EQ(AOM_CODEC_ERROR, aom_codec_control(&dec, AV1_GET_REFERENCE, &ref));
+  EXPECT_EQ(AOM_CODEC_ERROR, aom_codec_control(&dec, AV1_SET_REFERENCE, &ref));
+  EXPECT_EQ(AOM_CODEC_ERROR, aom_codec_control(&dec, AV1_COPY_REFERENCE, &ref));
+
+  aom_image_t img;
+  EXPECT_EQ(AOM_CODEC_ERROR,
+            aom_codec_control(&dec, AV1_COPY_NEW_FRAME_IMAGE, &img));
+
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&dec));
+}
+
 }  // namespace

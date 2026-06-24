@@ -14,7 +14,7 @@ from .base import get_free_port
 from .base import get_timeout_multiplier   # noqa: F401
 from .base import cmd_arg
 from ..executors import executor_kwargs as base_executor_kwargs
-from ..executors.base import WdspecExecutor  # noqa: F401
+from ..executors.base import PytestExecutor  # noqa: F401
 from ..executors.executorchrome import (  # noqa: F401
     ChromeDriverPrintRefTestExecutor,
     ChromeDriverRefTestExecutor,
@@ -32,8 +32,10 @@ __wptrunner__ = {"product": "chrome",
                  "executor": {"testharness": "ChromeDriverTestharnessExecutor",
                               "reftest": "ChromeDriverRefTestExecutor",
                               "print-reftest": "ChromeDriverPrintRefTestExecutor",
-                              "wdspec": "WdspecExecutor",
-                              "crashtest": "ChromeDriverCrashTestExecutor"},
+                              "wdspec": "PytestExecutor",
+                              "aamtest": "PytestExecutor",
+                              "crashtest": "ChromeDriverCrashTestExecutor",
+                              "test262": "ChromeDriverTestharnessExecutor"},
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
@@ -49,10 +51,18 @@ def check_args(**kwargs):
 
 
 def browser_kwargs(logger, test_type, run_info_data, config, **kwargs):
-    return {"binary": kwargs["binary"],
-            "webdriver_binary": kwargs["webdriver_binary"],
-            "webdriver_args": kwargs.get("webdriver_args"),
-            "leak_check": kwargs.get("leak_check", False)}
+    browser_kwargs = {
+        "binary": kwargs["binary"],
+        "webdriver_binary": kwargs["webdriver_binary"],
+        "webdriver_args": kwargs.get("webdriver_args"),
+        "leak_check": kwargs.get("leak_check", False),
+    }
+
+    if test_type == "aamtest":
+        # Necessary to force chrome to register in AT-SPI2.
+        browser_kwargs["env"] = {"ACCESSIBILITY_ENABLED": "1"}
+    return browser_kwargs
+
 
 
 def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite,
@@ -85,6 +95,15 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
         # recordings or traces. Note that older `chromedriver` versions will
         # fail to create a session if they don't recognize this capability.
         chrome_options["quitGracefully"] = True
+
+    if trace_categories := kwargs.get("trace_categories"):
+        executor_kwargs["enable_tracing"] = True
+        capabilities["goog:loggingPrefs"] = {
+            "performance": "INFO",
+        }
+        chrome_options["perfLoggingPrefs"] = {
+            "traceCategories": trace_categories,
+        }
 
     # Here we set a few Chrome flags that are always passed.
     # ChromeDriver's "acceptInsecureCerts" capability only controls the current
@@ -133,20 +152,31 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
         "MediaStreamTrackWebSpeech",
         "WebSpeechRecognitionContext",
     ]))
+    # For Web Install API and <install> element tests.
+    chrome_options["args"].append("--enable-features=WebAppInstallation,InstallElement")
     # For testing WebExtensions using WebDriver.
     chrome_options["args"].append("--enable-unsafe-extension-debugging")
     # Connection between ChromeDriver and Chrome will be over pipes.
     # This is needed to test extensions, PWA, compilation caches that
     # require local CDP access.
     chrome_options["args"].append("--remote-debugging-pipe")
+    # For Device Bound Session Credentials tests, which are only eligible on
+    # Windows, Mac, and Linux.
+    if run_info_data.get("os") in ["win", "mac", "linux"]:
+        chrome_options["args"].append("--enable-features=" + ",".join([
+            "EnableBoundSessionCredentialsSoftwareKeysForManualTesting",
+            "DeviceBoundSessions:RefreshQuota/false/RequireOriginTrialTokens/false",
+            "DeviceBoundSessionsFederatedRegistration",
+        ]))
 
-    # Classify `http-private`, `http-public` and https variants in the
+    # Classify `http-local`, `http-public` and https variants in the
     # appropriate IP address spaces.
     # For more details, see: https://github.com/web-platform-tests/rfcs/blob/master/rfcs/address_space_overrides.md
+    # and https://github.com/explainers-by-googlers/local-network-access
     address_space_overrides_ports = [
-        ("http-private", "private"),
+        ("http-local", "local"),
         ("http-public", "public"),
-        ("https-private", "private"),
+        ("https-local", "local"),
         ("https-public", "public"),
     ]
     address_space_overrides_arg = ",".join(
@@ -161,12 +191,12 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
     # Disable overlay scrollbar animations to prevent flaky wpt screenshots based on timing.
     chrome_options["args"].append("--disable-features=ScrollbarAnimations")
 
-    # Always disable antialiasing on the Ahem font.
-    blink_features = ['DisableAhemAntialias']
+    # Always enable ViewTransitions long callback timeout to avoid erroneous
+    # failures due to implicit timeout within the API.
+    blink_features = ['ViewTransitionLongCallbackTimeoutForTesting', 'NoFontAntialiasing']
 
     if kwargs["enable_mojojs"]:
-        blink_features.append('MojoJS')
-        blink_features.append('MojoJSTest')
+        blink_features.extend(['MojoJS', 'MojoJSTest'])
 
     chrome_options["args"].append("--enable-blink-features=" + ','.join(blink_features))
 
@@ -174,16 +204,26 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
         # https://chromium.googlesource.com/chromium/src/+/HEAD/docs/gpu/swiftshader.md
         chrome_options["args"].extend(["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
 
-    if kwargs["enable_experimental"]:
-        chrome_options["args"].extend(["--enable-experimental-web-platform-features"])
-
     # Copy over any other flags that were passed in via `--binary-arg` or the
     # subsuite config.
     binary_args = kwargs.get("binary_args", []) + subsuite.config.get("binary_args", [])
     for arg in binary_args:
+        if arg == "--stable-release-mode":
+            continue
         if arg not in chrome_options["args"]:
             chrome_options["args"].append(arg)
 
+    # Enable experimental features based on stable release mode setting. It is
+    # unfortunately that we need to do this based on a content shell specific
+    # setting, we choose to do this because we can not dynamically set
+    # enable-experimental in run_wpt_tests.py.
+    if kwargs["enable_experimental"] is None and "--stable-release-mode" not in binary_args:
+        chrome_options["args"].extend(["--enable-experimental-web-platform-features",
+                                       "--enable-blink-test-features"])
+
+    # Upstream CI should always explicitly enable/disable experimental features.
+    if kwargs["enable_experimental"]:
+        chrome_options["args"].extend(["--enable-experimental-web-platform-features"])
 
     # Pass the --headless=new flag to Chrome if WPT's own --headless flag was
     # set. '--headless' should always mean the new headless mode, as the old
@@ -195,6 +235,11 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
 
     if test_type == "wdspec":
         executor_kwargs["binary_args"] = chrome_options["args"]
+
+    if test_type == "aamtest":
+        if "--force-renderer-accessibility" not in chrome_options["args"]:
+            chrome_options["args"].append("--force-renderer-accessibility")
+            executor_kwargs["binary_args"] = chrome_options["args"]
 
     executor_kwargs["capabilities"] = capabilities
 
@@ -230,11 +275,10 @@ class ChromeBrowser(WebDriverBrowser):
         self._require_webdriver_bidi: Optional[bool] = None
 
     def restart_on_test_type_change(self, new_test_type: str, old_test_type: str) -> bool:
-        # Restart the test runner when switch from/to wdspec tests. Wdspec test
-        # is using a different protocol class so a restart is always needed.
-        if "wdspec" in [old_test_type, new_test_type]:
-            return True
-        return False
+        # Restart the test runner when switch from/to wdspec or aamtest tests.
+        # These tests use a different protocol class so a restart is always needed.
+        wdspec_types = {"wdspec", "aamtest"}
+        return old_test_type in wdspec_types or new_test_type in wdspec_types
 
     def create_output_handler(self, cmd: List[str]) -> OutputHandler:
         return ChromeDriverOutputHandler(
@@ -283,7 +327,12 @@ class ChromeBrowser(WebDriverBrowser):
     def settings(self, test: Test) -> BrowserSettings:
         """ Required to store `require_webdriver_bidi` in browser settings."""
         settings = super().settings(test)
-        self._require_webdriver_bidi = test.testdriver_features is not None and 'bidi' in test.testdriver_features
+        self._require_webdriver_bidi = (
+            test.testdriver_features is not None and (
+                'bidi' in test.testdriver_features or
+                'extensions' in test.testdriver_features
+            )
+        )
 
         return {
             **settings,

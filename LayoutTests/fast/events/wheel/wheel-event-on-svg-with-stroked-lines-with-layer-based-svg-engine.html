@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.dontForceRepaint();
+        }
+
+        function extractEventRegionFromLayerTree(output) {
+            const startMarker = '(event region';
+            const startIndex = output.indexOf(startMarker);
+            if (startIndex === -1)
+                return "no event region";
+            let depth = 0;
+            let endIndex = startIndex;
+            for (let i = startIndex; i < output.length; i++) {
+                if (output[i] === '(') depth++;
+                else if (output[i] === ')') {
+                    depth--;
+                    if (depth === 0) {
+                        endIndex = i + 1;
+                        break;
+                    }
+                }
+            }
+            return output.substring(startIndex, endIndex).trim();
+        }
+
+        async function runTest() {
+            if (!window.internals || !window.eventSender)
+                return;
+
+            const svg = document.getElementById('svg');
+            svg.addEventListener('wheel', () => {
+                const layerTree = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+                const eventRegion = extractEventRegionFromLayerTree(layerTree);
+                document.documentElement.innerHTML = '';
+                const output = document.createElement('pre');
+                output.textContent = "PASS: wheel event was dispatched to <svg> with mouse in empty interior." + "\n\n" + eventRegion;
+                document.body.appendChild(output);
+                testRunner.notifyDone();
+            });
+
+            await UIHelper.mouseWheelScrollAt(158, 158);
+        }
+
+        window.addEventListener('load', runTest);
+    </script>
+</head>
+<body>
+    <svg id="svg" viewBox="0 0 300 300" style="width:300px; height:300px;">
+        <g stroke="lightblue" stroke-opacity="1" stroke-width="10">
+            <line x1="5"   y1="5"   x2="295" y2="5"   />
+            <line x1="295" y1="5"   x2="295" y2="295" />
+            <line x1="295" y1="295" x2="5"   y2="295" />
+            <line x1="5"   y1="295" x2="5"   y2="5"   />
+        </g>
+    </svg>
+</body>
+</html>

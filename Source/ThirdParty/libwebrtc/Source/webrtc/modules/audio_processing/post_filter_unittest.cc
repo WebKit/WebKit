@@ -13,9 +13,9 @@
 #include <cmath>
 #include <memory>
 #include <numbers>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/test/audio_buffer_tools.h"
@@ -48,7 +48,7 @@ std::vector<float> ProcessOneFrameAsAudioBuffer(
   return frame_output;
 }
 
-float ComputePower(ArrayView<const float> audio) {
+float ComputePower(std::span<const float> audio) {
   double energy = 0.0;
   std::for_each(audio.begin(), audio.end(),
                 [&energy](float x) { energy += x * x; });

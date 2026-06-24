@@ -56,12 +56,12 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 
 class TextPainter {
 public:
-    TextPainter(GraphicsContext&, const FontCascade&, const RenderStyle&, const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, const AtomString& emphasisMark, float emphasisMarkOffset, const RenderCombineText*);
+    TextPainter(GraphicsContext&, const FontCascade&, const Style::ComputedStyle&, const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, const AtomString& emphasisMark, float emphasisMarkOffset, const RenderCombineText*);
 
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
     template<typename LayoutRun>
-    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const RenderStyle& style, const TextRun& textRun)
+    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const Style::ComputedStyle& style, const TextRun& textRun)
     {
         if (!TextPainter::shouldUseGlyphDisplayList(paintInfo, style))
             const_cast<LayoutRun&>(run).removeFromGlyphDisplayListCache();
@@ -69,7 +69,7 @@ public:
             m_glyphDisplayList = GlyphDisplayListCache::singleton().get(run, m_font, m_context, textRun, paintInfo);
     }
 
-    static bool shouldUseGlyphDisplayList(const PaintInfo&, const RenderStyle&);
+    static bool shouldUseGlyphDisplayList(const PaintInfo&, const Style::ComputedStyle&);
     WEBCORE_EXPORT static void NODELETE setForceUseGlyphDisplayListForTesting(bool);
     WEBCORE_EXPORT static String cachedGlyphDisplayListsForTextNodeAsText(Text&, OptionSet<DisplayList::AsTextFlag>);
     WEBCORE_EXPORT static void clearGlyphDisplayListCacheForTesting();
@@ -90,7 +90,7 @@ private:
 
     GraphicsContext& m_context;
     const CheckedRef<const FontCascade> m_font;
-    const CheckedRef<const RenderStyle> m_renderStyle;
+    const CheckedRef<const Style::ComputedStyle> m_renderStyle;
     TextPaintStyle m_style;
     AtomString m_emphasisMark;
     const Style::TextShadows& m_shadow;
@@ -102,7 +102,7 @@ private:
 
 class ShadowApplier {
 public:
-    ShadowApplier(const RenderStyle&, GraphicsContext&, const Style::TextShadow*, const Style::AppleColorFilter&, const FloatRect& textRect, bool isLastShadowIteration, bool lastShadowIterationShouldDrawText = true, bool opaque = false, bool ignoreWritingMode = false);
+    ShadowApplier(const Style::ComputedStyle&, GraphicsContext&, const Style::TextShadow*, const Style::AppleColorFilter&, const FloatRect& textRect, bool isLastShadowIteration, bool lastShadowIterationShouldDrawText = true, bool opaque = false, bool ignoreWritingMode = false);
     FloatSize extraOffset() const { return m_extraOffset; }
     bool nothingToDraw() const { return m_nothingToDraw; }
     bool didSaveContext() const { return m_didSaveContext; }

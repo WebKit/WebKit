@@ -44,7 +44,7 @@ Ref<CSSValue> CSSValueCreation<FontStyleRange>::operator()(CSSValuePool&, const 
 
 void Serialize<FontStyleRange::Oblique>::operator()(StringBuilder& builder, const SerializationContext& context, const FontStyleRange::Oblique& value)
 {
-    CSS::serializationForCSS(builder, context, SpaceSeparatedTuple { Keyword::Oblique { }, value.first, value.second });
+    CSS::serializationForCSS(builder, context, SpaceSeparatedTuple { Keyword::Oblique { }, value.angle });
 }
 
 } // namespace CSS

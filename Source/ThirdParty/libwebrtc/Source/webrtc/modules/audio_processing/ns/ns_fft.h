@@ -12,9 +12,9 @@
 #define MODULES_AUDIO_PROCESSING_NS_NS_FFT_H_
 
 #include <cstddef>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/ns/ns_common.h"
 
 namespace webrtc {
@@ -27,14 +27,14 @@ class NrFft {
   NrFft& operator=(const NrFft&) = delete;
 
   // Transforms the signal from time to frequency domain.
-  void Fft(ArrayView<float, kFftSize> time_data,
-           ArrayView<float, kFftSize> real,
-           ArrayView<float, kFftSize> imag);
+  void Fft(std::span<float, kFftSize> time_data,
+           std::span<float, kFftSize> real,
+           std::span<float, kFftSize> imag);
 
   // Transforms the signal from frequency to time domain.
-  void Ifft(ArrayView<const float> real,
-            ArrayView<const float> imag,
-            ArrayView<float> time_data);
+  void Ifft(std::span<const float> real,
+            std::span<const float> imag,
+            std::span<float> time_data);
 
  private:
   std::vector<size_t> bit_reversal_state_;

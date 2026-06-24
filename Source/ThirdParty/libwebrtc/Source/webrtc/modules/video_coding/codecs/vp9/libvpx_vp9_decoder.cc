@@ -17,8 +17,8 @@
 #include <cstdint>
 #include <cstring>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/color_space.h"
 #include "api/video/encoded_image.h"
@@ -209,7 +209,7 @@ int LibvpxVp9Decoder::Decode(const EncodedImage& input_image,
   if (input_image.IsKey()) {
     std::optional<Vp9UncompressedHeader> frame_info =
         ParseUncompressedVp9Header(
-            MakeArrayView(input_image.data(), input_image.size()));
+            std::span(input_image.data(), input_image.size()));
     if (frame_info) {
       RenderResolution frame_resolution(frame_info->frame_width,
                                         frame_info->frame_height);

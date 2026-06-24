@@ -68,6 +68,20 @@ public:
     // Returns true if there has been potential draws since last call.
     bool consumeHasDrawn();
 
+    // Single-line strokes are coalesced into a batch message that is written
+    // into the IPC stream lazily, so the buffered strokes sit *in front of* the
+    // stream. They must be sent into the stream before any other command is
+    // written to it (otherwise they would be reordered behind it) and before
+    // any path that observes the buffer's pixels. Drawing commands call this
+    // alongside appendStateChangeItemIfNecessary(); senders that do not go
+    // through that path (transforms, line-style setters, clips, save/restore,
+    // read-backs) call it explicitly.
+    void sendPendingDrawsIfNecessary()
+    {
+        if (!m_pendingLineStrokes.isEmpty()) [[unlikely]]
+            sendPendingDraws();
+    }
+
 protected:
     RemoteGraphicsContextProxy(const WebCore::DestinationColorSpace&, std::optional<WebCore::ContentsFormat>, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, DrawGlyphsMode, RemoteGraphicsContextIdentifier, RemoteRenderingBackendProxy&);
 
@@ -162,11 +176,21 @@ protected:
 
 private:
     struct InlineStrokeData {
-        std::optional<WebCore::PackedColor::RGBA> color;
-        std::optional<float> thickness;
+        WebCore::PackedColor::RGBA color;
+        float thickness;
     };
-    // Synchronizes draw state and returns stroke state that needs to be sent inline with the stroke command.
-    InlineStrokeData appendStateChangeItemForInlineStrokeIfNecessary();
+    // If the only pending state changes are stroke color/thickness and the
+    // stroke brush is a packed color, marks those changes applied and returns
+    // the current stroke color/thickness to stamp on a buffered line. Otherwise
+    // returns std::nullopt and the caller must flush pending draws and emit
+    // state through appendStateChangeItemIfNecessary().
+    std::optional<InlineStrokeData> inlineStrokeStateIfBatchable();
+
+    void bufferLine(const WebCore::PathDataLine&, const InlineStrokeData&);
+    void sendPendingDraws();
+
+    static constexpr size_t maxPendingLineStrokes = 64;
+    Vector<WebCore::PathDataLineColorThickness> m_pendingLineStrokes;
 
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, float resolutionScale, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMode>, std::optional<WebCore::RenderingMethod>, WebCore::ImageBufferFormat) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
@@ -200,6 +224,7 @@ private:
 
 inline bool RemoteGraphicsContextProxy::consumeHasDrawn()
 {
+    sendPendingDrawsIfNecessary();
     return std::exchange(m_hasDrawn, false);
 }
 

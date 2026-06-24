@@ -17,11 +17,11 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <type_traits>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/candidate.h"
 #include "api/dtls_transport_interface.h"
 #include "api/field_trials_view.h"
@@ -148,17 +148,17 @@ bool ConvertToProtoFormat(const std::vector<RtpExtension>& extensions,
   size_t unknown_extensions = 0;
   for (auto& extension : extensions) {
     if (extension.uri == RtpExtension::kAudioLevelUri) {
-      proto_config->set_audio_level_id(extension.id);
+      proto_config->set_audio_level_id(extension.id.value());
     } else if (extension.uri == RtpExtension::kTimestampOffsetUri) {
-      proto_config->set_transmission_time_offset_id(extension.id);
+      proto_config->set_transmission_time_offset_id(extension.id.value());
     } else if (extension.uri == RtpExtension::kAbsSendTimeUri) {
-      proto_config->set_absolute_send_time_id(extension.id);
+      proto_config->set_absolute_send_time_id(extension.id.value());
     } else if (extension.uri == RtpExtension::kTransportSequenceNumberUri) {
-      proto_config->set_transport_sequence_number_id(extension.id);
+      proto_config->set_transport_sequence_number_id(extension.id.value());
     } else if (extension.uri == RtpExtension::kVideoRotationUri) {
-      proto_config->set_video_rotation_id(extension.id);
+      proto_config->set_video_rotation_id(extension.id.value());
     } else if (extension.uri == RtpExtension::kDependencyDescriptorUri) {
-      proto_config->set_dependency_descriptor_id(extension.id);
+      proto_config->set_dependency_descriptor_id(extension.id.value());
     } else {
       ++unknown_extensions;
     }
@@ -340,7 +340,7 @@ size_t RemoveNonAllowlistedRtcpBlocks(const Buffer& packet, uint8_t* buffer) {
 }
 
 template <typename EventType, typename ProtoType>
-void EncodeRtcpPacket(ArrayView<const EventType*> batch,
+void EncodeRtcpPacket(std::span<const EventType*> batch,
                       ProtoType* proto_batch) {
   if (batch.empty()) {
     return;
@@ -465,23 +465,18 @@ void RtcEventLogEncoderNewFormat::EncodeRtpPacket(const Batch& batch,
   }
 
   {
-    // TODO(webrtc:14975) Remove this kill switch after DD in RTC event log has
-    //                    been rolled out.
-    if (encode_dependency_descriptor_) {
-      std::vector<ArrayView<const uint8_t>> raw_dds(batch.size());
-      bool has_dd = false;
-      for (size_t i = 0; i < batch.size(); ++i) {
-        raw_dds[i] =
-            batch[i]
-                ->template GetRawExtension<RtpDependencyDescriptorExtension>();
-        has_dd |= !raw_dds[i].empty();
-      }
-      if (has_dd) {
-        if (auto dd_encoded =
-                RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
-                    raw_dds)) {
-          *proto_batch->mutable_dependency_descriptor() = *dd_encoded;
-        }
+    std::vector<std::span<const uint8_t>> raw_dds(batch.size());
+    bool has_dd = false;
+    for (size_t i = 0; i < batch.size(); ++i) {
+      raw_dds[i] =
+          batch[i]
+              ->template GetRawExtension<RtpDependencyDescriptorExtension>();
+      has_dd |= !raw_dds[i].empty();
+    }
+    if (has_dd) {
+      if (auto dd_encoded =
+              RtcEventLogDependencyDescriptorEncoderDecoder::Encode(raw_dds)) {
+        *proto_batch->mutable_dependency_descriptor() = *dd_encoded;
       }
     }
   }
@@ -704,9 +699,7 @@ void RtcEventLogEncoderNewFormat::EncodeRtpPacket(const Batch& batch,
 RtcEventLogEncoderNewFormat::RtcEventLogEncoderNewFormat(
     const FieldTrialsView& field_trials)
     : encode_neteq_set_minimum_delay_kill_switch_(field_trials.IsEnabled(
-          "WebRTC-RtcEventLogEncodeNetEqSetMinimumDelayKillSwitch")),
-      encode_dependency_descriptor_(!field_trials.IsDisabled(
-          "WebRTC-RtcEventLogEncodeDependencyDescriptor")) {}
+          "WebRTC-RtcEventLogEncodeNetEqSetMinimumDelayKillSwitch")) {}
 
 std::string RtcEventLogEncoderNewFormat::EncodeLogStart(int64_t timestamp_us,
                                                         int64_t utc_time_us) {
@@ -973,7 +966,7 @@ std::string RtcEventLogEncoderNewFormat::EncodeBatch(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAlrState(
-    ArrayView<const RtcEventAlrState*> batch,
+    std::span<const RtcEventAlrState*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventAlrState* base_event : batch) {
     rtclog2::AlrState* proto_batch = event_stream->add_alr_states();
@@ -984,7 +977,7 @@ void RtcEventLogEncoderNewFormat::EncodeAlrState(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAudioNetworkAdaptation(
-    ArrayView<const RtcEventAudioNetworkAdaptation*> batch,
+    std::span<const RtcEventAudioNetworkAdaptation*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1135,7 +1128,7 @@ void RtcEventLogEncoderNewFormat::EncodeAudioNetworkAdaptation(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAudioPlayout(
-    ArrayView<const RtcEventAudioPlayout*> batch,
+    std::span<const RtcEventAudioPlayout*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1177,7 +1170,7 @@ void RtcEventLogEncoderNewFormat::EncodeAudioPlayout(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeNetEqSetMinimumDelay(
-    ArrayView<const RtcEventNetEqSetMinimumDelay*> batch,
+    std::span<const RtcEventNetEqSetMinimumDelay*> batch,
     rtclog2::EventStream* event_stream) {
   if (encode_neteq_set_minimum_delay_kill_switch_) {
     return;
@@ -1235,7 +1228,7 @@ void RtcEventLogEncoderNewFormat::EncodeNetEqSetMinimumDelay(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAudioRecvStreamConfig(
-    ArrayView<const RtcEventAudioReceiveStreamConfig*> batch,
+    std::span<const RtcEventAudioReceiveStreamConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventAudioReceiveStreamConfig* base_event : batch) {
     rtclog2::AudioRecvStreamConfig* proto_batch =
@@ -1254,7 +1247,7 @@ void RtcEventLogEncoderNewFormat::EncodeAudioRecvStreamConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeAudioSendStreamConfig(
-    ArrayView<const RtcEventAudioSendStreamConfig*> batch,
+    std::span<const RtcEventAudioSendStreamConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventAudioSendStreamConfig* base_event : batch) {
     rtclog2::AudioSendStreamConfig* proto_batch =
@@ -1272,7 +1265,7 @@ void RtcEventLogEncoderNewFormat::EncodeAudioSendStreamConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeBweUpdateDelayBased(
-    ArrayView<const RtcEventBweUpdateDelayBased*> batch,
+    std::span<const RtcEventBweUpdateDelayBased*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1329,7 +1322,7 @@ void RtcEventLogEncoderNewFormat::EncodeBweUpdateDelayBased(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeBweUpdateLossBased(
-    ArrayView<const RtcEventBweUpdateLossBased*> batch,
+    std::span<const RtcEventBweUpdateLossBased*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1393,7 +1386,7 @@ void RtcEventLogEncoderNewFormat::EncodeBweUpdateLossBased(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeBweUpdateScream(
-    ArrayView<const RtcEventBweUpdateScream*> batch,
+    std::span<const RtcEventBweUpdateScream*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1490,7 +1483,7 @@ void RtcEventLogEncoderNewFormat::EncodeBweUpdateScream(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeDtlsTransportState(
-    ArrayView<const RtcEventDtlsTransportState*> batch,
+    std::span<const RtcEventDtlsTransportState*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventDtlsTransportState* base_event : batch) {
     rtclog2::DtlsTransportStateEvent* proto_batch =
@@ -1502,7 +1495,7 @@ void RtcEventLogEncoderNewFormat::EncodeDtlsTransportState(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeDtlsWritableState(
-    ArrayView<const RtcEventDtlsWritableState*> batch,
+    std::span<const RtcEventDtlsWritableState*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventDtlsWritableState* base_event : batch) {
     rtclog2::DtlsWritableState* proto_batch =
@@ -1513,7 +1506,7 @@ void RtcEventLogEncoderNewFormat::EncodeDtlsWritableState(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeProbeClusterCreated(
-    ArrayView<const RtcEventProbeClusterCreated*> batch,
+    std::span<const RtcEventProbeClusterCreated*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventProbeClusterCreated* base_event : batch) {
     rtclog2::BweProbeCluster* proto_batch = event_stream->add_probe_clusters();
@@ -1526,7 +1519,7 @@ void RtcEventLogEncoderNewFormat::EncodeProbeClusterCreated(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeProbeResultFailure(
-    ArrayView<const RtcEventProbeResultFailure*> batch,
+    std::span<const RtcEventProbeResultFailure*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventProbeResultFailure* base_event : batch) {
     rtclog2::BweProbeResultFailure* proto_batch =
@@ -1540,7 +1533,7 @@ void RtcEventLogEncoderNewFormat::EncodeProbeResultFailure(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeProbeResultSuccess(
-    ArrayView<const RtcEventProbeResultSuccess*> batch,
+    std::span<const RtcEventProbeResultSuccess*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventProbeResultSuccess* base_event : batch) {
     rtclog2::BweProbeResultSuccess* proto_batch =
@@ -1553,7 +1546,7 @@ void RtcEventLogEncoderNewFormat::EncodeProbeResultSuccess(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeRouteChange(
-    ArrayView<const RtcEventRouteChange*> batch,
+    std::span<const RtcEventRouteChange*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventRouteChange* base_event : batch) {
     rtclog2::RouteChange* proto_batch = event_stream->add_route_changes();
@@ -1565,7 +1558,7 @@ void RtcEventLogEncoderNewFormat::EncodeRouteChange(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeRemoteEstimate(
-    ArrayView<const RtcEventRemoteEstimate*> batch,
+    std::span<const RtcEventRemoteEstimate*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty())
     return;
@@ -1637,7 +1630,7 @@ void RtcEventLogEncoderNewFormat::EncodeRemoteEstimate(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeRtcpPacketIncoming(
-    ArrayView<const RtcEventRtcpPacketIncoming*> batch,
+    std::span<const RtcEventRtcpPacketIncoming*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty()) {
     return;
@@ -1646,7 +1639,7 @@ void RtcEventLogEncoderNewFormat::EncodeRtcpPacketIncoming(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeRtcpPacketOutgoing(
-    ArrayView<const RtcEventRtcpPacketOutgoing*> batch,
+    std::span<const RtcEventRtcpPacketOutgoing*> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty()) {
     return;
@@ -1665,7 +1658,7 @@ void RtcEventLogEncoderNewFormat::EncodeRtpPacketIncoming(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeFramesDecoded(
-    ArrayView<const RtcEventFrameDecoded* const> batch,
+    std::span<const RtcEventFrameDecoded* const> batch,
     rtclog2::EventStream* event_stream) {
   if (batch.empty()) {
     return;
@@ -1774,7 +1767,7 @@ void RtcEventLogEncoderNewFormat::EncodeRtpPacketOutgoing(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeVideoRecvStreamConfig(
-    ArrayView<const RtcEventVideoReceiveStreamConfig*> batch,
+    std::span<const RtcEventVideoReceiveStreamConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventVideoReceiveStreamConfig* base_event : batch) {
     rtclog2::VideoRecvStreamConfig* proto_batch =
@@ -1794,7 +1787,7 @@ void RtcEventLogEncoderNewFormat::EncodeVideoRecvStreamConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeVideoSendStreamConfig(
-    ArrayView<const RtcEventVideoSendStreamConfig*> batch,
+    std::span<const RtcEventVideoSendStreamConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventVideoSendStreamConfig* base_event : batch) {
     rtclog2::VideoSendStreamConfig* proto_batch =
@@ -1813,7 +1806,7 @@ void RtcEventLogEncoderNewFormat::EncodeVideoSendStreamConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeIceCandidatePairConfig(
-    ArrayView<const RtcEventIceCandidatePairConfig*> batch,
+    std::span<const RtcEventIceCandidatePairConfig*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventIceCandidatePairConfig* base_event : batch) {
     rtclog2::IceCandidatePairConfig* proto_batch =
@@ -1842,7 +1835,7 @@ void RtcEventLogEncoderNewFormat::EncodeIceCandidatePairConfig(
 }
 
 void RtcEventLogEncoderNewFormat::EncodeIceCandidatePairEvent(
-    ArrayView<const RtcEventIceCandidatePair*> batch,
+    std::span<const RtcEventIceCandidatePair*> batch,
     rtclog2::EventStream* event_stream) {
   for (const RtcEventIceCandidatePair* base_event : batch) {
     rtclog2::IceCandidatePairEvent* proto_batch =

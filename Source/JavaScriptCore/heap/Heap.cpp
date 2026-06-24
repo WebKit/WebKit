@@ -63,6 +63,7 @@
 #include "JSPromiseReaction.h"
 #include "JSRawJSONObject.h"
 #include "JSRemoteFunction.h"
+#include "JSSentinel.h"
 #include "JSVirtualMachineInternal.h"
 #include "JSWeakMap.h"
 #include "JSWeakObjectRef.h"
@@ -411,13 +412,11 @@ Heap::Heap(VM& vm, HeapType heapType)
     , intlSegmenterHeapCellType(IsoHeapCellType::Args<IntlSegmenter>())
     , intlSegmentsHeapCellType(IsoHeapCellType::Args<IntlSegments>())
 #if ENABLE(WEBASSEMBLY)
-    , webAssemblyArrayHeapCellType(IsoHeapCellType::Args<JSWebAssemblyArray>())
     , webAssemblyExceptionHeapCellType(IsoHeapCellType::Args<JSWebAssemblyException>())
     , webAssemblyFunctionHeapCellType(IsoHeapCellType::Args<WebAssemblyFunction>())
     , webAssemblyGlobalHeapCellType(IsoHeapCellType::Args<JSWebAssemblyGlobal>())
     , webAssemblyInstanceHeapCellType(IsoHeapCellType::Args<JSWebAssemblyInstance>())
     , webAssemblyMemoryHeapCellType(IsoHeapCellType::Args<JSWebAssemblyMemory>())
-    , webAssemblyStructHeapCellType(IsoHeapCellType::Args<JSWebAssemblyStruct>())
     , webAssemblyModuleHeapCellType(IsoHeapCellType::Args<JSWebAssemblyModule>())
     , webAssemblyModuleRecordHeapCellType(IsoHeapCellType::Args<WebAssemblyModuleRecord>())
     , webAssemblyTableHeapCellType(IsoHeapCellType::Args<JSWebAssemblyTable>())
@@ -731,15 +730,16 @@ void Heap::reportAbandonedObjectGraph()
     // are abandoning so we just guess for them.
     size_t abandonedBytes = static_cast<size_t>(0.1 * capacity());
 
-    // We want to accelerate the next collection. Because memory has just 
-    // been abandoned, the next collection has the potential to 
+    m_bytesAbandonedSinceLastFullCollect += abandonedBytes;
+
+    // We want to accelerate the next collection. Because memory has just
+    // been abandoned, the next collection has the potential to
     // be more profitable. Since allocation is the trigger for collection, 
     // we hasten the next collection by pretending that we've allocated more memory. 
     if (m_fullActivityCallback) {
         m_fullActivityCallback->didAllocate(*this,
             m_sizeAfterLastCollect - m_sizeAfterLastFullCollect + totalBytesAllocatedThisCycle() + m_bytesAbandonedSinceLastFullCollect);
     }
-    m_bytesAbandonedSinceLastFullCollect += abandonedBytes;
 }
 
 void Heap::protect(JSValue k)
@@ -1236,6 +1236,37 @@ void Heap::addToRememberedSet(const JSCell* constCell)
     // be unfortunate but not the end of the world.
     cell->setCellState(CellState::PossiblyGrey);
     m_mutatorMarkStack->append(cell);
+}
+
+void Heap::clearConcurrentRetainedDataIfPossible()
+{
+
+    // FIXME: It's weird that we drive the runloop in the middle of a JS stack. But a few places in WebCore testing/debugger code do that so clearing would otherwise be invalid there. This is technically not strong enough to catch any bad code but it seems to work for the testing/debugger code in question.
+    if (vm().entryScope) [[unlikely]]
+        return;
+
+    // It wouldn't be safe to clear the list if it's possible to have a GCOwnedDataScope on the stack since
+    // m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope
+    // is what's keeping the backing bytes alive.
+    ASSERT(!m_topGCOwnedDataScope);
+
+    if (!m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.size())
+        return;
+
+    // The mutator needs to be fenced while marking and marker threads can access StringImpl::costDuringGC so we have to keep the Impls alive.
+    if (mutatorShouldBeFenced())
+        return;
+#if ENABLE(JIT)
+    auto* worklist = JITWorklist::existingGlobalWorklistOrNull();
+    // We need to make sure no JIT thread could be looking at one of our old strings. Any thread that starts after
+    // this check will load the new StringImpl rather than the one in this list so we're safe to delete these as
+    // long as none were running at the time of this check.
+    if (!worklist || !worklist->totalOngoingCompilations()) {
+#else
+    {
+#endif
+        m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.clear();
+    }
 }
 
 void Heap::sweepSynchronously()
@@ -1754,12 +1785,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         snapshotUnswept();
         finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
         removeDeadCompilerWorklistEntries();
+        deleteUnmarkedCompiledCode();
     }
-
-    // Keep in mind that we may use AtomStringTable, and this is totally OK since the main thread is suspended.
-    // End phase itself can run on main thread or concurrent collector thread. But whenever running this,
-    // mutator is suspended so there is no race condition.
-    deleteUnmarkedCompiledCode();
 
     notifyIncrementalSweeper();
     
@@ -2322,7 +2349,10 @@ void Heap::finalize()
     vm().stringSplitCache.clear();
     vm().jsonAtomStringCache.clearJSStrings();
 
-    m_possiblyAccessedStringsFromConcurrentThreads.clear();
+    m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.removeAllMatching([&](const auto& iter) {
+        return !m_discoveredAccessedStringsFromGCOwnedDataScope.contains(iter.first);
+    });
+    m_discoveredAccessedStringsFromGCOwnedDataScope.clear();
 
     immutableButterflyToStringCache.clear();
     
@@ -2640,13 +2670,17 @@ void Heap::setGarbageCollectionTimerEnabled(bool enable)
 constexpr size_t oversizedAllocationThreshold = 64 * KB;
 void Heap::didAllocate(size_t bytes)
 {
-    if (m_edenActivityCallback)
-        m_edenActivityCallback->didAllocate(*this, totalBytesAllocatedThisCycle() + m_bytesAbandonedSinceLastFullCollect);
     if (bytes >= oversizedAllocationThreshold) {
         m_oversizedBytesAllocatedThisCycle += bytes;
         m_lastOversidedAllocationThisCycle = bytes;
     } else
         m_nonOversizedBytesAllocatedThisCycle += bytes;
+
+    // totalBytesAllocatedThisCycle() depends on values updated above.
+    // So, only do this m_edenActivityCallback after updating those values.
+    if (m_edenActivityCallback)
+        m_edenActivityCallback->didAllocate(*this, totalBytesAllocatedThisCycle() + m_bytesAbandonedSinceLastFullCollect);
+
     performIncrement(bytes);
 }
 
@@ -3018,7 +3052,6 @@ void Heap::addCoreConstraints()
                 // If we tried to scan while not under a safepoint we could stop a thread that's in the process of calling
                 // one of the callees we are looking for.
                 // FIXME: Should we have two constraints for this? One for concurrent and one under safepoint at the bitter end.
-                // TODO: Verify this part only runs on one thread.
                 ASSERT(worldIsStopped());
                 ConservativeRoots conservativeRoots(*this);
 

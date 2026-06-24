@@ -24,5 +24,18 @@
  */
 
 #ifdef __cplusplus
+
 #include "common/PackedEnums.h"
+
+#include "common/system_utils.h"
+#include "common/tls.h"
+#include "compiler/translator/ImmutableStringBuilder.h"
+#include "compiler/translator/StaticType.h"
+#include "compiler/translator/tree_util/BuiltIn.h"
+#include "compiler/translator/tree_util/ReplaceVariable.h"
+#include "libANGLE/ErrorStrings.h"
+#include "libANGLE/Thread.h"
+#include "libANGLE/queryconversions.h"
+#include "libANGLE/queryutils.h"
+
 #endif

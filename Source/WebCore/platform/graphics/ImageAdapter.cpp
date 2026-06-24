@@ -47,25 +47,25 @@ void ImageAdapter::invalidate()
 
 RefPtr<NativeImage> ImageAdapter::nativeImageOfSize(const IntSize& size)
 {
-    unsigned count = image().frameCount();
+    unsigned count = protect(image())->frameCount();
 
     for (unsigned i = 0; i < count; ++i) {
-        RefPtr nativeImage = image().nativeImageAtIndex(i);
+        RefPtr nativeImage = protect(image())->nativeImageAtIndex(i);
         if (nativeImage && nativeImage->size() == size)
             return nativeImage;
     }
 
     // Fallback to the first frame image if we can't find the right size
-    return image().nativeImageAtIndex(0);
+    return protect(image())->nativeImageAtIndex(0);
 }
 
 Vector<Ref<NativeImage>> ImageAdapter::allNativeImages()
 {
     Vector<Ref<NativeImage>> nativeImages;
-    unsigned count = image().frameCount();
+    unsigned count = protect(image())->frameCount();
 
     for (unsigned i = 0; i < count; ++i) {
-        if (RefPtr nativeImage = image().nativeImageAtIndex(i))
+        if (RefPtr nativeImage = protect(image())->nativeImageAtIndex(i))
             nativeImages.append(nativeImage.releaseNonNull());
     }
 

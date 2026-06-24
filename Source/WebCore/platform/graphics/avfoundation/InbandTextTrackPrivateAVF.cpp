@@ -341,8 +341,7 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, CFArray
     if (!hasClients())
         return;
 
-    if (attributedStrings && CFArrayGetCount(attributedStrings))
-        processAttributedStrings(attributedStrings, time);
+    processAttributedStrings(attributedStrings, time);
     if (nativeSamples && CFArrayGetCount(nativeSamples))
         processVTTSamples(nativeSamples, time);
 }
@@ -393,7 +392,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
                 bool currentCueIsExtended = (arrivingCues.size() != nonExtensionCues.size());
 
                 arrivingCues = WTF::move(nonExtensionCues);
-                
+
                 if (currentCueIsExtended)
                     continue;
 

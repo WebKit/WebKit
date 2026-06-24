@@ -33,6 +33,15 @@
 #include "DFGGraph.h"
 #endif
 
+#include <JavaScriptCore/ExceptionExpectation.h>
+#include <JavaScriptCore/HashMapHelper.h>
+#include <JavaScriptCore/JSOrderedHashTable.h>
+#include <JavaScriptCore/JSOrderedHashTableHelper.h>
+#include <JavaScriptCore/JSSet.h>
+#include <JavaScriptCore/ParserArena.h>
+#include <wtf/SmallSet.h>
+
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())
 #endif

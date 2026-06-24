@@ -30,8 +30,10 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkStorageManagerMessages.h"
+#include "WebFileSystemStorageConnection.h"
 #include "WebIDBResult.h"
 #include "WebProcess.h"
+#include <WebCore/FileSystemHandleStorageKeepAlive.h>
 #include <WebCore/IDBConnectionToServer.h>
 #include <WebCore/IDBCursorInfo.h>
 #include <WebCore/IDBError.h>
@@ -275,11 +277,17 @@ void WebIDBConnectionToServer::didPutOrAdd(const IDBResultData& result)
 
 void WebIDBConnectionToServer::didGetRecord(const WebIDBResult& result)
 {
+    if (result.clientOrigin())
+        attachStorageKeepAliveIfNeeded(result, result.resultData().getResult().value());
     m_connectionToServer->didGetRecord(result.resultData());
 }
 
 void WebIDBConnectionToServer::didGetAllRecords(const WebIDBResult& result)
 {
+    if (result.clientOrigin()) {
+        for (auto& value : result.resultData().getAllResult().values())
+            attachStorageKeepAliveIfNeeded(result, value);
+    }
     m_connectionToServer->didGetAllRecords(result.resultData());
 }
 
@@ -295,12 +303,32 @@ void WebIDBConnectionToServer::didDeleteRecord(const IDBResultData& result)
 
 void WebIDBConnectionToServer::didOpenCursor(const WebIDBResult& result)
 {
+    if (result.clientOrigin()) {
+        attachStorageKeepAliveIfNeeded(result, result.resultData().getResult().value());
+        for (auto& cursorRecord : result.resultData().getResult().prefetchedRecords())
+            attachStorageKeepAliveIfNeeded(result, cursorRecord.value);
+    }
     m_connectionToServer->didOpenCursor(result.resultData());
 }
 
 void WebIDBConnectionToServer::didIterateCursor(const WebIDBResult& result)
 {
+    if (result.clientOrigin()) {
+        attachStorageKeepAliveIfNeeded(result, result.resultData().getResult().value());
+        for (auto& cursorRecord : result.resultData().getResult().prefetchedRecords())
+            attachStorageKeepAliveIfNeeded(result, cursorRecord.value);
+    }
     m_connectionToServer->didIterateCursor(result.resultData());
+}
+
+void WebIDBConnectionToServer::attachStorageKeepAliveIfNeeded(const WebIDBResult& result, const IDBValue& value)
+{
+    if (value.fileSystemHandleGlobalIdentifiers().isEmpty() || !result.clientOrigin())
+        return;
+    value.attachStorageKeepAlive(FileSystemHandleStorageKeepAlive::create(
+        ClientOrigin { *result.clientOrigin() },
+        Vector { value.fileSystemHandleGlobalIdentifiers() },
+        Ref { WebProcess::singleton().fileSystemStorageConnection() }));
 }
 
 void WebIDBConnectionToServer::fireVersionChangeEvent(IDBDatabaseConnectionIdentifier uniqueDatabaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)

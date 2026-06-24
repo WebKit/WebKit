@@ -93,6 +93,21 @@ inline UniquedStringImpl* CacheableIdentifier::uid() const
     return std::bit_cast<UniquedStringImpl*>(string->getValueImpl());
 }
 
+inline bool CacheableIdentifier::isSymbol() const
+{
+    return m_bits && uid()->isSymbol();
+}
+
+inline bool CacheableIdentifier::isPrivateName() const
+{
+    return isSymbol() && static_cast<SymbolImpl&>(*uid()).isPrivate();
+}
+
+inline unsigned CacheableIdentifier::hash() const
+{
+    return uid()->symbolAwareHash();
+}
+
 inline bool CacheableIdentifier::isCacheableIdentifierCell(JSCell* cell)
 {
     if (cell->isSymbol())

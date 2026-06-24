@@ -1,11 +1,8 @@
 <body onload="test()">
 <p>Should alert "PASS".</p>
-<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 
 function test()
 {
@@ -15,8 +12,7 @@ function test()
     }
     ws.onmessage = function(msg) {
         alert(msg.data);
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
     ws = null;
     gc();

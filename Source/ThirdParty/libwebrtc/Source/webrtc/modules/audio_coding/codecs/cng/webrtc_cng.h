@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/buffer.h"
 
 #define WEBRTC_CNG_MAX_LPC_ORDER 12
@@ -34,7 +34,7 @@ class ComfortNoiseDecoder {
 
   // Updates the CN state when a new SID packet arrives.
   // `sid` is a view of the SID packet without the headers.
-  void UpdateSid(ArrayView<const uint8_t> sid);
+  void UpdateSid(std::span<const uint8_t> sid);
 
   // Generates comfort noise.
   // `out_data` will be filled with samples - its size determines the number of
@@ -43,7 +43,7 @@ class ComfortNoiseDecoder {
   // currently 640 bytes (equalling 10ms at 64kHz).
   // TODO(ossu): Specify better limits for the size of out_data. Either let it
   //             be unbounded or limit to 10ms in the current sample rate.
-  bool Generate(ArrayView<int16_t> out_data, bool new_period);
+  bool Generate(std::span<int16_t> out_data, bool new_period);
 
  private:
   uint32_t dec_seed_;
@@ -79,7 +79,7 @@ class ComfortNoiseEncoder {
   // true, a SID frame is forced and the internal sid interval counter is reset.
   // Will fail if the input size is too large (> 640 samples, see
   // ComfortNoiseDecoder::Generate).
-  size_t Encode(ArrayView<const int16_t> speech,
+  size_t Encode(std::span<const int16_t> speech,
                 bool force_sid,
                 Buffer* output);
 

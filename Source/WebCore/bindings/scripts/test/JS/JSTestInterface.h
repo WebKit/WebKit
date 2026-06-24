@@ -84,8 +84,12 @@ protected:
 
 class WEBCORE_EXPORT JSTestInterfaceOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestInterfaceOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestInterfaceOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestInterface*)

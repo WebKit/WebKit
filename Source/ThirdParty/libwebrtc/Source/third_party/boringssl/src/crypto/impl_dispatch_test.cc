@@ -29,6 +29,9 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 class ImplDispatchTest : public ::testing::Test {
  public:
   void SetUp() override {
@@ -118,7 +121,7 @@ TEST_F(ImplDispatchTest, AEAD_AES_GCM) {
         const uint8_t kPlaintext[40] = {1, 2, 3, 4, 0};
         uint8_t ciphertext[sizeof(kPlaintext) + 16];
         size_t ciphertext_len;
-        bssl::ScopedEVP_AEAD_CTX ctx;
+        ScopedEVP_AEAD_CTX ctx;
         ASSERT_TRUE(EVP_AEAD_CTX_init(ctx.get(), EVP_aead_aes_128_gcm(), kZeros,
                                       sizeof(kZeros),
                                       EVP_AEAD_DEFAULT_TAG_LENGTH, nullptr));
@@ -160,5 +163,8 @@ TEST_F(ImplDispatchTest, AES_single_block) {
 }
 
 #endif  // X86 || X86_64
+
+}  // namespace
+BSSL_NAMESPACE_END
 
 #endif  // DISPATCH_TEST && !SHARED_LIBRARY

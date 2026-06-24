@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script>
+"use strict";
+
+const targetBounces = 10000;
+
+const channel = new MessageChannel();
+const portA = channel.port1;
+const portB = channel.port2;
+
+let bouncesRemaining = 0;
+let iterationStart = 0;
+
+function onBounce(event)
+{
+    if (--bouncesRemaining === 0) {
+        const elapsed = PerfTestRunner.now() - iterationStart;
+        if (!PerfTestRunner.measureValueAsync(elapsed))
+            return;
+        setTimeout(runIteration, 0);
+        return;
+    }
+    event.target.postMessage(0);
+}
+
+portA.onmessage = onBounce;
+portB.onmessage = onBounce;
+
+function runIteration()
+{
+    bouncesRemaining = targetBounces;
+    iterationStart = PerfTestRunner.now();
+    portA.postMessage(0);
+}
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    description: 'Time to deliver ' + targetBounces + ' messages by ping-ponging between '
+        + 'a single same-context MessagePort pair.',
+    unit: 'ms',
+});
+
+setTimeout(runIteration, 0);
+</script>
+</body>
+</html>

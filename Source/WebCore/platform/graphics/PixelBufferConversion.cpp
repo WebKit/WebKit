@@ -468,7 +468,15 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     auto isSourceFloat = source.format.pixelFormat == PixelFormat::RGBA16F;
+    if (isSourceFloat && destinationSize.height() > 0 && destinationSize.width() > 0) {
+        RELEASE_ASSERT((source.rows.size_bytes() - destinationSize.width() * (4 * sizeof(Float16))) / source.bytesPerRow >= size_t(destinationSize.height() - 1), "Expected source size_bytes >= (height-1) * bytesPerRow + width*4*sizeof(Float16)");
+        RELEASE_ASSERT(source.rows.size_bytes() / (4 * sizeof(Float16)) / destinationSize.width() >= size_t(destinationSize.height()), "Expected source size_bytes >= width * height * 4*sizeof(Float16)");
+    }
     auto isDestinationFloat = destination.format.pixelFormat == PixelFormat::RGBA16F;
+    if (isDestinationFloat && destinationSize.height() > 0 && destinationSize.width() > 0) {
+        RELEASE_ASSERT((destination.rows.size_bytes() - destinationSize.width() * (4 * sizeof(Float16))) / destination.bytesPerRow >= size_t(destinationSize.height() - 1), "Expected destination size_bytes >= (height-1) * bytesPerRow + width*4*sizeof(Float16)");
+        RELEASE_ASSERT(destination.rows.size_bytes() / (4 * sizeof(Float16)) / destinationSize.width() >= size_t(destinationSize.height()), "Expected destination size_bytes >= width * height * 4*sizeof(Float16)");
+    }
     if (isSourceFloat && isDestinationFloat)
         return convertImagePixelsFromFloat16ToFloat16(source, destination, destinationSize);
     if (isSourceFloat)

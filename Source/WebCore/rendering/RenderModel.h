@@ -41,7 +41,7 @@ class RenderModel final : public RenderReplaced {
     WTF_MAKE_TZONE_ALLOCATED(RenderModel);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderModel);
 public:
-    RenderModel(HTMLModelElement&, RenderStyle&&);
+    RenderModel(HTMLModelElement&, Style::ComputedStyle&&);
     virtual ~RenderModel();
 
     HTMLModelElement& NODELETE modelElement() const;
@@ -52,10 +52,8 @@ private:
 
     bool NODELETE requiresLayer() const final;
     void updateFromElement() final;
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
-#if USE(SYSTEM_PREVIEW)
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
-#endif
 
     void update();
 };

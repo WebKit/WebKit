@@ -22,6 +22,8 @@
 
 [
     ExceptionForEnabledBy,
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
     SwiftReceiverBuildEnabledBy=SWIFT_TEST_CONDITION
 ]
 messages -> TestWithSwiftConditionally {

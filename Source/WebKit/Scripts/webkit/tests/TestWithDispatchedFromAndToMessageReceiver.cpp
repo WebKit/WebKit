@@ -39,7 +39,6 @@ namespace WebKit {
 
 void TestWithDispatchedFromAndTo::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithDispatchedFromAndTo::AlwaysEnabled::name()) {
         IPC::handleMessage<Messages::TestWithDispatchedFromAndTo::AlwaysEnabled>(connection, decoder, this, &TestWithDispatchedFromAndTo::alwaysEnabled);
         return;

@@ -8,6 +8,7 @@
 </head>
 <body>
 <script>
+    window.jsTestIsAsync = true;
     const hostUnderTest = "127.0.0.1:8000";
     const statisticsUrl = "http://" + hostUnderTest + "/temp";
 
@@ -18,7 +19,7 @@
             testPassed("Cookie deleted.");
         internals.setTrackingPreventionEnabled(false);
         setEnableFeature(false, function() {
-            testRunner.notifyDone();
+            finishJSTest();
         });
     }
 
@@ -47,7 +48,6 @@
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
-        testRunner.waitUntilDone();
         setEnableFeature(true, function() {
             runTestRunnerTest();
         });

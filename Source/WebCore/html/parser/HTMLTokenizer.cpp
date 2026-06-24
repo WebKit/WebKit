@@ -1479,18 +1479,18 @@ String HTMLTokenizer::bufferedCharacters() const
 
 void HTMLTokenizer::updateStateFor(const AtomString& tagName)
 {
-    if (tagName == textareaTag || tagName == titleTag)
+    if (textareaTag->hasLocalName(tagName) || titleTag->hasLocalName(tagName))
         m_state = RCDATAState;
-    else if (tagName == plaintextTag)
+    else if (plaintextTag->hasLocalName(tagName))
         m_state = PLAINTEXTState;
-    else if (tagName == scriptTag)
+    else if (scriptTag->hasLocalName(tagName))
         m_state = ScriptDataState;
-    else if (tagName == styleTag
-        || tagName == iframeTag
-        || tagName == xmpTag
-        || (tagName == noembedTag)
-        || tagName == noframesTag
-        || (tagName == noscriptTag && m_options.scriptingFlag))
+    else if (styleTag->hasLocalName(tagName)
+        || iframeTag->hasLocalName(tagName)
+        || xmpTag->hasLocalName(tagName)
+        || noembedTag->hasLocalName(tagName)
+        || noframesTag->hasLocalName(tagName)
+        || (noscriptTag->hasLocalName(tagName) && m_options.scriptingFlag))
         m_state = RAWTEXTState;
 }
 

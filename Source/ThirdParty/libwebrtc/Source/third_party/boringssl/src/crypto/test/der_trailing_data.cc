@@ -18,6 +18,10 @@
 
 #include <openssl/bytestring.h>
 
+#include "../bytestring/internal.h"
+
+BSSL_NAMESPACE_BEGIN
+
 static bool RewriteWithTrailingData(CBB *cbb, CBS *cbs,
                                     std::optional<size_t> *rewrite_counter) {
   CBS contents;
@@ -55,12 +59,12 @@ static bool RewriteWithTrailingData(CBB *cbb, CBS *cbs,
 }
 
 bool TestDERTrailingData(
-    bssl::Span<const uint8_t> in,
-    std::function<void(bssl::Span<const uint8_t>, size_t)> func) {
+    Span<const uint8_t> in,
+    std::function<void(Span<const uint8_t>, size_t)> func) {
   for (size_t elem_to_rewrite = 0; true; elem_to_rewrite++) {
     std::optional<size_t> rewrite_counter = elem_to_rewrite;
     CBS cbs = in;
-    bssl::ScopedCBB cbb;
+    ScopedCBB cbb;
     if (!CBB_init(cbb.get(), in.size() + /* EOC */ 2 +
                                  /* in case lengths get larger */ 8) ||
         !RewriteWithTrailingData(cbb.get(), &cbs, &rewrite_counter) ||
@@ -73,6 +77,8 @@ bool TestDERTrailingData(
       return true;
     }
 
-    func(bssl::Span(CBB_data(cbb.get()), CBB_len(cbb.get())), elem_to_rewrite);
+    func(CBBAsSpan(cbb.get()), elem_to_rewrite);
   }
 }
+
+BSSL_NAMESPACE_END

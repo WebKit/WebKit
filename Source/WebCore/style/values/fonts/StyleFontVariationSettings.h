@@ -52,11 +52,11 @@ private:
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<FontVariationSettings> { auto operator()(BuilderState&, const CSSValue&) -> FontVariationSettings; };
-template<> struct CSSValueCreation<FontVariationSettings> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const FontVariationSettings&); };
+template<> struct CSSValueCreation<FontVariationSettings> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const FontVariationSettings&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<FontVariationSettings> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const FontVariationSettings&); };
+template<> struct Serialize<FontVariationSettings> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const FontVariationSettings&); };
 
 // MARK: - Blending
 

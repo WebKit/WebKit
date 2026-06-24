@@ -14,8 +14,8 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/ns/fast_math.h"
 #include "modules/audio_processing/ns/ns_common.h"
 
@@ -33,8 +33,8 @@ QuantileNoiseEstimator::QuantileNoiseEstimator() {
 }
 
 void QuantileNoiseEstimator::Estimate(
-    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
-    ArrayView<float, kFftSizeBy2Plus1> noise_spectrum) {
+    std::span<const float, kFftSizeBy2Plus1> signal_spectrum,
+    std::span<float, kFftSizeBy2Plus1> noise_spectrum) {
   std::array<float, kFftSizeBy2Plus1> log_spectrum;
   LogApproximation(signal_spectrum, log_spectrum);
 
@@ -82,7 +82,7 @@ void QuantileNoiseEstimator::Estimate(
 
   if (quantile_index_to_return >= 0) {
     ExpApproximation(
-        ArrayView<const float>(&log_quantile_[quantile_index_to_return],
+        std::span<const float>(&log_quantile_[quantile_index_to_return],
                                kFftSizeBy2Plus1),
         quantile_);
   }

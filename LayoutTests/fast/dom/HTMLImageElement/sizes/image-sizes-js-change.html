@@ -1,10 +1,22 @@
+<!-- webkit-test-runner [ dumpResourceResponseMIMETypes=* ] -->
 <!DOCTYPE html>
 <script src="../../../../resources/srcset-helper.js"></script>
 <script src="../../../../resources/js-test.js"></script>
-<script src="../resources/currentSrcHelper.js"></script>
 <script>
     if (window.testRunner)
         testRunner.dumpAsText();
+    if (window.internals)
+        internals.clearMemoryCache();
+
+    function fileName(src) {
+        var array = src.split('/');
+        return array[array.length -1];
+    };
+
+    function currentSrcFileName(id) {
+        var currentSrc = document.getElementById(id).currentSrc;
+        return fileName(currentSrc);
+    };
 
     function updateSrc() {
         var img = document.getElementById("foo");
@@ -16,8 +28,6 @@
     }
 
     addEventListener("DOMContentLoaded", function() {
-        if (sessionStorage.pageReloaded)
-            testRunner.dumpResourceResponseMIMETypes();
         updateSrc();
     }, false);
 

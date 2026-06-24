@@ -7,6 +7,8 @@
 <script>
 description("This tests what mouse events we send.");
 
+window.jsTestIsAsync = true;
+
 var div = document.createElement("div");
 div.style.width = "100px";
 div.style.height = "100px";
@@ -57,7 +59,6 @@ async function testEvents(description, button, expectedString) {
 }
 
 onload = async () => {
-    testRunner?.waitUntilDone();
 
     div.addEventListener("auxclick", appendEventLog, false);
     div.addEventListener("click", appendEventLog, false);
@@ -74,7 +75,7 @@ onload = async () => {
         await testEvents("Back Mouse Button", 3, "mousedown(button: 3 which: 4) mouseup(button: 3 which: 4) auxclick(button: 3 which: 4) mousedown(button: 3 which: 4) mouseup(button: 3 which: 4) auxclick(button: 3 which: 4) ");
         await testEvents("Forward Mouse Button", 4, "mousedown(button: 4 which: 5) mouseup(button: 4 which: 5) auxclick(button: 4 which: 5) mousedown(button: 4 which: 5) mouseup(button: 4 which: 5) auxclick(button: 4 which: 5) ");
     }
-    testRunner?.notifyDone();
+    finishJSTest();
 }
 </script>
 <script src="../../resources/js-test-post.js"></script>

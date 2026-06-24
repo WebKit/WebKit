@@ -102,6 +102,9 @@ void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, uint32_t ch
         return;
     }
 
+    if (!isAllowedToRunScript())
+        return;
+
     auto init = SpeechSynthesisEvent::Init {
         { false, false, false },
         *this,
@@ -119,6 +122,9 @@ void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, Speech
         m_completionHandler(*this);
         return;
     }
+
+    if (!isAllowedToRunScript())
+        return;
 
     auto init = SpeechSynthesisErrorEvent::Init { {
             { false, false, false },

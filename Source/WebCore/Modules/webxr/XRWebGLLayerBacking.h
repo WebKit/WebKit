@@ -76,10 +76,16 @@ public:
     void endFrame(PlatformXR::DeviceLayer&) final;
 #endif
 
-    RefPtr<WebGLOpaqueTexture> currentColorTexture() const;
-    RefPtr<WebGLOpaqueTexture> currentDepthTexture() const;
+    RefPtr<WebGLOpaqueTexture> currentColorTexture(uint32_t index = 0) const;
+    RefPtr<WebGLOpaqueTexture> currentDepthTexture(uint32_t index = 0) const;
+
+    // Returns true for non-array stereo cube layers, which require two separate GL_TEXTURE_CUBE_MAP
+    // objects (one per view). All other layer types use a single texture regardless of layout.
+    bool requiresPerViewColorTextures() const;
 
     bool allColorTexturesAreBound() const final;
+
+    void clearTexturesIfNeeded(const IntRect& viewport, std::optional<uint32_t> slice) final;
 
 protected:
     XRWebGLLayerBacking(PlatformXR::LayerHandle, std::unique_ptr<WebXRWebGLSwapchain>&& colorSwapchain, std::unique_ptr<WebXRWebGLSwapchain>&& depthSwapchain, uint32_t colorTextureArrayLength);
@@ -101,6 +107,9 @@ private:
     std::unique_ptr<WebXRWebGLSwapchain> m_colorSwapchain;
     std::unique_ptr<WebXRWebGLSwapchain> m_depthSwapchain;
     uint32_t m_colorTextureArrayLength { 1 };
+#if !PLATFORM(COCOA)
+    bool m_shouldSkipFrame { true };
+#endif
 };
 
 } // namespace WebCore

@@ -1,7 +1,8 @@
 <html dir=rtl>
     <head>
-        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../../../resources/js-test.js"></script>
         <script>
+            window.jsTestIsAsync = true;
 
             function log(str)
             {
@@ -12,9 +13,6 @@
             }
             
 
-            if (window.testRunner) {
-                testRunner.waitUntilDone();
-            }
 
             function dispatchWheelEvent()
             {
@@ -37,8 +35,7 @@
                 log("window.scrollX: " + window.scrollX);
                 log("window.scrollY: " + window.scrollY);
 
-                if (window.testRunner)
-                    window.testRunner.notifyDone();
+                finishJSTest();
             }
 
             function mousewheelHandler(e)

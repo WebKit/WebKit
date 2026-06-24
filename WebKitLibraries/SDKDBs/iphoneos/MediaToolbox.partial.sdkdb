@@ -35,7 +35,7 @@
     {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTCopyLocalizedNameForMediaSubType"},
     {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_MTCopyLocalizedNameForMediaType"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "introduced": "6", "name": "MTAudioProcessingTapCallbacks"},
     {"access": "public", "name": "MTAudioProcessingTapCreationFlags"},

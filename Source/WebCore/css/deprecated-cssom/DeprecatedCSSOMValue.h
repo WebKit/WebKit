@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +27,13 @@
 #pragma once
 
 #include <WebCore/CSSStyleDeclaration.h>
-#include <WebCore/CSSValue.h>
 #include <WebCore/ExceptionOr.h>
-#include <wtf/NoVirtualDestructorBase.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-// NOTE: This destructor is non-virtual for memory and performance reasons.
-// Don't go making it virtual again unless you know exactly what you're doing!
-class DeprecatedCSSOMValue : public RefCountedAndCanMakeWeakPtr<DeprecatedCSSOMValue>, public NoVirtualDestructorBase {
+class DeprecatedCSSOMValue : public RefCountedAndCanMakeWeakPtr<DeprecatedCSSOMValue> {
 public:
     // Exactly match the IDL. No reason to add anything if it's not in the IDL.
     enum Type : unsigned short {
@@ -47,64 +43,27 @@ public:
         CSS_CUSTOM = 3
     };
 
-    WEBCORE_EXPORT unsigned short NODELETE cssValueType() const;
+    WEBCORE_EXPORT virtual ~DeprecatedCSSOMValue();
 
-    WEBCORE_EXPORT String cssText() const;
+    WEBCORE_EXPORT virtual unsigned short NODELETE cssValueType() const = 0;
+    WEBCORE_EXPORT virtual String cssText() const = 0;
     ExceptionOr<void> setCssText(const String&) { return { }; } // Will never implement.
 
-    bool isLazySerializingCustomValue() const { return classType() == ClassType::LazySerializingCustom; }
-    bool isComplexValue() const { return classType() == ClassType::Complex; }
-    bool isPrimitiveValue() const { return classType() == ClassType::Primitive; }
-    bool isValueList() const { return classType() == ClassType::List; }
+    virtual bool isCustomValue() const { return false; }
+    virtual bool isPrimitiveValue() const { return false; }
+    virtual bool isValueList() const { return false; }
 
     CSSStyleDeclaration& owner() const { return m_owner; }
 
-    WEBCORE_EXPORT void operator delete(DeprecatedCSSOMValue*, std::destroying_delete_t);
-
 protected:
-    static const size_t ClassTypeBits = 3;
-    enum class ClassType : uint8_t {
-        LazySerializingCustom,
-        Complex,
-        List,
-        Primitive
-    };
-    ClassType classType() const { return static_cast<ClassType>(m_classType); }
-
-    DeprecatedCSSOMValue(ClassType classType, CSSStyleDeclaration& owner)
-        : m_classType(std::to_underlying(classType))
-        , m_owner(owner)
+    DeprecatedCSSOMValue(CSSStyleDeclaration& owner)
+        : m_owner(owner)
     {
     }
 
-protected:
-    unsigned m_valueSeparator : CSSValue::ValueSeparatorBits;
-    unsigned m_classType : ClassTypeBits; // ClassType
-    
     const Ref<CSSStyleDeclaration> m_owner;
 };
 
-class DeprecatedCSSOMComplexValue : public DeprecatedCSSOMValue {
-public:
-    static Ref<DeprecatedCSSOMComplexValue> create(Ref<const CSSValue> value, CSSStyleDeclaration& owner)
-    {
-        return adoptRef(*new DeprecatedCSSOMComplexValue(WTF::move(value), owner));
-    }
-
-    String cssText() const;
-    unsigned short NODELETE cssValueType() const;
-
-protected:
-    DeprecatedCSSOMComplexValue(Ref<const CSSValue> value, CSSStyleDeclaration& owner)
-        : DeprecatedCSSOMValue(ClassType::Complex, owner)
-        , m_value(WTF::move(value))
-    {
-    }
-
-private:
-    const Ref<const CSSValue> m_value;
-};
-    
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_CSSOM_VALUE(ToValueTypeName, predicate) \
@@ -112,4 +71,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
 static bool isType(const WebCore::DeprecatedCSSOMValue& value) { return value.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-SPECIALIZE_TYPE_TRAITS_CSSOM_VALUE(DeprecatedCSSOMComplexValue, isComplexValue())

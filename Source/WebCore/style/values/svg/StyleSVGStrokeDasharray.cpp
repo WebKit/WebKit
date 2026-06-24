@@ -28,8 +28,6 @@
 #include "AnimationUtilities.h"
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
-#include "StyleLengthWrapper+Blending.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include <numeric>
@@ -37,22 +35,22 @@
 namespace WebCore {
 namespace Style {
 
-using namespace CSS::Literals;
-
 // MARK: - Conversion
 
 auto CSSValueConversion<SVGStrokeDasharrayValue>::operator()(BuilderState& state, const CSSValue& value) -> SVGStrokeDasharrayValue
 {
+    using namespace CSS::Literals;
+
     RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
     if (!primitiveValue)
         return 0_css_px;
 
     if (primitiveValue->isNumberOrInteger()) {
-        return SVGStrokeDasharrayValueLength { SVGStrokeDasharrayValueLength::Fixed {
+        return SVGStrokeDasharrayValue::LengthPercentage { SVGStrokeDasharrayValue::LengthPercentage::Fixed {
             toStyleFromCSSValue<Number<CSS::All, float>>(state, *primitiveValue).value
         } };
     }
-    return toStyleFromCSSValue<SVGStrokeDasharrayValueLength>(state, *primitiveValue);
+    return toStyleFromCSSValue<SVGStrokeDasharrayValue::LengthPercentage>(state, *primitiveValue);
 }
 
 // MARK: - Blending

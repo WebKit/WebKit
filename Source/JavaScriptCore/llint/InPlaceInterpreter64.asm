@@ -10106,6 +10106,9 @@ ipintAtomicOp(_memory_atomic_wait32, macro()
     loadb IPInt::AtomicMemoryAccessMetadata::memoryIndex[MC], t0
     pushInt32(t0)
     loadq (StackValueSize * 3)[sp], t0
+    btbnz JSWebAssemblyInstance::m_cachedIsMemory64[wasmInstance], .pointerIsMemory64
+    zxi2q t0, t0
+.pointerIsMemory64:
     loadq IPInt::AtomicMemoryAccessMetadata::offset[MC], t1
     baddpc(t1, t0, _ipint_throw_OutOfBoundsMemoryAccess)
     storeq t0, (StackValueSize * 3)[sp] # replace pointer with pointer + offset
@@ -10136,6 +10139,9 @@ ipintAtomicOp(_memory_atomic_wait64, macro()
     loadb IPInt::AtomicMemoryAccessMetadata::memoryIndex[MC], t0
     pushInt32(t0)
     loadq (StackValueSize * 3)[sp], t0
+    btbnz JSWebAssemblyInstance::m_cachedIsMemory64[wasmInstance], .pointerIsMemory64
+    zxi2q t0, t0
+.pointerIsMemory64:
     loadq IPInt::AtomicMemoryAccessMetadata::offset[MC], t1
     baddpc(t1, t0, _ipint_throw_OutOfBoundsMemoryAccess)
     storeq t0, (StackValueSize * 3)[sp] # replace pointer with pointer + offset

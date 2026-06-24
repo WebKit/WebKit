@@ -10,13 +10,15 @@
 
 #include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 
-#include "api/array_view.h"
+#include <span>
+
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 
 namespace webrtc {
 
-int RtpHeaderExtensionSize(ArrayView<const RtpExtensionSize> extensions,
+int RtpHeaderExtensionSize(std::span<const RtpExtensionSize> extensions,
                            const RtpHeaderExtensionMap& registered_extensions) {
   // RFC3550 Section 5.3.1
   static constexpr int kExtensionBlockHeaderSize = 4;
@@ -25,12 +27,12 @@ int RtpHeaderExtensionSize(ArrayView<const RtpExtensionSize> extensions,
   int num_extensions = 0;
   int each_extension_header_size = 1;
   for (const RtpExtensionSize& extension : extensions) {
-    int id = registered_extensions.GetId(extension.type);
+    RtpHeaderExtensionId id = registered_extensions.GetId(extension.type);
     if (id == RtpHeaderExtensionMap::kInvalidId)
       continue;
     // All extensions should use same size header. Check if the `extension`
     // forces to switch to two byte header that allows larger id and value size.
-    if (id > RtpExtension::kOneByteHeaderExtensionMaxId ||
+    if (id > RtpHeaderExtensionId::kOneByteHeaderExtensionMaxId ||
         extension.value_size >
             RtpExtension::kOneByteHeaderExtensionMaxValueSize) {
       each_extension_header_size = 2;

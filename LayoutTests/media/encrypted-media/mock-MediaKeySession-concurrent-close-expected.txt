@@ -1,0 +1,19 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["keyids"])
+RUN(capabilities.initDataTypes = ["keyids"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
+Promise resolved OK
+Two concurrent close() calls should both resolve without crashing.
+RUN(promise = mediaKeySession.close())
+RUN(promise2 = mediaKeySession.close())
+Survived concurrent close() and the "closed" promise resolved exactly once.
+END OF TEST
+

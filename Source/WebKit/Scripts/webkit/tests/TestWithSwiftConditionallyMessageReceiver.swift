@@ -33,6 +33,7 @@ final class TestWithSwiftConditionallyWeakRef {
         self.target = target
     }
 
+    @used
     func getMessageTarget() -> TestWithSwiftConditionally? {
         target
     }

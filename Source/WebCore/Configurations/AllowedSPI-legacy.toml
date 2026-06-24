@@ -93,10 +93,13 @@ selectors = [
     { name = "valueForDimension:", class = "?" },
     { name = "verticalAlignment", class = "?" },
 ]
+requires-sdk = ["iOS <= 26.*"]
+
+[[legacy]]
 symbols = [
     "kCTFontDescriptorLanguageAttribute",
 ]
-requires-sdk = ["iOS <= 26.*"]
+requires-sdk = ["iOS <= 26.4"]
 
 # ------------------------------------------------------------------------
 # Below are uncategorized and unconditionally used SPI introduced in older

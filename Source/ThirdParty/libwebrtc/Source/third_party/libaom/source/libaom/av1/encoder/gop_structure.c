@@ -17,10 +17,12 @@
 
 #include "aom/aom_codec.h"
 #include "aom/aom_encoder.h"
+#include "aom/aom_ext_ratectrl.h"
 
 #include "av1/common/av1_common_int.h"
 
 #include "av1/encoder/encoder.h"
+#include "av1/encoder/av1_ext_ratectrl.h"
 #include "av1/encoder/firstpass.h"
 #include "av1/encoder/gop_structure.h"
 #include "av1/encoder/pass2_strategy.h"
@@ -65,7 +67,7 @@ static inline void set_params_for_leaf_frames(
     GF_GROUP *const gf_group, int *cur_frame_idx, int *frame_ind,
     int *parallel_frame_count, int max_parallel_frames,
     int do_frame_parallel_encode, int *first_frame_index, int *cur_disp_index,
-    int layer_depth, int start, int end) {
+    int layer_depth, int start, int end, const bool scale_max_boost) {
   gf_group->update_type[*frame_ind] = LF_UPDATE;
   gf_group->arf_src_offset[*frame_ind] = 0;
   gf_group->cur_frame_idx[*frame_ind] = *cur_frame_idx;
@@ -76,7 +78,7 @@ static inline void set_params_for_leaf_frames(
   gf_group->display_idx[*frame_ind] = (*cur_disp_index);
   gf_group->arf_boost[*frame_ind] =
       av1_calc_arf_boost(twopass, twopass_frame, p_rc, frame_info, start,
-                         end - start, 0, NULL, NULL, 0);
+                         end - start, 0, NULL, NULL, 0, scale_max_boost);
   ++(*cur_disp_index);
 
   // Set the level of parallelism for the LF_UPDATE frame.
@@ -118,7 +120,7 @@ static inline void set_params_for_internal_arfs(
     int *parallel_frame_count, int max_parallel_frames,
     int do_frame_parallel_encode, int *first_frame_index, int depth_thr,
     int *cur_disp_idx, int layer_depth, int arf_src_offset, int offset,
-    int f_frames, int b_frames) {
+    int f_frames, int b_frames, const bool scale_max_boost) {
   gf_group->update_type[*frame_ind] = INTNL_ARF_UPDATE;
   gf_group->arf_src_offset[*frame_ind] = arf_src_offset;
   gf_group->cur_frame_idx[*frame_ind] = *cur_frame_idx;
@@ -129,7 +131,7 @@ static inline void set_params_for_internal_arfs(
       (*cur_disp_idx) + gf_group->arf_src_offset[*frame_ind];
   gf_group->arf_boost[*frame_ind] =
       av1_calc_arf_boost(twopass, twopass_frame, p_rc, frame_info, offset,
-                         f_frames, b_frames, NULL, NULL, 0);
+                         f_frames, b_frames, NULL, NULL, 0, scale_max_boost);
 
   if (do_frame_parallel_encode) {
     if (depth_thr != INT_MAX) {
@@ -177,7 +179,8 @@ static void set_multi_layer_params_for_fp(
     RATE_CONTROL *rc, FRAME_INFO *frame_info, int start, int end,
     int *cur_frame_idx, int *frame_ind, int *parallel_frame_count,
     int max_parallel_frames, int do_frame_parallel_encode,
-    int *first_frame_index, int depth_thr, int *cur_disp_idx, int layer_depth) {
+    int *first_frame_index, int depth_thr, int *cur_disp_idx, int layer_depth,
+    const bool scale_max_boost) {
   const int num_frames_to_process = end - start;
 
   // Either we are at the last level of the pyramid, or we don't have enough
@@ -186,11 +189,11 @@ static void set_multi_layer_params_for_fp(
       num_frames_to_process < 3) {
     // Leaf nodes.
     while (start < end) {
-      set_params_for_leaf_frames(twopass, twopass_frame, p_rc, frame_info,
-                                 gf_group, cur_frame_idx, frame_ind,
-                                 parallel_frame_count, max_parallel_frames,
-                                 do_frame_parallel_encode, first_frame_index,
-                                 cur_disp_idx, layer_depth, start, end);
+      set_params_for_leaf_frames(
+          twopass, twopass_frame, p_rc, frame_info, gf_group, cur_frame_idx,
+          frame_ind, parallel_frame_count, max_parallel_frames,
+          do_frame_parallel_encode, first_frame_index, cur_disp_idx,
+          layer_depth, start, end, scale_max_boost);
       ++start;
     }
   } else {
@@ -202,7 +205,7 @@ static void set_multi_layer_params_for_fp(
         twopass, twopass_frame, p_rc, frame_info, gf_group, cur_frame_idx,
         frame_ind, parallel_frame_count, max_parallel_frames,
         do_frame_parallel_encode, first_frame_index, INT_MAX, cur_disp_idx,
-        layer_depth, arf_src_offset, m, end - m, m - start);
+        layer_depth, arf_src_offset, m, end - m, m - start, scale_max_boost);
 
     // If encode reordering is enabled, configure the multi-layers accordingly
     // and return. For e.g., the encode order for gf-interval 16 after
@@ -224,7 +227,7 @@ static void set_multi_layer_params_for_fp(
             frame_ind, parallel_frame_count, max_parallel_frames,
             do_frame_parallel_encode, first_frame_index, depth_thr,
             cur_disp_idx, layer_depth + 1, arf_src_offsets[i], offset[i],
-            f_frames[i], b_frames[i]);
+            f_frames[i], b_frames[i], scale_max_boost);
       }
 
       // Initialize the start and end indices to configure LF_UPDATE frames.
@@ -240,7 +243,8 @@ static void set_multi_layer_params_for_fp(
             twopass, twopass_frame, gf_group, p_rc, rc, frame_info,
             start_idx[i], end_idx[i], cur_frame_idx, frame_ind,
             parallel_frame_count, max_parallel_frames, do_frame_parallel_encode,
-            first_frame_index, depth_thr, cur_disp_idx, layer_depth + 2);
+            first_frame_index, depth_thr, cur_disp_idx, layer_depth + 2,
+            scale_max_boost);
         if (layer_depth_for_intnl_overlay[i] != INVALID_IDX)
           set_params_for_intnl_overlay_frames(
               gf_group, cur_frame_idx, frame_ind, first_frame_index,
@@ -254,7 +258,7 @@ static void set_multi_layer_params_for_fp(
         twopass, twopass_frame, gf_group, p_rc, rc, frame_info, start, m,
         cur_frame_idx, frame_ind, parallel_frame_count, max_parallel_frames,
         do_frame_parallel_encode, first_frame_index, depth_thr, cur_disp_idx,
-        layer_depth + 1);
+        layer_depth + 1, scale_max_boost);
 
     // Overlay for internal ARF.
     set_params_for_intnl_overlay_frames(gf_group, cur_frame_idx, frame_ind,
@@ -266,7 +270,7 @@ static void set_multi_layer_params_for_fp(
         twopass, twopass_frame, gf_group, p_rc, rc, frame_info, m + 1, end,
         cur_frame_idx, frame_ind, parallel_frame_count, max_parallel_frames,
         do_frame_parallel_encode, first_frame_index, depth_thr, cur_disp_idx,
-        layer_depth + 1);
+        layer_depth + 1, scale_max_boost);
   }
 }
 
@@ -379,7 +383,7 @@ static inline void set_multi_layer_params_for_gf14(
     int *cur_frame_idx, int *frame_ind, int *count_arf_frames,
     int *doh_gf_index_map, int *parallel_frame_count, int *first_frame_index,
     int *cur_disp_index, int gf_interval, int layer_depth,
-    int max_parallel_frames) {
+    int max_parallel_frames, const bool scale_max_boost) {
   assert(layer_depth == 2);
   assert(gf_group->max_layer_depth_allowed >= 4);
   int layer, node_start, node_end = 0;
@@ -416,7 +420,7 @@ static inline void set_multi_layer_params_for_gf14(
       set_params_for_leaf_frames(
           twopass, twopass_frame, p_rc, frame_info, gf_group, cur_frame_idx,
           frame_ind, parallel_frame_count, max_parallel_frames, 1,
-          first_frame_index, cur_disp_index, layer, 0, 0);
+          first_frame_index, cur_disp_index, layer, 0, 0, scale_max_boost);
     } else {
       // In order to obtain the layer depths of INTNL_OVERLAY_UPDATE frames, get
       // the gf index of corresponding INTNL_ARF_UPDATE frames.
@@ -436,7 +440,8 @@ static void set_multi_layer_params(
     RATE_CONTROL *rc, FRAME_INFO *frame_info, int start, int end,
     int *cur_frame_idx, int *frame_ind, int *parallel_frame_count,
     int max_parallel_frames, int do_frame_parallel_encode,
-    int *first_frame_index, int *cur_disp_idx, int layer_depth) {
+    int *first_frame_index, int *cur_disp_idx, int layer_depth,
+    const bool scale_max_boost) {
   const int num_frames_to_process = end - start;
 
   // Either we are at the last level of the pyramid, or we don't have enough
@@ -452,7 +457,7 @@ static void set_multi_layer_params(
       gf_group->layer_depth[*frame_ind] = MAX_ARF_LAYERS;
       gf_group->arf_boost[*frame_ind] =
           av1_calc_arf_boost(twopass, twopass_frame, p_rc, frame_info, start,
-                             end - start, 0, NULL, NULL, 0);
+                             end - start, 0, NULL, NULL, 0, scale_max_boost);
       gf_group->frame_type[*frame_ind] = INTER_FRAME;
       gf_group->refbuf_state[*frame_ind] = REFBUF_UPDATE;
       gf_group->max_layer_depth =
@@ -498,7 +503,7 @@ static void set_multi_layer_params(
     // Get the boost factor for intermediate ARF frames.
     gf_group->arf_boost[*frame_ind] =
         av1_calc_arf_boost(twopass, twopass_frame, p_rc, frame_info, m, end - m,
-                           m - start, NULL, NULL, 0);
+                           m - start, NULL, NULL, 0, scale_max_boost);
     ++(*frame_ind);
 
     // Frames displayed before this internal ARF.
@@ -506,7 +511,7 @@ static void set_multi_layer_params(
                            frame_info, start, m, cur_frame_idx, frame_ind,
                            parallel_frame_count, max_parallel_frames,
                            do_frame_parallel_encode, first_frame_index,
-                           cur_disp_idx, layer_depth + 1);
+                           cur_disp_idx, layer_depth + 1, scale_max_boost);
 
     // Overlay for internal ARF.
     gf_group->update_type[*frame_ind] = INTNL_OVERLAY_UPDATE;
@@ -528,7 +533,7 @@ static void set_multi_layer_params(
                            frame_info, m + 1, end, cur_frame_idx, frame_ind,
                            parallel_frame_count, max_parallel_frames,
                            do_frame_parallel_encode, first_frame_index,
-                           cur_disp_idx, layer_depth + 1);
+                           cur_disp_idx, layer_depth + 1, scale_max_boost);
   }
 }
 
@@ -665,6 +670,8 @@ static int construct_multi_layer_gf_structure(
                                   gf_group->max_layer_depth_allowed >= 4);
 
   int first_frame_index = cur_frame_index;
+  const bool scale_max_boost = (cpi->oxcf.mode != REALTIME);
+
   if (do_frame_parallel_encode) {
     // construct_multi_layer_gf_structure() takes the input parameter
     // 'gf_interval' as p_rc->baseline_gf_interval - 1 . Below code computes the
@@ -708,7 +715,7 @@ static int construct_multi_layer_gf_structure(
           arf_frame_stats, &cur_frame_index, &frame_index, &count_arf_frames,
           doh_gf_index_map, &parallel_frame_count, &first_frame_index,
           &cur_disp_index, actual_gf_length, use_altref + 1,
-          cpi->ppi->num_fp_contexts);
+          cpi->ppi->num_fp_contexts, scale_max_boost);
 
       // Set gf_group->skip_frame_refresh.
       for (int i = 0; i < actual_gf_length; i++) {
@@ -736,7 +743,7 @@ static int construct_multi_layer_gf_structure(
           cur_frame_index, gf_interval, &cur_frame_index, &frame_index,
           &parallel_frame_count, cpi->ppi->num_fp_contexts,
           do_frame_parallel_encode, &first_frame_index, depth_thr,
-          &cur_disp_index, use_altref + 1);
+          &cur_disp_index, use_altref + 1, scale_max_boost);
     }
     is_multi_layer_configured = 1;
   }
@@ -748,7 +755,7 @@ static int construct_multi_layer_gf_structure(
                            &cur_frame_index, &frame_index,
                            &parallel_frame_count, cpi->ppi->num_fp_contexts,
                            do_frame_parallel_encode, &first_frame_index,
-                           &cur_disp_index, use_altref + 1);
+                           &cur_disp_index, use_altref + 1, scale_max_boost);
 
   if (use_altref) {
     gf_group->update_type[frame_index] = OVERLAY_UPDATE;
@@ -839,7 +846,54 @@ static void set_ld_layer_depth(GF_GROUP *gf_group, int gop_length) {
   gf_group->max_layer_depth = AOMMIN(log_gop_length, MAX_ARF_LAYERS);
 }
 
-void av1_gop_setup_structure(AV1_COMP *cpi) {
+static void construct_gop_structure_from_rc(
+    GF_GROUP *gf_group, aom_rc_gop_decision_t *rc_gop_decision) {
+  gf_group->size = rc_gop_decision->gop_frame_count;
+  for (int frame_index = 0; frame_index < gf_group->size; ++frame_index) {
+    aom_rc_gop_frame_t *gop_frame_rc =
+        &rc_gop_decision->gop_frame_list[frame_index];
+    gf_group->update_type[frame_index] = gop_frame_rc->update_type;
+    gf_group->layer_depth[frame_index] = gop_frame_rc->layer_depth;
+    gf_group->update_ref_idx[frame_index] = gop_frame_rc->update_ref_idx;
+    // `display_idx` means differently in libaom and RC.
+    // - in libaom: it is display order index in the GOP, equivalent to
+    //              `order_idx` in RC
+    // - in RC: it is the number of display frames precedeing this frame, which
+    //          is equivalent to `cur_frame_idx` in libaom.
+    gf_group->display_idx[frame_index] = gop_frame_rc->order_idx;
+    gf_group->cur_frame_idx[frame_index] = gop_frame_rc->display_idx;
+    switch (gf_group->update_type[frame_index]) {
+      case LF_UPDATE:
+      case INTNL_OVERLAY_UPDATE:
+        gf_group->arf_src_offset[frame_index] = 0;
+        break;
+      case ARF_UPDATE:
+      case INTNL_ARF_UPDATE:
+        gf_group->arf_src_offset[frame_index] =
+            gop_frame_rc->order_idx - gop_frame_rc->display_idx;
+        break;
+      default: gf_group->arf_src_offset[frame_index] = 0;
+    }
+    gf_group->frame_type[frame_index] =
+        gop_frame_rc->is_key_frame ? KEY_FRAME : INTER_FRAME;
+    gf_group->refbuf_state[frame_index] =
+        gop_frame_rc->is_key_frame ? REFBUF_RESET : REFBUF_UPDATE;
+    // Always override the ref frame map from external RC.
+    gf_group->use_ext_ref_frame_map[frame_index] = 1;
+    for (int i = 0; i < REF_FRAMES; ++i) {
+      gf_group->ref_frame_list[frame_index][i] = INVALID_IDX;
+    }
+    for (int i = 0; i < AOM_RC_MAX_REF_FRAMES; ++i) {
+      int ref_name = gop_frame_rc->ref_frame_list.name[i];
+      int buf_idx = gop_frame_rc->ref_frame_list.index[i];
+      if (ref_name >= LAST_FRAME && ref_name <= ALTREF_FRAME) {
+        gf_group->ref_frame_list[frame_index][ref_name] = (int8_t)buf_idx;
+      }
+    }
+  }
+}
+
+void av1_gop_setup_structure(AV1_COMP *cpi, const int is_final_pass) {
   RATE_CONTROL *const rc = &cpi->rc;
   PRIMARY_RATE_CONTROL *const p_rc = &cpi->ppi->p_rc;
   GF_GROUP *const gf_group = &cpi->ppi->gf_group;
@@ -848,26 +902,45 @@ void av1_gop_setup_structure(AV1_COMP *cpi) {
   const int key_frame = rc->frames_since_key == 0;
   FRAME_UPDATE_TYPE first_frame_update_type = ARF_UPDATE;
 
-  if (key_frame) {
-    first_frame_update_type = KF_UPDATE;
-    if (cpi->oxcf.kf_max_pyr_height != -1) {
-      gf_group->max_layer_depth_allowed = AOMMIN(
-          cpi->oxcf.kf_max_pyr_height, gf_group->max_layer_depth_allowed);
+  // define_gf_group() is called twice in av1_set_second_pass_params() with
+  // `is_final_pass` being 0 and 1 separately. But only one GOP can be advanced
+  // with the external RC. That is only done when `is_final_pass` is true.
+  if (cpi->ext_ratectrl.ready &&
+      (cpi->ext_ratectrl.funcs.rc_type & AOM_RC_GOP) != 0 &&
+      cpi->ext_ratectrl.funcs.get_gop_decision != NULL && is_final_pass) {
+    aom_rc_gop_decision_t gop_decision;
+    aom_codec_err_t codec_status =
+        av1_extrc_get_gop_decision(&cpi->ext_ratectrl, &gop_decision);
+    if (codec_status != AOM_CODEC_OK) {
+      aom_internal_error(cpi->common.error, codec_status,
+                         "av1_extrc_get_gop_decision() failed");
     }
-  } else if (!cpi->ppi->gf_state.arf_gf_boost_lst) {
-    first_frame_update_type = GF_UPDATE;
+    construct_gop_structure_from_rc(gf_group, &gop_decision);
+    if (gop_decision.gop_frame_list[0].is_key_frame) {
+      rc->frames_since_key = 0;
+    }
+  } else {
+    if (key_frame) {
+      first_frame_update_type = KF_UPDATE;
+      if (cpi->oxcf.kf_max_pyr_height != -1) {
+        gf_group->max_layer_depth_allowed = AOMMIN(
+            cpi->oxcf.kf_max_pyr_height, gf_group->max_layer_depth_allowed);
+      }
+    } else if (!cpi->ppi->gf_state.arf_gf_boost_lst) {
+      first_frame_update_type = GF_UPDATE;
+    }
+
+    if (cpi->oxcf.algo_cfg.sharpness == 3)
+      gf_group->max_layer_depth_allowed =
+          AOMMIN(gf_group->max_layer_depth_allowed, 2);
+
+    gf_group->size = construct_multi_layer_gf_structure(
+        cpi, twopass, gf_group, rc, frame_info, p_rc->baseline_gf_interval,
+        first_frame_update_type);
+
+    if (gf_group->max_layer_depth_allowed == 0)
+      set_ld_layer_depth(gf_group, p_rc->baseline_gf_interval);
   }
-
-  if (cpi->oxcf.algo_cfg.sharpness == 3)
-    gf_group->max_layer_depth_allowed =
-        AOMMIN(gf_group->max_layer_depth_allowed, 2);
-
-  gf_group->size = construct_multi_layer_gf_structure(
-      cpi, twopass, gf_group, rc, frame_info, p_rc->baseline_gf_interval,
-      first_frame_update_type);
-
-  if (gf_group->max_layer_depth_allowed == 0)
-    set_ld_layer_depth(gf_group, p_rc->baseline_gf_interval);
 }
 
 int av1_gop_check_forward_keyframe(const GF_GROUP *gf_group,

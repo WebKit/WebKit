@@ -14,11 +14,11 @@
 #include <optional>
 #include <ostream>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video_codecs/scalability_mode.h"
@@ -115,14 +115,12 @@ TEST_P(ScalabilityStructureTest,
       controller->StreamConfig();
   EXPECT_EQ(config.num_spatial_layers, static_config->num_spatial_layers);
   EXPECT_EQ(config.num_temporal_layers, static_config->num_temporal_layers);
-  EXPECT_THAT(
-      MakeArrayView(config.scaling_factor_num, config.num_spatial_layers),
-      ElementsAreArray(static_config->scaling_factor_num,
-                       static_config->num_spatial_layers));
-  EXPECT_THAT(
-      MakeArrayView(config.scaling_factor_den, config.num_spatial_layers),
-      ElementsAreArray(static_config->scaling_factor_den,
-                       static_config->num_spatial_layers));
+  EXPECT_THAT(std::span(config.scaling_factor_num, config.num_spatial_layers),
+              ElementsAreArray(static_config->scaling_factor_num,
+                               static_config->num_spatial_layers));
+  EXPECT_THAT(std::span(config.scaling_factor_den, config.num_spatial_layers),
+              ElementsAreArray(static_config->scaling_factor_den,
+                               static_config->num_spatial_layers));
 }
 
 TEST_P(ScalabilityStructureTest,

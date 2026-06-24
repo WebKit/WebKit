@@ -26,6 +26,7 @@
 #include "api/data_channel_interface.h"
 #include "api/environment/environment.h"
 #include "api/media_types.h"
+#include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats_collector_callback.h"
@@ -34,6 +35,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/timestamp.h"
 #include "call/call.h"
+#include "media/base/media_channel.h"
 #include "pc/data_channel_utils.h"
 #include "pc/peer_connection_internal.h"
 #include "pc/rtp_receiver.h"
@@ -52,6 +54,7 @@ namespace webrtc {
 
 class RtpSenderInternal;
 class RtpReceiverInternal;
+class ScopedOperationsBatcher;
 
 // Structure for tracking stats about each RtpTransceiver managed by the
 // PeerConnection. This can either by a Plan B style or Unified Plan style
@@ -61,17 +64,29 @@ class RtpReceiverInternal;
 // If a BaseChannel is not available (e.g., if signaling has not started),
 // then `mid` and `transport_name` will be null.
 struct RtpTransceiverStatsInfo {
-  const scoped_refptr<RtpTransceiver> transceiver;
   const MediaType media_type;
   const std::optional<std::string> mid;
   std::optional<std::string> transport_name;
   std::vector<TrackMediaInfoMap::RtpSenderSignalInfo> sender_infos;
   std::vector<TrackMediaInfoMap::RtpReceiverSignalInfo> receiver_infos;
-  std::vector<scoped_refptr<RtpReceiverInternal>> receivers;
   std::unique_ptr<TrackMediaInfoMap> track_media_info_map;
   const std::optional<RtpTransceiverDirection> current_direction;
   bool has_receivers = false;
   const bool has_channel;
+};
+
+// References to objects used on the signaling and worker threads for populating
+// RtpTransceiverStatsInfo but must always be released on the signaling thread
+struct TransceiverReferences {
+  scoped_refptr<RtpTransceiver> transceiver;
+  std::vector<scoped_refptr<RtpReceiverInternal>> receivers;
+  absl::AnyInvocable<std::optional<VoiceMediaSendInfo>()> get_send_stats_voice;
+  absl::AnyInvocable<std::optional<VideoMediaSendInfo>()> get_send_stats_video;
+  absl::AnyInvocable<std::optional<VoiceMediaReceiveInfo>()>
+      get_receive_stats_voice;
+  absl::AnyInvocable<std::optional<VideoMediaReceiveInfo>()>
+      get_receive_stats_video;
+  absl::AnyInvocable<RtpParameters(uint32_t ssrc)> get_send_parameters;
 };
 
 // All public methods of the collector are to be called on the signaling thread.
@@ -109,8 +124,8 @@ class RTCStatsCollector {
   // on the worker and network threads before the RTCStatsCollector instance is
   // deleted.
   void CancelPendingRequestAndGetShutdownTasks(
-      std::vector<absl::AnyInvocable<void() &&>>& network_tasks,
-      std::vector<absl::AnyInvocable<void() &&>>& worker_tasks);
+      ScopedOperationsBatcher& network_tasks,
+      ScopedOperationsBatcher& worker_tasks);
 
   // Called by the PeerConnection instance when data channel states change.
   void OnSctpDataChannelStateChanged(int channel_id,
@@ -134,6 +149,7 @@ class RTCStatsCollector {
   virtual void ProducePartialResultsOnSignalingThreadImpl(
       Timestamp timestamp,
       const std::vector<RtpTransceiverStatsInfo>& transceiver_stats_infos,
+      const std::vector<TransceiverReferences>& transceiver_references,
       const std::optional<AudioDeviceModule::Stats>& audio_device_stats,
       RTCStatsReport* partial_report);
 
@@ -153,6 +169,11 @@ class RTCStatsCollector {
     std::optional<AudioDeviceModule::Stats> audio_device_stats;
   };
 
+  struct WorkerThreadResult {
+    StatsGatheringResults results;
+    std::vector<std::vector<RtpParameters>> sender_parameters;
+    std::vector<TransceiverReferences> transceiver_references;
+  };
   struct CollectionContext;
   class RequestInfo {
    public:
@@ -221,6 +242,7 @@ class RTCStatsCollector {
   void ProduceMediaSourceStats_s(
       Timestamp timestamp,
       const std::vector<RtpTransceiverStatsInfo>& transceiver_stats_infos,
+      const std::vector<TransceiverReferences>& transceiver_references,
       RTCStatsReport* report) const;
   // Produces `RTCPeerConnectionStats`.
   void ProducePeerConnectionStats_s(Timestamp timestamp,
@@ -267,12 +289,13 @@ class RTCStatsCollector {
   // Prepares the transceiver stats infos and call stats.
   // Returns a callback that should be executed on the worker thread to populate
   // the stats.
-  absl::AnyInvocable<StatsGatheringResults()>
+  absl::AnyInvocable<WorkerThreadResult()>
   PrepareTransceiverStatsInfosAndCallStats_s_w();
 
   // Stats gathering on a particular thread.
   void ProducePartialResultsOnSignalingThread(
       const std::vector<RtpTransceiverStatsInfo>& transceiver_stats_infos,
+      const std::vector<TransceiverReferences>& transceiver_references,
       const std::optional<AudioDeviceModule::Stats>& audio_device_stats);
   void ProducePartialResultsOnNetworkThread(
       scoped_refptr<PendingTaskSafetyFlag> signaling_safety,

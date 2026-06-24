@@ -57,6 +57,11 @@
     }).autorelease();
 }
 
+- (NSURL *)_topDocumentURLForTesting
+{
+    return _node->topDocumentURLForTesting().createNSURL().autorelease();
+}
+
 - (API::Object&)_apiObject
 {
     return *_node;

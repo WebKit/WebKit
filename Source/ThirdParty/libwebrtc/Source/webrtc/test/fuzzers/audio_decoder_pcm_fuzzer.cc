@@ -14,32 +14,29 @@
 
 #include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
 #include "test/fuzzers/audio_decoder_fuzzer.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  if (size > 10000 || size < 2) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  if (fuzz_data.size() > 10'000 || fuzz_data.size() < 2) {
     return;
   }
 
-  const size_t num_channels = data[0] % 16 + 1;
+  const size_t num_channels = fuzz_data.Read<uint8_t>() % 16 + 1;
 
   std::unique_ptr<AudioDecoder> dec;
-  if (data[1] % 2) {
+  if (fuzz_data.Read<uint8_t>() % 2) {
     dec = std::make_unique<AudioDecoderPcmU>(num_channels);
   } else {
     dec = std::make_unique<AudioDecoderPcmA>(num_channels);
   }
-
-  // Two first bytes of the data are used. Move forward.
-  data += 2;
-  size -= 2;
 
   // Allocate a maximum output size of 100 ms.
   const size_t allocated_ouput_size_samples =
       dec->SampleRateHz() * num_channels / 10;
   std::unique_ptr<int16_t[]> output =
       std::make_unique<int16_t[]>(allocated_ouput_size_samples);
-  FuzzAudioDecoder(DecoderFunctionType::kNormalDecode, data, size, dec.get(),
+  FuzzAudioDecoder(DecoderFunctionType::kNormalDecode, fuzz_data, dec.get(),
                    dec->SampleRateHz(),
                    allocated_ouput_size_samples * sizeof(int16_t),
                    output.get());

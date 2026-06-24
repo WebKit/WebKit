@@ -114,8 +114,6 @@ private:
     CallbackMap m_callbackMap;
 
     using PromiseVector = Vector<Ref<DeferredPromise>>;
-    PromiseVector m_availabilityPromises;
-    PromiseVector m_cancelAvailabilityPromises;
     PromiseVector m_promptPromises;
     State m_state { State::Disconnected };
     bool m_available { false };

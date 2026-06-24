@@ -13,20 +13,6 @@ rtc_library("cascaded_biquad_filter") {
     "cascaded_biquad_filter.cc",
     "cascaded_biquad_filter.h",
   ]
-  deps = [
-    "../../../api:array_view",
-    "../../../rtc_base:checks",
-  ]
-}
-
-rtc_library("legacy_delay_estimator") {
-  sources = [
-    "delay_estimator.cc",
-    "delay_estimator.h",
-    "delay_estimator_internal.h",
-    "delay_estimator_wrapper.cc",
-    "delay_estimator_wrapper.h",
-  ]
   deps = [ "../../../rtc_base:checks" ]
 }
 
@@ -37,7 +23,6 @@ rtc_library("pffft_wrapper") {
     "pffft_wrapper.h",
   ]
   deps = [
-    "../../../api:array_view",
     "../../../rtc_base:checks",
     "//third_party/pffft",
   ]
@@ -50,21 +35,8 @@ if (rtc_include_tests) {
     sources = [ "cascaded_biquad_filter_unittest.cc" ]
     deps = [
       ":cascaded_biquad_filter",
-      "../../../rtc_base:checks",
       "../../../test:test_support",
-      "//api:array_view",
       "//rtc_base:checks",
-      "//testing/gtest",
-    ]
-  }
-
-  rtc_library("legacy_delay_estimator_unittest") {
-    testonly = true
-
-    sources = [ "delay_estimator_unittest.cc" ]
-    deps = [
-      ":legacy_delay_estimator",
-      "../../../test:test_support",
       "//testing/gtest",
     ]
   }
@@ -74,7 +46,6 @@ if (rtc_include_tests) {
     sources = [ "pffft_wrapper_unittest.cc" ]
     deps = [
       ":pffft_wrapper",
-      "../../../api:array_view",
       "../../../test:test_support",
       "//testing/gtest",
       "//third_party/pffft",

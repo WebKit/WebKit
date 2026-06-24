@@ -15,5 +15,4 @@ layer at (8,8) size 302x302 clip at (9,9) size 300x300
   RenderSVGRoot {svg} at (0,0) size 302x302 [border: (1px solid #000000)]
 layer at (9,9) size 300x300
   RenderSVGViewportContainer at (1,1) size 300x300
-layer at (259,259) size 100x100 backgroundClip at (9,9) size 300x300 clip at (9,9) size 300x300
-  RenderSVGEllipse {circle} at (250,250) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [cx=300.00] [cy=300.00] [r=50.00]
+    RenderSVGEllipse {circle} at (250,250) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [cx=300.00] [cy=300.00] [r=50.00]

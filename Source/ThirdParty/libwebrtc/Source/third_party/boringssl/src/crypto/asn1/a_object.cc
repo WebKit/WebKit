@@ -24,10 +24,14 @@
 
 #include "../bytestring/internal.h"
 #include "../internal.h"
+#include "../mem_internal.h"
 #include "internal.h"
 
 
-int asn1_marshal_object(CBB *out, const ASN1_OBJECT *in, CBS_ASN1_TAG tag) {
+using namespace bssl;
+
+int bssl::asn1_marshal_object(CBB *out, const ASN1_OBJECT *in,
+                              CBS_ASN1_TAG tag) {
   if (in == nullptr) {
     OPENSSL_PUT_ERROR(ASN1, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
@@ -43,7 +47,7 @@ int asn1_marshal_object(CBB *out, const ASN1_OBJECT *in, CBS_ASN1_TAG tag) {
 }
 
 int i2d_ASN1_OBJECT(const ASN1_OBJECT *in, unsigned char **outp) {
-  return bssl::I2DFromCBB(
+  return I2DFromCBB(
       /*initial_capacity=*/static_cast<size_t>(in->length) + 2, outp,
       [&](CBB *cbb) -> bool {
         return asn1_marshal_object(cbb, in, /*tag=*/0);
@@ -91,7 +95,7 @@ int i2a_ASN1_OBJECT(BIO *bp, const ASN1_OBJECT *a) {
 
 ASN1_OBJECT *d2i_ASN1_OBJECT(ASN1_OBJECT **out, const unsigned char **inp,
                              long len) {
-  return bssl::D2IFromCBS(out, inp, len, [](CBS *cbs) -> ASN1_OBJECT * {
+  return D2IFromCBS(out, inp, len, [](CBS *cbs) -> ASN1_OBJECT * {
     CBS child;
     if (!CBS_get_asn1(cbs, &child, CBS_ASN1_OBJECT)) {
       OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
@@ -104,7 +108,7 @@ ASN1_OBJECT *d2i_ASN1_OBJECT(ASN1_OBJECT **out, const unsigned char **inp,
 
 ASN1_OBJECT *c2i_ASN1_OBJECT(ASN1_OBJECT **out, const unsigned char **inp,
                              long len) {
-  return bssl::D2IFromCBS(out, inp, len, [](CBS *cbs) -> ASN1_OBJECT * {
+  return D2IFromCBS(out, inp, len, [](CBS *cbs) -> ASN1_OBJECT * {
     if (!CBS_is_valid_asn1_oid(cbs)) {
       OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_OBJECT_ENCODING);
       return nullptr;
@@ -120,7 +124,7 @@ ASN1_OBJECT *c2i_ASN1_OBJECT(ASN1_OBJECT **out, const unsigned char **inp,
   });
 }
 
-ASN1_OBJECT *asn1_parse_object(CBS *cbs, CBS_ASN1_TAG tag) {
+ASN1_OBJECT *bssl::asn1_parse_object(CBS *cbs, CBS_ASN1_TAG tag) {
   tag = tag == 0 ? CBS_ASN1_OBJECT : tag;
   CBS child;
   if (!CBS_get_asn1(cbs, &child, tag)) {
@@ -135,10 +139,8 @@ ASN1_OBJECT *asn1_parse_object(CBS *cbs, CBS_ASN1_TAG tag) {
                             /*sn=*/nullptr, /*ln=*/nullptr);
 }
 
-ASN1_OBJECT *ASN1_OBJECT_new(void) {
-  ASN1_OBJECT *ret;
-
-  ret = (ASN1_OBJECT *)OPENSSL_malloc(sizeof(ASN1_OBJECT));
+ASN1_OBJECT *bssl::ASN1_OBJECT_new() {
+  ASN1_OBJECT *ret = New<ASN1_OBJECT>();
   if (ret == nullptr) {
     return nullptr;
   }
@@ -156,17 +158,17 @@ void ASN1_OBJECT_free(ASN1_OBJECT *a) {
     return;
   }
   if (a->flags & ASN1_OBJECT_FLAG_DYNAMIC_STRINGS) {
-    OPENSSL_free((void *)a->sn);
-    OPENSSL_free((void *)a->ln);
+    OPENSSL_free(const_cast<char *>(a->sn));
+    OPENSSL_free(const_cast<char *>(a->ln));
     a->sn = a->ln = nullptr;
   }
   if (a->flags & ASN1_OBJECT_FLAG_DYNAMIC_DATA) {
-    OPENSSL_free((void *)a->data);
+    OPENSSL_free(const_cast<uint8_t *>(a->data));
     a->data = nullptr;
     a->length = 0;
   }
   if (a->flags & ASN1_OBJECT_FLAG_DYNAMIC) {
-    OPENSSL_free(a);
+    Delete(a);
   }
 }
 

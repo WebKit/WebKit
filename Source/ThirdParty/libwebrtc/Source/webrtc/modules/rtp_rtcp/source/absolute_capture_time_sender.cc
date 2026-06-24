@@ -13,8 +13,8 @@
 #include <algorithm>
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/absolute_capture_time_interpolator.h"
@@ -32,7 +32,7 @@ AbsoluteCaptureTimeSender::AbsoluteCaptureTimeSender(Clock* clock)
     : clock_(clock) {}
 
 uint32_t AbsoluteCaptureTimeSender::GetSource(uint32_t ssrc,
-                                              ArrayView<const uint32_t> csrcs) {
+                                              std::span<const uint32_t> csrcs) {
   return AbsoluteCaptureTimeInterpolator::GetSource(ssrc, csrcs);
 }
 

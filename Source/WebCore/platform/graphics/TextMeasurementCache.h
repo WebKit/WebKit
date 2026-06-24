@@ -182,6 +182,8 @@ public:
         m_map.clear();
     }
 
+    bool isEmpty() const { return m_singleCharMap.isEmpty() && m_map.isEmpty(); }
+
 private:
 
     CachedType* addSlowCase(StringView text, CachedType&& entry)

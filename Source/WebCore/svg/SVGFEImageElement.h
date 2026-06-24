@@ -61,6 +61,7 @@ private:
 
     std::tuple<RefPtr<ImageBuffer>, FloatRect> imageBufferForEffect(const GraphicsContext& destinationContext) const;
 
+    bool taintsOrigin() const final { return renderingTaintsOrigin(); }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     void clearResourceReferences();

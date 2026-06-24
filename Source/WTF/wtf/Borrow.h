@@ -69,7 +69,7 @@ class Borrow {
     WTF_MAKE_NONCOPYABLE(Borrow);
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    Borrow(T& ref)
+    Borrow(T& ref LIFETIME_BOUND)
         : m_ref(ref)
         , m_previous(m_ref.setIsBorrowed(true))
     {
@@ -126,7 +126,7 @@ IGNORE_WARNINGS_BEGIN("dangling")
 #endif
 
 template<typename T>
-inline Borrow<T> borrow(T& ref)
+inline Borrow<T> borrow(T& ref LIFETIME_BOUND)
 {
     return Borrow<T>(ref);
 }

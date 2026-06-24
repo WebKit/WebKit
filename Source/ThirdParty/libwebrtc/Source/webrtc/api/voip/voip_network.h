@@ -12,8 +12,8 @@
 #define API_VOIP_VOIP_NETWORK_H_
 
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/voip/voip_base.h"
 
 namespace webrtc {
@@ -28,7 +28,7 @@ class VoipNetwork {
   //  kOk - received RTP packet is processed.
   //  kInvalidArgument - `channel_id` is invalid.
   virtual VoipResult ReceivedRTPPacket(ChannelId channel_id,
-                                       ArrayView<const uint8_t> rtp_packet) = 0;
+                                       std::span<const uint8_t> rtp_packet) = 0;
 
   // The data received from the network including RTCP header is passed here.
   // Returns following VoipResult;
@@ -36,7 +36,7 @@ class VoipNetwork {
   //  kInvalidArgument - `channel_id` is invalid.
   virtual VoipResult ReceivedRTCPPacket(
       ChannelId channel_id,
-      ArrayView<const uint8_t> rtcp_packet) = 0;
+      std::span<const uint8_t> rtcp_packet) = 0;
 
  protected:
   virtual ~VoipNetwork() = default;

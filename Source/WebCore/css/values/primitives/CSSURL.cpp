@@ -76,9 +76,9 @@ Ref<CSSValue> CSSValueCreation<URL>::operator()(CSSValuePool&, const URL& value)
     return CSSURLValue::create(value);
 }
 
-Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<URL>::operator()(CSSValuePool& pool, CSSStyleDeclaration& owner, const URL& value)
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<URL>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const URL& value)
 {
-    return DeprecatedCSSOMPrimitiveValue::create(createCSSValue(pool, value), owner);
+    return DeprecatedCSSOMPrimitiveValue::create(value, owner);
 }
 
 // MARK: Operations

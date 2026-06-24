@@ -122,7 +122,7 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
         return;
     }
 
-    m_connection->chainOperation(WTF::move(promise), [this, weakThis = WeakPtr { *this }, withTrack = WTF::move(withTrack)](Ref<DeferredPromise>&& promise) mutable {
+    protect(m_connection)->chainOperation(WTF::move(promise), [this, weakThis = WeakPtr { *this }, withTrack = WTF::move(withTrack)](Ref<DeferredPromise>&& promise) mutable {
         if (!weakThis)
             return;
         if (isStopped()) {
@@ -206,7 +206,7 @@ void RTCRtpSender::getStats(Ref<DeferredPromise>&& promise)
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
-    m_connection->getStats(*this, WTF::move(promise));
+    protect(m_connection)->getStats(*this, WTF::move(promise));
 }
 
 bool RTCRtpSender::isCreatedBy(const RTCPeerConnection& connection) const

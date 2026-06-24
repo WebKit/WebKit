@@ -14,9 +14,9 @@
 #include <stdint.h>
 
 #include <memory>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/media_stream_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_frame.h"
@@ -94,7 +94,7 @@ class GtkMainWnd : public MainWindow {
     // VideoSinkInterface implementation
     void OnFrame(const webrtc::VideoFrame& frame) override;
 
-    webrtc::ArrayView<const uint8_t> image() const { return image_; }
+    std::span<const uint8_t> image() const { return image_; }
 
     int width() const { return width_; }
 

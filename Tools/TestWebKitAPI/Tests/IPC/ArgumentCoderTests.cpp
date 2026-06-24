@@ -28,9 +28,13 @@
 
 #include "ArgumentCoders.h"
 #include "Decoder.h"
+#include "EditingRange.h"
 #include "Encoder.h"
+#include "GeneratedSerializers.h"
 #include "StreamConnectionEncoder.h"
 #include "Helpers/Test.h"
+#include <WebCore/ShareableResource.h>
+#include <limits>
 #include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
@@ -719,5 +723,58 @@ TYPED_TEST_P(ArgumentCoderVectorTest, VectorTooBig)
 REGISTER_TYPED_TEST_SUITE_P(ArgumentCoderVectorTest,
     VectorTooBig);
 INSTANTIATE_TYPED_TEST_SUITE_P(ArgumentCoderTest, ArgumentCoderVectorTest, EncoderTypes, EncoderTypeNames);
+
+TEST(ArgumentCoderEditingRange, OverflowingRangeIsRejectedNotCrashed)
+{
+    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
+    encoder << WebKit::EditingRange { std::numeric_limits<uint64_t>::max(), 1 };
+
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
+    ASSERT_TRUE(decoder);
+
+    auto editingRange = decoder->decode<WebKit::EditingRange>();
+    EXPECT_FALSE(editingRange.has_value());
+    EXPECT_FALSE(decoder->isValid());
+}
+
+TEST(EditingRangeFirstLineClamp, NeverProducesOverflowingRange)
+{
+    constexpr auto max = std::numeric_limits<uint64_t>::max();
+
+    EXPECT_TRUE(WebKit::EditingRange::clampedFirstLineRange({ 0, 5 }, { max, 0 }).isValid());
+    EXPECT_TRUE(WebKit::EditingRange::clampedFirstLineRange({ 100, 10 }, { max - 2, 0 }).isValid());
+    EXPECT_TRUE(WebKit::EditingRange::clampedFirstLineRange({ max, max }, { max, max }).isValid());
+    EXPECT_TRUE(WebKit::EditingRange::clampedFirstLineRange({ max - 3, 10 }, { 5, max }).isValid());
+
+    auto unchanged = WebKit::EditingRange::clampedFirstLineRange({ 5, 3 }, { 2, 20 });
+    EXPECT_EQ(unchanged.location, 5u);
+    EXPECT_EQ(unchanged.length, 3u);
+
+    auto trimmed = WebKit::EditingRange::clampedFirstLineRange({ 5, 100 }, { 2, 10 });
+    EXPECT_TRUE(trimmed.isValid());
+    EXPECT_EQ(trimmed.location, 5u);
+    EXPECT_EQ(trimmed.location + trimmed.length, 12u);
+}
+
+#if ENABLE(SHAREABLE_RESOURCE)
+TEST(ArgumentCoderShareableResourceHandle, OverflowingOffsetAndSizeIsRejectedNotCrashed)
+{
+    auto sharedMemory = WebCore::SharedMemory::allocate(4096);
+    ASSERT_TRUE(sharedMemory);
+    auto memoryHandle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
+    ASSERT_TRUE(memoryHandle);
+
+    WebCore::ShareableResourceHandle handle { WTF::move(*memoryHandle), std::numeric_limits<unsigned>::max(), 1 };
+
+    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
+    encoder << WTF::move(handle);
+
+    auto decoder = IPC::Decoder::create(encoder.span(), encoder.releaseAttachments());
+    ASSERT_TRUE(decoder);
+
+    auto result = decoder->decode<WebCore::ShareableResourceHandle>();
+    EXPECT_FALSE(result.has_value());
+}
+#endif // ENABLE(SHAREABLE_RESOURCE)
 
 } // namespace TestWebKitAPI

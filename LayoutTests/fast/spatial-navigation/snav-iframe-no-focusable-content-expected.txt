@@ -16,4 +16,7 @@ PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 This is to test that an iframe with no focusable content still scrolls

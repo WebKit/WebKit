@@ -173,38 +173,45 @@ void EnhancedSecurityTracking::trackSameSiteNavigation(const API::Navigation& na
     }
 }
 
-static bool shouldExpectHTTPSUpgrade(const URL& requestURL, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress)
+static bool isURLCandidateForEnhancedSecurity(const URL& url)
 {
-    if (!requestURL.protocolIs("http"_s) || SecurityOrigin::isLocalHostOrLoopbackIPAddress(requestURL.host()))
-        return false;
-
-    bool httpsByDefaultEnabled = (websitePolicies && (websitePolicies->isUpgradeWithAutomaticFallbackEnabled() || websitePolicies->isUpgradeWithUserMediatedFallbackEnabled()))
-        || preferences.httpSByDefaultEnabled();
-
-    if (!httpsByDefaultEnabled || httpFallbackInProgress)
-        return false;
-
-    bool isSameSite = sourceURL.isEmpty() || RegistrableDomain(requestURL) == RegistrableDomain(sourceURL);
-    bool isSameSiteBypassEnabled = isSameSite
-        && ((websitePolicies && websitePolicies->advancedPrivacyProtections().contains(WebCore::AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain))
-            || sourceURL.protocolIs("http"_s));
-
-    return !isSameSiteBypassEnabled;
+    return url.protocolIs("http"_s) && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(url.host());
 }
 
-bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress)
+bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation, bool httpFallbackInProgress)
 {
     if (navigation.isEnhancedSecurityLinkForCurrentSite()) {
+        RELEASE_LOG(EnhancedSecurity, "Enhanced Security enabled due to LinkSecurity");
         enableFor(EnhancedSecurityReason::LinkSecurity, navigation);
         return true;
     }
 
-    auto currentRequestURL = navigation.currentRequest().url();
+    if (navigation.currentRequestIsRedirect()) {
+        auto originalRequestURL = navigation.originalRequest().url();
+        auto currentRequestURL = navigation.currentRequest().url();
 
-    if (currentRequestURL.protocolIs("http"_s)
-        && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(currentRequestURL.host())
-        && !shouldExpectHTTPSUpgrade(currentRequestURL, websitePolicies, preferences, sourceURL, httpFallbackInProgress)) {
-        enableFor(EnhancedSecurityReason::InsecureProvisional, navigation);
+        bool isSameSite = RegistrableDomain { originalRequestURL } == RegistrableDomain { currentRequestURL };
+
+        if (!isSameSite && isURLCandidateForEnhancedSecurity(originalRequestURL)) {
+            RELEASE_LOG(EnhancedSecurity, "Enhanced Security enabled due to cross-site redirect");
+            enableFor(EnhancedSecurityReason::InsecureLoad, navigation);
+            return true;
+        }
+
+        if (isSameSite && currentRequestURL.protocolIs("https"_s)) {
+            LOG(EnhancedSecurity, "Enhanced Security ignoring navigation due to HTTPS upgrade");
+            return false;
+        }
+    }
+
+    if (isURLCandidateForEnhancedSecurity(navigation.currentRequest().url())) {
+        if (httpFallbackInProgress) {
+            RELEASE_LOG(EnhancedSecurity, "Enhanced Security enabled due to insecure response");
+            enableFor(EnhancedSecurityReason::InsecureProvisional, navigation);
+            return true;
+        }
+
+        LOG(EnhancedSecurity, "Enhanced Security decision deferred until response");
         return true;
     }
 
@@ -222,16 +229,22 @@ void EnhancedSecurityTracking::handleBackForwardNavigation(const API::Navigation
         enableFor(reasonForEnhancedSecurity(priorState), navigation);
 }
 
-void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation, bool hasOpenedPage, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress)
+static bool isNavigationExemptFromEnhancedSecurityDueToOpener(const API::Navigation& navigation, bool hasOpenedPage)
 {
-    auto lastNavigationAction = navigation.lastNavigationAction();
+    auto& lastNavigationAction = navigation.lastNavigationAction();
     if (lastNavigationAction && lastNavigationAction->hasOpener)
-        return;
+        return true;
 
     bool isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput() && !navigation.substituteData();
+    return navigation.hasOpenedFrames() && hasOpenedPage && !isRequestFromClientOrUserInput;
+}
 
-    if (navigation.hasOpenedFrames() && hasOpenedPage && !isRequestFromClientOrUserInput)
+void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation, bool hasOpenedPage, bool httpFallbackInProgress)
+{
+    if (isNavigationExemptFromEnhancedSecurityDueToOpener(navigation, hasOpenedPage))
         return;
+
+    auto& lastNavigationAction = navigation.lastNavigationAction();
 
     bool isBackForward = lastNavigationAction && lastNavigationAction->navigationType == NavigationType::BackForward;
     bool isReload = lastNavigationAction && lastNavigationAction->navigationType == NavigationType::Reload;
@@ -242,10 +255,10 @@ void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation
         return;
     }
 
-    if (m_activeState != ActivationState::None && isInitialUIDriven && !isReload)
+    if (isInitialUIDriven && !isReload)
         reset();
 
-    if (m_activeState != ActivationState::Active && enableIfRequired(navigation, websitePolicies, preferences, sourceURL, httpFallbackInProgress))
+    if (m_activeState != ActivationState::Active && enableIfRequired(navigation, httpFallbackInProgress))
         return;
 
     if (m_activeState == ActivationState::Active
@@ -280,6 +293,17 @@ void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation
         else
             enabledSitesMap().set(RegistrableDomain { navigation.currentRequest().url() }, m_activeReason);
     }
+}
+
+bool EnhancedSecurityTracking::shouldEnableForInsecureResponse(const API::Navigation& navigation, bool hasOpenedPage)
+{
+    if (m_activeState == ActivationState::Active)
+        return false;
+
+    if (isNavigationExemptFromEnhancedSecurityDueToOpener(navigation, hasOpenedPage))
+        return false;
+
+    return true;
 }
 
 } // namespace WebKit

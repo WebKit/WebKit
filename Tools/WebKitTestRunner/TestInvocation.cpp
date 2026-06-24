@@ -187,6 +187,7 @@ void TestInvocation::invoke()
     testController.setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
     if (m_options.shouldDumpResourceLoadCallbacks())
         testController.dumpResourceLoadCallbacks();
+    testController.dumpResourceResponseMIMETypes(String::fromUTF8(m_options.resourceResponseMIMETypesToDump().c_str()));
 
     WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(testController.websiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
 
@@ -491,8 +492,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "ProcessWorkQueue")) {
-        if (TestController::singleton().workQueueManager().processWorkQueue())
-            postPageMessage("WorkQueueProcessedCallback");
+        if (TestController::singleton().workQueueManager().processWorkQueue()) {
+            if (m_notifyDoneDeferredForWorkQueue) {
+                m_notifyDoneDeferredForWorkQueue = false;
+                postPageMessage("NotifyDone");
+            } else
+                postPageMessage("WorkQueueProcessedCallback");
+        }
         return;
     }
 
@@ -601,6 +607,9 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
     if (WKStringIsEqualToUTF8CString(messageName, "GetWaitUntilDone"))
         return adoptWK(WKBooleanCreate(m_waitUntilDone || m_notifyDoneMessageSent));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "GetIsWaitingUntilDone"))
+        return adoptWK(WKBooleanCreate(m_waitUntilDone));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetDumpFrameLoadCallbacks")) {
         m_dumpFrameLoadCallbacks = booleanValue(messageBody);
@@ -1464,7 +1473,11 @@ bool TestInvocation::resolveNotifyDone()
     m_waitUntilDone = false;
     if (m_options.siteIsolationEnabled()) {
         m_notifyDoneMessageSent = true;
-        postPageMessage("NotifyDone");
+        // If notifyDone() arrived mid-work-queue, defer it until the queue drains.
+        if (TestController::singleton().useWorkQueue() && !TestController::singleton().workQueueManager().isWorkQueueEmpty())
+            m_notifyDoneDeferredForWorkQueue = true;
+        else
+            postPageMessage("NotifyDone");
         return false;
     }
     return true;

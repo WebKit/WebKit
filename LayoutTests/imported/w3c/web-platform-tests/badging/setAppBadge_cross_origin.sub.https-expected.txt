@@ -1,6 +1,6 @@
 
 
 PASS Test that navigator.setAppBadge is available
-FAIL Test that calling setAppBadge in a cross-origin iframe throws a SecurityError assert_equals: setAppBadge should have rejected with an error expected "error" but got "success"
+PASS Test that calling setAppBadge in a cross-origin iframe throws a SecurityError
 PASS Test that calling setAppBadge in a same-origin iframe succeeds
 

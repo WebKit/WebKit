@@ -53,7 +53,7 @@ class AbstractCommitLogCommand(Command):
     _patch_by_regexp = re.compile(r'^Patch by (?P<name>.+?)\s+<(?P<email>[^<>]+)> on (?P<date>\d{4}-\d{2}-\d{2})$', re.MULTILINE)
     _committer_regexp = re.compile(r'^Author: (?P<name>.*?) <(?P<email>[^>]+)>$', re.MULTILINE)
     _date_regexp = re.compile(r'^Date:   (?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}) [\+\-]\d{4}$', re.MULTILINE)
-    _canonical_regexp = re.compile(r'^Canonical link: https://commits.webkit.org/(?P<canonicalid>\d+)@main$', re.MULTILINE)
+    _canonical_regexp = re.compile(r'^Canonical-link: https://commits.webkit.org/(?P<canonicalid>\d+)@main$', re.MULTILINE)
 
     def __init__(self, options=None):
         options = options or []
@@ -102,7 +102,7 @@ class AbstractCommitLogCommand(Command):
             raise CommitLogError
         commit_date = commit_date_match.group('date')
 
-        canonical_match = self._canonical_regexp.search(commit_message)
+        canonical_match = self._canonical_regexp.search(commit_message.replace('\nCanonical link:', '\nCanonical-link:'))
         if not canonical_match:
             raise CommitLogError
         canonical = canonical_match.group('canonicalid')

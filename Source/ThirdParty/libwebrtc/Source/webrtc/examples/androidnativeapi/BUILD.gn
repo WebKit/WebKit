@@ -54,6 +54,8 @@ if (is_android) {
       "../../api:rtc_error",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
+      "../../api/environment",
+      "../../api/environment:environment_factory",
       "../../api/video:video_frame",
       "../../rtc_base:checks",
       "../../rtc_base:logging",

@@ -32,7 +32,7 @@ namespace WebCore {
 
 void JSShadowRoot::setAdoptedStyleSheets(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    setAdoptedStyleSheetsOnTreeScope(wrapped(), lexicalGlobalObject, value);
+    setAdoptedStyleSheetsOnTreeScope(protect(wrapped()), lexicalGlobalObject, value);
 }
 
 } // namespace WebCore

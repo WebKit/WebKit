@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="resources/gesture-helpers.js"></script>
 <style type="text/css">
 
@@ -139,8 +139,7 @@ function secondGestureScroll()
     checkScrollOffset();
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
 
 function runTest()
 {

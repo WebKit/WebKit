@@ -2320,14 +2320,18 @@ String convertEnumerationToString(MediaPlayer::BufferingPolicy enumerationValue)
 
 String convertEnumerationToString(MediaPlayer::ViewportVisibility enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 4> values {
+    static const std::array<NeverDestroyed<String>, 5> values {
         MAKE_STATIC_STRING_IMPL("NotVisible"),
         MAKE_STATIC_STRING_IMPL("IntersectingViewport"),
         MAKE_STATIC_STRING_IMPL("VisibleInViewport"),
+        MAKE_STATIC_STRING_IMPL("VisibleInFullscreen"),
+        MAKE_STATIC_STRING_IMPL("VisibleInPictureInPicture"),
     };
     static_assert(!static_cast<size_t>(MediaPlayer::ViewportVisibility::NotVisible), "MediaPlayer::NotVisible is not 0 as expected");
     static_assert(static_cast<size_t>(MediaPlayer::ViewportVisibility::IntersectingViewport) == 1, "MediaPlayer::IntersectingViewport is not 1 as expected");
     static_assert(static_cast<size_t>(MediaPlayer::ViewportVisibility::VisibleInViewport) == 2, "MediaPlayer::VisibleInViewport is not 2 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::ViewportVisibility::VisibleInFullscreen) == 3, "MediaPlayer::VisibleInFullscreen is not 2 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::ViewportVisibility::VisibleInPictureInPicture) == 4, "MediaPlayer::VisibleInPictureInPicture is not 2 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }

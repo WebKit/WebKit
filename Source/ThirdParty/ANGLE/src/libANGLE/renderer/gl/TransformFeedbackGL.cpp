@@ -162,10 +162,16 @@ void TransformFeedbackGL::syncPausedState(bool paused) const
         mStateManager->bindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedbackID);
         if (mIsPaused)
         {
+            // If we're transitioning from active to paused, the currently bound program must be the
+            // one associated with this transform feedback.
+            ASSERT(mStateManager->getProgramID() == mActiveProgram);
             mFunctions->pauseTransformFeedback();
         }
         else
         {
+            // When transitioning to resumed, make sure the program associated with this transform
+            // feedback is set
+            mStateManager->useProgram(mActiveProgram);
             mFunctions->resumeTransformFeedback();
         }
     }

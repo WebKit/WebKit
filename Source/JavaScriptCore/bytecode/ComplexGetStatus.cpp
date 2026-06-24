@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ComplexGetStatus.h"
 
+#include "StructureInlines.h"
+
 namespace JSC {
 
 ComplexGetStatus ComplexGetStatus::computeFor(

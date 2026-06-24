@@ -54,6 +54,7 @@ my $numOfJobs;
 my $idlAttributesFile;
 my $showProgress;
 my @exclude;
+my $ignoreStandaloneConstructorAttributes;
 
 GetOptions('outputDir=s' => \$outputDirectory,
            'idlFilesList=s' => \$idlFilesList,
@@ -68,7 +69,8 @@ GetOptions('outputDir=s' => \$outputDirectory,
            'idlAttributesFile=s' => \$idlAttributesFile,
            'numOfJobs=i' => \$numOfJobs,
            'exclude=s@' => \@exclude,
-           'showProgress' => \$showProgress);
+           'showProgress' => \$showProgress,
+           'ignoreStandaloneConstructorAttributes' => \$ignoreStandaloneConstructorAttributes);
 
 if (!defined $numOfJobs) {
     $numOfJobs = `sysctl -n hw.activecpu 2>/dev/null` || `nproc 2>/dev/null` || 4;
@@ -238,7 +240,7 @@ sub spawnGenerateBindingsIfNeeded
         for my $targetIdlFile (@files) {
             my $targetParser = IDLParser->new($suppressVerboseOutput);
             my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $idlAttributes);
-            my $codeGen = CodeGenerator->new($generator, $outputDirectory, $outputDirectory, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes, \%supplementalDependencies, $idlFileNamesList);
+            my $codeGen = CodeGenerator->new($generator, $outputDirectory, $outputDirectory, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes, \%supplementalDependencies, $idlFileNamesList, $ignoreStandaloneConstructorAttributes);
             $codeGen->ProcessDocument($targetDocument, $defines);
         }
         exit 0;

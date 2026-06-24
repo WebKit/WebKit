@@ -13,10 +13,11 @@
 
 #include <cstddef>
 #include <iterator>
+#include <span>
 #include <variant>
 #include <vector>
 
-#include "api/array_view.h"
+#include "absl/algorithm/container.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -33,7 +34,7 @@ namespace webrtc {
 //   buffer. Channels can be enumerated and accessing the individual channel
 //   data is done via MonoView<>.
 //
-// The views are comparable to and built on ArrayView<> but add
+// The views are comparable to and built on std::span<> but add
 // audio specific properties for the dimensions of the buffer and the above
 // specialized [de]interleaved support.
 //
@@ -44,14 +45,13 @@ namespace webrtc {
 // can be either an single channel (mono) interleaved buffer (e.g. AudioFrame),
 // or a de-interleaved channel (e.g. from AudioBuffer).
 template <typename T>
-using MonoView = ArrayView<T>;
+using MonoView = std::span<T>;
 
 // The maximum number of audio channels supported by WebRTC encoders, decoders
 // and the AudioFrame class.
-// TODO(peah, tommi): Should kMaxNumberOfAudioChannels be 16 rather than 24?
-// The reason is that AudioFrame's max number of samples is 7680, which can
-// hold 16 10ms 16bit channels at 48 kHz (and not 24 channels).
-static constexpr size_t kMaxNumberOfAudioChannels = 24;
+// AudioFrame's max number of samples is 7680, which can hold 16 10ms 16bit
+// channels at 48 kHz.
+static constexpr size_t kMaxNumberOfAudioChannels = 16;
 
 // InterleavedView<> is a view over an interleaved audio buffer (e.g. from
 // AudioFrame).
@@ -59,6 +59,8 @@ template <typename T>
 class InterleavedView {
  public:
   using value_type = T;
+  using iterator = typename std::span<T>::iterator;
+  using const_iterator = typename std::span<const T>::iterator;
 
   InterleavedView() = default;
 
@@ -88,7 +90,7 @@ class InterleavedView {
 
   size_t num_channels() const { return num_channels_; }
   size_t samples_per_channel() const { return samples_per_channel_; }
-  ArrayView<T> data() const { return data_; }
+  std::span<T> data() const { return data_; }
   bool empty() const { return data_.empty(); }
   size_t size() const { return data_.size(); }
 
@@ -112,14 +114,16 @@ class InterleavedView {
   }
 
   T& operator[](size_t idx) const { return data_[idx]; }
-  T* begin() const { return data_.begin(); }
-  T* end() const { return data_.end(); }
-  const T* cbegin() const { return data_.cbegin(); }
-  const T* cend() const { return data_.cend(); }
-  std::reverse_iterator<T*> rbegin() const { return data_.rbegin(); }
-  std::reverse_iterator<T*> rend() const { return data_.rend(); }
-  std::reverse_iterator<const T*> crbegin() const { return data_.crbegin(); }
-  std::reverse_iterator<const T*> crend() const { return data_.crend(); }
+  iterator begin() const { return data_.begin(); }
+  iterator end() const { return data_.end(); }
+  const_iterator cbegin() const { return data_.begin(); }
+  const_iterator cend() const { return data_.end(); }
+  std::reverse_iterator<iterator> rbegin() const { return data_.rbegin(); }
+  std::reverse_iterator<iterator> rend() const { return data_.rend(); }
+  std::reverse_iterator<const_iterator> crbegin() const {
+    return data_.rbegin();
+  }
+  std::reverse_iterator<const_iterator> crend() const { return data_.rend(); }
 
  private:
   // TODO(tommi): Consider having these both be stored as uint16_t to
@@ -127,7 +131,7 @@ class InterleavedView {
   // construction.
   size_t num_channels_ = 0u;
   size_t samples_per_channel_ = 0u;
-  ArrayView<T> data_;
+  std::span<T> data_;
 };
 
 template <typename T>
@@ -207,7 +211,7 @@ class DeinterleavedView {
   void Clear() {
     for (size_t i = 0u; i < num_channels_; ++i) {
       MonoView<T> view = (*this)[i];
-      ClearSamples(view);
+      absl::c_fill(view, 0);
     }
   }
 
@@ -302,22 +306,6 @@ void CopySamples(D& destination, const S& source) {
   RTC_DCHECK_GE(destination.size(), source.size());
   memcpy(&destination[0], &source[0],
          source.size() * sizeof(typename S::value_type));
-}
-
-// Sets all the samples in a view to 0. This template function is a simple
-// wrapper around `memset()` but adds the benefit of automatically calculating
-// the byte size from the number of samples and sample type.
-template <typename T>
-void ClearSamples(T& view) {
-  memset(&view[0], 0, view.size() * sizeof(typename T::value_type));
-}
-
-// Same as `ClearSamples()` above but allows for clearing only the first
-// `sample_count` number of samples.
-template <typename T>
-void ClearSamples(T& view, size_t sample_count) {
-  RTC_DCHECK_LE(sample_count, view.size());
-  memset(&view[0], 0, sample_count * sizeof(typename T::value_type));
 }
 
 }  // namespace webrtc

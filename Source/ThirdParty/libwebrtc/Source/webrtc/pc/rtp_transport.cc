@@ -10,13 +10,22 @@
 
 #include "pc/rtp_transport.h"
 
+#include <algorithm>
+#include <bitset>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
-#include "api/array_view.h"
+#include "absl/algorithm/container.h"
+#include "absl/strings/string_view.h"
+#include "api/rtc_error.h"
+#include "api/rtp_header_extension_id.h"
+#include "api/rtp_parameters.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/transport/ecn_marking.h"
@@ -24,6 +33,7 @@
 #include "call/rtp_demuxer.h"
 #include "media/base/rtp_utils.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "p2p/base/packet_transport_internal.h"
 #include "pc/session_description.h"
@@ -39,6 +49,37 @@
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
+namespace {
+
+void RemoveExtensionMapForMid(
+    absl::string_view mid,
+    std::vector<std::pair<std::string, RtpHeaderExtensions>>& extensions) {
+  auto it = std::find_if(extensions.begin(), extensions.end(),
+                         [mid](const auto& kv) { return kv.first == mid; });
+  if (it != extensions.end()) {
+    extensions.erase(it);
+  }
+}
+
+RTCError VerifyExtensionIds(const RtpHeaderExtensions& extensions) {
+  using ExtensionsUsed = std::bitset<1 + RtpHeaderExtensionId::kMaxId.value()>;
+  ExtensionsUsed id_used;
+  for (const auto& extension : extensions) {
+    if (!extension.id.Valid()) {
+      return RTCError::InvalidParameter()
+             << "Bad extension ID: " << extension.ToString();
+    }
+    ExtensionsUsed::reference entry = id_used[extension.id.value()];
+    if (entry) {
+      return RTCError::InvalidParameter()
+             << "Duplicate extension ID: " << extension.ToString();
+    }
+    entry = true;
+  }
+  return RTCError::OK();
+}
+
+}  // namespace
 
 void RtpTransport::SetRtcpMuxEnabled(bool enable) {
   rtcp_mux_enabled_ = enable;
@@ -185,14 +226,115 @@ bool RtpTransport::SendPacket(bool rtcp,
   return true;
 }
 
-void RtpTransport::UpdateRtpHeaderExtensionMap(
-    const RtpHeaderExtensions& header_extensions) {
-  header_extension_map_ = RtpHeaderExtensionMap(header_extensions);
+RTCError RtpTransport::VerifyRtpHeaderExtensionMap(
+    const RtpHeaderExtensions& extensions) const {
+  RTC_DCHECK_RUN_ON(&network_thread_checker_);
+
+  RTCError error = VerifyExtensionIds(extensions);
+  if (!error.ok()) {
+    return error;
+  }
+
+  for (const auto& new_extension : extensions) {
+    // TODO: bugs.webrtc.org/503013383 - Introduce checking against IDs that are
+    // currently not present in the SDP, but have been used in previous
+    // negotiation rounds. Reusing extensions with a different ID is a protocol
+    // violation, but we cannot check this until we check against the same
+    // protocol violation on the sender side.
+    for (const auto& [mid, active_extensions] : header_extensions_by_mid_) {
+      auto it = absl::c_find_if(
+          active_extensions,
+          [&](const RtpExtension& ext) { return ext.id == new_extension.id; });
+      if (it != active_extensions.end() && it->uri != new_extension.uri) {
+        return RTCError::InvalidParameter()
+               << "RTP extension ID reassignment not supported (collision on "
+                  "active MID "
+               << mid << ", id=" << new_extension.id << ", old_uri=\""
+               << it->uri << "\", new_uri=\"" << new_extension.uri << "\").";
+      }
+    }
+  }
+
+  return RTCError::OK();
+}
+
+RTCError RtpTransport::RegisterRtpHeaderExtensionMap(
+    absl::string_view mid,
+    const RtpHeaderExtensions& extensions) {
+  RTC_DCHECK_RUN_ON(&network_thread_checker_);
+
+  RTCError error = VerifyRtpHeaderExtensionMap(extensions);
+  if (!error.ok()) {
+    return error;
+  }
+
+  auto existing_extensions =
+      absl::c_find_if(header_extensions_by_mid_,
+                      [mid](const auto& kv) { return kv.first == mid; });
+  if (existing_extensions != header_extensions_by_mid_.end() &&
+      existing_extensions->second == extensions) {
+    return RTCError::OK();
+  }
+
+  RemoveExtensionMapForMid(mid, header_extensions_by_mid_);
+  header_extensions_by_mid_.emplace_back(std::string(mid), extensions);
+
+  RebuildMergedMap();
+  return RTCError::OK();
+}
+
+void RtpTransport::UnregisterRtpHeaderExtensionMap(absl::string_view mid) {
+  RTC_DCHECK_RUN_ON(&network_thread_checker_);
+  RemoveExtensionMapForMid(mid, header_extensions_by_mid_);
+
+  RebuildMergedMap();
+}
+
+void RtpTransport::RebuildMergedMap() {
+  RTC_DCHECK_RUN_ON(&network_thread_checker_);
+  RtpHeaderExtensionMap merged_map;
+
+  // RFC 8843 (BUNDLE) Section 7.1.3 requires that the same local identifier
+  // MUST be used for a given RTP header extension across all m-sections in a
+  // BUNDLE group.
+  //
+  // However, during negotiation, we may encounter transient states with
+  // conflicting IDs. This can occur with buggy endpoints or during "forked"
+  // signaling (e.g., an Offer followed by a PR-Answer from one endpoint,
+  // then a final Answer from a different endpoint). While most browsers
+  // send identical extension sets, different endpoints ringing simultaneously
+  // could theoretically provide differing maps.
+  //
+  // To handle this gracefully, we merge the maps. Because
+  // `header_extensions_by_mid_` preserves registration order, we iterate in
+  // reverse (newest first). This ensures tie-breaking is deterministic:
+  // more recently registered or updated MIDs (like those in a final Answer)
+  // take precedence over older or provisional ones.
+
+  for (auto rit = header_extensions_by_mid_.rbegin();
+       rit != header_extensions_by_mid_.rend(); ++rit) {
+    for (const auto& extension : rit->second) {
+      if (extension.id == RtpHeaderExtensionMap::kInvalidId) {
+        continue;
+      }
+      // Only register if the ID is not already in use.
+      RTPExtensionType type = merged_map.GetType(extension.id);
+      if (type == kRtpExtensionNone) {
+        merged_map.RegisterByUri(extension.id, extension.uri);
+      }
+    }
+  }
+  header_extension_map_ = std::move(merged_map);
+}
+
+void RtpTransport::SetActivePayloadTypeDemuxing(bool enabled) {
+  rtp_demuxer_.set_use_payload_type_demuxing(enabled);
 }
 
 bool RtpTransport::RegisterRtpDemuxerSink(const RtpDemuxerCriteria& criteria,
                                           RtpPacketSinkInterface* sink) {
   rtp_demuxer_.RemoveSink(sink);
+
   if (!rtp_demuxer_.AddSink(criteria, sink)) {
     RTC_LOG(LS_ERROR) << "Failed to register the sink for RTP demuxer.";
     return false;
@@ -280,6 +422,12 @@ void RtpTransport::OnRtcpPacketReceived(
 void RtpTransport::OnReadPacket(PacketTransportInternal* transport,
                                 const ReceivedIpPacket& received_packet) {
   TRACE_EVENT0("webrtc", "RtpTransport::OnReadPacket");
+
+  // DTLS-decrypted application data is not RTP/RTCP.
+  // TODO: bugs.webrtc.org/517079993 - follow RFC 7983 design.
+  if (received_packet.decryption_info() == ReceivedIpPacket::kDtlsDecrypted) {
+    return;
+  }
 
   // When using RTCP multiplexing we might get RTCP packets on the RTP
   // transport. We check the RTP payload type to determine if it is RTCP.

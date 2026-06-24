@@ -129,8 +129,6 @@ private:
     bool copyBaseWindowsDriveLetter(const URL&);
     StringView parsedDataView(size_t start, size_t length) LIFETIME_BOUND;
     char16_t parsedDataView(size_t position);
-    template<typename CharacterType> bool NODELETE subdomainStartsWithXNDashDash(CodePointIterator<CharacterType>);
-    bool subdomainStartsWithXNDashDash(StringImpl&);
 
     bool NODELETE needsNonSpecialDotSlash() const;
     void addNonSpecialDotSlash();

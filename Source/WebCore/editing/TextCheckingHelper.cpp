@@ -338,7 +338,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                 if (checkGrammar)
                     checkingTypes.add(TextCheckingType::Grammar);
                 VisibleSelection currentSelection;
-                if (auto* frame = paragraphRange.start.document().frame())
+                if (RefPtr frame = paragraphRange.start.document().frame())
                     currentSelection = frame->selection().selection();
                 checkTextOfParagraph(*protect(m_client)->textChecker(), paragraphString, checkingTypes, results, currentSelection);
 
@@ -517,7 +517,7 @@ TextCheckingGuesses TextCheckingHelper::guessesForMisspelledWordOrUngrammaticalP
     if (checkGrammar)
         checkingTypes.add(TextCheckingType::Grammar);
     VisibleSelection currentSelection;
-    if (auto frame = m_range.start.document().frame())
+    if (RefPtr frame = m_range.start.document().frame())
         currentSelection = frame->selection().selection();
     CheckedRef client = m_client;
     checkTextOfParagraph(*client->textChecker(), paragraph.text(), checkingTypes, results, currentSelection);

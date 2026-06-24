@@ -65,9 +65,9 @@ class SctpTransport : public SctpTransportInterface,
 
   // Internal functions
   void Clear();
-  // Initialize the webrtc::SctpTransport. This can be called from
+  // Initialize the webrtc::SctpTransport. This must be called from
   // the signaling thread.
-  void Start(const SctpOptions& options);
+  bool Start(const SctpOptions& options);
 
   // TODO(https://bugs.webrtc.org/10629): Move functions that need
   // internal() to be functions on the SctpTransport interface,

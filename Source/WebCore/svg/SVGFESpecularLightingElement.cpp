@@ -27,11 +27,11 @@
 #include "FESpecularLighting.h"
 #include "NodeName.h"
 #include "RenderElement.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPropertyOwnerRegistry.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -165,6 +165,15 @@ RefPtr<FilterEffect> SVGFESpecularLightingElement::createFilterEffect(const Filt
 
     Ref lightSource = lightElement->lightSource();
     return FESpecularLighting::create(protect(renderer->style())->lightingColorResolvingCurrentColorApplyingColorFilter(), surfaceScale(), specularConstant(), specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), WTF::move(lightSource));
+}
+
+bool SVGFESpecularLightingElement::taintsOrigin() const
+{
+    // §16.3: tainted when lighting-color depends on currentColor.
+    CheckedPtr renderer = this->renderer();
+    if (!renderer)
+        return false;
+    return renderer->style().lightingColor().containsCurrentColor();
 }
 
 } // namespace WebCore

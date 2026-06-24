@@ -23,6 +23,7 @@
 import contextlib
 import io
 import logging
+import shutil
 import sys
 import webbrowser
 

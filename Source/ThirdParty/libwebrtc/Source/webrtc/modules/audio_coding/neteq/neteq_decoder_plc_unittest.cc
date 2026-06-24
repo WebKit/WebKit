@@ -14,11 +14,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/make_ref_counted.h"
@@ -107,9 +107,9 @@ class AudioDecoderPlc : public AudioDecoder {
 // An input sample generator which generates only zero-samples.
 class ZeroSampleGenerator : public EncodeNetEqInput::Generator {
  public:
-  ArrayView<const int16_t> Generate(size_t num_samples) override {
+  std::span<const int16_t> Generate(size_t num_samples) override {
     vec.resize(num_samples, 0);
-    ArrayView<const int16_t> view(vec);
+    std::span<const int16_t> view(vec);
     RTC_DCHECK_EQ(view.size(), num_samples);
     return view;
   }

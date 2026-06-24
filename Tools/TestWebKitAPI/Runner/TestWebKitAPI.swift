@@ -58,7 +58,7 @@ struct TestWebKitAPI {
                 argumentDefaults["WebKit2GPUProcessForDOMRendering"] = true
             case "--no-use-gpu-process":
                 argumentDefaults["WebKit2GPUProcessForDOMRendering"] = false
-            case "--site-isolation":
+            case "--site-isolation-enabled-by-default":
                 Self.forceSiteIsolationForTesting()
             default:
                 break

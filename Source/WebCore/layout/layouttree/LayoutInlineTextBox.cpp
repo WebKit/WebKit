@@ -27,7 +27,7 @@
 #include "LayoutInlineTextBox.h"
 
 #include "RenderObject.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -35,7 +35,7 @@ namespace Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineTextBox);
 
-InlineTextBox::InlineTextBox(String content, bool isCombined, EnumSet<ContentCharacteristic> contentCharacteristicSet, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+InlineTextBox::InlineTextBox(String content, bool isCombined, EnumSet<ContentCharacteristic> contentCharacteristicSet, Style::ComputedStyle&& style, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle)
 : Box({ NodeType::Text, IsAnonymous::Yes }, WTF::move(style), WTF::move(firstLineStyle), Box::InlineTextBoxFlag)
     , m_content(content)
     , m_isCombined(isCombined)

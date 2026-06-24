@@ -88,7 +88,7 @@ static IntRect elementRectInWindow(HTMLVideoElement* videoElement)
     if (!videoElement)
         return { };
     auto* renderer = videoElement->renderer();
-    auto* view = videoElement->document().view();
+    RefPtr view = videoElement->document().view();
     if (!renderer || !view)
         return { };
     return view->convertToContainingWindow(renderer->absoluteBoundingBoxRect());
@@ -268,7 +268,7 @@ void VideoFullscreenControllerContext::requestUpdateInlineRect()
     WebThreadRun([protectedThis = Ref { *this }, this] () mutable {
         IntRect clientRect = elementRectInWindow(m_videoElement.get());
         RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), this, clientRect] {
-            m_interface->setInlineRect(clientRect, clientRect != IntRect(0, 0, 0, 0));
+            protect(m_interface)->setInlineRect(clientRect, clientRect != IntRect(0, 0, 0, 0));
         });
     });
 #else
@@ -282,12 +282,12 @@ void VideoFullscreenControllerContext::requestVideoContentLayer()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
         [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack).get()];
-        m_presentationModel->setVideoFullscreenLayer(videoFullscreenLayer.get(), [protectedThis = WTF::move(protectedThis), this] () mutable {
+        protect(m_presentationModel)->setVideoFullscreenLayer(videoFullscreenLayer.get(), [protectedThis = WTF::move(protectedThis), this] () mutable {
             RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), this] {
                 if (!m_interface)
                     return;
 
-                m_interface->setHasVideoContentLayer(true);
+                protect(m_interface)->setHasVideoContentLayer(true);
             });
         });
     });
@@ -302,12 +302,12 @@ void VideoFullscreenControllerContext::returnVideoContentLayer()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
         [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack).get()];
-        m_presentationModel->setVideoFullscreenLayer(nil, [protectedThis = WTF::move(protectedThis), this] () mutable {
+        protect(m_presentationModel)->setVideoFullscreenLayer(nil, [protectedThis = WTF::move(protectedThis), this] () mutable {
             RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), this] {
                 if (!m_interface)
                     return;
 
-                m_interface->setHasVideoContentLayer(false);
+                protect(m_interface)->setHasVideoContentLayer(false);
             });
         });
     });
@@ -319,20 +319,9 @@ void VideoFullscreenControllerContext::returnVideoContentLayer()
 void VideoFullscreenControllerContext::didSetupFullscreen()
 {
     ASSERT(isUIThread());
-#if PLATFORM(IOS_FAMILY)
     RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this] {
-        m_interface->enterFullscreen();
+        protect(m_interface)->enterFullscreen();
     });
-#else
-    WebThreadRun([protectedThis = Ref { *this }, this, videoFullscreenLayer = retainPtr([m_videoFullscreenView layer])] () mutable {
-        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparentBlack)];
-        m_presentationModel->setVideoFullscreenLayer(videoFullscreenLayer.get(), [protectedThis = WTF::move(protectedThis), this] () mutable {
-            RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), this] {
-                m_interface->enterFullscreen();
-            });
-        });
-    });
-#endif
 }
 
 void VideoFullscreenControllerContext::willExitFullscreen()
@@ -348,34 +337,25 @@ void VideoFullscreenControllerContext::willExitFullscreen()
 void VideoFullscreenControllerContext::didExitFullscreen()
 {
     ASSERT(isUIThread());
-#if PLATFORM(IOS_FAMILY)
     RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this] {
-        m_interface->cleanupFullscreen();
+        protect(m_interface)->cleanupFullscreen();
     });
-#else
-    WebThreadRun([protectedThis = Ref { *this }, this] () mutable {
-        m_presentationModel->setVideoFullscreenLayer(nil, [protectedThis = WTF::move(protectedThis), this] () mutable {
-            RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), this] {
-                m_interface->cleanupFullscreen();
-            });
-        });
-    });
-#endif
 }
 
 void VideoFullscreenControllerContext::didCleanupFullscreen()
 {
     ASSERT(isUIThread());
-    m_interface->setVideoPresentationModel(nullptr);
+    protect(m_interface)->setVideoPresentationModel(nullptr);
     m_interface = nullptr;
     m_videoFullscreenView = nil;
 
     WebThreadRun([protectedThis = Ref { *this }, this] {
-        m_presentationModel->setVideoFullscreenLayer(nil);
-        m_presentationModel->setVideoElement(nullptr);
-        m_playbackModel->setMediaElement(nullptr);
-        m_playbackModel->removeClient(*this);
-        m_presentationModel->removeClient(*this);
+        RefPtr presentationModel = m_presentationModel;
+        presentationModel->setVideoFullscreenLayer(nil);
+        presentationModel->setVideoElement(nullptr);
+        protect(m_playbackModel)->setMediaElement(nullptr);
+        protect(m_playbackModel)->removeClient(*this);
+        presentationModel->removeClient(*this);
         m_presentationModel = nullptr;
         m_videoElement = nullptr;
 
@@ -389,7 +369,7 @@ void VideoFullscreenControllerContext::fullscreenMayReturnToInline()
     WebThreadRun([protectedThis = Ref { *this }, this] () mutable {
         IntRect clientRect = elementRectInWindow(m_videoElement.get());
         RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), this, clientRect] {
-            m_interface->preparedToReturnToInline(true, clientRect);
+            protect(m_interface)->preparedToReturnToInline(true, clientRect);
         });
     });
 }
@@ -599,7 +579,7 @@ void VideoFullscreenControllerContext::requestFullscreenMode(HTMLMediaElementEnu
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, mode, finishedWithMedia] {
         if (m_presentationModel)
-            m_presentationModel->requestFullscreenMode(mode, finishedWithMedia);
+            protect(m_presentationModel)->requestFullscreenMode(mode, finishedWithMedia);
     });
 }
 
@@ -617,7 +597,7 @@ void VideoFullscreenControllerContext::setVideoLayerFrame(FloatRect frame)
         [videoFullscreenLayer setSublayerTransform:CATransform3DIdentity];
 
         if (m_presentationModel)
-            m_presentationModel->setVideoLayerFrame(frame);
+            protect(m_presentationModel)->setVideoLayerFrame(frame);
         [CATransaction commit];
     });
 }
@@ -627,7 +607,7 @@ void VideoFullscreenControllerContext::setVideoLayerGravity(MediaPlayerEnums::Vi
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, videoGravity] {
         if (m_presentationModel)
-            m_presentationModel->setVideoLayerGravity(videoGravity);
+            protect(m_presentationModel)->setVideoLayerGravity(videoGravity);
     });
 }
 
@@ -639,44 +619,44 @@ void VideoFullscreenControllerContext::fullscreenModeChanged(HTMLMediaElementEnu
 
     WebThreadRun([protectedThis = Ref { *this }, this, mode] {
         if (m_presentationModel)
-            m_presentationModel->fullscreenModeChanged(mode, ShouldNotifyMediaElement::Yes);
+            protect(m_presentationModel)->fullscreenModeChanged(mode, ShouldNotifyMediaElement::Yes);
     });
 }
 
 bool VideoFullscreenControllerContext::hasVideo() const
 {
     ASSERT(isUIThread());
-    return m_presentationModel ? m_presentationModel->hasVideo() : false;
+    return m_presentationModel ? protect(m_presentationModel)->hasVideo() : false;
 }
 
 bool VideoFullscreenControllerContext::isChildOfElementFullscreen() const
 {
     ASSERT(isUIThread());
-    return m_presentationModel ? m_presentationModel->isChildOfElementFullscreen() : false;
+    return m_presentationModel ? protect(m_presentationModel)->isChildOfElementFullscreen() : false;
 }
 
 bool VideoFullscreenControllerContext::isMuted() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->isMuted() : false;
+    return m_playbackModel ? protect(m_playbackModel)->isMuted() : false;
 }
 
 double VideoFullscreenControllerContext::volume() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->volume() : 0;
+    return m_playbackModel ? protect(m_playbackModel)->volume() : 0;
 }
 
 bool VideoFullscreenControllerContext::isPictureInPictureActive() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->isPictureInPictureActive() : false;
+    return m_playbackModel ? protect(m_playbackModel)->isPictureInPictureActive() : false;
 }
 
 bool VideoFullscreenControllerContext::isPictureInPictureSupported() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->isPictureInPictureSupported() : false;
+    return m_playbackModel ? protect(m_playbackModel)->isPictureInPictureSupported() : false;
 }
 
 void VideoFullscreenControllerContext::willEnterPictureInPicture()
@@ -717,7 +697,7 @@ void VideoFullscreenControllerContext::didExitPictureInPicture()
 FloatSize VideoFullscreenControllerContext::videoDimensions() const
 {
     ASSERT(isUIThread());
-    return m_presentationModel ? m_presentationModel->videoDimensions() : FloatSize();
+    return m_presentationModel ? protect(m_presentationModel)->videoDimensions() : FloatSize();
 }
 
 #pragma mark - PlaybackSessionModel
@@ -739,7 +719,7 @@ void VideoFullscreenControllerContext::play()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] {
         if (m_playbackModel)
-            m_playbackModel->play();
+            protect(m_playbackModel)->play();
     });
 }
 
@@ -748,7 +728,7 @@ void VideoFullscreenControllerContext::pause()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] {
         if (m_playbackModel)
-            m_playbackModel->pause();
+            protect(m_playbackModel)->pause();
     });
 }
 
@@ -757,7 +737,7 @@ void VideoFullscreenControllerContext::togglePlayState()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] {
         if (m_playbackModel)
-            m_playbackModel->togglePlayState();
+            protect(m_playbackModel)->togglePlayState();
     });
 }
 
@@ -766,7 +746,7 @@ void VideoFullscreenControllerContext::toggleMuted()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] {
         if (m_playbackModel)
-            m_playbackModel->toggleMuted();
+            protect(m_playbackModel)->toggleMuted();
     });
 }
 
@@ -775,7 +755,7 @@ void VideoFullscreenControllerContext::setMuted(bool muted)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, muted] {
         if (m_playbackModel)
-            m_playbackModel->setMuted(muted);
+            protect(m_playbackModel)->setMuted(muted);
     });
 }
 
@@ -784,7 +764,7 @@ void VideoFullscreenControllerContext::setVolume(double volume)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, volume] {
         if (m_playbackModel)
-            m_playbackModel->setVolume(volume);
+            protect(m_playbackModel)->setVolume(volume);
     });
 }
 
@@ -793,7 +773,7 @@ void VideoFullscreenControllerContext::setPlayingOnSecondScreen(bool value)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, value] {
         if (m_playbackModel)
-            m_playbackModel->setPlayingOnSecondScreen(value);
+            protect(m_playbackModel)->setPlayingOnSecondScreen(value);
     });
 }
 
@@ -802,7 +782,7 @@ void VideoFullscreenControllerContext::beginScrubbing()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] {
         if (m_playbackModel)
-            m_playbackModel->beginScrubbing();
+            protect(m_playbackModel)->beginScrubbing();
     });
 }
 
@@ -811,7 +791,7 @@ void VideoFullscreenControllerContext::endScrubbing()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] {
         if (m_playbackModel)
-            m_playbackModel->endScrubbing();
+            protect(m_playbackModel)->endScrubbing();
     });
 }
 
@@ -820,7 +800,7 @@ void VideoFullscreenControllerContext::seekToTime(double time, double toleranceB
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, time, toleranceBefore, toleranceAfter] {
         if (m_playbackModel)
-            m_playbackModel->seekToTime(time, toleranceBefore, toleranceAfter);
+            protect(m_playbackModel)->seekToTime(time, toleranceBefore, toleranceAfter);
     });
 }
 
@@ -829,7 +809,7 @@ void VideoFullscreenControllerContext::fastSeek(double time)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, time] {
         if (m_playbackModel)
-            m_playbackModel->fastSeek(time);
+            protect(m_playbackModel)->fastSeek(time);
     });
 }
 
@@ -838,7 +818,7 @@ void VideoFullscreenControllerContext::beginScanningForward()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] {
         if (m_playbackModel)
-            m_playbackModel->beginScanningForward();
+            protect(m_playbackModel)->beginScanningForward();
     });
 }
 
@@ -847,7 +827,7 @@ void VideoFullscreenControllerContext::beginScanningBackward()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] {
         if (m_playbackModel)
-            m_playbackModel->beginScanningBackward();
+            protect(m_playbackModel)->beginScanningBackward();
     });
 }
 
@@ -856,7 +836,7 @@ void VideoFullscreenControllerContext::endScanning()
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this] {
         if (m_playbackModel)
-            m_playbackModel->endScanning();
+            protect(m_playbackModel)->endScanning();
     });
 }
 
@@ -865,7 +845,7 @@ void VideoFullscreenControllerContext::setDefaultPlaybackRate(double defaultPlay
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, defaultPlaybackRate] {
         if (m_playbackModel)
-            m_playbackModel->setDefaultPlaybackRate(defaultPlaybackRate);
+            protect(m_playbackModel)->setDefaultPlaybackRate(defaultPlaybackRate);
     });
 }
 
@@ -874,7 +854,7 @@ void VideoFullscreenControllerContext::setPlaybackRate(double playbackRate)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, playbackRate] {
         if (m_playbackModel)
-            m_playbackModel->setPlaybackRate(playbackRate);
+            protect(m_playbackModel)->setPlaybackRate(playbackRate);
     });
 }
 
@@ -883,7 +863,7 @@ void VideoFullscreenControllerContext::selectAudioMediaOption(uint64_t index)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, index] {
         if (m_playbackModel)
-            m_playbackModel->selectAudioMediaOption(index);
+            protect(m_playbackModel)->selectAudioMediaOption(index);
     });
 }
 
@@ -892,134 +872,134 @@ void VideoFullscreenControllerContext::selectLegibleMediaOption(uint64_t index)
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = Ref { *this }, this, index] {
         if (m_playbackModel)
-            m_playbackModel->selectLegibleMediaOption(index);
+            protect(m_playbackModel)->selectLegibleMediaOption(index);
     });
 }
 
 double VideoFullscreenControllerContext::duration() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->duration() : 0;
+    return m_playbackModel ? protect(m_playbackModel)->duration() : 0;
 }
 
 double VideoFullscreenControllerContext::currentTime() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->currentTime() : 0;
+    return m_playbackModel ? protect(m_playbackModel)->currentTime() : 0;
 }
 
 double VideoFullscreenControllerContext::bufferedTime() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->bufferedTime() : 0;
+    return m_playbackModel ? protect(m_playbackModel)->bufferedTime() : 0;
 }
 
 auto VideoFullscreenControllerContext::playbackState() const -> OptionSet<PlaybackState>
 {
     ASSERT(isUIThread());
     if (m_playbackModel)
-        return m_playbackModel->playbackState();
+        return protect(m_playbackModel)->playbackState();
     return { };
 }
 
 bool VideoFullscreenControllerContext::isPlaying() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->isPlaying() : false;
+    return m_playbackModel ? protect(m_playbackModel)->isPlaying() : false;
 }
 
 bool VideoFullscreenControllerContext::isStalled() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->isStalled() : false;
+    return m_playbackModel ? protect(m_playbackModel)->isStalled() : false;
 }
 
 double VideoFullscreenControllerContext::defaultPlaybackRate() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->defaultPlaybackRate() : 0;
+    return m_playbackModel ? protect(m_playbackModel)->defaultPlaybackRate() : 0;
 }
 
 double VideoFullscreenControllerContext::playbackRate() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->playbackRate() : 0;
+    return m_playbackModel ? protect(m_playbackModel)->playbackRate() : 0;
 }
 
 PlatformTimeRanges VideoFullscreenControllerContext::seekableRanges() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->seekableRanges() : PlatformTimeRanges::emptyRanges();
+    return m_playbackModel ? protect(m_playbackModel)->seekableRanges() : PlatformTimeRanges::emptyRanges();
 }
 
 double VideoFullscreenControllerContext::seekableTimeRangesLastModifiedTime() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->seekableTimeRangesLastModifiedTime() : 0;
+    return m_playbackModel ? protect(m_playbackModel)->seekableTimeRangesLastModifiedTime() : 0;
 }
 
 double VideoFullscreenControllerContext::liveUpdateInterval() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->liveUpdateInterval() : 0;
+    return m_playbackModel ? protect(m_playbackModel)->liveUpdateInterval() : 0;
 }
 
 bool VideoFullscreenControllerContext::canPlayFastReverse() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->canPlayFastReverse() : false;
+    return m_playbackModel ? protect(m_playbackModel)->canPlayFastReverse() : false;
 }
 
 Vector<MediaSelectionOption> VideoFullscreenControllerContext::audioMediaSelectionOptions() const
 {
     ASSERT(isUIThread());
     if (m_playbackModel)
-        return m_playbackModel->audioMediaSelectionOptions();
+        return protect(m_playbackModel)->audioMediaSelectionOptions();
     return { };
 }
 
 uint64_t VideoFullscreenControllerContext::audioMediaSelectedIndex() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->audioMediaSelectedIndex() : -1;
+    return m_playbackModel ? protect(m_playbackModel)->audioMediaSelectedIndex() : -1;
 }
 
 Vector<MediaSelectionOption> VideoFullscreenControllerContext::legibleMediaSelectionOptions() const
 {
     ASSERT(isUIThread());
     if (m_playbackModel)
-        return m_playbackModel->legibleMediaSelectionOptions();
+        return protect(m_playbackModel)->legibleMediaSelectionOptions();
     return { };
 }
 
 uint64_t VideoFullscreenControllerContext::legibleMediaSelectedIndex() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->legibleMediaSelectedIndex() : -1;
+    return m_playbackModel ? protect(m_playbackModel)->legibleMediaSelectedIndex() : -1;
 }
 
 bool VideoFullscreenControllerContext::externalPlaybackEnabled() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->externalPlaybackEnabled() : false;
+    return m_playbackModel ? protect(m_playbackModel)->externalPlaybackEnabled() : false;
 }
 
 PlaybackSessionModel::ExternalPlaybackTargetType VideoFullscreenControllerContext::externalPlaybackTargetType() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->externalPlaybackTargetType() : ExternalPlaybackTargetType::TargetTypeNone;
+    return m_playbackModel ? protect(m_playbackModel)->externalPlaybackTargetType() : ExternalPlaybackTargetType::TargetTypeNone;
 }
 
 String VideoFullscreenControllerContext::externalPlaybackLocalizedDeviceName() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->externalPlaybackLocalizedDeviceName() : String();
+    return m_playbackModel ? protect(m_playbackModel)->externalPlaybackLocalizedDeviceName() : String();
 }
 
 bool VideoFullscreenControllerContext::wirelessVideoPlaybackDisabled() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->wirelessVideoPlaybackDisabled() : true;
+    return m_playbackModel ? protect(m_playbackModel)->wirelessVideoPlaybackDisabled() : true;
 }
 
 #pragma mark Other
@@ -1030,18 +1010,18 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
     RetainPtr<UIView> viewRef = view;
     m_videoElement = &videoElement;
     m_playbackModel = PlaybackSessionModelMediaElement::create();
-    m_playbackModel->addClient(*this);
-    m_playbackModel->setMediaElement(m_videoElement.get());
+    protect(m_playbackModel)->addClient(*this);
+    protect(m_playbackModel)->setMediaElement(m_videoElement.get());
 
     m_presentationModel = VideoPresentationModelVideoElement::create();
-    m_presentationModel->addClient(*this);
-    m_presentationModel->setVideoElement(m_videoElement.get());
+    protect(m_presentationModel)->addClient(*this);
+    protect(m_presentationModel)->setVideoElement(m_videoElement.get());
 
-    bool allowsPictureInPicture = m_videoElement->webkitSupportsPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
+    bool allowsPictureInPicture = protect(m_videoElement)->webkitSupportsPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
 
     IntRect videoElementClientRect = elementRectInWindow(m_videoElement.get());
     FloatRect videoLayerFrame = FloatRect(FloatPoint(), videoElementClientRect.size());
-    m_presentationModel->setVideoLayerFrame(videoLayerFrame);
+    protect(m_presentationModel)->setVideoLayerFrame(videoLayerFrame);
 
     FloatSize videoDimensions = { (float)videoElement.videoWidth(), (float)videoElement.videoHeight() };
 
@@ -1050,11 +1030,11 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
         WebThreadLock();
         Ref<PlaybackSessionInterfaceIOS> sessionInterface = PlaybackSessionInterfaceAVKitLegacy::create(*this);
         m_interface = VideoPresentationInterfaceAVKitLegacy::create(sessionInterface.get());
-        m_interface->setVideoPresentationModel(this);
+        protect(m_interface)->setVideoPresentationModel(this);
 
         m_videoFullscreenView = adoptNS([PAL::allocUIViewInstance() init]);
 
-        m_interface->setupFullscreen(videoElementClientRect, videoDimensions, viewRef.get(), mode, allowsPictureInPicture, false, false);
+        protect(m_interface)->setupFullscreen(videoElementClientRect, videoDimensions, viewRef.get(), mode, allowsPictureInPicture, false, false);
     });
 }
 
@@ -1064,14 +1044,14 @@ void VideoFullscreenControllerContext::exitFullscreen()
     IntRect clientRect = elementRectInWindow(m_videoElement.get());
     RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this, clientRect] {
         ASSERT(isUIThread());
-        m_interface->exitFullscreen(clientRect);
+        protect(m_interface)->exitFullscreen(clientRect);
     });
 }
 
 void VideoFullscreenControllerContext::requestHideAndExitFullscreen()
 {
     ASSERT(isUIThread());
-    m_interface->requestHideAndExitFullscreen();
+    protect(m_interface)->requestHideAndExitFullscreen();
 }
 
 @implementation WebVideoFullscreenController {
@@ -1101,21 +1081,21 @@ void VideoFullscreenControllerContext::requestHideAndExitFullscreen()
 {
     ASSERT(isMainThread());
     _context = VideoFullscreenControllerContext::create();
-    _context->setController(self);
-    _context->setUpFullscreen(*_videoElement.get(), view, mode);
+    protect(_context)->setController(self);
+    protect(_context)->setUpFullscreen(*_videoElement.get(), view, mode);
 }
 
 - (void)exitFullscreen
 {
     ASSERT(WebThreadIsCurrent() || isMainThread());
-    _context->exitFullscreen();
+    protect(_context)->exitFullscreen();
 }
 
 - (void)requestHideAndExitFullscreen
 {
     ASSERT(isUIThread());
     if (_context)
-        _context->requestHideAndExitFullscreen();
+        protect(_context)->requestHideAndExitFullscreen();
 }
 
 - (void)didFinishFullscreen:(VideoFullscreenControllerContext*)context
@@ -1123,7 +1103,7 @@ void VideoFullscreenControllerContext::requestHideAndExitFullscreen()
     ASSERT(WebThreadIsCurrent());
     ASSERT_UNUSED(context, context == _context);
     auto strongSelf = retainPtr(self); // retain self before breaking a retain cycle.
-    _context->setController(nil);
+    protect(_context)->setController(nil);
     _context = nullptr;
     _videoElement = nullptr;
 }

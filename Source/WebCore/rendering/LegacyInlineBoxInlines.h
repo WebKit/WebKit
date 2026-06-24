@@ -26,7 +26,7 @@
 #pragma once
 
 #include "LegacyInlineBox.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 

@@ -19,6 +19,7 @@
 #include "absl/base/nullability.h"
 #include "absl/container/flat_hash_map.h"
 #include "api/environment/environment.h"
+#include "api/numerics/samples_stats_counter.h"
 #include "api/sequence_checker.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
@@ -240,13 +241,29 @@ RenderingSimulator::Results RenderingSimulator::Simulate(
                                                       rtx_ssrc, &results);
   };
   RtcEventLogDriver rtc_event_log_simulator(
-      {.reuse_streams = config_.reuse_streams}, &parsed_log,
-      config_.field_trials_string, std::move(stream_factory));
+      {.reuse_streams = config_.reuse_streams,
+       .ssrc_filter = config_.ssrc_filter},
+      &parsed_log, config_.field_trials_string, std::move(stream_factory));
   rtc_event_log_simulator.Simulate();
 
   // Return.
   SortByStreamOrder(results.streams);
   return results;
+}
+
+SamplesStatsCounter RenderingSimulator::Stream::InterRenderTimeMs() {
+  SortByRenderOrder(frames);
+  return BuildSamplesMs(&InterRenderTime);
+}
+
+SamplesStatsCounter RenderingSimulator::Stream::InterDecodedTimeMs() {
+  SortByDecodedOrder(frames);
+  return BuildSamplesMs(&InterDecodedTime);
+}
+
+SamplesStatsCounter RenderingSimulator::Stream::InterRenderedTimeMs() {
+  SortByRenderedOrder(frames);
+  return BuildSamplesMs(&InterRenderedTime);
 }
 
 }  // namespace webrtc::video_timing_simulator

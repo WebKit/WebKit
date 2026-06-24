@@ -30,8 +30,8 @@
 #include "Element.h"
 #include "NodeDocument.h"
 #include "RenderElement.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ bool useSmoothScrolling(ScrollBehavior behavior, Element* associatedElement)
     // FIXME: Should we use document()->scrollingElement()?
     // See https://bugs.webkit.org/show_bug.cgi?id=205059
     RefPtr element = associatedElement;
-    if (element == element->document().scrollingElement())
+    if (element == protect(element->document())->scrollingElement())
         element = element->document().documentElement();
 
     if (!element->renderer())

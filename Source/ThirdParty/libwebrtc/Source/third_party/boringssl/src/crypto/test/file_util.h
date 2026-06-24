@@ -87,20 +87,20 @@ class TemporaryFile {
 
   TemporaryFile(TemporaryFile &other) { *this = std::move(other); }
   TemporaryFile& operator=(TemporaryFile&&other) {
-    // Ensure |path_| is empty so it doesn't try to delete the File.
+    // Ensure `path_` is empty so it doesn't try to delete the File.
     path_ = std::exchange(other.path_, {});
     return *this;
   }
 
   // Init initializes the temporary file with the specified content. It returns
   // true on success and false on error. On error, callers should call
-  // |IgnoreTempFileErrors| to determine whether to ignore the error.
+  // `IgnoreTempFileErrors` to determine whether to ignore the error.
   bool Init(bssl::Span<const uint8_t> content = {});
   bool Init(std::string_view content) {
     return Init(bssl::StringAsBytes(content));
   }
 
-  // Open opens the file as a |FILE| with the specified mode.
+  // Open opens the file as a `FILE` with the specified mode.
   ScopedFILE Open(const char *mode) const;
 
   // Open opens the file as a file descriptor with the specified flags.
@@ -121,14 +121,14 @@ class TemporaryDirectory {
 
   TemporaryDirectory(TemporaryDirectory &other) { *this = std::move(other); }
   TemporaryDirectory& operator=(TemporaryDirectory&&other) {
-    // Ensure |other_| is empty so it doesn't try to delete the directory.
+    // Ensure `other_` is empty so it doesn't try to delete the directory.
     path_ = std::exchange(other.path_, {});
     files_ = std::exchange(other.files_, {});
     return *this;
   }
 
   // Init initializes the temporary directory. It returns true on success and
-  // false on error. On error, callers should call |IgnoreTempFileErrors| to
+  // false on error. On error, callers should call `IgnoreTempFileErrors` to
   // determine whether to ignore the error.
   bool Init();
 

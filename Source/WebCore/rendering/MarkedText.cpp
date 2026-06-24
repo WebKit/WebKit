@@ -34,9 +34,9 @@
 #include "RenderBoxModelObject.h"
 #include "RenderHighlight.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TextBoxSelectableRange.h"
 #include <algorithm>
 #include <ranges>
@@ -114,7 +114,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
     auto& parentStyle = parentRenderer.style();
     if (auto highlightRegistry = renderer.document().highlightRegistryIfExists()) {
         for (auto& highlightName : highlightRegistry->highlightNames()) {
-            auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoElementType::Highlight, highlightName }, &parentStyle);
+            auto renderStyle = parentRenderer.resolvePseudoElementStyle({ PseudoElementType::Highlight, highlightName }, &parentStyle);
             if (!renderStyle)
                 continue;
             if (renderStyle->textDecorationLineInEffect().isNone() && phase == PaintPhase::Decoration)
@@ -196,7 +196,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
     if (!markerController)
         return { };
 
-    auto markers = markerController->markersFor(*renderer.textNode());
+    auto markers = markerController->markersFor(*protect(renderer.textNode()));
 
     auto markedTextTypeForMarkerType = [] (DocumentMarkerType type) {
         switch (type) {
@@ -369,7 +369,7 @@ Vector<MarkedText> MarkedText::collectForDictationStreamingOpacity(const RenderT
     if (!markerController)
         return { };
 
-    auto markers = markerController->markersFor(*renderer.textNode(), DocumentMarkerType::DictationStreamingOpacity);
+    auto markers = markerController->markersFor(*protect(renderer.textNode()), DocumentMarkerType::DictationStreamingOpacity);
     if (markers.isEmpty())
         return { };
 

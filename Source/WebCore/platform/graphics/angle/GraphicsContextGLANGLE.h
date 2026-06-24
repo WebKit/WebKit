@@ -419,8 +419,6 @@ protected:
     HashSet<CString> m_allRequestableExtensions;
     HashSet<CString> m_allEnabledRequestableExtensions;
     HashSet<CString> m_extensions;
-    bool m_webglColorBufferFloatRGB { false };
-    bool m_webglColorBufferFloatRGBA { false };
     GCGLuint m_texture { 0 };
     GCGLuint m_fbo { 0 };
     GCGLuint m_depthStencilBuffer { 0 };

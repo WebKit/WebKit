@@ -87,7 +87,7 @@ void NotificationResourcesLoader::start(CompletionHandler<void(RefPtr<Notificati
                 if (image && !image->size().isEmpty()) {
                     if (!m_resources)
                         m_resources = NotificationResources::create();
-                    m_resources->setIcon(WTF::move(image));
+                    protect(m_resources)->setIcon(WTF::move(image));
                 }
 
                 didFinishLoadingResource(loader);

@@ -39,6 +39,7 @@
 #include <WebCore/StyleJustifySelf.h>
 #include <WebCore/StyleMaskLayers.h>
 #include <WebCore/StyleObjectPosition.h>
+#include <WebCore/StyleObjectViewBox.h>
 #include <WebCore/StyleOpacity.h>
 #include <WebCore/StyleOrder.h>
 #include <WebCore/StyleResize.h>
@@ -98,6 +99,7 @@ public:
     JustifySelf justifySelf;
 
     ObjectPosition objectPosition;
+    ObjectViewBox objectViewBox;
     Order order;
 
     PREFERRED_TYPE(bool) unsigned hasAttrContent : 1 { false };

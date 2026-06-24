@@ -180,6 +180,37 @@ private:
     WeakPtr<WebGLRenderingContextBase> m_context;
 };
 
+class ScopedScissorTestForRegion {
+    WTF_MAKE_NONCOPYABLE(ScopedScissorTestForRegion);
+public:
+    ScopedScissorTestForRegion(WebGLRenderingContextBase& context, const IntRect& region)
+        : m_context(context)
+        , m_wasEnabled(context.m_scissorEnabled)
+    {
+        if (!m_context)
+            return;
+        RefPtr gl = context.graphicsContextGL();
+        gl->getIntegerv(GraphicsContextGL::SCISSOR_BOX, m_scissorBox);
+        gl->enable(GraphicsContextGL::SCISSOR_TEST);
+        gl->scissor(region.x(), region.y(), region.width(), region.height());
+    }
+
+    ~ScopedScissorTestForRegion()
+    {
+        if (!m_context)
+            return;
+        RefPtr gl = m_context->graphicsContextGL();
+        gl->scissor(m_scissorBox[0], m_scissorBox[1], m_scissorBox[2], m_scissorBox[3]);
+        if (!m_wasEnabled)
+            gl->disable(GraphicsContextGL::SCISSOR_TEST);
+    }
+
+private:
+    WeakPtr<WebGLRenderingContextBase> m_context;
+    std::array<GCGLint, 4> m_scissorBox { };
+    bool m_wasEnabled { false };
+};
+
 class ScopedWebGLRestoreFramebuffer {
     WTF_MAKE_NONCOPYABLE(ScopedWebGLRestoreFramebuffer);
 public:

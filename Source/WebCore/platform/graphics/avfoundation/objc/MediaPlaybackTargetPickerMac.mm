@@ -45,9 +45,6 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-SOFTLINK_AVKIT_FRAMEWORK()
-SOFT_LINK_CLASS_OPTIONAL(AVKit, AVOutputDeviceMenuController)
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlaybackTargetPickerMac);

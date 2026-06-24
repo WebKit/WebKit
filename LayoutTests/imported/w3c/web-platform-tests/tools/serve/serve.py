@@ -2,6 +2,7 @@
 
 import abc
 import argparse
+import html
 import importlib
 import json
 import logging
@@ -24,6 +25,7 @@ from typing import ClassVar, List, Optional, Set, Tuple
 from localpaths import repo_root  # type: ignore
 
 from manifest.sourcefile import read_script_metadata, js_meta_re, parse_variants  # type: ignore
+from manifest.test262 import parse as test262_parse  # type: ignore
 from wptserve import server as wptserve, handlers
 from wptserve import stash
 from wptserve import config
@@ -93,9 +95,7 @@ def inject_script(html, script_tag):
         return html[:offset] + script_tag + html[offset:]
 
 
-class WrapperHandler:
-
-    __meta__ = abc.ABCMeta
+class WrapperHandler(metaclass=abc.ABCMeta):
 
     headers: ClassVar[List[Tuple[str, str]]] = []
 
@@ -207,7 +207,6 @@ class WrapperHandler:
         # a specific metadata key: value pair.
         pass
 
-    @abc.abstractmethod
     def check_exposure(self, request):
         # Raise an exception if this handler shouldn't be exposed after all.
         pass
@@ -215,7 +214,7 @@ class WrapperHandler:
 
 class HtmlWrapperHandler(WrapperHandler):
     global_type: ClassVar[Optional[str]] = None
-    headers = [('Content-Type', 'text/html')]
+    headers = [("Content-Type", "text/html")]
 
     def check_exposure(self, request):
         if self.global_type is not None:
@@ -235,7 +234,7 @@ class HtmlWrapperHandler(WrapperHandler):
                 return '<meta name="timeout" content="long">'
         if key == "title":
             value = value.replace("&", "&amp;").replace("<", "&lt;")
-            return '<title>%s</title>' % value
+            return "<title>%s</title>" % value
         return None
 
     def _script_replacement(self, key, value):
@@ -313,6 +312,139 @@ class WindowHandler(HtmlWrapperHandler):
 <div id=log></div>
 <script src="%(path)s"></script>
 """
+
+class ExtensionHandler(HtmlWrapperHandler):
+    path_replace = [(".extension.html", ".extension.js")]
+    wrapper = """<!doctype html>
+<meta charset=utf-8>
+%(meta)s
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js?feature=extensions"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/web-extensions-helper.js"></script>
+%(script)s
+<div id=log></div>
+<script src="%(path)s"></script>
+"""
+
+
+class Test262WindowHandler(HtmlWrapperHandler):
+    path_replace = [(".test262.html", ".js", ".test262-test.html")]
+    wrapper = """<!doctype html>
+<meta charset=utf-8>
+<title>Test</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const t = async_test(document.title);
+window.test262HarnessDone = t.step_func_done(function(status, message) {
+    if (status === 1) {
+        throw new Error(message || "Test failed");
+    } else if (status === 2) {
+        throw new Error(message || "Harness Error");
+    }
+});
+</script>
+%(meta)s
+%(script)s
+<div id=log></div>
+<iframe id="test262-iframe" src="%(path)s"></iframe>"""
+
+
+class Test262WindowTestBaseHandler(HtmlWrapperHandler):
+    # For SHAB
+    headers = [('Cross-Origin-Opener-Policy', 'same-origin'),
+               ('Cross-Origin-Embedder-Policy', 'require-corp')]
+
+    # Define a common HTML structure (testharness setup, etc.) that can be
+    # extended by subclasses. This avoids duplicating boilerplate. For example,
+    # Test262WindowModuleTestHandler reuses this `pre_wrapper` but appends a
+    # module script.
+    pre_wrapper = """<!doctype html>
+<meta charset=utf-8>
+<title>Test</title>
+<script src="/resources/test262/test262-reporter.js"></script>
+<script src="/third_party/test262/harness/assert.js"></script>
+<script src="/third_party/test262/harness/sta.js"></script>
+<script src="/resources/test262/test262-provider.js"></script>
+%(meta)s
+%(script)s"""
+    # The base wrapper for Test262 tests.
+    # It injects the reporter, the Test262 harness, and the provider.
+    wrapper = pre_wrapper + """<body><script>test262Setup()</script>
+<script src="%(path)s" onerror="test262ScriptError()"></script></body>"""
+
+    def _get_test_record(self, request):
+        path = self._get_filesystem_path(request)
+        with open(path, encoding='utf-8') as f:
+            return test262_parse(logging.getLogger(), f.read(), path)
+
+    def _get_meta(self, request):
+        yield from super()._get_meta(request)
+        test_record = self._get_test_record(request)
+        if test_record is None:
+            return
+
+        # Pass negative test metadata (type and phase) to the reporter to enable validation.
+        if test_record.negative:
+            yield "<script>test262Negative('%s', '%s')</script>" % (test_record.negative.get("type"), test_record.negative.get("phase"))
+
+        # Signal to the reporter if this is an async test.
+        if test_record.is_async:
+            yield "<script>test262IsAsync(true)</script>"
+
+    def _get_script(self, request):
+        yield from super()._get_script(request)
+        test_record = self._get_test_record(request)
+        if test_record is None:
+            return
+
+        # Include any harness files specified in the 'includes' frontmatter attribute.
+        for filename in (test_record.includes or []):
+            yield '<script src="/third_party/test262/harness/%s"></script>' % html.escape(filename)
+
+        # If it's an async test, the harness must wait for a print() signal,
+        # provided by Test262's doneprintHandle.js.
+        if test_record.is_async:
+            yield '<script src="/third_party/test262/harness/doneprintHandle.js"></script>'
+
+
+
+
+
+class Test262WindowTestHandler(Test262WindowTestBaseHandler):
+    # Handler for standard window tests.
+    path_replace = [(".test262-test.html", ".js")]
+
+
+class Test262WindowModuleHandler(Test262WindowHandler):
+    # Landing page for module tests (wraps further).
+    path_replace = [(".test262-module.html", ".js", ".test262-module-test.html")]
+
+class Test262WindowModuleTestHandler(Test262WindowTestBaseHandler):
+    # Specialized Handler for Test262 module tests using dynamic import().
+    path_replace = [(".test262-module-test.html", ".js")]
+    wrapper = Test262WindowTestBaseHandler.pre_wrapper + """<body>
+<script>window.__test262IsModule = true;</script>
+<script type="module">
+  test262Setup();
+  import("%(path)s").then(() => {
+    if (!window.test262Async) {
+      test262Done();
+    }
+  }).catch(error => {
+    setTimeout(() => { throw error; });
+  });
+</script>
+</body>"""
+
+
+class Test262StrictWindowHandler(Test262WindowHandler):
+    path_replace = [(".test262.strict.html", ".js", ".test262-test.strict.html")]
+
+class Test262StrictWindowTestHandler(Test262WindowTestBaseHandler):
+    path_replace = [(".test262-test.strict.html", ".js", ".test262.strict.js")]
 
 
 class WindowModulesHandler(HtmlWrapperHandler):
@@ -562,8 +694,32 @@ class ShadowRealmInAudioWorkletHandler(HtmlWrapperHandler):
 """
 
 
-class BaseWorkerHandler(WrapperHandler):
+class Test262StrictHandler(WrapperHandler):
+    path_replace = [(".test262.strict.js", ".js")]
     headers = [('Content-Type', 'text/javascript')]
+    wrapper = """
+"use strict";
+%(script)s
+"""
+
+    def _meta_replacement(self, key, value):
+        return None
+
+    def _get_script(self, request):
+        """
+        Reads the entire content of the associated JavaScript file to be
+        prepended with "use strict".
+        """
+        path = self._get_filesystem_path(request)
+        try:
+            with open(path, encoding='utf-8') as f:
+                yield f.read()
+        except OSError:
+            raise HTTPException(404)
+
+
+class BaseWorkerHandler(WrapperHandler):
+    headers = [("Content-Type", "text/javascript")]
 
     def _meta_replacement(self, key, value):
         return None
@@ -741,7 +897,7 @@ class RoutesBuilder:
         self.extra = []
         self.inject_script_data = None
         if inject_script is not None:
-            with open(inject_script, 'rb') as f:
+            with open(inject_script, "rb") as f:
                 self.inject_script_data = f.read()
 
         self.mountpoint_routes = OrderedDict()
@@ -775,6 +931,14 @@ class RoutesBuilder:
             ("GET", "*.worker.html", WorkersHandler),
             ("GET", "*.worker-module.html", WorkerModulesHandler),
             ("GET", "*.window.html", WindowHandler),
+            ("GET", "*.test262.html", Test262WindowHandler),
+            ("GET", "*.test262-test.html", Test262WindowTestHandler),
+            ("GET", "*.test262-module.html", Test262WindowModuleHandler),
+            ("GET", "*.test262-module-test.html", Test262WindowModuleTestHandler),
+            ("GET", "*.test262.strict.html", Test262StrictWindowHandler),
+            ("GET", "*.test262-test.strict.html", Test262StrictWindowTestHandler),
+            ("GET", "*.test262.strict.js", Test262StrictHandler),
+            ("GET", "*.extension.html", ExtensionHandler),
             ("GET", "*.any.html", AnyHtmlHandler),
             ("GET", "*.any.sharedworker.html", SharedWorkersHandler),
             ("GET", "*.any.sharedworker-module.html", SharedWorkerModulesHandler),
@@ -804,6 +968,7 @@ class RoutesBuilder:
             ("*", "/.well-known/private-aggregation/*", handlers.PythonScriptHandler),
             ("GET", "/.well-known/shared-storage/trusted-origins", handlers.PythonScriptHandler),
             ("*", "/.well-known/web-identity", handlers.PythonScriptHandler),
+            ("*", "/.well-known/device-bound-sessions", handlers.PythonScriptHandler),
             ("*", "*.py", handlers.PythonScriptHandler),
             ("GET", "*", handlers.FileHandler)
         ]
@@ -851,7 +1016,7 @@ class ServerProc:
         self.proc = self.mp_context.Process(target=self.create_daemon,
                                             args=(init_func, host, port, paths, routes, bind_address,
                                                   config, log_handlers, dict(**os.environ)),
-                                            name='%s on port %s' % (self.scheme, port),
+                                            name="%s on port %s" % (self.scheme, port),
                                             kwargs=kwargs)
         self.proc.daemon = True
         self.proc.start()
@@ -959,9 +1124,9 @@ def make_hosts_file(config, host):
     ):
         rv.append("%s\t%s" % (host, domain))
 
-    # Windows interpets the IP address 0.0.0.0 as non-existent, making it an
+    # Windows interprets the IP address 0.0.0.0 as non-existent, making it an
     # appropriate alias for non-existent hosts. However, UNIX-like systems
-    # interpret the same address to mean any IP address, which is inappropraite
+    # interpret the same address to mean any IP address, which is inappropriate
     # for this context. These systems do not reserve any value for this
     # purpose, so the inavailability of the domains must be taken for granted.
     #
@@ -990,8 +1155,12 @@ def start_servers(logger, host, ports, paths, routes, bind_address, config,
                          'Requires OpenSSL 1.0.2+')
             continue
 
-        # Skip WebTransport over HTTP/3 server unless if is enabled explicitly.
-        if scheme == 'webtransport-h3' and not kwargs.get("webtransport_h3"):
+        # Skip WebTransport over HTTP/3 server unless it is enabled explicitly.
+        if scheme == "webtransport-h3" and not kwargs.get("webtransport_h3"):
+            continue
+
+        # Skip over DNS unless it is enabled explicitly.
+        if scheme == "dns" and not kwargs.get("dns"):
             continue
 
         for port in ports:
@@ -1000,15 +1169,16 @@ def start_servers(logger, host, ports, paths, routes, bind_address, config,
 
             init_func = {
                 "http": start_http_server,
-                "http-private": start_http_server,
+                "http-local": start_http_server,
                 "http-public": start_http_server,
                 "https": start_https_server,
-                "https-private": start_https_server,
+                "https-local": start_https_server,
                 "https-public": start_https_server,
                 "h2": start_http2_server,
                 "ws": start_ws_server,
                 "wss": start_wss_server,
                 "webtransport-h3": start_webtransport_h3_server,
+                "dns": start_dns_server,
             }[scheme]
 
             server_proc = ServerProc(mp_context, scheme=scheme)
@@ -1187,6 +1357,19 @@ def start_webtransport_h3_server(logger, host, port, paths, routes, bind_address
         sys.exit(0)
 
 
+def start_dns_server(logger, host, port, paths, routes, bind_address, config, **kwargs):
+    try:
+        from .dns import DNSServerDaemon
+        return DNSServerDaemon(host=host,
+                               port=port,
+                               bind_address=bind_address,
+                               config=config,
+                               wildcards=kwargs.get("dns_wildcards"))
+    except Exception as error:
+        logger.critical(f"Failed to start DNS server: {error}")
+        sys.exit(0)
+
+
 def start(logger, config, routes, mp_context, log_handlers, **kwargs):
     host = config["server_host"]
     ports = config.ports
@@ -1241,14 +1424,15 @@ class ConfigBuilder(config.ConfigBuilder):
         "server_host": None,
         "ports": {
             "http": [8000, "auto"],
-            "http-private": ["auto"],
+            "http-local": ["auto"],
             "http-public": ["auto"],
             "https": [8443, 8444],
-            "https-private": ["auto"],
+            "https-local": ["auto"],
             "https-public": ["auto"],
             "ws": ["auto"],
             "wss": ["auto"],
             "webtransport-h3": ["auto"],
+            "dns": [8053],
         },
         "check_subdomains": True,
         "bind_address": True,
@@ -1373,6 +1557,10 @@ def get_parser():
                         help="Disable the HTTP/2.0 server")
     parser.add_argument("--webtransport-h3", action="store_true",
                         help="Enable WebTransport over HTTP/3 server")
+    parser.add_argument("--dns", action="store_true",
+                        help="Enable DNS server")
+    parser.add_argument("--dns-wildcards", type=int, metavar="N",
+                        help="Provide wildcards for N levels of subdomains")
     parser.add_argument("--exit-after-start", action="store_true",
                         help="Exit after starting servers")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
@@ -1413,8 +1601,8 @@ def get_logger(log_level, log_handlers):
     return logger
 
 
-def run(config_cls=ConfigBuilder, route_builder=None, mp_context=None, log_handlers=None,
-        **kwargs):
+def run(venv=None, config_cls=ConfigBuilder, route_builder=None,
+        mp_context=None, log_handlers=None, **kwargs):
     logger = get_logger("INFO", log_handlers)
 
     if mp_context is None:
@@ -1432,10 +1620,10 @@ def run(config_cls=ConfigBuilder, route_builder=None, mp_context=None, log_handl
         if kwargs.get("alias_file"):
             with open(kwargs["alias_file"]) as alias_file:
                 for line in alias_file:
-                    alias, doc_root = (x.strip() for x in line.split(','))
+                    alias, doc_root = (x.strip() for x in line.split(","))
                     config["aliases"].append({
-                        'url-path': alias,
-                        'local-dir': doc_root,
+                        "url-path": alias,
+                        "local-dir": doc_root,
                     })
 
         if route_builder is None:

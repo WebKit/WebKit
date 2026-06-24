@@ -1761,7 +1761,7 @@ private:
     Procedure& m_proc;
     BlockInsertionSet m_blockInsertionSet;
     InsertionSet m_insertionSet;
-    UseCounts m_useCounts;
+    UseCountsWithoutUsingInstructions m_useCounts;
     BasicBlock* m_block;
     unsigned m_index;
     Value* m_value;

@@ -83,6 +83,7 @@ const expectMatch = [
     [ ".kernON .latin",  ".paltONkernON .latin" ],
     [ ".kernOFF .latin", ".paltONkernOFF .latin" ],
     [ ".kernON .cjk",    ".paltONkernON .cjk" ],
+    [ ".default .cjk",   ".kernOFF .cjk" ],
 ];
 const expectMismatch = [
     [ ".kernOFF .latin",     ".kernON .latin" ],
@@ -91,7 +92,6 @@ const expectMismatch = [
 ];
 const expectMatchOneOf = [
     [ ".default .latin", [".kernON .latin", ".kernOFF .latin"] ],
-    [ ".default .cjk",   [".kernON .cjk",  ".kernOFF .cjk"] ],
 ];
 
 expectMatch.forEach((t) => {

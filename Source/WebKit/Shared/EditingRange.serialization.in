@@ -29,5 +29,5 @@ webkit_platform_headers: "EditingRange.h"
 
 [WebKitPlatform] struct WebKit::EditingRange {
     uint64_t location;
-    [Validator='!(Checked<uint64_t> { *location } + *length).hasOverflowed()'] uint64_t length;
+    [Validator='!(CheckedUint64 { *location } + *length).hasOverflowed()'] uint64_t length;
 };

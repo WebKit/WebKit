@@ -88,7 +88,7 @@ private:
     size_t lineIndex() const { return lineBox().lineIndex(); }
     const ConstraintsForInlineContent& constraints() const LIFETIME_BOUND { return m_constraints; }
     const ElementBox& root() const { return m_formattingContext.root(); }
-    const RenderStyle& rootStyle() const LIFETIME_BOUND { return lineIndex() ? root().style() : root().firstLineStyle(); }
+    const Style::ComputedStyle& rootStyle() const LIFETIME_BOUND { return lineIndex() ? root().style() : root().firstLineStyle(); }
     InlineFormattingContext& formattingContext() LIFETIME_BOUND { return m_formattingContext; }
     const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_formattingContext; }
 

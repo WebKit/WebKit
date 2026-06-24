@@ -209,6 +209,8 @@ void JSTestException::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestExceptionOwner::JSTestExceptionOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestExceptionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -221,7 +223,7 @@ void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestException = static_cast<JSTestException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestException->wrapped()).ptr(), jsTestException);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestException->wrapped(), jsTestException);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

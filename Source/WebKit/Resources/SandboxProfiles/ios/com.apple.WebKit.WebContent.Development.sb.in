@@ -21,6 +21,9 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(DEVELOPMENT_SANDBOX_FALLBACK)
+#include "Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in"
+#else
 #include "Shared/Sandbox/iOS/common.sb"
 #include "Shared/Sandbox/iOS/webcontent-defines.sb"
 
@@ -302,4 +305,5 @@
         (extension-class "com.apple.mediaserverd.read")
         (require-any
             (apply subpath issue-extension-secondary-paths))))
-#endif
+#endif // ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
+#endif // !ENABLE(DEVELOPMENT_SANDBOX_FALLBACK)

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleSingleAnimationRangeName.h>
 #include <WebCore/StyleValueTypes.h>
 #include <WebCore/TimelineRangeValue.h>
@@ -38,18 +38,11 @@ namespace Style {
 
 enum class SingleAnimationRangeType : bool { Start, End };
 
-struct SingleAnimationRangeLength : LengthWrapperBase<LengthPercentage<>> {
-    using Base::Base;
-
-    static SingleAnimationRangeLength NODELETE defaultValue(SingleAnimationRangeType);
-    bool isDefault(SingleAnimationRangeType) const;
-};
-
 template<SingleAnimationRangeType type>
 struct SingleAnimationRangeEdge {
     using Base = SingleAnimationRangeEdge<type>;
     using Name = SingleAnimationRangeName;
-    using Offset = SingleAnimationRangeLength;
+    using Offset = LengthPercentage<>;
 
     SingleAnimationRangeEdge(Offset&& offset)
         : SingleAnimationRangeEdge { Name::Omitted, WTF::move(offset) }
@@ -95,7 +88,7 @@ struct SingleAnimationRangeEdge {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
         auto visitPredefinedNamedRange = [&](auto keyword) {
-            if (m_offset.isDefault(type))
+            if (m_offset == defaultOffset())
                 return visitor(keyword);
             return visitor(SpaceSeparatedTuple { keyword, m_offset });
         };
@@ -126,7 +119,8 @@ struct SingleAnimationRangeEdge {
     Name name() const { return m_name; }
     const Offset& offset() const LIFETIME_BOUND { return m_offset; }
 
-    bool hasDefaultOffset() const { return m_offset.isDefault(type); }
+    static Offset NODELETE defaultOffset();
+    bool hasDefaultOffset() const { return m_offset == defaultOffset(); }
 
     bool operator==(const SingleAnimationRangeEdge<type>&) const = default;
 
@@ -139,13 +133,24 @@ protected:
 
     SingleAnimationRangeEdge(Name name, std::optional<Offset>&& offset)
         : m_name { name }
-        , m_offset { offset ? *offset : Offset::defaultValue(type) }
+        , m_offset { offset ? *offset : defaultOffset() }
     {
     }
 
     Name m_name { Name::Normal };
     Offset m_offset;
 };
+
+template<SingleAnimationRangeType type>
+auto SingleAnimationRangeEdge<type>::defaultOffset() -> Offset
+{
+    using namespace CSS::Literals;
+
+    if constexpr (type == SingleAnimationRangeType::Start)
+        return 0_css_percentage;
+    else
+        return 100_css_percentage;
+}
 
 struct SingleAnimationRangeStart : SingleAnimationRangeEdge<SingleAnimationRangeType::Start> {
     using Base::Base;
@@ -192,6 +197,5 @@ template<> struct DeprecatedCSSValueConversion<SingleAnimationRangeEnd> {
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationRangeLength)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationRangeStart)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SingleAnimationRangeEnd)

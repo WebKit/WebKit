@@ -2130,6 +2130,64 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
 }
 
 TEST_F(PeerConnectionEncodingsIntegrationTest,
+       EncodingParametersRedEnabledBeforeNegotiationAudioWithFieldTrial) {
+  scoped_refptr<PeerConnectionTestWrapper> local_pc_wrapper =
+      CreatePc("WebRTC-PayloadTypesInTransport/Enabled/");
+  scoped_refptr<PeerConnectionTestWrapper> remote_pc_wrapper =
+      CreatePc("WebRTC-PayloadTypesInTransport/Enabled/");
+  ExchangeIceCandidates(local_pc_wrapper, remote_pc_wrapper);
+
+  std::vector<RtpCodecCapability> send_codecs =
+      local_pc_wrapper->pc_factory()
+          ->GetRtpSenderCapabilities(MediaType::AUDIO)
+          .codecs;
+
+  std::optional<RtpCodecCapability> opus =
+      local_pc_wrapper->FindFirstSendCodecWithName(MediaType::AUDIO, "opus");
+  ASSERT_TRUE(opus);
+
+  std::optional<RtpCodecCapability> red =
+      local_pc_wrapper->FindFirstSendCodecWithName(MediaType::AUDIO, "red");
+  ASSERT_TRUE(red);
+
+  RtpTransceiverInit init;
+  init.direction = RtpTransceiverDirection::kSendOnly;
+  RtpEncodingParameters encoding_parameters;
+  encoding_parameters.codec = opus;
+  init.send_encodings.push_back(encoding_parameters);
+
+  auto transceiver_or_error =
+      local_pc_wrapper->pc()->AddTransceiver(MediaType::AUDIO, init);
+  ASSERT_TRUE(transceiver_or_error.ok());
+  scoped_refptr<RtpTransceiverInterface> audio_transceiver =
+      transceiver_or_error.MoveValue();
+
+  // Preferring RED over Opus should enable RED with Opus encoding.
+  send_codecs[0] = red.value();
+  send_codecs[1] = opus.value();
+
+  ASSERT_TRUE(audio_transceiver->SetCodecPreferences(send_codecs).ok());
+  NegotiateWithSimulcastTweaks(local_pc_wrapper, remote_pc_wrapper);
+  local_pc_wrapper->WaitForConnection();
+  remote_pc_wrapper->WaitForConnection();
+
+  RtpParameters parameters = audio_transceiver->sender()->GetParameters();
+  EXPECT_EQ(parameters.encodings[0].codec, opus);
+  EXPECT_EQ(parameters.codecs[0].name, red->name);
+
+  // Check that it's possible to switch back to Opus without RED.
+  send_codecs[0] = opus.value();
+  send_codecs[1] = red.value();
+
+  ASSERT_TRUE(audio_transceiver->SetCodecPreferences(send_codecs).ok());
+  NegotiateWithSimulcastTweaks(local_pc_wrapper, remote_pc_wrapper);
+
+  parameters = audio_transceiver->sender()->GetParameters();
+  EXPECT_EQ(parameters.encodings[0].codec, opus);
+  EXPECT_EQ(parameters.codecs[0].name, opus->name);
+}
+
+TEST_F(PeerConnectionEncodingsIntegrationTest,
        SetParametersRejectsScalabilityModeForSelectedCodec) {
   scoped_refptr<PeerConnectionTestWrapper> local_pc_wrapper = CreatePc();
 

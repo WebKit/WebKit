@@ -34,7 +34,6 @@
 namespace WebCore {
 
 struct AcceleratedEffectShapeFunction;
-struct TransformOperationData;
 
 namespace Style {
 
@@ -431,7 +430,7 @@ std::optional<Shape> makeShapeFromPath(const Path&);
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-template<> struct Evaluation<ShapeFunction, AcceleratedEffectShapeFunction> { AcceleratedEffectShapeFunction operator()(const ShapeFunction&, const TransformOperationData&, ZoomFactor); };
+template<> struct Evaluation<ShapeFunction, AcceleratedEffectShapeFunction> { AcceleratedEffectShapeFunction operator()(const ShapeFunction&, const FloatRect&, ZoomFactor); };
 
 #endif
 

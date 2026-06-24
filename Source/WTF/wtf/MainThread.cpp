@@ -44,6 +44,7 @@ void initializeMainThread()
         initialize();
         initializeMainThreadPlatform();
         RunLoop::initializeMain();
+        RELEASE_ASSERT(!isMainThread() || Thread::currentSingleton().uid() == 1);
     });
 }
 

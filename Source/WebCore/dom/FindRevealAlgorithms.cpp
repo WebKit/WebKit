@@ -33,8 +33,8 @@
 #include "HTMLDetailsElement.h"
 #include "HTMLSlotElement.h"
 #include "NodeRenderStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "UserAgentParts.h"
 
 namespace WebCore {

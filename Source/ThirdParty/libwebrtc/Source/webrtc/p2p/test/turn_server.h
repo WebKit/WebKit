@@ -16,11 +16,11 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/packet_socket_factory.h"
 #include "api/sequence_checker.h"
@@ -97,7 +97,7 @@ class TurnServerAllocation final {
   std::string ToString() const;
 
   void HandleTurnMessage(const TurnMessage* msg, EcnMarking ecn);
-  void HandleChannelData(ArrayView<const uint8_t> payload, EcnMarking ecn);
+  void HandleChannelData(std::span<const uint8_t> payload, EcnMarking ecn);
 
  private:
   struct Channel {
@@ -176,7 +176,7 @@ class TurnRedirectInterface {
 class StunMessageObserver {
  public:
   virtual void ReceivedMessage(const TurnMessage* msg) = 0;
-  virtual void ReceivedChannelData(ArrayView<const uint8_t> payload) = 0;
+  virtual void ReceivedChannelData(std::span<const uint8_t> payload) = 0;
   virtual ~StunMessageObserver() {}
 };
 
@@ -290,7 +290,7 @@ class TurnServer {
   void OnInternalSocketClose(AsyncPacketSocket* socket, int err);
 
   void HandleStunMessage(TurnServerConnection* conn,
-                         ArrayView<const uint8_t> payload,
+                         std::span<const uint8_t> payload,
                          EcnMarking ecn) RTC_RUN_ON(thread_);
   void HandleBindingRequest(TurnServerConnection* conn, const StunMessage* msg)
       RTC_RUN_ON(thread_);

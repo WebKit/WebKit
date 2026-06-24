@@ -62,19 +62,19 @@ public:
 
     WEBCORE_EXPORT Text* NODELETE textNode() const;
 
-    const RenderStyle& style() const LIFETIME_BOUND;
+    const Style::ComputedStyle& style() const LIFETIME_BOUND;
 
-    const RenderStyle& firstLineStyle() const LIFETIME_BOUND;
-    const RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&, const RenderStyle* parentStyle = nullptr) const LIFETIME_BOUND;
+    const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND;
+    const Style::ComputedStyle* lazyPseudoElementStyle(const Style::PseudoElementIdentifier&, const Style::ComputedStyle* parentStyle = nullptr) const LIFETIME_BOUND;
 
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
     Color selectionEmphasisMarkColor() const;
-    std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
+    std::unique_ptr<Style::ComputedStyle> selectionPseudoStyle() const;
 
-    const RenderStyle* spellingErrorPseudoStyle() const LIFETIME_BOUND;
-    const RenderStyle* grammarErrorPseudoStyle() const LIFETIME_BOUND;
-    const RenderStyle* targetTextPseudoStyle() const LIFETIME_BOUND;
+    const Style::ComputedStyle* spellingErrorPseudoStyle() const LIFETIME_BOUND;
+    const Style::ComputedStyle* grammarErrorPseudoStyle() const LIFETIME_BOUND;
+    const Style::ComputedStyle* targetTextPseudoStyle() const LIFETIME_BOUND;
 
     virtual String originalText() const;
 
@@ -119,7 +119,7 @@ public:
         bool hasBreak { false };
         bool endsWithBreak { false };
     };
-    Widths trimmedPreferredWidths(float leadWidth, bool& stripFrontSpaces);
+    Widths trimmedIntrinsicLogicalWidths(float leadingWidth, bool& stripFrontSpaces);
 
     float hangablePunctuationStartWidth(unsigned index) const;
     float hangablePunctuationEndWidth(unsigned index) const;
@@ -163,7 +163,7 @@ public:
     bool canUseSimpleFontCodePath() const { return fontCodePath() == FontCascade::CodePath::Simple; }
     bool shouldUseSimpleGlyphOverflowCodePath() const { return fontCodePath() == FontCascade::CodePath::SimpleWithGlyphOverflow; }
 
-    virtual void styleDidChange(Style::Difference, const RenderStyle* oldStyle);
+    virtual void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle);
 
 #if ENABLE(TEXT_AUTOSIZING)
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
@@ -192,7 +192,7 @@ public:
     std::optional<bool> hasStrongDirectionalityContent() const { return m_hasStrongDirectionalityContent; }
 
 protected:
-    virtual void computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation = false);
+    virtual void computeMinMaxIntrinsicLogicalWidths(float leadingWidth, bool forcedMinMaxWidthComputation = false);
     void willBeDestroyed() override;
 
     virtual void setRenderedText(const String&);
@@ -216,11 +216,11 @@ private:
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const final;
 
-    void computePreferredLogicalWidths(float leadWidth, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&, bool forcedMinMaxWidthComputation = false);
+    void computeMinMaxIntrinsicLogicalWidths(float leadingWidth, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&, bool forcedMinMaxWidthComputation = false);
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 
-    float widthFromCache(const FontCascade&, unsigned start, unsigned len, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow*, const RenderStyle&) const;
+    float widthFromCache(const FontCascade&, unsigned start, unsigned len, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow*, const Style::ComputedStyle&) const;
     bool computeUseBackslashAsYenSymbol() const;
 
     void secureText(char16_t mask);
@@ -231,8 +231,8 @@ private:
     void container() const = delete; // Use parent() instead.
     void container(const RenderLayerModelObject&, bool&) const = delete; // Use parent() instead.
 
-    float maxWordFragmentWidth(const RenderStyle&, const FontCascade&, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace&, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&);
-    float widthFromCacheConsideringPossibleTrailingSpace(const RenderStyle&, const FontCascade&, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace&, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&) const;
+    float maxWordFragmentWidth(const Style::ComputedStyle&, const FontCascade&, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace&, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&);
+    float widthFromCacheConsideringPossibleTrailingSpace(const Style::ComputedStyle&, const FontCascade&, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace&, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&) const;
     void initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifiedTextMeasuring(const String&);
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -266,8 +266,8 @@ private:
     FontCascade::CodePath m_fontCodePath : 2;
 };
 
-String applyTextTransform(const RenderStyle&, const String&, char32_t previousCharacter);
-String applyTextTransform(const RenderStyle&, const String&);
+String applyTextTransform(const Style::ComputedStyle&, const String&, char32_t previousCharacter);
+String applyTextTransform(const Style::ComputedStyle&, const String&);
 String capitalize(const String&, char32_t previousCharacter, const AtomString& locale);
 String capitalize(const String&, const AtomString& locale);
 bool isDutchLocale(const AtomString&);
@@ -279,21 +279,21 @@ inline char16_t RenderText::characterAt(unsigned i) const
     return i >= length() ? 0 : text()[i];
 }
 
-inline const RenderStyle& RenderText::style() const
+inline const Style::ComputedStyle& RenderText::style() const
 {
     return parent()->style();
 }
 
-inline const RenderStyle& RenderText::firstLineStyle() const
+inline const Style::ComputedStyle& RenderText::firstLineStyle() const
 {
     return parent()->firstLineStyle();
 }
 
-inline const RenderStyle* RenderText::getCachedPseudoStyle(const Style::PseudoElementIdentifier& pseudoElementIdentifier, const RenderStyle* parentStyle) const
+inline const Style::ComputedStyle* RenderText::lazyPseudoElementStyle(const Style::PseudoElementIdentifier& pseudoElementIdentifier, const Style::ComputedStyle* parentStyle) const
 {
     // Pseudostyle is associated with an element, so ascend the tree until we find a non-anonymous ancestor.
     if (auto* ancestor = firstNonAnonymousAncestor())
-        return ancestor->getCachedPseudoStyle(pseudoElementIdentifier, parentStyle);
+        return ancestor->lazyPseudoElementStyle(pseudoElementIdentifier, parentStyle);
     return nullptr;
 }
 
@@ -318,28 +318,28 @@ inline Color RenderText::selectionEmphasisMarkColor() const
     return Color();
 }
 
-inline std::unique_ptr<RenderStyle> RenderText::selectionPseudoStyle() const
+inline std::unique_ptr<Style::ComputedStyle> RenderText::selectionPseudoStyle() const
 {
     if (auto* ancestor = firstNonAnonymousAncestor())
         return ancestor->selectionPseudoStyle();
     return nullptr;
 }
 
-inline const RenderStyle* RenderText::spellingErrorPseudoStyle() const
+inline const Style::ComputedStyle* RenderText::spellingErrorPseudoStyle() const
 {
     if (auto* ancestor = firstNonAnonymousAncestor())
         return ancestor->spellingErrorPseudoStyle();
     return nullptr;
 }
 
-inline const RenderStyle* RenderText::grammarErrorPseudoStyle() const
+inline const Style::ComputedStyle* RenderText::grammarErrorPseudoStyle() const
 {
     if (auto* ancestor = firstNonAnonymousAncestor())
         return ancestor->grammarErrorPseudoStyle();
     return nullptr;
 }
 
-inline const RenderStyle* RenderText::targetTextPseudoStyle() const
+inline const Style::ComputedStyle* RenderText::targetTextPseudoStyle() const
 {
     if (auto* ancestor = firstNonAnonymousAncestor())
         return ancestor->targetTextPseudoStyle();

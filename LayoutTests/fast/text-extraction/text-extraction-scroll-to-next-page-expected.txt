@@ -3,15 +3,20 @@ Tests that scroll interactions with no delta scroll by one page and wrap around.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS scrollVerticalError is ""
+PASS scrollVerticalResult.error is ""
+PASS scrollVerticalResult.summary is "Scrolled 200px down"
 PASS verticalScrollTopAfterFirstScroll is 200
-PASS scrollVerticalWrapError is ""
+PASS scrollVerticalWrapResult.error is ""
+PASS scrollVerticalWrapResult.summary is "Scrolled 3800px up (wrapped to start)"
 PASS verticalScrollTopAfterWrap is 0
-PASS scrollHorizontalError is ""
+PASS scrollHorizontalResult.error is ""
+PASS scrollHorizontalResult.summary is "Scrolled 200px right"
 PASS horizontalScrollLeftAfterFirstScroll is 200
-PASS scrollHorizontalWrapError is ""
+PASS scrollHorizontalWrapResult.error is ""
+PASS scrollHorizontalWrapResult.summary is "Scrolled 3800px left (wrapped to start)"
 PASS horizontalScrollLeftAfterWrap is 0
-PASS scrollPageError is ""
+PASS scrollPageResult.error is ""
+PASS /^Scrolled [1-9]\d*px down$/.test(scrollPageResult.summary) is true
 PASS pageScrollTopAfterScroll is > 0
 PASS successfullyParsed is true
 

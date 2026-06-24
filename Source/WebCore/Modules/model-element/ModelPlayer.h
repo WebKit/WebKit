@@ -53,12 +53,15 @@ namespace WebCore {
 
 class FloatPoint3D;
 class GraphicsLayer;
+class ImageBuffer;
 class Model;
 class ModelPlayerAnimationState;
 class ModelPlayerTransformState;
 class SharedBuffer;
 class TransformationMatrix;
 
+class DestinationColorSpace;
+class FloatSize;
 struct ModelPlayerGraphicsLayerConfiguration;
 
 class WEBCORE_EXPORT ModelPlayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ModelPlayer> {
@@ -70,11 +73,13 @@ public:
     virtual bool NODELETE isPlaceholder() const;
 
     // Loading.
-    virtual void load(Model&, LayoutSize) = 0;
+    virtual void load(Model&, LayoutSize, bool) = 0;
     virtual void NODELETE reload(Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&);
 
     // Graphics.
     virtual void configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) = 0;
+
+    virtual RefPtr<ImageBuffer> snapshotCurrentFrame(const FloatSize& deviceSize, const DestinationColorSpace&);
 
     // State changes.
     virtual void NODELETE visibilityStateDidChange();

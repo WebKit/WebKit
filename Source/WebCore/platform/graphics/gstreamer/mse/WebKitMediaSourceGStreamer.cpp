@@ -35,7 +35,6 @@
 #include <wtf/DataMutex.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
-#include <wtf/MainThreadData.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/GMallocString.h>

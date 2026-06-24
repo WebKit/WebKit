@@ -86,32 +86,33 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 // ISOArithmetic tests — mirrors temporal_rs src/iso.rs tests
 // ---------------------------------------------------------------------------
 
-static void testBalanceISODate()
+static void testAddDaysToISODate()
 {
-    // temporal_rs: test balance_iso_date
-    // 2020-01-32 -> 2020-02-01
-    auto r = balanceISODate(2020, 1, 32);
-    TCHECK_EQ(r.year(), 2020, "balanceISODate: 2020-01-32 year");
-    TCHECK_EQ(r.month(), 2u, "balanceISODate: 2020-01-32 month");
-    TCHECK_EQ(r.day(), 1u, "balanceISODate: 2020-01-32 day");
+    // temporal_rs: test balance_iso_date (now addDaysToISODate — same algorithm, taking a
+    // PlainDate + day delta directly instead of (year, month, day-with-overflow)).
+    // 2020-01-31 +1d -> 2020-02-01
+    auto r = addDaysToISODate(ISO8601::PlainDate { 2020, 1, 31 }, 1);
+    TCHECK_EQ(r.year(), 2020, "addDaysToISODate: 2020-01-31 +1d year");
+    TCHECK_EQ(r.month(), 2u, "addDaysToISODate: 2020-01-31 +1d month");
+    TCHECK_EQ(r.day(), 1u, "addDaysToISODate: 2020-01-31 +1d day");
 
-    // 2020-12-32 -> 2021-01-01
-    auto r2 = balanceISODate(2020, 12, 32);
-    TCHECK_EQ(r2.year(), 2021, "balanceISODate: 2020-12-32 year");
-    TCHECK_EQ(r2.month(), 1u, "balanceISODate: 2020-12-32 month");
-    TCHECK_EQ(r2.day(), 1u, "balanceISODate: 2020-12-32 day");
+    // 2020-12-31 +1d -> 2021-01-01
+    auto r2 = addDaysToISODate(ISO8601::PlainDate { 2020, 12, 31 }, 1);
+    TCHECK_EQ(r2.year(), 2021, "addDaysToISODate: 2020-12-31 +1d year");
+    TCHECK_EQ(r2.month(), 1u, "addDaysToISODate: 2020-12-31 +1d month");
+    TCHECK_EQ(r2.day(), 1u, "addDaysToISODate: 2020-12-31 +1d day");
 
-    // 2020-01-00 -> 2019-12-31
-    auto r3 = balanceISODate(2020, 1, 0);
-    TCHECK_EQ(r3.year(), 2019, "balanceISODate: 2020-01-00 year");
-    TCHECK_EQ(r3.month(), 12u, "balanceISODate: 2020-01-00 month");
-    TCHECK_EQ(r3.day(), 31u, "balanceISODate: 2020-01-00 day");
+    // 2020-01-01 -1d -> 2019-12-31
+    auto r3 = addDaysToISODate(ISO8601::PlainDate { 2020, 1, 1 }, -1);
+    TCHECK_EQ(r3.year(), 2019, "addDaysToISODate: 2020-01-01 -1d year");
+    TCHECK_EQ(r3.month(), 12u, "addDaysToISODate: 2020-01-01 -1d month");
+    TCHECK_EQ(r3.day(), 31u, "addDaysToISODate: 2020-01-01 -1d day");
 
-    // 2020-03-01 (unchanged)
-    auto r4 = balanceISODate(2020, 3, 1);
-    TCHECK_EQ(r4.year(), 2020, "balanceISODate: 2020-03-01 year");
-    TCHECK_EQ(r4.month(), 3u, "balanceISODate: 2020-03-01 month");
-    TCHECK_EQ(r4.day(), 1u, "balanceISODate: 2020-03-01 day");
+    // 2020-03-01 +0d (unchanged)
+    auto r4 = addDaysToISODate(ISO8601::PlainDate { 2020, 3, 1 }, 0);
+    TCHECK_EQ(r4.year(), 2020, "addDaysToISODate: 2020-03-01 +0d year");
+    TCHECK_EQ(r4.month(), 3u, "addDaysToISODate: 2020-03-01 +0d month");
+    TCHECK_EQ(r4.day(), 1u, "addDaysToISODate: 2020-03-01 +0d day");
 }
 
 static void testRegulateISODate()
@@ -364,20 +365,46 @@ static void testAdjustDateDurationRecord()
     ISO8601::Duration base(2, 3, 1, 5, 0, 0, 0, 0, 0, 0);
 
     // Override days only
-    auto r1 = adjustDateDurationRecord(base, 10.0, std::nullopt, std::nullopt);
+    auto r1 = adjustDateDurationRecord(base, 10, std::nullopt, std::nullopt);
     TCHECK_TRUE(r1.has_value(), "adjustDateDur: days override ok");
     TCHECK_EQ(static_cast<int64_t>(r1->years()), 2LL, "adjustDateDur: years preserved");
     TCHECK_EQ(static_cast<int64_t>(r1->months()), 3LL, "adjustDateDur: months preserved");
     TCHECK_EQ(static_cast<int64_t>(r1->days()), 10LL, "adjustDateDur: days overridden");
 
     // Override weeks
-    auto r2 = adjustDateDurationRecord(base, 5.0, 2.0, std::nullopt);
+    auto r2 = adjustDateDurationRecord(base, 5, 2, std::nullopt);
     TCHECK_TRUE(r2.has_value(), "adjustDateDur: weeks override ok");
     TCHECK_EQ(static_cast<int64_t>(r2->weeks()), 2LL, "adjustDateDur: weeks overridden");
 
     // Mixed signs -> invalid, should error
-    auto r3 = adjustDateDurationRecord(base, -10.0, std::nullopt, std::nullopt);
+    auto r3 = adjustDateDurationRecord(base, -10, std::nullopt, std::nullopt);
     TCHECK_TRUE(!r3.has_value(), "adjustDateDur: mixed sign rejected");
+
+    // Day-magnitude limit. isValidDuration enforces |normalizedSeconds| < 2^53 which, for a
+    // date-only Duration, reduces to |days × 86400| < 2^53. The largest `days` that satisfies
+    // this is floor((2^53 - 1) / 86400) = 104249991374; one beyond that rejects.
+    ISO8601::Duration zeroBase(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    constexpr int64_t maxValidDays = 104249991374LL;
+    auto rMax = adjustDateDurationRecord(zeroBase, maxValidDays, std::nullopt, std::nullopt);
+    TCHECK_TRUE(rMax.has_value(), "adjustDateDur: max valid days accepted");
+    auto rOver = adjustDateDurationRecord(zeroBase, maxValidDays + 1, std::nullopt, std::nullopt);
+    TCHECK_TRUE(!rOver.has_value(), "adjustDateDur: days past 2^53/86400 rejected");
+    // Symmetric for negative.
+    auto rMinNeg = adjustDateDurationRecord(zeroBase, -maxValidDays, std::nullopt, std::nullopt);
+    TCHECK_TRUE(rMinNeg.has_value(), "adjustDateDur: negative max valid days accepted");
+    auto rOverNeg = adjustDateDurationRecord(zeroBase, -(maxValidDays + 1), std::nullopt, std::nullopt);
+    TCHECK_TRUE(!rOverNeg.has_value(), "adjustDateDur: negative days past -2^53/86400 rejected");
+
+    // Years/months/weeks 2^32 cap (isValidDuration step 3-5: |y|,|mo|,|w| < 2^32).
+    constexpr int64_t maxField = (static_cast<int64_t>(1) << 32) - 1;
+    auto rMaxY = adjustDateDurationRecord(ISO8601::Duration(maxField, 0, 0, 0, 0, 0, 0, 0, 0, 0), 0, std::nullopt, std::nullopt);
+    TCHECK_TRUE(rMaxY.has_value(), "adjustDateDur: years at 2^32-1 accepted");
+    auto rOverY = adjustDateDurationRecord(ISO8601::Duration(static_cast<int64_t>(1) << 32, 0, 0, 0, 0, 0, 0, 0, 0, 0), 0, std::nullopt, std::nullopt);
+    TCHECK_TRUE(!rOverY.has_value(), "adjustDateDur: years at 2^32 rejected");
+    auto rOverMo = adjustDateDurationRecord(zeroBase, 0, std::nullopt, static_cast<int64_t>(1) << 32);
+    TCHECK_TRUE(!rOverMo.has_value(), "adjustDateDur: months at 2^32 rejected");
+    auto rOverW = adjustDateDurationRecord(zeroBase, 0, static_cast<int64_t>(1) << 32, std::nullopt);
+    TCHECK_TRUE(!rOverW.has_value(), "adjustDateDur: weeks at 2^32 rejected");
 }
 
 // ---------------------------------------------------------------------------
@@ -492,26 +519,26 @@ static void testCalendarDateUntil()
 static void testISODateLimits()
 {
     // Max valid ISO date for Temporal: +275760-09-13 (±1e8 epoch days)
-    // balanceISODate returns outOfRangeYear only when year exceeds the year representation limit
-    auto rMax = balanceISODate(275760, 9, 13);
+    // addDaysToISODate returns outOfRangeYear only when year exceeds the year representation limit
+    auto rMax = addDaysToISODate(ISO8601::PlainDate { 275760, 9, 13 }, 0);
     TCHECK_EQ(rMax.year(), 275760, "limits: max date year");
     TCHECK_EQ(rMax.month(), 9u, "limits: max date month");
     TCHECK_EQ(rMax.day(), 13u, "limits: max date day");
 
     // Min valid ISO date: -271821-04-19
-    auto rMin = balanceISODate(-271821, 4, 19);
+    auto rMin = addDaysToISODate(ISO8601::PlainDate { -271821, 4, 19 }, 0);
     TCHECK_EQ(rMin.year(), -271821, "limits: min date year");
     TCHECK_EQ(rMin.month(), 4u, "limits: min date month");
     TCHECK_EQ(rMin.day(), 19u, "limits: min date day");
 
     // Unix epoch: 1970-01-01
-    auto rEpoch = balanceISODate(1970, 1, 1);
+    auto rEpoch = addDaysToISODate(ISO8601::PlainDate { 1970, 1, 1 }, 0);
     TCHECK_EQ(rEpoch.year(), 1970, "limits: epoch year");
     TCHECK_EQ(rEpoch.month(), 1u, "limits: epoch month");
     TCHECK_EQ(rEpoch.day(), 1u, "limits: epoch day");
 
     // Day before epoch: 1969-12-31
-    auto rEpochMinus1 = balanceISODate(1969, 12, 31);
+    auto rEpochMinus1 = addDaysToISODate(ISO8601::PlainDate { 1969, 12, 31 }, 0);
     TCHECK_EQ(rEpochMinus1.year(), 1969, "limits: epoch-1 year");
     TCHECK_EQ(rEpochMinus1.month(), 12u, "limits: epoch-1 month");
     TCHECK_EQ(rEpochMinus1.day(), 31u, "limits: epoch-1 day");
@@ -829,11 +856,15 @@ static void testTemporalDurationFromInternal()
     // 4 days as time nanoseconds -> largestUnit=Day yields 4 days, 0 hours
     Int128 fourDays = Int128(4LL) * Int128(86400000000000LL);
     auto internal = ISO8601::InternalDuration::combineDateAndTimeDuration(ISO8601::Duration(), fourDays);
-    auto result = temporalDurationFromInternal(internal, TemporalUnit::Day);
+    auto resultOrError = temporalDurationFromInternal(internal, TemporalUnit::Day);
+    TCHECK_TRUE(resultOrError.has_value(), "fromInternal: valid duration");
+    auto& result = *resultOrError;
     TCHECK_EQ(static_cast<int64_t>(result.days()), 4LL, "fromInternal: 4d days");
     TCHECK_EQ(static_cast<int64_t>(result.hours()), 0LL, "fromInternal: 4d hours=0");
     // largestUnit=Hour: 4 days = 96 hours, 0 days
-    auto result2 = temporalDurationFromInternal(internal, TemporalUnit::Hour);
+    auto result2OrError = temporalDurationFromInternal(internal, TemporalUnit::Hour);
+    TCHECK_TRUE(result2OrError.has_value(), "fromInternal: valid duration 2");
+    auto& result2 = *result2OrError;
     TCHECK_EQ(static_cast<int64_t>(result2.hours()), 96LL, "fromInternal: 96h");
     TCHECK_EQ(static_cast<int64_t>(result2.days()), 0LL, "fromInternal: 96h days=0");
 }
@@ -1986,7 +2017,7 @@ static void testAddLargeDurations()
 // ---------------------------------------------------------------------------
 // invalid_strings — mirrors temporal_rs plain_date.rs test invalid_strings
 // test262/test/built-ins/Temporal/Calendar/prototype/month/argument-string-invalid.js
-// Tests that parseCalendarDateTime rejects invalid/unsupported ISO 8601 strings.
+// Tests that parseISODateTime rejects invalid/unsupported ISO 8601 strings.
 // Note: "2020-01-01[u-ca=notexist]" is NOT tested here because it parses
 // successfully at the C++ layer; the calendar validation happens in JS.
 // ---------------------------------------------------------------------------
@@ -2043,7 +2074,7 @@ static void testInvalidDateStrings()
         "1970-01-01T00:00:00.1234567890",
     };
     for (auto* s : invalidStrings) {
-        auto r = ISO8601::parseCalendarDateTime(StringView::fromLatin1(s), TemporalDateFormat::Date);
+        auto r = ISO8601::parseISODateTime(StringView::fromLatin1(s), ISO8601::TemporalProduction::DateTimeUnzoned);
         TCHECK_TRUE(!r.has_value(), "invalidString: should reject");
     }
 }
@@ -2066,9 +2097,342 @@ static void testCriticalUnknownAnnotation()
         "1970-01-01T00:00[foo=bar][!_foo-bar0=Dont-Ignore-This-99999999999]",
     };
     for (auto* s : criticalAnnotationStrings) {
-        auto r = ISO8601::parseCalendarDateTime(StringView::fromLatin1(s), TemporalDateFormat::Date);
+        auto r = ISO8601::parseISODateTime(StringView::fromLatin1(s), ISO8601::TemporalProduction::DateTimeUnzoned);
         TCHECK_TRUE(!r.has_value(), "criticalAnnotation: should reject");
     }
+}
+
+// ---------------------------------------------------------------------------
+// parseISODateTime — comprehensive stress tests for the spec abstract op
+// ---------------------------------------------------------------------------
+
+namespace {
+using P = ISO8601::TemporalProduction;
+using PSet = ISO8601::TemporalProductionSet;
+}
+
+static void testParseInstantString()
+{
+    // TemporalInstantString ::= Date DateTimeSep Time DateTimeUTCOffset[+Z] TZAnno? Annotations?
+    auto r = ISO8601::parseISODateTime("2024-01-15T12:00:00Z"_s, P::Instant);
+    TCHECK_TRUE(r.has_value(), "Instant: Z form");
+    TCHECK_TRUE(r->matched == P::Instant, "Instant: matched=Instant");
+    TCHECK_TRUE(r->date.has_value() && r->date->year() == 2024 && r->date->month() == 1 && r->date->day() == 15, "Instant: date populated");
+    TCHECK_TRUE(r->time.has_value() && r->time->hour() == 12, "Instant: time populated");
+    TCHECK_TRUE(r->timeZone.has_value() && r->timeZone->m_z, "Instant: Z designator");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00+05:30"_s, P::Instant);
+    TCHECK_TRUE(r.has_value() && r->timeZone->m_offset.has_value(), "Instant: numeric offset");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00Z[UTC]"_s, P::Instant);
+    TCHECK_TRUE(r.has_value() && r->timeZone->m_z, "Instant: Z + bracket");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00+05:30:15.123456789"_s, P::Instant);
+    TCHECK_TRUE(r.has_value() && r->timeZone->m_offsetHasSubMinutePrecision, "Instant: sub-minute precision");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("20240115T120000Z"_s, P::Instant).has_value(), "Instant: compact YYYYMMDDTHHMMSSZ");
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15t12:00:00z"_s, P::Instant).has_value(), "Instant: lowercase t/z");
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15 12:00:00Z"_s, P::Instant).has_value(), "Instant: space separator");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15"_s, P::Instant).has_value(), "Instant: bare date rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15T12:00:00"_s, P::Instant).has_value(), "Instant: missing Z/offset rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("12:00:00Z"_s, P::Instant).has_value(), "Instant: bare time rejected");
+}
+
+static void testParseDateTimeStringUnzoned()
+{
+    // TemporalDateTimeString[~Zoned] = AnnotatedDateTime[~Zoned, ~TimeRequired]; Z forbidden.
+    auto r = ISO8601::parseISODateTime("2024-01-15"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && !r->time.has_value() && !r->timeZone.has_value(), "Unzoned: bare date");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && r->time.has_value() && !r->timeZone.has_value(), "Unzoned: date+time");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00+05:00"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && r->timeZone.has_value() && r->timeZone->m_offset.has_value(), "Unzoned: numeric offset OK");
+
+    r = ISO8601::parseISODateTime("2024-01-15[America/New_York]"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && r->timeZone.has_value(), "Unzoned: bracket alone OK");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15T12:00:00Z"_s, P::DateTimeUnzoned).has_value(), "Unzoned: bare Z rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15T12:00:00Z[UTC]"_s, P::DateTimeUnzoned).has_value(), "Unzoned: Z+bracket rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-13-01"_s, P::DateTimeUnzoned).has_value(), "Unzoned: month=13 rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-02-30"_s, P::DateTimeUnzoned).has_value(), "Unzoned: Feb 30 rejected");
+}
+
+static void testParseDateTimeStringZoned()
+{
+    // TemporalDateTimeString[+Zoned]: bracket REQUIRED; Z allowed.
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15[America/New_York]"_s, P::DateTimeZoned).has_value(), "Zoned: bare date + bracket");
+
+    auto r = ISO8601::parseISODateTime("2024-01-15T12:00:00Z[UTC]"_s, P::DateTimeZoned);
+    TCHECK_TRUE(r.has_value() && r->timeZone->m_z, "Zoned: Z + bracket");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00+05:00[Asia/Kolkata]"_s, P::DateTimeZoned);
+    TCHECK_TRUE(r.has_value() && r->timeZone->m_offset.has_value(), "Zoned: offset + bracket");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15"_s, P::DateTimeZoned).has_value(), "Zoned: no bracket rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15T12:00:00Z"_s, P::DateTimeZoned).has_value(), "Zoned: Z without bracket rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15T12:00:00+05:00"_s, P::DateTimeZoned).has_value(), "Zoned: offset without bracket rejected");
+}
+
+static void testParseYearMonthString()
+{
+    // TemporalYearMonthString = AnnotatedYearMonth | AnnotatedDateTime[~Zoned, ~TimeRequired].
+    auto r = ISO8601::parseISODateTime("2024-01"_s, P::YearMonth);
+    TCHECK_TRUE(r.has_value() && r->isShortForm, "YM: hyphenated short");
+    TCHECK_TRUE(r->date.has_value() && r->date->year() == 2024 && r->date->month() == 1, "YM: year+month populated");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("202401"_s, P::YearMonth).value().isShortForm, "YM: compact short");
+    TCHECK_TRUE(ISO8601::parseISODateTime("+002024-01"_s, P::YearMonth).value().isShortForm, "YM: extended hyphenated");
+    TCHECK_TRUE(ISO8601::parseISODateTime("+00202401"_s, P::YearMonth).value().isShortForm, "YM: extended compact");
+    TCHECK_TRUE(ISO8601::parseISODateTime("-001976-11"_s, P::YearMonth).value().isShortForm, "YM: negative extended");
+
+    // Long-form fallback (full date) → isShortForm=false
+    r = ISO8601::parseISODateTime("2024-01-15"_s, P::YearMonth);
+    TCHECK_TRUE(r.has_value() && !r->isShortForm && r->matched == P::YearMonth, "YM: full date fallback retagged");
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15T12:00:00"_s, P::YearMonth).value().matched == P::YearMonth, "YM: full datetime fallback");
+
+    // Calendar extraction: short-form requires iso8601, full-form accepts any builtin.
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01[u-ca=hebrew]"_s, P::YearMonth).has_value(),
+        "YM: short-form non-iso8601 rejected (Step 4.a.ii.(3))");
+    r = ISO8601::parseISODateTime("2024-01-15[u-ca=hebrew]"_s, P::YearMonth);
+    TCHECK_TRUE(r.has_value() && r->calendar.has_value(), "YM: full-form calendar extracted");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-13"_s, P::YearMonth).has_value(), "YM: month=13 rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-00"_s, P::YearMonth).has_value(), "YM: month=00 rejected");
+}
+
+static void testParseMonthDayString()
+{
+    // TemporalMonthDayString = AnnotatedMonthDay | AnnotatedDateTime[~Zoned, ~TimeRequired].
+    auto r = ISO8601::parseISODateTime("01-15"_s, P::MonthDay);
+    TCHECK_TRUE(r.has_value() && r->isShortForm, "MD: MM-DD");
+    TCHECK_TRUE(r->date.has_value() && r->date->month() == 1 && r->date->day() == 15, "MD: month+day populated");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("0115"_s, P::MonthDay).value().isShortForm, "MD: MMDD compact");
+    TCHECK_TRUE(ISO8601::parseISODateTime("--01-15"_s, P::MonthDay).value().isShortForm, "MD: --MM-DD");
+    TCHECK_TRUE(ISO8601::parseISODateTime("--0115"_s, P::MonthDay).value().isShortForm, "MD: --MMDD");
+
+    // Feb 29 OK (1972 reference is leap)
+    TCHECK_TRUE(ISO8601::parseISODateTime("02-29"_s, P::MonthDay).has_value(), "MD: Feb 29 OK");
+
+    // Long-form fallback
+    r = ISO8601::parseISODateTime("2024-01-15"_s, P::MonthDay);
+    TCHECK_TRUE(r.has_value() && !r->isShortForm && r->matched == P::MonthDay, "MD: full date fallback retagged");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("01-32"_s, P::MonthDay).has_value(), "MD: day=32 rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("02-30"_s, P::MonthDay).has_value(), "MD: Feb 30 rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("13-01"_s, P::MonthDay).has_value(), "MD: month=13 rejected");
+}
+
+static void testParseTimeString()
+{
+    // TemporalTimeString = AnnotatedTime | AnnotatedDateTime[~Zoned, +TimeRequired].
+    auto r = ISO8601::parseISODateTime("12:00"_s, P::Time);
+    TCHECK_TRUE(r.has_value() && !r->date.has_value() && r->time.has_value(), "Time: HH:MM (no date)");
+    TCHECK_TRUE(r->matched == P::Time, "Time: matched=Time");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("12:00:00"_s, P::Time).has_value(), "Time: HH:MM:SS");
+    TCHECK_TRUE(ISO8601::parseISODateTime("120000"_s, P::Time).has_value(), "Time: compact");
+    TCHECK_TRUE(ISO8601::parseISODateTime("12:00:00.123456789"_s, P::Time).has_value(), "Time: 9-digit fraction");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("T12:00"_s, P::Time).has_value(), "Time: T prefix");
+    TCHECK_TRUE(ISO8601::parseISODateTime("t12:00"_s, P::Time).has_value(), "Time: t prefix");
+
+    // Datetime fallback
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00"_s, P::Time);
+    TCHECK_TRUE(r.has_value() && r->date.has_value() && r->matched == P::Time, "Time: datetime fallback retagged");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("12:00:00+05:00"_s, P::Time).has_value(), "Time: time + offset OK");
+    TCHECK_TRUE(ISO8601::parseISODateTime("12:00:00[UTC]"_s, P::Time).has_value(), "Time: time + bracket OK");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("12:00:00Z"_s, P::Time).has_value(), "Time: Z forbidden");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15T12:00:00Z"_s, P::Time).has_value(), "Time: datetime+Z forbidden");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15"_s, P::Time).has_value(), "Time: bare date rejected");
+
+    // Ambiguity: 1212 matches HHMM AND DateSpec*; rejected without TimeDesignator
+    TCHECK_TRUE(!ISO8601::parseISODateTime("1212"_s, P::Time).has_value(), "Time: ambiguous 1212 rejected");
+    TCHECK_TRUE(ISO8601::parseISODateTime("T1212"_s, P::Time).has_value(), "Time: T1212 unambiguous");
+}
+
+static void testParseDateMVs()
+{
+    // Steps 8-12: DateYear (4-digit or ±6-digit) + DateMonth (01-12) + DateDay (per IsValidISODate).
+    auto r = ISO8601::parseISODateTime("0000-01-01"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && !r->date->year(), "Step 8: year=0000");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("9999-12-31"_s, P::DateTimeUnzoned).has_value(), "Step 8: year=9999");
+    TCHECK_TRUE(ISO8601::parseISODateTime("+275760-09-13"_s, P::DateTimeUnzoned).has_value(), "Step 8: max valid extended");
+    TCHECK_TRUE(ISO8601::parseISODateTime("-271821-04-20"_s, P::DateTimeUnzoned).has_value(), "Step 8: min valid extended");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("-000000-01-01"_s, P::DateTimeUnzoned).has_value(), "Step 8: -000000 forbidden");
+    TCHECK_TRUE(ISO8601::parseISODateTime("+000000-01-01"_s, P::DateTimeUnzoned).has_value(), "Step 8: +000000 = year 0");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("123-01-01"_s, P::DateTimeUnzoned).has_value(), "Step 8: 3-digit year rejected");
+
+    // Month bounds (Steps 9-10)
+    for (unsigned m = 1; m <= 12; ++m) {
+        char buf[16];
+        SAFE_SPRINTF(std::span { buf }, "2024-%02u-01", m);
+        TCHECK_TRUE(ISO8601::parseISODateTime(StringView::fromLatin1(buf), P::DateTimeUnzoned).has_value(), "Step 9-10: month bounds");
+    }
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-00-01"_s, P::DateTimeUnzoned).has_value(), "Step 9-10: month=00 rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-13-01"_s, P::DateTimeUnzoned).has_value(), "Step 9-10: month=13 rejected");
+
+    // Day bounds + IsValidISODate (Step 21)
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-02-29"_s, P::DateTimeUnzoned).has_value(), "Step 21: leap Feb 29");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2023-02-29"_s, P::DateTimeUnzoned).has_value(), "Step 21: non-leap Feb 29 rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-04-31"_s, P::DateTimeUnzoned).has_value(), "Step 21: Apr 31 rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-32"_s, P::DateTimeUnzoned).has_value(), "Step 21: day=32 rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("1900-02-29"_s, P::DateTimeUnzoned).has_value(), "Step 21: 1900 not leap");
+    TCHECK_TRUE(ISO8601::parseISODateTime("2000-02-29"_s, P::DateTimeUnzoned).has_value(), "Step 21: 2000 is leap");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2100-02-29"_s, P::DateTimeUnzoned).has_value(), "Step 21: 2100 not leap");
+
+    // Mixed extended/compact forbidden
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-0115"_s, P::DateTimeUnzoned).has_value(), "Step 11-12: mixed sep-then-no");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("202401-15"_s, P::DateTimeUnzoned).has_value(), "Step 11-12: mixed no-then-sep");
+}
+
+static void testParseTimeMVs()
+{
+    // Steps 13-20: hour/minute/second + leap-clamp + fractional padding.
+    for (unsigned h = 0; h <= 23; ++h) {
+        char buf[8];
+        SAFE_SPRINTF(std::span { buf }, "%02u:00", h);
+        TCHECK_TRUE(ISO8601::parseISODateTime(StringView::fromLatin1(buf), P::Time).has_value(), "Step 13-14: hour bounds");
+    }
+    TCHECK_TRUE(!ISO8601::parseISODateTime("24:00"_s, P::Time).has_value(), "Step 13-14: hour=24 rejected");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("12:59"_s, P::Time).has_value(), "Step 15-16: minute=59");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("12:60"_s, P::Time).has_value(), "Step 15-16: minute=60 rejected");
+
+    auto r = ISO8601::parseISODateTime("12:00:60"_s, P::Time);
+    TCHECK_TRUE(r.has_value() && r->time->second() == 59, "Step 18.b: leap-clamp 60→59");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("12:00:61"_s, P::Time).has_value(), "Step 17-18: second=61 rejected");
+
+    r = ISO8601::parseISODateTime("12:00:00.1"_s, P::Time);
+    TCHECK_TRUE(r.has_value() && r->time->millisecond() == 100, "Step 19-20: 0.1 → ms=100");
+    TCHECK_TRUE(!r->time->microsecond() && !r->time->nanosecond(), "Step 19-20: 0.1 → us=ns=0");
+
+    r = ISO8601::parseISODateTime("12:00:00.123456789"_s, P::Time);
+    TCHECK_TRUE(r.has_value() && r->time->millisecond() == 123 && r->time->microsecond() == 456 && r->time->nanosecond() == 789, "Step 19-20: 9-digit ms/us/ns");
+
+    r = ISO8601::parseISODateTime("12:00:00,5"_s, P::Time);
+    TCHECK_TRUE(r.has_value() && r->time->millisecond() == 500, "Step 19-20: comma separator");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("12:00:00.1234567890"_s, P::Time).has_value(), "Step 19-20: 10 frac digits rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("12:00:00."_s, P::Time).has_value(), "Step 19-20: trailing dot rejected");
+}
+
+static void testParseTimeZoneFields()
+{
+    // Steps 22-27: time + timeZone field population.
+    auto r = ISO8601::parseISODateTime("2024-01-15"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && !r->time.has_value(), "Step 22: bare date → time absent");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && r->time.has_value(), "Step 23: time present → CreateTimeRecord");
+
+    r = ISO8601::parseISODateTime("2024-01-15"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && !r->timeZone.has_value(), "Step 24: no TZ info → timeZone absent");
+
+    r = ISO8601::parseISODateTime("2024-01-15[America/New_York]"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && r->timeZone.has_value(), "Step 25: bracket → timeZone present");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00Z"_s, P::Instant);
+    TCHECK_TRUE(r.has_value() && r->timeZone->m_z && !r->timeZone->m_offset.has_value(), "Step 26: Z → m_z=true, no offset");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00+05:00"_s, P::Instant);
+    TCHECK_TRUE(r.has_value() && r->timeZone->m_offset.has_value() && !r->timeZone->m_z, "Step 27: offset → m_z=false");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00+05:30:15.123"_s, P::Instant);
+    TCHECK_TRUE(r.has_value() && r->timeZone->m_offsetHasSubMinutePrecision, "Step 27: sub-minute precision flag");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00+05:30"_s, P::Instant);
+    TCHECK_TRUE(r.has_value() && !r->timeZone->m_offsetHasSubMinutePrecision, "Step 27: HH:MM no sub-minute");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15T12:00:00+0530"_s, P::Instant).has_value(), "Step 27: ±HHMM compact");
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15T12:00:00+053015"_s, P::Instant).has_value(), "Step 27: ±HHMMSS compact");
+
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00+00:00"_s, P::Instant);
+    TCHECK_TRUE(r.has_value() && !r->timeZone->m_z, "Step 27: +00:00 is offset, not Z");
+}
+
+static void testParseAnnotationProcessing()
+{
+    // Step 4.a.ii.(1)-(2): annotation loop + critical-flag rules.
+    auto r = ISO8601::parseISODateTime("2024-01-15[u-ca=hebrew]"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && r->calendar.has_value(), "Annotation: u-ca extracted");
+
+    r = ISO8601::parseISODateTime("2024-01-15"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && !r->calendar.has_value(), "Annotation: no u-ca → calendar nullopt");
+
+    r = ISO8601::parseISODateTime("2024-01-15[!u-ca=hebrew]"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && r->calendar.has_value(), "Annotation: critical u-ca single OK");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15[!foo=bar]"_s, P::DateTimeUnzoned).has_value(), "Annotation: critical unknown rejected");
+
+    // First non-critical wins
+    r = ISO8601::parseISODateTime("2024-01-15[u-ca=hebrew][u-ca=iso8601]"_s, P::DateTimeUnzoned);
+    TCHECK_TRUE(r.has_value() && r->calendar.has_value(), "Annotation: first non-critical wins");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15[!u-ca=hebrew][u-ca=iso8601]"_s, P::DateTimeUnzoned).has_value(), "Annotation: critical-then-dup rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15[u-ca=hebrew][!u-ca=iso8601]"_s, P::DateTimeUnzoned).has_value(), "Annotation: dup-then-critical rejected");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15[foo=bar]"_s, P::DateTimeUnzoned).has_value(), "Annotation: non-critical unknown ignored");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15[u-ca=]"_s, P::DateTimeUnzoned).has_value(), "Annotation: empty u-ca value rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15[u-ca=ab]"_s, P::DateTimeUnzoned).has_value(), "Annotation: 2-char value rejected");
+}
+
+static void testParseShortFormFlag()
+{
+    // Step 4.a.ii.(3)/(4): isShortForm flag for YearMonth/MonthDay short forms.
+    TCHECK_TRUE(ISO8601::parseISODateTime("2020-01"_s, P::YearMonth).value().isShortForm, "Step 4.a.ii.(3): YM short form");
+    TCHECK_TRUE(ISO8601::parseISODateTime("202001"_s, P::YearMonth).value().isShortForm, "Step 4.a.ii.(3): YM compact");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2020-01-15"_s, P::YearMonth).value().isShortForm, "Step 4.a.ii.(3): YM full date → not short");
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("01-15"_s, P::MonthDay).value().isShortForm, "Step 4.a.ii.(4): MD short form");
+    TCHECK_TRUE(ISO8601::parseISODateTime("--01-15"_s, P::MonthDay).value().isShortForm, "Step 4.a.ii.(4): MD --MM-DD");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2020-01-15"_s, P::MonthDay).value().isShortForm, "Step 4.a.ii.(4): MD full date → not short");
+
+    // Other goals never set isShortForm
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2020-01-15"_s, P::DateTimeUnzoned).value().isShortForm, "isShortForm: false for DateTimeUnzoned");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("12:00:00"_s, P::Time).value().isShortForm, "isShortForm: false for Time");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15T12:00:00Z"_s, P::Instant).value().isShortForm, "isShortForm: false for Instant");
+}
+
+static void testParseFullUnion()
+{
+    // ParseTemporalCalendarString uses the full 6-production union.
+    PSet fullUnion {
+        P::DateTimeZoned, P::DateTimeUnzoned, P::Instant,
+        P::YearMonth, P::MonthDay, P::Time,
+    };
+
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15"_s, fullUnion).has_value(), "Full union: bare date");
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15T12:00:00Z"_s, fullUnion).value().matched == P::Instant, "Full union: Instant priority");
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01-15T12:00:00[UTC]"_s, fullUnion).value().matched == P::DateTimeZoned, "Full union: Zoned over Unzoned");
+    TCHECK_TRUE(ISO8601::parseISODateTime("2024-01"_s, fullUnion).value().matched == P::YearMonth, "Full union: YearMonth match");
+    TCHECK_TRUE(ISO8601::parseISODateTime("01-15"_s, fullUnion).value().matched == P::MonthDay, "Full union: MonthDay match");
+    TCHECK_TRUE(ISO8601::parseISODateTime("12:00:00"_s, fullUnion).value().matched == P::Time, "Full union: Time match");
+
+    TCHECK_TRUE(!ISO8601::parseISODateTime("garbage"_s, fullUnion).has_value(), "Full union: garbage rejected");
+    TCHECK_TRUE(!ISO8601::parseISODateTime(""_s, fullUnion).has_value(), "Full union: empty rejected");
+}
+
+static void testParseDispatchPriority()
+{
+    // Dispatcher tries goals most-specific first; matched tag reflects narrowest production.
+    PSet maskA { P::Instant, P::DateTimeUnzoned };
+    auto r = ISO8601::parseISODateTime("2024-01-15T12:00:00Z"_s, maskA);
+    TCHECK_TRUE(r.has_value() && r->matched == P::Instant, "Priority: Instant before DateTimeUnzoned");
+    TCHECK_TRUE(!ISO8601::parseISODateTime("2024-01-15T12:00:00Z"_s, P::DateTimeUnzoned).has_value(), "Priority: Unzoned alone rejects Z");
+
+    PSet maskB { P::DateTimeZoned, P::DateTimeUnzoned };
+    r = ISO8601::parseISODateTime("2024-01-15T12:00:00[UTC]"_s, maskB);
+    TCHECK_TRUE(r.has_value() && r->matched == P::DateTimeZoned, "Priority: Zoned before Unzoned for bracketed");
+
+    r = ISO8601::parseISODateTime("2024-01-15"_s, maskB);
+    TCHECK_TRUE(r.has_value() && r->matched == P::DateTimeUnzoned, "Priority: bare date falls to Unzoned");
 }
 
 // ---------------------------------------------------------------------------
@@ -2242,6 +2606,49 @@ static void testCalendarFieldsFunctions()
     CalendarFieldsIn emptyPartial;
     auto rWithEmpty = plainYearMonthWith(id("iso8601"_s), { 2025, 3, 1 }, emptyPartial, TemporalOverflow::Constrain);
     TCHECK_TRUE(!rWithEmpty.has_value(), "plainYearMonthWith: empty partial -> TypeError (temporal_rs: fields.is_empty())");
+
+    // --- plainDateWith ---
+    // temporal_rs: basic_date_with — ISO override year/month/monthCode/day
+
+    // override day only (ISO)
+    CalendarFieldsIn partialDay;
+    partialDay.day = 20;
+    auto rDW1 = plainDateWith(id("iso8601"_s), { 2025, 3, 14 }, partialDay, TemporalOverflow::Constrain);
+    TCHECK_TRUE(rDW1.has_value() && rDW1->isoDate.year() == 2025 && rDW1->isoDate.month() == 3 && rDW1->isoDate.day() == 20, "plainDateWith: override day -> 2025-03-20");
+
+    // override month only (ISO)
+    CalendarFieldsIn partialMonthOnly;
+    partialMonthOnly.month = 7;
+    auto rDW2 = plainDateWith(id("iso8601"_s), { 2025, 3, 14 }, partialMonthOnly, TemporalOverflow::Constrain);
+    TCHECK_TRUE(rDW2.has_value() && rDW2->isoDate.year() == 2025 && rDW2->isoDate.month() == 7 && rDW2->isoDate.day() == 14, "plainDateWith: override month -> 2025-07-14");
+
+    // override year only (ISO)
+    CalendarFieldsIn partialYearOnly;
+    partialYearOnly.year = 2000;
+    auto rDW3 = plainDateWith(id("iso8601"_s), { 2025, 3, 14 }, partialYearOnly, TemporalOverflow::Constrain);
+    TCHECK_TRUE(rDW3.has_value() && rDW3->isoDate.year() == 2000 && rDW3->isoDate.month() == 3 && rDW3->isoDate.day() == 14, "plainDateWith: override year -> 2000-03-14");
+
+    // Japanese: era+eraYear override (Showa 50 = 1975)
+    CalendarFieldsIn partialEra;
+    partialEra.era = "showa"_s;
+    partialEra.eraYear = 50;
+    auto rDW4 = plainDateWith(id("japanese"_s), { 1970, 1, 1 }, partialEra, TemporalOverflow::Constrain);
+    TCHECK_TRUE(rDW4.has_value() && rDW4->isoDate.year() == 1975 && rDW4->isoDate.month() == 1, "plainDateWith: japanese era+eraYear -> 1975-01-01");
+
+    // Japanese: month change suppresses inherited era — NonISOFieldKeysToIgnore spec NOTE.
+    // Showa 64 Jan 7 = 1989-01-07. Heisei started Jan 8 1989. month→6 re-derives to Heisei 1.
+    CalendarFieldsIn partialMonth6;
+    partialMonth6.month = 6;
+    auto rDW5 = plainDateWith(id("japanese"_s), { 1989, 1, 7 }, partialMonth6, TemporalOverflow::Constrain);
+    TCHECK_TRUE(rDW5.has_value() && rDW5->isoDate.year() == 1989 && rDW5->isoDate.month() == 6, "plainDateWith: japanese month change re-derives era -> 1989-06");
+
+    // era+eraYear+year inconsistent → RangeError
+    CalendarFieldsIn partialConflict;
+    partialConflict.era = "showa"_s;
+    partialConflict.eraYear = 50;
+    partialConflict.year = 2000;
+    auto rDW6 = plainDateWith(id("japanese"_s), { 1970, 1, 1 }, partialConflict, TemporalOverflow::Constrain);
+    TCHECK_TRUE(!rDW6.has_value() && rDW6.error().kind == TemporalErrorKind::RangeError, "plainDateWith: inconsistent year+era+eraYear -> RangeError");
 }
 
 static void testCalendarDateFromFields()
@@ -2255,20 +2662,20 @@ static void testCalendarDateFromFields()
     TCHECK_TRUE(r.has_value() && r->year() == 2024 && r->month() == 3 && r->day() == 15, "gregory: year+month+day");
 
     // --- Era + eraYear ---
-    // Gregory ce era
-    auto rEra = calendarDateFromFields(id("gregory"_s), 0, 3, 15, StringView("ce"_s), 2024, std::nullopt, TemporalOverflow::Reject);
+    // Gregory ce era — year=nullopt: no user-provided year, consistency check skipped
+    auto rEra = calendarDateFromFields(id("gregory"_s), std::nullopt, 3, 15, StringView("ce"_s), 2024, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(rEra.has_value() && rEra->year() == 2024 && rEra->month() == 3 && rEra->day() == 15, "gregory: ce+eraYear");
 
-    // Gregory bce era: eraYear 1 = ISO year 0
-    auto rBce = calendarDateFromFields(id("gregory"_s), 0, 1, 1, StringView("bce"_s), 1, std::nullopt, TemporalOverflow::Reject);
+    // Gregory bce era: eraYear 1 = ISO year 0 — year=nullopt (user didn't provide year)
+    auto rBce = calendarDateFromFields(id("gregory"_s), std::nullopt, 1, 1, StringView("bce"_s), 1, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(rBce.has_value() && !rBce->year(), "gregory: bce eraYear 1 = ISO 0");
 
-    // Japanese: modern era (reiwa year 6 = 2024)
-    auto rJp = calendarDateFromFields(id("japanese"_s), 0, 1, 1, StringView("reiwa"_s), 6, std::nullopt, TemporalOverflow::Reject);
+    // Japanese: modern era (reiwa year 6 = 2024) — year=nullopt
+    auto rJp = calendarDateFromFields(id("japanese"_s), std::nullopt, 1, 1, StringView("reiwa"_s), 6, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(rJp.has_value() && rJp->year() == 2024, "japanese: reiwa 6 = 2024");
 
-    // Japanese: pre-1868 "ce" era bypasses ICU
-    auto rJpCe = calendarDateFromFields(id("japanese"_s), 0, 6, 15, StringView("ce"_s), 1600, std::nullopt, TemporalOverflow::Reject);
+    // Japanese: pre-1868 "ce" era bypasses ICU — year=nullopt
+    auto rJpCe = calendarDateFromFields(id("japanese"_s), std::nullopt, 6, 15, StringView("ce"_s), 1600, std::nullopt, TemporalOverflow::Reject);
     TCHECK_TRUE(rJpCe.has_value() && rJpCe->year() == 1600 && rJpCe->month() == 6 && rJpCe->day() == 15, "japanese: ce 1600 bypass");
 
     // ROC: positive year (roc era)
@@ -3215,7 +3622,7 @@ static void runTemporalRSTests()
     testValidateTemporalRoundingIncrement(); // temporal_rs: RoundingIncrement::validate
 
     // --- plain_date.rs ---
-    testBalanceISODate(); // temporal_rs: (balanceISODate)
+    testAddDaysToISODate(); // temporal_rs: (addDaysToISODate)
     testBalanceISOYearMonth(); // temporal_rs: (balanceISOYearMonth)
     testRegulateISODate(); // temporal_rs: (regulateISODate)
     testISODateAdd(); // temporal_rs: simple_date_add
@@ -3322,6 +3729,21 @@ static void runStressTests()
     testCalendarICUNonISO(); // Non-ISO calendars (hebrew, chinese, japanese, persian)
     testCalendarDateFromFields(); // calendarDateFromFields: era, monthCode, overflow, ROC, Japanese
     testCalendarFieldsFunctions(); // yearMonthFromFields, monthDayFromFields, differenceYearMonth, plainYearMonthAdd, etc.
+
+    // parseISODateTime
+    testParseInstantString();
+    testParseDateTimeStringUnzoned();
+    testParseDateTimeStringZoned();
+    testParseYearMonthString();
+    testParseMonthDayString();
+    testParseTimeString();
+    testParseDateMVs();
+    testParseTimeMVs();
+    testParseTimeZoneFields();
+    testParseAnnotationProcessing();
+    testParseShortFormFlag();
+    testParseFullUnion();
+    testParseDispatchPriority();
 }
 
 } // namespace TemporalCore

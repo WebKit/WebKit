@@ -32,6 +32,7 @@
 #include <WebCore/MessagePortChannel.h>
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/MessageWithMessagePorts.h>
+#include <wtf/Deque.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -81,6 +82,7 @@ public:
 
     WEBCORE_EXPORT static bool isMessagePortAliveForTesting(const MessagePortIdentifier&);
     WEBCORE_EXPORT static void notifyMessageAvailable(const MessagePortIdentifier&);
+    WEBCORE_EXPORT static void notifyAllConnectionsClosed();
 
     WEBCORE_EXPORT void messageAvailable();
     bool started() const { return m_started; }
@@ -107,12 +109,17 @@ public:
     TransferredMessagePort disentangle();
     static Ref<MessagePort> entangle(ScriptExecutionContext&, TransferredMessagePort&&);
 
+    // Short-circuits message delivery for same-context ports. Should only be used for
+    // ports that have never been shippped, to avoid potential message reordering.
+    static void NODELETE entangleLocally(MessagePort&, MessagePort&);
+
 private:
     MessagePort(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
 
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
     using EventTarget::addEventListener;
     bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) final;
+    void drainOneLocalMessage();
 
     // ActiveDOMObject.
     void contextDestroyed() final;
@@ -131,6 +138,9 @@ private:
     MessagePortIdentifier m_remoteIdentifier;
 
     MessageHandler m_messageHandler;
+    Deque<MessageWithMessagePorts> m_localQueue;
+    ThreadSafeWeakPtr<MessagePort> m_localPartner;
+    unsigned m_newLocalMessages { 0 };
 };
 
 WebCoreOpaqueRoot NODELETE root(MessagePort*);

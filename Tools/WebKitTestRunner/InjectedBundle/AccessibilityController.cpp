@@ -132,9 +132,10 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement(JSContextRef co
         return AccessibilityUIElementClientMac::createForUIProcess();
 #endif
 
+    WKRetainPtr<WKBundleFrameRef> frame = WKBundleFrameForJavaScriptContext(context);
     PlatformUIElement root;
     executeOnAXThreadAndWait([&] () {
-        root = static_cast<PlatformUIElement>(_WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context)));
+        root = static_cast<PlatformUIElement>(_WKAccessibilityRootObjectForTesting(frame.get()));
     });
     return AccessibilityUIElement::create(root);
 }

@@ -44,7 +44,7 @@ private:
     bool isPlaceholder() const final { return true; }
     std::optional<ModelPlayerAnimationState> currentAnimationState() const final;
     std::optional<std::unique_ptr<ModelPlayerTransformState>> currentTransformState() const final;
-    void NODELETE load(Model&, LayoutSize) final;
+    void NODELETE load(Model&, LayoutSize, bool) final;
     void NODELETE reload(Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&) final;
 
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)

@@ -17,8 +17,8 @@
 #include <openssl/asn1.h>
 #include <openssl/digest.h>
 #include <openssl/err.h>
-#include <openssl/mem.h>
 #include <openssl/md5.h>
+#include <openssl/mem.h>
 #include <openssl/obj.h>
 #include <openssl/sha.h>
 #include <openssl/stack.h>
@@ -28,12 +28,18 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 int X509_issuer_name_cmp(const X509 *a, const X509 *b) {
-  return X509_NAME_cmp(&a->issuer, &b->issuer);
+  const auto *a_impl = FromOpaque(a);
+  const auto *b_impl = FromOpaque(b);
+  return X509_NAME_cmp(&a_impl->issuer, &b_impl->issuer);
 }
 
 int X509_subject_name_cmp(const X509 *a, const X509 *b) {
-  return X509_NAME_cmp(&a->subject, &b->subject);
+  const auto *a_impl = FromOpaque(a);
+  const auto *b_impl = FromOpaque(b);
+  return X509_NAME_cmp(&a_impl->subject, &b_impl->subject);
 }
 
 int X509_CRL_cmp(const X509_CRL *a, const X509_CRL *b) {
@@ -46,34 +52,44 @@ int X509_CRL_match(const X509_CRL *a, const X509_CRL *b) {
 
 X509_NAME *X509_get_issuer_name(const X509 *a) {
   // This function is not const-correct for OpenSSL compatibility.
-  return const_cast<X509_NAME*>(&a->issuer);
+  const auto *impl = FromOpaque(a);
+  return const_cast<X509Name *>(&impl->issuer);
 }
 
 uint32_t X509_issuer_name_hash(const X509 *x) {
-  return X509_NAME_hash(&x->issuer);
+  const auto *impl = FromOpaque(x);
+  return X509_NAME_hash(&impl->issuer);
 }
 
 uint32_t X509_issuer_name_hash_old(const X509 *x) {
-  return X509_NAME_hash_old(&x->issuer);
+  const auto *impl = FromOpaque(x);
+  return X509_NAME_hash_old(&impl->issuer);
 }
 
 X509_NAME *X509_get_subject_name(const X509 *a) {
   // This function is not const-correct for OpenSSL compatibility.
-  return const_cast<X509_NAME*>(&a->subject);
+  const auto *impl = FromOpaque(a);
+  return const_cast<X509Name *>(&impl->subject);
 }
 
-ASN1_INTEGER *X509_get_serialNumber(X509 *a) { return &a->serialNumber; }
+ASN1_INTEGER *X509_get_serialNumber(X509 *a) {
+  auto *impl = FromOpaque(a);
+  return &impl->serialNumber;
+}
 
 const ASN1_INTEGER *X509_get0_serialNumber(const X509 *x509) {
-  return &x509->serialNumber;
+  const auto *impl = FromOpaque(x509);
+  return &impl->serialNumber;
 }
 
 uint32_t X509_subject_name_hash(const X509 *x) {
-  return X509_NAME_hash(&x->subject);
+  const auto *impl = FromOpaque(x);
+  return X509_NAME_hash(&impl->subject);
 }
 
 uint32_t X509_subject_name_hash_old(const X509 *x) {
-  return X509_NAME_hash_old(&x->subject);
+  const auto *impl = FromOpaque(x);
+  return X509_NAME_hash_old(&impl->subject);
 }
 
 // Compare two certificates: they must be identical for this to work. NB:
@@ -83,6 +99,8 @@ uint32_t X509_subject_name_hash_old(const X509 *x) {
 // certain cert information is cached. So this is the point where the
 // "depth-first" constification tree has to halt with an evil cast.
 int X509_cmp(const X509 *a, const X509 *b) {
+  const auto *a_impl = FromOpaque(a);
+  const auto *b_impl = FromOpaque(b);
   // Fill in the |cert_hash| fields.
   //
   // TODO(davidben): This may fail, in which case the the hash will be all
@@ -91,10 +109,11 @@ int X509_cmp(const X509 *a, const X509 *b) {
   // comparison and may cause misbehaving sorts by transitivity. For now, we
   // retain the old OpenSSL behavior, which was to ignore the error. See
   // https://crbug.com/boringssl/355.
-  x509v3_cache_extensions((X509 *)a);
-  x509v3_cache_extensions((X509 *)b);
+  x509v3_cache_extensions((X509Impl *)a_impl);
+  x509v3_cache_extensions((X509Impl *)b_impl);
 
-  return OPENSSL_memcmp(a->cert_hash, b->cert_hash, SHA256_DIGEST_LENGTH);
+  return OPENSSL_memcmp(a_impl->cert_hash, b_impl->cert_hash,
+                        SHA256_DIGEST_LENGTH);
 }
 
 int X509_NAME_cmp(const X509_NAME *a, const X509_NAME *b) {
@@ -106,13 +125,14 @@ int X509_NAME_cmp(const X509_NAME *a, const X509_NAME *b) {
   if (b_cache == nullptr) {
     return -2;
   }
-  if (a_cache->canon_len < b_cache->canon_len) {
+  if (a_cache->canon.size() < b_cache->canon.size()) {
     return -1;
   }
-  if (a_cache->canon_len > b_cache->canon_len) {
+  if (a_cache->canon.size() > b_cache->canon.size()) {
     return 1;
   }
-  int ret = OPENSSL_memcmp(a_cache->canon, b_cache->canon, a_cache->canon_len);
+  int ret = OPENSSL_memcmp(a_cache->canon.data(), b_cache->canon.data(),
+                           a_cache->canon.size());
   // Canonicalize the return value so it is even possible to distinguish the
   // error case from a < b, though ideally we would not have an error case.
   if (ret < 0) {
@@ -130,7 +150,7 @@ uint32_t X509_NAME_hash(const X509_NAME *x) {
     return 0;
   }
   uint8_t md[SHA_DIGEST_LENGTH];
-  SHA1(cache->canon, cache->canon_len, md);
+  SHA1(cache->canon.data(), cache->canon.size(), md);
   return CRYPTO_load_u32_le(md);
 }
 
@@ -143,7 +163,7 @@ uint32_t X509_NAME_hash_old(const X509_NAME *x) {
     return 0;
   }
   uint8_t md[MD5_DIGEST_LENGTH];
-  MD5(cache->der, cache->der_len, md);
+  MD5(cache->der.data(), cache->der.size(), md);
   return CRYPTO_load_u32_le(md);
 }
 
@@ -178,14 +198,16 @@ EVP_PKEY *X509_get0_pubkey(const X509 *x) {
   if (x == nullptr) {
     return nullptr;
   }
-  return X509_PUBKEY_get0(&x->key);
+  auto *impl = FromOpaque(x);
+  return X509_PUBKEY_get0(&impl->key);
 }
 
 EVP_PKEY *X509_get_pubkey(const X509 *x) {
   if (x == nullptr) {
     return nullptr;
   }
-  return X509_PUBKEY_get(&x->key);
+  auto *impl = FromOpaque(x);
+  return X509_PUBKEY_get(&impl->key);
 }
 
 ASN1_BIT_STRING *X509_get0_pubkey_bitstr(const X509 *x) {
@@ -193,7 +215,8 @@ ASN1_BIT_STRING *X509_get0_pubkey_bitstr(const X509 *x) {
     return nullptr;
   }
   // This function is not const-correct for OpenSSL compatibility.
-  return const_cast<ASN1_BIT_STRING*>(&x->key.public_key);
+  auto *impl = FromOpaque(x);
+  return const_cast<ASN1_BIT_STRING *>(&impl->key.public_key);
 }
 
 int X509_check_private_key(const X509 *x, const EVP_PKEY *k) {
@@ -202,23 +225,15 @@ int X509_check_private_key(const X509 *x, const EVP_PKEY *k) {
     return 0;
   }
 
-  int ret = EVP_PKEY_cmp(xk, k);
-  if (ret > 0) {
+  if (EVP_PKEY_eq(xk, k) == 1) {
     return 1;
   }
 
-  switch (ret) {
-    case 0:
-      OPENSSL_PUT_ERROR(X509, X509_R_KEY_VALUES_MISMATCH);
-      return 0;
-    case -1:
-      OPENSSL_PUT_ERROR(X509, X509_R_KEY_TYPE_MISMATCH);
-      return 0;
-    case -2:
-      OPENSSL_PUT_ERROR(X509, X509_R_UNKNOWN_KEY_TYPE);
-      return 0;
+  if (EVP_PKEY_id(xk) != EVP_PKEY_id(k)) {
+    OPENSSL_PUT_ERROR(X509, X509_R_KEY_TYPE_MISMATCH);
+  } else {
+    OPENSSL_PUT_ERROR(X509, X509_R_KEY_VALUES_MISMATCH);
   }
-
   return 0;
 }
 
@@ -226,12 +241,5 @@ int X509_check_private_key(const X509 *x, const EVP_PKEY *k) {
 // count but it has the same effect by duping the STACK and upping the ref of
 // each X509 structure.
 STACK_OF(X509) *X509_chain_up_ref(STACK_OF(X509) *chain) {
-  STACK_OF(X509) *ret = sk_X509_dup(chain);
-  if (ret == nullptr) {
-    return nullptr;
-  }
-  for (size_t i = 0; i < sk_X509_num(ret); i++) {
-    X509_up_ref(sk_X509_value(ret, i));
-  }
-  return ret;
+  return sk_X509_deep_copy(chain, X509_dup_ref, X509_free);
 }

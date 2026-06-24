@@ -83,6 +83,7 @@ class IDBTransactionInfo;
 class IDBValue;
 class ServiceWorkerRegistrationKey;
 struct ClientOrigin;
+struct FileSystemHandleRecord;
 struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
 struct IDBGetAllRecordsData;
@@ -137,6 +138,7 @@ public:
     void suspend(CompletionHandler<void()>&&);
     bool isSuspended() const;
     void resume();
+    void setWebProcessSuspended(WebCore::ProcessIdentifier, bool isSuspended);
     void handleLowMemoryWarning();
     void syncLocalStorage(CompletionHandler<void()>&&);
     void fetchLocalStorage(CompletionHandler<void(std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>>&&)>&&);
@@ -164,6 +166,8 @@ public:
     const String& customIDBStoragePath() const LIFETIME_BOUND { return m_customIDBStoragePathNormalizedMainThread; }
 
     void queryCacheStorage(WebCore::ClientOrigin&&, WebCore::RetrieveRecordsOptions&&, String&&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Record>&&)>&&);
+
+    void registerFileSystemHandleRecordsForOrigin(const WebCore::ClientOrigin&, const Vector<WebCore::FileSystemHandleRecord>&);
 
 private:
     NetworkStorageManager(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, std::optional<IPC::Connection::UniqueID>, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel, bool storageSiteValidationEnabled, TimeBasedEvictionMode, Seconds timeBasedEvictionThreshold, std::optional<Seconds> lastModificationTimeUpdateIntervalOverride, std::optional<Seconds> timeBasedEvictionIntervalOverride);
@@ -217,7 +221,7 @@ private:
     void getHandleNames(WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&&);
     void getHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, CompletionHandler<void(Expected<std::optional<WebCore::FileSystemHandleInfo>, FileSystemStorageError>)>&&);
     void addGlobalIdentifierReference(IPC::Connection&, WebCore::ClientOrigin&&, WebCore::FileSystemHandleGlobalIdentifier);
-    void removeGlobalIdentifierReference(IPC::Connection&, WebCore::ClientOrigin&&, WebCore::FileSystemHandleGlobalIdentifier);
+    void removeGlobalIdentifierReferences(IPC::Connection&, WebCore::ClientOrigin&&, Vector<WebCore::FileSystemHandleGlobalIdentifier>&&);
     void resolveGlobalIdentifier(IPC::Connection&, WebCore::ClientOrigin&&, WebCore::FileSystemHandleGlobalIdentifier, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&&);
 
     // Message handlers for WebStorage.
@@ -257,6 +261,8 @@ private:
     void openCursor(IPC::Connection&, const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&);
     void iterateCursor(IPC::Connection&, const WebCore::IDBRequestData&, const WebCore::IDBIterateCursorData&);
     void getAllDatabaseNamesAndVersions(IPC::Connection&, const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&);
+
+    IDBStorageManager& idbStorageManagerForOrigin(const WebCore::ClientOrigin&, ShouldWriteOriginFile = ShouldWriteOriginFile::Yes, ShouldUpdateOriginAccessTime = ShouldUpdateOriginAccessTime::No);
 
     // Message handlers for CacheStorage.
     void cacheStorageOpenCache(IPC::Connection&, const WebCore::ClientOrigin&, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);

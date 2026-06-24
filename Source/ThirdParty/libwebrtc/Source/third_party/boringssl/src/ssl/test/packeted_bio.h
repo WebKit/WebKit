@@ -29,24 +29,29 @@
 
 // PacketedBioCreate creates a filter BIO which implements a reliable in-order
 // blocking datagram socket. It uses the value of |*clock| as the clock.
-// |get_timeout| should output what the |SSL| object believes is the next
-// timeout, or return false if there is none. It will be compared against
-// assertions from the runner. |set_mtu| will be called when the runner asks to
-// change the MTU.
 //
-// During a |BIO_read|, the peer may signal the filter BIO to simulate a
-// timeout. The operation will fail immediately. The caller must then call
-// |PacketedBioAdvanceClock| before retrying |BIO_read|.
-bssl::UniquePtr<BIO> PacketedBioCreate(
-    timeval *clock, std::function<bool(timeval *)> get_timeout,
-    std::function<bool(uint32_t)> set_mtu);
+// During a |BIO_read|, the peer may interrupt the filter BIO to perform
+// operations on |ssl|, such as handling timeouts or updating the MTU. In this
+// case, the |BIO_read| operation will fail with a retryable error, which should
+// be surfaced from |ssl| as |SSL_ERROR_WANT_READ|. The caller must then call
+// |PacketedBioHasInterrupt| and |PacketedBioHandleInterrupt| to handle the
+// interrupt.
+//
+// Pending operations are deferred so that they are not triggered reentrantly in
+// the middle of an operation on |ssl|.
+bssl::UniquePtr<BIO> PacketedBioCreate(timeval *clock, SSL *ssl);
 
-// PacketedBioAdvanceClock advances |bio|'s clock and returns true if there is a
-// pending timeout. Otherwise, it returns false.
-bool PacketedBioAdvanceClock(BIO *bio);
+// PacketedBioHasInterrupt returns whether |bio| has a pending interrupt. If it
+// returns true, the caller must call |PacketedBioHandleInterrupt| to handle it.
+bool PacketedBioHasInterrupt(BIO *bio);
 
-// PacketedBioAdvanceClock return's |bio|'s clock.
-timeval *PacketedBioGetClock(BIO *bio);
+// PacketedBioHandleInterrupt handles the pending interrupt on |bio|. It returns
+// true on success, in which case the caller should retry the operation, and
+// false on error.
+bool PacketedBioHandleInterrupt(BIO *bio);
 
+// PacketedBioAdvanceClock advances the clock by |microseconds| and handles the
+// timeout on the |SSL| object. It returns true on success and false on error.
+bool PacketedBioAdvanceClock(BIO *bio, uint64_t microseconds);
 
 #endif  // HEADER_PACKETED_BIO

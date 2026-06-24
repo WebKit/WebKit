@@ -22,30 +22,18 @@
 
 #pragma once
 
-#include <WebCore/CSSPrimitiveNumericUnits.h>
+#include <WebCore/CSSPrimitiveNumericRaw.h>
+#include <WebCore/CSSUnevaluatedCalc.h>
 #include <WebCore/CSSValue.h>
-#include <WebCore/CSSValueKeywords.h>
-#include <WebCore/LayoutUnit.h>
 #include <utility>
 #include <wtf/Forward.h>
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
 class CSSToLengthConversionData;
+class DeprecatedCSSOMPrimitiveValue;
 class FontCascade;
-class RenderStyle;
 class RenderView;
-
-namespace CSS {
-class UnevaluatedCalcBase;
-}
-
-namespace CSSCalc {
-class Value;
-Ref<const Value> CLANG_POINTER_CONVERSION protect(const Value&);
-RefPtr<const Value> CLANG_POINTER_CONVERSION protect(const Value*);
-}
 
 template<typename> class ExceptionOr;
 
@@ -76,25 +64,20 @@ public:
 
     ~CSSPrimitiveValue();
 
-    WEBCORE_EXPORT CSSUnitType primitiveType() const;
+    CSSUnitType primitiveType() const;
 
-    using Calc = CSSCalc::Value;
-    struct Raw {
-        CSSUnitType unit;
-        double value;
+    using Calc = CSS::UnevaluatedCalcBase;
+    using Raw = CSS::UnconstrainedPrimitiveNumericRaw;
 
-        constexpr bool operator==(const Raw&) const = default;
-    };
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         if (isCalculated())
-            SUPPRESS_FORWARD_DECL_ARG return visitor(protect(*m_value.calc));
+            SUPPRESS_FORWARD_DECL_ARG return visitor(Calc { const_cast<CSSCalc::Value&>(*m_value.calc) });
         return visitor(Raw { primitiveUnitType(), m_value.number });
     }
 
     std::optional<Raw> raw() const { return !isCalculated() ? std::optional { Raw { primitiveUnitType(), m_value.number } } : std::nullopt; }
-    const CSSCalc::Value* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
 
     // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
     std::optional<bool> NODELETE isZero() const;
@@ -106,6 +89,8 @@ public:
     bool equals(const CSSPrimitiveValue&) const;
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+
 private:
     friend class CSSValuePool;
     friend class StaticCSSValuePool;
@@ -114,9 +99,8 @@ private:
 
     CSSPrimitiveValue(const String&, CSSUnitType);
     CSSPrimitiveValue(double, CSSUnitType);
-    CSSPrimitiveValue(CSS::UnevaluatedCalcBase&&);
-
     CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
+    CSSPrimitiveValue(CSS::UnevaluatedCalcBase&&);
 
     CSSUnitType primitiveUnitType() const { return static_cast<CSSUnitType>(m_primitiveUnitType); }
     void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = std::to_underlying(type); }
@@ -134,6 +118,8 @@ private:
     static constexpr bool isRootFontRelativeLength(CSSUnitType);
     static constexpr bool isContainerPercentageLength(CSSUnitType);
     static constexpr bool isViewportPercentageLength(CSSUnitType);
+
+    const CSSCalc::Value* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
 
     union {
         double number;

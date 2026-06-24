@@ -18,11 +18,11 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 
 #include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_processing_statistics.h"
 #include "api/audio/echo_control.h"
 #include "api/environment/environment.h"
@@ -147,10 +147,10 @@ class RTC_EXPORT AudioProcessing : public RefCountInterface {
       // 32000 or 48000 and any differing values will be treated as 48000.
       int maximum_internal_processing_rate = 32000;
       // Allow multi-channel processing of render audio.
-      bool multi_channel_render = false;
+      bool multi_channel_render = true;
       // Allow multi-channel processing of capture audio when AEC3 is active
-      // or a custom AEC is injected..
-      bool multi_channel_capture = false;
+      // or a custom AEC is injected.
+      bool multi_channel_capture = true;
       // Indicates how to downmix multi-channel capture audio to mono (when
       // needed).
       DownmixMethod capture_downmix_method = DownmixMethod::kAverageChannels;
@@ -582,7 +582,7 @@ class RTC_EXPORT AudioProcessing : public RefCountInterface {
   // representation of the input is returned. Returns true/false to indicate
   // whether an output returned.
   virtual bool GetLinearAecOutput(
-      ArrayView<std::array<float, 160>> linear_output) const = 0;
+      std::span<std::array<float, 160>> linear_output) const = 0;
 
   // This must be called prior to ProcessStream() if and only if adaptive analog
   // gain control is enabled, to pass the current analog level from the audio
@@ -864,10 +864,10 @@ class EchoDetector : public RefCountInterface {
                           int num_render_channels) = 0;
 
   // Analysis (not changing) of the first channel of the render signal.
-  virtual void AnalyzeRenderAudio(ArrayView<const float> render_audio) = 0;
+  virtual void AnalyzeRenderAudio(std::span<const float> render_audio) = 0;
 
   // Analysis (not changing) of the capture signal.
-  virtual void AnalyzeCaptureAudio(ArrayView<const float> capture_audio) = 0;
+  virtual void AnalyzeCaptureAudio(std::span<const float> capture_audio) = 0;
 
   struct Metrics {
     std::optional<double> echo_likelihood;

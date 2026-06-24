@@ -1,0 +1,5 @@
+
+
+FAIL Changing the media attribute updates the associated stylesheet assert_equals: fill should switch once the second sheet's media matches expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Removing the media attribute updates the associated stylesheet assert_equals: removing the media attribute should make the rule apply expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

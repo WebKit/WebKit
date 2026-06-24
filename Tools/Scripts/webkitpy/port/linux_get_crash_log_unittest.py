@@ -43,7 +43,7 @@ from unittest import mock
 
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.port.linux_get_crash_log import CoreDumpMethod, CrashLogEnvVars, CrashLogUtils, GDBCrashLogGenerator, LockFile, ThreadNamesCrashLogCapturer
+from webkitpy.port.linux_get_crash_log import CoreDumpMethod, CrashLogEnvVars, CrashLogUtils, GDBCrashLogGenerator, GDBCrashLogStartupHandler, LockFile, ThreadNamesCrashLogCapturer
 
 
 # GDBCrashLogGenerator with determine_coredump_method_and_dir patched
@@ -190,6 +190,54 @@ class MakeTempPathTest(unittest.TestCase):
         self.addCleanup(os.unlink, p1)
         self.addCleanup(os.unlink, p2)
         self.assertNotEqual(p1, p2)
+
+
+class SafeGetmtimeMostRecentExistingTest(unittest.TestCase):
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmpdir, True)
+
+    def test_returns_mtime_for_existing_file(self):
+        path = os.path.join(self.tmpdir, 'f')
+        with open(path, 'w') as f:
+            f.write('')
+        os.utime(path, (1234, 1234))
+        self.assertEqual(CrashLogUtils.safe_getmtime(path), 1234)
+
+    def test_returns_none_for_missing_file(self):
+        self.assertIsNone(CrashLogUtils.safe_getmtime(os.path.join(self.tmpdir, 'does-not-exist')))
+
+    def _touch(self, name, mtime):
+        path = os.path.join(self.tmpdir, name)
+        with open(path, 'w') as f:
+            f.write('')
+        os.utime(path, (mtime, mtime))
+        return path
+
+    def test_empty_returns_none(self):
+        self.assertIsNone(CrashLogUtils.most_recent_existing([]))
+
+    def test_picks_newest(self):
+        old = self._touch('a', 1000)
+        new = self._touch('b', 2000)
+        self.assertEqual(CrashLogUtils.most_recent_existing([old, new]), new)
+
+    def test_skips_vanished_path(self):
+        alive = self._touch('a', 1000)
+        ghost = os.path.join(self.tmpdir, 'ghost')  # never created
+        self.assertEqual(CrashLogUtils.most_recent_existing([alive, ghost]), alive)
+
+    def test_newest_vanished_falls_back_to_next(self):
+        alive = self._touch('a', 1000)
+        newer = self._touch('b', 2000)
+        os.remove(newer)  # the candidate we would have picked is gone
+        self.assertEqual(CrashLogUtils.most_recent_existing([alive, newer]), alive)
+
+    def test_all_vanished_returns_none(self):
+        ghost1 = os.path.join(self.tmpdir, 'g1')
+        ghost2 = os.path.join(self.tmpdir, 'g2')
+        self.assertIsNone(CrashLogUtils.most_recent_existing([ghost1, ghost2]))
 
 
 class LockFileTest(unittest.TestCase):
@@ -393,7 +441,7 @@ class GenerateCrashLogTest(unittest.TestCase):
         gen = _make_generator(name='WebKitTestRunner', pid=28529)
         gen._get_coredump_path = lambda: (None, None)
         gen._filter_with_cppfilt = lambda text: text
-        gen._get_thread_info_for_effective_pid = lambda: '(no thread info)\n'
+        gen._get_thread_info_for_effective_pid = lambda coredump_found_matches_pid: '(no thread info)\n'
 
         with mock.patch.object(CrashLogUtils, 'are_coredumps_enabled', return_value=True), \
              mock.patch.object(CrashLogUtils, 'are_coredumps_enabled_and_unlimited', return_value=True):
@@ -421,7 +469,7 @@ class GenerateCrashLogTest(unittest.TestCase):
         gen = _make_generator(name='WebKitWebProcess', pid=42)
         gen._get_coredump_path = lambda: (None, None)
         gen._filter_with_cppfilt = lambda text: text
-        gen._get_thread_info_for_effective_pid = lambda: '(none)\n'
+        gen._get_thread_info_for_effective_pid = lambda coredump_found_matches_pid: '(none)\n'
 
         with mock.patch.object(CrashLogUtils, 'are_coredumps_enabled', return_value=True), \
              mock.patch.object(CrashLogUtils, 'are_coredumps_enabled_and_unlimited', return_value=True):
@@ -429,6 +477,203 @@ class GenerateCrashLogTest(unittest.TestCase):
 
         self.assertIn('TEST STDOUT', log)
         self.assertNotIn('TEST STDERR', log)
+
+
+class CorePatternScanRaceTest(unittest.TestCase):
+    """Regression: a coredump present at os.listdir() time can be deleted by
+    another worker before this one stats it. The scan must skip it instead of
+    raising FileNotFoundError and interrupting the whole test suite."""
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmpdir, True)
+
+    def _touch(self, name, mtime):
+        path = os.path.join(self.tmpdir, name)
+        with open(path, 'w') as f:
+            f.write('')
+        os.utime(path, (mtime, mtime))
+        return path
+
+    def test_candidate_deleted_between_listdir_and_stat_does_not_crash(self):
+        gen = _make_generator(
+            name='WebKitWebProcess', pid=222,
+            coredump_pattern='core-%e-pid_%p.dump', coredump_directory=self.tmpdir)
+        # newer_than makes the scan call getmtime on every candidate (the line
+        # that used to crash). Both files are newer than this.
+        gen.newer_than = 500
+        survivor = self._touch('core-WebKitWebProcess-pid_222.dump', mtime=2000)
+        ghost = self._touch('core-WebKitWebProcess-pid_333.dump', mtime=3000)
+
+        real_getmtime = os.path.getmtime
+
+        def flaky_getmtime(path):
+            # Simulate 'ghost' being removed by another worker after listdir().
+            if os.path.basename(path) == os.path.basename(ghost):
+                raise FileNotFoundError(2, 'No such file or directory', path)
+            return real_getmtime(path)
+
+        with mock.patch('os.path.getmtime', side_effect=flaky_getmtime), \
+             mock.patch('time.sleep'):
+            path, warning = gen._get_coredump_path_with_core_pattern_method()
+
+        self.assertEqual(path, survivor)
+        self.assertEqual(gen._effective_coredump_pid, 222)
+
+
+class CoredumpDeletionGatingTest(unittest.TestCase):
+    """With auto-delete on, only a pid-matched coredump (and its thread-info
+    file) is removed. A name/fallback match is left on disk so the rightful
+    owner can still find it; the periodic cleanup reclaims it later."""
+
+    def setUp(self):
+        self.coredir = tempfile.mkdtemp()
+        self.threaddir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.coredir, True)
+        self.addCleanup(shutil.rmtree, self.threaddir, True)
+
+    def _setup(self, pid, effective_pid):
+        gen = _make_generator(name='WebKitWebProcess', pid=pid, coredump_directory=self.coredir)
+        gen._webkit_thread_info_crashlog_dir = self.threaddir
+
+        core_path = os.path.join(self.coredir, f'core-WebKitWebProcess-pid_{effective_pid}.dump')
+        with open(core_path, 'w') as f:
+            f.write('ELF-ish coredump bytes')
+        info_path = os.path.join(self.threaddir, CrashLogUtils.get_thread_info_file_name(effective_pid))
+        with open(info_path, 'w') as f:
+            f.write(f'# PID: {effective_pid}\n')
+
+        # Stub selection so the test drives the deletion logic directly, setting
+        # the effective pid exactly as a pid match (==) or a name match (!=) would.
+        gen._get_coredump_path = lambda: (core_path, None)
+        gen._effective_coredump_pid = effective_pid
+        # Don't run gdb / cppfilt for real. A non-empty backtrace avoids the help-message path.
+        gen._get_gdb_output = lambda path: ('gdb backtrace here\n', '', '')
+        gen._filter_with_cppfilt = lambda text: text
+        return gen, core_path, info_path
+
+    def test_pid_match_deletes_coredump_and_thread_info(self):
+        gen, core_path, info_path = self._setup(pid=222, effective_pid=222)
+        with mock.patch.dict(os.environ, {CrashLogEnvVars.core_dumps_autodelete: '1'}):
+            gen.generate_crash_log('out', 'err')
+        self.assertFalse(os.path.exists(core_path), 'pid-matched coredump should be deleted')
+        self.assertFalse(os.path.exists(info_path), 'pid-matched thread-info should be deleted')
+
+    def test_name_match_keeps_coredump_and_thread_info(self):
+        # effective pid differs from self.pid => matched by name/fallback, not pid.
+        gen, core_path, info_path = self._setup(pid=222, effective_pid=555)
+        with mock.patch.dict(os.environ, {CrashLogEnvVars.core_dumps_autodelete: '1'}):
+            gen.generate_crash_log('out', 'err')
+        self.assertTrue(os.path.exists(core_path), 'non-pid-matched coredump must be left for the owner')
+        self.assertTrue(os.path.exists(info_path), 'non-pid-matched thread-info must be left for the owner')
+
+    def test_no_autodelete_keeps_coredump_even_on_pid_match(self):
+        gen, core_path, info_path = self._setup(pid=222, effective_pid=222)
+        with mock.patch.dict(os.environ, {CrashLogEnvVars.core_dumps_autodelete: '0'}):
+            gen.generate_crash_log('out', 'err')
+        self.assertTrue(os.path.exists(core_path), 'without auto-delete the raw coredump is kept')
+
+    def test_pid_match_claims_coredump_by_rename_before_gdb(self):
+        gen, core_path, info_path = self._setup(pid=222, effective_pid=222)
+
+        # Capture the directory state at the moment gdb runs.
+        observed = {}
+
+        def fake_gdb(path):
+            observed['gdb_path'] = path
+            observed['original_present'] = os.path.exists(core_path)
+            observed['claimed_present'] = any(
+                n.startswith(CrashLogUtils.CLAIMED_COREDUMP_PREFIX) for n in os.listdir(self.coredir))
+            return ('gdb backtrace here\n', '', '')
+
+        gen._get_gdb_output = fake_gdb
+        with mock.patch.dict(os.environ, {CrashLogEnvVars.core_dumps_autodelete: '1'}):
+            gen.generate_crash_log('out', 'err')
+
+        # During gdb the core had already been renamed out of the way.
+        self.assertFalse(observed['original_present'], 'core should be renamed before gdb runs')
+        self.assertTrue(observed['claimed_present'], 'a claimed-prefixed file should exist during gdb')
+        self.assertTrue(os.path.basename(observed['gdb_path']).startswith(CrashLogUtils.CLAIMED_COREDUMP_PREFIX))
+        # Afterwards nothing is left behind (neither the original nor the claimed file).
+        self.assertFalse(os.path.exists(core_path))
+        self.assertFalse(
+            any(n.startswith(CrashLogUtils.CLAIMED_COREDUMP_PREFIX) for n in os.listdir(self.coredir)),
+            'claimed file must be removed after processing')
+
+    def test_name_match_is_not_claimed_by_rename(self):
+        # A non-pid match is left in place (not renamed), so the rightful owner can find it.
+        gen, core_path, info_path = self._setup(pid=222, effective_pid=555)
+        observed = {}
+
+        def fake_gdb(path):
+            observed['original_present'] = os.path.exists(core_path)
+            return ('gdb backtrace here\n', '', '')
+
+        gen._get_gdb_output = fake_gdb
+        with mock.patch.dict(os.environ, {CrashLogEnvVars.core_dumps_autodelete: '1'}):
+            gen.generate_crash_log('out', 'err')
+        self.assertTrue(observed['original_present'], 'name-matched core must not be renamed')
+        self.assertTrue(os.path.exists(core_path))
+
+    def test_coredump_gone_at_stat_time_skips_rename_and_gdb(self):
+        # The core passed the isfile() check but vanished before we could stat its size:
+        # we must not rename it nor spawn gdb on a missing file.
+        gen, core_path, info_path = self._setup(pid=222, effective_pid=222)
+        gdb_called = {'v': False}
+
+        def fake_gdb(path):
+            gdb_called['v'] = True
+            return ('should not be reached\n', '', '')
+
+        gen._get_gdb_output = fake_gdb
+        with mock.patch.object(CrashLogUtils, 'human_readable_size', side_effect=OSError(2, 'No such file or directory')), \
+             mock.patch.dict(os.environ, {CrashLogEnvVars.core_dumps_autodelete: '1'}):
+            _, log = gen.generate_crash_log('out', 'err')
+
+        self.assertFalse(gdb_called['v'], 'gdb must not run when the coredump vanished before stat')
+        self.assertIn('removed', log)
+        self.assertFalse(
+            any(n.startswith(CrashLogUtils.CLAIMED_COREDUMP_PREFIX) for n in os.listdir(self.coredir)),
+            'a vanished coredump must not be renamed/claimed')
+
+
+class CleanOldCoredumpsTest(unittest.TestCase):
+    """clean_old_coredumps() reaps old files matching the core_pattern AND old
+    claimed (being-processed) leftovers, while leaving fresh and unrelated files."""
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmpdir, True)
+        # clean_old_coredumps lives on the startup handler; build a bare instance
+        # (its __init__ has heavy side effects) and set only what the method uses.
+        self.handler = GDBCrashLogStartupHandler.__new__(GDBCrashLogStartupHandler)
+        self.handler._coredump_directory = self.tmpdir
+        self.handler._coredump_pattern = 'core-%e-pid_%p.dump'
+
+    def _touch(self, name, age_seconds):
+        path = os.path.join(self.tmpdir, name)
+        with open(path, 'w') as f:
+            f.write('')
+        mtime = time.time() - age_seconds
+        os.utime(path, (mtime, mtime))
+        return path
+
+    def test_reaps_old_pattern_and_claimed_keeps_fresh_and_unrelated(self):
+        old_core = self._touch('core-WebKitWebProcess-pid_111.dump', age_seconds=3600)
+        fresh_core = self._touch('core-WebKitWebProcess-pid_222.dump', age_seconds=5)
+        old_claimed = self._touch(
+            CrashLogUtils.CLAIMED_COREDUMP_PREFIX + 'core-WebKitWebProcess-pid_333.dump', age_seconds=3600)
+        fresh_claimed = self._touch(
+            CrashLogUtils.CLAIMED_COREDUMP_PREFIX + 'core-WebKitWebProcess-pid_444.dump', age_seconds=5)
+        unrelated = self._touch('not-a-coredump.txt', age_seconds=3600)
+
+        self.handler.clean_old_coredumps()
+
+        self.assertFalse(os.path.exists(old_core), 'old pattern-matching core should be reaped')
+        self.assertTrue(os.path.exists(fresh_core), 'fresh core should be kept')
+        self.assertFalse(os.path.exists(old_claimed), 'old claimed leftover should be reaped')
+        self.assertTrue(os.path.exists(fresh_claimed), 'fresh (in-flight) claimed file should be kept')
+        self.assertTrue(os.path.exists(unrelated), 'unrelated file should be left untouched')
 
 
 class DetermineCoredumpMethodAndDirTest(unittest.TestCase):
@@ -686,6 +931,19 @@ class GetCoredumpPathTest(unittest.TestCase):
         self.assertEqual(self.gen._effective_coredump_pid, 222)
         # pid match: no warning
         self.assertIsNone(warning)
+
+    def test_selection_ignores_claimed_prefixed_files(self):
+        # A coredump another worker is processing (renamed with the claimed prefix) must be
+        # invisible to this scan, even though without the prefix it would win by pid+mtime.
+        claimed = self._touch(
+            CrashLogUtils.CLAIMED_COREDUMP_PREFIX + 'core-WebKitWebProcess-pid_222.dump', mtime=3000)
+        expected = self._touch('core-WebKitWebProcess-pid_222.dump', mtime=2000)
+
+        with mock.patch('time.sleep'):
+            path, warning = self.gen._get_coredump_path_with_core_pattern_method()
+
+        self.assertEqual(path, expected)
+        self.assertNotEqual(path, claimed)
 
     def test_matches_by_pid_when_pattern_contains_literal_percent_p(self):
         gen = _make_generator(name='WebKitWebProcess', pid=222, coredump_pattern='core-%%p-pid_%p.dump', coredump_directory=self.tmpdir)

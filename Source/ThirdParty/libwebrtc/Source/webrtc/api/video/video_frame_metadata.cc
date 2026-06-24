@@ -12,10 +12,10 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_content_type.h"
@@ -90,23 +90,37 @@ void VideoFrameMetadata::SetTemporalIndex(int temporal_index) {
   temporal_index_ = temporal_index;
 }
 
-ArrayView<const int64_t> VideoFrameMetadata::GetFrameDependencies() const {
-  return frame_dependencies_;
+std::span<const int64_t> VideoFrameMetadata::GetFrameDependencies() const {
+  return GetDependencies().value_or(std::span<const int64_t>());
 }
 
 void VideoFrameMetadata::SetFrameDependencies(
-    ArrayView<const int64_t> frame_dependencies) {
-  frame_dependencies_.assign(frame_dependencies.begin(),
-                             frame_dependencies.end());
+    std::span<const int64_t> frame_dependencies) {
+  frame_dependencies_.emplace(frame_dependencies.begin(),
+                              frame_dependencies.end());
 }
 
-ArrayView<const DecodeTargetIndication>
+std::optional<std::span<const int64_t>> VideoFrameMetadata::GetDependencies()
+    const {
+  return frame_dependencies_;
+}
+
+void VideoFrameMetadata::SetDependencies(
+    std::optional<std::span<const int64_t>> dependencies) {
+  if (!dependencies.has_value()) {
+    frame_dependencies_.reset();
+    return;
+  }
+  frame_dependencies_.emplace(dependencies->begin(), dependencies->end());
+}
+
+std::span<const DecodeTargetIndication>
 VideoFrameMetadata::GetDecodeTargetIndications() const {
   return decode_target_indications_;
 }
 
 void VideoFrameMetadata::SetDecodeTargetIndications(
-    ArrayView<const DecodeTargetIndication> decode_target_indications) {
+    std::span<const DecodeTargetIndication> decode_target_indications) {
   decode_target_indications_.assign(decode_target_indications.begin(),
                                     decode_target_indications.end());
 }

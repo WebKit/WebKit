@@ -13,8 +13,8 @@
 #include <algorithm>
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -29,12 +29,12 @@ namespace webrtc {
 FixedLengthEncodingParametersV3
 FixedLengthEncodingParametersV3::CalculateParameters(
     uint64_t base,
-    const ArrayView<const uint64_t> values,
+    const std::span<const uint64_t> values,
     uint64_t value_bit_width,
     bool values_optional) {
   // As a special case, if all of the elements are identical to the base
   // we just encode the base value with a special delta header.
-  if (std::all_of(values.cbegin(), values.cend(),
+  if (std::all_of(values.begin(), values.end(),
                   [base](uint64_t val) { return val == base; })) {
     // Delta header with signed=true and delta_bitwidth=64
     return FixedLengthEncodingParametersV3(/*delta_bit_width=*/64,

@@ -1,13 +1,10 @@
 <!DOCTYPE html><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script>
+        window.jsTestIsAsync = true;
         var newWindow;
         
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
     
         function clickHandler() {
             setTimeout(function() {
@@ -16,8 +13,7 @@
                 debug("Test calling window.open() with a 1100 ms delay. A popup should not be allowed.")
                 shouldBeNull("newWindow");
 
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                finishJSTest();
             }, 1100);
             if (window.eventSender)
                 eventSender.leapForward(1100);

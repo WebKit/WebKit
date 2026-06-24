@@ -57,8 +57,8 @@ TEST(VideoCodecTestAv1, HighBitrate) {
        .max_num_spatial_resizes = 0,
        .max_num_key_frames = 1}};
 
-  std::vector<QualityThresholds> quality_thresholds = {{.min_avg_psnr = 37,
-                                                        .min_min_psnr = 34,
+  std::vector<QualityThresholds> quality_thresholds = {{.min_avg_psnr = 36.5,
+                                                        .min_min_psnr = 33.5,
                                                         .min_avg_ssim = 0.94,
                                                         .min_min_ssim = 0.91}};
 

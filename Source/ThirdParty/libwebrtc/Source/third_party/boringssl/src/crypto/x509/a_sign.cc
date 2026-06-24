@@ -28,6 +28,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 int ASN1_item_sign(const ASN1_ITEM *it, X509_ALGOR *algor1, X509_ALGOR *algor2,
                    ASN1_BIT_STRING *signature, void *asn, EVP_PKEY *pkey,
                    const EVP_MD *type) {
@@ -35,7 +37,7 @@ int ASN1_item_sign(const ASN1_ITEM *it, X509_ALGOR *algor1, X509_ALGOR *algor2,
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_WRONG_TYPE);
     return 0;
   }
-  bssl::ScopedEVP_MD_CTX ctx;
+  ScopedEVP_MD_CTX ctx;
   if (!EVP_DigestSignInit(ctx.get(), nullptr, type, nullptr, pkey)) {
     return 0;
   }
@@ -47,7 +49,7 @@ int ASN1_item_sign_ctx(const ASN1_ITEM *it, X509_ALGOR *algor1,
                        void *asn, EVP_MD_CTX *ctx) {
   // Historically, this function called |EVP_MD_CTX_cleanup| on return. Some
   // callers rely on this to avoid memory leaks.
-  bssl::Cleanup cleanup = [&] { EVP_MD_CTX_cleanup(ctx); };
+  Cleanup cleanup = [&] { EVP_MD_CTX_cleanup(ctx); };
 
   // Write out the requested copies of the AlgorithmIdentifier. This may modify
   // |asn|, so we must do it first.
@@ -61,13 +63,13 @@ int ASN1_item_sign_ctx(const ASN1_ITEM *it, X509_ALGOR *algor1,
   if (in_len < 0) {
     return 0;
   }
-  bssl::UniquePtr<uint8_t> free_in(in);
+  UniquePtr<uint8_t> free_in(in);
 
-  return x509_sign_to_bit_string(ctx, signature, bssl::Span(in, in_len));
+  return x509_sign_to_bit_string(ctx, signature, Span(in, in_len));
 }
 
-int x509_sign_to_bit_string(EVP_MD_CTX *ctx, ASN1_BIT_STRING *out,
-                            bssl::Span<const uint8_t> in) {
+int bssl::x509_sign_to_bit_string(EVP_MD_CTX *ctx, ASN1_BIT_STRING *out,
+                                  Span<const uint8_t> in) {
   if (out->type != V_ASN1_BIT_STRING) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_WRONG_TYPE);
     return 0;
@@ -80,7 +82,7 @@ int x509_sign_to_bit_string(EVP_MD_CTX *ctx, ASN1_BIT_STRING *out,
     OPENSSL_PUT_ERROR(X509, ERR_R_OVERFLOW);
     return 0;
   }
-  bssl::Array<uint8_t> sig;
+  Array<uint8_t> sig;
   if (!sig.Init(sig_len)) {
     return 0;
   }
@@ -94,7 +96,5 @@ int x509_sign_to_bit_string(EVP_MD_CTX *ctx, ASN1_BIT_STRING *out,
   uint8_t *sig_data;
   sig.Release(&sig_data, &sig_len);
   ASN1_STRING_set0(out, sig_data, static_cast<int>(sig_len));
-  out->flags &= ~(ASN1_STRING_FLAG_BITS_LEFT | 0x07);
-  out->flags |= ASN1_STRING_FLAG_BITS_LEFT;
   return static_cast<int>(sig_len);
 }

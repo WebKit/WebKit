@@ -45,9 +45,11 @@ namespace WebCore {
 
 class DateComponents;
 class DateTimeFieldElement;
-class RenderStyle;
-
 struct DateTimeFieldsState;
+
+namespace Style {
+class ComputedStyle;
+}
 
 enum class DateTimePlaceholderIfNoValue : bool { No, Yes };
 
@@ -93,14 +95,14 @@ protected:
     Locale& localeForOwner() const;
     AtomString localeIdentifier() const;
     void updateVisibleValue(EventBehavior);
-    virtual void adjustMinInlineSize(RenderStyle&) const = 0;
+    virtual void adjustMinInlineSize(Style::ComputedStyle&) const = 0;
     virtual int valueAsInteger() const = 0;
     virtual int placeholderValueAsInteger() const = 0;
     virtual void handleKeyboardEvent(KeyboardEvent&) = 0;
     virtual void handleBlurEvent(Event&);
 
 private:
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle*) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle*) final;
 
     bool supportsFocus() const override;
 
@@ -113,6 +115,8 @@ private:
     bool isFieldOwnerHorizontal() const;
 
     WeakPtr<DateTimeFieldElementFieldOwner> m_fieldOwner;
+
+    bool m_hadValueAtLastValueUpdate { false };
 };
 
 } // namespace WebCore

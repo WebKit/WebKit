@@ -7,29 +7,31 @@ PASS :values:stage="constant";type="vec2%3Cf32%3E"
 FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504;c=-65504) SKIP: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=-65504;b=-65504;c=-65504) INFO: subcase skipped
+  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     enable f16;
     const v  = mix(vec2(-65504.0h, -65504.0h), vec2(-65504.0h, -65504.0h), vec2(-63.96875h, -63.96875h));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
   - (in subcase: a=-65504;b=-65504;c=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     enable f16;
     const v  = mix(vec2(-65504.0h, -65504.0h), vec2(-65504.0h, -65504.0h), -63.96875h);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:66:37
-  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
   - (in subcase: a=-65504;b=-65504;c=-63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -44,10 +46,6 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec2(-65504.0h, -65504.0h), vec2(-65504.0h, -65504.0h), -0.062469482421875h);
       at (elided: only 2 shown)
-  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) INFO: subcase ran
   - (in subcase: a=-65504;b=-65504;c=-0.00006103515625) INFO: subcase ran
   - (in subcase: a=-65504;b=-65504;c=-0.00006097555160522461) INFO: subcase ran
@@ -58,6 +56,10 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504;c=0.00006103515625) SKIP: subcase skipped: Checked value, -65507.998046875, was within the ambiguous overflow rounding range.
   - (in subcase: a=-65504;b=-65504;c=0.00006103515625) INFO: subcase skipped
   - (in subcase: a=-65504;b=-65504;c=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -72,11 +74,11 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec2(-65504.0h, -65504.0h), vec2(-65504.0h, -65504.0h), 63.96875h);
       at (elided: only 2 shown)
-  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -91,10 +93,6 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec2(-65504.0h, -65504.0h), vec2(-65504.0h, -65504.0h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=65504) INFO: subcase ran
   - (in subcase: a=-65504;b=-63.96875;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=-65504;b=-63.96875;c=-65504) INFO: subcase skipped
@@ -273,6 +271,10 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: a=-63.96875;b=-63.96875;c=0.00006103515625) INFO: subcase ran
   - (in subcase: a=-63.96875;b=-63.96875;c=0.062469482421875) INFO: subcase ran
   - (in subcase: a=-63.96875;b=-63.96875;c=63.96875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-63.96875;b=-63.96875;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -287,10 +289,6 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec2(-63.96875h, -63.96875h), vec2(-63.96875h, -63.96875h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-63.96875;b=-63.96875;c=65504) INFO: subcase ran
   - (in subcase: a=-63.96875;b=-0.062469482421875;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=-63.96875;b=-0.062469482421875;c=-65504) INFO: subcase skipped
@@ -1812,6 +1810,10 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: a=63.96875;b=63.96875;c=0.00006103515625) INFO: subcase ran
   - (in subcase: a=63.96875;b=63.96875;c=0.062469482421875) INFO: subcase ran
   - (in subcase: a=63.96875;b=63.96875;c=63.96875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=63.96875;b=63.96875;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -1826,10 +1828,6 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec2(63.96875h, 63.96875h), vec2(63.96875h, 63.96875h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=63.96875;b=63.96875;c=65504) INFO: subcase ran
   - (in subcase: a=63.96875;b=65504;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=63.96875;b=65504;c=-65504) INFO: subcase skipped
@@ -1998,6 +1996,10 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: a=65504;b=63.96875;c=65504) INFO: subcase ran
   - (in subcase: a=65504;b=65504;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=65504;b=65504;c=-65504) INFO: subcase skipped
+  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2012,11 +2014,11 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec2(65504.0h, 65504.0h), vec2(65504.0h, 65504.0h), -63.96875h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-0.062469482421875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2031,10 +2033,6 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec2(65504.0h, 65504.0h), vec2(65504.0h, 65504.0h), -0.062469482421875h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-0.062469482421875) INFO: subcase ran
   - (in subcase: a=65504;b=65504;c=-0.00006103515625) INFO: subcase ran
   - (in subcase: a=65504;b=65504;c=-0.00006097555160522461) INFO: subcase ran
@@ -2045,6 +2043,10 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: a=65504;b=65504;c=0.00006103515625) SKIP: subcase skipped: Checked value, 65507.998046875, was within the ambiguous overflow rounding range.
   - (in subcase: a=65504;b=65504;c=0.00006103515625) INFO: subcase skipped
   - (in subcase: a=65504;b=65504;c=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2059,11 +2061,11 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec2(65504.0h, 65504.0h), vec2(65504.0h, 65504.0h), 63.96875h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2078,10 +2080,6 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec2(65504.0h, 65504.0h), vec2(65504.0h, 65504.0h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=65504) INFO: subcase ran
  Reached unreachable code
 PASS :values:stage="constant";type="vec3%3Cabstract-float%3E"
@@ -2089,29 +2087,31 @@ PASS :values:stage="constant";type="vec3%3Cf32%3E"
 FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504;c=-65504) SKIP: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=-65504;b=-65504;c=-65504) INFO: subcase skipped
+  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     enable f16;
     const v  = mix(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(-65504.0h, -65504.0h, -65504.0h), vec3(-63.96875h, -63.96875h, -63.96875h));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
   - (in subcase: a=-65504;b=-65504;c=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     enable f16;
     const v  = mix(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(-65504.0h, -65504.0h, -65504.0h), -63.96875h);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:66:37
-  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
   - (in subcase: a=-65504;b=-65504;c=-63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2126,10 +2126,6 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(-65504.0h, -65504.0h, -65504.0h), -0.062469482421875h);
       at (elided: only 2 shown)
-  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) INFO: subcase ran
   - (in subcase: a=-65504;b=-65504;c=-0.00006103515625) INFO: subcase ran
   - (in subcase: a=-65504;b=-65504;c=-0.00006097555160522461) INFO: subcase ran
@@ -2140,6 +2136,10 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504;c=0.00006103515625) SKIP: subcase skipped: Checked value, -65507.998046875, was within the ambiguous overflow rounding range.
   - (in subcase: a=-65504;b=-65504;c=0.00006103515625) INFO: subcase skipped
   - (in subcase: a=-65504;b=-65504;c=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2154,11 +2154,11 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(-65504.0h, -65504.0h, -65504.0h), 63.96875h);
       at (elided: only 2 shown)
-  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2173,10 +2173,6 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(-65504.0h, -65504.0h, -65504.0h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=65504) INFO: subcase ran
   - (in subcase: a=-65504;b=-63.96875;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=-65504;b=-63.96875;c=-65504) INFO: subcase skipped
@@ -2355,6 +2351,10 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
   - (in subcase: a=-63.96875;b=-63.96875;c=0.00006103515625) INFO: subcase ran
   - (in subcase: a=-63.96875;b=-63.96875;c=0.062469482421875) INFO: subcase ran
   - (in subcase: a=-63.96875;b=-63.96875;c=63.96875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-63.96875;b=-63.96875;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -2369,10 +2369,6 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec3(-63.96875h, -63.96875h, -63.96875h), vec3(-63.96875h, -63.96875h, -63.96875h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-63.96875;b=-63.96875;c=65504) INFO: subcase ran
   - (in subcase: a=-63.96875;b=-0.062469482421875;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=-63.96875;b=-0.062469482421875;c=-65504) INFO: subcase skipped
@@ -3894,6 +3890,10 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
   - (in subcase: a=63.96875;b=63.96875;c=0.00006103515625) INFO: subcase ran
   - (in subcase: a=63.96875;b=63.96875;c=0.062469482421875) INFO: subcase ran
   - (in subcase: a=63.96875;b=63.96875;c=63.96875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=63.96875;b=63.96875;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -3908,10 +3908,6 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec3(63.96875h, 63.96875h, 63.96875h), vec3(63.96875h, 63.96875h, 63.96875h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=63.96875;b=63.96875;c=65504) INFO: subcase ran
   - (in subcase: a=63.96875;b=65504;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=63.96875;b=65504;c=-65504) INFO: subcase skipped
@@ -4080,6 +4076,10 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
   - (in subcase: a=65504;b=63.96875;c=65504) INFO: subcase ran
   - (in subcase: a=65504;b=65504;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=65504;b=65504;c=-65504) INFO: subcase skipped
+  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -4094,11 +4094,11 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec3(65504.0h, 65504.0h, 65504.0h), vec3(65504.0h, 65504.0h, 65504.0h), -63.96875h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-0.062469482421875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -4113,10 +4113,6 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec3(65504.0h, 65504.0h, 65504.0h), vec3(65504.0h, 65504.0h, 65504.0h), -0.062469482421875h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-0.062469482421875) INFO: subcase ran
   - (in subcase: a=65504;b=65504;c=-0.00006103515625) INFO: subcase ran
   - (in subcase: a=65504;b=65504;c=-0.00006097555160522461) INFO: subcase ran
@@ -4127,6 +4123,10 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
   - (in subcase: a=65504;b=65504;c=0.00006103515625) SKIP: subcase skipped: Checked value, 65507.998046875, was within the ambiguous overflow rounding range.
   - (in subcase: a=65504;b=65504;c=0.00006103515625) INFO: subcase skipped
   - (in subcase: a=65504;b=65504;c=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -4141,11 +4141,11 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec3(65504.0h, 65504.0h, 65504.0h), vec3(65504.0h, 65504.0h, 65504.0h), 63.96875h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -4160,10 +4160,6 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec3(65504.0h, 65504.0h, 65504.0h), vec3(65504.0h, 65504.0h, 65504.0h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=65504) INFO: subcase ran
  Reached unreachable code
 PASS :values:stage="constant";type="vec4%3Cabstract-float%3E"
@@ -4171,29 +4167,31 @@ PASS :values:stage="constant";type="vec4%3Cf32%3E"
 FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504;c=-65504) SKIP: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=-65504;b=-65504;c=-65504) INFO: subcase skipped
+  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     enable f16;
     const v  = mix(vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), vec4(-63.96875h, -63.96875h, -63.96875h, -63.96875h));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:57:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
   - (in subcase: a=-65504;b=-65504;c=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
     ---- shader ----
     enable f16;
     const v  = mix(vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), -63.96875h);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
-    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:66:37
-  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
   - (in subcase: a=-65504;b=-65504;c=-63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -4208,10 +4206,6 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), -0.062469482421875h);
       at (elided: only 2 shown)
-  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=-0.062469482421875) INFO: subcase ran
   - (in subcase: a=-65504;b=-65504;c=-0.00006103515625) INFO: subcase ran
   - (in subcase: a=-65504;b=-65504;c=-0.00006097555160522461) INFO: subcase ran
@@ -4222,6 +4216,10 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504;c=0.00006103515625) SKIP: subcase skipped: Checked value, -65507.998046875, was within the ambiguous overflow rounding range.
   - (in subcase: a=-65504;b=-65504;c=0.00006103515625) INFO: subcase skipped
   - (in subcase: a=-65504;b=-65504;c=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -4236,11 +4234,11 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), 63.96875h);
       at (elided: only 2 shown)
-  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -4255,10 +4253,6 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-65504;b=-65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-65504;b=-65504;c=65504) INFO: subcase ran
   - (in subcase: a=-65504;b=-63.96875;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=-65504;b=-63.96875;c=-65504) INFO: subcase skipped
@@ -4437,6 +4431,10 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
   - (in subcase: a=-63.96875;b=-63.96875;c=0.00006103515625) INFO: subcase ran
   - (in subcase: a=-63.96875;b=-63.96875;c=0.062469482421875) INFO: subcase ran
   - (in subcase: a=-63.96875;b=-63.96875;c=63.96875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=-63.96875;b=-63.96875;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -4451,10 +4449,6 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec4(-63.96875h, -63.96875h, -63.96875h, -63.96875h), vec4(-63.96875h, -63.96875h, -63.96875h, -63.96875h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=-63.96875;b=-63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=-63.96875;b=-63.96875;c=65504) INFO: subcase ran
   - (in subcase: a=-63.96875;b=-0.062469482421875;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=-63.96875;b=-0.062469482421875;c=-65504) INFO: subcase skipped
@@ -5976,6 +5970,10 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
   - (in subcase: a=63.96875;b=63.96875;c=0.00006103515625) INFO: subcase ran
   - (in subcase: a=63.96875;b=63.96875;c=0.062469482421875) INFO: subcase ran
   - (in subcase: a=63.96875;b=63.96875;c=63.96875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=63.96875;b=63.96875;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -5990,10 +5988,6 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec4(63.96875h, 63.96875h, 63.96875h, 63.96875h), vec4(63.96875h, 63.96875h, 63.96875h, 63.96875h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=63.96875;b=63.96875;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=63.96875;b=63.96875;c=65504) INFO: subcase ran
   - (in subcase: a=63.96875;b=65504;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=63.96875;b=65504;c=-65504) INFO: subcase skipped
@@ -6162,6 +6156,10 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
   - (in subcase: a=65504;b=63.96875;c=65504) INFO: subcase ran
   - (in subcase: a=65504;b=65504;c=-65504) SKIP: subcase skipped: Checked value, 65505, was within the ambiguous overflow rounding range.
   - (in subcase: a=65504;b=65504;c=-65504) INFO: subcase skipped
+  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -6176,11 +6174,11 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec4(65504.0h, 65504.0h, 65504.0h, 65504.0h), vec4(65504.0h, 65504.0h, 65504.0h, 65504.0h), -63.96875h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-0.062469482421875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -6195,10 +6193,6 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec4(65504.0h, 65504.0h, 65504.0h, 65504.0h), vec4(65504.0h, 65504.0h, 65504.0h, 65504.0h), -0.062469482421875h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=-0.062469482421875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=-0.062469482421875) INFO: subcase ran
   - (in subcase: a=65504;b=65504;c=-0.00006103515625) INFO: subcase ran
   - (in subcase: a=65504;b=65504;c=-0.00006097555160522461) INFO: subcase ran
@@ -6209,6 +6203,10 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
   - (in subcase: a=65504;b=65504;c=0.00006103515625) SKIP: subcase skipped: Checked value, 65507.998046875, was within the ambiguous overflow rounding range.
   - (in subcase: a=65504;b=65504;c=0.00006103515625) INFO: subcase skipped
   - (in subcase: a=65504;b=65504;c=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -6223,11 +6221,11 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec4(65504.0h, 65504.0h, 65504.0h, 65504.0h), vec4(65504.0h, 65504.0h, 65504.0h, 65504.0h), 63.96875h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -6242,10 +6240,6 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = mix(vec4(65504.0h, 65504.0h, 65504.0h, 65504.0h), vec4(65504.0h, 65504.0h, 65504.0h, 65504.0h), 65504.0h);
       at (elided: only 2 shown)
-  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: a=65504;b=65504;c=65504) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=65504;b=65504;c=65504) INFO: subcase ran
  Reached unreachable code
 PASS :values:stage="override";type="vec2%3Cf32%3E"
@@ -6254,14 +6248,14 @@ FAIL :values:stage="override";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504;c=-65504) INFO: subcase skipped
   - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1163:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:216:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:57:37
   - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1163:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:216:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:66:37
   - (in subcase: a=-65504;b=-65504;c=-63.96875) INFO: subcase ran
@@ -8199,14 +8193,14 @@ FAIL :values:stage="override";type="vec3%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504;c=-65504) INFO: subcase skipped
   - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1163:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:216:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:57:37
   - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1163:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:216:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:66:37
   - (in subcase: a=-65504;b=-65504;c=-63.96875) INFO: subcase ran
@@ -10144,14 +10138,14 @@ FAIL :values:stage="override";type="vec4%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504;c=-65504) INFO: subcase skipped
   - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1163:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:216:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:57:37
   - (in subcase: a=-65504;b=-65504;c=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1163:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:216:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/mix.spec.js:66:37
   - (in subcase: a=-65504;b=-65504;c=-63.96875) INFO: subcase ran

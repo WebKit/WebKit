@@ -14,10 +14,10 @@
 #include <cstdint>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
@@ -320,7 +320,7 @@ void NetEqDecodingTest::LongCngWithClockDrift(double drift_factor,
       RTPHeader rtp_info;
       PopulateCng(seq_no, timestamp, &rtp_info, payload, &payload_len);
       ASSERT_EQ(0, neteq_->InsertPacket(
-                       rtp_info, ArrayView<const uint8_t>(payload, payload_len),
+                       rtp_info, std::span<const uint8_t>(payload, payload_len),
                        Timestamp::Millis(t_ms)));
       ++seq_no;
       timestamp += kCngPeriodSamples;
@@ -363,7 +363,7 @@ void NetEqDecodingTest::LongCngWithClockDrift(double drift_factor,
       RTPHeader rtp_info;
       PopulateCng(seq_no, timestamp, &rtp_info, payload, &payload_len);
       ASSERT_EQ(0, neteq_->InsertPacket(
-                       rtp_info, ArrayView<const uint8_t>(payload, payload_len),
+                       rtp_info, std::span<const uint8_t>(payload, payload_len),
                        Timestamp::Millis(t_ms)));
       ++seq_no;
       timestamp += kCngPeriodSamples;

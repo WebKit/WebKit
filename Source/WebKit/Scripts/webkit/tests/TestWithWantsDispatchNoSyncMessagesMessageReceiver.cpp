@@ -39,7 +39,6 @@ namespace WebKit {
 
 void TestWithWantsDispatchNoSyncMessages::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithWantsDispatchNoSyncMessages::TestMessage::name()) {
         IPC::handleMessage<Messages::TestWithWantsDispatchNoSyncMessages::TestMessage>(connection, decoder, this, &TestWithWantsDispatchNoSyncMessages::testMessage);
         return;
@@ -53,7 +52,6 @@ void TestWithWantsDispatchNoSyncMessages::didReceiveMessage(IPC::Connection& con
 
 void TestWithWantsDispatchNoSyncMessages::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    Ref protectedThis { *this };
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
     UNUSED_PARAM(connection);

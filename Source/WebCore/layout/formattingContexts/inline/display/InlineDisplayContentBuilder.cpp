@@ -33,8 +33,8 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutBoxInlines.h"
 #include "LayoutInitialContainingBlock.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RubyFormattingContext.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TextUtil.h"
 #include <ranges>
 #include <wtf/ListHashSet.h>
@@ -143,7 +143,7 @@ InlineDisplay::Boxes InlineDisplayContentBuilder::buildTextOnlyContent(const Lin
     return boxes;
 }
 
-static inline bool computeInkOverflowForInlineLevelBox(const RenderStyle& style, FloatRect& inkOverflow)
+static inline bool computeInkOverflowForInlineLevelBox(const Style::ComputedStyle& style, FloatRect& inkOverflow)
 {
     auto hasInkOverflow = false;
 
@@ -169,13 +169,13 @@ static inline bool computeInkOverflowForInlineLevelBox(const RenderStyle& style,
     return hasInkOverflow;
 }
 
-static inline bool hasInlineBoxInkOverflow(const InlineLevelBox& inlineBox, const RenderStyle& style)
+static inline bool hasInlineBoxInkOverflow(const InlineLevelBox& inlineBox, const Style::ComputedStyle& style)
 {
     ASSERT(inlineBox.isInlineBox());
     return style.hasOutlineInVisualOverflow() || !style.boxShadow().isNone() || inlineBox.hasTextEmphasis();
 }
 
-static inline void adjustInkOverflowForInlineBox(const Box& layoutBox, const ElementBox& rootBox, const RenderStyle& style, FloatRect& inkOverflow)
+static inline void adjustInkOverflowForInlineBox(const Box& layoutBox, const ElementBox& rootBox, const Style::ComputedStyle& style, FloatRect& inkOverflow)
 {
     if (style.hasOutlineInVisualOverflow())
         inkOverflow.inflate(style.usedOutlineSize());

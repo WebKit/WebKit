@@ -58,7 +58,7 @@ void ServiceWorkerAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReas
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::ServiceWorker::Configuration>> ServiceWorkerAgent::getInitializationInfo()
 {
     return Inspector::Protocol::ServiceWorker::Configuration::create()
-        .setTargetId(m_serviceWorkerGlobalScope->inspectorIdentifier())
+        .setTargetId(protect(m_serviceWorkerGlobalScope)->inspectorIdentifier())
         .setSecurityOrigin(m_serviceWorkerGlobalScope->securityOrigin()->toRawString())
         .setUrl(m_serviceWorkerGlobalScope->contextData().scriptURL.string())
         .setContent(m_serviceWorkerGlobalScope->contextData().script.toString())

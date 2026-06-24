@@ -46,6 +46,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/VMEntryScopeInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -75,7 +76,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (!jsFunction)
         return;
 
-    auto* isolatedWorld = this->isolatedWorld();
+    RefPtr isolatedWorld = this->isolatedWorld();
     if (!isolatedWorld) [[unlikely]]
         return;
 
@@ -96,6 +97,11 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
             if (!errorEvent->currentTargetIsInShadowTree())
                 jsFunctionWindow->setCurrentEvent(errorEvent);
         }
+
+        auto restoreCurrentEventOnExit = makeScopeExit([&] {
+            if (jsFunctionWindow)
+                jsFunctionWindow->setCurrentEvent(savedEvent.get());
+        });
 
         auto exception = ([&] -> NakedPtr<JSC::Exception> {
             VM& vm = globalObject->vm();
@@ -136,9 +142,6 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
 
             if (returnValue.isTrue())
                 errorEvent->preventDefault();
-
-            if (jsFunctionWindow)
-                jsFunctionWindow->setCurrentEvent(savedEvent.get());
 
             return nullptr;
         }());

@@ -101,11 +101,11 @@ void TransposeWx8_SSSE3(const uint8_t* src,
       "movq        %%xmm7,(%1,%4)                \n"
       "lea         (%1,%4,2),%1                  \n"
       "jg          1b                            \n"
-      : "+r"(src),                    // %0
-        "+r"(dst),                    // %1
-        "+r"(width)                   // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride))   // %4
+      : "+r"(src),                     // %0
+        "+r"(dst),                     // %1
+        "+r"(width)                    // %2
+      : "r"((ptrdiff_t)(src_stride)),  // %3
+        "r"((ptrdiff_t)(dst_stride))   // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -243,11 +243,11 @@ void TransposeWx8_Fast_SSSE3(const uint8_t* src,
       "movq        %%xmm15,(%1,%4)               \n"
       "lea         (%1,%4,2),%1                  \n"
       "jg          1b                            \n"
-      : "+r"(src),                    // %0
-        "+r"(dst),                    // %1
-        "+r"(width)                   // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride))   // %4
+      : "+r"(src),                     // %0
+        "+r"(dst),                     // %1
+        "+r"(width)                    // %2
+      : "r"((ptrdiff_t)(src_stride)),  // %3
+        "r"((ptrdiff_t)(dst_stride))   // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7", "xmm8", "xmm9", "xmm10", "xmm11", "xmm12", "xmm13", "xmm14",
         "xmm15");
@@ -356,13 +356,13 @@ void TransposeUVWx8_SSE2(const uint8_t* src,
       "movhpd      %%xmm8,(%2,%6)                \n"
       "lea         (%2,%6,2),%2                  \n"
       "jg          1b                            \n"
-      : "+r"(src),                      // %0
-        "+r"(dst_a),                    // %1
-        "+r"(dst_b),                    // %2
-        "+r"(width)                     // %3
-      : "r"((intptr_t)(src_stride)),    // %4
-        "r"((intptr_t)(dst_stride_a)),  // %5
-        "r"((intptr_t)(dst_stride_b))   // %6
+      : "+r"(src),                       // %0
+        "+r"(dst_a),                     // %1
+        "+r"(dst_b),                     // %2
+        "+r"(width)                      // %3
+      : "r"((ptrdiff_t)(src_stride)),    // %4
+        "r"((ptrdiff_t)(dst_stride_a)),  // %5
+        "r"((ptrdiff_t)(dst_stride_b))   // %6
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7", "xmm8", "xmm9");
 }

@@ -1,4 +1,3 @@
-style1.css has MIME type text/css
 This test requires DumpRenderTree to see the log of what resources are loaded.
 
 <style>
@@ -17,3 +16,5 @@ em {
 @import "resources/fail.css";
 </style>
 
+style.html has MIME type text/html
+style1.css has MIME type text/css

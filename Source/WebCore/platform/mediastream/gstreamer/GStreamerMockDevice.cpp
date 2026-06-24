@@ -61,6 +61,7 @@ GstDevice* webkitMockDeviceCreate(const CaptureDevice& captureDevice)
 
     switch (captureDevice.type()) {
     case CaptureDevice::DeviceType::Camera:
+    case CaptureDevice::DeviceType::Canvas:
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
         deviceClass = "Video/Source"_s;

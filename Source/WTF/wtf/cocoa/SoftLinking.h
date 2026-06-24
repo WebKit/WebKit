@@ -43,7 +43,7 @@
 #pragma mark - Soft-link macros for use within a single source file
 
 #define SOFT_LINK_LIBRARY(lib) \
-    static void* lib##Library() \
+    static void* lib##Library(bool = false) \
     { \
         static void* dylib = ^{ \
             void *result = dlopen("/usr/lib/" #lib ".dylib", RTLD_NOW); \
@@ -54,7 +54,7 @@
     }
 
 #define SOFT_LINK_SYSTEM_LIBRARY(lib) \
-    static void* lib##Library() \
+    static void* lib##Library(bool = false) \
     { \
         static void* dylib = ^{ \
             void *result = dlopen("/usr/lib/system/" #lib ".dylib", RTLD_NOW); \
@@ -65,7 +65,7 @@
     }
 
 #define SOFT_LINK_LIBRARY_OPTIONAL(lib) \
-static void* lib##Library() \
+static void* lib##Library(bool = false) \
 { \
     static void* dylib = ^{ \
         void *result = dlopen("/usr/lib/" #lib ".dylib", RTLD_NOW); \
@@ -75,7 +75,7 @@ static void* lib##Library() \
 }
 
 #define SOFT_LINK_LIBRARY_WITH_PATH(lib, path) \
-    static void* lib##Library() \
+    static void* lib##Library(bool = false) \
     { \
         static void* dylib = ^{ \
             void *result = dlopen(path #lib ".dylib", RTLD_NOW); \
@@ -86,7 +86,7 @@ static void* lib##Library() \
     }
 
 #define SOFT_LINK_FRAMEWORK(framework) \
-    static void* framework##Library() \
+    static void* framework##Library(bool = false) \
     { \
         static void* frameworkLibrary = ^{ \
             void* result = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
@@ -97,7 +97,7 @@ static void* lib##Library() \
     }
 
 #define SOFT_LINK_PRIVATE_FRAMEWORK(framework) \
-    static void* framework##Library() \
+    static void* framework##Library(bool = false) \
     { \
         static void* frameworkLibrary = ^{ \
             void* result = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
@@ -108,21 +108,21 @@ static void* lib##Library() \
     }
 
 #define SOFT_LINK_FRAMEWORK_OPTIONAL(framework) \
-    static void* framework##Library() \
+    static void* framework##Library(bool = false) \
     { \
         static void* frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
         return frameworkLibrary; \
     }
 
 #define SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(framework) \
-    static void* framework##Library() \
+    static void* framework##Library(bool = false) \
     { \
         static void* frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
         return frameworkLibrary; \
     }
 
 #define SOFT_LINK_FRAMEWORK_IN_UMBRELLA(umbrella, framework) \
-    static void* framework##Library() \
+    static void* framework##Library(bool = false) \
     { \
         static void* frameworkLibrary = ^{ \
             void* result = dlopen("/System/Library/Frameworks/" #umbrella ".framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
@@ -133,7 +133,7 @@ static void* lib##Library() \
     }
 
 #define SOFT_LINK_FRAMEWORK_IN_UMBRELLA_OPTIONAL(umbrella, framework) \
-    static void* framework##Library() \
+    static void* framework##Library(bool = false) \
     { \
         static void* frameworkLibrary = dlopen("/System/Library/Frameworks/" #umbrella ".framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
         return frameworkLibrary; \
@@ -141,7 +141,7 @@ static void* lib##Library() \
 
 #define SOFT_LINK_FRAMEWORK_IN_UMBRELLA_FOR_SOURCE_WITH_EXPORT(functionNamespace, umbrella, framework, export) \
     namespace functionNamespace { \
-    export void* framework##Library(bool isOptional = false); \
+    export void* framework##Library(bool isOptional); \
     void* framework##Library(bool isOptional) \
     { \
         static void* frameworkLibrary; \
@@ -156,7 +156,7 @@ static void* lib##Library() \
     }
 
 #define SOFT_LINK_PRIVATE_FRAMEWORK_IN_UMBRELLA_OPTIONAL(umbrella, framework) \
-    static void* framework##Library() \
+    static void* framework##Library(bool = false) \
     { \
         static void* frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/" #umbrella ".framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
         return frameworkLibrary; \
@@ -172,7 +172,7 @@ static void* lib##Library() \
     static resultType init##functionName parameterDeclarations \
     { \
         _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
-        softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), auditedName); \
+        softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(false), auditedName); \
         RELEASE_ASSERT_WITH_MESSAGE(softLink##functionName, "%s", dlerror()); \
         return softLink##functionName parameterNames; \
     } \
@@ -198,7 +198,7 @@ static void* lib##Library() \
     { \
         ASSERT(!softLink##functionName); \
         _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
-        softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), auditedName); \
+        softLink##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(false), auditedName); \
         return !!softLink##functionName; \
     } \
     \
@@ -230,23 +230,23 @@ static void* lib##Library() \
     static functionName##PtrType functionName##Ptr() \
     { \
         _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
-        static functionName##PtrType ptr = reinterpret_cast<functionName##PtrType>(dlsym(framework##Library(), auditedName)); \
+        static functionName##PtrType ptr = reinterpret_cast<functionName##PtrType>(dlsym(framework##Library(false), auditedName)); \
         return ptr; \
     }
 
 #define SOFT_LINK_CLASS(framework, className) \
     @class className; \
-    static Class init##className(); \
-    static Class (*get##className##ClassSingleton)() = init##className; \
-    struct Class##className##Wrapper { SUPPRESS_UNCOUNTED_MEMBER Class classObject; }; \
+    static ::Class init##className(); \
+    static ::Class (*get##className##ClassSingleton)() = init##className; \
+    struct Class##className##Wrapper { SUPPRESS_UNCOUNTED_MEMBER ::Class classObject; }; \
     static Class##className##Wrapper class##className; \
     \
-    static Class className##Function() \
+    static ::Class className##Function() \
     { \
         return class##className.classObject; \
     } \
     \
-    static Class init##className() \
+    static ::Class init##className() \
     { \
         framework##Library(); \
         _STORE_IN_GETCLASS_SECTION static char const auditedClassName[] = #className; \
@@ -266,17 +266,17 @@ static void* lib##Library() \
 
 #define SOFT_LINK_CLASS_OPTIONAL(framework, className) \
     @class className; \
-    static Class init##className(); \
-    static Class (*get##className##ClassSingleton)() = init##className; \
-    struct class##className##Wrapper { SUPPRESS_UNCOUNTED_MEMBER Class classObject; }; \
+    static ::Class init##className(); \
+    static ::Class (*get##className##ClassSingleton)() = init##className; \
+    struct class##className##Wrapper { SUPPRESS_UNCOUNTED_MEMBER ::Class classObject; }; \
     static class##className##Wrapper class##className; \
     \
-    static Class className##Function() \
+    static ::Class className##Function() \
     { \
         return class##className.classObject; \
     } \
     \
-    static Class init##className() \
+    static ::Class init##className() \
     { \
         framework##Library(); \
         _STORE_IN_GETCLASS_SECTION static char const auditedClassName[] = #className; \
@@ -306,7 +306,7 @@ static void* lib##Library() \
     static type init##name() \
     { \
         _STORE_IN_DLSYM_SECTION static char const auditedName[] = #name; \
-        void** pointer = static_cast<void**>(dlsym(framework##Library(), auditedName)); \
+        void** pointer = static_cast<void**>(dlsym(framework##Library(false), auditedName)); \
         RELEASE_ASSERT_WITH_MESSAGE(pointer, "%s", dlerror()); \
         pointer##name = static_cast<type>(*pointer); \
         get##name = name##Function; \
@@ -326,7 +326,7 @@ static void* lib##Library() \
     static type init##name() \
     { \
         _STORE_IN_DLSYM_SECTION static char const auditedName[] = #name; \
-        void** pointer = static_cast<void**>(dlsym(framework##Library(), auditedName)); \
+        void** pointer = static_cast<void**>(dlsym(framework##Library(false), auditedName)); \
         if (pointer) \
             pointer##name = static_cast<type>(*pointer); \
         get##name = name##Function; \
@@ -347,7 +347,7 @@ static void* lib##Library() \
     static type init##name() \
     { \
         _STORE_IN_DLSYM_SECTION static char const auditedName[] = #name; \
-        void* constant = dlsym(framework##Library(), auditedName); \
+        void* constant = dlsym(framework##Library(false), auditedName); \
         RELEASE_ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
         constant##name.constant = *static_cast<type const *>(constant); \
         get##name##Singleton = name##Function; \
@@ -375,7 +375,7 @@ static void* lib##Library() \
     { \
         ASSERT(!get##name##Singleton); \
         _STORE_IN_DLSYM_SECTION static char const auditedName[] = #name; \
-        void* constant = dlsym(framework##Library(), auditedName); \
+        void* constant = dlsym(framework##Library(false), auditedName); \
         if (!constant) \
             return false; \
         constant##name.constant = *static_cast<type const *>(constant); \
@@ -399,7 +399,7 @@ static void* lib##Library() \
 
 #define SOFT_LINK_LIBRARY_FOR_SOURCE(functionNamespace, lib) \
     namespace functionNamespace { \
-    extern void* lib##Library(bool isOptional = false); \
+    extern void* lib##Library(bool isOptional); \
     void* lib##Library(bool isOptional) \
     { \
         static void* library; \
@@ -424,7 +424,7 @@ static void* lib##Library() \
 
 #define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT(functionNamespace, framework, flags, export) \
     namespace functionNamespace { \
-    export void* framework##Library(bool isOptional = false); \
+    export void* framework##Library(bool isOptional); \
     void* framework##Library(bool isOptional) \
     { \
         static void* frameworkLibrary; \
@@ -449,7 +449,7 @@ static void* lib##Library() \
 
 #define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) \
     namespace functionNamespace { \
-    export void* framework##Library(bool isOptional = false); \
+    export void* framework##Library(bool isOptional); \
     void* framework##Library(bool isOptional) \
     { \
         static void* frameworkLibrary; \
@@ -469,7 +469,7 @@ static void* lib##Library() \
 #define SOFT_LINK_CLASS_FOR_HEADER(functionNamespace, className) \
     @class className; \
     namespace functionNamespace { \
-    extern Class (*get##className##ClassSingleton)(); \
+    extern ::Class (*get##className##ClassSingleton)(); \
     className *alloc##className##Instance() NS_RETURNS_RETAINED; \
     inline className *alloc##className##Instance() NS_RETURNS_RETAINED \
     { \
@@ -480,23 +480,23 @@ static void* lib##Library() \
 #define SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(functionNamespace, className, availability) \
     @class className; \
     namespace functionNamespace { \
-    extern Class (*get##className##ClassSingleton)(); \
+    extern ::Class (*get##className##ClassSingleton)(); \
     NS_RETURNS_RETAINED className *alloc##className##Instance() availability; \
     }
 
 #define SOFT_LINK_CLASS_FOR_SOURCE_INTERNAL(functionNamespace, framework, className, export, isOptional, availability) \
     @class className; \
     namespace functionNamespace { \
-    static Class init##className(); \
-    export Class (*get##className##ClassSingleton)() = init##className; \
-    SUPPRESS_UNRETAINED_LOCAL static Class class##className; \
+    static ::Class init##className(); \
+    export ::Class (*get##className##ClassSingleton)() = init##className; \
+    SUPPRESS_UNRETAINED_LOCAL static ::Class class##className; \
     \
-    static Class className##Function() \
+    static ::Class className##Function() \
     { \
         return class##className; \
     } \
     \
-    static Class init##className() \
+    static ::Class init##className() \
     { \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
@@ -554,7 +554,7 @@ static void* lib##Library() \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
-            void* constant = dlsym(framework##Library(), auditedName); \
+            void* constant = dlsym(framework##Library(false), auditedName); \
             RELEASE_ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
             constant##framework##variableName = *static_cast<variableType const *>(constant); \
         }); \
@@ -563,7 +563,21 @@ static void* lib##Library() \
     }
 
 #define SOFT_LINK_CONSTANT_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
-    SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, )
+    namespace functionNamespace { \
+    variableType get_##framework##_##variableName##Singleton(); \
+    variableType get_##framework##_##variableName##Singleton() \
+    { \
+        SUPPRESS_UNRETAINED_LOCAL static variableType constant##framework##variableName; \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
+            void* constant = dlsym(framework##Library(false), auditedName); \
+            RELEASE_ASSERT_WITH_MESSAGE(constant, "%s", dlerror()); \
+            constant##framework##variableName = *static_cast<variableType const *>(constant); \
+        }); \
+        return constant##framework##variableName; \
+    } \
+    }
 
 #define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     namespace functionNamespace { \
@@ -580,7 +594,7 @@ static void* lib##Library() \
     bool init_##framework##_##variableName() \
     { \
         _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
-        void* constant = dlsym(framework##Library(), auditedName); \
+        void* constant = dlsym(framework##Library(false), auditedName); \
         if (!constant) \
             return false; \
         constant##framework##variableName.constant = *static_cast<variableType const *>(constant); \
@@ -600,7 +614,31 @@ static void* lib##Library() \
     }
 
 #define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
-    SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, )
+    namespace functionNamespace { \
+    struct Constant##framework##variableName##Wrapper { SUPPRESS_UNRETAINED_LOCAL variableType constant; }; \
+    static Constant##framework##variableName##Wrapper constant##framework##variableName; \
+    bool init_##framework##_##variableName(); \
+    bool init_##framework##_##variableName() \
+    { \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
+        void* constant = dlsym(framework##Library(false), auditedName); \
+        if (!constant) \
+            return false; \
+        constant##framework##variableName.constant = *static_cast<variableType const *>(constant); \
+        return true; \
+    } \
+    bool canLoad_##framework##_##variableName(); \
+    bool canLoad_##framework##_##variableName() \
+    { \
+        static bool loaded = init_##framework##_##variableName(); \
+        return loaded; \
+    } \
+    variableType get_##framework##_##variableName##Singleton(); \
+    variableType get_##framework##_##variableName##Singleton() \
+    { \
+        return constant##framework##variableName.constant; \
+    } \
+    }
 
 #define SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, functionAttributes) \
     WTF_EXTERN_C_BEGIN \
@@ -632,7 +670,7 @@ static void* lib##Library() \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
-            softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), auditedName); \
+            softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(false), auditedName); \
             RELEASE_ASSERT_WITH_MESSAGE(softLink##framework##functionName, "%s", dlerror()); \
         }); \
         return softLink##framework##functionName parameterNames; \
@@ -640,7 +678,20 @@ static void* lib##Library() \
     }
 
 #define SOFT_LINK_FUNCTION_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
-    SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
+    namespace functionNamespace { \
+    static resultType init##framework##functionName parameterDeclarations; \
+    resultType(*softLink##framework##functionName) parameterDeclarations = init##framework##functionName; \
+    static resultType init##framework##functionName parameterDeclarations \
+    { \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
+            softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(false), auditedName); \
+            RELEASE_ASSERT_WITH_MESSAGE(softLink##framework##functionName, "%s", dlerror()); \
+        }); \
+        return softLink##framework##functionName parameterNames; \
+    } \
+    }
 
 #define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, functionAttributes) \
     WTF_EXTERN_C_BEGIN \
@@ -670,7 +721,7 @@ static void* lib##Library() \
     { \
         ASSERT(!softLink##framework##functionName); \
         _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
-        softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), auditedName); \
+        softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(false), auditedName); \
         return !!softLink##framework##functionName; \
     } \
     \
@@ -690,7 +741,31 @@ static void* lib##Library() \
     }
 
 #define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
-    SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
+    namespace functionNamespace { \
+    resultType (*softLink##framework##functionName) parameterDeclarations = 0; \
+    bool init_##framework##_##functionName(); \
+    bool init_##framework##_##functionName() \
+    { \
+        ASSERT(!softLink##framework##functionName); \
+        _STORE_IN_DLSYM_SECTION static char const auditedName[] = #functionName; \
+        softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(false), auditedName); \
+        return !!softLink##framework##functionName; \
+    } \
+    \
+    bool canLoad_##framework##_##functionName(); \
+    bool canLoad_##framework##_##functionName() \
+    { \
+        static bool loaded = init_##framework##_##functionName(); \
+        return loaded; \
+    } \
+    \
+    resultType softLink_##framework##_##functionName parameterDeclarations; \
+    resultType softLink_##framework##_##functionName parameterDeclarations \
+    { \
+        ASSERT(softLink##framework##functionName); \
+        return softLink##framework##functionName parameterNames; \
+    } \
+    }
 
 #define SOFT_LINK_POINTER_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     namespace functionNamespace { \
@@ -713,7 +788,7 @@ static void* lib##Library() \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
-            void** pointer = static_cast<void**>(dlsym(framework##Library(), auditedName)); \
+            void** pointer = static_cast<void**>(dlsym(framework##Library(false), auditedName)); \
             RELEASE_ASSERT_WITH_MESSAGE(pointer, "%s", dlerror()); \
             SUPPRESS_UNRETAINED_LOCAL pointer##framework##variableName = static_cast<variableType>(*pointer); \
             get_##framework##_##variableName = pointer##framework##variableName##Function; \
@@ -742,7 +817,7 @@ static void* lib##Library() \
         static dispatch_once_t once; \
         dispatch_once(&once, ^{ \
             _STORE_IN_DLSYM_SECTION static char const auditedName[] = #variableName; \
-            void* variable = dlsym(framework##Library(), auditedName); \
+            void* variable = dlsym(framework##Library(false), auditedName); \
             RELEASE_ASSERT_WITH_MESSAGE(variable, "%s", dlerror()); \
             variable##framework##variableName = static_cast<variableType *>(variable); \
         }); \

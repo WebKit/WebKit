@@ -66,7 +66,8 @@ bool screenIsMonochrome(Widget*)
 
 bool screenHasInvertedColors()
 {
-    if (auto data = screenData(primaryScreenDisplayID()))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->screenHasInvertedColors;
 
     return PAL::softLinkUIKitUIAccessibilityIsInvertColorsEnabled();
@@ -92,12 +93,13 @@ OptionSet<ContentsFormat> screenContentsFormats(Widget* widget)
 
 bool screenSupportsExtendedColor(Widget*)
 {
+    Ref screen = PlatformScreen::singleton();
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGB10)
-    if (screenContentsFormatsForTesting().contains(ContentsFormat::RGBA10))
+    if (screen->screenContentsFormatsForTesting().contains(ContentsFormat::RGBA10))
         return true;
 #endif
 
-    if (auto data = screenData(primaryScreenDisplayID()))
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->screenSupportsExtendedColor;
 
     return MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
@@ -105,15 +107,16 @@ bool screenSupportsExtendedColor(Widget*)
 
 bool screenSupportsHighDynamicRange(Widget*)
 {
+    Ref screen = PlatformScreen::singleton();
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
-    if (screenContentsFormatsForTesting().contains(ContentsFormat::RGBA16F))
+    if (screen->screenContentsFormatsForTesting().contains(ContentsFormat::RGBA16F))
         return true;
 #endif
 
-    if (auto data = screenData(primaryScreenDisplayID()))
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->screenSupportsHighDynamicRange;
 
-#if USE(MEDIATOOLBOX)
+#if USE(MEDIATOOLBOX) && HAVE(SUPPORT_HDR_DISPLAY)
     if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
         return PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo(nullptr);
 #endif
@@ -128,7 +131,8 @@ bool screenSupportsHighDynamicRange(PlatformDisplayID)
 #if HAVE(SUPPORT_HDR_DISPLAY)
 float currentEDRHeadroomForDisplay(PlatformDisplayID)
 {
-    if (auto data = screenData(primaryScreenDisplayID()))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->currentEDRHeadroom;
 
     return [[PAL::getUIScreenClassSingleton() mainScreen] currentEDRHeadroom];
@@ -136,7 +140,8 @@ float currentEDRHeadroomForDisplay(PlatformDisplayID)
 
 float maxEDRHeadroomForDisplay(PlatformDisplayID)
 {
-    if (auto data = screenData(primaryScreenDisplayID()))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->maxEDRHeadroom;
 
     return [[PAL::getUIScreenClassSingleton() mainScreen] potentialEDRHeadroom];
@@ -144,7 +149,8 @@ float maxEDRHeadroomForDisplay(PlatformDisplayID)
 
 bool suppressEDRForDisplay(PlatformDisplayID)
 {
-    if (auto data = screenData(primaryScreenDisplayID()))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->suppressEDR;
 
     return false;
@@ -178,7 +184,7 @@ FloatRect screenRect(Widget* widget)
         CGRect screenRect = { CGPointZero, [window screenSize] };
         return enclosingIntRect(screenRect);
     }
-    return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->overrideScreenSize()));
+    return enclosingIntRect(FloatRect(FloatPoint(), protect(widget->root())->hostWindow()->overrideScreenSize()));
 }
 
 FloatRect screenAvailableRect(Widget* widget)
@@ -194,12 +200,13 @@ FloatRect screenAvailableRect(Widget* widget)
         CGRect screenRect = { CGPointZero, [window availableScreenSize] };
         return enclosingIntRect(screenRect);
     }
-    return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->overrideAvailableScreenSize()));
+    return enclosingIntRect(FloatRect(FloatPoint(), protect(widget->root())->hostWindow()->overrideAvailableScreenSize()));
 }
 
 float screenPPIFactor()
 {
-    if (auto data = screenData(primaryScreenDisplayID()))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->scaleFactor;
 
     static float ppiFactor = [] {
@@ -222,7 +229,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return { 320, 480 };
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    if (auto data = screenData(primaryScreenDisplayID()))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->screenRect.size();
 
     return FloatSize([[PAL::getUIScreenClassSingleton() mainScreen] _referenceBounds].size);
@@ -236,7 +244,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return { 320, 480 };
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    if (auto data = screenData(primaryScreenDisplayID()))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->screenAvailableRect.size();
 
     return FloatSize([PAL::getUIScreenClassSingleton() mainScreen].bounds.size);

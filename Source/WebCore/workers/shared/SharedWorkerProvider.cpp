@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-static SharedWorkerProvider* sharedProvider;
+static SharedWorkerProvider* sharedWorkerSharedProvider;
 
 // For WebKitLegacy.
 class DummySharedWorkerProvider final : public SharedWorkerProvider {
@@ -38,15 +38,15 @@ public:
 
 SharedWorkerProvider& SharedWorkerProvider::singleton()
 {
-    if (!sharedProvider)
-        sharedProvider = new DummySharedWorkerProvider;
-    return *sharedProvider;
+    if (!sharedWorkerSharedProvider)
+        sharedWorkerSharedProvider = new DummySharedWorkerProvider;
+    return *sharedWorkerSharedProvider;
 }
 
 void SharedWorkerProvider::setSharedProvider(SharedWorkerProvider& newProvider)
 {
-    RELEASE_ASSERT(!sharedProvider);
-    sharedProvider = &newProvider;
+    RELEASE_ASSERT(!sharedWorkerSharedProvider);
+    sharedWorkerSharedProvider = &newProvider;
 }
 
 } // namespace WebCore

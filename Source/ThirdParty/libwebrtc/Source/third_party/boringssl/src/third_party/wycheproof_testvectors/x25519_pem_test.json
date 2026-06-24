@@ -820,7 +820,6 @@
           "flags": [
             "LowOrderPublic",
             "NonCanonicalPublic",
-            "Twist",
             "SpecialPublicKey",
             "ZeroSharedSecret"
           ],
@@ -835,7 +834,6 @@
           "flags": [
             "LowOrderPublic",
             "NonCanonicalPublic",
-            "Twist",
             "SpecialPublicKey",
             "ZeroSharedSecret"
           ],
@@ -851,7 +849,8 @@
             "LowOrderPublic",
             "NonCanonicalPublic",
             "SpecialPublicKey",
-            "ZeroSharedSecret"
+            "ZeroSharedSecret",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VuAyEA7P////////////////////////////////////////8=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VuBCIEICBksvTJ3JfsfPWJMv36MmW6bqTRHwJZuO/Ir7NduIxI\n-----END PRIVATE KEY-----\n",
@@ -887,7 +886,8 @@
           "comment": "public key with low order",
           "flags": [
             "LowOrderPublic",
-            "ZeroSharedSecret"
+            "ZeroSharedSecret",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VuAyEA7P///////////////////////////////////////38=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VuBCIEIHhqM6T3ryl6IOdkKSWTK/UJ5wcPobw2mGrx6xP09QtV\n-----END PRIVATE KEY-----\n",
@@ -971,7 +971,8 @@
           "comment": "public key with low order",
           "flags": [
             "LowOrderPublic",
-            "ZeroSharedSecret"
+            "ZeroSharedSecret",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VuAyEA7P////////////////////////////////////////8=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VuBCIEIHhqM6T3ryl6IOdkKSWTK/UJ5wcPobw2mGrx6xP09QtV\n-----END PRIVATE KEY-----\n",
@@ -1077,7 +1078,6 @@
             "SmallPublicKey",
             "LowOrderPublic",
             "NonCanonicalPublic",
-            "Twist",
             "SpecialPublicKey",
             "ZeroSharedSecret"
           ],
@@ -1191,7 +1191,8 @@
           "comment": "non-canonical public key",
           "flags": [
             "NonCanonicalPublic",
-            "SpecialPublicKey"
+            "SpecialPublicKey",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VuAyEA2/////////////////////////////////////////8=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VuBCIEIMjgMwrp3O7/iH+6dhIlh5pL0uDbCHmSRBNuRyGyyIlw\n-----END PRIVATE KEY-----\n",
@@ -1203,7 +1204,6 @@
           "comment": "non-canonical public key",
           "flags": [
             "NonCanonicalPublic",
-            "Twist",
             "SpecialPublicKey"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VuAyEA3P////////////////////////////////////////8=\n-----END PUBLIC KEY-----\n",
@@ -1216,7 +1216,8 @@
           "comment": "non-canonical public key",
           "flags": [
             "NonCanonicalPublic",
-            "SpecialPublicKey"
+            "SpecialPublicKey",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VuAyEA6v////////////////////////////////////////8=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VuBCIEIJBBxuBEonffhGYnXKi17g2nvAKGSAVK3lxZKt0wV0dO\n-----END PRIVATE KEY-----\n",
@@ -1262,12 +1263,13 @@
           "tcId": 101,
           "comment": "RFC 7748",
           "flags": [
-            "Ktv"
+            "Ktv",
+            "Twist"
           ],
           "public": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VuAyEA5SEPEnhoEdP0t5WdBTiuLDHb5xBvwDw+/EzVSccVpBM=\n-----END PUBLIC KEY-----\n",
           "private": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VuBCIEIEhm6dTRtGc8WtImkZV9avXBG2Qh4OoB1CykFp55GLpN\n-----END PRIVATE KEY-----\n",
           "shared": "95cbde9476e8907d7aade45cb4b873f88b595a68799fa152e6f8f7647aac7957",
-          "result": "valid"
+          "result": "acceptable"
         },
         {
           "tcId": 102,

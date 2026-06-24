@@ -143,7 +143,7 @@ private:
 
 template<> struct CSSValueConversion<ListStyleType> { auto operator()(BuilderState&, const CSSValue&) -> ListStyleType; };
 
-template<> struct CSSValueCreation<ListStyleType> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const ListStyleType&); };
+template<> struct CSSValueCreation<ListStyleType> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const ListStyleType&); };
 
 } // namespace Style
 } // namespace WebCore

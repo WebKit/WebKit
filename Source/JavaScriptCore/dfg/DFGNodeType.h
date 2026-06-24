@@ -351,6 +351,7 @@ namespace JSC { namespace DFG {
     macro(ArrayConcatAppendOne, NodeResultJS | NodeMustGenerate) \
     macro(ArrayIncludes, NodeResultBoolean | NodeHasVarArgs) \
     macro(ArrayIndexOf, NodeResultInt32 | NodeHasVarArgs) \
+    macro(ArrayJoin, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(ArraySplice, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     \
     /* Optimizations for regular expression matching. */\
@@ -361,6 +362,8 @@ namespace JSC { namespace DFG {
     macro(RegExpMatchFast, NodeResultJS | NodeMustGenerate) \
     macro(RegExpMatchFastGlobal, NodeResultJS | NodeMustGenerate) \
     macro(RegExpSearch, NodeResultInt32 | NodeMustGenerate) \
+    macro(RegExpSplitFast, NodeResultJS | NodeMustGenerate) \
+    macro(RegExpStringIteratorNext, NodeResultJS | NodeMustGenerate) \
     macro(GetRegExpFlag, NodeResultBoolean) \
     macro(StringReplace, NodeResultJS | NodeMustGenerate) \
     macro(StringReplaceAll, NodeResultJS | NodeMustGenerate) \
@@ -372,12 +375,15 @@ namespace JSC { namespace DFG {
     macro(StringEndsWith, NodeResultBoolean) \
     macro(StringSplit, NodeResultJS | NodeMustGenerate) \
     macro(StringMatch, NodeResultJS | NodeMustGenerate) \
+    macro(StringSearch, NodeResultJS | NodeMustGenerate) \
     \
     /* Optimizations for string access */ \
     macro(StringAt, NodeResultJS) \
     macro(StringCharCodeAt, NodeResultInt32) \
     macro(StringCodePointAt, NodeResultInt32) \
     macro(StringCharAt, NodeResultJS) \
+    macro(StringIteratorNext, 0) \
+    macro(StringIteratorNextWithUndefined, 0) \
     macro(StringFromCharCode, NodeResultJS | NodeMustGenerate) \
     macro(StringFromCodePoint, NodeResultJS | NodeMustGenerate) \
     \
@@ -442,6 +448,8 @@ namespace JSC { namespace DFG {
     macro(NewStringObject, NodeResultJS) \
     macro(NewMap, NodeResultJS) \
     macro(NewSet, NodeResultJS) \
+    macro(NewWeakMap, NodeResultJS) \
+    macro(NewWeakSet, NodeResultJS) \
     /* Rest Parameter */\
     macro(CreateRest, NodeResultJS | NodeMustGenerate) \
     \
@@ -604,7 +612,7 @@ namespace JSC { namespace DFG {
     macro(NormalizeMapKey, NodeResultJS) \
     macro(MapGet, NodeResultStorage) \
     macro(LoadMapValue, NodeResultJS) \
-    macro(MapIteratorNext, NodeResultBoolean) \
+    macro(MapIteratorNext, 0) \
     macro(MapIteratorKey, NodeResultJS) \
     macro(MapIteratorValue, NodeResultJS) \
     macro(MapStorage, NodeResultJS) /* Get the map storage if exists. */ \

@@ -45,8 +45,8 @@
 #include "Quirks.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -70,8 +70,8 @@ TextStream& operator<<(TextStream& ts, ContentChange contentChange)
 static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
 {
     // Fullscreen status is propagated on the ancestor document chain all the way to the top document.
-    auto& document = descendantCandidate.document();
-    RefPtr mainFrameDocument = document.mainFrameDocument();
+    Ref document = descendantCandidate.document();
+    RefPtr mainFrameDocument = document->mainFrameDocument();
     if (!mainFrameDocument) {
         LOG_ONCE(SiteIsolation, "Unable to properly calculate isHiddenBehindFullscreenElement() without access to the main frame document ");
         return false;
@@ -85,7 +85,7 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
         return false;
 
     // If the document where the node lives does not have an active fullscreen element, it is a sibling/nephew document -> not a descendant.
-    documentFullscreen = document.fullscreenIfExists();
+    documentFullscreen = document->fullscreenIfExists();
     if (!documentFullscreen)
         return false;
     RefPtr fullscreenElement = documentFullscreen->fullscreenElement();
@@ -178,7 +178,7 @@ bool ContentChangeObserver::isConsideredActionableContent(const Element& candida
         if (is<HTMLIFrameElement>(element))
             return true;
 
-        if (auto imageElement = dynamicDowncast<HTMLImageElement>(element)) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element)) {
             // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
             auto* imageRenderer = imageElement->renderer();
             return imageRenderer && imageElement->willRespondToMouseClickEventsWithEditability(imageElement->computeEditabilityForMouseClickEvents(&imageRenderer->style()), HTMLImageElement::IgnoreTouchCallout::Yes);
@@ -192,8 +192,8 @@ bool ContentChangeObserver::isConsideredActionableContent(const Element& candida
         for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
             if (!descendant.element())
                 continue;
-            auto& element = *descendant.element();
-            if (element.renderer() && element.willRespondToMouseClickEvents(&element.renderer()->style()))
+            Ref element = *descendant.element();
+            if (element->renderer() && element->willRespondToMouseClickEvents(&element->renderer()->style()))
                 return true;
         }
         return false;
@@ -733,7 +733,7 @@ ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, co
 {
     // FIXME: Should this use `isConsideredVisible` like the destructor instead of `isVisuallyHidden`?
     if (m_contentChangeObserver.shouldObserveVisibilityChangeForElement(element))
-        m_wasHidden = isVisuallyHidden(m_element);
+        m_wasHidden = isVisuallyHidden(protect(m_element));
 }
 
 ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
@@ -742,15 +742,15 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
     if (!m_wasHidden.has_value())
         return;
 
-    if (!m_contentChangeObserver.isConsideredActionableContent(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
+    if (!m_contentChangeObserver.isConsideredActionableContent(protect(m_element), m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
         return;
 
     auto wasVisible = !m_wasHidden.value();
-    auto isVisible = isConsideredVisible(m_element);
+    auto isVisible = isConsideredVisible(protect(m_element));
     if (!wasVisible && isVisible)
-        m_contentChangeObserver.elementDidBecomeVisible(m_element);
+        m_contentChangeObserver.elementDidBecomeVisible(protect(m_element));
     else if (wasVisible && !isVisible)
-        m_contentChangeObserver.elementDidBecomeHidden(m_element);
+        m_contentChangeObserver.elementDidBecomeHidden(protect(m_element));
 }
 
 #if ENABLE(TOUCH_EVENTS)

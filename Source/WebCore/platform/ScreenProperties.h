@@ -27,13 +27,27 @@
 
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatRect.h>
-#include <WebCore/PlatformScreen.h>
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+enum class ContentsFormat : uint8_t;
+
+using PlatformGPUID = uint64_t; // On MAC, global IOKit registryID that can identify a GPU across process boundaries.
+
+using PlatformDisplayID = uint32_t;
+
+enum class DynamicRangeMode : uint8_t {
+    None,
+    Standard,
+    HLG,
+    HDR10,
+    DolbyVisionPQ,
+};
 
 struct ScreenData {
     FloatRect screenAvailableRect;
@@ -77,6 +91,8 @@ struct ScreenData {
 using ScreenDataMap = HashMap<PlatformDisplayID, ScreenData>;
 
 struct ScreenProperties {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(ScreenProperties, WEBCORE_EXPORT);
+
     PlatformDisplayID primaryDisplayID { 0 };
     ScreenDataMap screenDataMap;
 #if HAVE(SUPPORT_HDR_DISPLAY)

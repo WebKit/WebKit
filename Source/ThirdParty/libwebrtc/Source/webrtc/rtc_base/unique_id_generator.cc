@@ -13,11 +13,11 @@
 #include <cstdint>
 #include <limits>
 #include <optional>
+#include <span>
 #include <string>
 
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crypto_random.h"
 #include "rtc_base/string_to_number.h"
@@ -26,7 +26,7 @@
 namespace webrtc {
 
 UniqueRandomIdGenerator::UniqueRandomIdGenerator() : known_ids_() {}
-UniqueRandomIdGenerator::UniqueRandomIdGenerator(ArrayView<uint32_t> known_ids)
+UniqueRandomIdGenerator::UniqueRandomIdGenerator(std::span<uint32_t> known_ids)
     : known_ids_(known_ids.begin(), known_ids.end()) {}
 
 UniqueRandomIdGenerator::~UniqueRandomIdGenerator() = default;
@@ -49,7 +49,7 @@ bool UniqueRandomIdGenerator::AddKnownId(uint32_t value) {
 }
 
 UniqueStringGenerator::UniqueStringGenerator() : unique_number_generator_() {}
-UniqueStringGenerator::UniqueStringGenerator(ArrayView<std::string> known_ids) {
+UniqueStringGenerator::UniqueStringGenerator(std::span<std::string> known_ids) {
   for (const std::string& str : known_ids) {
     AddKnownId(str);
   }

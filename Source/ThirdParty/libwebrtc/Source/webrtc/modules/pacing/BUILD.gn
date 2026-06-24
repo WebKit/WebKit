@@ -29,7 +29,6 @@ rtc_library("pacing") {
   ]
 
   deps = [
-    "../../api:array_view",
     "../../api:field_trials_view",
     "../../api:rtp_headers",
     "../../api:rtp_packet_sender",
@@ -87,7 +86,6 @@ if (rtc_include_tests) {
     deps = [
       ":interval_budget",
       ":pacing",
-      "../../api:array_view",
       "../../api:field_trials",
       "../../api:rtp_headers",
       "../../api:sequence_checker",

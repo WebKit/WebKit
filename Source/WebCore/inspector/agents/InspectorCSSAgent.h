@@ -157,12 +157,6 @@ public:
     void reset();
 
 private:
-    class StyleSheetAction;
-    class SetStyleSheetTextAction;
-    class SetStyleTextAction;
-    class SetRuleHeaderTextAction;
-    class AddRuleAction;
-
     using IdToInspectorStyleSheet = HashMap<Inspector::Protocol::CSS::StyleSheetId, Ref<InspectorStyleSheet>>;
     using CSSStyleSheetToInspectorStyleSheet = HashMap<CSSStyleSheet*, Ref<InspectorStyleSheet>>;
     using DocumentToViaInspectorStyleSheet = HashMap<Ref<Document>, Vector<Ref<InspectorStyleSheet>>>; // "via inspector" stylesheets

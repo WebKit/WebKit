@@ -67,8 +67,12 @@ protected:
 
 class JSTestNamedSetterWithLegacyOverrideBuiltInsOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestNamedSetterWithLegacyOverrideBuiltInsOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestNamedSetterWithLegacyOverrideBuiltInsOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedSetterWithLegacyOverrideBuiltIns*)

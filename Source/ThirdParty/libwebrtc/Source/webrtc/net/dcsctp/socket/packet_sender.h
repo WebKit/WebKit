@@ -12,8 +12,8 @@
 
 #include <cstdint>
 #include <functional>
+#include <span>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/sctp_packet.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
 
@@ -25,8 +25,8 @@ namespace dcsctp {
 class PacketSender {
  public:
   PacketSender(DcSctpSocketCallbacks& callbacks,
-               std::function<void(webrtc::ArrayView<const uint8_t>,
-                                  SendPacketStatus)> on_sent_packet);
+               std::function<void(std::span<const uint8_t>, SendPacketStatus)>
+                   on_sent_packet);
 
   // Sends the packet, and returns true if it was sent successfully.
   bool Send(SctpPacket::Builder& builder, bool write_checksum = true);
@@ -36,7 +36,7 @@ class PacketSender {
 
   // Callback that will be triggered for every send attempt, indicating the
   // status of the operation.
-  std::function<void(webrtc::ArrayView<const uint8_t>, SendPacketStatus)>
+  std::function<void(std::span<const uint8_t>, SendPacketStatus)>
       on_sent_packet_;
 };
 }  // namespace dcsctp

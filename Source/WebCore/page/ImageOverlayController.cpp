@@ -45,8 +45,8 @@
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
 #include "RenderElement.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SimpleRange.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "VisiblePosition.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -106,7 +106,7 @@ void ImageOverlayController::selectionQuadsDidChange(LocalFrame& frame, const Ve
     m_selectionBackgroundColor = overlayHostRenderer->selectionBackgroundColor();
     m_selectionClipRect = overlayHostRenderer->absoluteBoundingBoxRect();
 
-    installPageOverlayIfNeeded().setNeedsDisplay();
+    protect(installPageOverlayIfNeeded())->setNeedsDisplay();
 }
 
 bool ImageOverlayController::shouldUsePageOverlayToPaintSelection(const RenderElement& renderer)

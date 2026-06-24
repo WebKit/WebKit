@@ -98,6 +98,7 @@ runtime/StringPrototype.cpp
 runtime/Structure.cpp
 runtime/StructureInlines.h
 runtime/SymbolTable.h
+runtime/SymbolTableInlines.h
 runtime/TypeSet.cpp
 runtime/VMTraps.cpp
 runtime/WaiterListManager.h

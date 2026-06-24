@@ -38,6 +38,8 @@ typedef NS_ENUM(NSInteger, WKStageModeOperation) {
     WKStageModeOperationOrbit,
 };
 
+#if HAVE(CORE_RE)
+
 NS_SWIFT_UI_ACTOR
 @protocol WKStageModeInteractionAware <NSObject>
 - (void)stageModeInteractionDidUpdateModel;
@@ -56,6 +58,8 @@ NS_SWIFT_UI_ACTOR
 - (void)operationDidUpdate:(WKStageModeOperation)operation;
 - (void)removeInteractionContainerFromSceneOrParent;
 @end
+
+#endif // HAVE(CORE_RE)
 
 NS_HEADER_AUDIT_END(nullability, sendability)
 

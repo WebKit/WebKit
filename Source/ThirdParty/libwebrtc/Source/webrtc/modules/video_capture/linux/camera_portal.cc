@@ -16,11 +16,12 @@
 #include <memory>
 #include <string>
 
+#include "api/scoped_refptr.h"
 #include "modules/portal/pipewire_utils.h"
+#include "modules/portal/portal_guard.h"
 #include "modules/portal/portal_request_response.h"
 #include "modules/portal/scoped_glib.h"
 #include "modules/portal/xdg_desktop_portal_utils.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
@@ -71,6 +72,7 @@ class CameraPortalPrivate {
   GDBusProxy* proxy_ = nullptr;
   GCancellable* cancellable_ = nullptr;
   guint access_request_signal_id_ = 0;
+  scoped_refptr<PortalGuard> guard_;
 };
 
 CameraPortalPrivate::CameraPortalPrivate(CameraPortal::PortalNotifier* notifier)
@@ -82,13 +84,16 @@ CameraPortalPrivate::~CameraPortalPrivate() {
     notifier_ = nullptr;
   }
 
-  if (access_request_signal_id_) {
-    g_dbus_connection_signal_unsubscribe(connection_,
-                                         access_request_signal_id_);
-    access_request_signal_id_ = 0;
-  }
-  if (cancellable_) {
+  if (cancellable_)
     g_cancellable_cancel(cancellable_);
+
+  if (guard_) {
+    MutexLock lock(&guard_->mutex);
+    guard_->portal = nullptr;
+  }
+
+  xdg_portal::UnsubscribeSignalHandler(connection_, access_request_signal_id_);
+  if (cancellable_) {
     g_object_unref(cancellable_);
     cancellable_ = nullptr;
   }
@@ -101,20 +106,24 @@ CameraPortalPrivate::~CameraPortalPrivate() {
 
 void CameraPortalPrivate::Start() {
   cancellable_ = g_cancellable_new();
-  Scoped<GError> error;
+  guard_ = scoped_refptr<PortalGuard>(new PortalGuard());
+  guard_->portal = this;
   RequestSessionProxy(kCameraInterfaceName, OnProxyRequested, cancellable_,
-                      this);
+                      guard_);
 }
 
 // static
 void CameraPortalPrivate::OnProxyRequested(GObject* gobject,
                                            GAsyncResult* result,
                                            gpointer user_data) {
-  CameraPortalPrivate* that = static_cast<CameraPortalPrivate*>(user_data);
+  ScopedPortalLock lock(user_data);
+  auto* that = static_cast<CameraPortalPrivate*>(lock.portal());
+  if (!that)
+    return;
+
   Scoped<GError> error;
   GDBusProxy* proxy = g_dbus_proxy_new_finish(result, error.receive());
   if (!proxy) {
-    // Ignore the error caused by user cancelling the request via `cancellable_`
     if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
       return;
     RTC_LOG(LS_ERROR) << "Failed to get a proxy for the portal: "
@@ -144,21 +153,23 @@ void CameraPortalPrivate::ProxyRequested(GDBusProxy* proxy) {
   access_handle =
       xdg_portal::PrepareSignalHandle(variant_string.get(), connection_);
   access_request_signal_id_ = xdg_portal::SetupRequestResponseSignal(
-      access_handle.c_str(), OnResponseSignalEmitted, this, connection_);
+      access_handle.c_str(), OnResponseSignalEmitted, guard_, connection_);
 
   RTC_LOG(LS_VERBOSE) << "Requesting camera access from the portal.";
   g_dbus_proxy_call(proxy_, "AccessCamera", g_variant_new("(a{sv})", &builder),
                     G_DBUS_CALL_FLAGS_NONE, /*timeout_msec=*/-1, cancellable_,
                     reinterpret_cast<GAsyncReadyCallback>(OnAccessResponse),
-                    this);
+                    guard_->AddRefAndGet());
 }
 
 // static
 void CameraPortalPrivate::OnAccessResponse(GDBusProxy* proxy,
                                            GAsyncResult* result,
                                            gpointer user_data) {
-  CameraPortalPrivate* that = static_cast<CameraPortalPrivate*>(user_data);
-  RTC_DCHECK(that);
+  ScopedPortalLock lock(user_data);
+  auto* that = static_cast<CameraPortalPrivate*>(lock.portal());
+  if (!that)
+    return;
 
   Scoped<GError> error;
   Scoped<GVariant> variant(
@@ -167,11 +178,8 @@ void CameraPortalPrivate::OnAccessResponse(GDBusProxy* proxy,
     if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
       return;
     RTC_LOG(LS_ERROR) << "Failed to access portal:" << error->message;
-    if (that->access_request_signal_id_) {
-      g_dbus_connection_signal_unsubscribe(that->connection_,
-                                           that->access_request_signal_id_);
-      that->access_request_signal_id_ = 0;
-    }
+    xdg_portal::UnsubscribeSignalHandler(that->connection_,
+                                         that->access_request_signal_id_);
     that->OnPortalDone(RequestResponse::kError);
   }
 }
@@ -184,8 +192,17 @@ void CameraPortalPrivate::OnResponseSignalEmitted(GDBusConnection* connection,
                                                   const char* signal_name,
                                                   GVariant* parameters,
                                                   gpointer user_data) {
-  CameraPortalPrivate* that = static_cast<CameraPortalPrivate*>(user_data);
-  RTC_DCHECK(that);
+  ScopedPortalSignalLock lock(user_data);
+  auto* that = static_cast<CameraPortalPrivate*>(lock.portal());
+  if (!that)
+    return;
+
+  if (!xdg_portal::UnsubscribeSignalHandler(that->connection_,
+                                            that->access_request_signal_id_)) {
+    RTC_LOG(LS_ERROR) << "Duplicate access response signal from portal.";
+    that->OnPortalDone(RequestResponse::kError);
+    return;
+  }
 
   uint32_t portal_response;
   g_variant_get(parameters, "(u@a{sv})", &portal_response, nullptr);
@@ -200,17 +217,20 @@ void CameraPortalPrivate::OnResponseSignalEmitted(GDBusConnection* connection,
   GVariantBuilder builder;
   g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
 
-  g_dbus_proxy_call(
-      that->proxy_, "OpenPipeWireRemote", g_variant_new("(a{sv})", &builder),
-      G_DBUS_CALL_FLAGS_NONE, /*timeout_msec=*/-1, that->cancellable_,
-      reinterpret_cast<GAsyncReadyCallback>(OnOpenResponse), that);
+  g_dbus_proxy_call(that->proxy_, "OpenPipeWireRemote",
+                    g_variant_new("(a{sv})", &builder), G_DBUS_CALL_FLAGS_NONE,
+                    /*timeout_msec=*/-1, that->cancellable_,
+                    reinterpret_cast<GAsyncReadyCallback>(OnOpenResponse),
+                    that->guard_->AddRefAndGet());
 }
 
 void CameraPortalPrivate::OnOpenResponse(GDBusProxy* proxy,
                                          GAsyncResult* result,
                                          gpointer user_data) {
-  CameraPortalPrivate* that = static_cast<CameraPortalPrivate*>(user_data);
-  RTC_DCHECK(that);
+  ScopedPortalLock lock(user_data);
+  auto* that = static_cast<CameraPortalPrivate*>(lock.portal());
+  if (!that)
+    return;
 
   Scoped<GError> error;
   Scoped<GUnixFDList> outlist;
@@ -220,11 +240,8 @@ void CameraPortalPrivate::OnOpenResponse(GDBusProxy* proxy,
     if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
       return;
     RTC_LOG(LS_ERROR) << "Failed to open PipeWire remote:" << error->message;
-    if (that->access_request_signal_id_) {
-      g_dbus_connection_signal_unsubscribe(that->connection_,
-                                           that->access_request_signal_id_);
-      that->access_request_signal_id_ = 0;
-    }
+    xdg_portal::UnsubscribeSignalHandler(that->connection_,
+                                         that->access_request_signal_id_);
     that->OnPortalDone(RequestResponse::kError);
     return;
   }

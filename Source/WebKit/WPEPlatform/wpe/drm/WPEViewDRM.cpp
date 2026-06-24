@@ -52,6 +52,11 @@ enum class UpdateFlags : uint8_t {
 /**
  * WPEViewDRM:
  *
+ * A [class@WPEPlatform.View] implementation for DRM/KMS.
+ *
+ * [class@ViewDRM] is the [class@WPEPlatform.View] implementation used by
+ * [class@DisplayDRM]. It displays the web view contents by scanning out
+ * buffers directly to the DRM device.
  */
 struct _WPEViewDRMPrivate {
     Seconds refreshDuration;

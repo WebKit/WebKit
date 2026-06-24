@@ -37,7 +37,7 @@
 namespace WebCore {
 
 // See also ScrollLatchingController.cpp
-static const Seconds resetLatchedStateTimeout { 100_ms };
+static const Seconds scrollingTreeResetLatchedStateTimeout { 100_ms };
 
 ScrollingTreeLatchingController::ScrollingTreeLatchingController() = default;
 
@@ -146,7 +146,7 @@ void ScrollingTreeLatchingController::clearLatchedNode()
 bool ScrollingTreeLatchingController::latchedNodeHasRecentInteraction() const
 {
     auto secondsSinceLastInteraction = MonotonicTime::now() - m_lastLatchedNodeInterationTime;
-    return secondsSinceLastInteraction < resetLatchedStateTimeout;
+    return secondsSinceLastInteraction < scrollingTreeResetLatchedStateTimeout;
 }
 
 } // namespace WebCore

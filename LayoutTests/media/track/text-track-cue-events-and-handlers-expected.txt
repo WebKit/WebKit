@@ -1,0 +1,7 @@
+
+PASS TextTrackCue: onenter and onexit IDL attributes exist (default null)
+PASS endTime setter: throws TypeError for NaN
+PASS endTime setter: throws TypeError for -Infinity
+PASS endTime setter: accepts +Infinity
+FAIL endTime setter: shrinking past currentTime fires 'exit' via time marches on assert_true: 'exit' fires when endTime is shrunk past currentTime expected true got false
+

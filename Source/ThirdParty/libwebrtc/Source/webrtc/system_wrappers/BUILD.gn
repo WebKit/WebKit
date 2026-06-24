@@ -23,7 +23,6 @@ rtc_library("system_wrappers") {
   defines = []
   libs = []
   deps = [
-    "../api:array_view",
     "../api/units:time_delta",
     "../api/units:timestamp",
     "../rtc_base:checks",

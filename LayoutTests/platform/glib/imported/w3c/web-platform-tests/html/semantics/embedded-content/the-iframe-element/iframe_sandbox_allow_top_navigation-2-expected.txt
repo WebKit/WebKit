@@ -1,3 +1,0 @@
-
-PASS Frames without `allow-top-navigation` should not be able to navigate the top frame.
-

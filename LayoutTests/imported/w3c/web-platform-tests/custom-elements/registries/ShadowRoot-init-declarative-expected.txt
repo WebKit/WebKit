@@ -1,4 +1,4 @@
 
-PASS Custom element inside 'shadowrootcustomelementregistry' declarative shadow root
-FAIL Built-in element inside 'shadowrootcustomelementregistry' declarative shadow root assert_equals: expected null but got object "[object CustomElementRegistry]"
+FAIL Custom element inside 'shadowrootcustomelementregistry' declarative shadow root should use document's registry as attachShadow default registry assert_equals: expected object "[object CustomElementRegistry]" but got null
+PASS Built-in element inside 'shadowrootcustomelementregistry' declarative shadow root should use document's registry as attachShadow default registry
 

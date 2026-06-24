@@ -243,4 +243,14 @@ void ConnectionContext::ReleaseMediaEngine() {
   }
 }
 
+VoiceChannelFactoryInterface* ConnectionContext::voice_channel_factory() {
+  RTC_DCHECK(is_configured_for_media());
+  return media_engine_ != nullptr ? &media_engine_->voice() : nullptr;
+}
+
+VideoChannelFactoryInterface* ConnectionContext::video_channel_factory() {
+  RTC_DCHECK(is_configured_for_media());
+  return media_engine_ != nullptr ? &media_engine_->video() : nullptr;
+}
+
 }  // namespace webrtc

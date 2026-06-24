@@ -29,6 +29,7 @@
 #include "api/video_codecs/vp8_frame_buffer_controller.h"
 #include "api/video_codecs/vp8_frame_config.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -101,7 +102,7 @@ class SimulcastRateAllocatorTest : public ::testing::TestWithParam<bool> {
     EXPECT_EQ(sum, actual.get_sum_bps());
   }
 
-  void CreateAllocator(Environment env = CreateEnvironment()) {
+  void CreateAllocator(Environment env = CreateTestEnvironment()) {
     allocator_ = std::make_unique<SimulcastRateAllocator>(env, codec_);
   }
 

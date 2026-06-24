@@ -46,8 +46,8 @@ public:
 
 
 private:
-    bool supportsDisplayMode(PDFDisplayMode) const override;
-    void willChangeDisplayMode(PDFDisplayMode) override { }
+    bool supportsDisplayMode(PDFPluginDisplayMode) const override;
+    void willChangeDisplayMode(PDFPluginDisplayMode) override { }
 
     void teardown() override;
 

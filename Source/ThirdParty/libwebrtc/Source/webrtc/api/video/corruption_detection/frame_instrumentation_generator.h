@@ -11,6 +11,7 @@
 #ifndef API_VIDEO_CORRUPTION_DETECTION_FRAME_INSTRUMENTATION_GENERATOR_H_
 #define API_VIDEO_CORRUPTION_DETECTION_FRAME_INSTRUMENTATION_GENERATOR_H_
 
+#include <cstdint>
 #include <memory>
 #include <optional>
 
@@ -38,6 +39,8 @@ class FrameInstrumentationGenerator {
   virtual void OnCapturedFrame(VideoFrame frame) = 0;
   virtual std::optional<FrameInstrumentationData> OnEncodedImage(
       const EncodedImage& encoded_image) = 0;
+  // Indicates that all encoding operations for this frame has been completed.
+  virtual void OnFrameReleased(uint32_t rtp_timestamp) = 0;
 
   // Returns `std::nullopt` if there is no context for the given layer.
   // The layer id is the simulcast id or SVC spatial layer id depending on

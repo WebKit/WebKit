@@ -214,6 +214,8 @@ void JSTestStringifier::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestStringifierOwner::JSTestStringifierOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestStringifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -226,7 +228,7 @@ void JSTestStringifierOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* co
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestStringifier = static_cast<JSTestStringifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestStringifier->wrapped()).ptr(), jsTestStringifier);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestStringifier->wrapped(), jsTestStringifier);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

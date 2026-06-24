@@ -35,6 +35,7 @@ base_url = "https://github.com/WebKit/WebKit/tree/main"
 
 [extra]
 content_files = [
+    "overview.md",
     "tutorial-browser.md",
     "tutorial-platform.md"
 ]

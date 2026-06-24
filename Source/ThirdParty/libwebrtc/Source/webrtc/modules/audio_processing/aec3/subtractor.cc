@@ -14,12 +14,11 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/environment/environment.h"
-#include "api/field_trials_view.h"
 #include "modules/audio_processing/aec3/adaptive_fir_filter.h"
 #include "modules/audio_processing/aec3/adaptive_fir_filter_erl.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -41,14 +40,9 @@ namespace webrtc {
 
 namespace {
 
-bool UseCoarseFilterResetHangover(const FieldTrialsView& field_trials) {
-  return !field_trials.IsEnabled(
-      "WebRTC-Aec3CoarseFilterResetHangoverKillSwitch");
-}
-
 void PredictionError(const Aec3Fft& fft,
                      const FftData& S,
-                     ArrayView<const float> y,
+                     std::span<const float> y,
                      std::array<float, kBlockSize>* e,
                      std::array<float, kBlockSize>* s) {
   std::array<float, kFftLength> tmp;
@@ -64,10 +58,10 @@ void PredictionError(const Aec3Fft& fft,
   }
 }
 
-void ScaleFilterOutput(ArrayView<const float> y,
+void ScaleFilterOutput(std::span<const float> y,
                        float factor,
-                       ArrayView<float> e,
-                       ArrayView<float> s) {
+                       std::span<float> e,
+                       std::span<float> s) {
   RTC_DCHECK_EQ(y.size(), e.size());
   RTC_DCHECK_EQ(y.size(), s.size());
   for (size_t k = 0; k < y.size(); ++k) {
@@ -89,8 +83,6 @@ Subtractor::Subtractor(const Environment& env,
       optimization_(optimization),
       config_(config),
       num_capture_channels_(num_capture_channels),
-      use_coarse_filter_reset_hangover_(
-          UseCoarseFilterResetHangover(env.field_trials())),
       refined_filters_(num_capture_channels_),
       coarse_filter_(num_capture_channels_),
       refined_gains_(num_capture_channels_),
@@ -197,7 +189,7 @@ void Subtractor::Process(const RenderBuffer& render_buffer,
                          const Block& capture,
                          const RenderSignalAnalyzer& render_signal_analyzer,
                          const AecState& aec_state,
-                         ArrayView<SubtractorOutput> outputs) {
+                         std::span<SubtractorOutput> outputs) {
   RTC_DCHECK_EQ(num_capture_channels_, capture.NumChannels());
 
   // Compute the render powers.
@@ -223,7 +215,7 @@ void Subtractor::Process(const RenderBuffer& render_buffer,
   // Process all capture channels
   for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
     SubtractorOutput& output = outputs[ch];
-    ArrayView<const float> y = capture.View(/*band=*/0, ch);
+    std::span<const float> y = capture.View(/*band=*/0, ch);
     FftData& E_refined = output.E_refined;
     FftData E_coarse;
     std::array<float, kBlockSize>& e_refined = output.e_refined;
@@ -270,8 +262,7 @@ void Subtractor::Process(const RenderBuffer& render_buffer,
       // adaptation speed of the refined filter just after the coarse filter has
       // been reset.
       const bool disallow_leakage_diverged =
-          coarse_filter_reset_hangover_[ch] > 0 &&
-          use_coarse_filter_reset_hangover_;
+          coarse_filter_reset_hangover_[ch] > 0;
 
       std::array<float, kFftLengthBy2Plus1> erl;
       ComputeErl(optimization_, refined_frequency_responses_[ch], erl);

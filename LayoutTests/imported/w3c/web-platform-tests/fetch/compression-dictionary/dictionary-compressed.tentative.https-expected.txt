@@ -1,7 +1,7 @@
 
-FAIL Decompresion using gzip-encoded dictionary works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
-FAIL Decompresion using Brotli-encoded dictionary works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
-FAIL Decompresion using Zstandard-encoded dictionary works as expected assert_equals: expected "This is a test dictionary.\n" but got "(\ufffd/\ufffd$\x1b\ufffd\0\0This is a test dictionary.\n?\rv\ufffd"
+FAIL Decompression using gzip-encoded dictionary works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Decompression using Brotli-encoded dictionary works as expected assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Decompression using Zstandard-encoded dictionary works as expected assert_equals: expected "This is a test dictionary.\n" but got "(\ufffd/\ufffd$\x1b\ufffd\0\0This is a test dictionary.\n?\rv\ufffd"
 FAIL A dcb dictionary-compressed dictionary can be used as a dictionary for future requests. assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
 FAIL A dcz dictionary-compressed dictionary can be used as a dictionary for future requests. assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
 

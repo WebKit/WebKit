@@ -1,7 +1,7 @@
 
 PASS setLocalDescription with valid offer should succeed
 PASS setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer
-FAIL Set created offer other than last offer should reject with InvalidModificationError assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Set created offer other than last offer should reject with InvalidModificationError
 PASS Creating and setting offer multiple times should succeed
 PASS Setting previously generated offer after a call to createAnswer should work
 PASS Negotiation works when there has been a repeated setLocalDescription(offer)

@@ -253,7 +253,7 @@ static RefPtr<DOMPromise> cancelReadableStream(JSDOMGlobalObject& globalObject, 
     if (!value)
         return nullptr;
 
-    auto* promise = downcast<JSC::JSPromise>(value);
+    auto* promise = dynamicDowncast<JSC::JSPromise>(value);
     if (!promise)
         return nullptr;
 
@@ -276,7 +276,12 @@ StreamPipeToState::~StreamPipeToState() = default;
 JSDOMGlobalObject* StreamPipeToState::globalObject()
 {
     RefPtr context = scriptExecutionContext();
-    return context ? downcast<JSDOMGlobalObject>(context->globalObject()) : nullptr;
+    if (!context)
+        return nullptr;
+    auto* jsGlobalObject = context->globalObject();
+    if (!jsGlobalObject)
+        return nullptr;
+    return dynamicDowncast<JSDOMGlobalObject>(jsGlobalObject);
 }
 
 void StreamPipeToState::handleSignal()
@@ -302,6 +307,8 @@ void StreamPipeToState::handleSignal()
                     return nullptr;
 
                 auto value = internalWritableStream->abort(*globalObject, signal->reason().getValue());
+                if (!value)
+                    return nullptr;
                 auto* promise = downcast<JSC::JSPromise>(value);
                 if (!promise)
                     return nullptr;
@@ -407,7 +414,9 @@ void StreamPipeToState::errorsMustBePropagatedForward(JSDOMGlobalObject& globalO
 
                 Ref internalWritableStream = protectedThis->m_destination->internalWritableStream();
                 auto value = internalWritableStream->abort(*globalObject, error.get());
-                auto* promise = downcast<JSC::JSPromise>(value);
+                if (!value)
+                    return nullptr;
+                auto* promise = dynamicDowncast<JSC::JSPromise>(value);
                 if (!promise) {
                     auto [result, deferred] = createPromiseAndWrapper(*globalObject);
                     deferred->resolve();
@@ -555,7 +564,7 @@ void StreamPipeToState::closingMustBePropagatedBackward()
             };
 
             auto [result, deferred] = createPromiseAndWrapper(*globalObject);
-            auto* promise = downcast<JSC::JSPromise>(value);
+            auto* promise = dynamicDowncast<JSC::JSPromise>(value);
             if (!promise)
                 deferred->rejectWithCallback(WTF::move(getError2), RejectAsHandled::Yes);
             else {

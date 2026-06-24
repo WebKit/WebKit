@@ -1,5 +1,19 @@
 Changelog
 
+2.8.0
+
+#778 - Backport cryptex to v2 branch
+
+#770 - Fix AES 192 kdf
+
+#760 - Properly support null crypto and null auth scenario
+
+2.7.0
+
+#746 - Fix function signature mismatch for srtp_remove_stream
+
+#733 - Fix srtp_unprotect_rtcp_mki when RTP auth != RTCP
+
 2.6.0
 
 #667 - remove use of pointers to 32bit values

@@ -44,6 +44,7 @@ public:
     WebKit::WebPageProxy& page() { return m_page.get(); }
     const WebKit::FrameInfoData& info() const LIFETIME_BOUND { return m_data.info; }
     const Vector<WebKit::FrameTreeNodeData>& childFrames() const LIFETIME_BOUND { return m_data.children; }
+    const WTF::URL& topDocumentURLForTesting() const LIFETIME_BOUND { return m_data.topDocumentURLForTesting; }
 
 private:
     FrameTreeNode(WebKit::FrameTreeNodeData&& data, WebKit::WebPageProxy& page)

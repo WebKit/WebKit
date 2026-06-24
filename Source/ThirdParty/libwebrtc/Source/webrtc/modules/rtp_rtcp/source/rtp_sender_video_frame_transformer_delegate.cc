@@ -14,11 +14,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
@@ -78,9 +78,9 @@ class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
   ~TransformableVideoSenderFrame() override = default;
 
   // Implements TransformableVideoFrameInterface.
-  ArrayView<const uint8_t> GetData() const override { return *encoded_data_; }
+  std::span<const uint8_t> GetData() const override { return *encoded_data_; }
 
-  void SetData(ArrayView<const uint8_t> data) override {
+  void SetData(std::span<const uint8_t> data) override {
     encoded_data_ = EncodedImageBuffer::Create(data.data(), data.size());
   }
 

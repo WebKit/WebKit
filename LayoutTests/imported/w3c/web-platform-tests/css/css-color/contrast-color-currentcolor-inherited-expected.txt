@@ -1,0 +1,3 @@
+
+PASS currentcolor inside contrast-color() computes to the keyword
+

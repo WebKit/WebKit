@@ -40,9 +40,12 @@ struct GridTrackSize;
 class GridSpan;
 class RenderElement;
 class RenderGrid;
-class RenderStyle;
 
 enum class ItemPosition : uint8_t;
+
+namespace Style {
+class ComputedStyle;
+}
 
 struct ExtraMarginsFromSubgrids {
     inline LayoutUnit extraTrackStartMargin() const { return m_extraMargins.first; }
@@ -98,7 +101,7 @@ void updateAutoMarginsInColumnAxisIfNeeded(RenderBox&, WritingMode);
 bool NODELETE isRelativeGridTrackBreadthAsAuto(const Style::GridTrackFitContentLength&, std::optional<LayoutUnit> availableSpace);
 bool NODELETE isRelativeGridTrackBreadthAsAuto(const Style::GridTrackBreadth&, std::optional<LayoutUnit> availableSpace);
 
-const Style::GridTrackSize& NODELETE rawGridTrackSize(const RenderStyle&, Style::GridTrackSizingDirection, unsigned translatedIndex, unsigned autoRepeatTracksCount, unsigned explicitGridStart);
+const Style::GridTrackSize& NODELETE rawGridTrackSize(const Style::ComputedStyle&, Style::GridTrackSizingDirection, unsigned translatedIndex, unsigned autoRepeatTracksCount, unsigned explicitGridStart);
 
 } // namespace GridLayoutFunctions
 

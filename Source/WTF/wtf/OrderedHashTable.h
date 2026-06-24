@@ -631,7 +631,7 @@ private:
 template<typename TableType, typename ValueType>
 class OrderedHashTableIterator {
 public:
-    using iterator_category = std::forward_iterator_tag;
+    using iterator_category = std::bidirectional_iterator_tag;
     using value_type = ValueType;
     using difference_type = ptrdiff_t;
     using pointer = ValueType*;
@@ -662,6 +662,24 @@ public:
     {
         auto result = *this;
         ++*this;
+        return result;
+    }
+
+    OrderedHashTableIterator& operator--()
+    {
+        ASSERT(m_table);
+        ASSERT(m_index > 0);
+        --m_index;
+        while (m_index > 0 && m_table->isDeletedEntry(m_table->entries()[m_index]))
+            --m_index;
+        ASSERT(!m_table->isDeletedEntry(m_table->entries()[m_index]));
+        return *this;
+    }
+
+    OrderedHashTableIterator operator--(int)
+    {
+        auto result = *this;
+        --*this;
         return result;
     }
 
@@ -696,7 +714,7 @@ private:
 template<typename TableType, typename ValueType>
 class OrderedHashTableConstIterator {
 public:
-    using iterator_category = std::forward_iterator_tag;
+    using iterator_category = std::bidirectional_iterator_tag;
     using value_type = ValueType;
     using difference_type = ptrdiff_t;
     using pointer = const ValueType*;
@@ -733,6 +751,24 @@ public:
     {
         auto result = *this;
         ++*this;
+        return result;
+    }
+
+    OrderedHashTableConstIterator& operator--()
+    {
+        ASSERT(m_table);
+        ASSERT(m_index > 0);
+        --m_index;
+        while (m_index > 0 && m_table->isDeletedEntry(m_table->entries()[m_index]))
+            --m_index;
+        ASSERT(!m_table->isDeletedEntry(m_table->entries()[m_index]));
+        return *this;
+    }
+
+    OrderedHashTableConstIterator operator--(int)
+    {
+        auto result = *this;
+        --*this;
         return result;
     }
 

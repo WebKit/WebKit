@@ -28,13 +28,9 @@ WebKitBuildbot = function()
     const queueInfo = {
         "Apple-Tahoe-Release-Build": {platform: Dashboard.Platform.macOSTahoe, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Tahoe-Debug-Build": {platform: Dashboard.Platform.macOSTahoe, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple-Tahoe-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple-Tahoe-Debug-WK2-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple-Tahoe-Release-WK1-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple-Tahoe-Release-WK2-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple-Tahoe-Debug-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Debug AppleSilicon"},
         "Apple-Tahoe-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
-        "Apple-Tahoe-Release-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Release AppleSilicon"},
         "Apple-Tahoe-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
         "Apple-Tahoe-Release-WK2-Perf": {platform: Dashboard.Platform.macOSTahoe, debug: false, performance: true, heading: "Performance"},
         "Apple-Tahoe JSC": {platform: Dashboard.Platform.macOSTahoe, heading: "JavaScript", combinedQueues: {
@@ -46,9 +42,7 @@ WebKitBuildbot = function()
         }},
         "Apple-Sequoia-Release-Build": {platform: Dashboard.Platform.macOSSequoia, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Sequoia-Debug-Build": {platform: Dashboard.Platform.macOSSequoia, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple-Sequoia-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple-Sequoia-Debug-WK2-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple-Sequoia-Release-WK1-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple-Sequoia-Release-WK2-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-Sequoia-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
         "Apple-Sequoia-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},

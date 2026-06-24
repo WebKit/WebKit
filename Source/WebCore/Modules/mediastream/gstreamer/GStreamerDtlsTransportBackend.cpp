@@ -63,7 +63,7 @@ void GStreamerDtlsTransportBackendObserver::stateChanged()
     if (!m_client)
         return;
 
-    callOnMainThread([this, protectedThis = Ref { *this }]() mutable {
+    callOnMainThread([this, protectedThis = protect(*this)]() mutable {
         if (!m_client || !m_backend)
             return;
 

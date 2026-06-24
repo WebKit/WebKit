@@ -32,7 +32,6 @@
 #import <WebCore/WebCoreThreadMessage.h>
 #endif
 
-using namespace WebCore;
 
 WebProgressTrackerClient::WebProgressTrackerClient(WebView *webView)
     : m_webView(webView)
@@ -79,7 +78,7 @@ void WebProgressTrackerClient::progressEstimateChanged(WebCore::LocalFrame&)
 #endif
 }
 
-void WebProgressTrackerClient::progressFinished(LocalFrame&)
+void WebProgressTrackerClient::progressFinished(WebCore::LocalFrame&)
 {
 #if !PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:m_webView];

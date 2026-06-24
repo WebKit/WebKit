@@ -69,6 +69,7 @@ public:
     T* operator->() const { return m_object.get(); }
     T& operator*() const { return *m_object; }
     operator RefPtr<T>() const { return m_object; }
+    Ref<T> releaseNonNull() { return m_object.releaseNonNull(); }
 
 private:
     void didBind(T& object)

@@ -59,7 +59,7 @@ static std::optional<AXID> nodeID(AXObjectCache& cache, Node* node)
     return std::nullopt;
 }
 
-TextMarkerData::TextMarkerData(AXObjectCache& cache, const VisiblePosition& visiblePosition, int charStart, int charOffset, bool ignoredParam, TextMarkerOrigin originParam)
+TextMarkerData::TextMarkerData(AXObjectCache& cache, const VisiblePosition& visiblePosition, int charStart, int charOffset, bool isRedactedParam, TextMarkerOrigin originParam)
 {
     AX_ASSERT(isMainThread());
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -76,11 +76,11 @@ TextMarkerData::TextMarkerData(AXObjectCache& cache, const VisiblePosition& visi
     affinity = visiblePosition.affinity();
     characterStart = std::max(charStart, 0);
     characterOffset = std::max(charOffset, 0);
-    ignored = ignoredParam;
+    isRedacted = isRedactedParam;
     origin = originParam;
 }
 
-TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& characterOffsetParam, bool ignoredParam, TextMarkerOrigin originParam)
+TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& characterOffsetParam, bool isRedactedParam, TextMarkerOrigin originParam)
 {
     AX_ASSERT(isMainThread());
 
@@ -104,7 +104,7 @@ TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& char
     affinity = visiblePosition.affinity();
     characterStart = std::max(characterOffsetParam.startIndex, 0);
     characterOffset = std::max(characterOffsetParam.offset, 0);
-    ignored = ignoredParam;
+    isRedacted = isRedactedParam;
     origin = originParam;
 }
 
@@ -154,7 +154,7 @@ AXTextMarker::operator CharacterOffset() const
 {
     AX_ASSERT(isMainThread());
 
-    if (isIgnored() || isNull())
+    if (isRedacted() || isNull())
         return { };
 
     WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.axTreeID());
@@ -241,7 +241,7 @@ String AXTextMarker::description() const
 
     return makeString("{"_s
         , object ? makeString("role "_s, roleToString(object->role())) : "no object"_s
-        , isIgnored() ? makeString(separator, "ignored"_s) : ""_s
+        , isRedacted() ? makeString(separator, "redacted"_s) : ""_s
         // Anchor type and other fields below are not used for text markers processed off the main-thread.
         , isMainThread() ? makeString(separator, "anchor "_s, m_data.anchorType) : ""_s
         , affinity

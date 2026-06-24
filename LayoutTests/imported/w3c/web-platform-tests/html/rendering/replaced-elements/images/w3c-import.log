@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/abs-pos-transferred-max-width-from-percentage-max-height-in-auto-height-containing-block-expected.png
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/abs-pos-transferred-max-width-from-percentage-max-height-in-auto-height-containing-block.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/blocked-by-csp-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/blocked-by-csp-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/blocked-by-csp.html

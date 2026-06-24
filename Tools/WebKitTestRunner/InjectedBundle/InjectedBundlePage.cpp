@@ -217,14 +217,14 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
 
     WKBundlePageResourceLoadClientV1 resourceLoadClient = {
         { 1, this },
-        didInitiateLoadForResource,
+        nullptr,
         willSendRequestForFrame,
-        didReceiveResponseForResource,
-        didReceiveContentLengthForResource,
-        didFinishLoadForResource,
-        didFailLoadForResource,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
         shouldCacheResponse,
-        0 // shouldUseCredentialStorage
+        nullptr // shouldUseCredentialStorage
     };
     WKBundlePageSetResourceLoadClient(m_page, &resourceLoadClient.base);
 
@@ -359,34 +359,9 @@ void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundlePageRef page, WKB
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didHandleOnloadEventsForFrame(frame);
 }
 
-void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool pageLoadIsProvisional, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didInitiateLoadForResource(page, frame, identifier, request, pageLoadIsProvisional);
-}
-
 WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willSendRequestForFrame(page, frame, identifier, request, redirectResponse);
-}
-
-void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLResponseRef response, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReceiveResponseForResource(page, frame, identifier, response);
-}
-
-void InjectedBundlePage::didReceiveContentLengthForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, uint64_t length, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReceiveContentLengthForResource(page, frame, identifier, length);
-}
-
-void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishLoadForResource(page, frame, identifier);
-}
-
-void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKErrorRef error, const void* clientInfo)
-{
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFailLoadForResource(page, frame, identifier, error);
 }
 
 bool InjectedBundlePage::shouldCacheResponse(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, const void* clientInfo)
@@ -756,10 +731,6 @@ void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundleFrameRef frame)
         dumpLoadEvent(frame, "didHandleOnloadEventsForFrame"_s);
 }
 
-void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, bool)
-{
-}
-
 // Resource Load Client Callbacks
 
 static inline bool isAllowedHost(WKStringRef host)
@@ -822,45 +793,6 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
 
     WKRetain(request);
     return request;
-}
-
-void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef response)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    RefPtr testRunner = injectedBundle.testRunner();
-    if (!testRunner)
-        return;
-
-    if (!testRunner->shouldDumpResourceResponseMIMETypes())
-        return;
-
-    auto url = adoptWK(WKURLResponseCopyURL(response));
-    auto urlString = adoptWK(WKURLCopyLastPathComponent(url.get()));
-    auto mimeTypeString = adoptWK(WKURLResponseCopyMIMEType(response));
-
-    StringBuilder stringBuilder;
-    stringBuilder.append(urlString.get(), " has MIME type "_s, mimeTypeString.get());
-
-    String platformMimeType = platformResponseMimeType(response);
-    if (!platformMimeType.isEmpty() && platformMimeType != toWTFString(mimeTypeString)) {
-        stringBuilder.append(" but platform response has "_s, platformMimeType);
-    }
-
-    stringBuilder.append('\n');
-
-    injectedBundle.outputText(stringBuilder.toString());
-}
-
-void InjectedBundlePage::didReceiveContentLengthForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, uint64_t)
-{
-}
-
-void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t)
-{
-}
-
-void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKErrorRef)
-{
 }
 
 bool InjectedBundlePage::shouldCacheResponse(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier)
@@ -1118,11 +1050,6 @@ String InjectedBundlePage::dumpHistory()
 void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRef)
 {
 }
-
-String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef)
-{
-    return String();
-}
 #endif
 
 static bool hasTestWaitAttribute(WKBundlePageRef page)
@@ -1175,10 +1102,11 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
             WKBundlePageForceRepaint(page->page());
     }
 
-    if (testRunner->shouldWaitUntilDone())
+    if (testRunner->isWaitingUntilDone())
         return;
 
-    if (injectedBundle.shouldProcessWorkQueue()) {
+    // Drain the work queue; once it's empty, ping it so any deferred NotifyDone gets delivered.
+    if (injectedBundle.shouldProcessWorkQueue() || testRunner->shouldWaitUntilDone()) {
         injectedBundle.processWorkQueue();
         return;
     }

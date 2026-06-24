@@ -38,16 +38,14 @@
         domains))
 
 (define (allow-reading-global-preferences)
-    (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
 #if ENABLE(CFPREFS_DIRECT_MODE)
     (allow file-read*
         (literal "/Library/Preferences/.GlobalPreferences.plist")
         (home-subpath "/Library/Preferences/.GlobalPreferences.plist")
         (home-subpath "/Library/Preferences/.GlobalPreferences_m.plist")
-        (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
-    )
+        (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$"))
 #endif
-)
+    (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication")))
 
 
 

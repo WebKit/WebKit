@@ -59,6 +59,7 @@
 #include "Logging.h"
 #include "Navigation.h"
 #include "NodeDocument.h"
+#include "NodeInlinesLight.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "ResourceLoadInfo.h"
@@ -117,7 +118,7 @@ PolicyChecker::PolicyChecker(LocalFrame& frame)
 
 void PolicyChecker::checkNavigationPolicy(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, NavigationPolicyDecisionFunction&& function)
 {
-    checkNavigationPolicy(WTF::move(newRequest), redirectResponse, protect(m_frame->loader().activeDocumentLoader()), { }, WTF::move(function));
+    checkNavigationPolicy(WTF::move(newRequest), redirectResponse, protect(m_frame->loader().activeDocumentLoader()), { }, WTF::move(function), IsSameDocumentNavigation::No);
 }
 
 URLKeepingBlobAlive PolicyChecker::extendBlobURLLifetimeIfNecessary(const ResourceRequest& request, const Document& document, PolicyDecisionMode mode) const
@@ -130,7 +131,7 @@ URLKeepingBlobAlive PolicyChecker::extendBlobURLLifetimeIfNecessary(const Resour
     return { request.url(), topOrigin };
 }
 
-void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const ResourceResponse& redirectResponse, DocumentLoader* loader, RefPtr<const FormSubmission>&& formSubmission, NavigationPolicyDecisionFunction&& function, PolicyDecisionMode policyDecisionMode, std::optional<NavigationNavigationType> navigationAPIType)
+void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const ResourceResponse& redirectResponse, DocumentLoader* loader, RefPtr<const FormSubmission>&& formSubmission, NavigationPolicyDecisionFunction&& function, IsSameDocumentNavigation isSameDocumentNavigation, PolicyDecisionMode policyDecisionMode, std::optional<NavigationNavigationType> navigationAPIType)
 {
     NavigationAction action = loader->triggeringAction();
     Ref frame = m_frame.get();
@@ -180,7 +181,9 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     }
 
     RefPtr frameOwnerElement = frame->ownerElement();
-    if (!isAllowedByContentSecurityPolicy(request.url(), frameOwnerElement.get(), !redirectResponse.isNull())) {
+    // Only cross-document navigations are subject to the navigation CSP check; same-document (fragment) navigations aren't fetched.
+    if (isSameDocumentNavigation == IsSameDocumentNavigation::No
+        && !isAllowedByContentSecurityPolicy(request.url(), frameOwnerElement.get(), !redirectResponse.isNull())) {
         if (frameOwnerElement) {
             // Fire a load event (even though we were blocked by CSP) as timing attacks would otherwise
             // reveal that the frame was blocked. This way, it looks like any other cross-origin page load.
@@ -240,7 +243,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
         RefPtr document = frame->document();
         if (document && document->settings().navigationAPIEnabled()) {
             if (RefPtr window = document->window()) {
-                if (!protect(window->navigation())->dispatchDownloadNavigateEvent(request.url(), action.downloadAttribute(), action.sourceElement()))
+                if (!protect(window->navigation())->dispatchDownloadNavigateEvent(request.url(), action.downloadAttribute(), protect(action.sourceElement())))
                     return function({ }, nullptr, NavigationPolicyDecision::IgnoreLoad);
             }
         }
@@ -364,10 +367,10 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, Re
     if (m_frame->document() && m_frame->document()->isSandboxed(SandboxFlag::Popups))
         return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
 
-    if (!LocalDOMWindow::allowPopUp(m_frame))
+    if (!LocalDOMWindow::allowPopUp(protect(m_frame)))
         return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
 
-    auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, *m_frame->document());
+    auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, protect(*m_frame->document()));
 
     Ref frame = m_frame.get();
     RefPtr formState = formSubmission ? protect(formSubmission->state()): nullptr;

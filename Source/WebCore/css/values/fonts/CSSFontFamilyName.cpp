@@ -29,20 +29,30 @@
 #include "CSSFontFamilyNameValue.h"
 #include "CSSMarkup.h"
 #include "CSSValuePool.h"
+#include "DeprecatedCSSOMPrimitiveValue.h"
 #include <wtf/Hasher.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace CSS {
 
+// MARK: - Serialize
+
 void Serialize<FontFamilyName>::operator()(StringBuilder& builder, const SerializationContext&, const FontFamilyName& value)
 {
     WebCore::serializeFontFamily(builder, value.value);
 }
 
+// MARK: - Conversion
+
 Ref<CSSValue> CSSValueCreation<FontFamilyName>::operator()(CSSValuePool& pool, const FontFamilyName& value)
 {
     return pool.createFontFamilyNameValue(value.value);
+}
+
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<FontFamilyName>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const FontFamilyName& value)
+{
+    return DeprecatedCSSOMPrimitiveValue::create(value, owner);
 }
 
 // MARK: - Logging

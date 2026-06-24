@@ -1,8 +1,11 @@
 # -----------------------------------------------------------------------------
 # Add module directories
 # -----------------------------------------------------------------------------
-add_subdirectory(bmalloc)
+if (USE_APPLE_INTERNAL_SDK)
+    add_subdirectory(../../Internal/WebKit/WebKitAdditions ${CMAKE_BINARY_DIR}/WebKitAdditions)
+endif ()
 
+add_subdirectory(bmalloc)
 add_subdirectory(WTF)
 
 if (USE_CAPSTONE)

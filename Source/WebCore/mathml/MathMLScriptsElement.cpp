@@ -31,8 +31,8 @@
 
 #include "NodeDocument.h"
 #include "RenderMathMLScripts.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -92,7 +92,7 @@ void MathMLScriptsElement::attributeChanged(const QualifiedName& name, const Ato
     MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> MathMLScriptsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLScriptsElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(msubTag) || hasTagName(msupTag) || hasTagName(msubsupTag) || hasTagName(mmultiscriptsTag));
     return createRenderer<RenderMathMLScripts>(RenderObject::Type::MathMLScripts, *this, WTF::move(style));

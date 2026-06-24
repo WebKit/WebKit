@@ -51,7 +51,7 @@
     [EnabledBy=FileSystemEnabled] GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemEnabled] GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::optional<WebCore::FileSystemHandleInfo>, WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] AddGlobalIdentifierReference(struct WebCore::ClientOrigin origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
-    [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] RemoveGlobalIdentifierReference(struct WebCore::ClientOrigin origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
+    [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] RemoveGlobalIdentifierReferences(struct WebCore::ClientOrigin origin, Vector<WebCore::FileSystemHandleGlobalIdentifier> globalIdentifiers)
     [EnabledBy=FileSystemHandleSerializationEnabled && FileSystemEnabled] ResolveGlobalIdentifier(struct WebCore::ClientOrigin origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
 
     [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, HashMap<String, String> items, uint64_t messageIdentifier)

@@ -11,6 +11,10 @@
                 .then(function(access) {
                     return access.createMediaKeys();
                 }).then(function(mediaKeys) {
+                    if (config.servercertificate)
+                        return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+                    return mediaKeys;
+                }).then(function(mediaKeys) {
                     var mediaKeySession = mediaKeys.createSession();
                     var initData = getInitData(initDataType);
                     return mediaKeySession.generateRequest(initDataType, initData);

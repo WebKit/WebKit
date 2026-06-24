@@ -35,12 +35,18 @@ namespace CSS {
 // MARK: - Concepts
 
 // Concept for use in generic contexts to filter on Constant keyword CSS types.
-template<typename Keyword> concept SpecificKeyword
-    = std::same_as<Keyword, Constant<Keyword::value>>;
+// Avoids naming `Keyword::value`; GCC 12 hard-errors on non-static data members during constraint substitution.
+namespace Detail {
+template<typename> inline constexpr bool isSpecificKeyword = false;
+template<CSSValueID C> inline constexpr bool isSpecificKeyword<Constant<C>> = true;
+}
+
+template<typename Keyword> concept SpecificKeyword = Detail::isSpecificKeyword<Keyword>;
 
 // MARK: - Conversion
 
 template<> struct CSSValueCreation<Keyword> { Ref<CSSValue> operator()(CSSValuePool&, const Keyword&); };
+template<> struct DeprecatedCSSOMValueCreation<Keyword> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const Keyword&); };
 
 // MARK: - Serialization
 

@@ -17,9 +17,9 @@
 #include <list>
 #include <memory>
 #include <ostream>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
@@ -178,13 +178,13 @@ class NetEqStereoTest : public ::testing::TestWithParam<TestParameters> {
         ASSERT_EQ(NetEq::kOK,
                   neteq_mono_->InsertPacket(
                       rtp_header_mono_,
-                      ArrayView<const uint8_t>(encoded_, payload_size_bytes_),
+                      std::span<const uint8_t>(encoded_, payload_size_bytes_),
                       Timestamp::Millis(time_now_ms)));
         // Insert packet in multi-channel instance.
         ASSERT_EQ(NetEq::kOK,
                   neteq_->InsertPacket(
                       rtp_header_,
-                      ArrayView<const uint8_t>(encoded_multi_channel_,
+                      std::span<const uint8_t>(encoded_multi_channel_,
                                                multi_payload_size_bytes_),
                       Timestamp::Millis(time_now_ms)));
         // Get next input packets (mono and multi-channel).

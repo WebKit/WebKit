@@ -26,6 +26,9 @@
 #include "config.h"
 #include "LayerHostingContextManager.h"
 
+#import <QuartzCore/QuartzCore.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/IntRect.h>
 #include <wtf/MachSendRightAnnotated.h>
 
 namespace WebKit {

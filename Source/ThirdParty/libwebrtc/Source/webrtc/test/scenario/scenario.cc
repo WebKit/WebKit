@@ -112,7 +112,7 @@ Scenario::~Scenario() {
 ColumnPrinter Scenario::TimePrinter() {
   return ColumnPrinter::Lambda(
       "time",
-      [this](SimpleStringBuilder& sb) {
+      [this](StringBuilder& sb) {
         sb.AppendFormat("%.3lf", Now().seconds<double>());
       },
       32);

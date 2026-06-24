@@ -18,6 +18,7 @@
 // a fallback to AST maintained at the same time.
 
 #include "compiler/translator/ParseContext.h"
+#include "compiler/translator/Compiler.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -597,12 +598,100 @@ ir::IR TParseContext::getIR()
     return ir::Builder::destroy(std::move(mIRBuilder));
 }
 
-void TParseContext::onShaderVersionDeclared(int version)
+void TParseContext::onShaderVersionDeclared(const TSourceLoc &loc, int version)
 {
     mShaderVersion = version;
+    checkShaderVersion(loc);
     // Update cached decisions that depend on the shader version
     mValidateESSL100Limitations = ShouldEnforceESSL100LoopAndIndexingLimitations(
         mShaderSpec, mShaderVersion, mCompileOptions);
+}
+
+void TParseContext::fatal(const TSourceLoc &loc, const char *reason)
+{
+    error(loc, reason, "");
+    mPreprocessor.forceEOF();
+}
+
+bool TParseContext::checkShaderVersion(const TSourceLoc &loc)
+{
+    if (GetMaxShaderVersionForSpec(mShaderSpec) < mShaderVersion)
+    {
+        std::stringstream reasonStream = sh::InitializeStream<std::stringstream>();
+        reasonStream << "unsupported shader version ";
+        reasonStream << mShaderVersion;
+        fatal(loc, reasonStream.str().c_str());
+        return false;
+    }
+
+    switch (mShaderType)
+    {
+        case GL_COMPUTE_SHADER:
+            if (mShaderVersion < 310)
+            {
+                fatal(loc, "Compute shader is not supported in this shader version.");
+                return false;
+            }
+            break;
+
+        case GL_GEOMETRY_SHADER_EXT:
+            if (mShaderVersion < 310)
+            {
+                fatal(loc, "Geometry shader is not supported in this shader version.");
+                return false;
+            }
+            break;
+
+        case GL_TESS_CONTROL_SHADER_EXT:
+        case GL_TESS_EVALUATION_SHADER_EXT:
+            if (mShaderVersion < 310)
+            {
+                fatal(loc, "Tessellation shaders are not supported in this shader version.");
+                return false;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    return true;
+}
+
+bool TParseContext::checkCanUseShaderType(const TSourceLoc &loc)
+{
+    switch (mShaderType)
+    {
+        case GL_GEOMETRY_SHADER_EXT:
+            if (mShaderVersion == 310)
+            {
+                if (!checkCanUseOneOfExtensions(
+                        loc, std::array<TExtension, 2u>{{TExtension::EXT_geometry_shader,
+                                                         TExtension::OES_geometry_shader}}))
+                {
+                    return false;
+                }
+            }
+            break;
+
+        case GL_TESS_CONTROL_SHADER_EXT:
+        case GL_TESS_EVALUATION_SHADER_EXT:
+            if (mShaderVersion == 310)
+            {
+                if (!checkCanUseOneOfExtensions(
+                        loc, std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                         TExtension::OES_tessellation_shader}}))
+                {
+                    return false;
+                }
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    return true;
 }
 
 bool TParseContext::anyMultiviewExtensionAvailable()
@@ -1106,6 +1195,25 @@ bool TParseContext::checkCanBeLValue(const TSourceLoc &line, const char *op, TIn
             {
                 message = "can't modify a readonly variable";
             }
+    }
+
+    // Disallow modification of structs that have samplers, even if the field being modified is not
+    // a sampler for example in code like this:
+    //
+    //     void f(StructWithSampler s) {
+    //         s.non_sampler = 1.0;
+    //     }
+    //
+    // The above is valid GLSL code, but is not currently supported due to limitations of the
+    // MonomorphizeUnsupportedFunctions pass.  On mesa/GL drivers, where
+    // MonomorphizeUnsupportedFunctions is not used, code like the above crashes the compiler.
+    if (message.empty())
+    {
+        TIntermTyped *lvalueBase = FindLValueBase(node);
+        if (lvalueBase->getType().isStructureContainingSamplers())
+        {
+            message = "modifying structures containing samplers is not currently supported";
+        }
     }
 
     ASSERT(binaryNode == nullptr && swizzleNode == nullptr);
@@ -1747,14 +1855,17 @@ bool TParseContext::checkVariableSize(const TSourceLoc &line,
     // The size check does not take std430 into account as it is intended for WebGL shaders.  For
     // the same reason, other shader stages than vertex/fragment are ignored as defer-sized
     // variables e.g. in geometry shaders are not handled.
-    //
-    // Additionally, if the shader has already failed compilation, do not validate the type sizes.
-    // For example, if previously an error is generated due to too-deep struct nesting the
-    // calculation here could overflow the stack if performed.
-    if (!mCompileOptions.rejectWebglShadersWithLargeVariables || numErrors() > 0 ||
+    if (!mCompileOptions.rejectWebglShadersWithLargeVariables ||
         (mShaderType != GL_VERTEX_SHADER && mShaderType != GL_FRAGMENT_SHADER))
     {
         return true;
+    }
+
+    // Check the cache of validated types first.
+    auto preValidatedIter = mValidatedVariableTypeSizes.find(*type);
+    if (preValidatedIter != mValidatedVariableTypeSizes.end())
+    {
+        return preValidatedIter->second;
     }
 
     // Note: the only allowed interface block in webgl shaders is UBOs in std140 mode, so the size
@@ -1767,6 +1878,7 @@ bool TParseContext::checkVariableSize(const TSourceLoc &line,
     if (variableSize > kWebGLMaxVariableSizeInBytes)
     {
         error(line, "Size of declared variable exceeds implementation-defined limit", identifier);
+        mValidatedVariableTypeSizes[*type] = false;
         return false;
     }
 
@@ -1813,6 +1925,7 @@ bool TParseContext::checkVariableSize(const TSourceLoc &line,
                 error(line,
                       "Size of declared private variable exceeds implementation-defined limit",
                       identifier);
+                mValidatedVariableTypeSizes[*type] = false;
                 return false;
             }
             mTotalPrivateVariablesSize += variableSize;
@@ -1820,6 +1933,8 @@ bool TParseContext::checkVariableSize(const TSourceLoc &line,
         default:
             break;
     }
+
+    mValidatedVariableTypeSizes[*type] = true;
     return true;
 }
 
@@ -6307,7 +6422,9 @@ bool TParseContext::checkUnsizedArrayConstructorArgumentDimensionality(
 //
 TIntermTyped *TParseContext::addConstructor(TFunctionLookup *fnCall, const TSourceLoc &line)
 {
-    TType type                 = fnCall->constructorType();
+    TType type = fnCall->constructorType();
+    checkVariableSize(line, ImmutableString(""), &type);
+
     TIntermSequence &arguments = fnCall->arguments();
     if (type.isUnsizedArray())
     {
@@ -7307,6 +7424,18 @@ TIntermTyped *TParseContext::addFieldSelectionExpression(TIntermTyped *baseExpre
             {
                 mIRBuilder.structField(i);
 
+                // The AST RewriteStructSamplers transformation cannot handle (..., struct).sampler.
+                // Fail compilation until the IR.
+                if (!mCompileOptions.useIR && baseExpression->getAsBinaryNode() &&
+                    baseExpression->getAsBinaryNode()->getOp() == EOpComma &&
+                    baseExpression->getType().isStructureContainingSamplers())
+                {
+                    error(dotLocation,
+                          "accessing fields of the result of a comma expression that is a "
+                          "structure with samplers is not currently supported",
+                          "Internal Error");
+                }
+
                 TIntermTyped *index = CreateIndexNode(i);
                 index->setLine(fieldLocation);
                 TIntermBinary *node =
@@ -7344,6 +7473,48 @@ TIntermTyped *TParseContext::addFieldSelectionExpression(TIntermTyped *baseExpre
             if (fieldFound)
             {
                 mIRBuilder.structField(i);
+
+                // Validate extension requirements for gl_PerVertex fields.
+                const TInterfaceBlock *interfaceBlock =
+                    baseExpression->getType().getInterfaceBlock();
+                if (interfaceBlock && interfaceBlock->name() == "gl_PerVertex")
+                {
+                    TQualifier fieldQualifier = fields[i]->type()->getQualifier();
+                    if (fieldQualifier == EvqClipDistance || fieldQualifier == EvqCullDistance)
+                    {
+                        // gl_ClipDistance and gl_CullDistance require EXT_clip_cull_distance or
+                        // ANGLE_clip_cull_distance extension.
+                        if (!checkCanUseOneOfExtensions(
+                                fieldLocation,
+                                std::array<TExtension, 2u>{{TExtension::EXT_clip_cull_distance,
+                                                            TExtension::ANGLE_clip_cull_distance}}))
+                        {
+                            return baseExpression;
+                        }
+                    }
+                    else if (mShaderType == GL_GEOMETRY_SHADER && fieldQualifier == EvqPointSize)
+                    {
+                        if (!checkCanUseOneOfExtensions(
+                                fieldLocation,
+                                std::array<TExtension, 2u>{{TExtension::EXT_geometry_point_size,
+                                                            TExtension::OES_geometry_point_size}}))
+                        {
+                            return baseExpression;
+                        }
+                    }
+                    else if ((mShaderType == GL_TESS_CONTROL_SHADER ||
+                              mShaderType == GL_TESS_EVALUATION_SHADER) &&
+                             fieldQualifier == EvqPointSize)
+                    {
+                        if (!checkCanUseOneOfExtensions(
+                                fieldLocation, std::array<TExtension, 2u>{
+                                                   {TExtension::EXT_tessellation_point_size,
+                                                    TExtension::OES_tessellation_point_size}}))
+                        {
+                            return baseExpression;
+                        }
+                    }
+                }
 
                 TIntermTyped *index = CreateIndexNode(i);
                 index->setLine(fieldLocation);
@@ -8801,8 +8972,7 @@ bool TParseContext::binaryOpCommonCheck(TOperator op,
             // Samplers as l-values are disallowed also in ESSL 3.00, see section 4.1.7,
             // we interpret the spec so that this extends to structs containing samplers,
             // similarly to ESSL 1.00 spec.
-            if ((mShaderVersion < 300 || op == EOpAssign || op == EOpInitialize) &&
-                left->getType().isStructureContainingSamplers())
+            if (left->getType().isStructureContainingSamplers())
             {
                 error(loc, "undefined operation for structs containing samplers",
                       GetOperatorString(op));
@@ -10471,6 +10641,11 @@ bool TParseContext::postParseChecks()
     {
         mEarlyFragmentTestsSpecified = true;
         // No need to set it for the IR, the PLS rewrite transformation will do that.
+    }
+
+    if (!checkCanUseShaderType(kNoSourceLoc))
+    {
+        return false;
     }
 
     checkCallGraph();

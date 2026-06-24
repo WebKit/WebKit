@@ -6,6 +6,10 @@
 
 import("../../gni/angle.gni")
 
+if (angle_use_wayland) {
+  import("//build_overrides/wayland.gni")
+}
+
 _glmark2_glad_common_sources = [
   "src/src/glad/include/glad/egl.h",
   "src/src/glad/include/glad/wgl.h",
@@ -363,12 +367,20 @@ template("glmark2_exe") {
       ]
     }
     if (is_linux || is_chromeos) {
-      defines += [ "GLMARK2_USE_X11" ]
-      sources += [
-        "src/src/native-state-x11.cpp",
-        "src/src/native-state-x11.h",
-      ]
-      libs = [ "X11" ]
+      if (angle_use_x11) {
+        defines += [ "GLMARK2_USE_X11" ]
+        sources += [
+          "src/src/native-state-x11.cpp",
+          "src/src/native-state-x11.h",
+        ]
+        libs = [ "X11" ]
+      } else if (angle_use_wayland) {
+        defines += [ "GLMARK2_USE_WAYLAND" ]
+        sources += [
+          "src/src/native-state-wayland.cpp",
+          "src/src/native-state-wayland.h",
+        ]
+      }
     }
   }
 }
@@ -385,6 +397,18 @@ glmark2_exe("glmark2_angle") {
     "EGL_EGL_PROTOTYPES=1",
     "GLMARK2_USE_EGL",
   ]
+  if (!angle_use_x11) {
+    defines += [ "EGL_NO_X11" ]
+  }
+
+  if (angle_use_wayland) {
+    deps += [
+      "$wayland_gn_dir:wayland_client",
+      "$wayland_gn_dir:wayland_cursor",
+      "$wayland_gn_dir:wayland_egl",
+      "$wayland_protocols_gn_dir:xdg_shell_protocol",
+    ]
+  }
 
   if ((is_linux || is_chromeos) && !is_component_build) {
     # Set rpath to find shared libs in a non-component build.
@@ -392,7 +416,7 @@ glmark2_exe("glmark2_angle") {
   }
 }
 
-if (is_linux || is_chromeos) {
+if ((is_linux || is_chromeos) && angle_use_x11) {
   glmark2_exe("glmark2_glx") {
     sources = [
       "src/src/gl-state-glx.cpp",

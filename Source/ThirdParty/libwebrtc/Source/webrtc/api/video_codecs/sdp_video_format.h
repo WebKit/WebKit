@@ -13,10 +13,10 @@
 
 #include <map>
 #include <optional>
+#include <span>
 #include <string>
 
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "api/rtp_parameters.h"
 #include "api/video_codecs/scalability_mode.h"
 #include "rtc_base/system/rtc_export.h"
@@ -55,7 +55,7 @@ struct RTC_EXPORT SdpVideoFormat {
   // specific parameters. Please note that two SdpVideoFormats can represent the
   // same codec even though not all parameters are the same.
   bool IsSameCodec(const SdpVideoFormat& other) const;
-  bool IsCodecInList(ArrayView<const SdpVideoFormat> formats) const;
+  bool IsCodecInList(std::span<const SdpVideoFormat> formats) const;
 
   std::string ToString() const;
 
@@ -69,6 +69,8 @@ struct RTC_EXPORT SdpVideoFormat {
   std::string name;
   CodecParameterMap parameters;
   absl::InlinedVector<ScalabilityMode, kScalabilityModeCount> scalability_modes;
+  std::optional<std::string> packetization;
+  std::optional<std::string> tx_mode;
 
   // Well-known video codecs and their format parameters.
   static const SdpVideoFormat VP8();
@@ -92,7 +94,7 @@ struct RTC_EXPORT SdpVideoFormat {
 // anymore. Until we stop misusing SdpVideoFormats provide this convenience
 // function to perform fuzzy matching.
 std::optional<SdpVideoFormat> FuzzyMatchSdpVideoFormat(
-    ArrayView<const SdpVideoFormat> supported_formats,
+    std::span<const SdpVideoFormat> supported_formats,
     const SdpVideoFormat& format);
 
 }  // namespace webrtc

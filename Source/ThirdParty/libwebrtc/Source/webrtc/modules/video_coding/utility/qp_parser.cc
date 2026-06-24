@@ -13,8 +13,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_codec_type.h"
 #include "modules/video_coding/utility/vp8_header_parser.h"
@@ -58,7 +58,7 @@ std::optional<uint32_t> QpParser::H264QpParser::Parse(const uint8_t* frame_data,
                                                       size_t frame_size) {
   MutexLock lock(&mutex_);
   bitstream_parser_.ParseBitstream(
-      ArrayView<const uint8_t>(frame_data, frame_size));
+      std::span<const uint8_t>(frame_data, frame_size));
   return bitstream_parser_.GetLastSliceQp();
 }
 
@@ -67,7 +67,7 @@ std::optional<uint32_t> QpParser::H265QpParser::Parse(const uint8_t* frame_data,
                                                       size_t frame_size) {
   MutexLock lock(&mutex_);
   bitstream_parser_.ParseBitstream(
-      ArrayView<const uint8_t>(frame_data, frame_size));
+      std::span<const uint8_t>(frame_data, frame_size));
   return bitstream_parser_.GetLastSliceQp();
 }
 #endif

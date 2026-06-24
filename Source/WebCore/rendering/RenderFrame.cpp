@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFrame);
 
-RenderFrame::RenderFrame(HTMLFrameElement& frame, RenderStyle&& style)
+RenderFrame::RenderFrame(HTMLFrameElement& frame, Style::ComputedStyle&& style)
     : RenderFrameBase(Type::Frame, frame, WTF::move(style))
 {
     ASSERT(isRenderFrame());

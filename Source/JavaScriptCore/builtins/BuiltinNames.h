@@ -86,9 +86,9 @@ namespace JSC {
     macro(newResolvedPromise) \
     macro(newRejectedPromise) \
     macro(resolveWithInternalMicrotaskForAsyncAwait) \
-    macro(asyncGeneratorQueueEnqueue) \
-    macro(asyncGeneratorQueueDequeueResolve) \
-    macro(asyncGeneratorQueueDequeueReject) \
+    macro(asyncGeneratorNextQueueEnqueue) \
+    macro(asyncGeneratorCompleteAndDrain) \
+    macro(asyncGeneratorSuspend) \
     macro(driveAsyncFunction) \
     macro(newHandledRejectedPromise) \
     macro(promiseReturnUndefinedOnFulfilled) \
@@ -168,7 +168,6 @@ namespace JSC {
     macro(setPrototypeDirect) \
     macro(setPrototypeDirectOrThrow) \
     macro(regExpBuiltinExec) \
-    macro(regExpMatchFast) \
     macro(regExpProtoFlagsGetter) \
     macro(regExpProtoHasIndicesGetter) \
     macro(regExpProtoGlobalGetter) \
@@ -180,9 +179,9 @@ namespace JSC {
     macro(regExpProtoUnicodeGetter) \
     macro(regExpProtoUnicodeSetsGetter) \
     macro(regExpPrototypeSymbolMatch) \
+    macro(regExpPrototypeSymbolMatchAll) \
     macro(regExpPrototypeSymbolReplace) \
     macro(regExpSearchFast) \
-    macro(regExpSplitFast) \
     macro(stringIncludesInternal) \
     macro(stringIndexOfInternal) \
     macro(stringSubstring) \

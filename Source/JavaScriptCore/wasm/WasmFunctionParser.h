@@ -63,18 +63,6 @@ enum class CatchKind {
 };
 OVERLOAD_RELATIONAL_OPERATORS_FOR_ENUM_CLASS_WITH_INTEGRALS(CatchKind);
 
-template<typename EnclosingStack, typename NewStack>
-void splitStack(const BlockSignature& signature, EnclosingStack& enclosingStack, NewStack& newStack)
-{
-    ASSERT(enclosingStack.size() >= signature.argumentCount());
-
-    unsigned offset = enclosingStack.size() - signature.argumentCount();
-    newStack = NewStack(signature.argumentCount(), [&](size_t i) {
-        return enclosingStack.at(i + offset);
-    });
-    enclosingStack.shrink(offset);
-}
-
 struct ControlRef {
     size_t m_index { 0 };
 };
@@ -119,8 +107,18 @@ struct FunctionParserTypes {
     using Stack = Vector<TypedExpression, 16, UnsafeVectorOverflow>;
 
     struct ControlEntry {
-        Stack enclosedExpressionStack;
-        Stack elseBlockStack;
+        // FIXME: This field is dead on every ControlEntry that isn't an `if` with
+        // args. On JetStream3, 100% of `if` blocks had argumentCount==0 and 86%
+        // never reached an `else`, so 100% of these slots store an empty
+        // FixedVector. Consider moving this to a sparse side data structure keyed
+        // by the few `if`s that actually have args. Alternatively, since control
+        // is structured there could be another parser-wide expression stack for
+        // else blocks.
+        FixedVector<TypedExpression> elseBlockStack;
+        // Offset in the parser's single contiguous expression-stack Vector where
+        // this entry's own slice begins (its args followed by values pushed by
+        // its body). While this entry is the innermost, equals m_currentStackBegin.
+        uint32_t enclosedStackBegin;
         uint32_t localInitStackHeight;
         ControlType controlData;
     };
@@ -170,7 +168,35 @@ public:
     bool unreachableBlocks() const { return m_unreachableBlocks; }
 
     ControlStack& controlStack() LIFETIME_BOUND { return m_controlStack; }
-    Stack& expressionStack() LIFETIME_BOUND { return m_expressionStack; }
+
+    // Returns the slice of the single backing Vector belonging to the
+    // currently-active control block.
+    std::span<TypedExpression> expressionStack() LIFETIME_BOUND
+    {
+        return m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
+    }
+    std::span<const TypedExpression> expressionStack() const LIFETIME_BOUND
+    {
+        return m_expressionStack.span().subspan(m_currentStackBegin);
+    }
+
+    // Slice of m_expressionStack belonging to the parent of the entry at controlIndex:
+    // the values live in that parent at the moment this entry was opened, after its
+    // args were taken out. For the outermost (TopLevel) entry, this slice is empty.
+    std::span<const TypedExpression> enclosedSliceOf(size_t controlIndex) const LIFETIME_BOUND
+    {
+        ASSERT(controlIndex < m_controlStack.size());
+        uint32_t begin = controlIndex ? m_controlStack[controlIndex - 1].enclosedStackBegin : 0;
+        uint32_t end = m_controlStack[controlIndex].enclosedStackBegin;
+        return m_expressionStack.span().subspan(begin, end - begin);
+    }
+    std::span<TypedExpression> enclosedSliceOf(size_t controlIndex) LIFETIME_BOUND
+    {
+        ASSERT(controlIndex < m_controlStack.size());
+        uint32_t begin = controlIndex ? m_controlStack[controlIndex - 1].enclosedStackBegin : 0;
+        uint32_t end = m_controlStack[controlIndex].enclosedStackBegin;
+        return m_expressionStack.mutableSpan().subspan(begin, end - begin);
+    }
 
     ControlEntry& resolveControlRef(ControlRef ref) { return m_controlStack[ref.m_index]; }
 
@@ -195,21 +221,25 @@ public:
 
     uint32_t getStackHeightInValues() const
     {
-        return m_expressionStack.size() + getControlEntryStackHeightInValues();
+        return m_expressionStack.size();
     }
 
     uint32_t getControlEntryStackHeightInValues() const
     {
-        uint32_t result = 0;
-        for (const ControlEntry& entry : m_controlStack)
-            result += entry.enclosedExpressionStack.size();
-        return result;
+        return m_currentStackBegin;
     }
 
     uint32_t numCallProfiles() const { return m_callProfileIndex; }
 
 private:
     static constexpr bool verbose = false;
+
+    // After takeLast() on m_controlStack, the new parent's enclosedStackBegin
+    // is where the just-ended block's enclosed slice ends (or 0 at TopLevel).
+    uint32_t parentEntryBegin() const
+    {
+        return m_controlStack.isEmpty() ? 0 : m_controlStack.last().enclosedStackBegin;
+    }
 
     [[nodiscard]] PartialResult parseBody();
     [[nodiscard]] PartialResult parseExpression();
@@ -230,10 +260,10 @@ private:
     [[nodiscard]] PartialResult parseReftypeSignature(const ModuleInformation&, BlockSignature&);
 
     [[nodiscard]] PartialResult parseNestedBlocksEagerly(bool&);
-    void switchToBlock(ControlType&&, Stack&&);
+    void switchToBlock(ControlType&&, uint32_t argumentCount);
 
 #define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do { \
-        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in "_s, what); \
+        WASM_PARSER_FAIL_IF(m_expressionStack.size() == m_currentStackBegin, "can't pop empty stack in "_s, what); \
         result = m_expressionStack.takeLast(); \
         m_context.didPopValueFromStack(result, "WasmFunctionParser.h " STRINGIZE_VALUE_OF(__LINE__) ""_s); \
     } while (0)
@@ -391,6 +421,10 @@ private:
 
     Context& m_context;
     Stack m_expressionStack;
+    // Backing offset where the currently-active control block's slice begins
+    // in m_expressionStack. Every active block's live values share that one
+    // Vector; m_expressionStack[m_currentStackBegin..end] is the live block.
+    uint32_t m_currentStackBegin { 0 };
     ControlStack m_controlStack;
     Vector<Type, 16> m_locals;
     const BlockSignature m_signature;
@@ -508,7 +542,8 @@ auto FunctionParser<Context>::parseConstantExpression() -> Result
 template<typename Context>
 auto FunctionParser<Context>::parseBody() -> PartialResult
 {
-    m_controlStack.append({ { }, { }, 0, m_context.addTopLevel(BlockSignature { m_signature }) });
+    const uint32_t enclosedStackBegin = 0;
+    m_controlStack.constructAndAppend(FixedVector<TypedExpression> { }, enclosedStackBegin, 0, m_context.addTopLevel(BlockSignature { m_signature }));
     uint8_t op = 0;
     while (m_controlStack.size()) {
         m_currentOpcodeStartingOffset = m_offset;
@@ -548,7 +583,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseExpression());
         m_context.didParseOpcode();
     }
-    WASM_FAIL_IF_HELPER_FAILS(m_context.endTopLevel(m_expressionStack));
+    WASM_FAIL_IF_HELPER_FAILS(m_context.endTopLevel(m_expressionStack.span()));
     if (Context::validateFunctionBodySize)
         WASM_PARSER_FAIL_IF(m_offset != source().size(), "function body size doesn't match the expected size");
 
@@ -600,7 +635,7 @@ auto FunctionParser<Context>::binaryCompareCase(OpType op, BinaryOperationHandle
 
             ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
             WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
-            WASM_TRY_ADD_TO_CONTEXT(addFusedBranchCompare(op, data, left, right, m_expressionStack));
+            WASM_TRY_ADD_TO_CONTEXT(addFusedBranchCompare(op, data, left, right, expressionStack()));
             m_context.didParseOpcode();
             return { };
         }
@@ -614,20 +649,22 @@ auto FunctionParser<Context>::binaryCompareCase(OpType op, BinaryOperationHandle
             BlockSignature inlineSignature;
             WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
 
-            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature);
-            unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
-            for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i)
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[i].type());
+            const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+            const uint32_t argumentCount = inlineSignature.argumentCount();
+            WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few arguments on stack for if block. If expects ", argumentCount, ", but only ", sliceSize, " were present. If block has signature: ", inlineSignature);
+            const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
+            for (unsigned i = 0; i < argumentCount; ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[parentStackHeight + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[parentStackHeight + i].type());
 
-            int64_t oldSize = m_expressionStack.size();
-            Stack newStack;
+            auto args = m_expressionStack.mutableSpan().last(argumentCount);
             ControlType control;
-            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, left, right, WTF::move(inlineSignature), m_expressionStack, control, newStack));
-            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == control.signature().argumentCount());
-            ASSERT(newStack.size() == control.signature().argumentCount());
-
-            m_controlStack.append({ WTF::move(m_expressionStack), newStack, getLocalInitStackHeight(), WTF::move(control) });
-            m_expressionStack = WTF::move(newStack);
+            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, left, right, WTF::move(inlineSignature), args, control));
+            FixedVector<TypedExpression> elseSave;
+            if (argumentCount)
+                elseSave = FixedVector<TypedExpression>::createWithSizeFromGenerator(argumentCount, [&](size_t i) { return m_expressionStack[parentStackHeight + i]; });
+            ASSERT(m_currentStackBegin == parentEntryBegin());
+            m_controlStack.constructAndAppend(WTF::move(elseSave), parentStackHeight, getLocalInitStackHeight(), WTF::move(control));
+            m_currentStackBegin = parentStackHeight;
             m_context.didParseOpcode();
             return { };
         }
@@ -672,7 +709,7 @@ auto FunctionParser<Context>::unaryCompareCase(OpType op, UnaryOperationHandler 
 
             ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
             WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
-            WASM_TRY_ADD_TO_CONTEXT(addFusedBranchCompare(op, data, value, m_expressionStack));
+            WASM_TRY_ADD_TO_CONTEXT(addFusedBranchCompare(op, data, value, expressionStack()));
             return { };
         }
         if (nextOpcode == OpType::If) {
@@ -682,20 +719,22 @@ auto FunctionParser<Context>::unaryCompareCase(OpType op, UnaryOperationHandler 
             BlockSignature inlineSignature;
             WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
 
-            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature);
-            unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
-            for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i)
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[i].type());
+            const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+            const uint32_t argumentCount = inlineSignature.argumentCount();
+            WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few arguments on stack for if block. If expects ", argumentCount, ", but only ", sliceSize, " were present. If block has signature: ", inlineSignature);
+            const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
+            for (unsigned i = 0; i < argumentCount; ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[parentStackHeight + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[parentStackHeight + i].type());
 
-            int64_t oldSize = m_expressionStack.size();
-            Stack newStack;
+            auto args = m_expressionStack.mutableSpan().last(argumentCount);
             ControlType control;
-            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, value, WTF::move(inlineSignature), m_expressionStack, control, newStack));
-            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == control.signature().argumentCount());
-            ASSERT(newStack.size() == control.signature().argumentCount());
-
-            m_controlStack.append({ WTF::move(m_expressionStack), newStack, getLocalInitStackHeight(), WTF::move(control) });
-            m_expressionStack = WTF::move(newStack);
+            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, value, WTF::move(inlineSignature), args, control));
+            FixedVector<TypedExpression> elseSave;
+            if (argumentCount)
+                elseSave = FixedVector<TypedExpression>::createWithSizeFromGenerator(argumentCount, [&](size_t i) { return m_expressionStack[parentStackHeight + i]; });
+            ASSERT(m_currentStackBegin == parentEntryBegin());
+            m_controlStack.constructAndAppend(WTF::move(elseSave), parentStackHeight, getLocalInitStackHeight(), WTF::move(control));
+            m_currentStackBegin = parentStackHeight;
             return { };
         }
     }
@@ -1861,9 +1900,10 @@ auto FunctionParser<Context>::checkBranchTarget(const ControlType& target, Branc
     if (!target.branchTargetArity())
         return { };
 
-    WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < target.branchTargetArity(), ControlType::isTopLevel(target) ? "branch out of function"_s : "branch to block"_s, " on expression stack of size "_s, m_expressionStack.size(), ", but block, "_s, target.signature() , " expects "_s, target.branchTargetArity(), " values"_s);
+    const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+    WASM_VALIDATOR_FAIL_IF(sliceSize < target.branchTargetArity(), ControlType::isTopLevel(target) ? "branch out of function"_s : "branch to block"_s, " on expression stack of size "_s, sliceSize, ", but block, "_s, target.signature() , " expects "_s, target.branchTargetArity(), " values"_s);
 
-    unsigned offset = m_expressionStack.size() - target.branchTargetArity();
+    const unsigned offset = m_expressionStack.size() - target.branchTargetArity();
     for (unsigned i = 0; i < target.branchTargetArity(); ++i) {
         WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), target.branchTargetType(i)), "branch's stack type is not a subtype of block's type branch target type. Stack value has type "_s, m_expressionStack[offset + i].type(), " but branch target expects a value of "_s, target.branchTargetType(i), " at index "_s, i);
 
@@ -1894,13 +1934,14 @@ template<typename Context>
 auto FunctionParser<Context>::checkExpressionStack(const ControlType& controlData, bool forceSignature) -> PartialResult
 {
     const auto& blockSignature = controlData.signature();
-    WASM_VALIDATOR_FAIL_IF(blockSignature.returnCount() != m_expressionStack.size(), " block with type: "_s, blockSignature, " returns: "_s, blockSignature.returnCount(), " but stack has: "_s, m_expressionStack.size(), " values"_s);
+    const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+    WASM_VALIDATOR_FAIL_IF(blockSignature.returnCount() != sliceSize, " block with type: "_s, blockSignature, " returns: "_s, blockSignature.returnCount(), " but stack has: "_s, sliceSize, " values"_s);
     for (unsigned i = 0; i < blockSignature.returnCount(); ++i) {
-        const auto actualType = m_expressionStack[i].type();
+        const auto actualType = m_expressionStack[m_currentStackBegin + i].type();
         const auto expectedType = blockSignature.returnType(i);
         WASM_VALIDATOR_FAIL_IF(!isSubtype(actualType, expectedType), "control flow returns with unexpected type. "_s, actualType, " is not a "_s, expectedType);
         if (forceSignature)
-            m_expressionStack[i].setType(expectedType);
+            m_expressionStack[m_currentStackBegin + i].setType(expectedType);
     }
 
     return { };
@@ -1954,14 +1995,9 @@ ALWAYS_INLINE auto FunctionParser<Context>::parseNestedBlocksEagerly(bool& shoul
 
         ASSERT(!inlineSignature.argumentCount());
 
-        int64_t oldSize = m_expressionStack.size();
-        Stack newStack;
         ControlType block;
-        WASM_TRY_ADD_TO_CONTEXT(addBlock(WTF::move(inlineSignature), m_expressionStack, block, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == block.signature().argumentCount());
-        ASSERT(newStack.size() == block.signature().argumentCount());
-
-        switchToBlock(WTF::move(block), WTF::move(newStack));
+        WASM_TRY_ADD_TO_CONTEXT(addBlock(WTF::move(inlineSignature), std::span<TypedExpression>(), block));
+        switchToBlock(WTF::move(block), 0);
 
         if (m_offset >= source().size()) {
             shouldContinue = false;
@@ -2032,10 +2068,12 @@ inline auto FunctionParser<Context>::parseReftypeSignature(const ModuleInformati
 }
 
 template <typename Context>
-ALWAYS_INLINE void FunctionParser<Context>::switchToBlock(ControlType&& block, Stack&& newStack)
+ALWAYS_INLINE void FunctionParser<Context>::switchToBlock(ControlType&& block, uint32_t argumentCount)
 {
-    m_controlStack.append({ WTF::move(m_expressionStack), { }, getLocalInitStackHeight(), WTF::move(block) });
-    m_expressionStack = WTF::move(newStack);
+    ASSERT(m_currentStackBegin == parentEntryBegin());
+    const uint32_t newBegin = m_expressionStack.size() - argumentCount;
+    m_controlStack.constructAndAppend(FixedVector<TypedExpression> { }, newBegin, getLocalInitStackHeight(), WTF::move(block));
+    m_currentStackBegin = newBegin;
 }
 
 template<typename Context>
@@ -2514,7 +2552,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(argc > maxArrayNewFixedArgs, "array_new_fixed can take at most "_s, maxArrayNewFixedArgs, " operands. Got "_s, argc);
 
             // If more arguments are expected than the current stack size, that's an error
-            WASM_VALIDATOR_FAIL_IF(argc > m_expressionStack.size(), "array_new_fixed: found ", m_expressionStack.size(), " operands on stack; expected ", argc, " operands");
+            WASM_VALIDATOR_FAIL_IF(argc > m_expressionStack.size() - m_currentStackBegin, "array_new_fixed: found ", m_expressionStack.size() - m_currentStackBegin, " operands on stack; expected ", argc, " operands");
 
             // Allocate stack space for arguments
             ArgumentList args;
@@ -2795,7 +2833,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new"_s));
 
             const auto& structType = m_info.rtt(typeIndex);
-            WASM_PARSER_FAIL_IF(structType.fieldCount() > m_expressionStack.size(), "struct.new "_s, typeIndex, " requires "_s, structType.fieldCount(), " values, but the expression stack currently holds "_s, m_expressionStack.size(), " values"_s);
+            WASM_PARSER_FAIL_IF(structType.fieldCount() > m_expressionStack.size() - m_currentStackBegin, "struct.new "_s, typeIndex, " requires "_s, structType.fieldCount(), " values, but the expression stack currently holds "_s, m_expressionStack.size() - m_currentStackBegin, " values"_s);
 
             ArgumentList args;
             size_t firstArgumentIndex = m_expressionStack.size() - structType.fieldCount();
@@ -2967,7 +3005,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             // Manually pop the stack in order to avoid decreasing the stack size, as we will immediately put it back.
             TypedExpression ref;
-            WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in "_s, opName);
+            WASM_PARSER_FAIL_IF(m_expressionStack.size() == m_currentStackBegin, "can't pop empty stack in "_s, opName);
             ref = m_expressionStack.takeLast();
 
             WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), Type { hasNull1 ? TypeKind::RefNull : TypeKind::Ref, typeIndex1 }), opName, " to type "_s, ref.type(), " expected a reference type with source heaptype"_s);
@@ -2992,7 +3030,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.takeLast();
             m_expressionStack.constructAndAppend(nonTakenType, ref.value());
 
-            WASM_TRY_ADD_TO_CONTEXT(addBranchCast(data, ref, m_expressionStack, hasNull2, heapType2, op == ExtGCOpType::BrOnCastFail));
+            WASM_TRY_ADD_TO_CONTEXT(addBranchCast(data, ref, expressionStack(), hasNull2, heapType2, op == ExtGCOpType::BrOnCastFail));
 
             break;
         }
@@ -3131,7 +3169,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
 
         ExpressionType result;
-        WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, false, result));
+        WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, expressionStack(), false, result));
         m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
 
         return { };
@@ -3143,7 +3181,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         TypedExpression ref;
         // Pop the stack manually to avoid changing the stack size, because the branch needs the value with a different type.
-        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in br_on_non_null"_s);
+        WASM_PARSER_FAIL_IF(m_expressionStack.size() == m_currentStackBegin, "can't pop empty stack in br_on_non_null"_s);
         ref = m_expressionStack.takeLast();
         m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, ref.value());
         WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "br_on_non_null ref to type "_s, ref.type(), " expected a reference type"_s);
@@ -3152,7 +3190,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
 
         ExpressionType unused;
-        WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, true, unused));
+        WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, expressionStack(), true, unused));
 
         // On a non-taken branch, the value is null so it's not needed on the stack.
         // We add a drop to ensure the context knows we are discarding this ref value,
@@ -3207,7 +3245,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
         pushLocalInitialized(index);
 
-        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't tee_local on empty expression stack"_s);
+        WASM_PARSER_FAIL_IF(m_expressionStack.size() == m_currentStackBegin, "can't tee_local on empty expression stack"_s);
         TypedExpression value;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "tee_local"_s);
         WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to tee unknown local "_s, index, "_s, the number of locals is "_s, m_locals.size());
@@ -3262,7 +3300,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
 
         const auto& calleeSignature = m_info.rtt(m_info.typeSignatureIndexFromFunctionIndexSpace(functionIndex));
-        WASM_PARSER_FAIL_IF(calleeSignature.argumentCount() > m_expressionStack.size(), "call function index "_s, functionIndex, " has "_s, calleeSignature.argumentCount(), " arguments, but the expression stack currently holds "_s, m_expressionStack.size(), " values"_s);
+        WASM_PARSER_FAIL_IF(calleeSignature.argumentCount() > m_expressionStack.size() - m_currentStackBegin, "call function index "_s, functionIndex, " has "_s, calleeSignature.argumentCount(), " arguments, but the expression stack currently holds "_s, m_expressionStack.size() - m_currentStackBegin, " values"_s);
 
         size_t firstArgumentIndex = m_expressionStack.size() - calleeSignature.argumentCount();
         ArgumentList args;
@@ -3326,7 +3364,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         const auto& calleeSignature = m_info.rtt(index);
         WASM_VALIDATOR_FAIL_IF(calleeSignature.kind() != RTTKind::Function, "invalid type index (not a function signature) for call_indirect, got ", signatureIndex);
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's index.
-        WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_indirect expects "_s, argumentCount, " arguments, but the expression stack currently holds "_s, m_expressionStack.size(), " values"_s);
+        WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size() - m_currentStackBegin, "call_indirect expects "_s, argumentCount, " arguments, but the expression stack currently holds "_s, m_expressionStack.size() - m_currentStackBegin, " values"_s);
 
         WASM_VALIDATOR_FAIL_IF(!m_expressionStack.last().type().isI32(), "non-i32 call_indirect index "_s, m_expressionStack.last().type());
 
@@ -3381,7 +3419,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!parseVarUInt32(rawTypeIndex), "can't get call_ref's signature index"_s);
         WASM_VALIDATOR_FAIL_IF(rawTypeIndex >= m_info.typeCount(), "call_ref index ", rawTypeIndex, " is out of bounds");
 
-        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't call_ref on empty expression stack"_s);
+        WASM_PARSER_FAIL_IF(m_expressionStack.size() == m_currentStackBegin, "can't call_ref on empty expression stack"_s);
 
         TypeSignatureIndex typeIndex(rawTypeIndex);
         const auto& calleeSignature = m_info.rtt(typeIndex);
@@ -3390,7 +3428,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack.last().type(), calleeType), "invalid type for call_ref value, expected ", calleeType, " got ", m_expressionStack.last().type());
 
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's value.
-        WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_ref expects ", argumentCount, " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
+        WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size() - m_currentStackBegin, "call_ref expects ", argumentCount, " arguments, but the expression stack currently holds ", m_expressionStack.size() - m_currentStackBegin, " values");
 
         ArgumentList args;
         WASM_ALLOCATOR_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
@@ -3445,21 +3483,20 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get block's signature"_s);
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few values on stack for block. Block expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Block has inlineSignature: ", inlineSignature);
-        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
-        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i) {
-            Type type = m_expressionStack.at(offset + i).type();
+        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+        const uint32_t argumentCount = inlineSignature.argumentCount();
+
+        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few values on stack for block. Block expects ", argumentCount, ", but only ", sliceSize, " were present. Block has inlineSignature: ", inlineSignature);
+        const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
+        for (unsigned i = 0; i < argumentCount; ++i) {
+            Type type = m_expressionStack[parentStackHeight + i].type();
             WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", type);
         }
 
-        int64_t oldSize = m_expressionStack.size();
-        Stack newStack;
+        auto args = m_expressionStack.mutableSpan().last(argumentCount);
         ControlType block;
-        WASM_TRY_ADD_TO_CONTEXT(addBlock(WTF::move(inlineSignature), m_expressionStack, block, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == block.signature().argumentCount());
-        ASSERT(newStack.size() == block.signature().argumentCount());
-
-        switchToBlock(WTF::move(block), WTF::move(newStack));
+        WASM_TRY_ADD_TO_CONTEXT(addBlock(WTF::move(inlineSignature), args, block));
+        switchToBlock(WTF::move(block), argumentCount);
         return { };
     }
 
@@ -3467,22 +3504,23 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get loop's signature"_s);
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few values on stack for loop block. Loop expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Loop has inlineSignature: ", inlineSignature);
-        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
-        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i) {
-            Type type = m_expressionStack.at(offset + i).type();
+        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+        const uint32_t argumentCount = inlineSignature.argumentCount();
+
+        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few values on stack for loop block. Loop expects ", argumentCount, ", but only ", sliceSize, " were present. Loop has inlineSignature: ", inlineSignature);
+        const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
+        for (unsigned i = 0; i < argumentCount; ++i) {
+            Type type = m_expressionStack[parentStackHeight + i].type();
             WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", type);
         }
 
-        int64_t oldSize = m_expressionStack.size();
-        Stack newStack;
+        auto args = m_expressionStack.mutableSpan().last(argumentCount);
         ControlType loop;
-        WASM_TRY_ADD_TO_CONTEXT(addLoop(WTF::move(inlineSignature), m_expressionStack, loop, newStack, m_loopIndex++));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == loop.signature().argumentCount());
-        ASSERT(newStack.size() == loop.signature().argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addLoop(WTF::move(inlineSignature), args, loop, m_loopIndex++));
 
-        m_controlStack.append({ WTF::move(m_expressionStack), { }, getLocalInitStackHeight(), WTF::move(loop) });
-        m_expressionStack = WTF::move(newStack);
+        ASSERT(m_currentStackBegin == parentEntryBegin());
+        m_controlStack.constructAndAppend(FixedVector<TypedExpression> { }, parentStackHeight, getLocalInitStackHeight(), WTF::move(loop));
+        m_currentStackBegin = parentStackHeight;
         return { };
     }
 
@@ -3493,20 +3531,24 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "if condition"_s);
 
         WASM_VALIDATOR_FAIL_IF(!condition.type().isI32(), "if condition must be i32, got ", condition.type());
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature);
-        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
-        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i)
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[i].type());
+        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+        const uint32_t argumentCount = inlineSignature.argumentCount();
 
-        int64_t oldSize = m_expressionStack.size();
-        Stack newStack;
+        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few arguments on stack for if block. If expects ", argumentCount, ", but only ", sliceSize, " were present. If block has signature: ", inlineSignature);
+        const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
+        for (unsigned i = 0; i < argumentCount; ++i)
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[parentStackHeight + i].type(), inlineSignature.argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[parentStackHeight + i].type());
+
+        auto args = m_expressionStack.mutableSpan().last(argumentCount);
         ControlType control;
-        WASM_TRY_ADD_TO_CONTEXT(addIf(condition, WTF::move(inlineSignature), m_expressionStack, control, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == control.signature().argumentCount());
-        ASSERT(newStack.size() == control.signature().argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addIf(condition, WTF::move(inlineSignature), args, control));
 
-        m_controlStack.append({ WTF::move(m_expressionStack), newStack, getLocalInitStackHeight(), WTF::move(control) });
-        m_expressionStack = WTF::move(newStack);
+        FixedVector<TypedExpression> elseSave;
+        if (argumentCount)
+            elseSave = FixedVector<TypedExpression>::createWithSizeFromGenerator(argumentCount, [&](size_t i) { return m_expressionStack[parentStackHeight + i]; });
+        ASSERT(m_currentStackBegin == parentEntryBegin());
+        m_controlStack.constructAndAppend(WTF::move(elseSave), parentStackHeight, getLocalInitStackHeight(), WTF::move(control));
+        m_currentStackBegin = parentStackHeight;
         return { };
     }
 
@@ -3517,8 +3559,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(controlEntry.controlData), "else block isn't associated to an if");
         WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
-        WASM_TRY_ADD_TO_CONTEXT(addElse(controlEntry.controlData, m_expressionStack));
-        m_expressionStack = WTF::move(controlEntry.elseBlockStack);
+        auto ifBranchResults = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
+        WASM_TRY_ADD_TO_CONTEXT(addElse(controlEntry.controlData, ifBranchResults));
+        m_expressionStack.shrink(m_currentStackBegin);
+        m_expressionStack.append(controlEntry.elseBlockStack.span());
         resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
         return { };
     }
@@ -3528,20 +3572,21 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get try's signature"_s);
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few arguments on stack for try block. Try expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Try block has signature: ", inlineSignature);
-        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
-        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i)
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature.argumentType(i)), "Try expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[i].type());
+        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+        const uint32_t argumentCount = inlineSignature.argumentCount();
 
-        int64_t oldSize = m_expressionStack.size();
-        Stack newStack;
+        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few arguments on stack for try block. Try expects ", argumentCount, ", but only ", sliceSize, " were present. Try block has signature: ", inlineSignature);
+        const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
+        for (unsigned i = 0; i < argumentCount; ++i)
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[parentStackHeight + i].type(), inlineSignature.argumentType(i)), "Try expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", m_expressionStack[parentStackHeight + i].type());
+
+        auto args = m_expressionStack.mutableSpan().last(argumentCount);
         ControlType control;
-        WASM_TRY_ADD_TO_CONTEXT(addTry(WTF::move(inlineSignature), m_expressionStack, control, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == control.signature().argumentCount());
-        ASSERT(newStack.size() == control.signature().argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addTry(WTF::move(inlineSignature), args, control));
 
-        m_controlStack.append({ WTF::move(m_expressionStack), { }, getLocalInitStackHeight(), WTF::move(control) });
-        m_expressionStack = WTF::move(newStack);
+        ASSERT(m_currentStackBegin == parentEntryBegin());
+        m_controlStack.constructAndAppend(FixedVector<TypedExpression> { }, parentStackHeight, getLocalInitStackHeight(), WTF::move(control));
+        m_currentStackBegin = parentStackHeight;
         return { };
     }
 
@@ -3557,10 +3602,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
 
         ResultList results;
-        Stack preCatchStack;
-        m_expressionStack.swap(preCatchStack);
+        auto preCatchStack = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
         WASM_TRY_ADD_TO_CONTEXT(addCatch(exceptionIndex, exceptionSignature, preCatchStack, controlEntry.controlData, results));
 
+        m_expressionStack.shrink(m_currentStackBegin);
         RELEASE_ASSERT(exceptionSignature.argumentCount() == results.size());
         for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
             Type argumentType = exceptionSignature.argumentType(i);
@@ -3582,10 +3627,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
         WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
 
-        ResultList results;
-        Stack preCatchStack;
-        m_expressionStack.swap(preCatchStack);
+        auto preCatchStack = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
         WASM_TRY_ADD_TO_CONTEXT(addCatchAll(preCatchStack, controlEntry.controlData));
+        m_expressionStack.shrink(m_currentStackBegin);
         resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
 
         ASSERT(m_info.m_usesLegacyExceptions.loadRelaxed());
@@ -3597,10 +3641,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get try_table's signature"_s);
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.argumentCount(), "Too few values on stack for block. Block expects ", inlineSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Block has inlineSignature: ", inlineSignature);
-        unsigned offset = m_expressionStack.size() - inlineSignature.argumentCount();
-        for (unsigned i = 0; i < inlineSignature.argumentCount(); ++i) {
-            Type type = m_expressionStack.at(offset + i).type();
+        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+        const uint32_t argumentCount = inlineSignature.argumentCount();
+        WASM_VALIDATOR_FAIL_IF(sliceSize < argumentCount, "Too few values on stack for block. Block expects ", argumentCount, ", but only ", sliceSize, " were present. Block has inlineSignature: ", inlineSignature);
+        const uint32_t parentStackHeight = m_expressionStack.size() - argumentCount;
+        for (unsigned i = 0; i < argumentCount; ++i) {
+            Type type = m_expressionStack[parentStackHeight + i].type();
             WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature.argumentType(i), " but argument has type ", type);
         }
 
@@ -3666,14 +3712,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 WASM_VALIDATOR_FAIL_IF(!isSubtype(results[i].type(), target.branchTargetType(i)), "try_table target type mismatch");
         }
 
-        int64_t oldSize = m_expressionStack.size();
-        Stack newStack;
+        auto args = m_expressionStack.mutableSpan().last(argumentCount);
         ControlType block;
-        WASM_TRY_ADD_TO_CONTEXT(addTryTable(WTF::move(inlineSignature), m_expressionStack, targets, block, newStack));
-        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == block.signature().argumentCount());
-        ASSERT(newStack.size() == block.signature().argumentCount());
+        WASM_TRY_ADD_TO_CONTEXT(addTryTable(WTF::move(inlineSignature), args, targets, block));
 
-        switchToBlock(WTF::move(block), WTF::move(newStack));
+        switchToBlock(WTF::move(block), argumentCount);
         return { };
     }
 
@@ -3691,8 +3734,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         WASM_TRY_ADD_TO_CONTEXT(addDelegate(targetData, controlEntry.controlData));
         WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
-        WASM_TRY_ADD_TO_CONTEXT(endBlock(controlEntry, m_expressionStack));
-        m_expressionStack.swap(controlEntry.enclosedExpressionStack);
+
+        const uint32_t parentBegin = parentEntryBegin();
+        auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
+        WASM_TRY_ADD_TO_CONTEXT(endBlock(controlEntry, enclosedStack));
+
+        m_currentStackBegin = parentBegin;
         resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
         return { };
     }
@@ -3702,20 +3749,21 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
         const auto& exceptionSignature = m_info.rtt(m_info.typeSignatureIndexFromExceptionIndexSpace(exceptionIndex));
 
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < exceptionSignature.argumentCount(), "Too few arguments on stack for the exception being thrown. The exception expects ", exceptionSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Exception has signature: ", exceptionSignature);
+        const uint32_t sliceSize = m_expressionStack.size() - m_currentStackBegin;
+        WASM_VALIDATOR_FAIL_IF(sliceSize < exceptionSignature.argumentCount(), "Too few arguments on stack for the exception being thrown. The exception expects ", exceptionSignature.argumentCount(), ", but only ", sliceSize, " were present. Exception has signature: ", exceptionSignature);
         unsigned offset = m_expressionStack.size() - exceptionSignature.argumentCount();
         ArgumentList args;
         WASM_ALLOCATOR_FAIL_IF(!args.tryReserveInitialCapacity(exceptionSignature.argumentCount()), "can't allocate enough memory for throw's "_s, exceptionSignature.argumentCount(), " arguments"_s);
         args.grow(exceptionSignature.argumentCount());
         for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
-            TypedExpression arg = m_expressionStack.at(m_expressionStack.size() - i - 1);
+            TypedExpression arg = m_expressionStack[m_expressionStack.size() - i - 1];
             WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), exceptionSignature.argumentType(exceptionSignature.argumentCount() - i - 1)), "The exception being thrown expects the argument at index ", i, " to be ", exceptionSignature.argumentType(exceptionSignature.argumentCount() - i - 1), " but argument has type ", arg.type());
             args[args.size() - i - 1] = arg;
             m_context.didPopValueFromStack(arg, "Throw"_s);
         }
         m_expressionStack.shrink(offset);
 
-        WASM_TRY_ADD_TO_CONTEXT(addThrow(exceptionIndex, args, m_expressionStack));
+        WASM_TRY_ADD_TO_CONTEXT(addThrow(exceptionIndex, args, expressionStack()));
         m_unreachableBlocks = 1;
         return { };
     }
@@ -3725,7 +3773,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_POP_EXPRESSION_STACK_INTO(exnref, "exception reference"_s);
         WASM_VALIDATOR_FAIL_IF(!isSubtype(exnref.type(), exnrefType()), "throw_ref expected an exception reference"_s);
 
-        WASM_TRY_ADD_TO_CONTEXT(addThrowRef(exnref, m_expressionStack));
+        WASM_TRY_ADD_TO_CONTEXT(addThrowRef(exnref, expressionStack()));
         m_unreachableBlocks = 1;
         return { };
     }
@@ -3758,7 +3806,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, m_currentOpcode == BrIf ? Conditional : Unconditional));
-        WASM_TRY_ADD_TO_CONTEXT(addBranch(data, condition, m_expressionStack));
+        WASM_TRY_ADD_TO_CONTEXT(addBranch(data, condition, expressionStack()));
         return { };
     }
 
@@ -3804,7 +3852,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
 
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(defaultTarget, Unconditional));
-        WASM_TRY_ADD_TO_CONTEXT(addSwitch(condition, targets, defaultTarget, m_expressionStack));
+        WASM_TRY_ADD_TO_CONTEXT(addSwitch(condition, targets, defaultTarget, expressionStack()));
 
         m_unreachableBlocks = 1;
         return { };
@@ -3812,7 +3860,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case Return: {
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(m_controlStack[0].controlData, Unconditional));
-        WASM_TRY_ADD_TO_CONTEXT(addReturn(m_controlStack[0].controlData, m_expressionStack));
+        WASM_TRY_ADD_TO_CONTEXT(addReturn(m_controlStack[0].controlData, expressionStack()));
         m_unreachableBlocks = 1;
         return { };
     }
@@ -3821,18 +3869,24 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ControlEntry data = m_controlStack.takeLast();
         if (ControlType::isIf(data.controlData)) {
             WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
-            WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, m_expressionStack));
-            m_expressionStack = WTF::move(data.elseBlockStack);
+            auto ifBranchResults = m_expressionStack.mutableSpan().subspan(m_currentStackBegin);
+            WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, ifBranchResults));
+            m_expressionStack.shrink(m_currentStackBegin);
+            m_expressionStack.append(data.elseBlockStack.span());
         }
         // When ending an 'if'/'else', including a synthetic 'else' added right above,
         // the spec requires the output type of 'if' to be the type from the signature.
         const bool shouldForceSignature = ControlType::isElse(data.controlData);
-        // FIXME: This is a little weird in that it will modify the expressionStack for the result of the block.
-        // That's a little too effectful for me but I don't have a better API right now.
+        // FIXME: endBlock may modify the expressionStack slice for the result of the block.
+        // That's a little too effectful but we don't have a better API right now.
         // see: https://bugs.webkit.org/show_bug.cgi?id=164353
         WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData, shouldForceSignature));
-        WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
-        m_expressionStack.swap(data.enclosedExpressionStack);
+
+        const uint32_t parentBegin = parentEntryBegin();
+        auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
+        WASM_TRY_ADD_TO_CONTEXT(endBlock(data, enclosedStack));
+
+        m_currentStackBegin = parentBegin;
         if (!ControlType::isTopLevel(data.controlData))
             resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
@@ -3942,7 +3996,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         m_unreachableBlocks = 0;
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(data.controlData), "else block isn't associated to an if");
         WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
-        m_expressionStack = WTF::move(data.elseBlockStack);
+        m_expressionStack.shrink(m_currentStackBegin);
+        m_expressionStack.append(data.elseBlockStack.span());
         resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
     }
@@ -3959,7 +4014,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(data.controlData), "catch block isn't associated to a try");
 
         m_unreachableBlocks = 0;
-        m_expressionStack = { };
+        m_expressionStack.shrink(m_currentStackBegin);
         ResultList results;
         WASM_TRY_ADD_TO_CONTEXT(addCatchToUnreachable(exceptionIndex, exceptionSignature, data.controlData, results));
 
@@ -3980,7 +4035,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
         ControlEntry& data = m_controlStack.last();
         m_unreachableBlocks = 0;
-        m_expressionStack = { };
+        m_expressionStack.shrink(m_currentStackBegin);
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(data.controlData), "catch block isn't associated to a try");
         WASM_TRY_ADD_TO_CONTEXT(addCatchAllToUnreachable(data.controlData));
         resetLocalInitStackToHeight(data.localInitStackHeight);
@@ -4001,9 +4056,18 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(data) && !ControlType::isTopLevel(data), "delegate target isn't a try block");
 
             WASM_TRY_ADD_TO_CONTEXT(addDelegateToUnreachable(data, controlEntry.controlData));
-            Stack emptyStack;
-            WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(controlEntry, emptyStack));
-            m_expressionStack.swap(controlEntry.enclosedExpressionStack);
+
+            // Drop child's slice and pre-allocate result placeholder slots that the generator
+            // will fill in.
+            m_expressionStack.shrink(m_currentStackBegin);
+            const auto& sig = controlEntry.controlData.signature();
+            for (unsigned i = 0; i < sig.returnCount(); ++i)
+                m_expressionStack.constructAndAppend(sig.returnType(i), Context::emptyExpression());
+            const uint32_t parentBegin = parentEntryBegin();
+            auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
+            WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(controlEntry, enclosedStack));
+
+            m_currentStackBegin = parentBegin;
             resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
         }
         m_unreachableBlocks--;
@@ -4013,17 +4077,27 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case End: {
         if (m_unreachableBlocks == 1) {
             ControlEntry data = m_controlStack.takeLast();
+            const uint32_t parentBegin = parentEntryBegin();
             if (ControlType::isIf(data.controlData)) {
                 WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
-                m_expressionStack = WTF::move(data.elseBlockStack);
+                m_expressionStack.shrink(m_currentStackBegin);
+                m_expressionStack.append(data.elseBlockStack.span());
                 WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
-                WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
+
+                // Reachable End handling: the combined enclosedStack now lives in
+                // m_expressionStack[parentBegin..end].
+                auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
+                WASM_TRY_ADD_TO_CONTEXT(endBlock(data, enclosedStack));
             } else {
-                Stack emptyStack;
-                WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(data, emptyStack));
+                m_expressionStack.shrink(m_currentStackBegin);
+                const auto& sig = data.controlData.signature();
+                for (unsigned i = 0; i < sig.returnCount(); ++i)
+                    m_expressionStack.constructAndAppend(sig.returnType(i), Context::emptyExpression());
+                auto enclosedStack = m_expressionStack.mutableSpan().subspan(parentBegin);
+                WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(data, enclosedStack));
             }
 
-            m_expressionStack.swap(data.enclosedExpressionStack);
+            m_currentStackBegin = parentBegin;
             if (!ControlType::isTopLevel(data.controlData))
                 resetLocalInitStackToHeight(data.localInitStackHeight);
         }

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -56,9 +56,8 @@ static constexpr auto borderFillColor = SRGBA<uint8_t> { 208, 208, 208 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFrameSet);
 
-RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& style)
+RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, Style::ComputedStyle&& style)
     : RenderBox(Type::FrameSet, frameSet, WTF::move(style))
-    , m_isResizing(false)
 {
     ASSERT(isRenderFrameSet());
     setInline(false);
@@ -69,11 +68,6 @@ RenderFrameSet::~RenderFrameSet() = default;
 HTMLFrameSetElement& NODELETE RenderFrameSet::frameSetElement() const
 {
     return downcast<HTMLFrameSetElement>(nodeForNonAnonymous());
-}
-
-RenderFrameSet::GridAxis::GridAxis()
-    : m_splitBeingResized(noSplit)
-{
 }
 
 void RenderFrameSet::paintColumnBorder(const PaintInfo& paintInfo, const IntRect& borderRect)
@@ -445,7 +439,7 @@ void RenderFrameSet::layout()
         oldBounds = clippedOverflowRectForRepaint(repaintContainer.get());
     }
 
-    if (!parent()->isRenderFrameSet() && !document().printing()) {
+    if (!parent()->isRenderFrameSet() && !protect(document())->printing()) {
         setWidth(view().viewWidth());
         setHeight(view().viewHeight());
     }
@@ -645,7 +639,7 @@ int RenderFrameSet::hitTestSplit(const GridAxis& axis, int position) const
     return noSplit;
 }
 
-bool RenderFrameSet::isChildAllowed(const RenderObject& child, const RenderStyle&) const
+bool RenderFrameSet::isChildAllowed(const RenderObject& child, const Style::ComputedStyle&) const
 {
     return child.isRenderFrame() || child.isRenderFrameSet();
 }

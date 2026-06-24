@@ -230,7 +230,7 @@ bool WebCookieJar::cookiesEnabled(Document& document)
         return false;
 
     auto blockCookies = shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), document.cookieURL());
-    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), document.cookieURL()) == BlockCookies::Yes)
+    if (blockCookies == BlockCookies::Yes)
         return false;
 
     if (blockCookies != BlockCookies::WillDecideInNetworkProcess)

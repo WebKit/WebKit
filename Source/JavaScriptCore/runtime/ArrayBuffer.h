@@ -328,9 +328,9 @@ private:
 public:
     Weak<JSArrayBuffer> m_wrapper;
 private:
+    WeakPtr<Wasm::Memory> m_associatedWasmMemory;
     Checked<unsigned> m_pinCount { 0 };
     bool m_isWasmMemory { false };
-    WeakPtr<Wasm::Memory> m_associatedWasmMemory;
     // m_locked == true means that some API user fetched m_contents directly from a TypedArray object,
     // the buffer is backed by a WebAssembly.Memory, or is a SharedArrayBuffer.
     bool m_locked { false };

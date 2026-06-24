@@ -161,6 +161,11 @@ public:
     void setStorage(VM& vm, JSCell* storage) { internalField(Field::Storage).set(vm, this, storage); }
     void setEntry(VM& vm, JSSet::Helper::Entry entry) { internalField(Field::Entry).set(vm, this, JSSet::Helper::toJSValue(entry)); }
 
+    void close(VM& vm)
+    {
+        markClosed(vm.orderedHashTableSentinel());
+    }
+
 private:
     JSSetIterator(VM& vm, Structure* structure)
         : Base(vm, structure)

@@ -109,6 +109,7 @@ set(WTF_PUBLIC_HEADERS
     FlipBytes.h
     Float16.h
     ForbidHeapAllocation.h
+    FormattedLogging.h
     Forward.h
     Function.h
     FunctionDispatcher.h
@@ -120,6 +121,7 @@ set(WTF_PUBLIC_HEADERS
     GetPtr.h
     GlobalVersion.h
     GraphNodeWorklist.h
+    GraphOrdering.h
     GregorianDateTime.h
     HashCountedSet.h
     HashFunctions.h
@@ -182,7 +184,6 @@ set(WTF_PUBLIC_HEADERS
     MachSendRight.h
     MachSendRightAnnotated.h
     MainThread.h
-    MainThreadData.h
     MainThreadDispatcher.h
     MallocCommon.h
     MallocPtr.h
@@ -296,6 +297,7 @@ set(WTF_PUBLIC_HEADERS
     SHA1.h
     SIMDHelpers.h
     SIMDUTF.h
+    SSACalculator.h
     SafeStrerror.h
     SaturatedArithmetic.h
     SchedulePair.h
@@ -326,6 +328,7 @@ set(WTF_PUBLIC_HEADERS
     SoftLinking.h
     SortedArrayMap.h
     SpanningTree.h
+    SparseBitVector.h
     Spectrum.h
     StackAllocation.h
     StackBounds.h
@@ -335,7 +338,6 @@ set(WTF_PUBLIC_HEADERS
     StackShotProfiler.h
     StackStats.h
     StackTrace.h
-    StatisticsManager.h
     StdFilesystem.h
     StdIntExtras.h
     StdLibExtras.h
@@ -455,8 +457,6 @@ set(WTF_PUBLIC_HEADERS
     dtoa/utils.h
 
     fast_float/fast_float.h
-
-    ios/WebCoreThread.h
 
     persistence/PersistentCoders.h
     persistence/PersistentDecoder.h
@@ -625,7 +625,6 @@ set(WTF_SOURCES
     StackPointer.cpp
     StackStats.cpp
     StackTrace.cpp
-    StatisticsManager.cpp
     StringPrintStream.cpp
     SuspendableWorkQueue.cpp
     ThreadGroup.cpp
@@ -685,6 +684,7 @@ set(WTF_SOURCES
     text/SymbolRegistry.cpp
     text/TextBreakIterator.cpp
     text/TextStream.cpp
+    text/UniquedStringImpl.cpp
     text/WTFString.cpp
 
     text/icu/UnicodeExtras.cpp
@@ -814,6 +814,9 @@ set(WTF_LIBRARIES
 )
 
 set(WTF_FRAMEWORKS bmalloc)
+if (USE_APPLE_INTERNAL_SDK)
+    list(APPEND WTF_FRAMEWORKS WebKitAdditions)
+endif ()
 
 if (ATOMICS_REQUIRE_LIBATOMIC)
     list(APPEND WTF_LIBRARIES atomic)
@@ -844,6 +847,13 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     # Provide a stub header so the directory has at least one entry.
     file(MAKE_DIRECTORY "${WTF_FRAMEWORK_HEADERS_DIR}/wtf/spi")
     file(WRITE "${WTF_FRAMEWORK_HEADERS_DIR}/wtf/spi/wtf_spi_stub.h" "")
+
+    # module.modulemap declares an explicit `WebCoreThread` submodule referencing
+    # ios/WebCoreThread.h, which is Cocoa-only. Clang validates header existence
+    # when parsing the modulemap even for unused explicit submodules, so provide
+    # an empty stub.
+    file(MAKE_DIRECTORY "${WTF_FRAMEWORK_HEADERS_DIR}/wtf/ios")
+    file(WRITE "${WTF_FRAMEWORK_HEADERS_DIR}/wtf/ios/WebCoreThread.h" "")
 endif ()
 
 WEBKIT_FRAMEWORK(WTF)

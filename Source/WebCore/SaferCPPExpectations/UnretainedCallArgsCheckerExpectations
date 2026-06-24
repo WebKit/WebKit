@@ -17,7 +17,6 @@ crypto/cocoa/SerializedCryptoKeyWrapCocoa.mm
 editing/SmartReplaceCF.cpp
 [ iOS ] editing/cocoa/DataDetection.mm
 editing/cocoa/EditingHTMLConverter.mm
-editing/cocoa/FontAttributeChangesCocoa.mm
 editing/cocoa/NodeHTMLConverter.mm
 editing/cocoa/WebContentReaderCocoa.mm
 inspector/agents/page/PageTimelineAgent.cpp

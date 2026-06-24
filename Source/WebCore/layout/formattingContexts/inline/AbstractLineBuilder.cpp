@@ -29,7 +29,7 @@
 #include "FontCascade.h"
 #include "InlineContentBreaker.h"
 #include "InlineFormattingContext.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -103,7 +103,7 @@ void AbstractLineBuilder::setIntrinsicWidthMode(IntrinsicWidthMode intrinsicWidt
     m_inlineContentBreaker.setIsMinimumInIntrinsicWidthMode(m_intrinsicWidthMode == IntrinsicWidthMode::Minimum);
 }
 
-const RenderStyle& AbstractLineBuilder::rootStyle() const
+const Style::ComputedStyle& AbstractLineBuilder::rootStyle() const
 {
     return isFirstFormattedLineCandidate() ? root().firstLineStyle() : root().style();
 }

@@ -20,6 +20,8 @@
 #include "../internal.h"
 
 
+using namespace bssl;
+
 int BN_mod_pow2(BIGNUM *r, const BIGNUM *a, size_t e) {
   if (e == 0 || a->width == 0) {
     BN_zero(r);

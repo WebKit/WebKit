@@ -175,8 +175,6 @@ async function runTests() {
 
 description("Test that mouse cursors are applied correctly on pseudo-elements (bug 237892).");
 if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
     window.jsTestIsAsync = true;
     runTests();
 } else

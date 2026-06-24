@@ -173,6 +173,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSet(ma
     macro(OpNegate) \
     macro(OpToNumber) \
     macro(OpToNumeric) \
+    macro(OpUnsigned) \
 
 
 IGNORE_WARNINGS_BEGIN("type-limits")

@@ -268,7 +268,10 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
                 return { };
             return document->page()->cookieJar().cookieRequestHeaderFieldValue(*document, url);
         };
-        LegacyWebSocketInspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document.get(), m_progressIdentifier, m_handshake->clientHandshakeRequest(WTF::move(cookieRequestHeaderFieldValue)));
+        auto request = m_handshake->clientHandshakeRequest(WTF::move(cookieRequestHeaderFieldValue));
+        LegacyWebSocketInspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document.get(), m_progressIdentifier, request);
+        m_handshake->setClientHandshakeRequestHeaders(request.httpHeaderFields());
+        LegacyWebSocketInspectorInstrumentation::didSendWebSocketHandshakeRequest(m_document.get(), m_progressIdentifier, request);
     }
     auto handshakeMessage = m_handshake->clientHandshakeMessage();
     std::optional<CookieRequestHeaderFieldProxy> cookieRequestHeaderFieldProxy;

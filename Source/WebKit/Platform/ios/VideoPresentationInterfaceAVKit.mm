@@ -160,8 +160,8 @@ void VideoPresentationInterfaceAVKit::setupPlayerViewController()
     RetainPtr contentSource = playbackSessionInterface().contentSource();
     [contentSource setVideoLayer:fullscreenPlayerLayer()];
 
-    RetainPtr platformContentSource = [allocAVPlayerViewControllerContentSourceInstance() initWithVideoPlaybackControllable:contentSource.get()];
-    m_experienceController = [allocWKSExperienceControllerInstance() initWithContentSource:platformContentSource.get()];
+    RetainPtr platformContentSource = adoptNS([allocAVPlayerViewControllerContentSourceInstance() initWithVideoPlaybackControllable:contentSource.get()]);
+    m_experienceController = adoptNS([allocWKSExperienceControllerInstance() initWithContentSource:platformContentSource.get()]);
     [m_experienceController setDelegate:m_experienceControllerDelegate.get()];
 }
 

@@ -47,10 +47,20 @@ option(SHOW_BINDINGS_GENERATION_PROGRESS "Show progress of generating bindings" 
 #   SUPPLEMENTAL_DEPFILE is a value of --supplementalDependencyFile. (optional)
 #   PP_EXTRA_OUTPUT is extra outputs of preprocess-idls.pl. (optional)
 #   PP_EXTRA_ARGS is extra arguments for preprocess-idls.pl. (optional)
+#   EXTRA_OUTPUT is extra source files emitted by the bindings generator that
+#       aren't derived from a single IDL via the JS<name>.cpp/.h convention
+#       (e.g. JSDOMWindowConstructorAttributes.cpp, the sibling translation
+#       unit emitted for any interface tagged [StandaloneConstructorAttributes]
+#       in IDL). Declared as BYPRODUCTS so ninja knows the custom command
+#       produces them; callers add the file to their source list via
+#       Sources.txt (the unified-source machinery) like any other compiled
+#       .cpp. CMake passes --ignoreStandaloneConstructorAttributes so the file
+#       is emitted as an empty TU here, since jumbo bundles negate the split's
+#       parallelism win.
 function(GENERATE_BINDINGS target)
     set(options)
     set(oneValueArgs OUTPUT_SOURCE BASE_DIR FEATURES DESTINATION GENERATOR SUPPLEMENTAL_DEPFILE)
-    set(multiValueArgs INPUT_FILES SUPPLEMENTAL_IDL_FILES PP_INPUT_FILES INCLUDED_FILES PP_EXTRA_OUTPUT PP_EXTRA_ARGS)
+    set(multiValueArgs INPUT_FILES SUPPLEMENTAL_IDL_FILES PP_INPUT_FILES INCLUDED_FILES PP_EXTRA_OUTPUT PP_EXTRA_ARGS EXTRA_OUTPUT)
     cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(binding_generator ${WEBCORE_DIR}/bindings/scripts/generate-bindings-all.pl)
     set(idl_attributes_file ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.json)
@@ -59,29 +69,53 @@ function(GENERATE_BINDINGS target)
     set(included_idl_files_list ${CMAKE_CURRENT_BINARY_DIR}/included_idl_files_${target}.tmp)
     set(_supplemental_dependency)
 
-    set(content)
-    foreach (f ${arg_INPUT_FILES} ${arg_SUPPLEMENTAL_IDL_FILES})
+    # Absolutize inputs once. These feed both the file lists handed to the
+    # generator and the custom command DEPENDS below: relative DEPENDS force
+    # CMake's O(N^2) linear output-to-source search during generation, and with
+    # ~1000 IDLs that dominates the configure's generate step.
+    set(_abs_input_files)
+    foreach (f ${arg_INPUT_FILES})
         if (NOT IS_ABSOLUTE ${f})
             set(f ${CMAKE_CURRENT_SOURCE_DIR}/${f})
         endif ()
+        list(APPEND _abs_input_files ${f})
+    endforeach ()
+    set(_abs_supplemental_files)
+    foreach (f ${arg_SUPPLEMENTAL_IDL_FILES})
+        if (NOT IS_ABSOLUTE ${f})
+            set(f ${CMAKE_CURRENT_SOURCE_DIR}/${f})
+        endif ()
+        list(APPEND _abs_supplemental_files ${f})
+    endforeach ()
+    set(_abs_pp_input_files)
+    foreach (f ${arg_PP_INPUT_FILES})
+        if (NOT IS_ABSOLUTE ${f})
+            set(f ${CMAKE_CURRENT_SOURCE_DIR}/${f})
+        endif ()
+        list(APPEND _abs_pp_input_files ${f})
+    endforeach ()
+    set(_abs_included_files)
+    foreach (f ${arg_INCLUDED_FILES})
+        if (NOT IS_ABSOLUTE ${f})
+            set(f ${CMAKE_CURRENT_SOURCE_DIR}/${f})
+        endif ()
+        list(APPEND _abs_included_files ${f})
+    endforeach ()
+
+    set(content)
+    foreach (f ${_abs_input_files} ${_abs_supplemental_files})
         set(content "${content}${f}\n")
     endforeach ()
     file(WRITE ${idl_files_list} ${content})
 
     set(pp_content)
-    foreach (f ${arg_PP_INPUT_FILES})
-        if (NOT IS_ABSOLUTE ${f})
-            set(f ${CMAKE_CURRENT_SOURCE_DIR}/${f})
-        endif ()
+    foreach (f ${_abs_pp_input_files})
         set(pp_content "${pp_content}${f}\n")
     endforeach ()
     file(WRITE ${pp_idl_files_list} ${pp_content})
 
     set(include_content)
-    foreach (f ${arg_INPUT_FILES} ${arg_SUPPLEMENTAL_IDL_FILES} ${arg_INCLUDED_FILES})
-        if (NOT IS_ABSOLUTE ${f})
-            set(f ${CMAKE_CURRENT_SOURCE_DIR}/${f})
-        endif ()
+    foreach (f ${_abs_input_files} ${_abs_supplemental_files} ${_abs_included_files})
         set(include_content "${include_content}${f}\n")
     endforeach ()
     file(WRITE ${included_idl_files_list} ${include_content})
@@ -94,6 +128,7 @@ function(GENERATE_BINDINGS target)
         --idlFileNamesList ${included_idl_files_list}
         --ppIDLFilesList ${pp_idl_files_list}
         --idlAttributesFile ${idl_attributes_file}
+        --ignoreStandaloneConstructorAttributes
     )
     if (arg_SUPPLEMENTAL_DEPFILE)
         list(APPEND args --supplementalDependencyFile ${arg_SUPPLEMENTAL_DEPFILE})
@@ -156,6 +191,9 @@ function(GENERATE_BINDINGS target)
     if (arg_PP_EXTRA_OUTPUT)
         list(APPEND _byproducts ${arg_PP_EXTRA_OUTPUT})
     endif ()
+    if (arg_EXTRA_OUTPUT)
+        list(APPEND _byproducts ${arg_EXTRA_OUTPUT})
+    endif ()
     if (arg_SUPPLEMENTAL_DEPFILE)
         list(APPEND _byproducts ${arg_SUPPLEMENTAL_DEPFILE})
     endif ()
@@ -170,9 +208,9 @@ function(GENERATE_BINDINGS target)
         COMMAND ${PERL_EXECUTABLE} ${binding_generator} ${args}
         COMMAND ${CMAKE_COMMAND} -E touch ${_stamp_file}
         DEPENDS
-            ${arg_INPUT_FILES}
-            ${arg_SUPPLEMENTAL_IDL_FILES}
-            ${arg_PP_INPUT_FILES}
+            ${_abs_input_files}
+            ${_abs_supplemental_files}
+            ${_abs_pp_input_files}
             ${common_generator_dependencies}
             ${binding_generator}
             ${idl_attributes_file}

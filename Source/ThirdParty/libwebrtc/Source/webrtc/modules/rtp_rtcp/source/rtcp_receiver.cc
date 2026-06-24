@@ -19,12 +19,12 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/base/attributes.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
@@ -184,7 +184,7 @@ RTCPReceiver::RTCPReceiver(const Environment& env,
 
 RTCPReceiver::~RTCPReceiver() {}
 
-void RTCPReceiver::IncomingPacket(ArrayView<const uint8_t> packet) {
+void RTCPReceiver::IncomingPacket(std::span<const uint8_t> packet) {
   if (packet.empty()) {
     RTC_LOG(LS_WARNING) << "Incoming empty RTCP packet";
     return;
@@ -347,7 +347,7 @@ std::vector<ReportBlockData> RTCPReceiver::GetLatestReportBlockData() const {
   return result;
 }
 
-bool RTCPReceiver::ParseCompoundPacket(ArrayView<const uint8_t> packet,
+bool RTCPReceiver::ParseCompoundPacket(std::span<const uint8_t> packet,
                                        PacketInformation* packet_information) {
   MutexLock lock(&rtcp_receiver_lock_);
 
@@ -363,12 +363,13 @@ bool RTCPReceiver::ParseCompoundPacket(ArrayView<const uint8_t> packet,
   // block.
   flat_map<uint32_t, RtcpReceivedBlock> received_blocks;
   bool valid = true;
-  for (const uint8_t* next_block = packet.begin();
-       valid && next_block != packet.end();
-       next_block = rtcp_block.NextPacket()) {
+  for (auto next_block = packet.begin(); valid && next_block != packet.end();
+       next_block =
+           packet.begin() + (rtcp_block.NextPacket() - packet.data())) {
     ptrdiff_t remaining_blocks_size = packet.end() - next_block;
     RTC_DCHECK_GT(remaining_blocks_size, 0);
-    if (!rtcp_block.Parse(next_block, remaining_blocks_size)) {
+    if (!rtcp_block.Parse(std::to_address(next_block),
+                          static_cast<size_t>(remaining_blocks_size))) {
       valid = false;
       break;
     }

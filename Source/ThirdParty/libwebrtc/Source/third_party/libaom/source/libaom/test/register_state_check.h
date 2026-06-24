@@ -20,9 +20,8 @@
 
 // API_REGISTER_STATE_CHECK(function)
 //   Validates the environment pre & post function execution to ensure the
-//   environment is in a consistent state. This should be used with API
-//   function sand assembly functions which are not expected to fully restore
-//   the system state.
+//   environment is in a consistent state. This should be used with functions
+//   which are expected to fully restore the system state.
 //   See platform implementations of RegisterStateCheck and
 //   RegisterStateCheckMMX for details.
 

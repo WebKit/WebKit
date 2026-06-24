@@ -96,6 +96,26 @@ CertificateInfo CertificateInfo::isolatedCopy() const
     return CertificateInfo(certificate.get(), m_tlsErrors);
 }
 
+// GLib's GTlsCertificate::subject-name property returns a full RFC 2253 distinguished name
+// (e.g. "CN=example.com,O=Org,C=US"). Extract a human-readable summary by preferring the
+// CN attribute, then O, to match the behaviour of SecCertificateCopySubjectSummary on macOS.
+static String subjectSummaryFromDN(const String& dn)
+{
+    String organization;
+    for (auto& component : dn.split(',')) {
+        auto equalsPos = component.find('=');
+        if (equalsPos == notFound)
+            continue;
+        auto type = component.left(equalsPos).trim(isASCIIWhitespace<char16_t>);
+        auto value = component.substring(equalsPos + 1).trim(isASCIIWhitespace<char16_t>);
+        if (type == "CN"_s)
+            return value;
+        if (type == "O"_s && organization.isEmpty())
+            organization = value;
+    }
+    return organization.isEmpty() ? dn : organization;
+}
+
 std::optional<CertificateSummary> CertificateInfo::summary() const
 {
     if (!m_certificate)
@@ -116,7 +136,7 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
     if (validNotAfter)
         summaryInfo.validUntil = Seconds(static_cast<double>(g_date_time_to_unix(validNotAfter.get())));
     if (subjectName)
-        summaryInfo.subject = String::fromUTF8(subjectName.get());
+        summaryInfo.subject = subjectSummaryFromDN(String::fromUTF8(subjectName.get()));
     for (auto dnsName : span<GBytes*>(dnsNames))
         summaryInfo.dnsNames.append(String(byteCast<Latin1Character>(span(dnsName))));
     for (auto address : span<GInetAddress*>(ipAddresses)) {

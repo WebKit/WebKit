@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,6 +90,9 @@ struct CSSParserContext {
     bool cssMathDepthEnabled : 1 { false };
     bool openPseudoClassEnabled : 1 { false };
     bool cssAttrSubstitutionFunctionEnabled : 1 { false };
+    bool cssScrollStateContainerQueriesEnabled : 1 { false };
+    bool cssCalcMixEnabled : 1 { false };
+    bool cssIdentFunctionEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_NS_HISTOGRAMS_H_
 
 #include <array>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/ns/signal_model.h"
 
 namespace webrtc {
@@ -35,11 +35,11 @@ class Histograms {
   void Update(const SignalModel& features_);
 
   // Methods for accessing the histograms.
-  ArrayView<const int, kHistogramSize> get_lrt() const { return lrt_; }
-  ArrayView<const int, kHistogramSize> get_spectral_flatness() const {
+  std::span<const int, kHistogramSize> get_lrt() const { return lrt_; }
+  std::span<const int, kHistogramSize> get_spectral_flatness() const {
     return spectral_flatness_;
   }
-  ArrayView<const int, kHistogramSize> get_spectral_diff() const {
+  std::span<const int, kHistogramSize> get_spectral_diff() const {
     return spectral_diff_;
   }
 

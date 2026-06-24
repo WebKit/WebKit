@@ -35,6 +35,7 @@
 #import "RemoteLayerTreeCommitBundle.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteScrollingCoordinatorProxyMac.h"
+#import "TransientZoomState.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -101,17 +102,14 @@ Ref<RemoteLayerTreeDrawingAreaProxyMac> RemoteLayerTreeDrawingAreaProxyMac::crea
 RemoteLayerTreeDrawingAreaProxyMac::RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
     : RemoteLayerTreeDrawingAreaProxy(pageProxy, webProcessProxy)
     , m_displayLinkClient(makeUniqueRef<RemoteLayerTreeDisplayLinkClient>(pageProxy.identifier()))
+    , m_processPool(pageProxy.configuration().processPool())
 {
 }
 
 RemoteLayerTreeDrawingAreaProxyMac::~RemoteLayerTreeDrawingAreaProxyMac()
 {
-    if (auto* displayLink = existingDisplayLink()) {
-        if (m_fullSpeedUpdateObserverID)
-            displayLink->removeObserver(m_displayLinkClient, *m_fullSpeedUpdateObserverID);
-        if (m_displayRefreshObserverID)
-            displayLink->removeObserver(m_displayLinkClient, *m_displayRefreshObserverID);
-    }
+    if (RefPtr processPool = m_processPool.get())
+        processPool->displayLinks().stopDisplayLinks(m_displayLinkClient);
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyMac::delegatedScrollingMode() const
@@ -308,6 +306,13 @@ void RemoteLayerTreeDrawingAreaProxyMac::applyTransientZoomToLayer()
     [scrolledContentsLayer removeAnimationForKey:transientScrolledContentsPositionAnimationKey];
     [scrolledContentsLayer addAnimation:transientPositionAnimation(transientScrolledContentsPosition).get() forKey:transientScrolledContentsPositionAnimationKey];
     END_BLOCK_OBJC_EXCEPTIONS
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    if (RefPtr page = this->page()) {
+        if (RefPtr pageClient = page->pageClient())
+            pageClient->didUpdateTransientZoomStateForScrollPocket({ { *m_transientZoomScale, *m_transientZoomOriginInVisibleRect } });
+    }
+#endif
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::removeTransientZoomFromLayer()
@@ -325,6 +330,13 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeTransientZoomFromLayer()
     [clipLayer removeAnimationForKey:transientClipSizeAnimationKey];
     [scrolledContentsLayer removeAnimationForKey:transientScrolledContentsPositionAnimationKey];
     END_BLOCK_OBJC_EXCEPTIONS
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    if (RefPtr page = this->page()) {
+        if (RefPtr pageClient = page->pageClient())
+            pageClient->didUpdateTransientZoomStateForScrollPocket(std::nullopt);
+    }
+#endif
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect)

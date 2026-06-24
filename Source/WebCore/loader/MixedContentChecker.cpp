@@ -31,7 +31,7 @@
 #include "MixedContentChecker.h"
 
 #include "ContentFilter.h"
-#include "Document.h"
+#include "DocumentQuirks.h"
 #include "FrameLoader.h"
 #include "LegacySchemeRegistry.h"
 #include "LocalFrameInlines.h"
@@ -130,6 +130,13 @@ bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destina
     return true;
 }
 
+static bool shouldAllowConnectionWithPotentiallyInsecureProtocol(Frame& frame, const URL& url, MixedContentChecker::IsUpgradable isUpgradable)
+{
+    if (RefPtr localFrame = dynamicDowncast<const LocalFrame>(frame); localFrame && protect(localFrame->document())->quirks().shouldAllowMixedContentConnectionToLoopback(url))
+        return true;
+    return (LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) || shouldTreatAsPotentiallyTrustworthy(url)) && isUpgradable == MixedContentChecker::IsUpgradable::Yes;
+}
+
 bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpgradable isUpgradable)
 {
 #if ENABLE(CONTENT_FILTERING) && HAVE(WEBCONTENTRESTRICTIONS)
@@ -139,7 +146,7 @@ bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpg
 
     if (!isMixedContent(frame, url))
         return false;
-    if ((LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) || shouldTreatAsPotentiallyTrustworthy(url)) && isUpgradable == IsUpgradable::Yes)
+    if (shouldAllowConnectionWithPotentiallyInsecureProtocol(frame, url, isUpgradable))
         return false;
     frame.reportMixedContentViolation(true, url);
     return true;

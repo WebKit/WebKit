@@ -28,9 +28,8 @@
 #include "CSSKeywordValue.h"
 #include "Document.h"
 #include "Element.h"
-#include "RenderStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleKeyword+CSSValueConversion.h"
 
 namespace WebCore {

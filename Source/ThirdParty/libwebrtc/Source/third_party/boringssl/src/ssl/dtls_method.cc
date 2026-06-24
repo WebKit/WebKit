@@ -163,7 +163,7 @@ static const SSL_PROTOCOL_METHOD kDTLSProtocolMethod = {
     dtls1_set_write_state,
 };
 
-const SSL_METHOD *DTLS_method(void) {
+const SSL_METHOD *DTLS_method() {
   static const SSL_METHOD kMethod = {
       0,
       &kDTLSProtocolMethod,
@@ -172,7 +172,7 @@ const SSL_METHOD *DTLS_method(void) {
   return &kMethod;
 }
 
-const SSL_METHOD *DTLS_with_buffers_method(void) {
+const SSL_METHOD *DTLS_with_buffers_method() {
   static const SSL_METHOD kMethod = {
       0,
       &kDTLSProtocolMethod,
@@ -183,7 +183,7 @@ const SSL_METHOD *DTLS_with_buffers_method(void) {
 
 // Legacy version-locked methods.
 
-const SSL_METHOD *DTLSv1_2_method(void) {
+const SSL_METHOD *DTLSv1_2_method() {
   static const SSL_METHOD kMethod = {
       DTLS1_2_VERSION,
       &kDTLSProtocolMethod,
@@ -192,7 +192,7 @@ const SSL_METHOD *DTLSv1_2_method(void) {
   return &kMethod;
 }
 
-const SSL_METHOD *DTLSv1_method(void) {
+const SSL_METHOD *DTLSv1_method() {
   static const SSL_METHOD kMethod = {
       DTLS1_VERSION,
       &kDTLSProtocolMethod,
@@ -203,14 +203,14 @@ const SSL_METHOD *DTLSv1_method(void) {
 
 // Legacy side-specific methods.
 
-const SSL_METHOD *DTLSv1_2_server_method(void) { return DTLSv1_2_method(); }
+const SSL_METHOD *DTLSv1_2_server_method() { return DTLSv1_2_method(); }
 
-const SSL_METHOD *DTLSv1_server_method(void) { return DTLSv1_method(); }
+const SSL_METHOD *DTLSv1_server_method() { return DTLSv1_method(); }
 
-const SSL_METHOD *DTLSv1_2_client_method(void) { return DTLSv1_2_method(); }
+const SSL_METHOD *DTLSv1_2_client_method() { return DTLSv1_2_method(); }
 
-const SSL_METHOD *DTLSv1_client_method(void) { return DTLSv1_method(); }
+const SSL_METHOD *DTLSv1_client_method() { return DTLSv1_method(); }
 
-const SSL_METHOD *DTLS_server_method(void) { return DTLS_method(); }
+const SSL_METHOD *DTLS_server_method() { return DTLS_method(); }
 
-const SSL_METHOD *DTLS_client_method(void) { return DTLS_method(); }
+const SSL_METHOD *DTLS_client_method() { return DTLS_method(); }

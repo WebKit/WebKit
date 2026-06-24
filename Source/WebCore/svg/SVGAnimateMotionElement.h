@@ -51,10 +51,10 @@ private:
     void applyResultsToTarget() override;
     std::optional<float> calculateDistance(const String& fromString, const String& toString) override;
 
-    enum RotateMode {
-        RotateAngle,
-        RotateAuto,
-        RotateAutoReverse
+    enum class RotateMode : uint8_t {
+        Angle,
+        Auto,
+        AutoReverse
     };
     RotateMode rotateMode() const;
     void buildTransformForProgress(AffineTransform*, float percentage);

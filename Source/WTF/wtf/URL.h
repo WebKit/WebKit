@@ -138,7 +138,7 @@ public:
     bool isValid() const;
 
     // Since we overload operator NSURL * we have this to prevent accidentally using that operator
-    // when placing a URL in an if statment.
+    // when placing a URL in an if statement.
     operator bool() const = delete;
 
     const String& string() const LIFETIME_BOUND { return m_string; }

@@ -44,8 +44,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FormAssociatedCustomElement);
 using namespace HTMLNames;
 
 FormAssociatedCustomElement::FormAssociatedCustomElement(HTMLMaybeFormAssociatedCustomElement& element)
-    : ValidatedFormListedElement { nullptr }
-    , m_element { element }
+    : m_element { element }
 {
 }
 
@@ -218,7 +217,7 @@ void FormAssociatedCustomElement::invalidateElementsCollectionCachesInAncestors(
     if (RefPtr form = this->form())
         invalidateElementsCache(*form);
 
-    for (Ref ancestor : lineageOfType<HTMLFieldSetElement>(*m_element))
+    for (Ref ancestor : lineageOfType<HTMLFieldSetElement>(protect(*m_element)))
         invalidateElementsCache(ancestor.get());
 }
 

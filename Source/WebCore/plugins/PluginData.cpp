@@ -69,7 +69,7 @@ const Vector<PluginInfo>& PluginData::webVisiblePlugins() const
 {
     Ref page = m_page.get();
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
-    auto documentURL = localMainFrame && localMainFrame->document() ? localMainFrame->document()->url() : URL { };
+    auto documentURL = localMainFrame && localMainFrame->document() ? protect(localMainFrame->document())->url() : URL { };
     if (!documentURL.isNull() && !protocolHostAndPortAreEqual(m_cachedVisiblePlugins.pageURL, documentURL)) {
         m_cachedVisiblePlugins.pageURL = WTF::move(documentURL);
         m_cachedVisiblePlugins.pluginList = std::nullopt;

@@ -58,11 +58,11 @@ struct GridTrackSizes : ListOrDefault<GridTrackSizeList, GridTrackSizeDefaulter>
 
 // MARK: - Conversion
 
-template<> struct ToCSS<GridTrackSizes> { auto operator()(const GridTrackSizes&, const RenderStyle&) -> CSS::GridTrackSizes; };
+template<> struct ToCSS<GridTrackSizes> { auto operator()(const GridTrackSizes&, const Style::ComputedStyle&) -> CSS::GridTrackSizes; };
 template<> struct ToStyle<CSS::GridTrackSizes> { auto operator()(const CSS::GridTrackSizes&, const BuilderState&) -> GridTrackSizes; };
 
 template<> struct CSSValueConversion<GridTrackSizes> { auto operator()(BuilderState&, const CSSValue&) -> GridTrackSizes; };
-template<> struct CSSValueCreation<GridTrackSizes> { auto operator()(CSSValuePool&, const RenderStyle&, const GridTrackSizes&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<GridTrackSizes> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const GridTrackSizes&) -> Ref<CSSValue>; };
 
 } // namespace Style
 } // namespace WebCore

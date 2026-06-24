@@ -201,4 +201,20 @@ void FontDescription::setVariantLigatures(FontVariantLigaturesValues values)
     setVariantContextualAlternates(values.contextual);
 }
 
+// Resolves which axis a font's slope is applied to when realizing variations. The slnt variation
+// implements oblique values and ital=1 implements italic values. WebKit treats italic as a synonym
+// for oblique, which css-fonts-4 permits ("User agents may treat italic as a synonym for oblique"),
+// so when italic is requested against a face that exposes its slope on the 'slnt' axis (an
+// oblique-angle @font-face, no 'ital' axis) and no synthetic oblique applies, drive the 'slnt' axis
+// rather than the absent 'ital' axis.
+FontStyleAxis variationStyleAxis(const FontDescription& description, const FontSelectionSpecifiedCapabilities& faceCapabilities)
+{
+    auto axis = description.fontStyleAxis();
+    if (axis != FontStyleAxis::ital || faceCapabilities.faceAxis != FontStyleAxis::slnt)
+        return axis;
+    bool willSynthesizeOblique = description.allowsItalicOrObliqueFontSynthesisStyle()
+        && faceCapabilities.slope && !isItalic(faceCapabilities.slope->maximum);
+    return willSynthesizeOblique ? axis : FontStyleAxis::slnt;
+}
+
 } // namespace WebCore

@@ -1,0 +1,14 @@
+Test
+Test
+Test
+Test
+Test
+
+PASS glyph-orientation-horizontal is not a recognized CSS property
+PASS CSS.supports rejects glyph-orientation-horizontal
+PASS glyph-orientation-horizontal presentation attribute has no effect on computed style
+PASS glyph-orientation-horizontal="0" does not affect getRotationOfChar
+PASS glyph-orientation-horizontal="90" does not affect getRotationOfChar
+PASS glyph-orientation-horizontal="180" does not affect getRotationOfChar
+PASS glyph-orientation-horizontal="270" does not affect getRotationOfChar
+

@@ -27,6 +27,7 @@
     WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad;
     std::optional<WebKit::WebsitePoliciesData> websitePolicies;
     bool lastNavigationWasAppInitiated;
+    WebCore::ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache;
     std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     WebCore::PublicSuffix publicSuffix;
     WebKit::SandboxExtensionHandle sandboxExtensionHandle;

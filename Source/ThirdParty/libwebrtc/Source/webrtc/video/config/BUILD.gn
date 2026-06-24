@@ -18,7 +18,6 @@ rtc_library("streams_config") {
 
   deps = [
     ":encoder_config",
-    "../../api:array_view",
     "../../api:field_trials_view",
     "../../api/units:data_rate",
     "../../api/video:resolution",

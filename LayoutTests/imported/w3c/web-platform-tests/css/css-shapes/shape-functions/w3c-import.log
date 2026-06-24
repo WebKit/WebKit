@@ -24,11 +24,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/inset-function-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/inset-function-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/inset-function-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/path-function-computed-collision.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/path-function-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/path-function-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/path-function-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-rounding-clamp-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-rounding-clamp-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-rounding-clamp.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/polygon-function-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/rect-function-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-functions/rect-function-invalid.html

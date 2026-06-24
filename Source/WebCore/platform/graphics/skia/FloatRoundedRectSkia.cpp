@@ -49,7 +49,7 @@ FloatRoundedRect::FloatRoundedRect(const SkRRect& skRect)
 
 FloatRoundedRect::operator SkRRect() const
 {
-    if (!isRounded())
+    if (!hasNonZeroRadii())
         return SkRRect::MakeRect(rect());
 
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port

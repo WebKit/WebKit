@@ -22,6 +22,7 @@
 
 import bisect
 import collections
+import importlib
 import math
 import os
 import signal
@@ -29,6 +30,9 @@ import threading
 import time
 
 from webkitcorepy import log, string_utils
+from webkitcorepy.call_by_need import CallByNeed
+
+mock = CallByNeed(lambda: importlib.import_module('unittest.mock'))
 
 ORIGINAL_SLEEP = time.sleep
 

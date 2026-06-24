@@ -218,7 +218,8 @@ void av1_cdef_dealloc_data(CdefSearchCtx *cdef_search_ctx);
 
 void av1_cdef_mse_calc_block(CdefSearchCtx *cdef_search_ctx,
                              struct aom_internal_error_info *error_info,
-                             int fbr, int fbc, int sb_count);
+                             int fbr, int fbc, int sb_count,
+                             int adaptive_cdef_mode);
 /*!\endcond */
 
 /*!\brief AV1 CDEF parameter search
@@ -251,10 +252,11 @@ void av1_cdef_search(struct AV1_COMP *cpi);
  * \param[in,out]  cm                 Pointer to top level common structure
  * \param[in]      skip_cdef          Flag to skip CDEF filtering
  * \param[in]      is_screen_content  Flag indicating screen content
+ * \param[in]      avoid_uv_cdef      Flag to avoid assigning UV CDEF strengths
  *
  */
 void av1_pick_cdef_from_qp(AV1_COMMON *const cm, int skip_cdef,
-                           int is_screen_content);
+                           int is_screen_content, bool avoid_uv_cdef);
 
 #ifdef __cplusplus
 }  // extern "C"

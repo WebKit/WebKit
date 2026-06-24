@@ -99,13 +99,13 @@ void RotateDesktopFrame(const DesktopFrame& source,
                         const DesktopVector& target_offset,
                         DesktopFrame* target) {
   RTC_DCHECK(target);
-  RTC_DCHECK(DesktopRect::MakeSize(source.size()).ContainsRect(source_rect));
+  RTC_CHECK(DesktopRect::MakeSize(source.size()).ContainsRect(source_rect));
   // TODO(bugs.webrtc.org/436974448): Support other pixel formats.
   RTC_CHECK_EQ(FOURCC_ARGB, source.pixel_format());
   // The rectangle in `target`.
   const DesktopRect target_rect =
       RotateAndOffsetRect(source_rect, source.size(), rotation, target_offset);
-  RTC_DCHECK(DesktopRect::MakeSize(target->size()).ContainsRect(target_rect));
+  RTC_CHECK(DesktopRect::MakeSize(target->size()).ContainsRect(target_rect));
 
   if (target_rect.is_empty()) {
     return;

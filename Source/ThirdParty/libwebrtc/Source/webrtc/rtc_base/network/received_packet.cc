@@ -13,9 +13,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/transport/ecn_marking.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
@@ -23,7 +23,7 @@
 
 namespace webrtc {
 
-ReceivedIpPacket::ReceivedIpPacket(ArrayView<const uint8_t> payload,
+ReceivedIpPacket::ReceivedIpPacket(std::span<const uint8_t> payload,
                                    const SocketAddress& source_address,
                                    std::optional<Timestamp> arrival_time,
                                    EcnMarking ecn,
@@ -48,7 +48,7 @@ ReceivedIpPacket ReceivedIpPacket::CreateFromLegacy(
     const SocketAddress& source_address) {
   RTC_DCHECK(packet_time_us == -1 || packet_time_us >= 0);
   return ReceivedIpPacket(
-      MakeArrayView(data, size), source_address,
+      std::span(data, size), source_address,
       (packet_time_us >= 0)
           ? std::optional<Timestamp>(Timestamp::Micros(packet_time_us))
           : std::nullopt);

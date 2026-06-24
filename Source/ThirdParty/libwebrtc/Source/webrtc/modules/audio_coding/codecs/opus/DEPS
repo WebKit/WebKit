@@ -1,5 +1,5 @@
 specific_include_rules = {
-  "opus_inst\.h": [
+  "opus_inst\\.h": [
     "+third_party/opus",
   ],
 }

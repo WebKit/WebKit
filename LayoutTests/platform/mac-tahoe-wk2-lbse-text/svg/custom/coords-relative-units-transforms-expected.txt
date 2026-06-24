@@ -4,25 +4,35 @@ layer at (0,0) size 400x200
   RenderSVGRoot {svg} at (0,0) size 400x200
 layer at (0,0) size 400x200
   RenderSVGViewportContainer at (0,0) size 400x200
-layer at (5,5) size 3990x1990 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
-  RenderSVGRect {rect} at (5,5) size 3990x1990 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [x=5.00] [y=5.00] [width=3990.00] [height=1990.00]
-layer at (-50,149.19) size 985x801 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
-  RenderSVGTransformableContainer {g} at (-50,149.19) size 984.53x800.81
+    RenderSVGRect {rect} at (5,5) size 3990x1990 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [x=5.00] [y=5.00] [width=3990.00] [height=1990.00]
+    RenderSVGTransformableContainer {g} at (-50,149.19) size 984.53x800.81
 layer at (-50,149.19) size 818x793 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
   RenderSVGTransformableContainer {g} at (0,0) size 817.83x792.81
-layer at (-50,149.19) size 818x182 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
-  RenderSVGText {text} at (0,0) size 818x183 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 818x183
-      chunk 1 text run 1 at (-50.00,300.00) startOffset 0 endOffset 11 width 817.82: "Abs. units:"
+    RenderSVGText {text} at (0,0) size 818x183 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 818x183
+        chunk 1 text run 1 at (-50.00,300.00) startOffset 0 endOffset 11 width 817.82: "Abs. units:"
+    RenderSVGRect {rect} at (50,250.81) size 384x192 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=400.00] [width=384.00] [height=192.00]
+    RenderSVGRect {rect} at (50,600.81) size 384x192 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=750.00] [width=384.00] [height=192.00]
+layer at (0,600) size 384x193 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (50,450.81) size 384x192
+    RenderSVGRect {rect} at (0,0) size 384x192 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=600.00] [width=384.00] [height=192.00]
 layer at (-50,149.19) size 779x789 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
   RenderSVGTransformableContainer {g} at (0,0) size 778.50x788.31
-layer at (-50,149.19) size 779x182 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
-  RenderSVGText {text} at (0,0) size 779x183 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 779x183
-      chunk 1 text run 1 at (-50.00,300.00) startOffset 0 endOffset 11 width 778.49: "Rel. units:"
+    RenderSVGText {text} at (0,0) size 779x183 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 779x183
+        chunk 1 text run 1 at (-50.00,300.00) startOffset 0 endOffset 11 width 778.49: "Rel. units:"
+    RenderSVGRect {rect} at (50,250.81) size 375x187.50 [stroke={[type=SOLID] [color=#FF0000] [stroke width=37.50]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=400.00] [width=375.00] [height=187.50]
+    RenderSVGRect {rect} at (50,600.81) size 375x187.50 [stroke={[type=SOLID] [color=#FF0000] [stroke width=37.50]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=750.00] [width=375.00] [height=187.50]
+layer at (0,600) size 375x189 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (50,450.81) size 375x187.50
+    RenderSVGRect {rect} at (0,0) size 375x187.50 [stroke={[type=SOLID] [color=#FF0000] [stroke width=37.50]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=600.00] [width=375.00] [height=187.50]
 layer at (-50,149.19) size 985x801 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
   RenderSVGTransformableContainer {g} at (0,0) size 984.53x800.81
-layer at (-50,149.19) size 985x182 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
-  RenderSVGText {text} at (0,0) size 985x183 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 985x183
-      chunk 1 text run 1 at (-50.00,300.00) startOffset 0 endOffset 12 width 984.52: "Percentages:"
+    RenderSVGText {text} at (0,0) size 985x183 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 985x183
+        chunk 1 text run 1 at (-50.00,300.00) startOffset 0 endOffset 12 width 984.52: "Percentages:"
+    RenderSVGRect {rect} at (50,250.81) size 400x200 [stroke={[type=SOLID] [color=#FF0000] [stroke width=31.62]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=400.00] [width=400.00] [height=200.00]
+    RenderSVGRect {rect} at (50,600.81) size 400x200 [stroke={[type=SOLID] [color=#FF0000] [stroke width=31.62]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=750.00] [width=400.00] [height=200.00]
+layer at (0,600) size 400x201 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (50,450.81) size 400x200
+    RenderSVGRect {rect} at (0,0) size 400x200 [stroke={[type=SOLID] [color=#FF0000] [stroke width=31.62]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=600.00] [width=400.00] [height=200.00]

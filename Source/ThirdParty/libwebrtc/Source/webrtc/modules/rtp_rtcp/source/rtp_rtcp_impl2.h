@@ -16,12 +16,15 @@
 
 #include <memory>
 #include <optional>
+#include <span>
+#include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
@@ -55,6 +58,22 @@ namespace webrtc {
 struct PacedPacketInfo;
 struct RTPVideoHeader;
 
+// This class and its members handles sending and receiving of RTP and RTCP
+// on behalf of a single media stream (incoming or outgoing).
+//
+// Threading and locking model:
+// Instances of ModuleRtpRtcpImpl2 are created and destroyed on the worker
+// queue.
+// The RTP sender lives on the RTP packet producing thread,
+// identified by rtp_sender_->sequencing_checker; calls that are forwarded
+// to the rtp_sender_ need to be called on this thread.
+// The RTCPSender allows multithread access using its `mutex_rtcp_sender_`.
+// The RTCPReceiver does the same using `mutex_receiver_lock_`.
+// These three objects are therefore not marked with guarding in this class.
+// Incoming RTCP packets are processed on the thread bound to
+// `rtcp_thread_checker_`.
+// `mutex_rtt_` allows multi-thread access to the "rtt" member.
+
 class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
                                  public RTCPReceiver::ModuleRtpRtcp {
  public:
@@ -62,24 +81,27 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
       const Environment& env,
       const RtpRtcpInterface::Configuration& configuration) {
     RTC_DCHECK(!configuration.receiver_only);
-    return absl::WrapUnique(new ModuleRtpRtcpImpl2(env, configuration));
+    return absl::WrapUnique(
+        new ModuleRtpRtcpImpl2(env, configuration, nullptr));
   }
   static std::unique_ptr<ModuleRtpRtcpImpl2> CreateReceiveModule(
       const Environment& env,
-      const RtpRtcpInterface::Configuration& configuration) {
+      const RtpRtcpInterface::Configuration& configuration,
+      absl::AnyInvocable<uint32_t() const> recv_ssrc_callback) {
     RTC_DCHECK(configuration.receiver_only);
-    return absl::WrapUnique(new ModuleRtpRtcpImpl2(env, configuration));
+    RTC_DCHECK(recv_ssrc_callback);
+    return absl::WrapUnique(new ModuleRtpRtcpImpl2(
+        env, configuration, std::move(recv_ssrc_callback)));
   }
   ~ModuleRtpRtcpImpl2() override;
 
   // Receiver part.
 
   // Called when we receive an RTCP packet.
-  void IncomingRtcpPacket(ArrayView<const uint8_t> incoming_packet) override;
+  void IncomingRtcpPacket(std::span<const uint8_t> incoming_packet) override;
 
   void SetRemoteSSRC(uint32_t ssrc) override;
 
-  void SetLocalSsrc(uint32_t local_ssrc) override;
 
   // Sender part.
   void RegisterSendPayloadFrequency(int payload_type,
@@ -89,7 +111,8 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
 
   void SetExtmapAllowMixed(bool extmap_allow_mixed) override;
 
-  void RegisterRtpHeaderExtension(absl::string_view uri, int id) override;
+  void RegisterRtpHeaderExtension(absl::string_view uri,
+                                  RtpHeaderExtensionId id) override;
   void DeregisterSendRtpHeaderExtension(absl::string_view uri) override;
 
   bool SupportsPadding() const override;
@@ -169,16 +192,16 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
   std::vector<std::unique_ptr<RtpPacketToSend>> FetchFecPackets() override;
 
   void OnAbortedRetransmissions(
-      ArrayView<const uint16_t> sequence_numbers) override;
+      std::span<const uint16_t> sequence_numbers) override;
 
   void OnPacketsAcknowledged(
-      ArrayView<const uint16_t> sequence_numbers) override;
+      std::span<const uint16_t> sequence_numbers) override;
 
   std::vector<std::unique_ptr<RtpPacketToSend>> GeneratePadding(
       size_t target_size_bytes) override;
 
   std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
-      ArrayView<const uint16_t> sequence_numbers) const override;
+      std::span<const uint16_t> sequence_numbers) const override;
 
   size_t ExpectedPerPacketOverhead() const override;
 
@@ -253,7 +276,7 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
   void OnReceivedNack(
       const std::vector<uint16_t>& nack_sequence_numbers) override;
   void OnReceivedRtcpReportBlocks(
-      ArrayView<const ReportBlockData> report_blocks) override;
+      std::span<const ReportBlockData> report_blocks) override;
   void OnRequestSendReport() override;
 
   void SetVideoBitrateAllocation(
@@ -286,7 +309,8 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
 
   // Private constructor, to enforce sender/receiver separation.
   ModuleRtpRtcpImpl2(const Environment& env,
-                     const RtpRtcpInterface::Configuration& configuration);
+                     const RtpRtcpInterface::Configuration& configuration,
+                     absl::AnyInvocable<uint32_t() const> recv_ssrc_callback);
 
   void set_rtt_ms(int64_t rtt_ms);
   int64_t rtt_ms() const;
@@ -317,28 +341,43 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
   void ScheduleMaybeSendRtcpAtOrAfterTimestamp(Timestamp execution_time,
                                                TimeDelta duration);
 
+  // This function is called by the RtcpSender when the module is configured
+  // for not sending RTP to query for the local SSRC, which may change over
+  // time. As a side effect, it informs the RtcpReceiver of the currently
+  // used SSRC.
+  uint32_t RtcpSenderSourceSsrc();
+
   const Environment env_;
   TaskQueueBase* const worker_queue_;
+  // Thread checker used for guarding the IncomingRtcpPacket call.
   RTC_NO_UNIQUE_ADDRESS SequenceChecker rtcp_thread_checker_;
+  // Thread checker used for guarding member variables in this class.
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker rtcp_module_checker_;
+  // TODO: issues.webrtc.org/48665180 - figure out why these are different.
 
-  std::unique_ptr<RtpSenderContext> rtp_sender_;
+  RTC_NO_UNIQUE_ADDRESS ScopedTaskSafety task_safety_;
+
+  // The function for getting the right SSRC for sending RTCP reports
+  // Must outlive rtcp_sender_, so placed before it.
+  const absl::AnyInvocable<uint32_t() const> recv_ssrc_callback_;
+
+  // These three classes contain their own thread checking.
+  const std::unique_ptr<RtpSenderContext> rtp_sender_;
   RTCPSender rtcp_sender_;
   RTCPReceiver rtcp_receiver_;
 
-  uint16_t packet_overhead_;
+  const uint16_t packet_overhead_;
 
   // Send side
-  int64_t nack_last_time_sent_full_ms_;
-  uint16_t nack_last_seq_number_sent_;
+  int64_t nack_last_time_sent_full_ms_ RTC_GUARDED_BY(rtcp_module_checker_);
+  uint16_t nack_last_seq_number_sent_ RTC_GUARDED_BY(rtcp_module_checker_);
 
-  RtcpRttStats* const rtt_stats_;
+  RtcpRttStats* const rtt_stats_ RTC_PT_GUARDED_BY(worker_queue_);
   RepeatingTaskHandle rtt_update_task_ RTC_GUARDED_BY(worker_queue_);
 
   // The processed RTT from RtcpRttStats.
   mutable Mutex mutex_rtt_;
   int64_t rtt_ms_ RTC_GUARDED_BY(mutex_rtt_);
-
-  RTC_NO_UNIQUE_ADDRESS ScopedTaskSafety task_safety_;
 };
 
 }  // namespace webrtc

@@ -36,6 +36,9 @@ root
                 input uid=… placeholder=Username name=username minlength=3 maxlength=20 required
                 input uid=… placeholder=Email pattern=[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$ name=email required
                 input uid=… placeholder='Zip Code' pattern=[0-9]{5} name=zipcode minlength=5 maxlength=5
+                input range uid=… name=volume value=42
+                input button uid=… name=cancel value=Cancel
+                input uid=… name=submit value='Sign Up Now'
             select uid=…
                 option value=one 'Number 1'
                 option value=two 'Number 2'
@@ -104,6 +107,9 @@ root
                 <input type='text' uid=… placeholder='Username' name='username' minlength=3 maxlength=20 required>
                 <input type='text' uid=… placeholder='Email' pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$' name='email' required>
                 <input type='text' uid=… placeholder='Zip Code' pattern='[0-9]{5}' name='zipcode' minlength=5 maxlength=5>
+                <input type='range' uid=… name='volume' value='42'>
+                <input type='button' uid=… name='cancel' value='Cancel'>
+                <input type='submit' uid=… name='submit' value='Sign Up Now'>
             </form>
             <select uid=…>
                 <option value='one'>Number 1</option>
@@ -442,6 +448,30 @@ root
                       "content": "Zip Code"
                     }
                   ]
+                },
+                {
+                  "type": "input",
+                  "nodeName": "input",
+                  "uid": "…",
+                  "controlType": "range",
+                  "name": "volume",
+                  "value": "42"
+                },
+                {
+                  "type": "input",
+                  "nodeName": "input",
+                  "uid": "…",
+                  "controlType": "button",
+                  "name": "cancel",
+                  "value": "Cancel"
+                },
+                {
+                  "type": "input",
+                  "nodeName": "input",
+                  "uid": "…",
+                  "controlType": "submit",
+                  "name": "submit",
+                  "value": "Sign Up Now"
                 }
               ]
             },

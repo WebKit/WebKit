@@ -237,6 +237,11 @@ bool TestRunner::shouldWaitUntilDone() const
     return postSynchronousMessageReturningBoolean("GetWaitUntilDone");
 }
 
+bool TestRunner::isWaitingUntilDone() const
+{
+    return postSynchronousMessageReturningBoolean("GetIsWaitingUntilDone");
+}
+
 void TestRunner::notifyDone()
 {
     auto& injectedBundle = InjectedBundle::singleton();

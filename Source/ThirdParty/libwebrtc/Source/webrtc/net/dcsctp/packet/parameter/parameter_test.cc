@@ -10,9 +10,9 @@
 #include "net/dcsctp/packet/parameter/parameter.h"
 
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/parameter/outgoing_ssn_reset_request_parameter.h"
 #include "net/dcsctp/public/types.h"
@@ -33,7 +33,7 @@ TEST(ParameterTest, SerializeDeserializeParameter) {
                                                 TSN(789), {StreamID(42)}))
           .Build();
 
-  webrtc::ArrayView<const uint8_t> serialized = parameters.data();
+  std::span<const uint8_t> serialized = parameters.data();
 
   ASSERT_HAS_VALUE_AND_ASSIGN(Parameters parsed, Parameters::Parse(serialized));
   auto descriptors = parsed.descriptors();

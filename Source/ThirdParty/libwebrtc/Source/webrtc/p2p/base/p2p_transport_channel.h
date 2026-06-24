@@ -26,11 +26,11 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/async_dns_resolver.h"
 #include "api/candidate.h"
 #include "api/environment/environment.h"
@@ -164,16 +164,9 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
   void SwitchSelectedConnection(const Connection* connection,
                                 IceSwitchReason reason) override;
   void ForgetLearnedStateForConnections(
-      ArrayView<const Connection* const> connections) override;
+      std::span<const Connection* const> connections) override;
   bool PruneConnections(
-      ArrayView<const Connection* const> connections) override;
-
-  // TODO(honghaiz): Remove this method once the reference of it in
-  // Chromoting is removed.
-  const Connection* best_connection() const {
-    RTC_DCHECK_RUN_ON(&network_thread_);
-    return selected_connection_;
-  }
+      std::span<const Connection* const> connections) override;
 
   void set_incoming_only(bool value) {
     RTC_DCHECK_RUN_ON(&network_thread_);
@@ -210,7 +203,7 @@ class RTC_EXPORT P2PTransportChannel : public IceTransportInternal,
   void MarkConnectionPinged(Connection* conn);
 
   // Public for unit tests.
-  ArrayView<Connection* const> connections() const;
+  std::span<Connection* const> connections() const;
   void RemoveConnectionForTest(Connection* connection);
 
   // Public for unit tests.

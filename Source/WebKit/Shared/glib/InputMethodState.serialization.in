@@ -30,7 +30,8 @@ header: "InputMethodState.h"
     Phone,
     Url,
     Email,
-    Password
+    Password,
+    Search,
 };
 
 [Nested, OptionSet] enum class WebKit::InputMethodState::Hint : uint8_t {

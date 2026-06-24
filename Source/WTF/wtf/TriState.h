@@ -35,12 +35,12 @@ enum class TriState : uint8_t {
     Indeterminate
 };
 
-inline TriState triState(bool boolean)
+inline constexpr TriState triState(bool boolean)
 {
     return static_cast<TriState>(boolean);
 }
 
-inline TriState invert(TriState triState)
+inline constexpr TriState invert(TriState triState)
 {
     if (triState == TriState::True)
         return TriState::False;

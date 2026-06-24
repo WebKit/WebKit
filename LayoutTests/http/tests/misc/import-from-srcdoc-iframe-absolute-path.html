@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Dynamic import() of an absolute path from a srcdoc iframe should resolve against the document fallback base URL.');
+window.jsTestIsAsync = true;
+
+window.result = "";
+window.addEventListener("message", e => {
+    window.result = e.data;
+    shouldBeEqualToString("result", "loaded");
+    finishJSTest();
+});
+
+const iframe = document.createElement("iframe");
+iframe.srcdoc = `<!DOCTYPE html><html><head>
+  <script type="module">
+    try {
+      await import("/misc/resources/module-srcdoc-absolute.js");
+    } catch (e) {
+      parent.postMessage("error: " + e.message, "*");
+    }
+  <\/script>
+</head><body></body></html>`;
+document.body.appendChild(iframe);
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

@@ -130,11 +130,11 @@ template<typename P> struct HashTraits<WebCore::GCReachableRef<P>> : SimpleClass
     }
 
     typedef P* PeekType;
-    static PeekType peek(const Ref<P>& value) { return const_cast<PeekType>(value.ptrAllowingHashTableEmptyValue()); }
+    static PeekType peek(const WebCore::GCReachableRef<P>& value) { return const_cast<PeekType>(value.ptrAllowingHashTableEmptyValue()); }
     static PeekType peek(P* value) { return value; }
 
-    typedef std::optional<Ref<P>> TakeType;
-    static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? std::nullopt : std::optional<Ref<P>>(WTF::move(value)); }
+    typedef std::optional<WebCore::GCReachableRef<P>> TakeType;
+    static TakeType take(WebCore::GCReachableRef<P>&& value) { return isEmptyValue(value) ? std::nullopt : std::optional<WebCore::GCReachableRef<P>>(WTF::move(value)); }
 };
 
 template <typename T>

@@ -152,7 +152,7 @@ std::unique_ptr<GeneralNames> GeneralNames::CreateFromValue(
     der::Parser name_parser(value);
     der::Input name_value;
     if (!name_parser.ReadTag(CBS_ASN1_SEQUENCE, &name_value) ||
-        parser.HasMore()) {
+        name_parser.HasMore()) {
       return false;
     }
     subtrees->directory_names.push_back(name_value);

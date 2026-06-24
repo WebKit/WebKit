@@ -14,11 +14,12 @@
 #include <cstdint>
 #include <cstring>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -29,6 +30,12 @@ class RtpPacket {
  public:
   using ExtensionType = RTPExtensionType;
   using ExtensionManager = RtpHeaderExtensionMap;
+
+  // Maximum number of CSRCs in an RTP packet as specified in section
+  // "5.1 RTP Fixed Header Fields" of RFC 3550.
+  // Note: This is a different limit than the one that applies to RTCP packets
+  // (which is specified in section 6.1).
+  static constexpr size_t kMaxCsrcs = 15;
 
   // `extensions` required for SetExtension/ReserveExtension functions during
   // packet creating and used if available in Parse function.
@@ -52,7 +59,7 @@ class RtpPacket {
   // read or allocate extensions in methods GetExtension, AllocateExtension,
   // etc.)
   bool Parse(const uint8_t* buffer, size_t size);
-  bool Parse(ArrayView<const uint8_t> packet);
+  bool Parse(std::span<const uint8_t> packet);
 
   // Parse and move given buffer into Packet.
   bool Parse(CopyOnWriteBuffer packet);
@@ -77,8 +84,8 @@ class RtpPacket {
   size_t payload_size() const { return payload_size_; }
   bool has_padding() const { return buffer_[0] & 0x20; }
   size_t padding_size() const { return padding_size_; }
-  ArrayView<const uint8_t> payload() const {
-    return MakeArrayView(data() + payload_offset_, payload_size_);
+  std::span<const uint8_t> payload() const {
+    return std::span(data() + payload_offset_, payload_size_);
   }
   CopyOnWriteBuffer PayloadBuffer() const {
     return buffer_.Slice(payload_offset_, payload_size_);
@@ -91,6 +98,7 @@ class RtpPacket {
     return payload_offset_ + payload_size_ + padding_size_;
   }
   const uint8_t* data() const { return buffer_.cdata(); }
+  std::span<const uint8_t> buffer() const { return buffer_; }
   size_t FreeCapacity() const { return capacity() - size(); }
   size_t MaxPayloadSize() const { return capacity() - headers_size(); }
 
@@ -118,7 +126,7 @@ class RtpPacket {
   // Writes csrc list. Assumes:
   // a) There is enough room left in buffer.
   // b) Extension headers, payload or padding data has not already been added.
-  void SetCsrcs(ArrayView<const uint32_t> csrcs);
+  void SetCsrcs(std::span<const uint32_t> csrcs);
 
   // Header extensions.
   template <typename Extension>
@@ -138,24 +146,24 @@ class RtpPacket {
 
   // Returns view of the raw extension or empty view on failure.
   template <typename Extension>
-  ArrayView<const uint8_t> GetRawExtension() const;
+  std::span<const uint8_t> GetRawExtension() const;
 
   template <typename Extension, typename... Values>
   bool SetExtension(const Values&...);
 
   template <typename Extension>
-  bool SetRawExtension(ArrayView<const uint8_t> data);
+  bool SetRawExtension(std::span<const uint8_t> data);
 
   template <typename Extension>
   bool ReserveExtension();
 
   // Find or allocate an extension `type`. Returns view of size `length`
   // to write raw extension to or an empty view on failure.
-  ArrayView<uint8_t> AllocateExtension(ExtensionType type, size_t length);
+  std::span<uint8_t> AllocateExtension(ExtensionType type, size_t length);
 
   // Find an extension `type`.
   // Returns view of the raw extension or empty view on failure.
-  ArrayView<const uint8_t> FindExtension(ExtensionType type) const;
+  std::span<const uint8_t> FindExtension(ExtensionType type) const;
 
   // Returns pointer to the payload of size at least `size_bytes`.
   // Keeps original payload, if any. If `size_bytes` is larger than current
@@ -166,7 +174,7 @@ class RtpPacket {
   uint8_t* AllocatePayload(size_t size_bytes);
 
   // Sets payload size to `payload.size()` and copies `payload`.
-  void SetPayload(ArrayView<const uint8_t> payload);
+  void SetPayload(std::span<const uint8_t> payload);
 
   bool SetPadding(size_t padding_size);
 
@@ -189,15 +197,16 @@ class RtpPacket {
 
   // Returns pointer to extension info for a given id. Returns nullptr if not
   // found.
-  const ExtensionInfo* FindExtensionInfo(int id) const;
+  const ExtensionInfo* FindExtensionInfo(RtpHeaderExtensionId id) const;
 
   // Returns reference to extension info for a given id. Creates a new entry
   // with the specified id if not found.
-  ExtensionInfo& FindOrCreateExtensionInfo(int id);
+  ExtensionInfo& FindOrCreateExtensionInfo(RtpHeaderExtensionId id);
 
   // Allocates and returns place to store rtp header extension.
-  // Returns empty arrayview on failure.
-  ArrayView<uint8_t> AllocateRawExtension(int id, size_t length);
+  // Returns empty std::span on failure.
+  std::span<uint8_t> AllocateRawExtension(RtpHeaderExtensionId id,
+                                          size_t length);
 
   // Promotes existing one-byte header extensions to two-byte header extensions
   // by rewriting the data and updates the corresponding extension offsets.
@@ -256,7 +265,7 @@ std::optional<typename Extension::value_type> RtpPacket::GetExtension() const {
 }
 
 template <typename Extension>
-ArrayView<const uint8_t> RtpPacket::GetRawExtension() const {
+std::span<const uint8_t> RtpPacket::GetRawExtension() const {
   return FindExtension(Extension::kId);
 }
 
@@ -270,8 +279,8 @@ bool RtpPacket::SetExtension(const Values&... values) {
 }
 
 template <typename Extension>
-bool RtpPacket::SetRawExtension(ArrayView<const uint8_t> data) {
-  ArrayView<uint8_t> buffer = AllocateExtension(Extension::kId, data.size());
+bool RtpPacket::SetRawExtension(std::span<const uint8_t> data) {
+  std::span<uint8_t> buffer = AllocateExtension(Extension::kId, data.size());
   if (buffer.empty()) {
     return false;
   }

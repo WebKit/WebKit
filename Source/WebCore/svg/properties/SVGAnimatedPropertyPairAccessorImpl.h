@@ -51,25 +51,25 @@ public:
 private:
     void setDirty(const OwnerType& owner, SVGAnimatedPropertyBase& animatedProperty) const final
     {
-        auto type = property2(owner)->baseVal();
+        auto type = protect(property2(owner))->baseVal();
         if (m_accessor1.matches(owner, animatedProperty) && type != SVGMarkerOrientAngle)
-            property2(owner)->setBaseValInternal(SVGMarkerOrientAngle);
+            protect(property2(owner))->setBaseValInternal(SVGMarkerOrientAngle);
         else if (m_accessor2.matches(owner, animatedProperty) && type != SVGMarkerOrientAngle)
-            property1(owner)->setBaseValInternal({ });
+            protect(property1(owner))->setBaseValInternal({ });
         animatedProperty.setDirty();
     }
 
     std::optional<String> synchronize(const OwnerType& owner) const final
     {
-        bool dirty1 = property1(owner)->isDirty();
-        bool dirty2 = property2(owner)->isDirty();
+        bool dirty1 = protect(property1(owner))->isDirty();
+        bool dirty2 = protect(property2(owner))->isDirty();
         if (!(dirty1 || dirty2))
             return std::nullopt;
 
-        auto type = property2(owner)->baseVal();
+        auto type = protect(property2(owner))->baseVal();
 
-        String string1 = dirty1 ? *property1(owner)->synchronize() : property1(owner)->baseValAsString();
-        String string2 = dirty2 ? *property2(owner)->synchronize() : property2(owner)->baseValAsString();
+        String string1 = dirty1 ? *protect(property1(owner))->synchronize() : protect(property1(owner))->baseValAsString();
+        String string2 = dirty2 ? *protect(property2(owner))->synchronize() : protect(property2(owner))->baseValAsString();
         return type == SVGMarkerOrientAuto || type == SVGMarkerOrientAutoStartReverse ? string2 : string1;
     }
 
@@ -98,13 +98,13 @@ public:
 private:
     std::optional<String> synchronize(const OwnerType& owner) const final
     {
-        bool dirty1 = property1(owner)->isDirty();
-        bool dirty2 = property2(owner)->isDirty();
+        bool dirty1 = protect(property1(owner))->isDirty();
+        bool dirty2 = protect(property2(owner))->isDirty();
         if (!(dirty1 || dirty2))
             return std::nullopt;
 
-        String string1 = dirty1 ? *property1(owner)->synchronize() : property1(owner)->baseValAsString();
-        String string2 = dirty2 ? *property2(owner)->synchronize() : property2(owner)->baseValAsString();
+        String string1 = dirty1 ? *protect(property1(owner))->synchronize() : protect(property1(owner))->baseValAsString();
+        String string2 = dirty2 ? *protect(property2(owner))->synchronize() : protect(property2(owner))->baseValAsString();
         return string1 == string2 ? string1 : makeString(string1, ", "_s, string2);
     }
 
@@ -133,13 +133,13 @@ public:
 private:
     std::optional<String> synchronize(const OwnerType& owner) const final
     {
-        bool dirty1 = property1(owner)->isDirty();
-        bool dirty2 = property2(owner)->isDirty();
+        bool dirty1 = protect(property1(owner))->isDirty();
+        bool dirty2 = protect(property2(owner))->isDirty();
         if (!(dirty1 || dirty2))
             return std::nullopt;
 
-        String string1 = dirty1 ? *property1(owner)->synchronize() : property1(owner)->baseValAsString();
-        String string2 = dirty2 ? *property2(owner)->synchronize() : property2(owner)->baseValAsString();
+        String string1 = dirty1 ? *protect(property1(owner))->synchronize() : protect(property1(owner))->baseValAsString();
+        String string2 = dirty2 ? *protect(property2(owner))->synchronize() : protect(property2(owner))->baseValAsString();
         return string1 == string2 ? string1 : makeString(string1, ", "_s, string2);
     }
 

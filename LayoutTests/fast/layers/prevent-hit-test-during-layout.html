@@ -6,17 +6,17 @@
     var fixedDiv;
     var target;
 
-    if (window.testRunner) {
+    window.jsTestIsAsync = true;
+
+    if (window.testRunner)
         description("This tests makes sure that hit tests are not processed while laying out the page.");
-        testRunner.waitUntilDone();
-    }
 
     function triggerHitTest() {
         var spanRects = target.getClientRects();
 
         if (spanRects.count > 1) {
             document.body.innerHTML += "<br/>ERROR: More than one rect for hit word."
-            testRunner.notifyDone();
+            finishJSTest();
             return;
         }
 
@@ -29,7 +29,7 @@
         var lookupRange = internals.rangeForDictionaryLookupAtLocation(x, y);
 
         document.body.innerHTML += "<br/>This test passes if it did not crash.";
-        testRunner.notifyDone();
+        finishJSTest();
     }
     
     function runTest() {

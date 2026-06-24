@@ -39,8 +39,9 @@
 namespace JSC { namespace Wasm {
 
 ModuleInformation::ModuleInformation()
-    : nameSection(NameSection::create())
+    : m_nameSection(NameSection::create())
 {
+    m_nameSectionPtr.store(m_nameSection.ptr(), std::memory_order_relaxed);
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]]
         debugInfo = WTF::makeUnique<ModuleDebugInfo>(*this);
@@ -48,6 +49,21 @@ ModuleInformation::ModuleInformation()
 }
 
 ModuleInformation::~ModuleInformation() = default;
+
+void ModuleInformation::setNameSection(Ref<NameSection>&& section)
+{
+    // The spec has the following editorial note:
+    //   The name section should appear only once in a module, [...]
+    //
+    // Since custom sections have no effect on the observable behavior, for simplicity, we ignore
+    // name sections after the first one if multiple such sections are present in a module.
+    if (m_hasCustomNameSection)
+        return;
+    m_hasCustomNameSection = true;
+    m_retiredNameSection = WTF::move(m_nameSection);
+    m_nameSection = WTF::move(section);
+    m_nameSectionPtr.store(m_nameSection.ptr(), std::memory_order_release);
+}
 
 // This is called during module creation, so at this point we have fully isolated access
 // to this ModuleInformation object.

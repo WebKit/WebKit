@@ -380,6 +380,8 @@ void JSTestNamedDeleterWithIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& a
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestNamedDeleterWithIdentifierOwner::JSTestNamedDeleterWithIdentifierOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestNamedDeleterWithIdentifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -392,7 +394,7 @@ void JSTestNamedDeleterWithIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> h
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedDeleterWithIdentifier = static_cast<JSTestNamedDeleterWithIdentifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestNamedDeleterWithIdentifier->wrapped()).ptr(), jsTestNamedDeleterWithIdentifier);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedDeleterWithIdentifier->wrapped(), jsTestNamedDeleterWithIdentifier);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

@@ -80,7 +80,7 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
     UNUSED_PARAM(sender);
     ASSERT(isMainThread());
     
-    m_monitor->displayLinkCallbackFired();
+    protect(m_monitor)->displayLinkCallbackFired();
 }
 
 - (void)setPaused:(BOOL)paused

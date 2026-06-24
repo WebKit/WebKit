@@ -223,6 +223,12 @@ PASS Origin parsing: <non-special:opaque 		  #hi> without base
 PASS Origin parsing: <non-special:opaque		  \r #hi> without base
 PASS Origin parsing: <http://www.foo。bar.com> against <http://other.com/>
 PASS Origin parsing: <https://x/�?�#�> without base
+PASS Origin parsing: <http://a.b.c.xn--pokxncvks> without base
+PASS Origin parsing: <http://10.0.0.xn--pokxncvks> without base
+PASS Origin parsing: <http://a.b.c.XN--pokxncvks> without base
+PASS Origin parsing: <http://a.b.c.Xn--pokxncvks> without base
+PASS Origin parsing: <http://10.0.0.XN--pokxncvks> without base
+PASS Origin parsing: <http://10.0.0.xN--pokxncvks> without base
 PASS Origin parsing: <http://Ｇｏ.com> against <http://other.com/>
 PASS Origin parsing: <http://你好你好> against <http://other.com/>
 PASS Origin parsing: <https://faß.ExAmPlE/> without base
@@ -366,6 +372,7 @@ PASS Origin parsing: <foo://host/dir/# !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~> without
 PASS Origin parsing: <wss://host/dir/# !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~> without base
 PASS Origin parsing: <https://example.com/"quoted"> without base
 PASS Origin parsing: <https://a%C2%ADb/> without base
+PASS Origin parsing: <https://xn--/> without base
 PASS Origin parsing: <data://example.com:8080/pathname?search#hash> without base
 PASS Origin parsing: <data:///test> without base
 PASS Origin parsing: <data://test/a/../b> without base

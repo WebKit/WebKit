@@ -5,6 +5,8 @@ This test verifies when the network process crashes, indexedDB.open() recovers w
 </body>
 <script>
 
+window.jsTestIsAsync = true;
+
 var dbname = setDBNameFromPath() + Date();
 var idbRef = window.indexedDB;
 
@@ -22,8 +24,7 @@ request.onsuccess = function(e) {
 
         if (idbRef !== window.indexedDB) {
             testFailed("window.indexedDB returned a different object after crash");
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
             return;
         }
         testPassed("window.indexedDB is the same object after crash");
@@ -32,27 +33,22 @@ request.onsuccess = function(e) {
         reopenRequest.onupgradeneeded = function(e) {
             debug("Successfully opened database with version 2 after network process crash.");
             testPassed("indexedDB.open() recovered after network process crash without page reload");
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
 
         reopenRequest.onerror = function(e) {
             testFailed("indexedDB.open() failed after network process crash: " + e.target.error);
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
     };
 
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
+    if (window.testRunner)
         testRunner.terminateNetworkProcess();
-    }
 }
 
 request.onerror = function(e) {
     testFailed("Error on initial database open: " + e.target.error);
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 </script>

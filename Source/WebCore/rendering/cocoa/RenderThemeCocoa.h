@@ -36,6 +36,8 @@ struct AttachmentLayout;
 
 namespace WebCore {
 
+class Node;
+
 #if ENABLE(FORM_CONTROL_REFRESH)
 
 enum class CornerType : uint8_t {
@@ -59,12 +61,12 @@ enum class ShouldComputePath : bool  {
 
 class RenderThemeCocoa : public RenderTheme {
 public:
-    Color controlTintColor(const RenderStyle&, OptionSet<StyleColorOptions>) const;
+    Color controlTintColor(const Style::ComputedStyle&, OptionSet<StyleColorOptions>) const;
 
     void adjustRepaintRect(const RenderBox&, FloatRect&) final;
 
 #if ENABLE(FORM_CONTROL_REFRESH)
-    Color controlTintColorWithContrast(const RenderStyle&, OptionSet<StyleColorOptions>) const;
+    Color controlTintColorWithContrast(const Style::ComputedStyle&, OptionSet<StyleColorOptions>) const;
     static std::optional<RoundedShape> shapeForInteractionRegion(const RenderBox&, const FloatRect&, ShouldComputePath);
     static FloatSize inflateRectForInteractionRegion(const RenderElement&, FloatRect&);
     bool controlSupportsTints(const RenderElement&) const override;
@@ -91,13 +93,13 @@ public:
 
 #if ENABLE(FORM_CONTROL_REFRESH)
     Color submitButtonTextColor(const RenderText&) const final;
-    float adjustedMaximumLogicalWidthForControl(const RenderStyle&, const Element&, float) const final;
+    float adjustedMaximumLogicalWidthForControl(const Style::ComputedStyle&, const Element&, float) const final;
 #endif
 
     void purgeCaches() final;
-    void adjustTextControlInnerContainerStyle(RenderStyle&, const RenderStyle&, const Element*) const final;
-    void adjustTextControlInnerTextStyle(RenderStyle&, const RenderStyle&, const Element*) const final;
-    void adjustTextControlInnerPlaceholderStyle(RenderStyle&, const RenderStyle&, const Element*) const final;
+    void adjustTextControlInnerContainerStyle(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const final;
+    void adjustTextControlInnerTextStyle(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const final;
+    void adjustTextControlInnerPlaceholderStyle(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const final;
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
 protected:
@@ -115,82 +117,82 @@ protected:
     Color platformDictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const final;
     Color platformGrammarMarkerColor(OptionSet<StyleColorOptions>) const final;
 
-    void adjustCheckboxStyle(RenderStyle&, const Element*) const override;
+    void adjustCheckboxStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintCheckbox(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustRadioStyle(RenderStyle&, const Element*) const override;
+    void adjustRadioStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintRadio(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustButtonStyle(RenderStyle&, const Element*) const override;
+    void adjustButtonStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintButton(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustColorWellStyle(RenderStyle&, const Element*) const final;
+    void adjustColorWellStyle(Style::ComputedStyle&, const Element*) const final;
     bool paintColorWell(const RenderElement&, const PaintInfo&, const FloatRect&) final;
     void paintColorWellDecorations(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustColorWellSwatchStyle(RenderStyle&, const Element*) const final;
-    void adjustColorWellSwatchOverlayStyle(RenderStyle&, const Element*) const final;
-    void adjustColorWellSwatchWrapperStyle(RenderStyle&, const Element*) const final;
+    void adjustColorWellSwatchStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustColorWellSwatchOverlayStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustColorWellSwatchWrapperStyle(Style::ComputedStyle&, const Element*) const final;
     bool paintColorWellSwatch(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const override;
+    void adjustInnerSpinButtonStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintInnerSpinButton(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustTextFieldStyle(RenderStyle&, const Element*) const override;
+    void adjustTextFieldStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintTextField(const RenderElement&, const PaintInfo&, const FloatRect&) final;
     void paintTextFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustTextAreaStyle(RenderStyle&, const Element*) const override;
+    void adjustTextAreaStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintTextArea(const RenderElement&, const PaintInfo&, const FloatRect&) final;
     void paintTextAreaDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustMenuListStyle(RenderStyle&, const Element*) const override;
+    void adjustMenuListStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintMenuList(const RenderElement&, const PaintInfo&, const FloatRect&) final;
     void paintMenuListDecorations(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
+    void adjustMenuListButtonStyle(Style::ComputedStyle&, const Element*) const override;
     void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
     bool paintMenuListButton(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustMeterStyle(RenderStyle&, const Element*) const final;
+    void adjustMeterStyle(Style::ComputedStyle&, const Element*) const final;
     bool paintMeter(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustListButtonStyle(RenderStyle&, const Element*) const override;
+    void adjustListButtonStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintListButton(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustProgressBarStyle(RenderStyle&, const Element*) const final;
+    void adjustProgressBarStyle(Style::ComputedStyle&, const Element*) const final;
     bool paintProgressBar(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSliderTrackStyle(RenderStyle&, const Element*) const override;
+    void adjustSliderTrackStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintSliderTrack(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
-    void adjustSliderThumbStyle(RenderStyle&, const Element*) const override;
+    void adjustSliderThumbSize(Style::ComputedStyle&, const Element*) const override;
+    void adjustSliderThumbStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintSliderThumb(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustSearchFieldStyle(RenderStyle&, const Element*) const override;
+    void adjustSearchFieldStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintSearchField(const RenderElement&, const PaintInfo&, const FloatRect&) final;
     void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const override;
+    void adjustSearchFieldCancelButtonStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const override;
+    void adjustSearchFieldDecorationPartStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintSearchFieldDecorationPart(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const override;
+    void adjustSearchFieldResultsDecorationPartStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const override;
+    void adjustSearchFieldResultsButtonStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSwitchStyle(RenderStyle&, const Element*) const final;
+    void adjustSwitchStyle(Style::ComputedStyle&, const Element*) const final;
     bool paintSwitch(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
     void paintPlatformResizer(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) final;
     void paintPlatformResizerFrame(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) final;
 
-    bool supportsFocusRing(const RenderElement&, const RenderStyle&) const override;
+    bool supportsFocusRing(const RenderElement&, const Style::ComputedStyle&) const override;
 
 #if ENABLE(FORM_CONTROL_REFRESH)
     bool NODELETE inflateRectForControlRendererForVectorBasedControls(const RenderElement& renderer, FloatRect&) const;
@@ -199,89 +201,89 @@ protected:
     bool NODELETE canCreateControlPartForBorderOnlyForVectorBasedControls(const RenderElement&) const;
     bool NODELETE canCreateControlPartForDecorationsForVectorBasedControls(const RenderElement&) const;
 
-    Color checkboxRadioBackgroundColorForVectorBasedControls(const RenderStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>) const;
+    Color checkboxRadioBackgroundColorForVectorBasedControls(const Style::ComputedStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>) const;
 
     bool paintCheckboxForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
     bool paintRadioForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool adjustButtonStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintButtonForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool adjustColorWellStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustColorWellStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintColorWellForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
     bool paintColorWellDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool NODELETE adjustColorWellSwatchStyleForVectorBasedControls(RenderStyle&, const Element*) const;
-    bool NODELETE adjustColorWellSwatchOverlayStyleForVectorBasedControls(RenderStyle&, const Element*) const;
-    bool adjustColorWellSwatchWrapperStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool NODELETE adjustColorWellSwatchStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
+    bool NODELETE adjustColorWellSwatchOverlayStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
+    bool adjustColorWellSwatchWrapperStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintColorWellSwatchForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool adjustInnerSpinButtonStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustInnerSpinButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintInnerSpinButtonForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool adjustTextFieldStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustTextFieldStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintTextFieldForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
     bool NODELETE paintTextFieldDecorationsForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
 
-    bool adjustTextAreaStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustTextAreaStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintTextAreaForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
     bool NODELETE paintTextAreaDecorationsForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
 
-    bool adjustMenuListStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustMenuListStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintMenuListForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
     bool NODELETE paintMenuListDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool adjustMenuListButtonStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustMenuListButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintMenuListButtonForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
     bool paintMenuListButtonDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool NODELETE adjustMeterStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool NODELETE adjustMeterStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintMeterForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool adjustListButtonStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustListButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintListButtonForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool NODELETE adjustProgressBarStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool NODELETE adjustProgressBarStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintProgressBarForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool NODELETE adjustSliderTrackStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool NODELETE adjustSliderTrackStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSliderTrackForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool adjustSliderThumbSizeForVectorBasedControls(RenderStyle&, const Element*) const;
-    bool adjustSliderThumbStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustSliderThumbSizeForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
+    bool adjustSliderThumbStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSliderThumbForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool adjustSearchFieldStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustSearchFieldStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSearchFieldForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
     bool NODELETE paintSearchFieldDecorationsForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
 
-    bool adjustSearchFieldCancelButtonStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustSearchFieldCancelButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSearchFieldCancelButtonForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
 
-    bool adjustSearchFieldDecorationPartStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustSearchFieldDecorationPartStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSearchFieldDecorationPartForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool adjustSearchFieldResultsDecorationPartStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustSearchFieldResultsDecorationPartStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSearchFieldResultsDecorationPartForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
 
-    bool adjustSearchFieldResultsButtonStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustSearchFieldResultsButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSearchFieldResultsButtonForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
 
-    bool adjustSwitchStyleForVectorBasedControls(RenderStyle&, const Element*) const;
+    bool adjustSwitchStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
 
     bool paintPlatformResizerForVectorBasedControls(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&);
     bool NODELETE paintPlatformResizerFrameForVectorBasedControls(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&);
 
-    bool NODELETE supportsFocusRingForVectorBasedControls(const RenderElement&, const RenderStyle&) const;
+    bool NODELETE supportsFocusRingForVectorBasedControls(const RenderElement&, const Style::ComputedStyle&) const;
 
-    bool NODELETE adjustTextControlInnerContainerStyleForVectorBasedControls(RenderStyle&, const RenderStyle&, const Element*) const;
-    bool adjustTextControlInnerPlaceholderStyleForVectorBasedControls(RenderStyle&, const RenderStyle&, const Element*) const;
-    bool adjustTextControlInnerTextStyleForVectorBasedControls(RenderStyle&, const RenderStyle&, const Element*) const;
+    bool NODELETE adjustTextControlInnerContainerStyleForVectorBasedControls(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const;
+    bool adjustTextControlInnerPlaceholderStyleForVectorBasedControls(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const;
+    bool adjustTextControlInnerTextStyleForVectorBasedControls(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const;
 
     Color buttonTextColor(OptionSet<StyleColorOptions>, bool) const;
 
-    bool mayNeedBleedAvoidance(const RenderStyle&) const final;
+    bool mayNeedBleedAvoidance(const Style::ComputedStyle&) const final;
 #endif
 
     bool isSubmitStyleButton(const Node*) const;
@@ -292,7 +294,7 @@ private:
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
 
 #if ENABLE(APPLE_PAY)
-    void adjustApplePayButtonStyle(RenderStyle&, const Element*) const final;
+    void adjustApplePayButtonStyle(Style::ComputedStyle&, const Element*) const final;
 #endif
 
     LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect&) const final;

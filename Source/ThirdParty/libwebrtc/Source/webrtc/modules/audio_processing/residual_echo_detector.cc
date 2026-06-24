@@ -15,17 +15,19 @@
 #include <cstddef>
 #include <numeric>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/metrics.h"
 
+namespace webrtc {
+
 namespace {
 
-float Power(webrtc::ArrayView<const float> input) {
+float Power(std::span<const float> input) {
   if (input.empty()) {
     return 0.f;
   }
@@ -42,8 +44,6 @@ constexpr size_t kAggregationBufferSize = 10 * 100;
 
 }  // namespace
 
-namespace webrtc {
-
 std::atomic<int> ResidualEchoDetector::instance_count_(0);
 
 ResidualEchoDetector::ResidualEchoDetector()
@@ -58,7 +58,7 @@ ResidualEchoDetector::ResidualEchoDetector()
 ResidualEchoDetector::~ResidualEchoDetector() = default;
 
 void ResidualEchoDetector::AnalyzeRenderAudio(
-    ArrayView<const float> render_audio) {
+    std::span<const float> render_audio) {
   // Dump debug data assuming 48 kHz sample rate (if this assumption is not
   // valid the dumped audio will need to be converted offline accordingly).
   data_dumper_->DumpWav("ed_render", render_audio.size(), render_audio.data(),
@@ -79,7 +79,7 @@ void ResidualEchoDetector::AnalyzeRenderAudio(
 }
 
 void ResidualEchoDetector::AnalyzeCaptureAudio(
-    ArrayView<const float> capture_audio) {
+    std::span<const float> capture_audio) {
   // Dump debug data assuming 48 kHz sample rate (if this assumption is not
   // valid the dumped audio will need to be converted offline accordingly).
   data_dumper_->DumpWav("ed_capture", capture_audio.size(),

@@ -24,6 +24,9 @@
 #include "../bytestring/internal.h"
 #include "internal.h"
 
+
+using namespace bssl;
+
 // These functions take a string in UTF8, ASCII or multibyte form and a mask
 // of permissible ASN1 string types. It then works out the minimal type
 // (using the order Printable < IA5 < T61 < BMP < Universal < UTF8) and
@@ -228,7 +231,7 @@ err:
   return -1;
 }
 
-int asn1_is_printable(uint32_t value) {
+int bssl::asn1_is_printable(uint32_t value) {
   if (value > 0x7f) {
     return 0;
   }

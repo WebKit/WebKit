@@ -92,7 +92,7 @@ public:
     GRefPtr<GstPad> m_pad;
     GRefPtr<GstPad> m_bestUpstreamPad;
     GRefPtr<GstStream> m_stream;
-    unsigned long m_eventProbe { 0 };
+    RefPtr<PadProbeHandle<TrackDataHolder>> m_eventProbeClient;
     GRefPtr<GstCaps> m_initialCaps;
     AbortableTaskQueue m_taskQueue;
 
@@ -152,7 +152,7 @@ public:
 private:
     TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, GStreamerTrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
     TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, GStreamerTrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, TrackID);
-    TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, GStreamerTrackType, TrackPrivateBase*, unsigned index, GstStream*);
+    TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, GStreamerTrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstStream>&&);
     ~TrackPrivateBaseGStreamer();
 
     const Ref<TrackDataHolder> m_data;

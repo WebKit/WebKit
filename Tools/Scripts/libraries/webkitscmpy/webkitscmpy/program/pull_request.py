@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import argparse
 import os
 import re
 import sys
@@ -134,6 +135,14 @@ class PullRequest(Command):
             '--no-issue', '--no-bug',
             dest='update_issue', default=True,
             help='Disable automatic bug creation and updates',
+            action=arguments.NoAction,
+        )
+        parser.add_argument(
+            '--update-radar', '--no-update-radar',
+            dest='update_radar', default=True,
+            help=('Update the state of the associated Radar when creating a pull request'
+                  if radar.Tracker.radarclient() is not None
+                  else argparse.SUPPRESS),
             action=arguments.NoAction,
         )
         parser.add_argument(
@@ -772,6 +781,15 @@ class PullRequest(Command):
             cls.add_comment_to_issue(not_radar, pr, commit_class=commit_class)
         elif issue and update_issue:
             cls.add_comment_to_issue(issue, pr, commit_class=commit_class)
+
+        if radar_issue and update_issue and radar_issue.tracker.radarclient():
+            if args.update_radar and radar_issue.state == 'Analyze' and radar_issue.substate in ['Investigate', 'Fix']:
+                try:
+                    radar_issue.set_state(state='Analyze', substate='Review')
+                    print('Updated {} to Analyze/Review'.format(radar_issue.link))
+                except radar_issue.tracker.radarclient().exceptions.UnsuccessfulResponseException as e:
+                    sys.stderr.write('Failed to update {}:\n'.format(radar_issue.link))
+                    sys.stderr.write('{}\n'.format(e))
 
         if issue and pr._metadata and pr._metadata.get('issue'):
             log.info('Syncing PR labels with issue component...')

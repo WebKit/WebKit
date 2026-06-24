@@ -64,7 +64,7 @@
             );
         }
 
-        function runTest() {
+        async function runTest() {
             switch (document.location.hash) {
                 case "#step1":
                     if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
@@ -106,7 +106,7 @@
                 case "#step6":
                     document.location.hash = "step7";
                     // Set per-frame access since otherwise the sibling iframe will get access.
-                    internals.settings.setStorageAccessAPIPerPageScopeEnabled(false);
+                    await testRunner.setStorageAccessAPIPerPageScopeEnabled(false);
                     let iframeElement = document.createElement("iframe");
                     iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
                     iframeElement.onload = function() {
@@ -125,7 +125,7 @@
                     break;
                 case "#step8":
                     // Reset access scope.
-                    internals.settings.setStorageAccessAPIPerPageScopeEnabled(true);
+                    await testRunner.setStorageAccessAPIPerPageScopeEnabled(true);
                     setEnableFeature(false, finishJSTest);
                     break;
             }

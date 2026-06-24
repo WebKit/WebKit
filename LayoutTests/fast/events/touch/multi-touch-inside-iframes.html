@@ -1,5 +1,5 @@
 <html>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <style>
 iframe {
   width: 100px;
@@ -39,6 +39,7 @@ top:150px;
 </div>
 <script type="text/javascript">
 description('Test multi-touch is sent to the same iframe.');
+window.jsTestIsAsync = true;
 
 var touchEventCount = 0;
 var title = 0;
@@ -99,8 +100,7 @@ function onTouch(event, receiver)
             shouldBe("ev.touches.length", "0");
             shouldBe("ev.targetTouches.length", "0");
             shouldBeEqualToString('ev.changedTouches[0].target.ownerDocument.title', 'iframe2');
-            isSuccessfullyParsed();
-            testRunner.notifyDone();
+            finishJSTest();
     }
     touchEventCount++;
 }
@@ -162,9 +162,6 @@ function runTest() {
     }
 }
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-}
 </script>
 </body>
 </html>

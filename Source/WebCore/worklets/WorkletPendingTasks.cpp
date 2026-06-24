@@ -56,7 +56,7 @@ void WorkletPendingTasks::abort(Exception&& exception)
     m_counter = -1;
     m_promise->reject(WTF::move(exception));
     if (m_worklet)
-        m_worklet->finishPendingTasks(*this);
+        protect(m_worklet)->finishPendingTasks(*this);
 }
 
 void WorkletPendingTasks::decrementCounter()
@@ -70,7 +70,7 @@ void WorkletPendingTasks::decrementCounter()
     if (!m_counter) {
         m_promise->resolve();
         if (m_worklet)
-            m_worklet->finishPendingTasks(*this);
+            protect(m_worklet)->finishPendingTasks(*this);
     }
 }
 

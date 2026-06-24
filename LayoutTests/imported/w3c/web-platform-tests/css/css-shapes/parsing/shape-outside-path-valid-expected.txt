@@ -1,0 +1,11 @@
+
+FAIL e.style['shape-outside'] = "path('M 10 10 h 80 v 80 h -80 Z')" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "path('M10,10h80v80h-80z')" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "path(evenodd, 'M10,10h80v80h-80zM25,25h50v50h-50z')" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "path(nonzero, 'M10,10h80v80h-80z')" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "path('M0,0L100,0L100,100Z')" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "path('M0,0C30,60,70,60,100,0')" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "path('M0,0Q50,100,100,0')" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "path('M0,0A25,25,0,0,1,50,0')" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "path(evenodd, 'M10,10h80v80h-80zM25,25h50v50h-50')" should set the property value assert_not_equals: property should be set got disallowed value ""
+

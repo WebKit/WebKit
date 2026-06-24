@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "RenderStyle+SettersInlines.h"
 #include "StyleBuilderState.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleZoom.h"
 

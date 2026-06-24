@@ -25,6 +25,8 @@
 #include "../service_indicator/internal.h"
 
 
+using namespace bssl;
+
 // kDefaultIV is the default IV value given in RFC 3394, 2.2.3.1.
 static const uint8_t kDefaultIV[] = {
     0xa6, 0xa6, 0xa6, 0xa6, 0xa6, 0xa6, 0xa6, 0xa6,

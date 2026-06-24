@@ -86,6 +86,11 @@ private:
 /**
  * WPEViewWayland:
  *
+ * A [class@WPEPlatform.View] implementation for Wayland.
+ *
+ * [class@ViewWayland] is the [class@WPEPlatform.View] implementation used by
+ * [class@DisplayWayland]. It renders the web view contents into a Wayland
+ * surface, which can be accessed with [method@ViewWayland.get_wl_surface].
  */
 struct _WPEViewWaylandPrivate {
     GRefPtr<WPEBuffer> buffer;
@@ -735,7 +740,7 @@ static void wpe_view_wayland_class_init(WPEViewWaylandClass* viewWaylandClass)
  * wpe_view_wayland_get_wl_surface: (skip)
  * @view: a #WPEViewWayland
  *
- * Get the native Wayland view of @view
+ * Get the native Wayland surface of @view
  *
  * Returns: (transfer none) (nullable): a Wayland `wl_surface`
  */

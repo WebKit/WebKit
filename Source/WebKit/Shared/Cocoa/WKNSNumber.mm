@@ -28,8 +28,6 @@
 
 #import <wtf/AlignedStorage.h>
 
-using namespace WebKit;
-
 @implementation WKNSNumber {
     union {
         AlignedStorage<API::Boolean> _boolean;

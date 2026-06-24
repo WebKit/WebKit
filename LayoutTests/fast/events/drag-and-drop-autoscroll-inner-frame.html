@@ -21,7 +21,6 @@ function setUpTest()
     }
 
     window.internals.settings.setAutoscrollForDragAndDropEnabled(true);
-    testRunner.waitUntilDone();
     testIt();
 }
 
@@ -94,7 +93,7 @@ function autoscrollTestPart2()
 function finishTest()
 {
     eventSender.mouseUp();
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 </script>
@@ -107,6 +106,7 @@ For manual testing, drag and drop "Drop Me" downwards and then upwards.
 <script src="../../resources/js-test-pre.js"></script>
 <script>
 description('Check autoscroll within an inner frame by drag-and-drop');
+window.jsTestIsAsync = true;
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

@@ -30,19 +30,19 @@
 
 #include "Gradient.h"
 #include "LegacyRenderSVGShapeInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGSubpathData.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGPath);
 
-LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
+LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGShape(Type::LegacySVGPath, element, WTF::move(style))
 {
     ASSERT(isLegacyRenderSVGPath());
@@ -83,15 +83,20 @@ void LegacyRenderSVGPath::updateShapeFromElement()
 
 FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation repaintRectCalculation, FloatRect strokeBoundingBox) const
 {
+    bool hasMarkers = !m_markerPositions.isEmpty();
+    bool hasZeroLengthCaps = !style().stroke().isNone() && !m_zeroLengthLinecapLocations.isEmpty();
+    if (!hasMarkers && !hasZeroLengthCaps)
+        return strokeBoundingBox;
+
     float strokeWidth = this->strokeWidth();
 
-    if (!m_markerPositions.isEmpty()) {
+    if (hasMarkers) {
         auto markerRect = this->markerRect(repaintRectCalculation, strokeWidth);
         if (!markerRect.isNaN())
             strokeBoundingBox.unite(markerRect);
     }
 
-    if (!style().stroke().isNone()) {
+    if (hasZeroLengthCaps) {
         // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.
         for (auto& zeroLengthLinecapLocation : m_zeroLengthLinecapLocations) {
             auto subpathRect = zeroLengthSubpathRect(zeroLengthLinecapLocation, strokeWidth);
@@ -103,7 +108,7 @@ FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLin
     return strokeBoundingBox;
 }
 
-static void useStrokeStyleToFill(GraphicsContext& context)
+static void legacyUseStrokeStyleToFill(GraphicsContext& context)
 {
     if (RefPtr gradient = context.strokeGradient())
         context.setFillGradient(*gradient, context.strokeGradientSpaceTransform());
@@ -154,19 +159,6 @@ bool LegacyRenderSVGPath::shouldStrokeZeroLengthSubpath() const
     return !style().stroke().isNone() && style().capStyle() != LineCap::Butt;
 }
 
-Path* LegacyRenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
-{
-    static NeverDestroyed<Path> tempPath;
-
-    tempPath.get().clear();
-    if (style().capStyle() == LineCap::Square)
-        tempPath.get().addRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
-    else
-        tempPath.get().addEllipseInRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
-
-    return &tempPath.get();
-}
-
 FloatRect LegacyRenderSVGPath::zeroLengthSubpathRect(const FloatPoint& linecapPosition, float strokeWidth) const
 {
     return FloatRect(linecapPosition.x() - strokeWidth / 2, linecapPosition.y() - strokeWidth / 2, strokeWidth, strokeWidth);
@@ -196,12 +188,21 @@ void LegacyRenderSVGPath::strokeZeroLengthSubpaths(GraphicsContext& context) con
         nonScalingTransform = nonScalingStrokeTransform();
 
     GraphicsContextStateSaver stateSaver(context, true);
-    useStrokeStyleToFill(context);
-    for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
-        auto usePath = zeroLengthLinecapPath(m_zeroLengthLinecapLocations[i]);
-        if (hasNonScalingStroke())
-            usePath = nonScalingStrokePath(usePath, nonScalingTransform);
-        context.fillPath(*usePath);
+    legacyUseStrokeStyleToFill(context);
+
+    float strokeWidth = this->strokeWidth();
+    bool isSquareCap = style().capStyle() == LineCap::Square;
+    for (auto& linecapLocation : m_zeroLengthLinecapLocations) {
+        // The linecap location is path geometry, not stroke geometry. So when
+        // vector-effect: non-scaling-stroke is in effect, the transform must be
+        // applied to the position where the cap is drawn -- not to the generated
+        // cap shape, which would otherwise be distorted by the transform.
+        auto position = hasNonScalingStroke() ? nonScalingTransform.mapPoint(linecapLocation) : linecapLocation;
+        auto subpathRect = zeroLengthSubpathRect(position, strokeWidth);
+        if (isSquareCap)
+            context.fillRect(subpathRect);
+        else
+            context.fillEllipse(subpathRect);
     }
 }
 
@@ -225,7 +226,7 @@ bool LegacyRenderSVGPath::shouldGenerateMarkerPositions() const
     if (!style().hasMarkers())
         return false;
 
-    if (!graphicsElement().supportsMarkers())
+    if (!protect(graphicsElement())->supportsMarkers())
         return false;
 
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
@@ -307,7 +308,7 @@ bool LegacyRenderSVGPath::isRenderingDisabled() const
     return !hasPath() || path().isEmpty();
 }
 
-void LegacyRenderSVGPath::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void LegacyRenderSVGPath::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     if (oldStyle && oldStyle->hasMarkers() && !style().hasMarkers())
         m_markerPositions.clear();

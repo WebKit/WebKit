@@ -17,10 +17,8 @@
 
 #include <openssl/base.h>
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
+BSSL_NAMESPACE_BEGIN
 
 extern const uint32_t CAST_S_table0[256];
 extern const uint32_t CAST_S_table1[256];
@@ -31,9 +29,6 @@ extern const uint32_t CAST_S_table5[256];
 extern const uint32_t CAST_S_table6[256];
 extern const uint32_t CAST_S_table7[256];
 
-
-#if defined(__cplusplus)
-}  // extern C
-#endif
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_HEADER_CAST_INTERNAL_H

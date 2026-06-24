@@ -265,6 +265,7 @@ TEST(WKWebViewAutoFillTests, AutoFillRequiresInputSession)
         done = true;
         return _WKFocusStartsInputSessionPolicyAuto;
     }];
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'><input id='password' type='password'>"];
     [webView stringByEvaluatingJavaScript:@"user.focus()"];
     Util::run(&done);
@@ -290,6 +291,7 @@ TEST(WKWebViewAutoFillTests, AutoFillPreservesTextSuggestion)
         EXPECT_EQ(customSuggestion.get(), suggestion);
         insertedSuggestion = true;
     }];
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'>"];
     [webView stringByEvaluatingJavaScript:@"user.focus()"];
     Util::run(&doneFocusing);

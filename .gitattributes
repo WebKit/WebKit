@@ -36,4 +36,4 @@ objc/*.h diff=objcppheader
 /Source/JavaScriptCore/b3/testb3*.cpp test=1
 /Source/JavaScriptCore/b3/air/testair.cpp test=1
 /Source/JavaScriptCore/dfg/testdfg.cpp test=1
-/Tools/TestWebKitAPI/**/* test=1
+/Tools/TestWebKitAPI/Tests/**/* test=1

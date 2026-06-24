@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+    <title>TextTrack cue edge times: unbounded and pre-zero</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard:
+//   §4.8.13.7 "Text tracks" -- text track cue start/end times
+//     https://html.spec.whatwg.org/multipage/media.html#text-track-cue-end-time
+//
+// - An unbounded text track cue (endTime = +Infinity) cannot become
+//   inactive through monotonic playback advance alone.
+// - Text track cue start/end times can be negative; cues entirely
+//   before time 0 cannot be active (since currentTime >= 0 always).
+
+const MEDIA_SRC = "../content/test-25fps.mp4";
+
+function makeReadyVideo(t) {
+    const video = document.createElement("video");
+    video.muted = true;
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+    video.src = MEDIA_SRC;
+    return video;
+}
+
+function whenSeekedTo(video, time) {
+    return new Promise(resolve => {
+        const handler = () => {
+            video.removeEventListener("seeked", handler);
+            resolve();
+        };
+        video.addEventListener("seeked", handler);
+        if (video.readyState >= video.HAVE_METADATA)
+            video.currentTime = time;
+        else
+            video.addEventListener("loadedmetadata",
+                () => { video.currentTime = time; }, { once: true });
+    });
+}
+
+promise_test(async t => {
+    // VTTCue with endTime = +Infinity stays active across monotonic
+    // playback advance once it's entered.
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+
+    const cue = new VTTCue(0, Infinity, "unbounded");
+    tt.addCue(cue);
+    assert_equals(cue.endTime, Infinity, "endTime stored as Infinity");
+
+    await whenSeekedTo(video, 0.1);
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_array_equals([...tt.activeCues], [cue],
+        "unbounded cue active at t=0.1");
+
+    // Advance playback by seeking forward; the cue should remain active.
+    await whenSeekedTo(video, 0.5);
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_array_equals([...tt.activeCues], [cue],
+        "unbounded cue still active at t=0.5");
+
+    await whenSeekedTo(video, 1.0);
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_array_equals([...tt.activeCues], [cue],
+        "unbounded cue still active at t=1.0");
+}, "unbounded cue (endTime = Infinity) stays active across monotonic advance");
+
+test(() => {
+    // Negative start/end times are storable on a VTTCue.
+    const cue = new VTTCue(-5, -1, "pre-zero");
+    assert_equals(cue.startTime, -5);
+    assert_equals(cue.endTime, -1);
+}, "VTTCue accepts negative startTime and endTime");
+
+promise_test(async t => {
+    // A cue entirely before time 0 must never be active, since
+    // currentPlaybackPosition >= 0.
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+
+    const preZeroCue = new VTTCue(-5, -1, "before zero");
+    const validCue = new VTTCue(0, 100, "after zero");
+    tt.addCue(preZeroCue);
+    tt.addCue(validCue);
+
+    await whenSeekedTo(video, 0);
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_false([...tt.activeCues].includes(preZeroCue),
+        "pre-zero cue is not active at t=0");
+    assert_true([...tt.activeCues].includes(validCue),
+        "valid cue is active at t=0");
+
+    await whenSeekedTo(video, 0.5);
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_false([...tt.activeCues].includes(preZeroCue),
+        "pre-zero cue is not active at t=0.5");
+}, "cue entirely before time 0 cannot be active");
+
+promise_test(async t => {
+    // A cue spanning across time 0 (negative start, positive end) IS
+    // active when currentTime falls within its range.
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+
+    const spanningCue = new VTTCue(-1, 0.5, "spanning zero");
+    tt.addCue(spanningCue);
+
+    await whenSeekedTo(video, 0.1);
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_array_equals([...tt.activeCues], [spanningCue],
+        "spanning cue is active at t=0.1 (within [-1, 0.5))");
+
+    await whenSeekedTo(video, 1.0);
+    await new Promise(r => t.step_timeout(r, 50));
+    assert_array_equals([...tt.activeCues], [],
+        "spanning cue is not active at t=1.0 (past endTime=0.5)");
+}, "cue spanning time 0 is active when currentTime is within range");
+</script>
+</body>
+</html>

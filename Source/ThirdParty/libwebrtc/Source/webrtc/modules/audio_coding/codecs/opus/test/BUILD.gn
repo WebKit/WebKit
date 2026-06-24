@@ -46,9 +46,7 @@ if (rtc_include_tests) {
     deps = [
       ":test",
       "../../../../../common_audio",
-      "../../../../../common_audio:common_audio_c",
       "../../../../../rtc_base:checks",
-      "../../../../../rtc_base:macromagic",
       "../../../../../test:test_support",
       "//testing/gtest",
     ]

@@ -12,12 +12,12 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <type_traits>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
@@ -63,7 +63,7 @@ absl::string_view ToString(ReconfigurationResponseParameter::Result result) {
 }
 
 std::optional<ReconfigurationResponseParameter>
-ReconfigurationResponseParameter::Parse(webrtc::ArrayView<const uint8_t> data) {
+ReconfigurationResponseParameter::Parse(std::span<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;

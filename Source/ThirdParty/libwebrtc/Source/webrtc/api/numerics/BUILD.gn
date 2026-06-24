@@ -16,7 +16,6 @@ rtc_library("numerics") {
     "samples_stats_counter.h",
   ]
   deps = [
-    "..:array_view",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_numerics",
     "../units:timestamp",

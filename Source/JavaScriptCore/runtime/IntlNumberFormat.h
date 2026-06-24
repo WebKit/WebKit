@@ -48,6 +48,7 @@ enum class IntlRoundingType : uint8_t { FractionDigits, SignificantDigits, MoreP
 enum class IntlRoundingPriority : uint8_t { Auto, MorePrecision, LessPrecision };
 enum class IntlTrailingZeroDisplay : uint8_t { Auto, StripIfInteger };
 enum class IntlNotation : uint8_t { Standard, Scientific, Engineering, Compact };
+enum class CompactDisplay : uint8_t { Short, Long };
 template<typename IntlType> void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
 template<typename IntlType> void appendNumberFormatDigitOptionsToSkeleton(IntlType*, StringBuilder&);
 template<typename IntlType> void appendNumberFormatNotationOptionsToSkeleton(IntlType*, StringBuilder&);
@@ -191,6 +192,7 @@ public:
     friend void appendNumberFormatNotationOptionsToSkeleton(IntlType*, StringBuilder&);
 
     static ASCIILiteral notationString(IntlNotation);
+    static ASCIILiteral compactDisplayString(CompactDisplay);
 
     static IntlNumberFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);
 
@@ -209,7 +211,6 @@ private:
     enum class CurrencyDisplay : uint8_t { Code, Symbol, FormalSymbol, NarrowSymbol, Name, Never };
     enum class CurrencySign : uint8_t { Standard, Accounting };
     enum class UnitDisplay : uint8_t { Short, Narrow, Long };
-    enum class CompactDisplay : uint8_t { Short, Long };
     enum class SignDisplay : uint8_t { Auto, Never, Always, ExceptZero, Negative };
     enum class UseGrouping : uint8_t { False, Min2, Auto, Always };
 
@@ -217,7 +218,6 @@ private:
     static ASCIILiteral currencyDisplayString(CurrencyDisplay);
     static ASCIILiteral currencySignString(CurrencySign);
     static ASCIILiteral unitDisplayString(UnitDisplay);
-    static ASCIILiteral compactDisplayString(CompactDisplay);
     static ASCIILiteral signDisplayString(SignDisplay);
     static JSValue useGroupingValue(VM&, UseGrouping);
 

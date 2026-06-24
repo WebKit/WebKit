@@ -1,0 +1,19 @@
+
+RUN(video.disableRemotePlayback = true)
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('audio/aac'))
+RUN(sourceBuffer.appendBuffer(buffer))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+sourceBuffer.buffered = [0, 2.026666666666667)
+RUN(source.endOfStream())
+EVENT(sourceended)
+EXPECTED (video.readyState == '4') OK
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.currentTime > 0) OK
+EXPECTED (video.paused == 'false') OK
+RUN(video.pause())
+END OF TEST
+

@@ -37,24 +37,19 @@ class MediaPlayerPrivateGStreamer;
 
 class InbandTextTrackPrivateGStreamer : public InbandTextTrackPrivate, public TrackPrivateBaseGStreamer {
 public:
-    static Ref<InbandTextTrackPrivateGStreamer> create(unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent = true)
-    {
-        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, WTF::move(pad), shouldHandleStreamStartEvent));
-    }
-
     static Ref<InbandTextTrackPrivateGStreamer> create(unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
     {
         return adoptRef(*new InbandTextTrackPrivateGStreamer(index, WTF::move(pad), trackId));
     }
 
-    static Ref<InbandTextTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstPad> pad)
+    static Ref<InbandTextTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstPad>&& pad, TrackID id)
     {
-        return create(index, WTF::move(pad));
+        return create(index, WTF::move(pad), id);
     }
 
-    static Ref<InbandTextTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GstStream* stream)
+    static Ref<InbandTextTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstStream>&& stream)
     {
-        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, stream));
+        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, WTF::move(stream)));
     }
 
     Kind kind() const final { return m_kind; }
@@ -69,9 +64,8 @@ public:
     void tagsChanged(GRefPtr<GstTagList>&&) final;
 
 private:
-    InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
     InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&&, TrackID);
-    InbandTextTrackPrivateGStreamer(unsigned index, GstStream*);
+    InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstStream>&&);
 
     void notifyTrackOfSample();
 

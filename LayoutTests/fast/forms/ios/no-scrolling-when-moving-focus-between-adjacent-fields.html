@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
     <script src="../../../resources/ui-helper.js"></script>
     <style>
         html, body {
@@ -42,10 +42,6 @@
     <div id="description"></div>
     <div id="output"></div>
     <script>
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
 
     firstField = document.getElementById("first");
     secondField = document.getElementById("second");
@@ -75,6 +71,7 @@
 
     addEventListener("load", async () => {
         description("This test verifies that moving focus between two fields that are at the same y offset does not induce vertical scrolling. To test manually, focus the left field and press any key. Focus should move to the right field, and there should be no scrolling.");
+        window.jsTestIsAsync = true;
         if (!window.testRunner) {
             shouldLogScrollDeltas = true;
             return;
@@ -105,7 +102,7 @@
         document.activeElement.blur();
         await UIHelper.waitForKeyboardToHide();
 
-        testRunner.notifyDone();
+        finishJSTest();
     });
     </script>
 </body>

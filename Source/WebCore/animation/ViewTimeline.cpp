@@ -44,8 +44,8 @@
 #include "StyleableInlines.h"
 #include "StyleBuilderState.h"
 #include "StyleKeyword+Logging.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
-#include "StyleLengthWrapper+DeprecatedCSSValueConversion.h"
+#include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
+#include "StylePrimitiveNumericOrKeyword+DeprecatedCSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "StyleScrollPadding.h"
@@ -182,7 +182,7 @@ void ViewTimeline::setSubject(Element* subject)
     if (subject)
         setSubject(Styleable::fromElement(*subject));
     else {
-        removeTimelineFromDocument(m_subject.element().get());
+        removeTimelineFromDocument(protect(m_subject.element().get()));
         m_subject = WeakStyleable();
     }
 }
@@ -198,7 +198,7 @@ void ViewTimeline::setSubject(const Styleable& styleable)
     if (previousSubject && &previousSubject->document() == &styleable.element.document())
         return;
 
-    removeTimelineFromDocument(previousSubject.get());
+    removeTimelineFromDocument(protect(previousSubject.get()));
 
     protect(styleable.element.document())->ensureTimelinesController().addTimeline(*this);
 }
@@ -206,7 +206,7 @@ void ViewTimeline::setSubject(const Styleable& styleable)
 AnimationTimelinesController* ViewTimeline::controller() const
 {
     if (auto subject = m_subject.styleable())
-        return &subject->element.document().ensureTimelinesController();
+        return &protect(subject->element.document())->ensureTimelinesController();
     return nullptr;
 }
 
@@ -315,7 +315,7 @@ void ViewTimeline::cacheCurrentTime()
             return { };
 
         CheckedPtr sourceRenderer = sourceScrollerRenderer();
-        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer.get(), subject->element.document());
+        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer.get(), protect(subject->element.document()));
         if (!sourceScrollableArea)
             return { };
 
@@ -351,28 +351,28 @@ void ViewTimeline::cacheCurrentTime()
 
             auto computedInset = [&](const CSSValue& specifiedInset) {
                 if (!conversionData)
-                    return Style::deprecatedToStyleFromCSSValue<Style::ViewTimelineInsetItem::Length>(specifiedInset).value_or(Style::ViewTimelineInsetItem::Length { CSS::Keyword::Auto { } });
-                return Style::toStyleFromCSSValue<Style::ViewTimelineInsetItem::Length>(*conversionData, specifiedInset);
+                    return Style::deprecatedToStyleFromCSSValue<Style::ViewTimelineInsetItem::Offset>(specifiedInset).value_or(Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } });
+                return Style::toStyleFromCSSValue<Style::ViewTimelineInsetItem::Offset>(*conversionData, specifiedInset);
             };
 
             if (m_specifiedInsets->start && m_specifiedInsets->end) {
                 m_insets = {
-                    computedInset(*m_specifiedInsets->start),
-                    computedInset(*m_specifiedInsets->end),
+                    computedInset(protect(*m_specifiedInsets->start)),
+                    computedInset(protect(*m_specifiedInsets->end)),
                 };
             } else if (m_specifiedInsets->start) {
                 m_insets = {
-                    computedInset(*m_specifiedInsets->start),
+                    computedInset(protect(*m_specifiedInsets->start)),
                 };
             } else if (m_specifiedInsets->end) {
                 m_insets = {
-                    Style::ViewTimelineInsetItem::Length { CSS::Keyword::Auto { } },
-                    computedInset(*m_specifiedInsets->end),
+                    Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } },
+                    computedInset(protect(*m_specifiedInsets->end)),
                 };
             } else {
                 m_insets = {
-                    Style::ViewTimelineInsetItem::Length { CSS::Keyword::Auto { } },
-                    Style::ViewTimelineInsetItem::Length { CSS::Keyword::Auto { } },
+                    Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } },
+                    Style::ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } },
                 };
             }
         }

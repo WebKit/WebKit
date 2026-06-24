@@ -165,7 +165,10 @@ public:
     }
 
     bool isJumpPad() { return m_nodes.size() == 1 && m_nodes[0]->isJump(); }
-    
+
+    BlockIndex index() const { return m_index; }
+    void setIndex(BlockIndex index) { m_index = index; }
+
     void NODELETE removePredecessor(BasicBlock* block);
     void NODELETE replacePredecessor(BasicBlock* from, BasicBlock* to);
 
@@ -192,9 +195,9 @@ public:
     // This value is used internally for block linking and OSR entry. It is mostly meaningless
     // for other purposes due to inlining.
     BytecodeIndex bytecodeBegin;
-    
-    BlockIndex index;
-
+private:
+    BlockIndex m_index;
+public:
     StructureClobberState cfaStructureClobberStateAtHead;
     StructureClobberState cfaStructureClobberStateAtTail;
     BranchDirection cfaBranchDirection;

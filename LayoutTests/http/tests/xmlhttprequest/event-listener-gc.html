@@ -1,7 +1,8 @@
 <html>
 <head>
-<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
 <script>
+window.jsTestIsAsync = true;
 function write(s)
 {
     document.getElementById('pre').appendChild(document.createTextNode(s));
@@ -18,17 +19,12 @@ function processStateChange(e)
 {
     write("PASS: event handler fired" + (didCollect ? " after garbage collection" : "") + ", readyState: " + e.target.readyState + ".\n");
     if (e.target.readyState == 4) {
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 }
 
 function test() 
 {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
 
     var request = new XMLHttpRequest();
     request.onreadystatechange = processStateChange;

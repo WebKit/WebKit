@@ -29,9 +29,10 @@ namespace WebCore {
 class LayoutSize;
 class LayoutUnit;
 class RenderElement;
-class RenderStyle;
 
 namespace Style {
+
+class ComputedStyle;
 
 // Token passed around to indicate that the evaluation will need zoom passed in the future.
 struct ZoomNeeded { };
@@ -46,17 +47,17 @@ struct ZoomFactor {
 };
 
 // Map from computed style values (which take zoom into account) to web-exposed values, which are zoom-independent.
-inline int adjustForAbsoluteZoom(int, const RenderStyle&);
+inline int adjustForAbsoluteZoom(int, const Style::ComputedStyle&);
 inline int adjustForAbsoluteZoom(int, const RenderElement&);
-inline float adjustFloatForAbsoluteZoom(float, const RenderStyle&);
+inline float adjustFloatForAbsoluteZoom(float, const Style::ComputedStyle&);
 inline float adjustFloatForAbsoluteZoom(float, const RenderElement&);
-inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit, const RenderStyle&);
+inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit, const Style::ComputedStyle&);
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit, const RenderElement&);
-inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize, const RenderStyle&);
+inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize, const Style::ComputedStyle&);
 inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize, const RenderElement&);
 
 // Map from zoom-independent style values to computed style values (which take zoom into account).
-inline float applyZoom(float, const RenderStyle&);
+inline float applyZoom(float, const Style::ComputedStyle&);
 
 } // namespace Style
 } // namespace WebCore

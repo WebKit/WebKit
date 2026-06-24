@@ -50,14 +50,34 @@ class FrameEncodeMetadataWriter {
   void UpdateBitstream(const CodecSpecificInfo* codec_specific_info,
                        EncodedImage* encoded_image);
 
+  void OnFrameDropped(uint32_t rtp_timestamp,
+                      int spatial_id,
+                      bool is_end_of_temporal_unit);
+
   void Reset();
 
  private:
+  struct DropNotification {
+    uint32_t rtp_timestamp;
+    int spatial_id;
+    bool is_end_of_temporal_unit;
+  };
+
   // For non-internal-source encoders, returns encode started time and fixes
   // capture timestamp for the frame, if corrupted by the encoder.
   std::optional<int64_t> ExtractEncodeStartTimeAndFillMetadata(
       size_t simulcast_svc_idx,
-      EncodedImage* encoded_image) RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
+      EncodedImage* encoded_image,
+      std::vector<DropNotification>& drop_notifications)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
+  void DropOldOrEqualFrames(uint32_t rtp_timestamp,
+                            int spatial_id_to_skip,
+                            std::vector<DropNotification>& drop_notifications)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
+  // Returns true if any spatial layer contains a pending frame with the given
+  // RTP timestamp.
+  bool IsFrameWithRtpTimestampPending(uint32_t rtp_timestamp)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
 
   struct FrameMetadata {
     uint32_t rtp_timestamp;

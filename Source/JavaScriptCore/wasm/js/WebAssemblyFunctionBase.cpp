@@ -56,12 +56,6 @@ void WebAssemblyFunctionBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(WebAssemblyFunctionBase);
 
-void WebAssemblyFunctionBase::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name)
-{
-    Base::finishCreation(vm, executable, length, name);
-    ASSERT(inherits(info()));
-}
-
 const Wasm::RTT& WebAssemblyFunctionBase::signature() const
 {
     return *m_importableFunction.rtt;

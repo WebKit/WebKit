@@ -255,6 +255,26 @@ void WebExtensionContext::setHasAccessToPrivateData(bool hasAccess)
     }
 }
 
+void WebExtensionContext::setHasAccessToFileURLs(bool hasAccess)
+{
+    if (m_hasAccessToFileURLs == hasAccess)
+        return;
+
+    m_hasAccessToFileURLs = hasAccess;
+
+    if (!safeToInjectContent())
+        return;
+
+    if (m_hasAccessToFileURLs && hasAccessToAllHosts()) {
+        auto filePattern = WebExtensionMatchPattern::getOrCreate("file"_s, "*"_s, "/*"_s);
+        if (filePattern)
+            addInjectedContent(injectedContents(), *filePattern);
+    } else {
+        removeInjectedContent();
+        addInjectedContent();
+    }
+}
+
 const WebExtensionContext::PermissionsMap& WebExtensionContext::grantedPermissions()
 {
     return removeExpired(m_grantedPermissions, m_nextGrantedPermissionsExpirationDate, PermissionNotification::GrantedPermissionsWereRemoved);
@@ -854,6 +874,9 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (!WebExtensionMatchPattern::validSchemes().contains(url.protocol().toStringWithoutCopying()))
         return PermissionState::Unknown;
 
+    if (url.protocolIsFile() && !m_hasAccessToFileURLs)
+        return PermissionState::Unknown;
+
     if (tab) {
         auto temporaryPattern = tab->temporaryPermissionMatchPattern();
         if (temporaryPattern && temporaryPattern->matchesURL(url))
@@ -901,10 +924,14 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
 
     // First, check for patterns that are specific to certain domains, ignoring wildcard host patterns that
     // match all hosts. The order is denied, then granted. This makes sure denied takes precedence over granted.
+    OptionSet<WebExtensionMatchPattern::Options> fileOptions;
+    if (m_hasAccessToFileURLs)
+        fileOptions.add(WebExtensionMatchPattern::Options::AllowFileScheme);
+
     auto urlMatchesPatternIgnoringWildcardHostPatterns = [&](WebExtensionMatchPattern& pattern) {
         if (pattern.matchesAllHosts())
             return false;
-        return pattern.matchesURL(url);
+        return pattern.matchesURL(url, fileOptions);
     };
 
     for (auto& deniedPermissionEntry : deniedPermissionMatchPatterns) {
@@ -923,7 +950,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     auto urlMatchesWildcardHostPatterns = [&](WebExtensionMatchPattern& pattern) {
         if (!pattern.matchesAllHosts())
             return false;
-        return pattern.matchesURL(url);
+        return pattern.matchesURL(url, fileOptions);
     };
 
     for (auto& deniedPermissionEntry : deniedPermissionMatchPatterns) {
@@ -979,6 +1006,9 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (!pattern.matchesAllURLs() && !WebExtensionMatchPattern::validSchemes().contains(pattern.scheme()))
         return PermissionState::Unknown;
 
+    if (!pattern.matchesAllURLs() && pattern.scheme() == "file"_s && !m_hasAccessToFileURLs)
+        return PermissionState::Unknown;
+
     if (tab) {
         auto temporaryPattern = tab->temporaryPermissionMatchPattern();
         if (temporaryPattern && temporaryPattern->matchesPattern(pattern))
@@ -992,10 +1022,14 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     // First, check for patterns that are specific to certain domains, ignoring wildcard host patterns that
     // match all hosts. The order is denied, then granted. This makes sure denied takes precedence over granted.
 
+    auto fileOptions = m_hasAccessToFileURLs
+        ? OptionSet<WebExtensionMatchPattern::Options> { WebExtensionMatchPattern::Options::AllowFileScheme }
+        : OptionSet<WebExtensionMatchPattern::Options> { };
+
     auto urlMatchesPatternIgnoringWildcardHostPatterns = [&](WebExtensionMatchPattern& otherPattern) {
         if (pattern.matchesAllHosts())
             return false;
-        return pattern.matchesPattern(otherPattern);
+        return pattern.matchesPattern(otherPattern, fileOptions);
     };
 
     for (auto& deniedPermissionEntry : deniedPermissionMatchPatterns) {
@@ -1015,7 +1049,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     auto urlMatchesWildcardHostPatterns = [&](WebExtensionMatchPattern& otherPattern) {
         if (!pattern.matchesAllHosts())
             return false;
-        return pattern.matchesPattern(otherPattern);
+        return pattern.matchesPattern(otherPattern, fileOptions);
     };
 
     for (auto& deniedPermissionEntry : deniedPermissionMatchPatterns) {
@@ -1189,6 +1223,11 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
     // This avoids duplicate injected content if individual hosts are granted in addition to "all hosts".
     if (hasAccessToAllHosts()) {
         addInjectedContent(injectedContents, WebExtensionMatchPattern::allHostsAndSchemesMatchPattern());
+        if (m_hasAccessToFileURLs) {
+            auto filePattern = WebExtensionMatchPattern::getOrCreate("file"_s, "*"_s, "/*"_s);
+            if (filePattern)
+                addInjectedContent(injectedContents, *filePattern);
+        }
         return;
     }
 
@@ -1269,6 +1308,10 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
     if (!safeToInjectContent())
         return;
 
+    OptionSet<WebExtensionMatchPattern::Options> expandOptions;
+    if (m_hasAccessToFileURLs)
+        expandOptions.add(WebExtensionMatchPattern::Options::AllowFileScheme);
+
     auto scriptAddResult = m_injectedScriptsPerPatternMap.ensure(pattern, [&] {
         return UserScriptVector { };
     });
@@ -1295,7 +1338,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         if (!pattern.matchesPattern(deniedMatchPattern, { WebExtensionMatchPattern::Options::IgnorePaths, WebExtensionMatchPattern::Options::MatchBidirectionally }))
             continue;
 
-        for (const auto& deniedMatchPatternString : deniedMatchPattern->expandedStrings())
+        for (const auto& deniedMatchPatternString : deniedMatchPattern->expandedStrings(expandOptions))
             baseExcludeMatchPatternsSet.add(deniedMatchPatternString);
     }
 
@@ -1315,7 +1358,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
                 if (!restrictedPattern)
                     continue;
 
-                for (const auto& restrictedPattern : restrictedPattern->expandedStrings())
+                for (const auto& restrictedPattern : restrictedPattern->expandedStrings(expandOptions))
                     includeMatchPatternsSet.add(restrictedPattern);
                 continue;
             }
@@ -1335,7 +1378,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             if (!restrictedPattern)
                 continue;
 
-            for (const auto& restrictedPattern : restrictedPattern->expandedStrings())
+            for (const auto& restrictedPattern : restrictedPattern->expandedStrings(expandOptions))
                 includeMatchPatternsSet.add(restrictedPattern);
         }
 
@@ -1611,6 +1654,8 @@ WebExtensionContext::WebExtensionContext()
     ASSERT(!get(identifier()));
     webExtensionContexts().add(identifier(), *this);
 }
+
+WebExtensionContext::~WebExtensionContext() = default;
 
 WebExtensionContextIdentifier WebExtensionContext::privilegedIdentifier() const
 {

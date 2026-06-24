@@ -15,11 +15,11 @@
 
 #include <map>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "api/adaptation/resource.h"
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
 #include "api/frame_transformer_interface.h"
@@ -210,8 +210,8 @@ class VideoSendStream {
 
     // An optional encoder selector provided by the user.
     // Overrides VideoEncoderFactory::GetEncoderSelector().
-    // Owned by RtpSenderBase.
-    VideoEncoderFactory::EncoderSelectorInterface* encoder_selector = nullptr;
+    scoped_refptr<VideoEncoderFactory::EncoderSelectorInterface>
+        encoder_selector;
 
     // Per PeerConnection cryptography options.
     CryptoOptions crypto_options;
@@ -264,7 +264,7 @@ class VideoSendStream {
   virtual void SetStats(const Stats& stats) { RTC_CHECK_NOTREACHED(); }
 
   // Sets the list of CSRCs to be included in every packet.
-  virtual void SetCsrcs(ArrayView<const uint32_t> csrcs) = 0;
+  virtual void SetCsrcs(std::span<const uint32_t> csrcs) = 0;
 
   virtual void GenerateKeyFrame(const std::vector<std::string>& rids) = 0;
 

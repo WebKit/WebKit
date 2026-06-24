@@ -28,7 +28,7 @@
 static const struct {
   int nid;
   const char *name;
-  const EVP_CIPHER *(*func)(void);
+  const EVP_CIPHER *(*func)();
 } kCiphers[] = {
     {NID_aes_128_cbc, "aes-128-cbc", EVP_aes_128_cbc},
     {NID_aes_128_ctr, "aes-128-ctr", EVP_aes_128_ctr},

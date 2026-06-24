@@ -213,12 +213,6 @@ public:
         return *this;
     }
 
-    constexpr Seconds reduceTimeResolution(Seconds resolution)
-    {
-        double reduced = std::floor(seconds() / resolution.seconds()) * resolution.seconds();
-        return Seconds(reduced);
-    }
-
 private:
     double m_value { 0 };
 };

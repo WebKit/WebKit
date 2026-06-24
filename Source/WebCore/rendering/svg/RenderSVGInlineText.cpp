@@ -39,10 +39,10 @@
 #include "RenderSVGText.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBoxInlines.h"
-#include "SVGLayerTransformComputation.h"
 #include "SVGRenderingContext.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextBoxPainter.h"
+#include "SVGTransformComputation.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 #include "VisiblePosition.h"
@@ -108,7 +108,7 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
         textAncestor->subtreeTextDidChange(this);
 }
 
-void RenderSVGInlineText::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderText::styleDidChange(diff, oldStyle);
     updateScaledFont();
@@ -248,12 +248,12 @@ float RenderSVGInlineText::computeScalingFactorForRenderer(const RenderObject& r
 {
     if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
         if (const auto* layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
-            return SVGLayerTransformComputation(*layerRenderer).calculateScreenFontSizeScalingFactor();
+            return SVGTransformComputation(*layerRenderer).calculateScreenFontSizeScalingFactor();
     }
     return SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
 }
 
-bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const RenderStyle& style, float& scalingFactor, FontCascade& scaledFont)
+bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const Style::ComputedStyle& style, float& scalingFactor, FontCascade& scaledFont)
 {
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     scalingFactor = computeScalingFactorForRenderer(renderer);
@@ -277,7 +277,7 @@ bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
         fontDescription.setOrientation(FontOrientation::Horizontal);
 
     scaledFont = FontCascade(WTF::move(fontDescription));
-    scaledFont.update(protect(renderer.document().fontSelector()).ptr());
+    scaledFont.update(protect(protect(renderer.document())->fontSelector()).ptr());
     return true;
 }
 

@@ -60,10 +60,7 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FormAttributeTargetObserver);
 
-FormListedElement::FormListedElement(HTMLFormElement* form)
-    : FormAssociatedElement(form)
-{
-}
+FormListedElement::FormListedElement() = default;
 
 FormListedElement::~FormListedElement() = default;
 

@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<head>
+    <title>Time marches on: cue lifecycle during playback and mutations</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard §4.8.13.9 "Playing the media resource",
+// "time marches on" steps:
+//   https://html.spec.whatwg.org/multipage/media.html#time-marches-on
+//
+// When the current playback position changes (playback or seeking), the
+// "time marches on" steps run. We exercise:
+//
+// - Adding a track with cues mid-playback fires enter/cuechange.
+// - Removing a cue or removing a track fires exit if the cue was active.
+// - Prepared-task ordering: when multiple cues share an event time,
+//   tasks are sorted by time ascending, then text-track-cue-order, then
+//   enter-before-exit.
+// - A cue is part of a track only when listed in track.cues, not merely
+//   associated.
+
+const MEDIA_SRC = "../content/test-25fps.mp4";
+
+function makeReadyVideo(t) {
+    const video = document.createElement("video");
+    video.muted = true;
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+    video.src = MEDIA_SRC;
+    return video;
+}
+
+function whenSeekedTo(video, time) {
+    return new Promise(resolve => {
+        const handler = () => {
+            video.removeEventListener("seeked", handler);
+            resolve();
+        };
+        video.addEventListener("seeked", handler);
+        if (video.readyState >= video.HAVE_METADATA)
+            video.currentTime = time;
+        else
+            video.addEventListener("loadedmetadata",
+                () => { video.currentTime = time; }, { once: true });
+    });
+}
+
+function nextTick(t) {
+    return new Promise(r => t.step_timeout(r, 50));
+}
+
+promise_test(async t => {
+    // Adding a track-with-cues mid-stream should fire 'enter' on cues
+    // that are active at the current playback position, and 'cuechange'
+    // on the track.
+    const video = makeReadyVideo(t);
+    await whenSeekedTo(video, 0.5);
+
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+
+    const cue = new VTTCue(0, 100, "covers t=0.5");
+
+    let enterFired = false;
+    let cuechangeFired = false;
+    cue.onenter = () => { enterFired = true; };
+    tt.oncuechange = () => { cuechangeFired = true; };
+
+    tt.addCue(cue);
+    await nextTick(t);
+
+    assert_true(enterFired, "'enter' fires when a cue is added covering currentTime");
+    assert_true(cuechangeFired, "'cuechange' fires on track when cue becomes active");
+    assert_array_equals([...tt.activeCues], [cue], "cue is in activeCues");
+}, "adding a track with cues mid-stream fires enter + cuechange");
+
+promise_test(async t => {
+    // Removing a currently-active cue must clear its active flag
+    // synchronously per HTML §4.8.13.7 "text track cue active flag".
+    //
+    // `tt.activeCues` cannot observe the cleared flag directly (the cue
+    // is no longer in tt.cues, so it can never be in activeCues). Instead,
+    // re-add the cue at a time outside its range and confirm no 'exit'
+    // event fires — if the flag had survived removeCue, time-marches-on
+    // would queue exit (the cue would be in "other cues" with active flag
+    // set, per step 11 of the time-marches-on algorithm).
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+    const cue = new VTTCue(0, 0.5, "in-range");
+    tt.addCue(cue);
+
+    await whenSeekedTo(video, 0.1);
+    await nextTick(t);
+    assert_array_equals([...tt.activeCues], [cue], "cue active before removal");
+
+    let exitAfterRemove = false;
+    cue.onexit = () => { exitAfterRemove = true; };
+
+    tt.removeCue(cue);
+    await whenSeekedTo(video, 0.8);
+    await nextTick(t);
+    tt.addCue(cue);
+    await nextTick(t);
+
+    assert_false(exitAfterRemove,
+        "no 'exit' fires after removeCue + re-add at out-of-range time " +
+        "(active flag was correctly cleared on removeCue)");
+}, "removing an active cue clears its active flag synchronously");
+
+promise_test(async t => {
+    // A cue is part of a track only when listed in track.cues.
+    // A VTTCue created but not added has cue.track === null and is not
+    // active even if its time range covers currentTime.
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+
+    const cue = new VTTCue(0, 100, "covers t=0.5 but not added");
+    assert_equals(cue.track, null, "unattached cue has track=null");
+
+    await whenSeekedTo(video, 0.5);
+    await nextTick(t);
+    assert_array_equals([...tt.activeCues], [],
+        "unattached cue is not in activeCues");
+}, "cue not in track.cues is not part of the track");
+
+promise_test(async t => {
+    // Time marches on (step 13): tasks in `events` are sorted by:
+    //   1. ascending time
+    //   2. then by relative text track cue order
+    //   3. then by enter-before-exit (only when same time AND same cue order)
+    //
+    // Within a track, cue order is by start time first (HTML §4.8.13.7).
+    // Our two cues share an event time of 0.5 but have different start
+    // times (0 and 0.5), so the enter-before-exit tiebreaker does NOT
+    // apply. Sort by cue order: cueA (start=0) precedes cueB (start=0.5),
+    // so A's exit task is queued before B's enter task.
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+
+    const cueA = new VTTCue(0, 0.5, "exits at 0.5");
+    const cueB = new VTTCue(0.5, 1.0, "enters at 0.5");
+    tt.addCue(cueA);
+    tt.addCue(cueB);
+
+    // Park the video at t=0 so cueA is initially active.
+    await whenSeekedTo(video, 0);
+    await nextTick(t);
+    assert_array_equals([...tt.activeCues], [cueA], "cueA active at t=0");
+
+    const events = [];
+    cueA.onexit = () => events.push("A.exit");
+    cueB.onenter = () => events.push("B.enter");
+
+    // Seek to a position where cueA has exited and cueB has entered.
+    await whenSeekedTo(video, 0.6);
+    await nextTick(t);
+
+    assert_array_equals(events, ["A.exit", "B.enter"],
+        "tasks fire in cue-order: A.exit (cue order earlier) before B.enter");
+    assert_array_equals([...tt.activeCues], [cueB], "cueB is active at t=0.6");
+}, "time marches on: tasks sorted by cue order when sharing an event time");
+
+promise_test(async t => {
+    // Removing a track from the media element clears its cues' active
+    // flags. Per the time-marches-on spec, removing a track from the
+    // media element's list of text tracks runs the rules for updating
+    // text track rendering, but does not queue 'exit' events.
+    const video = makeReadyVideo(t);
+    const trackEl = document.createElement("track");
+    trackEl.kind = "subtitles";
+    trackEl.src = "data:text/vtt;charset=utf-8,"
+        + encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:01:00.000\nactive\n");
+    video.appendChild(trackEl);
+    const tt = trackEl.track;
+    tt.mode = "showing";
+    await new Promise(resolve => {
+        if (trackEl.readyState === trackEl.LOADED)
+            resolve();
+        else
+            trackEl.addEventListener("load", resolve, { once: true });
+    });
+    await whenSeekedTo(video, 0.5);
+    await nextTick(t);
+    assert_equals(tt.activeCues.length, 1, "one cue active before removal");
+
+    video.removeChild(trackEl);
+    // Per spec §4.8.13.7 "text track cue active flag", removing the track
+    // from the media element's list of text tracks must synchronously
+    // clear active flags. Track mode is still "showing", so activeCues
+    // must be a non-null (live, empty) list.
+    assert_not_equals(tt.activeCues, null,
+        "activeCues is non-null (mode still 'showing' on detached track)");
+    assert_equals(tt.activeCues.length, 0,
+        "cue active flags were synchronously cleared on track removal");
+}, "removing a track with active cues clears their active flags");
+</script>
+</body>
+</html>

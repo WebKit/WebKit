@@ -37,8 +37,6 @@ namespace WebCore {
 class FloatingObject;
 class RenderBlockFlow;
 class RenderObject;
-class RenderStyle;
-
 struct LineSegment;
 
 class LineWidth {

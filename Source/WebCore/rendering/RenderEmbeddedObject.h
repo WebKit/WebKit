@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,7 +45,7 @@ class RenderEmbeddedObject final : public RenderWidget {
     WTF_MAKE_TZONE_ALLOCATED(RenderEmbeddedObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderEmbeddedObject);
 public:
-    RenderEmbeddedObject(HTMLFrameOwnerElement&, RenderStyle&&);
+    RenderEmbeddedObject(HTMLFrameOwnerElement&, Style::ComputedStyle&&);
     virtual ~RenderEmbeddedObject();
 
     PluginUnavailabilityReason pluginUnavailabilityReason() const { return m_pluginUnavailabilityReason; };
@@ -91,12 +91,11 @@ private:
 
     bool canHaveChildren() const override { return m_hasShadowContent; }
 
-    bool m_isPluginUnavailable;
-    PluginUnavailabilityReason m_pluginUnavailabilityReason;
+    bool m_isPluginUnavailable { false };
+    PluginUnavailabilityReason m_pluginUnavailabilityReason { PluginUnavailabilityReason::PluginMissing };
     String m_unavailablePluginReplacementText;
-    bool m_unavailablePluginIndicatorIsPressed;
-    bool m_mouseDownWasInUnavailablePluginIndicator;
-    String m_unavailabilityDescription;
+    bool m_unavailablePluginIndicatorIsPressed { false };
+    bool m_mouseDownWasInUnavailablePluginIndicator { false };
     bool m_hasShadowContent { false };
 };
 

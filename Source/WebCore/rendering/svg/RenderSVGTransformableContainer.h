@@ -31,7 +31,7 @@ class RenderSVGTransformableContainer final : public RenderSVGContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGTransformableContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGTransformableContainer);
 public:
-    RenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
+    RenderSVGTransformableContainer(SVGGraphicsElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGTransformableContainer();
 
     FloatSize additionalContainerTranslation() const;
@@ -42,7 +42,7 @@ private:
     void element() const = delete;
     SVGGraphicsElement& NODELETE graphicsElement() const;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
     void updateLayerTransform() final;
     bool needsHasSVGTransformFlags() const final;
 

@@ -24,6 +24,8 @@
 #
 # Identifier, format string, parameters, Log type (DEFAULT, INFO, ERROR, FAULT), Category (Default, Process, Loading, etc)
 
+GpuProcessConnectionCreate, "GPUProcessConnection::create(%" PRIu64 ")", (uint64_t), DEFAULT, Process
+GpuProcessConnectionDidInitialize, "GPUProcessConnection::didInitialize(%" PRIu64 ")", (uint64_t), DEFAULT, Process
 MediaPlayerPrivateRemoteLayerHostingContextChanged, "MediaPlayerPrivateRemote::layerHostingContextChanged", (), DEFAULT, Media
 PlatformInitializeWebProcess, "WebProcess::platformInitializeWebProcess", (), DEFAULT, Process
 ReceivedLaunchServicesDatabase, "Received Launch Services database", (), INFO, Loading
@@ -45,6 +47,7 @@ WebLocalFrameLoaderClientDispatchDidFirstLayoutForFrame, "[webFrameID=%" PRIu64 
 WebLocalFrameLoaderClientDispatchDidFirstVisuallyNonEmptyLayout, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidFirstVisuallyNonEmptyLayoutForFrame", (uint64_t, uint64_t), DEFAULT, Layout
 WebLocalFrameLoaderClientDispatchDidReachLayoutMilestone, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone (milestones=%" PUBLIC_LOG_STRING ")", (uint64_t, uint64_t, CString), DEFAULT, Layout
 WebPageClose, "[webPageID=%" PRIu64 "] WebPage::close", (uint64_t), DEFAULT, Loading
+WebPageDestructor, "[webPageID=%" PRIu64 "] WebPage::destructor", (uint64_t), DEFAULT, Loading
 WebPageFailedToMarkAllLayersVolatile, "[webPageID=%" PRIu64 "] WebPage::markLayersVolatile: Failed to mark all layers as volatile, will retry in %g ms", (uint64_t, double), DEFAULT, ProcessSuspension
 WebPageFreezeLayerTree, "[webPageID=%" PRIu64 "] WebPage::freezeLayerTree: Adding a reason to freeze layer tree (reason=%d, new=%d, old=%d)", (uint64_t, int, int, int), DEFAULT, ProcessSuspension
 WebPageLoadRequest, "[webPageID=%" PRIu64 "] WebPage::loadRequest: navigationID=%" PRIu64 ", shouldTreatAsContinuingLoad=%u, lastNavigationWasAppInitiated=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, (uint64_t, uint64_t, unsigned, int, uint64_t), DEFAULT, Loading

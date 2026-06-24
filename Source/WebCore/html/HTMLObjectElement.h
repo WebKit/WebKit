@@ -35,7 +35,7 @@ class HTMLObjectElement final : public HTMLPlugInElement, public FormListedEleme
 public:
     USING_CAN_MAKE_WEAKPTR(HTMLPlugInElement);
 
-    static Ref<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static Ref<HTMLObjectElement> create(const QualifiedName&, Document&);
 
     bool isExposed() const;
 
@@ -54,7 +54,7 @@ public:
     using HTMLPlugInElement::deref;
 
 private:
-    HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*);
+    HTMLObjectElement(const QualifiedName&, Document&);
     ~HTMLObjectElement();
 
     int defaultTabIndex() const final;

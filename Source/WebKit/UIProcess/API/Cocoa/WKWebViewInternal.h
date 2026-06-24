@@ -77,6 +77,8 @@
 
 #endif // !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
 
+#import "ScrollPerfIntervalState.h"
+
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 #if PLATFORM(IOS_FAMILY)
@@ -177,6 +179,12 @@ enum class HideScrollPocketReason : uint8_t {
 enum class PreferSolidColorHardPocketReason : uint8_t {
     AttachedInspector   = 1 << 0,
     RequestedByClient   = 1 << 1,
+};
+
+enum class AdjustedColorExtensionsForBannerViewOverlaysEnablement : uint8_t {
+    EnabledIfHorizontalBannerViewPresent      = 1 << 0,
+    ForcedOnForTesting                        = 1 << 1,
+    ForcedOffForTesting                       = 1 << 2,
 };
 }
 
@@ -306,8 +314,18 @@ struct PerWebProcessState {
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
     std::optional<CGFloat> lastResizedViewWidth;
     RetainPtr<NSDate> lastResizeTimestamp;
+    std::optional<WebKit::TransactionID> transactionIDForEndLiveResize;
+    BOOL waitingForEndLiveResizePresentationUpdate { NO };
+    BOOL resizeAnimationViewIsUpdating { NO };
 #endif
 };
+
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+struct LiveResizeSnapshotState {
+    RetainPtr<UIView> snapshotView;
+    CGFloat initialWidth { 0 };
+};
+#endif
 
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -452,7 +470,7 @@ struct PerWebProcessState {
     UIEdgeInsets _animatedResizeOldObscuredInsets;
     RetainPtr<UIView> _resizeAnimationView;
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-    RetainPtr<UIView> _liveResizeSnapshotContainerView;
+    std::optional<std::pair<WebKit::TransactionID, LiveResizeSnapshotState>> _liveResizeSnapshotState;
 #endif
     CGFloat _lastAdjustmentForScroller;
 
@@ -520,10 +538,6 @@ struct PerWebProcessState {
     String _defaultSTSLabel;
 #endif
 
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    RetainPtr<_WKSpatialBackdropSource> _cachedSpatialBackdropSource;
-#endif
-
     BOOL _didAccessBackForwardList;
     BOOL _dontResetTransientActivationAfterRunJavaScript;
 
@@ -539,6 +553,9 @@ struct PerWebProcessState {
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     BOOL _isScrollingWithOverlayRegion;
 #endif
+
+    ScrollPerfIntervalState _scrollPerfIntervalState;
+    BOOL _scrollPerfRubberbandingNotified;
 
     WebCore::FixedContainerEdges _fixedContainerEdges;
 
@@ -559,6 +576,11 @@ struct PerWebProcessState {
     BOOL _shouldUpdateNeedsTopScrollPocketDueToVisibleContentInset;
 #endif
 
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    WebCore::RectEdges<RetainPtr<WKColorExtensionView>> _systemBackgroundColorExtensionViews;
+    WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement _adjustedColorExtensionsForBannerViewOverlaysEnablement;
+#endif
+
 #if ENABLE(TEXT_EXTRACTION_FILTER)
     HashMap<unsigned /* string hash */, TextValidationMapValue> _textValidationCache;
     std::optional<HashSet<String>> _textExtractionRecognizedWords;
@@ -575,10 +597,6 @@ struct PerWebProcessState {
 
 #if PLATFORM(MAC) && HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
 - (void)_invalidateWindowSnapshotReadinessHandler;
-#endif
-
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-- (void)_spatialBackdropSourceDidChange;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
@@ -668,6 +686,13 @@ struct PerWebProcessState {
 - (void)_removeReasonToPreferSolidColorHardPocket:(WebKit::PreferSolidColorHardPocketReason)reason;
 #endif
 
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+- (BOOL)_hasDetectedHorizontalBannerViewOverlays;
+- (void)_updateAppearanceForSystemBackgroundColorExtensionViews;
+#endif
+
+- (BOOL)_shouldAdjustColorExtensionsForHorizontalBannerViewOverlays;
+
 #if ENABLE(GAMEPAD)
 - (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed;
 
@@ -686,7 +711,7 @@ struct PerWebProcessState {
 - (void)_updateFixedContainerEdges:(const WebCore::FixedContainerEdges&)edges;
 - (void)_updateScrollGeometryWithContentOffset:(CGPoint)contentOffset contentSize:(CGSize)contentSize;
 
-#if ENABLE(SCROLL_STRETCH_NOTIFICATIONS)
+#if HAVE(NSREFRESHCONTROLLER)
 - (void)_topScrollStretchDidChange:(CGFloat)topScrollStretch;
 #endif
 
@@ -724,8 +749,8 @@ struct PerWebProcessState {
 
 - (void)_setContentOffsetX:(nullable NSNumber *)x y:(nullable NSNumber *)y animated:(BOOL)animated NS_SWIFT_NAME(_setContentOffset(x:y:animated:));
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-@property (nonatomic, readonly) CGFloat _bannerViewOverlayHeight;
+#if HAVE(NSREFRESHCONTROLLER)
+@property (nonatomic, readonly) CGFloat _refreshControlVisibleHeight;
 #endif
 #endif // PLATFORM(MAC)
 
@@ -734,6 +759,8 @@ struct PerWebProcessState {
 - (void)_setNeedsScrollGeometryUpdates:(BOOL)needsScrollGeometryUpdates;
 
 - (void)_scrollToEdge:(_WKRectEdge)edge animated:(BOOL)animated;
+
+- (BOOL)_scrollPocketInFullscreenEnabled;
 
 @end
 

@@ -245,6 +245,7 @@ public:
     {
         if (m_skiaGLContext) {
             m_skiaGLContext->makeContextCurrent();
+            m_skiaGrContext->releaseResourcesAndAbandonContext();
             m_skiaGrContext = nullptr;
             m_skiaGLContext = nullptr;
         }
@@ -314,6 +315,10 @@ GLContext* PlatformDisplay::skiaGLContext()
 
 void PlatformDisplay::setSkiaGLContextForCurrentThread(std::unique_ptr<GLContext>&& glContext)
 {
+    if (!glContext) {
+        clearSkiaGLContext();
+        return;
+    }
     ASSERT(!s_skiaGLContext);
     s_skiaGLContext = SkiaGLContext::create(WTF::move(glContext));
     m_skiaGLContexts.add(*s_skiaGLContext);

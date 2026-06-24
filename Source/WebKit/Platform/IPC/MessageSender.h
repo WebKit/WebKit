@@ -84,8 +84,13 @@ public:
     virtual bool sendMessageWithAsyncReply(UniqueRef<Encoder>&&, AsyncReplyHandler, OptionSet<SendOption>);
 
 private:
+    explicit MessageSender(ClangVTableWorkaroundTag);
+
     virtual Connection* messageSenderConnection() const = 0;
     virtual uint64_t messageSenderDestinationID() const = 0;
+
+protected:
+    MessageSender() = default;
 };
 
 } // namespace IPC

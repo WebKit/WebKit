@@ -23,7 +23,13 @@
 
 import("//build/config/linux/pkg_config.gni")
 import("//build/config/sanitizers/sanitizers.gni")
+import("//testing/test.gni")
 import("webrtc.gni")
+
+if (rtc_rust) {
+  import("//build/rust/rust_unit_tests_group.gni")
+}
+
 if (rtc_enable_protobuf) {
   import("//third_party/protobuf/proto_library.gni")
 }
@@ -50,7 +56,7 @@ if (!build_with_chromium) {
         ":audio_engine_tests",
         ":rtc_p2p_unittests",
         ":rtc_unittests",
-        ":video_engine_tests",
+        ":test_suites",
         ":voip_unittests",
         ":webrtc_nonparallel_tests",
         ":webrtc_perf_tests",
@@ -82,16 +88,20 @@ if (!build_with_chromium) {
         "video:video_loopback",
         "video/timing:video_timing_tests",
       ]
+      deps += [ "tools_webrtc:validate_test_registration" ]
       if (use_libfuzzer) {
         deps += [ "test/fuzzers" ]
       }
 
       # TODO(bugs.webrtc.org/430260876): Remove once rust links with libwebrtc.
-      if (!is_asan && !rtc_rusty_base64) {
+      if (!is_asan) {
         # Do not build :webrtc_lib_link_test because lld complains on some OS
         # (e.g. when target_os = "mac") when is_asan=true. For more details,
         # see bugs.webrtc.org/11027#c5.
         deps += [ ":webrtc_lib_link_test" ]
+      }
+      if (rtc_rust) {
+        deps += [ ":rust_tests" ]
       }
       if (is_ios) {
         deps += [
@@ -125,19 +135,25 @@ if (!build_with_chromium) {
   }
 }
 
+if (rtc_include_tests) {
+  group("test_suites") {
+    testonly = true
+    deps = [
+      ":webrtc_nonparallel_tests",
+      "//call:call_tests",
+      "//call/adaptation:resource_adaptation_tests",
+      "//pc:peerconnection_unittests",
+      "//video:video_tests",
+      "//video/adaptation:video_adaptation_tests",
+    ]
+  }
+}
+
 # Abseil Flags by default doesn't register command line flags on mobile
 # platforms, WebRTC tests requires them (e.g. on simualtors) so this
 # config will be applied to testonly targets globally (see webrtc.gni).
 config("absl_flags_configs") {
   defines = [ "ABSL_FLAGS_STRIP_NAMES=0" ]
-}
-
-config("suppress_plan_b_deprecation") {
-  if (is_clang) {
-    cflags = [ "-Wno-deprecated-declarations" ]
-  } else if (is_win && !is_clang) {
-    cflags = [ "/wd4996" ]
-  }
 }
 
 config("library_impl_config") {
@@ -330,10 +346,6 @@ config("common_config") {
 
   if (rtc_enable_sctp) {
     defines += [ "WEBRTC_HAVE_SCTP" ]
-  }
-
-  if (rtc_enable_external_auth) {
-    defines += [ "ENABLE_EXTERNAL_AUTH" ]
   }
 
   if (rtc_use_h264) {
@@ -587,7 +599,7 @@ if (!build_with_chromium) {
 
   # TODO(bugs.webrtc.org/430260876): Compile webrtc lib with rust once toolchain
   # is working.
-  if (rtc_include_tests && !is_asan && !rtc_rusty_base64) {
+  if (rtc_include_tests && !is_asan) {
     rtc_executable("webrtc_lib_link_test") {
       testonly = true
 
@@ -605,7 +617,7 @@ if (!build_with_chromium) {
   }
 }
 
-if (use_libfuzzer || use_afl) {
+if (use_libfuzzer) {
   # This target is only here for gn to discover fuzzer build targets under
   # webrtc/test/fuzzers/.
   group("webrtc_fuzzers_dummy") {
@@ -706,7 +718,7 @@ if (rtc_include_tests && !build_with_chromium) {
     rtc_executable("benchmarks") {
       testonly = true
       deps = [
-        "rtc_base:base64_benchmark_temp",
+        "rtc_base:base64_benchmark",
         "rtc_base/synchronization:mutex_benchmark",
         "test:benchmark_main",
       ]
@@ -720,32 +732,6 @@ if (rtc_include_tests && !build_with_chromium) {
     if (is_android) {
       use_default_launcher = false
       deps += [ "//build/android/gtest_apk:native_test_instrumentation_test_runner_java" ]
-    }
-  }
-
-  # TODO(pbos): Rename test suite, this is no longer "just" for video targets.
-  rtc_test("video_engine_tests") {
-    testonly = true
-    deps = [
-      # TODO(eladalon): call_tests aren't actually video-specific, so we
-      # should move them to a more appropriate test suite.
-      "call:call_tests",
-      "call/adaptation:resource_adaptation_tests",
-      "test:test_common",
-      "test:video_test_common",
-      "video:video_tests",
-      "video/adaptation:video_adaptation_tests",
-    ]
-
-    data_deps = [ "resources:video_engine_tests_data" ]
-
-    if (is_android) {
-      use_default_launcher = false
-      deps += [ "//build/android/gtest_apk:native_test_instrumentation_test_runner_java" ]
-      shard_timeout = 900
-    }
-    if (is_ios) {
-      deps += [ "resources:video_engine_tests_bundle_data" ]
     }
   }
 
@@ -772,12 +758,14 @@ if (rtc_include_tests && !build_with_chromium) {
     }
   }
 
-  rtc_test("webrtc_nonparallel_tests") {
-    testonly = true
-    deps = [ "rtc_base:rtc_base_nonparallel_tests" ]
-    if (is_android) {
-      shard_timeout = 900
-    }
+  rtc_test_suite("webrtc_nonparallel_tests") {
+    tests = [
+      "rtc_base:cpu_time_unittest",
+      "rtc_base:file_rotating_stream_unittest",
+      "rtc_base:null_socket_server_unittest",
+      "rtc_base:physical_socket_server_unittest",
+      "rtc_base:socket_address_unittest",
+    ]
   }
 
   rtc_test("voip_unittests") {
@@ -790,6 +778,16 @@ if (rtc_include_tests && !build_with_chromium) {
       "audio/voip/test:audio_ingress_unittests",
       "audio/voip/test:voip_core_unittests",
     ]
+  }
+
+  if (rtc_rust) {
+    rtc_rust_test_suite("rust_tests") {
+      testonly = true
+      deps = [
+        "api/units:units_rust_unit_tests",
+        "rust/webrtc_import:tests",
+      ]
+    }
   }
 }
 

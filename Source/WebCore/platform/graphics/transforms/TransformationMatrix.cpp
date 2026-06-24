@@ -646,7 +646,7 @@ static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationM
         r = std::sqrt(1.0 + column[0][0] - column[1][1] - column[2][2]);
         s = 0.5 / r;
         x = 0.5 * r;
-        y = (column[1][0] - column[0][1]) * s;
+        y = (column[1][0] + column[0][1]) * s;
         z = (column[2][0] + column[0][2]) * s;
         w = (column[1][2] - column[2][1]) * s;
     } else if (column[1][1] > column[2][2]) {

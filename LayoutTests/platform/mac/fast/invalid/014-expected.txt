@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {FORM} at (0,18) size 784x18
         RenderMenuList {SELECT} at (0,0) size 39x18 [bgcolor=#FFFFFF]
-          RenderSelectFallbackButton {DIV} at (0,0) size 39x18
-            RenderText at (8,2) size 8x13
+          RenderBlock {DIV} at (0,0) size 39x18
+            RenderText {#text} at (8,2) size 8x13
               text run at (8,2) width 8: "A"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,52) size 784x0
@@ -19,8 +19,8 @@ layer at (470,46) size 43x46
   RenderBlock (positioned) {H2} at (470,45) size 43x47 [border: (2px solid #008000)]
     RenderBlock {FORM} at (2,2) size 39x18
       RenderMenuList {SELECT} at (0,0) size 39x18 [bgcolor=#FFFFFF]
-        RenderSelectFallbackButton {DIV} at (0,0) size 39x18
-          RenderText at (8,2) size 8x13
+        RenderBlock {DIV} at (0,0) size 39x18
+          RenderText {#text} at (8,2) size 8x13
             text run at (8,2) width 8: "A"
       RenderText {#text} at (0,0) size 0x0
 layer at (470,42) size 4x4

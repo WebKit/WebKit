@@ -1,0 +1,10 @@
+Dynamic import() of an absolute path from a srcdoc iframe should resolve against the document fallback base URL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is "loaded"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

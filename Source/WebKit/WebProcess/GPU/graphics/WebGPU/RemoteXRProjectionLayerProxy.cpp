@@ -102,7 +102,7 @@ bool RemoteXRProjectionLayerProxy::ignoreDepthValues() const
 
 std::optional<float> RemoteXRProjectionLayerProxy::fixedFoveation() const
 {
-    return 0.f;
+    return 1.f;
 }
 
 void RemoteXRProjectionLayerProxy::setFixedFoveation(std::optional<float>)

@@ -42,6 +42,14 @@
 /**
  * WPEScreen:
  *
+ * A monitor connected to a [class@Display].
+ *
+ * [class@Screen] is an abstract class that platform implementations derive to
+ * represent a monitor. Enumerate the screens of a display with
+ * [method@Display.get_n_screens] and [method@Display.get_screen].
+ *
+ * A screen exposes its position, size, physical size, scale and refresh rate,
+ * and provides a [class@ScreenSyncObserver] to be notified on vertical sync.
  */
 struct _WPEScreenPrivate {
     guint32 id;
@@ -374,7 +382,7 @@ static void wpe_screen_class_init(WPEScreenClass* screenClass)
  * @screen: a #WPEScreen
  *
  * Get the @screen identifier.
- * The idenifier is a non-zero value to uniquely identify a #WPEScreen.
+ * The identifier is a non-zero value to uniquely identify a #WPEScreen.
  *
  * Returns: the screen identifier
  */

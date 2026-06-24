@@ -200,7 +200,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
                 keyframePayload->setEasing(timingFunction->cssText());
 
             if (!parsedKeyframe.style->isEmpty())
-                keyframePayload->setStyle(parsedKeyframe.style->asText(CSS::defaultSerializationContext()));
+                keyframePayload->setStyle(protect(parsedKeyframe.style)->asText(CSS::defaultSerializationContext()));
 
             keyframesPayload->addItem(WTF::move(keyframePayload));
         }
@@ -235,7 +235,7 @@ static Ref<Inspector::Protocol::Animation::Effect> buildObjectForEffect(Animatio
             effectPayload->setIterationDuration(iterationDuration.value());
     }
 
-    if (auto* timingFunction = effect.timingFunction())
+    if (RefPtr timingFunction = effect.timingFunction())
         effectPayload->setTimingFunction(timingFunction->cssText());
 
     if (auto playbackDirection = protocolValueForPlaybackDirection(effect.direction()))

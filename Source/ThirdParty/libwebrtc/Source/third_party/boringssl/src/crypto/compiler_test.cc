@@ -22,6 +22,8 @@
 
 #include "test/test_util.h"
 
+
+BSSL_NAMESPACE_BEGIN
 namespace {
 
 // C and C++ have two forms of unspecified behavior: undefined behavior and
@@ -58,7 +60,7 @@ static void CheckRepresentation(T value) {
   // subtract (numerically, not within |T|) one more than the unsigned type's
   // maximum value until it fits (this must be a power of two). This is the
   // conversion we want.
-  using UnsignedT = typename std::make_unsigned<T>::type;
+  using UnsignedT = std::make_unsigned_t<T>;
   UnsignedT value_u = static_cast<UnsignedT>(value);
   EXPECT_EQ(sizeof(UnsignedT), sizeof(T));
 
@@ -92,7 +94,7 @@ TEST(CompilerTest, IntegerRepresentation) {
   // chars are a practical necessity for all real C code. We do not support
   // toolchains that break this assumption.
   static_assert(
-      std::is_same<unsigned char, uint8_t>::value,
+      std::is_same_v<unsigned char, uint8_t>,
       "BoringSSL requires uint8_t and unsigned char be the same type");
   uint8_t u8 = 0;
   unsigned char *ptr = &u8;
@@ -106,6 +108,9 @@ TEST(CompilerTest, IntegerRepresentation) {
 
   // size_t does not exceed uint64_t.
   static_assert(sizeof(size_t) <= 8u, "size_t must not exceed uint64_t");
+
+  // The positive maximum of |int| must fit into |size_t|.
+  static_assert(sizeof(int) <= sizeof(size_t), "int must not exceed size_t");
 
   // Require that |int| be exactly 32 bits. OpenSSL historically mixed up
   // |unsigned| and |uint32_t|, so we require it be at least 32 bits. Requiring
@@ -244,4 +249,6 @@ TEST(CompilerTest, NoStrictAliasing) {
   EXPECT_EQ(volatile_aba((uintptr_t *)aliased, (void **)aliased), (uintptr_t)0);
   EXPECT_EQ(Bytes(aliased), Bytes(zeros));
 }
+
 }  // namespace
+BSSL_NAMESPACE_END

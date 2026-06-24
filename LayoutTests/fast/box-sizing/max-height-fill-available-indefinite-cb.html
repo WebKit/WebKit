@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<title>max-height: -webkit-fill-available caps content at viewport size in an indefinite containing block</title>
+<link rel="match" href="max-height-fill-available-indefinite-cb-expected.html">
+<style>
+body {
+  margin: 0;
+}
+.outer {
+  max-height: -webkit-fill-available;
+  overflow: hidden;
+}
+.inner {
+  height: 2000px;
+  background: green;
+}
+</style>
+<div class="outer">
+  <div class="inner"></div>
+</div>

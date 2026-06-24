@@ -26,6 +26,7 @@
 ]
 messages -> WebPageTesting {
     IsLayerTreeFrozen() -> (bool isFrozen)
+    NumberOfLiveDocuments() -> (uint64_t count)
     SetPermissionLevel(String origin, bool allowed)
     IsEditingCommandEnabled(String commandName) -> (bool result) Synchronous
 

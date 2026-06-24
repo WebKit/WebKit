@@ -30,7 +30,6 @@ if(WIN32)
 endif()
 
 include(cmake/go.cmake)
-include(cmake/paths.cmake)
 include(gen/sources.cmake)
 
 enable_language(C)
@@ -76,36 +75,17 @@ foreach(VAR CMAKE_C_FLAGS CMAKE_CXX_FLAGS CMAKE_ASM_FLAGS)
          "${${VAR}_RELEASE}")
 endforeach()
 
-if(BORINGSSL_PREFIX AND BORINGSSL_PREFIX_SYMBOLS)
-  require_go()
+if(BORINGSSL_PREFIX)
   add_definitions(-DBORINGSSL_PREFIX=${BORINGSSL_PREFIX})
+
   # CMake automatically connects include_directories to the NASM command-line,
   # but not add_definitions.
+  set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -DBORINGSSL_PREFIX=${BORINGSSL_PREFIX}")
   set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -DBORINGSSL_PREFIX=${BORINGSSL_PREFIX}")
-
-  # Use "symbol_prefix_include" to store generated header files
-  include_directories(${CMAKE_CURRENT_BINARY_DIR}/symbol_prefix_include)
-  add_custom_command(
-    OUTPUT symbol_prefix_include/boringssl_prefix_symbols.h
-           symbol_prefix_include/boringssl_prefix_symbols_asm.h
-           symbol_prefix_include/boringssl_prefix_symbols_nasm.inc
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/symbol_prefix_include
-    COMMAND ${GO_EXECUTABLE} run ${CMAKE_CURRENT_SOURCE_DIR}/util/make_prefix_headers.go -out ${CMAKE_CURRENT_BINARY_DIR}/symbol_prefix_include ${BORINGSSL_PREFIX_SYMBOLS}
-    DEPENDS util/make_prefix_headers.go
-            ${BORINGSSL_PREFIX_SYMBOLS})
-
-  # add_dependencies needs a target, not a file, so we add an intermediate
-  # target.
-  add_custom_target(
-    boringssl_prefix_symbols
-    DEPENDS symbol_prefix_include/boringssl_prefix_symbols.h
-            symbol_prefix_include/boringssl_prefix_symbols_asm.h
-            symbol_prefix_include/boringssl_prefix_symbols_nasm.inc)
-elseif(BORINGSSL_PREFIX OR BORINGSSL_PREFIX_SYMBOLS)
-  message(FATAL_ERROR "Must specify both or neither of BORINGSSL_PREFIX and BORINGSSL_PREFIX_SYMBOLS")
-else()
-  add_custom_target(boringssl_prefix_symbols)
 endif()
+
+# Add the generated files to NASM's includes. With a final slash for NASM 2.
+set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -I${CMAKE_CURRENT_SOURCE_DIR}/gen/")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CLANG 1)
@@ -116,104 +96,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# Set some project-wide compiler flags.
 if(CMAKE_COMPILER_IS_GNUCXX OR CLANG)
-  # Note clang-cl is odd and sets both CLANG and MSVC. We base our configuration
-  # primarily on our normal Clang one.
-  set(C_CXX_FLAGS "-fno-strict-aliasing -Werror -Wformat=2 -Wsign-compare -Wwrite-strings -Wvla -Wshadow -Wtype-limits -Wmissing-field-initializers")
-  if(MSVC)
-    # clang-cl sets different default warnings than clang. It also treats -Wall
-    # as -Weverything, to match MSVC. Instead -W3 is the alias for -Wall.
-    # See http://llvm.org/viewvc/llvm-project?view=revision&revision=319116
-    set(C_CXX_FLAGS "${C_CXX_FLAGS} -W3 -Wno-unused-parameter -fmsc-version=1900")
-  else()
+  set(C_CXX_FLAGS "-fno-strict-aliasing")
+  if(NOT MSVC)
     if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
       # emscripten's emcc/clang does not accept the "-ggdb" flag.
       set(C_CXX_FLAGS "${C_CXX_FLAGS} -g")
     else()
       set(C_CXX_FLAGS "${C_CXX_FLAGS} -ggdb")
     endif()
-
-    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wall -fvisibility=hidden -fno-common")
+    set(C_CXX_FLAGS "${C_CXX_FLAGS} -fno-common -fvisibility=hidden")
   endif()
-
-  if(CLANG)
-    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wnewline-eof -Wextra-semi -fcolor-diagnostics")
-  else()
-    # GCC (at least 4.8.4) has a bug where it'll find unreachable free() calls
-    # and declare that the code is trying to free a stack pointer.
-    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wno-free-nonheap-object")
-  endif()
-
-  # -Wstring-concatenation was added in Clang 12.0.0, which corresponds to
-  # AppleClang 13.0.0 per the table in
-  # https://en.wikipedia.org/wiki/Xcode#Toolchain_versions
-  if((CMAKE_C_COMPILER_ID STREQUAL "Clang" AND
-      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0.0") OR
-     (CMAKE_C_COMPILER_ID STREQUAL "AppleClang" AND
-      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "13.0.0"))
-    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wstring-concatenation")
-  endif()
-
-  # Clang 12's -Wframe-larger-than reportedly does not work in clang-cl. See
-  # https://crbug.com/boringssl/709. Clang 13 includes the following fix, which
-  # may be related. Speculatively gate on Clang 13. That corresponds to
-  # AppleClang 13.1.6.
-  # https://github.com/llvm/llvm-project/commit/6aaf4fa2885600b0e31042071ad06f78218ab0f2
-  if((CMAKE_C_COMPILER_ID STREQUAL "Clang" AND
-      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "13.0.0") OR
-     (CMAKE_C_COMPILER_ID STREQUAL "AppleClang" AND
-      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "13.1.6"))
-    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wframe-larger-than=25344")
-  endif()
-
-  # -Wctad-maybe-unsupported was added in Clang 10, which is AppleClang 12.0.0.
-  if((CMAKE_C_COMPILER_ID STREQUAL "Clang" AND
-      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "10.0.0") OR
-     (CMAKE_C_COMPILER_ID STREQUAL "AppleClang" AND
-      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0.0"))
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wctad-maybe-unsupported")
-  endif()
-
-  if(CLANG OR CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "7.0.0")
-    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wimplicit-fallthrough")
-  endif()
-
-  if(CMAKE_COMPILER_IS_GNUCXX)
-    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wformat-signedness")
-  endif()
-
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_CXX_FLAGS} -Wmissing-prototypes -Wold-style-definition -Wstrict-prototypes")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${C_CXX_FLAGS} -Wmissing-declarations -Wnon-virtual-dtor")
-
-  # In GCC, -Wmissing-declarations is the C++ spelling of -Wmissing-prototypes
-  # and using the wrong one is an error. In Clang, -Wmissing-prototypes is the
-  # spelling for both and -Wmissing-declarations is some other warning.
-  #
-  # https://gcc.gnu.org/onlinedocs/gcc-7.1.0/gcc/Warning-Options.html#Warning-Options
-  # https://clang.llvm.org/docs/DiagnosticsReference.html#wmissing-prototypes
-  # https://clang.llvm.org/docs/DiagnosticsReference.html#wmissing-declarations
-  if(CLANG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wmissing-prototypes")
-  endif()
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${C_CXX_FLAGS}")
 elseif(MSVC)
-  set(MSVC_DISABLED_WARNINGS_LIST
-      "C4100" # 'exarg' : unreferenced formal parameter
-      "C4127" # conditional expression is constant
-      "C4244" # 'function' : conversion from 'int' to 'uint8_t',
-              # possible loss of data
-      "C4267" # conversion from 'size_t' to 'int', possible loss of data
-      "C4702" # unreachable code; MSVC's warning is too aggressive. See
-              # https://crbug.com/385161043
-      "C4706" # assignment within conditional expression
-      )
-  string(REPLACE "C" " -wd" MSVC_DISABLED_WARNINGS_STR
-                            ${MSVC_DISABLED_WARNINGS_LIST})
-  set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -utf-8 -W4 -WX ${MSVC_DISABLED_WARNINGS_STR}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -utf-8")
   # Without /Zc:__cplusplus, MSVC does not define the right value for
   # __cplusplus. See https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
   # If this becomes too problematic for downstream code, we can look at
   # _MSVC_LANG.
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -utf-8 -W4 -WX ${MSVC_DISABLED_WARNINGS_STR} -Zc:__cplusplus")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -utf-8 -Zc:__cplusplus")
 endif()
 
 if(WIN32)
@@ -247,8 +150,6 @@ if(FUZZ)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address,fuzzer-no-link -fsanitize-coverage=edge,indirect-calls")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,fuzzer-no-link -fsanitize-coverage=edge,indirect-calls")
 endif()
-
-add_definitions(-DBORINGSSL_IMPLEMENTATION)
 
 if(BUILD_SHARED_LIBS)
   add_definitions(-DBORINGSSL_SHARED_LIBRARY)
@@ -393,6 +294,8 @@ if(OPENSSL_NO_SSE2_FOR_TESTING)
   add_definitions(-DOPENSSL_NO_SSE2_FOR_TESTING)
 endif()
 
+# Build a custom libc++. This must be the first target, so that it is linked to
+# every subsequent target.
 if(USE_CUSTOM_LIBCXX)
   if(NOT CLANG)
     message(FATAL_ERROR "USE_CUSTOM_LIBCXX only supported with Clang")
@@ -456,7 +359,6 @@ if(USE_CUSTOM_LIBCXX)
   target_include_directories(libcxx PRIVATE util/bot/llvm-libc)
   set_target_properties(
     libcxx libcxxabi PROPERTIES
-    COMPILE_FLAGS "-Wno-missing-prototypes -Wno-implicit-fallthrough"
     # libc++ and libc++abi must be built in C++23 mode.
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED TRUE
@@ -464,6 +366,15 @@ if(USE_CUSTOM_LIBCXX)
   # libc++abi depends on libc++ internal headers.
   set_property(TARGET libcxx libcxxabi APPEND PROPERTY INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/util/bot/libcxx/src")
   target_link_libraries(libcxx libcxxabi)
+
+  # Link all subsequent libraries to the custom libc++.
+  link_libraries(libcxx)
+
+  # Third-party CMake files that export targets will this target itself be
+  # exported. This is not meant to be imported, as USE_CUSTOM_LIBCXX is a
+  # test-only configuration.
+  export(TARGETS libcxx libcxxabi NAMESPACE bssl_test_only
+         FILE ${PROJECT_BINARY_DIR}/bssl_test_only.cmake)
 endif()
 
 if(BUILD_TESTING)
@@ -471,12 +382,10 @@ if(BUILD_TESTING)
   # googletest has a very straightforward build.
   add_library(
     boringssl_gtest
+    STATIC
     third_party/googletest/googlemock/src/gmock-all.cc
     third_party/googletest/googletest/src/gtest-all.cc
   )
-  if(USE_CUSTOM_LIBCXX)
-    target_link_libraries(boringssl_gtest libcxx)
-  endif()
   target_include_directories(
       boringssl_gtest
       PUBLIC
@@ -487,11 +396,138 @@ if(BUILD_TESTING)
       third_party/googletest/googletest
   )
 
-  # Declare a dummy target to build all unit tests. Test targets should inject
-  # themselves as dependencies next to the target definition.
-  add_custom_target(boringssl_all_tests)
+  # Wrap this in a function for variable scoping. Switch to block() when our
+  # minimum CMake is at least CMake 3.25.
+  function(add_google_benchmark)
+    set(GOOGLETEST_PATH "${PROJECT_SOURCE_DIR}/third_party/googletest")
+    set(BENCHMARK_DOWNLOAD_DEPENDENCIES OFF)
+    set(BENCHMARK_ENABLE_TESTING OFF)
+    set(BENCHMARK_ENABLE_INSTALL OFF)
+    set(BENCHMARK_INSTALL_DOCS OFF)
+    if(USE_CUSTOM_LIBCXX)
+      # benchmark's feature testing does not pick up the custom STL.
+      set(HAVE_STD_REGEX 1)
+    endif()
+    if(DEFINED CMAKE_OSX_SYSROOT)
+      # CMAKE_CROSSCOMPILING is not correctly set when using CMAKE_OSX_SYSROOT
+      # to specify iOS vs macOS. Set CMAKE_CROSSCOMPILING so benchmark feature
+      # detection does not try to run its test programs.
+      set(CMAKE_CROSSCOMPILING 1)
+    endif()
+    add_subdirectory(third_party/benchmark)
+  endfunction()
+  add_google_benchmark()
+endif()
 
-  add_subdirectory(ssl/test)
+if(FUZZ AND LIBFUZZER_FROM_DEPS)
+  file(GLOB LIBFUZZER_SOURCES "util/bot/libFuzzer/*.cpp")
+  add_library(Fuzzer STATIC ${LIBFUZZER_SOURCES})
+  # libFuzzer must be built without -fsanitize-coverage options or clang
+  # crashes.
+  set_target_properties(
+    Fuzzer PROPERTIES
+    COMPILE_FLAGS "-fsanitize-coverage=0"
+  )
+endif()
+
+# Enable a suite of warnings. We do this here to avoid applying to external
+# dependencies, built above. Note this uses the list-based add_compile_options,
+# instead of CMAKE_*_FLAGS (string-based). Changes to CMAKE_*_FLAGS still apply
+# to earlier-defined targets.
+#
+# TODO(crbug.com/389897612): Should these be set on a per-target basis?
+if(CMAKE_COMPILER_IS_GNUCXX OR CLANG)
+  set(C_CXX_WARNINGS -Werror -Wformat=2 -Wmissing-field-initializers -Wshadow
+      -Wsign-compare -Wtype-limits -Wvla -Wwrite-strings -Wimplicit-fallthrough)
+  set(C_WARNINGS -Wold-style-definition -Wstrict-prototypes)
+  set(CXX_WARNING -Wnon-virtual-dtor)
+
+  # clang-cl sets both CLANG and MSVC. It implements clang's diagnostics, but
+  # some options behave as in MSVC.
+  if(MSVC)
+    # clang-cl sets different default warnings than clang. It also treats -Wall
+    # as -Weverything, to match MSVC. Instead -W3 is the alias for -Wall.
+    # See http://llvm.org/viewvc/llvm-project?view=revision&revision=319116
+    list(APPEND C_CXX_WARNINGS -W3 -Wno-unused-parameter)
+  else()
+    list(APPEND C_CXX_WARNINGS -Wall)
+  endif()
+
+  if(CLANG)
+    list(APPEND C_CXX_WARNINGS -Wnewline-eof -Wextra-semi -fcolor-diagnostics
+         -Wheader-hygiene)
+  else()
+    list(APPEND C_CXX_WARNINGS -Wformat-signedness)
+    # GCC (at least 4.8.4) has a bug where it'll find unreachable free() calls
+    # and declare that the code is trying to free a stack pointer.
+    list(APPEND C_CXX_WARNINGS -Wno-free-nonheap-object)
+  endif()
+
+  # In GCC, -Wmissing-declarations is the C++ spelling of -Wmissing-prototypes
+  # and using the wrong one is an error. In Clang, -Wmissing-prototypes is the
+  # spelling for both and -Wmissing-declarations is some other warning.
+  #
+  # https://gcc.gnu.org/onlinedocs/gcc-7.1.0/gcc/Warning-Options.html#Warning-Options
+  # https://clang.llvm.org/docs/DiagnosticsReference.html#wmissing-prototypes
+  # https://clang.llvm.org/docs/DiagnosticsReference.html#wmissing-declarations
+  if(CLANG)
+    list(APPEND C_CXX_WARNINGS -Wmissing-prototypes)
+  else()
+    list(APPEND C_WARNINGS -Wmissing-prototypes)
+    list(APPEND CXX_WARNINGS -Wmissing-declarations)
+  endif()
+
+  # -Wstring-concatenation was added in Clang 12.0.0, which corresponds to
+  # AppleClang 13.0.0 per the table in
+  # https://en.wikipedia.org/wiki/Xcode#Toolchain_versions
+  if((CMAKE_C_COMPILER_ID STREQUAL "Clang" AND
+      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0.0") OR
+     (CMAKE_C_COMPILER_ID STREQUAL "AppleClang" AND
+      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "13.0.0"))
+    list(APPEND C_CXX_WARNINGS -Wstring-concatenation)
+  endif()
+
+  # Clang 12's -Wframe-larger-than reportedly does not work in clang-cl. See
+  # https://crbug.com/42290587. Clang 13 includes the following fix, which may
+  # be related. Speculatively gate on Clang 13. That corresponds to
+  # AppleClang 13.1.6.
+  # https://github.com/llvm/llvm-project/commit/6aaf4fa2885600b0e31042071ad06f78218ab0f2
+  #
+  # Only enable this warning in release builds.
+  if(CMAKE_BUILD_TYPE MATCHES "[rR][eE][lL]" AND
+     ((CMAKE_C_COMPILER_ID STREQUAL "Clang" AND
+       CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "13.0.0") OR
+      (CMAKE_C_COMPILER_ID STREQUAL "AppleClang" AND
+       CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "13.1.6")))
+    list(APPEND C_CXX_WARNINGS -Wframe-larger-than=25344)
+  endif()
+
+  # -Wctad-maybe-unsupported was added in Clang 10, which is AppleClang 12.0.0.
+  if((CMAKE_C_COMPILER_ID STREQUAL "Clang" AND
+      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "10.0.0") OR
+     (CMAKE_C_COMPILER_ID STREQUAL "AppleClang" AND
+      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0.0"))
+    list(APPEND C_CXX_WARNINGS -Wctad-maybe-unsupported)
+  endif()
+
+  add_compile_options(
+    "$<$<COMPILE_LANGUAGE:C,CXX>:${C_CXX_WARNINGS}>"
+    "$<$<COMPILE_LANGUAGE:C>:${C_WARNINGS}>"
+    "$<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNINGS}>"
+  )
+elseif(MSVC)
+  set(MSVC_DISABLED_WARNINGS_LIST
+      "-wd4100" # 'exarg' : unreferenced formal parameter
+      "-wd4127" # conditional expression is constant
+      "-wd4244" # 'function' : conversion from 'int' to 'uint8_t',
+                # possible loss of data
+      "-wd4267" # conversion from 'size_t' to 'int', possible loss of data
+      "-wd4702" # unreachable code; MSVC's warning is too aggressive. See
+                # https://crbug.com/385161043
+      "-wd4706" # assignment within conditional expression
+      )
+  add_compile_options(
+    "$<$<COMPILE_LANGUAGE:C,CXX>:-W4;-WX;${MSVC_DISABLED_WARNINGS_LIST}>")
 endif()
 
 if(OPENSSL_ASM)
@@ -521,9 +557,9 @@ if(FIPS_DELOCATE)
   add_library(bcm_c_generated_asm STATIC ${BCM_SOURCES})
   # The C++ code in libcrypto shouldn't depend on libstdc++.
   target_compile_options(bcm_c_generated_asm PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${NO_CXX_RUNTIME_FLAGS}> "-S")
-  add_dependencies(bcm_c_generated_asm boringssl_prefix_symbols)
   target_include_directories(bcm_c_generated_asm PRIVATE ${PROJECT_SOURCE_DIR}/include)
   set_target_properties(bcm_c_generated_asm PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  target_compile_definitions(bcm_c_generated_asm PRIVATE -DBORINGSSL_IMPLEMENTATION)
   if(CLANG)
     # Clang warns when passing both -c (from CMake) and -S.
     target_compile_options(bcm_c_generated_asm PRIVATE "-Wno-unused-command-line-argument")
@@ -555,16 +591,21 @@ if(FIPS_DELOCATE)
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-  add_library(bcm_hashunset STATIC bcm-delocated.S)
-  set_target_properties(bcm_hashunset PROPERTIES POSITION_INDEPENDENT_CODE ON)
-  set_target_properties(bcm_hashunset PROPERTIES LINKER_LANGUAGE C)
+  add_library(bcm_hashunset OBJECT bcm-delocated.S)
+
+  # bcm_hashunset may still have relocations, just link-independent ones. Link a
+  # sample shared object before computing the hash.
+  add_library(bcm_relocated SHARED $<TARGET_OBJECTS:bcm_hashunset>)
+  set_target_properties(bcm_relocated PROPERTIES LINKER_LANGUAGE CXX)
+  target_link_options(bcm_relocated PRIVATE "-Wl,-z,undefs")
 
   go_executable(inject_hash
                 boringssl.googlesource.com/boringssl.git/util/fipstools/inject_hash)
   add_custom_command(
     OUTPUT bcm.o
-    COMMAND ./inject_hash -o bcm.o -in-archive $<TARGET_FILE:bcm_hashunset>
-    DEPENDS bcm_hashunset inject_hash
+    COMMAND ./inject_hash -o bcm.o -in-object $<TARGET_OBJECTS:bcm_hashunset>
+            -in-hash $<TARGET_FILE:bcm_relocated>
+    DEPENDS bcm_hashunset bcm_relocated inject_hash
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
   set(CRYPTO_FIPS_OBJECTS bcm.o)
@@ -576,8 +617,8 @@ elseif(FIPS_SHARED)
   add_library(bcm_library STATIC ${BCM_SOURCES} ${BCM_SOURCES_ASM_USED})
   # The C++ code in libcrypto shouldn't depend on libstdc++.
   target_compile_options(bcm_library PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${NO_CXX_RUNTIME_FLAGS}>)
-  add_dependencies(bcm_library boringssl_prefix_symbols)
   target_include_directories(bcm_library PRIVATE ${PROJECT_SOURCE_DIR}/include)
+  target_compile_definitions(bcm_library PRIVATE -DBORINGSSL_IMPLEMENTATION)
 
   add_custom_command(
     OUTPUT bcm.o
@@ -590,8 +631,8 @@ else()
   add_library(fipsmodule OBJECT ${BCM_SOURCES} ${BCM_SOURCES_ASM_USED})
   # The C++ code in libcrypto shouldn't depend on libstdc++.
   target_compile_options(fipsmodule PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${NO_CXX_RUNTIME_FLAGS}>)
-  add_dependencies(fipsmodule boringssl_prefix_symbols)
   target_include_directories(fipsmodule PRIVATE ${PROJECT_SOURCE_DIR}/include)
+  target_compile_definitions(fipsmodule PRIVATE -DBORINGSSL_IMPLEMENTATION)
   set(CRYPTO_FIPS_OBJECTS $<TARGET_OBJECTS:fipsmodule>)
 endif()
 
@@ -602,6 +643,7 @@ target_include_directories(crypto PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
+target_compile_definitions(crypto PRIVATE -DBORINGSSL_IMPLEMENTATION)
 set_property(TARGET crypto PROPERTY EXPORT_NAME Crypto)
 
 if(FIPS_SHARED)
@@ -620,7 +662,6 @@ if(FIPS_SHARED)
   )
 endif()
 
-add_dependencies(crypto boringssl_prefix_symbols)
 if(WIN32)
   target_link_libraries(crypto ws2_32)
 endif()
@@ -636,21 +677,17 @@ if(NOT CMAKE_SYSTEM_NAME MATCHES "^(Generic|Android)$")
   target_link_libraries(crypto Threads::Threads)
 endif()
 
-# Every target depends on crypto, so we add libcxx as a dependency here to
-# simplify injecting it everywhere.
-if(USE_CUSTOM_LIBCXX)
-  target_link_libraries(crypto libcxx)
-endif()
-
 add_library(ssl ${SSL_SOURCES})
 # Although libssl also provides headers that require an include directory, the
 # flag is already specified by libcrypto, so we omit target_include_directories
 # here.
 set_property(TARGET ssl PROPERTY EXPORT_NAME SSL)
 target_link_libraries(ssl crypto)
+target_compile_definitions(ssl PRIVATE -DBORINGSSL_IMPLEMENTATION)
 
 add_library(decrepit ${DECREPIT_SOURCES})
 target_link_libraries(decrepit ssl crypto)
+target_compile_definitions(decrepit PRIVATE -DBORINGSSL_IMPLEMENTATION)
 
 if(APPLE)
   set(PKI_CXX_FLAGS "-fno-aligned-new")
@@ -658,6 +695,15 @@ endif()
 add_library(pki ${PKI_SOURCES})
 target_link_libraries(pki crypto)
 target_compile_options(pki PRIVATE ${PKI_CXX_FLAGS})
+target_compile_definitions(pki PRIVATE -DBORINGSSL_IMPLEMENTATION)
+if(MSVC)
+  # libpki has a DLL C++ interface, where this warning is expected:
+  set(PKI_MSVC_DISABLED_WARNINGS_LIST
+      "-wd4251" # assignment within conditional expression
+      )
+  target_compile_options(pki PUBLIC
+    "$<$<COMPILE_LANGUAGE:C,CXX>:${PKI_MSVC_DISABLED_WARNINGS_LIST}>")
+endif()
 
 if(BUILD_TESTING)
   add_library(test_support_lib STATIC
@@ -671,6 +717,13 @@ if(BUILD_TESTING)
     target_link_libraries(test_support_lib dbghelp)
   endif()
   target_link_libraries(test_support_lib boringssl_gtest crypto)
+
+  # Declare a dummy target to build all unit tests. Test targets should inject
+  # themselves as dependencies next to the target definition.
+  add_custom_target(boringssl_all_tests)
+
+  # TODO(crbug.com/42290412): Drive this build with build.json and flatten.
+  add_subdirectory(ssl/test)
 
   # urandom_test is a separate binary because it needs to be able to observe the
   # PRNG initialisation, which means that it can't have other tests running before
@@ -686,6 +739,7 @@ if(BUILD_TESTING)
   add_executable(ssl_test ${SSL_TEST_SOURCES})
   target_link_libraries(ssl_test test_support_lib boringssl_gtest ssl crypto)
   add_dependencies(boringssl_all_tests ssl_test)
+
   add_executable(decrepit_test ${DECREPIT_TEST_SOURCES})
   target_link_libraries(decrepit_test test_support_lib boringssl_gtest
                         decrepit ssl crypto)
@@ -701,6 +755,9 @@ if(BUILD_TESTING)
 
   add_executable(jitter_deltas util/fipstools/entropy/jitter_deltas.cc)
   target_link_libraries(jitter_deltas crypto)
+
+  add_executable(bssl_bench ${BENCH_SOURCES})
+  target_link_libraries(bssl_bench ssl pki crypto benchmark::benchmark)
 endif()
 
 if(FIPS)
@@ -713,18 +770,13 @@ endif()
 add_executable(bssl ${BSSL_SOURCES})
 target_link_libraries(bssl ssl crypto)
 
-if(FUZZ)
-  if(LIBFUZZER_FROM_DEPS)
-    file(GLOB LIBFUZZER_SOURCES "util/bot/libFuzzer/*.cpp")
-    add_library(Fuzzer STATIC ${LIBFUZZER_SOURCES})
-    # libFuzzer does not pass our aggressive warnings. It also must be built
-    # without -fsanitize-coverage options or clang crashes.
-    set_target_properties(
-      Fuzzer PROPERTIES
-      COMPILE_FLAGS "-Wno-shadow -Wno-format-nonliteral -Wno-missing-prototypes -fsanitize-coverage=0"
-    )
-  endif()
+if(BUILD_TESTING)
+  add_executable(generate_mldsa_certs pki/testdata/verify_unittest/generate_mldsa_certs.cc)
+  target_link_libraries(generate_mldsa_certs crypto)
+endif()
 
+if(FUZZ)
+  # TODO(crbug.com/42290412): Drive this build with build.json and flatten.
   add_subdirectory(fuzz)
 endif()
 
@@ -769,7 +821,10 @@ if(BUILD_TESTING)
   # CMake target names can clash when projects are imported with
   # add_subdirectory. Only emit the run_tests target if we're the top-level
   # target. See https://crbug.com/428112180.
-  if(PROJECT_IS_TOP_LEVEL)
+  #
+  # Also disable on Visual Studio for now due to name clash.
+  # See https://crbug.com/465077378.
+  if(PROJECT_IS_TOP_LEVEL AND NOT CMAKE_GENERATOR MATCHES "^Visual Studio ")
     if(GO_EXECUTABLE)
       add_custom_target(
           run_tests
@@ -794,6 +849,20 @@ if(BUILD_TESTING)
           COMMAND ${CMAKE_COMMAND} -E false)
     endif()
   endif()
+endif()
+
+if(BORINGSSL_PREFIX)
+  require_go()
+  add_custom_target(
+    verify_boringssl_prefix ALL
+    COMMENT "Verifying symbol prefixing"
+    COMMAND ${GO_EXECUTABLE}
+            run ${CMAKE_CURRENT_SOURCE_DIR}/util/audit_symbols.go
+            -ignore-symbols-with ${BORINGSSL_PREFIX}
+            $<TARGET_FILE:crypto>
+    DEPENDS crypto
+    USES_TERMINAL
+  )
 endif()
 
 if(INSTALL_ENABLED)

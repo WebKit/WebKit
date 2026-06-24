@@ -1,0 +1,63 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest('This test requires window.internals.');
+                return;
+            }
+
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setMockVideoPresentationModeEnabled(true)');
+
+            window.outerHost = document.createElement('div');
+            outerHost.id = 'outerHost';
+            window.outerRoot = outerHost.attachShadow({ mode: 'open' });
+
+            window.innerHost = document.createElement('div');
+            innerHost.id = 'innerHost';
+            outerRoot.appendChild(innerHost);
+            window.innerRoot = innerHost.attachShadow({ mode: 'open' });
+
+            video = document.createElement('video');
+            video.id = 'video';
+            innerRoot.appendChild(video);
+
+            document.body.appendChild(outerHost);
+
+            run('video.src = findMediaFile("video", "../content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            consoleWrite('* Nothing is in Picture-in-Picture yet, so every getter returns null.');
+            testExpected('document.pictureInPictureElement', null);
+            testExpected('outerRoot.pictureInPictureElement', null);
+            testExpected('innerRoot.pictureInPictureElement', null);
+
+            runWithKeyDown(() => { video.requestPictureInPicture(); });
+            await waitFor(video, 'enterpictureinpicture');
+
+            consoleWrite('* The video inside the nested shadow roots is in Picture-in-Picture.');
+            testExpected('document.pictureInPictureElement.id', 'outerHost');
+            testExpected('outerRoot.pictureInPictureElement.id', 'innerHost');
+            testExpected('innerRoot.pictureInPictureElement.id', 'video');
+
+            document.exitPictureInPicture();
+            await waitFor(video, 'leavepictureinpicture');
+
+            consoleWrite('* After exiting Picture-in-Picture, every getter returns null again.');
+            testExpected('document.pictureInPictureElement', null);
+            testExpected('outerRoot.pictureInPictureElement', null);
+            testExpected('innerRoot.pictureInPictureElement', null);
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <div>This tests that when a video inside a shadow tree is in Picture-in-Picture, a page can find it through its shadow root's pictureInPictureElement property instead of always getting null.</div>
+</body>
+</html>

@@ -33,12 +33,7 @@ class RateTracker {
   double ComputeRateForInterval(Timestamp current_time,
                                 TimeDelta interval) const;
 
-  // Computes the average rate over the rate tracker's recording interval
-  // of bucket_milliseconds * bucket_count.
-  double Rate(Timestamp current_time) const {
-    return ComputeRateForInterval(
-        current_time, TimeDelta::Millis(bucket_milliseconds_) * bucket_count_);
-  }
+  double Rate(Timestamp current_time) const;
 
   // The total number of samples added.
   int64_t TotalSampleCount() const;
@@ -60,6 +55,5 @@ class RateTracker {
 };
 
 }  //  namespace webrtc
-
 
 #endif  // RTC_BASE_RATE_TRACKER_H_

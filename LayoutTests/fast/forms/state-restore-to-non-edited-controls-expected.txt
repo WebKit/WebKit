@@ -9,5 +9,8 @@ PASS document.getElementById("text0").value is "2"
 PASS document.getElementById("text1").value is "edit"
 PASS document.getElementById("text2").value is "2"
 PASS document.getElementById("textarea").value is "2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
 

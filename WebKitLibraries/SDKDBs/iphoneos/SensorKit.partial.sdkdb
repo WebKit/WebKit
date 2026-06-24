@@ -179,6 +179,7 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "introduced": "26.4", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoostingNone"},
       {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoostingSlight"},
       {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoostingModerate"},
       {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoostingStrong"}
@@ -189,6 +190,7 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "introduced": "26.4", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuningNone"},
       {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuningBalancedTone"},
       {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuningVocalRange"},
       {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuningBrightness"}
@@ -1220,7 +1222,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "introduced": "14", "name": "SRAbsoluteTime"},
     {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsName"},
@@ -1255,28 +1257,28 @@
   },
   {
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$sSo18SRAcousticSettingsC9SensorKitE25headphoneSafetyAudioLevelSdSgvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo18SRAcousticSettingsC9SensorKitE25headphoneSafetyAudioLevelSdSgvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25SRWristTemperatureSessionC9SensorKitE12temperaturesQrvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25SRWristTemperatureSessionC9SensorKitE12temperaturesQrvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo25SRWristTemperatureSessionC9SensorKitE12temperaturesQrvpQOMQ"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV010backgroundF0Sdvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV010backgroundF0SdvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV010backgroundF6OffsetSdvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV010backgroundF6OffsetSdvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV04pinkF0Sdvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV04pinkF0SdvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV05whiteF0Sdvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV05whiteF0SdvpMV"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo18SRAcousticSettingsC9SensorKitE25headphoneSafetyAudioLevelSdSgvg"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo18SRAcousticSettingsC9SensorKitE25headphoneSafetyAudioLevelSdSgvpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25SRWristTemperatureSessionC9SensorKitE12temperaturesQrvg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25SRWristTemperatureSessionC9SensorKitE12temperaturesQrvpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25SRWristTemperatureSessionC9SensorKitE12temperaturesQrvpQOMQ"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV010backgroundF0Sdvg"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV010backgroundF0SdvpMV"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV010backgroundF6OffsetSdvg"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV010backgroundF6OffsetSdvpMV"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV04pinkF0Sdvg"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV04pinkF0SdvpMV"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV05whiteF0Sdvg"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsV05whiteF0SdvpMV"},
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsVMa"},
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsVMn"},
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10NoiseTermsVN"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10noiseTermsAbCE05NoiseG0VSgvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10noiseTermsAbCE05NoiseG0VSgvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE21normalizedReflectanceSdSgvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE21normalizedReflectanceSdSgvpMV"}
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10noiseTermsAbCE05NoiseG0VSgvg"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE10noiseTermsAbCE05NoiseG0VSgvpMV"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE21normalizedReflectanceSdSgvg"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE21normalizedReflectanceSdSgvpMV"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

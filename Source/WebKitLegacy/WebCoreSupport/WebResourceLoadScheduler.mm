@@ -57,6 +57,11 @@ WebCore::ResourceError WebResourceLoadScheduler::blockedErrorFromRequest(const W
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotUseRestrictedPort URL:request.url().createNSURL().get()];
 }
 
+bool WebResourceLoadScheduler::isBlockedError(const WebCore::ResourceError& error) const
+{
+    return error.domain() == String(WebKitErrorDomain) && error.errorCode() == WebKitErrorCannotUseRestrictedPort;
+}
+
 WebCore::ResourceError WebResourceLoadScheduler::blockedByContentBlockerError(const WebCore::ResourceRequest& request) const
 {
     RELEASE_ASSERT_NOT_REACHED(); // Content blockers are not enabled in WebKit1.

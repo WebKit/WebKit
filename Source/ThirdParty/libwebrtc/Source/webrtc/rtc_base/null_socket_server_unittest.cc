@@ -10,41 +10,44 @@
 
 #include "rtc_base/null_socket_server.h"
 
-#include <cstdint>
 #include <memory>
 
-#include "api/test/rtc_error_matchers.h"
+#include "api/environment/environment.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/thread.h"
-#include "rtc_base/time_utils.h"
-#include "test/gmock.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
-#include "test/wait_until.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 
 TEST(NullSocketServerTest, WaitAndSet) {
-  AutoThread main_thread;
+  test::RunLoop run_loop;
   NullSocketServer ss;
   auto thread = Thread::Create();
   EXPECT_TRUE(thread->Start());
   thread->PostTask([&ss] { ss.WakeUp(); });
   // The process_io will be ignored.
   const bool process_io = true;
-  EXPECT_THAT(
-      WaitUntil([&] { return ss.Wait(SocketServer::kForever, process_io); },
-                ::testing::IsTrue(), {.timeout = TimeDelta::Millis(5'000)}),
-      IsRtcOk());
+  bool wait_result = false;
+  run_loop.PostTask([&] {
+    wait_result = ss.Wait(SocketServer::kForever, process_io);
+    run_loop.Quit();
+  });
+  run_loop.RunFor(TimeDelta::Seconds(5));
+  EXPECT_TRUE(wait_result);
 }
 
 TEST(NullSocketServerTest, TestWait) {
+  Environment env = CreateTestEnvironment();
   NullSocketServer ss;
-  int64_t start = TimeMillis();
+  Timestamp start = env.clock().CurrentTime();
   ss.Wait(TimeDelta::Millis(200), true);
   // The actual wait time is dependent on the resolution of the timer used by
   // the Event class. Allow for the event to signal ~20ms early.
-  EXPECT_GE(TimeSince(start), 180);
+  EXPECT_GE(env.clock().CurrentTime() - start, TimeDelta::Millis(180));
 }
 
 }  // namespace webrtc

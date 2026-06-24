@@ -107,7 +107,7 @@ public:
     using Node::deref;
 
 protected:
-    HTMLFormControlElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
+    HTMLFormControlElement(const QualifiedName& tagName, Document&);
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void postConnectionSteps() override;

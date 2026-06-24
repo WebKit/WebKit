@@ -12,14 +12,11 @@
     9. Test 3, measure the currentTime which should still be .05 sec.
     -->
     <html>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script src="resources/SVGAnimationTestCase.js"></script>
     <script>
+      window.jsTestIsAsync = true;
       function load() {
-        if (window.testRunner) {
-          testRunner.dumpAsText();
-          testRunner.waitUntilDone();
-        }
        
         svg = document.getElementById("svg");
         rect = document.getElementById("rect");
@@ -33,8 +30,7 @@
             svg.pauseAnimations();
             setTimeout(function() {
               shouldBeCloseEnough("svg.getCurrentTime()", "0.05", 0.02);
-              if (window.testRunner)
-                testRunner.notifyDone();
+              finishJSTest();
             }, 50);
           }, 50);
         }, 10);

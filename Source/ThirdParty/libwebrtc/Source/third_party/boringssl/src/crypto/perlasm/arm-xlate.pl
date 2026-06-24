@@ -30,6 +30,26 @@ my $dotinlocallabels=($flavour=~/linux/)?1:0;
 my $arch = sub {
     if ($flavour =~ /linux/)	{ ".arch\t".join(',',@_); }
     elsif ($flavour =~ /win64/) { ".arch\t".join(',',@_); }
+    elsif ($flavour =~ /ios/) {
+        # Apple's assembler does not support the .arch directive, but does
+        # support .arch_extension. We parse the .arch directive to extract the
+        # extensions and emit .arch_extension directives.
+        my @args = split(/,\s*/,shift);
+        my @extensions = ();
+        foreach my $arg (@args) {
+            # Parse "armv8.2-a+crypto+sha3" -> extract "crypto", "sha3"
+            if ($arg =~ /\+/) {
+                my @parts = split(/\+/, $arg);
+                shift @parts; # remove arch version (e.g. armv8.2-a)
+                push @extensions, @parts;
+            }
+        }
+        my $ret = "";
+        foreach my $ext (@extensions) {
+            $ret .= ".arch_extension $ext\n";
+        }
+        return $ret;
+    }
     else			{ ""; }
 };
 my $fpu = sub {

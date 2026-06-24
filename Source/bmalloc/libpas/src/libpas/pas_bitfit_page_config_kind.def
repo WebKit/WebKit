@@ -103,6 +103,12 @@ PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(bmalloc_medium_bitfit,
                                    BMALLOC_HEAP_CONFIG.medium_bitfit_config)
 PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(bmalloc_marge_bitfit,
                                    BMALLOC_HEAP_CONFIG.marge_bitfit_config)
+PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(tagged_bmalloc_small_bitfit,
+                                   TAGGED_BMALLOC_HEAP_CONFIG.small_bitfit_config)
+PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(tagged_bmalloc_medium_bitfit,
+                                   TAGGED_BMALLOC_HEAP_CONFIG.medium_bitfit_config)
+PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(tagged_bmalloc_marge_bitfit,
+                                   TAGGED_BMALLOC_HEAP_CONFIG.marge_bitfit_config)
 #endif
 
 #if PAS_ENABLE_HOTBIT

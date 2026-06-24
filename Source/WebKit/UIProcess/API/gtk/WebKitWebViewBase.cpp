@@ -1472,10 +1472,10 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
     auto phase = gdk_event_is_scroll_stop_event(event) ? WebWheelEvent::Phase::Ended : WebWheelEvent::Phase::Changed;
     double x, y;
     gdk_event_get_coords(event, &x, &y);
-    IntPoint position(clampToInteger(x), clampToInteger(y));
+    IntPoint position(clampTo<int>(x), clampTo<int>(y));
     double xRoot, yRoot;
     gdk_event_get_root_coords(event, &xRoot, &yRoot);
-    IntPoint globalPosition(clampToInteger(xRoot), clampToInteger(yRoot));
+    IntPoint globalPosition(clampTo<int>(xRoot), clampTo<int>(yRoot));
 
     bool hasPreciseScrollingDeltas = false;
     FloatSize wheelTicks;

@@ -39,7 +39,7 @@ namespace TemporalCore {
 
 ISO8601::PlainYearMonth JS_EXPORT_PRIVATE balanceISOYearMonth(int64_t year, int64_t month);
 
-ISO8601::PlainDate JS_EXPORT_PRIVATE balanceISODate(int32_t year, int32_t month, int64_t day);
+ISO8601::PlainDate JS_EXPORT_PRIVATE addDaysToISODate(const ISO8601::PlainDate&, int64_t days);
 
 TemporalResult<ISO8601::PlainDate> JS_EXPORT_PRIVATE regulateISODate(int32_t year, int32_t month, int64_t day, TemporalOverflow);
 

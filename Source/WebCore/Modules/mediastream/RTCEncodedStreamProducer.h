@@ -38,6 +38,7 @@ namespace WebCore {
 
 class FrameRateMonitor;
 class JSDOMGlobalObject;
+class RTCRtpScriptTransformer;
 class RTCRtpTransformBackend;
 class RTCRtpTransformableFrame;
 class ScriptExecutionContext;
@@ -53,7 +54,7 @@ public:
     static ExceptionOr<Ref<RTCEncodedStreamProducer>> create(ScriptExecutionContext&);
     ~RTCEncodedStreamProducer();
 
-    void start(Ref<RTCRtpTransformBackend>&&, bool isVideo);
+    void start(Ref<RTCRtpTransformBackend>&&, bool isVideo, RTCRtpScriptTransformer* = nullptr);
     void clear(bool shouldClearCallback);
 
     void generateKeyFrame(ScriptExecutionContext&, const String&, Ref<DeferredPromise>&&);
@@ -82,6 +83,8 @@ private:
     RefPtr<RTCRtpTransformBackend> m_transformBackend;
     Vector<Ref<DeferredPromise>> m_pendingKeyFramePromises;
     bool m_isVideo { false };
+    bool m_hasTransformer { false };
+    WeakPtr<RTCRtpScriptTransformer> m_transformer;
 
 #if !RELEASE_LOG_DISABLED
     bool m_enableAdditionalLogging { false };

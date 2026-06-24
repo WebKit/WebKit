@@ -30,9 +30,9 @@
 #include <WebCore/WebAnimationTime.h>
 #include <wtf/BitSet.h>
 #include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -58,9 +58,9 @@ enum class EndpointInclusiveActiveInterval : bool { No, Yes };
 enum class WebAnimationType : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
 
 using WeakStyleOriginatedAnimations = Vector<WeakPtr<StyleOriginatedAnimation, WeakPtrImplWithEventTargetData>>;
-using AnimationCollection = ListHashSet<Ref<WebAnimation>>;
+using AnimationCollection = OrderedHashSet<Ref<WebAnimation>>;
 using AnimationEvents = Vector<Ref<AnimationEventBase>>;
-using CSSAnimationCollection = ListHashSet<Ref<CSSAnimation>>;
+using CSSAnimationCollection = OrderedHashSet<Ref<CSSAnimation>>;
 
 using AnimatableCSSProperty = Variant<CSSPropertyID, AtomString>;
 using AnimatableCSSPropertyToTransitionMap = HashMap<AnimatableCSSProperty, Ref<CSSTransition>>;

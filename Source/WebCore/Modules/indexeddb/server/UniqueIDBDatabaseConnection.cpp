@@ -68,6 +68,11 @@ UniqueIDBDatabaseManager* UniqueIDBDatabaseConnection::manager()
     return m_manager.get();
 }
 
+CheckedPtr<UniqueIDBDatabase> UniqueIDBDatabaseConnection::checkedDatabase()
+{
+    return m_database.get();
+}
+
 bool UniqueIDBDatabaseConnection::hasNonFinishedTransactions() const
 {
     return !m_transactionMap.isEmpty();
@@ -240,6 +245,16 @@ void UniqueIDBDatabaseConnection::deleteTransaction(UniqueIDBDatabaseTransaction
     
     ASSERT(m_transactionMap.contains(transactionIdentifier));
     m_transactionMap.remove(transactionIdentifier);
+}
+
+void UniqueIDBDatabaseConnection::deleteTransactionsAbortedForClientSuspension()
+{
+    // Transactions aborted on the server while this connection's client was suspended are kept
+    // in the map so the client can learn about the abort if it resumes; on connection close
+    // there is no client left to tell.
+    m_transactionMap.removeIf([](auto& entry) {
+        return entry.value->suspensionAbortResult().has_value();
+    });
 }
 
 } // namespace IDBServer

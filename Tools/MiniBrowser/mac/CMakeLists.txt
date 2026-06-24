@@ -64,12 +64,18 @@ add_custom_target(MiniBrowserNibs ALL DEPENDS
 
 include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
 add_executable(MiniBrowser MACOSX_BUNDLE ${MiniBrowser_SOURCES})
+# FIXME: Remove once source files are fixed. https://bugs.webkit.org/show_bug.cgi?id=312034
+WEBKIT_ADD_TARGET_CXX_FLAGS(MiniBrowser -Wno-unused-parameter)
 set_target_properties(MiniBrowser PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${MINIBROWSER_DIR}/Info.plist)
 target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
-add_dependencies(MiniBrowser MiniBrowserNibs WebProcess NetworkProcess GPUProcess)
+add_dependencies(MiniBrowser MiniBrowserNibs)
+set(MiniBrowser_XPC_SERVICES WebProcess NetworkProcess GPUProcess)
 if (TARGET WebProcessEnhancedSecurity)
-    add_dependencies(MiniBrowser WebProcessEnhancedSecurity WebProcessCaptivePortal)
+    list(APPEND MiniBrowser_XPC_SERVICES WebProcessEnhancedSecurity WebProcessCaptivePortal)
 endif ()
+foreach (_service IN LISTS MiniBrowser_XPC_SERVICES)
+    set_property(TARGET MiniBrowser APPEND PROPERTY LINK_DEPENDS $<TARGET_FILE:${_service}>)
+endforeach ()
 
 # SIP strips DYLD_* for XPC children, so they load system WebKit -> version mismatch crash.
 # Set __XPC_DYLD_FRAMEWORK_PATH so XPC services find this build's frameworks.

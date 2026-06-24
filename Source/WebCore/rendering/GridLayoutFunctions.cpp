@@ -32,7 +32,7 @@
 #include "RenderChildIterator.h"
 #include "RenderGrid.h"
 #include "RenderStyleConstants.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleGridTrackSizingDirection.h"
 
 namespace WebCore {
@@ -381,7 +381,7 @@ bool isRelativeGridTrackBreadthAsAuto(const Style::GridTrackBreadth& length, std
     return length.isPercentOrCalculated() && !availableSpace;
 }
 
-const Style::GridTrackSize& rawGridTrackSize(const RenderStyle& renderStyle, Style::GridTrackSizingDirection direction, unsigned translatedIndex, unsigned autoRepeatTracksCount, unsigned explicitGridStart)
+const Style::GridTrackSize& rawGridTrackSize(const Style::ComputedStyle& renderStyle, Style::GridTrackSizingDirection direction, unsigned translatedIndex, unsigned autoRepeatTracksCount, unsigned explicitGridStart)
 {
     auto& autoTrackStyles = renderStyle.gridAutoList(direction);
     auto& tracks = renderStyle.gridTemplateList(direction);

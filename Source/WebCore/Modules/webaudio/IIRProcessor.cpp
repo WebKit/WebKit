@@ -60,7 +60,7 @@ IIRProcessor::IIRProcessor(float sampleRate, unsigned numberOfChannels, const Ve
         //   y(n) + a[1]/a[0]*y(n-1) + ... = b[0]/a[0]*x(n) + b[1]/a[0]*x(n-1) + ...
         //
         // Thus, the feedback and feedforward coefficients need to be scaled by 1/a[0].
-        float scale = feedback[0];
+        double scale = feedback[0];
         for (unsigned k = 1; k < feedbackLength; ++k)
             m_feedback[k] /= scale;
 

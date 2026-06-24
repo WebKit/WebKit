@@ -29,10 +29,7 @@ group("rtc_tools") {
     deps += [ ":tools_unittests" ]
   }
   if (rtc_include_tests && rtc_enable_protobuf) {
-    deps += [
-      ":rtp_analyzer",
-      "network_tester",
-    ]
+    deps += [ "network_tester" ]
   }
   if (rtc_include_tests && rtc_enable_protobuf && !build_with_chromium) {
     deps += [
@@ -62,6 +59,7 @@ rtc_library("video_file_reader") {
     "../rtc_base:logging",
     "../rtc_base:refcount",
     "../rtc_base:stringutils",
+    "//third_party/abseil-cpp/absl/cleanup",
     "//third_party/abseil-cpp/absl/strings",
   ]
 }
@@ -98,7 +96,6 @@ rtc_library("video_quality_analysis") {
   ]
   deps = [
     ":video_file_reader",
-    "../api:array_view",
     "../api:make_ref_counted",
     "../api:scoped_refptr",
     "../api/numerics",
@@ -141,7 +138,6 @@ if (!is_component_build) {
       ":video_file_reader",
       ":video_file_writer",
       ":video_quality_analysis",
-      "../api:array_view",
       "../api:make_ref_counted",
       "../api:scoped_refptr",
       "../api/test/metrics:chrome_perf_dashboard_metrics_exporter",
@@ -290,6 +286,12 @@ if (!build_with_chromium) {
         "rtc_event_log_visualizer/alerts.h",
         "rtc_event_log_visualizer/analyze_audio.cc",
         "rtc_event_log_visualizer/analyze_audio.h",
+        "rtc_event_log_visualizer/analyze_bwe.cc",
+        "rtc_event_log_visualizer/analyze_bwe.h",
+        "rtc_event_log_visualizer/analyze_connectivity.cc",
+        "rtc_event_log_visualizer/analyze_connectivity.h",
+        "rtc_event_log_visualizer/analyze_rtp_rtcp.cc",
+        "rtc_event_log_visualizer/analyze_rtp_rtcp.h",
         "rtc_event_log_visualizer/analyzer.cc",
         "rtc_event_log_visualizer/analyzer.h",
         "rtc_event_log_visualizer/analyzer_common.cc",
@@ -306,6 +308,7 @@ if (!build_with_chromium) {
         "../api:candidate",
         "../api:dtls_transport_interface",
         "../api:field_trials",
+        "../api:field_trials_view",
         "../api:function_view",
         "../api:make_ref_counted",
         "../api:rtp_headers",
@@ -616,18 +619,5 @@ if (rtc_include_tests) {
         ]
       }  # unpack_aecdump
     }
-  }
-
-  if (rtc_enable_protobuf) {
-    copy("rtp_analyzer") {
-      sources = [
-        "py_event_log_analyzer/misc.py",
-        "py_event_log_analyzer/pb_parse.py",
-        "py_event_log_analyzer/rtp_analyzer.py",
-        "py_event_log_analyzer/rtp_analyzer.sh",
-      ]
-      outputs = [ "$root_build_dir/{{source_file_part}}" ]
-      deps = [ "../logging:rtc_event_log_proto" ]
-    }  # rtp_analyzer
   }
 }

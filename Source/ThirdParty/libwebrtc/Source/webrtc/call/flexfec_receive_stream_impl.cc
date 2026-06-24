@@ -11,17 +11,17 @@
 #include "call/flexfec_receive_stream_impl.h"
 
 #include <cstddef>
-#include <cstdint>
 #include <memory>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "call/flexfec_receive_stream.h"
 #include "call/rtp_stream_receiver_controller_interface.h"
 #include "logging/rtc_event_log/events/rtc_event_rtp_packet_incoming.h"
+#include "modules/pacing/packet_router.h"
 #include "modules/rtp_rtcp/include/flexfec_receiver.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 #include "rtc_base/checks.h"
@@ -31,11 +31,9 @@
 namespace webrtc {
 
 std::string FlexfecReceiveStream::Config::ToString() const {
-  char buf[1024];
-  SimpleStringBuilder ss(buf);
+  StringBuilder ss;
   ss << "{payload_type: " << payload_type;
   ss << ", remote_ssrc: " << remote_ssrc;
-  ss << ", local_ssrc: " << local_ssrc;
   ss << ", protected_media_ssrcs: [";
   size_t i = 0;
   for (; i + 1 < protected_media_ssrcs.size(); ++i)
@@ -43,7 +41,7 @@ std::string FlexfecReceiveStream::Config::ToString() const {
   if (!protected_media_ssrcs.empty())
     ss << protected_media_ssrcs[i];
   ss << "}";
-  return ss.str();
+  return ss.Release();
 }
 
 bool FlexfecReceiveStream::Config::IsCompleteAndEnabled() const {
@@ -107,6 +105,7 @@ FlexfecReceiveStreamImpl::FlexfecReceiveStreamImpl(
     const Environment& env,
     Config config,
     RecoveredPacketReceiver* recovered_packet_receiver,
+    PacketRouter* packet_router,
     RtcpRttStats* rtt_stats)
     : env_(env),
       remote_ssrc_(config.remote_ssrc),
@@ -122,14 +121,21 @@ FlexfecReceiveStreamImpl::FlexfecReceiveStreamImpl(
            .receive_statistics = rtp_receive_statistics_.get(),
            .outgoing_transport = config.rtcp_send_transport,
            .rtt_stats = rtt_stats,
-           .local_media_ssrc = config.local_ssrc})) {
+           .rtcp_mode = config.rtcp_mode,
+           .remote_ssrc = config.remote_ssrc},
+          [packet_router] {
+            // Use the same logic as for the video receiver.
+            if (packet_router != nullptr) {
+              return packet_router->SsrcOfFirstSender().value_or(
+                  kFallbackRtcpSsrcForVideo);
+            } else {
+              return kFallbackRtcpSsrcForVideo;
+            }
+          })) {
   RTC_LOG(LS_INFO) << "FlexfecReceiveStreamImpl: " << config.ToString();
   RTC_DCHECK_GE(payload_type_, -1);
 
   packet_sequence_checker_.Detach();
-
-  // RTCP reporting.
-  rtp_rtcp_->SetRTCPStatus(config.rtcp_mode);
 }
 
 FlexfecReceiveStreamImpl::~FlexfecReceiveStreamImpl() {
@@ -180,14 +186,6 @@ void FlexfecReceiveStreamImpl::SetPayloadType(int payload_type) {
 int FlexfecReceiveStreamImpl::payload_type() const {
   RTC_DCHECK_RUN_ON(&packet_sequence_checker_);
   return payload_type_;
-}
-
-void FlexfecReceiveStreamImpl::SetLocalSsrc(uint32_t local_ssrc) {
-  RTC_DCHECK_RUN_ON(&packet_sequence_checker_);
-  if (local_ssrc == rtp_rtcp_->local_media_ssrc())
-    return;
-
-  rtp_rtcp_->SetLocalSsrc(local_ssrc);
 }
 
 }  // namespace webrtc

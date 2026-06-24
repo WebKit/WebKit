@@ -89,7 +89,7 @@ TEST(WTF, clampToIntLongLong)
     EXPECT_EQ(clampTo<int>(underflowInt), minInt);
 }
 
-TEST(WTF, clampToIntegerFloat)
+TEST(WTF, clampToIntFloat)
 {
     // This test is inaccurate as floats will round the min / max integer
     // due to the narrow mantissa. However it will properly checks within
@@ -107,14 +107,14 @@ TEST(WTF, clampToIntegerFloat)
     EXPECT_GT(overflowInt, maxInt);
     EXPECT_LT(underflowInt, minInt);
 
-    EXPECT_EQ(clampToInteger(maxInt), static_cast<int>(maxInt));
-    EXPECT_EQ(clampToInteger(minInt), std::numeric_limits<int>::min());
+    EXPECT_EQ(clampTo<int>(maxInt), static_cast<int>(maxInt));
+    EXPECT_EQ(clampTo<int>(minInt), std::numeric_limits<int>::min());
 
-    EXPECT_EQ(clampToInteger(overflowInt), std::numeric_limits<int>::max());
-    EXPECT_EQ(clampToInteger(underflowInt), std::numeric_limits<int>::min());
+    EXPECT_EQ(clampTo<int>(overflowInt), std::numeric_limits<int>::max());
+    EXPECT_EQ(clampTo<int>(underflowInt), std::numeric_limits<int>::min());
 }
 
-TEST(WTF, clampToIntegerDouble)
+TEST(WTF, clampToIntDouble)
 {
     double maxInt = std::numeric_limits<int>::max();
     double minInt = std::numeric_limits<int>::min();
@@ -124,11 +124,35 @@ TEST(WTF, clampToIntegerDouble)
     EXPECT_GT(overflowInt, maxInt);
     EXPECT_LT(underflowInt, minInt);
 
-    EXPECT_EQ(clampToInteger(maxInt), maxInt);
-    EXPECT_EQ(clampToInteger(minInt), minInt);
+    EXPECT_EQ(clampTo<int>(maxInt), maxInt);
+    EXPECT_EQ(clampTo<int>(minInt), minInt);
 
-    EXPECT_EQ(clampToInteger(overflowInt), maxInt);
-    EXPECT_EQ(clampToInteger(underflowInt), minInt);
+    EXPECT_EQ(clampTo<int>(overflowInt), maxInt);
+    EXPECT_EQ(clampTo<int>(underflowInt), minInt);
+}
+
+TEST(WTF, clampToIntIntegral)
+{
+    constexpr int intMax = std::numeric_limits<int>::max();
+    constexpr int intMin = std::numeric_limits<int>::min();
+
+    // int64_t: values in range pass through, out-of-range clamps both ends.
+    EXPECT_EQ(clampTo<int>(int64_t { 0 }), 0);
+    EXPECT_EQ(clampTo<int>(int64_t { 42 }), 42);
+    EXPECT_EQ(clampTo<int>(int64_t { -42 }), -42);
+    EXPECT_EQ(clampTo<int>(int64_t { intMax }), intMax);
+    EXPECT_EQ(clampTo<int>(int64_t { intMin }), intMin);
+    EXPECT_EQ(clampTo<int>(static_cast<int64_t>(intMax) + 1), intMax);
+    EXPECT_EQ(clampTo<int>(static_cast<int64_t>(intMin) - 1), intMin);
+    EXPECT_EQ(clampTo<int>(std::numeric_limits<int64_t>::max()), intMax);
+    EXPECT_EQ(clampTo<int>(std::numeric_limits<int64_t>::min()), intMin);
+
+    // uint64_t: in-range values pass through, large values clamp to intMax.
+    EXPECT_EQ(clampTo<int>(uint64_t { 0 }), 0);
+    EXPECT_EQ(clampTo<int>(uint64_t { 42 }), 42);
+    EXPECT_EQ(clampTo<int>(static_cast<uint64_t>(intMax)), intMax);
+    EXPECT_EQ(clampTo<int>(static_cast<uint64_t>(intMax) + 1), intMax);
+    EXPECT_EQ(clampTo<int>(std::numeric_limits<uint64_t>::max()), intMax);
 }
 
 TEST(WTF, clampToFloat)

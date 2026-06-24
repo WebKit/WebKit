@@ -1,0 +1,14 @@
+getComputedStyle of the background/mask shorthand must not crash when a non-image longhand has fewer specified values than background-image/mask-image (the longhand list is shorter than the layer count). The shorter list should repeat across layers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS backgroundOf("background-image: url(a.png), url(b.png); background-repeat: repeat-x;").match(/repeat-x/g).length is 2
+PASS backgroundOf("background-image: url(a.png), url(b.png); background-size: cover;").match(/cover/g).length is 2
+PASS backgroundOf("background-image: url(a.png), url(b.png), url(c.png); background-repeat: repeat-x, repeat-y;").match(/repeat-x/g).length is 2
+PASS backgroundOf("background-image: url(a.png), url(b.png), url(c.png); background-repeat: repeat-x, repeat-y;").match(/repeat-y/g).length is 1
+PASS maskOf("mask-image: url(a.png), url(b.png); mask-repeat: repeat-x;").match(/repeat-x/g).length is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

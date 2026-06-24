@@ -1,0 +1,3 @@
+
+PASS ReadableStream values() does not crash when the stream's iframe has been detached
+

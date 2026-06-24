@@ -73,7 +73,7 @@ cleanup = "rdar://161241477"
 symbols = [
     "CTFontGetUIFontType",
 ]
-requires-sdk = ["iOS <= 26.*"]
+requires-sdk = ["iOS <= 26.4"]
 
 [[temporary-usage]]
 request = "rdar://168834967"

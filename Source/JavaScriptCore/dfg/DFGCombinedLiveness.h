@@ -27,8 +27,8 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGBlockMap.h"
 #include "DFGGraph.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace DFG {
 
@@ -45,7 +45,7 @@ struct CombinedLiveness {
     
     CombinedLiveness(Graph&);
 
-    using NodeLivenessMap = BlockMap<NodeSet>;
+    using NodeLivenessMap = IndexMap<BasicBlock*, NodeSet>;
 
     NodeLivenessMap liveAtHead;
     NodeLivenessMap liveAtTail;

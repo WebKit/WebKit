@@ -4,79 +4,110 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
+    RenderSVGText {text} at (5,210) size 368x32 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 368x32
+        chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 367.83: "Test of keyPoints and keyTimes."
+    RenderSVGText {text} at (5,248) size 389x22 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 389x21
+        chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 54 width 388.14: "Number indicates the circle's passing time in seconds."
+    RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x46
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
+    RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 layer at (-170,-57.50) size 340x78 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (-170,-57.50) size 340x77.50
-layer at (0,0) size 0x0
-  RenderSVGTransformableContainer {g} at (170,57.50) size 0x0
-layer at (-150,0) size 300x0
-  RenderSVGPath {polyline} at (-150,0) size 300x0 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-150 0 0 0 150 0"]
-layer at (-170,-20) size 340x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,37.50) size 340x40
-layer at (-20,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (150,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=20.00]
-layer at (130,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (300,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
-layer at (-20,-20) size 40x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (150,37.50) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+    RenderSVGText {text} at (10,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 15.00: "0"
+    RenderSVGText {text} at (120,0) size 85x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 85x35
+        chunk 1 text run 1 at (-50.00,-30.00) startOffset 0 endOffset 7 width 84.99: "0.8-3.2"
+    RenderSVGText {text} at (310,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (140.00,-30.00) startOffset 0 endOffset 1 width 15.00: "4"
+    RenderSVGTransformableContainer {g} at (170,57.50) size 0x0
+      RenderSVGPath {polyline} at (-150,0) size 300x0 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-150 0 0 0 150 0"]
+    RenderSVGTransformableContainer {g} at (0,37.50) size 340x40
+      RenderSVGEllipse {circle} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-150.00] [cy=0.00] [r=20.00]
+      RenderSVGEllipse {circle} at (150,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=20.00]
+      RenderSVGEllipse {circle} at (300,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
+    RenderSVGEllipse {circle} at (150,37.50) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
 layer at (-170,-57.50) size 340x78 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (-170,-57.50) size 340x77.50
-layer at (0,0) size 0x0
-  RenderSVGTransformableContainer {g} at (170,57.50) size 0x0
-layer at (90,0) size 60x0
-  RenderSVGPath {polyline} at (90,0) size 60x0 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="90 0 150 0"]
-layer at (-170,-20) size 340x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,37.50) size 340x40
-layer at (70,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (240,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=90.00] [cy=0.00] [r=20.00]
-layer at (130,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (300,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
-layer at (-20,-20) size 40x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (150,37.50) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+    RenderSVGText {text} at (10,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 15.00: "0"
+    RenderSVGText {text} at (70,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (-100.00,-30.00) startOffset 0 endOffset 1 width 15.00: "2"
+    RenderSVGText {text} at (250,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (80.00,-30.00) startOffset 0 endOffset 1 width 15.00: "2"
+    RenderSVGText {text} at (310,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (140.00,-30.00) startOffset 0 endOffset 1 width 15.00: "4"
+    RenderSVGTransformableContainer {g} at (170,57.50) size 0x0
+      RenderSVGPath {polyline} at (-150,0) size 60x0 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-150 0 -90 0"]
+      RenderSVGPath {polyline} at (90,0) size 60x0 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="90 0 150 0"]
+    RenderSVGTransformableContainer {g} at (0,37.50) size 340x40
+      RenderSVGEllipse {circle} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-150.00] [cy=0.00] [r=20.00]
+      RenderSVGEllipse {circle} at (60,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-90.00] [cy=0.00] [r=20.00]
+      RenderSVGEllipse {circle} at (240,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=90.00] [cy=0.00] [r=20.00]
+      RenderSVGEllipse {circle} at (300,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
+    RenderSVGEllipse {circle} at (150,37.50) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
 layer at (-125,-87.50) size 250x116 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (-125,-87.50) size 250x115
-layer at (40,-7.50) size 38x35 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGText {text} at (165,80) size 38x35 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 38x35
-      chunk 1 text run 1 at (40.00,20.00) startOffset 0 endOffset 3 width 37.50: "1.4"
-layer at (-105,-60) size 210x61 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (20,27.50) size 210x60
-layer at (-105,-60) size 210x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGPath {polyline} at (0,0) size 210x60 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-105 0 -25 -60 25 -60 105 0"]
-layer at (-125,-50) size 250x71 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,37.50) size 250x70
-layer at (85,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (210,30) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=105.00] [cy=0.00] [r=20.00]
-layer at (-20,-20) size 40x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (105,67.50) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+    RenderSVGText {text} at (10,30) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (-115.00,-30.00) startOffset 0 endOffset 1 width 15.00: "3"
+    RenderSVGText {text} at (40,0) size 38x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 38x35
+        chunk 1 text run 1 at (-85.00,-60.00) startOffset 0 endOffset 3 width 37.50: "2.6"
+    RenderSVGText {text} at (185,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (60.00,-60.00) startOffset 0 endOffset 1 width 15.00: "0"
+    RenderSVGText {text} at (220,30) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (95.00,-30.00) startOffset 0 endOffset 1 width 15.00: "1"
+    RenderSVGText {text} at (50,80) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (-75.00,20.00) startOffset 0 endOffset 1 width 15.00: "4"
+    RenderSVGText {text} at (165,80) size 38x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 38x35
+        chunk 1 text run 1 at (40.00,20.00) startOffset 0 endOffset 3 width 37.50: "1.4"
+    RenderSVGTransformableContainer {g} at (20,27.50) size 210x60
+      RenderSVGPath {polyline} at (0,0) size 210x60 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-105 0 -25 -60 25 -60 105 0"]
+    RenderSVGTransformableContainer {g} at (0,37.50) size 250x70
+      RenderSVGEllipse {circle} at (0,30) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-105.00] [cy=0.00] [r=20.00]
+      RenderSVGEllipse {circle} at (40,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-65.00] [cy=-30.00] [r=20.00]
+      RenderSVGEllipse {circle} at (170,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=65.00] [cy=-30.00] [r=20.00]
+      RenderSVGEllipse {circle} at (210,30) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=105.00] [cy=0.00] [r=20.00]
+    RenderSVGEllipse {circle} at (105,67.50) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
 layer at (-145,-57.50) size 290x116 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (-145,-57.50) size 290x115
-layer at (50,22.50) size 38x35
-  RenderSVGText {text} at (195,80) size 38x35 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 38x35
-      chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 3 width 37.50: "1.4"
-layer at (0,0) size 0x0
-  RenderSVGTransformableContainer {g} at (145,57.50) size 0x0
-layer at (-125,0) size 250x0
-  RenderSVGPath {polyline} at (-125,0) size 250x0 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-125 0 125 0"]
-layer at (-145,-20) size 290x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,37.50) size 290x40
-layer at (55,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (200,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=75.00] [cy=0.00] [r=20.00]
-layer at (105,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (250,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=125.00] [cy=0.00] [r=20.00]
-layer at (-20,-20) size 40x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (125,37.50) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
-layer at (5,210) size 368x32
-  RenderSVGText {text} at (5,210) size 368x32 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 368x32
-      chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 367.83: "Test of keyPoints and keyTimes."
-layer at (5,248.50) size 388x21
-  RenderSVGText {text} at (5,248) size 389x22 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 389x21
-      chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 54 width 388.14: "Number indicates the circle's passing time in seconds."
-layer at (10,304) size 263x46
-  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 264x46
-      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
-layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGText {text} at (10,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (-135.00,-30.00) startOffset 0 endOffset 1 width 15.00: "3"
+    RenderSVGText {text} at (50,0) size 38x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 38x35
+        chunk 1 text run 1 at (-95.00,-30.00) startOffset 0 endOffset 3 width 37.50: "2.6"
+    RenderSVGText {text} at (210,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (65.00,-30.00) startOffset 0 endOffset 1 width 15.00: "0"
+    RenderSVGText {text} at (260,0) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (115.00,-30.00) startOffset 0 endOffset 1 width 15.00: "1"
+    RenderSVGText {text} at (60,80) size 15x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 15x35
+        chunk 1 text run 1 at (-85.00,50.00) startOffset 0 endOffset 1 width 15.00: "4"
+    RenderSVGText {text} at (195,80) size 38x35 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 38x35
+        chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 3 width 37.50: "1.4"
+    RenderSVGTransformableContainer {g} at (145,57.50) size 0x0
+      RenderSVGPath {polyline} at (-125,0) size 250x0 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-125 0 125 0"]
+    RenderSVGTransformableContainer {g} at (0,37.50) size 290x40
+      RenderSVGEllipse {circle} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-125.00] [cy=0.00] [r=20.00]
+      RenderSVGEllipse {circle} at (50,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-75.00] [cy=0.00] [r=20.00]
+      RenderSVGEllipse {circle} at (200,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=75.00] [cy=0.00] [r=20.00]
+      RenderSVGEllipse {circle} at (250,0) size 40x40 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=125.00] [cy=0.00] [r=20.00]
+    RenderSVGEllipse {circle} at (125,37.50) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]

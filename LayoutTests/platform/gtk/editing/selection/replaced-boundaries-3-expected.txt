@@ -19,8 +19,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 22: "abc"
         RenderBR {BR} at (22,0) size 0x18
         RenderMenuList {SELECT} at (0,18) size 283x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 281x28
-            RenderText at (5,5) size 255x18
+          RenderBlock {DIV} at (1,1) size 281x28
+            RenderText {#text} at (5,5) size 255x18
               text run at (5,5) width 255: "this select box shouldn't be selected"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 1 of child 0 {#text} of child 3 {DIV} of body

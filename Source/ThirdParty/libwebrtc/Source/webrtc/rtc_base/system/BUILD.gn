@@ -27,7 +27,6 @@ rtc_library("file_wrapper") {
   ]
   deps = [
     "..:checks",
-    "..:criticalsection",
     "..:safe_conversions",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
@@ -100,6 +99,24 @@ if (is_mac || is_ios) {
     ]
     include_dirs = [ "../.." ]
   }
+}
+
+# Function to query uninjectable system time.
+# Visibility is limited to webrtc low level system utilities that can't use
+# injectable clock.
+rtc_library("system_time") {
+  visibility = [
+    "..:rtc_task_queue_stdlib",
+    "..:threading",
+  ]
+  sources = [
+    "system_time.cc",
+    "system_time.h",
+  ]
+  deps = [
+    "..:timeutils",
+    "../../api/units:timestamp",
+  ]
 }
 
 rtc_library("warn_current_thread_is_deadlocked") {

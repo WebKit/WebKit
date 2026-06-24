@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 #include <wtf/Hasher.h>
 
 namespace WebCore {
@@ -33,7 +33,7 @@ namespace Style {
 // <'line-height'> = normal | <number [0,∞]> | <length-percentage [0,∞]>
 // NOTE: <number [0,∞]> gets converted to <length-percentage [0,∞]>.
 // https://drafts.csswg.org/css-inline/#propdef-line-height
-struct LineHeight : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::Normal> {
+struct LineHeight : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::Normal> {
     using Base::Base;
 
     bool isNormal() const { return holdsAlternative<CSS::Keyword::Normal>(); }

@@ -66,6 +66,19 @@ private:
     Vector<uint8_t>& m_vector;
 };
 
+static SkWebpEncoder::Options webpEncoderOptions(std::optional<double> quality)
+{
+    SkWebpEncoder::Options options;
+    if (quality && *quality == 1.0) {
+        // A quality of 1.0 selects lossless compression. For lossless encoding
+        // fQuality is the compression effort rather than the visual quality.
+        options.fCompression = SkWebpEncoder::Compression::kLossless;
+        options.fQuality = 75;
+    } else if (quality && *quality >= 0.0 && *quality < 1.0)
+        options.fQuality = static_cast<int>(*quality * 100.0 + 0.5);
+    return options;
+}
+
 static sk_sp<SkData> encodeAcceleratedImage(const NativeImage& nativeImage, const String& mimeType, std::optional<double> quality)
 {
     if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
@@ -81,12 +94,8 @@ static sk_sp<SkData> encodeAcceleratedImage(const NativeImage& nativeImage, cons
         return SkJpegEncoder::Encode(grContext, image, options);
     }
 
-    if (equalLettersIgnoringASCIICase(mimeType, "image/webp"_s)) {
-        SkWebpEncoder::Options options;
-        if (quality && *quality >= 0.0 && *quality <= 1.0)
-            options.fQuality = static_cast<int>(*quality * 100.0 + 0.5);
-        return SkWebpEncoder::Encode(grContext, image, options);
-    }
+    if (equalLettersIgnoringASCIICase(mimeType, "image/webp"_s))
+        return SkWebpEncoder::Encode(grContext, image, webpEncoderOptions(quality));
 
     if (equalLettersIgnoringASCIICase(mimeType, "image/png"_s))
         return SkPngEncoder::Encode(grContext, image, { });
@@ -106,10 +115,7 @@ static Vector<uint8_t> encodeUnacceleratedImage(const SkPixmap& pixmap, const St
         if (!SkJpegEncoder::Encode(&stream, pixmap, options))
             return { };
     } else if (equalLettersIgnoringASCIICase(mimeType, "image/webp"_s)) {
-        SkWebpEncoder::Options options;
-        if (quality && *quality >= 0.0 && *quality <= 1.0)
-            options.fQuality = static_cast<int>(*quality * 100.0 + 0.5);
-        if (!SkWebpEncoder::Encode(&stream, pixmap, options))
+        if (!SkWebpEncoder::Encode(&stream, pixmap, webpEncoderOptions(quality)))
             return { };
     } else if (equalLettersIgnoringASCIICase(mimeType, "image/png"_s)) {
         if (!SkPngEncoder::Encode(&stream, pixmap, { }))

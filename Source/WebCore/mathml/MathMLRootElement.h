@@ -42,7 +42,7 @@ public:
 
 private:
     MathMLRootElement(const QualifiedName& tagName, Document&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     void childrenChanged(const ChildChange&) override;
 

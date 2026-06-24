@@ -21,10 +21,10 @@ BSSL_NAMESPACE_BEGIN
 
 namespace {
 // Loads test data from file. The filename is constructed from the parameters:
-// |prefix| describes the type of data being tested, e.g. "ascii",
+// `prefix` describes the type of data being tested, e.g. "ascii",
 // "unicode_bmp", "unicode_supplementary", and "invalid".
-// |value_type| indicates what ASN.1 type is used to encode the data.
-// |suffix| indicates any additional modifications, such as caseswapping,
+// `value_type` indicates what ASN.1 type is used to encode the data.
+// `suffix` indicates any additional modifications, such as caseswapping,
 // whitespace adding, etc.
 ::testing::AssertionResult LoadTestData(const std::string &prefix,
                                         const std::string &value_type,

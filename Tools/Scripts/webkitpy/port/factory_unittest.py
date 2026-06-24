@@ -74,3 +74,15 @@ class FactoryTest(unittest.TestCase):
 
     def test_unknown_default(self):
         self.assertRaises(NotImplementedError, factory.PortFactory(MockSystemHost(os_name='vms')).get)
+
+    def test_port_classes_table_consistency(self):
+        # The PORT_CLASSES table duplicates each class's port_name so we can
+        # match port names without importing the (often heavy) port module.
+        # If the two ever diverge, prefix matching here would silently behave
+        # differently from the rest of the codebase.
+        for prefix, port_class_path in factory.PortFactory.PORT_CLASSES:
+            cls = factory._load_port_class(port_class_path)
+            self.assertEqual(
+                cls.port_name, prefix,
+                "PORT_CLASSES prefix {!r} doesn't match {}.port_name = {!r}".format(prefix, cls.__name__, cls.port_name),
+            )

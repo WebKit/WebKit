@@ -237,13 +237,13 @@ bool SourceBufferPrivateAVFObjC::precheckInitializationSegment(const Initializat
     }
 
     for (auto& videoTrackInfo : segment.videoTracks)
-        m_videoTracks.try_emplace(videoTrackInfo.track->id(), videoTrackInfo.track);
+        m_videoTracks.try_emplace(protect(videoTrackInfo.track)->id(), videoTrackInfo.track);
 
     for (auto& audioTrackInfo : segment.audioTracks)
-        m_audioTracks.try_emplace(audioTrackInfo.track->id(), audioTrackInfo.track);
+        m_audioTracks.try_emplace(protect(audioTrackInfo.track)->id(), audioTrackInfo.track);
 
     for (auto& textTrackInfo : segment.textTracks)
-        m_textTracks.try_emplace(textTrackInfo.track->id(), textTrackInfo.track);
+        m_textTracks.try_emplace(protect(textTrackInfo.track)->id(), textTrackInfo.track);
 
     setTrackChangeCallbacks(segment, false);
 
@@ -264,7 +264,7 @@ void SourceBufferPrivateAVFObjC::processInitializationSegment(std::optional<Init
     if (m_isDetached) {
         ASSERT(m_pendingTrackChangeTasks.isEmpty());
         for (auto& videoTrackInfo : segment->videoTracks) {
-            auto trackId = videoTrackInfo.track->id();
+            auto trackId = protect(videoTrackInfo.track)->id();
             if (m_enabledVideoTrackID == trackId) {
                 m_enabledVideoTrackID.reset();
                 videoTrackDidChangeSelected(trackId, true);
@@ -272,8 +272,8 @@ void SourceBufferPrivateAVFObjC::processInitializationSegment(std::optional<Init
         }
 
         for (auto& audioTrackInfo : segment->audioTracks) {
-            if (auto it = m_trackSelectedValues.find(audioTrackInfo.track->id()); it != m_trackSelectedValues.end() && it->second)
-                audioTrackDidChangeEnabled(audioTrackInfo.track->id(), it->second);
+            if (auto it = m_trackSelectedValues.find(protect(audioTrackInfo.track)->id()); it != m_trackSelectedValues.end() && it->second)
+                audioTrackDidChangeEnabled(protect(audioTrackInfo.track)->id(), it->second);
         }
 
         m_isDetached = false;
@@ -344,14 +344,14 @@ void SourceBufferPrivateAVFObjC::processFormatDescriptionForTrackId(Ref<TrackInf
     if (auto videoDescription = dynamicDowncast<VideoInfo>(formatDescription)) {
         auto result = m_videoTracks.find(trackId);
         if (result != m_videoTracks.end())
-            result->second->setFormatDescription(videoDescription.releaseNonNull());
+            protect(result->second)->setFormatDescription(videoDescription.releaseNonNull());
         return;
     }
 
     if (auto audioDescription = dynamicDowncast<AudioInfo>(formatDescription)) {
         auto result = m_audioTracks.find(trackId);
         if (result != m_audioTracks.end())
-            result->second->setFormatDescription(audioDescription.releaseNonNull());
+            protect(result->second)->setFormatDescription(audioDescription.releaseNonNull());
     }
 }
 

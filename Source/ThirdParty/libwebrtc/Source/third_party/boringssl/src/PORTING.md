@@ -293,7 +293,7 @@ With the standard OpenSSL APIs, when making many TLS connections, the certificat
 
 A [`CRYPTO_BUFFER`](https://commondatastorage.googleapis.com/chromium-boringssl-docs/pool.h.html) is just an opaque byte string. A `CRYPTO_BUFFER_POOL` is an intern table for these buffers, i.e. it ensures that only a single copy of any given byte string is kept for each pool.
 
-The function `TLS_with_buffers_method` returns an `SSL_METHOD` that avoids creating `X509` objects for certificates. Additionally, `SSL_CTX_set0_buffer_pool` can be used to install a pool on an `SSL_CTX` so that certificates can be deduplicated across connections and across `SSL_CTX`s.
+The function `TLS_with_buffers_method` returns an `SSL_METHOD` that avoids creating `X509` objects for certificates. Additionally, `SSL_CTX_set1_buffer_pool` can be used to install a pool on an `SSL_CTX` so that certificates can be deduplicated across connections and across `SSL_CTX`s.
 
 When using these functions, the application also needs to ensure that it doesn't call other functions that deal with `X509` or `X509_NAME` objects. For example, `SSL_get_peer_certificate` or `SSL_get_peer_cert_chain`. Doing so will trigger an assert in debug mode and will result in NULLs in release mode. Instead, call the buffer-based alternatives such as `SSL_get0_peer_certificates`. (See [ssl.h](https://commondatastorage.googleapis.com/chromium-boringssl-docs/ssl.h.html) for functions taking or returning `CRYPTO_BUFFER`.) The buffer-based alternative functions will work even when not using `TLS_with_buffers_method`, thus application code can transition gradually.
 

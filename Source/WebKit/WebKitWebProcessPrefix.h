@@ -34,6 +34,7 @@
 
 #include "ArgumentCoders.h"
 #include "GeneratedSerializers.h"
+#include "NetworkConnectionToWebProcessMessages.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebPreferencesDefinitions.h"
@@ -42,11 +43,21 @@
 #include <JavaScriptCore/AssemblyHelpers.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 
 #include <WebCore/Document.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
+#include <WebCore/RenderLayer.h>
 #include <WebCore/Settings.h>
+
+#if PLATFORM(COCOA)
+#include <AudioToolbox/AudioToolbox.h>
+#include <CoreAudio/CoreAudio.h>
+#include <simd/simd.h>
+#endif
 
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())

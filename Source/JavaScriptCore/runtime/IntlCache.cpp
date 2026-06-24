@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "IntlCache.h"
+#include "IntlObject.h"
 
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
@@ -66,6 +67,28 @@ Vector<char16_t, 32> IntlCache::getFieldDisplayName(const CString& locale, UDate
     if (U_FAILURE(status))
         return { };
     return buffer;
+}
+
+String IntlCache::canonicalizeUnicodeLocaleID(const String& languageTag)
+{
+    constexpr unsigned maxCachedTagLength = 100;
+    constexpr unsigned maxCacheEntries = 64;
+
+    if (languageTag.isEmpty() || languageTag.length() > maxCachedTagLength || !languageTag.containsOnlyASCII())
+        return JSC::canonicalizeUnicodeLocaleID(languageTag.utf8());
+
+    auto cached = m_cachedCanonicalizedLocaleIDs.find(languageTag);
+    if (cached != m_cachedCanonicalizedLocaleIDs.end())
+        return cached->value;
+
+    String canonicalized = JSC::canonicalizeUnicodeLocaleID(languageTag.ascii());
+    if (canonicalized.isNull())
+        return canonicalized;
+
+    if (m_cachedCanonicalizedLocaleIDs.size() >= maxCacheEntries)
+        m_cachedCanonicalizedLocaleIDs.clear();
+    m_cachedCanonicalizedLocaleIDs.add(languageTag, canonicalized);
+    return canonicalized;
 }
 
 } // namespace JSC

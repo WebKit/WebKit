@@ -100,10 +100,10 @@ struct TestURLSchemeHandler: URLSchemeHandler, Sendable {
 
             case .async:
                 Task {
-                    try await Task.sleep(for: delays.beforeYield)
+                    try? await Task.sleep(for: delays.beforeYield)
                     yieldResponse()
 
-                    try await Task.sleep(for: delays.beforeFinish)
+                    try? await Task.sleep(for: delays.beforeFinish)
                     yieldDataAndFinish()
                 }
             }

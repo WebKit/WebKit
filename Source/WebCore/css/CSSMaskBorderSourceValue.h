@@ -43,7 +43,7 @@ public:
     bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
-    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
 private:
     CSSMaskBorderSourceValue(CSS::MaskBorderSource&&);

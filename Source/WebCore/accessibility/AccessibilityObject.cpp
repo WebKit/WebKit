@@ -198,7 +198,7 @@ void AccessibilityObject::postMenuClosedNotificationIfNecessary() const
     if (CheckedPtr cache = axObjectCache()) {
         // Assistive technologies need to be informed when menus close.
         // No element is passed in the notification because it's a destruction event.
-        cache->postNotification(nullptr, cache->document(), AXNotification::MenuClosed);
+        cache->postNotification(nullptr, protect(cache->document()), AXNotification::MenuClosed);
     }
 }
 
@@ -437,7 +437,7 @@ Vector<AXTextMarkerRange> AccessibilityObject::misspellingRanges() const
     if (!frame)
         return { };
 
-    auto* textChecker = frame->editor().textChecker();
+    auto* textChecker = protect(frame->editor())->textChecker();
     if (!textChecker)
         return { };
 
@@ -455,7 +455,7 @@ Vector<AXTextMarkerRange> AccessibilityObject::misspellingRanges() const
         Vector<TextCheckingResult> misspellings;
         checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, misspellings, frame->selection().selection());
         for (auto& misspelling : misspellings) {
-            if (auto range = frame->editor().rangeForTextCheckingResult(misspelling))
+            if (auto range = protect(frame->editor())->rangeForTextCheckingResult(misspelling))
                 ranges.append(range);
         }
     } else {
@@ -525,7 +525,7 @@ AXTextMarkerRange AccessibilityObject::textInputMarkedTextMarkerRange() const
         return { };
 
     Ref editor = frame->editor();
-    RefPtr object = cache->getOrCreate(editor->compositionNode());
+    RefPtr object = cache->getOrCreate(protect(editor->compositionNode()));
     if (!object)
         return { };
 
@@ -553,7 +553,7 @@ AccessibilityObject* AccessibilityObject::nextSiblingUnignored(unsigned limit) c
     AX_ASSERT(limit);
 
     for (auto sibling = iterator(nextSibling()); limit && sibling; --limit, ++sibling) {
-        if (!sibling->isIgnored())
+        if (!protect(*sibling)->isIgnored())
             return sibling.ptr();
     }
     return nullptr;
@@ -564,7 +564,7 @@ AccessibilityObject* AccessibilityObject::previousSiblingUnignored(unsigned limi
     AX_ASSERT(limit);
 
     for (auto sibling = iterator(previousSibling()); limit && sibling; --limit, --sibling) {
-        if (!sibling->isIgnored())
+        if (!protect(*sibling)->isIgnored())
             return sibling.ptr();
     }
     return nullptr;
@@ -663,7 +663,7 @@ AccessibilityObject* firstAccessibleObjectFromNode(const Node* node, NOESCAPE co
     if (!axNode)
         return nullptr;
 
-    CheckedPtr cache = axNode->document().axObjectCache();
+    CheckedPtr cache = protect(axNode->document())->axObjectCache();
     if (!cache)
         return nullptr;
 
@@ -844,7 +844,7 @@ std::optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDir
 
     std::optional<SimpleRange> closestStringRange;
     for (auto& searchString : searchStrings) {
-        if (std::optional foundStringRange = frame->editor().rangeOfString(searchString, referenceRange, findOptions)) {
+        if (std::optional foundStringRange = protect(frame->editor())->rangeOfString(searchString, referenceRange, findOptions)) {
             bool foundStringIsCloser;
             if (!closestStringRange)
                 foundStringIsCloser = true;
@@ -1202,7 +1202,7 @@ struct TextOperationRange {
 
 static std::optional<TextOperationRange> textOperationRangeFromRange(const SimpleRange& range)
 {
-    RefPtr<Element> rootEditableElement = range.startContainer().rootEditableElement();
+    RefPtr<Element> rootEditableElement = protect(range.startContainer())->rootEditableElement();
     if (!rootEditableElement)
         return std::nullopt;
 
@@ -1308,9 +1308,9 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
             // aren't performed correctly in certain edge cases like at the the boundary between nodes
             // separated by spaces <p> foo <i>bar</i>[insert here] baz </p>.
             if (textOperationRange.characterRange.length)
-                frame->editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::Yes, operation.smartReplace == AccessibilityTextOperationSmartReplace::No ? Editor::SmartReplace::No : Editor::SmartReplace::Yes);
+                protect(frame->editor())->replaceSelectionWithText(replacementString, Editor::SelectReplacement::Yes, operation.smartReplace == AccessibilityTextOperationSmartReplace::No ? Editor::SmartReplace::No : Editor::SmartReplace::Yes);
             else
-                frame->editor().insertText(replacementString, /* triggeringEvent */ nullptr);
+                protect(frame->editor())->insertText(replacementString, /* triggeringEvent */ nullptr);
 
             result.append(replacementString);
         } else
@@ -1488,7 +1488,7 @@ IntPoint AccessibilityObject::clickPoint()
     if (isHeading()) {
         const auto& children = unignoredChildren();
         if (children.size() == 1)
-            return children.first()->clickPoint();
+            return protect(children.first())->clickPoint();
     }
 
     if (isLink())
@@ -1630,7 +1630,7 @@ Document* AccessibilityObject::topDocument() const
 {
     if (!document())
         return nullptr;
-    return document()->mainFrameDocument();
+    return protect(document())->mainFrameDocument();
 }
 
 RenderView* AccessibilityObject::topRenderer() const
@@ -1686,7 +1686,7 @@ VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint& poi
 #endif
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active };
         HitTestResult result { pointToUse };
-        renderView->document().hitTest(hitType, result);
+        protect(renderView->document())->hitTest(hitType, result);
         innerNode = result.innerNode();
         if (!innerNode)
             return VisiblePosition();
@@ -1868,7 +1868,7 @@ static VisiblePosition startOfStyleRange(const VisiblePosition& visiblePos)
         startRenderer = r;
     }
 
-    return firstPositionInOrBeforeNode(startRenderer->node());
+    return firstPositionInOrBeforeNode(protect(startRenderer->node()));
 }
 
 static VisiblePosition endOfStyleRange(const VisiblePosition& visiblePos)
@@ -1891,7 +1891,7 @@ static VisiblePosition endOfStyleRange(const VisiblePosition& visiblePos)
         endRenderer = r;
     }
 
-    return lastPositionInOrAfterNode(endRenderer->node());
+    return lastPositionInOrAfterNode(protect(endRenderer->node()));
 }
 
 VisiblePositionRange AccessibilityObject::styleRangeForPosition(const VisiblePosition& visiblePos) const
@@ -1978,7 +1978,7 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node& replacedNode)
         return false;
 
     // create an AX object, but skip it if it is not supposed to be seen
-    if (CheckedPtr cache = replacedNode.renderer()->document().axObjectCache()) {
+    if (CheckedPtr cache = protect(replacedNode.renderer()->document())->axObjectCache()) {
         if (RefPtr axObject = cache->getOrCreate(replacedNode))
             return !axObject->isIgnored();
     }
@@ -2021,7 +2021,7 @@ static StringView lineStartListMarkerText(const RenderListItem* listItem, const 
         return { };
 
     // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
-    if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(*listItem->element())))
+    if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(protect(*listItem->element()))))
         return { };
     return *markerText;
 }
@@ -2108,7 +2108,7 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
             it.appendTextToStringBuilder(builder);
         } else {
             // locate the node and starting offset for this replaced range
-            if (replacedNodeNeedsCharacter(*it.node()))
+            if (replacedNodeNeedsCharacter(protect(*it.node())))
                 builder.append(objectReplacementCharacter);
         }
     }
@@ -2176,7 +2176,7 @@ std::optional<VisiblePosition> AccessibilityObject::previousLineStartPositionInt
 bool AccessibilityObject::isVisited() const
 {
     if (!isLink()) {
-        // Note that this isLink() check is necessary in addition to the RenderStyle::isLink() check below, as multiple
+        // Note that this isLink() check is necessary in addition to the Style::ComputedStyle::isLink() check below, as multiple
         // renderers can share the same style, e.g. RenderTexts within a link take their parent's (the link) style.
         return false;
     }
@@ -2430,12 +2430,12 @@ LocalFrameView* AccessibilityObject::documentFrameView() const
     while (object) {
         // Ascend until we find an ancestor with a valid renderer or node, from which we can
         // actually get a frameview.
-        if (auto* axRenderObject = dynamicDowncast<AccessibilityRenderObject>(*object)) {
+        if (RefPtr axRenderObject = dynamicDowncast<AccessibilityRenderObject>(*object)) {
             if (axRenderObject->renderer() || axRenderObject->node()) {
                 object = axRenderObject;
                 break;
             }
-        } else if (auto* axNodeObject = dynamicDowncast<AccessibilityNodeObject>(*object); axNodeObject && axNodeObject->node()) {
+        } else if (RefPtr axNodeObject = dynamicDowncast<AccessibilityNodeObject>(*object); axNodeObject && axNodeObject->node()) {
             object = axNodeObject;
             break;
         }
@@ -2469,7 +2469,7 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node& node)
     if (!renderer)
         return nullptr;
 
-    WeakPtr cache = renderer->document().axObjectCache();
+    WeakPtr cache = protect(renderer->document())->axObjectCache();
     RefPtr axObject = cache ? cache->getOrCreate(node) : nullptr;
     RefPtr anchor = axObject ? axObject->anchorElement() : nullptr;
     return anchor ? cache->getOrCreate(*anchor) : nullptr;
@@ -2484,7 +2484,7 @@ AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
     if (!renderObject)
         return nullptr;
 
-    RefPtr axObject = renderObject->document().axObjectCache()->getOrCreate(*node);
+    RefPtr axObject = protect(renderObject->document())->axObjectCache()->getOrCreate(*node);
 
     return Accessibility::findAncestor<AccessibilityObject>(*axObject, true, [] (const AccessibilityObject& object) {
         return object.role() == AccessibilityRole::Heading;
@@ -2760,7 +2760,7 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
 {
     // If this is being called on the web area, redirect it to be on the body, which will have a renderer associated with it.
     if (RefPtr document = dynamicDowncast<Document>(node())) {
-        if (RefPtr bodyObject = axObjectCache()->getOrCreate(document->body()))
+        if (RefPtr bodyObject = axObjectCache()->getOrCreate(protect(document->body())))
             return bodyObject->replaceTextInRange(replacementString, range);
         return false;
     }
@@ -2776,7 +2776,7 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
     Ref frame = renderer()->frame();
     if (element->shouldUseInputMethod()) {
         frame->selection().setSelectedRange(rangeForCharacterRange(range), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes);
-        frame->editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::No, Editor::SmartReplace::No);
+        protect(frame->editor())->replaceSelectionWithText(replacementString, Editor::SelectReplacement::No, Editor::SmartReplace::No);
         return true;
     }
 
@@ -2808,7 +2808,7 @@ bool AccessibilityObject::insertText(const String& text)
         return false;
 
     // Use Editor::insertText to mimic typing into the field.
-    Ref editor = renderer()->frame().editor();
+    Ref editor = protect(renderer())->frame().editor();
     return editor->insertText(text, nullptr);
 }
 
@@ -2823,7 +2823,7 @@ struct RoleEntry {
     AccessibilityRole webcoreRole;
 };
 
-static void initializeRoleMap()
+static void initializeAriaRoleMap()
 {
     if (gAriaRoleMap)
         return;
@@ -2989,13 +2989,13 @@ static void initializeRoleMap()
 
 static ARIARoleMap& ariaRoleMap()
 {
-    initializeRoleMap();
+    initializeAriaRoleMap();
     return *gAriaRoleMap;
 }
 
 static ARIAReverseRoleMap& reverseAriaRoleMap()
 {
-    initializeRoleMap();
+    initializeAriaRoleMap();
     return *gAriaReverseRoleMap;
 }
 
@@ -3157,7 +3157,7 @@ CheckedPtr<RenderObject> AccessibilityObject::rendererOrNearestAncestor() const
     return node ? nearestRendererFromNode(*node) : nullptr;
 }
 
-const RenderStyle* AccessibilityObject::style() const
+const Style::ComputedStyle* AccessibilityObject::style() const
 {
     if (auto* renderer = this->renderer()) {
         if (auto* renderText = dynamicDowncast<RenderText>(*renderer)) {
@@ -3323,7 +3323,7 @@ RefPtr<AccessibilityObject> AccessibilityObject::elementAccessibilityHitTest(con
             RefPtr widgetScrollView = dynamicDowncast<ScrollView>(widget);
             if (CheckedPtr cache = widgetScrollView ? axObjectCache() : nullptr) {
                 IntPoint adjustedPoint = IntPoint(point - widget->frameRect().location()) + widgetScrollView->scrollPosition();
-                return downcast<AccessibilityObject>(cache->getOrCreate(*widget)->accessibilityHitTest(adjustedPoint).get());
+                return downcast<AccessibilityObject>(protect(cache->getOrCreate(*widget))->accessibilityHitTest(adjustedPoint).get());
             }
         }
 
@@ -3886,7 +3886,7 @@ FloatRect AccessibilityObject::unobscuredContentRect() const
     RefPtr document = this->document();
     if (!document || !document->view())
         return { };
-    return FloatRect(snappedIntRect(document->view()->unobscuredContentRect()));
+    return FloatRect(snappedIntRect(protect(document->view())->unobscuredContentRect()));
 }
 
 void AccessibilityObject::scrollToGlobalPoint(IntPoint&& point) const
@@ -3956,8 +3956,8 @@ void AccessibilityObject::scrollAreaAndAncestor(std::pair<ScrollableArea*, Acces
 {
     // Search up the parent chain until we find the first one that's scrollable.
     scrollers.first = nullptr;
-    for (scrollers.second = parentObject(); scrollers.second; scrollers.second = scrollers.second->parentObject()) {
-        if ((scrollers.first = scrollers.second->getScrollableAreaIfScrollable()))
+    for (scrollers.second = parentObject(); scrollers.second; scrollers.second = protect(scrollers.second)->parentObject()) {
+        if ((scrollers.first = protect(scrollers.second)->getScrollableAreaIfScrollable()))
             break;
     }
 }
@@ -4107,7 +4107,8 @@ bool AccessibilityObject::isARIAHidden() const
     // https://github.com/w3c/aria/pull/1880
     // To prevent authors from hiding all content from assistive technology users, do not respect
     // aria-hidden on html, body, or document-root svg elements.
-    if (tag == bodyTag || tag == htmlTag || (tag == SVGNames::svgTag && !element->parentNode()))
+    // FIXME: Should these be hasTagName() checks to also enforce the namespace?
+    if (bodyTag->hasLocalName(tag) || htmlTag->hasLocalName(tag) || (SVGNames::svgTag->hasLocalName(tag) && !element->parentNode()))
         return false;
 
     if (RefPtr assignedSlot = node ? node->assignedSlot() : nullptr) {

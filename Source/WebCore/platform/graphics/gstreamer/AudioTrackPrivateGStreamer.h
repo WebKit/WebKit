@@ -48,9 +48,9 @@ public:
         return adoptRef(*new AudioTrackPrivateGStreamer(WTF::move(player), index, WTF::move(pad), trackId));
     }
 
-    static Ref<AudioTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
+    static Ref<AudioTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstStream>&& stream)
     {
-        return adoptRef(*new AudioTrackPrivateGStreamer(WTF::move(player), index, stream));
+        return adoptRef(*new AudioTrackPrivateGStreamer(WTF::move(player), index, WTF::move(stream)));
     }
 
     Kind kind() const final;
@@ -75,7 +75,7 @@ public:
 private:
     AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
     AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstPad>&&, TrackID);
-    AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GstStream*);
+    AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstStream>&&);
 };
 
 } // namespace WebCore

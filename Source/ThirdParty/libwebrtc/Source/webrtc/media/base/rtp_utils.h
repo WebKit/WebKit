@@ -13,10 +13,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
-#include "rtc_base/async_packet_socket.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -45,7 +44,7 @@ bool GetRtcpType(const void* data, size_t len, int* value);
 bool GetRtcpSsrc(const void* data, size_t len, uint32_t* value);
 
 // Checks the packet header to determine if it can be an RTP or RTCP packet.
-RtpPacketType InferRtpPacketType(ArrayView<const uint8_t> packet);
+RtpPacketType InferRtpPacketType(std::span<const uint8_t> packet);
 // True if |payload type| is 0-127.
 bool IsValidRtpPayloadType(int payload_type);
 
@@ -56,21 +55,8 @@ bool IsValidRtpPacketSize(RtpPacketType packet_type, size_t size);
 absl::string_view RtpPacketTypeToString(RtpPacketType packet_type);
 
 // Verifies that a packet has a valid RTP header.
-bool RTC_EXPORT ValidateRtpHeader(ArrayView<const uint8_t> rtp,
+bool RTC_EXPORT ValidateRtpHeader(std::span<const uint8_t> rtp,
                                   size_t* header_length);
-
-// Helper method which updates the absolute send time extension if present.
-bool UpdateRtpAbsSendTimeExtension(ArrayView<uint8_t> rtp,
-                                   int extension_id,
-                                   uint64_t time_us);
-
-// Applies specified `options` to the packet. It updates the absolute send time
-// extension header if it is present present then updates HMAC.
-bool RTC_EXPORT
-ApplyPacketOptions(ArrayView<uint8_t> data,
-                   const PacketTimeUpdateParams& packet_time_params,
-                   uint64_t time_us);
-
 }  //  namespace webrtc
 
 

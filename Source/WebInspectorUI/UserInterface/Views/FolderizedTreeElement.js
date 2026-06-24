@@ -287,7 +287,7 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
             return folder;
 
         folder = new WI.FolderTreeElement(settings.displayName, settings.representedObject, {
-            id: `${settings.type}-${settings._folderSettingsKey}`,
+            id: `${settings.type}-${this._folderSettingsKey}`,
         });
         this._folderTypeMap.set(settings.type, folder);
         return folder;

@@ -30,7 +30,9 @@
 
 namespace WebCore {
 
-class RenderStyle;
+namespace Style {
+class ComputedStyle;
+}
 
 namespace Layout {
 
@@ -94,8 +96,8 @@ public:
         bool isFullyTrimmable() const { return m_isFullyTrimmable; }
         bool isHangingContent() const { return m_hangingContentWidth && *m_hangingContentWidth == logicalWidth(); }
 
-        void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
-        void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+        void append(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
+        void appendTextContent(const InlineTextItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth);
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_hangingContentWidth = logicalWidth; }
         void NODELETE setTrailingSoftHyphenWidth(InlineLayoutUnit);
         void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_minimumRequiredWidth = minimumRequiredWidth; }
@@ -104,7 +106,7 @@ public:
         void reset();
 
         struct Run {
-            Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
+            Run(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
             Run(const Run&);
             Run& operator=(const Run&) = delete;
 
@@ -113,7 +115,7 @@ public:
             InlineLayoutUnit contentWidth() const { return m_contentWidth; }
 
             const InlineItem& inlineItem;
-            const RenderStyle& style;
+            const Style::ComputedStyle& style;
             InlineLayoutUnit offset { 0 };
             InlineLayoutUnit textSpacingAdjustment { 0 };
             enum class ShapingBoundary : bool { Start, End };
@@ -127,7 +129,7 @@ public:
         RunList& runs() LIFETIME_BOUND { return m_runs; }
 
     private:
-        void appendToRunList(const InlineItem&, const RenderStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
+        void appendToRunList(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
         void NODELETE resetTrailingTrimmableContent();
 
         RunList m_runs;
@@ -189,7 +191,7 @@ private:
         AtArbitraryPosition,
         AtHyphenationOpportunities
     };
-    EnumSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
+    EnumSet<WordBreakRule> wordBreakBehavior(const Style::ComputedStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
     bool isMinimumInIntrinsicWidthMode() const { return m_isMinimumInIntrinsicWidthMode; }
 
 private:
@@ -197,7 +199,7 @@ private:
     bool n_hyphenationIsDisabled { false };
 };
 
-inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment)
+inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, const Style::ComputedStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment)
     : inlineItem(inlineItem)
     , style(style)
     , offset(offset)

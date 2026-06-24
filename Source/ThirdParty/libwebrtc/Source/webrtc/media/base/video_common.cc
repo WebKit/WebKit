@@ -13,7 +13,6 @@
 #include <cstdint>
 #include <string>
 
-#include "api/array_view.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
@@ -71,11 +70,10 @@ std::string VideoFormat::ToString() const {
     }
   }
 
-  char buf[256];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << fourcc_name << width << "x" << height << "x"
      << IntervalToFpsFloat(interval);
-  return sb.str();
+  return sb.Release();
 }
 
 }  // namespace webrtc

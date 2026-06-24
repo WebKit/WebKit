@@ -30,6 +30,8 @@
 #endif
 
 
+BSSL_NAMESPACE_BEGIN
+
 ScopedFD OpenFD(const char *path, int flags) {
 #if defined(OPENSSL_WINDOWS)
   return ScopedFD(_open(path, flags));
@@ -103,3 +105,5 @@ ScopedFILE FDToFILE(ScopedFD fd, const char *mode) {
   }
   return ret;
 }
+
+BSSL_NAMESPACE_END

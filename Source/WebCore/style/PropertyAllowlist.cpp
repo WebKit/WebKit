@@ -126,6 +126,7 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyTextWrapMode:
     case CSSPropertyTextWrapStyle:
     case CSSPropertyUnicodeBidi:
+    case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWordBreak:
     case CSSPropertyWordSpacing:

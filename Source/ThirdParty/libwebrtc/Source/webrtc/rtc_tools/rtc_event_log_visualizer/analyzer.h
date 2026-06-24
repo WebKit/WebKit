@@ -11,13 +11,13 @@
 #ifndef RTC_TOOLS_RTC_EVENT_LOG_VISUALIZER_ANALYZER_H_
 #define RTC_TOOLS_RTC_EVENT_LOG_VISUALIZER_ANALYZER_H_
 
-#include <cstdint>
 #include <cstdio>
 #include <functional>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "api/environment/environment.h"
+#include "absl/strings/string_view.h"
 #include "api/function_view.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
@@ -27,23 +27,33 @@
 
 namespace webrtc {
 
+class LazyNetEqSimulator;
+
 class EventLogAnalyzer {
   struct PlotDeclaration {
-    PlotDeclaration(const std::string& label, std::function<void(Plot*)> f)
+    PlotDeclaration(const std::string& label,
+                    std::function<void(PlotCollection*)> f)
         : label(label), plot_func(f) {}
     const std::string label;
     // TODO(terelius): Add a help text/explanation.
-    const std::function<void(Plot*)> plot_func;
+    const std::function<void(PlotCollection*)> plot_func;
   };
 
   class PlotMap {
    public:
-    void RegisterPlot(const std::string& label, std::function<void(Plot*)> f) {
+    void RegisterPlot(const std::string& label,
+                      std::function<void(PlotCollection*)> f) {
       for (const auto& plot : plots_) {
         RTC_DCHECK(plot.label != label)
             << "Can't use the same label for multiple plots";
       }
       plots_.push_back({label, f});
+    }
+
+    void RegisterPlot(const std::string& label, std::function<void(Plot*)> f) {
+      RegisterPlot(label, [f, label](PlotCollection* collection) {
+        f(collection->AppendNewPlot(label));
+      });
     }
 
     std::vector<PlotDeclaration>::const_iterator begin() const {
@@ -58,13 +68,12 @@ class EventLogAnalyzer {
   };
 
  public:
-  // The EventLogAnalyzer keeps a reference to the ParsedRtcEventLogNew for the
-  // duration of its lifetime. The ParsedRtcEventLogNew must not be destroyed or
+  // The EventLogAnalyzer keeps a reference to the ParsedRtcEventLog for the
+  // duration of its lifetime. The ParsedRtcEventLog must not be destroyed or
   // modified while the EventLogAnalyzer is being used.
   EventLogAnalyzer(const ParsedRtcEventLog& log, bool normalize_time);
-  EventLogAnalyzer(const Environment& env,
-                   const ParsedRtcEventLog& log,
-                   const AnalyzerConfig& config);
+  EventLogAnalyzer(const ParsedRtcEventLog& log, const AnalyzerConfig& config);
+  ~EventLogAnalyzer();
 
   void CreateGraphsByName(const std::vector<std::string>& names,
                           PlotCollection* collection) const;
@@ -122,9 +131,11 @@ class EventLogAnalyzer {
   void CreateScreamRefWindowGraph(Plot* plot) const;
   void CreateScreamDelayEstimateGraph(Plot* plot) const;
   void CreateGoogCcSimulationGraph(Plot* plot) const;
+  void CreateScreamSimulationDelayGraph(Plot* plot) const;
   void CreateScreamSimulationBitrateGraph(Plot* plot) const;
   void CreateScreamSimulationRefWindowGraph(Plot* plot) const;
   void CreateScreamSimulationRatiosGraph(Plot* plot) const;
+  void CreateScreamSimulationFeedbackEventsPerRttGraph(Plot* plot) const;
   void CreateSendSideBweSimulationGraph(Plot* plot) const;
   void CreateReceiveSideBweSimulationGraph(Plot* plot) const;
 
@@ -148,23 +159,17 @@ class EventLogAnalyzer {
   void CreateTriageNotifications() const;
   void PrintNotifications(FILE* file) const;
 
+  void SetNetEqReplacementFile(absl::string_view replacement_file_name,
+                               int file_sample_rate_hz);
+
  private:
-  template <typename IterableType>
-  void CreateAccumulatedPacketsTimeSeries(Plot* plot,
-                                          const IterableType& packets,
-                                          const std::string& label) const;
-  void CreateEcnFeedbackGraph(Plot* plot, PacketDirection direction) const;
-
-  const Environment env_;
   const ParsedRtcEventLog& parsed_log_;
-
-  // A list of SSRCs we are interested in analysing.
-  // If left empty, all SSRCs will be considered relevant.
-  std::vector<uint32_t> desired_ssrc_;
 
   AnalyzerConfig config_;
 
   PlotMap plots_;
+
+  std::unique_ptr<LazyNetEqSimulator> neteq_simulator_;
 };
 
 }  // namespace webrtc

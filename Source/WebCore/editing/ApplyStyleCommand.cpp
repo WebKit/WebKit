@@ -44,9 +44,9 @@
 #include "NodeTraversal.h"
 #include "RenderLineBreak.h"
 #include "RenderObject.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "ScriptDisallowedScope.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleExtractor.h"
 #include "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
 #include "StyleProperties.h"
@@ -198,19 +198,19 @@ void ApplyStyleCommand::doApply()
     switch (m_propertyLevel) {
     case ApplyStylePropertyLevel::Default: {
         // Apply the block-centric properties of the style.
-        auto blockStyle = m_style->extractAndRemoveBlockProperties();
+        auto blockStyle = protect(m_style)->extractAndRemoveBlockProperties();
         if (!blockStyle->isEmpty())
             applyBlockStyle(blockStyle);
         // Apply any remaining styles to the inline elements.
         if (!m_style->isEmpty() || m_styledInlineElement || m_isInlineElementToRemoveFunction) {
             applyRelativeFontStyleChange(m_style.get());
-            applyInlineStyle(*m_style);
+            applyInlineStyle(protect(*m_style));
         }
         break;
     }
     case ApplyStylePropertyLevel::ForceBlock:
         // Force all properties to be applied as block styles.
-        applyBlockStyle(*m_style);
+        applyBlockStyle(protect(*m_style));
         break;
     }
 }
@@ -302,7 +302,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
 
     // Join up any adjacent text nodes.
     if (is<Text>(start.deprecatedNode())) {
-        joinChildTextNodes(start.deprecatedNode()->parentNode(), start, end);
+        joinChildTextNodes(protect(start.deprecatedNode()->parentNode()), start, end);
         start = startPosition();
         end = endPosition();
     }
@@ -311,7 +311,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         return;
 
     if (is<Text>(*end.deprecatedNode()) && start.deprecatedNode()->parentNode() != end.deprecatedNode()->parentNode()) {
-        joinChildTextNodes(end.deprecatedNode()->parentNode(), start, end);
+        joinChildTextNodes(protect(end.deprecatedNode()->parentNode()), start, end);
         start = startPosition();
         end = endPosition();
     }
@@ -409,7 +409,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         }
         lastStyledNode = node;
 
-        RefPtr<MutableStyleProperties> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
+        RefPtr<MutableStyleProperties> inlineStyle = copyStyleOrCreateEmpty(protect(element->inlineStyle()));
         float currentFontSize = computedFontSize(node.get());
         float desiredFontSize = std::max(MinimumFontSize, startingFontSizes.get(node.get()) + style->fontSizeDelta());
         RefPtr<CSSValue> value = inlineStyle->getPropertyCSSValue(CSSPropertyFontSize);
@@ -541,7 +541,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
             // other attributes, like we (should) do with B and I elements.
             removeNodeAttribute(*element, dirAttr);
         } else {
-            auto inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
+            auto inlineStyle = copyStyleOrCreateEmpty(protect(element->inlineStyle()));
             inlineStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
             inlineStyle->removeProperty(CSSPropertyDirection);
             setNodeAttribute(*element, styleAttr, inlineStyle->asTextAtom(CSS::defaultSerializationContext()));
@@ -580,7 +580,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     // split the start node and containing element if the selection starts inside of it
     bool splitStart = isValidCaretPositionInTextNode(start);
     if (splitStart) {
-        if (shouldSplitTextElement(start.deprecatedNode()->parentElement(), style))
+        if (shouldSplitTextElement(protect(start.deprecatedNode()->parentElement()), style))
             splitTextElementAtStart(start, end);
         else
             splitTextAtStart(start, end);
@@ -588,13 +588,13 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
         end = endPosition();
         if (start.isNull() || end.isNull())
             return;
-        startDummySpanAncestor = dummySpanAncestorForNode(start.deprecatedNode());
+        startDummySpanAncestor = dummySpanAncestorForNode(protect(start.deprecatedNode()));
     }
 
     // split the end node and containing element if the selection ends inside of it
     bool splitEnd = isValidCaretPositionInTextNode(end);
     if (splitEnd) {
-        if (shouldSplitTextElement(end.deprecatedNode()->parentElement(), style))
+        if (shouldSplitTextElement(protect(end.deprecatedNode()->parentElement()), style))
             splitTextElementAtEnd(start, end);
         else
             splitTextAtEnd(start, end);
@@ -602,7 +602,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
         end = endPosition();
         if (start.isNull() || end.isNull())
             return;
-        endDummySpanAncestor = dummySpanAncestorForNode(end.deprecatedNode());
+        endDummySpanAncestor = dummySpanAncestorForNode(protect(end.deprecatedNode()));
     }
 
     if (start.isNull() || start.isOrphan() || end.isNull() || end.isOrphan())
@@ -619,10 +619,10 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     RefPtr<EditingStyle> embeddingStyle;
     if (textDirection) {
         // Leave alone an ancestor that provides the desired single level embedding, if there is one.
-        auto startUnsplitAncestor = splitAncestorsWithUnicodeBidi(start.deprecatedNode(), true, *textDirection);
-        auto endUnsplitAncestor = splitAncestorsWithUnicodeBidi(end.deprecatedNode(), false, *textDirection);
-        removeEmbeddingUpToEnclosingBlock(start.deprecatedNode(), startUnsplitAncestor.get());
-        removeEmbeddingUpToEnclosingBlock(end.deprecatedNode(), endUnsplitAncestor.get());
+        auto startUnsplitAncestor = splitAncestorsWithUnicodeBidi(protect(start.deprecatedNode()), true, *textDirection);
+        auto endUnsplitAncestor = splitAncestorsWithUnicodeBidi(protect(end.deprecatedNode()), false, *textDirection);
+        removeEmbeddingUpToEnclosingBlock(protect(start.deprecatedNode()), startUnsplitAncestor.get());
+        removeEmbeddingUpToEnclosingBlock(protect(end.deprecatedNode()), endUnsplitAncestor.get());
 
         // Avoid removing the dir attribute and the unicode-bidi and direction properties from the unsplit ancestors.
         Position embeddingRemoveStart = removeStart;
@@ -727,7 +727,7 @@ void ApplyStyleCommand::fixRangeAndApplyInlineStyle(EditingStyle& style, const P
     auto range = *makeSimpleRange(start, end);
     RefPtr editableRoot { startNode->rootEditableElement() };
     if (startNode != editableRoot) {
-        while (editableRoot && startNode->parentNode() != editableRoot && isNodeVisiblyContainedWithin(*startNode->parentNode(), range))
+        while (editableRoot && startNode->parentNode() != editableRoot && isNodeVisiblyContainedWithin(protect(*startNode->parentNode()), range))
             startNode = startNode->parentNode();
     }
 
@@ -793,7 +793,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
                 if (pastEndNode && pastEndNode->isDescendantOf(*node))
                     break;
                 // Add to this element's inline style and skip over its contents.
-                RefPtr inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
+                RefPtr inlineStyle = copyStyleOrCreateEmpty(protect(element->inlineStyle()));
                 if (RefPtr otherStyle = style.style())
                     inlineStyle->mergeAndOverrideOnConflict(*otherStyle);
                 setNodeAttribute(*element, styleAttr, inlineStyle->asTextAtom(CSS::defaultSerializationContext()));
@@ -806,7 +806,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
             continue;
         
         if (node->hasChildNodes()) {
-            if (node->contains(pastEndNode) || containsNonEditableRegion(*node) || !node->parentNode()->hasEditableStyle())
+            if (node->contains(pastEndNode) || containsNonEditableRegion(*node) || !protect(node->parentNode())->hasEditableStyle())
                 continue;
             if (editingIgnoresContent(*node)) {
                 next = NodeTraversal::nextSkippingChildren(*node);
@@ -843,7 +843,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
 
     for (auto& run : runs) {
         if (run.dummyElement)
-            removeNode(*run.dummyElement);
+            removeNode(protect(*run.dummyElement));
         if (run.startAndEndAreStillInDocument())
             applyInlineStyleChange(run.start.releaseNonNull(), run.end.releaseNonNull(), run.change, AddStyledElement::Yes);
     }
@@ -902,7 +902,7 @@ void ApplyStyleCommand::removeConflictingInlineStyleFromRun(EditingStyle& style,
 
 bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle& style, HTMLElement& element, InlineStyleRemovalMode mode, EditingStyle* extractedStyle)
 {
-    if (!element.parentNode() || !isEditableNode(*element.parentNode()))
+    if (!element.parentNode() || !isEditableNode(protect(*element.parentNode())))
         return false;
 
     if (isStyledInlineElementToRemove(&element)) {
@@ -1024,7 +1024,7 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node& node, EditingStyle* sty
     // FIXME: applyInlineStyleToRange should be used here instead.
     if (node.renderer()->isRenderBlockFlow() || node.hasChildNodes()) {
         if (auto* htmlElement = dynamicDowncast<HTMLElement>(node)) {
-            setNodeAttribute(*htmlElement, styleAttr, newInlineStyle->style()->asTextAtom(CSS::defaultSerializationContext()));
+            setNodeAttribute(*htmlElement, styleAttr, protect(newInlineStyle->style())->asTextAtom(CSS::defaultSerializationContext()));
             return;
         }
     }
@@ -1118,8 +1118,8 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
     if (is<Text>(pushDownEndContainer) && !pushDownEnd.computeOffsetInContainerNode())
         pushDownEnd = previousVisuallyDistinctCandidate(pushDownEnd);
 
-    pushDownInlineStyleAroundNode(style, pushDownStart.deprecatedNode());
-    pushDownInlineStyleAroundNode(style, pushDownEnd.deprecatedNode());
+    pushDownInlineStyleAroundNode(style, protect(pushDownStart.deprecatedNode()));
+    pushDownInlineStyleAroundNode(style, protect(pushDownEnd.deprecatedNode()));
 
     // The s and e variables store the positions used to set the ending selection after style removal
     // takes place. This will help callers to recognize when either the start node or the end node
@@ -1398,7 +1398,7 @@ void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElemen
 {
     // Do not check for legacy styles here. Those styles, like <B> and <I>, only apply for inline content.
     ASSERT(styleChange.cssStyle());
-    setNodeAttribute(block, styleAttr, joinWithSpace(styleChange.cssStyle()->asText(CSS::defaultSerializationContext()), block.getAttribute(styleAttr)));
+    setNodeAttribute(block, styleAttr, joinWithSpace(protect(styleChange.cssStyle())->asText(CSS::defaultSerializationContext()), block.getAttribute(styleAttr)));
 }
 
 void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, Node& start, Node& end, AddStyledElement addStyledElement)
@@ -1480,7 +1480,7 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
             if (RefPtr existingStyle = styleContainer->inlineStyle()) {
                 Ref inlineStyle = EditingStyle::create(existingStyle.get());
                 inlineStyle->overrideWithStyle(*styleToMerge);
-                setNodeAttribute(*styleContainer, styleAttr, inlineStyle->style()->asTextAtom(CSS::defaultSerializationContext()));
+                setNodeAttribute(*styleContainer, styleAttr, protect(inlineStyle->style())->asTextAtom(CSS::defaultSerializationContext()));
             } else
                 setNodeAttribute(*styleContainer, styleAttr, styleToMerge->asTextAtom(CSS::defaultSerializationContext()));
         } else {
@@ -1508,7 +1508,7 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
         surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document(), supTag));
 
     if (m_styledInlineElement && addStyledElement == AddStyledElement::Yes)
-        surroundNodeRangeWithElement(*startNode, *endNode, m_styledInlineElement->cloneElementWithoutChildren(document(), nullptr));
+        surroundNodeRangeWithElement(*startNode, *endNode, protect(m_styledInlineElement)->cloneElementWithoutChildren(document(), nullptr));
 }
 
 float ApplyStyleCommand::computedFontSize(Node* node)
@@ -1516,7 +1516,7 @@ float ApplyStyleCommand::computedFontSize(Node* node)
     if (!node)
         return 0;
 
-    // FIXME: This should not be using Style::Extractor to extract a CSSValue. Instead, we should make it possible to get at the computed style that exists on Style::ComputedStyle/RenderStyle directly, avoiding unnecessary and lossy conversion through CSSValue.
+    // FIXME: This should not be using Style::Extractor to extract a CSSValue. Instead, we should make it possible to get at the computed style that exists on Style::ComputedStyle directly, avoiding unnecessary and lossy conversion through CSSValue.
     RefPtr value = dynamicDowncast<CSSPrimitiveValue>(Style::Extractor(node).propertyValue(CSSPropertyFontSize));
     if (!value)
         return 0;

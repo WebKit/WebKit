@@ -49,7 +49,7 @@
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_aslresponse_free"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_aslresponse_next"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "asl_object_t"},
     {"access": "public", "name": "aslclient"},

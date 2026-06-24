@@ -125,10 +125,9 @@ bool SVGAnimateElementBase::setFromAndByValues(const String& fromString, const S
     if (animationMode() == AnimationMode::FromBy && isDiscreteAnimator())
         return false;
 
-    if (RefPtr animator = this->animator()) {
-        animator->setFromAndByValues(*target, animateRangeString(fromString), animateRangeString(byString));
-        return true;
-    }
+    if (RefPtr animator = this->animator())
+        return animator->setFromAndByValues(*target, animateRangeString(fromString), animateRangeString(byString));
+
     return false;
 }
 
@@ -141,10 +140,9 @@ bool SVGAnimateElementBase::setToAtEndOfDurationValue(const String& toAtEndOfDur
     if (isDiscreteAnimator())
         return true;
 
-    if (RefPtr animator = this->animator()) {
-        animator->setToAtEndOfDurationValue(*target, animateRangeString(toAtEndOfDurationString));
-        return true;
-    }
+    if (RefPtr animator = this->animator())
+        return animator->setToAtEndOfDurationValue(*target, animateRangeString(toAtEndOfDurationString));
+
     return false;
 }
 

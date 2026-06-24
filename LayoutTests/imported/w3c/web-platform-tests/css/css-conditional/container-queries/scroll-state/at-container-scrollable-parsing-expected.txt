@@ -1,4 +1,25 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Query condition should be valid: scroll-state(scrollable)
+PASS Query condition should be valid: scroll-state(scrollable: none)
+PASS Query condition should be valid: scroll-state(scrollable: top)
+PASS Query condition should be valid: scroll-state(scrollable: left)
+PASS Query condition should be valid: scroll-state(scrollable: bottom)
+PASS Query condition should be valid: scroll-state(scrollable: right)
+PASS Query condition should be valid: scroll-state(scrollable: inline-start)
+PASS Query condition should be valid: scroll-state(scrollable: inline-end)
+PASS Query condition should be valid: scroll-state(scrollable: block-start)
+PASS Query condition should be valid: scroll-state(scrollable: block-end)
+PASS Query condition should be valid: scroll-state(scrollable: block)
+PASS Query condition should be valid: scroll-state(scrollable: x)
+PASS Query condition should be valid: scroll-state(scrollable: y)
+PASS Query condition should be valid: scroll-state(scrollable: inline)
+PASS Query condition should be valid: (scroll-state(scrollable: inline-end))
+PASS Query condition should be valid: scroll-state((scrollable: left))
+PASS Query condition should be valid: scroll-state(not ((scrollable: bottom) and (scrollable: right)))
+PASS Query condition should be valid: scroll-state((scrollable: left) or (scrollable: top))
+PASS Query condition should be valid but unknown: scroll-state(scrollable: auto)
+PASS Query condition should be valid but unknown: scroll-state(scrollable: true)
+PASS Query condition should be valid but unknown: scroll-state(style(scrollable: left))
+PASS Query condition should be valid but unknown: style(scroll-state(scrollable: left))
+PASS Query condition should be valid but unknown: scroll-state(scrollable:)
 

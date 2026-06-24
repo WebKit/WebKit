@@ -30,10 +30,10 @@
 #include <WebCore/StyleValueTypes.h>
 
 namespace WebCore {
-namespace Style {
 
-struct ClipPath;
-struct OffsetPath;
+struct AcceleratedEffectClipPath;
+
+namespace Style {
 
 // <'clip-path'> = none | <url> | [ <basic-shape> || <geometry-box> ]
 struct ClipPath {
@@ -67,6 +67,7 @@ struct ClipPath {
 
 private:
     friend struct Blending<ClipPath>;
+    friend struct ToPlatform<ClipPath>;
     friend CSSBoxType referenceBox(const ClipPath&);
     friend std::optional<WebCore::Path> tryPath(const ClipPath&, const TransformOperationData&, ZoomFactor);
 
@@ -145,6 +146,14 @@ template<> struct Blending<ClipPath> {
     auto canBlend(const ClipPath&, const ClipPath&) -> bool;
     auto blend(const ClipPath&, const ClipPath&, const BlendingContext&) -> ClipPath;
 };
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+template<> struct Evaluation<ClipPath, AcceleratedEffectClipPath> { AcceleratedEffectClipPath operator()(const ClipPath&, const TransformOperationData&, ZoomFactor); };
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

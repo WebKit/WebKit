@@ -27,6 +27,8 @@
 #import "PrivateClickMeasurementConnection.h"
 
 #import "DaemonEncoder.h"
+#import "NetworkProcess.h"
+#import "NetworkSession.h"
 #import "PrivateClickMeasurementXPCUtilities.h"
 #import <wtf/NeverDestroyed.h>
 #import <wtf/darwin/XPCExtras.h>
@@ -57,7 +59,7 @@ void Connection::connectionReceivedEvent(xpc_object_t request)
     CheckedPtr networkSession = m_networkSession.get();
     if (!networkSession)
         return;
-    m_networkSession->networkProcess().broadcastConsoleMessage(m_networkSession->sessionID(), MessageSource::PrivateClickMeasurement, messageLevel, debugMessage);
+    m_networkSession->networkProcess().broadcastConsoleMessage(m_networkSession->sessionID(), JSC::MessageSource::PrivateClickMeasurement, messageLevel, debugMessage);
 }
 
 OSObjectPtr<xpc_object_t> Connection::dictionaryFromMessage(MessageType messageType, EncodedMessage&& message) const

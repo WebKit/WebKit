@@ -1580,7 +1580,7 @@
      "unavailable": true
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "CLKComplicationColumnAlignment"},
     {"access": "public", "name": "CLKComplicationFamily"},
@@ -1595,11 +1595,11 @@
   },
   {
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$sSo21CLKComplicationFamilyV8ClockKitE8allCasesSayABGvgZ"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo21CLKComplicationFamilyV8ClockKitE8allCasesSayABGvpZMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21CLKComplicationFamilyV8ClockKitE8allCasesSayABGvgZ", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo21CLKComplicationFamilyV8ClockKitE8allCasesSayABGvpZMV", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$sSo21CLKComplicationFamilyVs12CaseIterable8ClockKitMc", "unavailable": true}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

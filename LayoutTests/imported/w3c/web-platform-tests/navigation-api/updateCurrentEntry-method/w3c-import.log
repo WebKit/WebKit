@@ -21,5 +21,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/not-fully-active.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/opaque-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/reentrancy-on-serialize.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/same-document-away-and-back-location-api.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/unserializable.html

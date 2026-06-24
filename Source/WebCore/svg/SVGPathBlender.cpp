@@ -311,11 +311,17 @@ bool SVGPathBlender::blendArcToSegment(float progress)
             m_fromMode);
     } else {
         BlendingContext context { progress };
+        // Per spec, the arc flags interpolate as numbers (with progress clamped to
+        // [0, 1]) and any non-zero result is treated as a set flag, matching <path>.
+        // https://w3c.github.io/svgwg/specs/paths/#PathElement
+        BlendingContext flagContext { clampTo<float>(progress, 0.0f, 1.0f) };
+        bool largeArc = blend(from.largeArc ? 1.0f : 0.0f, to.largeArc ? 1.0f : 0.0f, flagContext);
+        bool sweep = blend(from.sweep ? 1.0f : 0.0f, to.sweep ? 1.0f : 0.0f, flagContext);
         m_consumer->arcTo(blend(from.rx, to.rx, context),
             blend(from.ry, to.ry, context),
             blend(from.angle, to.angle, context),
-            m_isInFirstHalfOfAnimation ? from.largeArc : to.largeArc,
-            m_isInFirstHalfOfAnimation ? from.sweep : to.sweep,
+            largeArc,
+            sweep,
             blendAnimatedFloatPoint(from.targetPoint, to.targetPoint, progress),
             m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     }

@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x6 [border: (3px solid #FFFFFF)]
       RenderBlock (anonymous) at (0,6) size 784x30
         RenderMenuList {SELECT} at (0,0) size 28x30 [bgcolor=#FFFFFF] [border: (1px solid #008000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 26x28
-            RenderText at (5,5) size 0x18
+          RenderBlock {DIV} at (1,1) size 26x28
+            RenderText {#text} at (5,5) size 0x18
               text run at (5,5) width 0: " "
         RenderText {#text} at (0,0) size 0x0

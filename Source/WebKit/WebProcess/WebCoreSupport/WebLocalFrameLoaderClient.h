@@ -110,6 +110,7 @@ private:
 #endif
     void dispatchDidChangeMainDocument() final;
     void dispatchWillChangeDocument(const URL& currentUrl, const URL& newUrl) final;
+    void dispatchDidChangeCSPOriginsThatUpgradeInsecureNavigations(const HashSet<WebCore::SecurityOriginData>&) final;
 
     void dispatchDidDispatchOnloadEvents() final;
     void dispatchDidReceiveServerRedirectForProvisionalLoad() final;
@@ -299,6 +300,8 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     void didExceedNetworkUsageThreshold();
 #endif
+
+    void applyMonitorUnloadToOwnerFrame(WebCore::IFrameUnloadReason) final;
 
 #if ENABLE(PDF_PLUGIN)
     RefPtr<PluginView> m_pluginView;

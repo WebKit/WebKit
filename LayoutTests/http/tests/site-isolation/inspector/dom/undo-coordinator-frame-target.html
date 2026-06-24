@@ -1,0 +1,143 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.UndoCoordinator");
+
+    let mainFrameTarget = null;
+    let childFrameTarget = null;
+
+    function spyAgent(target) {
+        let calls = {undo: 0, redo: 0, markUndoableState: 0};
+        let agent = target.DOMAgent;
+        let originals = {
+            undo: agent.undo.bind(agent),
+            redo: agent.redo.bind(agent),
+            markUndoableState: agent.markUndoableState.bind(agent),
+        };
+        agent.undo = (...args) => { calls.undo++; return originals.undo(...args); };
+        agent.redo = (...args) => { calls.redo++; return originals.redo(...args); };
+        agent.markUndoableState = (...args) => { calls.markUndoableState++; return originals.markUndoableState(...args); };
+        calls.restore = () => {
+            agent.undo = originals.undo;
+            agent.redo = originals.redo;
+            agent.markUndoableState = originals.markUndoableState;
+        };
+        return calls;
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame target.");
+
+            childFrameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+            InspectorTest.expectNotNull(childFrameTarget, "Should find a cross-origin child frame target.");
+
+            if (childFrameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                childFrameTarget = committedEvent.data.target;
+            }
+            await childFrameTarget.ensureTargetExecutionContext();
+
+            InspectorTest.expectNotNull(WI.domUndoCoordinator, "WI.domUndoCoordinator should exist.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DefaultsToMainWhenNoEdits",
+        description: "With no edits recorded, undo/redo fall back to the main (page) target, not a frame target.",
+        async test() {
+            // The fallback target is WI.assumingMainTarget() (the page target), which is a distinct object
+            // from the main frame target. Spy on it directly and assert neither frame target is touched.
+            let pageCalls = spyAgent(WI.assumingMainTarget());
+            let mainFrameCalls = spyAgent(mainFrameTarget);
+            let childCalls = spyAgent(childFrameTarget);
+
+            WI.domUndoCoordinator.undo();
+            WI.domUndoCoordinator.redo();
+
+            InspectorTest.expectEqual(pageCalls.undo, 1, "page target undo called once.");
+            InspectorTest.expectEqual(pageCalls.redo, 1, "page target redo called once.");
+            InspectorTest.expectEqual(mainFrameCalls.undo, 0, "main frame undo NOT called.");
+            InspectorTest.expectEqual(childCalls.undo, 0, "child frame undo NOT called.");
+            InspectorTest.expectEqual(childCalls.redo, 0, "child frame redo NOT called.");
+
+            pageCalls.restore();
+            mainFrameCalls.restore();
+            childCalls.restore();
+        }
+    });
+
+    suite.addTestCase({
+        name: "MarkUndoableStateRoutesToFrameTarget",
+        description: "markUndoableState(childFrameTarget) dispatches to the child frame agent and sets it as last-edit target.",
+        async test() {
+            let mainCalls = spyAgent(mainFrameTarget);
+            let childCalls = spyAgent(childFrameTarget);
+
+            WI.domUndoCoordinator.markUndoableState(childFrameTarget);
+            InspectorTest.expectEqual(childCalls.markUndoableState, 1, "child frame markUndoableState called.");
+            InspectorTest.expectEqual(mainCalls.markUndoableState, 0, "main frame markUndoableState NOT called.");
+
+            WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(childCalls.undo, 1, "Subsequent undo routes to child frame.");
+            InspectorTest.expectEqual(mainCalls.undo, 0, "Subsequent undo did NOT hit main frame.");
+
+            mainCalls.restore();
+            childCalls.restore();
+        }
+    });
+
+    suite.addTestCase({
+        name: "DidEditSwitchesRouting",
+        description: "didEdit(childFrameTarget) then didEdit(mainFrameTarget) — undo follows the latest target.",
+        async test() {
+            let mainCalls = spyAgent(mainFrameTarget);
+            let childCalls = spyAgent(childFrameTarget);
+
+            WI.domUndoCoordinator.didEdit(childFrameTarget);
+            WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(childCalls.undo, 1, "undo routes to child frame after didEdit(childFrameTarget).");
+
+            WI.domUndoCoordinator.didEdit(mainFrameTarget);
+            WI.domUndoCoordinator.redo();
+            InspectorTest.expectEqual(mainCalls.redo, 1, "redo routes to main frame after didEdit(mainFrameTarget).");
+            InspectorTest.expectEqual(childCalls.redo, 0, "redo did NOT hit child frame after switching to main frame.");
+
+            mainCalls.restore();
+            childCalls.restore();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NullTargetIsNoop",
+        description: "didEdit(null) preserves the prior last-edit target.",
+        async test() {
+            WI.domUndoCoordinator.didEdit(childFrameTarget);
+            WI.domUndoCoordinator.didEdit(null);
+
+            let mainCalls = spyAgent(mainFrameTarget);
+            let childCalls = spyAgent(childFrameTarget);
+
+            WI.domUndoCoordinator.undo();
+            InspectorTest.expectEqual(childCalls.undo, 1, "undo still routes to child frame after didEdit(null).");
+            InspectorTest.expectEqual(mainCalls.undo, 0, "didEdit(null) did NOT reset routing to main frame.");
+
+            mainCalls.restore();
+            childCalls.restore();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests WI.DOMUndoCoordinator routes undo/redo/markUndoableState to the most recently edited target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-frame.html"></iframe>
+</body>

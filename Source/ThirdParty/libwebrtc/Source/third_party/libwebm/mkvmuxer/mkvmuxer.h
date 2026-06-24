@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <list>
 #include <map>
+#include <vector>
 
 #include "common/webmids.h"
 #include "mkvmuxer/mkvmuxertypes.h"
@@ -353,6 +354,30 @@ class ContentEncoding {
 };
 
 ///////////////////////////////////////////////////////////////
+// BlockAdditionMapping element
+class BlockAdditionMapping {
+ public:
+  BlockAdditionMapping(uint64_t value, const char* name, uint64_t type,
+                       const uint8_t* extra_data, uint64_t extra_data_size);
+  BlockAdditionMapping(BlockAdditionMapping&& other) = default;
+  ~BlockAdditionMapping();
+
+  uint64_t Size() const;
+  bool Write(IMkvWriter* writer) const;
+
+ private:
+  uint64_t PayloadSize() const;
+
+  uint64_t value_;
+  const char* name_;
+  uint64_t type_;
+  const uint8_t* extra_data_;
+  uint64_t extra_data_size_;
+
+  LIBWEBM_DISALLOW_COPY_AND_ASSIGN(BlockAdditionMapping);
+};
+
+///////////////////////////////////////////////////////////////
 // Colour element.
 class PrimaryChromaticity {
  public:
@@ -674,6 +699,10 @@ class Track {
   // Output the Track element to the writer. Returns true on success.
   virtual bool Write(IMkvWriter* writer) const;
 
+  bool AddBlockAdditionMapping(uint64_t value, const char* name, uint64_t type,
+                               const uint8_t* extra_data,
+                               uint64_t extra_data_size);
+
   // Sets the CodecPrivate element of the Track element. Copies |length|
   // bytes from |codec_private| to |codec_private_|. Returns true on success.
   bool SetCodecPrivate(const uint8_t* codec_private, uint64_t length);
@@ -733,6 +762,9 @@ class Track {
 
   // Number of ContentEncoding elements added.
   uint32_t content_encoding_entries_size_;
+
+  // BlockAdditionMapping element list.
+  std::vector<BlockAdditionMapping> block_addition_mappings_;
 
   LIBWEBM_DISALLOW_COPY_AND_ASSIGN(Track);
 };

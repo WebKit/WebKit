@@ -29,6 +29,7 @@
 #include "api/field_trials.h"
 #include "api/function_view.h"
 #include "api/make_ref_counted.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_frame_encryptor.h"
@@ -80,8 +81,8 @@ constexpr float kTolerance = 0.0001f;
 constexpr uint32_t kSsrc = 1234;
 constexpr char kCName[] = "foo_name";
 constexpr std::array<uint32_t, 2> kCsrcs = {5678, 9012};
-constexpr int kAudioLevelId = 2;
-constexpr int kTransportSequenceNumberId = 4;
+constexpr RtpHeaderExtensionId kAudioLevelId(2);
+constexpr RtpHeaderExtensionId kTransportSequenceNumberId(4);
 constexpr int32_t kEchoDelayMedian = 254;
 constexpr int32_t kEchoDelayStdDev = -3;
 constexpr double kDivergentFilterFraction = 0.2f;
@@ -238,7 +239,7 @@ class ConfigHelper {
     EXPECT_CALL(rtp_rtcp_, SetExtmapAllowMixed(false)).Times(1);
     EXPECT_CALL(*channel_send_, SetCsrcs(ElementsAreArray(kCsrcs))).Times(1);
     EXPECT_CALL(*channel_send_,
-                SetSendAudioLevelIndicationStatus(true, kAudioLevelId))
+                SetSendAudioLevelIndicationStatus(kAudioLevelId))
         .Times(1);
     EXPECT_CALL(rtp_transport_, GetRtcpObserver)
         .WillRepeatedly(Return(&rtcp_observer_));
@@ -844,8 +845,8 @@ TEST(AudioSendStreamTest, ReconfigureTransportCcDeregistersExtension) {
     auto send_stream = helper.CreateAudioSendStream();
 
     // Reconfigure with a different transport-cc extension ID.
-    constexpr int kNewTransportSequenceNumberId =
-        kTransportSequenceNumberId + 1;
+    constexpr RtpHeaderExtensionId kNewTransportSequenceNumberId(
+        kTransportSequenceNumberId.value() + 1);
     auto new_config = helper.config();
     new_config.rtp.extensions.clear();
     new_config.rtp.extensions.push_back(

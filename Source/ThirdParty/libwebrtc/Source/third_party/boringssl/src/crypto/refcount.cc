@@ -18,7 +18,9 @@
 #include <stdlib.h>
 
 
-void CRYPTO_refcount_inc(CRYPTO_refcount_t *count) {
+using namespace bssl;
+
+void bssl::CRYPTO_refcount_inc(CRYPTO_refcount_t *count) {
   uint32_t expected = count->load();
 
   while (expected != CRYPTO_REFCOUNT_MAX) {
@@ -29,7 +31,7 @@ void CRYPTO_refcount_inc(CRYPTO_refcount_t *count) {
   }
 }
 
-int CRYPTO_refcount_dec_and_test_zero(CRYPTO_refcount_t *count) {
+int bssl::CRYPTO_refcount_dec_and_test_zero(CRYPTO_refcount_t *count) {
   uint32_t expected = count->load();
 
   for (;;) {

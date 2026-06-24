@@ -158,7 +158,10 @@ void RenderingTracker::OnEncodedFrame(
 
 void RenderingTracker::OnDecodableFrameTimeout(TimeDelta wait_time) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  RTC_LOG(LS_WARNING) << "VideoStreamBufferController timed out after wait_ms="
+  // Log as verbose because this timeout will periodically trigger when the
+  // stream has been deregistered. Unfortunately there is no log event for the
+  // deregistration, so the simulator will keep expecting packets forever.
+  RTC_LOG(LS_VERBOSE) << "VideoStreamBufferController timed out after wait_ms="
                       << wait_time << " on ssrc=" << config_.ssrc
                       << " (simulated_ts=" << env_.clock().CurrentTime() << ")";
   // TODO: b/423646186 - Consider adding this as a callback event.

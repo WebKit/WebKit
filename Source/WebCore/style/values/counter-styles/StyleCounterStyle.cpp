@@ -37,7 +37,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<CounterStyle>::operator()(const CounterStyle& value, const RenderStyle& style) -> CSS::CounterStyle
+auto ToCSS<CounterStyle>::operator()(const CounterStyle& value, const Style::ComputedStyle& style) -> CSS::CounterStyle
 {
     return { toCSS(value.identifier, style) };
 }

@@ -31,6 +31,7 @@
 #include "MessageNames.h"
 #include "StreamServerConnection.h"
 #include <functional>
+#include <wtf/Compiler.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CoroutineUtilities.h>
 #include <wtf/ProcessID.h>
@@ -484,14 +485,14 @@ void handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
 
     logMessage(connection, MessageType::name(), object, *arguments);
     auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
-    [replyEncoder = WTF::move(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
+    [replyEncoder = WTF::move(replyEncoder), connection = protect(connection)] (auto&&... args) mutable {
         logReply(connection, MessageType::name(), args...);
         (replyEncoder.get() << ... << std::forward<decltype(args)>(args));
         connection->sendSyncReply(WTF::move(replyEncoder));
     }));
 
     if constexpr (ValidationType::expectsConnectionArgument) {
-        callMemberFunction(object, function, connection, WTF::move(*arguments),
+        SUPPRESS_UNCOUNTED_ARG callMemberFunction(object, function, ValidationType::makeConnectionArgument(connection), WTF::move(*arguments),
             ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
     } else {
         callMemberFunction(object, function, WTF::move(*arguments),
@@ -514,7 +515,7 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
 
     logMessage(connection, MessageType::name(), object, *arguments);
     callMemberFunction(object, function, WTF::move(*arguments),
-        CompletionHandlerType([syncRequestID = decoder.syncRequestID(), connection = Ref { connection }] (auto&&... args) mutable {
+        CompletionHandlerType([syncRequestID = decoder.syncRequestID(), connection = protect(connection)] (auto&&... args) mutable {
             logReply(connection, MessageType::name(), args...);
             connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
         }));
@@ -542,7 +543,7 @@ void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* func
 
     logMessage(connection, MessageType::name(), object, *arguments);
     auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
-        [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
+        [replyID = *replyID, connection = protect(connection)] (auto&&... args) mutable {
             connection->template sendAsyncReply<MessageType>(replyID, std::forward<decltype(args)>(args)...);
         }, MessageType::callbackThread));
     if constexpr (ValidationType::returnsVoid) {
@@ -585,7 +586,7 @@ void handleMessageAsyncWithoutUsingIPCConnection(Decoder& decoder, Function<void
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     CompletionHandlerType completionHandler {
-        [destinationID = decoder.destinationID(), replyHandler = WTF::move(replyHandler), object = Ref { *object }] (auto&&... args) mutable {
+        [destinationID = decoder.destinationID(), replyHandler = WTF::move(replyHandler), object = protect(*object)] (auto&&... args) mutable {
             auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), destinationID);
             (encoder.get() << ... << std::forward<decltype(args)>(args));
             replyHandler(WTF::move(encoder));

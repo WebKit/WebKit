@@ -187,8 +187,7 @@
         "",
         "* accepts-quirky-angle:",
         "Indicates the property requires support for unitless angles. Only used for",
-        "two properties, glyph-orientation-horizontal and glyph-orientation-vertical,",
-        "though nothing in any standard requires this.",
+        "glyph-orientation-vertical, though nothing in any standard requires this.",
         "",
         "2. Lesser known capabilities of this file format",
         "",
@@ -4289,6 +4288,134 @@
                 "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
             }
         },
+        "corner-top-shape": {
+            "codegen-properties": {
+                "settings-flag": "cssCornerShapeEnabled",
+                "longhands": [
+                    "corner-top-left-shape",
+                    "corner-top-right-shape"
+                ],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-grammar-unused": "<'corner-top-left-shape'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+            }
+        },
+        "corner-right-shape": {
+            "codegen-properties": {
+                "settings-flag": "cssCornerShapeEnabled",
+                "longhands": [
+                    "corner-top-right-shape",
+                    "corner-bottom-right-shape"
+                ],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-grammar-unused": "<'corner-top-right-shape'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+            }
+        },
+        "corner-bottom-shape": {
+            "codegen-properties": {
+                "settings-flag": "cssCornerShapeEnabled",
+                "longhands": [
+                    "corner-bottom-left-shape",
+                    "corner-bottom-right-shape"
+                ],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-grammar-unused": "<'corner-bottom-left-shape'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+            }
+        },
+        "corner-left-shape": {
+            "codegen-properties": {
+                "settings-flag": "cssCornerShapeEnabled",
+                "longhands": [
+                    "corner-top-left-shape",
+                    "corner-bottom-left-shape"
+                ],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-grammar-unused": "<'corner-top-left-shape'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+            }
+        },
+        "corner-block-start-shape": {
+            "codegen-properties": {
+                "settings-flag": "cssCornerShapeEnabled",
+                "longhands": [
+                    "corner-start-start-shape",
+                    "corner-start-end-shape"
+                ],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-grammar-unused": "<'corner-start-start-shape'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+            }
+        },
+        "corner-block-end-shape": {
+            "codegen-properties": {
+                "settings-flag": "cssCornerShapeEnabled",
+                "longhands": [
+                    "corner-end-start-shape",
+                    "corner-end-end-shape"
+                ],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-grammar-unused": "<'corner-end-start-shape'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+            }
+        },
+        "corner-inline-start-shape": {
+            "codegen-properties": {
+                "settings-flag": "cssCornerShapeEnabled",
+                "longhands": [
+                    "corner-start-start-shape",
+                    "corner-end-start-shape"
+                ],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-grammar-unused": "<'corner-start-start-shape'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+            }
+        },
+        "corner-inline-end-shape": {
+            "codegen-properties": {
+                "settings-flag": "cssCornerShapeEnabled",
+                "longhands": [
+                    "corner-start-end-shape",
+                    "corner-end-end-shape"
+                ],
+                "shorthand-pattern": "CoalescingPair",
+                "parser-grammar-unused": "<'corner-start-end-shape'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-borders",
+                "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"
+            }
+        },
         "corner-top-left-shape": {
             "animation-type": "see prose",
             "initial": "round",
@@ -4855,24 +4982,6 @@
                 "url": "https://www.w3.org/TR/filter-effects/#FloodOpacityProperty"
             }
         },
-        "glyph-orientation-horizontal": {
-            "animation-type": "not animatable",
-            "inherited": true,
-            "initial": "0deg",
-            "codegen-properties": {
-                "accepts-quirky-angle": true,
-                "computed-style-initial-custom": true,
-                "computed-style-storage-path": ["m_svgData", "inheritedFlags"],
-                "computed-style-storage-container": "struct",
-                "computed-style-storage-kind": "enum",
-                "computed-style-type": "Style::SVGGlyphOrientationHorizontal",
-                "parser-grammar": "<angle unitless-zero=allowed>"
-            },
-            "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/text.html#GlyphOrientationHorizontalProperty"
-            }
-        },
         "glyph-orientation-vertical": {
             "animation-type": "not animatable",
             "inherited": true,
@@ -5226,7 +5335,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData", "grid"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::FlowTolerance",
-                "parser-grammar": "normal | <length-percentage> | infinite"
+                "parser-grammar": "normal | <length-percentage [0,inf]> | infinite"
             },
             "specification": {
                 "category": "css-grid",
@@ -6866,6 +6975,23 @@
             "specification": {
                 "category": "css-images",
                 "url": "https://www.w3.org/TR/css3-images/#object-position"
+            }
+        },
+        "object-view-box": {
+            "animation-type": "see prose",
+            "initial": "none",
+            "codegen-properties": {
+                "settings-flag": "cssObjectViewBoxEnabled",
+                "computed-style-storage-path": ["m_nonInheritedData", "miscData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::ObjectViewBox",
+                "parser-function": "consumeObjectViewBox",
+                "parser-grammar-unused": "none | <basic-shape-rect>",
+                "parser-grammar-unused-reason": "Needs support for transforming parsed input to minimal form and the strong value representation."
+            },
+            "specification": {
+                "category": "css-images",
+                "url": "https://drafts.csswg.org/css-images-5/#the-object-view-box"
             }
         },
         "offset-path": {
@@ -9360,13 +9486,14 @@
             "values": [
                 "normal",
                 "size",
-                "inline-size"
+                "inline-size",
+                "scroll-state"
             ],
             "codegen-properties": {
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::ContainerType",
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "normal | [ [ size | inline-size ] || scroll-state@(settings-flag=cssScrollStateContainerQueriesEnabled) ]@(type=CSSValuePair)"
             },
             "specification": {
                 "category": "css-contain",
@@ -13618,7 +13745,7 @@
                     {
                         "enable-if": "ENABLE_VARIATION_FONTS",
                         "aliases": ["font-stretch"],
-                        "parser-grammar": "<font-width-absolute> | <percentage [0,inf]>{1,2}",
+                        "parser-grammar": "<font-width-absolute> | <percentage [0,inf]>{1,2}@(type=CSSValuePair default=previous)",
                         "parser-grammar-comment": "Current spec grammar is 'auto | <'font-width'>{1,2}'",
                         "parser-exported": true
                     },
@@ -13675,7 +13802,7 @@
                 "codegen-properties": [
                     {
                         "enable-if": "ENABLE_VARIATION_FONTS",
-                        "parser-grammar": "normal | bold | <number [1,1000]>{1,2}",
+                        "parser-grammar": "normal | bold | <number [1,1000]>{1,2}@(type=CSSValuePair default=previous)",
                         "parser-grammar-comment": "Current spec grammar is 'auto | <font-weight-absolute>{1,2}'",
                         "parser-exported": true
                     },
@@ -14635,7 +14762,7 @@
             }
         },
         "<corner-shape-value>": {
-            "grammar": "round | scoop | bevel | notch | straight | squircle | superellipse(<number [0,inf]> | infinity)",
+            "grammar": "round | scoop | bevel | notch | square | squircle | superellipse(<number> | infinity | -infinity)",
             "specification": {
                 "category": "css-borders",
                 "url": "https://drafts.csswg.org/css-borders-4/#corner-shaping"

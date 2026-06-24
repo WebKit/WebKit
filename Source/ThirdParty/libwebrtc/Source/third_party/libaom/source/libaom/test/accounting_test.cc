@@ -27,7 +27,7 @@ TEST(AV1, TestAccounting) {
   const int kSymbols = 1024;
   aom_writer bw;
   uint8_t bw_buffer[kBufferSize];
-  aom_start_encode(&bw, bw_buffer);
+  aom_start_encode(&bw, bw_buffer, sizeof(bw_buffer));
   for (int i = 0; i < kSymbols; i++) {
     aom_write(&bw, 0, 32);
     aom_write(&bw, 0, 32);

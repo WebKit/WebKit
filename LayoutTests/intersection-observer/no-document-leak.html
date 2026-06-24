@@ -48,7 +48,8 @@ window.onload = function () {
             {
                 let count = internals.numberOfIntersectionObservers(document);
                 return count < totalCount || count === 0;
-            }
+            },
+            documentCount: 100 // ensure a leak.
         }
     ).then(
         () => testPassed("Document did not leak"),

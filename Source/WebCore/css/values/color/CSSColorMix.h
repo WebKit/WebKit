@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +29,6 @@
 #include "CSSColor.h"
 #include "CSSPrimitiveNumericTypes.h"
 #include "ColorInterpolationMethod.h"
-#include "StylePrimitiveNumericTypes.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -53,8 +53,7 @@ struct ColorMix {
     };
 
     ColorInterpolationMethod colorInterpolationMethod;
-    Component mixComponents1;
-    Component mixComponents2;
+    CommaSeparatedVector<Component> components;
 
     bool operator==(const ColorMix&) const = default;
 };

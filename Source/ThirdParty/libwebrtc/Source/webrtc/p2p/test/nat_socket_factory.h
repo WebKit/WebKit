@@ -16,8 +16,8 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/units/time_delta.h"
 #include "p2p/test/nat_server.h"
@@ -177,7 +177,7 @@ class NATSocketServer : public SocketServer, public NATInternalSocketFactory {
 
 // Free-standing NAT helper functions.
 void PackAddressForNAT(const SocketAddress& remote_addr, Buffer& buf);
-size_t UnpackAddressFromNAT(ArrayView<const uint8_t> buf,
+size_t UnpackAddressFromNAT(std::span<const uint8_t> buf,
                             SocketAddress* remote_addr);
 }  //  namespace webrtc
 

@@ -14,8 +14,8 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_compare.h"
@@ -95,15 +95,15 @@ SpectralCorrelator::SpectralCorrelator()
 SpectralCorrelator::~SpectralCorrelator() = default;
 
 void SpectralCorrelator::ComputeAutoCorrelation(
-    ArrayView<const float> x,
-    ArrayView<float, kOpusBands24kHz> auto_corr) const {
+    std::span<const float> x,
+    std::span<float, kOpusBands24kHz> auto_corr) const {
   ComputeCrossCorrelation(x, x, auto_corr);
 }
 
 void SpectralCorrelator::ComputeCrossCorrelation(
-    ArrayView<const float> x,
-    ArrayView<const float> y,
-    ArrayView<float, kOpusBands24kHz> cross_corr) const {
+    std::span<const float> x,
+    std::span<const float> y,
+    std::span<float, kOpusBands24kHz> cross_corr) const {
   RTC_DCHECK_EQ(x.size(), kFrameSize20ms24kHz);
   RTC_DCHECK_EQ(x.size(), y.size());
   RTC_DCHECK_EQ(x[1], 0.f) << "The Nyquist coefficient must be zeroed.";
@@ -126,8 +126,8 @@ void SpectralCorrelator::ComputeCrossCorrelation(
 }
 
 void ComputeSmoothedLogMagnitudeSpectrum(
-    ArrayView<const float> bands_energy,
-    ArrayView<float, kNumBands> log_bands_energy) {
+    std::span<const float> bands_energy,
+    std::span<float, kNumBands> log_bands_energy) {
   RTC_DCHECK_LE(bands_energy.size(), kNumBands);
   constexpr float kOneByHundred = 1e-2f;
   constexpr float kLogOneByHundred = -2.f;
@@ -161,9 +161,9 @@ std::array<float, kNumBands * kNumBands> ComputeDctTable() {
   return dct_table;
 }
 
-void ComputeDct(ArrayView<const float> in,
-                ArrayView<const float, kNumBands * kNumBands> dct_table,
-                ArrayView<float> out) {
+void ComputeDct(std::span<const float> in,
+                std::span<const float, kNumBands * kNumBands> dct_table,
+                std::span<float> out) {
   // DCT scaling factor - i.e., sqrt(2 / kNumBands).
   constexpr float kDctScalingFactor = 0.301511345f;
   constexpr float kDctScalingFactorError =

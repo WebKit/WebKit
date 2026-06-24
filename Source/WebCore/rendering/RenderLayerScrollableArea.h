@@ -235,7 +235,7 @@ public:
     bool containsDirtyOverlayScrollbars() const { return m_containsDirtyOverlayScrollbars; }
     void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
 
-    void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);
+    void updateScrollbarsAfterStyleChange(const Style::ComputedStyle* oldStyle);
 
     bool positionOverflowControls(const IntSize&);
 

@@ -12,14 +12,15 @@
 
 #include <cstdint>
 #include <cstdio>
-#include <ios>
 #include <memory>
 #include <set>
-#include <sstream>
 #include <string>
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "absl/strings/numbers.h"
+#include "absl/strings/str_split.h"
+#include "absl/strings/string_view.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "test/rtp_file_reader.h"
@@ -52,16 +53,15 @@ std::set<uint32_t> SsrcFilter() {
   std::string ssrc_filter_string = absl::GetFlag(FLAGS_ssrc_filter);
   if (ssrc_filter_string.empty())
     return std::set<uint32_t>();
-  std::stringstream ss;
-  std::string ssrc_filter = ssrc_filter_string;
   std::set<uint32_t> ssrcs;
 
   // Parse the ssrcs in hexadecimal format.
-  ss << std::hex << ssrc_filter;
-  uint32_t ssrc;
-  while (ss >> ssrc) {
-    ssrcs.insert(ssrc);
-    ss.ignore(1, ',');
+  for (absl::string_view s :
+       absl::StrSplit(ssrc_filter_string, ',', absl::SkipEmpty())) {
+    uint32_t ssrc;
+    if (absl::SimpleHexAtoi(s, &ssrc)) {
+      ssrcs.insert(ssrc);
+    }
   }
   return ssrcs;
 }

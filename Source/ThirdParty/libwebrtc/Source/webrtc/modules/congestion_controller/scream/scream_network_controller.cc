@@ -44,7 +44,9 @@ ScreamNetworkController::ScreamNetworkController(NetworkControllerConfig config)
       starting_rate_(
           config.constraints.starting_rate.value_or(kDefaultStartRate)),
       streams_config_(config.stream_based_config),
-      last_padding_interval_started_(Timestamp::Zero()) {
+      max_seen_total_allocated_bitrate_(
+          config.stream_based_config.max_total_allocated_bitrate.value_or(
+              DataRate::Zero())) {
   UpdateScreamTargetBitrateConstraints();
 }
 
@@ -62,6 +64,10 @@ NetworkControlUpdate ScreamNetworkController::CreateFirstUpdate(Timestamp now) {
   RTC_DCHECK(network_available_);
   RTC_DCHECK(!first_update_created_);
   first_update_created_ = true;
+  padding_interval_end_time_ = Timestamp::MinusInfinity();
+  if (allow_initial_bwe_before_media_) {
+    initial_bwe_probe_end_time_ = now + params_.initial_probing_duration.Get();
+  }
   NetworkControlUpdate update = CreateUpdate(now);
 
   if (allow_initial_bwe_before_media_) {
@@ -84,8 +90,7 @@ NetworkControlUpdate ScreamNetworkController::CreateFirstUpdate(Timestamp now) {
 NetworkControlUpdate ScreamNetworkController::OnNetworkAvailability(
     NetworkAvailability msg) {
   network_available_ = msg.network_available;
-  if (!first_update_created_ && network_available_ &&
-      streams_config_.max_total_allocated_bitrate > DataRate::Zero()) {
+  if (!first_update_created_ && network_available_) {
     return CreateFirstUpdate(msg.at_time);
   }
   return NetworkControlUpdate();
@@ -96,7 +101,12 @@ NetworkControlUpdate ScreamNetworkController::OnNetworkRouteChange(
   RTC_LOG(LS_INFO) << " OnNetworkRouteChange, resetting ScreamV2.";
   min_target_rate_ = msg.constraints.min_data_rate.value_or(min_target_rate_);
   max_target_rate_ = msg.constraints.max_data_rate.value_or(max_target_rate_);
-  starting_rate_ = msg.constraints.starting_rate.value_or(starting_rate_);
+  if (!msg.restart_bwe && scream_.has_value()) {
+    starting_rate_ = std::min(scream_->target_rate(), max_target_rate_);
+  } else {
+    starting_rate_ = msg.constraints.starting_rate.value_or(starting_rate_);
+  }
+
   scream_.emplace(env_);
   first_update_created_ = false;
   UpdateScreamTargetBitrateConstraints();
@@ -109,8 +119,9 @@ NetworkControlUpdate ScreamNetworkController::OnNetworkRouteChange(
 
 NetworkControlUpdate ScreamNetworkController::OnProcessInterval(
     ProcessInterval msg) {
-  // Scream currently has no need for periodic processing.
-  return NetworkControlUpdate();
+  NetworkControlUpdate update;
+  update.pacer_config = MaybeCreatePacerConfig(msg.at_time);
+  return update;
 }
 
 NetworkControlUpdate ScreamNetworkController::OnRemoteBitrateReport(
@@ -201,42 +212,57 @@ NetworkControlUpdate ScreamNetworkController::CreateUpdate(Timestamp now) {
     target_rate_msg.network_estimate.bwe_period = TimeDelta::Millis(25);
     update.target_rate = target_rate_msg;
   }
-  update.pacer_config = MaybeCreatePacerConfig();
+  update.pacer_config = MaybeCreatePacerConfig(now);
   update.congestion_window = scream_->max_data_in_flight();
   return update;
 }
 
-std::optional<PacerConfig> ScreamNetworkController::MaybeCreatePacerConfig() {
-  // Allow sending packets in larger bursts if data in flight is lower than
-  // reference window.
+std::optional<PacerConfig> ScreamNetworkController::MaybeCreatePacerConfig(
+    Timestamp now) {
+  // Allow sending packets in larger bursts if some time has passed since last
+  // congestion event.
   TimeDelta pacing_window =
-      (scream_->delay_based_congestion_control().IsQueueDelayDetected() ||
-       scream_->l4s_alpha() > 0.001)
-          ? TimeDelta::Millis(10)
-          : default_pacing_window_;
-  DataRate target_rate = scream_->target_rate();
-  Timestamp now = env_.clock().CurrentTime();
-  DataRate padding_rate = DataRate::Zero();
-  // Allow padding if needed. Note that current max needed by streams may be
-  // lower than what the user intended since it depends on video resolution
-  // that may be scaled down due to low quality.
-  DataRate max_padding_rate =
-      std::min({max_target_rate_, max_seen_total_allocated_bitrate_,
-                2 * streams_config_.max_total_allocated_bitrate.value_or(
-                        DataRate::Zero()),
-                remote_bitrate_report_.value_or(DataRate::PlusInfinity())});
-  if (target_rate < max_padding_rate &&
+      (env_.clock().CurrentTime() -
+           scream_->last_reaction_to_congestion_time() >
+       params_.allow_large_pacing_bursts_after_congestion_time.Get())
+          ? default_pacing_window_
+          : TimeDelta::Millis(10);
+
+  bool allow_padding = false;
+  if (params_.time_between_periodic_padding.Get().IsFinite() &&
       now - scream_->last_reference_window_decrease_time() >
           params_.allow_padding_after_last_congestion_time) {
-    if (params_.periodic_padding_interval->IsFinite() &&
-        (now - last_padding_interval_started_ >
-         params_.periodic_padding_interval.Get())) {
-      last_padding_interval_started_ = now;
+    if (now < padding_interval_end_time_) {
+      // We are currently inside an active padding duration.
+      allow_padding = true;
+    } else if (now - padding_interval_end_time_ >=
+               params_.time_between_periodic_padding.Get()) {
+      // Enough time has passed since the end of the last padding interval;
+      // start a new one.
+      padding_interval_end_time_ =
+          now + params_.periodic_padding_duration.Get();
+      allow_padding = true;
     }
-    if (now - last_padding_interval_started_ <
-        params_.periodic_padding_duration.Get()) {
-      padding_rate = target_rate;
+  } else if (now < padding_interval_end_time_) {
+    // Stop padding immediately if a congestion event occurred recently.
+    padding_interval_end_time_ = now;
+  }
+
+  DataRate padding_rate = DataRate::Zero();
+  if (allow_padding) {
+    // Padding is allowed.
+    DataRate max_padding_rate =
+        std::min({max_target_rate_, max_seen_total_allocated_bitrate_,
+                  2 * streams_config_.max_total_allocated_bitrate.value_or(
+                          DataRate::Zero()),
+                  remote_bitrate_report_.value_or(DataRate::PlusInfinity())});
+    if (max_padding_rate.IsZero() && now < initial_bwe_probe_end_time_) {
+      // If initial BWE probing is allowed, probe up to the max target rate.
+      max_padding_rate = max_target_rate_;
     }
+    DataRate target_rate = scream_->target_rate();
+    padding_rate =
+        target_rate < max_padding_rate ? target_rate : DataRate::Zero();
   }
 
   DataRate pacing_rate = scream_->pacing_rate();

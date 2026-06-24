@@ -10,12 +10,20 @@
 
 #include "api/video/video_frame_metadata.h"
 
+#include <cstdint>
+#include <optional>
+
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
+
+using ::testing::ElementsAre;
+using ::testing::IsEmpty;
+using ::testing::Optional;
 
 RTPVideoHeaderH264 ExampleHeaderH264() {
   NaluInfo nalu_info;
@@ -114,6 +122,27 @@ TEST(VideoFrameMetadataTest, VP9MetadataInequality) {
 
   EXPECT_FALSE(metadata_lhs == metadata_rhs);
   EXPECT_TRUE(metadata_lhs != metadata_rhs);
+}
+
+TEST(VideoFrameMetadataTest, FrameDependencies) {
+  VideoFrameMetadata metadata;
+  EXPECT_EQ(metadata.GetFrameId(), std::nullopt);
+  EXPECT_EQ(metadata.GetDependencies(), std::nullopt);
+  EXPECT_THAT(metadata.GetFrameDependencies(), IsEmpty());
+
+  metadata.SetFrameId(42);
+  EXPECT_THAT(metadata.GetFrameId(), Optional(42));
+
+  const int64_t deps[] = {1, 2, 3};
+  metadata.SetDependencies(deps);
+  EXPECT_THAT(metadata.GetDependencies(), Optional(ElementsAre(1, 2, 3)));
+  EXPECT_THAT(metadata.GetFrameDependencies(), ElementsAre(1, 2, 3));
+  const int64_t other_deps[] = {4, 5};
+  metadata.SetFrameDependencies(other_deps);
+  EXPECT_THAT(metadata.GetDependencies(), Optional(ElementsAre(4, 5)));
+
+  metadata.SetDependencies(std::nullopt);
+  EXPECT_EQ(metadata.GetDependencies(), std::nullopt);
 }
 
 }  // namespace

@@ -83,7 +83,7 @@ JSObject* Instance::createRuntimeObject(JSGlobalObject* lexicalGlobalObject)
     JSLockHolder lock(lexicalGlobalObject);
     RuntimeObject* newObject = newRuntimeObject(lexicalGlobalObject);
     m_runtimeObject = JSC::Weak<RuntimeObject>(newObject);
-    m_rootObject->addRuntimeObject(lexicalGlobalObject->vm(), newObject);
+    protect(m_rootObject)->addRuntimeObject(lexicalGlobalObject->vm(), newObject);
     return newObject;
 }
 

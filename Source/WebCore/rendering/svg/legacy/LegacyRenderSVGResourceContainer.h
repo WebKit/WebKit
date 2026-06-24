@@ -36,7 +36,7 @@ public:
     virtual ~LegacyRenderSVGResourceContainer();
 
     void layout() override;
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 
     static float NODELETE computeTextPaintingScale(const RenderElement&);
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
@@ -51,7 +51,7 @@ public:
     void markAllClientLayersForInvalidation();
 
 protected:
-    LegacyRenderSVGResourceContainer(Type, SVGElement&, RenderStyle&&);
+    LegacyRenderSVGResourceContainer(Type, SVGElement&, Style::ComputedStyle&&);
 
     enum InvalidationMode {
         LayoutAndBoundariesInvalidation,

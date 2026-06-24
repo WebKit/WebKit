@@ -52,7 +52,8 @@ enum {
 enum {
   INTERP_EVAL_LUMA_EVAL_CHROMA = 0,
   INTERP_SKIP_LUMA_EVAL_CHROMA,
-  INTERP_EVAL_INVALID,
+  INTERP_EVAL_LUMA_SKIP_CHROMA,  // Valid only when skip_model_rd_uv speed
+                                 // feature is enabled
   INTERP_SKIP_LUMA_SKIP_CHROMA,
 } UENUM1BYTE(INTERP_EVAL_PLANE);
 
@@ -301,20 +302,16 @@ static inline int get_filter_tap(const InterpFilterParams *const filter_params,
   if (filter_params->taps == 12) {
     return 12;
   }
-  if (filter[0] | filter[7]) {
+  if (filter[0] || filter[7]) {
     return 8;
   }
-  if (filter[1] | filter[6]) {
+  if (filter[1] || filter[6]) {
     return 6;
   }
-#if CONFIG_SVT_AV1
-  if (filter[2] | filter[5]) {
+  if (filter[2] || filter[5]) {
     return 4;
   }
   return 2;
-#else
-  return 4;
-#endif
 }
 
 #ifdef __cplusplus

@@ -163,7 +163,7 @@ public:
 
     WEBCORE_EXPORT virtual void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize, NotifyUIProcess = NotifyUIProcess::Yes);
 
-    WEBCORE_EXPORT bool NODELETE isPrinting() const;
+    bool NODELETE isPrinting() const { return m_isPrinting; }
     WEBCORE_EXPORT RefPtr<Frame> NODELETE parent() const;
 
 protected:

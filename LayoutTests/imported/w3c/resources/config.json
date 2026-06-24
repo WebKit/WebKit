@@ -3,7 +3,8 @@
  "ports":{"http":[8800, 8801],
           "https":[9443, 9444],
           "h2":[9000],
-          "ws":[49001]},
+          "ws":[49001],
+          "wss":[49002]},
  "aliases": [
           {"url-path": "/resources/testharnessreport.js", "local-dir":"../../../resources/"},
           {"url-path": "/resources/testdriver-vendor.js", "local-dir":"../../../resources/"},

@@ -1,20 +1,21 @@
-#Owners for infra and repo related files
+# Owners for infra and repo related files
 per-file .gitignore=*
+per-file AUTHORS=*
+per-file DEPS=*
+per-file WATCHLISTS=*
+per-file whitespace.txt=*
+
 per-file .gn=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
 per-file BUILD.gn=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
 per-file .../BUILD.gn=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
 per-file *.gni=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
 per-file .../*.gni=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+
 per-file .vpython=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
 per-file .vpython3=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
-per-file AUTHORS=*
-per-file DEPS=*
 per-file pylintrc=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
-per-file .rustfmt.toml=boivie@webrtc.org,mbonadei@webrtc.org,jleconte@webrtc.org
 per-file pylintrc_old_style=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
-per-file WATCHLISTS=*
-per-file whitespace.txt=*
-per-file native-api.md=mbonadei@webrtc.org
-per-file ....lua=titovartem@webrtc.org
 per-file .style.yapf=jleconte@webrtc.org
 per-file *.py=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+
+per-file .rustfmt.toml=boivie@webrtc.org,mbonadei@webrtc.org,jleconte@webrtc.org

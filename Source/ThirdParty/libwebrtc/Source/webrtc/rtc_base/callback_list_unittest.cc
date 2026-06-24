@@ -267,7 +267,66 @@ TEST(CallbackList, RemoveFromSend) {
   c.Send();
   EXPECT_EQ(removal_tag, 1);
 }
+
+TEST(CallbackList, RemoveFromSendFirst) {
+  int removal_tag0 = 0;
+  int removal_tag1 = 0;
+  CallbackList<> c;
+  c.AddReceiver(&removal_tag0, [&] {
+    c.RemoveReceivers(&removal_tag0);
+    // Do after RemoveReceivers to make sure the lambda is still valid.
+    ++removal_tag0;
+  });
+  c.AddReceiver(&removal_tag1, [&] {});
+  c.Send();
+  c.Send();
+  EXPECT_EQ(removal_tag0, 1);
+}
+
+TEST(CallbackList, RemoveLastFromSend) {
+  int removal_tag0 = 0;
+  int removal_tag1 = 0;
+  CallbackList<> c;
+  c.AddReceiver(&removal_tag0, [] {});
+  c.AddReceiver(&removal_tag1, [&] {
+    c.RemoveReceivers(&removal_tag1);
+    // Do after RemoveReceivers to make sure the lambda is still valid.
+    ++removal_tag1;
+  });
+  c.Send();
+  c.Send();
+  EXPECT_EQ(removal_tag1, 1);
+}
+
+TEST(CallbackList, RemoveMiddleFromSend) {
+  int removal_tag0 = 0;
+  int removal_tag1 = 0;
+  int removal_tag2 = 0;
+  CallbackList<> c;
+  c.AddReceiver(&removal_tag0, [&] {});
+  c.AddReceiver(&removal_tag1, [&] {
+    c.RemoveReceivers(&removal_tag1);
+    // Do after RemoveReceivers to make sure the lambda is still valid.
+    ++removal_tag1;
+  });
+  c.AddReceiver(&removal_tag2, [&] {});
+  c.Send();
+  c.Send();
+  EXPECT_EQ(removal_tag1, 1);
+}
+
 #pragma clang diagnostic pop
+
+TEST(CallbackList, ConstructorSingleSubscriberWithTagTest) {
+  int removal_tag;
+  int accumulator = 0;
+  CallbackList<> c(&removal_tag, [&accumulator] { accumulator += 10; });
+  c.Send();
+  EXPECT_EQ(accumulator, 10);
+  c.RemoveReceivers(&removal_tag);
+  c.Send();
+  EXPECT_EQ(accumulator, 10);  // No change after removal.
+}
 
 }  // namespace
 }  // namespace webrtc

@@ -64,6 +64,8 @@ class command:
         @functools.wraps(params_fn)
         async def inner(self: Any, **kwargs: Any) -> Any:
             raw_result = kwargs.pop("raw_result", False)
+            extension_params = kwargs.pop("_extension_params", {})
+
             params = remove_undefined(params_fn(self, **kwargs))
 
             # Convert the classname and the method name to a bidi command name
@@ -71,6 +73,14 @@ class command:
             if hasattr(owner, "prefix"):
                 mod_name = f"{owner.prefix}:{mod_name}"
             cmd_name = f"{mod_name}.{to_camelcase(name)}"
+
+            # Verify specified vendor parameters
+            for key in extension_params:
+                if ":" not in key:
+                    raise ValueError(f"Extension parameter '{key}' misses prefix.")
+
+            # Merge into params (vendor keys win if duplicates)
+            params.update(extension_params)
 
             future = await self.session.send_command(cmd_name, params)
             result = await future
@@ -102,5 +112,53 @@ def to_camelcase(name: str) -> str:
     return "".join(parts)
 
 
-def remove_undefined(obj: Mapping[str, Any]) -> Mapping[str, Any]:
-    return {key: value for key, value in obj.items() if value != UNDEFINED}
+def remove_undefined(obj: Any) -> Any:
+    """
+    Removes entries from a dictionary where the value is UNDEFINED. Also removes
+    UNDEFINED values from lists. Recursively processes nested dictionaries and
+    lists.
+
+    >>> from ..undefined import UNDEFINED
+    >>> remove_undefined({"a": 1, "b": UNDEFINED, "c": 3})
+    {'a': 1, 'c': 3}
+
+    >>> remove_undefined({"a": 1, "b": {"x": UNDEFINED, "y": 2}, "c": UNDEFINED})
+    {'a': 1, 'b': {'y': 2}}
+
+    >>> remove_undefined({"a": 1, "b": [1, UNDEFINED, 3], "c": UNDEFINED})
+    {'a': 1, 'b': [1, 3]}
+
+    >>> remove_undefined({"a": 1, "b": [{"x": UNDEFINED, "y": 2}], "c": UNDEFINED})
+    {'a': 1, 'b': [{'y': 2}]}
+
+    >>> remove_undefined({"a": UNDEFINED, "b": {"x": UNDEFINED}})
+    {'b': {}}
+
+    >>> remove_undefined({})
+    {}
+
+    >>> remove_undefined([])
+    []
+
+    >>> remove_undefined(1)
+    1
+
+    >>> remove_undefined("foo")
+    'foo'
+
+    >>> remove_undefined(None)
+
+    """
+    if isinstance(obj, Mapping):
+        new_obj = {}
+        for key, value in obj.items():
+            if value is not UNDEFINED:
+                new_obj[key] = remove_undefined(value)
+        return new_obj
+    elif isinstance(obj, list):
+        new_list = []
+        for item in obj:
+            if item is not UNDEFINED:
+                new_list.append(remove_undefined(item))
+        return new_list
+    return obj

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+    <div contenteditable id="ol-list">
+        <ol start="2" style="list-style-type: decimal" class="Apple-decimal-list">
+            <li id="ol1">two</li>
+            <li>three</li>
+            <li>four</li>
+        </ol>
+    </div>
+
+    <script>
+    Markup.description("Verifies that converting list, then undo and redo will restore the list accordingly.");
+    if (!window.internals)
+        Markup.notifyDone();
+
+    Markup.waitUntilDone();
+
+    Markup.dump("ol-list", "Before OL to UL");
+    document.getElementById("ol-list").focus();
+    getSelection().setPosition(ol1, 0);
+    internals.changeSelectionListType();
+    Markup.dump("ol-list", "After OL to UL");
+
+    undoCommand();
+    Markup.dump("ol-list", "After undo");
+
+    redoCommand();
+    Markup.dump("ol-list", "After redo");
+
+    Markup.notifyDone();
+    </script>
+</body>
+</html>

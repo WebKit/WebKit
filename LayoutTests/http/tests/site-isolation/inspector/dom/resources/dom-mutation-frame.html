@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin DOM Mutation Frame</title>
+</head>
+<body>
+    <div id="container" class="main-content" data-role="frame-root">
+        <h1 id="heading">Cross-Origin Heading</h1>
+        <p id="text-node">Hello from cross-origin frame.</p>
+        <ul id="list"><li>One</li></ul>
+    </div>
+    <script>
+    function modifyAttribute() {
+        document.getElementById("container").setAttribute("data-role", "updated-role");
+    }
+
+    function removeAttribute() {
+        document.getElementById("container").removeAttribute("data-role");
+    }
+
+    function modifyCharacterData() {
+        document.getElementById("text-node").firstChild.data = "Updated text content.";
+    }
+
+    function insertChild() {
+        let newElement = document.createElement("span");
+        newElement.id = "inserted-span";
+        newElement.textContent = "Inserted";
+        document.getElementById("container").appendChild(newElement);
+    }
+
+    function removeChild() {
+        document.getElementById("heading").remove();
+    }
+
+    function modifyInlineStyle() {
+        document.getElementById("container").style.color = "rgb(255, 0, 0)";
+    }
+
+    function insertUnexpandedChild() {
+        let newItem = document.createElement("li");
+        newItem.textContent = "Two";
+        document.getElementById("list").appendChild(newItem);
+    }
+    </script>
+</body>
+</html>

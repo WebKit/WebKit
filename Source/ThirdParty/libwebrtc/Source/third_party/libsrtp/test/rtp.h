@@ -53,13 +53,13 @@
 #ifndef SRTP_RTP_H
 #define SRTP_RTP_H
 
+#include "srtp_priv.h"
+
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #elif defined HAVE_WINSOCK2_H
 #include <winsock2.h>
 #endif
-
-#include "srtp_priv.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -29,7 +29,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceLinearGradient);
 
-LegacyRenderSVGResourceLinearGradient::LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement& element, RenderStyle&& style)
+LegacyRenderSVGResourceLinearGradient::LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGResourceGradient(Type::LegacySVGResourceLinearGradient, element, WTF::move(style))
 {
 }
@@ -52,7 +52,7 @@ FloatPoint LegacyRenderSVGResourceLinearGradient::endPoint(const LinearGradientA
     return SVGLengthContext::resolvePoint(protect(linearGradientElement()).ptr(), attributes.gradientUnits(), attributes.x2(), attributes.y2());
 }
 
-Ref<Gradient> LegacyRenderSVGResourceLinearGradient::buildGradient(const RenderStyle& style) const
+Ref<Gradient> LegacyRenderSVGResourceLinearGradient::buildGradient(const Style::ComputedStyle& style) const
 {
     return Gradient::create(
         Gradient::LinearData { startPoint(m_attributes), endPoint(m_attributes) },

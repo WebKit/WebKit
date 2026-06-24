@@ -33,7 +33,7 @@
 #include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/URLHash.h>
 
 namespace WebCore {
@@ -80,7 +80,7 @@ private:
     void retrieveResourcesForRule(StyleRule&, Document*);
 
     Vector<Resource>& m_resources;
-    ListHashSet<URL> m_resourceURLs;
+    OrderedHashSet<URL> m_resourceURLs;
     HashMap<LocalFrame*, URL> m_blankFrameURLs;
     unsigned m_blankFrameCounter { 0 };
 };

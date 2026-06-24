@@ -35,6 +35,13 @@ DECLARE_SYSTEM_HEADER
 
 #include <CoreMedia/CoreMedia.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+// Include some private headers before CoreMediaSoftLink.h overshadows
+// declarations with its macros to soft-link call sites.
+#include <CoreMedia/CMTimePrivate.h>
+#include <MediaToolbox/FigImageQueueDispatch.h>
+#endif
+
 #if PLATFORM(MAC)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnon-modular-include-in-module"

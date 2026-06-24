@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import "config.h"
 #import "GPUProcess.h"
 
@@ -45,7 +43,7 @@
 #include <pal/spi/cocoa/LaunchServicesSPI.h>
 #endif
 
-#if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(VISION) && ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
 #include "CoreIPCAuditToken.h"
 #include "SharedFileHandle.h"
 #include "WKSharedSimulationConnectionHelper.h"
@@ -173,6 +171,7 @@ void GPUProcess::resolveBookmarkDataForCacheDirectory(std::span<const uint8_t> b
 #endif
 
 #if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+#if HAVE(CORE_RE)
 void GPUProcess::requestSharedSimulationConnection(CoreIPCAuditToken&& modelProcessAuditToken, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&& completionHandler)
 {
     Ref<WKSharedSimulationConnectionHelper> sharedSimulationConnectionHelper = adoptRef(*new WKSharedSimulationConnectionHelper);
@@ -187,10 +186,12 @@ void GPUProcess::requestSharedSimulationConnection(CoreIPCAuditToken&& modelProc
         completionHandler(IPC::SharedFileHandle::create(FileSystem::FileHandle::adopt([sharedSimulationConnection fileDescriptor])));
     });
 }
+#endif
 
 #if HAVE(TASK_IDENTITY_TOKEN)
 void GPUProcess::createMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity, CompletionHandler<void(const std::optional<String>&)>&& completionHandler)
 {
+#if HAVE(CORE_RE)
     Ref<WKSharedSimulationConnectionHelper> sharedSimulationConnectionHelper = adoptRef(*new WKSharedSimulationConnectionHelper);
     sharedSimulationConnectionHelper->createMemoryAttributionIDForTask(processIdentity.taskIdToken(), [sharedSimulationConnectionHelper, completionHandler = WTF::move(completionHandler)] (RetainPtr<NSString> attributionTaskID, RetainPtr<id> appService) mutable {
         if (!attributionTaskID) {
@@ -202,10 +203,15 @@ void GPUProcess::createMemoryAttributionIDForTask(WebCore::ProcessIdentity proce
         RELEASE_LOG(ModelElement, "GPUProcess: Memory attribution ID request succeeded");
         completionHandler(String(attributionTaskID.get()));
     });
+#else
+    UNUSED_PARAM(processIdentity);
+    completionHandler(std::nullopt);
+#endif
 }
 
 void GPUProcess::unregisterMemoryAttributionID(const String& attributionID, CompletionHandler<void()>&& completionHandler)
 {
+#if HAVE(CORE_RE)
     Ref<WKSharedSimulationConnectionHelper> sharedSimulationConnectionHelper = adoptRef(*new WKSharedSimulationConnectionHelper);
     sharedSimulationConnectionHelper->unregisterMemoryAttributionID(attributionID.createNSString().get(), [sharedSimulationConnectionHelper, completionHandler = WTF::move(completionHandler)] (RetainPtr<id> appService) mutable {
         if (appService)
@@ -214,6 +220,10 @@ void GPUProcess::unregisterMemoryAttributionID(const String& attributionID, Comp
             RELEASE_LOG(ModelElement, "GPUProcess: Memory attribution ID unregistration failed");
         completionHandler();
     });
+#else
+    UNUSED_PARAM(attributionID);
+    completionHandler();
+#endif
 }
 #endif
 #endif

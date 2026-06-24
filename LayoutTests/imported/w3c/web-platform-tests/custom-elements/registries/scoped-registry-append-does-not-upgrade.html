@@ -90,13 +90,70 @@ test((test) => {
 test((test) => {
     const [doc1, win1] = makeIframe(test);
     const [doc2, win2] = makeIframe(test);
-    win2.customElements.define('a-b', class ABElement extends win2.HTMLElement { });
+    class ABElement extends win2.HTMLElement { };
+    win2.customElements.define('a-b', ABElement);
     const elementFromDoc1 = doc1.createElement('a-b');
-    assert_equals(elementFromDoc1.customElementRegistry, null);
+    assert_equals(elementFromDoc1.customElementRegistry, win1.customElements);
     doc2.body.appendChild(elementFromDoc1);
     assert_equals(elementFromDoc1.customElementRegistry, win2.customElements);
     assert_true(elementFromDoc1 instanceof ABElement);
-}, 'Inserting a node from another document results in the custom element registry to be set and upgraded.');
+}, 'Inserting a node from another document with global registry results in the custom element registry to be set and upgraded.');
+
+test((test) => {
+    const contentDocument = document.implementation.createHTMLDocument();
+    class ABElement extends HTMLElement { }
+    customElements.define('a-b', ABElement);
+    const elementFromContentDoc = contentDocument.createElement('a-b');
+    assert_equals(elementFromContentDoc.customElementRegistry, null);
+    document.body.appendChild(elementFromContentDoc);
+    assert_equals(elementFromContentDoc.customElementRegistry, customElements);
+    assert_true(elementFromContentDoc instanceof ABElement);
+}, 'Inserting a node from another document with null registry results in the custom element registry to be set and upgraded.');
+
+test((test) => {
+    const [doc, win] = makeIframe(test);
+    doc.documentElement.setHTMLUnsafe('<div id="host"><template shadowrootmode="open" shadowrootclonable="true" shadowrootcustomelementregistry><a-b></a-b></template></div>'
+        + '<template id="t"><a-b></a-b></template>');
+    const registry = new win.CustomElementRegistry();
+    const hostClone = doc.getElementById('host').cloneNode(true);
+    registry.initialize(hostClone.shadowRoot);
+    doc.body.appendChild(hostClone);
+
+    // Clone from template (null registry, no browsing context).
+    const templateContent = doc.getElementById('t').content;
+    const cloned = templateContent.firstElementChild.cloneNode(true);
+    assert_equals(cloned.customElementRegistry, null,
+        'Cloned element from template should have null registry');
+
+    // Append into scoped shadow root.
+    hostClone.shadowRoot.appendChild(cloned);
+    assert_equals(cloned.customElementRegistry, win.customElements,
+        'Element from template appended into scoped shadow root should get global registry');
+}, 'Inserting a node cloned from a template with null registry into a scoped shadow root should set global registry');
+
+test((test) => {
+    const [doc, win] = makeIframe(test);
+    doc.documentElement.setHTMLUnsafe('<div id="host"><template shadowrootmode="open" shadowrootclonable="true" shadowrootcustomelementregistry><a-b></a-b></template></div>'
+        + '<template id="t"><a-b></a-b></template>');
+    const registry = new win.CustomElementRegistry();
+    const hostClone = doc.getElementById('host').cloneNode(true);
+    registry.initialize(hostClone.shadowRoot);
+    doc.body.appendChild(hostClone);
+
+    // Clone from template (null registry), adopt into main doc first.
+    const templateContent = doc.getElementById('t').content;
+    const cloned = templateContent.firstElementChild.cloneNode(true);
+    assert_equals(cloned.customElementRegistry, null,
+        'Cloned element from template should have null registry');
+    doc.adoptNode(cloned);
+    assert_equals(cloned.customElementRegistry, win.customElements,
+        'After adoptNode, element should have global registry');
+
+    // Append into scoped shadow root.
+    hostClone.shadowRoot.appendChild(cloned);
+    assert_equals(cloned.customElementRegistry, win.customElements,
+        'Element adopted then appended into scoped shadow root should keep global registry');
+}, 'adoptNode then inserting into a scoped shadow root should preserve global registry');
 
 </script>
 </body>

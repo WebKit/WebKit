@@ -21,29 +21,19 @@
     # This is required because WebRTC mb.py overwrites the default configs
     # and Chromium's mb.py checks the default config contains 'chromium'.
     'chromium': {},
-    'chromium.infra.codesearch': {
-      'codesearch-gen-webrtc-android': {
-        'android': 'android_debug_static_bot_arm',
-      },
-      'codesearch-gen-webrtc-linux': {
-        'linux': 'codesearch_gen_linux_bot',
-      }
-    },
     'client.webrtc': {
       # Android
-      'Android32': 'android_release_bot_arm',
-      'Android32 (dbg)': 'android_debug_static_bot_arm',
-      'Android32 (more configs)': {
-        'dummy_audio_file_devices_no_protobuf':
-        'dummy_audio_file_devices_no_protobuf_android_arm',
-        'rtti_no_sctp': 'rtti_no_sctp_android_arm',
-        'cxx23': 'use_cxx23_android_arm',
-      },
       'Android32 Builder arm': 'android_pure_release_bot_arm',
       'Android32 Builder x86': 'android_release_bot_x86',
       'Android32 Builder x86 (dbg)': 'android_debug_static_bot_x86',
       'Android64': 'android_release_bot_arm64',
       'Android64 (dbg)': 'android_debug_static_bot_arm64',
+      'Android64 (more configs)': {
+        'dummy_audio_file_devices_no_protobuf':
+        'dummy_audio_file_devices_no_protobuf_android_arm64',
+        'rtti_no_sctp': 'rtti_no_sctp_android_arm64',
+        'cxx23': 'use_cxx23_android_arm64',
+      },
       'Android64 Builder arm64': 'android_pure_release_bot_arm64',
       'Android64 Builder x64 (dbg)': 'android_debug_static_bot_x64',
 
@@ -84,7 +74,6 @@
 
       # Mac
       'Mac Asan': 'mac_asan_clang_release_bot_x64',
-      'Mac64 Builder': 'pure_release_bot_x64',
       'Mac64 Debug': 'debug_bot_x64',
       'Mac64 Release': 'release_bot_x64',
       'MacARM64 M1 Release': 'release_bot_arm64',
@@ -109,19 +98,6 @@
       'iOS64 Debug': 'ios_debug_bot_arm64',
       'iOS64 Release': 'ios_release_bot_arm64',
     },
-    'client.webrtc.fyi': {
-      # Android
-      'Android ASan (swarming)': 'android_asan_shared_release_bot_arm',
-      'Android Perf (swarming)': 'android_pure_release_bot_arm',
-
-      # Mac
-      'Mac (swarming)': 'release_bot_x64',
-
-      # Windows
-      'Win (swarming)': 'release_bot_x86',
-      'Win64 Debug (Win10)': 'debug_bot_x64',
-      'Win64 Debug (Win8)': 'debug_bot_x64',
-    },
     'client.webrtc.perf': {
       # These are here because testers need to gn gen + ninja for the
       # webrtc_dashboard_upload target (otherwise a tester would not need to
@@ -132,33 +108,23 @@
       'Perf Android64 (R Pixel5)': 'release_bot_x64',
       'Perf Fuchsia': 'release_bot_x64_fuchsia',
       'Perf Linux': 'release_bot_x64',
-      'Perf Mac 11': 'release_bot_x64',
       'Perf Mac M1 Arm64 12': 'release_bot_x64',
       'Perf Win 10': 'release_bot_x64',
     },
-    'internal.client.webrtc': {
-      'iOS64 Debug': 'ios_internal_debug_bot_arm64',
-      'iOS64 Perf': 'ios_internal_pure_release_bot_arm64',
-      'iOS64 Release': 'ios_internal_release_bot_arm64',
-    },
     'tryserver.webrtc': {
       # Android
-      'android_arm64_dbg': 'android_release_bot_arm64',
-      'android_arm64_rel': 'android_release_bot_arm64',
-      'android_arm_dbg': 'android_debug_static_bot_arm',
+      'android_arm_dbg': 'android_debug_static_bot_arm64',
       'android_arm_more_configs': {
         'dummy_audio_file_devices_no_protobuf':
-        'dummy_audio_file_devices_no_protobuf_android_arm',
-        'rtti_no_sctp': 'rtti_no_sctp_android_arm',
-        'disable_trace_events': 'disable_trace_events_android_arm',
-        'perfetto': 'perfetto_android_arm',
-        'cxx23': 'use_cxx23_android_arm',
+        'dummy_audio_file_devices_no_protobuf_android_arm64',
+        'rtti_no_sctp': 'rtti_no_sctp_android_arm64',
+        'disable_trace_events': 'disable_trace_events_android_arm64',
+        'perfetto': 'perfetto_android_arm64',
+        'cxx23': 'use_cxx23_android_arm64',
       },
-      'android_arm_rel': 'android_release_bot_arm',
-      'android_compile_arm64_dbg': 'android_debug_static_bot_arm64',
-      'android_compile_arm64_rel': 'android_pure_release_bot_arm64',
-      'android_compile_arm_dbg': 'android_debug_static_bot_arm',
-      'android_compile_arm_rel': 'android_pure_release_bot_arm',
+      'android_arm_rel': 'android_release_bot_arm64',
+      'android_compile_arm_dbg': 'android_debug_static_bot_arm64',
+      'android_compile_arm_rel': 'android_pure_release_bot_arm64',
       'android_compile_x64_dbg': 'android_debug_static_bot_x64',
       'android_compile_x64_rel': 'android_release_bot_x64',
       'android_compile_x86_dbg': 'android_debug_static_bot_x86',
@@ -245,19 +211,6 @@
   # A given config *may* be platform-specific but is not necessarily so (i.e.,
   # we might have mac, win, and linux bots all using the 'release_bot' config).
   'configs': {
-    'android_asan_shared_release_bot_arm': [
-      'android',
-      'asan',
-      'clang',
-      'pure_release_bot',
-      'arm',
-    ],
-    'android_debug_static_bot_arm': [
-      'android',
-      'debug_static_bot',
-      'arm',
-      'h265',
-    ],
     'android_debug_static_bot_arm64': [
       'android',
       'debug_static_bot',
@@ -285,12 +238,6 @@
       'android',
       'pure_release_bot',
       'arm64',
-    ],
-    'android_release_bot_arm': [
-      'android',
-      'release_bot',
-      'arm',
-      'h265',
     ],
     'android_release_bot_arm64': [
       'android',
@@ -323,23 +270,21 @@
       'openh264', 'release_bot', 'x64', 'code_coverage',
       'partial_code_coverage_instrumentation', 'h265'
     ],
-    'codesearch_gen_linux_bot':
-    ['openh264', 'debug_bot', 'minimal_symbols', 'h265'],
     'debug_bot_arm': ['openh264', 'debug_bot', 'arm', 'h265'],
     'debug_bot_arm64': ['openh264', 'debug_bot', 'arm64', 'h265'],
     'debug_bot_x64': ['openh264', 'debug_bot', 'x64', 'h265'],
     'debug_bot_x86': ['openh264', 'debug_bot', 'x86', 'h265'],
-    'disable_trace_events_android_arm': [
+    'disable_trace_events_android_arm64': [
       'android',
-      'arm',
+      'arm64',
       'disable_trace_events',
       'release_bot',
     ],
     'disable_trace_events_x64': ['x64', 'disable_trace_events', 'release_bot'],
     'disable_trace_events_x86': ['x86', 'disable_trace_events', 'release_bot'],
-    'dummy_audio_file_devices_no_protobuf_android_arm': [
+    'dummy_audio_file_devices_no_protobuf_android_arm64': [
       'android',
-      'arm',
+      'arm64',
       'debug_static_bot',
       'dummy_audio_file_devices',
       'no_protobuf',
@@ -353,31 +298,6 @@
       'ios_simulator',
       'debug_bot',
       'arm64',
-      'xctest',
-    ],
-    'ios_internal_debug_bot_arm64': [
-      'ios',
-      'ios_device',
-      'debug_bot',
-      'arm64',
-      'ios_code_signing_identity_description',
-      'xctest',
-    ],
-    'ios_internal_pure_release_bot_arm64': [
-      'ios',
-      'ios_device',
-      'pure_release_bot',
-      'arm64',
-      'ios_code_signing_identity_description',
-      'xctest',
-      'rtc_objc_test_prefix',
-    ],
-    'ios_internal_release_bot_arm64': [
-      'ios',
-      'ios_device',
-      'release_bot',
-      'arm64',
-      'ios_code_signing_identity_description',
       'xctest',
     ],
     'ios_release_bot_arm64': [
@@ -413,9 +333,9 @@
     'no_lld_x64': ['debug_bot', 'x64', 'no_lld'],
     'no_psnr_x64': ['debug_bot', 'x64', 'no_psnr'],
     'openssl_x64': ['debug_bot', 'x64', 'no_build_ssl'],
-    'perfetto_android_arm': [
+    'perfetto_android_arm64': [
       'android',
-      'arm',
+      'arm64',
       'perfetto',
       'release_bot',
     ],
@@ -429,9 +349,9 @@
     'release_bot_x64_fuchsia':
     ['openh264', 'release_bot', 'x64', 'fuchsia', 'h265'],
     'release_bot_x86': ['openh264', 'release_bot', 'x86', 'h265'],
-    'rtti_no_sctp_android_arm': [
+    'rtti_no_sctp_android_arm64': [
       'android',
-      'arm',
+      'arm64',
       'debug_static_bot',
       'no_sctp',
       'rtti',
@@ -445,9 +365,9 @@
     ['ubsan', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'],
     'ubsan_vptr_clang_release_bot_x64':
     ['ubsan_vptr', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'],
-    'use_cxx23_android_arm': [
+    'use_cxx23_android_arm64': [
       'android',
-      'arm',
+      'arm64',
       'debug_bot',
       'use_cxx23_flag',
     ],
@@ -570,12 +490,6 @@
     },
     'ios': {
       'gn_args': 'target_os="ios"',
-    },
-    'ios_code_signing_identity_description': {
-      'gn_args': 'ios_code_signing_identity_description="Apple Development"',
-    },
-    'ios_device': {
-      'gn_args': 'target_environment="device"'
     },
     'ios_simulator': {
       'gn_args': 'target_environment="simulator"'

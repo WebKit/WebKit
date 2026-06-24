@@ -52,7 +52,7 @@ class ResizingVideoSource : public ::libaom_test::DummyVideoSource {
   void FillFrame() override {
     // Read frame from input_file and scale up.
     ASSERT_NE(input_file_, nullptr);
-    fread(img_input_->img_data, raw_size_, 1, input_file_);
+    ASSERT_EQ(fread(img_input_->img_data, raw_size_, 1, input_file_), 1);
     libyuv::I420Scale(
         img_input_->planes[AOM_PLANE_Y], img_input_->stride[AOM_PLANE_Y],
         img_input_->planes[AOM_PLANE_U], img_input_->stride[AOM_PLANE_U],
@@ -307,6 +307,77 @@ class DatarateTestLarge
     RunBasicRateTargetingTestReversed(&video, bitrate_array[GET_PARAM(4)], 0.85,
                                       1.15);
   }
+
+  virtual void BasicRateTargetingQvgaCBRKf() {
+    ::libaom_test::I420VideoSource video("desktop1.320_180.yuv", 320, 180, 30,
+                                         1, 0, 500);
+
+    cfg_.g_profile = 0;
+    cfg_.g_timebase = video.timebase();
+
+    SetUpCBR();
+    cfg_.kf_max_dist = 10;
+    cfg_.kf_min_dist = 10;
+    const int bitrate_array[2] = { 250, 650 };
+    ResetModel();
+    RunBasicRateTargetingTestReversed(&video, bitrate_array[GET_PARAM(4)], 0.5,
+                                      1.5);
+  }
+
+  virtual void BasicRateTargetingQvga2CBRKf() {
+    ::libaom_test::I420VideoSource video("desktopqvga2.320_240.yuv", 320, 240,
+                                         30, 1, 0, 500);
+
+    cfg_.g_profile = 0;
+    cfg_.g_timebase = video.timebase();
+
+    SetUpCBR();
+    cfg_.kf_max_dist = 10;
+    cfg_.kf_min_dist = 10;
+    const int bitrate_array[2] = { 250, 650 };
+    ResetModel();
+    RunBasicRateTargetingTestReversed(&video, bitrate_array[GET_PARAM(4)], 0.5,
+                                      1.5);
+  }
+
+  virtual void BasicRateTargetingCifCBRKf() {
+    ::libaom_test::I420VideoSource video("hantro_collage_w352h288.yuv", 352,
+                                         288, 30, 1, 0, 140);
+
+    cfg_.g_profile = 0;
+    cfg_.g_timebase = video.timebase();
+
+    SetUpCBR();
+    cfg_.kf_max_dist = 10;
+    cfg_.kf_min_dist = 10;
+    const int bitrate_array[2] = { 250, 650 };
+    ResetModel();
+    RunBasicRateTargetingTestReversed(&video, bitrate_array[GET_PARAM(4)], 0.5,
+                                      1.5);
+  }
+
+  virtual void BasicRateTargetingVBRLagRealtime() {
+    ::libaom_test::I420VideoSource video("niklas_640_480_30.yuv", 320, 240, 30,
+                                         1, 0, 200);
+    cfg_.rc_min_quantizer = 0;
+    cfg_.rc_max_quantizer = 63;
+    cfg_.g_error_resilient = 0;
+    cfg_.rc_end_usage = AOM_VBR;
+    cfg_.g_lag_in_frames = 48;
+    cfg_.g_pass = AOM_RC_ONE_PASS;
+    cfg_.g_usage = AOM_USAGE_REALTIME;
+    cfg_.g_profile = 0;
+    cfg_.g_timebase = video.timebase();
+    cfg_.g_threads = 1;
+
+    ResetModel();
+    lag_realtime_mode_ = 1;
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    ASSERT_GE(effective_datarate_, cfg_.rc_target_bitrate * 0.85)
+        << " The datarate for the file is lower than target by too much!";
+    ASSERT_LE(effective_datarate_, cfg_.rc_target_bitrate * 2.0)
+        << " The datarate for the file is greater than target by too much!";
+  }
 };
 
 // Params: test mode, speed, aq mode.
@@ -547,6 +618,25 @@ TEST_P(DatarateTestRealtime, BasicRateTargetingSuperresCBRMultiThreads) {
   BasicRateTargetingSuperresCBRMultiThreads();
 }
 
+// Check basic rate targeting for QVGA CBR with short keyframe spacing.
+TEST_P(DatarateTestRealtime, BasicRateTargetingQvgaCBRKf) {
+  BasicRateTargetingQvgaCBRKf();
+}
+
+// Check basic rate targeting for QVGA CBR with short keyframe spacing.
+TEST_P(DatarateTestRealtime, BasicRateTargetingQvga2CBRKf) {
+  BasicRateTargetingQvga2CBRKf();
+}
+
+// Check basic rate targeting for CIF CBR with short keyframe spacing.
+TEST_P(DatarateTestRealtime, BasicRateTargetingCifCBRKf) {
+  BasicRateTargetingCifCBRKf();
+}
+
+TEST_P(DatarateTestRealtime, BasicRateTargetingVBRLagRealtime) {
+  BasicRateTargetingVBRLagRealtime();
+}
+
 // Check that (1) the first dropped frame gets earlier and earlier
 // as the drop frame threshold is increased, and (2) that the total number of
 // frame drops does not decrease as we increase frame drop threshold.
@@ -680,12 +770,12 @@ AV1_INSTANTIATE_TEST_SUITE(DatarateTestFrameDropLarge,
 
 AV1_INSTANTIATE_TEST_SUITE(DatarateTestRealtime,
                            ::testing::Values(::libaom_test::kRealTime),
-                           ::testing::Range(7, 12), ::testing::Values(0, 3),
+                           ::testing::Range(6, 12), ::testing::Values(0, 3),
                            ::testing::Values(0, 1));
 
 AV1_INSTANTIATE_TEST_SUITE(DatarateTestFrameDropRealtime,
                            ::testing::Values(::libaom_test::kRealTime),
-                           ::testing::Range(7, 12), ::testing::Values(0, 3));
+                           ::testing::Range(6, 12), ::testing::Values(0, 3));
 
 AV1_INSTANTIATE_TEST_SUITE(DatarateTestSpeedChangeRealtime,
                            ::testing::Values(::libaom_test::kRealTime),

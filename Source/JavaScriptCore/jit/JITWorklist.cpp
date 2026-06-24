@@ -148,18 +148,6 @@ void JITWorklist::wakeThreads(const AbstractLocker& locker, unsigned enqueuedTie
     ASSERT(m_numberOfActiveThreads >= 1);
 }
 
-// Ask all underlying threads to exit, so that they can clean up any
-// thread-local data they have saved. Used when under memory pressure.
-void JITWorklist::requestTemporaryStop()
-{
-    Locker locker { *m_lock };
-    for (auto& thread : m_threads) {
-        if (!thread->hasUnderlyingThread(locker))
-            continue;
-        thread->requestTemporaryStop(locker);
-    }
-}
-
 CompilationResult JITWorklist::enqueue(Ref<JITPlan> plan)
 {
     if (!Options::useConcurrentJIT()) {
@@ -204,6 +192,12 @@ size_t JITWorklist::queueLength(const AbstractLocker&) const
     for (unsigned i = 0; i < static_cast<unsigned>(JITPlan::Tier::Count); ++i)
         queueLength += m_queues[i].size();
     return queueLength;
+}
+
+size_t JITWorklist::totalOngoingCompilations() const
+{
+    Locker locker { *m_lock };
+    return totalOngoingCompilations(locker);
 }
 
 size_t JITWorklist::totalOngoingCompilations(const AbstractLocker&) const

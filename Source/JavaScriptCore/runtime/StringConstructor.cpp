@@ -61,14 +61,12 @@ void StringConstructor::finishCreation(VM& vm, StringPrototype* stringPrototype)
 {
     Base::finishCreation(vm);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, stringPrototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->name, jsString(vm, vm.propertyNames->String.string()), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 StringConstructor* StringConstructor::create(VM& vm, Structure* structure, StringPrototype* stringPrototype)
 {
     JSGlobalObject* globalObject = structure->realm();
-    NativeExecutable* executable = vm.getHostFunction(callStringConstructor, ImplementationVisibility::Public, StringConstructorIntrinsic, constructWithStringConstructor, nullptr, vm.propertyNames->String.string());
+    NativeExecutable* executable = vm.getHostFunction(callStringConstructor, ImplementationVisibility::Public, StringConstructorIntrinsic, constructWithStringConstructor, nullptr, 1, vm.propertyNames->String.string());
     StringConstructor* constructor = new (NotNull, allocateCell<StringConstructor>(vm)) StringConstructor(vm, executable, globalObject, structure);
     constructor->finishCreation(vm, stringPrototype);
     return constructor;
@@ -129,7 +127,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCodePoint, (JSGlobalObject* globalObject, Cal
         double codePointAsDouble = callFrame->uncheckedArgument(i).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        uint32_t codePoint = static_cast<uint32_t>(codePointAsDouble);
+        uint32_t codePoint = truncateDoubleToUint32(codePointAsDouble);
 
         if (codePoint != codePointAsDouble || codePoint > UCHAR_MAX_VALUE)
             return throwVMError(globalObject, scope, createRangeError(globalObject, "Arguments contain a value that is out of range of code points"_s));

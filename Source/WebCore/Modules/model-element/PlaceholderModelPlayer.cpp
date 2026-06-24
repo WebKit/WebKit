@@ -79,7 +79,7 @@ std::optional<std::unique_ptr<ModelPlayerTransformState>> PlaceholderModelPlayer
     return m_transformState->clone();
 }
 
-void PlaceholderModelPlayer::load(Model&, LayoutSize)
+void PlaceholderModelPlayer::load(Model&, LayoutSize, bool)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -141,7 +141,7 @@ void PlaceholderModelPlayer::setLoop(bool loop)
 void PlaceholderModelPlayer::setPlaybackRate(double playbackRate, CompletionHandler<void(double effectivePlaybackRate)>&& completionHandler)
 {
     if (m_animationState.effectivePlaybackRate() == playbackRate)
-        return;
+        return completionHandler(playbackRate);
 
     m_animationState.setCurrentTime(m_animationState.currentTime(), MonotonicTime::now());
     m_animationState.setPlaybackRate(playbackRate);
@@ -162,7 +162,7 @@ bool PlaceholderModelPlayer::paused() const
 void PlaceholderModelPlayer::setPaused(bool paused, CompletionHandler<void(bool succeeded)>&& completionHandler)
 {
     if (m_animationState.paused() == paused)
-        return;
+        return completionHandler(true);
 
     m_animationState.setCurrentTime(m_animationState.currentTime(), MonotonicTime::now());
     m_animationState.setPaused(paused);

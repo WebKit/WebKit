@@ -394,6 +394,8 @@ void JSTestMapLike::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestMapLikeOwner::JSTestMapLikeOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestMapLikeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -406,7 +408,7 @@ void JSTestMapLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* contex
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestMapLike = static_cast<JSTestMapLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestMapLike->wrapped()).ptr(), jsTestMapLike);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestMapLike->wrapped(), jsTestMapLike);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

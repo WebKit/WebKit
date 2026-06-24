@@ -12,7 +12,6 @@
 #include <cstdint>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/parameter/outgoing_ssn_reset_request_parameter.h"
 #include "net/dcsctp/packet/parameter/parameter.h"

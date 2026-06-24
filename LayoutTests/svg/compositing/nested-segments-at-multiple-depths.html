@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 240px; height: 240px; }
+</style>
+</head>
+<body>
+<!-- A middle <g> between two outer anchors itself holds anchors and plain rects. DOM order must hold at both depths. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+    <g filter="url(#f)">
+        <rect x="10" y="10" width="100" height="100" fill="red"/>
+    </g>
+    <g>
+        <g filter="url(#f)">
+            <rect x="30" y="30" width="40" height="40" fill="green"/>
+        </g>
+        <rect x="50" y="50" width="40" height="40" fill="purple"/>
+        <g style="will-change: transform">
+            <rect x="70" y="70" width="40" height="40" fill="cyan"/>
+        </g>
+        <rect x="90" y="90" width="40" height="40" fill="orange"/>
+    </g>
+    <g style="will-change: transform">
+        <rect x="130" y="130" width="100" height="100" fill="blue"/>
+    </g>
+    <defs>
+        <filter id="f" x="-10%" y="-10%" width="120%" height="120%">
+            <feOffset dx="0" dy="0"/>
+        </filter>
+    </defs>
+</svg>
+</body>
+</html>

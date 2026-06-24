@@ -12,13 +12,23 @@
 
 namespace crc32c {
 
-// Reads a little-endian 32-bit integer from a 32-bit-aligned buffer.
+// Reads a little-endian 16-bit integer from bytes, not necessarily aligned.
+inline uint16_t ReadUint16LE(const uint8_t* buffer) {
+#if BYTE_ORDER_BIG_ENDIAN
+  return ((uint16_t{buffer[0]}) | (uint16_t{buffer[1]} << 8));
+#else   // !BYTE_ORDER_BIG_ENDIAN
+  uint16_t result;
+  // This should be optimized to a single instruction.
+  std::memcpy(&result, buffer, sizeof(result));
+  return result;
+#endif  // BYTE_ORDER_BIG_ENDIAN
+}
+
+// Reads a little-endian 32-bit integer from bytes, not necessarily aligned.
 inline uint32_t ReadUint32LE(const uint8_t* buffer) {
 #if BYTE_ORDER_BIG_ENDIAN
-  return ((static_cast<uint32_t>(static_cast<uint8_t>(buffer[0]))) |
-          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[1])) << 8) |
-          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[2])) << 16) |
-          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[3])) << 24));
+  return ((uint32_t{buffer[0]}) | (uint32_t{buffer[1]} << 8) |
+          (uint32_t{buffer[2]} << 16) | (uint32_t{buffer[3]} << 24));
 #else   // !BYTE_ORDER_BIG_ENDIAN
   uint32_t result;
   // This should be optimized to a single instruction.
@@ -27,17 +37,13 @@ inline uint32_t ReadUint32LE(const uint8_t* buffer) {
 #endif  // BYTE_ORDER_BIG_ENDIAN
 }
 
-// Reads a little-endian 64-bit integer from a 64-bit-aligned buffer.
+// Reads a little-endian 64-bit integer from bytes, not necessarily aligned.
 inline uint64_t ReadUint64LE(const uint8_t* buffer) {
 #if BYTE_ORDER_BIG_ENDIAN
-  return ((static_cast<uint64_t>(static_cast<uint8_t>(buffer[0]))) |
-          (static_cast<uint64_t>(static_cast<uint8_t>(buffer[1])) << 8) |
-          (static_cast<uint64_t>(static_cast<uint8_t>(buffer[2])) << 16) |
-          (static_cast<uint64_t>(static_cast<uint8_t>(buffer[3])) << 24) |
-          (static_cast<uint64_t>(static_cast<uint8_t>(buffer[4])) << 32) |
-          (static_cast<uint64_t>(static_cast<uint8_t>(buffer[5])) << 40) |
-          (static_cast<uint64_t>(static_cast<uint8_t>(buffer[6])) << 48) |
-          (static_cast<uint64_t>(static_cast<uint8_t>(buffer[7])) << 56));
+  return ((uint64_t{buffer[0]}) | (uint64_t{buffer[1]} << 8) |
+          (uint64_t{buffer[2]} << 16) | (uint64_t{buffer[3]} << 24) |
+          (uint64_t{buffer[4]} << 32) | (uint64_t{buffer[5]} << 40) |
+          (uint64_t{buffer[6]} << 48) | (uint64_t{buffer[7]} << 56));
 #else   // !BYTE_ORDER_BIG_ENDIAN
   uint64_t result;
   // This should be optimized to a single instruction.

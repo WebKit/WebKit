@@ -1,0 +1,289 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.Editing");
+
+    let frameTarget = null;
+    let frameDoc = null;
+    let containerNode = null;
+
+    // Backend commands take frame-local integer nodeIds; the frontend's `node.id` is a
+    // scoped string for frame-target nodes ("frame-<uuid>:<n>"). `backendNodeId` returns
+    // the raw integer.
+    function bid(node) { return node.backendNodeId; }
+
+    async function getOuterHTMLOf(node) {
+        let {outerHTML} = await frameTarget.DOMAgent.getOuterHTML(bid(node));
+        return outerHTML;
+    }
+
+    async function findChildElement(parent, predicate) {
+        await new Promise((resolve) => parent.getChildNodes(resolve));
+        return parent.children.find(predicate);
+    }
+
+    async function querySelectorBackend(parent, selector) {
+        // containerNode.querySelector returns a raw frame-local id; nodeForIdInFrameTarget
+        // scopes it and resolves the underlying DOMNode so we can read backendNodeId.
+        let rawId = await parent.querySelector(selector);
+        if (!rawId) return null;
+        return WI.domManager.nodeForIdInFrameTarget(rawId, frameTarget);
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and locate #container.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+            await frameTarget.ensureTargetExecutionContext();
+
+            frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = docEvent.data.document;
+            }
+            InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+
+            let htmlNode = await findChildElement(frameDoc, (n) => n.nodeName() === "HTML");
+            let bodyNode = await findChildElement(htmlNode, (n) => n.nodeName() === "BODY");
+            containerNode = await findChildElement(bodyNode, (n) => n.getAttribute && n.getAttribute("id") === "container");
+            InspectorTest.expectNotNull(containerNode, "Should find #container in the frame document.");
+            await new Promise((resolve) => containerNode.getChildNodes(resolve));
+        }
+    });
+
+    suite.addTestCase({
+        name: "SetAttributeValue",
+        description: "setAttributeValue on a frame-target node, undo, redo.",
+        async test() {
+            await frameTarget.DOMAgent.setAttributeValue(bid(containerNode), "data-edited", "yes");
+            let after = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(after.includes(`data-edited="yes"`), "Attribute should be set.");
+
+            await frameTarget.DOMAgent.undo();
+            let undone = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(!undone.includes(`data-edited="yes"`), "Attribute should be removed after undo.");
+
+            await frameTarget.DOMAgent.redo();
+            let redone = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(redone.includes(`data-edited="yes"`), "Attribute should be restored after redo.");
+
+            await frameTarget.DOMAgent.removeAttribute(bid(containerNode), "data-edited");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SetAttributesAsText",
+        description: "setAttributesAsText parses and applies multiple attributes in one call.",
+        async test() {
+            await frameTarget.DOMAgent.setAttributesAsText(bid(containerNode), `data-a="1" data-b="two"`, "");
+            let after = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(after.includes(`data-a="1"`), "data-a should be set.");
+            InspectorTest.expectThat(after.includes(`data-b="two"`), "data-b should be set.");
+
+            await frameTarget.DOMAgent.undo();
+            let undone = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(!undone.includes(`data-a`) && !undone.includes(`data-b`), "Both attributes should be removed after undo.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoveAttribute",
+        description: "removeAttribute drops an existing attribute and undo restores it.",
+        async test() {
+            await frameTarget.DOMAgent.removeAttribute(bid(containerNode), "data-role");
+            let after = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(!after.includes(`data-role`), "data-role should be removed.");
+
+            await frameTarget.DOMAgent.undo();
+            let undone = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(undone.includes(`data-role="frame-root"`), "data-role should be restored after undo.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SetNodeValue",
+        description: "setNodeValue replaces the text content of a text node.",
+        async test() {
+            let textPara = await querySelectorBackend(containerNode, "#text-node");
+            await new Promise((resolve) => textPara.getChildNodes(resolve));
+
+            let textNode = textPara.children.find((n) => n.nodeType() === Node.TEXT_NODE);
+            InspectorTest.expectNotNull(textNode, "#text-node should have a text child.");
+
+            await frameTarget.DOMAgent.setNodeValue(bid(textNode), "Replaced text.");
+            let after = await getOuterHTMLOf(textPara);
+            InspectorTest.expectThat(after.includes("Replaced text."), "Text content should be replaced.");
+
+            await frameTarget.DOMAgent.undo();
+            let undone = await getOuterHTMLOf(textPara);
+            InspectorTest.expectThat(undone.includes("Hello from cross-origin frame."), "Text content should be restored after undo.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SetNodeName",
+        description: "setNodeName replaces the element with a new tag, preserving children and attributes.",
+        async test() {
+            let heading = await querySelectorBackend(containerNode, "#heading");
+
+            let {nodeId: newBackendId} = await frameTarget.DOMAgent.setNodeName(bid(heading), "h2");
+            InspectorTest.expectNotNull(newBackendId, "setNodeName should return a new backend nodeId.");
+
+            // Re-query to find the new node via frontend resolution (frontend gets a scoped id).
+            let renamed = await querySelectorBackend(containerNode, "#heading");
+            InspectorTest.expectNotNull(renamed, "Renamed node should resolve in the frame target.");
+            InspectorTest.expectEqual(renamed.nodeName(), "H2", "New node should be H2.");
+            InspectorTest.expectEqual(renamed.getAttribute("id"), "heading", "Attribute should be preserved.");
+
+            await frameTarget.DOMAgent.undo();
+            let restored = await querySelectorBackend(containerNode, "#heading");
+            InspectorTest.expectEqual(restored.nodeName(), "H1", "Node should revert to H1 after undo.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoveNode",
+        description: "removeNode detaches a node and undo reattaches it.",
+        async test() {
+            let list = await querySelectorBackend(containerNode, "#list");
+            await new Promise((resolve) => list.getChildNodes(resolve));
+            let firstItem = list.children.find((n) => n.nodeName() === "LI");
+            InspectorTest.expectNotNull(firstItem, "Should find first LI.");
+
+            await frameTarget.DOMAgent.removeNode(bid(firstItem));
+            let after = await getOuterHTMLOf(list);
+            InspectorTest.expectThat(!after.includes("Item one"), "First LI should be removed.");
+            InspectorTest.expectThat(after.includes("Item two"), "Second LI should remain.");
+
+            await frameTarget.DOMAgent.undo();
+            let undone = await getOuterHTMLOf(list);
+            InspectorTest.expectThat(undone.includes("Item one"), "First LI should be restored after undo.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "InsertAdjacentHTML",
+        description: "insertAdjacentHTML at a position; undo removes; redo re-inserts.",
+        async test() {
+            let html = `<span class="injected">marker</span>`;
+            await frameTarget.DOMAgent.insertAdjacentHTML(bid(containerNode), "beforeend", html);
+            let after = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(after.includes(`class="injected"`), "Injected span should appear in container.");
+
+            await frameTarget.DOMAgent.undo();
+            let undone = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(!undone.includes(`class="injected"`), "Injected span should be removed after undo.");
+
+            await frameTarget.DOMAgent.redo();
+            let redone = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(redone.includes(`class="injected"`), "Injected span should be reinserted after redo.");
+
+            await frameTarget.DOMAgent.undo();
+        }
+    });
+
+    suite.addTestCase({
+        name: "InsertAdjacentHTML.InvalidPosition",
+        description: "insertAdjacentHTML with an invalid position should reject.",
+        async test() {
+            await InspectorTest.expectException(async () => {
+                await frameTarget.DOMAgent.insertAdjacentHTML(bid(containerNode), "INVALID_POSITION", "");
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SetOuterHTML",
+        description: "setOuterHTML replaces a subtree; undo restores it.",
+        async test() {
+            let textPara = await querySelectorBackend(containerNode, "#text-node");
+            let replacement = `<p id="text-node">After outer HTML.</p>`;
+            await frameTarget.DOMAgent.setOuterHTML(bid(textPara), replacement);
+
+            let newPara = await querySelectorBackend(containerNode, "#text-node");
+            let after = await getOuterHTMLOf(newPara);
+            InspectorTest.expectEqual(after, replacement, "Outer HTML should be replaced.");
+
+            await frameTarget.DOMAgent.undo();
+            let restored = await querySelectorBackend(containerNode, "#text-node");
+            let restoredHTML = await getOuterHTMLOf(restored);
+            InspectorTest.expectThat(restoredHTML.includes("Hello from cross-origin frame."), "Original text should be restored after undo.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "MoveTo",
+        description: "moveTo relocates a node within the frame document; undo returns it.",
+        async test() {
+            let list = await querySelectorBackend(containerNode, "#list");
+            let heading = await querySelectorBackend(containerNode, "#heading");
+
+            await frameTarget.DOMAgent.moveTo(bid(heading), bid(list));
+            let listHTML = await getOuterHTMLOf(list);
+            InspectorTest.expectThat(listHTML.includes(`id="heading"`), "Heading should now be inside #list.");
+
+            await frameTarget.DOMAgent.undo();
+        }
+    });
+
+    suite.addTestCase({
+        name: "FrontendDOMNode.SetAttributeAsText",
+        description: "WI.DOMNode.setAttribute on a cross-origin frame node should route through the frame's agent (not throw).",
+        async test() {
+            await new Promise((resolve, reject) => {
+                containerNode.setAttribute("data-role", `data-role="frame-root" data-frontend="ok"`, (error) => {
+                    if (error) reject(error);
+                    else resolve();
+                });
+            });
+            let after = await getOuterHTMLOf(containerNode);
+            InspectorTest.expectThat(after.includes(`data-frontend="ok"`), "Frontend setAttribute should succeed for frame-target node.");
+
+            await frameTarget.DOMAgent.undo();
+        }
+    });
+
+    // Whole-document patch destroys cached node references (containerNode, etc.), so it
+    // must run last.
+    suite.addTestCase({
+        name: "SetOuterHTML.WholeDocument",
+        description: "setOuterHTML with nodeId == 0 should patch the frame's whole document via DOMPatchSupport.",
+        async test() {
+            let documentNodeId = 0;
+            let newDocument = `<!DOCTYPE html><html><head><title>Patched</title></head><body><div id="patched-root">patched body</div></body></html>`;
+            await frameTarget.DOMAgent.setOuterHTML(documentNodeId, newDocument);
+
+            let newFrameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!newFrameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                newFrameDoc = docEvent.data.document;
+            }
+            let htmlNode = await findChildElement(newFrameDoc, (n) => n.nodeName() === "HTML");
+            let bodyNode = await findChildElement(htmlNode, (n) => n.nodeName() === "BODY");
+            let patched = await findChildElement(bodyNode, (n) => n.getAttribute && n.getAttribute("id") === "patched-root");
+            InspectorTest.expectNotNull(patched, "Patched element should exist after whole-document setOuterHTML.");
+
+            await frameTarget.DOMAgent.undo();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests FrameDOMAgent DOM editing commands: setAttributeValue, setAttributesAsText, removeAttribute, setNodeValue, setNodeName, removeNode, insertAdjacentHTML, setOuterHTML (subtree + whole document via DOMPatchSupport), and moveTo. Each command verifies the edit, undo, and where applicable redo, against a cross-origin iframe.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-frame.html"></iframe>
+</body>

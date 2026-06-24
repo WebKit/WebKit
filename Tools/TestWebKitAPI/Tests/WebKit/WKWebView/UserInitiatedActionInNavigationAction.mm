@@ -34,7 +34,7 @@
 #import <WebKit/_WKUserInitiatedAction.h>
 #import <wtf/RetainPtr.h>
 
-static bool finishedNavigation;
+static bool userInitiatedActionFinishedNavigation;
 
 @interface UserInitiatedActionInNavigationActionDelegate : NSObject <WKNavigationDelegate>
 @property (nonatomic, copy) void (^policyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));
@@ -54,7 +54,7 @@ static bool finishedNavigation;
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    finishedNavigation = true;
+    userInitiatedActionFinishedNavigation = true;
 }
 
 @end
@@ -89,8 +89,8 @@ public:
     void loadTest(NSString *test)
     {
         [webView loadRequest:[NSURLRequest requestWithURL:URLWithFragment(test)]];
-        TestWebKitAPI::Util::run(&finishedNavigation);
-        finishedNavigation = false;
+        TestWebKitAPI::Util::run(&userInitiatedActionFinishedNavigation);
+        userInitiatedActionFinishedNavigation = false;
     }
 
     void click()

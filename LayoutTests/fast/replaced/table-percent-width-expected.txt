@@ -20,6 +20,7 @@ FAIL getHeight('img-4') should be 36px. Was 98px.
 PASS getWidth('img-5') is '40px'
 FAIL getHeight('img-5') should be 36px. Was 98px.
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

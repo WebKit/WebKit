@@ -38,22 +38,22 @@ layer at (0,0) size 785x1750
               RenderText {#text} at (0,1) size 128x18
                 text run at (0,1) width 128: "Your degree program*"
             RenderMenuList {SELECT} at (325,75) size 180x20 [bgcolor=#FFFFFF]
-              RenderSelectFallbackButton {DIV} at (4,2) size 155x16
-                RenderText at (0,0) size 99x16
+              RenderBlock {DIV} at (4,2) size 155x16
+                RenderText {#text} at (0,0) size 99x16
                   text run at (0,0) width 99: "Program options"
             RenderBlock (floating) {SPAN} at (0,97) size 325x20 [color=#333333]
               RenderText {#text} at (0,1) size 111x18
                 text run at (0,1) width 111: "Your year of study*"
             RenderMenuList {SELECT} at (325,97) size 180x20 [bgcolor=#FFFFFF]
-              RenderSelectFallbackButton {DIV} at (4,2) size 155x16
-                RenderText at (0,0) size 143x16
+              RenderBlock {DIV} at (4,2) size 155x16
+                RenderText {#text} at (0,0) size 143x16
                   text run at (0,0) width 143: "Years you've been here"
             RenderBlock (floating) {SPAN} at (0,119) size 325x20 [color=#333333]
               RenderText {#text} at (0,1) size 156x18
                 text run at (0,1) width 156: "Shakespeare classes taken"
             RenderMenuList {SELECT} at (325,119) size 180x20 [bgcolor=#FFFFFF]
-              RenderSelectFallbackButton {DIV} at (4,2) size 155x16
-                RenderText at (0,0) size 84x16
+              RenderBlock {DIV} at (4,2) size 155x16
+                RenderText {#text} at (0,0) size 84x16
                   text run at (0,0) width 84: "Number taken"
             RenderBlock {P} at (0,152) size 560x21 [color=#333333]
               RenderText {#text} at (0,1) size 156x18
@@ -65,16 +65,16 @@ layer at (0,0) size 785x1750
               RenderText {#text} at (0,1) size 324x18
                 text run at (0,1) width 324: "What percentage of your research time is spent online?"
             RenderMenuList {SELECT} at (325,224) size 180x21 [bgcolor=#FFFFFF]
-              RenderSelectFallbackButton {DIV} at (4,2) size 155x16
-                RenderText at (0,0) size 119x16
+              RenderBlock {DIV} at (4,2) size 155x16
+                RenderText {#text} at (0,0) size 119x16
                   text run at (0,0) width 119: "Percentages of time"
             RenderBlock (floating) {SPAN} at (0,246) size 325x21 [color=#333333]
               RenderText {#text} at (0,1) size 302x38
                 text run at (0,1) width 302: "What is holding you back from doing more research"
                 text run at (0,21) width 40: "online?"
             RenderMenuList {SELECT} at (325,246) size 180x21 [bgcolor=#FFFFFF]
-              RenderSelectFallbackButton {DIV} at (4,2) size 155x16
-                RenderText at (0,0) size 55x16
+              RenderBlock {DIV} at (4,2) size 155x16
+                RenderText {#text} at (0,0) size 55x16
                   text run at (0,0) width 55: "Reasons"
             RenderBlock (floating) {SPAN} at (0,268) size 325x21 [color=#333333]
               RenderText {#text} at (0,1) size 222x18
@@ -113,15 +113,15 @@ layer at (0,0) size 785x1750
               RenderText {#text} at (0,1) size 277x18
                 text run at (0,1) width 277: "Which area of the ISE did you find most useful?"
             RenderMenuList {SELECT} at (325,450) size 180x21 [bgcolor=#FFFFFF]
-              RenderSelectFallbackButton {DIV} at (4,2) size 155x16
-                RenderText at (0,0) size 111x16
+              RenderBlock {DIV} at (4,2) size 155x16
+                RenderText {#text} at (0,0) size 111x16
                   text run at (0,0) width 111: "Sections of the ISE"
             RenderBlock (floating) {SPAN} at (0,472) size 325x21 [color=#333333]
               RenderText {#text} at (0,1) size 253x18
                 text run at (0,1) width 253: "How did you find the navigation of the ISE?"
             RenderMenuList {SELECT} at (325,472) size 180x21 [bgcolor=#FFFFFF]
-              RenderSelectFallbackButton {DIV} at (4,2) size 155x16
-                RenderText at (0,0) size 97x16
+              RenderBlock {DIV} at (4,2) size 155x16
+                RenderText {#text} at (0,0) size 97x16
                   text run at (0,0) width 97: "Level of difficulty"
             RenderBlock (floating) {SPAN} at (0,494) size 325x21 [color=#333333]
               RenderText {#text} at (0,1) size 209x18

@@ -95,7 +95,7 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
     if (parserInserted) {
         Ref document = element.document();
         if (RefPtr parser = document->scriptableDocumentParser(); parser && !document->isInDocumentWrite())
-            m_startLineNumber = parser->textPosition().m_line;
+            m_startPosition = parser->textPosition();
     }
 }
 
@@ -230,8 +230,8 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
 
     // Use the script start position captured when tree building (rather than the start line number)
     // to match other browsers.
-    if (m_startLineNumber > OrdinalNumber::beforeFirst() && scriptStartPosition.m_line > OrdinalNumber::beforeFirst())
-        m_startLineNumber = scriptStartPosition.m_line;
+    if (m_startPosition.m_line > OrdinalNumber::beforeFirst() && scriptStartPosition.m_line > OrdinalNumber::beforeFirst())
+        m_startPosition.m_line = scriptStartPosition.m_line;
 
     if (context->settingsValues().trustedTypesEnabled && sourceText != m_trustedScriptText) {
         auto trustedText = trustedTypeCompliantString(TrustedType::TrustedScript, context, sourceText, is<HTMLScriptElement>(element) ? "HTMLScriptElement text"_s : "SVGScriptElement text"_s);
@@ -385,7 +385,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
         auto scriptURL = document->encodingParseURL(sourceURL);
         document->willLoadScriptElement(scriptURL);
 
-        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(scriptURL, URL(), m_startLineNumber, element->nonce(), script->integrity(), String(), m_parserInserted))
+        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(scriptURL, URL(), m_startPosition.m_line, element->nonce(), script->integrity(), String(), m_parserInserted))
             return false;
 
         if (script->load(document, scriptURL)) {
@@ -436,7 +436,7 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
         Ref script = LoadableModuleScript::create(LoadableModuleScript::IsInline::No, nonce, integrity, referrerPolicy(), fetchPriority(), crossOriginMode,
             scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
 
-        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(moduleScriptRootURL, URL(), m_startLineNumber, nonce, String(integrity), String(), m_parserInserted))
+        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(moduleScriptRootURL, URL(), m_startPosition.m_line, nonce, String(integrity), String(), m_parserInserted))
             return false;
 
         m_loadableScript = script.copyRef();
@@ -453,10 +453,10 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
     ASSERT(document->contentSecurityPolicy());
     {
         CheckedRef contentSecurityPolicy = *document->contentSecurityPolicy();
-        if (!contentSecurityPolicy->allowScriptForStrictDynamic(URL(), document->url(), m_startLineNumber, element->nonce(), script->parameters().integrity(), sourceCode.source(), m_parserInserted))
+        if (!contentSecurityPolicy->allowScriptForStrictDynamic(URL(), document->url(), m_startPosition.m_line, element->nonce(), script->parameters().integrity(), sourceCode.source(), m_parserInserted))
             return false;
 
-        if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startLineNumber, sourceCode.source(), element, nonce, element->isInUserAgentShadowTree()))
+        if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startPosition, sourceCode.source(), element, nonce, element->isInUserAgentShadowTree()))
             return false;
     }
 
@@ -479,10 +479,10 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     if (!m_isExternalScript) {
         ASSERT(document->contentSecurityPolicy());
         CheckedRef contentSecurityPolicy = *document->contentSecurityPolicy();
-        if (!contentSecurityPolicy->allowScriptForStrictDynamic(URL(), document->url(), m_startLineNumber, element->nonce(), emptyString(), sourceCode.source(), m_parserInserted))
+        if (!contentSecurityPolicy->allowScriptForStrictDynamic(URL(), document->url(), m_startPosition.m_line, element->nonce(), emptyString(), sourceCode.source(), m_parserInserted))
             return;
 
-        if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startLineNumber, sourceCode.source(), element, element->nonce(), element->isInUserAgentShadowTree()))
+        if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startPosition, sourceCode.source(), element, element->nonce(), element->isInUserAgentShadowTree()))
             return;
     }
 
@@ -517,10 +517,10 @@ void ScriptElement::registerImportMap(const ScriptSourceCode& sourceCode)
     if (!m_isExternalScript) {
         ASSERT(document->contentSecurityPolicy());
         CheckedRef contentSecurityPolicy = *document->contentSecurityPolicy();
-        if (!contentSecurityPolicy->allowScriptForStrictDynamic(URL(), document->url(), m_startLineNumber, element->nonce(), emptyString(), sourceCode.source(), m_parserInserted))
+        if (!contentSecurityPolicy->allowScriptForStrictDynamic(URL(), document->url(), m_startPosition.m_line, element->nonce(), emptyString(), sourceCode.source(), m_parserInserted))
             return;
 
-        if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startLineNumber, sourceCode.source(), element, element->nonce(), element->isInUserAgentShadowTree()))
+        if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startPosition, sourceCode.source(), element, element->nonce(), element->isInUserAgentShadowTree()))
             return;
     }
 
@@ -690,10 +690,10 @@ void ScriptElement::registerSpeculationRules(const ScriptSourceCode& sourceCode)
         if (!contentSecurityPolicy)
             return;
 
-        if (!contentSecurityPolicy->allowScriptForStrictDynamic(URL(), document->url(), m_startLineNumber, element->nonce(), emptyString(), sourceCode.source(), m_parserInserted))
+        if (!contentSecurityPolicy->allowScriptForStrictDynamic(URL(), document->url(), m_startPosition.m_line, element->nonce(), emptyString(), sourceCode.source(), m_parserInserted))
             return;
 
-        if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startLineNumber, sourceCode.source(), element, element->nonce(), element->isInUserAgentShadowTree()))
+        if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startPosition, sourceCode.source(), element, element->nonce(), element->isInUserAgentShadowTree()))
             return;
     }
 

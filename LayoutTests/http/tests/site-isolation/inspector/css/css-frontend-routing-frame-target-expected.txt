@@ -1,0 +1,32 @@
+Test that the Web Inspector frontend routes CSS commands and events to a cross-origin iframe's FrameCSSAgent under site isolation.
+
+
+
+== Running test suite: SiteIsolation.CSS.FrontendRouting.FrameTarget
+-- Running test case: SiteIsolation.CSS.FrontendRouting.FrameTarget.Setup
+PASS: Should find a child frame target.
+PASS: Should find the target paragraph node.
+PASS: Target node's owningTarget should be the child frame target.
+
+-- Running test case: SiteIsolation.CSS.FrontendRouting.FrameTarget.StyleSheetsTrackedPerTarget
+PASS: Child frame should contribute at least one tracked stylesheet to WI.cssManager.
+
+-- Running test case: SiteIsolation.CSS.FrontendRouting.FrameTarget.StyleSheetIdentifierIsScoped
+PASS: Sheets from different targets must be distinct WI.CSSStyleSheet instances.
+PASS: Page-target sheet should not be tagged as owned by the child frame target.
+PASS: Frame-target sheet's owningTarget should be the child frame target.
+PASS: Page-target sheet's id getter should return the raw protocol id.
+PASS: Frame-target sheet's id getter should return the raw protocol id.
+
+-- Running test case: SiteIsolation.CSS.FrontendRouting.FrameTarget.StylesForNodeRoutesToFrameTarget
+PASS: Should have matched CSS rules from the frame target.
+PASS: Should have a rule matching .test-class from the frame target's stylesheet.
+PASS: Matched rule's ownerStyleSheet.owningTarget should be the child frame target (verifies styleSheetForIdentifier lookup with target).
+PASS: .test-class rule should have a color property.
+PASS: Initial color value should be 'red'.
+
+-- Running test case: SiteIsolation.CSS.FrontendRouting.FrameTarget.ChangeStyleTextRoutesToFrameTarget
+PASS: Should still have the .test-class rule.
+PASS: Frame target should still have the .test-class rule.
+PASS: Color value on the frame target should be 'blue' after the frontend edit.
+

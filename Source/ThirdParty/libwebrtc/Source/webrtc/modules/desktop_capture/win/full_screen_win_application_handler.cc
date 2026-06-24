@@ -36,10 +36,16 @@ void RecordFullScreenDetectorResult(FullScreenDetectorResult result) {
       static_cast<int>(FullScreenDetectorResult::kMaxValue));
 }
 
-void RecordFullScreenFindEditorResult(FullScreenFindEditorResult result) {
-  RTC_HISTOGRAM_ENUMERATION(
-      "WebRTC.Screenshare.FullScreenFindEditorResult", static_cast<int>(result),
-      static_cast<int>(FullScreenFindEditorResult::kMaxValue));
+void MaybeRecordFullScreenFindEditorResult(
+    FullScreenFindEditorResult result,
+    std::optional<FullScreenFindEditorResult>& previous_result) {
+  if (previous_result != result) {
+    RTC_HISTOGRAM_ENUMERATION(
+        "WebRTC.Screenshare.FullScreenFindEditorResult",
+        static_cast<int>(result),
+        static_cast<int>(FullScreenFindEditorResult::kMaxValue));
+    previous_result = result;
+  }
 }
 
 namespace webrtc {
@@ -210,7 +216,7 @@ DesktopCapturer::SourceId FullScreenPowerPointHandler::FindFullScreenWindow(
 
 DesktopCapturer::SourceId FullScreenPowerPointHandler::FindEditorWindow(
     const DesktopCapturer::SourceList& window_list) const {
-  if (!UseHeuristicForFindingEditor() || window_list.empty()) {
+  if (window_list.empty()) {
     return 0;
   }
 
@@ -246,15 +252,17 @@ DesktopCapturer::SourceId FullScreenPowerPointHandler::FindEditorWindow(
   }
 
   if (editor_ids.size() != 1) {
-    RecordFullScreenFindEditorResult(
-        FullScreenFindEditorResult::kFailureDueToSameTitleWindows);
+    MaybeRecordFullScreenFindEditorResult(
+        FullScreenFindEditorResult::kFailureDueToSameTitleWindows,
+        previous_find_editor_result_);
     // If `editor_ids` has more than one id, then there are multiple open
     // editors with the same title as the full screen slide show and then
     // there's no way of knowing which editor has opened the slide show.
     return 0;
   }
 
-  RecordFullScreenFindEditorResult(FullScreenFindEditorResult::kSuccess);
+  MaybeRecordFullScreenFindEditorResult(FullScreenFindEditorResult::kSuccess,
+                                        previous_find_editor_result_);
   return *editor_ids.begin();
 }
 
@@ -265,9 +273,6 @@ void FullScreenPowerPointHandler::SetSlideShowCreationStateForTest(
 }
 
 void FullScreenPowerPointHandler::SetEditorWasFound() {
-  if (!UseHeuristicForFindingEditor())
-    return;
-
   // Mark `was_slide_show_created_after_capture_started_` true if editor was
   // found for the chosen slide show window.
   // This ensures that when we call FindFullScreenWindow, the function finds the

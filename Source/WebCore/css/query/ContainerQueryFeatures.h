@@ -30,11 +30,14 @@ namespace WebCore {
 
 class CSSToLengthConversionData;
 class RenderBox;
-class RenderStyle;
 class RenderView;
 
 namespace CSS {
 enum class Category : uint8_t;
+}
+
+namespace Style {
+class ComputedStyle;
 }
 
 namespace CQ {
@@ -47,6 +50,10 @@ const MQ::FeatureSchema& blockSize();
 const MQ::FeatureSchema& aspectRatio();
 const MQ::FeatureSchema& orientation();
 const MQ::FeatureSchema& style();
+
+// Returns the scroll-state query feature schema for `name`
+// (scrollable/scrolled/stuck/snapped), or nullptr. Used inside scroll-state().
+const MQ::FeatureSchema* scrollState(const AtomString&);
 
 Vector<const MQ::FeatureSchema*> allSchemas();
 

@@ -241,7 +241,7 @@ def get_os_dimensions(os):
     elif os == "win":
         return {"os": "Windows-10", "cores": "8", "cpu": "x86-64"}
     elif os == "linux":
-        return {"os": "Ubuntu-22.04", "cores": "8", "cpu": "x86-64"}
+        return {"os": "Ubuntu-24.04", "cores": "8", "cpu": "x86-64"}
     return {}
 
 def libyuv_ci_builder(name, dimensions, properties, triggered_by):
@@ -286,9 +286,6 @@ def get_build_properties(bucket):
             "enable_cloud_profiler": True,
             "enable_cloud_trace": True,
             "enable_monitoring": True,
-        },
-        "$depot_tools/osx_sdk": {
-            "sdk_version": "17a324"
         },
     }
 

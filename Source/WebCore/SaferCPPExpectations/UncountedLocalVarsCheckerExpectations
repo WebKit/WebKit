@@ -15,119 +15,52 @@ Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
 Modules/webaudio/StereoPannerNode.cpp
 [ iOS ] Modules/webdatabase/DatabaseTracker.cpp
-[ iOS ] accessibility/AccessibilityNodeObject.cpp
 accessibility/AccessibilityObject.cpp
-[ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-[ iOS ] bindings/js/CommonVM.cpp
 bindings/js/JSAbortSignalCustom.cpp
 bindings/js/JSCSSRuleListCustom.cpp
 bindings/js/JSCSSStyleDeclarationCustom.cpp
 bindings/js/JSCustomElementInterface.cpp
-bindings/js/JSCustomElementRegistryCustom.cpp
-bindings/js/JSDOMBindingSecurity.cpp
-bindings/js/JSDOMGlobalObject.cpp
-bindings/js/JSDOMWindowBase.cpp
-bindings/js/JSErrorHandler.cpp
 bindings/js/JSHTMLElementCustom.cpp
-bindings/js/JSHistoryCustom.cpp
 bindings/js/JSIDBCursorCustom.cpp
 bindings/js/JSIDBRequestCustom.cpp
-bindings/js/JSLazyEventListener.cpp
 bindings/js/JSLocationCustom.cpp
 bindings/js/JSMessagePortCustom.cpp
 bindings/js/JSNavigateEventCustom.cpp
-bindings/js/JSNodeCustom.cpp
-bindings/js/JSObservableArray.cpp
 bindings/js/JSPluginElementFunctions.cpp
-bindings/js/JSPopStateEventCustom.cpp
 bindings/js/JSResizeObserverCustom.cpp
-bindings/js/JSSubscriberCustom.cpp
 bindings/js/JSTextTrackCueCustom.cpp
-bindings/js/ScriptCachedFrameData.cpp
-bindings/js/ScriptModuleLoader.cpp
-bindings/js/StructuredClone.cpp
 css/CSSStyleSheet.cpp
 css/SelectorChecker.cpp
-css/ShorthandSerializer.cpp
 css/values/CSSValueAggregates.h
 dom/ContainerNode.cpp
 dom/Position.cpp
-dom/Range.cpp
-dom/SpaceSplitString.cpp
-editing/DeleteSelectionCommand.cpp
-editing/TextCheckingHelper.cpp
-[ iOS ] editing/ios/DictationCommandIOS.cpp
-[ iOS ] editing/ios/EditorIOS.mm
-[ iOS ] html/HTMLAnchorElement.cpp
 html/HTMLFormElement.cpp
-[ iOS ] html/HTMLImageElement.cpp
-[ iOS ] html/HTMLImageLoader.cpp
 html/HTMLMediaElement.cpp
-html/HTMLOptionElement.cpp
-[ iOS ] html/HTMLPictureElement.cpp
-html/OffscreenCanvas.cpp
-html/canvas/CanvasRenderingContext2DBase.cpp
-inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorIdentifierRegistry.cpp
-inspector/InspectorNodeFinder.cpp
-inspector/agents/InspectorAnimationAgent.cpp
 inspector/agents/InspectorCSSAgent.cpp
-inspector/agents/InspectorCanvasAgent.cpp
-inspector/agents/InspectorDOMAgent.cpp
 inspector/agents/InspectorNetworkAgent.cpp
 inspector/agents/InspectorPageAgent.cpp
-inspector/agents/page/PageCanvasAgent.cpp
-inspector/agents/page/PageNetworkAgent.cpp
-[ iOS ] loader/cache/CachedRawResource.cpp
 page/EventHandler.cpp
-page/FocusController.cpp
-page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
-[ iOS ] page/LocalDOMWindow.cpp
 [ iOS ] page/LocalFrameView.cpp
-page/PointerCaptureController.cpp
 [ iOS ] page/Quirks.cpp
-[ iOS ] page/cocoa/ContentChangeObserver.cpp
-[ iOS ] page/ios/EventHandlerIOS.mm
 [ iOS ] page/ios/FrameIOS.mm
 [ Mac ] page/mac/ServicesOverlayController.mm
-[ iOS ] page/scrolling/AsyncScrollingCoordinator.cpp
-[ iOS ] platform/PreviewConverter.cpp
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
-[ iOS ] platform/audio/ios/MediaSessionManagerIOS.mm
-platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp
-[ iOS ] platform/ios/DragImageIOS.mm
-[ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
 rendering/RenderCounter.cpp
-[ iOS ] rendering/RenderImage.cpp
 rendering/RenderLayer.cpp
+rendering/RenderLayerBackingSVGAdditions.cpp
 [ iOS ] rendering/RenderLayerCompositor.cpp
-[ iOS ] rendering/RenderSelectFallbackButton.cpp
 rendering/RenderTreeAsText.cpp
-rendering/cocoa/RenderThemeCocoa.mm
-[ iOS ] rendering/ios/RenderThemeIOS.mm
-rendering/svg/legacy/LegacyRenderSVGTransformableContainer.cpp
-rendering/updating/RenderTreeBuilderFirstLetter.cpp
 style/ElementRuleCollector.cpp
-style/MatchResultCache.cpp
-style/PageRuleCollector.cpp
-style/RuleSetBuilder.cpp
-style/StyleBuilder.cpp
 style/StyleBuilderCustom.h
-style/StyleDifference.cpp
-style/StyleExtractorCustom.h
+style/StyleDocumentScope.cpp
 style/StyleInvalidationFunctions.h
-style/StyleRelations.cpp
-style/StyleScope.cpp
-[ iOS ] style/StyleScopeRuleSets.cpp
 style/UserAgentStyle.cpp
 style/computed/StyleComputedStyleBase+SettersInlines.h
 style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
-svg/SVGClipPathElement.cpp
 svg/SVGUseElement.cpp
 testing/Internals.cpp
 testing/LegacyMockCDM.cpp
-workers/service/ServiceWorkerContainer.cpp
-xml/XSLImportRule.cpp

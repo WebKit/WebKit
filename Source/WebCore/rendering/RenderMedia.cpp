@@ -40,7 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMedia);
 
-RenderMedia::RenderMedia(Type type, HTMLMediaElement& element, RenderStyle&& style)
+RenderMedia::RenderMedia(Type type, HTMLMediaElement& element, Style::ComputedStyle&& style)
     : RenderImage(type, element, WTF::move(style), ReplacedFlag::IsMedia)
 {
     setHasShadowControls(true);
@@ -60,7 +60,7 @@ void RenderMedia::layout()
         protect(mediaElement())->layoutSizeChanged();
 }
 
-void RenderMedia::styleDidChange(Style::Difference difference, const RenderStyle* oldStyle)
+void RenderMedia::styleDidChange(Style::Difference difference, const Style::ComputedStyle* oldStyle)
 {
     RenderImage::styleDidChange(difference, oldStyle);
     if (!oldStyle || style().usedVisibility() != oldStyle->usedVisibility())
@@ -68,6 +68,9 @@ void RenderMedia::styleDidChange(Style::Difference difference, const RenderStyle
 
     if (!oldStyle || style().dynamicRangeLimit() != oldStyle->dynamicRangeLimit())
         protect(mediaElement())->dynamicRangeLimitDidChange(style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
+
+    if (oldStyle && style().transform() != oldStyle->transform())
+        protect(mediaElement())->layoutSizeChanged();
 }
 
 } // namespace WebCore

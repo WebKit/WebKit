@@ -41,7 +41,13 @@ class TestScreenCastStreamProvider {
     virtual ~Observer() = default;
   };
 
-  enum FrameDefect { None, EmptyData, CorruptedData, CorruptedMetadata };
+  enum FrameDefect {
+    None,
+    EmptyData,
+    CorruptedData,
+    CorruptedMetadata,
+    InvalidStride
+  };
 
   explicit TestScreenCastStreamProvider(Observer* observer,
                                         uint32_t width,

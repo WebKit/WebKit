@@ -41,12 +41,12 @@ void FilterReference::loadExternalDocumentIfNeeded(CachedResourceLoader& cachedR
     if (!SVGURIReference::isExternalURIReference(url.resolved.string(), *protect(cachedResourceLoader.document())))
         return;
     lazyInitialize(cachedSVGDocumentReference, CachedSVGDocumentReference::create(url));
-    cachedSVGDocumentReference->load(cachedResourceLoader, options);
+    cachedSVGDocumentReference->load(protect(cachedResourceLoader), options);
 }
 
 // MARK: - Conversion
 
-auto ToCSS<FilterReference>::operator()(const FilterReference& value, const RenderStyle& style) -> CSS::FilterReference
+auto ToCSS<FilterReference>::operator()(const FilterReference& value, const Style::ComputedStyle& style) -> CSS::FilterReference
 {
     return { .url = toCSS(value.url, style) };
 }

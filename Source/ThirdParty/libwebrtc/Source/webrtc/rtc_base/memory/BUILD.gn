@@ -36,7 +36,6 @@ rtc_library("fifo_buffer") {
     "..:checks",
     "..:macromagic",
     "..:stream",
-    "../../api:array_view",
     "../../api:sequence_checker",
     "../../api/task_queue",
     "../../api/task_queue:pending_task_safety_flag",
@@ -59,8 +58,7 @@ rtc_library("unittests") {
     ":always_valid_pointer",
     ":fifo_buffer",
     "..:stream",
-    "..:threading",
-    "../../api:array_view",
+    "../../test:run_loop",
     "../../test:test_support",
   ]
 }

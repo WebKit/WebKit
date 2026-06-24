@@ -29,6 +29,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/ios/UserInterfaceSwizzler.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/mac/AppKitSPI.h"
 #import <WebCore/Color.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -37,14 +38,11 @@
 #import <WebKit/_WKFeature.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 #import "Helpers/ios/IOSMouseEventTestHarness.h"
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SampledPageTopColorAdditionsBefore.mm>
 #endif
 
 #define EXPECT_IN_RANGE(actual, min, max) \
@@ -137,9 +135,474 @@ static String createHTMLGradientWithColorStops(String&& direction, Vector<String
     return gradientBuilder.toString();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SampledPageTopColorAdditionsAfter.mm>
+#if ENABLE(MANAGED_REFRESHCONTROL_APPEARANCE)
+
+static RetainPtr<TestWKWebView> createWebViewWithRefreshControl()
+{
+    RetainPtr webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+#if PLATFORM(MAC)
+    RetainPtr refreshController = adoptNS([[NSRefreshController alloc] init]);
+    [webView setRefreshController:refreshController];
+#else
+    RetainPtr refreshControl = adoptNS([[UIRefreshControl alloc] init]);
+    [[webView scrollView] setRefreshControl:refreshControl];
 #endif
+    return webView;
+}
+
+static void expectRefreshControlLightAppearance(TestWKWebView *webView)
+{
+#if PLATFORM(MAC)
+    RetainPtr<NSString> appearanceName = webView.refreshController.refreshControl.appearance.name;
+    EXPECT_TRUE([appearanceName isEqualToString:NSAppearanceNameAqua]);
+#else
+    EXPECT_EQ([webView scrollView].refreshControl.traitOverrides.userInterfaceStyle, UIUserInterfaceStyleLight);
+#endif
+}
+
+static void expectRefreshControlDarkAppearance(TestWKWebView *webView)
+{
+#if PLATFORM(MAC)
+    RetainPtr<NSString> appearanceName = webView.refreshController.refreshControl.appearance.name;
+    EXPECT_TRUE([appearanceName isEqualToString:NSAppearanceNameDarkAqua]);
+#else
+    EXPECT_EQ([webView scrollView].refreshControl.traitOverrides.userInterfaceStyle, UIUserInterfaceStyleDark);
+#endif
+}
+
+static void waitForUnderPageBackgroundColorToChange(TestWKWebView *webView, Function<void()>&& trigger)
+{
+    bool done = false;
+    RetainPtr observer = adoptNS([[TestKVOWrapper alloc] initWithObservable:webView keyPath:@"underPageBackgroundColor" callback:[&done] {
+        done = true;
+    }]);
+
+    trigger();
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+static void testLightToDarkBackgroundColorChange()
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body>Test"];
+    expectRefreshControlLightAppearance(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.body.style.backgroundColor = 'black'"];
+    });
+    expectRefreshControlDarkAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceLightToDark)
+{
+    testLightToDarkBackgroundColorChange();
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST(SampledPageTopColor, RefreshControlAppearanceLightToDarkIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testLightToDarkBackgroundColorChange();
+}
+#endif
+
+static void testDarkToLightBackgroundColorChange()
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='background-color: black'>Test"];
+    });
+    expectRefreshControlDarkAppearance(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.body.style.backgroundColor = 'white'"];
+    });
+    expectRefreshControlLightAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceDarkToLight)
+{
+    testDarkToLightBackgroundColorChange();
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST(SampledPageTopColor, RefreshControlAppearanceDarkToLightIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testDarkToLightBackgroundColorChange();
+}
+#endif
+
+static void testLightToDarkPageNavigation()
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body>Test"];
+    expectRefreshControlLightAppearance(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='background-color: black'>Test"];
+    });
+    expectRefreshControlDarkAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceLightToDarkNavigation)
+{
+    testLightToDarkPageNavigation();
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST(SampledPageTopColor, RefreshControlAppearanceLightToDarkNavigationIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testLightToDarkPageNavigation();
+}
+#endif
+
+static void testDarkToLightPageNavigation()
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='background-color: black'>Test"];
+    });
+    expectRefreshControlDarkAppearance(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body>Test"];
+    });
+    expectRefreshControlLightAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceDarkToLightNavigation)
+{
+    testDarkToLightPageNavigation();
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST(SampledPageTopColor, RefreshControlAppearanceDarkToLightNavigationIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testDarkToLightPageNavigation();
+}
+#endif
+
+static NSString *fixedHeaderPageHTML(NSString *headerColor, NSString *bodyColor)
+{
+    return [NSString stringWithFormat:@""
+        "<style>"
+        "    html, body { margin: 0; width: 100%%; height: 100%%; }"
+        "    .tall { height: 4000px; }"
+        "    header { position: fixed; top: 0; left: 0; width: 100%%; height: 100px; background: %@; }"
+        "</style>"
+        "<body style='background-color: %@'>"
+        "    <header></header>"
+        "    <p>Test</p>"
+        "    <div class='tall'></div>"
+        "</body>", headerColor, bodyColor];
+}
+
+static void addObscuredTopContentInsets(TestWKWebView *webView)
+{
+#if PLATFORM(MAC)
+    [webView _setTopContentInset:75];
+#else
+    auto insets = UIEdgeInsetsMake(75, 0, 0, 0);
+    auto insetSize = UIEdgeInsetsInsetRect([webView bounds], insets).size;
+    [webView _setObscuredInsets:insets];
+    RetainPtr scrollView = [webView scrollView];
+    [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    [scrollView setContentInset:insets];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:insetSize minimumUnobscuredSizeOverride:insetSize maximumUnobscuredSizeOverride:insetSize];
+#endif
+}
+
+static void scrollPageDown(TestWKWebView *webView)
+{
+#if PLATFORM(MAC)
+    {
+        __block bool done = false;
+        [webView _startMonitoringWheelEventsForTesting:^{
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    }
+    [webView waitForNextPresentationUpdate];
+
+    [webView wheelEventAtPoint:NSMakePoint(400, 300) wheelDelta:CGSizeMake(0, -1) phase:kCGScrollPhaseBegan momentumPhase:kCGMomentumScrollPhaseNone];
+    [webView wheelEventAtPoint:NSMakePoint(400, 300) wheelDelta:CGSizeMake(0, -200) phase:kCGScrollPhaseChanged momentumPhase:kCGMomentumScrollPhaseNone];
+    [webView wheelEventAtPoint:NSMakePoint(400, 300) wheelDelta:CGSizeMake(0, 0) phase:kCGScrollPhaseEnded momentumPhase:kCGMomentumScrollPhaseNone];
+
+    {
+        __block bool done = false;
+        [webView _waitForWheelEventsToCompleteForTesting:^{
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    }
+    [webView waitForNextPresentationUpdate];
+#else
+    RetainPtr scrollView = [webView scrollView];
+    auto contentInsetTop = [scrollView contentInset].top;
+    [scrollView setContentOffset:CGPointMake(0, -contentInsetTop + 200)];
+    [webView waitForNextVisibleContentRectUpdate];
+    [webView waitForNextPresentationUpdate];
+#endif
+}
+
+static void testFixedHeaderWithInsetsLightHeader(bool expectStaleAfterScroll)
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+    addObscuredTopContentInsets(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:fixedHeaderPageHTML(@"white", @"black")];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlLightAppearance(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.querySelector('header').style.backgroundColor = 'black'; document.body.style.backgroundColor = 'white'"];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlDarkAppearance(webView.get());
+
+    scrollPageDown(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.querySelector('header').style.backgroundColor = 'white'; document.body.style.backgroundColor = 'black'"];
+    });
+    [webView waitForNextPresentationUpdate];
+
+    if (expectStaleAfterScroll)
+        expectRefreshControlDarkAppearance(webView.get());
+    else
+        expectRefreshControlLightAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceWithInsetsLightHeader)
+{
+#if PLATFORM(MAC)
+    testFixedHeaderWithInsetsLightHeader(true);
+#else
+    testFixedHeaderWithInsetsLightHeader(false);
+#endif
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST(SampledPageTopColor, RefreshControlAppearanceWithInsetsLightHeaderIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testFixedHeaderWithInsetsLightHeader(true);
+}
+#endif
+
+static void testFixedHeaderWithInsetsDarkHeader(bool expectStaleAfterScroll)
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+    addObscuredTopContentInsets(webView.get());
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:fixedHeaderPageHTML(@"black", @"white")];
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlDarkAppearance(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.querySelector('header').style.backgroundColor = 'white'; document.body.style.backgroundColor = 'black'"];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlLightAppearance(webView.get());
+
+    scrollPageDown(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.querySelector('header').style.backgroundColor = 'black'; document.body.style.backgroundColor = 'white'"];
+    });
+    [webView waitForNextPresentationUpdate];
+
+    if (expectStaleAfterScroll)
+        expectRefreshControlLightAppearance(webView.get());
+    else
+        expectRefreshControlDarkAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceWithInsetsDarkHeader)
+{
+#if PLATFORM(MAC)
+    testFixedHeaderWithInsetsDarkHeader(true);
+#else
+    testFixedHeaderWithInsetsDarkHeader(false);
+#endif
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST(SampledPageTopColor, RefreshControlAppearanceWithInsetsDarkHeaderIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testFixedHeaderWithInsetsDarkHeader(true);
+}
+#endif
+
+static void testFixedHeaderWithoutInsetsLightHeader()
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:fixedHeaderPageHTML(@"white", @"black")];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlDarkAppearance(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.querySelector('header').style.backgroundColor = 'black'; document.body.style.backgroundColor = 'white'"];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlLightAppearance(webView.get());
+
+    scrollPageDown(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.querySelector('header').style.backgroundColor = 'white'; document.body.style.backgroundColor = 'black'"];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlDarkAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceWithoutInsetsLightHeader)
+{
+    testFixedHeaderWithoutInsetsLightHeader();
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST(SampledPageTopColor, RefreshControlAppearanceWithoutInsetsLightHeaderIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testFixedHeaderWithoutInsetsLightHeader();
+}
+#endif
+
+static void testFixedHeaderWithoutInsetsDarkHeader()
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:fixedHeaderPageHTML(@"black", @"white")];
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlLightAppearance(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.querySelector('header').style.backgroundColor = 'white'; document.body.style.backgroundColor = 'black'"];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlDarkAppearance(webView.get());
+
+    scrollPageDown(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView objectByEvaluatingJavaScript:@"document.querySelector('header').style.backgroundColor = 'black'; document.body.style.backgroundColor = 'white'"];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlLightAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceWithoutInsetsDarkHeader)
+{
+    testFixedHeaderWithoutInsetsDarkHeader();
+}
+
+#if PLATFORM(IOS_FAMILY)
+TEST(SampledPageTopColor, RefreshControlAppearanceWithoutInsetsDarkHeaderIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testFixedHeaderWithoutInsetsDarkHeader();
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+
+static void testScrollViewBackgroundColorOverride()
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='background-color: black'>Test"];
+    });
+    expectRefreshControlDarkAppearance(webView.get());
+
+    [[webView scrollView] setBackgroundColor:[UIColor whiteColor]];
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlLightAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceScrollViewBackgroundColor)
+{
+    testScrollViewBackgroundColorOverride();
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceScrollViewBackgroundColorIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testScrollViewBackgroundColorOverride();
+}
+
+static void testScrollViewBackgroundColorOverrideWithInsets()
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+    addObscuredTopContentInsets(webView.get());
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:fixedHeaderPageHTML(@"black", @"black")];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlDarkAppearance(webView.get());
+
+    [[webView scrollView] setBackgroundColor:[UIColor whiteColor]];
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlDarkAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceScrollViewBGWithInsets)
+{
+    testScrollViewBackgroundColorOverrideWithInsets();
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceScrollViewBGWithInsetsIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testScrollViewBackgroundColorOverrideWithInsets();
+}
+
+static void testScrollViewBackgroundColorOverrideWithoutInsets()
+{
+    RetainPtr webView = createWebViewWithRefreshControl();
+
+    waitForUnderPageBackgroundColorToChange(webView.get(), [&] {
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:fixedHeaderPageHTML(@"black", @"black")];
+    });
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlDarkAppearance(webView.get());
+
+    [[webView scrollView] setBackgroundColor:[UIColor whiteColor]];
+    [webView waitForNextPresentationUpdate];
+    expectRefreshControlLightAppearance(webView.get());
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceScrollViewBGWithoutInsets)
+{
+    testScrollViewBackgroundColorOverrideWithoutInsets();
+}
+
+TEST(SampledPageTopColor, RefreshControlAppearanceScrollViewBGWithoutInsetsIPad)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    testScrollViewBackgroundColorOverrideWithoutInsets();
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+#endif // ENABLE(MANAGED_REFRESHCONTROL_APPEARANCE)
+
 
 TEST(SampledPageTopColor, ZeroMaxDifference)
 {
@@ -636,6 +1099,59 @@ TEST(SampledPageTopColor, TopColorExtensionHeightDoesNotIncreaseWithoutRefreshCo
     [scrollView setContentOffset:CGPointMake(0, -75) animated:NO];
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ(colorExtensionViewHeight(), 75.f);
+}
+
+TEST(SampledPageTopColor, ColorExtensionViewDeallocatesWithWebView)
+{
+    WeakObjCPtr<UIView> weakWebViewPtr;
+    WeakObjCPtr<UIView> weakColorExtensionViewPtr;
+
+    @autoreleasepool {
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+        auto insets = UIEdgeInsetsMake(75, 0, 0, 0);
+        auto insetSize = UIEdgeInsetsInsetRect([webView bounds], insets).size;
+        [webView _setObscuredInsets:insets];
+        RetainPtr scrollView = [webView scrollView];
+
+        [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+        [scrollView setContentInset:insets];
+
+        RetainPtr refreshControl = adoptNS([[UIRefreshControl alloc] init]);
+        [scrollView setRefreshControl:refreshControl];
+
+        [webView _overrideLayoutParametersWithMinimumLayoutSize:insetSize minimumUnobscuredSizeOverride:insetSize maximumUnobscuredSizeOverride:insetSize];
+
+        [webView synchronouslyLoadTestPageNamed:@"top-fixed-element"];
+        [webView waitForNextPresentationUpdate];
+
+        weakColorExtensionViewPtr = [webView _colorExtensionViewForTesting:UIRectEdgeTop];
+        EXPECT_NOT_NULL(weakColorExtensionViewPtr.get());
+
+        [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@""];
+        [webView waitForNextPresentationUpdate];
+
+        weakWebViewPtr = webView;
+        [webView removeFromTestWindow];
+    }
+
+    while (true) {
+        @autoreleasepool {
+            if (!weakWebViewPtr.get())
+                break;
+
+            TestWebKitAPI::Util::spinRunLoop();
+        }
+    }
+
+    while (true) {
+        @autoreleasepool {
+            if (!weakColorExtensionViewPtr.get())
+                break;
+
+            TestWebKitAPI::Util::spinRunLoop();
+        }
+    }
 }
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(CONTENT_INSET_BACKGROUND_FILL)

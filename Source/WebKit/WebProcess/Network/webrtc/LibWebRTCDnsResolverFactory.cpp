@@ -39,7 +39,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDnsResolverFactory);
 std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::CreateAndResolve(const webrtc::SocketAddress& address, absl::AnyInvocable<void()> callback)
 {
     auto resolver = protect(WebProcess::singleton().libWebRTCNetwork().socketFactory())->createAsyncDnsResolver();
-    resolver->start(address, [callback = absl::move(callback)] () mutable {
+    resolver->start(address, [callback = WTF::move(callback)] () mutable {
         callback();
     });
     return resolver;
@@ -49,7 +49,7 @@ std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::
 {
     auto resolver = protect(WebProcess::singleton().libWebRTCNetwork().socketFactory())->createAsyncDnsResolver();
     // FIXME: Make use of family.
-    resolver->start(address, [callback = absl::move(callback)] () mutable {
+    resolver->start(address, [callback = WTF::move(callback)] () mutable {
         callback();
     });
     return resolver;
@@ -62,7 +62,7 @@ std::unique_ptr<webrtc::AsyncDnsResolverInterface> LibWebRTCDnsResolverFactory::
 
 void LibWebRTCDnsResolverFactory::Resolver::Start(const webrtc::SocketAddress& address, absl::AnyInvocable<void()> callback)
 {
-    start(address, [callback = absl::move(callback)] () mutable {
+    start(address, [callback = WTF::move(callback)] () mutable {
         callback();
     });
 }
@@ -70,7 +70,7 @@ void LibWebRTCDnsResolverFactory::Resolver::Start(const webrtc::SocketAddress& a
 void LibWebRTCDnsResolverFactory::Resolver::Start(const webrtc::SocketAddress& address, int /* family */, absl::AnyInvocable<void()> callback)
 {
     // FIXME: Make use of family.
-    start(address, [callback = absl::move(callback)] () mutable {
+    start(address, [callback = WTF::move(callback)] () mutable {
         callback();
     });
 }

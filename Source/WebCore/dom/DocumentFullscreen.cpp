@@ -37,7 +37,6 @@
 #include "DocumentView.h"
 #include "Element.h"
 #include "ElementInlines.h"
-#include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -408,10 +407,6 @@ bool DocumentFullscreen::didEnterFullscreen()
     INFO_LOG(LOGIDENTIFIER);
 
     fullscreenElement->didBecomeFullscreenElement();
-
-    if (RefPtr frame = document().frame(); frame && !protect(document())->quirks().needsSuppressPostLayoutBoundaryEventsQuirk())
-        frame->eventHandler().dispatchMouseBoundaryEventsAfterFullscreenChange();
-
     return true;
 }
 

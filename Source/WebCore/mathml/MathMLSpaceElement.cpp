@@ -31,6 +31,7 @@
 #if ENABLE(MATHML)
 
 #include "ContainerNodeInlines.h"
+#include "ElementInlinesLight.h"
 #include "NodeName.h"
 #include "RenderMathMLSpace.h"
 #include "RenderObjectInlines.h"
@@ -89,13 +90,13 @@ void MathMLSpaceElement::attributeChanged(const QualifiedName& name, const AtomS
 
     if (affectsLayout) {
         if (CheckedPtr renderer = this->renderer())
-            renderer->setNeedsLayoutAndPreferredWidthsUpdate();
+            renderer->setNeedsLayoutAndInvalidateContentLogicalWidths();
     }
 
     MathMLPresentationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> MathMLSpaceElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLSpaceElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::mspaceTag));
     return createRenderer<RenderMathMLSpace>(*this, WTF::move(style));

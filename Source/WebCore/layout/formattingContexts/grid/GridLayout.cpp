@@ -31,11 +31,11 @@
 #include "GridLayoutState.h"
 #include "GridLayoutUtils.h"
 #include "ImplicitGrid.h"
-#include "RenderStyle+GettersInlines.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "NotImplemented.h"
 #include "PlacedGridItem.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TrackSizingAlgorithm.h"
 #include "TrackSizingFunctions.h"
 #include "UnplacedGridItem.h"
@@ -427,18 +427,18 @@ static LayoutUnit NODELETE oppositeAxisConstraintForTrackSizing(Vector<LayoutUni
     return totalAvailableSpaceFromSpannedTracks;
 }
 
-// https://www.w3.org/TR/css-grid-1/#algo-grid-sizing
-UsedTrackSizes GridLayout::performGridSizingAlgorithm(const GridLayoutState& layoutState, const PlacedGridItems& placedGridItems,
-    const TrackSizingFunctionsList& columnTrackSizingFunctionsList, const TrackSizingFunctionsList& rowTrackSizingFunctionsList) const
+// 1. https://www.w3.org/TR/css-grid-1/#algo-grid-sizing — step 1.
+// First, the track sizing algorithm is used to resolve the sizes of the grid columns.
+// If calculating the layout of a grid item in this step depends on the available space in the block axis,
+// assume the available space that it would have if any row with a definite max track sizing function had
+// that size and all other rows were infinite. If both the grid container and all tracks have definite sizes,
+// also apply align-content to find the final effective size of any gaps spanned by such items; otherwise
+// ignore the effects of track alignment in this estimation.
+TrackSizes GridLayout::sizeColumnTracks(const PlacedGridItems& placedGridItems, const TrackSizingFunctionsList& columnTrackSizingFunctionsList,
+    const TrackSizingFunctionsList& rowTrackSizingFunctionsList, const GridLayoutState& layoutState) const
 {
     auto& layoutConstraints = layoutState.gridLayoutConstraints;
 
-    // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns.
-    // If calculating the layout of a grid item in this step depends on the available space in the block axis,
-    // assume the available space that it would have if any row with a definite max track sizing function had
-    // that size and all other rows were infinite. If both the grid container and all tracks have definite sizes,
-    // also apply align-content to find the final effective size of any gaps spanned by such items; otherwise
-    // ignore the effects of track alignment in this estimation.
     auto columnFreeSpaceScenario = layoutConstraints.inlineAxis.scenario();
     std::optional<LayoutUnit> inlineAxisAvailableSpace = columnFreeSpaceScenario == AxisConstraint::FreeSpaceScenario::Definite
         ? std::optional(layoutConstraints.inlineAxis.availableSpace())
@@ -451,23 +451,43 @@ UsedTrackSizes GridLayout::performGridSizingAlgorithm(const GridLayoutState& lay
             { gridItem.columnStartLine(), gridItem.columnEndLine() }, oppositeAxisConstraintForTrackSizing(rowSizesForFirstColumnSizing, rowSpan) };
     });
 
-    auto& formattingContext = this->formattingContext();
-    auto columnSizes = TrackSizingAlgorithm::sizeTracks(columnTrackSizingItems, columnTrackSizingFunctionsList,
-        layoutConstraints.inlineAxis, GridLayoutUtils::inlineAxisGridItemSizingFunctions(formattingContext.integrationUtils()),
+    return TrackSizingAlgorithm::sizeTracks(columnTrackSizingItems, columnTrackSizingFunctionsList,
+        layoutConstraints.inlineAxis, GridLayoutUtils::inlineAxisGridItemSizingFunctions(formattingContext().integrationUtils()),
         layoutState.usedColumnGap, layoutState.usedJustifyContent);
+}
 
-    // 2. Next, the track sizing algorithm resolves the sizes of the grid rows.
-    // To find the inline-axis available space for any items whose block-axis size contributions
-    // require it, use the grid column sizes calculated in the previous step.
+// 2. https://www.w3.org/TR/css-grid-1/#algo-grid-sizing — step 2.
+// Next, the track sizing algorithm resolves the sizes of the grid rows.
+// To find the inline-axis available space for any items whose block-axis size contributions
+// require it, use the grid column sizes calculated in the previous step.
+TrackSizes GridLayout::sizeRowTracks(const PlacedGridItems& placedGridItems, const TrackSizes& columnSizes,
+    const TrackSizingFunctionsList& rowTrackSizingFunctionsList, const GridLayoutState& layoutState) const
+{
+    auto& layoutConstraints = layoutState.gridLayoutConstraints;
+
     auto rowTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto columnSpan = WTF::Range<size_t> { gridItem.columnStartLine(), gridItem.columnEndLine() };
         return { gridItem, gridItem.blockAxisSizes(), gridItem.usedBlockBorderAndPadding(),
             { gridItem.rowStartLine(), gridItem.rowEndLine() }, oppositeAxisConstraintForTrackSizing(columnSizes, columnSpan) };
     });
 
-    auto rowSizes = TrackSizingAlgorithm::sizeTracks(rowTrackSizingItems, rowTrackSizingFunctionsList,
-        layoutConstraints.blockAxis, GridLayoutUtils::blockAxisGridItemSizingFunctions(formattingContext),
+    return TrackSizingAlgorithm::sizeTracks(rowTrackSizingItems, rowTrackSizingFunctionsList,
+        layoutConstraints.blockAxis, GridLayoutUtils::blockAxisGridItemSizingFunctions(formattingContext()),
         layoutState.usedRowGap, layoutState.usedAlignContent);
+}
+
+// https://www.w3.org/TR/css-grid-1/#algo-grid-sizing
+UsedTrackSizes GridLayout::performGridSizingAlgorithm(const GridLayoutState& layoutState, const PlacedGridItems& placedGridItems,
+    const TrackSizingFunctionsList& columnTrackSizingFunctionsList, const TrackSizingFunctionsList& rowTrackSizingFunctionsList) const
+{
+    // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns.
+    // If both the grid container and all tracks have definite sizes, also apply align-content
+    // to find the final effective size of any gaps spanned by such items; otherwise ignore
+    // the effects of track alignment in this estimation.
+    auto columnSizes = sizeColumnTracks(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList, layoutState);
+
+    // 2. Next, the track sizing algorithm resolves the sizes of the grid rows.
+    auto rowSizes = sizeRowTracks(placedGridItems, columnSizes, rowTrackSizingFunctionsList, layoutState);
 
     // 3. Then, if the min-content contribution of any grid item has changed based on the
     // row sizes and alignment calculated in step 2, re-resolve the sizes of the grid

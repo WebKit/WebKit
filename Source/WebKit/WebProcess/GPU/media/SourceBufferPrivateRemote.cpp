@@ -346,17 +346,6 @@ Ref<GenericPromise> SourceBufferPrivateRemote::setMaximumBufferSize(size_t size)
     return promise;
 }
 
-Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivateRemote::computeSeekTime(const WebCore::SeekTarget& target)
-{
-    return invokeAsync(m_dispatcher, [protectedThis = Ref { *this }, this, target]() -> Ref<ComputeSeekPromise> {
-        auto gpuProcessConnection = m_gpuProcessConnection.get();
-        if (!gpuProcessConnection || !isGPURunning())
-            return ComputeSeekPromise::createAndReject(PlatformMediaError::IPCError);
-
-        return sendWithPromisedReply<MediaPromiseConverter>(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target));
-    });
-}
-
 void SourceBufferPrivateRemote::reenqueueMediaForTime(const MediaTime& time)
 {
     ASSERT_NOT_REACHED();

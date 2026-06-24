@@ -48,7 +48,7 @@ static bool shouldLoadAgainOnCrash;
 static bool calledAllCallbacks;
 static unsigned callbackCount;
 static unsigned crashHandlerCount;
-static unsigned loadCount;
+static unsigned terminateLoadCount;
 static unsigned expectedLoadCount;
 
 static NSString *testHTML = @"<script>window.webkit.messageHandlers.testHandler.postMessage('LOADED');</script>";
@@ -339,7 +339,7 @@ TEST(WKNavigation, ProcessCrashDuringCallback)
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    if (++loadCount == expectedLoadCount)
+    if (++terminateLoadCount == expectedLoadCount)
         finishedLoad = true;
 }
 
@@ -366,7 +366,7 @@ TEST(WKNavigation, ReloadRelatedViewsInProcessDidTerminate)
         [webView setNavigationDelegate:delegate.get()];
 
     crashHandlerCount = 0;
-    loadCount = 0;
+    terminateLoadCount = 0;
     expectedLoadCount = numberOfViews;
     finishedLoad = false;
 
@@ -381,7 +381,7 @@ TEST(WKNavigation, ReloadRelatedViewsInProcessDidTerminate)
     for (auto& webView : webViews)
         EXPECT_EQ(pidBefore, [webView _webProcessIdentifier]);
 
-    loadCount = 0;
+    terminateLoadCount = 0;
     finishedLoad = false;
 
     // Kill the WebContent process. The crash handler should reload all views.

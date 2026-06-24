@@ -148,7 +148,6 @@ class TextureStorage9_Cube : public TextureStorage9
                          bool renderTarget,
                          int size,
                          int levels,
-                         bool hintLevelZeroOnly,
                          const std::string &label);
 
     ~TextureStorage9_Cube() override;

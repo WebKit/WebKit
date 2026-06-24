@@ -12,9 +12,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/media_types.h"
 #include "rtc_base/checks.h"
 
@@ -27,9 +27,9 @@ FakeFrameDecryptor::FakeFrameDecryptor(uint8_t fake_key,
 FakeFrameDecryptor::Result FakeFrameDecryptor::Decrypt(
     MediaType /* media_type */,
     const std::vector<uint32_t>& /* csrcs */,
-    ArrayView<const uint8_t> /* additional_data */,
-    ArrayView<const uint8_t> encrypted_frame,
-    ArrayView<uint8_t> frame) {
+    std::span<const uint8_t> /* additional_data */,
+    std::span<const uint8_t> encrypted_frame,
+    std::span<uint8_t> frame) {
   if (fail_decryption_) {
     return Result(Status::kFailedToDecrypt, 0);
   }

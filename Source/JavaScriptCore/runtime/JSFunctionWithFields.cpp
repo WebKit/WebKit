@@ -40,11 +40,11 @@ JSFunctionWithFields::JSFunctionWithFields(VM& vm, NativeExecutable* executable,
 {
 }
 
-JSFunctionWithFields* JSFunctionWithFields::create(VM& vm, JSGlobalObject* globalObject, NativeExecutable* executable, unsigned length, const String& name)
+JSFunctionWithFields* JSFunctionWithFields::create(VM& vm, JSGlobalObject* globalObject, NativeExecutable* executable)
 {
     JSFunctionWithFields* function = new (NotNull, allocateCell<JSFunctionWithFields>(vm)) JSFunctionWithFields(vm, executable, globalObject, globalObject->functionWithFieldsStructure());
     ASSERT(function->realm());
-    function->finishCreation(vm, executable, length, name);
+    function->finishCreation(vm);
     return function;
 }
 

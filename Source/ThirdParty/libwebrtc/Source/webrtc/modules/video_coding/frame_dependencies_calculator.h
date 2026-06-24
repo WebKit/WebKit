@@ -14,9 +14,9 @@
 #include <stdint.h>
 
 #include <optional>
+#include <span>
 
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 
 namespace webrtc {
@@ -32,7 +32,7 @@ class FrameDependenciesCalculator {
   // Calculates frame dependencies based on previous encoder buffer usage.
   absl::InlinedVector<int64_t, 5> FromBuffersUsage(
       int64_t frame_id,
-      ArrayView<const CodecBufferUsage> buffers_usage);
+      std::span<const CodecBufferUsage> buffers_usage);
 
  private:
   struct BufferUsage {

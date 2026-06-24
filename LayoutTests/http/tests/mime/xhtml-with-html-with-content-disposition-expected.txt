@@ -1,2 +1,3 @@
-xhtml-with-html-with-content-disposition has MIME type text/plain
 
+xhtml-with-html-with-content-disposition.html has MIME type text/html
+xhtml-with-html-with-content-disposition has MIME type text/plain

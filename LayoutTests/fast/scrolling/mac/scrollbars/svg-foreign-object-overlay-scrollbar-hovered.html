@@ -24,8 +24,6 @@
         async function doTest()
         {
             description('Test hover over the overlay scrollbar of a overflow: scroll in an SVG foreign object');
-            if (window.testRunner)
-                testRunner.waitUntilDone();
             
             const scroller = document.getElementById('scroller');
             const scrollertBounds = scroller.getBoundingClientRect();
@@ -58,7 +56,7 @@
                 return thumbHidden && trackHidden;
             });
 
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         window.addEventListener('load', () => {

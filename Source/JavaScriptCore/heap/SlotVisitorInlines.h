@@ -35,6 +35,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+inline void SlotVisitor::didRace(JSCell* cell, const char* reason)
+{
+    didRace(VisitRaceKey(cell, reason));
+}
+
 ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSValue* slot, size_t count)
 {
     for (size_t i = count; i--;)

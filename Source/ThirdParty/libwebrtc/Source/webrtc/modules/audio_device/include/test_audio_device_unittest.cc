@@ -20,11 +20,11 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_device_defines.h"
 #include "api/environment/environment.h"
@@ -65,7 +65,7 @@ void RunWavTest(const std::vector<int16_t>& input_samples,
         TestAudioDeviceModule::CreateBoundedWavFileWriter(output_filename, 800);
 
     for (size_t i = 0; i < input_samples.size(); i += kSamplesPerFrame) {
-      EXPECT_TRUE(writer->Render(ArrayView<const int16_t>(
+      EXPECT_TRUE(writer->Render(std::span<const int16_t>(
           &input_samples[i],
           std::min(kSamplesPerFrame, input_samples.size() - i))));
     }
@@ -103,16 +103,20 @@ TEST(BoundedWavFileWriterTest, SomeStartSilence) {
 TEST(BoundedWavFileWriterTest, NegativeStartSilence) {
   static const std::vector<int16_t> kInputSamples = {
       0, -4, -6, 0, 3, 0, 0, 0, 0, 3, -13222, -7, -3525, 5787, -25247, 8};
-  static const std::vector<int16_t> kExpectedSamples(kInputSamples.begin() + 2,
-                                                     kInputSamples.end());
+  // The element at index 4 is below kAmplitudeThreshold and it is at the end
+  // of the first frame so gets speculatively cut off, then restored as 0.
+  static const std::vector<int16_t> kExpectedSamples = {
+      -6, 0, 0, 0, 0, 0, 0, 3, -13222, -7, -3525, 5787, -25247, 8};
   RunWavTest(kInputSamples, kExpectedSamples);
 }
 
 TEST(BoundedWavFileWriterTest, SomeEndSilence) {
   static const std::vector<int16_t> kInputSamples = {
       75, 1234, 243, -1231, -22222, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  // The trailing zeros and the 1 (which has amplitude below
+  // kAmplitudeThreshold) are cut off at the end.
   static const std::vector<int16_t> kExpectedSamples(kInputSamples.begin(),
-                                                     kInputSamples.end() - 9);
+                                                     kInputSamples.end() - 11);
   RunWavTest(kInputSamples, kExpectedSamples);
 }
 
@@ -136,8 +140,10 @@ TEST(BoundedWavFileWriterTest, DoubleSilence) {
 TEST(BoundedWavFileWriterTest, EndSilenceCutoff) {
   static const std::vector<int16_t> kInputSamples = {
       75, 1234, 243, -1231, -22222, 0, 1, 0, 0, 0, 0};
+  // The trailing zeros and the 1 (which has amplitude below
+  // kAmplitudeThreshold) are cut off at the end.
   static const std::vector<int16_t> kExpectedSamples(kInputSamples.begin(),
-                                                     kInputSamples.end() - 4);
+                                                     kInputSamples.end() - 6);
   RunWavTest(kInputSamples, kExpectedSamples);
 }
 
@@ -162,7 +168,7 @@ TEST(WavFileReaderTest, RepeatedTrueWithSingleFrameFileReadTwice) {
         TestAudioDeviceModule::CreateWavFileWriter(output_filename, 800);
 
     for (size_t i = 0; i < kInputSamples.size(); i += kSamplesPerFrame) {
-      EXPECT_TRUE(writer->Render(ArrayView<const int16_t>(
+      EXPECT_TRUE(writer->Render(std::span<const int16_t>(
           &kInputSamples[i],
           std::min(kSamplesPerFrame, kInputSamples.size() - i))));
     }
@@ -203,7 +209,7 @@ void RunRawTestNoRepeat(const std::vector<int16_t>& input_samples,
             output_filename, /*sampling_frequency_in_hz=*/800);
 
     for (size_t i = 0; i < input_samples.size(); i += kSamplesPerFrame) {
-      EXPECT_TRUE(writer->Render(ArrayView<const int16_t>(
+      EXPECT_TRUE(writer->Render(std::span<const int16_t>(
           &input_samples[i],
           std::min(kSamplesPerFrame, input_samples.size() - i))));
     }
@@ -311,7 +317,7 @@ TEST(RawFileWriterTest, Repeat) {
             output_filename, /*sampling_frequency_in_hz=*/800);
 
     for (size_t i = 0; i < kInputSamples.size(); i += kSamplesPerFrame) {
-      EXPECT_TRUE(writer->Render(ArrayView<const int16_t>(
+      EXPECT_TRUE(writer->Render(std::span<const int16_t>(
           &kInputSamples[i],
           std::min(kSamplesPerFrame, kInputSamples.size() - i))));
     }

@@ -72,7 +72,7 @@ private:
     void setUsedGeometryForRows(LayoutUnit availableHorizontalSpace);
     void setUsedGeometryForSections(const ConstraintsForInFlowContent&);
 
-    IntrinsicWidthConstraints computedPreferredWidthForColumns();
+    IntrinsicWidthConstraints computedIntrinsicWidthForColumns();
     void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpace);
 
     TableFormattingState& formattingState() LIFETIME_BOUND { return m_tableFormattingState; }

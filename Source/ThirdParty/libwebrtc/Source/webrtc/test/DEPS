@@ -28,64 +28,67 @@ include_rules = [
 ]
 
 specific_include_rules = {
-  "gmock\.h": [
+  "gmock\\.h": [
     "+testing/gmock/include/gmock",
   ],
-  "gtest\.h": [
+  "gtest\\.h": [
     "+testing/gtest/include/gtest",
   ],
-  ".*congestion_controller_feedback_fuzzer\.cc": [
+  ".*congestion_controller_feedback_fuzzer\\.cc": [
     "+modules/congestion_controller/include/receive_side_congestion_controller.h",
     "+modules/pacing/packet_router.h",
     "+modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h",
   ],
-  ".*mdns_parser_fuzzer\.cc": [
+  ".*mdns_parser_fuzzer\\.cc": [
     "+p2p/base/mdns_message.h",
   ],
-  ".*stun_parser_fuzzer\.cc": [
+  ".*stun_parser_fuzzer\\.cc": [
     "+p2p/base/stun.h",
   ],
-  ".*stun_validator_fuzzer\.cc": [
+  ".*stun_validator_fuzzer\\.cc": [
     "+p2p/base/stun.h",
   ],
-  ".*test_main_lib\.cc": [
+  ".*test_main_lib\\.cc": [
     "+third_party/perfetto",
   ],
-  ".*test_main\.cc": [
+  ".*test_main\\.cc": [
     "+absl/debugging/failure_signal_handler.h",
     "+absl/debugging/symbolize.h",
   ],
-  ".*test_peer\.(h|cc)": [
+  ".*test_peer\\.(h|cc)": [
     "+pc",
     "+p2p",
   ],
-  ".*test_peer_factory\.(h|cc)": [
+  ".*test_peer_factory\\.(h|cc)": [
     "+pc",
     "+p2p",
   ],
-  ".*network_emulation_pc_unittest\.cc": [
+  ".*network_emulation_pc_unittest\\.cc": [
     "+p2p/base/port_allocator.h",
     "+pc/peer_connection_wrapper.h",
     "+pc/test/mock_peer_connection_observers.h",
   ],
-  ".*peer_connection_quality_test\.(h|cc)": [
+  ".*peer_connection_quality_test\\.(h|cc)": [
     "+pc",
   ],
-  ".*sdp_changer\.(h|cc)": [
+  ".*sdp_changer\\.(h|cc)": [
     "+pc",
     "+p2p",
   ],
-  ".*test_video_capturer_video_track_source.h": [
+  ".*test_video_capturer_video_track_source\\.h": [
     "+pc",
   ],
-  "benchmark_main\.cc": [
+  "benchmark_main\\.cc": [
     "+benchmark",
   ],
-  "emulated_turn_server\.(h|cc)": [
+  "emulated_turn_server\\.(h|cc)": [
      "+p2p/test/turn_server.h",
      "+p2p/base/port_interface.h",
   ],
-  "wait_until\.cc": [
+  "video_test_constants\\.h": [
+     "+modules/rtp_rtcp/include/rtp_rtcp_defines.h",
+  ],
+  "wait_until\\.cc": [
     "+absl/functional/overload.h",
   ],
 }

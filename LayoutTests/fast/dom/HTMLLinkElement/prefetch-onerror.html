@@ -1,16 +1,12 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script type="text/javascript">
+window.jsTestIsAsync = true;
 function done()
 {
     testPassed('onerror was called');
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+    finishJSTest();
 }
 </script>
 </head>

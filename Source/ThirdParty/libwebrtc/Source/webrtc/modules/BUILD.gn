@@ -83,6 +83,7 @@ if (rtc_include_tests && !build_with_chromium) {
     deps = [
       ":module_api",
       ":module_api_public",
+      "../test:run_loop",
       "../test:test_support",
       "audio_coding:audio_coding_unittests",
       "audio_device:audio_device_unittests",

@@ -82,6 +82,7 @@
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerInlines.h"
+#include "RenderLayerSVGAdditions.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderMedia.h"
 #include "RenderModel.h"
@@ -366,6 +367,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateDescendantClippingLayer(false);
     clearOverflowControlsLayers();
     updateForegroundLayer(false);
+    clearSVGSegmentLayers();
     updateBackgroundLayer(false);
     updateMaskingLayer(false, false);
     updateScrollingLayers(false);
@@ -572,7 +574,12 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
         m_foregroundLayer->setShowDebugBorder(showBorder);
         m_foregroundLayer->setShowRepaintCounter(showRepaintCounter);
     }
-    
+
+    forEachSVGSegmentLayer([&](GraphicsLayer& segmentLayer) {
+        segmentLayer.setShowDebugBorder(showBorder);
+        segmentLayer.setShowRepaintCounter(showRepaintCounter);
+    });
+
     if (m_contentsContainmentLayer)
         m_contentsContainmentLayer->setShowDebugBorder(showBorder);
 
@@ -698,6 +705,7 @@ void RenderLayerBacking::destroyGraphicsLayers()
     GraphicsLayer::unparentAndClear(m_viewportClippingLayer);
     GraphicsLayer::unparentAndClear(m_contentsContainmentLayer);
     GraphicsLayer::unparentAndClear(m_foregroundLayer);
+    clearSVGSegmentLayers();
     GraphicsLayer::unparentAndClear(m_backgroundLayer);
     GraphicsLayer::unparentAndClear(m_childContainmentLayer);
     GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
@@ -737,12 +745,12 @@ static LayoutRect overflowControlsHostLayerRect(const RenderBox& renderBox)
     return renderBox.paddingBoxRectIncludingScrollbar();
 }
 
-void RenderLayerBacking::updateOpacity(const RenderStyle& style)
+void RenderLayerBacking::updateOpacity(const Style::ComputedStyle& style)
 {
     m_graphicsLayer->setOpacity(compositingOpacity(Style::evaluate<float>(style.opacity())));
 }
 
-void RenderLayerBacking::updateTransform(const RenderStyle& style)
+void RenderLayerBacking::updateTransform(const Style::ComputedStyle& style)
 {
     TransformationMatrix t;
     if (renderer().effectiveCapturedInViewTransition()) {
@@ -856,12 +864,12 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
     removeChildrenTransformFromLayers(layerForPerspective);
 }
 
-void RenderLayerBacking::updateFilters(const RenderStyle& style)
+void RenderLayerBacking::updateFilters(const Style::ComputedStyle& style)
 {
     m_canCompositeFilters = !style.filter().hasReferenceFilter() && m_graphicsLayer->setFilters(Style::toPlatform(style.filter(), style));
 }
 
-void RenderLayerBacking::updateBackdropFilters(const RenderStyle& style)
+void RenderLayerBacking::updateBackdropFilters(const Style::ComputedStyle& style)
 {
     m_canCompositeBackdropFilters = !style.backdropFilter().hasReferenceFilter() && m_graphicsLayer->setBackdropFilters(Style::toPlatform(style.backdropFilter(), style));
 }
@@ -916,7 +924,7 @@ bool RenderLayerBacking::updateBackdropRoot()
     return true;
 }
 
-void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
+void RenderLayerBacking::updateBlendMode(const Style::ComputedStyle& style)
 {
     // FIXME: where is the blend mode updated when m_ancestorClippingStacks come and go?
     if (m_ancestorClippingStack) {
@@ -927,7 +935,7 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 }
 
 #if ENABLE(VIDEO)
-void RenderLayerBacking::updateVideoGravity(const RenderStyle& style)
+void RenderLayerBacking::updateVideoGravity(const Style::ComputedStyle& style)
 {
     if (!renderer().isRenderVideo())
         return;
@@ -952,7 +960,7 @@ void RenderLayerBacking::updateVideoGravity(const RenderStyle& style)
 }
 #endif
 
-void RenderLayerBacking::updateContentsScalingFilters(const RenderStyle& style)
+void RenderLayerBacking::updateContentsScalingFilters(const Style::ComputedStyle& style)
 {
     if (!renderer().isRenderHTMLCanvas() || canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
         return;
@@ -973,7 +981,7 @@ void RenderLayerBacking::updateContentsScalingFilters(const RenderStyle& style)
 }
 
 #if HAVE(CORE_MATERIAL)
-void RenderLayerBacking::updateAppleVisualEffect(const RenderStyle& style)
+void RenderLayerBacking::updateAppleVisualEffect(const Style::ComputedStyle& style)
 {
     AppleVisualEffectData visualEffectData;
 
@@ -1100,6 +1108,9 @@ void RenderLayerBacking::updateAllowsBackingStoreDetaching(bool allowDetachingFo
         m_graphicsLayer->setAllowsBackingStoreDetaching(allowDetaching);
         if (m_foregroundLayer)
             m_foregroundLayer->setAllowsBackingStoreDetaching(allowDetaching);
+        forEachSVGSegmentLayer([&](GraphicsLayer& segmentLayer) {
+            segmentLayer.setAllowsBackingStoreDetaching(allowDetaching);
+        });
         if (m_backgroundLayer)
             m_backgroundLayer->setAllowsBackingStoreDetaching(allowDetaching);
         if (m_scrolledContentsLayer)
@@ -1205,6 +1216,11 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     if (updateForegroundLayer(compositor.needsContentsCompositingLayer(m_owningLayer)))
         layerConfigChanged = true;
 
+    // SVG overlay segment layers depend on which children composited this pass, so recompute after
+    // foreground (the two are mutually exclusive for SVG, see updatePaintingPhases).
+    if (updateSVGSegmentLayers())
+        layerConfigChanged = true;
+
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS)
     if (updateSystemPreviewBadgeLayer(needsSystemPreviewBadgeLayer())) {
         // Badge layer needs the contents containment layer to live as its parent so it sits next to m_graphicsLayer.
@@ -1221,7 +1237,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         auto& renderBox = downcast<RenderBox>(renderer());
         auto borderShape = BorderShape::shapeForBorderRect(renderBox.style(), renderBox.borderBoxRect());
         FloatRoundedRect contentsClippingRect = borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor());
-        needsDescendantsClippingLayer = contentsClippingRect.isRounded();
+        needsDescendantsClippingLayer = contentsClippingRect.hasNonZeroRadii();
     } else
         needsDescendantsClippingLayer = RenderLayerCompositor::clipsCompositingDescendants(m_owningLayer);
 
@@ -1341,9 +1357,16 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     }
 #if ENABLE(MODEL_ELEMENT)
     else if (is<RenderModel>(renderer())) {
+        auto modelBackgroundColor = rendererBackgroundColor();
+#if ENABLE(GPU_PROCESS_MODEL)
+        // Model expects opaque colors but we don't make the IOSurface of the model opaque, rather we make
+        // it transparent and composite it with the user's chosen background color.
+        modelBackgroundColor = modelBackgroundColor.isValid() ? modelBackgroundColor.opaqueColor() : Color::black;
+        m_graphicsLayer->setBackgroundColor(modelBackgroundColor);
+#endif
         RefPtr element = downcast<HTMLModelElement>(renderer().element());
 
-        element->configureGraphicsLayer(*m_graphicsLayer, rendererBackgroundColor());
+        element->configureGraphicsLayer(*m_graphicsLayer, modelBackgroundColor);
         element->sizeMayHaveChanged();
 
         layerConfigChanged = true;
@@ -1539,7 +1562,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     ASSERT(!m_owningLayer.descendantDependentFlagsAreDirty());
     ASSERT(!renderer().view().needsLayout());
 
-    const RenderStyle& style = renderer().style();
+    const Style::ComputedStyle& style = renderer().style();
     const auto deviceScaleFactor = this->deviceScaleFactor();
 
     auto styleable = Styleable::fromRenderer(renderer());
@@ -1744,27 +1767,48 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         m_overflowControlsContainer->setMasksToBounds(true);
     }
 
+    // Computes the base size and offset shared by the foreground layer and the SVG segment overlay
+    // layers. All of them start from the primary graphics layer's geometry. A segment paints only part
+    // of the content, but which part is decided by its range in the flat item list, not by geometry, so
+    // every overlay starts at this full size and gets cropped down to its slice below.
+    // FIXME: an overlay crops only the far (bottom-right) edge of its backing, never the near
+    // (top-left) edge, so it keeps the primary layer's origin and stays larger than its slice.
+    // Cropping the near edge too would move that origin and shift the paint coordinate system. Making
+    // that work reliably needs a follow-up investigation.
+    auto computeForegroundLikeGeometry = [&](FloatSize& outSize, FloatSize& outOffset, GraphicsLayer::ShouldSetNeedsDisplay& outNeedsDisplay) {
+        outNeedsDisplay = GraphicsLayer::ShouldSetNeedsDisplay::Set;
+        if (m_scrolledContentsLayer) {
+            outSize = m_scrolledContentsLayer->size();
+            outOffset = m_scrolledContentsLayer->offsetFromRenderer() - toLayoutSize(m_scrolledContentsLayer->scrollOffset());
+            outNeedsDisplay = GraphicsLayer::ShouldSetNeedsDisplay::DoNotSet;
+        } else if (hasClippingLayer()) {
+            // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
+            // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
+            outSize = FloatSize(clippingBox.size());
+            outOffset = toFloatSize(clippingBox.location());
+        } else {
+            outSize = primaryGraphicsLayerRect.size();
+            outOffset = m_graphicsLayer->offsetFromRenderer();
+        }
+    };
+
     if (m_foregroundLayer) {
         FloatSize foregroundSize;
         FloatSize foregroundOffset;
         auto needsDisplayOnOffsetChange = GraphicsLayer::ShouldSetNeedsDisplay::Set;
-        if (m_scrolledContentsLayer) {
-            foregroundSize = m_scrolledContentsLayer->size();
-            foregroundOffset = m_scrolledContentsLayer->offsetFromRenderer() - toLayoutSize(m_scrolledContentsLayer->scrollOffset());
-            needsDisplayOnOffsetChange = GraphicsLayer::ShouldSetNeedsDisplay::DoNotSet;
-        } else if (hasClippingLayer()) {
-            // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
-            // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
-            foregroundSize = FloatSize(clippingBox.size());
-            foregroundOffset = toFloatSize(clippingBox.location());
-        } else {
-            foregroundSize = primaryGraphicsLayerRect.size();
-            foregroundOffset = m_graphicsLayer->offsetFromRenderer();
-        }
+        computeForegroundLikeGeometry(foregroundSize, foregroundOffset, needsDisplayOnOffsetChange);
 
         m_foregroundLayer->setPosition({ });
         m_foregroundLayer->setSize(foregroundSize);
         m_foregroundLayer->setOffsetFromRenderer(foregroundOffset, needsDisplayOnOffsetChange);
+    }
+
+    if (!m_svgPaintOrderSegments.isEmpty()) {
+        FloatSize foregroundLikeSize;
+        FloatSize foregroundLikeOffset;
+        auto needsDisplayOnOffsetChange = GraphicsLayer::ShouldSetNeedsDisplay::Set;
+        computeForegroundLikeGeometry(foregroundLikeSize, foregroundLikeOffset, needsDisplayOnOffsetChange);
+        updateSVGSegmentLayerGeometry(foregroundLikeSize, foregroundLikeOffset, needsDisplayOnOffsetChange);
     }
 
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS)
@@ -2108,6 +2152,9 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
     if (m_foregroundLayer)
         m_foregroundLayer->setDrawsContent(hasPaintedContent);
 
+    if (!m_svgPaintOrderSegments.isEmpty())
+        updateSVGSegmentLayersDrawsContent(hasPaintedContent);
+
     if (m_backgroundLayer)
         m_backgroundLayer->setDrawsContent(m_backgroundLayerPaintsFixedRootBackground ? hasPaintedContent : contentsInfo.paintsBoxDecorations());
 
@@ -2257,6 +2304,10 @@ void RenderLayerBacking::updateEventRegion()
     if (m_foregroundLayer)
         updateEventRegionForLayer(*m_foregroundLayer);
 
+    forEachSVGSegmentLayer([&](GraphicsLayer& segmentLayer) {
+        updateEventRegionForLayer(segmentLayer);
+    });
+
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS) && ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     // Give the system-preview badge its own interaction region so gaze hover lights it up
     // the way it would for the (anchor-wrapped) model itself, AND make it click-through
@@ -2303,6 +2354,10 @@ void RenderLayerBacking::clearInteractionRegions()
 
     if (m_foregroundLayer)
         clearInteractionRegionsForLayer(*m_foregroundLayer);
+
+    forEachSVGSegmentLayer([&](GraphicsLayer& segmentLayer) {
+        clearInteractionRegionsForLayer(segmentLayer);
+    });
 
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS)
     if (m_systemPreviewBadgeLayer)
@@ -3183,7 +3238,7 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
 }
 
 // FIXME: Code is duplicated in RenderLayer. Also, we should probably not consider filters a box decoration here.
-static inline bool hasVisibleBoxDecorations(const RenderStyle& style)
+static inline bool hasVisibleBoxDecorations(const Style::ComputedStyle& style)
 {
     return style.border().hasVisibleBorder()
         || style.border().hasBorderRadius()
@@ -3195,7 +3250,7 @@ static inline bool hasVisibleBoxDecorations(const RenderStyle& style)
 
 static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& renderer)
 {
-    const RenderStyle& style = renderer.style();
+    const Style::ComputedStyle& style = renderer.style();
 
     if (!GraphicsLayer::supportsContentsTiling())
         return false;
@@ -3231,7 +3286,7 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& r
 
 static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderElement& renderer)
 {
-    const RenderStyle& style = renderer.style();
+    const Style::ComputedStyle& style = renderer.style();
 
     if (hasVisibleBoxDecorations(style))
         return true;
@@ -3242,7 +3297,7 @@ static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderElement& rende
     return !canDirectlyCompositeBackgroundBackgroundImage(renderer);
 }
 
-static inline bool NODELETE hasPerspectiveOrPreserves3D(const RenderStyle& style)
+static inline bool NODELETE hasPerspectiveOrPreserves3D(const Style::ComputedStyle& style)
 {
     return !style.perspective().isNone() || style.usedTransformStyle3D() == TransformStyle3D::Preserve3D;
 }
@@ -3375,11 +3430,19 @@ void RenderLayerBacking::updatePaintingPhases()
     }
 
     m_graphicsLayer->setPaintingPhase(primaryLayerPhases);
+
+    // Overlay segment layers paint the foreground of their flat-list range. The primary graphics layer
+    // keeps the Foreground phase (it paints the primary segment). Each layer's content is scoped by limiting its range,
+    // not by removing a phase. A foreground layer and segments are never used together.
+    ASSERT(!m_foregroundLayer || m_svgPaintOrderSegments.isEmpty());
+    forEachSVGSegmentLayer([&](GraphicsLayer& segmentLayer) {
+        segmentLayer.setPaintingPhase({ GraphicsLayerPaintingPhase::Foreground });
+    });
 }
 
 static bool supportsDirectlyCompositedBoxDecorations(const RenderLayerModelObject& renderer)
 {
-    const RenderStyle& style = renderer.style();
+    const Style::ComputedStyle& style = renderer.style();
     if (renderer.hasClip())
         return false;
 
@@ -3973,6 +4036,10 @@ void RenderLayerBacking::setRequiresOwnBackingStore(bool requiresOwnBacking)
 
     compositor().repaintInCompositedAncestor(m_owningLayer, compositedBounds());
 
+    // This change can make m_owningLayer start or stop being a segment anchor in its enclosing SVG
+    // container, so re-run that container's segmentation.
+    m_owningLayer.invalidateEnclosingSVGContainerSegmentation();
+
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if (!requiresOwnBacking)
         clearInteractionRegions();
@@ -4005,6 +4072,11 @@ void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer
     if (m_foregroundLayer && m_foregroundLayer->drawsContent())
         m_foregroundLayer->setNeedsDisplay();
 
+    forEachSVGSegmentLayer([&](GraphicsLayer& segmentLayer) {
+        if (segmentLayer.drawsContent())
+            segmentLayer.setNeedsDisplay();
+    });
+
     if (m_backgroundLayer && m_backgroundLayer->drawsContent())
         m_backgroundLayer->setNeedsDisplay();
 
@@ -4021,7 +4093,7 @@ void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer
 void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, GraphicsLayer::ShouldClipToLayer shouldClip)
 {
     ASSERT(!paintsIntoCompositedAncestor());
-    
+
     // Use the repaint as a trigger to re-evaluate direct compositing (which is never used on the root layer).
     if (!m_owningLayer.isRenderViewLayer())
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
@@ -4044,6 +4116,8 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
         layerDirtyRect.move(-m_foregroundLayer->offsetFromRenderer() - m_subpixelOffsetFromRenderer);
         m_foregroundLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);
     }
+
+    setSVGSegmentLayersNeedDisplayInRect(pixelSnappedRectForPainting, shouldClip);
 
     // FIXME: need to split out repaints for the background.
     if (m_backgroundLayer && m_backgroundLayer->drawsContent()) {
@@ -4102,6 +4176,13 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
         paintingInfo.regionContext = regionContext;
 
+        // Limit the owning SVG layer's DOM-order child walk to the part of the flat list this GraphicsLayer
+        // owns: the primary segment for the primary layer, the matching segment for each overlay. std::nullopt (no segments)
+        // leaves the common path unchanged. Only m_owningLayer has a flat list.
+        std::optional<WTF::Range<unsigned>> svgPaintOrderItemRange;
+        if (&layer == &m_owningLayer)
+            svgPaintOrderItemRange = svgSegmentRangeForGraphicsLayer(*graphicsLayer);
+
         if (&layer == &m_owningLayer) {
             {
                 bool shouldResetCompositeMode = false;
@@ -4109,13 +4190,13 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
                     context.setCompositeMode({ CompositeOperator::Copy, BlendMode::Normal });
                     shouldResetCompositeMode = true;
                 }
-                layer.paintLayerContents(context, paintingInfo, paintFlags);
+                layer.paintLayerContents(context, paintingInfo, paintFlags, svgPaintOrderItemRange);
                 if (shouldResetCompositeMode)
                     context.setCompositeMode({ CompositeOperator::SourceOver, BlendMode::Normal });
             }
             auto* scrollableArea = layer.scrollableArea();
             if (scrollableArea && scrollableArea->containsDirtyOverlayScrollbars() && !regionContext)
-                layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars);
+                layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars, svgPaintOrderItemRange);
         } else
             layer.paintLayerWithEffects(context, paintingInfo, paintFlags);
 
@@ -4492,7 +4573,8 @@ void RenderLayerBacking::paintContents(const GraphicsLayer& graphicsLayer, Graph
         || &graphicsLayer == m_foregroundLayer.get()
         || &graphicsLayer == m_backgroundLayer.get()
         || &graphicsLayer == m_maskLayer.get()
-        || &graphicsLayer == m_scrolledContentsLayer.get()) {
+        || &graphicsLayer == m_scrolledContentsLayer.get()
+        || svgSegmentRangeForGraphicsLayer(graphicsLayer)) {
 
         if (!graphicsLayer.paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
             dirtyRect.intersect(enclosingIntRect(compositedBoundsIncludingMargin()));
@@ -4725,7 +4807,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
     GraphicsLayerKeyframeValueList backdropFilterVector(AnimatedProperty::WebkitBackdropFilter);
 
     for (auto& currentKeyframe : keyframes) {
-        const RenderStyle* keyframeStyle = currentKeyframe.style();
+        const Style::ComputedStyle* keyframeStyle = currentKeyframe.style();
         double offset = currentKeyframe.offset();
 
         if (!keyframeStyle)
@@ -5122,6 +5204,9 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
     backingMemory = m_graphicsLayer->backingStoreMemoryEstimate();
     if (m_foregroundLayer)
         backingMemory += m_foregroundLayer->backingStoreMemoryEstimate();
+    forEachSVGSegmentLayer([&](GraphicsLayer& segmentLayer) {
+        backingMemory += segmentLayer.backingStoreMemoryEstimate();
+    });
     if (m_backgroundLayer)
         backingMemory += m_backgroundLayer->backingStoreMemoryEstimate();
     if (m_maskLayer)

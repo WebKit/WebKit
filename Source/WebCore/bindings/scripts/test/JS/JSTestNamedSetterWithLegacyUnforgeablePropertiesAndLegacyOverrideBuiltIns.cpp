@@ -420,6 +420,8 @@ void JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsOwner::JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -432,7 +434,7 @@ void JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsOw
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns = static_cast<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns->wrapped()).ptr(), jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns->wrapped(), jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

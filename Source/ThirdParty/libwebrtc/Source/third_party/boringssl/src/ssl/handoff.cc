@@ -18,6 +18,7 @@
 #include <openssl/err.h>
 
 #include <algorithm>
+#include <optional>
 
 #include "../crypto/internal.h"
 #include "internal.h"
@@ -189,22 +190,51 @@ static bool apply_remote_features(SSL *ssl, CBS *in) {
   }
   Span<const uint16_t> configured_groups =
       ssl->s3->hs->config->supported_group_list;
+  Span<const uint32_t> configured_groups_flags =
+      ssl->s3->hs->config->supported_group_list_flags;
   Array<uint16_t> new_configured_groups;
-  if (!new_configured_groups.InitForOverwrite(configured_groups.size())) {
+  // Temporary scratch space to keep track of consecutive runs of groups of
+  // equal preference, so they can be relabeled after filtering for groups
+  // present in the remote features and copying to the new configuration.
+  Array<size_t> new_groups_preference_ranks;
+  Array<uint32_t> new_groups_flags;
+  if (!new_configured_groups.InitForOverwrite(configured_groups.size()) ||
+      !new_groups_preference_ranks.Init(configured_groups.size()) ||
+      !new_groups_flags.Init(configured_groups.size())) {
     return false;
   }
-  idx = 0;
-  for (uint16_t configured_group : configured_groups) {
-    if (std::find(supported_groups.begin(), supported_groups.end(),
-                  configured_group) != supported_groups.end()) {
-      new_configured_groups[idx++] = configured_group;
+  // Populate temporary array containing "preference rank" of each group.
+  for (size_t i = 1; i < configured_groups.size(); ++i) {
+    new_groups_preference_ranks[i] = new_groups_preference_ranks[i - 1];
+    if ((configured_groups_flags[i - 1] &
+         SSL_GROUP_FLAG_EQUAL_PREFERENCE_WITH_NEXT) == 0) {
+      ++new_groups_preference_ranks[i];
     }
+  }
+  idx = 0;
+  std::optional<size_t> last_rank;
+  for (size_t i = 0u; i < configured_groups.size(); ++i) {
+    uint16_t configured_group = configured_groups[i];
+    if (std::find(supported_groups.begin(), supported_groups.end(),
+                  configured_group) == supported_groups.end()) {
+      continue;
+    }
+    new_configured_groups[idx] = configured_group;
+    // Set the "equal preference with next" flag on the previous group, if
+    // appropriate.
+    if (last_rank.has_value() && new_groups_preference_ranks[i] == *last_rank) {
+      new_groups_flags[idx - 1] |= SSL_GROUP_FLAG_EQUAL_PREFERENCE_WITH_NEXT;
+    }
+    last_rank = new_groups_preference_ranks[i];
+    ++idx;
   }
   if (idx == 0) {
     return false;
   }
   new_configured_groups.Shrink(idx);
+  new_groups_flags.Shrink(idx);
   ssl->config->supported_group_list = std::move(new_configured_groups);
+  ssl->config->supported_group_list_flags = std::move(new_groups_flags);
 
   CBS alps;
   CBS_init(&alps, nullptr, 0);
@@ -516,12 +546,18 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
   SSL_HANDSHAKE *const hs = s3->hs.get();
   if (!session_reused || type == handback_tls13) {
     hs->new_session =
-        SSL_SESSION_parse(&seq, ssl->ctx->x509_method, ssl->ctx->pool);
+        SSL_SESSION_parse(&seq, ssl->ctx->x509_method, ssl->ctx->pool.get());
     session = hs->new_session.get();
   } else {
     ssl->session =
-        SSL_SESSION_parse(&seq, ssl->ctx->x509_method, ssl->ctx->pool);
+        SSL_SESSION_parse(&seq, ssl->ctx->x509_method, ssl->ctx->pool.get());
     session = ssl->session.get();
+  }
+
+  // Split handshakes only support X.509 certificates.
+  if (session != nullptr && session->peer_cert_type != kDefaultCertType) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_UNSUPPORTED_CERTIFICATE);
+    return false;
   }
 
   if (!session || !CBS_get_asn1(&seq, &next_proto, CBS_ASN1_OCTETSTRING) ||
@@ -838,18 +874,24 @@ int SSL_request_handshake_hints(SSL *ssl, const uint8_t *client_hello,
 //     -- hint to the wrong field.
 //     decryptedPSKHint        [3] IMPLICIT OCTET STRING OPTIONAL,
 //     ignorePSKHint           [4] IMPLICIT NULL OPTIONAL,
-//     compressCertificateHint [5] IMPLICIT CompressCertificateHint OPTIONAL,
+//     -- Due to a historical typo, compressCertificateHint's tag is primitive
+//     -- instead of constructed.
+//     compressCertificateHint [5 PRIMITIVE] IMPLICIT CompressCertificateHint
+//                                 OPTIONAL,
 //     -- TLS 1.2 and 1.3 use different server random hints because one contains
 //     -- a timestamp while the other doesn't. If the hint was generated
 //     -- assuming TLS 1.3 but we actually negotiate TLS 1.2, mixing the two
 //     -- will break this.
 //     serverRandomTLS12       [6] IMPLICIT OCTET STRING OPTIONAL,
-//     ecdheHint               [7] IMPLICIT ECDHEHint OPTIONAL
+//     -- Due to a historical typo, ecdheHint tag has universal class instead of
+//     -- context-specific.
+//     ecdheHint               [UNIVERSAL 7] IMPLICIT ECDHEHint OPTIONAL
 //     -- At most one of decryptedTicketHint or ignoreTicketHint may be present.
 //     -- renewTicketHint requires decryptedTicketHint.
 //     decryptedTicketHint     [8] IMPLICIT OCTET STRING OPTIONAL,
 //     renewTicketHint         [9] IMPLICIT NULL OPTIONAL,
 //     ignoreTicketHint       [10] IMPLICIT NULL OPTIONAL,
+//     -- Unlike a usual ASN.1 structure, trailing data is ignored.
 // }
 //
 // KeyShareHint ::= SEQUENCE {

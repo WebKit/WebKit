@@ -156,6 +156,7 @@ public:
     WEBCORE_EXPORT void scrollMainFrameToRevealRect(const IntRect&) const;
 
     void contentsSizeChanged(LocalFrame&, const IntSize&) const;
+    void scrollOriginDidChange(const LocalFrame&) const;
 
     WEBCORE_EXPORT void setWindowRect(const FloatRect&);
     WEBCORE_EXPORT FloatRect windowRect() const;

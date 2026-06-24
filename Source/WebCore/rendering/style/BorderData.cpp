@@ -38,6 +38,22 @@ BorderData::BorderData()
 {
 }
 
+// Keep these out of line to work around a clang crash (rdar://178383013).
+bool BorderData::hasBorder() const
+{
+    return edges.anyOf([](const auto& edge) { return edge.nonZero(); });
+}
+
+bool BorderData::hasVisibleBorder() const
+{
+    return edges.anyOf([](const auto& edge) { return edge.isVisible(); });
+}
+
+bool BorderData::hasBorderRadius() const
+{
+    return radii.anyOf([](auto& corner) { return !Style::isKnownEmpty(corner); });
+}
+
 bool BorderData::containsCurrentColor() const
 {
     return edges.anyOf([](const auto& edge) {

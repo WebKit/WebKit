@@ -20,23 +20,48 @@
 
 #if ENABLE(VIDEO)
 
-#include <gst/gst.h>
+#include "GStreamerCommon.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 class MediaPlayerPrivateGStreamer;
 
+class WebKitVideoSinkProbeOwner final : public WTF::ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebKitVideoSinkProbeOwner> {
+    WTF_MAKE_TZONE_ALLOCATED(WebKitVideoSinkProbeOwner);
+
+public:
+    static RefPtr<WebKitVideoSinkProbeOwner> create(const ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>& player)
+    {
+        return adoptRef(*new WebKitVideoSinkProbeOwner(player));
+    }
+
+    void handleFlushEvent([[maybe_unused]] const GRefPtr<GstPad>&, GstPadProbeInfo*);
+
+    GstPadProbeReturn doProbe([[maybe_unused]] const GRefPtr<GstPad>&, GstPadProbeInfo*);
+
+private:
+    WebKitVideoSinkProbeOwner(const ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>& player)
+        : m_player(player)
+    {
+    }
+
+    ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer> m_player;
+    bool m_isFlushing { false };
+};
+
 struct WebKitVideoSinkSignalIdentifiers {
     unsigned long newSample { 0 };
     unsigned long newPreroll { 0 };
     unsigned long notifyCaps { 0 };
-    unsigned long padProbeId { 0 };
+    RefPtr<WebKitVideoSinkProbeOwner> padProbeOwner;
+    RefPtr<PadProbeHandle<WebKitVideoSinkProbeOwner>> padProbeHandle;
 };
 
+WebKitVideoSinkSignalIdentifiers webKitVideoSinkSetMediaPlayerPrivate(GstElement*, const ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&);
+
+void webKitVideoSinkDisconnectSignalHandlers(GstElement*, const WebKitVideoSinkSignalIdentifiers&);
+
 } // namespace WebCore
-
-WebCore::WebKitVideoSinkSignalIdentifiers webKitVideoSinkSetMediaPlayerPrivate(GstElement*, const ThreadSafeWeakPtr<WebCore::MediaPlayerPrivateGStreamer>&);
-
-void webKitVideoSinkDisconnectSignalHandlers(GstElement*, const WebCore::WebKitVideoSinkSignalIdentifiers&);
 
 #endif // ENABLE(VIDEO)

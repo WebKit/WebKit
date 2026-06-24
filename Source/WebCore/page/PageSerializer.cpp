@@ -121,7 +121,7 @@ PageSerializer::SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSer
 {
     // MarkupAccumulator does not serialize the <?xml ... line, so we add it explicitly to ensure the right encoding is specified.
     if (m_document->isXMLDocument() || m_document->xmlStandalone())
-        append("<?xml version=\""_s, m_document->xmlVersion(), "\" encoding=\""_s, m_document->charset(), "\"?>"_s);
+        append("<?xml version=\""_s, m_document->xmlVersion(), "\" encoding=\""_s, protect(m_document)->charset(), "\"?>"_s);
 }
 
 void PageSerializer::SerializerMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
@@ -137,7 +137,7 @@ void PageSerializer::SerializerMarkupAccumulator::appendStartTag(StringBuilder& 
         MarkupAccumulator::appendStartTag(out, element, namespaces);
 
     if (element.hasTagName(HTMLNames::headTag))
-        out.append("<meta charset=\""_s, m_document->charset(), "\">"_s);
+        out.append("<meta charset=\""_s, protect(m_document)->charset(), "\">"_s);
 
     // FIXME: For object (plugins) tags and video tag we could replace them by an image of their current contents.
 }
@@ -152,7 +152,7 @@ void PageSerializer::SerializerMarkupAccumulator::appendCustomAttributes(StringB
     if (!frame)
         return;
 
-    auto url = frame->document()->url();
+    auto url = protect(frame->document())->url();
     if (url.isValid() && !url.protocolIsAbout())
         return;
 
@@ -260,7 +260,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
             // FIXME: Add support for font face rule. It is not clear to me at this point if the actual otf/eot file can
             // be retrieved from the CSSFontFaceRule object.
         } else if (RefPtr styleRule = dynamicDowncast<CSSStyleRule>(*rule))
-            retrieveResourcesForRule(styleRule->styleRule(), document.get());
+            retrieveResourcesForRule(protect(styleRule->styleRule()), document.get());
     }
 
     if (url.isValid() && !m_resourceURLs.contains(url)) {

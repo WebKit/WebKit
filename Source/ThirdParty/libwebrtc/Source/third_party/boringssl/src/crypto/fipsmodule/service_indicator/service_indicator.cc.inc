@@ -20,7 +20,11 @@
 
 #include "../../evp/internal.h"
 #include "../../internal.h"
+#include "../../mem_internal.h"
 #include "internal.h"
+
+
+using namespace bssl;
 
 #if defined(BORINGSSL_FIPS)
 
@@ -43,14 +47,13 @@ struct fips_service_indicator_state {
 // FIPS 140-3 requires that the module should provide the service indicator
 // for approved services irrespective of whether the user queries it or not.
 // Hence, it is lazily initialized in any call to an approved service.
-static struct fips_service_indicator_state *service_indicator_get(void) {
+static struct fips_service_indicator_state *service_indicator_get() {
   struct fips_service_indicator_state *indicator =
       reinterpret_cast<fips_service_indicator_state *>(CRYPTO_get_thread_local(
           OPENSSL_THREAD_LOCAL_FIPS_SERVICE_INDICATOR_STATE));
 
   if (indicator == nullptr) {
-    indicator = reinterpret_cast<fips_service_indicator_state *>(
-        OPENSSL_malloc(sizeof(struct fips_service_indicator_state)));
+    indicator = New<struct fips_service_indicator_state>();
     if (indicator == nullptr) {
       return nullptr;
     }
@@ -69,7 +72,7 @@ static struct fips_service_indicator_state *service_indicator_get(void) {
   return indicator;
 }
 
-static uint64_t service_indicator_get_counter(void) {
+static uint64_t service_indicator_get_counter() {
   struct fips_service_indicator_state *indicator = service_indicator_get();
   if (indicator == nullptr) {
     return 0;
@@ -77,22 +80,22 @@ static uint64_t service_indicator_get_counter(void) {
   return indicator->counter;
 }
 
-uint64_t FIPS_service_indicator_before_call(void) {
+uint64_t bssl::FIPS_service_indicator_before_call() {
   return service_indicator_get_counter();
 }
 
-uint64_t FIPS_service_indicator_after_call(void) {
+uint64_t bssl::FIPS_service_indicator_after_call() {
   return service_indicator_get_counter();
 }
 
-void FIPS_service_indicator_update_state(void) {
+void bssl::FIPS_service_indicator_update_state() {
   struct fips_service_indicator_state *indicator = service_indicator_get();
   if (indicator && indicator->lock_state == STATE_UNLOCKED) {
     indicator->counter++;
   }
 }
 
-void FIPS_service_indicator_lock_state(void) {
+void bssl::FIPS_service_indicator_lock_state() {
   struct fips_service_indicator_state *indicator = service_indicator_get();
   if (indicator == nullptr) {
     return;
@@ -113,7 +116,7 @@ void FIPS_service_indicator_lock_state(void) {
   indicator->lock_state = new_state;
 }
 
-void FIPS_service_indicator_unlock_state(void) {
+void bssl::FIPS_service_indicator_unlock_state() {
   struct fips_service_indicator_state *indicator = service_indicator_get();
   if (indicator == nullptr) {
     return;
@@ -126,14 +129,14 @@ void FIPS_service_indicator_unlock_state(void) {
   indicator->lock_state--;
 }
 
-void AEAD_GCM_verify_service_indicator(const EVP_AEAD_CTX *ctx) {
+void bssl::AEAD_GCM_verify_service_indicator(const EVP_AEAD_CTX *ctx) {
   const size_t key_len = EVP_AEAD_key_length(ctx->aead);
   if (key_len == 16 || key_len == 32) {
     FIPS_service_indicator_update_state();
   }
 }
 
-void AEAD_CCM_verify_service_indicator(const EVP_AEAD_CTX *ctx) {
+void bssl::AEAD_CCM_verify_service_indicator(const EVP_AEAD_CTX *ctx) {
   if (EVP_AEAD_key_length(ctx->aead) == 16 && ctx->tag_len == 4) {
     FIPS_service_indicator_update_state();
   }
@@ -228,7 +231,7 @@ static void evp_md_ctx_verify_service_indicator(const EVP_MD_CTX *ctx,
 
     // The approved RSA key sizes for signing are 2048, 3072 and 4096 bits.
     // Note: |EVP_PKEY_size| returns the size in bytes.
-    size_t pkey_size = EVP_PKEY_size(ctx->pctx->pkey.get());
+    size_t pkey_size = EVP_PKEY_size(FromOpaque(ctx->pctx)->pkey.get());
 
     // Check if the MD type and the RSA key size are approved.
     if (md_ok(md_type) &&
@@ -238,8 +241,8 @@ static void evp_md_ctx_verify_service_indicator(const EVP_MD_CTX *ctx,
   } else if (pkey_type == EVP_PKEY_EC) {
     // Check if the MD type and the elliptic curve are approved.
     if (md_ok(md_type) &&
-        is_ec_fips_approved(EC_GROUP_get_curve_name(
-            EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(ctx->pctx->pkey.get()))))) {
+        is_ec_fips_approved(EC_GROUP_get_curve_name(EC_KEY_get0_group(
+            EVP_PKEY_get0_EC_KEY(FromOpaque(ctx->pctx)->pkey.get()))))) {
       FIPS_service_indicator_update_state();
     }
   }
@@ -249,19 +252,19 @@ err:
   ERR_clear_error();
 }
 
-void EC_KEY_keygen_verify_service_indicator(const EC_KEY *eckey) {
+void bssl::EC_KEY_keygen_verify_service_indicator(const EC_KEY *eckey) {
   if (is_ec_fips_approved(EC_GROUP_get_curve_name(EC_KEY_get0_group(eckey)))) {
     FIPS_service_indicator_update_state();
   }
 }
 
-void ECDH_verify_service_indicator(const EC_KEY *ec_key) {
+void bssl::ECDH_verify_service_indicator(const EC_KEY *ec_key) {
   if (is_ec_fips_approved(EC_GROUP_get_curve_name(EC_KEY_get0_group(ec_key)))) {
     FIPS_service_indicator_update_state();
   }
 }
 
-void EVP_Cipher_verify_service_indicator(const EVP_CIPHER_CTX *ctx) {
+void bssl::EVP_Cipher_verify_service_indicator(const EVP_CIPHER_CTX *ctx) {
   switch (EVP_CIPHER_CTX_nid(ctx)) {
     case NID_aes_128_ecb:
     case NID_aes_192_ecb:
@@ -278,17 +281,17 @@ void EVP_Cipher_verify_service_indicator(const EVP_CIPHER_CTX *ctx) {
   }
 }
 
-void EVP_DigestVerify_verify_service_indicator(const EVP_MD_CTX *ctx) {
+void bssl::EVP_DigestVerify_verify_service_indicator(const EVP_MD_CTX *ctx) {
   return evp_md_ctx_verify_service_indicator(ctx,
                                              is_md_fips_approved_for_verifying);
 }
 
-void EVP_DigestSign_verify_service_indicator(const EVP_MD_CTX *ctx) {
+void bssl::EVP_DigestSign_verify_service_indicator(const EVP_MD_CTX *ctx) {
   return evp_md_ctx_verify_service_indicator(ctx,
                                              is_md_fips_approved_for_signing);
 }
 
-void HMAC_verify_service_indicator(const EVP_MD *evp_md) {
+void bssl::HMAC_verify_service_indicator(const EVP_MD *evp_md) {
   switch (EVP_MD_type(evp_md)) {
     case NID_sha1:
     case NID_sha224:
@@ -301,7 +304,7 @@ void HMAC_verify_service_indicator(const EVP_MD *evp_md) {
   }
 }
 
-void TLSKDF_verify_service_indicator(const EVP_MD *md) {
+void bssl::TLSKDF_verify_service_indicator(const EVP_MD *md) {
   // HMAC-SHA{256, 384, 512} are approved for use in the KDF in TLS 1.2. These
   // Key Derivation functions are to be used in the context of the TLS protocol.
   switch (EVP_MD_type(md)) {
@@ -315,9 +318,9 @@ void TLSKDF_verify_service_indicator(const EVP_MD *md) {
 
 #else
 
-uint64_t FIPS_service_indicator_before_call(void) { return 0; }
+uint64_t bssl::FIPS_service_indicator_before_call() { return 0; }
 
-uint64_t FIPS_service_indicator_after_call(void) {
+uint64_t bssl::FIPS_service_indicator_after_call() {
   // One is returned so that the return value is always greater than zero, the
   // return value of |FIPS_service_indicator_before_call|. This makes everything
   // report as "approved" in non-FIPS builds.

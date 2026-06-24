@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceFilter);
 
-RenderSVGResourceFilter::RenderSVGResourceFilter(SVGElement& element, RenderStyle&& style)
+RenderSVGResourceFilter::RenderSVGResourceFilter(SVGElement& element, Style::ComputedStyle&& style)
     : RenderSVGResourcePaintServer(Type::SVGResourceFilter, element, WTF::move(style))
 {
     ASSERT(isRenderSVGResourceFilter());

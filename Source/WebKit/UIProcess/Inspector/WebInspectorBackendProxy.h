@@ -42,6 +42,8 @@ public:
     explicit WebInspectorBackendProxy(WebInspectorUIProxy& proxy)
     : m_proxy(proxy) { }
 
+    virtual ~WebInspectorBackendProxy();
+
     // RefCounted
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

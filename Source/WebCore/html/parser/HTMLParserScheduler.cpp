@@ -116,7 +116,7 @@ void HTMLParserScheduler::continueNextChunkTimerFired()
         m_continueNextChunkTimer.startOneShot(0_s);
         return;
     }
-    m_parser->resumeParsingAfterYield();
+    Ref { *m_parser }->resumeParsingAfterYield();
 }
 
 static bool NODELETE parsingProgressedSinceLastYield(PumpSession& session)

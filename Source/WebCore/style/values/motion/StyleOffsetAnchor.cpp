@@ -29,7 +29,7 @@
 #include "CSSPositionValue.h"
 #include "StyleBuilderChecking.h"
 #include "StyleComputedStyle+InitialInlines.h"
-#include "StyleLengthWrapper+Blending.h"
+#include "StylePrimitiveNumericOrKeyword+Blending.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include <wtf/text/TextStream.h>
 

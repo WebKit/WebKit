@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2005 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2026 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # 
 # This file is part of WebKit
@@ -55,6 +55,7 @@ my $verbose;
 my $supplementalDependencyFile;
 my $idlAttributesFile;
 my $idlFileNamesList;
+my $ignoreStandaloneConstructorAttributes;
 
 GetOptions('outputDir=s' => \$outputDirectory,
            'outputHeadersDir=s' => \$outputHeadersDirectory,
@@ -66,7 +67,8 @@ GetOptions('outputDir=s' => \$outputDirectory,
            'write-dependencies' => \$writeDependencies,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
            'idlAttributesFile=s' => \$idlAttributesFile,
-           'idlFileNamesList=s' => \$idlFileNamesList);
+           'idlFileNamesList=s' => \$idlFileNamesList,
+           'ignoreStandaloneConstructorAttributes' => \$ignoreStandaloneConstructorAttributes);
 
 die('Must specify input file.') unless @ARGV;
 die('Must specify generator') unless defined($generator);
@@ -126,6 +128,6 @@ sub generateBindings
     my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $idlAttributes);
 
     # Generate desired output for the target IDL file.
-    my $codeGen = CodeGenerator->new($generator, $outputDirectory, $outputHeadersDirectory, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes, \%supplementalDependencies, $idlFileNamesList);
+    my $codeGen = CodeGenerator->new($generator, $outputDirectory, $outputHeadersDirectory, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes, \%supplementalDependencies, $idlFileNamesList, $ignoreStandaloneConstructorAttributes);
     $codeGen->ProcessDocument($targetDocument, $defines);
 }

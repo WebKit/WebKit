@@ -129,7 +129,7 @@ LineSegment BoxLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUni
     float y2 = logicalTop + logicalHeight;
     const FloatRect& rect = marginBounds.rect();
 
-    if (!marginBounds.isRounded())
+    if (!marginBounds.hasNonZeroRadii())
         return LineSegment(rect.x(), rect.maxX());
 
     float topCornerMaxY = std::max<float>(marginBounds.topLeftCorner().maxY(), marginBounds.topRightCorner().maxY());

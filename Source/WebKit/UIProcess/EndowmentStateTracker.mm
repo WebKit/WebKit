@@ -50,43 +50,54 @@ static RBSProcessHandle *handleForPID(pid_t pid)
     NSError *error = nil;
     RBSProcessHandle *processHandle = [RBSProcessHandle handleForIdentifier:processIdentifier error:&error];
     if (!processHandle) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "endowmentsForPid: Failed to get RBSProcessHandle for process with PID %d, error: %{public}@", pid, error);
+        RELEASE_LOG_ERROR(ProcessSuspension, "handleForPID: Failed to get RBSProcessHandle for process with PID %d, error: %{public}@", pid, error);
         return nil;
     }
 
     return processHandle;
 }
 
-static NSSet<NSString *> *endowmentsForHandle(RBSProcessHandle *processHandle)
-{
-    if (!processHandle) {
-        // We assume foreground when unable to determine state to maintain pre-existing behavior and to avoid
-        // not rendering anything when we fail.
-        return [NSSet setWithObjects:protect(visibilityEndowment).get(), protect(userfacingEndowment).get(), nil];
-    }
-
-    RBSProcessState *state = processHandle.currentState;
-    if (state.taskState != RBSTaskStateRunningScheduled) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "endowmentsForHandle: Process with PID %d is not running", processHandle.pid);
-        return nil;
-    }
-
-    return [state endowmentNamespaces];
-}
-
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EndowmentStateTracker);
 
-inline auto EndowmentStateTracker::stateFromEndowments(NSSet *endowments) -> State
+inline auto EndowmentStateTracker::stateFromProcessState(RBSProcessState *processState) -> State
 {
-    return State {
-        !![endowments containsObject:protect(userfacingEndowment).get()],
-        !![endowments containsObject:protect(visibilityEndowment).get()]
-    };
+    State state;
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    for (RBSProcessEndowmentInfo *info in processState.endowmentInfos) {
+        NSString *endowmentNamespace = info.endowmentNamespace;
+        if ([endowmentNamespace isEqualToString:userfacingEndowment])
+            state.isUserFacing = true;
+        else if ([endowmentNamespace isEqualToString:visibilityEndowment]) {
+            state.isVisible = true;
+            if (NSString *environment = info.environment)
+                state.visibilityEnvironments.add(String(environment));
+        }
+    }
+#else
+    NSSet<NSString *> *endowmentNamespaces = processState.endowmentNamespaces;
+    state.isUserFacing = [endowmentNamespaces containsObject:protect(userfacingEndowment)];
+    state.isVisible = [endowmentNamespaces containsObject:protect(visibilityEndowment)];
+#endif
+    return state;
 }
 
 bool EndowmentStateTracker::isApplicationForeground(pid_t pid)
 {
-    return [protect(endowmentsForHandle(protect(handleForPID(pid)).get())) containsObject:protect(visibilityEndowment).get()];
+    return stateForHandle(protect(handleForPID(pid))).isVisible;
+}
+
+auto EndowmentStateTracker::stateForHandle(RBSProcessHandle *processHandle) -> State
+{
+    if (processHandle) {
+        RBSProcessState *processState = processHandle.currentState;
+        if (processState.taskState == RBSTaskStateRunningScheduled)
+            return stateFromProcessState(processState);
+        RELEASE_LOG_ERROR(ProcessSuspension, "stateForHandle: Process with PID %d is not running", processHandle.pid);
+    }
+
+    // Assume foreground when unable to determine state to maintain pre-existing behavior
+    // and to avoid not rendering anything when we fail.
+    return State { true, true, { } };
 }
 
 EndowmentStateTracker& EndowmentStateTracker::singleton()
@@ -105,10 +116,13 @@ void EndowmentStateTracker::registerMonitorIfNecessary()
 
         RBSProcessStateDescriptor *stateDescriptor = [RBSProcessStateDescriptor descriptor];
         stateDescriptor.endowmentNamespaces = @[visibilityEndowment, userfacingEndowment];
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+        stateDescriptor.values = RBSProcessStateValueEndowmentInfos;
+#endif
         [config setStateDescriptor:stateDescriptor];
 
         [config setUpdateHandler:[this] (RBSProcessMonitor * _Nonnull monitor, RBSProcessHandle * _Nonnull process, RBSProcessStateUpdate * _Nonnull update) mutable {
-            RunLoop::mainSingleton().dispatch([this, state = stateFromEndowments(update.state.endowmentNamespaces)]() mutable {
+            RunLoop::mainSingleton().dispatch([this, state = stateFromProcessState(update.state)]() mutable {
                 setState(WTF::move(state));
             });
         }];
@@ -129,7 +143,7 @@ void EndowmentStateTracker::removeClient(EndowmentStateTrackerClient& client)
 auto EndowmentStateTracker::ensureState() const -> const State&
 {
     if (!m_state)
-        m_state = stateFromEndowments(protect(endowmentsForHandle([RBSProcessHandle currentProcess])));
+        m_state = stateForHandle([RBSProcessHandle currentProcess]);
     return *m_state;
 }
 
@@ -137,20 +151,30 @@ void EndowmentStateTracker::setState(State&& state)
 {
     bool isUserFacingChanged = !m_state || m_state->isUserFacing != state.isUserFacing;
     bool isVisibleChanged = !m_state || m_state->isVisible != state.isVisible;
-    if (!isUserFacingChanged && !isVisibleChanged)
+    bool visibilityEnvironmentsChanged = !m_state || m_state->visibilityEnvironments != state.visibilityEnvironments;
+    if (!isUserFacingChanged && !isVisibleChanged && !visibilityEnvironmentsChanged)
         return;
 
     m_state = WTF::move(state);
 
-    RELEASE_LOG(ViewState, "%p - EndowmentStateTracker::setState() isUserFacing: %{public}s isVisible: %{public}s", this, m_state->isUserFacing ? "true" : "false", m_state->isVisible ? "true" : "false");
+    RELEASE_LOG(ViewState, "%p - EndowmentStateTracker::setState() isUserFacing: %{public}s isVisible: %{public}s visibilityEnvironmentCount: %u", this, m_state->isUserFacing ? "true" : "false", m_state->isVisible ? "true" : "false", m_state->visibilityEnvironments.size());
 
     m_clients.forEach([&](auto& client) {
         if (isUserFacingChanged)
             client.isUserFacingChanged(m_state->isUserFacing);
         if (isVisibleChanged)
             client.isVisibleChanged(m_state->isVisible);
+        if (visibilityEnvironmentsChanged)
+            client.visibilityEndowmentEnvironmentsChanged(m_state->visibilityEnvironments);
     });
 }
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+void EndowmentStateTracker::setStateForTesting(bool isUserFacing, bool isVisible)
+{
+    setState(State { isUserFacing, isVisible });
+}
+#endif
 
 }
 

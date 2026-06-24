@@ -27,6 +27,7 @@
 #include "WKContentWorldConfigurationInternal.h"
 
 #include "_WKContentWorldConfiguration.h"
+#include <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKContentWorldConfiguration
 

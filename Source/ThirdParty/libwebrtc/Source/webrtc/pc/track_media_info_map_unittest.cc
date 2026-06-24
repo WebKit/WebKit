@@ -33,6 +33,7 @@
 #include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 using ::testing::ElementsAre;
 
@@ -175,12 +176,14 @@ class TrackMediaInfoMapTest : public ::testing::Test {
   // into the map.
   TrackMediaInfoMap InitializeMap() {
     std::vector<TrackMediaInfoMap::RtpSenderSignalInfo> sender_infos;
+    std::vector<RtpParameters> sender_params;
     for (const auto& sender : rtp_senders_) {
       sender_infos.push_back({
           .ssrc = sender->ssrc(),
           .attachment_id = sender->AttachmentId(),
           .media_type = sender->media_type(),
       });
+      sender_params.push_back(sender->GetParameters());
     }
     std::vector<TrackMediaInfoMap::RtpReceiverSignalInfo> receiver_infos;
     std::vector<RtpParameters> receiver_params;
@@ -204,11 +207,11 @@ class TrackMediaInfoMapTest : public ::testing::Test {
     }
     return TrackMediaInfoMap(std::move(voice_media_info),
                              std::move(video_media_info), sender_infos,
-                             receiver_infos, receiver_params);
+                             sender_params, receiver_infos, receiver_params);
   }
 
  private:
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
   VoiceMediaInfo voice_media_info_;
   VideoMediaInfo video_media_info_;
 

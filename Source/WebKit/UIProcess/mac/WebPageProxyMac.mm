@@ -182,7 +182,11 @@ void WebPageProxy::speak(const String& string)
 void WebPageProxy::stopSpeaking()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    // Work around incorrect nullability annotation in the internal SDK, cf. rdar://179681908
     [NSApp stopSpeaking:nil];
+#pragma clang diagnostic pop
 }
 
 void WebPageProxy::searchTheWeb(const String& string)
@@ -347,9 +351,8 @@ void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& diction
         DictionaryLookup::showPopup(dictionaryPopupInfo, protect(pageClient->viewForPresentingRevealPopover()).get(), [this](TextIndicator& textIndicator) {
             setTextIndicator(textIndicator, WebCore::TextIndicatorLifetime::Permanent);
         }, nullptr, [weakThis = WeakPtr { *this }] {
-            if (!weakThis)
-                return;
-            weakThis->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
         });
     }
 }
@@ -495,9 +498,8 @@ void WebPageProxy::scheduleSetObscuredContentInsetsDispatch()
     m_didScheduleSetObscuredContentInsetsDispatch = true;
 
     callOnMainRunLoop([weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis->dispatchSetObscuredContentInsets();
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->dispatchSetObscuredContentInsets();
     });
 }
 

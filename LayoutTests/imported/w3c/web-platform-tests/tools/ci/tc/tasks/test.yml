@@ -4,7 +4,7 @@ components:
     workerType: ci
     schedulerId: taskcluster-github
     deadline: "24 hours"
-    image: ghcr.io/web-platform-tests/wpt:1
+    image: ghcr.io/web-platform-tests/wpt:3
     maxRunTime: 7200
     artifacts:
       public/results:
@@ -17,7 +17,7 @@ components:
 
   wpt-testharness:
     chunks: 16
-    maxRunTime: 10800
+    maxRunTime: 14400
     vars:
       test-type: testharness
 
@@ -41,6 +41,16 @@ components:
     vars:
       test-type: crashtest
 
+  wpt-test262:
+    chunks: 8
+    vars:
+      test-type: test262
+
+  wpt-aamtest:
+    chunks: 1
+    vars:
+      test-type: aamtest
+
   run-options:
     options:
       xvfb: true
@@ -54,6 +64,7 @@ components:
       browser:
         - ${vars.browser}
       channel: ${vars.channel}
+    commit-args-name: wpt-args
     command: >-
       ./tools/ci/taskcluster-run.py
       ${vars.browser}
@@ -117,24 +128,24 @@ components:
     chunks-override:
       testharness: 30
 
-  tox-python3_8:
+  tox-python3_9:
     env:
-      TOXENV: py38
+      TOXENV: py39
       PY_COLORS: "0"
     install:
-      - python3.8
-      - python3.8-distutils
-      - python3.8-dev
-      - python3.8-venv
+      - python3.9
+      - python3.9-distutils
+      - python3.9-dev
+      - python3.9-venv
 
-  tox-python3_13:
+  tox-python3_14:
     env:
-      TOXENV: py313
+      TOXENV: py314
       PY_COLORS: "0"
     install:
-      - python3.13
-      - python3.13-dev
-      - python3.13-venv
+      - python3.14
+      - python3.14-dev
+      - python3.14-venv
   tests-affected:
     options:
       browser:
@@ -154,11 +165,11 @@ tasks:
         - vars:
             suite: testharness
         - vars:
-            suite: reftest
-        - vars:
             suite: wdspec
         - vars:
             suite: crashtest
+        - vars:
+            suite: test262
       do:
         $map:
           for:
@@ -172,7 +183,7 @@ tasks:
                 browser: firefox
                 channel: beta
               use:
-                - trigger-weekly
+                - trigger-daily
                 - trigger-push
             - vars:
                 browser: firefox
@@ -259,6 +270,12 @@ tasks:
               use:
                 - trigger-daily
                 - trigger-push
+            - vars:
+                browser: firefox_android
+                channel: stable
+              use:
+                - trigger-daily
+                - trigger-push
           do:
             - ${vars.browser}-${vars.channel}-${vars.suite}:
                 use:
@@ -272,11 +289,12 @@ tasks:
                   of ${chunks.total}), run in the ${vars.channel} release of
                   ${vars.browser}.
 
-  # print-reftest are currently only supported by Chrome and Firefox.
+  # Reftests are currently broken on firefox_android; this should otherwise be identical
+  # to the section above
   - $map:
       for:
         - vars:
-            suite: print-reftest
+            suite: reftest
       do:
         $map:
           for:
@@ -290,7 +308,121 @@ tasks:
                 browser: firefox
                 channel: beta
               use:
+                - trigger-daily
+                - trigger-push
+            - vars:
+                browser: firefox
+                channel: stable
+              use:
+                - trigger-daily
+                - trigger-push
+            - vars:
+                # Chromium ToT
+                browser: chromium
+                channel: nightly
+              use:
+                - trigger-daily
+                - trigger-push
+            - vars:
+                browser: chrome
+                channel: canary
+              use:
+                - trigger-master
+                - trigger-push
+            - vars:
+                browser: chrome
+                channel: dev
+              use:
                 - trigger-weekly
+                - trigger-push
+            - vars:
+                browser: chrome
+                channel: beta
+              use:
+                - trigger-weekly
+                - trigger-push
+            - vars:
+                browser: chrome
+                channel: stable
+              use:
+                - trigger-daily
+                - trigger-push
+            - vars:
+                browser: webkitgtk_minibrowser
+                channel: nightly
+              use:
+                - trigger-daily
+                - trigger-push
+            - vars:
+                browser: webkitgtk_minibrowser
+                channel: stable
+              use:
+                - trigger-weekly
+                - trigger-push
+            - vars:
+                browser: webkitgtk_minibrowser
+                channel: beta
+              use:
+                - trigger-weekly
+                - trigger-push
+            - vars:
+                browser: wpewebkit_minibrowser
+                channel: nightly
+              use:
+                - trigger-daily
+                - trigger-push
+            - vars:
+                browser: wpewebkit_minibrowser
+                channel: stable
+              use:
+                - trigger-weekly
+                - trigger-push
+            - vars:
+                browser: wpewebkit_minibrowser
+                channel: beta
+              use:
+                - trigger-weekly
+                - trigger-push
+            - vars:
+                browser: servo
+                channel: nightly
+              use:
+                - trigger-daily
+                - trigger-push
+          do:
+            - ${vars.browser}-${vars.channel}-${vars.suite}:
+                use:
+                  - wpt-base
+                  - run-options
+                  - wpt-run
+                  - browser-${vars.browser}
+                  - wpt-${vars.suite}
+                description: >-
+                  A subset of WPT's "${vars.suite}" tests (chunk number ${chunks.id}
+                  of ${chunks.total}), run in the ${vars.channel} release of
+                  ${vars.browser}.
+
+  # print-reftest amd aamtest are currently only supported by Chrome and Firefox.
+  - $map:
+      for:
+        - vars:
+            suite: print-reftest
+        - vars:
+            suite: aamtest
+      do:
+        $map:
+          for:
+            - vars:
+                browser: firefox
+                channel: nightly
+              use:
+                - trigger-master
+                - trigger-push
+            - vars:
+                browser: firefox
+                channel: beta
+              use:
+                - trigger-daily
                 - trigger-push
             - vars:
                 browser: firefox
@@ -457,13 +589,13 @@ tasks:
           - update_built
       command: "./tools/ci/ci_built_diff.sh"
 
-  - tools/ unittests (Python 3.8):
+  - tools/ unittests (Python 3.9):
       description: >-
-        Unit tests for tools running under Python 3.8, excluding wptrunner
+        Unit tests for tools running under Python 3.9, excluding wptrunner
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_8
+        - tox-python3_9
       command: ./tools/ci/ci_tools_unittest.sh
       env:
         HYPOTHESIS_PROFILE: ci
@@ -471,13 +603,13 @@ tasks:
         run-job:
           - tools_unittest
 
-  - tools/ unittests (Python 3.13):
+  - tools/ unittests (Python 3.14):
       description: >-
-        Unit tests for tools running under Python 3.13, excluding wptrunner
+        Unit tests for tools running under Python 3.14, excluding wptrunner
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_13
+        - tox-python3_14
       command: ./tools/ci/ci_tools_unittest.sh
       env:
         HYPOTHESIS_PROFILE: ci
@@ -485,13 +617,13 @@ tasks:
         run-job:
           - tools_unittest
 
-  - tools/ integration tests (Python 3.8):
+  - tools/ integration tests (Python 3.9):
       description: >-
-        Integration tests for tools running under Python 3.8
+        Integration tests for tools running under Python 3.9
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_8
+        - tox-python3_9
       command: ./tools/ci/ci_tools_integration_test.sh
       install:
         - libnss3-tools
@@ -507,13 +639,13 @@ tasks:
         run-job:
           - wpt_integration
 
-  - tools/ integration tests (Python 3.13):
+  - tools/ integration tests (Python 3.14):
       description: >-
-        Integration tests for tools running under Python 3.13
+        Integration tests for tools running under Python 3.14
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_13
+        - tox-python3_14
       command: ./tools/ci/ci_tools_integration_test.sh
       install:
         - libnss3-tools
@@ -529,13 +661,13 @@ tasks:
         run-job:
           - wpt_integration
 
-  - resources/ tests (Python 3.8):
+  - resources/ tests (Python 3.9):
       description: >-
-        Tests for testharness.js and other files in resources/ under Python 3.8
+        Tests for testharness.js and other files in resources/ under Python 3.9
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_8
+        - tox-python3_9
       command: ./tools/ci/ci_resources_unittest.sh
       install:
         - libnss3-tools
@@ -548,13 +680,13 @@ tasks:
         run-job:
           - resources_unittest
 
-  - resources/ tests (Python 3.13):
+  - resources/ tests (Python 3.14):
       description: >-
-        Tests for testharness.js and other files in resources/ under Python 3.13
+        Tests for testharness.js and other files in resources/ under Python 3.14
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_13
+        - tox-python3_14
       command: ./tools/ci/ci_resources_unittest.sh
       install:
         - libnss3-tools
@@ -567,34 +699,41 @@ tasks:
         run-job:
           - resources_unittest
 
-  - infrastructure/ tests:
-      description: >-
-        Smoketests for wptrunner
-      vars:
-        channel: nightly
-      use:
-        - wpt-base
-        - trigger-pr
-        - browser-firefox
-        - browser-firefox_android
-      command: ./tools/ci/ci_wptrunner_infrastructure.sh
-      install:
-        - python3-pip
-        - libnss3-tools
-        - libappindicator1
-        - fonts-liberation
-      options:
-        oom-killer: true
-        browser:
-          - firefox
-          - chrome
-          - firefox_android
-        channel: experimental
-        xvfb: true
-        hosts: false
-      schedule-if:
-        run-job:
-          - wptrunner_infrastructure
+  - $map:
+      for:
+        - vars:
+            browser: firefox
+            channel: nightly
+        - vars:
+            browser: chrome
+            channel: dev
+        - vars:
+            browser: firefox_android
+            channel: nightly
+      do:
+        - infrastructure/ tests (${vars.browser}):
+            description: >-
+              Smoketests for wptrunner in ${vars.browser}.
+            use:
+              - wpt-base
+              - trigger-pr
+              - browser-${vars.browser}
+            command: ./tools/ci/ci_wptrunner_infrastructure.sh ${vars.browser} ${vars.channel}
+            install:
+              - python3-pip
+              - libnss3-tools
+              - libappindicator1
+              - fonts-liberation
+            options:
+              oom-killer: true
+              browser:
+                - ${vars.browser}
+              channel: ${vars.channel}
+              xvfb: true
+              hosts: false
+            schedule-if:
+              run-job:
+                - wptrunner_infrastructure
 
   # Note: even though sink-task does not have `depends-on`, it depends on all
   # other tasks (dynamically added by tools/ci/tc/decision.py).

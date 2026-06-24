@@ -290,7 +290,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
     resetInsertionModeAppropriately();
 
     auto* formElement = dynamicDowncast<HTMLFormElement>(contextElement);
-    m_tree.setForm(formElement ? formElement : HTMLFormElement::findClosestFormAncestor(contextElement));
+    m_tree.setForm(protect(formElement ? formElement : HTMLFormElement::findClosestFormAncestor(contextElement)));
 
 #if ASSERT_ENABLED
     m_destructionProhibited = false;
@@ -676,8 +676,8 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomHTMLToken&& token)
         }
         if (!m_framesetOk)
             return;
-        m_tree.openElements().bodyElement().remove();
-        m_tree.openElements().popUntil(m_tree.openElements().bodyElement());
+        protect(m_tree.openElements().bodyElement())->remove();
+        m_tree.openElements().popUntil(protect(m_tree.openElements().bodyElement()));
         m_tree.openElements().popHTMLBodyElement();
         // Note: in the fragment case the root is a DocumentFragment instead of a proper html element which is a quirk / optimization in WebKit.
         ASSERT(!isParsingFragment() || is<DocumentFragment>(m_tree.openElements().topNode()));
@@ -1226,7 +1226,7 @@ void HTMLTreeBuilder::processStartTag(AtomHTMLToken&& token)
             ASSERT(!m_tree.headStackItem().isNull());
             m_tree.openElements().pushHTMLHeadElement(HTMLStackItem(m_tree.headStackItem()));
             processStartTagForInHead(WTF::move(token));
-            m_tree.openElements().removeHTMLHeadElement(m_tree.head());
+            m_tree.openElements().removeHTMLHeadElement(protect(m_tree.head()));
             return;
         case TagName::head:
             parseError(token);
@@ -1619,7 +1619,7 @@ void HTMLTreeBuilder::processAnyOtherEndTagForInBody(AtomHTMLToken&& token)
                 m_tree.generateImpliedEndTagsWithExclusion(name);
                 if (!itemMatchesName(m_tree.currentStackItem(), name))
                     parseError(token);
-                m_tree.openElements().popUntilPopped(item.element());
+                m_tree.openElements().popUntilPopped(protect(item.element()));
                 return;
             }
             if (isSpecialNode(item)) {
@@ -1651,7 +1651,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomHTMLToken& token)
     // then pop the current node off the stack of open elements and return.
     if (!m_tree.isEmpty() && m_tree.currentStackItem().isElement()
         && m_tree.currentElement().elementName() == elementNameForTag(Namespace::HTML, token.tagName())
-        && !m_tree.activeFormattingElements().contains(m_tree.currentElement())) {
+        && !m_tree.activeFormattingElements().contains(protect(m_tree.currentElement()))) {
         m_tree.openElements().pop();
         return;
     }
@@ -1707,11 +1707,11 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomHTMLToken& token)
             if (node == formattingElementRecord)
                 break;
             // 4.13.4.
-            bool nodeIsInListOfActiveFormattingElements = m_tree.activeFormattingElements().contains(node->element());
+            bool nodeIsInListOfActiveFormattingElements = m_tree.activeFormattingElements().contains(protect(node->element()));
             if (innerLoopCounter > innerIterationLimit && nodeIsInListOfActiveFormattingElements)
-                m_tree.activeFormattingElements().removeUpdatingBookmark(node->element(), bookmark);
+                m_tree.activeFormattingElements().removeUpdatingBookmark(protect(node->element()), bookmark);
             // 4.13.5.
-            auto* nodeEntry = m_tree.activeFormattingElements().find(node->element());
+            auto* nodeEntry = m_tree.activeFormattingElements().find(protect(node->element()));
             if (!nodeEntry) {
                 m_tree.openElements().remove(protect(node->element()));
                 node = nullptr;
@@ -3023,7 +3023,7 @@ void HTMLTreeBuilder::processScriptStartTag(AtomHTMLToken&& token)
     m_parser->tokenizer().setScriptDataState();
     m_originalInsertionMode = m_insertionMode;
 
-    TextPosition position = m_parser->textPosition();
+    TextPosition position = protect(m_parser.get())->textPosition();
 
     m_scriptToProcessStartPosition = position;
 
@@ -3187,7 +3187,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
                 parseError(token);
             while (1) {
                 if (nodeRecord->stackItem().localName() == token.name()) {
-                    m_tree.openElements().popUntilPopped(nodeRecord->element());
+                    m_tree.openElements().popUntilPopped(protect(nodeRecord->element()));
                     return;
                 }
                 nodeRecord = nodeRecord->next();

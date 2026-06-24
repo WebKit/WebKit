@@ -24,12 +24,14 @@
 #include "../delocate.h"
 #include "internal.h"
 
+
+using namespace bssl;
+
 #if defined(NDEBUG)
 #define CHECK(x) (void)(x)
 #else
 #define CHECK(x) assert(x)
 #endif
-
 
 static void sha1_init(EVP_MD_CTX *ctx) {
   BCM_sha1_init(reinterpret_cast<SHA_CTX *>(ctx->md_data));

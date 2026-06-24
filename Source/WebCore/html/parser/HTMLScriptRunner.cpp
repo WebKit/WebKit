@@ -65,7 +65,7 @@ HTMLScriptRunner::~HTMLScriptRunner()
     // FIXME: Should we be passed a "done loading/parsing" callback sooner than destruction?
     if (m_parserBlockingScript) {
         if (m_parserBlockingScript->watchingForLoad())
-            stopWatchingForLoad(*m_parserBlockingScript);
+            stopWatchingForLoad(protect(*m_parserBlockingScript));
     }
 
     while (!m_scriptsToExecuteAfterParsing.isEmpty()) {
@@ -86,7 +86,7 @@ static URL documentURLForScriptExecution(Document* document)
         return URL();
 
     // Use the URL of the currently active document for this frame.
-    return document->frame()->document()->url();
+    return protect(document)->frame()->document()->url();
 }
 
 inline Ref<Event> createScriptLoadEvent()
@@ -113,7 +113,7 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
         stopWatchingForLoad(pendingScript);
 
     if (!isExecutingScript() && m_document)
-        m_document->eventLoop().performMicrotaskCheckpoint(m_document->vm());
+        protect(m_document.get())->eventLoop().performMicrotaskCheckpoint(protect(m_document.get())->vm());
 
     {
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
@@ -162,7 +162,7 @@ bool HTMLScriptRunner::hasParserBlockingScript() const
 
 void HTMLScriptRunner::executeParsingBlockingScripts()
 {
-    while (hasParserBlockingScript() && isPendingScriptReady(*m_parserBlockingScript)) {
+    while (hasParserBlockingScript() && isPendingScriptReady(protect(*m_parserBlockingScript))) {
         ASSERT(m_document);
         ASSERT(!isExecutingScript());
         ASSERT(m_document->haveStylesheetsLoaded());
@@ -197,7 +197,7 @@ bool HTMLScriptRunner::executeScriptsWaitingForParsing()
         ASSERT(!isExecutingScript());
         ASSERT(!hasParserBlockingScript());
         ASSERT(m_scriptsToExecuteAfterParsing.first()->needsLoading());
-        if (!m_scriptsToExecuteAfterParsing.first()->isLoaded()) {
+        if (!protect(m_scriptsToExecuteAfterParsing.first())->isLoaded()) {
             watchForLoad(m_scriptsToExecuteAfterParsing.first());
             return false;
         }
@@ -213,7 +213,7 @@ static Ref<PendingScript> requestPendingScript(ScriptElement& scriptElement)
 {
     ASSERT(scriptElement.willBeParserExecuted());
     ASSERT(scriptElement.loadableScript());
-    return PendingScript::create(scriptElement, *scriptElement.loadableScript());
+    return PendingScript::create(scriptElement, protect(*scriptElement.loadableScript()));
 }
 
 void HTMLScriptRunner::requestParsingBlockingScript(ScriptElement& scriptElement)
@@ -225,8 +225,8 @@ void HTMLScriptRunner::requestParsingBlockingScript(ScriptElement& scriptElement
     // We only care about a load callback if LoadableScript is not already
     // in the cache. Callers will attempt to run the m_parserBlockingScript
     // if possible before returning control to the parser.
-    if (!m_parserBlockingScript->isLoaded())
-        watchForLoad(*m_parserBlockingScript);
+    if (!protect(m_parserBlockingScript)->isLoaded())
+        watchForLoad(protect(*m_parserBlockingScript));
 }
 
 void HTMLScriptRunner::requestDeferredScript(ScriptElement& scriptElement)
@@ -248,7 +248,7 @@ void HTMLScriptRunner::runScript(ScriptElement& scriptElement, const TextPositio
     // unfortunately no obvious way to tell if prepareScript is going to
     // execute the script before calling it.
     if (!isExecutingScript() && m_document)
-        m_document->eventLoop().performMicrotaskCheckpoint(m_document->vm());
+        protect(m_document.get())->eventLoop().performMicrotaskCheckpoint(protect(m_document.get())->vm());
 
     InsertionPointRecord insertionPointRecord(m_host.inputStream());
     NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
@@ -265,9 +265,9 @@ void HTMLScriptRunner::runScript(ScriptElement& scriptElement, const TextPositio
             m_parserBlockingScript = PendingScript::create(scriptElement, scriptStartPosition);
         else {
             if (scriptElement.scriptType() == ScriptType::Classic)
-                scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.element().textContent(), scriptElement.sourceTaintedOrigin(), documentURLForScriptExecution(m_document.get()), scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(scriptElement)));
+                scriptElement.executeClassicScript(ScriptSourceCode(protect(scriptElement.element())->textContent(), scriptElement.sourceTaintedOrigin(), documentURLForScriptExecution(protect(m_document.get())), scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(scriptElement)));
             else
-                scriptElement.registerImportMap(ScriptSourceCode(scriptElement.element().textContent(), scriptElement.sourceTaintedOrigin(), documentURLForScriptExecution(m_document.get()), scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
+                scriptElement.registerImportMap(ScriptSourceCode(protect(scriptElement.element())->textContent(), scriptElement.sourceTaintedOrigin(), documentURLForScriptExecution(protect(m_document.get())), scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
         }
     } else
         requestParsingBlockingScript(scriptElement);

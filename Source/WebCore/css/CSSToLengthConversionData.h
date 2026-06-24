@@ -42,12 +42,12 @@ namespace WebCore {
 class Element;
 class FloatSize;
 class FontCascade;
-class RenderStyle;
 class RenderView;
 
 namespace Style {
 class BuilderState;
-};
+class ComputedStyle;
+}
 
 class CSSToLengthConversionData {
 public:
@@ -56,9 +56,9 @@ public:
     CSSToLengthConversionData(CSSToLengthConversionData&&);
 
     // This is used during style building. The 'zoom' property is taken into account.
-    CSSToLengthConversionData(const RenderStyle&, Style::BuilderState&);
+    CSSToLengthConversionData(const Style::ComputedStyle&, Style::BuilderState&);
     // This constructor ignores the `zoom` property.
-    CSSToLengthConversionData(const RenderStyle&, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution = nullptr, CSS::RangeZoomOptions = CSS::RangeZoomOptions::Default);
+    CSSToLengthConversionData(const Style::ComputedStyle&, const Style::ComputedStyle* rootStyle, const Style::ComputedStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution = nullptr, CSS::RangeZoomOptions = CSS::RangeZoomOptions::Default);
 
     // Used for resolutions that don't take place during normal style resolution.
     static std::optional<CSSToLengthConversionData> tryCreateForNonStyleBuildingResolution(Element&);
@@ -66,9 +66,9 @@ public:
 
     WEBCORE_EXPORT ~CSSToLengthConversionData();
 
-    const RenderStyle* style() const { return m_style; }
-    const RenderStyle* rootStyle() const { return m_rootStyle; }
-    const RenderStyle* parentStyle() const { return m_parentStyle; }
+    const Style::ComputedStyle* style() const { return m_style; }
+    const Style::ComputedStyle* rootStyle() const { return m_rootStyle; }
+    const Style::ComputedStyle* parentStyle() const { return m_parentStyle; }
     float NODELETE zoom() const;
     CSS::RangeZoomOptions rangeZoomOption() const { return m_rangeZoomOption; }
     bool computingFontSize() const { return m_propertyToCompute == CSSPropertyFontSize; }
@@ -115,9 +115,9 @@ public:
     Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
 
 private:
-    const RenderStyle* m_style { nullptr };
-    const RenderStyle* m_rootStyle { nullptr };
-    const RenderStyle* m_parentStyle { nullptr };
+    const Style::ComputedStyle* m_style { nullptr };
+    const Style::ComputedStyle* m_rootStyle { nullptr };
+    const Style::ComputedStyle* m_parentStyle { nullptr };
     const RenderView* m_renderView { nullptr };
     RefPtr<const Element> m_elementForContainerUnitResolution;
     std::optional<float> m_zoom;

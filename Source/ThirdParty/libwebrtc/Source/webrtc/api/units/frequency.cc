@@ -16,8 +16,7 @@
 
 namespace webrtc {
 std::string ToString(Frequency value) {
-  char buf[64];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   if (value.IsPlusInfinity()) {
     sb << "+inf Hz";
   } else if (value.IsMinusInfinity()) {
@@ -27,6 +26,6 @@ std::string ToString(Frequency value) {
   } else {
     sb << value.hertz<int64_t>() << " Hz";
   }
-  return sb.str();
+  return sb.Release();
 }
 }  // namespace webrtc

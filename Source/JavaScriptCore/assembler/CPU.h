@@ -222,7 +222,8 @@ constexpr size_t prologueStackPointerDelta()
 #endif
 }
 
-
+#define JSC_CACHE_LINE_SIZE 64
+#define JSC_CACHE_LINE_ALIGNED alignas(JSC_CACHE_LINE_SIZE)
 
 } // namespace JSC
 

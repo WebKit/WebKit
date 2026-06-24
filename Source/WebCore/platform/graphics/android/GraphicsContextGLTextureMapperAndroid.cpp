@@ -43,6 +43,11 @@ bool GraphicsContextGLTextureMapperAndroid::platformInitializeExtensions()
     if (!enableExtensionsImpl({ "GL_OES_EGL_image"_s }))
         return false;
 
+#if ENABLE(WEBXR)
+    if (contextAttributes().xrCompatible && !enableRequiredWebXRExtensionsImpl())
+        return false;
+#endif
+
     const auto& eglExtensions = PlatformDisplay::sharedDisplay().eglExtensions();
     return eglExtensions.KHR_image_base && eglExtensions.ANDROID_get_native_client_buffer && eglExtensions.ANDROID_image_native_buffer;
 }
@@ -104,6 +109,11 @@ bool GraphicsContextGLTextureMapperAndroid::enableRequiredWebXRExtensions()
     if (!makeContextCurrent())
         return false;
 
+    return enableRequiredWebXRExtensionsImpl();
+}
+
+bool GraphicsContextGLTextureMapperAndroid::enableRequiredWebXRExtensionsImpl()
+{
     return enableExtensionsImpl({
         "GL_OES_EGL_image"_s,
         "GL_OES_EGL_image_external"_s,

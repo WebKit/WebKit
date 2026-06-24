@@ -145,7 +145,6 @@ private:
     void sendMessage(WebSocketMessageHandler::Connection, const String& message);
     void sendErrorResponse(WebSocketMessageHandler::Connection, std::optional<unsigned> commandId, CommandResult::ErrorCode, const String& errorMessage, std::optional<String> stacktrace = std::nullopt);
     WebSocketMessageHandler& m_messageHandler;
-    String m_listenerURL;
     RefPtr<WebSocketListener> m_listener;
     HashMap<WebSocketMessageHandler::Connection, String> m_connectionToSession;
 

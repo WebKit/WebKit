@@ -23,6 +23,7 @@ selectors = [
     { name = "lookUpURL:isMainFrame:hasHighConfidenceOfSafety:cachedResult:completionHandler:", class = "SSBLookupContext" },
     { name = "_getListsForNamespace:collectionId:completionHandler:", class = "SSBLookupContext" },
 ]
+requires = ["HAVE_SAFE_BROWSING"]
 
 [[not-web-essential]]
 request = "rdar://166711133"
@@ -261,6 +262,13 @@ selectors = [
     { name = "requestProofreadingReviewOfString:range:language:options:completionHandler:", class = "UITextChecker" },
 ]
 
+ [[temporary-usage]]
+ request = "rdar://165789536"
+ cleanup = "rdar://179184814"
+ selectors = [
+     { name = "requestGrammarCheckingOfString:range:waitForAllResults:completionHandler:", class = "UITextChecker" },
+ ]
+
 [[temporary-usage]]
 request = "rdar://165789536"
 cleanup = "rdar://165842824"
@@ -268,15 +276,6 @@ selectors = [
     { name = "proofreadingSessionType", class = "WTSession" },
 ]
 requires = ["ENABLE_WRITING_TOOLS_EXTENDED_PROOFREADING"]
-
-[[staging]]
-request = "rdar://163791929"
-cleanup = "rdar://165836164"
-selectors = [
- { name = "setIsDelegatedRequest:", class = "PKPaymentRequest" },
-]
-requires = ["HAVE_PASSKIT_DELEGATED_REQUEST"]
-requires-sdk = ["iOS < 26.4"]
 
 [[not-web-essential]]
 request = "rdar://165006869"

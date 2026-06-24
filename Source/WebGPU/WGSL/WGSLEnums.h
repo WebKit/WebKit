@@ -125,6 +125,7 @@ namespace WGSL {
     value(LocalInvocationIndex, local_invocation_index) \
     value(NumWorkgroups, num_workgroups) \
     value(Position, position) \
+    value(PrimitiveIndex, primitive_index) \
     value(SampleIndex, sample_index) \
     value(SampleMask, sample_mask) \
     value(VertexIndex, vertex_index) \
@@ -133,6 +134,7 @@ namespace WGSL {
 #define ENUM_Extension(value) \
     value(ClipDistances, clip_distances, 1 << 0) \
     value(F16, f16, 1 << 1) \
+    value(PrimitiveIndex, primitive_index, 1 << 2) \
 
 #define ENUM_LanguageFeature(value) \
     value(Packed4x8IntegerDotProduct, packed_4x8_integer_dot_product, 1 << 0) \

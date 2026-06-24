@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -43,6 +44,15 @@ std::string AdapterTypeToString(AdapterType type) {
     default:
       RTC_DCHECK_NOTREACHED() << "Invalid type " << type;
       return std::string();
+  }
+}
+
+absl::string_view NetworkSliceToString(NetworkSlice network_slice) {
+  switch (network_slice) {
+    case NetworkSlice::NO_SLICE:
+      return "NO_SLICE";
+    case NetworkSlice::UNIFIED_COMMUNICATIONS:
+      return "UNIFIED_COMMUNICATIONS";
   }
 }
 

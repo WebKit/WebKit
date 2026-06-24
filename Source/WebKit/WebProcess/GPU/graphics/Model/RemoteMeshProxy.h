@@ -30,6 +30,7 @@
 #include "Mesh.h"
 #include "RemoteDeviceProxy.h"
 #include "WebModelIdentifier.h"
+#include <WebCore/StageModeOperations.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -88,6 +89,11 @@ private:
     {
         return protect(root().streamClientConnection())->sendWithAsyncReply(WTF::move(message), WTF::move(completionHandler), backing());
     }
+    template<typename T>
+    [[nodiscard]] auto sendSync(T&& message)
+    {
+        return protect(root().streamClientConnection())->sendSync(WTF::move(message), backing());
+    }
 
     void update(Vector<WebModel::UpdateMeshDescriptor>&&) final;
     void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&) final;
@@ -95,6 +101,7 @@ private:
 #if PLATFORM(COCOA)
     std::pair<simd_float4, simd_float4> getCenterAndExtents() const final;
     void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
+    void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier, uint32_t bufferIndex) final;
 #endif
     void play(bool) final;
 
@@ -107,7 +114,6 @@ private:
 #endif
     void setScale(float) final;
     void setFOV(float);
-    void setBackgroundColor(const WebModel::Float3&) final;
     void setViewportSize(float, float) final;
     void setStageMode(WebCore::StageModeOperation) final;
     void processRemovals(Vector<WebModel::TypedResourceId>&& meshRemovals, Vector<WebModel::TypedResourceId>&& materialRemovals, Vector<WebModel::TypedResourceId>&& textureRemovals, CompletionHandler<void(bool)>&&) final;
@@ -115,7 +121,7 @@ private:
     void computeTransform();
     void setRotation(float yaw, float pitch, float roll) final;
 #endif
-    void setEnvironmentMap(const WebModel::UpdateTextureDescriptor&) final;
+    void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) final;
     void updateContentsHeadroom(float) final;
 
     const WebModelIdentifier m_backing;
@@ -130,7 +136,7 @@ private:
 #if ENABLE(GPU_PROCESS_MODEL)
     float m_viewportWidth { 0.f };
     float m_viewportHeight { 0.f };
-    WebCore::StageModeOperation m_stageMode;
+    WebCore::StageModeOperation m_stageMode { WebCore::StageModeOperation::None };
     bool m_entityTransformSetByScript { false };
 #endif
 };

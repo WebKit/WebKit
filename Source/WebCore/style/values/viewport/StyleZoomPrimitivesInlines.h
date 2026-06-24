@@ -26,14 +26,14 @@
 
 #include "LayoutSize.h"
 #include "RenderElement.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Rounding.h"
 #include "StyleZoomPrimitives.h"
 
 namespace WebCore {
 namespace Style {
 
-inline int adjustForAbsoluteZoom(int value, const RenderStyle& style)
+inline int adjustForAbsoluteZoom(int value, const Style::ComputedStyle& style)
 {
     double zoomFactor = style.usedZoom();
     if (zoomFactor == 1)
@@ -54,7 +54,7 @@ inline int adjustForAbsoluteZoom(int value, const RenderElement& renderer)
     return adjustForAbsoluteZoom(value, renderer.style());
 }
 
-inline float adjustFloatForAbsoluteZoom(float value, const RenderStyle& style)
+inline float adjustFloatForAbsoluteZoom(float value, const Style::ComputedStyle& style)
 {
     return value / style.usedZoom();
 }
@@ -64,7 +64,7 @@ inline float adjustFloatForAbsoluteZoom(float value, const RenderElement& render
     return adjustFloatForAbsoluteZoom(value, renderer.style());
 }
 
-inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderStyle& style)
+inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Style::ComputedStyle& style)
 {
     return LayoutUnit(value / style.usedZoom());
 }
@@ -74,7 +74,7 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
     return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
 }
 
-inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const RenderStyle& style)
+inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const Style::ComputedStyle& style)
 {
     auto zoom = style.usedZoom();
     return { size.width() / zoom, size.height() / zoom };
@@ -85,7 +85,7 @@ inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const RenderE
     return adjustLayoutSizeForAbsoluteZoom(size, renderer.style());
 }
 
-inline float applyZoom(float value, const RenderStyle& style)
+inline float applyZoom(float value, const Style::ComputedStyle& style)
 {
     return value * style.usedZoom();
 }

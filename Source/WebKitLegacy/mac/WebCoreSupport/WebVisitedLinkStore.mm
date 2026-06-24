@@ -35,7 +35,6 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
 
 static bool s_shouldTrackVisitedLinks;
 
@@ -86,19 +85,19 @@ void WebVisitedLinkStore::addVisitedLink(NSString *urlString)
     size_t length = urlString.length;
 
     if (auto characters = CFStringGetCharactersPtr((__bridge CFStringRef)urlString)) {
-        addVisitedLinkHash(computeSharedStringHash(std::span { reinterpret_cast<const char16_t*>(characters), length }));
+        addVisitedLinkHash(WebCore::computeSharedStringHash(std::span { reinterpret_cast<const char16_t*>(characters), length }));
         return;
     }
 
     Vector<UniChar, 512> buffer(length);
     [urlString getCharacters:buffer.mutableSpan().data()];
 
-    addVisitedLinkHash(computeSharedStringHash(spanReinterpretCast<const char16_t>(buffer.span())));
+    addVisitedLinkHash(WebCore::computeSharedStringHash(spanReinterpretCast<const char16_t>(buffer.span())));
 }
 
 void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
 {
-    auto linkHash = computeSharedStringHash(urlString);
+    auto linkHash = WebCore::computeSharedStringHash(urlString);
 
     ASSERT(m_visitedLinkHashes.contains(linkHash));
     m_visitedLinkHashes.remove(linkHash);
@@ -106,14 +105,14 @@ void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
     invalidateStylesForLink(linkHash);
 }
 
-bool WebVisitedLinkStore::isLinkVisited(Page& page, SharedStringHash linkHash, const URL& baseURL, const AtomString& attributeURL)
+bool WebVisitedLinkStore::isLinkVisited(WebCore::Page& page, WebCore::SharedStringHash linkHash, const URL& baseURL, const AtomString& attributeURL)
 {
     populateVisitedLinksIfNeeded(page);
 
     return m_visitedLinkHashes.contains(linkHash);
 }
 
-void WebVisitedLinkStore::addVisitedLink(Page& sourcePage, SharedStringHash linkHash)
+void WebVisitedLinkStore::addVisitedLink(WebCore::Page& sourcePage, WebCore::SharedStringHash linkHash)
 {
     if (!s_shouldTrackVisitedLinks)
         return;
@@ -121,7 +120,7 @@ void WebVisitedLinkStore::addVisitedLink(Page& sourcePage, SharedStringHash link
     addVisitedLinkHash(linkHash);
 }
 
-void WebVisitedLinkStore::populateVisitedLinksIfNeeded(Page& page)
+void WebVisitedLinkStore::populateVisitedLinksIfNeeded(WebCore::Page& page)
 {
     if (m_visitedLinksPopulated)
         return;
@@ -145,7 +144,7 @@ void WebVisitedLinkStore::populateVisitedLinksIfNeeded(Page& page)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void WebVisitedLinkStore::addVisitedLinkHash(SharedStringHash linkHash)
+void WebVisitedLinkStore::addVisitedLinkHash(WebCore::SharedStringHash linkHash)
 {
     ASSERT(s_shouldTrackVisitedLinks);
 

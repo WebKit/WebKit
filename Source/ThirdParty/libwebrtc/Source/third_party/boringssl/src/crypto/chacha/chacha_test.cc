@@ -20,14 +20,17 @@
 
 #include <gtest/gtest.h>
 
-#include <openssl/crypto.h>
 #include <openssl/chacha.h>
+#include <openssl/crypto.h>
 
-#include "internal.h"
 #include "../internal.h"
 #include "../test/abi_test.h"
 #include "../test/test_util.h"
+#include "internal.h"
 
+
+BSSL_NAMESPACE_BEGIN
+namespace {
 
 static const uint8_t kKey[32] = {
     0x98, 0xbe, 0xf1, 0x46, 0x9b, 0xe7, 0x26, 0x98, 0x37, 0xa4, 0x5b,
@@ -399,3 +402,6 @@ TEST(ChaChaTest, ABI) {
 }
 
 #endif  // SUPPORTS_ABI_TEST
+
+}  // namespace
+BSSL_NAMESPACE_END

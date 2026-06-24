@@ -213,7 +213,6 @@ private:
 #if !LOG_DISABLED
     void checkTimestamps(const AudioTimeStamp&, double);
 
-    String m_ioUnitName;
 #endif
 
     LongCapabilityRange m_sampleRateCapabilities;
@@ -238,7 +237,6 @@ private:
 
     bool m_shouldUseVPIO { true };
     bool m_canRenderAudio { true };
-    bool m_shouldSetVoiceActivityListener { false };
     bool m_voiceActivityDetectionEnabled { false };
 #if PLATFORM(MAC)
     StoredAudioUnit m_storedVPIOUnit { nullptr };

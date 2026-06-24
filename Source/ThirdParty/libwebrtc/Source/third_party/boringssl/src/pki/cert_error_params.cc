@@ -15,6 +15,7 @@
 #include "cert_error_params.h"
 
 #include <memory>
+#include <string>
 
 #include <openssl/base.h>
 
@@ -74,8 +75,7 @@ class CertErrorParams1SizeT : public CertErrorParams {
   CertErrorParams1SizeT &operator=(const CertErrorParams1SizeT &) = delete;
 
   std::string ToDebugString() const override {
-    return name_ + std::string(": ") +
-           bssl::string_util::NumberToDecimalString(value_);
+    return name_ + std::string(": ") + std::to_string(value_);
   }
 
  private:
@@ -95,10 +95,8 @@ class CertErrorParams2SizeT : public CertErrorParams {
   CertErrorParams2SizeT &operator=(const CertErrorParams2SizeT &) = delete;
 
   std::string ToDebugString() const override {
-    return name1_ + std::string(": ") +
-           bssl::string_util::NumberToDecimalString(value1_) + "\n" + name2_ +
-           std::string(": ") +
-           bssl::string_util::NumberToDecimalString(value2_);
+    return name1_ + std::string(": ") + std::to_string(value1_) + "\n" +
+           name2_ + std::string(": ") + std::to_string(value2_);
   }
 
  private:

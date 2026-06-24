@@ -15,14 +15,15 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/task_queue/task_queue_base.h"
@@ -122,13 +123,13 @@ class SendTransport : public Transport {
 
   void SetRtpRtcpModule(ModuleRtpRtcpImpl2* receiver) { receiver_ = receiver; }
   void SimulateNetworkDelay(TimeDelta delay) { delay_ = delay; }
-  bool SendRtp(ArrayView<const uint8_t> data,
+  bool SendRtp(std::span<const uint8_t> data,
                const PacketOptions& /* options */) override {
     EXPECT_TRUE(last_packet_.Parse(data));
     ++rtp_packets_sent_;
     return true;
   }
-  bool SendRtcp(ArrayView<const uint8_t> data,
+  bool SendRtcp(std::span<const uint8_t> data,
                 const PacketOptions& /* options */) override {
     test::RtcpPacketParser parser;
     parser.Parse(data);
@@ -237,7 +238,7 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
     CreateModuleImpl();
   }
   const RtpPacketReceived& last_packet() { return transport_.last_packet_; }
-  void RegisterHeaderExtension(absl::string_view uri, int id) {
+  void RegisterHeaderExtension(absl::string_view uri, RtpHeaderExtensionId id) {
     impl_->RegisterRtpHeaderExtension(uri, id);
     transport_.header_extensions_.RegisterByUri(id, uri);
     transport_.last_packet_.IdentifyExtensions(transport_.header_extensions_);

@@ -11,9 +11,9 @@
 #include <cstdint>
 #include <iterator>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/rtp_video_frame_assembler.h"
@@ -54,7 +54,7 @@ class PacketBuilder {
     return *this;
   }
 
-  PacketBuilder& WithPayload(ArrayView<const uint8_t> payload) {
+  PacketBuilder& WithPayload(std::span<const uint8_t> payload) {
     payload_.assign(payload.begin(), payload.end());
     return *this;
   }
@@ -131,11 +131,11 @@ void AppendFrames(RtpVideoFrameAssembler::FrameVector from,
             std::make_move_iterator(from.end()));
 }
 
-ArrayView<int64_t> References(const std::unique_ptr<EncodedFrame>& frame) {
-  return MakeArrayView(frame->references, frame->num_references);
+std::span<int64_t> References(const std::unique_ptr<EncodedFrame>& frame) {
+  return std::span(frame->references, frame->num_references);
 }
 
-ArrayView<const uint8_t> Payload(const std::unique_ptr<EncodedFrame>& frame) {
+std::span<const uint8_t> Payload(const std::unique_ptr<EncodedFrame>& frame) {
   return *frame->GetEncodedData();
 }
 

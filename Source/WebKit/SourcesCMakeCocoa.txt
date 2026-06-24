@@ -1,0 +1,203 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+// CMake-only unified source list for the Cocoa ports. The Xcode build compiles
+// these files individually via WebKit.xcodeproj; folding them into the shared
+// SourcesCocoa.txt would require coordinated bundle-count and pbxproj updates.
+//
+// Registered Mac-only for now (see PlatformCocoa.cmake). When iOS adopts,
+// NetworkConnectionToWebProcessMac.mm and the two
+// _WKCaptionStyleMenuController*Mac.mm entries will need #if PLATFORM(MAC)
+// self-guards (the latter already has one) or a separate Mac-only list.
+
+GPUProcess/media/RemoteAudioDestinationManager.cpp
+
+NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm @nonARC
+
+NetworkProcess/cocoa/DeviceManagementSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm @nonARC
+NetworkProcess/cocoa/NetworkSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+NetworkProcess/cocoa/WebSocketTaskCocoa.mm @nonARC
+
+NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm @nonARC
+
+NetworkProcess/webrtc/NetworkRTCUtilitiesCocoa.mm @nonARC
+
+Platform/IPC/cocoa/SharedFileHandleCocoa.cpp
+
+Platform/cocoa/_WKWebViewTextInputNotifications.mm @nonARC
+
+Shared/API/Cocoa/WKMain.mm @nonARC
+
+Shared/AdditionalFonts.mm @nonARC
+
+Shared/Cocoa/AnnotatedMachSendRight.mm @nonARC
+Shared/Cocoa/ArgumentCodersCocoa.mm @nonARC
+Shared/Cocoa/BackgroundFetchStateCocoa.mm @nonARC
+Shared/Cocoa/CoreIPCAVOutputContext.mm @nonARC
+Shared/Cocoa/CoreIPCArray.mm @nonARC
+Shared/Cocoa/CoreIPCCFType.mm @nonARC
+Shared/Cocoa/CoreIPCCFURL.mm @nonARC
+Shared/Cocoa/CoreIPCCVPixelBufferRef.mm @nonARC
+Shared/Cocoa/CoreIPCContacts.mm @nonARC
+Shared/Cocoa/CoreIPCDDScannerResult.mm @nonARC
+Shared/Cocoa/CoreIPCDateComponents.mm @nonARC
+Shared/Cocoa/CoreIPCDictionary.mm @nonARC
+Shared/Cocoa/CoreIPCError.mm @nonARC
+Shared/Cocoa/CoreIPCLocale.mm @nonARC
+Shared/Cocoa/CoreIPCNSCFObject.mm @nonARC
+Shared/Cocoa/CoreIPCNSShadow.mm @nonARC
+Shared/Cocoa/CoreIPCNSURLCredential.mm @nonARC
+Shared/Cocoa/CoreIPCNSURLProtectionSpace.mm @nonARC
+Shared/Cocoa/CoreIPCNSURLRequest.mm @nonARC
+Shared/Cocoa/CoreIPCNSValue.mm @nonARC
+Shared/Cocoa/CoreIPCNull.mm @nonARC
+Shared/Cocoa/CoreIPCPKDateComponentsRange.mm @nonARC
+Shared/Cocoa/CoreIPCPKPayment.mm @nonARC
+Shared/Cocoa/CoreIPCPKPaymentMerchantSession.mm @nonARC
+Shared/Cocoa/CoreIPCPKPaymentMethod.mm @nonARC
+Shared/Cocoa/CoreIPCPKPaymentSetupFeature.mm @nonARC
+Shared/Cocoa/CoreIPCPKPaymentToken.mm @nonARC
+Shared/Cocoa/CoreIPCPKSecureElementPass.mm @nonARC
+Shared/Cocoa/CoreIPCPKShippingMethod.mm @nonARC
+Shared/Cocoa/CoreIPCPassKit.mm @nonARC
+Shared/Cocoa/CoreIPCPersonNameComponents.mm @nonARC
+Shared/Cocoa/CoreIPCPlistArray.mm @nonARC
+Shared/Cocoa/CoreIPCPlistDictionary.mm @nonARC
+Shared/Cocoa/CoreIPCPlistObject.mm @nonARC
+Shared/Cocoa/CoreIPCPresentationIntent.mm @nonARC
+Shared/Cocoa/CoreIPCSecureCoding.mm @nonARC
+Shared/Cocoa/CoreIPCStringSet.mm @nonARC
+Shared/Cocoa/CoreTextHelpers.mm @nonARC
+Shared/Cocoa/DataDetectionResult.mm @nonARC
+Shared/Cocoa/LaunchLogHook.mm @nonARC
+Shared/Cocoa/WKKeyedCoder.mm @nonARC
+Shared/Cocoa/WKProcessExtension.mm @nonARC
+Shared/Cocoa/WebPushMessageCocoa.mm @nonARC
+Shared/Cocoa/XPCEndpoint.mm @nonARC
+Shared/Cocoa/XPCEndpointClient.mm @nonARC
+
+Shared/cf/CoreIPCCFArray.mm @nonARC
+Shared/cf/CoreIPCCFDictionary.mm @nonARC
+Shared/cf/CoreIPCCGColorSpace.mm @nonARC
+Shared/cf/CoreIPCNumber.mm @nonARC
+Shared/cf/CoreIPCSecTrust.mm @nonARC
+
+UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientInputs.mm @nonARC
+UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientOutputs.mm @nonARC
+UIProcess/API/Cocoa/_WKAuthenticatorAssertionResponse.mm @nonARC
+UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponse.mm @nonARC
+UIProcess/API/Cocoa/_WKAuthenticatorResponse.mm @nonARC
+UIProcess/API/Cocoa/_WKAuthenticatorSelectionCriteria.mm @nonARC
+UIProcess/API/Cocoa/_WKPublicKeyCredentialCreationOptions.mm @nonARC
+UIProcess/API/Cocoa/_WKPublicKeyCredentialDescriptor.mm @nonARC
+UIProcess/API/Cocoa/_WKPublicKeyCredentialEntity.mm @nonARC
+UIProcess/API/Cocoa/_WKPublicKeyCredentialParameters.mm @nonARC
+UIProcess/API/Cocoa/_WKPublicKeyCredentialRelyingPartyEntity.mm @nonARC
+UIProcess/API/Cocoa/_WKPublicKeyCredentialRequestOptions.mm @nonARC
+UIProcess/API/Cocoa/_WKPublicKeyCredentialUserEntity.mm @nonARC
+UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm @nonARC
+UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm @nonARC
+
+UIProcess/Cocoa/AboutSchemeHandlerCocoa.mm @nonARC
+UIProcess/Cocoa/AuxiliaryProcessProxyCocoa.mm @nonARC
+UIProcess/Cocoa/CSPExtensionUtilities.mm @nonARC
+UIProcess/Cocoa/PreferenceObserver.mm @nonARC
+UIProcess/Cocoa/WKShareSheet.mm @nonARC
+UIProcess/Cocoa/WKStorageAccessAlert.mm @nonARC
+UIProcess/Cocoa/WebInspectorPreferenceObserver.mm @nonARC
+UIProcess/Cocoa/_WKWarningView.mm @nonARC
+
+UIProcess/Downloads/DownloadProxyCocoa.mm @nonARC
+
+UIProcess/EndowmentStateTracker.mm @nonARC
+
+UIProcess/Extensions/WebExtensionCommand.cpp
+UIProcess/Extensions/WebExtensionMenuItem.cpp
+
+UIProcess/Launcher/cocoa/ExtensionProcess.mm @nonARC
+
+UIProcess/PDF/WKPDFPageNumberIndicator.mm @nonARC
+
+UIProcess/RemoteLayerTree/cocoa/RemoteScrollingTreeCocoa.mm @nonARC
+
+UIProcess/WebAuthentication/AuthenticatorManager.cpp
+
+UIProcess/WebAuthentication/Cocoa/AuthenticationServicesSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+UIProcess/WebAuthentication/Cocoa/HidConnection.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/HidService.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm @nonARC
+
+UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.cpp
+UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorUtils.mm @nonARC
+UIProcess/WebAuthentication/Virtual/VirtualHidConnection.cpp
+UIProcess/WebAuthentication/Virtual/VirtualLocalConnection.mm @nonARC
+UIProcess/WebAuthentication/Virtual/VirtualService.mm @nonARC
+
+UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp
+UIProcess/WebAuthentication/fido/CtapCcidDriver.cpp
+UIProcess/WebAuthentication/fido/CtapHidDriver.cpp
+
+UIProcess/mac/_WKCaptionStyleMenuControllerAVKitMac.mm @nonARC
+UIProcess/mac/_WKCaptionStyleMenuControllerMac.mm @nonARC
+
+WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm @nonARC
+
+WebProcess/Inspector/ServiceWorkerDebuggableFrontendChannel.cpp
+WebProcess/Inspector/ServiceWorkerDebuggableProxy.cpp
+
+WebProcess/Network/WebMockContentFilterManager.cpp
+
+WebProcess/WebPage/Cocoa/PositionInformationForWebPage.mm @nonARC
+
+WebProcess/cocoa/AudioSessionRoutingArbitrator.cpp
+WebProcess/cocoa/LaunchServicesDatabaseManager.mm @nonARC
+WebProcess/cocoa/TextTrackRepresentationCocoa.mm @nonARC
+
+webpushd/ApplePushServiceConnection.mm @nonARC
+webpushd/MockPushServiceConnection.mm @nonARC
+webpushd/PushClientConnection.mm @nonARC
+webpushd/PushService.mm @nonARC
+webpushd/PushServiceConnection.mm @nonARC
+webpushd/WebClipCache.mm @nonARC
+webpushd/WebPushDaemon.mm @nonARC
+webpushd/_WKMockUserNotificationCenter.mm @nonARC
+
+// DerivedSources. The GeneratedSerializers*.mm / GeneratedWebKitSecureCoding.mm
+// / WebKitPlatformGeneratedSerializers.mm outputs of generate-serializers.py are
+// not listed: each emits the same BitsInIncreasingOrder / VirtualTableAndRefCountOverhead
+// helper templates at file scope, and together they total ~134k lines, so they
+// stay as the per-domain TUs the generator already produces.
+AutomationBackendDispatchers.cpp
+AutomationFrontendDispatchers.cpp
+AutomationProtocolObjects.cpp
+MessageArgumentDescriptions.cpp
+SharedPreferencesForWebProcess.cpp
+WebDriverBidiBackendDispatchers.cpp
+WebDriverBidiFrontendDispatchers.cpp
+WebDriverBidiProtocolObjects.cpp
+WebPageUpdatePreferences.cpp
+WebPreferencesFeatures.cpp
+WebPreferencesGetterSetters.cpp
+WebPreferencesKeys.cpp
+WebPreferencesStoreDefaultsMap.cpp

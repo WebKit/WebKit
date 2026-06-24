@@ -44,7 +44,7 @@ using namespace JSC;
 JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
-    auto result = wrapped().result();
+    auto result = protect(wrapped())->result();
     if (result.hasException()) [[unlikely]] {
         propagateException(lexicalGlobalObject, throwScope, result.releaseException());
         return jsNull();

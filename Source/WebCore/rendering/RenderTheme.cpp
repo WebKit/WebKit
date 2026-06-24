@@ -69,9 +69,7 @@
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderProgress.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderView.h"
 #include "SearchFieldCancelButtonPart.h"
 #include "SearchFieldPart.h"
@@ -82,7 +80,9 @@
 #include "SliderTrackPart.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StylePadding.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "SwitchPart.h"
@@ -116,7 +116,12 @@ using namespace HTMLNames;
 RenderTheme::RenderTheme() = default;
 RenderTheme::~RenderTheme() = default;
 
-StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, const RenderStyle& parentStyle, const Element* element, StyleAppearance autoAppearance) const
+float RenderTheme::usedZoomForComputedStyle(const Style::ComputedStyle& renderStyle) const
+{
+    return renderStyle.evaluationTimeZoomEnabled() ? 1.0f : renderStyle.usedZoom();
+}
+
+StyleAppearance RenderTheme::adjustAppearanceForElement(Style::ComputedStyle& style, const Style::ComputedStyle& parentStyle, const Element* element, StyleAppearance autoAppearance) const
 {
     if (!element) {
         style.setUsedAppearance(StyleAppearance::None);
@@ -261,17 +266,18 @@ bool RenderTheme::hasAppearanceForElementTypeFromUAStyle(const Element& element)
 {
     // NOTE: This is just a legacy hard-coded list of elements that have some appearance value in html.css
     // FIXME: Remove when devolvable widgets are universally enabled.
+    // FIXME: Should these be hasTagName() checks to also enforce the namespace?
     const auto& localName = element.localName();
-    return localName == HTMLNames::inputTag
-        || localName == HTMLNames::textareaTag
-        || localName == HTMLNames::buttonTag
-        || localName == HTMLNames::progressTag
-        || localName == HTMLNames::selectTag
-        || localName == HTMLNames::meterTag
+    return HTMLNames::inputTag->hasLocalName(localName)
+        || HTMLNames::textareaTag->hasLocalName(localName)
+        || HTMLNames::buttonTag->hasLocalName(localName)
+        || HTMLNames::progressTag->hasLocalName(localName)
+        || HTMLNames::selectTag->hasLocalName(localName)
+        || HTMLNames::meterTag->hasLocalName(localName)
         || (element.isInUserAgentShadowTree() && element.userAgentPart() == UserAgentParts::webkitListButton());
 }
 
-void RenderTheme::adjustStyle(RenderStyle& style, const RenderStyle& parentStyle, const Element* element)
+void RenderTheme::adjustStyle(Style::ComputedStyle& style, const Style::ComputedStyle& parentStyle, const Element* element)
 {
     auto autoAppearance = autoAppearanceForElement(style, element);
     auto appearance = adjustAppearanceForElement(style, parentStyle, element, autoAppearance);
@@ -318,7 +324,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const RenderStyle& parentStyle
     if (!isAppearanceAllowedForAllElements(appearance)
         && !hasAppearanceFromUAStyle
         && autoAppearance == StyleAppearance::None
-        && !style.borderAndBackgroundEqual(RenderStyle::defaultStyleSingleton()))
+        && !style.borderAndBackgroundEqual(Style::ComputedStyle::defaultStyleSingleton()))
         style.setUsedAppearance(StyleAppearance::None);
 
     if (!style.hasUsedAppearance())
@@ -392,7 +398,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const RenderStyle& parentStyle
     }
 }
 
-StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const Element* elementPtr) const
+StyleAppearance RenderTheme::autoAppearanceForElement(Style::ComputedStyle& style, const Element* elementPtr) const
 {
     if (!elementPtr)
         return StyleAppearance::None;
@@ -882,7 +888,7 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     
     auto appearance = box.style().usedAppearance();
 
-    if (!canPaint(paintInfo, box.settings(), appearance)) [[unlikely]]
+    if (!canPaint(paintInfo, protect(box.settings()), appearance)) [[unlikely]]
         return false;
 
     float deviceScaleFactor = protect(box.document())->deviceScaleFactor();
@@ -1171,7 +1177,7 @@ bool RenderTheme::isControlContainer(StyleAppearance appearance) const
     return appearance != StyleAppearance::Checkbox && appearance != StyleAppearance::Radio;
 }
 
-bool RenderTheme::isControlStyled(const RenderStyle& style) const
+bool RenderTheme::isControlStyled(const Style::ComputedStyle& style) const
 {
     switch (style.usedAppearance()) {
     case StyleAppearance::PushButton:
@@ -1193,7 +1199,7 @@ bool RenderTheme::isControlStyled(const RenderStyle& style) const
     }
 }
 
-bool RenderTheme::supportsFocusRing(const RenderElement&, const RenderStyle& style) const
+bool RenderTheme::supportsFocusRing(const RenderElement&, const Style::ComputedStyle& style) const
 {
     return style.hasUsedAppearance()
         && style.usedAppearance() != StyleAppearance::TextField
@@ -1372,7 +1378,7 @@ Style::LineWidthBox RenderTheme::controlBorder(StyleAppearance appearance, const
 
 // FIXME: iOS does not use this so arguably this should be better abstracted. Or maybe we should
 // investigate if we can bring the various ports closer together.
-void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(Style::ComputedStyle& style, const Element* element) const
 {
     auto appearance = style.usedAppearance();
     CheckedRef fontCascade = style.fontCascade();
@@ -1501,38 +1507,38 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     style.setInsideDefaultButton(appearance == StyleAppearance::DefaultButton && element && !element->isDisabledFormControl());
 }
 
-void RenderTheme::adjustCheckboxStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustCheckboxStyle(Style::ComputedStyle& style, const Element* element) const
 {
     adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
-void RenderTheme::adjustRadioStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustRadioStyle(Style::ComputedStyle& style, const Element* element) const
 {
     adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
-void RenderTheme::adjustColorWellStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustColorWellStyle(Style::ComputedStyle& style, const Element* element) const
 {
     adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
-void RenderTheme::adjustButtonStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustButtonStyle(Style::ComputedStyle& style, const Element* element) const
 {
     adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
-void RenderTheme::adjustInnerSpinButtonStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustInnerSpinButtonStyle(Style::ComputedStyle& style, const Element* element) const
 {
     adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
-void RenderTheme::adjustMenuListStyle(RenderStyle& style, const Element*) const
+void RenderTheme::adjustMenuListStyle(Style::ComputedStyle& style, const Element*) const
 {
     style.setOverflowX(Overflow::Visible);
     style.setOverflowY(Overflow::Visible);
 }
 
-void RenderTheme::adjustMeterStyle(RenderStyle& style, const Element*) const
+void RenderTheme::adjustMeterStyle(Style::ComputedStyle& style, const Element*) const
 {
     style.setBoxShadow(CSS::Keyword::None { });
 }
@@ -1689,12 +1695,12 @@ void RenderTheme::setColorWellSwatchBackground(HTMLElement& swatch, Color color)
     swatch.setInlineStyleProperty(CSSPropertyBackgroundColor, serializationForHTML(color));
 }
 
-void RenderTheme::adjustSliderThumbStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustSliderThumbStyle(Style::ComputedStyle& style, const Element* element) const
 {
     adjustSliderThumbSize(style, element);
 }
 
-void RenderTheme::adjustSwitchStyle(RenderStyle& style, const Element*) const
+void RenderTheme::adjustSwitchStyle(Style::ComputedStyle& style, const Element*) const
 {
     // FIXME: This probably has the same flaw as
     // RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle() by not taking
@@ -1704,7 +1710,7 @@ void RenderTheme::adjustSwitchStyle(RenderStyle& style, const Element*) const
     style.setLogicalHeight(Style::PreferredSize { controlSize.height() });
 }
 
-Style::PaddingBox RenderTheme::popupInternalPaddingBox(const RenderStyle& style) const
+Style::PaddingBox RenderTheme::popupInternalPaddingBox(const Style::ComputedStyle& style) const
 {
     auto padding = platformPopupInternalPaddingBox(style);
     auto mode = style.writingMode();
@@ -1722,7 +1728,7 @@ Style::PaddingBox RenderTheme::popupInternalPaddingBox(const RenderStyle& style)
     return result;
 }
 
-Style::PaddingBox RenderTheme::platformPopupInternalPaddingBox(const RenderStyle&) const
+Style::PaddingBox RenderTheme::platformPopupInternalPaddingBox(const Style::ComputedStyle&) const
 {
     return Style::PaddingBox { 0_css_px };
 }

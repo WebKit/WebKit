@@ -62,7 +62,7 @@ public:
     GradientApplier() = default;
     virtual ~GradientApplier() = default;
 
-    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) = 0;
+    virtual bool applyResource(RenderElement&, const Style::ComputedStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) = 0;
     virtual void postApplyResource(RenderElement&, GraphicsContext*&, const GradientData&, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) = 0;
 };
 
@@ -78,14 +78,14 @@ public:
     void removeAllClientsFromCacheAndMarkForInvalidationIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;
     void removeClientFromCache(RenderElement&) final;
 
-    OptionSet<ApplyResult> applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) final;
+    OptionSet<ApplyResult> applyResource(RenderElement&, const Style::ComputedStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) final;
     void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) final { return FloatRect(); }
 
 protected:
-    LegacyRenderSVGResourceGradient(Type, SVGGradientElement&, RenderStyle&&);
+    LegacyRenderSVGResourceGradient(Type, SVGGradientElement&, Style::ComputedStyle&&);
 
-    static GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const RenderStyle&);
+    static GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const Style::ComputedStyle&);
     static GradientSpreadMethod NODELETE platformSpreadMethodFromSVGType(SVGSpreadMethodType);
     ColorInterpolationMethod gradientColorInterpolationMethod() const;
 
@@ -93,12 +93,12 @@ private:
     void element() const = delete;
 
     GradientData::Inputs computeInputs(RenderElement&, OptionSet<RenderSVGResourceMode>);
-    GradientData* gradientDataForRenderer(RenderElement&, const RenderStyle&, OptionSet<RenderSVGResourceMode>);
+    GradientData* gradientDataForRenderer(RenderElement&, const Style::ComputedStyle&, OptionSet<RenderSVGResourceMode>);
 
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
     virtual AffineTransform gradientTransform() const = 0;
     virtual bool collectGradientAttributes() = 0;
-    virtual Ref<Gradient> buildGradient(const RenderStyle&) const = 0;
+    virtual Ref<Gradient> buildGradient(const Style::ComputedStyle&) const = 0;
 
     HashMap<SingleThreadWeakRef<RenderElement>, std::unique_ptr<GradientData>> m_gradientMap;
 

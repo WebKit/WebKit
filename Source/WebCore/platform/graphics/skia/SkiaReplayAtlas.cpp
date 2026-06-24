@@ -33,18 +33,13 @@
 #include "SkiaGPUAtlas.h"
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#include <skia/gpu/ganesh/GrDirectContext.h>
-#include <skia/gpu/ganesh/SkImageGanesh.h>
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SkiaReplayAtlas);
 
-SkiaReplayAtlas::SkiaReplayAtlas(Ref<const SkiaGPUAtlas>&& gpuAtlas, sk_sp<SkImage>&& rewrappedTexture)
+SkiaReplayAtlas::SkiaReplayAtlas(Ref<const SkiaGPUAtlas>&& gpuAtlas, sk_sp<SkImage>&& atlasImage)
     : m_gpuAtlas(WTF::move(gpuAtlas))
-    , m_rewrappedTexture(WTF::move(rewrappedTexture))
+    , m_atlasImage(WTF::move(atlasImage))
 {
 }
 
@@ -52,21 +47,15 @@ SkiaReplayAtlas::~SkiaReplayAtlas() = default;
 
 std::unique_ptr<SkiaReplayAtlas> SkiaReplayAtlas::create(const SkiaGPUAtlas& gpuAtlas)
 {
-    if (!gpuAtlas.backendTexture().isValid())
-        return nullptr;
-
-    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
-    RELEASE_ASSERT(grContext);
-
     // Always rewrap the texture for this worker context.
     // The underlying GL texture was created on the main thread context but is
     // shareable via GL context sharing. However, the Skia SkImage wrapper is
     // context-specific and must be rewrapped for each worker's GrDirectContext.
-    auto rewrapped = SkImages::BorrowTextureFrom(grContext, gpuAtlas.backendTexture(), kTopLeft_GrSurfaceOrigin, kBGRA_8888_SkColorType, kPremul_SkAlphaType, sRGBColorSpaceSingleton());
-    if (!rewrapped)
+    auto atlasImage = gpuAtlas.atlasImageForCurrentThread();
+    if (!atlasImage)
         return nullptr;
 
-    return std::unique_ptr<SkiaReplayAtlas>(new SkiaReplayAtlas(gpuAtlas, WTF::move(rewrapped)));
+    return makeUnique<SkiaReplayAtlas>(gpuAtlas, WTF::move(atlasImage));
 }
 
 std::optional<SkRect> SkiaReplayAtlas::rectForImage(const SkImage& image) const

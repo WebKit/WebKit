@@ -63,6 +63,10 @@ VTTRegion::VTTRegion(ScriptExecutionContext& context)
     : ContextDestructionObserver(&context)
     , m_id(emptyString())
     , m_scrollTimer(*this, &VTTRegion::scrollTimerFired)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(&downcast<Document>(context).logger())
+    , m_logIdentifier(uniqueLogIdentifier())
+#endif
 {
 }
 
@@ -203,7 +207,7 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
         if (WebVTTParser::parseFloatPercentageValue(input, floatWidth) && parsedEntireRun(input, valueRun))
             m_width = floatWidth;
         else
-            LOG(Media, "VTTRegion::parseSettingValue, invalid Width");
+            ERROR_LOG(LOGIDENTIFIER, "invalid Width");
         break;
     }
     case Lines: {
@@ -211,7 +215,7 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
         if (input.scanDigits(number) && parsedEntireRun(input, valueRun))
             m_lines = number;
         else
-            LOG(Media, "VTTRegion::parseSettingValue, invalid Lines");
+            ERROR_LOG(LOGIDENTIFIER, "invalid Lines");
         break;
     }
     case RegionAnchor: {
@@ -219,7 +223,7 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
         if (WebVTTParser::parseFloatPercentageValuePair(input, ',', anchor) && parsedEntireRun(input, valueRun))
             m_regionAnchor = anchor;
         else
-            LOG(Media, "VTTRegion::parseSettingValue, invalid RegionAnchor");
+            ERROR_LOG(LOGIDENTIFIER, "invalid RegionAnchor");
         break;
     }
     case ViewportAnchor: {
@@ -227,14 +231,14 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
         if (WebVTTParser::parseFloatPercentageValuePair(input, ',', anchor) && parsedEntireRun(input, valueRun))
             m_viewportAnchor = anchor;
         else
-            LOG(Media, "VTTRegion::parseSettingValue, invalid ViewportAnchor");
+            ERROR_LOG(LOGIDENTIFIER, "invalid ViewportAnchor");
         break;
     }
     case Scroll:
         if (input.scanRun(valueRun, upKeyword()))
             m_scroll = ScrollSetting::Up;
         else
-            LOG(Media, "VTTRegion::parseSettingValue, invalid Scroll");
+            ERROR_LOG(LOGIDENTIFIER, "invalid Scroll");
         break;
     case None:
         break;
@@ -296,7 +300,7 @@ void VTTRegion::displayLastTextTrackCueBox()
 
 void VTTRegion::willRemoveTextTrackCueBox(VTTCueBox* box)
 {
-    LOG(Media, "VTTRegion::willRemoveTextTrackCueBox");
+    DEBUG_LOG(LOGIDENTIFIER);
     ASSERT(m_cueContainer->contains(box));
 
     double boxHeight = box->boundingClientRect().height();
@@ -380,7 +384,7 @@ void VTTRegion::prepareRegionDisplayTree()
 
 void VTTRegion::startTimer()
 {
-    LOG(Media, "VTTRegion::startTimer");
+    DEBUG_LOG(LOGIDENTIFIER);
 
     if (m_scrollTimer.isActive())
         return;
@@ -391,7 +395,7 @@ void VTTRegion::startTimer()
 
 void VTTRegion::stopTimer()
 {
-    LOG(Media, "VTTRegion::stopTimer");
+    DEBUG_LOG(LOGIDENTIFIER);
 
     if (m_scrollTimer.isActive())
         m_scrollTimer.stop();
@@ -399,7 +403,7 @@ void VTTRegion::stopTimer()
 
 void VTTRegion::scrollTimerFired()
 {
-    LOG(Media, "VTTRegion::scrollTimerFired");
+    DEBUG_LOG(LOGIDENTIFIER);
 
     stopTimer();
     displayLastTextTrackCueBox();
@@ -409,6 +413,28 @@ Document* VTTRegion::document() const
 {
     return downcast<Document>(scriptExecutionContext());
 }
+
+#if !RELEASE_LOG_DISABLED
+ASCIILiteral VTTRegion::logClassName() const
+{
+    return "VTTRegion"_s;
+}
+
+WTFLogChannel& VTTRegion::logChannel() const
+{
+    return LogMedia;
+}
+
+const Logger& VTTRegion::logger() const
+{
+    return *m_logger;
+}
+
+uint64_t VTTRegion::logIdentifier() const
+{
+    return m_logIdentifier;
+}
+#endif
 
 } // namespace WebCore
 

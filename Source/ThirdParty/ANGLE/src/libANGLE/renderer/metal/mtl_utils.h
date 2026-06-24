@@ -13,6 +13,8 @@
 
 #import <Metal/Metal.h>
 
+#include <optional>
+
 #include "angle_gl.h"
 #include "common/MemoryBuffer.h"
 #include "common/PackedEnums.h"
@@ -47,24 +49,27 @@ bool PreferStagedTextureUploads(const gl::Context *context,
                                 const Format &textureObjFormat,
                                 const StagingPurpose purpose);
 
-// Initialize texture content to black.
+// Initialize texture content to black (or non-zero if requested).
 angle::Result InitializeTextureContents(const gl::Context *context,
                                         const TextureRef &texture,
                                         const Format &textureObjFormat,
-                                        const ImageNativeIndex &index);
-// Same as above but using GPU clear operation instead of CPU.forma
+                                        const ImageNativeIndex &index,
+                                        bool toNonZero = false);
+// Same as above but using GPU clear operation instead of CPU.
 // - channelsToInit parameter controls which channels will get their content initialized.
 angle::Result InitializeTextureContentsGPU(const gl::Context *context,
                                            const TextureRef &texture,
                                            const Format &textureObjFormat,
                                            const ImageNativeIndex &index,
-                                           MTLColorWriteMask channelsToInit);
+                                           MTLColorWriteMask channelsToInit,
+                                           bool toNonZero = false);
 
 // Same as above but for a depth/stencil texture.
 angle::Result InitializeDepthStencilTextureContentsGPU(const gl::Context *context,
                                                        const TextureRef &texture,
                                                        const Format &textureObjFormat,
-                                                       const ImageNativeIndex &index);
+                                                       const ImageNativeIndex &index,
+                                                       bool toNonZero = false);
 
 // Unified texture's per slice/depth texel reading function
 angle::Result ReadTexturePerSliceBytes(const gl::Context *context,
@@ -172,9 +177,7 @@ size_t EstimateTextureSizeInBytes(const mtl::Format &mtlFormat,
                                   size_t sampleCount,
                                   size_t numMips);
 
-NSUInteger GetMaxRenderTargetSizeForDeviceInBytes(const mtl::ContextDevice &device);
 NSUInteger GetMaxNumberOfRenderTargetsForDevice(const mtl::ContextDevice &device);
-bool DeviceHasMaximumRenderTargetSize(id<MTLDevice> device);
 
 // Useful to set clear color for texture originally having no alpha in GL, but backend's format
 // has alpha channel.
@@ -188,6 +191,12 @@ NSUInteger ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(
     const MTLRenderPipelineDescriptor *descriptor,
     const Context *context,
     const mtl::ContextDevice &device);
+
+// Returns the device's max render-pass color byte budget, or nullopt when the
+// device imposes no fixed limit (e.g. macOS).  Honors
+// FeaturesMtl::limitMaxColorTargetBitsForTesting.
+std::optional<NSUInteger> GetMaxRenderPassColorSizeBytes(const angle::FeaturesMtl &features,
+                                                         const mtl::ContextDevice &device);
 
 gl::Rectangle MTLRegionToGLRect(const MTLRegion &mtlRegion);
 gl::Box MTLRegionToGLBox(const MTLRegion &mtlRegion);

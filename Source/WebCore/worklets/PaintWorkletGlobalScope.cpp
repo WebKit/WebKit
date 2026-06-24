@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PaintWorkletGlobalScope.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "JSCSSPaintCallback.h"
 #include "JSDOMConvertCallbacks.h"
@@ -49,6 +50,7 @@ RefPtr<PaintWorkletGlobalScope> PaintWorkletGlobalScope::tryCreate(Document& doc
         return nullptr;
     auto scope = adoptRef(*new PaintWorkletGlobalScope(document, vm.releaseNonNull(), WTF::move(code)));
     scope->addToContextsMap();
+    scope->applyContentSecurityPolicyResponseHeaders(protect(document.contentSecurityPolicy())->responseHeaders());
     return scope;
 }
 
@@ -61,7 +63,7 @@ double PaintWorkletGlobalScope::devicePixelRatio() const
 {
     if (!responsibleDocument() || !responsibleDocument()->window())
         return 1.0;
-    return responsibleDocument()->window()->devicePixelRatio();
+    return protect(responsibleDocument())->window()->devicePixelRatio();
 }
 
 PaintDefinition::PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments)

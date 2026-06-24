@@ -26,23 +26,25 @@
 #pragma once
 
 #include "RenderLayoutState.h"
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/StyleMaximumLines.h>
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {
 
 class LineClampUpdater {
 public:
-    LineClampUpdater(const RenderBlockFlow& blockContainer);
+    LineClampUpdater(const RenderBlock& blockContainer);
     ~LineClampUpdater();
 
 private:
-    CheckedPtr<const RenderBlockFlow> m_blockContainer;
+    CheckedPtr<const RenderBlock> m_blockContainer;
     std::optional<RenderLayoutState::LineClamp> m_previousLineClamp { };
     std::optional<RenderLayoutState::LegacyLineClamp> m_skippedLegacyLineClampToRestore { };
 };
 
-inline LineClampUpdater::LineClampUpdater(const RenderBlockFlow& blockContainer)
+inline LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
     : m_blockContainer(blockContainer)
 {
     auto* layoutState = m_blockContainer->view().frameView().layoutContext().layoutState();
@@ -50,7 +52,8 @@ inline LineClampUpdater::LineClampUpdater(const RenderBlockFlow& blockContainer)
         return;
 
     m_previousLineClamp = layoutState->lineClamp();
-    if (blockContainer.isFieldset() || blockContainer.style().display() == Style::DisplayType::InlineFlowRoot) {
+    if (blockContainer.isFieldset() || blockContainer.isNonReplacedAtomicInlineLevelBox()) {
+        // Line clamp does not cross into the interior of an atomic inline-level box.
         layoutState->setLineClamp({ });
 
         m_skippedLegacyLineClampToRestore = layoutState->legacyLineClamp();
@@ -91,7 +94,10 @@ inline LineClampUpdater::~LineClampUpdater()
         return;
     }
 
-    layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - (m_blockContainer->childrenInline() ? m_blockContainer->lineCount() : 0), m_previousLineClamp->shouldDiscardOverflow });
+    size_t lineCount = 0;
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer.get()); blockFlow && blockFlow->childrenInline())
+        lineCount = blockFlow->lineCount();
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow });
 }
 
 }

@@ -216,7 +216,7 @@ void ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers()
 
     auto obscuredContentInsets = this->obscuredContentInsets();
     if (m_insetClipLayer && m_rootContentsLayer) {
-        auto insetClipLayerRect = LocalFrameView::insetClipLayerRect(scrollPosition, obscuredContentInsets, sizeForVisibleContent());
+        auto insetClipLayerRect = LocalFrameView::insetClipLayerRect(scrollPosition, totalContentsSize(), obscuredContentInsets, sizeForVisibleContent());
         [m_insetClipLayer setPosition:[&] {
             auto position = insetClipLayerRect.location();
             if (!obscuredContentInsets.left())

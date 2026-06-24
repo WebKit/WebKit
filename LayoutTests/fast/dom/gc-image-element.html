@@ -1,8 +1,9 @@
 <p>Tests for image elements firing their load events even when they're not in the document.</p>
 <pre id="console"></pre>
 
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
+window.jsTestIsAsync = true;
 function $(id)
 {
     return document.getElementById(id);
@@ -25,16 +26,11 @@ function createImage()
         --imageCount;
         if (imageCount)
             return;
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     };
 }
 
 (function () {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
 
     var image = new Image;
     image.src = "resources/apple.gif";

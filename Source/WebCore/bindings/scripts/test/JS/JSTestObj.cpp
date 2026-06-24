@@ -11838,6 +11838,8 @@ void JSTestObj::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestObjOwner::JSTestObjOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestObjOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -11850,7 +11852,7 @@ void JSTestObjOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestObj = static_cast<JSTestObj*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestObj->wrapped()).ptr(), jsTestObj);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestObj->wrapped(), jsTestObj);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

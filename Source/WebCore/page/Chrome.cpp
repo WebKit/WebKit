@@ -174,6 +174,11 @@ void Chrome::scrollMainFrameToRevealRect(const IntRect& rect) const
     m_client->scrollMainFrameToRevealRect(rect);
 }
 
+void Chrome::scrollOriginDidChange(const LocalFrame& frame) const
+{
+    m_client->scrollOriginDidChange(frame);
+}
+
 void Chrome::setWindowRect(const FloatRect& rect)
 {
     m_client->setWindowRect(rect);

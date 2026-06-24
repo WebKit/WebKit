@@ -113,6 +113,9 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${TOOLS_DIR}/TestRunnerShared/cocoa
     ${TOOLS_DIR}/TestRunnerShared/spi
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
+    ${TESTWEBKITAPI_DIR}/Helpers
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa
+    ${TESTWEBKITAPI_DIR}/Helpers/mac
     ${TESTWEBKITAPI_DIR}/Tests/WebCore
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/cocoa
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView
@@ -320,7 +323,6 @@ add_library(TestWebKitAPIWebProcessPlugIn MODULE
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/DisableSpellcheckPlugIn.mm
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/GetComputedStyleAfterIframeRemovalPlugIn.mm
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/InjectedBundleHitTestPlugIn.mm
-    ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/JSHandlePlugIn.mm
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/PageOverlayPlugin.mm
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/ParserYieldTokenPlugIn.mm
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/RemoteObjectRegistryPlugIn.mm

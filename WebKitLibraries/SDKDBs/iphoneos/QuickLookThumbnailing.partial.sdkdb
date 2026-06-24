@@ -141,7 +141,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "QLThumbnailError"},
     {"access": "public", "name": "QLThumbnailGenerationRequestRepresentationTypes"},
@@ -149,7 +149,7 @@
    ]
   },
   {
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

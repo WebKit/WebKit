@@ -14,6 +14,7 @@
 
 #include <gtest/gtest.h>
 
+#include <openssl/base.h>
 #include <openssl/pool.h>
 
 #include "internal.h"
@@ -25,9 +26,11 @@
 #endif
 
 
+BSSL_NAMESPACE_BEGIN
+
 TEST(PoolTest, Unpooled) {
   static const uint8_t kData[4] = {1, 2, 3, 4};
-  bssl::UniquePtr<CRYPTO_BUFFER> buf(
+  UniquePtr<CRYPTO_BUFFER> buf(
       CRYPTO_BUFFER_new(kData, sizeof(kData), nullptr));
   ASSERT_TRUE(buf);
 
@@ -35,26 +38,26 @@ TEST(PoolTest, Unpooled) {
             Bytes(CRYPTO_BUFFER_data(buf.get()), CRYPTO_BUFFER_len(buf.get())));
 
   // Test that reference-counting works properly.
-  bssl::UniquePtr<CRYPTO_BUFFER> buf2 = bssl::UpRef(buf);
+  UniquePtr<CRYPTO_BUFFER> buf2 = UpRef(buf);
 
-  bssl::UniquePtr<CRYPTO_BUFFER> buf_static(
-    CRYPTO_BUFFER_new_from_static_data_unsafe(kData, sizeof(kData), nullptr));
+  UniquePtr<CRYPTO_BUFFER> buf_static(
+      CRYPTO_BUFFER_new_from_static_data_unsafe(kData, sizeof(kData), nullptr));
   ASSERT_TRUE(buf_static);
   EXPECT_EQ(kData, CRYPTO_BUFFER_data(buf_static.get()));
   EXPECT_EQ(sizeof(kData), CRYPTO_BUFFER_len(buf_static.get()));
 
   // Test that reference-counting works properly.
-  bssl::UniquePtr<CRYPTO_BUFFER> buf_static2 = bssl::UpRef(buf_static);
+  UniquePtr<CRYPTO_BUFFER> buf_static2 = UpRef(buf_static);
 }
 
 TEST(PoolTest, Empty) {
-  bssl::UniquePtr<CRYPTO_BUFFER> buf(CRYPTO_BUFFER_new(nullptr, 0, nullptr));
+  UniquePtr<CRYPTO_BUFFER> buf(CRYPTO_BUFFER_new(nullptr, 0, nullptr));
   ASSERT_TRUE(buf);
 
   EXPECT_EQ(Bytes(""),
             Bytes(CRYPTO_BUFFER_data(buf.get()), CRYPTO_BUFFER_len(buf.get())));
 
-  bssl::UniquePtr<CRYPTO_BUFFER> buf_static(
+  UniquePtr<CRYPTO_BUFFER> buf_static(
       CRYPTO_BUFFER_new_from_static_data_unsafe(nullptr, 0, nullptr));
   ASSERT_TRUE(buf_static);
 
@@ -63,17 +66,17 @@ TEST(PoolTest, Empty) {
 }
 
 TEST(PoolTest, Pooled) {
-  bssl::UniquePtr<CRYPTO_BUFFER_POOL> pool(CRYPTO_BUFFER_POOL_new());
+  UniquePtr<CRYPTO_BUFFER_POOL> pool(CRYPTO_BUFFER_POOL_new());
   ASSERT_TRUE(pool);
 
   static const uint8_t kData1[4] = {1, 2, 3, 4};
-  bssl::UniquePtr<CRYPTO_BUFFER> buf(
+  UniquePtr<CRYPTO_BUFFER> buf(
       CRYPTO_BUFFER_new(kData1, sizeof(kData1), pool.get()));
   ASSERT_TRUE(buf);
   EXPECT_EQ(Bytes(kData1),
             Bytes(CRYPTO_BUFFER_data(buf.get()), CRYPTO_BUFFER_len(buf.get())));
 
-  bssl::UniquePtr<CRYPTO_BUFFER> buf2(
+  UniquePtr<CRYPTO_BUFFER> buf2(
       CRYPTO_BUFFER_new(kData1, sizeof(kData1), pool.get()));
   ASSERT_TRUE(buf2);
   EXPECT_EQ(Bytes(kData1), Bytes(CRYPTO_BUFFER_data(buf2.get()),
@@ -83,7 +86,7 @@ TEST(PoolTest, Pooled) {
 
   // Different inputs do not get deduped.
   static const uint8_t kData2[4] = {5, 6, 7, 8};
-  bssl::UniquePtr<CRYPTO_BUFFER> buf3(
+  UniquePtr<CRYPTO_BUFFER> buf3(
       CRYPTO_BUFFER_new(kData2, sizeof(kData2), pool.get()));
   ASSERT_TRUE(buf3);
   EXPECT_EQ(Bytes(kData2), Bytes(CRYPTO_BUFFER_data(buf3.get()),
@@ -92,7 +95,7 @@ TEST(PoolTest, Pooled) {
 
   // When the last refcount on |buf3| is dropped, it is removed from the pool.
   buf3 = nullptr;
-  EXPECT_EQ(1u, lh_CRYPTO_BUFFER_num_items(pool->bufs));
+  EXPECT_EQ(1u, lh_CryptoBuffer_num_items(FromOpaque(pool.get())->bufs_));
 
   // Static buffers participate in pooling.
   buf3.reset(CRYPTO_BUFFER_new_from_static_data_unsafe(kData2, sizeof(kData2),
@@ -102,17 +105,17 @@ TEST(PoolTest, Pooled) {
   EXPECT_EQ(sizeof(kData2), CRYPTO_BUFFER_len(buf3.get()));
   EXPECT_NE(buf.get(), buf3.get());
 
-  bssl::UniquePtr<CRYPTO_BUFFER> buf4(
+  UniquePtr<CRYPTO_BUFFER> buf4(
       CRYPTO_BUFFER_new(kData2, sizeof(kData2), pool.get()));
   EXPECT_EQ(buf4.get(), buf3.get());
 
-  bssl::UniquePtr<CRYPTO_BUFFER> buf5(CRYPTO_BUFFER_new_from_static_data_unsafe(
+  UniquePtr<CRYPTO_BUFFER> buf5(CRYPTO_BUFFER_new_from_static_data_unsafe(
       kData2, sizeof(kData2), pool.get()));
   EXPECT_EQ(buf5.get(), buf3.get());
 
   // When creating a static buffer, if there is already a non-static buffer, it
   // replaces the old buffer.
-  bssl::UniquePtr<CRYPTO_BUFFER> buf6(CRYPTO_BUFFER_new_from_static_data_unsafe(
+  UniquePtr<CRYPTO_BUFFER> buf6(CRYPTO_BUFFER_new_from_static_data_unsafe(
       kData1, sizeof(kData1), pool.get()));
   ASSERT_TRUE(buf6);
   EXPECT_EQ(kData1, CRYPTO_BUFFER_data(buf6.get()));
@@ -120,20 +123,50 @@ TEST(PoolTest, Pooled) {
   EXPECT_NE(buf.get(), buf6.get());
 
   // Subsequent lookups of |kData1| should return |buf6|.
-  bssl::UniquePtr<CRYPTO_BUFFER> buf7(
+  UniquePtr<CRYPTO_BUFFER> buf7(
       CRYPTO_BUFFER_new(kData1, sizeof(kData1), pool.get()));
   EXPECT_EQ(buf7.get(), buf6.get());
+
+  // Pools are reference-counted.
+  UniquePtr<CRYPTO_BUFFER_POOL> pool2 = UpRef(pool);
+}
+
+// Buffers are allowed to outlive pools.
+TEST(PoolTest, BufferOutlivesPool) {
+  UniquePtr<CRYPTO_BUFFER_POOL> pool(CRYPTO_BUFFER_POOL_new());
+  ASSERT_TRUE(pool);
+
+  static const uint8_t kData1[4] = {1, 2, 3, 4};
+  UniquePtr<CRYPTO_BUFFER> buf(
+      CRYPTO_BUFFER_new(kData1, sizeof(kData1), pool.get()));
+  ASSERT_TRUE(buf);
+  EXPECT_EQ(Bytes(kData1),
+            Bytes(CRYPTO_BUFFER_data(buf.get()), CRYPTO_BUFFER_len(buf.get())));
+
+  UniquePtr<CRYPTO_BUFFER> buf2(
+      CRYPTO_BUFFER_new(kData1, sizeof(kData1), pool.get()));
+  ASSERT_TRUE(buf2);
+  EXPECT_EQ(buf.get(), buf2.get()) << "CRYPTO_BUFFER_POOL did not dedup data.";
+
+  // Destroy the pool.
+  pool = nullptr;
+
+  // The buffer is still valid. It can be inspected and copied around.
+  EXPECT_EQ(Bytes(kData1),
+            Bytes(CRYPTO_BUFFER_data(buf.get()), CRYPTO_BUFFER_len(buf.get())));
+  UniquePtr<CRYPTO_BUFFER> buf3 = UpRef(buf);
 }
 
 #if defined(OPENSSL_THREADS)
 TEST(PoolTest, Threads) {
-  bssl::UniquePtr<CRYPTO_BUFFER_POOL> pool(CRYPTO_BUFFER_POOL_new());
+  UniquePtr<CRYPTO_BUFFER_POOL> pool(CRYPTO_BUFFER_POOL_new());
   ASSERT_TRUE(pool);
 
   // Race threads making pooled |CRYPTO_BUFFER|s.
   static const uint8_t kData[4] = {1, 2, 3, 4};
   static const uint8_t kData2[3] = {4, 5, 6};
-  bssl::UniquePtr<CRYPTO_BUFFER> buf, buf2, buf3;
+  static const uint8_t kData3[3] = {7, 8, 9};
+  UniquePtr<CRYPTO_BUFFER> buf, buf2, buf3;
   {
     std::thread thread([&] {
       buf.reset(CRYPTO_BUFFER_new(kData, sizeof(kData), pool.get()));
@@ -160,8 +193,8 @@ TEST(PoolTest, Threads) {
   // Reference-counting of |CRYPTO_BUFFER| interacts with pooling. Race an
   // increment and free.
   {
-    bssl::UniquePtr<CRYPTO_BUFFER> buf_ref;
-    std::thread thread([&] { buf_ref = bssl::UpRef(buf); });
+    UniquePtr<CRYPTO_BUFFER> buf_ref;
+    std::thread thread([&] { buf_ref = UpRef(buf); });
     buf2.reset();
     thread.join();
   }
@@ -200,14 +233,37 @@ TEST(PoolTest, Threads) {
     buf = std::move(buf2);
   }
 
+  // Race two threads repeatedly creating and destroying a buffer, to race
+  // destruction with a strong/weak reference upgrade.
+  {
+    constexpr size_t kNumThreads = 2;
+    constexpr size_t kIterations = 1000;
+    std::vector<std::thread> threads;
+    for (size_t i = 0; i < kNumThreads; i++) {
+      threads.emplace_back([&] {
+        for (size_t j = 0; j < kIterations; j++) {
+          CRYPTO_BUFFER_free(
+              CRYPTO_BUFFER_new(kData3, sizeof(kData3), pool.get()));
+        }
+      });
+    }
+    for (size_t i = 0; i < kNumThreads; i++) {
+      threads[i].join();
+    }
+  }
+
   // Finally, race the frees.
   {
-    buf2 = bssl::UpRef(buf);
+    buf2 = UpRef(buf);
     std::thread thread([&] { buf.reset(); });
     std::thread thread2([&] { buf3.reset(); });
+    std::thread thread3([&] { pool.reset(); });
     buf2.reset();
     thread.join();
     thread2.join();
+    thread3.join();
   }
 }
 #endif
+
+BSSL_NAMESPACE_END

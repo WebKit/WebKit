@@ -14,15 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-mutable-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-mutable.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-no-cascade-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-last-rule-wins.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-no-cascade.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-types-shared-elements-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-types-shared-elements-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-types-shared-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-with-types-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/navigation-supersedes-types-same-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/navigation-supersedes-types-when-after.html

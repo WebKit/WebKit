@@ -21,7 +21,7 @@ PASS checkRemoveAndReadd
 PASS checkAddTrackExistingTransceiverThenRemove
 PASS checkRemoveTrackNegotiation
 PASS checkStopAfterClose
-PASS checkRollbackAndSetRemoteOfferWithDifferentType
+FAIL checkRollbackAndSetRemoteOfferWithDifferentType promise_test: Unhandled rejection with value: object "InvalidAccessError: Failed to set remote offer sdp: A BUNDLE group contains a codec collision for header extension id=1. The id must be the same across all bundled media descriptions"
 PASS checkStopAfterCreateOfferWithReusedMsection
 PASS checkAddIceCandidateToStoppedTransceiver
 PASS checkBundleTagRejected

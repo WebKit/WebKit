@@ -29,7 +29,6 @@ if (rtc_include_tests) {
       "..:fileutils",
       "..:frame_generator_capturer",
       "..:test_support",
-      "../../api:array_view",
       "../../api:audio_options_api",
       "../../api:candidate",
       "../../api:create_modular_peer_connection_factory",

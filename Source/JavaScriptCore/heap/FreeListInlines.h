@@ -60,7 +60,7 @@ void FreeList::forEach(const Func& func) const
     FreeCell* cell = nextInterval();
     char* intervalStart = m_intervalStart;
     char* intervalEnd = m_intervalEnd;
-    ASSERT(intervalEnd - intervalStart < (ptrdiff_t)(16 * KB));
+    ASSERT(intervalEnd - intervalStart < (ptrdiff_t)MarkedBlock::blockSize);
 
     while (true) {
         for (; intervalStart < intervalEnd; intervalStart += m_cellSize)

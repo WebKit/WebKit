@@ -1,0 +1,3 @@
+
+PASS Property color value 'color-mix(in srgb, oklch(0 none none), white)'
+

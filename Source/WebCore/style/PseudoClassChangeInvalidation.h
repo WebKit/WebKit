@@ -39,6 +39,7 @@ public:
     enum AnyValueTag { AnyValue };
     PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClass, AnyValueTag);
     PseudoClassChangeInvalidation(Element&, std::initializer_list<std::pair<CSSSelector::PseudoClass, bool>>);
+    PseudoClassChangeInvalidation(Element&, std::initializer_list<CSSSelector::PseudoClass>, AnyValueTag);
 
     ~PseudoClassChangeInvalidation();
 
@@ -93,6 +94,17 @@ inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& ele
         return;
     for (auto pseudoClass : pseudoClasses)
         computeInvalidation(pseudoClass.first, pseudoClass.second ? Value::True : Value::False, Style::InvalidationScope::All);
+    invalidateBeforeChange();
+}
+
+inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, std::initializer_list<CSSSelector::PseudoClass> pseudoClasses, AnyValueTag)
+    : m_isEnabled(element.needsStyleInvalidation())
+    , m_element(element)
+{
+    if (!m_isEnabled)
+        return;
+    for (auto pseudoClass : pseudoClasses)
+        computeInvalidation(pseudoClass, Value::Any, Style::InvalidationScope::All);
     invalidateBeforeChange();
 }
 

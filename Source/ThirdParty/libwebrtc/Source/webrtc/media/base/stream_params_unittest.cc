@@ -12,10 +12,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "media/base/test_utils.h"
 #include "rtc_base/unique_id_generator.h"
 #include "test/gmock.h"
@@ -29,7 +29,7 @@ static const uint32_t kSsrcs2[] = {1, 2};
 
 static webrtc::StreamParams CreateStreamParamsWithSsrcGroup(
     const std::string& semantics,
-    webrtc::ArrayView<const uint32_t> ssrcs_in) {
+    std::span<const uint32_t> ssrcs_in) {
   webrtc::StreamParams stream;
   std::vector<uint32_t> ssrcs(ssrcs_in.begin(), ssrcs_in.end());
   webrtc::SsrcGroup sg(semantics, ssrcs);

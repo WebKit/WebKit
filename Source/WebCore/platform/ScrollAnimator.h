@@ -80,7 +80,7 @@ public:
     WEBCORE_EXPORT bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
     WEBCORE_EXPORT bool scrollToPositionWithAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
-    void retargetRunningAnimation(const FloatPoint& newPosition);
+    bool retargetRunningAnimation(const FloatPoint& newPosition);
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
     virtual bool processWheelEventForScrollSnap(const PlatformWheelEvent&) { return false; }

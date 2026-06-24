@@ -1,0 +1,98 @@
+// Copyright (C) 2017-2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+avfoundation/MediaTimeAVFoundation.cpp
+avfoundation/OutputContext.mm @nonARC
+avfoundation/OutputDevice.mm @nonARC
+
+cf/AudioToolboxSoftLink.cpp
+cf/CoreMediaSoftLink.cpp
+cf/CoreTextSoftLink.cpp
+cf/OTSVGTable.cpp
+cf/VideoToolboxSoftLink.cpp
+
+cg/CoreGraphicsSoftLink.cpp
+
+cocoa/ARKitSoftLink.mm @nonARC
+cocoa/AVFAudioSoftLink.mm @nonARC
+cocoa/AVFoundationSoftLink.mm @nonARC
+cocoa/AccessibilitySoftLink.mm @nonARC
+cocoa/AppSSOSoftLink.mm @nonARC
+cocoa/CompositorServicesSoftLink.mm @nonARC
+cocoa/ContactsSoftLink.mm @nonARC
+cocoa/CoreMLSoftLink.mm @nonARC
+cocoa/CoreMaterialSoftLink.mm @nonARC
+cocoa/CoreTelephonySoftLink.mm @nonARC
+cocoa/CryptoKitPrivateSoftLink.mm @nonARC
+cocoa/DataDetectorsCoreSoftLink.mm @nonARC
+cocoa/EnhancedSecurityCocoa.mm @nonARC
+cocoa/FileSizeFormatterCocoa.mm @nonARC
+cocoa/LinkPresentationSoftLink.mm @nonARC
+cocoa/LockdownModeCocoa.mm @nonARC
+cocoa/MediaToolboxSoftLink.cpp
+cocoa/NaturalLanguageSoftLink.mm @nonARC
+cocoa/OpenGLSoftLinkCocoa.mm @nonARC
+cocoa/PassKitSoftLink.mm @nonARC
+cocoa/QuartzCoreSoftLink.mm @nonARC
+cocoa/RevealSoftLink.mm @nonARC
+cocoa/ScreenTimeSoftLink.mm @nonARC
+cocoa/SpeechSoftLink.mm @nonARC
+cocoa/TranslationUIServicesSoftLink.mm @nonARC
+cocoa/UsageTrackingSoftLink.mm @nonARC
+cocoa/VisionKitCoreSoftLink.mm @nonARC
+cocoa/VisionSoftLink.mm @nonARC
+cocoa/WebContentAnalysisSoftLink.mm @nonARC
+cocoa/WebContentRestrictionsSoftLink.mm @nonARC
+cocoa/WebPrivacySoftLink.mm @nonARC
+cocoa/WritingToolsUISoftLink.mm @nonARC
+
+crypto/CryptoAlgorithmAESGCMCocoa.cpp
+crypto/CryptoAlgorithmAESKWCocoaBridging.cpp
+crypto/CryptoAlgorithmEd25519CocoaBridging.cpp
+crypto/CryptoAlgorithmHKDFCocoaBridging.cpp
+crypto/CryptoAlgorithmHMACCocoaBridging.cpp
+crypto/CryptoAlgorithmX25519CocoaBridging.cpp
+crypto/CryptoEDKeyBridging.cpp
+crypto/PlatformECKey.cpp
+
+crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
+
+mac/DataDetectorsSoftLink.mm @nonARC
+mac/LookupSoftLink.mm @nonARC
+mac/QuickLookUISoftLink.mm @nonARC
+mac/ScreenCaptureKitSoftLink.mm @nonARC
+
+spi/cocoa/AccessibilitySupportSoftLink.cpp
+
+system/ClockGeneric.cpp
+
+system/cocoa/SleepDisablerCocoa.cpp
+
+system/mac/DefaultSearchProvider.cpp
+system/mac/PopupMenu.mm @nonARC
+system/mac/SystemSleepListenerMac.mm @nonARC
+system/mac/WebPanel.mm @nonARC
+
+text/ios/TextEncodingRegistryIOS.mm @nonARC
+
+text/mac/TextEncodingRegistryMac.mm @nonARC

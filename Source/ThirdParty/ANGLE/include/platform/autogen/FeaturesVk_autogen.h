@@ -1694,6 +1694,18 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo avoidImageGhostOutsideRenderPass = {
+        "avoidImageGhostOutsideRenderPass",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsAmdShaderCoreProperties = {
+        "supportsAmdShaderCoreProperties",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

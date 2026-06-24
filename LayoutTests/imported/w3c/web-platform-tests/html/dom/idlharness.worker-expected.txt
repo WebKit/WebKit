@@ -310,7 +310,7 @@ PASS Path2D interface: operation quadraticCurveTo(unrestricted double, unrestric
 PASS Path2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS Path2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS Path2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
-FAIL Path2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional (unrestricted double or DOMPointInit or sequence<(unrestricted double or DOMPointInit)>)) assert_equals: property has wrong .length expected 4 but got 5
+PASS Path2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional (unrestricted double or DOMPointInit or sequence<(unrestricted double or DOMPointInit)>))
 PASS Path2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS Path2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS ImageBitmapRenderingContext interface: existence and properties of interface object
@@ -419,7 +419,7 @@ PASS OffscreenCanvasRenderingContext2D interface: operation quadraticCurveTo(unr
 PASS OffscreenCanvasRenderingContext2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
-FAIL OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional (unrestricted double or DOMPointInit or sequence<(unrestricted double or DOMPointInit)>)) assert_equals: property has wrong .length expected 4 but got 5
+PASS OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional (unrestricted double or DOMPointInit or sequence<(unrestricted double or DOMPointInit)>))
 PASS OffscreenCanvasRenderingContext2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS OffscreenCanvasRenderingContext2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS CustomElementRegistry interface: existence and properties of interface object

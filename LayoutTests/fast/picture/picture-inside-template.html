@@ -2,18 +2,14 @@
 <script src="../../resources/js-test.js"></script>
 <script src="resources/currentSrcHelper.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+window.jsTestIsAsync = true;
 
 function runTest() {
     shouldBe('document.getElementById("canary").clientWidth', '75');
     shouldBe('currentSrcFileName("canary")', '"blue_rect.jpg?0"');
     shouldBe('document.getElementById("simple").clientWidth', '800');
     shouldBe('currentSrcFileName("simple")', '"image-set-2x.png?2"');
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 function removeTemplate() {

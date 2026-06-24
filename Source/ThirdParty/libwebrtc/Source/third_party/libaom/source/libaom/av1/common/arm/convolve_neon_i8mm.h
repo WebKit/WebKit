@@ -23,18 +23,9 @@
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_ports/mem.h"
 
-DECLARE_ALIGNED(16, static const uint8_t, kDotProdPermuteTbl[48]) = {
-  0, 1, 2,  3,  1, 2,  3,  4,  2,  3,  4,  5,  3,  4,  5,  6,
-  4, 5, 6,  7,  5, 6,  7,  8,  6,  7,  8,  9,  7,  8,  9,  10,
-  8, 9, 10, 11, 9, 10, 11, 12, 10, 11, 12, 13, 11, 12, 13, 14
-};
-
-DECLARE_ALIGNED(16, static const uint8_t, kMatMul6PermuteTbl[32]) = {
-  // clang-format off
-  0,  1,  2,  3,  4,  5,  6,  7,  2,  3,  4,  5,  6,  7,  8,  9,
-  4,  5,  6,  7,  8,  9, 10, 11,  6,  7,  8,  9, 10, 11, 12, 13
-  // clang-format on
-};
+DECLARE_ALIGNED(16, extern const uint8_t, kMatMul6PermuteTbl[32]);
+DECLARE_ALIGNED(16, extern const uint8_t, kMatMul8PermuteTbl[32]);
+DECLARE_ALIGNED(16, extern const uint8_t, kFilterPermuteTbl[16]);
 
 static inline int16x4_t convolve12_4_2d_h(uint8x16_t samples[2],
                                           const int8x16_t filter[2],

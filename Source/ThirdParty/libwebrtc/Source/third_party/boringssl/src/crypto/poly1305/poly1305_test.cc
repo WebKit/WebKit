@@ -26,6 +26,9 @@
 #include "../test/test_util.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 static void TestSIMD(unsigned excess, const std::vector<uint8_t> &key,
                      const std::vector<uint8_t> &in,
                      const std::vector<uint8_t> &mac) {
@@ -111,3 +114,6 @@ TEST(Poly1305Test, TestVectors) {
     TestSIMD(48, key, in, mac);
   });
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that Document.createElementNS preserves a non-null prefix on known HTML elements.");
+
+const xhtmlNS = "http://www.w3.org/1999/xhtml";
+
+var element = document.createElementNS(xhtmlNS, "foo:textarea");
+shouldBeEqualToString("element.prefix", "foo");
+shouldBeEqualToString("element.localName", "textarea");
+shouldBeEqualToString("element.tagName", "FOO:TEXTAREA");
+shouldBeEqualToString("element.namespaceURI", xhtmlNS);
+
+element = document.createElementNS(xhtmlNS, "foo:article");
+shouldBeEqualToString("element.prefix", "foo");
+shouldBeEqualToString("element.localName", "article");
+shouldBeEqualToString("element.tagName", "FOO:ARTICLE");
+shouldBeEqualToString("element.namespaceURI", xhtmlNS);
+
+element = document.createElementNS(xhtmlNS, "foo:selectedcontent");
+shouldBeEqualToString("element.prefix", "foo");
+shouldBeEqualToString("element.localName", "selectedcontent");
+shouldBeEqualToString("element.tagName", "FOO:SELECTEDCONTENT");
+shouldBeEqualToString("element.namespaceURI", xhtmlNS);
+</script>
+</body>
+</html>

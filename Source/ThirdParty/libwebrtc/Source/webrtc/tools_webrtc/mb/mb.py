@@ -60,7 +60,7 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
 
         if test_type not in ('console_test_launcher', 'windowed_test_launcher',
                              'non_parallel_console_test_launcher', 'raw',
-                             'additional_compile_target'):
+                             'additional_compile_target', 'generated_script'):
             self.WriteFailureAndRaise('No command line for '
                                       '%s found (test type %s).' %
                                       (target, test_type),
@@ -72,7 +72,8 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
         ]
         vpython_exe = 'vpython3'
 
-        if is_ios or is_fuchsia or test_type == 'raw':
+        if (is_ios or is_fuchsia or test_type == 'raw'
+                or test_type == 'generated_script'):
             if is_win:
                 cmdline = ['bin\\run_{}.bat'.format(target)]
             else:

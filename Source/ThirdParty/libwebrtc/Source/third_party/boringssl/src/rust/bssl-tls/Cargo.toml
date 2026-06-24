@@ -1,0 +1,41 @@
+[package]
+name = "bssl-tls"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+
+[dependencies]
+bitflags = "2.0"
+
+[dependencies.bssl-crypto]
+path = "../bssl-crypto"
+
+[dependencies.bssl-macros]
+path = "../bssl-macros"
+
+[dependencies.bssl-sys]
+path = "../bssl-sys"
+
+[dependencies.bssl-x509]
+path = "../bssl-x509"
+
+
+[dependencies.once_cell]
+version = "1"
+default-features = false
+features = ["critical-section"]
+
+[dependencies.libc]
+version = "0.2"
+optional = true
+
+[dev-dependencies]
+futures = "0.3"
+
+
+[features]
+default = ["std"]
+# `std` depends on the Rust `std` crate, but adds some useful trait impls if
+# available.
+std = ["bssl-crypto/std", "once_cell/std", "libc"]

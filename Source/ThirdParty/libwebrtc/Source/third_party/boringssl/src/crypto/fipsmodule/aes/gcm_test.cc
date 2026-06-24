@@ -22,6 +22,9 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 #if defined(SUPPORTS_ABI_TEST) && !defined(OPENSSL_NO_ASM)
 TEST(GCMTest, ABI) {
   static const uint64_t kH[2] = {
@@ -168,6 +171,22 @@ TEST(GCMTest, ABI) {
                 Htable);
     }
   }
+  if (hwaes_capable() && gcm_eor3_capable()) {
+    static const uint8_t kKey[16] = {0};
+    uint8_t iv[16] = {0};
+
+    for (size_t key_bits = 128; key_bits <= 256; key_bits += 64) {
+      AES_KEY aes_key;
+      aes_hw_set_encrypt_key(kKey, key_bits, &aes_key);
+      CHECK_ABI(aes_gcm_enc_kernel_eor3, buf, sizeof(buf) * 8, buf, X, iv,
+                &aes_key, Htable);
+      CHECK_ABI(aes_gcm_dec_kernel_eor3, buf, sizeof(buf) * 8, buf, X, iv,
+                &aes_key, Htable);
+    }
+  }
 #endif
 }
 #endif  // SUPPORTS_ABI_TEST && !OPENSSL_NO_ASM
+
+}  // namespace
+BSSL_NAMESPACE_END

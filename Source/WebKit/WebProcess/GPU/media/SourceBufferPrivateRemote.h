@@ -124,7 +124,6 @@ private:
     void setAppendWindowEnd(const MediaTime&) final;
     Ref<GenericPromise> setMaximumBufferSize(size_t) final;
 
-    Ref<ComputeSeekPromise> computeSeekTime(const WebCore::SeekTarget&) final;
     void reenqueueMediaForTime(const MediaTime&) final;
 
     void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&&) final;

@@ -16,6 +16,7 @@
 
 #include "api/rtp_packet_infos.h"
 #include "api/scoped_refptr.h"
+#include "api/units/timestamp.h"
 #include "api/video/color_space.h"
 #include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/encoded_image.h"
@@ -33,8 +34,8 @@ RtpFrameObject::RtpFrameObject(
     uint16_t last_seq_num,
     bool markerBit,
     int times_nacked,
-    int64_t first_packet_received_time,
-    int64_t last_packet_received_time,
+    std::optional<Timestamp> first_packet_received_time,
+    std::optional<Timestamp> last_packet_received_time,
     uint32_t rtp_timestamp,
     int64_t ntp_time_ms,
     const VideoSendTiming& timing,
@@ -98,8 +99,12 @@ RtpFrameObject::RtpFrameObject(
     timing_.network2_timestamp_ms =
         ntp_time_ms_ + timing.network2_timestamp_delta_ms;
   }
-  timing_.receive_start_ms = first_packet_received_time;
-  timing_.receive_finish_ms = last_packet_received_time;
+  timing_.receive_start_ms = first_packet_received_time.has_value()
+                                 ? first_packet_received_time->ms()
+                                 : -1;
+  timing_.receive_finish_ms = last_packet_received_time.has_value()
+                                  ? last_packet_received_time->ms()
+                                  : -1;
   timing_.flags = timing.flags;
   is_last_spatial_layer = markerBit;
 }
@@ -126,7 +131,7 @@ VideoCodecType RtpFrameObject::codec_type() const {
   return codec_type_;
 }
 
-int64_t RtpFrameObject::ReceivedTime() const {
+std::optional<Timestamp> RtpFrameObject::ReceivedTimestamp() const {
   return last_packet_received_time_;
 }
 

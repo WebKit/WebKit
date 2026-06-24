@@ -471,6 +471,12 @@ static WKBridgeConstant convert(const Constant constant)
         return WKBridgeConstantMatrix3f;
     case Constant::kMatrix4f:
         return WKBridgeConstantMatrix4f;
+    case Constant::kMatrix2h:
+        return WKBridgeConstantMatrix2h;
+    case Constant::kMatrix3h:
+        return WKBridgeConstantMatrix3h;
+    case Constant::kMatrix4h:
+        return WKBridgeConstantMatrix4h;
     case Constant::kQuatf:
         return WKBridgeConstantQuatf;
     case Constant::kQuath:
@@ -662,7 +668,19 @@ static MTLTextureSwizzleChannels convert(ImageAssetSwizzle swizzle)
 static WKBridgeImageAsset* convert(const ImageAsset& imageAsset)
 {
     auto mtlPixelFormat = WebModel::toMetal(imageAsset.pixelFormat);
-    return [WebKit::allocWKBridgeImageAssetInstance() initWithData:convert(imageAsset.data) width:imageAsset.width height:imageAsset.height depth:imageAsset.depth textureType:toMetal(imageAsset.textureType) pixelFormat:mtlPixelFormat mipmapLevelCount:imageAsset.mipmapLevelCount arrayLength:imageAsset.arrayLength textureUsage:toMetal(imageAsset.textureUsage) swizzle:convert(imageAsset.swizzle)];
+
+    NSData *data = nil;
+    if (imageAsset.dataHandle) {
+        if (RefPtr sharedMemory = WebCore::SharedMemory::map(WebCore::SharedMemoryHandle(*imageAsset.dataHandle), WebCore::SharedMemoryProtection::ReadOnly)) {
+            auto span = sharedMemory->span();
+            data = [[NSData alloc] initWithBytesNoCopy:const_cast<uint8_t *>(span.data()) length:span.size() deallocator:^(void *, NSUInteger) {
+                // Capturing the RefPtr keeps the mapping alive for the lifetime of this NSData.
+                UNUSED_PARAM(sharedMemory);
+            }];
+        }
+    }
+
+    return [WebKit::allocWKBridgeImageAssetInstance() initWithData:data width:imageAsset.width height:imageAsset.height depth:imageAsset.depth textureType:toMetal(imageAsset.textureType) pixelFormat:mtlPixelFormat mipmapLevelCount:imageAsset.mipmapLevelCount arrayLength:imageAsset.arrayLength textureUsage:toMetal(imageAsset.textureUsage) swizzle:convert(imageAsset.swizzle)];
 }
 
 static WKBridgeTextureLevelInfo* convert(const TextureLevelInfo& textureLevelInfo)
@@ -758,7 +776,8 @@ static NSArray<WKBridgeValueString *> *convert(const Vector<Variant<String, doub
 
 static WKBridgeConstantContainer *convert(const ConstantContainer& constant)
 {
-    return [WebKit::allocWKBridgeConstantContainerInstance() initWithConstant:convert(constant.constant) constantValues:convert(constant.constantValues) name:constant.name.createNSString().get()];
+    NSString *colorSpaceName = constant.colorSpaceName ? constant.colorSpaceName->createNSString().get() : nil;
+    return [WebKit::allocWKBridgeConstantContainerInstance() initWithConstant:convert(constant.constant) constantValues:convert(constant.constantValues) name:constant.name.createNSString().get() colorSpaceName:colorSpaceName];
 }
 
 static NSArray<WKBridgeInputOutput *> *convert(const Vector<InputOutput>& inputOutputs)
@@ -854,9 +873,9 @@ static WKBridgeMaterialGraph *convert(const MaterialGraph& material)
 
 namespace WebKit {
 
-static RetainPtr<NSMutableArray> createMetalTextures(id<MTLDevice> device, const Vector<RetainPtr<IOSurfaceRef>>& ioSurfaces, unsigned width, unsigned height)
+static RetainPtr<NSMutableArray> createMetalTextures(id<MTLDevice> device, const Vector<RetainPtr<IOSurfaceRef>>& ioSurfaces, unsigned width, unsigned height, MTLPixelFormat pixelFormat)
 {
-    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA16Float width:width height:height mipmapped:NO];
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat width:width height:height mipmapped:NO];
     RetainPtr textures = adoptNS([[NSMutableArray alloc] init]);
     for (auto& ioSurface : ioSurfaces)
         [textures addObject:[device newTextureWithDescriptor:textureDescriptor iosurface:ioSurface.get() plane:0]];
@@ -865,21 +884,35 @@ static RetainPtr<NSMutableArray> createMetalTextures(id<MTLDevice> device, const
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMesh);
 
+static MTLPixelFormat pixelFormatForDynamicRange(bool standardRange)
+{
+    return standardRange ? MTLPixelFormatBGRA8Unorm : MTLPixelFormatRGBA16Float;
+}
+
 WebMesh::WebMesh(const WebModelCreateMeshDescriptor& descriptor)
+    : m_standardDynamicRange(descriptor.standardDynamicRange)
 {
     id<MTLDevice> device = MTLCreateSystemDefaultDevice();
-    m_textures = createMetalTextures(device, descriptor.ioSurfaces, descriptor.width, descriptor.height);
+    m_textures = createMetalTextures(device, descriptor.ioSurfaces, descriptor.width, descriptor.height, pixelFormatForDynamicRange(m_standardDynamicRange));
 
 #if ENABLE(GPU_PROCESS_MODEL)
     WKBridgeUSDConfiguration *configuration = [WebKit::allocWKBridgeUSDConfigurationInstance() initWithDevice:device memoryOwner:descriptor.processIdentity ? descriptor.processIdentity->taskIdToken() : 0];
     WKBridgeImageAsset *diffuseAsset = WebModel::convert(descriptor.diffuseTexture);
     WKBridgeImageAsset *specularAsset = WebModel::convert(descriptor.specularTexture);
     if (configuration) {
-        BinarySemaphore completion;
-        [configuration createMaterialCompiler:[&completion] mutable {
-            completion.signal();
+        configuration.standardDynamicRange = m_standardDynamicRange;
+        BinarySemaphore standaloneResourcesCompletion;
+        [configuration makeStandaloneResourcesWithCompletionHandler:[&standaloneResourcesCompletion] mutable {
+            standaloneResourcesCompletion.signal();
         }];
-        completion.wait();
+        standaloneResourcesCompletion.wait();
+        [configuration createMaterialCompiler];
+        BinarySemaphore rendererResourcesCompletion;
+        [configuration makeRendererResourcesWithCompletionHandler:[&rendererResourcesCompletion] mutable {
+            rendererResourcesCompletion.signal();
+        }];
+        rendererResourcesCompletion.wait();
+        [configuration createRenderer];
     }
 
     NSError *error;
@@ -944,13 +977,9 @@ void WebMesh::update(Vector<WebModel::UpdateMeshDescriptor>&& inputArray)
         return;
 
     RELEASE_ASSERT(m_receiver);
-    BinarySemaphore completion;
     [m_receiver updateMesh:createNSArray(inputArray, [](const WebModel::UpdateMeshDescriptor& desc) {
         return convert(desc);
-    }) completionHandler:[&] mutable {
-        completion.signal();
-    }];
-    completion.wait();
+    })];
     m_meshDataExists = true;
 #else
     UNUSED_PARAM(inputArray);
@@ -989,13 +1018,9 @@ void WebMesh::updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&& inputA
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     RELEASE_ASSERT(m_receiver);
-    BinarySemaphore completion;
     [m_receiver updateMaterial:createNSArray(inputArray, [](const WebModel::UpdateMaterialDescriptor& desc) {
         return convert(desc);
-    }) completionHandler:[&] mutable {
-        completion.signal();
-    }];
-    completion.wait();
+    })];
 #else
     UNUSED_PARAM(inputArray);
 #endif
@@ -1020,16 +1045,7 @@ void WebMesh::setFOV(float fovY)
 #endif
 }
 
-void WebMesh::setBackgroundColor(const simd_float3& color)
-{
-#if ENABLE(GPU_PROCESS_MODEL)
-    [m_receiver setBackgroundColor:color];
-#else
-    UNUSED_PARAM(color);
-#endif
-}
-
-void WebMesh::setEnvironmentMap(const WebModel::UpdateTextureDescriptor& imageAsset)
+void WebMesh::setEnvironmentMap(WebModel::UpdateTextureDescriptor&& imageAsset)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     [m_receiver setEnvironmentMap:convert(imageAsset)];
@@ -1053,7 +1069,7 @@ void WebMesh::updateRenderBuffers(const WebModel::ResizeMeshDescriptor& descript
     auto ioSurfaces = descriptor.renderBuffers.map([](auto& buffer) -> RetainPtr<IOSurfaceRef> {
         return buffer->surface();
     });
-    m_textures = createMetalTextures(MTLCreateSystemDefaultDevice(), ioSurfaces, descriptor.width, descriptor.height);
+    m_textures = createMetalTextures(MTLCreateSystemDefaultDevice(), ioSurfaces, descriptor.width, descriptor.height, pixelFormatForDynamicRange(m_standardDynamicRange));
 #else
     UNUSED_PARAM(descriptor);
 #endif

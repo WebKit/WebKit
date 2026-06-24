@@ -29,7 +29,6 @@
 #include "AnimationUtilities.h"
 #include "CSSBorderImageOutsetValue.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSQuadValue.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
@@ -43,7 +42,7 @@ namespace Style {
 
 DEFINE_TYPE_MAPPING(CSS::BorderImageOutset::Value, BorderImageOutset::Value);
 
-auto ToCSS<BorderImageOutset>::operator()(const BorderImageOutset& value, const RenderStyle& style) -> CSS::BorderImageOutset
+auto ToCSS<BorderImageOutset>::operator()(const BorderImageOutset& value, const Style::ComputedStyle& style) -> CSS::BorderImageOutset
 {
     return { toCSS(value.values, style) };
 }
@@ -70,7 +69,7 @@ auto CSSValueConversion<BorderImageOutset>::operator()(BuilderState& state, cons
     return toStyleFromCSSValue<BorderImageOutsetValue::Length>(state, *primitiveValue);
 }
 
-auto CSSValueCreation<BorderImageOutset>::operator()(CSSValuePool&, const RenderStyle& style, const BorderImageOutset& value) -> Ref<CSSValue>
+auto CSSValueCreation<BorderImageOutset>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BorderImageOutset& value) -> Ref<CSSValue>
 {
     return CSSBorderImageOutsetValue::create(toCSS(value, style));
 }

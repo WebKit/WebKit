@@ -41,15 +41,15 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "PointerEventsHitRules.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGPathData.h"
+#include "SVGPathFromElement.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "SVGVisitedRendererTracking.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -57,11 +57,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGShape);
 
-LegacyRenderSVGShape::LegacyRenderSVGShape(Type type, SVGGraphicsElement& element, RenderStyle&& style)
+LegacyRenderSVGShape::LegacyRenderSVGShape(Type type, SVGGraphicsElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGModelObject(type, element, WTF::move(style), { SVGModelObjectFlag::IsShape, SVGModelObjectFlag::UsesBoundaryCaching })
-    , m_needsBoundariesUpdate(false) // Default is false, the cached rects are empty from the beginning.
-    , m_needsShapeUpdate(true) // Default is true, so we grab a Path object once from SVGGraphicsElement.
-    , m_needsTransformUpdate(true) // Default is true, so we grab a AffineTransform object once from SVGGraphicsElement.
 {
 }
 
@@ -159,7 +156,7 @@ void LegacyRenderSVGShape::layout()
     }
 
     if (m_needsTransformUpdate) {
-        m_localTransform = graphicsElement().animatedLocalTransform();
+        m_localTransform = protect(graphicsElement())->animatedLocalTransform();
         m_needsTransformUpdate = false;
         updateCachedBoundariesInParents = true;
     }
@@ -244,7 +241,7 @@ AffineTransform LegacyRenderSVGShape::nonScalingStrokeTransform() const
     return legacyNonScalingStrokeCTM(protect(graphicsElement()));
 }
 
-void LegacyRenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& originalContext)
+void LegacyRenderSVGShape::fillShape(const Style::ComputedStyle& style, GraphicsContext& originalContext)
 {
     GraphicsContext* context = &originalContext;
     Color fallbackColor;
@@ -260,7 +257,7 @@ void LegacyRenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& 
     }
 }
 
-void LegacyRenderSVGShape::strokeShapeInternal(const RenderStyle& style, GraphicsContext& originalContext)
+void LegacyRenderSVGShape::strokeShapeInternal(const Style::ComputedStyle& style, GraphicsContext& originalContext)
 {
     GraphicsContext* context = &originalContext;
     Color fallbackColor;
@@ -276,7 +273,7 @@ void LegacyRenderSVGShape::strokeShapeInternal(const RenderStyle& style, Graphic
     }
 }
 
-void LegacyRenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& context)
+void LegacyRenderSVGShape::strokeShape(const Style::ComputedStyle& style, GraphicsContext& context)
 {
     if (style.stroke().isNone() || !style.strokeWidth().isPossiblyPositive())
         return;
@@ -364,6 +361,14 @@ bool LegacyRenderSVGShape::isPointInStroke(const FloatPoint& point)
     if (style().stroke().isNone())
         return false;
 
+    if (hasNonScalingStroke() && hasPath()) {
+        AffineTransform nonScalingTransform = nonScalingStrokeTransform();
+        auto& usePath = *nonScalingStrokePath(m_path.get(), nonScalingTransform);
+        return usePath.strokeContains(nonScalingTransform.mapPoint(point), [checkedThis = CheckedRef { *this }](GraphicsContext& context) {
+            SVGRenderSupport::applyStrokeStyleToContext(context, checkedThis->style(), checkedThis.get());
+        });
+    }
+
     return shapeDependentStrokeContains(point, LocalCoordinateSpace);
 }
 
@@ -379,7 +384,7 @@ FloatPoint LegacyRenderSVGShape::getPointAtLength(float distance) const
 
 bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
-    // We only draw in the forground phase, so we only hit-test then.
+    // We only draw in the foreground phase, so we only hit-test then.
     if (hitTestAction != HitTestAction::Foreground)
         return false;
 

@@ -36,7 +36,7 @@ class YouTubeEmbedShadowElement final : public HTMLDivElement {
 public:
     static Ref<YouTubeEmbedShadowElement> create(Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
 private:
     explicit YouTubeEmbedShadowElement(Document&);

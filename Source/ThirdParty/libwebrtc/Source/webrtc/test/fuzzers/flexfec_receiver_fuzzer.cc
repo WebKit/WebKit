@@ -11,13 +11,12 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
-#include <memory>
 
 #include "modules/rtp_rtcp/include/flexfec_receiver.h"
 #include "modules/rtp_rtcp/include/recovered_packet_receiver.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
 
@@ -27,48 +26,40 @@ class DummyCallback : public RecoveredPacketReceiver {
 };
 }  // namespace
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
   constexpr size_t kMinDataNeeded = 12;
-  if (size < kMinDataNeeded || size > 2000) {
+  if (fuzz_data.size() < kMinDataNeeded || fuzz_data.size() > 2'000) {
     return;
   }
 
-  uint32_t flexfec_ssrc;
-  memcpy(&flexfec_ssrc, data + 0, 4);
-  uint16_t flexfec_seq_num;
-  memcpy(&flexfec_seq_num, data + 4, 2);
-  uint32_t media_ssrc;
-  memcpy(&media_ssrc, data + 6, 4);
-  uint16_t media_seq_num;
-  memcpy(&media_seq_num, data + 10, 2);
+  uint32_t flexfec_ssrc = fuzz_data.Read<uint32_t>();
+  uint16_t flexfec_seq_num = fuzz_data.Read<uint16_t>();
+  uint32_t media_ssrc = fuzz_data.Read<uint32_t>();
+  uint16_t media_seq_num = fuzz_data.Read<uint16_t>();
 
   DummyCallback callback;
   FlexfecReceiver receiver(flexfec_ssrc, media_ssrc, &callback);
 
-  std::unique_ptr<uint8_t[]> packet;
   size_t packet_length;
-  size_t i = kMinDataNeeded;
-  while (i < size) {
-    packet_length = kRtpHeaderSize + data[i++];
-    packet = std::unique_ptr<uint8_t[]>(new uint8_t[packet_length]);
-    if (i + packet_length >= size) {
+  while (fuzz_data.BytesLeft() > 0) {
+    packet_length = kRtpHeaderSize + fuzz_data.Read<uint8_t>();
+    if (fuzz_data.BytesLeft() < packet_length + 1) {
       break;
     }
-    memcpy(packet.get(), data + i, packet_length);
-    i += packet_length;
-    if (i < size && data[i++] % 2 == 0) {
+    RtpPacketReceived parsed_packet;
+    if (!parsed_packet.Parse(fuzz_data.ReadByteArray(packet_length))) {
+      continue;
+    }
+    if (fuzz_data.Read<uint8_t>() % 2 == 0) {
       // Simulate FlexFEC packet.
-      ByteWriter<uint16_t>::WriteBigEndian(packet.get() + 2, flexfec_seq_num++);
-      ByteWriter<uint32_t>::WriteBigEndian(packet.get() + 8, flexfec_ssrc);
+      parsed_packet.SetSequenceNumber(flexfec_seq_num++);
+      parsed_packet.SetSsrc(flexfec_ssrc);
     } else {
       // Simulate media packet.
-      ByteWriter<uint16_t>::WriteBigEndian(packet.get() + 2, media_seq_num++);
-      ByteWriter<uint32_t>::WriteBigEndian(packet.get() + 8, media_ssrc);
+      parsed_packet.SetSequenceNumber(media_seq_num++);
+      parsed_packet.SetSsrc(media_ssrc);
     }
-    RtpPacketReceived parsed_packet;
-    if (parsed_packet.Parse(packet.get(), packet_length)) {
-      receiver.OnRtpPacket(parsed_packet);
-    }
+    receiver.OnRtpPacket(parsed_packet);
   }
 }
 

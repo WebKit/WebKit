@@ -84,7 +84,7 @@ void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const Str
     if (frame->documentIsBeingReplaced())
         return;
 
-    begin(frame->document()->url(), true, ownerDocument);
+    begin(protect(frame->document())->url(), true, ownerDocument);
 
     setEncoding("UTF-8"_s, IsEncodingUserChosen::No);
 
@@ -208,8 +208,8 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     frameLoader->setOutgoingReferrer(url);
     frame->setDocument(document.copyRef());
 
-    if (RefPtr decoder = m_decoder)
-        document->setDecoder(decoder.get());
+    if (m_decoder)
+        document->setDecoder(m_decoder.copyRef());
     if (ownerDocument) {
         // |document| is the result of evaluating a JavaScript URL.
         document->setCookieURL(ownerDocument->cookieURL());
@@ -252,7 +252,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     if (existingDocument && existingDocument->contentSecurityPolicy() && document->contentSecurityPolicy())
         document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade());
 
-    frameLoader->didBeginDocument(dispatch, previousWindow.get());
+    frameLoader->didBeginDocument(dispatch, previousWindow);
 
     document->implicitOpen();
 
@@ -284,11 +284,11 @@ TextResourceDecoder& DocumentWriter::decoder()
         // an attack vector.
         // FIXME: This might be too cautious for non-7bit-encodings and
         // we may consider relaxing this later after testing.
-        if (canReferToParentFrameEncoding(frame.ptr(), parentFrame.get()))
+        if (canReferToParentFrameEncoding(frame.ptr(), parentFrame))
             decoder->setHintEncoding(parentFrame->document()->decoder());
         if (m_encoding.isEmpty()) {
-            if (canReferToParentFrameEncoding(frame.ptr(), parentFrame.get()))
-                decoder->setEncoding(parentFrame->document()->textEncoding(), TextResourceDecoder::EncodingFromParentFrame);
+            if (canReferToParentFrameEncoding(frame.ptr(), parentFrame))
+                decoder->setEncoding(protect(parentFrame->document())->textEncoding(), TextResourceDecoder::EncodingFromParentFrame);
         } else {
             decoder->setEncoding(m_encoding,
                 m_encodingWasChosenByUser ? TextResourceDecoder::UserChosenEncoding : TextResourceDecoder::EncodingFromHTTPHeader);

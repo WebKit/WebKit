@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
 namespace WebCore {
 namespace Style {
@@ -48,14 +48,15 @@ struct PreferredSize;
 //
 // https://drafts.csswg.org/css-sizing-3/#min-size-properties
 // https://drafts.csswg.org/css-sizing-4/#sizing-values (additional values added)
-struct MinimumSize : LengthWrapperBase<LengthPercentage<CSS::NonnegativeLayoutUnitClampedUnzoomed>, CSS::Keyword::Auto, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::FitContent, CSS::Keyword::Stretch, CSS::Keyword::Intrinsic, CSS::Keyword::MinIntrinsic> {
+struct MinimumSize : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeLayoutUnitClampedUnzoomed>, CSS::Keyword::Auto, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::FitContent, CSS::Keyword::Stretch, CSS::Keyword::WebkitFillAvailable, CSS::Keyword::Intrinsic, CSS::Keyword::MinIntrinsic> {
     using Base::Base;
 
     ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }
     ALWAYS_INLINE bool isMinContent() const { return holdsAlternative<CSS::Keyword::MinContent>(); }
     ALWAYS_INLINE bool isMaxContent() const { return holdsAlternative<CSS::Keyword::MaxContent>(); }
     ALWAYS_INLINE bool isFitContent() const { return holdsAlternative<CSS::Keyword::FitContent>(); }
-    ALWAYS_INLINE bool isStretch() const { return holdsAlternative<CSS::Keyword::Stretch>(); }
+    ALWAYS_INLINE bool isStretch() const { return holdsAlternative<CSS::Keyword::Stretch>() || holdsAlternative<CSS::Keyword::WebkitFillAvailable>(); }
+    ALWAYS_INLINE bool isFillAvailable() const { return holdsAlternative<CSS::Keyword::WebkitFillAvailable>(); }
     ALWAYS_INLINE bool isIntrinsicKeyword() const { return holdsAlternative<CSS::Keyword::Intrinsic>(); }
     ALWAYS_INLINE bool isMinIntrinsic() const { return holdsAlternative<CSS::Keyword::MinIntrinsic>(); }
 

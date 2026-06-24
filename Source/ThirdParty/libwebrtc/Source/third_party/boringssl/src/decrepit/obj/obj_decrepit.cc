@@ -22,6 +22,8 @@
 #include "../../crypto/internal.h"
 
 
+using namespace bssl;
+
 struct wrapped_callback {
   void (*callback)(const OBJ_NAME *, void *arg);
   void *arg;

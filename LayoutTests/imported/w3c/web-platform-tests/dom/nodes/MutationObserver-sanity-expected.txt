@@ -12,4 +12,7 @@ PASS Should throw if attributeFilter is present and attributes is false
 PASS Should not throw if attributeFilter is present and attributes is true
 PASS Should throw if characterDataOldValue is true and characterData is false
 PASS Should not throw if characterDataOldValue is true and characterData is true
+PASS Should not throw if attributeOldValue is false and attributes is omitted
+PASS Should not throw if characterDataOldValue is false and characterData is omitted
+PASS attributeOldValue:false (present) auto-enables attribute observation
 

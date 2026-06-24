@@ -45,8 +45,4 @@ OBJC_CLASS WKWebView;
 
 @end
 
-@interface WKTextEffectManager (VersionCheck)
-@property (class, nonatomic, readonly) BOOL canUse;
-@end
-
 #endif // ENABLE(WRITING_TOOLS_TEXT_EFFECTS)

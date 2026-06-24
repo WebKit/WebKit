@@ -91,8 +91,6 @@ private:
 
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
     std::optional<WebCore::HostingContext> m_hostingContext;
-    uint64_t m_totalVideoFrames { 0 };
-    uint64_t m_droppedVideoFrames { 0 };
 };
 
 }

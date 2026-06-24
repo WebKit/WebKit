@@ -52,7 +52,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGImage);
 
-RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
+RenderSVGImage::RenderSVGImage(SVGImageElement& element, Style::ComputedStyle&& style)
     : RenderSVGModelObject(Type::SVGImage, element, WTF::move(style))
     , m_imageResource(makeUniqueRef<RenderImageResource>())
 {
@@ -113,7 +113,9 @@ void RenderSVGImage::layout()
     LayoutRepainter repainter(*this);
 
     updateImageViewport();
-    setCurrentSVGLayoutRect(enclosingLayoutRect(m_objectBoundingBox));
+
+    // Refresh the layout-rect size only. SVGContainerLayout assigns the container-relative location.
+    setCurrentSVGLayoutRect({ currentSVGLayoutLocation(), enclosingLayoutRect(m_objectBoundingBox).size() });
     m_cachedVisualOverflowRect = std::nullopt;
 
     updateLayerTransform();
@@ -191,7 +193,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
 
     auto drawResult = paintInfo.context().drawImage(*image, rect, sourceRect, options);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
-        imageResource().cachedImage()->addClientWaitingForAsyncDecoding(cachedImageClient());
+        protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
 
     return drawResult;
 }
@@ -201,18 +203,18 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
     GraphicsContext& context = paintInfo.context();
     if (context.invalidatingImagesWithAsyncDecodes()) {
         if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(cachedImageClient()))
-            cachedImage()->removeAllClientsWaitingForAsyncDecoding();
+            protect(cachedImage())->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
 
     if (!imageResource().cachedImage()) {
-        page().addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
+        protect(page())->addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
         return;
     }
 
     RefPtr<Image> image = imageResource().image();
     if (!image || image->isNull()) {
-        page().addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
+        protect(page())->addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
         return;
     }
 
@@ -230,13 +232,13 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
         replacedContentRect.moveBy(paintOffset);
         auto visibleRect = intersection(replacedContentRect, contentBoxRect);
         if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
-            page().addRelevantUnpaintedObject(*this, enclosingLayoutRect(visibleRect));
+            protect(page())->addRelevantUnpaintedObject(*this, enclosingLayoutRect(visibleRect));
         else
-            page().addRelevantRepaintedObject(*this, enclosingLayoutRect(visibleRect));
+            protect(page())->addRelevantRepaintedObject(*this, enclosingLayoutRect(visibleRect));
 
         auto localVisibleRect = visibleRect;
         localVisibleRect.moveBy(-paintOffset);
-        protect(document())->didPaintImage(protect(imageElement()).get(), cachedImage(), localVisibleRect);
+        protect(document())->didPaintImage(protect(imageElement()).get(), protect(cachedImage()), localVisibleRect);
     }
 }
 
@@ -261,7 +263,7 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     auto localPoint = locationInContainer.point();
-    auto boundingBoxTopLeftCorner = flooredLayoutPoint(objectBoundingBox().minXMinYCorner());
+    auto boundingBoxTopLeftCorner = objectBoundingBoxLocation();
     auto coordinateSystemOriginTranslation = boundingBoxTopLeftCorner - adjustedLocation;
     localPoint.move(coordinateSystemOriginTranslation);
 
@@ -289,7 +291,7 @@ bool RenderSVGImage::updateImageViewport()
 
     bool updatedViewport = false;
     Ref imageElement = this->imageElement();
-    URL imageSourceURL = document().encodingParseURL(imageElement->imageSourceURL());
+    URL imageSourceURL = protect(document())->encodingParseURL(imageElement->imageSourceURL());
 
     // Images with preserveAspectRatio=none should force non-uniform scaling. This can be achieved
     // by setting the image's container size to its intrinsic size.
@@ -369,7 +371,7 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     repaintOrMarkForLayout(rect);
 
-    if (CheckedPtr cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(protect(imageElement()).ptr());
 
     if (RefPtr image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
@@ -390,10 +392,10 @@ bool RenderSVGImage::bufferForeground(PaintInfo& paintInfo, const LayoutPoint& p
 
     auto absoluteTargetRect = enclosingIntRect(absoluteTransform.mapRect(repaintBoundingBox));
     if (m_bufferedForeground) {
-        if (absoluteTargetRect.size() != m_bufferedForeground->backendSize())
+        if (absoluteTargetRect.size() != protect(m_bufferedForeground)->backendSize())
             m_bufferedForeground = nullptr;
         else {
-            const auto& absoluteTransformBuffer = m_bufferedForeground->context().getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+            const auto& absoluteTransformBuffer = protect(m_bufferedForeground)->context().getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
             if (absoluteTransformBuffer != absoluteTransform)
                 m_bufferedForeground = nullptr;
         }
@@ -406,7 +408,7 @@ bool RenderSVGImage::bufferForeground(PaintInfo& paintInfo, const LayoutPoint& p
             return false;
     }
 
-    auto& bufferedContext = m_bufferedForeground->context();
+    auto& bufferedContext = protect(m_bufferedForeground)->context();
     bufferedContext.clearRect(absoluteTargetRect);
 
     PaintInfo bufferedInfo(paintInfo);
@@ -426,7 +428,7 @@ bool RenderSVGImage::needsHasSVGTransformFlags() const
     return protect(imageElement())->hasTransformRelatedAttributes();
 }
 
-void RenderSVGImage::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
+void RenderSVGImage::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     applySVGTransform(transform, protect(imageElement()), style, boundingBox, std::nullopt, std::nullopt, options);
 }

@@ -16,9 +16,9 @@
 #include <cstddef>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
@@ -36,9 +36,9 @@ class FullBandErleEstimator {
   void Reset();
 
   // Updates the ERLE estimator.
-  void Update(ArrayView<const float> X2,
-              ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-              ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+  void Update(std::span<const float> X2,
+              std::span<const std::array<float, kFftLengthBy2Plus1>> Y2,
+              std::span<const std::array<float, kFftLengthBy2Plus1>> E2,
               const std::vector<bool>& converged_filters);
 
   // Returns the fullband ERLE estimates in log2 units.
@@ -52,7 +52,7 @@ class FullBandErleEstimator {
 
   // Returns an estimation of the current linear filter quality. It returns a
   // float number between 0 and 1 mapping 1 to the highest possible quality.
-  ArrayView<const std::optional<float>> GetInstLinearQualityEstimates() const {
+  std::span<const std::optional<float>> GetInstLinearQualityEstimates() const {
     return linear_filters_qualities_;
   }
 

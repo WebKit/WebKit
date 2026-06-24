@@ -16,10 +16,10 @@
 #include <cstring>
 #include <numbers>
 #include <numeric>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
@@ -60,17 +60,17 @@ void ProduceDecimatedSinusoidalOutputPower(int sample_rate_hz,
   for (size_t k = 0; k < kNumBlocks; ++k) {
     std::vector<float> sub_block(sub_block_size);
     decimator.Decimate(
-        ArrayView<const float>(&input[k * kBlockSize], kBlockSize), sub_block);
+        std::span<const float>(&input[k * kBlockSize], kBlockSize), sub_block);
 
     std::copy(sub_block.begin(), sub_block.end(),
               output.begin() + k * sub_block_size);
   }
 
   ASSERT_GT(kNumBlocks, kNumStartupBlocks);
-  ArrayView<const float> input_to_evaluate(
+  std::span<const float> input_to_evaluate(
       &input[kNumStartupBlocks * kBlockSize],
       (kNumBlocks - kNumStartupBlocks) * kBlockSize);
-  ArrayView<const float> output_to_evaluate(
+  std::span<const float> output_to_evaluate(
       &output[kNumStartupBlocks * sub_block_size],
       (kNumBlocks - kNumStartupBlocks) * sub_block_size);
   *input_power =
@@ -114,7 +114,7 @@ TEST(DecimatorDeathTest, WrongInputSize) {
 TEST(DecimatorDeathTest, NullOutput) {
   Decimator decimator(4);
   std::vector<float> x(kBlockSize, 0.f);
-  EXPECT_DEATH(decimator.Decimate(x, nullptr), "");
+  EXPECT_DEATH(decimator.Decimate(x, {}), "");
 }
 
 // Verifies the check for the output size.

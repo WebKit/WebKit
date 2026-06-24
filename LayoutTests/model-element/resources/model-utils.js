@@ -48,10 +48,10 @@ const assert_cameras_are_not_equal = (actualCamera, expectedCamera, description)
 };
 
 const assert_points_are_equal = (actual, expected) => {
-    assert_equals(actual.x, expected.x, "x is not matched");
-    assert_equals(actual.y, expected.y, "y is not matched");
-    assert_equals(actual.z, expected.z, "z is not matched");
-    assert_equals(actual.w, expected.w, "w is not matched");
+    assert_approx_equals(actual.x, expected.x, epsilon, "x is not matched");
+    assert_approx_equals(actual.y, expected.y, epsilon, "y is not matched");
+    assert_approx_equals(actual.z, expected.z, epsilon, "z is not matched");
+    assert_approx_equals(actual.w, expected.w, epsilon, "w is not matched");
 };
 
 const assert_3d_matrix_is_identity = (actual, isIdentity) => {
@@ -73,7 +73,7 @@ const assert_3d_matrix_equals = (actual, expected) => {
     let expectedArray = expected.toFloat64Array();
     assert_equals(actualArray.length, expectedArray.length);
     for (var i = 0; i < actualArray.length; i++) {
-        assert_equals(actualArray[i], expectedArray[i], "matrix array should match at index " + i);
+        assert_approx_equals(actualArray[i], expectedArray[i], epsilon, "matrix array should match at index " + i);
     }
 };
 

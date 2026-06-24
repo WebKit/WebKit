@@ -38,10 +38,10 @@ enum class PseudoId : uint8_t;
 class AnimationEventBase;
 class Document;
 class Element;
-class RenderStyle;
 class WebAnimation;
 
 namespace Style {
+class ComputedStyle;
 struct PseudoElementIdentifier;
 }
 
@@ -68,8 +68,8 @@ std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIden
 AtomString animatablePropertyAsString(AnimatableCSSProperty);
 bool animatablePropertiesContainTransformRelatedProperty(const HashSet<AnimatableCSSProperty>&);
 
-// Determines whether a RenderStyle specifies a transition on `display` property.
-bool styleHasDisplayTransition(const RenderStyle&, const Element&);
+// Determines whether a Style::ComputedStyle specifies a transition on `display` property.
+bool styleHasDisplayTransition(const Style::ComputedStyle&, const Element&);
 
 } // namespace WebCore
 

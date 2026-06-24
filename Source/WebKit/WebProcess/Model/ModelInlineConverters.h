@@ -31,6 +31,7 @@
 #include <ImageIO/CGImageSource.h>
 #include <Metal/Metal.h>
 #include <wtf/cf/VectorCF.h>
+#include <wtf/cocoa/SpanCocoa.h>
 #include <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
@@ -635,6 +636,12 @@ static WebModel::Constant convert(WKBridgeConstant constant)
         return WebModel::Constant::kMatrix3f;
     case WKBridgeConstantMatrix4f:
         return WebModel::Constant::kMatrix4f;
+    case WKBridgeConstantMatrix2h:
+        return WebModel::Constant::kMatrix2h;
+    case WKBridgeConstantMatrix3h:
+        return WebModel::Constant::kMatrix3h;
+    case WKBridgeConstantMatrix4h:
+        return WebModel::Constant::kMatrix4h;
     case WKBridgeConstantQuatf:
         return WebModel::Constant::kQuatf;
     case WKBridgeConstantQuath:
@@ -712,7 +719,8 @@ static WebModel::ConstantContainer convert(WKBridgeConstantContainer *container)
     return WebModel::ConstantContainer {
         .constant = convert(container.constant),
         .constantValues = convert(container.constantValues),
-        .name = String(container.name)
+        .name = String(container.name),
+        .colorSpaceName = container.colorSpaceName ? std::optional<String>(String(container.colorSpaceName)) : std::nullopt
     };
 }
 
@@ -895,8 +903,12 @@ static WebModel::ImageAssetSwizzle convert(MTLTextureSwizzleChannels swizzle)
 
 static WebModel::ImageAsset convert(WKBridgeImageAsset *imageAsset)
 {
+    std::optional<WebCore::SharedMemory::Handle> dataHandle;
+    if (NSData *data = imageAsset.data; data && data.length)
+        dataHandle = WebCore::SharedMemoryHandle::createCopy(WTF::span(data), WebCore::SharedMemoryProtection::ReadOnly);
+
     return WebModel::ImageAsset {
-        .data = makeVector(imageAsset.data),
+        .dataHandle = WTF::move(dataHandle),
         .width = imageAsset.width,
         .height = imageAsset.height,
         .depth = imageAsset.depth,

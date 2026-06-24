@@ -78,6 +78,9 @@ public:
     const Vector<MediaKeyEncryptionScheme>& supportedEncryptionSchemes() const LIFETIME_BOUND { return m_supportedEncryptionSchemes; }
     void setSupportedEncryptionSchemes(Vector<MediaKeyEncryptionScheme>&& schemes) { m_supportedEncryptionSchemes = WTF::move(schemes); }
 
+    const Vector<String>& unsupportedVideoCodecs() const LIFETIME_BOUND { return m_unsupportedVideoCodecs; }
+    void setUnsupportedVideoCodecs(Vector<String>&& codecs) { m_unsupportedVideoCodecs = WTF::move(codecs); }
+
     void unregister();
 
     bool hasSessionWithID(const String& id);
@@ -97,6 +100,7 @@ private:
     Vector<MediaKeySessionType> m_supportedSessionTypes;
     Vector<String> m_supportedRobustness;
     Vector<MediaKeyEncryptionScheme> m_supportedEncryptionSchemes;
+    Vector<String> m_unsupportedVideoCodecs;
     bool m_registered { true };
     bool m_canCreateInstances { true };
     bool m_supportsServerCertificates { true };

@@ -165,9 +165,9 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
     };
 }
 
-std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging)
+std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride)
 {
-    return WebRTCVideoDecoder::create(codecType, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging)).get());
+    return WebRTCVideoDecoder::create(codecType, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging)).get(), WTF::move(colorSpaceOverride));
 }
 
 static bool validateCodecString(WebCore::VideoCodecType codecType, const String& codecString)
@@ -197,7 +197,7 @@ static bool validateCodecString(WebCore::VideoCodecType codecType, const String&
     return true;
 }
 
-void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, CompletionHandler<void(bool)>&& callback)
+void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
 
@@ -208,7 +208,7 @@ void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebC
         return;
     }
 
-    auto decoder = createLocalDecoder(identifier, codecType, useRemoteFrames, enableAdditionalLogging);
+    auto decoder = createLocalDecoder(identifier, codecType, useRemoteFrames, enableAdditionalLogging, WTF::move(colorSpaceOverride));
     if (!decoder) {
         callback(false);
         return;
@@ -260,6 +260,13 @@ void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier id
 {
     doDecoderTask(identifier, [&](auto& decoder) {
         decoder.webrtcDecoder->setFormat(data, width, height);
+    });
+}
+
+void LibWebRTCCodecsProxy::setDecoderColorSpaceOverride(VideoDecoderIdentifier identifier, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride)
+{
+    doDecoderTask(identifier, [&](auto& decoder) {
+        decoder.webrtcDecoder->setColorSpaceOverride(WTF::move(colorSpaceOverride));
     });
 }
 

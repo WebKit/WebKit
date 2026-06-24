@@ -46,9 +46,9 @@ DEFINE_CERT_ERROR_ID(kMissingQualifier,
 DEFINE_CERT_ERROR_ID(kPolicyQualifierInfoTrailingData,
                      "PolicyQualifierInfo has trailing data");
 
-// Minimally parse policyQualifiers, storing in |policy_qualifiers| if non-null.
+// Minimally parse policyQualifiers, storing in `policy_qualifiers` if non-null.
 // If a policy qualifier other than User Notice/CPS is present, parsing
-// will fail if |restrict_to_known_qualifiers| was set to true.
+// will fail if `restrict_to_known_qualifiers` was set to true.
 bool ParsePolicyQualifiers(bool restrict_to_known_qualifiers,
                            der::Parser *policy_qualifiers_sequence_parser,
                            std::vector<PolicyQualifierInfo> *policy_qualifiers,

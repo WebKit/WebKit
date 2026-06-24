@@ -33,8 +33,8 @@ namespace {
 using libaom_test::ACMRandom;
 
 using GetNzMapContextsFunc = void (*)(const uint8_t *const levels,
-                                      const int16_t *const scan,
-                                      const uint16_t eob, const TX_SIZE tx_size,
+                                      const int16_t *const scan, const int eob,
+                                      const TX_SIZE tx_size,
                                       const TX_CLASS tx_class,
                                       int8_t *const coeff_contexts);
 

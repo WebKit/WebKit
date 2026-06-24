@@ -544,10 +544,22 @@ ALWAYS_INLINE void JIT::load8FromMetadata(const Bytecode& bytecode, size_t offse
     load8(Address(GPRInfo::metadataTableRegister, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), result);
 }
 
+template <typename Bytecode>
+ALWAYS_INLINE void JIT::load16FromMetadata(const Bytecode& bytecode, size_t offset, GPRReg result)
+{
+    load16(Address(GPRInfo::metadataTableRegister, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), result);
+}
+
 template <typename ValueType, typename Bytecode>
 ALWAYS_INLINE void JIT::store8ToMetadata(ValueType value, const Bytecode& bytecode, size_t offset)
 {
     store8(value, Address(GPRInfo::metadataTableRegister, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset));
+}
+
+template <typename ValueType, typename Bytecode>
+ALWAYS_INLINE void JIT::store16ToMetadata(ValueType value, const Bytecode& bytecode, size_t offset)
+{
+    store16(value, Address(GPRInfo::metadataTableRegister, m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset));
 }
 
 template <typename Bytecode>

@@ -1,0 +1,4 @@
+This tests overriding Promise object in cancel callback of ReadableStream.
+WebKit should not crash or hit any assertions under ASAN, and you should see PASS below.
+
+PASS

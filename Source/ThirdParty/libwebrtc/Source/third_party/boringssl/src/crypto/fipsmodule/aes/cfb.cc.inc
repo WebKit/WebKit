@@ -18,11 +18,13 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static_assert(16 % sizeof(size_t) == 0, "block cannot be divided into size_t");
 
-void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
-                           const AES_KEY *key, uint8_t ivec[16], unsigned *num,
-                           int enc, block128_f block) {
+void bssl::CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
+                                 const AES_KEY *key, uint8_t ivec[16],
+                                 unsigned *num, int enc, block128_f block) {
   assert(in && out && key && ivec && num);
 
   unsigned n = *num;
@@ -134,9 +136,9 @@ static void cfbr_encrypt_block(const uint8_t *in, uint8_t *out, unsigned nbits,
 }
 
 // N.B. This expects the input to be packed, MS bit first
-void CRYPTO_cfb128_1_encrypt(const uint8_t *in, uint8_t *out, size_t bits,
-                             const AES_KEY *key, uint8_t ivec[16],
-                             unsigned *num, int enc, block128_f block) {
+void bssl::CRYPTO_cfb128_1_encrypt(const uint8_t *in, uint8_t *out, size_t bits,
+                                   const AES_KEY *key, uint8_t ivec[16],
+                                   unsigned *num, int enc, block128_f block) {
   size_t n;
   uint8_t c[1], d[1];
 
@@ -151,10 +153,10 @@ void CRYPTO_cfb128_1_encrypt(const uint8_t *in, uint8_t *out, size_t bits,
   }
 }
 
-void CRYPTO_cfb128_8_encrypt(const unsigned char *in, unsigned char *out,
-                             size_t length, const AES_KEY *key,
-                             unsigned char ivec[16], unsigned *num, int enc,
-                             block128_f block) {
+void bssl::CRYPTO_cfb128_8_encrypt(const unsigned char *in, unsigned char *out,
+                                   size_t length, const AES_KEY *key,
+                                   unsigned char ivec[16], unsigned *num,
+                                   int enc, block128_f block) {
   size_t n;
 
   assert(in && out && key && ivec && num);

@@ -876,6 +876,14 @@ bool AccessibilityUIElementIOS::attributedStringRangeIsMisspelled(unsigned locat
     return false;
 }
 
+bool AccessibilityUIElementIOS::isRemotePlatformElement() const
+{
+    // A search that crosses into an out-of-process iframe surfaces that frame as an AXRemoteElement
+    // placeholder (the iOS analog of NSAccessibilityRemoteUIElement on macOS). The class is soft-linked
+    // by WebCore, so it is only present in the process once such a placeholder has been created.
+    return [m_element isKindOfClass:NSClassFromString(@"AXRemoteElement")];
+}
+
 unsigned AccessibilityUIElementIOS::uiElementCountForSearchPredicate(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
     return 0;
@@ -906,8 +914,11 @@ JSValueRef AccessibilityUIElementIOS::uiElementsForSearchPredicate(JSContextRef 
         return nullptr;
 
     Vector<RefPtr<AccessibilityUIElement>> elements;
+    Class remoteElementClass = NSClassFromString(@"AXRemoteElement");
     for (id result in searchResults) {
-        if ([result isAccessibilityElement])
+        // Include the remote-frame placeholder (an AXRemoteElement, which is not itself an accessibility
+        // element) so tests can observe that a search crossing an out-of-process iframe returns it.
+        if ([result isAccessibilityElement] || [result isKindOfClass:remoteElementClass])
             elements.append(AccessibilityUIElement::create(result));
     }
     return makeJSArray(context, elements);

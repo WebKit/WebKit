@@ -13,6 +13,7 @@
 #define AOM_AV1_COMMON_AV1_TXFM_H_
 
 #include <assert.h>
+#include <inttypes.h>
 #include <math.h>
 #include <stdio.h>
 
@@ -89,6 +90,26 @@ static inline int32_t range_check_value(int32_t value, int8_t bit) {
 #if DO_RANGE_CHECK_CLAMP
   bit = AOMMIN(bit, 31);
   return clamp(value, -(1 << (bit - 1)), (1 << (bit - 1)) - 1);
+#endif  // DO_RANGE_CHECK_CLAMP
+  (void)bit;
+  return value;
+}
+
+static inline int64_t range_check_value64(int64_t value, int8_t bit) {
+#if CONFIG_COEFFICIENT_RANGE_CHECKING
+  const int64_t max_value = (1LL << (bit - 1)) - 1;
+  const int64_t min_value = -(1LL << (bit - 1));
+  if (value < min_value || value > max_value) {
+    fprintf(stderr, "coeff out of bit range, value: %" PRId64 " bit %d\n",
+            value, bit);
+#if !CONFIG_AV1_ENCODER
+    assert(0);
+#endif
+  }
+#endif  // CONFIG_COEFFICIENT_RANGE_CHECKING
+#if DO_RANGE_CHECK_CLAMP
+  bit = AOMMIN(bit, 63);
+  return clamp64(value, -(1LL << (bit - 1)), (1LL << (bit - 1)) - 1);
 #endif  // DO_RANGE_CHECK_CLAMP
   (void)bit;
   return value;

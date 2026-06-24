@@ -31,8 +31,8 @@
 #include "FontCascade.h"
 #include "KeyboardEvent.h"
 #include "RenderBlock.h"
-#include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+SettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -50,7 +50,7 @@ DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, D
     ASSERT(!m_symbols.isEmpty());
 }
 
-void DateTimeSymbolicFieldElement::adjustMinInlineSize(RenderStyle& style) const
+void DateTimeSymbolicFieldElement::adjustMinInlineSize(Style::ComputedStyle& style) const
 {
     CheckedRef font = style.fontCascade();
 

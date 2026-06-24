@@ -1041,6 +1041,20 @@ void SPIRVBuilder::predefineCommonTypes()
                          spirv::LiteralContextDependentNumber(value));
     mFloatConstants.insert({value, id});
 
+    ASSERT(kIdIVec4 > kIdVec4);
+    if (kIdIVec4 >= mNullConstants.size())
+    {
+        mNullConstants.resize(kIdIVec4 + 1);
+    }
+    ASSERT(!mNullConstants[kIdVec4].valid());
+    ASSERT(!mNullConstants[kIdIVec4].valid());
+    mNullConstants[kIdVec4] = spirv::IdRef(kIdVec4Zero);
+    spirv::WriteConstantNull(&mSpirvTypeAndConstantDecls, spirv::IdRef(kIdVec4),
+                             spirv::IdRef(kIdVec4Zero));
+    mNullConstants[kIdIVec4] = spirv::IdRef(kIdIVec4Zero);
+    spirv::WriteConstantNull(&mSpirvTypeAndConstantDecls, spirv::IdRef(kIdIVec4),
+                             spirv::IdRef(kIdIVec4Zero));
+
     // A few type pointers that are helpful for the SPIR-V transformer
     if (mShaderType != gl::ShaderType::Compute)
     {

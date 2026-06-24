@@ -25,9 +25,11 @@
 #include <openssl/nid.h>
 #include <openssl/rand.h>
 
-#include "internal.h"
 #include "../internal.h"
+#include "internal.h"
 
+
+using namespace bssl;
 
 // 1.2.840.113549.1.5.12
 static const uint8_t kPBKDF2[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
@@ -49,7 +51,7 @@ static const struct {
   uint8_t oid[9];
   uint8_t oid_len;
   int nid;
-  const EVP_CIPHER *(*cipher_func)(void);
+  const EVP_CIPHER *(*cipher_func)();
 } kCipherOIDs[] = {
     // 1.2.840.113549.3.2
     {{0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x03, 0x02},
@@ -100,7 +102,7 @@ static int add_cipher_oid(CBB *out, int nid) {
   return 0;
 }
 
-const EVP_CIPHER *pkcs5_pbe2_nid_to_cipher(int nid) {
+const EVP_CIPHER *bssl::pkcs5_pbe2_nid_to_cipher(int nid) {
   for (const auto &cipher : kCipherOIDs) {
     if (cipher.nid == nid) {
       return cipher.cipher_func();
@@ -127,10 +129,10 @@ static int pkcs5_pbe2_cipher_init(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
   return ret;
 }
 
-int PKCS5_pbe2_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx,
-                            const EVP_CIPHER *cipher, uint32_t iterations,
-                            const char *pass, size_t pass_len,
-                            const uint8_t *salt, size_t salt_len) {
+int bssl::PKCS5_pbe2_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx,
+                                  const EVP_CIPHER *cipher, uint32_t iterations,
+                                  const char *pass, size_t pass_len,
+                                  const uint8_t *salt, size_t salt_len) {
   int cipher_nid = EVP_CIPHER_nid(cipher);
   if (cipher_nid == NID_undef) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_CIPHER_HAS_NO_OBJECT_IDENTIFIER);
@@ -177,8 +179,9 @@ int PKCS5_pbe2_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx,
                                 EVP_CIPHER_iv_length(cipher), 1 /* encrypt */);
 }
 
-int PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite, EVP_CIPHER_CTX *ctx,
-                            const char *pass, size_t pass_len, CBS *param) {
+int bssl::PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite,
+                                  EVP_CIPHER_CTX *ctx, const char *pass,
+                                  size_t pass_len, CBS *param) {
   CBS pbe_param, kdf, kdf_obj, enc_scheme, enc_obj;
   if (!CBS_get_asn1(param, &pbe_param, CBS_ASN1_SEQUENCE) ||
       CBS_len(param) != 0 ||

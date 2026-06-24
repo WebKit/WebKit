@@ -1045,6 +1045,8 @@ private:
         case RegExpTestInline:
         case RegExpMatchFast:
         case RegExpMatchFastGlobal:
+        case RegExpSplitFast:
+        case RegExpStringIteratorNext:
         case StringReplace:
         case StringReplaceAll:
         case StringReplaceRegExp:
@@ -1159,7 +1161,10 @@ private:
             setPrediction(SpecInt32Only);
             break;
 
-        case MapIteratorNext:
+        case MapIteratorNext: {
+            setTuplePredictions(SpecCellOther, SpecInt32Only);
+            break;
+        }
         case GetRegExpFlag:
             setPrediction(SpecBoolean);
             break;
@@ -1228,6 +1233,11 @@ private:
             break;
         }
 
+        case StringSearch: {
+            setPrediction(SpecInt32Only);
+            break;
+        }
+
         case StringLocaleCompare: {
             setPrediction(SpecInt32Only);
             break;
@@ -1239,6 +1249,7 @@ private:
         case StringSubstr:
         case ToUpperCase:
         case ToLowerCase:
+        case ArrayJoin:
             setPrediction(SpecString);
             break;
 
@@ -1459,6 +1470,16 @@ private:
             break;
         }
 
+        case NewWeakMap: {
+            setPrediction(SpecWeakMapObject);
+            break;
+        }
+
+        case NewWeakSet: {
+            setPrediction(SpecWeakSetObject);
+            break;
+        }
+
         case PushWithScope:
         case CreateActivation: {
             setPrediction(SpecObjectOther);
@@ -1557,6 +1578,16 @@ private:
 
         case EnumeratorNextUpdateIndexAndMode: {
             setTuplePredictions(SpecInt32Only, SpecInt32Only);
+            break;
+        }
+
+        case StringIteratorNext: {
+            setTuplePredictions(SpecString, SpecInt32Only);
+            break;
+        }
+
+        case StringIteratorNextWithUndefined: {
+            setTuplePredictions(SpecString | SpecOther, SpecInt32Only);
             break;
         }
 

@@ -106,11 +106,11 @@ public:
     {
     }
 
-    CharacterClass(std::initializer_list<char32_t> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<char32_t> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
-        : m_matches(matches)
-        , m_ranges(ranges)
-        , m_matchesUnicode(matchesUnicode)
-        , m_rangesUnicode(rangesUnicode)
+    CharacterClass(std::initializer_list<char32_t> matches8, std::initializer_list<CharacterRange> ranges8, std::initializer_list<char32_t> matches32, std::initializer_list<CharacterRange> ranges32, CharacterClassWidths widths)
+        : m_matches8(matches8)
+        , m_ranges8(ranges8)
+        , m_matches32(matches32)
+        , m_ranges32(ranges32)
         , m_table(nullptr)
         , m_characterWidths(widths)
         , m_tableInverted(false)
@@ -118,12 +118,12 @@ public:
     {
     }
 
-    CharacterClass(std::initializer_list<Vector<char32_t>> strings, std::initializer_list<char32_t> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<char32_t> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths, bool inCanonicalForm)
+    CharacterClass(std::initializer_list<Vector<char32_t>> strings, std::initializer_list<char32_t> matches8, std::initializer_list<CharacterRange> ranges8, std::initializer_list<char32_t> matches32, std::initializer_list<CharacterRange> ranges32, CharacterClassWidths widths, bool inCanonicalForm)
         : m_strings(strings)
-        , m_matches(matches)
-        , m_ranges(ranges)
-        , m_matchesUnicode(matchesUnicode)
-        , m_rangesUnicode(rangesUnicode)
+        , m_matches8(matches8)
+        , m_ranges8(ranges8)
+        , m_matches32(matches32)
+        , m_ranges32(ranges32)
         , m_table(nullptr)
         , m_characterWidths(widths)
         , m_tableInverted(false)
@@ -132,20 +132,20 @@ public:
     {
     }
 
-    void copyOnly8BitCharacterData(const CharacterClass& other);
-
     bool NODELETE hasNonBMPCharacters() const { return m_characterWidths & CharacterClassWidths::HasNonBMPChars; }
 
     bool hasOneCharacterSize() const { return m_characterWidths == CharacterClassWidths::HasBMPChars || m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
     bool hasOnlyNonBMPCharacters() const { return m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
     bool hasStrings() const { return !m_strings.isEmpty(); }
-    bool hasSingleCharacters() const { return !m_matches.isEmpty() || !m_ranges.isEmpty() || !m_matchesUnicode.isEmpty() || !m_rangesUnicode.isEmpty(); }
-    
+    bool hasSingleCharacters() const { return !m_matches8.isEmpty() || !m_ranges8.isEmpty() || !m_matches32.isEmpty() || !m_ranges32.isEmpty(); }
+
+    std::optional<char16_t> hasSharedLeadSurrogate() const;
+
     Vector<Vector<char32_t>> m_strings;
-    Vector<char32_t> m_matches;
-    Vector<CharacterRange> m_ranges;
-    Vector<char32_t> m_matchesUnicode;
-    Vector<CharacterRange> m_rangesUnicode;
+    Vector<char32_t> m_matches8;
+    Vector<CharacterRange> m_ranges8;
+    Vector<char32_t> m_matches32;
+    Vector<CharacterRange> m_ranges32;
 
     Table m_table;
     CharacterClassWidths m_characterWidths;
@@ -169,14 +169,14 @@ public:
     {
     }
 
-    ClassSet(std::initializer_list<char32_t> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<char32_t> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
-        : CharacterClass(matches, ranges, matchesUnicode, rangesUnicode, widths)
+    ClassSet(std::initializer_list<char32_t> matches8, std::initializer_list<CharacterRange> ranges8, std::initializer_list<char32_t> matches32, std::initializer_list<CharacterRange> ranges32, CharacterClassWidths widths)
+        : CharacterClass(matches8, ranges8, matches32, ranges32, widths)
         , m_inCanonicalForm(true)
     {
     }
 
-    ClassSet(std::initializer_list<Vector<char32_t>> strings, std::initializer_list<char32_t> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<char32_t> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
-        : CharacterClass(matches, ranges, matchesUnicode, rangesUnicode, widths)
+    ClassSet(std::initializer_list<Vector<char32_t>> strings, std::initializer_list<char32_t> matches8, std::initializer_list<CharacterRange> ranges8, std::initializer_list<char32_t> matches32, std::initializer_list<CharacterRange> ranges32, CharacterClassWidths widths)
+        : CharacterClass(matches8, ranges8, matches32, ranges32, widths)
         , m_strings(strings)
         , m_inCanonicalForm(true)
     {
@@ -247,6 +247,12 @@ struct PatternTerm {
     };
     unsigned inputPosition;
     unsigned frameLocation;
+
+    // Set by YarrPattern's auto-possessification pass for a Greedy single-character
+    // (PatternCharacter / CharacterClass) term whose following mandatory term can never
+    // match a character this term matches. Backtracking into such a term is always futile,
+    // so the JIT generates a possessive (no-give-back) backtrack instead of the retry loop.
+    bool m_possessive { false };
 
     PatternTerm(char32_t ch, OptionSet<Flags> currFlags, MatchDirection matchDirection = Forward)
         : type(PatternTerm::Type::PatternCharacter)
@@ -389,22 +395,27 @@ struct PatternTerm {
         return m_matchDirection;
     }
 
-    bool capture()
+    bool capture() const
     {
         return m_capture;
     }
 
-    bool NODELETE ignoreCase()
+    bool possessive() const
+    {
+        return m_possessive;
+    }
+
+    bool NODELETE ignoreCase() const
     {
         return m_currentFlags.contains(Flags::IgnoreCase);
     }
 
-    bool NODELETE multiline()
+    bool NODELETE multiline() const
     {
         return m_currentFlags.contains(Flags::Multiline);
     }
 
-    bool NODELETE dotAll()
+    bool NODELETE dotAll() const
     {
         return m_currentFlags.contains(Flags::DotAll);
     }
@@ -414,7 +425,7 @@ struct PatternTerm {
         return type == Type::CharacterClass && characterClass->hasOneCharacterSize() && !invert();
     }
 
-    bool containsAnyCaptures()
+    bool containsAnyCaptures() const
     {
         ASSERT(this->type == Type::ParenthesesSubpattern
             || this->type == Type::ParentheticalAssertion);

@@ -49,7 +49,7 @@ bool Sepia::transformColor(SRGBA<float>& color) const
 
 // MARK: - Conversion
 
-auto ToCSS<Sepia>::operator()(const Sepia& value, const RenderStyle& style) -> CSS::Sepia
+auto ToCSS<Sepia>::operator()(const Sepia& value, const Style::ComputedStyle& style) -> CSS::Sepia
 {
     return { .value = CSS::Sepia::Parameter { toCSS(value.value, style) } };
 }

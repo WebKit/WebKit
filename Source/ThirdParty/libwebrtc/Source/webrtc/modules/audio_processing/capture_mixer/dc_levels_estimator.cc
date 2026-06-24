@@ -11,15 +11,14 @@
 
 #include <cstddef>
 #include <numeric>
-
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
 namespace {
 
 void UpdateDcEstimate(float one_by_num_samples_per_channel,
-                      ArrayView<const float> audio,
+                      std::span<const float> audio,
                       float& dc_estimate) {
   constexpr float kForgettingFactor = 0.05f;
   float mean = std::accumulate(audio.begin(), audio.end(), 0.0f) *
@@ -34,8 +33,8 @@ DcLevelsEstimator::DcLevelsEstimator(size_t num_samples_per_channel)
   dc_levels_.fill(0.0f);
 }
 
-void DcLevelsEstimator::Update(ArrayView<const float> channel0,
-                               ArrayView<const float> channel1) {
+void DcLevelsEstimator::Update(std::span<const float> channel0,
+                               std::span<const float> channel1) {
   UpdateDcEstimate(one_by_num_samples_per_channel_, channel0, dc_levels_[0]);
   UpdateDcEstimate(one_by_num_samples_per_channel_, channel1, dc_levels_[1]);
 }

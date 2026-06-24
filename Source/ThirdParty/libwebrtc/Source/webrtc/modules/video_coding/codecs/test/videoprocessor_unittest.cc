@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 
-#include "api/environment/environment_factory.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/test/mock_video_encoder.h"
 #include "api/test/videocodec_test_fixture.h"
@@ -25,6 +24,7 @@
 #include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/test/videocodec_test_stats_impl.h"
 #include "rtc_base/task_queue_for_test.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/mock/mock_frame_reader.h"
@@ -58,8 +58,8 @@ class VideoProcessorTest : public ::testing::Test {
     ExpectInit();
     q_.SendTask([this] {
       video_processor_ = std::make_unique<VideoProcessor>(
-          CreateEnvironment(), &encoder_mock_, &decoders_, &frame_reader_mock_,
-          config_, &stats_, &encoded_frame_writers_,
+          CreateTestEnvironment(), &encoder_mock_, &decoders_,
+          &frame_reader_mock_, config_, &stats_, &encoded_frame_writers_,
           /*decoded_frame_writers=*/nullptr);
     });
   }

@@ -62,7 +62,6 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 
-using namespace WebCore;
 
 @interface NSApplication ()
 - (BOOL)isSpeaking;
@@ -94,12 +93,12 @@ void WebContextMenuClient::downloadURL(const URL& url)
     [m_webView _downloadURL:url.createNSURL().get()];
 }
 
-void WebContextMenuClient::searchWithGoogle(const LocalFrame*)
+void WebContextMenuClient::searchWithGoogle(const WebCore::LocalFrame*)
 {
     [m_webView _searchWithGoogleFromMenu:nil];
 }
 
-void WebContextMenuClient::lookUpInDictionary(LocalFrame* frame)
+void WebContextMenuClient::lookUpInDictionary(WebCore::LocalFrame* frame)
 {
     WebHTMLView* htmlView = (WebHTMLView*)[[kit(frame) frameView] documentView];
     if(![htmlView isKindOfClass:[WebHTMLView class]])
@@ -122,21 +121,21 @@ void WebContextMenuClient::stopSpeaking()
     [NSApp stopSpeaking:nil];
 }
 
-bool WebContextMenuClient::clientFloatRectForNode(Node& node, FloatRect& rect) const
+bool WebContextMenuClient::clientFloatRectForNode(WebCore::Node& node, WebCore::FloatRect& rect) const
 {
-    RenderObject* renderer = node.renderer();
+    WebCore::RenderObject* renderer = node.renderer();
     if (!renderer) {
         // This method shouldn't be called in cases where the controlled node hasn't rendered.
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    if (!is<RenderBox>(*renderer))
+    if (!is<WebCore::RenderBox>(*renderer))
         return false;
-    auto& renderBox = downcast<RenderBox>(*renderer);
+    auto& renderBox = downcast<WebCore::RenderBox>(*renderer);
 
-    LayoutRect layoutRect = renderBox.clientBoxRect();
-    FloatQuad floatQuad = renderBox.localToAbsoluteQuad(FloatQuad(layoutRect));
+    WebCore::LayoutRect layoutRect = renderBox.clientBoxRect();
+    WebCore::FloatQuad floatQuad = renderBox.localToAbsoluteQuad(WebCore::FloatQuad(layoutRect));
     rect = floatQuad.boundingBox();
 
     return true;
@@ -144,7 +143,7 @@ bool WebContextMenuClient::clientFloatRectForNode(Node& node, FloatRect& rect) c
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 
-void WebContextMenuClient::handleTranslation(const TranslationContextMenuInfo& info)
+void WebContextMenuClient::handleTranslation(const WebCore::TranslationContextMenuInfo& info)
 {
     [m_webView _handleContextMenuTranslation:info];
 }
@@ -160,11 +159,11 @@ void WebContextMenuClient::sharingServicePickerWillBeDestroyed(WebSharingService
 
 WebCore::FloatRect WebContextMenuClient::screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
 {
-    Page* page = [m_webView page];
+    WebCore::Page* page = [m_webView page];
     if (!page)
         return NSZeroRect;
 
-    Node* node = page->contextMenuController().context().hitTestResult().innerNode();
+    WebCore::Node* node = page->contextMenuController().context().hitTestResult().innerNode();
     if (!node)
         return NSZeroRect;
 
@@ -175,14 +174,14 @@ WebCore::FloatRect WebContextMenuClient::screenRectForCurrentSharingServicePicke
         return NSZeroRect;
     }
 
-    FloatRect rect;
+    WebCore::FloatRect rect;
     if (!clientFloatRectForNode(*node, rect))
         return NSZeroRect;
 
     // FIXME: https://webkit.org/b/132915
     // Ideally we'd like to convert the content rect to screen coordinates without the lossy float -> int conversion.
     // Creating a rounded int rect works well in practice, but might still lead to off-by-one-pixel problems in edge cases.
-    IntRect intRect = roundedIntRect(rect);
+    WebCore::IntRect intRect = roundedIntRect(rect);
     return frameView->contentsToScreen(intRect);
 }
 
@@ -203,22 +202,22 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
         return nil;
     }
 
-    FloatRect rect;
+    WebCore::FloatRect rect;
     if (!clientFloatRectForNode(*node, rect))
         return nil;
 
     // This is effectively a snapshot, and will be painted in an unaccelerated fashion in line with FrameSnapshotting.
-    auto buffer = ImageBuffer::create(rect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto buffer = WebCore::ImageBuffer::create(rect.size(), WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::Unspecified, 1, WebCore::DestinationColorSpace::SRGB(), WebCore::PixelFormat::BGRA8);
     if (!buffer)
         return nil;
 
     Ref localFrame = frameView->frame();
 
     auto oldSelection = localFrame->selection().selection();
-    localFrame->selection().setSelection(*makeRangeSelectingNode(*node), FrameSelection::SetSelectionOption::DoNotSetFocus);
+    localFrame->selection().setSelection(*makeRangeSelectingNode(*node), WebCore::FrameSelection::SetSelectionOption::DoNotSetFocus);
 
     auto oldPaintBehavior = frameView->paintBehavior();
-    frameView->setPaintBehavior(PaintBehavior::SelectionOnly);
+    frameView->setPaintBehavior(WebCore::PaintBehavior::SelectionOnly);
 
     buffer->context().translate(-toFloatSize(rect.location()));
     frameView->paintContents(buffer->context(), roundedIntRect(rect));
@@ -226,7 +225,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     localFrame->selection().setSelection(oldSelection);
     frameView->setPaintBehavior(oldPaintBehavior);
 
-    auto image = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(buffer)));
+    auto image = WebCore::BitmapImage::create(WebCore::ImageBuffer::sinkIntoNativeImage(WTF::move(buffer)));
     if (!image)
         return nil;
 
@@ -239,12 +238,12 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view, 
 {
     isServicesMenu = false;
 
-    Page* page = [m_webView page];
+    WebCore::Page* page = [m_webView page];
     if (!page)
         return nil;
 
 #if ENABLE(SERVICE_CONTROLS)
-    if (Image* image = page->contextMenuController().context().controlledImage()) {
+    if (WebCore::Image* image = page->contextMenuController().context().controlledImage()) {
         ASSERT(page->contextMenuController().context().hitTestResult().innerNode());
 
         // FIXME: <rdar://165255055> Migrate from deprecated NSItemProvider APIs
@@ -276,7 +275,7 @@ void WebContextMenuClient::showContextMenu()
         return;
 
     RetainPtr view = frameView->documentView();
-    IntPoint point = frameView->contentsToWindow(page->contextMenuController().hitTestResult().roundedPointInInnerNodeFrame());
+    WebCore::IntPoint point = frameView->contentsToWindow(page->contextMenuController().hitTestResult().roundedPointInInnerNodeFrame());
     NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:point modifierFlags:0 timestamp:0 windowNumber:[[view.get() window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
 
     // Show the contextual menu for this event.

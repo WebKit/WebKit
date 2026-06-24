@@ -148,6 +148,7 @@ list(APPEND WebCore_LIBRARIES
     crypt32
     iphlpapi
     usp10
+    ws2_32
 )
 
 list(APPEND WebCoreTestSupport_LIBRARIES

@@ -156,7 +156,7 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
 
 void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {
-    client().declareAndWriteDragImage(dataTransfer.pasteboard().name(), element, url, label, element.document().frame());
+    client().declareAndWriteDragImage(dataTransfer.pasteboard().name(), element, url, label, protect(element.document())->frame());
 }
 
 } // namespace WebCore

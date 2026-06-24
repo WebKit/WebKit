@@ -30,8 +30,6 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/AlignedStorage.h>
 
-using namespace WebKit;
-
 @implementation WKNSDictionary {
     AlignedStorage<API::Dictionary> _dictionary;
 }
@@ -76,7 +74,7 @@ using namespace WebKit;
 
 - (NSEnumerator *)keyEnumerator
 {
-    return [wrapper(protect(*_dictionary)->keys()) objectEnumerator];
+    return [WebKit::wrapper(protect(*_dictionary)->keys()) objectEnumerator];
 }
 
 #pragma mark NSCopying protocol implementation

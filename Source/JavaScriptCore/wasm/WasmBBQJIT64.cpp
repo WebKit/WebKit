@@ -3365,7 +3365,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     targetControl.addBranch(m_jit.jump());
 }
 
-[[nodiscard]] PartialResult BBQJIT::addThrowRef(Value exception, Stack&)
+[[nodiscard]] PartialResult BBQJIT::addThrowRef(Value exception, std::span<TypedExpression>)
 {
     LOG_INSTRUCTION("ThrowRef", exception);
 
@@ -3407,7 +3407,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addBranchNull(ControlData& data, ExpressionType reference, Stack& returnValues, bool shouldNegate, ExpressionType& result)
+[[nodiscard]] PartialResult BBQJIT::addBranchNull(ControlData& data, ExpressionType reference, std::span<TypedExpression> returnValues, bool shouldNegate, ExpressionType& result)
 {
     if (reference.isConst() && (reference.asRef() == JSValue::encode(jsNull())) == shouldNegate) {
         // If branch is known to be not-taken, exit early.
@@ -3472,7 +3472,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addBranchCast(ControlData& data, ExpressionType reference, Stack& returnValues, bool allowNull, int32_t heapType, bool shouldNegate)
+[[nodiscard]] PartialResult BBQJIT::addBranchCast(ControlData& data, ExpressionType reference, std::span<TypedExpression> returnValues, bool allowNull, int32_t heapType, bool shouldNegate)
 {
     Value condition;
     if (reference.isConst()) {

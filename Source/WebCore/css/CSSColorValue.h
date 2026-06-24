@@ -43,6 +43,8 @@ public:
     bool equals(const CSSColorValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+
     WEBCORE_EXPORT static WebCore::Color absoluteColor(const CSSValue&);
 
 private:

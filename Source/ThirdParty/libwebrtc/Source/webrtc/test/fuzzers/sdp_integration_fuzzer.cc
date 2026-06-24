@@ -28,6 +28,7 @@
 #include "pc/test/integration_test_helpers.h"
 #include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/checks.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 #include "test/gmock.h"
 #include "test/wait_until.h"
 #pragma clang diagnostic pop
@@ -86,29 +87,14 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
   void TestBody() override {}
 };
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
 #ifdef WEBRTC_WEBKIT_BUILD
-  uint8_t* newData = const_cast<uint8_t*>(data);
-  size_t newSize = size;
-  uint8_t type = 0;
-
+  uint8_t type;
   if (const char* var = getenv("SDP_TYPE")) {
-    if (size > 16384) {
-      return;
-    }
     type = atoi(var);
   } else {
-    if (size < 1 || size > 16385) {
-      return;
-    }
-    type = data[0];
-    newSize = size - 1;
-    newData = reinterpret_cast<uint8_t*>(malloc(newSize));
-    if (!newData)
-      return;
-    memcpy(newData, &data[1], newSize);
+    type = fuzz_data.ReadOrDefaultValue<uint8_t>(0);
   }
-
   SdpType sdpType = SdpType::kOffer;
   switch (type % 4) {
     case 0: sdpType = SdpType::kOffer; break;
@@ -116,23 +102,18 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     case 2: sdpType = SdpType::kAnswer; break;
     case 3: sdpType = SdpType::kRollback; break;
   }
-#else
-  if (size > 16384) {
+#endif
+  if (fuzz_data.size() > 16384) {
     return;
   }
-#endif
 
   FuzzerTest test;
 #ifdef WEBRTC_WEBKIT_BUILD
   test.RunNegotiateCycle(
       sdpType,
-      absl::string_view(reinterpret_cast<const char*>(newData), newSize));
-
-  if (newData != data)
-      free(newData);
+      fuzz_data.ReadString());
 #else
-  test.RunNegotiateCycle(
-      absl::string_view(reinterpret_cast<const char*>(data), size));
+  test.RunNegotiateCycle(fuzz_data.ReadString());
 #endif
 }
 

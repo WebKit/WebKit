@@ -1,0 +1,14 @@
+
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, line to 20px 30px)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 0 0, line to 100% 100%)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, move to 20px 30px, line by 20px 30px)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, move to 20px 30px, hline to 100px)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, move to 20px 30px, vline to 100px)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, curve to 20px 20px with 10px 30px)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, curve to 10% 20% with 10px 30px / 12px 32px)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, smooth to center 20%)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, arc by 20px 20px of 10%)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, arc by 20px 20px of 10% 20% cw large)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, arc by 20px 20px of 10% 20% cw rotate 12deg)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['shape-outside'] = "shape(from 20px 40px, line to 100px 40px, line to 100px 100px, close)" should set the property value assert_not_equals: property should be set got disallowed value ""
+

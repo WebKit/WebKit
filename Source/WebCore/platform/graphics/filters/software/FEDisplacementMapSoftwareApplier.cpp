@@ -28,6 +28,7 @@
 #include "FEDisplacementMap.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -57,6 +58,17 @@ bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, std::span<con
 {
     Ref input = inputs[0].get();
     Ref input2 = inputs[1].get();
+
+    // §16.4: when in2 is tainted, act as a pass-through of in.
+    if (m_effect->in2IsTainted()) {
+        RefPtr resultImage = result.imageBuffer();
+        RefPtr inputImage = input->imageBuffer();
+        if (!resultImage || !inputImage)
+            return false;
+        FloatRect inputImageRect = input->absoluteImageRectRelativeTo(result);
+        resultImage->context().drawImageBuffer(*inputImage, inputImageRect);
+        return true;
+    }
 
     RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)

@@ -95,6 +95,31 @@ void MessagePort::notifyMessageAvailable(const MessagePortIdentifier& identifier
     });
 }
 
+void MessagePort::notifyAllConnectionsClosed()
+{
+    ASSERT(isMainThread());
+    Vector<std::pair<ScriptExecutionContextIdentifier, ThreadSafeWeakPtr<MessagePort>>> entries;
+    {
+        Locker locker { allMessagePortsLock };
+        entries.reserveInitialCapacity(allMessagePorts().size());
+        for (auto& [identifier, weakPort] : allMessagePorts()) {
+            if (auto contextIdentifier = portToContextIdentifier().getOptional(identifier))
+                entries.append({ *contextIdentifier, weakPort });
+        }
+    }
+
+    for (auto& [contextIdentifier, weakPort] : entries) {
+        ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [weakPort = WTF::move(weakPort)](auto&) {
+            RefPtr port = weakPort.get();
+            if (!port || port->m_isDetached)
+                return;
+            port->m_isDetached = true;
+            port->m_entangled = false;
+            port->removeAllEventListeners();
+        });
+    }
+}
+
 Ref<MessagePort> MessagePort::create(ScriptExecutionContext& scriptExecutionContext, const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
     Ref messagePort = adoptRef(*new MessagePort(scriptExecutionContext, local, remote));
@@ -180,6 +205,17 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
 
     LOG(MessagePorts, "Actually posting message to port %s (to be received by port %s)", m_identifier.logString().utf8().data(), m_remoteIdentifier.logString().utf8().data());
 
+    if (RefPtr partner = m_localPartner) {
+        partner->m_localQueue.append(WTF::move(message));
+        ++partner->m_newLocalMessages;
+        if (partner->started()) {
+            queueTaskKeepingObjectAlive(*partner, TaskSource::PostedMessageQueue, [](auto& port) mutable {
+                port.dispatchMessages();
+            });
+        }
+        return { };
+    }
+
     protect(MessagePortChannelProvider::fromContext(*protect(scriptExecutionContext())))->postMessageToRemote(WTF::move(message), m_remoteIdentifier);
     return { };
 }
@@ -195,6 +231,17 @@ TransferredMessagePort MessagePort::disentangle()
     m_entangled = false;
 
     Ref context = *scriptExecutionContext();
+    if (RefPtr localSibling = m_localPartner) {
+        localSibling->m_localPartner = nullptr;
+        m_localPartner = nullptr;
+    }
+
+    // Drain messages before disentanglement:
+    auto localMessagesToQueue = std::exchange(m_localQueue, { });
+    m_newLocalMessages = 0;
+    for (auto& message : localMessagesToQueue)
+        protect(MessagePortChannelProvider::fromContext(context))->postMessageToRemote(WTF::move(message), m_identifier);
+
     protect(MessagePortChannelProvider::fromContext(context))->messagePortDisentangled(m_identifier);
 
     // We can't receive any messages or generate any events after this, so remove ourselves from the list of active ports.
@@ -231,6 +278,10 @@ void MessagePort::start()
         return;
 
     m_started = true;
+
+    if (m_localPartner.get() && m_localQueue.isEmpty())
+        return;
+
     protect(scriptExecutionContext())->processMessageForPortSoon(m_identifier, [pendingActivity = makePendingActivity(*this)] { });
 }
 
@@ -239,6 +290,12 @@ void MessagePort::close()
     if (m_isDetached)
         return;
     m_isDetached = true;
+
+    m_localQueue.clear();
+    m_newLocalMessages = 0;
+    if (RefPtr partner = m_localPartner)
+        partner->m_localPartner = nullptr;
+    m_localPartner = nullptr;
 
     ensureOnMainThread([identifier = m_identifier] {
         MessagePortChannelProvider::singleton().messagePortClosed(identifier);
@@ -266,6 +323,20 @@ void MessagePort::dispatchMessages()
     if (!context || context->activeDOMObjectsAreSuspended() || !isEntangled())
         return;
 
+    LOG(MessagePorts, "Dispatching messages on MessagePort %s (%p)", m_identifier.logString().utf8().data(), this);
+    while (m_newLocalMessages) {
+        --m_newLocalMessages;
+        queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [](auto& port) {
+            LOG(MessagePorts, "Draining one local message on MessagePort %s (%p)", port.m_identifier.logString().utf8().data(), &port);
+            port.drainOneLocalMessage();
+        });
+    }
+
+    // Scheduling message handling on a locally entangled port can cause races if
+    // the port is later disentangled:
+    if (m_localPartner.get())
+        return;
+
     auto messagesTakenHandler = [pendingActivity = makePendingActivity(*this)](Vector<MessageWithMessagePorts>&& messages, CompletionHandler<void()>&& completionCallback) mutable {
         auto scopeExit = makeScopeExit(WTF::move(completionCallback));
 
@@ -288,7 +359,7 @@ void MessagePort::dispatchMessages()
 
             if (pendingActivity->object().m_messageHandler) {
                 ASSERT(message.transferredPorts.isEmpty());
-                pendingActivity->object().m_messageHandler(*downcast<JSDOMGlobalObject>(globalObject), message.message.releaseNonNull().get());
+                pendingActivity->object().m_messageHandler(*downcast<JSDOMGlobalObject>(globalObject), message.message.releaseNonNull());
                 continue;
             }
 
@@ -310,9 +381,43 @@ void MessagePort::dispatchMessages()
     protect(MessagePortChannelProvider::fromContext(*context))->takeAllMessagesForPort(m_identifier, WTF::move(messagesTakenHandler));
 }
 
+void MessagePort::drainOneLocalMessage()
+{
+    RefPtr context = scriptExecutionContext();
+    if (!context || !context->globalObject() || context->activeDOMObjectsAreSuspended() || !isEntangled())
+        return;
+
+    ASSERT(context->isContextThread());
+    if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context)) {
+        if (workerGlobalScope->isClosing())
+            return;
+    }
+
+    auto* globalObject = context->globalObject();
+    Ref vm = globalObject->vm();
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+
+    auto message = m_localQueue.takeFirst();
+
+    if (m_messageHandler) {
+        ASSERT(message.transferredPorts.isEmpty());
+        m_messageHandler(*downcast<JSDOMGlobalObject>(globalObject), message.message.releaseNonNull());
+        return;
+    }
+
+    auto ports = MessagePort::entanglePorts(*context, WTF::move(message.transferredPorts));
+    auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));
+    if (scope.exception()) [[unlikely]] {
+        // Currently, we assume that the only way we can get here is if we have a termination.
+        RELEASE_ASSERT(vm->hasPendingTerminationException());
+        return;
+    }
+    dispatchEvent(event.event);
+}
+
 void MessagePort::dispatchEvent(Event& event)
 {
-    if (m_isDetached)
+    if (!isEntangled())
         return;
 
     if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext())) {
@@ -379,6 +484,19 @@ Ref<MessagePort> MessagePort::entangle(ScriptExecutionContext& context, Transfer
     Ref port = MessagePort::create(context, transferredPort.first, transferredPort.second);
     port->entangle();
     return port;
+}
+
+// FIXME: avoid SUPRESS_NODELETE with lazyInitialize() - ThreadSafeWeakPtr still unsupported
+SUPPRESS_NODELETE void MessagePort::entangleLocally(MessagePort& port1, MessagePort& port2)
+{
+    ASSERT(port1.scriptExecutionContext() == port2.scriptExecutionContext());
+    ASSERT(port2.identifier() == port1.m_remoteIdentifier);
+    ASSERT(port1.identifier() == port2.m_remoteIdentifier);
+    // Assertions ensure the assignment doesn't violate NODELETE.
+    ASSERT(!port1.m_localPartner.get());
+    ASSERT(!port2.m_localPartner.get());
+    port1.m_localPartner = port2;
+    port2.m_localPartner = port1;
 }
 
 bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)

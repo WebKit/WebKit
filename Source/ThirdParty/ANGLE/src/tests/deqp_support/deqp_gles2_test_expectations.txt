@@ -467,6 +467,8 @@
 356399840 WGPU : dEQP-GLES2.functional.shaders.functions.qualifiers.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.indexing.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.linkage.* = FAIL
+// This variation times out
+356399840 WGPU : dEQP-GLES2.functional.shaders.loops.for_constant_iterations.mixed_break_continue_* = SKIP
 356399840 WGPU : dEQP-GLES2.functional.shaders.loops.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.matrix.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.misc.compound_assignment.* = FAIL
@@ -492,7 +494,7 @@
 // Cube textures not yet supported
 389145696 WGPU : dEQP-GLES2.functional.texture.mipmap.cube.* = SKIP
 // Mipmap generation not supported
-389145696 WGPU : dEQP-GLES2.functional.texture.mipmap.2d.generate.* = SKIP
+389145696 WGPU : dEQP-GLES2.functional.texture.mipmap.2d.* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.format.* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.size.* = SKIP
 389145696 WGPU : dEQP-GLES2.functional.texture.specification.* = SKIP

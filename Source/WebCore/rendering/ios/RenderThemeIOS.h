@@ -35,17 +35,19 @@
 OBJC_CLASS UIImage;
 
 namespace WebCore {
-    
-class RenderStyle;
-class GraphicsContext;
 
+class GraphicsContext;
 struct AttachmentLayout;
+
+namespace Style {
+class ComputedStyle;
+}
 
 class RenderThemeIOS final : public RenderThemeCocoa {
 public:
     friend NeverDestroyed<RenderThemeIOS>;
 
-    static void adjustRoundBorderRadius(RenderStyle&, RenderBox&);
+    static void adjustRoundBorderRadius(Style::ComputedStyle&, RenderBox&);
 
 #if USE(SYSTEM_PREVIEW)
     void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&) final;
@@ -66,33 +68,33 @@ public:
 
     bool canCreateControlPartForRenderer(const RenderElement&) const final;
 
-    Style::PaddingBox platformPopupInternalPaddingBox(const RenderStyle&) const final;
+    Style::PaddingBox platformPopupInternalPaddingBox(const Style::ComputedStyle&) const final;
 
     int baselinePosition(const RenderBox&) const final;
 
-    bool isControlStyled(const RenderStyle&) const final;
+    bool isControlStyled(const Style::ComputedStyle&) const final;
 
     // Methods for each appearance value.
-    void adjustCheckboxStyle(RenderStyle&, const Element*) const final;
+    void adjustCheckboxStyle(Style::ComputedStyle&, const Element*) const final;
 
-    void adjustRadioStyle(RenderStyle&, const Element*) const final;
+    void adjustRadioStyle(Style::ComputedStyle&, const Element*) const final;
 
-    void adjustButtonStyle(RenderStyle&, const Element*) const final;
+    void adjustButtonStyle(Style::ComputedStyle&, const Element*) const final;
 
-    void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const final { }
+    void adjustInnerSpinButtonStyle(Style::ComputedStyle&, const Element*) const final { }
 
-    void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
+    void adjustTextFieldStyle(Style::ComputedStyle&, const Element*) const final;
     void paintTextFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
-    void adjustTextAreaStyle(RenderStyle&, const Element*) const final;
+    void adjustTextAreaStyle(Style::ComputedStyle&, const Element*) const final;
     void paintTextAreaDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustMenuListButtonStyle(RenderStyle&, const Element*) const final;
+    void adjustMenuListButtonStyle(Style::ComputedStyle&, const Element*) const final;
     void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustSliderTrackStyle(RenderStyle&, const Element*) const final;
+    void adjustSliderTrackStyle(Style::ComputedStyle&, const Element*) const final;
     bool paintSliderTrack(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustSliderThumbSize(RenderStyle&, const Element*) const final;
+    void adjustSliderThumbSize(Style::ComputedStyle&, const Element*) const final;
 
     Seconds switchAnimationVisuallyOnDuration() const final { return 0.4880138408543766_s; }
     Seconds switchAnimationHeldDuration() const final { return 0.5073965509413827_s; }
@@ -105,7 +107,7 @@ public:
     IntSize sliderTickSize() const final;
     int sliderTickOffsetFromTrackCenter() const final;
 
-    void adjustSearchFieldStyle(RenderStyle&, const Element*) const final;
+    void adjustSearchFieldStyle(Style::ComputedStyle&, const Element*) const final;
     void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
     bool paintCheckbox(const RenderElement&, const PaintInfo&, const FloatRect&) final;
@@ -120,19 +122,19 @@ public:
 
     void paintColorWellDecorations(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
+    void adjustSearchFieldDecorationPartStyle(Style::ComputedStyle&, const Element*) const final;
     bool paintSearchFieldDecorationPart(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const final;
+    void adjustSearchFieldResultsDecorationPartStyle(Style::ComputedStyle&, const Element*) const final;
 
     bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
+    void adjustSearchFieldResultsButtonStyle(Style::ComputedStyle&, const Element*) const final;
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
-    bool supportsFocusRing(const RenderElement&, const RenderStyle&) const final;
+    bool supportsFocusRing(const RenderElement&, const Style::ComputedStyle&) const final;
 
-    bool supportsBoxShadow(const RenderStyle&) const final;
+    bool supportsBoxShadow(const Style::ComputedStyle&) const final;
 
     Color autocorrectionReplacementMarkerColor(const RenderText&) const final;
 
@@ -173,7 +175,7 @@ private:
     void paintTextFieldInnerShadow(const PaintInfo&, const FloatRoundedRect&);
 
     Color checkboxRadioBorderColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
-    Color checkboxRadioBackgroundColor(const RenderStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
+    Color checkboxRadioBackgroundColor(const Style::ComputedStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
     RefPtr<Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStyle::State>);
     Color checkboxRadioIndicatorColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
 
@@ -181,9 +183,9 @@ private:
 
     static Color insertionPointColor();
 
-    void adjustButtonLikeControlStyle(RenderStyle&, const Element&) const;
+    void adjustButtonLikeControlStyle(Style::ComputedStyle&, const Element&) const;
 
-    void adjustMinimumIntrinsicSizeForAppearance(StyleAppearance, RenderStyle&) const;
+    void adjustMinimumIntrinsicSizeForAppearance(StyleAppearance, Style::ComputedStyle&) const;
 };
 
 }

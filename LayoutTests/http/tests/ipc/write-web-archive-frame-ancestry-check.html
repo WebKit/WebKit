@@ -1,0 +1,31 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<iframe id="iframe"></iframe>
+<script>
+const WriteWebArchiveToPasteBoardResult = {
+    Success: 0,
+    FailureDueToInvalidFrameIdentifiers: 1,
+    FailureOther: 2,
+};
+
+promise_test(async t => {
+    let resultPromise = new Promise((resolve) => {
+        onmessage = (e) => {
+            if (e.data && e.data.getParentFrameID) {
+                e.source.postMessage({ parentFrameID: IPC.frameID[0].toString() }, '*');
+                return;
+            }
+            resolve(e.data);
+        };
+        t.step_timeout(() => resolve({ timeout: true }), 5000);
+    });
+    document.getElementById('iframe').src = 'http://localhost:8000/ipc/resources/write-web-archive-frame-ancestry-check-iframe.html';
+    let reply = await resultPromise;
+    if (reply.skipped)
+        return;
+    assert_false(!!reply.timeout, 'iframe did not report a result before timeout');
+    assert_equals(reply.result, WriteWebArchiveToPasteBoardResult.FailureDueToInvalidFrameIdentifiers,
+        'WriteWebArchiveToPasteBoard should reject a payload that names a non-descendant frame as a remote subframe');
+}, 'WriteWebArchiveToPasteBoard rejects cross-process remote frame ids that are not subtree descendants of the root frame');
+</script>

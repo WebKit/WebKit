@@ -13,11 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "logging/rtc_event_log/encoder/delta_encoding.h"
 #include "logging/rtc_event_log/encoder/optional_blob_encoding.h"
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
@@ -30,7 +30,7 @@ namespace webrtc {
 // static
 std::optional<rtclog2::DependencyDescriptorsWireInfo>
 RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
-    const std::vector<ArrayView<const uint8_t>>& raw_dd_data) {
+    const std::vector<std::span<const uint8_t>>& raw_dd_data) {
   if (raw_dd_data.empty()) {
     return {};
   }
@@ -43,9 +43,8 @@ RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
   }
 
   rtclog2::DependencyDescriptorsWireInfo res;
-  const ArrayView<const uint8_t>& base_dd = raw_dd_data[0];
-  auto delta_dds =
-      MakeArrayView(raw_dd_data.data(), raw_dd_data.size()).subview(1);
+  const std::span<const uint8_t>& base_dd = raw_dd_data[0];
+  auto delta_dds = std::span(raw_dd_data.data(), raw_dd_data.size()).subspan(1);
 
   // Start and end bit.
   {
@@ -117,7 +116,7 @@ RtcEventLogDependencyDescriptorEncoderDecoder::Encode(
     std::vector<std::optional<std::string>> values(raw_dd_data.size());
     for (size_t i = 0; i < raw_dd_data.size(); ++i) {
       if (raw_dd_data[i].size() > 3) {
-        auto extended_info = raw_dd_data[i].subview(3);
+        auto extended_info = raw_dd_data[i].subspan(3);
         values[i] = {reinterpret_cast<const char*>(extended_info.data()),
                      extended_info.size()};
       }

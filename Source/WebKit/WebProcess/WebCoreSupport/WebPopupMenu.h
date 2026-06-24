@@ -50,7 +50,7 @@ public:
 #if !PLATFORM(COCOA)
     void setTextForIndex(int newIndex);
 #endif
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     WebCore::PopupMenuClient* client() const { return m_popupClient.get(); }
 #endif
 

@@ -41,9 +41,11 @@ struct WebsiteDataStoreParameters {
 
 #if PLATFORM(IOS_FAMILY)
     std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
+#if !USE(EXTENSIONKIT)
     std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
-    std::optional<SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
     std::optional<SandboxExtension::Handle> tempDirectoryExtensionHandle;
+#endif
+    std::optional<SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
     std::optional<SandboxExtension::Handle> tempDirectoryRootExtensionHandle;
 #endif
 };

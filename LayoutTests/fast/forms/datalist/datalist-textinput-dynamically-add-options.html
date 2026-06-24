@@ -21,11 +21,8 @@ body {
 </datalist>
 
 <script>
+window.jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function addOptions() {
   let options = "";
@@ -41,7 +38,7 @@ function addOptions() {
     isShowingDataListSuggestions = await UIHelper.isShowingDataListSuggestions();
     shouldBeFalse("isShowingDataListSuggestions");
 
-    testRunner.notifyDone();
+    finishJSTest();
 })();
 
 </script>

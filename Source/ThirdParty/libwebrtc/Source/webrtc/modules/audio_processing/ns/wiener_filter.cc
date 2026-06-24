@@ -15,8 +15,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/ns/fast_math.h"
 #include "modules/audio_processing/ns/ns_common.h"
 #include "modules/audio_processing/ns/suppression_params.h"
@@ -32,10 +32,10 @@ WienerFilter::WienerFilter(const SuppressionParams& suppression_params)
 
 void WienerFilter::Update(
     int32_t num_analyzed_frames,
-    ArrayView<const float, kFftSizeBy2Plus1> noise_spectrum,
-    ArrayView<const float, kFftSizeBy2Plus1> prev_noise_spectrum,
-    ArrayView<const float, kFftSizeBy2Plus1> parametric_noise_spectrum,
-    ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum) {
+    std::span<const float, kFftSizeBy2Plus1> noise_spectrum,
+    std::span<const float, kFftSizeBy2Plus1> prev_noise_spectrum,
+    std::span<const float, kFftSizeBy2Plus1> parametric_noise_spectrum,
+    std::span<const float, kFftSizeBy2Plus1> signal_spectrum) {
   for (size_t i = 0; i < kFftSizeBy2Plus1; ++i) {
     // Previous estimate based on previous frame with gain filter.
     float prev_tsa = spectrum_prev_process_[i] /

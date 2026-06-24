@@ -126,3 +126,10 @@ TEST(VpxImageTest, VpxImgAllocHugeWidth) {
     vpx_img_free(image);
   }
 }
+
+TEST(VpxImageTest, VpxImgFlipNoAlpha) {
+  vpx_image_t *img = vpx_img_alloc(nullptr, VPX_IMG_FMT_I420, 64, 64, 16);
+  ASSERT_NE(img, nullptr);
+  vpx_img_flip(img);
+  vpx_img_free(img);
+}

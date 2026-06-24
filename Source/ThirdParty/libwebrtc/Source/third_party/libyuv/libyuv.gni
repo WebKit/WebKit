@@ -15,9 +15,8 @@ declare_args() {
   libyuv_include_tests = !build_with_chromium
   libyuv_disable_jpeg = false
   libyuv_disable_rvv = false
-  libyuv_use_neon =
-      current_cpu == "arm64" ||
-      (current_cpu == "arm" && (arm_use_neon || arm_optionally_use_neon))
+  libyuv_enable_rowwin = false
+  libyuv_use_neon = current_cpu == "arm64" || current_cpu == "arm"
   libyuv_use_sve = current_cpu == "arm64"
 
   # Restrict to (is_linux || is_android) to work around undefined symbol linker

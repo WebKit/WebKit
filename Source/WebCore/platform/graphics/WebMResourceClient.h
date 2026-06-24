@@ -38,6 +38,8 @@ class WebMResourceClientParent : public AbstractThreadSafeRefCountedAndCanMakeWe
 public:
     virtual ~WebMResourceClientParent() = default;
 
+    virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&) = 0;
+    virtual void redirectReceived(PlatformMediaResource&, const ResourceResponse&) = 0;
     virtual void dataReceived(const SharedBuffer&) = 0;
     virtual void loadFailed(const ResourceError&) = 0;
     virtual void loadFinished() = 0;
@@ -57,6 +59,7 @@ private:
     WebMResourceClient(WebMResourceClientParent&, Ref<PlatformMediaResource>&&);
 
     void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinuePolicyCheck)>&&) final;
+    void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) final;
     void dataReceived(PlatformMediaResource&, const SharedBuffer&) final;
     void loadFailed(PlatformMediaResource&, const ResourceError&) final;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final;

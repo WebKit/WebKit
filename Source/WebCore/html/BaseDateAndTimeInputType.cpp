@@ -650,9 +650,10 @@ void BaseDateAndTimeInputType::didEndChooser()
 
 bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
 {
-    ASSERT(element());
+    RefPtr element = this->element();
+    if (!element)
+        return false;
 
-    Ref element = *this->element();
     Ref document = element->document();
 
     if (!document->view())

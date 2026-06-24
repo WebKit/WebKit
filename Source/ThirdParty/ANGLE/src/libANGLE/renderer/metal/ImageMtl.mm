@@ -230,9 +230,6 @@ egl::Error ImageMtl::initialize(const egl::Display *display)
             default:
                 UNREACHABLE();
         }
-
-        mImageLevel = 0;
-        mImageLayer = 0;
     }
     else
     {

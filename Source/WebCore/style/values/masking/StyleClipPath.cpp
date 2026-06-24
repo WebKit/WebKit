@@ -25,7 +25,11 @@
 #include "config.h"
 #include "StyleClipPath.h"
 
+#include "AcceleratedEffectClipPath.h"
+#include "StyleKeyword+Serialization.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
+#include "StylePrimitiveNumericTypes+CSSValueCreation.h"
+#include "StylePrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
 namespace Style {
@@ -61,6 +65,30 @@ auto Blending<ClipPath>::blend(const ClipPath& a, const ClipPath& b, const Blend
     Ref bOperation = *b.operation;
     return ClipPath { aOperation->blend(bOperation.ptr(), context) };
 }
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+AcceleratedEffectClipPath Evaluation<ClipPath, AcceleratedEffectClipPath>::operator()(const ClipPath& value, const TransformOperationData& data, ZoomFactor zoom)
+{
+    return WTF::switchOn(value,
+        [&](const CSS::Keyword::None&) -> AcceleratedEffectClipPath {
+            return { .value = AcceleratedEffectClipPath::None { } };
+        },
+        [&](const ReferencePath& path) -> AcceleratedEffectClipPath {
+            return { .value = evaluate<AcceleratedEffectClipPath::ReferencePath>(path, data, zoom) };
+        },
+        [&](const BasicShapePath& path) -> AcceleratedEffectClipPath {
+            return { .value = evaluate<AcceleratedEffectClipPath::BasicShapePath>(path, data.boundingBox, zoom) };
+        },
+        [&](const BoxPath& path) -> AcceleratedEffectClipPath {
+            return { .value = evaluate<AcceleratedEffectClipPath::BoxPath>(path, data, zoom) };
+        }
+    );
+}
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

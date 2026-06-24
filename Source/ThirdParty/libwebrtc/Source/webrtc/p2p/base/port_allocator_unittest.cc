@@ -15,18 +15,18 @@
 
 #include "absl/strings/string_view.h"
 #include "api/candidate.h"
-#include "api/environment/environment_factory.h"
 #include "api/transport/enums.h"
 #include "p2p/base/port.h"
 #include "p2p/test/fake_port_allocator.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/net_helper.h"
 #include "rtc_base/socket_address.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
-using ::webrtc::CreateEnvironment;
+using ::webrtc::CreateTestEnvironment;
 using ::webrtc::IceCandidateType;
 
 namespace {
@@ -49,7 +49,7 @@ class PortAllocatorTest : public ::testing::Test {
       : vss_(std::make_unique<webrtc::VirtualSocketServer>()),
         main_(vss_.get()),
         allocator_(
-            std::make_unique<webrtc::FakePortAllocator>(CreateEnvironment(),
+            std::make_unique<webrtc::FakePortAllocator>(CreateTestEnvironment(),
                                                         vss_.get())) {}
 
  protected:
@@ -98,7 +98,7 @@ class PortAllocatorTest : public ::testing::Test {
   }
 
   std::unique_ptr<webrtc::VirtualSocketServer> vss_;
-  webrtc::AutoSocketServerThread main_;
+  webrtc::test::RunLoop main_;
   std::unique_ptr<webrtc::FakePortAllocator> allocator_;
   webrtc::SocketAddress stun_server_1{"11.11.11.11", 3478};
   webrtc::SocketAddress stun_server_2{"22.22.22.22", 3478};

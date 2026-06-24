@@ -22,21 +22,21 @@
         }
     </style>
     <script>
-        if (window.testRunner) {
+        window.jsTestIsAsync = true;
+
+        if (window.testRunner)
             testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
 
         function scrollerScrolled()
         {
             debug("Successful.")
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         function documentScrolled()
         {
             debug("Unsuccessful.");
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         async function runTest()
@@ -59,7 +59,7 @@
     <div id="scroller">
         <div id="innerDiv"></div>
     </div>
-    <script src="../../../../resources/js-test-post.js"></script>
+    <script src="../../../resources/js-test-post.js"></script>
 </body>
 
 </html>

@@ -1,77 +1,77 @@
 specific_include_rules = {
-  "encoded_frame.h" : [
+  "encoded_frame\\.h" : [
     "+modules/rtp_rtcp/source/rtp_video_header.h",
     "+modules/video_coding/include/video_codec_interface.h",
     "+modules/video_coding/include/video_coding_defines.h",
     "+common_video/frame_instrumentation_data.h",
   ],
-  "encoded_image\.h" : [
+  "encoded_image\\.h" : [
     "+rtc_base/buffer.h",
     "+rtc_base/ref_count.h",
   ],
 
-  "i010_buffer\.h": [
+  "i010_buffer\\.h": [
     "+rtc_base/memory/aligned_malloc.h",
   ],
 
-  "i210_buffer\.h": [
+  "i210_buffer\\.h": [
     "+rtc_base/memory/aligned_malloc.h",
   ],
 
-  "i410_buffer\.h": [
+  "i410_buffer\\.h": [
     "+rtc_base/memory/aligned_malloc.h",
   ],
 
-  "i420_buffer\.h": [
+  "i420_buffer\\.h": [
     "+rtc_base/memory/aligned_malloc.h",
   ],
 
-  "i422_buffer\.h": [
+  "i422_buffer\\.h": [
     "+rtc_base/memory/aligned_malloc.h",
   ],
 
-  "i444_buffer\.h": [
+  "i444_buffer\\.h": [
     "+rtc_base/memory/aligned_malloc.h",
   ],
 
-  "nv12_buffer\.h": [
+  "nv12_buffer\\.h": [
     "+rtc_base/memory/aligned_malloc.h",
   ],
 
-  "recordable_encoded_frame\.h": [
+  "recordable_encoded_frame\\.h": [
     "+rtc_base/ref_count.h",
   ],
 
-  "video_frame\.h": [
+  "video_frame\\.h": [
   ],
 
-  "video_frame_buffer\.h": [
+  "video_frame_buffer\\.h": [
     "+rtc_base/ref_count.h",
   ],
 
-  "video_frame_metadata\.h": [
+  "video_frame_metadata\\.h": [
     "+modules/video_coding/codecs/h264/include/h264_globals.h",
     "+modules/video_coding/codecs/vp8/include/vp8_globals.h",
     "+modules/video_coding/codecs/vp9/include/vp9_globals.h",
   ],
 
-  "video_stream_decoder_create.cc": [
+  "video_stream_decoder_create\\.cc": [
     "+video/video_stream_decoder_impl.h",
   ],
 
-  "video_stream_encoder_create.cc": [
+  "video_stream_encoder_create\\.cc": [
     "+video/video_stream_encoder.h",
   ],
 
-  "rtp_video_frame_assembler.h": [
+  "rtp_video_frame_assembler\\.h": [
     "+modules/rtp_rtcp/source/rtp_packet_received.h",
   ],
 
-  "frame_buffer.h": [
+  "frame_buffer\\.h": [
     "+modules/video_coding/utility/decoded_frames_history.h",
   ],
 
-  "video_frame_matchers\.h": [
+  "video_frame_matchers\\.h": [
     "+test/gmock.h",
   ],
 }

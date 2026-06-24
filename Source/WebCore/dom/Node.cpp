@@ -51,6 +51,7 @@
 #include "HTMLDialogElement.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "InputEvent.h"
@@ -62,7 +63,6 @@
 #include "Logging.h"
 #include "MouseEventTypes.h"
 #include "MutationEvent.h"
-#include "NameValidation.h"
 #include "NodeName.h"
 #include "NodeRareDataInlines.h"
 #include "NodeRenderStyle.h"
@@ -130,6 +130,7 @@ public:
     uint32_t stateFlags;
     void* parentNode;
     void* treeScope;
+    void* shadowIncludingRoot;
     void* previous;
     void* next;
     void* renderer;
@@ -378,6 +379,7 @@ Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
     : EventTarget(ConstructNode)
     , m_typeBitFields(constructBitFieldsFromNodeTypeAndFlags(type, flags))
     , m_treeScope((isDocumentNode() || isShadowRoot()) ? nullptr : &document)
+    , m_shadowIncludingRoot(this)
 {
     ASSERT(nodeType() == type);
     ASSERT(isMainThread());
@@ -391,6 +393,11 @@ Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
 #if !defined(NDEBUG) || DUMP_NODE_STATISTICS
     trackForDebugging();
 #endif
+}
+
+Node::Node(ClangVTableWorkaroundTag, Document& document)
+    : Node(document, NodeType::Element, { })
+{
 }
 
 static HashMap<WeakPtr<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>& NODELETE nodeIdentifiersMap()
@@ -802,7 +809,7 @@ Ref<Node> Node::cloneNode(bool deep) const
 {
     ASSERT(!isShadowRoot());
     RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, treeScope());
-    return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::SelfOnly, registry.get());
+    return cloneNodeInternal(protect(document()), deep ? CloningOperation::Everything : CloningOperation::SelfOnly, registry.get());
 }
 
 ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool deep) const
@@ -816,14 +823,6 @@ const AtomString& Node::prefix() const
 {
     // For nodes other than elements and attributes, the prefix is always null
     return nullAtom();
-}
-
-ExceptionOr<void> Node::setPrefix(const AtomString&)
-{
-    // The spec says that for nodes other than elements and attributes, prefix is always null.
-    // It does not say what to do when the user tries to set the prefix on another type of
-    // node, however Mozilla throws a NamespaceError exception.
-    return Exception { ExceptionCode::NamespaceError };
 }
 
 const AtomString& Node::localName() const
@@ -852,7 +851,7 @@ void Node::inspect()
         page->inspectorController().inspect(this);
 }
 
-static Node::Editability NODELETE computeEditabilityFromComputedStyle(const RenderStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
+static Node::Editability NODELETE computeEditabilityFromComputedStyle(const Style::ComputedStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
 {
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
     // ContainerNode::setFocus() calls invalidateStyleForSubtree(), so the assertion
@@ -878,7 +877,7 @@ static Node::Editability NODELETE computeEditabilityFromComputedStyle(const Rend
     return Node::Editability::ReadOnly;
 }
 
-Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* incomingStyle, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
+Node::Editability Node::computeEditabilityWithStyle(const Style::ComputedStyle* incomingStyle, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
 {
     if (!document().hasLivingRenderTree() || isPseudoElement())
         return Editability::ReadOnly;
@@ -895,7 +894,7 @@ Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* incomingS
         document->updateStyleIfNeeded();
     }
 
-    CheckedPtr style = [&]() -> const RenderStyle* {
+    CheckedPtr style = [&]() -> const Style::ComputedStyle* {
         if (incomingStyle)
             return incomingStyle;
         if (isDocumentNode())
@@ -1075,12 +1074,12 @@ void Node::invalidateNodeListAndCollectionCachesInAncestors()
             lists->clearChildNodeListCache();
     }
 
-    document().invalidateQuerySelectorAllResults(*this);
+    SUPPRESS_UNCOUNTED_ARG document().invalidateQuerySelectorAllResults(*this);
 
     if (!document().shouldInvalidateNodeListAndCollectionCaches())
         return;
 
-    document().invalidateNodeListAndCollectionCaches([](auto& list) {
+    protect(document())->invalidateNodeListAndCollectionCaches([](auto& list) {
         list.invalidateCache();
     });
 
@@ -1106,7 +1105,7 @@ void Node::invalidateNodeListCollectionAndInnerHTMLPrefixCachesInAncestorsForAtt
         return;
 
     if (shouldInvalidate) {
-        document().invalidateNodeListAndCollectionCaches([&attrName](auto& list) {
+        protect(document())->invalidateNodeListAndCollectionCaches([&attrName](auto& list) {
             list.invalidateCacheForAttribute(attrName);
         });
     }
@@ -1149,34 +1148,13 @@ void Node::clearNodeLists()
     rareData()->clearNodeLists();
 }
 
-ExceptionOr<void> Node::checkSetPrefix(const AtomString& prefix)
-{
-    // Perform error checking as required by spec for setting Node.prefix. Used by
-    // Element::setPrefix() and Attr::setPrefix()
-
-    if (!prefix.isEmpty() && !NameValidation::isValidNamespacePrefix(prefix))
-        return Exception { ExceptionCode::InvalidCharacterError };
-
-    // FIXME: Raise NamespaceError if prefix is malformed per the Namespaces in XML specification.
-
-    auto& namespaceURI = this->namespaceURI();
-    if (namespaceURI.isEmpty() && !prefix.isEmpty())
-        return Exception { ExceptionCode::NamespaceError };
-    if (prefix == xmlAtom() && namespaceURI != XMLNames::xmlNamespaceURI)
-        return Exception { ExceptionCode::NamespaceError };
-
-    // Attribute-specific checks are in Attr::setPrefix().
-
-    return { };
-}
-
 // https://dom.spec.whatwg.org/#concept-tree-descendant
 bool Node::isDescendantOf(const Node& other) const
 {
     // Return true if other is an ancestor of this.
     if (other.isTreeScope())
         return &treeScope().rootNode() == &other && !isTreeScope() && isInTreeScope();
-    if (!other.hasChildNodes() || isConnected() != other.isConnected())
+    if (!other.hasChildNodes() || isConnected() != other.isConnected() || &shadowIncludingRoot() != &other.shadowIncludingRoot())
         return false;
     for (auto ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
         if (ancestor == &other)
@@ -1188,6 +1166,9 @@ bool Node::isDescendantOf(const Node& other) const
 // https://dom.spec.whatwg.org/#concept-shadow-including-inclusive-ancestor
 bool Node::isShadowIncludingDescendantOf(const Node& other) const
 {
+    if (&shadowIncludingRoot() != &other.shadowIncludingRoot())
+        return false;
+
     if (isDescendantOf(other))
         return true;
 
@@ -1201,6 +1182,8 @@ bool Node::isShadowIncludingDescendantOf(const Node& other) const
 
 bool Node::isComposedTreeDescendantOf(const Node& node) const
 {
+    if (&shadowIncludingRoot() != &node.shadowIncludingRoot())
+        return false;
     for (auto* currentAncestor = parentElementInComposedTree(); currentAncestor; currentAncestor = currentAncestor->parentElementInComposedTree()) {
         if (currentAncestor == &node)
             return true;
@@ -1262,12 +1245,12 @@ Node* Node::pseudoAwareLastChild() const
     return lastChild();
 }
 
-const RenderStyle* Node::computedStyle()
+const Style::ComputedStyle* Node::computedStyle()
 {
     return computedStyle(std::nullopt);
 }
 
-const RenderStyle* Node::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+const Style::ComputedStyle* Node::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     RefPtr composedParent = parentElementInComposedTree();
     return composedParent ? composedParent->computedStyle(pseudoElementIdentifier) : nullptr;
@@ -1288,7 +1271,7 @@ bool Node::canStartSelection() const
         if (style.userDrag() == UserDrag::Element && style.usedUserSelect() == UserSelect::None)
             return false;
     }
-    return parentOrShadowHostNode() ? parentOrShadowHostNode()->canStartSelection() : true;
+    return parentOrShadowHostNode() ? protect(parentOrShadowHostNode())->canStartSelection() : true;
 }
 
 Element* Node::shadowHost() const
@@ -1473,27 +1456,6 @@ Node& Node::traverseToRootNode() const
     return traverseToRootNodeInternal(*this);
 }
 
-// https://dom.spec.whatwg.org/#concept-shadow-including-root
-Node& Node::shadowIncludingRoot() const
-{
-    auto& root = this->rootNode();
-    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(root)) {
-        auto* host = shadowRoot->host();
-        return host ? host->shadowIncludingRoot() : root;
-    }
-    return root;
-}
-
-SUPPRESS_NODELETE WebCoreOpaqueRoot Node::opaqueRoot() const
-{
-    if (isConnected()) {
-        Locker locker { TreeScope::treeScopeMutationLock() };
-        return WebCoreOpaqueRoot { &treeScope().documentScope() };
-    }
-    // FIXME: Possible race?
-    return traverseToOpaqueRoot();
-}
-
 Node& Node::getRootNode(const GetRootNodeOptions& options) const
 {
     return options.composed ? shadowIncludingRoot() : rootNode();
@@ -1506,6 +1468,29 @@ void Node::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
     });
 }
 
+#if ASSERT_ENABLED
+static Node* traverseToShadowIncludingRoot(Node* current)
+{
+    while (auto* parent = current->parentOrShadowHostNode())
+        current = parent;
+    return current;
+}
+#endif
+
+ALWAYS_INLINE void Node::updateShadowIncludingRoot()
+{
+    if (auto* parent = parentNode())
+        m_shadowIncludingRoot = parent->m_shadowIncludingRoot;
+    else if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(this)) [[unlikely]] {
+        auto* host = shadowRoot->host();
+        auto* root = host ? host->m_shadowIncludingRoot : shadowRoot;
+        shadowRoot->setShadowIncludingRoot(root);
+        m_shadowIncludingRoot = root;
+    } else
+        m_shadowIncludingRoot = this;
+    ASSERT(traverseToShadowIncludingRoot(this) == m_shadowIncludingRoot);
+}
+
 Node::NeedsPostConnectionSteps Node::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     ASSERT(!containsSelectionEndPoint());
@@ -1513,6 +1498,8 @@ Node::NeedsPostConnectionSteps Node::insertionSteps(InsertionType insertionType,
         setEventTargetFlag(EventTargetFlag::IsConnected);
     if (parentOfInsertedTree.isInShadowTree())
         setEventTargetFlag(EventTargetFlag::IsInShadowTree);
+
+    updateShadowIncludingRoot();
 
     invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::InsertedIntoAncestor);
 
@@ -1526,15 +1513,32 @@ void Node::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemo
         clearEventTargetFlag(EventTargetFlag::IsConnected);
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
         clearEventTargetFlag(EventTargetFlag::IsInShadowTree);
+
+    updateShadowIncludingRoot();
+
     if (removalType.disconnectedFromDocument) {
         if (CheckedPtr cache = oldParentOfRemovedTree.document().existingAXObjectCache())
             cache->remove(*this);
     }
 }
 
+void Node::movingSteps(bool, ContainerNode&)
+{
+    invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::InsertedIntoAncestor);
+}
+
+void Node::updateShadowIncludingRootForSubtree()
+{
+    SUPPRESS_UNCOUNTED_LOCAL for (auto* current = this; current; current = NodeTraversal::next(*current, this)) {
+        current->updateShadowIncludingRoot();
+        SUPPRESS_UNCOUNTED_LOCAL if (auto* shadowRoot = current->shadowRoot())
+            shadowRoot->updateShadowIncludingRootForSubtree();
+    }
+}
+
 bool Node::isRootEditableElement() const
 {
-    return hasEditableStyle() && isElementNode() && (!parentNode() || !parentNode()->hasEditableStyle()
+    return hasEditableStyle() && isElementNode() && (!parentNode() || !protect(parentNode())->hasEditableStyle()
         || !parentNode()->isElementNode() || document().body() == this);
 }
 
@@ -2098,22 +2102,22 @@ void Node::showTreeForThisAcrossFrame() const
 void NodeListsNodeData::invalidateCaches()
 {
     for (auto& atomName : m_atomNameCaches)
-        atomName.value->invalidateCache();
+        protect(atomName.value)->invalidateCache();
 
     for (auto& collection : m_cachedCollections)
-        collection.value->invalidateCache();
+        protect(collection.value)->invalidateCache();
 
     for (auto& tagCollection : m_tagCollectionNSCache)
-        tagCollection.value->invalidateCache();
+        protect(tagCollection.value)->invalidateCache();
 }
 
 void NodeListsNodeData::invalidateCachesForAttribute(const QualifiedName& attrName)
 {
     for (auto& atomName : m_atomNameCaches)
-        atomName.value->invalidateCacheForAttribute(attrName);
+        protect(atomName.value)->invalidateCacheForAttribute(attrName);
 
     for (auto& collection : m_cachedCollections)
-        collection.value->invalidateCacheForAttribute(attrName);
+        protect(collection.value)->invalidateCacheForAttribute(attrName);
 }
 
 void Node::getSubresourceURLs(OrderedHashSet<URL>& urls) const
@@ -2848,7 +2852,7 @@ bool Node::willRespondToTouchEvents() const
     });
 }
 
-Node::Editability Node::computeEditabilityForMouseClickEvents(const RenderStyle* style) const
+Node::Editability Node::computeEditabilityForMouseClickEvents(const Style::ComputedStyle* style) const
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
 #if PLATFORM(IOS_FAMILY)    
@@ -2860,7 +2864,7 @@ Node::Editability Node::computeEditabilityForMouseClickEvents(const RenderStyle*
     return computeEditabilityWithStyle(style, userSelectAllTreatment, style ? ShouldUpdateStyle::DoNotUpdate : ShouldUpdateStyle::Update);
 }
 
-bool Node::willRespondToMouseClickEvents(const RenderStyle* styleToUse) const
+bool Node::willRespondToMouseClickEvents(const Style::ComputedStyle* styleToUse) const
 {
     return willRespondToMouseClickEventsWithEditability(computeEditabilityForMouseClickEvents(styleToUse));
 }
@@ -2877,6 +2881,11 @@ bool Node::willRespondToMouseClickEventsWithEditability(Editability editability)
 #endif
     if (editability != Editability::ReadOnly)
         return true;
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
+    if (document().quirks().shouldAllowNativeTapsOnMediaElements(this))
+        return true;
+#endif
 
     auto& eventNames = WebCore::eventNames();
     return eventTypes().containsIf([&](const auto& type) {
@@ -2984,19 +2993,6 @@ bool Node::inRenderedDocument() const
     return isConnected() && document().hasLivingRenderTree();
 }
 
-WebCoreOpaqueRoot Node::traverseToOpaqueRoot() const
-{
-    ASSERT_WITH_MESSAGE(!isConnected(), "Call opaqueRoot() or document() when the node is connected");
-    const Node* node = this;
-    for (;;) {
-        const Node* nextNode = node->parentOrShadowHostNode();
-        if (!nextNode)
-            break;
-        node = nextNode;
-    }
-    return WebCoreOpaqueRoot { const_cast<Node*>(node) };
-}
-
 void Node::notifyInspectorOfRendererChange()
 {
     InspectorInstrumentation::didChangeRendererForDOMNode(*this);
@@ -3095,9 +3091,20 @@ template<TreeType treeType> bool NODELETE isSiblingSubsequent(const Node& siblin
 
     ASSERT(!siblingA.isPseudoElement() && !siblingB.isPseudoElement());
 
-    for (auto sibling = &siblingA; sibling; sibling = sibling->nextSibling()) {
-        if (sibling == &siblingB)
+    if (!siblingB.nextSibling() || !siblingA.previousSibling())
+        return true;
+    if (!siblingA.nextSibling() || !siblingB.previousSibling())
+        return false;
+
+    for (const Node* following = siblingA.nextSibling(), *preceding = siblingA.previousSibling(); following || preceding;) {
+        if (following == &siblingB)
             return true;
+        if (preceding == &siblingB)
+            return false;
+        if (following)
+            following = following->nextSibling();
+        if (preceding)
+            preceding = preceding->previousSibling();
     }
 
     return false;

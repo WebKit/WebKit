@@ -1,7 +1,7 @@
 {
   "algorithm": "ECDSA",
   "schema": "ecdsa_verify_schema_v1.json",
-  "numberOfTests": 506,
+  "numberOfTests": 514,
   "header": [
     "Test vectors of type EcdsaVerify are meant for the verification",
     "of ASN encoded ECDSA signatures."
@@ -7210,6 +7210,246 @@
           ],
           "msg": "",
           "sig": "3065023065fd456814371d60883ffda5f74f36dc2d45886121770e29ed3163754716d12c1cab03a2cb6a6e3376fc96d8727bd1bf1f02301aa65e57932d05788413219b7ab23e5337f63fb2dcb0f89b4227d284a3fcbdf3c54c021a6c0ca42445bf802213121654",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP384r1",
+        "keySize": 384,
+        "uncompressed": "046ccdfbab5508acb4d249874a289aa88f9c1f51c63aaa682a274853353060dd432030d70730c304aa6bee373ae6cc4d9e37e031b663362e6d9180b1e16640161d026fafba0c4de90d87584a52148cc70610b073da1ecb4c0db0c507cbc2a8fb6b",
+        "wx": "6ccdfbab5508acb4d249874a289aa88f9c1f51c63aaa682a274853353060dd432030d70730c304aa6bee373ae6cc4d9e",
+        "wy": "37e031b663362e6d9180b1e16640161d026fafba0c4de90d87584a52148cc70610b073da1ecb4c0db0c507cbc2a8fb6b"
+      },
+      "publicKeyDer": "307a301406072a8648ce3d020106092b240303020801010b036200046ccdfbab5508acb4d249874a289aa88f9c1f51c63aaa682a274853353060dd432030d70730c304aa6bee373ae6cc4d9e37e031b663362e6d9180b1e16640161d026fafba0c4de90d87584a52148cc70610b073da1ecb4c0db0c507cbc2a8fb6b",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHowFAYHKoZIzj0CAQYJKyQDAwIIAQELA2IABGzN+6tVCKy00kmHSiiaqI+cH1HG\nOqpoKidIUzUwYN1DIDDXBzDDBKpr7jc65sxNnjfgMbZjNi5tkYCx4WZAFh0Cb6+6\nDE3pDYdYSlIUjMcGELBz2h7LTA2wxQfLwqj7aw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-384",
+      "tests": [
+        {
+          "tcId": 507,
+          "comment": "r = 1, x = 1 is valid",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "30360201010231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e9046562",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP384r1",
+        "keySize": 384,
+        "uncompressed": "040bb23742fb3ca092a18cc0d55de6024fd9b69466c421fa8e8f9d572a5776af00364301a7c675fe7bbe42e24085e65cae76f3b9920b3953cd2d34dd0c538adcc5a79f0a5043205b1ba0e1439db0ef2a000920f723f5c3670b9338303c22ddd999",
+        "wx": "0bb23742fb3ca092a18cc0d55de6024fd9b69466c421fa8e8f9d572a5776af00364301a7c675fe7bbe42e24085e65cae",
+        "wy": "76f3b9920b3953cd2d34dd0c538adcc5a79f0a5043205b1ba0e1439db0ef2a000920f723f5c3670b9338303c22ddd999"
+      },
+      "publicKeyDer": "307a301406072a8648ce3d020106092b240303020801010b036200040bb23742fb3ca092a18cc0d55de6024fd9b69466c421fa8e8f9d572a5776af00364301a7c675fe7bbe42e24085e65cae76f3b9920b3953cd2d34dd0c538adcc5a79f0a5043205b1ba0e1439db0ef2a000920f723f5c3670b9338303c22ddd999",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHowFAYHKoZIzj0CAQYJKyQDAwIIAQELA2IABAuyN0L7PKCSoYzA1V3mAk/ZtpRm\nxCH6jo+dVypXdq8ANkMBp8Z1/nu+QuJAheZcrnbzuZILOVPNLTTdDFOK3MWnnwpQ\nQyBbG6DhQ52w7yoACSD3I/XDZwuTODA8It3ZmQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-384",
+      "tests": [
+        {
+          "tcId": 508,
+          "comment": "r = 2, x = 1 is invalid",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "30360201020231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e9046562",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP384r1",
+        "keySize": 384,
+        "uncompressed": "046ccdfbab5508acb4d249874a289aa88f9c1f51c63aaa682a274853353060dd432030d70730c304aa6bee373ae6cc4d9e37e031b663362e6d9180b1e16640161d026fafba0c4de90d87584a52148cc70610b073da1ecb4c0db0c507cbc2a8fb6b",
+        "wx": "6ccdfbab5508acb4d249874a289aa88f9c1f51c63aaa682a274853353060dd432030d70730c304aa6bee373ae6cc4d9e",
+        "wy": "37e031b663362e6d9180b1e16640161d026fafba0c4de90d87584a52148cc70610b073da1ecb4c0db0c507cbc2a8fb6b"
+      },
+      "publicKeyDer": "307a301406072a8648ce3d020106092b240303020801010b036200046ccdfbab5508acb4d249874a289aa88f9c1f51c63aaa682a274853353060dd432030d70730c304aa6bee373ae6cc4d9e37e031b663362e6d9180b1e16640161d026fafba0c4de90d87584a52148cc70610b073da1ecb4c0db0c507cbc2a8fb6b",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHowFAYHKoZIzj0CAQYJKyQDAwIIAQELA2IABGzN+6tVCKy00kmHSiiaqI+cH1HG\nOqpoKidIUzUwYN1DIDDXBzDDBKpr7jc65sxNnjfgMbZjNi5tkYCx4WZAFh0Cb6+6\nDE3pDYdYSlIUjMcGELBz2h7LTA2wxQfLwqj7aw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-384",
+      "tests": [
+        {
+          "tcId": 509,
+          "comment": "r = 1 + n, x = 1 is invalid; r was not reduced mod n",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "30660231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e90465660231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e9046562",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP384r1",
+        "keySize": 384,
+        "uncompressed": "040c85c7148557b3547b99179db691a3852e464695a96a8d80a4e729fa712217892f6edf396ed96322fde928695015dd45334049fc56d950c9b95260f1d23e8372e5a6e6cebb5fedb79e8dd5a638e2e75877a6c2be552f922f3ab957cfe1ae374d",
+        "wx": "0c85c7148557b3547b99179db691a3852e464695a96a8d80a4e729fa712217892f6edf396ed96322fde928695015dd45",
+        "wy": "334049fc56d950c9b95260f1d23e8372e5a6e6cebb5fedb79e8dd5a638e2e75877a6c2be552f922f3ab957cfe1ae374d"
+      },
+      "publicKeyDer": "307a301406072a8648ce3d020106092b240303020801010b036200040c85c7148557b3547b99179db691a3852e464695a96a8d80a4e729fa712217892f6edf396ed96322fde928695015dd45334049fc56d950c9b95260f1d23e8372e5a6e6cebb5fedb79e8dd5a638e2e75877a6c2be552f922f3ab957cfe1ae374d",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHowFAYHKoZIzj0CAQYJKyQDAwIIAQELA2IABAyFxxSFV7NUe5kXnbaRo4UuRkaV\nqWqNgKTnKfpxIheJL27fOW7ZYyL96ShpUBXdRTNASfxW2VDJuVJg8dI+g3LlpubO\nu1/tt56N1aY44udYd6bCvlUvki86uVfP4a43TQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-384",
+      "tests": [
+        {
+          "tcId": 510,
+          "comment": "r = n - 2, x = n - 1 is invalid",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "30660231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e90465630231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e9046562",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP384r1",
+        "keySize": 384,
+        "uncompressed": "047d93dfc3987183f62312f164852f511cc06f8f4b4fc29c370587da4927802edb6f030bae06abec906d031f409c2f2b355f60e860d34357956647540e692743533f59911f0d8f0a093c4ff84f66288867e2fa753c1342ef05e510d528574bd2bf",
+        "wx": "7d93dfc3987183f62312f164852f511cc06f8f4b4fc29c370587da4927802edb6f030bae06abec906d031f409c2f2b35",
+        "wy": "5f60e860d34357956647540e692743533f59911f0d8f0a093c4ff84f66288867e2fa753c1342ef05e510d528574bd2bf"
+      },
+      "publicKeyDer": "307a301406072a8648ce3d020106092b240303020801010b036200047d93dfc3987183f62312f164852f511cc06f8f4b4fc29c370587da4927802edb6f030bae06abec906d031f409c2f2b355f60e860d34357956647540e692743533f59911f0d8f0a093c4ff84f66288867e2fa753c1342ef05e510d528574bd2bf",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHowFAYHKoZIzj0CAQYJKyQDAwIIAQELA2IABH2T38OYcYP2IxLxZIUvURzAb49L\nT8KcNwWH2kkngC7bbwMLrgar7JBtAx9AnC8rNV9g6GDTQ1eVZkdUDmknQ1M/WZEf\nDY8KCTxP+E9mKIhn4vp1PBNC7wXlENUoV0vSvw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-384",
+      "tests": [
+        {
+          "tcId": 511,
+          "comment": "r = 1, x = n + 1 is the smallest possible x with a reduction",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "30360201010231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e9046562",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP384r1",
+        "keySize": 384,
+        "uncompressed": "044903be502d35a3bff2ea965679d02092d6eea949d8be120b08a2f465ae8b4103ff81d6b5875638aa6974801c3bea265b6e397e60b4ccadadff35975ddbf97a513b750c352048bc7ffb88fd38aefb379b3ce1525d8016b99b6e15f1747a028b30",
+        "wx": "4903be502d35a3bff2ea965679d02092d6eea949d8be120b08a2f465ae8b4103ff81d6b5875638aa6974801c3bea265b",
+        "wy": "6e397e60b4ccadadff35975ddbf97a513b750c352048bc7ffb88fd38aefb379b3ce1525d8016b99b6e15f1747a028b30"
+      },
+      "publicKeyDer": "307a301406072a8648ce3d020106092b240303020801010b036200044903be502d35a3bff2ea965679d02092d6eea949d8be120b08a2f465ae8b4103ff81d6b5875638aa6974801c3bea265b6e397e60b4ccadadff35975ddbf97a513b750c352048bc7ffb88fd38aefb379b3ce1525d8016b99b6e15f1747a028b30",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHowFAYHKoZIzj0CAQYJKyQDAwIIAQELA2IABEkDvlAtNaO/8uqWVnnQIJLW7qlJ\n2L4SCwii9GWui0ED/4HWtYdWOKppdIAcO+omW245fmC0zK2t/zWXXdv5elE7dQw1\nIEi8f/uI/Tiu+zebPOFSXYAWuZtuFfF0egKLMA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-384",
+      "tests": [
+        {
+          "tcId": 512,
+          "comment": "r = 2, x = n + 1 is invalid",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "30360201020231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e9046562",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP384r1",
+        "keySize": 384,
+        "uncompressed": "047992d55b377e7e60ca1592f9bab814aa0a1e80585b0bf3718f5c7465dcdfb3a72181ebfdcf4c77a635eee318ef0b4c496665964ce63eed78e81a31ca1e64997f91ad7b64f4387d8beb5b18dad3bacfb6d522d23355b0d34e951e7054ee5c3e8d",
+        "wx": "7992d55b377e7e60ca1592f9bab814aa0a1e80585b0bf3718f5c7465dcdfb3a72181ebfdcf4c77a635eee318ef0b4c49",
+        "wy": "6665964ce63eed78e81a31ca1e64997f91ad7b64f4387d8beb5b18dad3bacfb6d522d23355b0d34e951e7054ee5c3e8d"
+      },
+      "publicKeyDer": "307a301406072a8648ce3d020106092b240303020801010b036200047992d55b377e7e60ca1592f9bab814aa0a1e80585b0bf3718f5c7465dcdfb3a72181ebfdcf4c77a635eee318ef0b4c496665964ce63eed78e81a31ca1e64997f91ad7b64f4387d8beb5b18dad3bacfb6d522d23355b0d34e951e7054ee5c3e8d",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHowFAYHKoZIzj0CAQYJKyQDAwIIAQELA2IABHmS1Vs3fn5gyhWS+bq4FKoKHoBY\nWwvzcY9cdGXc37OnIYHr/c9Md6Y17uMY7wtMSWZllkzmPu146Boxyh5kmX+RrXtk\n9Dh9i+tbGNrTus+21SLSM1Ww006VHnBU7lw+jQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-384",
+      "tests": [
+        {
+          "tcId": 513,
+          "comment": "r = p - n + 1, x = 1 is invalid; r is too large to compare r + n with x",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "304e021900f39b6bacd3b2eb7bdd98f07a249d57614bbece10480386ef0231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e9046562",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP384r1",
+        "keySize": 384,
+        "uncompressed": "044c2600392d8674f2d0cf9119f522c59722a763eed686177e0b3bcd5f56d84d2fbcb5c2fd911f33c8a20e4748ffd2b5f721a0395e024a681cb6bd32702f61f5e64c35d4f9a87e489d5d4b64de264febe685b6c6d0f03e23e7939fbfed2df28814",
+        "wx": "4c2600392d8674f2d0cf9119f522c59722a763eed686177e0b3bcd5f56d84d2fbcb5c2fd911f33c8a20e4748ffd2b5f7",
+        "wy": "21a0395e024a681cb6bd32702f61f5e64c35d4f9a87e489d5d4b64de264febe685b6c6d0f03e23e7939fbfed2df28814"
+      },
+      "publicKeyDer": "307a301406072a8648ce3d020106092b240303020801010b036200044c2600392d8674f2d0cf9119f522c59722a763eed686177e0b3bcd5f56d84d2fbcb5c2fd911f33c8a20e4748ffd2b5f721a0395e024a681cb6bd32702f61f5e64c35d4f9a87e489d5d4b64de264febe685b6c6d0f03e23e7939fbfed2df28814",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMHowFAYHKoZIzj0CAQYJKyQDAwIIAQELA2IABEwmADkthnTy0M+RGfUixZcip2Pu\n1oYXfgs7zV9W2E0vvLXC/ZEfM8iiDkdI/9K19yGgOV4CSmgctr0ycC9h9eZMNdT5\nqH5InV1LZN4mT+vmhbbG0PA+I+eTn7/tLfKIFA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-384",
+      "tests": [
+        {
+          "tcId": 514,
+          "comment": "r = 2^384 - n + 1, x = 1 is invalid; r + n is too large to compare r + n with x, and overflows 2^384 bits",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "306502307346e17d5cc792d7f0a29081af19be20ead08ef612aba94ce0e9919353fbda5830c5495094803cefc477cdfd16fb9a9c0231008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e9046562",
           "result": "invalid"
         }
       ]

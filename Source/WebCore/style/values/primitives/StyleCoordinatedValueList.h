@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,11 +80,15 @@ struct CoordinatedValueList {
     T& operator[](size_t i) LIFETIME_BOUND { return m_data->container[i]; }
     const T& operator[](size_t i) const LIFETIME_BOUND { return m_data->container[i]; }
 
+    T atByRepeating(size_t) const;
+
     unsigned usedLength() const { return m_data->usedLength; }
     unsigned computedLength() const { return m_data->container.size(); }
+    template<CSSPropertyID> unsigned computedLengthForProperty() const;
 
     std::span<const T> usedValues() const LIFETIME_BOUND { return m_data->container.span().first(m_data->usedLength); }
     std::span<const T> computedValues() const LIFETIME_BOUND { return m_data->container.span(); }
+    template<CSSPropertyID propertyID> std::span<const T> computedValuesForProperty() const LIFETIME_BOUND { return m_data->container.span().first(computedLengthForProperty<propertyID>()); }
 
     bool isInitial() const { return m_data->container.size() == 1 && m_data->container[0].isInitial() && allNonBasePropertiesAreUnsetOrFilled(m_data->container[0]); }
 
@@ -131,6 +135,21 @@ private:
 };
 
 template<typename T>
+template<CSSPropertyID propertyID>
+unsigned CoordinatedValueList<T>::computedLengthForProperty() const
+{
+    using PropertyAccessor = CoordinatedValueListPropertyConstAccessor<propertyID>;
+
+    unsigned result = 0;
+    for (auto& value : m_data->container) {
+        if (!PropertyAccessor { value }.isSet())
+            break;
+        ++result;
+    }
+    return std::max(1u, result);
+}
+
+template<typename T>
 void CoordinatedValueList<T>::prepareForUse()
 {
     removeEmptyValues();
@@ -169,21 +188,31 @@ void CoordinatedValueList<T>::fillUnsetProperties()
 }
 
 template<typename T>
+T CoordinatedValueList<T>::atByRepeating(size_t requestedIndex) const
+{
+    ASSERT(requestedIndex >= m_data->container.size());
+
+    T result;
+
+    auto makeValueForIndex = [&]<auto propertyID>() {
+        using PropertyAccessor = CoordinatedValueListPropertyAccessor<propertyID>;
+
+        auto indexToCopy = requestedIndex % computedLengthForProperty<propertyID>();
+        PropertyAccessor { result }.set(typename PropertyAccessor::Type { PropertyAccessor { m_data->container[indexToCopy] }.get() });
+    };
+
+    eachCoordinatedValueListProperties<T>(makeValueForIndex);
+
+    return result;
+}
+
+template<typename T>
 void CoordinatedValueList<T>::computeUsedLength()
 {
-    // The length of the coordinated value list is determined by the number of items
+    // The used length of the coordinated value list is determined by the number of items
     // specified in one particular coordinating list property, the coordinating list
     // base property. (In the case of backgrounds, this is the background-image property.).
-
-    using BasePropertyAccessor = CoordinatedValueListPropertyConstAccessor<T::baseProperty.value>;
-
-    unsigned result = 0;
-    for (auto& value : m_data->container) {
-        if (!BasePropertyAccessor { value }.isSet())
-            break;
-        ++result;
-    }
-    m_data->usedLength = std::max(1u, result);
+    m_data->usedLength = computedLengthForProperty<T::baseProperty.value>();
 }
 
 // MARK: - Logging

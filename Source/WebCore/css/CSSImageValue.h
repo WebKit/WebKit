@@ -60,7 +60,7 @@ public:
 
     String customCSSText(const CSS::SerializationContext&) const;
 
-    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
     bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;
     bool customMayDependOnBaseURL() const;

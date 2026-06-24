@@ -78,10 +78,11 @@ WI.CSSGrouping = class CSSGrouping extends WI.Object
 
         this._nodeStyles.ignoreNextContentDidChangeForStyleSheet = this._ownerStyleSheet;
 
-        let target = WI.assumingMainTarget();
+        let owningTarget = this._nodeStyles.node.owningTarget;
+        let target = owningTarget || WI.assumingMainTarget();
         let {grouping: groupingPayload} = await target.CSSAgent.setGroupingHeaderText(this._id, newText);
 
-        target.DOMAgent.markUndoableState();
+        WI.domUndoCoordinator.markUndoableState(target);
         await this._nodeStyles.refresh();
 
         console.assert(groupingPayload.type == this._type);
@@ -100,7 +101,7 @@ WI.CSSGrouping = class CSSGrouping extends WI.Object
         }
 
         let groupingSourceCodeLocation = WI.DOMNodeStyles.createSourceCodeLocation(groupingPayload.sourceURL, location);
-        this._sourceCodeLocation = WI.cssManager.styleSheetForIdentifier(this._id.styleSheetId).offsetSourceCodeLocation(groupingSourceCodeLocation);
+        this._sourceCodeLocation = WI.cssManager.styleSheetForIdentifier(this._id.styleSheetId, owningTarget).offsetSourceCodeLocation(groupingSourceCodeLocation);
 
         this.dispatchEventToListeners(WI.CSSGrouping.Event.TextChanged);
     }

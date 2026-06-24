@@ -17,11 +17,11 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_options.h"
 #include "api/media_stream_interface.h"
 #include "api/rtp_parameters.h"
@@ -394,9 +394,9 @@ class VideoSubscription {
   // Returns the resolution constructed as maximum from all resolution
   // dimensions: width, height and fps.
   static std::optional<VideoResolution> GetMaxResolution(
-      ArrayView<const VideoConfig> video_configs);
+      std::span<const VideoConfig> video_configs);
   static std::optional<VideoResolution> GetMaxResolution(
-      ArrayView<const VideoResolution> resolutions);
+      std::span<const VideoResolution> resolutions);
 
   bool operator==(const VideoSubscription& other) const;
   bool operator!=(const VideoSubscription& other) const;

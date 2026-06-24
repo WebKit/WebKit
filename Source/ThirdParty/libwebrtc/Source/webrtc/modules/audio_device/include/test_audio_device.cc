@@ -14,12 +14,12 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/environment/environment.h"
 #include "api/make_ref_counted.h"
@@ -74,7 +74,7 @@ class PulsedNoiseCapturerImpl final
     buffer->SetData(
         TestAudioDeviceModule::SamplesPerFrame(sampling_frequency_in_hz_) *
             num_channels_,
-        [&](ArrayView<int16_t> data) {
+        [&](std::span<int16_t> data) {
           if (fill_with_zero_) {
             std::fill(data.begin(), data.end(), 0);
           } else {
@@ -120,13 +120,13 @@ class WavFileReader final : public TestAudioDeviceModule::Capturer {
     buffer->SetData(
         TestAudioDeviceModule::SamplesPerFrame(sampling_frequency_in_hz_) *
             num_channels_,
-        [&](ArrayView<int16_t> data) {
+        [&](std::span<int16_t> data) {
           size_t read = wav_reader_->ReadSamples(data.size(), data.data());
           if (read < data.size() && repeat_) {
             do {
               wav_reader_->Reset();
               size_t delta = wav_reader_->ReadSamples(
-                  data.size() - read, data.subview(read).data());
+                  data.size() - read, data.subspan(read).data());
               RTC_CHECK_GT(delta, 0) << "No new data read from file";
               read += delta;
             } while (read < data.size());
@@ -170,7 +170,7 @@ class WavFileWriter final : public TestAudioDeviceModule::Renderer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Render(ArrayView<const int16_t> data) override {
+  bool Render(std::span<const int16_t> data) override {
     wav_writer_->WriteSamples(data.data(), data.size());
     return true;
   }
@@ -207,11 +207,11 @@ class BoundedWavFileWriter : public TestAudioDeviceModule::Renderer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Render(ArrayView<const int16_t> data) override {
+  bool Render(std::span<const int16_t> data) override {
     const int16_t kAmplitudeThreshold = 5;
 
-    const int16_t* begin = data.begin();
-    const int16_t* end = data.end();
+    const int16_t* begin = data.data();
+    const int16_t* end = data.data() + data.size();
     if (!started_writing_) {
       // Cut off silence at the beginning.
       while (begin < end) {
@@ -225,7 +225,7 @@ class BoundedWavFileWriter : public TestAudioDeviceModule::Renderer {
     if (started_writing_) {
       // Cut off silence at the end.
       while (begin < end) {
-        if (*(end - 1) != 0) {
+        if (std::abs(*(end - 1)) > kAmplitudeThreshold) {
           break;
         }
         --end;
@@ -242,7 +242,7 @@ class BoundedWavFileWriter : public TestAudioDeviceModule::Renderer {
         wav_writer_.WriteSamples(begin, end - begin);
       }
       // Save the number of zeros we skipped in case this needs to be restored.
-      trailing_zeros_ += data.end() - end;
+      trailing_zeros_ += (data.data() + data.size()) - end;
     }
     return true;
   }
@@ -266,7 +266,7 @@ class DiscardRenderer final : public TestAudioDeviceModule::Renderer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Render(ArrayView<const int16_t> /* data */) override { return true; }
+  bool Render(std::span<const int16_t> /* data */) override { return true; }
 
  private:
   int sampling_frequency_in_hz_;
@@ -302,15 +302,15 @@ class RawFileReader final : public TestAudioDeviceModule::Capturer {
     buffer->SetData(
         TestAudioDeviceModule::SamplesPerFrame(SamplingFrequency()) *
             NumChannels(),
-        [&](ArrayView<int16_t> data) {
-          ArrayView<int8_t> read_buffer_view = ReadBufferView();
+        [&](std::span<int16_t> data) {
+          std::span<int8_t> read_buffer_view = ReadBufferView();
           size_t size = data.size() * 2;
           size_t read = input_file_.Read(read_buffer_view.data(), size);
           if (read < size && repeat_) {
             do {
               input_file_.Rewind();
               size_t delta = input_file_.Read(
-                  read_buffer_view.subview(read).data(), size - read);
+                  read_buffer_view.subspan(read).data(), size - read);
               RTC_CHECK_GT(delta, 0) << "No new data to read from file";
               read += delta;
             } while (read < size);
@@ -322,7 +322,7 @@ class RawFileReader final : public TestAudioDeviceModule::Capturer {
   }
 
  private:
-  ArrayView<int8_t> ReadBufferView() { return read_buffer_; }
+  std::span<int8_t> ReadBufferView() { return read_buffer_; }
 
   const std::string input_file_name_;
   const int sampling_frequency_in_hz_;
@@ -360,11 +360,11 @@ class RawFileWriter : public TestAudioDeviceModule::Renderer {
 
   int NumChannels() const override { return num_channels_; }
 
-  bool Render(ArrayView<const int16_t> data) override {
+  bool Render(std::span<const int16_t> data) override {
     const int16_t kAmplitudeThreshold = 5;
 
-    const int16_t* begin = data.begin();
-    const int16_t* end = data.end();
+    const int16_t* begin = data.data();
+    const int16_t* end = data.data() + data.size();
     if (!started_writing_) {
       // Cut off silence at the beginning.
       while (begin < end) {
@@ -395,7 +395,7 @@ class RawFileWriter : public TestAudioDeviceModule::Renderer {
         WriteInt16(begin, end);
       }
       // Save the number of zeros we skipped in case this needs to be restored.
-      trailing_zeros_ += data.end() - end;
+      trailing_zeros_ += (data.data() + data.size()) - end;
     }
     return true;
   }

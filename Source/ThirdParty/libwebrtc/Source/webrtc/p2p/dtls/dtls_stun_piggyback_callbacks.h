@@ -13,12 +13,12 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/transport/stun.h"
 #include "rtc_base/checks.h"
 
@@ -38,10 +38,10 @@ class DtlsStunPiggybackCallbacks {
           /* request-type */ StunMessageType)>&& send_data,
 
       // Function invoked when receiving a STUN_BINDING { REQUEST / RESPONSE }
-      // contains the optional ArrayView of the DTLS_IN_STUN attribute and the
+      // contains the optional std::span of the DTLS_IN_STUN attribute and the
       // optional uint32_t vector DTLS_IN_STUN_ACK attribute.
       absl::AnyInvocable<void(
-          std::optional<ArrayView<uint8_t>> /* recv_data */,
+          std::optional<std::span<uint8_t>> /* recv_data */,
           std::optional<std::vector<uint32_t>> /* recv_acks */)>&& recv_data)
       : send_data_(std::move(send_data)), recv_data_(std::move(recv_data)) {
     RTC_DCHECK(
@@ -58,7 +58,7 @@ class DtlsStunPiggybackCallbacks {
     return send_data_(request_type);
   }
 
-  void recv_data(std::optional<ArrayView<uint8_t>> data,
+  void recv_data(std::optional<std::span<uint8_t>> data,
                  std::optional<std::vector<uint32_t>> acks) {
     RTC_DCHECK(recv_data_);
     return recv_data_(data, acks);
@@ -75,7 +75,7 @@ class DtlsStunPiggybackCallbacks {
                                std::optional<std::vector<uint32_t>>>(
       /* request-type */ StunMessageType)>
       send_data_;
-  absl::AnyInvocable<void(std::optional<ArrayView<uint8_t>> /* recv_data */,
+  absl::AnyInvocable<void(std::optional<std::span<uint8_t>> /* recv_data */,
                           std::optional<std::vector<uint32_t>> /* recv_acks */)>
       recv_data_;
 };

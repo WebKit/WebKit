@@ -26,6 +26,7 @@
 #include "TestHarness.h"
 #include "pas_root.h"
 #include "bmalloc_heap.h"
+#include "pas_compact_heap_reservation.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_heap.h"
 #include "iso_heap.h"
@@ -280,6 +281,38 @@ void testPGMEnumerationAddAndFree() {
 
 }
 
+void testEnumerationInvalidCompactHeapBump()
+{
+    pas_heap_lock_lock();
+    pas_root* root = pas_root_create();
+    pas_heap_lock_unlock();
+
+    // Do an allocation to ensure the compact heap is initialized.
+    void* p = bmalloc_try_allocate(16, pas_non_compact_allocation_mode);
+    PAS_ASSERT(p);
+
+    size_t saved_bump = pas_compact_heap_reservation_bump;
+    // Set invalid bump size
+    pas_compact_heap_reservation_bump = pas_compact_heap_reservation_size + 1;
+
+    pas_enumerator* enumerator = pas_enumerator_create(
+        root, enumeratorReader, nullptr, enumeratorRecorder, nullptr,
+        pas_enumerator_do_not_record_meta_records,
+        pas_enumerator_do_not_record_payload_records,
+        pas_enumerator_do_not_record_object_records);
+    CHECK(!enumerator);
+
+    // Restore and verify normal creation still works.
+    pas_compact_heap_reservation_bump = saved_bump;
+
+    enumerator = pas_enumerator_create(
+        root, enumeratorReader, nullptr, enumeratorRecorder, nullptr,
+        pas_enumerator_do_not_record_meta_records,
+        pas_enumerator_do_not_record_payload_records,
+        pas_enumerator_do_not_record_object_records);
+    CHECK(enumerator);
+    pas_enumerator_destroy(enumerator);
+}
 
 } // end namespace
 
@@ -287,4 +320,5 @@ void addEnumerationTests() {
     ADD_TEST(testBasicEnumeration());
     ADD_TEST(testPGMEnumerationBasic());
     ADD_TEST(testPGMEnumerationAddAndFree());
+    ADD_TEST(testEnumerationInvalidCompactHeapBump());
 }

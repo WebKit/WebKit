@@ -37,14 +37,16 @@ public:
 
     bool isDiscrete() const override { return true; }
 
-    void setToAtEndOfDurationValue(SVGElement&, const String&) override
+    bool setToAtEndOfDurationValue(SVGElement&, const String&) override
     {
         ASSERT_NOT_REACHED();
+        return true;
     }
 
-    void setFromAndByValues(SVGElement&, const String&, const String&) override
+    bool setFromAndByValues(SVGElement&, const String&, const String&) override
     {
         ASSERT_NOT_REACHED();
+        return true;
     }
 
     void animate(SVGElement&, float progress, unsigned, ValueType& animated)

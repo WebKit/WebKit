@@ -13,9 +13,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/media_types.h"
 #include "test/gmock.h"
@@ -28,9 +28,9 @@ class MockFrameDecryptor : public FrameDecryptorInterface {
               Decrypt,
               (MediaType,
                const std::vector<uint32_t>&,
-               ArrayView<const uint8_t>,
-               ArrayView<const uint8_t>,
-               ArrayView<uint8_t>),
+               std::span<const uint8_t>,
+               std::span<const uint8_t>,
+               std::span<uint8_t>),
               (override));
 
   MOCK_METHOD(size_t,

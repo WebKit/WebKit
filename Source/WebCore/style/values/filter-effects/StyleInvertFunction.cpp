@@ -54,7 +54,7 @@ bool Invert::transformColor(SRGBA<float>& color) const
 
 // MARK: - Conversion
 
-auto ToCSS<Invert>::operator()(const Invert& value, const RenderStyle& style) -> CSS::Invert
+auto ToCSS<Invert>::operator()(const Invert& value, const Style::ComputedStyle& style) -> CSS::Invert
 {
     return { .value = CSS::Invert::Parameter { toCSS(value.value, style) } };
 }

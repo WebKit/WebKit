@@ -30,13 +30,11 @@
 
 #include "CSSKeywordValue.h"
 #include "CSSPropertyParserConsumer+Font.h"
-#include "StylePrimitiveNumericTypes+Blending.h"
-#include "StylePrimitiveNumericTypes+Evaluation.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
-#include "StyleLengthWrapper+Blending.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
-#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePrimitiveNumericOrKeyword+Blending.h"
+#include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {
@@ -101,7 +99,7 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
     };
 
     auto handleCalc = [&](const StyleSpecified::Calc& calc) {
-        return LineHeight::Fixed { CSS::clampToRangeOf<LineHeight::Fixed>(protect(calc.calculation())->evaluate(percentageBasis(), zoomFactor()) * multiplier) };
+        return LineHeight::Fixed { CSS::clampToRangeOf<LineHeight::Fixed>(calc.evaluate(percentageBasis(), zoomFactor()) * multiplier) };
     };
 
     auto handleNumber = [&](const StyleNumber& number) {
@@ -110,15 +108,15 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
 
     return WTF::switchOn(*primitiveValue,
         [&](const CSSPrimitiveValue::Calc& calc) -> LineHeight {
-            if (calc.category() == CSS::Category::Number || calc.category() == CSS::Category::Integer)
-                return handleNumber(toStyle(CSS::UnevaluatedCalc<CSSNumberRaw>( const_cast<CSSPrimitiveValue::Calc&>(calc)), conversionData));
+            if (calc.runtimeCategory() == CSS::Category::Number || calc.runtimeCategory() == CSS::Category::Integer)
+                return handleNumber(toStyle(CSS::UnevaluatedCalc<CSSNumberRaw> { calc }, conversionData));
 
-            ASSERT(calc.category() == CSS::Category::Length || calc.category() == CSS::Category::Percentage || calc.category() == CSS::Category::LengthPercentage);
+            ASSERT(calc.runtimeCategory() == CSS::Category::Length || calc.runtimeCategory() == CSS::Category::Percentage || calc.runtimeCategory() == CSS::Category::LengthPercentage);
 
             // <length-percentage> calc() can become a raw <length> or <percentage>, or can stay a calc() when converting,
             // so we have to handle all those cases here.
 
-            auto convertedCalc = toStyle(CSS::UnevaluatedCalc<CSSRaw>(const_cast<CSSPrimitiveValue::Calc&>(calc)), conversionData);
+            auto convertedCalc = toStyle(CSS::UnevaluatedCalc<CSSRaw> { calc }, conversionData);
             return WTF::switchOn(convertedCalc,
                 [&](const StyleSpecified::Dimension& fixed) {
                     return handleFixed(fixed);
@@ -151,7 +149,7 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
 
 auto Blending<LineHeight>::canBlend(const LineHeight& a, const LineHeight& b) -> bool
 {
-    return a.hasSameType(b) || (a.isCalculated() && b.isSpecified()) || (b.isCalculated() && a.isSpecified());
+    return a.hasSameType(b) || (a.isCalculated() && b.isNumeric()) || (b.isCalculated() && a.isNumeric());
 }
 
 auto Blending<LineHeight>::requiresInterpolationForAccumulativeIteration(const LineHeight& a, const LineHeight& b) -> bool
@@ -161,35 +159,10 @@ auto Blending<LineHeight>::requiresInterpolationForAccumulativeIteration(const L
 
 auto Blending<LineHeight>::blend(const LineHeight& a, const LineHeight& b, const BlendingContext& context) -> LineHeight
 {
-    if (!a.isSpecified() || !b.isSpecified())
+    if (!a.isNumeric() || !b.isNumeric())
         return context.progress < 0.5 ? a : b;
 
-    if (a.isCalculated() || b.isCalculated() || !a.hasSameType(b))
-        return LengthWrapperBlendingSupport<LineHeight>::blendMixedSpecifiedTypes(a, b, context);
-
-    if (!context.progress && context.isReplace())
-        return a;
-
-    if (context.progress == 1 && context.isReplace())
-        return b;
-
-    auto resultType = b.m_value.type();
-
-    ASSERT(resultType == LineHeight::indexForPercentage || resultType == LineHeight::indexForFixed);
-
-    if (resultType == LineHeight::indexForPercentage) {
-        return Style::blend(
-            LineHeight::Percentage { a.m_value.value() },
-            LineHeight::Percentage { b.m_value.value() },
-            context
-        );
-    } else {
-        return Style::blend(
-            LineHeight::Fixed { a.m_value.value() },
-            LineHeight::Fixed { b.m_value.value() },
-            context
-        );
-    }
+    return Style::blend(get<LineHeight::Numeric>(a), get<LineHeight::Numeric>(b), context);
 }
 
 // MARK: - Evaluation

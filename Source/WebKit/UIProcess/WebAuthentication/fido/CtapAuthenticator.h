@@ -58,7 +58,7 @@ private:
     void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&);
     void continueMakeCredentialAfterCheckExcludedCredentials(bool includeCurrentBatch = false);
     void getAssertion() final;
-    void continueSilentlyCheckCredentials(Vector<uint8_t>&&, CompletionHandler<void(bool)>&&);
+    void continueSilentlyCheckCredentials(Vector<uint8_t>&&, Function<void(bool)>&&);
     void continueGetAssertionAfterCheckAllowCredentials();
     void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
     void continueGetNextAssertionAfterResponseReceived(Vector<uint8_t>&&);

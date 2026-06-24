@@ -1385,11 +1385,12 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             }
             auto span = name.span8();
 
-            if (object.structure() != &structure) [[unlikely]] {
-                ASSERT_NOT_REACHED();
-                recordFailure("unexpected structure transition"_s);
-                return false;
-            }
+            // The structure cannot transition mid-iteration on FastStringifier's case.
+            // canPerformFastPropertyEnumeration ruled out getters/setters and
+            // the prototype is the original Object.prototype with no toJSON, so
+            // there is no JS observable to mutate the structure.
+            ASSERT(object.structure() == &structure);
+
             JSValue value = object.getDirect(entry.offset());
             if (value.isUndefined())
                 return true;
@@ -1418,6 +1419,37 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             buffer()[m_length + 1 + span.size()] = '"';
             buffer()[m_length + 1 + span.size() + 1] = ':';
             m_length += 1 + span.size() + 2;
+
+            if constexpr (std::same_as<CharType, Latin1Character>) {
+                // Inlining String case here since it is too common.
+                if (value.isCell() && value.asCell()->type() == StringType) [[likely]] {
+                    auto valueString = asString(value.asCell())->tryGetValue();
+                    if (!valueString.data.isNull() && valueString.data.is8Bit()) [[likely]] {
+                        unsigned valueLength = valueString.data.length();
+                        if (!hasRemainingCapacity(1 + valueLength + 1)) [[unlikely]] {
+                            recordBufferFull();
+                            return false;
+                        }
+                        buffer()[m_length] = '"';
+                        if (!stringCopySameType(valueString.data.span8(), buffer() + m_length + 1)) [[likely]] {
+                            buffer()[m_length + 1 + valueLength] = '"';
+                            m_length += 1 + valueLength + 1;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            // Also Int32 case is too common.
+            if (value.isInt32()) {
+                if (!hasRemainingCapacity(maxInt32StringLength)) [[unlikely]] {
+                    recordBufferFull();
+                    return false;
+                }
+                appendInt32(value.asInt32());
+                return true;
+            }
+
             append(value);
             return !haveFailure();
         });
@@ -1457,10 +1489,45 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             return;
         }
         buffer()[m_length++] = '[';
-        if (hasInt32(array.indexingType())) {
+
+        IndexingType indexingType = array.indexingType();
+        if (hasInt32(indexingType)) {
             appendInt32Array(array);
             if (haveFailure()) [[unlikely]]
                 return;
+            if (!hasRemainingCapacity()) [[unlikely]] {
+                recordBufferFull();
+                return;
+            }
+            buffer()[m_length++] = ']';
+            return;
+        }
+
+        if (hasContiguous(indexingType)) {
+            auto* butterfly = array.butterfly();
+            unsigned length = butterfly->publicLength();
+            if (length > butterfly->vectorLength()) [[unlikely]] {
+                recordFailure("!lengthBeyondVector"_s);
+                return;
+            }
+            auto data = butterfly->contiguous();
+            for (unsigned i = 0; i < length; ++i) {
+                if (i) {
+                    if (!hasRemainingCapacity()) [[unlikely]] {
+                        recordBufferFull();
+                        return;
+                    }
+                    buffer()[m_length++] = ',';
+                }
+                JSValue element = data.at(&array, i).get();
+                if (!element) [[unlikely]] {
+                    recordFailure("!canGetIndexQuickly"_s);
+                    return;
+                }
+                append(element);
+                if (haveFailure()) [[unlikely]]
+                    return;
+            }
             if (!hasRemainingCapacity()) [[unlikely]] {
                 recordBufferFull();
                 return;
@@ -1507,7 +1574,7 @@ NEVER_INLINE void FastStringifier<CharType, bufferMode>::appendInt32Array(JSArra
     auto* butterfly = array.butterfly();
     unsigned length = butterfly->publicLength();
     if (length > butterfly->vectorLength()) [[unlikely]] {
-        recordFailure("!canGetIndexQuickly"_s);
+        recordFailure("!lengthBeyondVector"_s);
         return;
     }
     auto data = butterfly->contiguousInt32();

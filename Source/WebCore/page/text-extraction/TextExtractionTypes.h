@@ -219,6 +219,8 @@ struct Item {
     String accessibilityRole;
     String title;
     HashMap<String, String> clientAttributes;
+    Vector<String> classNames;
+    String idAttribute;
     unsigned enclosingBlockNumber { 0 };
     unsigned visualBlockContainerNumber { 0 };
     bool hasLineThrough { false };
@@ -241,6 +243,7 @@ struct Result {
 
     Item rootItem;
     unsigned visibleTextLength { 0 };
+    std::optional<String> pdfMarkdownContent;
 };
 
 struct PageResults {

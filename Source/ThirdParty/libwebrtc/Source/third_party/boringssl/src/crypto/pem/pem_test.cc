@@ -437,4 +437,81 @@ wr6JtaX2G+pOmwcSPymZC4u2TncAP7KHgS8UGcMw8CE=
   }
 }
 
+TEST(PEMTest, ParsingErrorsAndSuccesses) {
+  const struct {
+    const char *name;
+    const char *pem;
+    int err_reason;
+    const char *want_name = nullptr;
+    const char *want_header = nullptr;
+    const char *want_body = nullptr;
+  } kTests[] = {
+      {"WithHeadersOK",
+       "-----BEGIN BEST-----\nX-Hdr: h\n\nYmFzZTY0\n-----END BEST-----",  //
+       0, "BEST", "X-Hdr: h\n", "base64"},
+      {"NoHeadersNoBlankLineOK",
+       "-----BEGIN FEST-----\nYmFzZTY0\n-----END FEST-----",  //
+       0, "FEST", "", "base64"},
+      {"WithHeadersWeirdLineSplitOK",
+       "-----BEGIN JEST-----\nX-Hdr: h\n\nYmF\nzZTY0\n-----END JEST-----",  //
+       0, "JEST", "X-Hdr: h\n", "base64"},
+      {"NoHeadersNoBlankLineWeirdLineSplitOK",
+       "-----BEGIN LEST-----\nYmF\nzZTY0\n-----END LEST-----",  //
+       0, "LEST", "", "base64"},
+      {"WithHeadersAndRubbishOK",
+       "a\n-----BEGIN TEST-----\nX-Hdr: h\n\nYmFzZTY0\n-----END TEST-----\nb",
+       0, "TEST", "X-Hdr: h\n", "base64"},
+      {"NoHeadersNoBlankLineButRubbishOK",
+       "a\n-----BEGIN ZEST-----\nYmFzZTY0\n-----END ZEST-----\nb",  //
+       0, "ZEST", "", "base64"},
+      {"Empty", "",  //
+       PEM_R_NO_START_LINE},
+      {"NoStart",           //
+       "Not a PEM file\n",  //
+       PEM_R_NO_START_LINE},
+      {"TruncatedBeforeStart",  //
+       "-----BEGIN ",           //
+       PEM_R_NO_START_LINE},
+      {"TruncatedAfterStart",     //
+       "-----BEGIN TEST-----\n",  //
+       PEM_R_BAD_END_LINE},
+      {"MismatchedEnd",                                //
+       "-----BEGIN TEST-----\n-----END OTHER-----\n",  //
+       PEM_R_BAD_END_LINE},
+      {"MismatchedEndLonger",                          //
+       "-----BEGIN TEST-----\n-----END TEST1-----\n",  //
+       PEM_R_BAD_END_LINE},
+      {"NoData",                                      //
+       "-----BEGIN TEST-----\n-----END TEST-----\n",  //
+       PEM_R_NO_DATA},
+      {"NoDataButHeaders",                                        //
+       "-----BEGIN TEST-----\nX-Hdr: h\n\n-----END TEST-----\n",  //
+       PEM_R_NO_DATA},
+      {"InvalidBase64",  //
+       "-----BEGIN TEST-----\n!!!!\n-----END TEST-----\n",
+       PEM_R_BAD_BASE64_DECODE},
+  };
+
+  for (const auto &t : kTests) {
+    SCOPED_TRACE(t.name);
+    bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(t.pem, -1));
+    char *name, *header;
+    uint8_t *data;
+    long len;
+    if (PEM_read_bio(bio.get(), &name, &header, &data, &len)) {
+      EXPECT_EQ(t.err_reason, 0);
+      EXPECT_EQ(Bytes(name), Bytes(t.want_name));
+      EXPECT_EQ(Bytes(header), Bytes(t.want_header));
+      EXPECT_EQ(Bytes(data, len), Bytes(t.want_body));
+      OPENSSL_free(name);
+      OPENSSL_free(header);
+      OPENSSL_free(data);
+    } else {
+      EXPECT_NE(t.err_reason, 0);
+      EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_PEM, t.err_reason));
+      ERR_clear_error();
+    }
+  }
+}
+
 }  // namespace

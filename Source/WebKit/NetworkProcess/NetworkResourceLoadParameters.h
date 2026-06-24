@@ -50,7 +50,7 @@ class Encoder;
 namespace WebKit {
 
 struct NetworkResourceLoadParameters {
-    bool createSandboxExtensionHandlesIfNecessary();
+    void createSandboxExtensionHandlesIfNecessary();
 
     RefPtr<WebCore::SecurityOrigin> NODELETE parentOrigin() const;
     NetworkLoadParameters networkLoadParameters() const;
@@ -132,6 +132,7 @@ struct NetworkResourceLoadParameters {
     bool isInitiatorPrefetch { false };
     bool isInitiatedByDedicatedWorker { false };
     bool globalPrivacyControlEnabled { false };
+    bool shouldConsiderEnhancedSecurityForInsecureResponse { false };
 };
 
 } // namespace WebKit

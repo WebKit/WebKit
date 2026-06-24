@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <memory>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -66,8 +67,11 @@
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
+#include "test/testsupport/file_utils.h"
 
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
@@ -165,8 +169,8 @@ class PeerConnectionFactoryTest : public ::testing::Test {
         nullptr /* audio_mixer */, nullptr /* audio_processing */);
 
     ASSERT_TRUE(factory_.get() != nullptr);
-    port_allocator_ = std::make_unique<FakePortAllocator>(CreateEnvironment(),
-                                                          socket_server_.get());
+    port_allocator_ = std::make_unique<FakePortAllocator>(
+        CreateTestEnvironment(), socket_server_.get());
     raw_port_allocator_ = port_allocator_.get();
   }
 
@@ -262,7 +266,7 @@ class PeerConnectionFactoryTest : public ::testing::Test {
   }
 
   std::unique_ptr<SocketServer> socket_server_;
-  AutoSocketServerThread main_thread_;
+  test::RunLoop main_thread_;
   scoped_refptr<PeerConnectionFactoryInterface> factory_;
   NullPeerConnectionObserver observer_;
   std::unique_ptr<FakePortAllocator> port_allocator_;
@@ -293,7 +297,7 @@ CreatePeerConnectionFactoryWithRtxDisabled() {
           OpenH264DecoderTemplateAdapter, Dav1dDecoderTemplateAdapter>>(),
   EnableMedia(pcf_dependencies);
 
-  Environment env = CreateEnvironment();
+  Environment env = CreateTestEnvironment();
   scoped_refptr<ConnectionContext> context =
       ConnectionContext::Create(env, &pcf_dependencies);
   context->set_use_rtx(false);
@@ -761,7 +765,14 @@ TEST(PeerConnectionFactoryDependenciesTest,
 
   scoped_refptr<PeerConnectionFactoryInterface> pcf =
       CreateModularPeerConnectionFactory(std::move(pcf_dependencies));
-  pcf->StartAecDump(nullptr, 24'242);
+  // Provide a valid file to avoid triggering the null pointer guard.
+  // The AEC dump machinery takes ownership of the file and closes it.
+  std::string temp_filename =
+      test::TempFilename(test::OutputPath(), "aec_dump");
+  pcf->StartAecDump(fopen(temp_filename.c_str(), "wb"), 24'242);
+  // Destroy the PCF to ensure the file is closed before attempting removal.
+  pcf = nullptr;
+  test::RemoveFile(temp_filename);
 }
 
 TEST(PeerConnectionFactoryDependenciesTest, RepeatMediaEngineInitialization) {

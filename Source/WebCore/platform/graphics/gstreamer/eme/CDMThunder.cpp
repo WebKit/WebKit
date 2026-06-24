@@ -571,10 +571,16 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
     m_sessionChangedCallbacks.append([this, callback = WTF::move(callback)](bool success, RefPtr<SharedBuffer>&& responseMessage) mutable {
         ASSERT(isMainThread());
         if (success) {
-            if (!responseMessage)
-                callback(false, m_keyStore.convertToJSKeyStatusVector(), std::nullopt, std::nullopt, SuccessValue::Succeeded);
-            else {
-                // FIXME: Using JSON reponse messages is much cleaner than using string prefixes, I believe there
+            if (!responseMessage) {
+                GST_DEBUG("Empty response message");
+                std::optional<KeyStatusVector> keyStatus;
+                // If the keystore is empty, generating an empty status vector would trigger a new
+                // keystatuses event potentially overriding the previous one.
+                if (!m_keyStore.isEmpty())
+                    keyStatus = m_keyStore.convertToJSKeyStatusVector();
+                callback(false, WTF::move(keyStatus), std::nullopt, std::nullopt, SuccessValue::Succeeded);
+            } else {
+                // FIXME: Using JSON response messages is much cleaner than using string prefixes, I believe there
                 // will even be other parts of the spec where not having structured data will be bad.
                 ParsedResponseMessage parsedResponseMessage(responseMessage);
                 ASSERT(parsedResponseMessage);

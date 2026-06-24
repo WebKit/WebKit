@@ -85,6 +85,10 @@ class DspHelper {
   // locations and values are written to the arrays `peak_index` and
   // `peak_value`, respectively. Both arrays must hold at least `num_peaks`
   // elements.
+  //
+  // NOTE: If `num_peaks == 1`, the algorithm assumes that `data` has at least
+  // `data_length + 1` allocated elements because the parabolic fit at the
+  // boundary may look one element past `data_length - 1`.
   static void PeakDetection(int16_t* data,
                             size_t data_length,
                             size_t num_peaks,

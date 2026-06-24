@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <style type="text/css">
 #frame {
     position: absolute;
@@ -22,6 +22,7 @@
 <script>
 
 description("Tests that tap gesture events set and clear the active state of elements, even when inside an iframe and the document is scrolled.");
+window.jsTestIsAsync = true;
 
 var isBoxActive;
 function runTests(ba)
@@ -50,13 +51,9 @@ function runTests(ba)
     eventSender.gestureTap(450, 50);
     shouldBeFalse("isBoxActive()");
 
-    isSuccessfullyParsed();
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-}
 
 </script>
 </body>

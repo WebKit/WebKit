@@ -13,9 +13,9 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/environment/environment.h"
 #include "api/sequence_checker.h"
@@ -368,8 +368,8 @@ bool CoreAudioInput::OnDataCallback(uint64_t device_frequency) {
       // Copy recorded audio in `audio_data` to the WebRTC sink using the
       // FineAudioBuffer object.
       fine_audio_buffer_->DeliverRecordedData(
-          webrtc::MakeArrayView(reinterpret_cast<const int16_t*>(audio_data),
-                                format_.Format.nChannels * num_frames_to_read),
+          std::span(reinterpret_cast<const int16_t*>(audio_data),
+                    format_.Format.nChannels * num_frames_to_read),
 
           latency_ms_);
     }

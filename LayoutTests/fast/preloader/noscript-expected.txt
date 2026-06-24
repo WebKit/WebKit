@@ -1,4 +1,3 @@
-noscript-image2.png has MIME type image/png
 This test requires DumpRenderTree to see the log of what resources are loaded. It checks that images inside a noscript block are not loaded.
 
 <noscript>
@@ -6,3 +5,4 @@ This test requires DumpRenderTree to see the log of what resources are loaded. I
 </noscript>
 <img src="resources/noscript-image2.png">
 
+noscript-image2.png has MIME type image/png

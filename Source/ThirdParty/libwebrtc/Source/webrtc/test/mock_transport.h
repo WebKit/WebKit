@@ -12,8 +12,8 @@
 #define TEST_MOCK_TRANSPORT_H_
 
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "test/gmock.h"
 
@@ -26,11 +26,11 @@ class MockTransport : public Transport {
 
   MOCK_METHOD(bool,
               SendRtp,
-              (webrtc::ArrayView<const uint8_t>, const PacketOptions&),
+              (std::span<const uint8_t>, const PacketOptions&),
               (override));
   MOCK_METHOD(bool,
               SendRtcp,
-              (webrtc::ArrayView<const uint8_t>, const PacketOptions&),
+              (std::span<const uint8_t>, const PacketOptions&),
               (override));
 };
 

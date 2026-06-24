@@ -35,7 +35,7 @@
 #include "KeyframeEffect.h"
 #include "Logging.h"
 #include "NodeDocument.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include "StyleOriginatedAnimationEvent.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -97,7 +97,7 @@ void StyleOriginatedAnimation::disassociateFromOwningElement()
     m_owningElement = nullptr;
 }
 
-void StyleOriginatedAnimation::initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
+void StyleOriginatedAnimation::initialize(const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
     WebAnimation::initialize();
 
@@ -110,7 +110,7 @@ void StyleOriginatedAnimation::initialize(const RenderStyle* oldStyle, const Ren
 
     Ref effect = KeyframeEffect::create(Ref { *m_owningElement }, m_owningPseudoElementIdentifier);
     setEffect(effect.copyRef());
-    setTimeline(&m_owningElement->document().timeline());
+    setTimeline(&protect(m_owningElement)->document().timeline());
     effect->computeStyleOriginatedAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
     syncPropertiesWithBackingAnimation();
     if (backingAnimationPlayState() == AnimationPlayState::Running)
@@ -183,7 +183,7 @@ void StyleOriginatedAnimation::flushPendingStyleChanges() const
 {
     if (RefPtr keyframeEffect = this->keyframeEffect()) {
         if (RefPtr target = keyframeEffect->target())
-            target->document().updateStyleIfNeeded();
+            protect(target->document())->updateStyleIfNeeded();
     }
 }
 

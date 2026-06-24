@@ -22,6 +22,8 @@
 
 [
     ExceptionForEnabledBy,
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
     SwiftReceiver
 ]
 messages -> TestWithSwift {

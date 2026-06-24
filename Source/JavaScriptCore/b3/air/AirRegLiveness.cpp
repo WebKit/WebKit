@@ -29,7 +29,9 @@
 #if ENABLE(B3_JIT)
 
 #include "AirArgInlines.h"
+#include "AirCFG.h"
 #include "AirInstInlines.h"
+#include <wtf/GraphOrdering.h>
 
 namespace AirRegLivenessInternal {
     static constexpr bool verbose = false;
@@ -47,7 +49,7 @@ RegLiveness::RegLiveness(Code& code)
     for (BasicBlock* block : code) {
         ActionsForBoundary& actionsForBoundary = m_actions[block];
         actionsForBoundary.resize(block->size() + 1);
-        
+
         for (size_t instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
             inst.forEach<Reg>(
@@ -63,80 +65,90 @@ RegLiveness::RegLiveness(Code& code)
                 });
         }
     }
-    
-    // The liveAtTail of each block automatically contains the LateUse's of the terminal.
+
+    IndexMap<BasicBlock*, RegisterSet> gen(code.size());
+    IndexMap<BasicBlock*, RegisterSet> kill(code.size());
+
     for (BasicBlock* block : code) {
-        auto& liveAtTail = m_liveAtTail[block];
-            
-        block->last().forEach<Reg>(
-            [&] (Reg& reg, Arg::Role role, Bank, Width width) {
-                ASSERT(width <= Width64 || Options::useWasmSIMD());
-                if (Arg::isLateUse(role))
-                    liveAtTail.add(reg, width);
+        ActionsForBoundary& actionsForBoundary = m_actions[block];
+
+        // kill: every register defined anywhere in the block. The whole register width is included so
+        // that excluding it later clears a register entirely, matching LocalCalc's width-agnostic remove.
+        RegisterSet& killSet = kill[block];
+        for (size_t boundary = 0; boundary <= block->size(); ++boundary)
+            killSet.merge(actionsForBoundary[boundary].def);
+        killSet.includeWholeRegisterWidth();
+
+        // gen: the block's transfer function applied to an empty liveAtTail, i.e. the uses exposed at the head.
+        RegisterSet workset;
+        for (size_t instIndex = block->size(); instIndex--;) {
+            actionsForBoundary[instIndex + 1].def.forEach([&](Reg r) {
+                workset.remove(r);
             });
-    }
-        
-    BitVector dirtyBlocks;
-    for (size_t blockIndex = code.size(); blockIndex--;)
-        dirtyBlocks.set(blockIndex);
-        
-    bool changed;
-    do {
-        changed = false;
-
-        if (AirRegLivenessInternal::verbose) {
-            dataLogLn("Next iteration");
-            for (size_t blockIndex = code.size(); blockIndex--;) {
-                BasicBlock* block = code[blockIndex];
-                if (!block)
-                    continue;
-                ActionsForBoundary& actionsForBoundary = m_actions[block];
-                dataLogLn("Block ", blockIndex);
-                dataLogLn("Live at head: ", m_liveAtHead[block]);
-                dataLogLn("Live at tail: ", m_liveAtTail[block]);
-
-                for (size_t instIndex = block->size(); instIndex--;) {
-                    dataLogLn(block->at(instIndex), " | use: ", actionsForBoundary[instIndex].use, " def: ", actionsForBoundary[instIndex].def);
-                }
-            }
+            workset.merge(actionsForBoundary[instIndex].use);
         }
-            
+        // Handle the early def's of the first instruction.
+        actionsForBoundary[0].def.forEach([&](Reg r) {
+            workset.remove(r);
+        });
+        gen[block] = workset;
+
+        // The liveAtTail of each block automatically contains the LateUse's of the terminal, which are
+        // exactly the uses at the final boundary.
+        m_liveAtTail[block].merge(actionsForBoundary[block->size()].use);
+    }
+
+    if (AirRegLivenessInternal::verbose) {
+        dataLogLn("Initial state");
         for (size_t blockIndex = code.size(); blockIndex--;) {
             BasicBlock* block = code[blockIndex];
             if (!block)
                 continue;
-                
-            if (!dirtyBlocks.quickClear(blockIndex))
-                continue;
-                
-            LocalCalc localCalc(*this, block);
-            for (size_t instIndex = block->size(); instIndex--;)
-                localCalc.execute(instIndex);
-                
-            // Handle the early def's of the first instruction.
-            block->at(0).forEach<Reg>(
-                [&] (Reg& reg, Arg::Role role, Bank, Width) {
-                    if (Arg::isEarlyDef(role))
-                        localCalc.m_workset.remove(reg);
-                });
-                
-            auto& liveAtHead = m_liveAtHead[block];
-            if (liveAtHead.subsumes(localCalc.m_workset))
-                continue;
-                
-            liveAtHead.merge(localCalc.m_workset);
-                
-            for (BasicBlock* predecessor : block->predecessors()) {
-                auto& liveAtTail = m_liveAtTail[predecessor];
-                if (liveAtTail.subsumes(localCalc.m_workset))
-                    continue;
-                    
-                liveAtTail.merge(localCalc.m_workset);
-                dirtyBlocks.quickSet(predecessor->index());
-                changed = true;
-            }
+            dataLogLn("Block ", blockIndex, " gen: ", gen[block], " kill: ", kill[block], " live at tail: ", m_liveAtTail[block]);
         }
-    } while (changed);
+    }
+
+    CFG cfg(code);
+    Vector<unsigned, 64> worklist;
+    BitVector dirtyBlocks(code.size());
+    worklist.reserveInitialCapacity(code.size());
+    appendNodeIndicesInOrder(cfg, GraphOrder::PostOrder, dirtyBlocks, worklist);
+    worklist.reverse();
+    // Queue any active block the DFS did not reach (e.g. unreachable but not yet pruned).
+    for (unsigned blockIndex = 0; blockIndex < code.size(); ++blockIndex) {
+        if (code[blockIndex] && !dirtyBlocks.quickSet(blockIndex))
+            worklist.append(blockIndex);
+    }
+
+    while (!worklist.isEmpty()) {
+        unsigned blockIndex = worklist.takeLast();
+        bool cleared = dirtyBlocks.quickClear(blockIndex);
+        ASSERT_UNUSED(cleared, cleared);
+
+        BasicBlock* block = code[blockIndex];
+        ASSERT(block);
+
+        // liveAtHead = gen | (liveAtTail & ~kill)
+        RegisterSet liveAtHead = gen[block];
+        RegisterSet throughLiveness = m_liveAtTail[block];
+        throughLiveness.exclude(kill[block]);
+        liveAtHead.merge(throughLiveness);
+
+        if (m_liveAtHead[block].subsumes(liveAtHead))
+            continue;
+
+        m_liveAtHead[block] = liveAtHead;
+
+        for (BasicBlock* predecessor : block->predecessors()) {
+            auto& liveAtTail = m_liveAtTail[predecessor];
+            if (liveAtTail.subsumes(liveAtHead))
+                continue;
+
+            liveAtTail.merge(liveAtHead);
+            if (!dirtyBlocks.quickSet(predecessor->index()))
+                worklist.append(predecessor->index());
+        }
+    }
 
     if (AirRegLivenessInternal::verbose) {
         dataLogLn("Reg liveness result:");
@@ -153,7 +165,7 @@ RegLiveness::RegLiveness(Code& code)
                 dataLogLn(block->at(instIndex), " | use: ", actionsForBoundary[instIndex].use, " def: ", actionsForBoundary[instIndex].def);
             }
         }
-        }
+    }
 }
 
 RegLiveness::~RegLiveness() = default;

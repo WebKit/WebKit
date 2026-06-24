@@ -236,6 +236,8 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     if (keyData.size() < index + 1)
         return nullptr;
     index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length
+    if (keyData.size() < index)
+        return nullptr;
     if (doesUncompressedPointMatchNamedCurve(curve, keyData.size() - index))
         return platformImportRaw(identifier, curve, Vector<uint8_t>(keyData.subspan(index, keyData.size() - index)), extractable, usages);
 
@@ -333,6 +335,8 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     if (keyData.size() < index + 1)
         return nullptr;
     index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length, InitialOctet
+    if (keyData.size() < index)
+        return nullptr;
 
     // KeyBinary = uncompressed point + private key
     auto keyBinary = keyData.subvector(index);

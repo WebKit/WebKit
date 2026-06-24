@@ -14,8 +14,7 @@
         let video = document.querySelector('video');
         let keys = await startEME({video: video, setMediaKeys: true, capabilities: [{
             initDataTypes: ['mpts'],
-            audioCapabilities: [{ contentType: 'audio/mp4', robustness: '' }],
-            videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+            videoCapabilities: [{ contentType: 'video/mp2t', robustness: '' }],
             distinctiveIdentifier: 'not-allowed',
             persistentState: 'not-allowed',
             sessionTypes: ['temporary'],
@@ -29,7 +28,7 @@
         consoleWrite('-');
         consoleWrite('Appending Encrypted Video Payload');
 
-        let {sourceBuffer: sourceBuffer, session: session} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, keys, 'video/mp4', 'content/elementary-stream-video-keyid-1.ts');
+        let {sourceBuffer: sourceBuffer, session: session} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, keys, 'video/mp2t', 'content/elementary-stream-video-keyid-1.ts');
 
         consoleWrite('-');
         consoleWrite('Playing video');

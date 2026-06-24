@@ -13,10 +13,10 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/audio/builtin_audio_processing_builder.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
@@ -271,7 +271,7 @@ CallClient::~CallClient() {
 ColumnPrinter CallClient::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "pacer_delay call_send_bw",
-      [this](SimpleStringBuilder& sb) {
+      [this](StringBuilder& sb) {
         Call::Stats call_stats = call_->GetStats();
         sb.AppendFormat("%.3lf %.0lf", call_stats.pacer_delay_ms / 1000.0,
                         call_stats.send_bandwidth_bps / 8.0);
@@ -309,14 +309,14 @@ void CallClient::UpdateBitrateConstraints(
 }
 
 void CallClient::SetAudioReceiveRtpHeaderExtensions(
-    ArrayView<RtpExtension> extensions) {
+    std::span<RtpExtension> extensions) {
   SendTask([this, &extensions]() {
     audio_extensions_ = RtpHeaderExtensionMap(extensions);
   });
 }
 
 void CallClient::SetVideoReceiveRtpHeaderExtensions(
-    ArrayView<RtpExtension> extensions) {
+    std::span<RtpExtension> extensions) {
   SendTask([this, &extensions]() {
     video_extensions_ = RtpHeaderExtensionMap(extensions);
   });

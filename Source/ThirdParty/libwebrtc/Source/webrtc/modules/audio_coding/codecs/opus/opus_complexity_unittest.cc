@@ -17,11 +17,11 @@
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
 #include "rtc_base/buffer.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -73,7 +73,7 @@ int64_t RunComplexityTest(const Environment& env,
 // be higher, since we have explicitly asked for a higher complexity setting at
 // the lower rate.
 TEST(AudioEncoderOpusComplexityAdaptationTest, Adaptation_On) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   // Create config.
   // The limit -- including the hysteresis window -- at which the complexity
   // shuold be increased.
@@ -95,7 +95,7 @@ TEST(AudioEncoderOpusComplexityAdaptationTest, Adaptation_On) {
 // adaptation enabled (neither on desktop, nor on mobile). The expectation is
 // that the resulting ratio is less than 100% at all times.
 TEST(AudioEncoderOpusComplexityAdaptationTest, Adaptation_Off) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   // Create config.
   // The limit -- including the hysteresis window -- at which the complexity
   // shuold be increased (but not in this test since complexity adaptation is

@@ -96,6 +96,8 @@ public:
 #endif
 
     virtual void performApplicationCommand(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, const WTF::String& commandName, const WTF::String& arguments, CompletionHandler<void(const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }
+
+    virtual bool shouldEnableInspectorTesting(WebKit::WebAutomationSession&) { return false; }
 };
 
 } // namespace API

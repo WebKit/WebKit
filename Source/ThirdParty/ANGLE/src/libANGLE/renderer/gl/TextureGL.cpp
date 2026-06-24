@@ -257,6 +257,11 @@ angle::Result TextureGL::setImageHelper(const gl::Context *context,
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
+    if (features.reattachFboDepthStencilOnReallocation.enabled)
+    {
+        onStateChange(angle::SubjectMessage::ObjectReallocated);
+    }
+
     const gl::InternalFormat &originalInternalFormatInfo =
         gl::GetInternalFormatInfo(internalFormat, type);
     nativegl::TexImageFormat texImageFormat =
@@ -1189,6 +1194,11 @@ angle::Result TextureGL::setStorage(const gl::Context *context,
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
+    if (features.reattachFboDepthStencilOnReallocation.enabled)
+    {
+        onStateChange(angle::SubjectMessage::ObjectReallocated);
+    }
+
     const gl::InternalFormat &originalInternalFormatInfo =
         gl::GetSizedInternalFormatInfo(internalFormat);
     nativegl::TexStorageFormat texStorageFormat =
@@ -1361,28 +1371,6 @@ angle::Result TextureGL::setStorage(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result TextureGL::setImageExternal(const gl::Context *context,
-                                          const gl::ImageIndex &index,
-                                          GLenum internalFormat,
-                                          const gl::Extents &size,
-                                          GLenum format,
-                                          GLenum type)
-{
-    const FunctionsGL *functions      = GetFunctionsGL(context);
-    const angle::FeaturesGL &features = GetFeaturesGL(context);
-
-    gl::TextureTarget target = index.getTarget();
-    size_t level             = static_cast<size_t>(index.getLevelIndex());
-    const gl::InternalFormat &originalInternalFormatInfo =
-        gl::GetInternalFormatInfo(internalFormat, type);
-    nativegl::TexImageFormat texImageFormat =
-        nativegl::GetTexImageFormat(functions, features, internalFormat, format, type);
-
-    setLevelInfo(context, target, level, 1,
-                 GetLevelInfo(features, originalInternalFormatInfo, texImageFormat.internalFormat));
-    return angle::Result::Continue;
-}
-
 angle::Result TextureGL::setStorageMultisample(const gl::Context *context,
                                                gl::TextureType type,
                                                GLsizei samples,
@@ -1393,6 +1381,11 @@ angle::Result TextureGL::setStorageMultisample(const gl::Context *context,
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    if (features.reattachFboDepthStencilOnReallocation.enabled)
+    {
+        onStateChange(angle::SubjectMessage::ObjectReallocated);
+    }
 
     const gl::InternalFormat &originalInternalFormatInfo =
         gl::GetSizedInternalFormatInfo(internalformat);
@@ -1507,6 +1500,8 @@ angle::Result TextureGL::generateMipmap(const gl::Context *context)
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
+    stateManager->bindTexture(getType(), mTextureID);
+
     bool recreateMipmapLevelsBeforeGenerate =
         features.recreateMipmapLevelsBeforeGenerate.enabled && !mState.getImmutableFormat();
     if (recreateMipmapLevelsBeforeGenerate)
@@ -1522,7 +1517,6 @@ angle::Result TextureGL::generateMipmap(const gl::Context *context)
 
     const LevelInfoGL &baseLevelInfo = getBaseLevelInfo();
 
-    stateManager->bindTexture(getType(), mTextureID);
     if (getType() == gl::TextureType::_2D &&
         ((baseLevelInternalFormat.colorEncoding == GL_SRGB &&
           features.decodeEncodeSRGBForGenerateMipmap.enabled) ||
@@ -1733,11 +1727,6 @@ angle::Result TextureGL::setEGLImageTarget(const gl::Context *context,
                  GetLevelInfo(features, originalInternalFormatInfo, imageNativeInternalFormat));
 
     return angle::Result::Continue;
-}
-
-GLint TextureGL::getNativeID() const
-{
-    return mTextureID;
 }
 
 angle::Result TextureGL::syncState(const gl::Context *context,

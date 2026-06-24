@@ -166,8 +166,6 @@ PAS_API bool pas_local_allocator_stop(pas_local_allocator* allocator,
                                       pas_lock_lock_mode page_lock_mode,
                                       pas_lock_hold_mode heap_lock_hold_mode);
 
-PAS_API pas_lock_hold_mode pas_local_allocator_heap_lock_hold_mode(pas_local_allocator* allocator);
-
 /* This is appropriate to call for allocators that are used under a lock and you're holding that
    lock. Allocators associated with TLCs use subtly different logic.
 

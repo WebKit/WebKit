@@ -60,7 +60,9 @@
 #endif
 
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+#if !defined(WebKit_libnetworkLibrary_SoftLinked)
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
+#endif
 SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __cdecl, (nw_context_t, nw_context_tracker_lookup_callback_t))
 #endif
 

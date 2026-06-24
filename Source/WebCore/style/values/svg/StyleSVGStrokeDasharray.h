@@ -24,23 +24,21 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
 
 // <dasharray-value> = [ <length-percentage [0,∞]> | <number [0,∞]>@(converted-to-px) ]
-struct SVGStrokeDasharrayValueLength : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
-    using Base::Base;
-};
 struct SVGStrokeDasharrayValue {
-    using Fixed = SVGStrokeDasharrayValueLength::Fixed;
-    using Percentage = SVGStrokeDasharrayValueLength::Percentage;
-    using Calc = SVGStrokeDasharrayValueLength::Calc;
+    using LengthPercentage = Style::LengthPercentage<CSS::Nonnegative>;
+    using Fixed = typename LengthPercentage::Fixed;
+    using Percentage = typename LengthPercentage::Percentage;
+    using Calc = typename LengthPercentage::Calc;
 
-    SVGStrokeDasharrayValueLength value;
+    LengthPercentage value;
 
-    SVGStrokeDasharrayValue(SVGStrokeDasharrayValueLength&& length) : value { WTF::move(length) } { }
+    SVGStrokeDasharrayValue(LengthPercentage&& value) : value { WTF::move(value) } { }
     SVGStrokeDasharrayValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : value { literal } { }
     SVGStrokeDasharrayValue(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal) : value { literal } { }
 
@@ -74,5 +72,4 @@ template<> struct Blending<SVGStrokeDasharray> {
 } // namespace WebCore
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SVGStrokeDasharrayValue)
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGStrokeDasharrayValueLength)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGStrokeDasharray)

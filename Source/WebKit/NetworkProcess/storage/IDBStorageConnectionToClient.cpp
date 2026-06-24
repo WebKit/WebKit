@@ -26,8 +26,11 @@
 #include "config.h"
 #include "IDBStorageConnectionToClient.h"
 
+#include "NetworkStorageManager.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebIDBResult.h"
+#include <WebCore/IDBGetAllResult.h>
+#include <WebCore/IDBGetResult.h>
 #include <WebCore/IDBRequestData.h>
 #include <WebCore/IDBResultData.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
@@ -37,10 +40,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBStorageConnectionToClient);
 
-IDBStorageConnectionToClient::IDBStorageConnectionToClient(IPC::Connection::UniqueID connection, WebCore::IDBConnectionIdentifier identifier)
+IDBStorageConnectionToClient::IDBStorageConnectionToClient(IPC::Connection::UniqueID connection, WebCore::IDBConnectionIdentifier identifier, NetworkStorageManager& networkStorageManager)
     : m_connection(connection)
     , m_identifier(identifier)
     , m_connectionToClient(WebCore::IDBServer::IDBConnectionToClient::create(*this))
+    , m_networkStorageManager(networkStorageManager)
 {
 }
 
@@ -119,14 +123,52 @@ void IDBStorageConnectionToClient::didPutOrAdd(const WebCore::IDBResultData& res
     IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidPutOrAdd(resultData), 0);
 }
 
+template<typename RegisterFn>
+static WebIDBResult prepareResultImpl(const WebCore::IDBResultData& resultData, RefPtr<NetworkStorageManager>&& networkStorageManager, NOESCAPE RegisterFn&& registerRecords)
+{
+    WebIDBResult result { resultData };
+    if (!networkStorageManager)
+        return result;
+    if (resultData.type() == WebCore::IDBResultType::Error || !resultData.clientOrigin())
+        return result;
+    auto& origin = *resultData.clientOrigin();
+    registerRecords(*networkStorageManager, origin);
+    result.setClientOrigin(WebCore::ClientOrigin { origin });
+    return result;
+}
+
+WebIDBResult IDBStorageConnectionToClient::prepareGetResult(const WebCore::IDBResultData& resultData)
+{
+    return prepareResultImpl(resultData, m_networkStorageManager.get(), [&](auto& networkStorageManager, auto& origin) {
+        networkStorageManager.registerFileSystemHandleRecordsForOrigin(origin, resultData.getResult().value().fileSystemHandleRecords());
+    });
+}
+
+WebIDBResult IDBStorageConnectionToClient::prepareGetAllResult(const WebCore::IDBResultData& resultData)
+{
+    return prepareResultImpl(resultData, m_networkStorageManager.get(), [&](auto& networkStorageManager, auto& origin) {
+        for (auto& value : resultData.getAllResult().values())
+            networkStorageManager.registerFileSystemHandleRecordsForOrigin(origin, value.fileSystemHandleRecords());
+    });
+}
+
+WebIDBResult IDBStorageConnectionToClient::prepareCursorResult(const WebCore::IDBResultData& resultData)
+{
+    return prepareResultImpl(resultData, m_networkStorageManager.get(), [&](auto& networkStorageManager, auto& origin) {
+        networkStorageManager.registerFileSystemHandleRecordsForOrigin(origin, resultData.getResult().value().fileSystemHandleRecords());
+        for (auto& cursorRecord : resultData.getResult().prefetchedRecords())
+            networkStorageManager.registerFileSystemHandleRecordsForOrigin(origin, cursorRecord.value.fileSystemHandleRecords());
+    });
+}
+
 void IDBStorageConnectionToClient::didGetRecord(const WebCore::IDBResultData& resultData)
 {
-    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetRecord(resultData), 0);
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetRecord(prepareGetResult(resultData)), 0);
 }
 
 void IDBStorageConnectionToClient::didGetAllRecords(const WebCore::IDBResultData& resultData)
 {
-    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetAllRecords(resultData), 0);
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetAllRecords(prepareGetAllResult(resultData)), 0);
 }
 
 void IDBStorageConnectionToClient::didGetCount(const WebCore::IDBResultData& resultData)
@@ -141,12 +183,12 @@ void IDBStorageConnectionToClient::didDeleteRecord(const WebCore::IDBResultData&
 
 void IDBStorageConnectionToClient::didOpenCursor(const WebCore::IDBResultData& resultData)
 {
-    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidOpenCursor(resultData), 0);
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidOpenCursor(prepareCursorResult(resultData)), 0);
 }
 
 void IDBStorageConnectionToClient::didIterateCursor(const WebCore::IDBResultData& resultData)
 {
-    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidIterateCursor(resultData), 0);
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidIterateCursor(prepareCursorResult(resultData)), 0);
 }
 
 void IDBStorageConnectionToClient::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, Vector<WebCore::IDBDatabaseNameAndVersion>&& databases)

@@ -213,7 +213,21 @@ static constexpr SSL_CIPHER kCiphers[] = {
         SSL_HANDSHAKE_MAC_DEFAULT,
     },
 
-    // Cipher C027
+    // HMAC based TLS v1.2 ciphersuites from RFC5289
+
+    // Cipher C023 (deprecated)
+    {
+        TLS1_TXT_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
+        SSL_CIPHER_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+        SSL_kECDHE,
+        SSL_aECDSA,
+        SSL_AES128,
+        SSL_SHA256,
+        SSL_HANDSHAKE_MAC_SHA256,
+    },
+
+    // Cipher C027 (deprecated)
     {
         TLS1_TXT_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
         "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
@@ -440,11 +454,6 @@ static const CIPHER_ALIAS kCipherAliases[] = {
     // Legacy strength classes.
     {"HIGH", ~0u, ~0u, ~0u, ~0u, 0},
     {"FIPS", ~0u, ~0u, ~0u, ~0u, 0},
-
-    // Temporary no-op aliases corresponding to removed SHA-2 legacy CBC
-    // ciphers. These should be removed after 2018-05-14.
-    {"SHA256", 0, 0, 0, 0, 0},
-    {"SHA384", 0, 0, 0, 0, 0},
 };
 
 static const size_t kCipherAliasesLen = std::size(kCipherAliases);
@@ -642,7 +651,9 @@ void SSLCipherPreferenceList::Remove(const SSL_CIPHER *cipher) {
 }
 
 bool ssl_cipher_is_deprecated(const SSL_CIPHER *cipher) {
-  return cipher->protocol_id == SSL_CIPHER_ECDHE_RSA_WITH_AES_128_CBC_SHA256 ||
+  return cipher->protocol_id ==
+             SSL_CIPHER_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 ||
+         cipher->protocol_id == SSL_CIPHER_ECDHE_RSA_WITH_AES_128_CBC_SHA256 ||
          cipher->algorithm_enc == SSL_3DES;
 }
 
@@ -1007,8 +1018,7 @@ bool ssl_create_cipher_list(UniquePtr<SSLCipherPreferenceList> *out_cipher_list,
   }
 
   // We prefer ECDHE ciphers over non-PFS ciphers. Then we prefer AEAD over
-  // non-AEAD. The constants are masked by 0xffff to remove the vestigial 0x03
-  // byte from SSL 2.0.
+  // non-AEAD.
   static const uint16_t kAESCiphers[] = {
       SSL_CIPHER_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
       SSL_CIPHER_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
@@ -1027,6 +1037,7 @@ bool ssl_create_cipher_list(UniquePtr<SSLCipherPreferenceList> *out_cipher_list,
       SSL_CIPHER_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
       SSL_CIPHER_ECDHE_RSA_WITH_AES_256_CBC_SHA,
       SSL_CIPHER_ECDHE_PSK_WITH_AES_256_CBC_SHA,
+      SSL_CIPHER_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
       SSL_CIPHER_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
       SSL_CIPHER_RSA_WITH_AES_128_GCM_SHA256,
       SSL_CIPHER_RSA_WITH_AES_256_GCM_SHA384,
@@ -1555,7 +1566,7 @@ const char *SSL_CIPHER_get_version(const SSL_CIPHER *cipher) {
   return "TLSv1/SSLv3";
 }
 
-STACK_OF(SSL_COMP) *SSL_COMP_get_compression_methods(void) { return nullptr; }
+STACK_OF(SSL_COMP) *SSL_COMP_get_compression_methods() { return nullptr; }
 
 int SSL_COMP_add_compression_method(int id, COMP_METHOD *cm) { return 1; }
 
@@ -1565,7 +1576,7 @@ const char *SSL_COMP_get0_name(const SSL_COMP *comp) { return comp->name; }
 
 int SSL_COMP_get_id(const SSL_COMP *comp) { return comp->id; }
 
-void SSL_COMP_free_compression_methods(void) {}
+void SSL_COMP_free_compression_methods() {}
 
 size_t SSL_get_all_cipher_names(const char **out, size_t max_out) {
   return GetAllNames(out, max_out, Span(&kUnknownCipher, 1), &SSL_CIPHER::name,

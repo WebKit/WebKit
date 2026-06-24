@@ -5,7 +5,7 @@ Modules/webauthn/cbor/CBORValue.cpp
 Modules/webtransport/WebTransportDatagramsWritable.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/CSSPropertyInitialValues.cpp
-css/DOMMatrixReadOnly.cpp
+[ iOS ] css/DOMMatrixReadOnly.cpp
 css/PropertySetCSSDescriptors.cpp
 css/StyleSheetList.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp

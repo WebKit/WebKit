@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+    <title>track element readiness state transitions</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard:
+//   §4.8.13.3 "The track element" — readyState IDL attribute
+//     https://html.spec.whatwg.org/multipage/media.html#the-track-element
+//   §4.8.13.7 "Text tracks" — text track readiness state
+//     https://html.spec.whatwg.org/multipage/media.html#text-track-readiness-state
+//
+// HTMLTrackElement.readyState constants:
+//   NONE    = 0   (not loaded)
+//   LOADING = 1
+//   LOADED  = 2
+//   ERROR   = 3   (failed to load)
+//
+// The element starts at NONE; the track processing model is triggered when
+// the track's mode is hidden/showing and the track is in a media element.
+// Valid transitions: NONE -> LOADING -> LOADED, or NONE -> LOADING -> ERROR.
+
+test(() => {
+    const track = document.createElement("track");
+    assert_equals(track.NONE, 0);
+    assert_equals(track.LOADING, 1);
+    assert_equals(track.LOADED, 2);
+    assert_equals(track.ERROR, 3);
+    assert_equals(track.readyState, track.NONE, "newly-created track has readyState NONE");
+}, "readyState: constants exposed and initial value is NONE");
+
+async_test(t => {
+    // NONE -> LOADING -> LOADED happy path.
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    // data: URL avoids any network dependency / flakiness.
+    track.src = "data:text/vtt;charset=utf-8,"
+        + encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nhello\n");
+
+    let sawLoading = false;
+    // Poll readyState a few times between mode-set and load to catch LOADING.
+    // The transition through LOADING is synchronous from the script's POV
+    // once the processing model starts in parallel, so polling on a timer
+    // is the most portable way to observe it.
+    const probe = () => {
+        if (track.readyState === track.LOADING)
+            sawLoading = true;
+    };
+
+    track.onload = t.step_func_done(() => {
+        assert_equals(track.readyState, track.LOADED, "readyState is LOADED on load event");
+        assert_true(sawLoading, "saw readyState=LOADING at some point before LOADED");
+    });
+    track.onerror = t.unreached_func("unexpected error event");
+
+    video.appendChild(track);
+    track.track.mode = "showing";
+    probe();
+    t.step_timeout(probe, 0);
+    t.step_timeout(probe, 5);
+    t.step_timeout(probe, 20);
+}, "readyState: transitions NONE -> LOADING -> LOADED for a valid VTT resource");
+
+async_test(t => {
+    // NONE -> LOADING -> ERROR (failed to load) arc.
+    // An unsupported URL scheme reliably triggers the failed-to-load path.
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.src = "javascript:'network error'";
+
+    track.onload = t.unreached_func("unexpected load event");
+    track.onerror = t.step_func_done(() => {
+        assert_equals(track.readyState, track.ERROR, "readyState is ERROR on error event");
+    });
+
+    video.appendChild(track);
+    track.track.mode = "showing";
+    // Spec doesn't guarantee an observable LOADING here (the error may be
+    // detected synchronously during scheme processing), so we don't assert it.
+}, "readyState: transitions to ERROR for an unfetchable src");
+
+async_test(t => {
+    // Verify the loaded state is sticky: once we reach LOADED, it stays
+    // LOADED across subsequent mode changes (without changing src).
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.src = "data:text/vtt;charset=utf-8,"
+        + encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nhi\n");
+
+    track.onload = t.step_func_done(() => {
+        assert_equals(track.readyState, track.LOADED);
+        // Flipping back to disabled should not regress the readiness state.
+        track.track.mode = "disabled";
+        assert_equals(track.readyState, track.LOADED, "mode=disabled preserves LOADED");
+        track.track.mode = "showing";
+        assert_equals(track.readyState, track.LOADED, "mode=showing preserves LOADED");
+    });
+    track.onerror = t.unreached_func("unexpected error event");
+
+    video.appendChild(track);
+    track.track.mode = "showing";
+}, "readyState: LOADED is preserved across mode toggles after load");
+</script>
+</body>
+</html>

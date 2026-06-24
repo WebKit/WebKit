@@ -104,6 +104,7 @@ public:
     bool usesSampleMaskInInput(const String&) const;
     bool usesSampleMaskInOutput(const String&) const;
     bool usesFragDepth(const String&) const;
+    bool usesPrimitiveIndexInInput(const String&) const;
     uint32_t clipDistancesCount(const String&) const;
 
 private:
@@ -123,8 +124,6 @@ private:
     ShaderModule::FragmentOutputs parseFragmentReturnType(const WGSL::Type&, const WGSL::CallGraph::EntryPoint&);
 
     const Ref<Device> m_device;
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250441 - this needs to be populated from the compiler
-    HashMap<String, String> m_constantIdentifiersToNames;
     HashMap<String, FragmentOutputs> m_fragmentReturnTypeForEntryPoint;
     HashMap<String, FragmentInputs> m_fragmentInputsForEntryPoint;
     HashMap<String, VertexOutputs> m_vertexReturnTypeForEntryPoint;
@@ -140,6 +139,7 @@ private:
         bool usesSampleMaskInInput { false };
         bool usesSampleMaskInOutput { false };
         bool usesFragDepth { false };
+        bool usesPrimitiveIndexInInput { false };
         uint32_t clipDistancesCount { 0 }; // Number of clip distances (0 if not used)
     };
     const ShaderModuleState* shaderModuleState(const String&) const;

@@ -7,83 +7,11 @@
 # and loading the cross-compilation settings from CMAKE_TOOLCHAIN_FILE.
 
 cmake_minimum_required(VERSION 3.20)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Source/cmake")
 
-if (PORT STREQUAL "IOS")
-    set(CMAKE_SYSTEM_NAME iOS)
-    if (CMAKE_IOS_SIMULATOR)
-        set(_sdk_name "iphonesimulator.internal")
-        set(_sdk_name_fallback "iphonesimulator")
-    else ()
-        set(_sdk_name "iphoneos.internal")
-        set(_sdk_name_fallback "iphoneos")
-    endif ()
-    execute_process(COMMAND xcrun --sdk ${_sdk_name} --show-sdk-path
-        OUTPUT_VARIABLE _ios_sysroot
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        RESULT_VARIABLE _internal_sdk_result
-        ERROR_QUIET)
-    if (NOT _internal_sdk_result EQUAL 0 OR NOT _ios_sysroot)
-        set(_ios_sysroot "")
-        if (CMAKE_OSX_SYSROOT AND EXISTS "${CMAKE_OSX_SYSROOT}")
-            set(_ios_sysroot "${CMAKE_OSX_SYSROOT}")
-        elseif (DEFINED ENV{SDKROOT} AND EXISTS "$ENV{SDKROOT}" AND "$ENV{SDKROOT}" MATCHES "iPhone")
-            set(_ios_sysroot "$ENV{SDKROOT}")
-        else ()
-            execute_process(COMMAND xcrun --sdk ${_sdk_name_fallback} --show-sdk-path
-                OUTPUT_VARIABLE _ios_sysroot
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                ERROR_QUIET)
-        endif ()
-    endif ()
-    if (_ios_sysroot)
-        set(CMAKE_OSX_SYSROOT "${_ios_sysroot}" CACHE PATH "iOS SDK path" FORCE)
-    endif ()
-    unset(_sdk_name)
-    unset(_sdk_name_fallback)
-    unset(_internal_sdk_result)
-    unset(_ios_sysroot)
-
-    if (NOT CMAKE_OSX_ARCHITECTURES)
-        if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$" AND NOT CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-            execute_process(COMMAND uname -m
-                OUTPUT_VARIABLE _host_arch
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-            if (_host_arch STREQUAL "arm64")
-                set(CMAKE_OSX_ARCHITECTURES "arm64e" CACHE STRING "Target architecture" FORCE)
-                message(STATUS "iOS: arm64e enabled (internal device SDK detected)")
-            endif ()
-        else ()
-            set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "Target architecture" FORCE)
-        endif ()
-    endif ()
-
-    if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "18.0" CACHE STRING "Minimum iOS version" FORCE)
-    endif ()
-
-    if (NOT CMAKE_SYSTEM_PROCESSOR)
-        set(CMAKE_SYSTEM_PROCESSOR "aarch64" CACHE STRING "Target processor" FORCE)
-    endif ()
-endif ()
-
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS" AND NOT CMAKE_OSX_SYSROOT)
-    # Set CMAKE_OSX_SYSROOT before the project() call below. project() runs ABI
-    # detection tests whose results are cached; having the wrong sysroot there
-    # would cause those cached results to refer to a different SDK than actual
-    # builds use. OptionsMac.cmake (which sets this via WEBKIT_XCRUN) is loaded
-    # only after project() via include(WebKitCommon), so it is too late.
-    # WEBKIT_XCRUN is also unavailable here because WebKitXcrun.cmake is
-    # included by OptionsMac.cmake.
-    execute_process(COMMAND xcrun --sdk macosx --show-sdk-path
-        OUTPUT_VARIABLE _macos_sysroot
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        RESULT_VARIABLE _xcrun_result
-        ERROR_QUIET)
-    if (_xcrun_result EQUAL 0 AND _macos_sysroot)
-        set(CMAKE_OSX_SYSROOT "${_macos_sysroot}" CACHE PATH "macOS SDK path" FORCE)
-    endif ()
-    unset(_macos_sysroot)
-    unset(_xcrun_result)
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+    # Resolve the SDK and pin tools before the call to project().
+    include(WebKitXcodeSDK)
 endif ()
 
 project(WebKit LANGUAGES C CXX)
@@ -91,7 +19,6 @@ project(WebKit LANGUAGES C CXX)
 # -----------------------------------------------------------------------------
 # Common configuration
 #------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Source/cmake")
 include(WebKitCommon)
 
 # -----------------------------------------------------------------------------
@@ -100,7 +27,9 @@ include(WebKitCommon)
 # "project()" line
 #------------------------------------------------------------------------------
 if (SWIFT_REQUIRED)
-    cmake_policy(SET CMP0157 NEW)
+    if (POLICY CMP0157)
+        cmake_policy(SET CMP0157 NEW)
+    endif ()
 
     # CMake omits -target for swiftc during iOS cross-compilation.
     if (PORT STREQUAL "IOS")
@@ -111,23 +40,6 @@ if (SWIFT_REQUIRED)
         endif ()
     endif ()
 
-    if (PORT STREQUAL "IOS")
-        execute_process(COMMAND xcrun --show-sdk-platform-path
-            OUTPUT_VARIABLE _ios_platform_path
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            ERROR_QUIET)
-        if (_ios_platform_path)
-            execute_process(COMMAND find "${_ios_platform_path}" -name swiftc -path "*/xctoolchain/*" -type f -print -quit
-                OUTPUT_VARIABLE _ios_swiftc
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                ERROR_QUIET)
-            if (_ios_swiftc AND NOT _ios_swiftc STREQUAL CMAKE_Swift_COMPILER)
-                set(CMAKE_Swift_COMPILER "${_ios_swiftc}" CACHE FILEPATH "Swift compiler" FORCE)
-                message(STATUS "iOS: using platform-specific Swift compiler: ${_ios_swiftc}")
-            endif ()
-        endif ()
-    endif ()
-
     enable_language(Swift)
 
     # -F causes Swift to find C++23 framework headers in implicit module builds.
@@ -135,17 +47,12 @@ if (SWIFT_REQUIRED)
         set(CMAKE_Swift_FRAMEWORK_SEARCH_FLAG "-Xcc -iquote")
     endif ()
 
-    # Override Swift compiler to a wrapper script to work around the
-    # fact CMake feeds incorrect flags to swiftc.
-    set(_swift_wrapper "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/swiftc-wrapper.sh")
-    if (CMAKE_Swift_COMPILER STREQUAL _swift_wrapper)
-        if (NOT ORIGINAL_Swift_COMPILER)
-            find_program(ORIGINAL_Swift_COMPILER NAMES swiftc REQUIRED)
-        endif ()
+    if (APPLE)
+        WEBKIT_XCRUN(ORIGINAL_Swift_COMPILER --find swiftc)
     else ()
-        set(ORIGINAL_Swift_COMPILER "${CMAKE_Swift_COMPILER}" CACHE FILEPATH "Original Swift compiler" FORCE)
+        set(ORIGINAL_Swift_COMPILER "${CMAKE_Swift_COMPILER}")
     endif ()
-    set(CMAKE_Swift_COMPILER "${_swift_wrapper}")
+    set(CMAKE_Swift_COMPILER "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/swiftc-wrapper.sh")
     add_compile_options($<$<COMPILE_LANGUAGE:Swift>:--original-swift-compiler=${ORIGINAL_Swift_COMPILER}>)
     add_link_options($<$<LINK_LANGUAGE:Swift>:--original-swift-compiler=${ORIGINAL_Swift_COMPILER}>)
     # The static archive rule (<CMAKE_Swift_CREATE_STATIC_LIBRARY>) uses neither
@@ -153,7 +60,6 @@ if (SWIFT_REQUIRED)
     string(REPLACE "<CMAKE_Swift_COMPILER>"
         "<CMAKE_Swift_COMPILER> --original-swift-compiler=${ORIGINAL_Swift_COMPILER}"
         CMAKE_Swift_CREATE_STATIC_LIBRARY "${CMAKE_Swift_CREATE_STATIC_LIBRARY}")
-    unset(_swift_wrapper)
 endif ()
 
 # -----------------------------------------------------------------------------

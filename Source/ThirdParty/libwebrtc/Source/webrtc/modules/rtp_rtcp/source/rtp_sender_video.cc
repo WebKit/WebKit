@@ -15,13 +15,13 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <variant>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/memory/memory.h"
-#include "api/array_view.h"
 #include "api/crypto/frame_encryptor_interface.h"
 #include "api/field_trials_view.h"
 #include "api/make_ref_counted.h"
@@ -522,7 +522,7 @@ bool RTPSenderVideo::SendVideo(int payload_type,
                                VideoCodecType codec_type,
                                uint32_t rtp_timestamp,
                                Timestamp capture_time,
-                               ArrayView<const uint8_t> payload,
+                               std::span<const uint8_t> payload,
                                size_t encoder_output_size,
                                RTPVideoHeader video_header,
                                TimeDelta expected_retransmission_time,

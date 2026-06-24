@@ -266,6 +266,8 @@ void JSTestOverloadedConstructorsWithSequence::analyzeHeap(JSCell* cell, HeapAna
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestOverloadedConstructorsWithSequenceOwner::JSTestOverloadedConstructorsWithSequenceOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestOverloadedConstructorsWithSequenceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -278,7 +280,7 @@ void JSTestOverloadedConstructorsWithSequenceOwner::finalize(JSC::Handle<JSC::Un
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestOverloadedConstructorsWithSequence = static_cast<JSTestOverloadedConstructorsWithSequence*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestOverloadedConstructorsWithSequence->wrapped()).ptr(), jsTestOverloadedConstructorsWithSequence);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestOverloadedConstructorsWithSequence->wrapped(), jsTestOverloadedConstructorsWithSequence);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

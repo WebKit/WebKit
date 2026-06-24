@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,6 +115,7 @@ public:
     bool isVisible() const { return isOutOfLine() ? asOutOfLine().resolvedAlpha() > 0.0 : asInline().resolved().alpha > 0; }
     uint8_t alphaByte() const { return isOutOfLine() ? convertFloatAlphaTo<uint8_t>(asOutOfLine().resolvedAlpha()) : asInline().resolved().alpha; }
     float alphaAsFloat() const { return isOutOfLine() ? asOutOfLine().resolvedAlpha() : convertByteAlphaTo<float>(asInline().resolved().alpha); }
+    float unresolvedAlphaAsFloat() const { return isOutOfLine() ? asOutOfLine().unresolvedAlpha() : convertByteAlphaTo<float>(asInline().resolved().alpha); }
 
     WEBCORE_EXPORT double luminance() const;
     WEBCORE_EXPORT double lightness() const; // FIXME: Replace remaining uses with luminance.
@@ -139,10 +141,13 @@ public:
     WEBCORE_EXPORT Color darkened() const;
 
     Color invertedColorWithAlpha(std::optional<float> alpha) const;
-    Color invertedColorWithAlpha(float alpha) const;
+    WEBCORE_EXPORT Color invertedColorWithAlpha(float alpha) const;
 
     Color colorWithAlphaMultipliedBy(std::optional<float>) const;
     Color colorWithAlphaMultipliedBy(float) const;
+
+    Color colorWithUnresolvedAlphaMultipliedBy(std::optional<float>) const;
+    Color colorWithUnresolvedAlphaMultipliedBy(float) const;
 
     Color colorWithAlpha(std::optional<float>) const;
     WEBCORE_EXPORT Color colorWithAlpha(float) const;
@@ -243,7 +248,9 @@ private:
         HashTableDeletedValue           = 1 << 5,
     };
     static OptionSet<FlagsIncludingPrivate> toFlagsIncludingPrivate(OptionSet<Flags> flags) { return OptionSet<FlagsIncludingPrivate>::fromRaw(flags.toRaw()); }
+    static OptionSet<Flags> toFlagsExcludingPrivate(OptionSet<FlagsIncludingPrivate> flags) { return OptionSet<Flags>::fromRaw(flags.toRaw() & 0b11); }
 
+    OptionSet<Flags> flagsExcludingPrivate() const;
     OptionSet<FlagsIncludingPrivate> flags() const;
     bool isOutOfLine() const;
     bool isInline() const;
@@ -425,36 +432,11 @@ inline Color& Color::operator=(Color&& other)
     return *this;
 }
 
-inline bool Color::isHashTableDeletedValue() const
-{
-    return flags().contains(FlagsIncludingPrivate::HashTableDeletedValue);
-}
-
-inline bool Color::isHashTableEmptyValue() const
-{
-    return flags().contains(FlagsIncludingPrivate::HashTableEmptyValue);
-}
-
 inline Color::~Color()
 {
     if (isOutOfLine())
         asOutOfLine().deref();
     secureZeroBytes(m_colorAndFlags);
-}
-
-inline bool Color::isValid() const
-{
-    return flags().contains(FlagsIncludingPrivate::Valid);
-}
-
-inline bool Color::isSemantic() const
-{
-    return flags().contains(FlagsIncludingPrivate::Semantic);
-}
-
-inline bool Color::usesColorFunctionSerialization() const
-{
-    return flags().contains(FlagsIncludingPrivate::UseColorFunctionSerialization);
 }
 
 inline ColorSpace Color::colorSpace() const
@@ -498,6 +480,18 @@ inline Color Color::colorWithAlphaMultipliedBy(std::optional<float> alpha) const
     return alpha ? colorWithAlphaMultipliedBy(alpha.value()) : *this;
 }
 
+inline Color Color::colorWithUnresolvedAlphaMultipliedBy(float amount) const
+{
+    if (auto existingAlpha = unresolvedAlphaAsFloat(); !std::isnan(existingAlpha))
+        return colorWithAlpha(amount * existingAlpha);
+    return *this;
+}
+
+inline Color Color::colorWithUnresolvedAlphaMultipliedBy(std::optional<float> alpha) const
+{
+    return alpha ? colorWithUnresolvedAlphaMultipliedBy(alpha.value()) : *this;
+}
+
 inline Color Color::colorWithAlpha(std::optional<float> alpha) const
 {
     return alpha ? colorWithAlpha(alpha.value()) : *this;
@@ -508,6 +502,26 @@ inline OptionSet<Color::FlagsIncludingPrivate> Color::flags() const
     return decodedFlags(m_colorAndFlags);
 }
 
+inline OptionSet<Color::Flags> Color::flagsExcludingPrivate() const
+{
+    return toFlagsExcludingPrivate(flags());
+}
+
+inline bool Color::isValid() const
+{
+    return flags().contains(FlagsIncludingPrivate::Valid);
+}
+
+inline bool Color::isSemantic() const
+{
+    return flags().contains(FlagsIncludingPrivate::Semantic);
+}
+
+inline bool Color::usesColorFunctionSerialization() const
+{
+    return flags().contains(FlagsIncludingPrivate::UseColorFunctionSerialization);
+}
+
 inline bool Color::isOutOfLine() const
 {
     return flags().contains(FlagsIncludingPrivate::OutOfLine);
@@ -516,6 +530,16 @@ inline bool Color::isOutOfLine() const
 inline bool Color::isInline() const
 {
     return !flags().contains(FlagsIncludingPrivate::OutOfLine);
+}
+
+inline bool Color::isHashTableDeletedValue() const
+{
+    return flags().contains(FlagsIncludingPrivate::HashTableDeletedValue);
+}
+
+inline bool Color::isHashTableEmptyValue() const
+{
+    return flags().contains(FlagsIncludingPrivate::HashTableEmptyValue);
 }
 
 inline Color::OutOfLineComponents& Color::asOutOfLine() const

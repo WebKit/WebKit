@@ -12,15 +12,15 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 
 #include "absl/memory/memory.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 
 RtcEventRtcpPacketIncoming::RtcEventRtcpPacketIncoming(
-    ArrayView<const uint8_t> packet)
+    std::span<const uint8_t> packet)
     : packet_(packet.data(), packet.size()) {}
 
 RtcEventRtcpPacketIncoming::RtcEventRtcpPacketIncoming(

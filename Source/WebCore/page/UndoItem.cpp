@@ -48,7 +48,7 @@ void UndoItem::setUndoManager(UndoManager* undoManager)
 void UndoItem::invalidate()
 {
     if (m_undoManager)
-        m_undoManager->removeItem(*this);
+        protect(m_undoManager)->removeItem(*this);
     m_undoManager.clear();
     m_document.clear();
 }

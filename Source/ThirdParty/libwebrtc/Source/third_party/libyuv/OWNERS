@@ -1,7 +1,7 @@
 mbonadei@chromium.org
 fbarchard@chromium.org
-magjed@chromium.org
 wtc@google.com
+magjed@chromium.org
 jansson@google.com
 
 per-file *.gn=mbonadei@chromium.org,jansson@google.com

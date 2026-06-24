@@ -1,2 +1,5 @@
 PASS dropTarget.value is "C:\\fakepath\\abe.png"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

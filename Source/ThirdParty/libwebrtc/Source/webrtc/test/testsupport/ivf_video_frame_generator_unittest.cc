@@ -37,7 +37,6 @@
 #include "modules/video_coding/utility/ivf_file_writer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/system/file_wrapper.h"
 #include "rtc_base/thread_annotations.h"
 #include "test/create_test_environment.h"
 #include "test/gtest.h"
@@ -72,8 +71,7 @@ class IvfFileWriterEncodedCallback : public EncodedImageCallback {
   IvfFileWriterEncodedCallback(const std::string& file_name,
                                VideoCodecType video_codec_type,
                                int expected_frames_count)
-      : file_writer_(
-            IvfFileWriter::Wrap(FileWrapper::OpenWriteOnly(file_name), 0)),
+      : file_writer_(IvfFileWriter::Wrap(file_name, 0)),
         video_codec_type_(video_codec_type),
         expected_frames_count_(expected_frames_count) {
     EXPECT_TRUE(file_writer_.get());
@@ -94,6 +92,10 @@ class IvfFileWriterEncodedCallback : public EncodedImageCallback {
     }
     return Result(Result::Error::OK);
   }
+
+  void OnFrameDropped(uint32_t /*rtp_timestamp*/,
+                      int /*spatial_id*/,
+                      bool /*is_end_of_temporal_unit*/) override {}
 
   bool WaitForExpectedFramesReceived(TimeDelta timeout) {
     return expected_frames_count_received_.Wait(timeout);

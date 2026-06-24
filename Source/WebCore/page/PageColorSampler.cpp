@@ -52,9 +52,9 @@
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 #include "StyleableInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "WebAnimation.h"
 #include <ranges>
 #include <wtf/HashCountedSet.h>
@@ -113,9 +113,13 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
     return true;
 }
 
-static RefPtr<PixelBuffer> takeRowSnapshot(Document& document, IntPoint&& topRight)
+static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& location)
 {
     // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
+
+    if (!isValidSampleLocation(document, location))
+        return std::nullopt;
+
     // FIXME: <https://webkit.org/b/225942> (Sampled Page Top Color: support sampling non-RGB values like P3)
 
     static constexpr OptionSet snapshotFlags {
@@ -125,31 +129,21 @@ static RefPtr<PixelBuffer> takeRowSnapshot(Document& document, IntPoint&& topRig
     };
 
     auto colorSpace = DestinationColorSpace::SRGB();
-    auto rect = IntRect { { 0, topRight.y() }, { topRight.x() + 1, 1 } };
 
     ASSERT(document.view());
-    auto snapshot = snapshotFrameRect(protect(document.view()->frame()), rect, { snapshotFlags, PixelFormat::BGRA8, colorSpace });
+    auto snapshot = snapshotFrameRect(protect(document.view()->frame()), IntRect(location, IntSize(1, 1)), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
     if (!snapshot)
-        return nullptr;
+        return std::nullopt;
 
     auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->truncatedLogicalSize() });
     if (!pixelBuffer)
-        return nullptr;
-
-    if (pixelBuffer->bytes().size() < rect.area() * 4)
-        return nullptr;
-
-    return pixelBuffer;
-}
-
-static std::optional<Lab<float>> sampleColor(Document& document, const PixelBuffer& rowPixelBuffer, const IntPoint& location)
-{
-    if (!isValidSampleLocation(document, location))
         return std::nullopt;
 
-    auto pixels = rowPixelBuffer.bytes();
-    auto pixel = pixels.subspan(location.x() * 4, 4);
-    return convertColor<Lab<float>>(SRGBA<uint8_t> { pixel[2], pixel[1], pixel[0], pixel[3] });
+    if (pixelBuffer->bytes().size() < 4)
+        return std::nullopt;
+
+    auto snapshotData = pixelBuffer->bytes();
+    return convertColor<Lab<float>>(SRGBA<uint8_t> { snapshotData[2], snapshotData[1], snapshotData[0], snapshotData[3] });
 }
 
 static double colorDifference(const Lab<float>& lhs, const Lab<float>& rhs)
@@ -204,7 +198,8 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
     if (!frameView->isVisuallyNonEmpty() || !frameView->hasContentfulDescendants() || !ContentfulPaintChecker::qualifiesForContentfulPaint(*frameView))
         return std::nullopt;
 
-    auto frameWidth = frameView->contentsWidth();
+    // Decrease the width by one pixel so that the last sample is within bounds and not off-by-one.
+    auto frameWidth = frameView->contentsWidth() - 1;
 
     static constexpr auto numSamples = 5;
     size_t nonMatchingColorIndex = numSamples;
@@ -221,13 +216,8 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
         return false;
     };
 
-    RefPtr topPagePixelBuffer = takeRowSnapshot(*mainDocument, IntPoint(frameWidth - 1, 0));
-    if (!topPagePixelBuffer)
-        return Color();
-
     for (size_t i = 0; i < numSamples; ++i) {
-        auto column = (i == numSamples - 1) ? frameWidth - 1 : frameWidth * i / (numSamples - 1);
-        auto sample = sampleColor(*mainDocument, *topPagePixelBuffer, IntPoint(column, 0));
+        auto sample = sampleColor(*mainDocument, IntPoint(frameWidth * i / (numSamples - 1), 0));
         if (!sample) {
             if (shouldStopAfterFindingNonMatchingColor(i))
                 return Color();
@@ -272,21 +262,17 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
     }
 
     // Decrease the height by one pixel so that the last sample is within bounds and not off-by-one.
-    int minY = static_cast<int>(page.settings().sampledPageTopColorMinHeight() - 1);
-    if (minY > 0) {
-        RefPtr minYPixelBuffer = takeRowSnapshot(*mainDocument, IntPoint(frameWidth - 1, minY));
-        if (!minYPixelBuffer)
-            return Color();
-
+    auto minHeight = page.settings().sampledPageTopColorMinHeight() - 1;
+    if (minHeight > 0) {
         if (nonMatchingColorIndex) {
-            if (auto leftMiddleSample = sampleColor(*mainDocument, *minYPixelBuffer, IntPoint(0, minY))) {
+            if (auto leftMiddleSample = sampleColor(*mainDocument, IntPoint(0, minHeight))) {
                 if (colorDifference(*leftMiddleSample, samples[0]) > maxDifference)
                     return Color();
             }
         }
 
         if (nonMatchingColorIndex != numSamples - 1) {
-            if (auto rightMiddleSample = sampleColor(*mainDocument, *minYPixelBuffer, IntPoint(frameWidth - 1, minY))) {
+            if (auto rightMiddleSample = sampleColor(*mainDocument, IntPoint(frameWidth, minHeight))) {
                 if (colorDifference(*rightMiddleSample, samples[numSamples - 1]) > maxDifference)
                     return Color();
             }

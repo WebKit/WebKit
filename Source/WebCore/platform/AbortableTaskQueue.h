@@ -148,7 +148,7 @@ public:
         if (m_aborting)
             return std::nullopt;
 
-        std::optional<R> response = std::nullopt;
+        std::optional<R> response;
         postTask([this, &response, &mainThreadTaskHandler]() {
             R responseValue = mainThreadTaskHandler();
             Locker locker { m_lock };

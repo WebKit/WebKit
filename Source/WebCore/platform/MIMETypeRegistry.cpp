@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -492,18 +492,11 @@ std::unique_ptr<MIMETypeRegistryThreadGlobalData> MIMETypeRegistry::createMIMETy
         "image/png"_s,
         "image/jpeg"_s,
         "image/gif"_s,
-#elif PLATFORM(GTK)
-        "image/png"_s,
-        "image/jpeg"_s,
-        "image/tiff"_s,
-        "image/bmp"_s,
-        "image/ico"_s,
 #elif USE(CAIRO)
         "image/png"_s,
 #elif USE(SKIA)
         "image/png"_s,
         "image/jpeg"_s,
-        "image/jpg"_s,
         "image/webp"_s,
 #endif
     };
@@ -758,6 +751,32 @@ static String NODELETE normalizedImageMIMEType(const String& mimeType)
 #endif
 }
 
+static String canonicalMIMEType(const String& mimeType)
+{
+    static constexpr SortedArrayMap aliasMap { WTF::toArray<std::pair<ComparableLettersLiteral, ASCIILiteral>>({
+        { "application/x-gzip"_s, "application/gzip"_s },
+        { "application/x-zip-compressed"_s, "application/zip"_s },
+    }) };
+    auto canonical = aliasMap.tryGet(mimeType);
+    return canonical ? *canonical : mimeType;
+}
+
+static bool isArchiveMIMEType(const String& canonicalizedMIMEType)
+{
+    static constexpr SortedArraySet archiveMIMETypes { WTF::toArray<ComparableLettersLiteral>({
+        "application/gzip"_s,
+        "application/java-archive"_s,
+        "application/vnd.rar"_s,
+        "application/x-7z-compressed"_s,
+        "application/x-bzip2"_s,
+        "application/x-compressed-tar"_s,
+        "application/x-tar"_s,
+        "application/x-xz"_s,
+        "application/zip"_s,
+    }) };
+    return archiveMIMETypes.contains(canonicalizedMIMEType);
+}
+
 String MIMETypeRegistry::appendFileExtensionIfNecessary(const String& filename, const String& mimeType)
 {
     if (filename.isEmpty() || filename.contains('.') || equalIgnoringASCIICase(mimeType, defaultMIMEType()))
@@ -785,8 +804,13 @@ String MIMETypeRegistry::correctExtensionForMIMEType(const String& suggestedFile
         return makeString(suggestedFilename, '.', preferredExtension);
 
     auto currentExtension = suggestedFilename.substring(dotPosition + 1);
-    if (!equalIgnoringASCIICase(mimeTypeForExtension(currentExtension), mimeType))
+    auto extensionMIMEType = canonicalMIMEType(mimeTypeForExtension(currentExtension));
+    auto responseMIMEType = canonicalMIMEType(mimeType);
+    if (!equalIgnoringASCIICase(extensionMIMEType, responseMIMEType)) {
+        if (isArchiveMIMEType(extensionMIMEType) && isArchiveMIMEType(responseMIMEType))
+            return suggestedFilename;
         return makeString(suggestedFilename.left(dotPosition), '.', preferredExtension);
+    }
 
     // Only strip the middle extension if it belongs to a different major MIME type to preserve compound extensions (e.g. ".tar.gz").
     auto basePart = suggestedFilename.left(dotPosition);

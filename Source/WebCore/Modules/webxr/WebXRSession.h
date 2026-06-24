@@ -141,6 +141,13 @@ public:
 
     void initializeTrackingAndRendering(std::optional<XRCanvasConfiguration>&&);
 
+    struct InitialRenderingDimensions {
+        uint32_t width { 0 };
+        uint32_t height { 0 };
+        uint32_t arrayLength { 0 };
+    };
+    std::optional<InitialRenderingDimensions> initialRenderingDimensions() const { return m_initialRenderingDimensions; }
+
 private:
     WebXRSession(Document&, XRSessionMode, PlatformXR::Device&, FeatureList&&);
 
@@ -156,6 +163,7 @@ private:
     void sessionDidInitializeInputSources(Vector<PlatformXR::FrameData::InputSource>&&) final;
     void sessionDidEnd() final;
     void updateSessionVisibilityState(PlatformXR::VisibilityState) final;
+    void sessionDidInitializeRendering(uint32_t width, uint32_t height, uint32_t arrayLength) final;
 
     // VisibilityChangeClient
     void visibilityStateChanged() final;
@@ -199,6 +207,7 @@ private:
     Vector<PlatformXR::Device::ViewData> m_views;
     PlatformXR::FrameData m_frameData;
     std::optional<PlatformXR::RequestData> m_requestData;
+    std::optional<InitialRenderingDimensions> m_initialRenderingDimensions;
 
     double m_minimumInlineFOV { 0.0 };
     double m_maximumInlineFOV { std::numbers::pi };

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
 
@@ -35,13 +35,9 @@ struct BorderImageWidth;
 
 namespace Style {
 
-struct BorderImageWidthValueLength : LengthWrapperBase<LengthPercentage<CSS::Nonnegative, float>> {
-    using Base::Base;
-};
-
 // <border-image-width-value> = <length-percentage [0,∞]> | <number [0,∞]> | auto
 struct BorderImageWidthValue {
-    using LengthPercentage = BorderImageWidthValueLength;
+    using LengthPercentage = Style::LengthPercentage<CSS::Nonnegative>;
     using Number = Style::Number<CSS::Nonnegative, float>;
 
     BorderImageWidthValue(CSS::Keyword::Auto keyword)
@@ -172,11 +168,11 @@ DEFINE_TYPE_WRAPPER_GET(BorderImageWidth, values);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderImageWidth> { auto operator()(const BorderImageWidth&, const RenderStyle&) -> CSS::BorderImageWidth; };
+template<> struct ToCSS<BorderImageWidth> { auto operator()(const BorderImageWidth&, const Style::ComputedStyle&) -> CSS::BorderImageWidth; };
 template<> struct ToStyle<CSS::BorderImageWidth> { auto operator()(const CSS::BorderImageWidth&, const BuilderState&) -> BorderImageWidth; };
 
 template<> struct CSSValueConversion<BorderImageWidth> { auto operator()(BuilderState&, const CSSValue&) -> BorderImageWidth; };
-template<> struct CSSValueCreation<BorderImageWidth> { auto operator()(CSSValuePool&, const RenderStyle&, const BorderImageWidth&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<BorderImageWidth> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const BorderImageWidth&) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 
@@ -196,5 +192,4 @@ template<> struct Blending<BorderImageWidth> {
 } // namespace WebCore
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::BorderImageWidth)
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::BorderImageWidthValueLength)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::BorderImageWidthValue)

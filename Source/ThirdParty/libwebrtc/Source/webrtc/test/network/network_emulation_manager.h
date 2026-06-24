@@ -18,11 +18,11 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/base/nullability.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/test/network_emulation/cross_traffic.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
@@ -86,11 +86,11 @@ class NetworkEmulationManagerImpl : public NetworkEmulationManager {
       const std::vector<EmulatedEndpoint*>& endpoints) override;
 
   void GetStats(
-      ArrayView<EmulatedEndpoint* const> endpoints,
+      std::span<EmulatedEndpoint* const> endpoints,
       std::function<void(EmulatedNetworkStats)> stats_callback) override;
 
   void GetStats(
-      ArrayView<EmulatedNetworkNode* const> nodes,
+      std::span<EmulatedNetworkNode* const> nodes,
       std::function<void(EmulatedNetworkNodeStats)> stats_callback) override;
 
   TimeController* time_controller() override { return time_controller_.get(); }

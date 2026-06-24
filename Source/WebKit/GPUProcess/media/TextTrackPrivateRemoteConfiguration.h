@@ -50,6 +50,7 @@ struct TextTrackPrivateRemoteConfiguration {
     bool isMainProgramContent { true };
     bool isEasyToRead { false };
     bool isDefault { false };
+    bool isMachineGenerated { false };
 };
 
 } // namespace WebKit

@@ -37,10 +37,10 @@ std::string GetFilePath(const std::string &file_name) {
 std::shared_ptr<const ParsedCertificate> ParseCertificate(
     std::string_view data) {
   CertErrors errors;
+  auto bytes = StringAsBytes(data);
   return ParsedCertificate::Create(
       bssl::UniquePtr<CRYPTO_BUFFER>(
-          CRYPTO_BUFFER_new(reinterpret_cast<const uint8_t *>(data.data()),
-                            data.size(), nullptr)),
+          CRYPTO_BUFFER_new(bytes.data(), bytes.size(), nullptr)),
       {}, &errors);
 }
 
@@ -55,83 +55,73 @@ class CheckOCSPTest : public ::testing::TestWithParam<TestParams> {};
 const TestParams kTestParams[] = {
     {"good_response.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"good_response_sha256.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"no_response.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::NO_MATCHING_RESPONSE},
-
     {"malformed_request.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::ERROR_RESPONSE},
-
     {"bad_status.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::PARSE_RESPONSE_ERROR},
-
     {"bad_ocsp_type.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::PARSE_RESPONSE_ERROR},
-
     {"bad_signature.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::PROVIDED},
-
     {"ocsp_sign_direct.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"ocsp_sign_indirect.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"ocsp_sign_indirect_missing.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::PROVIDED},
-
     {"ocsp_sign_bad_indirect.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::PROVIDED},
-
     {"ocsp_extra_certs.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"has_version.pem", OCSPRevocationStatus::GOOD, OCSPVerifyResult::PROVIDED},
-
     {"responder_name.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"responder_id.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"has_extension.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"good_response_next_update.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"revoke_response.pem", OCSPRevocationStatus::REVOKED,
      OCSPVerifyResult::PROVIDED},
-
     {"revoke_response_reason.pem", OCSPRevocationStatus::REVOKED,
      OCSPVerifyResult::PROVIDED},
-
     {"unknown_response.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::PROVIDED},
-
     {"multiple_response.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::PROVIDED},
-
     {"other_response.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::NO_MATCHING_RESPONSE},
-
     {"has_single_extension.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"has_critical_single_extension.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::UNHANDLED_CRITICAL_EXTENSION},
-
     {"has_critical_response_extension.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::UNHANDLED_CRITICAL_EXTENSION},
-
     {"has_critical_ct_extension.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
-
     {"missing_response.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::NO_MATCHING_RESPONSE},
+    {"stale_response.pem", OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::INVALID_DATE},
+    {"future_response.pem", OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::INVALID_DATE},
+    {"old_response.pem", OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::INVALID_DATE},
+    {"produced_early_response.pem", OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::BAD_PRODUCED_AT},
+    {"produced_late_response.pem", OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::BAD_PRODUCED_AT},
+    {"invalid_response.pem", OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::PARSE_RESPONSE_ERROR},
+    {"invalid_response_data.pem", OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::PARSE_RESPONSE_DATA_ERROR},
+    {"multiple_response_good_revoked.pem", OCSPRevocationStatus::REVOKED,
+     OCSPVerifyResult::PROVIDED},
 };
 
 // Parameterised test name generator for tests depending on RenderTextBackend.
@@ -228,7 +218,7 @@ TEST_P(CreateOCSPGetURLTest, Basic) {
       CreateOCSPGetURL(cert.get(), issuer.get(), GetParam());
   ASSERT_TRUE(url);
 
-  // Try to extract the encoded data and compare against |request_data|.
+  // Try to extract the encoded data and compare against `request_data`.
   //
   // A known answer output test would be better as this just reverses the logic
   // from the implementation file.

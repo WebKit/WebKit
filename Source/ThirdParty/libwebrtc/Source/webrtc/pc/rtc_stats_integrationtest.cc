@@ -523,6 +523,7 @@ class RTCStatsReportVerifier {
     verifier.TestAttributeIsUndefined(candidate.related_port);
     verifier.TestAttributeIsDefined(candidate.username_fragment);
     verifier.TestAttributeIsUndefined(candidate.tcp_type);
+    verifier.TestAttributeIsUndefined(candidate.network_slice);
     return verifier.ExpectAllAttributesSuccessfullyTested();
   }
 

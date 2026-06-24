@@ -219,6 +219,56 @@ TEST(VerifyUserGesture, InvalidateAuthorizationTokensByPage)
         Util::spinRunLoop();
     EXPECT_FALSE(openedConsumed);
 }
+
+TEST(VerifyUserGesture, PopunderPreventedByConsumedAction)
+{
+    auto openerHTML = "<script>"
+        "window.name = 'opener';"
+        "addEventListener('mouseup', () => {"
+        "    window.open('https://domain2.com/popup');"
+        "    window.open('', 'opener');"
+        "});"
+        "</script>"_s;
+    HTTPServer server({
+        { "/opener"_s, { openerHTML } },
+        { "/popup"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = server.httpsProxyConfiguration();
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [openerWebView setNavigationDelegate:navigationDelegate.get()];
+    [openerWebView setUIDelegate:uiDelegate.get()];
+
+    __block RetainPtr<TestWKWebView> popupWebView;
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *navigationAction, WKWindowFeatures *) {
+        // Consume the user action, as Safari's _shouldSuppressCreateWebView does.
+        [navigationAction._userInitiatedAction consume];
+        popupWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+        return popupWebView.get();
+    };
+
+    __block bool focusCalled = false;
+    uiDelegate.get().focusWebView = ^(WKWebView *) {
+        focusCalled = true;
+    };
+
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/opener"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [openerWebView mouseDownAtPoint:CGPointMake(50, 50) simulatePressure:NO];
+    [openerWebView mouseUpAtPoint:CGPointMake(50, 50)];
+    [openerWebView waitForPendingMouseEvents];
+    while (!popupWebView)
+        Util::spinRunLoop();
+
+    // The popup was created, but the second window.open("", "opener") should NOT
+    // have focused the opener because the _userInitiatedAction was already consumed
+    // during popup creation.
+    EXPECT_FALSE(focusCalled);
+}
 #endif
 
 }

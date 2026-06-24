@@ -263,15 +263,14 @@ const negSubseconds = new Temporal.Duration(0, 0, 0, 0, 0, 0, 0, -999, -999999, 
 shouldBe(posSubseconds.total("seconds"), 2.998998999);
 shouldBe(negSubseconds.total("seconds"), -2.998998999);
 
-// At present, toLocaleString has the same behavior as toJSON or argumentless toString.
-for (const method of ['toString', 'toJSON', 'toLocaleString']) {    
+for (const method of ['toString', 'toJSON']) {
     shouldBe(Temporal.Duration.prototype[method].length, 0);
     shouldThrow(() => Temporal.Duration.prototype[method].call({}), TypeError);
 
     shouldBe(zero[method](), 'PT0S');
     shouldBe(pos[method](), 'P1Y2M3W4DT5H6M7.00800901S');
     shouldBe(neg[method](), '-P1Y2M3W4DT5H6M7.00800901S');
-    
+
     shouldBe(new Temporal.Duration(1,1,1,1)[method](), 'P1Y1M1W1D');
     shouldBe(new Temporal.Duration(0,0,0,0,1,1,1)[method](), 'PT1H1M1S');
     shouldBe(new Temporal.Duration(0,0,0,0,0,0,0,100)[method](), 'PT0.1S');
@@ -282,6 +281,9 @@ for (const method of ['toString', 'toJSON', 'toLocaleString']) {
     shouldBe(new Temporal.Duration(0,0,0,0,0,0,0,0,1,1001)[method](), 'PT0.000002001S');
     shouldBe(new Temporal.Duration(0,0,0,0,0,0,1,1001,1001,1001)[method](), 'PT2.002002001S');
 }
+shouldBe(Temporal.Duration.prototype.toLocaleString.length, 0);
+shouldThrow(() => Temporal.Duration.prototype.toLocaleString.call({}), TypeError);
+shouldBe(typeof zero.toLocaleString(), 'string');
 
 shouldBe(pos.toString({}), pos.toString());
 

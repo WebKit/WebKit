@@ -24,18 +24,16 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
 
 // <'r'> = <length-percentage [0,∞]>
 // https://svgwg.org/svg2-draft/geometry.html#R
-struct SVGRadius : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
-    using Base::Base;
-};
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(SVGRadius, LengthPercentage<CSS::Nonnegative>);
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGRadius)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SVGRadius)

@@ -189,7 +189,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
     if (_datePickerController) {
         if (!_isDismissingDatePicker) {
             SetForScope isDismissingDatePicker { _isDismissingDatePicker, YES };
-            [_datePickerController dismissViewControllerAnimated:NO completion:nil];
+            [protect(_datePickerController) dismissViewControllerAnimated:NO completion:nil];
         }
 
         _datePickerController = nil;

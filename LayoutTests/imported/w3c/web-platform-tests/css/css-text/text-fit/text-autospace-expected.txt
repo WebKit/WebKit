@@ -1,0 +1,8 @@
+高輪Gateway
+高輪Gateway
+高輪Gateway
+高輪Gateway
+
+FAIL "text-autospace" and "consistent" work fine assert_approx_equals: The last letter aligns with the right edge expected 399 +/- 1 but got 106.97599792480469
+FAIL "text-autospace" and "per-line-all" work fine assert_approx_equals: The last letter aligns with the right edge expected 399 +/- 1 but got 106.97599792480469
+

@@ -33,7 +33,6 @@
 
 #import <WebCore/DocumentFullscreen.h>
 
-using namespace WebCore;
 
 @implementation WebKitFullScreenListener
 

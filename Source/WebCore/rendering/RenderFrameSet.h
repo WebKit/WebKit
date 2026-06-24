@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -58,7 +58,7 @@ class RenderFrameSet final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderFrameSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFrameSet);
 public:
-    RenderFrameSet(HTMLFrameSetElement&, RenderStyle&&);
+    RenderFrameSet(HTMLFrameSetElement&, Style::ComputedStyle&&);
     virtual ~RenderFrameSet();
 
     HTMLFrameSetElement& NODELETE frameSetElement() const;
@@ -74,22 +74,22 @@ public:
 
 private:
     void element() const = delete;
-    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { }
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { return { }; }
 
     static const int noSplit = -1;
 
     class GridAxis {
         WTF_MAKE_NONCOPYABLE(GridAxis);
     public:
-        GridAxis();
+        GridAxis() = default;
         void resize(int);
 
         Vector<int> m_sizes;
         Vector<int> m_deltas;
         Vector<bool> m_preventResize;
         Vector<bool> m_allowBorder;
-        int m_splitBeingResized;
-        int m_splitResizeOffset;
+        int m_splitBeingResized { noSplit };
+        int m_splitResizeOffset { 0 };
     };
 
     ASCIILiteral renderName() const override { return "RenderFrameSet"_s; }
@@ -97,7 +97,7 @@ private:
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;
     bool canHaveChildren() const override { return true; }
-    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
     CursorDirective getCursor(const LayoutPoint&, Cursor&) const override;
 
     void setIsResizing(bool);
@@ -119,7 +119,7 @@ private:
     GridAxis m_rows;
     GridAxis m_cols;
 
-    bool m_isResizing;
+    bool m_isResizing { false };
 };
 
 } // namespace WebCore

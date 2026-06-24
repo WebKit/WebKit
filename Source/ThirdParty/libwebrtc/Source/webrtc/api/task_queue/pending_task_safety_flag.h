@@ -19,6 +19,7 @@
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -165,6 +166,7 @@ class RTC_EXPORT ScopedTaskSafetyDetached final {
 inline absl::AnyInvocable<void() &&> SafeTask(
     scoped_refptr<PendingTaskSafetyFlag> flag,
     absl::AnyInvocable<void() &&> task) {
+  RTC_DCHECK(flag);
   return [flag = std::move(flag), task = std::move(task)]() mutable {
     if (flag->alive()) {
       std::move(task)();
@@ -176,6 +178,7 @@ inline absl::AnyInvocable<void() &&> SafeTask(
 inline absl::AnyInvocable<void()> SafeInvocable(
     scoped_refptr<PendingTaskSafetyFlag> flag,
     absl::AnyInvocable<void()> task) {
+  RTC_DCHECK(flag);
   return [flag = std::move(flag), task = std::move(task)]() mutable {
     if (flag->alive()) {
       task();

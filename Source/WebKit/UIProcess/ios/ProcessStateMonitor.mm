@@ -77,6 +77,8 @@ void ProcessStateMonitor::processDidBecomeRunning()
     if (m_state == State::Running)
         return;
 
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessStateMonitor::processDidBecomeRunning", this);
+
     if (m_state == State::Suspended)
         m_becomeSuspendedHandler(false);
     else {

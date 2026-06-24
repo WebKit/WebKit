@@ -195,7 +195,7 @@ public:
     void inflate(IntSize size) { inflateX(size.width()); inflateY(size.height()); }
     WEBCORE_EXPORT void NODELETE scale(float s);
 
-    IntSize NODELETE differenceToPoint(const IntPoint&) const;
+    WEBCORE_EXPORT IntSize NODELETE differenceToPoint(const IntPoint&) const;
     int distanceSquaredToPoint(const IntPoint& p) const { return differenceToPoint(p).diagonalLengthSquared(); }
 
     IntRect transposedRect() const { return IntRect(m_location.transposedPoint(), m_size.transposedSize()); }

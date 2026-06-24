@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,7 @@ protected:
     JS_EXPORT_PRIVATE void scheduleTimer(Seconds);
 
     GCActivityCallback(VM&, Synchronousness);
+    static double deathRate(size_t sizeBefore, size_t sizeAfter);
 
     Synchronousness m_synchronousness { Synchronousness::Async };
     bool m_enabled { true };

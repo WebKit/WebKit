@@ -36,6 +36,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+const uint64_t emptyWeakMapBuffer[2] = { 0, 0 };
+
 template <typename WeakMapBucket>
 void WeakMapImpl<WeakMapBucket>::destroy(JSCell* cell)
 {

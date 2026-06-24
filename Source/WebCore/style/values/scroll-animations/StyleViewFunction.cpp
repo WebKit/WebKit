@@ -31,7 +31,7 @@
 #include "StyleKeyword+CSSValueCreation.h"
 #include "StyleKeyword+Logging.h"
 #include "StyleKeyword+Serialization.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
+#include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
@@ -66,13 +66,13 @@ auto CSSValueConversion<ViewFunction>::operator()(BuilderState& state, const CSS
 
     auto startInset = [&] {
         if (RefPtr startInsetValue = value.startInset())
-            return toStyleFromCSSValue<ViewTimelineInsetItem::Length>(state, *startInsetValue);
-        return ViewTimelineInsetItem::Length { CSS::Keyword::Auto { } };
+            return toStyleFromCSSValue<ViewTimelineInsetItem::Offset>(state, *startInsetValue);
+        return ViewTimelineInsetItem::Offset { CSS::Keyword::Auto { } };
     }();
 
     auto endInset = [&] {
         if (RefPtr endInsetValue = value.endInset())
-            return toStyleFromCSSValue<ViewTimelineInsetItem::Length>(state, *endInsetValue);
+            return toStyleFromCSSValue<ViewTimelineInsetItem::Offset>(state, *endInsetValue);
         return startInset;
     }();
 
@@ -84,7 +84,7 @@ auto CSSValueConversion<ViewFunction>::operator()(BuilderState& state, const CSS
     };
 }
 
-Ref<CSSValue> CSSValueCreation<ViewFunction>::operator()(CSSValuePool& pool, const RenderStyle& style, const ViewFunction& value)
+Ref<CSSValue> CSSValueCreation<ViewFunction>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const ViewFunction& value)
 {
     return CSSViewValue::create(
         createCSSValue(pool, style, value.parameters.axis),
@@ -95,7 +95,7 @@ Ref<CSSValue> CSSValueCreation<ViewFunction>::operator()(CSSValuePool& pool, con
 
 // MARK: - Serialization
 
-void Serialize<ViewFunctionParameters>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const ViewFunctionParameters& value)
+void Serialize<ViewFunctionParameters>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const ViewFunctionParameters& value)
 {
     bool needsSpace = false;
     if (value.axis != ScrollAxis::Block) {

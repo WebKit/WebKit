@@ -29,11 +29,11 @@
 #include "CSSKeywordColor.h"
 #include "Document.h"
 #include "PlatformRenderTheme.h"
-#include "RenderStyle.h"
 #include "RenderTheme.h"
 #include "StyleBuilderState.h"
 #include "StyleColor.h"
 #include "StyleColorResolutionState.h"
+#include "StyleComputedStyle.h"
 #include "StyleCurrentColor.h"
 
 namespace WebCore {

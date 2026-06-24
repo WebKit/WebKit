@@ -50,6 +50,8 @@ static WPEInputPurpose toWPEInputPurpose(WebKitInputPurpose purpose)
         return WPE_INPUT_PURPOSE_EMAIL;
     case WEBKIT_INPUT_PURPOSE_PASSWORD:
         return WPE_INPUT_PURPOSE_PASSWORD;
+    case WEBKIT_INPUT_PURPOSE_SEARCH:
+        return WPE_INPUT_PURPOSE_SEARCH;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

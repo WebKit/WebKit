@@ -1,13 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
 description('Test for event dipatching by search cancel button.');
+window.jsTestIsAsync = true;
 
 var parent = document.createElement('div');
 document.body.appendChild(parent);
@@ -24,7 +25,6 @@ onload = async () => {
     if (!window.testRunner)
         return;
 
-    testRunner.waitUntilDone();
     if (window.eventSender) {
         debug('Initial state');
         shouldBe('changeEventCounter', '0');
@@ -47,9 +47,8 @@ onload = async () => {
     } else {
         document.getElementById('console').innerHTML = 'No eventSender';
     }
-    testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

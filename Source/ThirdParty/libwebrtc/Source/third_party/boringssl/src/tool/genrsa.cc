@@ -21,13 +21,18 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 static const struct argument kArguments[] = {
     {
-     "-bits", kOptionalArgument,
-     "The number of bits in the modulus (default: 2048)",
+        "-bits",
+        kOptionalArgument,
+        "The number of bits in the modulus (default: 2048)",
     },
     {
-     "", kOptionalArgument, "",
+        "",
+        kOptionalArgument,
+        "",
     },
 };
 
@@ -61,3 +66,5 @@ bool GenerateRSAKey(const std::vector<std::string> &args) {
 
   return true;
 }
+
+BSSL_NAMESPACE_END

@@ -25,7 +25,9 @@
 #define FALSE #f
 
 (define have_message_filtering?
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+#if USE(SANDBOX_PARAMS)
+    (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+#elif PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
     TRUE
 #else
     FALSE

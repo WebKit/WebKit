@@ -156,8 +156,8 @@ void GraphicsContextState::mergeAllChanges(const GraphicsContextState& state)
     mergeChange(Change::Style,                       &GraphicsContextState::m_style);
 
     mergeChange(Change::Alpha,                       &GraphicsContextState::m_alpha);
-    mergeChange(Change::ImageInterpolationQuality,   &GraphicsContextState::m_textDrawingMode);
-    mergeChange(Change::TextDrawingMode,             &GraphicsContextState::m_imageInterpolationQuality);
+    mergeChange(Change::ImageInterpolationQuality,   &GraphicsContextState::m_imageInterpolationQuality);
+    mergeChange(Change::TextDrawingMode,             &GraphicsContextState::m_textDrawingMode);
 
     mergeChange(Change::ShouldAntialias,             &GraphicsContextState::m_shouldAntialias);
     mergeChange(Change::ShouldSmoothFonts,           &GraphicsContextState::m_shouldSmoothFonts);

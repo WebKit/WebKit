@@ -247,7 +247,7 @@ public:
     bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
     GraphicsLayer* fixedRootBackgroundLayer() const;
 
-    void rootOrBodyStyleChanged(RenderElement&, const RenderStyle* oldStyle);
+    void rootOrBodyStyleChanged(RenderElement&, const Style::ComputedStyle* oldStyle);
 
     // Called after the view transparency, or the document or base background color change.
     void rootBackgroundColorOrTransparencyChanged();
@@ -260,7 +260,7 @@ public:
     // Notify us that a layer has been removed
     void layerWillBeRemoved(RenderLayer& parent, RenderLayer& child);
 
-    void layerStyleChanged(Style::Difference, RenderLayer&, const RenderStyle* oldStyle);
+    void layerStyleChanged(Style::Difference, RenderLayer&, const Style::ComputedStyle* oldStyle);
     void layerGainedCompositedScrollableOverflow(RenderLayer&);
 
     void establishesTopLayerWillChangeForLayer(RenderLayer&);
@@ -556,9 +556,11 @@ private:
     bool NODELETE requiresCompositingForAnchorPositioning(const RenderLayer&) const;
     IndirectCompositingReason computeIndirectCompositingReason(const RenderLayer&, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const;
 
+    void updateRepaintRectsAfterCompositingChange(RenderLayer&, bool wasComposited, BackingSharingState&);
+
     static ScrollPositioningBehavior layerScrollBehahaviorRelativeToCompositedAncestor(const RenderLayer&, const RenderLayer& compositedAncestor);
 
-    static bool styleChangeMayAffectIndirectCompositingReasons(const RenderStyle& oldStyle, const RenderStyle& newStyle);
+    static bool styleChangeMayAffectIndirectCompositingReasons(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);
 
     enum class ScrollingNodeChangeFlags {
         Layer           = 1 << 0,

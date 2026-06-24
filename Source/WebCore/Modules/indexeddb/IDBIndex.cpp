@@ -352,13 +352,13 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAllShared(IndexedDB::GetAllType getA
     String callingFunctionExceptionMessagePrefix;
     switch (getAllType) {
     case IndexedDB::GetAllType::Values:
-        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAll' on IDBIdex': "_s;
+        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAll' on IDBIndex': "_s;
         break;
     case IndexedDB::GetAllType::Keys:
-        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAllKeys' on IDBIdex': "_s;
+        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAllKeys' on IDBIndex': "_s;
         break;
     case IndexedDB::GetAllType::Records:
-        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAllRecords' on IDBIdex': "_s;
+        callingFunctionExceptionMessagePrefix = "Failed to execute 'getAllRecords' on IDBIndex': "_s;
         break;
     }
 

@@ -75,33 +75,33 @@ struct OPENSSL_EXPORT PolicyInformation {
 };
 
 // Parses a certificatePolicies extension and stores the policy information
-// |*policies|, in the order presented in |extension_value|.
+// `*policies`, in the order presented in `extension_value`.
 //
 // Returns true on success. On failure returns false and may add errors to
-// |errors|, which must be non-null.
+// `errors`, which must be non-null.
 //
-// The values in |policies| are only valid as long as |extension_value| is (as
+// The values in `policies` are only valid as long as `extension_value` is (as
 // it references data).
 OPENSSL_EXPORT bool ParseCertificatePoliciesExtension(
     der::Input extension_value, std::vector<PolicyInformation> *policies,
     CertErrors *errors);
 
 // Parses a certificatePolicies extension and stores the policy OIDs in
-// |*policy_oids|, in sorted order.
+// `*policy_oids`, in sorted order.
 //
 // If policyQualifiers for User Notice or CPS are present then they are
 // ignored (RFC 5280 section 4.2.1.4 says "optional qualifiers, which MAY
 // be present, are not expected to change the definition of the policy."
 //
 // If a policy qualifier other than User Notice/CPS is present, parsing
-// will fail if |fail_parsing_unknown_qualifier_oids| was set to true,
+// will fail if `fail_parsing_unknown_qualifier_oids` was set to true,
 // otherwise the unrecognized qualifiers will be skipped and not parsed
 // any further.
 //
 // Returns true on success. On failure returns false and may add errors to
-// |errors|, which must be non-null.
+// `errors`, which must be non-null.
 //
-// The values in |policy_oids| are only valid as long as |extension_value| is
+// The values in `policy_oids` are only valid as long as `extension_value` is
 // (as it references data).
 OPENSSL_EXPORT bool ParseCertificatePoliciesExtensionOids(
     der::Input extension_value, bool fail_parsing_unknown_qualifier_oids,
@@ -114,7 +114,7 @@ struct ParsedPolicyConstraints {
 };
 
 // Parses a PolicyConstraints SEQUENCE as defined by RFC 5280. Returns true on
-// success, and sets |out|.
+// success, and sets `out`.
 [[nodiscard]] OPENSSL_EXPORT bool ParsePolicyConstraints(
     der::Input policy_constraints_tlv, ParsedPolicyConstraints *out);
 
@@ -129,7 +129,7 @@ struct ParsedPolicyMapping {
 };
 
 // Parses a PolicyMappings SEQUENCE as defined by RFC 5280. Returns true on
-// success, and sets |mappings|.
+// success, and sets `mappings`.
 [[nodiscard]] OPENSSL_EXPORT bool ParsePolicyMappings(
     der::Input policy_mappings_tlv, std::vector<ParsedPolicyMapping> *mappings);
 

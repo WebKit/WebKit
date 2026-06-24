@@ -365,7 +365,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     if (!self.axBackingObject)
         return NO;
 
-    self.axBackingObject->updateBackingStore();
+    protect(self.axBackingObject)->updateBackingStore();
     if (!self.axBackingObject)
         return NO;
 

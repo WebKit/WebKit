@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
 <svg xmlns="http://www.w3.org/2000/svg">
     <g transform="translate(50,50) scale(1.5)">
         <circle cy="0" cx="0" r="30" fill="green" transform="translate(100,100) scale(2)"/>

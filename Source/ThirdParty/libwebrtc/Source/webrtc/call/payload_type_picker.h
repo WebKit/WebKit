@@ -11,21 +11,28 @@
 #ifndef CALL_PAYLOAD_TYPE_PICKER_H_
 #define CALL_PAYLOAD_TYPE_PICKER_H_
 
-#include <map>
-#include <set>
+#include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
+#include "api/payload_type.h"
 #include "api/rtc_error.h"
+#include "api/rtp_header_extension_id.h"
+#include "api/rtp_parameters.h"
 #include "call/payload_type.h"
 #include "media/base/codec.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/containers/flat_map.h"
+#include "rtc_base/containers/flat_set.h"
 
 namespace webrtc {
 
 class PayloadTypeRecorder;
 
-class PayloadTypePicker {
+class PayloadTypePicker final {
  public:
   PayloadTypePicker();
   PayloadTypePicker(const PayloadTypePicker&) = delete;
@@ -35,11 +42,16 @@ class PayloadTypePicker {
   // Suggest a payload type for the codec.
   // If the excluder maps it to something different, don't suggest it.
   RTCErrorOr<PayloadType> SuggestMapping(Codec codec,
-                                         const PayloadTypeRecorder* excluder);
+                                         const PayloadTypeRecorder* excluder,
+                                         bool pick_from_top_of_range = false);
   RTCError AddMapping(PayloadType payload_type, Codec codec);
+  std::optional<Codec> LookupCodec(PayloadType payload_type) const;
+  bool IsSeen(PayloadType payload_type) const {
+    return seen_payload_types_.contains(payload_type.value());
+  }
 
  private:
-  class MapEntry {
+  class MapEntry final {
    public:
     MapEntry(PayloadType payload_type, Codec codec)
         : payload_type_(payload_type), codec_(codec) {}
@@ -55,7 +67,7 @@ class PayloadTypePicker {
     }
   };
   std::vector<MapEntry> entries_;
-  std::set<PayloadType> seen_payload_types_;
+  flat_set<PayloadType> seen_payload_types_;
   template <typename Sink>
   friend void AbslStringify(Sink& sink, const PayloadTypePicker& picker) {
     sink.Append("Reserved:");
@@ -69,7 +81,7 @@ class PayloadTypePicker {
   }
 };
 
-class PayloadTypeRecorder {
+class PayloadTypeRecorder final {
  public:
   explicit PayloadTypeRecorder(PayloadTypePicker& suggester)
       : suggester_(suggester) {}
@@ -98,10 +110,57 @@ class PayloadTypeRecorder {
 
  private:
   PayloadTypePicker& suggester_;
-  std::map<PayloadType, Codec> payload_type_to_codec_;
-  std::map<PayloadType, Codec> checkpoint_payload_type_to_codec_;
+  flat_map<PayloadType, Codec> payload_type_to_codec_;
+  flat_map<PayloadType, Codec> checkpoint_payload_type_to_codec_;
   int disallow_redefinition_level_ = 0;
-  std::set<PayloadType> accepted_definitions_;
+  flat_set<PayloadType> accepted_definitions_;
+};
+
+class RtpHeaderExtensionRecorder final {
+ public:
+  explicit RtpHeaderExtensionRecorder(const Environment& env) : env_(env) {}
+  ~RtpHeaderExtensionRecorder() {}
+
+  RTCError AddMapping(RtpHeaderExtensionId id,
+                      absl::string_view uri,
+                      bool encrypt);
+  RTCErrorOr<RtpHeaderExtensionId> LookupId(absl::string_view uri,
+                                            bool encrypt) const;
+
+  void Commit();
+  void Rollback();
+
+ private:
+  const Environment env_;
+  // (uri, encrypt) -> id
+  flat_map<std::pair<std::string, bool>, RtpHeaderExtensionId> uri_to_id_;
+  flat_map<std::pair<std::string, bool>, RtpHeaderExtensionId>
+      checkpoint_uri_to_id_;
+};
+
+class RtpHeaderExtensionPicker final {
+ public:
+  RtpHeaderExtensionPicker() {}
+  ~RtpHeaderExtensionPicker() {}
+
+  RTCErrorOr<RtpHeaderExtensionId> SuggestMapping(
+      absl::string_view uri,
+      bool encrypt,
+      RtpHeaderExtensionId preferred_id,
+      RtpTransceiverIdDomain id_domain,
+      const RtpHeaderExtensionRecorder* excluder);
+  RTCError AddMapping(RtpHeaderExtensionId id,
+                      absl::string_view uri,
+                      bool encrypt);
+
+ private:
+  struct MapEntry {
+    std::string uri;
+    bool encrypt;
+    RtpHeaderExtensionId id;
+  };
+  std::vector<MapEntry> entries_;
+  flat_set<RtpHeaderExtensionId> seen_ids_;
 };
 
 }  // namespace webrtc

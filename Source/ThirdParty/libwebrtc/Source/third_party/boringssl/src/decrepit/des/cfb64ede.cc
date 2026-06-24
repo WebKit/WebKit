@@ -20,6 +20,8 @@
 #include "../../crypto/internal.h"
 
 
+using namespace bssl;
+
 // The input and output encrypted as though 64bit cfb mode is being used. The
 // extra state information to record how much of the 64bit block we have used
 // is contained in *num;

@@ -46,13 +46,18 @@ public:
 
     std::optional<ViewTransitionNavigation> navigation() const { return m_navigation; }
     ViewTransitionNavigation computedNavigation() const { return navigation().value_or(ViewTransitionNavigation::None); }
-    Vector<AtomString> types() const { return m_types; }
+    const Vector<AtomString>& types() const { return m_types; }
+    bool explicitlySetTypes() const { return m_explicitlySetTypes; }
 
 private:
     explicit StyleRuleViewTransition(Ref<StyleProperties>&&);
     StyleRuleViewTransition(const StyleRuleViewTransition&) = default;
 
     std::optional<ViewTransitionNavigation> m_navigation;
+
+    // Set if 'types' is explicit set in the CSS rule. Used to determine
+    // whether to serialize 'types' in cssText.
+    bool m_explicitlySetTypes { false };
     Vector<AtomString> m_types;
 };
 
@@ -68,7 +73,7 @@ public:
     StyleRuleType styleRuleType() const final { return StyleRuleType::ViewTransition; }
 
     AtomString navigation() const;
-    Vector<AtomString> types() const { return Ref { m_viewTransitionRule }->types(); }
+    const Vector<AtomString>& types() const { return protect(m_viewTransitionRule)->types(); }
 
 private:
     CSSViewTransitionRule(StyleRuleViewTransition&, CSSStyleSheet* parent);

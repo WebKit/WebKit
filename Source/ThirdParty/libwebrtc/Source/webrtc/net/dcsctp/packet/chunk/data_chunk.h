@@ -13,11 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
 #include "net/dcsctp/packet/chunk/data_common.h"
@@ -60,7 +60,7 @@ class DataChunk : public AnyDataChunk, public TLVTrait<DataChunkConfig> {
   DataChunk(TSN tsn, Data&& data, bool immediate_ack)
       : AnyDataChunk(tsn, std::move(data), immediate_ack) {}
 
-  static std::optional<DataChunk> Parse(webrtc::ArrayView<const uint8_t> data);
+  static std::optional<DataChunk> Parse(std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

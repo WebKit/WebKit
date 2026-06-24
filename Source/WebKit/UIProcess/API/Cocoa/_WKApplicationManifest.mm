@@ -278,17 +278,19 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     bool isDefaultScope = [aDecoder decodeBoolForKey:@"is_default_scope"];
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
     NSInteger orientation = [aDecoder decodeIntegerForKey:@"orientation"];
-    std::optional<WebCore::ScreenOrientationLockType> orientationValue = std::nullopt;
+    std::optional<WebCore::ScreenOrientationLockType> orientationValue;
     if (orientation != NSNotFound)
         orientationValue = static_cast<WebCore::ScreenOrientationLockType>(orientation);
     URL manifestURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifest_url"];
     URL startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
     URL manifestId = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifestId"];
-    RetainPtr<WebCore::CocoaColor> backgroundColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color"];
-    RetainPtr<WebCore::CocoaColor> themeColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color"];
     RetainPtr<NSArray<NSString *>> categories = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"categories"];
     RetainPtr<NSArray<_WKApplicationManifestIcon *>> icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
     RetainPtr<NSArray<_WKApplicationManifestIcon *>> shortcuts = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestShortcut class], [_WKApplicationManifestIcon class]]] forKey:@"shortcuts"];
+    RetainPtr<WebCore::CocoaColor> backgroundColorLight = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color_light"];
+    RetainPtr<WebCore::CocoaColor> backgroundColorDark = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color_dark"];
+    RetainPtr<WebCore::CocoaColor> themeColorLight = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color_light"];
+    RetainPtr<WebCore::CocoaColor> themeColorDark = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color_dark"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
         WTF::move(rawJSON),
@@ -304,8 +306,10 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
         WTF::move(manifestURL),
         WTF::move(startURL),
         WTF::move(manifestId),
-        WebCore::roundAndClampToSRGBALossy(RetainPtr { backgroundColor.get().CGColor }.get()),
-        WebCore::roundAndClampToSRGBALossy(RetainPtr { themeColor.get().CGColor }.get()),
+        WebCore::roundAndClampToSRGBALossy(protect(backgroundColorLight.get().CGColor)),
+        WebCore::roundAndClampToSRGBALossy(protect(backgroundColorDark.get().CGColor)),
+        WebCore::roundAndClampToSRGBALossy(protect(themeColorLight.get().CGColor)),
+        WebCore::roundAndClampToSRGBALossy(protect(themeColorDark.get().CGColor)),
         makeVector<String>(categories.get()),
         makeVector<WebCore::ApplicationManifest::Icon>(icons.get()),
         makeVector<WebCore::ApplicationManifest::Shortcut>(shortcuts.get()),
@@ -344,11 +348,25 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     [aCoder encodeObject:self.manifestURL forKey:@"manifest_url"];
     [aCoder encodeObject:self.startURL forKey:@"start_url"];
     [aCoder encodeObject:self.manifestId forKey:@"manifestId"];
-    [aCoder encodeObject:self.backgroundColor forKey:@"background_color"];
-    [aCoder encodeObject:self.themeColor forKey:@"theme_color"];
     [aCoder encodeObject:self.categories forKey:@"categories"];
     [aCoder encodeObject:self.icons forKey:@"icons"];
     [aCoder encodeObject:self.shortcuts forKey:@"shortcuts"];
+
+    auto encodeLightColors = ^{
+        [aCoder encodeObject:[WebCore::CocoaColor colorWithCGColor:protect(self.backgroundColor.CGColor)] forKey:@"background_color_light"];
+        [aCoder encodeObject:[WebCore::CocoaColor colorWithCGColor:protect(self.themeColor.CGColor)] forKey:@"theme_color_light"];
+    };
+    auto encodeDarkColors = ^{
+        [aCoder encodeObject:[WebCore::CocoaColor colorWithCGColor:protect(self.backgroundColor.CGColor)] forKey:@"background_color_dark"];
+        [aCoder encodeObject:[WebCore::CocoaColor colorWithCGColor:protect(self.themeColor.CGColor)] forKey:@"theme_color_dark"];
+    };
+#if PLATFORM(IOS_FAMILY)
+    [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight] performAsCurrentTraitCollection:encodeLightColors];
+    [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark] performAsCurrentTraitCollection:encodeDarkColors];
+#else
+    [[NSAppearance appearanceNamed:NSAppearanceNameAqua] performAsCurrentDrawingAppearance:encodeLightColors];
+    [[NSAppearance appearanceNamed:NSAppearanceNameDarkAqua] performAsCurrentDrawingAppearance:encodeDarkColors];
+#endif
 }
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
@@ -430,12 +448,38 @@ static RetainPtr<NSString> nullableNSString(const WTF::String& string)
 
 - (WebCore::CocoaColor *)backgroundColor
 {
-    return cocoaColor(_applicationManifest->applicationManifest().backgroundColor).autorelease();
+    const auto& manifest = _applicationManifest->applicationManifest();
+    auto getColor = [color = manifest.backgroundColor, darkColor = manifest.backgroundColorDark] (bool isDark) {
+        return cocoaColor((isDark && darkColor.isValid()) ? darkColor : color).autorelease();
+    };
+#if PLATFORM(IOS_FAMILY)
+    return [UIColor colorWithDynamicProvider:[getColor = WTF::move(getColor)] (UITraitCollection *traitCollection) -> UIColor * {
+        return getColor(traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark);
+    }];
+#else
+    return [NSColor colorWithName:nil dynamicProvider:[getColor = WTF::move(getColor)] (NSAppearance *appearance) -> NSColor * {
+        RetainPtr appearanceName = [appearance bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+        return getColor([appearanceName isEqualToString:NSAppearanceNameDarkAqua]);
+    }];
+#endif
 }
 
 - (WebCore::CocoaColor *)themeColor
 {
-    return cocoaColor(_applicationManifest->applicationManifest().themeColor).autorelease();
+    const auto& manifest = _applicationManifest->applicationManifest();
+    auto getColor = [color = manifest.themeColor, darkColor = manifest.themeColorDark] (bool isDark) {
+        return cocoaColor((isDark && darkColor.isValid()) ? darkColor : color).autorelease();
+    };
+#if PLATFORM(IOS_FAMILY)
+    return [UIColor colorWithDynamicProvider:[getColor = WTF::move(getColor)] (UITraitCollection *traitCollection) -> UIColor * {
+        return getColor(traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark);
+    }];
+#else
+    return [NSColor colorWithName:nil dynamicProvider:[getColor = WTF::move(getColor)] (NSAppearance *appearance) -> NSColor * {
+        RetainPtr appearanceName = [appearance bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+        return getColor([appearanceName isEqualToString:NSAppearanceNameDarkAqua]);
+    }];
+#endif
 }
 
 - (_WKApplicationManifestDisplayMode)displayMode

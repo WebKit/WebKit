@@ -60,27 +60,27 @@ using TextShadows = Shadows<TextShadow>;
 
 // MARK: - Conversions
 
-template<> struct ToCSS<TextShadow> { auto operator()(const TextShadow&, const RenderStyle&) -> CSS::TextShadow; };
+template<> struct ToCSS<TextShadow> { auto operator()(const TextShadow&, const Style::ComputedStyle&) -> CSS::TextShadow; };
 template<> struct ToStyle<CSS::TextShadow> { auto operator()(const CSS::TextShadow&, const BuilderState&) -> TextShadow; };
 
 // `TextShadowList` is special-cased to return a `CSSTextShadowPropertyValue`.
-template<> struct CSSValueCreation<TextShadowList> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const TextShadowList&); };
+template<> struct CSSValueCreation<TextShadowList> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const TextShadowList&); };
 template<> struct CSSValueConversion<TextShadows> { auto operator()(BuilderState&, const CSSValue&) -> TextShadows; };
 
 // MARK: - Serialization
 
-template<> struct Serialize<TextShadowList> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const TextShadowList&); };
+template<> struct Serialize<TextShadowList> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const TextShadowList&); };
 
 // MARK: - Blending
 
 template<> struct Blending<TextShadow> {
-    auto blend(const TextShadow&, const TextShadow&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> TextShadow;
+    auto blend(const TextShadow&, const TextShadow&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> TextShadow;
 };
 
 template<> struct Blending<TextShadows> {
     auto canBlend(const TextShadows&, const TextShadows&, CompositeOperation) -> bool;
     constexpr auto requiresInterpolationForAccumulativeIteration(const TextShadows&, const TextShadows&) -> bool { return true; }
-    auto blend(const TextShadows&, const TextShadows&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> TextShadows;
+    auto blend(const TextShadows&, const TextShadows&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> TextShadows;
 };
 
 // MARK: - Shadow-specific Interfaces

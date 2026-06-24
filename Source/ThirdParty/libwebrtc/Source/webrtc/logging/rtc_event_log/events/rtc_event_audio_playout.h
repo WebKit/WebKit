@@ -15,11 +15,11 @@
 
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_definition.h"
@@ -55,7 +55,7 @@ class RtcEventAudioPlayout final : public RtcEvent {
 
   uint32_t ssrc() const { return ssrc_; }
 
-  static std::string Encode(ArrayView<const RtcEvent*> batch) {
+  static std::string Encode(std::span<const RtcEvent*> batch) {
     return RtcEventAudioPlayout::definition_.EncodeBatch(batch);
   }
 

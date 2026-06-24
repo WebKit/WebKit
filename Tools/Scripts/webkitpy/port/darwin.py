@@ -37,13 +37,15 @@ from webkitcorepy import decorators, Version
 from webkitexpectationspy.parser import ExpectationParser
 from webkitexpectationspy.suites.api_tests import APITestSuite
 
+from webkitpy.common.version_name_map import DARWIN_CURRENT_VERSION
+
 
 _log = logging.getLogger(__name__)
 
 
 class DarwinPort(ApplePort):
 
-    CURRENT_VERSION = Version(26)
+    CURRENT_VERSION = DARWIN_CURRENT_VERSION
     SDK = None
 
     API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI', 'TestIPC', 'TestWGSL']

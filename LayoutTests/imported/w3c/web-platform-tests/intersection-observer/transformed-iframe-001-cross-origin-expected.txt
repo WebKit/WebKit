@@ -1,0 +1,6 @@
+
+
+PASS Target is initially visible
+FAIL Scroll such that target is just out of view, target is not visible assert_false: expected false got true
+PASS Scroll to end of page, target is not visible
+

@@ -55,7 +55,7 @@ static auto toStyleBorderImageRepeatValue(const CSS::BorderImageRepeat::Value& v
     );
 }
 
-auto ToCSS<BorderImageRepeat>::operator()(const BorderImageRepeat& value, const RenderStyle&) -> CSS::BorderImageRepeat
+auto ToCSS<BorderImageRepeat>::operator()(const BorderImageRepeat& value, const Style::ComputedStyle&) -> CSS::BorderImageRepeat
 {
     return { {
         toCSSBorderImageRepeatValue(value.values.width()),
@@ -80,7 +80,7 @@ auto CSSValueConversion<BorderImageRepeat>::operator()(BuilderState& state, cons
     return toStyleFromCSSValue<NinePieceImageRule>(state, value);
 }
 
-auto CSSValueCreation<BorderImageRepeat>::operator()(CSSValuePool&, const RenderStyle& style, const BorderImageRepeat& value) -> Ref<CSSValue>
+auto CSSValueCreation<BorderImageRepeat>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BorderImageRepeat& value) -> Ref<CSSValue>
 {
     return CSSBorderImageRepeatValue::create(toCSS(value, style));
 }

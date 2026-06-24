@@ -37,8 +37,8 @@
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include <ranges>
 #include <wtf/Scope.h>
@@ -133,7 +133,7 @@ private:
     unsigned m_ordinalIteration;
 };
 
-RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, RenderStyle&& style)
+RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, Style::ComputedStyle&& style)
     : RenderBlock(RenderObject::Type::DeprecatedFlexibleBox, element, WTF::move(style), { })
 {
     setChildrenInline(false); // All of our children must be block-level
@@ -207,7 +207,7 @@ static void setOverridingMainAxisExtent(RenderBox* child, bool isVerticalBox, La
         child->setOverridingBorderBoxLogicalWidth(extent);
 }
 
-void RenderDeprecatedFlexibleBox::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
+void RenderDeprecatedFlexibleBox::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
 {
     auto shouldClearLineClamp = [&] {
         auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
@@ -222,21 +222,18 @@ void RenderDeprecatedFlexibleBox::styleWillChange(Style::Difference diff, const 
     RenderBlock::styleWillChange(diff, newStyle);
 }
 
-void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+std::pair<LayoutUnit, LayoutUnit> RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths() const
 {
-    auto addScrollbarWidth = [&]() {
-        LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-        maxLogicalWidth += scrollbarWidth;
-        minLogicalWidth += scrollbarWidth;
-    };
+    auto minLogicalWidth = LayoutUnit { };
+    auto maxLogicalWidth = LayoutUnit { };
 
+    auto scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = width.value();
             maxLogicalWidth = width.value();
         }
-        addScrollbarWidth();
-        return;
+        return { minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth };
     }
 
     if (hasMultipleLines() || isVertical()) {
@@ -245,10 +242,10 @@ void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minL
                 continue;
 
             LayoutUnit margin = marginWidthForChild(child);
-            LayoutUnit width = child->minPreferredLogicalWidth() + margin;
+            LayoutUnit width = child->minContentLogicalWidthContribution() + margin;
             minLogicalWidth = std::max(width, minLogicalWidth);
 
-            width = child->maxPreferredLogicalWidth() + margin;
+            width = child->maxContentLogicalWidthContribution() + margin;
             maxLogicalWidth = std::max(width, maxLogicalWidth);
         }
     } else {
@@ -257,30 +254,30 @@ void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minL
                 continue;
 
             LayoutUnit margin = marginWidthForChild(child);
-            minLogicalWidth += child->minPreferredLogicalWidth() + margin;
-            maxLogicalWidth += child->maxPreferredLogicalWidth() + margin;
+            minLogicalWidth += child->minContentLogicalWidthContribution() + margin;
+            maxLogicalWidth += child->maxContentLogicalWidthContribution() + margin;
         }
     }
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
-    addScrollbarWidth();
+    return { minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth };
 }
 
-void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()
+void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidthContributions()
 {
-    ASSERT(needsPreferredLogicalWidthsUpdate());
+    ASSERT(hasInvalidContentLogicalWidths());
 
-    m_minPreferredLogicalWidth = 0;
-    m_maxPreferredLogicalWidth = 0;
+    m_minContentLogicalWidthContribution = 0_lu;
+    m_maxContentLogicalWidthContribution = 0_lu;
     if (auto fixedWidth = style().width().tryFixed(); fixedWidth && fixedWidth->isPositive()) {
-        m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedWidth);
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
+        m_maxContentLogicalWidthContribution = adjustContentBoxLogicalWidthForBoxSizing(*fixedWidth);
+        m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
     } else
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
 
-    constrainPreferredLogicalWidthsByMinMax(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
 
-    clearNeedsPreferredWidthsUpdate();
+    clearContentLogicalWidthsInvalidation();
 }
 
 // Use an inline capacity of 8, since flexbox containers usually have less than 8 children.
@@ -1198,9 +1195,9 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
             if (auto fixedMaxWidth = child->style().maxWidth().tryFixed())
                 maxWidth = fixedMaxWidth->resolveZoom(child->style().usedZoomForLength());
             else if (child->style().maxWidth().isIntrinsicKeyword())
-                maxWidth = child->maxPreferredLogicalWidth();
+                maxWidth = child->maxContentLogicalWidthContribution();
             else if (child->style().maxWidth().isMinIntrinsic())
-                maxWidth = child->minPreferredLogicalWidth();
+                maxWidth = child->minContentLogicalWidthContribution();
             if (maxWidth == LayoutUnit::max())
                 return maxWidth;
             return std::max<LayoutUnit>(0, maxWidth - width);
@@ -1218,14 +1215,14 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
 
     // FIXME: For now just handle fixed values.
     if (isHorizontal()) {
-        LayoutUnit minWidth = child->minPreferredLogicalWidth();
+        LayoutUnit minWidth = child->minContentLogicalWidthContribution();
         LayoutUnit width = mainAxisContentExtentForChild(child, false);
         if (auto fixedMinWidth = child->style().minWidth().tryFixed())
             minWidth = fixedMinWidth->resolveZoom(child->style().usedZoomForLength());
         else if (child->style().minWidth().isIntrinsicKeyword())
-            minWidth = child->maxPreferredLogicalWidth();
+            minWidth = child->maxContentLogicalWidthContribution();
         else if (child->style().minWidth().isMinIntrinsic())
-            minWidth = child->minPreferredLogicalWidth();
+            minWidth = child->minContentLogicalWidthContribution();
         else if (child->style().minWidth().isAuto())
             minWidth = 0;
 

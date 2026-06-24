@@ -27,6 +27,7 @@
 
 #import "APIConversions.h"
 #import "ShaderModule.h"
+#import "WGSLShaderModule.h"
 
 #if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
 #include <csignal>
@@ -79,8 +80,15 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
     for (const auto entry : constants) {
         auto keyEntry = fromAPI(entry.key);
         auto indexIterator = entryPointInformation.specializationConstants.find(keyEntry);
-        if (indexIterator == entryPointInformation.specializationConstants.end())
+        if (indexIterator == entryPointInformation.specializationConstants.end()) {
+            // Per WebGPU spec: providing a value for an override declared in the
+            // shader module but not statically used by this entry point is valid
+            // and the value is ignored. Returning an invalid pipeline only when
+            // the identifier does not refer to any override in the module.
+            if (ast->containsOverride(keyEntry))
+                continue;
             return { };
+        }
 
         const auto& specializationConstant = indexIterator->value;
         switch (specializationConstant.type) {

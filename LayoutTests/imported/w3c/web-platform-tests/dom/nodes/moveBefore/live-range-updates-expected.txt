@@ -2,12 +2,7 @@ RangeStartTarget
 Middle
 RangeEndTarget
 
-FAIL moveBefore still results in range startContainer snapping up to parent when startContainer is moved assert_equals: startContainer updates during move expected Element node <div id="old_parent">
-
-      <span id="middle">Midd... but got Element node <span id="start">RangeStartTarget</span>
-FAIL moveBefore still causes range startContainer to snap up to parent, when startContainer ancestor is moved assert_equals: startContainer still updates during move, to snap to parent expected Element node <div id="old_parent">
-
-      <span id="end">RangeEn... but got Element node <span id="start">RangeStartTarget</span>
-FAIL moveBefore still causes range endContainer to snap up to parent, when endContainer ancestor is moved assert_equals: endContainer still snaps up to parent after move expected Element node <div id="old_parent">
-      <span id="start">RangeStartTa... but got Element node <span id="end">RangeEndTarget</span>
+PASS moveBefore still results in range startContainer snapping up to parent when startContainer is moved
+PASS moveBefore still causes range startContainer to snap up to parent, when startContainer ancestor is moved
+PASS moveBefore still causes range endContainer to snap up to parent, when endContainer ancestor is moved
 

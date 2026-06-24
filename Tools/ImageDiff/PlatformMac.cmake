@@ -9,3 +9,6 @@ list(APPEND ImageDiff_LIBRARIES
 
 # kUTTypePNG deprecated in 12.0; our deployment target is 26.2.
 list(APPEND ImageDiff_COMPILE_OPTIONS -Wno-deprecated-declarations)
+
+# FIXME: Remove once source files are fixed. https://bugs.webkit.org/show_bug.cgi?id=312034
+list(APPEND ImageDiff_COMPILE_OPTIONS -Wno-unused-parameter)

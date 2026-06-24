@@ -53,7 +53,6 @@ int main(int argc, char **argv) {
     // |module_version| will be zero, so the non-FIPS build will never get
     // this far.
     printf("Non zero module version in non-FIPS build - should not happen!\n");
-    abort();
 #elif defined(OPENSSL_ASAN)
     printf("(not available when compiled for ASAN)");
 #else

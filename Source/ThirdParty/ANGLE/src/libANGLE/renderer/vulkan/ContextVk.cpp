@@ -672,6 +672,25 @@ bool IsAnySamplesQuery(gl::QueryType type)
     return type == gl::QueryType::AnySamples || type == gl::QueryType::AnySamplesConservative;
 }
 
+GLsizei GetRoundedDataCountForEmulatedXfb(const ContextVk *contextVk,
+                                          gl::PrimitiveMode mode,
+                                          GLsizei vertexOrIndexCount)
+{
+    ASSERT(contextVk->getFeatures().emulateTransformFeedback.enabled &&
+           contextVk->getState().isTransformFeedbackActiveUnpaused());
+    // For lines and triangles, the count should be rounded down to align with the number of
+    // vertices in the lines or triangles without leftover data.
+    if (mode == gl::PrimitiveMode::Triangles)
+    {
+        return vertexOrIndexCount - vertexOrIndexCount % 3;
+    }
+    if (mode == gl::PrimitiveMode::Lines)
+    {
+        return vertexOrIndexCount - vertexOrIndexCount % 2;
+    }
+    return vertexOrIndexCount;
+}
+
 bool QueueSerialsHaveDifferentIndexOrSmaller(const QueueSerial &queueSerial1,
                                              const QueueSerial &queueSerial2)
 {
@@ -769,6 +788,12 @@ class [[nodiscard]] SaveLoadStorePerfCounters
     uint64_t stencilStoreOpNones;
 };
 }  // anonymous namespace
+
+std::ostream &operator<<(std::ostream &os, const RenderPassClosureReason reason)
+{
+    os << kRenderPassClosureReason[reason];
+    return os;
+}
 
 void ContextVk::flushDescriptorSetUpdates()
 {
@@ -1226,10 +1251,10 @@ void ContextVk::onDestroy(const gl::Context *context)
     mIncompleteTextures.onDestroy(context);
 
     // Flush and complete current outstanding work before destruction.
-    (void)finishImpl(QueueSubmitReason::ContextDestruction);
+    const angle::Result finishResult = finishImpl(QueueSubmitReason::ContextDestruction);
 
     // The finish call could also generate device loss.
-    if (mRenderer->isDeviceLost())
+    if (mRenderer->isDeviceLost() || finishResult != angle::Result::Continue)
     {
         mRenderer->handleDeviceLost();
     }
@@ -1266,6 +1291,7 @@ void ContextVk::onDestroy(const gl::Context *context)
     mUtils.destroy(this);
 
     mRenderPassCache.destroy(this);
+    mFramebufferCache.destroy(mRenderer);
     mShaderLibrary.destroy(device);
 
     // Must release all Vulkan secondary command buffers before destroying the pools.
@@ -1624,8 +1650,9 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
         ASSERT(firstVertexOrInvalid != -1);
         TransformFeedbackVk *transformFeedbackVk =
             vk::GetImpl(mState.getCurrentTransformFeedback());
-        std::array<int32_t, 4> &bufferOffsets = mGraphicsDriverUniforms.updateTransformFeedbackData(
-            static_cast<int32_t>(vertexOrIndexCount));
+        GLsizei roundedCount = GetRoundedDataCountForEmulatedXfb(this, mode, vertexOrIndexCount);
+        std::array<int32_t, 4> &bufferOffsets =
+            mGraphicsDriverUniforms.updateTransformFeedbackData(static_cast<int32_t>(roundedCount));
 
         transformFeedbackVk->getBufferOffsets(this, firstVertexOrInvalid, bufferOffsets.data(),
                                               bufferOffsets.size());
@@ -2813,6 +2840,21 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffersVertexInputDynamicState
                 0, maxAttrib, bufferHandles.data(), bufferOffsets.data(), strides.data());
         }
     }
+    else if (getFeatures().supportsBindVertexBuffers2.enabled)
+    {
+        if (mUseSizePointerForBindingVertexBuffers)
+        {
+            const gl::AttribArray<VkDeviceSize> &bufferSizes =
+                vertexArrayVk->getCurrentArrayBufferSizes();
+            mRenderPassCommandBuffer->bindVertexBuffers2NoStride(
+                0, maxAttrib, bufferHandles.data(), bufferOffsets.data(), bufferSizes.data());
+        }
+        else
+        {
+            mRenderPassCommandBuffer->bindVertexBuffers2NoSizeNoStride(
+                0, maxAttrib, bufferHandles.data(), bufferOffsets.data());
+        }
+    }
     else
     {
         mRenderPassCommandBuffer->bindVertexBuffers(0, maxAttrib, bufferHandles.data(),
@@ -3645,7 +3687,7 @@ void ContextVk::syncObjectPerfCounters(const angle::VulkanPerfCounters &commandQ
         commandQueuePerfCounters.commandQueueWaitSemaphoresTotal;
 
     // Return current drawFramebuffer's cache stats
-    mPerfCounters.framebufferCacheSize = mShareGroupVk->getFramebufferCache().getSize();
+    mPerfCounters.framebufferCacheSize = mFramebufferCache.getSize();
 
     mPerfCounters.pendingSubmissionGarbageObjects =
         static_cast<uint64_t>(mRenderer->getPendingSubmissionGarbageSize());
@@ -3789,7 +3831,8 @@ angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore,
     // If there are foreign images to transition, issue the barrier now.
     if (!mImagesToTransitionToForeign.empty())
     {
-        mCommandState.flushImagesTransitionToForeign(std::move(mImagesToTransitionToForeign));
+        ANGLE_TRY(mCommandState.flushImagesTransitionToForeign(
+            this, std::move(mImagesToTransitionToForeign)));
     }
 
     if (mImageWithTileMemory != nullptr)
@@ -3798,11 +3841,18 @@ angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore,
         // Framebuffer::syncState will not get called for current draw call since
         // State::syncDirtyObjects already took the dirty bits. Here we try to detect that current
         // drawFBO is getting affected and invalidate cached object in FramebufferVk so that they
-        // could get recreated. We have to do this detection logic before fallback since fallback
-        // will clear mImageWithTileMemory pointer.
+        // could get recreated. Note that in this case, the FBO dirty bits must already been
+        // processed, otherwise we won't have this bug since next draw call should trigger dirty bit
+        // processing and everything will be in sync. Without check
+        // drawFramebuffer->hasAnyDirtyBit() you may run the risk of accessing an already deleted
+        // RenderTargetVk object due to FramebufferVk's mRenderTargetCache has a stale reference. We
+        // have to do this detection logic before fallback since fallback will clear
+        // mImageWithTileMemory pointer.
+        const gl::Framebuffer *drawFramebuffer = mState.getDrawFramebuffer();
         const vk::ImageHelper *drawFBOImageWithTileMemory =
-            mState.getDrawFramebuffer() != nullptr ? getDrawFramebuffer()->getImageWithTileMemory()
-                                                   : nullptr;
+            (drawFramebuffer != nullptr && !drawFramebuffer->hasAnyDirtyBit())
+                ? getDrawFramebuffer()->getImageWithTileMemory()
+                : nullptr;
         const bool drawFBOImageFallbackFromTileMemory =
             drawFBOImageWithTileMemory && drawFBOImageWithTileMemory == mImageWithTileMemory;
 
@@ -3904,16 +3954,6 @@ void ContextVk::clearAllGarbage()
         garbage.destroy(mRenderer);
     }
     mCurrentGarbage.clear();
-}
-
-void ContextVk::handleDeviceLost()
-{
-    vk::SecondaryCommandBufferCollector collector;
-    (void)mOutsideRenderPassCommands->reset(this, &collector);
-    (void)mRenderPassCommands->reset(this, &collector);
-    collector.releaseCommandBuffers();
-
-    mRenderer->notifyDeviceLost();
 }
 
 angle::Result ContextVk::drawArrays(const gl::Context *context,
@@ -4777,6 +4817,18 @@ void ContextVk::updateMissingAttachments()
     }
 }
 
+void ContextVk::updateBlendEnabled()
+{
+    const gl::DrawBufferMask framebufferMask = mState.getDrawFramebuffer()->getDrawBufferMask();
+    const gl::DrawBufferMask enabledBlend    = mState.getBlendStateExt().getEnabledMask();
+
+    // Filter out blend for disabled attachments.  If advanced blend is enabled, Vulkan
+    // forbids blend from being specified on the other attachments (same as GL, but GL
+    // ignores blend on disabled attachments).
+    mGraphicsPipelineDesc->updateBlendEnabled(&mGraphicsPipelineTransition,
+                                              enabledBlend & framebufferMask);
+}
+
 void ContextVk::updateBlendFuncsAndEquations()
 {
     const gl::BlendStateExt &blendStateExt = mState.getBlendStateExt();
@@ -5436,8 +5488,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 updateDepthRange(glState.getNearPlane(), glState.getFarPlane());
                 break;
             case gl::state::DIRTY_BIT_BLEND_ENABLED:
-                mGraphicsPipelineDesc->updateBlendEnabled(
-                    &mGraphicsPipelineTransition, glState.getBlendStateExt().getEnabledMask());
+                updateBlendEnabled();
                 updateDither();
                 updateAdvancedBlendEquations(programExecutable);
                 break;
@@ -5701,6 +5752,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                                glState.getFarPlane());
                 updateColorMasks();
                 updateMissingAttachments();
+                updateBlendEnabled();
                 updateRasterizationSamples(drawFramebufferVk->getSamples());
                 updateRasterizerDiscardEnabled(
                     mState.isQueryActive(gl::QueryType::PrimitivesGenerated));
@@ -6301,7 +6353,7 @@ FenceNVImpl *ContextVk::createFenceNV()
     return new FenceNVVk();
 }
 
-SyncImpl *ContextVk::createSync(const gl::Context *)
+SyncImpl *ContextVk::createSync()
 {
     return new SyncVk();
 }
@@ -6480,6 +6532,7 @@ angle::Result ContextVk::onFramebufferChange(FramebufferVk *framebufferVk, gl::C
 
     // Attachments might have changed.
     updateMissingAttachments();
+    updateBlendEnabled();
 
     if (mState.getProgramExecutable())
     {
@@ -7018,6 +7071,26 @@ void ContextVk::handleError(VkResult errorCode,
 
     getRenderer()->getMemoryAllocationTracker()->logMemoryStatsOnError();
 
+    // Command buffers maybe left in limbo state, we need to reset them.
+    vk::SecondaryCommandBufferCollector collector;
+    if (!mOutsideRenderPassCommands->empty())
+    {
+        mLastFlushedQueueSerial = mOutsideRenderPassCommands->getQueueSerial();
+        mOutsideRenderPassCommands->abandon(this, &collector);
+    }
+    if (mRenderPassCommands->started())
+    {
+        mLastFlushedQueueSerial = mRenderPassCommands->getQueueSerial();
+        mRenderPassCommands->abandon(this, &collector);
+    }
+    collector.releaseCommandBuffers();
+
+    mGraphicsDirtyBits |= mNewRenderPassDirtyBits;
+    mComputeDirtyBits |= mNewComputeCommandBufferDirtyBits;
+
+    mOutsideRenderPassSerialFactory.reset();
+    generateOutsideRenderPassCommandsQueueSerial();
+
     if (errorCode == VK_ERROR_DEVICE_LOST)
     {
         VkResult deviceLostInfoErrorCode = getRenderer()->retrieveDeviceLostDetails();
@@ -7030,7 +7103,7 @@ void ContextVk::handleError(VkResult errorCode,
         }
 
         WARN() << errorStream.str();
-        handleDeviceLost();
+        mRenderer->notifyDeviceLost();
     }
 
     mErrors->handleError(glErrorCode, errorStream.str().c_str(), file, function, line);
@@ -7047,10 +7120,15 @@ angle::Result ContextVk::initBufferAllocation(vk::BufferHelper *bufferHelper,
                                                            alignment, bufferUsageType, pool);
     if (ANGLE_LIKELY(result == VK_SUCCESS))
     {
-        if (mRenderer->getFeatures().allocateNonZeroMemory.enabled)
+        if (isRobustResourceInitEnabled())
+        {
+            ANGLE_TRY(bufferHelper->initializeRobustMemory(
+                this, GetDefaultBufferUsageFlags(mRenderer), bufferHelper->getSize()));
+        }
+        else if (mRenderer->getFeatures().allocateNonZeroMemory.enabled)
         {
             ANGLE_TRY(bufferHelper->initializeNonZeroMemory(
-                this, GetDefaultBufferUsageFlags(mRenderer), allocationSize));
+                this, GetDefaultBufferUsageFlags(mRenderer), bufferHelper->getSize()));
         }
 
         return angle::Result::Continue;
@@ -7096,11 +7174,16 @@ angle::Result ContextVk::initBufferAllocation(vk::BufferHelper *bufferHelper,
     // returned.
     ANGLE_VK_CHECK(this, result == VK_SUCCESS, result);
 
-    // Initialize with non-zero value if needed.
-    if (mRenderer->getFeatures().allocateNonZeroMemory.enabled)
+    // Initialize with value if needed.
+    if (isRobustResourceInitEnabled())
+    {
+        ANGLE_TRY(bufferHelper->initializeRobustMemory(this, GetDefaultBufferUsageFlags(mRenderer),
+                                                       bufferHelper->getSize()));
+    }
+    else if (mRenderer->getFeatures().allocateNonZeroMemory.enabled)
     {
         ANGLE_TRY(bufferHelper->initializeNonZeroMemory(this, GetDefaultBufferUsageFlags(mRenderer),
-                                                        allocationSize));
+                                                        bufferHelper->getSize()));
     }
 
     return angle::Result::Continue;
@@ -7552,6 +7635,21 @@ void ContextVk::prepareToSubmitAllCommands()
 angle::Result ContextVk::flushAndSubmitCommands(const vk::Semaphore *signalSemaphore,
                                                 const vk::SharedExternalFence *externalFence,
                                                 QueueSubmitReason queueSubmitReason)
+{
+    const angle::Result result =
+        flushAndSubmitCommandsImpl(signalSemaphore, externalFence, queueSubmitReason);
+
+    if (result != angle::Result::Continue)
+    {
+        forgetAllForeignImagesOnError();
+    }
+
+    return result;
+}
+
+angle::Result ContextVk::flushAndSubmitCommandsImpl(const vk::Semaphore *signalSemaphore,
+                                                    const vk::SharedExternalFence *externalFence,
+                                                    QueueSubmitReason queueSubmitReason)
 {
     // Even if render pass does not have any command, we may still need to submit it in case it has
     // CLEAR loadOp.
@@ -8024,9 +8122,13 @@ angle::Result ContextVk::flushCommandsAndEndRenderPass(RenderPassClosureReason r
     // here. Next addImageWithTileMemory will just overwrite the pointer with new pointer.
     if (mImageWithTileMemory && mImageWithTileMemory->isVkImageContentDefined())
     {
-        FramebufferVk *drawFramebufferVk = getDrawFramebuffer();
+        // Only consult the FramebufferVk render-target cache if the draw framebuffer is in
+        // sync.  If it has pending dirty bits, the cached RenderTargetVk* may dangle.
+        const gl::Framebuffer *drawFramebuffer = mState.getDrawFramebuffer();
         const vk::ImageHelper *nextImageWithTileMemory =
-            drawFramebufferVk->getImageWithTileMemory();
+            (drawFramebuffer != nullptr && !drawFramebuffer->hasAnyDirtyBit())
+                ? getDrawFramebuffer()->getImageWithTileMemory()
+                : nullptr;
         if (nextImageWithTileMemory && nextImageWithTileMemory != mImageWithTileMemory)
         {
             ASSERT(nextImageWithTileMemory->useTileMemory());
@@ -8242,6 +8344,12 @@ angle::Result ContextVk::flushAndSubmitOutsideRenderPassCommands(QueueSubmitReas
     ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::flushAndSubmitOutsideRenderPassCommands");
     ANGLE_TRY(flushOutsideRenderPassCommands());
     ASSERT(mLastFlushedQueueSerial.valid());
+    if (mLastFlushedQueueSerial == mLastSubmittedQueueSerial)
+    {
+        // flushOutsideRenderPassCommands may end up with submitCommands if it runs out of reserved
+        // queueSerial for OutsideRenderPass.
+        return angle::Result::Continue;
+    }
     ASSERT(QueueSerialsHaveDifferentIndexOrSmaller(mLastSubmittedQueueSerial,
                                                    mLastFlushedQueueSerial));
     return submitCommands(nullptr, nullptr, reason);
@@ -8479,11 +8587,12 @@ void ContextVk::setDefaultUniformBlocksMinSizeForTesting(size_t minSize)
 angle::Result ContextVk::initializeMultisampleTextureToBlack(const gl::Context *context,
                                                              gl::Texture *glTexture)
 {
-    ASSERT(glTexture->getType() == gl::TextureType::_2DMultisample);
-    TextureVk *textureVk = vk::GetImpl(glTexture);
+    const gl::TextureType type = glTexture->getType();
+    ASSERT(type == gl::TextureType::_2DMultisample || type == gl::TextureType::_2DMultisampleArray);
+    const gl::ImageIndex imageIndex = gl::ImageIndex::MakeFromType(type, 0);
 
-    return textureVk->initializeContentsWithBlack(context, GL_NONE,
-                                                  gl::ImageIndex::Make2DMultisample());
+    TextureVk *textureVk = vk::GetImpl(glTexture);
+    return textureVk->initializeContentsWithBlack(context, GL_NONE, imageIndex);
 }
 
 void ContextVk::onProgramExecutableReset(ProgramExecutableVk *executableVk)

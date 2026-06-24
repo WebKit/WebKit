@@ -28,15 +28,14 @@
 
 #include "Element.h"
 #include "NodeRenderStyle.h"
-#include "RenderStyle.h"
-#include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+SettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleUpdate.h"
 
 namespace WebCore {
 namespace Style {
 
-std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, const Element& element, const Relations& relations)
+std::unique_ptr<Relations> commitRelationsToRenderStyle(Style::ComputedStyle& style, const Element& element, const Relations& relations)
 {
     std::unique_ptr<Relations> remainingRelations;
 
@@ -53,7 +52,6 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, cons
         }
         switch (relation.type) {
         case Relation::AffectedByEmpty:
-            style.setEmptyState(relation.value);
             appendStyleRelation(relation);
             break;
         case Relation::FirstChild:
@@ -87,49 +85,49 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
     if (!relations)
         return;
     for (auto& relation : *relations) {
-        auto& element = const_cast<Element&>(*relation.element);
+        Ref element = const_cast<Element&>(*relation.element);
         switch (relation.type) {
         case Relation::AffectedByEmpty:
-            element.setStyleAffectedByEmpty();
+            element->setStyleAffectedByEmpty();
             break;
         case Relation::AffectedByPreviousSibling:
-            element.setStyleIsAffectedByPreviousSibling();
+            element->setStyleIsAffectedByPreviousSibling();
             break;
         case Relation::DescendantsAffectedByPreviousSibling:
-            element.setDescendantsAffectedByPreviousSibling();
+            element->setDescendantsAffectedByPreviousSibling();
             break;
         case Relation::AffectsNextSibling: {
-            auto* sibling = &element;
+            auto* sibling = element.ptr();
             for (unsigned i = 0; i < relation.value && sibling; ++i, sibling = sibling->nextElementSibling())
                 sibling->setAffectsNextSiblingElementStyle();
             break;
         }
         case Relation::ChildrenAffectedByForwardPositionalRules:
-            element.setChildrenAffectedByForwardPositionalRules();
+            element->setChildrenAffectedByForwardPositionalRules();
             break;
         case Relation::DescendantsAffectedByForwardPositionalRules:
-            element.setDescendantsAffectedByForwardPositionalRules();
+            element->setDescendantsAffectedByForwardPositionalRules();
             break;
         case Relation::ChildrenAffectedByBackwardPositionalRules:
-            element.setChildrenAffectedByBackwardPositionalRules();
+            element->setChildrenAffectedByBackwardPositionalRules();
             break;
         case Relation::DescendantsAffectedByBackwardPositionalRules:
-            element.setDescendantsAffectedByBackwardPositionalRules();
+            element->setDescendantsAffectedByBackwardPositionalRules();
             break;
         case Relation::ChildrenAffectedByFirstChildRules:
-            element.setChildrenAffectedByFirstChildRules();
+            element->setChildrenAffectedByFirstChildRules();
             break;
         case Relation::ChildrenAffectedByLastChildRules:
-            element.setChildrenAffectedByLastChildRules();
+            element->setChildrenAffectedByLastChildRules();
             break;
         case Relation::AffectedByHasWithBackwardSiblingRelationship:
-            element.setAffectedByHasWithBackwardSiblingRelationship();
+            element->setAffectedByHasWithBackwardSiblingRelationship();
             break;
         case Relation::AffectedByHasWithForwardSiblingRelationship:
-            element.setAffectedByHasWithForwardSiblingRelationship();
+            element->setAffectedByHasWithForwardSiblingRelationship();
             break;
         case Relation::AffectedByHasWithAdjacentSiblingRelationship:
-            element.setAffectedByHasWithAdjacentSiblingRelationship();
+            element->setAffectedByHasWithAdjacentSiblingRelationship();
             break;
         case Relation::FirstChild:
             if (auto* style = update.elementStyle(element))
@@ -140,16 +138,14 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
                 style->setLastChildState();
             break;
         case Relation::NthChildIndex:
-            element.setChildIndex(relation.value);
+            element->setChildIndex(relation.value);
             break;
         }
     }
 }
 
-void copyRelations(RenderStyle& to, const RenderStyle& from)
+void copyRelations(Style::ComputedStyle& to, const Style::ComputedStyle& from)
 {
-    if (from.emptyState())
-        to.setEmptyState(true);
     if (from.firstChildState())
         to.setFirstChildState();
     if (from.lastChildState())

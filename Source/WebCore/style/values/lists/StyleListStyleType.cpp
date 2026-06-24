@@ -123,7 +123,7 @@ auto CSSValueConversion<ListStyleType>::operator()(BuilderState& state, const CS
     return CounterStyle { toStyleFromCSSValue<CustomIdent>(state, value) };
 }
 
-auto CSSValueCreation<ListStyleType>::operator()(CSSValuePool& pool, const RenderStyle& style, const ListStyleType& value) -> Ref<CSSValue>
+auto CSSValueCreation<ListStyleType>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const ListStyleType& value) -> Ref<CSSValue>
 {
     return WTF::switchOn(value,
         [&](const CSS::Keyword::None& none) { return Style::createCSSValue(pool, style, none); },

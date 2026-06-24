@@ -83,11 +83,11 @@ auto CSSMathMax::toSumValue() const -> std::optional<SumValue>
 {
     // https://drafts.css-houdini.org/css-typed-om/#create-a-sum-value
     auto& valuesArray = m_values->array();
-    std::optional<SumValue> currentMax = valuesArray[0]->toSumValue();
+    std::optional<SumValue> currentMax = protect(valuesArray[0])->toSumValue();
     if (!currentMax || currentMax->size() != 1)
         return std::nullopt;
     for (size_t i = 1; i < valuesArray.size(); ++i) {
-        auto currentValue = valuesArray[i]->toSumValue();
+        auto currentValue = protect(valuesArray[i])->toSumValue();
         if (!currentValue
             || currentValue->size() != 1
             || (*currentValue)[0].units != (*currentMax)[0].units)

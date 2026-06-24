@@ -6,12 +6,6 @@ async function setup() {
 
         await testRunner.setResourceMonitorList(JSON.stringify(rules));
 
-        // Lower the threshold to 10k
-        internals.setResourceMonitorNetworkUsageThreshold(10 * 1024, 0.001);
-
-        // Skip throttling of unloading or not.
-        internals.shouldSkipResourceMonitorThrottling = false;
-
         return true;
     } else {
         console.error('ResourceMonitor is not available or cannot modify rules.');

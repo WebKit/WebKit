@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MediaElementAudioSourceNode: output channel count adapts when src changes channel count</title>
+<link rel="help" href="https://webaudio.github.io/web-audio-api/#MediaElementAudioSourceNode">
+<script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+
+function waitFor(element, type) {
+    return new Promise(resolve => element.addEventListener(type, resolve, { once: true }));
+}
+
+function sleepFor(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function dbAtFrequency(analyser, frequency, sampleRate) {
+    const buf = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(buf);
+    return buf[Math.round(frequency * analyser.fftSize / sampleRate)];
+}
+
+async function waitForPlayback(audio, target = 0.3) {
+    let attempts = 0;
+    while (audio.currentTime < target) {
+        if (++attempts >= 30)
+            throw new Error(`element.currentTime stuck at ${audio.currentTime}`);
+        await sleepFor(50);
+    }
+    await sleepFor(100);
+}
+
+promise_test(async t => {
+    // Start with the stereo fixture (L=440, R=880).
+    const audio = new Audio("../resources/media/stereo-440L-880R.wav");
+    waitFor(audio, "error").then(event => {
+        throw new Error(`audio element error: code=${event.target.error?.code}`);
+    });
+    audio.loop = true;
+
+    const context = new AudioContext({sampleRate: 48000});
+    t.add_cleanup(() => context.close());
+
+    const source = context.createMediaElementSource(audio);
+    const splitter = context.createChannelSplitter(2);
+    const analyserA = context.createAnalyser();
+    const analyserB = context.createAnalyser();
+    for (const a of [analyserA, analyserB]) {
+        a.fftSize = 2048;
+        a.smoothingTimeConstant = 0;
+        a.minDecibels = -40;
+        a.maxDecibels = 0;
+    }
+
+    const gain = context.createGain();
+    gain.gain.value = 0;
+
+    source.connect(splitter);
+    splitter.connect(analyserA, 0);
+    splitter.connect(analyserB, 1);
+    analyserA.connect(gain);
+    analyserB.connect(gain);
+    gain.connect(context.destination);
+
+    context.resume();
+    audio.play();
+    await waitForPlayback(audio);
+
+    assert_greater_than(dbAtFrequency(analyserA, 440, context.sampleRate), 0,
+        "stereo: splitter output 0 has 440Hz");
+    assert_greater_than(dbAtFrequency(analyserB, 880, context.sampleRate), 0,
+        "stereo: splitter output 1 has 880Hz");
+
+    // Switch source to a mono fixture. The node's output channel count must adapt.
+    audio.pause();
+    audio.src = "../resources/media/sine440.mp3";
+    audio.load();
+    await waitFor(audio, "canplay");
+    audio.play();
+    await waitForPlayback(audio);
+
+    assert_greater_than(dbAtFrequency(analyserA, 440, context.sampleRate), 0,
+        "after src change to mono: splitter output 0 has 440Hz");
+    assert_equals(dbAtFrequency(analyserB, 440, context.sampleRate), 0,
+        "after src change to mono: splitter output 1 is silent (output channel count adapted from 2 to 1)");
+
+    audio.pause();
+}, "MediaElementAudioSourceNode output channel count adapts when the underlying media changes from stereo to mono via src change");
+</script>
+</body>
+</html>

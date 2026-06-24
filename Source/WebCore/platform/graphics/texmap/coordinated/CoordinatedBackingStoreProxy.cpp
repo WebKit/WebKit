@@ -142,7 +142,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
                 tile.rect.x(), tile.rect.y(), tile.rect.width(), tile.rect.height(), tile.dirtyRect.x(), tile.dirtyRect.y(), tile.dirtyRect.width(), tile.dirtyRect.height());
 
 #if USE(SKIA)
-            auto buffer = recording ? layer.replay(recording, tile.dirtyRect) : layer.paint(tile.dirtyRect);
+            auto buffer = recording ? layer.replay(Ref { *recording }, tile.rect, tile.dirtyRect) : layer.paint(tile.dirtyRect);
 #else
             auto buffer = layer.paint(tile.dirtyRect);
 #endif

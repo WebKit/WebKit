@@ -33,6 +33,7 @@
 #include "AXUtilities.h"
 #include "AccessibilityObject.h"
 #include "LayoutRect.h"
+#include "LocalNameWithNamespace.h"
 #include "RenderStyleConstants.h"
 #include <wtf/Forward.h>
 
@@ -343,7 +344,7 @@ private:
     bool needsToUpdateChildren() const final { return m_childrenDirty; }
     void setNeedsToUpdateSubtree() final { m_subtreeDirty = true; }
 
-    bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
+    bool isDescendantOfElementType(const HashSet<LocalNameWithNamespace>&) const;
 
     AXObjectRareData* rareDataWithCleanTableChildren();
     // Returns the number of columns the table should have.

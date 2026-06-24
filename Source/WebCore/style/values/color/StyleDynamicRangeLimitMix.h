@@ -70,7 +70,7 @@ void addWeightedLimitTo(DynamicRangeLimitMixFunction&, const DynamicRangeLimit&,
 
 // MARK: Conversion
 
-template<> struct ToCSS<DynamicRangeLimitMixFunction> { auto operator()(const DynamicRangeLimitMixFunction&, const RenderStyle&) -> CSS::DynamicRangeLimitMixFunction; };
+template<> struct ToCSS<DynamicRangeLimitMixFunction> { auto operator()(const DynamicRangeLimitMixFunction&, const Style::ComputedStyle&) -> CSS::DynamicRangeLimitMixFunction; };
 template<> struct ToStyle<CSS::DynamicRangeLimitMixFunction> { auto operator()(const CSS::DynamicRangeLimitMixFunction&, const BuilderState&) -> DynamicRangeLimitMixFunction; };
 
 // MARK: Logging

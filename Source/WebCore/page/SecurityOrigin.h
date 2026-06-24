@@ -29,6 +29,7 @@
 #pragma once
 
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -244,3 +245,15 @@ inline void add(Hasher& hasher, const SecurityOrigin& origin)
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+// The content-based DefaultHash specialization for Ref<SecurityOrigin> is
+// declared here but intentionally defined only in SecurityOriginHash.h. Using
+// Ref<SecurityOrigin> as a hash-table key without including SecurityOriginHash.h
+// is therefore a hard compile error (instantiating an incomplete DefaultHash)
+// rather than a silent fall back to pointer hashing.
+template<typename> struct DefaultHash;
+template<> struct DefaultHash<Ref<WebCore::SecurityOrigin>>; // Defined in SecurityOriginHash.h
+
+} // namespace WTF

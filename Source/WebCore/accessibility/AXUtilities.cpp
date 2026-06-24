@@ -30,6 +30,7 @@
 #include "CSSProperty.h"
 #include "CSSValueList.h"
 #include "Document.h"
+#include "DocumentPage.h"
 #include "DocumentView.h"
 #include "ElementInlines.h"
 #include "HTMLImageElement.h"
@@ -75,7 +76,7 @@ NodeName elementName(Node& node)
     return element ? element->elementName() : ElementName::Unknown;
 }
 
-const RenderStyle* safeStyleFrom(Element& element)
+const Style::ComputedStyle* safeStyleFrom(Element& element)
 {
     // We cannot resolve style (as computedStyle() does) if we are downstream of an existing render tree
     // update. Otherwise, a RELEASE_ASSERT preventing re-entrancy will be hit inside RenderTreeBuilder.
@@ -179,26 +180,31 @@ bool hasRole(Element& element, StringView role)
     if (roleValue.isEmpty())
         return false;
 
-    return SpaceSplitString::spaceSplitStringContainsValue(roleValue, role, SpaceSplitString::ShouldFoldCase::Yes);
+    // Lowercase the role value ourselves (allocation-free when it's already lowercase, the common case for
+    // ARIA roles) and match without folding, so spaceSplitStringContainsValue doesn't allocate a lowercased copy.
+    return SpaceSplitString::spaceSplitStringContainsValue(roleValue.convertToASCIILowercase(), role, SpaceSplitString::ShouldFoldCase::No);
 }
 
-bool hasAnyRole(Element& element, Vector<StringView>&& roles)
+bool hasAnyRole(Element& element, std::initializer_list<StringView> roles)
 {
     auto roleValue = element.attributeWithDefaultARIA(roleAttr);
     if (roleValue.isEmpty())
         return false;
 
+    // Lowercase the role value once (allocation-free when it's already lowercase, the common case for ARIA
+    // roles) and match each candidate without folding, rather than lowercasing it once per candidate role.
+    AtomString lowercasedRoleValue = roleValue.convertToASCIILowercase();
     for (const auto& role : roles) {
         AX_ASSERT(!role.isEmpty());
-        if (SpaceSplitString::spaceSplitStringContainsValue(roleValue, role, SpaceSplitString::ShouldFoldCase::Yes))
+        if (SpaceSplitString::spaceSplitStringContainsValue(lowercasedRoleValue, role, SpaceSplitString::ShouldFoldCase::No))
             return true;
     }
     return false;
 }
 
-bool hasAnyRole(Element* element, Vector<StringView>&& roles)
+bool hasAnyRole(Element* element, std::initializer_list<StringView> roles)
 {
-    return element ? hasAnyRole(*element, WTF::move(roles)) : false;
+    return element ? hasAnyRole(*element, roles) : false;
 }
 
 bool hasTableRole(Element& element)

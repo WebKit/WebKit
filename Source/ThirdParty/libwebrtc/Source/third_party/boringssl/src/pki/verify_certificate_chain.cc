@@ -18,13 +18,20 @@
 #include <cassert>
 
 #include <openssl/base.h>
+#include <openssl/bytestring.h>
+#include <openssl/mem.h>
+#include <openssl/sha2.h>
+#include <openssl/span.h>
+
 #include "cert_error_params.h"
 #include "cert_errors.h"
 #include "common_cert_errors.h"
 #include "extended_key_usage.h"
 #include "input.h"
+#include "merkle_tree.h"
 #include "name_constraints.h"
 #include "parse_certificate.h"
+#include "parse_values.h"
 #include "signature_algorithm.h"
 #include "trust_store.h"
 #include "verify_signed_data.h"
@@ -83,7 +90,7 @@ bool IsHandledCriticalExtension(const ParsedExtension &extension) {
   return false;
 }
 
-// Adds errors to |errors| if the certificate contains unconsumed _critical_
+// Adds errors to `errors` if the certificate contains unconsumed _critical_
 // extensions.
 void VerifyNoUnconsumedCriticalExtensions(const ParsedCertificate &cert,
                                           CertErrors *errors,
@@ -118,7 +125,7 @@ void VerifyNoUnconsumedCriticalExtensions(const ParsedCertificate &cert,
   }
 }
 
-// Returns true if |cert| was self-issued. The definition of self-issuance
+// Returns true if `cert` was self-issued. The definition of self-issuance
 // comes from RFC 5280 section 6.1:
 //
 //    A certificate is self-issued if the same DN appears in the subject
@@ -133,7 +140,7 @@ void VerifyNoUnconsumedCriticalExtensions(const ParsedCertificate &cert,
   return cert.normalized_subject() == cert.normalized_issuer();
 }
 
-// Adds errors to |errors| if |cert| is not valid at time |time|.
+// Adds errors to `errors` if `cert` is not valid at time `time`.
 //
 // The certificate's validity requirements are described by RFC 5280 section
 // 4.1.2.5:
@@ -151,7 +158,7 @@ void VerifyTimeValidity(const ParsedCertificate &cert,
   }
 }
 
-// Adds errors to |errors| if |cert| has internally inconsistent signature
+// Adds errors to `errors` if `cert` has internally inconsistent signature
 // algorithms.
 //
 // X.509 certificates contain two different signature algorithms:
@@ -211,7 +218,7 @@ bool VerifySignatureAlgorithmsMatch(const ParsedCertificate &cert,
   return false;
 }
 
-// Verify that |cert| can be used for |required_key_purpose|.
+// Verify that `cert` can be used for `required_key_purpose`.
 void VerifyExtendedKeyUsage(const ParsedCertificate &cert,
                             KeyPurpose required_key_purpose, CertErrors *errors,
                             bool is_target_cert, bool is_target_cert_issuer) {
@@ -593,7 +600,7 @@ class ValidPolicyGraph {
 
   // Gets the set of policies (in terms of root authority's policy domain) that
   // are valid at the bottom level of the policy graph, intersected with
-  // |user_initial_policy_set|. This is what X.509 calls
+  // `user_initial_policy_set`. This is what X.509 calls
   // "user-constrained-policy-set".
   //
   // This method may only be called once, after the policy graph is constructed.
@@ -628,7 +635,7 @@ class ValidPolicyGraph {
           continue;
         }
         if (node.parent_policies.empty()) {
-          // |node|'s parent is anyPolicy, so this is in the root policy domain.
+          // `node`'s parent is anyPolicy, so this is in the root policy domain.
           // Add it to the set if it is also in user's list.
           if (user_has_any_policy ||
               user_initial_policy_set.count(policy) > 0) {
@@ -654,7 +661,7 @@ class ValidPolicyGraph {
     current_level_.has_any_policy = true;
   }
 
-  // Adds a node to the current level which is a child of |parent_policies| with
+  // Adds a node to the current level which is a child of `parent_policies` with
   // the specified policy.
   void AddNode(der::Input policy, std::vector<der::Input> parent_policies) {
     assert(policy != der::Input(kAnyPolicyOid));
@@ -668,7 +675,7 @@ class ValidPolicyGraph {
     AddNode(policy, {});
   }
 
-  // Maps |issuer_policy| to |subject_policy|, as in RFC 5280, section 6.1.4,
+  // Maps `issuer_policy` to `subject_policy`, as in RFC 5280, section 6.1.4,
   // step b.1.
   void AddPolicyMapping(der::Input issuer_policy, der::Input subject_policy) {
     assert(issuer_policy != der::Input(kAnyPolicyOid));
@@ -677,7 +684,7 @@ class ValidPolicyGraph {
       return;
     }
 
-    // The mapping only applies if |issuer_policy| exists in the current level.
+    // The mapping only applies if `issuer_policy` exists in the current level.
     auto issuer_policy_iter = levels_.back().find(issuer_policy);
     if (issuer_policy_iter == levels_.back().end()) {
       // If there is no match, it can instead match anyPolicy.
@@ -703,7 +710,7 @@ class ValidPolicyGraph {
     // in at StartLevel().
     issuer_policy_iter->second.mapped = true;
 
-    // Add |subject_policy| to |issuer_policy|'s "expected_policy_set".
+    // Add `subject_policy` to `issuer_policy`'s "expected_policy_set".
     current_level_.expected_policy_map[subject_policy].push_back(issuer_policy);
   }
 
@@ -739,7 +746,7 @@ class PathVerifier {
  public:
   // Same parameters and meaning as VerifyCertificateChain().
   void Run(const ParsedCertificateList &certs,
-           const CertificateTrust &last_cert_trust,
+           const TrustAnchor &last_cert_trust,
            VerifyCertificateChainDelegate *delegate,
            const der::GeneralizedTime &time, KeyPurpose required_key_purpose,
            InitialExplicitPolicy initial_explicit_policy,
@@ -774,7 +781,7 @@ class PathVerifier {
                                   bool *shortcircuit_chain_validation);
 
   // This function corresponds to RFC 5280 section 6.1.4's "Preparation for
-  // Certificate i+1" procedure. |cert| is expected to be an intermediate.
+  // Certificate i+1" procedure. `cert` is expected to be an intermediate.
   void PrepareForNextCertificate(const ParsedCertificate &cert,
                                  KeyPurpose key_purpose, CertErrors *errors);
 
@@ -795,7 +802,7 @@ class PathVerifier {
   // Initializes the path validation algorithm given anchor constraints. This
   // follows the description in RFC 5937
   void ProcessRootCertificate(const ParsedCertificate &cert,
-                              const CertificateTrust &trust,
+                              const TrustAnchor &trust_anchor,
                               const der::GeneralizedTime &time,
                               KeyPurpose required_key_purpose,
                               CertErrors *errors,
@@ -810,9 +817,9 @@ class PathVerifier {
                               KeyPurpose required_key_purpose,
                               CertErrors *errors);
 
-  // Parses |spki| to an EVP_PKEY and checks whether the public key is accepted
-  // by |delegate_|. On failure parsing returns nullptr. If either parsing the
-  // key or key policy failed, adds a high-severity error to |errors|.
+  // Parses `spki` to an EVP_PKEY and checks whether the public key is accepted
+  // by `delegate_`. On failure parsing returns nullptr. If either parsing the
+  // key or key policy failed, adds a high-severity error to `errors`.
   bssl::UniquePtr<EVP_PKEY> ParseAndCheckPublicKey(der::Input spki,
                                                    CertErrors *errors);
 
@@ -825,7 +832,7 @@ class PathVerifier {
   // excluded_subtrees state variables from RFC 5280.
   std::vector<const NameConstraints *> name_constraints_list_;
 
-  // |explicit_policy_| corresponds with the same named variable from RFC 5280
+  // `explicit_policy_` corresponds with the same named variable from RFC 5280
   // section 6.1.2:
   //
   //   explicit_policy:  an integer that indicates if a non-NULL
@@ -838,7 +845,7 @@ class PathVerifier {
   //   initial value is 0, otherwise the initial value is n+1.
   size_t explicit_policy_;
 
-  // |inhibit_any_policy_| corresponds with the same named variable from RFC
+  // `inhibit_any_policy_` corresponds with the same named variable from RFC
   // 5280 section 6.1.2:
   //
   //   inhibit_anyPolicy:  an integer that indicates whether the
@@ -854,7 +861,7 @@ class PathVerifier {
   //   initial value is n+1.
   size_t inhibit_any_policy_;
 
-  // |policy_mapping_| corresponds with the same named variable from RFC 5280
+  // `policy_mapping_` corresponds with the same named variable from RFC 5280
   // section 6.1.2:
   //
   //   policy_mapping:  an integer that indicates if policy mapping
@@ -868,7 +875,7 @@ class PathVerifier {
   //   otherwise the initial value is n+1.
   size_t policy_mapping_;
 
-  // |working_public_key_| is an amalgamation of 3 separate variables from RFC
+  // `working_public_key_` is an amalgamation of 3 separate variables from RFC
   // 5280:
   //    * working_public_key
   //    * working_public_key_algorithm
@@ -876,23 +883,30 @@ class PathVerifier {
   //
   // They are combined for simplicity since the signature verification takes an
   // EVP_PKEY, and the parameter inheritance is not applicable for the supported
-  // key types. |working_public_key_| may be null if parsing failed.
+  // key types. `working_public_key_` may be null if parsing failed.
   //
-  // An approximate explanation of |working_public_key_| is this description
+  // An approximate explanation of `working_public_key_` is this description
   // from RFC 5280 section 6.1.2:
   //
   //    working_public_key:  the public key used to verify the
   //    signature of a certificate.
   bssl::UniquePtr<EVP_PKEY> working_public_key_;
 
-  // |working_normalized_issuer_name_| is the normalized value of the
+  // `working_normalized_issuer_name_` is the normalized value of the
   // working_issuer_name variable in RFC 5280 section 6.1.2:
   //
   //    working_issuer_name:  the issuer distinguished name expected
   //    in the next certificate in the chain.
   der::Input working_normalized_issuer_name_;
 
-  // |max_path_length_| corresponds with the same named variable in RFC 5280
+  // `working_mtc_anchor_` is the trusted MTC Anchor that the chain-to-verify
+  // claims issued the next certificate in the chain, and should be used to
+  // verify that certificate. It is analogous to `working_public_key_`, except
+  // that MTCs don't have an EVP_PKEY that can be used to verify their
+  // "signature" and instead have an MTCAnchor used for verification.
+  const MTCAnchor *working_mtc_anchor_ = nullptr;
+
+  // `max_path_length_` corresponds with the same named variable in RFC 5280
   // section 6.1.2.
   //
   //    max_path_length:  this integer is initialized to n, is
@@ -1109,6 +1123,146 @@ void PathVerifier::ApplyPolicyConstraints(const ParsedCertificate &cert) {
   }
 }
 
+// This function implements draft-davidben-tls-merkle-tree-certs-08 section 7.2:
+// Verifying Certificate Signatures.
+static bool VerifyMTC(const ParsedCertificate &cert,
+                      const MTCAnchor *mtc_anchor) {
+  // Step 1: Check that the TBSCertificate's signature field is id-alg-mtcProof
+  // (kMtcProofDraftDavidben08) with omitted parameters.
+  if (cert.signature_algorithm() !=
+      SignatureAlgorithm::kMtcProofDraftDavidben08) {
+    // When we parse the signature algorithm, we check that the parameters are
+    // omitted.
+    return false;
+  }
+
+  // Step 2: Decode the signatureValue as an MTCProof.
+  CBS mtc_proof(cert.signature_value().bytes());
+  uint64_t start, end;
+  CBS inclusion_proof, signatures;
+  if (cert.signature_value().unused_bits() != 0 ||
+      !CBS_get_u64(&mtc_proof, &start) || !CBS_get_u64(&mtc_proof, &end) ||
+      !CBS_get_u16_length_prefixed(&mtc_proof, &inclusion_proof) ||
+      !CBS_get_u16_length_prefixed(&mtc_proof, &signatures) ||
+      CBS_len(&mtc_proof) != 0) {
+    return false;
+  }
+
+  // Step 3: Let index be the certificate's serial number.
+  uint64_t index;
+  if (!der::ParseUint64(cert.tbs().serial_number, &index)) {
+    return false;
+  }
+  // Step 3's revocation check is not performed in this function. The caller is
+  // responsible for performing revocation checks.
+
+  // Steps 5 and 4 are done in reverse order. Step 4 builds a value that gets
+  // embedded in step 5's MerkleTreeCertEntry `entry`, and then step 5 proceeds
+  // to prepend a value to `entry` and run all of that through a hash function.
+  // The input to the hash function is built up in a single buffer, which means
+  // steps 5 and 4 are effectively done in reverse order.
+  //
+  // Step 5:
+  //
+  //   Construct a MerkleTreeCertEntry of type tbs_cert_entry with contents the
+  //   TBSCertificateLogEntry. Let entry_hash be the hash of the entry,
+  //   MTH({entry}) = HASH(0x00 || entry), as defined in Section 2.1.1 of
+  //   [RFC9162].
+  //
+  // A MerkleTreeCertEntry is defined as follows (section 5.3):
+  //
+  //   struct {
+  //       MerkleTreeCertEntryType type;
+  //       select (type) {
+  //          case null_entry: Empty;
+  //          case tbs_cert_entry: opaque tbs_cert_entry_data[N];
+  //          /* May be extended with future types. */
+  //       }
+  //   } MerkleTreeCertEntry;
+  //
+  // When type = tbs_cert_entry (0x0001), the MerkleTreeCertEntry entry - the
+  // input to HASH(0x00 || entry) - consists of the 16-bit value 0x0001 followed
+  // by the TBSCertificateLogEntry (constructed according to the instructions in
+  // step 4). The variable `entry` below corresponds to the input to HASH, i.e.
+  // it contains 0x00 (the MTH domain separator), 0x0001
+  // (MerkleTreeCertEntryType of tbs_cert_entry), and then the
+  // TBSCertificateLogEntry.
+  ScopedCBB entry;
+  CBB tbs_cert_log_entry;
+  if (!CBB_init(entry.get(), 0) ||
+      !CBB_add_u8(entry.get(), 0 /* MTH domain separator */) ||
+      !CBB_add_u16(entry.get(), 1 /* tbs_cert_entry */) ||
+      !CBB_add_asn1(entry.get(), &tbs_cert_log_entry, CBS_ASN1_SEQUENCE)) {
+    return false;
+  }
+  // Add version (if not V1):
+  CBB version;
+  if (cert.tbs().version != CertificateVersion::V1 &&
+      (!CBB_add_asn1(&tbs_cert_log_entry, &version,
+                     CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0) ||
+       !CBB_add_asn1_uint64(&version,
+                            static_cast<uint64_t>(cert.tbs().version)))) {
+    return false;
+  }
+  // Add issuer, validity, subject:
+  if (!CBB_add_bytes(&tbs_cert_log_entry, cert.tbs().issuer_tlv.data(),
+                     cert.tbs().issuer_tlv.size()) ||
+      !CBB_add_bytes(&tbs_cert_log_entry, cert.tbs().validity_tlv.data(),
+                     cert.tbs().validity_tlv.size()) ||
+      !CBB_add_bytes(&tbs_cert_log_entry, cert.tbs().subject_tlv.data(),
+                     cert.tbs().subject_tlv.size())) {
+    return false;
+  }
+  // Hash SPKI and add to entry.
+  CBB spki_hash;
+  uint8_t *hash_buf;
+  if (!CBB_add_asn1(&tbs_cert_log_entry, &spki_hash, CBS_ASN1_OCTETSTRING) ||
+      !CBB_add_space(&spki_hash, &hash_buf, SHA256_DIGEST_LENGTH)) {
+    return false;
+  }
+  SHA256(cert.tbs().spki_tlv.data(), cert.tbs().spki_tlv.size(), hash_buf);
+  // Add the stuff from the cert after the SPKI (issuerUniqueID,
+  // subjectUniqueID, extensions):
+  if (!CBB_add_bytes(&tbs_cert_log_entry, cert.tbs().bytes_after_spki.data(),
+                     cert.tbs().bytes_after_spki.size())) {
+    return false;
+  }
+
+  // Finally done assembling `entry` - compute its hash:
+  if (!CBB_flush(entry.get())) {
+    return false;
+  }
+  TreeHash entry_hash;
+  SHA256(CBB_data(entry.get()), CBB_len(entry.get()), entry_hash.data());
+
+  // Step 6: Let expected_subtree_hash be the result of evaluating the
+  // MTCProof's inclusion_proof.
+  Subtree range{start, end};
+  std::optional<TreeHash> expected_subtree_hash =
+      EvaluateMerkleSubtreeInclusionProof(inclusion_proof, index, entry_hash,
+                                          range);
+  if (!expected_subtree_hash) {
+    return false;
+  }
+
+  // Step 7: If [start, end) matches a trusted subtree (Section 7.4), check that
+  // expected_subtree_hash is equal to the trusted subtree's hash. Return
+  // success if it matches and failure if it does not.
+  if (!mtc_anchor) {
+    return false;
+  }
+  std::optional<TreeHashConstSpan> trusted_subtree_hash =
+      mtc_anchor->SubtreeHash(range);
+  if (!trusted_subtree_hash) {
+    // Step 8 would check the MTCProof's signatures if there's no matching
+    // trusted subtree. This implementation does not support that check yet.
+    return false;
+  }
+  return CRYPTO_memcmp(expected_subtree_hash->data(),
+                       trusted_subtree_hash->data(),
+                       expected_subtree_hash->size()) == 0;
+}
+
 void PathVerifier::BasicCertificateProcessing(
     const ParsedCertificate &cert, bool is_target_cert,
     bool is_target_cert_issuer, const der::GeneralizedTime &time,
@@ -1142,6 +1296,14 @@ void PathVerifier::BasicCertificateProcessing(
       *shortcircuit_chain_validation = true;
       errors->AddError(cert_errors::kVerifySignedDataFailed);
     }
+  } else if (working_mtc_anchor_) {
+    if (!is_target_cert) {
+      *shortcircuit_chain_validation = true;
+      errors->AddError(cert_errors::kMaxPathLengthViolated);
+    } else if (!VerifyMTC(cert, working_mtc_anchor_)) {
+      *shortcircuit_chain_validation = true;
+      errors->AddError(cert_errors::kVerifySignedDataFailed);
+    }
   } else {
     // If `working_public_key_` is null, that indicates the SPKI of the issuer
     // could not be parsed. Handle this the same way as an invalid signature by
@@ -1157,7 +1319,7 @@ void PathVerifier::BasicCertificateProcessing(
   }
 
   // Check the time range for the certificate's validity, ensuring it is valid
-  // at |time|.
+  // at `time`.
   // (RFC 5280 section 6.1.3 step a.2)
   VerifyTimeValidity(cert, time, errors);
 
@@ -1208,10 +1370,11 @@ void PathVerifier::PrepareForNextCertificate(const ParsedCertificate &cert,
   //
   //    Assign the certificate subjectPublicKey to working_public_key.
   working_public_key_ = ParseAndCheckPublicKey(cert.tbs().spki_tlv, errors);
+  working_mtc_anchor_ = nullptr;
 
   // Note that steps e and f are omitted as they are handled by
-  // the assignment to |working_spki| above. See the definition
-  // of |working_spki|.
+  // the assignment to `working_spki` above. See the definition
+  // of `working_spki`.
 
   // From RFC 5280 section 6.1.4 step g:
   if (cert.has_name_constraints()) {
@@ -1303,7 +1466,7 @@ void PathVerifier::PrepareForNextCertificate(const ParsedCertificate &cert,
 }
 
 // Checks if the target certificate has the CA bit set. If it does, add
-// the appropriate error or warning to |errors|.
+// the appropriate error or warning to `errors`.
 void VerifyTargetCertIsNotCA(const ParsedCertificate &cert,
                              KeyPurpose required_key_purpose,
                              CertErrors *errors) {
@@ -1420,7 +1583,7 @@ void PathVerifier::ApplyTrustAnchorConstraints(const ParsedCertificate &cert,
   // policyConstraints and inhibitAnyPolicy extensions.
   ApplyPolicyConstraints(cert);
 
-  // If keyUsage is present, verify that |cert| has correct keyUsage bits for a
+  // If keyUsage is present, verify that `cert` has correct keyUsage bits for a
   // CA. This matches the handling for intermediates from RFC 5280 section
   // 6.1.4 step n.
   if (cert.has_key_usage() &&
@@ -1472,12 +1635,13 @@ void PathVerifier::ApplyTrustAnchorConstraints(const ParsedCertificate &cert,
 }
 
 void PathVerifier::ProcessRootCertificate(const ParsedCertificate &cert,
-                                          const CertificateTrust &trust,
+                                          const TrustAnchor &trust_anchor,
                                           const der::GeneralizedTime &time,
                                           KeyPurpose required_key_purpose,
                                           CertErrors *errors,
                                           bool *shortcircuit_chain_validation) {
   *shortcircuit_chain_validation = false;
+  const CertificateTrust &trust = trust_anchor.CertTrust();
   switch (trust.type) {
     case CertificateTrustType::UNSPECIFIED:
     case CertificateTrustType::TRUSTED_LEAF:
@@ -1517,7 +1681,12 @@ void PathVerifier::ProcessRootCertificate(const ParsedCertificate &cert,
   }
 
   // Use the certificate's SPKI and subject when verifying the next certificate.
-  working_public_key_ = ParseAndCheckPublicKey(cert.tbs().spki_tlv, errors);
+  const MTCAnchor *mtc_anchor = trust_anchor.MTCAnchor().get();
+  if (mtc_anchor) {
+    working_mtc_anchor_ = mtc_anchor;
+  } else {
+    working_public_key_ = ParseAndCheckPublicKey(cert.tbs().spki_tlv, errors);
+  }
   working_normalized_issuer_name_ = cert.normalized_subject();
 }
 
@@ -1593,7 +1762,7 @@ bssl::UniquePtr<EVP_PKEY> PathVerifier::ParseAndCheckPublicKey(
 }
 
 void PathVerifier::Run(
-    const ParsedCertificateList &certs, const CertificateTrust &last_cert_trust,
+    const ParsedCertificateList &certs, const TrustAnchor &last_cert_trust,
     VerifyCertificateChainDelegate *delegate, const der::GeneralizedTime &time,
     KeyPurpose required_key_purpose,
     InitialExplicitPolicy initial_explicit_policy,
@@ -1617,7 +1786,7 @@ void PathVerifier::Run(
   // Verifying a trusted leaf certificate isn't a well-specified operation, so
   // it's handled separately from the RFC 5280 defined verification process.
   if (certs.size() == 1) {
-    ProcessSingleCertChain(*certs.front(), last_cert_trust, time,
+    ProcessSingleCertChain(*certs.front(), last_cert_trust.CertTrust(), time,
                            required_key_purpose, errors->GetErrorsForCert(0));
     return;
   }
@@ -1667,7 +1836,7 @@ void PathVerifier::Run(
   for (size_t i = 0; i < certs.size(); ++i) {
     const size_t index_into_certs = certs.size() - i - 1;
 
-    // |is_target_cert| is true if the current certificate is the target
+    // `is_target_cert` is true if the current certificate is the target
     // certificate being verified. The target certificate isn't necessarily an
     // end-entity certificate.
     const bool is_target_cert = index_into_certs == 0;
@@ -1737,7 +1906,7 @@ void PathVerifier::Run(
 VerifyCertificateChainDelegate::~VerifyCertificateChainDelegate() = default;
 
 void VerifyCertificateChain(
-    const ParsedCertificateList &certs, const CertificateTrust &last_cert_trust,
+    const ParsedCertificateList &certs, const TrustAnchor &last_cert_trust,
     VerifyCertificateChainDelegate *delegate, const der::GeneralizedTime &time,
     KeyPurpose required_key_purpose,
     InitialExplicitPolicy initial_explicit_policy,

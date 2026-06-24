@@ -10,10 +10,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "call/audio_receive_stream.h"
@@ -56,7 +56,7 @@ TEST_F(AudioSendStreamCallTest, SupportsCName) {
     CNameObserver() = default;
 
    private:
-    Action OnSendRtcp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtcp(std::span<const uint8_t> packet) override {
       RtcpPacketParser parser;
       EXPECT_TRUE(parser.Parse(packet));
       if (parser.sdes()->num_packets() > 0) {
@@ -89,7 +89,7 @@ TEST_F(AudioSendStreamCallTest, NoExtensionsByDefault) {
     NoExtensionsObserver() = default;
 
    private:
-    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(std::span<const uint8_t> packet) override {
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet));  // rtp packet is valid.
       EXPECT_EQ(packet[0] & 0b0001'0000, 0);  // extension bit not set.
@@ -119,7 +119,7 @@ TEST_F(AudioSendStreamCallTest, SupportsAudioLevel) {
       extensions_.Register<AudioLevelExtension>(kAudioLevelExtensionId);
     }
 
-    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(std::span<const uint8_t> packet) override {
       RtpPacket rtp_packet(&extensions_);
       EXPECT_TRUE(rtp_packet.Parse(packet));
 
@@ -164,7 +164,7 @@ class TransportWideSequenceNumberObserver : public AudioSendTest {
   }
 
  private:
-  Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+  Action OnSendRtp(std::span<const uint8_t> packet) override {
     RtpPacket rtp_packet(&extensions_);
     EXPECT_TRUE(rtp_packet.Parse(packet));
 
@@ -210,7 +210,7 @@ TEST_F(AudioSendStreamCallTest, SendDtmf) {
     DtmfObserver() = default;
 
    private:
-    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(std::span<const uint8_t> packet) override {
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet));
 

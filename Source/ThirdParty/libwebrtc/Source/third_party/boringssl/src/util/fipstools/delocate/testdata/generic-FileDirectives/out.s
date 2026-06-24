@@ -2,6 +2,7 @@
 .file 1002 "inserted_by_delocate.c" md5 0x00000000000000000000000000000000
 .loc 1002 1 0
 BORINGSSL_bcm_text_start:
+.LBORINGSSL_bcm_text_start_local_target:
 .file 10 "some/path/file.c" "file.c"
 .file 1000 "some/path/file2.c" "file2.c"
 .file 1001 "some/path/file_with_md5.c" "other_name.c" md5 0x5eba7844df6449a7f2fff1556fe7ba8d239f8e2f
@@ -11,6 +12,7 @@ BORINGSSL_bcm_text_start:
 .text
 .loc 1002 2 0
 BORINGSSL_bcm_text_end:
+.LBORINGSSL_bcm_text_end_local_target:
 .type BORINGSSL_bcm_text_hash, @object
 .size BORINGSSL_bcm_text_hash, 32
 BORINGSSL_bcm_text_hash:

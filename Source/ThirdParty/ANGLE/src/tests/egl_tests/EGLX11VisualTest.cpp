@@ -19,7 +19,6 @@
 #include <X11/Xutil.h>
 
 #include "test_utils/ANGLETest.h"
-#include "util/OSWindow.h"
 #include "util/linux/x11/X11Window.h"
 
 using namespace angle;
@@ -41,6 +40,8 @@ class EGLX11VisualHintTest : public ANGLETest<>
 
         attribs.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         attribs.push_back(GetParam().getRenderer());
+        attribs.push_back(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE);
+        attribs.push_back(EGL_PLATFORM_X11_EXT);
         attribs.push_back(EGL_X11_VISUAL_ID_ANGLE);
         attribs.push_back(visualId);
         attribs.push_back(EGL_NONE);
@@ -79,6 +80,10 @@ class EGLX11VisualHintTest : public ANGLETest<>
 // Test that display creation fails if the visual ID passed in invalid.
 TEST_P(EGLX11VisualHintTest, InvalidVisualID)
 {
+    OSWindow *osWindow = CreateX11Window();
+    osWindow->initialize("EGLX11VisualHintTest", 500, 500);
+    setWindowVisible(osWindow, true);
+
     static const int gInvalidVisualId = -1;
     auto attributes                   = getDisplayAttributes(gInvalidVisualId);
 
@@ -88,6 +93,8 @@ TEST_P(EGLX11VisualHintTest, InvalidVisualID)
 
     ASSERT_TRUE(EGL_FALSE == eglInitialize(display, nullptr, nullptr));
     ASSERT_EGL_ERROR(EGL_NOT_INITIALIZED);
+
+    OSWindow::Delete(&osWindow);
 }
 
 // Test that context creation with a visual ID succeeds, that the context exposes
@@ -96,7 +103,7 @@ TEST_P(EGLX11VisualHintTest, ValidVisualIDAndClear)
 {
     // We'll test the extension with one visual ID but we don't care which one. This means we
     // can use OSWindow to create a window and just grab its visual.
-    OSWindow *osWindow = OSWindow::New();
+    OSWindow *osWindow = CreateX11Window();
     osWindow->initialize("EGLX11VisualHintTest", 500, 500);
     setWindowVisible(osWindow, true);
 
@@ -170,7 +177,7 @@ TEST_P(EGLX11VisualHintTest, InvalidWindowVisualID)
     // creation will succeed.
     int visualId;
     {
-        OSWindow *osWindow = OSWindow::New();
+        OSWindow *osWindow = CreateX11Window();
         osWindow->initialize("EGLX11VisualHintTest", 500, 500);
         setWindowVisible(osWindow, true);
 

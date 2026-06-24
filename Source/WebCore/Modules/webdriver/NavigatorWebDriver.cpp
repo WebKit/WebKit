@@ -29,7 +29,9 @@
 #include "DocumentPage.h"
 #include "LocalFrame.h"
 #include "Navigator.h"
+#include "NavigatorWebDriverActivePolicy.h"
 #include "Page.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -47,6 +49,14 @@ bool NavigatorWebDriver::isControlledByAutomation(const Navigator& navigator)
     if (!frame || !frame->page())
         return false;
 
+    switch (frame->settings().navigatorWebDriverActivePolicy()) {
+    case NavigatorWebDriverActivePolicy::Enabled:
+        return true;
+    case NavigatorWebDriverActivePolicy::Disabled:
+        return false;
+    case NavigatorWebDriverActivePolicy::Auto:
+        break;
+    }
     return frame->page()->isControlledByAutomation();
 }
 

@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <iframe id="xmlframe" onload="frameLoaded()" style="height:0px" src="data:application/xhtml+xml,<?xml version='1.0' encoding='UTF-8'?><body/>"></iframe>
 <script>
 description('Test DOMJIT documentElement accessor works.');
+window.jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 var target = null;
 var result = null;
@@ -36,14 +35,12 @@ function runTest()
         shouldBeTrue(`(${text})(target, result)`);
     }
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 function frameLoaded()
 {
     runTest();
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

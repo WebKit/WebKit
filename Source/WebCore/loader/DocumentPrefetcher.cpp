@@ -46,8 +46,8 @@
 
 namespace WebCore {
 
-DocumentPrefetcher::DocumentPrefetcher(FrameLoader& frameLoader)
-    : m_frameLoader(frameLoader)
+DocumentPrefetcher::DocumentPrefetcher(LocalFrame& frame)
+    : m_frame(frame)
 {
 }
 
@@ -121,10 +121,7 @@ static ResourceRequest makePrefetchRequest(URL&& url, const Vector<String>& tags
 
 void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, std::optional<ReferrerPolicy> referrerPolicy, bool lowPriority)
 {
-    WeakRef<FrameLoader> frameLoader = m_frameLoader;
-    if (!frameLoader.ptr())
-        return;
-    RefPtr<Document> document = frameLoader->frame().document();
+    RefPtr document = m_frame ? m_frame->document() : nullptr;
     if (!document)
         return;
 
@@ -134,14 +131,14 @@ void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, st
     if (m_prefetchedData.contains(url))
         return;
 
-    if (!isPassingSecurityChecks(url, *document.get()))
+    if (!isPassingSecurityChecks(url, *document))
         return;
 
     // TODO: This needs to be specified.
     if (url.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(url, document->url()))
         return;
 
-    ResourceRequest request = makePrefetchRequest(URL { url }, tags, referrerPolicy, frameLoader->outgoingReferrerURL(), *document);
+    ResourceRequest request = makePrefetchRequest(URL { url }, tags, referrerPolicy, m_frame->loader().outgoingReferrerURL(), *document);
 
     ResourceLoaderOptions prefetchOptions(
         SendCallbackPolicy::SendCallbacks,
@@ -169,6 +166,14 @@ void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, st
     auto& prefetchedResource = resourceErrorOr.value();
     m_prefetchedData.set(url, PrefetchedResourceData { CachedResourceHandle { prefetchedResource.get() }, { } });
     prefetchedResource->addClient(*this);
+}
+
+void DocumentPrefetcher::redirectReceived(CachedResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
+{
+    RefPtr document = m_frame ? m_frame->document() : nullptr;
+    if (!document || !isPassingSecurityChecks(request.url(), *document))
+        return completionHandler({ });
+    completionHandler(WTF::move(request));
 }
 
 void DocumentPrefetcher::responseReceived(const CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)

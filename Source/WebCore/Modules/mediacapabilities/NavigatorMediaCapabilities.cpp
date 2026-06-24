@@ -34,8 +34,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorMediaCapabilities);
 
-NavigatorMediaCapabilities::NavigatorMediaCapabilities()
-    : m_mediaCapabilities(MediaCapabilities::create())
+NavigatorMediaCapabilities::NavigatorMediaCapabilities(Navigator& navigator)
+    : m_mediaCapabilities(MediaCapabilities::create(navigator))
 {
 }
 
@@ -45,7 +45,7 @@ NavigatorMediaCapabilities& NavigatorMediaCapabilities::from(Navigator& navigato
 {
     auto* supplement = downcast<NavigatorMediaCapabilities>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = makeUnique<NavigatorMediaCapabilities>();
+        auto newSupplement = makeUnique<NavigatorMediaCapabilities>(navigator);
         supplement = newSupplement.get();
         provideTo(&navigator, supplementName(), WTF::move(newSupplement));
     }

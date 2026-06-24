@@ -23,6 +23,9 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 // poly3_rand sets |r| to a random value (albeit with bias).
 static void poly3_rand(poly3 *p) {
   RAND_bytes(reinterpret_cast<uint8_t *>(p), sizeof(poly3));
@@ -511,3 +514,6 @@ TEST(HRSS, ABI) {
             Bytes(kCanary));
 }
 #endif  // POLY_RQ_MUL_ASM && SUPPORTS_ABI_TEST
+
+}  // namespace
+BSSL_NAMESPACE_END

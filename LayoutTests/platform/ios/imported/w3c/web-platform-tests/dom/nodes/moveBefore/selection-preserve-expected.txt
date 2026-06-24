@@ -1,7 +1,7 @@
+Four
 One
 Two
 Three
-Four
 
 FAIL moveBefore should not reset selection with preceding text assert_equals: expected Text node "This text does not move" but got null
 FAIL moveBefore resets selection that enters a subtree, when the whole selection is moved assert_equals: expected Text node "Grandparent paragraph" but got null

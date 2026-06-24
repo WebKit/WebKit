@@ -41,20 +41,20 @@ public:
     // Return true if the block was added, false if it was already present.
     bool add(BasicBlock* block)
     {
-        return !m_set.set(block->index);
+        return !m_set.set(block->index());
     }
     
     // Return true if the block was removed, false if it was already absent.
     bool remove(BasicBlock* block)
     {
-        return m_set.clear(block->index);
+        return m_set.clear(block->index());
     }
     
     bool contains(BasicBlock* block) const
     {
         if (!block)
             return false;
-        return m_set.get(block->index);
+        return m_set.get(block->index());
     }
     
     class iterator {

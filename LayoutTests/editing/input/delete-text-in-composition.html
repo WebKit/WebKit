@@ -8,11 +8,8 @@ To manually test, type in the box below using input method (e.g. Japanese or Chi
 <script src="../../resources/js-test.js"></script>
 <script src="../../resources/ui-helper.js"></script>
 <script>
+window.jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
 editor.focus();
 
@@ -24,7 +21,7 @@ async function runTest() {
         await UIHelper.ensurePositionInformationUpdateForElement(editor);
         result.textContent = 'PASS - WebKit did not crash';
     }
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 window.onload = runTest;

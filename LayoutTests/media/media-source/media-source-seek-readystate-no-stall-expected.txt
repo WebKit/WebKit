@@ -1,0 +1,14 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/mp4; codecs="avc1.4d401e"'))
+RUN(sourceBuffer.appendBuffer(MP4.concat(init, makeSegment(1, 0, 100))))
+EVENT(updateend)
+RUN(video.play())
+EVENT(playing)
+
+Test: rapid seek burst with mid-seek readyState transitions
+EXPECTED (effRate == '1') OK
+
+END OF TEST
+

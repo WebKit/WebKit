@@ -143,7 +143,7 @@ for (const test of tests) {
 
 // Ensure that `calc` values work with dynamically changing relative units (slighly different alpha values to make test harness not complain about duplicate tests).
 document.getElementById("container").style.width = "1000px";
-test_computed_value("color", "rgba(calc(50% + (sign(2cqw - 10px) * 10%)), 0%, 0%, 51%)", "rgba(153, 0, 0, 0.51)"); 
+test_computed_value("color", "rgba(calc(50% + (sign(2cqw - 10px) * 10%)), 0%, 0%, 51%)", "rgba(153, 0, 0, 0.51)");
 document.getElementById("container").style.width = "100px";
 test_computed_value("color", "rgba(calc(50% + (sign(2cqw - 10px) * 10%)), 0%, 0%, 52%)", "rgba(102, 0, 0, 0.52)");
 

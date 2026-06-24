@@ -12,6 +12,8 @@
 
 #include <libloaderapi.h>
 
+namespace webrtc {
+
 namespace {
 
 FARPROC LoadD3D11Function(const char* function_name) {
@@ -29,8 +31,6 @@ GetCreateDirect3D11DeviceFromDXGIDevice() {
 }
 
 }  // namespace
-
-namespace webrtc {
 
 bool ResolveCoreWinRTDirect3DDelayload() {
   return GetCreateDirect3D11DeviceFromDXGIDevice();

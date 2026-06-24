@@ -348,13 +348,13 @@ PASS content: counter(par-num, decimal)
 PASS content: counter(par-num, upper-roman)
 PASS content: attr(foo-bar)
 PASS content: attr(foo_bar)
-FAIL content: attr(|bar) assert_equals: content raw inline style declaration expected "attr(bar)" but got "attr(|bar)"
-FAIL content: attr( |bar ) assert_equals: content raw inline style declaration expected "attr(bar)" but got "attr( |bar )"
+PASS content: attr(|bar)
+PASS content: attr( |bar )
 PASS content: attr(foo-bar, "fallback")
 PASS content: attr(foo_bar, "fallback")
-FAIL content: attr(|bar, "fallback") assert_equals: content raw inline style declaration expected "attr(bar, \"fallback\")" but got "attr(|bar, \"fallback\")"
+PASS content: attr(|bar, "fallback")
 PASS content: attr(foo, "")
-FAIL content: attr( |foo ,  "" ) assert_equals: content raw inline style declaration expected "attr(foo)" but got "attr( |foo ,  \"\" )"
+PASS content: attr( |foo ,  "" )
 PASS content: inherit
 PASS cursor: auto
 PASS cursor: crosshair

@@ -12,7 +12,6 @@
 #include <cstdint>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/error_cause/unrecognized_chunk_type_cause.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/testing/testing_macros.h"

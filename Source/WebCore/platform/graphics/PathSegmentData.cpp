@@ -692,6 +692,14 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataLine& data)
     return ts;
 }
 
+WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataLineColorThickness& data)
+{
+    ts << data.line;
+    ts << " #"_s << hex(data.color.value, 8);
+    ts << ' ' << data.thickness;
+    return ts;
+}
+
 FloatPoint PathDataQuadCurve::calculateEndPoint(const FloatPoint&, FloatPoint& lastMoveToPoint) const
 {
     lastMoveToPoint = start;

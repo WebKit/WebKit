@@ -17,9 +17,9 @@
 #include <cstddef>
 #include <numeric>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
@@ -38,16 +38,6 @@
 namespace webrtc {
 namespace {
 
-bool DeactivateInitialStateResetAtEchoPathChange(
-    const FieldTrialsView& field_trials) {
-  return field_trials.IsEnabled(
-      "WebRTC-Aec3DeactivateInitialStateResetKillSwitch");
-}
-
-bool FullResetAtEchoPathChange(const FieldTrialsView& field_trials) {
-  return !field_trials.IsEnabled("WebRTC-Aec3AecStateFullResetKillSwitch");
-}
-
 bool SubtractorAnalyzerResetAtEchoPathChange(
     const FieldTrialsView& field_trials) {
   return !field_trials.IsEnabled(
@@ -59,7 +49,7 @@ void ComputeAvgRenderReverb(
     int delay_blocks,
     float reverb_decay,
     ReverbModel* reverb_model,
-    ArrayView<float, kFftLengthBy2Plus1> reverb_power_spectrum) {
+    std::span<float, kFftLengthBy2Plus1> reverb_power_spectrum) {
   RTC_DCHECK(reverb_model);
   const size_t num_render_channels = spectrum_buffer.buffer[0].size();
   int idx_at_delay =
@@ -67,13 +57,13 @@ void ComputeAvgRenderReverb(
   int idx_past = spectrum_buffer.IncIndex(idx_at_delay);
 
   std::array<float, kFftLengthBy2Plus1> X2_data;
-  ArrayView<const float> X2;
+  std::span<const float> X2;
   if (num_render_channels > 1) {
     auto average_channels =
         [](size_t num_render_channels,
-           ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+           std::span<const std::array<float, kFftLengthBy2Plus1>>
                spectrum_band_0,
-           ArrayView<float, kFftLengthBy2Plus1> render_power) {
+           std::span<float, kFftLengthBy2Plus1> render_power) {
           std::fill(render_power.begin(), render_power.end(), 0.f);
           for (size_t ch = 0; ch < num_render_channels; ++ch) {
             for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
@@ -101,7 +91,7 @@ void ComputeAvgRenderReverb(
     X2 = spectrum_buffer.buffer[idx_at_delay][/*channel=*/0];
   }
 
-  ArrayView<const float, kFftLengthBy2Plus1> reverb_power =
+  std::span<const float, kFftLengthBy2Plus1> reverb_power =
       reverb_model->reverb();
   for (size_t k = 0; k < X2.size(); ++k) {
     reverb_power_spectrum[k] = X2[k] + reverb_power[k];
@@ -112,7 +102,7 @@ void ComputeAvgRenderReverb(
 
 std::atomic<int> AecState::instance_count_(0);
 
-void AecState::GetResidualEchoScaling(ArrayView<float> residual_scaling) const {
+void AecState::GetResidualEchoScaling(std::span<float> residual_scaling) const {
   bool filter_has_had_time_to_converge;
   if (config_.filter.conservative_initial_phase) {
     filter_has_had_time_to_converge =
@@ -131,10 +121,6 @@ AecState::AecState(const Environment& env,
     : data_dumper_(new ApmDataDumper(instance_count_.fetch_add(1) + 1)),
       config_(config),
       num_capture_channels_(num_capture_channels),
-      deactivate_initial_state_reset_at_echo_path_change_(
-          DeactivateInitialStateResetAtEchoPathChange(env.field_trials())),
-      full_reset_at_echo_path_change_(
-          FullResetAtEchoPathChange(env.field_trials())),
       subtractor_analyzer_reset_at_echo_path_change_(
           SubtractorAnalyzerResetAtEchoPathChange(env.field_trials())),
       initial_state_(config_),
@@ -161,9 +147,7 @@ void AecState::HandleEchoPathChange(
     capture_signal_saturation_ = false;
     strong_not_saturated_render_blocks_ = 0;
     blocks_with_active_render_ = 0;
-    if (!deactivate_initial_state_reset_at_echo_path_change_) {
-      initial_state_.Reset();
-    }
+    initial_state_.Reset();
     if (transparent_state_) {
       transparent_state_->Reset();
     }
@@ -175,9 +159,8 @@ void AecState::HandleEchoPathChange(
   // TODO(peah): Refine the reset scheme according to the type of gain and
   // delay adjustment.
 
-  if (full_reset_at_echo_path_change_ &&
-      echo_path_variability.delay_change !=
-          EchoPathVariability::DelayAdjustment::kNone) {
+  if (echo_path_variability.delay_change !=
+      EchoPathVariability::DelayAdjustment::kNone) {
     full_reset();
   } else if (echo_path_variability.gain_change) {
     erle_estimator_.Reset(false);
@@ -189,13 +172,13 @@ void AecState::HandleEchoPathChange(
 
 void AecState::Update(
     const std::optional<DelayEstimate>& external_delay,
-    ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+    std::span<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         adaptive_filter_frequency_responses,
-    ArrayView<const std::vector<float>> adaptive_filter_impulse_responses,
+    std::span<const std::vector<float>> adaptive_filter_impulse_responses,
     const RenderBuffer& render_buffer,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2_refined,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-    ArrayView<const SubtractorOutput> subtractor_output) {
+    std::span<const std::array<float, kFftLengthBy2Plus1>> E2_refined,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> Y2,
+    std::span<const SubtractorOutput> subtractor_output) {
   RTC_DCHECK_EQ(num_capture_channels_, Y2.size());
   RTC_DCHECK_EQ(num_capture_channels_, subtractor_output.size());
   RTC_DCHECK_EQ(num_capture_channels_,
@@ -376,12 +359,11 @@ AecState::FilterDelay::FilterDelay(const EchoCanceller3Config& config,
       min_filter_delay_(delay_headroom_blocks_) {}
 
 void AecState::FilterDelay::Update(
-    ArrayView<const int> analyzer_filter_delay_estimates_blocks,
+    std::span<const int> analyzer_filter_delay_estimates_blocks,
     const std::optional<DelayEstimate>& external_delay,
     size_t blocks_with_proper_filter_adaptation) {
   // Update the delay based on the external delay.
-  if (external_delay &&
-      (!external_delay_ || external_delay_->delay != external_delay->delay)) {
+  if (external_delay) {
     external_delay_ = external_delay;
   }
 
@@ -465,7 +447,7 @@ void AecState::SaturationDetector::Update(
     const Block& x,
     bool saturated_capture,
     bool usable_linear_estimate,
-    ArrayView<const SubtractorOutput> subtractor_output,
+    std::span<const SubtractorOutput> subtractor_output,
     float echo_path_gain) {
   saturated_echo_ = false;
   if (!saturated_capture) {
@@ -483,7 +465,7 @@ void AecState::SaturationDetector::Update(
   } else {
     float max_sample = 0.f;
     for (int ch = 0; ch < x.NumChannels(); ++ch) {
-      ArrayView<const float, kBlockSize> x_ch = x.View(/*band=*/0, ch);
+      std::span<const float, kBlockSize> x_ch = x.View(/*band=*/0, ch);
       for (float sample : x_ch) {
         max_sample = std::max(max_sample, fabsf(sample));
       }

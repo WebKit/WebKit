@@ -1,3 +1,2630 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+PASS :sampled_1d:stage="c";format="r8unorm"
+PASS :sampled_1d:stage="c";format="r8snorm"
+PASS :sampled_1d:stage="c";format="r8uint"
+PASS :sampled_1d:stage="c";format="r8sint"
+PASS :sampled_1d:stage="c";format="rg8unorm"
+PASS :sampled_1d:stage="c";format="rg8snorm"
+PASS :sampled_1d:stage="c";format="rg8uint"
+PASS :sampled_1d:stage="c";format="rg8sint"
+PASS :sampled_1d:stage="c";format="rgba8unorm"
+PASS :sampled_1d:stage="c";format="rgba8unorm-srgb"
+PASS :sampled_1d:stage="c";format="rgba8snorm"
+PASS :sampled_1d:stage="c";format="rgba8uint"
+PASS :sampled_1d:stage="c";format="rgba8sint"
+PASS :sampled_1d:stage="c";format="bgra8unorm"
+PASS :sampled_1d:stage="c";format="bgra8unorm-srgb"
+PASS :sampled_1d:stage="c";format="r16unorm"
+PASS :sampled_1d:stage="c";format="r16snorm"
+PASS :sampled_1d:stage="c";format="r16uint"
+PASS :sampled_1d:stage="c";format="r16sint"
+PASS :sampled_1d:stage="c";format="r16float"
+PASS :sampled_1d:stage="c";format="rg16unorm"
+PASS :sampled_1d:stage="c";format="rg16snorm"
+PASS :sampled_1d:stage="c";format="rg16uint"
+PASS :sampled_1d:stage="c";format="rg16sint"
+PASS :sampled_1d:stage="c";format="rg16float"
+PASS :sampled_1d:stage="c";format="rgba16unorm"
+PASS :sampled_1d:stage="c";format="rgba16snorm"
+PASS :sampled_1d:stage="c";format="rgba16uint"
+PASS :sampled_1d:stage="c";format="rgba16sint"
+PASS :sampled_1d:stage="c";format="rgba16float"
+PASS :sampled_1d:stage="c";format="r32uint"
+PASS :sampled_1d:stage="c";format="r32sint"
+PASS :sampled_1d:stage="c";format="r32float"
+PASS :sampled_1d:stage="c";format="rg32uint"
+PASS :sampled_1d:stage="c";format="rg32sint"
+PASS :sampled_1d:stage="c";format="rg32float"
+PASS :sampled_1d:stage="c";format="rgba32uint"
+PASS :sampled_1d:stage="c";format="rgba32sint"
+PASS :sampled_1d:stage="c";format="rgba32float"
+PASS :sampled_1d:stage="c";format="rgb10a2uint"
+PASS :sampled_1d:stage="c";format="rgb10a2unorm"
+PASS :sampled_1d:stage="c";format="rg11b10ufloat"
+PASS :sampled_1d:stage="c";format="rgb9e5ufloat"
+PASS :sampled_1d:stage="f";format="r8unorm"
+PASS :sampled_1d:stage="f";format="r8snorm"
+PASS :sampled_1d:stage="f";format="r8uint"
+PASS :sampled_1d:stage="f";format="r8sint"
+PASS :sampled_1d:stage="f";format="rg8unorm"
+PASS :sampled_1d:stage="f";format="rg8snorm"
+PASS :sampled_1d:stage="f";format="rg8uint"
+PASS :sampled_1d:stage="f";format="rg8sint"
+PASS :sampled_1d:stage="f";format="rgba8unorm"
+PASS :sampled_1d:stage="f";format="rgba8unorm-srgb"
+PASS :sampled_1d:stage="f";format="rgba8snorm"
+PASS :sampled_1d:stage="f";format="rgba8uint"
+PASS :sampled_1d:stage="f";format="rgba8sint"
+PASS :sampled_1d:stage="f";format="bgra8unorm"
+PASS :sampled_1d:stage="f";format="bgra8unorm-srgb"
+PASS :sampled_1d:stage="f";format="r16unorm"
+PASS :sampled_1d:stage="f";format="r16snorm"
+PASS :sampled_1d:stage="f";format="r16uint"
+PASS :sampled_1d:stage="f";format="r16sint"
+PASS :sampled_1d:stage="f";format="r16float"
+PASS :sampled_1d:stage="f";format="rg16unorm"
+PASS :sampled_1d:stage="f";format="rg16snorm"
+PASS :sampled_1d:stage="f";format="rg16uint"
+PASS :sampled_1d:stage="f";format="rg16sint"
+PASS :sampled_1d:stage="f";format="rg16float"
+PASS :sampled_1d:stage="f";format="rgba16unorm"
+PASS :sampled_1d:stage="f";format="rgba16snorm"
+PASS :sampled_1d:stage="f";format="rgba16uint"
+PASS :sampled_1d:stage="f";format="rgba16sint"
+PASS :sampled_1d:stage="f";format="rgba16float"
+PASS :sampled_1d:stage="f";format="r32uint"
+PASS :sampled_1d:stage="f";format="r32sint"
+PASS :sampled_1d:stage="f";format="r32float"
+PASS :sampled_1d:stage="f";format="rg32uint"
+PASS :sampled_1d:stage="f";format="rg32sint"
+PASS :sampled_1d:stage="f";format="rg32float"
+PASS :sampled_1d:stage="f";format="rgba32uint"
+PASS :sampled_1d:stage="f";format="rgba32sint"
+PASS :sampled_1d:stage="f";format="rgba32float"
+PASS :sampled_1d:stage="f";format="rgb10a2uint"
+PASS :sampled_1d:stage="f";format="rgb10a2unorm"
+PASS :sampled_1d:stage="f";format="rg11b10ufloat"
+PASS :sampled_1d:stage="f";format="rgb9e5ufloat"
+PASS :sampled_1d:stage="v";format="r8unorm"
+PASS :sampled_1d:stage="v";format="r8snorm"
+PASS :sampled_1d:stage="v";format="r8uint"
+PASS :sampled_1d:stage="v";format="r8sint"
+PASS :sampled_1d:stage="v";format="rg8unorm"
+PASS :sampled_1d:stage="v";format="rg8snorm"
+PASS :sampled_1d:stage="v";format="rg8uint"
+PASS :sampled_1d:stage="v";format="rg8sint"
+PASS :sampled_1d:stage="v";format="rgba8unorm"
+PASS :sampled_1d:stage="v";format="rgba8unorm-srgb"
+PASS :sampled_1d:stage="v";format="rgba8snorm"
+PASS :sampled_1d:stage="v";format="rgba8uint"
+PASS :sampled_1d:stage="v";format="rgba8sint"
+PASS :sampled_1d:stage="v";format="bgra8unorm"
+PASS :sampled_1d:stage="v";format="bgra8unorm-srgb"
+PASS :sampled_1d:stage="v";format="r16unorm"
+PASS :sampled_1d:stage="v";format="r16snorm"
+PASS :sampled_1d:stage="v";format="r16uint"
+PASS :sampled_1d:stage="v";format="r16sint"
+PASS :sampled_1d:stage="v";format="r16float"
+PASS :sampled_1d:stage="v";format="rg16unorm"
+PASS :sampled_1d:stage="v";format="rg16snorm"
+PASS :sampled_1d:stage="v";format="rg16uint"
+PASS :sampled_1d:stage="v";format="rg16sint"
+PASS :sampled_1d:stage="v";format="rg16float"
+PASS :sampled_1d:stage="v";format="rgba16unorm"
+PASS :sampled_1d:stage="v";format="rgba16snorm"
+PASS :sampled_1d:stage="v";format="rgba16uint"
+PASS :sampled_1d:stage="v";format="rgba16sint"
+PASS :sampled_1d:stage="v";format="rgba16float"
+PASS :sampled_1d:stage="v";format="r32uint"
+PASS :sampled_1d:stage="v";format="r32sint"
+PASS :sampled_1d:stage="v";format="r32float"
+PASS :sampled_1d:stage="v";format="rg32uint"
+PASS :sampled_1d:stage="v";format="rg32sint"
+PASS :sampled_1d:stage="v";format="rg32float"
+PASS :sampled_1d:stage="v";format="rgba32uint"
+PASS :sampled_1d:stage="v";format="rgba32sint"
+PASS :sampled_1d:stage="v";format="rgba32float"
+PASS :sampled_1d:stage="v";format="rgb10a2uint"
+PASS :sampled_1d:stage="v";format="rgb10a2unorm"
+PASS :sampled_1d:stage="v";format="rg11b10ufloat"
+PASS :sampled_1d:stage="v";format="rgb9e5ufloat"
+PASS :sampled_2d:stage="c";format="r8unorm"
+PASS :sampled_2d:stage="c";format="r8snorm"
+PASS :sampled_2d:stage="c";format="r8uint"
+PASS :sampled_2d:stage="c";format="r8sint"
+PASS :sampled_2d:stage="c";format="rg8unorm"
+PASS :sampled_2d:stage="c";format="rg8snorm"
+PASS :sampled_2d:stage="c";format="rg8uint"
+PASS :sampled_2d:stage="c";format="rg8sint"
+PASS :sampled_2d:stage="c";format="rgba8unorm"
+PASS :sampled_2d:stage="c";format="rgba8unorm-srgb"
+PASS :sampled_2d:stage="c";format="rgba8snorm"
+PASS :sampled_2d:stage="c";format="rgba8uint"
+PASS :sampled_2d:stage="c";format="rgba8sint"
+PASS :sampled_2d:stage="c";format="bgra8unorm"
+PASS :sampled_2d:stage="c";format="bgra8unorm-srgb"
+PASS :sampled_2d:stage="c";format="r16unorm"
+PASS :sampled_2d:stage="c";format="r16snorm"
+PASS :sampled_2d:stage="c";format="r16uint"
+PASS :sampled_2d:stage="c";format="r16sint"
+PASS :sampled_2d:stage="c";format="r16float"
+PASS :sampled_2d:stage="c";format="rg16unorm"
+PASS :sampled_2d:stage="c";format="rg16snorm"
+PASS :sampled_2d:stage="c";format="rg16uint"
+PASS :sampled_2d:stage="c";format="rg16sint"
+PASS :sampled_2d:stage="c";format="rg16float"
+PASS :sampled_2d:stage="c";format="rgba16unorm"
+PASS :sampled_2d:stage="c";format="rgba16snorm"
+PASS :sampled_2d:stage="c";format="rgba16uint"
+PASS :sampled_2d:stage="c";format="rgba16sint"
+PASS :sampled_2d:stage="c";format="rgba16float"
+PASS :sampled_2d:stage="c";format="r32uint"
+PASS :sampled_2d:stage="c";format="r32sint"
+PASS :sampled_2d:stage="c";format="r32float"
+PASS :sampled_2d:stage="c";format="rg32uint"
+PASS :sampled_2d:stage="c";format="rg32sint"
+PASS :sampled_2d:stage="c";format="rg32float"
+PASS :sampled_2d:stage="c";format="rgba32uint"
+PASS :sampled_2d:stage="c";format="rgba32sint"
+PASS :sampled_2d:stage="c";format="rgba32float"
+PASS :sampled_2d:stage="c";format="rgb10a2uint"
+PASS :sampled_2d:stage="c";format="rgb10a2unorm"
+PASS :sampled_2d:stage="c";format="rg11b10ufloat"
+PASS :sampled_2d:stage="c";format="rgb9e5ufloat"
+PASS :sampled_2d:stage="c";format="stencil8"
+PASS :sampled_2d:stage="c";format="depth16unorm"
+PASS :sampled_2d:stage="c";format="depth32float"
+PASS :sampled_2d:stage="c";format="depth24plus"
+PASS :sampled_2d:stage="c";format="depth24plus-stencil8"
+PASS :sampled_2d:stage="c";format="depth32float-stencil8"
+PASS :sampled_2d:stage="c";format="bc1-rgba-unorm"
+PASS :sampled_2d:stage="c";format="bc1-rgba-unorm-srgb"
+PASS :sampled_2d:stage="c";format="bc2-rgba-unorm"
+PASS :sampled_2d:stage="c";format="bc2-rgba-unorm-srgb"
+PASS :sampled_2d:stage="c";format="bc3-rgba-unorm"
+PASS :sampled_2d:stage="c";format="bc3-rgba-unorm-srgb"
+PASS :sampled_2d:stage="c";format="bc4-r-unorm"
+PASS :sampled_2d:stage="c";format="bc4-r-snorm"
+PASS :sampled_2d:stage="c";format="bc5-rg-unorm"
+PASS :sampled_2d:stage="c";format="bc5-rg-snorm"
+PASS :sampled_2d:stage="c";format="bc7-rgba-unorm"
+PASS :sampled_2d:stage="c";format="bc7-rgba-unorm-srgb"
+PASS :sampled_2d:stage="c";format="etc2-rgb8unorm"
+PASS :sampled_2d:stage="c";format="etc2-rgb8unorm-srgb"
+PASS :sampled_2d:stage="c";format="etc2-rgb8a1unorm"
+PASS :sampled_2d:stage="c";format="etc2-rgb8a1unorm-srgb"
+PASS :sampled_2d:stage="c";format="etc2-rgba8unorm"
+PASS :sampled_2d:stage="c";format="etc2-rgba8unorm-srgb"
+PASS :sampled_2d:stage="c";format="eac-r11unorm"
+PASS :sampled_2d:stage="c";format="eac-r11snorm"
+PASS :sampled_2d:stage="c";format="eac-rg11unorm"
+PASS :sampled_2d:stage="c";format="eac-rg11snorm"
+PASS :sampled_2d:stage="c";format="astc-4x4-unorm"
+PASS :sampled_2d:stage="c";format="astc-4x4-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-5x4-unorm"
+PASS :sampled_2d:stage="c";format="astc-5x4-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-5x5-unorm"
+PASS :sampled_2d:stage="c";format="astc-5x5-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-6x5-unorm"
+PASS :sampled_2d:stage="c";format="astc-6x5-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-6x6-unorm"
+PASS :sampled_2d:stage="c";format="astc-6x6-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-8x5-unorm"
+PASS :sampled_2d:stage="c";format="astc-8x5-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-8x6-unorm"
+PASS :sampled_2d:stage="c";format="astc-8x6-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-8x8-unorm"
+PASS :sampled_2d:stage="c";format="astc-8x8-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-10x5-unorm"
+PASS :sampled_2d:stage="c";format="astc-10x5-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-10x6-unorm"
+PASS :sampled_2d:stage="c";format="astc-10x6-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-10x8-unorm"
+PASS :sampled_2d:stage="c";format="astc-10x8-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-10x10-unorm"
+PASS :sampled_2d:stage="c";format="astc-10x10-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-12x10-unorm"
+PASS :sampled_2d:stage="c";format="astc-12x10-unorm-srgb"
+PASS :sampled_2d:stage="c";format="astc-12x12-unorm"
+PASS :sampled_2d:stage="c";format="astc-12x12-unorm-srgb"
+PASS :sampled_2d:stage="f";format="r8unorm"
+PASS :sampled_2d:stage="f";format="r8snorm"
+PASS :sampled_2d:stage="f";format="r8uint"
+PASS :sampled_2d:stage="f";format="r8sint"
+PASS :sampled_2d:stage="f";format="rg8unorm"
+PASS :sampled_2d:stage="f";format="rg8snorm"
+PASS :sampled_2d:stage="f";format="rg8uint"
+PASS :sampled_2d:stage="f";format="rg8sint"
+PASS :sampled_2d:stage="f";format="rgba8unorm"
+PASS :sampled_2d:stage="f";format="rgba8unorm-srgb"
+PASS :sampled_2d:stage="f";format="rgba8snorm"
+PASS :sampled_2d:stage="f";format="rgba8uint"
+PASS :sampled_2d:stage="f";format="rgba8sint"
+PASS :sampled_2d:stage="f";format="bgra8unorm"
+PASS :sampled_2d:stage="f";format="bgra8unorm-srgb"
+PASS :sampled_2d:stage="f";format="r16unorm"
+PASS :sampled_2d:stage="f";format="r16snorm"
+PASS :sampled_2d:stage="f";format="r16uint"
+PASS :sampled_2d:stage="f";format="r16sint"
+PASS :sampled_2d:stage="f";format="r16float"
+PASS :sampled_2d:stage="f";format="rg16unorm"
+PASS :sampled_2d:stage="f";format="rg16snorm"
+PASS :sampled_2d:stage="f";format="rg16uint"
+PASS :sampled_2d:stage="f";format="rg16sint"
+PASS :sampled_2d:stage="f";format="rg16float"
+PASS :sampled_2d:stage="f";format="rgba16unorm"
+PASS :sampled_2d:stage="f";format="rgba16snorm"
+PASS :sampled_2d:stage="f";format="rgba16uint"
+PASS :sampled_2d:stage="f";format="rgba16sint"
+PASS :sampled_2d:stage="f";format="rgba16float"
+PASS :sampled_2d:stage="f";format="r32uint"
+PASS :sampled_2d:stage="f";format="r32sint"
+PASS :sampled_2d:stage="f";format="r32float"
+PASS :sampled_2d:stage="f";format="rg32uint"
+PASS :sampled_2d:stage="f";format="rg32sint"
+PASS :sampled_2d:stage="f";format="rg32float"
+PASS :sampled_2d:stage="f";format="rgba32uint"
+PASS :sampled_2d:stage="f";format="rgba32sint"
+PASS :sampled_2d:stage="f";format="rgba32float"
+PASS :sampled_2d:stage="f";format="rgb10a2uint"
+PASS :sampled_2d:stage="f";format="rgb10a2unorm"
+PASS :sampled_2d:stage="f";format="rg11b10ufloat"
+PASS :sampled_2d:stage="f";format="rgb9e5ufloat"
+PASS :sampled_2d:stage="f";format="stencil8"
+PASS :sampled_2d:stage="f";format="depth16unorm"
+PASS :sampled_2d:stage="f";format="depth32float"
+PASS :sampled_2d:stage="f";format="depth24plus"
+PASS :sampled_2d:stage="f";format="depth24plus-stencil8"
+PASS :sampled_2d:stage="f";format="depth32float-stencil8"
+PASS :sampled_2d:stage="f";format="bc1-rgba-unorm"
+PASS :sampled_2d:stage="f";format="bc1-rgba-unorm-srgb"
+PASS :sampled_2d:stage="f";format="bc2-rgba-unorm"
+PASS :sampled_2d:stage="f";format="bc2-rgba-unorm-srgb"
+PASS :sampled_2d:stage="f";format="bc3-rgba-unorm"
+PASS :sampled_2d:stage="f";format="bc3-rgba-unorm-srgb"
+PASS :sampled_2d:stage="f";format="bc4-r-unorm"
+PASS :sampled_2d:stage="f";format="bc4-r-snorm"
+PASS :sampled_2d:stage="f";format="bc5-rg-unorm"
+PASS :sampled_2d:stage="f";format="bc5-rg-snorm"
+PASS :sampled_2d:stage="f";format="bc7-rgba-unorm"
+PASS :sampled_2d:stage="f";format="bc7-rgba-unorm-srgb"
+PASS :sampled_2d:stage="f";format="etc2-rgb8unorm"
+PASS :sampled_2d:stage="f";format="etc2-rgb8unorm-srgb"
+PASS :sampled_2d:stage="f";format="etc2-rgb8a1unorm"
+PASS :sampled_2d:stage="f";format="etc2-rgb8a1unorm-srgb"
+PASS :sampled_2d:stage="f";format="etc2-rgba8unorm"
+PASS :sampled_2d:stage="f";format="etc2-rgba8unorm-srgb"
+PASS :sampled_2d:stage="f";format="eac-r11unorm"
+PASS :sampled_2d:stage="f";format="eac-r11snorm"
+PASS :sampled_2d:stage="f";format="eac-rg11unorm"
+PASS :sampled_2d:stage="f";format="eac-rg11snorm"
+PASS :sampled_2d:stage="f";format="astc-4x4-unorm"
+PASS :sampled_2d:stage="f";format="astc-4x4-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-5x4-unorm"
+PASS :sampled_2d:stage="f";format="astc-5x4-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-5x5-unorm"
+PASS :sampled_2d:stage="f";format="astc-5x5-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-6x5-unorm"
+PASS :sampled_2d:stage="f";format="astc-6x5-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-6x6-unorm"
+PASS :sampled_2d:stage="f";format="astc-6x6-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-8x5-unorm"
+PASS :sampled_2d:stage="f";format="astc-8x5-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-8x6-unorm"
+PASS :sampled_2d:stage="f";format="astc-8x6-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-8x8-unorm"
+PASS :sampled_2d:stage="f";format="astc-8x8-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-10x5-unorm"
+PASS :sampled_2d:stage="f";format="astc-10x5-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-10x6-unorm"
+PASS :sampled_2d:stage="f";format="astc-10x6-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-10x8-unorm"
+PASS :sampled_2d:stage="f";format="astc-10x8-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-10x10-unorm"
+PASS :sampled_2d:stage="f";format="astc-10x10-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-12x10-unorm"
+PASS :sampled_2d:stage="f";format="astc-12x10-unorm-srgb"
+PASS :sampled_2d:stage="f";format="astc-12x12-unorm"
+PASS :sampled_2d:stage="f";format="astc-12x12-unorm-srgb"
+PASS :sampled_2d:stage="v";format="r8unorm"
+PASS :sampled_2d:stage="v";format="r8snorm"
+PASS :sampled_2d:stage="v";format="r8uint"
+PASS :sampled_2d:stage="v";format="r8sint"
+PASS :sampled_2d:stage="v";format="rg8unorm"
+PASS :sampled_2d:stage="v";format="rg8snorm"
+PASS :sampled_2d:stage="v";format="rg8uint"
+PASS :sampled_2d:stage="v";format="rg8sint"
+PASS :sampled_2d:stage="v";format="rgba8unorm"
+PASS :sampled_2d:stage="v";format="rgba8unorm-srgb"
+PASS :sampled_2d:stage="v";format="rgba8snorm"
+PASS :sampled_2d:stage="v";format="rgba8uint"
+PASS :sampled_2d:stage="v";format="rgba8sint"
+PASS :sampled_2d:stage="v";format="bgra8unorm"
+PASS :sampled_2d:stage="v";format="bgra8unorm-srgb"
+PASS :sampled_2d:stage="v";format="r16unorm"
+PASS :sampled_2d:stage="v";format="r16snorm"
+PASS :sampled_2d:stage="v";format="r16uint"
+PASS :sampled_2d:stage="v";format="r16sint"
+PASS :sampled_2d:stage="v";format="r16float"
+PASS :sampled_2d:stage="v";format="rg16unorm"
+PASS :sampled_2d:stage="v";format="rg16snorm"
+PASS :sampled_2d:stage="v";format="rg16uint"
+PASS :sampled_2d:stage="v";format="rg16sint"
+PASS :sampled_2d:stage="v";format="rg16float"
+PASS :sampled_2d:stage="v";format="rgba16unorm"
+PASS :sampled_2d:stage="v";format="rgba16snorm"
+PASS :sampled_2d:stage="v";format="rgba16uint"
+PASS :sampled_2d:stage="v";format="rgba16sint"
+PASS :sampled_2d:stage="v";format="rgba16float"
+PASS :sampled_2d:stage="v";format="r32uint"
+PASS :sampled_2d:stage="v";format="r32sint"
+PASS :sampled_2d:stage="v";format="r32float"
+PASS :sampled_2d:stage="v";format="rg32uint"
+PASS :sampled_2d:stage="v";format="rg32sint"
+PASS :sampled_2d:stage="v";format="rg32float"
+PASS :sampled_2d:stage="v";format="rgba32uint"
+PASS :sampled_2d:stage="v";format="rgba32sint"
+PASS :sampled_2d:stage="v";format="rgba32float"
+PASS :sampled_2d:stage="v";format="rgb10a2uint"
+PASS :sampled_2d:stage="v";format="rgb10a2unorm"
+PASS :sampled_2d:stage="v";format="rg11b10ufloat"
+PASS :sampled_2d:stage="v";format="rgb9e5ufloat"
+PASS :sampled_2d:stage="v";format="stencil8"
+PASS :sampled_2d:stage="v";format="depth16unorm"
+PASS :sampled_2d:stage="v";format="depth32float"
+PASS :sampled_2d:stage="v";format="depth24plus"
+PASS :sampled_2d:stage="v";format="depth24plus-stencil8"
+PASS :sampled_2d:stage="v";format="depth32float-stencil8"
+PASS :sampled_2d:stage="v";format="bc1-rgba-unorm"
+PASS :sampled_2d:stage="v";format="bc1-rgba-unorm-srgb"
+PASS :sampled_2d:stage="v";format="bc2-rgba-unorm"
+PASS :sampled_2d:stage="v";format="bc2-rgba-unorm-srgb"
+PASS :sampled_2d:stage="v";format="bc3-rgba-unorm"
+PASS :sampled_2d:stage="v";format="bc3-rgba-unorm-srgb"
+PASS :sampled_2d:stage="v";format="bc4-r-unorm"
+PASS :sampled_2d:stage="v";format="bc4-r-snorm"
+PASS :sampled_2d:stage="v";format="bc5-rg-unorm"
+PASS :sampled_2d:stage="v";format="bc5-rg-snorm"
+PASS :sampled_2d:stage="v";format="bc7-rgba-unorm"
+PASS :sampled_2d:stage="v";format="bc7-rgba-unorm-srgb"
+PASS :sampled_2d:stage="v";format="etc2-rgb8unorm"
+PASS :sampled_2d:stage="v";format="etc2-rgb8unorm-srgb"
+PASS :sampled_2d:stage="v";format="etc2-rgb8a1unorm"
+PASS :sampled_2d:stage="v";format="etc2-rgb8a1unorm-srgb"
+PASS :sampled_2d:stage="v";format="etc2-rgba8unorm"
+PASS :sampled_2d:stage="v";format="etc2-rgba8unorm-srgb"
+PASS :sampled_2d:stage="v";format="eac-r11unorm"
+PASS :sampled_2d:stage="v";format="eac-r11snorm"
+PASS :sampled_2d:stage="v";format="eac-rg11unorm"
+PASS :sampled_2d:stage="v";format="eac-rg11snorm"
+PASS :sampled_2d:stage="v";format="astc-4x4-unorm"
+PASS :sampled_2d:stage="v";format="astc-4x4-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-5x4-unorm"
+PASS :sampled_2d:stage="v";format="astc-5x4-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-5x5-unorm"
+PASS :sampled_2d:stage="v";format="astc-5x5-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-6x5-unorm"
+PASS :sampled_2d:stage="v";format="astc-6x5-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-6x6-unorm"
+PASS :sampled_2d:stage="v";format="astc-6x6-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-8x5-unorm"
+PASS :sampled_2d:stage="v";format="astc-8x5-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-8x6-unorm"
+PASS :sampled_2d:stage="v";format="astc-8x6-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-8x8-unorm"
+PASS :sampled_2d:stage="v";format="astc-8x8-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-10x5-unorm"
+PASS :sampled_2d:stage="v";format="astc-10x5-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-10x6-unorm"
+PASS :sampled_2d:stage="v";format="astc-10x6-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-10x8-unorm"
+PASS :sampled_2d:stage="v";format="astc-10x8-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-10x10-unorm"
+PASS :sampled_2d:stage="v";format="astc-10x10-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-12x10-unorm"
+PASS :sampled_2d:stage="v";format="astc-12x10-unorm-srgb"
+PASS :sampled_2d:stage="v";format="astc-12x12-unorm"
+PASS :sampled_2d:stage="v";format="astc-12x12-unorm-srgb"
+PASS :sampled_3d:stage="c";format="r8unorm"
+PASS :sampled_3d:stage="c";format="r8snorm"
+PASS :sampled_3d:stage="c";format="r8uint"
+PASS :sampled_3d:stage="c";format="r8sint"
+PASS :sampled_3d:stage="c";format="rg8unorm"
+PASS :sampled_3d:stage="c";format="rg8snorm"
+PASS :sampled_3d:stage="c";format="rg8uint"
+PASS :sampled_3d:stage="c";format="rg8sint"
+PASS :sampled_3d:stage="c";format="rgba8unorm"
+PASS :sampled_3d:stage="c";format="rgba8unorm-srgb"
+PASS :sampled_3d:stage="c";format="rgba8snorm"
+PASS :sampled_3d:stage="c";format="rgba8uint"
+PASS :sampled_3d:stage="c";format="rgba8sint"
+PASS :sampled_3d:stage="c";format="bgra8unorm"
+PASS :sampled_3d:stage="c";format="bgra8unorm-srgb"
+PASS :sampled_3d:stage="c";format="r16unorm"
+PASS :sampled_3d:stage="c";format="r16snorm"
+PASS :sampled_3d:stage="c";format="r16uint"
+PASS :sampled_3d:stage="c";format="r16sint"
+PASS :sampled_3d:stage="c";format="r16float"
+PASS :sampled_3d:stage="c";format="rg16unorm"
+PASS :sampled_3d:stage="c";format="rg16snorm"
+PASS :sampled_3d:stage="c";format="rg16uint"
+PASS :sampled_3d:stage="c";format="rg16sint"
+PASS :sampled_3d:stage="c";format="rg16float"
+PASS :sampled_3d:stage="c";format="rgba16unorm"
+PASS :sampled_3d:stage="c";format="rgba16snorm"
+PASS :sampled_3d:stage="c";format="rgba16uint"
+PASS :sampled_3d:stage="c";format="rgba16sint"
+PASS :sampled_3d:stage="c";format="rgba16float"
+PASS :sampled_3d:stage="c";format="r32uint"
+PASS :sampled_3d:stage="c";format="r32sint"
+PASS :sampled_3d:stage="c";format="r32float"
+PASS :sampled_3d:stage="c";format="rg32uint"
+PASS :sampled_3d:stage="c";format="rg32sint"
+PASS :sampled_3d:stage="c";format="rg32float"
+PASS :sampled_3d:stage="c";format="rgba32uint"
+PASS :sampled_3d:stage="c";format="rgba32sint"
+PASS :sampled_3d:stage="c";format="rgba32float"
+PASS :sampled_3d:stage="c";format="rgb10a2uint"
+PASS :sampled_3d:stage="c";format="rgb10a2unorm"
+PASS :sampled_3d:stage="c";format="rg11b10ufloat"
+PASS :sampled_3d:stage="c";format="rgb9e5ufloat"
+PASS :sampled_3d:stage="c";format="bc1-rgba-unorm"
+PASS :sampled_3d:stage="c";format="bc1-rgba-unorm-srgb"
+PASS :sampled_3d:stage="c";format="bc2-rgba-unorm"
+PASS :sampled_3d:stage="c";format="bc2-rgba-unorm-srgb"
+PASS :sampled_3d:stage="c";format="bc3-rgba-unorm"
+PASS :sampled_3d:stage="c";format="bc3-rgba-unorm-srgb"
+PASS :sampled_3d:stage="c";format="bc4-r-unorm"
+PASS :sampled_3d:stage="c";format="bc4-r-snorm"
+PASS :sampled_3d:stage="c";format="bc5-rg-unorm"
+PASS :sampled_3d:stage="c";format="bc5-rg-snorm"
+PASS :sampled_3d:stage="c";format="bc7-rgba-unorm"
+PASS :sampled_3d:stage="c";format="bc7-rgba-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-4x4-unorm"
+PASS :sampled_3d:stage="c";format="astc-4x4-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-5x4-unorm"
+PASS :sampled_3d:stage="c";format="astc-5x4-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-5x5-unorm"
+PASS :sampled_3d:stage="c";format="astc-5x5-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-6x5-unorm"
+PASS :sampled_3d:stage="c";format="astc-6x5-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-6x6-unorm"
+PASS :sampled_3d:stage="c";format="astc-6x6-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-8x5-unorm"
+PASS :sampled_3d:stage="c";format="astc-8x5-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-8x6-unorm"
+PASS :sampled_3d:stage="c";format="astc-8x6-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-8x8-unorm"
+PASS :sampled_3d:stage="c";format="astc-8x8-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-10x5-unorm"
+PASS :sampled_3d:stage="c";format="astc-10x5-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-10x6-unorm"
+PASS :sampled_3d:stage="c";format="astc-10x6-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-10x8-unorm"
+PASS :sampled_3d:stage="c";format="astc-10x8-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-10x10-unorm"
+PASS :sampled_3d:stage="c";format="astc-10x10-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-12x10-unorm"
+PASS :sampled_3d:stage="c";format="astc-12x10-unorm-srgb"
+PASS :sampled_3d:stage="c";format="astc-12x12-unorm"
+PASS :sampled_3d:stage="c";format="astc-12x12-unorm-srgb"
+PASS :sampled_3d:stage="f";format="r8unorm"
+PASS :sampled_3d:stage="f";format="r8snorm"
+PASS :sampled_3d:stage="f";format="r8uint"
+PASS :sampled_3d:stage="f";format="r8sint"
+PASS :sampled_3d:stage="f";format="rg8unorm"
+PASS :sampled_3d:stage="f";format="rg8snorm"
+PASS :sampled_3d:stage="f";format="rg8uint"
+PASS :sampled_3d:stage="f";format="rg8sint"
+PASS :sampled_3d:stage="f";format="rgba8unorm"
+PASS :sampled_3d:stage="f";format="rgba8unorm-srgb"
+PASS :sampled_3d:stage="f";format="rgba8snorm"
+PASS :sampled_3d:stage="f";format="rgba8uint"
+PASS :sampled_3d:stage="f";format="rgba8sint"
+PASS :sampled_3d:stage="f";format="bgra8unorm"
+PASS :sampled_3d:stage="f";format="bgra8unorm-srgb"
+PASS :sampled_3d:stage="f";format="r16unorm"
+PASS :sampled_3d:stage="f";format="r16snorm"
+PASS :sampled_3d:stage="f";format="r16uint"
+PASS :sampled_3d:stage="f";format="r16sint"
+PASS :sampled_3d:stage="f";format="r16float"
+PASS :sampled_3d:stage="f";format="rg16unorm"
+PASS :sampled_3d:stage="f";format="rg16snorm"
+PASS :sampled_3d:stage="f";format="rg16uint"
+PASS :sampled_3d:stage="f";format="rg16sint"
+PASS :sampled_3d:stage="f";format="rg16float"
+PASS :sampled_3d:stage="f";format="rgba16unorm"
+PASS :sampled_3d:stage="f";format="rgba16snorm"
+PASS :sampled_3d:stage="f";format="rgba16uint"
+PASS :sampled_3d:stage="f";format="rgba16sint"
+PASS :sampled_3d:stage="f";format="rgba16float"
+PASS :sampled_3d:stage="f";format="r32uint"
+PASS :sampled_3d:stage="f";format="r32sint"
+PASS :sampled_3d:stage="f";format="r32float"
+PASS :sampled_3d:stage="f";format="rg32uint"
+PASS :sampled_3d:stage="f";format="rg32sint"
+PASS :sampled_3d:stage="f";format="rg32float"
+PASS :sampled_3d:stage="f";format="rgba32uint"
+PASS :sampled_3d:stage="f";format="rgba32sint"
+PASS :sampled_3d:stage="f";format="rgba32float"
+PASS :sampled_3d:stage="f";format="rgb10a2uint"
+PASS :sampled_3d:stage="f";format="rgb10a2unorm"
+PASS :sampled_3d:stage="f";format="rg11b10ufloat"
+PASS :sampled_3d:stage="f";format="rgb9e5ufloat"
+PASS :sampled_3d:stage="f";format="bc1-rgba-unorm"
+PASS :sampled_3d:stage="f";format="bc1-rgba-unorm-srgb"
+PASS :sampled_3d:stage="f";format="bc2-rgba-unorm"
+PASS :sampled_3d:stage="f";format="bc2-rgba-unorm-srgb"
+PASS :sampled_3d:stage="f";format="bc3-rgba-unorm"
+PASS :sampled_3d:stage="f";format="bc3-rgba-unorm-srgb"
+PASS :sampled_3d:stage="f";format="bc4-r-unorm"
+PASS :sampled_3d:stage="f";format="bc4-r-snorm"
+PASS :sampled_3d:stage="f";format="bc5-rg-unorm"
+PASS :sampled_3d:stage="f";format="bc5-rg-snorm"
+PASS :sampled_3d:stage="f";format="bc7-rgba-unorm"
+PASS :sampled_3d:stage="f";format="bc7-rgba-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-4x4-unorm"
+PASS :sampled_3d:stage="f";format="astc-4x4-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-5x4-unorm"
+PASS :sampled_3d:stage="f";format="astc-5x4-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-5x5-unorm"
+PASS :sampled_3d:stage="f";format="astc-5x5-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-6x5-unorm"
+PASS :sampled_3d:stage="f";format="astc-6x5-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-6x6-unorm"
+PASS :sampled_3d:stage="f";format="astc-6x6-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-8x5-unorm"
+PASS :sampled_3d:stage="f";format="astc-8x5-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-8x6-unorm"
+PASS :sampled_3d:stage="f";format="astc-8x6-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-8x8-unorm"
+PASS :sampled_3d:stage="f";format="astc-8x8-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-10x5-unorm"
+PASS :sampled_3d:stage="f";format="astc-10x5-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-10x6-unorm"
+PASS :sampled_3d:stage="f";format="astc-10x6-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-10x8-unorm"
+PASS :sampled_3d:stage="f";format="astc-10x8-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-10x10-unorm"
+PASS :sampled_3d:stage="f";format="astc-10x10-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-12x10-unorm"
+PASS :sampled_3d:stage="f";format="astc-12x10-unorm-srgb"
+PASS :sampled_3d:stage="f";format="astc-12x12-unorm"
+PASS :sampled_3d:stage="f";format="astc-12x12-unorm-srgb"
+PASS :sampled_3d:stage="v";format="r8unorm"
+PASS :sampled_3d:stage="v";format="r8snorm"
+PASS :sampled_3d:stage="v";format="r8uint"
+PASS :sampled_3d:stage="v";format="r8sint"
+PASS :sampled_3d:stage="v";format="rg8unorm"
+PASS :sampled_3d:stage="v";format="rg8snorm"
+PASS :sampled_3d:stage="v";format="rg8uint"
+PASS :sampled_3d:stage="v";format="rg8sint"
+PASS :sampled_3d:stage="v";format="rgba8unorm"
+PASS :sampled_3d:stage="v";format="rgba8unorm-srgb"
+PASS :sampled_3d:stage="v";format="rgba8snorm"
+PASS :sampled_3d:stage="v";format="rgba8uint"
+PASS :sampled_3d:stage="v";format="rgba8sint"
+PASS :sampled_3d:stage="v";format="bgra8unorm"
+PASS :sampled_3d:stage="v";format="bgra8unorm-srgb"
+PASS :sampled_3d:stage="v";format="r16unorm"
+PASS :sampled_3d:stage="v";format="r16snorm"
+PASS :sampled_3d:stage="v";format="r16uint"
+PASS :sampled_3d:stage="v";format="r16sint"
+PASS :sampled_3d:stage="v";format="r16float"
+PASS :sampled_3d:stage="v";format="rg16unorm"
+PASS :sampled_3d:stage="v";format="rg16snorm"
+PASS :sampled_3d:stage="v";format="rg16uint"
+PASS :sampled_3d:stage="v";format="rg16sint"
+PASS :sampled_3d:stage="v";format="rg16float"
+PASS :sampled_3d:stage="v";format="rgba16unorm"
+PASS :sampled_3d:stage="v";format="rgba16snorm"
+PASS :sampled_3d:stage="v";format="rgba16uint"
+PASS :sampled_3d:stage="v";format="rgba16sint"
+PASS :sampled_3d:stage="v";format="rgba16float"
+PASS :sampled_3d:stage="v";format="r32uint"
+PASS :sampled_3d:stage="v";format="r32sint"
+PASS :sampled_3d:stage="v";format="r32float"
+PASS :sampled_3d:stage="v";format="rg32uint"
+PASS :sampled_3d:stage="v";format="rg32sint"
+PASS :sampled_3d:stage="v";format="rg32float"
+PASS :sampled_3d:stage="v";format="rgba32uint"
+PASS :sampled_3d:stage="v";format="rgba32sint"
+PASS :sampled_3d:stage="v";format="rgba32float"
+PASS :sampled_3d:stage="v";format="rgb10a2uint"
+PASS :sampled_3d:stage="v";format="rgb10a2unorm"
+PASS :sampled_3d:stage="v";format="rg11b10ufloat"
+PASS :sampled_3d:stage="v";format="rgb9e5ufloat"
+PASS :sampled_3d:stage="v";format="bc1-rgba-unorm"
+PASS :sampled_3d:stage="v";format="bc1-rgba-unorm-srgb"
+PASS :sampled_3d:stage="v";format="bc2-rgba-unorm"
+PASS :sampled_3d:stage="v";format="bc2-rgba-unorm-srgb"
+PASS :sampled_3d:stage="v";format="bc3-rgba-unorm"
+PASS :sampled_3d:stage="v";format="bc3-rgba-unorm-srgb"
+PASS :sampled_3d:stage="v";format="bc4-r-unorm"
+PASS :sampled_3d:stage="v";format="bc4-r-snorm"
+PASS :sampled_3d:stage="v";format="bc5-rg-unorm"
+PASS :sampled_3d:stage="v";format="bc5-rg-snorm"
+PASS :sampled_3d:stage="v";format="bc7-rgba-unorm"
+PASS :sampled_3d:stage="v";format="bc7-rgba-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-4x4-unorm"
+PASS :sampled_3d:stage="v";format="astc-4x4-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-5x4-unorm"
+PASS :sampled_3d:stage="v";format="astc-5x4-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-5x5-unorm"
+PASS :sampled_3d:stage="v";format="astc-5x5-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-6x5-unorm"
+PASS :sampled_3d:stage="v";format="astc-6x5-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-6x6-unorm"
+PASS :sampled_3d:stage="v";format="astc-6x6-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-8x5-unorm"
+PASS :sampled_3d:stage="v";format="astc-8x5-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-8x6-unorm"
+PASS :sampled_3d:stage="v";format="astc-8x6-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-8x8-unorm"
+PASS :sampled_3d:stage="v";format="astc-8x8-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-10x5-unorm"
+PASS :sampled_3d:stage="v";format="astc-10x5-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-10x6-unorm"
+PASS :sampled_3d:stage="v";format="astc-10x6-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-10x8-unorm"
+PASS :sampled_3d:stage="v";format="astc-10x8-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-10x10-unorm"
+PASS :sampled_3d:stage="v";format="astc-10x10-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-12x10-unorm"
+PASS :sampled_3d:stage="v";format="astc-12x10-unorm-srgb"
+PASS :sampled_3d:stage="v";format="astc-12x12-unorm"
+PASS :sampled_3d:stage="v";format="astc-12x12-unorm-srgb"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="r8unorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="r8uint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="r8sint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rg8unorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rg8uint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rg8sint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgba8unorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgba8unorm-srgb"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgba8uint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgba8sint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="bgra8unorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="bgra8unorm-srgb"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="r16unorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="r16snorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="r16uint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="r16sint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="r16float"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rg16unorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rg16snorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rg16uint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rg16sint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rg16float"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgba16unorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgba16snorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgba16uint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgba16sint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgba16float"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="r32float"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgb10a2uint"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rgb10a2unorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="rg11b10ufloat"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="stencil8"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="depth16unorm"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="depth32float"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="depth24plus"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="depth24plus-stencil8"
+PASS :multisampled:stage="c";texture_type="texture_multisampled_2d";format="depth32float-stencil8"
+PASS :multisampled:stage="c";texture_type="texture_depth_multisampled_2d";format="depth16unorm"
+PASS :multisampled:stage="c";texture_type="texture_depth_multisampled_2d";format="depth32float"
+PASS :multisampled:stage="c";texture_type="texture_depth_multisampled_2d";format="depth24plus"
+PASS :multisampled:stage="c";texture_type="texture_depth_multisampled_2d";format="depth24plus-stencil8"
+PASS :multisampled:stage="c";texture_type="texture_depth_multisampled_2d";format="depth32float-stencil8"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="r8unorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="r8uint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="r8sint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rg8unorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rg8uint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rg8sint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgba8unorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgba8unorm-srgb"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgba8uint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgba8sint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="bgra8unorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="bgra8unorm-srgb"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="r16unorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="r16snorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="r16uint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="r16sint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="r16float"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rg16unorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rg16snorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rg16uint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rg16sint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rg16float"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgba16unorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgba16snorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgba16uint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgba16sint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgba16float"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="r32float"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgb10a2uint"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rgb10a2unorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="rg11b10ufloat"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="stencil8"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="depth16unorm"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="depth32float"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="depth24plus"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="depth24plus-stencil8"
+PASS :multisampled:stage="f";texture_type="texture_multisampled_2d";format="depth32float-stencil8"
+PASS :multisampled:stage="f";texture_type="texture_depth_multisampled_2d";format="depth16unorm"
+PASS :multisampled:stage="f";texture_type="texture_depth_multisampled_2d";format="depth32float"
+PASS :multisampled:stage="f";texture_type="texture_depth_multisampled_2d";format="depth24plus"
+PASS :multisampled:stage="f";texture_type="texture_depth_multisampled_2d";format="depth24plus-stencil8"
+PASS :multisampled:stage="f";texture_type="texture_depth_multisampled_2d";format="depth32float-stencil8"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="r8unorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="r8uint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="r8sint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rg8unorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rg8uint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rg8sint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgba8unorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgba8unorm-srgb"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgba8uint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgba8sint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="bgra8unorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="bgra8unorm-srgb"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="r16unorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="r16snorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="r16uint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="r16sint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="r16float"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rg16unorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rg16snorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rg16uint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rg16sint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rg16float"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgba16unorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgba16snorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgba16uint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgba16sint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgba16float"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="r32float"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgb10a2uint"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rgb10a2unorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="rg11b10ufloat"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="stencil8"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="depth16unorm"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="depth32float"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="depth24plus"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="depth24plus-stencil8"
+PASS :multisampled:stage="v";texture_type="texture_multisampled_2d";format="depth32float-stencil8"
+PASS :multisampled:stage="v";texture_type="texture_depth_multisampled_2d";format="depth16unorm"
+PASS :multisampled:stage="v";texture_type="texture_depth_multisampled_2d";format="depth32float"
+PASS :multisampled:stage="v";texture_type="texture_depth_multisampled_2d";format="depth24plus"
+PASS :multisampled:stage="v";texture_type="texture_depth_multisampled_2d";format="depth24plus-stencil8"
+PASS :multisampled:stage="v";texture_type="texture_depth_multisampled_2d";format="depth32float-stencil8"
+PASS :depth:stage="c";format="depth16unorm"
+PASS :depth:stage="c";format="depth32float"
+PASS :depth:stage="c";format="depth24plus"
+PASS :depth:stage="c";format="depth24plus-stencil8"
+PASS :depth:stage="c";format="depth32float-stencil8"
+PASS :depth:stage="f";format="depth16unorm"
+PASS :depth:stage="f";format="depth32float"
+PASS :depth:stage="f";format="depth24plus"
+PASS :depth:stage="f";format="depth24plus-stencil8"
+PASS :depth:stage="f";format="depth32float-stencil8"
+PASS :depth:stage="v";format="depth16unorm"
+PASS :depth:stage="v";format="depth32float"
+PASS :depth:stage="v";format="depth24plus"
+PASS :depth:stage="v";format="depth24plus-stencil8"
+PASS :depth:stage="v";format="depth32float-stencil8"
+FAIL :external:stage="c" assert_unreached:
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: below max severity)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: below max severity)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="u32") INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: GPUComputePassEncoder.setBindGroup: invalid bind group
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:466:44
+ Reached unreachable code
+FAIL :external:stage="f" assert_unreached:
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: below max severity)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: below max severity)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="u32") INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: setBindGroup: invalid bind group
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:466:44
+ Reached unreachable code
+FAIL :external:stage="v" assert_unreached:
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: below max severity)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: below max severity)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.21569, 0.03922, 0.27451, 0.49020
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 55, 10, 70, 125
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="texel-centre";C="u32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.00000, 0.00000, 0.00000, 0.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.01176, 0.01961, 0.01961, 0.03922
+     rel diffs: 100.00%, 100.00%, 100.00%, 100.00%
+     ulp diffs: 3, 5, 5, 10
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=false;samplePoints="spiral";C="u32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(2, 4))  // #0
+           got: 0.43922, 0.07843, 0.56078, 1.00000
+      expected: 0.21569, 0.03922, 0.27451, 0.49020
+      max diff: 0
+     abs diffs: 0.22353, 0.03922, 0.28627, 0.50980
+     rel diffs: 50.89%, 50.00%, 51.05%, 50.98%
+     ulp diffs: 57, 10, 73, 130
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="texel-centre";C="u32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2i(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="i32";L="u32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="i32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="i32") INFO: subcase ran
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="u32") EXPECTATION FAILED: result was not as expected:
+       physical size: [8, 8, 1]
+        baseMipLevel: 0
+       mipLevelCount: 1
+    baseMipLevelSize: [8, 8, 1]
+      baseArrayLayer: 0
+     arrayLayerCount: 1
+    physicalMipCount: 1
+
+         lodMinClamp: 0 (effective)
+         lodMaxClamp: 0 (effective)
+                call: textureLoad(texture: T, coords: vec2u(4, 4))  // #0
+           got: 0.30196, 0.50196, 0.50196, 1.00000
+      expected: 0.01176, 0.01961, 0.01961, 0.03922
+      max diff: 0
+     abs diffs: 0.29020, 0.48235, 0.48235, 0.96078
+     rel diffs: 96.10%, 96.09%, 96.09%, 96.08%
+     ulp diffs: 74, 123, 123, 245
+
+      at (elided: only 2 shown)
+  - (in subcase: importExternalTexture=true;samplePoints="spiral";C="u32";L="u32") INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: setBindGroup: invalid bind group
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:466:44
+ Reached unreachable code
+PASS :arrayed:stage="c";format="r8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r8snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r8uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r8sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg8snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg8uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg8sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba8snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba8uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba8sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bgra8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bgra8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r16snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r16uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r16sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r16float";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg16snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg16uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg16sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg16float";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba16snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba16uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba16sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba16float";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r32uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r32sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="r32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg32uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg32sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba32uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba32sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgba32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgb10a2uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgb10a2unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rg11b10ufloat";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="rgb9e5ufloat";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="stencil8";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="depth16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="depth16unorm";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="c";format="depth32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="depth32float";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="c";format="depth24plus";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="depth24plus";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="c";format="depth24plus-stencil8";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="depth24plus-stencil8";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="c";format="depth32float-stencil8";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="depth32float-stencil8";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="c";format="bc1-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc1-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc2-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc2-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc3-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc3-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc4-r-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc4-r-snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc5-rg-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc5-rg-snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc7-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="bc7-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="etc2-rgb8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="etc2-rgb8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="etc2-rgb8a1unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="etc2-rgb8a1unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="etc2-rgba8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="etc2-rgba8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="eac-r11unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="eac-r11snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="eac-rg11unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="eac-rg11snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-4x4-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-4x4-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-5x4-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-5x4-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-5x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-5x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-6x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-6x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-6x6-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-6x6-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-8x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-8x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-8x6-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-8x6-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-8x8-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-8x8-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-10x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-10x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-10x6-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-10x6-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-10x8-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-10x8-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-10x10-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-10x10-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-12x10-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-12x10-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-12x12-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="c";format="astc-12x12-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r8snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r8uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r8sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg8snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg8uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg8sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba8snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba8uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba8sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bgra8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bgra8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r16snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r16uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r16sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r16float";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg16snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg16uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg16sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg16float";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba16snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba16uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba16sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba16float";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r32uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r32sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="r32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg32uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg32sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba32uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba32sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgba32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgb10a2uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgb10a2unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rg11b10ufloat";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="rgb9e5ufloat";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="stencil8";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="depth16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="depth16unorm";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="f";format="depth32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="depth32float";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="f";format="depth24plus";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="depth24plus";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="f";format="depth24plus-stencil8";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="depth24plus-stencil8";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="f";format="depth32float-stencil8";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="depth32float-stencil8";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="f";format="bc1-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc1-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc2-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc2-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc3-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc3-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc4-r-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc4-r-snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc5-rg-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc5-rg-snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc7-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="bc7-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="etc2-rgb8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="etc2-rgb8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="etc2-rgb8a1unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="etc2-rgb8a1unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="etc2-rgba8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="etc2-rgba8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="eac-r11unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="eac-r11snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="eac-rg11unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="eac-rg11snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-4x4-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-4x4-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-5x4-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-5x4-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-5x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-5x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-6x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-6x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-6x6-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-6x6-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-8x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-8x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-8x6-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-8x6-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-8x8-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-8x8-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-10x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-10x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-10x6-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-10x6-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-10x8-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-10x8-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-10x10-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-10x10-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-12x10-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-12x10-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-12x12-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="f";format="astc-12x12-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r8snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r8uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r8sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg8snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg8uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg8sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba8snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba8uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba8sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bgra8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bgra8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r16snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r16uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r16sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r16float";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg16snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg16uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg16sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg16float";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba16snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba16uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba16sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba16float";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r32uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r32sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="r32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg32uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg32sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba32uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba32sint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgba32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgb10a2uint";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgb10a2unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rg11b10ufloat";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="rgb9e5ufloat";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="stencil8";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="depth16unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="depth16unorm";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="v";format="depth32float";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="depth32float";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="v";format="depth24plus";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="depth24plus";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="v";format="depth24plus-stencil8";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="depth24plus-stencil8";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="v";format="depth32float-stencil8";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="depth32float-stencil8";texture_type="texture_depth_2d_array"
+PASS :arrayed:stage="v";format="bc1-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc1-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc2-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc2-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc3-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc3-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc4-r-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc4-r-snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc5-rg-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc5-rg-snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc7-rgba-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="bc7-rgba-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="etc2-rgb8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="etc2-rgb8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="etc2-rgb8a1unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="etc2-rgb8a1unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="etc2-rgba8unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="etc2-rgba8unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="eac-r11unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="eac-r11snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="eac-rg11unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="eac-rg11snorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-4x4-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-4x4-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-5x4-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-5x4-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-5x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-5x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-6x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-6x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-6x6-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-6x6-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-8x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-8x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-8x6-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-8x6-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-8x8-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-8x8-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-10x5-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-10x5-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-10x6-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-10x6-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-10x8-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-10x8-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-10x10-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-10x10-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-12x10-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-12x10-unorm-srgb";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-12x12-unorm";texture_type="texture_2d_array"
+PASS :arrayed:stage="v";format="astc-12x12-unorm-srgb";texture_type="texture_2d_array"
+PASS :storage_textures_1d:stage="c";format="rgba8unorm"
+PASS :storage_textures_1d:stage="c";format="rgba8snorm"
+PASS :storage_textures_1d:stage="c";format="rgba8uint"
+PASS :storage_textures_1d:stage="c";format="rgba8sint"
+PASS :storage_textures_1d:stage="c";format="r16unorm"
+PASS :storage_textures_1d:stage="c";format="r16snorm"
+PASS :storage_textures_1d:stage="c";format="rg16unorm"
+PASS :storage_textures_1d:stage="c";format="rg16snorm"
+PASS :storage_textures_1d:stage="c";format="rgba16unorm"
+PASS :storage_textures_1d:stage="c";format="rgba16snorm"
+PASS :storage_textures_1d:stage="c";format="rgba16uint"
+PASS :storage_textures_1d:stage="c";format="rgba16sint"
+PASS :storage_textures_1d:stage="c";format="rgba16float"
+PASS :storage_textures_1d:stage="c";format="r32uint"
+PASS :storage_textures_1d:stage="c";format="r32sint"
+PASS :storage_textures_1d:stage="c";format="r32float"
+PASS :storage_textures_1d:stage="c";format="rg32uint"
+PASS :storage_textures_1d:stage="c";format="rg32sint"
+PASS :storage_textures_1d:stage="c";format="rg32float"
+PASS :storage_textures_1d:stage="c";format="rgba32uint"
+PASS :storage_textures_1d:stage="c";format="rgba32sint"
+PASS :storage_textures_1d:stage="c";format="rgba32float"
+PASS :storage_textures_1d:stage="c";format="bgra8unorm"
+PASS :storage_textures_1d:stage="c";format="r8unorm"
+PASS :storage_textures_1d:stage="c";format="r8snorm"
+PASS :storage_textures_1d:stage="c";format="r8uint"
+PASS :storage_textures_1d:stage="c";format="r8sint"
+PASS :storage_textures_1d:stage="c";format="rg8unorm"
+PASS :storage_textures_1d:stage="c";format="rg8snorm"
+PASS :storage_textures_1d:stage="c";format="rg8uint"
+PASS :storage_textures_1d:stage="c";format="rg8sint"
+PASS :storage_textures_1d:stage="c";format="r16uint"
+PASS :storage_textures_1d:stage="c";format="r16sint"
+PASS :storage_textures_1d:stage="c";format="r16float"
+PASS :storage_textures_1d:stage="c";format="rg16uint"
+PASS :storage_textures_1d:stage="c";format="rg16sint"
+PASS :storage_textures_1d:stage="c";format="rg16float"
+PASS :storage_textures_1d:stage="c";format="rgb10a2uint"
+PASS :storage_textures_1d:stage="c";format="rgb10a2unorm"
+PASS :storage_textures_1d:stage="c";format="rg11b10ufloat"
+PASS :storage_textures_1d:stage="f";format="rgba8unorm"
+PASS :storage_textures_1d:stage="f";format="rgba8snorm"
+PASS :storage_textures_1d:stage="f";format="rgba8uint"
+PASS :storage_textures_1d:stage="f";format="rgba8sint"
+PASS :storage_textures_1d:stage="f";format="r16unorm"
+PASS :storage_textures_1d:stage="f";format="r16snorm"
+PASS :storage_textures_1d:stage="f";format="rg16unorm"
+PASS :storage_textures_1d:stage="f";format="rg16snorm"
+PASS :storage_textures_1d:stage="f";format="rgba16unorm"
+PASS :storage_textures_1d:stage="f";format="rgba16snorm"
+PASS :storage_textures_1d:stage="f";format="rgba16uint"
+PASS :storage_textures_1d:stage="f";format="rgba16sint"
+PASS :storage_textures_1d:stage="f";format="rgba16float"
+PASS :storage_textures_1d:stage="f";format="r32uint"
+PASS :storage_textures_1d:stage="f";format="r32sint"
+PASS :storage_textures_1d:stage="f";format="r32float"
+PASS :storage_textures_1d:stage="f";format="rg32uint"
+PASS :storage_textures_1d:stage="f";format="rg32sint"
+PASS :storage_textures_1d:stage="f";format="rg32float"
+PASS :storage_textures_1d:stage="f";format="rgba32uint"
+PASS :storage_textures_1d:stage="f";format="rgba32sint"
+PASS :storage_textures_1d:stage="f";format="rgba32float"
+PASS :storage_textures_1d:stage="f";format="bgra8unorm"
+PASS :storage_textures_1d:stage="f";format="r8unorm"
+PASS :storage_textures_1d:stage="f";format="r8snorm"
+PASS :storage_textures_1d:stage="f";format="r8uint"
+PASS :storage_textures_1d:stage="f";format="r8sint"
+PASS :storage_textures_1d:stage="f";format="rg8unorm"
+PASS :storage_textures_1d:stage="f";format="rg8snorm"
+PASS :storage_textures_1d:stage="f";format="rg8uint"
+PASS :storage_textures_1d:stage="f";format="rg8sint"
+PASS :storage_textures_1d:stage="f";format="r16uint"
+PASS :storage_textures_1d:stage="f";format="r16sint"
+PASS :storage_textures_1d:stage="f";format="r16float"
+PASS :storage_textures_1d:stage="f";format="rg16uint"
+PASS :storage_textures_1d:stage="f";format="rg16sint"
+PASS :storage_textures_1d:stage="f";format="rg16float"
+PASS :storage_textures_1d:stage="f";format="rgb10a2uint"
+PASS :storage_textures_1d:stage="f";format="rgb10a2unorm"
+PASS :storage_textures_1d:stage="f";format="rg11b10ufloat"
+PASS :storage_textures_1d:stage="v";format="rgba8unorm"
+PASS :storage_textures_1d:stage="v";format="rgba8snorm"
+PASS :storage_textures_1d:stage="v";format="rgba8uint"
+PASS :storage_textures_1d:stage="v";format="rgba8sint"
+PASS :storage_textures_1d:stage="v";format="r16unorm"
+PASS :storage_textures_1d:stage="v";format="r16snorm"
+PASS :storage_textures_1d:stage="v";format="rg16unorm"
+PASS :storage_textures_1d:stage="v";format="rg16snorm"
+PASS :storage_textures_1d:stage="v";format="rgba16unorm"
+PASS :storage_textures_1d:stage="v";format="rgba16snorm"
+PASS :storage_textures_1d:stage="v";format="rgba16uint"
+PASS :storage_textures_1d:stage="v";format="rgba16sint"
+PASS :storage_textures_1d:stage="v";format="rgba16float"
+PASS :storage_textures_1d:stage="v";format="r32uint"
+PASS :storage_textures_1d:stage="v";format="r32sint"
+PASS :storage_textures_1d:stage="v";format="r32float"
+PASS :storage_textures_1d:stage="v";format="rg32uint"
+PASS :storage_textures_1d:stage="v";format="rg32sint"
+PASS :storage_textures_1d:stage="v";format="rg32float"
+PASS :storage_textures_1d:stage="v";format="rgba32uint"
+PASS :storage_textures_1d:stage="v";format="rgba32sint"
+PASS :storage_textures_1d:stage="v";format="rgba32float"
+PASS :storage_textures_1d:stage="v";format="bgra8unorm"
+PASS :storage_textures_1d:stage="v";format="r8unorm"
+PASS :storage_textures_1d:stage="v";format="r8snorm"
+PASS :storage_textures_1d:stage="v";format="r8uint"
+PASS :storage_textures_1d:stage="v";format="r8sint"
+PASS :storage_textures_1d:stage="v";format="rg8unorm"
+PASS :storage_textures_1d:stage="v";format="rg8snorm"
+PASS :storage_textures_1d:stage="v";format="rg8uint"
+PASS :storage_textures_1d:stage="v";format="rg8sint"
+PASS :storage_textures_1d:stage="v";format="r16uint"
+PASS :storage_textures_1d:stage="v";format="r16sint"
+PASS :storage_textures_1d:stage="v";format="r16float"
+PASS :storage_textures_1d:stage="v";format="rg16uint"
+PASS :storage_textures_1d:stage="v";format="rg16sint"
+PASS :storage_textures_1d:stage="v";format="rg16float"
+PASS :storage_textures_1d:stage="v";format="rgb10a2uint"
+PASS :storage_textures_1d:stage="v";format="rgb10a2unorm"
+PASS :storage_textures_1d:stage="v";format="rg11b10ufloat"
+PASS :storage_textures_2d:stage="c";format="rgba8unorm"
+PASS :storage_textures_2d:stage="c";format="rgba8snorm"
+PASS :storage_textures_2d:stage="c";format="rgba8uint"
+PASS :storage_textures_2d:stage="c";format="rgba8sint"
+PASS :storage_textures_2d:stage="c";format="r16unorm"
+PASS :storage_textures_2d:stage="c";format="r16snorm"
+PASS :storage_textures_2d:stage="c";format="rg16unorm"
+PASS :storage_textures_2d:stage="c";format="rg16snorm"
+PASS :storage_textures_2d:stage="c";format="rgba16unorm"
+PASS :storage_textures_2d:stage="c";format="rgba16snorm"
+PASS :storage_textures_2d:stage="c";format="rgba16uint"
+PASS :storage_textures_2d:stage="c";format="rgba16sint"
+PASS :storage_textures_2d:stage="c";format="rgba16float"
+PASS :storage_textures_2d:stage="c";format="r32uint"
+PASS :storage_textures_2d:stage="c";format="r32sint"
+PASS :storage_textures_2d:stage="c";format="r32float"
+PASS :storage_textures_2d:stage="c";format="rg32uint"
+PASS :storage_textures_2d:stage="c";format="rg32sint"
+PASS :storage_textures_2d:stage="c";format="rg32float"
+PASS :storage_textures_2d:stage="c";format="rgba32uint"
+PASS :storage_textures_2d:stage="c";format="rgba32sint"
+PASS :storage_textures_2d:stage="c";format="rgba32float"
+PASS :storage_textures_2d:stage="c";format="bgra8unorm"
+PASS :storage_textures_2d:stage="c";format="r8unorm"
+PASS :storage_textures_2d:stage="c";format="r8snorm"
+PASS :storage_textures_2d:stage="c";format="r8uint"
+PASS :storage_textures_2d:stage="c";format="r8sint"
+PASS :storage_textures_2d:stage="c";format="rg8unorm"
+PASS :storage_textures_2d:stage="c";format="rg8snorm"
+PASS :storage_textures_2d:stage="c";format="rg8uint"
+PASS :storage_textures_2d:stage="c";format="rg8sint"
+PASS :storage_textures_2d:stage="c";format="r16uint"
+PASS :storage_textures_2d:stage="c";format="r16sint"
+PASS :storage_textures_2d:stage="c";format="r16float"
+PASS :storage_textures_2d:stage="c";format="rg16uint"
+PASS :storage_textures_2d:stage="c";format="rg16sint"
+PASS :storage_textures_2d:stage="c";format="rg16float"
+PASS :storage_textures_2d:stage="c";format="rgb10a2uint"
+PASS :storage_textures_2d:stage="c";format="rgb10a2unorm"
+PASS :storage_textures_2d:stage="c";format="rg11b10ufloat"
+PASS :storage_textures_2d:stage="f";format="rgba8unorm"
+PASS :storage_textures_2d:stage="f";format="rgba8snorm"
+PASS :storage_textures_2d:stage="f";format="rgba8uint"
+PASS :storage_textures_2d:stage="f";format="rgba8sint"
+PASS :storage_textures_2d:stage="f";format="r16unorm"
+PASS :storage_textures_2d:stage="f";format="r16snorm"
+PASS :storage_textures_2d:stage="f";format="rg16unorm"
+PASS :storage_textures_2d:stage="f";format="rg16snorm"
+PASS :storage_textures_2d:stage="f";format="rgba16unorm"
+PASS :storage_textures_2d:stage="f";format="rgba16snorm"
+PASS :storage_textures_2d:stage="f";format="rgba16uint"
+PASS :storage_textures_2d:stage="f";format="rgba16sint"
+PASS :storage_textures_2d:stage="f";format="rgba16float"
+PASS :storage_textures_2d:stage="f";format="r32uint"
+PASS :storage_textures_2d:stage="f";format="r32sint"
+PASS :storage_textures_2d:stage="f";format="r32float"
+PASS :storage_textures_2d:stage="f";format="rg32uint"
+PASS :storage_textures_2d:stage="f";format="rg32sint"
+PASS :storage_textures_2d:stage="f";format="rg32float"
+PASS :storage_textures_2d:stage="f";format="rgba32uint"
+PASS :storage_textures_2d:stage="f";format="rgba32sint"
+PASS :storage_textures_2d:stage="f";format="rgba32float"
+PASS :storage_textures_2d:stage="f";format="bgra8unorm"
+PASS :storage_textures_2d:stage="f";format="r8unorm"
+PASS :storage_textures_2d:stage="f";format="r8snorm"
+PASS :storage_textures_2d:stage="f";format="r8uint"
+PASS :storage_textures_2d:stage="f";format="r8sint"
+PASS :storage_textures_2d:stage="f";format="rg8unorm"
+PASS :storage_textures_2d:stage="f";format="rg8snorm"
+PASS :storage_textures_2d:stage="f";format="rg8uint"
+PASS :storage_textures_2d:stage="f";format="rg8sint"
+PASS :storage_textures_2d:stage="f";format="r16uint"
+PASS :storage_textures_2d:stage="f";format="r16sint"
+PASS :storage_textures_2d:stage="f";format="r16float"
+PASS :storage_textures_2d:stage="f";format="rg16uint"
+PASS :storage_textures_2d:stage="f";format="rg16sint"
+PASS :storage_textures_2d:stage="f";format="rg16float"
+PASS :storage_textures_2d:stage="f";format="rgb10a2uint"
+PASS :storage_textures_2d:stage="f";format="rgb10a2unorm"
+PASS :storage_textures_2d:stage="f";format="rg11b10ufloat"
+PASS :storage_textures_2d:stage="v";format="rgba8unorm"
+PASS :storage_textures_2d:stage="v";format="rgba8snorm"
+PASS :storage_textures_2d:stage="v";format="rgba8uint"
+PASS :storage_textures_2d:stage="v";format="rgba8sint"
+PASS :storage_textures_2d:stage="v";format="r16unorm"
+PASS :storage_textures_2d:stage="v";format="r16snorm"
+PASS :storage_textures_2d:stage="v";format="rg16unorm"
+PASS :storage_textures_2d:stage="v";format="rg16snorm"
+PASS :storage_textures_2d:stage="v";format="rgba16unorm"
+PASS :storage_textures_2d:stage="v";format="rgba16snorm"
+PASS :storage_textures_2d:stage="v";format="rgba16uint"
+PASS :storage_textures_2d:stage="v";format="rgba16sint"
+PASS :storage_textures_2d:stage="v";format="rgba16float"
+PASS :storage_textures_2d:stage="v";format="r32uint"
+PASS :storage_textures_2d:stage="v";format="r32sint"
+PASS :storage_textures_2d:stage="v";format="r32float"
+PASS :storage_textures_2d:stage="v";format="rg32uint"
+PASS :storage_textures_2d:stage="v";format="rg32sint"
+PASS :storage_textures_2d:stage="v";format="rg32float"
+PASS :storage_textures_2d:stage="v";format="rgba32uint"
+PASS :storage_textures_2d:stage="v";format="rgba32sint"
+PASS :storage_textures_2d:stage="v";format="rgba32float"
+PASS :storage_textures_2d:stage="v";format="bgra8unorm"
+PASS :storage_textures_2d:stage="v";format="r8unorm"
+PASS :storage_textures_2d:stage="v";format="r8snorm"
+PASS :storage_textures_2d:stage="v";format="r8uint"
+PASS :storage_textures_2d:stage="v";format="r8sint"
+PASS :storage_textures_2d:stage="v";format="rg8unorm"
+PASS :storage_textures_2d:stage="v";format="rg8snorm"
+PASS :storage_textures_2d:stage="v";format="rg8uint"
+PASS :storage_textures_2d:stage="v";format="rg8sint"
+PASS :storage_textures_2d:stage="v";format="r16uint"
+PASS :storage_textures_2d:stage="v";format="r16sint"
+PASS :storage_textures_2d:stage="v";format="r16float"
+PASS :storage_textures_2d:stage="v";format="rg16uint"
+PASS :storage_textures_2d:stage="v";format="rg16sint"
+PASS :storage_textures_2d:stage="v";format="rg16float"
+PASS :storage_textures_2d:stage="v";format="rgb10a2uint"
+PASS :storage_textures_2d:stage="v";format="rgb10a2unorm"
+PASS :storage_textures_2d:stage="v";format="rg11b10ufloat"
+PASS :storage_textures_2d_array:stage="c";format="rgba8unorm"
+PASS :storage_textures_2d_array:stage="c";format="rgba8snorm"
+PASS :storage_textures_2d_array:stage="c";format="rgba8uint"
+PASS :storage_textures_2d_array:stage="c";format="rgba8sint"
+PASS :storage_textures_2d_array:stage="c";format="r16unorm"
+PASS :storage_textures_2d_array:stage="c";format="r16snorm"
+PASS :storage_textures_2d_array:stage="c";format="rg16unorm"
+PASS :storage_textures_2d_array:stage="c";format="rg16snorm"
+PASS :storage_textures_2d_array:stage="c";format="rgba16unorm"
+PASS :storage_textures_2d_array:stage="c";format="rgba16snorm"
+PASS :storage_textures_2d_array:stage="c";format="rgba16uint"
+PASS :storage_textures_2d_array:stage="c";format="rgba16sint"
+PASS :storage_textures_2d_array:stage="c";format="rgba16float"
+PASS :storage_textures_2d_array:stage="c";format="r32uint"
+PASS :storage_textures_2d_array:stage="c";format="r32sint"
+PASS :storage_textures_2d_array:stage="c";format="r32float"
+PASS :storage_textures_2d_array:stage="c";format="rg32uint"
+PASS :storage_textures_2d_array:stage="c";format="rg32sint"
+PASS :storage_textures_2d_array:stage="c";format="rg32float"
+PASS :storage_textures_2d_array:stage="c";format="rgba32uint"
+PASS :storage_textures_2d_array:stage="c";format="rgba32sint"
+PASS :storage_textures_2d_array:stage="c";format="rgba32float"
+PASS :storage_textures_2d_array:stage="c";format="bgra8unorm"
+PASS :storage_textures_2d_array:stage="c";format="r8unorm"
+PASS :storage_textures_2d_array:stage="c";format="r8snorm"
+PASS :storage_textures_2d_array:stage="c";format="r8uint"
+PASS :storage_textures_2d_array:stage="c";format="r8sint"
+PASS :storage_textures_2d_array:stage="c";format="rg8unorm"
+PASS :storage_textures_2d_array:stage="c";format="rg8snorm"
+PASS :storage_textures_2d_array:stage="c";format="rg8uint"
+PASS :storage_textures_2d_array:stage="c";format="rg8sint"
+PASS :storage_textures_2d_array:stage="c";format="r16uint"
+PASS :storage_textures_2d_array:stage="c";format="r16sint"
+PASS :storage_textures_2d_array:stage="c";format="r16float"
+PASS :storage_textures_2d_array:stage="c";format="rg16uint"
+PASS :storage_textures_2d_array:stage="c";format="rg16sint"
+PASS :storage_textures_2d_array:stage="c";format="rg16float"
+PASS :storage_textures_2d_array:stage="c";format="rgb10a2uint"
+PASS :storage_textures_2d_array:stage="c";format="rgb10a2unorm"
+PASS :storage_textures_2d_array:stage="c";format="rg11b10ufloat"
+PASS :storage_textures_2d_array:stage="f";format="rgba8unorm"
+PASS :storage_textures_2d_array:stage="f";format="rgba8snorm"
+PASS :storage_textures_2d_array:stage="f";format="rgba8uint"
+PASS :storage_textures_2d_array:stage="f";format="rgba8sint"
+PASS :storage_textures_2d_array:stage="f";format="r16unorm"
+PASS :storage_textures_2d_array:stage="f";format="r16snorm"
+PASS :storage_textures_2d_array:stage="f";format="rg16unorm"
+PASS :storage_textures_2d_array:stage="f";format="rg16snorm"
+PASS :storage_textures_2d_array:stage="f";format="rgba16unorm"
+PASS :storage_textures_2d_array:stage="f";format="rgba16snorm"
+PASS :storage_textures_2d_array:stage="f";format="rgba16uint"
+PASS :storage_textures_2d_array:stage="f";format="rgba16sint"
+PASS :storage_textures_2d_array:stage="f";format="rgba16float"
+PASS :storage_textures_2d_array:stage="f";format="r32uint"
+PASS :storage_textures_2d_array:stage="f";format="r32sint"
+PASS :storage_textures_2d_array:stage="f";format="r32float"
+PASS :storage_textures_2d_array:stage="f";format="rg32uint"
+PASS :storage_textures_2d_array:stage="f";format="rg32sint"
+PASS :storage_textures_2d_array:stage="f";format="rg32float"
+PASS :storage_textures_2d_array:stage="f";format="rgba32uint"
+PASS :storage_textures_2d_array:stage="f";format="rgba32sint"
+PASS :storage_textures_2d_array:stage="f";format="rgba32float"
+PASS :storage_textures_2d_array:stage="f";format="bgra8unorm"
+PASS :storage_textures_2d_array:stage="f";format="r8unorm"
+PASS :storage_textures_2d_array:stage="f";format="r8snorm"
+PASS :storage_textures_2d_array:stage="f";format="r8uint"
+PASS :storage_textures_2d_array:stage="f";format="r8sint"
+PASS :storage_textures_2d_array:stage="f";format="rg8unorm"
+PASS :storage_textures_2d_array:stage="f";format="rg8snorm"
+PASS :storage_textures_2d_array:stage="f";format="rg8uint"
+PASS :storage_textures_2d_array:stage="f";format="rg8sint"
+PASS :storage_textures_2d_array:stage="f";format="r16uint"
+PASS :storage_textures_2d_array:stage="f";format="r16sint"
+PASS :storage_textures_2d_array:stage="f";format="r16float"
+PASS :storage_textures_2d_array:stage="f";format="rg16uint"
+PASS :storage_textures_2d_array:stage="f";format="rg16sint"
+PASS :storage_textures_2d_array:stage="f";format="rg16float"
+PASS :storage_textures_2d_array:stage="f";format="rgb10a2uint"
+PASS :storage_textures_2d_array:stage="f";format="rgb10a2unorm"
+PASS :storage_textures_2d_array:stage="f";format="rg11b10ufloat"
+PASS :storage_textures_2d_array:stage="v";format="rgba8unorm"
+PASS :storage_textures_2d_array:stage="v";format="rgba8snorm"
+PASS :storage_textures_2d_array:stage="v";format="rgba8uint"
+PASS :storage_textures_2d_array:stage="v";format="rgba8sint"
+PASS :storage_textures_2d_array:stage="v";format="r16unorm"
+PASS :storage_textures_2d_array:stage="v";format="r16snorm"
+PASS :storage_textures_2d_array:stage="v";format="rg16unorm"
+PASS :storage_textures_2d_array:stage="v";format="rg16snorm"
+PASS :storage_textures_2d_array:stage="v";format="rgba16unorm"
+PASS :storage_textures_2d_array:stage="v";format="rgba16snorm"
+PASS :storage_textures_2d_array:stage="v";format="rgba16uint"
+PASS :storage_textures_2d_array:stage="v";format="rgba16sint"
+PASS :storage_textures_2d_array:stage="v";format="rgba16float"
+PASS :storage_textures_2d_array:stage="v";format="r32uint"
+PASS :storage_textures_2d_array:stage="v";format="r32sint"
+PASS :storage_textures_2d_array:stage="v";format="r32float"
+PASS :storage_textures_2d_array:stage="v";format="rg32uint"
+PASS :storage_textures_2d_array:stage="v";format="rg32sint"
+PASS :storage_textures_2d_array:stage="v";format="rg32float"
+PASS :storage_textures_2d_array:stage="v";format="rgba32uint"
+PASS :storage_textures_2d_array:stage="v";format="rgba32sint"
+PASS :storage_textures_2d_array:stage="v";format="rgba32float"
+PASS :storage_textures_2d_array:stage="v";format="bgra8unorm"
+PASS :storage_textures_2d_array:stage="v";format="r8unorm"
+PASS :storage_textures_2d_array:stage="v";format="r8snorm"
+PASS :storage_textures_2d_array:stage="v";format="r8uint"
+PASS :storage_textures_2d_array:stage="v";format="r8sint"
+PASS :storage_textures_2d_array:stage="v";format="rg8unorm"
+PASS :storage_textures_2d_array:stage="v";format="rg8snorm"
+PASS :storage_textures_2d_array:stage="v";format="rg8uint"
+PASS :storage_textures_2d_array:stage="v";format="rg8sint"
+PASS :storage_textures_2d_array:stage="v";format="r16uint"
+PASS :storage_textures_2d_array:stage="v";format="r16sint"
+PASS :storage_textures_2d_array:stage="v";format="r16float"
+PASS :storage_textures_2d_array:stage="v";format="rg16uint"
+PASS :storage_textures_2d_array:stage="v";format="rg16sint"
+PASS :storage_textures_2d_array:stage="v";format="rg16float"
+PASS :storage_textures_2d_array:stage="v";format="rgb10a2uint"
+PASS :storage_textures_2d_array:stage="v";format="rgb10a2unorm"
+PASS :storage_textures_2d_array:stage="v";format="rg11b10ufloat"
+PASS :storage_textures_3d:stage="c";format="rgba8unorm"
+PASS :storage_textures_3d:stage="c";format="rgba8snorm"
+PASS :storage_textures_3d:stage="c";format="rgba8uint"
+PASS :storage_textures_3d:stage="c";format="rgba8sint"
+PASS :storage_textures_3d:stage="c";format="r16unorm"
+PASS :storage_textures_3d:stage="c";format="r16snorm"
+PASS :storage_textures_3d:stage="c";format="rg16unorm"
+PASS :storage_textures_3d:stage="c";format="rg16snorm"
+PASS :storage_textures_3d:stage="c";format="rgba16unorm"
+PASS :storage_textures_3d:stage="c";format="rgba16snorm"
+PASS :storage_textures_3d:stage="c";format="rgba16uint"
+PASS :storage_textures_3d:stage="c";format="rgba16sint"
+PASS :storage_textures_3d:stage="c";format="rgba16float"
+PASS :storage_textures_3d:stage="c";format="r32uint"
+PASS :storage_textures_3d:stage="c";format="r32sint"
+PASS :storage_textures_3d:stage="c";format="r32float"
+PASS :storage_textures_3d:stage="c";format="rg32uint"
+PASS :storage_textures_3d:stage="c";format="rg32sint"
+PASS :storage_textures_3d:stage="c";format="rg32float"
+PASS :storage_textures_3d:stage="c";format="rgba32uint"
+PASS :storage_textures_3d:stage="c";format="rgba32sint"
+PASS :storage_textures_3d:stage="c";format="rgba32float"
+PASS :storage_textures_3d:stage="c";format="bgra8unorm"
+PASS :storage_textures_3d:stage="c";format="r8unorm"
+PASS :storage_textures_3d:stage="c";format="r8snorm"
+PASS :storage_textures_3d:stage="c";format="r8uint"
+PASS :storage_textures_3d:stage="c";format="r8sint"
+PASS :storage_textures_3d:stage="c";format="rg8unorm"
+PASS :storage_textures_3d:stage="c";format="rg8snorm"
+PASS :storage_textures_3d:stage="c";format="rg8uint"
+PASS :storage_textures_3d:stage="c";format="rg8sint"
+PASS :storage_textures_3d:stage="c";format="r16uint"
+PASS :storage_textures_3d:stage="c";format="r16sint"
+PASS :storage_textures_3d:stage="c";format="r16float"
+PASS :storage_textures_3d:stage="c";format="rg16uint"
+PASS :storage_textures_3d:stage="c";format="rg16sint"
+PASS :storage_textures_3d:stage="c";format="rg16float"
+PASS :storage_textures_3d:stage="c";format="rgb10a2uint"
+PASS :storage_textures_3d:stage="c";format="rgb10a2unorm"
+PASS :storage_textures_3d:stage="c";format="rg11b10ufloat"
+PASS :storage_textures_3d:stage="f";format="rgba8unorm"
+PASS :storage_textures_3d:stage="f";format="rgba8snorm"
+PASS :storage_textures_3d:stage="f";format="rgba8uint"
+PASS :storage_textures_3d:stage="f";format="rgba8sint"
+PASS :storage_textures_3d:stage="f";format="r16unorm"
+PASS :storage_textures_3d:stage="f";format="r16snorm"
+PASS :storage_textures_3d:stage="f";format="rg16unorm"
+PASS :storage_textures_3d:stage="f";format="rg16snorm"
+PASS :storage_textures_3d:stage="f";format="rgba16unorm"
+PASS :storage_textures_3d:stage="f";format="rgba16snorm"
+PASS :storage_textures_3d:stage="f";format="rgba16uint"
+PASS :storage_textures_3d:stage="f";format="rgba16sint"
+PASS :storage_textures_3d:stage="f";format="rgba16float"
+PASS :storage_textures_3d:stage="f";format="r32uint"
+PASS :storage_textures_3d:stage="f";format="r32sint"
+PASS :storage_textures_3d:stage="f";format="r32float"
+PASS :storage_textures_3d:stage="f";format="rg32uint"
+PASS :storage_textures_3d:stage="f";format="rg32sint"
+PASS :storage_textures_3d:stage="f";format="rg32float"
+PASS :storage_textures_3d:stage="f";format="rgba32uint"
+PASS :storage_textures_3d:stage="f";format="rgba32sint"
+PASS :storage_textures_3d:stage="f";format="rgba32float"
+PASS :storage_textures_3d:stage="f";format="bgra8unorm"
+PASS :storage_textures_3d:stage="f";format="r8unorm"
+PASS :storage_textures_3d:stage="f";format="r8snorm"
+PASS :storage_textures_3d:stage="f";format="r8uint"
+PASS :storage_textures_3d:stage="f";format="r8sint"
+PASS :storage_textures_3d:stage="f";format="rg8unorm"
+PASS :storage_textures_3d:stage="f";format="rg8snorm"
+PASS :storage_textures_3d:stage="f";format="rg8uint"
+PASS :storage_textures_3d:stage="f";format="rg8sint"
+PASS :storage_textures_3d:stage="f";format="r16uint"
+PASS :storage_textures_3d:stage="f";format="r16sint"
+PASS :storage_textures_3d:stage="f";format="r16float"
+PASS :storage_textures_3d:stage="f";format="rg16uint"
+PASS :storage_textures_3d:stage="f";format="rg16sint"
+PASS :storage_textures_3d:stage="f";format="rg16float"
+PASS :storage_textures_3d:stage="f";format="rgb10a2uint"
+PASS :storage_textures_3d:stage="f";format="rgb10a2unorm"
+PASS :storage_textures_3d:stage="f";format="rg11b10ufloat"
+PASS :storage_textures_3d:stage="v";format="rgba8unorm"
+PASS :storage_textures_3d:stage="v";format="rgba8snorm"
+PASS :storage_textures_3d:stage="v";format="rgba8uint"
+PASS :storage_textures_3d:stage="v";format="rgba8sint"
+PASS :storage_textures_3d:stage="v";format="r16unorm"
+PASS :storage_textures_3d:stage="v";format="r16snorm"
+PASS :storage_textures_3d:stage="v";format="rg16unorm"
+PASS :storage_textures_3d:stage="v";format="rg16snorm"
+PASS :storage_textures_3d:stage="v";format="rgba16unorm"
+PASS :storage_textures_3d:stage="v";format="rgba16snorm"
+PASS :storage_textures_3d:stage="v";format="rgba16uint"
+PASS :storage_textures_3d:stage="v";format="rgba16sint"
+PASS :storage_textures_3d:stage="v";format="rgba16float"
+PASS :storage_textures_3d:stage="v";format="r32uint"
+PASS :storage_textures_3d:stage="v";format="r32sint"
+PASS :storage_textures_3d:stage="v";format="r32float"
+PASS :storage_textures_3d:stage="v";format="rg32uint"
+PASS :storage_textures_3d:stage="v";format="rg32sint"
+PASS :storage_textures_3d:stage="v";format="rg32float"
+PASS :storage_textures_3d:stage="v";format="rgba32uint"
+PASS :storage_textures_3d:stage="v";format="rgba32sint"
+PASS :storage_textures_3d:stage="v";format="rgba32float"
+PASS :storage_textures_3d:stage="v";format="bgra8unorm"
+PASS :storage_textures_3d:stage="v";format="r8unorm"
+PASS :storage_textures_3d:stage="v";format="r8snorm"
+PASS :storage_textures_3d:stage="v";format="r8uint"
+PASS :storage_textures_3d:stage="v";format="r8sint"
+PASS :storage_textures_3d:stage="v";format="rg8unorm"
+PASS :storage_textures_3d:stage="v";format="rg8snorm"
+PASS :storage_textures_3d:stage="v";format="rg8uint"
+PASS :storage_textures_3d:stage="v";format="rg8sint"
+PASS :storage_textures_3d:stage="v";format="r16uint"
+PASS :storage_textures_3d:stage="v";format="r16sint"
+PASS :storage_textures_3d:stage="v";format="r16float"
+PASS :storage_textures_3d:stage="v";format="rg16uint"
+PASS :storage_textures_3d:stage="v";format="rg16sint"
+PASS :storage_textures_3d:stage="v";format="rg16float"
+PASS :storage_textures_3d:stage="v";format="rgb10a2uint"
+PASS :storage_textures_3d:stage="v";format="rgb10a2unorm"
+PASS :storage_textures_3d:stage="v";format="rg11b10ufloat"
 

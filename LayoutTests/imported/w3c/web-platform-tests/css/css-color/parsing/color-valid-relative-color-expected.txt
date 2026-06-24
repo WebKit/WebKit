@@ -499,6 +499,7 @@ PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30 / 40%) calc(l) calc(c) cal
 PASS e.style['color'] = "oklch(from oklch(0.7 0.2 300) calc(l - 0.2) c h)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.2 300) l calc(c / 2) h)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.2 300) l c calc(h * 2.5))" should set the property value
+PASS e.style['color'] = "oklch(from red calc(1 / l) c h)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30) none none none)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30) none none none / none)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30) l c none)" should set the property value
@@ -1145,12 +1146,4 @@ PASS e.style['color'] = "LCH(from var(--accent) l c calc(h + 180))" should set t
 PASS e.style['color'] = "lch(from var(--mycolor) l 0 h)" should set the property value
 PASS e.style['color'] = "var(--mygray)" should set the property value
 PASS e.style['color'] = "lch(from var(--mygray) l 30 h)" should set the property value
-FAIL e.style['color'] = "color(from rebeccapurple srgb r g b)" should set the property value Colors do not match.
-Actual:   color(from rebeccapurple srgb r g b)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 0
-FAIL e.style['color'] = "rgb(from color(srgb 0.4 0.2 0.6) r g b)" should set the property value Colors do not match.
-Actual:   rgb(from color(srgb 0.4 0.2 0.6) r g b)
-Expected: color(srgb 0.4 0.2 0.6).
-Error: assert_equals: Color format is correct. expected "color(srgb   )" but got "rgb(from color(srgb   ) r g b)"
 

@@ -407,50 +407,50 @@ sha512_block_data_order_ssse3:
 	subl	$256,%esp
 	movdqa	640(%ebp),%xmm1
 	movdqu	(%edi),%xmm0
-.byte	102,15,56,0,193
+	pshufb	%xmm1,%xmm0
 	movdqa	(%ebp),%xmm3
 	movdqa	%xmm1,%xmm2
 	movdqu	16(%edi),%xmm1
 	paddq	%xmm0,%xmm3
-.byte	102,15,56,0,202
+	pshufb	%xmm2,%xmm1
 	movdqa	%xmm3,-128(%edx)
 	movdqa	16(%ebp),%xmm4
 	movdqa	%xmm2,%xmm3
 	movdqu	32(%edi),%xmm2
 	paddq	%xmm1,%xmm4
-.byte	102,15,56,0,211
+	pshufb	%xmm3,%xmm2
 	movdqa	%xmm4,-112(%edx)
 	movdqa	32(%ebp),%xmm5
 	movdqa	%xmm3,%xmm4
 	movdqu	48(%edi),%xmm3
 	paddq	%xmm2,%xmm5
-.byte	102,15,56,0,220
+	pshufb	%xmm4,%xmm3
 	movdqa	%xmm5,-96(%edx)
 	movdqa	48(%ebp),%xmm6
 	movdqa	%xmm4,%xmm5
 	movdqu	64(%edi),%xmm4
 	paddq	%xmm3,%xmm6
-.byte	102,15,56,0,229
+	pshufb	%xmm5,%xmm4
 	movdqa	%xmm6,-80(%edx)
 	movdqa	64(%ebp),%xmm7
 	movdqa	%xmm5,%xmm6
 	movdqu	80(%edi),%xmm5
 	paddq	%xmm4,%xmm7
-.byte	102,15,56,0,238
+	pshufb	%xmm6,%xmm5
 	movdqa	%xmm7,-64(%edx)
 	movdqa	%xmm0,(%edx)
 	movdqa	80(%ebp),%xmm0
 	movdqa	%xmm6,%xmm7
 	movdqu	96(%edi),%xmm6
 	paddq	%xmm5,%xmm0
-.byte	102,15,56,0,247
+	pshufb	%xmm7,%xmm6
 	movdqa	%xmm0,-48(%edx)
 	movdqa	%xmm1,16(%edx)
 	movdqa	96(%ebp),%xmm1
 	movdqa	%xmm7,%xmm0
 	movdqu	112(%edi),%xmm7
 	paddq	%xmm6,%xmm1
-.byte	102,15,56,0,248
+	pshufb	%xmm0,%xmm7
 	movdqa	%xmm1,-32(%edx)
 	movdqa	%xmm2,32(%edx)
 	movdqa	112(%ebp),%xmm2
@@ -481,9 +481,9 @@ sha512_block_data_order_ssse3:
 .L00600_47_ssse3:
 	movdqa	%xmm5,%xmm3
 	movdqa	%xmm2,%xmm1
-.byte	102,15,58,15,208,8
+	palignr	$8,%xmm0,%xmm2
 	movdqa	%xmm4,(%edx)
-.byte	102,15,58,15,220,8
+	palignr	$8,%xmm4,%xmm3
 	movdqa	%xmm2,%xmm4
 	psrlq	$7,%xmm2
 	paddq	%xmm3,%xmm0
@@ -608,9 +608,9 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm2,-128(%edx)
 	movdqa	%xmm6,%xmm4
 	movdqa	%xmm3,%xmm2
-.byte	102,15,58,15,217,8
+	palignr	$8,%xmm1,%xmm3
 	movdqa	%xmm5,16(%edx)
-.byte	102,15,58,15,229,8
+	palignr	$8,%xmm5,%xmm4
 	movdqa	%xmm3,%xmm5
 	psrlq	$7,%xmm3
 	paddq	%xmm4,%xmm1
@@ -735,9 +735,9 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm3,-112(%edx)
 	movdqa	%xmm7,%xmm5
 	movdqa	%xmm4,%xmm3
-.byte	102,15,58,15,226,8
+	palignr	$8,%xmm2,%xmm4
 	movdqa	%xmm6,32(%edx)
-.byte	102,15,58,15,238,8
+	palignr	$8,%xmm6,%xmm5
 	movdqa	%xmm4,%xmm6
 	psrlq	$7,%xmm4
 	paddq	%xmm5,%xmm2
@@ -862,9 +862,9 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm4,-96(%edx)
 	movdqa	%xmm0,%xmm6
 	movdqa	%xmm5,%xmm4
-.byte	102,15,58,15,235,8
+	palignr	$8,%xmm3,%xmm5
 	movdqa	%xmm7,48(%edx)
-.byte	102,15,58,15,247,8
+	palignr	$8,%xmm7,%xmm6
 	movdqa	%xmm5,%xmm7
 	psrlq	$7,%xmm5
 	paddq	%xmm6,%xmm3
@@ -989,9 +989,9 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm5,-80(%edx)
 	movdqa	%xmm1,%xmm7
 	movdqa	%xmm6,%xmm5
-.byte	102,15,58,15,244,8
+	palignr	$8,%xmm4,%xmm6
 	movdqa	%xmm0,(%edx)
-.byte	102,15,58,15,248,8
+	palignr	$8,%xmm0,%xmm7
 	movdqa	%xmm6,%xmm0
 	psrlq	$7,%xmm6
 	paddq	%xmm7,%xmm4
@@ -1116,9 +1116,9 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm6,-64(%edx)
 	movdqa	%xmm2,%xmm0
 	movdqa	%xmm7,%xmm6
-.byte	102,15,58,15,253,8
+	palignr	$8,%xmm5,%xmm7
 	movdqa	%xmm1,16(%edx)
-.byte	102,15,58,15,193,8
+	palignr	$8,%xmm1,%xmm0
 	movdqa	%xmm7,%xmm1
 	psrlq	$7,%xmm7
 	paddq	%xmm0,%xmm5
@@ -1243,9 +1243,9 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm7,-48(%edx)
 	movdqa	%xmm3,%xmm1
 	movdqa	%xmm0,%xmm7
-.byte	102,15,58,15,198,8
+	palignr	$8,%xmm6,%xmm0
 	movdqa	%xmm2,32(%edx)
-.byte	102,15,58,15,202,8
+	palignr	$8,%xmm2,%xmm1
 	movdqa	%xmm0,%xmm2
 	psrlq	$7,%xmm0
 	paddq	%xmm1,%xmm6
@@ -1370,9 +1370,9 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm0,-32(%edx)
 	movdqa	%xmm4,%xmm2
 	movdqa	%xmm1,%xmm0
-.byte	102,15,58,15,207,8
+	palignr	$8,%xmm7,%xmm1
 	movdqa	%xmm3,48(%edx)
-.byte	102,15,58,15,211,8
+	palignr	$8,%xmm3,%xmm2
 	movdqa	%xmm1,%xmm3
 	psrlq	$7,%xmm1
 	paddq	%xmm2,%xmm7
@@ -1501,12 +1501,12 @@ sha512_block_data_order_ssse3:
 	movdqa	(%ebp),%xmm1
 	leal	-640(%ebp),%ebp
 	movdqu	(%ebx),%xmm0
-.byte	102,15,56,0,193
+	pshufb	%xmm1,%xmm0
 	movdqa	(%ebp),%xmm3
 	movdqa	%xmm1,%xmm2
 	movdqu	16(%ebx),%xmm1
 	paddq	%xmm0,%xmm3
-.byte	102,15,56,0,202
+	pshufb	%xmm2,%xmm1
 	movq	%mm4,%mm1
 	movq	-128(%edx),%mm7
 	pxor	%mm6,%mm5
@@ -1604,7 +1604,7 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm2,%xmm3
 	movdqu	32(%ebx),%xmm2
 	paddq	%xmm1,%xmm4
-.byte	102,15,56,0,211
+	pshufb	%xmm3,%xmm2
 	movq	%mm4,%mm1
 	movq	-112(%edx),%mm7
 	pxor	%mm6,%mm5
@@ -1702,7 +1702,7 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm3,%xmm4
 	movdqu	48(%ebx),%xmm3
 	paddq	%xmm2,%xmm5
-.byte	102,15,56,0,220
+	pshufb	%xmm4,%xmm3
 	movq	%mm4,%mm1
 	movq	-96(%edx),%mm7
 	pxor	%mm6,%mm5
@@ -1800,7 +1800,7 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm4,%xmm5
 	movdqu	64(%ebx),%xmm4
 	paddq	%xmm3,%xmm6
-.byte	102,15,56,0,229
+	pshufb	%xmm5,%xmm4
 	movq	%mm4,%mm1
 	movq	-80(%edx),%mm7
 	pxor	%mm6,%mm5
@@ -1898,7 +1898,7 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm5,%xmm6
 	movdqu	80(%ebx),%xmm5
 	paddq	%xmm4,%xmm7
-.byte	102,15,56,0,238
+	pshufb	%xmm6,%xmm5
 	movq	%mm4,%mm1
 	movq	-64(%edx),%mm7
 	pxor	%mm6,%mm5
@@ -1997,7 +1997,7 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm6,%xmm7
 	movdqu	96(%ebx),%xmm6
 	paddq	%xmm5,%xmm0
-.byte	102,15,56,0,247
+	pshufb	%xmm7,%xmm6
 	movq	%mm4,%mm1
 	movq	-48(%edx),%mm7
 	pxor	%mm6,%mm5
@@ -2096,7 +2096,7 @@ sha512_block_data_order_ssse3:
 	movdqa	%xmm7,%xmm0
 	movdqu	112(%ebx),%xmm7
 	paddq	%xmm6,%xmm1
-.byte	102,15,56,0,248
+	pshufb	%xmm0,%xmm7
 	movq	%mm4,%mm1
 	movq	-32(%edx),%mm7
 	pxor	%mm6,%mm5

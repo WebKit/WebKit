@@ -65,8 +65,8 @@ SVGElement& SVGURIReference::contextElement() const
 void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name.matches(SVGNames::hrefAttr))
-        m_href->setBaseValInternal(value.isNull() ? contextElement().getAttribute(XLinkNames::hrefAttr) : value);
-    else if (name.matches(XLinkNames::hrefAttr) && !contextElement().hasAttribute(SVGNames::hrefAttr))
+        m_href->setBaseValInternal(value.isNull() ? protect(contextElement())->getAttribute(XLinkNames::hrefAttr) : value);
+    else if (name.matches(XLinkNames::hrefAttr) && !protect(contextElement())->hasAttribute(SVGNames::hrefAttr))
         m_href->setBaseValInternal(value);
 }
 

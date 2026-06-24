@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/CSSNoConversionDataRequiredToken.h>
 #include <WebCore/CSSPrimitiveNumericConcepts.h>
 #include <WebCore/CSSValueTypes.h>
 #include <optional>
@@ -34,13 +36,17 @@
 
 namespace WebCore {
 
+class CSSCalcSymbolsAllowed;
 class CSSCalcSymbolTable;
+class CSSParserTokenRange;
 class CSSToLengthConversionData;
 struct ComputedStyleDependencies;
-struct NoConversionDataRequiredToken;
+struct CSSPropertyParserOptions;
 
 namespace Style {
 class BuilderState;
+class ComputedStyle;
+class UnevaluatedCalculationBase;
 }
 
 namespace CSSCalc {
@@ -48,6 +54,8 @@ class Value;
 }
 
 namespace CSS {
+
+struct PropertyParserState;
 
 enum class Category : uint8_t;
 
@@ -64,32 +72,49 @@ class UnevaluatedCalcBase {
 public:
     WEBCORE_EXPORT UnevaluatedCalcBase(CSSCalc::Value&);
     UnevaluatedCalcBase(Ref<CSSCalc::Value>&&);
+    UnevaluatedCalcBase(Category, Range, const Style::UnevaluatedCalculationBase&, const Style::ComputedStyle&);
 
     UnevaluatedCalcBase(const UnevaluatedCalcBase&);
     UnevaluatedCalcBase(UnevaluatedCalcBase&&);
     UnevaluatedCalcBase& operator=(const UnevaluatedCalcBase&);
     UnevaluatedCalcBase& operator=(UnevaluatedCalcBase&&);
+
     WEBCORE_EXPORT ~UnevaluatedCalcBase();
+
+    static std::optional<UnevaluatedCalcBase> parseBase(CSSParserTokenRange&, PropertyParserState&, Category, Range, CSSCalcSymbolsAllowed&&, const CSSPropertyParserOptions&);
 
     CSSCalc::Value& calcValue() const { return m_calc; }
     [[nodiscard]] CSSCalc::Value& NODELETE leakRef();
 
+    Category NODELETE runtimeCategory() const;
+    CSSUnitType NODELETE primitiveType() const;
+    bool NODELETE rootNodeIsPercentage() const;
     bool NODELETE requiresConversionData() const;
 
-    void serializationForCSS(StringBuilder&, const CSS::SerializationContext&) const;
+    bool canBeCastedTo(Category) const;
+
+    void serializationForCSS(StringBuilder&, const SerializationContext&) const;
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
+    UnevaluatedCalcBase simplifyBase(const CSSToLengthConversionData&) const;
     UnevaluatedCalcBase simplifyBase(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    UnevaluatedCalcBase simplifyBase(NoConversionDataRequiredToken) const;
+    UnevaluatedCalcBase simplifyBase(NoConversionDataRequiredToken, const CSSCalcSymbolTable&) const;
 
-    double evaluate(CSS::Category, const Style::BuilderState&) const;
-    double evaluate(CSS::Category, const Style::BuilderState&, const CSSCalcSymbolTable&) const;
-    double evaluate(CSS::Category, const CSSToLengthConversionData&) const;
-    double evaluate(CSS::Category, const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    double evaluate(CSS::Category, NoConversionDataRequiredToken) const;
-    double evaluate(CSS::Category, NoConversionDataRequiredToken, const CSSCalcSymbolTable&) const;
-    double evaluateDeprecated(CSS::Category) const;
+    double evaluate(const Style::BuilderState&) const;
+    double evaluate(const Style::BuilderState&, const CSSCalcSymbolTable&) const;
+    double evaluate(const CSSToLengthConversionData&) const;
+    double evaluate(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    double evaluate(NoConversionDataRequiredToken) const;
+    double evaluate(NoConversionDataRequiredToken, const CSSCalcSymbolTable&) const;
+    double evaluateDeprecated() const;
 
-    bool equal(const UnevaluatedCalcBase&) const;
+    Style::UnevaluatedCalculationBase createCalculationValue(const CSSToLengthConversionData&) const;
+    Style::UnevaluatedCalculationBase createCalculationValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::UnevaluatedCalculationBase createCalculationValue(NoConversionDataRequiredToken) const;
+    Style::UnevaluatedCalculationBase createCalculationValue(NoConversionDataRequiredToken, const CSSCalcSymbolTable&) const;
+
+    bool operator==(const UnevaluatedCalcBase&) const;
 
 private:
     Ref<CSSCalc::Value> m_calc;
@@ -106,14 +131,48 @@ template<NumericRaw RawType> struct UnevaluatedCalc : UnevaluatedCalcBase {
     static constexpr auto range = Raw::range;
     static constexpr auto category = Raw::category;
 
-    bool operator==(const UnevaluatedCalc& other) const
+    explicit UnevaluatedCalc(const Style::UnevaluatedCalculationBase& value, const Style::ComputedStyle& style)
+        : UnevaluatedCalcBase(category, range, value, style)
     {
-        return UnevaluatedCalcBase::equal(static_cast<const UnevaluatedCalcBase&>(other));
     }
 
+    explicit UnevaluatedCalc(UnevaluatedCalcBase&& base)
+        : UnevaluatedCalcBase(WTF::move(base))
+    {
+    }
+
+    explicit UnevaluatedCalc(const UnevaluatedCalcBase& base)
+        : UnevaluatedCalcBase(base)
+    {
+    }
+
+    static std::optional<UnevaluatedCalc> parse(CSSParserTokenRange& tokens, PropertyParserState& state, CSSCalcSymbolsAllowed&& symbolsAllowed, const CSSPropertyParserOptions& options)
+    {
+        if (auto result = parseBase(tokens, state, category, range, WTF::move(symbolsAllowed), options))
+            return UnevaluatedCalc(WTF::move(*result));
+        return std::nullopt;
+    }
+
+    bool operator==(const UnevaluatedCalc& other) const
+    {
+        return UnevaluatedCalcBase::operator==(static_cast<const UnevaluatedCalcBase&>(other));
+    }
+
+    UnevaluatedCalc simplify(const CSSToLengthConversionData& conversionData) const
+    {
+        return UnevaluatedCalc(simplifyBase(conversionData));
+    }
     UnevaluatedCalc simplify(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
     {
-        return static_cast<UnevaluatedCalc>(simplifyBase(conversionData, symbolTable));
+        return UnevaluatedCalc(simplifyBase(conversionData, symbolTable));
+    }
+    UnevaluatedCalc simplify(NoConversionDataRequiredToken token) const
+    {
+        return UnevaluatedCalc(simplifyBase(token));
+    }
+    UnevaluatedCalc simplify(NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) const
+    {
+        return UnevaluatedCalc(simplifyBase(token, symbolTable));
     }
 };
 
@@ -171,7 +230,7 @@ template<typename T> auto simplifyUnevaluatedCalc(const T& component, const CSST
 
 template<typename... Ts> auto simplifyUnevaluatedCalc(const Variant<Ts...>& component, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> Variant<Ts...>
 {
-    return WTF::switchOn(component, [&](auto alternative) -> bool { return simplifyUnevaluatedCalc(alternative, conversionData, symbolTable); });
+    return WTF::switchOn(component, [&](auto alternative) -> Variant<Ts...> { return simplifyUnevaluatedCalc(alternative, conversionData, symbolTable); });
 }
 
 template<typename T> decltype(auto) simplifyUnevaluatedCalc(const std::optional<T>& component, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
@@ -180,6 +239,13 @@ template<typename T> decltype(auto) simplifyUnevaluatedCalc(const std::optional<
 }
 
 // MARK: - Serialization
+
+template<> struct Serialize<UnevaluatedCalcBase> {
+    inline void operator()(StringBuilder& builder, const SerializationContext& context, const UnevaluatedCalcBase& value)
+    {
+        value.serializationForCSS(builder, context);
+    }
+};
 
 template<Calc T> struct Serialize<T> {
     inline void operator()(StringBuilder& builder, const SerializationContext& context, const T& value)

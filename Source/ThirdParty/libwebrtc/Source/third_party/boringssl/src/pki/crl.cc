@@ -167,10 +167,10 @@ bool ParseCrlTbsCertList(der::Input tbs_tlv, ParsedCrlTbsCertList *out) {
 
   //         revokedCertificates     SEQUENCE OF SEQUENCE  { ... } OPTIONAL,
   der::Input unused_revoked_certificates;
-  CBS_ASN1_TAG maybe_revoked_certifigates_tag;
-  if (tbs_parser.PeekTagAndValue(&maybe_revoked_certifigates_tag,
+  CBS_ASN1_TAG maybe_revoked_certificates_tag;
+  if (tbs_parser.PeekTagAndValue(&maybe_revoked_certificates_tag,
                                  &unused_revoked_certificates) &&
-      maybe_revoked_certifigates_tag == CBS_ASN1_SEQUENCE) {
+      maybe_revoked_certificates_tag == CBS_ASN1_SEQUENCE) {
     der::Input revoked_certificates_tlv;
     if (!tbs_parser.ReadRawTLV(&revoked_certificates_tlv)) {
       return false;
@@ -408,7 +408,7 @@ CRLRevocationStatus GetCRLStatusForCert(
     return CRLRevocationStatus::REVOKED;
   }
 
-  // |cert| is not present in the revokedCertificates list.
+  // `cert` is not present in the revokedCertificates list.
   return CRLRevocationStatus::GOOD;
 }
 
@@ -626,7 +626,7 @@ CRLRevocationStatus CheckCRL(std::string_view raw_crl,
   // cases of key rollover without requiring additional CRL issuer cert
   // discovery & path building.
   // TODO(https://crbug.com/749276): should this loop start at
-  // |target_cert_index|? There doesn't seem to be anything in the specs that
+  // `target_cert_index`? There doesn't seem to be anything in the specs that
   // precludes a CRL signed by a self-issued cert from covering itself. On the
   // other hand it seems like a pretty weird thing to allow and causes NIST
   // PKITS 4.5.3 to pass when it seems like it would not be intended to (since
@@ -639,7 +639,7 @@ CRLRevocationStatus CheckCRL(std::string_view raw_crl,
     //           path MUST be the same as the trust anchor used to validate
     //           the target certificate.
     //
-    // As the |issuer_cert| is from the already validated chain, it is already
+    // As the `issuer_cert` is from the already validated chain, it is already
     // known to chain to the same trust anchor as the target certificate.
     if (der::Input(StringAsBytes(normalized_crl_issuer)) !=
         issuer_cert->normalized_subject()) {
@@ -669,7 +669,7 @@ CRLRevocationStatus CheckCRL(std::string_view raw_crl,
     //           in Section 5.3.3, then set the cert_status variable to the
     //           indicated reason as described in step (i).
     //
-    // CRL is valid and covers |target_cert|, check if |target_cert| is present
+    // CRL is valid and covers `target_cert`, check if `target_cert` is present
     // in the revokedCertificates sequence.
     return GetCRLStatusForCert(target_cert->tbs().serial_number,
                                tbs_cert_list.version,
@@ -678,7 +678,7 @@ CRLRevocationStatus CheckCRL(std::string_view raw_crl,
     // 6.3.3 (k,l) skipped. This implementation does not support reason codes.
   }
 
-  // Did not find the issuer & signer of |raw_crl| in |valid_chain|.
+  // Did not find the issuer & signer of `raw_crl` in `valid_chain`.
   return CRLRevocationStatus::UNKNOWN;
 }
 

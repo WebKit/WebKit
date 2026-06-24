@@ -62,6 +62,7 @@ platform/graphics/skia/SkiaBackingStore.cpp
 platform/graphics/skia/SkiaCompositingLayer.cpp
 platform/graphics/skia/SkiaCompositingLayer3DRenderingContext.cpp
 platform/graphics/skia/SkiaCompositingLayerFilters.cpp
+platform/graphics/skia/SkiaCompositingLayerImageSetBatch.cpp
 platform/graphics/skia/SkiaCompositingLayerOverlapRegions.cpp
 platform/graphics/skia/SkiaGPUAtlas.cpp
 platform/graphics/skia/SkiaHarfBuzzFont.cpp

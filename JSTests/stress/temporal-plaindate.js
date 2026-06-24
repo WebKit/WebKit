@@ -69,9 +69,9 @@ shouldBe(String(Temporal.PlainDate.from('2007-01-09T03:24:30+01:00[Etc/GMT-20]')
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01]')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01:00]')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[-01:00]')), `2007-01-09`);
-shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[u-ca=japanese]')), `2007-01-09`);
-shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[Europe/Brussels][u-ca=japanese]')), `2007-01-09`);
-shouldBe(String(Temporal.PlainDate.from('2007-01-09[u-ca=japanese]')), `2007-01-09`);
+shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[u-ca=japanese]')), `2007-01-09[u-ca=japanese]`);
+shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[Europe/Brussels][u-ca=japanese]')), `2007-01-09[u-ca=japanese]`);
+shouldBe(String(Temporal.PlainDate.from('2007-01-09[u-ca=japanese]')), `2007-01-09[u-ca=japanese]`);
 {
     let date = Temporal.PlainDate.from('2007-01-09T03:24:30+01:00[Europe/Brussels]');
     shouldBe(date === Temporal.PlainDate.from(date), false);
@@ -90,7 +90,7 @@ shouldBe(String(Temporal.PlainDate.from('2007-01-09[u-ca=japanese]')), `2007-01-
     shouldBe(Temporal.PlainDate.from({ year: 2007, month: 20, day: 40 }, { overflow: 'constrain' }).toString(), '2007-12-31');
 
     shouldBe(date.toJSON(), date.toString());
-    shouldBe(date.toLocaleString(), date.toString());
+    shouldBe(typeof date.toLocaleString(), 'string');
 }
 
 shouldThrow(() => { Temporal.PlainDate.from({ month: 1, day: 9 }); }, TypeError);
@@ -148,9 +148,6 @@ let failures = [
     "2007-01-09T03:24:30+01:00[-/_]",
     "2007-01-09T03:24:30+01:00[_/-]",
     "2007-01-09T03:24:30+01:00[CocoaCappuccinoMatcha]",
-    "2007-01-09T03:24:30+01:00[Etc/GMT+50]",
-    "2007-01-09T03:24:30+01:00[Etc/GMT+0]",
-    "2007-01-09T03:24:30+01:00[Etc/GMT0]",
     "2007-01-09T03:24:30+10:20:30.0123456789",
     "2007-01-09 03:24:30+01:00[Etc/GMT\u221201]",
     "2007-01-09 03:24:30+01:00[+02:00:00.0123456789]",
@@ -318,7 +315,7 @@ for (let text of failures) {
 
 {
     let getterNames = [
-        "calendar",
+        "calendarId",
         "year",
         "month",
         "monthCode",
@@ -343,8 +340,11 @@ for (let text of failures) {
 
 shouldThrow(() => { Temporal.PlainDate.from('2007-01-09').valueOf(); }, TypeError);
 {
-    let time = Temporal.PlainDate.from('2007-01-09');
-    shouldBe(JSON.stringify(time.getISOFields()), `{"calendar":"iso8601","isoDay":9,"isoMonth":1,"isoYear":2007}`);
+    let date = Temporal.PlainDate.from('2007-01-09');
+    shouldBe(date.year, 2007);
+    shouldBe(date.month, 1);
+    shouldBe(date.day, 9);
+    shouldBe(date.calendarId, "iso8601");
 }
 
 {

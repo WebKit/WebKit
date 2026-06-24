@@ -369,7 +369,7 @@ void PlaybackSessionModelMediaElement::selectAudioMediaOption(uint64_t selectedA
         return;
 
     for (size_t i = 0, size = m_audioTracksForMenu.size(); i < size; ++i)
-        m_audioTracksForMenu[i]->setEnabled(i == selectedAudioIndex);
+        protect(m_audioTracksForMenu[i])->setEnabled(i == selectedAudioIndex);
 }
 
 void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
@@ -517,7 +517,7 @@ void PlaybackSessionModelMediaElement::setSpatialTrackingLabel(const String& spa
 void PlaybackSessionModelMediaElement::sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
     if (RefPtr mediaElement = m_mediaElement)
-        mediaElement->mediaSession().didReceiveRemoteControlCommand(command, argument);
+        protect(mediaElement->mediaSession())->didReceiveRemoteControlCommand(command, argument);
 }
 
 void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
@@ -529,7 +529,7 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
     if (!mediaElement->document().page())
         return;
 
-    Ref captionPreferences = protect(mediaElement->document().page()->group())->ensureCaptionPreferences();
+    Ref captionPreferences = protect(protect(mediaElement->document())->page()->group())->ensureCaptionPreferences();
     auto* textTracks = mediaElement->textTracks();
     if (textTracks && textTracks->length())
         m_legibleTracksForMenu = captionPreferences->sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
@@ -578,7 +578,7 @@ void PlaybackSessionModelMediaElement::maybeUpdateVideoMetadata()
         m_immersiveVideoMetadata = WTF::move(immersiveVideoMetadata);
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "immersiveVideoMetadata: ", m_immersiveVideoMetadata);
         for (auto& client : m_clients)
-            client->immersiveVideoMetadataChanged(immersiveVideoMetadata);
+            client->immersiveVideoMetadataChanged(m_immersiveVideoMetadata);
     }
 }
 
@@ -731,7 +731,7 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::audioMediaSelecti
     if (!mediaElement || !mediaElement->document().page())
         return { };
 
-    Ref captionPreferences = protect(mediaElement->document().page()->group())->ensureCaptionPreferences();
+    Ref captionPreferences = protect(protect(mediaElement->document())->page()->group())->ensureCaptionPreferences();
     return m_audioTracksForMenu.map([&](auto& audioTrack) {
         return captionPreferences->mediaSelectionOptionForTrack(audioTrack.get());
     });
@@ -740,7 +740,7 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::audioMediaSelecti
 uint64_t PlaybackSessionModelMediaElement::audioMediaSelectedIndex() const
 {
     for (size_t index = 0; index < m_audioTracksForMenu.size(); ++index) {
-        if (m_audioTracksForMenu[index]->enabled())
+        if (protect(m_audioTracksForMenu[index])->enabled())
             return index;
     }
     return std::numeric_limits<uint64_t>::max();
@@ -762,7 +762,7 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::legibleMediaSelec
     }
 #endif
 
-    Ref captionPreferences = protect(mediaElement->document().page()->group())->ensureCaptionPreferences();
+    Ref captionPreferences = protect(protect(mediaElement->document())->page()->group())->ensureCaptionPreferences();
     return m_legibleTracksForMenu.map([&](auto& track) {
         return captionPreferences->mediaSelectionOptionForTrack(track.get());
     });
@@ -848,7 +848,7 @@ String PlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName() c
 bool PlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
 {
     if (RefPtr mediaElement = m_mediaElement)
-        return mediaElement->mediaSession().wirelessVideoPlaybackDisabled();
+        return protect(mediaElement->mediaSession())->wirelessVideoPlaybackDisabled();
     return false;
 }
 

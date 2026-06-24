@@ -93,9 +93,77 @@ NavigationAPIMethodTracker::NavigationAPIMethodTracker(JSC::JSGlobalObject& glob
     , m_finishedPromise(WTF::move(finished))
     , m_identifier(Identifier::generate())
 {
+    // Because rejection is also reported via the navigateerror event, the finished promise
+    // never causes unhandled rejection reporting.
+    m_finishedPromise->markAsHandled();
 }
 
 NavigationAPIMethodTracker::~NavigationAPIMethodTracker() = default;
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#notify-about-the-committed-to-entry
+void NavigationAPIMethodTracker::commitTo(NavigationHistoryEntry& entry, NavigationNavigationType navigationType)
+{
+    // The navigation may have been aborted (settling both promises) before the commit signal arrives,
+    // for example by an intercept handler starting another navigation.
+    if (m_state == State::Settled)
+        return;
+
+    ASSERT(!m_committedToEntry);
+    m_committedToEntry = &entry;
+    if (navigationType != NavigationNavigationType::Traverse && m_serializedState)
+        entry.setState(WTF::move(m_serializedState));
+
+    protect(m_committedPromise)->resolve<IDLInterface<NavigationHistoryEntry>>(entry);
+
+    if (m_state == State::FinishedBeforeCommit) {
+        protect(m_finishedPromise)->resolve<IDLInterface<NavigationHistoryEntry>>(entry);
+        m_state = State::Settled;
+    } else
+        m_state = State::Committed;
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#resolve-the-finished-promise
+void NavigationAPIMethodTracker::resolveFinished()
+{
+    if (m_state == State::Settled)
+        return;
+
+    RefPtr committedToEntry = m_committedToEntry;
+    if (!committedToEntry) {
+        // The committed promise must resolve first; hold the finish signal until commitTo() runs.
+        m_state = State::FinishedBeforeCommit;
+        return;
+    }
+
+    ASSERT(m_state == State::Committed);
+    protect(m_finishedPromise)->resolve<IDLInterface<NavigationHistoryEntry>>(*committedToEntry);
+    m_state = State::Settled;
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#reject-the-finished-promise
+void NavigationAPIMethodTracker::rejectFinished(const Exception& exception, JSC::JSValue exceptionObject)
+{
+    if (m_state == State::Settled)
+        return;
+
+    // Only reject the committed promise if it hasn't been fulfilled yet. If the navigation was committed
+    // before being aborted, the committed promise stays fulfilled while only the finished promise rejects.
+    if (m_state != State::Committed)
+        protect(m_committedPromise)->reject(exception, RejectAsHandled::No, exceptionObject);
+    protect(m_finishedPromise)->reject(exception, RejectAsHandled::Yes, exceptionObject);
+    m_state = State::Settled;
+}
+
+void NavigationAPIMethodTracker::rejectFinished(JSC::JSValue error)
+{
+    if (m_state == State::Settled)
+        return;
+
+    if (m_state != State::Committed)
+        protect(m_committedPromise)->reject<IDLAny>(error, RejectAsHandled::No);
+    protect(m_finishedPromise)->reject<IDLAny>(error, RejectAsHandled::Yes);
+    m_state = State::Settled;
+}
 
 Navigation::Navigation(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)
@@ -352,15 +420,10 @@ ExceptionOr<RefPtr<SerializedScriptValue>> Navigation::serializeState(JSC::JSVal
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#maybe-set-the-upcoming-non-traverse-api-method-tracker
 RefPtr<NavigationAPIMethodTracker> Navigation::maybeSetUpcomingNonTraversalTracker(JSC::JSGlobalObject& globalObject, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue info, RefPtr<SerializedScriptValue>&& serializedState)
 {
-    RefPtr apiMethodTracker = NavigationAPIMethodTracker::create(globalObject, WTF::move(committed), WTF::move(finished), WTF::move(info), WTF::move(serializedState));
+    Ref apiMethodTracker = NavigationAPIMethodTracker::create(globalObject, WTF::move(committed), WTF::move(finished), WTF::move(info), WTF::move(serializedState));
 
-    apiMethodTracker->finishedPromise().markAsHandled();
-
-    // FIXME: We should be able to assert m_upcomingNonTraverseMethodTracker is empty.
-    if (!hasEntriesAndEventsDisabled()) {
-        Locker locker { m_apiMethodTrackersLock };
-        m_upcomingNonTraverseMethodTracker = apiMethodTracker;
-    }
+    if (!hasEntriesAndEventsDisabled())
+        m_methodTrackers.setUpcomingNonTraverse(apiMethodTracker.copyRef());
 
     return apiMethodTracker;
 }
@@ -368,15 +431,10 @@ RefPtr<NavigationAPIMethodTracker> Navigation::maybeSetUpcomingNonTraversalTrack
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#add-an-upcoming-traverse-api-method-tracker
 RefPtr<NavigationAPIMethodTracker> Navigation::addUpcomingTraverseAPIMethodTracker(JSC::JSGlobalObject& globalObject, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, const String& key, JSC::JSValue info)
 {
-    RefPtr apiMethodTracker = NavigationAPIMethodTracker::create(globalObject, WTF::move(committed), WTF::move(finished), WTF::move(info), nullptr);
+    Ref apiMethodTracker = NavigationAPIMethodTracker::create(globalObject, WTF::move(committed), WTF::move(finished), WTF::move(info), nullptr);
     apiMethodTracker->setKey(key);
 
-    apiMethodTracker->finishedPromise().markAsHandled();
-
-    {
-        Locker locker { m_apiMethodTrackersLock };
-        m_upcomingTraverseMethodTrackers.add(key, *apiMethodTracker);
-    }
+    m_methodTrackers.addUpcomingTraverse(key, apiMethodTracker.copyRef());
 
     return apiMethodTracker;
 }
@@ -401,7 +459,7 @@ Navigation::Result Navigation::reload(JSC::JSGlobalObject& globalObject, ReloadO
         state = currentEntry()->associatedHistoryItem().navigationAPIStateObject();
 
     RefPtr window = this->window();
-    if (!protect(window->document())->isFullyActive() || window->document()->unloadCounter())
+    if (RefPtr document = window->document(); !document->isFullyActive() || frame()->loader().isDispatchingPageSwapEvent() || document->unloadCounter())
         return createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     RefPtr apiMethodTracker = maybeSetUpcomingNonTraversalTracker(globalObject, WTF::move(committed), WTF::move(finished), WTF::move(options.info), WTF::move(state));
@@ -452,14 +510,9 @@ Navigation::Result Navigation::navigate(JSC::JSGlobalObject& globalObject, const
     request.setIsFromNavigationAPI(true);
     frame()->loader().loadFrameRequest(WTF::move(request), nullptr, { });
 
-    // If the load() call never made it to the point that NavigateEvent was emitted, thus promoteUpcomingAPIMethodTracker() called, this will be true.
-    {
-        Locker locker { m_apiMethodTrackersLock };
-        if (m_upcomingNonTraverseMethodTracker == apiMethodTracker) {
-            m_upcomingNonTraverseMethodTracker = nullptr;
-            return createErrorResult(protect(apiMethodTracker->committedPromise()), protect(apiMethodTracker->finishedPromise()), ExceptionCode::AbortError, "Navigation aborted"_s);
-        }
-    }
+    // If the load() call never made it to the point that NavigateEvent was emitted, thus the upcoming-non-traverse slot was never promoted, this returns the tracker so we can reject it.
+    if (RefPtr aborted = m_methodTrackers.takeUpcomingNonTraverseIfEquals(*apiMethodTracker))
+        rejectFinishedPromise(aborted);
 
     return apiMethodTrackerDerivedResult(*apiMethodTracker);
 }
@@ -485,18 +538,22 @@ Navigation::Result Navigation::performTraversal(JSC::JSGlobalObject& globalObjec
         return { createDOMPromise(committed), createDOMPromise(finished) };
     }
 
-    {
-        Locker locker { m_apiMethodTrackersLock };
-        if (auto existingMethodTracker = m_upcomingTraverseMethodTrackers.getOptional(key))
-            return apiMethodTrackerDerivedResult(*existingMethodTracker);
-    }
+    if (RefPtr existingMethodTracker = m_methodTrackers.upcomingTraverse(key))
+        return apiMethodTrackerDerivedResult(*existingMethodTracker);
 
     RefPtr apiMethodTracker = addUpcomingTraverseAPIMethodTracker(globalObject, WTF::move(committed), WTF::move(finished), key, options.info);
 
     // FIXME: 11. Let sourceSnapshotParams be the result of snapshotting source snapshot params given document.
-    protect(frame->navigationScheduler())->scheduleHistoryNavigationByKey(key, [apiMethodTracker] (ScheduleHistoryNavigationResult result) {
-        if (result == ScheduleHistoryNavigationResult::Aborted)
-            createErrorResult(protect(apiMethodTracker->committedPromise()), protect(apiMethodTracker->finishedPromise()), ExceptionCode::AbortError, "Navigation aborted"_s);
+    protect(frame->navigationScheduler())->scheduleHistoryNavigationByKey(key, [weakThis = WeakPtr { this }, apiMethodTracker] (ScheduleHistoryNavigationResult result) {
+        if (result != ScheduleHistoryNavigationResult::Aborted)
+            return;
+
+        // Going through rejectFinishedPromise also removes the tracker from the upcoming-traverse map;
+        // otherwise a later traversal to the same key would be deduplicated against the settled promises.
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->rejectFinishedPromise(apiMethodTracker.get());
+        else
+            apiMethodTracker->rejectFinished(Exception { ExceptionCode::AbortError, "Navigation aborted"_s }, JSC::JSValue { });
     });
 
     return apiMethodTrackerDerivedResult(*apiMethodTracker);
@@ -598,15 +655,9 @@ bool Navigation::hasEntriesAndEventsDisabled() const
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#resolve-the-finished-promise
 void Navigation::resolveFinishedPromise(NavigationAPIMethodTracker* apiMethodTracker)
 {
-    RefPtr committedToEntry = apiMethodTracker->committedToEntry();
-    if (!committedToEntry) {
-        apiMethodTracker->setFinishedBeforeCommit(true);
-        return;
-    }
-
-    protect(apiMethodTracker->committedPromise())->resolve<IDLInterface<NavigationHistoryEntry>>(*committedToEntry);
-    protect(apiMethodTracker->finishedPromise())->resolve<IDLInterface<NavigationHistoryEntry>>(*committedToEntry);
-    cleanupAPIMethodTracker(apiMethodTracker);
+    apiMethodTracker->resolveFinished();
+    if (apiMethodTracker->isSettled())
+        m_methodTrackers.unregister(*apiMethodTracker);
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#reject-the-finished-promise
@@ -614,12 +665,8 @@ void Navigation::rejectFinishedPromise(NavigationAPIMethodTracker* apiMethodTrac
 {
     RELEASE_LOG(Navigation, "rejectFinishedPromise: rejecting promises for tracker=%p with exception='%s'", apiMethodTracker, exception.message().utf8().data());
 
-    // Only reject committed promise if it hasn't been fulfilled yet (committedToEntry is null). If the navigation was "committed" (state updated)
-    // before being aborted, the committed promise should remain fulfilled while only the finished promise gets rejected.
-    if (!apiMethodTracker->committedToEntry())
-        protect(apiMethodTracker->committedPromise())->reject(exception, RejectAsHandled::No, exceptionObject);
-    protect(apiMethodTracker->finishedPromise())->reject(exception, RejectAsHandled::Yes, exceptionObject);
-    cleanupAPIMethodTracker(apiMethodTracker);
+    apiMethodTracker->rejectFinished(exception, exceptionObject);
+    m_methodTrackers.unregister(*apiMethodTracker);
 }
 
 void Navigation::rejectFinishedPromise(NavigationAPIMethodTracker* apiMethodTracker)
@@ -627,8 +674,9 @@ void Navigation::rejectFinishedPromise(NavigationAPIMethodTracker* apiMethodTrac
     if (!apiMethodTracker)
         return;
 
-    auto* globalObject = protect(scriptExecutionContext())->globalObject();
-    if (!globalObject && apiMethodTracker)
+    RefPtr scriptExecutionContext = this->scriptExecutionContext();
+    auto* globalObject = scriptExecutionContext ? scriptExecutionContext->globalObject() : nullptr;
+    if (!globalObject)
         globalObject = apiMethodTracker->committedPromise().globalObject();
     if (!globalObject)
         return;
@@ -643,16 +691,12 @@ void Navigation::rejectFinishedPromise(NavigationAPIMethodTracker* apiMethodTrac
 void Navigation::notifyCommittedToEntry(NavigationAPIMethodTracker* apiMethodTracker, NavigationHistoryEntry* entry, NavigationNavigationType navigationType)
 {
     ASSERT(entry);
-    apiMethodTracker->setCommittedToEntry(entry);
-    if (navigationType != NavigationNavigationType::Traverse) {
-        if (apiMethodTracker->serializedState())
-            protect(apiMethodTracker->committedToEntry())->setState(apiMethodTracker->takeSerializedState());
-    }
+    if (!entry)
+        return;
 
-    if (apiMethodTracker->finishedBeforeCommit())
-        resolveFinishedPromise(apiMethodTracker);
-    else
-        protect(apiMethodTracker->committedPromise())->resolve<IDLInterface<NavigationHistoryEntry>>(*entry);
+    apiMethodTracker->commitTo(*entry, navigationType);
+    if (apiMethodTracker->isSettled())
+        m_methodTrackers.unregister(*apiMethodTracker);
 }
 
 void Navigation::updateNavigationEntry(Ref<HistoryItem>&& item, ShouldCopyStateObjectFromCurrentEntry shouldCopyStateObjectFromCurrentEntry)
@@ -698,7 +742,7 @@ void Navigation::recursivelyDisposeOfForwardEntriesInParents(BackForwardItemIden
     if (frame() == navigatedFrame)
         return;
 
-    std::optional<size_t> index = std::nullopt;
+    std::optional<size_t> index;
     for (size_t i = 0; i < m_entries.size(); i++) {
         if (m_entries[i]->associatedHistoryItem().itemID() == itemID) {
             index = i;
@@ -766,11 +810,7 @@ void Navigation::updateForNavigation(Ref<HistoryItem>&& item, NavigationNavigati
             Ref { m_entries[*m_currentEntryIndex] }->setState(oldCurrentEntry->state());
     }
 
-    RefPtr<NavigationAPIMethodTracker> ongoingAPIMethodTracker;
-    {
-        Locker locker { m_apiMethodTrackersLock };
-        ongoingAPIMethodTracker = m_ongoingAPIMethodTracker;
-    }
+    RefPtr ongoingAPIMethodTracker = m_methodTrackers.ongoing();
     if (ongoingAPIMethodTracker && shouldNotifyCommitted == ShouldNotifyCommitted::Yes)
         notifyCommittedToEntry(ongoingAPIMethodTracker.get(), protect(currentEntry()).get(), navigationType);
 
@@ -855,46 +895,104 @@ static bool documentCanHaveURLRewritten(const Document& document, const URL& tar
     return equalIgnoringFragmentIdentifier(documentURL, targetURL);
 }
 
-// https://html.spec.whatwg.org/multipage/nav-history-apis.html#promote-an-upcoming-api-method-tracker-to-ongoing
-void Navigation::promoteUpcomingAPIMethodTracker(const String& destinationKey)
+void Navigation::MethodTrackerRegistry::setUpcomingNonTraverse(Ref<NavigationAPIMethodTracker>&& tracker)
 {
-    // FIXME: We should be able to assert m_ongoingAPIMethodTracker is unset.
+    assertIsMainThread();
+    Locker locker { m_lock };
+    // FIXME: We should be able to assert m_upcomingNonTraverse is empty.
+    m_upcomingNonTraverse = WTF::move(tracker);
+}
 
-    Locker locker { m_apiMethodTrackersLock };
-    if (!destinationKey.isEmpty())
-        m_ongoingAPIMethodTracker = m_upcomingTraverseMethodTrackers.take(destinationKey);
-    else if (destinationKey.isNull()) {
-        m_ongoingAPIMethodTracker = WTF::move(m_upcomingNonTraverseMethodTracker);
-        m_upcomingNonTraverseMethodTracker = nullptr;
-    } else if (destinationKey.isEmpty() && !m_upcomingTraverseMethodTrackers.isEmpty()) {
-        // For traverse navigation where destination key is empty, try to use any available traverse method tracker.
-        // (e.g., cross-document navigation where NavigationHistoryEntry is not found).
-        auto firstTracker = m_upcomingTraverseMethodTrackers.begin();
-        if (firstTracker != m_upcomingTraverseMethodTrackers.end()) {
-            String trackerKey = firstTracker->key;
-            m_ongoingAPIMethodTracker = m_upcomingTraverseMethodTrackers.take(trackerKey);
-        }
-    }
+void Navigation::MethodTrackerRegistry::addUpcomingTraverse(const String& key, Ref<NavigationAPIMethodTracker>&& tracker)
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    m_upcomingTraverse.add(key, WTF::move(tracker));
+}
+
+NavigationAPIMethodTracker* Navigation::MethodTrackerRegistry::upcomingTraverse(const String& key) const
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    if (key.isNull())
+        return nullptr;
+    return m_upcomingTraverse.get(key);
+}
+
+NavigationAPIMethodTracker* Navigation::MethodTrackerRegistry::ongoing() const
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    return m_ongoing.get();
+}
+
+RefPtr<NavigationAPIMethodTracker> Navigation::MethodTrackerRegistry::takeUpcomingNonTraverseIfEquals(NavigationAPIMethodTracker& tracker)
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    if (m_upcomingNonTraverse != &tracker)
+        return nullptr;
+    return std::exchange(m_upcomingNonTraverse, nullptr);
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#promote-an-upcoming-api-method-tracker-to-ongoing
+NavigationAPIMethodTracker* Navigation::MethodTrackerRegistry::promoteUpcomingNonTraverseToOngoing()
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    // FIXME: We should be able to assert m_ongoing is unset.
+    m_ongoing = WTF::move(m_upcomingNonTraverse);
+    return m_ongoing.get();
+}
+
+NavigationAPIMethodTracker* Navigation::MethodTrackerRegistry::promoteUpcomingTraverseToOngoing(const String& destinationKey)
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    // FIXME: We should be able to assert m_ongoing is unset.
+    ASSERT(destinationKey.isNull() || !destinationKey.isEmpty());
+    if (destinationKey.isNull())
+        return nullptr;
+    m_ongoing = m_upcomingTraverse.take(destinationKey);
+    return m_ongoing.get();
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-method-tracker-clean-up
-void Navigation::cleanupAPIMethodTracker(NavigationAPIMethodTracker* apiMethodTracker)
+void Navigation::MethodTrackerRegistry::unregister(NavigationAPIMethodTracker& tracker)
 {
-    Locker locker { m_apiMethodTrackersLock };
-    if (m_ongoingAPIMethodTracker == apiMethodTracker)
-        m_ongoingAPIMethodTracker = nullptr;
-    else {
-        auto& key = apiMethodTracker->key();
-        // FIXME: We should be able to assert key isn't null and m_upcomingTraverseMethodTrackers contains it.
-        if (!key.isNull())
-            m_upcomingTraverseMethodTrackers.remove(key);
+    assertIsMainThread();
+    Locker locker { m_lock };
+    if (m_ongoing == &tracker) {
+        m_ongoing = nullptr;
+        return;
     }
+    auto& key = tracker.key();
+    // FIXME: We should be able to assert key isn't null and m_upcomingTraverse contains it.
+    if (!key.isNull())
+        m_upcomingTraverse.remove(key);
+}
+
+bool Navigation::MethodTrackerRegistry::isEmpty() const
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    return !m_ongoing && !m_upcomingNonTraverse && m_upcomingTraverse.isEmpty();
+}
+
+void Navigation::MethodTrackerRegistry::visitInGCThread(JSC::AbstractSlotVisitor& visitor) const
+{
+    Locker locker { m_lock };
+    if (m_ongoing)
+        m_ongoing->info().visitInGCThread(visitor);
+    if (m_upcomingNonTraverse)
+        m_upcomingNonTraverse->info().visitInGCThread(visitor);
+    for (auto& tracker : m_upcomingTraverse.values())
+        tracker->info().visitInGCThread(visitor);
 }
 
 NavigationAPIMethodTracker* Navigation::upcomingTraverseMethodTracker(const String& key) const
 {
-    Locker locker { m_apiMethodTrackersLock };
-    return m_upcomingTraverseMethodTrackers.get(key);
+    return m_methodTrackers.upcomingTraverse(key);
 }
 
 auto Navigation::registerAbortHandler() -> Ref<AbortHandler>
@@ -914,12 +1012,7 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
     auto* globalObject = scriptExecutionContext->globalObject();
     if (!globalObject) {
-        RefPtr<NavigationAPIMethodTracker> ongoingAPIMethodTracker;
-        {
-            Locker locker { m_apiMethodTrackersLock };
-            ongoingAPIMethodTracker = m_ongoingAPIMethodTracker;
-        }
-        if (ongoingAPIMethodTracker)
+        if (RefPtr ongoingAPIMethodTracker = m_methodTrackers.ongoing())
             globalObject = ongoingAPIMethodTracker->committedPromise().globalObject();
     }
     if (!globalObject)
@@ -953,12 +1046,7 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
 
     dispatchEvent(ErrorEvent::create(*globalObject, eventNames().navigateerrorEvent, exception.message(), errorInformation.sourceURL, errorInformation.line, errorInformation.column, { globalObject->vm(), domException }));
 
-    RefPtr<NavigationAPIMethodTracker> ongoingAPIMethodTracker;
-    {
-        Locker locker { m_apiMethodTrackersLock };
-        ongoingAPIMethodTracker = m_ongoingAPIMethodTracker;
-    }
-    if (ongoingAPIMethodTracker)
+    if (RefPtr ongoingAPIMethodTracker = m_methodTrackers.ongoing())
         rejectFinishedPromise(ongoingAPIMethodTracker.get(), exception, domException);
 
     if (RefPtr transition = m_transition) {
@@ -1121,7 +1209,7 @@ std::optional<Navigation::DispatchResult> Navigation::handleSameDocumentNavigati
 
     // For intercepted traverse navigations, notify committed after handlers have been invoked but before
     // they complete. This ensures the correct event ordering.
-    if (navigationType == NavigationNavigationType::Traverse && event.wasIntercepted() && apiMethodTracker && !apiMethodTracker->committedToEntry())
+    if (navigationType == NavigationNavigationType::Traverse && event.wasIntercepted() && apiMethodTracker && !apiMethodTracker->hasCommitted())
         notifyCommittedToEntry(apiMethodTracker, protect(currentEntry()).get(), navigationType);
 
     if (!event.wasIntercepted() && !apiMethodTracker) {
@@ -1183,8 +1271,8 @@ std::optional<Navigation::DispatchResult> Navigation::handleSameDocumentNavigati
                 protectedThis->dispatchEvent(ErrorEvent::create(*navGlobalObject, eventNames().navigateerrorEvent, errorMessage, errorInformation.sourceURL, errorInformation.line, errorInformation.column, { navGlobalObject->vm(), result }));
 
                 if (apiMethodTracker) {
-                    protect(apiMethodTracker->finishedPromise())->reject<IDLAny>(result, RejectAsHandled::Yes);
-                    protectedThis->cleanupAPIMethodTracker(apiMethodTracker);
+                    apiMethodTracker->rejectFinished(result);
+                    protectedThis->m_methodTrackers.unregister(*apiMethodTracker);
                 }
 
                 if (RefPtr transition = std::exchange(protectedThis->m_transition, nullptr))
@@ -1204,12 +1292,7 @@ std::optional<Navigation::DispatchResult> Navigation::handleSameDocumentNavigati
 Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename, FormState* formState, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement)
 {
     if (hasEntriesAndEventsDisabled()) {
-#if ASSERT_ENABLED
-        Locker locker { m_apiMethodTrackersLock };
-#endif
-        ASSERT(!m_ongoingAPIMethodTracker);
-        ASSERT(!m_upcomingNonTraverseMethodTracker);
-        ASSERT(m_upcomingTraverseMethodTrackers.isEmpty());
+        ASSERT(m_methodTrackers.isEmpty());
         return DispatchResult::Completed;
     }
 
@@ -1222,17 +1305,12 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
     if (wasBeingDispatched && classicHistoryAPIState)
         return DispatchResult::Completed;
 
-    promoteUpcomingAPIMethodTracker(destination->key());
-
-    RefPtr<NavigationAPIMethodTracker> ongoingAPIMethodTracker;
-    {
-        Locker locker { m_apiMethodTrackersLock };
-        ongoingAPIMethodTracker = m_ongoingAPIMethodTracker;
-    }
+    RefPtr apiMethodTracker = navigationType == NavigationNavigationType::Traverse
+        ? m_methodTrackers.promoteUpcomingTraverseToOngoing(destination->key())
+        : m_methodTrackers.promoteUpcomingNonTraverseToOngoing();
 
     // Enforce rate limiting to prevent excessive navigation requests.
-    // Only check for script-initiated navigations (those with an API method tracker).
-    if (ongoingAPIMethodTracker && !m_rateLimiter.navigationAllowed()) {
+    if (!m_rateLimiter.navigationAllowed()) {
         // Log a warning once per window when the limit is reached.
         if (!m_rateLimiter.wasReported()) {
             m_rateLimiter.markReported();
@@ -1240,22 +1318,14 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
                 document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Excessive navigation attempts blocked."_s);
         }
 
-        // Reject the promises and clean up.
-        auto exception = Exception { ExceptionCode::QuotaExceededError, "Navigation rate limit exceeded"_s };
-        protect(ongoingAPIMethodTracker->committedPromise())->reject(exception);
-        protect(ongoingAPIMethodTracker->finishedPromise())->reject(exception);
-        cleanupAPIMethodTracker(ongoingAPIMethodTracker.get());
+        if (apiMethodTracker)
+            rejectFinishedPromise(apiMethodTracker.get(), Exception { ExceptionCode::QuotaExceededError, "Navigation rate limit exceeded"_s }, JSC::JSValue { });
 
         return DispatchResult::Aborted;
     }
 
     RefPtr document = window()->document();
 
-    RefPtr<NavigationAPIMethodTracker> apiMethodTracker;
-    {
-        Locker locker { m_apiMethodTrackersLock };
-        apiMethodTracker = m_ongoingAPIMethodTracker;
-    }
     // FIXME: this should not be needed, we should pass it into FrameLoader.
     if (apiMethodTracker && apiMethodTracker->serializedState())
         destination->setStateObject(protect(apiMethodTracker->serializedState()));
@@ -1455,13 +1525,7 @@ bool Navigation::RateLimiter::navigationAllowed()
 
 void Navigation::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor)
 {
-    Locker locker { m_apiMethodTrackersLock };
-    if (m_ongoingAPIMethodTracker)
-        m_ongoingAPIMethodTracker->info().visitInGCThread(visitor);
-    if (m_upcomingNonTraverseMethodTracker)
-        m_upcomingNonTraverseMethodTracker->info().visitInGCThread(visitor);
-    for (auto& tracker : m_upcomingTraverseMethodTrackers.values())
-        tracker->info().visitInGCThread(visitor);
+    m_methodTrackers.visitInGCThread(visitor);
 }
 
 } // namespace WebCore

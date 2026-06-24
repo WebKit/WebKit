@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
     <iframe src="script-tests/request-animation-frame-subframe.html" width="700" height="500"></iframe>
     <script type="text/javascript" charset="utf-8">
         description("Tests requestAnimationFrame in an iframe");
+        window.jsTestIsAsync = true;
 
         var callbackInvoked = false;
     
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
 
         // Called from subframe.
         async function doDisplay()
@@ -28,9 +25,7 @@
     
         function doTestDone()
         {
-            isSuccessfullyParsed();
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
     </script>
 </body>

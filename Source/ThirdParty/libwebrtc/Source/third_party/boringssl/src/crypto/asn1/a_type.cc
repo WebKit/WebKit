@@ -24,6 +24,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 int ASN1_TYPE_get(const ASN1_TYPE *a) {
   switch (a->type) {
     case V_ASN1_NULL:
@@ -36,7 +38,7 @@ int ASN1_TYPE_get(const ASN1_TYPE *a) {
   }
 }
 
-const void *asn1_type_value_as_pointer(const ASN1_TYPE *a) {
+const void *bssl::asn1_type_value_as_pointer(const ASN1_TYPE *a) {
   switch (a->type) {
     case V_ASN1_NULL:
       return nullptr;
@@ -49,7 +51,7 @@ const void *asn1_type_value_as_pointer(const ASN1_TYPE *a) {
   }
 }
 
-void asn1_type_set0_string(ASN1_TYPE *a, ASN1_STRING *str) {
+void bssl::asn1_type_set0_string(ASN1_TYPE *a, ASN1_STRING *str) {
   // |ASN1_STRING| types are almost the same as |ASN1_TYPE| types, except that
   // the negative flag is not reflected into |ASN1_TYPE|.
   int type = str->type;
@@ -66,7 +68,7 @@ void asn1_type_set0_string(ASN1_TYPE *a, ASN1_STRING *str) {
   ASN1_TYPE_set(a, type, str);
 }
 
-void asn1_type_cleanup(ASN1_TYPE *a) {
+void bssl::asn1_type_cleanup(ASN1_TYPE *a) {
   switch (a->type) {
     case V_ASN1_NULL:
       a->value.ptr = nullptr;
@@ -172,7 +174,7 @@ int ASN1_TYPE_cmp(const ASN1_TYPE *a, const ASN1_TYPE *b) {
   return result;
 }
 
-int asn1_parse_any(CBS *cbs, ASN1_TYPE *out) {
+int bssl::asn1_parse_any(CBS *cbs, ASN1_TYPE *out) {
   CBS_ASN1_TAG tag;
   CBS elem;
   size_t header_len;
@@ -183,7 +185,7 @@ int asn1_parse_any(CBS *cbs, ASN1_TYPE *out) {
 
   // Handle the non-string types.
   if (tag == CBS_ASN1_OBJECT) {
-    bssl::UniquePtr<ASN1_OBJECT> obj(asn1_parse_object(&elem, /*tag=*/0));
+    UniquePtr<ASN1_OBJECT> obj(asn1_parse_object(&elem, /*tag=*/0));
     if (obj == nullptr) {
       return 0;
     }
@@ -211,7 +213,7 @@ int asn1_parse_any(CBS *cbs, ASN1_TYPE *out) {
   }
 
   // All other cases are handled identically to the string-based ANY parser.
-  bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_new());
+  UniquePtr<ASN1_STRING> str(ASN1_STRING_new());
   if (str == nullptr || !asn1_parse_any_as_string(&elem, str.get())) {
     return 0;
   }
@@ -219,7 +221,7 @@ int asn1_parse_any(CBS *cbs, ASN1_TYPE *out) {
   return 1;
 }
 
-int asn1_parse_any_as_string(CBS *cbs, ASN1_STRING *out) {
+int bssl::asn1_parse_any_as_string(CBS *cbs, ASN1_STRING *out) {
   CBS_ASN1_TAG tag;
   CBS elem;
   size_t header_len;
@@ -349,7 +351,7 @@ int asn1_parse_any_as_string(CBS *cbs, ASN1_STRING *out) {
 static int asn1_marshal_string_with_type(CBB *out, const ASN1_STRING *in,
                                          int type);
 
-int asn1_marshal_any(CBB *out, const ASN1_TYPE *in) {
+int bssl::asn1_marshal_any(CBB *out, const ASN1_TYPE *in) {
   switch (in->type) {
     case V_ASN1_OBJECT:
       return asn1_marshal_object(out, in->value.object, /*tag=*/0);
@@ -414,7 +416,7 @@ static int asn1_marshal_string_with_type(CBB *out, const ASN1_STRING *in,
     case V_ASN1_BMPSTRING:
     case V_ASN1_UTF8STRING:
       return asn1_marshal_octet_string(out, in,
-                                       static_cast<CBS_ASN1_TAG>(in->type));
+                                       static_cast<CBS_ASN1_TAG>(type));
     case V_ASN1_SEQUENCE:
     case V_ASN1_SET:
     case V_ASN1_OTHER:
@@ -428,6 +430,6 @@ static int asn1_marshal_string_with_type(CBB *out, const ASN1_STRING *in,
   }
 }
 
-int asn1_marshal_any_string(CBB *out, const ASN1_STRING *in) {
+int bssl::asn1_marshal_any_string(CBB *out, const ASN1_STRING *in) {
   return asn1_marshal_string_with_type(out, in, in->type);
 }

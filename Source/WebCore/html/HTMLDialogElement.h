@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CloseWatcher.h"
 #include "HTMLElement.h"
 #include "ToggleEventTask.h"
 
@@ -36,6 +37,10 @@ enum class ClosedByState : uint8_t {
     CloseRequest,
     Any,
 };
+
+class Event;
+class EventListener;
+class ScriptExecutionContext;
 
 class HTMLDialogElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLDialogElement);
@@ -69,6 +74,19 @@ public:
     void queueDialogToggleEventTask(ToggleState oldState, ToggleState newState, Element* source);
 
 private:
+    class DialogCloseWatcherEventListener final : public EventListener {
+    public:
+        static Ref<DialogCloseWatcherEventListener> create(HTMLDialogElement& dialog)
+        {
+            return adoptRef(*new DialogCloseWatcherEventListener(dialog));
+        }
+        void handleEvent(ScriptExecutionContext&, Event&) final;
+    private:
+        explicit DialogCloseWatcherEventListener(HTMLDialogElement&);
+
+        WeakPtr<HTMLDialogElement, WeakPtrImplWithEventTargetData> m_dialog;
+    };
+
     HTMLDialogElement(const QualifiedName&, Document&);
 
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
@@ -82,12 +100,15 @@ private:
 
     void setupSteps();
     void cleanupSteps();
+    void setCloseWatcher();
+    void setCloseWatcherEnabledState();
 
     String m_returnValue;
     bool m_isModal { false };
     bool m_isOpen { false };
     bool m_isRequestingToClose { false };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
+    RefPtr<CloseWatcher> m_closeWatcher;
 
     RefPtr<ToggleEventTask> m_toggleEventTask;
 };

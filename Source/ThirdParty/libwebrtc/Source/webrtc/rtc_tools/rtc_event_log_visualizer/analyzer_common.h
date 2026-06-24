@@ -15,7 +15,10 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <vector>
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/function_view.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -33,6 +36,20 @@ constexpr float kTopMargin = 0.05f;
 
 class AnalyzerConfig {
  public:
+  AnalyzerConfig() : normalize_time_(true), env_(CreateEnvironment()) {}
+
+  AnalyzerConfig(const Environment& env,
+                 const ParsedRtcEventLog& parsed_log,
+                 bool normalize_time)
+      : normalize_time_(normalize_time), env_(env) {
+    begin_time_ = parsed_log.first_timestamp();
+    end_time_ = parsed_log.last_timestamp();
+    if (!parsed_log.start_log_events().empty()) {
+      rtc_to_utc_offset_ = parsed_log.start_log_events().front().utc_time() -
+                           parsed_log.start_log_events().front().log_time();
+    }
+  }
+
   float GetCallTimeSec(Timestamp timestamp) const {
     Timestamp offset = normalize_time_ ? begin_time_ : Timestamp::Zero();
     return static_cast<float>((timestamp - offset).us()) / 1000000;
@@ -66,6 +83,8 @@ class AnalyzerConfig {
   Timestamp end_time_ = Timestamp::MinusInfinity();
   TimeDelta rtc_to_utc_offset_ = TimeDelta::Zero();
   bool normalize_time_;
+  std::vector<uint32_t> desired_ssrc_;
+  const Environment env_;
 };
 
 struct LayerDescription {
@@ -98,7 +117,18 @@ bool IsAudioSsrc(const ParsedRtcEventLog& parsed_log,
 std::string GetStreamName(const ParsedRtcEventLog& parsed_log,
                           PacketDirection direction,
                           uint32_t ssrc);
+std::string SsrcToString(uint32_t ssrc);
+
 std::string GetLayerName(LayerDescription layer);
+
+std::string GetDirectionAsString(PacketDirection direction);
+std::string GetDirectionAsShortString(PacketDirection direction);
+
+int64_t WrappingDifference(uint32_t later, uint32_t earlier, int64_t modulus);
+
+// Checks whether an SSRC is contained in the list of desired SSRCs.
+// Note that an empty SSRC list matches every SSRC.
+bool MatchingSsrc(uint32_t ssrc, const std::vector<uint32_t>& desired_ssrc);
 
 // For each element in data_view, use `f()` to extract a y-coordinate and
 // store the result in a TimeSeries.

@@ -16,6 +16,10 @@
 #include <cstddef>  // size_t
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
+
+namespace webrtc {
+
 // A typical PCMU RTP packet.
 // PT=0, SN=1, TS=0, SSRC=1
 // all data FF
@@ -37,7 +41,8 @@ static const unsigned char kPcmuFrame[] = {
     0xFF, 0xFF, 0xFF, 0xFF,
 };
 
-static const int kHeaderExtensionIDs[] = {1, 4};
+static const RtpHeaderExtensionId kHeaderExtensionIDs[] = {
+    RtpHeaderExtensionId(1), RtpHeaderExtensionId(4)};
 
 // A typical PCMU RTP packet with header extensions.
 // PT=0, SN=1, TS=0, SSRC=1
@@ -256,7 +261,7 @@ static const unsigned char kPcmuFrameWithExtensions[] = {
 // A typical Receiver Report RTCP packet.
 // PT=RR, LN=1, SSRC=1
 // send SSRC=2, all other fields 0
-static const unsigned char kRtcpReport[] = {
+static const unsigned char kFakeRtcpReport[] = {
     0x80, 0xc9, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
     0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -291,11 +296,14 @@ static const unsigned char kDataPacket[] = {
 // This expects both packets to be based on kPcmuFrameWithExtensions.
 // Header extensions with an id in "encrypted_headers" are expected to be
 // different in the packets unless "expect_equal" is set to "true".
-void CompareHeaderExtensions(const char* packet1,
-                             size_t packet1_size,
-                             const char* packet2,
-                             size_t packet2_size,
-                             const std::vector<int>& encrypted_headers,
-                             bool expect_equal);
+void CompareHeaderExtensions(
+    const char* packet1,
+    size_t packet1_size,
+    const char* packet2,
+    size_t packet2_size,
+    const std::vector<RtpHeaderExtensionId>& encrypted_headers,
+    bool expect_equal);
+
+}  // namespace webrtc
 
 #endif  // MEDIA_BASE_FAKE_RTP_H_

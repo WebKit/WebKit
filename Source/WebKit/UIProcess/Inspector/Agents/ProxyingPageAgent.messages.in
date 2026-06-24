@@ -31,7 +31,7 @@
 ]
 messages -> Inspector::ProxyingPageAgent {
     # Page lifecycle events
-    FrameNavigated(WebCore::FrameIdentifier frameID, URL url, String mimeType, WebCore::SecurityOriginData securityOrigin, std::optional<WebCore::FrameIdentifier> parentFrameID, String name)
+    FrameNavigated(WebCore::FrameIdentifier frameID, URL url, String mimeType, WebCore::SecurityOriginData securityOrigin, std::optional<WebCore::FrameIdentifier> parentFrameID, String name, WebCore::ScriptExecutionContextIdentifier loaderId)
     DomContentEventFired(double timestamp)
     LoadEventFired(double timestamp)
     FrameDetached(WebCore::FrameIdentifier frameID)

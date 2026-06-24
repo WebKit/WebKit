@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+let requestCount = 0;
+
+function createSecureRequest() {
+    let img = document.createElement("img");
+    img.src = "https://localhost:8443/resources/square100.png?" + (++requestCount);
+    document.body.appendChild(img);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Security.Certificate.Subject");
+
+    suite.addTestCase({
+        name: "Resource.Security.Certificate.Subject.Format",
+        description: "Certificate subject should be a human-readable summary, not a raw RFC 2253 distinguished name.",
+        test(resolve, reject) {
+            WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
+            .then((event) => {
+                let resource = event.target;
+                InspectorTest.expectThat(resource.loadedSecurely, "Resource should have been loaded securely.");
+
+                let certificate = resource.security?.certificate;
+                InspectorTest.expectNotNull(certificate, "Resource should have certificate information.");
+
+                // The subject should be a human-readable summary (e.g. "WebKit Layout Tests"),
+                // not a raw RFC 2253 distinguished name like "C=AU,ST=Some-State,O=WebKit Layout Tests".
+                let subject = certificate?.subject;
+                InspectorTest.log("Subject: " + subject);
+                InspectorTest.expectFalse(/[A-Z]+=/.test(subject ?? ""), "Subject should not contain raw RFC 2253 attribute types.");
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`createSecureRequest()`)
+            .catch(reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that the certificate subject is a human-readable name, not a raw RFC 2253 distinguished name.</p>
+</body>
+</html>

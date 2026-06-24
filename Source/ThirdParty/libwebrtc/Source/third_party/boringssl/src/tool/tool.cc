@@ -30,6 +30,8 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 static bool IsFIPS(const std::vector<std::string> &args) {
   printf("%d\n", FIPS_mode());
   return true;
@@ -43,27 +45,26 @@ struct Tool {
 };
 
 static const Tool kTools[] = {
-  { "ciphers", Ciphers },
-  { "client", Client },
-  { "isfips", IsFIPS },
-  { "generate-ech", GenerateECH},
-  { "generate-ed25519", GenerateEd25519Key },
-  { "genrsa", GenerateRSAKey },
-  { "md5sum", MD5Sum },
-  { "pkcs12", DoPKCS12 },
-  { "rand", Rand },
-  { "s_client", Client },
-  { "s_server", Server },
-  { "server", Server },
-  { "sha1sum", SHA1Sum },
-  { "sha224sum", SHA224Sum },
-  { "sha256sum", SHA256Sum },
-  { "sha384sum", SHA384Sum },
-  { "sha512sum", SHA512Sum },
-  { "sha512256sum", SHA512256Sum },
-  { "sign", Sign },
-  { "speed", Speed },
-  { "", nullptr },
+    {"ciphers", Ciphers},
+    {"client", Client},
+    {"isfips", IsFIPS},
+    {"generate-ech", GenerateECH},
+    {"generate-ed25519", GenerateEd25519Key},
+    {"genrsa", GenerateRSAKey},
+    {"md5sum", MD5Sum},
+    {"pkcs12", DoPKCS12},
+    {"rand", Rand},
+    {"s_client", Client},
+    {"s_server", Server},
+    {"server", Server},
+    {"sha1sum", SHA1Sum},
+    {"sha224sum", SHA224Sum},
+    {"sha256sum", SHA256Sum},
+    {"sha384sum", SHA384Sum},
+    {"sha512sum", SHA512Sum},
+    {"sha512256sum", SHA512256Sum},
+    {"sign", Sign},
+    {"", nullptr},
 };
 
 static void usage(const char *name) {
@@ -88,6 +89,10 @@ static tool_func_t FindTool(const std::string &name) {
     }
   }
 }
+
+BSSL_NAMESPACE_END
+
+using namespace bssl;
 
 int main(int argc, char **argv) {
 #if defined(OPENSSL_WINDOWS)

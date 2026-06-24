@@ -1,0 +1,3 @@
+
+PASS cross-document traversals in the same (back) direction: the result is going -2 with only one load event
+

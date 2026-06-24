@@ -25,11 +25,14 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "RemoteObjectRegistry.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/Utilities.h"
+#import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -878,6 +881,161 @@ TEST(IPCTestingAPI, SpeechSynthesisWithLockdownMode)
 
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:NO];
 }
+
+static RetainPtr<NSString> sendOriginAccessAllowListEntryAndFetchCrossOrigin(bool allowOriginAccessAllowListIPC)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/pageA"_s, { "<!DOCTYPE html>"_s } },
+        { "/pageB"_s, { "<!DOCTYPE html>"_s } },
+        { "/target"_s, { {{ "Content-Type"_s, "text/plain"_s }}, "cross-origin-data"_s } },
+    });
+    auto serverPort = server.port();
+
+    RetainPtr configA = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"])
+            [[configA preferences] _setEnabled:YES forFeature:feature];
+        if ([feature.key isEqualToString:@"AllowTestOnlyOriginAccessAllowListIPC"])
+            [[configA preferences] _setEnabled:allowOriginAccessAllowListIPC forFeature:feature];
+    }
+
+    RetainPtr configB = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configB setProcessPool:[configA processPool]];
+
+    RetainPtr webViewA = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configA.get()]);
+    RetainPtr webViewB = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configB.get()]);
+
+    [webViewA loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%u/pageA", serverPort]]]];
+    [webViewA _test_waitForDidFinishNavigation];
+
+    [webViewB loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%u/pageB", serverPort]]]];
+    [webViewB _test_waitForDidFinishNavigation];
+
+    [webViewA stringByEvaluatingJavaScript:[NSString stringWithFormat:
+        @"IPC.sendMessage('Networking', 0,"
+        "  IPC.messages.NetworkConnectionToWebProcess_AddOriginAccessAllowListEntry.name,"
+        "  ["
+        "    { type: 'String', value: 'http://localhost:%u' },"
+        "    { type: 'String', value: 'http' },"
+        "    { type: 'String', value: '127.0.0.1' },"
+        "    { type: 'bool', value: 1 }"
+        "  ]"
+        ")", serverPort]];
+
+    Util::runFor(0.5_s);
+
+    [webViewB evaluateJavaScript:[NSString stringWithFormat:
+        @"try {"
+        "  var xhr = new XMLHttpRequest();"
+        "  xhr.open('GET', 'http://127.0.0.1:%u/target', false);"
+        "  xhr.send();"
+        "  alert('FETCHED:' + xhr.responseText);"
+        "} catch(e) {"
+        "  alert('BLOCKED:' + e);"
+        "}", serverPort] completionHandler:nil];
+
+    return [webViewB _test_waitForAlert];
+}
+
+TEST(IPCTestingAPI, AddOriginAccessAllowListEntryRequiresTestOnlyIPC)
+{
+    auto result = sendOriginAccessAllowListEntryAndFetchCrossOrigin(false);
+    EXPECT_TRUE([result hasPrefix:@"BLOCKED:"]);
+}
+
+TEST(IPCTestingAPI, AddOriginAccessAllowListEntryAllowedWithTestOnlyIPC)
+{
+    auto result = sendOriginAccessAllowListEntryAndFetchCrossOrigin(true);
+    EXPECT_WK_STREQ(result, "FETCHED:cross-origin-data");
+}
+
+#if ENABLE(CONTENT_FILTERING)
+
+static NSString *installMockContentFilterAndNavigateVictim(bool allowMockContentFilterIPC)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer attackerServer({
+        { "/attacker"_s, { "<!DOCTYPE html>"_s } },
+        { "/evil"_s, { "<!DOCTYPE html><body>REDIRECTED</body>"_s } },
+    });
+    HTTPServer victimServer({
+        { "/victim"_s, { "<!DOCTYPE html><body>ORIGINAL</body>"_s } },
+    });
+
+    RetainPtr configA = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"])
+            [[configA preferences] _setEnabled:YES forFeature:feature];
+        if ([feature.key isEqualToString:@"AllowTestOnlyMockContentFilterIPC"])
+            [[configA preferences] _setEnabled:allowMockContentFilterIPC forFeature:feature];
+    }
+
+    RetainPtr configB = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configB setProcessPool:[configA processPool]];
+
+    RetainPtr webViewA = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configA.get()]);
+    RetainPtr webViewB = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configB.get()]);
+
+    [webViewA loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%u/attacker", attackerServer.port()]]]];
+    [webViewA _test_waitForDidFinishNavigation];
+
+    [webViewA stringByEvaluatingJavaScript:[NSString stringWithFormat:
+        @"IPC.sendMessage('Networking', 0,"
+        "  IPC.messages.NetworkConnectionToWebProcess_InstallMockContentFilter.name,"
+        "  ["
+        "    { type: 'bool', value: 1 },"
+        "    { type: 'uint8_t', value: 0 },"
+        "    { type: 'bool', value: 0 },"
+        "    { type: 'bool', value: 1 },"
+        "    { type: 'String', value: '' },"
+        "    { type: 'String', value: 'http://127.0.0.1:%u/evil' },"
+        "    { type: 'double', value: 0 }"
+        "  ]"
+        ")", attackerServer.port()]];
+
+    Util::runFor(0.5_s);
+
+    [webViewB loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%u/victim", victimServer.port()]]]];
+    [webViewB _test_waitForDidFinishNavigation];
+
+    NSString *bodyText = [webViewB stringByEvaluatingJavaScript:@"document.body.innerText"];
+
+    if (allowMockContentFilterIPC) {
+        // Reset MockContentFilterSettings since it is a process-global singleton in the NetworkProcess.
+        [webViewA stringByEvaluatingJavaScript:
+            @"IPC.sendMessage('Networking', 0,"
+            "  IPC.messages.NetworkConnectionToWebProcess_InstallMockContentFilter.name,"
+            "  ["
+            "    { type: 'bool', value: 0 },"
+            "    { type: 'uint8_t', value: 0 },"
+            "    { type: 'bool', value: 0 },"
+            "    { type: 'bool', value: 0 },"
+            "    { type: 'String', value: '' },"
+            "    { type: 'String', value: '' },"
+            "    { type: 'double', value: 0 }"
+            "  ]"
+            ")"];
+
+        Util::runFor(0.5_s);
+    }
+
+    return bodyText;
+}
+
+TEST(IPCTestingAPI, InstallMockContentFilterRequiresTestOnlyIPC)
+{
+    EXPECT_WK_STREQ(installMockContentFilterAndNavigateVictim(false), "ORIGINAL");
+}
+
+TEST(IPCTestingAPI, InstallMockContentFilterRedirectsWithTestOnlyIPC)
+{
+    EXPECT_WK_STREQ(installMockContentFilterAndNavigateVictim(true), "REDIRECTED");
+}
+
+#endif // ENABLE(CONTENT_FILTERING)
 
 #endif
 

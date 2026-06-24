@@ -59,19 +59,19 @@ void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, cons
 {
     switch (name.nodeName()) {
     case AttributeNames::xAttr:
-        m_x->baseVal()->parse(newValue);
+        protect(m_x)->baseVal()->parse(newValue);
         break;
     case AttributeNames::yAttr:
-        m_y->baseVal()->parse(newValue);
+        protect(m_y)->baseVal()->parse(newValue);
         break;
     case AttributeNames::dxAttr:
-        m_dx->baseVal()->parse(newValue);
+        protect(m_dx)->baseVal()->parse(newValue);
         break;
     case AttributeNames::dyAttr:
-        m_dy->baseVal()->parse(newValue);
+        protect(m_dy)->baseVal()->parse(newValue);
         break;
     case AttributeNames::rotateAttr:
-        m_rotate->baseVal()->parse(newValue);
+        protect(m_rotate)->baseVal()->parse(newValue);
         break;
     default:
         break;

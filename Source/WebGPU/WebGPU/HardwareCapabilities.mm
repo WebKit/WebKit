@@ -120,6 +120,7 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
     features.append(WGPUFeatureName_Float32Blendable);
 
     features.append(WGPUFeatureName_ClipDistances);
+    features.append(WGPUFeatureName_PrimitiveIndex);
     features.append(WGPUFeatureName_DepthClipControl);
     features.append(WGPUFeatureName_Depth32FloatStencil8);
 

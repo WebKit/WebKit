@@ -1,4 +1,33 @@
 ================
+WebKitGTK 2.53.4
+================
+
+What's new in WebKitGTK 2.53.4?
+
+  - Implemented batched painting in skia compositor, which improves performance when
+    there are many layers that can be painted in the same operation.
+  - Avoid unnecessary clips when possible in skia compositor.
+  - Fix synchronization issues between main, scrolling and compositing threads causing
+    glitches while scrolling in some cases.
+  - Limit the damage region of the scrollbar to the region actually painted.
+  - Add support for image/webp to canvas.toDataURL().
+  - Expose search inputs as WEBKIT_INPUT_PURPOSE_SEARCH.
+  - Add User-Agent quirk for HBO Max.
+  - Fix several crashes and rendering issues.
+
+================
+WebKitGTK 2.53.3
+================
+
+What's new in WebKitGTK 2.53.3?
+
+  - Switch web process compositor to use Skia instead of TextureMapper.
+  - Fix missing glyph before ZWJ/ZWNJ if no font is found for the cluster.
+  - Add support for half width fonts.
+  - Support time zone change notifications on linux.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.53.2
 ================
 

@@ -80,11 +80,11 @@ DEFINE_TYPE_WRAPPER_GET(BorderImageRepeat, values);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderImageRepeat> { auto operator()(const BorderImageRepeat&, const RenderStyle&) -> CSS::BorderImageRepeat; };
+template<> struct ToCSS<BorderImageRepeat> { auto operator()(const BorderImageRepeat&, const Style::ComputedStyle&) -> CSS::BorderImageRepeat; };
 template<> struct ToStyle<CSS::BorderImageRepeat> { auto operator()(const CSS::BorderImageRepeat&, const BuilderState&) -> BorderImageRepeat; };
 
 template<> struct CSSValueConversion<BorderImageRepeat> { BorderImageRepeat operator()(BuilderState&, const CSSValue&); };
-template<> struct CSSValueCreation<BorderImageRepeat> { auto operator()(CSSValuePool&, const RenderStyle&, const BorderImageRepeat&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<BorderImageRepeat> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const BorderImageRepeat&) -> Ref<CSSValue>; };
 
 } // namespace Style
 } // namespace WebCore

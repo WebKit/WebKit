@@ -1494,6 +1494,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!breakpoint.identifier || breakpoint.disabled)
             return;
 
+        if (!this._restoringBreakpoints) {
+            // The stored key is derived from the breakpoint's original location, so first get rid
+            // of that association before saving the new location (which creates a new association).
+            WI.objectStores.breakpoints.deleteObject(breakpoint);
+            WI.objectStores.breakpoints.putObject(breakpoint);
+        }
+
         // Remove the breakpoint with its old id.
         this._removeBreakpoint(breakpoint, (target) => {
             // Add the breakpoint at its new lineNumber and get a new id.

@@ -1,11 +1,15 @@
 
+PASS initialize throws when the registry scoped is false and the root is the document.
+PASS initialize throws when the registry scoped is false and the root document already has another registry
 PASS initialize is a function on both global and scoped CustomElementRegistry
 PASS initialize sets element.customElementRegistry to the global registry
 PASS initialize does not set the registry of nested shadow tree to the global registry
 PASS initialize sets element.customElementRegistry to a scoped registry
+PASS initialize does not set descendants whose customElementRegistry already uses a different registry
 PASS initialize does not set the registry of nested shadow tree to a scoped registry
 PASS initialize sets element.customElementRegistry permantently
 PASS initialize is no-op on a subtree with a non-null registry
 PASS initialize works on Document
 PASS initialize works on DocumentFragment
+FAIL initialize sets registry on shadow root descendants with no registry assert_equals: expected object "[object CustomElementRegistry]" but got object "[object CustomElementRegistry]"
 

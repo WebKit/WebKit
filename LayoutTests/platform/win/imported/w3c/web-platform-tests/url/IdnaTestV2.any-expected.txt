@@ -1823,7 +1823,7 @@ PASS ToASCII("１꫶Ss𑲥｡ᷘ") V6
 PASS ToASCII("xn--3j78f.xn--mkb20b") V7
 PASS ToASCII("𲤱⒛⾳．ꡦ⒈") V7
 FAIL ToASCII("𲤱20.音.ꡦ1.") A4_2 (ignored) "https://𲤱20.音.ꡦ1./x" cannot be parsed as a URL.
-FAIL ToASCII("xn--20-9802c.xn--0w5a.xn--1-eg4e.") A4_2 (ignored) "https://xn--20-9802c.xn--0w5a.xn--1-eg4e./x" cannot be parsed as a URL.
+PASS ToASCII("xn--20-9802c.xn--0w5a.xn--1-eg4e.") A4_2 (ignored)
 PASS ToASCII("xn--dth6033bzbvx.xn--tsh9439b") V7
 PASS ToASCII("Ⴕ。۰≮ß݅")
 PASS ToASCII("Ⴕ。۰≮ß݅")
@@ -1910,7 +1910,7 @@ PASS ToASCII("𲮚９ꍩ៓．‍ß") C2
 PASS ToASCII("𲮚9ꍩ៓.‍ß") C2
 PASS ToASCII("𲮚9ꍩ៓.‍SS") C2
 PASS ToASCII("𲮚9ꍩ៓.‍ss") C2
-FAIL ToASCII("xn--9-i0j5967eg3qz.ss") "https://xn--9-i0j5967eg3qz.ss/x" cannot be parsed as a URL.
+PASS ToASCII("xn--9-i0j5967eg3qz.ss")
 FAIL ToASCII("𲮚9ꍩ៓.ss") "https://𲮚9ꍩ៓.ss/x" cannot be parsed as a URL.
 FAIL ToASCII("𲮚9ꍩ៓.SS") "https://𲮚9ꍩ៓.SS/x" cannot be parsed as a URL.
 PASS ToASCII("xn--9-i0j5967eg3qz.xn--ss-l1t") C2

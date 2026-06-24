@@ -12,11 +12,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/bounded_byte_reader.h"
 #include "net/dcsctp/packet/bounded_byte_writer.h"
@@ -49,7 +49,7 @@ namespace dcsctp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 std::optional<IForwardTsnChunk> IForwardTsnChunk::Parse(
-    webrtc::ArrayView<const uint8_t> data) {
+    std::span<const uint8_t> data) {
   std::optional<BoundedByteReader<kHeaderSize>> reader = ParseTLV(data);
   if (!reader.has_value()) {
     return std::nullopt;
@@ -77,7 +77,7 @@ std::optional<IForwardTsnChunk> IForwardTsnChunk::Parse(
 }
 
 void IForwardTsnChunk::SerializeTo(std::vector<uint8_t>& out) const {
-  webrtc::ArrayView<const SkippedStream> skipped = skipped_streams();
+  std::span<const SkippedStream> skipped = skipped_streams();
   size_t variable_size = skipped.size() * kSkippedStreamBufferSize;
   BoundedByteWriter<kHeaderSize> writer = AllocateTLV(out, variable_size);
 

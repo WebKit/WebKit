@@ -14,8 +14,8 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "common_audio/channel_buffer.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc2/gain_map_internal.h"
@@ -43,7 +43,7 @@ class FakeRecordingDeviceWorker {
   void set_mic_level(const int level) { mic_level_ = level; }
   void set_undo_mic_level(const int level) { undo_mic_level_ = level; }
   virtual ~FakeRecordingDeviceWorker() = default;
-  virtual void ModifyBufferInt16(ArrayView<int16_t> buffer) = 0;
+  virtual void ModifyBufferInt16(std::span<int16_t> buffer) = 0;
   virtual void ModifyBufferFloat(ChannelBuffer<float>* buffer) = 0;
 
  protected:
@@ -62,7 +62,7 @@ class FakeRecordingDeviceIdentity final : public FakeRecordingDeviceWorker {
   explicit FakeRecordingDeviceIdentity(const int initial_mic_level)
       : FakeRecordingDeviceWorker(initial_mic_level) {}
   ~FakeRecordingDeviceIdentity() override = default;
-  void ModifyBufferInt16(ArrayView<int16_t> /* buffer */) override {}
+  void ModifyBufferInt16(std::span<int16_t> /* buffer */) override {}
   void ModifyBufferFloat(ChannelBuffer<float>* /* buffer */) override {}
 };
 
@@ -73,7 +73,7 @@ class FakeRecordingDeviceLinear final : public FakeRecordingDeviceWorker {
   explicit FakeRecordingDeviceLinear(const int initial_mic_level)
       : FakeRecordingDeviceWorker(initial_mic_level) {}
   ~FakeRecordingDeviceLinear() override = default;
-  void ModifyBufferInt16(ArrayView<int16_t> buffer) override {
+  void ModifyBufferInt16(std::span<int16_t> buffer) override {
     const size_t number_of_samples = buffer.size();
     int16_t* data = buffer.data();
     // If an undo level is specified, virtually restore the unmodified
@@ -115,7 +115,7 @@ class FakeRecordingDeviceAgc final : public FakeRecordingDeviceWorker {
   explicit FakeRecordingDeviceAgc(const int initial_mic_level)
       : FakeRecordingDeviceWorker(initial_mic_level) {}
   ~FakeRecordingDeviceAgc() override = default;
-  void ModifyBufferInt16(ArrayView<int16_t> buffer) override {
+  void ModifyBufferInt16(std::span<int16_t> buffer) override {
     const float scaling_factor =
         ComputeAgcLinearFactor(undo_mic_level_, mic_level_);
     const size_t number_of_samples = buffer.size();
@@ -178,7 +178,7 @@ void FakeRecordingDevice::SetUndoMicLevel(const int level) {
   worker_->set_undo_mic_level(level);
 }
 
-void FakeRecordingDevice::SimulateAnalogGain(ArrayView<int16_t> buffer) {
+void FakeRecordingDevice::SimulateAnalogGain(std::span<int16_t> buffer) {
   RTC_DCHECK(worker_);
   worker_->ModifyBufferInt16(buffer);
 }

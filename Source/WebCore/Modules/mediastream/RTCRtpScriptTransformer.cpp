@@ -83,7 +83,7 @@ WritableStream& RTCRtpScriptTransformer::writable()
 void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
 {
     m_isSender = backend->side() == RTCRtpTransformBackend::Side::Sender;
-    m_streamProducer->start(WTF::move(backend), backend->mediaType() == RTCRtpTransformBackend::MediaType::Video);
+    m_streamProducer->start(WTF::move(backend), backend->mediaType() == RTCRtpTransformBackend::MediaType::Video, this);
 }
 
 void RTCRtpScriptTransformer::clear(ClearCallback clearCallback)

@@ -37,11 +37,9 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 {
-    return suggestedFilenameWithMIMEType(url, mimeType, copyImageUnknownFileLabel());
+    return suggestedFilenameWithMIMEType(url, mimeType, WebCore::copyImageUnknownFileLabel());
 }
 
 NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType, const String& defaultValue)
@@ -79,11 +77,11 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType, cons
     // I don't think we need to worry about this for the image case
     // If the type is known, check the extension and correct it if necessary.
     if (mimeType != "application/octet-stream"_s && mimeType != "text/plain"_s) {
-        Vector<String> extensions = MIMETypeRegistry::extensionsForMIMEType(mimeType);
+        Vector<String> extensions = WebCore::MIMETypeRegistry::extensionsForMIMEType(mimeType);
 
         if (extensions.isEmpty() || !extensions.contains(String(extension.get()))) {
             // The extension doesn't match the MIME type. Correct this.
-            RetainPtr correctExtension = MIMETypeRegistry::preferredExtensionForMIMEType(mimeType).createNSString();
+            RetainPtr correctExtension = WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(mimeType).createNSString();
             if ([correctExtension length] != 0) {
                 // Append the correct extension.
                 filename = [filename stringByAppendingPathExtension:correctExtension.get()];

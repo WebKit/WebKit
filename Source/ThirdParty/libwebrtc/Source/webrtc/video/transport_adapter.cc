@@ -11,8 +11,8 @@
 #include "video/transport_adapter.h"
 
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "rtc_base/checks.h"
 
@@ -26,7 +26,7 @@ TransportAdapter::TransportAdapter(Transport* transport)
 
 TransportAdapter::~TransportAdapter() = default;
 
-bool TransportAdapter::SendRtp(ArrayView<const uint8_t> packet,
+bool TransportAdapter::SendRtp(std::span<const uint8_t> packet,
                                const PacketOptions& options) {
   if (!enabled_.load())
     return false;
@@ -34,7 +34,7 @@ bool TransportAdapter::SendRtp(ArrayView<const uint8_t> packet,
   return transport_->SendRtp(packet, options);
 }
 
-bool TransportAdapter::SendRtcp(ArrayView<const uint8_t> packet,
+bool TransportAdapter::SendRtcp(std::span<const uint8_t> packet,
                                 const PacketOptions& options) {
   if (!enabled_.load())
     return false;

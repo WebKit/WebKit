@@ -925,6 +925,11 @@ typedef struct macroblockd {
    * 'cpi->tile_thr_data[t].td->mb.tmp_pred_bufs'.
    */
   uint8_t *tmp_obmc_bufs[2];
+
+  /*!
+   *  Temporary buffer used for upsampled prediction.
+   */
+  uint8_t *tmp_upsample_pred;
 } MACROBLOCKD;
 
 /*!\cond */

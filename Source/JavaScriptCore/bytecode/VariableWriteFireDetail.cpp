@@ -27,6 +27,7 @@
 #include "VariableWriteFireDetail.h"
 
 #include "JSCJSValueInlines.h"
+#include "VariableWriteFireDetailInlines.h"
 
 namespace JSC {
 

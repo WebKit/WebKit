@@ -855,13 +855,13 @@ void SocketTest::TcpInternal(const IPAddress& loopback,
   EXPECT_EQ(sender->GetRemoteAddress(), receiver->GetLocalAddress());
 
   // Create test data.
-  Buffer send_buffer(0, data_size);
-  Buffer recv_buffer(0, data_size);
+  Buffer send_buffer(Buffer::CreateWithCapacity(data_size));
+  Buffer recv_buffer(Buffer::CreateWithCapacity(data_size));
   for (size_t i = 0; i < data_size; ++i) {
     char ch = static_cast<char>(i % 256);
     send_buffer.AppendData(&ch, sizeof(ch));
   }
-  Buffer recved_data(0, data_size);
+  Buffer recved_data(Buffer::CreateWithCapacity(data_size));
 
   // Send and receive a bunch of data.
   size_t sent_size = 0;
@@ -1288,45 +1288,52 @@ void SocketTest::UdpSocketRecvTimestampUseRtcEpoch(const IPAddress& loopback) {
 
 void SocketTest::SocketSendRecvWithEcn(const IPAddress& loopback) {
   StreamSink sink;
-  std::unique_ptr<Socket> socket =
+  std::unique_ptr<Socket> receiving_socket =
       socket_factory_->Create(loopback.family(), SOCK_DGRAM);
-  EXPECT_EQ(0, socket->Bind(SocketAddress(loopback, 0)));
-  SocketAddress address = socket->GetLocalAddress();
-  sink.Monitor(socket.get());
+  std::unique_ptr<Socket> sending_socket =
+      socket_factory_->Create(loopback.family(), SOCK_DGRAM);
+  EXPECT_EQ(0, receiving_socket->Bind(SocketAddress(loopback, 0)));
+  EXPECT_EQ(0, sending_socket->Bind(SocketAddress(loopback, 0)));
+  SocketAddress address = receiving_socket->GetLocalAddress();
+  sink.Monitor(receiving_socket.get());
   Buffer buffer;
   Socket::ReceiveBuffer receive_buffer(buffer);
 
-  socket->SendTo("foo", 3, address);
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(socket.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
-  ASSERT_GT(socket->RecvFrom(receive_buffer), 0);
+  sending_socket->SendTo("foo", 3, address);
+  EXPECT_THAT(
+      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); },
+                ::testing::IsTrue()),
+      IsRtcOk());
+  ASSERT_GT(receiving_socket->RecvFrom(receive_buffer), 0);
   EXPECT_EQ(receive_buffer.ecn, EcnMarking::kNotEct);
 
-  socket->SetOption(Socket::OPT_SEND_ECN, 1);  // Ect(1)
-  socket->SetOption(Socket::OPT_RECV_ECN, 1);
+  sending_socket->SetOption(Socket::OPT_SEND_ECN, 1);  // Ect(1)
+  receiving_socket->SetOption(Socket::OPT_RECV_ECN, 1);
 
-  socket->SendTo("bar", 3, address);
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(socket.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
-  ASSERT_GT(socket->RecvFrom(receive_buffer), 0);
+  sending_socket->SendTo("bar", 3, address);
+  EXPECT_THAT(
+      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); },
+                ::testing::IsTrue()),
+      IsRtcOk());
+  ASSERT_GT(receiving_socket->RecvFrom(receive_buffer), 0);
   EXPECT_EQ(receive_buffer.ecn, EcnMarking::kEct1);
 
-  socket->SetOption(Socket::OPT_SEND_ECN, 2);  // Ect(0)
-  socket->SendTo("bar", 3, address);
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(socket.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
-  ASSERT_GT(socket->RecvFrom(receive_buffer), 0);
+  sending_socket->SetOption(Socket::OPT_SEND_ECN, 2);  // Ect(0)
+  sending_socket->SendTo("bar", 3, address);
+  EXPECT_THAT(
+      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); },
+                ::testing::IsTrue()),
+      IsRtcOk());
+  ASSERT_GT(receiving_socket->RecvFrom(receive_buffer), 0);
   EXPECT_EQ(receive_buffer.ecn, EcnMarking::kEct0);
 
-  socket->SetOption(Socket::OPT_SEND_ECN, 3);  // Ce
-  socket->SendTo("bar", 3, address);
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(socket.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
-  ASSERT_GT(socket->RecvFrom(receive_buffer), 0);
+  sending_socket->SetOption(Socket::OPT_SEND_ECN, 3);  // Ce
+  sending_socket->SendTo("bar", 3, address);
+  EXPECT_THAT(
+      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); },
+                ::testing::IsTrue()),
+      IsRtcOk());
+  ASSERT_GT(receiving_socket->RecvFrom(receive_buffer), 0);
   EXPECT_EQ(receive_buffer.ecn, EcnMarking::kCe);
 }
 

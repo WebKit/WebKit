@@ -174,5 +174,3 @@ function shouldBe(actual, expected) {
     };
     shouldBe(String.prototype.match.call(receiver, re), ["a"]);
 })();
-
-print("PASSED");

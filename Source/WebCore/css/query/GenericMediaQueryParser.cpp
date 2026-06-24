@@ -38,6 +38,7 @@
 #include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 #include "CSSPropertyParserState.h"
 #include "CSSSubstitutionParser.h"
+#include "CSSUnevaluatedCalc.h"
 #include "MediaQueryParserContext.h"
 #include <wtf/text/MakeString.h>
 
@@ -300,7 +301,7 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                                 return raw.value;
                             },
                             [](const CSS::Integer<>::Calc& calc) {
-                                return protect(calc.calcValue())->doubleValueDeprecated();
+                                return calc.evaluateDeprecated();
                             }
                         );
                         if (resolved < 0)
@@ -314,7 +315,7 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                                 return raw.value;
                             },
                             [](const CSS::Number<>::Calc& calc) {
-                                return protect(calc.calcValue())->doubleValueDeprecated();
+                                return calc.evaluateDeprecated();
                             }
                         );
                         if (resolved < 0)

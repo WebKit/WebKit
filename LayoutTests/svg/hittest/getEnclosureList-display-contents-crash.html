@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>Test passes if it does not crash.</p>
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <g display="contents">
+        <rect id="r" x="10" y="10" width="50" height="50"/>
+    </g>
+</svg>
+<script>
+// getEnclosureList on a descendant of a display:contents <g> crashed because
+// getElementCTM dereferenced a null renderer while walking the ancestor chain.
+const svg = document.getElementById("svg");
+const svgRect = svg.createSVGRect();
+svgRect.x = 0;
+svgRect.y = 0;
+svgRect.width = 200;
+svgRect.height = 200;
+svg.getEnclosureList(svgRect, null);
+</script>
+</body>
+</html>

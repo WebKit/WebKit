@@ -7,6 +7,6 @@ layer at (0,0) size 800x600
         text run at (0,0) width 397: "This tests that we don't honor line-height for styled popup buttons."
       RenderBR {BR} at (397,15) size 0x0
       RenderMenuList {SELECT} at (2,22) size 210x22 [bgcolor=#ADD8E6] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (5,3) size 183x16
-          RenderText at (0,0) size 183x16
+        RenderBlock {DIV} at (5,3) size 183x16
+          RenderText {#text} at (0,0) size 183x16
             text run at (0,0) width 183: "This text should not be clipped."

@@ -976,6 +976,15 @@
             ]
         },
         {
+            "name": "sendInspectorMessage",
+            "description": "Relay a Web Inspector backend message from the client into the given browsing context's Inspector controller. Available when the session is configured to permit Inspector-protocol testing over the Automation transport.",
+            "condition": "ENABLE(REMOTE_INSPECTOR)",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context whose Inspector controller should receive the message." },
+                { "name": "message", "type": "string", "description": "An Inspector backend message sent by the client to WebKit, encoded as a UTF-8 JSON literal." }
+            ]
+        },
+        {
             "name": "emitActiveBidiScriptRealmCreatedEvents",
             "description": "Emit script.realmCreated events for currently active realms in the automation session.",
             "condition": "ENABLE(WEBDRIVER_BIDI)"
@@ -1004,6 +1013,15 @@
             "condition": "ENABLE(WEBDRIVER_BIDI)",
             "parameters": [
                 { "name": "message", "type": "string", "description": "A Bidi message sent by WebKit to the client, encoded as a UTF-8 JSON literal." }
+            ]
+        },
+        {
+            "name": "receiveInspectorMessage",
+            "description": "Relay a Web Inspector backend message from a browsing context's Inspector controller back to the client.",
+            "condition": "ENABLE(REMOTE_INSPECTOR)",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context whose Inspector controller emitted the message." },
+                { "name": "message", "type": "string", "description": "An Inspector backend message sent by WebKit to the client, encoded as a UTF-8 JSON literal." }
             ]
         }
     ]

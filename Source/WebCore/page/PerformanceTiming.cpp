@@ -41,6 +41,7 @@
 #include "NetworkLoadMetrics.h"
 #include "Performance.h"
 #include "ResourceResponse.h"
+#include <wtf/ReducedResolutionSeconds.h>
 
 namespace WebCore {
 
@@ -389,7 +390,7 @@ unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(Monoton
     ASSERT(timeStamp.secondsSinceEpoch().seconds() >= 0);
     if (!timeStamp)
         return 0;
-    Seconds reduced = Performance::reduceTimeResolution(timeStamp.approximate<WallTime>().secondsSinceEpoch());
+    auto reduced = Performance::reduceTimeResolution(timeStamp.approximate<WallTime>().secondsSinceEpoch());
     return static_cast<unsigned long long>(reduced.milliseconds());
 }
 

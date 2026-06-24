@@ -5,7 +5,7 @@ from collections import deque
 from fnmatch import fnmatch
 from io import BytesIO
 from typing import (Any, BinaryIO, Callable, Deque, Dict, Iterable, List,
-                    Optional, Pattern, Set, Text, Tuple, TypedDict, Union, cast)
+                    Optional, Pattern, Set, Text, Tuple, TypedDict, Union)
 from urllib.parse import parse_qs, urlparse, urljoin
 
 try:
@@ -16,7 +16,8 @@ except ImportError:
 import html5lib
 
 from . import XMLParser
-from .item import (ConformanceCheckerTest,
+from .item import (AccessibilityAPIMappingTest,
+                   ConformanceCheckerTest,
                    CrashTest,
                    ManifestItem,
                    ManualTest,
@@ -24,22 +25,26 @@ from .item import (ConformanceCheckerTest,
                    RefTest,
                    SpecItem,
                    SupportFile,
+                   Test262Test,
                    TestharnessTest,
                    VisualTest,
                    WebDriverSpecTest)
+from .log import get_logger
 from .utils import cached_property
+
+from . import test262
 
 # Cannot do `from ..metadata.webfeatures.schema import WEB_FEATURES_YML_FILENAME`
 # because relative import beyond toplevel throws *ImportError*!
 from metadata.webfeatures.schema import WEB_FEATURES_YML_FILENAME  # type: ignore
 
-wd_pattern = "*.py"
+py_pattern = "*.py"
 js_meta_re = re.compile(br"//\s*META:\s*(\w*)=(.*)$")
 python_meta_re = re.compile(br"#\s*META:\s*(\w*)=(.*)$")
 
 reference_file_re = re.compile(r'(^|[\-_])(not)?ref[0-9]*([\-_]|$)')
 
-space_chars: Text = "".join(html5lib.constants.spaceCharacters)
+space_chars: Text = "".join(html5lib.constants.spaceCharacters)  # type: ignore[attr-defined]
 
 
 def replace_end(s: Text, old: Text, new: Text) -> Text:
@@ -179,8 +184,7 @@ def global_variant_url(url: Text, suffix: Text) -> Text:
 
 
 def _parse_html(f: BinaryIO) -> ElementTree.Element:
-    doc = html5lib.parse(f, treebuilder="etree", useChardet=False)
-    return cast(ElementTree.Element, doc)
+    return html5lib.parse(f, treebuilder="etree", useChardet=False)
 
 def _parse_xml(f: BinaryIO) -> ElementTree.Element:
     try:
@@ -380,6 +384,12 @@ class SourceFile:
         return "window" in self.meta_flags and self.ext == ".js"
 
     @property
+    def name_is_extension(self) -> bool:
+        """Check if the file name matches the conditions for the file to
+        be a extension js test file"""
+        return "extension" in self.meta_flags and self.ext == ".js"
+
+    @property
     def name_is_webdriver(self) -> bool:
         """Check if the file name matches the conditions for the file to
         be a webdriver spec test file"""
@@ -390,7 +400,16 @@ class SourceFile:
                  (rel_path_parts[:2] == ("infrastructure", "webdriver") and
                   len(rel_path_parts) > 2)) and
                 self.filename not in ("__init__.py", "conftest.py") and
-                fnmatch(self.filename, wd_pattern))
+                fnmatch(self.filename, py_pattern))
+
+    @property
+    def name_is_aamtest(self) -> bool:
+        """Check if the file name matches the conditions for the file to
+        be an accessibility API test"""
+        rel_path_parts = self.rel_path_parts
+        return ("aamtests" in rel_path_parts and
+                self.filename not in ("__init__.py", "conftest.py") and
+                fnmatch(self.filename, py_pattern))
 
     @property
     def name_is_reference(self) -> bool:
@@ -415,6 +434,12 @@ class SourceFile:
     def name_is_print_reftest(self) -> bool:
         return (self.markup_type is not None and
                 (self.type_flag == "print" or "print" in self.dir_path.split(os.path.sep)))
+
+    @property
+    def name_is_test262(self) -> bool:
+        """Check if the file name matches the conditions for the file to be a
+        test262 file"""
+        return ("test262" in self.dir_path.split(os.path.sep) and self.ext == ".js")
 
     @property
     def markup_type(self) -> Optional[Text]:
@@ -466,11 +491,31 @@ class SourceFile:
         return self.root.findall(".//{http://www.w3.org/1999/xhtml}meta[@name='pac']")
 
     @cached_property
+    def test262_test_record(self) -> Optional[test262.TestRecord]:
+        if self.name_is_test262:
+            with self.open() as f:
+                return test262.parse(get_logger(), f.read().decode('utf-8'), self.path)
+        else:
+            return None
+
+    @cached_property
     def script_metadata(self) -> Optional[List[Tuple[Text, Text]]]:
-        if self.name_is_worker or self.name_is_multi_global or self.name_is_window:
+        if self.name_is_worker or self.name_is_multi_global or self.name_is_window or self.name_is_extension:
             regexp = js_meta_re
-        elif self.name_is_webdriver:
+        elif self.name_is_webdriver or self.name_is_aamtest:
             regexp = python_meta_re
+        elif self.name_is_test262:
+            if self.test262_test_record is None:
+                return None
+            paths: List[Tuple[Text, Text]] = []
+            if self.test262_test_record.includes is None:
+                return paths
+            for filename in self.test262_test_record.includes:
+                if filename in ("assert.js", "sta.js"):
+                    paths.append(('script', "/third_party/test262/harness/%s" % filename))
+                else:
+                    paths.append(('script', "/resources/test262/%s" % filename))
+            return paths
         else:
             return None
 
@@ -618,6 +663,8 @@ class SourceFile:
                     positional_args.append(range_value)
                 else:
                     arg_values[name] = range_value
+            if key in rv:
+                raise ValueError("Got multiple fuzzy values for key %s" % (key,))
             rv[key] = []
             for arg_name in args:
                 if arg_values.get(arg_name):
@@ -894,6 +941,9 @@ class SourceFile:
         if self.name_is_webdriver:
             return {WebDriverSpecTest.item_type}
 
+        if self.name_is_aamtest:
+            return {AccessibilityAPIMappingTest.item_type}
+
         if self.name_is_visual:
             return {VisualTest.item_type}
 
@@ -910,6 +960,12 @@ class SourceFile:
             return {TestharnessTest.item_type}
 
         if self.name_is_window:
+            return {TestharnessTest.item_type}
+
+        if self.name_is_test262:
+            return {Test262Test.item_type, SupportFile.item_type}
+
+        if self.name_is_extension:
             return {TestharnessTest.item_type}
 
         if self.markup_type is None:
@@ -971,6 +1027,16 @@ class SourceFile:
         elif self.name_is_webdriver:
             rv = WebDriverSpecTest.item_type, [
                 WebDriverSpecTest(
+                    self.tests_root,
+                    self.rel_path,
+                    self.url_base,
+                    self.rel_url,
+                    timeout=self.timeout
+                )]
+
+        elif self.name_is_aamtest:
+            rv = AccessibilityAPIMappingTest.item_type, [
+                AccessibilityAPIMappingTest(
                     self.tests_root,
                     self.rel_path,
                     self.url_base,
@@ -1075,6 +1141,54 @@ class SourceFile:
                 for variant in self.test_variants
             ]
             rv = TestharnessTest.item_type, tests
+
+        elif self.name_is_extension:
+            test_url = replace_end(self.rel_url, ".extension.js", ".extension.html")
+            tests = [
+                TestharnessTest(
+                    self.tests_root,
+                    self.rel_path,
+                    self.url_base,
+                    test_url + variant,
+                    timeout=self.timeout,
+                    pac=self.pac,
+                    script_metadata=self.script_metadata
+                )
+                for variant in self.test_variants
+            ]
+            rv = TestharnessTest.item_type, tests
+
+        elif self.name_is_test262:
+            if self.test262_test_record is None:
+                rv = "support", [
+                    SupportFile(
+                        self.tests_root,
+                        self.rel_path
+                    )]
+            else:
+                suffix = ".test262"
+                if self.test262_test_record.is_module:
+                    suffix += "-module"
+                elif self.test262_test_record.is_only_strict:
+                    # Modules are always strict mode, so only append strict for
+                    # non-module tests.
+                    suffix += ".strict"
+                suffix += ".html"
+                test_url = replace_end(self.rel_url, ".js", suffix)
+                tests = [
+                    Test262Test(
+                        self.tests_root,
+                        self.rel_path,
+                        self.url_base,
+                        test_url + variant,
+                        timeout=self.timeout,
+                        pac=self.pac,
+                        testdriver_features=self.testdriver_features,
+                        script_metadata=self.script_metadata
+                    )
+                    for variant in self.test_variants
+                ]
+                rv = Test262Test.item_type, tests
 
         elif self.content_is_css_manual and not self.name_is_reference:
             rv = ManualTest.item_type, [

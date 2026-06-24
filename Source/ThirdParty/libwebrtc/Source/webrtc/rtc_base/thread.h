@@ -14,6 +14,7 @@
 #include <atomic>
 #include <cstddef>
 #include <cstdint>
+#include <deque>
 #include <map>
 #include <memory>
 #include <queue>
@@ -63,15 +64,27 @@
         }                                                                 \
       })
 
+// For situations where an implementation decides that logging information about
+// blocking calls is actually not useful, such as when a test is fundamentally
+// single threaded and that may affect the behavior of blocking calls, or if a
+// test purposely changes this behavior, this macro can disable an already
+// initialized block-count logger object on the stack.
+#define RTC_IGNORE_THREAD_BLOCK_COUNT()   \
+  do {                                    \
+    blocked_call_count_printer.Disable(); \
+  } while (0)
+
 // Adds an RTC_DCHECK_LE that checks that the number of blocking calls are
 // less than or equal to a specific value. Use to avoid regressing in the
 // number of blocking thread calls.
 // Note: Use of this macro, requires RTC_LOG_THREAD_BLOCK_COUNT() to be called
 // first.
-#define RTC_DCHECK_BLOCK_COUNT_NO_MORE_THAN(x)                               \
-  do {                                                                       \
-    blocked_call_count_printer.set_minimum_call_count_for_callback(x + 1);   \
-    RTC_DCHECK_LE(blocked_call_count_printer.GetTotalBlockedCallCount(), x); \
+#define RTC_DCHECK_BLOCK_COUNT_NO_MORE_THAN(x)                                 \
+  do {                                                                         \
+    if (blocked_call_count_printer.is_enabled()) {                             \
+      blocked_call_count_printer.set_minimum_call_count_for_callback(x + 1);   \
+      RTC_DCHECK_LE(blocked_call_count_printer.GetTotalBlockedCallCount(), x); \
+    }                                                                          \
   } while (0)
 
 // Use to disallow calls to Thread::BlockingCall() within a scope/function.
@@ -80,6 +93,7 @@
 
 #else
 #define RTC_LOG_THREAD_BLOCK_COUNT()
+#define RTC_IGNORE_THREAD_BLOCK_COUNT()
 #define RTC_DCHECK_BLOCK_COUNT_NO_MORE_THAN(x)
 #define RTC_DCHECK_DISALLOW_THREAD_BLOCKING_CALLS()
 #endif
@@ -238,10 +252,13 @@ class RTC_LOCKABLE RTC_EXPORT Thread : public TaskQueueBase {
     uint32_t GetBlockingCallCount() const;
     uint32_t GetCouldBeBlockingCallCount() const;
     uint32_t GetTotalBlockedCallCount() const;
+    void Disable();
 
     void set_minimum_call_count_for_callback(uint32_t minimum) {
       min_blocking_calls_for_callback_ = minimum;
     }
+
+    bool is_enabled() const { return result_callback_ != nullptr; }
 
    private:
     Thread* const thread_;
@@ -285,6 +302,7 @@ class RTC_LOCKABLE RTC_EXPORT Thread : public TaskQueueBase {
     return messages_.size() + delayed_messages_.size();
   }
 
+  absl::string_view queue_name() const override { return name_; }
   bool IsCurrent() const;
 
   // Sleeps the calling thread for the specified number of milliseconds, during
@@ -315,6 +333,13 @@ class RTC_LOCKABLE RTC_EXPORT Thread : public TaskQueueBase {
   // work, override Run().  To receive and dispatch messages, call
   // ProcessMessages occasionally.
   virtual void Run();
+
+  // Returns true if there are pending tasks in the message queue.
+  // Cooperative tasks can use this to know if they should yield.
+  // If a task yields, it is up to the task itself how or if to
+  // continue the ongoing operation. Typically this can be handled
+  // by using PostTask() to queue up a continuation task.
+  bool HasPendingTasks() const;
 
   // Convenience method to invoke a functor on another thread.
   // Blocks the current thread until execution is complete.
@@ -497,7 +522,7 @@ class RTC_LOCKABLE RTC_EXPORT Thread : public TaskQueueBase {
   // Called by the ThreadManager when being unset as the current thread.
   void ClearCurrentTaskQueue();
 
-  std::queue<absl::AnyInvocable<void() &&>> messages_ RTC_GUARDED_BY(mutex_);
+  std::deque<absl::AnyInvocable<void() &&>> messages_ RTC_GUARDED_BY(mutex_);
   std::priority_queue<DelayedMessage> delayed_messages_ RTC_GUARDED_BY(mutex_);
   uint32_t delayed_next_num_ RTC_GUARDED_BY(mutex_);
 #if RTC_DCHECK_IS_ON
@@ -507,8 +532,8 @@ class RTC_LOCKABLE RTC_EXPORT Thread : public TaskQueueBase {
   bool invoke_policy_enabled_ RTC_GUARDED_BY(this) = false;
 #endif
   mutable Mutex mutex_;
-  bool fInitialized_;
-  bool fDestroyed_;
+  bool initialized_;
+  bool destroyed_;
 
   std::atomic<int> stop_;
 
@@ -556,7 +581,9 @@ class RTC_LOCKABLE RTC_EXPORT Thread : public TaskQueueBase {
 // thread, and provides utilities for testing with threads. It also does not
 // expose a direct dependency on webrtc::Thread.
 //
-class AutoThread : public Thread {
+class [[deprecated(
+    "Use test::RunLoop or GlobalSimulatedTimeController")]] AutoThread
+    : public Thread {
  public:
   AutoThread();
   ~AutoThread() override;
@@ -573,7 +600,9 @@ class AutoThread : public Thread {
 // NOTE: Use test::RunLoop instead of AutoSocketServerThread as it also adopts
 // the current thread, and provides utilities for testing with threads. It also
 // does not expose a direct dependency on webrtc::Thread.
-class AutoSocketServerThread : public Thread {
+class [[deprecated(
+    "Use test::RunLoop or "
+    "GlobalSimulatedTimeController")]] AutoSocketServerThread : public Thread {
  public:
   explicit AutoSocketServerThread(SocketServer* ss);
   ~AutoSocketServerThread() override;
@@ -585,6 +614,5 @@ class AutoSocketServerThread : public Thread {
   Thread* old_thread_;
 };
 }  //  namespace webrtc
-
 
 #endif  // RTC_BASE_THREAD_H_

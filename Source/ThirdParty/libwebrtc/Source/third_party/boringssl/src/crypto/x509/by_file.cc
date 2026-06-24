@@ -29,7 +29,7 @@ static const X509_LOOKUP_METHOD x509_file_lookup = {
     nullptr,       // get_by_subject
 };
 
-const X509_LOOKUP_METHOD *X509_LOOKUP_file(void) { return &x509_file_lookup; }
+const X509_LOOKUP_METHOD *X509_LOOKUP_file() { return &x509_file_lookup; }
 
 static int by_file_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
                         char **ret) {

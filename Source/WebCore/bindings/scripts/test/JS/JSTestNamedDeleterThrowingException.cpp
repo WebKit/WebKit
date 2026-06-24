@@ -355,6 +355,8 @@ void JSTestNamedDeleterThrowingException::analyzeHeap(JSCell* cell, HeapAnalyzer
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestNamedDeleterThrowingExceptionOwner::JSTestNamedDeleterThrowingExceptionOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestNamedDeleterThrowingExceptionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -367,7 +369,7 @@ void JSTestNamedDeleterThrowingExceptionOwner::finalize(JSC::Handle<JSC::Unknown
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedDeleterThrowingException = static_cast<JSTestNamedDeleterThrowingException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestNamedDeleterThrowingException->wrapped()).ptr(), jsTestNamedDeleterThrowingException);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedDeleterThrowingException->wrapped(), jsTestNamedDeleterThrowingException);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

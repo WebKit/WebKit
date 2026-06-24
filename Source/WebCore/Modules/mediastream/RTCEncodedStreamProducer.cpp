@@ -38,6 +38,7 @@
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
 #include "Logging.h"
+#include "RTCRtpScriptTransformer.h"
 #include "ReadableStreamSource.h"
 #include "ScriptExecutionContextInlines.h"
 #include "Settings.h"
@@ -94,7 +95,7 @@ std::optional<Exception> RTCEncodedStreamProducer::initialize(JSDOMGlobalObject&
     return { };
 }
 
-void RTCEncodedStreamProducer::start(Ref<RTCRtpTransformBackend>&& transformBackend, bool isVideo)
+void RTCEncodedStreamProducer::start(Ref<RTCRtpTransformBackend>&& transformBackend, bool isVideo, RTCRtpScriptTransformer* transformer)
 {
     transformBackend->setTransformableFrameCallback([weakThis = WeakPtr { *this }, contextIdentifer = m_contextIdentifier](Ref<RTCRtpTransformableFrame>&& frame) mutable {
         ScriptExecutionContext::postTaskTo(contextIdentifer, [weakThis, frame = WTF::move(frame)](auto&) mutable {
@@ -104,6 +105,8 @@ void RTCEncodedStreamProducer::start(Ref<RTCRtpTransformBackend>&& transformBack
     });
     m_transformBackend = WTF::move(transformBackend);
     m_isVideo = isVideo;
+    m_hasTransformer = !!transformer;
+    m_transformer = transformer;
 }
 
 void RTCEncodedStreamProducer::enqueueFrame(Ref<RTCRtpTransformableFrame>&& frame)
@@ -136,6 +139,7 @@ void RTCEncodedStreamProducer::enqueueFrame(Ref<RTCRtpTransformableFrame>&& fram
     }
 #endif
 
+    frame->setTransformer(m_transformer);
     auto value = m_isVideo ? toJS(globalObject, globalObject, RTCEncodedVideoFrame::create(WTF::move(frame))) : toJS(globalObject, globalObject, RTCEncodedAudioFrame::create(WTF::move(frame)));
 
     m_readableSource->enqueue(value);
@@ -158,15 +162,20 @@ ExceptionOr<void> RTCEncodedStreamProducer::writeFrame(ScriptExecutionContext& c
     if (frameConversionResult.hasException(scope)) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
 
+    bool isVideo = false;
     auto frame = frameConversionResult.releaseReturnValue();
     auto rtcFrame = WTF::switchOn(frame,
         [&](Ref<RTCEncodedAudioFrame>& value) {
             return value->rtcFrame(vm);
         },
         [&](Ref<RTCEncodedVideoFrame>& value) {
+            isVideo = true;
             return value->rtcFrame(vm);
         }
     );
+
+    if (m_isVideo != isVideo || (m_hasTransformer && !rtcFrame->isFromTransformer(m_transformer.get())))
+        return { };
 
     // If no data, skip the frame since there is nothing to packetize or decode.
     if (rtcFrame->data().data())

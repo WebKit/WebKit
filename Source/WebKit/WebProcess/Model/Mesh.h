@@ -33,6 +33,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <simd/simd.h>
 #include <wtf/MachSendRight.h>
 #endif
@@ -42,6 +43,7 @@ struct ResizeMeshDescriptor;
 }
 
 namespace WebCore {
+class NativeImage;
 class TransformationMatrix;
 enum class StageModeOperation : bool;
 }
@@ -80,12 +82,11 @@ public:
     virtual void setEntityTransform(const WebModel::Float4x4&) = 0;
     virtual void setScale(float) { }
     virtual void setFOV(float) { }
-    virtual void setBackgroundColor(const WebModel::Float3&) { }
     virtual void setViewportSize(float, float) { }
     virtual void setStageMode(WebCore::StageModeOperation) { }
     virtual void setRotation(float, float = 0.f, float = 0.f) { }
     virtual void play(bool) = 0;
-    virtual void setEnvironmentMap(const WebModel::UpdateTextureDescriptor&) = 0;
+    virtual void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) = 0;
     virtual void updateContentsHeadroom(float) = 0;
 
     virtual void render(uint32_t textureIndex, Function<void(bool)>&&) = 0;
@@ -93,6 +94,8 @@ public:
 #if PLATFORM(COCOA)
     virtual std::optional<WebModel::Float4x4> entityTransform() const = 0;
     virtual Vector<MachSendRight> ioSurfaceHandles() { return { }; }
+    virtual void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier, uint32_t) { }
+    virtual RefPtr<WebCore::NativeImage> getCurrentFrameAsNativeImage(uint32_t) { return nullptr; }
     virtual void updateRenderBuffers(WebModel::ResizeMeshDescriptor&&) { }
     virtual void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback) { callback({ }); }
     virtual std::pair<simd_float4, simd_float4> getCenterAndExtents() const { return std::make_pair(simd_make_float4(0.f), simd_make_float4(0.f)); }
@@ -114,7 +117,7 @@ private:
 
 #define WEBMODEL_WEB_MODEL_PLAYER_DECLARE_DIFFUSE_AND_SPECULAR_TEXTURES \
 WebModel::ImageAsset diffuseTexture { \
-    .data = loadData(adoptCF(static_cast<CFStringRef>(@"modelDefaultDiffuseData"))), \
+    .dataHandle = loadData(adoptCF(static_cast<CFStringRef>(@"modelDefaultDiffuseData"))), \
     .width = 64, \
     .height = 64, \
     .depth = 1, \
@@ -126,7 +129,7 @@ WebModel::ImageAsset diffuseTexture { \
     .swizzle = { } \
 }; \
 WebModel::ImageAsset specularTexture { \
-    .data = loadData(adoptCF(static_cast<CFStringRef>(@"modelDefaultSpecularData"))), \
+    .dataHandle = loadData(adoptCF(static_cast<CFStringRef>(@"modelDefaultSpecularData"))), \
     .width = 256, \
     .height = 256, \
     .depth = 1, \

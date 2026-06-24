@@ -29,45 +29,45 @@ extern "C" {
 //
 // BoringSSL has its own set of allocation functions, which keep track of
 // allocation lengths and zero them out before freeing. All memory returned by
-// BoringSSL API calls must therefore generally be freed using |OPENSSL_free|
+// BoringSSL API calls must therefore generally be freed using `OPENSSL_free`
 // unless stated otherwise.
 
 
 #ifndef _BORINGSSL_PROHIBIT_OPENSSL_MALLOC
-// OPENSSL_malloc is similar to a regular |malloc|, but allocates additional
-// private data. The resulting pointer must be freed with |OPENSSL_free|. In
-// the case of a malloc failure, prior to returning NULL |OPENSSL_malloc| will
-// push |ERR_R_MALLOC_FAILURE| onto the openssl error stack.
+// OPENSSL_malloc is similar to a regular `malloc`, but allocates additional
+// private data. The resulting pointer must be freed with `OPENSSL_free`. In
+// the case of a malloc failure, prior to returning NULL `OPENSSL_malloc` will
+// push `ERR_R_MALLOC_FAILURE` onto the openssl error stack.
 OPENSSL_EXPORT void *OPENSSL_malloc(size_t size);
 
-// OPENSSL_zalloc behaves like |OPENSSL_malloc| except it also initializes the
+// OPENSSL_zalloc behaves like `OPENSSL_malloc` except it also initializes the
 // resulting memory to zero.
 OPENSSL_EXPORT void *OPENSSL_zalloc(size_t size);
 
-// OPENSSL_calloc is similar to a regular |calloc|, but allocates data with
-// |OPENSSL_malloc|. On overflow, it will push |ERR_R_OVERFLOW| onto the error
+// OPENSSL_calloc is similar to a regular `calloc`, but allocates data with
+// `OPENSSL_malloc`. On overflow, it will push `ERR_R_OVERFLOW` onto the error
 // queue.
 OPENSSL_EXPORT void *OPENSSL_calloc(size_t num, size_t size);
 
-// OPENSSL_realloc returns a pointer to a buffer of |new_size| bytes that
-// contains the contents of |ptr|. Unlike |realloc|, a new buffer is always
-// allocated and the data at |ptr| is always wiped and freed. Memory is
-// allocated with |OPENSSL_malloc| and must be freed with |OPENSSL_free|.
+// OPENSSL_realloc returns a pointer to a buffer of `new_size` bytes that
+// contains the contents of `ptr`. Unlike `realloc`, a new buffer is always
+// allocated and the data at `ptr` is always wiped and freed. Memory is
+// allocated with `OPENSSL_malloc` and must be freed with `OPENSSL_free`.
 OPENSSL_EXPORT void *OPENSSL_realloc(void *ptr, size_t new_size);
 #endif // !_BORINGSSL_PROHIBIT_OPENSSL_MALLOC
 
-// OPENSSL_free does nothing if |ptr| is NULL. Otherwise it zeros out the
-// memory allocated at |ptr| and frees it along with the private data.
-// It must only be used on on |ptr| values obtained from |OPENSSL_malloc|
+// OPENSSL_free does nothing if `ptr` is NULL. Otherwise it zeros out the
+// memory allocated at `ptr` and frees it along with the private data.
+// It must only be used on on `ptr` values obtained from `OPENSSL_malloc`
 OPENSSL_EXPORT void OPENSSL_free(void *ptr);
 
-// OPENSSL_cleanse zeros out |len| bytes of memory at |ptr|. This is similar to
-// |memset_s| from C11.
+// OPENSSL_cleanse zeros out `len` bytes of memory at `ptr`. This is similar to
+// `memset_s` from C11.
 OPENSSL_EXPORT void OPENSSL_cleanse(void *ptr, size_t len);
 
-// CRYPTO_memcmp returns zero iff the |len| bytes at |a| and |b| are equal. It
-// takes an amount of time dependent on |len|, but independent of the contents
-// of |a| and |b|. Unlike memcmp, it cannot be used to put elements into a
+// CRYPTO_memcmp returns zero iff the `len` bytes at `a` and `b` are equal. It
+// takes an amount of time dependent on `len`, but independent of the contents
+// of `a` and `b`. Unlike memcmp, it cannot be used to put elements into a
 // defined order as the return value when a != b is undefined, other than to be
 // non-zero.
 OPENSSL_EXPORT int CRYPTO_memcmp(const void *a, const void *b, size_t len);
@@ -75,7 +75,7 @@ OPENSSL_EXPORT int CRYPTO_memcmp(const void *a, const void *b, size_t len);
 // OPENSSL_hash32 implements the 32 bit, FNV-1a hash.
 OPENSSL_EXPORT uint32_t OPENSSL_hash32(const void *ptr, size_t len);
 
-// OPENSSL_strhash calls |OPENSSL_hash32| on the NUL-terminated string |s|.
+// OPENSSL_strhash calls `OPENSSL_hash32` on the NUL-terminated string `s`.
 OPENSSL_EXPORT uint32_t OPENSSL_strhash(const char *s);
 
 // OPENSSL_strdup has the same behaviour as strdup(3).
@@ -97,13 +97,13 @@ OPENSSL_EXPORT int OPENSSL_isdigit(int c);
 // digits.
 OPENSSL_EXPORT int OPENSSL_isxdigit(int c);
 
-// OPENSSL_fromxdigit returns one if |c| is a hexadecimal digit as recognized
-// by OPENSSL_isxdigit, and sets |out| to the corresponding value. Otherwise
+// OPENSSL_fromxdigit returns one if `c` is a hexadecimal digit as recognized
+// by OPENSSL_isxdigit, and sets `out` to the corresponding value. Otherwise
 // zero is returned.
 OPENSSL_EXPORT int OPENSSL_fromxdigit(uint8_t *out, int c);
 
 // OPENSSL_isalnum is a locale-independent, ASCII-only version of isalnum(3), It
-// only recognizes what |OPENSSL_isalpha| and |OPENSSL_isdigit| recognize.
+// only recognizes what `OPENSSL_isalpha` and `OPENSSL_isdigit` recognize.
 OPENSSL_EXPORT int OPENSSL_isalnum(int c);
 
 // OPENSSL_tolower is a locale-independent, ASCII-only version of tolower(3). It
@@ -135,24 +135,24 @@ OPENSSL_EXPORT int BIO_vsnprintf(char *buf, size_t n, const char *format,
                                  va_list args) OPENSSL_PRINTF_FORMAT_FUNC(3, 0);
 
 // OPENSSL_vasprintf has the same behavior as vasprintf(3), except that
-// memory allocated in a returned string must be freed with |OPENSSL_free|.
+// memory allocated in a returned string must be freed with `OPENSSL_free`.
 OPENSSL_EXPORT int OPENSSL_vasprintf(char **str, const char *format,
                                      va_list args)
     OPENSSL_PRINTF_FORMAT_FUNC(2, 0);
 
 // OPENSSL_asprintf has the same behavior as asprintf(3), except that
-// memory allocated in a returned string must be freed with |OPENSSL_free|.
+// memory allocated in a returned string must be freed with `OPENSSL_free`.
 OPENSSL_EXPORT int OPENSSL_asprintf(char **str, const char *format, ...)
     OPENSSL_PRINTF_FORMAT_FUNC(2, 3);
 
-// OPENSSL_strndup returns an allocated, duplicate of |str|, which is, at most,
-// |size| bytes. The result is always NUL terminated. The memory allocated
-// must be freed with |OPENSSL_free|.
+// OPENSSL_strndup returns an allocated, duplicate of `str`, which is, at most,
+// `size` bytes. The result is always NUL terminated. The memory allocated
+// must be freed with `OPENSSL_free`.
 OPENSSL_EXPORT char *OPENSSL_strndup(const char *str, size_t size);
 
-// OPENSSL_memdup returns an allocated, duplicate of |size| bytes from |data| or
+// OPENSSL_memdup returns an allocated, duplicate of `size` bytes from `data` or
 // NULL on allocation failure. The memory allocated must be freed with
-// |OPENSSL_free|.
+// `OPENSSL_free`.
 OPENSSL_EXPORT void *OPENSSL_memdup(const void *data, size_t size);
 
 // OPENSSL_strlcpy acts like strlcpy(3).
@@ -166,18 +166,18 @@ OPENSSL_EXPORT size_t OPENSSL_strlcat(char *dst, const char *src,
 
 // Deprecated functions.
 
-// CRYPTO_malloc calls |OPENSSL_malloc|. |file| and |line| are ignored.
+// CRYPTO_malloc calls `OPENSSL_malloc`. `file` and `line` are ignored.
 OPENSSL_EXPORT void *CRYPTO_malloc(size_t size, const char *file, int line);
 
-// CRYPTO_realloc calls |OPENSSL_realloc|. |file| and |line| are ignored.
+// CRYPTO_realloc calls `OPENSSL_realloc`. `file` and `line` are ignored.
 OPENSSL_EXPORT void *CRYPTO_realloc(void *ptr, size_t new_size,
                                     const char *file, int line);
 
-// CRYPTO_free calls |OPENSSL_free|. |file| and |line| are ignored.
+// CRYPTO_free calls `OPENSSL_free`. `file` and `line` are ignored.
 OPENSSL_EXPORT void CRYPTO_free(void *ptr, const char *file, int line);
 
-// OPENSSL_clear_free calls |OPENSSL_free|. BoringSSL automatically clears all
-// allocations on free, but we define |OPENSSL_clear_free| for compatibility.
+// OPENSSL_clear_free calls `OPENSSL_free`. BoringSSL automatically clears all
+// allocations on free, but we define `OPENSSL_clear_free` for compatibility.
 OPENSSL_EXPORT void OPENSSL_clear_free(void *ptr, size_t len);
 
 // CRYPTO_secure_malloc_init returns zero.
@@ -189,10 +189,10 @@ OPENSSL_EXPORT int CRYPTO_secure_malloc_initialized(void);
 // CRYPTO_secure_used returns zero.
 OPENSSL_EXPORT size_t CRYPTO_secure_used(void);
 
-// OPENSSL_secure_malloc calls |OPENSSL_malloc|.
+// OPENSSL_secure_malloc calls `OPENSSL_malloc`.
 OPENSSL_EXPORT void *OPENSSL_secure_malloc(size_t size);
 
-// OPENSSL_secure_clear_free calls |OPENSSL_clear_free|.
+// OPENSSL_secure_clear_free calls `OPENSSL_clear_free`.
 OPENSSL_EXPORT void OPENSSL_secure_clear_free(void *ptr, size_t len);
 
 

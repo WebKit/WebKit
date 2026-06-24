@@ -118,6 +118,12 @@ function mac_process_network_entitlements()
         plistbuddy Add :com.apple.private.assets.accessible-asset-types array
         plistbuddy Add :com.apple.private.assets.accessible-asset-types:0 string com.apple.MobileAsset.WebContentRestrictions
 
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 260000 ))
+        then
+            plistbuddy Add :com.apple.private.device-configuration.effective-configuration-ids.read array
+            plistbuddy Add :com.apple.private.device-configuration.effective-configuration-ids.read:0 string com.apple.WebContentRestrictions
+        fi
+
         plistbuddy Add :com.apple.private.ciphermld.allow bool YES
 
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications array
@@ -319,6 +325,8 @@ function maccatalyst_process_webcontent_shared_entitlements()
     fi
 
     plistbuddy Add :com.apple.private.disable-log-mach-ports bool YES
+
+    webcontent_sandbox_entitlements
 }
 
 function maccatalyst_process_webcontent_entitlements()
@@ -588,6 +596,10 @@ function ios_family_process_model_entitlements()
 function ios_family_process_adattributiond_entitlements()
 {
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.adattributiond
+    plistbuddy Add :com.apple.private.network.socket-delegate bool YES
+    plistbuddy Add :com.apple.security.network.client bool YES
+    plistbuddy Add :com.apple.private.networkserviceproxy bool YES
+    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name:0 string com.apple.networkserviceproxy
 }
 
 function ios_family_process_webpushd_entitlements()

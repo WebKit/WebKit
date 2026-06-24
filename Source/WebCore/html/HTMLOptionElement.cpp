@@ -46,11 +46,11 @@
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptElement.h"
 #include "SelectPopoverElement.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/Ref.h>
@@ -163,10 +163,7 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
 {
     auto result = HTMLElement::insertionSteps(insertionType, parentOfInsertedTree);
 
-    if (!document().settings().htmlEnhancedSelectParsingEnabled())
-        return result;
-
-    if (!m_ownerSelect) {
+    if (document().settings().htmlEnhancedSelectParsingEnabled() && !m_ownerSelect) {
         if (RefPtr select = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::No)) {
             m_ownerSelect = select.get();
             select->setRecalcListItems();
@@ -182,8 +179,12 @@ auto HTMLOptionElement::insertionSteps(InsertionType insertionType, ContainerNod
         }
     }
 
-    if (insertionType.connectedToDocument && m_shadowTreeNeedsUpdate)
-        protect(document())->addElementWithPendingUserAgentShadowTreeUpdate(*this);
+    if (insertionType.connectedToDocument) {
+        if (RefPtr select = ownerSelectElement())
+            select->invalidateButtonText();
+        if (m_shadowTreeNeedsUpdate)
+            protect(document())->addElementWithPendingUserAgentShadowTreeUpdate(*this);
+    }
 
     return result;
 }
@@ -205,6 +206,7 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
 
     if (RefPtr select = std::exchange(m_ownerSelect, nullptr).get()) {
         select->setRecalcListItems();
+        select->invalidateButtonText();
         invalidateShadowTree();
     }
 }
@@ -579,7 +581,7 @@ bool HTMLOptionElement::isDisabledFormControl() const
         return true;
 
     if (!document().settings().htmlEnhancedSelectParsingEnabled()) {
-        auto* parentOptGroup = dynamicDowncast<HTMLOptGroupElement>(parentNode());
+        RefPtr parentOptGroup = dynamicDowncast<HTMLOptGroupElement>(parentNode());
         return parentOptGroup && parentOptGroup->isDisabledFormControl();
     }
 

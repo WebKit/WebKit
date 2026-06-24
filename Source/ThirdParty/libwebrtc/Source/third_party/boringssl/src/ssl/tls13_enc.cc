@@ -30,6 +30,7 @@
 #include <openssl/hmac.h>
 #include <openssl/mem.h>
 
+#include "../crypto/bytestring/internal.h"
 #include "../crypto/fipsmodule/tls/internal.h"
 #include "../crypto/internal.h"
 #include "internal.h"
@@ -398,17 +399,17 @@ bool tls13_derive_application_secrets(SSL_HANDSHAKE *hs) {
 static const char kTLS13LabelApplicationTraffic[] = "traffic upd";
 
 bool tls13_rotate_traffic_key(SSL *ssl, enum evp_aead_direction_t direction) {
-  Span<uint8_t> secret = direction == evp_aead_open
-                             ? Span(ssl->s3->read_traffic_secret)
-                             : Span(ssl->s3->write_traffic_secret);
+  InplaceVector<uint8_t, SSL_MAX_MD_SIZE> secret(
+      direction == evp_aead_open ? ssl->s3->read_traffic_secret
+                                 : ssl->s3->write_traffic_secret);
 
   const SSL_SESSION *session = SSL_get_session(ssl);
   const EVP_MD *digest = ssl_session_get_digest(session);
-  return hkdf_expand_label(secret, digest, secret,
+  return hkdf_expand_label(Span(secret), digest, secret,
                            kTLS13LabelApplicationTraffic, {},
                            SSL_is_dtls(ssl)) &&
          tls13_set_traffic_key(ssl, ssl_encryption_application, direction,
-                               session, secret);
+                               session, Span(secret));
 }
 
 static const char kTLS13LabelResumption[] = "res master";
@@ -423,8 +424,7 @@ static const char kTLS13LabelFinished[] = "finished";
 // Finished key for both Finished messages and the PSK binder. |out| must have
 // space available for |EVP_MAX_MD_SIZE| bytes.
 static bool tls13_verify_data(uint8_t *out, size_t *out_len,
-                              const EVP_MD *digest, uint16_t version,
-                              Span<const uint8_t> secret,
+                              const EVP_MD *digest, Span<const uint8_t> secret,
                               Span<const uint8_t> context, bool is_dtls) {
   uint8_t key_buf[EVP_MAX_MD_SIZE];
   auto key = Span(key_buf, EVP_MD_size(digest));
@@ -447,8 +447,7 @@ bool tls13_finished_mac(SSL_HANDSHAKE *hs, uint8_t *out, size_t *out_len,
   uint8_t context_hash[EVP_MAX_MD_SIZE];
   size_t context_hash_len;
   if (!hs->transcript.GetHash(context_hash, &context_hash_len) ||
-      !tls13_verify_data(out, out_len, hs->transcript.Digest(),
-                         hs->ssl->s3->version, traffic_secret,
+      !tls13_verify_data(out, out_len, hs->transcript.Digest(), traffic_secret,
                          Span(context_hash, context_hash_len),
                          SSL_is_dtls(hs->ssl))) {
     return false;
@@ -503,14 +502,48 @@ bool tls13_export_keying_material(const SSL *ssl, Span<uint8_t> out,
                            hash, SSL_is_dtls(ssl));
 }
 
-static const char kTLS13LabelPSKBinder[] = "res binder";
+const EVP_MD *ssl_pre_shared_key_hash(const SSLPreSharedKey &psk) {
+  if (const auto *imported = std::get_if<SSLImportedPSK>(&psk);
+      imported != nullptr) {
+    return imported->md;
+  }
+  return ssl_session_get_digest(std::get<UniquePtr<SSL_SESSION>>(psk).get());
+}
 
-static bool tls13_psk_binder(uint8_t *out, size_t *out_len,
-                             const SSL_SESSION *session,
-                             const SSLTranscript &transcript,
-                             Span<const uint8_t> client_hello,
-                             size_t binders_len, bool is_dtls) {
-  const EVP_MD *digest = ssl_session_get_digest(session);
+Span<const uint8_t> ssl_pre_shared_key_identity(const SSLPreSharedKey &psk) {
+  if (const auto *imported = std::get_if<SSLImportedPSK>(&psk);
+      imported != nullptr) {
+    return imported->imported_identity;
+  }
+  return std::get<UniquePtr<SSL_SESSION>>(psk)->ticket;
+}
+
+Span<const uint8_t> ssl_pre_shared_key_secret(const SSLPreSharedKey &psk) {
+  if (const auto *imported = std::get_if<SSLImportedPSK>(&psk);
+      imported != nullptr) {
+    return imported->ipskx;
+  }
+  return std::get<UniquePtr<SSL_SESSION>>(psk)->secret;
+}
+
+bool tls13_psk_binder(const SSL_HANDSHAKE *hs, Span<uint8_t> out,
+                      size_t *out_len, const SSLPreSharedKey &psk,
+                      const SSLTranscript &transcript,
+                      Span<const uint8_t> client_hello, size_t binders_len) {
+  const EVP_MD *digest;
+  Span<const uint8_t> secret;
+  std::string_view label;
+  if (const auto *imported = std::get_if<SSLImportedPSK>(&psk);
+      imported != nullptr) {
+    digest = imported->md;
+    secret = imported->ipskx;
+    label = "imp binder";
+  } else {
+    const SSL_SESSION *session = std::get<UniquePtr<SSL_SESSION>>(psk).get();
+    digest = ssl_session_get_digest(session);
+    secret = session->secret;
+    label = "res binder";
+  }
 
   // Compute the binder key.
   //
@@ -524,52 +557,40 @@ static bool tls13_psk_binder(uint8_t *out, size_t *out_len,
   auto binder_key = Span(binder_key_buf, EVP_MD_size(digest));
   if (!EVP_Digest(nullptr, 0, binder_context, &binder_context_len, digest,
                   nullptr) ||
-      !HKDF_extract(early_secret, &early_secret_len, digest,
-                    session->secret.data(), session->secret.size(), nullptr,
-                    0) ||
-      !hkdf_expand_label(binder_key, digest,
-                         Span(early_secret, early_secret_len),
-                         kTLS13LabelPSKBinder,
-                         Span(binder_context, binder_context_len), is_dtls)) {
+      !HKDF_extract(early_secret, &early_secret_len, digest, secret.data(),
+                    secret.size(), nullptr, 0) ||
+      !hkdf_expand_label(
+          binder_key, digest, Span(early_secret, early_secret_len), label,
+          Span(binder_context, binder_context_len), SSL_is_dtls(hs->ssl))) {
     return false;
   }
 
-  // Hash the transcript and truncated ClientHello.
-  if (client_hello.size() < binders_len) {
+  // Hash the transcript and truncated ClientHello. As part of this, construct
+  // the expected ClientHello header.
+  if (client_hello.size() < binders_len || client_hello.size() > 0xffffff) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
   }
+  uint8_t header[4] = {
+      SSL3_MT_CLIENT_HELLO,
+      static_cast<uint8_t>(client_hello.size() >> 16),
+      static_cast<uint8_t>(client_hello.size() >> 8),
+      static_cast<uint8_t>(client_hello.size()),
+  };
   auto truncated = client_hello.subspan(0, client_hello.size() - binders_len);
   uint8_t context[EVP_MAX_MD_SIZE];
   unsigned context_len;
   ScopedEVP_MD_CTX ctx;
-  if (!is_dtls) {
-    if (!transcript.CopyToHashContext(ctx.get(), digest) ||
-        !EVP_DigestUpdate(ctx.get(), truncated.data(), truncated.size()) ||
-        !EVP_DigestFinal_ex(ctx.get(), context, &context_len)) {
-      return false;
-    }
-  } else {
-    // In DTLS 1.3, the transcript hash is computed over only the TLS 1.3
-    // handshake messages (i.e. only type and length in the header), not the
-    // full DTLSHandshake messages that are in |truncated|. This code pulls
-    // the header and body out of the truncated ClientHello and writes those
-    // to the hash context so the correct binder value is computed.
-    if (truncated.size() < DTLS1_HM_HEADER_LENGTH) {
-      return false;
-    }
-    auto header = truncated.first<4>();
-    auto body = truncated.subspan<12>();
-    if (!transcript.CopyToHashContext(ctx.get(), digest) ||
-        !EVP_DigestUpdate(ctx.get(), header.data(), header.size()) ||
-        !EVP_DigestUpdate(ctx.get(), body.data(), body.size()) ||
-        !EVP_DigestFinal_ex(ctx.get(), context, &context_len)) {
-      return false;
-    }
+  if (!transcript.CopyToHashContext(ctx.get(), digest) ||
+      !EVP_DigestUpdate(ctx.get(), header, sizeof(header)) ||
+      !EVP_DigestUpdate(ctx.get(), truncated.data(), truncated.size()) ||
+      !EVP_DigestFinal_ex(ctx.get(), context, &context_len)) {
+    return false;
   }
 
-  if (!tls13_verify_data(out, out_len, digest, session->ssl_version, binder_key,
-                         Span(context, context_len), is_dtls)) {
+  BSSL_CHECK(out.size() >= EVP_MD_size(digest));
+  if (!tls13_verify_data(out.data(), out_len, digest, binder_key,
+                         Span(context, context_len), SSL_is_dtls(hs->ssl))) {
     return false;
   }
 
@@ -577,62 +598,93 @@ static bool tls13_psk_binder(uint8_t *out, size_t *out_len,
   return true;
 }
 
-bool tls13_write_psk_binder(const SSL_HANDSHAKE *hs,
-                            const SSLTranscript &transcript, Span<uint8_t> msg,
-                            size_t *out_binder_len) {
-  const SSL *const ssl = hs->ssl;
-  const EVP_MD *digest = ssl_session_get_digest(ssl->session.get());
-  const size_t hash_len = EVP_MD_size(digest);
-  // We only offer one PSK, so the binders are a u16 and u8 length
-  // prefix, followed by the binder. The caller is assumed to have constructed
-  // |msg| with placeholder binders.
-  const size_t binders_len = 3 + hash_len;
-  uint8_t verify_data[EVP_MAX_MD_SIZE];
-  size_t verify_data_len;
-  if (!tls13_psk_binder(verify_data, &verify_data_len, ssl->session.get(),
-                        transcript, msg, binders_len, SSL_is_dtls(hs->ssl)) ||
-      verify_data_len != hash_len) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-    return false;
+static std::optional<uint16_t> hkdf_md_to_kdf_id(const EVP_MD *hkdf_md) {
+  // See Section 10 of RFC 9258.
+  switch (EVP_MD_nid(hkdf_md)) {
+    case NID_sha256:
+      return 0x0001;  // HKDF_SHA256
+    case NID_sha384:
+      return 0x0002;  // HKDF_SHA384
+    default:
+      return std::nullopt;
   }
-
-  auto msg_binder = msg.last(verify_data_len);
-  OPENSSL_memcpy(msg_binder.data(), verify_data, verify_data_len);
-  if (out_binder_len != nullptr) {
-    *out_binder_len = verify_data_len;
-  }
-  return true;
 }
 
-bool tls13_verify_psk_binder(const SSL_HANDSHAKE *hs,
-                             const SSL_SESSION *session, const SSLMessage &msg,
-                             CBS *binders) {
-  uint8_t verify_data[EVP_MAX_MD_SIZE];
-  size_t verify_data_len;
-  CBS binder;
-  // The binders are computed over |msg| with |binders| and its u16 length
-  // prefix removed. The caller is assumed to have parsed |msg|, extracted
-  // |binders|, and verified the PSK extension is last.
-  if (!tls13_psk_binder(verify_data, &verify_data_len, session, hs->transcript,
-                        msg.raw, 2 + CBS_len(binders), SSL_is_dtls(hs->ssl)) ||
-      // We only consider the first PSK, so compare against the first binder.
-      !CBS_get_u8_length_prefixed(binders, &binder)) {
+std::optional<SSLImportedPSK> tls13_derive_imported_psk(const SSL_HANDSHAKE *hs,
+                                                        SSLCredential *cred,
+                                                        uint16_t protocol,
+                                                        const EVP_MD *hkdf_md) {
+  assert(cred->type == SSLCredentialType::kPreSharedKey);
+
+  std::optional<uint16_t> target_kdf = hkdf_md_to_kdf_id(hkdf_md);
+  if (!target_kdf.has_value()) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return std::nullopt;
+  }
+
+  SSLImportedPSK ret;
+  ret.credential = UpRef(cred);
+  ret.protocol = protocol;
+  ret.md = hkdf_md;
+
+  // See Section 5.1 of RFC 9258.
+  ScopedCBB imported_id;
+  CBB external_identity, context;
+  if (!CBB_init(imported_id.get(), 2 + cred->epsk_id.size() + 2 +
+                                       cred->epsk_context.size() + 2 + 2) ||
+      !CBB_add_u16_length_prefixed(imported_id.get(), &external_identity) ||
+      !CBB_add_bytes(&external_identity, cred->epsk_id.data(),
+                     cred->epsk_id.size()) ||
+      !CBB_add_u16_length_prefixed(imported_id.get(), &context) ||
+      !CBB_add_bytes(&context, cred->epsk_context.data(),
+                     cred->epsk_context.size()) ||
+      !CBB_add_u16(imported_id.get(), protocol) ||
+      !CBB_add_u16(imported_id.get(), *target_kdf) ||
+      !CBBFinishArray(imported_id.get(), &ret.imported_identity)) {
+    return std::nullopt;
+  }
+
+  ScopedEVP_MD_CTX imported_id_ctx;
+  InplaceVector<uint8_t, EVP_MAX_MD_SIZE> imported_id_hash;
+  imported_id_hash.ResizeForOverwrite(EVP_MD_size(cred->epsk_md));
+  unsigned imported_id_hash_len;
+  if (!EVP_Digest(ret.imported_identity.data(), ret.imported_identity.size(),
+                  imported_id_hash.data(), &imported_id_hash_len, cred->epsk_md,
+                  nullptr)) {
+    return std::nullopt;
+  }
+  assert(imported_id_hash.size() == imported_id_hash_len);
+
+  ret.ipskx.ResizeForOverwrite(EVP_MD_size(hkdf_md));
+  if (!hkdf_expand_label(Span(ret.ipskx), cred->epsk_md, cred->epskx,
+                         "derived psk", imported_id_hash,
+                         SSL_is_dtls(hs->ssl))) {
+    return std::nullopt;
+  }
+
+  return ret;
+}
+
+bool tls13_compare_imported_psk_identity(Span<const uint8_t> id,
+                                         const SSLCredential *cred,
+                                         uint16_t protocol,
+                                         const EVP_MD *hkdf_md) {
+  assert(cred->type == SSLCredentialType::kPreSharedKey);
+  std::optional<uint16_t> target_kdf = hkdf_md_to_kdf_id(hkdf_md);
+  if (!target_kdf.has_value()) {
     return false;
   }
 
-  bool binder_ok =
-      CBS_len(&binder) == verify_data_len &&
-      CRYPTO_memcmp(CBS_data(&binder), verify_data, verify_data_len) == 0;
-  if (CRYPTO_fuzzer_mode_enabled()) {
-    binder_ok = true;
-  }
-  if (!binder_ok) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_DIGEST_CHECK_FAILED);
-    return false;
-  }
-
-  return true;
+  // See Section 5.1 of RFC 9258.
+  CBS cbs = id, external_identity, context;
+  uint16_t found_protocol, found_kdf;
+  return CBS_get_u16_length_prefixed(&cbs, &external_identity) &&
+         external_identity == Span(cred->epsk_id) &&
+         CBS_get_u16_length_prefixed(&cbs, &context) &&
+         context == Span(cred->epsk_context) &&
+         CBS_get_u16(&cbs, &found_protocol) && found_protocol == protocol &&
+         CBS_get_u16(&cbs, &found_kdf) && found_kdf == *target_kdf &&
+         CBS_len(&cbs) == 0;
 }
 
 size_t ssl_ech_confirmation_signal_hello_offset(const SSL *ssl) {
@@ -649,7 +701,7 @@ bool ssl_ech_accept_confirmation(
     Span<const uint8_t, SSL3_RANDOM_SIZE> client_random,
     const SSLTranscript &transcript, bool is_hrr, Span<const uint8_t> msg,
     size_t offset) {
-  // See draft-ietf-tls-esni-13, sections 7.2 and 7.2.1.
+  // See RFC 9849, sections 7.2 and 7.2.1.
   static const uint8_t kZeros[EVP_MAX_MD_SIZE] = {0};
 
   // We hash |msg|, with bytes from |offset| zeroed.

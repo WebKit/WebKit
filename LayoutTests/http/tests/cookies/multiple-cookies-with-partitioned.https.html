@@ -12,6 +12,8 @@ description(
 "This test checks that mulitple cookies are correctly set."
 );
 
+window.jsTestIsAsync = true;
+
 let expectedCookies = [ "", "test=foobarPartitioned", "test=foobarPartitioned; test=foobarPath", "test=foobarPartitioned; test=foobarPath; test=foobar" ];
 let testSetCookies = [ "test=foobarPartitioned;Secure;Partitioned", "test=foobarPartitioned;SameSite=None;Secure;Partitioned", "test=foobarPath;SameSite=None;Secure;Path=/", "test=foobar;SameSite=None;Secure" ];
 
@@ -29,7 +31,6 @@ async function runTest() {
     document.cookie = testSetCookies[3]
     shouldBe('document.cookie', 'expectedCookies[3]');
 
-
     await fetch(`/clear-site-data/resources/clear-site-data-cookies.py`);
 
     cookiesShouldBe(testSetCookies[0], expectedCookies[0]);
@@ -38,10 +39,11 @@ async function runTest() {
 
     clearCookies();
 
-    successfullyParsed = true;
+    finishJSTest();
 }
 
 runTest();
+successfullyParsed = true;
 </script>
 <script src="resources/cookies-test-post.js"></script>
 </body>

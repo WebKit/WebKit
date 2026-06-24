@@ -48,6 +48,7 @@
 #include "WasmThunks.h"
 #include <bmalloc/BPlatform.h>
 #include <mutex>
+#include <wtf/Condition.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>
 

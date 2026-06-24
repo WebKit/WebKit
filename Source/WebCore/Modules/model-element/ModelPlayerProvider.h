@@ -39,6 +39,8 @@ class WEBCORE_EXPORT ModelPlayerProvider : public RefCountedAndCanMakeWeakPtr<Mo
 public:
     virtual ~ModelPlayerProvider();
 
+    virtual bool isAvailable() const;
+
     // FIXME: Once all clients have adopted ModelPlayerProvider, this should
     // be changed to return a Ref<ModelPlayer>
     virtual RefPtr<ModelPlayer> createModelPlayer(ModelPlayerClient&) = 0;

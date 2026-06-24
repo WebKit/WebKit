@@ -95,11 +95,6 @@
 namespace WebCore {
 namespace Style {
 
-constexpr SVGGlyphOrientationHorizontal ComputedStyleProperties::initialGlyphOrientationHorizontal()
-{
-    return SVGGlyphOrientationHorizontal::Degrees0;
-}
-
 constexpr LineWidth ComputedStyleProperties::initialBorderBottomWidth()
 {
     return LineWidth { 3.0f };

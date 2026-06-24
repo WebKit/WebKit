@@ -1,0 +1,14 @@
+xxxx
+xxxx
+xxxx
+xxxx
+xxxx
+xxxx
+xxxx
+xxxx
+
+FAIL line-height:normal should be scaled assert_greater_than: expected a number greater than 20 but got 20
+FAIL line-height:<number> should be scaled assert_greater_than: expected a number greater than 26 but got 26
+PASS line-height:<percentage> should not be scaled
+PASS line-height:<length> should not be scaled
+

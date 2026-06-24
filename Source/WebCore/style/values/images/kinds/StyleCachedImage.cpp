@@ -125,10 +125,10 @@ LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(const 
 
     if (!m_cachedImage) {
         auto fragmentIdentifier = SVGURIReference::fragmentIdentifierFromIRIString(m_url, protect(renderer->document()));
-        return uncheckedRenderSVGResource(renderer->treeScopeForSVGReferences(), fragmentIdentifier);
+        return uncheckedRenderSVGResource(protect(renderer->treeScopeForSVGReferences()), fragmentIdentifier);
     }
 
-    RefPtr image = dynamicDowncast<SVGImage>(m_cachedImage->image());
+    RefPtr image = dynamicDowncast<SVGImage>(protect(m_cachedImage)->image());
     if (!image)
         return nullptr;
 
@@ -136,7 +136,7 @@ LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(const 
     if (!rootElement)
         return nullptr;
 
-    return uncheckedRenderSVGResource(rootElement->treeScopeForSVGReferences(), m_url.resolved.fragmentIdentifier().toAtomString());
+    return uncheckedRenderSVGResource(protect(rootElement->treeScopeForSVGReferences()), m_url.resolved.fragmentIdentifier().toAtomString());
 }
 
 LegacyRenderSVGResourceContainer* CachedImage::legacyRenderSVGResource(const RenderElement* renderer) const
@@ -158,14 +158,14 @@ RenderSVGResourceContainer* CachedImage::renderSVGResource(const RenderElement* 
         return nullptr;
 
     if (!m_cachedImage) {
-        if (RefPtr referencedMaskElement = ReferencedSVGResources::referencedMaskElement(renderer->treeScopeForSVGReferences(), *this)) {
+        if (RefPtr referencedMaskElement = ReferencedSVGResources::referencedMaskElement(protect(renderer->treeScopeForSVGReferences()), *this)) {
             if (auto* referencedMaskerRenderer = dynamicDowncast<RenderSVGResourceMasker>(referencedMaskElement->renderer()))
                 return referencedMaskerRenderer;
         }
         return nullptr;
     }
 
-    RefPtr image = dynamicDowncast<SVGImage>(m_cachedImage->image());
+    RefPtr image = dynamicDowncast<SVGImage>(protect(m_cachedImage)->image());
     if (!image)
         return nullptr;
 
@@ -173,7 +173,7 @@ RenderSVGResourceContainer* CachedImage::renderSVGResource(const RenderElement* 
     if (!rootElement)
         return nullptr;
 
-    auto referencedMaskElement = ReferencedSVGResources::referencedMaskElement(rootElement->treeScopeForSVGReferences(), m_url.resolved.fragmentIdentifier().toAtomString());
+    auto referencedMaskElement = ReferencedSVGResources::referencedMaskElement(protect(rootElement->treeScopeForSVGReferences()), m_url.resolved.fragmentIdentifier().toAtomString());
     if (!referencedMaskElement)
         return nullptr;
 
@@ -197,12 +197,12 @@ WebCore::CachedImage* CachedImage::cachedImage() const
     return m_cachedImage.get();
 }
 
-Ref<CSSValue> CachedImage::computedStyleValue(const RenderStyle& style) const
+Ref<CSSValue> CachedImage::computedStyleValue(const Style::ComputedStyle& style) const
 {
     return m_cssValue->copyForComputedStyle(toCSS(m_url, style));
 }
 
-Ref<DeprecatedCSSOMValue> CachedImage::computedStyleDeprecatedCSSOMValue(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CachedImage::computedStyleDeprecatedCSSOMValue(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
     // We expose CachedImage as just the URI primitive values in the DeprecatedCSSOM to maintain existing behavior.
     return createDeprecatedCSSOMValue(pool, style, owner, m_url);
@@ -214,7 +214,7 @@ bool CachedImage::canRender(const RenderElement* renderer, float multiplier) con
         return true;
     if (!m_cachedImage)
         return false;
-    return m_cachedImage->canRender(renderer, multiplier);
+    return protect(m_cachedImage)->canRender(renderer, multiplier);
 }
 
 bool CachedImage::isPending() const
@@ -247,21 +247,21 @@ FloatSize CachedImage::imageSize(const RenderElement* renderer, float multiplier
     float density = 1.0f;
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer))
         density = renderImage->imageDevicePixelRatio();
-    return m_cachedImage->imageSizeForRenderer(renderer, multiplier, sizeType, density) / m_scaleFactor;
+    return protect(m_cachedImage)->imageSizeForRenderer(renderer, multiplier, sizeType, density) / m_scaleFactor;
 }
 
 bool CachedImage::imageHasRelativeWidth() const
 {
     if (!m_cachedImage)
         return false;
-    return m_cachedImage->imageHasRelativeWidth();
+    return protect(m_cachedImage)->imageHasRelativeWidth();
 }
 
 bool CachedImage::imageHasRelativeHeight() const
 {
     if (!m_cachedImage)
         return false;
-    return m_cachedImage->imageHasRelativeHeight();
+    return protect(m_cachedImage)->imageHasRelativeHeight();
 }
 
 bool CachedImage::imageHasNaturalAspectRatio() const
@@ -285,14 +285,14 @@ void CachedImage::computeIntrinsicDimensions(const RenderElement* renderer, floa
     if (!m_cachedImage)
         return;
 
-    m_cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    protect(m_cachedImage)->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
 bool CachedImage::usesImageContainerSize() const
 {
     if (!m_cachedImage)
         return false;
-    return m_cachedImage->usesImageContainerSize();
+    return protect(m_cachedImage)->usesImageContainerSize();
 }
 
 void CachedImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& url)
@@ -300,7 +300,7 @@ void CachedImage::setContainerContextForRenderer(const RenderElement& renderer, 
     m_containerSize = containerSize;
     if (!m_cachedImage)
         return;
-    m_cachedImage->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_url.resolved);
+    protect(m_cachedImage)->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_url.resolved);
 }
 
 void CachedImage::addClient(RenderElement& renderer)
@@ -308,7 +308,7 @@ void CachedImage::addClient(RenderElement& renderer)
     ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
-    m_cachedImage->addClient(renderer.cachedImageClient());
+    protect(m_cachedImage)->addClient(protect(renderer.cachedImageClient()));
 }
 
 void CachedImage::removeClient(RenderElement& renderer)
@@ -316,7 +316,7 @@ void CachedImage::removeClient(RenderElement& renderer)
     ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
-    m_cachedImage->removeClient(renderer.cachedImageClient());
+    protect(m_cachedImage)->removeClient(protect(renderer.cachedImageClient()));
 }
 
 bool CachedImage::hasClient(RenderElement& renderer) const
@@ -347,12 +347,12 @@ RefPtr<WebCore::Image> CachedImage::image(const RenderElement* renderer, const F
     if (!m_cachedImage)
         return nullptr;
 
-    return m_cachedImage->imageForRenderer(renderer);
+    return protect(m_cachedImage)->imageForRenderer(renderer);
 }
 
 bool CachedImage::currentFrameIsComplete(const RenderElement* renderer) const
 {
-    return m_cachedImage && m_cachedImage->currentFrameIsComplete(renderer);
+    return m_cachedImage && protect(m_cachedImage)->currentFrameIsComplete(renderer);
 }
 
 float CachedImage::imageScaleFactor() const
@@ -362,7 +362,7 @@ float CachedImage::imageScaleFactor() const
 
 bool CachedImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    return m_cachedImage && m_cachedImage->currentFrameKnownToBeOpaque(&renderer);
+    return m_cachedImage && protect(m_cachedImage)->currentFrameKnownToBeOpaque(&renderer);
 }
 
 bool CachedImage::usesDataProtocol() const

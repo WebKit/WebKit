@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <map>
 #include <set>
+#include <span>
 #include <utility>
 #include <vector>
 
@@ -190,7 +191,9 @@ class FakeNetworkInterface : public MediaChannelNetworkInterface {
  private:
   void SetRtpSsrc(uint32_t ssrc, CopyOnWriteBuffer& buffer) {
     RTC_CHECK_GE(buffer.size(), 12);
-    SetBE32(buffer.MutableData() + 8, ssrc);
+    SetBE32(
+        std::span<uint8_t>(buffer.MutableData(), buffer.size()).subspan(8, 4),
+        ssrc);
   }
 
   void GetNumRtpBytesAndPackets(uint32_t ssrc, int* bytes, int* packets) {

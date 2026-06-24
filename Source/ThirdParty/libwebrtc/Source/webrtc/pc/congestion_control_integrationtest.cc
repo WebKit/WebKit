@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "absl/strings/str_cat.h"
@@ -31,6 +32,7 @@
 
 namespace webrtc {
 
+using ::testing::ContainsRegex;
 using ::testing::Eq;
 using ::testing::Field;
 using ::testing::Gt;
@@ -45,6 +47,9 @@ class PeerConnectionCongestionControlTest
       : PeerConnectionIntegrationBaseTest(SdpSemantics::kUnifiedPlan) {}
 };
 
+// This regexp matches both wildcard and non-wildcard ccfb lines.
+constexpr std::string_view ccfb_regex = "a=rtcp-fb:[0-9*]* ack ccfb\r\n";
+
 TEST_F(PeerConnectionCongestionControlTest,
        OfferDoesNotContainCcfbEvenIfEnabled) {
   SetFieldTrials("WebRTC-RFC8888CongestionControlFeedback/Enabled/");
@@ -53,7 +58,7 @@ TEST_F(PeerConnectionCongestionControlTest,
   std::unique_ptr<SessionDescriptionInterface> offer =
       caller()->CreateOfferAndWait();
   std::string offer_str = absl::StrCat(*offer);
-  EXPECT_THAT(offer_str, Not(HasSubstr("a=rtcp-fb:* ack ccfb\r\n")));
+  EXPECT_THAT(offer_str, Not(ContainsRegex(ccfb_regex)));
 }
 
 TEST_F(PeerConnectionCongestionControlTest, OfferContainsCcfbIfFieldTrial) {
@@ -63,7 +68,7 @@ TEST_F(PeerConnectionCongestionControlTest, OfferContainsCcfbIfFieldTrial) {
   std::unique_ptr<SessionDescriptionInterface> offer =
       caller()->CreateOfferAndWait();
   std::string offer_str = absl::StrCat(*offer);
-  EXPECT_THAT(offer_str, HasSubstr("a=rtcp-fb:* ack ccfb\r\n"));
+  EXPECT_THAT(offer_str, ContainsRegex(ccfb_regex));
 }
 
 TEST_F(PeerConnectionCongestionControlTest, ReceiveOfferSetsCcfbFlag) {

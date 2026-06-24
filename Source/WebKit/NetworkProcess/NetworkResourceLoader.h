@@ -177,7 +177,7 @@ public:
     void NODELETE setWorkerFinalRouterSource(WebCore::RouterSourceEnum);
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
-    void sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
+    void sendDidReceiveResponseWithPotentialProcessSwap(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
 
     bool NODELETE isAppInitiated();
 
@@ -301,6 +301,10 @@ private:
     void reportNetworkUsageToAllServiceWorkerClients(WebCore::ServiceWorkerIdentifier, size_t bytesTransferredOverNetworkDelta);
 #endif
 
+#if ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
+    bool isLocalFileLoadAllowedWithoutSandboxExtension(const URL& url);
+#endif
+
     NetworkResourceLoadParameters m_parameters;
     Vector<Ref<SandboxExtension>> m_extensionsToRevoke;
 
@@ -323,8 +327,6 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     size_t m_bytesTransferredOverNetwork { 0 };
 #endif
-
-    unsigned m_retrievedDerivedDataCount { 0 };
 
     WebCore::Timer m_bufferingTimer;
     RefPtr<NetworkCache::Cache> m_cache;

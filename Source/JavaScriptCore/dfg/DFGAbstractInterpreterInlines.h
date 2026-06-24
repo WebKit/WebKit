@@ -1735,6 +1735,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case MapIteratorNext:
+        m_state.setTypeForTupleNode(node, 0, SpecCellOther);
+        m_state.setNonCellTypeForTupleNode(node, 1, SpecInt32Only);
+        clearForNode(node);
+        break;
     case IsEmptyStorage:
         setTypeForNode(node, SpecBoolean);
         break;
@@ -2711,6 +2715,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case StringMatch:
+    case StringSearch:
         clobberWorld();
         makeHeapTopForNode(node);
         break;
@@ -3360,6 +3365,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }
+
+    case ArrayJoin:
+        clobberWorld();
+        setTypeForNode(node, SpecString);
+        break;
             
     case ArrayPop:
         clobberWorld();
@@ -3467,9 +3477,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setTypeForNode(node, SpecOther | SpecArray);
         break;
 
+    case RegExpSplitFast:
+        ASSERT(node->child1().useKind() == RegExpObjectUse);
+        ASSERT(node->child2().useKind() == StringUse || node->child2().useKind() == KnownStringUse);
+        clobberWorld();
+        setTypeForNode(node, SpecArray);
+        break;
+
     case RegExpMatchFastGlobal:
         ASSERT(node->child2().useKind() == StringUse || node->child2().useKind() == KnownStringUse);
         setTypeForNode(node, SpecOther | SpecArray);
+        break;
+
+    case RegExpStringIteratorNext:
+        ASSERT(node->child1().useKind() == CellUse);
+        clobberWorld();
+        setTypeForNode(node, SpecFinalObject);
         break;
             
     case StringReplace:
@@ -3976,6 +3999,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case NewSet:
+        setForNode(node, node->structure());
+        break;
+
+    case NewWeakMap:
+        setForNode(node, node->structure());
+        break;
+
+    case NewWeakSet:
         setForNode(node, node->structure());
         break;
 
@@ -5533,6 +5564,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case StringIteratorNext: {
+        m_state.setTypeForTupleNode(node, 0, SpecString);
+        m_state.setNonCellTypeForTupleNode(node, 1, SpecInt32Only);
+        clearForNode(node);
+        break;
+    }
+
+    case StringIteratorNextWithUndefined: {
+        m_state.setTypeForTupleNode(node, 0, SpecString | SpecOther);
+        m_state.setNonCellTypeForTupleNode(node, 1, SpecInt32Only);
+        clearForNode(node);
+        break;
+    }
+
     case EnumeratorNextUpdatePropertyName: {
         setTypeForNode(node, SpecStringIdent);
         break;
@@ -5978,9 +6023,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
                 if (argument.isType(SpecPromiseObject)) {
                     if (m_graph.isWatchingPromiseSpeciesWatchpoint(node)) {
-                        didFoldClobberWorld();
-                        forNode(node) = argument;
-                        break;
+                        if (auto structure = argument.m_structure.onlyStructure()) {
+                            if (structure.get() == globalObject->promiseStructure()) {
+                                didFoldClobberWorld();
+                                forNode(node) = argument;
+                                break;
+                            }
+                        }
                     }
                 }
 

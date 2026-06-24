@@ -1455,6 +1455,41 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageToNonZeroBase)
                   kTexSize, 1.0);
 }
 
+// Test that copying into a image after unrelated image has been defined with another format works.
+TEST_P(CopyTexImageTestES3, CopyTexSubImageAfterIncompatibleDefinition)
+{
+    constexpr GLsizei kTexSize = 4;
+    std::vector<GLColor> green(kTexSize * kTexSize, GLColor::green);
+
+    GLTexture srcColor;
+    glBindTexture(GL_TEXTURE_2D, srcColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kTexSize, kTexSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 green.data());
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcColor, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    std::vector<GLColor> red(kTexSize * kTexSize, GLColor::red);
+    GLTexture dstColor;
+    glBindTexture(GL_TEXTURE_2D, dstColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kTexSize, kTexSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 red.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glGenerateMipmap(GL_TEXTURE_2D); // Sync state.
+    glTexImage2D(GL_TEXTURE_2D, 7, GL_DEPTH_COMPONENT32F, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr); // Trigger the bug.
+    ASSERT_GL_NO_ERROR();
+
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, kTexSize, kTexSize);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr std::array<GLubyte, 4> kExpected = {0, 255, 0, 255};
+    verifyResults(dstColor, kExpected.data(), kTexSize, 0, 0, kTexSize, kTexSize, 1.0);
+}
+
 // Initialize the 3D texture we will copy the subImage data into
 void CopyTexImageTestES3::initialize3DTexture(GLTexture &texture,
                                               const GLsizei imageWidth,

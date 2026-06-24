@@ -241,6 +241,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // ShareGroup
     ShareGroupVk *getShareGroup() { return mShareGroupVk; }
+    FramebufferCache &getFramebufferCache() { return mFramebufferCache; }
     PipelineLayoutCache &getPipelineLayoutCache()
     {
         return mShareGroupVk->getPipelineLayoutCache();
@@ -252,6 +253,22 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     vk::DescriptorSetArray<vk::MetaDescriptorPool> &getMetaDescriptorPools()
     {
         return mShareGroupVk->getMetaDescriptorPools();
+    }
+    SamplerCache &getSamplerCache()
+    {
+        if (hasDisplayTextureShareGroup())
+        {
+            return mRenderer->getSamplerCache();
+        }
+        return mShareGroupVk->getSamplerCache();
+    }
+    SamplerYcbcrConversionCache &getYuvConversionCache()
+    {
+        if (hasDisplayTextureShareGroup())
+        {
+            return mRenderer->getYuvConversionCache();
+        }
+        return mShareGroupVk->getYuvConversionCache();
     }
 
     // Device loss
@@ -360,7 +377,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // Query and Fence creation
     QueryImpl *createQuery(gl::QueryType type) override;
     FenceNVImpl *createFenceNV() override;
-    SyncImpl *createSync(const gl::Context *context) override;
+    SyncImpl *createSync() override;
 
     // Transform Feedback creation
     TransformFeedbackImpl *createTransformFeedback(
@@ -389,8 +406,6 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     angle::Result memoryBarrier(const gl::Context *context, GLbitfield barriers) override;
     angle::Result memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers) override;
-
-    ANGLE_INLINE void invalidateTexture(gl::TextureType target) override {}
 
     bool hasDisplayTextureShareGroup() const { return mState.hasDisplayTextureShareGroup(); }
 
@@ -476,6 +491,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                        gl::SamplerFormat format,
                                        gl::Texture **textureOut);
     void updateColorMasks();
+    void updateBlendEnabled();
     void updateBlendFuncsAndEquations();
 
     void handleError(VkResult errorCode,
@@ -1344,11 +1360,12 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                  QueueSubmitReason reason);
     angle::Result flushImpl(const gl::Context *context);
 
-    void handleDeviceLost();
-    bool shouldEmulateSeamfulCubeMapSampling() const;
     void clearAllGarbage();
     void dumpCommandStreamDiagnostics();
     angle::Result flushOutsideRenderPassCommands();
+    angle::Result flushAndSubmitCommandsImpl(const vk::Semaphore *signalSemaphore,
+                                             const vk::SharedExternalFence *externalFence,
+                                             QueueSubmitReason queueSubmitReason);
     // Flush commands and end render pass without setting any dirty bits.
     // flushCommandsAndEndRenderPass() and flushDirtyGraphicsRenderPass() will set the dirty bits
     // directly or through the iterator respectively.  Outside those two functions, this shouldn't
@@ -1600,6 +1617,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     vk::GarbageObjects mCurrentGarbage;
 
     RenderPassCache mRenderPassCache;
+    FramebufferCache mFramebufferCache;
     // Used with dynamic rendering as it doesn't use render passes.
     vk::RenderPass mNullRenderPass;
 

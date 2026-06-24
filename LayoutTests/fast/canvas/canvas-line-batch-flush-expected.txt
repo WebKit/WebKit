@@ -1,0 +1,12 @@
+Regression test for webkit.org/b/315554: drawImage from an unparented source canvas must flush the source's pending strokeLine batch before its pixels are sampled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS directNonBlank is > 1000
+PASS destNonBlank is directNonBlank
+PASS bytesDifferent is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -34,7 +34,7 @@ public:
 private:
     SVGMetadataElement(const QualifiedName&, Document&);
 
-    bool rendererIsNeeded(const RenderStyle&) final { return false; }
+    bool rendererIsNeeded(const Style::ComputedStyle&) final { return false; }
     bool supportsFocus() const final { return false; }
 };
 

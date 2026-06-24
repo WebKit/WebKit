@@ -62,11 +62,6 @@ public:
     URL href() const;
     WEBCORE_EXPORT const AtomString& NODELETE rel() const;
 
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    URL environmentMap() const;
-    bool isSpatialBackdrop() const { return m_relAttribute.isSpatialBackdrop; }
-#endif
-
     AtomString target() const final;
 
     const AtomString& NODELETE type() const;
@@ -168,9 +163,6 @@ private:
     String m_media;
     String m_integrityMetadataForPendingSheetRequest;
     URL m_url;
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    URL m_environmentMapURL;
-#endif
     const std::unique_ptr<DOMTokenList> m_sizes;
     const std::unique_ptr<DOMTokenList> m_relList;
     const std::unique_ptr<DOMTokenList> m_blockingList;

@@ -131,7 +131,6 @@ private:
     HashMap<RealmIdentifier, RealmInfo> m_activeRealms;
 
     // Track realm counters for navigation detection: frame ID -> counter
-    HashMap<WebCore::FrameIdentifier, uint64_t> m_frameRealmCounters;
 
     Vector<std::pair<PreloadScriptIdentifier, PreloadScriptInfo>> m_preloadScripts;
 };

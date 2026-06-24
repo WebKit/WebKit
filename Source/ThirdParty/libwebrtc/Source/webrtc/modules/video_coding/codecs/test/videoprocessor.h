@@ -120,6 +120,10 @@ class VideoProcessor {
       return Result(Result::OK, 0);
     }
 
+    void OnFrameDropped(uint32_t /*rtp_timestamp*/,
+                        int /*spatial_id*/,
+                        bool /*is_end_of_temporal_unit*/) override {}
+
    private:
     VideoProcessor* const video_processor_;
     TaskQueueBase* const task_queue_;
@@ -183,6 +187,7 @@ class VideoProcessor {
 
   void HandleTailDrops();
 
+  const Environment env_;
   // Test config.
   const VideoCodecTestFixture::Config config_;
   const size_t num_simulcast_or_spatial_layers_;

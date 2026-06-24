@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebCodecs AV1 HDR decoding with colorSpace overrides</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const HDR_CODEC = "av01.0.04M.08";
+let av1Data;
+
+promise_test(async () => {
+    assert_implements(window.VideoDecoder, "VideoDecoder is supported");
+    const config = { codec: HDR_CODEC, codedWidth: 320, codedHeight: 240 };
+    const support = await VideoDecoder.isConfigSupported(config);
+    assert_true(support.supported, "AV1 (8-bit) is supported");
+}, "AV1 isConfigSupported");
+
+promise_test(async () => {
+    // AV1 main profile, level 4.0, Main tier, 8-bit. The bitstream itself carries BT709, video range.
+    const response = await fetch("av1-sdr.bin");
+    const buffer = await response.arrayBuffer();
+    // Need to strip the 32-byte IVF file header + 12-byte frame header.
+    av1Data = new Uint8Array(buffer).slice(44);
+}, "Setup");
+
+async function decodeWithOverride(colorSpace) {
+    const frames = [];
+    const decoder = new VideoDecoder({
+        output: f => frames.push(f),
+        error: e => assert_unreached(`decode error: ${e.message}`),
+    });
+    const config = { codec: HDR_CODEC, codedWidth: 320, codedHeight: 240 };
+    if (colorSpace)
+        config.colorSpace = colorSpace;
+    decoder.configure(config);
+    decoder.decode(new EncodedVideoChunk({ type: "key", timestamp: 0, data: av1Data }));
+    await decoder.flush();
+    assert_equals(frames.length, 1, "one frame decoded");
+    return frames[0];
+}
+
+promise_test(async () => {
+    const f = await decodeWithOverride();
+    assert_equals(f.colorSpace.primaries, "bt709", "primaries from bitstream");
+    assert_equals(f.colorSpace.matrix, "bt709", "matrix from bitstream");
+    assert_false(f.colorSpace.fullRange, "video range from bitstream");
+    f.close();
+}, "AV1 (no override): bitstream colorSpace surfaces");
+
+promise_test(async () => {
+    const f = await decodeWithOverride({ primaries: "smpte170m" });
+    assert_equals(f.colorSpace.primaries, "smpte170m", "primaries overridden");
+    assert_equals(f.colorSpace.matrix, "bt709", "matrix preserved from bitstream");
+    f.close();
+}, "AV1 colorSpace override: primaries");
+
+promise_test(async () => {
+    const f = await decodeWithOverride({ matrix: "bt470bg" });
+    assert_equals(f.colorSpace.primaries, "bt709", "primaries preserved from bitstream");
+    assert_equals(f.colorSpace.matrix, "bt470bg", "matrix overridden");
+    f.close();
+}, "AV1 colorSpace override: matrix");
+
+promise_test(async () => {
+    const f = await decodeWithOverride({ transfer: "pq" });
+    assert_equals(f.colorSpace.primaries, "bt709", "primaries preserved from bitstream");
+    assert_equals(f.colorSpace.matrix, "bt709", "matrix preserved from bitstream");
+    assert_equals(f.colorSpace.transfer, "pq", "transfer overridden to PQ");
+    f.close();
+}, "AV1 colorSpace override: transfer (pq)");
+
+promise_test(async () => {
+    const f = await decodeWithOverride({ fullRange: true });
+    assert_equals(f.colorSpace.primaries, "bt709", "primaries preserved from bitstream");
+    assert_equals(f.colorSpace.matrix, "bt709", "matrix preserved from bitstream");
+    assert_true(f.colorSpace.fullRange, "range overridden to full");
+    f.close();
+}, "AV1 colorSpace override: fullRange (true)");
+
+promise_test(async () => {
+    const f = await decodeWithOverride({ fullRange: false });
+    assert_equals(f.colorSpace.primaries, "bt709", "primaries preserved from bitstream");
+    assert_equals(f.colorSpace.matrix, "bt709", "matrix preserved from bitstream");
+    assert_false(f.colorSpace.fullRange, "range overridden to video");
+    f.close();
+}, "AV1 colorSpace override: fullRange (false)");
+
+promise_test(async () => {
+    const f = await decodeWithOverride({ fullRange: false, transfer: "pq", matrix: "bt470bg", primaries: "smpte170m" });
+    assert_equals(f.colorSpace.primaries, "smpte170m", "primaries overriden");
+    assert_equals(f.colorSpace.matrix, "bt470bg", "matrix overriden");
+    assert_equals(f.colorSpace.transfer, "pq", "transfer overriden");
+    assert_false(f.colorSpace.fullRange, "range overridden to video");
+    f.close();
+}, "AV1 colorSpace full override");
+</script>
+</body>
+</html>

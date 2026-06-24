@@ -1,5 +1,5 @@
 <html>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <style type="text/css">
 #box {
     background-color:blue;
@@ -20,11 +20,11 @@
 
 <script type="text/javascript">
 description('Test touches set the active state.');
+window.jsTestIsAsync = true;
 
 function testComplete(event)
 {
-    isSuccessfullyParsed();
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 function runTest()
@@ -37,8 +37,6 @@ function runTest()
         debug('This test requires DRT.');
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 </script>
 </body>
 </html>

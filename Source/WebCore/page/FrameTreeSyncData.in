@@ -38,4 +38,4 @@ FrameRect : WebCore::IntRect [Headers=<WebCore/IntRect.h>]
 FrameLayoutViewportRect : WebCore::LayoutRect [Headers=<WebCore/LayoutRect.h>]
 
 # Collection of layout info regarding children frames of this frame.
-ChildrenFrameLayoutInfo : HashMap<WebCore::FrameIdentifier, WebCore::RemoteFrameLayoutInfo> [Headers=<WebCore/FrameIdentifier.h>,<WebCore/RemoteFrameLayoutInfo.h>]
+ChildrenFrameLayoutInfo : HashMap<WebCore::FrameIdentifier, Ref<WebCore::RemoteFrameLayoutInfo>> [Headers=<WebCore/FrameIdentifier.h>,<WebCore/RemoteFrameLayoutInfo.h>]

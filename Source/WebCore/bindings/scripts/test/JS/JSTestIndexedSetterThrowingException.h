@@ -67,8 +67,12 @@ protected:
 
 class JSTestIndexedSetterThrowingExceptionOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestIndexedSetterThrowingExceptionOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestIndexedSetterThrowingExceptionOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestIndexedSetterThrowingException*)

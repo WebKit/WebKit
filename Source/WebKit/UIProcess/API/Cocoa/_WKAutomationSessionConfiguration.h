@@ -37,6 +37,7 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(12.2))
 @property (nonatomic) BOOL suppressesICECandidateFiltering;
 @property (nonatomic) BOOL alwaysAllowAutoplay;
 @property (nonatomic) BOOL siteIsolationEnabled;
+@property (nonatomic) BOOL navigatorWebDriverEnabled;
 
 @end
 

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body onload="runTest()">
 <input type="file" ondrop="dropped(event)"></input>
@@ -10,20 +10,20 @@
 <script>
 
 description("Test that the same object is returned for dataTransfer.files each time, as well as for File objects in the FileList.");
+window.jsTestIsAsync = true;
 
 async function runTest()
 {
     if (!window.testRunner || !window.eventSender)
         return;
 
-    testRunner.waitUntilDone();
 
     var inputElement = document.getElementsByTagName('input')[0];
     eventSender.beginDragWithFiles(['test.txt']);
     await eventSender.asyncMouseMoveTo(inputElement.offsetLeft + inputElement.offsetWidth / 2,
                             inputElement.offsetTop + inputElement.offsetHeight / 2);
     await eventSender.asyncMouseUp();
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 function dropped(event)
@@ -32,6 +32,5 @@ function dropped(event)
     shouldBe("event.dataTransfer.files.item(0)", "event.dataTransfer.files.item(0)");
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

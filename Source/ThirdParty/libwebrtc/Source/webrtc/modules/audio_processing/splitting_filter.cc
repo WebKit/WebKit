@@ -13,8 +13,8 @@
 #include <array>
 #include <cstddef>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "common_audio/channel_buffer.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "modules/audio_processing/three_band_filter_bank.h"
@@ -113,10 +113,10 @@ void SplittingFilter::ThreeBandsAnalysis(const ChannelBuffer<float>* data,
 
   for (size_t i = 0; i < three_band_filter_banks_.size(); ++i) {
     three_band_filter_banks_[i].Analysis(
-        ArrayView<const float, ThreeBandFilterBank::kFullBandSize>(
+        std::span<const float, ThreeBandFilterBank::kFullBandSize>(
             data->channels_view()[i].data(),
             ThreeBandFilterBank::kFullBandSize),
-        ArrayView<const ArrayView<float>, ThreeBandFilterBank::kNumBands>(
+        std::span<const std::span<float>, ThreeBandFilterBank::kNumBands>(
             bands->bands_view(i).data(), ThreeBandFilterBank::kNumBands));
   }
 }
@@ -134,9 +134,9 @@ void SplittingFilter::ThreeBandsSynthesis(const ChannelBuffer<float>* bands,
 
   for (size_t i = 0; i < data->num_channels(); ++i) {
     three_band_filter_banks_[i].Synthesis(
-        ArrayView<const ArrayView<float>, ThreeBandFilterBank::kNumBands>(
+        std::span<const std::span<float>, ThreeBandFilterBank::kNumBands>(
             bands->bands_view(i).data(), ThreeBandFilterBank::kNumBands),
-        ArrayView<float, ThreeBandFilterBank::kFullBandSize>(
+        std::span<float, ThreeBandFilterBank::kFullBandSize>(
             data->channels_view()[i].data(),
             ThreeBandFilterBank::kFullBandSize));
   }

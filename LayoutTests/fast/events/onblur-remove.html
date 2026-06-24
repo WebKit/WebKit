@@ -1,9 +1,8 @@
 <html>
   <head>
-      <script src="../../resources/js-test-pre.js"></script>
+      <script src="../../resources/js-test.js"></script>
     <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
+        window.jsTestIsAsync = true;
 
         var blurEventCount = 0;
 
@@ -16,9 +15,7 @@
 
             shouldBe("blurEventCount", "0");
 
-            debug('<br /><span class="pass">TEST COMPLETE</span>');
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
     </script>
   </head>

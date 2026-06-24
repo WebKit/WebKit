@@ -31,6 +31,7 @@
 #include "JSCInlines.h"
 #include "Scribble.h"
 #include "SubspaceInlines.h"
+#include "WeakSetInlines.h"
 
 namespace JSC {
 

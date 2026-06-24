@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        window.jsTestIsAsync = true;
         
         var dropTarget;
         
@@ -17,8 +14,7 @@
                 dropTarget.style.display = "none";
                 setTimeout(function() {
                     shouldBeEqualToString("dropTarget.value", "C:\\fakepath\\abe.png");
-                    if (window.testRunner)
-                        testRunner.notifyDone();
+                    finishJSTest();
                 }, 0);
             }, false);
             

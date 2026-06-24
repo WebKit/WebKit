@@ -11,11 +11,11 @@
 #include "rtc_base/string_encode.h"
 
 #include <cstdio>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -91,7 +91,7 @@ std::string hex_encode_with_delimiter(absl::string_view source,
   return s;
 }
 
-size_t hex_decode_with_delimiter(ArrayView<char> cbuffer,
+size_t hex_decode_with_delimiter(std::span<char> cbuffer,
                                  absl::string_view source,
                                  char delimiter) {
   if (cbuffer.empty())
@@ -131,7 +131,7 @@ size_t hex_decode_with_delimiter(ArrayView<char> cbuffer,
   return bufpos;
 }
 
-size_t hex_decode(ArrayView<char> buffer, absl::string_view source) {
+size_t hex_decode(std::span<char> buffer, absl::string_view source) {
   return hex_decode_with_delimiter(buffer, source, 0);
 }
 

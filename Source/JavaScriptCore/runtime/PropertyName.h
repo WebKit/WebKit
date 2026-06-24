@@ -58,10 +58,8 @@ public:
     {
     }
 
-    PropertyName(const CacheableIdentifier& propertyName)
-        : PropertyName(propertyName.uid())
-    {
-    }
+    // Defined in PropertyNameInlines.h.
+    PropertyName(const CacheableIdentifier&);
 
     PropertyName(const PrivateName& propertyName)
         : m_impl(&propertyName.uid())

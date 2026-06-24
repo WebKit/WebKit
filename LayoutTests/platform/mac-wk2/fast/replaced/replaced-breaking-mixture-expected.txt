@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 25x18
           text run at (0,0) width 25: "Foo"
         RenderMenuList {SELECT} at (0,18) size 55x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 53x18
-            RenderText at (8,2) size 22x13
+          RenderBlock {DIV} at (1,1) size 53x18
+            RenderText {#text} at (8,2) size 22x13
               text run at (8,2) width 22: "One"
       RenderBlock {DIV} at (0,81) size 10x39
         RenderText {#text} at (0,0) size 25x18
@@ -24,8 +24,8 @@ layer at (0,0) size 800x600
           text run at (0,25) width 25: "Foo"
       RenderBlock {DIV} at (0,163) size 10x38
         RenderMenuList {SELECT} at (0,0) size 55x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 53x18
-            RenderText at (8,2) size 22x13
+          RenderBlock {DIV} at (1,1) size 53x18
+            RenderText {#text} at (8,2) size 22x13
               text run at (8,2) width 22: "One"
         RenderText {#text} at (0,20) size 25x18
           text run at (0,20) width 25: "Foo"

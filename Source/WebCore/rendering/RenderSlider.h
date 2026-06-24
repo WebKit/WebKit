@@ -33,7 +33,7 @@ class RenderSlider final : public RenderFlexibleBox {
 public:
     static const int defaultTrackLength;
 
-    RenderSlider(HTMLInputElement&, RenderStyle&&);
+    RenderSlider(HTMLInputElement&, Style::ComputedStyle&&);
     virtual ~RenderSlider();
 
     HTMLInputElement& NODELETE element() const;
@@ -47,8 +47,8 @@ public:
 private:
     ASCIILiteral renderName() const override { return "RenderSlider"_s; }
 
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    void computePreferredLogicalWidths() override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
+    void computeIntrinsicLogicalWidthContributions() override;
 
     bool isFlexibleBoxImpl() const override { return true; }
 };

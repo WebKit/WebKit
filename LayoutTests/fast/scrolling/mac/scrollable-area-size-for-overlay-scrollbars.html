@@ -12,9 +12,8 @@
     <script src="../../../resources/js-test.js"></script>
     <script src="../../../resources/ui-helper.js"></script>
     <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
         description("Tests that scrollable area size is properly updated when toggling scrollbar style");
+        window.jsTestIsAsync = true;
         window.internals.setUsesOverlayScrollbars(true);
 
         async function doTest()
@@ -22,7 +21,7 @@
             preChangeSize = window.internals.scrollableAreaWidth(document.getElementById("scroller"));
             window.internals.setUsesOverlayScrollbars(false);
             shouldBeGreaterThan("preChangeSize", "window.internals.scrollableAreaWidth(document.getElementById(\"scroller\"))");
-            testRunner.notifyDone();
+            finishJSTest();
         }
         window.addEventListener('load', doTest, false);
     </script>

@@ -195,7 +195,7 @@ void BreakBlockquoteCommand::doApply()
             ancestor = ancestor->parentElement(), clonedParent = clonedParent->parentElement()) {
             if (!clonedParent)
                 break;
-            moveRemainingSiblingsToNewParent(ancestor->nextSibling(), 0, *clonedParent);
+            moveRemainingSiblingsToNewParent(protect(ancestor->nextSibling()), 0, *clonedParent);
         }
 
         // If the startNode's original parent is now empty, remove it

@@ -56,7 +56,7 @@ bool Contrast::transformColor(SRGBA<float>& color) const
 
 // MARK: - Conversion
 
-auto ToCSS<Contrast>::operator()(const Contrast& value, const RenderStyle& style) -> CSS::Contrast
+auto ToCSS<Contrast>::operator()(const Contrast& value, const Style::ComputedStyle& style) -> CSS::Contrast
 {
     return { .value = CSS::Contrast::Parameter { toCSS(value.value, style) } };
 }

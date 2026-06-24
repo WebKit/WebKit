@@ -1033,5 +1033,6 @@ bool WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& or
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_WITH_RETURN_VALUE
 #undef SWSERVERCONNECTION_RELEASE_LOG
 #undef SWSERVERCONNECTION_RELEASE_LOG_ERROR

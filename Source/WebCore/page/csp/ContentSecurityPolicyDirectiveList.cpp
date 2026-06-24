@@ -487,7 +487,8 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
             if (auto directive = parseDirective(std::span { directiveBegin, buffer.position() })) {
                 ASSERT(!directive->name.isEmpty());
                 if (policyFrom == ContentSecurityPolicy::PolicyFrom::Inherited) {
-                    if (equalIgnoringASCIICase(directive->name, ContentSecurityPolicyDirectiveNames::upgradeInsecureRequests))
+                    if (equalIgnoringASCIICase(directive->name, ContentSecurityPolicyDirectiveNames::upgradeInsecureRequests)
+                        || equalIgnoringASCIICase(directive->name, ContentSecurityPolicyDirectiveNames::sandbox))
                         continue;
                 } else if (policyFrom == ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta) {
                     if (equalIgnoringASCIICase(directive->name, ContentSecurityPolicyDirectiveNames::sandbox)
@@ -736,13 +737,9 @@ void ContentSecurityPolicyDirectiveList::addDirective(ParsedDirective&& directiv
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTF::move(directive), m_formAction);
     else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::baseURI))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTF::move(directive), m_baseURI);
-    else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::frameAncestors)) {
-        if (m_reportOnly) {
-            m_policy->reportInvalidDirectiveInReportOnlyMode(directive.name);
-            return;
-        }
+    else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::frameAncestors))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTF::move(directive), m_frameAncestors);
-    } else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::pluginTypes)) {
+    else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::pluginTypes)) {
         auto name = directive.name;
         setCSPDirective<ContentSecurityPolicyMediaListDirective>(WTF::move(directive), m_pluginTypes);
         m_policy->reportDeprecatedDirectiveToConsole(name);

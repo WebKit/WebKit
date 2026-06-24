@@ -47,11 +47,11 @@ struct CustomIdent {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<CustomIdent> { auto operator()(const CustomIdent&, const RenderStyle&) -> CSS::CustomIdent; };
+template<> struct ToCSS<CustomIdent> { auto operator()(const CustomIdent&, const Style::ComputedStyle&) -> CSS::CustomIdent; };
 template<> struct ToStyle<CSS::CustomIdent> { auto operator()(const CSS::CustomIdent&, const BuilderState&) -> CustomIdent; };
 
 template<> struct CSSValueCreation<CustomIdent> {
-    Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const CustomIdent&);
+    Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const CustomIdent&);
 };
 
 template<> struct CSSValueConversion<CustomIdent> {
@@ -60,12 +60,12 @@ template<> struct CSSValueConversion<CustomIdent> {
 };
 
 template<> struct DeprecatedCSSOMValueCreation<CustomIdent> {
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const RenderStyle&, CSSStyleDeclaration&, const CustomIdent&);
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&, const CustomIdent&);
 };
 
 // MARK: - Serialization
 
-template<> struct Serialize<CustomIdent> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const CustomIdent&); };
+template<> struct Serialize<CustomIdent> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const CustomIdent&); };
 
 // MARK: - Logging
 

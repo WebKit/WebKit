@@ -47,7 +47,6 @@ void TestWithValidator::didReceiveMessage(IPC::Connection& connection, IPC::Deco
         decoder.markInvalid();
         return;
     }
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithValidator::AlwaysEnabled::name()) {
         IPC::handleMessage<Messages::TestWithValidator::AlwaysEnabled>(connection, decoder, this, &TestWithValidator::alwaysEnabled);
         return;

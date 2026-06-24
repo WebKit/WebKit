@@ -40,7 +40,7 @@ namespace WebCore {
 
 FontCustomPlatformData::~FontCustomPlatformData() = default;
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontCreationContext& fontCreationContext)
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
 {
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     UnrealizedCoreTextFont unrealizedFont = { RetainPtr { fontDescriptor } };
@@ -54,7 +54,13 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
     auto font = preparePlatformFont(WTF::move(unrealizedFont), fontDescription, fontCreationContext);
     ASSERT(font);
-    FontPlatformData platformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode(), this);
+
+    auto variationAxes = defaultVariationValues(font.get(), ShouldLocalizeAxisNames::No);
+    bool hasWeightVariationAxis = variationAxes.contains(FontVariationAxisTag::wght);
+    bool hasSlopeVariationAxis = variationAxes.contains(FontVariationAxisTag::slnt) || variationAxes.contains(FontVariationAxisTag::ital);
+    bool syntheticBold = computeSyntheticBold(hasWeightVariationAxis, fontDescription, fontCreationContext);
+    bool syntheticItalic = computeSyntheticItalic(hasSlopeVariationAxis, fontDescription, fontCreationContext);
+    FontPlatformData platformData(font.get(), size, syntheticBold, syntheticItalic, orientation, widthVariant, fontDescription.textRenderingMode(), this);
 
     platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
     return platformData;

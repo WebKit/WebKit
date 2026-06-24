@@ -31,7 +31,7 @@ class LegacyRenderSVGResourceLinearGradient final : public LegacyRenderSVGResour
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceLinearGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceLinearGradient);
 public:
-    LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement&, RenderStyle&&);
+    LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement&, Style::ComputedStyle&&);
     virtual ~LegacyRenderSVGResourceLinearGradient();
 
     inline SVGLinearGradientElement& linearGradientElement() const;
@@ -45,7 +45,7 @@ private:
     SVGUnitTypes::SVGUnitType gradientUnits() const final { return m_attributes.gradientUnits(); }
     AffineTransform gradientTransform() const final { return m_attributes.gradientTransform(); }
     bool collectGradientAttributes() final;
-    Ref<Gradient> buildGradient(const RenderStyle&) const final;
+    Ref<Gradient> buildGradient(const Style::ComputedStyle&) const final;
 
     void gradientElement() const = delete;
 

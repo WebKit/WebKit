@@ -30,7 +30,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGHiddenContainer);
 
-RenderSVGHiddenContainer::RenderSVGHiddenContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> flags)
+RenderSVGHiddenContainer::RenderSVGHiddenContainer(Type type, SVGElement& element, Style::ComputedStyle&& style, OptionSet<SVGModelObjectFlag> flags)
     : RenderSVGContainer(type, element, WTF::move(style), flags | SVGModelObjectFlag::IsHiddenContainer)
 {
     ASSERT(isRenderSVGHiddenContainer());

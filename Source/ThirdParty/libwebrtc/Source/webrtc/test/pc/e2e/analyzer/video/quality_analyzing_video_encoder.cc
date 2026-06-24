@@ -26,6 +26,7 @@
 #include "api/fec_controller_override.h"
 #include "api/test/video_quality_analyzer_interface.h"
 #include "api/video/encoded_image.h"
+#include "api/video/resolution.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_codec_type.h"
@@ -336,12 +337,15 @@ EncodedImageCallback::Result QualityAnalyzingVideoEncoder::OnEncodedImage(
   }
 }
 
-void QualityAnalyzingVideoEncoder::OnDroppedFrame(
-    EncodedImageCallback::DropReason reason) {
+void QualityAnalyzingVideoEncoder::OnFrameDropped(
+    uint32_t rtp_timestamp,
+    int spatial_id,
+    bool is_end_of_temporal_unit) {
   MutexLock lock(&mutex_);
-  analyzer_->OnFrameDropped(peer_name_, reason);
+  analyzer_->OnFrameDropped(peer_name_);
   RTC_DCHECK(delegate_callback_);
-  delegate_callback_->OnDroppedFrame(reason);
+  delegate_callback_->OnFrameDropped(rtp_timestamp, spatial_id,
+                                     is_end_of_temporal_unit);
 }
 
 bool QualityAnalyzingVideoEncoder::ShouldDiscard(
@@ -419,8 +423,9 @@ QualityAnalyzingVideoEncoderFactory::GetSupportedFormats() const {
 VideoEncoderFactory::CodecSupport
 QualityAnalyzingVideoEncoderFactory::QueryCodecSupport(
     const SdpVideoFormat& format,
-    std::optional<std::string> scalability_mode) const {
-  return delegate_->QueryCodecSupport(format, scalability_mode);
+    std::optional<std::string> scalability_mode,
+    std::optional<Resolution> resolution) const {
+  return delegate_->QueryCodecSupport(format, scalability_mode, resolution);
 }
 
 std::unique_ptr<VideoEncoder> QualityAnalyzingVideoEncoderFactory::Create(

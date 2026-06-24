@@ -13,12 +13,13 @@
 #include <cstdint>
 #include <cstring>
 #include <optional>
+#include <span>
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/video/color_space.h"
@@ -437,7 +438,7 @@ TEST(RtpPacketTest, SetReservedExtensionsAfterPayload) {
 }
 
 TEST(RtpPacketTest, SetEmptyPayload) {
-  ArrayView<const uint8_t> empty_payload;
+  std::span<const uint8_t> empty_payload;
   RtpPacket packet;
   packet.SetPayload(empty_payload);
 
@@ -446,7 +447,7 @@ TEST(RtpPacketTest, SetEmptyPayload) {
 
 TEST(RtpPacketTest, SetEmptyPayloadOverwritesExistingPayload) {
   const uint8_t payload[] = {1, 2, 3, 4, 2, 0, 42};
-  ArrayView<const uint8_t> empty_payload;
+  std::span<const uint8_t> empty_payload;
   RtpPacket packet;
 
   packet.SetPayload(payload);
@@ -505,7 +506,7 @@ TEST(RtpPacketTest, UsesZerosForPadding) {
   RtpPacket packet;
 
   EXPECT_TRUE(packet.SetPadding(kPaddingSize));
-  EXPECT_THAT(MakeArrayView(packet.data() + 12, kPaddingSize - 1), Each(0));
+  EXPECT_THAT(std::span(packet.data() + 12, kPaddingSize - 1), Each(0));
 }
 
 TEST(RtpPacketTest, CreateOneBytePadding) {
@@ -920,11 +921,11 @@ struct UncopyableExtension {
   static constexpr absl::string_view Uri() { return "uri"; }
 
   static size_t ValueSize(const UncopyableValue& /* value */) { return 1; }
-  static bool Write(ArrayView<uint8_t> /* data */,
+  static bool Write(std::span<uint8_t> /* data */,
                     const UncopyableValue& /* value */) {
     return true;
   }
-  static bool Parse(ArrayView<const uint8_t> /* data */,
+  static bool Parse(std::span<const uint8_t> /* data */,
                     UncopyableValue* /* value */) {
     return true;
   }
@@ -957,12 +958,12 @@ struct ParseByReferenceExtension {
   static size_t ValueSize(uint8_t /* value1 */, uint8_t /* value2 */) {
     return 2;
   }
-  static bool Write(ArrayView<uint8_t> data, uint8_t value1, uint8_t value2) {
+  static bool Write(std::span<uint8_t> data, uint8_t value1, uint8_t value2) {
     data[0] = value1;
     data[1] = value2;
     return true;
   }
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     uint8_t& value1,
                     uint8_t& value2) {
     value1 = data[0];
@@ -1345,6 +1346,28 @@ TEST(RtpPacketTest, SetExtensionWithArray) {
   packet.SetRawExtension<RtpDependencyDescriptorExtension>(extension_data);
   EXPECT_THAT(packet.GetRawExtension<RtpDependencyDescriptorExtension>(),
               ElementsAreArray(extension_data));
+}
+
+TEST(RtpPacketTest, SetCsrcsTruncatesWhenExceedingMax) {
+  RtpPacketToSend packet(nullptr);
+  packet.SetPayloadType(kPayloadType);
+  packet.SetSequenceNumber(kSeqNum);
+  packet.SetTimestamp(kTimestamp);
+  packet.SetSsrc(kSsrc);
+
+  std::vector<uint32_t> many_csrcs;
+  for (uint32_t i = 0; i < 20; ++i) {
+    many_csrcs.push_back(kSsrc + i);
+  }
+
+  // SetCsrcs should truncate to maximum elements allowed.
+  packet.SetCsrcs(many_csrcs);
+
+  std::vector<uint32_t> csrcs = packet.Csrcs();
+  EXPECT_EQ(csrcs.size(), RtpPacket::kMaxCsrcs);
+  for (size_t i = 0; i < RtpPacket::kMaxCsrcs; ++i) {
+    EXPECT_EQ(csrcs[i], many_csrcs[i]);
+  }
 }
 
 }  // namespace

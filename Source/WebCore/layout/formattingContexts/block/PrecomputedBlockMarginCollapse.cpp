@@ -33,7 +33,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutState.h"
 #include "LayoutUnit.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Layout {

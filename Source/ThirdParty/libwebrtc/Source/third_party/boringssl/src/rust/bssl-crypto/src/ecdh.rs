@@ -36,7 +36,10 @@
 //! assert_eq!(shared_key1, shared_key2);
 //! ```
 
-use crate::{ec, sealed, with_output_vec, Buffer};
+use crate::{
+    ec::{self, Group},
+    with_output_vec, Buffer,
+};
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 
@@ -50,7 +53,7 @@ impl<C: ec::Curve> PublicKey<C> {
     /// Parse a public key in uncompressed X9.62 format. (This is the common
     /// format for elliptic curve points beginning with an 0x04 byte.)
     pub fn from_x962_uncompressed(x962: &[u8]) -> Option<Self> {
-        let point = ec::Point::from_x962_uncompressed(C::group(sealed::Sealed), x962)?;
+        let point = ec::Point::from_x962_uncompressed(C::group(), x962)?;
         Some(Self {
             point,
             marker: PhantomData,
@@ -63,24 +66,63 @@ impl<C: ec::Curve> PublicKey<C> {
     }
 }
 
+/// Parsed `ECPrivateKey` dispatched into the corresponding curve types.
+pub enum ParsedPrivateKey {
+    /// A P-256 private key.
+    P256(PrivateKey<ec::P256>),
+    /// A P-384 private key.
+    P384(PrivateKey<ec::P384>),
+}
+
+impl ParsedPrivateKey {
+    /// Parses an ECPrivateKey structure froma DER encoded structure per [RFC 5915],
+    /// whose curve is specified by the `ECParameters`.
+    ///
+    /// Unless the curve group is one of the variants of [`Group`], this method returns [`None`].
+    ///
+    /// [RFC 5915]: <https://datatracker.ietf.org/doc/html/rfc5915>
+    pub fn from_der(der: &[u8]) -> Option<Self> {
+        let key = ec::Key::from_der_ec_private_key_with_curve_names(der)?;
+        match key.get_group()? {
+            Group::P256 => Some(ParsedPrivateKey::P256(PrivateKey {
+                key,
+                marker: PhantomData,
+            })),
+            Group::P384 => Some(ParsedPrivateKey::P384(PrivateKey {
+                key,
+                marker: PhantomData,
+            })),
+        }
+    }
+}
+
 /// An ECDH private key over the given curve.
 pub struct PrivateKey<C: ec::Curve> {
     key: ec::Key,
     marker: PhantomData<C>,
 }
 
+impl<C: ec::Curve> Clone for PrivateKey<C> {
+    fn clone(&self) -> Self {
+        Self {
+            key: self.key.clone(),
+            marker: PhantomData,
+        }
+    }
+}
+
 impl<C: ec::Curve> PrivateKey<C> {
     /// Generate a random private key.
     pub fn generate() -> Self {
         Self {
-            key: ec::Key::generate(C::group(sealed::Sealed)),
+            key: ec::Key::generate(C::group()),
             marker: PhantomData,
         }
     }
 
     /// Parse a `PrivateKey` from a zero-padded, big-endian representation of the secret scalar.
     pub fn from_big_endian(scalar: &[u8]) -> Option<Self> {
-        let key = ec::Key::from_big_endian(C::group(sealed::Sealed), scalar)?;
+        let key = ec::Key::from_big_endian(C::group(), scalar)?;
         Some(Self {
             key,
             marker: PhantomData,
@@ -95,7 +137,7 @@ impl<C: ec::Curve> PrivateKey<C> {
     /// Parse an ECPrivateKey structure (from RFC 5915). The key must be on the
     /// specified curve.
     pub fn from_der_ec_private_key(der: &[u8]) -> Option<Self> {
-        let key = ec::Key::from_der_ec_private_key(C::group(sealed::Sealed), der)?;
+        let key = ec::Key::from_der_ec_private_key(C::group(), der)?;
         Some(Self {
             key,
             marker: PhantomData,
@@ -110,7 +152,7 @@ impl<C: ec::Curve> PrivateKey<C> {
     /// Parse a PrivateKeyInfo structure (from RFC 5208). The key must be on the
     /// specified curve.
     pub fn from_der_private_key_info(der: &[u8]) -> Option<Self> {
-        let key = ec::Key::from_der_private_key_info(C::group(sealed::Sealed), der)?;
+        let key = ec::Key::from_der_private_key_info(C::group(), der)?;
         Some(Self {
             key,
             marker: PhantomData,
@@ -177,10 +219,9 @@ mod test {
         let alice_public_key = alice_private_key.to_public_key();
         let alice_private_key =
             PrivateKey::<C>::from_big_endian(alice_private_key.to_big_endian().as_ref()).unwrap();
-        let alice_private_key = PrivateKey::<C>::from_der_ec_private_key(
-            alice_private_key.to_der_ec_private_key().as_ref(),
-        )
-        .unwrap();
+        let alice_private_key_der = alice_private_key.to_der_ec_private_key();
+        let alice_private_key =
+            PrivateKey::<C>::from_der_ec_private_key(alice_private_key_der.as_ref()).unwrap();
 
         let bob_private_key = PrivateKey::<C>::generate();
         let bob_public_key = bob_private_key.to_public_key();
@@ -189,6 +230,11 @@ mod test {
         let shared_key2 = bob_private_key.compute_shared_key(&alice_public_key);
 
         assert_eq!(shared_key1, shared_key2);
+
+        match ParsedPrivateKey::from_der(alice_private_key_der.as_ref()).unwrap() {
+            ParsedPrivateKey::P256(_) => assert!(matches!(C::group(), Group::P256)),
+            ParsedPrivateKey::P384(_) => assert!(matches!(C::group(), Group::P384)),
+        }
     }
 
     #[test]

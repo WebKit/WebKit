@@ -26,6 +26,9 @@
 #pragma once
 
 #include <WebCore/LayoutRect.h>
+#include <WebCore/TransformationMatrix.h>
+#include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,15 +44,44 @@ enum class FrameOwnerElementAppearance : uint8_t {
 // Collection of style/layout info regarding a (potentially remote) frame.
 // This is synchronized from LocalFrame in one process to RemoteFrames
 // in other processes using FrameTreeSyncData.
-struct RemoteFrameLayoutInfo {
+class RemoteFrameLayoutInfo : public RefCounted<RemoteFrameLayoutInfo> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RemoteFrameLayoutInfo, WEBCORE_EXPORT);
+
+public:
+    WEBCORE_EXPORT static Ref<RemoteFrameLayoutInfo> create(std::optional<LayoutRect>, TransformationMatrix, TransformationMatrix, float, LayoutPoint, OptionSet<FrameOwnerElementAppearance>);
+
+    std::optional<LayoutRect> visibleRectInParent() const { return m_visibleRectInParent; }
+    const TransformationMatrix& childFrameOwnerToRootContentTransform() const { return m_childFrameOwnerToRootContentTransform; }
+    const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform() const { return m_absoluteToChildFrameOwnerLocalTransform; }
+    float usedZoom() const { return m_usedZoom; }
+    LayoutPoint contentBoxLocation() const { return m_contentBoxLocation; }
+    OptionSet<FrameOwnerElementAppearance> ownerElementAppearance() const { return m_ownerElementAppearance; }
+
+private:
+    RemoteFrameLayoutInfo(std::optional<LayoutRect>, TransformationMatrix, TransformationMatrix, float, LayoutPoint, OptionSet<FrameOwnerElementAppearance>);
+
     // Rectangle of the visible portion of the frame in its parent frame,
     // in the coordinate space of the document of the parent frame.
-    std::optional<LayoutRect> visibleRectInParent;
+    std::optional<LayoutRect> m_visibleRectInParent;
 
-    // RenderStyle::usedZoom of the owner renderer of the frame.
-    float usedZoom;
+    // The transformation matrix to project from the frame owner's
+    // coordinate space to its RenderView's (root) coordinate space.
+    // Note: this DOES NOT include the frame scale transform on the
+    // RenderView.
+    TransformationMatrix m_childFrameOwnerToRootContentTransform;
 
-    OptionSet<FrameOwnerElementAppearance> ownerElementAppearance;
+    // The transformation matrix to project from current frame's
+    // absolute coordinate to the child frame owner's local coordinate.
+    TransformationMatrix m_absoluteToChildFrameOwnerLocalTransform;
+
+    // Style::ComputedStyle::usedZoom of the owner renderer of the frame.
+    float m_usedZoom;
+
+    // The offset of the content box of the frame's owner element
+    // from its border box.
+    LayoutPoint m_contentBoxLocation;
+
+    OptionSet<FrameOwnerElementAppearance> m_ownerElementAppearance;
 };
 
 };

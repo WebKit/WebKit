@@ -33,6 +33,7 @@
 #include "HTMLDetailsElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLFrameElement.h"
+#include "HTMLHeadingElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -259,6 +260,16 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
             return true;
     }
     return false;
+}
+
+ALWAYS_INLINE bool matchesHeadingPseudoClass(const Element& element, const FixedVector<int>* integerList)
+{
+    CheckedPtr headingElement = dynamicDowncast<HTMLHeadingElement>(element);
+    if (!headingElement)
+        return false;
+    if (!integerList)
+        return true;
+    return integerList->contains(static_cast<int>(headingElement->level()));
 }
 
 ALWAYS_INLINE bool matchesDirPseudoClass(const Element& element, const AtomString& argument)

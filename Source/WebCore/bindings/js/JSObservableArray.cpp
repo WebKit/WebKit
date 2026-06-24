@@ -48,10 +48,10 @@ static bool observableArraySetLength(JSObservableArray* object, JSGlobalObject* 
         throwRangeError(lexicalGlobalObject, scope, "Invalid length"_s);
         return false;
     }
-    auto& concreteArray = object->getConcreteArray();
-    if (length > concreteArray.length())
+    Ref concreteArray = object->getConcreteArray();
+    if (length > concreteArray->length())
         return false;
-    concreteArray.shrinkTo(length);
+    concreteArray->shrinkTo(length);
     return true;
 }
 
@@ -116,7 +116,7 @@ bool JSObservableArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lex
     std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < thisObject->length()) {
         slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontDelete),
-            thisObject->getConcreteArray().valueAt(lexicalGlobalObject, index.value()));
+            protect(thisObject->getConcreteArray())->valueAt(lexicalGlobalObject, index.value()));
         return true;
     }
 
@@ -128,7 +128,7 @@ bool JSObservableArray::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObje
     JSObservableArray* thisObject = uncheckedDowncast<JSObservableArray>(object);
     if (index < thisObject->length()) {
         slot.setValue(thisObject, std::to_underlying(PropertyAttribute::DontDelete),
-            thisObject->getConcreteArray().valueAt(lexicalGlobalObject, index));
+            protect(thisObject->getConcreteArray())->valueAt(lexicalGlobalObject, index));
         return true;
     }
 
@@ -154,10 +154,10 @@ bool JSObservableArray::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, P
 bool JSObservableArray::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool)
 {
     auto* thisObject = uncheckedDowncast<JSObservableArray>(cell);
-    auto& concreteArray = thisObject->getConcreteArray();
-    if (index > concreteArray.length())
+    Ref concreteArray = thisObject->getConcreteArray();
+    if (index > concreteArray->length())
         return false;
-    return concreteArray.setValueAt(lexicalGlobalObject, index, value);
+    return concreteArray->setValueAt(lexicalGlobalObject, index, value);
 }
 
 // https://webidl.spec.whatwg.org/#es-observable-array-deleteProperty
@@ -180,10 +180,10 @@ bool JSObservableArray::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlob
 bool JSObservableArray::deletePropertyByIndex(JSCell* cell, JSGlobalObject*, unsigned index)
 {
     auto* thisObject = uncheckedDowncast<JSObservableArray>(cell);
-    auto& concreteArray = thisObject->getConcreteArray();
-    if (!concreteArray.length() || index != concreteArray.length() - 1)
+    Ref concreteArray = thisObject->getConcreteArray();
+    if (!concreteArray->length() || index != concreteArray->length() - 1)
         return false;
-    concreteArray.removeLast();
+    concreteArray->removeLast();
     return true;
 }
 

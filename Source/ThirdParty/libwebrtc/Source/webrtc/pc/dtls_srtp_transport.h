@@ -19,6 +19,7 @@
 #include "absl/functional/any_invocable.h"
 #include "api/dtls_transport_interface.h"
 #include "api/field_trials_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "p2p/base/packet_transport_internal.h"
 #include "p2p/dtls/dtls_transport_internal.h"
 #include "pc/srtp_transport.h"
@@ -46,10 +47,10 @@ class DtlsSrtpTransport : public SrtpTransport {
 
   // Set the header extension ids that should be encrypted.
   void UpdateSendEncryptedHeaderExtensionIds(
-      const std::vector<int>& send_extension_ids);
+      const std::vector<RtpHeaderExtensionId>& send_extension_ids);
 
   void UpdateRecvEncryptedHeaderExtensionIds(
-      const std::vector<int>& recv_extension_ids);
+      const std::vector<RtpHeaderExtensionId>& recv_extension_ids);
 
   void SetOnDtlsStateChange(absl::AnyInvocable<void()> callback);
 
@@ -88,8 +89,8 @@ class DtlsSrtpTransport : public SrtpTransport {
   void OnWritableState(PacketTransportInternal* packet_transport) override;
 
   // The encrypted header extension IDs.
-  std::optional<std::vector<int>> send_extension_ids_;
-  std::optional<std::vector<int>> recv_extension_ids_;
+  std::optional<std::vector<RtpHeaderExtensionId>> send_extension_ids_;
+  std::optional<std::vector<RtpHeaderExtensionId>> recv_extension_ids_;
 
   absl::AnyInvocable<void()> on_dtls_state_change_;
 };

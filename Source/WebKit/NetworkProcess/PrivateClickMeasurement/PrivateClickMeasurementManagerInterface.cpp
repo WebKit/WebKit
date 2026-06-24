@@ -198,10 +198,10 @@ static RefPtr<PrivateClickMeasurementManager>& NODELETE managerPointer()
     return manager.get();
 }
 
-void initializePCMStorageInDirectory(const String& storageDirectory, const String& applicationBundleIdentifier)
+void initializePCMStorageInDirectory(const String& storageDirectory, const String& applicationBundleIdentifier, const String& secondaryApplicationBundleIdentifier)
 {
     ASSERT(!managerPointer());
-    managerPointer() = PrivateClickMeasurementManager::create(makeUniqueRef<PCM::DaemonClient>(), storageDirectory, applicationBundleIdentifier);
+    managerPointer() = PrivateClickMeasurementManager::create(makeUniqueRef<PCM::DaemonClient>(), storageDirectory, std::make_pair(applicationBundleIdentifier, secondaryApplicationBundleIdentifier));
 }
 
 static PrivateClickMeasurementManager& NODELETE daemonManagerSingleton()

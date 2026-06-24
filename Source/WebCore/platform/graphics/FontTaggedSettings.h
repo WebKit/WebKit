@@ -47,6 +47,19 @@ inline FontTag fontFeatureTag(std::span<const char, 5> nullTerminatedString)
     return { nullTerminatedString[0], nullTerminatedString[1], nullTerminatedString[2], nullTerminatedString[3] };
 }
 
+namespace FontVariationAxisTag {
+inline constexpr FontTag ital = { { 'i', 't', 'a', 'l' } };
+inline constexpr FontTag opsz = { { 'o', 'p', 's', 'z' } };
+inline constexpr FontTag slnt = { { 's', 'l', 'n', 't' } };
+inline constexpr FontTag wdth = { { 'w', 'd', 't', 'h' } };
+inline constexpr FontTag wght = { { 'w', 'g', 'h', 't' } };
+} // namespace FontVariationAxisTag
+
+inline constexpr uint32_t fontVariationAxisTagValue(FontTag tag)
+{
+    return (static_cast<uint8_t>(tag[0]) << 24) | (static_cast<uint8_t>(tag[1]) << 16) | (static_cast<uint8_t>(tag[2]) << 8) | static_cast<uint8_t>(tag[3]);
+}
+
 inline void add(Hasher& hasher, std::array<char, 4> array)
 {
     uint32_t integer = (static_cast<uint8_t>(array[0]) << 24) | (static_cast<uint8_t>(array[1]) << 16) | (static_cast<uint8_t>(array[2]) << 8) | static_cast<uint8_t>(array[3]);

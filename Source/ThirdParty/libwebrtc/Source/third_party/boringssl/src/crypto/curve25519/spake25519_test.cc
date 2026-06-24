@@ -26,17 +26,20 @@
 #include "./internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 // TODO(agl): add tests with fixed vectors once SPAKE2 is nailed down.
 
 struct SPAKE2Run {
   bool Run() {
-    bssl::UniquePtr<SPAKE2_CTX> alice(SPAKE2_CTX_new(
+    UniquePtr<SPAKE2_CTX> alice(SPAKE2_CTX_new(
         spake2_role_alice,
         reinterpret_cast<const uint8_t *>(alice_names.first.data()),
         alice_names.first.size(),
         reinterpret_cast<const uint8_t *>(alice_names.second.data()),
         alice_names.second.size()));
-    bssl::UniquePtr<SPAKE2_CTX> bob(SPAKE2_CTX_new(
+    UniquePtr<SPAKE2_CTX> bob(SPAKE2_CTX_new(
         spake2_role_bob,
         reinterpret_cast<const uint8_t *>(bob_names.first.data()),
         bob_names.first.size(),
@@ -155,3 +158,6 @@ TEST(SPAKE25519Test, CorruptMessages) {
         << "Passed after corrupting Alice's message, bit " << i;
   }
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

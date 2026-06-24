@@ -1,2 +1,3 @@
-xml-with-html.xml has MIME type text/plain
 
+xml-with-html.html has MIME type text/html
+xml-with-html.xml has MIME type text/plain

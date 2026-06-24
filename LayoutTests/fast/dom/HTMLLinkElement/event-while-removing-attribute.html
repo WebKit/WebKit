@@ -20,6 +20,7 @@ function testBeforeLoad()
 
 function test()
 {
+    window.jsTestIsAsync = true;
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
@@ -36,8 +37,7 @@ function test()
 function step2()
 {
     testPassed("Test did not generate a Debug ASSERT.");
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
 </head>

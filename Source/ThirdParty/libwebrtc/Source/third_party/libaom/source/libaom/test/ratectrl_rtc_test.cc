@@ -41,6 +41,8 @@ class RcInterfaceTest : public ::libaom_test::EncoderTest,
         frame_drop_thresh_(0) {
     memset(&svc_params_, 0, sizeof(svc_params_));
     memset(&layer_id_, 0, sizeof(layer_id_));
+    memset(&frame_params_, 0, sizeof(frame_params_));
+    frame_params_.frame_type = aom::kKeyFrame;
   }
 
   ~RcInterfaceTest() override = default;
@@ -256,6 +258,34 @@ class RcInterfaceTest : public ::libaom_test::EncoderTest,
                                          1, 0, kNumFrames);
 
     ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  }
+
+  void RunSvcInvalidInputs() {
+    key_interval_ = 10000;
+    // Initial resolution is set to 640x480.
+    SetConfigSvc(3, 3);
+    rc_api_ = aom::AV1RateControlRTC::Create(rc_cfg_);
+    // Verfiy return false on UpdateRateControl if resolution goes above
+    // configured setting.
+    rc_cfg_.width = 1280;
+    rc_cfg_.height = 720;
+    ASSERT_FALSE(rc_api_->UpdateRateControl(rc_cfg_));
+    // Go back to original resolution.
+    rc_cfg_.width = 640;
+    rc_cfg_.height = 480;
+    ASSERT_TRUE(rc_api_->UpdateRateControl(rc_cfg_));
+    // Set layer_id beyond the range set in init (#spatial=3, #temporal=3).
+    // Expect ComputeQP() to return kFrameDropDecisionDrop.
+    frame_params_.spatial_layer_id = 4;
+    frame_params_.temporal_layer_id = 0;
+    ASSERT_EQ(rc_api_->ComputeQP(frame_params_), aom::kFrameDropDecisionDrop);
+    frame_params_.spatial_layer_id = 0;
+    frame_params_.temporal_layer_id = 4;
+    ASSERT_EQ(rc_api_->ComputeQP(frame_params_), aom::kFrameDropDecisionDrop);
+    // Start with valid (0, 0) layer_id, expect return kFrameDropDecisionOk.
+    frame_params_.spatial_layer_id = 0;
+    frame_params_.temporal_layer_id = 0;
+    ASSERT_EQ(rc_api_->ComputeQP(frame_params_), aom::kFrameDropDecisionOk);
   }
 
   void RunSvc() {
@@ -683,6 +713,8 @@ TEST_P(RcInterfaceTest, OneLayerDropFramesCBR) { RunOneLayerDropFramesCBR(); }
 TEST_P(RcInterfaceTest, OneLayerPeriodicKey) { RunOneLayerPeriodicKey(); }
 
 TEST_P(RcInterfaceTest, OneLayerScreen) { RunOneLayerScreen(); }
+
+TEST_P(RcInterfaceTest, SvcInvalidInputs) { RunSvcInvalidInputs(); }
 
 TEST_P(RcInterfaceTest, Svc) { RunSvc(); }
 

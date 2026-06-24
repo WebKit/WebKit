@@ -62,7 +62,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) final;
     void childrenChanged(const ChildChange&) final;
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool needsPendingResourceHandling() const final { return false; }

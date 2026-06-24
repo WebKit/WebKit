@@ -37,12 +37,12 @@ extern "C" {
 #define X25519_PUBLIC_VALUE_LEN 32
 #define X25519_SHARED_KEY_LEN 32
 
-// X25519_keypair sets |out_public_value| and |out_private_key| to a freshly
+// X25519_keypair sets `out_public_value` and `out_private_key` to a freshly
 // generated, public–private key pair.
 OPENSSL_EXPORT void X25519_keypair(uint8_t out_public_value[32],
                                    uint8_t out_private_key[32]);
 
-// X25519 writes a shared key to |out_shared_key| that is calculated from the
+// X25519 writes a shared key to `out_shared_key` that is calculated from the
 // given private key and the peer's public value. It returns one on success and
 // zero on error.
 //
@@ -53,7 +53,7 @@ OPENSSL_EXPORT int X25519(uint8_t out_shared_key[32],
                           const uint8_t peer_public_value[32]);
 
 // X25519_public_from_private calculates a Diffie-Hellman public value from the
-// given private key and writes it to |out_public_value|.
+// given private key and writes it to `out_public_value`.
 OPENSSL_EXPORT void X25519_public_from_private(uint8_t out_public_value[32],
                                                const uint8_t private_key[32]);
 
@@ -72,20 +72,20 @@ OPENSSL_EXPORT void X25519_public_from_private(uint8_t out_public_value[32],
 #define ED25519_PUBLIC_KEY_LEN 32
 #define ED25519_SIGNATURE_LEN 64
 
-// ED25519_keypair sets |out_public_key| and |out_private_key| to a freshly
+// ED25519_keypair sets `out_public_key` and `out_private_key` to a freshly
 // generated, public–private key pair.
 OPENSSL_EXPORT void ED25519_keypair(uint8_t out_public_key[32],
                                     uint8_t out_private_key[64]);
 
-// ED25519_sign sets |out_sig| to be a signature of |message_len| bytes from
-// |message| using |private_key|. It returns one on success or zero on
+// ED25519_sign sets `out_sig` to be a signature of `message_len` bytes from
+// `message` using `private_key`. It returns one on success or zero on
 // allocation failure.
 OPENSSL_EXPORT int ED25519_sign(uint8_t out_sig[64], const uint8_t *message,
                                 size_t message_len,
                                 const uint8_t private_key[64]);
 
-// ED25519_verify returns one iff |signature| is a valid signature, by
-// |public_key| of |message_len| bytes from |message|. It returns zero
+// ED25519_verify returns one iff `signature` is a valid signature, by
+// `public_key` of `message_len` bytes from `message`. It returns zero
 // otherwise.
 OPENSSL_EXPORT int ED25519_verify(const uint8_t *message, size_t message_len,
                                   const uint8_t signature[64],
@@ -118,12 +118,12 @@ enum spake2_role_t {
   spake2_role_bob,
 };
 
-// SPAKE2_CTX_new creates a new |SPAKE2_CTX| (which can only be used for a
+// SPAKE2_CTX_new creates a new `SPAKE2_CTX` (which can only be used for a
 // single execution of the protocol). SPAKE2 requires the symmetry of the two
-// parties to be broken which is indicated via |my_role| – each party must pass
+// parties to be broken which is indicated via `my_role` – each party must pass
 // a different value for this argument.
 //
-// The |my_name| and |their_name| arguments allow optional, opaque names to be
+// The `my_name` and `their_name` arguments allow optional, opaque names to be
 // bound into the protocol. For example MAC addresses, hostnames, usernames
 // etc. These values are not exposed and can avoid context-confusion attacks
 // when a password is shared between several devices.
@@ -132,19 +132,19 @@ OPENSSL_EXPORT SPAKE2_CTX *SPAKE2_CTX_new(
     const uint8_t *my_name, size_t my_name_len,
     const uint8_t *their_name, size_t their_name_len);
 
-// SPAKE2_CTX_free frees |ctx| and all the resources that it has allocated.
+// SPAKE2_CTX_free frees `ctx` and all the resources that it has allocated.
 OPENSSL_EXPORT void SPAKE2_CTX_free(SPAKE2_CTX *ctx);
 
 // SPAKE2_MAX_MSG_SIZE is the maximum size of a SPAKE2 message.
 #define SPAKE2_MAX_MSG_SIZE 32
 
-// SPAKE2_generate_msg generates a SPAKE2 message given |password|, writes
-// it to |out| and sets |*out_len| to the number of bytes written.
+// SPAKE2_generate_msg generates a SPAKE2 message given `password`, writes
+// it to `out` and sets `*out_len` to the number of bytes written.
 //
-// At most |max_out_len| bytes are written to |out| and, in order to ensure
-// success, |max_out_len| should be at least |SPAKE2_MAX_MSG_SIZE| bytes.
+// At most `max_out_len` bytes are written to `out` and, in order to ensure
+// success, `max_out_len` should be at least `SPAKE2_MAX_MSG_SIZE` bytes.
 //
-// This function can only be called once for a given |SPAKE2_CTX|.
+// This function can only be called once for a given `SPAKE2_CTX`.
 //
 // It returns one on success and zero on error.
 OPENSSL_EXPORT int SPAKE2_generate_msg(SPAKE2_CTX *ctx, uint8_t *out,
@@ -157,8 +157,8 @@ OPENSSL_EXPORT int SPAKE2_generate_msg(SPAKE2_CTX *ctx, uint8_t *out,
 #define SPAKE2_MAX_KEY_SIZE 64
 
 // SPAKE2_process_msg completes the SPAKE2 exchange given the peer's message in
-// |their_msg|, writes at most |max_out_key_len| bytes to |out_key| and sets
-// |*out_key_len| to the number of bytes written.
+// `their_msg`, writes at most `max_out_key_len` bytes to `out_key` and sets
+// `*out_key_len` to the number of bytes written.
 //
 // The resulting keying material is suitable for:
 //    - Using directly in a key-confirmation step: i.e. each side could
@@ -167,13 +167,13 @@ OPENSSL_EXPORT int SPAKE2_generate_msg(SPAKE2_CTX *ctx, uint8_t *out,
 //   -  Using as input keying material to HKDF to generate a variety of subkeys
 //      for encryption etc.
 //
-// If |max_out_key_key| is smaller than the amount of key material generated
+// If `max_out_key_key` is smaller than the amount of key material generated
 // then the key is silently truncated. If you want to ensure that no truncation
-// occurs then |max_out_key| should be at least |SPAKE2_MAX_KEY_SIZE|.
+// occurs then `max_out_key` should be at least `SPAKE2_MAX_KEY_SIZE`.
 //
-// You must call |SPAKE2_generate_msg| on a given |SPAKE2_CTX| before calling
-// this function. On successful return, |ctx| is complete and calling
-// |SPAKE2_CTX_free| is the only acceptable operation on it.
+// You must call `SPAKE2_generate_msg` on a given `SPAKE2_CTX` before calling
+// this function. On successful return, `ctx` is complete and calling
+// `SPAKE2_CTX_free` is the only acceptable operation on it.
 //
 // Returns one on success or zero on error.
 OPENSSL_EXPORT int SPAKE2_process_msg(SPAKE2_CTX *ctx, uint8_t *out_key,

@@ -13,8 +13,8 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "common_audio/channel_buffer.h"
 
 namespace webrtc {
@@ -53,7 +53,7 @@ class FakeRecordingDevice final {
   // If `real_device_level` is a valid level, the unmodified mic signal is
   // virtually restored. To skip the latter step set `real_device_level` to
   // an empty value.
-  void SimulateAnalogGain(ArrayView<int16_t> buffer);
+  void SimulateAnalogGain(std::span<int16_t> buffer);
 
   // Simulates the analog gain.
   // If `real_device_level` is a valid level, the unmodified mic signal is

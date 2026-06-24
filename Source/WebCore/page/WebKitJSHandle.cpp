@@ -28,23 +28,25 @@
 
 #include "DOMWindow.h"
 #include "Frame.h"
+#include "JSDOMGlobalObject.h"
 #include "JSWindowProxy.h"
-#include <JavaScriptCore/JSCellInlines.h>
-#include <JavaScriptCore/JSObject.h>
-#include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakInlines.h>
 
 namespace WebCore {
 
-struct JSHandleData {
-    JSC::Strong<JSC::JSObject> strongReference;
-    size_t refCount { 0 };
-};
-using HandleMap = HashMap<JSHandleIdentifier, JSHandleData>;
-static HandleMap& NODELETE handleMap()
+using HandleToGlobalMap = HashMap<JSHandleIdentifier, JSC::Weak<JSDOMGlobalObject>>;
+static HandleToGlobalMap& handleToGlobalMap()
 {
-    static MainThreadNeverDestroyed<HandleMap> map;
+    static MainThreadNeverDestroyed<HandleToGlobalMap> map;
     return map.get();
+}
+
+static JSDOMGlobalObject* globalObjectForIdentifier(JSHandleIdentifier identifier)
+{
+    auto it = handleToGlobalMap().find(identifier);
+    return it == handleToGlobalMap().end() ? nullptr : it->value.get();
 }
 
 Ref<WebKitJSHandle> WebKitJSHandle::create(JSC::JSObject* object)
@@ -59,34 +61,23 @@ WebKitJSHandle::~WebKitJSHandle()
 
 void WebKitJSHandle::jsHandleSentToAnotherProcess(JSHandleIdentifier identifier)
 {
-    auto it = handleMap().find(identifier);
-    if (it == handleMap().end()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    ASSERT(it->value.refCount);
-    ++it->value.refCount;
+    if (auto* global = globalObjectForIdentifier(identifier))
+        global->refJSHandle(identifier);
 }
 
 void WebKitJSHandle::jsHandleDestroyed(JSHandleIdentifier identifier)
 {
-    auto it = handleMap().find(identifier);
-    if (it == handleMap().end()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    if (!--it->value.refCount)
-        handleMap().remove(identifier);
+    auto* global = globalObjectForIdentifier(identifier);
+    if (!global || global->derefJSHandle(identifier))
+        handleToGlobalMap().remove(identifier);
 }
 
 JSC::JSObject* WebKitJSHandle::objectForIdentifier(JSHandleIdentifier identifier)
 {
-    auto it = handleMap().find(identifier);
-    if (it == handleMap().end()) {
-        ASSERT_NOT_REACHED();
+    auto* global = globalObjectForIdentifier(identifier);
+    if (!global)
         return nullptr;
-    }
-    return it->value.strongReference.get();
+    return global->jsHandle(identifier);
 }
 
 static Markable<FrameIdentifier> NODELETE windowFrameIdentifier(JSC::JSObject* object)
@@ -102,14 +93,11 @@ WebKitJSHandle::WebKitJSHandle(JSC::JSObject* object)
     : m_identifier(JSHandleIdentifier(WebProcessJSHandleIdentifier(reinterpret_cast<uintptr_t>(object)), Process::identifier()))
     , m_windowFrameIdentifier(WebCore::windowFrameIdentifier(object))
 {
-    auto addResult = handleMap().ensure(m_identifier, [&] {
-        return JSHandleData {
-            JSC::Strong<JSC::JSObject> { object->vm(), object },
-            0 // Immediately incremented.
-        };
-    });
-    auto& data = addResult.iterator->value;
-    data.refCount++;
+    auto* global = dynamicDowncast<JSDOMGlobalObject>(object->realmMayBeNull());
+    if (!global)
+        return;
+    global->addJSHandle(m_identifier, *object);
+    handleToGlobalMap().set(m_identifier, JSC::Weak<JSDOMGlobalObject> { global });
 }
 
 }

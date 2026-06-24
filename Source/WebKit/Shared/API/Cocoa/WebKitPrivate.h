@@ -54,7 +54,6 @@
 #import <WebKit/_WKPageLoadTiming.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKRectEdge.h>
-#import <WebKit/_WKSpatialBackdropSource.h>
 #import <WebKit/_WKTargetedElementInfo.h>
 #import <WebKit/_WKTargetedElementRequest.h>
 #import <WebKit/_WKTextExtraction.h>

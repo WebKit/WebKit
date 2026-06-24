@@ -217,7 +217,7 @@ ExceptionOr<Ref<URLPattern>> URLPattern::create(ScriptExecutionContext& context,
     URLPatternInit init;
 
     if (std::holds_alternative<String>(input) && !std::get<String>(input).isNull()) {
-        auto maybeInit = URLPatternConstructorStringParser(WTF::move(std::get<String>(input))).parse(context);
+        auto maybeInit = URLPatternConstructorStringParser(std::get<String>(input)).parse(context);
         if (maybeInit.hasException())
             return maybeInit.releaseException();
         init = maybeInit.releaseReturnValue();
@@ -228,7 +228,7 @@ ExceptionOr<Ref<URLPattern>> URLPattern::create(ScriptExecutionContext& context,
     } else if (std::holds_alternative<URLPatternInit>(input)) {
         if (!baseURL.isNull())
             return Exception { ExceptionCode::TypeError, "Constructor with a URLPatternInit should have a null baseURL argument."_s };
-        init = std::get<URLPatternInit>(input);
+        init = WTF::move(std::get<URLPatternInit>(input));
     }
 
     auto maybeProcessedInit = processInit(WTF::move(init), BaseURLStringType::Pattern);

@@ -13,9 +13,9 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/media_types.h"
 #include "api/rtp_parameters.h"
 #include "media/base/media_channel.h"
@@ -45,9 +45,10 @@ class TrackMediaInfoMap {
 
   TrackMediaInfoMap(std::optional<VoiceMediaInfo> voice_media_info,
                     std::optional<VideoMediaInfo> video_media_info,
-                    ArrayView<const RtpSenderSignalInfo> senders,
-                    ArrayView<const RtpReceiverSignalInfo> receivers,
-                    ArrayView<const RtpParameters> receiver_parameters);
+                    std::span<const RtpSenderSignalInfo> senders,
+                    std::span<const RtpParameters> sender_parameters,
+                    std::span<const RtpReceiverSignalInfo> receivers,
+                    std::span<const RtpParameters> receiver_parameters);
 
   const std::optional<VoiceMediaInfo>& voice_media_info() const {
     return voice_media_info_;

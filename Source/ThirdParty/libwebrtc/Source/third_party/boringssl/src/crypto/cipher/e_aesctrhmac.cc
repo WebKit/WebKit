@@ -20,10 +20,13 @@
 #include <openssl/crypto.h>
 #include <openssl/err.h>
 #include <openssl/sha2.h>
+#include <openssl/span.h>
 
 #include "../fipsmodule/aes/internal.h"
 #include "../fipsmodule/cipher/internal.h"
 
+
+using namespace bssl;
 
 #define EVP_AEAD_AES_CTR_HMAC_SHA256_TAG_LEN SHA256_DIGEST_LENGTH
 #define EVP_AEAD_AES_CTR_HMAC_SHA256_NONCE_LEN 12
@@ -121,19 +124,22 @@ static void hmac_update_uint64(SHA256_CTX *sha256, uint64_t value) {
 static void hmac_calculate(uint8_t out[SHA256_DIGEST_LENGTH],
                            const SHA256_CTX *inner_init_state,
                            const SHA256_CTX *outer_init_state,
-                           const uint8_t *ad, size_t ad_len,
-                           const uint8_t *nonce, const uint8_t *ciphertext,
-                           size_t ciphertext_len) {
+                           Span<const CRYPTO_IVEC> aadvecs,
+                           const uint8_t *nonce,
+                           Span<const CRYPTO_IOVEC> iovecs, bool encrypt) {
+  size_t ad_len = bssl::iovec::TotalLength(aadvecs);
   SHA256_CTX sha256;
   OPENSSL_memcpy(&sha256, inner_init_state, sizeof(sha256));
   hmac_update_uint64(&sha256, ad_len);
-  hmac_update_uint64(&sha256, ciphertext_len);
+  hmac_update_uint64(&sha256, bssl::iovec::TotalLength(iovecs));
   SHA256_Update(&sha256, nonce, EVP_AEAD_AES_CTR_HMAC_SHA256_NONCE_LEN);
-  SHA256_Update(&sha256, ad, ad_len);
+  for (const CRYPTO_IVEC &aadvec : aadvecs) {
+    SHA256_Update(&sha256, aadvec.in, aadvec.len);
+  }
 
   // Pad with zeros to the end of the SHA-256 block.
   const unsigned num_padding =
-      (SHA256_CBLOCK - ((sizeof(uint64_t)*2 +
+      (SHA256_CBLOCK - ((sizeof(uint64_t) * 2 +
                          EVP_AEAD_AES_CTR_HMAC_SHA256_NONCE_LEN + ad_len) %
                         SHA256_CBLOCK)) %
       SHA256_CBLOCK;
@@ -141,7 +147,9 @@ static void hmac_calculate(uint8_t out[SHA256_DIGEST_LENGTH],
   OPENSSL_memset(padding, 0, num_padding);
   SHA256_Update(&sha256, padding, num_padding);
 
-  SHA256_Update(&sha256, ciphertext, ciphertext_len);
+  for (const CRYPTO_IOVEC &iovec : iovecs) {
+    SHA256_Update(&sha256, encrypt ? iovec.out : iovec.in, iovec.len);
+  }
 
   uint8_t inner_digest[SHA256_DIGEST_LENGTH];
   SHA256_Final(inner_digest, &sha256);
@@ -152,10 +160,8 @@ static void hmac_calculate(uint8_t out[SHA256_DIGEST_LENGTH],
 }
 
 static void aead_aes_ctr_hmac_sha256_crypt(
-    const struct aead_aes_ctr_hmac_sha256_ctx *aes_ctx, uint8_t *out,
-    const uint8_t *in, size_t len, const uint8_t *nonce) {
-  // Since the AEAD operation is one-shot, keeping a buffer of unused keystream
-  // bytes is pointless. However, |CRYPTO_ctr128_encrypt_ctr32| requires it.
+    const struct aead_aes_ctr_hmac_sha256_ctx *aes_ctx,
+    Span<const CRYPTO_IOVEC> iovecs, const uint8_t *nonce) {
   uint8_t partial_block_buffer[AES_BLOCK_SIZE];
   unsigned partial_block_offset = 0;
   OPENSSL_memset(partial_block_buffer, 0, sizeof(partial_block_buffer));
@@ -164,74 +170,85 @@ static void aead_aes_ctr_hmac_sha256_crypt(
   OPENSSL_memcpy(counter, nonce, EVP_AEAD_AES_CTR_HMAC_SHA256_NONCE_LEN);
   OPENSSL_memset(counter + EVP_AEAD_AES_CTR_HMAC_SHA256_NONCE_LEN, 0, 4);
 
-  CRYPTO_ctr128_encrypt_ctr32(in, out, len, &aes_ctx->ks.ks, counter,
-                              partial_block_buffer, &partial_block_offset,
-                              aes_ctx->ctr);
+  for (const CRYPTO_IOVEC &iovec : iovecs) {
+    CRYPTO_ctr128_encrypt_ctr32(iovec.in, iovec.out, iovec.len, &aes_ctx->ks.ks,
+                                counter, partial_block_buffer,
+                                &partial_block_offset, aes_ctx->ctr);
+  }
 }
 
-static int aead_aes_ctr_hmac_sha256_seal_scatter(
-    const EVP_AEAD_CTX *ctx, uint8_t *out, uint8_t *out_tag,
-    size_t *out_tag_len, size_t max_out_tag_len, const uint8_t *nonce,
-    size_t nonce_len, const uint8_t *in, size_t in_len, const uint8_t *extra_in,
-    size_t extra_in_len, const uint8_t *ad, size_t ad_len) {
+static int aead_aes_ctr_hmac_sha256_sealv(const EVP_AEAD_CTX *ctx,
+                                          Span<const CRYPTO_IOVEC> iovecs,
+                                          Span<uint8_t> out_tag,
+                                          size_t *out_tag_len,
+                                          Span<const uint8_t> nonce,
+                                          Span<const CRYPTO_IVEC> aadvecs) {
   const struct aead_aes_ctr_hmac_sha256_ctx *aes_ctx =
-      (struct aead_aes_ctr_hmac_sha256_ctx *) &ctx->state;
-  const uint64_t in_len_64 = in_len;
+      (struct aead_aes_ctr_hmac_sha256_ctx *)&ctx->state;
+  const uint64_t in_len_64 = bssl::iovec::TotalLength(iovecs);
 
   if (in_len_64 >= (UINT64_C(1) << 32) * AES_BLOCK_SIZE) {
-     // This input is so large it would overflow the 32-bit block counter.
+    // This input is so large it would overflow the 32-bit block counter.
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_TOO_LARGE);
     return 0;
   }
 
-  if (max_out_tag_len < ctx->tag_len) {
+  if (out_tag.size() < ctx->tag_len) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BUFFER_TOO_SMALL);
     return 0;
   }
 
-  if (nonce_len != EVP_AEAD_AES_CTR_HMAC_SHA256_NONCE_LEN) {
+  if (nonce.size() != EVP_AEAD_AES_CTR_HMAC_SHA256_NONCE_LEN) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_UNSUPPORTED_NONCE_SIZE);
     return 0;
   }
 
-  aead_aes_ctr_hmac_sha256_crypt(aes_ctx, out, in, in_len, nonce);
+  aead_aes_ctr_hmac_sha256_crypt(aes_ctx, iovecs, nonce.data());
 
   uint8_t hmac_result[SHA256_DIGEST_LENGTH];
   hmac_calculate(hmac_result, &aes_ctx->inner_init_state,
-                 &aes_ctx->outer_init_state, ad, ad_len, nonce, out, in_len);
-  OPENSSL_memcpy(out_tag, hmac_result, ctx->tag_len);
+                 &aes_ctx->outer_init_state, aadvecs, nonce.data(), iovecs,
+                 /*encrypt=*/true);
+  CopyToPrefix(Span(hmac_result).first(ctx->tag_len), out_tag);
   *out_tag_len = ctx->tag_len;
 
   return 1;
 }
 
-static int aead_aes_ctr_hmac_sha256_open_gather(
-    const EVP_AEAD_CTX *ctx, uint8_t *out, const uint8_t *nonce,
-    size_t nonce_len, const uint8_t *in, size_t in_len, const uint8_t *in_tag,
-    size_t in_tag_len, const uint8_t *ad, size_t ad_len) {
+static int aead_aes_ctr_hmac_sha256_openv_detached(
+    const EVP_AEAD_CTX *ctx, Span<const CRYPTO_IOVEC> iovecs,
+    Span<const uint8_t> nonce, Span<const uint8_t> in_tag,
+    Span<const CRYPTO_IVEC> aadvecs) {
   const struct aead_aes_ctr_hmac_sha256_ctx *aes_ctx =
-      (struct aead_aes_ctr_hmac_sha256_ctx *) &ctx->state;
+      (struct aead_aes_ctr_hmac_sha256_ctx *)&ctx->state;
+  const uint64_t in_len_64 = bssl::iovec::TotalLength(iovecs);
 
-  if (in_tag_len != ctx->tag_len) {
+  if (in_len_64 >= (UINT64_C(1) << 32) * AES_BLOCK_SIZE) {
+    // This input is so large it would overflow the 32-bit block counter.
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
     return 0;
   }
 
-  if (nonce_len != EVP_AEAD_AES_CTR_HMAC_SHA256_NONCE_LEN) {
+  if (in_tag.size() != ctx->tag_len) {
+    OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
+    return 0;
+  }
+
+  if (nonce.size() != EVP_AEAD_AES_CTR_HMAC_SHA256_NONCE_LEN) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_UNSUPPORTED_NONCE_SIZE);
     return 0;
   }
 
   uint8_t hmac_result[SHA256_DIGEST_LENGTH];
   hmac_calculate(hmac_result, &aes_ctx->inner_init_state,
-                 &aes_ctx->outer_init_state, ad, ad_len, nonce, in,
-                 in_len);
-  if (CRYPTO_memcmp(hmac_result, in_tag, ctx->tag_len) != 0) {
+                 &aes_ctx->outer_init_state, aadvecs, nonce.data(), iovecs,
+                 /*encrypt=*/false);
+  if (CRYPTO_memcmp(hmac_result, in_tag.data(), ctx->tag_len) != 0) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
     return 0;
   }
 
-  aead_aes_ctr_hmac_sha256_crypt(aes_ctx, out, in, in_len, nonce);
+  aead_aes_ctr_hmac_sha256_crypt(aes_ctx, iovecs, nonce.data());
 
   return 1;
 }
@@ -241,14 +258,13 @@ static const EVP_AEAD aead_aes_128_ctr_hmac_sha256 = {
     12,                                    // nonce length
     EVP_AEAD_AES_CTR_HMAC_SHA256_TAG_LEN,  // overhead
     EVP_AEAD_AES_CTR_HMAC_SHA256_TAG_LEN,  // max tag length
-    0,                                     // seal_scatter_supports_extra_in
 
     aead_aes_ctr_hmac_sha256_init,
     nullptr /* init_with_direction */,
     aead_aes_ctr_hmac_sha256_cleanup,
-    nullptr /* open */,
-    aead_aes_ctr_hmac_sha256_seal_scatter,
-    aead_aes_ctr_hmac_sha256_open_gather,
+    nullptr /* openv */,
+    aead_aes_ctr_hmac_sha256_sealv,
+    aead_aes_ctr_hmac_sha256_openv_detached,
     nullptr /* get_iv */,
     nullptr /* tag_len */,
 };
@@ -258,22 +274,21 @@ static const EVP_AEAD aead_aes_256_ctr_hmac_sha256 = {
     12,                                    // nonce length
     EVP_AEAD_AES_CTR_HMAC_SHA256_TAG_LEN,  // overhead
     EVP_AEAD_AES_CTR_HMAC_SHA256_TAG_LEN,  // max tag length
-    0,                                     // seal_scatter_supports_extra_in
 
     aead_aes_ctr_hmac_sha256_init,
     nullptr /* init_with_direction */,
     aead_aes_ctr_hmac_sha256_cleanup,
-    nullptr /* open */,
-    aead_aes_ctr_hmac_sha256_seal_scatter,
-    aead_aes_ctr_hmac_sha256_open_gather,
+    nullptr /* openv */,
+    aead_aes_ctr_hmac_sha256_sealv,
+    aead_aes_ctr_hmac_sha256_openv_detached,
     nullptr /* get_iv */,
     nullptr /* tag_len */,
 };
 
-const EVP_AEAD *EVP_aead_aes_128_ctr_hmac_sha256(void) {
+const EVP_AEAD *EVP_aead_aes_128_ctr_hmac_sha256() {
   return &aead_aes_128_ctr_hmac_sha256;
 }
 
-const EVP_AEAD *EVP_aead_aes_256_ctr_hmac_sha256(void) {
+const EVP_AEAD *EVP_aead_aes_256_ctr_hmac_sha256() {
   return &aead_aes_256_ctr_hmac_sha256;
 }

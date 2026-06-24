@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +32,8 @@
 #include "CSSNoConversionDataRequiredToken.h"
 #include "CSSPropertyParserOptions.h"
 #include "StyleBuilderState.h"
+#include "StyleCalculationValue.h"
+#include "StyleUnevaluatedCalculation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -56,6 +59,11 @@ UnevaluatedCalcBase::UnevaluatedCalcBase(Ref<CSSCalc::Value>&& value)
 {
 }
 
+UnevaluatedCalcBase::UnevaluatedCalcBase(Category category, Range range, const Style::UnevaluatedCalculationBase& value, const Style::ComputedStyle& style)
+    : m_calc { CSSCalc::Value::create(category, range, protect(value.calculation()), style) }
+{
+}
+
 UnevaluatedCalcBase::UnevaluatedCalcBase(const UnevaluatedCalcBase&) = default;
 UnevaluatedCalcBase::UnevaluatedCalcBase(UnevaluatedCalcBase&&) = default;
 UnevaluatedCalcBase& UnevaluatedCalcBase::operator=(const UnevaluatedCalcBase&) = default;
@@ -63,19 +71,76 @@ UnevaluatedCalcBase& UnevaluatedCalcBase::operator=(UnevaluatedCalcBase&&) = def
 
 UnevaluatedCalcBase::~UnevaluatedCalcBase() = default;
 
+std::optional<UnevaluatedCalcBase> UnevaluatedCalcBase::parseBase(CSSParserTokenRange& tokens, PropertyParserState& state, Category category, Range range, CSSCalcSymbolsAllowed&& symbolsAllowed, const CSSPropertyParserOptions& options)
+{
+    if (RefPtr value = CSSCalc::Value::parse(tokens, state, category, range, WTF::move(symbolsAllowed), options))
+        return UnevaluatedCalcBase { value.releaseNonNull() };
+    return std::nullopt;
+}
+
 CSSCalc::Value& UnevaluatedCalcBase::leakRef()
 {
     return m_calc.leakRef();
 }
 
-bool UnevaluatedCalcBase::equal(const UnevaluatedCalcBase& other) const
+bool UnevaluatedCalcBase::operator==(const UnevaluatedCalcBase& other) const
 {
     return protect(calcValue())->equals(other.m_calc.get());
+}
+
+Category UnevaluatedCalcBase::runtimeCategory() const
+{
+    return calcValue().category();
+}
+
+CSSUnitType UnevaluatedCalcBase::primitiveType() const
+{
+    return calcValue().primitiveType();
+}
+
+bool UnevaluatedCalcBase::rootNodeIsPercentage() const
+{
+    return calcValue().rootNodeIsPercentage();
 }
 
 bool UnevaluatedCalcBase::requiresConversionData() const
 {
     return calcValue().requiresConversionData();
+}
+
+bool UnevaluatedCalcBase::canBeCastedTo(Category targetCategory) const
+{
+    switch (runtimeCategory()) {
+    case CSS::Category::Integer:
+    case CSS::Category::Number:
+        return targetCategory == CSS::Category::Integer
+            || targetCategory == CSS::Category::Number;
+    case CSS::Category::Percentage:
+        return targetCategory == CSS::Category::Percentage
+            || targetCategory == CSS::Category::AnglePercentage
+            || targetCategory == CSS::Category::LengthPercentage;
+    case CSS::Category::Length:
+        return targetCategory == CSS::Category::Length
+            || targetCategory == CSS::Category::LengthPercentage;
+    case CSS::Category::Angle:
+        return targetCategory == CSS::Category::Angle
+            || targetCategory == CSS::Category::AnglePercentage;
+    case CSS::Category::Time:
+        return targetCategory == CSS::Category::Time;
+    case CSS::Category::Frequency:
+        return targetCategory == CSS::Category::Frequency;
+    case CSS::Category::Resolution:
+        return targetCategory == CSS::Category::Resolution;
+    case CSS::Category::Flex:
+        return targetCategory == CSS::Category::Flex;
+    case CSS::Category::LengthPercentage:
+        return targetCategory == CSS::Category::LengthPercentage;
+    case CSS::Category::AnglePercentage:
+        return targetCategory == CSS::Category::AnglePercentage;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void UnevaluatedCalcBase::serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context) const
@@ -88,47 +153,79 @@ void UnevaluatedCalcBase::collectComputedStyleDependencies(ComputedStyleDependen
     protect(calcValue())->collectComputedStyleDependencies(dependencies);
 }
 
+UnevaluatedCalcBase UnevaluatedCalcBase::simplifyBase(const CSSToLengthConversionData& conversionData) const
+{
+    return UnevaluatedCalcBase { protect(calcValue())->copySimplified(conversionData) };
+}
+
 UnevaluatedCalcBase UnevaluatedCalcBase::simplifyBase(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
     return UnevaluatedCalcBase { protect(calcValue())->copySimplified(conversionData, symbolTable) };
 }
 
-double UnevaluatedCalcBase::evaluate(CSS::Category category, const Style::BuilderState& state) const
+UnevaluatedCalcBase UnevaluatedCalcBase::simplifyBase(NoConversionDataRequiredToken token) const
 {
-    return evaluate(category, state.cssToLengthConversionData(), { });
+    return UnevaluatedCalcBase { protect(calcValue())->copySimplified(token) };
 }
 
-double UnevaluatedCalcBase::evaluate(CSS::Category category, const Style::BuilderState& state, const CSSCalcSymbolTable& symbolTable) const
+UnevaluatedCalcBase UnevaluatedCalcBase::simplifyBase(NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) const
 {
-    return evaluate(category, state.cssToLengthConversionData(), symbolTable);
+    return UnevaluatedCalcBase { protect(calcValue())->copySimplified(token, symbolTable) };
 }
 
-double UnevaluatedCalcBase::evaluate(CSS::Category category, const CSSToLengthConversionData& conversionData) const
+double UnevaluatedCalcBase::evaluate(const Style::BuilderState& state) const
 {
-    return evaluate(category, conversionData, { });
+    return evaluate(state.cssToLengthConversionData(), { });
 }
 
-double UnevaluatedCalcBase::evaluate(CSS::Category category, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+double UnevaluatedCalcBase::evaluate(const Style::BuilderState& state, const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT_UNUSED(category, protect(calcValue())->category() == category);
+    return evaluate(state.cssToLengthConversionData(), symbolTable);
+}
+
+double UnevaluatedCalcBase::evaluate(const CSSToLengthConversionData& conversionData) const
+{
+    return evaluate(conversionData, { });
+}
+
+double UnevaluatedCalcBase::evaluate(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+{
     return protect(calcValue())->doubleValue(conversionData, symbolTable);
 }
 
-double UnevaluatedCalcBase::evaluate(CSS::Category category, NoConversionDataRequiredToken token) const
+double UnevaluatedCalcBase::evaluate(NoConversionDataRequiredToken token) const
 {
-    return evaluate(category, token, { });
+    return evaluate(token, { });
 }
 
-double UnevaluatedCalcBase::evaluate(CSS::Category category, NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) const
+double UnevaluatedCalcBase::evaluate(NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT_UNUSED(category, protect(calcValue())->category() == category);
     return protect(calcValue())->doubleValue(token, symbolTable);
 }
 
-double UnevaluatedCalcBase::evaluateDeprecated(CSS::Category category) const
+double UnevaluatedCalcBase::evaluateDeprecated() const
 {
-    ASSERT_UNUSED(category, protect(calcValue())->category() == category);
     return protect(calcValue())->doubleValueDeprecated();
+}
+
+Style::UnevaluatedCalculationBase UnevaluatedCalcBase::createCalculationValue(const CSSToLengthConversionData& conversionData) const
+{
+    return Style::UnevaluatedCalculationBase { protect(calcValue())->createCalculationValue(conversionData) };
+}
+
+Style::UnevaluatedCalculationBase UnevaluatedCalcBase::createCalculationValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+{
+    return Style::UnevaluatedCalculationBase { protect(calcValue())->createCalculationValue(conversionData, symbolTable) };
+}
+
+Style::UnevaluatedCalculationBase UnevaluatedCalcBase::createCalculationValue(NoConversionDataRequiredToken token) const
+{
+    return Style::UnevaluatedCalculationBase { protect(calcValue())->createCalculationValue(token) };
+}
+
+Style::UnevaluatedCalculationBase UnevaluatedCalcBase::createCalculationValue(NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) const
+{
+    return Style::UnevaluatedCalculationBase { protect(calcValue())->createCalculationValue(token, symbolTable) };
 }
 
 } // namespace CSS

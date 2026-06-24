@@ -36,15 +36,15 @@ class RenderMathMLSpace final : public RenderMathMLBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLSpace);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLSpace);
 public:
-    RenderMathMLSpace(MathMLSpaceElement&, RenderStyle&&);
+    RenderMathMLSpace(MathMLSpaceElement&, Style::ComputedStyle&&);
     virtual ~RenderMathMLSpace();
 
     MathMLSpaceElement& NODELETE element() const;
 
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLSpace"_s; }
-    bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return false; }
-    void computePreferredLogicalWidths() final;
+    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const final { return false; }
+    void computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     std::optional<LayoutUnit> firstLineBaseline() const final;
 

@@ -1,8 +1,8 @@
 
 PASS The signal option must be an AbortSignal
 PASS Passing an already aborted signal aborts
-FAIL Passing an already aborted signal rejects with the custom abort reason. promise_rejects_exactly: Rejection should give the abort reason function "function() { throw e; }" threw object "AbortError: WebLockOptions's signal is aborted" but we expected it to throw "My dog ate it."
-FAIL Passing an already aborted signal rejects with the default abort reason. promise_rejects_exactly: Rejection should give the abort reason function "function() { throw e; }" threw object "AbortError: WebLockOptions's signal is aborted" but we expected it to throw object "AbortError: The operation was aborted."
+PASS Passing an already aborted signal rejects with the custom abort reason.
+PASS Passing an already aborted signal rejects with the default abort reason.
 PASS An aborted request results in AbortError
 PASS Abort after a timeout
 PASS Signal that is not aborted

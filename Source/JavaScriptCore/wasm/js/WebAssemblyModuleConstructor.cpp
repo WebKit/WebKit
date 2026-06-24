@@ -290,7 +290,10 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyModule, (JSGlobalObject* globalOb
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    
+
+    if (!globalObject->webAssemblyEnabled()) [[unlikely]]
+        return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, globalObject->webAssemblyDisabledErrorMessage())));
+
     Vector<uint8_t> source = createSourceBufferFromValue(vm, globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 

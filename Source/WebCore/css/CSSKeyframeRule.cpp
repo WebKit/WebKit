@@ -88,7 +88,7 @@ StyleRuleKeyframe::~StyleRuleKeyframe() = default;
 MutableStyleProperties& StyleRuleKeyframe::mutableProperties()
 {
     if (!is<MutableStyleProperties>(m_properties))
-        m_properties = m_properties->mutableCopy();
+        m_properties = protect(m_properties)->mutableCopy();
     return uncheckedDowncast<MutableStyleProperties>(m_properties.get());
 }
 
@@ -117,7 +117,7 @@ bool StyleRuleKeyframe::setKeyText(const String& keyText)
 
 String StyleRuleKeyframe::cssText() const
 {
-    if (auto declarations = m_properties->asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
+    if (auto declarations = protect(m_properties)->asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
         return makeString(keyText(), " { "_s, declarations, " }"_s);
     return makeString(keyText(), " { }"_s);
 }
@@ -138,7 +138,7 @@ CSSKeyframeRule::~CSSKeyframeRule()
 CSSStyleProperties& CSSKeyframeRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(m_keyframe->mutableProperties(), *this);
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(protect(m_keyframe->mutableProperties()), *this);
     return *m_propertiesCSSOMWrapper;
 }
 

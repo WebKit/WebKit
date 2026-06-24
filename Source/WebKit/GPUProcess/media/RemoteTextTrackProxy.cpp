@@ -79,6 +79,7 @@ TextTrackPrivateRemoteConfiguration& RemoteTextTrackProxy::configuration()
     configuration->isMainProgramContent = m_trackPrivate->isMainProgramContent();
     configuration->isEasyToRead = m_trackPrivate->isEasyToRead();
     configuration->isDefault = m_trackPrivate->isDefault();
+    configuration->isMachineGenerated = m_trackPrivate->isMachineGenerated();
     configuration->kind = m_trackPrivate->kind();
 
     return configuration.get();

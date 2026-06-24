@@ -1470,6 +1470,18 @@ String addTextTrackKindForcedSuffix(const String& text)
     return WEB_UI_FORMAT_CFSTRING_KEY("%@ Forced", "%@ Forced (text track)", "Forced text track display name format that includes the language and/or locale (e.g. 'English Forced').", text.createCFString().get());
 }
 
+String textTrackKindGeneratedDisplayName()
+{
+    return WEB_UI_CFSTRING_KEY("Generated", "Generated (text track)", "Display name for text track kind 'generated'.");
+}
+
+String addTextTrackKindGeneratedSuffix(const String& text)
+{
+    if (text.isEmpty())
+        return textTrackKindGeneratedDisplayName();
+    return WEB_UI_FORMAT_CFSTRING_KEY("%@ Generated", "%@ Generated (text track)", "Generated text track display name format that includes the language and/or locale (e.g. 'English Generated').", text.createCFString().get());
+}
+
 String audioTrackKindDescriptionsDisplayName()
 {
     return WEB_UI_CFSTRING_KEY("Descriptions", "Descriptions (audio track)", "Display name for audio track kind 'descriptions'.");

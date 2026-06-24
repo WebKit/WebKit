@@ -26,6 +26,7 @@
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/video_quality_analyzer_interface.h"
 #include "api/video/encoded_image.h"
+#include "api/video/resolution.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_type.h"
@@ -88,7 +89,9 @@ class QualityAnalyzingVideoEncoder : public VideoEncoder,
   EncodedImageCallback::Result OnEncodedImage(
       const EncodedImage& encoded_image,
       const CodecSpecificInfo* codec_specific_info) override;
-  void OnDroppedFrame(DropReason reason) override;
+  void OnFrameDropped(uint32_t rtp_timestamp,
+                      int spatial_id,
+                      bool is_end_of_temporal_unit) override;
 
  private:
   enum SimulcastMode {
@@ -182,10 +185,12 @@ class QualityAnalyzingVideoEncoderFactory : public VideoEncoderFactory {
   ~QualityAnalyzingVideoEncoderFactory() override;
 
   // Methods of VideoEncoderFactory interface.
+  using VideoEncoderFactory::QueryCodecSupport;
   std::vector<SdpVideoFormat> GetSupportedFormats() const override;
   VideoEncoderFactory::CodecSupport QueryCodecSupport(
       const SdpVideoFormat& format,
-      std::optional<std::string> scalability_mode) const override;
+      std::optional<std::string> scalability_mode,
+      std::optional<Resolution> resolution) const override;
   std::unique_ptr<VideoEncoder> Create(const Environment& env,
                                        const SdpVideoFormat& format) override;
 

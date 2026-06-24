@@ -27,6 +27,7 @@
 #include "modules/video_coding/codecs/test/videocodec_test_stats_impl.h"
 #include "modules/video_coding/codecs/test/videoprocessor.h"
 #include "rtc_base/task_queue_for_test.h"
+#include "system_wrappers/include/clock.h"
 #include "test/testsupport/frame_reader.h"
 
 namespace webrtc {
@@ -96,6 +97,7 @@ class VideoCodecTestFixtureImpl : public VideoCodecTestFixture {
 
   // Helper objects.
   Config config_;
+  std::unique_ptr<SimulatedClock> encoder_clock_;
   const Environment env_;
   VideoCodecTestStatsImpl stats_;
   std::unique_ptr<FrameReader> source_frame_reader_;

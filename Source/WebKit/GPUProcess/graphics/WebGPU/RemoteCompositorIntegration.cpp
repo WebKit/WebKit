@@ -35,6 +35,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCompositorIntegration.h>
+#include <WebCore/WebGPUDevice.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_streamConnection, completion)
@@ -99,6 +100,6 @@ void RemoteCompositorIntegration::updateContentsHeadroom(float headroom)
 
 } // namespace WebKit
 
-#undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_COMPLETION
 
 #endif // ENABLE(GPU_PROCESS)

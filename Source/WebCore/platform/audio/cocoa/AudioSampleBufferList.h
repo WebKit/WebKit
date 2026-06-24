@@ -85,13 +85,12 @@ protected:
     size_t m_sampleCount { 0 };
     size_t m_sampleCapacity { 0 };
     size_t m_maxBufferSizePerChannel { 0 };
-    size_t m_bufferListBaseSize { 0 };
     const UniqueRef<WebAudioBufferList> m_bufferList;
 };
 
 inline size_t AudioSampleBufferList::audioBufferListSizeForStream(const CAAudioStreamDescription& description)
 {
-    return offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * std::max<uint32_t>(1, description.numberOfChannelStreams()));
+    return offsetof(AudioBufferList, mBuffers) + (sizeof(::AudioBuffer) * std::max<uint32_t>(1, description.numberOfChannelStreams()));
 }
 
 } // namespace WebCore

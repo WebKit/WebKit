@@ -51,6 +51,7 @@
 #endif
 
 
+BSSL_NAMESPACE_BEGIN
 namespace abi_test {
 
 namespace internal {
@@ -139,17 +140,17 @@ static std::array<char, sizeof(crypto_word_t) * 2 + 1> WordToHex(
   return ret;
 }
 
-static void StrCatSignalSafeImpl(bssl::Span<char> out) {}
+static void StrCatSignalSafeImpl(Span<char> out) {}
 
 template <typename... Args>
-static void StrCatSignalSafeImpl(bssl::Span<char> out, const char *str,
+static void StrCatSignalSafeImpl(Span<char> out, const char *str,
                                  Args... args) {
   OPENSSL_strlcat(out.data(), str, out.size());
   StrCatSignalSafeImpl(out, args...);
 }
 
 template <typename... Args>
-static void StrCatSignalSafe(bssl::Span<char> out, Args... args) {
+static void StrCatSignalSafe(Span<char> out, Args... args) {
   if (out.empty()) {
     return;
   }
@@ -374,7 +375,7 @@ class UnwindCursor {
     size_t len = strlen(starting_ip_buf_);
     // Print the offset in decimal, to match gdb's disassembly output and ease
     // debugging.
-    StrCatSignalSafe(bssl::Span<char>(starting_ip_buf_).subspan(len), "+",
+    StrCatSignalSafe(Span<char>(starting_ip_buf_).subspan(len), "+",
                      WordToDecimal(off).data(), " (0x",
                      WordToHex(starting_ip_).data(), ")");
     return starting_ip_buf_;
@@ -765,3 +766,4 @@ void EnableUnwindTests() { internal::EnableUnwindTestsImpl(); }
 bool UnwindTestsEnabled() { return internal::g_unwind_tests_enabled; }
 
 }  // namespace abi_test
+BSSL_NAMESPACE_END

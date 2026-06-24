@@ -51,7 +51,11 @@ void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction
     if (menu) {
         m_menu = WTF::move(menu);
         g_signal_connect_swapped(m_menu.get(), "close", G_CALLBACK(menuCloseCallback), this);
+        return;
     }
+
+    if (CheckedPtr checkedClient = client())
+        checkedClient->failedToShowPopupMenu();
 }
 
 void WebKitPopupMenu::hidePopupMenu()

@@ -445,7 +445,7 @@ TEST(IndexedDB, MigrateThirdPartyDataToGeneralStorageDirectory)
     EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeDatabaseFile.path]);
 }
 
-static const char* workerBytes = R"TESTRESOURCE(
+static const char* indexedDBWorkerBytes = R"TESTRESOURCE(
 try {
     var request = indexedDB.open('IndexedDBThirdPartyWorkerHasAccess');
     var db = null;
@@ -493,7 +493,7 @@ TEST(IndexedDB, IndexedDBThirdPartyWorkerHasAccess)
         } else {
             EXPECT_WK_STREQ("iframe:///worker.js", requestURL.absoluteString);
             response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/javascript" expectedContentLength:0 textEncodingName:nil]);
-            data = [NSData dataWithBytes:workerBytes length:strlen(workerBytes)];
+            data = [NSData dataWithBytes:indexedDBWorkerBytes length:strlen(indexedDBWorkerBytes)];
         }
         [task didReceiveResponse:response.get()];
         [task didReceiveData:data.get()];

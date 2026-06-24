@@ -543,6 +543,64 @@ TEST(SSLAEADContextTest, Lengths) {
   }
 }
 
+TEST(SSLTest, ECHPublicName) {
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("")));
+  EXPECT_TRUE(ssl_is_valid_ech_public_name(StringAsBytes("example.com")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes(".example.com")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("example.com.")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("example..com")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("www.-example.com")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("www.example-.com")));
+  EXPECT_FALSE(
+      ssl_is_valid_ech_public_name(StringAsBytes("no_underscores.example")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      StringAsBytes("invalid_chars.\x01.example")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      StringAsBytes("invalid_chars.\xff.example")));
+  static const uint8_t kWithNUL[] = {'t', 'e', 's', 't', 0};
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(kWithNUL));
+
+  // Test an LDH label with every character and the maximum length.
+  EXPECT_TRUE(ssl_is_valid_ech_public_name(StringAsBytes(
+      "abcdefhijklmnopqrstuvwxyz-ABCDEFGHIJKLMNOPQRSTUVWXYZ-0123456789")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes(
+      "abcdefhijklmnopqrstuvwxyz-ABCDEFGHIJKLMNOPQRSTUVWXYZ-01234567899")));
+
+  // Inputs with trailing numeric components are rejected.
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("127.0.0.1")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("example.1")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("example.01")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("example.0x01")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("example.0X01")));
+  // Leading zeros and values that overflow |uint32_t| are still rejected.
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      StringAsBytes("example.123456789000000000000000")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      StringAsBytes("example.012345678900000000000000")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      StringAsBytes("example.0x123456789abcdefABCDEF0")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(
+      StringAsBytes("example.0x0123456789abcdefABCDEF")));
+  // Adding a non-digit or non-hex character makes it a valid DNS name again.
+  // Single-component numbers are rejected.
+  EXPECT_TRUE(
+      ssl_is_valid_ech_public_name(StringAsBytes("example.1234567890a")));
+  EXPECT_TRUE(
+      ssl_is_valid_ech_public_name(StringAsBytes("example.01234567890a")));
+  EXPECT_TRUE(ssl_is_valid_ech_public_name(
+      StringAsBytes("example.0x123456789abcdefg")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("1")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("01")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("0x01")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("0X01")));
+  // Numbers with trailing dots are rejected. (They are already rejected by the
+  // LDH label rules, but the WHATWG URL parser additionally rejects them.)
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("1.")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("01.")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("0x01.")));
+  EXPECT_FALSE(ssl_is_valid_ech_public_name(StringAsBytes("0X01.")));
+}
+
 }  // namespace
 BSSL_NAMESPACE_END
 #endif  // !BORINGSSL_SHARED_LIBRARY

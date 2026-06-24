@@ -57,6 +57,7 @@ PACKAGES=(
     gdb
     psmisc
     pulseaudio
+    python-legacy-cgi
     python2-psutil
     ttf-liberation
     time

@@ -242,6 +242,16 @@ static inline uint32_t horizontal_add_u16x4(const uint16x4_t a) {
 #endif
 }
 
+static inline uint32x4_t horizontal_add_2d_u32(uint32x4_t a, uint32x4_t b) {
+#if AOM_ARCH_AARCH64
+  return vpaddq_u32(a, b);
+#else
+  const uint32x2_t a0 = vpadd_u32(vget_low_u32(a), vget_high_u32(a));
+  const uint32x2_t b0 = vpadd_u32(vget_low_u32(b), vget_high_u32(b));
+  return vcombine_u32(a0, b0);
+#endif
+}
+
 static inline int32x4_t horizontal_add_2d_s32(int32x4_t a, int32x4_t b) {
 #if AOM_ARCH_AARCH64
   return vpaddq_s32(a, b);

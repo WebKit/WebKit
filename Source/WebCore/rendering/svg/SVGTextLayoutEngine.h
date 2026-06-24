@@ -28,11 +28,14 @@
 namespace WebCore {
 
 class RenderObject;
-class RenderStyle;
 class RenderSVGInlineText;
 class RenderSVGTextPath;
 class SVGElement;
 class SVGInlineTextBox;
+
+namespace Style {
+class ComputedStyle;
+}
 
 // SVGTextLayoutEngine performs the second layout phase for SVG text.
 //
@@ -65,7 +68,7 @@ private:
     void recordTextFragment(InlineIterator::SVGTextBoxIterator, const Vector<SVGTextMetrics>&);
     bool parentDefinesTextLength(RenderObject*) const;
 
-    void layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator, const RenderSVGInlineText&, const RenderStyle&);
+    void layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator, const RenderSVGInlineText&, const Style::ComputedStyle&);
     void finalizeTransformMatrices(Vector<InlineIterator::SVGTextBoxIterator>&);
 
     bool NODELETE currentLogicalCharacterAttributes(SVGTextLayoutAttributes*&);

@@ -63,7 +63,6 @@
 
     if (window.accessibilityController) {
         jsTestIsAsync = true;
-        testRunner.waitUntilDone();
 
         accessibilityController.enableEnhancedAccessibility(true);
         webArea = accessibilityController.rootElement.childAtIndex(0);

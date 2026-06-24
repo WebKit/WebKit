@@ -259,7 +259,7 @@ class SSLIdentityTest : public ::testing::Test {
     EXPECT_EQ(expected_len, digest.size());
 
     // Repeat digest computation for the identity as a sanity check.
-    Buffer digest1(0, MessageDigest::kMaxSize);
+    Buffer digest1 = Buffer::CreateWithCapacity(MessageDigest::kMaxSize);
     std::memset(digest1.data(), 0xff, expected_len);
     EXPECT_TRUE(identity->certificate().ComputeDigest(algorithm, digest1));
     EXPECT_EQ(expected_len, digest1.size());
@@ -291,7 +291,7 @@ class SSLIdentityTest : public ::testing::Test {
   void TestDigestForFixedCert(absl::string_view algorithm,
                               size_t expected_len,
                               const unsigned char* expected_digest) {
-    Buffer digest(0, MessageDigest::kMaxSize);
+    Buffer digest(Buffer::CreateWithCapacity(MessageDigest::kMaxSize));
 
     ASSERT_TRUE(expected_len <= digest.capacity());
 

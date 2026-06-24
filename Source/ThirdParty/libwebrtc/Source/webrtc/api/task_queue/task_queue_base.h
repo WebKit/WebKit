@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
+#include "absl/strings/string_view.h"
 #include "api/location.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/system/rtc_export.h"
@@ -35,6 +36,9 @@ class RTC_LOCKABLE RTC_EXPORT TaskQueueBase {
     // more information.
     kHigh,
   };
+
+  // Returns the name of the task queue.
+  virtual absl::string_view queue_name() const { return "unnamed"; }
 
   // Starts destruction of the task queue.
   // On return ensures no task are running and no new tasks are able to start

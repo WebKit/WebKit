@@ -95,7 +95,6 @@
 #import "_WKResourceLoadInfoInternal.h"
 #import "_WKResourceLoadStatisticsFirstPartyInternal.h"
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
-#import "_WKSerializedNode.h"
 #import "_WKTargetedElementInfoInternal.h"
 #import "_WKTargetedElementRequestInternal.h"
 #import "_WKTextRunInternal.h"
@@ -537,7 +536,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::SerializedNode:
-        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKSerializedNode alloc];
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKJSSerializedNode alloc];
         break;
 
     case Type::JSHandle:

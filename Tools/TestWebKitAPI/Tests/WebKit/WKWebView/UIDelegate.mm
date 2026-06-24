@@ -82,7 +82,7 @@
 #import "UIKitUtilities.h"
 #endif
 
-static bool didReceiveMessage;
+static bool uiDelegateDidReceiveMessage;
 
 @interface AudioObserver : NSObject
 @end
@@ -284,7 +284,7 @@ TEST(WebKit, GeolocationPermission)
 @implementation GeolocationPermissionMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    didReceiveMessage = true;
+    uiDelegateDidReceiveMessage = true;
 }
 @end
 
@@ -350,9 +350,9 @@ TEST(WebKit, GeolocationPermissionInIFrame)
     }];
 
     done = false;
-    didReceiveMessage = false;
+    uiDelegateDidReceiveMessage = false;
     [webView loadRequest:server1.request()];
-    TestWebKitAPI::Util::run(&didReceiveMessage);
+    TestWebKitAPI::Util::run(&uiDelegateDidReceiveMessage);
     EXPECT_TRUE(done);
 }
 
@@ -416,11 +416,11 @@ TEST(WebKit, GeolocationPermissionInIFrameExampleWebArchive)
     NSString *getCurrentPosition = @"navigator.geolocation.getCurrentPosition(() => { webkit.messageHandlers.testHandler.postMessage(\"ok\") }, () => { webkit.messageHandlers.testHandler.postMessage(\"ko\") });";
 
     done = false;
-    didReceiveMessage = false;
+    uiDelegateDidReceiveMessage = false;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
     [navigationDelegate waitForDidFinishNavigation];
     [webView evaluateJavaScript:getCurrentPosition completionHandler:nil];
-    TestWebKitAPI::Util::run(&didReceiveMessage);
+    TestWebKitAPI::Util::run(&uiDelegateDidReceiveMessage);
     TestWebKitAPI::Util::run(&done);
 
 #if ENABLE(WEB_ARCHIVE)
@@ -437,9 +437,9 @@ TEST(WebKit, GeolocationPermissionInIFrameExampleWebArchive)
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
 
     done = false;
-    didReceiveMessage = false;
+    uiDelegateDidReceiveMessage = false;
     [webView evaluateJavaScript:getCurrentPosition completionHandler:nil];
-    TestWebKitAPI::Util::run(&didReceiveMessage);
+    TestWebKitAPI::Util::run(&uiDelegateDidReceiveMessage);
     TestWebKitAPI::Util::run(&done);
 
     // Reset web process state.
@@ -449,7 +449,7 @@ TEST(WebKit, GeolocationPermissionInIFrameExampleWebArchive)
     [navigationDelegate waitForDidFinishNavigation];
 
     done = false;
-    didReceiveMessage = false;
+    uiDelegateDidReceiveMessage = false;
     doneEvaluatingJavaScript = false;
     [webView callAsyncJavaScript:@"return (await new Promise(function (resolve, reject) {"
         "navigator.geolocation.getCurrentPosition((position) => { resolve(JSON.stringify(position.toJSON())) }, (error) => { reject(error.message) });"
@@ -460,7 +460,7 @@ TEST(WebKit, GeolocationPermissionInIFrameExampleWebArchive)
         doneEvaluatingJavaScript = true;
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
-    EXPECT_FALSE(didReceiveMessage);
+    EXPECT_FALSE(uiDelegateDidReceiveMessage);
     EXPECT_TRUE(done);
 #endif
 }
@@ -510,9 +510,9 @@ TEST(WebKit, GeolocationPermissionInDisallowedIFrame)
     webView.get().navigationDelegate = navigationDelegate.get();
 
     done = false;
-    didReceiveMessage = false;
+    uiDelegateDidReceiveMessage = false;
     [webView loadRequest:server1.request()];
-    TestWebKitAPI::Util::run(&didReceiveMessage);
+    TestWebKitAPI::Util::run(&uiDelegateDidReceiveMessage);
     EXPECT_FALSE(done);
 }
 
@@ -707,7 +707,7 @@ INSTANTIATE_TEST_SUITE_P(WebKit, ScreenWakeLockTests, testing::Values(
 @class UITestDelegate;
 
 static RetainPtr<WKWebView> webViewFromDelegateCallback;
-static RetainPtr<WKWebView> createdWebView;
+static RetainPtr<WKWebView> uiDelegateCreatedWebView;
 static RetainPtr<UITestDelegate> delegate;
 
 @interface UITestDelegate : NSObject <WKUIDelegatePrivate, WKURLSchemeHandler>
@@ -717,9 +717,9 @@ static RetainPtr<UITestDelegate> delegate;
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
-    createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
-    [createdWebView setUIDelegate:delegate.get()];
-    return createdWebView.get();
+    uiDelegateCreatedWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [uiDelegateCreatedWebView setUIDelegate:delegate.get()];
+    return uiDelegateCreatedWebView.get();
 }
 
 - (void)_showWebView:(WKWebView *)webView
@@ -752,7 +752,7 @@ TEST(WebKit, ShowWebView)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///first"]]];
     TestWebKitAPI::Util::run(&done);
     
-    ASSERT_EQ(webViewFromDelegateCallback, createdWebView);
+    ASSERT_EQ(webViewFromDelegateCallback, uiDelegateCreatedWebView);
 }
 
 static bool receivedWindowFrame;

@@ -7,7 +7,7 @@
             direction: ltr;
         }
     </style>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script>
         window.jsTestIsAsync = true;
 
@@ -41,20 +41,17 @@
             eventSender.mouseUp();
 
             shouldNotBe("scroller.scrollTop", "0");
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         function startTest()
         {
             if (window.eventSender) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
 
                 scroller = document.scrollingElement;
                 setTimeout(doTest, 0);
             }
         }
     </script>
-    <script src="../../resources/js-test-post.js"></script>
 </head>
 <body style='min-height: 5000px' onload='startTest();'></body>

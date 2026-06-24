@@ -28,17 +28,17 @@
 #include "LegacyRenderSVGEllipse.h"
 
 #include "LegacyRenderSVGShapeInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGEllipse);
 
-LegacyRenderSVGEllipse::LegacyRenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
+LegacyRenderSVGEllipse::LegacyRenderSVGEllipse(SVGGraphicsElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGShape(Type::LegacySVGEllipse, element, WTF::move(style))
 {
 }

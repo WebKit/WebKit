@@ -32,6 +32,7 @@
 #include <WebCore/LayoutUnit.h>
 #include <WebCore/StylePrimitiveNumericTypes+Calculation.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 #include <WebCore/StyleValueTypes.h>
 
 namespace WebCore {
@@ -93,77 +94,78 @@ template<NonCompositeNumeric StyleType, typename Result> struct Evaluation<Style
 
 // MARK: - Calculation
 
-template<typename Result> struct Evaluation<Ref<Calculation::Value>, Result> {
-    auto operator()(Ref<Calculation::Value> calculation, Result referenceLength, ZoomFactor usedZoom) -> Result
-    {
-        return Result(calculation->evaluate(referenceLength, usedZoom));
-    }
-
-    auto operator()(Ref<Calculation::Value> calculation, Result referenceLength, ZoomNeeded token) -> Result
-    {
-        return Result(calculation->evaluate(referenceLength, token));
-    }
-
-    auto operator()(Ref<Calculation::Value> calculation, Result referenceLength) -> Result
-    {
-        return Result(calculation->evaluate(referenceLength));
-    }
-};
-
 template<Calc Calculation, typename Result> struct Evaluation<Calculation, Result> {
-    template<typename... Rest> auto operator()(const Calculation& calculation, Result referenceLength, ZoomNeeded token, Rest&&... rest) -> Result
+    template<typename... Rest> auto operator()(const Calculation& calculation, Result percentageBasis, ZoomNeeded token, Rest&&... rest) -> Result
         requires (Calculation::range.zoomOptions == CSS::RangeZoomOptions::Default && (Calculation::category == CSS::Category::Length || Calculation::category == CSS::Category::LengthPercentage))
     {
-        return evaluate<Result>(protect(calculation.calculation()), referenceLength, token, std::forward<Rest>(rest)...);
+        return Result(calculation.evaluate(percentageBasis, token, std::forward<Rest>(rest)...));
     }
 
-    template<typename... Rest> auto operator()(const Calculation& calculation, Result referenceLength, ZoomFactor usedZoom, Rest&&... rest) -> Result
+    template<typename... Rest> auto operator()(const Calculation& calculation, Result percentageBasis, ZoomFactor usedZoom, Rest&&... rest) -> Result
         requires (Calculation::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed && (Calculation::category == CSS::Category::Length || Calculation::category == CSS::Category::LengthPercentage))
     {
-        return evaluate<Result>(protect(calculation.calculation()), referenceLength, usedZoom, std::forward<Rest>(rest)...);
+        return Result(calculation.evaluate(percentageBasis, usedZoom, std::forward<Rest>(rest)...));
     }
 
-    template<typename... Rest> auto operator()(const Calculation& calculation, Result referenceLength, Rest&&... rest) -> Result
+    template<typename... Rest> auto operator()(const Calculation& calculation, Result percentageBasis, Rest&&... rest) -> Result
         requires (Calculation::category != CSS::Category::Length && Calculation::category != CSS::Category::LengthPercentage)
     {
-        return evaluate<Result>(protect(calculation.calculation()), referenceLength, ZoomNeeded { }, std::forward<Rest>(rest)...);
+        return Result(calculation.evaluate(percentageBasis, ZoomNeeded { }, std::forward<Rest>(rest)...));
     }
 };
 
 // MARK: - LengthPercentage
 
 template<auto R, typename V, typename Result> struct Evaluation<LengthPercentage<R, V>, Result> {
-    constexpr auto operator()(const LengthPercentage<R, V>& lengthPercentage, Result referenceLength, ZoomNeeded token) -> Result
-        requires (R.zoomOptions == CSS::RangeZoomOptions::Default)
+    using StyleType = LengthPercentage<R, V>;
+
+    auto operator()(const StyleType& value, NOESCAPE const Invocable<Result()> auto& lazyMaximumValueFunctor, ZoomNeeded token) -> Result
+        requires (StyleType::range.zoomOptions == CSS::RangeZoomOptions::Default)
     {
-        return WTF::switchOn(lengthPercentage,
-            [&](const typename LengthPercentage<R, V>::Dimension& length) -> Result {
-                return evaluate<Result>(length, token);
-            },
-            [&](const typename LengthPercentage<R, V>::Percentage& percentage) -> Result {
-                return evaluate<Result>(percentage, referenceLength);
-            },
-            [&](const typename LengthPercentage<R, V>::Calc& calculation) -> Result {
-                return evaluate<Result>(calculation, referenceLength, token);
-            }
-        );
+        return value.m_value.template valueForPrimitiveDataWithLazyMaximum<StyleType::range, Result, Result>(value.evaluationKind(), lazyMaximumValueFunctor, token);
     }
-    constexpr auto operator()(const LengthPercentage<R, V>& lengthPercentage, Result referenceLength, ZoomFactor zoom) -> Result
-        requires (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
+    auto operator()(const StyleType& value, Result maximumValue, ZoomNeeded token) -> Result
+        requires (StyleType::range.zoomOptions == CSS::RangeZoomOptions::Default)
     {
-        return WTF::switchOn(lengthPercentage,
-            [&](const typename LengthPercentage<R, V>::Dimension& length) -> Result {
-                return evaluate<Result>(length, zoom);
-            },
-            [&](const typename LengthPercentage<R, V>::Percentage& percentage) -> Result {
-                return evaluate<Result>(percentage, referenceLength);
-            },
-            [&](const typename LengthPercentage<R, V>::Calc& calculation) -> Result {
-                return evaluate<Result>(calculation, referenceLength, zoom);
-            }
-        );
+        return value.m_value.template valueForPrimitiveDataWithLazyMaximum<StyleType::range, Result, Result>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; }, token);
+    }
+
+    auto operator()(const StyleType& value, NOESCAPE const Invocable<Result()> auto& lazyMaximumValueFunctor, ZoomFactor zoom) -> Result
+        requires (StyleType::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
+    {
+        return value.m_value.template valueForPrimitiveDataWithLazyMaximum<StyleType::range, Result, Result>(value.evaluationKind(), lazyMaximumValueFunctor, zoom);
+    }
+    auto operator()(const StyleType& value, Result maximumValue, ZoomFactor zoom) -> Result
+        requires (StyleType::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
+    {
+        return value.m_value.template valueForPrimitiveDataWithLazyMaximum<StyleType::range, Result, Result>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; }, zoom);
     }
 };
+
+template<LengthPercentageOrKeywordDerived StyleType, typename Result> struct Evaluation<StyleType, Result> {
+    auto operator()(const StyleType& value, NOESCAPE const Invocable<Result()> auto& lazyMaximumValueFunctor, ZoomNeeded token) -> Result
+        requires (StyleType::Numeric::range.zoomOptions == CSS::RangeZoomOptions::Default)
+    {
+        return value.m_value.template valueForPrimitiveDataWithLazyMaximum<StyleType::Numeric::range, Result, Result>(value.evaluationKind(), lazyMaximumValueFunctor, token);
+    }
+    auto operator()(const StyleType& value, Result maximumValue, ZoomNeeded token) -> Result
+        requires (StyleType::Numeric::range.zoomOptions == CSS::RangeZoomOptions::Default)
+    {
+        return value.m_value.template valueForPrimitiveDataWithLazyMaximum<StyleType::Numeric::range, Result, Result>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; }, token);
+    }
+
+    auto operator()(const StyleType& value, NOESCAPE const Invocable<Result()> auto& lazyMaximumValueFunctor, ZoomFactor zoom) -> Result
+        requires (StyleType::Numeric::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
+    {
+        return value.m_value.template valueForPrimitiveDataWithLazyMaximum<StyleType::Numeric::range, Result, Result>(value.evaluationKind(), lazyMaximumValueFunctor, zoom);
+    }
+    auto operator()(const StyleType& value, Result maximumValue, ZoomFactor zoom) -> Result
+        requires (StyleType::Numeric::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed)
+    {
+        return value.m_value.template valueForPrimitiveDataWithLazyMaximum<StyleType::Numeric::range, Result, Result>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; }, zoom);
+    }
+};
+
 
 // MARK: - NumberOrPercentageResolvedToNumber
 

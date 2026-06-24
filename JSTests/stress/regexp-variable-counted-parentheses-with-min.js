@@ -275,3 +275,82 @@ function shouldBe(actual, expected, message) {
             throw new Error("(a){3}b should match 'aaab' within 'aaaab'");
     }
 })();
+
+// Test 23: validatorjs IPv6 pattern fragment - capturing groups with {1,N}
+// Multiple sibling capturing parens with non-zero min trigger the
+// no-IR-expansion path in YarrPattern (m_hasCopiedParenSubexpressions guard);
+// the JIT must handle min > 0 && min != max for capturing groups directly.
+(function() {
+    var re = /^(:(?:[0-9a-fA-F]{1,4})){1,7}$/;
+    for (var i = 0; i < 1000; i++) {
+        var result = re.exec(":a");
+        if (!result || result[0] !== ":a") throw new Error("Test 23a iter " + i);
+        result = re.exec(":a:b:c:d:e:f:7");
+        if (!result || result[0] !== ":a:b:c:d:e:f:7") throw new Error("Test 23b iter " + i);
+        if (re.exec(":") !== null) throw new Error("Test 23c iter " + i);
+        if (re.exec("a") !== null) throw new Error("Test 23d iter " + i);
+        if (re.exec(":a:b:c:d:e:f:g:h") !== null) throw new Error("Test 23e iter " + i);
+    }
+})();
+
+// Test 24: Nested capturing min>0 inside outer min>0 (mirrors locale RFC 5646
+// `(x(-[A-Za-z0-9]{1,8})+)`). Outer is FixedCount(1) with capturing inner that's
+// (...){1,inf}. The inner BEGIN.bt count<min retry-via-content-backtrack path
+// must not lose the outer capture.
+(function() {
+    var re = /^(x(-[A-Za-z0-9]{1,8})+)$/;
+    for (var i = 0; i < 1000; i++) {
+        var result = re.exec("x-abc");
+        if (!result || result[1] !== "x-abc" || result[2] !== "-abc")
+            throw new Error("Test 24a iter " + i);
+        result = re.exec("x-a-b-c");
+        if (!result || result[1] !== "x-a-b-c" || result[2] !== "-c")
+            throw new Error("Test 24b iter " + i);
+        if (re.exec("x") !== null) throw new Error("Test 24c iter " + i);
+        if (re.exec("-abc") !== null) throw new Error("Test 24d iter " + i);
+    }
+})();
+
+// Test 25: Nested non-capturing min>0 - /(?:(?:ab)+){2,}/ requires the outer
+// BEGIN.bt to backtrack INTO the prior iter's content (via END's content
+// backtrack entry) rather than fail when count < min. With "abab", the outer
+// needs to break iter 1 into a single (ab) so iter 2 can match.
+(function() {
+    var re = /^(?:(?:ab)+){2,}$/;
+    for (var i = 0; i < 1000; i++) {
+        if (!re.test("abab")) throw new Error("Test 25a iter " + i);
+        if (!re.test("ababab")) throw new Error("Test 25b iter " + i);
+        if (!re.test("abababab")) throw new Error("Test 25c iter " + i);
+        if (re.test("ab")) throw new Error("Test 25d iter " + i);
+        if (re.test("aba")) throw new Error("Test 25e iter " + i);
+        if (re.test("ababa")) throw new Error("Test 25f iter " + i);
+    }
+})();
+
+// Test 26: Non-greedy with capturing and min > 0
+// /(((a){2})+){2,}?z/ exercises NonGreedy mandatory phase with deeply nested
+// capturing parens — exposed by the yarr-jit-fixedcount-paren-context-free-on-skip suite.
+(function() {
+    var re = /(((a){2})+){2,}?z/;
+    for (var i = 0; i < 1000; i++) {
+        var result = re.exec("aaaaz");
+        if (!result || result[0] !== "aaaaz" || result[1] !== "aa" || result[2] !== "aa" || result[3] !== "a")
+            throw new Error("Test 26a iter " + i);
+        result = re.exec("aaaaaaz");
+        if (!result || result[0] !== "aaaaaaz")
+            throw new Error("Test 26b iter " + i);
+        if (re.exec("aaz") !== null) throw new Error("Test 26c iter " + i);
+        if (re.exec("z") !== null) throw new Error("Test 26d iter " + i);
+    }
+})();
+
+// Test 27: + on capturing group (= {1,inf}) — ensure simple cases still work
+(function() {
+    var re = /^(a)+$/;
+    for (var i = 0; i < 1000; i++) {
+        var result = re.exec("aaa");
+        if (!result || result[0] !== "aaa" || result[1] !== "a")
+            throw new Error("Test 27a iter " + i);
+        if (re.exec("") !== null) throw new Error("Test 27b iter " + i);
+    }
+})();

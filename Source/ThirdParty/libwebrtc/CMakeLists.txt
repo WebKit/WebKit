@@ -12,6 +12,13 @@ add_definitions(-DWEBRTC_WEBKIT_BUILD=1)
 # Suppress all warnings for third-party libwebrtc code.
 add_compile_options(-w)
 
+# Match the Xcode build (Configurations/Base.xcconfig: CLANG_ENABLE_OBJC_ARC = YES).
+# The webkit_sdk Objective-C(++) sources rely on ARC for block/object ownership —
+# e.g. RTCVideoEncoderH264 stores its callback blocks via plain ivar assignment,
+# which only retains/copies under ARC. Compiling them MRR produces immediate
+# use-after-free of the GPU-process encoder callback blocks.
+add_compile_options("$<$<COMPILE_LANGUAGE:OBJC,OBJCXX>:-fobjc-arc>")
+
 if (NOT APPLE)
     find_package(LibEvent)
     if (NOT LIBEVENT_FOUND)
@@ -41,14 +48,20 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/base/internal/strerror.cc
     Source/third_party/abseil-cpp/absl/base/internal/sysinfo.cc
     Source/third_party/abseil-cpp/absl/base/internal/thread_identity.cc
-    Source/third_party/abseil-cpp/absl/base/internal/throw_delegate.cc
     Source/third_party/abseil-cpp/absl/base/internal/unscaledcycleclock.cc
+    Source/third_party/abseil-cpp/absl/base/casts.cc
     Source/third_party/abseil-cpp/absl/base/log_severity.cc
+    Source/third_party/abseil-cpp/absl/base/throw_delegate.cc
     Source/third_party/abseil-cpp/absl/container/internal/hash_generator_testing.cc
     Source/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler.cc
     Source/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler_force_weak_definition.cc
     Source/third_party/abseil-cpp/absl/container/internal/raw_hash_set.cc
     Source/third_party/abseil-cpp/absl/container/internal/test_instance_tracker.cc
+    Source/third_party/abseil-cpp/absl/crc/crc32c.cc
+    Source/third_party/abseil-cpp/absl/crc/internal/cpu_detect.cc
+    Source/third_party/abseil-cpp/absl/crc/internal/crc.cc
+    Source/third_party/abseil-cpp/absl/crc/internal/crc_cord_state.cc
+    Source/third_party/abseil-cpp/absl/crc/internal/crc_x86_arm_combined.cc
     Source/third_party/abseil-cpp/absl/debugging/failure_signal_handler.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc
@@ -129,7 +142,6 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/strings/match.cc
     Source/third_party/abseil-cpp/absl/strings/numbers.cc
     Source/third_party/abseil-cpp/absl/strings/str_cat.cc
-    Source/third_party/abseil-cpp/absl/strings/string_view.cc
     Source/third_party/abseil-cpp/absl/strings/str_replace.cc
     Source/third_party/abseil-cpp/absl/strings/str_split.cc
     Source/third_party/abseil-cpp/absl/strings/substitute.cc
@@ -159,6 +171,7 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/time/internal/cctz/src/zone_info_source.cc
     Source/third_party/abseil-cpp/absl/time/internal/test_util.cc
     Source/third_party/abseil-cpp/absl/time/time.cc
+    Source/third_party/abseil-cpp/absl/types/source_location.cc
     Source/third_party/crc32c/src/src/crc32c_arm64.cc
     Source/third_party/crc32c/src/src/crc32c.cc
     Source/third_party/crc32c/src/src/crc32c_portable.cc
@@ -304,6 +317,7 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/api/video_codecs/video_decoder_factory.cc
     Source/webrtc/api/video_codecs/video_decoder_software_fallback_wrapper.cc
     Source/webrtc/api/video_codecs/video_encoder.cc
+    Source/webrtc/api/video_codecs/video_encoder_factory.cc
     Source/webrtc/api/video_codecs/video_encoder_software_fallback_wrapper.cc
     Source/webrtc/api/video_codecs/vp8_frame_config.cc
     Source/webrtc/api/video_codecs/vp8_temporal_layers.cc
@@ -395,7 +409,6 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/common_audio/signal_processing/lpc_to_refl_coef.c
     Source/webrtc/common_audio/signal_processing/min_max_operations.c
     Source/webrtc/common_audio/signal_processing/randomization_functions.c
-    Source/webrtc/common_audio/signal_processing/real_fft.c
     Source/webrtc/common_audio/signal_processing/refl_coef_to_lpc.c
     Source/webrtc/common_audio/signal_processing/resample.c
     Source/webrtc/common_audio/signal_processing/resample_48khz.c
@@ -652,7 +665,7 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/modules/audio_processing/aec3/fullband_erle_estimator.cc
     Source/webrtc/modules/audio_processing/aec3/matched_filter.cc
     Source/webrtc/modules/audio_processing/aec3/matched_filter_lag_aggregator.cc
-    Source/webrtc/modules/audio_processing/aec3/moving_average.cc
+    Source/webrtc/modules/audio_processing/aec3/moving_average_spectrum.cc
     Source/webrtc/modules/audio_processing/aec3/multi_channel_content_detector.cc
     Source/webrtc/modules/audio_processing/aec3/refined_filter_update_gain.cc
     Source/webrtc/modules/audio_processing/aec3/render_buffer.cc
@@ -755,8 +768,6 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/modules/audio_processing/splitting_filter.cc
     Source/webrtc/modules/audio_processing/three_band_filter_bank.cc
     Source/webrtc/modules/audio_processing/utility/cascaded_biquad_filter.cc
-    Source/webrtc/modules/audio_processing/utility/delay_estimator.cc
-    Source/webrtc/modules/audio_processing/utility/delay_estimator_wrapper.cc
     Source/webrtc/modules/audio_processing/utility/pffft_wrapper.cc
     Source/webrtc/modules/audio_processing/vad/gmm.cc
     Source/webrtc/modules/audio_processing/vad/pitch_based_vad.cc
@@ -794,6 +805,8 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/modules/congestion_controller/rtp/transport_feedback_adapter.cc
     Source/webrtc/modules/congestion_controller/rtp/transport_feedback_demuxer.cc
     Source/webrtc/modules/congestion_controller/scream/delay_based_congestion_control.cc
+    Source/webrtc/modules/congestion_controller/scream/loss_estimator.cc
+    Source/webrtc/modules/congestion_controller/scream/scream_feedback.cc
     Source/webrtc/modules/congestion_controller/scream/scream_network_controller.cc
     Source/webrtc/modules/congestion_controller/scream/scream_v2.cc
     Source/webrtc/modules/congestion_controller/scream/scream_v2_parameters.cc
@@ -1109,7 +1122,6 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/pc/dtls_srtp_transport.cc
     Source/webrtc/pc/dtls_transport.cc
     Source/webrtc/pc/dtmf_sender.cc
-    Source/webrtc/pc/external_hmac.cc
     Source/webrtc/pc/ice_server_parsing.cc
     Source/webrtc/pc/ice_transport.cc
     Source/webrtc/pc/jitter_buffer_delay.cc
@@ -1137,6 +1149,7 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/pc/rtp_transceiver.cc
     Source/webrtc/pc/rtp_transmission_manager.cc
     Source/webrtc/pc/rtp_transport.cc
+    Source/webrtc/pc/scoped_operations_batcher.cc
     Source/webrtc/pc/sctp_data_channel.cc
     Source/webrtc/pc/sctp_transport.cc
     Source/webrtc/pc/sctp_utils.cc
@@ -1253,6 +1266,7 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/rtc_base/rate_limiter.cc
     Source/webrtc/rtc_base/rate_statistics.cc
     Source/webrtc/rtc_base/rate_tracker.cc
+    Source/webrtc/rtc_base/ref_counter.cc
     Source/webrtc/rtc_base/rtc_certificate.cc
     Source/webrtc/rtc_base/rtc_certificate_generator.cc
     Source/webrtc/rtc_base/rtp_to_ntp_estimator.cc
@@ -1276,9 +1290,11 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/rtc_base/synchronization/yield.cc
     Source/webrtc/rtc_base/synchronization/yield_policy.cc
     Source/webrtc/rtc_base/system/file_wrapper.cc
+    Source/webrtc/rtc_base/system/system_time.cc
     Source/webrtc/rtc_base/system_time.cc
     Source/webrtc/rtc_base/task_queue_stdlib.cc
     Source/webrtc/rtc_base/task_utils/repeating_task.cc
+    Source/webrtc/rtc_base/text2pcap.cc
     Source/webrtc/rtc_base/thread.cc
     Source/webrtc/rtc_base/time_utils.cc
     Source/webrtc/rtc_base/timestamp_aligner.cc
@@ -1327,6 +1343,7 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/video/frame_dumping_decoder.cc
     Source/webrtc/video/frame_dumping_encoder.cc
     Source/webrtc/video/frame_encode_metadata_writer.cc
+    Source/webrtc/video/null_video_decoder.cc
     Source/webrtc/video/quality_convergence_controller.cc
     Source/webrtc/video/quality_convergence_monitor.cc
     Source/webrtc/video/quality_limitation_reason_tracker.cc
@@ -1386,7 +1403,6 @@ list(APPEND webrtc_SOURCES
     Source/third_party/libyuv/source/compare.cc
     Source/third_party/libyuv/source/compare_common.cc
     Source/third_party/libyuv/source/compare_gcc.cc
-    Source/third_party/libyuv/source/compare_msa.cc
     Source/third_party/libyuv/source/compare_neon.cc
     Source/third_party/libyuv/source/compare_neon64.cc
     Source/third_party/libyuv/source/compare_win.cc
@@ -1407,7 +1423,6 @@ list(APPEND webrtc_SOURCES
     Source/third_party/libyuv/source/rotate_common.cc
     Source/third_party/libyuv/source/rotate_gcc.cc
     Source/third_party/libyuv/source/rotate_lsx.cc
-    Source/third_party/libyuv/source/rotate_msa.cc
     Source/third_party/libyuv/source/rotate_neon.cc
     Source/third_party/libyuv/source/rotate_neon64.cc
     Source/third_party/libyuv/source/rotate_sme.cc
@@ -1417,7 +1432,6 @@ list(APPEND webrtc_SOURCES
     Source/third_party/libyuv/source/row_gcc.cc
     Source/third_party/libyuv/source/row_lasx.cc
     Source/third_party/libyuv/source/row_lsx.cc
-    Source/third_party/libyuv/source/row_msa.cc
     Source/third_party/libyuv/source/row_neon.cc
     Source/third_party/libyuv/source/row_neon64.cc
     Source/third_party/libyuv/source/row_rvv.cc
@@ -1430,7 +1444,6 @@ list(APPEND webrtc_SOURCES
     Source/third_party/libyuv/source/scale_common.cc
     Source/third_party/libyuv/source/scale_gcc.cc
     Source/third_party/libyuv/source/scale_lsx.cc
-    Source/third_party/libyuv/source/scale_msa.cc
     Source/third_party/libyuv/source/scale_neon.cc
     Source/third_party/libyuv/source/scale_neon64.cc
     Source/third_party/libyuv/source/scale_rgb.cc
@@ -1540,13 +1553,14 @@ list(APPEND webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/evp/evp.cc
     Source/third_party/boringssl/src/crypto/evp/evp_ctx.cc
     Source/third_party/boringssl/src/crypto/evp/pbkdf.cc
+    Source/third_party/boringssl/src/crypto/evp/print.cc
     Source/third_party/boringssl/src/crypto/evp/p_dh.cc
     Source/third_party/boringssl/src/crypto/evp/p_dsa.cc
     Source/third_party/boringssl/src/crypto/evp/p_ec.cc
     Source/third_party/boringssl/src/crypto/evp/p_ed25519.cc
     Source/third_party/boringssl/src/crypto/evp/p_hkdf.cc
     Source/third_party/boringssl/src/crypto/evp/p_mldsa.cc
-    Source/third_party/boringssl/src/crypto/evp/print.cc
+    Source/third_party/boringssl/src/crypto/evp/p_mlkem.cc
     Source/third_party/boringssl/src/crypto/evp/p_rsa.cc
     Source/third_party/boringssl/src/crypto/evp/p_x25519.cc
     Source/third_party/boringssl/src/crypto/evp/scrypt.cc
@@ -1773,28 +1787,6 @@ list(APPEND webrtc_SOURCES
     Source/third_party/boringssl/src/ssl/tls13_server.cc
     Source/third_party/boringssl/src/ssl/tls_method.cc
     Source/third_party/boringssl/src/ssl/tls_record.cc
-    Source/third_party/boringssl/src/tool/args.cc
-    Source/third_party/boringssl/src/tool/ciphers.cc
-    Source/third_party/boringssl/src/tool/client.cc
-    Source/third_party/boringssl/src/tool/const.cc
-    Source/third_party/boringssl/src/tool/digest.cc
-    Source/third_party/boringssl/src/tool/fd.cc
-    Source/third_party/boringssl/src/tool/file.cc
-    Source/third_party/boringssl/src/tool/generate_ech.cc
-    Source/third_party/boringssl/src/tool/generate_ed25519.cc
-    Source/third_party/boringssl/src/tool/genrsa.cc
-    Source/third_party/boringssl/src/tool/pkcs12.cc
-    Source/third_party/boringssl/src/tool/rand.cc
-    Source/third_party/boringssl/src/tool/server.cc
-    Source/third_party/boringssl/src/tool/sign.cc
-    Source/third_party/boringssl/src/tool/speed.cc
-    Source/third_party/boringssl/src/tool/tool.cc
-    Source/third_party/boringssl/src/tool/transport_common.cc
-    Source/third_party/boringssl/src/util/ar/testdata/sample/bar.cc
-    Source/third_party/boringssl/src/util/bazel-example/example.cc
-    Source/third_party/boringssl/src/util/fipstools/acvp/modulewrapper/main.cc
-    Source/third_party/boringssl/src/util/fipstools/acvp/modulewrapper/modulewrapper.cc
-    Source/third_party/boringssl/src/util/fipstools/acvp/modulewrapper/proto.cc
 )
 
 if (WTF_CPU_X86_64 OR WTF_CPU_X86)
@@ -2102,7 +2094,6 @@ if (APPLE)
         Source/webrtc/webkit_sdk/WebKit/WebKitEncoder.mm
         Source/webrtc/webkit_sdk/WebKit/WebKitDecoderReceiver.cpp
 
-        Source/webrtc/webkit_sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.mm
         Source/webrtc/webkit_sdk/objc/api/video_codec/RTCVideoCodecConstants.mm
         Source/webrtc/webkit_sdk/objc/api/video_codec/RTCVideoDecoderVP8.mm
         Source/webrtc/webkit_sdk/objc/api/video_codec/RTCVideoDecoderVP9.mm
@@ -2155,10 +2146,8 @@ if (APPLE)
     if (ENABLE_AV1)
         list(APPEND webrtc_SOURCES
             Source/webrtc/modules/video_coding/codecs/av1/dav1d_decoder.cc
-            Source/webrtc/modules/video_coding/codecs/av1/libaom_av1_decoder.cc
             Source/webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder.cc
             Source/webrtc/modules/video_coding/codecs/av1/libaom_speed_config_factory.cc
-            Source/webrtc/webkit_sdk/objc/api/video_codec/RTCVideoDecoderAV1.mm
             Source/webrtc/webkit_sdk/objc/api/video_codec/RTCVideoEncoderAV1.mm
         )
     endif ()
@@ -2302,6 +2291,15 @@ target_compile_options(webrtc PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:-std=c++2b>"
     "-UHAVE_CONFIG_H"
 )
+
+# The Swift-enabled clang shipped in the wkdev-sdk picks up libstdc++'s
+# std::bind_front, whose result is not convertible to
+# std::function<void(std::vector<std::unique_ptr<T>>)> and breaks call.cc et al.
+# Pre-define __cpp_lib_bind_front=0 so libstdc++ never advertises the feature
+# and Abseil falls back to its in-tree absl::bind_front. Must be a -D rather
+# than a force-included #undef: libstdc++'s feature-test header is
+# re-includable and would re-define the macro before Abseil reaches it.
+target_compile_definitions(webrtc PRIVATE __cpp_lib_bind_front=0)
 
 set_target_properties(webrtc PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(webrtc PROPERTIES C_VISIBILITY_PRESET hidden)
@@ -2451,6 +2449,32 @@ endif ()
 
 target_include_directories(webrtc ${webrtc_INCLUDE_DIRECTORIES})
 WEBKIT_ADD_PREFIX_HEADER(webrtc WebRTCPrefix.h PREFIX_LANGUAGES CXX)
+WEBKIT_ADD_PREFIX_HEADER(webrtc WebRTCObjCPrefix.h PREFIX_LANGUAGES OBJCXX)
+
+if (APPLE)
+    # ObjC categories whose object files export no external symbols. If these
+    # lived inside the static archive, ld would never load them (nothing
+    # references a symbol they define) and category methods such as
+    # -[RTCVideoCodecInfo initWithNativeSdpVideoFormat:] would be missing at
+    # runtime, breaking webrtc::createLocalEncoder. Build them as an OBJECT
+    # library so consumers (WebCore) link the objects directly.
+    add_library(webrtc_objc_categories OBJECT
+        Source/webrtc/webkit_sdk/objc/api/peerconnection/RTCEncodedImage+Private.mm
+        Source/webrtc/webkit_sdk/objc/api/peerconnection/RTCVideoCodecInfo+Private.mm
+        Source/webrtc/webkit_sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.mm
+        Source/webrtc/webkit_sdk/objc/helpers/NSString+StdString.mm
+    )
+    target_compile_options(webrtc_objc_categories PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:-std=c++2b>")
+    target_compile_definitions(webrtc_objc_categories PRIVATE
+        WEBRTC_POSIX
+        WEBRTC_ARCH_LITTLE_ENDIAN
+        WEBRTC_USE_H265=1
+        RTC_ENABLE_H265
+        RTC_ENABLE_VP9
+    )
+    target_include_directories(webrtc_objc_categories ${webrtc_INCLUDE_DIRECTORIES})
+endif ()
+
 set_source_files_properties(Source/third_party/libyuv/util/color.cc PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 set_source_files_properties(Source/webrtc/rtc_base/logging.cc PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 if (LIBPULSE_FOUND)
@@ -2686,7 +2710,6 @@ if (APPLE)
           Source/third_party/opus/src/celt/x86/x86cpu.c
           Source/third_party/opus/src/celt/x86/x86_celt_map.c
           Source/third_party/opus/src/celt/x86/pitch_sse.c
-          Source/third_party/opus/src/silk/fixed/x86/prefilter_FIX_sse.c
           Source/third_party/opus/src/silk/x86/x86_silk_map.c
       )
     endif ()
@@ -2909,9 +2932,7 @@ set(vpx_SOURCES
     Source/third_party/libvpx/source/libvpx/vp9/common/vp9_frame_buffers.c
     Source/third_party/libvpx/source/libvpx/vp9/common/vp9_idct.c
     Source/third_party/libvpx/source/libvpx/vp9/common/vp9_loopfilter.c
-    Source/third_party/libvpx/source/libvpx/vp9/common/vp9_mfqe.c
     Source/third_party/libvpx/source/libvpx/vp9/common/vp9_mvref_common.c
-    Source/third_party/libvpx/source/libvpx/vp9/common/vp9_postproc.c
     Source/third_party/libvpx/source/libvpx/vp9/common/vp9_pred_common.c
     Source/third_party/libvpx/source/libvpx/vp9/common/vp9_quant_common.c
     Source/third_party/libvpx/source/libvpx/vp9/common/vp9_reconinter.c
@@ -3021,6 +3042,11 @@ set(vpx_SOURCES
 
 if (WTF_CPU_X86_64)
     enable_language(ASM_NASM)
+    # Override the compile command to only pass nasm-compatible flags.
+    # Global add_compile_options() bleeds in Clang flags (-isystem, -iframework, -w) that
+    # nasm doesn't understand, and nasm 3.x doesn't treat -MD as a two-token dep flag.
+    # Mirrors how the Xcode build invokes yasm: format + includes + defines, nothing else.
+    set(CMAKE_ASM_NASM_COMPILE_OBJECT "<CMAKE_ASM_NASM_COMPILER> <DEFINES> <INCLUDES> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
 
     list(APPEND vpx_SOURCES
         Source/third_party/libvpx/source/config/mac/x64/vpx_config.c
@@ -3064,6 +3090,7 @@ if (WTF_CPU_X86_64)
         Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct4x4_add_sse4.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct8x8_add_sse2.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct8x8_add_sse4.c
+        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_intrin_avx2.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_intrin_sse2.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_intrin_ssse3.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_loopfilter_sse2.c
@@ -3118,7 +3145,6 @@ if (WTF_CPU_X86_64)
         Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/dct_sse2.asm
         Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/fwalsh_sse2.asm
         Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/temporal_filter_apply_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_mfqe_sse2.asm
         Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_dct_sse2.asm
         Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_error_sse2.asm
         Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/add_noise_sse2.asm
@@ -3236,6 +3262,7 @@ elseif (WTF_CPU_ARM64)
         Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/sse_neon.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/sse_neon_dotprod.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/subpel_variance_neon.c
+        Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/subpel_variance_neon_dotprod.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/subtract_neon.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/sum_squares_neon.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/variance_neon.c
@@ -3302,7 +3329,7 @@ elseif (WTF_CPU_ARM64)
 endif ()
 
 target_include_directories(vpx PRIVATE ${vpx_INCLUDE_DIRECTORIES})
-target_compile_options(vpx PRIVATE -Wno-cast-align -Wno-incompatible-pointer-types)
+target_compile_options(vpx PRIVATE $<$<COMPILE_LANGUAGE:C,CXX>:-Wno-cast-align> $<$<COMPILE_LANGUAGE:C,CXX>:-Wno-incompatible-pointer-types>)
 
 # libaom OBJECT library, mirrors libwebrtc.xcodeproj's libaom target.
 # Source list canonically extracted from libwebrtc.xcodeproj/project.pbxproj (228 entries),
@@ -3361,7 +3388,6 @@ if (ENABLE_AV1 AND APPLE)
         Source/third_party/libaom/source/libaom/aom_util/debug_util.c
         Source/third_party/libaom/source/libaom/av1/arg_defs.c
         Source/third_party/libaom/source/libaom/av1/av1_cx_iface.c
-        Source/third_party/libaom/source/libaom/av1/av1_dx_iface.c
         Source/third_party/libaom/source/libaom/av1/common/alloccommon.c
         Source/third_party/libaom/source/libaom/av1/common/av1_inv_txfm1d.c
         Source/third_party/libaom/source/libaom/av1/common/av1_inv_txfm2d.c
@@ -3371,7 +3397,6 @@ if (ENABLE_AV1 AND APPLE)
         Source/third_party/libaom/source/libaom/av1/common/blockd.c
         Source/third_party/libaom/source/libaom/av1/common/cdef.c
         Source/third_party/libaom/source/libaom/av1/common/cdef_block.c
-        Source/third_party/libaom/source/libaom/av1/common/cfl.c
         Source/third_party/libaom/source/libaom/av1/common/common_data.c
         Source/third_party/libaom/source/libaom/av1/common/convolve.c
         Source/third_party/libaom/source/libaom/av1/common/debugmodes.c
@@ -3387,7 +3412,6 @@ if (ENABLE_AV1 AND APPLE)
         Source/third_party/libaom/source/libaom/av1/common/reconinter.c
         Source/third_party/libaom/source/libaom/av1/common/reconintra.c
         Source/third_party/libaom/source/libaom/av1/common/resize.c
-        Source/third_party/libaom/source/libaom/av1/common/restoration.c
         Source/third_party/libaom/source/libaom/av1/common/scale.c
         Source/third_party/libaom/source/libaom/av1/common/scan.c
         Source/third_party/libaom/source/libaom/av1/common/seg_common.c
@@ -3395,15 +3419,6 @@ if (ENABLE_AV1 AND APPLE)
         Source/third_party/libaom/source/libaom/av1/common/tile_common.c
         Source/third_party/libaom/source/libaom/av1/common/timing.c
         Source/third_party/libaom/source/libaom/av1/common/txb_common.c
-        Source/third_party/libaom/source/libaom/av1/common/warped_motion.c
-        Source/third_party/libaom/source/libaom/av1/decoder/accounting.c
-        Source/third_party/libaom/source/libaom/av1/decoder/decodeframe.c
-        Source/third_party/libaom/source/libaom/av1/decoder/decodemv.c
-        Source/third_party/libaom/source/libaom/av1/decoder/decoder.c
-        Source/third_party/libaom/source/libaom/av1/decoder/decodetxb.c
-        Source/third_party/libaom/source/libaom/av1/decoder/detokenize.c
-        Source/third_party/libaom/source/libaom/av1/decoder/grain_synthesis.c
-        Source/third_party/libaom/source/libaom/av1/decoder/obu.c
         Source/third_party/libaom/source/libaom/av1/encoder/allintra_vis.c
         Source/third_party/libaom/source/libaom/av1/encoder/aq_complexity.c
         Source/third_party/libaom/source/libaom/av1/encoder/aq_cyclicrefresh.c
@@ -3413,7 +3428,6 @@ if (ENABLE_AV1 AND APPLE)
         Source/third_party/libaom/source/libaom/av1/encoder/av1_fwd_txfm2d.c
         Source/third_party/libaom/source/libaom/av1/encoder/av1_noise_estimate.c
         Source/third_party/libaom/source/libaom/av1/encoder/av1_quantize.c
-        Source/third_party/libaom/source/libaom/av1/encoder/av1_temporal_denoiser.c
         Source/third_party/libaom/source/libaom/av1/encoder/bitstream.c
         Source/third_party/libaom/source/libaom/av1/encoder/blockiness.c
         Source/third_party/libaom/source/libaom/av1/encoder/compound_type.c
@@ -3488,6 +3502,7 @@ if (ENABLE_AV1 AND APPLE)
             Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_convolve8_neon.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_convolve8_neon_dotprod.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_convolve_copy_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_scaled_convolve8_neon_dotprod.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_scaled_convolve8_neon.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/avg_neon.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/avg_pred_neon.c
@@ -3508,17 +3523,20 @@ if (ENABLE_AV1 AND APPLE)
             Source/third_party/libaom/source/libaom/aom_dsp/arm/sse_neon.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/sse_neon_dotprod.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/subpel_variance_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/subpel_variance_neon_dotprod.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/subtract_neon.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/sum_squares_neon.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/sum_squares_neon_dotprod.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/variance_neon.c
             Source/third_party/libaom/source/libaom/aom_dsp/arm/variance_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/av1_convolve_horiz_rs_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/av1_convolve_scale_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/av1_convolve_scale_neon_dotprod.c
             Source/third_party/libaom/source/libaom/av1/common/arm/av1_inv_txfm_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/av1_txfm_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/blend_a64_hmask_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/blend_a64_vmask_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/cdef_block_neon.c
-            Source/third_party/libaom/source/libaom/av1/common/arm/cfl_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/compound_convolve_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/compound_convolve_neon_dotprod.c
             Source/third_party/libaom/source/libaom/av1/common/arm/convolve_neon.c
@@ -3527,6 +3545,7 @@ if (ENABLE_AV1 AND APPLE)
             Source/third_party/libaom/source/libaom/av1/common/arm/reconinter_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/reconintra_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/resize_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/resize_neon_dotprod.c
             Source/third_party/libaom/source/libaom/av1/common/arm/selfguided_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/warp_plane_neon.c
             Source/third_party/libaom/source/libaom/av1/common/arm/wiener_convolve_neon.c

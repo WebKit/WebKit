@@ -42,7 +42,7 @@ class RenderMathMLRoot final : public RenderMathMLRow {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLRoot);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLRoot);
 public:
-    RenderMathMLRoot(MathMLRootElement&, RenderStyle&&);
+    RenderMathMLRoot(MathMLRootElement&, Style::ComputedStyle&&);
     virtual ~RenderMathMLRoot();
 
     void updateStyle();
@@ -56,9 +56,9 @@ private:
     MathMLRootElement& NODELETE element() const;
     RootType NODELETE rootType() const;
 
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 
-    void computePreferredLogicalWidths() final;
+    void computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void paint(PaintInfo&, const LayoutPoint&) final;
     std::optional<LayoutUnit> firstLineBaseline() const final;

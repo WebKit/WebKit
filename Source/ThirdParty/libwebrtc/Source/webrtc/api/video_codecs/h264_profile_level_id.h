@@ -91,6 +91,11 @@ RTC_EXPORT bool H264IsSameProfile(const CodecParameterMap& params1,
 RTC_EXPORT bool H264IsSameProfileAndLevel(const CodecParameterMap& params1,
                                           const CodecParameterMap& params2);
 
+// Returns true if the profile defined in `subset` is a valid subset of the
+// profile defined in `superset` according to ITU-T H.264 Annex A.2.
+RTC_EXPORT bool H264IsProfileSubsetOf(const CodecParameterMap& subset,
+                                      const CodecParameterMap& superset);
+
 }  // namespace webrtc
 
 #endif  // API_VIDEO_CODECS_H264_PROFILE_LEVEL_ID_H_

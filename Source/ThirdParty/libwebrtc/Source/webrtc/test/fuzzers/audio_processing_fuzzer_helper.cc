@@ -16,8 +16,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_processing.h"
 #include "api/scoped_refptr.h"
@@ -31,7 +31,7 @@ bool ValidForApm(float x) {
   return std::isfinite(x) && -1.0f <= x && x <= 1.0f;
 }
 
-void GenerateFloatFrame(test::FuzzDataHelper* fuzz_data,
+void GenerateFloatFrame(FuzzDataHelper* fuzz_data,
                         int input_rate,
                         int num_channels,
                         float* const* float_frames) {
@@ -42,9 +42,9 @@ void GenerateFloatFrame(test::FuzzDataHelper* fuzz_data,
     std::fill(float_frames[i], float_frames[i] + samples_per_input_channel, 0);
     const size_t read_bytes = sizeof(float) * samples_per_input_channel;
     if (fuzz_data->CanReadBytes(read_bytes)) {
-      ArrayView<const uint8_t> byte_array =
+      std::span<const uint8_t> byte_array =
           fuzz_data->ReadByteArray(read_bytes);
-      memmove(float_frames[i], byte_array.begin(), read_bytes);
+      memmove(float_frames[i], byte_array.data(), read_bytes);
     }
 
     // Sanitize input.
@@ -56,7 +56,7 @@ void GenerateFloatFrame(test::FuzzDataHelper* fuzz_data,
   }
 }
 
-void GenerateFixedFrame(test::FuzzDataHelper* fuzz_data,
+void GenerateFixedFrame(FuzzDataHelper* fuzz_data,
                         int input_rate,
                         int num_channels,
                         AudioFrame* fixed_frame) {
@@ -75,7 +75,7 @@ void GenerateFixedFrame(test::FuzzDataHelper* fuzz_data,
 }
 }  // namespace
 
-void FuzzAudioProcessing(test::FuzzDataHelper* fuzz_data,
+void FuzzAudioProcessing(FuzzDataHelper* fuzz_data,
                          scoped_refptr<AudioProcessing> apm) {
   AudioFrame fixed_frame;
   // Normal usage is up to 8 channels. Allowing to fuzz one beyond this allows

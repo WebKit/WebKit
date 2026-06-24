@@ -24,122 +24,71 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@linkTimeConstant
-function asyncGeneratorResumeNext(generator, resumeMode)
-{
-    "use strict";
-
-    @assert(@isAsyncGenerator(generator), "Generator is not an AsyncGenerator instance.");
-
-    while (true) {
-        var state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
-
-        @assert(state !== @AsyncGeneratorStateExecuting, "Async generator should not be in executing state");
-
-        if (state === @AsyncGeneratorStateAwaitingReturn)
-            return;
-
-        if (resumeMode === @AsyncGeneratorResumeModeEmpty)
-            return;
-
-        var resumeValue = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldResumeValue);
-
-        if (resumeMode !== @GeneratorResumeModeNormal) {
-            if (state === @AsyncGeneratorStateInit) {
-                @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
-                state = @AsyncGeneratorStateCompleted;
-            }
-
-            if (resumeMode === @GeneratorResumeModeReturn) {
-                if (state === @AsyncGeneratorStateCompleted) {
-                    @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateAwaitingReturn);
-                    return @resolveWithInternalMicrotaskForAsyncAwait(resumeValue, @InternalMicrotaskAsyncGeneratorResumeNext, generator);
-                }
-
-                if (state > 0 && (state & @AsyncGeneratorSuspendReasonMask) === @AsyncGeneratorSuspendReasonYield) {
-                    state = (state & ~@AsyncGeneratorSuspendReasonMask) | @AsyncGeneratorSuspendReasonAwait;
-                    @putAsyncGeneratorInternalField(generator, @generatorFieldState, state);
-                    return @resolveWithInternalMicrotaskForAsyncAwait(resumeValue, @InternalMicrotaskAsyncGeneratorBodyCallReturn, generator);
-                }
-            } else {
-                @assert(resumeMode === @GeneratorResumeModeThrow, "Async generator has wrong mode");
-                if (state === @AsyncGeneratorStateCompleted) {
-                    resumeMode = @asyncGeneratorQueueDequeueReject(generator, resumeValue);
-                    continue;
-                }
-            }
-        } else if (state === @AsyncGeneratorStateCompleted) {
-            resumeMode = @asyncGeneratorQueueDequeueResolve(generator, { value: @undefined, done: true });
-            continue;
-        }
-
-        var value = @undefined;
-
-        @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateExecuting);
-
-        try {
-            value = @getAsyncGeneratorInternalField(generator, @generatorFieldNext).@call(@getAsyncGeneratorInternalField(generator, @generatorFieldThis), generator, state >> @AsyncGeneratorSuspendReasonShift, resumeValue, resumeMode, @getAsyncGeneratorInternalField(generator, @generatorFieldFrame));
-            state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
-            if (state === @AsyncGeneratorStateExecuting) {
-                @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
-                state = @AsyncGeneratorStateCompleted;
-            }
-        } catch (error) {
-            @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
-            resumeMode = @asyncGeneratorQueueDequeueReject(generator, error);
-            continue;
-        }
-
-        if (state > 0) {
-            if ((state & @AsyncGeneratorSuspendReasonMask) === @AsyncGeneratorSuspendReasonAwait)
-                return @resolveWithInternalMicrotaskForAsyncAwait(value, @InternalMicrotaskAsyncGeneratorBodyCallNormal, generator);
-
-            state = (state & ~@AsyncGeneratorSuspendReasonMask) | @AsyncGeneratorSuspendReasonAwait;
-            @putAsyncGeneratorInternalField(generator, @generatorFieldState, state);
-            return @resolveWithInternalMicrotaskForAsyncAwait(value, @InternalMicrotaskAsyncGeneratorYieldAwaited, generator);
-        }
-
-        if (state === @AsyncGeneratorStateCompleted) {
-            @assert(@getAsyncGeneratorInternalField(generator, @generatorFieldState) == @AsyncGeneratorStateCompleted);
-            resumeMode = @asyncGeneratorQueueDequeueResolve(generator, { value, done: true });
-            continue;
-        }
-        return;
-    }
-}
-
+// https://tc39.es/ecma262/#sec-asyncgenerator-prototype-next
 function next(value)
 {
     "use strict";
 
     var promise = @newPromise();
-    var resumeMode = @asyncGeneratorQueueEnqueue(this, value, @GeneratorResumeModeNormal, promise);
-    if (resumeMode !== @AsyncGeneratorResumeModeEmpty)
-        @asyncGeneratorResumeNext(this, resumeMode);
+    // 3. Let result be Completion(AsyncGeneratorValidate(gen, empty)).
+    // 4. IfAbruptRejectPromise(result, promiseCapability).
+    // 5. Let state be gen.[[AsyncGeneratorState]].
+    // 6. If state is completed, then
+    // 6.a. Let iteratorResult be CreateIteratorResultObject(undefined, true).
+    // 6.b. Perform ! Call(promiseCapability.[[Resolve]], undefined, « iteratorResult »).
+    // 6.c. Return promiseCapability.[[Promise]].
+    // 7. Let completion be NormalCompletion(value).
+    // 8. Perform AsyncGeneratorEnqueue(gen, completion, promiseCapability).
+    // 9. If state is either suspended-start or suspended-yield, then
+    // 9.a. Perform AsyncGeneratorResume(gen, completion).
+    // 10. Else,
+    // 10.a. Assert: state is either executing or draining-queue.
+    var resumeMode = @asyncGeneratorNextQueueEnqueue(this, value, @GeneratorResumeModeNormal, promise);
+    if (resumeMode === @AsyncGeneratorResumeModeEmpty)
+        return promise;
+    @assert(@isAsyncGenerator(this), "Generator is not an AsyncGenerator instance.");
 
-    return promise;
-}
+    // https://tc39.es/ecma262/#sec-asyncgeneratorresume
+    //
+    // 3. Set gen.[[AsyncGeneratorState]] to executing.
+    // 4. Perform ! RunSuspendedContext(genContext, completion).
+    var state = @getAsyncGeneratorInternalField(this, @generatorFieldState);
+    @putAsyncGeneratorInternalField(this, @generatorFieldState, @AsyncGeneratorStateExecuting);
 
-function return(value)
-{
-    "use strict";
+    var result;
+    try {
+        result = @getAsyncGeneratorInternalField(this, @generatorFieldNext).@call(
+            @getAsyncGeneratorInternalField(this, @generatorFieldThis),
+            this,
+            state >> @AsyncGeneratorSuspendReasonShift,
+            @getAsyncGeneratorInternalField(this, @asyncGeneratorFieldResumeValue),
+            @GeneratorResumeModeNormal,
+            @getAsyncGeneratorInternalField(this, @generatorFieldFrame));
+    } catch (error) {
+        // https://tc39.es/ecma262/#sec-asyncgeneratorstart
+        // 4.g. Set acGen.[[AsyncGeneratorState]] to draining-queue.
+        // 4.h. If result is a normal completion, set result to NormalCompletion(undefined).
+        // 4.i. If result is a return completion, set result to NormalCompletion(result.[[Value]]).
+        // 4.j. Perform AsyncGeneratorCompleteStep(acGen, result, true).
+        // 4.k. Perform AsyncGeneratorDrainQueue(acGen).
+        @asyncGeneratorCompleteAndDrain(this, error, true);
+        return promise;
+    }
 
-    var promise = @newPromise();
-    var resumeMode = @asyncGeneratorQueueEnqueue(this, value, @GeneratorResumeModeReturn, promise);
-    if (resumeMode !== @AsyncGeneratorResumeModeEmpty)
-        @asyncGeneratorResumeNext(this, resumeMode);
+    state = @getAsyncGeneratorInternalField(this, @generatorFieldState);
 
-    return promise;
-}
+    // Body suspended at `await` / `yield` / `yield*`.
+    if (state > 0) {
+        @asyncGeneratorSuspend(this, result);
+        return promise;
+    }
 
-function throw(value)
-{
-    "use strict";
-
-    var promise = @newPromise();
-    var resumeMode = @asyncGeneratorQueueEnqueue(this, value, @GeneratorResumeModeThrow, promise);
-    if (resumeMode !== @AsyncGeneratorResumeModeEmpty)
-        @asyncGeneratorResumeNext(this, resumeMode);
-
+    // https://tc39.es/ecma262/#sec-asyncgeneratorstart
+    // 4.g. Set acGen.[[AsyncGeneratorState]] to draining-queue.
+    // 4.h. If result is a normal completion, set result to NormalCompletion(undefined).
+    // 4.i. If result is a return completion, set result to NormalCompletion(result.[[Value]]).
+    // 4.j. Perform AsyncGeneratorCompleteStep(acGen, result, true).
+    // 4.k. Perform AsyncGeneratorDrainQueue(acGen).
+    @asyncGeneratorCompleteAndDrain(this, result, false);
     return promise;
 }

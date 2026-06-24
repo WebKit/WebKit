@@ -117,7 +117,7 @@ std::optional<ApplicationManifest>& ApplicationManifestLoader::processManifest()
     if (!m_processedManifest) {
         if (RefPtr resource = m_resource) {
             auto manifestURL = m_url;
-            auto documentURL = m_documentLoader->url();
+            auto documentURL = protect(m_documentLoader)->url();
             RefPtr frame = m_documentLoader->frame();
             RefPtr document = frame ? frame->document() : nullptr;
             m_processedManifest = resource->process(manifestURL, documentURL, document.get());

@@ -26,6 +26,7 @@
 #include "cmakeconfig.h"
 
 #include "BuildRevision.h"
+#include <glib-unix.h>
 #include <memory>
 #include <wpe/webkit.h>
 #include <wtf/Compiler.h>
@@ -822,6 +823,12 @@ int main(int argc, char *argv[])
 #else
     g_signal_connect(application, "activate", G_CALLBACK(activate), nullptr);
 #endif
+    GSourceFunc quitOnSignal = [](gpointer app) -> gboolean {
+        g_application_quit(G_APPLICATION(app));
+        return G_SOURCE_REMOVE;
+    };
+    g_unix_signal_add(SIGINT, quitOnSignal, application);
+    g_unix_signal_add(SIGTERM, quitOnSignal, application);
     g_application_run(application, 0, nullptr);
     g_object_unref(application);
 

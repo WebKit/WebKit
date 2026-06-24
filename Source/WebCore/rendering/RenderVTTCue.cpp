@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderVTTCue);
 
-RenderVTTCue::RenderVTTCue(VTTCueBox& element, RenderStyle&& style)
+RenderVTTCue::RenderVTTCue(VTTCueBox& element, Style::ComputedStyle&& style)
     : RenderBlockFlow(Type::VTTCue, element, WTF::move(style))
     , m_cue(downcast<VTTCue>(element.getCue()))
 {
@@ -273,10 +273,12 @@ bool RenderVTTCue::switchDirection(bool& switched, LayoutUnit& step)
     setX(m_fallbackPosition.x());
     setY(m_fallbackPosition.y());
 
-    // 16. If switched is true, jump to the step labeled done
-    // positioning below.
-    if (switched)
+    // 16. If switched is true, then remove all the boxes in boxes, and
+    // jump to the step labeled done positioning below.
+    if (switched) {
+        setSize({ });
         return false;
+    }
 
     // 17. Negate step.
     step = -step;

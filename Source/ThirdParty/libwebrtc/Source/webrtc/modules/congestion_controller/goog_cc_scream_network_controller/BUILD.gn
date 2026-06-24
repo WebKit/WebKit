@@ -14,11 +14,9 @@ rtc_library("goog_cc_scream_network_controller") {
   ]
 
   deps = [
-    "../../../api:field_trials_view",
     "../../../api/environment",
     "../../../api/transport:network_control",
     "../../../rtc_base:logging",
-    "../../../rtc_base/experiments:field_trial_parser",
     "../goog_cc",
     "../scream:scream_network_controller",
     "//third_party/abseil-cpp/absl/functional:any_invocable",
@@ -30,17 +28,14 @@ if (rtc_include_tests) {
     testonly = true
     sources = [ "goog_cc_scream_network_controller_unittest.cc" ]
     deps = [
-      ":goog_cc_scream_network_controller",
       "../../../api/environment",
       "../../../api/transport:ecn_marking",
       "../../../api/transport:goog_cc",
       "../../../api/transport:network_control",
       "../../../api/units:data_rate",
       "../../../api/units:data_size",
-      "../../../api/units:time_delta",
       "../../../test:create_test_environment",
       "../../../test:test_support",
-      "../goog_cc",
     ]
   }
 }

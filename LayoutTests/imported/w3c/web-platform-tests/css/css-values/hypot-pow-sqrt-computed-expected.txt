@@ -25,6 +25,11 @@ PASS hypot(0% + 600px, 0% + 800px) should be used-value-equivalent to 1000px
 PASS sqrt(sibling-index()) should be used-value-equivalent to 2
 PASS calc(1px * sqrt(sibling-index())) should be used-value-equivalent to 2px
 PASS sqrt(pow(sibling-index(), 2)) should be used-value-equivalent to 4
+PASS hypot(3, sibling-index()) should be used-value-equivalent to 5
+PASS sqrt(4 * sign(1em - 1px)) should be used-value-equivalent to 2
+PASS calc(1px * sqrt(4 * sign(1em - 1px))) should be used-value-equivalent to 2px
+PASS sqrt(pow(4 * sign(1em - 1px), 2)) should be used-value-equivalent to 4
+PASS hypot(3, 4 * sign(1em - 1px)) should be used-value-equivalent to 5
 PASS hypot(1px) should be used-value-equivalent to 1px
 PASS hypot(1cm) should be used-value-equivalent to 1cm
 PASS hypot(1mm) should be used-value-equivalent to 1mm

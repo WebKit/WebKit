@@ -34,6 +34,7 @@
 #include <WebCore/NavigationAction.h>
 #include <WebCore/Node.h>
 #include <WebCore/RenderImage.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Text.h>
 #include <wtf/URL.h>
@@ -81,8 +82,8 @@ static String imageSuggestedFilenameFromHitTestResult(const HitTestResult& hitTe
         return nullString();
 
     auto url = hitTestResult.absoluteImageURL();
-    auto filename = webFrame->suggestedFilenameForResourceWithURL(url);
-    auto mimeType = webFrame->mimeTypeForResourceWithURL(url);
+    auto filename = webFrame->suggestedFilenameForResourceWithURL(url, WebFrame::ResourceType::Image);
+    auto mimeType = webFrame->mimeTypeForResourceWithURL(url, WebFrame::ResourceType::Image);
     return MIMETypeRegistry::correctExtensionForMIMEType(filename, mimeType);
 }
 
@@ -225,7 +226,7 @@ IntRect WebHitTestResultData::elementBoundingBoxInWindowCoordinates(const WebCor
 
 std::optional<WebCore::SharedMemory::Handle> WebHitTestResultData::getImageSharedMemoryHandle() const
 {
-    std::optional<WebCore::SharedMemory::Handle> imageHandle = std::nullopt;
+    std::optional<WebCore::SharedMemory::Handle> imageHandle;
     if (RefPtr memory = imageSharedMemory; memory && !memory->span().empty()) {
         if (auto handle = memory->createHandle(WebCore::SharedMemory::Protection::ReadOnly))
             imageHandle = WTF::move(*handle);

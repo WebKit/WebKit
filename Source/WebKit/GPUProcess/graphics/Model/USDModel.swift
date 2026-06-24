@@ -26,19 +26,11 @@ import OSLog
 import WebKit
 import simd
 
-#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreTextureProcessing, _version: 24) && canImport(_USDKit_RealityKit, _version: 42) && canImport(RealityCoreRenderer, _version: 22) && canImport(ShaderGraph, _version: 156) && arch(arm64)
-@_spi(UsdLoaderAPI) import _USDKit_RealityKit
-@_spi(RealityCoreRendererAPI) import RealityKit
+#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 import USDKit
-@_spi(SwiftAPI) import DirectResource
+import DirectResource
 import RealityKit
-import ShaderGraph
-import RealityCoreDeformation
-
-extension _USDKit_RealityKit._Proto_MeshDataUpdate_v1 {
-    @_silgen_name("$s18_USDKit_RealityKit24_Proto_MeshDataUpdate_v1V18instanceTransformsSaySo13simd_float4x4aGvg")
-    internal func instanceTransformsCompat() -> [simd_float4x4]
-}
+import UniformTypeIdentifiers
 
 extension MTLCaptureDescriptor {
     fileprivate convenience init(from device: (any MTLDevice)?) {
@@ -53,6 +45,14 @@ extension MTLCaptureDescriptor {
         let dateString = dateFormatter.string(from: now)
 
         outputURL = URL.temporaryDirectory.appending(path: "capture_\(dateString).gputrace").standardizedFileURL
+    }
+}
+
+extension LowLevelTextureResource {
+    func replace(commandBuffer: any MTLCommandBuffer, memoryOwner: task_id_token_t) -> any MTLTexture {
+        let texture = replace(commandBuffer: commandBuffer)
+        texture.__setOwnerWithIdentity(memoryOwner)
+        return texture
     }
 }
 
@@ -245,7 +245,7 @@ private func makeTextureFromImageAsset(
             blitEncoder.generateMipmaps(for: mtlTexture)
         }
 
-        let outTexture = textureResource.replace(commandBuffer: commandBuffer)
+        let outTexture = textureResource.replace(commandBuffer: commandBuffer, memoryOwner: memoryOwner)
         blitEncoder.copy(from: mtlTexture, to: outTexture)
 
         blitEncoder.endEncoding()
@@ -374,18 +374,18 @@ private func rootSkinMatrices(_ skinningData: WKBridgeSkinningData) -> [simd_flo
 }
 
 // Computes root joint indices for the mesh at meshPath by reading the skeleton's
-// joint token paths from the UsdStage. A root joint is one whose parent token path
+// joint token paths from the USDStage. A root joint is one whose parent token path
 // is not present in the skeleton's joint list.
-private func rootJointIndices(forMeshAt meshPath: String, in stage: UsdStage) -> [UInt32] {
-    let meshPrim = stage.prim(at: SdfPath(meshPath))
+private func rootJointIndices(forMeshAt meshPath: String, in stage: USDStage) -> [UInt32] {
+    let meshPrim = stage.prim(at: USDLayer.Path(meshPath))
     guard meshPrim.isValid else { return [] }
 
     // Walk up the prim hierarchy to find a skel:skeleton relationship.
-    var skelPrimPath: SdfPath? = nil
-    var current: UsdPrim? = meshPrim
+    var skelPrimPath: USDLayer.Path? = nil
+    var current: USDPrim? = meshPrim
     while let prim = current {
         if let rel = prim.relationship(named: "skel:skeleton"),
-            let targets = rel.forwardedTargets, let target = targets.first
+            let target = rel.targets.first
         {
             skelPrimPath = target
             break
@@ -395,9 +395,10 @@ private func rootJointIndices(forMeshAt meshPath: String, in stage: UsdStage) ->
 
     guard let skelPath = skelPrimPath else { return [] }
     let skelPrim = stage.prim(at: skelPath)
+    let jointsAttr = skelPrim.attribute(named: "joints")
     guard skelPrim.isValid,
-        let jointsAttr = skelPrim.attribute("joints"),
-        let jointTokens: TokenArray = jointsAttr.get()
+        jointsAttr.isValid,
+        let jointTokens = skelPrim["joints", as: USDArray<USDToken>.self]
     else { return [] }
 
     return rootJointIndices(from: jointTokens.map(\.string))
@@ -490,10 +491,54 @@ extension WKBridgeUSDConfiguration {
         }
     }
 
-    @objc(createMaterialCompiler:)
-    func createMaterialCompiler() async {
+    var standardDynamicRange: Bool = false
+
+    func makeStandaloneResources() async {
         do {
-            try await self.appRenderer.createMaterialCompiler(colorPixelFormat: .rgba16Float, rasterSampleCount: 4)
+            appRenderer.pendingStandaloneResources = try await LowLevelRenderContextStandalone.Resources(device: self.device)
+        } catch {
+            fatalError("Exception creating standalone resources \(error)")
+        }
+    }
+
+    func createMaterialCompiler() {
+        do {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
+            // swift-format-ignore: NeverForceUnwrap
+            try appRenderer.createMaterialCompiler(resources: appRenderer.pendingStandaloneResources!)
+            appRenderer.pendingStandaloneResources = nil
+        } catch {
+            fatalError("Exception creating material compiler \(error)")
+        }
+    }
+
+    func makeRendererResources() async {
+        do {
+            let colorPixelFormat: MTLPixelFormat = standardDynamicRange ? .bgra8Unorm : .rgba16Float
+            let sampleCount: Int = 4
+            appRenderer.pendingRendererResources = try await LowLevelRenderer.Resources(
+                configuration: .init(
+                    output: .init(colorPixelFormat: colorPixelFormat),
+                    rasterSampleCount: sampleCount,
+                    enableTonemap: standardDynamicRange,
+                    enableColorMatch: false,
+                    alphaPremultiply: false
+                ),
+                renderContext: self.renderContext
+            )
+            appRenderer.rasterSampleCount = sampleCount
+        } catch {
+            fatalError("Exception creating renderer resources \(error)")
+        }
+    }
+
+    func createRenderer() {
+        do {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
+            // swift-format-ignore: NeverForceUnwrap
+            try appRenderer.createRenderer(resources: appRenderer.pendingRendererResources!)
+            appRenderer.pendingRendererResources = nil
+            appRenderer.tonemapEnabled = standardDynamicRange
         } catch {
             fatalError("Exception creating renderer \(error)")
         }
@@ -539,13 +584,23 @@ extension WKBridgeReceiver {
     @nonobjc
     fileprivate var meshToMeshInstances: [WKBridgeTypedResourceId: [LowLevelMeshInstance]] = [:]
     @nonobjc
+    fileprivate var meshTransforms: [WKBridgeTypedResourceId: [simd_float4x4]] = [:]
+    @nonobjc
+    fileprivate var modelTransform: simd_float4x4 = matrix_identity_float4x4
+    @nonobjc
     fileprivate var rotationAngle: Float = 0
 
     @nonobjc
-    fileprivate let deformationSystem: _Proto_LowLevelDeformationSystem_v1
+    fileprivate let deformationContext: LowLevelDeformationContext
 
     @nonobjc
     fileprivate var meshResourceToDeformationContext: [WKBridgeTypedResourceId: DeformationContext] = [:]
+
+    @nonobjc
+    fileprivate var deformationResidencySet: (any MTLResidencySet)?
+
+    @nonobjc
+    fileprivate var deformationResidencySetNeedsCommit: Bool = false
 
     struct Material {
         let resource: LowLevelMaterialResource
@@ -574,8 +629,6 @@ extension WKBridgeReceiver {
         enum UpdateType {
             // First time mesh update, should add mesh instances to the scene
             case newMesh
-            // Transform update on existing mesh, should only update the transform on relevant mesh instances
-            case transformUpdate([simd_float4x4])
         }
 
         let identifier: WKBridgeTypedResourceId
@@ -586,10 +639,6 @@ extension WKBridgeReceiver {
             self.identifier = identifier
             self.type = type
             self.updatedInstances = updatedInstances
-
-            if case .transformUpdate(let newTransforms) = type {
-                assert(newTransforms.count == updatedInstances.count)
-            }
         }
     }
 
@@ -605,9 +654,16 @@ extension WKBridgeReceiver {
         self.skyboxGenerator = SkyboxGenerator(device: configuration.device)
         self.imageBasedLightTextureGenerator = ImageBasedLightTextureGenerator(device: configuration.device)
         self.commandQueue = configuration.commandQueue
-        self.deformationSystem = try _Proto_LowLevelDeformationSystem_v1.make(configuration.device, configuration.commandQueue).get()
-        let meshInstances = try configuration.renderContext.makeMeshInstanceArray(renderTargets: [configuration.renderTarget], count: 16)
-        self.meshInstancePool = MeshInstancePool(renderContext: configuration.renderContext, meshInstances: meshInstances)
+        self.deformationContext = try LowLevelDeformationContext(configuration.device)
+        let residencyDescriptor = MTLResidencySetDescriptor()
+        residencyDescriptor.label = "DeformationResidencySet"
+        residencyDescriptor.initialCapacity = 32
+        self.deformationResidencySet = try? configuration.device.makeResidencySet(descriptor: residencyDescriptor)
+        self.meshInstancePool = try MeshInstancePool(
+            renderContext: configuration.renderContext,
+            renderTargets: [configuration.renderTarget],
+            initialCapacity: 16
+        )
         let lightingFunction = configuration.renderContext.lighting.makeImageBasedLightingFunction()
         guard
             let diffuseTexture = makeTextureFromImageAsset(
@@ -663,25 +719,55 @@ extension WKBridgeReceiver {
 
     @objc(renderWithTexture:commandBuffer:)
     func render(with texture: any MTLTexture, commandBuffer: any MTLCommandBuffer) {
+        // Apply the latest model transform to every mesh instance, composed with
+        // each instance's original USD-space transform.
+        for (identifier, meshes) in meshToMeshInstances {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
+            // swift-format-ignore: NeverForceUnwrap
+            let originalTransforms = meshTransforms[identifier]!
+            for (index, meshInstance) in meshes.enumerated() {
+                meshInstance.transform = modelTransform * originalTransforms[index]
+            }
+        }
+
         // animate
         if !meshResourceToDeformationContext.isEmpty {
-            let commandBuffer = self.commandQueue.makeCommandBuffer()!
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
+            // swift-format-ignore: NeverForceUnwrap
+            let deformationCommandBuffer = self.commandQueue.makeCommandBuffer()!
 
-            for (identifier, deformationContext) in meshResourceToDeformationContext where deformationContext.dirty {
-                let result = deformationContext.deformation.execute(
-                    deformation: deformationContext.description,
-                    commandBuffer: commandBuffer
-                ) { (commandBuffer: any MTLCommandBuffer) in }
-                meshResourceToDeformationContext[identifier]!.dirty = false
-
-                if case .failure(let error) = result {
-                    print(error)
-                    fatalError("Failed to execute deformation work")
+            if deformationResidencySetNeedsCommit, let residencySet = deformationResidencySet {
+                residencySet.removeAllAllocations()
+                for context in meshResourceToDeformationContext.values {
+                    for buffer in context.mtlBuffers {
+                        residencySet.addAllocation(buffer)
+                    }
                 }
+                residencySet.commit()
+                deformationResidencySetNeedsCommit = false
+            }
+            if let residencySet = deformationResidencySet {
+                deformationCommandBuffer.useResidencySet(residencySet)
             }
 
-            commandBuffer.enqueue()
-            commandBuffer.commit()
+            for (identifier, ctx) in meshResourceToDeformationContext where ctx.dirty {
+                guard let computeEncoder = deformationCommandBuffer.makeComputeCommandEncoder() else {
+                    fatalError("Failed to create compute command encoder for deformation")
+                }
+                do {
+                    try ctx.deformation.encode(into: computeEncoder)
+                } catch {
+                    computeEncoder.endEncoding()
+                    fatalError("Failed to execute deformation work \(error)")
+                }
+                computeEncoder.endEncoding()
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
+                // swift-format-ignore: NeverForceUnwrap
+                meshResourceToDeformationContext[identifier]!.dirty = false
+            }
+
+            deformationCommandBuffer.enqueue()
+            deformationCommandBuffer.commit()
         }
 
         // render
@@ -737,8 +823,8 @@ extension WKBridgeReceiver {
         }
     }
 
-    @objc(updateMaterial:completionHandler:)
-    func updateMaterial(_ updates: [WKBridgeUpdateMaterial]) async {
+    @objc(updateMaterial:)
+    func updateMaterial(_ updates: [WKBridgeUpdateMaterial]) {
         do {
             for data in updates {
                 logInfo("updateMaterial (pre-dispatch) \(data.identifier)")
@@ -750,7 +836,7 @@ extension WKBridgeReceiver {
                     fatalError("No materialGraph data provided for material \(identifier)")
                 }
 
-                let shaderGraphOutput = try await renderContext.shaderGraph.makeShaderGraphFunctions(
+                let shaderGraphOutput = try renderContext.shaderGraph.makeShaderGraphFunctions(
                     shaderGraph: shaderGraph,
                     constantValues: .init()
                 )
@@ -770,7 +856,7 @@ extension WKBridgeReceiver {
 
                 let geometryModifier = shaderGraphOutput.geometryModifier ?? renderContext.makeDefaultGeometryModifier()
                 let surfaceShader = shaderGraphOutput.surfaceShader
-                let materialResource = try await renderContext.makeMaterialResource(
+                let materialResource = try renderContext.makeMaterialResource(
                     descriptor: .init(
                         geometry: geometryModifier,
                         surface: surfaceShader,
@@ -825,8 +911,8 @@ extension WKBridgeReceiver {
         return true
     }
 
-    @objc(updateMesh:completionHandler:)
-    func updateMesh(_ updates: [WKBridgeUpdateMesh]) async {
+    @objc(updateMesh:)
+    func updateMesh(_ updates: [WKBridgeUpdateMesh]) {
         do {
             var deferredMeshUpdates: [DeferredMeshUpdate] = []
 
@@ -872,9 +958,10 @@ extension WKBridgeReceiver {
                         device: device,
                         meshResource: meshResources[identifier]!,
                         meshResourceToDeformationContext: &meshResourceToDeformationContext,
-                        deformationSystem: deformationSystem,
+                        deformationContext: deformationContext,
                         memoryOwner: self.memoryOwner
                     )
+                    deformationResidencySetNeedsCommit = true
                     commandBuffer.enqueue()
                     commandBuffer.commit()
                 }
@@ -882,11 +969,12 @@ extension WKBridgeReceiver {
                 if meshData.instanceTransformsCount > 0 {
                     if meshToMeshInstances[identifier] == nil {
                         meshToMeshInstances[identifier] = []
+                        meshTransforms[identifier] = []
 
                         var deferredMeshUpdate = DeferredMeshUpdate(identifier: identifier, type: .newMesh, updatedInstances: [])
 
                         let skinMatrices = meshData.deformationData?.skinningData.map { rootSkinMatrices($0) } ?? []
-                        for (partIndex, part) in meshData.parts.enumerated() {
+                        for part in meshData.parts {
                             if part.materialIndex >= meshData.assignedMaterials.count {
                                 fatalError(
                                     "index out of range: material index \(part.materialIndex) while only \(meshData.assignedMaterials.count) were found"
@@ -897,7 +985,7 @@ extension WKBridgeReceiver {
                                 fatalError("Failed to get material instance \(materialIdentifier)")
                             }
 
-                            let pipeline = try await renderContext.makeRenderPipelineState(
+                            let pipeline = try renderContext.makeRenderPipelineState(
                                 descriptor: .init(
                                     mesh: meshResource.descriptor,
                                     material: material.resource,
@@ -938,6 +1026,9 @@ extension WKBridgeReceiver {
                                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                                 // swift-format-ignore: NeverForceUnwrap
                                 meshToMeshInstances[identifier]!.append(meshInstance)
+                                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
+                                // swift-format-ignore: NeverForceUnwrap
+                                meshTransforms[identifier]!.append(instanceTransform)
                                 deferredMeshUpdate.updatedInstances.append(meshInstance)
                             }
                         }
@@ -947,26 +1038,14 @@ extension WKBridgeReceiver {
                         // Update transforms otherwise
                         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                         // swift-format-ignore: NeverForceUnwrap
-                        var newTransforms: [simd_float4x4] = []
-                        var updatedInstances: [LowLevelMeshInstance] = []
-
                         let partCount = meshToMeshInstances[identifier]!.count / meshData.instanceTransforms.count
                         for (instanceIndex, instanceTransform) in meshData.instanceTransforms.enumerated() {
                             for partIndex in 0..<partCount {
                                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                                 // swift-format-ignore: NeverForceUnwrap
-                                let meshInstance = meshToMeshInstances[identifier]![instanceIndex * meshData.parts.count + partIndex]
-                                updatedInstances.append(meshInstance)
-                                newTransforms.append(instanceTransform)
+                                meshTransforms[identifier]![instanceIndex * partCount + partIndex] = instanceTransform
                             }
                         }
-
-                        let deferredMeshUpdate = DeferredMeshUpdate(
-                            identifier: identifier,
-                            type: .transformUpdate(newTransforms),
-                            updatedInstances: updatedInstances
-                        )
-                        deferredMeshUpdates.append(deferredMeshUpdate)
                     }
                 }
 
@@ -982,10 +1061,6 @@ extension WKBridgeReceiver {
                     for newMeshInstance in deferredUpdate.updatedInstances {
                         try meshInstancePool.add(newMeshInstance)
                     }
-                case .transformUpdate(let newTransforms):
-                    for (instanceIndex, meshInstance) in deferredUpdate.updatedInstances.enumerated() {
-                        meshInstance.transform = newTransforms[instanceIndex]
-                    }
                 }
             }
         } catch {
@@ -995,15 +1070,11 @@ extension WKBridgeReceiver {
 
     @objc(setTransform:)
     func setTransform(_ transform: simd_float4x4) {
-        appRenderer.setCameraTransformForModelTransform(transform)
+        modelTransform = transform
     }
 
     func setFOV(_ fovY: Float) {
         appRenderer.setFOV(fovY)
-    }
-
-    func setBackgroundColor(_ color: simd_float3) {
-        appRenderer.setBackgroundColor(color)
     }
 
     func setPlaying(_ play: Bool) {
@@ -1054,8 +1125,8 @@ extension WKBridgeReceiver {
                 into: cubeMTLTexture
             )
 
-            let diffuseMTLTexture = diffuseTexture.replace(commandBuffer: commandBuffer)
-            let specularMTLTexture = specularTexture.replace(commandBuffer: commandBuffer)
+            let diffuseMTLTexture = diffuseTexture.replace(commandBuffer: commandBuffer, memoryOwner: self.memoryOwner)
+            let specularMTLTexture = specularTexture.replace(commandBuffer: commandBuffer, memoryOwner: self.memoryOwner)
 
             try self.imageBasedLightTextureGenerator.generateDiffuse(
                 using: commandBuffer,
@@ -1091,34 +1162,16 @@ private func webPartsFromParts(_ parts: [LowLevelMesh.Part]) -> [WKBridgeMeshPar
     })
 }
 
-private func convert(_ m: _Proto_DataUpdateType_v1) -> WKBridgeDataUpdateType {
-    if m == .initial {
-        return .initial
-    }
-    return .delta
-}
-
-private func convert<T>(_ ids: [_Proto_TypedResourceId<T>]) -> [WKBridgeTypedResourceId] {
-    ids.map { id in
-        WKBridgeTypedResourceId(
-            value: id.value,
-            path: id.path,
-            hashValue: id.hashValue
-        )
-    }
-}
-
-private func webUpdateTextureRequestFromUpdateTextureRequest(_ request: _Proto_TextureDataUpdate_v1) -> WKBridgeUpdateTexture {
-    // FIXME: remove placeholder code
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-    // swift-format-ignore: NeverForceUnwrap
-    let descriptor = request.descriptor!
-    let data = request.data
-    return WKBridgeUpdateTexture(
-        imageAsset: .init(descriptor, data: data),
-        identifier: .init(value: request.id.value, path: request.id.path, hashValue: request.id.hashValue),
-        hashString: request.hashString,
-        layout: request.layout.map {
+private func webUpdateTextureRequestFromTextureData(_ textureData: TextureData, hashString: String) -> WKBridgeUpdateTexture {
+    WKBridgeUpdateTexture(
+        imageAsset: .init(textureData.descriptor, data: textureData.data),
+        identifier: makeTypedResourceId(
+            uuid: makeUUID(from: textureData.id.description),
+            path: textureData.assetPath,
+            hashValue: textureData.id.hashValue
+        ),
+        hashString: hashString,
+        layout: textureData.layout.map {
             WKBridgeTextureLevelInfo(
                 dataOffset: $0.dataOffset,
                 byteCountPerRow: $0.byteCountPerRow,
@@ -1128,225 +1181,200 @@ private func webUpdateTextureRequestFromUpdateTextureRequest(_ request: _Proto_T
     )
 }
 
-private func webUpdateMeshRequestFromUpdateMeshRequest(
-    _ request: _Proto_MeshDataUpdate_v1,
-    rootJointIndices: [UInt32]
-) -> WKBridgeUpdateMesh {
-    var descriptor: WKBridgeMeshDescriptor?
-    if let requestDescriptor = request.descriptor {
-        descriptor = .init(request: requestDescriptor)
-    }
+private func deformationID(from meshType: MeshData.MeshType) -> DeformationID? {
+    if case .deformable(let id) = meshType { return id }
+    return nil
+}
 
-    return WKBridgeUpdateMesh(
-        identifier: .init(value: request.id.value, path: request.id.path, hashValue: request.id.hashValue),
-        updateType: convert(request.updateType),
-        descriptor: descriptor,
-        parts: webPartsFromParts(request.parts),
-        indexData: request.indexData,
-        vertexData: request.vertexData,
-        instanceTransforms: toData(request.instanceTransformsCompat()),
-        instanceTransformsCount: request.instanceTransformsCompat().count,
-        assignedMaterials: convert(request.assignedMaterials),
-        deformationData: .init(request.deformationData, rootJointIndices: rootJointIndices)
+// Accumulates per-frame overrides from DeformationData.Update so the next
+// WKBridgeDeformationData we ship to the receiver carries the latest joint
+// transforms / blend shape weights / renormalization buffers. The override
+// has the same shape as DeformationData.SkinningData / BlendShapeData /
+// RenormalizationData; absent fields fall back to the original DeformationData
+// captured at deformationAdditions time.
+struct DeformationOverrides {
+    var jointTransforms: [simd_float4x4]?
+    var inverseBindPoses: [simd_float4x4]?
+    var influenceJointIndices: [UInt32]?
+    var influenceWeights: [Float]?
+    var geometryBindTransform: simd_float4x4?
+    var blendShapeWeights: [Float]?
+    var blendShapePositionOffsets: [[SIMD3<Float>]]?
+    var vertexIndicesPerTriangle: [UInt32]?
+    var vertexAdjacencies: [UInt32]?
+    var vertexAdjacencyEndIndices: [UInt32]?
+
+    mutating func apply(_ update: DeformationData.Update) {
+        if let s = update.skinning {
+            if let v = s.jointTransforms { jointTransforms = v }
+            if let v = s.inverseBindPoses { inverseBindPoses = v }
+            if let v = s.influenceJointIndices { influenceJointIndices = v }
+            if let v = s.influenceWeights { influenceWeights = v }
+            if let v = s.geometryBindTransform { geometryBindTransform = v }
+        }
+        if let b = update.blendShapes {
+            if let v = b.weights { blendShapeWeights = v }
+            if let v = b.positionOffsets { blendShapePositionOffsets = v }
+        }
+        if let r = update.renormalization {
+            if let v = r.vertexIndicesPerTriangle { vertexIndicesPerTriangle = v }
+            if let v = r.vertexAdjacencies { vertexAdjacencies = v }
+            if let v = r.vertexAdjacencyEndIndices { vertexAdjacencyEndIndices = v }
+        }
+    }
+}
+
+private func bridgeDeformation(
+    base: DeformationData?,
+    overrides: DeformationOverrides?,
+    rootJointIndices: [UInt32]
+) -> WKBridgeDeformationData? {
+    guard let base else { return nil }
+    let skinning: WKBridgeSkinningData? = base.skinning.map {
+        WKBridgeSkinningData(
+            influencePerVertexCount: $0.influencePerVertexCount,
+            jointTransforms: toData(overrides?.jointTransforms ?? $0.jointTransforms),
+            inverseBindPoses: toData(overrides?.inverseBindPoses ?? $0.inverseBindPoses),
+            influenceJointIndices: toData(overrides?.influenceJointIndices ?? $0.influenceJointIndices),
+            influenceWeights: toData(overrides?.influenceWeights ?? $0.influenceWeights),
+            geometryBindTransform: overrides?.geometryBindTransform ?? $0.geometryBindTransform,
+            rootJointIndices: rootJointIndices.isEmpty ? nil : toData(rootJointIndices)
+        )
+    }
+    let blendShape: WKBridgeBlendShapeData? = base.blendShapes.map {
+        WKBridgeBlendShapeData(
+            weights: toData(overrides?.blendShapeWeights ?? $0.weights),
+            positionOffsets: toDataArray(overrides?.blendShapePositionOffsets ?? $0.positionOffsets),
+            normalOffsets: []
+        )
+    }
+    let renormalization: WKBridgeRenormalizationData? = base.renormalization.map {
+        WKBridgeRenormalizationData(
+            vertexIndicesPerTriangle: toData(overrides?.vertexIndicesPerTriangle ?? $0.vertexIndicesPerTriangle),
+            vertexAdjacencies: toData(overrides?.vertexAdjacencies ?? $0.vertexAdjacencies),
+            vertexAdjacencyEndIndices: toData(overrides?.vertexAdjacencyEndIndices ?? $0.vertexAdjacencyEndIndices)
+        )
+    }
+    return WKBridgeDeformationData(
+        skinningData: skinning,
+        blendShapeData: blendShape,
+        renormalizationData: renormalization
     )
 }
 
-private func toWKBridgeNodeType(_ node: _Proto_ShaderNodeGraph.Node) -> WKBridgeNodeType {
-    // Determine node type based on the node's name or data type
-    let nodeName = node.name.lowercased()
-    if nodeName == "arguments" {
-        return .arguments
-    } else if nodeName == "results" || nodeName == "result" {
-        return .results
-    }
+private func webMeshFromMeshData(
+    _ meshData: MeshData,
+    deformation: WKBridgeDeformationData?
+) -> WKBridgeUpdateMesh {
+    WKBridgeUpdateMesh(
+        identifier: makeTypedResourceId(
+            uuid: makeUUID(from: meshData.id.description),
+            path: meshData.primPath,
+            hashValue: meshData.id.hashValue
+        ),
+        updateType: .initial,
+        descriptor: .init(request: meshData.descriptor),
+        parts: webPartsFromParts(meshData.parts),
+        indexData: meshData.indexData,
+        vertexData: meshData.vertexData,
+        instanceTransforms: toData(meshData.instanceTransforms),
+        instanceTransformsCount: meshData.instanceTransforms.count,
+        assignedMaterials: meshData.assignedMaterials.map { id in
+            makeTypedResourceId(
+                uuid: makeUUID(from: id.description),
+                path: "",
+                hashValue: id.hashValue
+            )
+        },
+        deformationData: deformation
+    )
+}
 
-    // Check the node data type
-    switch node.data {
-    case .constant:
-        return .constant
-    case .definition, .graph:
-        return .builtin
-    default: fatalError("toWKBridgeNodeType - unknown _Proto_ShaderNodeGraph.Node.data type")
+private func webMeshFromMeshUpdate(
+    _ update: MeshData.Update,
+    primPath: String,
+    deformation: WKBridgeDeformationData?
+) -> WKBridgeUpdateMesh {
+    WKBridgeUpdateMesh(
+        identifier: makeTypedResourceId(
+            uuid: makeUUID(from: update.id.description),
+            path: primPath,
+            hashValue: update.id.hashValue
+        ),
+        updateType: .delta,
+        descriptor: nil,
+        parts: webPartsFromParts(update.parts ?? []),
+        indexData: update.indexData,
+        vertexData: update.vertexData ?? [],
+        instanceTransforms: (update.instanceTransforms).map { toData($0) },
+        instanceTransformsCount: update.instanceTransforms?.count ?? 0,
+        assignedMaterials: (update.assignedMaterials ?? [])
+            .map { id in
+                makeTypedResourceId(
+                    uuid: makeUUID(from: id.description),
+                    path: "",
+                    hashValue: id.hashValue
+                )
+            },
+        deformationData: deformation
+    )
+}
+
+// Synthesizes a delta mesh update that only refreshes the deformation, for use
+// when DeformationData.Update fires without an accompanying MeshData.Update.
+// Carries no mesh data — just the new joint transforms / blend weights / etc.
+private func webMeshDeformationDelta(
+    meshId: MeshID,
+    primPath: String,
+    deformation: WKBridgeDeformationData
+) -> WKBridgeUpdateMesh {
+    WKBridgeUpdateMesh(
+        identifier: makeTypedResourceId(
+            uuid: makeUUID(from: meshId.description),
+            path: primPath,
+            hashValue: meshId.hashValue
+        ),
+        updateType: .delta,
+        descriptor: nil,
+        parts: [],
+        indexData: nil,
+        vertexData: [],
+        instanceTransforms: nil,
+        instanceTransformsCount: 0,
+        assignedMaterials: [],
+        deformationData: deformation
+    )
+}
+
+private func makeTypedResourceId(uuid: UUID, path: String, hashValue: Int) -> WKBridgeTypedResourceId {
+    WKBridgeTypedResourceId(value: uuid, path: path, hashValue: hashValue)
+}
+
+private func makeUUID(from description: String, in context: StaticString = #function) -> UUID {
+    guard let uuid = UUID(uuidString: description) else {
+        fatalError("UUID in \(context) could not be constructed")
+    }
+    return uuid
+}
+
+// Maps a canonical UV name string (e.g. "UV0") to a `ShaderGraph.TextureCoordinate`,
+// used by `fromWKDescriptor` to restore primvarMappings on the receiver side.
+private func textureCoordinate(from name: String) -> ShaderGraph.TextureCoordinate? {
+    switch name {
+    case "UV0": .uv0
+    case "UV1": .uv1
+    case "UV2": .uv2
+    case "UV3": .uv3
+    case "UV4": .uv4
+    case "UV5": .uv5
+    case "UV6": .uv6
+    case "UV7": .uv7
+    default: nil
     }
 }
 
-private func toWKBridgeBuiltin(_ node: _Proto_ShaderNodeGraph.Node) -> WKBridgeBuiltin {
-    // Extract builtin information from the node
-    switch node.data {
-    case .definition(let definition):
-        return WKBridgeBuiltin(definition: definition.name, name: node.name)
-    case .graph:
-        return WKBridgeBuiltin(definition: "graph", name: node.name)
-    case .constant:
-        return WKBridgeBuiltin(definition: "", name: node.name)
-    default: fatalError("toWKBridgeBuiltin - unknown _Proto_ShaderNodeGraph.Node.data type")
-    }
-}
-
-private func constantValues(_ constant: _Proto_ShaderGraphValue) -> ([WKBridgeValueString], WKBridgeConstant) {
-    switch constant {
-    case .bool(let bool):
-        return ([WKBridgeValueString(number: NSNumber(booleanLiteral: bool))], .bool)
-    case .uchar(let uchar):
-        return ([WKBridgeValueString(number: NSNumber(value: uchar))], .uchar)
-    case .int(let int):
-        return ([WKBridgeValueString(number: NSNumber(value: int))], .int)
-    case .uint(let uint):
-        return ([WKBridgeValueString(number: NSNumber(value: uint))], .uint)
-    case .half(let uint16):
-        return ([WKBridgeValueString(number: NSNumber(value: uint16))], .half)
-    case .float(let float):
-        return ([WKBridgeValueString(number: NSNumber(value: float))], .float)
-    case .string(let string):
-        return ([WKBridgeValueString(string: string)], .string)
-    case .float2(let vector2f):
-        return (
-            [WKBridgeValueString(number: NSNumber(value: vector2f.x)), WKBridgeValueString(number: NSNumber(value: vector2f.y))], .float2
-        )
-    case .float3(let float3):
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: float3.x)),
-                WKBridgeValueString(number: NSNumber(value: float3.y)),
-                WKBridgeValueString(number: NSNumber(value: float3.z)),
-            ], .float3
-        )
-    case .float4(let vector4f):
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: vector4f.x)),
-                WKBridgeValueString(number: NSNumber(value: vector4f.y)),
-                WKBridgeValueString(number: NSNumber(value: vector4f.z)),
-                WKBridgeValueString(number: NSNumber(value: vector4f.w)),
-            ], .float4
-        )
-    case .half2(let vector2h):
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: vector2h.x)),
-                WKBridgeValueString(number: NSNumber(value: vector2h.y)),
-            ], .half2
-        )
-    case .half3(let half3):
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: half3.x)),
-                WKBridgeValueString(number: NSNumber(value: half3.y)),
-                WKBridgeValueString(number: NSNumber(value: half3.z)),
-            ], .half3
-        )
-    case .half4(let vector4h):
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: vector4h.x)),
-                WKBridgeValueString(number: NSNumber(value: vector4h.y)),
-                WKBridgeValueString(number: NSNumber(value: vector4h.z)),
-                WKBridgeValueString(number: NSNumber(value: vector4h.w)),
-            ], .half4
-        )
-    case .int2(let vector2i):
-        return (
-            [WKBridgeValueString(number: NSNumber(value: vector2i.x)), WKBridgeValueString(number: NSNumber(value: vector2i.y))], .int2
-        )
-    case .int3(let vector3i):
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: vector3i.x)),
-                WKBridgeValueString(number: NSNumber(value: vector3i.y)),
-                WKBridgeValueString(number: NSNumber(value: vector3i.z)),
-            ], .int3
-        )
-    case .int4(let vector4i):
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: vector4i.x)),
-                WKBridgeValueString(number: NSNumber(value: vector4i.y)),
-                WKBridgeValueString(number: NSNumber(value: vector4i.z)),
-                WKBridgeValueString(number: NSNumber(value: vector4i.w)),
-            ], .int4
-        )
-    case .cgColor3(let color3):
-        guard let components = color3.components, components.count >= 3 else {
-            fatalError("constantValues: CGColor3 has fewer than 3 components")
-        }
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: Float(components[0]))),
-                WKBridgeValueString(number: NSNumber(value: Float(components[1]))),
-                WKBridgeValueString(number: NSNumber(value: Float(components[2]))),
-            ], .cgColor3
-        )
-    case .cgColor4(let color4):
-        guard let components = color4.components, components.count >= 4 else {
-            fatalError("constantValues: CGColor4 has fewer than 4 components")
-        }
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: Float(components[0]))),
-                WKBridgeValueString(number: NSNumber(value: Float(components[1]))),
-                WKBridgeValueString(number: NSNumber(value: Float(components[2]))),
-                WKBridgeValueString(number: NSNumber(value: Float(components[3]))),
-            ], .cgColor4
-        )
-    case .float3x3(let col0, let col1, let col2):
-        // Extract 9 float values from the 3x3 matrix (3 columns of 3 rows each)
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: col0.x)),
-                WKBridgeValueString(number: NSNumber(value: col0.y)),
-                WKBridgeValueString(number: NSNumber(value: col0.z)),
-                WKBridgeValueString(number: NSNumber(value: col1.x)),
-                WKBridgeValueString(number: NSNumber(value: col1.y)),
-                WKBridgeValueString(number: NSNumber(value: col1.z)),
-                WKBridgeValueString(number: NSNumber(value: col2.x)),
-                WKBridgeValueString(number: NSNumber(value: col2.y)),
-                WKBridgeValueString(number: NSNumber(value: col2.z)),
-            ], .matrix3f
-        )
-    case .float4x4(let col0, let col1, let col2, let col3):
-        // Extract 16 float values from the 4x4 matrix (4 columns of 4 rows each)
-        return (
-            [
-                WKBridgeValueString(number: NSNumber(value: col0.x)),
-                WKBridgeValueString(number: NSNumber(value: col0.y)),
-                WKBridgeValueString(number: NSNumber(value: col0.z)),
-                WKBridgeValueString(number: NSNumber(value: col0.w)),
-                WKBridgeValueString(number: NSNumber(value: col1.x)),
-                WKBridgeValueString(number: NSNumber(value: col1.y)),
-                WKBridgeValueString(number: NSNumber(value: col1.z)),
-                WKBridgeValueString(number: NSNumber(value: col1.w)),
-                WKBridgeValueString(number: NSNumber(value: col2.x)),
-                WKBridgeValueString(number: NSNumber(value: col2.y)),
-                WKBridgeValueString(number: NSNumber(value: col2.z)),
-                WKBridgeValueString(number: NSNumber(value: col2.w)),
-                WKBridgeValueString(number: NSNumber(value: col3.x)),
-                WKBridgeValueString(number: NSNumber(value: col3.y)),
-                WKBridgeValueString(number: NSNumber(value: col3.z)),
-                WKBridgeValueString(number: NSNumber(value: col3.w)),
-            ], .matrix4f
-        )
-    default:
-        fatalError("constantValues: unhandled ShaderGraphValue type \(constant)")
-    }
-}
-
-private func toWKBridgeConstantContainer(
-    _ node: _Proto_ShaderNodeGraph.Node
-) -> WKBridgeConstantContainer {
-    // Extract constant value if this is a constant node
-    switch node.data {
-    case .constant(let value):
-        let (values, defaultType) = constantValues(value)
-        return WKBridgeConstantContainer(constant: defaultType, constantValues: values, name: node.name)
-    case .definition, .graph:
-        return WKBridgeConstantContainer(constant: .asset, constantValues: [], name: node.name)
-    default: fatalError("toWKBridgeConstantContainer - unknown _Proto_ShaderNodeGraph.Node.data type")
-    }
-}
-
-private func toWKBridgeDataType(_ dataType: _Proto_ShaderDataType) -> WKBridgeDataType {
+private func toWKBridgeDataType(_ dataType: ShaderGraph.DataType) -> WKBridgeDataType {
     switch dataType {
-    case .invalid: .asset // Map invalid to asset as fallback
     case .bool: .bool
     case .uchar: .uchar
     case .int: .int
@@ -1369,109 +1397,237 @@ private func toWKBridgeDataType(_ dataType: _Proto_ShaderDataType) -> WKBridgeDa
     case .half2x2: .matrix2h
     case .half3x3: .matrix3h
     case .half4x4: .matrix4h
-    case .quaternion: .quat
     case .surfaceShader: .surfaceShader
     case .geometryModifier: .geometryModifier
     case .postLightingShader: .postLightingShader
     case .cgColor3: .cgColor3
     case .cgColor4: .cgColor4
-    case .filename: .asset
+    case .texture: .asset
     @unknown default: .asset
     }
 }
 
-private func createInputOutput(
-    name: String,
-    type: _Proto_ShaderDataType,
-    semanticType: _Proto_ShaderGraphNodeDefinition.SemanticType?,
-    defaultValue: _Proto_ShaderGraphValue?,
-) -> WKBridgeInputOutput {
-    let defaultValueContainer: WKBridgeConstantContainer? = defaultValue.map {
-        let (values, constantType) = constantValues($0)
-        return WKBridgeConstantContainer(constant: constantType, constantValues: values, name: "")
-    }
-
-    let actualType = toWKBridgeDataType(type)
-    return WKBridgeInputOutput(
-        type: actualType,
-        name: name,
-        semanticTypeName: semanticType?.name,
-        defaultValue: defaultValueContainer
-    )
-}
-
-private func toWebInputOutputs(_ inputs: [_Proto_ShaderGraphNodeDefinition.Input]) -> [WKBridgeInputOutput] {
-    inputs.map { e in
-        createInputOutput(
-            name: e.name,
-            type: e.type,
-            semanticType: e.semanticType,
-            defaultValue: e.defaultValue
+private func constantValues(value: ShaderGraph.Value) -> ([WKBridgeValueString], WKBridgeConstant) {
+    switch value {
+    case .bool(let v): return ([WKBridgeValueString(number: NSNumber(booleanLiteral: v))], .bool)
+    case .uchar(let v): return ([WKBridgeValueString(number: NSNumber(value: v))], .uchar)
+    case .int(let v): return ([WKBridgeValueString(number: NSNumber(value: v))], .int)
+    case .uint(let v): return ([WKBridgeValueString(number: NSNumber(value: v))], .uint)
+    case .half(let v): return ([WKBridgeValueString(number: NSNumber(value: v.bitPattern))], .half)
+    case .float(let v): return ([WKBridgeValueString(number: NSNumber(value: v))], .float)
+    case .string(let v): return ([WKBridgeValueString(string: v)], .string)
+    case .float2(let v):
+        return ([WKBridgeValueString(number: NSNumber(value: v.x)), WKBridgeValueString(number: NSNumber(value: v.y))], .float2)
+    case .float3(let v):
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: v.x)), WKBridgeValueString(number: NSNumber(value: v.y)),
+                WKBridgeValueString(number: NSNumber(value: v.z)),
+            ], .float3
         )
-    }
-}
-
-private func toWebOutputs(_ outputs: [_Proto_ShaderGraphNodeDefinition.Output]) -> [WKBridgeInputOutput] {
-    outputs.map { e in
-        createInputOutput(
-            name: e.name,
-            type: e.type,
-            semanticType: e.semanticType,
-            defaultValue: e.defaultValue
+    case .float4(let v):
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: v.x)), WKBridgeValueString(number: NSNumber(value: v.y)),
+                WKBridgeValueString(number: NSNumber(value: v.z)), WKBridgeValueString(number: NSNumber(value: v.w)),
+            ], .float4
         )
-    }
-}
-
-private func toWebNode(_ e: _Proto_ShaderNodeGraph.Node) -> WKBridgeNode {
-    WKBridgeNode(
-        bridgeNodeType: toWKBridgeNodeType(e),
-        builtin: toWKBridgeBuiltin(e),
-        constant: toWKBridgeConstantContainer(e)
-    )
-}
-
-private func toWebEdges(_ edges: [_Proto_ShaderNodeGraph.Edge]) -> [WKBridgeEdge] {
-    edges.map { edge in
-        WKBridgeEdge(
-            outputNode: edge.outputNode,
-            outputPort: edge.outputPort,
-            inputNode: edge.inputNode,
-            inputPort: edge.inputPort
+    case .half2(let v):
+        return (
+            [WKBridgeValueString(number: NSNumber(value: v.x.bitPattern)), WKBridgeValueString(number: NSNumber(value: v.y.bitPattern))],
+            .half2
         )
+    case .half3(let v):
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: v.x.bitPattern)), WKBridgeValueString(number: NSNumber(value: v.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: v.z.bitPattern)),
+            ], .half3
+        )
+    case .half4(let v):
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: v.x.bitPattern)), WKBridgeValueString(number: NSNumber(value: v.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: v.z.bitPattern)), WKBridgeValueString(number: NSNumber(value: v.w.bitPattern)),
+            ], .half4
+        )
+    case .int2(let v):
+        return ([WKBridgeValueString(number: NSNumber(value: v.x)), WKBridgeValueString(number: NSNumber(value: v.y))], .int2)
+    case .int3(let v):
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: v.x)), WKBridgeValueString(number: NSNumber(value: v.y)),
+                WKBridgeValueString(number: NSNumber(value: v.z)),
+            ], .int3
+        )
+    case .int4(let v):
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: v.x)), WKBridgeValueString(number: NSNumber(value: v.y)),
+                WKBridgeValueString(number: NSNumber(value: v.z)), WKBridgeValueString(number: NSNumber(value: v.w)),
+            ], .int4
+        )
+    case .cgColor3(let color):
+        guard let c = color.components, c.count >= 3 else { fatalError("constantValues(value:): cgColor3 missing components") }
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: Float(c[0]))), WKBridgeValueString(number: NSNumber(value: Float(c[1]))),
+                WKBridgeValueString(number: NSNumber(value: Float(c[2]))),
+            ], .cgColor3
+        )
+    case .cgColor4(let color):
+        guard let c = color.components, c.count >= 4 else { fatalError("constantValues(value:): cgColor4 missing components") }
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: Float(c[0]))), WKBridgeValueString(number: NSNumber(value: Float(c[1]))),
+                WKBridgeValueString(number: NSNumber(value: Float(c[2]))), WKBridgeValueString(number: NSNumber(value: Float(c[3]))),
+            ], .cgColor4
+        )
+    case .float2x2(let m):
+        let col0 = m.columns.0
+        let col1 = m.columns.1
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: col0.x)), WKBridgeValueString(number: NSNumber(value: col0.y)),
+                WKBridgeValueString(number: NSNumber(value: col1.x)), WKBridgeValueString(number: NSNumber(value: col1.y)),
+            ], .matrix2f
+        )
+    case .float3x3(let m):
+        let col0 = m.columns.0
+        let col1 = m.columns.1
+        let col2 = m.columns.2
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: col0.x)), WKBridgeValueString(number: NSNumber(value: col0.y)),
+                WKBridgeValueString(number: NSNumber(value: col0.z)), WKBridgeValueString(number: NSNumber(value: col1.x)),
+                WKBridgeValueString(number: NSNumber(value: col1.y)), WKBridgeValueString(number: NSNumber(value: col1.z)),
+                WKBridgeValueString(number: NSNumber(value: col2.x)), WKBridgeValueString(number: NSNumber(value: col2.y)),
+                WKBridgeValueString(number: NSNumber(value: col2.z)),
+            ], .matrix3f
+        )
+    case .float4x4(let m):
+        let col0 = m.columns.0
+        let col1 = m.columns.1
+        let col2 = m.columns.2
+        let col3 = m.columns.3
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: col0.x)), WKBridgeValueString(number: NSNumber(value: col0.y)),
+                WKBridgeValueString(number: NSNumber(value: col0.z)), WKBridgeValueString(number: NSNumber(value: col0.w)),
+                WKBridgeValueString(number: NSNumber(value: col1.x)), WKBridgeValueString(number: NSNumber(value: col1.y)),
+                WKBridgeValueString(number: NSNumber(value: col1.z)), WKBridgeValueString(number: NSNumber(value: col1.w)),
+                WKBridgeValueString(number: NSNumber(value: col2.x)), WKBridgeValueString(number: NSNumber(value: col2.y)),
+                WKBridgeValueString(number: NSNumber(value: col2.z)), WKBridgeValueString(number: NSNumber(value: col2.w)),
+                WKBridgeValueString(number: NSNumber(value: col3.x)), WKBridgeValueString(number: NSNumber(value: col3.y)),
+                WKBridgeValueString(number: NSNumber(value: col3.z)), WKBridgeValueString(number: NSNumber(value: col3.w)),
+            ], .matrix4f
+        )
+    case .half2x2(let m):
+        let col0 = m.columns.0
+        let col1 = m.columns.1
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: col0.x.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col0.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col1.x.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col1.y.bitPattern)),
+            ], .matrix2h
+        )
+    case .half3x3(let m):
+        let col0 = m.columns.0
+        let col1 = m.columns.1
+        let col2 = m.columns.2
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: col0.x.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col0.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col0.z.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col1.x.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col1.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col1.z.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col2.x.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col2.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col2.z.bitPattern)),
+            ], .matrix3h
+        )
+    case .half4x4(let m):
+        let col0 = m.columns.0
+        let col1 = m.columns.1
+        let col2 = m.columns.2
+        let col3 = m.columns.3
+        return (
+            [
+                WKBridgeValueString(number: NSNumber(value: col0.x.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col0.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col0.z.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col0.w.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col1.x.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col1.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col1.z.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col1.w.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col2.x.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col2.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col2.z.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col2.w.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col3.x.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col3.y.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col3.z.bitPattern)),
+                WKBridgeValueString(number: NSNumber(value: col3.w.bitPattern)),
+            ], .matrix4h
+        )
+    @unknown default: fatalError("constantValues(value:): unhandled ShaderGraph.Value type \(value)")
     }
 }
 
-private func texcoordName(for coord: _Proto_TextureCoordinate) -> String {
-    switch coord {
-    case .uv0: "UV0"
-    case .uv1: "UV1"
-    case .uv2: "UV2"
-    case .uv3: "UV3"
-    case .uv4: "UV4"
-    case .uv5: "UV5"
-    case .uv6: "UV6"
-    case .uv7: "UV7"
-    @unknown default: "UV0"
+private func toWebNode(_ node: ShaderGraph.Node) -> WKBridgeNode {
+    let nodeName = node.name.lowercased()
+    let bridgeNodeType: WKBridgeNodeType
+    if nodeName == "arguments" {
+        bridgeNodeType = .arguments
+    } else if nodeName == "results" || nodeName == "result" {
+        bridgeNodeType = .results
+    } else {
+        switch node.data {
+        case .constant: bridgeNodeType = .constant
+        case .definition, .graph: bridgeNodeType = .builtin
+        @unknown default: fatalError("toWebNode: unknown bridgeNodeType")
+        }
     }
+
+    let builtin: WKBridgeBuiltin =
+        switch node.data {
+        case .definition(let definition): WKBridgeBuiltin(definition: definition.name, name: node.name)
+        case .graph: WKBridgeBuiltin(definition: "graph", name: node.name)
+        case .constant: WKBridgeBuiltin(definition: "", name: node.name)
+        @unknown default: fatalError("toWebNode: unknown builtin")
+        }
+
+    let constant: WKBridgeConstantContainer =
+        switch node.data {
+        case .constant(let value):
+            {
+                let (values, constantType) = constantValues(value: value)
+                let colorSpace: String? =
+                    switch value {
+                    case .cgColor3(let color): color.colorSpace?.name as String?
+                    case .cgColor4(let color): color.colorSpace?.name as String?
+                    default: nil
+                    }
+                return WKBridgeConstantContainer(
+                    constant: constantType,
+                    constantValues: values,
+                    name: node.name,
+                    colorSpaceName: colorSpace
+                )
+            }()
+        default: WKBridgeConstantContainer(constant: .asset, constantValues: [], name: node.name, colorSpaceName: nil)
+        }
+
+    return WKBridgeNode(bridgeNodeType: bridgeNodeType, builtin: builtin, constant: constant)
 }
 
-private func textureCoordinate(from name: String) -> ShaderGraph.TextureCoordinate? {
-    switch name {
-    case "UV0": .uv0
-    case "UV1": .uv1
-    case "UV2": .uv2
-    case "UV3": .uv3
-    case "UV4": .uv4
-    case "UV5": .uv5
-    case "UV6": .uv6
-    case "UV7": .uv7
-    default: nil
-    }
-}
-
-private func toWebMaterialGraph(_ material: _Proto_ShaderNodeGraph?) -> WKBridgeMaterialGraph {
+private func toWebMaterialGraph(_ material: ShaderGraph?) -> WKBridgeMaterialGraph {
     guard let material else {
-        // Return empty material graph if nil
         return WKBridgeMaterialGraph(
             graphName: "",
             nodes: [],
@@ -1479,12 +1635,12 @@ private func toWebMaterialGraph(_ material: _Proto_ShaderNodeGraph?) -> WKBridge
             arguments: WKBridgeNode(
                 bridgeNodeType: .arguments,
                 builtin: WKBridgeBuiltin(definition: "", name: "arguments"),
-                constant: WKBridgeConstantContainer(constant: .asset, constantValues: [], name: "")
+                constant: WKBridgeConstantContainer(constant: .asset, constantValues: [], name: "", colorSpaceName: nil)
             ),
             results: WKBridgeNode(
                 bridgeNodeType: .results,
                 builtin: WKBridgeBuiltin(definition: "", name: "results"),
-                constant: WKBridgeConstantContainer(constant: .asset, constantValues: [], name: "")
+                constant: WKBridgeConstantContainer(constant: .asset, constantValues: [], name: "", colorSpaceName: nil)
             ),
             inputs: [],
             outputs: [],
@@ -1494,50 +1650,76 @@ private func toWebMaterialGraph(_ material: _Proto_ShaderNodeGraph?) -> WKBridge
         )
     }
 
-    // Convert nodes dictionary to array
     let nodes = material.nodes.values.map { toWebNode($0) }
-
-    // Convert edges
-    let edges = toWebEdges(material.edges)
-
-    // Get arguments and results nodes directly from the graph
+    let edges = material.edges.map { edge in
+        WKBridgeEdge(outputNode: edge.outputNode, outputPort: edge.outputPort ?? "", inputNode: edge.inputNode, inputPort: edge.inputPort)
+    }
     let argumentsNode = toWebNode(material.arguments)
     let resultsNode = toWebNode(material.results)
-
-    // Convert inputs - filter out invalid material input types
-    let inputs = toWebInputOutputs(material.inputs)
-
-    // Convert outputs
-    let outputs = toWebOutputs(material.outputs)
-
-    // Serialize primvarMappings as parallel arrays (sorted for determinism).
-    // _Proto_TextureCoordinate.name is internal so we map to the canonical UV name string.
+    let inputs = material.inputs.map { i -> WKBridgeInputOutput in
+        let defaultValueContainer: WKBridgeConstantContainer? = i.defaultValue.map { value in
+            let (values, constantType) = constantValues(value: value)
+            let colorSpace: String? =
+                switch value {
+                case .cgColor3(let color): color.colorSpace?.name as String?
+                case .cgColor4(let color): color.colorSpace?.name as String?
+                default: nil
+                }
+            return WKBridgeConstantContainer(constant: constantType, constantValues: values, name: "", colorSpaceName: colorSpace)
+        }
+        return WKBridgeInputOutput(
+            type: toWKBridgeDataType(i.type),
+            name: i.name,
+            semanticTypeName: i.semanticType?.name,
+            defaultValue: defaultValueContainer
+        )
+    }
+    let outputs = material.outputs.map { o -> WKBridgeInputOutput in
+        let defaultValueContainer: WKBridgeConstantContainer? = o.defaultValue.map { value in
+            let (values, constantType) = constantValues(value: value)
+            let colorSpace: String? =
+                switch value {
+                case .cgColor3(let color): color.colorSpace?.name as String?
+                case .cgColor4(let color): color.colorSpace?.name as String?
+                default: nil
+                }
+            return WKBridgeConstantContainer(constant: constantType, constantValues: values, name: "", colorSpaceName: colorSpace)
+        }
+        return WKBridgeInputOutput(
+            type: toWKBridgeDataType(o.type),
+            name: o.name,
+            semanticTypeName: o.semanticType?.name,
+            defaultValue: defaultValueContainer
+        )
+    }
     let sortedPrimvarKeys = material.primvarMappings.keys.sorted()
-    let primvarPrimvarNames = sortedPrimvarKeys
-    let primvarTexcoordNames = sortedPrimvarKeys.map { texcoordName(for: material.primvarMappings[$0]!) }
+    let primvarTexcoordNames = sortedPrimvarKeys.map { (key: String) -> String in
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
+        // swift-format-ignore: NeverForceUnwrap
+        switch material.primvarMappings[key]! {
+        case .uv0: "UV0"
+        case .uv1: "UV1"
+        case .uv2: "UV2"
+        case .uv3: "UV3"
+        case .uv4: "UV4"
+        case .uv5: "UV5"
+        case .uv6: "UV6"
+        case .uv7: "UV7"
+        @unknown default: "UV0"
+        }
+    }
 
     return WKBridgeMaterialGraph(
         graphName: "MaterialGraph",
-        nodes: nodes,
+        nodes: Array(nodes),
         edges: edges,
         arguments: argumentsNode,
         results: resultsNode,
         inputs: inputs,
         outputs: outputs,
-        primvarMappingPrimvarNames: primvarPrimvarNames,
+        primvarMappingPrimvarNames: Array(sortedPrimvarKeys),
         primvarMappingTexcoordNames: primvarTexcoordNames,
         functionConstantInputNames: material.functionConstantInputs
-    )
-}
-
-func webUpdateMaterialRequestFromUpdateMaterialRequest(
-    _ request: _Proto_MaterialDataUpdate_v1
-) -> WKBridgeUpdateMaterial {
-    let bridgeMaterialGraph = toWebMaterialGraph(request.shaderGraph)
-
-    return WKBridgeUpdateMaterial(
-        materialGraph: bridgeMaterialGraph,
-        identifier: .init(value: request.id.value, path: request.id.path, hashValue: request.id.hashValue)
     )
 }
 
@@ -1547,6 +1729,7 @@ extension ShaderGraph {
         guard let descriptor else { return nil }
 
         do {
+            let library = ShaderGraph.NodeLibrary(version: .materialX138)
             let graph = try ShaderGraph(
                 named: descriptor.graphName.isEmpty ? "MaterialGraph" : descriptor.graphName,
                 inputs: descriptor.inputs.map {
@@ -1562,10 +1745,9 @@ extension ShaderGraph {
                         type: fromWKBridgeDataType($0.type),
                         semanticType: $0.semanticTypeName.map { .init(name: $0) }
                     )
-                }
+                },
+                nodeLibrary: library
             )
-
-            let library = ShaderGraph.NodeLibrary(version: .materialX138)
 
             for bridgeNode in descriptor.nodes {
                 switch bridgeNode.bridgeNodeType {
@@ -1659,8 +1841,34 @@ private func fromWKBridgeDataType(_ dataType: WKBridgeDataType) -> ShaderGraph.D
     }
 }
 
+private func makeCGColor3(colorSpace: CGColorSpace, _ a: CGFloat, _ b: CGFloat, _ c: CGFloat) -> CGColor {
+    // rdar://177971578 - CG should provide an API for not requiring unsafe
+    guard let cs = unsafe CGColor(colorSpace: colorSpace, components: [a, b, c, 1.0]) else {
+        fatalError("\(a) \(b) \(c) could not form a CGColor with colorSpace \(colorSpace)")
+    }
+    return cs
+}
+
+private func makeCGColor4(colorSpace: CGColorSpace, _ a: CGFloat, _ b: CGFloat, _ c: CGFloat, _ d: CGFloat) -> CGColor {
+    // rdar://177971578 - CG should provide an API for not requiring unsafe
+    guard let cs = unsafe CGColor(colorSpace: colorSpace, components: [a, b, c, d]) else {
+        fatalError("\(a) \(b) \(c) \(d) could not form a CGColor with colorSpace \(colorSpace)")
+    }
+    return cs
+}
+
 private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> ShaderGraph.Value {
     let values = constant.constantValues
+    // Resolve the color space from the transmitted name, falling back to extendedLinearSRGB.
+    // USD color3f/color4f values are in linear sRGB, so extendedLinearSRGB is the correct fallback.
+    // swift-format-ignore: NeverForceUnwrap
+    guard
+        let colorSpace =
+            (constant.colorSpaceName.flatMap { CGColorSpace(name: $0 as CFString) }
+                ?? CGColorSpace(name: CGColorSpace.extendedLinearSRGB))
+    else {
+        fatalError("extendedLinearSRGB could not be constructed, should never occur")
+    }
 
     switch constant.constant {
     case .bool:
@@ -1834,6 +2042,77 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
                 )
             )
         )
+    case .matrix2h:
+        guard values.count >= 4 else {
+            fatalError("fromWKBridgeConstant: expected 4 values for matrix2h constant '\(constant.name)', got \(values.count)")
+        }
+        return .half2x2(
+            simd_half2x2(
+                columns: (
+                    SIMD2<Float16>(.init(bitPattern: values[0].number.uint16Value), .init(bitPattern: values[1].number.uint16Value)),
+                    SIMD2<Float16>(.init(bitPattern: values[2].number.uint16Value), .init(bitPattern: values[3].number.uint16Value))
+                )
+            )
+        )
+    case .matrix3h:
+        guard values.count >= 9 else {
+            fatalError("fromWKBridgeConstant: expected 9 values for matrix3h constant '\(constant.name)', got \(values.count)")
+        }
+        return .half3x3(
+            simd_half3x3(
+                columns: (
+                    SIMD3<Float16>(
+                        .init(bitPattern: values[0].number.uint16Value),
+                        .init(bitPattern: values[1].number.uint16Value),
+                        .init(bitPattern: values[2].number.uint16Value)
+                    ),
+                    SIMD3<Float16>(
+                        .init(bitPattern: values[3].number.uint16Value),
+                        .init(bitPattern: values[4].number.uint16Value),
+                        .init(bitPattern: values[5].number.uint16Value)
+                    ),
+                    SIMD3<Float16>(
+                        .init(bitPattern: values[6].number.uint16Value),
+                        .init(bitPattern: values[7].number.uint16Value),
+                        .init(bitPattern: values[8].number.uint16Value)
+                    )
+                )
+            )
+        )
+    case .matrix4h:
+        guard values.count >= 16 else {
+            fatalError("fromWKBridgeConstant: expected 16 values for matrix4h constant '\(constant.name)', got \(values.count)")
+        }
+        return .half4x4(
+            simd_half4x4(
+                columns: (
+                    SIMD4<Float16>(
+                        .init(bitPattern: values[0].number.uint16Value),
+                        .init(bitPattern: values[1].number.uint16Value),
+                        .init(bitPattern: values[2].number.uint16Value),
+                        .init(bitPattern: values[3].number.uint16Value)
+                    ),
+                    SIMD4<Float16>(
+                        .init(bitPattern: values[4].number.uint16Value),
+                        .init(bitPattern: values[5].number.uint16Value),
+                        .init(bitPattern: values[6].number.uint16Value),
+                        .init(bitPattern: values[7].number.uint16Value)
+                    ),
+                    SIMD4<Float16>(
+                        .init(bitPattern: values[8].number.uint16Value),
+                        .init(bitPattern: values[9].number.uint16Value),
+                        .init(bitPattern: values[10].number.uint16Value),
+                        .init(bitPattern: values[11].number.uint16Value)
+                    ),
+                    SIMD4<Float16>(
+                        .init(bitPattern: values[12].number.uint16Value),
+                        .init(bitPattern: values[13].number.uint16Value),
+                        .init(bitPattern: values[14].number.uint16Value),
+                        .init(bitPattern: values[15].number.uint16Value)
+                    )
+                )
+            )
+        )
     case .quatf, .quath:
         // quath/quatf don't exist in the enum - map to float4
         guard values.count >= 4 else {
@@ -1851,64 +2130,65 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
         guard values.count >= 3 else {
             fatalError("fromWKBridgeConstant: expected 3 values for color3 constant '\(constant.name)', got \(values.count)")
         }
-        // Use extendedLinearSRGB to preserve values outside [0,1] (e.g. negative bias, scale > 1).
-        // CGColor(red:green:blue:alpha:) clamps to device RGB [0,1] which corrupts shader constants.
-        let components3: [CGFloat] = [
-            CGFloat(values[0].number.floatValue),
-            CGFloat(values[1].number.floatValue),
-            CGFloat(values[2].number.floatValue),
-            1.0,
-        ]
-        return .cgColor3(CGColor(red: components3[0], green: components3[1], blue: components3[2], alpha: 1.0))
+        return .cgColor3(
+            makeCGColor3(
+                colorSpace: colorSpace,
+                CGFloat(values[0].number.floatValue),
+                CGFloat(values[1].number.floatValue),
+                CGFloat(values[2].number.floatValue)
+            )
+        )
     case .cgColor4:
         guard values.count >= 4 else {
             fatalError("fromWKBridgeConstant: expected 4 values for color4 constant '\(constant.name)', got \(values.count)")
         }
-        // Use extendedLinearSRGB to preserve values outside [0,1] (e.g. negative bias, scale > 1).
-        // CGColor(red:green:blue:alpha:) clamps to device RGB [0,1] which corrupts shader constants.
-        let components4: [CGFloat] = [
-            CGFloat(values[0].number.floatValue),
-            CGFloat(values[1].number.floatValue),
-            CGFloat(values[2].number.floatValue),
-            CGFloat(values[3].number.floatValue),
-        ]
-        return .cgColor4(CGColor(red: components4[0], green: components4[1], blue: components4[2], alpha: components4[3]))
+        return .cgColor4(
+            makeCGColor4(
+                colorSpace: colorSpace,
+                CGFloat(values[0].number.floatValue),
+                CGFloat(values[1].number.floatValue),
+                CGFloat(values[2].number.floatValue),
+                CGFloat(values[3].number.floatValue)
+            )
+        )
     case .color4f:
-        // USD/MaterialX color4f or color4h — encoded as 4 raw floats without CGColor clamping.
-        // Decoded as cgColor4 via extendedLinearSRGB to preserve color semantics for MaterialX.
+        // USD/MaterialX color4f — encoded as 4 raw floats without CGColor clamping.
         guard values.count >= 4 else {
             fatalError("fromWKBridgeConstant: expected 4 values for color4f constant '\(constant.name)', got \(values.count)")
         }
-        let components4f: [CGFloat] = [
-            CGFloat(values[0].number.floatValue),
-            CGFloat(values[1].number.floatValue),
-            CGFloat(values[2].number.floatValue),
-            CGFloat(values[3].number.floatValue),
-        ]
-        return .cgColor4(CGColor(red: components4f[0], green: components4f[1], blue: components4f[2], alpha: components4f[3]))
+        return .cgColor4(
+            makeCGColor4(
+                colorSpace: colorSpace,
+                CGFloat(values[0].number.floatValue),
+                CGFloat(values[1].number.floatValue),
+                CGFloat(values[2].number.floatValue),
+                CGFloat(values[3].number.floatValue)
+            )
+        )
     case .color3f:
         // USD/MaterialX color3f — encoded as 3 raw floats without CGColor clamping.
         guard values.count >= 3 else {
             fatalError("fromWKBridgeConstant: expected 3 values for color3f constant '\(constant.name)', got \(values.count)")
         }
-        let components3f: [CGFloat] = [
-            CGFloat(values[0].number.floatValue),
-            CGFloat(values[1].number.floatValue),
-            CGFloat(values[2].number.floatValue),
-            1.0,
-        ]
-        return .cgColor3(CGColor(red: components3f[0], green: components3f[1], blue: components3f[2], alpha: 1.0))
+        return .cgColor3(
+            makeCGColor3(
+                colorSpace: colorSpace,
+                CGFloat(values[0].number.floatValue),
+                CGFloat(values[1].number.floatValue),
+                CGFloat(values[2].number.floatValue)
+            )
+        )
     case .color3h:
         // USD/MaterialX color3h — half-precision; represented as cgColor3 in ShaderGraph.Value.
         guard values.count >= 3 else {
             fatalError("fromWKBridgeConstant: expected 3 values for color3h constant '\(constant.name)', got \(values.count)")
         }
         return .cgColor3(
-            CGColor(
-                red: CGFloat(values[0].number.floatValue),
-                green: CGFloat(values[1].number.floatValue),
-                blue: CGFloat(values[2].number.floatValue),
-                alpha: 1.0
+            makeCGColor3(
+                colorSpace: colorSpace,
+                CGFloat(values[0].number.floatValue),
+                CGFloat(values[1].number.floatValue),
+                CGFloat(values[2].number.floatValue)
             )
         )
     case .color4h:
@@ -1917,11 +2197,12 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
             fatalError("fromWKBridgeConstant: expected 4 values for color4h constant '\(constant.name)', got \(values.count)")
         }
         return .cgColor4(
-            CGColor(
-                red: CGFloat(values[0].number.floatValue),
-                green: CGFloat(values[1].number.floatValue),
-                blue: CGFloat(values[2].number.floatValue),
-                alpha: CGFloat(values[3].number.floatValue)
+            makeCGColor4(
+                colorSpace: colorSpace,
+                CGFloat(values[0].number.floatValue),
+                CGFloat(values[1].number.floatValue),
+                CGFloat(values[2].number.floatValue),
+                CGFloat(values[3].number.floatValue)
             )
         )
     @unknown default:
@@ -1929,12 +2210,53 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
     }
 }
 
+private func usdStageType(forMIMEType mimeType: String) -> UTType {
+    switch mimeType {
+    case "model/vnd.usdz+zip":
+        return .usdz
+    case "model/usd", "model/vnd.pixar.usd":
+        return .usd
+    default:
+        return UTType(mimeType: mimeType) ?? .usdz
+    }
+}
+
 final class USDModelLoader {
-    fileprivate let usdStageSession: _Proto_UsdStageSession_v1
-    fileprivate var stage: UsdStage?
+    fileprivate var usdPlayer: USDPlayer?
+    fileprivate var stage: USDStage?
     fileprivate var data: Data?
     private let objcLoader: WKBridgeModelLoader
+    private let gpuFamily: MTLGPUFamily
     private var rootJointIndicesCache: [String: [UInt32]] = [:]
+
+    // TextureID → shader parameter name (e.g. "diffuseColor"). Populated from
+    // MaterialData.assignedTextures so we can set WKBridgeUpdateTexture.hashString
+    // to the parameter name that the receiver matches against `parameter.name`
+    // at material processing time.
+    private var textureIdToParameterName: [TextureID: String] = [:]
+
+    // Cached DeformationData by ID. MeshData.MeshType.deformable(DeformationID)
+    // points to a DeformationData received in deformationAdditions; we hold it
+    // here so subsequent mesh updates can re-use the same deformation binding.
+    private var deformationDataById: [DeformationID: DeformationData] = [:]
+
+    // Per-frame field-level overrides applied on top of `deformationDataById`
+    // when constructing the WKBridgeDeformationData we send to the receiver.
+    // DeformationData.Update fields (jointTransforms, weights, etc.) are merged
+    // here so animated skeletons keep deforming on subsequent frames.
+    private var deformationOverridesById: [DeformationID: DeformationOverrides] = [:]
+
+    // Reverse lookup so a deformation update can find its mesh: needed to
+    // synthesize a delta WKBridgeUpdateMesh that refreshes the receiver's GPU
+    // buffers when only the deformation changed this frame (no MeshData.Update).
+    private var meshIdByDeformationId: [DeformationID: MeshID] = [:]
+    private var meshPathByDeformationId: [DeformationID: String] = [:]
+
+    // ID → primPath maps so we can build WKBridgeTypedResourceId for removals
+    // (the new public ID types do not expose a `.path` accessor).
+    private var meshIdToPath: [MeshID: String] = [:]
+    private var materialIdToPath: [MaterialID: String] = [:]
+    private var textureIdToPath: [TextureID: String] = [:]
 
     @nonobjc
     fileprivate var time: TimeInterval = 0
@@ -1950,31 +2272,32 @@ final class USDModelLoader {
 
     init(objcInstance: WKBridgeModelLoader, gpuFamily: MTLGPUFamily) {
         objcLoader = objcInstance
-        usdStageSession = _Proto_UsdStageSession_v1.noMetalSessionWithSynchronizedUpdate(gpuFamily: gpuFamily)
+        self.gpuFamily = gpuFamily
     }
 
-    func loadModel(from url: Foundation.URL) {
+    private func resetLoaderState() {
         rootJointIndicesCache.removeAll()
-        do {
-            let stage = try UsdStage.open(url)
-            self.setupTimes(from: stage)
-            self.usdStageSession.loadStage(stage)
-        } catch {
-            fatalError(error.localizedDescription)
-        }
+        textureIdToParameterName.removeAll()
+        deformationDataById.removeAll()
+        deformationOverridesById.removeAll()
+        meshIdByDeformationId.removeAll()
+        meshPathByDeformationId.removeAll()
+        meshIdToPath.removeAll()
+        materialIdToPath.removeAll()
+        textureIdToPath.removeAll()
     }
 
-    func loadModel(data: Foundation.Data) -> Bool {
-        rootJointIndicesCache.removeAll()
+    func loadModel(data: Foundation.Data, mimeType: String) -> Bool {
+        resetLoaderState()
         do {
-            self.stage = try UsdStage.open(buffer: data)
+            self.stage = try USDStage(data, type: usdStageType(forMIMEType: mimeType))
             guard let stage = self.stage else {
                 logError("model data is corrupted")
                 return false
             }
             self.data = data
             self.setupTimes(from: stage)
-            self.usdStageSession.loadStage(stage)
+            self.usdPlayer = USDPlayer(stage: stage, gpuFamily: gpuFamily)
             return true
         } catch {
             logError(error.localizedDescription)
@@ -1984,24 +2307,27 @@ final class USDModelLoader {
 
     func loadEnvironmentMap(_ data: Foundation.Data) -> WKBridgeUpdateTexture? {
         guard
-            let textureData = self.usdStageSession.importCustomIBLTexture(
-                identifier: .init(UUID().uuidString),
-                data: data
-            )
+            let usdPlayer = self.usdPlayer,
+            let textureData = try? usdPlayer.importCustomIBLTexture(data: data)
         else { return nil }
 
-        return webUpdateTextureRequestFromUpdateTextureRequest(textureData)
+        return webUpdateTextureRequestFromTextureData(textureData, hashString: "")
     }
 
-    func setupTimes(from stage: UsdStage) {
+    func setupTimes(from stage: USDStage) {
         timeCodePerSecond = stage.timeCodesPerSecond > 0 ? stage.timeCodesPerSecond : 1
-        startTime = stage.startTimeCode / timeCodePerSecond
-        endTime = stage.endTimeCode / timeCodePerSecond
+        let timeCodeRange = stage.timeCodeRange
+        startTime = (timeCodeRange.lowerBound.value ?? 0) / timeCodePerSecond
+        endTime = (timeCodeRange.upperBound.value ?? 0) / timeCodePerSecond
         time = 0
     }
 
     func duration() -> Double {
         endTime - startTime
+    }
+
+    func treatZAsUpAxis() -> Bool {
+        stage?.upAxis == USDToken("Z")
     }
 
     func currentTime() -> Double {
@@ -2012,13 +2338,13 @@ final class USDModelLoader {
         time = startTime + newTime
     }
 
-    func loadModel(from data: Data) -> Bool {
-        false
-    }
-
     func update(deltaTime: TimeInterval) {
-        let frameUpdate = usdStageSession.updateAndFetchFrameData(time: time * timeCodePerSecond)
+        guard let usdPlayer else { return }
 
+        let timeCode = USDStage.TimeCode(time * timeCodePerSecond)
+        let frameUpdateResult = usdPlayer.update(timeCode: timeCode)
+
+        // Always advance time, even when there's no frame update.
         let newTime = currentTime() + deltaTime
         let adjustedTime: TimeInterval
         if loop {
@@ -2033,87 +2359,262 @@ final class USDModelLoader {
         }
         time = startTime + adjustedTime
 
-        if frameUpdate.isEmpty {
+        // Optional<~Copyable> must be unwrapped by consuming the optional.
+        switch consume frameUpdateResult {
+        case .none:
             return
-        }
-
-        // Extract arrays from the ~Copyable FrameUpdate before capturing in the Task.
-        let meshUpdates = frameUpdate.meshUpdates
-        let materialUpdates = frameUpdate.materialUpdates
-        let textureUpdates = frameUpdate.textureUpdates
-        let meshRemovals = frameUpdate.meshRemovals
-        let materialRemovals = frameUpdate.materialRemovals
-        let textureRemovals = frameUpdate.textureRemovals
-
-        if let errors = frameUpdate.errors {
-            processErrors(errors)
-        }
-
-        // Process in dependency order: textures → materials → meshes.
-        // Each phase completes before the next begins so that:
-        //   - textureHashesAndResources is fully populated before makeParameters reads it inside material Tasks
-        //   - materialsAndParams has Task entries for all new materials before mesh processing looks them up
-        processRemovals(meshRemovals: meshRemovals, materialRemovals: materialRemovals, textureRemovals: textureRemovals)
-        processTextureUpdates(textureUpdates)
-        processMaterialUpdates(materialUpdates)
-        processMeshUpdates(meshUpdates)
-    }
-
-    private func processErrors(_ errors: _Proto_UsdStageSession_v1.FrameUpdate.Errors) {
-        for (id, error) in errors.meshErrors {
-            print("mesh error with id \(id): \(error.localizedDescription)")
-        }
-        for (id, error) in errors.materialErrors {
-            print("material error with id \(id): \(error.localizedDescription)")
-        }
-        for (id, error) in errors.textureErrors {
-            print("texture error with id \(id): \(error.localizedDescription)")
+        case .some(var frameUpdate):
+            processFrameUpdate(&frameUpdate)
         }
     }
 
-    private func processRemovals(
-        meshRemovals: [_Proto_MeshId],
-        materialRemovals: [_Proto_MaterialId],
-        textureRemovals: [_Proto_TextureId]
-    ) {
-        self.objcLoader.processRemovals(
-            removals:
-                WKBridgeRemovals(
-                    meshRemovals: meshRemovals.map { .init(value: $0.value, path: $0.path, hashValue: $0.hashValue) },
-                    materialRemovals: materialRemovals.map { .init(value: $0.value, path: $0.path, hashValue: $0.hashValue) },
-                    textureRemovals: textureRemovals.map { .init(value: $0.value, path: $0.path, hashValue: $0.hashValue) }
-                )
+    private func processFrameUpdate(_ frameUpdate: inout USDPlayer.FrameUpdate) {
+        for error in frameUpdate.errors {
+            logError("USD render error: \(error.localizedDescription)")
+        }
+
+        // ===== Phase 1: take deformation data =====
+        var dirtyDeformations: Set<DeformationID> = []
+        for id in frameUpdate.deformationAdditions {
+            if let deformation = frameUpdate.takeDeformationAddition(id: id) {
+                deformationDataById[id] = deformation
+                deformationOverridesById[id] = DeformationOverrides()
+                dirtyDeformations.insert(id)
+            }
+        }
+        // Apply DeformationData.Update fields onto the cached overrides. The
+        // receiver's deformation context will pick up the new joint transforms
+        // / blend weights / etc. from the next WKBridgeUpdateMesh we send for
+        // the corresponding mesh.
+        for id in frameUpdate.deformationUpdates {
+            if let update = frameUpdate.takeDeformationUpdate(id: id) {
+                var overrides = deformationOverridesById[id] ?? DeformationOverrides()
+                overrides.apply(update)
+                deformationOverridesById[id] = overrides
+                dirtyDeformations.insert(id)
+            }
+        }
+        for id in frameUpdate.deformationRemovals {
+            deformationDataById.removeValue(forKey: id)
+            deformationOverridesById.removeValue(forKey: id)
+            meshIdByDeformationId.removeValue(forKey: id)
+            meshPathByDeformationId.removeValue(forKey: id)
+        }
+
+        // ===== Phase 2: take material data =====
+        var materialAdditions: [MaterialData] = []
+        for id in frameUpdate.materialAdditions {
+            if let material = frameUpdate.takeMaterialAddition(id: id) {
+                materialIdToPath[id] = material.primPath
+                for (paramName, texId) in material.assignedTextures {
+                    textureIdToParameterName[texId] = paramName
+                }
+                materialAdditions.append(material)
+            }
+        }
+        // Material updates only carry assignedTextures changes — update the
+        // texture → parameter map so future textures get the right hashString.
+        // The receiver isn't re-notified because MaterialData.Update has no
+        // shaderGraph to rebuild from.
+        for id in frameUpdate.materialUpdates {
+            if let update = frameUpdate.takeMaterialUpdate(id: id) {
+                if let textures = update.assignedTextures {
+                    for (paramName, texId) in textures {
+                        textureIdToParameterName[texId] = paramName
+                    }
+                }
+            }
+        }
+
+        // ===== Phase 3: take texture data =====
+        var textureAdditions: [TextureData] = []
+        for id in frameUpdate.textureAdditions {
+            if let textureData = frameUpdate.takeTextureAddition(id: id) {
+                textureIdToPath[id] = textureData.assetPath
+                textureAdditions.append(textureData)
+            }
+        }
+
+        // ===== Phase 4: take mesh data =====
+        var meshAdditions: [MeshData] = []
+        var meshUpdates: [MeshData.Update] = []
+        for id in frameUpdate.meshAdditions {
+            if let mesh = frameUpdate.takeMeshAddition(id: id) {
+                meshIdToPath[id] = mesh.primPath
+                if let did = deformationID(from: mesh.meshType) {
+                    meshIdByDeformationId[did] = id
+                    meshPathByDeformationId[did] = mesh.primPath
+                }
+                meshAdditions.append(mesh)
+            }
+        }
+        for id in frameUpdate.meshUpdates {
+            if let update = frameUpdate.takeMeshUpdate(id: id) {
+                if let mt = update.meshType, let did = deformationID(from: mt) {
+                    meshIdByDeformationId[did] = id
+                    if let p = meshIdToPath[id] { meshPathByDeformationId[did] = p }
+                }
+                meshUpdates.append(update)
+            }
+        }
+
+        // ===== Build removal bridge ids and drain bookkeeping =====
+        let meshRemovalIds = frameUpdate.meshRemovals.map { id -> WKBridgeTypedResourceId in
+            let path = meshIdToPath.removeValue(forKey: id) ?? ""
+            return makeTypedResourceId(
+                uuid: makeUUID(from: id.description),
+                path: path,
+                hashValue: id.hashValue
+            )
+        }
+        let materialRemovalIds = frameUpdate.materialRemovals.map { id -> WKBridgeTypedResourceId in
+            let path = materialIdToPath.removeValue(forKey: id) ?? ""
+            return makeTypedResourceId(
+                uuid: makeUUID(from: id.description),
+                path: path,
+                hashValue: id.hashValue
+            )
+        }
+        let textureRemovalIds = frameUpdate.textureRemovals.map { id -> WKBridgeTypedResourceId in
+            let path = textureIdToPath.removeValue(forKey: id) ?? ""
+            textureIdToParameterName.removeValue(forKey: id)
+            return makeTypedResourceId(
+                uuid: makeUUID(from: id.description),
+                path: path,
+                hashValue: id.hashValue
+            )
+        }
+
+        dispatchToReceiver(
+            meshRemovalIds: meshRemovalIds,
+            materialRemovalIds: materialRemovalIds,
+            textureRemovalIds: textureRemovalIds,
+            textureAdditions: textureAdditions,
+            materialAdditions: materialAdditions,
+            meshAdditions: meshAdditions,
+            meshUpdates: meshUpdates,
+            dirtyDeformations: dirtyDeformations
         )
     }
 
-    private func processTextureUpdates(_ updates: [_Proto_TextureDataUpdate_v1]) {
-        self.objcLoader.updateTexture(webRequest: updates.map { webUpdateTextureRequestFromUpdateTextureRequest($0) })
-    }
-
-    private func processMaterialUpdates(_ updates: [_Proto_MaterialDataUpdate_v1]) {
-        self.objcLoader.updateMaterial(webRequest: updates.map { webUpdateMaterialRequestFromUpdateMaterialRequest($0) })
-    }
-
-    private func processMeshUpdates(_ updates: [_Proto_MeshDataUpdate_v1]) {
-        let stage = self.stage
-        self.objcLoader.updateMesh(
-            webRequest: updates.map { update in
-                let rootIndices: [UInt32]
-                if let stage, update.deformationData?.skinningData != nil {
-                    let path = update.id.path
-                    if let cached = rootJointIndicesCache[path] {
-                        rootIndices = cached
-                    } else {
-                        let computed = rootJointIndices(forMeshAt: path, in: stage)
-                        rootJointIndicesCache[path] = computed
-                        rootIndices = computed
-                    }
-                } else {
-                    rootIndices = []
-                }
-                return webUpdateMeshRequestFromUpdateMeshRequest(update, rootJointIndices: rootIndices)
+    private func dispatchToReceiver(
+        meshRemovalIds: [WKBridgeTypedResourceId],
+        materialRemovalIds: [WKBridgeTypedResourceId],
+        textureRemovalIds: [WKBridgeTypedResourceId],
+        textureAdditions: [TextureData],
+        materialAdditions: [MaterialData],
+        meshAdditions: [MeshData],
+        meshUpdates: [MeshData.Update],
+        dirtyDeformations: Set<DeformationID>
+    ) {
+        // ===== Dispatch to receiver in dependency order =====
+        // (removals → textures → materials → meshes)
+        self.objcLoader.processRemovals(
+            removals: WKBridgeRemovals(
+                meshRemovals: meshRemovalIds,
+                materialRemovals: materialRemovalIds,
+                textureRemovals: textureRemovalIds
+            )
+        )
+        self.objcLoader.updateTexture(
+            webRequest: textureAdditions.map { textureData in
+                webUpdateTextureRequestFromTextureData(
+                    textureData,
+                    hashString: textureIdToParameterName[textureData.id] ?? ""
+                )
             }
         )
+        self.objcLoader.updateMaterial(
+            webRequest: materialAdditions.map { material in
+                WKBridgeUpdateMaterial(
+                    materialGraph: toWebMaterialGraph(material.shaderGraph),
+                    identifier: makeTypedResourceId(
+                        uuid: makeUUID(from: material.id.description),
+                        path: material.primPath,
+                        hashValue: material.id.hashValue
+                    )
+                )
+            }
+        )
+
+        let stageForMeshUpdates = self.stage
+        // Track which mesh IDs already get a real mesh update this frame so we
+        // don't duplicate them when synthesizing per-deformation deltas below.
+        var meshesAlreadyDispatched: Set<MeshID> = []
+
+        let meshAdditionRequests = meshAdditions.map { meshData -> WKBridgeUpdateMesh in
+            meshesAlreadyDispatched.insert(meshData.id)
+            let bridgeDef = bridgeDeformationFor(meshType: meshData.meshType, primPath: meshData.primPath, stage: stageForMeshUpdates)
+            return webMeshFromMeshData(meshData, deformation: bridgeDef)
+        }
+        let meshUpdateRequests = meshUpdates.map { update -> WKBridgeUpdateMesh in
+            meshesAlreadyDispatched.insert(update.id)
+            let path = meshIdToPath[update.id] ?? ""
+            let bridgeDef: WKBridgeDeformationData?
+            if let mt = update.meshType {
+                bridgeDef = bridgeDeformationFor(meshType: mt, primPath: path, stage: stageForMeshUpdates)
+            } else if let did = meshIdByDeformationId.first(where: { $0.value == update.id })?.key {
+                bridgeDef = bridgeDeformation(
+                    base: deformationDataById[did],
+                    overrides: deformationOverridesById[did],
+                    rootJointIndices: resolveRootJointIndices(
+                        primPath: path,
+                        needsRoots: deformationDataById[did]?.skinning != nil,
+                        stage: stageForMeshUpdates
+                    )
+                )
+            } else {
+                bridgeDef = nil
+            }
+            return webMeshFromMeshUpdate(update, primPath: path, deformation: bridgeDef)
+        }
+
+        // Synthesize deltas for deformations that ticked without a matching
+        // mesh update — without this, an animation with a static mesh never
+        // reaches the receiver after the first frame.
+        var synthesizedRequests: [WKBridgeUpdateMesh] = []
+        for did in dirtyDeformations {
+            guard let meshId = meshIdByDeformationId[did],
+                !meshesAlreadyDispatched.contains(meshId),
+                let path = meshPathByDeformationId[did] ?? meshIdToPath[meshId]
+            else { continue }
+            let rootIndices = resolveRootJointIndices(
+                primPath: path,
+                needsRoots: deformationDataById[did]?.skinning != nil,
+                stage: stageForMeshUpdates
+            )
+            guard
+                let bridgeDef = bridgeDeformation(
+                    base: deformationDataById[did],
+                    overrides: deformationOverridesById[did],
+                    rootJointIndices: rootIndices
+                )
+            else { continue }
+            synthesizedRequests.append(webMeshDeformationDelta(meshId: meshId, primPath: path, deformation: bridgeDef))
+        }
+
+        self.objcLoader.updateMesh(webRequest: meshAdditionRequests + meshUpdateRequests + synthesizedRequests)
+    }
+
+    private func bridgeDeformationFor(meshType: MeshData.MeshType, primPath: String, stage: USDStage?) -> WKBridgeDeformationData? {
+        guard let did = deformationID(from: meshType) else { return nil }
+        let base = deformationDataById[did]
+        let rootIndices = resolveRootJointIndices(
+            primPath: primPath,
+            needsRoots: base?.skinning != nil,
+            stage: stage
+        )
+        return bridgeDeformation(base: base, overrides: deformationOverridesById[did], rootJointIndices: rootIndices)
+    }
+
+    private func resolveRootJointIndices(primPath: String, needsRoots: Bool, stage: USDStage?) -> [UInt32] {
+        guard needsRoots, let stage, !primPath.isEmpty else { return [] }
+        if let cached = rootJointIndicesCache[primPath] {
+            return cached
+        }
+        let computed = rootJointIndices(forMeshAt: primPath, in: stage)
+        rootJointIndicesCache[primPath] = computed
+        return computed
     }
 }
 
@@ -2159,12 +2660,8 @@ extension WKBridgeModelLoader {
         self.processRemovalsCallback = processRemovalsCallback
     }
 
-    func loadModel(from url: Foundation.URL) {
-        self.loader?.loadModel(from: url)
-    }
-
-    func loadModel(_ data: Foundation.Data) -> Bool {
-        self.loader?.loadModel(data: data) ?? false
+    func loadModel(_ data: Foundation.Data, mimeType: String) -> Bool {
+        self.loader?.loadModel(data: data, mimeType: mimeType) ?? false
     }
 
     func loadEnvironmentMap(_ data: Foundation.Data) -> WKBridgeUpdateTexture? {
@@ -2188,6 +2685,10 @@ extension WKBridgeModelLoader {
             return 0.0
         }
         return loader.duration()
+    }
+
+    func treatZAsUpAxis() -> Bool {
+        loader?.treatZAsUpAxis() ?? false
     }
 
     func currentTime() -> Double {
@@ -2268,7 +2769,7 @@ private func makeFallBackTextureResource(
     // Create command buffer to upload white pixel data
     // swift-format-ignore: NeverForceUnwrap
     let fallbackCommandBuffer = commandQueue.makeCommandBuffer()!
-    let fallbackMTLTexture = fallbackTexture.replace(commandBuffer: fallbackCommandBuffer)
+    let fallbackMTLTexture = fallbackTexture.replace(commandBuffer: fallbackCommandBuffer, memoryOwner: memoryOwner)
 
     // Use blit encoder to copy from buffer to texture
     // swift-format-ignore: NeverForceUnwrap
@@ -2298,8 +2799,18 @@ extension WKBridgeUSDConfiguration {
     init(device: any MTLDevice, memoryOwner: task_id_token_t) {
     }
 
-    @objc(createMaterialCompiler:)
-    func createMaterialCompiler() async {
+    var standardDynamicRange: Bool = false
+
+    func makeStandaloneResources() async {
+    }
+
+    func createMaterialCompiler() {
+    }
+
+    func makeRendererResources() async {
+    }
+
+    func createRenderer() {
     }
 }
 
@@ -2325,12 +2836,12 @@ extension WKBridgeReceiver {
     func updateTexture(_ data: [WKBridgeUpdateTexture]) {
     }
 
-    @objc(updateMaterial:completionHandler:)
-    func updateMaterial(_ data: [WKBridgeUpdateMaterial]) async {
+    @objc(updateMaterial:)
+    func updateMaterial(_ data: [WKBridgeUpdateMaterial]) {
     }
 
-    @objc(updateMesh:completionHandler:)
-    func updateMesh(_ data: [WKBridgeUpdateMesh]) async {
+    @objc(updateMesh:)
+    func updateMesh(_ data: [WKBridgeUpdateMesh]) {
     }
 
     @objc
@@ -2347,9 +2858,6 @@ extension WKBridgeReceiver {
     }
 
     func setFOV(_ fovY: Float) {
-    }
-
-    func setBackgroundColor(_ color: simd_float3) {
     }
 
     func setPlaying(_ play: Bool) {
@@ -2381,10 +2889,7 @@ extension WKBridgeModelLoader {
     ) {
     }
 
-    func loadModel(from url: Foundation.URL) {
-    }
-
-    func loadModel(_ data: Foundation.Data) -> Bool {
+    func loadModel(_ data: Foundation.Data, mimeType: String) -> Bool {
         false
     }
 
@@ -2403,6 +2908,10 @@ extension WKBridgeModelLoader {
 
     func duration() -> Double {
         0.0
+    }
+
+    func treatZAsUpAxis() -> Bool {
+        false
     }
 
     func currentTime() -> Double {

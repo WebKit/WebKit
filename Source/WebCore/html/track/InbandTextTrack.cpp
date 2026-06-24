@@ -141,6 +141,11 @@ bool InbandTextTrack::isDefault() const
     return protect(m_private)->isDefault();
 }
 
+bool InbandTextTrack::isMachineGenerated() const
+{
+    return protect(m_private)->isMachineGenerated();
+}
+
 size_t InbandTextTrack::inbandTrackIndex()
 {
     return protect(m_private)->trackIndex();

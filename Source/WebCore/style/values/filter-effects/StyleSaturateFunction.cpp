@@ -50,7 +50,7 @@ bool Saturate::transformColor(SRGBA<float>& color) const
 
 // MARK: - Conversion
 
-auto ToCSS<Saturate>::operator()(const Saturate& value, const RenderStyle& style) -> CSS::Saturate
+auto ToCSS<Saturate>::operator()(const Saturate& value, const Style::ComputedStyle& style) -> CSS::Saturate
 {
     return { .value = CSS::Saturate::Parameter { toCSS(value.value, style) } };
 }

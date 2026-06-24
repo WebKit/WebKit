@@ -15,9 +15,9 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
@@ -44,7 +44,7 @@ class FakeEncodedFrame : public AudioDecoder::EncodedAudioFrame {
   size_t Duration() const override { return duration_; }
 
   std::optional<DecodeResult> Decode(
-      ArrayView<int16_t> decoded) const override {
+      std::span<int16_t> decoded) const override {
     if (is_dtx_) {
       std::fill_n(decoded.data(), duration_, 0);
       return DecodeResult{.num_decoded_samples = duration_,
@@ -105,7 +105,7 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
 void FakeDecodeFromFile::PrepareEncoded(uint32_t timestamp,
                                         size_t samples,
                                         size_t original_payload_size_bytes,
-                                        ArrayView<uint8_t> encoded) {
+                                        std::span<uint8_t> encoded) {
   RTC_CHECK_GE(encoded.size(), 12);
   ByteWriter<uint32_t>::WriteLittleEndian(&encoded[0], timestamp);
   ByteWriter<uint32_t>::WriteLittleEndian(&encoded[4],

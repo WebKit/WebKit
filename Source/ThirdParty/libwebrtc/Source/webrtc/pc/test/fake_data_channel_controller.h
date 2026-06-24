@@ -12,6 +12,7 @@
 #define PC_TEST_FAKE_DATA_CHANNEL_CONTROLLER_H_
 
 #include <cstddef>
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>
@@ -23,6 +24,7 @@
 #include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "api/transport/data_channel_transport_interface.h"
 #include "pc/sctp_data_channel.h"
 #include "pc/sctp_utils.h"
@@ -70,7 +72,8 @@ class FakeDataChannelController : public SctpDataChannelControllerInterface {
 
           scoped_refptr<SctpDataChannel> channel = SctpDataChannel::Create(
               std::move(my_weak_ptr), std::string(label), transport_available_,
-              init, signaling_thread_, network_thread_);
+              init, std::nullopt, signaling_safety_.flag(), signaling_thread_,
+              network_thread_);
           if (transport_available_ && channel->sid_n().has_value()) {
             AddSctpDataStream(*channel->sid_n(), channel->priority());
           }
@@ -236,6 +239,7 @@ class FakeDataChannelController : public SctpDataChannelControllerInterface {
  private:
   Thread* const signaling_thread_;
   Thread* const network_thread_;
+  ScopedTaskSafety signaling_safety_;
   StreamId last_sid_ RTC_GUARDED_BY(network_thread_);
   SendDataParams last_send_data_params_ RTC_GUARDED_BY(network_thread_);
   bool send_blocked_ RTC_GUARDED_BY(network_thread_);

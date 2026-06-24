@@ -27,7 +27,10 @@
 
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/CachedResource.h>
+#include <WebCore/InspectorResourceType.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -48,10 +51,35 @@ enum class ResourceType : int;
 
 enum class ResourceType : uint8_t;
 
+// Plain, IPC-serializable description of a frame's cached subresource. Mirrors the fields of
+// Protocol::Page::FrameResource so a frame's resources can be gathered from its hosting
+// WebContent process and the Protocol object built later in the UIProcess (rather than shipping
+// protocol JSON across the wire). See webkit.org/b/308896.
+struct FrameResource {
+    String url;
+    ResourceType type { ResourceType::Other };
+    String mimeType;
+    bool canceled { false };
+    bool failed { false };
+    String sourceMapURL;
+    String targetId;
+};
+
+// Per-frame data gathered from a frame's hosting WebContent process: the committed document's
+// loaderId (carried as a ScriptExecutionContextIdentifier and converted to the protocol loaderId
+// string at the UIProcess boundary) and the frame's cached subresources.
+struct FrameResourceData {
+    std::optional<WebCore::ScriptExecutionContextIdentifier> loaderId;
+    Vector<FrameResource> resources;
+};
+
 namespace ResourceUtilities {
 
 WEBCORE_EXPORT bool sharedBufferContent(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
 Vector<WebCore::CachedResource*> cachedResourcesForFrame(WebCore::LocalFrame*);
+WEBCORE_EXPORT Ref<JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>> buildResourceObjectsForFrame(WebCore::LocalFrame&);
+WEBCORE_EXPORT Vector<Inspector::FrameResource> buildResourceDataForFrame(WebCore::LocalFrame&);
+WEBCORE_EXPORT Ref<Inspector::Protocol::Page::FrameResource> buildResourceObject(const Inspector::FrameResource&);
 void resourceContent(Inspector::Protocol::ErrorString&, WebCore::LocalFrame*, const URL&, String* result, bool* base64Encoded);
 bool mainResourceContent(WebCore::LocalFrame*, bool withBase64Encode, String* result);
 

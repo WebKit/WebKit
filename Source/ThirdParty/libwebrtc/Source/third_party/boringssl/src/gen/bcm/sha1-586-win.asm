@@ -2,7 +2,7 @@
 ; source tree. Do not edit by hand.
 
 %ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
+%include "boringssl_prefix_symbols_internal_x86_win_asm.inc"
 %endif
 %ifidn __OUTPUT_FORMAT__, win32
 %ifidn __OUTPUT_FORMAT__,obj
@@ -1430,11 +1430,11 @@ L$001pic_point:
 	movdqu	xmm1,[ebp-48]
 	movdqu	xmm2,[ebp-32]
 	movdqu	xmm3,[ebp-16]
-db	102,15,56,0,198
-db	102,15,56,0,206
-db	102,15,56,0,214
+	pshufb	xmm0,xmm6
+	pshufb	xmm1,xmm6
+	pshufb	xmm2,xmm6
 	movdqa	[96+esp],xmm7
-db	102,15,56,0,222
+	pshufb	xmm3,xmm6
 	paddd	xmm0,xmm7
 	paddd	xmm1,xmm7
 	paddd	xmm2,xmm7
@@ -2361,7 +2361,7 @@ L$002loop:
 	movdqu	xmm2,[32+ebp]
 	movdqu	xmm3,[48+ebp]
 	add	ebp,64
-db	102,15,56,0,198
+	pshufb	xmm0,xmm6
 	mov	DWORD [196+esp],ebp
 	movdqa	[96+esp],xmm7
 	add	ebx,DWORD [16+esp]
@@ -2371,7 +2371,7 @@ db	102,15,56,0,198
 	add	ebx,esi
 	xor	ebp,edi
 	ror	edx,7
-db	102,15,56,0,206
+	pshufb	xmm1,xmm6
 	add	ebx,ecx
 	add	eax,DWORD [20+esp]
 	xor	ebp,edx
@@ -2407,7 +2407,7 @@ db	102,15,56,0,206
 	add	ecx,esi
 	xor	ebp,eax
 	ror	edi,7
-db	102,15,56,0,214
+	pshufb	xmm2,xmm6
 	add	ecx,edx
 	add	ebx,DWORD [36+esp]
 	xor	ebp,edi
@@ -2443,7 +2443,7 @@ db	102,15,56,0,214
 	add	edx,esi
 	xor	ebp,ebx
 	ror	eax,7
-db	102,15,56,0,222
+	pshufb	xmm3,xmm6
 	add	edx,edi
 	add	ecx,DWORD [52+esp]
 	xor	ebp,eax

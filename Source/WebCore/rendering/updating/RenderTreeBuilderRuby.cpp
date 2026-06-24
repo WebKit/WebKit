@@ -32,7 +32,7 @@
 #include "RenderTreeBuilder.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderInline.h"
-#include "RenderStyle+SettersInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "UnicodeBidi.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -45,11 +45,11 @@ RenderTreeBuilder::Ruby::Ruby(RenderTreeBuilder& builder)
 {
 }
 
-RenderStyle createAnonymousStyleForRuby(const RenderStyle& parentStyle, Style::Display display)
+Style::ComputedStyle createAnonymousStyleForRuby(const Style::ComputedStyle& parentStyle, Style::Display display)
 {
     ASSERT(display == Style::DisplayType::InlineRuby || display == Style::DisplayType::RubyBase);
 
-    auto style = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, display);
+    auto style = Style::ComputedStyle::createAnonymousStyleWithDisplay(parentStyle, display);
     style.setUnicodeBidi(UnicodeBidi::Isolate);
     if (display == Style::DisplayType::RubyBase)
         style.setTextWrapMode(TextWrapMode::NoWrap);
@@ -59,7 +59,7 @@ RenderStyle createAnonymousStyleForRuby(const RenderStyle& parentStyle, Style::D
 static RenderPtr<RenderElement> createAnonymousRendererForRuby(RenderElement& parent, Style::Display display)
 {
     auto style = createAnonymousStyleForRuby(parent.style(), display);
-    auto ruby = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), WTF::move(style));
+    auto ruby = createRenderer<RenderInline>(RenderObject::Type::Inline, protect(parent.document()), WTF::move(style));
     ruby->initializeStyle();
     return ruby;
 }

@@ -13,8 +13,8 @@
 #include <cstdint>
 #include <cstring>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_device/audio_device_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -64,7 +64,7 @@ bool FineAudioBuffer::IsReadyForRecord() const {
   return record_samples_per_channel_10ms_ > 0 && record_channels_ > 0;
 }
 
-void FineAudioBuffer::GetPlayoutData(ArrayView<int16_t> audio_buffer,
+void FineAudioBuffer::GetPlayoutData(std::span<int16_t> audio_buffer,
                                      int playout_delay_ms) {
   RTC_DCHECK(IsReadyForPlayout());
   // Ask WebRTC for new data in chunks of 10ms until we have enough to
@@ -81,7 +81,7 @@ void FineAudioBuffer::GetPlayoutData(ArrayView<int16_t> audio_buffer,
       const size_t num_elements_10ms =
           playout_channels_ * playout_samples_per_channel_10ms_;
       const size_t written_elements = playout_buffer_.AppendData(
-          num_elements_10ms, [&](ArrayView<int16_t> buf) {
+          num_elements_10ms, [&](std::span<int16_t> buf) {
             const size_t samples_per_channel_10ms =
                 audio_device_buffer_->GetPlayoutData(buf.data());
             return playout_channels_ * samples_per_channel_10ms;
@@ -108,7 +108,7 @@ void FineAudioBuffer::GetPlayoutData(ArrayView<int16_t> audio_buffer,
 }
 
 void FineAudioBuffer::DeliverRecordedData(
-    ArrayView<const int16_t> audio_buffer,
+    std::span<const int16_t> audio_buffer,
     int record_delay_ms,
     std::optional<int64_t> capture_time_ns) {
   RTC_DCHECK(IsReadyForRecord());

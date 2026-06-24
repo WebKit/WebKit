@@ -29,7 +29,6 @@
 #import <WebCore/SecurityOriginData.h>
 #import <wtf/RetainPtr.h>
 
-using namespace WebCore;
 
 @implementation WebDeviceOrientationProviderMockInternal
 
@@ -38,7 +37,7 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
-    m_core = makeUnique<DeviceOrientationClientMock>();
+    m_core = makeUnique<WebCore::DeviceOrientationClientMock>();
     return self;
 }
 
@@ -47,7 +46,7 @@ using namespace WebCore;
     m_core->setOrientation(core(orientation));
 }
 
-- (void)setController:(DeviceOrientationController*)controller
+- (void)setController:(WebCore::DeviceOrientationController*)controller
 {
     m_core->setController(controller);
 }

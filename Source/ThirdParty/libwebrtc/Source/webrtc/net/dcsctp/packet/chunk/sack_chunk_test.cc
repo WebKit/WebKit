@@ -12,7 +12,6 @@
 #include <cstdint>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/testing/testing_macros.h"
 #include "test/gmock.h"

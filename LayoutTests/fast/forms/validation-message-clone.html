@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/common.js"></script>
 </head>
 <body>
@@ -13,13 +13,12 @@
 </form>
 
 <script>
+window.jsTestIsAsync = true;
 var original = document.getElementsByTagName('input')[0];
 var lastInOriginalShadow;
 var lastInClonedShadow;
 $('submit').click();
 setTimeout(cloneElementWithValidationMessage, 0);
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 function cloneElementWithValidationMessage() {
     $('dest').appendChild(original.cloneNode());
@@ -34,7 +33,7 @@ function confirmNoBubble() {
     shouldBeTrue('internals.userAgentPart(lastInOriginalShadow) == "-webkit-validation-bubble"');
     lastInClonedShadow = internals.shadowRoot($('dest').firstChild).lastChild;
     shouldBeFalse('internals.userAgentPart(lastInClonedShadow) == "-webkit-validation-bubble"');
-    testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
 

@@ -834,7 +834,7 @@
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_vvtanpi"},
     {"access": "public", "introduced": "5", "kind": "function", "linkage": "exported", "name": "_vvtanpif"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "COMPLEX"},
     {"access": "public", "name": "COMPLEX_SPLIT"},
@@ -888,7 +888,7 @@
    ]
   },
   {
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

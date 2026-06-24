@@ -21,8 +21,8 @@
 #include "SVGTextMetrics.h"
 
 #include "RenderSVGInlineText.h"
-#include "RenderStyle+GettersInlines.h"
 #include "FontCascadeInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TextRun.h"
 #include "UnicodeBidi.h"
 
@@ -44,7 +44,7 @@ SVGTextMetrics::SVGTextMetrics(const RenderSVGInlineText& textRenderer, const Te
 
 TextRun SVGTextMetrics::constructTextRun(const RenderSVGInlineText& text, unsigned position, unsigned length)
 {
-    const RenderStyle& style = text.style();
+    const Style::ComputedStyle& style = text.style();
 
     TextRun run(StringView(text.text()).substring(position, length),
         0, /* xPos, only relevant with allowTabs=true */

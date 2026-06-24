@@ -14,9 +14,9 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/ref_count.h"
 #include "api/scoped_refptr.h"
 #include "api/units/time_delta.h"
@@ -46,10 +46,10 @@ class TransformableFrameInterface {
 
   // Returns the frame payload data. The data is valid until the next non-const
   // method call.
-  virtual ArrayView<const uint8_t> GetData() const = 0;
+  virtual std::span<const uint8_t> GetData() const = 0;
 
   // Copies `data` into the owned frame payload data.
-  virtual void SetData(ArrayView<const uint8_t> data) = 0;
+  virtual void SetData(std::span<const uint8_t> data) = 0;
 
   virtual uint8_t GetPayloadType() const = 0;
   virtual bool CanSetPayloadType() const { return false; }
@@ -125,7 +125,7 @@ class TransformableAudioFrameInterface : public TransformableFrameInterface {
   RTC_EXPORT explicit TransformableAudioFrameInterface(Passkey passkey);
   ~TransformableAudioFrameInterface() override = default;
 
-  virtual ArrayView<const uint32_t> GetContributingSources() const = 0;
+  virtual std::span<const uint32_t> GetContributingSources() const = 0;
 
   virtual const std::optional<uint16_t> SequenceNumber() const = 0;
 

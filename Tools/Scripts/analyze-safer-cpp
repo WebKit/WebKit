@@ -1,0 +1,620 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Run the SaferCPP clang static-analyzer checkers against your local changes
+without performing a full WebKit build.
+
+Downloads a recent toolchain from swift.org if needed.
+
+Uses CMake for fast generation of compile_commands.json. Or you can supply
+your own.
+"""
+
+import argparse
+import concurrent.futures
+import glob
+import json
+import os
+import re
+import shlex
+import subprocess
+import sys
+import tempfile
+
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, SCRIPT_DIR)
+
+
+def find_webkit_root():
+    proc = subprocess.run(['git', 'rev-parse', '--show-toplevel'],
+                          capture_output=True, text=True)
+    if proc.returncode == 0 and proc.stdout.strip():
+        return os.path.realpath(proc.stdout.strip())
+    return os.path.dirname(os.path.dirname(SCRIPT_DIR))
+
+
+WEBKIT_ROOT = find_webkit_root()
+
+from webkitpy.safer_cpp.checkers import Checker, PROJECTS  # noqa: E402
+
+# Keep in sync with Tools/Scripts/build-and-analyze WEBKIT_CHECKERS.
+WEBKIT_CHECKERS = [
+    'alpha.webkit.ForwardDeclChecker',
+    'alpha.webkit.MemoryUnsafeCastChecker',
+    'alpha.webkit.NoDeleteChecker',
+    'alpha.webkit.NoUncheckedPtrMemberChecker',
+    'alpha.webkit.NoUnretainedMemberChecker',
+    'alpha.webkit.RetainPtrCtorAdoptChecker',
+    'alpha.webkit.UncheckedCallArgsChecker',
+    'alpha.webkit.UncheckedLocalVarsChecker',
+    'alpha.webkit.UncountedCallArgsChecker',
+    'alpha.webkit.UncountedLocalVarsChecker',
+    'alpha.webkit.UnretainedCallArgsChecker',
+    'alpha.webkit.UnretainedLambdaCapturesChecker',
+    'alpha.webkit.UnretainedLocalVarsChecker',
+    'webkit.NoUncountedMemberChecker',
+    'webkit.RefCntblBaseVirtualDtor',
+    'webkit.UncountedLambdaCapturesChecker',
+]
+
+# Keep in sync with Tools/Scripts/build-and-analyze make_analyzer_flags().
+DISABLE_CATEGORIES = 'alpha,apiModeling,core,cplusplus,deadcode,debug,fuchsia,nullability,optin,osx,security,unix,webkit'
+
+SOURCE_EXT = {'.cpp', '.cc', '.cxx', '.c', '.mm', '.m'}
+HEADER_EXT = {'.h', '.hpp', '.hxx'}
+
+DEFAULT_BUILD_DIR = os.path.join(WEBKIT_ROOT, 'WebKitBuild', 'cmake-mac', 'Debug')
+TOOLCHAIN_DIRS = [
+    os.path.expanduser('~/Library/Developer/Toolchains'),
+    '/Library/Developer/Toolchains',
+]
+SWIFT_LATEST_URL = 'https://download.swift.org/development/xcode/latest-build.yml'
+SWIFT_DOWNLOAD_BASE = 'https://download.swift.org/development/xcode'
+
+# Ordered so that PAL (which lives under WebCore) is matched before WebCore.
+PROJECT_ROOTS = [
+    ('PAL', os.path.join(WEBKIT_ROOT, 'Source', 'WebCore', 'PAL')),
+    ('WTF', os.path.join(WEBKIT_ROOT, 'Source', 'WTF')),
+] + [(p, os.path.join(WEBKIT_ROOT, 'Source', p)) for p in PROJECTS if p not in ('PAL', 'WTF')]
+
+DIAG_RE = re.compile(
+    r'^(?P<path>[^:]+):(?P<line>\d+):(?P<col>\d+): '
+    r'(?P<kind>warning|error|note): '
+    r'(?P<msg>.*?)(?: \[(?P<checker>[\w.]+)\])?$'
+)
+SUMMARY_RE = re.compile(r'^\d+ warnings?( and \d+ errors?)? generated\.$')
+INCLUDE_RE = re.compile(r'^\s*#\s*include\s+"([^"]+)"')
+
+
+def project_for_path(absPath):
+    for name, root in PROJECT_ROOTS:
+        if absPath.startswith(root + os.sep):
+            return name, root
+    return None, None
+
+
+class CompileDB:
+    def __init__(self, compileCommandsPath):
+        with open(compileCommandsPath) as f:
+            entries = json.load(f)
+        self.byFile = {os.path.realpath(e['file']): e for e in entries}
+        self._bundleIndex = None
+
+    def _buildBundleIndex(self):
+        index = {}
+        for path, entry in self.byFile.items():
+            if '/unified-sources/UnifiedSource' not in path:
+                continue
+            try:
+                with open(path) as f:
+                    for line in f:
+                        m = INCLUDE_RE.match(line)
+                        if m:
+                            index.setdefault(m.group(1), entry)
+            except OSError:
+                pass
+        self._bundleIndex = index
+
+    def lookup(self, absSrc):
+        absSrc = os.path.realpath(absSrc)
+        entry = self.byFile.get(absSrc)
+        if entry:
+            return entry
+        if self._bundleIndex is None:
+            self._buildBundleIndex()
+        _, root = project_for_path(absSrc)
+        if not root:
+            return None
+        rel = os.path.relpath(absSrc, root).replace(os.sep, '/')
+        return self._bundleIndex.get(rel)
+
+
+class Expectations:
+    def __init__(self):
+        self._cache = {}
+
+    def _load(self, project, shortChecker):
+        if not Checker.find_checker_by_name(shortChecker) or project not in PROJECTS:
+            return frozenset()
+        projectDir = 'WebCore/PAL' if project == 'PAL' else project
+        path = os.path.join(WEBKIT_ROOT, 'Source', projectDir,
+                            'SaferCPPExpectations', shortChecker + 'Expectations')
+        result = set()
+        try:
+            with open(path) as f:
+                for raw in f:
+                    line = raw.strip()
+                    if not line or line.startswith('#') or line.startswith('//'):
+                        continue
+                    if line.startswith('['):
+                        line = line.split(']', 1)[-1].strip()
+                    result.add(line)
+        except FileNotFoundError:
+            pass
+        return frozenset(result)
+
+    def isExpected(self, project, shortChecker, relPath):
+        key = (project, shortChecker)
+        if key not in self._cache:
+            self._cache[key] = self._load(project, shortChecker)
+        return relPath in self._cache[key]
+
+
+def resolve_preset_build_dir(presetName):
+    presets = {}
+    for name in ('CMakePresets.json', 'CMakeUserPresets.json'):
+        path = os.path.join(WEBKIT_ROOT, name)
+        if not os.path.isfile(path):
+            continue
+        with open(path) as f:
+            for p in json.load(f).get('configurePresets', []):
+                presets[p['name']] = p
+
+    def findBinaryDir(name, seen):
+        if name in seen or name not in presets:
+            return None
+        seen.add(name)
+        p = presets[name]
+        if 'binaryDir' in p:
+            return p['binaryDir']
+        parents = p.get('inherits', [])
+        if isinstance(parents, str):
+            parents = [parents]
+        for parent in parents:
+            result = findBinaryDir(parent, seen)
+            if result:
+                return result
+        return None
+
+    if presetName not in presets:
+        sys.exit("error: unknown preset '{}'".format(presetName))
+    binaryDir = findBinaryDir(presetName, set())
+    if not binaryDir:
+        sys.exit("error: preset '{}' does not define binaryDir".format(presetName))
+    binaryDir = binaryDir.replace('${sourceDir}', WEBKIT_ROOT)
+    if not os.path.isabs(binaryDir):
+        binaryDir = os.path.join(WEBKIT_ROOT, binaryDir)
+    return binaryDir
+
+
+def rewrite_argv(entry, absSrc, clang, checkers):
+    tokens = shlex.split(entry['command'])
+    out = [clang]
+    i = 1
+    n = len(tokens)
+    entryFile = entry['file']
+    entryFileReal = os.path.realpath(entryFile)
+    while i < n:
+        t = tokens[i]
+        if t == '-o' or t == '-MT' or t == '-MF' or t == '-MQ' or t == '-include':
+            i += 2
+            continue
+        if t in ('-c', '-MD', '-MMD', '-Winvalid-pch', '-fpch-instantiate-templates',
+                 '-Werror', '-fcolor-diagnostics'):
+            i += 1
+            continue
+        if t.startswith('-fdiagnostics-color') or t.startswith('-Werror='):
+            i += 1
+            continue
+        if t == '-Xclang' and i + 1 < n:
+            nxt = tokens[i + 1]
+            if nxt in ('-include-pch', '-include'):
+                i += 4
+                continue
+            if nxt == '-fno-pch-timestamp':
+                i += 2
+                continue
+        if t == entryFile or os.path.realpath(t) == entryFileReal:
+            i += 1
+            continue
+        out.append(t)
+        i += 1
+
+    out += [
+        absSrc,
+        '--analyze',
+        '-fno-color-diagnostics',
+        '-Wno-error',
+        # The SaferCPP EWS analyzes a Release build. Disable assertions so a
+        # Debug compile_commands.json produces the same checker results.
+        '-UASSERT_ENABLED', '-DASSERT_ENABLED=0', '-DNDEBUG=1',
+        '-DRELEASE_WITHOUT_OPTIMIZATIONS=1',
+        '-Xclang', '-analyzer-output=text',
+        '-Xclang', '-analyzer-disable-checker', '-Xclang', DISABLE_CATEGORIES,
+        '-Xclang', '-analyzer-checker', '-Xclang', ','.join(checkers),
+        '-Xclang', '-analyzer-config', '-Xclang', 'max-nodes=10000000',
+        '-o', os.devnull,
+    ]
+    return out, entry['directory']
+
+
+def filter_diagnostics(stderr, requestedPaths, expectations, ignoreExpectations):
+    lines = stderr.splitlines()
+    blocks = []
+    current = None
+    for line in lines:
+        if SUMMARY_RE.match(line):
+            continue
+        m = DIAG_RE.match(line)
+        if m and m.group('kind') in ('warning', 'error'):
+            current = {'head': m, 'lines': [line]}
+            blocks.append(current)
+        elif current is not None:
+            current['lines'].append(line)
+
+    kept = []
+    unexpected = 0
+    errors = 0
+    for block in blocks:
+        m = block['head']
+        kind = m.group('kind')
+        if kind == 'error':
+            kept.append('\n'.join(block['lines']))
+            errors += 1
+            continue
+        checker = m.group('checker')
+        if not checker:
+            continue
+        diagPath = m.group('path')
+        diagAbs = os.path.realpath(diagPath)
+        if diagAbs not in requestedPaths:
+            continue
+        if not ignoreExpectations:
+            short = checker.rsplit('.', 1)[-1]
+            project, root = project_for_path(diagAbs)
+            if project:
+                rel = os.path.relpath(diagAbs, root).replace(os.sep, '/')
+                if expectations.isExpected(project, short, rel):
+                    continue
+        kept.append('\n'.join(block['lines']))
+        unexpected += 1
+    return kept, unexpected, errors
+
+
+def resolve_base_ref(base):
+    if base != 'auto':
+        return base
+    proc = subprocess.run(
+        ['git', '-C', WEBKIT_ROOT, 'merge-base', 'origin/main', 'HEAD'],
+        capture_output=True, text=True)
+    if proc.returncode == 0 and proc.stdout.strip():
+        return proc.stdout.strip()
+    return 'HEAD'
+
+
+def collect_input_files(args):
+    files = []
+    for f in args.files:
+        files.append(os.path.realpath(os.path.join(os.getcwd(), f)))
+    if args.changed_files:
+        base = resolve_base_ref(args.base)
+        for cmd in (['git', '-C', WEBKIT_ROOT, 'diff', '--name-only', '--diff-filter=d', base],
+                    ['git', '-C', WEBKIT_ROOT, 'diff', '--name-only', '--diff-filter=d', '--cached']):
+            out = subprocess.run(cmd, capture_output=True, text=True, check=True).stdout
+            for line in out.splitlines():
+                line = line.strip()
+                if line:
+                    files.append(os.path.realpath(os.path.join(WEBKIT_ROOT, line)))
+    seen = set()
+    result = []
+    for f in files:
+        ext = os.path.splitext(f)[1]
+        if ext not in SOURCE_EXT and ext not in HEADER_EXT:
+            continue
+        if f in seen:
+            continue
+        seen.add(f)
+        result.append(f)
+    return result
+
+
+def map_header_to_tu(headerPath, db):
+    stem = os.path.splitext(headerPath)[0]
+    for suffix in ('.cpp', '.mm', 'Cocoa.mm', 'Mac.cpp', 'Mac.mm', '.c', '.m'):
+        candidate = stem + suffix
+        if os.path.isfile(candidate) and db.lookup(candidate):
+            return candidate
+
+    basename = os.path.basename(headerPath)
+    headerDir = os.path.dirname(headerPath)
+    patterns = ['-e', '"{}"'.format(basename)]
+    project, _ = project_for_path(headerPath)
+    if project:
+        patterns += ['-e', '<{}/{}>'.format(project, basename)]
+    proc = subprocess.run(
+        ['git', '-C', WEBKIT_ROOT, 'grep', '-l', '-F'] + patterns +
+        ['--', ':(glob)Source/**/*.cpp', ':(glob)Source/**/*.mm'],
+        capture_output=True, text=True)
+    candidates = []
+    for line in proc.stdout.splitlines():
+        path = os.path.realpath(os.path.join(WEBKIT_ROOT, line.strip()))
+        try:
+            size = os.path.getsize(path)
+        except OSError:
+            continue
+        candidates.append((os.path.dirname(path) != headerDir, size, path))
+    candidates.sort()
+    for _, _, path in candidates:
+        if db.lookup(path):
+            return path
+    return None
+
+
+def normalize_checkers(values, parser):
+    if not values:
+        return list(WEBKIT_CHECKERS)
+    result = []
+    shortNames = {c.rsplit('.', 1)[-1]: c for c in WEBKIT_CHECKERS}
+    for v in values:
+        if v in WEBKIT_CHECKERS:
+            result.append(v)
+        elif v in shortNames:
+            result.append(shortNames[v])
+        else:
+            parser.error("unknown checker '{}'; valid names: {}".format(
+                v, ', '.join(sorted(shortNames))))
+    return result
+
+
+def read_plist_key(plist, key):
+    proc = subprocess.run(['plutil', '-extract', key, 'raw', '-o', '-', plist],
+                          capture_output=True, text=True)
+    return proc.stdout.strip() if proc.returncode == 0 else ''
+
+
+def find_toolchain_clangs():
+    candidates = []
+    for d in TOOLCHAIN_DIRS:
+        for tc in glob.glob(os.path.join(d, '*.xctoolchain')):
+            clang = os.path.join(tc, 'usr', 'bin', 'clang++')
+            if not os.path.isfile(clang):
+                continue
+            plist = os.path.join(tc, 'Info.plist')
+            created = read_plist_key(plist, 'CreatedDate')
+            display = read_plist_key(plist, 'DisplayName') or os.path.basename(tc)
+            candidates.append((created, clang, display))
+    candidates.sort(reverse=True)
+    return candidates
+
+
+def download_swift_toolchain():
+    print('Fetching latest swift.org development snapshot manifest...', file=sys.stderr)
+    proc = subprocess.run(['curl', '-fsSL', SWIFT_LATEST_URL], capture_output=True, text=True)
+    if proc.returncode != 0:
+        sys.exit('error: failed to fetch {}: {}'.format(SWIFT_LATEST_URL, proc.stderr.strip()))
+    fields = dict(re.findall(r'^(\w+):\s*(\S+)', proc.stdout, re.M))
+    snapshot = fields.get('dir')
+    pkgName = fields.get('download')
+    if not snapshot or not pkgName:
+        sys.exit('error: could not parse snapshot manifest:\n' + proc.stdout)
+    url = '{}/{}/{}'.format(SWIFT_DOWNLOAD_BASE, snapshot, pkgName)
+    with tempfile.NamedTemporaryFile(suffix='.pkg', delete=False) as f:
+        pkgPath = f.name
+    print('Downloading {} (~1.5 GB)...'.format(url), file=sys.stderr)
+    rc = subprocess.call(['curl', '-fL', '-#', '-o', pkgPath, url])
+    if rc != 0:
+        sys.exit('error: download failed')
+    print('Installing to ~/Library/Developer/Toolchains/ ...', file=sys.stderr)
+    rc = subprocess.call(['installer', '-pkg', pkgPath, '-target', 'CurrentUserHomeDirectory'])
+    os.unlink(pkgPath)
+    if rc != 0:
+        sys.exit('error: installer failed (exit {})'.format(rc))
+    expected = os.path.join(TOOLCHAIN_DIRS[0], snapshot + '.xctoolchain', 'usr', 'bin', 'clang++')
+    if os.path.isfile(expected):
+        return expected, snapshot
+    for _, clang, display in find_toolchain_clangs():
+        if snapshot in clang:
+            return clang, display
+    sys.exit('error: installed toolchain not found at {}'.format(expected))
+
+
+def resolve_analyzer_clang(args):
+    if args.clang:
+        if not os.path.isfile(args.clang):
+            sys.exit("error: --clang path '{}' does not exist".format(args.clang))
+        print('Using analyzer: {}'.format(args.clang), file=sys.stderr)
+        return args.clang
+
+    if args.download_toolchain:
+        clang, display = download_swift_toolchain()
+        print('Using analyzer: {} ({})'.format(clang, display), file=sys.stderr)
+        return clang
+
+    candidates = find_toolchain_clangs()
+    if candidates:
+        _, clang, display = candidates[0]
+        print('Using analyzer: {} ({})'.format(clang, display), file=sys.stderr)
+        return clang
+
+    print(file=sys.stderr)
+    print('No Swift toolchain found in {}.'.format(' or '.join(TOOLCHAIN_DIRS)), file=sys.stderr)
+    print(file=sys.stderr)
+    if not sys.stdin.isatty():
+        sys.exit('Pass --clang PATH, or --download-toolchain to fetch a swift.org snapshot.')
+    try:
+        answer = input('Download the latest swift.org development snapshot (~1.5 GB)? [y/N] ')
+    except (EOFError, KeyboardInterrupt):
+        answer = ''
+    if answer.strip().lower() in ('y', 'yes'):
+        clang, display = download_swift_toolchain()
+        print('Using analyzer: {} ({})'.format(clang, display), file=sys.stderr)
+        return clang
+    sys.exit('No analyzer clang available. Pass --clang PATH or re-run with --download-toolchain.')
+
+
+def repo_relative(path):
+    try:
+        rel = os.path.relpath(path, WEBKIT_ROOT)
+    except ValueError:
+        return path
+    return rel if not rel.startswith('..') else path
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        usage='%(prog)s [-h] [--base BASE] [--clang CLANG] [--download-toolchain]\n'
+              '                         [--cmake-preset CMAKE_PRESET | --compile-commands PATH]\n'
+              '                         [--checker NAME] [--ignore-expectations] [-j N] [-v]\n'
+              '                         [--changed-files | FILE ...]',
+        epilog='examples:\n'
+               '  analyze-safer-cpp Source/WebCore/dom/Document.cpp\n'
+               '  analyze-safer-cpp --changed-files -j 12\n')
+    parser.add_argument('files', nargs='*', metavar='FILE',
+                        help='source or header files to analyze')
+    parser.add_argument('--changed-files', action='store_true',
+                        help='analyze files changed vs --base (and staged)')
+    parser.add_argument('--base', default='auto',
+                        help='git ref to diff against for --changed-files '
+                             "(default: auto = merge-base of origin/main and HEAD)")
+    parser.add_argument('--clang', default=None,
+                        help='clang with alpha.webkit.* checkers '
+                             '(default: newest installed swift.org toolchain)')
+    parser.add_argument('--download-toolchain', action='store_true',
+                        help='download and install the latest swift.org development '
+                             'snapshot without prompting')
+    where = parser.add_mutually_exclusive_group()
+    where.add_argument('--cmake-preset', help='CMake configure preset name')
+    where.add_argument('--compile-commands', metavar='PATH',
+                       help='path to a compile_commands.json file')
+    parser.add_argument('--checker', action='append', dest='checkers', metavar='NAME',
+                        help='restrict to one checker (repeatable; short or full name)')
+    parser.add_argument('--ignore-expectations', action='store_true',
+                        help='show all checker warnings, ignoring SaferCPPExpectations')
+    parser.add_argument('-j', type=int, default=os.cpu_count(), metavar='N',
+                        help='analyze N files in parallel (default: number of CPUs)')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='print each rewritten clang command')
+
+    args = parser.parse_args()
+    if args.files and args.changed_files:
+        parser.error('specify FILE... or --changed-files, not both')
+    if not args.files and not args.changed_files:
+        parser.error('specify FILE... or --changed-files')
+    args.checkers = normalize_checkers(args.checkers, parser)
+    return args
+
+
+def main():
+    args = parse_args()
+    clang = resolve_analyzer_clang(args)
+
+    if args.compile_commands:
+        compileCommandsPath = os.path.abspath(args.compile_commands)
+    elif args.cmake_preset:
+        compileCommandsPath = os.path.join(resolve_preset_build_dir(args.cmake_preset), 'compile_commands.json')
+    else:
+        compileCommandsPath = os.path.join(DEFAULT_BUILD_DIR, 'compile_commands.json')
+    if not os.path.isfile(compileCommandsPath):
+        sys.exit("error: compile_commands.json not found at '{}' (run cmake --preset ... first)".format(compileCommandsPath))
+
+    db = CompileDB(compileCommandsPath)
+    expectations = Expectations()
+
+    requested = collect_input_files(args)
+    if not requested:
+        print('No analyzable files.')
+        return 0
+    requestedPaths = set(requested)
+
+    workItems = []
+    seenTUs = set()
+    for path in requested:
+        ext = os.path.splitext(path)[1]
+        if ext in HEADER_EXT:
+            tu = map_header_to_tu(path, db)
+            if not tu:
+                print('SKIP: {} (header has no sibling or direct includer in this checkout)'.format(repo_relative(path)))
+                continue
+            tu = os.path.realpath(tu)
+            if args.verbose:
+                sys.stderr.write('header {} -> {}\n'.format(repo_relative(path), repo_relative(tu)))
+            requestedPaths.add(tu)
+        else:
+            tu = path
+        if tu in seenTUs:
+            continue
+        entry = db.lookup(tu)
+        if not entry:
+            print('SKIP: {} (no compile command found; is the build configured?)'.format(repo_relative(tu)))
+            continue
+        seenTUs.add(tu)
+        workItems.append((tu, entry))
+
+    if not workItems:
+        print('Nothing to analyze.')
+        return 0
+
+    def runOne(item):
+        tu, entry = item
+        argv, cwd = rewrite_argv(entry, tu, clang, args.checkers)
+        if args.verbose:
+            sys.stderr.write(' '.join(shlex.quote(a) for a in argv) + '\n')
+        proc = subprocess.run(argv, cwd=cwd, capture_output=True, text=True)
+        return tu, proc.stderr
+
+    totalUnexpected = 0
+    totalErrors = 0
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, args.j)) as pool:
+        for tu, stderr in pool.map(runOne, workItems):
+            blocks, unexpected, errors = filter_diagnostics(
+                stderr, requestedPaths, expectations, args.ignore_expectations)
+            print('==> {}'.format(repo_relative(tu)))
+            if blocks:
+                for b in blocks:
+                    print(b)
+            else:
+                print('  OK')
+            totalUnexpected += unexpected
+            totalErrors += errors
+
+    summary = '{} file(s) analyzed, {} unexpected issue(s), {} error(s)'.format(
+        len(workItems), totalUnexpected, totalErrors)
+    print()
+    print(summary)
+    return 1 if (totalUnexpected or totalErrors) else 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

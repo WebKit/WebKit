@@ -604,7 +604,7 @@
     {"access": "public", "introduced": "18.5", "kind": "function", "linkage": "internal", "name": "__ZL32SparseGetStateSize_Complex_Float21SparseIterativeMethodbiii"},
     {"access": "public", "introduced": "18.5", "kind": "function", "linkage": "internal", "name": "__ZL33SparseGetStateSize_Complex_Double21SparseIterativeMethodbiii"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "DenseMatrix_Complex_Double"},
     {"access": "public", "name": "DenseMatrix_Complex_Float"},

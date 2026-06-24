@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_AGC_MOCK_AGC_H_
 
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc/agc.h"
 #include "test/gmock.h"
 
@@ -22,7 +22,7 @@ namespace webrtc {
 class MockAgc : public Agc {
  public:
   ~MockAgc() override {}
-  MOCK_METHOD(void, Process, (ArrayView<const int16_t> audio), (override));
+  MOCK_METHOD(void, Process, (std::span<const int16_t> audio), (override));
   MOCK_METHOD(bool, GetRmsErrorDb, (int* error), (override));
   MOCK_METHOD(void, Reset, (), (override));
   MOCK_METHOD(int, set_target_level_dbfs, (int level), (override));

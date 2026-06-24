@@ -9,8 +9,7 @@
 <script>
   description("Tests getCTM/getScreenCTM in combination with CSS transform-origin / transform-box");
 
-  if (window.testRunner)
-    testRunner.waitUntilDone();
+  window.jsTestIsAsync = true;
 
   function rectToString(r) {
     return "[" + r.x
@@ -134,18 +133,11 @@
     shouldBeEqualToString("getBBoxById('rect9')", "[60 55 25 25]");
     shouldBeEqualToString("getAbsoluteBBoxById('rect9')", "[483 53 200 75]");
 
-    var script = document.createElement('script');
-    script.src = "../../resources/js-test-post.js";
-    script.onload = completeTest;
-    document.body.appendChild(script);
+    finishJSTest();
   }
 
-  function completeTest() {
-    if (window.testRunner)
-      testRunner.notifyDone();
-  }
-  
   startTest();
 </script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

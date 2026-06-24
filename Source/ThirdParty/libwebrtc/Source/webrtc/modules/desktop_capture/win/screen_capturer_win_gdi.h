@@ -25,6 +25,7 @@
 #include "modules/desktop_capture/shared_memory.h"
 #include "modules/desktop_capture/win/display_configuration_monitor.h"
 #include "modules/desktop_capture/win/scoped_thread_desktop.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -81,6 +82,7 @@ class ScreenCapturerWinGdi : public DesktopCapturer {
 
   HMODULE dwmapi_library_ = NULL;
   DwmEnableCompositionFunc composition_func_ = nullptr;
+  Clock& clock_;
 };
 
 }  // namespace webrtc

@@ -35,13 +35,13 @@ namespace WTF {
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SegmentedVector);
 
     // An iterator for SegmentedVector. It supports only the pre ++ operator
-    template <typename T, size_t SegmentSize, size_t InlineCapacity, typename Malloc> class SegmentedVector;
-    template <typename T, size_t SegmentSize = 8, size_t InlineCapacity = 0, typename Malloc = SegmentedVectorMalloc> class SegmentedVectorIterator {
+    template <typename T, size_t SegmentSize, size_t InlineCapacity, SegmentedVectorGrowthPolicy GrowthPolicy, typename Malloc> class SegmentedVector;
+    template <typename T, size_t SegmentSize = 8, size_t InlineCapacity = 0, SegmentedVectorGrowthPolicy GrowthPolicy = SegmentedVectorGrowthPolicy::Constant, typename Malloc = SegmentedVectorMalloc> class SegmentedVectorIterator {
         WTF_MAKE_CONFIGURABLE_ALLOCATED(FastMalloc);
     private:
-        friend class SegmentedVector<T, SegmentSize, InlineCapacity, Malloc>;
+        friend class SegmentedVector<T, SegmentSize, InlineCapacity, GrowthPolicy, Malloc>;
     public:
-        typedef SegmentedVectorIterator<T, SegmentSize, InlineCapacity, Malloc> Iterator;
+        typedef SegmentedVectorIterator<T, SegmentSize, InlineCapacity, GrowthPolicy, Malloc> Iterator;
 
         using iterator_category = std::forward_iterator_tag;
         using value_type = T;
@@ -66,7 +66,7 @@ namespace WTF {
             return m_index == other.m_index && &m_vector == &other.m_vector;
         }
 
-        SegmentedVectorIterator& operator=(const SegmentedVectorIterator<T, SegmentSize, InlineCapacity, Malloc>& other)
+        SegmentedVectorIterator& operator=(const SegmentedVectorIterator<T, SegmentSize, InlineCapacity, GrowthPolicy, Malloc>& other)
         {
             m_vector = other.m_vector;
             m_index = other.m_index;
@@ -74,13 +74,13 @@ namespace WTF {
         }
 
     private:
-        SegmentedVectorIterator(SegmentedVector<T, SegmentSize, InlineCapacity, Malloc>& vector, size_t index)
+        SegmentedVectorIterator(SegmentedVector<T, SegmentSize, InlineCapacity, GrowthPolicy, Malloc>& vector, size_t index)
             : m_vector(vector)
             , m_index(index)
         {
         }
 
-        SegmentedVector<T, SegmentSize, InlineCapacity, Malloc>& m_vector;
+        SegmentedVector<T, SegmentSize, InlineCapacity, GrowthPolicy, Malloc>& m_vector;
         size_t m_index;
     };
 
@@ -95,16 +95,16 @@ namespace WTF {
     // small vectors. Additional elements are stored in heap-allocated segments
     // of SegmentSize elements each. Vectors with inline storage are not
     // movable, as moving would invalidate pointers to elements stored inline.
-    template <typename T, size_t SegmentSize, size_t InlineCapacity, typename Malloc>
+    template <typename T, size_t SegmentSize, size_t InlineCapacity, SegmentedVectorGrowthPolicy GrowthPolicy, typename Malloc>
     class SegmentedVector final {
-        friend class SegmentedVectorIterator<T, SegmentSize, InlineCapacity, Malloc>;
+        friend class SegmentedVectorIterator<T, SegmentSize, InlineCapacity, GrowthPolicy, Malloc>;
         WTF_MAKE_NONCOPYABLE(SegmentedVector);
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SegmentedVector);
 
         static constexpr bool hasInlineStorage = InlineCapacity > 0;
 
     public:
-        using Iterator = SegmentedVectorIterator<T, SegmentSize, InlineCapacity, Malloc>;
+        using Iterator = SegmentedVectorIterator<T, SegmentSize, InlineCapacity, GrowthPolicy, Malloc>;
 
         using value_type = T;
         using iterator = Iterator;
@@ -221,7 +221,7 @@ namespace WTF {
             size_t oldSize = m_size;
             m_size = size;
             for (size_t i = oldSize; i < m_size; ++i)
-                new (NotNull, &at(i)) T();
+                new (NotNull, addressAt(i)) T();
         }
 
         void clear()
@@ -236,10 +236,61 @@ namespace WTF {
 
         void shrinkToFit() { m_segments.shrinkToFit(); }
 
+        unsigned removeAllMatching(NOESCAPE const Invocable<bool(T&)> auto& matches)
+        {
+            unsigned writeIndex = 0;
+            unsigned matchCount = 0;
+            for (unsigned readIndex = 0; readIndex < m_size; ++readIndex) {
+                T* readPtr = addressAt(readIndex);
+                if (matches(*readPtr)) {
+                    std::destroy_at(readPtr);
+                    ++matchCount;
+                } else {
+                    if (writeIndex != readIndex) {
+                        T* writePtr = addressAt(writeIndex);
+                        new (NotNull, writePtr) T(WTF::move(*readPtr));
+                        std::destroy_at(readPtr);
+                    }
+                    ++writeIndex;
+                }
+            }
+            m_size = writeIndex;
+            shrinkToFit();
+            return matchCount;
+        }
+
     private:
+        struct SegmentLocation {
+            size_t segmentIndex;
+            size_t offsetInSegment;
+        };
+
+        ALWAYS_INLINE static SegmentLocation segmentLocationFor(size_t index)
+        {
+            if constexpr (GrowthPolicy == SegmentedVectorGrowthPolicy::Doubling) {
+                size_t n = index / SegmentSize + 1;
+                size_t segmentIndex = (sizeof(size_t) * CHAR_BIT - 1) - WTF::clz(n);
+                size_t offset = index - (SegmentSize * ((static_cast<size_t>(1) << segmentIndex) - 1));
+                return { segmentIndex, offset };
+            } else
+                return { index / SegmentSize, index % SegmentSize };
+        }
+
+        ALWAYS_INLINE static size_t sizeOfSegment(size_t segmentIndex)
+        {
+            if constexpr (GrowthPolicy == SegmentedVectorGrowthPolicy::Doubling)
+                return SegmentSize << segmentIndex;
+            else
+                return SegmentSize;
+        }
+
         class Segment {
         public:
-            std::span<T, SegmentSize> entries() { return unsafeMakeSpan<T, SegmentSize>(m_entries, SegmentSize); }
+            std::span<T, SegmentSize> entries() requires (GrowthPolicy == SegmentedVectorGrowthPolicy::Constant)
+            {
+                return unsafeMakeSpan<T, SegmentSize>(m_entries, SegmentSize);
+            }
+            T* data() { return m_entries; }
 
         private:
             T m_entries[0];
@@ -269,10 +320,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             if constexpr (hasInlineStorage) {
                 if (index < InlineCapacity) [[likely]]
                     return &inlineStorage()[index];
-                size_t heapIndex = index - InlineCapacity;
-                return &m_segments[heapIndex / SegmentSize].get()->entries()[heapIndex % SegmentSize];
-            } else
-                return &m_segments[index / SegmentSize].get()->entries()[index % SegmentSize];
+                index -= InlineCapacity;
+            }
+            auto [segmentIndex, offset] = segmentLocationFor(index);
+            return &m_segments[segmentIndex].get()->data()[offset];
         }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
@@ -290,16 +341,16 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     return true;
                 return heapSegmentExistsFor(index);
             } else
-                return index / SegmentSize < m_segments.size();
+                return segmentLocationFor(index).segmentIndex < m_segments.size();
         }
 
         ALWAYS_INLINE bool heapSegmentExistsFor(size_t index)
         {
             if constexpr (hasInlineStorage) {
                 ASSERT(index >= InlineCapacity);
-                return (index - InlineCapacity) / SegmentSize < m_segments.size();
+                return segmentLocationFor(index - InlineCapacity).segmentIndex < m_segments.size();
             } else
-                return index / SegmentSize < m_segments.size();
+                return segmentLocationFor(index).segmentIndex < m_segments.size();
         }
 
         void ensureSegmentsFor(size_t size)
@@ -308,12 +359,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 if (size <= InlineCapacity)
                     return;
                 size_t currentSegmentCount = m_segments.size();
-                size_t requiredSegmentCount = (size - InlineCapacity + SegmentSize - 1) / SegmentSize;
+                size_t requiredSegmentCount = segmentLocationFor(size - InlineCapacity - 1).segmentIndex + 1;
                 for (size_t i = currentSegmentCount; i < requiredSegmentCount; ++i)
                     allocateSegment();
             } else {
-                size_t segmentCount = (m_size + SegmentSize - 1) / SegmentSize;
-                size_t requiredSegmentCount = (size + SegmentSize - 1) / SegmentSize;
+                size_t segmentCount = m_size ? segmentLocationFor(m_size - 1).segmentIndex + 1 : 0;
+                size_t requiredSegmentCount = segmentLocationFor(size - 1).segmentIndex + 1;
                 for (size_t i = segmentCount ? segmentCount - 1 : 0; i < requiredSegmentCount; ++i)
                     ensureSegment(i);
             }
@@ -328,7 +379,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         void allocateSegment()
         {
-            auto* ptr = static_cast<Segment*>(Malloc::malloc(sizeof(T) * SegmentSize));
+            size_t segSize = sizeOfSegment(m_segments.size());
+            auto* ptr = static_cast<Segment*>(Malloc::malloc(sizeof(T) * segSize));
             m_segments.append(SegmentPtr(ptr, { }));
         }
 
@@ -340,3 +392,4 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 } // namespace WTF
 
 using WTF::SegmentedVector;
+using WTF::SegmentedVectorGrowthPolicy;

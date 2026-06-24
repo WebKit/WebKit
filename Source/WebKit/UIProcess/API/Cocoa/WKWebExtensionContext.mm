@@ -191,7 +191,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
     return Ref { *_webExtensionContext }->overrideNewTabPageURL().createNSURL().autorelease();
 }
 
-static inline WallTime toImpl(NSDate *date)
+static inline WallTime toExpirationTime(NSDate *date)
 {
     NSCParameterAssert(!date || [date isKindOfClass:NSDate.class]);
     return date ? WebKit::toImpl(date) : WebKit::toImpl(NSDate.distantFuture);
@@ -225,7 +225,7 @@ static inline WebKit::WebExtensionContext::PermissionsMap toImpl(NSDictionary<WK
     [permissions enumerateKeysAndObjectsUsingBlock:^(WKWebExtensionPermission permission, NSDate *date, BOOL *) {
         NSCParameterAssert([permission isKindOfClass:NSString.class]);
         NSCParameterAssert([date isKindOfClass:NSDate.class]);
-        result.set(permission, toImpl(date));
+        result.set(permission, toExpirationTime(date));
     }];
 
     return result;
@@ -239,7 +239,7 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
     [permissionMatchPatterns enumerateKeysAndObjectsUsingBlock:^(WKWebExtensionMatchPattern *origin, NSDate *date, BOOL *) {
         NSCParameterAssert([origin isKindOfClass:WKWebExtensionMatchPattern.class]);
         NSCParameterAssert([date isKindOfClass:NSDate.class]);
-        result.set(origin._webExtensionMatchPattern, toImpl(date));
+        result.set(origin._webExtensionMatchPattern, toExpirationTime(date));
     }];
 
     return result;
@@ -311,6 +311,16 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
 - (void)setHasAccessToPrivateData:(BOOL)hasAccess
 {
     return Ref { *_webExtensionContext }->setHasAccessToPrivateData(hasAccess);
+}
+
+- (BOOL)_hasAccessToFileURLs
+{
+    return _webExtensionContext->hasAccessToFileURLs();
+}
+
+- (void)_setHasAccessToFileURLs:(BOOL)hasAccess
+{
+    return Ref { *_webExtensionContext }->setHasAccessToFileURLs(hasAccess);
 }
 
 static inline NSSet<WKWebExtensionPermission> *toAPI(const WebKit::WebExtensionContext::PermissionsMap::KeysConstIteratorRange& permissions)
@@ -450,7 +460,7 @@ static inline WebKit::WebExtensionContext::PermissionState NODELETE toImpl(WKWeb
     NSParameterAssert(status == WKWebExtensionContextPermissionStatusDeniedExplicitly || status == WKWebExtensionContextPermissionStatusUnknown || status == WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert([permission isKindOfClass:NSString.class]);
 
-    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), permission, toImpl(expirationDate));
+    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), permission, toExpirationTime(expirationDate));
 }
 
 - (WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url
@@ -481,7 +491,7 @@ static inline WebKit::WebExtensionContext::PermissionState NODELETE toImpl(WKWeb
     NSParameterAssert(status == WKWebExtensionContextPermissionStatusDeniedExplicitly || status == WKWebExtensionContextPermissionStatusUnknown || status == WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert([url isKindOfClass:NSURL.class]);
 
-    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), url, toImpl(expirationDate));
+    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), url, toExpirationTime(expirationDate));
 }
 
 - (WKWebExtensionContextPermissionStatus)permissionStatusForMatchPattern:(WKWebExtensionMatchPattern *)pattern
@@ -512,7 +522,7 @@ static inline WebKit::WebExtensionContext::PermissionState NODELETE toImpl(WKWeb
     NSParameterAssert(status == WKWebExtensionContextPermissionStatusDeniedExplicitly || status == WKWebExtensionContextPermissionStatusUnknown || status == WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert([pattern isKindOfClass:WKWebExtensionMatchPattern.class]);
 
-    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), protect(*pattern->_webExtensionMatchPattern), toImpl(expirationDate));
+    Ref { *_webExtensionContext }->setPermissionState(toImpl(status), protect(*pattern->_webExtensionMatchPattern), toExpirationTime(expirationDate));
 }
 
 - (BOOL)hasAccessToAllURLs

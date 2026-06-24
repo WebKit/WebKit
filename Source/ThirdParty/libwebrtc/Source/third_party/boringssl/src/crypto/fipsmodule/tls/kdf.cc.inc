@@ -19,20 +19,22 @@
 #include <openssl/hkdf.h>
 #include <openssl/hmac.h>
 #include <openssl/mem.h>
+#include <openssl/tls_prf.h>
 
-#include "internal.h"
 #include "../../internal.h"
 #include "../service_indicator/internal.h"
+#include "internal.h"
 
+
+using namespace bssl;
 
 // tls1_P_hash computes the TLS P_<hash> function as described in RFC 5246,
 // section 5. It XORs |out_len| bytes to |out|, using |md| as the hash and
 // |secret| as the secret. |label|, |seed1|, and |seed2| are concatenated to
 // form the seed parameter. It returns true on success and false on failure.
-static int tls1_P_hash(uint8_t *out, size_t out_len,
-                       const EVP_MD *md,
+static int tls1_P_hash(uint8_t *out, size_t out_len, const EVP_MD *md,
                        const uint8_t *secret, size_t secret_len,
-                       const char *label, size_t label_len,
+                       const uint8_t *label, size_t label_len,
                        const uint8_t *seed1, size_t seed1_len,
                        const uint8_t *seed2, size_t seed2_len) {
   HMAC_CTX ctx, ctx_tmp, ctx_init;
@@ -47,7 +49,7 @@ static int tls1_P_hash(uint8_t *out, size_t out_len,
 
   if (!HMAC_Init_ex(&ctx_init, secret, secret_len, md, nullptr) ||
       !HMAC_CTX_copy_ex(&ctx, &ctx_init) ||
-      !HMAC_Update(&ctx, (const uint8_t *)label, label_len) ||
+      !HMAC_Update(&ctx, label, label_len) ||
       !HMAC_Update(&ctx, seed1, seed1_len) ||
       !HMAC_Update(&ctx, seed2, seed2_len) ||  //
       !HMAC_Final(&ctx, A1, &A1_len)) {
@@ -57,11 +59,10 @@ static int tls1_P_hash(uint8_t *out, size_t out_len,
   for (;;) {
     unsigned len_u;
     uint8_t hmac[EVP_MAX_MD_SIZE];
-    if (!HMAC_CTX_copy_ex(&ctx, &ctx_init) ||
-        !HMAC_Update(&ctx, A1, A1_len) ||
+    if (!HMAC_CTX_copy_ex(&ctx, &ctx_init) || !HMAC_Update(&ctx, A1, A1_len) ||
         // Save a copy of |ctx| to compute the next A1 value below.
         (out_len > chunk && !HMAC_CTX_copy_ex(&ctx_tmp, &ctx)) ||
-        !HMAC_Update(&ctx, (const uint8_t *) label, label_len) ||
+        !HMAC_Update(&ctx, (const uint8_t *)label, label_len) ||
         !HMAC_Update(&ctx, seed1, seed1_len) ||
         !HMAC_Update(&ctx, seed2, seed2_len) ||
         !HMAC_Final(&ctx, hmac, &len_u)) {
@@ -100,10 +101,9 @@ err:
   return ret;
 }
 
-int CRYPTO_tls1_prf(const EVP_MD *digest,
-                    uint8_t *out, size_t out_len,
+int CRYPTO_tls1_prf(const EVP_MD *digest, uint8_t *out, size_t out_len,
                     const uint8_t *secret, size_t secret_len,
-                    const char *label, size_t label_len,
+                    const uint8_t *label, size_t label_len,
                     const uint8_t *seed1, size_t seed1_len,
                     const uint8_t *seed2, size_t seed2_len) {
   if (out_len == 0) {
@@ -141,11 +141,12 @@ end:
   return ret;
 }
 
-int CRYPTO_tls13_hkdf_expand_label(uint8_t *out, size_t out_len,
-                                   const EVP_MD *digest,  //
-                                   const uint8_t *secret, size_t secret_len,
-                                   const uint8_t *label, size_t label_len,
-                                   const uint8_t *hash, size_t hash_len) {
+int bssl::CRYPTO_tls13_hkdf_expand_label(uint8_t *out, size_t out_len,
+                                         const EVP_MD *digest,  //
+                                         const uint8_t *secret,
+                                         size_t secret_len,
+                                         const uint8_t *label, size_t label_len,
+                                         const uint8_t *hash, size_t hash_len) {
   static const uint8_t kProtocolLabel[] = "tls13 ";
   CBB cbb, child;
   uint8_t *hkdf_label = nullptr;
@@ -177,4 +178,3 @@ int CRYPTO_tls13_hkdf_expand_label(uint8_t *out, size_t out_len,
   }
   return ret;
 }
-

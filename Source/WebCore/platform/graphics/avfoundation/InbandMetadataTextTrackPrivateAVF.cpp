@@ -109,7 +109,7 @@ void InbandMetadataTextTrackPrivateAVF::flushPartialCues()
         ASSERT(hasOneClient());
         for (auto& partialCue : m_incompleteCues) {
             notifyMainThreadClient([&](TrackPrivateBaseClient& client) {
-                downcast<InbandTextTrackPrivateClient>(client).removeDataCue(partialCue.startTime, MediaTime::positiveInfiniteTime(), *partialCue.cueData);
+                downcast<InbandTextTrackPrivateClient>(client).removeDataCue(partialCue.startTime, MediaTime::positiveInfiniteTime(), protect(*partialCue.cueData));
             });
         }
     }

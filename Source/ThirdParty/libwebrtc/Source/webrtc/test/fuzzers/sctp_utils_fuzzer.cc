@@ -16,11 +16,12 @@
 #include "api/data_channel_interface.h"
 #include "pc/sctp_utils.h"
 #include "rtc_base/copy_on_write_buffer.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  webrtc::CopyOnWriteBuffer payload(data, size);
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  CopyOnWriteBuffer payload(fuzz_data.ReadRemaining());
   std::string label;
   DataChannelInit config;
   IsOpenMessage(payload);

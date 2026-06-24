@@ -59,7 +59,7 @@ enum class InternalMicrotask : uint8_t {
     AsyncGeneratorYieldAwaited,
     AsyncGeneratorBodyCallNormal,
     AsyncGeneratorBodyCallReturn,
-    AsyncGeneratorResumeNext,
+    AsyncGeneratorAwaitReturn,
 
     InvokeFunctionJob,
     AsyncModuleExecutionResume,

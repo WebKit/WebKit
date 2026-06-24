@@ -33,6 +33,7 @@
 #include <WebCore/WritingMode.h>
 #include <array>
 #include <wtf/EnumSet.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
@@ -89,6 +90,22 @@ constexpr std::array<BoxSide, 4> allBoxSides = {
     BoxSide::Bottom,
     BoxSide::Left
 };
+
+inline ASCIILiteral nameForBoxSide(BoxSide side)
+{
+    switch (side) {
+    case BoxSide::Top:
+        return "Top"_s;
+    case BoxSide::Right:
+        return "Right"_s;
+    case BoxSide::Bottom:
+        return "Bottom"_s;
+    case BoxSide::Left:
+        return "Left"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return ""_s;
+}
 
 using BoxSideSet = EnumSet<BoxSide>;
 

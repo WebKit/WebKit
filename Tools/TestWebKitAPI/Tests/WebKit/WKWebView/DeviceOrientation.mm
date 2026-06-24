@@ -36,6 +36,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Function.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -457,6 +458,63 @@ TEST(WebKit, DeviceOrientationPermissionInIFrame)
 
     TestWebKitAPI::Util::run(&askedClientForPermission);
 
+}
+
+static constexpr auto requestPermissionPageBytes = R"TESTRESOURCE(
+<script>
+function requestPermission() {
+    DeviceOrientationEvent.requestPermission().then((result) => {
+        webkit.messageHandlers.testHandler.postMessage(result);
+    }).catch(() => {
+        webkit.messageHandlers.testHandler.postMessage('error');
+    });
+}
+</script>
+)TESTRESOURCE"_s;
+
+TEST(DeviceOrientation, PermissionOriginDuringPendingNavigation)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/source"_s, { requestPermissionPageBytes } },
+        { "/target"_s, { "hi"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr messageHandler = adoptNS([[DeviceOrientationMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    static RetainPtr<TestWKWebView> webView;
+    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr permissionDelegate = adoptNS([[DeviceOrientationPermissionValidationDelegate alloc] init]);
+    [webView setUIDelegate:permissionDelegate.get()];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example1.com/source"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Start permission request on example1.com after navigation to example2.com starts
+    // and active URL is changed to example2.com.
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
+        [webView evaluateJavaScript:@"requestPermission();" completionHandler:nil];
+    };
+    static bool receivedPermissionRequest = false;
+    didReceiveMessage = false;
+    [permissionDelegate setValidationHandler:[&](WKSecurityOrigin *origin, WKFrameInfo *frame) {
+        EXPECT_WK_STREQ(origin.protocol, @"https");
+        EXPECT_WK_STREQ(origin.host, @"example1.com");
+        EXPECT_WK_STREQ(frame.securityOrigin.protocol, @"https");
+        EXPECT_WK_STREQ(frame.securityOrigin.host, @"example1.com");
+        receivedPermissionRequest = true;
+    }];
+    [webView evaluateJavaScript:@"location.href = 'https://example2.com/target'" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedPermissionRequest);
+
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
 }
 
 #endif // ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)

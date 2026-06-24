@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <style type="text/css">
 #gesturetarget {
   width: 100px;
@@ -83,9 +83,7 @@ function checkScrollOffset()
 
     if (scrollsOccurred == expectedScrollsTotal) {
         // If we've got here, we've passed.
-        isSuccessfullyParsed();
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     } else {
         secondGestureScrollSequence();
     }
@@ -118,13 +116,10 @@ function secondGestureScrollSequence()
 function exitIfNecessary()
 {
     debug('Gesture events not implemented on this platform or broken');
-    isSuccessfullyParsed();
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
 
 function runTest()
 {
@@ -134,7 +129,7 @@ function runTest()
         description('This tests scroll gesture events. ' +
             'Square is (mostly) green on pass');
 
-        if (eventSender.clearTouchPoints)
+        if (eventSender.gestureScrollBegin)
             firstGestureScrollSequence();
         else
             exitIfNecessary();

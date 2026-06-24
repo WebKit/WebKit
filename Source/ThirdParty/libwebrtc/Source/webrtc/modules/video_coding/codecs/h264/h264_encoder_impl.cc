@@ -457,6 +457,11 @@ int32_t H264EncoderImpl::Encode(
                       << " image to I420. Can't encode frame.";
     return WEBRTC_VIDEO_CODEC_ENCODER_FAILURE;
   }
+  if (frame_buffer->StrideU() != frame_buffer->StrideV()) {
+    // TODO: crbug.com/chromium:491655161 - Remove once the root cause is fixed.
+    RTC_LOG(LS_ERROR) << "OpenH264 requires the U and V strides to be equal.";
+    return WEBRTC_VIDEO_CODEC_ENCODER_FAILURE;
+  }
   RTC_CHECK(frame_buffer->type() == VideoFrameBuffer::Type::kI420 ||
             frame_buffer->type() == VideoFrameBuffer::Type::kI420A);
 

@@ -57,7 +57,7 @@ public:
         if (!addPendingNotification(notificationType))
             return;
 
-        RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, notificationType, callback = Function<void()>(WTF::move(callbackFunctor))] {
+        RunLoop::mainSingleton().dispatch([this, protectedThis = protect(*this), notificationType, callback = Function<void()>(WTF::move(callbackFunctor))] {
             if (!m_isValid.load())
                 return;
             if (removePendingNotification(notificationType))

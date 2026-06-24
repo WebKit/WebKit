@@ -95,8 +95,8 @@ void ResizeObserver::observeInternal(Element& target, const ResizeObserverBoxOpt
     }
 
     if (m_document && isJSCallback()) {
-        m_document->addResizeObserver(*this);
-        m_document->scheduleRenderingUpdate(RenderingUpdateStep::ResizeObservations);
+        protect(m_document)->addResizeObserver(*this);
+        protect(m_document)->scheduleRenderingUpdate(RenderingUpdateStep::ResizeObservations);
     }
 }
 

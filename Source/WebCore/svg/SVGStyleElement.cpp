@@ -56,7 +56,7 @@ Ref<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName, Docum
 
 bool SVGStyleElement::disabled() const
 {
-    return sheet() && sheet()->disabled();
+    return sheet() && protect(sheet())->disabled();
 }
 
 void SVGStyleElement::setDisabled(bool setDisabled)

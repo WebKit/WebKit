@@ -35,6 +35,7 @@ import socket
 import sys
 
 from Shared.steps import ShellMixin, SetBuildSummary, InstallSwiftToolchain, InstallMetalToolchain, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, USER_TOOLCHAINS_DIR
+from Shared import generate_s3_url
 
 if sys.version_info < (3, 9):  # noqa: UP036
     print('ERROR: Minimum supported Python version for this code is Python 3.9')
@@ -929,7 +930,7 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin, ShellMixin):
 
         # Up the timeout limit for site isolation queues to 300
         # FIXME: We should remove the need for these timeouts altogether. (webkit.org/b/303404)
-        if additionalArguments and '--site-isolation' in additionalArguments:
+        if additionalArguments and '--site-isolation-enabled-by-default' in additionalArguments:
             idx = self.command.index('--exit-after-n-crashes-or-timeouts')
             self.command[idx + 1] = '300'
 
@@ -1051,7 +1052,7 @@ class RunWorldLeaksTests(RunWebKitTests):
 
 class RunAPITests(TestWithFailureCount, CustomFlagsMixin, ShellMixin):
     name = "run-api-tests"
-    VALID_ADDITIONAL_ARGUMENTS_LIST = ["--remote-layer-tree", "--use-gpu-process", "--child-processes", "--site-isolation", "--wpe-legacy-api"]
+    VALID_ADDITIONAL_ARGUMENTS_LIST = ["--remote-layer-tree", "--use-gpu-process", "--child-processes", "--site-isolation-enabled-by-default", "--wpe-legacy-api"]
     description = ["api tests running"]
     descriptionDone = ["api-tests"]
     jsonFileName = "api_test_results.json"
@@ -1632,56 +1633,42 @@ class UploadFileToS3(shell.ShellCommand):
         return super().getResultSummary()
 
 
-class GenerateS3URL(master.MasterShellCommand):
+class GenerateS3URL(buildstep.BuildStep, AddToLogMixin):
     name = 'generate-s3-url'
     descriptionDone = ['Generated S3 URL']
     haltOnFailure = False
     flunkOnFailure = False
 
     def __init__(self, identifier, extension='zip', content_type=None, minified=False, additions=None, **kwargs):
+        super().__init__(**kwargs)
         self.identifier = identifier
         self.extension = extension
+        self.content_type = content_type
         self.minified = minified
         self.additions = additions
-        kwargs['command'] = [
-            'python3', '../Shared/generate-s3-url',
-            '--revision', WithProperties('%(archive_revision)s'),
-            '--identifier', self.identifier,
-        ]
-        if extension:
-            kwargs['command'] += ['--extension', extension]
-        if content_type:
-            kwargs['command'] += ['--content-type', content_type]
-        if minified:
-            kwargs['command'] += ['--minified']
-        if additions:
-            kwargs['command'] += ['--additions', additions]
-        super().__init__(logEnviron=False, **kwargs)
 
     @defer.inlineCallbacks
     def run(self):
-        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-
-        rc = yield super().run()
-
         self.build.s3url = ''
         if not getattr(self.build, 's3_archives', None):
             self.build.s3_archives = []
 
-        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
-        match = re.search(r'S3 URL: (?P<url>[^\s]+)', log_text)
-        # Sample log: S3 URL: https://s3-us-west-2.amazonaws.com/archives.webkit.org/ios-simulator-12-x86_64-release/123456.zip
+        archive_revision = self.getProperty('archive_revision')
+        bucket = S3_BUCKET_MINIFIED if self.minified else S3_BUCKET
+        try:
+            url = generate_s3_url.generateS3URL(
+                bucket, self.identifier, archive_revision,
+                additions=self.additions,
+                extension=self.extension,
+                content_type=self.content_type,
+            )
+        except Exception as e:
+            yield self._addToLog('stdio', f'Failed to generate S3 URL: {type(e).__name__}\n')
+            return defer.returnValue(FAILURE)
 
-        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
-        if match:
-            self.build.s3url = match.group('url')
-            bucket_url = S3_BUCKET_MINIFIED if self.minified else S3_BUCKET
-            self.build.s3_archives.append(S3URL + f"{bucket_url}/{self.identifier}/{self.getProperty('archive_revision')}{f'-{self.additions}' if self.additions else ''}.{self.extension}")
-            defer.returnValue(rc)
-        else:
-            print(f'build: {build_url}, logs for GenerateS3URL:\n{log_text}')
-            defer.returnValue(FAILURE)
+        self.build.s3url = url
+        self.build.s3_archives.append(S3URL + f"{bucket}/{self.identifier}/{archive_revision}{f'-{self.additions}' if self.additions else ''}.{self.extension}")
+        return defer.returnValue(SUCCESS)
 
     def hideStepIf(self, results, step):
         return results == SUCCESS

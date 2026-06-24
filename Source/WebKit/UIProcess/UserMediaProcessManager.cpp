@@ -41,10 +41,14 @@ namespace WebKit {
 static const ASCIILiteral audioExtensionPath { "com.apple.webkit.microphone"_s };
 static const ASCIILiteral videoExtensionPath { "com.apple.webkit.camera"_s };
 static const ASCIILiteral appleCameraServicePath { "com.apple.applecamerad"_s };
+#if USE(APPLE_INTERNAL_SDK) && HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
 static const ASCIILiteral additionalAppleCameraServicePath { "com.apple.appleh13camerad"_s };
+#endif
+#if USE(APPLE_INTERNAL_SDK) && HAVE(APPLE_CAMERA_USER_CLIENT)
 static const ASCIILiteral appleCameraUserClientPath { "com.apple.aneuserd"_s };
 static const ASCIILiteral appleCameraUserClientIOKitClientClass { "H11ANEInDirectPathClient"_s };
 static const ASCIILiteral appleCameraUserClientIOKitServiceClass { "H11ANEIn"_s };
+#endif
 #endif
 
 UserMediaProcessManager& UserMediaProcessManager::singleton()

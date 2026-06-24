@@ -15,6 +15,8 @@
 #include <X11/Xutil.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/composite.h>
+
+#include <cstdint>
 // X11 creates a CurrentTime macro, which causes compilation errors when
 // including webrtc::Clock.
 #undef CurrentTime
@@ -25,6 +27,8 @@
 #include <utility>
 
 #include "api/scoped_refptr.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "media/base/video_common.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
@@ -43,6 +47,7 @@ namespace webrtc {
 
 WindowCapturerX11::WindowCapturerX11(const DesktopCaptureOptions& options)
     : x_display_(options.x_display()),
+      clock_(options.clock()),
       atom_cache_(display()),
       window_finder_(&atom_cache_) {
   int event_base, error_base, major_version, minor_version;
@@ -149,6 +154,7 @@ void WindowCapturerX11::Start(Callback* callback) {
 
 void WindowCapturerX11::CaptureFrame() {
   TRACE_EVENT0("webrtc", "WindowCapturerX11::CaptureFrame");
+  Timestamp capture_start_time = clock_.CurrentTime();
 
   if (!x_server_pixel_buffer_.IsWindowValid()) {
     RTC_LOG(LS_ERROR) << "The window is no longer valid.";
@@ -190,6 +196,9 @@ void WindowCapturerX11::CaptureFrame() {
       DesktopRect::MakeSize(frame->size()));
   frame->set_top_left(x_server_pixel_buffer_.window_rect().top_left());
   frame->set_capturer_id(DesktopCapturerId::kX11CapturerLinux);
+
+  int64_t capture_time_ms = (clock_.CurrentTime() - capture_start_time).ms();
+  frame->set_capture_time_ms(capture_time_ms);
 
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 }

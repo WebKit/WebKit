@@ -24,19 +24,22 @@
 #include <openssl/mem.h>
 #include <openssl/nid.h>
 
-#include "internal.h"
-#include "../bn/internal.h"
 #include "../../internal.h"
 #include "../../test/abi_test.h"
 #include "../../test/file_test.h"
 #include "../../test/test_util.h"
+#include "../bn/internal.h"
+#include "internal.h"
 #include "p256-nistz.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 // Disable tests if BORINGSSL_SHARED_LIBRARY is defined. These tests need access
 // to internal functions.
-#if !defined(OPENSSL_NO_ASM) &&  \
-    (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) &&  \
+#if !defined(OPENSSL_NO_ASM) &&                              \
+    (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) && \
     !defined(OPENSSL_SMALL) && !defined(BORINGSSL_SHARED_LIBRARY)
 
 struct P256NistzSelectImpl {
@@ -143,94 +146,6 @@ TEST_P(P256NistzSelectImplTest, SelectW7) {
   CHECK_ABI(impl().select_w7, &val, table, 42);
 }
 
-TEST(P256_NistzTest, BEEU) {
-#if defined(OPENSSL_X86_64)
-  if (!CRYPTO_is_AVX_capable()) {
-    // No AVX support; cannot run the BEEU code.
-    return;
-  }
-#endif
-
-  const EC_GROUP *group = EC_group_p256();
-  BN_ULONG order_words[P256_LIMBS];
-  ASSERT_TRUE(
-      bn_copy_words(order_words, P256_LIMBS, EC_GROUP_get0_order(group)));
-
-  BN_ULONG in[P256_LIMBS], out[P256_LIMBS];
-  EC_SCALAR in_scalar, out_scalar, result;
-  OPENSSL_memset(in, 0, sizeof(in));
-
-  // Trying to find the inverse of zero should fail.
-  ASSERT_FALSE(beeu_mod_inverse_vartime(out, in, order_words));
-  // This is not a constant-time function, so instrument both zero and a few
-  // inputs below.
-  ASSERT_FALSE(CHECK_ABI(beeu_mod_inverse_vartime, out, in, order_words));
-
-  // kOneMont is 1, in Montgomery form.
-  static const BN_ULONG kOneMont[P256_LIMBS] = {
-      TOBN(0xc46353d, 0x039cdaaf),
-      TOBN(0x43190552, 0x58e8617b),
-      0,
-      0xffffffff,
-  };
-
-  for (BN_ULONG i = 1; i < 2000; i++) {
-    SCOPED_TRACE(i);
-
-    in[0] = i;
-    if (i >= 1000) {
-      in[1] = i << 8;
-      in[2] = i << 32;
-      in[3] = i << 48;
-    } else {
-      in[1] = in[2] = in[3] = 0;
-    }
-
-    EXPECT_TRUE(bn_less_than_words(in, order_words, P256_LIMBS));
-    ASSERT_TRUE(beeu_mod_inverse_vartime(out, in, order_words));
-    EXPECT_TRUE(bn_less_than_words(out, order_words, P256_LIMBS));
-
-    // Calculate out*in and confirm that it equals one, modulo the order.
-    OPENSSL_memcpy(in_scalar.words, in, sizeof(in));
-    OPENSSL_memcpy(out_scalar.words, out, sizeof(out));
-    ec_scalar_to_montgomery(group, &in_scalar, &in_scalar);
-    ec_scalar_to_montgomery(group, &out_scalar, &out_scalar);
-    ec_scalar_mul_montgomery(group, &result, &in_scalar, &out_scalar);
-
-    EXPECT_EQ(0, OPENSSL_memcmp(kOneMont, &result, sizeof(kOneMont)));
-
-    // Invert the result and expect to get back to the original value.
-    ASSERT_TRUE(beeu_mod_inverse_vartime(out, out, order_words));
-    EXPECT_EQ(0, OPENSSL_memcmp(in, out, sizeof(in)));
-
-    if (i < 5) {
-      EXPECT_TRUE(CHECK_ABI(beeu_mod_inverse_vartime, out, in, order_words));
-    }
-  }
-}
-
-static bool GetFieldElement(FileTest *t, BN_ULONG out[P256_LIMBS],
-                            const char *name) {
-  std::vector<uint8_t> bytes;
-  if (!t->GetBytes(&bytes, name)) {
-    return false;
-  }
-
-  if (bytes.size() != BN_BYTES * P256_LIMBS) {
-    ADD_FAILURE() << "Invalid length: " << name;
-    return false;
-  }
-
-  // |byte| contains bytes in big-endian while |out| should contain |BN_ULONG|s
-  // in little-endian.
-  OPENSSL_memset(out, 0, P256_LIMBS * sizeof(BN_ULONG));
-  for (size_t i = 0; i < bytes.size(); i++) {
-    out[P256_LIMBS - 1 - (i / BN_BYTES)] <<= 8;
-    out[P256_LIMBS - 1 - (i / BN_BYTES)] |= bytes[i];
-  }
-
-  return true;
-}
 
 static std::string FieldElementToString(const BN_ULONG a[P256_LIMBS]) {
   std::string ret;
@@ -259,6 +174,107 @@ static testing::AssertionResult ExpectFieldElementsEqual(
 #define EXPECT_FIELD_ELEMENTS_EQUAL(a, b) \
   EXPECT_PRED_FORMAT2(ExpectFieldElementsEqual, a, b)
 
+// P-256 scalars and field elements are the same size.
+#define EXPECT_SCALARS_EQUAL(a, b) EXPECT_FIELD_ELEMENTS_EQUAL(a, b)
+
+TEST(P256_NistzTest, BEEU) {
+#if defined(OPENSSL_X86_64)
+  if (!CRYPTO_is_AVX_capable()) {
+    // No AVX support; cannot run the BEEU code.
+    return;
+  }
+#endif
+
+  const EC_GROUP *group = EC_group_p256();
+  BN_ULONG order_words[P256_LIMBS];
+  ASSERT_TRUE(
+      bn_copy_words(order_words, P256_LIMBS, EC_GROUP_get0_order(group)));
+
+  BN_ULONG in[P256_LIMBS], out[P256_LIMBS];
+  EC_SCALAR in_scalar, out_scalar, result;
+  OPENSSL_memset(in, 0, sizeof(in));
+
+  // Trying to find the inverse of zero should fail.
+  ASSERT_FALSE(beeu_mod_inverse_vartime(out, in, order_words));
+  // This is not a constant-time function, so instrument both zero and a few
+  // inputs below.
+  ASSERT_FALSE(CHECK_ABI(beeu_mod_inverse_vartime, out, in, order_words));
+
+  BN_ULONG kOne[P256_LIMBS] = {};
+  kOne[0] = 1;
+
+  auto beeu_test = [&] {
+    EXPECT_TRUE(bn_less_than_words(in, order_words, P256_LIMBS));
+    ASSERT_TRUE(beeu_mod_inverse_vartime(out, in, order_words));
+    EXPECT_TRUE(bn_less_than_words(out, order_words, P256_LIMBS));
+
+    // Calculate out*in and confirm that it equals one, modulo the order. We
+    // only have Montgomery multiplication, but if we convert one input, and not
+    // the other, this gives the result outside the Montgomery domain.
+    OPENSSL_memcpy(in_scalar.words, in, sizeof(in));
+    OPENSSL_memcpy(out_scalar.words, out, sizeof(out));
+    ec_scalar_to_montgomery(group, &in_scalar, &in_scalar);
+    ec_scalar_mul_montgomery(group, &result, &in_scalar, &out_scalar);
+    EXPECT_SCALARS_EQUAL(kOne, result.words);
+
+    // Invert the result and expect to get back to the original value.
+    ASSERT_TRUE(beeu_mod_inverse_vartime(out, out, order_words));
+    EXPECT_SCALARS_EQUAL(in, out);
+  };
+
+  for (BN_ULONG i = 1; i < 2000; i++) {
+    SCOPED_TRACE(i);
+    in[0] = i;
+    if (i >= 1000) {
+      in[1] = i << 8;
+      in[2] = i << 32;
+      in[3] = i << 48;
+    } else {
+      in[1] = in[2] = in[3] = 0;
+    }
+
+    beeu_test();
+    if (i < 5) {
+      EXPECT_TRUE(CHECK_ABI(beeu_mod_inverse_vartime, out, in, order_words));
+    }
+  }
+
+  for (int i = 0; i < 255; i++) {
+    SCOPED_TRACE(i);
+    // Test |in| = 2^i.
+    OPENSSL_memset(in, 0, sizeof(in));
+    in[i / BN_BITS2] = BN_ULONG{1} << (i % BN_BITS2);
+    beeu_test();
+
+    // Test |in| = N - 2^i.
+    bn_sub_words(in, order_words, in, P256_LIMBS);
+    beeu_test();
+  }
+}
+
+static bool GetFieldElement(FileTest *t, BN_ULONG out[P256_LIMBS],
+                            const char *name) {
+  std::vector<uint8_t> bytes;
+  if (!t->GetBytes(&bytes, name)) {
+    return false;
+  }
+
+  if (bytes.size() != BN_BYTES * P256_LIMBS) {
+    ADD_FAILURE() << "Invalid length: " << name;
+    return false;
+  }
+
+  // |byte| contains bytes in big-endian while |out| should contain |BN_ULONG|s
+  // in little-endian.
+  OPENSSL_memset(out, 0, P256_LIMBS * sizeof(BN_ULONG));
+  for (size_t i = 0; i < bytes.size(); i++) {
+    out[P256_LIMBS - 1 - (i / BN_BYTES)] <<= 8;
+    out[P256_LIMBS - 1 - (i / BN_BYTES)] |= bytes[i];
+  }
+
+  return true;
+}
+
 static bool PointToAffine(P256_POINT_AFFINE *out, const P256_POINT *in) {
   static const uint8_t kP[] = {
       0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
@@ -266,10 +282,9 @@ static bool PointToAffine(P256_POINT_AFFINE *out, const P256_POINT *in) {
       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
   };
 
-  bssl::UniquePtr<BIGNUM> x(BN_new()), y(BN_new()), z(BN_new());
-  bssl::UniquePtr<BIGNUM> p(BN_bin2bn(kP, sizeof(kP), nullptr));
-  if (!x || !y || !z || !p ||
-      !bn_set_words(x.get(), in->X, P256_LIMBS) ||
+  UniquePtr<BIGNUM> x(BN_new()), y(BN_new()), z(BN_new());
+  UniquePtr<BIGNUM> p(BN_bin2bn(kP, sizeof(kP), nullptr));
+  if (!x || !y || !z || !p || !bn_set_words(x.get(), in->X, P256_LIMBS) ||
       !bn_set_words(y.get(), in->Y, P256_LIMBS) ||
       !bn_set_words(z.get(), in->Z, P256_LIMBS)) {
     return false;
@@ -288,9 +303,8 @@ static bool PointToAffine(P256_POINT_AFFINE *out, const P256_POINT *in) {
     return true;
   }
 
-  bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
-  bssl::UniquePtr<BN_MONT_CTX> mont(
-      BN_MONT_CTX_new_for_modulus(p.get(), ctx.get()));
+  UniquePtr<BN_CTX> ctx(BN_CTX_new());
+  UniquePtr<BN_MONT_CTX> mont(BN_MONT_CTX_new_for_modulus(p.get(), ctx.get()));
   if (!ctx || !mont ||
       // Invert Z.
       !BN_from_montgomery(z.get(), z.get(), mont.get(), ctx.get()) ||
@@ -671,3 +685,6 @@ TEST_P(P256NistzImplTest, ABI) {
 }
 
 #endif
+
+}  // namespace
+BSSL_NAMESPACE_END

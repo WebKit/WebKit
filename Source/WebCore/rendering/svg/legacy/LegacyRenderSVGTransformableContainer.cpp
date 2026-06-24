@@ -34,10 +34,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGTransformableContainer);
 
-LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVGGraphicsElement& element, RenderStyle&& style)
+LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVGGraphicsElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGContainer(Type::LegacySVGTransformableContainer, element, WTF::move(style))
-    , m_needsTransformUpdate(true)
-    , m_didTransformToRootUpdate(false)
 {
     ASSERT(isLegacyRenderSVGTransformableContainer());
 }
@@ -53,7 +51,7 @@ bool LegacyRenderSVGTransformableContainer::calculateLocalTransform()
     // need to respect the translations induced by their corresponding use elements x/y attributes.
     RefPtr useElement = dynamicDowncast<SVGUseElement>(element.get());
     if (!useElement && element->isInShadowTree() && is<SVGGElement>(element)) {
-        if (auto* correspondingElement = dynamicDowncast<SVGUseElement>(element->correspondingElement()))
+        if (RefPtr correspondingElement = dynamicDowncast<SVGUseElement>(element->correspondingElement()))
             useElement = correspondingElement;
     }
 

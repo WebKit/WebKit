@@ -265,29 +265,29 @@ inline void FloatPoint::rotate(double angleInRadians, const FloatPoint& aboutPoi
 
 inline IntSize flooredIntSize(const FloatPoint& p)
 {
-    return IntSize(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
+    return IntSize(clampTo<int>(floorf(p.x())), clampTo<int>(floorf(p.y())));
 }
 
 #if USE(CG)
 inline IntPoint roundedIntPoint(const CGPoint& p)
 {
-    return IntPoint(clampToInteger(roundf(p.x)), clampToInteger(roundf(p.y)));
+    return IntPoint(clampTo<int>(roundf(p.x)), clampTo<int>(roundf(p.y)));
 }
 #endif
 
 inline IntPoint roundedIntPoint(const FloatPoint& p)
 {
-    return IntPoint(clampToInteger(roundf(p.x())), clampToInteger(roundf(p.y())));
+    return IntPoint(clampTo<int>(roundf(p.x())), clampTo<int>(roundf(p.y())));
 }
 
 inline IntPoint flooredIntPoint(const FloatPoint& p)
 {
-    return IntPoint(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
+    return IntPoint(clampTo<int>(floorf(p.x())), clampTo<int>(floorf(p.y())));
 }
 
 inline IntPoint ceiledIntPoint(const FloatPoint& p)
 {
-    return IntPoint(clampToInteger(ceilf(p.x())), clampToInteger(ceilf(p.y())));
+    return IntPoint(clampTo<int>(ceilf(p.x())), clampTo<int>(ceilf(p.y())));
 }
 
 inline FloatPoint floorPointToDevicePixels(const FloatPoint& p, float deviceScaleFactor)

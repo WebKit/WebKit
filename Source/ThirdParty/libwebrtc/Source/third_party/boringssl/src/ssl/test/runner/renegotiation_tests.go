@@ -177,6 +177,28 @@ func addRenegotiationTests() {
 			"-expect-no-secure-renegotiation",
 		},
 	})
+	testCases = append(testCases, testCase{
+		name: "Renegotiate-Client-NoExt-Forbidden",
+		config: Config{
+			MaxVersion: VersionTLS12,
+			Bugs: ProtocolBugs{
+				NoRenegotiationInfo: true,
+			},
+		},
+		flags:         []string{"-no-legacy-server-connect"},
+		shouldFail:    true,
+		expectedError: ":UNSAFE_LEGACY_RENEGOTIATION_DISABLED:",
+	})
+
+	// Missing extension is OK (and expected!) in TLS 1.3, even if the
+	// extension is otherwise enforced. TLS 1.3 has no renegotiation.
+	testCases = append(testCases, testCase{
+		name: "NoLegacyServerConnect-TLS13",
+		config: Config{
+			MaxVersion: VersionTLS13,
+		},
+		flags: []string{"-no-legacy-server-connect"},
+	})
 
 	// Test that the server may switch ciphers on renegotiation without
 	// problems.
@@ -542,5 +564,34 @@ func addRenegotiationTests() {
 			"-verify-fail",
 			"-expect-verify-result",
 		},
+	})
+
+	// We do not support renegotiation in DTLS, even if enabled. Currently,
+	// BoringSSL treats this as an unexpected record.
+	testCases = append(testCases, testCase{
+		protocol: dtls,
+		testType: clientTest,
+		name:     "Renegotiate-DTLS-Client-Forbidden",
+		config: Config{
+			MaxVersion: VersionTLS12,
+		},
+		renegotiate:        1,
+		flags:              []string{"-renegotiate-freely"},
+		shouldFail:         true,
+		expectedError:      ":UNEXPECTED_RECORD:",
+		expectedLocalError: "remote error: unexpected message",
+	})
+	testCases = append(testCases, testCase{
+		protocol: dtls,
+		testType: serverTest,
+		name:     "Renegotiate-DTLS-Server-Forbidden",
+		config: Config{
+			MaxVersion: VersionTLS12,
+		},
+		renegotiate:        1,
+		flags:              []string{"-renegotiate-freely"},
+		shouldFail:         true,
+		expectedError:      ":UNEXPECTED_RECORD:",
+		expectedLocalError: "remote error: unexpected message",
 	})
 }

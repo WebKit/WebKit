@@ -104,6 +104,7 @@ public:
 
     virtual ResourceError cancelledError(const ResourceRequest&) const = 0;
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;
+    virtual bool isBlockedError(const ResourceError&) const = 0;
     virtual ResourceError blockedByContentBlockerError(const ResourceRequest&) const = 0;
     virtual ResourceError cannotShowURLError(const ResourceRequest&) const = 0;
     virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&) const = 0;

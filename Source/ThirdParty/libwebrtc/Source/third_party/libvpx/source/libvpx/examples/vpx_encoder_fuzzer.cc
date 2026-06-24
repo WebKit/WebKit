@@ -108,7 +108,7 @@
 #define VPX_ENCODER_NAME_(name) #name
 
 // Taken from libvpx/source/libvpx/tools_common.c.
-static bool vpx_img_read(vpx_image_t *img, webrtc::test::FuzzDataHelper& fuzz_input) {
+static bool vpx_img_read(vpx_image_t *img, webrtc::FuzzDataHelper& fuzz_input) {
   for (int plane = 0; plane < 3; ++plane) {
     if (plane == VPX_PLANE_V && img->fmt == VPX_IMG_FMT_NV12)
       continue;
@@ -168,7 +168,7 @@ static std::span<uint8_t> encode_frame(vpx_codec_ctx_t *codec, vpx_image_t *img,
 extern "C" void usage_exit(void) { exit(EXIT_FAILURE); }
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-  webrtc::test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
+    webrtc::FuzzDataHelper fuzz_input({ data, size });
 
   vpx_codec_ctx_t codec;
   vpx_codec_enc_cfg_t cfg;

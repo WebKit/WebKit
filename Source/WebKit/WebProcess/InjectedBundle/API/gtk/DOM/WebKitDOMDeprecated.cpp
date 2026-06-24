@@ -235,14 +235,6 @@ void webkit_dom_node_set_prefix(WebKitDOMNode* self, const gchar* value, GError*
     g_return_if_fail(!error || !*error);
 
     g_warning("%s: prefix is now a readonly property according to the DOM spec.", __func__);
-
-    WebCore::JSMainThreadNullState state;
-    WebCore::Node* item = WebKit::core(self);
-    auto result = item->setPrefix(WTF::AtomString::fromUTF8(value));
-    if (result.hasException()) {
-        auto description = WebCore::DOMException::description(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
-    }
 }
 
 gchar* webkit_dom_node_get_local_name(WebKitDOMNode* self)

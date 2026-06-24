@@ -87,11 +87,11 @@ private:
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<PositionArea> { PositionArea NODELETE operator()(BuilderState&, const CSSValue&); };
-template<> struct CSSValueCreation<PositionAreaValue> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const PositionAreaValue&); };
+template<> struct CSSValueCreation<PositionAreaValue> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const PositionAreaValue&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<PositionAreaValue> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const PositionAreaValue&); };
+template<> struct Serialize<PositionAreaValue> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const PositionAreaValue&); };
 
 // MARK: - Logging
 

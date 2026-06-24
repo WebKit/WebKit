@@ -13,9 +13,9 @@
 
 #include <stddef.h>
 
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/field_trials_view.h"
 #include "api/units/data_rate.h"
 #include "api/video/resolution.h"
@@ -44,7 +44,7 @@ size_t LimitSimulcastLayerCount(size_t min_num_layers,
 
 // Gets simulcast settings.
 std::vector<VideoStream> GetSimulcastConfig(
-    ArrayView<const Resolution> resolutions,
+    std::span<const Resolution> resolutions,
     bool is_screenshare_with_conference_mode,
     bool temporal_layers_supported,
     const FieldTrialsView& trials,

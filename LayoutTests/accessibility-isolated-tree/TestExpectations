@@ -59,13 +59,11 @@ accessibility/mac/text-marker-word-nav-collapsed-whitespace.html [ Failure ]
 accessibility/mac/text-markers-for-input-with-placeholder.html [ Failure ]
 accessibility/mac/textmarker-range-for-range.html [ Failure ]
 accessibility/native-text-control-attributed-string.html [ Failure ]
-accessibility/search-misspellings.html [ Failure ]
 accessibility/text-marker/text-marker-previous-next.html [ Failure ]
 accessibility/mac/text-marker-for-index-2.html [ Failure ]
 accessibility/mac/text-marker-word-nav.html [ Failure ]
 accessibility/mac/selected-visible-position-range.html [ Failure ]
 accessibility/mac/text-marker-word-nav.html [ Timeout ]
-accessibility/mac/text-operation/text-operation-replace-across-multiple-fields.html [ Failure ]
 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 
 # We compute the wrong line index relative to what is actually visually laid out.

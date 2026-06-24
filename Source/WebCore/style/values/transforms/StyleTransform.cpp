@@ -62,7 +62,7 @@ auto CSSValueConversion<Transform>::operator()(BuilderState& state, const CSSVal
     };
 }
 
-auto CSSValueCreation<Transform>::operator()(CSSValuePool& pool, const RenderStyle& style, const Transform& value) -> Ref<CSSValue>
+auto CSSValueCreation<Transform>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const Transform& value) -> Ref<CSSValue>
 {
     CSSValueListBuilder list;
     for (auto& transformFunction : value)

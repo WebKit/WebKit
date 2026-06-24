@@ -12,17 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
-#include <vector>
-
+#include <assert.h>
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include "internal.h"
 
+
+BSSL_NAMESPACE_BEGIN
 
 bool ParseKeyValueArguments(std::map<std::string, std::string> *out_args,
                             const std::vector<std::string> &args,
@@ -106,3 +110,33 @@ bool GetUnsigned(unsigned *out, const std::string &arg_name,
 
   return true;
 }
+
+std::vector<std::string_view> SplitString(std::string_view s,
+                                          std::string_view sep) {
+  assert(!sep.empty());
+  std::vector<std::string_view> ret;
+  while (true) {
+    size_t idx = s.find(sep);
+    if (idx == std::string_view::npos) {
+      ret.push_back(s);
+      break;
+    }
+    ret.push_back(s.substr(0, idx));
+    s = s.substr(idx + sep.size());
+  }
+  return ret;
+}
+
+std::string_view TrimSpace(std::string_view s) {
+  size_t pos = s.find_first_not_of("\t\n\v\f\r ");
+  if (pos == std::string_view::npos) {
+    return std::string_view();
+  }
+  s = s.substr(pos);
+  pos = s.find_last_not_of("\t\n\v\f\r ");
+  assert(pos != std::string_view::npos);
+  s = s.substr(0, pos + 1);
+  return s;
+}
+
+BSSL_NAMESPACE_END

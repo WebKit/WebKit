@@ -256,7 +256,8 @@ static unsigned int highbd_get_prediction_error(BLOCK_SIZE bsize,
 // for first pass test.
 static int get_search_range(int width, int height) {
   int sr = 0;
-  const int dim = AOMMIN(width, height);
+  int dim = AOMMIN(width, height);
+  dim = AOMMAX(dim, MI_SIZE);
 
   while ((dim << sr) < MAX_FULL_PEL_VAL) ++sr;
   return sr;
@@ -682,10 +683,10 @@ static void accumulate_mv_stats(const MV best_mv, const FULLPEL_MV mv,
 //   golden_frame: the frame buffer of the golden frame.
 //   unit_row: row index in the unit of first pass block size.
 //   unit_col: column index in the unit of first pass block size.
-//   recon_yoffset: the y offset of the reconstructed  frame buffer,
+//   recon_yoffset: the y offset of the reconstructed frame buffer,
 //                  indicating the starting point of the current block.
-//   recont_uvoffset: the u/v offset of the reconstructed frame buffer,
-//                    indicating the starting point of the current block.
+//   recon_uvoffset: the u/v offset of the reconstructed frame buffer,
+//                   indicating the starting point of the current block.
 //   src_yoffset: the y offset of the source frame buffer.
 //   fp_block_size: first pass block size.
 //   this_intra_error: the intra prediction error of this block.
@@ -1003,6 +1004,19 @@ static void update_firstpass_stats(AV1_COMP *cpi,
          twopass->stats_buf_ctx->stats_in_buf_end)) {
       twopass->stats_buf_ctx->stats_in_end =
           twopass->stats_buf_ctx->stats_in_start;
+    } else if (cpi->ppi->lap_enabled &&
+               (twopass->stats_buf_ctx->stats_in_end >=
+                twopass->stats_buf_ctx->stats_in_buf_end)) {
+      const int num_valid = (int)(twopass->stats_buf_ctx->stats_in_end -
+                                  cpi->twopass_frame.stats_in);
+      if (num_valid > 0) {
+        memmove(twopass->stats_buf_ctx->stats_in_start,
+                cpi->twopass_frame.stats_in,
+                num_valid * sizeof(FIRSTPASS_STATS));
+      }
+      cpi->twopass_frame.stats_in = twopass->stats_buf_ctx->stats_in_start;
+      twopass->stats_buf_ctx->stats_in_end =
+          twopass->stats_buf_ctx->stats_in_start + num_valid;
     }
   }
 }
@@ -1145,8 +1159,8 @@ void av1_first_pass_row(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
   MACROBLOCKD *const xd = &x->e_mbd;
   TileInfo *tile = &tile_data->tile_info;
   const int qindex = find_fp_qindex(seq_params->bit_depth);
-  const int fp_block_size_width = block_size_high[fp_block_size];
-  const int fp_block_size_height = block_size_wide[fp_block_size];
+  const int fp_block_size_width = block_size_wide[fp_block_size];
+  const int fp_block_size_height = block_size_high[fp_block_size];
   const int unit_width = mi_size_wide[fp_block_size];
   const int unit_width_log2 = mi_size_wide_log2[fp_block_size];
   const int unit_height_log2 = mi_size_high_log2[fp_block_size];
@@ -1193,6 +1207,8 @@ void av1_first_pass_row(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
   const int src_y_stride = cpi->source->y_stride;
   const int recon_y_stride = this_frame->y_stride;
   const int recon_uv_stride = this_frame->uv_stride;
+  const int uv_mb_width =
+      fp_block_size_width >> (this_frame->y_width > this_frame->uv_width);
   const int uv_mb_height =
       fp_block_size_height >> (this_frame->y_height > this_frame->uv_height);
 
@@ -1206,7 +1222,7 @@ void av1_first_pass_row(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
   int src_yoffset = (unit_row * src_y_stride * fp_block_size_height) +
                     (unit_col_start * fp_block_size_width);
   int recon_uvoffset = (unit_row * recon_uv_stride * uv_mb_height) +
-                       (unit_col_start * uv_mb_height);
+                       (unit_col_start * uv_mb_width);
 
   // Set up limit values for motion vectors to prevent them extending
   // outside the UMV borders.
@@ -1264,13 +1280,13 @@ void av1_first_pass_row(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
     // Adjust to the next column of MBs.
     x->plane[0].src.buf += fp_block_size_width;
     if (num_planes > 1) {
-      x->plane[1].src.buf += uv_mb_height;
-      x->plane[2].src.buf += uv_mb_height;
+      x->plane[1].src.buf += uv_mb_width;
+      x->plane[2].src.buf += uv_mb_width;
     }
 
     recon_yoffset += fp_block_size_width;
     src_yoffset += fp_block_size_width;
-    recon_uvoffset += uv_mb_height;
+    recon_uvoffset += uv_mb_width;
     mb_stats++;
 
     enc_row_mt->sync_write_ptr(row_mt_sync, unit_row_in_tile, unit_col_in_tile,
@@ -1360,7 +1376,7 @@ void av1_first_pass(AV1_COMP *cpi, const int64_t ts_duration) {
 
   const int tile_cols = cm->tiles.cols;
   const int tile_rows = cm->tiles.rows;
-  if (cpi->allocated_tiles < tile_cols * tile_rows) {
+  if (cpi->allocated_tiles != tile_cols * tile_rows) {
     av1_alloc_tile_data(cpi);
   }
 

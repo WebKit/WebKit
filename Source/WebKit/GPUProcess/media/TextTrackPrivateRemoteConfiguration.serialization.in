@@ -39,6 +39,7 @@ struct WebKit::TextTrackPrivateRemoteConfiguration {
     bool isMainProgramContent;
     bool isEasyToRead;
     bool isDefault;
+    bool isMachineGenerated;
 };
 
 #endif

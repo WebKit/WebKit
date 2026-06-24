@@ -14,12 +14,12 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
-#include <functional>
 #include <memory>
 #include <optional>
 #include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -355,9 +355,9 @@ std::unique_ptr<ReceiveStatistics> ReceiveStatistics::CreateThreadCompatible(
 
 ReceiveStatisticsImpl::ReceiveStatisticsImpl(
     Clock* clock,
-    std::function<std::unique_ptr<StreamStatisticianImplInterface>(
+    absl::AnyInvocable<std::unique_ptr<StreamStatisticianImplInterface>(
         uint32_t ssrc,
-        Clock* clock)> stream_statistician_factory)
+        Clock* clock) const> stream_statistician_factory)
     : clock_(clock),
       stream_statistician_factory_(std::move(stream_statistician_factory)),
       last_returned_ssrc_idx_(0) {}

@@ -24,8 +24,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-border-area-and-blend-mode-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-content-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-content-box-with-border-radius-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-content-box-with-border-radius-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-padding-box-with-border-radius-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-padding-box-with-border-radius-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-padding-box-with-border-radius-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-clip-text-and-blend-mode-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-color-clip.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-gradient-subpixel-fills-area-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/background-image-001-ref.html
@@ -131,6 +137,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/css3-border-image-source-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/css3-box-shadow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/first-letter-space-not-selected-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/green-root-background.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/inline-background-rtl-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/order-of-images-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/reference/origin-border-box-ref.html

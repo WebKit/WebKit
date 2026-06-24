@@ -140,12 +140,12 @@ void CSSScale::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssscale
     builder.append(is2D() ? "scale("_s : "scale3d("_s);
-    m_x->serialize(builder);
+    protect(m_x)->serialize(builder);
     builder.append(", "_s);
-    m_y->serialize(builder);
+    protect(m_y)->serialize(builder);
     if (!is2D()) {
         builder.append(", "_s);
-        m_z->serialize(builder);
+        protect(m_z)->serialize(builder);
     }
     builder.append(')');
 }
@@ -174,15 +174,15 @@ ExceptionOr<Ref<DOMMatrix>> CSSScale::toMatrix()
 
 RefPtr<CSSValue> CSSScale::toCSSValue() const
 {
-    auto x = m_x->toCSSValue();
-    auto y = m_y->toCSSValue();
+    auto x = protect(m_x)->toCSSValue();
+    auto y = protect(m_y)->toCSSValue();
     if (!x || !y)
         return nullptr;
 
     if (is2D())
         return CSSFunctionValue::create(CSSValueScale, x.releaseNonNull(), y.releaseNonNull());
 
-    auto z = m_z->toCSSValue();
+    auto z = protect(m_z)->toCSSValue();
     if (!z)
         return nullptr;
 

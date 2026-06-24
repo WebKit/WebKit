@@ -90,6 +90,10 @@ bool SimplePathBuilderDelegate::IsSignatureAlgorithmAcceptable(
     case SignatureAlgorithm::kRsaPssSha256:
     case SignatureAlgorithm::kRsaPssSha384:
     case SignatureAlgorithm::kRsaPssSha512:
+    case SignatureAlgorithm::kMtcProofDraftDavidben08:
+    case SignatureAlgorithm::kMldsa44:
+    case SignatureAlgorithm::kMldsa65:
+    case SignatureAlgorithm::kMldsa87:
       return true;
   }
   return false;
@@ -118,6 +122,12 @@ bool SimplePathBuilderDelegate::IsPublicKeyAcceptable(EVP_PKEY *public_key,
       return false;
     }
 
+    return true;
+  }
+
+  if (pkey_id == EVP_PKEY_ML_DSA_44 || pkey_id == EVP_PKEY_ML_DSA_65 ||
+      pkey_id == EVP_PKEY_ML_DSA_87) {
+    // ML-DSA keys are acceptable.
     return true;
   }
 

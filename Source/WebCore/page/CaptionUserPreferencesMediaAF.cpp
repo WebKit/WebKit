@@ -730,6 +730,9 @@ static String addTextTrackKindDisplayNameIfNeeded(const TextTrack& track, const 
     if ((track.containsOnlyForcedSubtitles() || track.kind() == TextTrack::Kind::Forced) && !text.contains(textTrackKindForcedDisplayName()))
         result = addTextTrackKindForcedSuffix(result);
 
+    if (track.isMachineGenerated() && !text.contains(textTrackKindGeneratedDisplayName()))
+        result = addTextTrackKindGeneratedSuffix(result);
+
     return result;
 }
 

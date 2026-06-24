@@ -37,6 +37,13 @@ inline Structure* FunctionExecutable::createStructure(VM& vm, JSGlobalObject* gl
     return Structure::create(vm, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), info());
 }
 
+inline void FunctionExecutable::notifyCreation(VM& vm, JSFunction* function, const char* reason)
+{
+    m_singleton.notifyWrite(vm, this, function, reason);
+    if (m_singleton.hasBeenInvalidated())
+        m_unlinkedExecutable->setSingletonHasBeenInvalidated();
+}
+
 inline void FunctionExecutable::finalizeUnconditionally(VM& vm, CollectionScope collectionScope)
 {
     m_singleton.finalizeUnconditionally(vm, collectionScope);

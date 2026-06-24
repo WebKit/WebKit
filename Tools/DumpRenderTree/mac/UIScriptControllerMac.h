@@ -51,6 +51,7 @@ public:
     NSUndoManager *platformUndoManager() const override;
     void copyText(JSStringRef) override;
     void activateDataListSuggestion(unsigned, JSValueRef) override;
+    void insertAutofillSuggestion(JSStringRef, JSStringRef, JSValueRef) override;
     void setSpellCheckerResults(JSValueRef) override;
     void sendEventStream(JSStringRef, JSValueRef) override;
 

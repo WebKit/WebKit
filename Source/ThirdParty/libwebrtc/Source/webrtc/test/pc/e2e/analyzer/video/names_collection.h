@@ -15,11 +15,11 @@
 #include <map>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 
 namespace webrtc {
 
@@ -40,7 +40,7 @@ class NamesCollection {
  public:
   NamesCollection() = default;
 
-  explicit NamesCollection(ArrayView<const std::string> names);
+  explicit NamesCollection(std::span<const std::string> names);
 
   // Returns amount of currently presented names in the collection.
   size_t size() const { return size_; }

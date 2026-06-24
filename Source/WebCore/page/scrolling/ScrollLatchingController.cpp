@@ -136,7 +136,7 @@ void ScrollLatchingController::updateAndFetchLatchingStateForFrame(LocalFrame& f
             FrameState state;
             state.frame = &frame;
             state.wheelEventElement = latchedElement;
-            if (shouldLatchToScrollableArea(frame, scrollableArea.get(), m_cumulativeEventDelta))
+            if (shouldLatchToScrollableArea(frame, scrollableArea, m_cumulativeEventDelta))
                 state.scrollableArea = scrollableArea;
             state.isOverWidget = isOverWidget;
 
@@ -152,7 +152,7 @@ void ScrollLatchingController::updateAndFetchLatchingStateForFrame(LocalFrame& f
             return;
 
         // We may not have latched at gesture start because of small deltas. Re-evaluate latching based on accumulated delta.
-        if (!state->scrollableArea && shouldLatchToScrollableArea(frame, scrollableArea.get(), m_cumulativeEventDelta))
+        if (!state->scrollableArea && shouldLatchToScrollableArea(frame, scrollableArea, m_cumulativeEventDelta))
             state->scrollableArea = scrollableArea;
     }
 
@@ -196,7 +196,7 @@ void ScrollLatchingController::removeLatchingStateForFrame(const LocalFrame& fra
         clear();
 }
 
-static bool NODELETE deltaIsPredominantlyVertical(FloatSize delta)
+static bool NODELETE scrollDeltaIsPredominantlyVertical(FloatSize delta)
 {
     return std::abs(delta.height()) > std::abs(delta.width());
 }
@@ -216,7 +216,7 @@ bool ScrollLatchingController::shouldLatchToScrollableArea(const LocalFrame& fra
     if (scrollDelta.isZero())
         return false;
 
-    if (!deltaIsPredominantlyVertical(scrollDelta) && scrollDelta.width()) {
+    if (!scrollDeltaIsPredominantlyVertical(scrollDelta) && scrollDelta.width()) {
         if (!scrollableArea->horizontalScrollbar())
             return false;
 

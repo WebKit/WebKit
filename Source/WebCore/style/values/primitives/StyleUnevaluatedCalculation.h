@@ -45,7 +45,7 @@ class UnevaluatedCalculationBase {
 public:
     explicit UnevaluatedCalculationBase(Calculation::Value&);
     explicit UnevaluatedCalculationBase(Ref<Calculation::Value>&&);
-    explicit UnevaluatedCalculationBase(Calculation::Child&&, CSS::Category, CSS::Range);
+    explicit UnevaluatedCalculationBase(Calculation::Child&&);
 
     WEBCORE_EXPORT UnevaluatedCalculationBase(const UnevaluatedCalculationBase&);
     WEBCORE_EXPORT UnevaluatedCalculationBase(UnevaluatedCalculationBase&&);
@@ -55,11 +55,13 @@ public:
     WEBCORE_EXPORT ~UnevaluatedCalculationBase();
 
     Calculation::Value& calculation() const { return m_calc; }
-
-    double evaluate(double percentageBasis, ZoomFactor) const;
-    double evaluate(double percentageBasis, ZoomNeeded) const;
+    [[nodiscard]] Calculation::Value& NODELETE leakRef();
 
     bool equal(const UnevaluatedCalculationBase&) const;
+
+protected:
+    double evaluateBase(CSS::Range, double percentageBasis, const ZoomFactor&) const;
+    double evaluateBase(CSS::Range, double percentageBasis, const ZoomNeeded&) const;
 
 private:
     Ref<Calculation::Value> m_calc;
@@ -80,7 +82,17 @@ template<CSS::Numeric CSSType> struct UnevaluatedCalculation : UnevaluatedCalcul
     }
 
     explicit UnevaluatedCalculation(Calculation::Child&& child)
-        : UnevaluatedCalculationBase(WTF::move(child), category, range)
+        : UnevaluatedCalculationBase(WTF::move(child))
+    {
+    }
+
+    explicit UnevaluatedCalculation(UnevaluatedCalculationBase&& base)
+        : UnevaluatedCalculationBase(WTF::move(base))
+    {
+    }
+
+    explicit UnevaluatedCalculation(const UnevaluatedCalculationBase& base)
+        : UnevaluatedCalculationBase(base)
     {
     }
 
@@ -88,7 +100,19 @@ template<CSS::Numeric CSSType> struct UnevaluatedCalculation : UnevaluatedCalcul
     {
         return UnevaluatedCalculationBase::equal(static_cast<const UnevaluatedCalculationBase&>(other));
     }
+
+    double evaluate(double percentageBasis, const ZoomFactor& zoom) const
+    {
+        return UnevaluatedCalculationBase::evaluateBase(range, percentageBasis, zoom);
+    }
+
+    double evaluate(double percentageBasis, const ZoomNeeded& zoomNeeded) const
+    {
+        return UnevaluatedCalculationBase::evaluateBase(range, percentageBasis, zoomNeeded);
+    }
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const UnevaluatedCalculationBase&);
 
 } // namespace Style
 } // namespace WebCore

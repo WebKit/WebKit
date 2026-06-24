@@ -26,14 +26,17 @@ struct ThreadData;
 // TODO(wtc): These two variables are only used in avx2, sse2, neon
 // implementations, where the block size is still hard coded to TF_BLOCK_SIZE.
 // This should be fixed to align with the c implementation.
-#define BH 32
-#define BW 32
+#define BH 64
+#define BW 64
 
 // Block size used in temporal filtering.
-#define TF_BLOCK_SIZE BLOCK_32X32
+#define TF_BLOCK_SIZE BLOCK_64X64
 
 // Window size for temporal filtering.
 #define TF_WINDOW_LENGTH 5
+
+// Number of 16x16 blocks within one 64x64 TF block.
+#define NUM_16X16 16
 
 // A constant number, sqrt(pi / 2),  used for noise estimation.
 static const double SQRT_PI_BY_2 = 1.25331413732;
@@ -338,17 +341,20 @@ void av1_temporal_filter(struct AV1_COMP *cpi,
  * to make decision.
  *
  * \ingroup src_frame_proc
- * \param[in]  frame        filtered frame's buffer
- * \param[in]  frame_diff   structure of sse and sum of the
- *                          filtered frame.
- * \param[in]  q_index      q_index used for this frame
- * \param[in]  bit_depth    bit depth
+ * \param[in]  frame          filtered frame's buffer
+ * \param[in]  frame_diff     structure of sse and sum of the
+ *                            filtered frame.
+ * \param[in]  q_index        q_index used for this frame
+ * \param[in]  bit_depth      bit depth
+ * \param[in]  enable_overlay arf overlay is enabled or disabled
+ * \param[in]  is_second_arf  whether or not this is a second ARF frame
  * \return     return 1 if this frame can be shown directly, otherwise
  *             return 0
  */
 int av1_check_show_filtered_frame(const YV12_BUFFER_CONFIG *frame,
                                   const FRAME_DIFF *frame_diff, int q_index,
-                                  aom_bit_depth_t bit_depth);
+                                  aom_bit_depth_t bit_depth, int enable_overlay,
+                                  int is_second_arf);
 
 /*!\cond */
 // Allocates memory for members of TemporalFilterData.

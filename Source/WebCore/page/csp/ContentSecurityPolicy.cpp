@@ -43,11 +43,13 @@
 #include "EventNames.h"
 #include "FormData.h"
 #include "FrameDestructionObserverInlines.h"
+#include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "JSExecState.h"
 #include "JSWindowProxy.h"
 #include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "OriginAccessPatterns.h"
 #include "PingLoader.h"
 #include "Report.h"
@@ -121,7 +123,13 @@ ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecution
     , m_protectedURL { WTF::move(protectedURL) }
 {
     ASSERT(scriptExecutionContext.securityOrigin());
-    updateSourceSelf(*protect(scriptExecutionContext.securityOrigin()));
+    // CSP3 2.2.2: a policy's self-origin is the response URL's origin. Apply when the runtime
+    // origin is opaque and the URL is http(s); local schemes inherit via Document::initSecurityContext.
+    bool hasOpaqueOriginWithResponseURL = scriptExecutionContext.securityOrigin()->isOpaque() && m_protectedURL.protocolIsInHTTPFamily();
+    if (hasOpaqueOriginWithResponseURL)
+        updateSourceSelf(SecurityOrigin::create(m_protectedURL).get());
+    else
+        updateSourceSelf(*protect(scriptExecutionContext.securityOrigin()));
     // FIXME: handle the non-document case.
     if (auto* document = dynamicDowncast<Document>(scriptExecutionContext)) {
         if (auto* page = document->page())
@@ -136,6 +144,7 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other, Sh
     if (m_hasAPIPolicy)
         return;
     ASSERT(m_policies.isEmpty());
+    m_sandboxFlags = other->m_sandboxFlags;
     for (auto& policy : other->m_policies)
         didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited, String { });
     m_referrer = shouldMakeIsolatedCopy == ShouldMakeIsolatedCopy::Yes ? other->m_referrer.isolatedCopy() : other->m_referrer;
@@ -296,7 +305,13 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
     // security origin of its owner document.
     RefPtr securityOrigin = scriptExecutionContext->securityOrigin();
     ASSERT(securityOrigin);
-    updateSourceSelf(*securityOrigin);
+
+    // Skip for opaque origins (e.g. sandboxed iframes) to preserve the self-source
+    // established after CSP inheritance. Per the CSP spec §2.2 note, the self-origin
+    // concept exists to facilitate 'self' checks for opaque-origin documents that
+    // inherited their policy.
+    if (!securityOrigin->isOpaque())
+        updateSourceSelf(*securityOrigin);
 
     bool requiresTrustedTypesForScript = false;
     bool requiresTrustedTypesForScriptEnforced = false;
@@ -503,14 +518,14 @@ bool ContentSecurityPolicy::allowScriptForStrictDynamic(const URL& sourceURL, co
     return allPoliciesAllow(handleViolatedDirective, &ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts, trimmedNonce, contentHashes, subResourceIntegrityDigests, sourceURL, parserInserted);
 }
 
-bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const OrdinalNumber& contextLine, StringView scriptContent, Element& element, const String& nonce, bool overrideContentSecurityPolicy) const
+bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const TextPosition& contextPosition, StringView scriptContent, Element& element, const String& nonce, bool overrideContentSecurityPolicy) const
 {
     if (overrideContentSecurityPolicy || shouldPerformEarlyCSPCheck() || m_policies.isEmpty())
         return true;
     bool didNotifyInspector = false;
-    auto handleViolatedDirective = [checkedThis = CheckedRef { *this }, &didNotifyInspector, &contextURL, &contextLine, &scriptContent, element = Ref { element }] (const ContentSecurityPolicyDirective& violatedDirective) {
+    auto handleViolatedDirective = [checkedThis = CheckedRef { *this }, &didNotifyInspector, &contextURL, &contextPosition, &scriptContent, element = Ref { element }] (const ContentSecurityPolicyDirective& violatedDirective) {
         String consoleMessage = consoleMessageForViolation(violatedDirective, URL(), "Refused to execute a script"_s, "its hash, its nonce, or 'unsafe-inline'"_s);
-        checkedThis->reportViolation(violatedDirective, "inline"_s, consoleMessage, contextURL, scriptContent, TextPosition(contextLine, OrdinalNumber()), URL(), nullptr, element.ptr());
+        checkedThis->reportViolation(violatedDirective, "inline"_s, consoleMessage, contextURL, scriptContent, contextPosition, URL(), nullptr, element.ptr());
         if (!didNotifyInspector && !violatedDirective.directiveList().isReportOnly()) {
             checkedThis->reportBlockedScriptExecutionToInspector(violatedDirective.text());
             didNotifyInspector = true;
@@ -1219,11 +1234,13 @@ void ContentSecurityPolicy::setUpgradeInsecureRequests(bool upgradeInsecureReque
         upgradeURL.setProtocol("ws"_s);
     
     m_insecureNavigationRequestsToUpgrade.add(SecurityOriginData::fromURL(upgradeURL));
+    notifyInsecureNavigationRequestsToUpgradeChanged();
 }
 
 void ContentSecurityPolicy::inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy& other)
 {
     m_insecureNavigationRequestsToUpgrade.addAll(other.m_insecureNavigationRequestsToUpgrade);
+    notifyInsecureNavigationRequestsToUpgradeChanged();
 }
 
 HashSet<SecurityOriginData> ContentSecurityPolicy::takeNavigationRequestsToUpgrade()
@@ -1234,6 +1251,20 @@ HashSet<SecurityOriginData> ContentSecurityPolicy::takeNavigationRequestsToUpgra
 void ContentSecurityPolicy::setInsecureNavigationRequestsToUpgrade(HashSet<SecurityOriginData>&& insecureNavigationRequests)
 {
     m_insecureNavigationRequestsToUpgrade = WTF::move(insecureNavigationRequests);
+    notifyInsecureNavigationRequestsToUpgradeChanged();
+}
+
+void ContentSecurityPolicy::notifyInsecureNavigationRequestsToUpgradeChanged() const
+{
+    RefPtr document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
+    if (!document)
+        return;
+    if (!document->settings().siteIsolationEnabled())
+        return;
+    RefPtr frame = document->frame();
+    if (!frame)
+        return;
+    frame->loader().client().dispatchDidChangeCSPOriginsThatUpgradeInsecureNavigations(m_insecureNavigationRequestsToUpgrade);
 }
 
 const HashAlgorithmSetCollection& ContentSecurityPolicy::hashesToReport()

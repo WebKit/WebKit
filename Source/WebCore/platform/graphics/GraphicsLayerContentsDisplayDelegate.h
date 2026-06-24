@@ -31,6 +31,12 @@
 #include <WebCore/PlatformLayer.h>
 #endif
 
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
 namespace WebCore {
 class ImageBuffer;
 #if USE(CA)
@@ -58,8 +64,18 @@ public:
 #elif USE(COORDINATED_GRAPHICS)
     virtual void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) = 0;
     virtual bool display(CoordinatedPlatformLayer&, std::optional<Damage>&&) = 0;
+#if USE(SKIA)
+    void setThreadSafeGrContext(const sk_sp<GrContextThreadSafeProxy>&);
+    const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext() const;
+#endif
+
 #else
     virtual PlatformLayer* platformLayer() const = 0;
+#endif
+
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+protected:
+    sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
 #endif
 };
 

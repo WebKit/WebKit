@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,16 +23,12 @@
 
 #include <WebCore/Color.h>
 #include <WebCore/DeprecatedCSSOMPrimitiveValue.h>
-#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class DeprecatedCSSOMRGBColor final : public RefCounted<DeprecatedCSSOMRGBColor> {
 public:
-    static Ref<DeprecatedCSSOMRGBColor> create(CSSStyleDeclaration& owner, const WebCore::Color& color)
-    {
-        return adoptRef(*new DeprecatedCSSOMRGBColor(owner, color));
-    }
+    static Ref<DeprecatedCSSOMRGBColor> create(const WebCore::Color&, CSSStyleDeclaration&);
 
     DeprecatedCSSOMPrimitiveValue& red() { return m_red; }
     DeprecatedCSSOMPrimitiveValue& green() { return m_green; }
@@ -41,19 +38,7 @@ public:
     ResolvedColorType<SRGBA<uint8_t>> color() const { return m_color; }
 
 private:
-    template<typename NumberType> static Ref<DeprecatedCSSOMPrimitiveValue> createWrapper(CSSStyleDeclaration& owner, NumberType number)
-    {
-        return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(number), owner);
-    }
-
-    DeprecatedCSSOMRGBColor(CSSStyleDeclaration& owner, const WebCore::Color& color)
-        : m_color(color.toColorTypeLossy<SRGBA<uint8_t>>().resolved())
-        , m_red(createWrapper(owner, m_color.red))
-        , m_green(createWrapper(owner, m_color.green))
-        , m_blue(createWrapper(owner, m_color.blue))
-        , m_alpha(createWrapper(owner, color.alphaAsFloat()))
-    {
-    }
+    DeprecatedCSSOMRGBColor(const WebCore::Color&, CSSStyleDeclaration&);
 
     ResolvedColorType<SRGBA<uint8_t>> m_color;
     const Ref<DeprecatedCSSOMPrimitiveValue> m_red;

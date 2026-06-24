@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="240" height="240" viewBox="0 0 240 240">
+<defs><g id="m" transform="rotate(-45)"><rect width="60" height="10" fill="red"/><circle cx="30" cy="5" r="10" fill="green"/></g></defs><g transform="translate(80,80)"><use xlink:href="#m"/></g>
+</svg>

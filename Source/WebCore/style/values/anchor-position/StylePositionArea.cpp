@@ -27,8 +27,8 @@
 
 #include "BoxSides.h"
 #include "CSSPropertyParserConsumer+Anchor.h"
-#include "RenderStyle.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle.h"
 #include "StylePositionTryFallbackTactic.h"
 #include "StyleSelfAlignmentData.h"
 #include "WritingMode.h"
@@ -656,7 +656,7 @@ static CSSValueID NODELETE keywordForPositionAreaSpan(PositionAreaSpan span)
     return CSSValueLeft;
 }
 
-Ref<CSSValue> CSSValueCreation<PositionAreaValue>::operator()(CSSValuePool&, const RenderStyle&, const PositionAreaValue& value)
+Ref<CSSValue> CSSValueCreation<PositionAreaValue>::operator()(CSSValuePool&, const Style::ComputedStyle&, const PositionAreaValue& value)
 {
     auto blockOrXAxisKeyword = keywordForPositionAreaSpan(value.blockOrXAxis());
     auto inlineOrYAxisKeyword = keywordForPositionAreaSpan(value.inlineOrYAxis());
@@ -666,7 +666,7 @@ Ref<CSSValue> CSSValueCreation<PositionAreaValue>::operator()(CSSValuePool&, con
 
 // MARK: - Serialization
 
-void Serialize<PositionAreaValue>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle&, const PositionAreaValue& value)
+void Serialize<PositionAreaValue>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle&, const PositionAreaValue& value)
 {
     auto blockOrXAxisKeyword = keywordForPositionAreaSpan(value.blockOrXAxis());
     auto inlineOrYAxisKeyword = keywordForPositionAreaSpan(value.inlineOrYAxis());

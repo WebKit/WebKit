@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 60: "Move to:"
               RenderTableCell {TD} at (648,2) size 134x32 [r=0 c=5 rs=1 cs=1]
                 RenderMenuList {SELECT} at (1,1) size 132x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderSelectFallbackButton {DIV} at (1,1) size 130x28
-                    RenderText at (5,5) size 104x18
+                  RenderBlock {DIV} at (1,1) size 130x28
+                    RenderText {#text} at (5,5) size 104x18
                       text run at (5,5) width 104: "Choose folder "
                 RenderText {#text} at (0,0) size 0x0

@@ -1,12 +1,8 @@
 <html>
 <head>
 <title>Test for Buzilla Bug 15359: JPEG image not shown when height is specified as percentage inside a table</title>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function getComputedStyleForElement(element, cssPropertyName)
 {
@@ -61,6 +57,7 @@ function is75PercentOf(expression75, expression100, hasSubpixelSupport)
 function test()
 {
     description("This test checks that replaced elements with percentage heights within table cells have the correct height.<br>Note, some of the button height tests fail on the Windows ports. See bug #34071.");
+    window.jsTestIsAsync = true;
 
     var hasSubpixelSupport = getWidth('canvas-75') == '225px';
 
@@ -126,10 +123,9 @@ function test()
     shouldBeTrue("getHeight('select-75') != '0px'");
     shouldBe("getHeight('select-75')", "getHeight('select-100')");
 
-    isSuccessfullyParsed();
 
     if (window.testRunner) { 
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 </script>

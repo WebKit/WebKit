@@ -31,6 +31,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-color-transparent.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-css-xml-attributeType.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-currentColor.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-currentcolor-in-visited-link.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-display-to-none-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-display-to-none-001.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-dynamic-update-attributeName.html
@@ -57,6 +58,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-marker-orient-to-angle.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-number-calcMode-discrete-keyTimes.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-number-calcMode-discrete.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-additive-sum-both-empty-over-base.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-animation-Cc-Ss.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-animation-Ll-Vv-Hh.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-animation-Mm-Aa-Z.tentative.html
@@ -69,12 +71,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-accumulate.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-additive-mismatch.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-additive.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-empty-base.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-mismatch.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-by-animation-both-empty.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-by-animation-empty-by.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-by-animation-empty-from.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-by-animation-mismatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-accumulate-sum-empty-base.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-animation-additive.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-animation-both-empty.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-animation-empty-from.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-animation-empty-to.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-animation-mismatch-diff-seg-counts.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-from-to-animation-mismatch-same-seg-count.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-to-animation-empty-base.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-to-animation.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-pathLength.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-reset-freeze.html
@@ -96,6 +107,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-ellipse.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-fill-freeze.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-fill-remove.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-from-to-rotate-auto-horizontal.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-from-to-rotate-auto-no-motion.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-from-to-rotate-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-keyPoints-001.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-keyPoints-002.html
@@ -188,6 +201,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/single-values-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/slider-switch.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/smil-clock-value-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/smil-values-trailing-semicolon.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/spaces-at-end-of-path-data.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/stop-animation-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/stop-animation-01.html

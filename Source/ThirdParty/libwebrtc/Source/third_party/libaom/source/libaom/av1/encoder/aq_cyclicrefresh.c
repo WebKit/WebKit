@@ -439,6 +439,8 @@ void av1_cyclic_refresh_update_parameters(AV1_COMP *const cpi) {
   // should we enable cyclic refresh on this frame.
   cr->apply_cyclic_refresh = 1;
   if (frame_is_intra_only(cm) || is_lossless_requested(&cpi->oxcf.rc_cfg) ||
+      (is_one_pass_rt_lag_params(cpi) &&
+       (cpi->refresh_frame.alt_ref_frame || cpi->rc.is_src_frame_alt_ref)) ||
       cpi->roi.enabled || cpi->rc.high_motion_content_screen_rtc ||
       scene_change_detected || svc->temporal_layer_id > 0 ||
       svc->prev_number_spatial_layers != svc->number_spatial_layers ||
@@ -645,7 +647,8 @@ void av1_cyclic_refresh_setup(AV1_COMP *const cpi) {
         qindex2, cm->seq_params->bit_depth,
         cpi->ppi->gf_group.update_type[cpi->gf_frame_index], layer_depth,
         boost_index, frame_type, cpi->oxcf.q_cfg.use_fixed_qp_offsets,
-        is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning);
+        is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning,
+        cpi->oxcf.mode);
 
     av1_set_segdata(seg, CR_SEGMENT_ID_BOOST1, SEG_LVL_ALT_Q, qindex_delta);
 

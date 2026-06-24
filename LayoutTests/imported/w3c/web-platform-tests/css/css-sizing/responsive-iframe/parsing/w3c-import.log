@@ -14,5 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/parsing/frame-sizing-computed.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/parsing/frame-sizing-valid.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/parsing/frame-sizing-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/responsive-iframe/parsing/frame-sizing-valid.html

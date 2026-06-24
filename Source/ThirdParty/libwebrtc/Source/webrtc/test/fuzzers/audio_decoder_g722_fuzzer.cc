@@ -14,16 +14,17 @@
 
 #include "modules/audio_coding/codecs/g722/audio_decoder_g722.h"
 #include "test/fuzzers/audio_decoder_fuzzer.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  if (size > 10000 || size < 1) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  if (fuzz_data.size() > 10'000 || fuzz_data.size() < 1) {
     return;
   }
 
   std::unique_ptr<AudioDecoder> dec;
   size_t num_channels;
-  if (data[0] % 2) {
+  if (fuzz_data.Read<uint8_t>() % 2) {
     dec = std::make_unique<AudioDecoderG722Impl>();
     num_channels = 1;
   } else {
@@ -37,7 +38,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<int16_t[]> output =
       std::make_unique<int16_t[]>(allocated_ouput_size_samples);
   FuzzAudioDecoder(
-      DecoderFunctionType::kNormalDecode, data, size, dec.get(), sample_rate_hz,
+      DecoderFunctionType::kNormalDecode, fuzz_data, dec.get(), sample_rate_hz,
       allocated_ouput_size_samples * sizeof(int16_t), output.get());
 }
 }  // namespace webrtc

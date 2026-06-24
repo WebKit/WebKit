@@ -39,7 +39,6 @@ namespace WebKit {
 
 void TestWithWantsAsyncDispatch::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithWantsAsyncDispatch::TestMessage::name()) {
         IPC::handleMessage<Messages::TestWithWantsAsyncDispatch::TestMessage>(connection, decoder, this, &TestWithWantsAsyncDispatch::testMessage);
         return;
@@ -53,7 +52,6 @@ void TestWithWantsAsyncDispatch::didReceiveMessage(IPC::Connection& connection, 
 
 void TestWithWantsAsyncDispatch::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithWantsAsyncDispatch::TestSyncMessage::name()) {
         IPC::handleMessageSynchronous<Messages::TestWithWantsAsyncDispatch::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithWantsAsyncDispatch::testSyncMessage);
         return;

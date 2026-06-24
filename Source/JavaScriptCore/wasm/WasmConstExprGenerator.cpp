@@ -639,43 +639,43 @@ public:
         return ControlData(WTF::move(signature));
     }
 
-    [[nodiscard]] PartialResult addBlock(BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addLoop(BlockSignature, Stack&, ControlType&, Stack&, uint32_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addIf(ExpressionType, BlockSignature, Stack&, ControlData&, Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addElse(ControlData&, Stack&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addBlock(BlockSignature, std::span<TypedExpression>, ControlType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addLoop(BlockSignature, std::span<TypedExpression>, ControlType&, uint32_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addIf(ExpressionType, BlockSignature, std::span<TypedExpression>, ControlData&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addElse(ControlData&, std::span<const TypedExpression>) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addElseToUnreachable(ControlData&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addTry(BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addTryTable(BlockSignature, Stack&, const Vector<CatchHandler>&, ControlType&, Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addCatch(unsigned, const RTT&, Stack&, ControlType&, ResultList&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addTry(BlockSignature, std::span<TypedExpression>, ControlType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addTryTable(BlockSignature, std::span<TypedExpression>, const Vector<CatchHandler>&, ControlType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addCatch(unsigned, const RTT&, std::span<const TypedExpression>, ControlType&, ResultList&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addCatchToUnreachable(unsigned, const RTT&, ControlType&, ResultList&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addCatchAll(Stack&, ControlType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addCatchAll(std::span<const TypedExpression>, ControlType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addCatchAllToUnreachable(ControlType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addDelegate(ControlType&, ControlType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addDelegateToUnreachable(ControlType&, ControlType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addThrow(unsigned, ArgumentList&, Stack&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addThrow(unsigned, ArgumentList&, std::span<const TypedExpression>) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addRethrow(unsigned, ControlType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addThrowRef(ExpressionType, Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addReturn(const ControlData&, const Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addBranch(ControlData&, ExpressionType, Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addBranchCast(ControlType&, ExpressionType, Stack&, bool, int32_t, bool) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addSwitch(ExpressionType, const Vector<ControlData*>&, ControlData&, Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType&, ExpressionType, const Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addThrowRef(ExpressionType, std::span<const TypedExpression>) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addReturn(const ControlData&, std::span<const TypedExpression>) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addBranch(ControlData&, ExpressionType, std::span<const TypedExpression>) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addBranchNull(ControlType&, ExpressionType, std::span<const TypedExpression>, bool, ExpressionType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addBranchCast(ControlType&, ExpressionType, std::span<const TypedExpression>, bool, int32_t, bool) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addSwitch(ExpressionType, const Vector<ControlData*>&, ControlData&, std::span<const TypedExpression>) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType&, ExpressionType, std::span<const TypedExpression>) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, std::span<const TypedExpression>) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, BlockSignature, std::span<TypedExpression>, ControlType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, std::span<TypedExpression>, ControlType&) CONST_EXPR_STUB
 
-    [[nodiscard]] PartialResult NODELETE endBlock(ControlEntry& entry, Stack& expressionStack)
+    [[nodiscard]] PartialResult NODELETE endBlock(ControlEntry& entry, std::span<TypedExpression> enclosedStack)
     {
-        ASSERT(expressionStack.size() == 1);
+        ASSERT(enclosedStack.size() == 1);
         ASSERT_UNUSED(entry, ControlType::isTopLevel(entry.controlData));
-        m_result = expressionStack.first().value();
+        m_result = enclosedStack.front().value();
         return { };
     }
 
-    [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry&, Stack&, bool = true) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry&, std::span<TypedExpression>) CONST_EXPR_STUB
 
-    [[nodiscard]] PartialResult endTopLevel(const Stack&)
+    [[nodiscard]] PartialResult endTopLevel(std::span<const TypedExpression>)
     {
         // Some opcodes like "nop" are not detectable by an error stub because the context
         // doesn't get called by the parser. This flag is set by didParseOpcode() to signal

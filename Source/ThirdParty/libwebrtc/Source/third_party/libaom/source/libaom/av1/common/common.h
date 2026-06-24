@@ -27,17 +27,17 @@ extern "C" {
 #endif
 
 // Only need this for fixed-size arrays, for structs just assign.
-#define av1_copy(dest, src)              \
-  do {                                   \
-    assert(sizeof(dest) == sizeof(src)); \
-    memcpy(dest, src, sizeof(src));      \
+#define av1_copy(dest, src)                         \
+  do {                                              \
+    static_assert(sizeof(dest) == sizeof(src), ""); \
+    memcpy(dest, src, sizeof(src));                 \
   } while (0)
 
 // Use this for variably-sized arrays.
-#define av1_copy_array(dest, src, n)           \
-  do {                                         \
-    assert(sizeof(*(dest)) == sizeof(*(src))); \
-    memcpy(dest, src, n * sizeof(*(src)));     \
+#define av1_copy_array(dest, src, n)                      \
+  do {                                                    \
+    static_assert(sizeof(*(dest)) == sizeof(*(src)), ""); \
+    memcpy(dest, src, n * sizeof(*(src)));                \
   } while (0)
 
 #define av1_zero(dest) memset(&(dest), 0, sizeof(dest))

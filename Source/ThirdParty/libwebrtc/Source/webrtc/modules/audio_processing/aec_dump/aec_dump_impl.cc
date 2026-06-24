@@ -169,7 +169,7 @@ void AecDumpImpl::WriteRenderStreamMessage(
 
   for (int i = 0; i < src.num_channels(); ++i) {
     const auto& channel_view = src.channel(i);
-    msg->add_channel(channel_view.begin(), sizeof(float) * channel_view.size());
+    msg->add_channel(channel_view.data(), sizeof(float) * channel_view.size());
   }
 
   PostWriteToFileTask(std::move(event));
@@ -185,7 +185,7 @@ void AecDumpImpl::WriteRenderStreamMessage(const float* const* data,
 
   for (int i = 0; i < num_channels; ++i) {
     MonoView<const float> channel_view(data[i], samples_per_channel);
-    msg->add_channel(channel_view.begin(), sizeof(float) * channel_view.size());
+    msg->add_channel(channel_view.data(), sizeof(float) * channel_view.size());
   }
 
   PostWriteToFileTask(std::move(event));

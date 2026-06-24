@@ -79,19 +79,27 @@ void CoordinatedSceneState::removeLayer(CoordinatedPlatformLayer& layer)
 bool CoordinatedSceneState::flush()
 {
     ASSERT(isMainRunLoop());
-    if (!m_didChangeLayers)
-        return false;
 
-    m_didChangeLayers = false;
+    bool didChangeLayers = m_didChangeLayers.exchange(false);
+    if (didChangeLayers) {
+        Locker pendingLayersLock { m_pendingLayersLock };
+        m_pendingLayers = m_layers;
+        if (m_pendingLayersToRemove.isEmpty())
+            m_pendingLayersToRemove = WTF::move(m_layersToRemove);
+        else
+            m_pendingLayersToRemove.addAll(std::exchange(m_layersToRemove, { }));
+    }
 
-    Locker pendingLayersLock { m_pendingLayersLock };
-    m_pendingLayers = m_layers;
-    if (m_pendingLayersToRemove.isEmpty())
-        m_pendingLayersToRemove = WTF::move(m_layersToRemove);
-    else
-        m_pendingLayersToRemove.addAll(std::exchange(m_layersToRemove, { }));
+    flushPendingState();
 
-    return true;
+    return didChangeLayers;
+}
+
+void CoordinatedSceneState::flushPendingState()
+{
+    Locker stateLock { m_stateLock };
+    for (auto& layer : m_layers)
+        layer->flushPendingState();
 }
 
 void CoordinatedSceneState::commitPendingLayers()
@@ -107,10 +115,24 @@ void CoordinatedSceneState::commitPendingLayers()
         m_committedLayers = WTF::move(m_pendingLayers);
 }
 
-const HashSet<Ref<CoordinatedPlatformLayer>>& CoordinatedSceneState::committedLayers()
+void CoordinatedSceneState::flushCompositingState(const OptionSet<CompositionReason>& reasons, bool useSkia)
 {
     commitPendingLayers();
-    return m_committedLayers;
+
+    // We update the tiles after flushing to release the state lock as early as possible.
+    Vector<Ref<CoordinatedPlatformLayer>, 16> layersWithPendingTileUpdates;
+    {
+        Locker stateLock { m_stateLock };
+        m_rootLayer->flushCompositingState(reasons, useSkia);
+        for (auto& layer : m_committedLayers) {
+            layer->flushCompositingState(reasons, useSkia);
+            if (layer->hasPendingBackingStoreTileUpdates())
+                layersWithPendingTileUpdates.append(Ref { layer });
+        }
+    }
+
+    for (auto& layer : layersWithPendingTileUpdates)
+        layer->processPendingBackingStoreTileUpdates();
 }
 
 void CoordinatedSceneState::invalidateCommittedLayers()

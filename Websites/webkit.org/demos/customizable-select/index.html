@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <title>Photo Gallery</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="select.css">
+    <link rel="stylesheet" href="color-select.css">
+    <link rel="stylesheet" href="category-select.css">
+    <meta name="color-scheme" content="dark light">
+</head>
+<body>
+    <header>
+        <div class="spacer"></div>
+        <span class="header-brand">
+            <img src="icons/camera.svg" role="none">
+            Tim’s photo gallery
+        </span>
+        <div class="spacer"></div>
+    </header>
+    <aside>
+        <div class="spacer"></div>
+
+        <div class="control-group">
+            <span class="select-label">Sort by</span>
+            <select id="sort-select">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <span class="select-label">Category</span>
+            <select id="category-select">
+                <button>
+                    <selectedcontent></selectedcontent>
+                </button>
+                <option value="everything">
+                    <img src="icons/all.svg" alt="">
+                    <span class="text">Everything</span>
+                </option>
+                <option value="buildings">
+                    <img src="icons/buildings.svg" alt="">
+                    <span class="text">Buildings</span>
+                </option>
+                <option value="flowers">
+                    <img src="icons/flower.svg" alt="">
+                    <span class="text">Flowers</span>
+                </option>
+                <option value="landscapes">
+                    <img src="icons/landscapes.svg" alt="">
+                    <span class="text">Landscapes</span>
+                </option>
+                <option value="objects">
+                    <img src="icons/furniture.svg" alt="">
+                    <span class="text">Objects</span>
+                </option>
+                <option value="wildlife">
+                    <img src="icons/bird.svg" alt="">
+                    <span class="text">Wildlife</span>
+                </option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <span class="select-label">Color</span>
+            <select id="color-select">
+                <button><selectedcontent></selectedcontent></button>
+                <div>
+                    <option value="all">
+                        <div class="swatch all"></div>
+                        <span>All</span>
+                    </option>
+                    <option value="skyblue" title="Blue">
+                        <div class="swatch" style="background-color: skyblue;"></div>
+                        <span>Blue</span>
+                    </option>
+                    <option value="navy" title="Navy">
+                        <div class="swatch" style="background-color: navy;"></div>
+                        <span>Navy</span>
+                    </option>
+                    <option value="forestgreen" title="Green">
+                        <div class="swatch" style="background-color: forestgreen;"></div>
+                        <span>Green</span>
+                    </option>
+                    <option value="orange" title="Orange">
+                        <div class="swatch" style="background-color: orange;"></div>
+                        <span>Orange</span>
+                    </option>
+                    <option value="sienna" title="Brown">
+                        <div class="swatch" style="background-color: sienna;"></div>
+                        <span>Brown</span>
+                    </option>
+                    <option value="purple" title="Purple">
+                        <div class="swatch" style="background-color: purple;"></div>
+                        <span>Purple</span>
+                    </option>
+                    <option value="pink" title="Pink">
+                        <div class="swatch" style="background-color: pink;"></div>
+                        <span>Pink</span>
+                    </option>
+                </div>
+            </select>
+        </div>
+        <div class="spacer"></div>
+    </aside>
+    <main class="grid">
+        <figure class="card"><img data-color="sienna" src="photos/buildings/adam-bignell-Frt_UFRKMvc-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/flowers/annie-spratt-VfXZg_-8f6A-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/landscapes/agata-ciosek-eppywzUKWzA-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/buildings/andrea-de-santis-KF52HaIDtyM-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/landscapes/benoit-deschasaux-WSsW8EpMaeQ-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/objects/alexandr-istomin-QmuHSij3bzk-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/buildings/andrew-keymaster-KiXccYM2eQo-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/landscapes/blaire-harmon-HkG8cOpvUkU-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/objects/bundo-kim-VRbd6ss_LJI-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/buildings/barthelemy-de-mazenod-rRLZZ8BHZNo-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/landscapes/clement-m-h7vKkZNNThE-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/objects/ciocan-ciprian-armvMS3dYng-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/buildings/catia-dombaxe-cPFYcoMAi-I-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/landscapes/clement-proust-m3StSUrsi3I-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/objects/farriou-8jdrapiKD1I-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/buildings/chalo-gallardo-F01kfMEodyk-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/landscapes/cristina-gottardi-CSpjU6hYo_0-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/objects/nik-_gScLDbcg2k-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/buildings/clark-van-der-beken-IImZQk78xe0-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/landscapes/cristina-gottardi-KX_214Qr7Ko-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/objects/pawel-czerwinski-blD64oKLHXU-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/buildings/clay-banks-RRjC0r8GwpI-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/landscapes/daniel-j-schwarz-6oKyf2Pip6Y-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/objects/philip-oroni-VKIXwWsRwt4-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="pink" src="photos/buildings/clay-banks-X1vQu69kV48-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/landscapes/daniel-lerman-7bZi3hfM_Pc-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/objects/sourav-ek-JMmNHe9lvFU-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/buildings/di-an-yAjzHx986fQ-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="pink" src="photos/landscapes/dylan-taylor-O_QJLYPvqa4-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/objects/yuri-krupenin-qB-MKKLRwBc-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/buildings/eugenivy_now-VxoaIWyyaaI-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/landscapes/eberhard-grossgasteiger-l6WnmYW0LQY-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/wildlife/ray-hennessy-6-JIDCnZG2E-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/buildings/fadhil-abhimantra-OLWz1lhO_54-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/landscapes/eugenivy_now-skXOY314xMQ-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/wildlife/ray-hennessy-jN5pk0lbv4E-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/buildings/francesca-saraco-fC9ydjoOOHA-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/landscapes/hannah-grace-znL3MUoOOtg-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/wildlife/soekarno-omar-TkNwKbKQNbg-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/buildings/fujiphilm-Q4c1RTklBhk-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/landscapes/iskra-photography-dZPYgXncUK8-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="pink" src="photos/flowers/elyssa-fahndrich-MF16lGb95WY-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/buildings/jacek-kadaj-d5l_C354BHU-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/landscapes/iskra-photography-IH9syVvlgT8-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/flowers/henry-be-IicyiaPYGGI-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/buildings/jorgen-hendriksen-2V1AgzYuOJc-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/landscapes/iskra-photography-KH84oeK05xE-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/flowers/kyle-vaughn-i3ka9q7EhH8-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/buildings/jose-fuentes-1RWd2nKjq04-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/landscapes/kirsten-frank-7LDcvZbEPQs-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="pink" src="photos/flowers/micheile-henderson-KUbt9qYUmxw-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/buildings/jovan-vasiljevic-D9SD5wciKtU-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/landscapes/koushik-chowdavarapu-Zjd6NvWUf5k-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="pink" src="photos/flowers/olegs-jonins-c5c2d84cjK8-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="pink" src="photos/buildings/jubeo-hernandez-2FxiqXZyB7s-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/landscapes/louis-maniquet-Ae64KHAzt1I-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/flowers/stacey-knipe-0hznujQ4fMk-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/buildings/jubeo-hernandez-5ajzXUSb-q4-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="purple" src="photos/landscapes/mark-harpur-K2s_YE031CA-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="pink" src="photos/buildings/kit-suman-WQwtk_t4oJI-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/landscapes/oliver-sjostrom-ITRnilDKqGs-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/buildings/lucas-gallone-lJ5nW8PrfCU-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="forestgreen" src="photos/landscapes/robert-nelson-9H3WouBtk0U-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/buildings/mahdi-mahmoodi-Nis_bQyp2Qc-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/landscapes/saleh-yQ84oCgUdOo-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/buildings/marcus-lenk-JQAiksStApk-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/landscapes/sebastian-boring-1s66d5yY5gE-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/buildings/maria-teneva-Y-0pfJPmjXY-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/buildings/meg-BSfxs8o7wkg-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/buildings/micke-lindstrom-wJIhQLXG5CI-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="purple" src="photos/buildings/mos-design-ild0babk0Q0-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/buildings/nicola-richli-6NOHq2HWxRU-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="pink" src="photos/buildings/nikunj-singh-jCjiVCGc2Ik-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="orange" src="photos/buildings/noam-cohen-_dAXhRuNhDM-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="navy" src="photos/buildings/peter-amende-XxteOm21HOw-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="pink" src="photos/buildings/reza-madani-ohdJdcO9-Tc-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="sienna" src="photos/buildings/ryunosuke-kikuno-odJXXIELx6Q-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/buildings/sourav-ek-pm0O5YpXeAo-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/buildings/vishwasa-navada-k-SMSzt8_xVeM-unsplash.jpg" width="640"></figure>
+        <figure class="card"><img data-color="skyblue" src="photos/buildings/zhivko-minkov-lAvtYSgNSfY-unsplash.jpg" width="640"></figure>
+    </main>
+    <dialog closedby="any">
+        <img>
+    </dialog>
+    <script src="script.js"></script>
+</body>
+</html>

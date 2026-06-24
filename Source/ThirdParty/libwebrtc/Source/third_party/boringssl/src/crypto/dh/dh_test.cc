@@ -32,8 +32,11 @@
 #include "../test/test_util.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 TEST(DHTest, Basic) {
-  bssl::UniquePtr<DH> a(DH_new());
+  UniquePtr<DH> a(DH_new());
   ASSERT_TRUE(a);
   ASSERT_TRUE(DH_generate_parameters_ex(a.get(), 64, DH_GENERATOR_5, nullptr));
 
@@ -44,7 +47,7 @@ TEST(DHTest, Basic) {
   EXPECT_FALSE(check_result & DH_CHECK_UNABLE_TO_CHECK_GENERATOR);
   EXPECT_FALSE(check_result & DH_CHECK_NOT_SUITABLE_GENERATOR);
 
-  bssl::UniquePtr<DH> b(DHparams_dup(a.get()));
+  UniquePtr<DH> b(DHparams_dup(a.get()));
   ASSERT_TRUE(b);
 
   ASSERT_TRUE(DH_generate_key(a.get()));
@@ -152,12 +155,12 @@ static const uint8_t kRFC5114_2048_224BadY[] = {
     0x93, 0x74, 0x89, 0x59,
 };
 
-static bssl::UniquePtr<DH> NewDHGroup(const BIGNUM *p, const BIGNUM *q,
-                                      const BIGNUM *g) {
-  bssl::UniquePtr<BIGNUM> p_copy(BN_dup(p));
-  bssl::UniquePtr<BIGNUM> q_copy(q != nullptr ? BN_dup(q) : nullptr);
-  bssl::UniquePtr<BIGNUM> g_copy(BN_dup(g));
-  bssl::UniquePtr<DH> dh(DH_new());
+static UniquePtr<DH> NewDHGroup(const BIGNUM *p, const BIGNUM *q,
+                                const BIGNUM *g) {
+  UniquePtr<BIGNUM> p_copy(BN_dup(p));
+  UniquePtr<BIGNUM> q_copy(q != nullptr ? BN_dup(q) : nullptr);
+  UniquePtr<BIGNUM> g_copy(BN_dup(g));
+  UniquePtr<DH> dh(DH_new());
   if (p_copy == nullptr || (q != nullptr && q_copy == nullptr) ||
       g_copy == nullptr || dh == nullptr ||
       !DH_set0_pqg(dh.get(), p_copy.get(), q_copy.get(), g_copy.get())) {
@@ -170,19 +173,19 @@ static bssl::UniquePtr<DH> NewDHGroup(const BIGNUM *p, const BIGNUM *q,
 }
 
 TEST(DHTest, BadY) {
-  bssl::UniquePtr<BIGNUM> p(
+  UniquePtr<BIGNUM> p(
       BN_bin2bn(kRFC5114_2048_224P, sizeof(kRFC5114_2048_224P), nullptr));
-  bssl::UniquePtr<BIGNUM> q(
+  UniquePtr<BIGNUM> q(
       BN_bin2bn(kRFC5114_2048_224Q, sizeof(kRFC5114_2048_224Q), nullptr));
-  bssl::UniquePtr<BIGNUM> g(
+  UniquePtr<BIGNUM> g(
       BN_bin2bn(kRFC5114_2048_224G, sizeof(kRFC5114_2048_224G), nullptr));
   ASSERT_TRUE(p);
   ASSERT_TRUE(q);
   ASSERT_TRUE(g);
-  bssl::UniquePtr<DH> dh = NewDHGroup(p.get(), q.get(), g.get());
+  UniquePtr<DH> dh = NewDHGroup(p.get(), q.get(), g.get());
   ASSERT_TRUE(dh);
 
-  bssl::UniquePtr<BIGNUM> pub_key(
+  UniquePtr<BIGNUM> pub_key(
       BN_bin2bn(kRFC5114_2048_224BadY, sizeof(kRFC5114_2048_224BadY), nullptr));
   ASSERT_TRUE(pub_key);
   ASSERT_TRUE(DH_generate_key(dh.get()));
@@ -203,7 +206,7 @@ static bool BIGNUMEqualsHex(const BIGNUM *bn, const char *hex) {
   if (!BN_hex2bn(&hex_bn, hex)) {
     return false;
   }
-  bssl::UniquePtr<BIGNUM> free_hex_bn(hex_bn);
+  UniquePtr<BIGNUM> free_hex_bn(hex_bn);
   return BN_cmp(bn, hex_bn) == 0;
 }
 
@@ -219,22 +222,22 @@ TEST(DHTest, ASN1) {
 
   CBS cbs;
   CBS_init(&cbs, kParams, sizeof(kParams));
-  bssl::UniquePtr<DH> dh(DH_parse_parameters(&cbs));
+  UniquePtr<DH> dh(DH_parse_parameters(&cbs));
   ASSERT_TRUE(dh);
   EXPECT_EQ(CBS_len(&cbs), 0u);
   EXPECT_TRUE(BIGNUMEqualsHex(
       DH_get0_p(dh.get()),
       "d72034a3274fdfbf04fd246825b656d8ab2a412d740a52087c40714ed2579313"));
   EXPECT_TRUE(BIGNUMEqualsHex(DH_get0_g(dh.get()), "2"));
-  EXPECT_EQ(dh->priv_length, 0u);
+  EXPECT_EQ(FromOpaque(dh.get())->priv_length, 0u);
 
-  bssl::ScopedCBB cbb;
+  ScopedCBB cbb;
   uint8_t *der;
   size_t der_len;
   ASSERT_TRUE(CBB_init(cbb.get(), 0));
   ASSERT_TRUE(DH_marshal_parameters(cbb.get(), dh.get()));
   ASSERT_TRUE(CBB_finish(cbb.get(), &der, &der_len));
-  bssl::UniquePtr<uint8_t> free_der(der);
+  UniquePtr<uint8_t> free_der(der);
   EXPECT_EQ(Bytes(kParams), Bytes(der, der_len));
 
   // kParamsDSA are a set of Diffie-Hellman parameters generated with
@@ -268,17 +271,17 @@ TEST(DHTest, ASN1) {
                       "44c8105344323163d8d18c75c898533b5b4a2a0a09e7d03c5372a86"
                       "b70419c267144fc7f0875e102ab7441e82a3d3c263309e48bb441ec"
                       "a6a8ba1a078a77f55f"));
-  EXPECT_EQ(dh->priv_length, 160u);
+  EXPECT_EQ(FromOpaque(dh.get())->priv_length, 160u);
 
   ASSERT_TRUE(CBB_init(cbb.get(), 0));
   ASSERT_TRUE(DH_marshal_parameters(cbb.get(), dh.get()));
   ASSERT_TRUE(CBB_finish(cbb.get(), &der, &der_len));
-  bssl::UniquePtr<uint8_t> free_der2(der);
+  UniquePtr<uint8_t> free_der2(der);
   EXPECT_EQ(Bytes(kParamsDSA), Bytes(der, der_len));
 }
 
 TEST(DHTest, RFC3526) {
-  bssl::UniquePtr<BIGNUM> bn(BN_get_rfc3526_prime_1536(nullptr));
+  UniquePtr<BIGNUM> bn(BN_get_rfc3526_prime_1536(nullptr));
   ASSERT_TRUE(bn);
 
   static const uint8_t kPrime1536[] = {
@@ -307,18 +310,18 @@ TEST(DHTest, RFC3526) {
 }
 
 TEST(DHTest, LeadingZeros) {
-  bssl::UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_1536(nullptr));
+  UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_1536(nullptr));
   ASSERT_TRUE(p);
-  bssl::UniquePtr<BIGNUM> g(BN_new());
+  UniquePtr<BIGNUM> g(BN_new());
   ASSERT_TRUE(g);
   ASSERT_TRUE(BN_set_word(g.get(), 2));
 
-  bssl::UniquePtr<DH> dh = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
+  UniquePtr<DH> dh = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
   ASSERT_TRUE(dh);
 
   // These values are far too small to be reasonable Diffie-Hellman keys, but
   // they are an easy way to get a shared secret with leading zeros.
-  bssl::UniquePtr<BIGNUM> priv_key(BN_new()), peer_key(BN_new());
+  UniquePtr<BIGNUM> priv_key(BN_new()), peer_key(BN_new());
   ASSERT_TRUE(priv_key);
   ASSERT_TRUE(BN_set_word(priv_key.get(), 2));
   ASSERT_TRUE(peer_key);
@@ -343,17 +346,17 @@ TEST(DHTest, LeadingZeros) {
 
 TEST(DHTest, Overwrite) {
   // Generate a DH key with the 1536-bit MODP group.
-  bssl::UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_1536(nullptr));
+  UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_1536(nullptr));
   ASSERT_TRUE(p);
-  bssl::UniquePtr<BIGNUM> g(BN_new());
+  UniquePtr<BIGNUM> g(BN_new());
   ASSERT_TRUE(g);
   ASSERT_TRUE(BN_set_word(g.get(), 2));
 
-  bssl::UniquePtr<DH> key1 = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
+  UniquePtr<DH> key1 = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
   ASSERT_TRUE(key1);
   ASSERT_TRUE(DH_generate_key(key1.get()));
 
-  bssl::UniquePtr<BIGNUM> peer_key(BN_new());
+  UniquePtr<BIGNUM> peer_key(BN_new());
   ASSERT_TRUE(peer_key);
   ASSERT_TRUE(BN_set_word(peer_key.get(), 42));
 
@@ -364,7 +367,7 @@ TEST(DHTest, Overwrite) {
   // Generate a different key with a different group.
   p.reset(BN_get_rfc3526_prime_2048(nullptr));
   ASSERT_TRUE(p);
-  bssl::UniquePtr<DH> key2 = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
+  UniquePtr<DH> key2 = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
   ASSERT_TRUE(key2);
   ASSERT_TRUE(DH_generate_key(key2.get()));
 
@@ -373,9 +376,9 @@ TEST(DHTest, Overwrite) {
   ASSERT_TRUE(p);
   g.reset(BN_dup(DH_get0_g(key2.get())));
   ASSERT_TRUE(g);
-  bssl::UniquePtr<BIGNUM> pub(BN_dup(DH_get0_pub_key(key2.get())));
+  UniquePtr<BIGNUM> pub(BN_dup(DH_get0_pub_key(key2.get())));
   ASSERT_TRUE(pub);
-  bssl::UniquePtr<BIGNUM> priv(BN_dup(DH_get0_priv_key(key2.get())));
+  UniquePtr<BIGNUM> priv(BN_dup(DH_get0_priv_key(key2.get())));
   ASSERT_TRUE(priv);
   ASSERT_TRUE(DH_set0_pqg(key1.get(), p.get(), /*q=*/nullptr, g.get()));
   p.release();
@@ -393,19 +396,19 @@ TEST(DHTest, Overwrite) {
 }
 
 TEST(DHTest, GenerateKeyTwice) {
-  bssl::UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_2048(nullptr));
+  UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_2048(nullptr));
   ASSERT_TRUE(p);
-  bssl::UniquePtr<BIGNUM> g(BN_new());
+  UniquePtr<BIGNUM> g(BN_new());
   ASSERT_TRUE(g);
   ASSERT_TRUE(BN_set_word(g.get(), 2));
-  bssl::UniquePtr<DH> key1 = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
+  UniquePtr<DH> key1 = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
   ASSERT_TRUE(key1);
   ASSERT_TRUE(DH_generate_key(key1.get()));
 
   // Copy the parameters and private key to a new DH object.
-  bssl::UniquePtr<DH> key2(DHparams_dup(key1.get()));
+  UniquePtr<DH> key2(DHparams_dup(key1.get()));
   ASSERT_TRUE(key2);
-  bssl::UniquePtr<BIGNUM> priv_key(BN_dup(DH_get0_priv_key(key1.get())));
+  UniquePtr<BIGNUM> priv_key(BN_dup(DH_get0_priv_key(key1.get())));
   ASSERT_TRUE(DH_set0_key(key2.get(), /*pub_key=*/nullptr, priv_key.get()));
   priv_key.release();
 
@@ -427,7 +430,7 @@ TEST(DHTest, InvalidParameters) {
     EXPECT_FALSE(DH_generate_key(dh));
     int check_result;
     EXPECT_FALSE(DH_check(dh, &check_result));
-    bssl::UniquePtr<BIGNUM> pub_key(BN_new());
+    UniquePtr<BIGNUM> pub_key(BN_new());
     ASSERT_TRUE(pub_key);
     ASSERT_TRUE(BN_set_u64(pub_key.get(), 42));
     EXPECT_FALSE(DH_check_pub_key(dh, pub_key.get(), &check_result));
@@ -436,15 +439,15 @@ TEST(DHTest, InvalidParameters) {
     EXPECT_EQ(DH_compute_key_padded(buf, pub_key.get(), dh), -1);
   };
 
-  bssl::UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_2048(nullptr));
+  UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_2048(nullptr));
   ASSERT_TRUE(p);
-  bssl::UniquePtr<BIGNUM> g(BN_new());
+  UniquePtr<BIGNUM> g(BN_new());
   ASSERT_TRUE(g);
   ASSERT_TRUE(BN_set_word(g.get(), 2));
 
   // p is negative.
   BN_set_negative(p.get(), 1);
-  bssl::UniquePtr<DH> dh = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
+  UniquePtr<DH> dh = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
   ASSERT_TRUE(dh);
   BN_set_negative(p.get(), 0);
   check_invalid_group(dh.get());
@@ -463,7 +466,7 @@ TEST(DHTest, InvalidParameters) {
   check_invalid_group(dh.get());
 
   // p is too large.
-  bssl::UniquePtr<BIGNUM> large(BN_new());
+  UniquePtr<BIGNUM> large(BN_new());
   ASSERT_TRUE(BN_set_bit(large.get(), 0));
   ASSERT_TRUE(BN_set_bit(large.get(), 10000000));
   dh = NewDHGroup(large.get(), /*q=*/nullptr, g.get());
@@ -507,12 +510,12 @@ TEST(DHTest, PrivateKeyLength) {
       0x6a, 0xa9, 0xda, 0x2e, 0x50, 0x25, 0x87, 0x73, 0xab, 0x71, 0xfb, 0xa0,
       0x92, 0xba, 0x8e, 0x9c, 0x4e, 0xea, 0x18, 0x32, 0xc4, 0x02, 0x8f, 0xe8,
       0x95, 0x9e, 0xcb, 0x9f};
-  bssl::UniquePtr<BIGNUM> p(BN_bin2bn(kP, sizeof(kP), nullptr));
+  UniquePtr<BIGNUM> p(BN_bin2bn(kP, sizeof(kP), nullptr));
   ASSERT_TRUE(p);
-  bssl::UniquePtr<BIGNUM> g(BN_new());
+  UniquePtr<BIGNUM> g(BN_new());
   ASSERT_TRUE(g);
   ASSERT_TRUE(BN_set_word(g.get(), 2));
-  bssl::UniquePtr<BIGNUM> q(BN_new());
+  UniquePtr<BIGNUM> q(BN_new());
   ASSERT_TRUE(q);
   ASSERT_TRUE(BN_rshift1(q.get(), p.get()));  // (p-1)/2
 
@@ -530,7 +533,7 @@ TEST(DHTest, PrivateKeyLength) {
 
   for (unsigned i = 0; i < kIterations; i++) {
     // If unspecified, the private key is bounded by q = (p-1)/2.
-    bssl::UniquePtr<DH> dh = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
+    UniquePtr<DH> dh = NewDHGroup(p.get(), /*q=*/nullptr, g.get());
     ASSERT_TRUE(dh);
     ASSERT_TRUE(DH_generate_key(dh.get()));
     EXPECT_LT(BN_cmp(DH_get0_priv_key(dh.get()), q.get()), 0);
@@ -577,3 +580,6 @@ TEST(DHTest, PrivateKeyLength) {
               BN_num_bits(DH_get0_priv_key(dh.get())));
   }
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

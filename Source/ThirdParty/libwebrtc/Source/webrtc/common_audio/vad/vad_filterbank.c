@@ -12,6 +12,7 @@
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/sanitizer.h"
 
 // Constants used in LogOfEnergy().
 static const int16_t kLogConst = 24660;          // 160*log10(2) in Q9.
@@ -79,7 +80,8 @@ static void HighPassFilter(const int16_t* data_in,
 // - filter_coefficient [i]   : Given in Q15.
 // - filter_state       [i/o] : State of the filter given in Q(-1).
 // - data_out           [o]   : Output audio signal given in Q(-1).
-static void AllPassFilter(const int16_t* data_in,
+static void RTC_NO_SANITIZE("signed-integer-overflow") // https://bugs.webrtc.org/490331112
+    AllPassFilter(const int16_t* data_in,
                           size_t data_length,
                           int16_t filter_coefficient,
                           int16_t* filter_state,

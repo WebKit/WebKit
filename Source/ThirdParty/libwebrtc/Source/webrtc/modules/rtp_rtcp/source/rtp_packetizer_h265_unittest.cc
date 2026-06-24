@@ -14,10 +14,10 @@
 #include <cstdint>
 #include <cstring>
 #include <initializer_list>
+#include <span>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_h265_common.h"
@@ -55,7 +55,7 @@ struct NalUnitHeader {
 Buffer GenerateNalUnit(NalUnitHeader header, size_t size) {
   RTC_CHECK_GT(size, 0);
   Buffer buffer = Buffer::CreateWithCapacity(size);
-  buffer.AppendData(size, [&](ArrayView<uint8_t> buffer_view) {
+  buffer.AppendData(size, [&](std::span<uint8_t> buffer_view) {
     buffer_view[0] = (header.nal_unit_type << 1) | (header.nuh_layer_id >> 5);
     buffer_view[1] = (header.nuh_layer_id << 3) | header.nuh_temporal_id_plus1;
     for (size_t i = 2; i < size; ++i) {
@@ -75,7 +75,7 @@ Buffer CreateFrame(std::initializer_list<size_t> nalu_sizes) {
   size_t size = absl::c_accumulate(nalu_sizes, size_t{0}) +
                 kStartCodeSize * nalu_sizes.size();
   Buffer frame = Buffer::CreateWithCapacity(size);
-  frame.AppendData(size, [&](ArrayView<uint8_t> frame_view) {
+  frame.AppendData(size, [&](std::span<uint8_t> frame_view) {
     size_t offset = 0;
     for (size_t nalu_size : nalu_sizes) {
       EXPECT_GE(nalu_size, 1u);
@@ -97,14 +97,14 @@ Buffer CreateFrame(std::initializer_list<size_t> nalu_sizes) {
 }
 
 // Create frame consisting of given nalus.
-Buffer CreateFrame(ArrayView<const Buffer> nalus) {
+Buffer CreateFrame(std::span<const Buffer> nalus) {
   static constexpr int kStartCodeSize = 3;
   int frame_size = 0;
   for (const Buffer& nalu : nalus) {
     frame_size += (kStartCodeSize + nalu.size());
   }
   Buffer frame = Buffer::CreateWithCapacity(frame_size);
-  frame.AppendData(frame_size, [&](ArrayView<uint8_t> frame_view) {
+  frame.AppendData(frame_size, [&](std::span<uint8_t> frame_view) {
     size_t offset = 0;
     for (const Buffer& nalu : nalus) {
       // Insert nalu start code

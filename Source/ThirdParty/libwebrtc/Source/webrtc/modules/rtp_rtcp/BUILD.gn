@@ -113,9 +113,9 @@ rtc_library("rtp_rtcp_format") {
   deps = [
     ":leb128",
     "..:module_api_public",
-    "../../api:array_view",
     "../../api:function_view",
     "../../api:refcountedbase",
+    "../../api:rtp_header_extension_id",
     "../../api:rtp_headers",
     "../../api:rtp_parameters",
     "../../api:scoped_refptr",
@@ -276,11 +276,11 @@ rtc_library("rtp_rtcp") {
     ":rtp_video_header",
     "..:module_api_public",
     "..:module_fec_api",
-    "../../api:array_view",
     "../../api:field_trials_view",
     "../../api:frame_transformer_interface",
     "../../api:function_view",
     "../../api:make_ref_counted",
+    "../../api:rtp_header_extension_id",
     "../../api:rtp_headers",
     "../../api:rtp_packet_info",
     "../../api:rtp_packet_sender",
@@ -337,7 +337,6 @@ rtc_library("rtp_rtcp") {
     "../../rtc_base:rtp_to_ntp_estimator",
     "../../rtc_base:safe_conversions",
     "../../rtc_base:safe_minmax",
-    "../../rtc_base:threading",
     "../../rtc_base:timeutils",
     "../../rtc_base/containers:flat_map",
     "../../rtc_base/experiments:field_trial_parser",
@@ -387,7 +386,6 @@ rtc_library("rtcp_transceiver") {
     ":ntp_time_util",
     ":rtp_rtcp",
     ":rtp_rtcp_format",
-    "../../api:array_view",
     "../../api:rtp_headers",
     "../../api/task_queue",
     "../../api/units:data_rate",
@@ -472,8 +470,9 @@ rtc_library("mock_rtp_rtcp") {
     ":rtp_rtcp",
     ":rtp_rtcp_format",
     "..:module_fec_api",
-    "../../api:array_view",
+    "../../api:rtp_header_extension_id",
     "../../api:rtp_headers",
+    "../../api:rtp_parameters",
     "../../api/transport:network_control",
     "../../api/units:data_rate",
     "../../api/units:time_delta",
@@ -492,9 +491,21 @@ rtc_library("rtp_packetizer_av1_test_helper") {
   ]
 }
 
+rtc_source_set("sframe_descriptor") {
+  sources = [ "source/sframe_descriptor.h" ]
+}
+
+rtc_source_set("sframe_rtp_packet_received") {
+  sources = [ "source/sframe_rtp_packet_received.h" ]
+  deps = [
+    ":rtp_rtcp_format",
+    ":sframe_descriptor",
+  ]
+}
+
 if (rtc_include_tests) {
   if (!build_with_chromium) {
-    rtc_executable("test_packet_masks_metrics") {
+    rtc_test("test_packet_masks_metrics") {
       testonly = true
 
       sources = [
@@ -505,10 +516,8 @@ if (rtc_include_tests) {
       deps = [
         ":rtp_rtcp",
         "..:module_fec_api",
-        "../../api:array_view",
         "../../rtc_base:checks",
         "../../test:fileutils",
-        "../../test:test_main",
         "../../test:test_support",
         "//testing/gtest",
       ]
@@ -637,7 +646,6 @@ if (rtc_include_tests) {
       ":rtp_video_header",
       ":rtp_video_header_unittest",
       "..:module_fec_api",
-      "../../api:array_view",
       "../../api:create_time_controller",
       "../../api:field_trials_view",
       "../../api:frame_transformer_factory",
@@ -647,6 +655,7 @@ if (rtc_include_tests) {
       "../../api:mock_frame_encryptor",
       "../../api:mock_frame_transformer",
       "../../api:mock_transformable_video_frame",
+      "../../api:rtp_header_extension_id",
       "../../api:rtp_headers",
       "../../api:rtp_packet_info",
       "../../api:rtp_packet_sender",
@@ -698,6 +707,7 @@ if (rtc_include_tests) {
       "../../test:mock_transport",
       "../../test:near_matcher",
       "../../test:rtp_test_utils",
+      "../../test:run_loop",
       "../../test:test_support",
       "../../test/time_controller",
       "../audio_coding:audio_coding_module_typedefs",
@@ -714,7 +724,6 @@ if (rtc_include_tests) {
     testonly = true
     sources = [ "source/frame_transformer_factory_unittest.cc" ]
     deps = [
-      "../../api:array_view",
       "../../api:frame_transformer_factory",
       "../../api:mock_transformable_audio_frame",
       "../../api:mock_transformable_video_frame",

@@ -5,16 +5,15 @@
     <script src="../resources/ui-helper.js"></script>
 </head>
 <script>
+    window.jsTestIsAsync = true;
     if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
 
         event = new PointerEvent('pointerdown');
         shouldBe("event.twist", "0");
 
         event = new PointerEvent('pointerdown', { twist: 50 });
         shouldBe("event.twist", "50");
-        testRunner.notifyDone();
+        finishJSTest();
     }
 </script>
 </html>

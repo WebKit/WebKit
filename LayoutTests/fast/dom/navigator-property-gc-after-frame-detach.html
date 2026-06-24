@@ -7,7 +7,7 @@
 description("Tests that Navigator properties do not get GC'd before their Navigator object.");
 jsTestIsAsync = true;
 
-var navigatorProperties = [ "geolocation", "mimeTypes", "plugins" ];
+var navigatorProperties = [ "mediaCapabilities", "geolocation", "mimeTypes", "plugins" ];
 if (navigator.serviceWorker)
     navigatorProperties.push("serviceWorker");
 

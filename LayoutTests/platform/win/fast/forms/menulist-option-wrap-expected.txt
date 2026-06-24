@@ -24,8 +24,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (97,1) size 7x19
           text run at (97,1) width 7: ": "
         RenderMenuList {SELECT} at (104,2) size 100x18 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 98x16
-            RenderText at (0,0) size 188x16
+          RenderBlock {DIV} at (1,1) size 98x16
+            RenderText {#text} at (0,0) size 188x16
               text run at (0,0) width 188: "Very long option that does not fit"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,74) size 784x22
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (84,1) size 7x19
           text run at (84,1) width 7: ": "
         RenderMenuList {SELECT} at (91,2) size 100x18 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 98x16
-            RenderText at (0,0) size 188x16
+          RenderBlock {DIV} at (1,1) size 98x16
+            RenderText {#text} at (0,0) size 188x16
               text run at (0,0) width 188: "Very long option that does not fit"
         RenderText {#text} at (0,0) size 0x0

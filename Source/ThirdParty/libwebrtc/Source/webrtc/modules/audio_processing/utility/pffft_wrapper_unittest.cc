@@ -13,14 +13,17 @@
 #include <algorithm>
 #include <cstdlib>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "third_party/pffft/src/pffft.h"
 
 namespace webrtc {
 namespace test {
 namespace {
+
+using ::testing::ElementsAreArray;
 
 constexpr size_t kMaxValidSizeCheck = 1024;
 
@@ -39,15 +42,6 @@ float* AllocateScratchBuffer(size_t fft_size, bool complex_fft) {
 
 double frand() {
   return std::rand() / static_cast<double>(RAND_MAX);
-}
-
-void ExpectArrayViewsEquality(ArrayView<const float> a,
-                              ArrayView<const float> b) {
-  ASSERT_EQ(a.size(), b.size());
-  for (size_t i = 0; i < a.size(); ++i) {
-    SCOPED_TRACE(i);
-    EXPECT_EQ(a[i], b[i]);
-  }
 }
 
 // Compares the output of the PFFFT C++ wrapper to that of the C PFFFT.
@@ -75,8 +69,8 @@ void PffftValidateWrapper(size_t fft_size, bool complex_fft) {
   auto out_wrapper = pffft_wrapper.CreateBuffer();
 
   // Input and output buffers views.
-  ArrayView<float> in_view(in, num_floats);
-  ArrayView<float> out_view(out, num_floats);
+  std::span<float> in_view(in, num_floats);
+  std::span<float> out_view(out, num_floats);
   auto in_wrapper_view = in_wrapper->GetView();
   EXPECT_EQ(in_wrapper_view.size(), num_floats);
   auto out_wrapper_view = out_wrapper->GetConstView();
@@ -91,7 +85,7 @@ void PffftValidateWrapper(size_t fft_size, bool complex_fft) {
   pffft_transform(pffft_status, in, out, scratch, PFFFT_FORWARD);
   pffft_wrapper.ForwardTransform(*in_wrapper, out_wrapper.get(),
                                  /*ordered=*/false);
-  ExpectArrayViewsEquality(out_view, out_wrapper_view);
+  EXPECT_THAT(out_wrapper_view, ElementsAreArray(out_view));
 
   // Copy the FFT results into the input buffers to compute the backward FFT.
   std::copy(out_view.begin(), out_view.end(), in_view.begin());
@@ -102,7 +96,7 @@ void PffftValidateWrapper(size_t fft_size, bool complex_fft) {
   pffft_transform(pffft_status, in, out, scratch, PFFFT_BACKWARD);
   pffft_wrapper.BackwardTransform(*in_wrapper, out_wrapper.get(),
                                   /*ordered=*/false);
-  ExpectArrayViewsEquality(out_view, out_wrapper_view);
+  EXPECT_THAT(out_wrapper_view, ElementsAreArray(out_view));
 
   pffft_destroy_setup(pffft_status);
   pffft_aligned_free(in);

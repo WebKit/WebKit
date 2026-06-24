@@ -71,13 +71,19 @@ std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSPar
 
 bool ContainerQueryParser::isValidFunctionId(CSSValueID functionId)
 {
-    return functionId == CSSValueStyle;
+    return functionId == CSSValueStyle || functionId == CSSValueScrollState;
 }
 
 const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(const AtomString& name, const MediaQueryParserContext& context, State& state)
 {
     if (state.inFunctionId == CSSValueStyle)
         return &Features::style();
+
+    if (state.inFunctionId == CSSValueScrollState) {
+        if (!context.context.cssScrollStateContainerQueriesEnabled)
+            return nullptr;
+        return Features::scrollState(name);
+    }
 
     return GenericMediaQueryParser<ContainerQueryParser>::schemaForFeatureName(name, context, state);
 }

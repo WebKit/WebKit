@@ -60,6 +60,7 @@ private:
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) override;
     Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
+    bool taintsOrigin() const override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };

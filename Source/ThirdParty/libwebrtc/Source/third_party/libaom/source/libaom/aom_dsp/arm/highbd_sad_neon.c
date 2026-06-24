@@ -77,6 +77,46 @@ static inline uint32_t highbd_sad8xh_neon(const uint8_t *src_ptr,
   return horizontal_add_u32x4(sum_u32);
 }
 
+static inline uint32_t highbd_sad16xh_neon(const uint8_t *src_ptr,
+                                           int src_stride,
+                                           const uint8_t *ref_ptr,
+                                           int ref_stride, int h) {
+  const uint16_t *src16_ptr = CONVERT_TO_SHORTPTR(src_ptr);
+  const uint16_t *ref16_ptr = CONVERT_TO_SHORTPTR(ref_ptr);
+
+  // 'h_overflow' is the number of 16-wide rows we can process before 16-bit
+  // accumulators overflow. After hitting this limit accumulate into 32-bit
+  // elements. 65535 / 4095 ~= 16, so 16 16-wide rows using two accumulators.
+  const int h_overflow = 16;
+  // If block height 'h' is smaller than this limit, use 'h' instead.
+  const int h_limit = h < h_overflow ? h : h_overflow;
+  assert(h % h_limit == 0);
+
+  uint32x4_t sum_u32 = vdupq_n_u32(0);
+
+  do {
+    uint16x8_t sum_u16[2] = { vdupq_n_u16(0), vdupq_n_u16(0) };
+    int i = h_limit;
+    do {
+      uint16x8_t s0 = vld1q_u16(src16_ptr);
+      uint16x8_t r0 = vld1q_u16(ref16_ptr);
+      sum_u16[0] = vabaq_u16(sum_u16[0], s0, r0);
+
+      uint16x8_t s1 = vld1q_u16(src16_ptr + 8);
+      uint16x8_t r1 = vld1q_u16(ref16_ptr + 8);
+      sum_u16[1] = vabaq_u16(sum_u16[1], s1, r1);
+
+      src16_ptr += src_stride;
+      ref16_ptr += ref_stride;
+    } while (--i != 0);
+
+    sum_u32 = vpadalq_u16(sum_u32, sum_u16[0]);
+    sum_u32 = vpadalq_u16(sum_u32, sum_u16[1]);
+    h -= h_limit;
+  } while (h != 0);
+  return horizontal_add_u32x4(sum_u32);
+}
+
 static inline uint32_t highbd_sadwxh_neon(const uint8_t *src_ptr,
                                           int src_stride,
                                           const uint8_t *ref_ptr,
@@ -91,7 +131,8 @@ static inline uint32_t highbd_sadwxh_neon(const uint8_t *src_ptr,
   uint32x4_t sum_u32 = vdupq_n_u32(0);
 
   do {
-    uint16x8_t sum_u16[2] = { vdupq_n_u16(0), vdupq_n_u16(0) };
+    uint16x8_t sum_u16[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
+                              vdupq_n_u16(0) };
 
     int i = h_limit;
     do {
@@ -105,7 +146,15 @@ static inline uint32_t highbd_sadwxh_neon(const uint8_t *src_ptr,
         uint16x8_t r1 = vld1q_u16(ref16_ptr + j + 8);
         sum_u16[1] = vabaq_u16(sum_u16[1], s1, r1);
 
-        j += 16;
+        uint16x8_t s2 = vld1q_u16(src16_ptr + j + 16);
+        uint16x8_t r2 = vld1q_u16(ref16_ptr + j + 16);
+        sum_u16[2] = vabaq_u16(sum_u16[2], s2, r2);
+
+        uint16x8_t s3 = vld1q_u16(src16_ptr + j + 24);
+        uint16x8_t r3 = vld1q_u16(ref16_ptr + j + 24);
+        sum_u16[3] = vabaq_u16(sum_u16[3], s3, r3);
+
+        j += 32;
       } while (j < w);
 
       src16_ptr += src_stride;
@@ -114,22 +163,12 @@ static inline uint32_t highbd_sadwxh_neon(const uint8_t *src_ptr,
 
     sum_u32 = vpadalq_u16(sum_u32, sum_u16[0]);
     sum_u32 = vpadalq_u16(sum_u32, sum_u16[1]);
+    sum_u32 = vpadalq_u16(sum_u32, sum_u16[2]);
+    sum_u32 = vpadalq_u16(sum_u32, sum_u16[3]);
 
     h -= h_limit;
   } while (h != 0);
   return horizontal_add_u32x4(sum_u32);
-}
-
-static inline uint32_t highbd_sad16xh_neon(const uint8_t *src_ptr,
-                                           int src_stride,
-                                           const uint8_t *ref_ptr,
-                                           int ref_stride, int h) {
-  // 'h_overflow' is the number of 16-wide rows we can process before 16-bit
-  // accumulators overflow. After hitting this limit accumulate into 32-bit
-  // elements. 65535 / 4095 ~= 16, so 16 16-wide rows using two accumulators.
-  const int h_overflow = 16;
-  return highbd_sadwxh_neon(src_ptr, src_stride, ref_ptr, ref_stride, 16, h,
-                            h_overflow);
 }
 
 static inline uint32_t highbd_sad32xh_neon(const uint8_t *src_ptr,
@@ -138,8 +177,8 @@ static inline uint32_t highbd_sad32xh_neon(const uint8_t *src_ptr,
                                            int ref_stride, int h) {
   // 'h_overflow' is the number of 32-wide rows we can process before 16-bit
   // accumulators overflow. After hitting this limit accumulate into 32-bit
-  // elements. 65535 / 4095 ~= 16, so 8 32-wide rows using two accumulators.
-  const int h_overflow = 8;
+  // elements. 65535 / 4095 ~= 16, so 16 32-wide rows using four accumulators.
+  const int h_overflow = 16;
   return highbd_sadwxh_neon(src_ptr, src_stride, ref_ptr, ref_stride, 32, h,
                             h_overflow);
 }
@@ -150,8 +189,8 @@ static inline uint32_t highbd_sad64xh_neon(const uint8_t *src_ptr,
                                            int ref_stride, int h) {
   // 'h_overflow' is the number of 64-wide rows we can process before 16-bit
   // accumulators overflow. After hitting this limit accumulate into 32-bit
-  // elements. 65535 / 4095 ~= 16, so 4 64-wide rows using two accumulators.
-  const int h_overflow = 4;
+  // elements. 65535 / 4095 ~= 16, so 8 64-wide rows using four accumulators.
+  const int h_overflow = 8;
   return highbd_sadwxh_neon(src_ptr, src_stride, ref_ptr, ref_stride, 64, h,
                             h_overflow);
 }
@@ -162,8 +201,8 @@ static inline uint32_t highbd_sad128xh_neon(const uint8_t *src_ptr,
                                             int ref_stride, int h) {
   // 'h_overflow' is the number of 128-wide rows we can process before 16-bit
   // accumulators overflow. After hitting this limit accumulate into 32-bit
-  // elements. 65535 / 4095 ~= 16, so 2 128-wide rows using two accumulators.
-  const int h_overflow = 2;
+  // elements. 65535 / 4095 ~= 16, so 4 128-wide rows using four accumulators.
+  const int h_overflow = 4;
   return highbd_sadwxh_neon(src_ptr, src_stride, ref_ptr, ref_stride, 128, h,
                             h_overflow);
 }

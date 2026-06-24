@@ -11,41 +11,12 @@
     'name': 'client.webrtc',
     'mixins': [],
     'machines': {
-      'Android32': {
-        'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
-          'chromium-tester-service-account'
-        ],
-        'test_suites': {
-          'gtest_tests': 'android_tests',
-          'isolated_scripts': 'android_junit_tests',
-        },
-      },
-      'Android32 (dbg)': {
-        'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
-          'chromium-tester-service-account'
-        ],
-        'test_suites': {
-          'gtest_tests': 'android_tests',
-          'isolated_scripts': 'android_junit_tests',
-        },
-      },
-      'Android32 (more configs)': {
-        'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
-          'chromium-tester-service-account'
-        ],
-        'test_suites': {
-          'gtest_tests': 'more_configs_tests',
-        },
-      },
       'Android32 Builder arm': {},
       'Android32 Builder x86': {},
       'Android32 Builder x86 (dbg)': {},
       'Android64': {
         'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
           'chromium-tester-service-account'
         ],
         'test_suites': {
@@ -55,12 +26,21 @@
       },
       'Android64 (dbg)': {
         'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
           'chromium-tester-service-account'
         ],
         'test_suites': {
           'gtest_tests': 'android_tests',
           'isolated_scripts': 'android_junit_tests',
+        },
+      },
+      'Android64 (more configs)': {
+        'mixins': [
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
+          'chromium-tester-service-account'
+        ],
+        'test_suites': {
+          'gtest_tests': 'more_configs_tests',
         },
       },
       'Android64 Builder arm64': {},
@@ -160,7 +140,6 @@
           'isolated_scripts': 'desktop_tests',
         },
       },
-      'Mac64 Builder': {},
       'Mac64 Debug': {
         'os_type': 'mac',
         'mixins': ['mac_15_x64', 'cores-12', 'resultdb-json-format'],
@@ -277,17 +256,6 @@
           'isolated_scripts': 'perf_tests_save_worst_frame',
         },
       },
-      'Perf Mac 11': {
-        'os_type':
-        'mac',
-        'mixins': [
-          'mac11', 'x86-64', 'perf-pool', 'timeout-3h',
-          'resultdb-gtest-json-format'
-        ],
-        'test_suites': {
-          'isolated_scripts': 'perf_tests_save_worst_frame',
-        },
-      },
       'Perf Mac M1 Arm64 12': {
         'os_type':
         'mac',
@@ -311,71 +279,12 @@
     },
   },
   {
-    'name': 'internal.client.webrtc',
-    'mixins': [],
-    'machines': {
-      'iOS64 Debug': {
-        'mixins': [
-          'ios-device-18', 'webrtc-xctest', 'chrome-tester-service-account',
-          'xcode_26_main', 'mac_toolchain', 'has_native_resultdb_integration',
-          'out_dir_arg'
-        ],
-        'test_suites': {
-          'isolated_scripts': 'ios_device_tests',
-        },
-      },
-      'iOS64 Perf': {
-        'mixins': [
-          'arm64', 'ios-device-perf', 'webrtc-xctest', 'timeout-3h',
-          'chrome-tester-service-account', 'xcode_26_main', 'mac_toolchain',
-          'has_native_resultdb_integration', 'out_dir_arg'
-        ],
-        'test_suites': {
-          'isolated_scripts': 'perf_tests_no_video_codec',
-        },
-        'args': [
-          '--write_perf_output_on_ios',
-        ],
-      },
-      'iOS64 Release': {
-        'mixins': [
-          'ios-device-18', 'webrtc-xctest', 'chrome-tester-service-account',
-          'xcode_26_main', 'mac_toolchain', 'has_native_resultdb_integration',
-          'out_dir_arg'
-        ],
-        'test_suites': {
-          'isolated_scripts': 'ios_device_tests',
-        },
-      },
-    },
-  },
-  {
     'name': 'tryserver.webrtc',
     'mixins': [],
     'machines': {
-      'android_arm64_dbg': {
-        'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
-          'chromium-tester-service-account'
-        ],
-        'test_suites': {
-          'gtest_tests': 'android_tests_tryserver',
-          'isolated_scripts': 'android_junit_tests',
-        },
-      },
-      'android_arm64_rel': {
-        'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
-          'chromium-tester-service-account'
-        ],
-        'test_suites': {
-          'gtest_tests': 'android_tests_tryserver',
-          'isolated_scripts': 'android_junit_tests',
-        },
-      },
       'android_arm_dbg': {
         'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
           'chromium-tester-service-account'
         ],
         'test_suites': {
@@ -385,7 +294,7 @@
       },
       'android_arm_more_configs': {
         'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
           'chromium-tester-service-account'
         ],
         'test_suites': {
@@ -394,7 +303,7 @@
       },
       'android_arm_rel': {
         'mixins': [
-          'walleye', 'android-devices', 'has_native_resultdb_integration',
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
           'chromium-tester-service-account'
         ],
         'test_suites': {
@@ -402,8 +311,6 @@
           'isolated_scripts': 'android_junit_tests',
         },
       },
-      'android_compile_arm64_dbg': {},
-      'android_compile_arm64_rel': {},
       'android_compile_arm_dbg': {},
       'android_compile_arm_rel': {},
       'android_compile_x64_dbg': {},

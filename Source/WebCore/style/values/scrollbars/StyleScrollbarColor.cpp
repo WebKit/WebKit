@@ -31,8 +31,8 @@
 #include "CSSKeywordValueInlines.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
-#include "RenderStyle.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle.h"
 
 namespace WebCore {
 namespace Style {
@@ -59,7 +59,7 @@ auto CSSValueConversion<ScrollbarColor>::operator()(BuilderState& state, const C
 
 // MARK: - Blending
 
-auto Blending<ScrollbarColor>::equals(const ScrollbarColor& a, const ScrollbarColor& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+auto Blending<ScrollbarColor>::equals(const ScrollbarColor& a, const ScrollbarColor& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     bool aAuto = a.isAuto();
     bool bAuto = b.isAuto();
@@ -79,7 +79,7 @@ auto Blending<ScrollbarColor>::canBlend(const ScrollbarColor& a, const Scrollbar
         && Style::canBlend(a.tryValue()->track, b.tryValue()->track);
 }
 
-auto Blending<ScrollbarColor>::blend(const ScrollbarColor& a, const ScrollbarColor& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> ScrollbarColor
+auto Blending<ScrollbarColor>::blend(const ScrollbarColor& a, const ScrollbarColor& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> ScrollbarColor
 {
     if (!Style::canBlend(a, b)) {
         ASSERT(!context.progress || context.progress == 1.0);

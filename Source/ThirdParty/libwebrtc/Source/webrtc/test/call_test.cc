@@ -58,6 +58,7 @@
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/task_queue_for_test.h"
+#include "rtc_base/thread.h"
 #include "test/create_test_environment.h"
 #include "test/encoder_settings.h"
 #include "test/fake_decoder.h"
@@ -99,9 +100,12 @@ CallTest::CallTest(FieldTrials field_trials)
       num_flexfec_streams_(0),
       audio_decoder_factory_(CreateBuiltinAudioDecoderFactory()),
       audio_encoder_factory_(CreateBuiltinAudioEncoderFactory()),
+      network_thread_(Thread::CreateWithSocketServer()),
       task_queue_(env_.task_queue_factory().CreateTaskQueue(
           "CallTestTaskQueue",
-          TaskQueueFactory::Priority::kNormal)) {}
+          TaskQueueFactory::Priority::kNormal)) {
+  network_thread_->Start();
+}
 
 CallTest::~CallTest() = default;
 
@@ -186,10 +190,10 @@ void CallTest::RunBaseTest(BaseTest* test) {
                              receive_transport_.get(),
                              receive_simulated_network_);
     if (test->ShouldCreateReceivers()) {
-      if (num_video_streams_ > 0)
+      network_thread()->BlockingCall([this]() {
         receiver_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
-      if (num_audio_streams_ > 0)
         receiver_call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
+      });
     } else {
       // Sender-only call delivers to itself.
       send_transport_->SetReceiver(sender_call_->Receiver());
@@ -256,7 +260,7 @@ void CallTest::RunBaseTest(BaseTest* test) {
 }
 
 CallConfig CallTest::SendCallConfig() const {
-  CallConfig sender_config(send_env_);
+  CallConfig sender_config(send_env_, network_thread_.get());
   sender_config.network_state_predictor_factory =
       network_state_predictor_factory_.get();
   sender_config.network_controller_factory = network_controller_factory_.get();
@@ -264,7 +268,7 @@ CallConfig CallTest::SendCallConfig() const {
 }
 
 CallConfig CallTest::RecvCallConfig() const {
-  return CallConfig(recv_env_);
+  return CallConfig(recv_env_, network_thread_.get());
 }
 
 void CallTest::CreateCalls() {
@@ -438,7 +442,6 @@ void CallTest::AddMatchingVideoReceiveConfigs(
     int rtp_history_ms) {
   RTC_DCHECK(!video_send_config.rtp.ssrcs.empty());
   VideoReceiveStreamInterface::Config default_config(rtcp_send_transport);
-  default_config.rtp.local_ssrc = VideoTestConstants::kReceiverLocalVideoSsrc;
   default_config.rtp.nack.rtp_history_ms = rtp_history_ms;
   // Enable RTT calculation so NTP time estimator will work.
   default_config.rtp.rtcp_xr.receiver_reference_time_report =
@@ -497,7 +500,6 @@ AudioReceiveStreamInterface::Config CallTest::CreateMatchingAudioConfig(
     Transport* transport,
     std::string sync_group) {
   AudioReceiveStreamInterface::Config audio_config;
-  audio_config.rtp.local_ssrc = VideoTestConstants::kReceiverLocalAudioSsrc;
   audio_config.rtcp_send_transport = transport;
   audio_config.rtp.remote_ssrc = send_config.rtp.ssrc;
   audio_config.decoder_factory = audio_decoder_factory;
@@ -514,7 +516,6 @@ void CallTest::CreateMatchingFecConfig(
   config.payload_type = send_config.rtp.flexfec.payload_type;
   config.remote_ssrc = send_config.rtp.flexfec.ssrc;
   config.protected_media_ssrcs = send_config.rtp.flexfec.protected_media_ssrcs;
-  config.local_ssrc = VideoTestConstants::kReceiverLocalVideoSsrc;
   if (!video_receive_configs_.empty()) {
     video_receive_configs_[0].rtp.protected_by_flexfec = true;
     video_receive_configs_[0].rtp.packet_sink_ = this;
@@ -610,7 +611,7 @@ void CallTest::CreateVideoSendStreams() {
     if (fec_controller_factory_) {
       video_send_streams_[i] = sender_call_->CreateVideoSendStream(
           video_send_configs_[i].Copy(), video_encoder_configs_[i].Copy(),
-          fec_controller_factory_->CreateFecController(send_env_));
+          nullptr, fec_controller_factory_->CreateFecController(send_env_));
     } else {
       video_send_streams_[i] = sender_call_->CreateVideoSendStream(
           video_send_configs_[i].Copy(), video_encoder_configs_[i].Copy());
@@ -650,7 +651,7 @@ void CallTest::CreateSendTransport(const BuiltInNetworkBehaviorConfig& config,
   auto network = std::make_unique<SimulatedNetwork>(config);
   send_simulated_network_ = network.get();
   send_transport_ = std::make_unique<PacketTransport>(
-      env_, task_queue(), sender_call_.get(), observer,
+      env_, network_thread_.get(), sender_call_.get(), observer,
       test::PacketTransport::kSender, payload_type_map_,
       std::make_unique<FakeNetworkPipe>(&env_.clock(), std::move(network),
                                         receiver),
@@ -663,8 +664,8 @@ void CallTest::CreateReceiveTransport(
   auto network = std::make_unique<SimulatedNetwork>(config);
   receive_simulated_network_ = network.get();
   receive_transport_ = std::make_unique<PacketTransport>(
-      env_, task_queue(), nullptr, observer, test::PacketTransport::kReceiver,
-      payload_type_map_,
+      env_, network_thread_.get(), nullptr, observer,
+      test::PacketTransport::kReceiver, payload_type_map_,
       std::make_unique<FakeNetworkPipe>(&env_.clock(), std::move(network),
                                         sender_call_->Receiver()),
       rtp_extensions_, rtp_extensions_);

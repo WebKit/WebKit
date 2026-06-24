@@ -16,11 +16,11 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_encoder.h"
@@ -31,6 +31,7 @@
 #include "api/crypto/frame_encryptor_interface.h"
 #include "api/frame_transformer_interface.h"
 #include "api/function_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
 #include "api/transport/rtp/rtp_source.h"
@@ -55,11 +56,6 @@ class MockChannelReceive : public voe::ChannelReceiveInterface {
   MOCK_METHOD(void, SetNACKStatus, (bool enable, int max_packets), (override));
   MOCK_METHOD(void, SetRtcpMode, (RtcpMode mode), (override));
   MOCK_METHOD(void, SetNonSenderRttMeasurement, (bool enabled), (override));
-  MOCK_METHOD(void,
-              RegisterReceiverCongestionControlObjects,
-              (PacketRouter*),
-              (override));
-  MOCK_METHOD(void, ResetReceiverCongestionControlObjects, (), (override));
   MOCK_METHOD(ChannelReceiveStatistics,
               GetRTCPStatistics,
               (),
@@ -128,9 +124,9 @@ class MockChannelReceive : public voe::ChannelReceiveInterface {
       SetFrameDecryptor,
       (webrtc::scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor),
       (override));
-  MOCK_METHOD(void, OnLocalSsrcChange, (uint32_t local_ssrc), (override));
   MOCK_METHOD(void, SetMaximumBufferPackets, (size_t max_packets), (override));
   MOCK_METHOD(void, SetFastAccelerate, (bool enable), (override));
+  MOCK_METHOD(uint32_t, remote_ssrc, (), (const, override));
 };
 
 class MockChannelSend : public voe::ChannelSendInterface {
@@ -153,7 +149,7 @@ class MockChannelSend : public voe::ChannelSendInterface {
   MOCK_METHOD(void, SetRTCP_CNAME, (absl::string_view c_name), (override));
   MOCK_METHOD(void,
               SetSendAudioLevelIndicationStatus,
-              (bool enable, int id),
+              (RtpHeaderExtensionId id),
               (override));
   MOCK_METHOD(void,
               RegisterSenderCongestionControlObjects,
@@ -209,7 +205,7 @@ class MockChannelSend : public voe::ChannelSendInterface {
               RegisterPacketOverhead,
               (int packet_byte_overhead),
               (override));
-  MOCK_METHOD(void, SetCsrcs, (ArrayView<const uint32_t> csrcs), (override));
+  MOCK_METHOD(void, SetCsrcs, (std::span<const uint32_t> csrcs), (override));
 };
 }  // namespace test
 }  // namespace webrtc

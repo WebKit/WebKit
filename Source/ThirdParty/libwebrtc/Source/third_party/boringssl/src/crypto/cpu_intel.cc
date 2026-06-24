@@ -31,6 +31,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 // OPENSSL_cpuid runs the cpuid instruction. |leaf| is passed in as EAX and ECX
 // is set to zero. It writes EAX, EBX, ECX, and EDX to |*out_eax| through
 // |*out_edx|.
@@ -125,7 +127,7 @@ static void handle_cpu_env(uint32_t out[2], const char *in, bool is_last) {
   }
 }
 
-void OPENSSL_adjust_ia32cap(uint32_t cap[4], const char *env) {
+void bssl::OPENSSL_adjust_ia32cap(uint32_t cap[4], const char *env) {
   // OPENSSL_ia32cap can contain zero, one or two values, separated with a ':'.
   // Each value is a 64-bit, unsigned value which may start with "0x" to
   // indicate a hex value. Prior to the 64-bit value, a '~' or '|' may be given.
@@ -146,7 +148,7 @@ void OPENSSL_adjust_ia32cap(uint32_t cap[4], const char *env) {
   }
 }
 
-void OPENSSL_cpuid_setup(void) {
+void bssl::OPENSSL_cpuid_setup() {
   // Determine the vendor and maximum input value.
   uint32_t eax, ebx, ecx, edx;
   OPENSSL_cpuid(&eax, &ebx, &ecx, &edx, 0);

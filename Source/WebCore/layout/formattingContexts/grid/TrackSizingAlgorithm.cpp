@@ -31,6 +31,7 @@
 #include "NotImplemented.h"
 #include "PlacedGridItem.h"
 #include "StyleContentAlignmentData.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TrackSizingFunctions.h"
 #include <wtf/Range.h>
 #include <wtf/Vector.h>
@@ -137,7 +138,7 @@ static FrSizeComponents computeFRSizeComponents(const UnsizedTracks& tracks, con
 // https://drafts.csswg.org/css-grid-1/#algo-find-fr-size
 // Step 4: If the product of the hypothetical fr size and a flexible track’s flex factor is less than
 // the track’s base size, restart this algorithm treating all such tracks as inflexible.
-static bool isValidFlexFactorUnit(const UnsizedTracks& tracks, LayoutUnit hypotheticalFrSize, InflexibleTrackState& state)
+static bool isValidFlexFactorUnit(const UnsizedTracks& tracks, double hypotheticalFrSize, InflexibleTrackState& state)
 {
     bool hasInvalidTracks = false;
     for (auto [index, track] : indexedRange(tracks)) {
@@ -145,11 +146,11 @@ static bool isValidFlexFactorUnit(const UnsizedTracks& tracks, LayoutUnit hypoth
             continue;
 
         auto flexFactor = track.trackSizingFunction.max.flex();
-        LayoutUnit computedSize = hypotheticalFrSize * LayoutUnit(flexFactor.value);
+        double computedSize = hypotheticalFrSize * flexFactor.value;
 
         // If the product of the hypothetical fr size and a flexible track's flex factor is less
         // than the track's base size, we should treat this track as inflexible.
-        if (computedSize < track.baseSize) {
+        if (computedSize < track.baseSize.toDouble()) {
             hasInvalidTracks = true;
             state.markAsInflexible(index);
         }
@@ -538,7 +539,7 @@ static double flexFactorSum(const FlexTracks& flexTracks)
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-find-fr-size
-static LayoutUnit findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit availableSpace, const LayoutUnit gapSize)
+static double findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit availableSpace, const LayoutUnit gapSize)
 {
     ASSERT(availableSpace >= 0_lu);
 
@@ -549,8 +550,8 @@ static LayoutUnit findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit ava
     InflexibleTrackState state;
     FrSizeComponents components;
     LayoutUnit freeSpace;
-    double flexFactorSum;
-    LayoutUnit hypotheticalFrSize;
+    double flexFactorSum = 0;
+    double hypotheticalFrSize = 0;
 
     while (true) {
         components = computeFRSizeComponents(tracks, state);
@@ -561,7 +562,7 @@ static LayoutUnit findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit ava
         // If leftover space is negative, the non-flexible tracks have already exceeded the space to fill; flex tracks should be sized to zero.
         // https://www.w3.org/TR/css-grid-1/#grid-track-concept
         if (freeSpace <= 0_lu)
-            return 0_lu;
+            return 0;
 
         // https://drafts.csswg.org/css-grid-1/#typedef-flex
         // Values between 0fr and 1fr have a somewhat special behavior: when the sum of the
@@ -572,7 +573,7 @@ static LayoutUnit findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit ava
         flexFactorSum = std::max(1.0, components.flexFactorSum);
 
         // Let the hypothetical fr size be the leftover space divided by the flex factor sum.
-        hypotheticalFrSize = freeSpace / LayoutUnit(flexFactorSum);
+        hypotheticalFrSize = freeSpace / flexFactorSum;
 
         // If the hypothetical fr size is valid for all flexible tracks, return that size.
         // Otherwise, restart the algorithm treating the invalid tracks as inflexible.
@@ -585,11 +586,11 @@ static LayoutUnit findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit ava
 
 // "... if the flexible track's flex factor is greater than one,
 // the result of dividing the track's base size by its flex factor; otherwise, the track's base size."
-static LayoutUnit NODELETE flexFractionFromTrackBaseSize(const FlexTrack& flexTrack)
+static double NODELETE flexFractionFromTrackBaseSize(const FlexTrack& flexTrack)
 {
     if (flexTrack.flexFactor.value > 1.0)
-        return flexTrack.baseSize / LayoutUnit(flexTrack.flexFactor.value);
-    return flexTrack.baseSize;
+        return flexTrack.baseSize / flexTrack.flexFactor.value;
+    return flexTrack.baseSize.toDouble();
 }
 
 static bool NODELETE itemCrossesFlexibleTrack(const UnsizedTracks& tracks, const WTF::Range<size_t>& span)
@@ -604,12 +605,26 @@ static bool NODELETE itemCrossesFlexibleTrack(const UnsizedTracks& tracks, const
 // Implements the final step of spec section 11.7:
 // "For each flexible track, if the product of the used flex fraction and the track's
 // flex factor is greater than the track's base size, set its base size to that product."
-static void NODELETE applyFlexFractionToTracks(UnsizedTracks& unsizedTracks, const FlexTracks& flexTracks, LayoutUnit flexFraction)
+static void applyFlexFractionToTracks(UnsizedTracks& unsizedTracks, const FlexTracks& flexTracks, double flexFraction)
 {
+    // Track the difference between the ideal size (float, product of the used flex fraction and the track's flex factor)
+    // and the snapped size (LayoutUnit, rounding down from ideal size).
+    double lastTrackRoundingError = 0;
     for (const auto& flexTrack : flexTracks) {
-        LayoutUnit flexSize = flexFraction * LayoutUnit(flexTrack.flexFactor.value);
-        if (flexSize > unsizedTracks[flexTrack.trackIndex].baseSize)
-            unsizedTracks[flexTrack.trackIndex].baseSize = flexSize;
+        // The target size of the flex track is the product of the used flex fraction and the track's flex factor.
+        // Carry the fraction lost when snapping the previous track so flooring errors don't accumulate.
+        double targetSize = flexFraction * flexTrack.flexFactor.value + lastTrackRoundingError;
+
+        // https://drafts.csswg.org/css-grid-2/#algo-flex-tracks
+        // For each flexible track, if the product of the used flex fraction and the track’s flex factor
+        // is greater than the track’s base size, set its base size to that product.
+        LayoutUnit snappedSize { targetSize };
+        LayoutUnit& baseSize = unsizedTracks[flexTrack.trackIndex].baseSize;
+        if (snappedSize > baseSize)
+            baseSize = snappedSize;
+
+        lastTrackRoundingError = targetSize - snappedSize.toDouble();
+        ASSERT(lastTrackRoundingError >= 0);
     }
 }
 
@@ -632,7 +647,7 @@ static void expandFlexibleTracksForMaxContent(UnsizedTracks& unsizedTracks, cons
     const TrackSizingGridItemConstraintList& oppositeAxisConstraints, const GridItemSizingFunctions& gridItemSizingFunctions)
 {
     // The used flex fraction is the maximum of:
-    LayoutUnit usedFlexFraction = 0_lu;
+    double usedFlexFraction = 0;
 
     // For each flexible track, if the flexible track's flex factor is greater than one,
     // the result of dividing the track's base size by its flex factor; otherwise, the track's base size.
@@ -647,7 +662,7 @@ static void expandFlexibleTracksForMaxContent(UnsizedTracks& unsizedTracks, cons
 
         auto maxContentContribution = gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex].gridItem, oppositeAxisConstraints[gridItemIndex]);
         auto itemTracks = unsizedTracks.subspan(gridItemSpan.begin(), gridItemSpan.distance());
-        auto candidateFlexFraction = findSizeOfFr(itemTracks, maxContentContribution, gapSize);
+        double candidateFlexFraction = findSizeOfFr(itemTracks, maxContentContribution, gapSize);
 
         usedFlexFraction = std::max(usedFlexFraction, candidateFlexFraction);
     }
@@ -675,7 +690,7 @@ static void expandFlexibleTracksForDefiniteLength(UnsizedTracks& unsizedTracks, 
     // Otherwise, if the free space is a definite length:
     // The used flex fraction is the result of finding the size of an fr using all of the
     // grid tracks and a space to fill of the available grid space (minus gutters).
-    auto frSize = findSizeOfFr(unsizedTracks, availableGridSpace.value(), gapSize);
+    double frSize = findSizeOfFr(unsizedTracks, availableGridSpace.value(), gapSize);
 
     // For each flexible track, if the product of the used flex fraction and the track's flex factor is greater than the track's base size, set its base size to that product.
     applyFlexFractionToTracks(unsizedTracks, flexTracks, frSize);

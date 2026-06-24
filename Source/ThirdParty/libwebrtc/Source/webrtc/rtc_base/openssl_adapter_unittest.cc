@@ -13,7 +13,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -26,10 +25,11 @@
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/ssl_certificate.h"
-#include "rtc_base/ssl_stream_adapter.h"           // IWYU pragma: keep
-#include "rtc_base/thread.h"
+#include "rtc_base/ssl_stream_adapter.h"  // IWYU pragma: keep
+#include "rtc_base/strings/string_builder.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"  // IWYU pragma: keep
 
 namespace webrtc {
@@ -132,20 +132,23 @@ TEST(OpenSSLAdapterTest, TestTransformAlpnProtocols) {
 
   // One protocol test.
   std::vector<std::string> alpn_protos{"h2"};
-  std::stringstream expected_response;
-  expected_response << static_cast<char>(2) << "h2";
-  EXPECT_EQ(expected_response.str(), TransformAlpnProtocols(alpn_protos));
+  StringBuilder sb;
+  sb << static_cast<char>(2) << "h2";
+  std::string expected_response = sb.Release();
+  EXPECT_EQ(expected_response, TransformAlpnProtocols(alpn_protos));
 
   // Standard protocols test (h2,http/1.1).
   alpn_protos.push_back("http/1.1");
-  expected_response << static_cast<char>(8) << "http/1.1";
-  EXPECT_EQ(expected_response.str(), TransformAlpnProtocols(alpn_protos));
+  StringBuilder sb2;
+  sb2 << static_cast<char>(2) << "h2" << static_cast<char>(8) << "http/1.1";
+  expected_response = sb2.Release();
+  EXPECT_EQ(expected_response, TransformAlpnProtocols(alpn_protos));
 }
 
 // Verifies that SSLStart works when OpenSSLAdapter is started in standalone
 // mode.
 TEST(OpenSSLAdapterTest, TestBeginSSLBeforeConnection) {
-  AutoThread main_thread;
+  test::RunLoop main_thread;
   Socket* async_socket = new MockAsyncSocket();
   OpenSSLAdapter adapter(async_socket);
   EXPECT_EQ(adapter.StartSSL("webrtc.org"), 0);
@@ -158,7 +161,7 @@ TEST(OpenSSLAdapterTest, TestBeginSSLBeforeConnection) {
 // build and run this test.
 TEST(OpenSSLAdaptorTest, TestRealSSLConnection) {
   PhysicalSocketServer socket_server;
-  AutoSocketServerThread main_thread(&socket_server);
+  test::RunLoop main_thread(&socket_server);
 
   constexpr absl::string_view kHostname = "webrtc.org";
   constexpr int kPort = 443;
@@ -213,7 +216,7 @@ TEST(OpenSSLAdaptorTest, TestRealSSLConnection) {
 
 // Verifies that the adapter factory can create new adapters.
 TEST(OpenSSLAdapterFactoryTest, CreateSingleOpenSSLAdapter) {
-  AutoThread main_thread;
+  test::RunLoop main_thread;
   OpenSSLAdapterFactory adapter_factory;
   Socket* async_socket = new MockAsyncSocket();
   auto simple_adapter = std::unique_ptr<OpenSSLAdapter>(
@@ -224,7 +227,7 @@ TEST(OpenSSLAdapterFactoryTest, CreateSingleOpenSSLAdapter) {
 // Verifies that setting a custom verifier still allows for adapters to be
 // created.
 TEST(OpenSSLAdapterFactoryTest, CreateWorksWithCustomVerifier) {
-  AutoThread main_thread;
+  test::RunLoop main_thread;
   MockCertVerifier* mock_verifier = new MockCertVerifier();
   EXPECT_CALL(*mock_verifier, Verify(_)).WillRepeatedly(Return(true));
   auto cert_verifier = std::unique_ptr<SSLCertificateVerifier>(mock_verifier);

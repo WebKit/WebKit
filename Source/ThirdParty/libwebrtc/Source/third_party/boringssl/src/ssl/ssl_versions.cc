@@ -22,7 +22,6 @@
 #include <openssl/err.h>
 #include <openssl/span.h>
 
-#include "../crypto/internal.h"
 #include "internal.h"
 
 
@@ -98,12 +97,9 @@ struct VersionInfo {
 };
 
 static const VersionInfo kVersionNames[] = {
-    {TLS1_3_VERSION, "TLSv1.3"},
-    {TLS1_2_VERSION, "TLSv1.2"},
-    {TLS1_1_VERSION, "TLSv1.1"},
-    {TLS1_VERSION, "TLSv1"},
-    {DTLS1_VERSION, "DTLSv1"},
-    {DTLS1_2_VERSION, "DTLSv1.2"},
+    {TLS1_3_VERSION, "TLSv1.3"},   {TLS1_2_VERSION, "TLSv1.2"},
+    {TLS1_1_VERSION, "TLSv1.1"},   {TLS1_VERSION, "TLSv1"},
+    {DTLS1_VERSION, "DTLSv1"},     {DTLS1_2_VERSION, "DTLSv1.2"},
     {DTLS1_3_VERSION, "DTLSv1.3"},
 };
 
@@ -156,10 +152,8 @@ static bool set_min_version(const SSL_PROTOCOL_METHOD *method, uint16_t *out,
 static bool set_max_version(const SSL_PROTOCOL_METHOD *method, uint16_t *out,
                             uint16_t version) {
   // Zero is interpreted as the default maximum version.
-  // TODO(crbug.com/42290594): Enable DTLS 1.3 by default, after it's
-  // successfully shipped in WebRTC.
   if (version == 0) {
-    *out = method->is_dtls ? DTLS1_2_VERSION : TLS1_3_VERSION;
+    *out = method->is_dtls ? DTLS1_3_VERSION : TLS1_3_VERSION;
     return true;
   }
 
@@ -355,19 +349,23 @@ BSSL_NAMESPACE_END
 using namespace bssl;
 
 int SSL_CTX_set_min_proto_version(SSL_CTX *ctx, uint16_t version) {
-  return set_min_version(ctx->method, &ctx->conf_min_version, version);
+  auto *ctx_impl = FromOpaque(ctx);
+  return set_min_version(ctx_impl->method, &ctx_impl->conf_min_version,
+                         version);
 }
 
 int SSL_CTX_set_max_proto_version(SSL_CTX *ctx, uint16_t version) {
-  return set_max_version(ctx->method, &ctx->conf_max_version, version);
+  auto *ctx_impl = FromOpaque(ctx);
+  return set_max_version(ctx_impl->method, &ctx_impl->conf_max_version,
+                         version);
 }
 
 uint16_t SSL_CTX_get_min_proto_version(const SSL_CTX *ctx) {
-  return ctx->conf_min_version;
+  return FromOpaque(ctx)->conf_min_version;
 }
 
 uint16_t SSL_CTX_get_max_proto_version(const SSL_CTX *ctx) {
-  return ctx->conf_max_version;
+  return FromOpaque(ctx)->conf_max_version;
 }
 
 int SSL_set_min_proto_version(SSL *ssl, uint16_t version) {

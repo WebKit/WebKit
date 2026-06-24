@@ -23,6 +23,7 @@
 #include "modules/portal/portal_request_response.h"
 #include "modules/portal/xdg_session_details.h"
 #include "rtc_base/system/rtc_export.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -76,6 +77,7 @@ class RTC_EXPORT BaseCapturerPipeWire
   ScreenCastPortal* GetScreenCastPortal();
 
   DesktopCaptureOptions options_ = {};
+  Clock& clock_;
   Callback* callback_ = nullptr;
   bool send_frames_immediately_ = false;
   bool capturer_failed_ = false;

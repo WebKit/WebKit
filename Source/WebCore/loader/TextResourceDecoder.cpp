@@ -40,30 +40,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// You might think we should put these find functions elsewhere, perhaps with the
-// similar functions that operate on char16_t, but arguably only the decoder has
-// a reason to process strings of char rather than char16_t.
-
-static size_t NODELETE find(std::span<const uint8_t> subject, std::span<const uint8_t> target)
-{
-    if (target.size() > subject.size())
-        return notFound;
-
-    size_t sizeDifference = subject.size() - target.size();
-    for (size_t i = 0; i < sizeDifference; ++i) {
-        bool match = true;
-        for (size_t j = 0; j < target.size(); ++j) {
-            if (subject[i + j] != target[j]) {
-                match = false;
-                break;
-            }
-        }
-        if (match)
-            return i;
-    }
-    return notFound;
-}
-
 static PAL::TextEncoding findTextEncoding(std::span<const Latin1Character> encodingName)
 {
     return StringView { encodingName };

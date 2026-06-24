@@ -77,3 +77,11 @@ WK_EXTERN NSString * const _WKMenuItemIdentifierPlayAllAnimations WK_API_AVAILAB
 WK_EXTERN NSString * const _WKMenuItemIdentifierPauseAllAnimations WK_API_AVAILABLE(macos(13.3), ios(16.4));
 WK_EXTERN NSString * const _WKMenuItemIdentifierPlayAnimation  WK_API_AVAILABLE(macos(14.0), ios(17.0));
 WK_EXTERN NSString * const _WKMenuItemIdentifierPauseAnimation  WK_API_AVAILABLE(macos(14.0), ios(17.0));
+
+WK_EXTERN NSString * const _WKMenuItemIdentifierSubstitutionsMenu WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierShowSubstitutions WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierSmartCopyPaste WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierSmartQuotes WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierSmartDashes WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierSmartLinks WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_EXTERN NSString * const _WKMenuItemIdentifierTextReplacement WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));

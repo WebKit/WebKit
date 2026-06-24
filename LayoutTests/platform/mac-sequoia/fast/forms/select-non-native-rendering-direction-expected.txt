@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 127x18
           text run at (0,0) width 127: "Left to right select: "
         RenderMenuList {SELECT} at (126,1) size 115x19 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 112x16
-            RenderText at (8,1) size 46x13
+          RenderBlock {DIV} at (1,1) size 112x16
+            RenderText {#text} at (8,1) size 46x13
               text run at (8,1) width 46: "Alabama"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,19) size 784x20
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
           text run at (657,0) width 10 RTL: ": "
           text run at (666,0) width 118: "Right to left select"
         RenderMenuList {SELECT} at (543,1) size 115x19 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 112x16
-            RenderText at (58,1) size 46x13
+          RenderBlock {DIV} at (1,1) size 112x16
+            RenderText {#text} at (58,1) size 46x13
               text run at (58,1) width 46: "Alabama"
         RenderText {#text} at (0,0) size 0x0

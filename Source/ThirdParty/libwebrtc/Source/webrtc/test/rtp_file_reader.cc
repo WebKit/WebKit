@@ -17,15 +17,18 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_util.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
+
+namespace webrtc {
+namespace test {
 
 namespace {
 constexpr size_t kRtpDumpFirstLineLength = 80;
@@ -108,9 +111,6 @@ bool ReadUint16(uint16_t* out, FILE* file) {
 }
 
 }  // namespace
-
-namespace webrtc {
-namespace test {
 
 class RtpFileReaderImpl : public RtpFileReader {
  public:
@@ -470,7 +470,7 @@ class PcapReader : public RtpFileReaderImpl {
 
   int ProcessPacket(RtpPacketMarker& marker,
                     const std::set<uint32_t>& ssrc_filter,
-                    ArrayView<const uint8_t> packet) {
+                    std::span<const uint8_t> packet) {
     if (IsRtcpPacket(packet)) {
       marker.payload_type = packet[1];
       packets_.push_back(marker);

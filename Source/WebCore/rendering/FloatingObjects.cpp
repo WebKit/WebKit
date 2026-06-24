@@ -56,7 +56,7 @@ static_assert(sizeof(CheckedPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr
 FloatingObject::FloatingObject(RenderBox& renderer)
     : m_renderer(renderer)
 {
-    UsedFloat type = RenderStyle::usedFloat(renderer);
+    UsedFloat type = Style::ComputedStyle::usedFloat(renderer);
     ASSERT(type != UsedFloat::None);
     if (type == UsedFloat::Left)
         m_type = FloatLeft;

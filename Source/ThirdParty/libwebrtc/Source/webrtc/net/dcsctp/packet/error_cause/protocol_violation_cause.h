@@ -13,11 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
 
@@ -39,7 +39,7 @@ class ProtocolViolationCause : public Parameter,
       : additional_information_(additional_information) {}
 
   static std::optional<ProtocolViolationCause> Parse(
-      webrtc::ArrayView<const uint8_t> data);
+      std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

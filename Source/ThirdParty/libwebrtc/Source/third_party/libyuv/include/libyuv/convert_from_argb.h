@@ -18,6 +18,47 @@ namespace libyuv {
 extern "C" {
 #endif
 
+// The ArgbConstants below can be used with the ARGBTo*Matrix() functions to
+// process different RGB formats. E.g., if your input is ARGB little endian
+// (bgra in memory) you'll want to use the kArgb* constants. Alternatively, if
+// your input is ABGR little endian (rgba in memory) you'd use the kAbgr* ones.
+//
+// Conversion matrix for xRGB to YUV.
+LIBYUV_API extern const struct ArgbConstants kArgbI601Constants;  // BT.601
+LIBYUV_API extern const struct ArgbConstants kArgbJPEGConstants;  // BT.601 full
+LIBYUV_API extern const struct ArgbConstants kArgbH709Constants;  // BT.709
+LIBYUV_API extern const struct ArgbConstants kArgbF709Constants;  // BT.709 full
+LIBYUV_API extern const struct ArgbConstants kArgbU2020Constants;  // BT.2020
+LIBYUV_API extern const struct ArgbConstants
+    kArgbV2020Constants;  // BT.2020 full
+
+// Conversion matrix for xBGR to YUV.
+LIBYUV_API extern const struct ArgbConstants kAbgrI601Constants;  // BT.601
+LIBYUV_API extern const struct ArgbConstants kAbgrJPEGConstants;  // BT.601 full
+LIBYUV_API extern const struct ArgbConstants kAbgrH709Constants;  // BT.709
+LIBYUV_API extern const struct ArgbConstants kAbgrF709Constants;  // BT.709 full
+LIBYUV_API extern const struct ArgbConstants kAbgrU2020Constants;  // BT.2020
+LIBYUV_API extern const struct ArgbConstants
+    kAbgrV2020Constants;  // BT.2020 full
+
+// Conversion matrix for RGBx to YUV.
+LIBYUV_API extern const struct ArgbConstants kRgbaI601Constants;  // BT.601
+LIBYUV_API extern const struct ArgbConstants kRgbaJPEGConstants;  // BT.601 full
+LIBYUV_API extern const struct ArgbConstants kRgbaH709Constants;  // BT.709
+LIBYUV_API extern const struct ArgbConstants kRgbaF709Constants;  // BT.709 full
+LIBYUV_API extern const struct ArgbConstants kRgbaU2020Constants;  // BT.2020
+LIBYUV_API extern const struct ArgbConstants
+    kRgbaV2020Constants;  // BT.2020 full
+
+// Conversion matrix from BGRx to YUV.
+LIBYUV_API extern const struct ArgbConstants kBgraI601Constants;  // BT.601
+LIBYUV_API extern const struct ArgbConstants kBgraJPEGConstants;  // BT.601 full
+LIBYUV_API extern const struct ArgbConstants kBgraH709Constants;  // BT.709
+LIBYUV_API extern const struct ArgbConstants kBgraF709Constants;  // BT.709 full
+LIBYUV_API extern const struct ArgbConstants kBgraU2020Constants;  // BT.2020
+LIBYUV_API extern const struct ArgbConstants
+    kBgraV2020Constants;  // BT.2020 full
+
 // Copy ARGB to ARGB.
 #define ARGBToARGB ARGBCopy
 LIBYUV_API
@@ -153,6 +194,20 @@ int ARGBToI444(const uint8_t* src_argb,
                int width,
                int height);
 
+// RGB to I444 with matrix. See ArgbConstants at the top of this file for usage.
+LIBYUV_API
+int ARGBToI444Matrix(const uint8_t* src_argb,
+                     int src_stride_argb,
+                     uint8_t* dst_y,
+                     int dst_stride_y,
+                     uint8_t* dst_u,
+                     int dst_stride_u,
+                     uint8_t* dst_v,
+                     int dst_stride_v,
+                     const struct ArgbConstants* argbconstants,
+                     int width,
+                     int height);
+
 // Convert ARGB to AR64.
 LIBYUV_API
 int ARGBToAR64(const uint8_t* src_argb,
@@ -189,6 +244,33 @@ int ARGBToI422(const uint8_t* src_argb,
                int dst_stride_v,
                int width,
                int height);
+
+// Convert ABGR To I422.
+LIBYUV_API
+int ABGRToI422(const uint8_t* src_abgr,
+               int src_stride_abgr,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_u,
+               int dst_stride_u,
+               uint8_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height);
+
+// RGB to I444 with matrix. See ArgbConstants at the top of this file for usage.
+LIBYUV_API
+int ARGBToI422Matrix(const uint8_t* src_argb,
+                     int src_stride_argb,
+                     uint8_t* dst_y,
+                     int dst_stride_y,
+                     uint8_t* dst_u,
+                     int dst_stride_u,
+                     uint8_t* dst_v,
+                     int dst_stride_v,
+                     const struct ArgbConstants* argbconstants,
+                     int width,
+                     int height);
 
 // Convert ARGB To I420. (also in convert.h)
 LIBYUV_API
@@ -324,6 +406,18 @@ int ARGBToNV12(const uint8_t* src_argb,
                int width,
                int height);
 
+// RGB to NV12 with matrix. See ArgbConstants at the top of this file for usage.
+LIBYUV_API
+int ARGBToNV12Matrix(const uint8_t* src_argb,
+                     int src_stride_argb,
+                     uint8_t* dst_y,
+                     int dst_stride_y,
+                     uint8_t* dst_uv,
+                     int dst_stride_uv,
+                     const struct ArgbConstants* argbconstants,
+                     int width,
+                     int height);
+
 // Convert ARGB To NV21.
 LIBYUV_API
 int ARGBToNV21(const uint8_t* src_argb,
@@ -374,6 +468,40 @@ int ARGBToUYVY(const uint8_t* src_argb,
                int dst_stride_uyvy,
                int width,
                int height);
+
+// RAW to NV21 with Matrix
+LIBYUV_API
+int RGBToNV21Matrix(const uint8_t* src_raw,
+                    int src_stride_raw,
+                    uint8_t* dst_y,
+                    int dst_stride_y,
+                    uint8_t* dst_vu,
+                    int dst_stride_vu,
+                    const struct ArgbConstants* argbconstants,
+                    int width,
+                    int height);
+
+// RAW to NV21
+LIBYUV_API
+int RAWToNV21(const uint8_t* src_raw,
+              int src_stride_raw,
+              uint8_t* dst_y,
+              int dst_stride_y,
+              uint8_t* dst_vu,
+              int dst_stride_vu,
+              int width,
+              int height);
+
+// RGB24 to NV12
+LIBYUV_API
+int RGB24ToNV12(const uint8_t* src_rgb24,
+                int src_stride_rgb24,
+                uint8_t* dst_y,
+                int dst_stride_y,
+                uint8_t* dst_uv,
+                int dst_stride_uv,
+                int width,
+                int height);
 
 // RAW to JNV21 full range NV21
 LIBYUV_API

@@ -12,8 +12,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/media_types.h"
 #include "rtc_base/checks.h"
 
@@ -24,9 +24,9 @@ FakeFrameEncryptor::FakeFrameEncryptor(uint8_t fake_key, uint8_t postfix_byte)
 // FrameEncryptorInterface implementation
 int FakeFrameEncryptor::Encrypt(MediaType /* media_type */,
                                 uint32_t /* ssrc */,
-                                ArrayView<const uint8_t> /* additional_data */,
-                                ArrayView<const uint8_t> frame,
-                                ArrayView<uint8_t> encrypted_frame,
+                                std::span<const uint8_t> /* additional_data */,
+                                std::span<const uint8_t> frame,
+                                std::span<uint8_t> encrypted_frame,
                                 size_t* bytes_written) {
   if (fail_encryption_) {
     return static_cast<int>(FakeEncryptionStatus::FORCED_FAILURE);

@@ -14,9 +14,11 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/field_trials_view.h"
 #include "api/function_view.h"
 #include "api/neteq/neteq.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
@@ -45,13 +47,45 @@ void CreateAudioEncoderNumChannelsGraph(const ParsedRtcEventLog& parsed_log,
                                         const AnalyzerConfig& config,
                                         Plot* plot);
 
+void CreatePlayoutGraph(const ParsedRtcEventLog& parsed_log,
+                        const AnalyzerConfig& config,
+                        Plot* plot);
+
+void CreateNetEqSetMinimumDelay(const ParsedRtcEventLog& parsed_log,
+                                const AnalyzerConfig& config,
+                                Plot* plot);
+
+void CreateAudioLevelGraph(const ParsedRtcEventLog& parsed_log,
+                           const AnalyzerConfig& config,
+                           PacketDirection direction,
+                           Plot* plot);
+
 using NetEqStatsGetterMap =
     std::map<uint32_t, std::unique_ptr<test::NetEqStatsGetter>>;
+
+class LazyNetEqSimulator {
+ public:
+  LazyNetEqSimulator(const ParsedRtcEventLog& parsed_log,
+                     const AnalyzerConfig& config);
+
+  void SetReplacementAudioFile(absl::string_view replacement_file_name,
+                               int file_sample_rate_hz);
+
+  const NetEqStatsGetterMap& GetStats() const;
+
+ private:
+  const ParsedRtcEventLog& parsed_log_;
+  const AnalyzerConfig config_;
+  std::string replacement_file_name_;
+  int file_sample_rate_hz_ = 48000;
+  mutable std::optional<NetEqStatsGetterMap> neteq_stats_;
+};
+
 NetEqStatsGetterMap SimulateNetEq(const ParsedRtcEventLog& parsed_log,
                                   const AnalyzerConfig& config,
                                   absl::string_view replacement_file_name,
                                   int file_sample_rate_hz,
-                                  absl::string_view field_trials);
+                                  const FieldTrialsView* field_trials);
 
 void CreateAudioJitterBufferGraph(const ParsedRtcEventLog& parsed_log,
                                   const AnalyzerConfig& config,

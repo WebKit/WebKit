@@ -120,6 +120,9 @@ struct HTTPResponse {
     HTTPResponse(HashMap<String, String>&& headerFields, const String& body)
         : headerFields(WTF::move(headerFields))
         , body(bodyFromString(body)) { }
+    HTTPResponse(HashMap<String, String>&& headerFields, NSData *data)
+        : headerFields(WTF::move(headerFields))
+        , body(makeVector(data)) { }
     HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields = { }, const String& body = { })
         : statusCode(statusCode)
         , headerFields(WTF::move(headerFields))

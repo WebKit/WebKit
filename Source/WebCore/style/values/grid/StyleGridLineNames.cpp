@@ -33,7 +33,7 @@ namespace Style {
 
 // MARK: - Serialization
 
-void Serialize<GridLineNames>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const GridLineNames& value)
+void Serialize<GridLineNames>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const GridLineNames& value)
 {
     // <line-names>          = '[' <custom-ident excluding=span,auto>* ']'
     // https://drafts.csswg.org/css-grid/#typedef-line-names

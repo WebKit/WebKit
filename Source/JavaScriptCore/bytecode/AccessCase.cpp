@@ -831,7 +831,9 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
         break;
     }
     case CustomValueGetter:
-    case CustomValueSetter: {
+    case CustomValueSetter:
+    case CustomAccessorGetter:
+    case CustomAccessorSetter: {
         auto& accessor = this->as<GetterSetterAccessCase>();
         if (accessor.customSlotBase())
             functor(accessor.customSlotBase());
@@ -856,8 +858,6 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
         if (as<InstanceOfAccessCase>().prototype())
             functor(as<InstanceOfAccessCase>().prototype());
         break;
-    case CustomAccessorGetter:
-    case CustomAccessorSetter:
     case Load:
     case LoadMegamorphic:
     case StoreMegamorphic:

@@ -13,9 +13,9 @@
 #include <bitset>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "rtc_base/bit_buffer.h"
 
@@ -24,7 +24,7 @@ class RtpDependencyDescriptorWriter {
  public:
   // Assumes `structure` and `descriptor` are valid and
   // `descriptor` matches the `structure`.
-  RtpDependencyDescriptorWriter(ArrayView<uint8_t> data,
+  RtpDependencyDescriptorWriter(std::span<uint8_t> data,
                                 const FrameDependencyStructure& structure,
                                 std::bitset<32> active_chains,
                                 const DependencyDescriptor& descriptor);

@@ -235,6 +235,8 @@ void TestScreenCastStreamProvider::RecordFrame(RgbaColor rgba_color,
     spa_data->chunk->size = 0;
   } else if (frame_defect == CorruptedData) {
     spa_data->chunk->flags = SPA_CHUNK_FLAG_CORRUPTED;
+  } else if (frame_defect == InvalidStride) {
+    spa_data->chunk->stride = spa_data->maxsize + 1;
   } else if (frame_defect == CorruptedMetadata) {
     struct spa_meta_header* spa_header =
         static_cast<spa_meta_header*>(spa_buffer_find_meta_data(

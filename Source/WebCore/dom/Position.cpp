@@ -90,7 +90,7 @@ static bool hasInlineRun(RenderObject& renderer)
 
 static Node* nextRenderedEditable(SUPPRESS_UNCHECKED_LOCAL Node* node)
 {
-    while ((node = nextLeafNode(node))) {
+    while ((node = nextLeafNode(protect(node)))) {
         CheckedPtr renderer = node->renderer();
         if (!renderer || !node->hasEditableStyle())
             continue;
@@ -102,7 +102,7 @@ static Node* nextRenderedEditable(SUPPRESS_UNCHECKED_LOCAL Node* node)
 
 static Node* previousRenderedEditable(SUPPRESS_UNCHECKED_LOCAL Node* node)
 {
-    while ((node = previousLeafNode(node))) {
+    while ((node = previousLeafNode(protect(node)))) {
         CheckedPtr renderer = node->renderer();
         if (!renderer || !node->hasEditableStyle())
             continue;
@@ -504,15 +504,15 @@ bool Position::atLastEditingPositionForNode() const
 bool Position::atEditingBoundary() const
 {
     Position nextPosition = downstream(CanCrossEditingBoundary);
-    if (atFirstEditingPositionForNode() && nextPosition.isNotNull() && !nextPosition.deprecatedNode()->hasEditableStyle())
+    if (atFirstEditingPositionForNode() && nextPosition.isNotNull() && !protect(nextPosition.deprecatedNode())->hasEditableStyle())
         return true;
-        
+
     Position prevPosition = upstream(CanCrossEditingBoundary);
-    if (atLastEditingPositionForNode() && prevPosition.isNotNull() && !prevPosition.deprecatedNode()->hasEditableStyle())
+    if (atLastEditingPositionForNode() && prevPosition.isNotNull() && !protect(prevPosition.deprecatedNode())->hasEditableStyle())
         return true;
-        
-    return nextPosition.isNotNull() && !nextPosition.deprecatedNode()->hasEditableStyle()
-        && prevPosition.isNotNull() && !prevPosition.deprecatedNode()->hasEditableStyle();
+
+    return nextPosition.isNotNull() && !protect(nextPosition.deprecatedNode())->hasEditableStyle()
+        && prevPosition.isNotNull() && !protect(prevPosition.deprecatedNode())->hasEditableStyle();
 }
 
 RefPtr<Node> Position::parentEditingBoundary() const
@@ -525,7 +525,7 @@ RefPtr<Node> Position::parentEditingBoundary() const
         return nullptr;
 
     RefPtr boundary = m_anchorNode;
-    while (boundary != documentElement && boundary->nonShadowBoundaryParentNode() && m_anchorNode->hasEditableStyle() == boundary->parentNode()->hasEditableStyle())
+    while (boundary != documentElement && boundary->nonShadowBoundaryParentNode() && protect(m_anchorNode)->hasEditableStyle() == protect(boundary->parentNode())->hasEditableStyle())
         boundary = boundary->nonShadowBoundaryParentNode();
     
     return boundary;
@@ -588,7 +588,7 @@ Position Position::previousCharacterPosition(Affinity affinity) const
     if (isNull())
         return { };
 
-    RefPtr fromRootEditableElement = deprecatedNode()->rootEditableElement();
+    RefPtr fromRootEditableElement = protect(deprecatedNode())->rootEditableElement();
 
     bool atStartOfLine = isStartOfLine(VisiblePosition(*this, affinity));
     bool rendered = isCandidate();
@@ -597,7 +597,7 @@ Position Position::previousCharacterPosition(Affinity affinity) const
     while (!currentPosition.atStartOfTree()) {
         currentPosition = currentPosition.previous();
 
-        if (currentPosition.deprecatedNode()->rootEditableElement() != fromRootEditableElement)
+        if (protect(currentPosition.deprecatedNode())->rootEditableElement() != fromRootEditableElement)
             return *this;
 
         if (atStartOfLine || !rendered) {
@@ -638,9 +638,9 @@ static bool endsOfNodeAreVisuallyDistinctPositions(Node* node)
 
 static Node* enclosingVisualBoundary(SUPPRESS_UNCHECKED_LOCAL Node* node)
 {
-    while (node && !endsOfNodeAreVisuallyDistinctPositions(node))
+    while (node && !endsOfNodeAreVisuallyDistinctPositions(protect(node)))
         node = node->parentNode();
-        
+
     return node;
 }
 
@@ -1035,16 +1035,16 @@ bool Position::isCandidate() const
 
     if (CheckedPtr block = dynamicDowncast<RenderBlock>(*renderer)) {
         if (isAnyOf<RenderBlockFlow, RenderGrid, RenderFlexibleBox>(*block)) {
-            if (block->logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || m_anchorNode->isRootEditableElement()) {
+            if (block->logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || protect(m_anchorNode)->isRootEditableElement()) {
                 if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(*block))
                     return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(node.get());
-                return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(node.get()) && atEditingBoundary();
+                return protect(m_anchorNode)->hasEditableStyle() && !Position::nodeIsUserSelectNone(node.get()) && atEditingBoundary();
             }
             return false;
         }
     }
 
-    return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(node.get()) && atEditingBoundary();
+    return protect(m_anchorNode)->hasEditableStyle() && !Position::nodeIsUserSelectNone(node.get()) && atEditingBoundary();
 }
 
 bool Position::isRenderedCharacter() const
@@ -1234,7 +1234,7 @@ static Position upstreamIgnoringEditingBoundaries(Position position)
 
 std::pair<RenderObject*, unsigned> Position::rendererAndOffset() const
 {
-    auto* node = anchorNode();
+    RefPtr node = anchorNode();
     if (!node)
         return { nullptr, 0 };
     auto* renderer = node->renderer();
@@ -1543,7 +1543,7 @@ bool Position::equals(const Position& other) const
             ASSERT(!is<Text>(*other.m_anchorNode));
             return m_anchorNode == other.m_anchorNode;
         case PositionIsOffsetInAnchor:
-            return m_anchorNode == other.m_anchorNode && m_anchorNode->countChildNodes() == static_cast<unsigned>(m_offset);
+            return m_anchorNode == other.m_anchorNode && m_anchorNode->countChildNodes() == static_cast<unsigned>(other.m_offset);
         case PositionIsBeforeAnchor:
             return false;
         case PositionIsAfterAnchor:
@@ -1698,7 +1698,7 @@ template<TreeType treeType> std::partial_ordering treeOrder(const Position& a, c
     RefPtr bContainer = b.containerNode();
 
     if (!aContainer || !bContainer) {
-        if (!commonInclusiveAncestor<treeType>(*a.anchorNode(), *b.anchorNode()))
+        if (!commonInclusiveAncestor<treeType>(*protect(a.anchorNode()), *protect(b.anchorNode())))
             return std::partial_ordering::unordered;
         if (!aContainer && !bContainer && a.anchorType() == b.anchorType())
             return std::partial_ordering::equivalent;

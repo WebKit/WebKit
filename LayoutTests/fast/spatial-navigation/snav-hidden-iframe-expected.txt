@@ -6,4 +6,7 @@ hidden iframe.
 This is link_2.
 
 PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 This test is to test that iframe with display:none does not get focus, and neither do its descendants

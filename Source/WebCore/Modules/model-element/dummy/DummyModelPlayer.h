@@ -45,7 +45,7 @@ private:
 
     // ModelPlayer overrides.
     ModelPlayerIdentifier identifier() const final { return m_id; }
-    void load(Model&, LayoutSize) override;
+    void load(Model&, LayoutSize, bool) override;
     void NODELETE configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) override;
     void NODELETE sizeDidChange(LayoutSize) override;
     void NODELETE enterFullscreen() override;

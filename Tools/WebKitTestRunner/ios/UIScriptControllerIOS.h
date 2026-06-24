@@ -146,6 +146,7 @@ private:
     void completeBackSwipe(JSValueRef) override;
     bool isShowingDataListSuggestions() const override;
     void activateDataListSuggestion(unsigned, JSValueRef) override;
+    void insertAutofillSuggestion(JSStringRef, JSStringRef, JSValueRef) override;
     void setSelectedColorForColorPicker(double, double, double) override;
     bool isShowingColorPicker() const override;
     void setKeyboardInputModeIdentifier(JSStringRef) override;

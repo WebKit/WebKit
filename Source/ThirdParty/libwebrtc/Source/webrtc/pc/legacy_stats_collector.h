@@ -114,6 +114,11 @@ class LegacyStatsCollector : public LegacyStatsCollectorInterface {
 
   bool UseStandardBytesStats() const { return use_standard_bytes_stats_; }
 
+  StatsReport* AddCertificateReportsForTest(
+      std::unique_ptr<SSLCertificateStats> cert_stats) {
+    return AddCertificateReports(std::move(cert_stats));
+  }
+
  private:
   // Struct that's populated on the network thread and carries the values to
   // the signaling thread where the stats are added to the stats reports.

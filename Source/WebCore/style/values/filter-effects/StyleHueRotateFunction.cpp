@@ -48,7 +48,7 @@ bool HueRotate::transformColor(SRGBA<float>& color) const
 
 // MARK: - Conversion
 
-auto ToCSS<HueRotate>::operator()(const HueRotate& value, const RenderStyle& style) -> CSS::HueRotate
+auto ToCSS<HueRotate>::operator()(const HueRotate& value, const Style::ComputedStyle& style) -> CSS::HueRotate
 {
     return { .value = toCSS(value.value, style) };
 }

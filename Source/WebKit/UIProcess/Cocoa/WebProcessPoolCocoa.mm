@@ -159,8 +159,6 @@
 #import <WebKitAdditions/WebProcessPoolAdditions.h>
 #endif
 
-static NSString * const WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";
-static NSString * const WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 static NSString * const WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
 static NSString * const WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEnabledDefaultsKey";
 
@@ -170,8 +168,6 @@ static CFStringRef AppleColorPreferencesChangedNotification = CFSTR("AppleColorP
 #endif
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
-
-static NSString * const WebKitMediaStreamingActivity = @"WebKitMediaStreamingActivity";
 
 #if !RELEASE_LOG_DISABLED
 static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
@@ -282,6 +278,9 @@ static AccessibilityPreferences accessibilityPreferences()
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     preferences.imageAnimationEnabled = AXPreferenceHelpers::imageAnimationEnabled();
 #endif
+#if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
+    preferences.videoAutoplayPreviewsEnabled = AXPreferenceHelpers::videoAutoplayPreviewsEnabled();
+#endif
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     preferences.prefersNonBlinkingCursor = AXPreferenceHelpers::prefersNonBlinkingCursor();
 #endif
@@ -293,12 +292,23 @@ void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
 {
     static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> mediaAccessibilityQueue = adoptOSObject(dispatch_queue_create("MediaAccessibility queue", DISPATCH_QUEUE_SERIAL));
 
-    dispatch_async(mediaAccessibilityQueue.get().get(), [weakProcess = WeakPtr { process }] {
+    dispatch_async(mediaAccessibilityQueue.get().get(), [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }] mutable {
         auto captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
         auto preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
-        callOnMainRunLoop([weakProcess, captionDisplayMode, preferredLanguages = crossThreadCopy(WTF::move(preferredLanguages))] {
-            if (weakProcess)
-                weakProcess->send(Messages::WebProcess::SetMediaAccessibilityPreferences(captionDisplayMode, preferredLanguages), 0);
+        callOnMainRunLoop([weakThis = WTF::move(weakThis), weakProcess, captionDisplayMode, preferredLanguages = crossThreadCopy(WTF::move(preferredLanguages))] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || !weakProcess)
+                return;
+
+            if (captionDisplayMode != protectedThis->m_captionDisplayMode) {
+                protectedThis->m_captionDisplayMode = captionDisplayMode;
+                weakProcess->send(Messages::WebProcess::SetMediaAccessibilityPreferredCaptionDisplayMode(captionDisplayMode), 0);
+            }
+
+            if (preferredLanguages != protectedThis->m_preferredLanguages) {
+                protectedThis->m_preferredLanguages = preferredLanguages;
+                weakProcess->send(Messages::WebProcess::SetMediaAccessibilityPreferredLanguages(preferredLanguages), 0);
+            }
         });
     });
 }
@@ -349,11 +359,10 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
         installMemoryPressureHandler();
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-    if (!_MGCacheValid()) {
-        dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (!_MGCacheValid())
             [adoptNS([[objc_getClass("MobileGestaltHelperProxy") alloc] init]) proxyRebuildCache];
-        });
-    }
+    });
 #endif
 
 #if PLATFORM(MAC)
@@ -477,10 +486,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
     parameters.localizedDeviceModel = localizedDeviceModel();
     parameters.contentSizeCategory = contentSizeCategory();
-    parameters.containerTemporaryDirectory = WebsiteDataStore::defaultResolvedContainerTemporaryDirectory();
 #endif
-
-    parameters.mobileGestaltExtensionHandle = process.createMobileGestaltSandboxExtensionIfNeeded();
 
 #if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
@@ -654,7 +660,14 @@ void WebProcessPool::mediaAccessibilityPreferencesChangedCallback(CFNotification
         return;
     auto captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
     auto preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
-    pool->sendToAllProcesses(Messages::WebProcess::SetMediaAccessibilityPreferences(captionDisplayMode, preferredLanguages));
+    if (captionDisplayMode != pool->m_captionDisplayMode) {
+        pool->m_captionDisplayMode = captionDisplayMode;
+        pool->sendToAllProcesses(Messages::WebProcess::SetMediaAccessibilityPreferredCaptionDisplayMode(captionDisplayMode));
+    }
+    if (preferredLanguages != pool->m_preferredLanguages) {
+        pool->m_preferredLanguages = preferredLanguages;
+        pool->sendToAllProcesses(Messages::WebProcess::SetMediaAccessibilityPreferredLanguages(preferredLanguages));
+    }
 }
 #endif
 
@@ -991,6 +1004,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (canLoadkAXSReduceMotionAutoplayAnimatedImagesChangedNotification())
         addCFNotificationObserver(accessibilityPreferencesChangedCallback, getkAXSReduceMotionAutoplayAnimatedImagesChangedNotificationSingleton());
 #endif
+#if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
+    addCFNotificationObserver(accessibilityPreferencesChangedCallback, (__bridge CFStringRef)UIAccessibilityVideoAutoplayStatusDidChangeNotification, CFNotificationCenterGetLocalCenterSingleton());
+#endif
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSPrefersNonBlinkingCursorIndicatorDidChangeNotification);
 #endif
@@ -1093,13 +1109,6 @@ void WebProcessPool::setNotifyState(const String& name, int status, uint64_t sta
 }
 
 #endif
-
-bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
-{
-    RetainPtr<CFURLRef> url = URL { urlString }.createCFURL();
-
-    return _CFNetworkIsKnownHSTSHostWithSession(url.get(), nullptr);
-}
 
 // FIXME: Deprecated. Left here until a final decision is made.
 void WebProcessPool::setCookieStoragePartitioningEnabled(bool enabled)
@@ -1288,8 +1297,10 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
 }
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
 
-void WebProcessPool::screenPropertiesChanged()
+void WebProcessPool::screenPropertiesUpdateTimerFired()
 {
+    m_lastScreenPropertiesUpdateTime = ApproximateTime::now();
+
     auto screenProperties = WebCore::collectScreenProperties();
 #if HAVE(SUPPORT_HDR_DISPLAY)
     if (m_suppressEDR) {
@@ -1301,6 +1312,7 @@ void WebProcessPool::screenPropertiesChanged()
         }
     }
 #endif
+
     sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
 
 #if PLATFORM(MAC) && ENABLE(GPU_PROCESS)
@@ -1309,26 +1321,43 @@ void WebProcessPool::screenPropertiesChanged()
 #endif
 }
 
-#if PLATFORM(MAC)
-void WebProcessPool::displayPropertiesChanged(const WebCore::ScreenProperties& screenProperties, WebCore::PlatformDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+void WebProcessPool::screenPropertiesChanged()
 {
-    sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
+    static const Seconds debounceInterval = []() -> Seconds {
+        if (auto value = dynamic_cf_cast<CFNumberRef>(adoptCF(CFPreferencesCopyAppValue(CFSTR("WebKitDebugScreenPropertiesDebounceInterval"), kCFPreferencesCurrentApplication)))) {
+            float floatValue = 0;
+            if (CFNumberGetValue(value.get(), kCFNumberFloatType, &floatValue))
+                return Seconds(floatValue);
+        }
+        return 250_ms;
+    }();
 
+    if (m_screenPropertiesUpdateTimer.isActive())
+        return;
+
+    auto elapsed = ApproximateTime::now() - m_lastScreenPropertiesUpdateTime;
+    if (elapsed >= debounceInterval) {
+        screenPropertiesUpdateTimerFired();
+        return;
+    }
+
+    m_screenPropertiesUpdateTimer.startOneShot(debounceInterval - elapsed);
+}
+
+#if PLATFORM(MAC)
+void WebProcessPool::displayPropertiesChanged(WebCore::PlatformDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+{
     if (auto* displayLink = displayLinks().existingDisplayLinkForDisplay(displayID))
         displayLink->displayPropertiesChanged();
 
-#if ENABLE(GPU_PROCESS)
-    if (RefPtr gpuProcess = this->gpuProcess())
-        gpuProcess->setScreenProperties(screenProperties);
-#endif
+    screenPropertiesChanged();
 }
 
 static void displayReconfigurationCallBack(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
     RunLoop::mainSingleton().dispatch([displayID, flags]() {
-        auto screenProperties = WebCore::collectScreenProperties();
         for (auto& processPool : WebProcessPool::allProcessPools())
-            processPool->displayPropertiesChanged(screenProperties, displayID, flags);
+            processPool->displayPropertiesChanged(displayID, flags);
     });
 }
 
@@ -1345,9 +1374,8 @@ void WebProcessPool::registerDisplayConfigurationCallback()
 static void webProcessPoolHighDynamicRangeDidChangeCallback(CFNotificationCenterRef, void*, CFNotificationName, const void*, CFDictionaryRef)
 {
     RunLoop::mainSingleton().dispatch([] {
-        auto properties = WebCore::collectScreenProperties();
         for (auto& pool : WebProcessPool::allProcessPools())
-            pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
+            pool->screenPropertiesChanged();
     });
 }
 
@@ -1386,9 +1414,8 @@ void WebProcessPool::systemDidWake()
 void WebProcessPool::registerHighDynamicRangeChangeCallback()
 {
     static NeverDestroyed<LowPowerModeNotifier> notifier { [](bool) {
-        auto properties = WebCore::collectScreenProperties();
         for (auto& pool : WebProcessPool::allProcessPools())
-            pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
+            pool->screenPropertiesChanged();
     } };
 }
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
@@ -1397,7 +1424,8 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
 void WebProcessPool::didRefreshDisplay()
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    float headroom = currentEDRHeadroomForDisplay(primaryScreenDisplayID());
+    Ref screen = PlatformScreen::singleton();
+    float headroom = currentEDRHeadroomForDisplay(screen->primaryScreenDisplayID());
     if (m_currentEDRHeadroom != headroom) {
         m_currentEDRHeadroom = headroom;
         screenPropertiesChanged();

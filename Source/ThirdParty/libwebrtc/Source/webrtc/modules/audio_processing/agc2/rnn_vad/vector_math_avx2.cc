@@ -10,7 +10,8 @@
 
 #include <immintrin.h>
 
-#include "api/array_view.h"
+#include <span>
+
 #include "modules/audio_processing/agc2/rnn_vad/vector_math.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -18,8 +19,8 @@
 namespace webrtc {
 namespace rnn_vad {
 
-float VectorMath::DotProductAvx2(ArrayView<const float> x,
-                                 ArrayView<const float> y) const {
+float VectorMath::DotProductAvx2(std::span<const float> x,
+                                 std::span<const float> y) const {
   RTC_DCHECK(cpu_features_.avx2);
   RTC_DCHECK_EQ(x.size(), y.size());
   __m256 accumulator = _mm256_setzero_ps();

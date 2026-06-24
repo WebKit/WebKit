@@ -1,4 +1,22 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Query condition should be valid: scroll-state(stuck)
+PASS Query condition should be valid: scroll-state(stuck: none)
+PASS Query condition should be valid: scroll-state(stuck: top)
+PASS Query condition should be valid: scroll-state(stuck: left)
+PASS Query condition should be valid: scroll-state(stuck: bottom)
+PASS Query condition should be valid: scroll-state(stuck: right)
+PASS Query condition should be valid: scroll-state(stuck: block-start)
+PASS Query condition should be valid: scroll-state(stuck: block-end)
+PASS Query condition should be valid: scroll-state(stuck: inline-start)
+PASS Query condition should be valid: scroll-state(stuck: inline-end)
+PASS Query condition should be valid: (scroll-state(stuck: top))
+PASS Query condition should be valid: scroll-state((stuck: top))
+PASS Query condition should be valid: scroll-state(not ((stuck: top) and (stuck: bottom)))
+PASS Query condition should be valid: scroll-state((stuck: right) or (stuck: left))
+PASS Query condition should be valid but unknown: scroll-state(stuck: auto)
+PASS Query condition should be valid but unknown: scroll-state(stuck: true)
+PASS Query condition should be valid but unknown: scroll-state(style(stuck: top))
+PASS Query condition should be valid but unknown: style(scroll-state(stuck: top))
+PASS Query condition should be valid but unknown: scroll-state(stuck:)
+PASS Query condition should be valid but unknown: scroll-state(--foo)
 

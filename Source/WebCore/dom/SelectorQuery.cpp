@@ -241,12 +241,12 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Containe
 
     const AtomString& idToMatch = idSelector->value();
     if (rootNode.treeScope().containsMultipleElementsWithId(idToMatch)) [[unlikely]] {
-        auto* elements = rootNode.treeScope().getAllElementsById(idToMatch);
+        auto* elements = protect(rootNode.treeScope())->getAllElementsById(idToMatch);
         ASSERT(elements);
         bool rootNodeIsTreeScopeRoot = rootNode.isTreeScope();
         for (auto& element : *elements) {
-            if ((rootNodeIsTreeScopeRoot || element->isDescendantOf(rootNode)) && selectorMatches(selectorData, element, rootNode)) {
-                appendOutputForElement(output, element);
+            if ((rootNodeIsTreeScopeRoot || element->isDescendantOf(rootNode)) && selectorMatches(selectorData, protect(element), rootNode)) {
+                appendOutputForElement(output, protect(element));
                 if constexpr (std::is_same_v<OutputType, Element*>)
                     return;
             }
@@ -254,7 +254,7 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Containe
         return;
     }
 
-    RefPtr element = rootNode.treeScope().getElementById(idToMatch);
+    RefPtr element = protect(rootNode.treeScope())->getElementById(idToMatch);
     if (!element || !(rootNode.isTreeScope() || element->isDescendantOf(rootNode)))
         return;
     if (selectorMatches(selectorData, *element, rootNode))
@@ -282,7 +282,7 @@ static Ref<ContainerNode> filterRootById(ContainerNode& rootNode, const CSSSelec
     for (; selector; selector = selector->precedingInComplexSelector()) {
         if (canBeUsedForIdFastPath(*selector)) {
             const AtomString& idToMatch = selector->value();
-            if (RefPtr<ContainerNode> searchRoot = rootNode.treeScope().getElementById(idToMatch)) {
+            if (RefPtr<ContainerNode> searchRoot = protect(rootNode.treeScope())->getElementById(idToMatch)) {
                 if (!rootNode.treeScope().containsMultipleElementsWithId(idToMatch)) [[likely]] {
                     if (inAdjacentChain)
                         searchRoot = searchRoot->parentNode();
@@ -440,7 +440,7 @@ ALWAYS_INLINE void SelectorDataList::executeSingleAttributeExactSelectorData(con
 
             if (!foundFirstMatch && rootNode.isDocumentNode()) {
                 foundFirstMatch = true;
-                rootNode.document().setCachedFirstElementWithAttribute(selectorAttribute, element);
+                protect(rootNode.document())->setCachedFirstElementWithAttribute(selectorAttribute, element);
             }
 
             if (selectorValue == attribute.value()) {

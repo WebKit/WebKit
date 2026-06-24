@@ -64,7 +64,7 @@ static bool shouldSuspendRepaintForChildren(const LegacyRenderSVGContainer& cont
     return numberOfChildren >= minimumRequiredChildren;
 }
 
-LegacyRenderSVGContainer::LegacyRenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
+LegacyRenderSVGContainer::LegacyRenderSVGContainer(Type type, SVGElement& element, Style::ComputedStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
     : LegacyRenderSVGModelObject(type, element, WTF::move(style), svgFlags | SVGModelObjectFlag::IsContainer | SVGModelObjectFlag::UsesBoundaryCaching)
 {
 }
@@ -176,7 +176,7 @@ void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
     }
 }
 
-// addFocusRingRects is called from paintOutline and needs to be in the same coordinates as the paintOuline call
+// addFocusRingRects is called from paintOutline and needs to be in the same coordinates as the paintOutline call
 void LegacyRenderSVGContainer::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&, const RenderLayerModelObject*) const
 {
     LayoutRect paintRectInParent = LayoutRect(localToParentTransform().mapRect(repaintRectInLocalCoordinates()));

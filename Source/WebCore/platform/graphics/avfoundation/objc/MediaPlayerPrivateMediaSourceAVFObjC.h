@@ -309,7 +309,7 @@ private:
     void updateStateFromReadyState();
     void mediaSourceHasRetrievedAllData() final;
 
-    bool supportsProgressMonitoring() const final { return false; }
+    bool supportsProgressMonitoring() const final;
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const final { return true; }
@@ -317,6 +317,7 @@ private:
 
     friend class MediaSourcePrivateAVFObjC;
     void bufferedChanged();
+    void resetStallForTime(const MediaTime&);
     void stall();
     void timeChanged();
 
@@ -359,6 +360,7 @@ private:
     const Ref<NativePromiseRequest> m_waitForTargetRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
     const Ref<NativePromiseRequest> m_rendererPrepareSeekRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
     const Ref<NativePromiseRequest> m_rendererFinishSeekRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
+    const Ref<NativePromiseRequest> m_stallRequest WTF_GUARDED_BY_CAPABILITY(mainThread);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     ThreadSafeWeakPtr<CDMSessionAVContentKeySession> m_session;
@@ -375,7 +377,6 @@ private:
     bool m_allRenderersHaveAvailableSamples WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     bool m_pageIsVisible WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     ViewportVisibility m_viewportVisibility WTF_GUARDED_BY_CAPABILITY(mainThread) { ViewportVisibility::NotVisible };
-    RetainPtr<CVOpenGLTextureRef> m_lastTexture WTF_GUARDED_BY_CAPABILITY(mainThread);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget WTF_GUARDED_BY_CAPABILITY(mainThread);
     bool m_shouldPlayToTarget WTF_GUARDED_BY_CAPABILITY(mainThread) { false };

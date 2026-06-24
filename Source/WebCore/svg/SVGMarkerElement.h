@@ -82,8 +82,8 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool rendererIsNeeded(const RenderStyle&) override { return true; }
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
+    bool rendererIsNeeded(const Style::ComputedStyle&) override { return true; }
 
     bool needsPendingResourceHandling() const override { return false; }
 

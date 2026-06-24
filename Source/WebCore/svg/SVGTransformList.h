@@ -59,7 +59,7 @@ public:
     ExceptionOr<RefPtr<SVGTransform>> consolidate();
     std::optional<AffineTransform> NODELETE concatenate() const;
 
-    void parse(StringView);
+    bool parse(StringView);
     String valueAsString() const override;
 
     static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringView);

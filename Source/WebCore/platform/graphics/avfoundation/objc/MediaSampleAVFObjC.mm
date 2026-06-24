@@ -228,13 +228,7 @@ void MediaSampleAVFObjC::setTimestamps(const WTF::MediaTime &presentationTimesta
 
 bool MediaSampleAVFObjC::isDivisable() const
 {
-    if (PAL::CMSampleBufferGetNumSamples(m_sample.get()) == 1)
-        return false;
-
-    if (PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 0, nullptr, nullptr) == kCMSampleBufferError_BufferHasNoSampleSizes)
-        return false;
-
-    return true;
+    return PAL::CMSampleBufferGetNumSamples(m_sample.get()) > 1;
 }
 
 Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divide()
@@ -246,10 +240,11 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divide()
 
     Vector<Ref<MediaSampleAVFObjC>> samples;
     samples.reserveInitialCapacity(numSamples);
-    PAL::CMSampleBufferCallBlockForEachSample(m_sample.get(), [&samples, id = m_id] (CMSampleBufferRef sampleBuffer, CMItemCount) -> OSStatus {
+    if (forEachSample(m_sample.get(), [&samples, id = m_id] (CMSampleBufferRef sampleBuffer, CMItemCount) -> OSStatus {
         samples.append(MediaSampleAVFObjC::create(sampleBuffer, id));
         return noErr;
-    });
+    }) != noErr)
+        return { };
     return samples;
 }
 
@@ -260,7 +255,7 @@ std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(c
 
     CFIndex samplesBeforePresentationTime = 0;
 
-    PAL::CMSampleBufferCallBlockForEachSample(m_sample.get(), [&] (CMSampleBufferRef sampleBuffer, CMItemCount) -> OSStatus {
+    if (forEachSample(m_sample.get(), [&] (CMSampleBufferRef sampleBuffer, CMItemCount) -> OSStatus {
         auto timeStamp = PAL::CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer);
         if (CMTIME_IS_INVALID(timeStamp))
             timeStamp = PAL::CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
@@ -276,7 +271,8 @@ std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(c
             return 1;
         ++samplesBeforePresentationTime;
         return noErr;
-    });
+    }) == kCMSampleBufferError_CannotSubdivide)
+        return { nullptr, nullptr };
 
     if (!samplesBeforePresentationTime)
         return { nullptr, this };
@@ -285,17 +281,13 @@ std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(c
     if (samplesBeforePresentationTime >= sampleCount)
         return { this, nullptr };
 
-    CMSampleBufferRef rawSampleBefore = nullptr;
-    CFRange rangeBefore = CFRangeMake(0, samplesBeforePresentationTime);
-    if (PAL::CMSampleBufferCopySampleBufferForRange(kCFAllocatorDefault, m_sample.get(), rangeBefore, &rawSampleBefore) != noErr)
+    RetainPtr sampleBefore = copySampleBufferForRange(m_sample.get(), CFRangeMake(0, samplesBeforePresentationTime));
+    if (!sampleBefore)
         return { nullptr, nullptr };
-    RetainPtr<CMSampleBufferRef> sampleBefore = adoptCF(rawSampleBefore);
 
-    CMSampleBufferRef rawSampleAfter = nullptr;
-    CFRange rangeAfter = CFRangeMake(samplesBeforePresentationTime, sampleCount - samplesBeforePresentationTime);
-    if (PAL::CMSampleBufferCopySampleBufferForRange(kCFAllocatorDefault, m_sample.get(), rangeAfter, &rawSampleAfter) != noErr)
+    RetainPtr sampleAfter = copySampleBufferForRange(m_sample.get(), CFRangeMake(samplesBeforePresentationTime, sampleCount - samplesBeforePresentationTime));
+    if (!sampleAfter)
         return { nullptr, nullptr };
-    RetainPtr<CMSampleBufferRef> sampleAfter = adoptCF(rawSampleAfter);
 
     return { MediaSampleAVFObjC::create(sampleBefore.get(), m_id), MediaSampleAVFObjC::create(sampleAfter.get(), m_id) };
 }
@@ -304,13 +296,8 @@ Ref<MediaSample> MediaSampleAVFObjC::createCopyWithAdjustedStartTime(const Media
 {
     MediaTime clampedOffset = std::max(MediaTime::zeroTime(), std::min(offset, duration()));
 
-    CMItemCount itemCount = 0;
-    if (noErr != PAL::CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), 0, nullptr, &itemCount))
-        return const_cast<MediaSampleAVFObjC&>(*this);
-
-    Vector<CMSampleTimingInfo> timingInfoArray;
-    timingInfoArray.grow(itemCount);
-    if (noErr != PAL::CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), itemCount, timingInfoArray.mutableSpan().data(), nullptr))
+    auto timingInfoArray = getSampleTimingInfoArray(m_sample.get());
+    if (timingInfoArray.isEmpty())
         return const_cast<MediaSampleAVFObjC&>(*this);
 
     CMTime cmOffset = PAL::toCMTime(clampedOffset);
@@ -329,7 +316,7 @@ Ref<MediaSample> MediaSampleAVFObjC::createCopyWithAdjustedStartTime(const Media
     }
 
     CMSampleBufferRef newSampleBuffer = nullptr;
-    if (noErr != PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.span().data(), &newSampleBuffer) || !newSampleBuffer)
+    if (noErr != PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), timingInfoArray.size(), timingInfoArray.span().data(), &newSampleBuffer) || !newSampleBuffer)
         return const_cast<MediaSampleAVFObjC&>(*this);
 
     return MediaSampleAVFObjC::create(adoptCF(newSampleBuffer).get(), m_id);
@@ -418,11 +405,11 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
 
     SampleVector samples;
     samples.reserveInitialCapacity(ranges.size());
-    for (auto& range : ranges) {
-        CMSampleBufferRef rawSample = nullptr;
-        if (PAL::CMSampleBufferCopySampleBufferForRange(kCFAllocatorDefault, m_sample.get(), range, &rawSample) != noErr || !rawSample)
+    for (const auto& range : ranges) {
+        RetainPtr subSample = copySampleBufferForRange(m_sample.get(), range);
+        if (!subSample)
             return { };
-        samples.append(MediaSampleAVFObjC::create(adoptCF(rawSample).get(), m_id));
+        samples.append(MediaSampleAVFObjC::create(subSample.get(), m_id));
     }
     return samples;
 }

@@ -537,14 +537,6 @@ angle::Result TextureD3D::generateMipmap(const gl::Context *context)
     const GLuint maxLevel  = mState.getMipmapMaxLevel();
     ASSERT(maxLevel > baseLevel);  // Should be checked before calling this.
 
-    if (mTexStorage && mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        // Switch to using the mipmapped texture.
-        TextureStorage *textureStorageEXT = nullptr;
-        ANGLE_TRY(getNativeTexture(context, &textureStorageEXT));
-        ANGLE_TRY(textureStorageEXT->useLevelZeroWorkaroundTexture(context, false));
-    }
-
     // Set up proper mipmap chain in our Image array.
     ANGLE_TRY(initMipmapImages(context));
 
@@ -602,15 +594,7 @@ angle::Result TextureD3D::generateMipmapUsingImages(const gl::Context *context,
         }
     }
 
-    // TODO: Decouple this from zeroMaxLodWorkaround. This is a 9_3 restriction, unrelated to
-    // zeroMaxLodWorkaround. The restriction is because Feature Level 9_3 can't create SRVs on
-    // individual levels of the texture. As a result, even if the storage is a rendertarget, we
-    // can't use the GPU to generate the mipmaps without further work. The D3D9 renderer works
-    // around this by copying each level of the texture into its own single-layer GPU texture (in
-    // Blit9::boxFilter). Feature Level 9_3 could do something similar, or it could continue to use
-    // CPU-side mipmap generation, or something else.
-    bool renderableStorage = (mTexStorage && mTexStorage->isRenderTarget() &&
-                              !(mRenderer->getFeatures().zeroMaxLodWorkaround.enabled));
+    bool renderableStorage = (mTexStorage && mTexStorage->isRenderTarget());
     if (renderableStorage)
     {
         ANGLE_TRY(updateStorage(context));
@@ -928,11 +912,9 @@ angle::Result TextureD3D::initializeContents(const gl::Context *context,
     }
 
     // Fast path: can use a render target clear.
-    // We don't use the fast path with the zero max lod workaround because it would introduce a race
-    // between the rendertarget and the staging images.
     const angle::FeaturesD3D &features = mRenderer->getFeatures();
     bool shouldUseClear                = (image == nullptr);
-    if (canCreateRenderTargetForImage(index) && !features.zeroMaxLodWorkaround.enabled &&
+    if (canCreateRenderTargetForImage(index) &&
         (shouldUseClear || features.allowClearForRobustResourceInit.enabled))
     {
         ANGLE_TRY(ensureRenderTarget(context));
@@ -1260,10 +1242,7 @@ angle::Result TextureD3D_2D::copyImage(const gl::Context *context,
 
     gl::Offset destOffset(clippedArea.x - sourceArea.x, clippedArea.y - sourceArea.y, 0);
 
-    // If the zero max LOD workaround is active, then we can't sample from individual layers of the
-    // framebuffer in shaders, so we should use the non-rendering copy path.
-    if (!canCreateRenderTargetForImage(index) ||
-        mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
+    if (!canCreateRenderTargetForImage(index))
     {
         ANGLE_TRY(mImageArray[index.getLevelIndex()]->copyFromFramebuffer(context, destOffset,
                                                                           clippedArea, source));
@@ -1307,10 +1286,7 @@ angle::Result TextureD3D_2D::copySubImage(const gl::Context *context,
     // height) and the current level we're copying to is defined (with appropriate format, width &
     // height)
 
-    // If the zero max LOD workaround is active, then we can't sample from individual layers of the
-    // framebuffer in shaders, so we should use the non-rendering copy path.
-    if (!canCreateRenderTargetForImage(index) ||
-        mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
+    if (!canCreateRenderTargetForImage(index))
     {
         ANGLE_TRY(mImageArray[index.getLevelIndex()]->copyFromFramebuffer(context, clippedOffset,
                                                                           clippedArea, source));
@@ -1488,7 +1464,7 @@ angle::Result TextureD3D_2D::setStorage(const gl::Context *context,
     flags.renderTarget        = IsRenderTargetUsage(mState.getUsage());
     TexStoragePointer storage = {
         mRenderer->createTextureStorage2D(internalFormat, flags, size.width, size.height,
-                                          static_cast<int>(levels), mState.getLabel(), false),
+                                          static_cast<int>(levels), mState.getLabel()),
         context};
 
     ANGLE_TRY(setCompleteTexStorage(context, storage.get()));
@@ -1698,21 +1674,9 @@ angle::Result TextureD3D_2D::createCompleteStorage(const gl::Context *context,
     // use existing storage level count, when previously specified by TexStorage*D
     GLint levels = (mTexStorage ? mTexStorage->getLevelCount() : creationLevels(width, height, 1));
 
-    bool hintLevelZeroOnly = false;
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        // If any of the CPU images (levels >= 1) are dirty, then the textureStorage2D should use
-        // the mipped texture to begin with. Otherwise, it should use the level-zero-only texture.
-        hintLevelZeroOnly = true;
-        for (int level = 1; level < levels && hintLevelZeroOnly; level++)
-        {
-            hintLevelZeroOnly = !(mImageArray[level]->isDirty() && isLevelComplete(level));
-        }
-    }
-
     // TODO(geofflang): Determine if the texture creation succeeded
     *outStorage = {mRenderer->createTextureStorage2D(internalFormat, bindFlags, width, height,
-                                                     levels, mState.getLabel(), hintLevelZeroOnly),
+                                                     levels, mState.getLabel()),
                    context};
 
     return angle::Result::Continue;
@@ -2046,10 +2010,7 @@ angle::Result TextureD3D_Cube::copyImage(const gl::Context *context,
 
     gl::Offset destOffset(clippedArea.x - sourceArea.x, clippedArea.y - sourceArea.y, 0);
 
-    // If the zero max LOD workaround is active, then we can't sample from individual layers of the
-    // framebuffer in shaders, so we should use the non-rendering copy path.
-    if (!canCreateRenderTargetForImage(index) ||
-        mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
+    if (!canCreateRenderTargetForImage(index))
     {
         ANGLE_TRY(mImageArray[faceIndex][index.getLevelIndex()]->copyFromFramebuffer(
             context, destOffset, clippedArea, source));
@@ -2091,10 +2052,7 @@ angle::Result TextureD3D_Cube::copySubImage(const gl::Context *context,
 
     GLint faceIndex = index.cubeMapFaceIndex();
 
-    // If the zero max LOD workaround is active, then we can't sample from individual layers of the
-    // framebuffer in shaders, so we should use the non-rendering copy path.
-    if (!canCreateRenderTargetForImage(index) ||
-        mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
+    if (!canCreateRenderTargetForImage(index))
     {
         ANGLE_TRY(mImageArray[faceIndex][index.getLevelIndex()]->copyFromFramebuffer(
             context, clippedOffset, clippedArea, source));
@@ -2260,7 +2218,7 @@ angle::Result TextureD3D_Cube::setStorage(const gl::Context *context,
 
     TexStoragePointer storage = {
         mRenderer->createTextureStorageCube(internalFormat, bindFlags, size.width,
-                                            static_cast<int>(levels), false, mState.getLabel()),
+                                            static_cast<int>(levels), mState.getLabel()),
         context};
 
     ANGLE_TRY(setCompleteTexStorage(context, storage.get()));
@@ -2390,28 +2348,10 @@ angle::Result TextureD3D_Cube::createCompleteStorage(const gl::Context *context,
     // use existing storage level count, when previously specified by TexStorage*D
     GLint levels = (mTexStorage ? mTexStorage->getLevelCount() : creationLevels(size, size, 1));
 
-    bool hintLevelZeroOnly = false;
-    if (mRenderer->getFeatures().zeroMaxLodWorkaround.enabled)
-    {
-        // If any of the CPU images (levels >= 1) are dirty, then the textureStorageEXT should use
-        // the mipped texture to begin with. Otherwise, it should use the level-zero-only texture.
-        hintLevelZeroOnly = true;
-        for (int faceIndex = 0;
-             faceIndex < static_cast<int>(gl::kCubeFaceCount) && hintLevelZeroOnly; faceIndex++)
-        {
-            for (int level = 1; level < levels && hintLevelZeroOnly; level++)
-            {
-                hintLevelZeroOnly = !(mImageArray[faceIndex][level]->isDirty() &&
-                                      isFaceLevelComplete(faceIndex, level));
-            }
-        }
-    }
-
     // TODO (geofflang): detect if storage creation succeeded
-    *outStorage = {
-        mRenderer->createTextureStorageCube(getBaseLevelInternalFormat(), bindFlags, size, levels,
-                                            hintLevelZeroOnly, mState.getLabel()),
-        context};
+    *outStorage = {mRenderer->createTextureStorageCube(getBaseLevelInternalFormat(), bindFlags,
+                                                       size, levels, mState.getLabel()),
+                   context};
 
     return angle::Result::Continue;
 }

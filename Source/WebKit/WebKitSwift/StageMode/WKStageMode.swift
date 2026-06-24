@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_MODEL_PROCESS
+#if ENABLE_MODEL_PROCESS && canImport(CoreRE)
 
 import Combine
 import Spatial
@@ -192,4 +192,4 @@ extension simd_quatd {
     }
 }
 
-#endif // ENABLE_MODEL_PROCESS
+#endif // ENABLE_MODEL_PROCESS && canImport(CoreRE)

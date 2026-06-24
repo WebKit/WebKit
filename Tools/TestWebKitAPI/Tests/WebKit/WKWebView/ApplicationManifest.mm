@@ -40,7 +40,7 @@ namespace TestWebKitAPI {
 
 TEST(ApplicationManifest, Coding)
 {
-    auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\", \"display\": \"minimal-ui\", \"theme_color\": \"red\" }";
+    auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\", \"display\": \"minimal-ui\", \"background_color\": \"white\", \"theme_color\": \"red\", \"color_scheme_dark\": { \"background_color\": \"black\", \"theme_color\": \"blue\" } }";
     RetainPtr<_WKApplicationManifest> manifest { [_WKApplicationManifest applicationManifestFromJSON:jsonString manifestURL:[NSURL URLWithString:@"https://test.com/manifest.json"] documentURL:[NSURL URLWithString:@"https://test.com/"]] };
 
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:manifest.get() requiringSecureCoding:YES error:nullptr];
@@ -55,8 +55,26 @@ TEST(ApplicationManifest, Coding)
     EXPECT_EQ(_WKApplicationManifestDisplayModeMinimalUI,  manifest.get().displayMode);
 
     RetainPtr sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    RetainPtr blackColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blackColorComponents));
     RetainPtr redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
-    EXPECT_TRUE(CGColorEqualToColor(manifest.get().themeColor.CGColor, redColor.get()));
+    RetainPtr blueColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blueColorComponents));
+    RetainPtr whiteColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), whiteColorComponents));
+
+    auto checkLightColors = ^{
+        EXPECT_TRUE(CGColorEqualToColor(manifest.get().backgroundColor.CGColor, whiteColor.get()));
+        EXPECT_TRUE(CGColorEqualToColor(manifest.get().themeColor.CGColor, redColor.get()));
+    };
+    auto checkDarkColors = ^{
+        EXPECT_TRUE(CGColorEqualToColor(manifest.get().backgroundColor.CGColor, blackColor.get()));
+        EXPECT_TRUE(CGColorEqualToColor(manifest.get().themeColor.CGColor, blueColor.get()));
+    };
+#if PLATFORM(IOS_FAMILY)
+    [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight] performAsCurrentTraitCollection:checkLightColors];
+    [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark] performAsCurrentTraitCollection:checkDarkColors];
+#else
+    [[NSAppearance appearanceNamed:NSAppearanceNameAqua] performAsCurrentDrawingAppearance:checkLightColors];
+    [[NSAppearance appearanceNamed:NSAppearanceNameDarkAqua] performAsCurrentDrawingAppearance:checkDarkColors];
+#endif
 }
 
 TEST(ApplicationManifest, Basic)
@@ -97,7 +115,12 @@ TEST(ApplicationManifest, Basic)
         @"description": @"Hello.",
         @"start_url": @"http://example.com/app/start",
         @"scope": @"http://example.com/app",
+        @"background_color": @"white",
         @"theme_color": @"red",
+        @"color_scheme_dark": @{
+            @"background_color": @"black",
+            @"theme_color": @"blue",
+        },
     };
     json = [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0];
     NSString *htmlString = [NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:text/plain;charset=utf-8;base64,%@\">", json];
@@ -111,8 +134,26 @@ TEST(ApplicationManifest, Basic)
         EXPECT_TRUE([manifest.scope isEqual:[NSURL URLWithString:@"http://example.com/app"]]);
 
         RetainPtr sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        RetainPtr blackColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blackColorComponents));
         RetainPtr redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
-        EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+        RetainPtr blueColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blueColorComponents));
+        RetainPtr whiteColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), whiteColorComponents));
+
+        auto checkLightColors = ^{
+            EXPECT_TRUE(CGColorEqualToColor(manifest.backgroundColor.CGColor, whiteColor.get()));
+            EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+        };
+        auto checkDarkColors = ^{
+            EXPECT_TRUE(CGColorEqualToColor(manifest.backgroundColor.CGColor, blackColor.get()));
+            EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, blueColor.get()));
+        };
+#if PLATFORM(IOS_FAMILY)
+        [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight] performAsCurrentTraitCollection:checkLightColors];
+        [[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark] performAsCurrentTraitCollection:checkDarkColors];
+#else
+        [[NSAppearance appearanceNamed:NSAppearanceNameAqua] performAsCurrentDrawingAppearance:checkLightColors];
+        [[NSAppearance appearanceNamed:NSAppearanceNameDarkAqua] performAsCurrentDrawingAppearance:checkDarkColors];
+#endif
 
         done = true;
     }];

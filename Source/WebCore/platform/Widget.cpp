@@ -69,7 +69,7 @@ FrameView* Widget::root() const
 void Widget::removeFromParent()
 {
     if (parent())
-        parent()->removeChild(*this);
+        protect(parent())->removeChild(*this);
 }
 
 void Widget::setCursor(const Cursor& cursor)

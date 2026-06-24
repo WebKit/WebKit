@@ -322,7 +322,9 @@ map
       Could not get AX element.
 
 area
-      Could not get AX element.
+      AXRole: AXLink
+      AXSubrole:
+      AXRoleDescription: link
 
 main
       AXRole: AXGroup

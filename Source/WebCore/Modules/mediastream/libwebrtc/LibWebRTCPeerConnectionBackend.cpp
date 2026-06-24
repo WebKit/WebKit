@@ -372,11 +372,6 @@ void LibWebRTCPeerConnectionBackend::setSenderSourceFromTrack(LibWebRTCRtpSender
     m_endpoint->setSenderSourceFromTrack(sender, track);
 }
 
-static inline LibWebRTCRtpTransceiverBackend& NODELETE backendFromRTPTransceiver(RTCRtpTransceiver& transceiver)
-{
-    return downcast<LibWebRTCRtpTransceiverBackend>(transceiver.backend());
-}
-
 void LibWebRTCPeerConnectionBackend::addInternalTransceiver(UniqueRef<LibWebRTCRtpTransceiverBackend>&& transceiverBackend, RealtimeMediaSource::Type type)
 {
     Ref peerConnection = m_peerConnection;

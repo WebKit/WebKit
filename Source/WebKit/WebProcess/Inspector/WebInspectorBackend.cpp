@@ -35,12 +35,15 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Chrome.h>
+#include <WebCore/Document.h>
 #include <WebCore/DocumentView.h>
 #include <WebCore/FrameInspectorController.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/InspectorFrontendClient.h>
+#include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorPageAgent.h>
+#include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
@@ -313,6 +316,12 @@ void WebInspectorBackend::updateDockingAvailability()
 
 void WebInspectorBackend::ensureInstrumentationForFrame(LocalFrame& frame)
 {
+    ensureNetworkInstrumentationForFrame(frame);
+    ensurePageInstrumentationForFrame(frame);
+}
+
+void WebInspectorBackend::ensureNetworkInstrumentationForFrame(LocalFrame& frame)
+{
     if (!m_networkInstrumentationEnabled)
         return;
 
@@ -364,7 +373,7 @@ void WebInspectorBackend::enableNetworkInstrumentation()
     }
 
     corePage->forEachLocalFrame([&](LocalFrame& frame) {
-        ensureInstrumentationForFrame(frame);
+        ensureNetworkInstrumentationForFrame(frame);
     });
 }
 
@@ -386,6 +395,7 @@ void WebInspectorBackend::disableNetworkInstrumentation()
 void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
 {
     m_frameNetworkAgentProxies.remove(frameID);
+    m_framePageAgentProxies.remove(frameID);
 }
 
 void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&& completionHandler)
@@ -399,6 +409,50 @@ void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, C
         completionHandler(String(), false, result.error());
 }
 
+void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)
+{
+    if (!m_pageInstrumentationEnabled)
+        return;
+
+    auto frameID = frame.frameID();
+    if (m_framePageAgentProxies.contains(frameID))
+        return;
+
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    RefPtr corePage = page->corePage();
+    if (!corePage)
+        return;
+
+    // Register the PageAgentProxy on the frame's OWN InstrumentingAgents (mirroring
+    // FrameNetworkAgentProxy in ensureNetworkInstrumentationForFrame), rather than the page's.
+    // The frame's first commit dispatches frameNavigated via instrumentingAgents(frame),
+    // which resolves the frame's own InstrumentingAgents; setting the slot there fires
+    // the proxy directly without depending on the frame->page fallback. Under Site
+    // Isolation a cross-origin child loads in a brand-new process whose page-level slot
+    // is set up too late / via a fallback that doesn't fire, so the page-level + fallback
+    // model never delivered the child's initial frameNavigated. See webkit.org/b/308896.
+    auto& pageInspectorController = corePage->inspectorController();
+    auto& frameController = frame.inspectorController();
+    Inspector::AgentContext baseContext = {
+        frameController,
+        pageInspectorController.injectedScriptManager(),
+        pageInspectorController.frontendRouter(),
+        pageInspectorController.backendDispatcher()
+    };
+    Ref instrumentingAgents = frameController.instrumentingAgents();
+    WebAgentContext webContext = {
+        baseContext,
+        instrumentingAgents.get()
+    };
+
+    auto proxy = makeUnique<PageAgentProxy>(webContext, *page);
+    proxy->enable();
+    m_framePageAgentProxies.add(frameID, WTF::move(proxy));
+}
+
 void WebInspectorBackend::enablePageInstrumentation()
 {
     if (!m_page || !m_page->corePage())
@@ -409,26 +463,12 @@ void WebInspectorBackend::enablePageInstrumentation()
 
     m_pageInstrumentationEnabled = true;
 
-    RefPtr page = m_page.get();
-    RefPtr corePage = page->corePage();
+    RefPtr corePage = m_page->corePage();
     corePage->settings().setDeveloperExtrasEnabled(true);
 
-    auto& pageInspectorController = corePage->inspectorController();
-    Inspector::AgentContext baseContext = {
-        pageInspectorController,
-        pageInspectorController.injectedScriptManager(),
-        pageInspectorController.frontendRouter(),
-        pageInspectorController.backendDispatcher()
-    };
-    Ref instrumentingAgents = pageInspectorController.instrumentingAgents();
-    WebAgentContext webContext = {
-        baseContext,
-        instrumentingAgents.get()
-    };
-
-    m_pageAgentProxy = makeUnique<PageAgentProxy>(webContext, *page);
-    CheckedRef pageAgentProxy { *m_pageAgentProxy };
-    pageAgentProxy->enable();
+    corePage->forEachLocalFrame([&](LocalFrame& frame) {
+        ensurePageInstrumentationForFrame(frame);
+    });
 }
 
 void WebInspectorBackend::disablePageInstrumentation()
@@ -436,8 +476,44 @@ void WebInspectorBackend::disablePageInstrumentation()
     if (!m_pageInstrumentationEnabled)
         return;
 
-    m_pageAgentProxy = nullptr;
+    // Clearing the map destroys each PageAgentProxy, whose destructor (via disable())
+    // clears the enabledPageProxy slot on its frame's InstrumentingAgents. Without that,
+    // a later frame commit in this process would dereference a freed pointer from
+    // InspectorInstrumentation. The page is still alive here (this is an explicit
+    // DisablePageInstrumentation IPC, not process teardown).
+    m_framePageAgentProxies.clear();
     m_pageInstrumentationEnabled = false;
+}
+
+
+void WebInspectorBackend::getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&& completionHandler)
+{
+    // Return, for each requested frame that is local to this WebContent process, its committed
+    // document's loaderId (as a ScriptExecutionContextIdentifier) and cached subresources. The
+    // UIProcess ProxyingPageAgent walks the authoritative cross-process frame tree, groups frame
+    // IDs by hosting process, and asks each process only for the frames it hosts; it then builds
+    // the Page.getResourceTree protocol objects from this typed data under Site Isolation. Frames
+    // not local to this process are silently skipped (another process answers for them).
+    // See webkit.org/b/308896.
+    Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>> resourcesByFrame;
+    resourcesByFrame.reserveInitialCapacity(frameIDs.size());
+
+    for (auto frameID : frameIDs) {
+        RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+        if (!webFrame)
+            continue;
+        RefPtr localFrame = webFrame->coreLocalFrame();
+        if (!localFrame)
+            continue;
+
+        Inspector::FrameResourceData frameData;
+        if (RefPtr document = localFrame->document())
+            frameData.loaderId = document->identifier();
+        frameData.resources = Inspector::ResourceUtilities::buildResourceDataForFrame(*localFrame);
+        resourcesByFrame.append({ frameID, WTF::move(frameData) });
+    }
+
+    completionHandler(WTF::move(resourcesByFrame));
 }
 
 } // namespace WebKit

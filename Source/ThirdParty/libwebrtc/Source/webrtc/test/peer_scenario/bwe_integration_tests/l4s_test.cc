@@ -11,13 +11,14 @@
 #include <atomic>
 #include <map>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_options.h"
 #include "api/jsep.h"
+#include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats_report.h"
@@ -33,7 +34,6 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_util.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/network_constants.h"
 #include "test/create_frame_generator_capturer.h"
 #include "test/gmock.h"
@@ -49,17 +49,22 @@ namespace {
 
 using test::GetAvailableSendBitrate;
 using test::GetAverageRoundTripTime;
+using test::GetPacketsReceived;
 using test::GetPacketsReceivedWithCe;
 using test::GetPacketsReceivedWithEct1;
 using test::GetPacketsSentWithEct1;
 using test::GetStatsAndProcess;
 using test::PeerScenario;
 using test::PeerScenarioClient;
+using ::testing::ContainsRegex;
 using ::testing::HasSubstr;
 using ::testing::TestWithParam;
 
 // RTC event logs can be gathered from these tests.
 // Add --peer_logs=true --peer_logs_root=/tmp/l4s/ to write logs to /tmp/l4s
+
+// This regexp matches both wildcard and non-wildcard ccfb lines.
+constexpr std::string_view ccfb_regex = "a=rtcp-fb:[0-9*]* ack ccfb\r\n";
 
 // Helper class used for counting RTCP feedback messages.
 class RtcpFeedbackCounter {
@@ -162,7 +167,7 @@ TEST(L4STest, NegotiateAndUseCcfbIfEnabled) {
         // Check that the offer contain both congestion control feedback
         // according to RFC 8888, and transport-cc and the header extension
         // http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
-        EXPECT_THAT(offer_str, HasSubstr("a=rtcp-fb:* ack ccfb\r\n"));
+        EXPECT_THAT(offer_str, ContainsRegex(ccfb_regex));
         EXPECT_THAT(offer_str, HasSubstr("transport-cc"));
         EXPECT_THAT(
             offer_str,
@@ -171,7 +176,7 @@ TEST(L4STest, NegotiateAndUseCcfbIfEnabled) {
       },
       [&](const SessionDescriptionInterface& answer) {
         std::string answer_str = absl::StrCat(answer);
-        EXPECT_THAT(answer_str, HasSubstr("a=rtcp-fb:* ack ccfb\r\n"));
+        EXPECT_THAT(answer_str, ContainsRegex(ccfb_regex));
         // Check that the answer does not contain transport-cc nor the
         // header extension
         // http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
@@ -267,7 +272,7 @@ TEST(L4STest, NoCcfbSentAfterRenegotiationAndCallerCachesLocalDescription) {
   std::string answer_str;
   caller->pc()->local_description()->ToString(&answer_str);
   ASSERT_FALSE(answer_str.empty());
-  ASSERT_THAT(answer_str, HasSubstr("a=rtcp-fb:* ack ccfb\r\n"));
+  ASSERT_THAT(answer_str, ContainsRegex(ccfb_regex));
 
   callee->CreateAndSetSdp(
       [&](SessionDescriptionInterface* /*munge_offer*/) {
@@ -275,7 +280,7 @@ TEST(L4STest, NoCcfbSentAfterRenegotiationAndCallerCachesLocalDescription) {
       },
       [&](std::string offer) {
         // Callee does not support ccfb and does not have it in the offer.
-        ASSERT_THAT(offer, Not(HasSubstr("a=rtcp-fb:* ack ccfb\r\n")));
+        ASSERT_THAT(offer, Not(ContainsRegex(ccfb_regex)));
         caller->SetRemoteDescription(
             offer, SdpType::kOffer, [&](RTCError error) {
               ASSERT_TRUE(error.ok());
@@ -449,52 +454,84 @@ TEST(L4STest, SendsEct1WithScream) {
   EXPECT_EQ(feedback_counter.not_ect(), 0);
 }
 
-TEST(L4STest, SendsEct1AfterRouteChange) {
+TEST(L4STest, SendsEct1AfterRouteChangeEvenIfBleached) {
   PeerScenario s(*test_info_);
 
   PeerScenarioClient::Config config;
   config.field_trials.Set("WebRTC-RFC8888CongestionControlFeedback",
                           "Enabled,offer:true");
+  config.field_trials.Set("WebRTC-Bwe-ScreamV2", "Enabled");
   config.disable_encryption = true;
-  config.endpoints = {{0, {.type = AdapterType::ADAPTER_TYPE_WIFI}}};
-  PeerScenarioClient* caller = s.CreateClient(config);
-  // Callee has booth wifi and cellular adapters.
+
+  // Caller has both wifi and cellular adapters.
   config.endpoints = {{0, {.type = AdapterType::ADAPTER_TYPE_WIFI}},
                       {1, {.type = AdapterType::ADAPTER_TYPE_CELLULAR}}};
+  PeerScenarioClient* caller = s.CreateClient(config);
+
+  // Callee has only wifi adapter.
+  config.endpoints = {{0, {.type = AdapterType::ADAPTER_TYPE_WIFI}}};
   PeerScenarioClient* callee = s.CreateClient(config);
 
-  // Create network path from caller to callee.
-  auto caller_to_callee = s.net()->NodeBuilder().Build().node;
-  auto callee_to_caller_wifi = s.net()->NodeBuilder().Build().node;
-  auto callee_to_caller_cellular = s.net()->NodeBuilder().Build().node;
-  s.net()->CreateRoute(caller->endpoint(0), {caller_to_callee},
+  auto caller_wifi_node = s.net()->NodeBuilder().Build().node;
+  auto caller_cellular_node = s.net()->NodeBuilder().Build().node;
+  auto bleaching_node =
+      s.net()->NodeBuilder().config({.forward_ecn = false}).Build().node;
+  auto callee_to_caller_wifi = s.net()->NodeBuilder().config({}).Build().node;
+  auto callee_to_caller_cellular =
+      s.net()->NodeBuilder().config({}).Build().node;
+
+  // Routes from caller to callee bleach ECN.
+  s.net()->CreateRoute(caller->endpoint(0), {caller_wifi_node, bleaching_node},
                        callee->endpoint(0));
-  s.net()->CreateRoute(caller->endpoint(0), {caller_to_callee},
-                       callee->endpoint(1));
+  s.net()->CreateRoute(caller->endpoint(1),
+                       {caller_cellular_node, bleaching_node},
+                       callee->endpoint(0));
+  // Routes from callee to caller do not bleach ECN.
   s.net()->CreateRoute(callee->endpoint(0), {callee_to_caller_wifi},
                        caller->endpoint(0));
-  s.net()->CreateRoute(callee->endpoint(1), {callee_to_caller_cellular},
-                       caller->endpoint(0));
+  s.net()->CreateRoute(callee->endpoint(0), {callee_to_caller_cellular},
+                       caller->endpoint(1));
 
-  RtcpFeedbackCounter wifi_feedback_counter;
-  std::atomic<bool> seen_ect1_on_wifi_feedback = false;
-  std::atomic<bool> seen_not_ect_on_wifi_feedback = false;
-  callee_to_caller_wifi->router()->SetWatcher(
+  int ect1_count_wifi = 0;
+  int not_ect_count_wifi = 0;
+  int ect1_count_cellular = 0;
+  int not_ect_count_cellular = 0;
+  std::atomic<bool> seen_ect1_on_wifi = false;
+  std::atomic<bool> seen_ect1_on_cellular = false;
+  std::atomic<bool> seen_not_ect_on_wifi = false;
+  std::atomic<bool> seen_not_ect_on_cellular = false;
+
+  caller_wifi_node->router()->SetWatcher([&](const EmulatedIpPacket& packet) {
+    if (!IsRtpPacket(packet.data))
+      return;
+    if (packet.from.ipaddr() == caller->endpoint(0)->GetPeerLocalAddress()) {
+      if (packet.ecn == EcnMarking::kEct1) {
+        seen_ect1_on_wifi = true;
+        ect1_count_wifi++;
+      } else if (packet.ecn == EcnMarking::kNotEct) {
+        not_ect_count_wifi++;
+        seen_not_ect_on_wifi = true;
+      }
+    }
+  });
+
+  caller_cellular_node->router()->SetWatcher(
       [&](const EmulatedIpPacket& packet) {
-        wifi_feedback_counter.Count(packet);
-        if (wifi_feedback_counter.ect1() > 0) {
-          seen_ect1_on_wifi_feedback = true;
-          RTC_LOG(LS_INFO) << "ect 1 feedback on wifi: "
-                           << wifi_feedback_counter.ect1();
-        }
-        if (wifi_feedback_counter.not_ect() > 0) {
-          seen_not_ect_on_wifi_feedback = true;
-          RTC_LOG(LS_INFO) << "not ect feedback on wifi: "
-                           << wifi_feedback_counter.not_ect();
+        if (!IsRtpPacket(packet.data))
+          return;
+        if (packet.from.ipaddr() ==
+            caller->endpoint(1)->GetPeerLocalAddress()) {
+          if (packet.ecn == EcnMarking::kEct1) {
+            seen_ect1_on_cellular = true;
+            ect1_count_cellular++;
+          } else if (packet.ecn == EcnMarking::kNotEct) {
+            not_ect_count_cellular++;
+            seen_not_ect_on_cellular = true;
+          }
         }
       });
 
-  auto signaling = s.ConnectSignaling(caller, callee, {caller_to_callee},
+  auto signaling = s.ConnectSignaling(caller, callee, {bleaching_node},
                                       {callee_to_caller_wifi});
   PeerScenarioClient::VideoSendTrackConfig video_conf;
   video_conf.generator.squares_video->framerate = 15;
@@ -508,44 +545,127 @@ TEST(L4STest, SendsEct1AfterRouteChange) {
   });
   s.WaitAndProcess(&offer_exchange_done);
 
-  // Wait for first feedback where packets have been sent with ECT(1). Then
-  // feedback for packets sent as not ECT since currently webrtc does not
-  // implement adaptation to ECN.
-  EXPECT_TRUE(
-      s.WaitAndProcess(&seen_ect1_on_wifi_feedback, TimeDelta::Seconds(1)));
-  EXPECT_FALSE(seen_not_ect_on_wifi_feedback);
-  EXPECT_TRUE(
-      s.WaitAndProcess(&seen_not_ect_on_wifi_feedback, TimeDelta::Seconds(1)));
+  EXPECT_TRUE(s.WaitAndProcess(&seen_ect1_on_wifi, TimeDelta::Seconds(1)));
+  EXPECT_TRUE(s.WaitAndProcess(&seen_not_ect_on_wifi, TimeDelta::Seconds(1)));
 
-  RtcpFeedbackCounter cellular_feedback_counter;
-  std::atomic<bool> seen_ect1_on_cellular_feedback = false;
-  callee_to_caller_cellular->router()->SetWatcher(
-      [&](const EmulatedIpPacket& packet) {
-        cellular_feedback_counter.Count(packet);
-        if (cellular_feedback_counter.ect1() > 0) {
-          seen_ect1_on_cellular_feedback = true;
-          RTC_LOG(LS_INFO) << "ect 1 feedback on cellular: "
-                           << cellular_feedback_counter.ect1();
-        }
-      });
-  // Disable callees wifi and expect that the connection switch to cellular and
-  // sends packets with ECT(1) again.
-  s.net()->DisableEndpoint(callee->endpoint(0));
+  // Disable caller's wifi and expect that the connection switch to cellular.
+  s.net()->DisableEndpoint(caller->endpoint(0));
+  EXPECT_TRUE(s.WaitAndProcess(&seen_ect1_on_cellular, TimeDelta::Seconds(5)));
   EXPECT_TRUE(
-      s.WaitAndProcess(&seen_ect1_on_cellular_feedback, TimeDelta::Seconds(5)));
+      s.WaitAndProcess(&seen_not_ect_on_cellular, TimeDelta::Seconds(5)));
 
   // Check statistics.
   auto packets_sent_with_ect1_stats =
       GetPacketsSentWithEct1(GetStatsAndProcess(s, caller));
-  EXPECT_EQ(packets_sent_with_ect1_stats,
-            wifi_feedback_counter.ect1() + cellular_feedback_counter.ect1());
+  EXPECT_GE(packets_sent_with_ect1_stats, 0);
 
   scoped_refptr<const RTCStatsReport> callee_stats =
       GetStatsAndProcess(s, callee);
-  EXPECT_EQ(GetPacketsReceivedWithEct1(callee_stats),
-            wifi_feedback_counter.ect1() + cellular_feedback_counter.ect1());
-  // TODO: bugs.webrtc.org/42225697 - testing CE would be useful.
+  EXPECT_EQ(GetPacketsReceivedWithEct1(callee_stats), 0);
   EXPECT_EQ(GetPacketsReceivedWithCe(callee_stats), 0);
+
+  // Verify that packets were sent with ECT1 and then fell back to not-ECT.
+  EXPECT_GT(ect1_count_wifi, 0);
+  EXPECT_GT(not_ect_count_wifi, 0);
+  EXPECT_GT(ect1_count_cellular, 0);
+  EXPECT_GT(not_ect_count_cellular, 0);
+}
+
+TEST(L4STest, SendsEct1AfterRouteChangeFromTurnWithBleachingToDirect) {
+  PeerScenario s(*test_info_);
+
+  EmulatedTURNServerConfig turn_config;
+  turn_config.client_config.type = AdapterType::ADAPTER_TYPE_WIFI;
+  turn_config.peer_config.type = AdapterType::ADAPTER_TYPE_WIFI;
+  EmulatedTURNServerInterface* turn_server =
+      s.net()->CreateTURNServer(turn_config);
+
+  auto ice_server_config = turn_server->GetIceServerConfig();
+  PeerConnectionInterface::IceServer ice_server;
+  ice_server.urls.push_back(ice_server_config.url);
+  ice_server.username = ice_server_config.username;
+  ice_server.password = ice_server_config.password;
+
+  PeerScenarioClient::Config config;
+  config.field_trials.Set("WebRTC-RFC8888CongestionControlFeedback",
+                          "Enabled,offer:true");
+  config.field_trials.Set("WebRTC-Bwe-ScreamV2", "Enabled");
+  config.disable_encryption = true;
+  config.endpoints = {{0, {.type = AdapterType::ADAPTER_TYPE_WIFI}}};
+  config.rtc_config.servers.push_back(ice_server);
+  PeerScenarioClient* caller = s.CreateClient(config);
+  PeerScenarioClient* callee = s.CreateClient(config);
+
+  // TURN routes for Caller.
+  // Route via a node that will not forward ECN markings to simulate TURN
+  // server bleaching. The route also has longer delay to test that packets will
+  // be delivered out of order when switching to a direct route.
+  s.net()->CreateRoute(
+      caller->endpoint(0),
+      {s.net()->NodeBuilder().delay_ms(50).Build().node,
+       s.net()->NodeBuilder().config({.forward_ecn = false}).Build().node},
+      turn_server->GetClientEndpoint());
+  s.net()->CreateRoute(turn_server->GetClientEndpoint(),
+                       {s.net()->NodeBuilder().Build().node},
+                       caller->endpoint(0));
+
+  // TURN routes for Callee.
+  s.net()->CreateRoute(callee->endpoint(0),
+                       {s.net()->NodeBuilder().Build().node},
+                       turn_server->GetClientEndpoint());
+  s.net()->CreateRoute(turn_server->GetClientEndpoint(),
+                       {s.net()->NodeBuilder().Build().node},
+                       callee->endpoint(0));
+
+  auto signaling =
+      s.ConnectSignaling(caller, callee, {s.net()->NodeBuilder().Build().node},
+                         {s.net()->NodeBuilder().Build().node});
+
+  PeerScenarioClient::VideoSendTrackConfig video_conf;
+  video_conf.generator.squares_video->framerate = 15;
+  caller->CreateVideo("VIDEO_1", video_conf);
+  signaling.StartIceSignaling();
+
+  std::atomic<bool> offer_exchange_done(false);
+  signaling.NegotiateSdp([&](const SessionDescriptionInterface& answer) {
+    offer_exchange_done = true;
+  });
+  ASSERT_TRUE(s.WaitAndProcess(&offer_exchange_done));
+  ASSERT_TRUE(offer_exchange_done);
+
+  /// Run simulation with the TURN route
+  s.ProcessMessages(TimeDelta::Seconds(5));
+  scoped_refptr<const RTCStatsReport> callee_stats =
+      GetStatsAndProcess(s, callee);
+  ASSERT_GT(GetPacketsReceived(callee_stats), 0);
+  EXPECT_LT(GetAverageRoundTripTime(callee_stats), TimeDelta::Millis(90));
+
+  // Create a direct route from caller to callee and callee to caller.
+  EmulatedNetworkNode* caller_to_direct_node =
+      s.net()->NodeBuilder().delay_ms(0).Build().node;
+  s.net()->CreateRoute(caller->endpoint(0), {caller_to_direct_node},
+                       callee->endpoint(0));
+  int ect1_count_direct = 0;
+  int not_ect_count_direct = 0;
+  caller_to_direct_node->router()->SetWatcher(
+      [&](const EmulatedIpPacket& packet) {
+        if (!IsRtpPacket(packet.data))
+          return;
+        if (packet.ecn == EcnMarking::kEct1) {
+          ++ect1_count_direct;
+        } else if (packet.ecn == EcnMarking::kNotEct) {
+          ++not_ect_count_direct;
+        }
+      });
+  s.net()->CreateRoute(callee->endpoint(0),
+                       {s.net()->NodeBuilder().Build().node},
+                       caller->endpoint(0));
+
+  s.ProcessMessages(TimeDelta::Seconds(10));
+  // Expect that eventually, caller switches to sending packets with ect1 on the
+  // direct route.
+  EXPECT_GT(ect1_count_direct, 0);
+  EXPECT_EQ(not_ect_count_direct, 0);
 }
 
 TEST(L4STest, RtcpSentAsEct1IfRtpWithEct1Received) {
@@ -566,9 +686,7 @@ TEST(L4STest, RtcpSentAsEct1IfRtpWithEct1Received) {
   // be RTCP. Negotiation is still done using not ECT.
   callee_to_caller_node->router()->SetWatcher(
       [&](const EmulatedIpPacket& packet) {
-        if (StunMessage::ValidateFingerprint(
-                reinterpret_cast<const char*>(packet.data.data()),
-                packet.data.size())) {
+        if (StunMessage::ValidateFingerprint(packet.data)) {
           return;
         }
         if (packet.ecn == EcnMarking::kEct1 || packet.ecn == EcnMarking::kCe) {

@@ -47,6 +47,9 @@ void CroppingWindowCapturer::SetSharedMemoryFactory(
 
 void CroppingWindowCapturer::CaptureFrame() {
   if (ShouldUseScreenCapturer()) {
+    // We record the window position here at capture time; it may differ at
+    // frame delivery time.
+    last_window_rect_ = GetWindowRectInVirtualScreen();
     if (!screen_capturer_) {
       screen_capturer_ = DesktopCapturer::CreateRawScreenCapturer(options_);
       if (excluded_window_) {
@@ -74,6 +77,7 @@ bool CroppingWindowCapturer::GetSourceList(SourceList* sources) {
 bool CroppingWindowCapturer::SelectSource(SourceId id) {
   if (window_capturer_->SelectSource(id)) {
     selected_window_ = id;
+    last_window_rect_ = {};
     return true;
   }
   return false;
@@ -92,21 +96,30 @@ void CroppingWindowCapturer::OnCaptureResult(
     return;
   }
 
+  // We don't know when capture has occurred, so if the window moved we can't
+  // assert which pixels we should capture. Capture again and we'll return a
+  // frame once the window is stationary between the two calls.
+  DesktopRect current_window_rect = GetWindowRectInVirtualScreen();
+  if (!current_window_rect.equals(last_window_rect_)) {
+    RTC_LOG(LS_INFO) << "Window moved during capture";
+    window_capturer_->CaptureFrame();
+    return;
+  }
+
   if (result != Result::SUCCESS) {
     RTC_LOG(LS_WARNING) << "ScreenCapturer failed to capture a frame";
     callback_->OnCaptureResult(result, nullptr);
     return;
   }
 
-  DesktopRect window_rect = GetWindowRectInVirtualScreen();
-  if (window_rect.is_empty()) {
+  if (last_window_rect_.is_empty()) {
     RTC_LOG(LS_WARNING) << "Window rect is empty";
     callback_->OnCaptureResult(Result::ERROR_TEMPORARY, nullptr);
     return;
   }
 
   std::unique_ptr<DesktopFrame> cropped_frame =
-      CreateCroppedDesktopFrame(std::move(screen_frame), window_rect);
+      CreateCroppedDesktopFrame(std::move(screen_frame), last_window_rect_);
 
   if (!cropped_frame) {
     RTC_LOG(LS_WARNING) << "Window is outside of the captured display";

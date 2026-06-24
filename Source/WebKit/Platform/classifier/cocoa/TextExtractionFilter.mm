@@ -75,7 +75,7 @@ void TextExtractionFilter::initializeModelIfNeeded()
         return;
 
     RetainPtr compiledModelName = [[[modelURL lastPathComponent] stringByDeletingPathExtension] stringByAppendingPathExtension:@"mlmodelc"];
-    RetainPtr compiledModelURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()] URLByAppendingPathComponent:compiledModelName.get()];
+    RetainPtr compiledModelURL = [[NSURL fileURLWithPath:protect(NSTemporaryDirectory())] URLByAppendingPathComponent:compiledModelName.get()];
 
     auto needsRecompile = [&] -> bool {
         if (![[NSFileManager defaultManager] fileExistsAtPath:[compiledModelURL path]])

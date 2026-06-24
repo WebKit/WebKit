@@ -21,7 +21,9 @@
 #define RTC_MODES (AOMMAX(RTC_INTER_MODES, RTC_INTRA_MODES))
 #define CALC_BIASED_RDCOST(rdcost) (7 * (rdcost) >> 3)
 #define NUM_COMP_INTER_MODES_RT (6)
+#define NUM_COMP_INTER_MODES_RT_FULL (10)
 #define NUM_INTER_MODES 12
+#define NUM_INTER_MODES_FULL 28
 #define CAP_TX_SIZE_FOR_BSIZE_GT32(tx_mode_search_type, bsize) \
   (((tx_mode_search_type) != ONLY_4X4 && (bsize) > BLOCK_32X32) ? true : false)
 #define TX_SIZE_FOR_BSIZE_GT32 (TX_16X16)
@@ -144,6 +146,23 @@ static const REF_MODE ref_mode_set[NUM_INTER_MODES] = {
   { ALTREF_FRAME, GLOBALMV },  { ALTREF_FRAME, NEWMV },
 };
 
+static const REF_MODE ref_mode_set_full[NUM_INTER_MODES_FULL] = {
+  { LAST_FRAME, NEARESTMV },    { LAST_FRAME, NEARMV },
+  { LAST_FRAME, GLOBALMV },     { LAST_FRAME, NEWMV },
+  { GOLDEN_FRAME, NEARESTMV },  { GOLDEN_FRAME, NEARMV },
+  { GOLDEN_FRAME, GLOBALMV },   { GOLDEN_FRAME, NEWMV },
+  { ALTREF_FRAME, NEARESTMV },  { ALTREF_FRAME, NEARMV },
+  { ALTREF_FRAME, GLOBALMV },   { ALTREF_FRAME, NEWMV },
+  { LAST2_FRAME, NEARESTMV },   { LAST2_FRAME, NEARMV },
+  { LAST2_FRAME, GLOBALMV },    { LAST2_FRAME, NEWMV },
+  { LAST3_FRAME, NEARESTMV },   { LAST3_FRAME, NEARMV },
+  { LAST3_FRAME, GLOBALMV },    { LAST3_FRAME, NEWMV },
+  { BWDREF_FRAME, NEARESTMV },  { BWDREF_FRAME, NEARMV },
+  { BWDREF_FRAME, GLOBALMV },   { BWDREF_FRAME, NEWMV },
+  { ALTREF2_FRAME, NEARESTMV }, { ALTREF2_FRAME, NEARMV },
+  { ALTREF2_FRAME, GLOBALMV },  { ALTREF2_FRAME, NEWMV },
+};
+
 static const COMP_REF_MODE comp_ref_mode_set[NUM_COMP_INTER_MODES_RT] = {
   { { LAST_FRAME, GOLDEN_FRAME }, GLOBAL_GLOBALMV },
   { { LAST_FRAME, GOLDEN_FRAME }, NEAREST_NEARESTMV },
@@ -152,6 +171,20 @@ static const COMP_REF_MODE comp_ref_mode_set[NUM_COMP_INTER_MODES_RT] = {
   { { LAST_FRAME, ALTREF_FRAME }, GLOBAL_GLOBALMV },
   { { LAST_FRAME, ALTREF_FRAME }, NEAREST_NEARESTMV },
 };
+
+static const COMP_REF_MODE
+    comp_ref_mode_set_full[NUM_COMP_INTER_MODES_RT_FULL] = {
+      { { LAST_FRAME, GOLDEN_FRAME }, GLOBAL_GLOBALMV },
+      { { LAST_FRAME, GOLDEN_FRAME }, NEAREST_NEARESTMV },
+      { { LAST_FRAME, LAST2_FRAME }, GLOBAL_GLOBALMV },
+      { { LAST_FRAME, LAST2_FRAME }, NEAREST_NEARESTMV },
+      { { LAST_FRAME, ALTREF_FRAME }, GLOBAL_GLOBALMV },
+      { { LAST_FRAME, ALTREF_FRAME }, NEAREST_NEARESTMV },
+      { { LAST_FRAME, BWDREF_FRAME }, GLOBAL_GLOBALMV },
+      { { LAST_FRAME, BWDREF_FRAME }, NEAREST_NEARESTMV },
+      { { LAST_FRAME, ALTREF2_FRAME }, GLOBAL_GLOBALMV },
+      { { LAST_FRAME, ALTREF2_FRAME }, NEAREST_NEARESTMV },
+    };
 
 static const int_interpfilters filters_ref_set[9] = {
   [0].as_filters = { EIGHTTAP_REGULAR, EIGHTTAP_REGULAR },
@@ -466,7 +499,8 @@ static inline void find_predictors(
         &frame_mv[NEARESTMV][ref_frame], &frame_mv[NEARMV][ref_frame], 0);
     frame_mv[GLOBALMV][ref_frame] = mbmi_ext->global_mvs[ref_frame];
     // Early exit for non-LAST frame if force_skip_low_temp_var is set.
-    if (!ref_is_scaled && bsize >= BLOCK_8X8 && !skip_pred_mv &&
+    if (!is_one_pass_rt_lag_params(cpi) && !ref_is_scaled &&
+        bsize >= BLOCK_8X8 && !skip_pred_mv &&
         !(force_skip_low_temp_var && ref_frame != LAST_FRAME)) {
       av1_mv_pred(cpi, x, yv12_mb[ref_frame][0].buf, yv12->y_stride, ref_frame,
                   bsize);
@@ -585,7 +619,6 @@ void av1_estimate_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
                              PRED_BUFFER *tmp_buffers,
                              PRED_BUFFER **this_mode_pred, RD_STATS *best_rdc,
                              BEST_PICKMODE *best_pickmode,
-                             PICK_MODE_CONTEXT *ctx,
                              unsigned int *best_sad_norm);
 
 #endif  // AOM_AV1_ENCODER_NONRD_OPT_H_

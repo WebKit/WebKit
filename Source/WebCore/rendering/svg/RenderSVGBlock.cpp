@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGBlock);
 
-RenderSVGBlock::RenderSVGBlock(Type type, SVGGraphicsElement& element, RenderStyle&& style)
+RenderSVGBlock::RenderSVGBlock(Type type, SVGGraphicsElement& element, Style::ComputedStyle&& style)
     : RenderBlockFlow(type, element, WTF::move(style), BlockFlowFlag::IsSVGBlock)
 {
 }
@@ -101,7 +101,7 @@ void RenderSVGBlock::willBeDestroyed()
     RenderBlockFlow::willBeDestroyed();
 }
 
-void RenderSVGBlock::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderSVGBlock::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
         RenderBlockFlow::styleDidChange(diff, oldStyle);

@@ -131,11 +131,6 @@ class GeneratedFileContentsTest(unittest.TestCase):
         implementation_contents = messages.generate_message_argument_description_implementation(self.receivers, receiver_header_files)
         self.assertGeneratedFileContentsEqual(implementation_contents, os.path.join(tests_directory, 'MessageArgumentDescriptions.cpp'))
 
-    def test_modulemap(self):
-        receiver_header_files = ['{}Messages.h'.format(receiver.name) for receiver in self.receivers]
-        modulemap_contents = messages.generate_modulemap(receiver_header_files)
-        self.assertGeneratedFileContentsEqual(modulemap_contents, os.path.join(tests_directory, 'module.private.modulemap'))
-
 
 def parse_sys_argv():
     global reset_results

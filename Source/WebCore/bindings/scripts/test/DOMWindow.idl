@@ -1,2 +1,2 @@
-[Exposed=Window] interface DOMWindow : EventTarget {
+[Exposed=Window, StandaloneConstructorAttributes] interface DOMWindow : EventTarget {
 };

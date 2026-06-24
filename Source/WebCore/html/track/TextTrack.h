@@ -109,6 +109,7 @@ public:
     virtual bool containsOnlyForcedSubtitles() const;
     virtual bool isMainProgramContent() const;
     virtual bool isEasyToRead() const { return false; }
+    virtual bool isMachineGenerated() const { return false; }
 
     int trackIndex();
     void invalidateTrackIndex()

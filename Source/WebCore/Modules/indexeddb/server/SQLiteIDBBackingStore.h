@@ -26,6 +26,9 @@
 #pragma once
 
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/FileSystemHandleGlobalIdentifier.h>
+#include <WebCore/FileSystemHandleKind.h>
+#include <WebCore/FileSystemHandleRecord.h>
 #include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBDatabaseIdentifier.h>
 #include <WebCore/IDBDatabaseInfo.h>
@@ -100,6 +103,8 @@ public:
     void unregisterCursor(SQLiteIDBCursor&);
 
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
+    IDBError getFileSystemHandleRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<FileSystemHandleRecord>& records);
+    Expected<IDBValue, IDBError> buildIDBValueForRecord(int64_t objectStoreRecord, const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths);
 
     WEBCORE_EXPORT static uint64_t databasesSizeForDirectory(const String& directory);
     const String& databaseDirectory() const LIFETIME_BOUND { return m_databaseDirectory; };
@@ -117,6 +122,7 @@ protected:
     IDBError ensureValidIndexRecordsIndex();
     IDBError ensureValidIndexRecordsRecordIndex();
     IDBError ensureValidBlobTables();
+    IDBError ensureValidFileSystemHandleRecordsTable();
     std::optional<IsSchemaUpgraded> ensureValidObjectStoreInfoTable();
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
     Expected<std::unique_ptr<IDBDatabaseInfo>, IDBError> extractExistingDatabaseInfo();
@@ -144,6 +150,10 @@ private:
     IDBError uncheckedGetIndexRecordForOneKey(IDBIndexIdentifier, IDBObjectStoreIdentifier, IndexedDB::IndexRecordType, const IDBKeyData&, IDBGetResult&);
 
     IDBError deleteUnusedBlobFileRecords(SQLiteIDBTransaction&);
+
+    IDBError addFileSystemHandleRecordsForObjectStoreRecord(int64_t recordID, const Vector<FileSystemHandleRecord>&);
+    IDBError deleteFileSystemHandleRecordsForObjectStoreRecord(int64_t recordID);
+    IDBError deleteFileSystemHandleRecordsForObjectStore(IDBObjectStoreIdentifier);
 
     IDBError getAllObjectStoreRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
     IDBError getAllIndexRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
@@ -187,6 +197,10 @@ private:
         BlobFilenameForBlobURL,
         AddBlobFilename,
         GetBlobURL,
+        AddFileSystemHandleRecord,
+        DeleteFileSystemHandleRecordsByObjectStoreRow,
+        DeleteFileSystemHandleRecordsByObjectStoreID,
+        GetFileSystemHandleRecordsByObjectStoreRow,
         GetKeyGeneratorValue,
         SetKeyGeneratorValue,
         GetObjectStoreRecords,

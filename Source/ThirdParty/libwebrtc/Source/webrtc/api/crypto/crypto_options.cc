@@ -33,8 +33,24 @@ CryptoOptions CryptoOptions::NoGcm() {
   return options;
 }
 
+// static
+CryptoOptions CryptoOptions::PreferGcm() {
+  CryptoOptions options;
+  options.srtp.enable_gcm_crypto_suites = true;
+  options.srtp.prefer_gcm_crypto_suites = true;
+  return options;
+}
+
 std::vector<int> CryptoOptions::GetSupportedDtlsSrtpCryptoSuites() const {
   std::vector<int> crypto_suites;
+  // When prefer_gcm_crypto_suites is set, GCM is listed first so it is
+  // selected whenever both peers support it, despite the slight packet-size
+  // overhead.
+  if (srtp.prefer_gcm_crypto_suites && srtp.enable_gcm_crypto_suites) {
+    crypto_suites.push_back(kSrtpAeadAes256Gcm);
+    crypto_suites.push_back(kSrtpAeadAes128Gcm);
+  }
+
   // Note: kSrtpAes128CmSha1_80 is what is required to be supported (by
   // draft-ietf-rtcweb-security-arch), but kSrtpAes128CmSha1_32 is allowed as
   // well, and saves a few bytes per packet if it ends up selected.
@@ -47,10 +63,10 @@ std::vector<int> CryptoOptions::GetSupportedDtlsSrtpCryptoSuites() const {
     crypto_suites.push_back(kSrtpAes128CmSha1_80);
   }
 
-  // Note: GCM cipher suites are not the top choice since they increase the
-  // packet size. In order to negotiate them the other side must not support
+  // Without prefer_gcm_crypto_suites, GCM is offered last: it increases the
+  // packet size, and to negotiate it the other side must not support
   // kSrtpAes128CmSha1_80.
-  if (srtp.enable_gcm_crypto_suites) {
+  if (!srtp.prefer_gcm_crypto_suites && srtp.enable_gcm_crypto_suites) {
     crypto_suites.push_back(kSrtpAeadAes256Gcm);
     crypto_suites.push_back(kSrtpAeadAes128Gcm);
   }
@@ -62,9 +78,11 @@ bool CryptoOptions::operator==(const CryptoOptions& other) const {
   struct data_being_tested_for_equality {
     struct Srtp {
       bool enable_gcm_crypto_suites;
+      bool prefer_gcm_crypto_suites;
       bool enable_aes128_sha1_32_crypto_cipher;
       bool enable_aes128_sha1_80_crypto_cipher;
       bool enable_encrypted_rtp_header_extensions;
+      CryptoOptions::Srtp::CryptexPolicy cryptex_policy;
     } srtp;
     struct SFrame {
       bool require_frame_encryption;
@@ -76,12 +94,14 @@ bool CryptoOptions::operator==(const CryptoOptions& other) const {
                 "update operator==?");
 
   return srtp.enable_gcm_crypto_suites == other.srtp.enable_gcm_crypto_suites &&
+         srtp.prefer_gcm_crypto_suites == other.srtp.prefer_gcm_crypto_suites &&
          srtp.enable_aes128_sha1_32_crypto_cipher ==
              other.srtp.enable_aes128_sha1_32_crypto_cipher &&
          srtp.enable_aes128_sha1_80_crypto_cipher ==
              other.srtp.enable_aes128_sha1_80_crypto_cipher &&
          srtp.enable_encrypted_rtp_header_extensions ==
              other.srtp.enable_encrypted_rtp_header_extensions &&
+         srtp.cryptex_policy == other.srtp.cryptex_policy &&
          sframe.require_frame_encryption ==
              other.sframe.require_frame_encryption &&
          ephemeral_key_exchange_cipher_groups ==

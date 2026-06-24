@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/field_trials_view.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/time_controller.h"
@@ -31,6 +32,9 @@ class RealTimeController : public TimeController {
   std::unique_ptr<Thread> CreateThread(
       const std::string& name,
       std::unique_ptr<SocketServer> socket_server) override;
+  std::unique_ptr<Thread> CreateThreadWithSocketServer(
+      absl::string_view name,
+      SocketServer* socket_server) override;
   Thread* GetMainThread() override;
   void AdvanceTime(TimeDelta duration) override;
 

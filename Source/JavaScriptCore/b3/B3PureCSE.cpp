@@ -80,6 +80,9 @@ bool PureCSE::process(Value* value, Dominators& dominators)
     Matches& matches = m_map.add(key, Matches()).iterator->value;
 
     for (Value* match : matches) {
+        // CSE may revisit blocks (loop re-sweep); avoid self-replacement.
+        if (match == value)
+            return false;
         // Value is invalidated.
         if (!match->owner)
             continue;

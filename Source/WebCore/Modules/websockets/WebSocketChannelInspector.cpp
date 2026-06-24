@@ -48,10 +48,16 @@ void WebSocketChannelInspector::didCreateWebSocket(const URL& url) const
         InspectorInstrumentation::didCreateWebSocket(document.get(), m_progressIdentifier, url);
 }
 
-void WebSocketChannelInspector::willSendWebSocketHandshakeRequest(const ResourceRequest& request) const
+void WebSocketChannelInspector::willSendWebSocketHandshakeRequest(ResourceRequest& request) const
 {
     if (RefPtr document = m_document.get())
         InspectorInstrumentation::willSendWebSocketHandshakeRequest(document.get(), m_progressIdentifier, request);
+}
+
+void WebSocketChannelInspector::didSendWebSocketHandshakeRequest(const ResourceRequest& request) const
+{
+    if (RefPtr document = m_document.get())
+        InspectorInstrumentation::didSendWebSocketHandshakeRequest(document.get(), m_progressIdentifier, request);
 }
 
 void WebSocketChannelInspector::didReceiveWebSocketHandshakeResponse(const ResourceResponse& response) const

@@ -26,8 +26,8 @@
 #pragma once
 
 #include <WebCore/Color.h>
-#include <WebCore/RenderStyle.h>
 #include <WebCore/StyleAppleColorFilter.h>
+#include <WebCore/StyleComputedStyle.h>
 
 namespace WebCore {
 namespace Style {
@@ -50,8 +50,8 @@ template<typename T> concept ImplementsExcludesVisitedLinkColor = requires {
 
 class ColorResolver {
 public:
-    explicit ColorResolver(const RenderStyle& style)
-        : m_style { style.computedStyle() }
+    explicit ColorResolver(const Style::ComputedStyle& style)
+        : m_style { style }
     {
     }
 
@@ -79,7 +79,7 @@ protected:
 // Property specialized resolver. Can perform visited link color specific resolutions that the non-specialized resolver cannot.
 template<typename ColorTraits> class ColorPropertyResolver : public ColorResolver {
 public:
-    explicit ColorPropertyResolver(const RenderStyle& style)
+    explicit ColorPropertyResolver(const Style::ComputedStyle& style)
         : ColorResolver { style }
     {
     }

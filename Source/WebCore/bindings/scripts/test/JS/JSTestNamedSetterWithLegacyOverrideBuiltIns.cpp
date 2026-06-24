@@ -360,6 +360,8 @@ void JSTestNamedSetterWithLegacyOverrideBuiltIns::analyzeHeap(JSCell* cell, Heap
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestNamedSetterWithLegacyOverrideBuiltInsOwner::JSTestNamedSetterWithLegacyOverrideBuiltInsOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestNamedSetterWithLegacyOverrideBuiltInsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -372,7 +374,7 @@ void JSTestNamedSetterWithLegacyOverrideBuiltInsOwner::finalize(JSC::Handle<JSC:
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestNamedSetterWithLegacyOverrideBuiltIns = static_cast<JSTestNamedSetterWithLegacyOverrideBuiltIns*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestNamedSetterWithLegacyOverrideBuiltIns->wrapped()).ptr(), jsTestNamedSetterWithLegacyOverrideBuiltIns);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestNamedSetterWithLegacyOverrideBuiltIns->wrapped(), jsTestNamedSetterWithLegacyOverrideBuiltIns);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

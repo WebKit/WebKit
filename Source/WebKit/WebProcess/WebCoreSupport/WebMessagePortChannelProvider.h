@@ -31,6 +31,7 @@
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/NonSerializedDataToken.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -42,6 +43,7 @@ public:
 
     void messagePortSentToRemote(const WebCore::MessagePortIdentifier&);
     void dropNonSerializableInProcessCache(WebCore::NonSerializedDataIdentifier);
+    void networkProcessConnectionClosed();
 
     // Don't do anything in ref() / deref() since this class is a singleton.
     void ref() const { }
@@ -64,6 +66,7 @@ private:
     // FIXME: this data registry currently only holds SharedArrayBuffer contents
     // but it should be generalized for other non-serializable types.
     HashMap<WebCore::NonSerializedDataIdentifier, std::unique_ptr<Vector<JSC::ArrayBufferContents>>> m_nonSerializedDataRegistry;
+    HashSet<WebCore::MessagePortIdentifier> m_portsKnownToNetworkProcess;
 };
 
 } // namespace WebKit

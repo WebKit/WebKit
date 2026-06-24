@@ -167,200 +167,348 @@ DECLARE_ALIGNED(32, static const uint8_t, bilinear_filters_avx2[512]) = {
 // don't have to manually optimize the individual for-loops. We could save some
 // binary size by optimizing the loops more carefully without duplicating the
 // codes with a macro.
-#define MAKE_SUB_PIXEL_VAR_32XH(height, log2height)                           \
-  static inline int aom_sub_pixel_variance32x##height##_imp_avx2(             \
-      const uint8_t *src, int src_stride, int x_offset, int y_offset,         \
-      const uint8_t *dst, int dst_stride, unsigned int *sse) {                \
-    __m256i src_reg, dst_reg, exp_src_lo, exp_src_hi, exp_dst_lo, exp_dst_hi; \
-    __m256i sse_reg, sum_reg, sse_reg_hi, res_cmp, sum_reg_lo, sum_reg_hi;    \
-    __m256i zero_reg;                                                         \
-    int i, sum;                                                               \
-    sum_reg = _mm256_setzero_si256();                                         \
-    sse_reg = _mm256_setzero_si256();                                         \
-    zero_reg = _mm256_setzero_si256();                                        \
-                                                                              \
-    /* x_offset = 0 and y_offset = 0 */                                       \
-    if (x_offset == 0) {                                                      \
-      if (y_offset == 0) {                                                    \
-        for (i = 0; i < height; i++) {                                        \
-          LOAD_SRC_DST                                                        \
-          /* expend each byte to 2 bytes */                                   \
-          MERGE_WITH_SRC(src_reg, zero_reg)                                   \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += src_stride;                                                  \
-          dst += dst_stride;                                                  \
-        }                                                                     \
-        /* x_offset = 0 and y_offset = 4 */                                   \
-      } else if (y_offset == 4) {                                             \
-        __m256i src_next_reg;                                                 \
-        for (i = 0; i < height; i++) {                                        \
-          LOAD_SRC_DST                                                        \
-          AVG_NEXT_SRC(src_reg, src_stride)                                   \
-          /* expend each byte to 2 bytes */                                   \
-          MERGE_WITH_SRC(src_reg, zero_reg)                                   \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += src_stride;                                                  \
-          dst += dst_stride;                                                  \
-        }                                                                     \
-        /* x_offset = 0 and y_offset = bilin interpolation */                 \
-      } else {                                                                \
-        __m256i filter, pw8, src_next_reg;                                    \
-                                                                              \
-        y_offset <<= 5;                                                       \
-        filter = _mm256_load_si256(                                           \
-            (__m256i const *)(bilinear_filters_avx2 + y_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        for (i = 0; i < height; i++) {                                        \
-          LOAD_SRC_DST                                                        \
-          MERGE_NEXT_SRC(src_reg, src_stride)                                 \
-          FILTER_SRC(filter)                                                  \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += src_stride;                                                  \
-          dst += dst_stride;                                                  \
-        }                                                                     \
-      }                                                                       \
-      /* x_offset = 4  and y_offset = 0 */                                    \
-    } else if (x_offset == 4) {                                               \
-      if (y_offset == 0) {                                                    \
-        __m256i src_next_reg;                                                 \
-        for (i = 0; i < height; i++) {                                        \
-          LOAD_SRC_DST                                                        \
-          AVG_NEXT_SRC(src_reg, 1)                                            \
-          /* expand each byte to 2 bytes */                                   \
-          MERGE_WITH_SRC(src_reg, zero_reg)                                   \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += src_stride;                                                  \
-          dst += dst_stride;                                                  \
-        }                                                                     \
-        /* x_offset = 4  and y_offset = 4 */                                  \
-      } else if (y_offset == 4) {                                             \
-        __m256i src_next_reg, src_avg;                                        \
-        /* load source and another source starting from the next */           \
-        /* following byte */                                                  \
-        src_reg = _mm256_loadu_si256((__m256i const *)(src));                 \
-        AVG_NEXT_SRC(src_reg, 1)                                              \
-        for (i = 0; i < height; i++) {                                        \
-          src_avg = src_reg;                                                  \
-          src += src_stride;                                                  \
-          LOAD_SRC_DST                                                        \
-          AVG_NEXT_SRC(src_reg, 1)                                            \
-          /* average between previous average to current average */           \
-          src_avg = _mm256_avg_epu8(src_avg, src_reg);                        \
-          /* expand each byte to 2 bytes */                                   \
-          MERGE_WITH_SRC(src_avg, zero_reg)                                   \
-          /* save current source average */                                   \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          dst += dst_stride;                                                  \
-        }                                                                     \
-        /* x_offset = 4  and y_offset = bilin interpolation */                \
-      } else {                                                                \
-        __m256i filter, pw8, src_next_reg, src_avg;                           \
-        y_offset <<= 5;                                                       \
-        filter = _mm256_load_si256(                                           \
-            (__m256i const *)(bilinear_filters_avx2 + y_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        /* load source and another source starting from the next */           \
-        /* following byte */                                                  \
-        src_reg = _mm256_loadu_si256((__m256i const *)(src));                 \
-        AVG_NEXT_SRC(src_reg, 1)                                              \
-        for (i = 0; i < height; i++) {                                        \
-          /* save current source average */                                   \
-          src_avg = src_reg;                                                  \
-          src += src_stride;                                                  \
-          LOAD_SRC_DST                                                        \
-          AVG_NEXT_SRC(src_reg, 1)                                            \
-          MERGE_WITH_SRC(src_avg, src_reg)                                    \
-          FILTER_SRC(filter)                                                  \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          dst += dst_stride;                                                  \
-        }                                                                     \
-      }                                                                       \
-      /* x_offset = bilin interpolation and y_offset = 0 */                   \
-    } else {                                                                  \
-      if (y_offset == 0) {                                                    \
-        __m256i filter, pw8, src_next_reg;                                    \
-        x_offset <<= 5;                                                       \
-        filter = _mm256_load_si256(                                           \
-            (__m256i const *)(bilinear_filters_avx2 + x_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        for (i = 0; i < height; i++) {                                        \
-          LOAD_SRC_DST                                                        \
-          MERGE_NEXT_SRC(src_reg, 1)                                          \
-          FILTER_SRC(filter)                                                  \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += src_stride;                                                  \
-          dst += dst_stride;                                                  \
-        }                                                                     \
-        /* x_offset = bilin interpolation and y_offset = 4 */                 \
-      } else if (y_offset == 4) {                                             \
-        __m256i filter, pw8, src_next_reg, src_pack;                          \
-        x_offset <<= 5;                                                       \
-        filter = _mm256_load_si256(                                           \
-            (__m256i const *)(bilinear_filters_avx2 + x_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        src_reg = _mm256_loadu_si256((__m256i const *)(src));                 \
-        MERGE_NEXT_SRC(src_reg, 1)                                            \
-        FILTER_SRC(filter)                                                    \
-        /* convert each 16 bit to 8 bit to each low and high lane source */   \
-        src_pack = _mm256_packus_epi16(exp_src_lo, exp_src_hi);               \
-        for (i = 0; i < height; i++) {                                        \
-          src += src_stride;                                                  \
-          LOAD_SRC_DST                                                        \
-          MERGE_NEXT_SRC(src_reg, 1)                                          \
-          FILTER_SRC(filter)                                                  \
-          src_reg = _mm256_packus_epi16(exp_src_lo, exp_src_hi);              \
-          /* average between previous pack to the current */                  \
-          src_pack = _mm256_avg_epu8(src_pack, src_reg);                      \
-          MERGE_WITH_SRC(src_pack, zero_reg)                                  \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src_pack = src_reg;                                                 \
-          dst += dst_stride;                                                  \
-        }                                                                     \
-        /* x_offset = bilin interpolation and y_offset = bilin interpolation  \
-         */                                                                   \
-      } else {                                                                \
-        __m256i xfilter, yfilter, pw8, src_next_reg, src_pack;                \
-        x_offset <<= 5;                                                       \
-        xfilter = _mm256_load_si256(                                          \
-            (__m256i const *)(bilinear_filters_avx2 + x_offset));             \
-        y_offset <<= 5;                                                       \
-        yfilter = _mm256_load_si256(                                          \
-            (__m256i const *)(bilinear_filters_avx2 + y_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        /* load source and another source starting from the next */           \
-        /* following byte */                                                  \
-        src_reg = _mm256_loadu_si256((__m256i const *)(src));                 \
-        MERGE_NEXT_SRC(src_reg, 1)                                            \
-                                                                              \
-        FILTER_SRC(xfilter)                                                   \
-        /* convert each 16 bit to 8 bit to each low and high lane source */   \
-        src_pack = _mm256_packus_epi16(exp_src_lo, exp_src_hi);               \
-        for (i = 0; i < height; i++) {                                        \
-          src += src_stride;                                                  \
-          LOAD_SRC_DST                                                        \
-          MERGE_NEXT_SRC(src_reg, 1)                                          \
-          FILTER_SRC(xfilter)                                                 \
-          src_reg = _mm256_packus_epi16(exp_src_lo, exp_src_hi);              \
-          /* merge previous pack to current pack source */                    \
-          MERGE_WITH_SRC(src_pack, src_reg)                                   \
-          /* filter the source */                                             \
-          FILTER_SRC(yfilter)                                                 \
-          src_pack = src_reg;                                                 \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          dst += dst_stride;                                                  \
-        }                                                                     \
-      }                                                                       \
-    }                                                                         \
-    CALC_SUM_AND_SSE                                                          \
-    _mm256_zeroupper();                                                       \
-    return sum;                                                               \
-  }                                                                           \
-  unsigned int aom_sub_pixel_variance32x##height##_avx2(                      \
-      const uint8_t *src, int src_stride, int x_offset, int y_offset,         \
-      const uint8_t *dst, int dst_stride, unsigned int *sse) {                \
-    const int sum = aom_sub_pixel_variance32x##height##_imp_avx2(             \
-        src, src_stride, x_offset, y_offset, dst, dst_stride, sse);           \
-    return *sse - (unsigned int)(((int64_t)sum * sum) >> (5 + log2height));   \
+#define MAKE_SUB_PIXEL_VAR_32XH(height, log2height)                            \
+  static inline int aom_sub_pixel_variance32x##height##_imp_avx2(              \
+      const uint8_t *src, int src_stride, int x_offset, int y_offset,          \
+      const uint8_t *dst, int dst_stride, unsigned int *sse) {                 \
+    __m256i src_reg, dst_reg, exp_src_lo, exp_src_hi, exp_dst_lo, exp_dst_hi;  \
+    __m256i sse_reg, sum_reg, sse_reg_hi, res_cmp, sum_reg_lo, sum_reg_hi;     \
+    __m256i zero_reg;                                                          \
+    int i, sum;                                                                \
+    sum_reg = _mm256_setzero_si256();                                          \
+    sse_reg = _mm256_setzero_si256();                                          \
+    zero_reg = _mm256_setzero_si256();                                         \
+                                                                               \
+    /* x_offset = 0 and y_offset = 0 */                                        \
+    if (x_offset == 0) {                                                       \
+      if (y_offset == 0) {                                                     \
+        for (i = 0; i < height; i++) {                                         \
+          LOAD_SRC_DST                                                         \
+          /* expend each byte to 2 bytes */                                    \
+          MERGE_WITH_SRC(src_reg, zero_reg)                                    \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += src_stride;                                                   \
+          dst += dst_stride;                                                   \
+        }                                                                      \
+        /* x_offset = 0 and y_offset = 4 */                                    \
+      } else if (y_offset == 4) {                                              \
+        __m256i src_next_reg;                                                  \
+        for (i = 0; i < height; i++) {                                         \
+          LOAD_SRC_DST                                                         \
+          AVG_NEXT_SRC(src_reg, src_stride)                                    \
+          /* expend each byte to 2 bytes */                                    \
+          MERGE_WITH_SRC(src_reg, zero_reg)                                    \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += src_stride;                                                   \
+          dst += dst_stride;                                                   \
+        }                                                                      \
+        /* x_offset = 0 and y_offset = bilin interpolation */                  \
+      } else {                                                                 \
+        __m256i filter, pw8, src_next_reg;                                     \
+                                                                               \
+        y_offset <<= 5;                                                        \
+        filter = _mm256_load_si256(                                            \
+            (__m256i const *)(bilinear_filters_avx2 + y_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        for (i = 0; i < height; i++) {                                         \
+          LOAD_SRC_DST                                                         \
+          MERGE_NEXT_SRC(src_reg, src_stride)                                  \
+          FILTER_SRC(filter)                                                   \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += src_stride;                                                   \
+          dst += dst_stride;                                                   \
+        }                                                                      \
+      }                                                                        \
+      /* x_offset = 4  and y_offset = 0 */                                     \
+    } else if (x_offset == 4) {                                                \
+      if (y_offset == 0) {                                                     \
+        __m256i src_next_reg;                                                  \
+        for (i = 0; i < height; i++) {                                         \
+          LOAD_SRC_DST                                                         \
+          AVG_NEXT_SRC(src_reg, 1)                                             \
+          /* expand each byte to 2 bytes */                                    \
+          MERGE_WITH_SRC(src_reg, zero_reg)                                    \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += src_stride;                                                   \
+          dst += dst_stride;                                                   \
+        }                                                                      \
+        /* x_offset = 4  and y_offset = 4 */                                   \
+      } else if (y_offset == 4) {                                              \
+        __m256i src_next_reg, src_avg;                                         \
+        /* load source and another source starting from the next */            \
+        /* following byte */                                                   \
+        src_reg = _mm256_loadu_si256((__m256i const *)(src));                  \
+        AVG_NEXT_SRC(src_reg, 1)                                               \
+        for (i = 0; i < height; i++) {                                         \
+          src_avg = src_reg;                                                   \
+          src += src_stride;                                                   \
+          LOAD_SRC_DST                                                         \
+          AVG_NEXT_SRC(src_reg, 1)                                             \
+          /* average between previous average to current average */            \
+          src_avg = _mm256_avg_epu8(src_avg, src_reg);                         \
+          /* expand each byte to 2 bytes */                                    \
+          MERGE_WITH_SRC(src_avg, zero_reg)                                    \
+          /* save current source average */                                    \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          dst += dst_stride;                                                   \
+        }                                                                      \
+        /* x_offset = 4  and y_offset = bilin interpolation */                 \
+      } else {                                                                 \
+        __m256i filter, pw8, src_next_reg, src_avg;                            \
+        y_offset <<= 5;                                                        \
+        filter = _mm256_load_si256(                                            \
+            (__m256i const *)(bilinear_filters_avx2 + y_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        /* load source and another source starting from the next */            \
+        /* following byte */                                                   \
+        src_reg = _mm256_loadu_si256((__m256i const *)(src));                  \
+        AVG_NEXT_SRC(src_reg, 1)                                               \
+        for (i = 0; i < height; i++) {                                         \
+          /* save current source average */                                    \
+          src_avg = src_reg;                                                   \
+          src += src_stride;                                                   \
+          LOAD_SRC_DST                                                         \
+          AVG_NEXT_SRC(src_reg, 1)                                             \
+          MERGE_WITH_SRC(src_avg, src_reg)                                     \
+          FILTER_SRC(filter)                                                   \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          dst += dst_stride;                                                   \
+        }                                                                      \
+      }                                                                        \
+      /* x_offset = bilin interpolation and y_offset = 0 */                    \
+    } else {                                                                   \
+      if (y_offset == 0) {                                                     \
+        __m256i filter, pw8, src_next_reg;                                     \
+        x_offset <<= 5;                                                        \
+        filter = _mm256_load_si256(                                            \
+            (__m256i const *)(bilinear_filters_avx2 + x_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        for (i = 0; i < height; i++) {                                         \
+          LOAD_SRC_DST                                                         \
+          MERGE_NEXT_SRC(src_reg, 1)                                           \
+          FILTER_SRC(filter)                                                   \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += src_stride;                                                   \
+          dst += dst_stride;                                                   \
+        }                                                                      \
+        /* x_offset = bilin interpolation and y_offset = 4 */                  \
+      } else if (y_offset == 4) {                                              \
+        __m256i filter, pw8, src_next_reg, src_pack;                           \
+        x_offset <<= 5;                                                        \
+        filter = _mm256_load_si256(                                            \
+            (__m256i const *)(bilinear_filters_avx2 + x_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        src_reg = _mm256_loadu_si256((__m256i const *)(src));                  \
+        MERGE_NEXT_SRC(src_reg, 1)                                             \
+        FILTER_SRC(filter)                                                     \
+        /* convert each 16 bit to 8 bit to each low and high lane source */    \
+        src_pack = _mm256_packus_epi16(exp_src_lo, exp_src_hi);                \
+        for (i = 0; i < height; i++) {                                         \
+          src += src_stride;                                                   \
+          LOAD_SRC_DST                                                         \
+          MERGE_NEXT_SRC(src_reg, 1)                                           \
+          FILTER_SRC(filter)                                                   \
+          src_reg = _mm256_packus_epi16(exp_src_lo, exp_src_hi);               \
+          /* average between previous pack to the current */                   \
+          src_pack = _mm256_avg_epu8(src_pack, src_reg);                       \
+          MERGE_WITH_SRC(src_pack, zero_reg)                                   \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src_pack = src_reg;                                                  \
+          dst += dst_stride;                                                   \
+        }                                                                      \
+        /* x_offset = bilin interpolation and y_offset = bilin interpolation   \
+         */                                                                    \
+      } else {                                                                 \
+        __m256i xfilter, yfilter, pw8, mask_00ff;                              \
+        __m256i p0, p1, p2;                                                    \
+        const uint8_t *src_ptr = src;                                          \
+        x_offset <<= 5;                                                        \
+        xfilter = _mm256_load_si256(                                           \
+            (__m256i const *)(bilinear_filters_avx2 + x_offset));              \
+        y_offset <<= 5;                                                        \
+        yfilter = _mm256_load_si256(                                           \
+            (__m256i const *)(bilinear_filters_avx2 + y_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        mask_00ff = _mm256_set1_epi16(0x00ff);                                 \
+                                                                               \
+        {                                                                      \
+          __m256i s0 = _mm256_loadu_si256((__m256i const *)(src_ptr));         \
+          __m256i s1 = _mm256_loadu_si256((__m256i const *)(src_ptr + 1));     \
+          __m256i he = _mm256_maddubs_epi16(s0, xfilter);                      \
+          __m256i ho = _mm256_maddubs_epi16(s1, xfilter);                      \
+          he = _mm256_srai_epi16(_mm256_add_epi16(he, pw8), 4);                \
+          ho = _mm256_srai_epi16(_mm256_add_epi16(ho, pw8), 4);                \
+          p0 = _mm256_packus_epi16(he, ho);                                    \
+          src_ptr += src_stride;                                               \
+        }                                                                      \
+        {                                                                      \
+          __m256i s0 = _mm256_loadu_si256((__m256i const *)(src_ptr));         \
+          __m256i s1 = _mm256_loadu_si256((__m256i const *)(src_ptr + 1));     \
+          __m256i he = _mm256_maddubs_epi16(s0, xfilter);                      \
+          __m256i ho = _mm256_maddubs_epi16(s1, xfilter);                      \
+          he = _mm256_srai_epi16(_mm256_add_epi16(he, pw8), 4);                \
+          ho = _mm256_srai_epi16(_mm256_add_epi16(ho, pw8), 4);                \
+          p1 = _mm256_packus_epi16(he, ho);                                    \
+          src_ptr += src_stride;                                               \
+        }                                                                      \
+        {                                                                      \
+          __m256i s0 = _mm256_loadu_si256((__m256i const *)(src_ptr));         \
+          __m256i s1 = _mm256_loadu_si256((__m256i const *)(src_ptr + 1));     \
+          __m256i he = _mm256_maddubs_epi16(s0, xfilter);                      \
+          __m256i ho = _mm256_maddubs_epi16(s1, xfilter);                      \
+          he = _mm256_srai_epi16(_mm256_add_epi16(he, pw8), 4);                \
+          ho = _mm256_srai_epi16(_mm256_add_epi16(ho, pw8), 4);                \
+          p2 = _mm256_packus_epi16(he, ho);                                    \
+          src_ptr += src_stride;                                               \
+        }                                                                      \
+                                                                               \
+        for (i = 0; i < height - 2; i += 2) {                                  \
+          __m256i p3, p4, v_ev_A, v_od_A, dst_A, dst_A_ev, dst_A_od;           \
+          __m256i diff_A_ev, diff_A_od, v_ev_B, v_od_B, dst_B, dst_B_ev;       \
+          __m256i dst_B_od, diff_B_ev, diff_B_od, sum_comb, sse_comb;          \
+                                                                               \
+          {                                                                    \
+            __m256i s0 = _mm256_loadu_si256((__m256i const *)(src_ptr));       \
+            __m256i s1 = _mm256_loadu_si256((__m256i const *)(src_ptr + 1));   \
+            __m256i he = _mm256_maddubs_epi16(s0, xfilter);                    \
+            __m256i ho = _mm256_maddubs_epi16(s1, xfilter);                    \
+            he = _mm256_srai_epi16(_mm256_add_epi16(he, pw8), 4);              \
+            ho = _mm256_srai_epi16(_mm256_add_epi16(ho, pw8), 4);              \
+            p3 = _mm256_packus_epi16(he, ho);                                  \
+            src_ptr += src_stride;                                             \
+          }                                                                    \
+          {                                                                    \
+            __m256i s0 = _mm256_loadu_si256((__m256i const *)(src_ptr));       \
+            __m256i s1 = _mm256_loadu_si256((__m256i const *)(src_ptr + 1));   \
+            __m256i he = _mm256_maddubs_epi16(s0, xfilter);                    \
+            __m256i ho = _mm256_maddubs_epi16(s1, xfilter);                    \
+            he = _mm256_srai_epi16(_mm256_add_epi16(he, pw8), 4);              \
+            ho = _mm256_srai_epi16(_mm256_add_epi16(ho, pw8), 4);              \
+            p4 = _mm256_packus_epi16(he, ho);                                  \
+            src_ptr += src_stride;                                             \
+          }                                                                    \
+                                                                               \
+          v_ev_A =                                                             \
+              _mm256_maddubs_epi16(_mm256_unpacklo_epi8(p0, p1), yfilter);     \
+          v_od_A =                                                             \
+              _mm256_maddubs_epi16(_mm256_unpackhi_epi8(p0, p1), yfilter);     \
+          v_ev_A = _mm256_srai_epi16(_mm256_add_epi16(v_ev_A, pw8), 4);        \
+          v_od_A = _mm256_srai_epi16(_mm256_add_epi16(v_od_A, pw8), 4);        \
+                                                                               \
+          dst_A = _mm256_loadu_si256((__m256i const *)(dst));                  \
+          dst += dst_stride;                                                   \
+          dst_A_ev = _mm256_and_si256(dst_A, mask_00ff);                       \
+          dst_A_od = _mm256_srli_epi16(dst_A, 8);                              \
+          diff_A_ev = _mm256_sub_epi16(v_ev_A, dst_A_ev);                      \
+          diff_A_od = _mm256_sub_epi16(v_od_A, dst_A_od);                      \
+                                                                               \
+          v_ev_B =                                                             \
+              _mm256_maddubs_epi16(_mm256_unpacklo_epi8(p1, p2), yfilter);     \
+          v_od_B =                                                             \
+              _mm256_maddubs_epi16(_mm256_unpackhi_epi8(p1, p2), yfilter);     \
+          v_ev_B = _mm256_srai_epi16(_mm256_add_epi16(v_ev_B, pw8), 4);        \
+          v_od_B = _mm256_srai_epi16(_mm256_add_epi16(v_od_B, pw8), 4);        \
+                                                                               \
+          dst_B = _mm256_loadu_si256((__m256i const *)(dst));                  \
+          dst += dst_stride;                                                   \
+          dst_B_ev = _mm256_and_si256(dst_B, mask_00ff);                       \
+          dst_B_od = _mm256_srli_epi16(dst_B, 8);                              \
+          diff_B_ev = _mm256_sub_epi16(v_ev_B, dst_B_ev);                      \
+          diff_B_od = _mm256_sub_epi16(v_od_B, dst_B_od);                      \
+                                                                               \
+          sum_comb = _mm256_add_epi16(_mm256_add_epi16(diff_A_ev, diff_A_od),  \
+                                      _mm256_add_epi16(diff_B_ev, diff_B_od)); \
+          sum_reg = _mm256_add_epi16(sum_reg, sum_comb);                       \
+                                                                               \
+          sse_comb = _mm256_add_epi32(                                         \
+              _mm256_add_epi32(_mm256_madd_epi16(diff_A_ev, diff_A_ev),        \
+                               _mm256_madd_epi16(diff_A_od, diff_A_od)),       \
+              _mm256_add_epi32(_mm256_madd_epi16(diff_B_ev, diff_B_ev),        \
+                               _mm256_madd_epi16(diff_B_od, diff_B_od)));      \
+          sse_reg = _mm256_add_epi32(sse_reg, sse_comb);                       \
+                                                                               \
+          p0 = p2;                                                             \
+          p1 = p3;                                                             \
+          p2 = p4;                                                             \
+        }                                                                      \
+                                                                               \
+        {                                                                      \
+          __m256i v_ev_A, v_od_A, dst_A, dst_A_ev, dst_A_od;                   \
+          __m256i diff_A_ev, diff_A_od, v_ev_B, v_od_B, dst_B, dst_B_ev;       \
+          __m256i dst_B_od, diff_B_ev, diff_B_od, sum_comb, sse_comb;          \
+                                                                               \
+          v_ev_A =                                                             \
+              _mm256_maddubs_epi16(_mm256_unpacklo_epi8(p0, p1), yfilter);     \
+          v_od_A =                                                             \
+              _mm256_maddubs_epi16(_mm256_unpackhi_epi8(p0, p1), yfilter);     \
+          v_ev_A = _mm256_srai_epi16(_mm256_add_epi16(v_ev_A, pw8), 4);        \
+          v_od_A = _mm256_srai_epi16(_mm256_add_epi16(v_od_A, pw8), 4);        \
+                                                                               \
+          dst_A = _mm256_loadu_si256((__m256i const *)(dst));                  \
+          dst += dst_stride;                                                   \
+          dst_A_ev = _mm256_and_si256(dst_A, mask_00ff);                       \
+          dst_A_od = _mm256_srli_epi16(dst_A, 8);                              \
+          diff_A_ev = _mm256_sub_epi16(v_ev_A, dst_A_ev);                      \
+          diff_A_od = _mm256_sub_epi16(v_od_A, dst_A_od);                      \
+                                                                               \
+          v_ev_B =                                                             \
+              _mm256_maddubs_epi16(_mm256_unpacklo_epi8(p1, p2), yfilter);     \
+          v_od_B =                                                             \
+              _mm256_maddubs_epi16(_mm256_unpackhi_epi8(p1, p2), yfilter);     \
+          v_ev_B = _mm256_srai_epi16(_mm256_add_epi16(v_ev_B, pw8), 4);        \
+          v_od_B = _mm256_srai_epi16(_mm256_add_epi16(v_od_B, pw8), 4);        \
+                                                                               \
+          dst_B = _mm256_loadu_si256((__m256i const *)(dst));                  \
+          dst += dst_stride;                                                   \
+          dst_B_ev = _mm256_and_si256(dst_B, mask_00ff);                       \
+          dst_B_od = _mm256_srli_epi16(dst_B, 8);                              \
+          diff_B_ev = _mm256_sub_epi16(v_ev_B, dst_B_ev);                      \
+          diff_B_od = _mm256_sub_epi16(v_od_B, dst_B_od);                      \
+                                                                               \
+          sum_comb = _mm256_add_epi16(_mm256_add_epi16(diff_A_ev, diff_A_od),  \
+                                      _mm256_add_epi16(diff_B_ev, diff_B_od)); \
+          sum_reg = _mm256_add_epi16(sum_reg, sum_comb);                       \
+                                                                               \
+          sse_comb = _mm256_add_epi32(                                         \
+              _mm256_add_epi32(_mm256_madd_epi16(diff_A_ev, diff_A_ev),        \
+                               _mm256_madd_epi16(diff_A_od, diff_A_od)),       \
+              _mm256_add_epi32(_mm256_madd_epi16(diff_B_ev, diff_B_ev),        \
+                               _mm256_madd_epi16(diff_B_od, diff_B_od)));      \
+          sse_reg = _mm256_add_epi32(sse_reg, sse_comb);                       \
+        }                                                                      \
+                                                                               \
+        {                                                                      \
+          __m256i sse_hi, sum_hi;                                              \
+          int f_sse, f_sum;                                                    \
+          sum_reg = _mm256_madd_epi16(sum_reg, _mm256_set1_epi16(1));          \
+          sse_hi = _mm256_srli_si256(sse_reg, 8);                              \
+          sum_hi = _mm256_srli_si256(sum_reg, 8);                              \
+          sse_reg = _mm256_add_epi32(sse_reg, sse_hi);                         \
+          sum_reg = _mm256_add_epi32(sum_reg, sum_hi);                         \
+          sse_hi = _mm256_srli_si256(sse_reg, 4);                              \
+          sum_hi = _mm256_srli_si256(sum_reg, 4);                              \
+          sse_reg = _mm256_add_epi32(sse_reg, sse_hi);                         \
+          sum_reg = _mm256_add_epi32(sum_reg, sum_hi);                         \
+          f_sse = _mm_cvtsi128_si32(_mm256_castsi256_si128(sse_reg)) +         \
+                  _mm_cvtsi128_si32(_mm256_extractf128_si256(sse_reg, 1));     \
+          f_sum = _mm_cvtsi128_si32(_mm256_castsi256_si128(sum_reg)) +         \
+                  _mm_cvtsi128_si32(_mm256_extractf128_si256(sum_reg, 1));     \
+          *sse = f_sse;                                                        \
+          _mm256_zeroupper();                                                  \
+          return f_sum;                                                        \
+        }                                                                      \
+      }                                                                        \
+    }                                                                          \
+    CALC_SUM_AND_SSE                                                           \
+    _mm256_zeroupper();                                                        \
+    return sum;                                                                \
+  }                                                                            \
+  unsigned int aom_sub_pixel_variance32x##height##_avx2(                       \
+      const uint8_t *src, int src_stride, int x_offset, int y_offset,          \
+      const uint8_t *dst, int dst_stride, unsigned int *sse) {                 \
+    const int sum = aom_sub_pixel_variance32x##height##_imp_avx2(              \
+        src, src_stride, x_offset, y_offset, dst, dst_stride, sse);            \
+    return *sse - (unsigned int)(((int64_t)sum * sum) >> (5 + log2height));    \
   }
 
 MAKE_SUB_PIXEL_VAR_32XH(64, 6)
@@ -400,243 +548,381 @@ AOM_SUB_PIXEL_VAR_AVX2(64, 128, 32, 64, 6, 7)
 AOM_SUB_PIXEL_VAR_AVX2(64, 64, 32, 64, 6, 6)
 AOM_SUB_PIXEL_VAR_AVX2(64, 32, 32, 32, 6, 5)
 
-#define MAKE_SUB_PIXEL_VAR_16XH(height, log2height)                           \
-  unsigned int aom_sub_pixel_variance16x##height##_avx2(                      \
-      const uint8_t *src, int src_stride, int x_offset, int y_offset,         \
-      const uint8_t *dst, int dst_stride, unsigned int *sse) {                \
-    __m256i src_reg, dst_reg, exp_src_lo, exp_src_hi, exp_dst_lo, exp_dst_hi; \
-    __m256i sse_reg, sum_reg, sse_reg_hi, res_cmp, sum_reg_lo, sum_reg_hi;    \
-    __m256i zero_reg;                                                         \
-    int i, sum;                                                               \
-    sum_reg = _mm256_setzero_si256();                                         \
-    sse_reg = _mm256_setzero_si256();                                         \
-    zero_reg = _mm256_setzero_si256();                                        \
-                                                                              \
-    /* x_offset = 0 and y_offset = 0 */                                       \
-    if (x_offset == 0) {                                                      \
-      if (y_offset == 0) {                                                    \
-        for (i = 0; i < height; i += 2) {                                     \
-          LOAD_SRC_DST_INSERT(src_stride, dst_stride)                         \
-          /* expend each byte to 2 bytes */                                   \
-          MERGE_WITH_SRC(src_reg, zero_reg)                                   \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += (src_stride << 1);                                           \
-          dst += (dst_stride << 1);                                           \
-        }                                                                     \
-        /* x_offset = 0 and y_offset = 4 */                                   \
-      } else if (y_offset == 4) {                                             \
-        __m256i src_next_reg;                                                 \
-        for (i = 0; i < height; i += 2) {                                     \
-          LOAD_SRC_DST_INSERT(src_stride, dst_stride)                         \
-          AVG_NEXT_SRC_INSERT(src_reg, src_stride)                            \
-          /* expend each byte to 2 bytes */                                   \
-          MERGE_WITH_SRC(src_reg, zero_reg)                                   \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += (src_stride << 1);                                           \
-          dst += (dst_stride << 1);                                           \
-        }                                                                     \
-        /* x_offset = 0 and y_offset = bilin interpolation */                 \
-      } else {                                                                \
-        __m256i filter, pw8, src_next_reg;                                    \
-        y_offset <<= 5;                                                       \
-        filter = _mm256_load_si256(                                           \
-            (__m256i const *)(bilinear_filters_avx2 + y_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        for (i = 0; i < height; i += 2) {                                     \
-          LOAD_SRC_DST_INSERT(src_stride, dst_stride)                         \
-          MERGE_NEXT_SRC_INSERT(src_reg, src_stride)                          \
-          FILTER_SRC(filter)                                                  \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += (src_stride << 1);                                           \
-          dst += (dst_stride << 1);                                           \
-        }                                                                     \
-      }                                                                       \
-      /* x_offset = 4  and y_offset = 0 */                                    \
-    } else if (x_offset == 4) {                                               \
-      if (y_offset == 0) {                                                    \
-        __m256i src_next_reg;                                                 \
-        for (i = 0; i < height; i += 2) {                                     \
-          LOAD_SRC_NEXT_BYTE_INSERT                                           \
-          LOAD_DST_INSERT                                                     \
-          /* average between current and next stride source */                \
-          src_reg = _mm256_avg_epu8(src_reg, src_next_reg);                   \
-          /* expand each byte to 2 bytes */                                   \
-          MERGE_WITH_SRC(src_reg, zero_reg)                                   \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += (src_stride << 1);                                           \
-          dst += (dst_stride << 1);                                           \
-        }                                                                     \
-        /* x_offset = 4  and y_offset = 4 */                                  \
-      } else if (y_offset == 4) {                                             \
-        __m256i src_next_reg, src_avg, src_temp;                              \
-        /* load and insert source and next row source */                      \
-        LOAD_SRC_NEXT_BYTE_INSERT                                             \
-        src_avg = _mm256_avg_epu8(src_reg, src_next_reg);                     \
-        src += src_stride << 1;                                               \
-        for (i = 0; i < height - 2; i += 2) {                                 \
-          LOAD_SRC_NEXT_BYTE_INSERT                                           \
-          src_next_reg = _mm256_avg_epu8(src_reg, src_next_reg);              \
-          src_temp = _mm256_permute2x128_si256(src_avg, src_next_reg, 0x21);  \
-          src_temp = _mm256_avg_epu8(src_avg, src_temp);                      \
-          LOAD_DST_INSERT                                                     \
-          /* expand each byte to 2 bytes */                                   \
-          MERGE_WITH_SRC(src_temp, zero_reg)                                  \
-          /* save current source average */                                   \
-          src_avg = src_next_reg;                                             \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          dst += dst_stride << 1;                                             \
-          src += src_stride << 1;                                             \
-        }                                                                     \
-        /* last 2 rows processing happens here */                             \
-        __m128i src_reg_0 = _mm_loadu_si128((__m128i *)(src));                \
-        __m128i src_reg_1 = _mm_loadu_si128((__m128i *)(src + 1));            \
-        src_reg_0 = _mm_avg_epu8(src_reg_0, src_reg_1);                       \
-        src_next_reg = _mm256_permute2x128_si256(                             \
-            src_avg, _mm256_castsi128_si256(src_reg_0), 0x21);                \
-        LOAD_DST_INSERT                                                       \
-        src_avg = _mm256_avg_epu8(src_avg, src_next_reg);                     \
-        MERGE_WITH_SRC(src_avg, zero_reg)                                     \
-        CALC_SUM_SSE_INSIDE_LOOP                                              \
-      } else {                                                                \
-        /* x_offset = 4  and y_offset = bilin interpolation */                \
-        __m256i filter, pw8, src_next_reg, src_avg, src_temp;                 \
-        y_offset <<= 5;                                                       \
-        filter = _mm256_load_si256(                                           \
-            (__m256i const *)(bilinear_filters_avx2 + y_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        /* load and insert source and next row source */                      \
-        LOAD_SRC_NEXT_BYTE_INSERT                                             \
-        src_avg = _mm256_avg_epu8(src_reg, src_next_reg);                     \
-        src += src_stride << 1;                                               \
-        for (i = 0; i < height - 2; i += 2) {                                 \
-          LOAD_SRC_NEXT_BYTE_INSERT                                           \
-          src_next_reg = _mm256_avg_epu8(src_reg, src_next_reg);              \
-          src_temp = _mm256_permute2x128_si256(src_avg, src_next_reg, 0x21);  \
-          LOAD_DST_INSERT                                                     \
-          MERGE_WITH_SRC(src_avg, src_temp)                                   \
-          /* save current source average */                                   \
-          src_avg = src_next_reg;                                             \
-          FILTER_SRC(filter)                                                  \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          dst += dst_stride << 1;                                             \
-          src += src_stride << 1;                                             \
-        }                                                                     \
-        /* last 2 rows processing happens here */                             \
-        __m128i src_reg_0 = _mm_loadu_si128((__m128i *)(src));                \
-        __m128i src_reg_1 = _mm_loadu_si128((__m128i *)(src + 1));            \
-        src_reg_0 = _mm_avg_epu8(src_reg_0, src_reg_1);                       \
-        src_next_reg = _mm256_permute2x128_si256(                             \
-            src_avg, _mm256_castsi128_si256(src_reg_0), 0x21);                \
-        LOAD_DST_INSERT                                                       \
-        MERGE_WITH_SRC(src_avg, src_next_reg)                                 \
-        FILTER_SRC(filter)                                                    \
-        CALC_SUM_SSE_INSIDE_LOOP                                              \
-      }                                                                       \
-      /* x_offset = bilin interpolation and y_offset = 0 */                   \
-    } else {                                                                  \
-      if (y_offset == 0) {                                                    \
-        __m256i filter, pw8, src_next_reg;                                    \
-        x_offset <<= 5;                                                       \
-        filter = _mm256_load_si256(                                           \
-            (__m256i const *)(bilinear_filters_avx2 + x_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        for (i = 0; i < height; i += 2) {                                     \
-          LOAD_SRC_DST_INSERT(src_stride, dst_stride)                         \
-          MERGE_NEXT_SRC_INSERT(src_reg, 1)                                   \
-          FILTER_SRC(filter)                                                  \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += (src_stride << 1);                                           \
-          dst += (dst_stride << 1);                                           \
-        }                                                                     \
-        /* x_offset = bilin interpolation and y_offset = 4 */                 \
-      } else if (y_offset == 4) {                                             \
-        __m256i filter, pw8, src_next_reg, src_pack;                          \
-        x_offset <<= 5;                                                       \
-        filter = _mm256_load_si256(                                           \
-            (__m256i const *)(bilinear_filters_avx2 + x_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        /* load and insert source and next row source */                      \
-        LOAD_SRC_NEXT_BYTE_INSERT                                             \
-        MERGE_WITH_SRC(src_reg, src_next_reg)                                 \
-        FILTER_SRC(filter)                                                    \
-        /* convert each 16 bit to 8 bit to each low and high lane source */   \
-        src_pack = _mm256_packus_epi16(exp_src_lo, exp_src_hi);               \
-        src += src_stride << 1;                                               \
-        for (i = 0; i < height - 2; i += 2) {                                 \
-          LOAD_SRC_NEXT_BYTE_INSERT                                           \
-          LOAD_DST_INSERT                                                     \
-          MERGE_WITH_SRC(src_reg, src_next_reg)                               \
-          FILTER_SRC(filter)                                                  \
-          src_reg = _mm256_packus_epi16(exp_src_lo, exp_src_hi);              \
-          src_next_reg = _mm256_permute2x128_si256(src_pack, src_reg, 0x21);  \
-          /* average between previous pack to the current */                  \
-          src_pack = _mm256_avg_epu8(src_pack, src_next_reg);                 \
-          MERGE_WITH_SRC(src_pack, zero_reg)                                  \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src_pack = src_reg;                                                 \
-          src += src_stride << 1;                                             \
-          dst += dst_stride << 1;                                             \
-        }                                                                     \
-        /* last 2 rows processing happens here */                             \
-        LOAD_SRC_MERGE_128BIT(filter)                                         \
-        LOAD_DST_INSERT                                                       \
-        FILTER_SRC_128BIT(filter_128bit)                                      \
-        src_reg_0 = _mm_packus_epi16(src_lo, src_hi);                         \
-        src_next_reg = _mm256_permute2x128_si256(                             \
-            src_pack, _mm256_castsi128_si256(src_reg_0), 0x21);               \
-        /* average between previous pack to the current */                    \
-        src_pack = _mm256_avg_epu8(src_pack, src_next_reg);                   \
-        MERGE_WITH_SRC(src_pack, zero_reg)                                    \
-        CALC_SUM_SSE_INSIDE_LOOP                                              \
-      } else {                                                                \
-        /* x_offset = bilin interpolation and y_offset = bilin interpolation  \
-         */                                                                   \
-        __m256i xfilter, yfilter, pw8, src_next_reg, src_pack;                \
-        x_offset <<= 5;                                                       \
-        xfilter = _mm256_load_si256(                                          \
-            (__m256i const *)(bilinear_filters_avx2 + x_offset));             \
-        y_offset <<= 5;                                                       \
-        yfilter = _mm256_load_si256(                                          \
-            (__m256i const *)(bilinear_filters_avx2 + y_offset));             \
-        pw8 = _mm256_set1_epi16(8);                                           \
-        /* load and insert source and next row source */                      \
-        LOAD_SRC_NEXT_BYTE_INSERT                                             \
-        MERGE_WITH_SRC(src_reg, src_next_reg)                                 \
-        FILTER_SRC(xfilter)                                                   \
-        /* convert each 16 bit to 8 bit to each low and high lane source */   \
-        src_pack = _mm256_packus_epi16(exp_src_lo, exp_src_hi);               \
-        src += src_stride << 1;                                               \
-        for (i = 0; i < height - 2; i += 2) {                                 \
-          LOAD_SRC_NEXT_BYTE_INSERT                                           \
-          LOAD_DST_INSERT                                                     \
-          MERGE_WITH_SRC(src_reg, src_next_reg)                               \
-          FILTER_SRC(xfilter)                                                 \
-          src_reg = _mm256_packus_epi16(exp_src_lo, exp_src_hi);              \
-          src_next_reg = _mm256_permute2x128_si256(src_pack, src_reg, 0x21);  \
-          /* average between previous pack to the current */                  \
-          MERGE_WITH_SRC(src_pack, src_next_reg)                              \
-          /* filter the source */                                             \
-          FILTER_SRC(yfilter)                                                 \
-          src_pack = src_reg;                                                 \
-          CALC_SUM_SSE_INSIDE_LOOP                                            \
-          src += src_stride << 1;                                             \
-          dst += dst_stride << 1;                                             \
-        }                                                                     \
-        /* last 2 rows processing happens here */                             \
-        LOAD_SRC_MERGE_128BIT(xfilter)                                        \
-        LOAD_DST_INSERT                                                       \
-        FILTER_SRC_128BIT(filter_128bit)                                      \
-        src_reg_0 = _mm_packus_epi16(src_lo, src_hi);                         \
-        src_next_reg = _mm256_permute2x128_si256(                             \
-            src_pack, _mm256_castsi128_si256(src_reg_0), 0x21);               \
-        MERGE_WITH_SRC(src_pack, src_next_reg)                                \
-        FILTER_SRC(yfilter)                                                   \
-        CALC_SUM_SSE_INSIDE_LOOP                                              \
-      }                                                                       \
-    }                                                                         \
-    CALC_SUM_AND_SSE                                                          \
-    _mm256_zeroupper();                                                       \
-    return *sse - (unsigned int)(((int64_t)sum * sum) >> (4 + log2height));   \
+#define MAKE_SUB_PIXEL_VAR_16XH(height, log2height)                            \
+  unsigned int aom_sub_pixel_variance16x##height##_avx2(                       \
+      const uint8_t *src, int src_stride, int x_offset, int y_offset,          \
+      const uint8_t *dst, int dst_stride, unsigned int *sse) {                 \
+    __m256i src_reg, dst_reg, exp_src_lo, exp_src_hi, exp_dst_lo, exp_dst_hi;  \
+    __m256i sse_reg, sum_reg, sse_reg_hi, res_cmp, sum_reg_lo, sum_reg_hi;     \
+    __m256i zero_reg;                                                          \
+    int i, sum;                                                                \
+    sum_reg = _mm256_setzero_si256();                                          \
+    sse_reg = _mm256_setzero_si256();                                          \
+    zero_reg = _mm256_setzero_si256();                                         \
+                                                                               \
+    /* x_offset = 0 and y_offset = 0 */                                        \
+    if (x_offset == 0) {                                                       \
+      if (y_offset == 0) {                                                     \
+        for (i = 0; i < height; i += 2) {                                      \
+          LOAD_SRC_DST_INSERT(src_stride, dst_stride)                          \
+          /* expend each byte to 2 bytes */                                    \
+          MERGE_WITH_SRC(src_reg, zero_reg)                                    \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += (src_stride << 1);                                            \
+          dst += (dst_stride << 1);                                            \
+        }                                                                      \
+        /* x_offset = 0 and y_offset = 4 */                                    \
+      } else if (y_offset == 4) {                                              \
+        __m256i src_next_reg;                                                  \
+        for (i = 0; i < height; i += 2) {                                      \
+          LOAD_SRC_DST_INSERT(src_stride, dst_stride)                          \
+          AVG_NEXT_SRC_INSERT(src_reg, src_stride)                             \
+          /* expend each byte to 2 bytes */                                    \
+          MERGE_WITH_SRC(src_reg, zero_reg)                                    \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += (src_stride << 1);                                            \
+          dst += (dst_stride << 1);                                            \
+        }                                                                      \
+        /* x_offset = 0 and y_offset = bilin interpolation */                  \
+      } else {                                                                 \
+        __m256i filter, pw8, src_next_reg;                                     \
+        y_offset <<= 5;                                                        \
+        filter = _mm256_load_si256(                                            \
+            (__m256i const *)(bilinear_filters_avx2 + y_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        for (i = 0; i < height; i += 2) {                                      \
+          LOAD_SRC_DST_INSERT(src_stride, dst_stride)                          \
+          MERGE_NEXT_SRC_INSERT(src_reg, src_stride)                           \
+          FILTER_SRC(filter)                                                   \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += (src_stride << 1);                                            \
+          dst += (dst_stride << 1);                                            \
+        }                                                                      \
+      }                                                                        \
+      /* x_offset = 4  and y_offset = 0 */                                     \
+    } else if (x_offset == 4) {                                                \
+      if (y_offset == 0) {                                                     \
+        __m256i src_next_reg;                                                  \
+        for (i = 0; i < height; i += 2) {                                      \
+          LOAD_SRC_NEXT_BYTE_INSERT                                            \
+          LOAD_DST_INSERT                                                      \
+          /* average between current and next stride source */                 \
+          src_reg = _mm256_avg_epu8(src_reg, src_next_reg);                    \
+          /* expand each byte to 2 bytes */                                    \
+          MERGE_WITH_SRC(src_reg, zero_reg)                                    \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += (src_stride << 1);                                            \
+          dst += (dst_stride << 1);                                            \
+        }                                                                      \
+        /* x_offset = 4  and y_offset = 4 */                                   \
+      } else if (y_offset == 4) {                                              \
+        __m256i src_next_reg, src_avg, src_temp;                               \
+        /* load and insert source and next row source */                       \
+        LOAD_SRC_NEXT_BYTE_INSERT                                              \
+        src_avg = _mm256_avg_epu8(src_reg, src_next_reg);                      \
+        src += src_stride << 1;                                                \
+        for (i = 0; i < height - 2; i += 2) {                                  \
+          LOAD_SRC_NEXT_BYTE_INSERT                                            \
+          src_next_reg = _mm256_avg_epu8(src_reg, src_next_reg);               \
+          src_temp = _mm256_permute2x128_si256(src_avg, src_next_reg, 0x21);   \
+          src_temp = _mm256_avg_epu8(src_avg, src_temp);                       \
+          LOAD_DST_INSERT                                                      \
+          /* expand each byte to 2 bytes */                                    \
+          MERGE_WITH_SRC(src_temp, zero_reg)                                   \
+          /* save current source average */                                    \
+          src_avg = src_next_reg;                                              \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          dst += dst_stride << 1;                                              \
+          src += src_stride << 1;                                              \
+        }                                                                      \
+        /* last 2 rows processing happens here */                              \
+        __m128i src_reg_0 = _mm_loadu_si128((__m128i *)(src));                 \
+        __m128i src_reg_1 = _mm_loadu_si128((__m128i *)(src + 1));             \
+        src_reg_0 = _mm_avg_epu8(src_reg_0, src_reg_1);                        \
+        src_next_reg = _mm256_permute2x128_si256(                              \
+            src_avg, _mm256_castsi128_si256(src_reg_0), 0x21);                 \
+        LOAD_DST_INSERT                                                        \
+        src_avg = _mm256_avg_epu8(src_avg, src_next_reg);                      \
+        MERGE_WITH_SRC(src_avg, zero_reg)                                      \
+        CALC_SUM_SSE_INSIDE_LOOP                                               \
+      } else {                                                                 \
+        /* x_offset = 4  and y_offset = bilin interpolation */                 \
+        __m256i filter, pw8, src_next_reg, src_avg, src_temp;                  \
+        y_offset <<= 5;                                                        \
+        filter = _mm256_load_si256(                                            \
+            (__m256i const *)(bilinear_filters_avx2 + y_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        /* load and insert source and next row source */                       \
+        LOAD_SRC_NEXT_BYTE_INSERT                                              \
+        src_avg = _mm256_avg_epu8(src_reg, src_next_reg);                      \
+        src += src_stride << 1;                                                \
+        for (i = 0; i < height - 2; i += 2) {                                  \
+          LOAD_SRC_NEXT_BYTE_INSERT                                            \
+          src_next_reg = _mm256_avg_epu8(src_reg, src_next_reg);               \
+          src_temp = _mm256_permute2x128_si256(src_avg, src_next_reg, 0x21);   \
+          LOAD_DST_INSERT                                                      \
+          MERGE_WITH_SRC(src_avg, src_temp)                                    \
+          /* save current source average */                                    \
+          src_avg = src_next_reg;                                              \
+          FILTER_SRC(filter)                                                   \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          dst += dst_stride << 1;                                              \
+          src += src_stride << 1;                                              \
+        }                                                                      \
+        /* last 2 rows processing happens here */                              \
+        __m128i src_reg_0 = _mm_loadu_si128((__m128i *)(src));                 \
+        __m128i src_reg_1 = _mm_loadu_si128((__m128i *)(src + 1));             \
+        src_reg_0 = _mm_avg_epu8(src_reg_0, src_reg_1);                        \
+        src_next_reg = _mm256_permute2x128_si256(                              \
+            src_avg, _mm256_castsi128_si256(src_reg_0), 0x21);                 \
+        LOAD_DST_INSERT                                                        \
+        MERGE_WITH_SRC(src_avg, src_next_reg)                                  \
+        FILTER_SRC(filter)                                                     \
+        CALC_SUM_SSE_INSIDE_LOOP                                               \
+      }                                                                        \
+      /* x_offset = bilin interpolation and y_offset = 0 */                    \
+    } else {                                                                   \
+      if (y_offset == 0) {                                                     \
+        __m256i filter, pw8, src_next_reg;                                     \
+        x_offset <<= 5;                                                        \
+        filter = _mm256_load_si256(                                            \
+            (__m256i const *)(bilinear_filters_avx2 + x_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        for (i = 0; i < height; i += 2) {                                      \
+          LOAD_SRC_DST_INSERT(src_stride, dst_stride)                          \
+          MERGE_NEXT_SRC_INSERT(src_reg, 1)                                    \
+          FILTER_SRC(filter)                                                   \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src += (src_stride << 1);                                            \
+          dst += (dst_stride << 1);                                            \
+        }                                                                      \
+        /* x_offset = bilin interpolation and y_offset = 4 */                  \
+      } else if (y_offset == 4) {                                              \
+        __m256i filter, pw8, src_next_reg, src_pack;                           \
+        x_offset <<= 5;                                                        \
+        filter = _mm256_load_si256(                                            \
+            (__m256i const *)(bilinear_filters_avx2 + x_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        /* load and insert source and next row source */                       \
+        LOAD_SRC_NEXT_BYTE_INSERT                                              \
+        MERGE_WITH_SRC(src_reg, src_next_reg)                                  \
+        FILTER_SRC(filter)                                                     \
+        /* convert each 16 bit to 8 bit to each low and high lane source */    \
+        src_pack = _mm256_packus_epi16(exp_src_lo, exp_src_hi);                \
+        src += src_stride << 1;                                                \
+        for (i = 0; i < height - 2; i += 2) {                                  \
+          LOAD_SRC_NEXT_BYTE_INSERT                                            \
+          LOAD_DST_INSERT                                                      \
+          MERGE_WITH_SRC(src_reg, src_next_reg)                                \
+          FILTER_SRC(filter)                                                   \
+          src_reg = _mm256_packus_epi16(exp_src_lo, exp_src_hi);               \
+          src_next_reg = _mm256_permute2x128_si256(src_pack, src_reg, 0x21);   \
+          /* average between previous pack to the current */                   \
+          src_pack = _mm256_avg_epu8(src_pack, src_next_reg);                  \
+          MERGE_WITH_SRC(src_pack, zero_reg)                                   \
+          CALC_SUM_SSE_INSIDE_LOOP                                             \
+          src_pack = src_reg;                                                  \
+          src += src_stride << 1;                                              \
+          dst += dst_stride << 1;                                              \
+        }                                                                      \
+        /* last 2 rows processing happens here */                              \
+        LOAD_SRC_MERGE_128BIT(filter)                                          \
+        LOAD_DST_INSERT                                                        \
+        FILTER_SRC_128BIT(filter_128bit)                                       \
+        src_reg_0 = _mm_packus_epi16(src_lo, src_hi);                          \
+        src_next_reg = _mm256_permute2x128_si256(                              \
+            src_pack, _mm256_castsi128_si256(src_reg_0), 0x21);                \
+        /* average between previous pack to the current */                     \
+        src_pack = _mm256_avg_epu8(src_pack, src_next_reg);                    \
+        MERGE_WITH_SRC(src_pack, zero_reg)                                     \
+        CALC_SUM_SSE_INSIDE_LOOP                                               \
+      } else {                                                                 \
+        __m256i xfilter, yfilter, pw8, mask_00ff;                              \
+        __m256i p0, p1;                                                        \
+        const uint8_t *src_ptr = src;                                          \
+        x_offset <<= 5;                                                        \
+        xfilter = _mm256_load_si256(                                           \
+            (__m256i const *)(bilinear_filters_avx2 + x_offset));              \
+        y_offset <<= 5;                                                        \
+        yfilter = _mm256_load_si256(                                           \
+            (__m256i const *)(bilinear_filters_avx2 + y_offset));              \
+        pw8 = _mm256_set1_epi16(8);                                            \
+        mask_00ff = _mm256_set1_epi16(0x00ff);                                 \
+                                                                               \
+        {                                                                      \
+          __m256i s0 = _mm256_inserti128_si256(                                \
+              _mm256_castsi128_si256(                                          \
+                  _mm_loadu_si128((__m128i const *)(src_ptr))),                \
+              _mm_loadu_si128((__m128i const *)(src_ptr + src_stride)), 1);    \
+          __m256i s1 = _mm256_inserti128_si256(                                \
+              _mm256_castsi128_si256(                                          \
+                  _mm_loadu_si128((__m128i const *)(src_ptr + 1))),            \
+              _mm_loadu_si128((__m128i const *)(src_ptr + src_stride + 1)),    \
+              1);                                                              \
+          __m256i he = _mm256_maddubs_epi16(s0, xfilter);                      \
+          __m256i ho = _mm256_maddubs_epi16(s1, xfilter);                      \
+          he = _mm256_srai_epi16(_mm256_add_epi16(he, pw8), 4);                \
+          ho = _mm256_srai_epi16(_mm256_add_epi16(ho, pw8), 4);                \
+          p0 = _mm256_packus_epi16(he, ho);                                    \
+          src_ptr += src_stride << 1;                                          \
+        }                                                                      \
+        {                                                                      \
+          __m256i s0 = _mm256_inserti128_si256(                                \
+              _mm256_castsi128_si256(                                          \
+                  _mm_loadu_si128((__m128i const *)(src_ptr))),                \
+              _mm_loadu_si128((__m128i const *)(src_ptr + src_stride)), 1);    \
+          __m256i s1 = _mm256_inserti128_si256(                                \
+              _mm256_castsi128_si256(                                          \
+                  _mm_loadu_si128((__m128i const *)(src_ptr + 1))),            \
+              _mm_loadu_si128((__m128i const *)(src_ptr + src_stride + 1)),    \
+              1);                                                              \
+          __m256i he = _mm256_maddubs_epi16(s0, xfilter);                      \
+          __m256i ho = _mm256_maddubs_epi16(s1, xfilter);                      \
+          he = _mm256_srai_epi16(_mm256_add_epi16(he, pw8), 4);                \
+          ho = _mm256_srai_epi16(_mm256_add_epi16(ho, pw8), 4);                \
+          p1 = _mm256_packus_epi16(he, ho);                                    \
+          src_ptr += src_stride << 1;                                          \
+        }                                                                      \
+                                                                               \
+        for (i = 0; i < height - 4; i += 2) {                                  \
+          __m256i p2, p_mix, v_ev, v_od, dst_ev, dst_od;                       \
+          __m256i diff_ev, diff_od, sum_comb, sse_comb;                        \
+                                                                               \
+          {                                                                    \
+            __m256i s0 = _mm256_inserti128_si256(                              \
+                _mm256_castsi128_si256(                                        \
+                    _mm_loadu_si128((__m128i const *)(src_ptr))),              \
+                _mm_loadu_si128((__m128i const *)(src_ptr + src_stride)), 1);  \
+            __m256i s1 = _mm256_inserti128_si256(                              \
+                _mm256_castsi128_si256(                                        \
+                    _mm_loadu_si128((__m128i const *)(src_ptr + 1))),          \
+                _mm_loadu_si128((__m128i const *)(src_ptr + src_stride + 1)),  \
+                1);                                                            \
+            __m256i he = _mm256_maddubs_epi16(s0, xfilter);                    \
+            __m256i ho = _mm256_maddubs_epi16(s1, xfilter);                    \
+            he = _mm256_srai_epi16(_mm256_add_epi16(he, pw8), 4);              \
+            ho = _mm256_srai_epi16(_mm256_add_epi16(ho, pw8), 4);              \
+            p2 = _mm256_packus_epi16(he, ho);                                  \
+            src_ptr += src_stride << 1;                                        \
+          }                                                                    \
+                                                                               \
+          p_mix = _mm256_permute2x128_si256(p0, p1, 0x21);                     \
+          v_ev =                                                               \
+              _mm256_maddubs_epi16(_mm256_unpacklo_epi8(p0, p_mix), yfilter);  \
+          v_od =                                                               \
+              _mm256_maddubs_epi16(_mm256_unpackhi_epi8(p0, p_mix), yfilter);  \
+          v_ev = _mm256_srai_epi16(_mm256_add_epi16(v_ev, pw8), 4);            \
+          v_od = _mm256_srai_epi16(_mm256_add_epi16(v_od, pw8), 4);            \
+                                                                               \
+          dst_reg = _mm256_inserti128_si256(                                   \
+              _mm256_castsi128_si256(_mm_loadu_si128((__m128i const *)(dst))), \
+              _mm_loadu_si128((__m128i const *)(dst + dst_stride)), 1);        \
+          dst += dst_stride << 1;                                              \
+          dst_ev = _mm256_and_si256(dst_reg, mask_00ff);                       \
+          dst_od = _mm256_srli_epi16(dst_reg, 8);                              \
+          diff_ev = _mm256_sub_epi16(v_ev, dst_ev);                            \
+          diff_od = _mm256_sub_epi16(v_od, dst_od);                            \
+                                                                               \
+          sum_comb = _mm256_add_epi16(diff_ev, diff_od);                       \
+          sum_reg = _mm256_add_epi16(sum_reg, sum_comb);                       \
+                                                                               \
+          sse_comb = _mm256_add_epi32(_mm256_madd_epi16(diff_ev, diff_ev),     \
+                                      _mm256_madd_epi16(diff_od, diff_od));    \
+          sse_reg = _mm256_add_epi32(sse_reg, sse_comb);                       \
+                                                                               \
+          p0 = p1;                                                             \
+          p1 = p2;                                                             \
+        }                                                                      \
+                                                                               \
+        {                                                                      \
+          __m256i p_mix = _mm256_permute2x128_si256(p0, p1, 0x21);             \
+          __m256i v_ev =                                                       \
+              _mm256_maddubs_epi16(_mm256_unpacklo_epi8(p0, p_mix), yfilter);  \
+          __m256i v_od =                                                       \
+              _mm256_maddubs_epi16(_mm256_unpackhi_epi8(p0, p_mix), yfilter);  \
+          __m256i dst_ev, dst_od, diff_ev, diff_od, sum_comb, sse_comb;        \
+          v_ev = _mm256_srai_epi16(_mm256_add_epi16(v_ev, pw8), 4);            \
+          v_od = _mm256_srai_epi16(_mm256_add_epi16(v_od, pw8), 4);            \
+                                                                               \
+          dst_reg = _mm256_inserti128_si256(                                   \
+              _mm256_castsi128_si256(_mm_loadu_si128((__m128i const *)(dst))), \
+              _mm_loadu_si128((__m128i const *)(dst + dst_stride)), 1);        \
+          dst += dst_stride << 1;                                              \
+          dst_ev = _mm256_and_si256(dst_reg, mask_00ff);                       \
+          dst_od = _mm256_srli_epi16(dst_reg, 8);                              \
+          diff_ev = _mm256_sub_epi16(v_ev, dst_ev);                            \
+          diff_od = _mm256_sub_epi16(v_od, dst_od);                            \
+                                                                               \
+          sum_comb = _mm256_add_epi16(diff_ev, diff_od);                       \
+          sum_reg = _mm256_add_epi16(sum_reg, sum_comb);                       \
+                                                                               \
+          sse_comb = _mm256_add_epi32(_mm256_madd_epi16(diff_ev, diff_ev),     \
+                                      _mm256_madd_epi16(diff_od, diff_od));    \
+          sse_reg = _mm256_add_epi32(sse_reg, sse_comb);                       \
+        }                                                                      \
+        {                                                                      \
+          __m128i s0 = _mm_loadu_si128((__m128i const *)(src_ptr));            \
+          __m128i s1 = _mm_loadu_si128((__m128i const *)(src_ptr + 1));        \
+          __m128i he = _mm_maddubs_epi16(s0, _mm256_castsi256_si128(xfilter)); \
+          __m128i ho = _mm_maddubs_epi16(s1, _mm256_castsi256_si128(xfilter)); \
+          __m256i p_last, p_mix, v_ev, v_od, dst_ev, dst_od;                   \
+          __m256i diff_ev, diff_od, sum_comb, sse_comb;                        \
+          he = _mm_srai_epi16(_mm_add_epi16(he, _mm256_castsi256_si128(pw8)),  \
+                              4);                                              \
+          ho = _mm_srai_epi16(_mm_add_epi16(ho, _mm256_castsi256_si128(pw8)),  \
+                              4);                                              \
+          p_last = _mm256_castsi128_si256(_mm_packus_epi16(he, ho));           \
+                                                                               \
+          p_mix = _mm256_permute2x128_si256(p1, p_last, 0x21);                 \
+          v_ev =                                                               \
+              _mm256_maddubs_epi16(_mm256_unpacklo_epi8(p1, p_mix), yfilter);  \
+          v_od =                                                               \
+              _mm256_maddubs_epi16(_mm256_unpackhi_epi8(p1, p_mix), yfilter);  \
+          v_ev = _mm256_srai_epi16(_mm256_add_epi16(v_ev, pw8), 4);            \
+          v_od = _mm256_srai_epi16(_mm256_add_epi16(v_od, pw8), 4);            \
+                                                                               \
+          dst_reg = _mm256_inserti128_si256(                                   \
+              _mm256_castsi128_si256(_mm_loadu_si128((__m128i const *)(dst))), \
+              _mm_loadu_si128((__m128i const *)(dst + dst_stride)), 1);        \
+          dst_ev = _mm256_and_si256(dst_reg, mask_00ff);                       \
+          dst_od = _mm256_srli_epi16(dst_reg, 8);                              \
+          diff_ev = _mm256_sub_epi16(v_ev, dst_ev);                            \
+          diff_od = _mm256_sub_epi16(v_od, dst_od);                            \
+                                                                               \
+          sum_comb = _mm256_add_epi16(diff_ev, diff_od);                       \
+          sum_reg = _mm256_add_epi16(sum_reg, sum_comb);                       \
+                                                                               \
+          sse_comb = _mm256_add_epi32(_mm256_madd_epi16(diff_ev, diff_ev),     \
+                                      _mm256_madd_epi16(diff_od, diff_od));    \
+          sse_reg = _mm256_add_epi32(sse_reg, sse_comb);                       \
+        }                                                                      \
+                                                                               \
+        {                                                                      \
+          __m256i sse_hi, sum_hi;                                              \
+          int f_sse, f_sum;                                                    \
+          sum_reg = _mm256_madd_epi16(sum_reg, _mm256_set1_epi16(1));          \
+          sse_hi = _mm256_srli_si256(sse_reg, 8);                              \
+          sum_hi = _mm256_srli_si256(sum_reg, 8);                              \
+          sse_reg = _mm256_add_epi32(sse_reg, sse_hi);                         \
+          sum_reg = _mm256_add_epi32(sum_reg, sum_hi);                         \
+          sse_hi = _mm256_srli_si256(sse_reg, 4);                              \
+          sum_hi = _mm256_srli_si256(sum_reg, 4);                              \
+          sse_reg = _mm256_add_epi32(sse_reg, sse_hi);                         \
+          sum_reg = _mm256_add_epi32(sum_reg, sum_hi);                         \
+          f_sse = _mm_cvtsi128_si32(_mm256_castsi256_si128(sse_reg)) +         \
+                  _mm_cvtsi128_si32(_mm256_extractf128_si256(sse_reg, 1));     \
+          f_sum = _mm_cvtsi128_si32(_mm256_castsi256_si128(sum_reg)) +         \
+                  _mm_cvtsi128_si32(_mm256_extractf128_si256(sum_reg, 1));     \
+          *sse = f_sse;                                                        \
+          _mm256_zeroupper();                                                  \
+          return f_sse -                                                       \
+                 (unsigned int)(((int64_t)f_sum * f_sum) >> (4 + log2height)); \
+        }                                                                      \
+      }                                                                        \
+    }                                                                          \
+    CALC_SUM_AND_SSE                                                           \
+    _mm256_zeroupper();                                                        \
+    return *sse - (unsigned int)(((int64_t)sum * sum) >> (4 + log2height));    \
   }
 
 MAKE_SUB_PIXEL_VAR_16XH(32, 5)

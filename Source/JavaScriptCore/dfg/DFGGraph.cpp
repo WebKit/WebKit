@@ -34,7 +34,6 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGBackwardsCFG.h"
 #include "DFGBackwardsDominators.h"
-#include "DFGBlockWorklist.h"
 #include "DFGCFG.h"
 #include "DFGClobberSet.h"
 #include "DFGClobbersExitState.h"
@@ -60,6 +59,7 @@
 #include "StructureInlines.h"
 #include <array>
 #include <wtf/CommaPrinter.h>
+#include <wtf/GraphOrdering.h>
 #include <wtf/ListDump.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -241,7 +241,7 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         });
     }
 
-    if (toCString(NodeFlagsDump(node->flags())) != "<empty>")
+    if (toCString(NodeFlagsDump(node->flags())) != "<empty>"_s)
         out.print(comma, NodeFlagsDump(node->flags()));
     if (node->prediction())
         out.print(comma, SpeculationDump(node->prediction()));
@@ -536,7 +536,7 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefixStr, BasicBlock*
             out.print(prefix, "  Loop header, contains:");
             Vector<BlockIndex> sortedBlockList;
             for (unsigned i = 0; i < loop->size(); ++i)
-                sortedBlockList.append(unboxLoopNode(loop->at(i))->index);
+                sortedBlockList.append(unboxLoopNode(loop->at(i))->index());
             std::ranges::sort(sortedBlockList);
             for (unsigned i = 0; i < sortedBlockList.size(); ++i)
                 out.print(" #", sortedBlockList[i]);
@@ -566,7 +566,7 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefixStr, BasicBlock*
                 continue;
 
             out.print(" D@", phiNode->index(), "<", phiNode->operand(), ",", phiNode->refCount());
-            if (toCString(NodeFlagsDump(phiNode->flags())) != "<empty>")
+            if (toCString(NodeFlagsDump(phiNode->flags())) != "<empty>"_s)
                 out.print(", ", NodeFlagsDump(phiNode->flags()));
             out.print(">->(");
             if (phiNode->child1()) {
@@ -600,7 +600,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
     }
     else {
         for (const auto& pair : m_rootToArguments)
-            out.print(prefix, "  Arguments for block#", pair.key->index, ": ", listDump(pair.value), "\n");
+            out.print(prefix, "  Arguments for block#", pair.key->index(), ": ", listDump(pair.value), "\n");
     }
     out.print("\n");
     
@@ -609,7 +609,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
         BasicBlock* block = m_blocks[b].get();
         if (!block)
             continue;
-        prefix.blockIndex = block->index;
+        prefix.blockIndex = block->index();
         dumpBlockHeader(out, Prefix::noString, block, DumpAllPhis, context);
         out.print(prefix, "  States: ", block->cfaStructureClobberStateAtHead);
         if (!block->cfaHasVisited)
@@ -973,14 +973,8 @@ BlockList Graph::blocksInPreOrder()
 {
     BlockList result;
     result.reserveInitialCapacity(m_blocks.size());
-    BlockWorklist worklist;
-    for (BasicBlock* entrypoint : m_roots)
-        worklist.push(entrypoint);
-    while (BasicBlock* block = worklist.pop()) {
-        result.append(block);
-        for (unsigned i = block->numSuccessors(); i--;)
-            worklist.push(block->successor(i));
-    }
+    CFG cfg(*this);
+    appendNodesInOrder(cfg, m_roots, GraphOrder::PreOrder, result);
 
     if (validationEnabled()) {
         // When iterating over pre order, we should see dominators
@@ -1012,21 +1006,8 @@ BlockList Graph::blocksInPostOrder(bool isSafeToValidate)
 {
     BlockList result;
     result.reserveInitialCapacity(m_blocks.size());
-    PostOrderBlockWorklist worklist;
-    for (BasicBlock* entrypoint : m_roots)
-        worklist.push(entrypoint);
-    while (BlockWithOrder item = worklist.pop()) {
-        switch (item.order) {
-        case VisitOrder::Pre:
-            worklist.pushPost(item.node);
-            for (unsigned i = item.node->numSuccessors(); i--;)
-                worklist.push(item.node->successor(i));
-            break;
-        case VisitOrder::Post:
-            result.append(item.node);
-            break;
-        }
-    }
+    CFG cfg(*this);
+    appendNodesInOrder(cfg, m_roots, GraphOrder::PostOrder, result);
 
     if (isSafeToValidate && validationEnabled()) { // There are users of this where we haven't yet built the CFG enough to be able to run dominators.
         auto validateResults = [&] (auto& dominators) {
@@ -1555,6 +1536,28 @@ ObjectPropertyConditionSet Graph::tryEnsureAbsence(JSGlobalObject* globalObject,
     if (!headStructure)
         return ObjectPropertyConditionSet::invalid();
 
+    auto isAbsenceCacheable = [&](Structure* structure) {
+        if (structure->typeInfo().overridesGetOwnPropertySlot())
+            return false;
+        if (!structure->propertyAccessesAreCacheable())
+            return false;
+        if (!structure->propertyAccessesAreCacheableForAbsence())
+            return false;
+        if (structure->isDictionary())
+            return false;
+        unsigned attributes;
+        if (isValidOffset(structure->getConcurrently(identifier.uid(), attributes)))
+            return false;
+        if (structure->hasPolyProto())
+            return false;
+        return true;
+    };
+
+    // generateConditionsForPropertyMissConcurrently only walks the prototype chain, so validate
+    // headStructure first.
+    if (!isAbsenceCacheable(headStructure))
+        return ObjectPropertyConditionSet::invalid();
+
     auto result = generateConditionsForPropertyMissConcurrently(globalObject->vm(), globalObject, headStructure, identifier.uid());
     if (!result.isValid())
         return result;
@@ -1564,22 +1567,7 @@ ObjectPropertyConditionSet Graph::tryEnsureAbsence(JSGlobalObject* globalObject,
         if (!object)
             return ObjectPropertyConditionSet::invalid();
 
-        auto* structure = object->structure();
-        if (structure->typeInfo().overridesGetOwnPropertySlot())
-            return ObjectPropertyConditionSet::invalid();
-
-        if (!structure->propertyAccessesAreCacheable())
-            return ObjectPropertyConditionSet::invalid();
-
-        if (!structure->propertyAccessesAreCacheableForAbsence())
-            return ObjectPropertyConditionSet::invalid();
-
-        unsigned attributes;
-        PropertyOffset offset = structure->getConcurrently(identifier.uid(), attributes);
-        if (isValidOffset(offset))
-            return ObjectPropertyConditionSet::invalid();
-
-        if (structure->hasPolyProto())
+        if (!isAbsenceCacheable(object->structure()))
             return ObjectPropertyConditionSet::invalid();
     }
     return result;
@@ -2037,6 +2025,16 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
     return allGood;
 }
 
+bool Graph::canDoFastSpreadWithStructureCheck(Node* node)
+{
+    ASSERT(node->op() == Spread);
+
+    if (m_plan.isUnlinked())
+        return false;
+
+    return node->child1().useKind() == ArrayUse;
+}
+
 bool Graph::isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue& value)
 {
     auto& structureSet = value.m_structure;
@@ -2184,7 +2182,7 @@ void Graph::appendIonGraphPass(const String& passName)
                         auto* block = node->successor(i);
                         if (!block)
                             continue;
-                        stream.print(comma, "block "_s, block->index);
+                        stream.print(comma, "block "_s, block->index());
                     }
                 }
 
@@ -2201,13 +2199,13 @@ void Graph::appendIonGraphPass(const String& passName)
             }
 
             for (auto* predecessor : block->predecessors)
-                predecessors->pushInteger(predecessor->index);
+                predecessors->pushInteger(predecessor->index());
 
             for (auto* successor : block->successors())
-                successors->pushInteger(successor->index);
+                successors->pushInteger(successor->index());
 
-            ionBlock->setInteger("ptr"_s, block->index + 1);
-            ionBlock->setInteger("id"_s, block->index);
+            ionBlock->setInteger("ptr"_s, block->index() + 1);
+            ionBlock->setInteger("id"_s, block->index());
             ionBlock->setInteger("loopDepth"_s, 0);
             ionBlock->setArray("attributes"_s, WTF::move(attributes));
             ionBlock->setArray("predecessors"_s, WTF::move(predecessors));

@@ -36,6 +36,12 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    static size_t allocationSize(Checked<size_t> inlineCapacity)
+    {
+        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+        return sizeof(JSWeakMap);
+    }
+
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     static JSWeakMap* create(VM& vm, Structure* structure)

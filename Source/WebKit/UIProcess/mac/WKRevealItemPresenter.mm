@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import "config.h"
 #import "WKRevealItemPresenter.h"
 

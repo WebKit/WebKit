@@ -18,11 +18,13 @@
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
 
-using std::complex;
+namespace webrtc {
 
 namespace {
 
-class NoopCallback : public webrtc::LappedTransform::Callback {
+using std::complex;
+
+class NoopCallback : public LappedTransform::Callback {
  public:
   NoopCallback() : block_num_(0) {}
 
@@ -44,7 +46,7 @@ class NoopCallback : public webrtc::LappedTransform::Callback {
   size_t block_num_;
 };
 
-class FftCheckerCallback : public webrtc::LappedTransform::Callback {
+class FftCheckerCallback : public LappedTransform::Callback {
  public:
   FftCheckerCallback() : block_num_(0) {}
 
@@ -84,8 +86,6 @@ void SetFloatArray(float value, int rows, int cols, float* const* array) {
 }
 
 }  // namespace
-
-namespace webrtc {
 
 TEST(LappedTransformTest, Windowless) {
   const size_t kChannels = 3;

@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) Apple Inc. 2017-2022 All rights reserved.
+ * Copyright (C) Apple Inc. 2017-2026 All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,8 +27,8 @@
 
 #include "FEMorphology.h"
 #include "Filter.h"
+#include "FilterEffectSoftwareParallelApplier.h"
 #include "PixelBuffer.h"
-#include <wtf/ParallelJobs.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -44,12 +44,12 @@ inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::minOrMax(const C
     return perComponentMax(a, b);
 }
 
-inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::columnExtremum(const PixelBuffer& srcPixelBuffer, int x, int yStart, int yEnd, int width, MorphologyOperatorType type)
+inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::columnExtremum(const PixelBuffer& sourceBuffer, int x, int yStart, int yEnd, int width, MorphologyOperatorType type)
 {
-    auto extremum = makeColorComponentsfromPixelValue(PackedColor::RGBA { reinterpretCastSpanStartTo<const unsigned>(srcPixelBuffer.bytes().subspan(pixelArrayIndex(x, yStart, width))) });
+    auto extremum = makeColorComponentsfromPixelValue(PackedColor::RGBA { reinterpretCastSpanStartTo<const unsigned>(sourceBuffer.bytes().subspan(pixelArrayIndex(x, yStart, width))) });
 
     for (int y = yStart + 1; y < yEnd; ++y) {
-        auto pixel = makeColorComponentsfromPixelValue(PackedColor::RGBA { reinterpretCastSpanStartTo<const unsigned>(srcPixelBuffer.bytes().subspan(pixelArrayIndex(x, y, width))) });
+        auto pixel = makeColorComponentsfromPixelValue(PackedColor::RGBA { reinterpretCastSpanStartTo<const unsigned>(sourceBuffer.bytes().subspan(pixelArrayIndex(x, y, width))) });
         extremum = minOrMax(extremum, pixel, type);
     }
     return extremum;
@@ -64,93 +64,94 @@ inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::kernelExtremum(c
     return extremum;
 }
 
-void FEMorphologySoftwareApplier::applyPlatformGeneric(const PaintingData& paintingData, int startY, int endY)
+void FEMorphologySoftwareApplier::applyPlatformGeneric(PixelBuffer& sourceBuffer, PixelBuffer& destinationBuffer, const IntSize& sourceSize, const IntRect& destinationRect, MorphologyOperatorType type, const IntSize& radius)
 {
-    ASSERT(endY > startY);
+    const int radiusX = radius.width();
+    const int radiusY = radius.height();
+    const int startY = destinationRect.y();
+    const int endY = destinationRect.maxY();
+    const int sourceWidth = sourceSize.width();
+    const int sourceHeight = sourceSize.height();
 
-    const auto& srcPixelBuffer = *paintingData.srcPixelBuffer;
-    auto& dstPixelBuffer = *paintingData.dstPixelBuffer;
-
-    const int radiusX = paintingData.radiusX;
-    const int radiusY = paintingData.radiusY;
-    const int width = paintingData.width;
-    const int height = paintingData.height;
-
-    ASSERT(radiusX <= width || radiusY <= height);
-    ASSERT(startY >= 0 && endY <= height && startY < endY);
+    ASSERT(radiusX <= sourceWidth || radiusY <= sourceHeight);
+    ASSERT(destinationBuffer.size().width() <= sourceBuffer.size().width());
+    ASSERT(destinationBuffer.size().height() <= sourceBuffer.size().height());
 
     ColumnExtrema extrema;
     extrema.reserveInitialCapacity(2 * radiusX + 1);
 
     for (int y = startY; y < endY; ++y) {
         int yRadiusStart = std::max(0, y - radiusY);
-        int yRadiusEnd = std::min(height, y + radiusY + 1);
+        int yRadiusEnd = std::min(sourceHeight, y + radiusY + 1);
 
         extrema.shrink(0);
 
         // We start at the left edge, so compute extreme for the radiusX columns.
         for (int x = 0; x < radiusX; ++x)
-            extrema.append(columnExtremum(srcPixelBuffer, x, yRadiusStart, yRadiusEnd, width, paintingData.type));
+            extrema.append(columnExtremum(sourceBuffer, x, yRadiusStart, yRadiusEnd, sourceWidth, type));
 
         // Kernel is filled, get extrema of next column
-        for (int x = 0; x < width; ++x) {
-            if (x < width - radiusX)
-                extrema.append(columnExtremum(srcPixelBuffer, x + radiusX, yRadiusStart, yRadiusEnd, width, paintingData.type));
+        for (int x = 0; x < sourceWidth; ++x) {
+            if (x < sourceWidth - radiusX)
+                extrema.append(columnExtremum(sourceBuffer, x + radiusX, yRadiusStart, yRadiusEnd, sourceWidth, type));
 
             if (x > radiusX)
                 extrema.removeAt(0);
 
-            unsigned& destPixel = reinterpretCastSpanStartTo<unsigned>(dstPixelBuffer.bytes().subspan(pixelArrayIndex(x, y, width)));
-            destPixel = makePixelValueFromColorComponents(kernelExtremum(extrema, paintingData.type)).value;
+            unsigned& destPixel = reinterpretCastSpanStartTo<unsigned>(destinationBuffer.bytes().subspan(pixelArrayIndex(x, y - startY, sourceWidth)));
+            destPixel = makePixelValueFromColorComponents(kernelExtremum(extrema, type)).value;
         }
     }
 }
 
 void FEMorphologySoftwareApplier::applyPlatformWorker(ApplyParameters* params)
 {
-    applyPlatformGeneric(*params->paintingData, params->startY, params->endY);
+    RELEASE_ASSERT(params && params->sourceBuffer && params->destinationBuffer);
+    Ref sourceBuffer = *params->sourceBuffer;
+    Ref destinationBuffer = *params->destinationBuffer;
+    applyPlatformGeneric(sourceBuffer, destinationBuffer, params->sourceSize, params->destinationRect, params->type, params->radius);
 }
 
-void FEMorphologySoftwareApplier::applyPlatform(const PaintingData& paintingData)
+bool FEMorphologySoftwareApplier::applyPlatform(PixelBuffer& sourceBuffer, PixelBuffer& destinationBuffer, MorphologyOperatorType type, const IntSize& radius)
 {
     // Empirically, runtime is approximately linear over reasonable kernel sizes with a slope of about 0.65.
-    float kernelFactor = sqrt(paintingData.radiusX * paintingData.radiusY) * 0.65;
+    float kernelFactor = sqrt(radius.width() * radius.height()) * 0.65;
+    int kernelSizeY = 2 * radius.height();
+    int extraHeight = 3 * kernelSizeY * 0.5f;
 
     static const int minimalArea = (160 * 160); // Empirical data limit for parallel jobs
-    
-    unsigned maxNumThreads = paintingData.height / 8;
-    unsigned optimalThreadNumber = std::min<unsigned>((paintingData.width * paintingData.height * kernelFactor) / minimalArea, maxNumThreads);
+
+    IntSize paintSize = sourceBuffer.size();
+    IntRect paintRect = { { }, paintSize };
+    unsigned maxNumThreads = paintSize.height() / 8;
+    unsigned optimalThreadNumber = std::min<unsigned>((paintSize.unclampedArea() * kernelFactor) / (minimalArea + extraHeight * paintSize.width()), maxNumThreads);
+
     if (optimalThreadNumber > 1) {
-        ParallelJobs<ApplyParameters> parallelJobs(&applyPlatformWorker, optimalThreadNumber);
-        auto numOfThreads = parallelJobs.numberOfJobs();
-        if (numOfThreads > 1) {
-            // Split the job into "jobSize"-sized jobs but there a few jobs that need to be slightly larger since
-            // jobSize * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
-            int jobSize = paintingData.height / numOfThreads;
-            int jobsWithExtra = paintingData.height % numOfThreads;
-            int currentY = 0;
-            for (int job = numOfThreads - 1; job >= 0; --job) {
-                ApplyParameters& param = parallelJobs.parameter(job);
-                param.startY = currentY;
-                currentY += job < jobsWithExtra ? jobSize + 1 : jobSize;
-                param.endY = currentY;
-                param.paintingData = &paintingData;
-            }
-            parallelJobs.execute();
-            return;
-        }
+        ApplyParameters params {
+            .sourceBuffer = sourceBuffer,
+            .destinationBuffer = destinationBuffer,
+            .sourceSize = paintSize,
+            .destinationRect = paintRect,
+            .type = type,
+            .radius = radius
+        };
+
+        if (applyPlatformParallel(&FEMorphologySoftwareApplier::applyPlatformWorker, optimalThreadNumber, params, extraHeight))
+            return true;
+
         // Fallback to single thread model
     }
 
-    applyPlatformGeneric(paintingData, 0, paintingData.height);
+    applyPlatformGeneric(sourceBuffer, destinationBuffer, paintSize, paintRect, type, radius);
+    return true;
 }
 
 bool FEMorphologySoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
 
-    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
-    if (!destinationPixelBuffer)
+    auto destinationBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    if (!destinationBuffer)
         return false;
 
     auto isDegenerate = [](const IntSize& absoluteRadius) -> bool {
@@ -163,7 +164,7 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, std::span<const Re
     auto absoluteRadius = flooredIntSize(filter.scaledByFilterScale(radius));
 
     if (isDegenerate(absoluteRadius)) {
-        input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+        input.copyPixelBuffer(*destinationBuffer, effectDrawingRect);
         return true;
     }
 
@@ -171,25 +172,15 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, std::span<const Re
     int radiusY = std::min(effectDrawingRect.height() - 1, absoluteRadius.height());
 
     if (isDegenerate({ radiusX, radiusY })) {
-        input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+        input.copyPixelBuffer(*destinationBuffer, effectDrawingRect);
         return true;
     }
 
-    auto sourcePixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect->operatingColorSpace());
-    if (!sourcePixelBuffer)
+    RefPtr sourceBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect->operatingColorSpace());
+    if (!sourceBuffer)
         return false;
 
-    PaintingData paintingData;
-    paintingData.type = m_effect->morphologyOperator();
-    paintingData.srcPixelBuffer = &*sourcePixelBuffer;
-    paintingData.dstPixelBuffer = destinationPixelBuffer;
-    paintingData.width = effectDrawingRect.width();
-    paintingData.height = effectDrawingRect.height();
-    paintingData.radiusX = radiusX;
-    paintingData.radiusY = radiusY;
-
-    applyPlatform(paintingData);
-    return true;
+    return applyPlatform(*sourceBuffer, *destinationBuffer, m_effect->morphologyOperator(), { radiusX, radiusY });
 }
 
 } // namespace WebCore

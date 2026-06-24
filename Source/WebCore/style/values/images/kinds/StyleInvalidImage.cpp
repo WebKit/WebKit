@@ -54,12 +54,12 @@ RefPtr<WebCore::Image> InvalidImage::image(const RenderElement*, const FloatSize
     return &WebCore::Image::nullImage();
 }
 
-Ref<CSSValue> InvalidImage::computedStyleValue(const RenderStyle&) const
+Ref<CSSValue> InvalidImage::computedStyleValue(const Style::ComputedStyle&) const
 {
     return CSSImageValue::create();
 }
 
-Ref<DeprecatedCSSOMValue> InvalidImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> InvalidImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }

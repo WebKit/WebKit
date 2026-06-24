@@ -176,8 +176,6 @@ public:
         return *tzoneHeapManager;
     }
 
-    static void setHasDisableTZoneEntitlementCallback(bool (*hasDisableTZoneEntitlement)());
-
     pas_heap_ref* heapRefForTZoneType(const TZoneSpecification&);
     pas_heap_ref* heapRefForTZoneTypeDifferentSize(size_t requestedSize, const TZoneSpecification&);
 

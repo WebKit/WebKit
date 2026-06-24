@@ -15,9 +15,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc/gain_control.h"
@@ -112,7 +112,7 @@ GainControlImpl::GainControlImpl()
 GainControlImpl::~GainControlImpl() = default;
 
 void GainControlImpl::ProcessRenderAudio(
-    ArrayView<const int16_t> packed_render_audio) {
+    std::span<const int16_t> packed_render_audio) {
   for (size_t ch = 0; ch < mono_agcs_.size(); ++ch) {
     WebRtcAgc_AddFarend(mono_agcs_[ch]->state, packed_render_audio.data(),
                         packed_render_audio.size());
@@ -125,7 +125,7 @@ void GainControlImpl::PackRenderAudioBuffer(
   RTC_DCHECK_GE(AudioBuffer::kMaxSplitFrameLength, audio.num_frames_per_band());
   std::array<int16_t, AudioBuffer::kMaxSplitFrameLength>
       mixed_16_kHz_render_data;
-  ArrayView<const int16_t> mixed_16_kHz_render(mixed_16_kHz_render_data.data(),
+  std::span<const int16_t> mixed_16_kHz_render(mixed_16_kHz_render_data.data(),
                                                audio.num_frames_per_band());
   if (audio.num_channels() == 1) {
     FloatS16ToS16(audio.split_bands_const(0)[kBand0To8kHz],

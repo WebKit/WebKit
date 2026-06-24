@@ -206,7 +206,8 @@ void setShouldOverrideScreenSupportsHighDynamicRange(bool shouldOverride, bool s
 
 uint32_t primaryOpenGLDisplayMask()
 {
-    if (auto data = screenData(primaryScreenDisplayID()))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->displayMask;
 
     return 0;
@@ -214,7 +215,8 @@ uint32_t primaryOpenGLDisplayMask()
 
 uint32_t displayMaskForDisplay(PlatformDisplayID displayID)
 {
-    if (auto data = screenData(displayID))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(displayID))
         return data->displayMask;
 
     ASSERT_NOT_REACHED();
@@ -223,12 +225,13 @@ uint32_t displayMaskForDisplay(PlatformDisplayID displayID)
 
 PlatformGPUID primaryGPUID()
 {
-    return gpuIDForDisplay(primaryScreenDisplayID());
+    return gpuIDForDisplay(PlatformScreen::singleton()->primaryScreenDisplayID());
 }
 
 PlatformGPUID gpuIDForDisplay(PlatformDisplayID displayID)
 {
-    if (auto data = screenData(displayID))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(displayID))
         return data->gpuID;
 
     return 0;
@@ -272,14 +275,10 @@ PlatformGPUID gpuIDForDisplayMask(GLuint displayMask)
     return static_cast<PlatformGPUID>(static_cast<uint32_t>(gpuIDHigh)) << 32 | static_cast<uint32_t>(gpuIDLow);
 }
 
-static const ScreenData* screenProperties(Widget* widget)
-{
-    return screenData(displayID(widget));
-}
-
 bool screenIsMonochrome(Widget* widget)
 {
-    if (auto data = screenProperties(widget))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID(widget)))
         return data->screenIsMonochrome;
 
     // This is a system-wide accessibility setting, same on all screens.
@@ -289,7 +288,8 @@ bool screenIsMonochrome(Widget* widget)
 
 bool screenHasInvertedColors()
 {
-    if (auto data = screenData(primaryScreenDisplayID()))
+    Ref screen = PlatformScreen::singleton();
+    if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->screenHasInvertedColors;
 
     // This is a system-wide accessibility setting, same on all screens.
@@ -299,7 +299,8 @@ bool screenHasInvertedColors()
 
 int screenDepth(Widget* widget)
 {
-    if (auto data = screenProperties(widget)) {
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID(widget))) {
         ASSERT(data->screenDepth);
         return data->screenDepth;
     }
@@ -310,7 +311,8 @@ int screenDepth(Widget* widget)
 
 int screenDepthPerComponent(Widget* widget)
 {
-    if (auto data = screenProperties(widget)) {
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID(widget))) {
         ASSERT(data->screenDepthPerComponent);
         return data->screenDepthPerComponent;
     }
@@ -321,7 +323,8 @@ int screenDepthPerComponent(Widget* widget)
 
 FloatRect screenRectForDisplay(PlatformDisplayID displayID)
 {
-    if (auto data = screenData(displayID)) {
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID)) {
         ASSERT(!data->screenRect.isEmpty());
         return data->screenRect;
     }
@@ -332,13 +335,14 @@ FloatRect screenRectForDisplay(PlatformDisplayID displayID)
 
 FloatRect screenRectForPrimaryScreen()
 {
-    return screenRectForDisplay(primaryScreenDisplayID());
+    return screenRectForDisplay(PlatformScreen::singleton()->primaryScreenDisplayID());
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
 float currentEDRHeadroomForDisplay(PlatformDisplayID displayID)
 {
-    if (auto data = screenData(displayID))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID))
         return data->currentEDRHeadroom;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -347,7 +351,8 @@ float currentEDRHeadroomForDisplay(PlatformDisplayID displayID)
 
 float maxEDRHeadroomForDisplay(PlatformDisplayID displayID)
 {
-    if (auto data = screenData(displayID))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID))
         return data->maxEDRHeadroom;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -356,7 +361,8 @@ float maxEDRHeadroomForDisplay(PlatformDisplayID displayID)
 
 bool suppressEDRForDisplay(PlatformDisplayID displayID)
 {
-    if (auto data = screenData(displayID))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID))
         return data->suppressEDR;
 
     return false;
@@ -365,7 +371,8 @@ bool suppressEDRForDisplay(PlatformDisplayID displayID)
 
 FloatRect screenRect(Widget* widget)
 {
-    if (auto data = screenProperties(widget))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID(widget)))
         return data->screenRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -374,7 +381,8 @@ FloatRect screenRect(Widget* widget)
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-    if (auto data = screenProperties(widget))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID(widget)))
         return data->screenAvailableRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -399,7 +407,8 @@ NSScreen *screen(PlatformDisplayID displayID)
 
 DestinationColorSpace screenColorSpace(Widget* widget)
 {
-    if (auto data = screenProperties(widget))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID(widget)))
         return data->colorSpace;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -426,12 +435,13 @@ OptionSet<ContentsFormat> screenContentsFormats(Widget* widget)
 
 bool screenSupportsExtendedColor(Widget* widget)
 {
+    Ref platformScreen = PlatformScreen::singleton();
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGB10)
-    if (screenContentsFormatsForTesting().contains(ContentsFormat::RGBA10))
+    if (platformScreen->screenContentsFormatsForTesting().contains(ContentsFormat::RGBA10))
         return true;
 #endif
 
-    if (auto data = screenProperties(widget))
+    if (auto data = platformScreen->screenData(displayID(widget)))
         return data->screenSupportsExtendedColor;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -445,12 +455,14 @@ bool screenSupportsHighDynamicRange(Widget* widget)
 
 bool screenSupportsHighDynamicRange(PlatformDisplayID displayID)
 {
+    Ref screen = PlatformScreen::singleton();
+
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
-    if (screenContentsFormatsForTesting().contains(ContentsFormat::RGBA16F))
+    if (screen->screenContentsFormatsForTesting().contains(ContentsFormat::RGBA16F))
         return true;
 #endif
 
-    if (auto data = screenData(displayID))
+    if (auto data = screen->screenData(displayID))
         return data->screenSupportsHighDynamicRange;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -464,7 +476,8 @@ bool screenSupportsHighDynamicRange(PlatformDisplayID displayID)
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
 DynamicRangeMode preferredDynamicRangeMode(Widget* widget)
 {
-    if (auto data = screenProperties(widget))
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto data = platformScreen->screenData(displayID(widget)))
         return data->preferredDynamicRangeMode;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -487,14 +500,14 @@ FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)
 FloatRect toUserSpaceForPrimaryScreen(const NSRect& rect)
 {
     FloatRect userRect = rect;
-    userRect.setY(NSMaxY(screenRectForDisplay(primaryScreenDisplayID())) - (userRect.y() + userRect.height())); // flip
+    userRect.setY(NSMaxY(screenRectForDisplay(PlatformScreen::singleton()->primaryScreenDisplayID())) - (userRect.y() + userRect.height())); // flip
     return userRect;
 }
 
 FloatPoint toUserSpaceForPrimaryScreen(const NSPoint& point)
 {
     FloatPoint userPoint = point;
-    userPoint.setY(NSMaxY(screenRectForDisplay(primaryScreenDisplayID())) - userPoint.y()); // flip
+    userPoint.setY(NSMaxY(screenRectForDisplay(PlatformScreen::singleton()->primaryScreenDisplayID())) - userPoint.y()); // flip
     return userPoint;
 }
 

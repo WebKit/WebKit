@@ -27,9 +27,7 @@
 extern crate alloc;
 extern crate core;
 
-#[cfg(feature = "mlalgs")]
 use alloc::boxed::Box;
-
 use alloc::vec::Vec;
 use core::ffi::c_void;
 
@@ -50,12 +48,12 @@ pub mod ed25519;
 pub mod hkdf;
 pub mod hmac;
 pub mod hpke;
-#[cfg(feature = "mlalgs")]
 pub mod mldsa;
-#[cfg(feature = "mlalgs")]
 pub mod mlkem;
+pub mod pkcs8;
 pub mod rsa;
 pub mod slhdsa;
+pub mod tls12_prf;
 pub mod x25519;
 
 mod scoped;
@@ -79,8 +77,10 @@ pub struct InvalidSignatureError;
 /// the pointer. When passing pointers into C/C++ code, that is not a valid
 /// pointer. Thus this method should be used whenever passing a pointer to a
 /// slice into BoringSSL code.
-trait FfiSlice<T> {
+pub trait FfiSlice<T> {
+    /// Cast the slice into a valid raw pointer for FFI.
     fn as_ffi_ptr(&self) -> *const T;
+    /// Cast the slice into a valid `const void *` pointer for FFI.
     fn as_ffi_void_ptr(&self) -> *const c_void {
         self.as_ffi_ptr() as *const c_void
     }
@@ -107,7 +107,8 @@ impl<T, const N: usize> FfiSlice<T> for [T; N] {
 }
 
 /// See the comment [`FfiSlice`].
-trait FfiMutSlice {
+pub trait FfiMutSlice {
+    /// Cast the mutable slice as a valid `uint8_t*` pointer for FFI.
     fn as_mut_ffi_ptr(&mut self) -> *mut u8;
 }
 
@@ -251,7 +252,6 @@ where
 /// Requires that the given function completely initializes the value.
 ///
 /// Safety: the argument must fully initialize the pointed-to `T`.
-#[cfg(feature = "mlalgs")]
 unsafe fn initialized_boxed_struct<T, F>(init: F) -> Box<T>
 where
     F: FnOnce(*mut T),
@@ -267,7 +267,6 @@ where
 ///
 /// Safety: the argument must fully initialize the pointed-to `T` if it returns
 /// true. If it returns false then there are no safety requirements.
-#[cfg(feature = "mlalgs")]
 unsafe fn initialized_boxed_struct_fallible<T, F>(init: F) -> Option<Box<T>>
 where
     F: FnOnce(*mut T) -> bool,
@@ -404,7 +403,6 @@ impl Drop for Buffer {
     }
 }
 
-#[cfg(feature = "mlalgs")]
 fn as_cbs(buf: &[u8]) -> bssl_sys::CBS {
     bssl_sys::CBS {
         data: buf.as_ffi_ptr(),
@@ -440,7 +438,7 @@ where
 /// Calls `func` with a `CBB` pointer and returns a [Buffer] of the ultimate
 /// contents of that CBB.
 #[allow(clippy::unwrap_used)]
-fn cbb_to_buffer<F: FnOnce(*mut bssl_sys::CBB)>(initial_capacity: usize, func: F) -> Buffer {
+pub fn cbb_to_buffer<F: FnOnce(*mut bssl_sys::CBB)>(initial_capacity: usize, func: F) -> Buffer {
     // Safety: type checking ensures that `cbb` is the correct size.
     let mut cbb = unsafe {
         initialized_struct_fallible(|cbb| bssl_sys::CBB_init(cbb, initial_capacity) == 1)
@@ -462,7 +460,6 @@ fn cbb_to_buffer<F: FnOnce(*mut bssl_sys::CBB)>(initial_capacity: usize, func: F
     unsafe { Buffer::new(ptr, len) }
 }
 
-#[cfg(feature = "mlalgs")]
 /// Calls `func` with a `CBB` pointer that has been initialized to a vector
 /// of `len` bytes. That function must write exactly `len` bytes to the
 /// `CBB`. Those bytes are then returned as a vector.
@@ -489,5 +486,6 @@ fn cbb_to_vec<F: FnOnce(*mut bssl_sys::CBB)>(len: usize, func: F) -> Vec<u8> {
 
 /// Used to prevent external implementations of internal traits.
 mod sealed {
-    pub struct Sealed;
+    pub struct SealedType;
+    pub trait Sealed {}
 }

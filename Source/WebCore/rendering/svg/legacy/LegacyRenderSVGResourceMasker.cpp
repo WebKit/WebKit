@@ -28,15 +28,15 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "LegacyRenderSVGResourceMaskerInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGRenderingContext.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceMasker);
 
-LegacyRenderSVGResourceMasker::LegacyRenderSVGResourceMasker(SVGMaskElement& element, RenderStyle&& style)
+LegacyRenderSVGResourceMasker::LegacyRenderSVGResourceMasker(SVGMaskElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceMasker, element, WTF::move(style))
 {
 }
@@ -54,7 +54,7 @@ void LegacyRenderSVGResourceMasker::removeClientFromCache(RenderElement& client)
     m_masker.remove(client);
 }
 
-auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
+auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const Style::ComputedStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);

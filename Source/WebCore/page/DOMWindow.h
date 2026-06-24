@@ -169,6 +169,7 @@ public:
     ExceptionOr<String> origin() const;
     ExceptionOr<bool> isSecureContext() const;
     ExceptionOr<bool> crossOriginIsolated() const;
+    ExceptionOr<bool> originAgentCluster() const;
     ExceptionOr<void> print();
     ExceptionOr<void> stop();
     ExceptionOr<Performance&> performance() const;

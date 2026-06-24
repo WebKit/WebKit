@@ -56,6 +56,23 @@
 /**
  * WPEDisplay:
  *
+ * A connection to a native display.
+ *
+ * [class@Display] is an abstract class that platform implementations derive to
+ * represent a connection to a native display, such as a Wayland or DRM
+ * display. It is the root of the WPE platform API: a [class@Display] creates the
+ * [class@View] and [class@Toplevel] instances used to show web content, and gives
+ * access to the platform's keymap, clipboard, screens and preferred buffer
+ * formats.
+ *
+ * Use [func@Display.get_default] to get the default display, which is
+ * obtained by loading the available platform implementations and connecting
+ * to the first one that succeeds. A platform implementation may also be
+ * instantiated directly, in which case [method@Display.connect] must be
+ * called before the display is used.
+ *
+ * When a connected [class@Display] is passed to a WebKitWebView on construction,
+ * the web view is rendered using the WPE platform API.
  */
 struct _WPEDisplayPrivate {
     bool eglInitialized;
@@ -329,7 +346,7 @@ void wpe_display_set_primary(WPEDisplay* display)
 }
 
 /**
- * wpe_display_connect
+ * wpe_display_connect:
  * @display: a #WPEDisplay
  * @error: return location for error or %NULL to ignore
  *
@@ -369,7 +386,7 @@ void wpe_display_disconnected(WPEDisplay* display, GError* error)
  *
  * Get the `EGLDisplay` of @display
  *
- * Retrurns: (transfer none) (nullable): a `EGLDisplay` or %NULL
+ * Returns: (transfer none) (nullable): a `EGLDisplay` or %NULL
  */
 gpointer wpe_display_get_egl_display(WPEDisplay* display, GError** error)
 {

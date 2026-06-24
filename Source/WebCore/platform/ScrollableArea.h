@@ -471,12 +471,13 @@ public:
     virtual bool formControlRefreshEnabled() const { return false; }
 #endif
     virtual void scrollDidEnd() { }
+    virtual void scrollOriginDidChange() { }
 
 protected:
     WEBCORE_EXPORT ScrollableArea();
     WEBCORE_EXPORT virtual ~ScrollableArea();
 
-    void NODELETE setScrollOrigin(const IntPoint&);
+    void setScrollOrigin(const IntPoint&);
     void resetScrollOriginChanged() { m_scrollOriginChanged = false; }
 
     virtual void invalidateScrollbarRect(Scrollbar&, const IntRect&) = 0;

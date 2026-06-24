@@ -175,7 +175,7 @@ template<typename Layers> void BackgroundPainter::paintFillLayersImpl(const Colo
         context.endTransparencyLayer();
 }
 
-static void applyBoxShadowForBackground(GraphicsContext& context, const RenderStyle& style)
+static void applyBoxShadowForBackground(GraphicsContext& context, const Style::ComputedStyle& style)
 {
     Style::ColorResolver colorResolver { style };
     const auto& zoomFactor = style.usedZoomForLength();
@@ -241,7 +241,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
 
     if (context.invalidatingImagesWithAsyncDecodes()) {
         if (shouldPaintBackgroundImage && bgImage->cachedImage()->isClientWaitingForAsyncDecoding(m_renderer.cachedImageClient()))
-            bgImage->cachedImage()->removeAllClientsWaitingForAsyncDecoding();
+            protect(bgImage->cachedImage())->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
 
@@ -557,16 +557,16 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
             auto drawResult = context.drawTiledImage(*image, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
-                bgImage->cachedImage()->addClientWaitingForAsyncDecoding(m_renderer.cachedImageClient());
+                protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());
             }
 
             if (!context.paintingDisabled()) {
                 if (m_renderer.element())
-                    m_renderer.element()->setHasEverPaintedImages(true);
+                    protect(m_renderer)->element()->setHasEverPaintedImages(true);
 
                 if (RefPtr image = bgImage->cachedImage(); image && image->currentFrameIsComplete(&m_renderer)) {
                     if (auto styleable = Styleable::fromRenderer(m_renderer))
-                        document().didPaintImage(styleable->element, image, geometry.destinationRect);
+                        document().didPaintImage(protect(styleable->element), image, geometry.destinationRect);
                 }
             }
         }
@@ -624,7 +624,7 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
     bool fixedAttachment = fillLayer.attachment() == FillAttachment::FixedBackground && !isTransformed;
 
     LayoutRect destinationRect(borderBoxRect);
-    float deviceScaleFactor = renderer.document().deviceScaleFactor();
+    float deviceScaleFactor = protect(renderer)->document().deviceScaleFactor();
     if (!fixedAttachment) {
         LayoutUnit right;
         LayoutUnit bottom;
@@ -649,8 +649,8 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
         if (renderer.isDocumentElementRenderer()) {
             positioningAreaSize = downcast<RenderBox>(renderer).size() - LayoutSize(left + right, top + bottom);
             positioningAreaSize = LayoutSize(snapSizeToDevicePixel(positioningAreaSize, LayoutPoint(), deviceScaleFactor));
-            if (view.frameView().hasExtendedBackgroundRectForPainting()) {
-                LayoutRect extendedBackgroundRect = view.frameView().extendedBackgroundRectForPainting();
+            if (protect(view)->frameView().hasExtendedBackgroundRectForPainting()) {
+                LayoutRect extendedBackgroundRect = protect(view)->frameView().extendedBackgroundRectForPainting();
                 left += (renderer.marginLeft() - extendedBackgroundRect.x());
                 top += (renderer.marginTop() - extendedBackgroundRect.y());
             }
@@ -797,7 +797,7 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
 template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(const RenderBoxModelObject& renderer, const Layer& fillLayer, Style::ZoomFactor, const LayoutSize& positioningAreaSize)
 {
     RefPtr image = fillLayer.image().tryStyleImage();
-    auto devicePixelSize = LayoutUnit { 1.0 / renderer.document().deviceScaleFactor() };
+    auto devicePixelSize = LayoutUnit { 1.0 / protect(renderer)->document().deviceScaleFactor() };
 
     LayoutSize imageIntrinsicSize;
     if (image) {
@@ -870,7 +870,7 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
     );
 }
 
-void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const RenderStyle& style, Style::ShadowStyle shadowStyle, RectEdges<bool> closedEdges) const
+void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Style::ComputedStyle& style, Style::ShadowStyle shadowStyle, RectEdges<bool> closedEdges) const
 {
     // FIXME: Deal with border-image. Would be great to use border-image as a mask.
     GraphicsContext& context = m_paintInfo.context();

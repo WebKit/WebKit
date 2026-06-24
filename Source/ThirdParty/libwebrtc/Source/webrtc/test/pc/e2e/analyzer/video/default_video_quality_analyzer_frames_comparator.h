@@ -16,10 +16,10 @@
 #include <deque>
 #include <map>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_frame.h"
@@ -95,7 +95,7 @@ class DefaultVideoQualityAnalyzerFramesComparator {
   //     has to be created.
   // `start_time` - call start time.
   void RegisterParticipantInCall(
-      ArrayView<std::pair<InternalStatsKey, Timestamp>> stream_started_time,
+      std::span<std::pair<InternalStatsKey, Timestamp>> stream_started_time,
       Timestamp start_time);
 
   // `captured` - video frame captured by sender to use for PSNR/SSIM

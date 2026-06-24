@@ -83,6 +83,8 @@ static ASCIILiteral wgslExtensionToWebGPUFeatureName(Extension extension)
         return "clip-distances"_s;
     case Extension::F16:
         return "shader-f16"_s;
+    case Extension::PrimitiveIndex:
+        return "primitive-index"_s;
     }
 }
 
@@ -356,3 +358,7 @@ std::optional<ConstantValue> evaluate(const ShaderModule& module, const AST::Exp
 }
 
 }
+
+#undef CHECK_PASS
+#undef RUN_PASS
+#undef RUN_PASS_WITH_RESULT

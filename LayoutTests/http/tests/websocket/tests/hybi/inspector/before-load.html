@@ -56,9 +56,16 @@ function test()
 
             InspectorTest.expectThat(webSocketResource instanceof WI.WebSocketResource, "Resource should be a WebSocket.");
             InspectorTest.expectEqual(webSocketResource.url, url, `Resource URL should be "${url}".`);
-            InspectorTest.expectThat(!isEmptyObject(webSocketResource.requestHeaders), "Resource should have request headers.");
-            InspectorTest.expectThat(!isEmptyObject(webSocketResource.responseHeaders), "Resource should have response headers.");
-            InspectorTest.log(`Resource readyState should be ${String(webSocketResource.readyState)}.`);
+            InspectorTest.expectEqual(webSocketResource.statusCode, 101, "Resource status code should be 101.");
+            InspectorTest.expectEqual(webSocketResource.statusText, "Switching Protocols", "Resource status text should be \"Switching Protocols\".");
+            InspectorTest.expectThat(webSocketResource.requestHeaders.valueForCaseInsensitiveKey("Connection"), "Resource should have request header Connection.");
+            InspectorTest.expectThat(webSocketResource.requestHeaders.valueForCaseInsensitiveKey("Sec-Websocket-Key"), "Resource should have request header Sec-Websocket-Key.");
+            InspectorTest.expectThat(webSocketResource.requestHeaders.valueForCaseInsensitiveKey("Sec-Websocket-Version"), "Resource should have request header Sec-Websocket-Version.");
+            InspectorTest.expectEqual(webSocketResource.requestHeaders.valueForCaseInsensitiveKey("Upgrade"), "websocket", "Resource should have request header Upgrade.");
+            InspectorTest.expectThat(webSocketResource.responseHeaders.valueForCaseInsensitiveKey("Connection"), "Resource should have response header Connection.");
+            InspectorTest.expectThat(webSocketResource.responseHeaders.valueForCaseInsensitiveKey("sec-websocket-accept"), "Resource should have response header sec-websocket-accept.");
+            InspectorTest.expectEqual(webSocketResource.responseHeaders.valueForCaseInsensitiveKey("Upgrade"), "websocket", "Resource should have response header Upgrade.");
+            InspectorTest.expectEqual(webSocketResource.readyState, WI.WebSocketResource.ReadyState.Open, "Resource should be open.");
 
             let expectedFrames = [
                 {

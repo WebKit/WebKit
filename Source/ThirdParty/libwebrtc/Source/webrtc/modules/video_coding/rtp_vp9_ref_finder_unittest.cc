@@ -16,10 +16,10 @@
 #include <memory>
 #include <optional>
 #include <ostream>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/rtp_packet_infos.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/encoded_image.h"
@@ -115,7 +115,7 @@ class Frame {
     } else {
       vp9_header.flexible_mode = true;
       vp9_header.num_ref_pics = flex_refs.size();
-      for (size_t i = 0; i < flex_refs.size(); ++i) {
+      for (size_t i = 0; i < std::min(flex_refs.size(), kMaxVp9RefPics); ++i) {
         vp9_header.pid_diff[i] = flex_refs.at(i);
       }
     }
@@ -137,8 +137,8 @@ class Frame {
         seq_num_end,
         /*markerBit=*/true,
         /*times_nacked=*/0,
-        /*first_packet_received_time=*/0,
-        /*last_packet_received_time=*/0,
+        /*first_packet_received_time=*/std::nullopt,
+        /*last_packet_received_time=*/std::nullopt,
         /*rtp_timestamp=*/0,
         /*ntp_time_ms=*/0,
         VideoSendTiming(),
@@ -192,7 +192,7 @@ class HasFrameMatcher : public MatcherInterface<const FrameVector&> {
       return false;
     }
 
-    ArrayView<int64_t> actual_refs((*it)->references, (*it)->num_references);
+    std::span<int64_t> actual_refs((*it)->references, (*it)->num_references);
     if (!Matches(UnorderedElementsAreArray(expected_refs_))(actual_refs)) {
       if (result_listener->IsInterested()) {
         *result_listener << "Frame with frame_id:" << frame_id_ << " and "
@@ -691,6 +691,60 @@ TEST_F(RtpVp9RefFinderTest, SpatialIndexTooHighDropsFrame) {
              .AsKeyFrame()
              .Gof(&ss));
   EXPECT_THAT(frames_, SizeIs(0));
+}
+
+TEST_F(RtpVp9RefFinderTest, FlexibleModeTooManyReferencesDropsFrame) {
+  Insert(Frame().Pid(0).SidAndTid(0, 0).AsKeyFrame());
+  EXPECT_THAT(frames_, SizeIs(1));
+  Insert(Frame().Pid(1).SidAndTid(0, 0).FlexRefs({1, 2, 3, 4}));
+  EXPECT_THAT(frames_, SizeIs(1));
+}
+
+TEST_F(RtpVp9RefFinderTest, GofTooManyReferencesDropsFrame) {
+  GofInfoVP9 ss;
+  ss.num_frames_in_gof = 2;
+  ss.temporal_idx[0] = 0;
+  ss.num_ref_pics[0] = 1;
+  ss.pid_diff[0][0] = 1;
+
+  // GOF index 1 requires 4 reference pictures (more than kMaxVp9RefPics = 3).
+  ss.temporal_idx[1] = 1;
+  ss.num_ref_pics[1] = 4;
+  ss.pid_diff[1][0] = 1;
+
+  Insert(Frame().Pid(0).SidAndTid(0, 0).Tl0(0).AsKeyFrame().Gof(&ss));
+  EXPECT_THAT(frames_, SizeIs(0));
+}
+
+TEST_F(RtpVp9RefFinderTest, GofUpSwitchMultipleRefs) {
+  GofInfoVP9 ss;
+  ss.num_frames_in_gof = 3;
+
+  ss.temporal_idx[0] = 0;
+  ss.num_ref_pics[0] = 1;
+  ss.pid_diff[0][0] = 3;
+
+  ss.temporal_idx[1] = 1;
+  ss.num_ref_pics[1] = 1;
+  ss.pid_diff[1][0] = 1;
+
+  ss.temporal_idx[2] = 2;
+  ss.num_ref_pics[2] = 2;
+  ss.pid_diff[2][0] = 2;
+  ss.pid_diff[2][1] = 1;
+
+  Insert(Frame().Pid(0).SidAndTid(0, 0).Tl0(0).AsKeyFrame().Gof(&ss));
+  EXPECT_THAT(frames_, SizeIs(1));
+  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(0, {}));
+  Insert(Frame().Pid(1).SidAndTid(0, 1).Tl0(0).AsUpswitch());
+  EXPECT_THAT(frames_, SizeIs(2));
+  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(5, {0}));
+
+  // Since PID0 was prior to the upswitch frame (PID1), the reference from PID2
+  // to PID0 should be removed.
+  Insert(Frame().Pid(2).SidAndTid(0, 2).Tl0(0));
+  EXPECT_THAT(frames_, SizeIs(3));
+  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(10, {5}));
 }
 
 }  // namespace webrtc

@@ -35,8 +35,8 @@
 #include "LayoutState.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StringTruncator.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -47,7 +47,7 @@ inline static float endPaddingQuirkValue(const RenderBlockFlow& flow)
     auto endPadding = flow.hasNonVisibleOverflow() ? flow.paddingEnd() : 0_lu;
     if (!endPadding)
         endPadding = flow.endPaddingWidthForCaret();
-    if (flow.hasNonVisibleOverflow() && !endPadding && flow.element() && flow.element()->isRootEditableElement() && flow.style().writingMode().deprecatedIsLeftToRightDirection())
+    if (flow.hasNonVisibleOverflow() && !endPadding && flow.element() && protect(flow.element())->isRootEditableElement() && flow.style().writingMode().deprecatedIsLeftToRightDirection())
         endPadding = 1;
     return endPadding;
 }

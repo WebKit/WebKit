@@ -33,6 +33,7 @@
 #import "DrawingAreaProxy.h"
 #import "FrameInfoData.h"
 #import "GPUProcessProxy.h"
+#import "LayerHostingVisibilityPropagator.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "PageClient.h"
@@ -345,6 +346,13 @@ void VideoPresentationModelContext::requestCloseAllMediaPresentations(bool finis
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     manager->requestCloseAllMediaPresentations(m_contextId, finishedWithMedia, WTF::move(completionHandler));
 }
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+void VideoPresentationModelContext::setLayerHostingVisibilityPropagator(RefPtr<LayerHostingVisibilityPropagator>&& propagator)
+{
+    m_layerHostingVisibilityPropagator = WTF::move(propagator);
+}
+#endif
 
 void VideoPresentationModelContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
@@ -1111,6 +1119,10 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(PlaybackSessionContext
     RefPtr pageClient = page->pageClient();
     if (RetainPtr visibilityPropagationView = pageClient ? pageClient->createVisibilityPropagationView() : nil)
         setVisibilityPropagationViewForLayerHostView(visibilityPropagationView.get(), view.get());
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    if (RefPtr layerHostingVisibilityPropagator = pageClient ? pageClient->createLayerHostingVisibilityPropagator() : nil)
+        model->setLayerHostingVisibilityPropagator(WTF::move(layerHostingVisibilityPropagator));
+#endif
 #else
     UNUSED_VARIABLE(view);
 #endif
@@ -1548,6 +1560,9 @@ void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextI
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     if (RetainPtr layerHostView = dynamic_objc_cast<WKLayerHostView>(interface->layerHostView()))
         setVisibilityPropagationViewForLayerHostView(nil, layerHostView.get());
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    model->setLayerHostingVisibilityPropagator(nullptr);
+#endif
 #endif
 
     [protect(interface->layerHostView()) removeFromSuperview];

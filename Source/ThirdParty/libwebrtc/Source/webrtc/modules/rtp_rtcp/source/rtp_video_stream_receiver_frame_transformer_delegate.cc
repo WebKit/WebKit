@@ -13,16 +13,17 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/rtp_packet_infos.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
@@ -32,7 +33,6 @@
 #include "modules/rtp_rtcp/source/frame_object.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/thread.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
 
@@ -54,11 +54,11 @@ class TransformableVideoReceiverFrame
   ~TransformableVideoReceiverFrame() override = default;
 
   // Implements TransformableVideoFrameInterface.
-  ArrayView<const uint8_t> GetData() const override {
+  std::span<const uint8_t> GetData() const override {
     return *frame_->GetEncodedData();
   }
 
-  void SetData(ArrayView<const uint8_t> data) override {
+  void SetData(std::span<const uint8_t> data) override {
     frame_->SetEncodedData(
         EncodedImageBuffer::Create(data.data(), data.size()));
   }
@@ -79,7 +79,7 @@ class TransformableVideoReceiverFrame
     // dependencies.
     VideoFrameMetadata new_metadata = Metadata();
     new_metadata.SetFrameId(metadata.GetFrameId());
-    new_metadata.SetFrameDependencies(metadata.GetFrameDependencies());
+    new_metadata.SetDependencies(metadata.GetDependencies());
     RTC_DCHECK(new_metadata == metadata)
         << "TransformableVideoReceiverFrame::SetMetadata can be only used to "
            "change frameID and dependencies";
@@ -135,11 +135,11 @@ RtpVideoStreamReceiverFrameTransformerDelegate::
         RtpVideoFrameReceiver* receiver,
         Clock* clock,
         scoped_refptr<FrameTransformerInterface> frame_transformer,
-        Thread* network_thread,
+        TaskQueueBase* task_queue,
         uint32_t ssrc)
     : receiver_(receiver),
       frame_transformer_(std::move(frame_transformer)),
-      network_thread_(network_thread),
+      network_thread_(task_queue),
       ssrc_(ssrc),
       clock_(clock) {}
 
@@ -232,8 +232,8 @@ void RtpVideoStreamReceiverFrameTransformerDelegate::ManageFrame(
     VideoFrameMetadata metadata = transformed_frame->Metadata();
     RTPVideoHeader video_header = RTPVideoHeader::FromMetadata(metadata);
     VideoSendTiming timing;
-    ArrayView<const uint8_t> data = transformed_frame->GetData();
-    int64_t receive_time = clock_->CurrentTime().ms();
+    std::span<const uint8_t> data = transformed_frame->GetData();
+    Timestamp receive_time = clock_->CurrentTime();
     receiver_->ManageFrame(std::make_unique<RtpFrameObject>(
         /*first_seq_num=*/metadata.GetFrameId().value_or(0),
         /*last_seq_num=*/metadata.GetFrameId().value_or(0),

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../../../resources/js-test-pre.js"></script>
+<script src="../../../../../resources/js-test.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -58,9 +58,8 @@ const testConfigurations = [
 // Run the test!
 if (window.eventSender) {
     description("This tests touch events on readonly and disabled sliders.");
+    window.jsTestIsAsync = true;
 
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     // iOS <input type="range"> uses identifier 0 as the "NoIdentifier".
     // So swallow touch point 0 and ignore it from now on. Currently
@@ -80,8 +79,7 @@ function runAllTestConfigurations() {
 
     debug("");
     successfullyParsed = true;
-    isSuccessfullyParsed();
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 function runTestConfiguration(configuration) {

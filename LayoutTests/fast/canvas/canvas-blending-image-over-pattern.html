@@ -1,17 +1,15 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <script type="text/javascript">
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-    </script>
 </head>
 <body>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script type="text/javascript" src="canvas-blending-helpers.js"></script>
     <script type="text/javascript">
 
         description("Series of tests to ensure correct results on applying different blend modes when drawing an image on top of a pattern.");
+
+        window.jsTestIsAsync = true;
 
         var context;
         var hardwareAcceleratedTestsDone = false;
@@ -31,9 +29,7 @@
         function drawElement(context, i) {
             if (i >= blendModes.length) {
                 if (hardwareAcceleratedTestsDone) {
-                    var scriptElement = document.createElement("script");
-                    scriptElement.src = "../../resources/js-test-post-async.js";
-                    document.body.appendChild(scriptElement);
+                    finishJSTest();
                     return;
                 }
                 hardwareAcceleratedTestsDone = true;

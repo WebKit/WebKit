@@ -17,18 +17,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-when-using-arrow-keys.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-deltas.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-document.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-element-with-overscroll-behavior.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-scrolled-element.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-window.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/save-iframe-scroll-offset-when-display-none.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/save-iframe-scroll-offset-when-display-none.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scroll-cross-origin-iframes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scroll-cross-origin-iframes.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scroll-event-fired-to-element.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scroll-event-fired-to-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollIntoView-in-onscroll-to-sticky.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scroll_support.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-instant-scroll-in-microtask.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-sequence-of-scrolls.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-snap.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-mandatory-snap-point-after-load.html
@@ -38,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-element-with-overscroll-behavior.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-window.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-for-repeat-key-ending-after-scroll-container-end-is-reached.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-on-visual-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-to-iframe-inner-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-to-iframe-window.html
@@ -48,6 +46,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-fires-to-text-input.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-user-scroll-common.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-with-snap-on-fractional-offset.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-composed.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-no-scroll-after-prevent-default.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-multiple-action-chains.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/wheel-event-transactions-target-display-change.html

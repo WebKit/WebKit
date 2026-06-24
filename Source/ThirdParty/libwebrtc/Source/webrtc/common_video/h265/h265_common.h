@@ -13,9 +13,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -80,12 +80,12 @@ struct NaluIndex {
 
 // Returns a vector of the NALU indices in the given buffer.
 RTC_EXPORT std::vector<NaluIndex> FindNaluIndices(
-    ArrayView<const uint8_t> buffer);
+    std::span<const uint8_t> buffer);
 
 // TODO: bugs.webrtc.org/42225170 - Deprecate.
 inline std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
                                               size_t buffer_size) {
-  return FindNaluIndices(MakeArrayView(buffer, buffer_size));
+  return FindNaluIndices(std::span(buffer, buffer_size));
 }
 
 // Get the NAL type from the header byte immediately following start sequence.
@@ -105,23 +105,23 @@ RTC_EXPORT NaluType ParseNaluType(uint8_t data);
 // the 03 emulation byte.
 
 // Parse the given data and remove any emulation byte escaping.
-std::vector<uint8_t> ParseRbsp(ArrayView<const uint8_t> data);
+std::vector<uint8_t> ParseRbsp(std::span<const uint8_t> data);
 
 // TODO: bugs.webrtc.org/42225170 - Deprecate.
 inline std::vector<uint8_t> ParseRbsp(const uint8_t* data, size_t length) {
-  return ParseRbsp(MakeArrayView(data, length));
+  return ParseRbsp(std::span(data, length));
 }
 
 // Write the given data to the destination buffer, inserting and emulation
 // bytes in order to escape any data the could be interpreted as a start
 // sequence.
-void WriteRbsp(ArrayView<const uint8_t> bytes, Buffer* destination);
+void WriteRbsp(std::span<const uint8_t> bytes, Buffer* destination);
 
 // TODO: bugs.webrtc.org/42225170 -  Deprecate.
 inline void WriteRbsp(const uint8_t* bytes,
                       size_t length,
                       Buffer* destination) {
-  WriteRbsp(MakeArrayView(bytes, length), destination);
+  WriteRbsp(std::span(bytes, length), destination);
 }
 
 uint32_t Log2Ceiling(uint32_t value);

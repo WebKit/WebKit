@@ -14,9 +14,9 @@
 #include <stddef.h>
 
 #include <array>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/block_buffer.h"
@@ -48,7 +48,7 @@ class RenderBuffer {
   }
 
   // Get the spectrum from one of the FFTs in the buffer.
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> Spectrum(
+  std::span<const std::array<float, kFftLengthBy2Plus1>> Spectrum(
       int buffer_offset_ffts) const {
     int position = spectrum_buffer_->OffsetIndex(spectrum_buffer_->read,
                                                  buffer_offset_ffts);
@@ -56,7 +56,7 @@ class RenderBuffer {
   }
 
   // Returns the circular fft buffer.
-  ArrayView<const std::vector<FftData>> GetFftBuffer() const {
+  std::span<const std::vector<FftData>> GetFftBuffer() const {
     return fft_buffer_->buffer;
   }
 
@@ -88,12 +88,12 @@ class RenderBuffer {
   int Headroom() const {
     // The write and read indices are decreased over time.
     int headroom =
-        fft_buffer_->write < fft_buffer_->read
+        fft_buffer_->write <= fft_buffer_->read
             ? fft_buffer_->read - fft_buffer_->write
             : fft_buffer_->size - fft_buffer_->write + fft_buffer_->read;
 
     RTC_DCHECK_LE(0, headroom);
-    RTC_DCHECK_GE(fft_buffer_->size, headroom);
+    RTC_DCHECK_GT(fft_buffer_->size, headroom);
 
     return headroom;
   }

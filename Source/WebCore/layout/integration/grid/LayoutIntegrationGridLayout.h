@@ -60,6 +60,8 @@ public:
 private:
     void updateGridItemRenderers();
     void updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints&, const Layout::UsedTrackSizes&);
+    void layoutOutOfFlowBoxes(const Layout::UsedTrackSizes&);
+    void populateGridPositionsForOutOfFlowLayout(const Layout::UsedTrackSizes&);
 
     const Layout::ElementBox& gridBox() const { return *m_gridBox; }
     Layout::ElementBox& gridBox() { return *m_gridBox; }

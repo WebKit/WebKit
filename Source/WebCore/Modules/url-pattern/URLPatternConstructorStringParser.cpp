@@ -38,8 +38,8 @@
 namespace WebCore {
 using namespace JSC;
 
-URLPatternConstructorStringParser::URLPatternConstructorStringParser(String&& input)
-    : m_input(WTF::move(input))
+URLPatternConstructorStringParser::URLPatternConstructorStringParser(StringView input)
+    : m_input(input)
 {
 }
 
@@ -364,7 +364,7 @@ ExceptionOr<URLPatternInit> URLPatternConstructorStringParser::parse(ScriptExecu
 
     performParse(context);
 
-    return URLPatternInit { m_result };
+    return WTF::move(m_result);
 }
 
 }

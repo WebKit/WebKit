@@ -62,4 +62,7 @@ PASS symbolToPrimitiveDescriptor.enumerable is true
 PASS symbolToPrimitiveDescriptor.configurable is true
 
 PASS object[Symbol.toPrimitive] is 123
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

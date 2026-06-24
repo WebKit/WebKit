@@ -10,6 +10,7 @@
 #ifndef CALL_PACKET_RECEIVER_H_
 #define CALL_PACKET_RECEIVER_H_
 
+#include "absl/base/nullability.h"
 #include "absl/functional/any_invocable.h"
 #include "api/media_types.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -27,13 +28,13 @@ class PacketReceiver {
   using OnUndemuxablePacketHandler =
       absl::AnyInvocable<bool(const RtpPacketReceived& parsed_packet)>;
 
-  // Must be called on the worker thread.
+  // Can be called on the network thread or the worker thread.
   // If `media_type` is not Audio or Video, packets may be used for BWE
   // calculations but are not demuxed.
-  virtual void DeliverRtpPacket(
-      MediaType media_type,
-      RtpPacketReceived packet,
-      OnUndemuxablePacketHandler undemuxable_packet_handler) = 0;
+  virtual void DeliverRtpPacket(MediaType media_type,
+                                RtpPacketReceived packet,
+                                absl_nonnull OnUndemuxablePacketHandler
+                                    undemuxable_packet_handler) = 0;
 
  protected:
   virtual ~PacketReceiver() {}

@@ -13,7 +13,9 @@
 #include <memory>
 
 #include "absl/algorithm/container.h"
+#include "api/numerics/samples_stats_counter.h"
 #include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "test/gmock.h"
@@ -34,6 +36,32 @@ using ::testing::SizeIs;
 
 using Frame = DecodabilitySimulator::Frame;
 using Stream = DecodabilitySimulator::Stream;
+
+TEST(DecodabilitySimulatorFrameTest, UndecodableDuration) {
+  DecodabilitySimulator::Frame frame{
+      .assembled_timestamp = Timestamp::Millis(0),
+      .decodable_timestamp = Timestamp::Millis(5)};
+
+  EXPECT_EQ(frame.UndecodableDuration(), TimeDelta::Millis(5));
+}
+
+TEST(DecodabilitySimulatorStreamTest, NumDecodableFrames) {
+  DecodabilitySimulator::Stream stream{
+      .frames = {{}, {.decodable_timestamp = Timestamp::Millis(10)}}};
+
+  EXPECT_EQ(stream.NumDecodableFrames(), 1);
+}
+
+TEST(DecodabilitySimulatorStreamTest, UndecodableDurationMs) {
+  DecodabilitySimulator::Stream stream{
+      .frames = {{.assembled_timestamp = Timestamp::Millis(0)},
+                 {.assembled_timestamp = Timestamp::Millis(1),
+                  .decodable_timestamp = Timestamp::Millis(5)}}};
+
+  EXPECT_THAT(
+      stream.UndecodableDurationMs().GetTimedSamples(),
+      ElementsAre(Field(&SamplesStatsCounter::StatsSample::value, Eq(4))));
+}
 
 Matcher<const Frame&> EqualsFrame(const Frame& expected) {
   return AllOf(

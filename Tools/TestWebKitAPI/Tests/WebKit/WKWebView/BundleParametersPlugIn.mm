@@ -63,7 +63,7 @@ static NSString * const testParameter2 = @"TestParameter2";
 #if WK_HAVE_C_SPI
     WKBundlePageLoaderClientV6 loaderClient = { };
     loaderClient.base.version = 6;
-    loaderClient.willLoadDataRequest = [] (WKBundlePageRef page, WKURLRequestRef, WKDataRef, WKStringRef, WKStringRef, WKURLRef, WKTypeRef userData, const void*) {
+    loaderClient.willLoadDataRequest = [] (WKBundlePageRef, WKURLRequestRef, WKDataRef, WKStringRef, WKStringRef, WKURLRef, WKTypeRef userData, const void*) {
         id data = WKObjCTypeWrapperGetObject((WKObjCTypeWrapperRef)userData);
         RELEASE_ASSERT([data isKindOfClass:NSData.class]);
     };

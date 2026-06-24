@@ -84,19 +84,28 @@ void TemporalInstantConstructor::finishCreation(VM& vm, TemporalInstantPrototype
     instantPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.instant
 JSC_DEFINE_HOST_FUNCTION(constructTemporalInstant, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // Step 1: NewTarget check done by JSC dispatch.
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, instantStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (callFrame->argumentCount() < 1)
-        return throwVMTypeError(globalObject, scope, "Missing required epochNanoseconds argument to Temporal.Instant"_s);
+    // Step 2: Set epochNanoseconds to ? ToBigInt(epochNanoseconds).
+    JSValue bigIntValue = callFrame->argument(0).toBigInt(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalInstant::tryCreateIfValid(globalObject, callFrame->uncheckedArgument(0), structure)));
+    // Step 3: If IsValidEpochNanoseconds(epochNanoseconds) is false, throw RangeError.
+    auto exactTimeOpt = bigIntValueToExactTime(globalObject, bigIntValue, "Temporal.Instant"_s);
+    RETURN_IF_EXCEPTION(scope, { });
+    ASSERT(exactTimeOpt);
+
+    // Step 4: Return ! CreateTemporalInstant(epochNanoseconds, NewTarget).
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalInstant::create(vm, structure, *exactTimeOpt)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalInstant, (JSGlobalObject* globalObject, CallFrame*))
@@ -107,9 +116,10 @@ JSC_DEFINE_HOST_FUNCTION(callTemporalInstant, (JSGlobalObject* globalObject, Cal
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Instant"_s));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.instant.from
 JSC_DEFINE_HOST_FUNCTION(temporalInstantConstructorFuncFrom, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return JSValue::encode(TemporalInstant::from(globalObject, callFrame->argument(0)));
+    return JSValue::encode(TemporalInstant::toInstant(globalObject, callFrame->argument(0)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalInstantConstructorFuncFromEpochMilliseconds, (JSGlobalObject* globalObject, CallFrame* callFrame))

@@ -27,7 +27,9 @@
 
 namespace WebCore {
 
-class RenderStyle;
+namespace Style {
+class ComputedStyle;
+}
 
 class AutosizeStatus {
 public:
@@ -37,19 +39,19 @@ public:
         FixedWidth = 1 << 2,
         Floating = 1 << 3,
         OverflowXHidden = 1 << 4,
-        // Adding new values requires giving RenderStyle::InheritedFlags::autosizeStatus additional bits.
+        // Adding new values requires giving Style::ComputedStyle::InheritedFlags::autosizeStatus additional bits.
     };
 
-    static AutosizeStatus compute(const RenderStyle&);
+    static AutosizeStatus compute(const Style::ComputedStyle&);
 
     constexpr AutosizeStatus(OptionSet<Fields>);
     constexpr OptionSet<Fields> fields() const { return m_fields; }
 
     constexpr bool contains(Fields) const;
 
-    bool isIdempotentTextAutosizingCandidate(const RenderStyle&);
+    bool isIdempotentTextAutosizingCandidate(const Style::ComputedStyle&);
     static float idempotentTextSize(float specifiedSize, float pageScale);
-    static bool probablyContainsASmallFixedNumberOfLines(const RenderStyle&);
+    static bool probablyContainsASmallFixedNumberOfLines(const Style::ComputedStyle&);
 
     constexpr bool operator==(const AutosizeStatus&) const = default;
 

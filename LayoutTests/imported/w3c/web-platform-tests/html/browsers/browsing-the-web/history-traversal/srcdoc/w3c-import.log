@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/srcdoc/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/srcdoc/consecutive-srcdoc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/srcdoc/srcdoc-history-entries.html

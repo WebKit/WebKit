@@ -54,5 +54,11 @@ pw_context *pw_context_new(pw_loop *main_loop, pw_properties *props, size_t user
 pw_core * pw_context_connect(pw_context *context, pw_properties *properties, size_t user_data_size);
 pw_core * pw_context_connect_fd(pw_context *context, int fd, pw_properties *properties, size_t user_data_size);
 
+// node.h
+struct pw_node_info * pw_node_info_update(struct pw_node_info *info, const struct pw_node_info *update);
+void pw_node_info_free(struct pw_node_info *info);
+
 // proxy.h
 void pw_proxy_destroy(struct pw_proxy *proxy);
+void pw_proxy_add_listener(struct pw_proxy *proxy, struct spa_hook *listener, const struct pw_proxy_events *events, void *data);
+int pw_proxy_sync(struct pw_proxy *proxy, int seq);

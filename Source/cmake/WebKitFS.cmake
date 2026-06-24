@@ -40,6 +40,8 @@ set(WebDriver_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebDriver/DerivedSources"
 set(WebKitLegacy_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebKitLegacy/DerivedSources")
 set(WebKit_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebKit/DerivedSources")
 set(WebInspectorUI_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebInspectorUI/DerivedSources")
+set(WGSLCore_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WGSL/DerivedSources")
+set(WebGPU_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebGPU/DerivedSources")
 set(MiniBrowser_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/MiniBrowser/DerivedSources")
 set(TestRunnerShared_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/TestRunnerShared/DerivedSources")
 set(DumpRenderTree_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DumpRenderTree/DerivedSources")
@@ -57,6 +59,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebCore/PrivateHe
 set(WebKitLegacy_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKitLegacy/Headers")
 set(WebKit_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKit/Headers")
 set(WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKit/PrivateHeaders")
+set(WebKitAdditions_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKitAdditions/Headers")
 
 set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/WTF/Scripts")
 set(JavaScriptCore_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/JavaScriptCore/Scripts")

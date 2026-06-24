@@ -16,7 +16,10 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <stdint.h>
 #include <string.h>
+
+#include <algorithm>
 
 #include <openssl/err.h>
 #include <openssl/mem.h>
@@ -25,8 +28,16 @@
 #include "../crypto/internal.h"
 #include "internal.h"
 
-
 BSSL_NAMESPACE_BEGIN
+
+namespace {
+inline uint64_t ToMicros(const OPENSSL_timeval& now) {
+  uint64_t us = now.tv_sec;
+  us *= 1000000;
+  us += now.tv_usec;
+  return us;
+}
+}  // namespace
 
 DTLS1_STATE::DTLS1_STATE()
     : has_change_cipher_spec(false),
@@ -78,31 +89,18 @@ void dtls1_free(SSL *ssl) {
 }
 
 void DTLSTimer::StartMicroseconds(OPENSSL_timeval now, uint64_t microseconds) {
-  uint64_t seconds = microseconds / 1000000;
-  microseconds %= 1000000;
-
-  now.tv_usec += microseconds;
-  if (now.tv_usec >= 1000000) {
-    now.tv_usec -= 1000000;
-    seconds++;
-  }
-
-  if (now.tv_sec > UINT64_MAX - seconds) {
-    Stop();
-    return;
-  }
-  now.tv_sec += seconds;
-  expire_time_ = now;
+  start_time_ = ToMicros(now);
+  duration_ = microseconds;
 }
 
-void DTLSTimer::Stop() { expire_time_ = {0, 0}; }
+void DTLSTimer::Stop() { duration_ = kNever; }
 
 bool DTLSTimer::IsExpired(OPENSSL_timeval now) const {
   return MicrosecondsRemaining(now) == 0;
 }
 
 bool DTLSTimer::IsSet() const {
-  return expire_time_.tv_sec != 0 || expire_time_.tv_usec != 0;
+  return duration_ != kNever;
 }
 
 uint64_t DTLSTimer::MicrosecondsRemaining(OPENSSL_timeval now) const {
@@ -110,35 +108,20 @@ uint64_t DTLSTimer::MicrosecondsRemaining(OPENSSL_timeval now) const {
     return kNever;
   }
 
-  if (now.tv_sec > expire_time_.tv_sec ||
-      (now.tv_sec == expire_time_.tv_sec &&
-       now.tv_usec >= expire_time_.tv_usec)) {
+  uint64_t now_us = ToMicros(now);
+  uint64_t expire_us = start_time_ + duration_;
+  if (now_us > expire_us) {
     return 0;
   }
 
-  uint64_t sec = expire_time_.tv_sec - now.tv_sec;
-  uint32_t usec;
-  if (expire_time_.tv_usec >= now.tv_usec) {
-    usec = expire_time_.tv_usec - now.tv_usec;
-  } else {
-    sec--;
-    usec = expire_time_.tv_usec + 1000000 - now.tv_usec;
-  }
-
+  uint64_t remain_us = expire_us - now_us;
   // If remaining time is less than 15 ms, return 0 to prevent issues because of
   // small divergences with socket timeouts.
-  if (sec == 0 && usec < 15000) {
+  if (remain_us < 15000) {
     return 0;
   }
 
-  if (sec > UINT64_MAX / 1000000) {
-    return kNever;
-  }
-  sec *= 1000000;
-  if (sec > UINT64_MAX - usec) {
-    return kNever;
-  }
-  return sec + usec;
+  return remain_us;
 }
 
 void dtls1_stop_timer(SSL *ssl) {
@@ -152,7 +135,34 @@ BSSL_NAMESPACE_END
 using namespace bssl;
 
 void DTLSv1_set_initial_timeout_duration(SSL *ssl, uint32_t duration_ms) {
+  if (!SSL_is_dtls(ssl)) {
+    return;
+  }
+
+  // Modify the initial value for next flight.
   ssl->initial_timeout_duration_ms = duration_ms;
+
+  // Retransmit timer increase by factor of 2 at each timeout.
+  uint32_t timeout_duration_ms = duration_ms << ssl->d1->num_timeouts;
+  if (timeout_duration_ms < duration_ms) {
+    timeout_duration_ms = uint32_t{60000};
+  } else {
+    timeout_duration_ms = std::min(timeout_duration_ms, uint32_t{60000});
+  }
+
+  // Modify the value used for next timeout.
+  ssl->d1->timeout_duration_ms = timeout_duration_ms;
+
+  // Modify retransmit timer.
+  if (ssl->d1->retransmit_timer.IsSet()) {
+    ssl->d1->retransmit_timer.UpdateDuration(uint64_t{timeout_duration_ms} *
+                                             1000);
+  }
+
+  // Modify ack timer.
+  if (ssl->d1->ack_timer.IsSet()) {
+    ssl->d1->ack_timer.UpdateDuration(uint64_t{timeout_duration_ms} * 1000 / 4);
+  }
 }
 
 int DTLSv1_get_timeout(const SSL *ssl, struct timeval *out) {

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    setTimeout(() => testRunner.notifyDone(), 3000);
+}
+onmessage = (message) => {
+    result.textContent = message.data;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<p>This tests acquiring a web lock in data URL. You should see PASS below</p>
+<div id="result">Running</div>
+<iframe src="data:text/html,
+<!DOCTYPE html>
+<script>
+top.postMessage(navigator.locks ? 'FAIL' : 'PASS', '*');
+</script>"></iframe>
+</body>
+</html>

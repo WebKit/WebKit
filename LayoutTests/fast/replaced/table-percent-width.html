@@ -1,12 +1,8 @@
 <html>
 <head>
 <title> webkit.org/b/29447: Replaced elements squeezed when width is specified as percentage inside a table with Auto layout</title>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function getComputedStyleForElement(element, cssPropertyName)
 {
@@ -44,6 +40,7 @@ function parsePixelValue(str)
 function test()
 {
     description("This test checks that a replaced element with percentage width (and no height specified) within a table cell is squeezed to the dimensions of the table cell.<br>See bug #29447.");
+    window.jsTestIsAsync = true;
 
     shouldBe("getWidth('img-1')", "'105px'");
     shouldBe("getHeight('img-1')", "'105px'");
@@ -56,10 +53,9 @@ function test()
     shouldBe("getWidth('img-5')", "'40px'");
     shouldBe("getHeight('img-5')", "'36px'");
 
-    isSuccessfullyParsed();
 
     if (window.testRunner) {
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 </script>

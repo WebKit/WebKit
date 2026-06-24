@@ -103,9 +103,18 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
     static const int maxConnections = 256;
     static const int maxConnectionsPerHost = 6;
 
+    // libsoup's default idle-timeout is 60s. Raise it to 115s, matching
+    // Firefox's network.http.keep-alive.timeout default, to keep connections
+    // warm for same-origin renavigation within a browsing session.
+    // Firefox flags a problem with IIS7 servers' default timeout of 120s, so
+    // the timeout chosen is a little shorter to keep a reserve for cases
+    // when the packet is lost or delayed on the route.
+    static const int idleTimeout = 115;
+
     m_soupSession = adoptGRef(soup_session_new_with_options(
         "max-conns", maxConnections,
         "max-conns-per-host", maxConnectionsPerHost,
+        "idle-timeout", idleTimeout,
         "timeout", 0,
         nullptr));
 

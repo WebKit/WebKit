@@ -68,25 +68,4 @@ private:
     SpeechRecognitionPermissionRequestCallback m_completionHandler;
 };
 
-class SpeechRecognitionPermissionCallback : public API::ObjectImpl<API::Object::Type::SpeechRecognitionPermissionCallback> {
-public:
-    static Ref<SpeechRecognitionPermissionCallback> create(CompletionHandler<void(bool)>&& completionHandler)
-    {
-        return adoptRef(*new SpeechRecognitionPermissionCallback(WTF::move(completionHandler)));
-    }
-
-    void complete(bool granted) { m_completionHandler(granted); }
-
-private:
-    SpeechRecognitionPermissionCallback(CompletionHandler<void(bool)>&& completionHandler)
-        : m_completionHandler(WTF::move(completionHandler))
-    { }
-
-    CompletionHandler<void(bool)> m_completionHandler;
-};
-
 } // namespace WebKit
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::SpeechRecognitionPermissionCallback)
-static bool isType(const API::Object& object) { return object.type() == API::Object::Type::SpeechRecognitionPermissionCallback; }
-SPECIALIZE_TYPE_TRAITS_END()

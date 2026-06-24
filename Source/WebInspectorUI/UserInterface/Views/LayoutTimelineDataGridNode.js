@@ -42,6 +42,7 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
         this._cachedData = super.data;
         this._cachedData.type = this.record.eventType;
         this._cachedData.name = this.displayName();
+        this._cachedData.node = this.record.domNode;
         this._cachedData.width = this.record.width;
         this._cachedData.height = this.record.height;
         this._cachedData.area = this.record.area;
@@ -60,20 +61,6 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
         switch (columnIdentifier) {
         case "name":
             cell.classList.add(...this.iconClassNames());
-
-            if (this.record.eventType == WI.LayoutTimelineRecord.EventType.Layout || this.record.eventType == WI.LayoutTimelineRecord.EventType.LargestContentfulPaint) {
-                let fragment = document.createDocumentFragment();
-                fragment.append(value);
-
-                if (this.record.domNode) {
-                    let goToArrow = fragment.appendChild(WI.createGoToArrowButton());
-                    goToArrow.addEventListener("click", (event) => {
-                        WI.showMainFrameDOMTree(this.record.domNode, {ignoreSearchTab: true});
-                    });
-                }
-
-                return fragment;
-            }
             return value;
 
         case "width":
@@ -91,6 +78,12 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
 
         case "source": // Timeline Overview
             return super.createCellContent("initiator", cell);
+
+        case "node":
+            if (!value)
+                return emDash;
+            cell.classList.add(WI.DOMTreeElementPathComponent.iconClassNameForNode(value));
+            return WI.linkifyNodeReference(value);
         }
 
         return super.createCellContent(columnIdentifier, cell);

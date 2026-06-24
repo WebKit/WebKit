@@ -29,6 +29,7 @@
 #include "StyleRule.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -54,7 +55,9 @@ using CascadeLayerPriority = uint16_t;
 struct RuleSetAndNegation {
     RefPtr<const RuleSet> ruleSet;
     IsNegation isNegation { IsNegation::No };
-    const CSSSelectorList* scopeSelector { nullptr };
+    // Selector for the :has() scope element, used to bound invalidation traversal.
+    // Null means scope-breaking (no scope element can be identified).
+    RefPtr<const RefCountedCSSSelectorList> scopeSelector { };
 };
 using InvalidationRuleSetVector = Vector<RuleSetAndNegation, 1>;
 
@@ -73,7 +76,7 @@ struct DynamicMediaQueryEvaluationChanges {
     };
 };
 
-class RuleSet : public RefCounted<RuleSet> {
+class RuleSet : public ThreadSafeRefCounted<RuleSet> {
     WTF_MAKE_NONCOPYABLE(RuleSet);
 public:
     static Ref<RuleSet> create() { return adoptRef(*new RuleSet); }
@@ -257,6 +260,9 @@ private:
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_hasViewportDependentMediaQueries { false };
     bool m_hasHostOrScopePseudoClassRulesInUniversalBucket { false };
+
+    // For checking against re-entrancy.
+    bool m_isBuilding { false };
 };
 
 inline const RuleSet::RuleDataVector* RuleSet::attributeRules(const AtomString& key, bool isHTMLName) const

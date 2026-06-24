@@ -47,7 +47,7 @@ IF NOT "%ALTERNATE_OPTIONS%"=="" copy %ALTERNATE_OPTIONS% absl\base\options.h
 :: /google/data/rw/teams/absl/kokoro/windows.
 ::
 :: TODO(absl-team): Remove -Wno-microsoft-cast
-%KOKORO_GFILE_DIR%\bazel-8.2.1-windows-x86_64.exe ^
+%KOKORO_GFILE_DIR%\bazel-9.1.0-windows-x86_64.exe ^
   test ... ^
   --compilation_mode=%COMPILATION_MODE% ^
   --compiler=clang-cl ^
@@ -59,6 +59,7 @@ IF NOT "%ALTERNATE_OPTIONS%"=="" copy %ALTERNATE_OPTIONS% absl\base\options.h
   --extra_execution_platforms=//:x64_windows-clang-cl ^
   --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows-clang-cl ^
   --keep_going ^
+  --per_file_copt=external/.*@/w ^
   --test_env="GTEST_INSTALL_FAILURE_SIGNAL_HANDLER=1" ^
   --test_env=TZDIR="%CD%\absl\time\internal\cctz\testdata\zoneinfo" ^
   --test_output=errors ^

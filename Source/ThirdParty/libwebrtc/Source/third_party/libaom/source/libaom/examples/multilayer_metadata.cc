@@ -12,12 +12,12 @@
 #include "examples/multilayer_metadata.h"
 
 #include <assert.h>
-#include <inttypes.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <cinttypes>
 #include <cmath>
 #include <fstream>
 #include <iostream>

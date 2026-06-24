@@ -251,7 +251,7 @@ template<Numeric N, SpecificKeyword... Ks> struct PrimitiveData {
     }
 
     PrimitiveData(Calc calc)
-        : payload { &protect(calc.calcValue()).leakRef() }
+        : payload { &calc.leakRef() }
         , index { calc }
     {
     }

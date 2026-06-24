@@ -2255,6 +2255,53 @@ TEST(WebArchive, SaveResourcesWithUTF8Encoding)
     Util::run(&saved);
 }
 
+TEST(WebArchive, ArchiveWithConfigurationLinkIcon)
+{
+    RetainPtr<NSURL> directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ArchiveWithConfigurationLinkIconTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    HTTPServer server({
+        { "/main.html"_s, { "<head>"
+            "<link rel=\"icon\" href=\"/favicon.ico\">"
+            "<link rel=\"stylesheet\" href=\"/favicon.ico\">"
+            "</head>"
+            "<script>window.onload = () => window.webkit.messageHandlers.testHandler.postMessage('done');</script>"_s } },
+        { "/favicon.ico"_s, { { { "Content-Type"_s, "text/css"_s } }, "/* */"_s } },
+    });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:server.request("/main.html"_s)];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    RetainPtr<_WKArchiveConfiguration> archiveConfiguration = adoptNS([[_WKArchiveConfiguration alloc] init]);
+    archiveConfiguration.get().directory = directoryURL.get();
+    archiveConfiguration.get().suggestedFileName = @"host";
+    [webView _archiveWithConfiguration:archiveConfiguration.get() completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+
+        NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+
+        NSString *resourceDirectoryPath = [directoryURL URLByAppendingPathComponent:@"host_files"].path;
+        NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:resourceDirectoryPath error:nil];
+        EXPECT_EQ(resourceFileNames.count, 2u);
+
+        for (NSString *fileName in resourceFileNames)
+            EXPECT_TRUE([fileName containsString:@"favicon"]);
+
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

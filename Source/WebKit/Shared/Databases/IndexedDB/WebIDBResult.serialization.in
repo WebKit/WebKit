@@ -23,4 +23,5 @@
 [RValue] class WebKit::WebIDBResult {
     WebCore::IDBResultData m_resultData;
     Vector<WebKit::SandboxExtensionHandle> m_handles
+    std::optional<WebCore::ClientOrigin> m_clientOrigin
 }

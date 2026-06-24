@@ -11,29 +11,33 @@
 #ifndef API_VIDEO_CORRUPTION_DETECTION_FRAME_INSTRUMENTATION_DATA_H_
 #define API_VIDEO_CORRUPTION_DETECTION_FRAME_INSTRUMENTATION_DATA_H_
 
+#include <span>
 #include <vector>
-
-#include "api/array_view.h"
 
 namespace webrtc {
 
 class FrameInstrumentationData {
  public:
   FrameInstrumentationData();
+  FrameInstrumentationData(const FrameInstrumentationData&) = default;
+  FrameInstrumentationData(FrameInstrumentationData&&) = default;
+  FrameInstrumentationData& operator=(const FrameInstrumentationData&) =
+      default;
+  FrameInstrumentationData& operator=(FrameInstrumentationData&&) = default;
 
   int sequence_index() const { return sequence_index_; }
   bool is_droppable() const { return droppable_; }
   double std_dev() const { return std_dev_; }
   int luma_error_threshold() const { return luma_error_threshold_; }
   int chroma_error_threshold() const { return chroma_error_threshold_; }
-  ArrayView<const double> sample_values() const { return sample_values_; }
+  std::span<const double> sample_values() const { return sample_values_; }
 
   bool SetSequenceIndex(int index);
   void set_droppable(bool droppable) { droppable_ = droppable; }
   bool SetStdDev(double std_dev);
   bool SetLumaErrorThreshold(int threshold);
   bool SetChromaErrorThreshold(int threshold);
-  bool SetSampleValues(ArrayView<const double> samples);
+  bool SetSampleValues(std::span<const double> samples);
   bool SetSampleValues(std::vector<double>&& samples);
 
   // Convenience methods..

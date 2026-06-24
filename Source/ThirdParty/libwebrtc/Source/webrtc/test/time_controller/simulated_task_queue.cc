@@ -28,13 +28,10 @@ namespace webrtc {
 SimulatedTaskQueue::SimulatedTaskQueue(
     sim_time_impl::SimulatedTimeControllerImpl* handler,
     absl::string_view name)
-    : handler_(handler), name_(new char[name.size()]) {
-  std::copy_n(name.begin(), name.size(), name_);
-}
+    : handler_(handler), name_(name) {}
 
 SimulatedTaskQueue::~SimulatedTaskQueue() {
   handler_->Unregister(this);
-  delete[] name_;
 }
 
 void SimulatedTaskQueue::Delete() {

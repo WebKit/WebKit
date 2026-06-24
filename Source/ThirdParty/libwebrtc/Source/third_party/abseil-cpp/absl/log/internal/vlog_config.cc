@@ -20,6 +20,7 @@
 #include <atomic>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -38,20 +39,31 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/strip.h"
 #include "absl/synchronization/mutex.h"
-#include "absl/types/optional.h"
 
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace log_internal {
 
 namespace {
-bool ModuleIsPath(absl::string_view module_pattern) {
+
 #ifdef _WIN32
-  return module_pattern.find_first_of("/\\") != module_pattern.npos;
+constexpr char kPathSeparators[] = "/\\";
 #else
-  return module_pattern.find('/') != module_pattern.npos;
+constexpr char kPathSeparators[] = "/";
 #endif
+
+bool ModuleIsPath(absl::string_view module_pattern) {
+  return module_pattern.find_first_of(kPathSeparators) != module_pattern.npos;
 }
+
+absl::string_view Basename(absl::string_view file) {
+  auto sep = file.find_last_of(kPathSeparators);
+  if (sep != file.npos) {
+    file.remove_prefix(sep + 1);
+  }
+  return file;
+}
+
 }  // namespace
 
 bool VLogSite::SlowIsEnabled(int stale_v, int level) {
@@ -129,21 +141,9 @@ int VLogLevel(absl::string_view file, const std::vector<VModuleInfo>* infos,
   // parsing flags).  We can't allocate in `VLOG`, so we treat null as empty
   // here and press on.
   if (!infos || infos->empty()) return current_global_v;
-  // Get basename for file
-  absl::string_view basename = file;
-  {
-    const size_t sep = basename.rfind('/');
-    if (sep != basename.npos) {
-      basename.remove_prefix(sep + 1);
-#ifdef _WIN32
-    } else {
-      const size_t sep = basename.rfind('\\');
-      if (sep != basename.npos) basename.remove_prefix(sep + 1);
-#endif
-    }
-  }
 
-  absl::string_view stem = file, stem_basename = basename;
+  absl::string_view stem = file;
+  absl::string_view stem_basename = Basename(stem);
   {
     const size_t sep = stem_basename.find('.');
     if (sep != stem_basename.npos) {
@@ -189,7 +189,7 @@ int AppendVModuleLocked(absl::string_view module_pattern, int log_level)
 // Allocates memory.
 int PrependVModuleLocked(absl::string_view module_pattern, int log_level)
     ABSL_EXCLUSIVE_LOCKS_REQUIRED(mutex) {
-  absl::optional<int> old_log_level;
+  std::optional<int> old_log_level;
   for (const auto& info : get_vmodule_info()) {
     if (FNMatch(info.module_pattern, module_pattern)) {
       old_log_level = info.vlog_level;

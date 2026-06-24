@@ -14,17 +14,19 @@
 
 #include <assert.h>
 
-#include "internal.h"
 #include "../bcm_interface.h"
+#include "internal.h"
 
+
+using namespace bssl;
 
 // Be aware that different sets of AES functions use incompatible key
 // representations, varying in format of the key schedule, the |AES_KEY.rounds|
 // value, or both. Therefore they cannot mix. Also, on AArch64, the plain-C
 // code, above, is incompatible with the |aes_hw_*| functions.
 
-bcm_infallible BCM_aes_encrypt(const uint8_t *in, uint8_t *out,
-                               const AES_KEY *key) {
+bcm_infallible bssl::BCM_aes_encrypt(const uint8_t *in, uint8_t *out,
+                                     const AES_KEY *key) {
   if (hwaes_capable()) {
     aes_hw_encrypt(in, out, key);
   } else if (vpaes_capable()) {
@@ -35,8 +37,8 @@ bcm_infallible BCM_aes_encrypt(const uint8_t *in, uint8_t *out,
   return bcm_infallible::not_approved;
 }
 
-bcm_infallible BCM_aes_decrypt(const uint8_t *in, uint8_t *out,
-                               const AES_KEY *key) {
+bcm_infallible bssl::BCM_aes_decrypt(const uint8_t *in, uint8_t *out,
+                                     const AES_KEY *key) {
   if (hwaes_capable()) {
     aes_hw_decrypt(in, out, key);
   } else if (vpaes_capable()) {
@@ -47,8 +49,8 @@ bcm_infallible BCM_aes_decrypt(const uint8_t *in, uint8_t *out,
   return bcm_infallible::not_approved;
 }
 
-bcm_status BCM_aes_set_encrypt_key(const uint8_t *key, unsigned bits,
-                                   AES_KEY *aeskey) {
+bcm_status bssl::BCM_aes_set_encrypt_key(const uint8_t *key, unsigned bits,
+                                         AES_KEY *aeskey) {
   int ret = -1;
   if (hwaes_capable()) {
     ret = aes_hw_set_encrypt_key(key, bits, aeskey);
@@ -64,8 +66,8 @@ bcm_status BCM_aes_set_encrypt_key(const uint8_t *key, unsigned bits,
   return bcm_status::not_approved;
 }
 
-bcm_status BCM_aes_set_decrypt_key(const uint8_t *key, unsigned bits,
-                                   AES_KEY *aeskey) {
+bcm_status bssl::BCM_aes_set_decrypt_key(const uint8_t *key, unsigned bits,
+                                         AES_KEY *aeskey) {
   int ret = -1;
   if (hwaes_capable()) {
     ret = aes_hw_set_decrypt_key(key, bits, aeskey);
@@ -85,7 +87,8 @@ bcm_status BCM_aes_set_decrypt_key(const uint8_t *key, unsigned bits,
 // On x86 and x86_64, |aes_hw_set_decrypt_key|, we implement
 // |aes_hw_encrypt_key_to_decrypt_key| in assembly and rely on C code to combine
 // the operations.
-int aes_hw_set_decrypt_key(const uint8_t *user_key, int bits, AES_KEY *key) {
+int bssl::aes_hw_set_decrypt_key(const uint8_t *user_key, int bits,
+                                 AES_KEY *key) {
   int ret = aes_hw_set_encrypt_key(user_key, bits, key);
   if (ret == 0) {
     aes_hw_encrypt_key_to_decrypt_key(key);
@@ -93,7 +96,8 @@ int aes_hw_set_decrypt_key(const uint8_t *user_key, int bits, AES_KEY *key) {
   return ret;
 }
 
-int aes_hw_set_encrypt_key(const uint8_t *user_key, int bits, AES_KEY *key) {
+int bssl::aes_hw_set_encrypt_key(const uint8_t *user_key, int bits,
+                                 AES_KEY *key) {
   if (aes_hw_set_encrypt_key_alt_preferred()) {
     return aes_hw_set_encrypt_key_alt(user_key, bits, key);
   } else {
@@ -105,8 +109,9 @@ int aes_hw_set_encrypt_key(const uint8_t *user_key, int bits, AES_KEY *key) {
 #if defined(VPAES) && defined(OPENSSL_X86)
 // On x86, there is no |vpaes_ctr32_encrypt_blocks|, so we implement it
 // ourselves. This avoids all callers needing to account for a missing function.
-void vpaes_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out, size_t blocks,
-                                const AES_KEY *key, const uint8_t iv[16]) {
+void bssl::vpaes_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
+                                      size_t blocks, const AES_KEY *key,
+                                      const uint8_t iv[16]) {
   uint32_t ctr = CRYPTO_load_u32_be(iv + 12);
   uint8_t iv_buf[16], enc[16];
   OPENSSL_memcpy(iv_buf, iv, 12);
@@ -122,9 +127,10 @@ void vpaes_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out, size_t blocks,
 #endif
 
 #if defined(BSAES)
-void vpaes_ctr32_encrypt_blocks_with_bsaes(const uint8_t *in, uint8_t *out,
-                                           size_t blocks, const AES_KEY *key,
-                                           const uint8_t ivec[16]) {
+void bssl::vpaes_ctr32_encrypt_blocks_with_bsaes(const uint8_t *in,
+                                                 uint8_t *out, size_t blocks,
+                                                 const AES_KEY *key,
+                                                 const uint8_t ivec[16]) {
   // |bsaes_ctr32_encrypt_blocks| is faster than |vpaes_ctr32_encrypt_blocks|,
   // but it takes at least one full 8-block batch to amortize the conversion.
   if (blocks < 8) {
@@ -159,9 +165,9 @@ void vpaes_ctr32_encrypt_blocks_with_bsaes(const uint8_t *in, uint8_t *out,
 }
 #endif  // BSAES
 
-ctr128_f aes_ctr_set_key(AES_KEY *aes_key, int *out_is_hwaes,
-                         block128_f *out_block, const uint8_t *key,
-                         size_t key_bytes) {
+ctr128_f bssl::aes_ctr_set_key(AES_KEY *aes_key, int *out_is_hwaes,
+                               block128_f *out_block, const uint8_t *key,
+                               size_t key_bytes) {
   // This function assumes the key length was previously validated.
   assert(key_bytes == 128 / 8 || key_bytes == 192 / 8 || key_bytes == 256 / 8);
   if (hwaes_capable()) {

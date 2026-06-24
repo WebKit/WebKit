@@ -14,6 +14,7 @@
 #include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -28,10 +29,16 @@
 namespace webrtc {
 
 GlobalSimulatedTimeController::GlobalSimulatedTimeController(
-    Timestamp start_time)
+    Timestamp start_time,
+    SocketServer* socket_server)
     : sim_clock_(start_time.us()), impl_(start_time), yield_policy_(&impl_) {
   global_clock_.SetTime(start_time);
-  auto main_thread = std::make_unique<SimulatedMainThread>(&impl_);
+  std::unique_ptr<SimulatedMainThread> main_thread;
+  if (socket_server) {
+    main_thread = std::make_unique<SimulatedMainThread>(&impl_, socket_server);
+  } else {
+    main_thread = std::make_unique<SimulatedMainThread>(&impl_);
+  }
   impl_.Register(main_thread.get());
   main_thread_ = std::move(main_thread);
 }
@@ -50,6 +57,13 @@ std::unique_ptr<Thread> GlobalSimulatedTimeController::CreateThread(
     const std::string& name,
     std::unique_ptr<SocketServer> socket_server) {
   return impl_.CreateThread(name, std::move(socket_server));
+}
+
+std::unique_ptr<Thread>
+GlobalSimulatedTimeController::CreateThreadWithSocketServer(
+    absl::string_view name,
+    SocketServer* socket_server) {
+  return impl_.CreateThreadWithSocketServer(name, socket_server);
 }
 
 Thread* GlobalSimulatedTimeController::GetMainThread() {

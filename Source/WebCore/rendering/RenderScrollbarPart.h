@@ -36,7 +36,7 @@ class RenderScrollbarPart final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderScrollbarPart);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderScrollbarPart);
 public:
-    RenderScrollbarPart(Document&, RenderStyle&&, RenderScrollbar* = nullptr, ScrollbarPart = NoPart);
+    RenderScrollbarPart(Document&, Style::ComputedStyle&&, RenderScrollbar* = nullptr, ScrollbarPart = NoPart);
     
     virtual ~RenderScrollbarPart();
 
@@ -59,7 +59,7 @@ public:
     RenderBox* rendererOwningScrollbar() const;
 
 private:
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
     void layoutHorizontalPart();

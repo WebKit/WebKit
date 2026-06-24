@@ -31,7 +31,7 @@
 #include "InlineItem.h"
 #include "InlineTextItem.h"
 #include "LayoutElementBox.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TextUtil.h"
 #include <wtf/unicode/CharacterNames.h>
 
@@ -429,22 +429,22 @@ static std::optional<TextUtil::WordBreakLeft> midWordBreak(const InlineContentBr
     return TextUtil::WordBreakLeft { right - left, TextUtil::width(inlineTextItem, textRun.style.fontCascade(), left, right, runLogicalLeft) };
 }
 
-static size_t NODELETE limitBeforeValue(const RenderStyle& style)
+static size_t NODELETE limitBeforeValue(const Style::ComputedStyle& style)
 {
     return style.hyphenateLimitBefore().tryValue().value_or(0).value;
 }
 
-static size_t NODELETE limitAfterValue(const RenderStyle& style)
+static size_t NODELETE limitAfterValue(const Style::ComputedStyle& style)
 {
     return style.hyphenateLimitAfter().tryValue().value_or(0).value;
 }
 
-static inline bool NODELETE hasEnoughContentForHyphenation(size_t contentLength, const RenderStyle& style)
+static inline bool NODELETE hasEnoughContentForHyphenation(size_t contentLength, const Style::ComputedStyle& style)
 {
     return limitBeforeValue(style) + limitAfterValue(style) <= contentLength;
 }
 
-static std::optional<size_t> firstHyphenPosition(StringView content, const RenderStyle& style)
+static std::optional<size_t> firstHyphenPosition(StringView content, const Style::ComputedStyle& style)
 {
     // FIXME: We may produce slightly incorrect (less fine-grained) hyphenation here as the incoming content may just be a partial word.
     // (same applies to hyphenPosition below)
@@ -469,7 +469,7 @@ static std::optional<size_t> firstHyphenPosition(StringView content, const Rende
     return { };
 }
 
-static std::optional<size_t> lastHyphenPosition(StringView content, const RenderStyle& style)
+static std::optional<size_t> lastHyphenPosition(StringView content, const Style::ComputedStyle& style)
 {
     size_t contentLength = content.length();
     if (!hasEnoughContentForHyphenation(contentLength, style))
@@ -480,7 +480,7 @@ static std::optional<size_t> lastHyphenPosition(StringView content, const Render
     return { };
 }
 
-static std::optional<size_t> hyphenPositionBefore(StringView content, const RenderStyle& style, size_t beforePosition)
+static std::optional<size_t> hyphenPositionBefore(StringView content, const Style::ComputedStyle& style, size_t beforePosition)
 {
     // Find the hyphen position as follows:
     // 1. Split the text by taking the hyphen width into account
@@ -874,7 +874,7 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
     return { overflowingRunIndex };
 }
 
-EnumSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBehavior(const RenderStyle& style, bool hasWrapOpportunityAtPreviousPosition) const
+EnumSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBehavior(const Style::ComputedStyle& style, bool hasWrapOpportunityAtPreviousPosition) const
 {
     // Disregard any prohibition against line breaks mandated by the word-break property.
     // The different wrapping opportunities must not be prioritized.
@@ -920,7 +920,7 @@ void InlineContentBreaker::ContinuousContent::setTrailingSoftHyphenWidth(InlineL
     m_hasTrailingSoftHyphen = true;
 }
 
-void InlineContentBreaker::ContinuousContent::appendToRunList(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment)
+void InlineContentBreaker::ContinuousContent::appendToRunList(const InlineItem& inlineItem, const Style::ComputedStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment)
 {
     m_runs.append({ inlineItem, style, offset, contentWidth, textSpacingAdjustment });
     m_logicalWidth = clampTo<InlineLayoutUnit>(m_logicalWidth + offset + contentWidth);
@@ -934,7 +934,7 @@ void InlineContentBreaker::ContinuousContent::resetTrailingTrimmableContent()
     m_isFullyTrimmable = false;
 }
 
-void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
+void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
 {
     ASSERT(inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOutOfFlow() || inlineItem.isBlock());
     m_isTextOnlyContent = false;
@@ -947,7 +947,7 @@ void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineIte
     }
 }
 
-void InlineContentBreaker::ContinuousContent::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
+void InlineContentBreaker::ContinuousContent::appendTextContent(const InlineTextItem& inlineTextItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalWidth)
 {
     m_hasTextContent = true;
     auto isAfterWordSeparator = m_hasTrailingWordSeparator;

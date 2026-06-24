@@ -1,6 +1,0 @@
-Span text
-Row 1, Cell 1	Row 1, Cell 2
-
-PASS Test serialized html on copy has resolved css values
-FAIL Test for resolving css variables on copy null is not an object (evaluating 'span.style')
-

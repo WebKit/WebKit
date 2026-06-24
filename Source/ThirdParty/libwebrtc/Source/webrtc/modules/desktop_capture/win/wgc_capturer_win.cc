@@ -11,6 +11,7 @@
 #include "modules/desktop_capture/win/wgc_capturer_win.h"
 
 #include <DispatcherQueue.h>
+#include <dxgi1_4.h>
 #include <windows.foundation.metadata.h>
 #include <windows.graphics.capture.h>
 
@@ -49,7 +50,6 @@ constexpr wchar_t kCoreMessagingDll[] = L"CoreMessaging.dll";
 constexpr wchar_t kWgcSessionType[] =
     L"Windows.Graphics.Capture.GraphicsCaptureSession";
 constexpr wchar_t kApiContract[] = L"Windows.Foundation.UniversalApiContract";
-constexpr wchar_t kDirtyRegionMode[] = L"DirtyRegionMode";
 constexpr UINT16 kRequiredApiContractVersion = 8;
 
 enum class WgcCapturerResult {
@@ -68,44 +68,6 @@ void RecordWgcCapturerResult(WgcCapturerResult error) {
   RTC_HISTOGRAM_ENUMERATION("WebRTC.DesktopCapture.Win.WgcCapturerResult",
                             static_cast<int>(error),
                             static_cast<int>(WgcCapturerResult::kMaxValue));
-}
-
-// Checks if the DirtyRegionMode property is present in GraphicsCaptureSession
-// and logs a boolean histogram with the result.
-// TODO(https://crbug.com/40259177): Detecting support for this property means
-// that the WGC API supports dirty regions and it can be utilized to improve
-// the capture performance and the existing zero-herz support.
-void LogDirtyRegionSupport() {
-  ComPtr<ABI::Windows::Foundation::Metadata::IApiInformationStatics>
-      api_info_statics;
-  HRESULT hr = GetActivationFactory<
-      ABI::Windows::Foundation::Metadata::IApiInformationStatics,
-      RuntimeClass_Windows_Foundation_Metadata_ApiInformation>(
-      &api_info_statics);
-  if (FAILED(hr)) {
-    return;
-  }
-
-  HSTRING dirty_region_mode;
-  hr = CreateHstring(kDirtyRegionMode, wcslen(kDirtyRegionMode),
-                     &dirty_region_mode);
-  if (FAILED(hr)) {
-    DeleteHstring(dirty_region_mode);
-    return;
-  }
-
-  HSTRING wgc_session_type;
-  hr = CreateHstring(kWgcSessionType, wcslen(kWgcSessionType),
-                     &wgc_session_type);
-  if (SUCCEEDED(hr)) {
-    boolean is_dirty_region_mode_supported =
-        api_info_statics->IsPropertyPresent(wgc_session_type, dirty_region_mode,
-                                            &is_dirty_region_mode_supported);
-    RTC_HISTOGRAM_BOOLEAN("WebRTC.DesktopCapture.Win.WgcDirtyRegionSupport",
-                          !!is_dirty_region_mode_supported);
-  }
-  DeleteHstring(dirty_region_mode);
-  DeleteHstring(wgc_session_type);
 }
 
 }  // namespace
@@ -217,7 +179,6 @@ WgcCapturerWin::WgcCapturerWin(
         reinterpret_cast<CreateDispatcherQueueControllerFunc>(GetProcAddress(
             core_messaging_library_, "CreateDispatcherQueueController"));
   }
-  LogDirtyRegionSupport();
 }
 
 WgcCapturerWin::~WgcCapturerWin() {
@@ -253,7 +214,6 @@ bool WgcCapturerWin::SelectSource(DesktopCapturer::SourceId id) {
   selected_source_id_ = id;
 
   if (full_screen_window_detector_ &&
-      full_screen_window_detector_->UseHeuristicForFindingEditor() &&
       editor_id_ == 0) {
     // Use `full_screen_window_detector_` to check if the selected `id` is a
     // full screen window, in which case we would like the `selected_source_id_`
@@ -324,11 +284,28 @@ void WgcCapturerWin::Start(Callback* callback) {
 
   callback_ = callback;
 
-  // Create a Direct3D11 device to share amongst the WgcCaptureSessions. Many
-  // parameters are nullptr as the implemention uses defaults that work well for
-  // us.
-  HRESULT hr = D3D11CreateDevice(
-      /*adapter=*/nullptr, D3D_DRIVER_TYPE_HARDWARE,
+  // Create a Direct3D11 device to share amongst the WgcCaptureSessions.
+  // When a specific GPU adapter LUID is provided (e.g. for texture sharing with
+  // the GPU process), create the device on that adapter. Otherwise, fall back
+  // to the system default adapter.
+  HRESULT hr;
+  ComPtr<IDXGIAdapter> adapter;
+  const LUID luid = options_.d3d_device_luid();
+  if (luid.LowPart != 0 || luid.HighPart != 0) {
+    ComPtr<IDXGIFactory4> factory4;
+    hr = CreateDXGIFactory1(IID_PPV_ARGS(&factory4));
+    if (SUCCEEDED(hr)) {
+      hr = factory4->EnumAdapterByLuid(luid, IID_PPV_ARGS(&adapter));
+    }
+    if (FAILED(hr)) {
+      RTC_LOG(LS_WARNING) << "Failed to get adapter by LUID, "
+                          << "falling back to default adapter: " << hr;
+    }
+  }
+
+  hr = D3D11CreateDevice(
+      adapter.Get(),
+      adapter ? D3D_DRIVER_TYPE_UNKNOWN : D3D_DRIVER_TYPE_HARDWARE,
       /*software_rasterizer=*/nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT,
       /*feature_levels=*/nullptr, /*feature_levels_size=*/0, D3D11_SDK_VERSION,
       &d3d11_device_, /*feature_level=*/nullptr, /*device_context=*/nullptr);
@@ -471,7 +448,7 @@ void WgcCapturerWin::CaptureFrame() {
                             capture_time_ms);
   frame->set_capture_time_ms(capture_time_ms);
   frame->set_capturer_id(DesktopCapturerId::kWgcCapturerWin);
-  frame->set_may_contain_cursor(options_.prefer_cursor_embedded());
+  frame->set_may_contain_cursor(capture_session->MayContainCursor());
   frame->set_top_left(capture_source_->GetTopLeft());
   RecordWgcCapturerResult(WgcCapturerResult::kSuccess);
   callback_->OnCaptureResult(DesktopCapturer::Result::SUCCESS,
@@ -490,12 +467,10 @@ bool WgcCapturerWin::IsSourceBeingCaptured(DesktopCapturer::SourceId id) {
 
 void WgcCapturerWin::SetUpFullScreenDetectorForTest(
     DesktopCapturer::SourceId source_id,
-    bool fullscreen_slide_show_started_after_capture_start,
-    bool use_heuristic_for_finding_editor) {
+    bool fullscreen_slide_show_started_after_capture_start) {
   if (full_screen_window_detector_) {
     full_screen_window_detector_->CreateFullScreenApplicationHandlerForTest(
-        source_id, fullscreen_slide_show_started_after_capture_start,
-        use_heuristic_for_finding_editor);
+        source_id, fullscreen_slide_show_started_after_capture_start);
   }
 }
 

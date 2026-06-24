@@ -32,6 +32,7 @@
 #import <WebCore/AXIsolatedTree.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 WebCore::IntPoint WebLocalFrameLoaderClient::accessibilityRemoteFrameOffset()
 {

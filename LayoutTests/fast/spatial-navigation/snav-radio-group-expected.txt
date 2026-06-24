@@ -22,4 +22,7 @@ PASS gFocusedDocument.activeElement.getAttribute("id") is "4"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "left"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
 PASS document.getElementById('down').checked is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

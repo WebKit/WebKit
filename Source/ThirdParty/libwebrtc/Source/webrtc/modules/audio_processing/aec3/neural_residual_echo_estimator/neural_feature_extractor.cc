@@ -15,9 +15,9 @@
 #include <cmath>
 #include <cstring>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "common_audio/window_generator.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/checks.h"
@@ -46,7 +46,7 @@ std::vector<float> GetSqrtHanningWindow(int frame_size, float scale) {
 }
 
 std::array<float, kBlockSize> AverageAllChannels(
-    ArrayView<const ArrayView<const float, kBlockSize>> all_channels) {
+    std::span<const std::span<const float, kBlockSize>> all_channels) {
   std::array<float, kBlockSize> summed_block;
   summed_block.fill(0.0f);
   const float scale = kScale * 1.0f / all_channels.size();
@@ -93,7 +93,7 @@ bool TimeDomainFeatureExtractor::ReadyForInference() const {
 }
 
 void TimeDomainFeatureExtractor::UpdateBuffers(
-    ArrayView<const ArrayView<const float, kBlockSize>> all_channels,
+    std::span<const std::span<const float, kBlockSize>> all_channels,
     ModelInputEnum input_type) {
   if (!RequiredInput(input_type)) {
     return;
@@ -101,11 +101,11 @@ void TimeDomainFeatureExtractor::UpdateBuffers(
   std::vector<float>& input_buffer =
       input_buffer_[static_cast<size_t>(input_type)];
   std::array<float, kBlockSize> summed_block = AverageAllChannels(all_channels);
-  input_buffer.insert(input_buffer.end(), summed_block.cbegin(),
-                      summed_block.cend());
+  input_buffer.insert(input_buffer.end(), summed_block.begin(),
+                      summed_block.end());
 }
 
-void TimeDomainFeatureExtractor::PrepareModelInput(ArrayView<float> model_input,
+void TimeDomainFeatureExtractor::PrepareModelInput(std::span<float> model_input,
                                                    ModelInputEnum input_type) {
   if (!RequiredInput(input_type)) {
     return;
@@ -113,9 +113,9 @@ void TimeDomainFeatureExtractor::PrepareModelInput(ArrayView<float> model_input,
   std::vector<float>& input_buffer =
       input_buffer_[static_cast<size_t>(input_type)];
   RTC_CHECK_EQ(input_buffer.size(), step_size_);
-  std::copy(model_input.cbegin() + step_size_, model_input.cend(),
+  std::copy(model_input.begin() + step_size_, model_input.end(),
             model_input.begin());
-  std::copy(input_buffer.cbegin(), input_buffer.cend(),
+  std::copy(input_buffer.begin(), input_buffer.end(),
             model_input.end() - step_size_);
   input_buffer.clear();
 }
@@ -174,10 +174,10 @@ bool FrequencyDomainFeatureExtractor::ReadyForInference() const {
 }
 
 void FrequencyDomainFeatureExtractor::ComputeAndAddPowerSpectra(
-    ArrayView<const float> frame,
+    std::span<const float> frame,
     std::unique_ptr<PffftState>& pffft_state,
     int number_channels,
-    ArrayView<float> power_spectra) {
+    std::span<float> power_spectra) {
   const float kAverageScale = 1.0f / number_channels;
   if (pffft_state == nullptr) {
     pffft_state = std::make_unique<PffftState>(frame_size_);
@@ -202,7 +202,7 @@ void FrequencyDomainFeatureExtractor::ComputeAndAddPowerSpectra(
 }
 
 void FrequencyDomainFeatureExtractor::UpdateBuffers(
-    ArrayView<const ArrayView<const float, kBlockSize>> all_channels,
+    std::span<const std::span<const float, kBlockSize>> all_channels,
     ModelInputEnum input_type) {
   if (!RequiredInput(input_type)) {
     return;
@@ -211,14 +211,14 @@ void FrequencyDomainFeatureExtractor::UpdateBuffers(
       input_buffer_[static_cast<size_t>(input_type)];
   input_buffer.resize(all_channels.size());
   for (size_t ch = 0; ch < all_channels.size(); ++ch) {
-    const ArrayView<const float, kBlockSize>& frame_in = all_channels[ch];
+    const std::span<const float, kBlockSize>& frame_in = all_channels[ch];
     std::vector<float>& input_buffer_ch = input_buffer[ch];
-    input_buffer_ch.insert(input_buffer_ch.end(), frame_in.cbegin(),
-                           frame_in.cend());
+    input_buffer_ch.insert(input_buffer_ch.end(), frame_in.begin(),
+                           frame_in.end());
   }
 }
 void FrequencyDomainFeatureExtractor::PrepareModelInput(
-    ArrayView<float> model_input,
+    std::span<float> model_input,
     ModelInputEnum input_type) {
   if (!RequiredInput(input_type)) {
     return;

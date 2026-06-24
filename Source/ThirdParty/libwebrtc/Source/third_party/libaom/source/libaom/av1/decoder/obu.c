@@ -66,15 +66,14 @@ static int is_obu_in_current_operating_point(AV1Decoder *pbi,
   return 0;
 }
 
-static int byte_alignment(AV1_COMMON *const cm,
-                          struct aom_read_bit_buffer *const rb) {
+static void byte_alignment(struct aom_internal_error_info *error_info,
+                           struct aom_read_bit_buffer *const rb) {
   while (rb->bit_offset & 7) {
     if (aom_rb_read_bit(rb)) {
-      cm->error->error_code = AOM_CODEC_CORRUPT_FRAME;
-      return -1;
+      aom_internal_error(error_info, AOM_CODEC_CORRUPT_FRAME,
+                         "byte_alignment() is not all 0 bits");
     }
   }
-  return 0;
 }
 
 static uint32_t read_temporal_delimiter_obu(void) { return 0; }
@@ -100,7 +99,8 @@ static int are_seq_headers_consistent(const SequenceHeader *seq_params_old,
 
 // On success, sets pbi->sequence_header_ready to 1 and returns the number of
 // bytes read from 'rb'.
-// On failure, sets pbi->common.error.error_code and returns 0.
+// On failure, calls aom_internal_error() and does not return, or sets
+// pbi->error.error_code and returns 0.
 static uint32_t read_sequence_header_obu(AV1Decoder *pbi,
                                          struct aom_read_bit_buffer *rb) {
   AV1_COMMON *const cm = &pbi->common;
@@ -137,8 +137,9 @@ static uint32_t read_sequence_header_obu(AV1Decoder *pbi,
     seq_params->operating_point_idc[0] = 0;
     seq_params->has_nonzero_operating_point_idc = false;
     if (!read_bitstream_level(&seq_params->seq_level_idx[0], rb)) {
-      pbi->error.error_code = AOM_CODEC_UNSUP_BITSTREAM;
-      return 0;
+      aom_internal_error(&pbi->error, AOM_CODEC_UNSUP_BITSTREAM,
+                         "Value %d of seq_level_idx[%d] is not yet defined",
+                         seq_params->seq_level_idx[0], 0);
     }
     seq_params->tier[0] = 0;
     seq_params->op_params[0].decoder_model_param_present_flag = 0;
@@ -164,8 +165,9 @@ static uint32_t read_sequence_header_obu(AV1Decoder *pbi,
       if (seq_params->operating_point_idc[i] != 0)
         seq_params->has_nonzero_operating_point_idc = true;
       if (!read_bitstream_level(&seq_params->seq_level_idx[i], rb)) {
-        pbi->error.error_code = AOM_CODEC_UNSUP_BITSTREAM;
-        return 0;
+        aom_internal_error(&pbi->error, AOM_CODEC_UNSUP_BITSTREAM,
+                           "Value %d of seq_level_idx[%d] is not yet defined",
+                           seq_params->seq_level_idx[i], i);
       }
       // This is the seq_level_idx[i] > 7 check in the spec. seq_level_idx 7
       // is equivalent to level 3.3.
@@ -196,7 +198,7 @@ static uint32_t read_sequence_header_obu(AV1Decoder *pbi,
           aom_internal_error(&pbi->error, AOM_CODEC_UNSUP_BITSTREAM,
                              "AV1 does not support this combination of "
                              "profile, level, and tier.");
-        // Buffer size in bits/s is bitrate in bits/s * 1 s
+        // Buffer size in bits is bitrate in bits/s * 1 s
         seq_params->op_params[i].buffer_size = seq_params->op_params[i].bitrate;
       }
       if (seq_params->timing_info_present &&
@@ -236,10 +238,11 @@ static uint32_t read_sequence_header_obu(AV1Decoder *pbi,
     operating_point = 0;
   pbi->current_operating_point =
       seq_params->operating_point_idc[operating_point];
-  if (aom_get_num_layers_from_operating_point_idc(
-          pbi->current_operating_point, &pbi->number_spatial_layers,
-          &pbi->number_temporal_layers) != AOM_CODEC_OK) {
-    pbi->error.error_code = AOM_CODEC_ERROR;
+  aom_codec_err_t status = aom_get_num_layers_from_operating_point_idc(
+      pbi->current_operating_point, &pbi->number_spatial_layers,
+      &pbi->number_temporal_layers);
+  if (status != AOM_CODEC_OK) {
+    pbi->error.error_code = status;
     return 0;
   }
 
@@ -294,10 +297,10 @@ static uint32_t read_frame_header_obu(AV1Decoder *pbi,
 
 // On success, returns the tile group header size. On failure, calls
 // aom_internal_error() and does not return.
-static int32_t read_tile_group_header(AV1Decoder *pbi,
-                                      struct aom_read_bit_buffer *rb,
-                                      int *start_tile, int *end_tile,
-                                      int tile_start_implicit) {
+static uint32_t read_tile_group_header(AV1Decoder *pbi,
+                                       struct aom_read_bit_buffer *rb,
+                                       int *start_tile, int *end_tile,
+                                       int tile_start_implicit) {
   AV1_COMMON *const cm = &pbi->common;
   CommonTileParams *const tiles = &cm->tiles;
   uint32_t saved_bit_offset = rb->bit_offset;
@@ -342,27 +345,26 @@ static int32_t read_tile_group_header(AV1Decoder *pbi,
   return ((rb->bit_offset - saved_bit_offset + 7) >> 3);
 }
 
-// On success, returns the tile group OBU size. On failure, sets
-// pbi->common.error.error_code and returns 0.
+// On success, returns the tile group OBU size. On failure, calls
+// aom_internal_error() and does not return.
 static uint32_t read_one_tile_group_obu(
     AV1Decoder *pbi, struct aom_read_bit_buffer *rb, int is_first_tg,
     const uint8_t *data, const uint8_t *data_end, const uint8_t **p_data_end,
     int *is_last_tg, int tile_start_implicit) {
   AV1_COMMON *const cm = &pbi->common;
   int start_tile, end_tile;
-  int32_t header_size, tg_payload_size;
 
   assert((rb->bit_offset & 7) == 0);
   assert(rb->bit_buffer + aom_rb_bytes_read(rb) == data);
 
-  header_size = read_tile_group_header(pbi, rb, &start_tile, &end_tile,
-                                       tile_start_implicit);
-  if (header_size == -1 || byte_alignment(cm, rb)) return 0;
+  uint32_t header_size = read_tile_group_header(pbi, rb, &start_tile, &end_tile,
+                                                tile_start_implicit);
+  byte_alignment(&pbi->error, rb);
   data += header_size;
   av1_decode_tg_tiles_and_wrapup(pbi, data, data_end, p_data_end, start_tile,
                                  end_tile, is_first_tg);
 
-  tg_payload_size = (uint32_t)(*p_data_end - data);
+  uint32_t tg_payload_size = (uint32_t)(*p_data_end - data);
 
   *is_last_tg = end_tile == cm->tiles.rows * cm->tiles.cols - 1;
   return header_size + tg_payload_size;
@@ -478,7 +480,7 @@ static void copy_decoded_tile_to_tile_list_buffer(AV1Decoder *pbi, int tile_idx,
 // Only called while large_scale_tile = 1.
 //
 // On success, returns the tile list OBU size. On failure, sets
-// pbi->common.error.error_code and returns 0.
+// pbi->error.error_code and returns 0.
 static uint32_t read_and_decode_one_tile_list(AV1Decoder *pbi,
                                               struct aom_read_bit_buffer *rb,
                                               const uint8_t *data,
@@ -780,8 +782,8 @@ static uint8_t get_last_nonzero_byte(const uint8_t *data, size_t sz) {
 // Checks the metadata for correct syntax but ignores the parsed metadata.
 //
 // On success, returns the number of bytes read from 'data'. On failure, sets
-// pbi->common.error.error_code and returns 0, or calls aom_internal_error()
-// and does not return.
+// pbi->error.error_code and returns 0, or calls aom_internal_error() and does
+// not return.
 static size_t read_metadata(AV1Decoder *pbi, const uint8_t *data, size_t sz,
                             bool has_obu_extension_header) {
   size_t type_length;
@@ -841,10 +843,10 @@ static size_t read_metadata(AV1Decoder *pbi, const uint8_t *data, size_t sz,
   return type_length + (rb.bit_offset >> 3);
 }
 
-// On success, returns 'sz'. On failure, sets pbi->common.error.error_code and
-// returns 0.
-static size_t read_padding(AV1_COMMON *const cm, const uint8_t *data,
-                           size_t sz) {
+// On success, returns 'sz'. On failure, sets error_info->error_code and returns
+// 0.
+static size_t read_padding(struct aom_internal_error_info *error_info,
+                           const uint8_t *data, size_t sz) {
   // The spec allows a padding OBU to be header-only (i.e., obu_size = 0). So
   // check trailing bits only if sz > 0.
   if (sz > 0) {
@@ -852,7 +854,7 @@ static size_t read_padding(AV1_COMMON *const cm, const uint8_t *data,
     // trailing byte should be 0x80. See https://crbug.com/aomedia/2393.
     const uint8_t last_nonzero_byte = get_last_nonzero_byte(data, sz);
     if (last_nonzero_byte != 0x80) {
-      cm->error->error_code = AOM_CODEC_CORRUPT_FRAME;
+      error_info->error_code = AOM_CODEC_CORRUPT_FRAME;
       return 0;
     }
   }
@@ -986,7 +988,8 @@ int aom_decode_frame_from_obus(struct AV1Decoder *pbi, const uint8_t *data,
         }
         // Only decode first frame header received
         if (!pbi->seen_frame_header ||
-            (cm->tiles.large_scale && !pbi->camera_frame_header_ready)) {
+            (cm->tiles.large_scale && !pbi->camera_frame_header_ready &&
+             obu_header.type != OBU_REDUNDANT_FRAME_HEADER)) {
           frame_header_size = read_frame_header_obu(
               pbi, &rb, data, p_data_end, obu_header.type != OBU_FRAME);
           frame_header = data;
@@ -1039,8 +1042,7 @@ int aom_decode_frame_from_obus(struct AV1Decoder *pbi, const uint8_t *data,
         if (obu_header.type != OBU_FRAME) break;
         obu_payload_offset = frame_header_size;
         // Byte align the reader before reading the tile group.
-        // byte_alignment() has set pbi->error.error_code if it returns -1.
-        if (byte_alignment(cm, &rb)) return -1;
+        byte_alignment(&pbi->error, &rb);
         AOM_FALLTHROUGH_INTENDED;  // fall through to read tile group.
       case OBU_TILE_GROUP:
         if (!pbi->seen_frame_header) {
@@ -1055,7 +1057,6 @@ int aom_decode_frame_from_obus(struct AV1Decoder *pbi, const uint8_t *data,
             pbi, &rb, is_first_tg_obu_received, data + obu_payload_offset,
             data + payload_size, p_data_end, &frame_decoding_finished,
             obu_header.type == OBU_FRAME);
-        if (pbi->error.error_code != AOM_CODEC_OK) return -1;
         is_first_tg_obu_received = 0;
         if (frame_decoding_finished) {
           pbi->seen_frame_header = 0;
@@ -1090,7 +1091,7 @@ int aom_decode_frame_from_obus(struct AV1Decoder *pbi, const uint8_t *data,
         if (pbi->error.error_code != AOM_CODEC_OK) return -1;
         break;
       case OBU_PADDING:
-        decoded_payload_size = read_padding(cm, data, payload_size);
+        decoded_payload_size = read_padding(&pbi->error, data, payload_size);
         if (pbi->error.error_code != AOM_CODEC_OK) return -1;
         break;
       default:

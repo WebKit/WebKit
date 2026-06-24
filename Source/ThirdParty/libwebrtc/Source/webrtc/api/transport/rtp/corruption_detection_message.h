@@ -13,9 +13,9 @@
 
 #include <cstddef>
 #include <optional>
+#include <span>
 
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "api/video/corruption_detection/frame_instrumentation_data.h"
 
 namespace webrtc {
@@ -39,8 +39,8 @@ class CorruptionDetectionMessage {
   double std_dev() const { return std_dev_; }
   int luma_error_threshold() const { return luma_error_threshold_; }
   int chroma_error_threshold() const { return chroma_error_threshold_; }
-  ArrayView<const double> sample_values() const {
-    return MakeArrayView(sample_values_.data(), sample_values_.size());
+  std::span<const double> sample_values() const {
+    return std::span(sample_values_.data(), sample_values_.size());
   }
 
   static CorruptionDetectionMessage FromFrameInstrumentationData(
@@ -95,7 +95,7 @@ class CorruptionDetectionMessage::Builder {
   Builder& WithStdDev(double std_dev);
   Builder& WithLumaErrorThreshold(int luma_error_threshold);
   Builder& WithChromaErrorThreshold(int chroma_error_threshold);
-  Builder& WithSampleValues(const ArrayView<const double>& sample_values);
+  Builder& WithSampleValues(const std::span<const double>& sample_values);
 
  private:
   CorruptionDetectionMessage message_;

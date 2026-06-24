@@ -40,13 +40,29 @@ class Virtualenv:
 
     @property
     def broken_link(self):
-        python_link = os.path.join(self.path, ".Python")
-        return os.path.lexists(python_link) and not os.path.exists(python_link)
+        # We shouldn't ever be using virtualenv, but for historic reasons check this
+        virtualenv_python_link = os.path.join(self.path, ".Python")
+        if os.path.lexists(virtualenv_python_link) and not os.path.exists(virtualenv_python_link):
+            return True
+
+        # This isn't a broken link, but we can't run the below in this state
+        if not os.path.exists(self.bin_path):
+            return True
+
+        with os.scandir(self.bin_path) as it:
+            for entry in it:
+                # There is no entry.exists(), it's not quite Path-like enough.
+                if entry.is_symlink() and not os.path.exists(entry.path):
+                    return True
+
+        return False
 
     def create(self):
         if os.path.exists(self.path):
+            logger.warning(f"Removing existing venv at {self.path!r}")
             shutil.rmtree(self.path, ignore_errors=True)
             self._working_set = None
+        logger.info(f"Creating new venv at {self.path!r}")
         call(*self.virtualenv, self.path)
 
     def get_paths(self):
@@ -111,13 +127,6 @@ class Virtualenv:
         return self._working_set
 
     def activate(self):
-        if sys.platform == "darwin":
-            # The default Python on macOS sets a __PYVENV_LAUNCHER__ environment
-            # variable which affects invocation of python (e.g. via pip) in a
-            # virtualenv. Unset it if present to avoid this. More background:
-            # https://github.com/web-platform-tests/wpt/issues/27377
-            # https://github.com/python/cpython/pull/9516
-            os.environ.pop("__PYVENV_LAUNCHER__", None)
 
         paths = self.get_paths()
 
@@ -157,7 +166,7 @@ class Virtualenv:
 
         # `--prefer-binary` guards against race conditions when installation
         # occurs while packages are in the process of being published.
-        call(self.pip_path, "install", "--prefer-binary", *requirements)
+        call(self.pip_path, "--disable-pip-version-check", "install", "--prefer-binary", *requirements)
 
     def install_requirements(self, *requirements_paths):
         install = []
@@ -174,7 +183,7 @@ class Virtualenv:
         if install:
             # `--prefer-binary` guards against race conditions when installation
             # occurs while packages are in the process of being published.
-            cmd = [self.pip_path, "install", "--prefer-binary"]
+            cmd = [self.pip_path, "--disable-pip-version-check", "install", "--prefer-binary"]
             for path in install:
                 cmd.extend(["-r", path])
             call(*cmd)

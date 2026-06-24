@@ -1540,7 +1540,6 @@
           "flags": [
             "LowOrderPublic",
             "NonCanonicalPublic",
-            "Twist",
             "SpecialPublicKey",
             "ZeroSharedSecret"
           ],
@@ -1566,7 +1565,6 @@
           "flags": [
             "LowOrderPublic",
             "NonCanonicalPublic",
-            "Twist",
             "SpecialPublicKey",
             "ZeroSharedSecret"
           ],
@@ -1593,7 +1591,8 @@
             "LowOrderPublic",
             "NonCanonicalPublic",
             "SpecialPublicKey",
-            "ZeroSharedSecret"
+            "ZeroSharedSecret",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",
@@ -1662,7 +1661,8 @@
           "comment": "public key with low order",
           "flags": [
             "LowOrderPublic",
-            "ZeroSharedSecret"
+            "ZeroSharedSecret",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",
@@ -1823,7 +1823,8 @@
           "comment": "public key with low order",
           "flags": [
             "LowOrderPublic",
-            "ZeroSharedSecret"
+            "ZeroSharedSecret",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",
@@ -2017,7 +2018,6 @@
             "SmallPublicKey",
             "LowOrderPublic",
             "NonCanonicalPublic",
-            "Twist",
             "SpecialPublicKey",
             "ZeroSharedSecret"
           ],
@@ -2230,7 +2230,8 @@
           "comment": "non-canonical public key",
           "flags": [
             "NonCanonicalPublic",
-            "SpecialPublicKey"
+            "SpecialPublicKey",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",
@@ -2253,7 +2254,6 @@
           "comment": "non-canonical public key",
           "flags": [
             "NonCanonicalPublic",
-            "Twist",
             "SpecialPublicKey"
           ],
           "public": {
@@ -2277,7 +2277,8 @@
           "comment": "non-canonical public key",
           "flags": [
             "NonCanonicalPublic",
-            "SpecialPublicKey"
+            "SpecialPublicKey",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",
@@ -2367,7 +2368,8 @@
           "tcId": 101,
           "comment": "RFC 7748",
           "flags": [
-            "Ktv"
+            "Ktv",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",
@@ -2383,7 +2385,7 @@
             "kid": "none"
           },
           "shared": "95cbde9476e8907d7aade45cb4b873f88b595a68799fa152e6f8f7647aac7957",
-          "result": "valid"
+          "result": "acceptable"
         },
         {
           "tcId": 102,

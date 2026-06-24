@@ -106,10 +106,10 @@ void CloseWatcher::requestClose()
 
 bool CloseWatcher::requestToClose(RequireHistoryActionActivation requireHistoryActionActivation)
 {
-    if (!canBeClosed())
+    RefPtr document = downcast<Document>(scriptExecutionContext());
+    if (!isActive() || !enabled() || m_isRunningCancelAction || !document || !document->isFullyActive())
         return true;
 
-    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     Ref manager = protect(document->window())->closeWatcherManager();
     bool canPreventClose = requireHistoryActionActivation == RequireHistoryActionActivation::No || (manager->canPreventClose() && document->window()->hasHistoryActionActivation());
     Ref cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, canPreventClose ? Event::IsCancelable::Yes : Event::IsCancelable::No);
@@ -127,7 +127,8 @@ bool CloseWatcher::requestToClose(RequireHistoryActionActivation requireHistoryA
 
 void CloseWatcher::close()
 {
-    if (!canBeClosed())
+    RefPtr document = downcast<Document>(scriptExecutionContext());
+    if (!isActive() || !enabled() || !document || !document->isFullyActive())
         return;
 
     destroy();
@@ -137,18 +138,12 @@ void CloseWatcher::close()
     dispatchEvent(closeEvent);
 }
 
-bool CloseWatcher::canBeClosed() const
-{
-    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
-    return isActive() && !m_isRunningCancelAction && document && document->isFullyActive();
-}
-
 void CloseWatcher::destroy()
 {
     if (!isActive())
         return;
 
-    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    RefPtr document = downcast<Document>(scriptExecutionContext());
     if (document && document->window()) {
         Ref manager = protect(document->window())->closeWatcherManager();
         manager->remove(*this);

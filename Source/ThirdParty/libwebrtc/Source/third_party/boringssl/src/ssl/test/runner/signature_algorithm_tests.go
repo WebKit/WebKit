@@ -40,6 +40,9 @@ var testSignatureAlgorithms = []struct {
 	{"RSA_PSS_SHA384", signatureRSAPSSWithSHA384, &rsaCertificate, 0},
 	{"RSA_PSS_SHA512", signatureRSAPSSWithSHA512, &rsaCertificate, 0},
 	{"Ed25519", signatureEd25519, &ed25519Certificate, 0},
+	{"ML-DSA-44", signatureMLDSA44, &mldsa44Certificate, 0},
+	{"ML-DSA-65", signatureMLDSA65, &mldsa65Certificate, 0},
+	{"ML-DSA-87", signatureMLDSA87, &mldsa87Certificate, 0},
 	// Tests for key types prior to TLS 1.2.
 	{"RSA", 0, &rsaCertificate, 0},
 	{"ECDSA", 0, &ecdsaP256Certificate, CurveP256},
@@ -95,6 +98,7 @@ func addSignatureAlgorithmTests() {
 				var shouldFail bool
 				isTLS12PKCS1 := hasComponent(alg.name, "PKCS1") && !hasComponent(alg.name, "LEGACY")
 				isTLS13PKCS1 := hasComponent(alg.name, "PKCS1") && hasComponent(alg.name, "LEGACY")
+				isMLDSA := alg.id == signatureMLDSA44 || alg.id == signatureMLDSA65 || alg.id == signatureMLDSA87
 
 				// TLS 1.3 removes a number of signature algorithms.
 				if ver.version >= VersionTLS13 && (alg.id == signatureECDSAWithSHA1 || isTLS12PKCS1) {
@@ -107,6 +111,11 @@ func addSignatureAlgorithmTests() {
 					shouldFail = true
 				}
 
+				// ML-DSA is only supported for TLS 1.3
+				if ver.version < VersionTLS13 && isMLDSA {
+					shouldFail = true
+				}
+
 				// By default, BoringSSL does not sign with these algorithms.
 				signDefault := !shouldFail
 				if isTLS13PKCS1 {
@@ -115,7 +124,7 @@ func addSignatureAlgorithmTests() {
 
 				// By default, BoringSSL does not accept these algorithms.
 				verifyDefault := !shouldFail
-				if alg.id == signatureECDSAWithSHA1 || alg.id == signatureECDSAWithP521AndSHA512 || alg.id == signatureEd25519 || isTLS13PKCS1 {
+				if alg.id == signatureECDSAWithSHA1 || alg.id == signatureECDSAWithP521AndSHA512 || alg.id == signatureEd25519 || isTLS13PKCS1 || isMLDSA {
 					verifyDefault = false
 				}
 
@@ -140,6 +149,12 @@ func addSignatureAlgorithmTests() {
 					if ver.version <= VersionTLS12 && signTestType == serverTest {
 						return ":NO_SHARED_CIPHER:"
 					}
+					if ver.version <= VersionTLS12 && isMLDSA {
+						// In TLS 1.2, there's no valid way for the server to request an
+						// ML-DSA client certificate (there's no ClientCertificateType for
+						// ML-DSA).
+						return ":UNKNOWN_CERTIFICATE_TYPE:"
+					}
 					return ":NO_COMMON_SIGNATURE_ALGORITHMS:"
 				}
 				signLocalError := func(shouldFail bool) string {
@@ -153,6 +168,12 @@ func addSignatureAlgorithmTests() {
 				verifyError := func(shouldFail bool) string {
 					if !shouldFail {
 						return ""
+					}
+					if ver.version <= VersionTLS12 && verifyTestType == clientTest && isMLDSA {
+						// TLS 1.2 has no support for ML-DSA signatures. The client code
+						// rejects a server's attempt to sign with ML-DSA when it sees the
+						// certificate.
+						return ":WRONG_CERTIFICATE_TYPE:"
 					}
 					// If the shim rejects the signature algorithm, but the
 					// runner forcibly selects it anyway, the shim should notice.

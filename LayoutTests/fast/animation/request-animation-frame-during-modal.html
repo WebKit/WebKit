@@ -1,11 +1,12 @@
 <!-- webkit-test-runner [ ShowModalDialogEnabled=true ] -->
 <!DOCTYPE html>
 <html>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <body>
 
 <script type="text/javascript">
 description('Tests that requestAnimationFrame callbacks are not invoked while modal dialogs are displayed.');
+window.jsTestIsAsync = true;
 
 onload = function()
 {
@@ -25,13 +26,9 @@ onload = function()
     }
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 setTimeout(function() {
-    isSuccessfullyParsed();
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }, 200);
 
 </script>

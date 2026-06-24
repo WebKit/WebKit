@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -13,6 +13,7 @@
 </form>
 <script>
 description('There was a bug of validation of a required checkbox. This test confirms the bug has been fixed.');
+window.jsTestIsAsync = true;
 
 function startOrVerify() {
     var query = window.location.search;
@@ -20,8 +21,7 @@ function startOrVerify() {
         testPassed('The form should be submitted.');
         shouldBeTrue('location.search.indexOf("terms=on") != -1');
         debug('TEST COMPLETE');
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     } else {
         document.getElementById('i0').checked = true;
         // HTMLFormElement::submit() skips validation. Use the submit button.
@@ -30,8 +30,6 @@ function startOrVerify() {
     }
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 window.onload = startOrVerify;
 </script>
 </body>

@@ -13,13 +13,13 @@
 //  encoding scheme for RTC video applications.
 
 #include <assert.h>
-#include <inttypes.h>
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <cinttypes>
 #include <memory>
 
 #include "config/aom_config.h"

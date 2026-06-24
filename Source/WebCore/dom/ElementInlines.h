@@ -28,11 +28,12 @@
 #include <WebCore/CustomElementDefaultARIA.h>
 #include <WebCore/Element.h>
 #include <WebCore/ElementData.h>
+#include <WebCore/ElementInlinesLight.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/NodeInlines.h>
-#include <WebCore/RenderStyle.h>
 #include <WebCore/StyleChange.h>
+#include <WebCore/StyleComputedStyle.h>
 
 namespace WebCore {
 
@@ -234,9 +235,9 @@ inline const AtomString& Element::getAttribute(const QualifiedName& name, const 
     return getAttribute(names...);
 }
 
-inline bool isInTopLayerOrBackdrop(const RenderStyle& style, const Element* element)
+inline bool isInTopLayerOrBackdrop(const Style::ComputedStyle& style, const Element* element)
 {
-    return (element && element->isInTopLayer()) || style.pseudoElementType() == PseudoElementType::Backdrop;
+    return (element && element->isInTopLayer()) || pseudoElementType(style) == PseudoElementType::Backdrop;
 }
 
 inline void Element::hideNonce()

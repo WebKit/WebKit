@@ -42,6 +42,7 @@
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
 #include "StringTruncator.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TextRun.h"
 #include "VisiblePosition.h"
 #include <math.h>
@@ -70,7 +71,7 @@ constexpr int iconFilenameSpacing = afterButtonSpacing;
 constexpr int defaultWidthNumChars = 38;
 #endif
 
-RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, RenderStyle&& style)
+RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, Style::ComputedStyle&& style)
     : RenderBlockFlow(Type::FileUploadControl, input, WTF::move(style))
     , m_canReceiveDroppedFiles(input.canReceiveDroppedFiles())
 {
@@ -190,7 +191,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                     if (auto textBox = InlineIterator::lineLeftmostTextBoxFor(*buttonTextRenderer)) {
                         auto textVisualRect = textBox->visualRectIgnoringBlockDirection();
                         textVisualRect.setLocation(buttonTextRenderer->localToContainerPoint(textVisualRect.location(), this));
-                        textVisualRect.moveBy(roundPointToDevicePixels(paintOffset, document().deviceScaleFactor()));
+                        textVisualRect.moveBy(roundPointToDevicePixels(paintOffset, protect(document())->deviceScaleFactor()));
 
                         auto metrics = textBox->style()->fontCascade().metricsOfPrimaryFont();
 
@@ -209,7 +210,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                 }
             }
             // File upload button is display: none (see ::file-selector-button).
-            return roundToDevicePixel(marginBoxLogicalHeight(containingBlock()->writingMode()), document().deviceScaleFactor());
+            return roundToDevicePixel(marginBoxLogicalHeight(containingBlock()->writingMode()), protect(document())->deviceScaleFactor());
         }();
 
         paintInfo.context().setFillColor(style().visitedDependentColorApplyingColorFilter());
@@ -223,7 +224,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                 textLogicalTop += (settings().subpixelInlineLayoutEnabled() ? font.metricsOfPrimaryFont().ascent() : font.metricsOfPrimaryFont().intAscent());
             }
 
-            auto textOrigin = roundPointToDevicePixels({ textLogicalLeft, textLogicalTop }, document().deviceScaleFactor());
+            auto textOrigin = roundPointToDevicePixels({ textLogicalLeft, textLogicalTop }, protect(document())->deviceScaleFactor());
             if (!isHorizontalWritingMode) {
                 textOrigin = textOrigin.transposedPoint();
 
@@ -260,7 +261,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
             if (RenderButton* buttonRenderer = downcast<RenderButton>(button->renderer())) {
                 // Draw the file icon and decorations.
                 auto decorationsType = inputElement().files()->length() == 1 ? RenderTheme::FileUploadDecorations::SingleFile : RenderTheme::FileUploadDecorations::MultipleFiles;
-                theme().paintFileUploadIconDecorations(*this, *buttonRenderer, paintInfo, iconRect, inputElement().icon(), decorationsType);
+                theme().paintFileUploadIconDecorations(*this, *buttonRenderer, paintInfo, iconRect, protect(inputElement().icon()), decorationsType);
             }
 #else
             // Draw the file icon
@@ -270,15 +271,16 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
     }
 }
 
-void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+std::pair<LayoutUnit, LayoutUnit> RenderFileUploadControl::computeIntrinsicLogicalWidths() const
 {
     if (shouldApplySizeOrInlineSizeContainment()) {
-        if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth()) {
-            minLogicalWidth = logicalWidth.value();
-            maxLogicalWidth = logicalWidth.value();
-        }
-        return;
+        if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth())
+            return { logicalWidth.value(), logicalWidth.value() };
+        return { };
     }
+
+    auto minLogicalWidth = LayoutUnit { };
+    auto maxLogicalWidth = LayoutUnit { };
     // Figure out how big the filename space needs to be for a given number of characters
     // (using "0" as the nominal character).
     const char16_t character = '0';
@@ -291,7 +293,7 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     float defaultLabelWidth = font.width(constructTextRun(label, style(), ExpansionBehavior::allowRightOnly()));
     if (RefPtr button = uploadButton()) {
         if (CheckedPtr buttonRenderer = dynamicDowncast<RenderBox>(button->renderer()))
-            defaultLabelWidth += buttonRenderer->maxPreferredLogicalWidth() + afterButtonSpacing;
+            defaultLabelWidth += buttonRenderer->maxContentLogicalWidthContribution() + afterButtonSpacing;
     }
     maxLogicalWidth = static_cast<int>(ceilf(std::max(minDefaultLabelWidth, defaultLabelWidth)));
 
@@ -300,24 +302,26 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
         minLogicalWidth = std::max(0_lu, Style::evaluate<LayoutUnit>(logicalWidth, 0_lu, style().usedZoomForLength()));
     else if (!logicalWidth.isPercent())
         minLogicalWidth = maxLogicalWidth;
+
+    return { minLogicalWidth, maxLogicalWidth };
 }
 
-void RenderFileUploadControl::computePreferredLogicalWidths()
+void RenderFileUploadControl::computeIntrinsicLogicalWidthContributions()
 {
-    ASSERT(needsPreferredLogicalWidthsUpdate());
+    ASSERT(hasInvalidContentLogicalWidths());
 
-    m_minPreferredLogicalWidth = 0;
-    m_maxPreferredLogicalWidth = 0;
+    m_minContentLogicalWidthContribution = 0_lu;
+    m_maxContentLogicalWidthContribution = 0_lu;
 
     if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
-        m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
+        m_maxContentLogicalWidthContribution = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+        m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
     } else
-        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
 
-    constrainPreferredLogicalWidthsByMinMax(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
 
-    clearNeedsPreferredWidthsUpdate();
+    clearContentLogicalWidthsInvalidation();
 }
 
 PositionWithAffinity RenderFileUploadControl::positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*)
@@ -350,7 +354,7 @@ String RenderFileUploadControl::fileTextValue() const
 
         return StringTruncator::rightTruncate(input->displayString(), maxFilenameLogicalWidth(), style().fontCascade());
     }
-    return theme().fileListNameForWidth(input->files(), style().fontCascade(), maxFilenameLogicalWidth(), input->multiple());
+    return theme().fileListNameForWidth(protect(input->files()), style().fontCascade(), maxFilenameLogicalWidth(), input->multiple());
 }
     
 } // namespace WebCore

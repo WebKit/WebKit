@@ -34,19 +34,20 @@
 #include "SVGGeometryElement.h"
 #include "SVGInlineTextBox.h"
 #include "SVGNames.h"
-#include "SVGPathData.h"
 #include "SVGPathElement.h"
+#include "SVGPathFromElement.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextPathElement.h"
 #include "Settings.h"
 #include "StyleTransformResolver.h"
+#include "TransformationMatrix.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGTextPath);
 
-RenderSVGTextPath::RenderSVGTextPath(SVGTextPathElement& element, RenderStyle&& style)
+RenderSVGTextPath::RenderSVGTextPath(SVGTextPathElement& element, Style::ComputedStyle&& style)
     : RenderSVGInline(Type::SVGTextPath, element, WTF::move(style))
 {
     ASSERT(isRenderSVGTextPath());
@@ -61,7 +62,7 @@ SVGTextPathElement& RenderSVGTextPath::textPathElement() const
 
 RefPtr<SVGGeometryElement> RenderSVGTextPath::targetElement() const
 {
-    auto target = SVGURIReference::targetElementFromIRIString(textPathElement().href(), textPathElement().treeScopeForSVGReferences());
+    auto target = SVGURIReference::targetElementFromIRIString(textPathElement().href(), protect(textPathElement())->treeScopeForSVGReferences());
     return dynamicDowncast<SVGGeometryElement>(WTF::move(target.element));
 }
 

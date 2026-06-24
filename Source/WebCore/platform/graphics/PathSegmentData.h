@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ColorTypes.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatRoundedRect.h>
 #include <WebCore/PathElement.h>
@@ -321,6 +322,16 @@ private:
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataLine&);
+
+struct PathDataLineColorThickness {
+    PathDataLine line;
+    PackedColor::RGBA color;
+    float thickness;
+
+    bool operator==(const PathDataLineColorThickness&) const = default;
+};
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataLineColorThickness&);
 
 struct PathDataQuadCurve {
     FloatPoint start;

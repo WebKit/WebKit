@@ -135,7 +135,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
 
 void ScheduledAction::execute(Document& document)
 {
-    auto* window = toJSDOMWindow(document.frame(), m_isolatedWorld);
+    auto* window = toJSDOMWindow(protect(document.frame()), m_isolatedWorld);
     if (!window)
         return;
 

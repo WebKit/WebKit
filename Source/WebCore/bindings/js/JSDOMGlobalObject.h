@@ -28,8 +28,10 @@
 
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/WeakGCMap.h>
+#include <WebCore/ProcessQualified.h>
 #include <wtf/Compiler.h>
 #include <wtf/Forward.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -49,6 +51,10 @@ class JSBuiltinInternalFunctions;
 class Event;
 class DOMWrapperWorld;
 class ScriptExecutionContext;
+
+struct JSHandleIdentifierType;
+using WebProcessJSHandleIdentifier = ObjectIdentifier<JSHandleIdentifierType>;
+using JSHandleIdentifier = ProcessQualified<WebProcessJSHandleIdentifier>;
 
 using JSDOMStructureMap = HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure>>;
 using DOMGuardedObjectSet = HashSet<DOMGuardedObject*>;
@@ -124,6 +130,11 @@ public:
     bool hasScriptErrorCallbacks() const;
     void invokeScriptErrorCallbacks(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) const;
 
+    void addJSHandle(JSHandleIdentifier, JSC::JSObject&);
+    void refJSHandle(JSHandleIdentifier);
+    bool derefJSHandle(JSHandleIdentifier);
+    JSC::JSObject* jsHandle(JSHandleIdentifier) const;
+
 protected:
     JSDOMGlobalObject(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&, const JSC::GlobalObjectMethodTable* = nullptr);
     void finishCreation(JSC::VM&);
@@ -162,6 +173,12 @@ private:
     JSC::WeakGCMap<CrossOriginMapKey, JSC::GetterSetter> m_crossOriginGetterSetterMap;
     JSC::Weak<JSC::JSObject> m_readableStreamByteStrategySize;
     Vector<ScriptErrorCallback> m_scriptErrorCallbacks;
+
+    struct JSHandleSlot {
+        JSC::WriteBarrier<JSC::JSObject> object;
+        size_t refCount { 0 };
+    };
+    HashMap<JSHandleIdentifier, JSHandleSlot> m_jsHandles WTF_GUARDED_BY_LOCK(m_gcLock);
 };
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext&, DOMWrapperWorld&);

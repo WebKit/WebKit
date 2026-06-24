@@ -1,0 +1,3 @@
+
+PASS Resolving threaded-animation timing on the main and scrolling threads concurrently does not trip the RefCounted threading check.
+

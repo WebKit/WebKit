@@ -1151,6 +1151,11 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     }
 
     RefPtr registration = m_scopeToRegistrationMap.get(data.registration.key);
+    if (!registration) {
+        RELEASE_LOG_ERROR(ServiceWorker, "Cannot install service worker since registration no longer exists");
+        return;
+    }
+
     Ref worker = SWServerWorker::create(*this, *registration, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, String { data.referrerPolicy }, data.workerType, data.serviceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> { data.scriptResourceMap });
 
     RefPtr connection = worker->contextConnection();

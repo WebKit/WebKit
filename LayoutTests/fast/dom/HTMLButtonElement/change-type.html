@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body onload="runTests()">
 <script>
@@ -98,8 +98,6 @@ function runTests()
     wasPostTestScriptParsed = true;
 
     if (window.jsTestIsAsync) {
-        if (window.testRunner)
-            testRunner.waitUntilDone();
         if (window.wasFinishJSTestCalled)
             finishJSTest();
     } else

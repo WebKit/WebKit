@@ -15,9 +15,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/ns/noise_estimator.h"
 #include "modules/audio_processing/ns/ns_common.h"
@@ -87,7 +87,7 @@ class NoiseSuppressor {
   std::vector<std::unique_ptr<ChannelState>> channels_;
 
   // Aggregates the Wiener filters into a single filter to use.
-  void AggregateWienerFilters(ArrayView<float, kFftSizeBy2Plus1> filter) const;
+  void AggregateWienerFilters(std::span<float, kFftSizeBy2Plus1> filter) const;
 };
 
 }  // namespace webrtc

@@ -68,6 +68,5 @@ from webkitscmpy.pull_request import PullRequest
 from webkitscmpy.scm_base import ScmBase
 
 from webkitscmpy import local
-from webkitscmpy import mocks
 
 name = 'webkitscmpy'

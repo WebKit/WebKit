@@ -294,7 +294,6 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
     size_t redirectChainIndex = navigation.redirectChainIndex(url);
 
     navigation.setSafeBrowsingCheckOngoing(redirectChainIndex, true);
-    m_isSafeBrowsingCheckInProgress = true;
 
     auto performLookup = [weakThis = WeakPtr { *this }, navigation = protect(navigation), forMainFrameNavigation, url = url.isolatedCopy(), redirectChainIndex](RetainPtr<SSBLookupResult> cachedResult) mutable {
         RefPtr protectedThis = weakThis.get();
@@ -308,8 +307,14 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
                 return;
 
             navigation->setSafeBrowsingCheckOngoing(redirectChainIndex, false);
-            if (error)
-                return protectedThis->completeSafeBrowsingCheckForModals(true);
+            if (error) {
+                RELEASE_LOG(Loading, "beginSafeBrowsingCheck: error navigationID=%" PRIu64, navigation->navigationID().toUInt64());
+                if (!navigation->safeBrowsingCheckOngoing())
+                    navigation->fireSafeBrowsingCheckCompletionCallbacks();
+                if (protectedThis->m_committedMainFrameNavigationID == navigation->navigationID())
+                    protectedThis->completeSafeBrowsingCheckForModals(true);
+                return;
+            }
 
             RefPtr navigationState = NavigationState::fromWebPage(*protectedThis);
             auto historyDelegate = navigationState ? navigationState->historyDelegate() : nullptr;
@@ -321,16 +326,37 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
             for (SSBServiceLookupResult *lookupResult in [result serviceLookupResults]) {
                 SAFE_BROWSING_LOOKUP_RESULT_ADDITIONS(lookupResult);
                 if (lookupResult.isPhishing || lookupResult.isMalware || lookupResult.isUnwantedSoftware || SAFE_BROWSING_RESULT_CHECK_ADDITIONS) {
+                    RELEASE_LOG(Loading, "beginSafeBrowsingCheck: threat found navigationID=%" PRIu64 ", type=%s", navigation->navigationID().toUInt64(), lookupResult.isPhishing ? "phishing" : lookupResult.isMalware ? "malware" : "unwanted");
                     navigation->setSafeBrowsingWarning(BrowsingWarning::create(url, forMainFrameNavigation, BrowsingWarning::SafeBrowsingWarningData { lookupResult }));
                     break;
                 }
             }
 
-            if (!navigation->safeBrowsingCheckOngoing() && navigation->safeBrowsingWarning() && navigation->safeBrowsingCheckTimedOut()) {
-                protectedThis->setHasShownSafeBrowsingWarningAfterLastLoadCommit();
-                protectedThis->showBrowsingWarning(navigation->safeBrowsingWarning());
-            } else if (!navigation->safeBrowsingWarning())
-                protectedThis->completeSafeBrowsingCheckForModals(true);
+            if (navigation->safeBrowsingCheckOngoing())
+                return;
+
+            navigation->fireSafeBrowsingCheckCompletionCallbacks();
+
+            if (navigation->safeBrowsingWarning()) {
+                RELEASE_LOG(Loading, "beginSafeBrowsingCheck: showing warning navigationID=%" PRIu64, navigation->navigationID().toUInt64());
+                if (navigation->safeBrowsingWarning()->forMainFrameNavigation()) {
+                    RefPtr safeBrowsingWarning = navigation->safeBrowsingWarning();
+                    navigation->setSafeBrowsingWarning(nullptr);
+                    if (safeBrowsingWarning->url().isValid()) {
+                        Ref protectedPageLoadState = protectedThis->pageLoadState();
+                        auto transaction = protectedPageLoadState->transaction();
+                        protectedPageLoadState->setHadSafeBrowsingWarning(transaction);
+                        protectedPageLoadState->setPendingAPIRequest(transaction, { navigation->navigationID(), safeBrowsingWarning->url() });
+                        protectedPageLoadState->commitChanges();
+                    }
+                    protectedThis->setSafeBrowsingWarningShownForNavigation(navigation->navigationID());
+                    protectedThis->showBrowsingWarning(WTF::move(safeBrowsingWarning));
+                }
+            } else {
+                RELEASE_LOG(Loading, "beginSafeBrowsingCheck: no threat, completing navigationID=%" PRIu64, navigation->navigationID().toUInt64());
+                if (protectedThis->m_committedMainFrameNavigationID == navigation->navigationID())
+                    protectedThis->completeSafeBrowsingCheckForModals(true);
+            }
         });
     };
 
@@ -372,6 +398,19 @@ void WebPageProxy::completeSafeBrowsingCheckForModals(bool userProceeded)
 
     for (auto& handler : std::exchange(handlers, { }))
         handler(userProceeded);
+}
+
+void WebPageProxy::drainDeferredModalsForNewNavigation()
+{
+    ASSERT(isMainRunLoop());
+    for (auto& handler : std::exchange(m_deferredModalHandlers, { }))
+        handler(false);
+
+    if (m_isSafeBrowsingCheckInProgress) {
+        m_isSafeBrowsingCheckInProgress = false;
+        m_safeBrowsingWarningShownForNavigation = std::nullopt;
+        protect(pageClient())->clearBrowsingWarning();
+    }
 }
 #endif
 
@@ -1175,7 +1214,7 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
     for (RefPtr page = configuration->relatedPage(); page && !visitedPages.contains(*page); page = page->configuration().relatedPage()) {
         if (protect(page->preferences())->useGPUProcessForDOMRenderingEnabled())
             return true;
-        visitedPages.add(page.releaseNonNull());
+        visitedPages.add(*page);
     }
 
     return false;
@@ -2098,6 +2137,18 @@ void WebPageProxy::updateSelectionWithExtentPoint(WebCore::IntPoint point, bool 
 void WebPageProxy::updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, TextInteractionSource source, CompletionHandler<void(bool)>&& callback)
 {
     protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithExtentPointAndBoundary(point, granularity, isInteractingWithFocusedElement, source), WTF::move(callback), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
+{
+    m_isAutoscrolling = true;
+    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::StartAutoscrollAtPosition(positionInWindow), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::cancelAutoscroll()
+{
+    m_isAutoscrolling = false;
+    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::CancelAutoscroll(), webPageIDInMainFrameProcess());
 }
 
 #if ENABLE(TWO_PHASE_CLICKS)

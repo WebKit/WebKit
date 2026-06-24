@@ -191,10 +191,10 @@ void Transpose4x4_32_C(const uint8_t* src,
     ((uint32_t*)(dst3))[1] = p31;
     ((uint32_t*)(dst3))[2] = p32;
     ((uint32_t*)(dst3))[3] = p33;
-    src += src_stride * 4;  // advance 4 rows
-    src1 += src_stride * 4;
-    src2 += src_stride * 4;
-    src3 += src_stride * 4;
+    src += (ptrdiff_t)src_stride * 4;  // advance 4 rows
+    src1 += (ptrdiff_t)src_stride * 4;
+    src2 += (ptrdiff_t)src_stride * 4;
+    src3 += (ptrdiff_t)src_stride * 4;
     dst += 4 * 4;  // advance 4 columns
     dst1 += 4 * 4;
     dst2 += 4 * 4;

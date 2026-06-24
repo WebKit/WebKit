@@ -175,6 +175,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case ArrayUnshift:
         case ArrayIncludes:
         case ArrayIndexOf:
+        case ArrayJoin:
         case HasIndexedProperty:
         case AtomicsAdd:
         case AtomicsAnd:
@@ -248,7 +249,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case SameValue:
     case IsEmpty:
     case IsEmptyStorage:
-    case TypeOfIsUndefined:
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
@@ -256,8 +256,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NumberIsInteger:
     case IsObject:
     case IsTypedArrayView:
-    case ToBoolean:
-    case LogicalNot:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case DoubleRep:
@@ -272,9 +270,17 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ValueToInt32:
     case GetExecutable:
     case BottomValue:
-    case TypeOf:
     case SymbolToString:
         def(PureValue(node));
+        return;
+
+    // These nodes are realm-dependent when MasqueradesAsUndefined is involved.
+    // Including the globalObject in the PureValue ensures nodes from different realms are not folded by CSE.
+    case TypeOfIsUndefined:
+    case ToBoolean:
+    case LogicalNot:
+    case TypeOf:
+        def(PureValue(node, graph.globalObjectFor(node->origin.semantic)));
         return;
 
     // JSCallee for Eval can change the scope field.
@@ -690,12 +696,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case TypeOfIsObject:
         read(MiscFields);
-        def(HeapLocation(TypeOfIsObjectLoc, MiscFields, node->child1()), LazyNode(node));
+        def(HeapLocation(TypeOfIsObjectLoc, MiscFields, node->child1(), graph.globalObjectFor(node->origin.semantic)), LazyNode(node));
         return;
 
     case TypeOfIsFunction:
         read(MiscFields);
-        def(HeapLocation(TypeOfIsFunctionLoc, MiscFields, node->child1()), LazyNode(node));
+        def(HeapLocation(TypeOfIsFunctionLoc, MiscFields, node->child1(), graph.globalObjectFor(node->origin.semantic)), LazyNode(node));
         return;
         
     case IsCallable:
@@ -770,6 +776,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             RELEASE_ASSERT_NOT_REACHED();
             return;
         }
+        return;
+    }
+
+    case ArrayJoin: {
+        clobberTop();
         return;
     }
 
@@ -2258,6 +2269,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NewStringObject:
     case NewMap:
     case NewSet:
+    case NewWeakMap:
+    case NewWeakSet:
     case PhantomNewObject:
     case MaterializeNewObject:
     case PhantomNewFunction:
@@ -2293,6 +2306,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case RegExpExec:
     case RegExpTest:
     case RegExpTestInline:
+    case RegExpSplitFast:
+    case RegExpStringIteratorNext:
         // Even if we've proven known input types as RegExpObject and String,
         // accessing lastIndex is effectful if it's a global regexp.
         clobberTop();
@@ -2328,6 +2343,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case StringSplit:
     case StringMatch:
+    case StringSearch:
         clobberTop();
         return;
 
@@ -2338,8 +2354,22 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case StringAt:
+        // String.prototype.at returns a string when in bounds and undefined when OOB. This is
+        // unlike charAt, which always returns a string. Include arrayMode to prevent CSE across
+        // modes.
+        def(PureValue(node, node->arrayMode().asWord()));
+        return;
     case StringCharAt:
         def(PureValue(node));
+        return;
+
+    case StringIteratorNext:
+    case StringIteratorNextWithUndefined:
+        // Reads only immutable string contents and allocates the result string, so it is pure
+        // with respect to the heap. It never touches the iterator object, so the
+        // GetInternalField/PutInternalField pair around it stays visible to
+        // ObjectAllocationSinking. Unlike other pure nodes we do not def(PureValue) here: this is
+        // a tuple node and CSE's value-replacement would corrupt ExtractFromTuple references.
         return;
 
     case CompareBelow:
@@ -2360,6 +2390,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
         if (node->isBinaryUseKind(UntypedUse)) {
             clobberTop();
+            return;
+        }
+
+        // CompareEq is realm-dependent when MasqueradesAsUndefined is involved.
+        // Including the globalObject ensures nodes from different realms are not folded by CSE.
+        if (node->op() == CompareEq) {
+            def(PureValue(node, graph.globalObjectFor(node->origin.semantic)));
             return;
         }
 
@@ -2444,27 +2481,25 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
 
     case MapIteratorNext: {
-        Edge& mapIteratorEdge = node->child1();
-        AbstractHeapKind ownerHeap = (mapIteratorEdge.useKind() == MapIteratorObjectUse) ? JSMapFields : JSSetFields;
-        AbstractHeapKind heap = (mapIteratorEdge.useKind() == MapIteratorObjectUse) ? JSMapIteratorFields : JSSetIteratorFields;
+        Edge& iteratedObjectEdge = node->child2();
+        AbstractHeapKind ownerHeap = (iteratedObjectEdge.useKind() == MapObjectUse) ? JSMapFields : JSSetFields;
         read(ownerHeap);
-        read(heap);
-        write(heap);
-        def(HeapLocation(MapIteratorNextLoc, heap, mapIteratorEdge), LazyNode(node));
+        // We do not def here as it is tuple result.
         return;
     }
     case MapIteratorKey: {
-        Edge& mapIteratorEdge = node->child1();
-        AbstractHeapKind heap = (mapIteratorEdge.useKind() == MapIteratorObjectUse) ? JSMapIteratorFields : JSSetIteratorFields;
+        Edge& storageEdge = node->child1();
+        Edge& entryEdge = node->child2();
+        AbstractHeapKind heap = (node->bucketOwnerType() == BucketOwnerType::Map) ? JSMapFields : JSSetFields;
         read(heap);
-        def(HeapLocation(MapIteratorKeyLoc, heap, mapIteratorEdge), LazyNode(node));
+        def(HeapLocation(MapIteratorKeyLoc, heap, storageEdge, entryEdge), LazyNode(node));
         return;
     }
     case MapIteratorValue: {
-        Edge& mapIteratorEdge = node->child1();
-        AbstractHeapKind heap = (mapIteratorEdge.useKind() == MapIteratorObjectUse) ? JSMapIteratorFields : JSSetIteratorFields;
-        read(heap);
-        def(HeapLocation(MapIteratorValueLoc, heap, mapIteratorEdge), LazyNode(node));
+        Edge& storageEdge = node->child1();
+        Edge& entryEdge = node->child2();
+        read(JSMapFields);
+        def(HeapLocation(MapIteratorValueLoc, JSMapFields, storageEdge, entryEdge), LazyNode(node));
         return;
     }
 

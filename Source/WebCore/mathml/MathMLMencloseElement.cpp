@@ -32,7 +32,7 @@
 #include "ElementInlines.h"
 #include "MathMLNames.h"
 #include "RenderMathMLMenclose.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -54,7 +54,7 @@ Ref<MathMLMencloseElement> MathMLMencloseElement::create(const QualifiedName& ta
     return adoptRef(*new MathMLMencloseElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderMathMLMenclose>(*this, WTF::move(style));
 }

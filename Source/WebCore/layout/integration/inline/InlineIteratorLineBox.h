@@ -71,7 +71,7 @@ public:
     float scrollableOverflowTop() const;
     float scrollableOverflowBottom() const;
 
-    const RenderStyle& style() const LIFETIME_BOUND { return isFirst() ? formattingContextRoot().firstLineStyle() : formattingContextRoot().style(); }
+    const Style::ComputedStyle& style() const LIFETIME_BOUND { return isFirst() ? formattingContextRoot().firstLineStyle() : formattingContextRoot().style(); }
 
     bool hasEllipsis() const;
     enum AdjustedForSelection : bool { No, Yes };

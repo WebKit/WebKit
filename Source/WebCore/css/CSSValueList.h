@@ -124,6 +124,8 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSValueList&) const;
 
+    Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+
 private:
     friend void add(Hasher&, const CSSValueList&);
 

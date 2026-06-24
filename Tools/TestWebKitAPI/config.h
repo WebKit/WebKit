@@ -67,13 +67,16 @@
 
 // XCode path
 #include <JavaScriptCore/JSExportMacros.h>
-#if !defined(BUILDING_TEST_WGSL) && !defined(BUILDING_TEST_WTF)
+#if __has_include(<WebCore/PlatformExportMacros.h>)
 #include <WebCore/PlatformExportMacros.h>
+#endif
+#if __has_include(<pal/ExportMacros.h>)
 #include <pal/ExportMacros.h>
-#if !PLATFORM(IOS_FAMILY) && !defined(BUILDING_TEST_IPC)
+#endif
+#if !PLATFORM(IOS_FAMILY) && __has_include(<WebKit/WebKit2_C.h>)
 #include <WebKit/WebKit2_C.h>
 #endif
-#if PLATFORM(COCOA) && defined(__OBJC__)
+#if PLATFORM(COCOA) && defined(__OBJC__) && __has_include(<WebKit/WebKit.h>)
 #import <WebKit/WebKit.h>
 #if PLATFORM(MACCATALYST)
 // Many tests depend on WebKitLegacy.h being implicitly included; however,
@@ -81,8 +84,7 @@
 // to do it explicitly here.
 #import <WebKit/WebKitLegacy.h>
 #endif // PLATFORM(MACCATALYST)
-#endif // PLATFORM(COCOA) && defined(__OBJC__)
-#endif // !defined(BUILDING_TEST_WGSL) && !defined(BUILDING_TEST_WTF)
+#endif // PLATFORM(COCOA) && defined(__OBJC__) && __has_include(<WebKit/WebKit.h>)
 
 #endif
 

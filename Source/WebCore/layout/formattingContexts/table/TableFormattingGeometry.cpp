@@ -30,7 +30,7 @@
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutInitialContainingBlock.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingQuirks.h"
 

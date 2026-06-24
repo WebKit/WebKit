@@ -168,4 +168,57 @@ TEST(H264ProfileLevelId, TestParseSdpProfileLevelIdInvalid) {
   EXPECT_FALSE(ParseSdpForH264ProfileLevelId(params));
 }
 
+TEST(H264ProfileLevelId, TestIsProfileSubsetOf) {
+  CodecParameterMap params_cb;
+  params_cb["profile-level-id"] = "42e01f";
+  CodecParameterMap params_baseline;
+  params_baseline["profile-level-id"] = "42001f";
+  CodecParameterMap params_main;
+  params_main["profile-level-id"] = "4d001f";
+  CodecParameterMap params_constrained_high;
+  params_constrained_high["profile-level-id"] = "640c1f";
+  CodecParameterMap params_high;
+  params_high["profile-level-id"] = "64001f";
+  CodecParameterMap params_high444;
+  params_high444["profile-level-id"] = "f4001f";
+
+  // Same profile.
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_cb, params_cb));
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_baseline, params_baseline));
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_main, params_main));
+
+  // Constrained Baseline is a subset of almost everything.
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_cb, params_baseline));
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_cb, params_main));
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_cb, params_constrained_high));
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_cb, params_high));
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_cb, params_high444));
+
+  // Main is a subset of High and High 4:4:4 profiles.
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_main, params_high));
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_main, params_high444));
+
+  // Constrained High is a subset of High and High 4:4:4.
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_constrained_high, params_high));
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_constrained_high, params_high444));
+
+  // High is a subset of High 4:4:4.
+  EXPECT_TRUE(H264IsProfileSubsetOf(params_high, params_high444));
+
+  // Standard Baseline is not a subset of Main/High.
+  EXPECT_FALSE(H264IsProfileSubsetOf(params_baseline, params_main));
+  EXPECT_FALSE(H264IsProfileSubsetOf(params_baseline, params_constrained_high));
+  EXPECT_FALSE(H264IsProfileSubsetOf(params_baseline, params_high));
+  EXPECT_FALSE(H264IsProfileSubsetOf(params_baseline, params_high444));
+
+  // Main allows interlaced video, Constrained High does not.
+  EXPECT_FALSE(H264IsProfileSubsetOf(params_main, params_constrained_high));
+
+  // Higher profiles are not subsets of lower profiles.
+  EXPECT_FALSE(H264IsProfileSubsetOf(params_baseline, params_cb));
+  EXPECT_FALSE(H264IsProfileSubsetOf(params_main, params_cb));
+  EXPECT_FALSE(H264IsProfileSubsetOf(params_high, params_main));
+  EXPECT_FALSE(H264IsProfileSubsetOf(params_high444, params_high));
+}
+
 }  // namespace webrtc

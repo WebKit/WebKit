@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
 
+#if HAVE(CORE_RE)
+
 #import "UIKitSPI.h"
 #import "WKPageHostedModelView.h"
 #import "WKWebViewIOS.h"
@@ -171,5 +173,48 @@ ModelPresentationManagerProxy::ModelPresentation& ModelPresentationManagerProxy:
 }
 
 }
+
+#else // !HAVE(CORE_RE)
+
+namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelPresentationManagerProxy);
+
+ModelPresentationManagerProxy::ModelPresentationManagerProxy(WebPageProxy& page)
+    : m_page(page)
+{
+}
+
+ModelPresentationManagerProxy::~ModelPresentationManagerProxy() = default;
+
+RetainPtr<WKPageHostedModelView> ModelPresentationManagerProxy::setUpModelView(Ref<WebCore::ModelContext>)
+{
+    return nil;
+}
+
+RetainPtr<UIView> ModelPresentationManagerProxy::startDragForModel(const WebCore::PlatformLayerIdentifier&)
+{
+    return nil;
+}
+
+void ModelPresentationManagerProxy::doneWithCurrentDragSession()
+{
+}
+
+void ModelPresentationManagerProxy::pageScaleDidChange(CGFloat)
+{
+}
+
+void ModelPresentationManagerProxy::invalidateModel(const WebCore::PlatformLayerIdentifier&)
+{
+}
+
+void ModelPresentationManagerProxy::invalidateAllModels()
+{
+}
+
+}
+
+#endif // HAVE(CORE_RE)
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)

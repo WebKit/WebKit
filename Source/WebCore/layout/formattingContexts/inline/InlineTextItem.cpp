@@ -28,7 +28,7 @@
 
 #include "FontCascade.h"
 #include "InlineSoftLineBreakItem.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TextUtil.h"
 #include <wtf/unicode/CharacterNames.h>
 

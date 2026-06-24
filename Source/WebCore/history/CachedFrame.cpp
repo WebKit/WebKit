@@ -45,11 +45,11 @@
 #include "NavigationDisabler.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderWidgetInlines.h"
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTreeResolver.h"
 #include "WindowEventLoop.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -76,7 +76,7 @@ void CachedFrameBase::initializeWithLocalFrame(LocalFrame& frame)
 {
     m_document = frame.document();
     m_documentLoader = frame.loader().documentLoader();
-    m_url = frame.document()->url();
+    m_url = protect(frame.document())->url();
 }
 
 CachedFrameBase::~CachedFrameBase()

@@ -50,7 +50,10 @@ struct ImageAsset;
 }
 
 namespace WebCore {
+class DestinationColorSpace;
+class FloatSize;
 class GraphicsLayerContentsDisplayDelegate;
+class ImageBuffer;
 class ModelPlayerClient;
 class Page;
 }
@@ -77,9 +80,10 @@ private:
     void updateScene();
 
     // ModelPlayer finals.
-    void load(WebCore::Model&, WebCore::LayoutSize) final;
+    void load(WebCore::Model&, WebCore::LayoutSize, bool) final;
     void sizeDidChange(WebCore::LayoutSize) final;
     void configureGraphicsLayer(WebCore::GraphicsLayer&, WebCore::ModelPlayerGraphicsLayerConfiguration&&) final;
+    RefPtr<WebCore::ImageBuffer> snapshotCurrentFrame(const WebCore::FloatSize& deviceSize, const WebCore::DestinationColorSpace&) final;
     void enterFullscreen() final;
     void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) final;
     void handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime) final;
@@ -105,6 +109,8 @@ private:
     std::optional<WebCore::ModelPlayerAnimationState> currentAnimationState() const final;
     std::optional<std::unique_ptr<WebCore::ModelPlayerTransformState>> currentTransformState() const final;
 
+    std::pair<WebCore::FloatPoint3D, WebCore::FloatPoint3D> boundingBoxCenterAndExtents() const;
+
     const MachSendRight* displayBuffer() const;
     WebCore::GraphicsLayerContentsDisplayDelegate* contentsDisplayDelegate();
 
@@ -122,6 +128,7 @@ private:
     void ensureOnMainThreadWithProtectedThis(Function<void(Ref<WebModelPlayer>)>&& task);
     void startUpdateLoopIfNeeded();
     void update();
+    void updateClockTimeOnAnimationState();
     bool render();
     void scheduleDisplayUpdate();
 
@@ -135,6 +142,8 @@ private:
     float computeContentsHeadroom();
     void updateContentsHeadroom();
     void updateScreenHeadroom(float currentEDRHeadroom, bool suppressEDR);
+    void updateScreenHeadroomFromPage();
+    void dynamicRangeLimitDidChange();
 #endif
 
     WeakPtr<WebCore::ModelPlayerClient> m_client;
@@ -149,8 +158,8 @@ private:
     WeakPtr<WebCore::GraphicsLayer> m_graphicsLayer;
     uint32_t m_renderTextureIndex { 0 };
     uint32_t m_displayTextureIndex { 0 };
+    bool m_hasRenderedFrame { false };
     WebCore::StageModeOperation m_stageMode { WebCore::StageModeOperation::None };
-    std::optional<WebCore::Color> m_backgroundColor;
     WebCore::IntSize m_currentPixelSize;
     bool m_didFinishLoading { false };
     enum class PauseState {
@@ -176,9 +185,13 @@ private:
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     using ScreenPropertiesChangedObserver = Observer<void(WebCore::PlatformDisplayID)>;
     RefPtr<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
+    RefPtr<WebCore::Model> m_cachedModelSource;
+    WebCore::LayoutSize m_lastLayoutSize;
     float m_currentEDRHeadroom { 1.f };
+    float m_lastSentContentsHeadroom { -1.f };
     bool m_suppressEDR { false };
     WebCore::PlatformDynamicRangeLimit m_dynamicRangeLimit { WebCore::PlatformDynamicRangeLimit::initialValue() };
+    bool m_usingStandardDynamicRange { false };
 #endif
 };
 

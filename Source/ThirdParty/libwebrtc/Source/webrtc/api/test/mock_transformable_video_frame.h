@@ -13,10 +13,10 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <type_traits>
 
-#include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -28,8 +28,8 @@ namespace webrtc {
 class MockTransformableVideoFrame : public TransformableVideoFrameInterface {
  public:
   MockTransformableVideoFrame() : TransformableVideoFrameInterface(Passkey()) {}
-  MOCK_METHOD(ArrayView<const uint8_t>, GetData, (), (const, override));
-  MOCK_METHOD(void, SetData, (ArrayView<const uint8_t> data), (override));
+  MOCK_METHOD(std::span<const uint8_t>, GetData, (), (const, override));
+  MOCK_METHOD(void, SetData, (std::span<const uint8_t> data), (override));
   MOCK_METHOD(uint32_t, GetTimestamp, (), (const, override));
   MOCK_METHOD(void, SetRTPTimestamp, (uint32_t), (override));
   MOCK_METHOD(uint32_t, GetSsrc, (), (const, override));

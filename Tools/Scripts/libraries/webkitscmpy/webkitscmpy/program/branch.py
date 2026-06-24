@@ -147,7 +147,11 @@ class Branch(Command):
             if ' ' in args.issue:
                 if getattr(Tracker.instance(), 'credentials', None):
                     Tracker.instance().credentials(required=True, validate=True)
+
                 description = Terminal.input('Issue description: ')
+                while not description.strip():
+                    description = Terminal.input('Invalid description. Please enter a valid issue description: ')
+                description = description.strip()
 
                 needs_radar = any([isinstance(tracker, radar.Tracker) and tracker.radarclient() for tracker in Tracker._trackers])
                 radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'

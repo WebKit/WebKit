@@ -43,13 +43,14 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMesh);
 
-RemoteMesh::RemoteMesh(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebKit::Mesh& mesh, ModelObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebModelIdentifier identifier)
+RemoteMesh::RemoteMesh(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebKit::Mesh& mesh, ModelObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebModelIdentifier identifier, bool standardDynamicRange)
     : m_backing(mesh)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
     , m_identifier(identifier)
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_gpu(gpu)
+    , m_standardDynamicRange(standardDynamicRange)
 {
     protect(m_streamConnection)->startReceivingMessages(*this, Messages::RemoteMesh::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -117,19 +118,14 @@ void RemoteMesh::setFOV(float fovY)
     m_backing->setFOV(fovY);
 }
 
-void RemoteMesh::setBackgroundColor(const WebModel::Float3& color)
-{
-    m_backing->setBackgroundColor(color);
-}
-
 void RemoteMesh::play(bool playing)
 {
     m_backing->play(playing);
 }
 
-void RemoteMesh::setEnvironmentMap(const WebModel::UpdateTextureDescriptor& imageAsset)
+void RemoteMesh::setEnvironmentMap(WebModel::UpdateTextureDescriptor&& imageAsset)
 {
-    m_backing->setEnvironmentMap(imageAsset);
+    m_backing->setEnvironmentMap(WTF::move(imageAsset));
 }
 
 void RemoteMesh::updateContentsHeadroom(float headroom)
@@ -149,7 +145,7 @@ void RemoteMesh::updateRenderBuffers(unsigned width, unsigned height, Completion
         return;
     }
 
-    auto renderBuffers = RemoteGPU::createRenderBuffers(width, height, gpuProcessConnection->webProcessIdentity());
+    auto renderBuffers = RemoteGPU::createRenderBuffers(width, height, gpuProcessConnection->webProcessIdentity(), m_standardDynamicRange);
     WebModel::ResizeMeshDescriptor descriptor { width, height, WTF::move(renderBuffers) };
     m_backing->updateRenderBuffers(WTF::move(descriptor));
     completionHandler(m_backing->ioSurfaceHandles());
@@ -158,6 +154,13 @@ void RemoteMesh::updateRenderBuffers(unsigned width, unsigned height, Completion
 void RemoteMesh::processRemovals(Vector<WebModel::TypedResourceId>&& meshRemovals, Vector<WebModel::TypedResourceId>&& materialRemovals, Vector<WebModel::TypedResourceId>&& textureRemovals, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_backing->processRemovals(WTF::move(meshRemovals), WTF::move(materialRemovals), WTF::move(textureRemovals), WTF::move(completionHandler));
+}
+
+void RemoteMesh::paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex, CompletionHandler<void()>&& completionHandler)
+{
+    if (RefPtr nativeImage { m_backing->getCurrentFrameAsNativeImage(bufferIndex) })
+        m_gpu->paintNativeImageToImageBuffer(*nativeImage, imageBufferIdentifier);
+    completionHandler();
 }
 
 } // namespace WebKit

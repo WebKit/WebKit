@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
+#include "AV1Utilities.h"
 #include "CMUtilities.h"
 #include "CVUtilities.h"
 #include "IOSurface.h"
@@ -36,6 +37,7 @@
 #include "LibWebRTCVideoFrameUtilities.h"
 #include "Logging.h"
 #include "VP9Utilities.h"
+#include "VP9UtilitiesCocoa.h"
 #include "VideoFrameLibWebRTC.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -89,7 +91,7 @@ private:
     int64_t m_timestamp { 0 };
     std::optional<uint64_t> m_duration;
     std::atomic<bool> m_isClosed { false };
-    std::optional<VPCodecConfigurationRecord> m_configuration WTF_GUARDED_BY_CAPABILITY(vpxDecoderQueueSingleton());
+    RefPtr<VideoInfo> m_videoInfo WTF_GUARDED_BY_CAPABILITY(vpxDecoderQueueSingleton());
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
     Lock m_pixelBufferPoolLock;
     size_t m_pixelBufferPoolWidth { 0 };
@@ -145,8 +147,11 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(std::s
     m_timestamp = timestamp;
     m_duration = duration;
 
-    if (isVPx() && !m_configuration)
-        m_configuration = vPCodecConfigurationRecordFromVPXByteStream(m_type == LibWebRTCVPXVideoDecoder::Type::VP8 ? VPXCodec::Vp8 : VPXCodec::Vp9, data);
+    if (isVPx()) {
+        if (auto record = vpCodecConfigurationRecordFromVPXByteStream(m_type == LibWebRTCVPXVideoDecoder::Type::VP8 ? VPXCodec::Vp8 : VPXCodec::Vp9, data))
+            m_videoInfo = createVideoInfoFromVPCodecConfigurationRecord(*record, m_colorSpace);
+    } else if (RefPtr videoInfo = createVideoInfoFromAV1Stream(data, std::nullopt, m_colorSpace))
+        m_videoInfo = WTF::move(videoInfo);
 
     webrtc::EncodedImage image;
     image.SetEncodedData(webrtc::WebKitEncodedImageBufferWrapper::create(const_cast<uint8_t*>(data.data()), data.size()));
@@ -176,10 +181,20 @@ static UniqueRef<webrtc::VideoDecoder> createInternalDecoder(LibWebRTCVPXVideoDe
     }
 }
 
+static RefPtr<VideoInfo> createVideoInfo(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config)
+{
+    bool isVPx = type == LibWebRTCVPXVideoDecoder::Type::VP8 || type == LibWebRTCVPXVideoDecoder::Type::VP9 || type == LibWebRTCVPXVideoDecoder::Type::VP9_P2;
+    if (!isVPx)
+        return nullptr;
+    if (auto record = createVPCodecConfigurationRecordFromVPCC(config.description))
+        return createVideoInfoFromVPCodecConfigurationRecord(*record, config.colorSpace);
+    return nullptr;
+}
+
 LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback)
     : m_type(type)
     , m_outputCallback(WTF::move(outputCallback))
-    , m_configuration(isVPx() ? createVPCodecConfigurationRecordFromVPCC(config.description) : std::nullopt)
+    , m_videoInfo(createVideoInfo(type, config))
     , m_internalDecoder(createInternalDecoder(type))
     , m_useIOSurface(config.pixelBuffer == VideoDecoder::HardwareBuffer::Yes)
     , m_treatNoOutputAsError(config.noOutputAsError == VideoDecoder::TreatNoOutputAsError::Yes)
@@ -257,10 +272,16 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
     if (m_isClosed)
         return 0;
 
-    bool isFullRange = (m_configuration && m_configuration->videoFullRangeFlag == VPConfigurationRange::FullRange) || (m_colorSpace && m_colorSpace->fullRange.value_or(false));
-    auto colorSpace = m_colorSpace ? m_colorSpace : m_configuration ? colorSpaceFromVPCodecConfigurationRecord(*m_configuration) : colorSpaceFromLibWebRTCVideoFrame(frame);
+    auto colorSpace = m_videoInfo ? std::optional { m_videoInfo->colorSpace() } : colorSpaceFromLibWebRTCVideoFrame(frame);
+    if (!m_videoInfo && m_colorSpace) {
+        if (!colorSpace)
+            colorSpace = m_colorSpace;
+        else
+            overrideVideoColorSpaceAsNeeded(*colorSpace, m_colorSpace);
+    }
+    bool isFullRange = colorSpace && colorSpace->fullRange.value_or(false);
 
-    auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, colorSpaceFromLibWebRTCVideoFrame(frame), toRef(frame.video_frame_buffer()), [protectedThis = Ref { *this }, colorSpace, isFullRange](auto& buffer) {
+    auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, std::optional { colorSpace }, toRef(frame.video_frame_buffer()), [protectedThis = Ref { *this }, colorSpace, isFullRange](auto& buffer) {
         return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [protectedThis, colorSpace, isFullRange](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
             auto pixelBuffer = protectedThis->createPixelBuffer(width, height, bufferType, isFullRange);
             if (colorSpace)

@@ -40,7 +40,7 @@ const Color& CaretColor::colorOrCurrentColor() const
 
 // MARK: - Blending
 
-auto Blending<CaretColor>::equals(const CaretColor& a, const CaretColor& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
+auto Blending<CaretColor>::equals(const CaretColor& a, const CaretColor& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
     bool aAuto = a.isAuto();
     bool bAuto = b.isAuto();
@@ -56,7 +56,7 @@ auto Blending<CaretColor>::canBlend(const CaretColor& a, const CaretColor& b) ->
     return !a.isAuto() && !b.isAuto() && Style::canBlend(*a.tryColor(), *b.tryColor());
 }
 
-auto Blending<CaretColor>::blend(const CaretColor& a, const CaretColor& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> CaretColor
+auto Blending<CaretColor>::blend(const CaretColor& a, const CaretColor& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> CaretColor
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1);

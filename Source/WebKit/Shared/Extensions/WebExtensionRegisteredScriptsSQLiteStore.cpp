@@ -66,7 +66,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::updateScripts(Vector<Ref<JSON::Ob
     for (const auto& script : scripts)
         ids.append(script->getString(idKey));
 
-    deleteScriptsWithIDs(ids, [weakThis = ThreadSafeWeakPtr { *this }, ids = WTF::move(ids), scripts = WTF::move(scripts), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
+    deleteScriptsWithIDs(ids, [weakThis = ThreadSafeWeakPtr { *this }, scripts = WTF::move(scripts), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completionHandler({ });

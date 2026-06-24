@@ -6,6 +6,7 @@
 
 #include "../../crypto/internal.h"
 
+
 #if defined(OPENSSL_64_BIT)
 #define BR_WORD_MAX UINT64_MAX
 typedef uint64_t br_word_t;
@@ -18,7 +19,7 @@ typedef int32_t br_signed_t;
 #error "Must define either OPENSSL_32_BIT or OPENSSL_64_BIT"
 #endif
 
-static_assert(sizeof(br_word_t) == sizeof(crypto_word_t));
+static_assert(sizeof(br_word_t) == sizeof(bssl::crypto_word_t));
 
 // Scalar memory operations
 
@@ -27,15 +28,16 @@ static_assert(sizeof(br_word_t) == sizeof(crypto_word_t));
 // Bulk memory operations
 
 static inline void br_memcpy(br_word_t d, br_word_t s, br_word_t n) {
-  OPENSSL_memcpy((void *)d, (const void *)s, n);
+  bssl::OPENSSL_memcpy((void *)d, (const void *)s, n);
 }
 
 static inline void br_memset(br_word_t d, br_word_t v, br_word_t n) {
-  OPENSSL_memset((void *)d, v, n);
+  bssl::OPENSSL_memset((void *)d, v, n);
 }
 
-static inline void br_memcxor(uintptr_t d, uintptr_t s, uintptr_t n, uintptr_t mask) {
-  constant_time_conditional_memxor((void*)d, (void*)s, n, mask);
+static inline void br_memcxor(uintptr_t d, uintptr_t s, uintptr_t n,
+                              uintptr_t mask) {
+  bssl::constant_time_conditional_memxor((void *)d, (void *)s, n, mask);
 }
 
 // CPU Arithmetic
@@ -43,16 +45,16 @@ static inline void br_memcxor(uintptr_t d, uintptr_t s, uintptr_t n, uintptr_t m
 static inline br_word_t br_full_add(br_word_t x, br_word_t y, br_word_t carry,
                                     br_word_t *_sum) {
   br_word_t carry_out = 0;
-  static_assert(sizeof(br_word_t) == sizeof(crypto_word_t));
-  *_sum = CRYPTO_addc_w(x, y, carry, &carry_out);
+  static_assert(sizeof(br_word_t) == sizeof(bssl::crypto_word_t));
+  *_sum = bssl::CRYPTO_addc_w(x, y, carry, &carry_out);
   return carry_out;
 }
 
 static inline br_word_t br_full_sub(br_word_t x, br_word_t y, br_word_t borrow,
                                     br_word_t *_diff) {
   br_word_t borrow_out = 0;
-  static_assert(sizeof(br_word_t) == sizeof(crypto_word_t));
-  *_diff = CRYPTO_subc_w(x, y, borrow, &borrow_out);
+  static_assert(sizeof(br_word_t) == sizeof(bssl::crypto_word_t));
+  *_diff = bssl::CRYPTO_subc_w(x, y, borrow, &borrow_out);
   return borrow_out;
 }
 
@@ -62,7 +64,7 @@ static inline br_word_t br_full_mul(br_word_t a, br_word_t b, br_word_t *_low) {
   *_low = r;
   return r >> 32;
 #elif defined(BORINGSSL_HAS_UINT128)
-  uint128_t r = (uint128_t)a * b;
+  bssl::uint128_t r = (bssl::uint128_t)a * b;
   *_low = r;
   return r >> 64;
 #elif defined(_M_X64)
@@ -80,13 +82,13 @@ static inline br_word_t br_full_mul(br_word_t a, br_word_t b, br_word_t *_low) {
 // Constant-time computations
 
 static inline br_word_t br_value_barrier(br_word_t a) {
-  static_assert(sizeof(br_word_t) == sizeof(crypto_word_t));
-  return value_barrier_w(a);
+  static_assert(sizeof(br_word_t) == sizeof(bssl::crypto_word_t));
+  return bssl::value_barrier_w(a);
 }
 
 static inline br_word_t br_declassify(br_word_t a) {
-  static_assert(sizeof(br_word_t) == sizeof(crypto_word_t));
-  return constant_time_declassify_w(a);
+  static_assert(sizeof(br_word_t) == sizeof(bssl::crypto_word_t));
+  return bssl::constant_time_declassify_w(a);
 }
 
 static inline br_word_t br_broadcast_negative(br_word_t x) {

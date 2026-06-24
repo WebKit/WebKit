@@ -41,12 +41,12 @@ inline Document* LocalFrame::document() const
 
 inline Editor& LocalFrame::editor()
 {
-    return protect(document())->editor();
+    SUPPRESS_UNCOUNTED_ARG return document()->editor();
 }
 
 inline const Editor& LocalFrame::editor() const
 {
-    return protect(document())->editor();
+    SUPPRESS_UNCOUNTED_ARG return document()->editor();
 }
 
 inline FrameSelection& LocalFrame::selection()

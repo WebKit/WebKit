@@ -377,7 +377,7 @@ class StatsTimestampConverter {
 public:
     static StatsTimestampConverter& singleton();
 
-    Seconds convertFromMonotonicTime(Seconds value) const;
+    ReducedResolutionSeconds convertFromMonotonicTime(Seconds value) const;
 
 private:
     explicit StatsTimestampConverter() = default;

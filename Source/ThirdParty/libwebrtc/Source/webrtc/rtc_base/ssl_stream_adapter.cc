@@ -15,13 +15,14 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "rtc_base/openssl_stream_adapter.h"
 #include "rtc_base/ssl_identity.h"
@@ -86,10 +87,17 @@ bool IsGcmCryptoSuite(int crypto_suite) {
 
 std::unique_ptr<SSLStreamAdapter> SSLStreamAdapter::Create(
     std::unique_ptr<StreamInterface> stream,
-    absl::AnyInvocable<void(SSLHandshakeError)> handshake_error,
-    const FieldTrialsView* field_trials) {
-  return std::make_unique<OpenSSLStreamAdapter>(
-      std::move(stream), std::move(handshake_error), field_trials);
+    absl::AnyInvocable<void(SSLHandshakeError)> handshake_error) {
+  return std::make_unique<OpenSSLStreamAdapter>(std::nullopt, std::move(stream),
+                                                std::move(handshake_error));
+}
+
+std::unique_ptr<SSLStreamAdapter> SSLStreamAdapter::Create(
+    const Environment& env,
+    std::unique_ptr<StreamInterface> stream,
+    absl::AnyInvocable<void(SSLHandshakeError)> handshake_error) {
+  return std::make_unique<OpenSSLStreamAdapter>(env, std::move(stream),
+                                                std::move(handshake_error));
 }
 
 bool SSLStreamAdapter::IsBoringSsl() {
@@ -181,7 +189,7 @@ bool SSLStreamAdapter::SetPeerCertificateDigest(
     SSLPeerCertificateDigestError* error) {
   unsigned char* nonconst_val = const_cast<unsigned char*>(digest_val);
   SSLPeerCertificateDigestError ret = SetPeerCertificateDigest(
-      digest_alg, ArrayView<uint8_t>(nonconst_val, digest_len));
+      digest_alg, std::span<uint8_t>(nonconst_val, digest_len));
   if (error)
     *error = ret;
   return ret == SSLPeerCertificateDigestError::NONE;

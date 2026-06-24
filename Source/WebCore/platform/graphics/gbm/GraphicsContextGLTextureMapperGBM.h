@@ -60,6 +60,9 @@ private:
     bool platformInitializeExtensions() override;
     bool reshapeDrawingBuffer() override;
     void prepareForDisplay() override;
+#if ENABLE(WEBXR)
+    bool enableRequiredWebXRExtensionsImpl();
+#endif
 
     void freeDrawingBuffers();
     bool bindNextDrawingBuffer();

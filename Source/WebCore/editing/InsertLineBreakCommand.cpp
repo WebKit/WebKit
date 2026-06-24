@@ -37,8 +37,8 @@
 #include "LocalFrame.h"
 #include "RenderElement.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 
@@ -106,7 +106,7 @@ void InsertLineBreakCommand::doApply()
         
         VisiblePosition endingPosition(positionBeforeNode(nodeToInsert));
         setEndingSelection(VisibleSelection(endingPosition, endingSelection().directionality()));
-    } else if (position.deprecatedEditingOffset() <= caretMinOffset(*position.deprecatedNode())) {
+    } else if (position.deprecatedEditingOffset() <= caretMinOffset(*protect(position.deprecatedNode()))) {
         insertNodeAt(nodeToInsert.copyRef(), position);
         
         // Insert an extra br or '\n' if the just inserted one collapsed.
@@ -116,7 +116,7 @@ void InsertLineBreakCommand::doApply()
         setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert), Affinity::Downstream, endingSelection().directionality()));
     // If we're inserting after all of the rendered text in a text node, or into a non-text node,
     // a simple insertion is sufficient.
-    } else if (position.deprecatedEditingOffset() >= caretMaxOffset(*position.deprecatedNode()) || !is<Text>(*position.deprecatedNode())) {
+    } else if (position.deprecatedEditingOffset() >= caretMaxOffset(*protect(position.deprecatedNode())) || !is<Text>(*position.deprecatedNode())) {
         insertNodeAt(nodeToInsert.copyRef(), position);
         setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert), Affinity::Downstream, endingSelection().directionality()));
     } else if (RefPtr textNode = dynamicDowncast<Text>(*position.deprecatedNode())) {

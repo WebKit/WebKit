@@ -32,7 +32,7 @@ bool RefCountDebuggerBase::areThreadingChecksEnabledGlobally { false };
 // This is a convenience that makes IPC serialization easier.
 static_assert(sizeof(RefCountedBase) == sizeof(ThreadSafeRefCountedBase));
 
-#if defined(NDEBUG) && !ASSERT_ENABLED && !ENABLE(SECURITY_ASSERTIONS) && COMPILER(CLANG) && !OS(WINDOWS)
+#if defined(NDEBUG) && !ASSERT_ENABLED && !ENABLE(SECURITY_ASSERTIONS) && COMPILER(CLANG)
 static_assert(sizeof(RefCountedBase) == sizeof(unsigned), "RefCountedBase should stay small");
 #endif
 

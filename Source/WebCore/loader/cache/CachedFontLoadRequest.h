@@ -84,9 +84,9 @@ private:
         return result;
     }
 
-    RefPtr<Font> createFont(const FontDescription& description, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext) final
+    RefPtr<Font> createFont(const FontDescription& description, const FontCreationContext& fontCreationContext) final
     {
-        return protect(m_font)->createFont(description, syntheticBold, syntheticItalic, fontCreationContext);
+        return protect(m_font)->createFont(description, fontCreationContext);
     }
 
     void setClient(FontLoadRequestClient* client) final

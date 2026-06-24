@@ -12,10 +12,6 @@
     </div>
     <div id="console"></div>
     <script>
-      if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
-      }
 
       // Force layout
       document.body.offsetTop;
@@ -24,6 +20,7 @@
       var svg = document.getElementById('svg');
 
       description('This tests the behavior of root SVG length value resolution');
+      window.jsTestIsAsync = true;
 
       debug('Initial/default values:');
       shouldBe('svg.width.baseVal.value', '200');
@@ -51,8 +48,7 @@
       shouldBe('svg.width.baseVal.value', '200');
       shouldBe('svg.height.baseVal.value', '100');
 
-      if (window.testRunner)
-        testRunner.notifyDone();
+      finishJSTest();
     </script>
   </body>
 </html>

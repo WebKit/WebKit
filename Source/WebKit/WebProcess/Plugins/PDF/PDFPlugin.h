@@ -197,7 +197,6 @@ private:
     
     RefPtr<PDFPluginPasswordField> m_passwordField;
 
-    String m_temporaryPDFUUID;
 
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 

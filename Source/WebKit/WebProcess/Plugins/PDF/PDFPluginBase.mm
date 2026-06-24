@@ -35,6 +35,7 @@
 #import "MessageSenderInlines.h"
 #import "PDFIncrementalLoader.h"
 #import "PDFKitSPI.h"
+#import "PDFPluginAnnotation.h"
 #import "PDFScriptEvaluation.h"
 #import "PluginView.h"
 #import "WKAccessibilityPDFDocumentObject.h"

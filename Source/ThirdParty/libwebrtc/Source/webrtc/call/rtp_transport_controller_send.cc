@@ -14,12 +14,12 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/fec_controller.h"
 #include "api/frame_transformer_interface.h"
@@ -56,7 +56,6 @@
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_map.h"
-#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/network_route.h"
@@ -94,9 +93,6 @@ TargetRateConstraints ConvertConstraints(const BitrateConstraints& contraints,
                             contraints.start_bitrate_bps, clock);
 }
 
-bool IsRelayed(const NetworkRoute& route) {
-  return route.local.uses_turn() || route.remote.uses_turn();
-}
 }  // namespace
 
 RtpTransportControllerSend::RtpTransportControllerSend(
@@ -115,21 +111,15 @@ RtpTransportControllerSend::RtpTransportControllerSend(
       process_interval_(TimeDelta::PlusInfinity()),
       last_report_block_time_(env_.clock().CurrentTime()),
       initial_config_(env_),
-      reset_feedback_on_route_change_(
-          !env_.field_trials().IsEnabled("WebRTC-Bwe-NoFeedbackReset")),
       add_pacing_to_cwin_(env_.field_trials().IsEnabled(
           "WebRTC-AddPacingToCongestionWindowPushback")),
       reset_bwe_on_adapter_id_change_(
           env_.field_trials().IsEnabled("WebRTC-Bwe-ResetOnAdapterIdChange")),
-      relay_bandwidth_cap_("relay_cap", DataRate::PlusInfinity()),
       transport_overhead_bytes_per_packet_(0),
       network_available_(false),
       congestion_window_size_(DataSize::PlusInfinity()),
       is_congested_(false),
       retransmission_rate_limiter_(&env_.clock(), kRetransmitWindowSizeMs) {
-  ParseFieldTrial(
-      {&relay_bandwidth_cap_},
-      env_.field_trials().Lookup("WebRTC-Bwe-NetworkRouteConstraints"));
   initial_config_.constraints =
       ConvertConstraints(config.bitrate_config, &env_.clock());
   initial_config_.default_pacing_time_window =
@@ -325,7 +315,6 @@ bool RtpTransportControllerSend::IsRelevantRouteChange(
     const NetworkRoute& new_route) const {
   bool connected_changed = old_route.connected != new_route.connected;
   bool route_ids_changed = false;
-  bool relaying_changed = false;
 
   if (reset_bwe_on_adapter_id_change_) {
     route_ids_changed =
@@ -336,10 +325,7 @@ bool RtpTransportControllerSend::IsRelevantRouteChange(
         old_route.local.network_id() != new_route.local.network_id() ||
         old_route.remote.network_id() != new_route.remote.network_id();
   }
-  if (relay_bandwidth_cap_->IsFinite()) {
-    relaying_changed = IsRelayed(old_route) != IsRelayed(new_route);
-  }
-  return connected_changed || route_ids_changed || relaying_changed;
+  return connected_changed || route_ids_changed;
 }
 
 void RtpTransportControllerSend::OnNetworkRouteChanged(
@@ -352,9 +338,6 @@ void RtpTransportControllerSend::OnNetworkRouteChanged(
     // consider merging these two methods.
     return;
   }
-
-  std::optional<BitrateConstraints> relay_constraint_update =
-      ApplyOrLiftRelayCap(IsRelayed(network_route));
 
   // Check whether the network route has changed on each transport.
   auto result = network_routes_.insert(
@@ -371,54 +354,71 @@ void RtpTransportControllerSend::OnNetworkRouteChanged(
       RTC_LOG(LS_INFO) << "old_route = " << kv->second.DebugString();
     }
   }
-
   if (inserted) {
-    if (relay_constraint_update.has_value()) {
-      UpdateBitrateConstraints(*relay_constraint_update);
-    }
     transport_overhead_bytes_per_packet_ = network_route.packet_overhead;
     // No need to reset BWE if this is the first time the network connects.
     return;
   }
-
   const NetworkRoute old_route = kv->second;
   kv->second = network_route;
 
-  // Check if enough conditions of the new/old route has changed
-  // to trigger resetting of bitrates (and a probe).
-  if (IsRelevantRouteChange(old_route, network_route)) {
+  // Check if the new/old route is significantly different from the old route.
+  // If it is, restart BWE.
+  bool restart_bwe = IsRelevantRouteChange(old_route, network_route);
+
+  // If Scream is used, notify the controller of the route change regardless
+  // of what changed in order for it to understand that the route has changed,
+  // and thus RTT may have changed. Always log the route change and ensure the
+  // feedback adapter only reports packets sent on the new route since ECN
+  // support may be different.
+  bool is_controller_supporting_ecn = rfc_8888_feedback_negotiated_ &&
+                                      controller_ &&
+                                      controller_->SupportsEcnAdaptation();
+
+  if (!restart_bwe && !is_controller_supporting_ecn) {
+    // Nothing changed - no need to notify the controller.
+    return;
+  }
+
+  if (restart_bwe) {
     BitrateConstraints bitrate_config = bitrate_configurator_.GetConfig();
     RTC_LOG(LS_INFO) << "Reset bitrates to min: "
                      << bitrate_config.min_bitrate_bps
                      << " bps, start: " << bitrate_config.start_bitrate_bps
                      << " bps,  max: " << bitrate_config.max_bitrate_bps
                      << " bps.";
-    RTC_DCHECK_GT(bitrate_config.start_bitrate_bps, 0);
+  }
 
-    env_.event_log().Log(std::make_unique<RtcEventRouteChange>(
-        network_route.connected, network_route.packet_overhead));
-    if (rfc_8888_feedback_negotiated_) {
-      sending_packets_as_ect1_ = true;
-      packet_router_.ConfigureForRtcpFeedback(
-          /*set_transport_seq=*/rfc_8888_feedback_negotiated_,
-          sending_packets_as_ect1_);
-    }
-    NetworkRouteChange msg;
-    msg.at_time = env_.clock().CurrentTime();
-    msg.constraints = ConvertConstraints(bitrate_config, &env_.clock());
-    transport_overhead_bytes_per_packet_ = network_route.packet_overhead;
-    if (reset_feedback_on_route_change_) {
-      transport_feedback_adapter_.SetNetworkRoute(network_route);
-    }
-    if (controller_) {
-      PostUpdates(controller_->OnNetworkRouteChange(msg));
-    } else {
-      UpdateInitialConstraints(msg.constraints);
-    }
-    is_congested_ = false;
-    pacer_.SetCongested(false);
+  env_.event_log().Log(std::make_unique<RtcEventRouteChange>(
+      network_route.connected, network_route.packet_overhead));
+  transport_overhead_bytes_per_packet_ = network_route.packet_overhead;
+  transport_feedback_adapter_.SetNetworkRoute(network_route);
+
+  // Reset the congested state.
+  is_congested_ = false;
+  pacer_.SetCongested(false);
+
+  NetworkRouteChange msg;
+  msg.at_time = env_.clock().CurrentTime();
+  msg.constraints =
+      ConvertConstraints(bitrate_configurator_.GetConfig(), &env_.clock());
+  msg.restart_bwe = restart_bwe;
+  if (controller_) {
+    PostUpdates(controller_->OnNetworkRouteChange(msg));
+  } else {
+    UpdateInitialConstraints(msg.constraints);
+  }
+
+  if (is_controller_supporting_ecn && !sending_packets_as_ect1_) {
+    RTC_LOG(LS_INFO)
+        << "Enabling sending packets as ECT1 again after route change. ";
+    sending_packets_as_ect1_ = true;
+    packet_router_.ConfigureForRtcpFeedback(
+        /*set_transport_seq=*/rfc_8888_feedback_negotiated_,
+        sending_packets_as_ect1_);
   }
 }
+
 void RtpTransportControllerSend::OnNetworkAvailability(bool network_available) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_LOG(LS_VERBOSE) << "SignalNetworkState "
@@ -549,12 +549,6 @@ void RtpTransportControllerSend::SetClientBitratePreferences(
         << "WebRTC.RtpTransportControllerSend.SetClientBitratePreferences: "
            "nothing to update";
   }
-}
-
-std::optional<BitrateConstraints>
-RtpTransportControllerSend::ApplyOrLiftRelayCap(bool is_relayed) {
-  DataRate cap = is_relayed ? relay_bandwidth_cap_ : DataRate::PlusInfinity();
-  return bitrate_configurator_.UpdateWithRelayCap(cap);
 }
 
 void RtpTransportControllerSend::OnTransportOverheadChanged(
@@ -898,7 +892,7 @@ void RtpTransportControllerSend::PostUpdates(NetworkControlUpdate update) {
 
 void RtpTransportControllerSend::OnReport(
     Timestamp receive_time,
-    ArrayView<const ReportBlockData> report_blocks) {
+    std::span<const ReportBlockData> report_blocks) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   if (report_blocks.empty())
     return;

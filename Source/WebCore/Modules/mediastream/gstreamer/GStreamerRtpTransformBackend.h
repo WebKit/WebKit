@@ -46,7 +46,6 @@ private:
     Lock m_inputCallbackLock;
     Callback m_inputCallback;
 
-    Lock m_outputCallbackLock;
 };
 
 inline GStreamerRtpTransformBackend::GStreamerRtpTransformBackend(MediaType mediaType, Side side)

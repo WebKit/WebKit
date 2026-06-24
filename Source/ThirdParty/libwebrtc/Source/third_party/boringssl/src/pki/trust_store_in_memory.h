@@ -76,14 +76,24 @@ class OPENSSL_EXPORT TrustStoreInMemory : public TrustStore {
   void AddCertificateWithUnspecifiedTrust(
       std::shared_ptr<const ParsedCertificate> cert);
 
+  // Adds a trusted MTC anchor to the store.
+  [[nodiscard]] bool AddMTCTrustAnchor(
+      std::shared_ptr<const MTCAnchor> mtc_anchor);
+
   // TrustStore implementation:
   void SyncGetIssuersOf(const ParsedCertificate *cert,
                         ParsedCertificateList *issuers) override;
   CertificateTrust GetTrust(const ParsedCertificate *cert) override;
+  std::shared_ptr<const MTCAnchor> GetTrustedMTCIssuerOf(
+      const ParsedCertificate *cert) override;
 
   // Returns true if the trust store contains the given ParsedCertificate
-  // (matches by DER).
+  // (matches by DER). Only works for traditional anchors; see ContainsMTCAnchor
+  // for MTC anchors.
   bool Contains(const ParsedCertificate *cert) const;
+
+  // Returns true if the trust store contains the specified MTC anchor.
+  bool ContainsMTCAnchor(const MTCAnchor *anchor) const;
 
  private:
   struct Entry {
@@ -97,6 +107,9 @@ class OPENSSL_EXPORT TrustStoreInMemory : public TrustStore {
 
   // Multimap from normalized subject -> Entry.
   std::unordered_multimap<std::string_view, Entry> entries_;
+  // Map from normalized subject -> MTCAnchor.
+  std::unordered_map<std::string_view, std::shared_ptr<const MTCAnchor>>
+      trusted_mtc_anchors_;
 
   // Set of distrusted SPKIs.
   std::set<std::string, std::less<>> distrusted_spkis_;

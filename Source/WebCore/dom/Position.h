@@ -201,7 +201,7 @@ public:
 
     // This is a tentative enhancement of operator== to account for different position types.
     // FIXME: Combine this function with operator==
-    bool NODELETE equals(const Position&) const;
+    WEBCORE_EXPORT bool NODELETE equals(const Position&) const;
 
 private:
     // For creating legacy editing positions: (Anchor type will be determined from editingIgnoresContent(node))

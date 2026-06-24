@@ -238,8 +238,6 @@ ssl_open_record_t tls_open_record(SSL *ssl, uint8_t *out_type,
     }
     // Apart from the limit, empty records are returned up to the caller. This
     // allows the caller to reject records of the wrong type.
-  } else {
-    ssl->s3->empty_record_count = 0;
   }
 
   if (type == SSL3_RT_ALERT) {
@@ -254,7 +252,12 @@ ssl_open_record_t tls_open_record(SSL *ssl, uint8_t *out_type,
     return ssl_open_record_error;
   }
 
-  ssl->s3->warning_alert_count = 0;
+  // Only when at least one byte is returned, clear the counters for empty
+  // records and warnings.
+  if (!out->empty()) {
+    ssl->s3->empty_record_count = 0;
+    ssl->s3->warning_alert_count = 0;
+  }
 
   *out_type = type;
   return ssl_open_record_success;

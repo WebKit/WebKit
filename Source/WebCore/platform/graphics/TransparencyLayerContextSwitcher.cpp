@@ -39,7 +39,7 @@ TransparencyLayerContextSwitcher::TransparencyLayerContextSwitcher(GraphicsConte
     : GraphicsContextSwitcher(WTF::move(filter))
 {
     if (m_filter)
-        m_filterStyles = m_filter->createFilterStyles(destinationContext, sourceImageRect);
+        m_filterStyles = protect(m_filter)->createFilterStyles(destinationContext, sourceImageRect);
 }
 
 void TransparencyLayerContextSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect&, const FloatRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip)

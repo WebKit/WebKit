@@ -26,14 +26,17 @@
 #include "config.h"
 #include "ChangeListTypeCommand.h"
 
+#include "DOMTokenList.h"
 #include "Editing.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "HTMLElement.h"
+#include "HTMLInterchange.h"
 #include "HTMLOListElement.h"
 #include "HTMLUListElement.h"
 #include "LocalFrameInlines.h"
+#include "StylePropertiesInlines.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -70,6 +73,30 @@ std::optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversion
     return std::nullopt;
 }
 
+static void removeSourceListAttributes(const HTMLElement& listToReplace, HTMLElement& list, ChangeListTypeCommand::Type type)
+{
+    bool convertToUnorderedList = type == ChangeListTypeCommand::Type::ConvertToUnorderedList;
+    if (convertToUnorderedList) {
+        list.removeAttribute(HTMLNames::startAttr);
+        list.removeAttribute(HTMLNames::typeAttr);
+        list.removeAttribute(HTMLNames::reversedAttr);
+    }
+    list.removeInlineStyleProperty(CSSPropertyListStyleType);
+
+    Ref classList = list.classList();
+    bool sourceHasClassNameForSmartList = classList->contains(AppleDecimalListClass) || classList->contains(AppleDiscListClass) || classList->contains(AppleDashListClass);
+
+    if (sourceHasClassNameForSmartList) {
+        FixedVector<AtomString> classNamesToRemove { AppleDashListClass, (convertToUnorderedList ? AppleDecimalListClass : AppleDiscListClass) };
+        classList->remove(classNamesToRemove);
+        classList->add(convertToUnorderedList ? AppleDiscListClass : AppleDecimalListClass);
+    }
+
+    RefPtr existingInlineStyle = listToReplace.inlineStyle();
+    if (existingInlineStyle && !existingInlineStyle->getPropertyValue(CSSPropertyListStyleType).isEmpty())
+        list.setInlineStyleProperty(CSSPropertyListStyleType, (convertToUnorderedList ? CSSValueDisc : CSSValueDecimal));
+}
+
 Ref<HTMLElement> ChangeListTypeCommand::createNewList(const HTMLElement& listToReplace)
 {
     RefPtr<HTMLElement> list;
@@ -78,6 +105,9 @@ Ref<HTMLElement> ChangeListTypeCommand::createNewList(const HTMLElement& listToR
     else
         list = HTMLUListElement::create(document());
     list->cloneDataFromElement(listToReplace);
+
+    removeSourceListAttributes(listToReplace, *list, m_type);
+
     return list.releaseNonNull();
 }
 

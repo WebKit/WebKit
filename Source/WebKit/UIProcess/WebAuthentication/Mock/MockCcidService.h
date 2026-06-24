@@ -38,7 +38,7 @@ class MockCcidService final : public CcidService {
 public:
     static Ref<MockCcidService> create(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
-    RetainPtr<NSData> nextReply();
+    RetainPtr<NSData> nextReply(NSData *request);
 
 private:
     MockCcidService(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);

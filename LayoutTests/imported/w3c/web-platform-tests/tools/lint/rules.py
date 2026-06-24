@@ -369,7 +369,7 @@ class InvalidMetaFile(Rule):
 
 class InvalidWebFeaturesFile(Rule):
     name = "INVALID-WEB-FEATURES-FILE"
-    description = "The WEB_FEATURES.yml file contains an invalid structure"
+    description = "The WEB_FEATURES.yml file contains an invalid structure: %s"
 
 
 class MissingTestInWebFeaturesFile(Rule):
@@ -377,6 +377,38 @@ class MissingTestInWebFeaturesFile(Rule):
     description = collapse("""
         The WEB_FEATURES.yml file references a test that does not exist: '%s'
     """)
+
+
+class UnnecessaryExclusionInWebFeaturesFile(Rule):
+    name = "UNNECESSARY-EXCLUSION-IN-WEB-FEATURES-FILE"
+    description = collapse("""
+        The WEB_FEATURES.yml file contains a redundant or inoperable exclusion pattern: %s
+    """)
+
+
+class WebFeaturesFileInNonTestDirectory(Rule):
+    name = "WEB-FEATURES-FILE-IN-NON-TEST-DIRECTORY"
+    description = collapse("""
+        WEB_FEATURES.yml is located in a non-test directory: '%s'
+    """)
+
+
+class NonTestFileInWebFeaturesFile(Rule):
+    name = "NON-TEST-FILE-IN-WEB-FEATURES-FILE"
+    description = collapse("""
+        The WEB_FEATURES.yml file references a non-test file: '%s' in feature '%s'
+    """)
+
+
+EXTENSIONS = {
+    "html": [".html", ".htm"],
+    "xhtml": [".xht", ".xhtml"],
+    "svg": [".svg"],
+    "js": [".js", ".mjs"],
+    "python": [".py"]
+}
+EXTENSIONS["markup"] = EXTENSIONS["html"] + EXTENSIONS["xhtml"] + EXTENSIONS["svg"]
+EXTENSIONS["js_all"] = EXTENSIONS["markup"] + EXTENSIONS["js"]
 
 
 class Regexp(metaclass=abc.ABCMeta):
@@ -425,7 +457,7 @@ class CRRegexp(Regexp):
 class SetTimeoutRegexp(Regexp):
     pattern = br"setTimeout\s*\("
     name = "SET TIMEOUT"
-    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    file_extensions = EXTENSIONS["js_all"]
     description = "setTimeout used"
     to_fix = """
         replace all `setTimeout(...)` calls with `step_timeout(...)` calls
@@ -462,7 +494,7 @@ class Webidl2Regexp(Regexp):
 class ConsoleRegexp(Regexp):
     pattern = br"console\.[a-zA-Z]+\s*\("
     name = "CONSOLE"
-    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    file_extensions = EXTENSIONS["js_all"]
     description = "Test-file line has a `console.*(...)` call"
     to_fix = """
         remove the `console.*(...)` call (and in some cases, consider adding an
@@ -473,7 +505,7 @@ class ConsoleRegexp(Regexp):
 class GenerateTestsRegexp(Regexp):
     pattern = br"generate_tests\s*\("
     name = "GENERATE_TESTS"
-    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    file_extensions = EXTENSIONS["js_all"]
     description = "Test file line has a generate_tests call"
     to_fix = "remove the call and call `test()` a number of times instead"
 
@@ -481,7 +513,7 @@ class GenerateTestsRegexp(Regexp):
 class PrintRegexp(Regexp):
     pattern = br"print(?:\s|\s*\()"
     name = "PRINT STATEMENT"
-    file_extensions = [".py"]
+    file_extensions = EXTENSIONS["python"]
     description = collapse("""
         A server-side python support file contains a `print` statement
     """)
@@ -494,14 +526,14 @@ class PrintRegexp(Regexp):
 class LayoutTestsRegexp(Regexp):
     pattern = br"(eventSender|testRunner|internals)\."
     name = "LAYOUTTESTS APIS"
-    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    file_extensions = EXTENSIONS["js_all"]
     description = "eventSender/testRunner/internals used; these are LayoutTests-specific APIs (WebKit/Blink)"
 
 
 class MissingDepsRegexp(Regexp):
     pattern = br"[^\w]/gen/"
     name = "MISSING DEPENDENCY"
-    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    file_extensions = EXTENSIONS["js_all"]
     description = "Chromium-specific content referenced"
     to_fix = "Reimplement the test to use well-documented testing interfaces"
 
@@ -509,7 +541,7 @@ class MissingDepsRegexp(Regexp):
 class SpecialPowersRegexp(Regexp):
     pattern = b"SpecialPowers"
     name = "SPECIALPOWERS API"
-    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    file_extensions = EXTENSIONS["js_all"]
     description = "SpecialPowers used; this is gecko-specific and not supported in wpt"
 
 
@@ -523,7 +555,7 @@ class TrailingWhitespaceRegexp(Regexp):
 class AssertThrowsRegexp(Regexp):
     pattern = br"[^.]assert_throws\("
     name = "ASSERT_THROWS"
-    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    file_extensions = EXTENSIONS["js_all"]
     description = "Test-file line has an `assert_throws(...)` call"
     to_fix = """Replace with `assert_throws_dom` or `assert_throws_js` or `assert_throws_exactly`"""
 
@@ -531,7 +563,7 @@ class AssertThrowsRegexp(Regexp):
 class PromiseRejectsRegexp(Regexp):
     pattern = br"promise_rejects\("
     name = "PROMISE_REJECTS"
-    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    file_extensions = EXTENSIONS["js_all"]
     description = "Test-file line has a `promise_rejects(...)` call"
     to_fix = """Replace with promise_rejects_dom or promise_rejects_js or `promise_rejects_exactly`"""
 
@@ -539,7 +571,7 @@ class PromiseRejectsRegexp(Regexp):
 class AssertPreconditionRegexp(Regexp):
     pattern = br"[^.]assert_precondition\("
     name = "ASSERT-PRECONDITION"
-    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    file_extensions = EXTENSIONS["js_all"]
     description = "Test-file line has an `assert_precondition(...)` call"
     to_fix = """Replace with `assert_implements` or `assert_implements_optional`"""
 
@@ -551,6 +583,14 @@ class HTMLInvalidSyntaxRegexp(Regexp):
                br"search|section|select|slot|small|span|strong|style|sub|summary|sup|table|tbody|td|template|textarea|tfoot|th|thead|time|"
                br"title|tr|u|ul|var|video)(\s+[^>]+)?\s*/>")
     name = "HTML INVALID SYNTAX"
-    file_extensions = [".html", ".htm"]
+    file_extensions = EXTENSIONS["html"]
     description = "Test-file line has a non-void HTML tag with /> syntax"
     to_fix = """Replace with start tag and end tag"""
+
+
+class TestDriverInternalRegexp(Regexp):
+    pattern = br"test_driver_internal"
+    name = "TEST DRIVER INTERNAL"
+    file_extensions = EXTENSIONS["js_all"]
+    description = "Test-file uses test_driver_internal API"
+    to_fix = """Only use test_driver public API"""

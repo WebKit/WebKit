@@ -13,7 +13,6 @@
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/heartbeat_info_parameter.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/testing/testing_macros.h"

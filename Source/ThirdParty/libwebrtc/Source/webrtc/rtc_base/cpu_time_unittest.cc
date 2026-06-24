@@ -26,6 +26,8 @@
 #define MAYBE_TEST(test_name) test_name
 #endif
 
+namespace webrtc {
+
 namespace {
 constexpr int kAllowedErrorMillisecs = 30;
 constexpr int kProcessingTimeMillisecs = 500;
@@ -34,16 +36,13 @@ constexpr int kWorkingThreads = 2;
 // Consumes approximately kProcessingTimeMillisecs of CPU time in single thread.
 void WorkingFunction(int64_t* counter) {
   *counter = 0;
-  int64_t stop_cpu_time =
-      webrtc::GetThreadCpuTimeNanos() +
-      kProcessingTimeMillisecs * webrtc::kNumNanosecsPerMillisec;
-  while (webrtc::GetThreadCpuTimeNanos() < stop_cpu_time) {
+  int64_t stop_cpu_time = GetThreadCpuTimeNanos() +
+                          kProcessingTimeMillisecs * kNumNanosecsPerMillisec;
+  while (GetThreadCpuTimeNanos() < stop_cpu_time) {
     (*counter)++;
   }
 }
 }  // namespace
-
-namespace webrtc {
 
 // A minimal test which can be run on instrumented builds, so that they're at
 // least exercising the code to check for memory leaks/etc.

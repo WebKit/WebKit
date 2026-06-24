@@ -17,6 +17,7 @@
 
 #include "api/rtp_packet_infos.h"
 #include "api/scoped_refptr.h"
+#include "api/units/timestamp.h"
 #include "api/video/color_space.h"
 #include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/encoded_frame.h"
@@ -38,8 +39,8 @@ class RtpFrameObject : public EncodedFrame {
       uint16_t last_seq_num,
       bool markerBit,
       int times_nacked,
-      int64_t first_packet_received_time,
-      int64_t last_packet_received_time,
+      std::optional<Timestamp> first_packet_received_time,
+      std::optional<Timestamp> last_packet_received_time,
       uint32_t rtp_timestamp,
       int64_t ntp_time_ms,
       const VideoSendTiming& timing,
@@ -59,7 +60,7 @@ class RtpFrameObject : public EncodedFrame {
   int times_nacked() const;
   VideoFrameType frame_type() const;
   VideoCodecType codec_type() const;
-  int64_t ReceivedTime() const override;
+  std::optional<Timestamp> ReceivedTimestamp() const override;
   int64_t RenderTime() const override;
   bool delayed_by_retransmission() const override;
   const RTPVideoHeader& GetRtpVideoHeader() const;
@@ -81,7 +82,7 @@ class RtpFrameObject : public EncodedFrame {
   VideoCodecType codec_type_;
   uint16_t first_seq_num_;
   uint16_t last_seq_num_;
-  int64_t last_packet_received_time_;
+  std::optional<Timestamp> last_packet_received_time_;
   std::vector<uint32_t> csrcs_;
 
   // Equal to times nacked of the packet with the highet times nacked

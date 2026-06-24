@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -29,47 +28,28 @@
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/rtp_frame_reference_finder.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
 
 namespace {
 class DataReader {
  public:
-  DataReader(const uint8_t* data, size_t size) : data_(data), size_(size) {}
+  DataReader(FuzzDataHelper fuzz_data) : data_(fuzz_data) {}
 
   template <typename T>
-  void CopyTo(T* object) {
-    static_assert(std::is_trivial_v<T> && std::is_standard_layout_v<T>, "");
-    uint8_t* destination = reinterpret_cast<uint8_t*>(object);
-    size_t object_size = sizeof(T);
-    size_t num_bytes = std::min(size_ - offset_, object_size);
-    memcpy(destination, data_ + offset_, num_bytes);
-    offset_ += num_bytes;
-
-    // If we did not have enough data, fill the rest with 0.
-    object_size -= num_bytes;
-    memset(destination + num_bytes, 0, object_size);
+  void CopyTo(T& object) {
+    return data_.CopyTo(object);
   }
 
   template <typename T>
   T GetNum() {
-    T res;
-    if (offset_ + sizeof(res) < size_) {
-      memcpy(&res, data_ + offset_, sizeof(res));
-      offset_ += sizeof(res);
-      return res;
-    }
-
-    offset_ = size_;
-    return T(0);
+    return data_.Read<T>();
   }
-
-  bool MoreToRead() { return offset_ < size_; }
+  bool MoreToRead() { return data_.BytesLeft() > 0; }
 
  private:
-  const uint8_t* data_;
-  size_t size_;
-  size_t offset_ = 0;
+  FuzzDataHelper data_;
 };
 
 RTPVideoHeaderH264 GenerateRTPVideoHeaderH264(DataReader* reader) {
@@ -78,7 +58,7 @@ RTPVideoHeaderH264 GenerateRTPVideoHeaderH264(DataReader* reader) {
   result.packetization_type = reader->GetNum<H264PacketizationTypes>();
   int nalus_length = reader->GetNum<uint8_t>();
   for (int i = 0; i < nalus_length; ++i) {
-    reader->CopyTo(&result.nalus.emplace_back());
+    reader->CopyTo(result.nalus.emplace_back());
   }
   result.packetization_mode = reader->GetNum<H264PacketizationMode>();
   return result;
@@ -111,8 +91,8 @@ GenerateGenericFrameDependencies(DataReader* reader) {
 }
 }  // namespace
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  DataReader reader(data, size);
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  DataReader reader(fuzz_data);
   RtpFrameReferenceFinder reference_finder;
 
   auto codec = static_cast<VideoCodecType>(reader.GetNum<uint8_t>() % 5);
@@ -138,11 +118,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     switch (codec) {
       case kVideoCodecVP8:
         reader.CopyTo(
-            &video_header.video_type_header.emplace<RTPVideoHeaderVP8>());
+            video_header.video_type_header.emplace<RTPVideoHeaderVP8>());
         break;
       case kVideoCodecVP9:
         reader.CopyTo(
-            &video_header.video_type_header.emplace<RTPVideoHeaderVP9>());
+            video_header.video_type_header.emplace<RTPVideoHeaderVP9>());
         break;
       case kVideoCodecH264:
         video_header.video_type_header = GenerateRTPVideoHeaderH264(&reader);
@@ -162,8 +142,8 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         last_seq_num,
         marker_bit,
         /*times_nacked=*/0,
-        /*first_packet_received_time=*/0,
-        /*last_packet_received_time=*/0,
+        /*first_packet_received_time=*/std::nullopt,
+        /*last_packet_received_time=*/std::nullopt,
         /*rtp_timestamp=*/0,
         /*ntp_time_ms=*/0,
         VideoSendTiming(),

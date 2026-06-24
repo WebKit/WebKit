@@ -21,9 +21,10 @@
     <style>
     :focus {outline: 1px solid black;}
     </style>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script src="resources/spatial-navigation-utils.js"></script>
     <script type="application/javascript">
+    window.jsTestIsAsync = true;
 
     var resultMap = [
       ["Down", "2"],
@@ -31,10 +32,6 @@
       ["DONE", "DONE"]
     ];
 
-    if (window.testRunner) {
-      testRunner.dumpAsText();
-      testRunner.waitUntilDone();
-    }
 
     function runTest()
     {
@@ -46,14 +43,12 @@
 
     function testCompleted()
     {
-      if (window.testRunner)
-        testRunner.notifyDone();
+      finishJSTest();
     }
 
     window.onload = runTest;
 
     </script>
-    <script src="../resources/js-test-post.js"></script>
   </head>
   <body>
     <a href="#" id="start">This is an element</a><br>

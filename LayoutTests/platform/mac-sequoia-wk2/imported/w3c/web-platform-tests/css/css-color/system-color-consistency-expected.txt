@@ -27,6 +27,9 @@ FAIL Property color value 'FieldText' resolves to the same color as text on a te
 PASS Property color value 'Mark' has the same color as the background-color of a mark element (light)
 PASS Property color value 'MarkText' has the same color as the color of a mark element (light)
 PASS Property color value 'LinkText' has the same color as the color of an anchor element (light)
+PASS LinkText should not match Canvas in light mode
+PASS ActiveText should not match Canvas in light mode
+PASS VisitedText should not match Canvas in light mode
 FAIL Property color value 'ButtonBorder' resolves to the same color as the border-color of a button (dark) assert_equals: expected "rgba(255, 255, 255, 0.847) rgba(255, 255, 255, 0.247)" but got "rgb(255, 255, 255)"
 PASS Property color value 'ButtonFace' resolves to the same color as the background-color of a button (dark)
 PASS Property color value 'ButtonText' resolves to the same color as text on a button (dark)
@@ -55,4 +58,7 @@ FAIL Property color value 'FieldText' resolves to the same color as text on a te
 PASS Property color value 'Mark' has the same color as the background-color of a mark element (dark)
 PASS Property color value 'MarkText' has the same color as the color of a mark element (dark)
 PASS Property color value 'LinkText' has the same color as the color of an anchor element (dark)
+PASS LinkText should not match Canvas in dark mode
+PASS ActiveText should not match Canvas in dark mode
+PASS VisitedText should not match Canvas in dark mode
 

@@ -178,6 +178,11 @@ public:
         return m_buffer->memoryCost();
     }
 
+    std::unique_ptr<SerializedImageBuffer> clone() const final
+    {
+        return makeUnique<DefaultSerializedImageBuffer>(m_buffer.get());
+    }
+
 private:
     RefPtr<ImageBuffer> m_buffer;
 };

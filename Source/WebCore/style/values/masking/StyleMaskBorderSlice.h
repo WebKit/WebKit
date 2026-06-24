@@ -93,11 +93,11 @@ template<size_t I> const auto& get(const MaskBorderSlice& value)
 
 // MARK: - Conversion
 
-template<> struct ToCSS<MaskBorderSlice> { auto operator()(const MaskBorderSlice&, const RenderStyle&) -> CSS::MaskBorderSlice; };
+template<> struct ToCSS<MaskBorderSlice> { auto operator()(const MaskBorderSlice&, const Style::ComputedStyle&) -> CSS::MaskBorderSlice; };
 template<> struct ToStyle<CSS::MaskBorderSlice> { auto operator()(const CSS::MaskBorderSlice&, const BuilderState&) -> MaskBorderSlice; };
 
 template<> struct CSSValueConversion<MaskBorderSlice> { auto operator()(BuilderState&, const CSSValue&) -> MaskBorderSlice; };
-template<> struct CSSValueCreation<MaskBorderSlice> { auto operator()(CSSValuePool&, const RenderStyle&, const MaskBorderSlice&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<MaskBorderSlice> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const MaskBorderSlice&) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 

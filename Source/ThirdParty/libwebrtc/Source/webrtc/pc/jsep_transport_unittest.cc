@@ -15,16 +15,19 @@
 #include <memory>
 #include <optional>
 #include <ostream>
+#include <span>
 #include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
 
 #include "api/candidate.h"
+#include "api/crypto/crypto_options.h"
 #include "api/field_trials.h"
 #include "api/ice_transport_interface.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/scoped_refptr.h"
 #include "media/base/fake_rtp.h"
 #include "p2p/base/ice_transport_internal.h"
@@ -52,9 +55,9 @@
 #include "rtc_base/ssl_fingerprint.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
-#include "rtc_base/thread.h"
 #include "test/create_test_field_trials.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 namespace {
@@ -149,7 +152,8 @@ class JsepTransport2Test : public ::testing::Test {
         /*local_certificate=*/nullptr, std::move(rtp_transport),
         std::move(rtp_dtls_transport_wrapper),
         /*sctp_transport=*/nullptr,
-        /*rtcp_mux_active_callback=*/[&]() { OnRtcpMuxActive(); });
+        /*rtcp_mux_active_callback=*/[&]() { OnRtcpMuxActive(); },
+        /*cryptex_policy=*/CryptoOptions::Srtp::CryptexPolicy::kDisabled);
 
     signal_rtcp_mux_active_received_ = false;
     return jsep_transport;
@@ -185,7 +189,7 @@ class JsepTransport2Test : public ::testing::Test {
 
   void OnRtcpMuxActive() { signal_rtcp_mux_active_received_ = true; }
 
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
   std::unique_ptr<JsepTransport> jsep_transport_;
   bool signal_rtcp_mux_active_received_ = false;
   FieldTrials field_trials_ = CreateTestFieldTrials();
@@ -339,6 +343,76 @@ TEST_P(JsepTransport2WithRtcpMux, SetDtlsParametersWithPassiveAnswer) {
         remote_description.transport_desc.identity_fingerprint->ToString(),
         fake_rtcp_dtls->dtls_fingerprint().ToString());
   }
+}
+
+TEST_P(JsepTransport2WithRtcpMux, SetGoogSpedV1OptionUpdatesIceConfig) {
+  bool rtcp_mux_enabled = GetParam();
+  jsep_transport_ = CreateJsepTransport2(rtcp_mux_enabled);
+
+  scoped_refptr<RTCCertificate> local_cert =
+      RTCCertificate::Create(SSLIdentity::Create("local", KT_DEFAULT));
+  scoped_refptr<RTCCertificate> remote_cert =
+      RTCCertificate::Create(SSLIdentity::Create("remote", KT_DEFAULT));
+  jsep_transport_->SetLocalCertificate(local_cert);
+
+  JsepTransportDescription local_description =
+      MakeJsepTransportDescription(rtcp_mux_enabled, kIceUfrag1, kIcePwd1,
+                                   local_cert, CONNECTIONROLE_ACTPASS);
+  local_description.transport_desc.AddOption(ICE_OPTION_GOOG_SPED_V1);
+
+  ASSERT_TRUE(
+      jsep_transport_
+          ->SetLocalJsepTransportDescription(local_description, SdpType::kOffer)
+          .ok());
+
+  JsepTransportDescription remote_description =
+      MakeJsepTransportDescription(rtcp_mux_enabled, kIceUfrag2, kIcePwd2,
+                                   remote_cert, CONNECTIONROLE_ACTIVE);
+
+  ASSERT_TRUE(jsep_transport_
+                  ->SetRemoteJsepTransportDescription(remote_description,
+                                                      SdpType::kAnswer)
+                  .ok());
+
+  auto fake_ice_transport = static_cast<FakeIceTransportInternal*>(
+      jsep_transport_->rtp_dtls_transport()->ice_transport());
+
+  EXPECT_TRUE(fake_ice_transport->config().dtls_handshake_in_stun);
+}
+
+TEST_P(JsepTransport2WithRtcpMux,
+       MissingGoogSpedV1OptionDoesNotUpdateIceConfig) {
+  bool rtcp_mux_enabled = GetParam();
+  jsep_transport_ = CreateJsepTransport2(rtcp_mux_enabled);
+
+  scoped_refptr<RTCCertificate> local_cert =
+      RTCCertificate::Create(SSLIdentity::Create("local", KT_DEFAULT));
+  scoped_refptr<RTCCertificate> remote_cert =
+      RTCCertificate::Create(SSLIdentity::Create("remote", KT_DEFAULT));
+  jsep_transport_->SetLocalCertificate(local_cert);
+
+  JsepTransportDescription local_description =
+      MakeJsepTransportDescription(rtcp_mux_enabled, kIceUfrag1, kIcePwd1,
+                                   local_cert, CONNECTIONROLE_ACTPASS);
+
+  ASSERT_TRUE(
+      jsep_transport_
+          ->SetLocalJsepTransportDescription(local_description, SdpType::kOffer)
+          .ok());
+
+  JsepTransportDescription remote_description =
+      MakeJsepTransportDescription(rtcp_mux_enabled, kIceUfrag2, kIcePwd2,
+                                   remote_cert, CONNECTIONROLE_ACTIVE);
+
+  ASSERT_TRUE(jsep_transport_
+                  ->SetRemoteJsepTransportDescription(remote_description,
+                                                      SdpType::kAnswer)
+                  .ok());
+
+  auto fake_ice_transport = static_cast<FakeIceTransportInternal*>(
+      jsep_transport_->rtp_dtls_transport()->ice_transport());
+
+  EXPECT_FALSE(fake_ice_transport->config().dtls_handshake_in_stun);
 }
 
 // Tests SetNeedsIceRestartFlag and need_ice_restart, ensuring needs_ice_restart
@@ -1172,7 +1246,7 @@ class JsepTransport2HeaderExtensionTest
     memcpy(rtp_packet_data, kPcmuFrameWithExtensions, rtp_len);
     // In order to be able to run this test function multiple times we can not
     // use the same sequence number twice. Increase the sequence number by one.
-    SetBE16(reinterpret_cast<uint8_t*>(rtp_packet_data) + 2,
+    SetBE16(std::span<uint8_t>(rtp_packet_buffer).subspan(2),
             ++sequence_number_);
     CopyOnWriteBuffer rtp_packet(rtp_packet_data, rtp_len, packet_size);
 
@@ -1189,8 +1263,8 @@ class JsepTransport2HeaderExtensionTest
   int received_packet_count_ = 0;
   std::unique_ptr<JsepTransport> jsep_transport1_;
   std::unique_ptr<JsepTransport> jsep_transport2_;
-  std::vector<int> recv_encrypted_headers1_;
-  std::vector<int> recv_encrypted_headers2_;
+  std::vector<RtpHeaderExtensionId> recv_encrypted_headers1_;
+  std::vector<RtpHeaderExtensionId> recv_encrypted_headers2_;
 };
 
 // Test that the encrypted header extension works and can be changed in

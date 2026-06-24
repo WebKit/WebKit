@@ -19,8 +19,10 @@
 #include "api/candidate.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "p2p/base/p2p_constants.h"
+#include "p2p/base/packet_transport_internal.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/net_helper.h"
 
@@ -234,7 +236,8 @@ RTCError IceConfig::IsValid() const {
   return RTCError::OK();
 }
 
-IceTransportInternal::IceTransportInternal() = default;
+IceTransportInternal::IceTransportInternal(TaskQueueBase* attached_queue)
+    : PacketTransportInternal(attached_queue) {}
 
 IceTransportInternal::~IceTransportInternal() = default;
 

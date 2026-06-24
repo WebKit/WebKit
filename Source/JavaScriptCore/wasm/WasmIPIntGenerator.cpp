@@ -494,40 +494,40 @@ public:
     // Control flow
 
     [[nodiscard]] ControlType addTopLevel(BlockSignature&&);
-    [[nodiscard]] PartialResult addBlock(BlockSignature&&, Stack&, ControlType&, Stack&);
-    [[nodiscard]] PartialResult addLoop(BlockSignature&&, Stack&, ControlType&, Stack&, uint32_t);
-    [[nodiscard]] PartialResult addIf(ExpressionType, BlockSignature&&, Stack&, ControlType&, Stack&);
-    [[nodiscard]] PartialResult addElse(ControlType&, Stack&);
+    [[nodiscard]] PartialResult addBlock(BlockSignature&&, std::span<TypedExpression>, ControlType&);
+    [[nodiscard]] PartialResult addLoop(BlockSignature&&, std::span<TypedExpression>, ControlType&, uint32_t);
+    [[nodiscard]] PartialResult addIf(ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&);
+    [[nodiscard]] PartialResult addElse(ControlType&, std::span<const TypedExpression>);
     [[nodiscard]] PartialResult addElseToUnreachable(ControlType&);
 
-    [[nodiscard]] PartialResult addTry(BlockSignature&&, Stack&, ControlType&, Stack&);
-    [[nodiscard]] PartialResult addTryTable(BlockSignature&&, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
-    [[nodiscard]] PartialResult addCatch(unsigned, const RTT&, Stack&, ControlType&, ResultList&);
+    [[nodiscard]] PartialResult addTry(BlockSignature&&, std::span<TypedExpression>, ControlType&);
+    [[nodiscard]] PartialResult addTryTable(BlockSignature&&, std::span<TypedExpression> args, const Vector<CatchHandler>& targets, ControlType& result);
+    [[nodiscard]] PartialResult addCatch(unsigned, const RTT&, std::span<const TypedExpression>, ControlType&, ResultList&);
     [[nodiscard]] PartialResult addCatchToUnreachable(unsigned, const RTT&, ControlType&, ResultList&);
-    [[nodiscard]] PartialResult addCatchAll(Stack&, ControlType&);
+    [[nodiscard]] PartialResult addCatchAll(std::span<const TypedExpression>, ControlType&);
     [[nodiscard]] PartialResult addCatchAllToUnreachable(ControlType&);
     [[nodiscard]] PartialResult addDelegate(ControlType&, ControlType&);
     [[nodiscard]] PartialResult addDelegateToUnreachable(ControlType&, ControlType&);
-    [[nodiscard]] PartialResult addThrow(unsigned, ArgumentList&, Stack&);
+    [[nodiscard]] PartialResult addThrow(unsigned, ArgumentList&, std::span<const TypedExpression>);
     [[nodiscard]] PartialResult addRethrow(unsigned, ControlType&);
-    [[nodiscard]] PartialResult addThrowRef(ExpressionType, Stack&);
+    [[nodiscard]] PartialResult addThrowRef(ExpressionType, std::span<const TypedExpression>);
 
-    [[nodiscard]] PartialResult addReturn(const ControlType&, const Stack&);
-    [[nodiscard]] PartialResult addBranch(ControlType&, ExpressionType, const Stack&);
-    [[nodiscard]] PartialResult addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&);
-    [[nodiscard]] PartialResult addBranchCast(ControlType&, ExpressionType, Stack&, bool, int32_t, bool);
-    [[nodiscard]] PartialResult addSwitch(ExpressionType, const Vector<ControlType*>&, ControlType&, const Stack&);
-    [[nodiscard]] PartialResult endBlock(ControlEntry&, Stack&);
+    [[nodiscard]] PartialResult addReturn(const ControlType&, std::span<const TypedExpression>);
+    [[nodiscard]] PartialResult addBranch(ControlType&, ExpressionType, std::span<const TypedExpression>);
+    [[nodiscard]] PartialResult addBranchNull(ControlType&, ExpressionType, std::span<const TypedExpression>, bool, ExpressionType&);
+    [[nodiscard]] PartialResult addBranchCast(ControlType&, ExpressionType, std::span<const TypedExpression>, bool, int32_t, bool);
+    [[nodiscard]] PartialResult addSwitch(ExpressionType, const Vector<ControlType*>&, ControlType&, std::span<const TypedExpression>);
+    [[nodiscard]] PartialResult endBlock(ControlEntry&, std::span<TypedExpression>);
     void endTryTable(const ControlType& data);
-    [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry&, Stack&);
+    [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry&, std::span<TypedExpression>);
 
-    [[nodiscard]] PartialResult endTopLevel(const Stack&);
+    [[nodiscard]] PartialResult endTopLevel(std::span<const TypedExpression>);
 
     // Fused comparison stubs (TODO: make use of these for better codegen)
-    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     // Calls
 
@@ -2183,10 +2183,9 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addBlock(BlockSignature&& signature, Stack& oldStack, ControlType& block, Stack& newStack)
+[[nodiscard]] PartialResult IPIntGenerator::addBlock(BlockSignature&& signature, std::span<TypedExpression> args, ControlType& block)
 {
-    splitStack(signature, oldStack, newStack);
-    block = ControlType(WTF::move(signature), m_stackSize.value() - newStack.size(), BlockType::Block);
+    block = ControlType(WTF::move(signature), m_stackSize.value() - args.size(), BlockType::Block);
     block.m_index = m_controlStructuresAwaitingCoalescing.size();
     block.m_pc = curPC();
     block.m_mc = curMC();
@@ -2210,10 +2209,9 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addLoop(BlockSignature&& signature, Stack& oldStack, ControlType& block, Stack& newStack, uint32_t loopIndex)
+[[nodiscard]] PartialResult IPIntGenerator::addLoop(BlockSignature&& signature, std::span<TypedExpression> args, ControlType& block, uint32_t loopIndex)
 {
-    splitStack(signature, oldStack, newStack);
-    block = ControlType(WTF::move(signature), m_stackSize.value() - newStack.size(), BlockType::Loop);
+    block = ControlType(WTF::move(signature), m_stackSize.value() - args.size(), BlockType::Loop);
     block.m_index = m_controlStructuresAwaitingCoalescing.size();
     block.m_pendingOffset = -1; // no need to update!
     block.m_pc = curPC();
@@ -2232,7 +2230,7 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     m_metadata->appendMetadata(md);
 
     // Loop OSR
-    ASSERT(m_parser->getStackHeightInValues() + newStack.size() == m_stackSize.value());
+    ASSERT(m_parser->getStackHeightInValues() == m_stackSize.value());
     unsigned numOSREntryDataValues = m_stackSize.value();
 
     // Note the +1: we do this to avoid having 0 as a key in the map, since the current map can't handle 0 as a key
@@ -2241,11 +2239,10 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addIf(ExpressionType, BlockSignature&& signature, Stack& oldStack, ControlType& block, Stack& newStack)
+[[nodiscard]] PartialResult IPIntGenerator::addIf(ExpressionType, BlockSignature&& signature, std::span<TypedExpression> args, ControlType& block)
 {
-    splitStack(signature, oldStack, newStack);
     changeStackSize(-1);
-    block = ControlType(WTF::move(signature), m_stackSize.value() - newStack.size(), BlockType::If);
+    block = ControlType(WTF::move(signature), m_stackSize.value() - args.size(), BlockType::If);
     block.m_index = m_controlStructuresAwaitingCoalescing.size();
     block.m_pc = curPC();
     block.m_mc = curMC();
@@ -2268,7 +2265,7 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addElse(ControlType& block, Stack&)
+[[nodiscard]] PartialResult IPIntGenerator::addElse(ControlType& block, std::span<const TypedExpression>)
 {
     return addElseToUnreachable(block);
 }
@@ -2310,13 +2307,12 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
 
 // Exception Handling
 
-[[nodiscard]] PartialResult IPIntGenerator::addTry(BlockSignature&& signature, Stack& oldStack, ControlType& block, Stack& newStack)
+[[nodiscard]] PartialResult IPIntGenerator::addTry(BlockSignature&& signature, std::span<TypedExpression> args, ControlType& block)
 {
     m_tryDepth++;
     m_maxTryDepth = std::max(m_maxTryDepth, m_tryDepth.value());
 
-    splitStack(signature, oldStack, newStack);
-    block = ControlType(WTF::move(signature), m_stackSize.value() - newStack.size(), BlockType::Try);
+    block = ControlType(WTF::move(signature), m_stackSize.value() - args.size(), BlockType::Try);
     block.m_index = m_controlStructuresAwaitingCoalescing.size();
     block.m_tryDepth = m_tryDepth;
     block.m_pc = curPC();
@@ -2341,10 +2337,9 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addTryTable(BlockSignature&& signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack)
+[[nodiscard]] PartialResult IPIntGenerator::addTryTable(BlockSignature&& signature, std::span<TypedExpression> args, const Vector<CatchHandler>& targets, ControlType& result)
 {
-    splitStack(signature, enclosingStack, newStack);
-    result = ControlType(WTF::move(signature), m_stackSize.value() - newStack.size(), BlockType::TryTable);
+    result = ControlType(WTF::move(signature), m_stackSize.value() - args.size(), BlockType::TryTable);
     result.m_tryTableTargets.reserveInitialCapacity(targets.size());
     result.m_index = m_controlStructuresAwaitingCoalescing.size();
     result.m_pc = curPC();
@@ -2409,7 +2404,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     tryBlock = WTF::move(catchBlock);
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addCatch(unsigned exceptionIndex, const RTT& exceptionSignature, Stack&, ControlType& block, ResultList& results)
+[[nodiscard]] PartialResult IPIntGenerator::addCatch(unsigned exceptionIndex, const RTT& exceptionSignature, std::span<const TypedExpression>, ControlType& block, ResultList& results)
 {
 
     return addCatchToUnreachable(exceptionIndex, exceptionSignature, block, results);
@@ -2450,7 +2445,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addCatchAll(Stack&, ControlType& block)
+[[nodiscard]] PartialResult IPIntGenerator::addCatchAll(std::span<const TypedExpression>, ControlType& block)
 {
     return addCatchAllToUnreachable(block);
 }
@@ -2521,7 +2516,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addThrow(unsigned exceptionIndex, ArgumentList&, Stack&)
+[[nodiscard]] PartialResult IPIntGenerator::addThrow(unsigned exceptionIndex, ArgumentList&, std::span<const TypedExpression>)
 {
     // IPInt reads throw arguments directly from the operand stack, but BBQ copies
     // them to a separate callee stack area. Track the size BBQ will need.
@@ -2554,7 +2549,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addThrowRef(ExpressionType, Stack&)
+[[nodiscard]] PartialResult IPIntGenerator::addThrowRef(ExpressionType, std::span<const TypedExpression>)
 {
     changeStackSize(-1);
     return { };
@@ -2562,12 +2557,12 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
 
 // Control Flow Branches
 
-[[nodiscard]] PartialResult IPIntGenerator::addReturn(const ControlType&, const Stack&)
+[[nodiscard]] PartialResult IPIntGenerator::addReturn(const ControlType&, std::span<const TypedExpression>)
 {
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addBranch(ControlType& block, ExpressionType, const Stack&)
+[[nodiscard]] PartialResult IPIntGenerator::addBranch(ControlType& block, ExpressionType, std::span<const TypedExpression>)
 {
     bool isBrIf = (m_parser->currentOpcode() == OpType::BrIf);
     if (isBrIf)
@@ -2591,7 +2586,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
 
     return { };
 }
-[[nodiscard]] PartialResult IPIntGenerator::addBranchNull(ControlType& block, ExpressionType, Stack&, bool shouldNegate, ExpressionType&)
+[[nodiscard]] PartialResult IPIntGenerator::addBranchNull(ControlType& block, ExpressionType, std::span<const TypedExpression>, bool shouldNegate, ExpressionType&)
 {
     // We don't need shouldNegate in the metadata since it's in the opcode
 
@@ -2619,7 +2614,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addBranchCast(ControlType& block, ExpressionType, Stack&, bool, int32_t heapType, bool)
+[[nodiscard]] PartialResult IPIntGenerator::addBranchCast(ControlType& block, ExpressionType, std::span<const TypedExpression>, bool, int32_t heapType, bool)
 {
     m_metadata->appendMetadata<IPInt::RefTestCastMetadata>({
         heapType,
@@ -2642,7 +2637,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addSwitch(ExpressionType, const Vector<ControlType*>& jumps, ControlType& defaultJump, const Stack&)
+[[nodiscard]] PartialResult IPIntGenerator::addSwitch(ExpressionType, const Vector<ControlType*>& jumps, ControlType& defaultJump, std::span<const TypedExpression>)
 {
     changeStackSize(-1);
     IPInt::SwitchMetadata mdSwitch {
@@ -2673,9 +2668,9 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::endBlock(ControlEntry& entry, Stack& stack)
+[[nodiscard]] PartialResult IPIntGenerator::endBlock(ControlEntry& entry, std::span<TypedExpression> enclosedStack)
 {
-    return addEndToUnreachable(entry, stack);
+    return addEndToUnreachable(entry, enclosedStack);
 }
 
 void IPIntGenerator::endTryTable(const ControlType& data)
@@ -2717,13 +2712,16 @@ void IPIntGenerator::endTryTable(const ControlType& data)
     }
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack&)
+[[nodiscard]] PartialResult IPIntGenerator::addEndToUnreachable(ControlEntry& entry, std::span<TypedExpression> enclosedStack)
 {
     const auto& block = entry.controlData;
-    for (unsigned i = 0; i < block.signature().returnCount(); i ++)
-        entry.enclosedExpressionStack.constructAndAppend(block.signature().returnType(i), IPIntValue { });
+    unsigned returnCount = block.signature().returnCount();
+    ASSERT(enclosedStack.size() >= returnCount);
+    auto resultSlots = enclosedStack.last(returnCount);
+    for (unsigned i = 0; i < returnCount; ++i)
+        resultSlots[i] = TypedExpression(block.signature().returnType(i), IPIntValue { });
     m_stackSize = block.stackSize();
-    changeStackSize(block.signature().returnCount());
+    changeStackSize(returnCount);
 
     if (ControlType::isTry(block) || ControlType::isAnyCatch(block)) {
         --m_tryDepth;
@@ -2773,7 +2771,7 @@ void IPIntGenerator::endTryTable(const ControlType& data)
     return { };
 }
 
-auto IPIntGenerator::endTopLevel(const Stack&) -> PartialResult
+auto IPIntGenerator::endTopLevel(std::span<const TypedExpression>) -> PartialResult
 {
     bool isNotDebugMode = !m_debugInfo;
     if (m_usesSIMD && isNotDebugMode)

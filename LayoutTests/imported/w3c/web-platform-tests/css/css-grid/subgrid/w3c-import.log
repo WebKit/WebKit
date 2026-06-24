@@ -97,6 +97,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-smaller-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-smaller-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-smaller-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-template-computed-invalid-subgrid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-template-computed-nogrid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-template-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-template-valid.html
@@ -211,6 +212,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/scrollbar-gutter-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/scrollbar-gutter-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/scrollbar-gutter-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/sibling-nested-subgrids-overflow-hidden-contribution.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/standalone-axis-size-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/standalone-axis-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/standalone-axis-size-002-expected.xht
@@ -266,6 +268,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-paint-containment-change-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-scroller-auto-height-padding-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-scroller-auto-height-padding-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-scroller-auto-height-padding.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-stretch-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-stretch-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-stretch.html

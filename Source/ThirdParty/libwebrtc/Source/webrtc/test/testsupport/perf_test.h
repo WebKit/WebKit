@@ -12,11 +12,11 @@
 #define TEST_TESTSUPPORT_PERF_TEST_H_
 
 #include <cstdio>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/numerics/samples_stats_counter.h"
 
 namespace webrtc {
@@ -76,7 +76,7 @@ void PrintResultList(
     absl::string_view measurement,
     absl::string_view modifier,
     absl::string_view user_story,
-    ArrayView<const double> values,
+    std::span<const double> values,
     absl::string_view units,
     bool important,
     ImproveDirection improve_direction = ImproveDirection::kNone);
@@ -93,7 +93,7 @@ void PrintResult(absl::string_view measurement,
 
 // Returns a string-encoded proto as described in
 // tracing/tracing/proto/histogram.proto in
-// https://github.com/catapult-project/catapult/blob/master/.
+// https://chromium.googlesource.com/catapult/+/refs/heads/main.
 // If you want to print the proto in human readable format, use
 // tracing/bin/proto2json from third_party/catapult in your WebRTC checkout.
 std::string GetPerfResults();

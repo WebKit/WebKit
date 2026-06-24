@@ -33,6 +33,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -161,8 +162,7 @@ constexpr char kMinMicLevelFieldTrial[] =
     "WebRTC-Audio-2ndAgcMinMicLevelExperiment";
 
 std::string GetAgcMinMicLevelExperimentFieldTrial(const std::string& value) {
-  char field_trial_buffer[64];
-  SimpleStringBuilder builder(field_trial_buffer);
+  StringBuilder builder;
   builder << kMinMicLevelFieldTrial << "/" << value << "/";
   return builder.str();
 }
@@ -172,8 +172,7 @@ std::string GetAgcMinMicLevelExperimentFieldTrialEnabled(
     const std::string& suffix = "") {
   RTC_DCHECK_GE(enabled_value, 0);
   RTC_DCHECK_LE(enabled_value, 255);
-  char field_trial_buffer[64];
-  SimpleStringBuilder builder(field_trial_buffer);
+  StringBuilder builder;
   builder << kMinMicLevelFieldTrial << "/Enabled-" << enabled_value << suffix
           << "/";
   return builder.str();
@@ -2084,7 +2083,7 @@ TEST_P(AgcManagerDirectChannelSampleRateTest, CheckIsAlive) {
 
   constexpr AnalogAgcConfig kConfig{.enabled = true,
                                     .clipping_predictor{.enabled = true}};
-  AgcManagerDirect manager(CreateEnvironment(), num_channels, kConfig);
+  AgcManagerDirect manager(CreateTestEnvironment(), num_channels, kConfig);
   manager.Initialize();
   AudioBuffer buffer(sample_rate_hz, num_channels, sample_rate_hz, num_channels,
                      sample_rate_hz, num_channels);

@@ -11,8 +11,7 @@
 #include "modules/audio_processing/aec3/reverb_model.h"
 
 #include <cstddef>
-
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
@@ -27,7 +26,7 @@ void ReverbModel::Reset() {
 }
 
 void ReverbModel::UpdateReverbNoFreqShaping(
-    ArrayView<const float> power_spectrum,
+    std::span<const float> power_spectrum,
     float power_spectrum_scaling,
     float reverb_decay) {
   if (reverb_decay > 0) {
@@ -39,8 +38,8 @@ void ReverbModel::UpdateReverbNoFreqShaping(
   }
 }
 
-void ReverbModel::UpdateReverb(ArrayView<const float> power_spectrum,
-                               ArrayView<const float> power_spectrum_scaling,
+void ReverbModel::UpdateReverb(std::span<const float> power_spectrum,
+                               std::span<const float> power_spectrum_scaling,
                                float reverb_decay) {
   if (reverb_decay > 0) {
     // Update the estimate of the reverberant power.

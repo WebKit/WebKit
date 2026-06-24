@@ -16,6 +16,7 @@
 
 #include "api/jsep.h"
 #include "api/media_types.h"
+#include "api/rtp_parameters.h"
 #include "api/rtp_sender_interface.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/scoped_refptr.h"
@@ -206,7 +207,7 @@ INSTANTIATE_TEST_SUITE_P(
              .l4s_network = true,
              .network_capacity = DataRate::KilobitsPerSec(3000),
              .expected_bwe_min = DataRate::KilobitsPerSec(1500),
-             .max_bwe = DataRate::KilobitsPerSec(3000),
+             .max_bwe = DataRate::KilobitsPerSec(3600),
          },
          {
              .test_name = "L4s500Kbit",
@@ -239,12 +240,18 @@ TEST_P(BweRampupWithInitialProbeTest, BweRampUpBothDirectionsWithoutMedia) {
   PeerScenarioClient* caller = s.CreateClient(config);
   PeerScenarioClient* callee = s.CreateClient(config);
 
-  auto transceiver = caller->pc()->AddTransceiver(MediaType::VIDEO);
-  ASSERT_TRUE(transceiver.error().ok());
+  auto transceiver_or = caller->pc()->AddTransceiver(MediaType::VIDEO);
+  ASSERT_TRUE(transceiver_or.error().ok());
+  auto transceiver = transceiver_or.value();
+
+  auto parameters = transceiver->sender()->GetParameters();
+  ASSERT_THAT(parameters.encodings, testing::SizeIs(1));
+  parameters.encodings[0].max_bitrate_bps = 3'000'000;
+  ASSERT_TRUE(transceiver->sender()->SetParameters(parameters).ok());
 
   MockRtpSenderObserver observer;
   EXPECT_CALL(observer, OnFirstPacketSent).Times(0);
-  transceiver.value()->sender()->SetObserver(&observer);
+  transceiver->sender()->SetObserver(&observer);
 
   caller->pc()->ReconfigureBandwidthEstimation(
       {.allow_probe_without_media = true});

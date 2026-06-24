@@ -11,8 +11,8 @@
 #include "test/rtcp_packet_parser.h"
 
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
@@ -38,7 +38,7 @@ namespace test {
 RtcpPacketParser::RtcpPacketParser() = default;
 RtcpPacketParser::~RtcpPacketParser() = default;
 
-bool RtcpPacketParser::Parse(ArrayView<const uint8_t> data) {
+bool RtcpPacketParser::Parse(std::span<const uint8_t> data) {
   ++processed_rtcp_packets_;
 
   const uint8_t* const buffer = data.data();

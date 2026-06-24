@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/rtp_packet_sender.h"
@@ -93,14 +93,14 @@ class RtpSenderEgress {
   // recalled, return a vector with all of them (in corresponding order).
   // If any could not be recalled, return an empty vector.
   std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
-      ArrayView<const uint16_t> sequence_numbers) const;
+      std::span<const uint16_t> sequence_numbers) const;
 
   void SetFecProtectionParameters(const FecProtectionParams& delta_params,
                                   const FecProtectionParams& key_params);
   std::vector<std::unique_ptr<RtpPacketToSend>> FetchFecPackets();
 
   // Clears pending status for these sequence numbers in the packet history.
-  void OnAbortedRetransmissions(ArrayView<const uint16_t> sequence_numbers);
+  void OnAbortedRetransmissions(std::span<const uint16_t> sequence_numbers);
 
  private:
   struct Packet {

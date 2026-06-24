@@ -55,11 +55,11 @@
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderTable.h"
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "TextUtil.h"
 #include "WidthIterator.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -112,7 +112,7 @@ std::unique_ptr<Layout::LayoutTree> TreeBuilder::buildLayoutTree(const RenderVie
 {
     PhaseScope scope(Phase::Type::TreeBuilding);
 
-    auto rootStyle = RenderStyle::clone(renderView.style());
+    auto rootStyle = Style::ComputedStyle::clone(renderView.style());
     rootStyle.setLogicalWidth(Style::PreferredSize::Fixed { renderView.width() });
     rootStyle.setLogicalHeight(Style::PreferredSize::Fixed { renderView.height() });
 
@@ -124,12 +124,12 @@ std::unique_ptr<Layout::LayoutTree> TreeBuilder::buildLayoutTree(const RenderVie
 
 TreeBuilder::TreeBuilder() = default;
 
-std::unique_ptr<Box> TreeBuilder::createReplacedBox(Box::ElementAttributes elementAttributes, ElementBox::ReplacedAttributes&& replacedAttributes, RenderStyle&& style)
+std::unique_ptr<Box> TreeBuilder::createReplacedBox(Box::ElementAttributes elementAttributes, ElementBox::ReplacedAttributes&& replacedAttributes, Style::ComputedStyle&& style)
 {
     return makeUnique<ElementBox>(WTF::move(elementAttributes), WTF::move(replacedAttributes), WTF::move(style));
 }
 
-std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool isCombined, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath, bool hasPositionDependentContentWidth, bool hasStrongDirectionalityContent, RenderStyle&& style)
+std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool isCombined, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath, bool hasPositionDependentContentWidth, bool hasStrongDirectionalityContent, Style::ComputedStyle&& style)
 {
     auto contentCharacteristic = EnumSet<Layout::InlineTextBox::ContentCharacteristic> { };
     if (canUseSimpleFontCodePath)
@@ -143,7 +143,7 @@ std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool isCombined, bo
     return makeUnique<InlineTextBox>(text, isCombined, contentCharacteristic, WTF::move(style));
 }
 
-std::unique_ptr<ElementBox> TreeBuilder::createContainer(Box::ElementAttributes elementAttributes, RenderStyle&& style)
+std::unique_ptr<ElementBox> TreeBuilder::createContainer(Box::ElementAttributes elementAttributes, Style::ComputedStyle&& style)
 {
     return makeUnique<ElementBox>(WTF::move(elementAttributes), WTF::move(style));
 }
@@ -184,14 +184,14 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
             const_cast<RenderText*>(textRenderer)->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
         }
         if (parentContainer.style().display() == Style::DisplayType::InlineFlow)
-            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer->canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, *hasStrongDirectionalityContent, RenderStyle::clone(parentContainer.style()));
+            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer->canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, *hasStrongDirectionalityContent, Style::ComputedStyle::clone(parentContainer.style()));
         else
-            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer->canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, *hasStrongDirectionalityContent, RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), Style::DisplayType::InlineFlow));
+            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer->canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, *hasStrongDirectionalityContent, Style::ComputedStyle::createAnonymousStyleWithDisplay(parentContainer.style(), Style::DisplayType::InlineFlow));
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();
 
-        auto clonedStyle = RenderStyle::clone(renderer.style());
+        auto clonedStyle = Style::ComputedStyle::clone(renderer.style());
 
         if (is<RenderLineBreak>(renderer)) {
             clonedStyle.setDisplay(Style::DisplayType::InlineFlow);
@@ -203,7 +203,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
             // The computed values of properties 'position', 'float', 'margin-*', 'top', 'right', 'bottom', and 'left' on the table element
             // are used on the table wrapper box and not the table box; all other values of non-inheritable properties are used
             // on the table box and not the table wrapper box.
-            auto tableWrapperBoxStyle = RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), renderer.style().display() == Style::DisplayType::BlockTable ? Style::DisplayType::BlockFlow : Style::DisplayType::InlineFlow);
+            auto tableWrapperBoxStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(parentContainer.style(), renderer.style().display() == Style::DisplayType::BlockTable ? Style::DisplayType::BlockFlow : Style::DisplayType::InlineFlow);
             tableWrapperBoxStyle.setPosition(renderer.style().position());
             tableWrapperBoxStyle.setFloating(renderer.style().floating());
 
@@ -280,7 +280,7 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, ElementB
         tableChild = tableChild->nextSibling();
     }
 
-    auto tableBoxStyle = RenderStyle::clone(tableRenderer.style());
+    auto tableBoxStyle = Style::ComputedStyle::clone(tableRenderer.style());
     tableBoxStyle.setPosition(PositionType::Static);
     tableBoxStyle.setFloating(Float::None);
     tableBoxStyle.resetMargin();
@@ -331,7 +331,7 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, ElementB
             ASSERT(maximumColumns >= numberOfCellsPerRow[rowIndex]);
             auto numberOfMissingCells = maximumColumns - numberOfCellsPerRow[rowIndex++];
             for (size_t i = 0; i < numberOfMissingCells; ++i)
-                appendChild(const_cast<ElementBox&>(rowBox), createContainer({ }, RenderStyle::createAnonymousStyleWithDisplay(rowBox.style(), Style::DisplayType::TableCell)));
+                appendChild(const_cast<ElementBox&>(rowBox), createContainer({ }, Style::ComputedStyle::createAnonymousStyleWithDisplay(rowBox.style(), Style::DisplayType::TableCell)));
         }
     };
 

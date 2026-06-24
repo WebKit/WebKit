@@ -14,11 +14,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
 
@@ -41,7 +41,7 @@ class SupportedExtensionsParameter
       : chunk_types_(std::move(chunk_types)) {}
 
   static std::optional<SupportedExtensionsParameter> Parse(
-      webrtc::ArrayView<const uint8_t> data);
+      std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
@@ -51,7 +51,7 @@ class SupportedExtensionsParameter
            chunk_types_.end();
   }
 
-  webrtc::ArrayView<const uint8_t> chunk_types() const { return chunk_types_; }
+  std::span<const uint8_t> chunk_types() const { return chunk_types_; }
 
  private:
   std::vector<uint8_t> chunk_types_;

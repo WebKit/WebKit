@@ -13,9 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <span>
 
 #include "api/audio_codecs/audio_decoder.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
 namespace {
@@ -42,14 +44,14 @@ bool ParseInt(const uint8_t** data, size_t* remaining_size, T* value) {
 // AudioDecoder::DecodeRedundant is used, depending on the value of
 // `decode_type`.
 void FuzzAudioDecoder(DecoderFunctionType decode_type,
-                      const uint8_t* data,
-                      size_t size,
+                      FuzzDataHelper& fuzz_data,
                       AudioDecoder* decoder,
                       int sample_rate_hz,
                       size_t max_decoded_bytes,
                       int16_t* decoded) {
-  const uint8_t* data_ptr = data;
-  size_t remaining_size = size;
+  std::span<const uint8_t> data = fuzz_data.ReadRemaining();
+  const uint8_t* data_ptr = data.data();
+  size_t remaining_size = data.size();
   size_t packet_len;
   constexpr size_t kMaxNumFuzzedPackets = 200;
   for (size_t num_packets = 0; num_packets < kMaxNumFuzzedPackets;

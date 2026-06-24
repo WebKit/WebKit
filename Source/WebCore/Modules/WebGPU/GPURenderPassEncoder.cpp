@@ -169,7 +169,7 @@ void GPURenderPassEncoder::executeBundles(Vector<Ref<GPURenderBundle>>&& bundles
 void GPURenderPassEncoder::end()
 {
     protect(backing())->end();
-    if (RefPtr device = m_device.get()) {
+    if (RefPtr device = m_device) {
         m_overrideLabel = label();
         m_backing = device->invalidRenderPassEncoder();
     }

@@ -23,25 +23,28 @@ gcc_copts = [
     # This list of warnings should match those in the top-level CMakeLists.txt.
     "-Wall",
     "-Wformat=2",
-    "-Wsign-compare",
     "-Wmissing-field-initializers",
-    "-Wwrite-strings",
     "-Wshadow",
+    "-Wsign-compare",
+    "-Wtype-limits",
+    "-Wvla",
+    "-Wwrite-strings",
     "-fno-common",
     "-fno-strict-aliasing",
 ]
 
-gcc_copts_cxx = [
+gcc_cxxopts = [
     "-Wmissing-declarations",
+    "-Wnon-virtual-dtor",
 ]
 
-gcc_copts_c = [
+gcc_conlyopts = [
     "-Wmissing-prototypes",
     "-Wold-style-definition",
     "-Wstrict-prototypes",
 ]
 
-boringssl_copts_common = select({
+boringssl_copts = select({
     # This condition and the asm_srcs_used one below must be kept in sync.
     "@platforms//os:windows": ["-DOPENSSL_NO_ASM"],
     "//conditions:default": [],
@@ -69,18 +72,18 @@ boringssl_copts_common = select({
 # We do not specify the C++ version here because Bazel expects C++ version
 # to come from the top-level toolchain. The concern is that different C++
 # versions may cause ABIs, notably Abseil's, to change.
-boringssl_copts_cxx = boringssl_copts_common + select({
+boringssl_cxxopts = select({
     "@platforms//os:windows": [],
-    "//conditions:default": gcc_copts_cxx,
+    "//conditions:default": gcc_cxxopts,
 })
 
 # We specify the C version because Bazel projects often do not remember to
 # specify the C version. We do not expect ABIs to vary by C versions, at least
 # for our code or the headers we include, so configure the C version inside the
 # library. If Bazel's C/C++ version handling improves, we may reconsider this.
-boringssl_copts_c = boringssl_copts_common + select({
+boringssl_conlyopts = select({
     "@platforms//os:windows": ["/std:c11"],
-    "//conditions:default": ["-std=c11"] + gcc_copts_c,
+    "//conditions:default": ["-std=c11"] + gcc_conlyopts,
 })
 
 def linkstatic_kwargs(linkstatic):
@@ -92,59 +95,6 @@ def linkstatic_kwargs(linkstatic):
     if linkstatic != None:
         kwargs["linkstatic"] = linkstatic
     return kwargs
-
-def handle_mixed_c_cxx(
-        name,
-        copts,
-        deps,
-        internal_hdrs,
-        includes,
-        linkopts,
-        linkstatic,
-        srcs,
-        testonly,
-        alwayslink):
-    """
-    Works around https://github.com/bazelbuild/bazel/issues/22041. Determines
-    whether a target contains C, C++, or both. If the target is multi-language,
-    the C sources are split into a separate library. Returns a tuple of updated
-    (copts, deps, srcs) to apply.
-    """
-    has_c, has_cxx = False, False
-    for src in srcs:
-        if src.endswith(".c"):
-            has_c = True
-        elif src.endswith(".cc"):
-            has_cxx = True
-
-    # If a target has both C and C++, we need to split it in two.
-    if has_c and has_cxx:
-        # Pull the C++ files out.
-        srcs_cxx = [src for src in srcs if src.endswith(".cc") or src.endswith(".h")]
-        name_cxx = name + "_cxx"
-        cc_library(
-            name = name_cxx,
-            srcs = srcs_cxx + internal_hdrs,
-            copts = copts + boringssl_copts_cxx,
-            includes = includes,
-            linkopts = linkopts,
-            deps = deps,
-            testonly = testonly,
-            alwayslink = alwayslink,
-            **linkstatic_kwargs(linkstatic),
-        )
-
-        # Build the remainder as a C-only target.
-        deps = deps + [":" + name_cxx]
-        srcs = [src for src in srcs if not src.endswith(".cc")]
-        has_cxx = False
-
-    if has_c:
-        copts = copts + boringssl_copts_c
-    else:
-        copts = copts + boringssl_copts_cxx
-
-    return copts, deps, srcs
 
 def handle_asm_srcs(asm_srcs):
     if not asm_srcs:
@@ -182,6 +132,7 @@ def bssl_cc_library(
         asm_srcs = [],
         copts = [],
         deps = [],
+        implementation_deps = [],
         hdrs = [],
         includes = [],
         internal_hdrs = [],
@@ -191,26 +142,6 @@ def bssl_cc_library(
         testonly = False,
         alwayslink = False,
         visibility = []):
-    copts, deps, srcs = handle_mixed_c_cxx(
-        name = name,
-        copts = copts,
-        deps = deps,
-        internal_hdrs = hdrs + internal_hdrs,
-        includes = includes,
-        linkopts = linkopts,
-        # Ideally we would set linkstatic = True to statically link the helper
-        # library into main cc_library. But Bazel interprets linkstatic such
-        # that, if A(test, linkshared) -> B(library) -> C(library, linkstatic),
-        # C will be statically linked into A, not B. This is probably to avoid
-        # diamond dependency problems but means linkstatic does not help us make
-        # this function transparent. Instead, just pass along the linkstatic
-        # nature of the main library.
-        linkstatic = linkstatic,
-        srcs = srcs,
-        testonly = testonly,
-        alwayslink = alwayslink,
-    )
-
     # BoringSSL's notion of internal headers are slightly different from
     # Bazel's. libcrypto's internal headers may be used by libssl, but they
     # cannot be used outside the library. To express this, we make separate
@@ -223,10 +154,13 @@ def bssl_cc_library(
         name = name_internal,
         srcs = srcs + handle_asm_srcs(asm_srcs),
         hdrs = hdrs + internal_hdrs,
-        copts = copts,
+        copts = copts + boringssl_copts,
+        conlyopts = boringssl_conlyopts,
+        cxxopts = boringssl_cxxopts,
         includes = includes,
         linkopts = linkopts,
         deps = deps,
+        implementation_deps = implementation_deps,
         testonly = testonly,
         alwayslink = alwayslink,
         **linkstatic_kwargs(linkstatic)
@@ -236,7 +170,13 @@ def bssl_cc_library(
         cc_library(
             name = name,
             hdrs = hdrs,
-            deps = [":" + name_internal],
+            # Depend on the internal target via implementation_deps to avoid
+            # re-exporting internal_hdrs.
+            implementation_deps = [":" + name_internal],
+            # Although picked up transitively, re-specify deps and includes, so
+            # that targets depending on the public target also pick them up.
+            deps = deps,
+            includes = includes,
             visibility = visibility,
         )
 
@@ -251,28 +191,12 @@ def bssl_cc_binary(
         deps = [],
         testonly = False,
         visibility = []):
-    copts, deps, srcs = handle_mixed_c_cxx(
-        name = name,
-        copts = copts,
-        deps = deps,
-        internal_hdrs = [],
-        includes = includes,
-        # If it weren't for https://github.com/bazelbuild/bazel/issues/22041,
-        # the split library be part of `srcs` and linked statically. Set
-        # linkstatic to match.
-        linkstatic = True,
-        linkopts = linkopts,
-        srcs = srcs,
-        testonly = testonly,
-        # TODO(davidben): Should this be alwayslink = True? How does Bazel treat
-        # the real cc_binary.srcs?
-        alwayslink = False,
-    )
-
     cc_binary(
         name = name,
         srcs = srcs + handle_asm_srcs(asm_srcs),
-        copts = copts,
+        copts = copts + boringssl_copts,
+        conlyopts = boringssl_conlyopts,
+        cxxopts = boringssl_cxxopts,
         includes = includes,
         linkopts = linkopts,
         deps = deps,
@@ -293,30 +217,14 @@ def bssl_cc_test(
         linkstatic = None,
         deps = [],
         shard_count = None):
-    copts, deps, srcs = handle_mixed_c_cxx(
-        name = name,
-        copts = copts,
-        deps = deps,
-        internal_hdrs = [],
-        includes = includes,
-        # If it weren't for https://github.com/bazelbuild/bazel/issues/22041,
-        # the split library be part of `srcs` and linked statically. Set
-        # linkstatic to match.
-        linkstatic = True,
-        linkopts = linkopts,
-        srcs = srcs,
-        testonly = True,
-        # If any sources get extracted, they must always be linked, otherwise
-        # tests will be dropped.
-        alwayslink = True,
-    )
-
     cc_test(
         name = name,
         data = data,
         deps = deps,
         srcs = srcs + handle_asm_srcs(asm_srcs),
-        copts = copts,
+        copts = copts + boringssl_copts,
+        conlyopts = boringssl_conlyopts,
+        cxxopts = boringssl_cxxopts,
         includes = includes,
         linkopts = linkopts,
         shard_count = shard_count,

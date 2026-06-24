@@ -13,11 +13,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
@@ -51,16 +51,16 @@ class MockChannelSend {
               (AudioFrameType frameType,
                uint8_t payloadType,
                uint32_t rtp_timestamp,
-               ArrayView<const uint8_t> payload,
+               std::span<const uint8_t> payload,
                int64_t absolute_capture_timestamp_ms,
-               ArrayView<const uint32_t> csrcs,
+               std::span<const uint32_t> csrcs,
                std::optional<uint8_t> audio_level_dbov));
 
   ChannelSendFrameTransformerDelegate::SendFrameCallback callback() {
     return [this](AudioFrameType frameType, uint8_t payloadType,
-                  uint32_t rtp_timestamp, ArrayView<const uint8_t> payload,
+                  uint32_t rtp_timestamp, std::span<const uint8_t> payload,
                   int64_t absolute_capture_timestamp_ms,
-                  ArrayView<const uint32_t> csrcs,
+                  std::span<const uint32_t> csrcs,
                   std::optional<uint8_t> audio_level_dbov) {
       return SendFrame(frameType, payloadType, rtp_timestamp, payload,
                        absolute_capture_timestamp_ms, csrcs, audio_level_dbov);
@@ -73,7 +73,7 @@ std::unique_ptr<TransformableAudioFrameInterface> CreateMockReceiverFrame(
     std::optional<uint8_t> audio_level_dbov) {
   std::unique_ptr<MockTransformableAudioFrame> mock_frame =
       std::make_unique<NiceMock<MockTransformableAudioFrame>>();
-  ArrayView<const uint8_t> payload(mock_data);
+  std::span<const uint8_t> payload(mock_data);
   ON_CALL(*mock_frame, GetData).WillByDefault(Return(payload));
   ON_CALL(*mock_frame, GetPayloadType).WillByDefault(Return(0));
   ON_CALL(*mock_frame, GetDirection)

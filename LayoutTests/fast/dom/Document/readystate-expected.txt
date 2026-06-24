@@ -4,7 +4,6 @@ PASS document.onreadystatechange is null
 PASS document.readyState is "loading"
 PASS subdocument.readyState is "loading"
 PASS subdocument.readyState is "complete"
-PASS htmlDocument.readyState is "loading"
 PASS dynamicIframe.contentDocument.readyState is "complete"
 PASS dynamicIframe.contentDocument.onreadystatechange is null
 PASS dynamicIframe.contentDocument.readyState is "loading"

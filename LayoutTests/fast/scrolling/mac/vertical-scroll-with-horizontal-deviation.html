@@ -1,0 +1,109 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 200%;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var initialScrollY;
+        var sawHorizontalRubberband = false;
+        var sawHorizontalWheelEvent = false;
+        var scrollYAtLastHorizontalWheelEvent = 0;
+        var scrolledVerticallyAfterHorizontalDeltas = false;
+
+        async function resetScrollPositions()
+        {
+            // Sit at the left edge horizontally (so a sideways push rubberbands) and mid-way vertically
+            // (so the vertical scroll itself doesn't rubberband).
+            window.scrollTo(0, 300);
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+
+            initialScrollY = window.scrollY;
+            sawHorizontalRubberband = false;
+            sawHorizontalWheelEvent = false;
+            scrolledVerticallyAfterHorizontalDeltas = false;
+        }
+
+        async function doMouseWheelScroll()
+        {
+            // A predominantly-vertical scroll that includes a short burst of horizontal-dominant events
+            // pushing against the pinned left edge, as the wheel-event delta filter sometimes emits
+            // during a near-vertical trackpad scroll. viewX is toggled to defeat event coalescing so
+            // each event keeps its own 16ms timestamp.
+            const wheelEventSequence = {
+                "events" : [
+                    { type : "wheel", viewX : 100, viewY : 100, deltaY : -10, phase : "began" },
+                    { type : "wheel", viewX : 101, deltaY : -40, phase : "changed" },
+                    { type : "wheel", viewX : 100, deltaY : -40, phase : "changed" },
+                    { type : "wheel", viewX : 101, deltaY : -40, phase : "changed" },
+                    // Horizontal burst against the left edge.
+                    { type : "wheel", viewX : 100, deltaX : 12, phase : "changed" },
+                    { type : "wheel", viewX : 101, deltaX : 12, phase : "changed" },
+                    // Back to vertical.
+                    { type : "wheel", viewX : 100, deltaY : -40, phase : "changed" },
+                    { type : "wheel", viewX : 101, deltaY : -40, phase : "changed" },
+                    { type : "wheel", viewX : 100, deltaY : -40, phase : "changed" },
+                    { type : "wheel", phase : "ended" }
+                ]
+            };
+
+            await UIHelper.sendEventStream(wheelEventSequence);
+            await UIHelper.waitForEvent(window, 'scrollend');
+        }
+
+        async function testVerticalScrollWithHorizontalDeviation()
+        {
+            await resetScrollPositions();
+
+            await doMouseWheelScroll();
+
+            // The horizontal burst should not have caused horizontal rubberbanding.
+            shouldBeFalse('sawHorizontalRubberband');
+            // Vertical scrolling should have happened...
+            shouldBeTrue('window.scrollY != initialScrollY');
+            // ...and should have continued after the horizontal deltas (the burst must not have halted it).
+            shouldBeTrue('scrolledVerticallyAfterHorizontalDeltas');
+        }
+
+        async function scrollTest()
+        {
+            debug('Tests that a horizontal deviation during a vertical scroll does not cause horizontal rubberbanding or halt vertical scrolling');
+
+            await testVerticalScrollWithHorizontalDeviation();
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            // Detect when the horizontal-delta events arrive, and remember the vertical scroll offset then.
+            window.addEventListener('wheel', (event) => {
+                if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+                    sawHorizontalWheelEvent = true;
+                    scrollYAtLastHorizontalWheelEvent = window.scrollY;
+                }
+            }, { passive: true });
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollX < 0)
+                    sawHorizontalRubberband = true;
+                // Any vertical movement seen after the horizontal-delta events means vertical scrolling
+                // was not halted by the deviation.
+                if (sawHorizontalWheelEvent && window.scrollY != scrollYAtLastHorizontalWheelEvent)
+                    scrolledVerticallyAfterHorizontalDeltas = true;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+</body>
+</html>

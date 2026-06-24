@@ -36,7 +36,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/text/StringBuilder.h>
 
-static bool didReceiveMessage;
+static bool permissionsDidReceiveMessage;
 static bool didReceiveQueryPermission;
 static WKPermissionDecision queryPermissionDelegateResult;
 static RetainPtr<WKScriptMessage> scriptMessage;
@@ -58,7 +58,7 @@ enum class GeolocationPermissionState {
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     scriptMessage = message;
-    didReceiveMessage = true;
+    permissionsDidReceiveMessage = true;
 }
 @end
 
@@ -112,7 +112,7 @@ TEST(PermissionsAPI, DataURL)
     [webView setUIDelegate:delegate.get()];
 
     queryPermissionDelegateResult = WKPermissionDecisionDeny;
-    didReceiveMessage = false;
+    permissionsDidReceiveMessage = false;
     didReceiveQueryPermission = false;
 
     char script[] = "<script>\
@@ -131,7 +131,7 @@ TEST(PermissionsAPI, DataURL)
     RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:buffer.createNSString().get()]).get()]);
     [webView loadRequest:request.get()];
 
-    TestWebKitAPI::Util::run(&didReceiveMessage);
+    TestWebKitAPI::Util::run(&permissionsDidReceiveMessage);
     EXPECT_STREQ(((NSString *)[scriptMessage body]).UTF8String, "prompt");
 
     EXPECT_FALSE(didReceiveQueryPermission);
@@ -148,7 +148,7 @@ TEST(PermissionsAPI, OnChange)
     [webView setUIDelegate:delegate.get()];
 
     queryPermissionDelegateResult = WKPermissionDecisionGrant;
-    didReceiveMessage = false;
+    permissionsDidReceiveMessage = false;
     didReceiveQueryPermission = false;
 
     NSString *script = @"<script>"
@@ -164,17 +164,17 @@ TEST(PermissionsAPI, OnChange)
 
     [webView synchronouslyLoadHTMLString:script baseURL:[NSURL URLWithString:@"https://example.com/"]];
 
-    TestWebKitAPI::Util::run(&didReceiveMessage);
+    TestWebKitAPI::Util::run(&permissionsDidReceiveMessage);
     EXPECT_STREQ(((NSString *)[scriptMessage body]).UTF8String, "granted");
 
-    didReceiveMessage = false;
+    permissionsDidReceiveMessage = false;
     queryPermissionDelegateResult = WKPermissionDecisionPrompt;
 
     auto originString = adoptWK(WKStringCreateWithUTF8CString("https://example.com/"));
     auto origin = adoptWK(WKSecurityOriginCreateFromString(originString.get()));
     [WKWebView _permissionChanged:@"geolocation" forOrigin:(__bridge WKSecurityOrigin *)origin.get()];
 
-    TestWebKitAPI::Util::run(&didReceiveMessage);
+    TestWebKitAPI::Util::run(&permissionsDidReceiveMessage);
     EXPECT_STREQ(((NSString *)[scriptMessage body]).UTF8String, "prompt");
 }
 
@@ -217,7 +217,7 @@ static void testPermissionsAPIForGeolocation(GeolocationPermissionState geolocat
         break;
     }
 
-    didReceiveMessage = false;
+    permissionsDidReceiveMessage = false;
     didReceiveQueryPermission = false;
 
     NSString *scriptWithGeolocationRequestedSincePageLoad = @"<script>"
@@ -251,7 +251,7 @@ static void testPermissionsAPIForGeolocation(GeolocationPermissionState geolocat
     else
         [webView synchronouslyLoadHTMLString:scriptWithoutGeolocationRequestedSincePageLoad baseURL:[NSURL URLWithString:@"https://example.com/"]];
 
-    TestWebKitAPI::Util::run(&didReceiveMessage);
+    TestWebKitAPI::Util::run(&permissionsDidReceiveMessage);
     EXPECT_STREQ(((NSString *)[scriptMessage body]).UTF8String, expectedResult.utf8().data());
 }
 

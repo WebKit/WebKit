@@ -11,7 +11,7 @@
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_free_error"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_sandbox_init"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

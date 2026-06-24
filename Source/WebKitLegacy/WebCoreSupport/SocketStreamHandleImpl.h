@@ -97,7 +97,6 @@ private:
     RetainPtr<CFStringRef> m_proxyHost;
     RetainPtr<CFNumberRef> m_proxyPort;
 
-    RetainPtr<CFHTTPMessageRef> m_proxyResponseMessage;
     bool m_sentStoredCredentials;
     bool m_shouldAcceptInsecureCertificates;
     RetainPtr<CFReadStreamRef> m_readStream;

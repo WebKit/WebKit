@@ -9,5 +9,8 @@ license = "Apache-2.0"
 # https://github.com/rust-lang/cargo/issues/3544
 links = "bssl"
 
+[dependencies.bssl-macros]
+path = "../bssl-macros"
+
 [lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(unsupported_inline_wrappers)', 'cfg(bindgen_rs_file)'] }
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(bindgen_rs_file)'] }

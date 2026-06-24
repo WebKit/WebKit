@@ -28,6 +28,7 @@
 #include "DebuggerParseData.h"
 #include "JSCJSValueInlines.h"
 #include "VM.h"
+#include "VariableEnvironmentInlines.h"
 #include <utility>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
@@ -127,19 +128,19 @@ void Parser<LexerType>::logError(bool shouldPrintToken, Args&&... args)
 template <typename LexerType>
 Parser<LexerType>::Parser(VM& vm, const SourceCode& source, ImplementationVisibility implementationVisibility, JSParserBuiltinMode builtinMode, LexicallyScopedFeatures lexicallyScopedFeatures, JSParserScriptMode scriptMode, SourceParseMode parseMode, FunctionMode functionMode, SuperBinding superBinding, ConstructorKind constructorKind, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType, DebuggerParseData* debuggerParseData, bool isInsideOrdinaryFunction)
     : m_vm(vm)
+    , m_source(&source)
+    , m_debuggerParseData(debuggerParseData)
+    , m_statementDepth(0)
+    , m_functionMode(functionMode)
     , m_allowsIn(true)
     , m_immediateParentAllowsFunctionDeclarationInStatement(false)
-    , m_parseMode(parseMode)
-    , m_statementDepth(0)
-    , m_scriptMode(scriptMode)
-    , m_source(&source)
-    , m_functionMode(functionMode)
-    , m_superBinding(superBinding)
     , m_implementationVisibility(implementationVisibility)
-    , m_parsingBuiltin(builtinMode == JSParserBuiltinMode::Builtin)
+    , m_parseMode(parseMode)
     , m_isInsideOrdinaryFunction(isInsideOrdinaryFunction)
+    , m_parsingBuiltin(builtinMode == JSParserBuiltinMode::Builtin)
+    , m_scriptMode(scriptMode)
+    , m_superBinding(superBinding)
     , m_hasStackOverflow(false)
-    , m_debuggerParseData(debuggerParseData)
 {
     m_lexer = makeUnique<LexerType>(vm, builtinMode, scriptMode);
     m_lexer->setCode(source, &m_parserArena);
@@ -407,9 +408,11 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
     TreeSourceElements sourceElements = context.createSourceElements();
     const Identifier* directive = nullptr;
     unsigned directiveLiteralLength = 0;
-    auto savePoint = createSavePoint(context);
+    std::optional<SavePoint> savePoint;
     bool shouldCheckForUseStrict = mode == CheckForStrictMode;
-    
+    if (shouldCheckForUseStrict)
+        savePoint.emplace(createSavePoint(context));
+
     while (TreeStatement statement = parseStatementListItem(context, directive, &directiveLiteralLength)) {
         if (shouldCheckForUseStrict) {
             if (directive) {
@@ -428,7 +431,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
                         semanticFailIfFalse(isValidStrictMode(), "Invalid parameters or function name in strict mode");
                     }
                     // Since strict mode is changed, restoring lexer state by calling next() may cause errors.
-                    restoreSavePoint(context, savePoint);
+                    restoreSavePoint(context, *savePoint);
                     propagateError();
                     continue;
                 }
@@ -3440,7 +3443,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseClassFie
     // Clear errors from parsing anything before the initializer expressions.
     m_lexer->clearErrorCodeAndBuffers();
 
-    for (auto definition : classElementDefinitions) {
+    for (const auto& definition : classElementDefinitions) {
         auto position = definition.position;
         bool hasLineTerminatorBeforeToken = false;
 
@@ -4494,7 +4497,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseConditionalE
     JSTokenLocation location(tokenLocation());
     TreeExpression cond = parseBinaryExpression(context);
     failIfFalse(cond, "Cannot parse expression");
-    if (!match(QUESTION))
+    if (!match(QUESTION)) [[likely]]
         return cond;
     m_parserState.nonTrivialExpressionCount++;
     m_parserState.nonLHSCount++;
@@ -4561,7 +4564,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
 
         context.appendBinaryExpressionInfo(operandStackDepth, current, exprStart, lastTokenEndPosition(), lastTokenEndPosition(), initialAssignments != m_parserState.assignmentCount);
         int precedence = isBinaryOperator(m_token.m_type);
-        if (!precedence)
+        if (!precedence) [[likely]]
             break;
 
         // 12.6 https://tc39.github.io/ecma262/#sec-exp-operator

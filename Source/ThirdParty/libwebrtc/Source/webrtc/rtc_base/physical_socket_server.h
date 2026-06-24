@@ -106,20 +106,16 @@ class RTC_EXPORT PhysicalSocketServer : public SocketServer {
  private:
   // The number of events to process with one call to "epoll_wait".
   static constexpr size_t kNumEpollEvents = 128;
-  // A local historical definition of "foreverness", in milliseconds.
-  static constexpr int kForeverMs = -1;
-
-  static int ToCmsWait(TimeDelta max_wait_duration);
 
 #if defined(WEBRTC_POSIX)
-  bool WaitSelect(int cmsWait, bool process_io);
+  bool WaitSelect(TimeDelta timeout, bool process_io);
 
 #if defined(WEBRTC_USE_EPOLL)
   void AddEpoll(Dispatcher* dispatcher, uint64_t key);
   void RemoveEpoll(Dispatcher* dispatcher);
   void UpdateEpoll(Dispatcher* dispatcher, uint64_t key);
-  bool WaitEpoll(int cmsWait);
-  bool WaitPollOneDispatcher(int cmsWait, Dispatcher* dispatcher);
+  bool WaitEpoll(TimeDelta timeout);
+  bool WaitPollOneDispatcher(TimeDelta timeout, Dispatcher* dispatcher);
 
   // This array is accessed in isolation by a thread calling into Wait().
   // It's useless to use a SequenceChecker to guard it because a socket
@@ -129,7 +125,7 @@ class RTC_EXPORT PhysicalSocketServer : public SocketServer {
   const int epoll_fd_ = INVALID_SOCKET;
 
 #elif defined(WEBRTC_USE_POLL)
-  bool WaitPoll(int cmsWait, bool process_io);
+  bool WaitPoll(TimeDelta timeout, bool process_io);
 
 #endif  // WEBRTC_USE_EPOLL, WEBRTC_USE_POLL
 #endif  // WEBRTC_POSIX
@@ -249,7 +245,8 @@ class PhysicalSocket : public Socket {
   ConnState state_;
   std::unique_ptr<AsyncDnsResolverInterface> resolver_;
   uint8_t dscp_ = 0;  // 6bit.
-  uint8_t ecn_ = 0;   // 2bits.
+  uint8_t ecn_send_options_ = 0;  // 2bits.
+  bool read_ecn_ = false;
 
 #if RTC_DCHECK_IS_ON
   std::string dbg_addr_;

@@ -24,9 +24,9 @@
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_unittest.h"
 #include "rtc_base/test_utils.h"
-#include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 
 #define MAYBE_SKIP_IPV4                        \
@@ -130,7 +130,7 @@ class PhysicalSocketTest : public SocketTest {
   void WritableAfterPartialWrite(const IPAddress& loopback);
 
   FakePhysicalSocketServer server_;
-  AutoSocketServerThread thread_;
+  test::RunLoop thread_;
   bool fail_accept_;
   int max_send_size_;
 };

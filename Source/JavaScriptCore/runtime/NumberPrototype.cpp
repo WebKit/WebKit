@@ -401,15 +401,16 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
 
     JSValue arg = callFrame->argument(0);
     // Perform ToInteger on the argument before remaining steps.
-    int decimalPlaces = static_cast<int>(arg.toIntegerOrInfinity(globalObject));
+    double decimalPlacesDouble = arg.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
         return JSValue::encode(jsNontrivialString(vm, String::number(x)));
 
-    if (decimalPlaces < 0 || decimalPlaces > 100)
+    if (decimalPlacesDouble < 0 || decimalPlacesDouble > 100)
         return throwVMRangeError(globalObject, scope, "toExponential() argument must be between 0 and 100"_s);
+    int decimalPlaces = static_cast<int>(decimalPlacesDouble);
 
     // Round if the argument is not undefined, always format as exponential.
     NumberToStringBuffer buffer;
@@ -437,10 +438,11 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToFixed, (JSGlobalObject* globalObject, 
     if (!toThisNumber(callFrame->thisValue(), x))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
 
-    int decimalPlaces = static_cast<int>(callFrame->argument(0).toIntegerOrInfinity(globalObject));
+    double decimalPlacesDouble = callFrame->argument(0).toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    if (decimalPlaces < 0 || decimalPlaces > 100)
+    if (decimalPlacesDouble < 0 || decimalPlacesDouble > 100)
         return throwVMRangeError(globalObject, scope, "toFixed() argument must be between 0 and 100"_s);
+    int decimalPlaces = static_cast<int>(decimalPlacesDouble);
 
     // 15.7.4.5.7 states "If x >= 10^21, then let m = ToString(x)"
     // This also covers Ininity, and structure the check so that NaN
@@ -477,15 +479,16 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObje
         return JSValue::encode(jsString(vm, String::number(x)));
 
     // Perform ToInteger on the argument before remaining steps.
-    int significantFigures = static_cast<int>(arg.toIntegerOrInfinity(globalObject));
+    double significantFiguresDouble = arg.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
         return JSValue::encode(jsNontrivialString(vm, String::number(x)));
 
-    if (significantFigures < 1 || significantFigures > 100)
+    if (significantFiguresDouble < 1 || significantFiguresDouble > 100)
         return throwVMRangeError(globalObject, scope, "toPrecision() argument must be between 1 and 100"_s);
+    int significantFigures = static_cast<int>(significantFiguresDouble);
 
     return JSValue::encode(jsString(vm, String::numberToStringFixedPrecision(x, significantFigures, TrailingZerosPolicy::Keep)));
 }

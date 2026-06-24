@@ -42,7 +42,7 @@ struct FontOpentypeTag {
 // MARK: - Serialization
 
 template<> struct Serialize<FontOpentypeTag> {
-    void operator()(StringBuilder& builder, const CSS::SerializationContext&, const RenderStyle&, const FontOpentypeTag& tag)
+    void operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle&, const FontOpentypeTag& tag)
     {
         builder.append('"', tag.value[0], tag.value[1], tag.value[2], tag.value[3], '"');
     }

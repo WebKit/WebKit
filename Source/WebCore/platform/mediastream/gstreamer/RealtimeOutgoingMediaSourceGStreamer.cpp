@@ -386,20 +386,52 @@ void RealtimeOutgoingMediaSourceGStreamer::replaceTrack(const RefPtr<MediaStream
     if (newTrack)
         trackPrivate = newTrack->privateTrack();
 
-    if (m_outgoingSource)
+    if (m_outgoingSource) {
         webkitMediaStreamSrcReplaceTrack(WEBKIT_MEDIA_STREAM_SRC_CAST(m_outgoingSource.get()), RefPtr(trackPrivate));
-    else {
-        if (trackPrivate) {
-            m_outgoingSource = webkitMediaStreamSrcNew();
-            gst_bin_add(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
-            webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC_CAST(m_outgoingSource.get()), trackPrivate.get());
+        auto srcPad = outgoingSourcePad();
+        if (!gst_pad_is_linked(srcPad.get())) {
             gst_element_link(m_outgoingSource.get(), m_inputSelector.get());
             gst_element_sync_state_with_parent(m_outgoingSource.get());
         }
-        auto srcPad = outgoingSourcePad();
-        auto activePad = adoptGRef(gst_pad_get_peer(srcPad.get()));
-        g_object_set(m_inputSelector.get(), "active-pad", activePad.get(), nullptr);
+    } else if (trackPrivate) {
+        m_outgoingSource = webkitMediaStreamSrcNew();
+        gst_bin_add(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
+        webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC_CAST(m_outgoingSource.get()), trackPrivate.get());
+        gst_element_link(m_outgoingSource.get(), m_inputSelector.get());
+        gst_element_sync_state_with_parent(m_outgoingSource.get());
     }
+
+    auto srcPad = outgoingSourcePad();
+    auto activePad = adoptGRef(gst_pad_get_peer(srcPad.get()));
+    RELEASE_ASSERT(activePad);
+    g_object_set(m_inputSelector.get(), "active-pad", activePad.get(), nullptr);
+
+    if (m_transceiver) {
+        GRefPtr<GstCaps> caps;
+        g_object_get(m_transceiver.get(), "codec-preferences", &caps.outPtr(), nullptr);
+
+        m_pendingTrackId = trackPrivate ? trackPrivate->id() : emptyString();
+        auto newCaps = adoptGRef(gst_caps_make_writable(caps.leakRef()));
+        gst_caps_map_in_place(newCaps.get(), [](auto*, auto* structure, gpointer userData) -> gboolean {
+            if (!gst_structure_has_field_typed(structure, "a-msid", G_TYPE_STRING)) [[unlikely]]
+                return TRUE;
+
+            auto self = static_cast<RealtimeOutgoingMediaSourceGStreamer*>(userData);
+            if (self->m_pendingTrackId.isEmpty())
+                gst_structure_remove_field(structure, "a-msid");
+            else {
+                auto newMsid = makeString(self->m_mediaStreamId, ' ', self->m_pendingTrackId);
+                gst_structure_set(structure, "a-msid", G_TYPE_STRING, newMsid.utf8().data(), nullptr);
+            }
+
+            return TRUE;
+        }, this);
+        g_object_freeze_notify(G_OBJECT(m_transceiver.get()));
+        g_object_set(m_transceiver.get(), "codec-preferences", newCaps.get(), nullptr);
+        m_pendingTrackId = emptyString();
+        g_object_thaw_notify(G_OBJECT(m_transceiver.get()));
+    }
+
     if (!newTrack) {
         m_isStopped = true;
         m_track = nullptr;
@@ -407,6 +439,13 @@ void RealtimeOutgoingMediaSourceGStreamer::replaceTrack(const RefPtr<MediaStream
     }
 
     m_track = WTF::move(trackPrivate);
+
+    const auto& webrtcSinkPad = pad();
+    if (!webrtcSinkPad)
+        return;
+    if (!gst_pad_is_linked(webrtcSinkPad.get()))
+        return;
+
     start();
 }
 

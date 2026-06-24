@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/g722/audio_encoder_g722_config.h"
 #include "api/units/time_delta.h"
@@ -47,7 +47,7 @@ class AudioEncoderG722Impl final : public AudioEncoder {
 
  protected:
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,
-                         ArrayView<const int16_t> audio,
+                         std::span<const int16_t> audio,
                          Buffer* encoded) override;
 
  private:

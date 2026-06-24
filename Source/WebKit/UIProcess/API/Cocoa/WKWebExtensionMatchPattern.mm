@@ -235,6 +235,9 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> NODELETE matchPatter
     if (options & WKWebExtensionMatchPatternOptionsMatchBidirectionally)
         result.add(WebKit::WebExtensionMatchPattern::Options::MatchBidirectionally);
 
+    if (options & WKWebExtensionMatchPatternOptionsAllowFileScheme)
+        result.add(WebKit::WebExtensionMatchPattern::Options::AllowFileScheme);
+
     return result;
 }
 

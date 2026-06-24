@@ -18,11 +18,11 @@
 #include <openssl/base.h>  // IWYU pragma: export
 #include <openssl/sha.h>
 
-// Upstream OpenSSL defines |OPENSSL_malloc|, etc., in crypto.h rather than
+// Upstream OpenSSL defines `OPENSSL_malloc`, etc., in crypto.h rather than
 // mem.h.
 #include <openssl/mem.h>
 
-// Upstream OpenSSL defines |CRYPTO_LOCK|, etc., in crypto.h rather than
+// Upstream OpenSSL defines `CRYPTO_LOCK`, etc., in crypto.h rather than
 // thread.h.
 #include <openssl/thread.h>
 
@@ -111,7 +111,7 @@ enum fips_counter_t {
 };
 
 // FIPS_read_counter returns a counter of the number of times the specific
-// function denoted by |counter| has been used. This always returns zero unless
+// function denoted by `counter` has been used. This always returns zero unless
 // BoringSSL was built with BORINGSSL_FIPS_COUNTERS defined.
 OPENSSL_EXPORT size_t FIPS_read_counter(enum fips_counter_t counter);
 
@@ -129,7 +129,7 @@ OPENSSL_EXPORT size_t FIPS_read_counter(enum fips_counter_t counter);
 #define OPENSSL_DIR 4
 
 // OpenSSL_version is a compatibility function that returns the string
-// "BoringSSL" if |which| is |OPENSSL_VERSION| and placeholder strings
+// "BoringSSL" if `which` is `OPENSSL_VERSION` and placeholder strings
 // otherwise.
 OPENSSL_EXPORT const char *OpenSSL_version(int which);
 
@@ -139,7 +139,7 @@ OPENSSL_EXPORT const char *OpenSSL_version(int which);
 #define SSLEAY_PLATFORM OPENSSL_PLATFORM
 #define SSLEAY_DIR OPENSSL_DIR
 
-// SSLeay_version calls |OpenSSL_version|.
+// SSLeay_version calls `OpenSSL_version`.
 OPENSSL_EXPORT const char *SSLeay_version(int which);
 
 // SSLeay is a compatibility function that returns OPENSSL_VERSION_NUMBER from
@@ -196,8 +196,8 @@ OPENSSL_EXPORT int OPENSSL_init_crypto(uint64_t opts,
 // OPENSSL_cleanup does nothing.
 OPENSSL_EXPORT void OPENSSL_cleanup(void);
 
-// FIPS_mode_set returns one if |on| matches whether BoringSSL was built with
-// |BORINGSSL_FIPS| and zero otherwise.
+// FIPS_mode_set returns one if `on` matches whether BoringSSL was built with
+// `BORINGSSL_FIPS` and zero otherwise.
 OPENSSL_EXPORT int FIPS_mode_set(int on);
 
 // FIPS_module_name returns the name of the FIPS module.
@@ -210,10 +210,10 @@ OPENSSL_EXPORT const uint8_t *FIPS_module_hash(void);
 // isn't exactly at a verified version. The version, expressed in base 10, will
 // be a date in the form yyyymmdd.
 //
-// (This format exceeds a |uint32_t| in the year 4294.)
+// (This format exceeds a `uint32_t` in the year 4294.)
 OPENSSL_EXPORT uint32_t FIPS_version(void);
 
-// FIPS_query_algorithm_status returns one if |algorithm| is FIPS validated in
+// FIPS_query_algorithm_status returns one if `algorithm` is FIPS validated in
 // the current BoringSSL and zero otherwise.
 OPENSSL_EXPORT int FIPS_query_algorithm_status(const char *algorithm);
 

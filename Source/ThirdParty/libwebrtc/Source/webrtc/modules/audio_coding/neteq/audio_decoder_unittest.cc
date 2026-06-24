@@ -15,16 +15,15 @@
 #include <cstdlib>
 #include <memory>
 #include <optional>
+#include <span>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/g722/audio_encoder_g722_config.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
-#include "api/environment/environment_factory.h"
 #include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
 #include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
 #include "modules/audio_coding/codecs/g722/audio_decoder_g722.h"
@@ -36,6 +35,7 @@
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -147,7 +147,7 @@ class AudioDecoderTest : public ::testing::Test {
 
       encoded_info = audio_encoder_->Encode(
           0,
-          ArrayView<const int16_t>(interleaved_input.get(),
+          std::span<const int16_t>(interleaved_input.get(),
                                    audio_encoder_->NumChannels() *
                                        audio_encoder_->SampleRateHz() / 100),
           output);
@@ -191,7 +191,7 @@ class AudioDecoderTest : public ::testing::Test {
           decoder_->ParsePayload(std::move(encoded), /*timestamp=*/0);
       RTC_CHECK_EQ(parse_result.size(), size_t{1});
       auto decode_result = parse_result[0].frame->Decode(
-          ArrayView<int16_t>(&decoded[processed_samples * channels_],
+          std::span<int16_t>(&decoded[processed_samples * channels_],
                              frame_size_ * channels_ * sizeof(int16_t)));
       RTC_CHECK(decode_result.has_value());
       EXPECT_EQ(frame_size_ * channels_, decode_result->num_decoded_samples);
@@ -367,7 +367,7 @@ class AudioDecoderOpusTest
                              ? AudioEncoderOpusConfig::ApplicationMode::kVoip
                              : AudioEncoderOpusConfig::ApplicationMode::kAudio;
     audio_encoder_ = AudioEncoderOpus::MakeAudioEncoder(
-        CreateEnvironment(), std::move(config),
+        CreateTestEnvironment(), std::move(config),
         {.payload_type = payload_type_});
     audio_encoder_->OnReceivedOverhead(kOverheadBytesPerPacket);
   }

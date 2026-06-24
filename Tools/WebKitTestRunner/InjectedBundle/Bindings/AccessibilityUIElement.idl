@@ -291,6 +291,7 @@ interface AccessibilityUIElement {
     long textMarkerRangeLength(AccessibilityTextMarkerRange range);
     boolean attributedStringForTextMarkerRangeContainsAttribute(DOMString attr, AccessibilityTextMarkerRange range);
     long indexForTextMarker(AccessibilityTextMarker marker);
+    long relativeIndexForTextMarker(AccessibilityTextMarker marker);
     boolean isTextMarkerValid(AccessibilityTextMarker marker);
     boolean isTextMarkerRangeValid(AccessibilityTextMarkerRange markerRange);
     boolean isTextMarkerNull(AccessibilityTextMarker marker);

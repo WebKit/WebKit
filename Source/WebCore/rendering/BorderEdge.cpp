@@ -30,7 +30,7 @@
 #include "Color.h"
 #include "LayoutUnit.h"
 #include "RenderObject.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
@@ -48,9 +48,9 @@ BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, 
     m_flooredToDevicePixelWidth = floorf(edgeWidth * devicePixelRatio) / devicePixelRatio;
 }
 
-BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, RectEdges<bool> closedEdges, LayoutSize inflation, bool setColorsToBlack)
+BorderEdges borderEdges(const Style::ComputedStyle& style, float deviceScaleFactor, RectEdges<bool> closedEdges, LayoutSize inflation, bool setColorsToBlack)
 {
-    auto constructBorderEdge = [&]<CSSPropertyID borderColorProperty>(const RenderStyle& style, Style::LineWidth width, float inflation, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
+    auto constructBorderEdge = [&]<CSSPropertyID borderColorProperty>(const Style::ComputedStyle& style, Style::LineWidth width, float inflation, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
         auto color = setColorsToBlack ? Color::black : Style::ColorPropertyResolver<Style::ColorPropertyTraits<PropertyNameConstant<borderColorProperty>>> { style }.visitedDependentColorApplyingColorFilter();
         auto evaluatedWidth = Style::evaluate<float>(width, Style::ZoomNeeded { });
         auto inflatedWidth = evaluatedWidth ? evaluatedWidth + inflation : evaluatedWidth;
@@ -65,7 +65,7 @@ BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, RectE
     };
 }
 
-BorderEdges borderEdgesForOutline(const RenderStyle& style, BorderStyle borderStyle, float deviceScaleFactor)
+BorderEdges borderEdgesForOutline(const Style::ComputedStyle& style, BorderStyle borderStyle, float deviceScaleFactor)
 {
     auto color = style.visitedDependentOutlineColorApplyingColorFilter();
     auto isTransparent = color.isValid() && !color.isVisible();

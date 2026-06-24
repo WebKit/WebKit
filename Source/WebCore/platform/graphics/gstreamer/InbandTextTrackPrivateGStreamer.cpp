@@ -45,14 +45,6 @@ static void ensureTextTrackDebugCategoryInitialized()
     });
 }
 
-InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
-    : InbandTextTrackPrivate(CueFormat::WebVTT)
-    , TrackPrivateBaseGStreamer(nullptr, GStreamerTrackType::Text, this, index, WTF::move(pad), shouldHandleStreamStartEvent)
-    , m_kind(Kind::Subtitles)
-{
-    ensureTextTrackDebugCategoryInitialized();
-}
-
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
     , TrackPrivateBaseGStreamer(nullptr, GStreamerTrackType::Text, this, index, WTF::move(pad), trackId)
@@ -61,9 +53,9 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
     ensureTextTrackDebugCategoryInitialized();
 }
 
-InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GstStream* stream)
+InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstStream>&& stream)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
-    , TrackPrivateBaseGStreamer(nullptr, GStreamerTrackType::Text, this, index, stream)
+    , TrackPrivateBaseGStreamer(nullptr, GStreamerTrackType::Text, this, index, WTF::move(stream))
 {
     ensureTextTrackDebugCategoryInitialized();
 

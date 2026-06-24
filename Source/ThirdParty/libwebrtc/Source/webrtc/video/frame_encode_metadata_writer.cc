@@ -16,6 +16,7 @@
 #include <memory>
 #include <optional>
 #include <utility>
+#include <vector>
 
 #include "api/environment/environment.h"
 #include "api/video/encoded_image.h"
@@ -103,102 +104,173 @@ void FrameEncodeMetadataWriter::OnSetRates(
 }
 
 void FrameEncodeMetadataWriter::OnEncodeStarted(const VideoFrame& frame) {
-  MutexLock lock(&lock_);
+  std::vector<DropNotification> drop_notifications;
+  {
+    MutexLock lock(&lock_);
 
-  timing_frames_info_.resize(num_spatial_layers_);
-  FrameMetadata metadata;
-  metadata.rtp_timestamp = frame.rtp_timestamp();
-  metadata.encode_start_time_ms = env_.clock().TimeInMilliseconds();
-  metadata.ntp_time_ms = frame.ntp_time_ms();
-  metadata.timestamp_us = frame.timestamp_us();
-  metadata.rotation = frame.rotation();
-  metadata.color_space = frame.color_space();
-  metadata.is_steady_state_refresh_frame = frame.update_rect().IsEmpty();
-  metadata.packet_infos = frame.packet_infos();
-  for (size_t si = 0; si < num_spatial_layers_; ++si) {
-    RTC_DCHECK(timing_frames_info_[si].frames.empty() ||
-               TimeDiff(frame.render_time_ms(),
-                        timing_frames_info_[si].frames.back().timestamp_us /
-                            1000) >= 0);
-    // If stream is disabled due to low bandwidth OnEncodeStarted still will be
-    // called and have to be ignored.
-    if (timing_frames_info_[si].target_bitrate_bytes_per_sec == 0)
-      continue;
-    if (timing_frames_info_[si].frames.size() == kMaxEncodeStartTimeListSize) {
-      ++stalled_encoder_logged_messages_;
-      if (stalled_encoder_logged_messages_ <= kMessagesThrottlingThreshold ||
-          stalled_encoder_logged_messages_ % kThrottleRatio == 0) {
-        RTC_LOG(LS_WARNING) << "Too many frames in the encode_start_list."
-                               " Did encoder stall?";
-        if (stalled_encoder_logged_messages_ == kMessagesThrottlingThreshold) {
-          RTC_LOG(LS_WARNING)
-              << "Too many log messages. Further stalled encoder"
-                 "warnings will be throttled.";
+    timing_frames_info_.resize(num_spatial_layers_);
+    FrameMetadata metadata;
+    metadata.rtp_timestamp = frame.rtp_timestamp();
+    metadata.encode_start_time_ms = env_.clock().TimeInMilliseconds();
+    metadata.ntp_time_ms = frame.ntp_time_ms();
+    metadata.timestamp_us = frame.timestamp_us();
+    metadata.rotation = frame.rotation();
+    metadata.color_space = frame.color_space();
+    metadata.is_steady_state_refresh_frame = frame.update_rect().IsEmpty();
+    metadata.packet_infos = frame.packet_infos();
+    for (size_t si = 0; si < num_spatial_layers_; ++si) {
+      RTC_DCHECK(timing_frames_info_[si].frames.empty() ||
+                 TimeDiff(frame.render_time_ms(),
+                          timing_frames_info_[si].frames.back().timestamp_us /
+                              1000) >= 0);
+      // If stream is disabled due to low bandwidth OnEncodeStarted still will
+      // be called and have to be ignored.
+      if (timing_frames_info_[si].target_bitrate_bytes_per_sec == 0)
+        continue;
+      if (timing_frames_info_[si].frames.size() ==
+          kMaxEncodeStartTimeListSize) {
+        ++stalled_encoder_logged_messages_;
+        if (stalled_encoder_logged_messages_ <= kMessagesThrottlingThreshold ||
+            stalled_encoder_logged_messages_ % kThrottleRatio == 0) {
+          RTC_LOG(LS_WARNING) << "Too many frames in the encode_start_list."
+                                 " Did encoder stall?";
+          if (stalled_encoder_logged_messages_ ==
+              kMessagesThrottlingThreshold) {
+            RTC_LOG(LS_WARNING)
+                << "Too many log messages. Further stalled encoder"
+                   "warnings will be throttled.";
+          }
         }
+
+        uint32_t dropped_rtp_timestamp =
+            timing_frames_info_[si].frames.front().rtp_timestamp;
+        timing_frames_info_[si].frames.pop_front();
+        drop_notifications.push_back(
+            {dropped_rtp_timestamp, static_cast<int>(si),
+             !IsFrameWithRtpTimestampPending(dropped_rtp_timestamp)});
       }
-      frame_drop_callback_->OnDroppedFrame(
-          EncodedImageCallback::DropReason::kDroppedByEncoder);
-      timing_frames_info_[si].frames.pop_front();
+      timing_frames_info_[si].frames.emplace_back(metadata);
     }
-    timing_frames_info_[si].frames.emplace_back(metadata);
+  }
+
+  for (const auto& drop : drop_notifications) {
+    frame_drop_callback_->OnFrameDropped(drop.rtp_timestamp, drop.spatial_id,
+                                         drop.is_end_of_temporal_unit);
   }
 }
 
 void FrameEncodeMetadataWriter::FillMetadataAndTimingInfo(
     size_t simulcast_svc_idx,
     EncodedImage* encoded_image) {
-  MutexLock lock(&lock_);
-  std::optional<size_t> outlier_frame_size;
-  std::optional<int64_t> encode_start_ms;
-  uint8_t timing_flags = VideoSendTiming::kNotTriggered;
+  std::vector<DropNotification> drop_notifications;
+  {
+    MutexLock lock(&lock_);
+    std::optional<size_t> outlier_frame_size;
+    std::optional<int64_t> encode_start_ms;
+    uint8_t timing_flags = VideoSendTiming::kNotTriggered;
 
-  int64_t encode_done_ms = env_.clock().TimeInMilliseconds();
+    int64_t encode_done_ms = env_.clock().TimeInMilliseconds();
 
-  encode_start_ms =
-      ExtractEncodeStartTimeAndFillMetadata(simulcast_svc_idx, encoded_image);
+    encode_start_ms = ExtractEncodeStartTimeAndFillMetadata(
+        simulcast_svc_idx, encoded_image, drop_notifications);
 
-  if (timing_frames_info_.size() > simulcast_svc_idx) {
-    size_t target_bitrate =
-        timing_frames_info_[simulcast_svc_idx].target_bitrate_bytes_per_sec;
-    if (framerate_fps_ > 0 && target_bitrate > 0) {
-      // framerate and target bitrate were reported by encoder.
-      size_t average_frame_size = target_bitrate / framerate_fps_;
-      outlier_frame_size.emplace(
-          average_frame_size *
-          codec_settings_.timing_frame_thresholds.outlier_ratio_percent / 100);
+    if (timing_frames_info_.size() > simulcast_svc_idx) {
+      size_t target_bitrate =
+          timing_frames_info_[simulcast_svc_idx].target_bitrate_bytes_per_sec;
+      if (framerate_fps_ > 0 && target_bitrate > 0) {
+        // framerate and target bitrate were reported by encoder.
+        size_t average_frame_size = target_bitrate / framerate_fps_;
+        outlier_frame_size.emplace(
+            average_frame_size *
+            codec_settings_.timing_frame_thresholds.outlier_ratio_percent /
+            100);
+      }
+    }
+
+    // Outliers trigger timing frames, but do not affect scheduled timing
+    // frames.
+    if (outlier_frame_size && encoded_image->size() >= *outlier_frame_size) {
+      timing_flags |= VideoSendTiming::kTriggeredBySize;
+    }
+
+    // Check if it's time to send a timing frame.
+    int64_t timing_frame_delay_ms =
+        encoded_image->capture_time_ms_ - last_timing_frame_time_ms_;
+    // Trigger threshold if it's a first frame, too long passed since the last
+    // timing frame, or we already sent timing frame on a different simulcast
+    // stream with the same capture time.
+    if (last_timing_frame_time_ms_ == -1 ||
+        timing_frame_delay_ms >=
+            codec_settings_.timing_frame_thresholds.delay_ms ||
+        timing_frame_delay_ms == 0) {
+      timing_flags |= VideoSendTiming::kTriggeredByTimer;
+      last_timing_frame_time_ms_ = encoded_image->capture_time_ms_;
+    }
+
+    // If encode start is not available that means that encoder uses internal
+    // source. In that case capture timestamp may be from a different clock with
+    // a drift relative to `env_.clock()`. We can't use it for Timing frames,
+    // because to being sent in the network capture time required to be less
+    // than all the other timestamps.
+    if (encode_start_ms) {
+      encoded_image->SetEncodeTime(*encode_start_ms, encode_done_ms);
+      encoded_image->timing_.flags = timing_flags;
+    } else {
+      encoded_image->timing_.flags = VideoSendTiming::kInvalid;
+    }
+
+    // Cancel timing frames for older layers.
+    if (encoded_image->is_end_of_temporal_unit().value_or(false)) {
+      DropOldOrEqualFrames(encoded_image->RtpTimestamp(), simulcast_svc_idx,
+                           drop_notifications);
     }
   }
 
-  // Outliers trigger timing frames, but do not affect scheduled timing
-  // frames.
-  if (outlier_frame_size && encoded_image->size() >= *outlier_frame_size) {
-    timing_flags |= VideoSendTiming::kTriggeredBySize;
+  for (const auto& drop : drop_notifications) {
+    frame_drop_callback_->OnFrameDropped(drop.rtp_timestamp, drop.spatial_id,
+                                         drop.is_end_of_temporal_unit);
+  }
+}
+
+void FrameEncodeMetadataWriter::OnFrameDropped(uint32_t rtp_timestamp,
+                                               int spatial_id,
+                                               bool is_end_of_temporal_unit) {
+  std::vector<DropNotification> drop_notifications;
+  {
+    MutexLock lock(&lock_);
+    RTC_DCHECK_LT(spatial_id, static_cast<int>(timing_frames_info_.size()));
+    bool found_timestamp = false;
+    while (!timing_frames_info_[spatial_id].frames.empty()) {
+      if (timing_frames_info_[spatial_id].frames.front().rtp_timestamp ==
+          rtp_timestamp) {
+        found_timestamp = true;
+        break;
+      } else if (IsNewerTimestamp(rtp_timestamp, timing_frames_info_[spatial_id]
+                                                     .frames.front()
+                                                     .rtp_timestamp)) {
+        uint32_t dropped_timestamp =
+            timing_frames_info_[spatial_id].frames.front().rtp_timestamp;
+        timing_frames_info_[spatial_id].frames.pop_front();
+        drop_notifications.push_back(
+            {dropped_timestamp, spatial_id,
+             !IsFrameWithRtpTimestampPending(dropped_timestamp)});
+        continue;
+      }
+      break;
+    }
+    if (found_timestamp) {
+      if (is_end_of_temporal_unit) {
+        DropOldOrEqualFrames(rtp_timestamp, spatial_id, drop_notifications);
+      }
+      timing_frames_info_[spatial_id].frames.pop_front();
+      drop_notifications.push_back(
+          {rtp_timestamp, spatial_id, is_end_of_temporal_unit});
+    }
   }
 
-  // Check if it's time to send a timing frame.
-  int64_t timing_frame_delay_ms =
-      encoded_image->capture_time_ms_ - last_timing_frame_time_ms_;
-  // Trigger threshold if it's a first frame, too long passed since the last
-  // timing frame, or we already sent timing frame on a different simulcast
-  // stream with the same capture time.
-  if (last_timing_frame_time_ms_ == -1 ||
-      timing_frame_delay_ms >=
-          codec_settings_.timing_frame_thresholds.delay_ms ||
-      timing_frame_delay_ms == 0) {
-    timing_flags |= VideoSendTiming::kTriggeredByTimer;
-    last_timing_frame_time_ms_ = encoded_image->capture_time_ms_;
-  }
-
-  // If encode start is not available that means that encoder uses internal
-  // source. In that case capture timestamp may be from a different clock with a
-  // drift relative to `env_.clock()`. We can't use it for Timing frames,
-  // because to being sent in the network capture time required to be less than
-  // all the other timestamps.
-  if (encode_start_ms) {
-    encoded_image->SetEncodeTime(*encode_start_ms, encode_done_ms);
-    encoded_image->timing_.flags = timing_flags;
-  } else {
-    encoded_image->timing_.flags = VideoSendTiming::kInvalid;
+  for (const auto& drop : drop_notifications) {
+    frame_drop_callback_->OnFrameDropped(drop.rtp_timestamp, drop.spatial_id,
+                                         drop.is_end_of_temporal_unit);
   }
 }
 
@@ -233,7 +305,8 @@ void FrameEncodeMetadataWriter::Reset() {
 std::optional<int64_t>
 FrameEncodeMetadataWriter::ExtractEncodeStartTimeAndFillMetadata(
     size_t simulcast_svc_idx,
-    EncodedImage* encoded_image) {
+    EncodedImage* encoded_image,
+    std::vector<DropNotification>& drop_notifications) {
   std::optional<int64_t> result;
   size_t num_simulcast_svc_streams = timing_frames_info_.size();
   if (simulcast_svc_idx < num_simulcast_svc_streams) {
@@ -245,9 +318,11 @@ FrameEncodeMetadataWriter::ExtractEncodeStartTimeAndFillMetadata(
     while (!metadata_list->empty() &&
            IsNewerTimestamp(encoded_image->RtpTimestamp(),
                             metadata_list->front().rtp_timestamp)) {
-      frame_drop_callback_->OnDroppedFrame(
-          EncodedImageCallback::DropReason::kDroppedByEncoder);
+      uint32_t dropped_timestamp = metadata_list->front().rtp_timestamp;
       metadata_list->pop_front();
+      drop_notifications.push_back(
+          {dropped_timestamp, static_cast<int>(simulcast_svc_idx),
+           !IsFrameWithRtpTimestampPending(dropped_timestamp)});
     }
 
     encoded_image->content_type_ =
@@ -284,6 +359,43 @@ FrameEncodeMetadataWriter::ExtractEncodeStartTimeAndFillMetadata(
     }
   }
   return result;
+}
+
+void FrameEncodeMetadataWriter::DropOldOrEqualFrames(
+    uint32_t rtp_timestamp,
+    int spatial_id_to_skip,
+    std::vector<DropNotification>& drop_notifications) {
+  for (size_t si = 0; si < num_spatial_layers_; ++si) {
+    if (spatial_id_to_skip == static_cast<int>(si)) {
+      continue;
+    }
+    auto metadata_list = &timing_frames_info_[si].frames;
+    while (!metadata_list->empty() &&
+           (metadata_list->front().rtp_timestamp == rtp_timestamp ||
+            IsNewerTimestamp(rtp_timestamp,
+                             metadata_list->front().rtp_timestamp))) {
+      uint32_t dropped_timestamp = metadata_list->front().rtp_timestamp;
+      metadata_list->pop_front();
+      drop_notifications.push_back(
+          {dropped_timestamp, static_cast<int>(si),
+           !IsFrameWithRtpTimestampPending(dropped_timestamp)});
+    }
+  }
+}
+
+bool FrameEncodeMetadataWriter::IsFrameWithRtpTimestampPending(
+    uint32_t rtp_timestamp) {
+  for (size_t si = 0; si < num_spatial_layers_; ++si) {
+    for (const FrameMetadata& metadata : timing_frames_info_[si].frames) {
+      if (metadata.rtp_timestamp == rtp_timestamp) {
+        return true;
+      }
+      if (IsNewerTimestamp(metadata.rtp_timestamp, rtp_timestamp)) {
+        break;
+      }
+    }
+  }
+  return false;
 }
 
 }  // namespace webrtc

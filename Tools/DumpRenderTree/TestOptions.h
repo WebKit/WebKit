@@ -54,6 +54,7 @@ public:
     uint16_t insecureUpgradePort() const { return uint16TestRunnerFeatureValue("insecureUpgradePort", 80); };
     uint16_t secureUpgradePort() const { return uint16TestRunnerFeatureValue("secureUpgradePort", 443); };
     bool shouldDumpResourceLoadCallbacks() const { return boolTestRunnerFeatureValue("dumpResourceLoadCallbacks", false); }
+    std::string resourceResponseMIMETypesToDump() const { return stringTestRunnerFeatureValue("dumpResourceResponseMIMETypes", ""); }
 
     const auto& boolWebPreferenceFeatures() const { return m_features.boolWebPreferenceFeatures; }
     const auto& doubleWebPreferenceFeatures() const { return m_features.doubleWebPreferenceFeatures; }

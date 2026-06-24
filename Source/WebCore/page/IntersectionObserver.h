@@ -134,6 +134,7 @@ private:
 
     struct IntersectionObservationState {
         FloatRect rootBounds;
+        // "Absolute" means in the absolute coordinate system of the target's frame.
         std::optional<FloatRect> absoluteIntersectionRect; // Only computed if intersecting.
         std::optional<FloatRect> absoluteTargetRect; // Only computed if first observation, or intersecting.
         std::optional<FloatRect> absoluteRootBounds; // Only computed if observationChanged.

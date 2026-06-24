@@ -357,9 +357,12 @@ window.test_driver_internal.send_keys = async function(element, keys)
     if (testRunner.isIOSFamily && testRunner.isWebKit2) {
         await new Promise((resolve) => {
             testRunner.runUIScript(`
+            {
                 const keyList = JSON.parse('${JSON.stringify(keyList)}');
+                const modifiers = JSON.parse('${JSON.stringify(modifiers)}');
                 for (const key of keyList)
-                    uiController.keyDown(key, modifiers);`, resolve);
+                    uiController.keyDown(key, modifiers);
+            }`, resolve);
         });
         return;
     }

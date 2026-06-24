@@ -41,7 +41,7 @@ G_BEGIN_DECLS
  * @WPE_SETTINGS_ERROR_ALREADY_REGISTERED: Key has already been registered
  * @WPE_SETTINGS_ERROR_INVALID_VALUE: Failed to parse a value from a keyfile
  *
- * #WPESettings errors
+ * [class@Settings] errors.
  */
 typedef enum {
     WPE_SETTINGS_ERROR_INCORRECT_TYPE,
@@ -100,10 +100,12 @@ WPE_API GQuark wpe_settings_error_quark(void);
 
 /**
  * WPESettingsHintingStyle:
- * @WPE_SETTINGS_HINTING_STYLE_NONE
- * @WPE_SETTINGS_HINTING_STYLE_SLIGHT
- * @WPE_SETTINGS_HINTING_STYLE_MEDIUM
- * @WPE_SETTINGS_HINTING_STYLE_FULL
+ * @WPE_SETTINGS_HINTING_STYLE_NONE: do not apply font hinting.
+ * @WPE_SETTINGS_HINTING_STYLE_SLIGHT: apply a small amount of font hinting.
+ * @WPE_SETTINGS_HINTING_STYLE_MEDIUM: apply a moderate amount of font hinting.
+ * @WPE_SETTINGS_HINTING_STYLE_FULL: apply the maximum amount of font hinting.
+ *
+ * The style of hinting to apply to fonts.
  */
 typedef enum {
     WPE_SETTINGS_HINTING_STYLE_NONE,
@@ -125,10 +127,13 @@ typedef enum {
 
 /**
  * WPESettingsSubpixelLayout:
- * @WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB
- * @WPE_SETTINGS_SUBPIXEL_LAYOUT_BGR
- * @WPE_SETTINGS_SUBPIXEL_LAYOUT_VRGB
- * @WPE_SETTINGS_SUBPIXEL_LAYOUT_VBGR
+ * @WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB: horizontal subpixels ordered red, green, blue.
+ * @WPE_SETTINGS_SUBPIXEL_LAYOUT_BGR: horizontal subpixels ordered blue, green, red.
+ * @WPE_SETTINGS_SUBPIXEL_LAYOUT_VRGB: vertical subpixels ordered red, green, blue.
+ * @WPE_SETTINGS_SUBPIXEL_LAYOUT_VBGR: vertical subpixels ordered blue, green, red.
+ *
+ * The order of the subpixels that compose a pixel, used for subpixel font
+ * rendering.
  */
 typedef enum {
     WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB,
@@ -248,7 +253,7 @@ typedef enum {
  *
  * By default, when a #WPEView is created, a #WPEToplevel is also created and set
  * as the toplevel of the newly created view. This setting allows to create
- * views wihtout a toplevel set, for applications that want to handle the toplevels
+ * views without a toplevel set, for applications that want to handle the toplevels
  * themselves, for example to create a multiview toplevel.
  *
  * VariantType: boolean

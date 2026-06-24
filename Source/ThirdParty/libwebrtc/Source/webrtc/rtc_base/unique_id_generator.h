@@ -14,11 +14,11 @@
 #include <cstdint>
 #include <limits>
 #include <set>
+#include <span>
 #include <string>
 #include <type_traits>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -41,7 +41,7 @@ class UniqueNumberGenerator {
   typedef TIntegral value_type;
   UniqueNumberGenerator();
   // Creates a generator that will never return any value from the given list.
-  explicit UniqueNumberGenerator(ArrayView<TIntegral> known_ids);
+  explicit UniqueNumberGenerator(std::span<TIntegral> known_ids);
   ~UniqueNumberGenerator();
 
   // Generates a number that this generator has never produced before.
@@ -74,7 +74,7 @@ class UniqueRandomIdGenerator {
   typedef uint32_t value_type;
   UniqueRandomIdGenerator();
   // Create a generator that will never return any value from the given list.
-  explicit UniqueRandomIdGenerator(ArrayView<uint32_t> known_ids);
+  explicit UniqueRandomIdGenerator(std::span<uint32_t> known_ids);
   ~UniqueRandomIdGenerator();
 
   // Generates a random id that this generator has never produced before.
@@ -105,7 +105,7 @@ class UniqueStringGenerator {
  public:
   typedef std::string value_type;
   UniqueStringGenerator();
-  explicit UniqueStringGenerator(ArrayView<std::string> known_ids);
+  explicit UniqueStringGenerator(std::span<std::string> known_ids);
   ~UniqueStringGenerator();
 
   std::string GenerateString();
@@ -126,7 +126,7 @@ UniqueNumberGenerator<TIntegral>::UniqueNumberGenerator() : counter_(0) {}
 
 template <typename TIntegral>
 UniqueNumberGenerator<TIntegral>::UniqueNumberGenerator(
-    ArrayView<TIntegral> known_ids)
+    std::span<TIntegral> known_ids)
     : counter_(0), known_ids_(known_ids.begin(), known_ids.end()) {}
 
 template <typename TIntegral>

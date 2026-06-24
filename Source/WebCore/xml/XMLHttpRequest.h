@@ -104,7 +104,6 @@ public:
     enum class FinalMIMEType : bool { No, Yes };
     String responseMIMEType(FinalMIMEType = FinalMIMEType::No) const;
 
-    Document* optionalResponseXML() const { return m_responseDocument.get(); }
     ExceptionOr<Document*> responseXML();
 
     Ref<Blob> createResponseBlob();
@@ -131,7 +130,6 @@ public:
     String responseURL() const;
 
     XMLHttpRequestUpload& upload();
-    XMLHttpRequestUpload* optionalUpload() const { return m_upload.get(); }
 
     const ResourceResponse& resourceResponse() const LIFETIME_BOUND { return m_response; }
 
@@ -141,6 +139,8 @@ public:
     void dispatchEvent(Event&) override;
 
     void dispatchThrottledProgressEventIfNeeded();
+
+    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
     friend class XMLHttpRequestUpload;
@@ -221,7 +221,8 @@ private:
 
     unsigned m_timeoutMilliseconds { 0 };
 
-    const std::unique_ptr<XMLHttpRequestUpload> m_upload;
+    Lock m_gcLock;
+    const std::unique_ptr<XMLHttpRequestUpload> m_upload WTF_GUARDED_BY_LOCK(m_gcLock);
 
     URLKeepingBlobAlive m_url;
     String m_method;
@@ -241,7 +242,7 @@ private:
 
     RefPtr<TextResourceDecoder> m_decoder;
 
-    RefPtr<Document> m_responseDocument;
+    RefPtr<Document> m_responseDocument WTF_GUARDED_BY_LOCK(m_gcLock);
 
     SharedBufferBuilder m_binaryResponseBuilder;
 

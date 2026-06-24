@@ -39,14 +39,14 @@ public:
 
     static void destroyCounterNodes(RenderElement&);
     static void destroyCounterNode(RenderElement&, const AtomString& identifier);
-    static void rendererStyleChanged(RenderElement&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    static void rendererStyleChanged(RenderElement&, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);
 
     void updateCounter();
     bool canBeSelectionLeaf() const final { return false; }
 
 private:
     void willBeDestroyed() override;
-    static void rendererStyleChangedSlowCase(RenderElement&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    static void rendererStyleChangedSlowCase(RenderElement&, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);
     
     ASCIILiteral renderName() const override;
     String originalText() const override;

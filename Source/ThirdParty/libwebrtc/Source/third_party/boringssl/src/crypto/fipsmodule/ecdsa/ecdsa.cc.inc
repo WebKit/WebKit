@@ -29,6 +29,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 // digest_to_scalar interprets |digest_len| bytes from |digest| as a scalar for
 // ECDSA.
 static void digest_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
@@ -57,9 +59,9 @@ static void digest_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
                           order->width);
 }
 
-int ecdsa_verify_fixed_no_self_test(const uint8_t *digest, size_t digest_len,
-                                    const uint8_t *sig, size_t sig_len,
-                                    const EC_KEY *eckey) {
+int bssl::ecdsa_verify_fixed_no_self_test(const uint8_t *digest,
+                                          size_t digest_len, const uint8_t *sig,
+                                          size_t sig_len, const EC_KEY *eckey) {
   const EC_GROUP *group = EC_KEY_get0_group(eckey);
   const EC_POINT *pub_key = EC_KEY_get0_public_key(eckey);
   if (group == nullptr || pub_key == nullptr || sig == nullptr) {
@@ -107,8 +109,9 @@ int ecdsa_verify_fixed_no_self_test(const uint8_t *digest, size_t digest_len,
   return 1;
 }
 
-int ecdsa_verify_fixed(const uint8_t *digest, size_t digest_len,
-                       const uint8_t *sig, size_t sig_len, const EC_KEY *key) {
+int bssl::ecdsa_verify_fixed(const uint8_t *digest, size_t digest_len,
+                             const uint8_t *sig, size_t sig_len,
+                             const EC_KEY *key) {
   boringssl_ensure_ecc_self_test();
 
   return ecdsa_verify_fixed_no_self_test(digest, digest_len, sig, sig_len, key);
@@ -120,14 +123,7 @@ static int ecdsa_sign_impl(const EC_GROUP *group, int *out_retry, uint8_t *sig,
                            const uint8_t *digest, size_t digest_len) {
   *out_retry = 0;
 
-  // Check that the size of the group order is FIPS compliant (FIPS 186-4
-  // B.5.2).
   const BIGNUM *order = EC_GROUP_get0_order(group);
-  if (BN_num_bits(order) < 160) {
-    OPENSSL_PUT_ERROR(EC, EC_R_INVALID_GROUP_ORDER);
-    return 0;
-  }
-
   size_t sig_len = 2 * BN_num_bytes(order);
   if (sig_len > max_sig_len) {
     OPENSSL_PUT_ERROR(EC, EC_R_BUFFER_TOO_SMALL);
@@ -185,21 +181,23 @@ static int ecdsa_sign_impl(const EC_GROUP *group, int *out_retry, uint8_t *sig,
   return 1;
 }
 
-int ecdsa_sign_fixed_with_nonce_for_known_answer_test(
+int bssl::ecdsa_sign_fixed_with_nonce_for_known_answer_test(
     const uint8_t *digest, size_t digest_len, uint8_t *sig, size_t *out_sig_len,
     size_t max_sig_len, const EC_KEY *eckey, const uint8_t *nonce,
     size_t nonce_len) {
-  if (eckey->ecdsa_meth && eckey->ecdsa_meth->sign) {
+  const ECKey *impl = FromOpaque(eckey);
+
+  if (impl->ecdsa_meth && impl->ecdsa_meth->sign) {
     OPENSSL_PUT_ERROR(ECDSA, ECDSA_R_NOT_IMPLEMENTED);
     return 0;
   }
 
-  const EC_GROUP *group = EC_KEY_get0_group(eckey);
-  if (group == nullptr || eckey->priv_key == nullptr) {
+  const EC_GROUP *group = EC_KEY_get0_group(impl);
+  if (group == nullptr || impl->priv_key == nullptr) {
     OPENSSL_PUT_ERROR(ECDSA, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
-  const EC_SCALAR *priv_key = &eckey->priv_key->scalar;
+  const EC_SCALAR *priv_key = &impl->priv_key->scalar;
 
   EC_SCALAR k;
   if (!ec_scalar_from_bytes(group, &k, nonce, nonce_len)) {
@@ -210,23 +208,34 @@ int ecdsa_sign_fixed_with_nonce_for_known_answer_test(
                          priv_key, &k, digest, digest_len);
 }
 
-int ecdsa_sign_fixed(const uint8_t *digest, size_t digest_len, uint8_t *sig,
-                     size_t *out_sig_len, size_t max_sig_len,
-                     const EC_KEY *eckey) {
+int bssl::ecdsa_sign_fixed(const uint8_t *digest, size_t digest_len,
+                           uint8_t *sig, size_t *out_sig_len,
+                           size_t max_sig_len, const EC_KEY *eckey) {
+  const ECKey *impl = FromOpaque(eckey);
+
   boringssl_ensure_ecc_self_test();
 
-  if (eckey->ecdsa_meth && eckey->ecdsa_meth->sign) {
+  if (impl->ecdsa_meth && impl->ecdsa_meth->sign) {
     OPENSSL_PUT_ERROR(ECDSA, ECDSA_R_NOT_IMPLEMENTED);
     return 0;
   }
 
-  const EC_GROUP *group = EC_KEY_get0_group(eckey);
-  if (group == nullptr || eckey->priv_key == nullptr) {
+  const EC_GROUP *group = EC_KEY_get0_group(impl);
+  if (group == nullptr || impl->priv_key == nullptr) {
     OPENSSL_PUT_ERROR(ECDSA, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
   const BIGNUM *order = EC_GROUP_get0_order(group);
-  const EC_SCALAR *priv_key = &eckey->priv_key->scalar;
+  const EC_SCALAR *priv_key = &impl->priv_key->scalar;
+
+  // Generate the ECDSA per-message secret number by rejection sampling. This
+  // function implements FIPS 186-5, A.3.2, repeating the process on failure.
+
+  // Check the group order is large enough. See step 1 of FIPS 186-5, A.3.2.
+  if (BN_num_bits(order) < 224) {
+    OPENSSL_PUT_ERROR(EC, EC_R_INVALID_GROUP_ORDER);
+    return 0;
+  }
 
   // Pass a SHA512 hash of the private key and digest as additional data
   // into the RBG. This is a hardening measure against entropy failure.

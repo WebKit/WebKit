@@ -526,4 +526,16 @@ inline T CheckedDivExact(T a, T b) {
 
 #endif  // __cplusplus
 
+// Hardening assert. This assert can be turned on and off independently
+// of debug mode / non debug mode.
+// If enabled, it turns into RTC_CHECK.
+// If disabled, it turns into RTC_DCHECK.
+// This resembles the behavior of ABSL_HARDENING_ASSERT,
+// but is not affected by NDEBUG.
+#ifdef RTC_HARDENING
+#define RTC_HARDENING_ASSERT(x) RTC_CHECK(x)
+#else
+#define RTC_HARDENING_ASSERT(x) RTC_DCHECK(x)
+#endif
+
 #endif  // RTC_BASE_CHECKS_H_

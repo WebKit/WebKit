@@ -380,7 +380,7 @@ typedef long aom_enc_frame_flags_t;
 /*!\brief Calculate PSNR for this frame, requires g_lag_in_frames to be 0 */
 #define AOM_EFLAG_CALCULATE_PSNR (1 << 1)
 /*!\brief Freeze internal state, do not update reference buffers, entropy
- * tables, rate control state, etc. */
+ * tables, rate control state, etc. Requires g_lag_in_frames to be 0. */
 #define AOM_EFLAG_FREEZE_INTERNAL_STATE (1 << 2)
 
 /*!\brief Encoder configuration structure
@@ -471,11 +471,15 @@ typedef struct aom_codec_enc_cfg {
    */
   aom_bit_depth_t g_bit_depth;
 
-  /*!\brief Bit-depth of the input frames
+  /*!\brief Bit-depth of the input source
    *
-   * This value identifies the bit_depth of the input frames in bits.
-   * Note that the frames passed as input to the encoder must have
-   * this bit-depth.
+   * This value identifies the actual bit-depth of the input source in bits. It
+   * must not exceed codec bit-depth. Note that the frames passed as input to
+   * the encoder must match codec bit-depth. So, if there is a mismatch between
+   * source bit-depth and codec bit-depth, the application is required to
+   * upshift the frame to the codec bit-depth before passing it for encoding.
+   * This is only used for computing quality metrics relative to the actual
+   * input source and has no effect on the encoder's output.
    */
   unsigned int g_input_bit_depth;
 
@@ -890,11 +894,14 @@ typedef struct aom_codec_enc_cfg {
    */
   int tile_heights[MAX_TILE_HEIGHTS];
 
-  /*!\brief Whether encoder should use fixed QP offsets.
+  /*!\brief Controls how the encoder applies fixed QP offsets
    *
+   * If a value of 0 is provided, encoder will adaptively choose QP offsets for
+   * frames at different levels of the pyramid.
    * If a value of 1 is provided, encoder will use fixed QP offsets for frames
    * at different levels of the pyramid.
-   * If a value of 0 is provided, encoder will NOT use fixed QP offsets.
+   * If a value of 2 is provided, encoder will use the same QP for all frames
+   * at different levels of the pyramid (i.e. no QP offsets are applied).
    * Note: This option is only relevant for --end-usage=q.
    */
   unsigned int use_fixed_qp_offsets;
@@ -922,8 +929,9 @@ typedef struct aom_codec_enc_cfg {
  * is not thread safe and should be guarded with a lock if being used
  * in a multithreaded context.
  *
- * If aom_codec_enc_init_ver() fails, it is not necessary to call
- * aom_codec_destroy() on the encoder context.
+ * On success, aom_codec_destroy() must be used to free resources allocated for
+ * the encoder context. If aom_codec_enc_init_ver() fails, it is not necessary
+ * to call aom_codec_destroy() on the encoder context.
  *
  * \param[in]    ctx     Pointer to this instance's context.
  * \param[in]    iface   Pointer to the algorithm interface to use.

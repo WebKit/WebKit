@@ -120,7 +120,7 @@ CSSCounterStyleDescriptors::Pad padFromCSSValue(const CSSValue& value)
 {
     auto& list = downcast<CSSValueList>(value);
     ASSERT(list.size() == 2);
-    auto length = Style::deprecatedToStyleFromCSSValue<Style::Integer<CSS::Nonnegative>>(downcast<CSSPrimitiveValue>(list[0]))->value;
+    auto length = Style::deprecatedToStyleFromCSSValue<Style::Integer<CSS::Nonnegative>>(protect(downcast<CSSPrimitiveValue>(list[0])))->value;
     ASSERT(length >= 0);
     return { static_cast<unsigned>(std::max(0, length)), symbolFromCSSValue(&list[1]) };
 }

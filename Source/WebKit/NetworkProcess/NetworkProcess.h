@@ -407,6 +407,7 @@ public:
     void clearCrossOriginPreflightResultCacheForTesting(CompletionHandler<void()>&&);
     Seconds serviceWorkerFetchTimeout() const { return m_serviceWorkerFetchTimeout; }
     void terminateIdleServiceWorkers(WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
+    void setWebProcessSuspended(WebCore::ProcessIdentifier, bool isSuspended);
 
     void lastPageLoadNetworkActivityCompletionCodeForTesting(PAL::SessionID, WebCore::PageIdentifier, CompletionHandler<void(std::optional<NetworkActivityTracker::CompletionCode>)>&&);
 
@@ -424,13 +425,17 @@ public:
     void clearBundleIdentifier(CompletionHandler<void()>&&);
 
     bool shouldDisableCORSForRequestTo(WebCore::PageIdentifier, const URL&) const;
-    void setCORSDisablingPatterns(NetworkConnectionToWebProcess&, WebCore::PageIdentifier, Vector<String>&&);
+    void setCORSDisablingPatternsForPage(WebCore::ProcessIdentifier, WebCore::PageIdentifier, Vector<String>&&);
 
 #if PLATFORM(COCOA)
     void appPrivacyReportTestingData(PAL::SessionID, CompletionHandler<void(const AppPrivacyReportTestingData&)>&&);
     void clearAppPrivacyReportTestingData(PAL::SessionID, CompletionHandler<void()>&&);
 
     bool isParentProcessFullWebBrowserOrRunningTest() const { return m_isParentProcessFullWebBrowserOrRunningTest; }
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    String containerTemporaryDirectory() const { return m_containerTemporaryDirectory; }
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -684,6 +689,9 @@ private:
 #if PLATFORM(COCOA)
     int m_mediaStreamingActivitityToken { NOTIFY_TOKEN_INVALID };
     bool m_isParentProcessFullWebBrowserOrRunningTest { false };
+#endif
+#if PLATFORM(IOS_FAMILY)
+    String m_containerTemporaryDirectory;
 #endif
     bool m_enableModernDownloadProgress { false };
 #if HAVE(ENHANCED_SECURITY_LINKS)

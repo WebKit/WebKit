@@ -11,8 +11,7 @@ layer at (0,0) size 800x392
             RenderSVGRoot {svg} at (0,0) size 208x208
           layer at (0,0) size 208x208
             RenderSVGViewportContainer at (0,0) size 208x208
-          layer at (5,5) size 40x40
-            RenderSVGEllipse {circle} at (5,5) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=25.00] [r=20.00]
+              RenderSVGEllipse {circle} at (5,5) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=25.00] [r=20.00]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,228) size 208x18 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 13x18

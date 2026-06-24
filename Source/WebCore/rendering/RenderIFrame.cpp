@@ -32,10 +32,10 @@
 #include "LocalFrameView.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "RenderWidgetInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderIFrame);
 
 using namespace HTMLNames;
     
-RenderIFrame::RenderIFrame(HTMLIFrameElement& element, RenderStyle&& style)
+RenderIFrame::RenderIFrame(HTMLIFrameElement& element, Style::ComputedStyle&& style)
     : RenderFrameBase(Type::IFrame, element, WTF::move(style))
 {
     ASSERT(isRenderIFrame());

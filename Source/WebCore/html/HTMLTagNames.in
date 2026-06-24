@@ -24,7 +24,7 @@ big interfaceName=HTMLElement
 blockquote interfaceName=HTMLQuoteElement
 body
 br interfaceName=HTMLBRElement
-button constructorNeedsFormElement
+button
 canvas customTypeHelper
 caption interfaceName=HTMLTableCaptionElement
 center interfaceName=HTMLElement
@@ -45,7 +45,7 @@ dl interfaceName=HTMLDListElement
 dt interfaceName=HTMLElement
 em interfaceName=HTMLElement
 embed settingsConditional=embedElementEnabled
-fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement
+fieldset interfaceName=HTMLFieldSetElement
 figcaption interfaceName=HTMLElement
 figure interfaceName=HTMLElement
 font
@@ -67,8 +67,8 @@ html
 i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement
 image interfaceName=HTMLUnknownElement
-img interfaceName=HTMLImageElement, constructorNeedsFormElement
-input constructorNeedsFormElement, constructorNeedsCreatedByParser
+img interfaceName=HTMLImageElement
+input constructorNeedsCreatedByParser
 ins interfaceName=HTMLModElement
 kbd interfaceName=HTMLElement
 keygen interfaceName=HTMLUnknownElement
@@ -89,11 +89,11 @@ nav interfaceName=HTMLElement
 nobr interfaceName=HTMLElement
 noembed interfaceName=HTMLElement
 noframes interfaceName=HTMLElement
-object constructorNeedsFormElement
+object
 ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement
 option
-output constructorNeedsFormElement
+output
 p interfaceName=HTMLParagraphElement
 param
 picture interfaceName=HTMLPictureElement
@@ -111,7 +111,7 @@ samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser
 search interfaceName=HTMLElement
 section interfaceName=HTMLElement
-select constructorNeedsFormElement
+select
 selectedcontent interfaceName=HTMLSelectedContentElement, settingsConditional=htmlEnhancedSelectParsingEnabled&htmlEnhancedSelectEnabled&!mutationEventsEnabled
 slot
 small interfaceName=HTMLElement
@@ -127,7 +127,7 @@ table
 tbody interfaceName=HTMLTableSectionElement
 td interfaceName=HTMLTableCellElement
 template
-textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement
+textarea interfaceName=HTMLTextAreaElement
 tfoot interfaceName=HTMLTableSectionElement
 th interfaceName=HTMLTableCellElement
 thead interfaceName=HTMLTableSectionElement

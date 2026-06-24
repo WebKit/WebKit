@@ -40,6 +40,11 @@
 /**
  * WPEClipboardWayland:
  *
+ * A [class@WPEPlatform.Clipboard] implementation for Wayland.
+ *
+ * [class@ClipboardWayland] is the [class@WPEPlatform.Clipboard] implementation
+ * used by [class@DisplayWayland]. It integrates with the Wayland data device
+ * protocol to share clipboard contents with other Wayland clients.
  */
 struct _WPEClipboardWaylandPrivate {
     struct wl_data_device* wlDataDevice;

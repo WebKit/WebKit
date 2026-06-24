@@ -32,6 +32,7 @@
 #import <WebCore/HTMLCollection.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLNames.h>
+#import <WebCore/HTMLTableRowElement.h>
 #import <WebCore/HTMLTableSectionElement.h>
 #import <WebCore/JSExecState.h>
 #import <WebCore/ThreadCheck.h>

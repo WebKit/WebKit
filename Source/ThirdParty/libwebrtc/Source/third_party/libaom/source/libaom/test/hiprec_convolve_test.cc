@@ -45,9 +45,14 @@ INSTANTIATE_TEST_SUITE_P(NEON, AV1HiprecConvolveTest,
                          libaom_test::AV1HiprecConvolve::BuildParams(
                              av1_wiener_convolve_add_src_neon));
 #endif
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1HiprecConvolveTest,
+                         libaom_test::AV1HiprecConvolve::BuildParams(
+                             av1_wiener_convolve_add_src_rvv));
+#endif
 
 #if CONFIG_AV1_HIGHBITDEPTH
-#if HAVE_SSSE3 || HAVE_AVX2 || HAVE_NEON
+#if HAVE_SSSE3 || HAVE_AVX2 || HAVE_NEON || HAVE_RVV
 TEST_P(AV1HighbdHiprecConvolveTest, CheckOutput) {
   RunCheckOutput(GET_PARAM(4));
 }
@@ -69,6 +74,11 @@ INSTANTIATE_TEST_SUITE_P(AVX2, AV1HighbdHiprecConvolveTest,
 INSTANTIATE_TEST_SUITE_P(NEON, AV1HighbdHiprecConvolveTest,
                          libaom_test::AV1HighbdHiprecConvolve::BuildParams(
                              av1_highbd_wiener_convolve_add_src_neon));
+#endif
+#if HAVE_RVV
+INSTANTIATE_TEST_SUITE_P(RVV, AV1HighbdHiprecConvolveTest,
+                         libaom_test::AV1HighbdHiprecConvolve::BuildParams(
+                             av1_highbd_wiener_convolve_add_src_rvv));
 #endif
 #endif
 #endif  // CONFIG_AV1_HIGHBITDEPTH

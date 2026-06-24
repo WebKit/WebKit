@@ -4,7 +4,7 @@ PASS HTTP cache does not reuse a response with a past Expires
 PASS HTTP cache does not reuse a response with a present Expires
 PASS HTTP cache does not reuse a response with an invalid Expires
 PASS HTTP cache does not reuse a response with an invalid Expires with Last-Modified now
-FAIL HTTP cache does not reuse a response with an invalid Expires with past Last-Modified assert_equals: Response 2 comes from cache expected 2 but got 1
+PASS HTTP cache does not reuse a response with an invalid Expires with past Last-Modified
 PASS HTTP cache reuses a response with positive Cache-Control: max-age
 PASS HTTP cache does not reuse a response with Cache-Control: max-age=0
 PASS HTTP cache reuses a response with positive Cache-Control: max-age and a past Expires

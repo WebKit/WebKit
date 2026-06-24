@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
 
@@ -34,16 +34,16 @@ class HeartbeatInfoParameter : public Parameter,
  public:
   static constexpr int kType = HeartbeatInfoParameterConfig::kType;
 
-  explicit HeartbeatInfoParameter(webrtc::ArrayView<const uint8_t> info)
+  explicit HeartbeatInfoParameter(std::span<const uint8_t> info)
       : info_(info.begin(), info.end()) {}
 
   static std::optional<HeartbeatInfoParameter> Parse(
-      webrtc::ArrayView<const uint8_t> data);
+      std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
 
-  webrtc::ArrayView<const uint8_t> info() const { return info_; }
+  std::span<const uint8_t> info() const { return info_; }
 
  private:
   std::vector<uint8_t> info_;

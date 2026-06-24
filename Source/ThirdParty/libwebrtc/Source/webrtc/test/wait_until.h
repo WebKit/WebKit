@@ -99,6 +99,27 @@ template <typename Fn>
   return RTCError(RTCErrorType::INTERNAL_ERROR, listener.str());
 }
 
+// A utility class that binds WaitUntilSettings to WaitUntil methods.
+class Waiter {
+ public:
+  explicit Waiter(WaitUntilSettings settings)
+      : settings_(std::move(settings)) {}
+
+  [[nodiscard]] bool Until(FunctionView<bool()> fn) const {
+    return WaitUntil(std::move(fn), settings_);
+  }
+
+  template <typename Fn>
+  [[nodiscard]] RTCErrorOr<std::invoke_result_t<Fn>> Until(
+      const Fn& fn,
+      ::testing::Matcher<std::invoke_result_t<Fn>> matcher) const {
+    return WaitUntil(fn, std::move(matcher), settings_);
+  }
+
+ private:
+  WaitUntilSettings settings_;
+};
+
 }  // namespace webrtc
 
 #endif  // TEST_WAIT_UNTIL_H_

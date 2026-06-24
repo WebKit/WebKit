@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
         text run at (250,0) width 304: "(Aqua for now- later, we will honor the styling)."
       RenderBR {BR} at (553,0) size 1x18
       RenderMenuList {SELECT} at (0,18) size 53x30 [bgcolor=#FF0000] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 51x28
-          RenderText at (5,5) size 25x18
+        RenderBlock {DIV} at (1,1) size 51x28
+          RenderText {#text} at (5,5) size 25x18
             text run at (5,5) width 25: "test"
       RenderBR {BR} at (53,24) size 0x18
       RenderText {#text} at (0,48) size 528x18
@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
       RenderInline {SPAN} at (0,67) size 63x28 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (5,66) size 53x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 51x28
-            RenderText at (5,5) size 25x18
+          RenderBlock {DIV} at (1,1) size 51x28
+            RenderText {#text} at (5,5) size 25x18
               text run at (5,5) width 25: "test"
         RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (63,72) size 0x18
@@ -29,8 +29,8 @@ layer at (0,0) size 800x600
       RenderInline {SPAN} at (0,115) size 63x28 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (5,114) size 53x30 [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 51x28
-            RenderText at (5,5) size 25x18
+          RenderBlock {DIV} at (1,1) size 51x28
+            RenderText {#text} at (5,5) size 25x18
               text run at (5,5) width 25: "test"
         RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (63,120) size 0x18
@@ -40,8 +40,8 @@ layer at (0,0) size 800x600
       RenderInline {SPAN} at (0,163) size 63x28 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (5,162) size 53x30 [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 51x28
-            RenderText at (5,5) size 25x18
+          RenderBlock {DIV} at (1,1) size 51x28
+            RenderText {#text} at (5,5) size 25x18
               text run at (5,5) width 25: "test"
         RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (63,168) size 0x18
@@ -49,15 +49,15 @@ layer at (0,0) size 800x600
         text run at (0,192) width 498: "This tests that background is white if only background-image:none is specified."
       RenderBR {BR} at (498,192) size 0x18
       RenderMenuList {SELECT} at (0,210) size 53x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 51x28
-          RenderText at (5,5) size 25x18
+        RenderBlock {DIV} at (1,1) size 51x28
+          RenderText {#text} at (5,5) size 25x18
             text run at (5,5) width 25: "test"
       RenderBR {BR} at (53,216) size 0x18
       RenderText {#text} at (0,240) size 418x18
         text run at (0,240) width 418: "This tests that the image specified for background-image is visible."
       RenderBR {BR} at (418,240) size 0x18
       RenderMenuList {SELECT} at (0,258) size 53x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 51x28
-          RenderText at (5,5) size 25x18
+        RenderBlock {DIV} at (1,1) size 51x28
+          RenderText {#text} at (5,5) size 25x18
             text run at (5,5) width 25: "test"
       RenderText {#text} at (0,0) size 0x0

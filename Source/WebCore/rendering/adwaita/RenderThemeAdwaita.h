@@ -41,7 +41,7 @@ public:
     bool canCreateControlPartForBorderOnly(const RenderElement&) const final;
     bool canCreateControlPartForDecorations(const RenderElement&) const final;
 
-    bool isControlStyled(const RenderStyle&) const final;
+    bool isControlStyled(const Style::ComputedStyle&) const final;
 
     void setAccentColor(const Color&);
 
@@ -58,7 +58,7 @@ public:
 #endif // ENABLE(VIDEO)
 
     bool supportsHover() const final { return true; }
-    bool supportsFocusRing(const RenderElement&, const RenderStyle&) const final;
+    bool supportsFocusRing(const RenderElement&, const Style::ComputedStyle&) const final;
     bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return false; }
     bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return true; }
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
@@ -75,25 +75,25 @@ public:
     float platformFocusRingWidth() const final;
     void platformColorsDidChange() final;
 
-    void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
-    void adjustTextAreaStyle(RenderStyle&, const Element*) const final;
-    void adjustSearchFieldStyle(RenderStyle&, const Element*) const final;
+    void adjustTextFieldStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustTextAreaStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustSearchFieldStyle(Style::ComputedStyle&, const Element*) const final;
 
     bool popsMenuBySpaceOrReturn() const final { return true; }
-    void adjustMenuListStyle(RenderStyle&, const Element*) const final;
-    void adjustMenuListButtonStyle(RenderStyle&, const Element*) const final;
-    Style::PaddingBox platformPopupInternalPaddingBox(const RenderStyle&) const final;
+    void adjustMenuListStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustMenuListButtonStyle(Style::ComputedStyle&, const Element*) const final;
+    Style::PaddingBox platformPopupInternalPaddingBox(const Style::ComputedStyle&) const final;
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
     IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const final;
 
-    void adjustSliderThumbSize(RenderStyle&, const Element*) const final;
+    void adjustSliderThumbSize(Style::ComputedStyle&, const Element*) const final;
 
     WEBCORE_EXPORT Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 
     IntSize sliderTickSize() const final;
     int sliderTickOffsetFromTrackCenter() const final;
-    void adjustListButtonStyle(RenderStyle&, const Element*) const final;
+    void adjustListButtonStyle(Style::ComputedStyle&, const Element*) const final;
 
     Style::PreferredSizePair controlSize(StyleAppearance, const FontCascade&, const Style::PreferredSizePair&, float) const final;
     Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, float zoomFactor) const final;

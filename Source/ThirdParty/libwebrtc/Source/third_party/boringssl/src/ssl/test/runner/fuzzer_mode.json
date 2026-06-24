@@ -32,6 +32,7 @@
     "ShimTicketRewritable*": "Fuzzer mode does not encrypt tickets.",
 
     "Resume-Server-*Binder*": "Fuzzer mode does not check binders.",
+    "PSK-Server-*Binder*": "Fuzzer mode does not check binders.",
 
     "SkipEarlyData*": "Trial decryption does not work with the NULL cipher.",
     "EarlyDataChannelID-OfferBoth-Server-*": "Trial decryption does not work with the NULL cipher.",

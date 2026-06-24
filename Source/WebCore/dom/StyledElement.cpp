@@ -113,7 +113,7 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomString
             styleAttributeChanged(newValue, reason);
         else if (hasPresentationalHintsForAttribute(name)) {
             elementData()->setPresentationalHintStyleIsDirty(true);
-            invalidateStyleInternal();
+            invalidateStyle();
         }
     }
 }
@@ -156,7 +156,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
     Ref document = this->document();
     auto startLineNumber = OrdinalNumber::beforeFirst();
     if (document->scriptableDocumentParser() && !document->isInDocumentWrite())
-        startLineNumber = document->scriptableDocumentParser()->textPosition().m_line;
+        startLineNumber = protect(document->scriptableDocumentParser())->textPosition().m_line;
 
     if (newStyleString.isNull())
         ensureMutableInlineStyle()->clear();
@@ -377,7 +377,7 @@ void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties&
     
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& value)
 {
-    style.setProperty(propertyID, value, protect(document())->cssParserContext());
+    SUPPRESS_UNCOUNTED_ARG style.setProperty(propertyID, value, document().cssParserContext());
 }
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, Ref<CSSValue>&& value)

@@ -114,7 +114,7 @@
 #define AOM_ENCODER_NAME_(name) #name
 
 // Taken from libaom/source/libaom/common/tools_common.c.
-static bool aom_img_read(aom_image_t *img, webrtc::test::FuzzDataHelper& fuzz_input) {
+static bool aom_img_read(aom_image_t *img, webrtc::FuzzDataHelper& fuzz_input) {
   const int bytespp = (img->fmt & AOM_IMG_FMT_HIGHBITDEPTH) ? 2 : 1;
 
   for (int plane = 0; plane < 3; ++plane) {
@@ -171,7 +171,7 @@ static std::span<uint8_t> encode_frame(aom_codec_ctx_t *codec, aom_image_t *img,
 extern "C" void usage_exit(void) { exit(EXIT_FAILURE); }
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-  webrtc::test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
+    webrtc::FuzzDataHelper fuzz_input({ data, size });
 
   aom_codec_ctx_t codec;
   aom_codec_enc_cfg_t cfg;

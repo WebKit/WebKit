@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <script src="../../../resources/js-test-pre.js"></script>
+  <script src="../../../resources/js-test.js"></script>
   <title>Repeated mouse-wheel scrolling does not scroll to top of page</title>
   <style>
     body {
@@ -14,6 +14,7 @@
 <body>
 </body>
 <script>
+window.jsTestIsAsync = true;
 var wheelTick = 40;
 var expectedMinimum;
 var expectedScrollTop;
@@ -48,8 +49,7 @@ function triggerNextTest() {
         return;
     }
 
-    isSuccessfullyParsed();
-    testRunner.notifyDone();
+    finishJSTest();
 
     return;
 }
@@ -67,9 +67,6 @@ function scrollEventCallback() {
 
 document.addEventListener("scroll", scrollEventCallback, false);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-}
 
 if (window.eventSender) {
     triggerNextTest();

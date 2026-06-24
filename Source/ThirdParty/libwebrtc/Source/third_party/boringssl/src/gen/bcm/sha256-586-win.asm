@@ -2,7 +2,7 @@
 ; source tree. Do not edit by hand.
 
 %ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
+%include "boringssl_prefix_symbols_internal_x86_win_asm.inc"
 %endif
 %ifidn __OUTPUT_FORMAT__, win32
 %ifidn __OUTPUT_FORMAT__,obj
@@ -3209,14 +3209,14 @@ L$008grand_ssse3:
 	movdqu	xmm2,[32+edi]
 	movdqu	xmm3,[48+edi]
 	add	edi,64
-db	102,15,56,0,199
+	pshufb	xmm0,xmm7
 	mov	DWORD [100+esp],edi
-db	102,15,56,0,207
+	pshufb	xmm1,xmm7
 	movdqa	xmm4,[ebp]
-db	102,15,56,0,215
+	pshufb	xmm2,xmm7
 	movdqa	xmm5,[16+ebp]
 	paddd	xmm4,xmm0
-db	102,15,56,0,223
+	pshufb	xmm3,xmm7
 	movdqa	xmm6,[32+ebp]
 	paddd	xmm5,xmm1
 	movdqa	xmm7,[48+ebp]
@@ -3237,11 +3237,11 @@ L$009ssse3_00_47:
 	movdqa	xmm7,xmm3
 	xor	edx,ecx
 	mov	edi,DWORD [24+esp]
-db	102,15,58,15,224,4
+	palignr	xmm4,xmm0,4
 	xor	esi,edi
 	ror	edx,5
 	and	esi,ecx
-db	102,15,58,15,250,4
+	palignr	xmm7,xmm2,4
 	mov	DWORD [16+esp],ecx
 	xor	edx,ecx
 	xor	edi,esi
@@ -3397,11 +3397,11 @@ db	102,15,58,15,250,4
 	movdqa	xmm7,xmm0
 	xor	edx,ecx
 	mov	edi,DWORD [8+esp]
-db	102,15,58,15,225,4
+	palignr	xmm4,xmm1,4
 	xor	esi,edi
 	ror	edx,5
 	and	esi,ecx
-db	102,15,58,15,251,4
+	palignr	xmm7,xmm3,4
 	mov	DWORD [esp],ecx
 	xor	edx,ecx
 	xor	edi,esi
@@ -3557,11 +3557,11 @@ db	102,15,58,15,251,4
 	movdqa	xmm7,xmm1
 	xor	edx,ecx
 	mov	edi,DWORD [24+esp]
-db	102,15,58,15,226,4
+	palignr	xmm4,xmm2,4
 	xor	esi,edi
 	ror	edx,5
 	and	esi,ecx
-db	102,15,58,15,248,4
+	palignr	xmm7,xmm0,4
 	mov	DWORD [16+esp],ecx
 	xor	edx,ecx
 	xor	edi,esi
@@ -3717,11 +3717,11 @@ db	102,15,58,15,248,4
 	movdqa	xmm7,xmm2
 	xor	edx,ecx
 	mov	edi,DWORD [8+esp]
-db	102,15,58,15,227,4
+	palignr	xmm4,xmm3,4
 	xor	esi,edi
 	ror	edx,5
 	and	esi,ecx
-db	102,15,58,15,249,4
+	palignr	xmm7,xmm1,4
 	mov	DWORD [esp],ecx
 	xor	edx,ecx
 	xor	edi,esi

@@ -31,6 +31,11 @@
 /**
  * WPEScreenWayland:
  *
+ * A [class@WPEPlatform.Screen] implementation for Wayland.
+ *
+ * [class@ScreenWayland] is the [class@WPEPlatform.Screen] implementation used
+ * by [class@DisplayWayland]. Each instance represents a `wl_output`, which can
+ * be accessed with [method@ScreenWayland.get_wl_output].
  */
 struct _WPEScreenWaylandPrivate {
     struct wl_output* wlOutput;

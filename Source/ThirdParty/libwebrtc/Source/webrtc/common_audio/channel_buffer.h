@@ -14,9 +14,9 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_view.h"
 #include "rtc_base/checks.h"
 
@@ -89,19 +89,19 @@ class ChannelBuffer {
         num_channels_(num_channels),
         num_bands_(num_bands),
         bands_view_(num_allocated_channels_,
-                    std::vector<ArrayView<T>>(num_bands_)),
+                    std::vector<std::span<T>>(num_bands_)),
         channels_view_(num_bands_,
-                       std::vector<ArrayView<T>>(num_allocated_channels_)) {
+                       std::vector<std::span<T>>(num_allocated_channels_)) {
     // Temporarily cast away const_ness to allow populating the array views.
     auto* bands_view =
-        const_cast<std::vector<std::vector<ArrayView<T>>>*>(&bands_view_);
+        const_cast<std::vector<std::vector<std::span<T>>>*>(&bands_view_);
     auto* channels_view =
-        const_cast<std::vector<std::vector<ArrayView<T>>>*>(&channels_view_);
+        const_cast<std::vector<std::vector<std::span<T>>>*>(&channels_view_);
 
     for (size_t ch = 0; ch < num_allocated_channels_; ++ch) {
       for (size_t band = 0; band < num_bands_; ++band) {
         (*channels_view)[band][ch] =
-            ArrayView<T>(&data_[ch * num_frames_ + band * num_frames_per_band_],
+            std::span<T>(&data_[ch * num_frames_ + band * num_frames_per_band_],
                          num_frames_per_band_);
         (*bands_view)[ch][band] = channels_view_[band][ch];
         channels_[band * num_allocated_channels_ + ch] =
@@ -133,10 +133,10 @@ class ChannelBuffer {
     const ChannelBuffer<T>* t = this;
     return const_cast<T* const*>(t->channels(band));
   }
-  ArrayView<const ArrayView<T>> channels_view(size_t band = 0) {
+  std::span<const std::span<T>> channels_view(size_t band = 0) {
     return channels_view_[band];
   }
-  ArrayView<const ArrayView<T>> channels_view(size_t band = 0) const {
+  std::span<const std::span<T>> channels_view(size_t band = 0) const {
     return channels_view_[band];
   }
 
@@ -157,10 +157,10 @@ class ChannelBuffer {
     return const_cast<T* const*>(t->bands(channel));
   }
 
-  ArrayView<const ArrayView<T>> bands_view(size_t channel) {
+  std::span<const std::span<T>> bands_view(size_t channel) {
     return bands_view_[channel];
   }
-  ArrayView<const ArrayView<T>> bands_view(size_t channel) const {
+  std::span<const std::span<T>> bands_view(size_t channel) const {
     return bands_view_[channel];
   }
 
@@ -204,8 +204,8 @@ class ChannelBuffer {
   // Number of channels the user sees.
   size_t num_channels_;
   const size_t num_bands_;
-  const std::vector<std::vector<ArrayView<T>>> bands_view_;
-  const std::vector<std::vector<ArrayView<T>>> channels_view_;
+  const std::vector<std::vector<std::span<T>>> bands_view_;
+  const std::vector<std::vector<std::span<T>>> channels_view_;
 };
 
 // One int16_t and one float ChannelBuffer that are kept in sync. The sync is

@@ -320,7 +320,7 @@ private:
     
     Procedure& m_proc;
     InsertionSet m_insertionSet;
-    UseCounts m_useCounts;
+    UseCountsWithoutUsingInstructions m_useCounts;
 };
 
 } // anonymous namespace

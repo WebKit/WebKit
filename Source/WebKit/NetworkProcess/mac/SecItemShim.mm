@@ -28,7 +28,6 @@
 
 #if ENABLE(SEC_ITEM_SHIM)
 
-#include "BlockingResponseMap.h"
 #include "NetworkProcess.h"
 #include "SecItemRequestData.h"
 #include "SecItemResponseData.h"

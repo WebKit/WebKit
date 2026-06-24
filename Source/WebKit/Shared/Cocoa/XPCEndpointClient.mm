@@ -49,7 +49,7 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
         xpc_connection_set_event_handler(m_connection.get(), ^(xpc_object_t message) {
             xpc_type_t type = xpc_get_type(message);
             if (type == XPC_TYPE_ERROR) {
-                if (message == XPC_ERROR_CONNECTION_INVALID || message == XPC_ERROR_TERMINATION_IMMINENT || XPC_ERROR_CONNECTION_INTERRUPTED) {
+                if (message == XPC_ERROR_CONNECTION_INVALID || message == XPC_ERROR_TERMINATION_IMMINENT || message == XPC_ERROR_CONNECTION_INTERRUPTED) {
                     Locker locker { m_connectionLock };
                     m_connection = nullptr;
                 }

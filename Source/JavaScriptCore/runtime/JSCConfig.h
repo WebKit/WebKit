@@ -151,6 +151,11 @@ ALWAYS_INLINE PURE_FUNCTION uintptr_t startOfStructureHeap()
     return g_jscConfig.startOfStructureHeap;
 }
 
+ALWAYS_INLINE PURE_FUNCTION uintptr_t sizeOfStructureHeap()
+{
+    return g_jscConfig.sizeOfStructureHeap;
+}
+
 ALWAYS_INLINE PURE_FUNCTION uintptr_t structureIDBase()
 {
     return g_jscConfig.structureIDBase;

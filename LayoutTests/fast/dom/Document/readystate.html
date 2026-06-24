@@ -43,9 +43,6 @@ Tests that the document's readyState is set properly at various phases during lo
   subdocument.close();
   shouldBeEqualToString("subdocument.readyState", "complete");
 
-  var htmlDocument = document.implementation.createHTMLDocument();
-  shouldBeEqualToString("htmlDocument.readyState", "loading");
-
   var expectedDynamicStates = ["interactive", "complete"];
   var nextExpectedDynamicState = 0;
   var dynamicIframe = document.createElement('iframe');

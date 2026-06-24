@@ -74,17 +74,17 @@ private:
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderImageSource> { auto operator()(const BorderImageSource&, const RenderStyle&) -> CSS::BorderImageSource; };
+template<> struct ToCSS<BorderImageSource> { auto operator()(const BorderImageSource&, const Style::ComputedStyle&) -> CSS::BorderImageSource; };
 template<> struct ToStyle<CSS::BorderImageSource> { auto operator()(const CSS::BorderImageSource&, const BuilderState&) -> BorderImageSource; };
 
 template<> struct CSSValueConversion<BorderImageSource> { auto operator()(BuilderState&, const CSSValue&) -> BorderImageSource; };
-template<> struct CSSValueCreation<BorderImageSource> { auto operator()(CSSValuePool&, const RenderStyle&, const BorderImageSource&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<BorderImageSource> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const BorderImageSource&) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 
 template<> struct Blending<BorderImageSource> {
     bool NODELETE canBlend(const BorderImageSource&, const BorderImageSource&);
-    auto blend(const BorderImageSource&, const BorderImageSource&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> BorderImageSource;
+    auto blend(const BorderImageSource&, const BorderImageSource&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> BorderImageSource;
 };
 
 } // namespace Style

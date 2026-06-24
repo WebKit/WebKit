@@ -28,6 +28,7 @@
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_video_layers_allocation_extension.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
 // We decide which header extensions to register by reading four bytes
@@ -37,14 +38,12 @@ static_assert(kRtpExtensionNumberOfExtensions <= 32,
               "Insufficient bits read to configure all header extensions. Add "
               "an extra byte and update the switches.");
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  if (size <= 4)
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  if (fuzz_data.size() <= 4)
     return;
 
   // Don't use the configuration byte as part of the packet.
-  std::bitset<32> extensionMask(*reinterpret_cast<const uint32_t*>(data));
-  data += 4;
-  size -= 4;
+  std::bitset<32> extensionMask(fuzz_data.Read<uint32_t>());
 
   RtpPacketReceived::ExtensionManager extensions(/*extmap_allow_mixed=*/true);
   // Start at local_id = 1 since 0 is an invalid extension id.
@@ -61,7 +60,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   }
 
   RtpPacketReceived packet(&extensions);
-  packet.Parse(data, size);
+  packet.Parse(fuzz_data.ReadRemaining());
 
   // Call packet accessors because they have extra checks.
   packet.Marker();

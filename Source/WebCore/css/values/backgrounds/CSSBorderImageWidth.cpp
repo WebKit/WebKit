@@ -26,8 +26,8 @@
 #include "CSSBorderImageWidth.h"
 
 #include "CSSBorderImageWidthValue.h"
-#include "CSSCalcValue.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSUnevaluatedCalc.h"
 
 namespace WebCore {
 namespace CSS {
@@ -40,7 +40,7 @@ bool BorderImageWidthValue::isLength() const
 
     return WTF::switchOn(*lengthPercentage,
         [](const LengthPercentage::Calc& calc) {
-            return calc.calcValue().primitiveType() == CSSUnitType::CSS_PX;
+            return calc.primitiveType() == CSSUnitType::CSS_PX;
         },
         [](const LengthPercentage::Raw& raw) {
             return raw.unit != CSS::PercentageUnit::Percentage;

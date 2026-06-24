@@ -57,7 +57,7 @@
             includeAccessibilityAttributes: true,
         });
 
-        scrollVerticalError = await UIHelper.performTextExtractionInteraction("scroll", {
+        scrollVerticalResult = await UIHelper.performTextExtractionInteractionResult("scroll", {
             nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Vertical scroller"),
         });
 
@@ -66,12 +66,13 @@
 
         verticalScrollTopAfterFirstScroll = verticalScroller.scrollTop;
 
-        shouldBeEqualToString("scrollVerticalError", "");
+        shouldBeEqualToString("scrollVerticalResult.error", "");
+        shouldBeEqualToString("scrollVerticalResult.summary", "Scrolled 200px down");
         shouldBe("verticalScrollTopAfterFirstScroll", "200");
 
         verticalScroller.scrollTop = verticalScroller.scrollHeight;
 
-        scrollVerticalWrapError = await UIHelper.performTextExtractionInteraction("scroll", {
+        scrollVerticalWrapResult = await UIHelper.performTextExtractionInteractionResult("scroll", {
             nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Vertical scroller"),
         });
 
@@ -80,10 +81,11 @@
 
         verticalScrollTopAfterWrap = verticalScroller.scrollTop;
 
-        shouldBeEqualToString("scrollVerticalWrapError", "");
+        shouldBeEqualToString("scrollVerticalWrapResult.error", "");
+        shouldBeEqualToString("scrollVerticalWrapResult.summary", "Scrolled 3800px up (wrapped to start)");
         shouldBe("verticalScrollTopAfterWrap", "0");
 
-        scrollHorizontalError = await UIHelper.performTextExtractionInteraction("scroll", {
+        scrollHorizontalResult = await UIHelper.performTextExtractionInteractionResult("scroll", {
             nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Horizontal scroller"),
         });
 
@@ -92,12 +94,13 @@
 
         horizontalScrollLeftAfterFirstScroll = horizontalScroller.scrollLeft;
 
-        shouldBeEqualToString("scrollHorizontalError", "");
+        shouldBeEqualToString("scrollHorizontalResult.error", "");
+        shouldBeEqualToString("scrollHorizontalResult.summary", "Scrolled 200px right");
         shouldBe("horizontalScrollLeftAfterFirstScroll", "200");
 
         horizontalScroller.scrollLeft = horizontalScroller.scrollWidth;
 
-        scrollHorizontalWrapError = await UIHelper.performTextExtractionInteraction("scroll", {
+        scrollHorizontalWrapResult = await UIHelper.performTextExtractionInteractionResult("scroll", {
             nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Horizontal scroller"),
         });
 
@@ -106,20 +109,22 @@
 
         horizontalScrollLeftAfterWrap = horizontalScroller.scrollLeft;
 
-        shouldBeEqualToString("scrollHorizontalWrapError", "");
+        shouldBeEqualToString("scrollHorizontalWrapResult.error", "");
+        shouldBeEqualToString("scrollHorizontalWrapResult.summary", "Scrolled 3800px left (wrapped to start)");
         shouldBe("horizontalScrollLeftAfterWrap", "0");
 
         document.body.style.height = "4000px";
         await UIHelper.ensurePresentationUpdate();
 
-        scrollPageError = await UIHelper.performTextExtractionInteraction("scroll", {});
+        scrollPageResult = await UIHelper.performTextExtractionInteractionResult("scroll", {});
 
         await UIHelper.ensureVisibleContentRectUpdate();
         await UIHelper.ensurePresentationUpdate();
 
         pageScrollTopAfterScroll = document.scrollingElement.scrollTop;
 
-        shouldBeEqualToString("scrollPageError", "");
+        shouldBeEqualToString("scrollPageResult.error", "");
+        shouldBeTrue("/^Scrolled [1-9]\\d*px down$/.test(scrollPageResult.summary)");
         shouldBeGreaterThan("pageScrollTopAfterScroll", "0");
 
         finishJSTest();

@@ -23,6 +23,13 @@ extern "C" {
 
 
 // MD4.
+//
+// MD4 is not a secure hash function. There are very efficient attacks for
+// finding collisions, and its preimage resistance is also broken. It is
+// implemented purely for compatibility with legacy systems.
+//
+// Use a secure hash function, such as SHA-256, instead.
+
 
 // MD4_CBLOCK is the block size of MD4.
 #define MD4_CBLOCK 64
@@ -30,24 +37,24 @@ extern "C" {
 // MD4_DIGEST_LENGTH is the length of an MD4 digest.
 #define MD4_DIGEST_LENGTH 16
 
-// MD4_Init initialises |md4| and returns one.
+// MD4_Init initialises `md4` and returns one.
 OPENSSL_EXPORT int MD4_Init(MD4_CTX *md4);
 
-// MD4_Update adds |len| bytes from |data| to |md4| and returns one.
+// MD4_Update adds `len` bytes from `data` to `md4` and returns one.
 OPENSSL_EXPORT int MD4_Update(MD4_CTX *md4, const void *data, size_t len);
 
-// MD4_Final adds the final padding to |md4| and writes the resulting digest to
-// |out|, which must have at least |MD4_DIGEST_LENGTH| bytes of space. It
+// MD4_Final adds the final padding to `md4` and writes the resulting digest to
+// `out`, which must have at least `MD4_DIGEST_LENGTH` bytes of space. It
 // returns one.
 OPENSSL_EXPORT int MD4_Final(uint8_t out[MD4_DIGEST_LENGTH], MD4_CTX *md4);
 
-// MD4 writes the digest of |len| bytes from |data| to |out| and returns |out|.
-// There must be at least |MD4_DIGEST_LENGTH| bytes of space in |out|.
+// MD4 writes the digest of `len` bytes from `data` to `out` and returns `out`.
+// There must be at least `MD4_DIGEST_LENGTH` bytes of space in `out`.
 OPENSSL_EXPORT uint8_t *MD4(const uint8_t *data, size_t len,
                             uint8_t out[MD4_DIGEST_LENGTH]);
 
 // MD4_Transform is a low-level function that performs a single, MD4 block
-// transformation using the state from |md4| and 64 bytes from |block|.
+// transformation using the state from `md4` and 64 bytes from `block`.
 OPENSSL_EXPORT void MD4_Transform(MD4_CTX *md4,
                                   const uint8_t block[MD4_CBLOCK]);
 

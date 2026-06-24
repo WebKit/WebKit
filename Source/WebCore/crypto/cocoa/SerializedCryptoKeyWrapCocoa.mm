@@ -253,9 +253,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto dictionary = @{
         versionKey: [NSNumber numberWithUnsignedInteger:currentSerializationVersion],
-        wrappedKEKKey: toNSData(wrappedKEK).autorelease(),
-        encryptedKeyKey: toNSData(encryptedKey).autorelease(),
-        tagKey: toNSData(std::span { tag }.first(tagLength)).get()
+        wrappedKEKKey: WTF::toNSData(wrappedKEK).autorelease(),
+        encryptedKeyKey: WTF::toNSData(encryptedKey).autorelease(),
+        tagKey: WTF::toNSData(std::span { tag }.first(tagLength)).get()
     };
 
     NSData* serialization = [NSPropertyListSerialization dataWithPropertyList:dictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];

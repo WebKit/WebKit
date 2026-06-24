@@ -29,4 +29,5 @@ PASS CSS Values and Units Test: attr 26
 PASS CSS Values and Units Test: attr 27
 PASS CSS Values and Units Test: attr 28
 PASS CSS Values and Units Test: attr 29
+FAIL CSS Values and Units Test: attr 30 assert_equals: Value 'attr(data-foo type(*))', where 'data-foo=attr(data-bar number)' should be valid for the property '--data-foo'. expected "3" but got ""
 

@@ -39,7 +39,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<MaskBorderSlice>::operator()(const MaskBorderSlice& value, const RenderStyle& style) -> CSS::MaskBorderSlice
+auto ToCSS<MaskBorderSlice>::operator()(const MaskBorderSlice& value, const Style::ComputedStyle& style) -> CSS::MaskBorderSlice
 {
     return { toCSS(value.values, style), value.fill };
 }
@@ -58,7 +58,7 @@ auto CSSValueConversion<MaskBorderSlice>::operator()(BuilderState& state, const 
     return toStyleFromCSSValue<MaskBorderSlice::Value>(state, value);
 }
 
-auto CSSValueCreation<MaskBorderSlice>::operator()(CSSValuePool&, const RenderStyle& style, const MaskBorderSlice& value) -> Ref<CSSValue>
+auto CSSValueCreation<MaskBorderSlice>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const MaskBorderSlice& value) -> Ref<CSSValue>
 {
     return CSSMaskBorderSliceValue::create(toCSS(value, style));
 }

@@ -394,7 +394,7 @@ func connect(config *Config, sessionTokensCacheDir string) (*acvp.Server, error)
 	if len(config.PrivateKeyDERFile) == 0 && len(config.PrivateKeyFile) == 0 {
 		return nil, errors.New("config file missing PrivateKeyDERFile and PrivateKeyFile")
 	}
-	if len(config.PrivateKeyDERFile) != 0 && len(config.PrivateKeyFile) != 0 {
+	if config.PrivateKeyDERFile != "" && config.PrivateKeyFile != "" {
 		return nil, errors.New("config file has both PrivateKeyDERFile and PrivateKeyFile - can only have one")
 	}
 	privateKeyFile := config.PrivateKeyDERFile

@@ -19,7 +19,8 @@
       {"access": "public", "name": "kSSLCiphersuiteGroupCompatibility"},
       {"access": "public", "name": "kSSLCiphersuiteGroupLegacy"},
       {"access": "public", "name": "kSSLCiphersuiteGroupATS"},
-      {"access": "public", "name": "kSSLCiphersuiteGroupATSCompatibility"}
+      {"access": "public", "name": "kSSLCiphersuiteGroupATSCompatibility"},
+      {"access": "public", "introduced": "26.5", "name": "kSSLCiphersuiteGroupATSFCP_v2_1"}
      ],
      "name": "SSLCiphersuiteGroup"
     },
@@ -823,7 +824,8 @@
       {"access": "public", "name": "tls_ciphersuite_group_compatibility"},
       {"access": "public", "name": "tls_ciphersuite_group_legacy"},
       {"access": "public", "name": "tls_ciphersuite_group_ats"},
-      {"access": "public", "name": "tls_ciphersuite_group_ats_compatibility"}
+      {"access": "public", "name": "tls_ciphersuite_group_ats_compatibility"},
+      {"access": "public", "introduced": "26.5", "name": "tls_ciphersuite_group_ats_fcp_v2_1"}
      ],
      "name": "tls_ciphersuite_group_t"
     },
@@ -1428,11 +1430,11 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "SSLAuthenticate"},
     {"access": "public", "name": "SSLCipherSuite"},
-    {"access": "public", "name": "SSLCiphersuiteGroup"},
+    {"access": "public", "introduced": "12", "name": "SSLCiphersuiteGroup"},
     {"access": "public", "name": "SSLClientCertificateState"},
     {"access": "public", "name": "SSLConnectionRef"},
     {"access": "public", "name": "SSLConnectionType"},
@@ -1485,7 +1487,7 @@
     {"access": "public", "name": "sec_protocol_verify_complete_t"},
     {"access": "public", "name": "sec_protocol_verify_t"},
     {"access": "public", "name": "sec_trust_t"},
-    {"access": "public", "name": "tls_ciphersuite_group_t"},
+    {"access": "public", "introduced": "13", "name": "tls_ciphersuite_group_t"},
     {"access": "public", "name": "tls_ciphersuite_t"},
     {"access": "public", "introduced": "13", "name": "tls_protocol_version_t"}
    ]

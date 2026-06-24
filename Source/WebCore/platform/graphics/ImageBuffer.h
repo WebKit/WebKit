@@ -275,6 +275,7 @@ public:
     virtual ~SerializedImageBuffer() = default;
 
     virtual size_t memoryCost() const = 0;
+    virtual std::unique_ptr<SerializedImageBuffer> clone() const { return nullptr; }
 
     WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer>, GraphicsClient* = nullptr);
 

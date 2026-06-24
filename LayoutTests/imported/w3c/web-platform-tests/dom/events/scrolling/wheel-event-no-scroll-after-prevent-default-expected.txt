@@ -1,0 +1,3 @@
+
+PASS When `preventDefault` is called on a WheelEvent, scrolling should be prevented.
+

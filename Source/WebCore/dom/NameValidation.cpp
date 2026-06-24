@@ -63,6 +63,11 @@ static constexpr bool NODELETE isInvalidDoctypeNameCharacter(char16_t c)
     return !c || isASCIIWhitespace(c) || c == '>';
 }
 
+static constexpr bool NODELETE isValidASCIIXMLNamePart(char16_t c)
+{
+    return isASCIIAlphanumeric(c) || c == ':' || c == '_' || c == '-' || c == '.';
+}
+
 // https://dom.spec.whatwg.org/#valid-element-name
 bool isValidElementName(StringView name)
 {
@@ -71,21 +76,11 @@ bool isValidElementName(StringView name)
 
     auto firstCharacter = name[0];
 
-    if (isASCIIAlpha(firstCharacter)) {
-        for (unsigned i = 1; i < name.length(); ++i) {
-            if (isInvalidElementNameCharacterAfterAlphaStart(name[i]))
-                return false;
-        }
-        return true;
-    }
+    if (isASCIIAlpha(firstCharacter))
+        return !name.contains(isInvalidElementNameCharacterAfterAlphaStart);
 
-    if (firstCharacter == ':' || firstCharacter == '_' || firstCharacter >= 0x80) {
-        for (unsigned i = 1; i < name.length(); ++i) {
-            if (!isValidElementNameContinuationCharacter(name[i]))
-                return false;
-        }
-        return true;
-    }
+    if (firstCharacter == ':' || firstCharacter == '_' || firstCharacter >= 0x80)
+        return name.containsOnly<isValidElementNameContinuationCharacter>();
 
     return false;
 }
@@ -98,37 +93,19 @@ bool isValidElementName(const QualifiedName& name)
 // https://dom.spec.whatwg.org/#valid-attribute-name
 bool isValidAttributeName(StringView name)
 {
-    if (name.isEmpty())
-        return false;
-
-    for (auto codeUnit : name.codeUnits()) {
-        if (isInvalidAttributeNameCharacter(codeUnit))
-            return false;
-    }
-    return true;
+    return !name.isEmpty() && !name.contains(isInvalidAttributeNameCharacter);
 }
 
 // https://dom.spec.whatwg.org/#valid-namespace-prefix
-bool isValidNamespacePrefix(StringView prefix)
+static bool isValidNamespacePrefix(StringView prefix)
 {
-    if (prefix.isEmpty())
-        return false;
-
-    for (auto codeUnit : prefix.codeUnits()) {
-        if (isInvalidNamespacePrefixCharacter(codeUnit))
-            return false;
-    }
-    return true;
+    return !prefix.isEmpty() && !prefix.contains(isInvalidNamespacePrefixCharacter);
 }
 
 // https://dom.spec.whatwg.org/#valid-doctype-name
 bool isValidDoctypeName(StringView name)
 {
-    for (auto codeUnit : name.codeUnits()) {
-        if (isInvalidDoctypeNameCharacter(codeUnit))
-            return false;
-    }
-    return true;
+    return !name.contains(isInvalidDoctypeNameCharacter);
 }
 
 static inline bool NODELETE isValidASCIIXMLName(StringView name)
@@ -137,15 +114,10 @@ static inline bool NODELETE isValidASCIIXMLName(StringView name)
         return false;
 
     auto firstCharacter = name[0];
-    if (!(isASCIIAlpha(firstCharacter) || firstCharacter == ':' || firstCharacter == '_'))
+    if (!isASCIIAlpha(firstCharacter) && firstCharacter != ':' && firstCharacter != '_')
         return false;
 
-    for (unsigned i = 1; i < name.length(); ++i) {
-        auto c = name[i];
-        if (!(isASCIIAlphanumeric(c) || c == ':' || c == '_' || c == '-' || c == '.'))
-            return false;
-    }
-    return true;
+    return name.containsOnly<isValidASCIIXMLNamePart>();
 }
 
 // https://www.w3.org/TR/xml/#NT-NameStartChar

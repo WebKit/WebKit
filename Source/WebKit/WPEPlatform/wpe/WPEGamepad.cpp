@@ -33,6 +33,14 @@
 /**
  * WPEGamepad:
  *
+ * A gamepad device.
+ *
+ * [class@Gamepad] is an abstract class that platform implementations derive to
+ * represent a connected gamepad. It reports input through the
+ * [signal@Gamepad::button-event] and [signal@Gamepad::axis-event]
+ * signals, and may support force feedback through [method@Gamepad.rumble].
+ *
+ * Gamepads are tracked by a [class@GamepadManager].
  */
 struct _WPEGamepadPrivate {
     CString name;

@@ -15,9 +15,9 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
@@ -92,7 +92,7 @@ class MockStreamDataCountersCallback : public StreamDataCountersCallback {
 };
 
 struct TransmittedPacket {
-  TransmittedPacket(ArrayView<const uint8_t> data,
+  TransmittedPacket(std::span<const uint8_t> data,
                     const PacketOptions& packet_options,
                     RtpHeaderExtensionMap* extensions)
       : packet(extensions), options(packet_options) {
@@ -107,7 +107,7 @@ class TestTransport : public Transport {
   explicit TestTransport(RtpHeaderExtensionMap* extensions)
       : total_data_sent_(DataSize::Zero()), extensions_(extensions) {}
   MOCK_METHOD(void, SentRtp, (const PacketOptions& options), ());
-  bool SendRtp(ArrayView<const uint8_t> packet,
+  bool SendRtp(std::span<const uint8_t> packet,
                const PacketOptions& options) override {
     total_data_sent_ += DataSize::Bytes(packet.size());
     last_packet_.emplace(packet, options, extensions_);
@@ -115,7 +115,7 @@ class TestTransport : public Transport {
     return true;
   }
 
-  bool SendRtcp(ArrayView<const uint8_t> /* packet */,
+  bool SendRtcp(std::span<const uint8_t> /* packet */,
                 const PacketOptions& /* options */) override {
     RTC_CHECK_NOTREACHED();
   }
@@ -852,7 +852,7 @@ TEST_F(RtpSenderEgressTest,
 TEST_F(RtpSenderEgressTest, SendPacketUpdatesStats) {
   const size_t kPayloadSize = 1000;
 
-  const ArrayView<const RtpExtensionSize> kNoRtpHeaderExtensionSizes;
+  const std::span<const RtpExtensionSize> kNoRtpHeaderExtensionSizes;
   FlexfecSender flexfec(env_, kFlexfectPayloadType, kFlexFecSsrc, kSsrc,
                         /*mid=*/"",
                         /*rtp_header_extensions=*/{},

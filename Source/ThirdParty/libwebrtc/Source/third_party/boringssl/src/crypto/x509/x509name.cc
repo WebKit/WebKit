@@ -26,6 +26,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 int X509_NAME_get_text_by_NID(const X509_NAME *name, int nid, char *buf,
                               int len) {
   const ASN1_OBJECT *obj;
@@ -79,7 +81,8 @@ int X509_NAME_entry_count(const X509_NAME *name) {
   if (name == nullptr) {
     return 0;
   }
-  return (int)sk_X509_NAME_ENTRY_num(name->entries);
+  const auto *impl = FromOpaque(name);
+  return (int)sk_X509_NAME_ENTRY_num(impl->entries);
 }
 
 int X509_NAME_get_index_by_NID(const X509_NAME *name, int nid, int lastpos) {
@@ -98,10 +101,11 @@ int X509_NAME_get_index_by_OBJ(const X509_NAME *name, const ASN1_OBJECT *obj,
   if (name == nullptr) {
     return -1;
   }
+  const auto *impl = FromOpaque(name);
   if (lastpos < 0) {
     lastpos = -1;
   }
-  const STACK_OF(X509_NAME_ENTRY) *sk = name->entries;
+  const STACK_OF(X509_NAME_ENTRY) *sk = impl->entries;
   int n = (int)sk_X509_NAME_ENTRY_num(sk);
   for (lastpos++; lastpos < n; lastpos++) {
     const X509_NAME_ENTRY *ne = sk_X509_NAME_ENTRY_value(sk, lastpos);
@@ -113,21 +117,27 @@ int X509_NAME_get_index_by_OBJ(const X509_NAME *name, const ASN1_OBJECT *obj,
 }
 
 X509_NAME_ENTRY *X509_NAME_get_entry(const X509_NAME *name, int loc) {
-  if (name == nullptr || loc < 0 ||
-      sk_X509_NAME_ENTRY_num(name->entries) <= (size_t)loc) {
+  if (name == nullptr) {
+    return nullptr;
+  }
+  const auto *impl = FromOpaque(name);
+  if (loc < 0 || sk_X509_NAME_ENTRY_num(impl->entries) <= (size_t)loc) {
     return nullptr;
   } else {
-    return (sk_X509_NAME_ENTRY_value(name->entries, loc));
+    return (sk_X509_NAME_ENTRY_value(impl->entries, loc));
   }
 }
 
 X509_NAME_ENTRY *X509_NAME_delete_entry(X509_NAME *name, int loc) {
-  if (name == nullptr || loc < 0 ||
-      sk_X509_NAME_ENTRY_num(name->entries) <= (size_t)loc) {
+  if (name == nullptr) {
+    return nullptr;
+  }
+  const auto *impl = FromOpaque(name);
+  if (loc < 0 || sk_X509_NAME_ENTRY_num(impl->entries) <= (size_t)loc) {
     return nullptr;
   }
 
-  STACK_OF(X509_NAME_ENTRY) *sk = name->entries;
+  STACK_OF(X509_NAME_ENTRY) *sk = impl->entries;
   X509_NAME_ENTRY *ret = sk_X509_NAME_ENTRY_delete(sk, loc);
   size_t n = sk_X509_NAME_ENTRY_num(sk);
   x509_name_invalidate_cache(name);
@@ -199,14 +209,15 @@ int X509_NAME_add_entry(X509_NAME *name, const X509_NAME_ENTRY *entry, int loc,
   if (name == nullptr) {
     return 0;
   }
-  if (name->entries == nullptr) {
-    name->entries = sk_X509_NAME_ENTRY_new_null();
-    if (name->entries == nullptr) {
+  auto *impl = FromOpaque(name);
+  if (impl->entries == nullptr) {
+    impl->entries = sk_X509_NAME_ENTRY_new_null();
+    if (impl->entries == nullptr) {
       return 0;
     }
   }
 
-  STACK_OF(X509_NAME_ENTRY) *sk = name->entries;
+  STACK_OF(X509_NAME_ENTRY) *sk = impl->entries;
   int n = (int)sk_X509_NAME_ENTRY_num(sk);
   if (loc > n) {
     loc = n;
@@ -236,7 +247,7 @@ int X509_NAME_add_entry(X509_NAME *name, const X509_NAME_ENTRY *entry, int loc,
     }
   }
 
-  bssl::UniquePtr<X509_NAME_ENTRY> new_entry(X509_NAME_ENTRY_dup(entry));
+  UniquePtr<X509_NAME_ENTRY> new_entry(X509_NAME_ENTRY_dup(entry));
   if (new_entry == nullptr) {
     return 0;
   }

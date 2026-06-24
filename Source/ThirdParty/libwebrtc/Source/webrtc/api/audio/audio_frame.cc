@@ -13,8 +13,9 @@
 #include <cstdint>
 #include <cstring>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
+#include "absl/algorithm/container.h"
 #include "api/audio/audio_view.h"
 #include "api/audio/channel_layout.h"
 #include "api/rtp_packet_infos.h"
@@ -102,7 +103,7 @@ void AudioFrame::CopyFrom(const AudioFrame& src) {
     // copying over new values. If we don't, msan might complain in some tests.
     // Consider locking down construction, avoiding the default constructor and
     // prefering construction that initializes all state.
-    ClearSamples(data_);
+    absl::c_fill(data_, 0);
   }
 
   timestamp_ = src.timestamp_;
@@ -126,18 +127,16 @@ void AudioFrame::CopyFrom(const AudioFrame& src) {
 }
 
 const int16_t* AudioFrame::data() const {
-  return muted_ ? zeroed_data().begin() : data_.data();
+  return muted_ ? zeroed_data().data() : data_.data();
 }
 
 InterleavedView<const int16_t> AudioFrame::data_view() const {
   // If you get a nullptr from `data_view()`, it's likely because the
   // samples_per_channel_ and/or num_channels_ members haven't been properly
-  // set. Since `data_view()` returns an InterleavedView<> (which internally
-  // uses ArrayView<>), we inherit the behavior in InterleavedView when
-  // the view size is 0 that ArrayView<>::data() returns nullptr. So, even when
-  // an AudioFrame is muted and we want to return `zeroed_data()`, if
-  // samples_per_channel_ or  num_channels_ is 0, the view will point to
-  // nullptr.
+  // set. `data_view()` returns an InterleavedView<> which internally
+  // uses std::span<>. So, even when an AudioFrame is muted and we want to
+  // return `zeroed_data()`, if samples_per_channel_ or  num_channels_ is 0,
+  // the view might point to nullptr.
   return InterleavedView<const int16_t>(muted_ ? &zeroed_data()[0] : &data_[0],
                                         samples_per_channel_, num_channels_);
 }
@@ -147,7 +146,7 @@ int16_t* AudioFrame::mutable_data() {
   // Consider instead if we should rather zero the buffer when `muted_` is set
   // to `true`.
   if (muted_) {
-    ClearSamples(data_);
+    absl::c_fill(data_, 0);
     muted_ = false;
   }
   return &data_[0];
@@ -170,7 +169,7 @@ InterleavedView<int16_t> AudioFrame::mutable_data(size_t samples_per_channel,
   // Consider instead if we should rather zero the whole buffer when `muted_` is
   // set to `true`.
   if (muted_) {
-    ClearSamples(data_, total_samples);
+    absl::c_fill_n(data_, total_samples, 0);
     muted_ = false;
   }
   samples_per_channel_ = samples_per_channel;
@@ -212,9 +211,9 @@ void AudioFrame::SetSampleRateAndChannelSize(int sample_rate) {
 }
 
 // static
-ArrayView<const int16_t> AudioFrame::zeroed_data() {
+std::span<const int16_t> AudioFrame::zeroed_data() {
   static int16_t* null_data = new int16_t[kMaxDataSizeSamples]();
-  return ArrayView<const int16_t>(null_data, kMaxDataSizeSamples);
+  return std::span<const int16_t>(null_data, kMaxDataSizeSamples);
 }
 
 }  // namespace webrtc

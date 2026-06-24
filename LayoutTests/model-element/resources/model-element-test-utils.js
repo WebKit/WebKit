@@ -60,6 +60,29 @@ async function waitForModelState(element, expectedState, timeout = 5000) {
     });
 }
 
+async function waitForEntityTransform(element, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const startTime = Date.now();
+
+        function check() {
+            const transform = element.entityTransform;
+            if (transform && !transform.isIdentity) {
+                resolve(transform);
+                return;
+            }
+
+            if (Date.now() - startTime > timeout) {
+                reject(new Error(`Timeout waiting for non-identity entityTransform`));
+                return;
+            }
+
+            setTimeout(check, 100);
+        }
+
+        check();
+    });
+}
+
 function scrollElementIntoView(element) {
     const rect = element.getBoundingClientRect();
     const elementTop = rect.top + window.pageYOffset;

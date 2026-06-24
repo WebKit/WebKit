@@ -47,7 +47,6 @@ void TestWithMultiLineExtendedAttributes::didReceiveMessage(IPC::Connection& con
         decoder.markInvalid();
         return;
     }
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithMultiLineExtendedAttributes::AlwaysEnabled::name()) {
         IPC::handleMessage<Messages::TestWithMultiLineExtendedAttributes::AlwaysEnabled>(connection, decoder, this, &TestWithMultiLineExtendedAttributes::alwaysEnabled);
         return;

@@ -53,11 +53,11 @@ class AnimationEventBase;
 class AnimationTimeline;
 class Document;
 class KeyframeEffect;
-class RenderStyle;
 
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
 namespace Style {
+class ComputedStyle;
 struct ResolutionContext;
 }
 
@@ -161,7 +161,7 @@ public:
     bool needsTick() const;
     virtual void tick();
     WEBCORE_EXPORT Seconds timeToNextTick() const;
-    OptionSet<AnimationImpact> resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No);
+    OptionSet<AnimationImpact> resolve(Style::ComputedStyle& targetStyle, const Style::ResolutionContext&, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No);
     void effectTargetDidChange(const std::optional<const Styleable>& previousTarget, const std::optional<const Styleable>& newTarget);
     void acceleratedStateDidChange();
     void willChangeRenderer();

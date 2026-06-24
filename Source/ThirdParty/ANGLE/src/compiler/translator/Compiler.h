@@ -48,6 +48,8 @@ bool IsGLSL150OrNewer(ShShaderOutput output);
 bool IsGLSL420OrNewer(ShShaderOutput output);
 bool IsGLSL410OrOlder(ShShaderOutput output);
 
+int GetMaxShaderVersionForSpec(ShShaderSpec spec);
+
 //
 // The base class used to back handles returned to the driver.
 //
@@ -289,9 +291,6 @@ class TCompiler : public TShHandleBase
     // Fetches and stores shader metadata that is not stored within the AST itself, such as shader
     // version.
     void setShaderMetadata(const TParseContext &parseContext);
-
-    // Check if shader version meets the requirement.
-    bool checkShaderVersion(TParseContext *parseContext);
 
     // Does checks that need to be run after parsing is complete and returns true if they pass.
     bool checkAndSimplifyAST(TIntermBlock *root,

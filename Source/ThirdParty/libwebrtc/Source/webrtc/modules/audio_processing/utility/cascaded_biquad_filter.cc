@@ -11,9 +11,9 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -23,7 +23,7 @@ void CascadedBiQuadFilter::BiQuad::BiQuad::Reset() {
 }
 
 CascadedBiQuadFilter::CascadedBiQuadFilter(
-    ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients> coefficients) {
+    std::span<const CascadedBiQuadFilter::BiQuadCoefficients> coefficients) {
   for (const auto& single_biquad_coefficients : coefficients) {
     biquads_.push_back(BiQuad(single_biquad_coefficients));
   }
@@ -31,8 +31,8 @@ CascadedBiQuadFilter::CascadedBiQuadFilter(
 
 CascadedBiQuadFilter::~CascadedBiQuadFilter() = default;
 
-void CascadedBiQuadFilter::Process(ArrayView<const float> x,
-                                   ArrayView<float> y) {
+void CascadedBiQuadFilter::Process(std::span<const float> x,
+                                   std::span<float> y) {
   if (!biquads_.empty()) {
     ApplyBiQuad(x, y, &biquads_[0]);
     for (size_t k = 1; k < biquads_.size(); ++k) {
@@ -43,7 +43,7 @@ void CascadedBiQuadFilter::Process(ArrayView<const float> x,
   }
 }
 
-void CascadedBiQuadFilter::Process(ArrayView<float> y) {
+void CascadedBiQuadFilter::Process(std::span<float> y) {
   for (auto& biquad : biquads_) {
     ApplyBiQuad(y, y, &biquad);
   }
@@ -55,8 +55,8 @@ void CascadedBiQuadFilter::Reset() {
   }
 }
 
-void CascadedBiQuadFilter::ApplyBiQuad(ArrayView<const float> x,
-                                       ArrayView<float> y,
+void CascadedBiQuadFilter::ApplyBiQuad(std::span<const float> x,
+                                       std::span<float> y,
                                        CascadedBiQuadFilter::BiQuad* biquad) {
   RTC_DCHECK_EQ(x.size(), y.size());
   const float c_a_0 = biquad->coefficients.a[0];

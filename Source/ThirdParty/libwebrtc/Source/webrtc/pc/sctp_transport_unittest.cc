@@ -32,9 +32,9 @@
 #include "p2p/dtls/fake_dtls_transport.h"
 #include "pc/dtls_transport.h"
 #include "rtc_base/copy_on_write_buffer.h"
-#include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/wait_until.h"
 
 namespace webrtc {
@@ -161,7 +161,7 @@ class SctpTransportTest : public ::testing::Test {
     return static_cast<FakeSctpTransportInternal*>(transport_->internal());
   }
 
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
   scoped_refptr<SctpTransport> transport_;
   scoped_refptr<DtlsTransport> dtls_transport_;
   std::unique_ptr<FakeDtlsTransport> internal_transport_;
@@ -169,7 +169,7 @@ class SctpTransportTest : public ::testing::Test {
 };
 
 TEST(SctpTransportSimpleTest, CreateClearDelete) {
-  AutoThread main_thread;
+  test::RunLoop main_thread;
   std::unique_ptr<DtlsTransportInternal> internal_transport =
       std::make_unique<FakeDtlsTransport>("audio", ICE_CANDIDATE_COMPONENT_RTP);
   scoped_refptr<DtlsTransport> dtls_transport =

@@ -45,9 +45,9 @@
 #include "MathMLNames.h"
 #include "MouseEvent.h"
 #include "NodeName.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "Settings.h"
+#include "StyleComputedStyle.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -80,7 +80,7 @@ unsigned MathMLElement::rowSpan() const
 {
     if (!hasTagName(mtdTag))
         return 1u;
-    auto& rowSpanValue = attributeWithoutSynchronization(rowspanAttr);
+    auto& rowSpanValue = attributeWithoutSynchronization(MathMLNames::rowspanAttr);
     return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), HTMLTableCellElement::maxRowspan));
 }
 
@@ -304,10 +304,10 @@ void MathMLElement::defaultEventHandler(Event& event)
             return;
         }
         if (MouseEvent::canTriggerActivationBehavior(event)) {
-            const auto& href = attributeWithoutSynchronization(hrefAttr);
+            const auto& href = attributeWithoutSynchronization(MathMLNames::hrefAttr);
             event.setDefaultHandled();
             if (RefPtr frame = document().frame())
-                frame->loader().changeLocation(document().encodingParseURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+                frame->loader().changeLocation(protect(document())->encodingParseURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, protect(document())->shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }
@@ -350,12 +350,14 @@ bool MathMLElement::isURLAttribute(const Attribute& attribute) const
 {
     if (!allowsHref())
         return false;
-    return attribute.name().localName() == hrefAttr || StyledElement::isURLAttribute(attribute);
+    // FIXME: Should this be attribute.name().matches(hrefAttr) to also enforce the namespace?
+    return MathMLNames::hrefAttr->hasLocalName(attribute.name().localName()) || StyledElement::isURLAttribute(attribute);
 }
 
 bool MathMLElement::allowsHref() const
 {
-    return !document().settings().mathMLDisableHrefOnNonAnchorElement() || localName() == HTMLNames::aTag;
+    // FIXME: Should this be hasTagName(HTMLNames::aTag) to also enforce the namespace?
+    return !document().settings().mathMLDisableHrefOnNonAnchorElement() || HTMLNames::aTag->hasLocalName(localName());
 }
 
 bool MathMLElement::supportsFocus() const
@@ -368,7 +370,8 @@ bool MathMLElement::supportsFocus() const
 
 int MathMLElement::defaultTabIndex() const
 {
-    return localName() == HTMLNames::aTag ? 0 : -1;
+    // FIXME: Should this be hasTagName(HTMLNames::aTag) to also enforce the namespace?
+    return HTMLNames::aTag->hasLocalName(localName()) ? 0 : -1;
 }
 
 Node::NeedsPostConnectionSteps MathMLElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 #include <optional>
 
@@ -44,6 +45,10 @@ class FakeAudioCaptureModule : public webrtc::AudioDeviceModule {
   static const size_t kNumberBytesPerSample = sizeof(Sample);
 
   // Creates a FakeAudioCaptureModule or returns NULL on failure.
+  static webrtc::scoped_refptr<FakeAudioCaptureModule> Create(
+      std::unique_ptr<webrtc::Thread> process_thread);
+
+  // Creates a FakeAudioCaptureModule with a default started thread.
   static webrtc::scoped_refptr<FakeAudioCaptureModule> Create();
 
   // Returns the number of frames that have been successfully pulled by the
@@ -156,7 +161,9 @@ class FakeAudioCaptureModule : public webrtc::AudioDeviceModule {
   // exposed in which case the burden of proper instantiation would be put on
   // the creator of a FakeAudioCaptureModule instance. To create an instance of
   // this class use the Create(..) API.
-  FakeAudioCaptureModule();
+  explicit FakeAudioCaptureModule(
+      std::unique_ptr<webrtc::Thread> process_thread);
+
   // The destructor is protected because it is reference counted and should not
   // be deleted directly.
   ~FakeAudioCaptureModule() override;
@@ -215,9 +222,9 @@ class FakeAudioCaptureModule : public webrtc::AudioDeviceModule {
   std::unique_ptr<webrtc::Thread> process_thread_;
 
   // Buffer for storing samples received from the webrtc::AudioTransport.
-  char rec_buffer_[kNumberSamples * kNumberBytesPerSample];
+  std::array<Sample, kNumberSamples> rec_buffer_;
   // Buffer for samples to send to the webrtc::AudioTransport.
-  char send_buffer_[kNumberSamples * kNumberBytesPerSample];
+  std::array<Sample, kNumberSamples> send_buffer_;
 
   // Counter of frames received that have samples of high enough amplitude to
   // indicate that the frames are not faked somewhere in the audio pipeline

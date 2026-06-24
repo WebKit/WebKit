@@ -38,7 +38,7 @@ class PathBuilderTestDelegate {
       intermediate_cert_issuer_source.AddCert(test.chain[i]);
     }
 
-    // First cert in the |chain| is the target.
+    // First cert in the `chain` is the target.
     CertPathBuilder path_builder(
         test.chain.front(), &trust_store, &path_builder_delegate, test.time,
         test.key_purpose, test.initial_explicit_policy,

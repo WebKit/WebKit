@@ -13,12 +13,12 @@
 
 #include <stdint.h>
 
+#include <span>
 #include <string>
 #include <type_traits>
 
 #include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -33,7 +33,7 @@ namespace webrtc {
 class BitstreamReader {
  public:
   explicit BitstreamReader(
-      ArrayView<const uint8_t> bytes ABSL_ATTRIBUTE_LIFETIME_BOUND);
+      std::span<const uint8_t> bytes ABSL_ATTRIBUTE_LIFETIME_BOUND);
   explicit BitstreamReader(
       absl::string_view bytes ABSL_ATTRIBUTE_LIFETIME_BOUND);
   BitstreamReader(const BitstreamReader&) = default;
@@ -126,7 +126,7 @@ class BitstreamReader {
   mutable bool last_read_is_verified_ = true;
 };
 
-inline BitstreamReader::BitstreamReader(ArrayView<const uint8_t> bytes)
+inline BitstreamReader::BitstreamReader(std::span<const uint8_t> bytes)
     : bytes_(bytes.data()),
       remaining_bits_(checked_cast<int>(bytes.size() * 8)) {}
 

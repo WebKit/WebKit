@@ -37,11 +37,11 @@ class RenderTableCol final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableCol);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCol);
 public:
-    RenderTableCol(Element&, RenderStyle&&);
-    RenderTableCol(Document&, RenderStyle&&);
+    RenderTableCol(Element&, Style::ComputedStyle&&);
+    RenderTableCol(Document&, Style::ComputedStyle&&);
     virtual ~RenderTableCol();
 
-    void clearNeedsPreferredLogicalWidthsUpdate();
+    void clearContentLogicalWidthsInvalidation();
 
     unsigned span() const { return m_span; }
     void setSpan(unsigned span) { m_span = span; }
@@ -70,13 +70,13 @@ public:
 
 private:
     ASCIILiteral renderName() const override { return "RenderTableCol"_s; }
-    void computePreferredLogicalWidths() override { ASSERT_NOT_REACHED(); }
-    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
+    void computeIntrinsicLogicalWidthContributions() override { ASSERT_NOT_REACHED(); }
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { ASSERT_NOT_REACHED(); return { }; }
 
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
 
-    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
     bool canHaveChildren() const override;
     bool requiresLayer() const override { return false; }
 
@@ -85,7 +85,7 @@ private:
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
     void paint(PaintInfo&, const LayoutPoint&) override { }
 
     RenderTable* NODELETE table() const;

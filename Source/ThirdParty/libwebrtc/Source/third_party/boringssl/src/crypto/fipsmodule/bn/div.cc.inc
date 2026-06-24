@@ -33,9 +33,12 @@
 #endif
 
 
+using namespace bssl;
+
 // bn_div_words divides a double-width |h|,|l| by |d| and returns the result,
 // which must fit in a |BN_ULONG|, i.e. |h < d|.
-static inline BN_ULONG bn_div_words(BN_ULONG h, BN_ULONG l, BN_ULONG d) {
+[[maybe_unused]]
+static BN_ULONG bn_div_words(BN_ULONG h, BN_ULONG l, BN_ULONG d) {
   assert(h < d);
   BN_ULONG dh, dl, q, ret = 0, th, tl, t;
   int i, count = 2;
@@ -109,8 +112,8 @@ static inline BN_ULONG bn_div_words(BN_ULONG h, BN_ULONG l, BN_ULONG d) {
 // half |nl|) with a single-width divisor. It sets |*quotient_out| and
 // |*rem_out| to be the quotient and numerator, respectively. The quotient must
 // fit in a |BN_ULONG|, i.e. |nh < d|.
-static inline void bn_div_rem_words(BN_ULONG *quotient_out, BN_ULONG *rem_out,
-                                    BN_ULONG nh, BN_ULONG nl, BN_ULONG d) {
+static void bn_div_rem_words(BN_ULONG *quotient_out, BN_ULONG *rem_out,
+                             BN_ULONG nh, BN_ULONG nl, BN_ULONG d) {
   assert(nh < d);
   // This operation is the x86 and x86_64 DIV instruction, but it is difficult
   // for the compiler to emit it. Dividing a |BN_ULLONG| by a |BN_ULONG| does
@@ -166,7 +169,7 @@ int BN_div(BIGNUM *quotient, BIGNUM *rem, const BIGNUM *numerator,
     return 0;
   }
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
   BIGNUM *snum = BN_CTX_get(ctx);
   BIGNUM *sdiv = BN_CTX_get(ctx);
@@ -350,8 +353,8 @@ int BN_nnmod(BIGNUM *r, const BIGNUM *m, const BIGNUM *d, BN_CTX *ctx) {
   return BN_usub(r, d, r);
 }
 
-BN_ULONG bn_reduce_once(BN_ULONG *r, const BN_ULONG *a, BN_ULONG carry,
-                        const BN_ULONG *m, size_t num) {
+BN_ULONG bssl::bn_reduce_once(BN_ULONG *r, const BN_ULONG *a, BN_ULONG carry,
+                              const BN_ULONG *m, size_t num) {
   assert(r != a);
   // |r| = |a| - |m|. |bn_sub_words| performs the bulk of the subtraction, and
   // then we apply the borrow to |carry|.
@@ -370,8 +373,9 @@ BN_ULONG bn_reduce_once(BN_ULONG *r, const BN_ULONG *a, BN_ULONG carry,
   return carry;
 }
 
-BN_ULONG bn_reduce_once_in_place(BN_ULONG *r, BN_ULONG carry, const BN_ULONG *m,
-                                 BN_ULONG *tmp, size_t num) {
+BN_ULONG bssl::bn_reduce_once_in_place(BN_ULONG *r, BN_ULONG carry,
+                                       const BN_ULONG *m, BN_ULONG *tmp,
+                                       size_t num) {
   // See |bn_reduce_once| for why this logic works.
   carry -= bn_sub_words(tmp, r, m, num);
   declassify_assert(carry + 1 <= 1);
@@ -379,8 +383,8 @@ BN_ULONG bn_reduce_once_in_place(BN_ULONG *r, BN_ULONG carry, const BN_ULONG *m,
   return carry;
 }
 
-void bn_mod_sub_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
-                      const BN_ULONG *m, BN_ULONG *tmp, size_t num) {
+void bssl::bn_mod_sub_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
+                            const BN_ULONG *m, BN_ULONG *tmp, size_t num) {
   // r = a - b
   BN_ULONG borrow = bn_sub_words(r, a, b, num);
   // tmp = a - b + m
@@ -388,15 +392,15 @@ void bn_mod_sub_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
   bn_select_words(r, 0 - borrow, tmp /* r < 0 */, r /* r >= 0 */, num);
 }
 
-void bn_mod_add_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
-                      const BN_ULONG *m, BN_ULONG *tmp, size_t num) {
+void bssl::bn_mod_add_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
+                            const BN_ULONG *m, BN_ULONG *tmp, size_t num) {
   BN_ULONG carry = bn_add_words(r, a, b, num);
   bn_reduce_once_in_place(r, carry, m, tmp, num);
 }
 
-int bn_div_consttime(BIGNUM *quotient, BIGNUM *remainder,
-                     const BIGNUM *numerator, const BIGNUM *divisor,
-                     unsigned divisor_min_bits, BN_CTX *ctx) {
+int bssl::bn_div_consttime(BIGNUM *quotient, BIGNUM *remainder,
+                           const BIGNUM *numerator, const BIGNUM *divisor,
+                           unsigned divisor_min_bits, BN_CTX *ctx) {
   if (BN_is_negative(numerator) || BN_is_negative(divisor)) {
     OPENSSL_PUT_ERROR(BN, BN_R_NEGATIVE_NUMBER);
     return 0;
@@ -410,7 +414,7 @@ int bn_div_consttime(BIGNUM *quotient, BIGNUM *remainder,
   // but it is simple, easy to make constant-time, and performant enough for RSA
   // key generation.
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *q = quotient, *r = remainder;
   if (quotient == nullptr || quotient == numerator || quotient == divisor) {
     q = BN_CTX_get(ctx);
@@ -519,13 +523,13 @@ int BN_mod_add(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, const BIGNUM *m,
 
 int BN_mod_add_quick(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
                      const BIGNUM *m) {
-  bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
+  UniquePtr<BN_CTX> ctx(BN_CTX_new());
   return ctx != nullptr && bn_mod_add_consttime(r, a, b, m, ctx.get());
 }
 
-int bn_mod_add_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
-                         const BIGNUM *m, BN_CTX *ctx) {
-  bssl::BN_CTXScope scope(ctx);
+int bssl::bn_mod_add_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
+                               const BIGNUM *m, BN_CTX *ctx) {
+  BN_CTXScope scope(ctx);
   a = bn_resized_from_ctx(a, m->width, ctx);
   b = bn_resized_from_ctx(b, m->width, ctx);
   BIGNUM *tmp = bn_scratch_space_from_ctx(m->width, ctx);
@@ -547,9 +551,9 @@ int BN_mod_sub(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, const BIGNUM *m,
   return BN_nnmod(r, r, m, ctx);
 }
 
-int bn_mod_sub_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
-                         const BIGNUM *m, BN_CTX *ctx) {
-  bssl::BN_CTXScope scope(ctx);
+int bssl::bn_mod_sub_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
+                               const BIGNUM *m, BN_CTX *ctx) {
+  BN_CTXScope scope(ctx);
   a = bn_resized_from_ctx(a, m->width, ctx);
   b = bn_resized_from_ctx(b, m->width, ctx);
   BIGNUM *tmp = bn_scratch_space_from_ctx(m->width, ctx);
@@ -565,13 +569,13 @@ int bn_mod_sub_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
 
 int BN_mod_sub_quick(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
                      const BIGNUM *m) {
-  bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
+  UniquePtr<BN_CTX> ctx(BN_CTX_new());
   return ctx != nullptr && bn_mod_sub_consttime(r, a, b, m, ctx.get());
 }
 
 int BN_mod_mul(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, const BIGNUM *m,
                BN_CTX *ctx) {
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *t = BN_CTX_get(ctx);
   if (t == nullptr) {
     return 0;
@@ -609,7 +613,7 @@ int BN_mod_lshift(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m,
     return 0;
   }
 
-  bssl::UniquePtr<BIGNUM> abs_m;
+  UniquePtr<BIGNUM> abs_m;
   if (m->neg) {
     abs_m.reset(BN_dup(m));
     if (abs_m == nullptr) {
@@ -621,13 +625,13 @@ int BN_mod_lshift(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m,
   return bn_mod_lshift_consttime(r, r, n, (abs_m ? abs_m.get() : m), ctx);
 }
 
-int bn_mod_lshift_consttime(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m,
-                            BN_CTX *ctx) {
+int bssl::bn_mod_lshift_consttime(BIGNUM *r, const BIGNUM *a, int n,
+                                  const BIGNUM *m, BN_CTX *ctx) {
   if (!BN_copy(r, a) || !bn_resize_words(r, m->width)) {
     return 0;
   }
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *tmp = bn_scratch_space_from_ctx(m->width, ctx);
   if (tmp == nullptr) {
     return 0;
@@ -640,7 +644,7 @@ int bn_mod_lshift_consttime(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m,
 }
 
 int BN_mod_lshift_quick(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m) {
-  bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
+  UniquePtr<BN_CTX> ctx(BN_CTX_new());
   return ctx != nullptr && bn_mod_lshift_consttime(r, a, n, m, ctx.get());
 }
 
@@ -652,13 +656,13 @@ int BN_mod_lshift1(BIGNUM *r, const BIGNUM *a, const BIGNUM *m, BN_CTX *ctx) {
   return BN_nnmod(r, r, m, ctx);
 }
 
-int bn_mod_lshift1_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *m,
-                             BN_CTX *ctx) {
+int bssl::bn_mod_lshift1_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *m,
+                                   BN_CTX *ctx) {
   return bn_mod_add_consttime(r, a, a, m, ctx);
 }
 
 int BN_mod_lshift1_quick(BIGNUM *r, const BIGNUM *a, const BIGNUM *m) {
-  bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
+  UniquePtr<BN_CTX> ctx(BN_CTX_new());
   return ctx != nullptr && bn_mod_lshift1_consttime(r, a, m, ctx.get());
 }
 

@@ -14,11 +14,11 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/candidate.h"
 #include "api/crypto/crypto_options.h"
 #include "api/datagram_connection.h"
@@ -58,6 +58,7 @@ using PacketMetadata = DatagramConnection::Observer::PacketMetadata;
 
 const size_t kMaxRtpPacketLen = 2048;
 const size_t kIceUfragLength = 16;
+const size_t kMinPayloadLengthForRtpCheck = 2;
 
 // Helper function to create IceTransportInit
 IceTransportInit CreateIceTransportInit(const Environment& env,
@@ -142,7 +143,13 @@ DatagramConnectionInternal::DatagramConnectionInternal(
 
   internal_transport_->ice_transport()->SubscribeCandidateGathered(
       this,
+#if WEBRTC_WEBKIT_BUILD
+      [this](IceTransportInternal* ice_transport, const Candidate& candidate) {
+        OnCandidateGathered(ice_transport, candidate);
+      });
+#else
       std::bind_front(&DatagramConnectionInternal::OnCandidateGathered, this));
+#endif
 
   if (wire_protocol_ == WireProtocol::kDtls) {
     internal_transport_->SubscribeWritableState(this, [this](bool is_writable) {
@@ -254,7 +261,7 @@ void DatagramConnectionInternal::SetRemoteDtlsParameters(
 }
 
 void DatagramConnectionInternal::SendPackets(
-    ArrayView<PacketSendParameters> packets) {
+    std::span<PacketSendParameters> packets) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   for (size_t i = 0; i < packets.size(); ++i) {
     SendSinglePacket(packets[i],
@@ -291,7 +298,8 @@ void DatagramConnectionInternal::SendSinglePacket(
     return;
   }
 
-  if (IsRtpOrRtcpPacket(packet.payload[0])) {
+  if (packet.payload.size() >= kMinPayloadLengthForRtpCheck &&
+      IsRtpOrRtcpPacket(packet.payload[0])) {
     // Copy the payload into a buffer with some extra capacity to allow space
     // for the SRTP encryption tag to be added.
     CopyOnWriteBuffer buffer(packet.payload.data(), packet.payload.size(),
@@ -388,20 +396,25 @@ void DatagramConnectionInternal::OnDtlsPacket(CopyOnWriteBuffer packet,
 }
 
 void DatagramConnectionInternal::OnSentPacket(const SentPacketInfo& sent_info) {
-  Observer::SendOutcome outcome{};
-  outcome.id = sent_info.packet_id;
-  outcome.status = Observer::SendOutcome::Status::kSuccess;
-  outcome.send_time = Timestamp::Millis(sent_info.send_time_ms);
-  outcome.bytes_sent = sent_info.info.packet_size_bytes;
+  // Ignore internal transport packets (e.g. DTLS handshakes, session tickets,
+  // STUN connectivity checks) which are sent with the default packet ID of -1.
+  if (sent_info.packet_id == -1) {
+    return;
+  }
+  Observer::SendOutcome outcome{
+      .id = static_cast<DatagramConnection::PacketId>(sent_info.packet_id),
+      .status = Observer::SendOutcome::Status::kSuccess,
+      .send_time = sent_info.send_time_ms >= 0
+                       ? Timestamp::Millis(sent_info.send_time_ms)
+                       : Timestamp::MinusInfinity(),
+      .bytes_sent = sent_info.info.packet_size_bytes};
   observer_->OnSendOutcome(outcome);
 }
 
 void DatagramConnectionInternal::DispatchSendOutcome(
     PacketId id,
     Observer::SendOutcome::Status status) {
-  Observer::SendOutcome outcome{};
-  outcome.id = id;
-  outcome.status = status;
+  Observer::SendOutcome outcome{.id = id, .status = status};
   observer_->OnSendOutcome(outcome);
 }
 

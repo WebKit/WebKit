@@ -303,8 +303,8 @@ extension WKPDFHUDView {
     private static func makeBarView() -> NSView {
         #if HAVE_LIQUID_GLASS
         let view = NSGlassEffectView()
-        #if ENABLE_NSGLASSEFFECTVIEW_USES_DEFAULT_CONFIGURATION
-        view.usesDefaultConfiguration = true
+        #if HAVE_NSGLASSEFFECTVIEW_EFFECT_IS_INTERACTIVE
+        view.effectIsInteractive = true
         #endif
         view._adaptiveAppearance = .on
         #else

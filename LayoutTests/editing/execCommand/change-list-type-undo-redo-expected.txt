@@ -1,0 +1,76 @@
+Verifies that converting list, then undo and redo will restore the list accordingly.
+
+Before OL to UL:
+| "\n        "
+| <ol>
+|   class="Apple-decimal-list"
+|   start="2"
+|   style="list-style-type: decimal"
+|   "\n            "
+|   <li>
+|     id="ol1"
+|     "two"
+|   "\n            "
+|   <li>
+|     "three"
+|   "\n            "
+|   <li>
+|     "four"
+|   "\n        "
+| "\n    "
+
+After OL to UL:
+| "\n        "
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   "\n            "
+|   <li>
+|     id="ol1"
+|     "two"
+|   "\n            "
+|   <li>
+|     "three"
+|   "\n            "
+|   <li>
+|     "four<#selection-caret>"
+|   "\n        "
+| "\n    "
+
+After undo:
+| "\n        "
+| <ol>
+|   class="Apple-decimal-list"
+|   start="2"
+|   style="list-style-type: decimal"
+|   "\n            "
+|   <li>
+|     id="ol1"
+|     <#selection-caret>
+|     "two"
+|   "\n            "
+|   <li>
+|     "three"
+|   "\n            "
+|   <li>
+|     "four"
+|   "\n        "
+| "\n    "
+
+After redo:
+| "\n        "
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   "\n            "
+|   <li>
+|     id="ol1"
+|     "two"
+|   "\n            "
+|   <li>
+|     "three"
+|   "\n            "
+|   <li>
+|     "four<#selection-caret>"
+|   "\n        "
+| "\n    "

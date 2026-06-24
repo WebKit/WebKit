@@ -65,6 +65,7 @@
 #define OPENSSL_NO_SSL3_METHOD
 #define OPENSSL_NO_STATIC_ENGINE
 #define OPENSSL_NO_STORE
+#define OPENSSL_NO_UI_CONSOLE
 #define OPENSSL_NO_WHIRLPOOL
 
 // We do not implement OpenSSL's CMS API, except for a tiny subset. Projects
@@ -73,6 +74,35 @@
 // option does not change what APIs are exposed by BoringSSL, only this macro.
 #if !defined(BORINGSSL_NO_NO_CMS)
 #define OPENSSL_NO_CMS
+#endif
+
+// C and C++ handle inline functions differently. In C++, an inline function is
+// defined in just the header file, potentially emitted in multiple compilation
+// units (in cases the compiler did not inline), but each copy must be identical
+// to satisfy ODR. In C, a non-static inline must be manually emitted in exactly
+// one compilation unit with a separate extern inline declaration.
+//
+// In both languages, exported inline functions referencing file-local symbols
+// are problematic. C forbids this altogether (though GCC and Clang seem not to
+// enforce it). It works in C++, but ODR requires the definitions be identical,
+// including all names in the definitions resolving to the "same entity". In
+// practice, this is unlikely to be a problem, but an inline function that
+// returns a pointer to a file-local symbol
+// could compile oddly.
+//
+// Historically, we used static inline in headers. However, to satisfy ODR, use
+// plain inline in C++, to allow inline consumer functions to call our header
+// functions. Plain inline would also work better with C99 inline, but that is
+// not used much in practice, extern inline is tedious, and there are conflicts
+// with the old gnu89 model:
+// https://stackoverflow.com/questions/216510/extern-inline
+//
+// So in C, always use static inline, whereas in C++, use static inline
+// only if `BORINGSSL_ALWAYS_USE_STATIC_INLINE` is defined (which may be useful
+// for some FFI integrations in conjunction with `BORINGSSL_PREFIX`, as static
+// inline functions are local to the compilation unit and need no prefix).
+#if !defined(__cplusplus) && !defined(BORINGSSL_ALWAYS_USE_STATIC_INLINE)
+#define BORINGSSL_ALWAYS_USE_STATIC_INLINE
 #endif
 
 #endif  // OPENSSL_HEADER_OPENSSLCONF_H

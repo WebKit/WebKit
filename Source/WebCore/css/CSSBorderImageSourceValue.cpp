@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +28,7 @@
 #include "CSSBorderImageSourceValue.h"
 
 #include "CSSValuePool.h"
-#include "DeprecatedCSSOMValue.h"
+#include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 
 namespace WebCore {
 
@@ -71,7 +72,7 @@ IterationStatus CSSBorderImageSourceValue::customVisitChildren(NOESCAPE const Fu
     return CSS::visitCSSValueChildren(function, m_source);
 }
 
-Ref<DeprecatedCSSOMValue> CSSBorderImageSourceValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CSSBorderImageSourceValue::customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
 {
     return CSS::createDeprecatedCSSOMValue(CSSValuePool::singleton(), owner, m_source);
 }

@@ -21,6 +21,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 X509_ATTRIBUTE *X509_ATTRIBUTE_create_by_NID(X509_ATTRIBUTE **attr, int nid,
                                              int attrtype, const void *data,
                                              int len) {

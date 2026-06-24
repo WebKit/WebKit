@@ -26,9 +26,9 @@
 #include "config.h"
 #include "CSSValuePair.h"
 
+#include "DeprecatedCSSOMPrimitiveValue.h"
 #include <wtf/Hasher.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -82,6 +82,13 @@ bool CSSValuePair::addDerivedHash(Hasher& hasher) const
 {
     add(hasher, m_valueSeparator, m_coalesceIdenticalValues);
     return m_first->addHash(hasher) && m_second->addHash(hasher);
+}
+
+Ref<DeprecatedCSSOMValue> CSSValuePair::customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+{
+    return DeprecatedCSSOMPrimitiveValue::create([copy = protect(*this)](const CSS::SerializationContext& context) {
+        return copy->cssText(context);
+    }, owner);
 }
 
 } // namespace WebCore

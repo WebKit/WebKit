@@ -34,6 +34,10 @@
 #include <WebCore/Settings.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if PLATFORM(COCOA)
+#include <sys/sysctl.h>
+#include <wtf/spi/darwin/OSVariantSPI.h>
+#endif
 
 #if ENABLE(MODEL_PROCESS)
 #include "ModelProcessModelPlayer.h"
@@ -43,6 +47,18 @@
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebModelPlayerProvider);
+
+#if PLATFORM(COCOA)
+static bool isRunningInRecoveryOS()
+{
+#if PLATFORM(MAC)
+    static bool isBaseSystem = os_variant_is_basesystem("WebKit");
+    return isBaseSystem;
+#else
+    return false;
+#endif
+}
+#endif
 
 Ref<WebModelPlayerProvider> WebModelPlayerProvider::create(WebPage& webPage)
 {
@@ -58,9 +74,24 @@ WebModelPlayerProvider::~WebModelPlayerProvider() = default;
 
 // MARK: - WebCore::ModelPlayerProvider overrides.
 
+bool WebModelPlayerProvider::isAvailable() const
+{
+#if PLATFORM(COCOA)
+    return !isRunningInRecoveryOS();
+#else
+    return true;
+#endif
+}
+
 RefPtr<WebCore::ModelPlayer> WebModelPlayerProvider::createModelPlayer(WebCore::ModelPlayerClient& client)
 {
     Ref page = m_page.get();
+#if PLATFORM(COCOA)
+    if (!isAvailable()) {
+        UNUSED_PARAM(client);
+        return nullptr;
+    }
+#endif
 #if ENABLE(MODEL_PROCESS)
     if (page->corePage() && page->corePage()->settings().modelProcessEnabled())
         return WebProcess::singleton().modelProcessModelPlayerManager().createModelProcessModelPlayer(page, client);

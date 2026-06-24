@@ -224,6 +224,8 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     SetMediaAccessibilityPreferences(enum:uint8_t WebCore::CaptionUserPreferencesDisplayMode displayMode, Vector<String> languages)
+    SetMediaAccessibilityPreferredLanguages(Vector<String> languages)
+    SetMediaAccessibilityPreferredCaptionDisplayMode(enum:uint8_t WebCore::CaptionUserPreferencesDisplayMode displayMode)
 #endif
 
 #if PLATFORM(MAC)

@@ -97,7 +97,7 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
         ts << "XYZ-D50"_s;
         break;
     case ColorSpace::XYZ_D65:
-        ts << "XYZ-D50"_s;
+        ts << "XYZ-D65"_s;
         break;
     }
     return ts;

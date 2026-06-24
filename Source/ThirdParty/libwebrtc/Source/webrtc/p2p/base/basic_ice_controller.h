@@ -17,9 +17,9 @@
 #include <map>
 #include <optional>
 #include <set>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -45,13 +45,8 @@ class BasicIceController : public IceControllerInterface {
   void SetSelectedConnection(const Connection* selected_connection) override;
   void AddConnection(const Connection* connection) override;
   void OnConnectionDestroyed(const Connection* connection) override;
-  ArrayView<const Connection* const> GetConnections() const override {
+  std::span<const Connection* const> GetConnections() const override {
     return connections_;
-  }
-  ArrayView<const Connection*> connections() const override {
-    return ArrayView<const Connection*>(
-        const_cast<const Connection**>(connections_.data()),
-        connections_.size());
   }
 
   bool HasPingableConnection() const override;

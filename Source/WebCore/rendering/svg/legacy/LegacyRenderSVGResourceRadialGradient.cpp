@@ -29,7 +29,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceRadialGradient);
 
-LegacyRenderSVGResourceRadialGradient::LegacyRenderSVGResourceRadialGradient(SVGRadialGradientElement& element, RenderStyle&& style)
+LegacyRenderSVGResourceRadialGradient::LegacyRenderSVGResourceRadialGradient(SVGRadialGradientElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGResourceGradient(Type::LegacySVGResourceRadialGradient, element, WTF::move(style))
 {
 }
@@ -62,7 +62,7 @@ float LegacyRenderSVGResourceRadialGradient::focalRadius(const RadialGradientAtt
     return SVGLengthContext::resolveLength(protect(radialGradientElement()).ptr(), attributes.gradientUnits(), attributes.fr());
 }
 
-Ref<Gradient> LegacyRenderSVGResourceRadialGradient::buildGradient(const RenderStyle& style) const
+Ref<Gradient> LegacyRenderSVGResourceRadialGradient::buildGradient(const Style::ComputedStyle& style) const
 {
     return Gradient::create(
         Gradient::RadialData { focalPoint(m_attributes), centerPoint(m_attributes), focalRadius(m_attributes), radius(m_attributes), 1 },

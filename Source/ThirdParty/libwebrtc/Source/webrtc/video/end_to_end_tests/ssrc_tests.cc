@@ -12,10 +12,10 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/rtp_parameters.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/simulated_network.h"
@@ -55,7 +55,7 @@ TEST_F(SsrcEndToEndTest, ReceiverUsesLocalSsrc) {
     SyncRtcpObserver()
         : EndToEndTest(test::VideoTestConstants::kDefaultTimeout) {}
 
-    Action OnReceiveRtcp(ArrayView<const uint8_t> packet) override {
+    Action OnReceiveRtcp(std::span<const uint8_t> packet) override {
       test::RtcpPacketParser parser;
       EXPECT_TRUE(parser.Parse(packet));
       EXPECT_EQ(test::VideoTestConstants::kReceiverLocalVideoSsrc,
@@ -114,14 +114,14 @@ TEST_F(SsrcEndToEndTest, UnknownRtpPacketTriggersUndemuxablePacketHandler) {
     CreateCalls();
 
     send_transport = std::make_unique<test::DirectTransport>(
-        env(), task_queue(),
+        env(), network_thread(),
         std::make_unique<FakeNetworkPipe>(
             &env().clock(),
             std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())),
         sender_call_.get(), payload_type_map_, GetRegisteredExtensions(),
         GetRegisteredExtensions());
     receive_transport = std::make_unique<test::DirectTransport>(
-        env(), task_queue(),
+        env(), network_thread(),
         std::make_unique<FakeNetworkPipe>(
             &env().clock(),
             std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())),
@@ -177,7 +177,7 @@ void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
     }
 
    private:
-    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(std::span<const uint8_t> packet) override {
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet));
 
@@ -285,7 +285,7 @@ TEST_F(SsrcEndToEndTest, DISABLED_RedundantPayloadsTransmittedOnAllSsrcs) {
     }
 
    private:
-    Action OnSendRtp(ArrayView<const uint8_t> packet) override {
+    Action OnSendRtp(std::span<const uint8_t> packet) override {
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet));
 

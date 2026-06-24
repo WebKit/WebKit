@@ -145,6 +145,9 @@ const testAssertionMessageApduBase64 =
     "QoJ1L7Fe64G9uBeQAA==";
 const testCcidNoUidBase64 = "aIE=";
 const testCcidValidUidBase64 = "CH+d1ZAA";
+// APDU status word 0x6D00 ("instruction not supported"); not a FIDO applet selection match, as returned
+// by a legacy U2F-only key that does not understand the applet selection command.
+const testCcidUnknownInsBase64 = "bQA=";
 const testCreateMessageFullKeyStoreBase64 = "KA==";
 
 // hmac-secret test constants

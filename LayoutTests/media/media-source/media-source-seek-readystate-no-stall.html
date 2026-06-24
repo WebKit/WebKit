@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="timeout" content="long">
+    <title>media-source-seek-readystate-no-stall</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Regression test: rapid seeks combined with readyState transitions
+    // landing mid-seek must not leave the renderer paused once the seek
+    // completes.
+
+    var source;
+    var sourceBuffer;
+    var init;
+    var effRate;
+
+    function makeSegment(seq, baseDecodeTime, count) {
+        const samples = [];
+        for (let i = 0; i < count; i++)
+            samples.push({ duration: 100, compositionTimeOffset: 0, isSync: true });
+        return MP4.mediaSegment({
+            sequenceNumber: seq,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime, samples }],
+        });
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+        source.duration = 1000;
+
+        init = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }],
+        });
+        // Seed: init + 10s of samples starting at t=0 so playback can begin.
+        run('sourceBuffer.appendBuffer(MP4.concat(init, makeSegment(1, 0, 100)))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('video.play()');
+        await waitFor(video, 'playing');
+
+        consoleWrite('');
+        consoleWrite('Test: rapid seek burst with mid-seek readyState transitions');
+
+        let seq = 2;
+        effRate = 1;
+        let base = 100000;
+        for (let i = 0; i < 8; i++) {
+            const target = (base + 500) / 1000;
+            video.currentTime = target;
+            await waitFor(video, 'seeking', true);
+
+            // Drop readyState by clearing buffered, then climb back to
+            // HAVE_ENOUGH_DATA by appending data covering the seek target
+            // while the seek is in flight.
+            sourceBuffer.remove(0, source.duration);
+            await waitFor(sourceBuffer, 'updateend', true);
+
+            sourceBuffer.appendBuffer(makeSegment(seq++, base, 100));
+            await waitFor(sourceBuffer, 'updateend', true);
+
+            await Promise.race([
+                waitFor(video, 'seeked', true),
+                new Promise(r => setTimeout(r, 1000)),
+            ]);
+
+            // Let the rate change propagate before sampling.
+            await new Promise(r => setTimeout(r, 50));
+            effRate = internals.effectiveRate(video);
+            if (!effRate)
+                break;
+
+            base += 100000;
+        }
+
+        testExpected('effRate', 1);
+
+        consoleWrite('');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

@@ -43,7 +43,6 @@ namespace WebKit {
 
 void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
 #if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name()) {
         IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);

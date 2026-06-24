@@ -1,0 +1,6 @@
+
+PASS processing model: returns early when track has no media element parent
+PASS processing model: returns early when mode is disabled
+PASS processing model: unsupported resource fails to load and fires error
+PASS processing model: load fires once per src settle; src change re-triggers load
+

@@ -39,6 +39,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
@@ -104,7 +105,16 @@ return "DONE";
     id innerBadge = badge;
     if (!innerBadge)
         innerBadge = [NSNull null];
-    EXPECT_TRUE([_expectedAppBadgeSequence[_appBadgeIndex++] isEqual:innerBadge]);
+
+    if (_expectedAppBadgeSequence)
+        EXPECT_TRUE([_expectedAppBadgeSequence[_appBadgeIndex++] isEqual:innerBadge]);
+    else {
+        // This badging delegate expects no badge updates, so getting any is bad news.
+        // But we'll still bump the _appBadgeIndex variable to register that we received
+        // a badge update for other parts of the test.
+        ++_appBadgeIndex;
+        FAIL();
+    }
 
     if (_serverURL) {
         if (!_shouldAllowOriginViolations)
@@ -214,7 +224,7 @@ TEST(Badging, APIWindow)
     EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 5);
 }
 
-static constexpr auto workerMainBytes = R"TESTRESOURCE(
+static constexpr auto badgingWorkerMainBytes = R"TESTRESOURCE(
 <script>
 window.worker = new Worker('worker.js');
 worker.onerror = (event) => {
@@ -226,7 +236,7 @@ worker.onmessage = (event) => {
 </script>
 )TESTRESOURCE"_s;
 
-static constexpr auto workerBytes = R"TESTRESOURCE(
+static constexpr auto badingWorkerBytes = R"TESTRESOURCE(
 self.onmessage = (event) => {
     if (event.data != 'updateBadge')
         return;
@@ -243,8 +253,8 @@ self.postMessage('RUNNING');
 TEST(Badging, DedicatedWorker)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { workerMainBytes } },
-        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, workerBytes } }
+        { "/"_s, { badgingWorkerMainBytes } },
+        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, badingWorkerBytes } }
     });
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -439,24 +449,34 @@ TEST(Badging, ServiceWorker)
 }
 
 static constexpr auto originMainFrameBytes = R"SWRESOURCE(
-<iframe src="origintest2://main.com/"></iframe>
-)SWRESOURCE"_s;
-
-static constexpr auto originIFrameBytes = R"SWRESOURCE(
+<iframe src="origintest2://main.com/iframe.html"></iframe>
 <script>
-window.navigator.setAppBadge(10);
+window.onmessage = (event) => {
+    window.webkit.messageHandlers.testHandler.postMessage(event.data);
+}
 </script>
 )SWRESOURCE"_s;
 
-TEST(Badging, Origin)
+static constexpr auto originIFrameBytes = R"SWRESOURCE(
+<script type="module">
+try {
+    await window.navigator.setAppBadge(10);
+    window.parent.postMessage("BadgeSucceeded", "*");
+} catch (e) {
+    window.parent.postMessage("BadgeFailed: " + e, "*");
+}
+</script>
+)SWRESOURCE"_s;
+
+static void runOriginTest(NSString *mainURL, NSString *expectedMessage)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     RetainPtr handler = adoptNS([[TestURLSchemeHandler alloc] init]);
     handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
-        if ([task.request.URL.scheme isEqualToString:@"origintest1"])
+        if ([task.request.URL.path hasSuffix:@"index.html"])
             return respond(task, originMainFrameBytes);
-        if ([task.request.URL.scheme isEqualToString:@"origintest2"])
+        if ([task.request.URL.path hasSuffix:@"iframe.html"])
             return respond(task, originIFrameBytes);
 
         ASSERT_NOT_REACHED();
@@ -465,19 +485,42 @@ TEST(Badging, Origin)
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"origintest2"];
     configuration.get().preferences._appBadgeEnabled = YES;
 
+    RetainPtr testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:testMessageHandler.get() name:@"testHandler"];
+
+    static bool gotMessage = false;
+    static RetainPtr<NSString> storedMessage;
+    testMessageHandler.get().didReceiveScriptMessage = ^(NSString *message) {
+        storedMessage = message;
+        gotMessage = true;
+    };
+
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
     RetainPtr badgeDelegate = adoptNS([BadgeDelegate new]);
 
-    NSURL *url = [NSURL URLWithString:@"origintest1://webkit.org/index.html"];
+    NSURL *url = [NSURL URLWithString:mainURL];
     badgeDelegate.get().serverURL = url;
     badgeDelegate.get().shouldAllowOriginViolations = YES;
     badgeDelegate.get().expectedAppBadgeSequence = @[@10];
     webView.get().UIDelegate = badgeDelegate.get();
 
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    TestWebKitAPI::Util::run(&gotMessage);
 
-    // Having synchronously loaded, we should already have received the badging update
-    EXPECT_EQ(badgeDelegate.get().originViolationCount, 1);
+    // For the purposes of this test suite, no origin violations should ever
+    // escape the web content process and reach the UI process delegate.
+    EXPECT_EQ(badgeDelegate.get().originViolationCount, 0);
+    EXPECT_TRUE([storedMessage.get() isEqualToString:expectedMessage]);
+}
+
+TEST(Badging, CrossOrigin)
+{
+    runOriginTest(@"origintest1://webkit.org/index.html", @"BadgeFailed: SecurityError: The operation is insecure.");
+}
+
+TEST(Badging, SameOrigin)
+{
+    runOriginTest(@"origintest2://main.com/index.html", @"BadgeSucceeded");
 }
 
 TEST(Badging, ServiceWorkerOverride)
@@ -538,3 +581,109 @@ TEST(Badging, ServiceWorkerOverride)
 
     EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 2);
 }
+
+#if ENABLE(IPC_TESTING_API)
+
+static constexpr auto badgeAttackFromWorkerBytes = R"TESTRESOURCE(
+<script src="coreipc.js"></script>
+<script>
+async function sendSpoofedBadgeIPC()
+{
+    const CoreIPC = new CoreIPCClass();
+
+    CoreIPC.UI.WebProcessProxy.SetAppBadgeFromWorker(0, {
+        origin: {
+            data: {
+                variantType: 'WebCore::SecurityOriginData::Tuple',
+                variant: {
+                    protocol: 'https',
+                    host: 'apple.com',
+                    port: { }
+                }
+            }
+        },
+        badge: {
+            optionalValue: 1337
+        }
+    });
+}
+</script>
+)TESTRESOURCE"_s;
+
+static void runAppBadgeSpoofTest(const String& attackerHTML)
+{
+    NSURL *coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
+    NSData *coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { attackerHTML } },
+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCData } },
+    });
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+    configuration.get().preferences._appBadgeEnabled = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+
+    auto badgeDelegate = adoptNS([BadgeDelegate new]);
+    badgeDelegate.get().expectedAppBadgeSequence = nil;
+
+    webView.get().UIDelegate = badgeDelegate.get();
+    configuration.get().websiteDataStore._delegate = badgeDelegate.get();
+
+    [webView synchronouslyLoadRequest:server.request("/"_s)];
+
+    static bool javascriptDone = false;
+    [webView callAsyncJavaScript:@"sendSpoofedBadgeIPC();" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        javascriptDone = true;
+    }];
+    TestWebKitAPI::Util::run(&javascriptDone);
+
+    // Give the IPC message time to be processed.
+    TestWebKitAPI::Util::spinRunLoop(30);
+
+    EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 0);
+}
+
+TEST(Badging, SetAppBadgeFromWorkerOriginSpoof)
+{
+    runAppBadgeSpoofTest(badgeAttackFromWorkerBytes);
+}
+
+static constexpr auto badgeAttackFromFrameBytes = R"TESTRESOURCE(
+<script src="coreipc.js"></script>
+<script>
+async function sendSpoofedBadgeIPC()
+{
+    const CoreIPC = new CoreIPCClass();
+
+    CoreIPC.UI.WebFrameProxy.SetAppBadge(IPC.frameID[0], {
+        origin: {
+            data: {
+                variantType: 'WebCore::SecurityOriginData::Tuple',
+                variant: {
+                    protocol: 'https',
+                    host: 'apple.com',
+                    port: { }
+                }
+            }
+        },
+        badge: {
+            optionalValue: 1337
+        }
+    });
+}
+</script>
+)TESTRESOURCE"_s;
+
+TEST(Badging, SetAppBadgeFromFrameOriginSpoof)
+{
+    runAppBadgeSpoofTest(badgeAttackFromFrameBytes);
+}
+
+#endif // ENABLE(IPC_TESTING_API)

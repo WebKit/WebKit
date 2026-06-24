@@ -22,11 +22,11 @@
 #include <vector>
 
 #include "api/audio/audio_processing.h"
-#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "system_wrappers/include/metrics.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -84,7 +84,8 @@ std::unique_ptr<InputVolumeController> CreateInputVolumeController(
   };
 
   return std::make_unique<InputVolumeController>(
-      /*num_capture_channels=*/1, config, CreateEnvironment().field_trials());
+      /*num_capture_channels=*/1, config,
+      CreateTestEnvironment().field_trials());
 }
 
 // (Over)writes `samples_value` for the samples in `audio_buffer`.
@@ -252,7 +253,7 @@ class InputVolumeControllerTestHelper {
                      kNumChannels),
         controller(/*num_capture_channels=*/1,
                    config,
-                   CreateEnvironment().field_trials()) {
+                   CreateTestEnvironment().field_trials()) {
     controller.Initialize();
     WriteAudioBufferSamples(/*samples_value=*/0.0f, /*clipped_ratio=*/0.0f,
                             audio_buffer);
@@ -347,7 +348,7 @@ TEST_P(InputVolumeControllerChannelSampleRateTest, CheckIsAlive) {
   constexpr InputVolumeController::Config kConfig{.enable_clipping_predictor =
                                                       true};
   InputVolumeController controller(num_channels, kConfig,
-                                   CreateEnvironment().field_trials());
+                                   CreateTestEnvironment().field_trials());
   controller.Initialize();
   AudioBuffer buffer(sample_rate_hz, num_channels, sample_rate_hz, num_channels,
                      sample_rate_hz, num_channels);
@@ -1190,7 +1191,7 @@ TEST_P(InputVolumeControllerParametrizedTest,
 TEST_P(InputVolumeControllerParametrizedTest, EmptyRmsErrorHasNoEffect) {
   InputVolumeController controller(kNumChannels,
                                    GetInputVolumeControllerTestConfig(),
-                                   CreateEnvironment().field_trials());
+                                   CreateTestEnvironment().field_trials());
   controller.Initialize();
 
   // Feed speech with low energy that would trigger an upward adapation of

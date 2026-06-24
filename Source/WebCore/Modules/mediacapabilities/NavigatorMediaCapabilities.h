@@ -36,7 +36,7 @@ class Navigator;
 class NavigatorMediaCapabilities final : public Supplement<Navigator> {
     WTF_MAKE_TZONE_ALLOCATED(NavigatorMediaCapabilities);
 public:
-    NavigatorMediaCapabilities();
+    explicit NavigatorMediaCapabilities(Navigator&);
     ~NavigatorMediaCapabilities();
 
     static MediaCapabilities& mediaCapabilities(Navigator&);

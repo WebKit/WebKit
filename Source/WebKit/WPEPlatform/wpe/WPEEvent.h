@@ -42,21 +42,21 @@ typedef struct _WPEEvent WPEEvent;
 
 /**
  * WPEEventType:
- * @WPE_EVENT_NONE:
- * @WPE_EVENT_POINTER_DOWN:
- * @WPE_EVENT_POINTER_UP:
- * @WPE_EVENT_POINTER_MOVE:
- * @WPE_EVENT_POINTER_ENTER:
- * @WPE_EVENT_POINTER_LEAVE:
- * @WPE_EVENT_SCROLL:
- * @WPE_EVENT_KEYBOARD_KEY_DOWN:
- * @WPE_EVENT_KEYBOARD_KEY_UP:
- * @WPE_EVENT_TOUCH_DOWN:
- * @WPE_EVENT_TOUCH_UP:
- * @WPE_EVENT_TOUCH_MOVE:
- * @WPE_EVENT_TOUCH_CANCEL:
+ * @WPE_EVENT_NONE: no event.
+ * @WPE_EVENT_POINTER_DOWN: a pointer button was pressed.
+ * @WPE_EVENT_POINTER_UP: a pointer button was released.
+ * @WPE_EVENT_POINTER_MOVE: the pointer moved.
+ * @WPE_EVENT_POINTER_ENTER: the pointer entered the view.
+ * @WPE_EVENT_POINTER_LEAVE: the pointer left the view.
+ * @WPE_EVENT_SCROLL: the pointer scroll (axis) was operated.
+ * @WPE_EVENT_KEYBOARD_KEY_DOWN: a keyboard key was pressed.
+ * @WPE_EVENT_KEYBOARD_KEY_UP: a keyboard key was released.
+ * @WPE_EVENT_TOUCH_DOWN: a new touch point appeared.
+ * @WPE_EVENT_TOUCH_UP: a touch point was removed.
+ * @WPE_EVENT_TOUCH_MOVE: a touch point moved.
+ * @WPE_EVENT_TOUCH_CANCEL: a touch point was cancelled.
  *
- * The type of a #WPEEvent
+ * The type of a [struct@Event].
  */
 typedef enum {
     WPE_EVENT_NONE,
@@ -80,12 +80,13 @@ typedef enum {
 
 /**
  * WPEInputSource:
- * @WPE_INPUT_SOURCE_MOUSE:
- * @WPE_INPUT_SOURCE_PEN:
- * @WPE_INPUT_SOURCE_KEYBOARD:
- * @WPE_INPUT_SOURCE_TOUCHSCREEN:
- * @WPE_INPUT_SOURCE_TOUCHPAD:
- * @WPE_INPUT_SOURCE_TRACKPOINT:
+ * @WPE_INPUT_SOURCE_MOUSE: the event came from a mouse.
+ * @WPE_INPUT_SOURCE_PEN: the event came from a pen or stylus.
+ * @WPE_INPUT_SOURCE_KEYBOARD: the event came from a keyboard.
+ * @WPE_INPUT_SOURCE_TOUCHSCREEN: the event came from a touchscreen.
+ * @WPE_INPUT_SOURCE_TOUCHPAD: the event came from a touchpad.
+ * @WPE_INPUT_SOURCE_TRACKPOINT: the event came from a trackpoint.
+ * @WPE_INPUT_SOURCE_TABLET_PAD: the event came from a tablet pad.
  *
  * The type of a device input source.
  */

@@ -90,13 +90,14 @@ TEST(VideoEncoderFactoryTemplate, OneTemplateAdapterCreateEncoder) {
 
 TEST(VideoEncoderFactoryTemplate, OneTemplateAdapterCodecSupport) {
   VideoEncoderFactoryTemplate<FooEncoderTemplateAdapter> factory;
-  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, std::nullopt),
+  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, std::nullopt, std::nullopt),
               Field(&CodecSupport::is_supported, true));
-  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, "L1T2"),
+  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, "L1T2", std::nullopt),
               Field(&CodecSupport::is_supported, true));
-  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, "S3T3"),
+  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, "S3T3", std::nullopt),
               Field(&CodecSupport::is_supported, false));
-  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat("FooX"), std::nullopt),
+  EXPECT_THAT(factory.QueryCodecSupport(SdpVideoFormat("FooX"), std::nullopt,
+                                        std::nullopt),
               Field(&CodecSupport::is_supported, false));
 }
 
@@ -125,19 +126,20 @@ TEST(VideoEncoderFactoryTemplate, TwoTemplateAdaptersCodecSupport) {
   VideoEncoderFactoryTemplate<FooEncoderTemplateAdapter,
                               BarEncoderTemplateAdapter>
       factory;
-  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, std::nullopt),
+  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, std::nullopt, std::nullopt),
               Field(&CodecSupport::is_supported, true));
-  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, "L1T2"),
+  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, "L1T2", std::nullopt),
               Field(&CodecSupport::is_supported, true));
-  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, "S3T3"),
+  EXPECT_THAT(factory.QueryCodecSupport(kFooSdp, "S3T3", std::nullopt),
               Field(&CodecSupport::is_supported, false));
-  EXPECT_THAT(factory.QueryCodecSupport(kBarLowSdp, std::nullopt),
+  EXPECT_THAT(factory.QueryCodecSupport(kBarLowSdp, std::nullopt, std::nullopt),
               Field(&CodecSupport::is_supported, true));
-  EXPECT_THAT(factory.QueryCodecSupport(kBarHighSdp, std::nullopt),
+  EXPECT_THAT(
+      factory.QueryCodecSupport(kBarHighSdp, std::nullopt, std::nullopt),
+      Field(&CodecSupport::is_supported, true));
+  EXPECT_THAT(factory.QueryCodecSupport(kBarLowSdp, "S2T1", std::nullopt),
               Field(&CodecSupport::is_supported, true));
-  EXPECT_THAT(factory.QueryCodecSupport(kBarLowSdp, "S2T1"),
-              Field(&CodecSupport::is_supported, true));
-  EXPECT_THAT(factory.QueryCodecSupport(kBarHighSdp, "S3T2"),
+  EXPECT_THAT(factory.QueryCodecSupport(kBarHighSdp, "S3T2", std::nullopt),
               Field(&CodecSupport::is_supported, false));
 }
 

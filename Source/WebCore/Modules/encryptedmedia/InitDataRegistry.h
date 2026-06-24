@@ -64,6 +64,15 @@ public:
     static std::optional<CDMKeyIDs> extractKeyIDsCenc(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeCenc(const SharedBuffer&);
 
+#if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
+    // Walks the PSSH atoms in a cenc init data buffer and returns the bytes of the first
+    // PSSH whose SystemID matches FairPlay's, or std::nullopt if none is present.
+    // AVFoundation's PSSH parser only inspects the first PSSH atom in the supplied data
+    // and rejects the entire blob if its SystemID isn't FairPlay's, so callers must
+    // filter to a FairPlay-only buffer before forwarding to AVContentKeySession.
+    static RefPtr<SharedBuffer> extractFairPlayPsshFromCenc(const SharedBuffer&);
+#endif
+
 private:
     InitDataRegistry();
     ~InitDataRegistry();

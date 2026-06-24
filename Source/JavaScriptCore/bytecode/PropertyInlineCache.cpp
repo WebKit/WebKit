@@ -838,8 +838,6 @@ void HandlerPropertyInlineCache::initializeFromUnlinkedPropertyInlineCache(VM& v
     if (unlinkedPropertyCache.canBeMegamorphic)
         bufferingCountdown = 1;
 
-    usedRegisters = RegisterSet::stubUnavailableRegisters().toScalarRegisterSet();
-
     m_slowOperation = slowOperationFromUnlinkedPropertyInlineCache(unlinkedPropertyCache);
     initializePredefinedRegisters();
 }
@@ -875,8 +873,6 @@ void HandlerPropertyInlineCache::initializeFromDFGUnlinkedPropertyInlineCache(Co
 
     if (unlinkedPropertyCache.canBeMegamorphic)
         bufferingCountdown = 1;
-
-    usedRegisters = RegisterSet::stubUnavailableRegisters().toScalarRegisterSet();
 
     m_slowOperation = slowOperationFromUnlinkedPropertyInlineCache(unlinkedPropertyCache);
     initializePredefinedRegisters();

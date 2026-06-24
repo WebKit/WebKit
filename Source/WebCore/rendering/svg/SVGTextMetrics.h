@@ -29,7 +29,7 @@ class TextRun;
 
 class SVGTextMetrics {
 public:
-    enum MetricsType { SkippedSpaceMetrics };
+    enum class MetricsType : uint8_t { SkippedSpaceMetrics };
 
     SVGTextMetrics() = default;
     explicit SVGTextMetrics(MetricsType)

@@ -56,8 +56,12 @@ protected:
 
 class JSTestStringifierOperationImplementedAsOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestStringifierOperationImplementedAsOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestStringifierOperationImplementedAsOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestStringifierOperationImplementedAs*)

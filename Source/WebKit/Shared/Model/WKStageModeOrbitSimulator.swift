@@ -70,6 +70,11 @@ extension WKStageModeOrbitSimulator {
         previousDeltaX = dx
     }
 
+    func setCurrentYaw(_ yaw: Float, pitch: Float) {
+        self.yaw = yaw
+        self.pitch = pitch
+    }
+
     func gestureDidEnd() {
         isDecelerating = true
         isPitchSettling = true
@@ -112,6 +117,7 @@ extension WKStageModeOrbitSimulator {
     func gestureDidUpdate(withDeltaX dx: Float, deltaY dy: Float) {}
     func gestureDidEnd() {}
     func step(withElapsedTime dt: Float) -> Bool { false }
+    func setCurrentYaw(_ yaw: Float, pitch: Float) {}
 }
 
 #endif

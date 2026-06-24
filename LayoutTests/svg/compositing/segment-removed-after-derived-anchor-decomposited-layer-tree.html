@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function dumpLayers(out, label) {
+        if (!window.internals)
+            return;
+        out.textContent += '=== ' + label + ' ===\n' + internals.layerTreeAsText(document) + '\n';
+    }
+
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            document.body.offsetTop;
+            const out = document.getElementById('layers');
+            out.textContent = '';
+
+            // Phase 1: composite the rect in each wrapping isolation <g> (translateZ), so each <g> becomes a derived anchor. The container backing grows one overlay "(svg segment N)" layer for the middle rect, which gets no layer of its own.
+            document.getElementById('ar').setAttribute('class', 'anchor');
+            document.getElementById('cr').setAttribute('class', 'anchor');
+            dumpLayers(out, 'Anchors composited');
+
+            // Phase 2: de-composite both descendants. With no anchors left, the overlay segment layer must be torn down with no composited SVG layers remaining (guard against a stale overlay).
+            document.getElementById('ar').removeAttribute('class');
+            document.getElementById('cr').removeAttribute('class');
+            requestAnimationFrame(() => {
+                dumpLayers(out, 'Anchors de-composited: no composited SVG children must remain');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        });
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g style="isolation: isolate"><rect id="ar" x="10" y="10" width="120" height="120" fill="red"/></g>
+    <rect x="40" y="40" width="120" height="120" fill="green"/>
+    <g style="isolation: isolate"><rect id="cr" x="70" y="70" width="120" height="120" fill="blue"/></g>
+</svg>
+<pre id="layers"></pre>
+</body>
+</html>

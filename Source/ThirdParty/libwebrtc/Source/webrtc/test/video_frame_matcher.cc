@@ -12,9 +12,9 @@
 
 #include <cstdint>
 #include <ostream>
+#include <span>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
@@ -27,7 +27,7 @@ namespace {
 using ::testing::Matcher;
 using ::testing::MatchResultListener;
 
-void PrintOneChannelToOs(ArrayView<const uint8_t> data,
+void PrintOneChannelToOs(std::span<const uint8_t> data,
                          int width,
                          int height,
                          std::ostream& os) {
@@ -39,7 +39,7 @@ void PrintOneChannelToOs(ArrayView<const uint8_t> data,
   }
 }
 
-void PrintOneChannelToListener(ArrayView<const uint8_t> data,
+void PrintOneChannelToListener(std::span<const uint8_t> data,
                                int width,
                                int height,
                                MatchResultListener& listener) {
@@ -105,30 +105,29 @@ class PixelValuesEqualMatcher {
     // done in order to give a more detailed error message.
     bool is_same = true;
     is_same &= DataMatricesAreEqual(
-        MakeArrayView(
+        std::span(
             expected_frame_buffer_->DataY(),
             expected_frame_buffer_->width() * expected_frame_buffer_->height()),
-        MakeArrayView(
-            actual_frame_buffer->DataY(),
-            actual_frame_buffer->width() * actual_frame_buffer->height()),
+        std::span(actual_frame_buffer->DataY(),
+                  actual_frame_buffer->width() * actual_frame_buffer->height()),
         width_, height_, SampleType::kY, *listener);
 
     is_same &= DataMatricesAreEqual(
-        MakeArrayView(expected_frame_buffer_->DataU(),
-                      expected_frame_buffer_->ChromaWidth() *
-                          expected_frame_buffer_->ChromaHeight()),
-        MakeArrayView(actual_frame_buffer->DataU(),
-                      actual_frame_buffer->ChromaWidth() *
-                          actual_frame_buffer->ChromaHeight()),
+        std::span(expected_frame_buffer_->DataU(),
+                  expected_frame_buffer_->ChromaWidth() *
+                      expected_frame_buffer_->ChromaHeight()),
+        std::span(actual_frame_buffer->DataU(),
+                  actual_frame_buffer->ChromaWidth() *
+                      actual_frame_buffer->ChromaHeight()),
         width_ / 2, height_ / 2, SampleType::kU, *listener);
 
     is_same &= DataMatricesAreEqual(
-        MakeArrayView(expected_frame_buffer_->DataV(),
-                      expected_frame_buffer_->ChromaWidth() *
-                          expected_frame_buffer_->ChromaHeight()),
-        MakeArrayView(actual_frame_buffer->DataV(),
-                      actual_frame_buffer->ChromaWidth() *
-                          actual_frame_buffer->ChromaHeight()),
+        std::span(expected_frame_buffer_->DataV(),
+                  expected_frame_buffer_->ChromaWidth() *
+                      expected_frame_buffer_->ChromaHeight()),
+        std::span(actual_frame_buffer->DataV(),
+                  actual_frame_buffer->ChromaWidth() *
+                      actual_frame_buffer->ChromaHeight()),
         width_ / 2, height_ / 2, SampleType::kV, *listener);
 
     return is_same;
@@ -136,50 +135,46 @@ class PixelValuesEqualMatcher {
 
   void DescribeTo(std::ostream* os) const {
     *os << "is the actual frame to have the following Y channel:\n";
-    PrintOneChannelToOs(MakeArrayView(expected_frame_buffer_->DataY(),
-                                      expected_frame_buffer_->width() *
-                                          expected_frame_buffer_->height()),
+    PrintOneChannelToOs(std::span(expected_frame_buffer_->DataY(),
+                                  expected_frame_buffer_->width() *
+                                      expected_frame_buffer_->height()),
                         width_, height_, *os);
 
     *os << "is the actual frame to have the following U channel:\n";
-    PrintOneChannelToOs(
-        MakeArrayView(expected_frame_buffer_->DataU(),
-                      expected_frame_buffer_->ChromaWidth() *
-                          expected_frame_buffer_->ChromaHeight()),
-        width_ / 2, height_ / 2, *os);
+    PrintOneChannelToOs(std::span(expected_frame_buffer_->DataU(),
+                                  expected_frame_buffer_->ChromaWidth() *
+                                      expected_frame_buffer_->ChromaHeight()),
+                        width_ / 2, height_ / 2, *os);
 
     *os << "or the actual frame to have the following V channel:\n";
-    PrintOneChannelToOs(
-        MakeArrayView(expected_frame_buffer_->DataV(),
-                      expected_frame_buffer_->ChromaWidth() *
-                          expected_frame_buffer_->ChromaHeight()),
-        width_ / 2, height_ / 2, *os);
+    PrintOneChannelToOs(std::span(expected_frame_buffer_->DataV(),
+                                  expected_frame_buffer_->ChromaWidth() *
+                                      expected_frame_buffer_->ChromaHeight()),
+                        width_ / 2, height_ / 2, *os);
   }
 
   void DescribeNegationTo(std::ostream* os) const {
     *os << "is the actual frame to not have the following Y channel:\n";
-    PrintOneChannelToOs(MakeArrayView(expected_frame_buffer_->DataY(),
-                                      expected_frame_buffer_->width() *
-                                          expected_frame_buffer_->height()),
+    PrintOneChannelToOs(std::span(expected_frame_buffer_->DataY(),
+                                  expected_frame_buffer_->width() *
+                                      expected_frame_buffer_->height()),
                         width_, height_, *os);
 
     *os << "is the actual frame to not have the following U channel:\n";
-    PrintOneChannelToOs(
-        MakeArrayView(expected_frame_buffer_->DataU(),
-                      expected_frame_buffer_->ChromaWidth() *
-                          expected_frame_buffer_->ChromaHeight()),
-        width_ / 2, height_ / 2, *os);
+    PrintOneChannelToOs(std::span(expected_frame_buffer_->DataU(),
+                                  expected_frame_buffer_->ChromaWidth() *
+                                      expected_frame_buffer_->ChromaHeight()),
+                        width_ / 2, height_ / 2, *os);
 
     *os << "and the actual frame to not have the following V channel:\n";
-    PrintOneChannelToOs(
-        MakeArrayView(expected_frame_buffer_->DataV(),
-                      expected_frame_buffer_->ChromaWidth() *
-                          expected_frame_buffer_->ChromaHeight()),
-        width_ / 2, height_ / 2, *os);
+    PrintOneChannelToOs(std::span(expected_frame_buffer_->DataV(),
+                                  expected_frame_buffer_->ChromaWidth() *
+                                      expected_frame_buffer_->ChromaHeight()),
+                        width_ / 2, height_ / 2, *os);
   }
 
-  bool DataMatricesAreEqual(ArrayView<const uint8_t> expected_data,
-                            ArrayView<const uint8_t> actual_data,
+  bool DataMatricesAreEqual(std::span<const uint8_t> expected_data,
+                            std::span<const uint8_t> actual_data,
                             int width,
                             int height,
                             SampleType sample_type,

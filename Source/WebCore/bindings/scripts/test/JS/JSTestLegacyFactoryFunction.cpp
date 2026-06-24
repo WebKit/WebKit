@@ -257,6 +257,8 @@ void JSTestLegacyFactoryFunction::analyzeHeap(JSCell* cell, HeapAnalyzer& analyz
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestLegacyFactoryFunctionOwner::JSTestLegacyFactoryFunctionOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestLegacyFactoryFunctionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto* jsTestLegacyFactoryFunction = uncheckedDowncast<JSTestLegacyFactoryFunction>(handle.slot()->asCell());
@@ -275,7 +277,7 @@ void JSTestLegacyFactoryFunctionOwner::finalize(JSC::Handle<JSC::Unknown> handle
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestLegacyFactoryFunction = static_cast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestLegacyFactoryFunction->wrapped()).ptr(), jsTestLegacyFactoryFunction);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestLegacyFactoryFunction->wrapped(), jsTestLegacyFactoryFunction);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

@@ -159,6 +159,14 @@ void PlatformXRSystemProxy::sessionDidUpdateVisibilityState(XRDeviceIdentifier d
         device->updateSessionVisibilityState(visibilityState);
 }
 
+void PlatformXRSystemProxy::sessionDidInitializeRendering(XRDeviceIdentifier deviceIdentifier, uint32_t width, uint32_t height, uint32_t arrayLength)
+{
+    RELEASE_ASSERT(webXREnabled());
+
+    if (auto device = deviceByIdentifier(deviceIdentifier))
+        device->sessionDidInitializeRendering(width, height, arrayLength);
+}
+
 RefPtr<XRDeviceProxy> PlatformXRSystemProxy::deviceByIdentifier(XRDeviceIdentifier identifier)
 {
     for (auto& device : m_devices) {

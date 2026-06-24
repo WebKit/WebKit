@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,6 +88,42 @@ TEST(MIMETypeRegistry, PreferredExtensionForMIMEType)
 TEST(MIMETypeRegistry, ExtensionsForMIMEType)
 {
     EXPECT_EQ(MIMETypeRegistry::extensionsForMIMEType({ }).size(), 0U);
+}
+
+TEST(MIMETypeRegistry, CorrectExtensionForMIMEType)
+{
+    EXPECT_TRUE(MIMETypeRegistry::correctExtensionForMIMEType({ }, "image/png"_s).isEmpty());
+    EXPECT_STREQ("file.png", MIMETypeRegistry::correctExtensionForMIMEType("file.png"_s, { }).utf8().data());
+    EXPECT_STREQ("file.png", MIMETypeRegistry::correctExtensionForMIMEType("file.png"_s, "application/octet-stream"_s).utf8().data());
+    EXPECT_STREQ("file.html", MIMETypeRegistry::correctExtensionForMIMEType("file.html"_s, "text/plain"_s).utf8().data());
+
+    EXPECT_STREQ("image.png", MIMETypeRegistry::correctExtensionForMIMEType("image.png"_s, "image/png"_s).utf8().data());
+
+    EXPECT_STREQ("video.mp4", MIMETypeRegistry::correctExtensionForMIMEType("video.gif"_s, "video/mp4"_s).utf8().data());
+    EXPECT_STREQ("file.png", MIMETypeRegistry::correctExtensionForMIMEType("file.gif"_s, "image/png"_s).utf8().data());
+
+    EXPECT_STREQ("file.png", MIMETypeRegistry::correctExtensionForMIMEType("file"_s, "image/png"_s).utf8().data());
+
+#if PLATFORM(COCOA)
+    EXPECT_STREQ("archive.tar.gz", MIMETypeRegistry::correctExtensionForMIMEType("archive.tar.gz"_s, "application/gzip"_s).utf8().data());
+
+    EXPECT_STREQ("resource.tgz", MIMETypeRegistry::correctExtensionForMIMEType("resource.tgz"_s, "application/gzip"_s).utf8().data());
+
+    EXPECT_STREQ("resource.tgz", MIMETypeRegistry::correctExtensionForMIMEType("resource.tgz"_s, "application/x-gzip"_s).utf8().data());
+    EXPECT_STREQ("file.zip", MIMETypeRegistry::correctExtensionForMIMEType("file.zip"_s, "application/x-zip-compressed"_s).utf8().data());
+    EXPECT_STREQ("file.gz", MIMETypeRegistry::correctExtensionForMIMEType("file.gz"_s, "application/gzip"_s).utf8().data());
+    EXPECT_STREQ("file.gz", MIMETypeRegistry::correctExtensionForMIMEType("file.gz"_s, "application/x-gzip"_s).utf8().data());
+
+    EXPECT_STREQ("resource.TGZ", MIMETypeRegistry::correctExtensionForMIMEType("resource.TGZ"_s, "application/gzip"_s).utf8().data());
+    EXPECT_STREQ("resource.tgz", MIMETypeRegistry::correctExtensionForMIMEType("resource.tgz"_s, "Application/X-Gzip"_s).utf8().data());
+
+    EXPECT_STREQ("archive.cpgz", MIMETypeRegistry::correctExtensionForMIMEType("archive.cpgz"_s, "application/zip"_s).utf8().data());
+    EXPECT_STREQ("archive.cpgz", MIMETypeRegistry::correctExtensionForMIMEType("archive.cpgz"_s, "application/gzip"_s).utf8().data());
+    EXPECT_STREQ("data.tar", MIMETypeRegistry::correctExtensionForMIMEType("data.tar"_s, "application/gzip"_s).utf8().data());
+    EXPECT_STREQ("data.tgz", MIMETypeRegistry::correctExtensionForMIMEType("data.tgz"_s, "application/zip"_s).utf8().data());
+    EXPECT_STREQ("file.gz", MIMETypeRegistry::correctExtensionForMIMEType("file.gz"_s, "application/zip"_s).utf8().data());
+    EXPECT_STREQ("app.jar", MIMETypeRegistry::correctExtensionForMIMEType("app.jar"_s, "application/zip"_s).utf8().data());
+#endif
 }
 
 } // namespace TestWebKitAPI

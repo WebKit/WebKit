@@ -41,6 +41,7 @@
 #include <WebCore/ApplePayShippingContactUpdate.h>
 #include <WebCore/ApplePayShippingMethodUpdate.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/Page.h>
 #include <WebCore/PaymentCoordinator.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>

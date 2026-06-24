@@ -31,6 +31,7 @@
 """Factory method to retrieve the appropriate port implementation."""
 
 import fnmatch
+import importlib
 import optparse
 import re
 
@@ -78,7 +79,7 @@ def platform_options(use_globs=False):
 
 def configuration_options():
     return [
-        optparse.make_option("-t", "--target", default=config.Config(executive.Executive(), filesystem.FileSystem()).default_configuration(), dest="configuration", help="(DEPRECATED) (default: %default)"),
+        optparse.make_option("-t", "--target", default=None, dest="configuration", help="(DEPRECATED)"),
         optparse.make_option('--debug', action='store_const', const='Debug', dest="configuration",
             help='Set the configuration to Debug'),
         optparse.make_option('--release', action='store_const', const='Release', dest="configuration",
@@ -99,26 +100,34 @@ def configuration_options():
     ]
 
 
+def _load_port_class(port_class_path):
+    module_name, class_name = port_class_path.rsplit('.', 1)
+    module = importlib.import_module('webkitpy.port.{}'.format(module_name))
+    return getattr(module, class_name)
+
+
 class PortFactory(object):
     # Order matters.  For port classes that have a port_name with a
     # common prefix, the more specific port class should be listed
-    # first.
+    # first. The prefix is duplicated from the class's own port_name
+    # so we can match without importing the (often heavy) port module;
+    # FactoryTest.test_port_classes_table_consistency enforces the two stay in sync.
     PORT_CLASSES = (
-        'gtk.GtkPort',
-        'ios_simulator.IOSSimulatorPort',
-        'ios_simulator.IPhoneSimulatorPort',
-        'ios_simulator.IPadSimulatorPort',
-        'ios_device.IOSDevicePort',
-        'watch_simulator.WatchSimulatorPort',
-        'watch_device.WatchDevicePort',
-        'visionos_simulator.VisionOSSimulatorPort',
-        'visionos_device.VisionOSDevicePort',
-        'jsc_only.JscOnlyPort',
-        'mac.MacCatalystPort',
-        'mac.MacPort',
-        'test.TestPort',
-        'win.WinPort',
-        'wpe.WPEPort',
+        ('gtk',                 'gtk.GtkPort'),
+        ('ios-simulator',       'ios_simulator.IOSSimulatorPort'),
+        ('iphone-simulator',    'ios_simulator.IPhoneSimulatorPort'),
+        ('ipad-simulator',      'ios_simulator.IPadSimulatorPort'),
+        ('ios-device',          'ios_device.IOSDevicePort'),
+        ('watchos-simulator',   'watch_simulator.WatchSimulatorPort'),
+        ('watchos-device',      'watch_device.WatchDevicePort'),
+        ('visionos-simulator',  'visionos_simulator.VisionOSSimulatorPort'),
+        ('visionos-device',     'visionos_device.VisionOSDevicePort'),
+        ('jsc-only',            'jsc_only.JscOnlyPort'),
+        ('maccatalyst',         'mac.MacCatalystPort'),
+        ('mac',                 'mac.MacPort'),
+        ('test',                'test.TestPort'),
+        ('win',                 'win.WinPort'),
+        ('wpe',                 'wpe.WPEPort'),
     )
 
     def __init__(self, host):
@@ -139,23 +148,26 @@ class PortFactory(object):
         port_name is None, this routine attempts to guess at the most
         appropriate port on this platform."""
         port_name = port_name or self._default_port()
-        classes = []
-        for port_class in self.PORT_CLASSES:
-            module_name, class_name = port_class.rsplit('.', 1)
-            module = __import__('webkitpy.port.{}'.format(module_name), globals(), locals(), [], 0)
-            cls = module.__dict__.get('port').__dict__.get(module_name).__dict__.get(class_name)
-            if cls:
-                classes.append(cls)
-        if config.apple_additions() and hasattr(config.apple_additions(), 'ports'):
-            classes += config.apple_additions().ports()
 
-        for cls in classes:
-            if port_name.startswith(cls.port_name):
-                port_name = cls.determine_full_port_name(self._host, options, port_name)
-                try:
-                    return cls(self._host, port_name, options=options, **kwargs)
-                except ValueError:
-                    continue
+        for prefix, port_class_path in self.PORT_CLASSES:
+            if not port_name.startswith(prefix):
+                continue
+            cls = _load_port_class(port_class_path)
+            full_name = cls.determine_full_port_name(self._host, options, port_name)
+            try:
+                return cls(self._host, full_name, options=options, **kwargs)
+            except ValueError:
+                continue
+
+        if config.apple_additions() and hasattr(config.apple_additions(), 'ports'):
+            for cls in config.apple_additions().ports():
+                if port_name.startswith(cls.port_name):
+                    full_name = cls.determine_full_port_name(self._host, options, port_name)
+                    try:
+                        return cls(self._host, full_name, options=options, **kwargs)
+                    except ValueError:
+                        continue
+
         raise NotImplementedError('unsupported platform: "%s"' % port_name)
 
     def all_port_names(self, platform=None):

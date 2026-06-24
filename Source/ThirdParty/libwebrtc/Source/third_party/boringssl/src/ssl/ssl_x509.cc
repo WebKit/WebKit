@@ -25,8 +25,8 @@
 #include <openssl/stack.h>
 #include <openssl/x509.h>
 
-#include "../crypto/internal.h"
 #include "../crypto/bytestring/internal.h"
+#include "../crypto/internal.h"
 #include "internal.h"
 
 
@@ -41,7 +41,7 @@ static void check_ssl_x509_method(const SSL *ssl) {
 
 // check_ssl_ctx_x509_method acts like |check_ssl_x509_method|, but for an
 // |SSL_CTX|.
-static void check_ssl_ctx_x509_method(const SSL_CTX *ctx) {
+static void check_ssl_ctx_x509_method(const SSLContext *ctx) {
   assert(ctx == nullptr || ctx->x509_method == &ssl_crypto_x509_method);
 }
 
@@ -201,6 +201,9 @@ static void ssl_crypto_x509_session_clear(SSL_SESSION *session) {
 static bool ssl_crypto_x509_session_verify_cert_chain(SSL_SESSION *session,
                                                       SSL_HANDSHAKE *hs,
                                                       uint8_t *out_alert) {
+  if (session->peer_cert_type != TLSEXT_cert_type_x509) {
+    return false;
+  }
   *out_alert = SSL_AD_INTERNAL_ERROR;
   STACK_OF(X509) *const cert_chain = session->x509_chain;
   if (cert_chain == nullptr || sk_X509_num(cert_chain) == 0) {
@@ -208,7 +211,7 @@ static bool ssl_crypto_x509_session_verify_cert_chain(SSL_SESSION *session,
   }
 
   SSL *const ssl = hs->ssl;
-  SSL_CTX *ssl_ctx = ssl->ctx.get();
+  SSLContext *ssl_ctx = ssl->ctx.get();
   X509_STORE *verify_store = ssl_ctx->cert_store;
   if (hs->config->cert->verify_store != nullptr) {
     verify_store = hs->config->cert->verify_store;
@@ -293,7 +296,7 @@ static bool ssl_crypto_x509_ssl_auto_chain_if_needed(SSL_HANDSHAKE *hs) {
   // Only build a chain if the feature isn't disabled, the legacy credential
   // exists but has no intermediates configured.
   SSL *ssl = hs->ssl;
-  SSL_CREDENTIAL *cred = hs->config->cert->legacy_credential.get();
+  SSLCredential *cred = hs->config->cert->legacy_credential.get();
   if ((ssl->mode & SSL_MODE_NO_AUTO_CHAIN) || !cred->IsComplete() ||
       sk_CRYPTO_BUFFER_num(cred->chain.get()) != 1) {
     return true;
@@ -327,18 +330,18 @@ static bool ssl_crypto_x509_ssl_auto_chain_if_needed(SSL_HANDSHAKE *hs) {
   return SSL_set1_chain(ssl, chain.get());
 }
 
-static void ssl_crypto_x509_ssl_ctx_flush_cached_client_CA(SSL_CTX *ctx) {
+static void ssl_crypto_x509_ssl_ctx_flush_cached_client_CA(SSLContext *ctx) {
   sk_X509_NAME_pop_free(ctx->cached_x509_client_CA, X509_NAME_free);
   ctx->cached_x509_client_CA = nullptr;
 }
 
-static bool ssl_crypto_x509_ssl_ctx_new(SSL_CTX *ctx) {
+static bool ssl_crypto_x509_ssl_ctx_new(SSLContext *ctx) {
   ctx->cert_store = X509_STORE_new();
   ctx->param = X509_VERIFY_PARAM_new();
   return (ctx->cert_store != nullptr && ctx->param != nullptr);
 }
 
-static void ssl_crypto_x509_ssl_ctx_free(SSL_CTX *ctx) {
+static void ssl_crypto_x509_ssl_ctx_free(SSLContext *ctx) {
   ssl_crypto_x509_ssl_ctx_flush_cached_client_CA(ctx);
   X509_VERIFY_PARAM_free(ctx->param);
   X509_STORE_free(ctx->cert_store);
@@ -408,8 +411,9 @@ STACK_OF(X509) *SSL_get_peer_full_cert_chain(const SSL *ssl) {
 }
 
 int SSL_CTX_set_purpose(SSL_CTX *ctx, int purpose) {
-  check_ssl_ctx_x509_method(ctx);
-  return X509_VERIFY_PARAM_set_purpose(ctx->param, purpose);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return X509_VERIFY_PARAM_set_purpose(ctx_impl->param, purpose);
 }
 
 int SSL_set_purpose(SSL *ssl, int purpose) {
@@ -421,8 +425,9 @@ int SSL_set_purpose(SSL *ssl, int purpose) {
 }
 
 int SSL_CTX_set_trust(SSL_CTX *ctx, int trust) {
-  check_ssl_ctx_x509_method(ctx);
-  return X509_VERIFY_PARAM_set_trust(ctx->param, trust);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return X509_VERIFY_PARAM_set_trust(ctx_impl->param, trust);
 }
 
 int SSL_set_trust(SSL *ssl, int trust) {
@@ -434,8 +439,9 @@ int SSL_set_trust(SSL *ssl, int trust) {
 }
 
 int SSL_CTX_set1_param(SSL_CTX *ctx, const X509_VERIFY_PARAM *param) {
-  check_ssl_ctx_x509_method(ctx);
-  return X509_VERIFY_PARAM_set1(ctx->param, param);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return X509_VERIFY_PARAM_set1(ctx_impl->param, param);
 }
 
 int SSL_set1_param(SSL *ssl, const X509_VERIFY_PARAM *param) {
@@ -447,8 +453,9 @@ int SSL_set1_param(SSL *ssl, const X509_VERIFY_PARAM *param) {
 }
 
 X509_VERIFY_PARAM *SSL_CTX_get0_param(SSL_CTX *ctx) {
-  check_ssl_ctx_x509_method(ctx);
-  return ctx->param;
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return ctx_impl->param;
 }
 
 X509_VERIFY_PARAM *SSL_get0_param(SSL *ssl) {
@@ -479,19 +486,22 @@ int (*SSL_get_verify_callback(const SSL *ssl))(int, X509_STORE_CTX *) {
 }
 
 int SSL_CTX_get_verify_mode(const SSL_CTX *ctx) {
-  check_ssl_ctx_x509_method(ctx);
-  return ctx->verify_mode;
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return ctx_impl->verify_mode;
 }
 
 int SSL_CTX_get_verify_depth(const SSL_CTX *ctx) {
-  check_ssl_ctx_x509_method(ctx);
-  return X509_VERIFY_PARAM_get_depth(ctx->param);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return X509_VERIFY_PARAM_get_depth(ctx_impl->param);
 }
 
 int (*SSL_CTX_get_verify_callback(const SSL_CTX *ctx))(
     int ok, X509_STORE_CTX *store_ctx) {
-  check_ssl_ctx_x509_method(ctx);
-  return ctx->default_verify_callback;
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return ctx_impl->default_verify_callback;
 }
 
 void SSL_set_verify(SSL *ssl, int mode,
@@ -516,32 +526,37 @@ void SSL_set_verify_depth(SSL *ssl, int depth) {
 
 void SSL_CTX_set_cert_verify_callback(
     SSL_CTX *ctx, int (*cb)(X509_STORE_CTX *store_ctx, void *arg), void *arg) {
-  check_ssl_ctx_x509_method(ctx);
-  ctx->app_verify_callback = cb;
-  ctx->app_verify_arg = arg;
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  ctx_impl->app_verify_callback = cb;
+  ctx_impl->app_verify_arg = arg;
 }
 
 void SSL_CTX_set_verify(SSL_CTX *ctx, int mode,
                         int (*cb)(int, X509_STORE_CTX *)) {
-  check_ssl_ctx_x509_method(ctx);
-  ctx->verify_mode = mode;
-  ctx->default_verify_callback = cb;
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  ctx_impl->verify_mode = mode;
+  ctx_impl->default_verify_callback = cb;
 }
 
 void SSL_CTX_set_verify_depth(SSL_CTX *ctx, int depth) {
-  check_ssl_ctx_x509_method(ctx);
-  X509_VERIFY_PARAM_set_depth(ctx->param, depth);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  X509_VERIFY_PARAM_set_depth(ctx_impl->param, depth);
 }
 
 int SSL_CTX_set_default_verify_paths(SSL_CTX *ctx) {
-  check_ssl_ctx_x509_method(ctx);
-  return X509_STORE_set_default_paths(ctx->cert_store);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return X509_STORE_set_default_paths(ctx_impl->cert_store);
 }
 
 int SSL_CTX_load_verify_locations(SSL_CTX *ctx, const char *ca_file,
                                   const char *ca_dir) {
-  check_ssl_ctx_x509_method(ctx);
-  return X509_STORE_load_locations(ctx->cert_store, ca_file, ca_dir);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return X509_STORE_load_locations(ctx_impl->cert_store, ca_file, ca_dir);
 }
 
 long SSL_get_verify_result(const SSL *ssl) {
@@ -554,14 +569,16 @@ long SSL_get_verify_result(const SSL *ssl) {
 }
 
 X509_STORE *SSL_CTX_get_cert_store(const SSL_CTX *ctx) {
-  check_ssl_ctx_x509_method(ctx);
-  return ctx->cert_store;
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return ctx_impl->cert_store;
 }
 
 void SSL_CTX_set_cert_store(SSL_CTX *ctx, X509_STORE *store) {
-  check_ssl_ctx_x509_method(ctx);
-  X509_STORE_free(ctx->cert_store);
-  ctx->cert_store = store;
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  X509_STORE_free(ctx_impl->cert_store);
+  ctx_impl->cert_store = store;
 }
 
 static int ssl_use_certificate(CERT *cert, X509 *x) {
@@ -587,8 +604,9 @@ int SSL_use_certificate(SSL *ssl, X509 *x) {
 }
 
 int SSL_CTX_use_certificate(SSL_CTX *ctx, X509 *x) {
-  check_ssl_ctx_x509_method(ctx);
-  return ssl_use_certificate(ctx->cert.get(), x);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return ssl_use_certificate(ctx_impl->cert.get(), x);
 }
 
 // ssl_cert_cache_leaf_cert sets |cert->x509_leaf|, if currently NULL, from the
@@ -596,7 +614,7 @@ int SSL_CTX_use_certificate(SSL_CTX *ctx, X509 *x) {
 static int ssl_cert_cache_leaf_cert(CERT *cert) {
   assert(cert->x509_method);
 
-  const SSL_CREDENTIAL *cred = cert->legacy_credential.get();
+  const SSLCredential *cred = cert->legacy_credential.get();
   if (cert->x509_leaf != nullptr || cred->chain == nullptr) {
     return 1;
   }
@@ -629,9 +647,10 @@ X509 *SSL_get_certificate(const SSL *ssl) {
 }
 
 X509 *SSL_CTX_get0_certificate(const SSL_CTX *ctx) {
-  check_ssl_ctx_x509_method(ctx);
-  MutexWriteLock lock(const_cast<CRYPTO_MUTEX *>(&ctx->lock));
-  return ssl_cert_get0_leaf(ctx->cert.get());
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  MutexWriteLock lock(&ctx_impl->lock);
+  return ssl_cert_get0_leaf(ctx_impl->cert.get());
 }
 
 static int ssl_cert_add1_chain_cert(CERT *cert, X509 *x509) {
@@ -658,8 +677,9 @@ static int ssl_cert_add0_chain_cert(CERT *cert, X509 *x509) {
 }
 
 int SSL_CTX_set0_chain(SSL_CTX *ctx, STACK_OF(X509) *chain) {
-  check_ssl_ctx_x509_method(ctx);
-  if (!ssl_cert_set1_chain(ctx->cert.get(), chain)) {
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  if (!ssl_cert_set1_chain(ctx_impl->cert.get(), chain)) {
     return 0;
   }
   sk_X509_pop_free(chain, X509_free);
@@ -667,8 +687,9 @@ int SSL_CTX_set0_chain(SSL_CTX *ctx, STACK_OF(X509) *chain) {
 }
 
 int SSL_CTX_set1_chain(SSL_CTX *ctx, STACK_OF(X509) *chain) {
-  check_ssl_ctx_x509_method(ctx);
-  return ssl_cert_set1_chain(ctx->cert.get(), chain);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return ssl_cert_set1_chain(ctx_impl->cert.get(), chain);
 }
 
 int SSL_set0_chain(SSL *ssl, STACK_OF(X509) *chain) {
@@ -692,17 +713,20 @@ int SSL_set1_chain(SSL *ssl, STACK_OF(X509) *chain) {
 }
 
 int SSL_CTX_add0_chain_cert(SSL_CTX *ctx, X509 *x509) {
-  check_ssl_ctx_x509_method(ctx);
-  return ssl_cert_add0_chain_cert(ctx->cert.get(), x509);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return ssl_cert_add0_chain_cert(ctx_impl->cert.get(), x509);
 }
 
 int SSL_CTX_add1_chain_cert(SSL_CTX *ctx, X509 *x509) {
-  check_ssl_ctx_x509_method(ctx);
-  return ssl_cert_add1_chain_cert(ctx->cert.get(), x509);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return ssl_cert_add1_chain_cert(ctx_impl->cert.get(), x509);
 }
 
 int SSL_CTX_add_extra_chain_cert(SSL_CTX *ctx, X509 *x509) {
-  check_ssl_ctx_x509_method(ctx);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
   return SSL_CTX_add0_chain_cert(ctx, x509);
 }
 
@@ -723,12 +747,14 @@ int SSL_add1_chain_cert(SSL *ssl, X509 *x509) {
 }
 
 int SSL_CTX_clear_chain_certs(SSL_CTX *ctx) {
-  check_ssl_ctx_x509_method(ctx);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
   return SSL_CTX_set0_chain(ctx, nullptr);
 }
 
 int SSL_CTX_clear_extra_chain_certs(SSL_CTX *ctx) {
-  check_ssl_ctx_x509_method(ctx);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
   return SSL_CTX_clear_chain_certs(ctx);
 }
 
@@ -742,7 +768,7 @@ int SSL_clear_chain_certs(SSL *ssl) {
 static int ssl_cert_cache_chain_certs(CERT *cert) {
   assert(cert->x509_method);
 
-  const SSL_CREDENTIAL *cred = cert->legacy_credential.get();
+  const SSLCredential *cred = cert->legacy_credential.get();
   if (cert->x509_chain != nullptr || cred->chain == nullptr ||
       sk_CRYPTO_BUFFER_num(cred->chain.get()) < 2) {
     return 1;
@@ -767,14 +793,15 @@ static int ssl_cert_cache_chain_certs(CERT *cert) {
 }
 
 int SSL_CTX_get0_chain_certs(const SSL_CTX *ctx, STACK_OF(X509) **out_chain) {
-  check_ssl_ctx_x509_method(ctx);
-  MutexWriteLock lock(const_cast<CRYPTO_MUTEX *>(&ctx->lock));
-  if (!ssl_cert_cache_chain_certs(ctx->cert.get())) {
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  MutexWriteLock lock(&ctx_impl->lock);
+  if (!ssl_cert_cache_chain_certs(ctx_impl->cert.get())) {
     *out_chain = nullptr;
     return 0;
   }
 
-  *out_chain = ctx->cert->x509_chain;
+  *out_chain = ctx_impl->cert->x509_chain;
   return 1;
 }
 
@@ -863,14 +890,15 @@ void SSL_set_client_CA_list(SSL *ssl, STACK_OF(X509_NAME) *name_list) {
     return;
   }
   ssl->ctx->x509_method->ssl_flush_cached_client_CA(ssl->config.get());
-  set_client_CA_list(&ssl->config->client_CA, name_list, ssl->ctx->pool);
+  set_client_CA_list(&ssl->config->client_CA, name_list, ssl->ctx->pool.get());
   sk_X509_NAME_pop_free(name_list, X509_NAME_free);
 }
 
 void SSL_CTX_set_client_CA_list(SSL_CTX *ctx, STACK_OF(X509_NAME) *name_list) {
-  check_ssl_ctx_x509_method(ctx);
-  ctx->x509_method->ssl_ctx_flush_cached_client_CA(ctx);
-  set_client_CA_list(&ctx->client_CA, name_list, ctx->pool);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  ctx_impl->x509_method->ssl_ctx_flush_cached_client_CA(ctx_impl);
+  set_client_CA_list(&ctx_impl->client_CA, name_list, ctx_impl->pool.get());
   sk_X509_NAME_pop_free(name_list, X509_NAME_free);
 }
 
@@ -933,13 +961,14 @@ STACK_OF(X509_NAME) *SSL_get_client_CA_list(const SSL *ssl) {
 }
 
 STACK_OF(X509_NAME) *SSL_CTX_get_client_CA_list(const SSL_CTX *ctx) {
-  check_ssl_ctx_x509_method(ctx);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
   // This is a logically const operation that may be called on multiple threads,
   // so it needs to lock around updating |cached_x509_client_CA|.
-  MutexWriteLock lock(const_cast<CRYPTO_MUTEX *>(&ctx->lock));
+  MutexWriteLock lock(&ctx_impl->lock);
   return buffer_names_to_x509(
-      ctx->client_CA.get(),
-      const_cast<STACK_OF(X509_NAME) **>(&ctx->cached_x509_client_CA));
+      ctx_impl->client_CA.get(),
+      const_cast<STACK_OF(X509_NAME) **>(&ctx_impl->cached_x509_client_CA));
 }
 
 static int add_client_CA(UniquePtr<STACK_OF(CRYPTO_BUFFER)> *names, X509 *x509,
@@ -985,7 +1014,7 @@ int SSL_add_client_CA(SSL *ssl, X509 *x509) {
   if (!ssl->config) {
     return 0;
   }
-  if (!add_client_CA(&ssl->config->client_CA, x509, ssl->ctx->pool)) {
+  if (!add_client_CA(&ssl->config->client_CA, x509, ssl->ctx->pool.get())) {
     return 0;
   }
 
@@ -994,12 +1023,13 @@ int SSL_add_client_CA(SSL *ssl, X509 *x509) {
 }
 
 int SSL_CTX_add_client_CA(SSL_CTX *ctx, X509 *x509) {
-  check_ssl_ctx_x509_method(ctx);
-  if (!add_client_CA(&ctx->client_CA, x509, ctx->pool)) {
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  if (!add_client_CA(&ctx_impl->client_CA, x509, ctx_impl->pool.get())) {
     return 0;
   }
 
-  ssl_crypto_x509_ssl_ctx_flush_cached_client_CA(ctx);
+  ssl_crypto_x509_ssl_ctx_flush_cached_client_CA(ctx_impl);
   return 1;
 }
 
@@ -1034,10 +1064,11 @@ static int do_client_cert_cb(SSL *ssl, void *arg) {
 void SSL_CTX_set_client_cert_cb(SSL_CTX *ctx,
                                 int (*cb)(SSL *ssl, X509 **out_x509,
                                           EVP_PKEY **out_pkey)) {
-  check_ssl_ctx_x509_method(ctx);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
   // Emulate the old client certificate callback with the new one.
   SSL_CTX_set_cert_cb(ctx, do_client_cert_cb, nullptr);
-  ctx->client_cert_cb = cb;
+  ctx_impl->client_cert_cb = cb;
 }
 
 static int set_cert_store(X509_STORE **store_ptr, X509_STORE *new_store,
@@ -1052,7 +1083,7 @@ static int set_cert_store(X509_STORE **store_ptr, X509_STORE *new_store,
   return 1;
 }
 
-int SSL_get_ex_data_X509_STORE_CTX_idx(void) {
+int SSL_get_ex_data_X509_STORE_CTX_idx() {
   // The ex_data index to go from |X509_STORE_CTX| to |SSL| always uses the
   // reserved app_data slot. Before ex_data was introduced, app_data was used.
   // Avoid breaking any software which assumes |X509_STORE_CTX_get_app_data|
@@ -1061,13 +1092,15 @@ int SSL_get_ex_data_X509_STORE_CTX_idx(void) {
 }
 
 int SSL_CTX_set0_verify_cert_store(SSL_CTX *ctx, X509_STORE *store) {
-  check_ssl_ctx_x509_method(ctx);
-  return set_cert_store(&ctx->cert->verify_store, store, 0);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return set_cert_store(&ctx_impl->cert->verify_store, store, 0);
 }
 
 int SSL_CTX_set1_verify_cert_store(SSL_CTX *ctx, X509_STORE *store) {
-  check_ssl_ctx_x509_method(ctx);
-  return set_cert_store(&ctx->cert->verify_store, store, 1);
+  auto *ctx_impl = FromOpaque(ctx);
+  check_ssl_ctx_x509_method(ctx_impl);
+  return set_cert_store(&ctx_impl->cert->verify_store, store, 1);
 }
 
 int SSL_set0_verify_cert_store(SSL *ssl, X509_STORE *store) {

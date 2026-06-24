@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="resources/gesture-helpers.js"></script>
 <style type="text/css">
 #touchtarget {
@@ -100,8 +100,7 @@ function firstGestureScroll()
      checkScrollOffset();
  }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
 
 async function runTest()
 {
@@ -125,8 +124,7 @@ async function runTest()
     } else {
         debug("This test requires DumpRenderTree.  Touch scroll the red rect to log.");
     }
-    if (window.testRunner)
-        window.testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
 </body>

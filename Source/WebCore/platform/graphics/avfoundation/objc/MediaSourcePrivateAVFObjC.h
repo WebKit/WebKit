@@ -119,7 +119,7 @@ private:
 
     MediaTime currentTime() const final;
     bool timeIsProgressing() const final;
-    void bufferedChanged(const PlatformTimeRanges&) final;
+    void bufferedChanged(PlatformTimeRanges&&) final;
 
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_player WTF_GUARDED_BY_CAPABILITY(mainThread);
     ThreadSafeWeakPtr<SourceBufferPrivateAVFObjC> m_sourceBufferWithSelectedVideo WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());

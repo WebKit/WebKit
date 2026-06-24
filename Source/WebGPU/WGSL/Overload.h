@@ -122,7 +122,7 @@ struct OverloadCandidate {
     AbstractType result;
 };
 
-using ValidationFunction = std::optional<String>(*)(const FixedVector<std::optional<ConstantValue>>&);
+using ValidationFunction = std::optional<String>(*)(const FixedVector<std::optional<ConstantValue>>&, const FixedVector<const Type*>&);
 
 struct OverloadedDeclaration {
     enum Kind : uint8_t {

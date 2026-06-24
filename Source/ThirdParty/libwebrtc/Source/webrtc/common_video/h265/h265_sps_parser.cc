@@ -15,9 +15,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/logging.h"
@@ -53,19 +53,19 @@
     }                                                                    \
   } while (0)
 
+namespace webrtc {
+
 namespace {
-using OptionalSps = std::optional<webrtc::H265SpsParser::SpsState>;
+using OptionalSps = std::optional<H265SpsParser::SpsState>;
 using OptionalShortTermRefPicSet =
-    std::optional<webrtc::H265SpsParser::ShortTermRefPicSet>;
-using OptionalProfileTierLevel =
-    std::optional<webrtc::H265SpsParser::ProfileTierLevel>;
+    std::optional<H265SpsParser::ShortTermRefPicSet>;
+using OptionalProfileTierLevel = std::optional<H265SpsParser::ProfileTierLevel>;
 
 constexpr int kMaxNumSizeIds = 4;
 constexpr int kMaxNumMatrixIds = 6;
 constexpr int kMaxNumCoefs = 64;
 }  // namespace
 
-namespace webrtc {
 
 #if WEBRTC_WEBKIT_BUILD
 const uint32_t kMaxSPSLongTermRefPics = 32;
@@ -114,7 +114,7 @@ size_t H265SpsParser::GetDpbMaxPicBuf(int general_profile_idc) {
 
 // Unpack RBSP and parse SPS state from the supplied buffer.
 std::optional<H265SpsParser::SpsState> H265SpsParser::ParseSps(
-    ArrayView<const uint8_t> data) {
+    std::span<const uint8_t> data) {
   return ParseSpsInternal(H265::ParseRbsp(data));
 }
 
@@ -401,7 +401,7 @@ H265SpsParser::ParseProfileTierLevel(bool profile_present,
 }
 
 std::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
-    ArrayView<const uint8_t> buffer) {
+    std::span<const uint8_t> buffer) {
   BitstreamReader reader(buffer);
 
   // Now, we need to use a bit buffer to parse through the actual H265 SPS

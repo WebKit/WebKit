@@ -35,10 +35,11 @@ public:
     using Base = SVGAnimationDiscreteFunction<bool>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
     {
         m_from = SVGPropertyTraits<bool>::fromString(targetElement, from);
         m_to = SVGPropertyTraits<bool>::fromString(targetElement, to);
+        return true;
     }
 };
 
@@ -51,10 +52,11 @@ class SVGAnimationEnumerationFunction : public SVGAnimationDiscreteFunction<Enum
 public:
     using Base::Base;
 
-    void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
     {
         m_from = SVGPropertyTraits<EnumType>::fromString(targetElement, from);
         m_to = SVGPropertyTraits<EnumType>::fromString(targetElement, to);
+        return true;
     }
 };
 
@@ -63,10 +65,11 @@ public:
     using Base = SVGAnimationDiscreteFunction<SVGMarkerOrientType>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement&, const String&, const String&) override
+    bool setFromAndToValues(SVGElement&, const String&, const String&) override
     {
         // Values will be set by SVGAnimatedAngleOrientAnimator.
         ASSERT_NOT_REACHED();
+        return true;
     }
 
 private:
@@ -78,10 +81,11 @@ public:
     using Base = SVGAnimationDiscreteFunction<SVGPreserveAspectRatioValue>;
     using Base::Base;
     
-    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from = SVGPreserveAspectRatioValue(from);
         m_to = SVGPreserveAspectRatioValue(to);
+        return true;
     }
 };
 
@@ -90,10 +94,11 @@ public:
     using Base = SVGAnimationDiscreteFunction<String>;
     using Base::Base;
     
-    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from = from;
         m_to = to;
+        return true;
     }
 };
 

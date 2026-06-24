@@ -214,7 +214,6 @@ ISO8601::PlainTime plainTimeFromSubdayNs(Int128 ns)
 
 // totalTimeDuration — temporal_rs: TimeDuration::total (src/builtins/core/duration/normalized.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-totaltimeduration
-// Returns the total time portion of a duration as a fractional count of the given unit.
 double totalTimeDuration(Int128 timeDuration, TemporalUnit unit)
 {
     Int128 unitLength = lengthInNanoseconds(unit);
@@ -236,7 +235,7 @@ ISO8601::InternalDuration toInternalDuration(ISO8601::Duration d)
 
 // temporalDurationFromInternal — temporal_rs: Duration::from_internal (src/builtins/core/duration.rs)
 // Converts an InternalDuration back to a Duration given largestUnit.
-ISO8601::Duration temporalDurationFromInternal(ISO8601::InternalDuration internalDuration, TemporalUnit largestUnit)
+TemporalResult<ISO8601::Duration> temporalDurationFromInternal(ISO8601::InternalDuration internalDuration, TemporalUnit largestUnit)
 {
     int64_t days = 0;
     int64_t hours = 0;
@@ -314,7 +313,7 @@ ISO8601::Duration temporalDurationFromInternal(ISO8601::InternalDuration interna
     // Int128 values not exactly representable round past nanosecondsLimit → isValidDuration rejects.
     // milliseconds uses doubleToInt64Saturating because Int128 → double can still exceed int64_t
     // (e.g. largestUnit=millisecond, out-of-range input: ms ≈ 9e21 > INT64_MAX ≈ 9.2e18).
-    return ISO8601::Duration { internalDuration.dateDuration().years(),
+    ISO8601::Duration result { internalDuration.dateDuration().years(),
         internalDuration.dateDuration().months(),
         internalDuration.dateDuration().weeks(),
         static_cast<int64_t>(internalDuration.dateDuration().days() + days * sign),
@@ -322,6 +321,10 @@ ISO8601::Duration temporalDurationFromInternal(ISO8601::InternalDuration interna
         ISO8601::Duration::doubleToInt64Saturating(static_cast<double>(milliseconds)),
         Int128(static_cast<double>(microseconds)),
         Int128(static_cast<double>(nanoseconds)) };
+    // CreateTemporalDuration step: If IsValidDuration is false, return error.
+    if (!ISO8601::isValidDuration(result))
+        return makeUnexpected(rangeError("Duration is outside the representable range"_s));
+    return result;
 }
 
 // add24HourDaysToTimeDuration — temporal_rs: TimeDuration::add_days (src/builtins/core/duration/normalized.rs)
@@ -334,6 +337,17 @@ TemporalResult<Int128> add24HourDaysToTimeDuration(Int128 d, double days)
     if (absInt128(result) > ISO8601::InternalDuration::maxTimeDuration)
         return makeUnexpected(TemporalError { TemporalErrorKind::RangeError, "Total time in duration is out of range"_s });
     return Int128(result);
+}
+
+// toInternalDurationRecord — temporal_rs: InternalDurationRecord::from_duration (src/builtins/core/duration/normalized.rs)
+// https://tc39.es/proposal-temporal/#sec-temporal-tointernaldurationrecord
+// Keeps days in [[Date]] and converts only time fields (hours..nanoseconds) to [[Time]] nanoseconds.
+ISO8601::InternalDuration toInternalDurationRecord(ISO8601::Duration d)
+{
+    auto timeDuration = timeDurationFromComponents(d.hours(), d.minutes(), d.seconds(),
+        d.milliseconds(), static_cast<double>(d.microseconds()), static_cast<double>(d.nanoseconds()));
+    ISO8601::Duration dateDuration(d.years(), d.months(), d.weeks(), d.days(), 0, 0, 0, 0, Int128(0), Int128(0));
+    return ISO8601::InternalDuration::combineDateAndTimeDuration(dateDuration, timeDuration);
 }
 
 // toInternalDurationRecordWith24HourDays — temporal_rs: InternalDurationRecord::from_duration_with_24_hour_days (src/builtins/core/duration/normalized.rs)
@@ -452,18 +466,36 @@ static TemporalResult<Int128> epochNanosecondsForDateAndTime(
 
 // adjustDateDurationRecord — internal helper; builds a new date duration with overridden days/weeks/months fields.
 // https://tc39.es/proposal-temporal/#sec-temporal-adjustdatedurationrecord
-TemporalResult<ISO8601::Duration> adjustDateDurationRecord(const ISO8601::Duration& dateDuration, double days, std::optional<double> weeks, std::optional<double> months)
+TemporalResult<ISO8601::Duration> adjustDateDurationRecord(const ISO8601::Duration& dateDuration, int64_t days, std::optional<int64_t> weeks, std::optional<int64_t> months)
 {
     // Step 1: If weeks is not present, set weeks to dateDuration.[[Weeks]].
     // Step 2: If months is not present, set months to dateDuration.[[Months]].
     // (Both handled implicitly by the std::optional parameters.)
-    auto result = ISO8601::Duration {
-        dateDuration.years(),
-        months ? static_cast<int64_t>(months.value()) : dateDuration.months(),
-        weeks ? static_cast<int64_t>(weeks.value()) : dateDuration.weeks(),
-        // Step 3: Return ? CreateDateDurationRecord(dateDuration.[[Years]], months, weeks, days).
-        static_cast<int64_t>(days), 0, 0, 0, 0, Int128(0), Int128(0)
-    };
+    int64_t y = dateDuration.years();
+    int64_t mo = months.value_or(dateDuration.months());
+    int64_t w = weeks.value_or(dateDuration.weeks());
+    int64_t d = days;
+    // Step 3: Return ? CreateDateDurationRecord(dateDuration.[[Years]], months, weeks, days).
+    auto result = ISO8601::Duration { y, mo, w, d, 0, 0, 0, 0, Int128(0), Int128(0) };
+
+    // Skip isValidDuration by filtering the most of legit cases via quick comparison of specified fields.
+    constexpr int64_t fieldLimit = static_cast<int64_t>(1) << 32;
+    constexpr int64_t maxDays = (static_cast<int64_t>(1) << 53) / 86400;
+    bool fastPath = (y > -fieldLimit && y < fieldLimit)
+        && (mo > -fieldLimit && mo < fieldLimit)
+        && (w > -fieldLimit && w < fieldLimit)
+        && (d > -maxDays && d < maxDays);
+    if (fastPath) {
+        int sign = 0;
+        auto check = [&](int64_t v) {
+            if (!sign && v)
+                sign = v > 0 ? 1 : -1;
+            return !((v < 0 && sign > 0) || (v > 0 && sign < 0));
+        };
+        if (check(y) && check(mo) && check(w) && check(d))
+            return result;
+    }
+
     if (!ISO8601::isValidDuration(result))
         return makeUnexpected(rangeError("Temporal.Duration properties must be valid and of consistent sign"_s));
     return result;
@@ -513,12 +545,12 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
         // Step 2.d: r2 = r1 + increment × sign.
         r2 = r1 + increment * sign;
         // Step 2.e: startDuration = AdjustDateDurationRecord(duration.[[Date]], 0, 0, r1).
-        auto sd = adjustDateDurationRecord(duration.dateDuration(), 0, 0, r1);
+        auto sd = adjustDateDurationRecord(duration.dateDuration(), 0, 0, static_cast<int64_t>(r1));
         if (!sd)
             return makeUnexpected(sd.error());
         startDuration = *sd;
         // Step 2.f: endDuration = AdjustDateDurationRecord(duration.[[Date]], 0, 0, r2).
-        auto ed = adjustDateDurationRecord(duration.dateDuration(), 0, 0, r2);
+        auto ed = adjustDateDurationRecord(duration.dateDuration(), 0, 0, static_cast<int64_t>(r2));
         if (!ed)
             return makeUnexpected(ed.error());
         endDuration = *ed;
@@ -535,7 +567,7 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
             return makeUnexpected(weeksStartResult.error());
         auto weeksStart = *weeksStartResult;
         // Step 3.c: weeksEnd = AddDaysToISODate(weeksStart, duration.[[Date]].[[Days]]).
-        auto weeksEnd = TemporalCore::balanceISODate(weeksStart.year(), static_cast<int32_t>(weeksStart.month()), static_cast<int64_t>(weeksStart.day()) + duration.dateDuration().days());
+        auto weeksEnd = TemporalCore::addDaysToISODate(weeksStart, duration.dateDuration().days());
         // Step 3.d: untilResult = CalendarDateUntil(calendar, weeksStart, weeksEnd, week).
         auto untilResult = TemporalCore::calendarDateUntil(calendarId, weeksStart, weeksEnd, TemporalUnit::Week);
         if (!untilResult)
@@ -546,12 +578,12 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
         r1 = (double)weeks;
         r2 = (double)weeks + increment * sign;
         // Step 3.h: startDuration = AdjustDateDurationRecord(duration.[[Date]], 0, r1).
-        auto sd = adjustDateDurationRecord(duration.dateDuration(), 0, r1, std::nullopt);
+        auto sd = adjustDateDurationRecord(duration.dateDuration(), 0, static_cast<int64_t>(r1), std::nullopt);
         if (!sd)
             return makeUnexpected(sd.error());
         startDuration = *sd;
         // Step 3.i: endDuration = AdjustDateDurationRecord(duration.[[Date]], 0, r2).
-        auto ed = adjustDateDurationRecord(duration.dateDuration(), 0, r2, std::nullopt);
+        auto ed = adjustDateDurationRecord(duration.dateDuration(), 0, static_cast<int64_t>(r2), std::nullopt);
         if (!ed)
             return makeUnexpected(ed.error());
         endDuration = *ed;
@@ -566,12 +598,12 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
         r1 = (double)days;
         r2 = (double)days + increment * sign;
         // Step 4.e: startDuration = AdjustDateDurationRecord(duration.[[Date]], r1).
-        auto sd = adjustDateDurationRecord(duration.dateDuration(), r1, std::nullopt, std::nullopt);
+        auto sd = adjustDateDurationRecord(duration.dateDuration(), static_cast<int64_t>(r1), std::nullopt, std::nullopt);
         if (!sd)
             return makeUnexpected(sd.error());
         startDuration = *sd;
         // Step 4.f: endDuration = AdjustDateDurationRecord(duration.[[Date]], r2).
-        auto ed = adjustDateDurationRecord(duration.dateDuration(), r2, std::nullopt, std::nullopt);
+        auto ed = adjustDateDurationRecord(duration.dateDuration(), static_cast<int64_t>(r2), std::nullopt, std::nullopt);
         if (!ed)
             return makeUnexpected(ed.error());
         endDuration = *ed;
@@ -585,10 +617,10 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
     ASSERT(sign != -1 || (r1 <= 0 && r1 > r2));
 
     // Step 7: If r1=0, startEpochNs = originEpochNs.
-    // Step 8: Else, start = CalendarDateAdd (8.a); then steps 8.b (CombineISODateAndTimeRecord) +
-    //         8.c/8.d (GetUTCEpochNanoseconds or GetEpochNanosecondsFor) fused into epochNanosecondsForDateAndTime.
+    // Steps 7-8: startEpochNs. Use originEpochNs only when startDuration is entirely zero;
+    // otherwise compute via CalendarDateAdd (fix for https://github.com/tc39/proposal-temporal/issues/3316).
     Int128 startEpochNs;
-    if (!r1)
+    if (!startDuration.years() && !startDuration.months() && !startDuration.weeks() && !startDuration.days())
         startEpochNs = originEpochNs;
     else {
         auto startResult = TemporalCore::calendarDateAdd(calendarId, isoDate, startDuration, TemporalOverflow::Constrain);
@@ -707,7 +739,7 @@ TemporalResult<NudgeResult> nudgeToZonedTime(int32_t sign,
     // Step 3: endDate = AddDaysToISODate(start, sign).
     // Step 4: endDateTime = CombineISODateAndTimeRecord(endDate, isoDateTime.[[Time]]).
     // (Steps 2/4 fused into epochNanosecondsForDateAndTime — no intermediate records.)
-    auto endDate = TemporalCore::balanceISODate(start.year(), static_cast<int32_t>(start.month()), static_cast<int64_t>(start.day()) + sign);
+    auto endDate = TemporalCore::addDaysToISODate(start, sign);
     // Step 5: startEpochNs = GetEpochNanosecondsFor(timeZone, startDateTime, compatible). (steps 2+5 fused)
     auto startNsResult = epochNanosecondsForDateAndTime(start, isoTime, &timeZone);
     if (!startNsResult)
@@ -787,14 +819,14 @@ TemporalResult<NudgeResult> nudgeToDayOrTime(ISO8601::InternalDuration duration,
     auto nudgedEpochNs = diffTime + destEpochNs;
     // Step 11: Let days be 0.
     // Step 12: Let remainder be roundedTime.
-    auto days = 0;
+    int64_t days = 0;
     auto remainder = roundedTime;
     // Step 13: If TemporalUnitCategory(largestUnit) is ~date~, then
     if (largestUnit <= TemporalUnit::Day) {
         // Step 13.a: Set days to roundedWholeDays.
-        days = roundedWholeDays;
+        days = static_cast<int64_t>(roundedWholeDays);
         // Step 13.b: remainder = roundedTime - roundedWholeDays×hoursPerDay (days==roundedWholeDays here).
-        remainder = roundedTime + timeDurationFromComponents(-days * WTF::hoursPerDay, 0, 0, 0, 0, 0);
+        remainder = roundedTime + timeDurationFromComponents(-static_cast<double>(days) * WTF::hoursPerDay, 0, 0, 0, 0, 0);
     }
     // Step 14: Let dateDuration be ! AdjustDateDurationRecord(duration.[[Date]], days).
     auto dateDurationResult = adjustDateDurationRecord(duration.dateDuration(), days, std::nullopt, std::nullopt);

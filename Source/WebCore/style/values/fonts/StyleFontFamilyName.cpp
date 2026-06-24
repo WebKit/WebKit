@@ -36,7 +36,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<FontFamilyName>::operator()(const FontFamilyName& value, const RenderStyle&) -> CSS::FontFamilyName
+auto ToCSS<FontFamilyName>::operator()(const FontFamilyName& value, const Style::ComputedStyle&) -> CSS::FontFamilyName
 {
     return { .value = value.value };
 }
@@ -46,7 +46,7 @@ auto ToStyle<CSS::FontFamilyName>::operator()(const CSS::FontFamilyName& value, 
     return { .value = value.value };
 }
 
-Ref<CSSValue> CSSValueCreation<FontFamilyName>::operator()(CSSValuePool& pool, const RenderStyle& style, const FontFamilyName& value)
+Ref<CSSValue> CSSValueCreation<FontFamilyName>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const FontFamilyName& value)
 {
     return CSS::createCSSValue(pool, toCSS(value, style));
 }
@@ -66,7 +66,7 @@ auto CSSValueConversion<FontFamilyName>::operator()(BuilderState& state, const C
 
 // MARK: - Serialization
 
-void Serialize<FontFamilyName>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const RenderStyle&, const FontFamilyName& value)
+void Serialize<FontFamilyName>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle&, const FontFamilyName& value)
 {
     WebCore::serializeFontFamily(builder, value.value);
 }

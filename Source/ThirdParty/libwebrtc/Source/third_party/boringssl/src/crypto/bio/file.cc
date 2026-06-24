@@ -97,26 +97,26 @@ BIO *BIO_new_fp(FILE *stream, int flags) {
 }
 
 static int file_free(BIO *bio) {
-  if (!bio->shutdown) {
+  if (!BIO_get_shutdown(bio)) {
     return 1;
   }
 
-  if (bio->init && bio->ptr != nullptr) {
-    fclose(reinterpret_cast<FILE *>(bio->ptr));
-    bio->ptr = nullptr;
+  if (BIO_get_init(bio) && BIO_get_data(bio) != nullptr) {
+    fclose(reinterpret_cast<FILE *>(BIO_get_data(bio)));
+    BIO_set_data(bio, nullptr);
   }
-  bio->init = 0;
+  BIO_set_init(bio, 0);
 
   return 1;
 }
 
 static int file_read(BIO *b, char *out, int outl) {
-  if (!b->init) {
+  if (!BIO_get_init(b)) {
     return 0;
   }
 
-  size_t ret = fread(out, 1, outl, (FILE *)b->ptr);
-  if (ret == 0 && ferror((FILE *)b->ptr)) {
+  size_t ret = fread(out, 1, outl, (FILE *)BIO_get_data(b));
+  if (ret == 0 && ferror((FILE *)BIO_get_data(b))) {
     OPENSSL_PUT_SYSTEM_ERROR();
     OPENSSL_PUT_ERROR(BIO, ERR_R_SYS_LIB);
     return -1;
@@ -127,11 +127,11 @@ static int file_read(BIO *b, char *out, int outl) {
 }
 
 static int file_write(BIO *b, const char *in, int inl) {
-  if (!b->init) {
+  if (!BIO_get_init(b)) {
     return 0;
   }
 
-  int ret = (int)fwrite(in, inl, 1, (FILE *)b->ptr);
+  int ret = (int)fwrite(in, inl, 1, (FILE *)BIO_get_data(b));
   if (ret > 0) {
     ret = inl;
   }
@@ -139,7 +139,7 @@ static int file_write(BIO *b, const char *in, int inl) {
 }
 
 static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
-  FILE *fp = static_cast<FILE *>(b->ptr);
+  FILE *fp = static_cast<FILE *>(BIO_get_data(b));
   switch (cmd) {
     case BIO_CTRL_RESET:
       num = 0;
@@ -147,7 +147,8 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
     case BIO_C_FILE_SEEK:
       return fseek(fp, num, 0);
     case BIO_CTRL_EOF:
-      return feof(fp);
+      // feof may return any non-zero value for EOF, but we must return 1.
+      return feof(fp) != 0;
     case BIO_C_FILE_TELL:
     case BIO_CTRL_INFO:
       return ftell(fp);
@@ -164,13 +165,13 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
         _setmode(_fileno(reinterpret_cast<FILE *>(ptr)), _O_TEXT);
       }
 #endif
-      b->shutdown = static_cast<int>(num) & BIO_CLOSE;
-      b->ptr = ptr;
-      b->init = 1;
+      BIO_set_shutdown(b, static_cast<int>(num) & BIO_CLOSE);
+      BIO_set_data(b, ptr);
+      BIO_set_init(b, 1);
       return 1;
     case BIO_C_SET_FILENAME:
       file_free(b);
-      b->shutdown = static_cast<int>(num) & BIO_CLOSE;
+      BIO_set_shutdown(b, static_cast<int>(num) & BIO_CLOSE);
       const char *mode;
       if (num & BIO_FP_APPEND) {
         if (num & BIO_FP_READ) {
@@ -195,8 +196,8 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
         OPENSSL_PUT_ERROR(BIO, ERR_R_SYS_LIB);
         return 0;
       }
-      b->ptr = fp;
-      b->init = 1;
+      BIO_set_data(b, fp);
+      BIO_set_init(b, 1);
       return 1;
     case BIO_C_GET_FILE_PTR:
       // the ptr parameter is actually a FILE ** in this case.
@@ -206,9 +207,9 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
       }
       return 1;
     case BIO_CTRL_GET_CLOSE:
-      return b->shutdown;
+      return BIO_get_shutdown(b);
     case BIO_CTRL_SET_CLOSE:
-      b->shutdown = static_cast<int>(num);
+      BIO_set_shutdown(b, static_cast<int>(num));
       return 1;
     case BIO_CTRL_FLUSH:
       return fflush(fp) == 0;
@@ -222,7 +223,7 @@ static int file_gets(BIO *bp, char *buf, int size) {
     return 0;
   }
 
-  if (!fgets(buf, size, (FILE *)bp->ptr)) {
+  if (!fgets(buf, size, (FILE *)BIO_get_data(bp))) {
     buf[0] = 0;
     // TODO(davidben): This doesn't distinguish error and EOF. This should check
     // |ferror| as in |file_read|.
@@ -238,7 +239,7 @@ static const BIO_METHOD methods_filep = {
     /*create=*/nullptr, file_free,      /*callback_ctrl=*/nullptr,
 };
 
-const BIO_METHOD *BIO_s_file(void) { return &methods_filep; }
+const BIO_METHOD *BIO_s_file() { return &methods_filep; }
 
 
 int BIO_get_fp(BIO *bio, FILE **out_file) {

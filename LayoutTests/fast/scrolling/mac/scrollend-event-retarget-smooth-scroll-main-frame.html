@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useThreadedScrolling=false ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+            margin: 0;
+            background-image: repeating-linear-gradient(transparent, silver 500px);
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        description('Interrupting a smooth scroll of the main frame with a new scrollTo() to a different target should retarget the running animation, so the scrollend event fires at the final destination rather than prematurely at the intermediate offset. useThreadedScrolling=false forces the main frame onto the main-thread ScrollAnimator, which is the path the fix touches.');
+
+        const firstTarget = 2000;
+        const finalTarget = 4000;
+
+        var scrollYAtScrollend = -1;
+
+        window.addEventListener('load', () => {
+            // Start a smooth scroll towards the first target.
+            window.scrollTo({ top: firstTarget, behavior: 'smooth' });
+
+            // Once the animation is actually in flight (first scroll event), retarget
+            // it to a different destination and capture where we are when scrollend fires.
+            window.addEventListener('scroll', function onScroll() {
+                if (window.scrollY <= 0 || window.scrollY >= firstTarget)
+                    return;
+                window.removeEventListener('scroll', onScroll);
+
+                window.addEventListener('scrollend', () => {
+                    // On the buggy code path, cancelling the in-flight animation fires a
+                    // premature scrollend here while still mid-way to finalTarget. After
+                    // the fix, the animation is retargeted and scrollend fires only once
+                    // we have reached finalTarget.
+                    scrollYAtScrollend = window.scrollY;
+                    shouldBe('scrollYAtScrollend', 'finalTarget');
+                    finishJSTest();
+                }, { once: true });
+
+                window.scrollTo({ top: finalTarget, behavior: 'smooth' });
+            }, false);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="console"></div>
+</body>
+</html>

@@ -79,6 +79,9 @@ public:
 
 private:
     Connection(CString&& machServiceName, WebPushDaemonConnectionConfiguration&&);
+#if PLATFORM(COCOA)
+    ~Connection();
+#endif
 
     void newConnectionWasInitialized() const final;
 #if PLATFORM(COCOA)

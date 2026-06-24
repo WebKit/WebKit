@@ -14,10 +14,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <vector>
 
 #include "absl/container/flat_hash_set.h"
-#include "api/array_view.h"
 #include "rtc_base/buffer.h"
 
 namespace webrtc {
@@ -25,22 +25,23 @@ namespace webrtc {
 const size_t kDtlsRecordHeaderLen = 13;
 const size_t kMaxDtlsPacketLen = 2048;
 
-bool IsDtlsPacket(ArrayView<const uint8_t> payload);
-bool IsDtlsClientHelloPacket(ArrayView<const uint8_t> payload);
-bool IsDtlsHandshakePacket(ArrayView<const uint8_t> payload);
+bool IsDtlsPacket(std::span<const uint8_t> payload);
+bool IsDtlsClientHelloPacket(std::span<const uint8_t> payload);
+bool IsDtlsHandshakePacket(std::span<const uint8_t> payload);
 
-uint32_t ComputeDtlsPacketHash(ArrayView<const uint8_t> dtls_packet);
+uint32_t ComputeDtlsPacketHash(std::span<const uint8_t> dtls_packet);
 
 class PacketStash {
  public:
   PacketStash() {}
 
-  void Add(ArrayView<const uint8_t> packet);
-  bool AddIfUnique(ArrayView<const uint8_t> packet);
-  void Prune(const absl::flat_hash_set<uint32_t>& packet_hashes);
+  void Add(std::span<const uint8_t> packet);
+  bool AddIfUnique(std::span<const uint8_t> packet);
+  // Returns number of elements that were removed.
+  size_t Prune(const absl::flat_hash_set<uint32_t>& packet_hashes);
   void Prune(uint32_t max_size);
-  ArrayView<const uint8_t> GetNext();
-  std::vector<ArrayView<const uint8_t>> GetAll() const;
+  std::span<const uint8_t> GetNext();
+  std::vector<std::span<const uint8_t>> GetAll() const;
 
   void clear() {
     packets_.clear();
@@ -49,7 +50,7 @@ class PacketStash {
   bool empty() const { return packets_.empty(); }
   int size() const { return packets_.size(); }
 
-  static uint32_t Hash(ArrayView<const uint8_t> packet) {
+  static uint32_t Hash(std::span<const uint8_t> packet) {
     return ComputeDtlsPacketHash(packet);
   }
 

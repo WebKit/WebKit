@@ -21,8 +21,8 @@
 #include "absl/memory/memory.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/media_types.h"
+#include "api/test/time_controller.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "call/call.h"
@@ -33,16 +33,17 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "rtc_base/fake_clock.h"
 #include "rtc_base/logging.h"
 #if !WEBRTC_WEBKIT_BUILD
 #include "rtc_base/strings/json.h"
 #endif
 #include "system_wrappers/include/clock.h"
 #include "test/call_config_utils.h"
+#include "test/create_test_environment.h"
 #include "test/encoder_settings.h"
 #include "test/rtp_file_reader.h"
 #include "test/run_loop.h"
+#include "test/time_controller/simulated_time_controller.h"
 #include "test/video_renderer.h"
 
 namespace webrtc {
@@ -66,12 +67,8 @@ void RtpReplayer::Replay(
     const uint8_t* rtp_dump_data,
     size_t rtp_dump_size) {
   RunLoop loop;
-  ScopedBaseFakeClock fake_clock;
-
-  // Work around: webrtc calls webrtc::Random(clock.TimeInMicroseconds())
-  // everywhere and Random expects non-zero seed. Let's set the clock non-zero
-  // to make them happy.
-  fake_clock.SetTime(Timestamp::Millis(1));
+  GlobalSimulatedTimeController time_controller(
+      /*start_time=*/Timestamp::Millis(1));
 
   // Attempt to create an RtpReader from the input file.
   auto rtp_reader = CreateRtpReader(rtp_dump_data, rtp_dump_size);
@@ -91,9 +88,14 @@ void RtpReplayer::Replay(
   }
 
   // Setup the video streams based on the configuration.
-  Environment env = CreateEnvironment();
+  // Destroying video receive streams does a blocking call using Event class.
+  // TaskQueue implementations that `time_controller` creates can cooperate
+  // with Event class implemented in WebRTC, but not with Event class overridden
+  // by chromium. To avoid blocking when running in chromium, real (default)
+  // task queues are used, while `time_controller` is used only for the Clock.
+  Environment env = CreateTestEnvironment({.time = time_controller.GetClock()});
   CallConfig call_config(env);
-  std::unique_ptr<Call> call(Call::Create(std::move(call_config)));
+  std::unique_ptr<Call> call = Call::Create(std::move(call_config));
   SetupVideoStreams(&receive_stream_configs, stream_state.get(), call.get());
 
   // Start replaying the provided stream now that it has been configured.
@@ -101,8 +103,7 @@ void RtpReplayer::Replay(
     receive_stream->Start();
   }
 
-  ReplayPackets(&fake_clock, env.clock(), call.get(), rtp_reader.get(),
-                extensions);
+  ReplayPackets(time_controller, *call, *rtp_reader, extensions);
 
   for (const auto& receive_stream : stream_state->receive_streams) {
     call->DestroyVideoReceiveStream(receive_stream);
@@ -172,11 +173,11 @@ std::unique_ptr<test::RtpFileReader> RtpReplayer::CreateRtpReader(
 }
 
 void RtpReplayer::ReplayPackets(
-    FakeClock* fake_clock,
-    Clock& clock,
-    Call* call,
-    test::RtpFileReader* rtp_reader,
+    TimeController& time_controller,
+    Call& call,
+    test::RtpFileReader& rtp_reader,
     const RtpPacketReceived::ExtensionManager& extensions) {
+  Clock& clock = *time_controller.GetClock();
   int64_t replay_start_ms = -1;
 
   while (true) {
@@ -186,7 +187,7 @@ void RtpReplayer::ReplayPackets(
     }
 
     test::RtpPacket packet;
-    if (!rtp_reader->NextPacket(&packet)) {
+    if (!rtp_reader.NextPacket(&packet)) {
       break;
     }
 
@@ -194,7 +195,7 @@ void RtpReplayer::ReplayPackets(
     if (deliver_in_ms > 0) {
       // StatsCounter::ReportMetricToAggregatedCounter is O(elapsed time).
       // Set an upper limit to prevent waste time.
-      fake_clock->AdvanceTime(TimeDelta::Millis(
+      time_controller.AdvanceTime(TimeDelta::Millis(
           std::min(deliver_in_ms, static_cast<int64_t>(100))));
     }
 
@@ -213,7 +214,7 @@ void RtpReplayer::ReplayPackets(
     received_packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
 #endif
 
-    call->Receiver()->DeliverRtpPacket(
+    call.Receiver()->DeliverRtpPacket(
         MediaType::VIDEO, std::move(received_packet),
         [&](const RtpPacketReceived& parsed_packet) {
           RTC_LOG(LS_ERROR) << "Unknown SSRC: " << parsed_packet.Ssrc();

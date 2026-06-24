@@ -419,8 +419,10 @@ std::optional<FontPlatformSerializedAttributes> FontPlatformSerializedAttributes
 #define PAIR_VECTOR_TO_DICTIONARY(key, vector) \
     if (vector) { \
         RetainPtr<CFMutableDictionaryRef> newResult = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks)); \
-        for (auto& item : *vector) \
-            CFDictionaryAddValue(newResult.get(), item.first.get(), item.second.get()); \
+        for (auto& item : *vector) { \
+            if (item.first && item.second) \
+                CFDictionaryAddValue(newResult.get(), item.first.get(), item.second.get()); \
+        } \
         CFDictionaryAddValue(result.get(), key, newResult.get()); \
     }
 

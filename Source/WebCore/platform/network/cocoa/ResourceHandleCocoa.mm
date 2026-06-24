@@ -145,13 +145,13 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         if (d->m_user.isEmpty() && d->m_password.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication,
             // try and reuse the credential preemptively, as allowed by RFC 2617.
-            if (auto* networkStorageSession = d->m_context->storageSession())
+            if (auto* networkStorageSession = protect(d->m_context)->storageSession())
                 d->m_initialCredential = networkStorageSession->credentialStorage().get(firstRequest().cachePartition(), firstRequest().url());
         } else {
             // If there is already a protection space known for the URL, update stored credentials before sending a request.
             // This makes it possible to implement logout by sending an XMLHttpRequest with known incorrect credentials, and aborting it immediately
             // (so that an authentication dialog doesn't pop up).
-            if (auto* networkStorageSession = d->m_context->storageSession())
+            if (auto* networkStorageSession = protect(d->m_context)->storageSession())
                 networkStorageSession->credentialStorage().set(firstRequest().cachePartition(), Credential(d->m_user, d->m_password, CredentialPersistence::None), firstRequest().url());
         }
     }
@@ -192,10 +192,10 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         // requests may get stuck waiting for delegate calls while we are in nested run loop, and the sync
         // request won't start because there are no available connections.
         // Connections are grouped by their socket stream properties, with each group having a separate count.
-        [streamProperties setObject:@TRUE forKey:@"_WebKitSynchronousRequest"];
+        [streamProperties setObject:@YES forKey:@"_WebKitSynchronousRequest"];
     }
 
-    RetainPtr<CFDataRef> sourceApplicationAuditData = d->m_context->sourceApplicationAuditData();
+    RetainPtr<CFDataRef> sourceApplicationAuditData = protect(d->m_context)->sourceApplicationAuditData();
     if (sourceApplicationAuditData)
         [streamProperties setObject:(__bridge NSData *)sourceApplicationAuditData.get() forKey:@"kCFStreamPropertySourceApplication"];
 
@@ -224,17 +224,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 bool ResourceHandle::start()
 {
-    if (!d->m_context)
+    RefPtr context = d->m_context;
+    if (!context)
         return false;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // If NetworkingContext is invalid then we are no longer attached to a Page,
     // this must be an attempted load from an unload event handler, so let's just block it.
-    if (!d->m_context->isValid())
+    if (!context->isValid())
         return false;
 
-    if (auto* networkStorageSession = d->m_context->storageSession())
+    if (auto* networkStorageSession = context->storageSession())
         d->m_storageSession = networkStorageSession->platformSession();
 
     // FIXME: Do not use the sync version of shouldUseCredentialStorage when the client returns true from usesAsyncCallbacks.
@@ -246,14 +247,14 @@ bool ResourceHandle::start()
     createNSURLConnection(
         ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr),
         shouldUseCredentialStorage,
-        d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
+        d->m_shouldContentSniff || context->localFileContentSniffingEnabled(),
         d->m_contentEncodingSniffingPolicy,
         schedulingBehavior);
 #else
     createNSURLConnection(
         ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr),
         shouldUseCredentialStorage,
-        d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
+        d->m_shouldContentSniff || context->localFileContentSniffingEnabled(),
         d->m_contentEncodingSniffingPolicy,
         schedulingBehavior,
         (NSDictionary *)client()->connectionProperties(this).get());
@@ -429,7 +430,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
     }
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!request.url().protocolIs("https"_s) && protocolIs(request.httpReferrer(), "https"_s) && d->m_context->shouldClearReferrerOnHTTPSToHTTPRedirect())
+    if (!request.url().protocolIs("https"_s) && protocolIs(request.httpReferrer(), "https"_s) && protect(d->m_context)->shouldClearReferrerOnHTTPSToHTTPRedirect())
         request.clearHTTPReferrer();
 
     const URL& url = request.url();
@@ -452,7 +453,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         // URL didn't include credentials of its own.
         if (d->m_user.isEmpty() && d->m_password.isEmpty() && !redirectResponse.isNull()) {
             Credential credential;
-            if (auto* networkStorageSession = d->m_context->storageSession())
+            if (auto* networkStorageSession = protect(d->m_context)->storageSession())
                 credential = networkStorageSession->credentialStorage().get(request.cachePartition(), request.url());
             if (!credential.isEmpty()) {
                 d->m_initialCredential = credential;

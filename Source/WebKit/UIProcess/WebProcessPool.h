@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "APIDictionary.h"
 #include "APIObject.h"
 #include "APIProcessPoolConfiguration.h"
 #include "EnhancedSecurity.h"
@@ -40,11 +39,9 @@
 #include "WebPreferencesStore.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
-#include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/SecurityOriginHash.h>
-#include <WebCore/SharedStringHash.h>
 #include <pal/SessionID.h>
+#include <wtf/ApproximateTime.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -62,13 +59,7 @@
 #if PLATFORM(COCOA)
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSObject;
-OBJC_CLASS NSSet;
-OBJC_CLASS NSString;
-OBJC_CLASS WKPreferenceObserver;
 OBJC_CLASS WKProcessPoolWeakObserver;
-#if PLATFORM(MAC)
-OBJC_CLASS WKWebInspectorPreferenceObserver;
-#endif
 #endif
 
 #if PLATFORM(MAC)
@@ -92,13 +83,17 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #include <wtf/cf/NotificationCenterCF.h>
 #endif
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK) && PLATFORM(COCOA)
+#include <WebCore/CaptionUserPreferences.h>
+#endif
+
 namespace API {
+class Array;
 class AutomationClient;
+class Data;
 class DownloadClient;
-class HTTPCookieStore;
 class InjectedBundleClient;
 class LegacyContextHistoryClient;
-class LegacyDownloadClient;
 class Navigation;
 class PageConfiguration;
 }
@@ -132,7 +127,6 @@ class WebPageGroup;
 class WebPageProxy;
 class WebProcessCache;
 struct GPUProcessConnectionParameters;
-struct GPUProcessCreationParameters;
 struct NetworkProcessCreationParameters;
 struct WebProcessCreationParameters;
 struct WebProcessDataStoreParameters;
@@ -266,7 +260,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void displayPropertiesChanged(const WebCore::ScreenProperties&, WebCore::PlatformDisplayID, CGDisplayChangeSummaryFlags);
+    void displayPropertiesChanged(WebCore::PlatformDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
 #if HAVE(DISPLAY_LINK)
@@ -328,9 +322,6 @@ public:
     static Statistics& statistics();    
 
     void terminateAllWebContentProcesses(ProcessTerminationReason);
-    void sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&&);
-    void sendNetworkProcessWillSuspendImminentlyForTesting();
-    void sendNetworkProcessDidResume();
     void terminateServiceWorkersForSession(PAL::SessionID);
     void terminateServiceWorkers();
 
@@ -428,8 +419,6 @@ public:
 
     static void NODELETE setInvalidMessageCallback(void (*)(WKStringRef));
     static void didReceiveInvalidMessage(IPC::MessageName);
-
-    bool isURLKnownHSTSHost(const String& urlString) const;
 
     static void registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
     static void unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
@@ -754,6 +743,10 @@ private:
 #endif
     void clearAudibleActivity();
 
+#if PLATFORM(COCOA)
+    void screenPropertiesUpdateTimerFired();
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef);
     void initializeHardwareKeyboardAvailability();
@@ -858,7 +851,6 @@ private:
     RetainPtr<NSObject> m_didBeginSuppressingHighDynamicRange;
     RetainPtr<NSObject> m_didEndSuppressingHighDynamicRange;
 #endif
-    RetainPtr<WKWebInspectorPreferenceObserver> m_webInspectorPreferenceObserver;
 
     const UniqueRef<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
 #endif
@@ -903,10 +895,6 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;
-#endif
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    HashMap<String, String> m_encodedContentExtensions;
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -1013,6 +1001,7 @@ private:
     RefPtr<ListDataObserver> m_storageAccessUserAgentStringQuirksDataUpdateObserver;
     RefPtr<ListDataObserver> m_storageAccessPromptQuirksDataUpdateObserver;
     RefPtr<ListDataObserver> m_scriptTrackingPrivacyDataUpdateObserver;
+    RefPtr<ListDataObserver> m_consistentPrivacyQuirkDataUpdateObserver;
 #endif
 
     bool m_webProcessStateUpdatesForPageClientEnabled { false };
@@ -1035,6 +1024,9 @@ private:
     std::optional<HashMap<String, Vector<String>>> m_userInstalledFontFamilyMap;
     std::optional<Vector<URL>> m_sandboxExtensionURLs;
     HashMap<String, bool> m_mediaSourceTypesSupported;
+
+    ApproximateTime m_lastScreenPropertiesUpdateTime;
+    RunLoop::Timer m_screenPropertiesUpdateTimer;
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -1046,6 +1038,11 @@ private:
     bool m_suppressEDR { false };
 
     Seconds m_pltResourceDelayInterval { 100_ms };
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK) && PLATFORM(COCOA)
+    std::optional<WebCore::CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
+    std::optional<Vector<String>> m_preferredLanguages;
+#endif
 };
 
 template<typename T>

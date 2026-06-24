@@ -38,7 +38,7 @@ TimeBasedEvictionMode WebsiteDataStoreConfiguration::defaultTimeBasedEvictionMod
 #if ENABLE(TIME_BASED_EVICTION_SERVICE_WORKER_ONLY)
     return TimeBasedEvictionMode::ServiceWorkerRegistrationsOnly;
 #else
-    return TimeBasedEvictionMode::Disabled;
+    return TimeBasedEvictionMode::AllTypes;
 #endif
 }
 

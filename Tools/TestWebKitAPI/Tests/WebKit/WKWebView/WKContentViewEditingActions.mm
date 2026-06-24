@@ -147,6 +147,9 @@ TEST(WebKit, CaptureTextFromCamera)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView _setInputDelegate:inputDelegate.get()];
 
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+#endif
     [webView synchronouslyLoadHTMLString:@"<input style='display: block; font-size: 100px;' value='foo' autofocus><input value='bar' readonly>"];
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ([webView targetForAction:@selector(captureTextFromCamera:) withSender:nil], [webView textInputContentView]);

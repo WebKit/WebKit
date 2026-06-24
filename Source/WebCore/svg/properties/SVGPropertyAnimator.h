@@ -40,19 +40,19 @@ class SVGPropertyAnimator : public SVGAttributeAnimator {
 public:
     bool isDiscrete() const override { return m_function.isDiscrete(); }
 
-    void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
     {
-        m_function.setFromAndToValues(targetElement, adjustForInheritance(targetElement, from), adjustForInheritance(targetElement, to));
+        return m_function.setFromAndToValues(targetElement, adjustForInheritance(targetElement, from), adjustForInheritance(targetElement, to));
     }
 
-    void setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
+    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
     {
-        m_function.setFromAndByValues(targetElement, from, by);
+        return m_function.setFromAndByValues(targetElement, from, by);
     }
 
-    void setToAtEndOfDurationValue(SVGElement& targetElement, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement& targetElement, const String& toAtEndOfDuration) override
     {
-        m_function.setToAtEndOfDurationValue(targetElement, toAtEndOfDuration);
+        return m_function.setToAtEndOfDurationValue(targetElement, toAtEndOfDuration);
     }
 
 protected:

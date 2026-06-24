@@ -271,6 +271,12 @@ public:
     InstallVerifier();
 };
 
+/* This exists to make it easier to filter for non-verifier tests */
+class NoVerifier : public TestScope {
+public:
+    NoVerifier();
+};
+
 class EpochIsCounter : public TestScope {
 public:
     EpochIsCounter();

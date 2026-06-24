@@ -45,7 +45,7 @@ static RetainPtr<NSMutableDictionary> readSearchFieldRecentSearchesPlist(NSStrin
     return adoptNS([[NSMutableDictionary alloc] initWithContentsOfFile:searchFieldRecentSearchesPlistPath(baseDirectory)]);
 }
 
-static WallTime toSystemClockTime(NSDate *date)
+static WallTime searchPopupWallTimeFromNSDate(NSDate *date)
 {
     ASSERT(date);
     return WallTime::fromRawSeconds(date.timeIntervalSince1970);
@@ -177,7 +177,7 @@ Vector<RecentSearch> loadRecentSearchesFromFile(const String& name, const String
         if (![searchString isKindOfClass:[NSString class]])
             continue;
 
-        searchItems.append({ String { searchString }, toSystemClockTime(date.get()) });
+        searchItems.append({ String { searchString }, searchPopupWallTimeFromNSDate(date.get()) });
     }
 
     return searchItems;

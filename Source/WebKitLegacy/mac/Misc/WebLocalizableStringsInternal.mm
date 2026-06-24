@@ -27,10 +27,9 @@
 
 #import <WebCore/LocalizedStrings.h>
 
-using namespace WebCore;
 
 NSString *WebLocalizedStringInternal(const char* key)
 {
     auto keyString = adoptCF(CFStringCreateWithCStringNoCopy(0, key, kCFStringEncodingUTF8, kCFAllocatorNull));
-    return localizedNSString(bridge_cast(keyString.get()));
+    return WebCore::localizedNSString(bridge_cast(keyString.get()));
 }

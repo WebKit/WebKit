@@ -110,8 +110,6 @@ public:
 
     void abortIfUpdating();
     void removedFromMediaSource();
-    using ComputeSeekPromise = SourceBufferPrivate::ComputeSeekPromise;
-    Ref<ComputeSeekPromise> computeSeekTime(const SeekTarget&);
 
     bool NODELETE hasVideo() const;
 

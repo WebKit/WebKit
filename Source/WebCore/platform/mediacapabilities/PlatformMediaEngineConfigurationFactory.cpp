@@ -54,10 +54,10 @@ static bool& NODELETE mockEnabled()
     return enabled;
 }
 
-using FactoryVector = Vector<PlatformMediaEngineConfigurationFactory::MediaEngineFactory>;
-static FactoryVector defaultFactories()
+using MediaEngineFactoryVector = Vector<PlatformMediaEngineConfigurationFactory::MediaEngineFactory>;
+static MediaEngineFactoryVector defaultFactories()
 {
-    FactoryVector factories;
+    MediaEngineFactoryVector factories;
 #if PLATFORM(COCOA)
     factories.append({ &createMediaPlayerDecodingConfigurationCocoa, nullptr });
 #endif
@@ -67,7 +67,7 @@ static FactoryVector defaultFactories()
     return factories;
 }
 
-static FactoryVector& factories()
+static MediaEngineFactoryVector& factories()
 {
     static NeverDestroyed factories = defaultFactories();
     return factories;

@@ -17,4 +17,5 @@ PASS Test empty rect.
 PASS Test left crop.
 PASS Test invalid rect.
 FAIL copyTo from byte data with non-default visibleRect assert_array_equals: Copied frame data incorrect. expected property 0 to be 76 but got 0 (expected array object "76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76" got object "0,0,76,76,0,0,76,76,0,0,76,76,0,0,76,76,0,0,76,76")
+PASS copyTo from byte data with codedHeight larger than visibleRect height
 

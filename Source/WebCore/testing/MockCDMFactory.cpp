@@ -29,6 +29,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "InitDataRegistry.h"
+#include "ParsedContentType.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <algorithm>
@@ -176,9 +177,24 @@ bool MockCDM::supportsConfiguration(const MediaKeySystemConfiguration& configura
 
 }
 
-bool MockCDM::supportsConfigurationWithRestrictions(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const
+bool MockCDM::supportsConfigurationWithRestrictions(const MediaKeySystemConfiguration& configuration, const MediaKeysRestrictions&) const
 {
-    // NOTE: Implement;
+    if (!m_factory)
+        return true;
+
+    const auto& unsupportedVideoCodecs = m_factory->unsupportedVideoCodecs();
+    if (unsupportedVideoCodecs.isEmpty())
+        return true;
+
+    for (const auto& capability : configuration.videoCapabilities) {
+        auto contentType = ParsedContentType::create(capability.contentType);
+        if (!contentType)
+            continue;
+        auto codecs = contentType->parameterValueForName("codecs"_s);
+        if (!codecs.isEmpty() && unsupportedVideoCodecs.contains(codecs))
+            return false;
+    }
+
     return true;
 }
 

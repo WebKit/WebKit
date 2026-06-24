@@ -45,10 +45,10 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SearchInputType.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
 #include "UnicodeBidi.h"
@@ -60,7 +60,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSearchField);
 
-RenderSearchField::RenderSearchField(HTMLInputElement& element, RenderStyle&& style)
+RenderSearchField::RenderSearchField(HTMLInputElement& element, Style::ComputedStyle&& style)
     : RenderTextControlSingleLine(Type::SearchField, element, WTF::move(style))
     , m_searchPopupIsVisible(false)
     , m_searchPopup(nullptr)
@@ -185,7 +185,7 @@ void RenderSearchField::updateCancelButtonVisibility() const
     if (curStyle->usedVisibility() == buttonVisibility)
         return;
 
-    auto cancelButtonStyle = RenderStyle::clone(curStyle.get());
+    auto cancelButtonStyle = Style::ComputedStyle::clone(curStyle.get());
     cancelButtonStyle.setVisibility(buttonVisibility);
     cancelButtonRenderer->setStyle(WTF::move(cancelButtonStyle));
 }

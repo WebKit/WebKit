@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/support/dynamic-available-size-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/support/min-content-max-content.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/support/ratio-2-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/support/ratio-3-1.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/support/replaced-min-max-1.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/support/replaced-min-max-10.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/support/replaced-min-max-11.png

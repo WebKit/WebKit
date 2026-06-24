@@ -8,6 +8,7 @@
 </head>
 <body>
 <script>
+    window.jsTestIsAsync = true;
     const hostUnderTest = "127.0.0.1";
     const statisticsUrl = "http://" + hostUnderTest + "/temp";
     const topFrameOrigin1 = "http://127.0.0.2:8000/temp";
@@ -25,7 +26,7 @@
             testPassed("Host deleted from memory store.");
 
         setEnableFeature(false, function() {
-            testRunner.notifyDone();
+            finishJSTest();
         });
     }
 
@@ -47,7 +48,6 @@
     }
 
     if (window.testRunner && window.internals) {
-        testRunner.waitUntilDone();
         setEnableFeature(true, runTestRunnerTest);
     }
 </script>

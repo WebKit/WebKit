@@ -33,6 +33,9 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/HistoryItem.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/Page.h>
+#include <WebCore/Settings.h>
 
 namespace WebKit {
 
@@ -49,6 +52,14 @@ ScopeExit<CompletionHandler<void()>> WebHistoryItemClient::ignoreChangesForScope
     return makeScopeExit(CompletionHandler<void()> { [this, protectedThis = Ref { *this }] {
         m_shouldIgnoreChanges = false;
     } });
+}
+
+ScopeExit<CompletionHandler<void()>> WebHistoryItemClient::ignoreChangesForScopeDuringRedirect(const WebCore::LocalFrame& frame)
+{
+    RefPtr page = frame.page();
+    if (!page || !page->settings().useUIProcessForBackForwardItemLoading() || frame.isMainFrame())
+        return HistoryItemClient::ignoreChangesForScopeDuringRedirect(frame);
+    return ignoreChangesForScope();
 }
 
 void WebHistoryItemClient::historyItemChanged(const WebCore::HistoryItem& item)

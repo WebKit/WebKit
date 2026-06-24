@@ -45,7 +45,7 @@ enum class URLPatternConstructorStringParserState : uint8_t { Init, Protocol, Au
 
 class URLPatternConstructorStringParser {
 public:
-    explicit URLPatternConstructorStringParser(String&& input);
+    explicit URLPatternConstructorStringParser(StringView input);
     ExceptionOr<URLPatternInit> parse(ScriptExecutionContext&);
 
 private:

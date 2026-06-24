@@ -124,6 +124,11 @@ class SimulcastTestFixtureImpl::TestEncodedImageCallback
     }
     return Result(Result::OK, encoded_image.RtpTimestamp());
   }
+
+  void OnFrameDropped(uint32_t /*rtp_timestamp*/,
+                      int /*spatial_id*/,
+                      bool /*is_end_of_temporal_unit*/) override {}
+
   // This method only makes sense for VP8.
   void GetLastEncodedFrameInfo(int* temporal_layer,
                                bool* layer_sync,

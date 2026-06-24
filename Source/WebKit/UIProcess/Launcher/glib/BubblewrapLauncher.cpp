@@ -461,6 +461,11 @@ static void bindGStreamerData(Vector<CString>& args)
     bindIfExists(args, scannerPath);
     bindIfExists(args, installPluginsHelperPath);
     bindIfExists(args, ptpHelperPath);
+
+    // Since GStreamer 1.28.0 software video decoders are likely to use a udmabuf allocator, so
+    // allow access to the corresponding device in the sandbox. Note: We are in the UIProcess so a
+    // runtime GStreamer version check is not wanted here.
+    args.appendList({ "--dev-bind-try", "/dev/udmabuf", "/dev/udmabuf" });
 }
 
 static void bindOpenGL(Vector<CString>& args)

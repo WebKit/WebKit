@@ -34,10 +34,12 @@ messages -> RemoteMediaSourceProxy {
     AddSourceBuffer(WebCore::ContentType contentType, struct WebCore::MediaSourceConfiguration configuration) -> (enum:uint8_t WebCore::MediaSourcePrivateAddStatus status, std::optional<WebKit::RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier) Synchronous
     DurationChanged(MediaTime duration)
     BufferedChanged(WebCore::PlatformTimeRanges buffered)
+    SetReadyState(enum:uint8_t WebCore::MediaSourceReadyState readyState)
     SetMediaPlayerReadyState(enum:uint8_t WebCore::MediaPlayerReadyState readyState)
     SetTimeFudgeFactor(MediaTime fudgeFactor)
     MarkEndOfStream(enum:uint8_t WebCore::MediaSourcePrivateEndOfStreamStatus status)
     UnmarkEndOfStream()
+    CancelPendingWaitForTarget()
     Shutdown()
 }
 

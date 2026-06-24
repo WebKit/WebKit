@@ -99,13 +99,13 @@ canvas {
         <aside role="complementary" aria-label="Related information">
             <h4>Related Links</h4>
             <ul>
-                <li><a href="https://webkit.org" onmouseover="this.style.color='red'">Example Link</a></li>
+                <li><a href="https://webkit.org" onmouseover="this.style.color='red'"><canvas></canvas>Example Link</a></li>
                 <li><a href="https://apple.com" onmouseout="this.style.color=''">Test Link</a></li>
             </ul>
         </aside>
         <div role="region">
             <div role="status" aria-live="polite" id="status-msg">Ready</div>
-            <button onclick="document.getElementById('status-msg').textContent = 'Updated!'">Update Status</button>
+            <button onclick="document.getElementById('status-msg').textContent = 'Updated!'"><canvas></canvas>Update Status</button>
         </div>
         <div class="canvas-container" aria-label="Figure 1">
             <canvas width="400" height="400"></canvas>
@@ -114,6 +114,14 @@ canvas {
         Price: $11<sup>99</sup>
         Link to <sub>WebKit home page:<a href="https://webkit.org">webkit.org</a></sub>
         <strike>This <a href="https://www.apple.com/">link</a> was deleted</strike>
+    </section>
+    <section id="section4" aria-label="Class and ID Hint Filtering">
+        <button class="user-avatar">AB</button>
+        <button class="user-icon" id="user-account">JS</button>
+        <button class="user-menu-btn">MN</button>
+        <button class="login-button">Sign In</button>
+        <button class="user-avatar" aria-label="Profile">YZ</button>
+        <input type="text" class="user-input" placeholder="Username" />
     </section>
 </main>
 <footer role="contentinfo">

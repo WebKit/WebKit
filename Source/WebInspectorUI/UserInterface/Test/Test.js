@@ -71,6 +71,8 @@ WI.loaded = function()
         WI.animationManager = new WI.AnimationManager,
     ];
 
+    WI.domUndoCoordinator = new WI.DOMUndoCoordinator;
+
     // Register for events.
     document.addEventListener("DOMContentLoaded", WI.contentLoaded);
     WI.browserManager.enable();

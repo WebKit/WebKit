@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/encoded_image.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
@@ -34,7 +34,7 @@ class VideoRtpDepacketizer {
   virtual std::optional<ParsedRtpPayload> Parse(
       CopyOnWriteBuffer rtp_payload) = 0;
   virtual scoped_refptr<EncodedImageBuffer> AssembleFrame(
-      ArrayView<const ArrayView<const uint8_t>> rtp_payloads);
+      std::span<const std::span<const uint8_t>> rtp_payloads);
 };
 
 }  // namespace webrtc

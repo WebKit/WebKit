@@ -11,11 +11,11 @@
 #include "test/mappable_native_buffer.h"
 
 #include <cstdint>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "api/array_view.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
@@ -96,7 +96,7 @@ MappableNativeBuffer::ScaledBuffer::ToI420() {
 
 scoped_refptr<VideoFrameBuffer>
 MappableNativeBuffer::ScaledBuffer::GetMappedFrameBuffer(
-    ArrayView<VideoFrameBuffer::Type> types) {
+    std::span<VideoFrameBuffer::Type> types) {
   if (absl::c_find(types, parent_->mappable_type_) == types.end())
     return nullptr;
   return parent_->GetOrCreateMappedBuffer(width_, height_);
@@ -128,7 +128,7 @@ scoped_refptr<I420BufferInterface> MappableNativeBuffer::ToI420() {
 }
 
 scoped_refptr<VideoFrameBuffer> MappableNativeBuffer::GetMappedFrameBuffer(
-    ArrayView<VideoFrameBuffer::Type> types) {
+    std::span<VideoFrameBuffer::Type> types) {
   return FullSizeBuffer()->GetMappedFrameBuffer(types);
 }
 

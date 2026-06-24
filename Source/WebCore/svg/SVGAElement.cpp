@@ -118,7 +118,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-RenderPtr<RenderElement> SVGAElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGAElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     RefPtr svgParent = dynamicDowncast<SVGElement>(parentNode());
     if (svgParent && svgParent->isTextContent())
@@ -143,7 +143,7 @@ void SVGAElement::defaultEventHandler(Event& event)
             auto url = href().trim(isASCIIWhitespace);
 
             if (url[0] == '#') {
-                if (RefPtr targetElement = dynamicDowncast<SVGSMILElement>(treeScope().getElementById(url.substringSharingImpl(1)))) {
+                if (RefPtr targetElement = dynamicDowncast<SVGSMILElement>(protect(treeScope())->getElementById(url.substringSharingImpl(1)))) {
                     targetElement->beginByLinkActivation();
                     event.setDefaultHandled();
                     return;
@@ -231,7 +231,7 @@ bool SVGAElement::childShouldCreateRenderer(const Node& child) const
         return false;
 
     if (parentElement() && parentElement()->isSVGElement())
-        return parentElement()->childShouldCreateRenderer(child);
+        return protect(parentElement())->childShouldCreateRenderer(child);
 
     return SVGElement::childShouldCreateRenderer(child);
 }
@@ -247,6 +247,11 @@ SharedStringHash SVGAElement::visitedLinkHash() const
     if (!m_storedVisitedLinkHash)
         m_storedVisitedLinkHash = computeVisitedLinkHash(document().baseURL(), getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr));
     return *m_storedVisitedLinkHash;
+}
+
+URL SVGAElement::hrefURL() const
+{
+    return protect(document())->encodingParseURL(href());
 }
 
 DOMTokenList& SVGAElement::relList()

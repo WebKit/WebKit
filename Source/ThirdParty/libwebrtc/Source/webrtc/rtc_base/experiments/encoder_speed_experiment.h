@@ -18,7 +18,11 @@ namespace webrtc {
 
 class EncoderSpeedExperiment {
  public:
+  // Convenience method, uses `use_low_complexity_for_vp9` = false.
   explicit EncoderSpeedExperiment(const FieldTrialsView& field_trials);
+
+  EncoderSpeedExperiment(const FieldTrialsView& field_trials,
+                         bool use_low_complexity_for_vp9);
 
   bool IsDynamicSpeedEnabled() const;
   VideoCodecComplexity GetComplexity(VideoCodecType codec_type,
@@ -32,9 +36,10 @@ class EncoderSpeedExperiment {
 
   void ParseCodecSettings(absl::string_view codec_name,
                           absl::string_view trial_string,
-                          ComplexitySettings& settings);
+                          ComplexitySettings& settings,
+                          bool use_low_complexity_for_vp9);
 
-  bool dynamic_speed_enabled_ = false;
+  bool dynamic_speed_enabled_;
   ComplexitySettings av1_complexity_;
   ComplexitySettings vp8_complexity_;
   ComplexitySettings vp9_complexity_;

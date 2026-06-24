@@ -1,0 +1,11 @@
+
+Test that an audible <video autoplay> element whose renderer attaches outside the viewport does not begin playing.
+
+** loading an audible video with no renderer
+
+EVENT(canplaythrough)
+** making the video renderer attach far below the viewport
+RUN(document.querySelector(".container").style.display = "block")
+EXPECTED (video.paused == 'true') OK
+END OF TEST
+

@@ -33,8 +33,8 @@
 #include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderObject.h"
-#include "RenderStyle+GettersInlines.h"
 #include "ShadowRoot.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 

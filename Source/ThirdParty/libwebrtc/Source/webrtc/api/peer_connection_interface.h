@@ -417,6 +417,10 @@ class RTC_EXPORT PeerConnectionInterface : public RefCountInterface {
     static const int kAudioJitterBufferMaxPackets = 200;
     // ICE connection receiving timeout for aggressive configuration.
     static const int kAggressiveIceConnectionReceivingTimeout = 1000;
+    // Maximum number of certificates allowed in the configuration.
+    // Capped at 1000 which still provides ample headroom for interoperability
+    // of multiple key algorithms.
+    static const int kMaxCertificates = 1000;
 
     ////////////////////////////////////////////////////////////////////////
     // The below few fields mirror the standard RTCConfiguration dictionary:
@@ -693,6 +697,10 @@ class RTC_EXPORT PeerConnectionInterface : public RefCountInterface {
     // This controls the announced_maximum_outgoing_streams parameter
     // of the DcSctpOptions struct.
     int max_sctp_streams = kMaxSctpStreams;
+
+    // https://www.ietf.org/archive/id/draft-hancke-tsvwg-snap-00.html
+    // Option for origin trial / rollout.
+    bool enable_sctp_snap = false;
 
     //
     // Don't forget to update operator== if adding something.
@@ -1519,7 +1527,7 @@ class RTC_EXPORT PeerConnectionFactoryInterface : public RefCountInterface {
     // Sets the maximum supported protocol version. The highest version
     // supported by both ends will be used for the connection, i.e. if one
     // party supports DTLS 1.0 and the other DTLS 1.2, DTLS 1.0 will be used.
-    SSLProtocolVersion ssl_max_version = SSL_PROTOCOL_DTLS_12;
+    SSLProtocolVersion ssl_max_version = SSL_PROTOCOL_DTLS_13;
   };
 
   // Set the options to be used for subsequently created PeerConnections.

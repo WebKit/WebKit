@@ -30,7 +30,6 @@
 #include "call/adaptation/video_source_restrictions.h"
 #include "call/adaptation/video_stream_input_state.h"
 #include "call/adaptation/video_stream_input_state_provider.h"
-#include "modules/video_coding/svc/scalability_mode_util.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -729,29 +728,21 @@ std::optional<uint32_t> VideoStreamAdapter::GetSingleActiveLayerPixels(
     const VideoCodec& codec) {
   int num_active = 0;
   std::optional<uint32_t> pixels;
-  if (codec.codecType == VideoCodecType::kVideoCodecAV1 &&
-      codec.GetScalabilityMode().has_value()) {
-    for (int i = 0;
-         i < ScalabilityModeToNumSpatialLayers(*(codec.GetScalabilityMode()));
-         ++i) {
-      if (codec.spatialLayers[i].active) {
+  if (codec.numberOfSimulcastStreams > 1 ||
+      !(codec.codecType == VideoCodecType::kVideoCodecAV1 ||
+        codec.codecType == VideoCodecType::kVideoCodecVP9)) {
+    // Simulcast or non-SVC codec.
+    for (const auto& stream : codec.simulcastStream) {
+      if (stream.active) {
         ++num_active;
-        pixels = codec.spatialLayers[i].width * codec.spatialLayers[i].height;
-      }
-    }
-  } else if (codec.codecType == VideoCodecType::kVideoCodecVP9) {
-    for (int i = 0; i < codec.VP9().numberOfSpatialLayers; ++i) {
-      if (codec.spatialLayers[i].active) {
-        ++num_active;
-        pixels = codec.spatialLayers[i].width * codec.spatialLayers[i].height;
+        pixels = stream.width * stream.height;
       }
     }
   } else {
-    for (int i = 0; i < codec.numberOfSimulcastStreams; ++i) {
-      if (codec.simulcastStream[i].active) {
+    for (const auto& stream : codec.spatialLayers) {
+      if (stream.active) {
         ++num_active;
-        pixels =
-            codec.simulcastStream[i].width * codec.simulcastStream[i].height;
+        pixels = stream.width * stream.height;
       }
     }
   }

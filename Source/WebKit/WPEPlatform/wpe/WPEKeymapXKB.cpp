@@ -37,6 +37,12 @@
 /**
  * WPEKeymapXKB:
  *
+ * A [class@Keymap] implementation based on XKB.
+ *
+ * [class@KeymapXKB] is the [class@Keymap] implementation used by the built-in
+ * platforms. It is backed by libxkbcommon; use
+ * [method@KeymapXKB.get_xkb_keymap] and [method@KeymapXKB.get_xkb_state]
+ * to access the underlying `xkb_keymap` and `xkb_state`.
  */
 struct _WPEKeymapXKBPrivate {
     struct xkb_keymap* xkbKeymap;

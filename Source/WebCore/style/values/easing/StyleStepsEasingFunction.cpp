@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Style {
 
-CSS::StepsEasingFunction toCSSStepsEasingFunction(const StepsTimingFunction& function, const RenderStyle&)
+CSS::StepsEasingFunction toCSSStepsEasingFunction(const StepsTimingFunction& function, const Style::ComputedStyle&)
 {
     auto position = function.stepPosition();
     if (!position)

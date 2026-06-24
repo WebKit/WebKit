@@ -2350,11 +2350,6 @@ void ProgramExecutable::getTransformFeedbackVarying(GLuint index,
     ASSERT(index < mLinkedTransformFeedbackVaryings.size());
     const auto &var     = mLinkedTransformFeedbackVaryings[index];
     std::string varName = var.nameWithArrayIndex();
-    GLsizei lastNameIdx = std::min(bufSize - 1, static_cast<GLsizei>(varName.length()));
-    if (length)
-    {
-        *length = lastNameIdx;
-    }
     if (size)
     {
         *size = var.size();
@@ -2363,10 +2358,14 @@ void ProgramExecutable::getTransformFeedbackVarying(GLuint index,
     {
         *type = var.type;
     }
-    if (name)
+
+    if (length)
     {
-        memcpy(name, varName.c_str(), lastNameIdx);
-        name[lastNameIdx] = '\0';
+        *length = 0;
+    }
+    if (name && bufSize > 0)
+    {
+        CopyStringToBuffer(name, varName, bufSize, length);
     }
 }
 

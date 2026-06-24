@@ -42,7 +42,7 @@ class CustomProperty;
 class Builder {
     WTF_MAKE_TZONE_ALLOCATED(Builder);
 public:
-    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, PropertyCascade::IncludedProperties&& = PropertyCascade::normalProperties(), const HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>>* animatedProperties = nullptr);
+    Builder(Style::ComputedStyle&, BuilderContext&&, const MatchResult&, PropertyCascade::IncludedProperties&& = PropertyCascade::normalProperties(), const HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>>* animatedProperties = nullptr);
     ~Builder();
 
     void applyAllProperties();

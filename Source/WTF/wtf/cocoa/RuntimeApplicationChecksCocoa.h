@@ -143,6 +143,9 @@ enum class SDKAlignedBehavior {
     AllBackForwardItemsWithoutUserGestureInvisibleToUI,
     ExposePartitionFromWKHTTPCookieStoreAPI,
     MediaSessionPauseOnInterruption,
+    ScrollPocketInFullscreen,
+    IgnorePageLocationDuringHardPocketEligibilityCheck,
+    AdjustColorExtensionsForHorizontalBannerViewOverlays,
 
     NumberOfBehaviors
 };

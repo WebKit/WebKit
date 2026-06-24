@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "CSSCalcValue.h"
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
@@ -52,7 +51,7 @@ struct CSSPrimitiveValueResolverBase {
 
     static RefPtr<CSSPrimitiveValue> resolve(CSS::Calc auto value, CSSPropertyParserOptions = { })
     {
-        return CSSPrimitiveValue::create(protect(value.calcValue()));
+        return CSSPrimitiveValue::create(WTF::move(value));
     }
 
     static RefPtr<CSSPrimitiveValue> resolve(CSS::Numeric auto value, CSSPropertyParserOptions options = { })

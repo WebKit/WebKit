@@ -1027,6 +1027,20 @@ static void testWebKitInputMethodContextContentType(InputMethodTest* test, gcons
     g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
     test->unfocusEditableAndWaitUntilInputMethodDisabled();
 
+    test->loadHtml("<input id='editable' type='search' spellcheck='false'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_SEARCH);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    test->loadHtml("<input id='editable' type='search' spellcheck='true'>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_SEARCH);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_SPELLCHECK);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
     test->loadHtml("<div contenteditable id='editable' inputmode='text' spellcheck='false'></div>", nullptr);
     test->waitUntilLoadFinished();
     test->focusEditableAndWaitUntilInputMethodEnabled();
@@ -1072,7 +1086,7 @@ static void testWebKitInputMethodContextContentType(InputMethodTest* test, gcons
     test->loadHtml("<div contenteditable id='editable' inputmode='search' spellcheck='false'></div>", nullptr);
     test->waitUntilLoadFinished();
     test->focusEditableAndWaitUntilInputMethodEnabled();
-    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_SEARCH);
     g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
     test->unfocusEditableAndWaitUntilInputMethodDisabled();
 

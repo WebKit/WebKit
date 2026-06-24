@@ -77,6 +77,8 @@ extension WKWebViewConfiguration {
         #if os(macOS)
         self._requiresUserActionForEditingControlsManager = wrapped.requiresUserActionForEditingControlsManager
         #endif
+
+        self._isControlledByAutomation = wrapped.isControlledByAutomation
     }
 }
 

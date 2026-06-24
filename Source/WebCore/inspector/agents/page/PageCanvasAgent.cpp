@@ -97,7 +97,7 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> PageCanvasA
 
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
     Ref agents = m_instrumentingAgents.get();
-    int documentNodeId = agents->persistentDOMAgent()->boundNodeId(&node->document());
+    int documentNodeId = agents->persistentDOMAgent()->boundNodeId(protect(node->document()).ptr());
     if (!documentNodeId)
         return makeUnexpected("Document must have been requested"_s);
 
@@ -119,7 +119,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::N
     auto clientNodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
     for (auto& clientNode : inspectorCanvas->clientNodes()) {
         // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
-        if (auto documentNodeId = domAgent->boundNodeId(&clientNode->document()))
+        if (auto documentNodeId = domAgent->boundNodeId(protect(clientNode->document()).ptr()))
             clientNodeIds->addItem(domAgent->pushNodeToFrontend(errorString, documentNodeId, clientNode));
     }
     return clientNodeIds;
@@ -139,13 +139,13 @@ void PageCanvasAgent::frameNavigated(LocalFrame& frame)
                 inspectorCanvases.append(inspectorCanvas.ptr());
         }
     }
-    for (auto* inspectorCanvas : inspectorCanvases)
+    for (RefPtr inspectorCanvas : inspectorCanvases)
         unbindCanvas(*inspectorCanvas);
 }
 
 void PageCanvasAgent::didChangeCSSCanvasClientNodes(CanvasBase& canvasBase)
 {
-    auto* context = canvasBase.renderingContext();
+    RefPtr context = canvasBase.renderingContext();
     if (!context) {
         ASSERT_NOT_REACHED();
         return;

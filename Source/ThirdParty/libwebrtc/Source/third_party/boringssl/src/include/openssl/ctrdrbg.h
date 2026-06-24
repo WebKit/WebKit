@@ -53,17 +53,17 @@ extern "C" {
 #define CTR_DRBG_NONCE_LEN 16
 
 // CTR_DRBG_MAX_GENERATE_LENGTH is the maximum number of bytes that can be
-// generated in a single call to |CTR_DRBG_generate|.
+// generated in a single call to `CTR_DRBG_generate`.
 #define CTR_DRBG_MAX_GENERATE_LENGTH 65536
 
-// CTR_DRBG_new returns an initialized |CTR_DRBG_STATE|, or NULL if either
-// allocation failed or if |personalization_len| is invalid. This DRBG will not
+// CTR_DRBG_new returns an initialized `CTR_DRBG_STATE`, or NULL if either
+// allocation failed or if `personalization_len` is invalid. This DRBG will not
 // use a derivation function.
 OPENSSL_EXPORT CTR_DRBG_STATE *CTR_DRBG_new(
     const uint8_t entropy[CTR_DRBG_ENTROPY_LEN], const uint8_t *personalization,
     size_t personalization_len);
 
-// CTR_DRBG_new_df returns an initialized |CTR_DRBG_STATE|, or NULL if either
+// CTR_DRBG_new_df returns an initialized `CTR_DRBG_STATE`, or NULL if either
 // allocation failed or if an argument is invalid. This DRBG will use a
 // derivation function.
 OPENSSL_EXPORT CTR_DRBG_STATE *CTR_DRBG_new_df(
@@ -71,11 +71,11 @@ OPENSSL_EXPORT CTR_DRBG_STATE *CTR_DRBG_new_df(
     const uint8_t nonce[CTR_DRBG_NONCE_LEN], const uint8_t *personalization,
     size_t personalization_len);
 
-// CTR_DRBG_free frees |state| if non-NULL, or else does nothing.
+// CTR_DRBG_free frees `state` if non-NULL, or else does nothing.
 OPENSSL_EXPORT void CTR_DRBG_free(CTR_DRBG_STATE *state);
 
-// CTR_DRBG_reseed reseeds |drbg| given |CTR_DRBG_ENTROPY_LEN| bytes of entropy
-// in |entropy| and, optionally, up to |CTR_DRBG_SEED_LEN| bytes of
+// CTR_DRBG_reseed reseeds `drbg` given `CTR_DRBG_ENTROPY_LEN` bytes of entropy
+// in `entropy` and, optionally, up to `CTR_DRBG_SEED_LEN` bytes of
 // additional data. It returns one on success or zero on error.
 OPENSSL_EXPORT int CTR_DRBG_reseed(CTR_DRBG_STATE *drbg,
                                    const uint8_t entropy[CTR_DRBG_ENTROPY_LEN],
@@ -83,23 +83,23 @@ OPENSSL_EXPORT int CTR_DRBG_reseed(CTR_DRBG_STATE *drbg,
                                    size_t additional_data_len);
 
 // CTR_DRBG_reseed_ex acts like `CTR_DRBG_reseed` but with variable-length
-// entropy input, up to |CTR_DRBG_MAX_ENTROPY_LEN|.
+// entropy input, up to `CTR_DRBG_MAX_ENTROPY_LEN`.
 OPENSSL_EXPORT int CTR_DRBG_reseed_ex(CTR_DRBG_STATE *drbg,
                                       const uint8_t *entropy,
                                       size_t entropy_len,
                                       const uint8_t *additional_data,
                                       size_t additional_data_len);
 
-// CTR_DRBG_generate processes to up |CTR_DRBG_ENTROPY_LEN| bytes of additional
-// data (if any) and then writes |out_len| random bytes to |out|, where
-// |out_len| <= |CTR_DRBG_MAX_GENERATE_LENGTH|. It returns one on success or
+// CTR_DRBG_generate processes to up `CTR_DRBG_ENTROPY_LEN` bytes of additional
+// data (if any) and then writes `out_len` random bytes to `out`, where
+// `out_len` <= `CTR_DRBG_MAX_GENERATE_LENGTH`. It returns one on success or
 // zero on error.
 OPENSSL_EXPORT int CTR_DRBG_generate(CTR_DRBG_STATE *drbg, uint8_t *out,
                                      size_t out_len,
                                      const uint8_t *additional_data,
                                      size_t additional_data_len);
 
-// CTR_DRBG_clear zeroises the state of |drbg|.
+// CTR_DRBG_clear zeroises the state of `drbg`.
 OPENSSL_EXPORT void CTR_DRBG_clear(CTR_DRBG_STATE *drbg);
 
 

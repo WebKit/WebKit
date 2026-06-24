@@ -259,6 +259,31 @@ func addTrustAnchorTests() {
 		flags: []string{"-expect-selected-credential", "2"},
 	})
 
+	// The caller can override the default available list.
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "TrustAnchors-Server-OverrideAvailable",
+		config: Config{
+			RequestTrustAnchors: [][]byte{id1},
+			Bugs: ProtocolBugs{
+				ExpectPeerAvailableTrustAnchors: [][]byte{id1, id2, id3},
+			},
+		},
+		shimCredentials: []*Credential{&rsaCertificate},
+		flags:           []string{"-available-trust-anchors", trustAnchorListFlagValue(id1, id2, id3)},
+	})
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "TrustAnchors-Server-OverrideAvailable-NotRequested",
+		config: Config{
+			Bugs: ProtocolBugs{
+				ExpectPeerAvailableTrustAnchors: [][]byte{},
+			},
+		},
+		shimCredentials: []*Credential{&rsaCertificate},
+		flags:           []string{"-available-trust-anchors", trustAnchorListFlagValue(id1, id2, id3)},
+	})
+
 	// The ClientHello list may be empty. The client must be able to send it and
 	// receive available trust anchors.
 	testCases = append(testCases, testCase{

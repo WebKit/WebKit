@@ -28,6 +28,12 @@
 #if USE(COORDINATED_GRAPHICS)
 #include <wtf/ThreadSafeRefCounted.h>
 
+#if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
 namespace WebCore {
 
 class CoordinatedPlatformLayerBuffer;
@@ -36,6 +42,9 @@ class NativeImage;
 class CoordinatedImageBackingStore final : public ThreadSafeRefCounted<CoordinatedImageBackingStore> {
 public:
     static Ref<CoordinatedImageBackingStore> create(Ref<NativeImage>&&);
+#if USE(SKIA)
+    static Ref<CoordinatedImageBackingStore> create(Ref<NativeImage>&&, const sk_sp<GrContextThreadSafeProxy>&);
+#endif
     ~CoordinatedImageBackingStore();
 
     bool isSameNativeImage(const NativeImage&);
@@ -43,8 +52,12 @@ public:
 
 private:
     explicit CoordinatedImageBackingStore(Ref<NativeImage>&&);
+#if USE(SKIA)
+    CoordinatedImageBackingStore(Ref<NativeImage>&&, const sk_sp<GrContextThreadSafeProxy>&);
+#endif
 
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
+    uint64_t m_uniqueID { 0 };
 };
 
 } // namespace WebCore

@@ -105,7 +105,7 @@ public:
     void stopRunningTasks() { m_runTasks = false; }
     JS_EXPORT_PRIVATE void runRunLoop();
 
-    static Ref<DeferredWorkTimer> create(VM& vm) { return adoptRef(*new DeferredWorkTimer(vm)); }
+    static Ref<DeferredWorkTimer> create(VM& vm);
 private:
     DeferredWorkTimer(VM&);
 
@@ -117,14 +117,10 @@ private:
     UncheckedKeyHashSet<Ref<TicketData>> m_pendingTickets;
 };
 
-inline JSObject* DeferredWorkTimer::TicketData::target()
-{
-    ASSERT(!isCancelled() && isTargetObject());
-    // This function can be triggered on the main thread with a GC end phase
-    // and a sweeping state. So, jsCast is not wanted here.
-    return std::bit_cast<JSObject*>(m_dependencies.last());
-}
-
+// target() reads m_dependencies, which cancelAndClear() can free concurrently.
+// Safe only when: (1) holding m_taskLock, (2) inside a scheduleWorkSoon task lambda
+// (ticket already removed from m_pendingTickets), or (3) GC End phase is prevented from running.
+// Never call from a foreign VM's thread.
 inline const FixedVector<JSCell*>& DeferredWorkTimer::TicketData::dependencies(bool mayBeCancelled)
 {
     ASSERT_UNUSED(mayBeCancelled, mayBeCancelled || !isCancelled());

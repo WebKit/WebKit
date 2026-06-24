@@ -40,7 +40,7 @@ class RenderMathMLFraction final : public RenderMathMLRow {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLFraction);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLFraction);
 public:
-    RenderMathMLFraction(MathMLFractionElement&, RenderStyle&&);
+    RenderMathMLFraction(MathMLFractionElement&, Style::ComputedStyle&&);
     virtual ~RenderMathMLFraction();
 
     LayoutUnit defaultLineThickness() const;
@@ -50,7 +50,7 @@ public:
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLFraction"_s; }
 
-    void computePreferredLogicalWidths() final;
+    void computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     std::optional<LayoutUnit> firstLineBaseline() const final;
     void paint(PaintInfo&, const LayoutPoint&) final;

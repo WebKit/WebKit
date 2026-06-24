@@ -109,7 +109,7 @@ int RegularExpression::match(StringView str, unsigned startFrom, int* matchLengt
     if (str.isNull())
         return -1;
 
-    int offsetVectorSize = (d->m_numSubpatterns + 1) * 2;
+    int offsetVectorSize = d->m_regExpByteCode->m_offsetsSize;
     unsigned* offsetVector;
     Vector<unsigned, 32> nonReturnedOvector;
 

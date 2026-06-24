@@ -42,7 +42,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     if (!AXObjectCache::accessibilityEnabled())
         return;
 
-    if (CheckedPtr cache = m_document->existingAXObjectCache()) {
+    if (CheckedPtr cache = protect(m_document)->existingAXObjectCache()) {
         if (m_selection.start().isNotNull() && m_selection.end().isNotNull())
             cache->postTextStateChangeNotification(m_selection.start(), intent, m_selection);
         else {

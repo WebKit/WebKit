@@ -52,7 +52,7 @@ enum class CacheType : int8_t {
     StringLength,
 };
 
-class InlineCacheHandler : public RefCounted<InlineCacheHandler> {
+class JSC_CACHE_LINE_ALIGNED InlineCacheHandler : public RefCounted<InlineCacheHandler> {
     WTF_MAKE_NONCOPYABLE(InlineCacheHandler);
     WTF_MAKE_TZONE_ALLOCATED(InlineCacheHandler);
     friend class InlineCacheCompiler;
@@ -138,11 +138,17 @@ protected:
 
     static Ref<InlineCacheHandler> createSlowPath(VM&, AccessType);
 
+    // The selection and ordering of the fields through m_uid is deliberate.
+    // They are are either hot with high affinity, or placed where they are to minimize padding.
+    StructureID m_structureID { };
+    RefPtr<InlineCacheHandler> m_next;
     CodePtr<JITStubRoutinePtrTag> m_callTarget;
     CodePtr<JITStubRoutinePtrTag> m_jumpTarget;
-    StructureID m_structureID { };
     PropertyOffset m_offset { invalidOffset };
+    CacheType m_cacheType { CacheType::Unset };
+    bool m_makesJSCalls { false };
     UniquedStringImpl* m_uid { nullptr };
+
     union {
         struct {
             StructureID m_newStructureID { };
@@ -159,13 +165,14 @@ protected:
             WriteBarrierBase<Unknown>* m_moduleVariableSlot;
         } s3;
     } u;
-    CacheType m_cacheType { CacheType::Unset };
-    bool m_makesJSCalls { false };
-    RefPtr<InlineCacheHandler> m_next;
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     RefPtr<AccessCase> m_accessCase;
     std::unique_ptr<PropertyInlineCacheClearingWatchpoint> m_watchpoint;
 };
+
+#if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64) && CPU(ADDRESS64)
+static_assert(InlineCacheHandler::offsetOfUid() == 40, "InlineCacheHandler hot field layout drifted.");
+#endif
 
 class InlineCacheHandlerWithJSCall final : public InlineCacheHandler {
     WTF_MAKE_TZONE_ALLOCATED(InlineCacheHandlerWithJSCall);

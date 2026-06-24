@@ -12,9 +12,9 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/random.h"
 #include "test/gtest.h"
@@ -32,8 +32,8 @@ TEST(EchoCancellerTestTools, FloatDelayBuffer) {
   constexpr size_t kBlockSize = 50;
   for (size_t k = 0; k < CheckedDivExact(v.size(), kBlockSize); ++k) {
     delay_buffer.Delay(
-        ArrayView<const float>(&v[k * kBlockSize], kBlockSize),
-        ArrayView<float>(&v_delayed[k * kBlockSize], kBlockSize));
+        std::span<const float>(&v[k * kBlockSize], kBlockSize),
+        std::span<float>(&v_delayed[k * kBlockSize], kBlockSize));
   }
   for (size_t k = kDelay; k < v.size(); ++k) {
     EXPECT_EQ(v[k - kDelay], v_delayed[k]);
@@ -50,8 +50,8 @@ TEST(EchoCancellerTestTools, IntDelayBuffer) {
   std::vector<int> v_delayed = v;
   const size_t kBlockSize = 50;
   for (size_t k = 0; k < CheckedDivExact(v.size(), kBlockSize); ++k) {
-    delay_buffer.Delay(ArrayView<const int>(&v[k * kBlockSize], kBlockSize),
-                       ArrayView<int>(&v_delayed[k * kBlockSize], kBlockSize));
+    delay_buffer.Delay(std::span<const int>(&v[k * kBlockSize], kBlockSize),
+                       std::span<int>(&v_delayed[k * kBlockSize], kBlockSize));
   }
   for (size_t k = kDelay; k < v.size(); ++k) {
     EXPECT_EQ(v[k - kDelay], v_delayed[k]);

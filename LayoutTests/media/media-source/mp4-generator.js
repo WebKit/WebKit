@@ -16,6 +16,21 @@
 //   sourceBuffer.appendBuffer(init);
 //   // ... wait for updateend ...
 //   sourceBuffer.appendBuffer(media);
+//
+// In-band CEA-608 captions: add a second track with type 'captions' and supply
+// caption samples built by Captions.buildPaintOnCueSamples() from caption-generator.js.
+//
+//   <script src="caption-generator.js"></script>
+//   <script src="mp4-generator.js"></script>
+//   const captionSamples = Captions.buildPaintOnCueSamples({ cues: [...], totalDurationTicks });
+//   const { init, media } = MP4.samples({
+//       timescale: 30000,
+//       tracks: [{ id: 1, type: 'video' }, { id: 2, type: 'captions' }],
+//       trackSamples: {
+//           1: videoSamples,
+//           2: captionSamples.map(s => ({ duration: s.duration, data: s.data, isSync: true, dts: FRAME_DURATION, pts: FRAME_DURATION })),
+//       },
+//   });
 
 const MP4 = (function() {
 
@@ -277,10 +292,33 @@ const MP4 = (function() {
         );
     }
 
+    // Closed-caption sample entry. QuickTime/ISO form: 6-byte reserved + 2-byte
+    // data_reference_index, with no codec-specific fields. Valid for both 'c608'
+    // and 'c708' — only the fourcc differs.
+    function c608Entry() {
+        return box('c608', zeros(6), uint16(1));
+    }
+
+    // Null media header — 12-byte fullbox with no payload. ISO BMFF standard
+    // header for non-av tracks (subtitles, metadata, captions).
+    function nmhd() {
+        return fullBox('nmhd', 0, 0);
+    }
+
     function stsd(trackType) {
+        let entry;
+        if (trackType === 'video')
+            entry = avc1();
+        else if (trackType === 'captions')
+            entry = c608Entry();
+        else if (trackType === 'audio')
+            entry = mp4a();
+        else
+            throw new Error(`stsd: unknown track type '${trackType}'`);
+
         return fullBox('stsd', 0, 0,
             uint32(1),
-            (trackType === 'video') ? avc1() : mp4a()
+            entry
         );
     }
 
@@ -295,27 +333,59 @@ const MP4 = (function() {
     }
 
     function minf(trackType) {
+        let header;
+        if (trackType === 'video')
+            header = vmhd();
+        else if (trackType === 'captions')
+            header = nmhd();
+        else if (trackType === 'audio')
+            header = smhd();
+        else
+            throw new Error(`minf: unknown track type '${trackType}'`);
+
         return box('minf',
-            (trackType === 'video') ? vmhd() : smhd(),
+            header,
             dinf(), stbl(trackType)
         );
     }
 
     function mdia(trackType, timescale, duration) {
-        const isVideo = trackType === 'video';
+        let handlerType, handlerName;
+        if (trackType === 'video') {
+            handlerType = 'vide';
+            handlerName = 'VideoHandler';
+        } else if (trackType === 'captions') {
+            handlerType = 'clcp';
+            handlerName = 'Closed Caption Media Handler';
+        } else if (trackType === 'audio') {
+            handlerType = 'soun';
+            handlerName = 'SoundHandler';
+        } else
+            throw new Error(`mdia: unknown track type '${trackType}'`);
+
         return box('mdia',
             mdhd(timescale, duration),
-            hdlr(isVideo ? 'vide' : 'soun', isVideo ? 'VideoHandler' : 'SoundHandler'),
+            hdlr(handlerType, handlerName),
             minf(trackType)
         );
     }
 
     function trak(trackDef) {
-        const timescale = trackDef.timescale
-            || ((trackDef.type === 'video') ? VIDEO_TIMESCALE_DEFAULT : AUDIO_TIMESCALE_DEFAULT);
-        const isAudio = trackDef.type === 'audio';
+        let defaultTimescale;
+        if (trackDef.type === 'video')
+            defaultTimescale = VIDEO_TIMESCALE_DEFAULT;
+        else if (trackDef.type === 'captions')
+            defaultTimescale = VIDEO_TIMESCALE_DEFAULT;
+        else if (trackDef.type === 'audio')
+            defaultTimescale = AUDIO_TIMESCALE_DEFAULT;
+        else
+            throw new Error(`trak: unknown track type '${trackDef.type}'`);
+
+        // 'captions' and 'audio' both want width/height = 0. Only 'video' carries geometry.
+        const isGeometric = trackDef.type === 'video';
+        const timescale = trackDef.timescale || defaultTimescale;
         return box('trak',
-            tkhd(trackDef.id, 0, VIDEO_WIDTH, VIDEO_HEIGHT, isAudio),
+            tkhd(trackDef.id, 0, VIDEO_WIDTH, VIDEO_HEIGHT, !isGeometric),
             mdia(trackDef.type, timescale, 0)
         );
     }
@@ -355,7 +425,10 @@ const MP4 = (function() {
     function sampleDataSize(isSync, trackType) {
         if (trackType === 'video')
             return isSync ? VIDEO_SYNC_SAMPLE.byteLength : VIDEO_NONSYNC_SAMPLE.byteLength;
-        return AUDIO_SAMPLE_DATA.byteLength;
+        if (trackType === 'audio')
+            return AUDIO_SAMPLE_DATA.byteLength;
+
+        throw new Error(`sampleDataSize: unknown track type '${trackType}'`);
     }
 
     function trun(samples, dataOffset, trackType) {
@@ -366,7 +439,7 @@ const MP4 = (function() {
 
         const entries = [];
         for (const sample of samples) {
-            const size = sample.size || sampleDataSize(sample.isSync, trackType);
+            const size = sample.size || (sample.data ? sample.data.byteLength : sampleDataSize(sample.isSync, trackType));
             // ISO 14496-12: sample_depends_on (bits 25-24), sample_is_non_sync_sample (bit 16)
             const sampleFlags = sample.isSync ? 0x01000000 : 0x02010000;
             const cto = sample.compositionTimeOffset || 0;
@@ -388,8 +461,10 @@ const MP4 = (function() {
                 parts.push(sample.data);
             else if (trackType === 'video')
                 parts.push(sample.isSync ? VIDEO_SYNC_SAMPLE : VIDEO_NONSYNC_SAMPLE);
-            else
+            else if (trackType === 'audio')
                 parts.push(AUDIO_SAMPLE_DATA.slice(0, sample.size || AUDIO_SAMPLE_DATA.byteLength));
+            else
+                throw new Error(`buildMdatData: unknown track type '${trackType}'`);
         }
         return concat(...parts);
     }
@@ -415,13 +490,19 @@ const MP4 = (function() {
         // options.timescale  - Movie-level timescale (default: first track's timescale)
         // options.tracks[]   - Array of track definitions:
         //   .id        - Track ID (integer)
-        //   .type      - 'video' or 'audio'
+        //   .type      - 'video', 'audio', or 'captions'
         //   .timescale - Track timescale (optional, defaults per type)
         initSegment(options) {
             const tracks = options.tracks || [{ id: 1, type: 'video' }];
-            for (const t of tracks) {
-                if (!t.timescale)
-                    t.timescale = (t.type === 'video') ? VIDEO_TIMESCALE_DEFAULT : AUDIO_TIMESCALE_DEFAULT;
+            for (const trackDef of tracks) {
+                if (!trackDef.timescale) {
+                    if (trackDef.type === 'video' || trackDef.type === 'captions')
+                        trackDef.timescale = VIDEO_TIMESCALE_DEFAULT;
+                    else if (trackDef.type === 'audio')
+                        trackDef.timescale = AUDIO_TIMESCALE_DEFAULT;
+                    else
+                        throw new Error(`initSegment: unknown track type '${trackDef.type}'`);
+                }
             }
             const movieTimescale = options.timescale || tracks[0].timescale;
             return concat(ftyp(), moov(movieTimescale, tracks));
@@ -580,3 +661,4 @@ const MP4 = (function() {
         },
     };
 })();
+

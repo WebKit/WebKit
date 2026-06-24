@@ -35,7 +35,7 @@ SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing(const FontCascade& font)
 {
 }
 
-float SVGTextLayoutEngineSpacing::calculateCSSSpacing(char16_t currentCharacter)
+float SVGTextLayoutEngineSpacing::calculateCSSSpacing(char32_t currentCharacter)
 {
     float spacing = m_font->letterSpacing();
 

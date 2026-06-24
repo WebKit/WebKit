@@ -75,6 +75,8 @@ struct MediaDescriptionOptions {
   // Codecs to include in a generated offer or answer.
   // If this is used, session-level codec lists MUST be ignored.
   std::vector<Codec> codecs_to_include;
+  // Whether Sframe encryption is requested for this media section.
+  bool sframe_enabled = false;
 
  private:
   // Doesn't DCHECK on `type`.

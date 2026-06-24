@@ -43,6 +43,38 @@ To get just the source (not buildable):
 
 ## Building the Library and Unittests
 
+### Bazel
+
+Libyuv can be built using [Bazel](https://bazel.build/).
+
+#### Android Prerequisites
+To build for Android using Bazel, you must have the Android SDK and NDK installed. Bazel will look for the following environment variables to locate them:
+*   `ANDROID_HOME`: Set this to the path of your Android SDK.
+*   `ANDROID_NDK_HOME`: Set this to the path of your Android NDK.
+
+Ensure these variables are set before running the Bazel Android build commands.
+
+**Android arm64:**
+
+    bazel build -c opt --config=android_arm64 //:libyuv_test
+
+    # Or, specifying standard open-source flags (if NDK is set up in workspace):
+    bazel build -c opt --cpu=arm64-v8a --crosstool_top=//external:android/crosstool //:libyuv_test
+
+**Linux x86_64:**
+
+    bazel build -c opt //:libyuv_test
+
+    # Or, specifying a specific CPU architecture:
+    bazel build -c opt --cpu=haswell //:libyuv_test
+
+Additional commonly used compiler options can be passed to Bazel via `--copt`:
+
+    bazel build -c opt --config=android_arm64 \
+        --copt=-DLIBYUV_UNLIMITED_DATA \
+        --copt=-DENABLE_ROW_TESTS \
+        //:libyuv_test
+
 ### Windows
 
     gn gen out\Release "--args=is_debug=false target_cpu=\"x64\""
@@ -250,6 +282,20 @@ See also https://www.ccoderun.ca/programming/2015-12-20_CrossCompiling/index.htm
     arm-linux-gnueabihf-objdump -d psnr
 
 ## Running Unittests
+
+### Bazel
+
+You can run the tests using Bazel's `test` command. This will build and run the test in an isolated environment:
+
+    bazel test -c opt //:libyuv_test
+
+To pass specific arguments to the test binary (like a gtest filter), use `--test_arg`:
+
+    bazel test -c opt //:libyuv_test --test_arg=--gtest_filter="*" --test_output=all
+
+Alternatively, you can run the compiled binary directly from the `bazel-bin` directory:
+
+    ./bazel-bin/libyuv_test --gtest_filter="*"
 
 ### Windows
 

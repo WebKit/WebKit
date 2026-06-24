@@ -16,9 +16,9 @@
 
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc/gain_control.h"
 
 namespace webrtc {
@@ -34,7 +34,7 @@ class GainControlImpl : public GainControl {
 
   ~GainControlImpl() override;
 
-  void ProcessRenderAudio(ArrayView<const int16_t> packed_render_audio);
+  void ProcessRenderAudio(std::span<const int16_t> packed_render_audio);
   int AnalyzeCaptureAudio(const AudioBuffer& audio);
   int ProcessCaptureAudio(AudioBuffer* audio, bool stream_has_echo);
 

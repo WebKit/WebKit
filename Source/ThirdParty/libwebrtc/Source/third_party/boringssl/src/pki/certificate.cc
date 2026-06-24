@@ -31,7 +31,7 @@ namespace {
 std::shared_ptr<const bssl::ParsedCertificate> ParseCertificateFromDer(
     bssl::Span<const uint8_t>cert, std::string *out_diagnostic) {
   bssl::ParseCertificateOptions default_options{};
-  // We follow Chromium in setting |allow_invalid_serial_numbers| in order to
+  // We follow Chromium in setting `allow_invalid_serial_numbers` in order to
   // not choke on 21-byte serial numbers, which are common.  davidben explains
   // why:
   //

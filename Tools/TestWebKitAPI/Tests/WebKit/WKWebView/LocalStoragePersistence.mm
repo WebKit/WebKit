@@ -45,7 +45,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-static RetainPtr<WKWebView> createdWebView;
+static RetainPtr<WKWebView> localStorageCreatedWebView;
 
 @interface LocalStorageMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -70,9 +70,9 @@ static RetainPtr<WKWebView> createdWebView;
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
-    createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
-    [createdWebView setNavigationDelegate:self];
-    return createdWebView.get();
+    localStorageCreatedWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [localStorageCreatedWebView setNavigationDelegate:self];
+    return localStorageCreatedWebView.get();
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
@@ -382,7 +382,7 @@ TEST(WKWebView, AuxiliaryWindowsShareLocalStorage)
     TestWebKitAPI::Util::run(&finishedRunningScript);
     finishedRunningScript = false;
     
-    createdWebView = nullptr;
+    localStorageCreatedWebView = nullptr;
     [webView evaluateJavaScript:@"open(window.location)" completionHandler: [&] (id result, NSError *error) {
         finishedRunningScript = true;
     }];
@@ -392,9 +392,9 @@ TEST(WKWebView, AuxiliaryWindowsShareLocalStorage)
     TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
     didFinishNavigationBoolean = false;
     
-    EXPECT_TRUE(!!createdWebView);
+    EXPECT_TRUE(!!localStorageCreatedWebView);
     
-    [createdWebView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+    [localStorageCreatedWebView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
         NSString *value = (NSString *)result;
         EXPECT_WK_STREQ(@"Persistent item!", value);
         finishedRunningScript = true;
@@ -402,13 +402,13 @@ TEST(WKWebView, AuxiliaryWindowsShareLocalStorage)
     TestWebKitAPI::Util::run(&finishedRunningScript);
     finishedRunningScript = false;
     
-    [createdWebView evaluateJavaScript:@"localStorage.setItem('testItem', 'ChangedValue');" completionHandler: [&] (id result, NSError *error) {
+    [localStorageCreatedWebView evaluateJavaScript:@"localStorage.setItem('testItem', 'ChangedValue');" completionHandler: [&] (id result, NSError *error) {
         finishedRunningScript = true;
     }];
     TestWebKitAPI::Util::run(&finishedRunningScript);
     finishedRunningScript = false;
     
-    [createdWebView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
+    [localStorageCreatedWebView evaluateJavaScript:@"localStorage.getItem('testItem');" completionHandler: [&] (id result, NSError *error) {
         NSString *value = (NSString *)result;
         EXPECT_WK_STREQ(@"ChangedValue", value);
         finishedRunningScript = true;

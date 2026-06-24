@@ -160,6 +160,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(ArithUnary, Common) \
     CLONE_STATUS(ArrayIncludes, Common) \
     CLONE_STATUS(ArrayIndexOf, Common) \
+    CLONE_STATUS(ArrayJoin, Common) \
     CLONE_STATUS(ArrayPop, Common) \
     CLONE_STATUS(ArrayPush, Common) \
     CLONE_STATUS(ArrayShift, Common) \
@@ -303,6 +304,8 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(NewRegExp, Common) \
     CLONE_STATUS(NewRegExpUntyped, Common) \
     CLONE_STATUS(NewSet, Common) \
+    CLONE_STATUS(NewWeakMap, Common) \
+    CLONE_STATUS(NewWeakSet, Common) \
     CLONE_STATUS(NormalizeMapKey, Common) \
     CLONE_STATUS(NumberToStringWithValidRadixConstant, Common) \
     CLONE_STATUS(NukeStructureAndSetButterfly, Common) \
@@ -345,6 +348,8 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(StringFromCharCode, Common) \
     CLONE_STATUS(StringFromCodePoint, Common) \
     CLONE_STATUS(StringIndexOf, Common) \
+    CLONE_STATUS(StringIteratorNext, Common) \
+    CLONE_STATUS(StringIteratorNextWithUndefined, Common) \
     CLONE_STATUS(StringLastIndexOf, Common) \
     CLONE_STATUS(StringStartsWith, Common) \
     CLONE_STATUS(StringEndsWith, Common) \
@@ -354,6 +359,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(StringSlice, Common) \
     CLONE_STATUS(StringSplit, Common) \
     CLONE_STATUS(StringMatch, Common) \
+    CLONE_STATUS(StringSearch, Common) \
     CLONE_STATUS(StringSubstring, Common) \
     CLONE_STATUS(StringSubstr, Common) \
     CLONE_STATUS(StrCat, Common) \

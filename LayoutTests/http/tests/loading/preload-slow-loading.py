@@ -9,7 +9,6 @@ sys.stdout.write(
     '<script>\n'
     'if (window.testRunner) {{\n'
     '    testRunner.dumpAsText();\n'
-    '    testRunner.dumpResourceResponseMIMETypes();\n'
     '}}\n'
     '</script>\n'
     '<script src="non-existant-1"></script>\n'.format('A' * 2048)

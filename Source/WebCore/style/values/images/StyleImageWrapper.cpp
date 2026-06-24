@@ -43,7 +43,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<ImageWrapper>::operator()(const ImageWrapper& value, const RenderStyle& style) -> CSS::ImageWrapper
+auto ToCSS<ImageWrapper>::operator()(const ImageWrapper& value, const Style::ComputedStyle& style) -> CSS::ImageWrapper
 {
     return { protect(value.value)->computedStyleValue(style) };
 }
@@ -55,19 +55,19 @@ auto ToStyle<CSS::ImageWrapper>::operator()(const CSS::ImageWrapper& value, cons
     return ImageWrapper { InvalidImage::create() };
 }
 
-Ref<CSSValue> CSSValueCreation<ImageWrapper>::operator()(CSSValuePool&, const RenderStyle& style, const ImageWrapper& value)
+Ref<CSSValue> CSSValueCreation<ImageWrapper>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const ImageWrapper& value)
 {
     return protect(value.value)->computedStyleValue(style);
 }
 
-Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ImageWrapper>::operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const ImageWrapper& value)
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ImageWrapper>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const ImageWrapper& value)
 {
     return protect(value.value)->computedStyleDeprecatedCSSOMValue(pool, style, owner);
 }
 
 // MARK: - Serialization
 
-void Serialize<ImageWrapper>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const ImageWrapper& value)
+void Serialize<ImageWrapper>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const ImageWrapper& value)
 {
     builder.append(protect(value.value)->computedStyleValue(style)->cssText(context));
 }
@@ -88,12 +88,12 @@ static ImageWrapper crossfadeBlend(Ref<CachedImage>&& fromImage, Ref<CachedImage
     return ImageWrapper { CrossfadeImage::create(WTF::move(fromImage), WTF::move(toImage), context.progress, false) };
 }
 
-static ImageWrapper filterBlend(RefPtr<Image> inputImage, const Filter& from, const Filter& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context)
+static ImageWrapper filterBlend(RefPtr<Image> inputImage, const Filter& from, const Filter& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context)
 {
     return ImageWrapper { FilterImage::create(WTF::move(inputImage), blend(from, to, fromStyle, toStyle, context)) };
 }
 
-auto Blending<ImageWrapper>::blend(const ImageWrapper& a, const ImageWrapper& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> ImageWrapper
+auto Blending<ImageWrapper>::blend(const ImageWrapper& a, const ImageWrapper& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> ImageWrapper
 {
     if (!context.progress)
         return a;

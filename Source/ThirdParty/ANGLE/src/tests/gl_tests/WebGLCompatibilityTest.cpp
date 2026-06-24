@@ -951,9 +951,10 @@ TEST_P(WebGLCompatibilityTest, EnablePackReverseRowOrderExtension)
 {
     EXPECT_FALSE(IsGLExtensionEnabled("GL_ANGLE_pack_reverse_row_order"));
 
-    GLint result = 0;
+    GLint result = 2;
     glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    EXPECT_EQ(result, 2);
 
     glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, GL_TRUE);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
@@ -964,8 +965,25 @@ TEST_P(WebGLCompatibilityTest, EnablePackReverseRowOrderExtension)
         EXPECT_GL_NO_ERROR();
 
         glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
+        EXPECT_EQ(result, 0);
+
         glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, GL_TRUE);
         EXPECT_GL_NO_ERROR();
+
+        glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
+        EXPECT_EQ(result, 1);
+
+        glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, 0);
+        EXPECT_GL_NO_ERROR();
+
+        glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
+        EXPECT_EQ(result, 0);
+
+        glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, -1);
+        EXPECT_GL_NO_ERROR();
+
+        glGetIntegerv(GL_PACK_REVERSE_ROW_ORDER_ANGLE, &result);
+        EXPECT_EQ(result, 1);
     }
 }
 
@@ -1744,13 +1762,16 @@ void main()
     ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
     glUseProgram(program);
 
+    GLint posLocation = glGetAttribLocation(program, "a_Position");
+    ASSERT_NE(-1, posLocation);
+    glEnableVertexAttribArray(posLocation);
     constexpr float kVertexData[] = {
         1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
     };
-
     GLBuffer vertexBuffer;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData, GL_STREAM_DRAW);
+    glVertexAttribPointer(posLocation, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     GLuint positionLocation = glGetAttribLocation(program, "a_Position");
     glEnableVertexAttribArray(positionLocation);
@@ -1778,6 +1799,33 @@ void main()
     // Neither index is representable as 32-bit int
     glDrawElements(GL_POINTS, 4, GL_UNSIGNED_INT, reinterpret_cast<void *>(sizeof(GLuint) * 2));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    constexpr GLuint kIndexData2[] = {
+        0,
+        std::numeric_limits<GLuint>::max(),
+    };
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndexData2), kIndexData2, GL_DYNAMIC_DRAW);
+
+    glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, 0);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, reinterpret_cast<void *>(2));
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glDrawElements(GL_LINES, 2, GL_UNSIGNED_BYTE, reinterpret_cast<void *>(3));
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    constexpr GLuint kIndexData3[] = {0, 1};
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndexData3), kIndexData3, GL_DYNAMIC_DRAW);
+
+    glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, 0);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, reinterpret_cast<void *>(2));
+    EXPECT_GL_NO_ERROR();
+
+    glDrawElements(GL_LINES, 2, GL_UNSIGNED_BYTE, reinterpret_cast<void *>(3));
+    EXPECT_GL_NO_ERROR();
 }
 
 // Test for drawing with a null index buffer
@@ -3500,6 +3548,49 @@ TEST_P(WebGLCompatibilityTest, CompressedTexImageBPTC)
     }
 }
 
+// Sampling an uninitialized COMPRESSED_RGBA_ASTC_4x4_KHR texture allocated via glTexStorage2D
+// should yield NaN per the ASTC spec for empty/undefined block data; the NaN-to-magenta shader
+// should therefore produce magenta. Isolates the first failing sub-test of the WebGL conformance
+// test webgl/2.0.y/conformance/extensions/webgl-compressed-texture-astc.html on Metal.
+TEST_P(WebGL2CompatibilityTest, CompressedTextureASTCEmptyStorageError)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_texture_compression_astc_ldr"));
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform sampler2D u_tex2D;
+in vec2 v_texCoord;
+out vec4 out_color;
+void main()
+{
+    vec4 c = texture(u_tex2D, v_texCoord);
+    if (all(isnan(c)))
+        out_color = vec4(1, 0, 1, 1);
+    else
+        out_color = c;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Texture2DLod(), kFS);
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, essl3_shaders::Texture2DUniform()), 0);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_ASTC_4x4_KHR, 16, 16);
+    ASSERT_GL_NO_ERROR();
+
+    glViewport(0, 0, getWindowWidth(), getWindowHeight());
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f, 1.0f, /*useVertexBuffer=*/true);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
 TEST_P(WebGLCompatibilityTest, L32FTextures)
 {
     constexpr float textureData[]   = {15.1f, 0.0f, 0.0f, 0.0f};
@@ -4557,6 +4648,36 @@ void main() {
     drawBuffersFeedbackLoop(program, {{GL_COLOR_ATTACHMENT0, GL_NONE}}, GL_INVALID_OPERATION);
 }
 
+// WebGL requires that all framebuffer attachments are unique
+TEST_P(WebGL2CompatibilityTest, UniqueFramebufferAttachments)
+{
+    GLTexture tex0;
+    FillTexture2D(tex0, 8, 8, GLColor::red, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex0, 0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_UNSUPPORTED, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+}
+
+// Hardened contexts also require that all framebuffer color attachments are unique
+TEST_P(HardenedContextTest, UniqueFramebufferAttachments)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    GLTexture tex0;
+    FillTexture2D(tex0, 8, 8, GLColor::red, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex0, 0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_UNSUPPORTED, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+}
+
 // This tests that texture base level for immutable textures is clamped to the valid range, unlike
 // for non-immutable textures, for purposes of validation. Related to WebGL test
 // conformance2/textures/misc/immutable-tex-render-feedback.html
@@ -4720,6 +4841,235 @@ void main() {
     glDisable(GL_STENCIL_TEST);
     drawQuad(program, "aPosition", 0.5f, 1.0f, true);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Stencil test disabled should still fail";
+}
+
+// This test covers detection of rendering feedback loops between the FBO and a depth Texture.
+// Read-only depth/stencil feedback loops are allowed in hardened contexts and
+// should not generate an error.
+TEST_P(HardenedContextTest, RenderingFeedbackLoopWithDepthStencil)
+{
+    constexpr char kVS[] =
+        R"(#version 300 es
+in vec4 aPosition;
+out vec2 texCoord;
+void main() {
+    gl_Position = aPosition;
+    texCoord = (aPosition.xy * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+precision mediump float;
+uniform sampler2D tex;
+in vec2 texCoord;
+out vec4 oColor;
+void main() {
+    oColor = texture(tex, texCoord);
+})";
+
+    GLsizei width  = 8;
+    GLsizei height = 8;
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glViewport(0, 0, width, height);
+
+    GLint texLoc = glGetUniformLocation(program, "tex");
+    glUniform1i(texLoc, 0);
+
+    // Create textures and allocate storage
+    GLTexture tex0;
+    GLTexture tex1;
+    FillTexture2D(tex0, width, height, GLColor::black, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    FillTexture2D(tex1, width, height, 0x80, 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT,
+                  GL_UNSIGNED_INT);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+
+    // Test rendering and sampling feedback loop for depth buffer
+    glBindTexture(GL_TEXTURE_2D, tex1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tex1, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // The same image is used as depth buffer during rendering.
+    // This should be an error in hardened contexts.
+    glEnable(GL_DEPTH_TEST);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Same image as depth buffer should fail";
+
+    // The same image is used as depth buffer. But depth mask is false.
+    glDepthMask(GL_FALSE);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+
+    // The same image is used as depth buffer. But depth test is not enabled during rendering.
+    glDepthMask(GL_TRUE);
+    glDisable(GL_DEPTH_TEST);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+}
+
+// This test covers detection of rendering feedback loops between the FBO and a stencil texture with
+// GL_OES_texture_stencil8. Read-only stencil feedback loops are allowed in hardened contexts and
+// should not generate an error.
+TEST_P(HardenedContextTest, RenderingFeedbackLoopWithStencilOnlyStencil8)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_texture_stencil8"));
+
+    constexpr char kVS[] =
+        R"(#version 300 es
+in vec4 aPosition;
+out vec2 texCoord;
+void main() {
+    gl_Position = aPosition;
+    texCoord = (aPosition.xy * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+precision mediump float;
+precision mediump usampler2D;
+uniform usampler2D tex;
+in vec2 texCoord;
+out vec4 oColor;
+void main() {
+    oColor = vec4(texture(tex, texCoord)) / 256.0;
+})";
+
+    GLsizei width  = 8;
+    GLsizei height = 8;
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glViewport(0, 0, width, height);
+
+    GLint texLoc = glGetUniformLocation(program, "tex");
+    glUniform1i(texLoc, 0);
+
+    // Create textures and allocate storage
+    GLTexture tex0;
+    GLTexture tex1;
+    FillTexture2D(tex0, width, height, GLColor::black, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    FillTexture2D(tex1, width, height, 0x40, 0, GL_STENCIL_INDEX8, GL_STENCIL_INDEX,
+                  GL_UNSIGNED_BYTE);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex1, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glBindTexture(GL_TEXTURE_2D, tex1);
+
+    // The same image is used as stencil buffer during rendering.
+    // Ensure that the stencil func and op are not no-ops, so that there can
+    // be stencil writes.
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_GREATER, 0x0000, 0xFFFFFFFF);
+    glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Same image as stencil buffer should fail";
+
+    // The same image is used as stencil buffer. But stencil mask is zero.
+    glStencilMask(0x0);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+
+    // The same image is used as stencil buffer. But stencil test is not enabled during rendering.
+    glStencilMask(0xffff);
+    glDisable(GL_STENCIL_TEST);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+}
+
+// This test covers detection of rendering feedback loops between the FBO and a stencil texture with
+// GL_ANGLE_stencil_texturing. Read-only stencil feedback loops are allowed in hardened contexts and
+// should not generate an error.
+TEST_P(HardenedContextTest, RenderingFeedbackLoopWithStencilOnlyANGLE)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_stencil_texturing"));
+
+    constexpr char kVS[] =
+        R"(#version 300 es
+in vec4 aPosition;
+out vec2 texCoord;
+void main() {
+    gl_Position = aPosition;
+    texCoord = (aPosition.xy * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+precision mediump float;
+precision mediump usampler2D;
+uniform usampler2D tex;
+in vec2 texCoord;
+out vec4 oColor;
+void main() {
+    oColor = vec4(texture(tex, texCoord)) / 256.0;
+})";
+
+    GLsizei width  = 8;
+    GLsizei height = 8;
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glViewport(0, 0, width, height);
+
+    GLint texLoc = glGetUniformLocation(program, "tex");
+    glUniform1i(texLoc, 0);
+
+    // Create textures and allocate storage
+    GLTexture tex0;
+    GLTexture tex1;
+    FillTexture2D(tex0, width, height, GLColor::black, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    FillTexture2D(tex1, width, height, 0x40, 0, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL,
+                  GL_UNSIGNED_INT_24_8);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex1, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glBindTexture(GL_TEXTURE_2D, tex1);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+
+    // The same image is used as stencil buffer during rendering.
+    // Ensure that the stencil func and op are not no-ops, so that there can
+    // be stencil writes.
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_GREATER, 0x0000, 0xFFFFFFFF);
+    glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Same image as stencil buffer should fail";
+
+    // The same image is used as stencil buffer. But stencil mask is zero.
+    glStencilMask(0x0);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+
+    // The same image is used as stencil buffer. But stencil test is not enabled during rendering.
+    glStencilMask(0xffff);
+    glDisable(GL_STENCIL_TEST);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+
+    // The same image is used as stencil buffer. But only the depth component of the texture is
+    // being read.
+    glStencilMask(0xffff);
+    glEnable(GL_STENCIL_TEST);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+    drawQuad(program, "aPosition", 0.5f, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
 }
 
 // The source and the target for CopyTexSubImage3D are the same 3D texture.
@@ -5544,57 +5894,78 @@ void WebGLCompatibilityTest::testCompressedTexLevelDimension(GLenum format,
                                                              GLenum expectedError,
                                                              const char *explanation)
 {
+    const bool isBPTC = format == GL_COMPRESSED_RGBA_BPTC_UNORM_EXT ||
+                        format == GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT ||
+                        format == GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT ||
+                        format == GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT;
+
     std::vector<uint8_t> tempVector(expectedByteLength, 0);
 
     EXPECT_GL_NO_ERROR();
 
-    GLTexture sourceTexture;
-    glBindTexture(GL_TEXTURE_2D, sourceTexture);
-    glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height, 0, expectedByteLength,
-                           tempVector.data());
-    if (expectedError == 0)
     {
-        EXPECT_GL_NO_ERROR() << explanation;
+        GLTexture sourceTexture;
+        glBindTexture(GL_TEXTURE_2D, sourceTexture);
+        glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height, 0, expectedByteLength,
+                               tempVector.data());
+        EXPECT_GL_ERROR(expectedError) << explanation << " (glCompressedTexImage2D)";
     }
-    else
+
+    if (getClientMajorVersion() >= 3)
     {
-        EXPECT_GL_ERROR(expectedError) << explanation;
+        GLTexture sourceTexture;
+        glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture);
+        glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, level, format, width, height, 3, 0,
+                               expectedByteLength * 3, nullptr);
+        EXPECT_GL_ERROR(expectedError) << explanation << "(glCompressedTexImage3D array)";
+    }
+
+    if (isBPTC && getClientMajorVersion() >= 3)
+    {
+        GLTexture sourceTexture;
+        glBindTexture(GL_TEXTURE_3D, sourceTexture);
+        glCompressedTexImage3D(GL_TEXTURE_3D, level, format, width, height, 3, 0,
+                               expectedByteLength * 3, nullptr);
+        EXPECT_GL_ERROR(expectedError) << explanation << "(glCompressedTexImage3D volume)";
     }
 
     if (level == 0 && width > 0)
     {
-        GLTexture sourceTextureStorage;
-        glBindTexture(GL_TEXTURE_2D, sourceTextureStorage);
-
-        if (getClientMajorVersion() >= 3)
         {
-            glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
-            if (expectedError == 0)
+            GLTexture sourceTextureStorage;
+            glBindTexture(GL_TEXTURE_2D, sourceTextureStorage);
+
+            if (getClientMajorVersion() >= 3)
             {
-                EXPECT_GL_NO_ERROR() << explanation << " (texStorage2D)";
+                glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+                EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage2D)";
             }
             else
             {
-                EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage2D)";
-            }
-        }
-        else
-        {
-            if (IsGLExtensionRequestable("GL_EXT_texture_storage"))
-            {
-                glRequestExtensionANGLE("GL_EXT_texture_storage");
-                ASSERT_TRUE(IsGLExtensionEnabled("GL_EXT_texture_storage"));
-
-                glTexStorage2DEXT(GL_TEXTURE_2D, 1, format, width, height);
-                if (expectedError == 0)
+                if (EnsureGLExtensionEnabled("GL_EXT_texture_storage"))
                 {
-                    EXPECT_GL_NO_ERROR() << explanation << " (texStorage2DEXT)";
-                }
-                else
-                {
+                    glTexStorage2DEXT(GL_TEXTURE_2D, 1, format, width, height);
                     EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage2DEXT)";
                 }
             }
+        }
+
+        if (getClientMajorVersion() >= 3)
+        {
+            GLTexture sourceTextureStorage;
+            glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTextureStorage);
+
+            glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, format, width, height, 3);
+            EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage3D, array)";
+        }
+
+        if (isBPTC && getClientMajorVersion() >= 3)
+        {
+            GLTexture sourceTextureStorage;
+            glBindTexture(GL_TEXTURE_3D, sourceTextureStorage);
+
+            glTexStorage3D(GL_TEXTURE_3D, 1, format, width, height, 3);
+            EXPECT_GL_ERROR(expectedError) << explanation << " (texStorage3D, volume)";
         }
     }
 }
@@ -5724,13 +6095,6 @@ TEST_P(WebGLCompatibilityTest, EnableCompressedTextureExtensionETC1)
     validateCompressedTexImageExtensionFormat(
         GL_ETC1_RGB8_OES, 4, 4, 8, "GL_OES_compressed_ETC1_RGB8_texture",
         IsGLExtensionEnabled("GL_EXT_compressed_ETC1_RGB8_sub_texture"));
-}
-
-// Test enabling GL_ANGLE_lossy_etc_decode
-TEST_P(WebGLCompatibilityTest, EnableCompressedTextureExtensionLossyDecode)
-{
-    validateCompressedTexImageExtensionFormat(GL_ETC1_RGB8_LOSSY_DECODE_ANGLE, 4, 4, 8,
-                                              "GL_ANGLE_lossy_etc_decode", true);
 }
 
 // Reject attempts to allocate too-large arrays in shaders.
@@ -6216,6 +6580,49 @@ TEST_P(WebGL2CompatibilityTest, TransformFeedbackBufferModification)
 
     constexpr uint8_t data[8] = {0};
     glBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 8, data);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Modifying a buffer that is part of an active transform feedback object (even when that transform
+// feedback is paused and not current) is invalid.
+TEST_P(WebGL2CompatibilityTest, TransformFeedbackBufferModificationWhileNotCurrent)
+{
+    constexpr char kVS[] = R"(attribute float a; varying float b; void main() { b = a; })";
+    constexpr char kFS[] = R"(void main(){})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    static const char *varyings[] = {"b"};
+    glTransformFeedbackVaryings(program, 1, varyings, GL_SEPARATE_ATTRIBS);
+    glLinkProgram(program);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind the transform feedback varyings to non-overlapping regions of the same buffer.
+    GLTransformFeedback tf1;
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tf1);
+
+    GLBuffer buffer;
+    glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer, 0, 4);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 8, nullptr, GL_STATIC_DRAW);
+    glBeginTransformFeedback(GL_POINTS);
+    ASSERT_GL_NO_ERROR();
+
+    glPauseTransformFeedback();
+
+    GLTransformFeedback tf2;
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tf2);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    ASSERT_GL_NO_ERROR();
+
+    glBufferData(GL_ARRAY_BUFFER, 8, nullptr, GL_STATIC_DRAW);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    constexpr uint8_t data[8] = {0};
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 8, data);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glMapBufferRange(GL_ARRAY_BUFFER, 0, 8, GL_MAP_READ_BIT);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
@@ -7471,7 +7878,7 @@ void main()
     // Buffer data region = 64 bytes -> fits 5 vertices (attrib=8 bytes, (64-8)/12+1=5).
     // Total buffer = 64 + 124 = 188 bytes.
     std::vector<uint8_t> instData(188, 0);
-    // Write GL_SHORT×4 green values (0, 0x7FFF, 0, 0x7FFF) at offset=124, stride=12 for 5 entries.
+    // Write 4 GL_SHORT green values (0, 0x7FFF, 0, 0x7FFF) at offset=124, stride=12 for 5 entries.
     for (int i = 0; i < 5; ++i)
     {
         size_t base         = 124 + i * 12;
@@ -7531,6 +7938,286 @@ TEST_P(WebGL2CompatibilityTest, PrimitiveRestartIndexAfterToggleIsError)
     glDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
     glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Tests that WebGL-specific unpack state validation is implemented.
+TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
+{
+    // Either of these must be supported on WebGL 2.0
+    const bool hasBC1  = EnsureGLExtensionEnabled("GL_EXT_texture_compression_dxt1");
+    const bool hasETC2 = EnsureGLExtensionEnabled("GL_ANGLE_compressed_texture_etc");
+    ASSERT(hasBC1 || hasETC2);
+    const GLenum compressed2DFormat =
+        hasBC1 ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGB8_ETC2;
+
+    // BPTC is used for 3D textures.
+    const bool hasBPTC              = EnsureGLExtensionEnabled("GL_EXT_texture_compression_bptc");
+    const GLenum compressed3DFormat = GL_COMPRESSED_RGBA_BPTC_UNORM_EXT;
+
+    auto test = [=](GLenum target, GLint skipPixels, GLint rowLength, GLint skipRows,
+                    GLint imageHeight, GLenum error) {
+        ASSERT(target == GL_TEXTURE_2D || target == GL_TEXTURE_3D || target == GL_TEXTURE_2D_ARRAY);
+        ASSERT(skipPixels >= 0 && rowLength >= 0 && skipRows >= 0 && imageHeight >= 0);
+        ASSERT(error == GL_NO_ERROR || error == GL_INVALID_OPERATION);
+
+        constexpr size_t kPixelCount = 8 * 8 * 2;
+        std::vector<GLColor> data(kPixelCount);
+
+        // Settings for compressed tests
+        bool isCompressedSupported = true;
+        GLenum compressedFormat;
+        GLsizei compressedSize;
+        if (target == GL_TEXTURE_2D)
+        {
+            compressedFormat = compressed2DFormat;
+            // For 4x4 BC1/ETC2 texture
+            compressedSize = 8;
+        }
+        else if (target == GL_TEXTURE_2D_ARRAY)
+        {
+            compressedFormat = compressed2DFormat;
+            // For 4x4x2 BC1/ETC2 texture
+            compressedSize = 16;
+        }
+        else
+        {
+            ASSERT(target == GL_TEXTURE_3D);
+            isCompressedSupported = hasBPTC;
+            compressedFormat      = compressed3DFormat;
+            // For 4x4x2 BPTC texture
+            compressedSize = 32;
+        }
+
+        // Set up PBO and texture, and run tests with combinations of PBO/client data and
+        // compressed/uncompressed formats.
+        GLBuffer buf;
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buf);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, kPixelCount * 4, data.data(), GL_STATIC_READ);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+        ASSERT_GL_NO_ERROR();
+
+        GLTexture tex;
+        glBindTexture(target, tex);
+        ASSERT_GL_NO_ERROR();
+
+        for (size_t i = 0; i < 4; ++i)
+        {
+            const bool usePixelUnpackBuffer = i & 1;
+            const bool isCompressed         = i & 2;
+
+            if (isCompressed && !isCompressedSupported)
+            {
+                continue;
+            }
+
+            const void *dataPtr =
+                usePixelUnpackBuffer ? nullptr : reinterpret_cast<const void *>(data.data());
+
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, usePixelUnpackBuffer ? buf.get() : 0);
+            ASSERT_GL_NO_ERROR();
+
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, rowLength);
+            glPixelStorei(GL_UNPACK_SKIP_ROWS, skipRows);
+            glPixelStorei(GL_UNPACK_SKIP_PIXELS, skipPixels);
+            glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, imageHeight);
+            if (isCompressed)
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glCompressedTexImage2D(target, 0, compressedFormat, 4, 4, 0, compressedSize,
+                                           dataPtr);
+                }
+                else
+                {
+                    glCompressedTexImage3D(target, 0, compressedFormat, 4, 4, 2, 0, compressedSize,
+                                           dataPtr);
+                }
+                EXPECT_GL_NO_ERROR();  // Pixel unpack state must be ignored for compressed formats
+            }
+            else
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glTexImage2D(target, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                }
+                else
+                {
+                    glTexImage3D(target, 0, GL_RGBA8, 4, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                 nullptr);
+                }
+                // When using client memory and passing no data to TexImage calls, validation must
+                // always succeed.
+                EXPECT_GL_ERROR(usePixelUnpackBuffer ? error : GL_NO_ERROR);
+
+                if (!usePixelUnpackBuffer)
+                {
+                    ASSERT(dataPtr != nullptr);
+                    if (target == GL_TEXTURE_2D)
+                    {
+                        glTexImage2D(target, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                     dataPtr);
+                    }
+                    else
+                    {
+                        glTexImage3D(target, 0, GL_RGBA8, 4, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                     dataPtr);
+                    }
+                    EXPECT_GL_ERROR(error);
+                }
+            }
+
+            // Reset the unpack state so that the texture is created successfully
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+            glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+            glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+            glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, 0);
+            if (!isCompressed)
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glTexImage2D(target, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataPtr);
+                }
+                else
+                {
+                    glTexImage3D(target, 0, GL_RGBA8, 4, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                                 dataPtr);
+                }
+                EXPECT_GL_NO_ERROR();
+            }
+
+            // Try subimage update with the provided unpack state
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, rowLength);
+            glPixelStorei(GL_UNPACK_SKIP_ROWS, skipRows);
+            glPixelStorei(GL_UNPACK_SKIP_PIXELS, skipPixels);
+            glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, imageHeight);
+            if (isCompressed)
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glCompressedTexSubImage2D(target, 0, 0, 0, 4, 4, compressedFormat,
+                                              compressedSize, dataPtr);
+                }
+                else
+                {
+                    glCompressedTexSubImage3D(target, 0, 0, 0, 0, 4, 4, 2, compressedFormat,
+                                              compressedSize, dataPtr);
+                }
+                EXPECT_GL_NO_ERROR();  // Pixel unpack state must be ignored for compressed formats
+            }
+            else
+            {
+                if (target == GL_TEXTURE_2D)
+                {
+                    glTexSubImage2D(target, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE, dataPtr);
+                }
+                else
+                {
+                    glTexSubImage3D(target, 0, 0, 0, 0, 4, 4, 2, GL_RGBA, GL_UNSIGNED_BYTE,
+                                    dataPtr);
+                }
+                EXPECT_GL_ERROR(error);
+            }
+        }
+    };
+
+    // For all targets: if GL_UNPACK_ROW_LENGTH is set, the sum of GL_UNPACK_SKIP_PIXELS and
+    // width must be less than or equal to GL_UNPACK_ROW_LENGTH. If GL_UNPACK_ROW_LENGTH is
+    // not set, GL_UNPACK_SKIP_PIXELS must be zero.
+
+    // For 3D/2D array targets: if GL_UNPACK_IMAGE_HEIGHT is set, the sum of GL_UNPACK_SKIP_ROWS and
+    // height must be less than or equal to GL_UNPACK_IMAGE_HEIGHT. If GL_UNPACK_IMAGE_HEIGHT is not
+    // set, GL_UNPACK_SKIP_ROWS must be zero.
+
+    // Test params: (target, skipPixels, rowLength, skipRows, imageHeight, error)
+
+    // 2D texture, default
+    test(GL_TEXTURE_2D, 0, 0, 0, 0, GL_NO_ERROR);
+
+    // 2D texture, validated pixel skip and row length
+    test(GL_TEXTURE_2D, 0, 4, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_2D, 0, 5, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_2D, 1, 5, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_2D, 1, 6, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_2D, 0, 3, 0, 0, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_2D, 1, 0, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_2D, 1, 4, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 2D texture, ignored row skip and image height
+    test(GL_TEXTURE_2D, 0, 0, 0, 4, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 0, 5, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 1, 5, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 1, 6, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 0, 3, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 1, 0, GL_NO_ERROR);
+    test(GL_TEXTURE_2D, 0, 0, 1, 4, GL_NO_ERROR);
+
+    // 2D array texture, default
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, GL_NO_ERROR);
+
+    // 2D array texture, validated pixel skip and row length
+    test(GL_TEXTURE_2D_ARRAY, 0, 4, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_2D_ARRAY, 0, 5, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 1, 5, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 1, 6, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_2D_ARRAY, 0, 3, 0, 0, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_2D_ARRAY, 1, 4, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 2D array texture, validated row skip and image height
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 4, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 5, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 1, 5, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 1, 6, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_2D_ARRAY, 0, 0, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 2D array texture, validated all params
+    test(GL_TEXTURE_2D_ARRAY, 0, 4, 0, 4, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_2D_ARRAY, 0, 5, 0, 5, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 1, 5, 1, 5, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_2D_ARRAY, 1, 6, 1, 6, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_2D_ARRAY, 0, 3, 0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_2D_ARRAY, 1, 0, 1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_2D_ARRAY, 1, 4, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 3D texture, default
+    test(GL_TEXTURE_3D, 0, 0, 0, 0, GL_NO_ERROR);
+
+    // 3D texture, validated pixel skip and row length
+    test(GL_TEXTURE_3D, 0, 4, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_3D, 0, 5, 0, 0, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_3D, 1, 5, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_3D, 1, 6, 0, 0, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_3D, 0, 3, 0, 0, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_3D, 1, 0, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_3D, 1, 4, 0, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 3D texture, validated row skip and image height
+    test(GL_TEXTURE_3D, 0, 0, 0, 4, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_3D, 0, 0, 0, 5, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_3D, 0, 0, 1, 5, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_3D, 0, 0, 1, 6, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_3D, 0, 0, 0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_3D, 0, 0, 1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_3D, 0, 0, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    // 3D texture, validated all params
+    test(GL_TEXTURE_3D, 0, 4, 0, 4, GL_NO_ERROR);           // 0 + 4 <= 4
+    test(GL_TEXTURE_3D, 0, 5, 0, 5, GL_NO_ERROR);           // 0 + 4 <= 5
+    test(GL_TEXTURE_3D, 1, 5, 1, 5, GL_NO_ERROR);           // 1 + 4 <= 5
+    test(GL_TEXTURE_3D, 1, 6, 1, 6, GL_NO_ERROR);           // 1 + 4 <= 6
+    test(GL_TEXTURE_3D, 0, 3, 0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    test(GL_TEXTURE_3D, 1, 0, 1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    test(GL_TEXTURE_3D, 1, 4, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
+}
+
+// Tests that using cube map arrays is not supported in WebGL.
+TEST_P(WebGL2CompatibilityTest, CubeMapArrayNotSupported)
+{
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, texture);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
 // Test that drawing GL_POINTS without setting gl_PointSize in the vertex shader
@@ -7703,6 +8390,82 @@ void main()
 
     drawQuad(program, "a_position", 0.5f, 1.0f, true);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that drawing a large GLuint index works.
+TEST_P(WebGL2CompatibilityTest, DrawLargeIndex)
+{
+    constexpr std::array<GLfloat, 4> kGreen = {0.0f, 1.0f, 0.0f, 1.0f};
+    constexpr GLuint offset = 0x80000000;
+    GLuint indexData[] = {0, 1, 2, 1, 3, 2};
+    for (auto& index : indexData)
+    {
+        index += offset;
+    }
+    float vertexData[] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+
+    GLBuffer indexBuffer;
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint vPos = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(vPos, -1);
+    glUseProgram(program);
+    GLint colorUniformLocation =
+        glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, offset * sizeof(float) * 2 + sizeof(vertexData), nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, offset * sizeof(float) * 2, sizeof(vertexData), vertexData);
+    glVertexAttribPointer(vPos, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(vPos);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_DYNAMIC_DRAW);
+
+    glUniform4fv(colorUniformLocation, 1, kGreen.data());
+    ASSERT_GL_NO_ERROR();
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() - 1, GLColor::green);
+}
+
+// Test that drawing a large GLuint index is detected as out-of-bounds access.
+TEST_P(WebGL2CompatibilityTest, DrawLargeIndexOOB)
+{
+    constexpr GLuint offset = 0x80000000;
+    GLuint indexData[] = {0, 1, 2};
+    for (auto& index : indexData)
+    {
+        index += offset;
+    }
+    GLBuffer indexBuffer;
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint vPos = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(vPos, -1);
+    glUseProgram(program);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 10, nullptr, GL_STATIC_DRAW);
+    glVertexAttribPointer(vPos, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(vPos);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_DYNAMIC_DRAW);
+
+    EXPECT_GL_NO_ERROR();
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+    if (!IsGLExtensionEnabled("GL_KHR_robust_buffer_access_behavior"))
+    {
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    else
+    {
+        EXPECT_GL_NO_ERROR();
+    }
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);

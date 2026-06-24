@@ -27,6 +27,9 @@
 #include <openssl/rand.h>
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 static uint8_t FromBool8(bool b) {
   return b ? CONSTTIME_TRUE_8 : CONSTTIME_FALSE_8;
 }
@@ -141,69 +144,80 @@ TEST(ConstantTimeTest, ValueBarrier) {
 }
 
 TEST(ConstantTimeTest, MemCmov) {
-  for (int i = 0; i < 100; i++) {
-    uint8_t out[256], in[256];
-    RAND_bytes(out, sizeof(out));
-    RAND_bytes(in, sizeof(in));
+  static constexpr size_t kMaxLen = 256;
+  uint8_t out[kMaxLen], in[kMaxLen];
+  for (size_t len = 0; len <= kMaxLen; len++) {
+    SCOPED_TRACE(len);
+    for (int i = 0; i < 100; i++) {
+      RAND_bytes(out, len);
+      RAND_bytes(in, len);
 
-    uint8_t b = 0;
-    RAND_bytes(&b, 1);
-    b = constant_time_is_zero_8(b & 0xf);
+      uint8_t b = 0;
+      RAND_bytes(&b, 1);
+      b = constant_time_is_zero_8(b & 0xf);
 
-    uint8_t ref_in[256];
-    OPENSSL_memcpy(ref_in, in, sizeof(in));
+      uint8_t ref_in[256];
+      OPENSSL_memcpy(ref_in, in, len);
 
-    uint8_t ref_out[256];
-    OPENSSL_memcpy(ref_out, out, sizeof(out));
-    if (b) {
-      OPENSSL_memcpy(ref_out, in, sizeof(in));
+      uint8_t ref_out[256];
+      OPENSSL_memcpy(ref_out, out, len);
+      if (b) {
+        OPENSSL_memcpy(ref_out, in, len);
+      }
+
+      CONSTTIME_SECRET(out, len);
+      CONSTTIME_SECRET(in, len);
+      CONSTTIME_SECRET(&b, 1);
+
+      constant_time_conditional_memcpy(out, in, len, b);
+
+      CONSTTIME_DECLASSIFY(&in, len);
+      CONSTTIME_DECLASSIFY(&out, len);
+
+      EXPECT_EQ(Bytes(in, len), Bytes(ref_in, len));
+      EXPECT_EQ(Bytes(out, len), Bytes(ref_out, len));
     }
-
-    CONSTTIME_SECRET(out, sizeof(out));
-    CONSTTIME_SECRET(in, sizeof(in));
-    CONSTTIME_SECRET(&b, 1);
-
-    constant_time_conditional_memcpy(out, in, sizeof(out), b);
-
-    CONSTTIME_DECLASSIFY(&in, sizeof(in));
-    CONSTTIME_DECLASSIFY(&out, sizeof(out));
-
-    EXPECT_EQ(Bytes(in), Bytes(ref_in));
-    EXPECT_EQ(Bytes(out), Bytes(ref_out));
   }
 }
 
 TEST(ConstantTimeTest, MemCxor) {
-  for (int i = 0; i < 100; i++) {
-    uint8_t out[256], in[256];
-    RAND_bytes(out, sizeof(out));
-    RAND_bytes(in, sizeof(in));
+  static constexpr size_t kMaxLen = 256;
+  uint8_t out[kMaxLen], in[kMaxLen];
+  for (size_t len = 0; len <= kMaxLen; len++) {
+    SCOPED_TRACE(len);
+    for (int i = 0; i < 100; i++) {
+      RAND_bytes(out, len);
+      RAND_bytes(in, len);
 
-    uint8_t b = 0;
-    RAND_bytes(&b, 1);
-    b = constant_time_is_zero_8(b & 0xf);
+      uint8_t b = 0;
+      RAND_bytes(&b, 1);
+      b = constant_time_is_zero_8(b & 0xf);
 
-    uint8_t ref_in[256];
-    OPENSSL_memcpy(ref_in, in, sizeof(in));
+      uint8_t ref_in[kMaxLen];
+      OPENSSL_memcpy(ref_in, in, len);
 
-    uint8_t ref_out[256];
-    OPENSSL_memcpy(ref_out, out, sizeof(out));
-    if (b) {
-      for (size_t j = 0; j < sizeof(ref_out); ++j) {
-        ref_out[j] ^= in[j];
+      uint8_t ref_out[kMaxLen];
+      OPENSSL_memcpy(ref_out, out, len);
+      if (b) {
+        for (size_t j = 0; j < len; ++j) {
+          ref_out[j] ^= in[j];
+        }
       }
+
+      CONSTTIME_SECRET(out, len);
+      CONSTTIME_SECRET(in, len);
+      CONSTTIME_SECRET(&b, 1);
+
+      constant_time_conditional_memxor(out, in, len, b);
+
+      CONSTTIME_DECLASSIFY(&in, len);
+      CONSTTIME_DECLASSIFY(&out, len);
+
+      EXPECT_EQ(Bytes(in, len), Bytes(ref_in, len));
+      EXPECT_EQ(Bytes(out, len), Bytes(ref_out, len));
     }
-
-    CONSTTIME_SECRET(out, sizeof(out));
-    CONSTTIME_SECRET(in, sizeof(in));
-    CONSTTIME_SECRET(&b, 1);
-
-    constant_time_conditional_memxor(out, in, sizeof(out), b);
-
-    CONSTTIME_DECLASSIFY(&in, sizeof(in));
-    CONSTTIME_DECLASSIFY(&out, sizeof(out));
-
-    EXPECT_EQ(Bytes(in), Bytes(ref_in));
-    EXPECT_EQ(Bytes(out), Bytes(ref_out));
   }
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

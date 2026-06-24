@@ -182,7 +182,7 @@ func main() {
 	sort.Strings(files)
 
 	outFile := os.Stdout
-	if len(*out) != 0 {
+	if *out != "" {
 		var err error
 		outFile, err = os.Create(*out)
 		if err != nil {

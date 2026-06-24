@@ -97,15 +97,7 @@ function continueFuzzing(event)
     if (testNumber < testsToRun.length)
         testString = testsToRun[testNumber];
     else {
-        var script = document.createElement("script");
-
-        script.onload = function() {
-            if (window.testRunner)
-                testRunner.notifyDone();
-        };
-
-        script.src = "../../resources/js-test-post.js";
-        document.body.appendChild(script);
+        finishJSTest();
         return;
     }
     testNumber++;

@@ -161,8 +161,7 @@ DOMNode *kit(WebCore::Node* value)
 
 - (void)setPrefix:(NSString *)newPrefix
 {
-    WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self).setPrefix(newPrefix));
+    UNUSED_PARAM(newPrefix);
 }
 
 - (NSString *)localName

@@ -39,10 +39,10 @@ namespace WebCore {
 class Element;
 class KeyframeEffectStack;
 class RenderElement;
-class RenderStyle;
 class WebAnimation;
 
 namespace Style {
+class ComputedStyle;
 template<typename> struct CoordinatedValueList;
 struct Animation;
 using Animations = CoordinatedValueList<Animation>;
@@ -70,7 +70,7 @@ struct Styleable {
 
     RenderElement* renderer() const;
 
-    std::unique_ptr<RenderStyle> computeAnimatedStyle() const;
+    std::unique_ptr<Style::ComputedStyle> computeAnimatedStyle() const;
 
     // If possible, compute the visual extent of any transform animation using the given rect,
     // returning the result in the rect. Return false if there is some transform animation but
@@ -101,7 +101,7 @@ struct Styleable {
         return element.hasKeyframeEffects(pseudoElementIdentifier);
     }
 
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&) const;
+    OptionSet<AnimationImpact> applyKeyframeEffects(Style::ComputedStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const Style::ComputedStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&) const;
 
     const AnimationCollection* animations() const
     {
@@ -153,12 +153,12 @@ struct Styleable {
         element.setAnimationsCreatedByMarkup(pseudoElementIdentifier, WTF::move(collection));
     }
 
-    const RenderStyle* lastStyleChangeEventStyle() const
+    const Style::ComputedStyle* lastStyleChangeEventStyle() const
     {
         return element.lastStyleChangeEventStyle(pseudoElementIdentifier);
     }
 
-    void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&& style) const
+    void setLastStyleChangeEventStyle(std::unique_ptr<const Style::ComputedStyle>&& style) const
     {
         element.setLastStyleChangeEventStyle(pseudoElementIdentifier, WTF::move(style));
     }
@@ -194,10 +194,10 @@ struct Styleable {
 
     void removeStyleOriginatedAnimationFromListsForOwningElement(WebAnimation&) const;
 
-    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&, WeakStyleOriginatedAnimations&, Style::IsInDisplayNoneTree) const;
-    void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle, WeakStyleOriginatedAnimations&) const;
-    void updateCSSScrollTimelines(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle) const;
-    void updateCSSViewTimelines(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle) const;
+    void updateCSSAnimations(const Style::ComputedStyle* currentStyle, const Style::ComputedStyle& afterChangeStyle, const Style::ResolutionContext&, WeakStyleOriginatedAnimations&, Style::IsInDisplayNoneTree) const;
+    void updateCSSTransitions(const Style::ComputedStyle& currentStyle, const Style::ComputedStyle& newStyle, WeakStyleOriginatedAnimations&) const;
+    void updateCSSScrollTimelines(const Style::ComputedStyle* currentStyle, const Style::ComputedStyle& afterChangeStyle) const;
+    void updateCSSViewTimelines(const Style::ComputedStyle* currentStyle, const Style::ComputedStyle& afterChangeStyle) const;
 };
 
 class WeakStyleable {

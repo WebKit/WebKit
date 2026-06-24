@@ -31,10 +31,6 @@
 #include "system_wrappers/include/clock.h"
 #include "test/testsupport/file_utils.h"
 
-using webrtc::NetEq;
-using webrtc::test::AudioLoop;
-using webrtc::test::RtpGenerator;
-
 namespace webrtc {
 namespace test {
 

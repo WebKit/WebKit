@@ -2,7 +2,7 @@
 ; source tree. Do not edit by hand.
 
 %ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
+%include "boringssl_prefix_symbols_internal_x86_win_asm.inc"
 %endif
 %ifidn __OUTPUT_FORMAT__, win32
 %ifidn __OUTPUT_FORMAT__,obj
@@ -41,9 +41,9 @@ L$000pic:
 	pshufd	xmm4,xmm2,78
 	pxor	xmm3,xmm0
 	pxor	xmm4,xmm2
-db	102,15,58,68,194,0
-db	102,15,58,68,202,17
-db	102,15,58,68,220,0
+	pclmulqdq	xmm0,xmm2,0
+	pclmulqdq	xmm1,xmm2,17
+	pclmulqdq	xmm3,xmm4,0
 	xorps	xmm3,xmm0
 	xorps	xmm3,xmm1
 	movdqa	xmm4,xmm3
@@ -77,7 +77,7 @@ db	102,15,58,68,220,0
 	movdqu	[edx],xmm2
 	pxor	xmm4,xmm0
 	movdqu	[16+edx],xmm0
-db	102,15,58,15,227,8
+	palignr	xmm4,xmm3,8
 	movdqu	[32+edx],xmm4
 	ret
 global	_gcm_gmult_clmul
@@ -93,14 +93,14 @@ L$001pic:
 	movdqu	xmm0,[eax]
 	movdqa	xmm5,[ecx]
 	movups	xmm2,[edx]
-db	102,15,56,0,197
+	pshufb	xmm0,xmm5
 	movups	xmm4,[32+edx]
 	movdqa	xmm1,xmm0
 	pshufd	xmm3,xmm0,78
 	pxor	xmm3,xmm0
-db	102,15,58,68,194,0
-db	102,15,58,68,202,17
-db	102,15,58,68,220,0
+	pclmulqdq	xmm0,xmm2,0
+	pclmulqdq	xmm1,xmm2,17
+	pclmulqdq	xmm3,xmm4,0
 	xorps	xmm3,xmm0
 	xorps	xmm3,xmm1
 	movdqa	xmm4,xmm3
@@ -128,7 +128,7 @@ db	102,15,58,68,220,0
 	pxor	xmm0,xmm4
 	psrlq	xmm0,1
 	pxor	xmm0,xmm1
-db	102,15,56,0,197
+	pshufb	xmm0,xmm5
 	movdqu	[eax],xmm0
 	ret
 global	_gcm_ghash_clmul
@@ -150,22 +150,22 @@ L$002pic:
 	movdqu	xmm0,[eax]
 	movdqa	xmm5,[ecx]
 	movdqu	xmm2,[edx]
-db	102,15,56,0,197
+	pshufb	xmm0,xmm5
 	sub	ebx,16
 	jz	NEAR L$003odd_tail
 	movdqu	xmm3,[esi]
 	movdqu	xmm6,[16+esi]
-db	102,15,56,0,221
-db	102,15,56,0,245
+	pshufb	xmm3,xmm5
+	pshufb	xmm6,xmm5
 	movdqu	xmm5,[32+edx]
 	pxor	xmm0,xmm3
 	pshufd	xmm3,xmm6,78
 	movdqa	xmm7,xmm6
 	pxor	xmm3,xmm6
 	lea	esi,[32+esi]
-db	102,15,58,68,242,0
-db	102,15,58,68,250,17
-db	102,15,58,68,221,0
+	pclmulqdq	xmm6,xmm2,0
+	pclmulqdq	xmm7,xmm2,17
+	pclmulqdq	xmm3,xmm5,0
 	movups	xmm2,[16+edx]
 	nop
 	sub	ebx,32
@@ -177,9 +177,9 @@ L$005mod_loop:
 	movdqa	xmm1,xmm0
 	pxor	xmm4,xmm0
 	nop
-db	102,15,58,68,194,0
-db	102,15,58,68,202,17
-db	102,15,58,68,229,16
+	pclmulqdq	xmm0,xmm2,0
+	pclmulqdq	xmm1,xmm2,17
+	pclmulqdq	xmm4,xmm5,16
 	movups	xmm2,[edx]
 	xorps	xmm0,xmm6
 	movdqa	xmm5,[ecx]
@@ -188,14 +188,14 @@ db	102,15,58,68,229,16
 	pxor	xmm3,xmm0
 	movdqu	xmm6,[16+esi]
 	pxor	xmm3,xmm1
-db	102,15,56,0,253
+	pshufb	xmm7,xmm5
 	pxor	xmm4,xmm3
 	movdqa	xmm3,xmm4
 	psrldq	xmm4,8
 	pslldq	xmm3,8
 	pxor	xmm1,xmm4
 	pxor	xmm0,xmm3
-db	102,15,56,0,245
+	pshufb	xmm6,xmm5
 	pxor	xmm1,xmm7
 	movdqa	xmm7,xmm6
 	movdqa	xmm4,xmm0
@@ -204,7 +204,7 @@ db	102,15,56,0,245
 	pxor	xmm3,xmm0
 	psllq	xmm0,1
 	pxor	xmm0,xmm3
-db	102,15,58,68,242,0
+	pclmulqdq	xmm6,xmm2,0
 	movups	xmm5,[32+edx]
 	psllq	xmm0,57
 	movdqa	xmm3,xmm0
@@ -217,14 +217,14 @@ db	102,15,58,68,242,0
 	psrlq	xmm0,1
 	pxor	xmm3,xmm7
 	pxor	xmm1,xmm4
-db	102,15,58,68,250,17
+	pclmulqdq	xmm7,xmm2,17
 	movups	xmm2,[16+edx]
 	pxor	xmm4,xmm0
 	psrlq	xmm0,5
 	pxor	xmm0,xmm4
 	psrlq	xmm0,1
 	pxor	xmm0,xmm1
-db	102,15,58,68,221,0
+	pclmulqdq	xmm3,xmm5,0
 	lea	esi,[32+esi]
 	sub	ebx,32
 	ja	NEAR L$005mod_loop
@@ -232,9 +232,9 @@ L$004even_tail:
 	pshufd	xmm4,xmm0,78
 	movdqa	xmm1,xmm0
 	pxor	xmm4,xmm0
-db	102,15,58,68,194,0
-db	102,15,58,68,202,17
-db	102,15,58,68,229,16
+	pclmulqdq	xmm0,xmm2,0
+	pclmulqdq	xmm1,xmm2,17
+	pclmulqdq	xmm4,xmm5,16
 	movdqa	xmm5,[ecx]
 	xorps	xmm0,xmm6
 	xorps	xmm1,xmm7
@@ -271,16 +271,16 @@ db	102,15,58,68,229,16
 	movups	xmm2,[edx]
 L$003odd_tail:
 	movdqu	xmm3,[esi]
-db	102,15,56,0,221
+	pshufb	xmm3,xmm5
 	pxor	xmm0,xmm3
 	movdqa	xmm1,xmm0
 	pshufd	xmm3,xmm0,78
 	pshufd	xmm4,xmm2,78
 	pxor	xmm3,xmm0
 	pxor	xmm4,xmm2
-db	102,15,58,68,194,0
-db	102,15,58,68,202,17
-db	102,15,58,68,220,0
+	pclmulqdq	xmm0,xmm2,0
+	pclmulqdq	xmm1,xmm2,17
+	pclmulqdq	xmm3,xmm4,0
 	xorps	xmm3,xmm0
 	xorps	xmm3,xmm1
 	movdqa	xmm4,xmm3
@@ -309,7 +309,7 @@ db	102,15,58,68,220,0
 	psrlq	xmm0,1
 	pxor	xmm0,xmm1
 L$006done:
-db	102,15,56,0,197
+	pshufb	xmm0,xmm5
 	movdqu	[eax],xmm0
 	pop	edi
 	pop	esi

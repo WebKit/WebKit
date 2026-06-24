@@ -15,11 +15,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/function_view.h"
@@ -262,7 +262,7 @@ int32_t AudioCodingModuleImpl::Encode(
   encode_buffer_.Clear();
   encoded_info = encoder_stack_->Encode(
       rtp_timestamp,
-      ArrayView<const int16_t>(
+      std::span<const int16_t>(
           input_data.audio,
           input_data.audio_channel * input_data.length_per_channel),
       &encode_buffer_);

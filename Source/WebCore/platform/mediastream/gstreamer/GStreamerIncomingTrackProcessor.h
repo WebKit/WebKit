@@ -72,7 +72,7 @@ private:
 
     bool m_isDecoding { false };
     IntSize m_videoSize;
-    double m_frameRate;
+    double m_frameRate { 0 };
     uint64_t m_decodedVideoFrames { 0 };
     uint64_t m_framesReceived { 0 };
     uint64_t m_decodedKeyFrames { 0 };

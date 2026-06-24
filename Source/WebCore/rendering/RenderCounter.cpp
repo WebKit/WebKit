@@ -35,8 +35,8 @@
 #include "RenderElementInlines.h"
 #include "RenderListItem.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle.h"
 #include "RenderView.h"
+#include "StyleComputedStyle.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -275,7 +275,7 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
 
     bool isReset = type.contains(CounterNode::Type::Reset);
     while (currentRenderer) {
-        auto currentCounter = makeCounterNode(*currentRenderer, identifier, false);
+        RefPtr currentCounter = makeCounterNode(*currentRenderer, identifier, false);
         if (searchEndRenderer == currentRenderer) {
             // We may be at the end of our search.
             if (currentCounter) {
@@ -380,7 +380,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
 
     auto place = findPlaceForCounter(renderer, identifier, type);
     if (place.parent)
-        place.parent->insertAfter(newNode, place.previousSibling.get(), identifier);
+        protect(place.parent)->insertAfter(newNode, place.previousSibling.get(), identifier);
 
     maps.add(renderer, makeUnique<CounterMap>()).iterator->value->add(identifier, newNode.copyRef());
     renderer.setHasCounterNodeMap(true);
@@ -404,7 +404,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
             continue;
         if (stayWithin == currentRenderer->firstNonAnonymousAncestor() && currentCounter->hasResetType())
             break;
-        newNode->insertAfter(*currentCounter, newNode->lastChild(), identifier);
+        newNode->insertAfter(*currentCounter, protect(newNode->lastChild()), identifier);
     }
 
     return newNode.unsafePtr();
@@ -485,7 +485,7 @@ static void destroyCounterNodeWithoutMapRemoval(const AtomString& identifier, Co
     RefPtr<CounterNode> previous;
     for (RefPtr<CounterNode> child = node.lastDescendant(); child && child != &node; child = WTF::move(previous)) {
         previous = child->previousInPreOrder();
-        child->parent()->removeChild(*child);
+        protect(child->parent())->removeChild(*child);
         auto& ownerCounterMap = *counterMaps().find(child->owner())->value;
         ASSERT(ownerCounterMap.get(identifier) == child);
         ownerCounterMap.remove(identifier);
@@ -521,9 +521,9 @@ void RenderCounter::destroyCounterNode(RenderElement& owner, const AtomString& i
     // will be called.
 }
 
-void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle)
 {
-    Element* element = renderer.generatingElement();
+    RefPtr element = renderer.generatingElement();
     if (!element || !element->renderer())
         return; // cannot have generated content or if it can have, it will be handled during attaching
 

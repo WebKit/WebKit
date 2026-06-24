@@ -26,8 +26,8 @@
 #include "StyleTextEmphasisStyle.h"
 
 #include "CSSValueList.h"
-#include "RenderStyle.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle.h"
 #include "StyleKeyword+CSSValueConversion.h"
 #include "StyleKeyword+CSSValueCreation.h"
 #include "StyleKeyword+Serialization.h"

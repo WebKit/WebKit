@@ -13,8 +13,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/encoded_image.h"
 #include "rtc_base/checks.h"
@@ -22,9 +22,9 @@
 namespace webrtc {
 
 scoped_refptr<EncodedImageBuffer> VideoRtpDepacketizer::AssembleFrame(
-    ArrayView<const ArrayView<const uint8_t>> rtp_payloads) {
+    std::span<const std::span<const uint8_t>> rtp_payloads) {
   size_t frame_size = 0;
-  for (ArrayView<const uint8_t> payload : rtp_payloads) {
+  for (std::span<const uint8_t> payload : rtp_payloads) {
     frame_size += payload.size();
   }
 
@@ -32,7 +32,7 @@ scoped_refptr<EncodedImageBuffer> VideoRtpDepacketizer::AssembleFrame(
       EncodedImageBuffer::Create(frame_size);
 
   uint8_t* write_at = bitstream->data();
-  for (ArrayView<const uint8_t> payload : rtp_payloads) {
+  for (std::span<const uint8_t> payload : rtp_payloads) {
     memcpy(write_at, payload.data(), payload.size());
     write_at += payload.size();
   }

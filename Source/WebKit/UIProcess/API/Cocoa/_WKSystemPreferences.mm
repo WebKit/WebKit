@@ -34,7 +34,9 @@
 #import <pal/cocoa/LockdownModeCocoa.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
 constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpmconfig_ignore";
+#endif
 
 @implementation _WKSystemPreferences
 

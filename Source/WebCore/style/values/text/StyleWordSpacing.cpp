@@ -25,8 +25,7 @@
 #include "config.h"
 #include "StyleWordSpacing.h"
 
-#include "StyleCalculationValue.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
@@ -53,14 +52,10 @@ auto CSSValueConversion<WordSpacing>::operator()(BuilderState& state, const CSSV
         auto zoom = state.zoomWithTextZoomFactor();
         if (zoom == state.cssToLengthConversionData().zoom())
             return state.cssToLengthConversionData();
-        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, WordSpacing::Fixed::range.zoomOptions);
+        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, WordSpacing::range.zoomOptions);
     };
 
-    if (auto result = convertLengthWrapperFromCSSValue<WordSpacing>(conversionData(state), *primitiveValue))
-        return *result;
-
-    state.setCurrentPropertyInvalidAtComputedValueTime();
-    return CSS::Keyword::Normal { };
+    return toStyleFromCSSValue<WordSpacing::Wrapped>(conversionData(state), *primitiveValue);
 }
 
 } // namespace Style

@@ -31,6 +31,10 @@ set(WebKitLegacy_FRAMEWORKS
     WebCore
     bmalloc
 )
+if (USE_APPLE_INTERNAL_SDK)
+    list(APPEND WebKitLegacy_FRAMEWORKS WebKitAdditions)
+    list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES "${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions")
+endif ()
 
 set(WebKitLegacy_INTERFACE_LIBRARIES WebKitLegacy)
 set(WebKitLegacy_INTERFACE_INCLUDE_DIRECTORIES ${WebKitLegacy_FRAMEWORK_HEADERS_DIR})

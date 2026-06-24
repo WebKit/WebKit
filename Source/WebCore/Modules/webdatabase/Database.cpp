@@ -186,14 +186,14 @@ static inline DatabaseGUID guidForOriginAndName(const String& origin, const Stri
 
 Database::Database(DatabaseContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned long long estimatedSize)
     : m_document(*context.document())
-    , m_contextThreadSecurityOrigin(m_document->securityOrigin().isolatedCopy())
-    , m_databaseThreadSecurityOrigin(m_document->securityOrigin().isolatedCopy())
+    , m_contextThreadSecurityOrigin(protect(m_document)->securityOrigin().isolatedCopy())
+    , m_databaseThreadSecurityOrigin(protect(m_document)->securityOrigin().isolatedCopy())
     , m_databaseContext(context)
     , m_name((name.isNull() ? emptyString() : name).isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())
     , m_displayName(displayName.isolatedCopy())
     , m_estimatedSize(estimatedSize)
-    , m_filename(DatabaseManager::singleton().fullPathForDatabase(m_document->securityOrigin(), m_name))
+    , m_filename(DatabaseManager::singleton().fullPathForDatabase(protect(protect(m_document)->securityOrigin()), m_name))
     , m_sqliteDatabase(makeUniqueRef<SQLiteDatabase>())
     , m_databaseAuthorizer(DatabaseAuthorizer::create(unqualifiedInfoTableName))
 {
@@ -413,7 +413,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
     if (m_new && !shouldSetVersionInNewDatabase)
         m_expectedVersion = emptyString(); // The caller provided a creationCallback which will set the expected version.
 
-    databaseThread().recordDatabaseOpen(*this);
+    protect(databaseThread())->recordDatabaseOpen(*this);
 
     return { };
 }
@@ -520,7 +520,7 @@ void Database::scheduleTransaction()
     auto transaction = m_transactionQueue.takeFirst();
     auto task = makeUnique<DatabaseTransactionTask>(WTF::move(transaction));
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
-    databaseThread().scheduleTask(WTF::move(task));
+    protect(databaseThread())->scheduleTask(WTF::move(task));
 }
 
 void Database::scheduleTransactionStep(SQLTransaction& transaction)
@@ -676,7 +676,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
     Locker locker { m_transactionInProgressLock };
     if (!m_isTransactionQueueEnabled) {
         if (errorCallback) {
-            protect(m_document->eventLoop())->queueTask(TaskSource::Networking, [errorCallback = Ref { *errorCallback }] {
+            protect(protect(m_document)->eventLoop())->queueTask(TaskSource::Networking, [errorCallback = Ref { *errorCallback }] {
                 errorCallback->invoke(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"_s));
             });
         }
@@ -691,7 +691,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
 {
     callOnMainThread([this, protectedThis = Ref { *this }, transaction = RefPtr { transaction }] mutable {
-        protect(m_document->eventLoop())->queueTask(TaskSource::Networking, [transaction = WTF::move(transaction)] {
+        protect(protect(m_document)->eventLoop())->queueTask(TaskSource::Networking, [transaction = WTF::move(transaction)] {
             transaction->performPendingCallback();
         });
     });
@@ -741,7 +741,7 @@ void Database::incrementalVacuumIfNeeded()
 
 void Database::logErrorMessage(const String& message)
 {
-    m_document->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
+    protect(m_document)->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
 }
 
 Vector<String> Database::tableNames()
@@ -790,7 +790,7 @@ bool Database::didExceedQuota()
         // oldQuota + 5MB so that the client actually increases the quota.
         setEstimatedSize(oldQuota + quotaIncreaseSize);
     }
-    databaseContext().databaseExceededQuota(stringIdentifierIsolatedCopy(), details());
+    protect(databaseContext())->databaseExceededQuota(stringIdentifierIsolatedCopy(), details());
     return tracker.quota(securityOrigin()) > oldQuota;
 }
 

@@ -1447,7 +1447,7 @@ auto SectionParser::parseCustom() -> PartialResult
         NameSectionParser nameSectionParser(section.payload, m_info);
         auto nameSection = nameSectionParser.parse();
         if (nameSection)
-            m_info->nameSection = WTF::move(*nameSection);
+            m_info->setNameSection(WTF::move(*nameSection));
         else
             dataLogLnIf(Options::dumpWasmWarnings(), "Could not parse name section: ", nameSection.error());
     } else if (WTF::Unicode::equal("metadata.code.branch_hint"_span8, section.name.span())) {

@@ -11,10 +11,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/test/simulated_network.h"
@@ -78,7 +78,7 @@ class RtcpXrObserver : public test::EndToEndTest {
 
  private:
   // Receive stream should send RR packets (and RRTR packets if enabled).
-  Action OnReceiveRtcp(ArrayView<const uint8_t> packet) override {
+  Action OnReceiveRtcp(std::span<const uint8_t> packet) override {
     MutexLock lock(&mutex_);
     test::RtcpPacketParser parser;
     EXPECT_TRUE(parser.Parse(packet));
@@ -95,7 +95,7 @@ class RtcpXrObserver : public test::EndToEndTest {
     return SEND_PACKET;
   }
   // Send stream should send SR packets (and DLRR packets if enabled).
-  Action OnSendRtcp(ArrayView<const uint8_t> packet) override {
+  Action OnSendRtcp(std::span<const uint8_t> packet) override {
     MutexLock lock(&mutex_);
     test::RtcpPacketParser parser;
     EXPECT_TRUE(parser.Parse(packet));

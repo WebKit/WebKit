@@ -3987,7 +3987,7 @@ JSC_DEFINE_HOST_FUNCTION(functionRejectPromiseAsHandled, (JSGlobalObject* global
     DollarVMAssertScope assertScope;
     JSPromise* promise = uncheckedDowncast<JSPromise>(callFrame->uncheckedArgument(0));
     JSValue reason = callFrame->uncheckedArgument(1);
-    promise->rejectAsHandled(globalObject->vm(), globalObject, reason);
+    promise->rejectAsHandled(globalObject->vm(), reason);
     return JSValue::encode(jsUndefined());
 }
 

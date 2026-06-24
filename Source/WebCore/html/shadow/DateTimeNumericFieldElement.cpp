@@ -34,7 +34,7 @@
 #include "PathOperation.h"
 #include "PlatformLocale.h"
 #include "RenderBlock.h"
-#include "RenderStyle+SettersInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -63,7 +63,7 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Dat
 {
 }
 
-void DateTimeNumericFieldElement::adjustMinInlineSize(RenderStyle& style) const
+void DateTimeNumericFieldElement::adjustMinInlineSize(Style::ComputedStyle& style) const
 {
     CheckedRef font = style.fontCascade();
 

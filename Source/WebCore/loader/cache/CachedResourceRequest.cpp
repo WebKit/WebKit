@@ -103,7 +103,7 @@ void CachedResourceRequest::updateForAccessControl(Document& document)
 {
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
-    m_origin = document.securityOrigin();
+    m_origin = protect(document)->securityOrigin();
     updateRequestForAccessControl(m_resourceRequest, *m_origin, m_options.storedCredentialsPolicy);
 }
 

@@ -114,7 +114,7 @@ void decodeMessageAndSendToManager(const Daemon::Connection&, MessageType, std::
 void doDailyActivityInManager();
 bool NODELETE messageTypeSendsReply(MessageType);
 
-void initializePCMStorageInDirectory(const String& storageDirectory, const String& applicationBundleIdentifier);
+void initializePCMStorageInDirectory(const String& storageDirectory, const String& applicationBundleIdentifier, const String& secondaryApplicationBundleIdentifier);
 
 } // namespace PCM
 

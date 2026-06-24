@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -13,6 +13,7 @@
 </form>
 <script>
 description('Test if the form is submitted with a submit button with formnovalidate.');
+window.jsTestIsAsync = true;
 
 function startOrVerify() {
     var query = window.location.search;
@@ -20,8 +21,7 @@ function startOrVerify() {
         testPassed('The form should not be submitted.');
         shouldBeTrue('location.search.indexOf("i0=") != -1');
         debug('TEST COMPLETE');
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     } else {
         // HTMLFormElement::submit() skips validation. Use the submit button.
         document.getElementById('s').click();
@@ -29,8 +29,6 @@ function startOrVerify() {
     }
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 window.onload = startOrVerify;
 </script>
 </body>

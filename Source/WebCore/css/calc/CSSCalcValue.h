@@ -38,6 +38,7 @@
 namespace WebCore {
 
 namespace Style {
+class ComputedStyle;
 namespace Calculation {
 class Value;
 }
@@ -53,7 +54,6 @@ class CSSCalcSymbolTable;
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 class CSSToLengthConversionData;
-class RenderStyle;
 
 struct CSSParserContext;
 struct CSSPropertyParserOptions;
@@ -70,7 +70,7 @@ class Value final : public RefCounted<Value> {
 public:
     static RefPtr<Value> parse(CSSParserTokenRange&, CSS::PropertyParserState&, CSS::Category, CSS::Range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 
-    static Ref<Value> create(const Style::Calculation::Value&, const RenderStyle&);
+    static Ref<Value> create(CSS::Category, CSS::Range, const Style::Calculation::Value&, const Style::ComputedStyle&);
     static Ref<Value> create(CSS::Category, CSS::Range, CSSCalc::Tree&&);
 
     ~Value();
@@ -85,6 +85,7 @@ public:
     CSS::Range range() const { return m_range; }
 
     CSSUnitType NODELETE primitiveType() const;
+    bool NODELETE rootNodeIsPercentage() const;
 
     // Returns whether the CSSCalc::Tree requires `CSSToLengthConversionData` to fully resolve.
     bool requiresConversionData() const { return m_tree.requiresConversionData; };

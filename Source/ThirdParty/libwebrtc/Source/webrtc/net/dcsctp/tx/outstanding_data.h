@@ -16,10 +16,10 @@
 #include <functional>
 #include <optional>
 #include <set>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "net/dcsctp/common/internal_types.h"
@@ -89,10 +89,9 @@ class OutstandingData {
         last_cumulative_tsn_ack_(last_cumulative_tsn_ack),
         discard_from_send_queue_(std::move(discard_from_send_queue)) {}
 
-  AckInfo HandleSack(
-      UnwrappedTSN cumulative_tsn_ack,
-      webrtc::ArrayView<const SackChunk::GapAckBlock> gap_ack_blocks,
-      bool is_in_fast_recovery);
+  AckInfo HandleSack(UnwrappedTSN cumulative_tsn_ack,
+                     std::span<const SackChunk::GapAckBlock> gap_ack_blocks,
+                     bool is_in_fast_recovery);
 
   // Returns as many of the chunks that are eligible for fast retransmissions
   // and that would fit in a single packet of `max_size`. The eligible chunks
@@ -314,10 +313,9 @@ class OutstandingData {
 
   // Will mark the chunks covered by the `gap_ack_blocks` from an incoming SACK
   // as "acked" and update `ack_info` by adding new TSNs to `added_tsns`.
-  void AckGapBlocks(
-      UnwrappedTSN cumulative_tsn_ack,
-      webrtc::ArrayView<const SackChunk::GapAckBlock> gap_ack_blocks,
-      AckInfo& ack_info);
+  void AckGapBlocks(UnwrappedTSN cumulative_tsn_ack,
+                    std::span<const SackChunk::GapAckBlock> gap_ack_blocks,
+                    AckInfo& ack_info);
 
   // Mark chunks reported as "missing", as "nacked" or "to be retransmitted"
   // depending how many times this has happened. Only packets up until
@@ -325,8 +323,9 @@ class OutstandingData {
   // nacked/retransmitted. The method will set `ack_info.has_packet_loss`.
   void NackBetweenAckBlocks(
       UnwrappedTSN cumulative_tsn_ack,
-      webrtc::ArrayView<const SackChunk::GapAckBlock> gap_ack_blocks,
+      std::span<const SackChunk::GapAckBlock> gap_ack_blocks,
       bool is_in_fast_recovery,
+      bool cumulative_tsn_acked_advanced,
       OutstandingData::AckInfo& ack_info);
 
   // Process the acknowledgement of the chunk referenced by `iter` and updates

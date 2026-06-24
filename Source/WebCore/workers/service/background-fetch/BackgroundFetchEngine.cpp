@@ -257,7 +257,7 @@ void BackgroundFetchEngine::retrieveRecordResponse(BackgroundFetchRecordIdentifi
         callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Record not found"_s }));
         return;
     }
-    record->retrieveResponse(m_store.get(), WTF::move(callback));
+    record->retrieveResponse(m_store, WTF::move(callback));
 }
 
 void BackgroundFetchEngine::retrieveRecordResponseBody(BackgroundFetchRecordIdentifier recordIdentifier, RetrieveRecordResponseBodyCallback&& callback)
@@ -267,7 +267,7 @@ void BackgroundFetchEngine::retrieveRecordResponseBody(BackgroundFetchRecordIden
         callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "Record not found"_s }));
         return;
     }
-    record->retrieveRecordResponseBody(m_store.get(), WTF::move(callback));
+    record->retrieveRecordResponseBody(m_store, WTF::move(callback));
 }
 
 void BackgroundFetchEngine::addFetchFromStore(std::span<const uint8_t> data, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&& callback)

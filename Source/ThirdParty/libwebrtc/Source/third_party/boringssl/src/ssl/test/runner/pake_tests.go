@@ -511,7 +511,7 @@ func addPAKETests() {
 				ExpectNoTLS13PSK: true,
 				// Respond with an unsolicited PSK extension in ServerHello, to
 				// check that the client rejects it.
-				AlwaysSelectPSKIdentity: true,
+				AlwaysSelectPSKIdentity: ptrTo(uint16(0)),
 			},
 		},
 		resumeShimCredentials: []*Credential{&spakeCredential},

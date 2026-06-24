@@ -12,9 +12,9 @@
 
 #include <cstddef>
 #include <map>
+#include <span>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/common/sequence_numbers.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
@@ -35,12 +35,11 @@ class TraditionalReassemblyStreams : public ReassemblyStreams {
 
   int Add(UnwrappedTSN tsn, Data data) override;
 
-  size_t HandleForwardTsn(
-      UnwrappedTSN new_cumulative_ack_tsn,
-      webrtc::ArrayView<const AnyForwardTsnChunk::SkippedStream>
-          skipped_streams) override;
+  size_t HandleForwardTsn(UnwrappedTSN new_cumulative_ack_tsn,
+                          std::span<const AnyForwardTsnChunk::SkippedStream>
+                              skipped_streams) override;
 
-  void ResetStreams(webrtc::ArrayView<const StreamID> stream_ids) override;
+  void ResetStreams(std::span<const StreamID> stream_ids) override;
 
   HandoverReadinessStatus GetHandoverReadiness() const override;
   void AddHandoverState(DcSctpSocketHandoverState& state) override;

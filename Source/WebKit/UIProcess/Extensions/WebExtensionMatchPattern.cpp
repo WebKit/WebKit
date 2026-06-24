@@ -284,7 +284,7 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const S
 
 bool WebExtensionMatchPattern::isSupported() const
 {
-    return isValid() && (m_matchesAllURLs || supportedSchemes().contains(scheme()));
+    return isValid() && (m_matchesAllURLs || supportedSchemes().contains(scheme()) || scheme() == "file"_s);
 }
 
 bool WebExtensionMatchPattern::operator==(const WebExtensionMatchPattern& other) const
@@ -334,17 +334,22 @@ String WebExtensionMatchPattern::stringWithScheme(const String& differentScheme)
     return makeString(differentScheme.isEmpty() ? scheme() : differentScheme, "://"_s, host(), path());
 }
 
-Vector<String> WebExtensionMatchPattern::expandedStrings() const
+Vector<String> WebExtensionMatchPattern::expandedStrings(OptionSet<Options> options) const
 {
     if (!isValid())
         return { };
 
     if (m_matchesAllURLs) {
-        return compactMap(supportedSchemes(), [&](auto& scheme) -> std::optional<String> {
+        auto strings = compactMap(supportedSchemes(), [&](auto& scheme) -> std::optional<String> {
             if (scheme == "*"_s)
                 return std::nullopt;
             return makeString(scheme, "://*/*"_s);
         });
+
+        if (options.contains(Options::AllowFileScheme))
+            strings.append("file://*/*"_s);
+
+        return strings;
     }
 
     return { string() };
@@ -367,8 +372,11 @@ bool WebExtensionMatchPattern::matchesURL(const URL& urlToMatch, OptionSet<Optio
     if (!isValid() || !urlToMatch.isValid())
         return false;
 
-    if (m_matchesAllURLs)
+    if (m_matchesAllURLs) {
+        if (urlToMatch.protocolIsFile())
+            return options.contains(Options::AllowFileScheme);
         return supportedSchemes().contains(urlToMatch.protocol().toString());
+    }
 
     if (!options.contains(Options::IgnoreSchemes) && !pattern().matchesScheme(urlToMatch))
         return false;
@@ -390,8 +398,12 @@ bool WebExtensionMatchPattern::matchesPattern(const WebExtensionMatchPattern& pa
     if (*this == patternToMatch)
         return true;
 
-    auto compareAllURLs = [](const WebExtensionMatchPattern& a, const WebExtensionMatchPattern& b) {
-        return a.matchesAllURLs() && (b.matchesAllURLs() || supportedSchemes().contains(b.scheme()));
+    auto compareAllURLs = [&options](const WebExtensionMatchPattern& a, const WebExtensionMatchPattern& b) {
+        if (!a.matchesAllURLs())
+            return false;
+        if (b.matchesAllURLs() || supportedSchemes().contains(b.scheme()))
+            return true;
+        return options.contains(Options::AllowFileScheme) && b.scheme() == "file"_s;
     };
 
     if (compareAllURLs(*this, patternToMatch))

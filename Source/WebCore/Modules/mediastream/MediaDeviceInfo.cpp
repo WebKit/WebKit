@@ -56,6 +56,7 @@ MediaDeviceInfo::Kind toMediaDeviceInfoKind(CaptureDevice::DeviceType type)
     case CaptureDevice::DeviceType::Speaker:
         return MediaDeviceInfo::Kind::Audiooutput;
     case CaptureDevice::DeviceType::Camera:
+    case CaptureDevice::DeviceType::Canvas:
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
         return MediaDeviceInfo::Kind::Videoinput;

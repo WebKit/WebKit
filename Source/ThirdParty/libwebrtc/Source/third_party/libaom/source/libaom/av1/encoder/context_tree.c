@@ -25,8 +25,6 @@ void av1_copy_tree_context(PICK_MODE_CONTEXT *dst_ctx,
   dst_ctx->best_mode_index = src_ctx->best_mode_index;
 #endif  // CONFIG_INTERNAL_STATS
 
-  memcpy(dst_ctx->blk_skip, src_ctx->blk_skip,
-         sizeof(uint8_t) * src_ctx->num_4x4_blk);
   av1_copy_array(dst_ctx->tx_type_map, src_ctx->tx_type_map,
                  src_ctx->num_4x4_blk);
 
@@ -84,8 +82,6 @@ PICK_MODE_CONTEXT *av1_alloc_pmc(const struct AV1_COMP *const cpi,
   const int num_pix = block_size_wide[bsize] * block_size_high[bsize];
   const int num_blk = num_pix / 16;
 
-  AOM_CHECK_MEM_ERROR(&error, ctx->blk_skip,
-                      aom_calloc(num_blk, sizeof(*ctx->blk_skip)));
   AOM_CHECK_MEM_ERROR(&error, ctx->tx_type_map,
                       aom_calloc(num_blk, sizeof(*ctx->tx_type_map)));
   ctx->num_4x4_blk = num_blk;
@@ -119,7 +115,6 @@ PICK_MODE_CONTEXT *av1_alloc_pmc(const struct AV1_COMP *const cpi,
 }
 
 void av1_reset_pmc(PICK_MODE_CONTEXT *ctx) {
-  av1_zero_array(ctx->blk_skip, ctx->num_4x4_blk);
   av1_zero_array(ctx->tx_type_map, ctx->num_4x4_blk);
   av1_invalid_rd_stats(&ctx->rd_stats);
 }
@@ -127,8 +122,6 @@ void av1_reset_pmc(PICK_MODE_CONTEXT *ctx) {
 void av1_free_pmc(PICK_MODE_CONTEXT *ctx, int num_planes) {
   if (ctx == NULL) return;
 
-  aom_free(ctx->blk_skip);
-  ctx->blk_skip = NULL;
   aom_free(ctx->tx_type_map);
   for (int i = 0; i < num_planes; ++i) {
     ctx->coeff[i] = NULL;

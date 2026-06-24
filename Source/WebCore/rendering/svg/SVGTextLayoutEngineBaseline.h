@@ -26,10 +26,13 @@ namespace WebCore {
 
 class RenderElement;
 class RenderSVGInlineText;
-class RenderStyle;
 class SVGTextMetrics;
 
 enum class AlignmentBaseline : uint8_t;
+
+namespace Style {
+class ComputedStyle;
+}
 
 // Helper class used by SVGTextLayoutEngine to handle 'alignment-baseline' / 'dominant-baseline' and 'baseline-shift'.
 class SVGTextLayoutEngineBaseline {
@@ -37,9 +40,9 @@ class SVGTextLayoutEngineBaseline {
 public:
     SVGTextLayoutEngineBaseline(const FontCascade&);
 
-    float calculateBaselineShift(const RenderStyle&) const;
+    float calculateBaselineShift(const Style::ComputedStyle&) const;
     float calculateAlignmentBaselineShift(bool isVerticalText, const RenderSVGInlineText& textRenderer) const;
-    float calculateGlyphOrientationAngle(bool isVerticalText, const RenderStyle&, const char16_t& character) const;
+    float calculateGlyphOrientationAngle(bool isVerticalText, const Style::ComputedStyle&, const char32_t& character) const;
     float calculateGlyphAdvanceAndOrientation(bool isVerticalText, const SVGTextMetrics&, float angle, float& xOrientationShift, float& yOrientationShift) const;
 
 private:

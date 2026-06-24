@@ -42,7 +42,6 @@ class LegacyRenderSVGResourceContainer;
 class QualifiedName;
 class RenderElement;
 class RenderSVGResourceFilter;
-class RenderStyle;
 class SVGClipPathElement;
 class SVGElement;
 class SVGFilterElement;
@@ -51,6 +50,7 @@ class SVGMaskElement;
 class TreeScope;
 
 namespace Style {
+class ComputedStyle;
 class Image;
 struct FilterReference;
 struct ReferencePath;
@@ -66,7 +66,7 @@ public:
     using SVGQualifiedNames = Vector<SVGQualifiedName>;
     using SVGElementIdentifierAndTagPairs = Vector<std::pair<AtomString, SVGQualifiedNames>>;
 
-    static SVGElementIdentifierAndTagPairs referencedSVGResourceIDs(const RenderStyle&, const Document&);
+    static SVGElementIdentifierAndTagPairs referencedSVGResourceIDs(const Style::ComputedStyle&, const Document&);
     void updateReferencedResources(TreeScope&, const SVGElementIdentifierAndTagPairs&);
     bool addReferencedSVGResourceIfNeeded(SVGElement&, const AtomString&);
 

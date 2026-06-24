@@ -65,7 +65,7 @@ private:
 
     void didAttachRenderers() final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
     bool haveLoadedRequiredResources() final;

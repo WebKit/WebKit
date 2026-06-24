@@ -166,7 +166,11 @@ template<typename CharacterType> inline bool NODELETE isASCIIDigitOrValidHostCha
 template <UScriptCode ScriptType>
 bool isLookalikeSequence(const std::optional<char32_t>& previousCodePoint, char32_t codePoint)
 {
-    if (!previousCodePoint || *previousCodePoint == '/')
+    if (!previousCodePoint
+        || codePoint == '/' || *previousCodePoint == '/'
+        || codePoint == ':' // Only digits should be after a colon when used as a URL separator before a port, so no check for previousCodePoint here.
+        || codePoint == '?' || *previousCodePoint == '?'
+        || codePoint == '#' || *previousCodePoint == '#')
         return false;
 
     auto isLookalikePair = [] (char16_t first, char16_t second) {
@@ -643,10 +647,17 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
         return String();
 
     String string;
-    if (decodeFunction && string.contains('%'))
+    if (decodeFunction && hostName.contains('%'))
         string = (*decodeFunction)(hostName);
     else
         string = hostName;
+
+    if (decodeFunction && string.containsOnlyASCII()) {
+        auto lowered = string.convertToASCIILowercase();
+        if (lowered == string)
+            return String();
+        return lowered;
+    }
 
     unsigned length = string.length();
 
@@ -679,6 +690,10 @@ static void collectRangesThatNeedMapping(const String& string, unsigned location
 {
     // Generally, we want to optimize for the case where there is one host name that does not need mapping.
     // Therefore, we use null to indicate no mapping here and an empty array to indicate error.
+
+    // IPv6 addresses are bracketed and don't need IDN processing.
+    if (length && string[location] == '[')
+        return;
 
     String substring = string.substringSharingImpl(location, length);
     std::optional<String> host = mapHostName(substring, decodeFunction);
@@ -731,7 +746,7 @@ static void applyHostNameFunctionToMailToURLString(const String& string, URLDeco
                 current = hostNameEnd;
                 done = false;
             }
-            
+
             // Process host name range.
             collectRangesThatNeedMapping(string, hostNameStart, hostNameEnd - hostNameStart, array, decodeFunction);
 
@@ -812,7 +827,7 @@ String mapHostNames(const String& string, URLDecodeFunction decodeFunction)
 {
     // Generally, we want to optimize for the case where there is one host name that does not need mapping.
     
-    if (decodeFunction && string.containsOnlyASCII())
+    if (decodeFunction && string.containsOnlyASCII() && !string.contains('%'))
         return string;
     
     // Make a list of ranges that actually need mapping.
@@ -842,7 +857,7 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
     unsigned i;
     for (i = 0; i < length; ) {
         char32_t c = sourceBuffer.codePointAt(i);
-        if (isLookalikeCharacter(previousCodePoint, sourceBuffer.codePointAt(i)))
+        if (isLookalikeCharacter(previousCodePoint, c))
             break;
         previousCodePoint = c;
         i += U16_LENGTH(c);
@@ -888,7 +903,7 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
 String userVisibleURL(const CString& url)
 {
     auto before = url.span();
-    int length = url.length();
+    size_t length = url.length();
 
     if (!length)
         return { };
@@ -904,7 +919,7 @@ String userVisibleURL(const CString& url)
     size_t afterIndex = 0;
     {
         auto p = before;
-        for (int i = 0; i < length; i++) {
+        for (size_t i = 0; i < length; i++) {
             unsigned char c = p[i];
             // unescape escape sequences that indicate bytes greater than 0x7f
             if (c == '%' && i + 2 < length && isASCIIHexDigit(p[i + 1]) && isASCIIHexDigit(p[i + 2])) {
@@ -938,7 +953,7 @@ String userVisibleURL(const CString& url)
         // Shift current string to the end of the buffer
         // then we will copy back bytes to the start of the buffer 
         // as we convert.
-        int afterlength = afterIndex;
+        size_t afterlength = afterIndex;
         auto p = after.mutableSpan().subspan(bufferLength.value() - afterlength - 1);
         memmoveSpan(p, after.span().first(afterlength + 1)); // copies trailing '\0'
         afterIndex = 0;

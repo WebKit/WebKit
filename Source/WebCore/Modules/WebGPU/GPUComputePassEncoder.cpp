@@ -69,7 +69,7 @@ void GPUComputePassEncoder::dispatchWorkgroupsIndirect(const GPUBuffer& indirect
 void GPUComputePassEncoder::end()
 {
     protect(backing())->end();
-    if (RefPtr device = m_device.get()) {
+    if (RefPtr device = m_device) {
         m_overrideLabel = label();
         m_backing = device->invalidComputePassEncoder();
     }

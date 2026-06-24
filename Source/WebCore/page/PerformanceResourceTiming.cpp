@@ -40,6 +40,7 @@
 #include "PerformanceServerTiming.h"
 #include "ResourceResponse.h"
 #include "ResourceTiming.h"
+#include <wtf/ReducedResolutionSeconds.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -51,7 +52,7 @@ static double networkLoadTimeToDOMHighResTimeStamp(MonotonicTime timeOrigin, Mon
         return 0.0;
     auto result = Performance::reduceTimeResolution(timeStamp - timeOrigin);
     if (!result)
-        result = Performance::timeResolution();
+        result = ReducedResolutionSeconds::fromSeconds(Performance::timeResolution());
     return result.milliseconds();
 }
 

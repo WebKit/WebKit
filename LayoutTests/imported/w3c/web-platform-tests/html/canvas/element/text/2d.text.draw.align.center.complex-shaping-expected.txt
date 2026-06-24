@@ -1,0 +1,4 @@
+
+PASS fillText with textAlign=center centers complex-shaped text on the requested x
+PASS fillText with textAlign=right right-aligns complex-shaped text on the requested x
+

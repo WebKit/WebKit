@@ -32,6 +32,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/ScreenTimeExtras.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -53,8 +54,8 @@
 static void *blockedStateObserverChangeKVOContext = &blockedStateObserverChangeKVOContext;
 static bool stateDidChange = false;
 static bool receivedLoadMessage = false;
-static bool hasVideoInPictureInPictureValue = false;
-static bool hasVideoInPictureInPictureCalled = false;
+static bool st_hasVideoInPictureInPictureValue = false;
+static bool st_hasVideoInPictureInPictureCalled = false;
 
 static RetainPtr<TestWKWebView> webViewForScreenTimeTests(WKWebViewConfiguration *configuration = nil, BOOL addToWindow = YES)
 {
@@ -106,10 +107,6 @@ static void testSuppressUsageRecordingWithDataStore(RetainPtr<WKWebsiteDataStore
 
     EXPECT_EQ(suppressUsageRecordingExpectation, suppressUsageRecording);
 }
-
-@interface STWebpageController ()
-@property (setter=setURLIsBlocked:) BOOL URLIsBlocked;
-@end
 
 @interface STWebHistory ()
 @property (readonly, copy) STWebHistoryProfileIdentifier profileIdentifier;
@@ -565,8 +562,8 @@ TEST(ScreenTime, URLIsPlayingVideo)
 
 - (void)_webView:(WKWebView *)webView hasVideoInPictureInPictureDidChange:(BOOL)hasVideoInPictureInPicture
 {
-    hasVideoInPictureInPictureValue = hasVideoInPictureInPicture;
-    hasVideoInPictureInPictureCalled = true;
+    st_hasVideoInPictureInPictureValue = hasVideoInPictureInPicture;
+    st_hasVideoInPictureInPictureCalled = true;
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
@@ -612,8 +609,8 @@ TEST(ScreenTime, URLIsPictureInPicture)
     TestWebKitAPI::Util::run(&receivedLoadMessage);
     TestWebKitAPI::Util::run(&childRestrictionsDone);
 
-    hasVideoInPictureInPictureValue = false;
-    hasVideoInPictureInPictureCalled = false;
+    st_hasVideoInPictureInPictureValue = false;
+    st_hasVideoInPictureInPictureCalled = false;
 
     while (![webView _canTogglePictureInPicture])
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
@@ -621,8 +618,8 @@ TEST(ScreenTime, URLIsPictureInPicture)
     ASSERT_FALSE([webView _isPictureInPictureActive]);
     [webView _togglePictureInPicture];
 
-    TestWebKitAPI::Util::run(&hasVideoInPictureInPictureCalled);
-    EXPECT_TRUE(hasVideoInPictureInPictureValue);
+    TestWebKitAPI::Util::run(&st_hasVideoInPictureInPictureCalled);
+    EXPECT_TRUE(st_hasVideoInPictureInPictureValue);
     EXPECT_TRUE([[webView _screenTimeWebpageController] URLIsPictureInPicture]);
 
     // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
@@ -631,12 +628,12 @@ TEST(ScreenTime, URLIsPictureInPicture)
     ASSERT_TRUE([webView _isPictureInPictureActive]);
     ASSERT_TRUE([webView _canTogglePictureInPicture]);
 
-    hasVideoInPictureInPictureCalled = false;
+    st_hasVideoInPictureInPictureCalled = false;
 
     [webView _togglePictureInPicture];
 
-    TestWebKitAPI::Util::run(&hasVideoInPictureInPictureCalled);
-    EXPECT_FALSE(hasVideoInPictureInPictureValue);
+    TestWebKitAPI::Util::run(&st_hasVideoInPictureInPictureCalled);
+    EXPECT_FALSE(st_hasVideoInPictureInPictureValue);
     EXPECT_FALSE([[webView _screenTimeWebpageController] URLIsPictureInPicture]);
 }
 
@@ -782,6 +779,76 @@ TEST(ScreenTime, RemoveData)
 
     for (NSURL *url in fetchedURLs.get())
         EXPECT_TRUE([deletedURLs containsObject:url]);
+}
+
+TEST(ScreenTime, RemoveDataDoesNotMatchUnanchoredHostSuffix)
+{
+    __block bool childRestrictionsDone = false;
+
+    RetainPtr exactMatchURL = adoptNS([[NSURL alloc] initWithString:@"https://github.com/WebKit/WebKit"]);
+    RetainPtr subdomainURL = adoptNS([[NSURL alloc] initWithString:@"https://www.github.com/apple"]);
+    RetainPtr unrelatedSuffixURL = adoptNS([[NSURL alloc] initWithString:@"https://notgithub.com/"]);
+
+    __block RetainPtr<NSSet<NSURL *>> fetchedURLs = adoptNS([[NSSet alloc] initWithArray:@[
+        exactMatchURL.get(),
+        subdomainURL.get(),
+        unrelatedSuffixURL.get()
+    ]]);
+
+    InstanceMethodSwizzler fetchHistorySwizzler {
+        PAL::getSTWebHistoryClassSingleton(),
+        @selector(fetchAllHistoryWithCompletionHandler:),
+        imp_implementationWithBlock(^(id object, void (^completionHandler)(NSSet<NSURL *> *urls, NSError *error)) {
+            completionHandler(fetchedURLs.get(), nil);
+        })
+    };
+
+    __block RetainPtr<NSMutableSet<NSURL *>> deletedURLs = adoptNS([[NSMutableSet alloc] init]);
+    InstanceMethodSwizzler deleteHistorySwizzler {
+        PAL::getSTWebHistoryClassSingleton(),
+        @selector(deleteHistoryForURL:),
+        imp_implementationWithBlock(^(id object, NSURL *url) {
+            [deletedURLs addObject:url];
+        })
+    };
+
+    RetainPtr dataTypeScreenTime = adoptNS([[NSSet alloc] initWithArray:@[ WKWebsiteDataTypeScreenTime ]]);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
+
+    RetainPtr webView = webViewForScreenTimeTests(configuration.get());
+
+    RetainPtr request = [NSURLRequest requestWithURL:exactMatchURL.get()];
+    auto swizzle = swizzleEnforcesChildRestrictions(childRestrictionsDone);
+    [webView synchronouslyLoadSimulatedRequest:request.get() responseHTMLString:@""];
+    TestWebKitAPI::Util::run(&childRestrictionsDone);
+
+    __block bool done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:dataTypeScreenTime.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        // Remove data only for "github.com". The unrelated "notgithub.com" record is left in place;
+        // it must not be deleted just because its host ends with the literal "github.com".
+        RetainPtr<NSMutableArray<WKWebsiteDataRecord *>> recordsToRemove = adoptNS([[NSMutableArray alloc] init]);
+        for (WKWebsiteDataRecord *record in dataRecords) {
+            if ([record.displayName isEqualToString:@"github.com"])
+                [recordsToRemove addObject:record];
+        }
+
+        [websiteDataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] forDataRecords:recordsToRemove.get() completionHandler:^{
+            done = true;
+        }];
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
+    // "github.com" and its subdomain "www.github.com" should be deleted, but "notgithub.com"
+    // must survive: a bare hasSuffix: check would have incorrectly matched and deleted it.
+    EXPECT_EQ([deletedURLs count], 2u);
+    EXPECT_TRUE([deletedURLs containsObject:exactMatchURL.get()]);
+    EXPECT_TRUE([deletedURLs containsObject:subdomainURL.get()]);
+    EXPECT_FALSE([deletedURLs containsObject:unrelatedSuffixURL.get()]);
 }
 
 TEST(ScreenTime, OffscreenSystemScreenTimeBlockingView)

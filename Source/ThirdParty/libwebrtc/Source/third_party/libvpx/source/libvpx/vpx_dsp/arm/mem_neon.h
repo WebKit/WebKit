@@ -262,6 +262,10 @@ static INLINE void store_u8_8x3(uint8_t *s, const ptrdiff_t p,
   vst1_u8(s, s2);
 }
 
+static INLINE uint8x16_t load_u8_8x2(const uint8_t *s, ptrdiff_t p) {
+  return vcombine_u8(vld1_u8(s), vld1_u8(s + p));
+}
+
 static INLINE void load_u8_8x3(const uint8_t *s, const ptrdiff_t p,
                                uint8x8_t *const s0, uint8x8_t *const s1,
                                uint8x8_t *const s2) {
@@ -497,6 +501,34 @@ static INLINE void load_s16_4x4(const int16_t *s, const ptrdiff_t p,
   *s2 = vld1_s16(s);
   s += p;
   *s3 = vld1_s16(s);
+}
+
+static INLINE void load_s16_4x11(const int16_t *s, const ptrdiff_t p,
+                                 int16x4_t *s0, int16x4_t *s1, int16x4_t *s2,
+                                 int16x4_t *s3, int16x4_t *s4, int16x4_t *s5,
+                                 int16x4_t *s6, int16x4_t *s7, int16x4_t *s8,
+                                 int16x4_t *s9, int16x4_t *s10) {
+  *s0 = vld1_s16(s);
+  s += p;
+  *s1 = vld1_s16(s);
+  s += p;
+  *s2 = vld1_s16(s);
+  s += p;
+  *s3 = vld1_s16(s);
+  s += p;
+  *s4 = vld1_s16(s);
+  s += p;
+  *s5 = vld1_s16(s);
+  s += p;
+  *s6 = vld1_s16(s);
+  s += p;
+  *s7 = vld1_s16(s);
+  s += p;
+  *s8 = vld1_s16(s);
+  s += p;
+  *s9 = vld1_s16(s);
+  s += p;
+  *s10 = vld1_s16(s);
 }
 
 static INLINE void store_u16_4x4(uint16_t *s, const ptrdiff_t p,

@@ -520,8 +520,6 @@ EXPORTS
     ; GL_ANGLE_logic_op
     glLogicOpANGLE
 
-    ; GL_ANGLE_lossy_etc_decode
-
     ; GL_ANGLE_memory_object_flags
     glTexStorageMemFlags2DANGLE
     glTexStorageMemFlags2DMultisampleANGLE
@@ -639,10 +637,6 @@ EXPORTS
     ; GL_ANGLE_texture_compression_dxt3
 
     ; GL_ANGLE_texture_compression_dxt5
-
-    ; GL_ANGLE_texture_external_update
-    glInvalidateTextureANGLE
-    glTexImage2DExternalANGLE
 
     ; GL_ANGLE_texture_multisample
     glGetMultisamplefvANGLE

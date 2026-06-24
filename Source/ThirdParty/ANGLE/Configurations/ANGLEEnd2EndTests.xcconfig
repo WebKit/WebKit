@@ -31,17 +31,7 @@ ALTERNATE_HEADER_SEARCH_PATHS_iosmac = $(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_FRAME
 HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS) ${BUILT_PRODUCTS_DIR}/usr/local/include $(ANGLE_HEADER_PATH_PREFIX)/src/tests/ $(inherited);
 GCC_PREPROCESSOR_DEFINITIONS = EGL_EGLEXT_PROTOTYPES=1 GL_GLES_PROTOTYPES=1 GL_GLEXT_PROTOTYPES=1 ANGLE_EGL_LIBRARY_NAME=\"\" ANGLE_GLESV2_LIBRARY_NAME=\"\" ANGLE_MESA_EGL_LIBRARY_NAME=\"mesa-libEGL\" ANGLE_MESA_GLESV2_LIBRARY_NAME=\"mesa-libGLESv2\" ANGLE_VULKAN_SECONDARIES_EGL_LIBRARY_NAME=\"vk-libEGL\" ANGLE_VULKAN_SECONDARIES_GLESV2_LIBRARY_NAME=\"vk-libGLESv2\" $(inherited);
 
-ANGLE_OTHER_LDFLAGS = -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface -framework Metal $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME)) -Wl;
-ANGLE_OTHER_LDFLAGS_iphoneos = -framework UIKit -lz;
-ANGLE_OTHER_LDFLAGS_iphonesimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);
-ANGLE_OTHER_LDFLAGS_watchos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
-ANGLE_OTHER_LDFLAGS_watchsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
-ANGLE_OTHER_LDFLAGS_appletvos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
-ANGLE_OTHER_LDFLAGS_appletvsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
-ANGLE_OTHER_LDFLAGS_xros = $(ANGLE_OTHER_LDFLAGS_iphoneos);
-ANGLE_OTHER_LDFLAGS_xrsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
-ANGLE_OTHER_LDFLAGS_maccatalyst = -framework UIKit -framework IOKit -lz;
-ANGLE_OTHER_LDFLAGS_macosx = -framework Cocoa -framework IOKit -lz;
+ANGLE_OTHER_LDFLAGS = -framework AppKit -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface -framework Metal -framework Cocoa -framework IOKit -lz;
 
 WARNING_CFLAGS = $(inherited) -Wno-global-constructors;
 GCC_WARN_64_TO_32_BIT_CONVERSION = NO;

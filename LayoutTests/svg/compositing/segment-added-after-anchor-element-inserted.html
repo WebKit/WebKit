@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html class="reftest-wait">
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsPixels = true;
+    }
+
+    // Inserting a composited anchor before the plain middle rect must not change the rendering (red, green, blue).
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            const svg = document.querySelector('svg');
+            const middle = document.getElementById('middle');
+            const newAnchor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            newAnchor.setAttribute('class', 'anchor');
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', '10');
+            rect.setAttribute('y', '10');
+            rect.setAttribute('width', '120');
+            rect.setAttribute('height', '120');
+            rect.setAttribute('fill', 'red');
+            newAnchor.appendChild(rect);
+            svg.insertBefore(newAnchor, middle);
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                document.documentElement.classList.remove('reftest-wait');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }));
+        }));
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <rect id="middle" x="40" y="40" width="120" height="120" fill="green"/>
+    <g id="last-anchor" class="anchor"><rect x="70" y="70" width="120" height="120" fill="blue"/></g>
+</svg>
+</body>
+</html>

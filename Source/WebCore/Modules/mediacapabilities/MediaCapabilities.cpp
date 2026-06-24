@@ -38,6 +38,7 @@
 #include "MediaCapabilitiesEncodingInfo.h"
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
+#include "NavigatorBase.h"
 #include "PlatformMediaCapabilitiesLogging.h"
 #include "PlatformMediaEngineConfigurationFactory.h"
 #include "Settings.h"
@@ -47,6 +48,16 @@
 #include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
+
+MediaCapabilities::MediaCapabilities(NavigatorBase& navigator)
+    : m_navigator(navigator)
+{
+}
+
+NavigatorBase* MediaCapabilities::navigator()
+{
+    return m_navigator.get();
+}
 
 static bool isValidMediaMIMEType(const ContentType& contentType)
 {

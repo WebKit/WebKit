@@ -12,9 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_REVERB_DECAY_ESTIMATOR_H_
 
 #include <optional>
+#include <span>
 #include <vector>
-
-#include "api/array_view.h"
 
 namespace webrtc {
 
@@ -27,7 +26,7 @@ class ReverbDecayEstimator {
   explicit ReverbDecayEstimator(const EchoCanceller3Config& config);
   ~ReverbDecayEstimator();
   // Updates the decay estimate.
-  void Update(ArrayView<const float> filter,
+  void Update(std::span<const float> filter,
               const std::optional<float>& filter_quality,
               int filter_delay_blocks,
               bool usable_linear_filter,
@@ -45,8 +44,8 @@ class ReverbDecayEstimator {
   void Dump(ApmDataDumper* data_dumper) const;
 
  private:
-  void EstimateDecay(ArrayView<const float> filter, int peak_block);
-  void AnalyzeFilter(ArrayView<const float> filter);
+  void EstimateDecay(std::span<const float> filter, int peak_block);
+  void AnalyzeFilter(std::span<const float> filter);
 
   void ResetDecayEstimation();
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AudioVideoRenderer.h>
+#include <WebCore/PeriodicSharedTimer.h>
 #include <WebCore/PlatformDynamicRangeLimit.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/TrackInfo.h>
@@ -34,6 +35,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RetainPtr.h>
@@ -55,6 +57,7 @@ class EffectiveRateChangedListener;
 class MediaSample;
 class NativeImage;
 class PixelBufferConformerCV;
+class SharedTimebase;
 class VideoLayerManagerObjC;
 class VideoMediaSampleRenderer;
 
@@ -62,10 +65,12 @@ class AudioVideoRendererAVFObjC
     : public AudioVideoRenderer
     , public WebAVSampleBufferListenerClient
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioVideoRendererAVFObjC>
+    , private PeriodicSharedTimer::Client
     , private LoggerHelper {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioVideoRendererAVFObjC, WEBCORE_EXPORT);
 public:
-    static Ref<AudioVideoRendererAVFObjC> create(const Logger& logger, uint64_t logIdentifier) { return adoptRef(*new AudioVideoRendererAVFObjC(logger, logIdentifier)); }
+    WEBCORE_EXPORT static Ref<AudioVideoRendererAVFObjC> create(const Logger&, uint64_t logIdentifier);
+    WEBCORE_EXPORT static Ref<AudioVideoRendererAVFObjC> create(const Logger&, uint64_t logIdentifier, UniqueRef<SharedTimebase>&&);
 
     ~AudioVideoRendererAVFObjC();
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
@@ -84,7 +89,7 @@ public:
 
     bool timeIsProgressing() const final;
     MediaTime currentTime() const final;
-    void notifyTimeReachedAndStall(const MediaTime&, Function<void(const MediaTime&)>&&) final;
+    Ref<MediaTimePromise> notifyTimeReachedAndStall(const MediaTime&) final;
     void cancelTimeReachedAction() final;
     void performTaskAtTime(const MediaTime&, Function<void(const MediaTime&)>&&) final;
     void setTimeObserver(Seconds, Function<void(const MediaTime&)>&&) final;
@@ -109,6 +114,7 @@ public:
     void notifyEffectiveRateChanged(Function<void(double)>&&) final;
     bool seeking() const final;
     void setScreenReserved(bool) final;
+    SharedTimebase* sharedTimebase() final { return m_sharedTimebase.get(); }
 
     // AudioInterface
     void setVolume(float) final;
@@ -153,9 +159,10 @@ public:
     void isInFullscreenOrPictureInPictureChanged(bool) final;
 
 private:
-    WEBCORE_EXPORT AudioVideoRendererAVFObjC(const Logger&, uint64_t);
+    WEBCORE_EXPORT AudioVideoRendererAVFObjC(const Logger&, uint64_t, std::unique_ptr<SharedTimebase>&&);
 
     MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
+    void setTimeFloor(const MediaTime&);
     void maybeCompleteSeek();
     bool shouldBePlaying() const;
     bool allRenderersHaveAvailableSamples() const { return m_allRenderersHaveAvailableSamples; }
@@ -223,6 +230,12 @@ private:
     // changes. The cached value reflects the rate we set, not the actual
     // timebase rate.
     float synchronizerRate() const { return m_lastSetSyncRate; }
+    void handleEffectiveRateChanged(double);
+    void releaseStartupGateAndForwardRate();
+    void cancelStartupGateObserver();
+    void updateSharedTimebase();
+    void publishSnapshot(MediaTime currentTime, double playbackRate);
+    void periodicSharedTimerFired() final;
     bool updateLastPixelBuffer();
     void maybePurgeLastPixelBuffer();
     void setNeedsPlaceholderImage(bool);
@@ -286,6 +299,7 @@ private:
     Function<void(const MediaTime&, FloatSize)> m_sizeChangedCallback;
 
     RetainPtr<id> m_currentTimeObserver;
+    std::optional<MediaTimePromise::Producer> m_stallProducer;
     RetainPtr<id> m_performTaskObserver;
     RetainPtr<id> m_timeChangedObserver;
 
@@ -306,6 +320,7 @@ private:
     String m_audioOutputDeviceId;
 #endif
 
+    mutable Lock m_publishLock;
     // Seek Logic
     MediaTime m_lastSeekTime;
     SeekState m_seekState { SeekCompleted };
@@ -353,8 +368,20 @@ private:
     // Video Frame metadata gathering
     RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     MonotonicTime m_startupTime;
+    const std::unique_ptr<SharedTimebase> m_sharedTimebase;
+    bool m_registeredWithSharedTimer { false };
+    std::optional<MediaTime> m_stallCap WTF_GUARDED_BY_LOCK(m_publishLock);
+    // Floor for SharedTimebase publishes; locked so off-main-thread publishers can read it.
+    MediaTime m_publishedTimeFloor WTF_GUARDED_BY_LOCK(m_publishLock);
 
     RefPtr<EffectiveRateChangedListener> m_effectiveRateChangedListener;
+    Function<void(double)> m_effectiveRateChangedCallback;
+    double m_lastForwardedEffectiveRate { 0 };
+    // Set between a 0 → non-zero rate notification and the moment the
+    // synchronizer's timebase is observed to actually move. While set,
+    // effectiveRate() returns 0 — masking AVSampleBufferRenderSynchronizer's
+    // habit of publishing a non-zero rate before its timebase starts moving.
+    RetainPtr<id> m_startupGateObserver;
 
     mutable std::unique_ptr<PixelBufferConformerCV> m_rgbConformer;
 

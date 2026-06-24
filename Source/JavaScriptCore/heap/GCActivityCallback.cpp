@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,6 +76,20 @@ void GCActivityCallback::scheduleTimer(Seconds newDelay)
         newDelay = *timeUntilFire - delta;
     setTimeUntilFire(newDelay);
 }
+
+double GCActivityCallback::deathRate(size_t sizeBefore, size_t sizeAfter)
+{
+    if (!sizeBefore)
+        return 1.0;
+    if (sizeAfter > sizeBefore) {
+        // GC caused the heap to grow(!)
+        // This could happen if the we visited more extra memory than was reported allocated.
+        // We don't return a negative death rate, since that would schedule the next GC in the past.
+        return 0;
+    }
+    return static_cast<double>(sizeBefore - sizeAfter) / static_cast<double>(sizeBefore);
+}
+
 
 void GCActivityCallback::didAllocate(JSC::Heap& heap, size_t bytes)
 {

@@ -40,9 +40,12 @@
 #include "JSHTMLAreaElement.h"
 #include "JSMessageEvent.h"
 #include "JSOrigin.h"
+#include "JSSVGAElement.h"
 #include "JSWorkerGlobalScope.h"
 #include "LocalDOMWindow.h"
+#include "SVGNames.h"
 #include "SecurityOrigin.h"
+#include "XLinkNames.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -111,6 +114,10 @@ ExceptionOr<Ref<Origin>> Origin::from(ScriptExecutionContext& context, JSC::JSVa
         Ref areaElement = jsAreaElement->wrapped();
         if (areaElement->hasAttributeWithoutSynchronization(hrefAttr))
             return create(SecurityOrigin::create(areaElement->href()));
+    } else if (auto* jsSVGAElement = dynamicDowncast<JSSVGAElement>(value)) {
+        Ref svgAElement = jsSVGAElement->wrapped();
+        if (svgAElement->hasAttribute(SVGNames::hrefAttr) || svgAElement->hasAttribute(XLinkNames::hrefAttr))
+            return create(SecurityOrigin::create(svgAElement->hrefURL()));
     }
     return Exception { ExceptionCode::TypeError };
 }

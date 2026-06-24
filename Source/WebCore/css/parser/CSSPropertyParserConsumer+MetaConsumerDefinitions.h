@@ -26,11 +26,11 @@
 #pragma once
 
 #include "CSSCalcSymbolsAllowed.h"
-#include "CSSCalcValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserOptions.h"
 #include "CSSPropertyParserState.h"
+#include "CSSUnevaluatedCalc.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -229,12 +229,12 @@ template<typename Primitive> struct FunctionConsumerForCalcValues {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (RefPtr value = CSSCalc::Value::parse(rangeCopy, state, Primitive::category, Primitive::range, WTF::move(symbolsAllowed), options)) {
-            range = rangeCopy;
-            return {{ value.releaseNonNull() }};
-        }
+        auto value = Primitive::Calc::parse(rangeCopy, state, WTF::move(symbolsAllowed), options);
+        if (!value)
+            return std::nullopt;
 
-        return std::nullopt;
+        range = rangeCopy;
+        return value;
     }
 };
 
@@ -245,12 +245,11 @@ template<typename T> struct KeywordConsumer {
     {
         ASSERT(range.peek().type() == IdentToken);
 
-        if (range.peek().id() == T::value) {
-            range.consumeIncludingWhitespace();
-            return T { };
-        }
+        if (range.peek().id() != T::value)
+            return std::nullopt;
 
-        return std::nullopt;
+        range.consumeIncludingWhitespace();
+        return T { };
     }
 };
 

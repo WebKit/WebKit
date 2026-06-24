@@ -29,6 +29,7 @@
 #include "vp8/encoder/ethreading.h"
 #endif
 #include "vp8/encoder/onyx_int.h"
+#include "vp8/encoder/block.h"
 #include "vpx/vp8cx.h"
 #include "vp8/encoder/firstpass.h"
 #include "vp8/common/onyx.h"
@@ -199,6 +200,9 @@ static vpx_codec_err_t validate_config(vpx_codec_alg_priv_t *ctx,
   RANGE_CHECK_BOOL(vp8_cfg, enable_auto_alt_ref);
   RANGE_CHECK(vp8_cfg, cpu_used, -16, 16);
 
+  /* Prevent (static_thresh >> 7) from exceeding MAX_ERROR_BINS (1024) */
+  RANGE_CHECK_HI(vp8_cfg, static_thresh, (MAX_ERROR_BINS << 7) - 1);
+
 #if CONFIG_REALTIME_ONLY && !CONFIG_TEMPORAL_DENOISING
   RANGE_CHECK(vp8_cfg, noise_sensitivity, 0, 0);
 #else
@@ -300,6 +304,9 @@ static vpx_codec_err_t validate_img(vpx_codec_alg_priv_t *ctx,
 
   if ((img->d_w != ctx->cfg.g_w) || (img->d_h != ctx->cfg.g_h))
     ERROR("Image size must match encoder init configuration size");
+  assert(img->fmt & VPX_IMG_FMT_PLANAR);
+  if (img->stride[VPX_PLANE_U] != img->stride[VPX_PLANE_V])
+    ERROR("Image U/V strides must match");
 
   return VPX_CODEC_OK;
 }
@@ -796,6 +803,7 @@ static vpx_codec_err_t image2yuvconfig(const vpx_image_t *img,
   yv12->uv_height = uv_h;
 
   yv12->y_stride = img->stride[VPX_PLANE_Y];
+  assert(img->stride[VPX_PLANE_U] == img->stride[VPX_PLANE_V]);
   yv12->uv_stride = img->stride[VPX_PLANE_U];
 
   yv12->border = (img->stride[VPX_PLANE_Y] - img->w) / 2;

@@ -4550,7 +4550,7 @@ void Track::Info::Clear() {
   codecNameAsUTF8 = NULL;
 }
 
-int Track::Info::CopyStr(char* Info::*str, Info& dst_) const {
+int Track::Info::CopyStr(char* Info::* str, Info& dst_) const {
   if (str == static_cast<char * Info::*>(NULL))
     return -1;
 

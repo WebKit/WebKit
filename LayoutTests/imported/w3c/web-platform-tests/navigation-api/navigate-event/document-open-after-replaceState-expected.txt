@@ -1,0 +1,4 @@
+
+
+PASS document.open() after replaceState should not crash when updating navigation entries
+

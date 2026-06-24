@@ -103,8 +103,19 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
 #endif
     {
         RefPtr webPage { m_webPage.get() };
-        matchCount = protect(webPage->corePage())->countFindMatches(string, core(options), maxMatchCount + 1);
-        protect(webPage->corePage())->unmarkAllTextMatches();
+        bool shouldShowOverlay = options.contains(FindOptions::ShowOverlay);
+        bool shouldShowHighlight = options.contains(FindOptions::ShowHighlight);
+        if (shouldShowOverlay || shouldShowHighlight) {
+            auto result = protect(webPage->corePage())->findTextMatches(string, core(options), maxMatchCount);
+            matchCount = result.ranges.size();
+            protect(webPage->corePage())->unmarkAllTextMatches();
+            protect(webPage->corePage())->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
+        } else {
+            matchCount = protect(webPage->corePage())->countFindMatches(string, core(options), maxMatchCount + 1);
+            protect(webPage->corePage())->unmarkAllTextMatches();
+        }
+
+        updateFindPageOverlay(shouldShowOverlay);
     }
 
     if (matchCount > maxMatchCount)
@@ -258,7 +269,6 @@ void FindController::updateFindUIAfterFindingAllMatches(bool found, const String
     RefPtr pluginView = mainFramePlugIn();
 #endif
 
-    bool shouldShowOverlay = found && options.contains(FindOptions::ShowOverlay);
     if (!found) {
         if (selectedFrame && !options.contains(FindOptions::DoNotSetSelection))
             protect(selectedFrame->selection())->clear();
@@ -266,6 +276,7 @@ void FindController::updateFindUIAfterFindingAllMatches(bool found, const String
         return;
     }
 
+    bool shouldShowOverlay = found && options.contains(FindOptions::ShowOverlay);
     bool shouldShowHighlight = options.contains(FindOptions::ShowHighlight);
     if (shouldShowOverlay || shouldShowHighlight) {
         protect(webPage->corePage())->unmarkAllTextMatches();
@@ -324,6 +335,18 @@ void FindController::findStringIncludingImages(const String& string, OptionSet<F
 
 void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
+    findString(string, options, maxMatchCount, ShouldReuseLastFoundRange::No, WTF::move(completionHandler));
+}
+
+void FindController::selectLastFoundRange(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, int32_t, bool)>&& completionHandler)
+{
+    findString(string, options, maxMatchCount, ShouldReuseLastFoundRange::Yes, [completionHandler = WTF::move(completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t, int32_t matchIndex, bool didWrap) mutable {
+        completionHandler(frameID, WTF::move(matchRects), matchIndex, didWrap);
+    });
+}
+
+void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, ShouldReuseLastFoundRange shouldReuseLastFoundRange, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
+{
 #if ENABLE(PDF_PLUGIN)
     RefPtr pluginView = mainFramePlugIn();
 #endif
@@ -354,20 +377,38 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
         }
     }
 
-    bool found;
+    bool found = false;
     std::optional<FrameIdentifier> idOfFrameContainingString;
     auto didWrap = WebCore::DidWrap::No;
 #if ENABLE(PDF_PLUGIN)
     if (pluginView) {
+        m_lastFoundRange = std::nullopt;
         found = pluginView->findString(string, coreOptions, maxMatchCount);
         if (auto* frame = pluginView->frame(); frame && found)
             idOfFrameContainingString = frame->frameID();
     } else
 #endif
     {
-        auto [frameID, _] = protect(webPage->corePage())->findString(string, coreOptions, &didWrap);
-        idOfFrameContainingString = frameID;
-        found = idOfFrameContainingString.has_value();
+        if (shouldReuseLastFoundRange == ShouldReuseLastFoundRange::Yes && m_lastFoundRange) {
+            RefPtr frame = m_lastFoundRange->start.document().frame();
+            if (frame && m_lastFoundRange->start.container->isConnected()) {
+                if (RefPtr previousFrame = dynamicDowncast<LocalFrame>(protect(webPage->corePage())->focusController().focusedFrame()); previousFrame && previousFrame != frame)
+                    protect(previousFrame->selection())->clear();
+                protect(frame->selection())->setSelection(*m_lastFoundRange);
+                protect(webPage->corePage())->focusController().setFocusedFrame(frame.get());
+                idOfFrameContainingString = frame->frameID();
+                found = true;
+                didWrap = m_lastFoundRangeDidWrap ? WebCore::DidWrap::Yes : WebCore::DidWrap::No;
+            }
+        }
+
+        if (!found) {
+            auto [frameID, range] = protect(webPage->corePage())->findString(string, coreOptions, &didWrap);
+            idOfFrameContainingString = frameID;
+            found = idOfFrameContainingString.has_value();
+            m_lastFoundRange = WTF::move(range);
+            m_lastFoundRangeDidWrap = didWrap == WebCore::DidWrap::Yes;
+        }
     }
 
     if (found && !options.contains(FindOptions::DoNotSetSelection)) {
@@ -461,6 +502,7 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 void FindController::hideFindUI()
 {
     m_findMatches.clear();
+    m_lastFoundRange = std::nullopt;
     if (RefPtr findPageOverlay = m_findPageOverlay.get())
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
 

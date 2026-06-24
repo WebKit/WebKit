@@ -29,8 +29,6 @@
 #include "AnimationUtilities.h"
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
-#include "StyleLengthWrapper+Blending.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
@@ -67,7 +65,7 @@ auto CSSValueConversion<VerticalAlign>::operator()(BuilderState& state, const CS
         return CSS::Keyword::Baseline { };
     }
 
-    return toStyleFromCSSValue<VerticalAlignLength>(state, value);
+    return toStyleFromCSSValue<VerticalAlign::LengthPercentage>(state, value);
 }
 
 // MARK: - Blending
@@ -81,18 +79,18 @@ auto Blending<VerticalAlign>::requiresInterpolationForAccumulativeIteration(cons
 {
     if (a.m_value.index() != b.m_value.index())
         return true;
-    if (!a.isLength())
+    if (!a.isLengthPercentage())
         return false;
-    return Style::requiresInterpolationForAccumulativeIteration(*a.tryLength(), *b.tryLength());
+    return Style::requiresInterpolationForAccumulativeIteration(*a.tryLengthPercentage(), *b.tryLengthPercentage());
 }
 
 auto Blending<VerticalAlign>::blend(const VerticalAlign& a, const VerticalAlign& b, const BlendingContext& context) -> VerticalAlign
 {
-    if (!a.isLength() || !b.isLength())
+    if (!a.isLengthPercentage() || !b.isLengthPercentage())
         return context.progress < 0.5 ? a : b;
 
     ASSERT(canBlend(a, b));
-    return Style::blend(*a.tryLength(), *b.tryLength(), context);
+    return Style::blend(*a.tryLengthPercentage(), *b.tryLengthPercentage(), context);
 }
 
 } // namespace Style

@@ -118,11 +118,16 @@ struct NodeHashSetPolicy;
 //   if (ducks.contains("dewey")) {
 //     std::cout << "We found dewey!" << std::endl;
 //   }
-template <class T, class Hash = DefaultHashContainerHash<T>,
-          class Eq = DefaultHashContainerEq<T>, class Alloc = std::allocator<T>>
+template <
+    class T,
+    class Hash = typename container_internal::NodeHashSetPolicy<T>::DefaultHash,
+    class Eq = typename container_internal::NodeHashSetPolicy<T>::DefaultEq,
+    class Alloc =
+        typename container_internal::NodeHashSetPolicy<T>::DefaultAlloc>
 class ABSL_ATTRIBUTE_OWNER node_hash_set
-    : public absl::container_internal::raw_hash_set<
-          absl::container_internal::NodeHashSetPolicy<T>, Hash, Eq, Alloc> {
+    : public absl::container_internal::InstantiateRawHashSet<
+          absl::container_internal::NodeHashSetPolicy<T>, Hash, Eq,
+          Alloc>::type {
   using Base = typename node_hash_set::raw_hash_set;
 
  public:
@@ -166,6 +171,11 @@ class ABSL_ATTRIBUTE_OWNER node_hash_set
   //
   //   std::vector<std::string> v = {"a", "b"};
   //   absl::node_hash_set<std::string> set7(v.begin(), v.end());
+  //
+  // * from_range constructor (C++23)
+  //
+  //   std::vector<std::string> v = {"a", "b"};
+  //   absl::node_hash_set<std::string> set8(std::from_range, v);
   node_hash_set() {}
   using Base::Base;
 
@@ -502,18 +512,20 @@ namespace container_internal {
 // There is no guarantees on the order of the function calls.
 // Erasure and/or insertion of elements in the function is not allowed.
 template <typename T, typename H, typename E, typename A, typename Function>
-decay_t<Function> c_for_each_fast(const node_hash_set<T, H, E, A>& c,
-                                  Function&& f) {
+std::decay_t<Function> c_for_each_fast(const node_hash_set<T, H, E, A>& c,
+                                       Function&& f) {
   container_internal::ForEach(f, &c);
   return f;
 }
 template <typename T, typename H, typename E, typename A, typename Function>
-decay_t<Function> c_for_each_fast(node_hash_set<T, H, E, A>& c, Function&& f) {
+std::decay_t<Function> c_for_each_fast(node_hash_set<T, H, E, A>& c,
+                                       Function&& f) {
   container_internal::ForEach(f, &c);
   return f;
 }
 template <typename T, typename H, typename E, typename A, typename Function>
-decay_t<Function> c_for_each_fast(node_hash_set<T, H, E, A>&& c, Function&& f) {
+std::decay_t<Function> c_for_each_fast(node_hash_set<T, H, E, A>&& c,
+                                       Function&& f) {
   container_internal::ForEach(f, &c);
   return f;
 }
@@ -529,24 +541,28 @@ struct NodeHashSetPolicy
   using init_type = T;
   using constant_iterators = std::true_type;
 
+  using DefaultHash = DefaultHashContainerHash<T>;
+  using DefaultEq = DefaultHashContainerEq<T>;
+  using DefaultAlloc = std::allocator<T>;
+
   template <class Allocator, class... Args>
   static T* new_element(Allocator* alloc, Args&&... args) {
     using ValueAlloc =
-        typename absl::allocator_traits<Allocator>::template rebind_alloc<T>;
+        typename std::allocator_traits<Allocator>::template rebind_alloc<T>;
     ValueAlloc value_alloc(*alloc);
-    T* res = absl::allocator_traits<ValueAlloc>::allocate(value_alloc, 1);
-    absl::allocator_traits<ValueAlloc>::construct(value_alloc, res,
-                                                  std::forward<Args>(args)...);
+    T* res = std::allocator_traits<ValueAlloc>::allocate(value_alloc, 1);
+    std::allocator_traits<ValueAlloc>::construct(value_alloc, res,
+                                                 std::forward<Args>(args)...);
     return res;
   }
 
   template <class Allocator>
   static void delete_element(Allocator* alloc, T* elem) {
     using ValueAlloc =
-        typename absl::allocator_traits<Allocator>::template rebind_alloc<T>;
+        typename std::allocator_traits<Allocator>::template rebind_alloc<T>;
     ValueAlloc value_alloc(*alloc);
-    absl::allocator_traits<ValueAlloc>::destroy(value_alloc, elem);
-    absl::allocator_traits<ValueAlloc>::deallocate(value_alloc, elem, 1);
+    std::allocator_traits<ValueAlloc>::destroy(value_alloc, elem);
+    std::allocator_traits<ValueAlloc>::deallocate(value_alloc, elem, 1);
   }
 
   template <class F, class... Args>

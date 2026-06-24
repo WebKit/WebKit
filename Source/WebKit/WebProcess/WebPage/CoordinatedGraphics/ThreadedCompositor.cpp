@@ -123,9 +123,10 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
 
-        if (m_useSkia)
+        if (m_useSkia) {
             PlatformDisplay::sharedDisplay().setSkiaGLContextForCurrentThread(WTF::move(context));
-        else {
+            m_threadSafeGrContext = PlatformDisplay::sharedDisplay().skiaGrContext()->threadSafeProxy();
+        } else {
             m_context = WTF::move(context);
             m_textureMapper = TextureMapper::create();
             if (!nativeSurfaceHandle)
@@ -165,6 +166,8 @@ void ThreadedCompositor::invalidate()
         m_textureMapper = nullptr;
         m_surface->willDestroyGLContext();
         m_context = nullptr;
+        if (m_useSkia)
+            PlatformDisplay::sharedDisplay().setSkiaGLContextForCurrentThread(nullptr);
     });
     m_sceneState = nullptr;
     m_layerTreeHost = nullptr;
@@ -260,7 +263,7 @@ void ThreadedCompositor::setSize(const IntSize& size, float deviceScaleFactor)
 }
 
 #if ENABLE(DAMAGE_TRACKING)
-void ThreadedCompositor::setDamagePropagationFlags(std::optional<OptionSet<DamagePropagationFlags>> flags)
+void ThreadedCompositor::setDamagePropagationSettings(std::optional<OptionSet<DamagePropagationFlags>> flags, unsigned rectangleThreshold)
 {
     m_damage.flags = flags;
     if ((m_damage.visualizer || m_damage.showSkiaDamage) && m_damage.flags) {
@@ -268,6 +271,11 @@ void ThreadedCompositor::setDamagePropagationFlags(std::optional<OptionSet<Damag
         // frame is invalidated in the next paint so that previous damage rects are cleared.
         m_damage.flags->remove(DamagePropagationFlags::UseForCompositing);
     }
+
+    rectangleThreshold = Damage::clampRectangleThreshold(rectangleThreshold);
+    m_damage.rectangleThreshold = rectangleThreshold;
+    if (m_surface)
+        m_surface->setFrameDamageRectangleThreshold(rectangleThreshold);
 }
 
 void ThreadedCompositor::enableFrameDamageNotificationForTesting()
@@ -288,9 +296,7 @@ void ThreadedCompositor::flushCompositingState(const OptionSet<CompositionReason
     }
 #endif
 
-    m_sceneState->rootLayer().flushCompositingState(reasons, m_useSkia);
-    for (auto& layer : m_sceneState->committedLayers())
-        layer->flushCompositingState(reasons, m_useSkia);
+    m_sceneState->flushCompositingState(reasons, m_useSkia);
 }
 
 void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)

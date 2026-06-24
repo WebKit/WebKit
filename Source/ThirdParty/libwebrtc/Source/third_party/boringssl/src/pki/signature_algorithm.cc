@@ -28,7 +28,7 @@ namespace {
 
 // These OIDs do not reference libcrypto's OBJ table, as that table is very
 // large and includes many more OIDs than we need. However, where OIDs are
-// already in the table, we reuse the |OBJ_ENC_*| constants to avoid needing to
+// already in the table, we reuse the `OBJ_ENC_*` constants to avoid needing to
 // specify them a second time.
 
 // From RFC 5912:
@@ -129,6 +129,45 @@ const uint8_t kOidRsaSsaPss[] = {OBJ_ENC_rsassaPss};
 //
 // In dotted notation: 1.2.840.113549.1.1.8
 const uint8_t kOidMgf1[] = {OBJ_ENC_mgf1};
+
+// From RFC 9881:
+//
+//     id-ml-dsa-44 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+//              country(16) us(840) organization(1) gov(101) csor(3)
+//              nistAlgorithm(4) sigAlgs(3) id-ml-dsa-44(17) }
+//
+// In dotted notation: 2.16.840.1.101.3.4.3.17
+const uint8_t kOidAlgMldsa44[] = {OBJ_ENC_ML_DSA_44};
+
+// From RFC 9881:
+//
+//     id-ml-dsa-65 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+//              country(16) us(840) organization(1) gov(101) csor(3)
+//              nistAlgorithm(4) sigAlgs(3) id-ml-dsa-65(18) }
+//
+// In dotted notation: 2.16.840.1.101.3.4.3.18
+const uint8_t kOidAlgMldsa65[] = {OBJ_ENC_ML_DSA_65};
+
+// From RFC 9881:
+//
+//     id-ml-dsa-87 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+//              country(16) us(840) organization(1) gov(101) csor(3)
+//              nistAlgorithm(4) sigAlgs(3) id-ml-dsa-87(19) }
+//
+// In dotted notation: 2.16.840.1.101.3.4.3.19
+const uint8_t kOidAlgMldsa87[] = {OBJ_ENC_ML_DSA_87};
+
+// From draft-davidben-tls-merkle-tree-certs-08:
+//
+//   id-alg-mtcProof OBJECT IDENTIFIER ::= {
+//       iso(1) identified-organization(3) dod(6) internet(1) security(5)
+//       mechanisms(5) pkix(7) algorithms(6) TBD}
+//
+// Also from said draft:
+//   For initial experimentation, early implementations of this design will use
+//   the OID 1.3.6.1.4.1.44363.47.0 instead of id-alg-mtcProof.
+const uint8_t kOidAlgMtcProofDraftDavidben08[] = {0x2b, 0x06, 0x01, 0x04, 0x01,
+                                                  0x82, 0xda, 0x4b, 0x2f, 0x00};
 
 // Returns true if the entirety of the input is a NULL value.
 [[nodiscard]] bool IsNull(der::Input input) {
@@ -383,8 +422,25 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
     return SignatureAlgorithm::kEcdsaSha512;
   }
 
+  // RFC 9881 requires that the parameters for ML-DSA algorithms be absent
+  // ("The contents of the parameters component for each algorithm MUST be
+  // absent.");
+  if (oid == der::Input(kOidAlgMldsa44) && params.empty()) {
+    return SignatureAlgorithm::kMldsa44;
+  }
+  if (oid == der::Input(kOidAlgMldsa65) && params.empty()) {
+    return SignatureAlgorithm::kMldsa65;
+  }
+  if (oid == der::Input(kOidAlgMldsa87) && params.empty()) {
+    return SignatureAlgorithm::kMldsa87;
+  }
+
   if (oid == der::Input(kOidRsaSsaPss)) {
     return ParseRsaPss(params);
+  }
+
+  if (oid == der::Input(kOidAlgMtcProofDraftDavidben08) && params.empty()) {
+    return SignatureAlgorithm::kMtcProofDraftDavidben08;
   }
 
   // Unknown signature algorithm.
@@ -425,6 +481,14 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
       return DigestAlgorithm::Sha384;
     case SignatureAlgorithm::kRsaPssSha512:
       return DigestAlgorithm::Sha512;
+
+    // RFC 5929 (nor other references) does not define digests to use for these
+    // signature algorithms:
+    case SignatureAlgorithm::kMtcProofDraftDavidben08:
+    case SignatureAlgorithm::kMldsa44:
+    case SignatureAlgorithm::kMldsa65:
+    case SignatureAlgorithm::kMldsa87:
+      return std::nullopt;
   }
   return std::nullopt;
 }

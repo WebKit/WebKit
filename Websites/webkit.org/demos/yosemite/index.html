@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yosemite Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <script src="https://cdn.apple-mapkit.com/mk/6.x.x/mapkit.core.js"
+        defer crossorigin
+        data-callback="initMapKit"
+        data-libraries="services,map,annotations"
+        data-token="eyJraWQiOiJKNkpQOUg3SjhGIiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJDNVU4OTI3MzZZIiwiaWF0IjoxNzgwNTA5NDU0LCJvcmlnaW4iOiJ3ZWJraXQub3JnIiwic2NvcGUiOiJtYXBraXRfanMifQ.QGze2dNLTdZEYkIBCEEfV9EXF9_VSTD0-KILsv1P9jXGU5B1bP-2KMYMr84muSgdqQ7EG0uwa0y9kCAju7ta7g"
+        ></script>
+</head>
+<body>
+
+<header>
+    <nav>
+        <div class="nav-logo">Park Maps</div>
+        <div class="nav-right">
+            <button class="btn-ghost-dark" id="toggle-map-type">Satellite</button>
+        </div>
+    </nav>
+    <div class="hero">
+        <div class="hero-inner">
+            <div class="hero-eyebrow">National Park · California</div>
+            <h1>Yosemite National Park</h1>
+            <p>Explore iconic valleys, ancient sequoias, and granite peaks. Plan your visit with real-time points of interest across the park.</p>
+        </div>
+    </div>
+</header>
+
+<div class="page">
+    <div class="content-grid">
+        <div class="map-embed">
+            <div id="map"></div>
+        </div>
+
+        <div class="poi-panel">
+            <div class="poi-list-card">
+                <div class="poi-list-header">
+                    <span>Points of Interest</span>
+                    <span class="results-badge" id="count"></span>
+                </div>
+                <div id="poi-list" role="list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<template id="tmpl-category-header">
+    <div class="category-header">
+        <span class="cat-label"></span>
+    </div>
+</template>
+
+<template id="tmpl-poi-item">
+    <button class="poi-item" type="button">
+        <div class="poi-item-info">
+            <span class="poi-item-name"></span>
+        </div>
+        <svg class="poi-item-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+</template>
+
+</body>
+</html>

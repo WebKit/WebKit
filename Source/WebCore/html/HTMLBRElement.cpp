@@ -27,7 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include "RenderLineBreak.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -74,7 +74,7 @@ void HTMLBRElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-RenderPtr<RenderElement> HTMLBRElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLBRElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     if (RenderElement::isContentDataSupported(style.content()))
         return RenderElement::createFor(*this, WTF::move(style));

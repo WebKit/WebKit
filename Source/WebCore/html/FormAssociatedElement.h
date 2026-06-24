@@ -41,13 +41,14 @@ public:
     virtual RefPtr<HTMLFormElement> formForBindings() const;
 
     void setForm(RefPtr<HTMLFormElement>&&);
+    void setFormSetByParser(HTMLFormElement* form) { ASSERT(!m_formSetByParser); m_formSetByParser = form; }
     virtual void elementInsertedIntoAncestor(Element&, Node::InsertionType);
     virtual void elementRemovedFromAncestor(Element&, Node::RemovalType);
 
     virtual FormAssociatedElement* NODELETE asFormAssociatedElement() = 0;
 
 protected:
-    explicit FormAssociatedElement(HTMLFormElement*);
+    FormAssociatedElement() = default;
 
     virtual void resetFormOwner() = 0;
     virtual void setFormInternal(RefPtr<HTMLFormElement>&&);

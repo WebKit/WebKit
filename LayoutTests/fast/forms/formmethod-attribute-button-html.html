@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -11,10 +11,14 @@
     <button id="button" formmethod="post" type="submit" name="button" value="value" />
 </form>
 <script>
-description("Test for the formmethod attribute in button tags.");
-if (window.testRunner) {
+window.jsTestIsAsync = true;
+
+// This load submits the form (navigating away) during parsing, before js-test.js can
+// arm waitUntilDone() on DOMContentLoaded, so call it synchronously here.
+if (window.testRunner)
     testRunner.waitUntilDone();
-}
+
+description("Test for the formmethod attribute in button tags.");
 
 var button = document.getElementById('button');
 
@@ -27,11 +31,9 @@ if (document.URL.substring(0, 4) == "file") {
         else
             testFailed('The formmethod attribute was not used');
 
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

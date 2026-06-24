@@ -1,11 +1,12 @@
 <html><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
     <head>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
     </head>
     <body>
         <button id="test" onclick="clickHandler()">Click Here</button>
         <div id="console"></div>
         <script>
+            window.jsTestIsAsync = true;
             var stolenEvent;
             var win;
             function clickHandler1()
@@ -26,8 +27,6 @@
             clickHandler = clickHandler1;
 
             if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
 
                 var button = document.getElementById("test");
 
@@ -41,7 +40,7 @@
                 window.event = stolenEvent;
                 button.click();
 
-                testRunner.notifyDone();
+                finishJSTest();
             }
         </script>
     </body>

@@ -63,6 +63,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <string_view>
@@ -71,11 +72,14 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "absl/base/attributes.h"
+#include "absl/base/internal/endian.h"
 #include "absl/base/internal/unaligned_access.h"
 #include "absl/base/optimization.h"
+#include "absl/base/options.h"
 #include "absl/base/port.h"
 #include "absl/container/fixed_array.h"
 #include "absl/hash/internal/city.h"
@@ -91,6 +95,54 @@
 #if defined(__cpp_lib_filesystem) && __cpp_lib_filesystem >= 201703L && \
     !defined(__XTENSA__)
 #include <filesystem>  // NOLINT
+#endif
+
+// We are allowed to use a non-portable hardware-accelerated implementation in
+// headers if ABSL_OPTION_INLINE_HW_ACCEL_STRATEGY != 0
+#if ABSL_OPTION_INLINE_HW_ACCEL_STRATEGY != 0
+
+// 32-bit builds with SSE 4.2 do not have _mm_crc32_u64, so the
+// __x86_64__ condition is necessary.
+#if defined(__SSE4_2__) && defined(__x86_64__)
+
+#include <x86intrin.h>
+#define ABSL_HASH_INTERNAL_HAS_CRC32
+#define ABSL_HASH_INTERNAL_CRC32_U64 _mm_crc32_u64
+#define ABSL_HASH_INTERNAL_CRC32_U32 _mm_crc32_u32
+#define ABSL_HASH_INTERNAL_CRC32_U8 _mm_crc32_u8
+
+// 32-bit builds with AVX do not have _mm_crc32_u64, so the _M_X64 condition is
+// necessary.
+#elif defined(_MSC_VER) && !defined(__clang__) && defined(__AVX__) && \
+    defined(_M_X64)
+
+// MSVC AVX (/arch:AVX) implies SSE 4.2.
+#include <intrin.h>
+#define ABSL_HASH_INTERNAL_HAS_CRC32
+#define ABSL_HASH_INTERNAL_CRC32_U64 _mm_crc32_u64
+#define ABSL_HASH_INTERNAL_CRC32_U32 _mm_crc32_u32
+#define ABSL_HASH_INTERNAL_CRC32_U8 _mm_crc32_u8
+
+#elif defined(__ARM_FEATURE_CRC32)
+
+#include <arm_acle.h>
+#define ABSL_HASH_INTERNAL_HAS_CRC32
+// Casting to uint32_t to be consistent with x86 intrinsic (_mm_crc32_u64
+// accepts crc as 64 bit integer).
+#define ABSL_HASH_INTERNAL_CRC32_U64(crc, data) \
+  __crc32cd(static_cast<uint32_t>(crc), data)
+#define ABSL_HASH_INTERNAL_CRC32_U32 __crc32cw
+#define ABSL_HASH_INTERNAL_CRC32_U8 __crc32cb
+
+#endif  // Platform tests
+
+#endif  // ABSL_OPTION_INLINE_HW_ACCEL_STRATEGY != 0
+
+
+#if ABSL_OPTION_INLINE_HW_ACCEL_STRATEGY == 1
+#ifndef ABSL_HASH_INTERNAL_HAS_CRC32
+#error "Hardware acceleration is required by ABSL_OPTION_INLINE_HW_ACCEL_STRATEGY but not supported on this platform; see absl/base/options.h"
+#endif
 #endif
 
 namespace absl {
@@ -366,7 +418,7 @@ struct HashWithSeed {
 // Convenience function that combines `hash_state` with the byte representation
 // of `value`.
 template <typename H, typename T,
-          absl::enable_if_t<FitsIn64Bits<T>::value, int> = 0>
+          std::enable_if_t<FitsIn64Bits<T>::value, int> = 0>
 H hash_bytes(H hash_state, const T& value) {
   const unsigned char* start = reinterpret_cast<const unsigned char*>(&value);
   uint64_t v;
@@ -383,7 +435,7 @@ H hash_bytes(H hash_state, const T& value) {
   return CombineRaw()(std::move(hash_state), v);
 }
 template <typename H, typename T,
-          absl::enable_if_t<!FitsIn64Bits<T>::value, int> = 0>
+          std::enable_if_t<!FitsIn64Bits<T>::value, int> = 0>
 H hash_bytes(H hash_state, const T& value) {
   const unsigned char* start = reinterpret_cast<const unsigned char*>(&value);
   return H::combine_contiguous(std::move(hash_state), start, sizeof(value));
@@ -552,7 +604,7 @@ AbslHashValue(H hash_state, const std::pair<T1, T2>& p) {
 // Helper function for hashing a tuple. The third argument should
 // be an index_sequence running from 0 to tuple_size<Tuple> - 1.
 template <typename H, typename Tuple, size_t... Is>
-H hash_tuple(H hash_state, const Tuple& t, absl::index_sequence<Is...>) {
+H hash_tuple(H hash_state, const Tuple& t, std::index_sequence<Is...>) {
   return H::combine(std::move(hash_state), std::get<Is>(t)...);
 }
 
@@ -563,11 +615,11 @@ template <typename H, typename... Ts>
 // for now.
 H
 #else   // _MSC_VER
-typename std::enable_if<absl::conjunction<is_hashable<Ts>...>::value, H>::type
+typename std::enable_if<std::conjunction<is_hashable<Ts>...>::value, H>::type
 #endif  // _MSC_VER
 AbslHashValue(H hash_state, const std::tuple<Ts...>& t) {
   return hash_internal::hash_tuple(std::move(hash_state), t,
-                                   absl::make_index_sequence<sizeof...(Ts)>());
+                                   std::make_index_sequence<sizeof...(Ts)>());
 }
 
 // -----------------------------------------------------------------------------
@@ -612,7 +664,7 @@ H AbslHashValue(H hash_state, absl::string_view str) {
 
 // Support std::wstring, std::u16string and std::u32string.
 template <typename Char, typename Alloc, typename H,
-          typename = absl::enable_if_t<std::is_same<Char, wchar_t>::value ||
+          typename = std::enable_if_t<std::is_same<Char, wchar_t>::value ||
                                        std::is_same<Char, char16_t>::value ||
                                        std::is_same<Char, char32_t>::value>>
 H AbslHashValue(
@@ -623,7 +675,7 @@ H AbslHashValue(
 
 // Support std::wstring_view, std::u16string_view and std::u32string_view.
 template <typename Char, typename H,
-          typename = absl::enable_if_t<std::is_same<Char, wchar_t>::value ||
+          typename = std::enable_if_t<std::is_same<Char, wchar_t>::value ||
                                        std::is_same<Char, char16_t>::value ||
                                        std::is_same<Char, char32_t>::value>>
 H AbslHashValue(H hash_state, std::basic_string_view<Char> str) {
@@ -642,7 +694,7 @@ H AbslHashValue(H hash_state, std::basic_string_view<Char> str) {
 // Support std::filesystem::path. The SFINAE is required because some string
 // types are implicitly convertible to std::filesystem::path.
 template <typename Path, typename H,
-          typename = absl::enable_if_t<
+          typename = std::enable_if_t<
               std::is_same_v<Path, std::filesystem::path>>>
 H AbslHashValue(H hash_state, const Path& path) {
   // This is implemented by deferring to the standard library to compute the
@@ -862,10 +914,10 @@ typename std::enable_if<is_hashable<T>::value, H>::type AbslHashValue(
   return H::combine(std::move(hash_state), opt.get());
 }
 
-// AbslHashValue for hashing absl::optional
+// AbslHashValue for hashing std::optional
 template <typename H, typename T>
 typename std::enable_if<is_hashable<T>::value, H>::type AbslHashValue(
-    H hash_state, const absl::optional<T>& opt) {
+    H hash_state, const std::optional<T>& opt) {
   if (opt) hash_state = H::combine(std::move(hash_state), *opt);
   return H::combine(std::move(hash_state), opt.has_value());
 }
@@ -879,12 +931,12 @@ struct VariantVisitor {
   }
 };
 
-// AbslHashValue for hashing absl::variant
+// AbslHashValue for hashing std::variant
 template <typename H, typename... T>
-typename std::enable_if<conjunction<is_hashable<T>...>::value, H>::type
-AbslHashValue(H hash_state, const absl::variant<T...>& v) {
+typename std::enable_if<std::conjunction<is_hashable<T>...>::value, H>::type
+AbslHashValue(H hash_state, const std::variant<T...>& v) {
   if (!v.valueless_by_exception()) {
-    hash_state = absl::visit(VariantVisitor<H>{std::move(hash_state)}, v);
+    hash_state = std::visit(VariantVisitor<H>{std::move(hash_state)}, v);
   }
   return H::combine(std::move(hash_state), v.index());
 }
@@ -965,18 +1017,20 @@ ABSL_ATTRIBUTE_ALWAYS_INLINE inline uint64_t Mix(uint64_t lhs, uint64_t rhs) {
   return Uint128High64(m) ^ Uint128Low64(m);
 }
 
-// Reads 8 bytes from p.
-inline uint64_t Read8(const unsigned char* p) {
 // Suppress erroneous array bounds errors on GCC.
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #endif
+inline uint32_t Read4(const unsigned char* p) {
+  return absl::base_internal::UnalignedLoad32(p);
+}
+inline uint64_t Read8(const unsigned char* p) {
   return absl::base_internal::UnalignedLoad64(p);
+}
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
-}
 
 // Reads 9 to 16 bytes from p.
 // The first 8 bytes are in .first, and the rest of the bytes are in .second
@@ -1022,19 +1076,61 @@ inline uint32_t Read1To3(const unsigned char* p, size_t len) {
   return mem0 | mem1;
 }
 
+#ifdef ABSL_HASH_INTERNAL_HAS_CRC32
+
+ABSL_ATTRIBUTE_ALWAYS_INLINE inline uint64_t CombineRawImpl(uint64_t state,
+                                                            uint64_t value) {
+  // We use a union to access the high and low 32 bits of the state.
+  union {
+    uint64_t u64;
+    struct {
+#ifdef ABSL_IS_LITTLE_ENDIAN
+      uint32_t low, high;
+#else  // big endian
+      uint32_t high, low;
+#endif
+    } u32s;
+  } s;
+  s.u64 = state;
+  // The general idea here is to do two CRC32 operations in parallel using the
+  // low and high 32 bits of state as CRC states. Note that: (1) when absl::Hash
+  // is inlined into swisstable lookups, we know that the seed's high bits are
+  // zero so s.u32s.high is available immediately. (2) We chose to multiply
+  // value by 3 for the low CRC because (a) multiplication by 3 can be done in 1
+  // cycle on x86/ARM and (b) multiplication has carry bits so it's nonlinear in
+  // GF(2) and therefore ensures that the two CRCs are independent (unlike bit
+  // rotation, XOR, etc). (3) We also tried using addition instead of
+  // multiplication by 3, but (a) code size is larger and (b) if the input keys
+  // all have 0s in the bits where the addition constant has 1s, then the
+  // addition is equivalent to XOR and linear in GF(2). (4) The union makes it
+  // easy for the compiler to understand that the high and low CRC states are
+  // independent from each other so that when CombineRawImpl is repeated (e.g.
+  // for std::pair<size_t, size_t>), the CRC chains can run in parallel. We
+  // originally tried using bswaps rather than shifting by 32 bits (to get from
+  // high to low bits) because bswap is one byte smaller in code size, but the
+  // compiler couldn't understand that the CRC chains were independent.
+  s.u32s.high =
+      static_cast<uint32_t>(ABSL_HASH_INTERNAL_CRC32_U64(s.u32s.high, value));
+  s.u32s.low = static_cast<uint32_t>(
+      ABSL_HASH_INTERNAL_CRC32_U64(s.u32s.low, 3 * value));
+  return s.u64;
+}
+#else   // ABSL_HASH_INTERNAL_HAS_CRC32
 ABSL_ATTRIBUTE_ALWAYS_INLINE inline uint64_t CombineRawImpl(uint64_t state,
                                                             uint64_t value) {
   return Mix(state ^ value, kMul);
 }
+#endif  // ABSL_HASH_INTERNAL_HAS_CRC32
 
 // Slow dispatch path for calls to CombineContiguousImpl with a size argument
 // larger than inlined size. Has the same effect as calling
 // CombineContiguousImpl() repeatedly with the chunk stride size.
-uint64_t CombineLargeContiguousImplOn32BitLengthGt8(const unsigned char* first,
-                                                    size_t len, uint64_t state);
-uint64_t CombineLargeContiguousImplOn64BitLengthGt32(const unsigned char* first,
-                                                     size_t len,
-                                                     uint64_t state);
+uint64_t CombineLargeContiguousImplOn32BitLengthGt8(uint64_t state,
+                                                    const unsigned char* first,
+                                                    size_t len);
+uint64_t CombineLargeContiguousImplOn64BitLengthGt32(uint64_t state,
+                                                     const unsigned char* first,
+                                                     size_t len);
 
 ABSL_ATTRIBUTE_ALWAYS_INLINE inline uint64_t CombineSmallContiguousImpl(
     uint64_t state, const unsigned char* first, size_t len) {
@@ -1092,9 +1188,73 @@ inline uint64_t CombineContiguousImpl(
     return CombineSmallContiguousImpl(PrecombineLengthMix(state, len), first,
                                       len);
   }
-  return CombineLargeContiguousImplOn32BitLengthGt8(first, len, state);
+  return CombineLargeContiguousImplOn32BitLengthGt8(state, first, len);
 }
 
+#ifdef ABSL_HASH_INTERNAL_HAS_CRC32
+inline uint64_t CombineContiguousImpl(
+    uint64_t state, const unsigned char* first, size_t len,
+    std::integral_constant<int, 8> /* sizeof_size_t */) {
+  if (ABSL_PREDICT_FALSE(len > 32)) {
+    return CombineLargeContiguousImplOn64BitLengthGt32(state, first, len);
+  }
+  // `mul` is the salt that is used for final mixing. It is important to fill
+  // high 32 bits because CRC wipes out high 32 bits.
+  // `rotr` is important to mix `len` into high 32 bits.
+  uint64_t mul = absl::rotr(kMul, static_cast<int>(len));
+  // Only low 32 bits of each uint64_t are used in CRC32 so we use gbswap_64 to
+  // move high 32 bits to low 32 bits. It has slightly smaller binary size than
+  // `>> 32`. `state + 8 * len` is a single instruction on both x86 and ARM, so
+  // we use it to better mix length. Although only the low 32 bits of the pair
+  // elements are used, we use pair<uint64_t, uint64_t> for better generated
+  // code.
+  std::pair<uint64_t, uint64_t> crcs = {state + 8 * len,
+                                        absl::gbswap_64(state)};
+
+  // All CRC operations here directly read bytes from the memory.
+  // Single fused instructions are used, like `crc32 rcx, qword ptr [rsi]`.
+  // On x86, llvm-mca reports latency `R + 2` for such fused instructions, while
+  // `R + 3` for two separate `mov` + `crc` instructions. `R` is the latency of
+  // reading the memory. Fused instructions also reduce register pressure
+  // allowing surrounding code to be more efficient when this code is inlined.
+  if (len > 8) {
+    crcs = {ABSL_HASH_INTERNAL_CRC32_U64(crcs.first, Read8(first)),
+            ABSL_HASH_INTERNAL_CRC32_U64(crcs.second, Read8(first + len - 8))};
+    if (len > 16) {
+      // We compute the second round of dependent CRC32 operations.
+      crcs = {ABSL_HASH_INTERNAL_CRC32_U64(crcs.first, Read8(first + len - 16)),
+              ABSL_HASH_INTERNAL_CRC32_U64(crcs.second, Read8(first + 8))};
+    }
+  } else {
+    if (len >= 4) {
+      // We use CRC for 4 bytes to benefit from the fused instruction and better
+      // hash quality.
+      // Using `xor` or `add` may reduce latency for this case, but would
+      // require more registers, more instructions and will have worse hash
+      // quality.
+      crcs = {ABSL_HASH_INTERNAL_CRC32_U32(static_cast<uint32_t>(crcs.first),
+                                           Read4(first)),
+              ABSL_HASH_INTERNAL_CRC32_U32(static_cast<uint32_t>(crcs.second),
+                                           Read4(first + len - 4))};
+    } else if (len >= 1) {
+      // We mix three bytes all into different output registers.
+      // This way, we do not need shifting of these bytes (so they don't overlap
+      // with each other).
+      crcs = {ABSL_HASH_INTERNAL_CRC32_U8(static_cast<uint32_t>(crcs.first),
+                                          first[0]),
+              ABSL_HASH_INTERNAL_CRC32_U8(static_cast<uint32_t>(crcs.second),
+                                          first[len - 1])};
+      // Middle byte is mixed weaker. It is a new byte only for len == 3.
+      // Mixing is independent from CRC operations so it is scheduled ASAP.
+      mul += first[len / 2];
+    }
+  }
+  // `mul` is mixed into both sides of `Mix` to guarantee non-zero values for
+  // both multiplicands. Using Mix instead of just multiplication here improves
+  // hash quality, especially for short strings.
+  return Mix(mul - crcs.first, crcs.second - mul);
+}
+#else
 inline uint64_t CombineContiguousImpl(
     uint64_t state, const unsigned char* first, size_t len,
     std::integral_constant<int, 8> /* sizeof_size_t */) {
@@ -1115,11 +1275,11 @@ inline uint64_t CombineContiguousImpl(
   // We must not mix length into the state here because calling
   // CombineContiguousImpl twice with PiecewiseChunkSize() must be equivalent
   // to calling CombineLargeContiguousImpl once with 2 * PiecewiseChunkSize().
-  return CombineLargeContiguousImplOn64BitLengthGt32(first, len, state);
+  return CombineLargeContiguousImplOn64BitLengthGt32(state, first, len);
 }
+#endif  // ABSL_HASH_INTERNAL_HAS_CRC32
 
-#if defined(ABSL_INTERNAL_LEGACY_HASH_NAMESPACE) && \
-    ABSL_META_INTERNAL_STD_HASH_SFINAE_FRIENDLY_
+#if defined(ABSL_INTERNAL_LEGACY_HASH_NAMESPACE)
 #define ABSL_HASH_INTERNAL_SUPPORT_LEGACY_HASH_ 1
 #else
 #define ABSL_HASH_INTERNAL_SUPPORT_LEGACY_HASH_ 0
@@ -1153,14 +1313,14 @@ struct HashSelect {
   struct UniquelyRepresentedProbe {
     template <typename H, typename T>
     static auto Invoke(H state, const T& value)
-        -> absl::enable_if_t<is_uniquely_represented<T>::value, H> {
+        -> std::enable_if_t<is_uniquely_represented<T>::value, H> {
       return hash_internal::hash_bytes(std::move(state), value);
     }
   };
 
   struct HashValueProbe {
     template <typename H, typename T>
-    static auto Invoke(H state, const T& value) -> absl::enable_if_t<
+    static auto Invoke(H state, const T& value) -> std::enable_if_t<
         std::is_same<H,
                      decltype(AbslHashValue(std::move(state), value))>::value,
         H> {
@@ -1171,7 +1331,7 @@ struct HashSelect {
   struct LegacyHashProbe {
 #if ABSL_HASH_INTERNAL_SUPPORT_LEGACY_HASH_
     template <typename H, typename T>
-    static auto Invoke(H state, const T& value) -> absl::enable_if_t<
+    static auto Invoke(H state, const T& value) -> std::enable_if_t<
         std::is_convertible<
             decltype(ABSL_INTERNAL_LEGACY_HASH_NAMESPACE::hash<T>()(value)),
             size_t>::value,
@@ -1186,7 +1346,7 @@ struct HashSelect {
   struct StdHashProbe {
     template <typename H, typename T>
     static auto Invoke(H state, const T& value)
-        -> absl::enable_if_t<type_traits_internal::IsHashable<T>::value, H> {
+        -> std::enable_if_t<type_traits_internal::IsHashable<T>::value, H> {
       return hash_internal::hash_bytes(std::move(state), std::hash<T>{}(value));
     }
   };
@@ -1208,7 +1368,7 @@ struct HashSelect {
   // Probe each implementation in order.
   // disjunction provides short circuiting wrt instantiation.
   template <typename T>
-  using Apply = absl::disjunction<         //
+  using Apply = std::disjunction<         //
       Probe<WeaklyMixedIntegerProbe, T>,   //
       Probe<UniquelyRepresentedProbe, T>,  //
       Probe<HashValueProbe, T>,            //
@@ -1224,8 +1384,8 @@ struct is_hashable
 class ABSL_DLL MixingHashState : public HashStateBase<MixingHashState> {
   template <typename T>
   using IntegralFastPath =
-      conjunction<std::is_integral<T>, is_uniquely_represented<T>,
-                  FitsIn64Bits<T>>;
+      std::conjunction<std::is_integral<T>, is_uniquely_represented<T>,
+                       FitsIn64Bits<T>>;
 
  public:
   // Move only
@@ -1253,13 +1413,13 @@ class ABSL_DLL MixingHashState : public HashStateBase<MixingHashState> {
   // Otherwise we would be instantiating and calling dozens of functions for
   // something that is just one multiplication and a couple xor's.
   // The result should be the same as running the whole algorithm, but faster.
-  template <typename T, absl::enable_if_t<IntegralFastPath<T>::value, int> = 0>
+  template <typename T, std::enable_if_t<IntegralFastPath<T>::value, int> = 0>
   static size_t hash_with_seed(T value, size_t seed) {
     return static_cast<size_t>(
         CombineRawImpl(seed, static_cast<std::make_unsigned_t<T>>(value)));
   }
 
-  template <typename T, absl::enable_if_t<!IntegralFastPath<T>::value, int> = 0>
+  template <typename T, std::enable_if_t<!IntegralFastPath<T>::value, int> = 0>
   static size_t hash_with_seed(const T& value, size_t seed) {
     return static_cast<size_t>(combine(MixingHashState{seed}, value).state_);
   }
@@ -1381,7 +1541,7 @@ struct HashImpl {
 
 template <typename T>
 struct Hash
-    : absl::conditional_t<is_hashable<T>::value, HashImpl<T>, PoisonedHash> {};
+    : std::conditional_t<is_hashable<T>::value, HashImpl<T>, PoisonedHash> {};
 
 template <typename H>
 template <typename T, typename... Ts>
@@ -1450,5 +1610,10 @@ H PiecewiseCombiner::finalize(H state) {
 }  // namespace hash_internal
 ABSL_NAMESPACE_END
 }  // namespace absl
+
+#undef ABSL_HASH_INTERNAL_HAS_CRC32
+#undef ABSL_HASH_INTERNAL_CRC32_U64
+#undef ABSL_HASH_INTERNAL_CRC32_U32
+#undef ABSL_HASH_INTERNAL_CRC32_U8
 
 #endif  // ABSL_HASH_INTERNAL_HASH_H_

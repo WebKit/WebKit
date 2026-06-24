@@ -447,7 +447,7 @@ public:
 
 private:
     // multiply passed 2D point by matrix (assume z=0)
-    void NODELETE multVecMatrix(double x, double y, double& dstX, double& dstY) const;
+    WEBCORE_EXPORT void NODELETE multVecMatrix(double x, double y, double& dstX, double& dstY) const;
     FloatPoint internalMapPoint(const FloatPoint& sourcePoint) const
     {
         double resultX;
@@ -456,7 +456,7 @@ private:
         return FloatPoint(static_cast<float>(resultX), static_cast<float>(resultY));
     }
 
-    void multVecMatrix(double x, double y, double z, double& dstX, double& dstY, double& dstZ) const;
+    WEBCORE_EXPORT void multVecMatrix(double x, double y, double z, double& dstX, double& dstY, double& dstZ) const;
     FloatPoint3D internalMapPoint(const FloatPoint3D& sourcePoint) const
     {
         double resultX;

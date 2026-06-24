@@ -170,82 +170,8 @@ list(APPEND PAL_PUBLIC_HEADERS
     system/mac/WebPanel.h
 )
 
-list(APPEND PAL_SOURCES
-    avfoundation/MediaTimeAVFoundation.cpp
-    avfoundation/OutputContext.mm
-    avfoundation/OutputDevice.mm
-
-    cf/AudioToolboxSoftLink.cpp
-    cf/CoreMediaSoftLink.cpp
-    cf/CoreTextSoftLink.cpp
-    cf/OTSVGTable.cpp
-    cf/VideoToolboxSoftLink.cpp
-
-    cg/CoreGraphicsSoftLink.cpp
-
-    cocoa/ARKitSoftLink.mm
-    cocoa/AVFAudioSoftLink.mm
-    cocoa/AVFoundationSoftLink.mm
-    cocoa/AccessibilitySoftLink.mm
-    cocoa/AppSSOSoftLink.mm
-    cocoa/CompositorServicesSoftLink.mm
-    cocoa/ContactsSoftLink.mm
-    cocoa/CoreMLSoftLink.mm
-    cocoa/CoreMaterialSoftLink.mm
-    cocoa/CoreTelephonySoftLink.mm
-    cocoa/CryptoKitPrivateSoftLink.mm
-    cocoa/DataDetectorsCoreSoftLink.mm
-    cocoa/EnhancedSecurityCocoa.mm
-    cocoa/FileSizeFormatterCocoa.mm
-    cocoa/LinkPresentationSoftLink.mm
-    cocoa/LockdownModeCocoa.mm
-    cocoa/MediaToolboxSoftLink.cpp
-    cocoa/NaturalLanguageSoftLink.mm
-    cocoa/OpenGLSoftLinkCocoa.mm
-    cocoa/PassKitSoftLink.mm
-    cocoa/QuartzCoreSoftLink.mm
-    cocoa/RevealSoftLink.mm
-    cocoa/ScreenTimeSoftLink.mm
-    cocoa/SpeechSoftLink.mm
-    cocoa/TranslationUIServicesSoftLink.mm
-    cocoa/UsageTrackingSoftLink.mm
-    cocoa/VisionKitCoreSoftLink.mm
-    cocoa/VisionSoftLink.mm
-    cocoa/WebContentAnalysisSoftLink.mm
-    cocoa/WebContentRestrictionsSoftLink.mm
-    cocoa/WebPrivacySoftLink.mm
-    cocoa/WritingToolsUISoftLink.mm
-
-    crypto/CryptoAlgorithmAESGCMCocoa.cpp
-    crypto/CryptoAlgorithmAESKWCocoaBridging.cpp
-    crypto/CryptoAlgorithmEd25519CocoaBridging.cpp
-    crypto/CryptoAlgorithmHKDFCocoaBridging.cpp
-    crypto/CryptoAlgorithmHMACCocoaBridging.cpp
-    crypto/CryptoAlgorithmX25519CocoaBridging.cpp
-    crypto/CryptoEDKeyBridging.cpp
-    crypto/PlatformECKey.cpp
-
-    crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
-
-    mac/DataDetectorsSoftLink.mm
-    mac/LookupSoftLink.mm
-    mac/QuickLookUISoftLink.mm
-    mac/ScreenCaptureKitSoftLink.mm
-
-    spi/cocoa/AccessibilitySupportSoftLink.cpp
-
-    system/ClockGeneric.cpp
-
-    system/cocoa/SleepDisablerCocoa.cpp
-
-    system/mac/DefaultSearchProvider.cpp
-    system/mac/PopupMenu.mm
-    system/mac/SystemSleepListenerMac.mm
-    system/mac/WebPanel.mm
-
-    text/ios/TextEncodingRegistryIOS.mm
-
-    text/mac/TextEncodingRegistryMac.mm
+list(APPEND PAL_UNIFIED_SOURCE_LIST_FILES
+    "SourcesCocoa.txt"
 )
 
 list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES

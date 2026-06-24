@@ -81,11 +81,11 @@ public:
     FloatBoxExtent obscuredContentInsets() const { return m_obscuredContentInsets; }
     WEBCORE_EXPORT void setObscuredContentInsets(const FloatBoxExtent&);
 
-    // The target offset for rubber band animations when a banner view overlay is present.
+    // The target offset for rubber band animations when refresh controller is present.
     // When non-zero, rubber banding will snap to this offset instead of the edge.
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    float bannerViewHeight() const { return m_bannerViewHeight; }
-    WEBCORE_EXPORT void setBannerViewHeight(float);
+#if HAVE(NSREFRESHCONTROLLER)
+    float topScrollStretchForRefreshController() const { return m_topScrollStretchForRefreshController; }
+    WEBCORE_EXPORT void setTopScrollStretchForRefreshController(float);
 #endif
 
     const LayerRepresentation& rootContentsLayer() const LIFETIME_BOUND { return m_rootContentsLayer; }
@@ -177,8 +177,8 @@ private:
         int footerHeight,
         ScrollBehaviorForFixedElements&&,
         FloatBoxExtent&& obscuredContentInsets,
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-        float bannerViewHeight,
+#if HAVE(NSREFRESHCONTROLLER)
+        float topScrollStretchForRefreshController,
 #endif
         bool visualViewportIsSmallerThanLayoutViewport,
         bool asyncFrameOrOverflowScrollingEnabled,
@@ -214,8 +214,8 @@ private:
 
     float m_frameScaleFactor { 1 };
     FloatBoxExtent m_obscuredContentInsets;
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    float m_bannerViewHeight { 0 };
+#if HAVE(NSREFRESHCONTROLLER)
+    float m_topScrollStretchForRefreshController { 0 };
 #endif
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };

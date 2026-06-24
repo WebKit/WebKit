@@ -412,9 +412,9 @@ void EventDispatcher::stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
 void EventDispatcher::flushMomentumEventLoggingSoon()
 {
-    // FIXME: Nothing keeps this alive.
-    queue().dispatchAfter(1_s, [this] {
-        m_momentumEventDispatcher->flushLog();
+    queue().dispatchAfter(1_s, [weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->m_momentumEventDispatcher->flushLog();
     });
 }
 #endif

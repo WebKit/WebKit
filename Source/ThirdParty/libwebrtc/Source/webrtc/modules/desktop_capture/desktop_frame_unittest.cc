@@ -14,8 +14,8 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "test/gtest.h"
 
@@ -77,7 +77,7 @@ void RunTest(const TestData& test) {
   }
 }
 
-void RunTests(ArrayView<const TestData> tests) {
+void RunTests(std::span<const TestData> tests) {
   for (const TestData& test : tests) {
     SCOPED_TRACE(test.description);
 

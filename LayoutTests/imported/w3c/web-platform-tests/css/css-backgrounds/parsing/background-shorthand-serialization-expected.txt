@@ -7,4 +7,7 @@ PASS multiple backgrounds with varying values
 PASS all initial values
 PASS border-area border-box
 PASS border-area padding-box
+FAIL border-area text sets background-clip assert_equals: expected "border-area text" but got "border-area"
+FAIL text border-area serializes as border-area text assert_equals: expected "border-area text" but got ""
+PASS border-area text sets background-origin to border-box
 

@@ -55,7 +55,7 @@ DEFINE_CERT_ERROR_ID(kEkuLacksServerAuth,
                      "The extended key usage does not include server auth");
 DEFINE_CERT_ERROR_ID(kEkuLacksServerAuthButHasAnyEKU,
                      "The extended key usage does not include server auth but "
-                     "instead includes anyExtendeKeyUsage");
+                     "instead includes anyExtendedKeyUsage");
 DEFINE_CERT_ERROR_ID(kEkuLacksClientAuth,
                      "The extended key usage does not include client auth");
 DEFINE_CERT_ERROR_ID(kEkuLacksClientAuthButHasAnyEKU,

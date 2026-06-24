@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +26,33 @@
 
 #pragma once
 
-#include <WebCore/CSSParserIdioms.h>
-#include <WebCore/CSSPrimitiveValue.h>
 #include <WebCore/DeprecatedCSSOMValue.h>
+#include <wtf/Function.h>
 
 namespace WebCore {
+
+namespace CSS {
+class UnevaluatedCalcBase;
+struct ClipRect;
+struct Color;
+struct ContentCounterFunctionWrapper;
+struct ContentCountersFunctionWrapper;
+struct ContentLegacyAttrFunctionWrapper;
+struct CustomIdent;
+struct FontFamilyName;
+struct Keyword;
+struct SerializationContext;
+struct String;
+struct URL;
+struct UnconstrainedPrimitiveNumericRaw;
+}
 
 class DeprecatedCSSOMCounter;
 class DeprecatedCSSOMRGBColor;
 class DeprecatedCSSOMRect;
-    
-class DeprecatedCSSOMPrimitiveValue : public DeprecatedCSSOMValue {
+struct DeprecatedCSSOMPrimitiveValueData;
+
+class DeprecatedCSSOMPrimitiveValue final : public DeprecatedCSSOMValue {
 public:
     // Only expose what's in the IDL file.
     enum UnitType {
@@ -68,13 +85,24 @@ public:
         // Do not add new units here; this is deprecated and we shouldn't expose anything not in DOM Level 2 Style.
     };
 
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSSValue& value, CSSStyleDeclaration& owner)
-    {
-        return adoptRef(*new DeprecatedCSSOMPrimitiveValue(value, owner));
-    }
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(Function<String(const CSS::SerializationContext&)>&&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::UnconstrainedPrimitiveNumericRaw&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::UnevaluatedCalcBase&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::ClipRect&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::Color&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::ContentCounterFunctionWrapper&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::ContentCountersFunctionWrapper&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::ContentLegacyAttrFunctionWrapper&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::CustomIdent&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::FontFamilyName&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::Keyword&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::String&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::URL&, CSSStyleDeclaration&);
+    ~DeprecatedCSSOMPrimitiveValue();
 
-    bool equals(const DeprecatedCSSOMPrimitiveValue& other) const { return m_value->equals(other.m_value); }
-    String cssText() const;
+    String cssText() const override;
+    unsigned short NODELETE cssValueType() const override;
+    bool isPrimitiveValue() const override { return true; }
 
     WEBCORE_EXPORT unsigned short primitiveType() const;
     WEBCORE_EXPORT ExceptionOr<float> getFloatValue(unsigned short unitType) const;
@@ -88,20 +116,13 @@ public:
 
     bool isCSSWideKeyword() const;
 
-    static unsigned short cssValueType() { return CSS_PRIMITIVE_VALUE; }
-
 private:
-    DeprecatedCSSOMPrimitiveValue(const CSSValue& value, CSSStyleDeclaration& owner)
-        : DeprecatedCSSOMValue(ClassType::Primitive, owner)
-        , m_value(value)
-    {
-    }
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(DeprecatedCSSOMPrimitiveValueData&&, CSSStyleDeclaration&);
+    DeprecatedCSSOMPrimitiveValue(DeprecatedCSSOMPrimitiveValueData&&, CSSStyleDeclaration&);
 
-    const CSSValue& value() const { return m_value; }
-
-    Ref<const CSSValue> m_value;
+    UniqueRef<DeprecatedCSSOMPrimitiveValueData> m_data;
 };
-    
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSSOM_VALUE(DeprecatedCSSOMPrimitiveValue, isPrimitiveValue())

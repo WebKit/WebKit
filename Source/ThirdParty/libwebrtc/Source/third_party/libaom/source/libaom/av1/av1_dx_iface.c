@@ -62,6 +62,7 @@ struct aom_codec_alg_priv {
   unsigned int is_annexb;
   int operating_point;
   int output_all_layers;
+  unsigned int frame_size_limit;
 
   AVxWorker *frame_worker;
 
@@ -112,6 +113,8 @@ static aom_codec_err_t decoder_init(aom_codec_ctx_t *ctx) {
     priv->tile_mode = 0;
     priv->decode_tile_row = -1;
     priv->decode_tile_col = -1;
+
+    priv->frame_size_limit = 0;
   }
 
   return AOM_CODEC_OK;
@@ -247,13 +250,9 @@ static aom_codec_err_t parse_operating_points(struct aom_read_bit_buffer *rb,
     }
   }
 
-  if (aom_get_num_layers_from_operating_point_idc(
-          operating_point_idc0, &si->number_spatial_layers,
-          &si->number_temporal_layers) != AOM_CODEC_OK) {
-    return AOM_CODEC_ERROR;
-  }
-
-  return AOM_CODEC_OK;
+  return aom_get_num_layers_from_operating_point_idc(
+      operating_point_idc0, &si->number_spatial_layers,
+      &si->number_temporal_layers);
 }
 
 static aom_codec_err_t decoder_peek_si_internal(const uint8_t *data,
@@ -495,6 +494,7 @@ static aom_codec_err_t init_decoder(aom_codec_alg_priv_t *ctx) {
   frame_worker_data->pbi->dec_tile_col = ctx->decode_tile_col;
   frame_worker_data->pbi->operating_point = ctx->operating_point;
   frame_worker_data->pbi->output_all_layers = ctx->output_all_layers;
+  frame_worker_data->pbi->frame_size_limit = ctx->frame_size_limit;
   frame_worker_data->pbi->ext_tile_debug = ctx->ext_tile_debug;
   frame_worker_data->pbi->row_mt = ctx->row_mt;
   frame_worker_data->pbi->is_fwd_kf_present = 0;
@@ -950,6 +950,7 @@ static aom_codec_err_t ctrl_set_reference(aom_codec_alg_priv_t *ctx,
     av1_ref_frame_t *const frame = data;
     YV12_BUFFER_CONFIG sd;
     AVxWorker *const worker = ctx->frame_worker;
+    if (worker == NULL) return AOM_CODEC_ERROR;
     FrameWorkerData *const frame_worker_data = (FrameWorkerData *)worker->data1;
     image2yuvconfig(&frame->img, &sd);
 
@@ -975,6 +976,7 @@ static aom_codec_err_t ctrl_copy_reference(aom_codec_alg_priv_t *ctx,
   if (frame) {
     YV12_BUFFER_CONFIG sd;
     AVxWorker *const worker = ctx->frame_worker;
+    if (worker == NULL) return AOM_CODEC_ERROR;
     FrameWorkerData *const frame_worker_data = (FrameWorkerData *)worker->data1;
     image2yuvconfig(&frame->img, &sd);
     return av1_copy_reference_dec(frame_worker_data->pbi, frame->idx, &sd);
@@ -989,6 +991,7 @@ static aom_codec_err_t ctrl_get_reference(aom_codec_alg_priv_t *ctx,
   if (data) {
     YV12_BUFFER_CONFIG *fb;
     AVxWorker *const worker = ctx->frame_worker;
+    if (worker == NULL) return AOM_CODEC_ERROR;
     FrameWorkerData *const frame_worker_data = (FrameWorkerData *)worker->data1;
     fb = get_ref_frame(&frame_worker_data->pbi->common, data->idx);
     if (fb == NULL) return AOM_CODEC_ERROR;
@@ -1005,6 +1008,7 @@ static aom_codec_err_t ctrl_get_new_frame_image(aom_codec_alg_priv_t *ctx,
   if (new_img) {
     YV12_BUFFER_CONFIG new_frame;
     AVxWorker *const worker = ctx->frame_worker;
+    if (worker == NULL) return AOM_CODEC_ERROR;
     FrameWorkerData *const frame_worker_data = (FrameWorkerData *)worker->data1;
 
     if (av1_get_frame_to_show(frame_worker_data->pbi, &new_frame) == 0) {
@@ -1024,6 +1028,7 @@ static aom_codec_err_t ctrl_copy_new_frame_image(aom_codec_alg_priv_t *ctx,
   if (img) {
     YV12_BUFFER_CONFIG new_frame;
     AVxWorker *const worker = ctx->frame_worker;
+    if (worker == NULL) return AOM_CODEC_ERROR;
     FrameWorkerData *const frame_worker_data = (FrameWorkerData *)worker->data1;
 
     if (av1_get_frame_to_show(frame_worker_data->pbi, &new_frame) == 0) {
@@ -1326,6 +1331,11 @@ static aom_codec_err_t ctrl_get_tile_data(aom_codec_alg_priv_t *ctx,
       FrameWorkerData *const frame_worker_data =
           (FrameWorkerData *)worker->data1;
       const AV1Decoder *pbi = frame_worker_data->pbi;
+      if (pbi->dec_tile_row < 0 || pbi->dec_tile_row >= MAX_TILE_ROWS ||
+          pbi->dec_tile_col < 0 || pbi->dec_tile_col >= MAX_TILE_COLS) {
+        return AOM_CODEC_ERROR;
+      }
+
       tile_data->coded_tile_data_size =
           pbi->tile_buffers[pbi->dec_tile_row][pbi->dec_tile_col].size;
       tile_data->coded_tile_data =
@@ -1588,6 +1598,12 @@ static aom_codec_err_t ctrl_set_skip_film_grain(aom_codec_alg_priv_t *ctx,
   return AOM_CODEC_OK;
 }
 
+static aom_codec_err_t ctrl_set_frame_size_limit(aom_codec_alg_priv_t *ctx,
+                                                 va_list args) {
+  ctx->frame_size_limit = va_arg(args, unsigned int);
+  return AOM_CODEC_OK;
+}
+
 static aom_codec_err_t ctrl_get_accounting(aom_codec_alg_priv_t *ctx,
                                            va_list args) {
 #if !CONFIG_ACCOUNTING
@@ -1695,6 +1711,7 @@ static aom_codec_ctrl_fn_map_t decoder_ctrl_maps[] = {
   { AV1D_SET_ROW_MT, ctrl_set_row_mt },
   { AV1D_SET_EXT_REF_PTR, ctrl_set_ext_ref_ptr },
   { AV1D_SET_SKIP_FILM_GRAIN, ctrl_set_skip_film_grain },
+  { AOMD_SET_FRAME_SIZE_LIMIT, ctrl_set_frame_size_limit },
 
   // Getters
   { AOMD_GET_FRAME_CORRUPTED, ctrl_get_frame_corrupted },

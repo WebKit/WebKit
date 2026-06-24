@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -34,8 +34,7 @@ function touchEventCallback() {
         // If we've got here, we can safely say we were successfully parsed :) We need to
         // call the isSucccessfullyParsed function to output the correct TEST COMPLETE
         // footer message.
-        isSuccessfullyParsed();
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 
@@ -134,11 +133,10 @@ function touchTargets()
     eventSender.touchMove();
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 if (window.eventSender) {
     description("This tests basic single touch event support.");
+    window.jsTestIsAsync = true;
 
     lastEvent = null;
     eventSender.clearTouchPoints();

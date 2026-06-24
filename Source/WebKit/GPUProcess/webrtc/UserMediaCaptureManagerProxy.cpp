@@ -579,6 +579,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         sourceOrError = createMicrophoneSource(device, WTF::move(hashSalts), constraints, pageIdentifier);
         break;
     case WebCore::CaptureDevice::DeviceType::Camera:
+    case WebCore::CaptureDevice::DeviceType::Canvas:
         sourceOrError = createCameraSource(device, WTF::move(hashSalts), pageIdentifier);
         break;
     case WebCore::CaptureDevice::DeviceType::Screen:

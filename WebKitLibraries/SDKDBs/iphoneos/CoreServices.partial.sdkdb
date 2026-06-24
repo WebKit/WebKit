@@ -2,7 +2,7 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   },
   {
    "globals": [
@@ -161,7 +161,7 @@
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kUTTypeXPCService"},
     {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_kUTTypeZipArchive"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

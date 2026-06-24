@@ -1044,7 +1044,7 @@
      "unavailable": true
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "introduced": "16", "name": "NSFileProviderContentPolicy"},
     {"access": "public", "name": "NSFileProviderCreateItemOptions"},
@@ -1076,13 +1076,13 @@
   },
   {
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$sSo21NSFileProviderManagerC04FileB0E22requestDownloadForItem14withIdentifier14requestedRange17completionHandlerySo0abhJ0a_So8_NSRangeVSgys5Error_pSgctF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo21NSFileProviderManagerC04FileB0E22requestDownloadForItem14withIdentifier14requestedRangeySo0abhJ0a_So8_NSRangeVSgtYaKF"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo21NSFileProviderManagerC04FileB0E22requestDownloadForItem14withIdentifier14requestedRangeySo0abhJ0a_So8_NSRangeVSgtYaKFTu"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo27NSFileProviderDomainVersionC04FileB0E1loiySbAB_ABtFZ"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo21NSFileProviderManagerC04FileB0E22requestDownloadForItem14withIdentifier14requestedRange17completionHandlerySo0abhJ0a_So8_NSRangeVSgys5Error_pSgctF"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo21NSFileProviderManagerC04FileB0E22requestDownloadForItem14withIdentifier14requestedRangeySo0abhJ0a_So8_NSRangeVSgtYaKF"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo21NSFileProviderManagerC04FileB0E22requestDownloadForItem14withIdentifier14requestedRangeySo0abhJ0a_So8_NSRangeVSgtYaKFTu"},
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo27NSFileProviderDomainVersionC04FileB0E1loiySbAB_ABtFZ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo27NSFileProviderDomainVersionCSL04FileB0Mc"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

@@ -61,9 +61,32 @@
 #include "B3WasmStructGetValue.h"
 #include "B3WasmStructNewValue.h"
 #include "B3WasmStructSetValue.h"
+#include <array>
 #include <wtf/GraphNodeWorklist.h>
 
 namespace JSC { namespace B3 {
+
+inline constexpr unsigned numberOfB3Opcodes = static_cast<unsigned>(Oops) + 1;
+
+// Effects for opcodes whose effects are a pure function of the opcode. Invalid entries are
+// value-dependent and handled by Value::effectsSlow(). Defined once in B3Value.cpp.
+JS_EXPORT_PRIVATE extern const std::array<Effects, numberOfB3Opcodes> constantEffectsTable;
+
+ALWAYS_INLINE Effects Value::effects() const
+{
+    const Effects& entry = constantEffectsTable[opcode()];
+    if (entry.isValid()) [[likely]]
+        return entry;
+    return effectsSlow();
+}
+
+ALWAYS_INLINE bool Value::mustExecute() const
+{
+    const Effects& entry = constantEffectsTable[opcode()];
+    if (entry.isValid()) [[likely]]
+        return entry.mustExecute();
+    return effectsSlow().mustExecute();
+}
 
 #define DISPATCH_ON_KIND(MACRO) \
     switch (kind().opcode()) { \

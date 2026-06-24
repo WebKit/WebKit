@@ -29,6 +29,9 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 // Test that OPENSSL_VERSION_NUMBER and OPENSSL_VERSION_TEXT are consistent.
 // Node.js parses the version out of OPENSSL_VERSION_TEXT instead of using
 // OPENSSL_VERSION_NUMBER.
@@ -42,7 +45,7 @@ TEST(CryptoTest, Version) {
 }
 
 TEST(CryptoTest, Strndup) {
-  bssl::UniquePtr<char> str(OPENSSL_strndup(nullptr, 0));
+  UniquePtr<char> str(OPENSSL_strndup(nullptr, 0));
   EXPECT_TRUE(str);
   EXPECT_STREQ("", str.get());
 }
@@ -98,7 +101,7 @@ TEST(CryptoTest, FIPSCountersEVP) {
   CounterArray before, after;
   for (const auto &test : kTests) {
     read_all_counters(before);
-    bssl::ScopedEVP_CIPHER_CTX ctx;
+    ScopedEVP_CIPHER_CTX ctx;
     ASSERT_TRUE(EVP_EncryptInit_ex(ctx.get(), test.cipher(), /*engine=*/nullptr,
                                    key, iv));
     read_all_counters(after);
@@ -132,7 +135,7 @@ TEST(CryptoTest, FIPSCountersEVP_AEAD) {
     ASSERT_LE(test.key_len, sizeof(key));
 
     read_all_counters(before);
-    bssl::ScopedEVP_AEAD_CTX ctx;
+    ScopedEVP_AEAD_CTX ctx;
     ASSERT_TRUE(EVP_AEAD_CTX_init(ctx.get(), test.aead(), key, test.key_len,
                                   EVP_AEAD_DEFAULT_TAG_LENGTH,
                                   /*engine=*/nullptr));
@@ -172,6 +175,17 @@ TEST(CryptoTest, DeprecatedFunction) {
 }
 OPENSSL_END_ALLOW_DEPRECATED
 
+TEST(CryptoTest, Cleanup) {
+  bool cleaned_up = false;
+  {
+    Cleanup cleanup = [&] {
+      EXPECT_FALSE(cleaned_up);  // Cleanup should run exactly once.
+      cleaned_up = true;
+    };
+    EXPECT_FALSE(cleaned_up);  // Cleanup should not run yet.
+  }
+  EXPECT_TRUE(cleaned_up);  // Cleanup should have run.
+}
 
 #if (defined(OPENSSL_X86) || defined(OPENSSL_X86_64)) && \
     !defined(OPENSSL_NO_ASM) && !defined(BORINGSSL_SHARED_LIBRARY)
@@ -245,3 +259,6 @@ TEST(Crypto, CPUIDEnvVariable) {
   }
 }
 #endif
+
+}  // namespace
+BSSL_NAMESPACE_END

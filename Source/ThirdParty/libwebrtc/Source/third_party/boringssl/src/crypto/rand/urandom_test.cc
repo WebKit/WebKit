@@ -25,12 +25,10 @@
 #include "../fipsmodule/rand/internal.h"
 #include "../internal.h"
 #include "internal.h"
-#include "getrandom_fillin.h"
 
 
-#if (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) &&               \
-    !defined(BORINGSSL_SHARED_LIBRARY) && defined(OPENSSL_RAND_URANDOM) && \
-    defined(USE_NR_getrandom)
+#if (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) && \
+    !defined(BORINGSSL_SHARED_LIBRARY) && defined(OPENSSL_RAND_URANDOM)
 
 #include <elf.h>
 #include <linux/random.h>
@@ -41,6 +39,7 @@
 #include <sys/un.h>
 #include <sys/user.h>
 
+BSSL_NAMESPACE_BEGIN
 namespace {
 
 #if !defined(PTRACE_O_EXITKILL)
@@ -604,7 +603,9 @@ static void TestFunction() {
   RAND_bytes(&byte, sizeof(byte));
 }
 
-static bool have_fork_detection() { return CRYPTO_get_fork_generation() != 0; }
+static bool have_fork_detection() {
+  return bssl::CRYPTO_get_fork_generation() != 0;
+}
 
 static bool AppendDaemonEvents(std::vector<Event> *events, unsigned flags) {
   events->push_back(Event::Socket());
@@ -639,16 +640,14 @@ out:
 // |GetTrace| will observe the real code making.
 static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
   std::vector<Event> ret;
-  bool getrandom_ready = false;
-  bool used_daemon = false;
 
-  if (have_fork_detection()) {
-    used_daemon = kUsesDaemon && AppendDaemonEvents(&ret, flags);
+  bool daemon_failed = false;
+  if (have_fork_detection() && kUsesDaemon) {
+    daemon_failed = !AppendDaemonEvents(&ret, flags);
   }
 
   // Probe for getrandom support
   ret.push_back(Event::GetRandom(1, GRND_NONBLOCK));
-  std::function<void()> wait_for_entropy;
   std::function<bool(size_t)> sysrand;
 
   if (flags & NO_GETRANDOM) {
@@ -678,25 +677,16 @@ static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
       return ret;
     }
 
-    getrandom_ready = (flags & GETRANDOM_NOT_READY) == 0;
-    wait_for_entropy = [&ret, &getrandom_ready] {
-      if (getrandom_ready) {
-        return;
-      }
-
-      ret.push_back(Event::GetRandom(1, GRND_NONBLOCK));
-      ret.push_back(Event::GetRandom(1, 0));
-      getrandom_ready = true;
-    };
-    sysrand = [&ret, &wait_for_entropy](size_t len) {
-      wait_for_entropy();
+    sysrand = [&ret](size_t len) {
       ret.push_back(Event::GetRandom(len, 0));
       return true;
     };
   }
 
-  const size_t kSeedLength =
-      CTR_DRBG_SEED_LEN * (kIsFIPS ? 10 : 1) + (kIsFIPS ? 16 : 0);
+  if (daemon_failed && !sysrand(48)) {
+    return ret;
+  }
+
   const size_t kAdditionalDataLength = 32;
 
   if (!have_rdrand()) {
@@ -704,12 +694,16 @@ static std::vector<Event> TestFunctionPRNGModel(unsigned flags) {
       if (!sysrand(kAdditionalDataLength)) {
         return ret;
       }
-      used_daemon = kUsesDaemon && AppendDaemonEvents(&ret, flags);
+      if (kUsesDaemon && !AppendDaemonEvents(&ret, flags) &&
+          !sysrand(48)) {
+        return ret;
+      }
     }
-    if (// Initialise CRNGT. If the daemon is used, the OS is used for the
-        // personalisation data of length |CTR_DRBG_SEED_LEN|. Otherwise, it
-        // used for the seed itself, including FIPS overread.
-        !sysrand(used_daemon ? CTR_DRBG_SEED_LEN : kSeedLength) ||
+    if (  // Initialise thread-local DRBG. In FIPS mode, the jitter source
+          // will be used, but we cannot observe that. Either way,
+          // CTR_DRBG_SEED_LEN will be drawn from sysrand, either as the
+          // additional data in FIPS mode, or as the seed otherwise.
+        !sysrand(CTR_DRBG_SEED_LEN) ||
         // Second additional data, when other fork-safety measures have failed.
         (!have_fork_detection() && !sysrand(kAdditionalDataLength))) {
       return ret;
@@ -779,14 +773,15 @@ TEST(URandomTest, Test) {
 }
 
 }  // namespace
+BSSL_NAMESPACE_END
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
 
   if (getenv("BORINGSSL_IGNORE_MADV_WIPEONFORK")) {
-    CRYPTO_fork_detect_force_madv_wipeonfork_for_testing(0);
+    bssl::CRYPTO_fork_detect_force_madv_wipeonfork_for_testing(0);
   } else {
-    CRYPTO_fork_detect_force_madv_wipeonfork_for_testing(1);
+    bssl::CRYPTO_fork_detect_force_madv_wipeonfork_for_testing(1);
   }
 
   return RUN_ALL_TESTS();
@@ -799,5 +794,4 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-#endif  // (X86_64 || AARCH64) && !SHARED_LIBRARY &&
-        // !UNSAFE_DETERMINISTIC_MODE && USE_NR_getrandom
+#endif  // (X86_64 || AARCH64) && !SHARED_LIBRARY && !UNSAFE_DETERMINISTIC_MODE

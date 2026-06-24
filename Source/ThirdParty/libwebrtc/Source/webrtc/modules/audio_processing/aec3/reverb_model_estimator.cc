@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/reverb_decay_estimator.h"
@@ -41,11 +41,11 @@ ReverbModelEstimator::ReverbModelEstimator(const EchoCanceller3Config& config,
 ReverbModelEstimator::~ReverbModelEstimator() = default;
 
 void ReverbModelEstimator::Update(
-    ArrayView<const std::vector<float>> impulse_responses,
-    ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+    std::span<const std::vector<float>> impulse_responses,
+    std::span<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
         frequency_responses,
-    ArrayView<const std::optional<float>> linear_filter_qualities,
-    ArrayView<const int> filter_delays_blocks,
+    std::span<const std::optional<float>> linear_filter_qualities,
+    std::span<const int> filter_delays_blocks,
     const std::vector<bool>& usable_linear_estimates,
     bool stationary_block) {
   const size_t num_capture_channels = reverb_decay_estimators_.size();

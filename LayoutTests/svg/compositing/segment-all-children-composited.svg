@@ -1,0 +1,7 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Every child is composited, so there is no non-composited content to slice and no overlay segments are built. -->
+    <rect style="will-change: transform" x="10" y="10" width="80" height="80" fill="blue"/>
+    <rect style="will-change: transform" x="110" y="10" width="80" height="80" fill="green"/>
+    <rect style="will-change: transform" x="210" y="10" width="80" height="80" fill="red"/>
+</svg>

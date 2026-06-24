@@ -327,7 +327,9 @@ public:
     bool isSIMDValue() const;
     SIMDValue* asSIMDValue();
 
-    Effects effects() const;
+    inline Effects effects() const;
+
+    inline bool mustExecute() const;
 
     // This returns a ValueKey that describes that this Value returns when it executes. Returns an
     // empty ValueKey if this Value is impure. Note that an operation that returns Void could still
@@ -360,6 +362,8 @@ public:
     void walk(const Functor& functor, PhiChildren* = nullptr);
 
 protected:
+    Effects effectsSlow() const;
+
     Value* cloneImpl() const;
 
     void replaceWith(Kind, Type, BasicBlock*);

@@ -29,7 +29,7 @@
 #include <WebCore/InlineItem.h>
 #include <WebCore/InlineLineTypes.h>
 #include <WebCore/InlineTextItem.h>
-#include <WebCore/RenderStyle.h>
+#include <WebCore/StyleComputedStyle.h>
 #include <ranges>
 #include <unicode/ubidi.h>
 #include <wtf/Range.h>
@@ -50,14 +50,14 @@ public:
     void initialize(const Vector<InlineItem, 1>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
 
     enum class ShapingBoundary : uint8_t { NotApplicable, Start, Inside, End };
-    void appendText(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<ShapingBoundary>);
-    void appendTextFast(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth); // Reserved for TextOnlySimpleLineBuilder
-    void appendAtomicInlineBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
-    void appendInlineBoxStart(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment);
-    void appendInlineBoxEnd(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
-    void appendLineBreak(const InlineItem&, const RenderStyle&);
-    void appendWordBreakOpportunity(const InlineItem&, const RenderStyle&);
-    void appendOutOfFlow(const InlineItem&, const RenderStyle&);
+    void appendText(const InlineTextItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth, std::optional<ShapingBoundary>);
+    void appendTextFast(const InlineTextItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth); // Reserved for TextOnlySimpleLineBuilder
+    void appendAtomicInlineBox(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit marginBoxLogicalWidth);
+    void appendInlineBoxStart(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment);
+    void appendInlineBoxEnd(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth);
+    void appendLineBreak(const InlineItem&, const Style::ComputedStyle&);
+    void appendWordBreakOpportunity(const InlineItem&, const Style::ComputedStyle&);
+    void appendOutOfFlow(const InlineItem&, const Style::ComputedStyle&);
     void appendBlock(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
 
     void setContentNeedsBidiReordering() { m_hasNonDefaultBidiLevelRun = true; }
@@ -168,19 +168,19 @@ public:
         bool isShapingBoundary() const { return m_shapingBoundary != Line::ShapingBoundary::NotApplicable; }
 
         // FIXME: Maybe add create functions intead?
-        Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
+        Run(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft);
         Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
-        Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f, std::optional<Line::ShapingBoundary> = std::nullopt);
+        Run(const InlineTextItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f, std::optional<Line::ShapingBoundary> = std::nullopt);
 
     private:
         friend class Line;
         friend class InlineContentAligner;
         friend class RubyFormattingContext;
 
-        Run(const InlineSoftLineBreakItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
-        Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
+        Run(const InlineSoftLineBreakItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft);
+        Run(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
 
-        const RenderStyle& style() const LIFETIME_BOUND { return m_style; }
+        const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
         void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
         void shrinkHorizontally(InlineLayoutUnit width) { m_logicalWidth -= width; }
@@ -220,7 +220,7 @@ public:
         InlineLayoutUnit m_textSpacingAdjustment { 0 };
         GlyphOverflow m_glyphOverflow;
         const Box* m_layoutBox { nullptr };
-        const RenderStyle& m_style;
+        const Style::ComputedStyle& m_style;
         InlineDisplay::Box::Expansion m_expansion;
         Text m_textContent;
     };

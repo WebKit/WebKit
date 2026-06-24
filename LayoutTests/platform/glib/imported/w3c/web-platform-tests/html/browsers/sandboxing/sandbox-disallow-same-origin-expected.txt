@@ -1,5 +1,0 @@
-Access to sandbox iframe
-
-
-PASS Access to sandbox iframe is disallowed
-

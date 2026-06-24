@@ -28,24 +28,14 @@
 
 #include "DateComponents.h"
 #include "DateTimeFieldElement.h"
-
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class DateTimeEditElementEditControlOwner;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DateTimeEditElementEditControlOwner> : std::true_type { };
-}
 
 namespace WebCore {
 
 class Locale;
 
-class DateTimeEditElementEditControlOwner : public CanMakeWeakPtr<DateTimeEditElementEditControlOwner> {
+class DateTimeEditElementEditControlOwner : public AbstractRefCountedAndCanMakeWeakPtr<DateTimeEditElementEditControlOwner> {
 public:
     virtual ~DateTimeEditElementEditControlOwner();
     virtual void didBlurFromControl() = 0;

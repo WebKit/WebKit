@@ -13,31 +13,30 @@
 #include <array>
 #include <cstddef>
 #include <numeric>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
-#include "modules/audio_processing/aec3/moving_average.h"
+#include "modules/audio_processing/aec3/moving_average_spectrum.h"
 
 namespace webrtc {
 SubbandNearendDetector::SubbandNearendDetector(
-    const EchoCanceller3Config::Suppressor::SubbandNearendDetection& config,
+    const EchoCanceller3Config::Suppressor& config,
     size_t num_capture_channels)
-    : config_(config),
-      num_capture_channels_(num_capture_channels),
-      nearend_smoothers_(num_capture_channels_,
-                         aec3::MovingAverage(kFftLengthBy2Plus1,
-                                             config_.nearend_average_blocks)),
-      one_over_subband_length1_(
-          1.f / (config_.subband1.high - config_.subband1.low + 1)),
-      one_over_subband_length2_(
-          1.f / (config_.subband2.high - config_.subband2.low + 1)) {}
+    : num_capture_channels_(num_capture_channels),
+      nearend_smoothers_(
+          num_capture_channels_,
+          MovingAverageSpectrum(
+              kFftLengthBy2Plus1,
+              config.subband_nearend_detection.nearend_average_blocks)) {
+  SetConfig(config);
+}
 
 void SubbandNearendDetector::Update(
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    std::span<const std::array<float, kFftLengthBy2Plus1>> nearend_spectrum,
+    std::span<const std::array<float, kFftLengthBy2Plus1>>
     /* residual_echo_spectrum */,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+    std::span<const std::array<float, kFftLengthBy2Plus1>>
         comfort_noise_spectrum,
     bool /* initial_state */) {
   nearend_state_ = false;
@@ -73,4 +72,17 @@ void SubbandNearendDetector::Update(
          (nearend_power_subband1 > config_.snr_threshold * noise_power));
   }
 }
+
+void SubbandNearendDetector::SetConfig(
+    const EchoCanceller3Config::Suppressor& config) {
+  config_ = config.subband_nearend_detection;
+  one_over_subband_length1_ =
+      1.f / (config_.subband1.high - config_.subband1.low + 1);
+  one_over_subband_length2_ =
+      1.f / (config_.subband2.high - config_.subband2.low + 1);
+  for (auto& smoother : nearend_smoothers_) {
+    smoother.UpdateMemoryLength(config_.nearend_average_blocks);
+  }
+}
+
 }  // namespace webrtc

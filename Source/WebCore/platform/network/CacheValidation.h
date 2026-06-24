@@ -66,15 +66,18 @@ struct CacheControlDirectives {
         , noStore(false)
         , mustRevalidate(false)
         , immutable(false)
+        , isPublic(false)
         { }
 
     Markable<Seconds> maxAge;
     Markable<Seconds> maxStale;
+    Markable<Seconds> minFresh;
     Markable<Seconds> staleWhileRevalidate;
     bool noCache : 1;
     bool noStore : 1;
     bool mustRevalidate : 1;
     bool immutable : 1;
+    bool isPublic : 1;
 };
 WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap&);
 
@@ -84,6 +87,5 @@ WEBCORE_EXPORT bool verifyVaryingRequestHeaders(NetworkStorageSession*, const Ve
 WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const CookieJar*, const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&);
 
 WEBCORE_EXPORT bool NODELETE isStatusCodeCacheableByDefault(int statusCode);
-WEBCORE_EXPORT bool NODELETE isStatusCodePotentiallyCacheable(int statusCode);
 
 }

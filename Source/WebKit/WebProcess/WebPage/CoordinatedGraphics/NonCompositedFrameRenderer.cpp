@@ -126,18 +126,22 @@ void NonCompositedFrameRenderer::resetFrameDamage()
 {
     auto scaledRect = m_webPage->bounds();
     scaledRect.scale(m_webPage->deviceScaleFactor());
+
+    const auto& settings = m_webPage->corePage()->settings();
+    auto rectangleThreshold = Damage::clampRectangleThreshold(settings.damageRectangleThreshold());
+
     if (!m_context) {
         // For CPU rendering use the damage unconditionally to reduce the amount of pixels to upload to the GPU for the UI process.
-        m_frameDamage = std::make_optional<Damage>(scaledRect, Damage::Mode::Rectangles, 4);
+        m_frameDamage = std::make_optional<Damage>(scaledRect, Damage::Mode::Rectangles, rectangleThreshold);
         return;
     }
 
-    if (!m_webPage->corePage()->settings().propagateDamagingInformation()) {
+    if (!settings.propagateDamagingInformation()) {
         m_frameDamage = std::nullopt;
         return;
     }
 
-    m_frameDamage = std::make_optional<Damage>(scaledRect, m_webPage->corePage()->settings().unifyDamagedRegions() ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles, 4);
+    m_frameDamage = std::make_optional<Damage>(scaledRect, settings.unifyDamagedRegions() ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles, rectangleThreshold);
 }
 #endif
 

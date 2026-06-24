@@ -16,7 +16,7 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_iconvlist"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_libiconv_set_relocation_prefix"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "__iconv_bool"},
     {"access": "public", "name": "iconv_allocation_t"},

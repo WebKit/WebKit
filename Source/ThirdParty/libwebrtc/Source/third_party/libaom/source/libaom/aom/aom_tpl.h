@@ -9,10 +9,16 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+/*!\file
+ * \brief Defines structs related to temporal dependency model stats, needed for
+ * external rate control.
+ *
+ * \attention Experimental. Not part of the stable API.
+ */
 #ifndef AOM_AOM_AOM_TPL_H_
 #define AOM_AOM_AOM_TPL_H_
 
-#include "./aom_integer.h"
+#include "aom/aom_integer.h"
 
 #ifdef __cplusplus
 extern "C" {

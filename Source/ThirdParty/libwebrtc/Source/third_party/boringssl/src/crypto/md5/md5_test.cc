@@ -16,9 +16,12 @@
 
 #include <gtest/gtest.h>
 
-#include "internal.h"
 #include "../test/abi_test.h"
+#include "internal.h"
 
+
+BSSL_NAMESPACE_BEGIN
+namespace {
 
 #if defined(MD5_ASM) && defined(SUPPORTS_ABI_TEST)
 TEST(MD5Test, ABI) {
@@ -32,3 +35,6 @@ TEST(MD5Test, ABI) {
   CHECK_ABI(md5_block_asm_data_order, ctx.h, kBuf, 8);
 }
 #endif  // MD5_ASM && SUPPORTS_ABI_TEST
+
+}  // namespace
+BSSL_NAMESPACE_END

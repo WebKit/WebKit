@@ -261,7 +261,7 @@ void MediaPlayerPrivateWirelessPlayback::pause()
 bool MediaPlayerPrivateWirelessPlayback::hasAudio() const
 {
     if (RefPtr route = this->route())
-        return route->hasAudio();
+        return !route->audioOptions().isEmpty();
     return false;
 }
 
@@ -429,6 +429,15 @@ void MediaPlayerPrivateWirelessPlayback::playbackErrorDidChange(MediaDeviceRoute
 
     if (route.playbackError())
         setNetworkState(route.ready() ? MediaPlayer::NetworkState::DecodeError : MediaPlayer::NetworkState::FormatError);
+}
+
+void MediaPlayerPrivateWirelessPlayback::audioOptionsDidChange(MediaDeviceRoute& route)
+{
+    ASSERT(&route == this->route());
+    ALWAYS_LOG(LOGIDENTIFIER, route.audioOptions().size());
+
+    if (RefPtr player = m_player.get())
+        player->characteristicChanged();
 }
 
 void MediaPlayerPrivateWirelessPlayback::currentPlaybackPositionDidChange(MediaDeviceRoute& route)

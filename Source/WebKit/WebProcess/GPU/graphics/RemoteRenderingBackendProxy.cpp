@@ -682,13 +682,11 @@ void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Se
     connection->setSemaphores(WTF::move(wakeUp), WTF::move(clientWait));
 }
 
-bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const
+RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::cachedImageBuffer(const ImageBuffer& imageBuffer) const
 {
-    if (RefPtr cachedImageBuffer = m_imageBuffers.get(imageBuffer.renderingResourceIdentifier()).get()) {
-        ASSERT_UNUSED(cachedImageBuffer, cachedImageBuffer == &imageBuffer);
-        return true;
-    }
-    return false;
+    RefPtr cached = m_imageBuffers.get(imageBuffer.renderingResourceIdentifier()).get();
+    ASSERT(!cached || cached == &imageBuffer);
+    return cached;
 }
 
 #if USE(GRAPHICS_LAYER_WC)

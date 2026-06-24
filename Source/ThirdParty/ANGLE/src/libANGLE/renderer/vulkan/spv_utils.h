@@ -52,7 +52,8 @@ struct SpvTransformOptions
     bool enableSampleShading            = false;
     bool validate                       = true;
     bool useSpirvVaryingPrecisionFixer  = false;
-    bool removeDepthStencilInput        = false;
+    bool removeDepthInput               = false;
+    bool removeStencilInput             = false;
     bool roundOutputAfterDithering      = false;
     uint16_t ditherControl              = 0;
 };

@@ -111,11 +111,11 @@ NetworkStorageSession* NetworkSession::networkStorageSession() const
 static Ref<PCM::ManagerInterface> managerOrProxy(NetworkSession& networkSession, NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
 {
 #if PLATFORM(COCOA)
-    ApplicationBundleIdentifierOrAuditToken applicationBundleIdentifier = parameters.sourceApplicationBundleIdentifier;
+    ApplicationBundleIdentifiersOrAuditToken applicationBundleIdentifier = std::make_pair(parameters.sourceApplicationBundleIdentifier, parameters.sourceApplicationSecondaryIdentifier);
     if (auto data = networkProcess.sourceApplicationAuditData(); data && parameters.sourceApplicationBundleIdentifier.isEmpty())
         applicationBundleIdentifier = makeVector(data.get());
 #else
-    ApplicationBundleIdentifierOrAuditToken applicationBundleIdentifier = String();
+    ApplicationBundleIdentifiersOrAuditToken applicationBundleIdentifier = std::make_pair(String(), String());
 #endif
 
     if (!parameters.pcmMachServiceName.isEmpty() && !networkSession.sessionID().isEphemeral())

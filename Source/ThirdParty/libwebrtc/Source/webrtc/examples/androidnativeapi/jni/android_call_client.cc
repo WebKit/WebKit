@@ -19,12 +19,12 @@
 #include "api/create_modular_peer_connection_factory.h"
 #include "api/data_channel_interface.h"
 #include "api/enable_media_with_defaults.h"
+#include "api/environment/environment_factory.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
 #include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
-#include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/rtp_transceiver_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
@@ -93,7 +93,9 @@ class SetLocalSessionDescriptionObserver
 }  // namespace
 
 AndroidCallClient::AndroidCallClient()
-    : call_started_(false), pc_observer_(std::make_unique<PCObserver>(this)) {
+    : env_(webrtc::CreateEnvironment()),
+      call_started_(false),
+      pc_observer_(std::make_unique<PCObserver>(this)) {
   thread_checker_.Detach();
   CreatePeerConnectionFactory();
 }
@@ -115,9 +117,10 @@ void AndroidCallClient::Call(JNIEnv* env,
   local_sink_ = webrtc::JavaToNativeVideoSink(env, local_sink.obj());
   remote_sink_ = webrtc::JavaToNativeVideoSink(env, remote_sink.obj());
 
-  video_source_ = webrtc::CreateJavaVideoSource(env, signaling_thread_.get(),
-                                                /* is_screencast= */ false,
-                                                /* align_timestamps= */ true);
+  video_source_ =
+      webrtc::CreateJavaVideoSource(env, signaling_thread_.get(),
+                                    /* is_screencast= */ false,
+                                    /* align_timestamps= */ true, env_);
 
   CreatePeerConnection();
   Connect();
@@ -168,10 +171,10 @@ void AndroidCallClient::CreatePeerConnectionFactory() {
   RTC_CHECK(signaling_thread_->Start()) << "Failed to start thread";
 
   webrtc::PeerConnectionFactoryDependencies pcf_deps;
+  pcf_deps.env = env_;
   pcf_deps.network_thread = network_thread_.get();
   pcf_deps.worker_thread = worker_thread_.get();
   pcf_deps.signaling_thread = signaling_thread_.get();
-  pcf_deps.event_log_factory = std::make_unique<webrtc::RtcEventLogFactory>();
 
   pcf_deps.video_encoder_factory =
       std::make_unique<webrtc::InternalEncoderFactory>();

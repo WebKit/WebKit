@@ -29,10 +29,9 @@
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
 #include "Path.h"
-#include "StyleLengthWrapper+Blending.h"
+#include "StylePrimitiveNumericOrKeyword+Blending.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
-#include "TransformOperationData.h"
 #include <numbers>
 #include <wtf/TinyLRUCache.h>
 
@@ -181,10 +180,8 @@ AcceleratedEffectCircleFunction::RadialSize Evaluation<Circle::RadialSize, Accel
     );
 }
 
-AcceleratedEffectCircleFunction Evaluation<CircleFunction, AcceleratedEffectCircleFunction>::operator()(const CircleFunction& value, const TransformOperationData& data, ZoomFactor zoom)
+AcceleratedEffectCircleFunction Evaluation<CircleFunction, AcceleratedEffectCircleFunction>::operator()(const CircleFunction& value, const FloatSize& containingBlockSize, ZoomFactor zoom)
 {
-    auto containingBlockSize = data.motionPathData->offsetRect().rect().size();
-
     return {
         .radius = evaluate<AcceleratedEffectCircleFunction::RadialSize>(value->radius, containingBlockSize, zoom),
         .position = value->position ? std::optional { evaluate<FloatPoint>(*value->position, containingBlockSize, zoom) } : std::nullopt,

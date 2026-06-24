@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_EX_DATA_H
 #define OPENSSL_HEADER_EX_DATA_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,9 +35,9 @@ extern "C" {
 
 // Each type that supports ex_data provides three functions:
 
-// TYPE_get_ex_new_index allocates a new index for |TYPE|. An optional
-// |free_func| argument may be provided which is called when the owning object
-// is destroyed. See |CRYPTO_EX_free| for details. The |argl| and |argp|
+// TYPE_get_ex_new_index allocates a new index for `TYPE`. An optional
+// `free_func` argument may be provided which is called when the owning object
+// is destroyed. See `CRYPTO_EX_free` for details. The `argl` and `argp`
 // arguments are opaque values that are passed to the callback. It returns the
 // new index or a negative number on error.
 OPENSSL_EXPORT int TYPE_get_ex_new_index(long argl, void *argp,
@@ -45,24 +45,24 @@ OPENSSL_EXPORT int TYPE_get_ex_new_index(long argl, void *argp,
                                          CRYPTO_EX_dup *dup_unused,
                                          CRYPTO_EX_free *free_func);
 
-// TYPE_set_ex_data sets an extra data pointer on |t|. The |index| argument
-// must have been returned from a previous call to |TYPE_get_ex_new_index|.
+// TYPE_set_ex_data sets an extra data pointer on `t`. The `index` argument
+// must have been returned from a previous call to `TYPE_get_ex_new_index`.
 OPENSSL_EXPORT int TYPE_set_ex_data(TYPE *t, int index, void *arg);
 
-// TYPE_get_ex_data returns an extra data pointer for |t|, or NULL if no such
-// pointer exists. The |index| argument should have been returned from a
-// previous call to |TYPE_get_ex_new_index|.
+// TYPE_get_ex_data returns an extra data pointer for `t`, or NULL if no such
+// pointer exists. The `index` argument should have been returned from a
+// previous call to `TYPE_get_ex_new_index`.
 OPENSSL_EXPORT void *TYPE_get_ex_data(const TYPE *t, int index);
 
 // Some types additionally preallocate index zero, with all callbacks set to
 // NULL. Applications that do not need the general ex_data machinery may use
 // this instead.
 
-// TYPE_set_app_data sets |t|'s application data pointer to |arg|. It returns
+// TYPE_set_app_data sets `t`'s application data pointer to `arg`. It returns
 // one on success and zero on error.
 OPENSSL_EXPORT int TYPE_set_app_data(TYPE *t, void *arg);
 
-// TYPE_get_app_data returns the application data pointer for |t|, or NULL if no
+// TYPE_get_app_data returns the application data pointer for `t`, or NULL if no
 // such pointer exists.
 OPENSSL_EXPORT void *TYPE_get_app_data(const TYPE *t);
 
@@ -77,19 +77,19 @@ typedef struct crypto_ex_data_st CRYPTO_EX_DATA;
 
 // CRYPTO_EX_free is a callback function that is called when an object of the
 // class with extra data pointers is being destroyed. For example, if this
-// callback has been passed to |SSL_get_ex_new_index| then it may be called each
-// time an |SSL*| is destroyed.
+// callback has been passed to `SSL_get_ex_new_index` then it may be called each
+// time an `SSL*` is destroyed.
 //
-// |parent| and |ad| will be NULL. Historically, the parent object was passed in
-// |parent|, but accessing the pointer was not safe because |parent| was in the
+// `parent` and `ad` will be NULL. Historically, the parent object was passed in
+// `parent`, but accessing the pointer was not safe because `parent` was in the
 // process of being destroyed. If the callback has access to some other pointer
 // to the parent object, it must not pass the pointer to any BoringSSL APIs.
 // Mid-destruction, invariants on the parent object no longer hold.
 //
-// The arguments |argl| and |argp| contain opaque values that were given to
-// |CRYPTO_get_ex_new_index_ex|.
+// The arguments `argl` and `argp` contain opaque values that were given to
+// `CRYPTO_get_ex_new_index_ex`.
 //
-// This callback may be called with a NULL value for |ptr| if the object has no
+// This callback may be called with a NULL value for `ptr` if the object has no
 // value set for this index. However, the callbacks may also be skipped entirely
 // if no extra data pointers are set on the object at all.
 typedef void CRYPTO_EX_free(void *parent, void *ptr, CRYPTO_EX_DATA *ad,

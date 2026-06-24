@@ -14,7 +14,6 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
-	"crypto/x509"
 	"hash"
 	"slices"
 
@@ -29,15 +28,15 @@ type keyAgreement interface {
 	// In the case that the key agreement protocol doesn't use a
 	// ServerKeyExchange message, generateServerKeyExchange can return nil,
 	// nil.
-	generateServerKeyExchange(*Config, *Credential, *clientHelloMsg, *serverHelloMsg, uint16) (*serverKeyExchangeMsg, error)
-	processClientKeyExchange(*Config, *Credential, *clientKeyExchangeMsg, uint16) ([]byte, error)
+	generateServerKeyExchange(*Config, *Credential, *clientHelloMsg, *serverHelloMsg) (*serverKeyExchangeMsg, error)
+	processClientKeyExchange(*Config, *Credential, *clientKeyExchangeMsg) ([]byte, error)
 
 	// On the client side, the next two methods are called in order.
 
 	// This method may not be called if the server doesn't send a
 	// ServerKeyExchange message.
 	processServerKeyExchange(*Config, *clientHelloMsg, *serverHelloMsg, crypto.PublicKey, *serverKeyExchangeMsg) error
-	generateClientKeyExchange(*Config, *clientHelloMsg, *x509.Certificate) ([]byte, *clientKeyExchangeMsg, error)
+	generateClientKeyExchange(*Config, *clientHelloMsg, crypto.PublicKey) ([]byte, *clientKeyExchangeMsg, error)
 
 	// peerSignatureAlgorithm returns the signature algorithm used by the
 	// peer, or zero if not applicable.
@@ -81,13 +80,13 @@ type cipherSuite struct {
 	// the lengths, in bytes, of the key material needed for each component.
 	keyLen int
 	macLen int
-	ivLen  func(version uint16) int
-	ka     func(version uint16) keyAgreement
+	ivLen  func(vers version) int
+	ka     func(vers version) keyAgreement
 	// flags is a bitmask of the suite* values, above.
 	flags  int
 	cipher func(key, iv []byte, isRead bool) any
-	mac    func(version uint16, macKey []byte) macFunction
-	aead   func(version uint16, key, fixedNonce []byte) *tlsAead
+	mac    func(vers version, macKey []byte) macFunction
+	aead   func(vers version, key, fixedNonce []byte) *tlsAead
 }
 
 func (cs cipherSuite) hash() crypto.Hash {
@@ -130,22 +129,22 @@ var cipherSuites = []*cipherSuite{
 	{TLS_PSK_WITH_AES_256_CBC_SHA, 32, 20, ivLenAES, pskKA, suitePSK, cipherAES, macSHA1, nil},
 }
 
-func ivLenChaCha20Poly1305(vers uint16) int {
+func ivLenChaCha20Poly1305(vers version) int {
 	return 12
 }
 
-func ivLenAESGCM(vers uint16) int {
-	if vers >= VersionTLS13 {
+func ivLenAESGCM(vers version) int {
+	if vers.protocolVersion() >= VersionTLS13 {
 		return 12
 	}
 	return 4
 }
 
-func ivLenAES(vers uint16) int {
+func ivLenAES(vers version) int {
 	return 16
 }
 
-func ivLen3DES(vers uint16) int {
+func ivLen3DES(vers version) int {
 	return 8
 }
 
@@ -189,19 +188,19 @@ func cipherAES(key, iv []byte, isRead bool) any {
 }
 
 // macSHA1 returns a macFunction for the given protocol version.
-func macSHA1(version uint16, key []byte) macFunction {
+func macSHA1(version version, key []byte) macFunction {
 	return tls10MAC{hmac.New(sha1.New, key)}
 }
 
-func macMD5(version uint16, key []byte) macFunction {
+func macMD5(version version, key []byte) macFunction {
 	return tls10MAC{hmac.New(md5.New, key)}
 }
 
-func macSHA256(version uint16, key []byte) macFunction {
+func macSHA256(version version, key []byte) macFunction {
 	return tls10MAC{hmac.New(sha256.New, key)}
 }
 
-func macSHA384(version uint16, key []byte) macFunction {
+func macSHA384(version version, key []byte) macFunction {
 	return tls10MAC{hmac.New(sha512.New384, key)}
 }
 
@@ -233,7 +232,7 @@ func (f *fixedNonceAEAD) Open(out, nonce, plaintext, additionalData []byte) ([]b
 	return f.aead.Open(out, f.openNonce, plaintext, additionalData)
 }
 
-func aeadAESGCM(version uint16, key, fixedNonce []byte) *tlsAead {
+func aeadAESGCM(version version, key, fixedNonce []byte) *tlsAead {
 	aes, err := aes.NewCipher(key)
 	if err != nil {
 		panic(err)
@@ -247,7 +246,7 @@ func aeadAESGCM(version uint16, key, fixedNonce []byte) *tlsAead {
 	copy(nonce1, fixedNonce)
 	copy(nonce2, fixedNonce)
 
-	if version >= VersionTLS13 {
+	if version.protocolVersion() >= VersionTLS13 {
 		return &tlsAead{&xorNonceAEAD{nonce1, nonce2, aead}, false}
 	}
 
@@ -287,7 +286,7 @@ func (x *xorNonceAEAD) Open(out, nonce, plaintext, additionalData []byte) ([]byt
 	return ret, err
 }
 
-func aeadCHACHA20POLY1305(version uint16, key, fixedNonce []byte) *tlsAead {
+func aeadCHACHA20POLY1305(version version, key, fixedNonce []byte) *tlsAead {
 	aead, err := chacha20poly1305.New(key)
 	if err != nil {
 		panic(err)
@@ -318,11 +317,11 @@ func (s tls10MAC) MAC(digestBuf, seq, header, length, data []byte) []byte {
 	return s.h.Sum(digestBuf[:0])
 }
 
-func rsaKA(version uint16) keyAgreement {
+func rsaKA(version version) keyAgreement {
 	return &rsaKeyAgreement{version: version}
 }
 
-func ecdheECDSAKA(version uint16) keyAgreement {
+func ecdheECDSAKA(version version) keyAgreement {
 	return &ecdheKeyAgreement{
 		auth: &signedKeyAgreement{
 			keyType: keyTypeECDSA,
@@ -331,7 +330,7 @@ func ecdheECDSAKA(version uint16) keyAgreement {
 	}
 }
 
-func ecdheRSAKA(version uint16) keyAgreement {
+func ecdheRSAKA(version version) keyAgreement {
 	return &ecdheKeyAgreement{
 		auth: &signedKeyAgreement{
 			keyType: keyTypeRSA,
@@ -340,13 +339,13 @@ func ecdheRSAKA(version uint16) keyAgreement {
 	}
 }
 
-func pskKA(version uint16) keyAgreement {
+func pskKA(version version) keyAgreement {
 	return &pskKeyAgreement{
 		base: &nilKeyAgreement{},
 	}
 }
 
-func ecdhePSKKA(version uint16) keyAgreement {
+func ecdhePSKKA(version version) keyAgreement {
 	return &pskKeyAgreement{
 		base: &ecdheKeyAgreement{
 			auth: &nilKeyAgreementAuthentication{},

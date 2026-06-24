@@ -9,6 +9,7 @@
  */
 #include "test/run_loop.h"
 
+#include "absl/base/nullability.h"
 #include "absl/functional/any_invocable.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
@@ -21,7 +22,14 @@
 namespace webrtc {
 namespace test {
 
-RunLoop::RunLoop() : weak_factory_(this) {
+RunLoop::RunLoop() : worker_thread_(&socket_server_), weak_factory_(this) {
+  worker_thread_.WrapCurrent();
+}
+
+RunLoop::RunLoop(SocketServer* absl_nullable custom_ss)
+    : socket_server_(custom_ss),
+      worker_thread_(&socket_server_),
+      weak_factory_(this) {
   worker_thread_.WrapCurrent();
 }
 
@@ -69,10 +77,21 @@ void RunLoop::Flush() {
 }
 
 RunLoop::FakeSocketServer::FakeSocketServer() = default;
+
+RunLoop::FakeSocketServer::FakeSocketServer(
+    SocketServer* absl_nullable custom_ss)
+    : custom_ss_(custom_ss) {}
+
 RunLoop::FakeSocketServer::~FakeSocketServer() = default;
 
 void RunLoop::FakeSocketServer::FailNextWait() {
   fail_next_wait_ = true;
+}
+
+void RunLoop::FakeSocketServer::SetMessageQueue(Thread* absl_nullable queue) {
+  if (custom_ss_) {
+    custom_ss_->SetMessageQueue(queue);
+  }
 }
 
 bool RunLoop::FakeSocketServer::Wait(TimeDelta max_wait_duration,
@@ -81,16 +100,27 @@ bool RunLoop::FakeSocketServer::Wait(TimeDelta max_wait_duration,
     fail_next_wait_ = false;
     return false;
   }
+  if (custom_ss_) {
+    return custom_ss_->Wait(max_wait_duration, process_io);
+  }
   return true;
 }
 
-void RunLoop::FakeSocketServer::WakeUp() {}
+void RunLoop::FakeSocketServer::WakeUp() {
+  if (custom_ss_) {
+    custom_ss_->WakeUp();
+  }
+}
 
-Socket* RunLoop::FakeSocketServer::CreateSocket(int family, int type) {
+Socket* absl_nullable RunLoop::FakeSocketServer::CreateSocket(int family,
+                                                              int type) {
+  if (custom_ss_) {
+    return custom_ss_->CreateSocket(family, type);
+  }
   return nullptr;
 }
 
-RunLoop::WorkerThread::WorkerThread(SocketServer* ss)
+RunLoop::WorkerThread::WorkerThread(SocketServer* absl_nullable ss)
     : Thread(ss), tq_setter_(this) {}
 
 }  // namespace test

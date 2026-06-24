@@ -42,13 +42,13 @@ CSSNestedDeclarations::~CSSNestedDeclarations() = default;
 CSSStyleProperties& CSSNestedDeclarations::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(m_styleRule->mutableProperties(), *this);
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleProperties::create(protect(m_styleRule)->mutableProperties(), *this);
     return *m_propertiesCSSOMWrapper;
 }
 
 String CSSNestedDeclarations::cssText() const
 {
-    return m_styleRule->properties().asText(CSS::defaultSerializationContext());
+    return protect(m_styleRule)->properties().asText(CSS::defaultSerializationContext());
 }
 
 void CSSNestedDeclarations::reattach(StyleRuleBase& rule)
@@ -56,7 +56,7 @@ void CSSNestedDeclarations::reattach(StyleRuleBase& rule)
     m_styleRule = downcast<StyleRuleNestedDeclarations>(rule);
 
     if (m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
+        protect(m_propertiesCSSOMWrapper)->reattach(protect(m_styleRule)->mutableProperties());
 }
 
 } // namespace WebCore

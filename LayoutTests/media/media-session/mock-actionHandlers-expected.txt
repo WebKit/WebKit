@@ -35,5 +35,21 @@ EXPECTED (actionDetails === '{"action":"seekto","seekTime":1}') OK
 RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1, fastSeek: true}))
 ACTION: seekto
 EXPECTED (actionDetails === '{"action":"seekto","seekTime":1,"fastSeek":true}') OK
+Test that nexttrack handler takes priority over nextslide when both are registered
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "nexttrack"}))
+ACTION: nexttrack
+EXPECTED (actionDetails === '{"action":"nexttrack"}') OK
+Test that nexttrack falls back to nextslide handler when only nextslide is registered
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "nexttrack"}))
+ACTION: nextslide
+EXPECTED (actionDetails === '{"action":"nextslide"}') OK
+Test that previoustrack handler takes priority over previousslide when both are registered
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "previoustrack"}))
+ACTION: previoustrack
+EXPECTED (actionDetails === '{"action":"previoustrack"}') OK
+Test that previoustrack falls back to previousslide handler when only previousslide is registered
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "previoustrack"}))
+ACTION: previousslide
+EXPECTED (actionDetails === '{"action":"previousslide"}') OK
 END OF TEST
 

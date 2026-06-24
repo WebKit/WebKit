@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FilterData);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceFilter);
 
-LegacyRenderSVGResourceFilter::LegacyRenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
+LegacyRenderSVGResourceFilter::LegacyRenderSVGResourceFilter(SVGFilterElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceFilter, element, WTF::move(style))
 {
 }
@@ -74,7 +74,7 @@ void LegacyRenderSVGResourceFilter::removeClientFromCache(RenderElement& client)
     }
 }
 
-auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
+auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const Style::ComputedStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
@@ -97,8 +97,7 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     }
 
     auto addResult = m_rendererFilterDataMap.set(renderer, makeUnique<FilterData>());
-    auto addedIterator = addResult.iterator;
-    auto filterData = addedIterator->value.get();
+    auto filterData = addResult.iterator->value.get();
 
     Ref filterElement = this->filterElement();
     RefPtr contextElement = dynamicDowncast<SVGElement>(renderer.element());
@@ -106,14 +105,14 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
 
     auto filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), filterElement.get(), filterElement->filterUnits(), targetBoundingBox);
     if (filterRegion.isEmpty()) {
-        m_rendererFilterDataMap.remove(addedIterator);
+        m_rendererFilterDataMap.remove(renderer);
         return { };
     }
 
     // Determine absolute transformation matrix for filter.
     auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     if (!absoluteTransform.isInvertible()) {
-        m_rendererFilterDataMap.remove(addedIterator);
+        m_rendererFilterDataMap.remove(renderer);
         return { };
     }
 
@@ -127,8 +126,8 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     // Determine scale factor for filter. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
     ImageBuffer::sizeNeedsClamping(filterData->sourceImageRect.size(), filterScale);
 
-    auto preferredFilterModes = renderer.page().preferredFilterRenderingModes(*context);
-    auto renderingOptions(renderer.settings().showDebugBorders() ? std::make_optional(FilterRenderingOption::ShowDebugOverlay) : std::nullopt);
+    auto preferredFilterModes = protect(renderer.page())->preferredFilterRenderingModes(*context);
+    auto renderingOptions(protect(renderer.settings())->showDebugBorders() ? std::make_optional(FilterRenderingOption::ShowDebugOverlay) : std::nullopt);
 
     // Create the SVGFilterRenderer object.
     filterData->filter = SVGFilterRenderer::create(contextElement.get(), filterElement, {
@@ -138,7 +137,7 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     }, preferredFilterModes, renderingOptions, *context, RenderingResourceIdentifier::generate());
 
     if (!filterData->filter) {
-        m_rendererFilterDataMap.remove(addedIterator);
+        m_rendererFilterDataMap.remove(renderer);
         return { };
     }
 
@@ -150,13 +149,13 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     auto colorSpace = DestinationColorSpace::LinearSRGB();
 #endif
 
-    auto& results = filterData->filter->ensureResults([&]() {
+    auto& results = protect(filterData->filter)->ensureResults([&]() {
         return makeUnique<FilterResults>();
     });
 
     filterData->targetSwitcher = GraphicsContextSwitcher::create(*context, filterData->sourceImageRect, colorSpace, filterData->filter, &results);
     if (!filterData->targetSwitcher) {
-        m_rendererFilterDataMap.remove(addedIterator);
+        m_rendererFilterDataMap.remove(renderer);
         return { };
     }
     
@@ -251,7 +250,7 @@ void LegacyRenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
         // Repaint the image on the screen.
         markClientForInvalidation(objectFilterDataPair.key, RepaintInvalidation);
 
-        filterData->filter->clearEffectResult(effect);
+        protect(filterData->filter)->clearEffectResult(effect);
     }
 }
 

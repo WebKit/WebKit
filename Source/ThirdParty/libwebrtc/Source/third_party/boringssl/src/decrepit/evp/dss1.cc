@@ -15,6 +15,4 @@
 #include <openssl/digest.h>
 
 
-const EVP_MD *EVP_dss1(void) {
-  return EVP_sha1();
-}
+const EVP_MD *EVP_dss1() { return EVP_sha1(); }

@@ -16,11 +16,11 @@
 #include <iterator>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
 #include "absl/algorithm/container.h"
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "api/field_trials_view.h"
 #include "api/video/encoded_frame.h"
 #include "rtc_base/logging.h"
@@ -46,7 +46,7 @@ bool ValidReferences(const EncodedFrame& frame) {
 // Since FrameBuffer::FrameInfo is private it can't be used in the function
 // signature, hence the FrameIteratorT type.
 template <typename FrameIteratorT>
-ArrayView<const int64_t> GetReferences(const FrameIteratorT& it) {
+std::span<const int64_t> GetReferences(const FrameIteratorT& it) {
   return {it->second.encoded_frame->references,
           std::min<size_t>(it->second.encoded_frame->num_references,
                            EncodedFrame::kMaxFrameReferences)};

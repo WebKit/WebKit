@@ -1110,6 +1110,7 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, Re
             capabilitiesObject->setBoolean("acceptInsecureCerts"_s, capabilities.acceptInsecureCerts.value_or(false));
             capabilitiesObject->setBoolean("strictFileInteractability"_s, capabilities.strictFileInteractability.value_or(false));
             capabilitiesObject->setBoolean("setWindowRect"_s, capabilities.setWindowRect.value_or(true));
+            capabilitiesObject->setInteger("webkit:processID"_s, capabilities.processID.value_or(0));
             switch (capabilities.unhandledPromptBehavior.value_or(UnhandledPromptBehavior::DismissAndNotify)) {
             case UnhandledPromptBehavior::Dismiss:
                 capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss"_s);

@@ -1,0 +1,4 @@
+ABCD
+
+PASS Test SVGTransformList animation with invalid values: String value in transform list values for from and to attributes.
+

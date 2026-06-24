@@ -45,9 +45,9 @@
 #include "RenderInline.h"
 #include "RenderListBox.h"
 #include "RenderObjectDocument.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderSVGModelObject.h"
 #include "RenderTheme.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <numeric>
 
@@ -139,7 +139,7 @@ BorderPainter::BorderPainter(const RenderElement& renderer, const PaintInfo& pai
 {
 }
 
-std::optional<Path> BorderPainter::pathForBorderArea(const LayoutRect& rect, const RenderStyle& style, float deviceScaleFactor, RectEdges<bool> closedEdges)
+std::optional<Path> BorderPainter::pathForBorderArea(const LayoutRect& rect, const Style::ComputedStyle& style, float deviceScaleFactor, RectEdges<bool> closedEdges)
 {
     auto edges = borderEdges(style, deviceScaleFactor, closedEdges);
     if (!decorationHasAllSimpleEdges(edges))
@@ -203,7 +203,7 @@ bool BorderPainter::decorationHasAllSolidEdges(const RectEdges<BorderEdge>& edge
     return true;
 }
 
-void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style, BleedAvoidance bleedAvoidance, RectEdges<bool> closedEdges) const
+void BorderPainter::paintBorder(const LayoutRect& rect, const Style::ComputedStyle& style, BleedAvoidance bleedAvoidance, RectEdges<bool> closedEdges) const
 {
     auto& graphicsContext = m_paintInfo.context();
 
@@ -215,10 +215,10 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
         if (!image)
             return false;
 
-        if (!image->value->isLoaded(m_renderer.ptr()))
+        if (!protect(image->value)->isLoaded(m_renderer.ptr()))
             return false;
 
-        if (!image->value->canRender(m_renderer.ptr(), style.usedZoom()))
+        if (!protect(image->value)->canRender(m_renderer.ptr(), style.usedZoom()))
             return false;
 
         auto rectWithOutsets = rect;
@@ -233,7 +233,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
     bool appliedClipAlready = !rectToClipOut.isEmpty();
     GraphicsContextStateSaver stateSave(graphicsContext, appliedClipAlready);
     if (!rectToClipOut.isEmpty())
-        graphicsContext.clipOut(snapRectToDevicePixels(rectToClipOut, document().deviceScaleFactor()));
+        graphicsContext.clipOut(snapRectToDevicePixels(rectToClipOut, protect(document())->deviceScaleFactor()));
 
     // border-image is not affected by border-radius.
     if (paintNinePieceImage(rect, style, style.borderImage()))
@@ -246,13 +246,13 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
         case BleedAvoidance::UseTransparencyLayer:
             return std::tuple<BorderShape, BorderEdges> {
                 BorderShape::shapeForBorderRect(style, rect, closedEdges),
-                borderEdges(style, document().deviceScaleFactor(), closedEdges, { }, m_paintInfo.paintBehavior.contains(PaintBehavior::ForceBlackBorder))
+                borderEdges(style, protect(document())->deviceScaleFactor(), closedEdges, { }, m_paintInfo.paintBehavior.contains(PaintBehavior::ForceBlackBorder))
             };
 
         case BleedAvoidance::BackgroundOverBorder: {
             // Shrink the inner edge so there's no gap between the border and the background, which will be painted atop.
-            auto shrinkAmount = sizeForDevicePixel(m_paintInfo.context(), document().deviceScaleFactor());
-            auto edges = borderEdges(style, document().deviceScaleFactor(), closedEdges, shrinkAmount, m_paintInfo.paintBehavior.contains(PaintBehavior::ForceBlackBorder));
+            auto shrinkAmount = sizeForDevicePixel(m_paintInfo.context(), protect(document())->deviceScaleFactor());
+            auto edges = borderEdges(style, protect(document())->deviceScaleFactor(), closedEdges, shrinkAmount, m_paintInfo.paintBehavior.contains(PaintBehavior::ForceBlackBorder));
             auto borderWidths = RectEdges<LayoutUnit> {
                 edges.top().width(),
                 edges.right().width(),
@@ -271,7 +271,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
     }();
 
     bool haveAllSolidEdges = decorationHasAllSolidEdges(edges);
-    bool outerEdgeIsRectangular = !shape.isRounded() || (haveAllSolidEdges && shape.allCornersClippedOut(m_paintInfo.rect));
+    bool outerEdgeIsRectangular = !shape.hasNonZeroRadii() || (haveAllSolidEdges && shape.allCornersClippedOut(m_paintInfo.rect));
     bool innerEdgeIsRectangular = shape.innerShapeIsRectangular();
 
     paintSides(shape, {
@@ -296,7 +296,7 @@ void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& side
     if (borderShape.innerShapeContains(m_paintInfo.rect))
         return;
 
-    auto deviceScaleFactor = document().deviceScaleFactor();
+    auto deviceScaleFactor = protect(document())->deviceScaleFactor();
     bool haveAlphaColor = false;
     bool haveAllDoubleEdges = true;
     int numEdgesVisible = 4;
@@ -424,7 +424,7 @@ void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& side
 }
 
 template<typename T>
-bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const RenderStyle& style, const T& ninePieceImage, CompositeOperator op) const
+bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Style::ComputedStyle& style, const T& ninePieceImage, CompositeOperator op) const
 {
     auto image = ninePieceImage.source().tryStyleImage();
     if (!image)
@@ -449,7 +449,7 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Render
 
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
     // doesn't have any understanding of the zoom that is in effect on the tile.
-    float deviceScaleFactor = document().deviceScaleFactor();
+    float deviceScaleFactor = protect(document())->deviceScaleFactor();
 
     LayoutRect rectWithOutsets = rect;
     rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
@@ -464,12 +464,12 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Render
     return true;
 }
 
-bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyle& style, const Style::BorderImage& borderImage, CompositeOperator op) const
+bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const Style::ComputedStyle& style, const Style::BorderImage& borderImage, CompositeOperator op) const
 {
     return paintNinePieceImageImpl(rect, style, borderImage, op);
 }
 
-bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyle& style, const Style::MaskBorder& maskBorder, CompositeOperator op) const
+bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const Style::ComputedStyle& style, const Style::MaskBorder& maskBorder, CompositeOperator op) const
 {
     return paintNinePieceImageImpl(rect, style, maskBorder, op);
 }
@@ -629,7 +629,7 @@ void BorderPainter::paintBorderSides(const BorderShape& borderShape, const Sides
 {
     Path roundedPath;
     if (!sides.outerEdgeIsRectangular) {
-        float deviceScaleFactor = document().deviceScaleFactor();
+        float deviceScaleFactor = protect(document())->deviceScaleFactor();
         roundedPath = borderShape.pathForOuterShape(deviceScaleFactor);
     }
 
@@ -725,7 +725,7 @@ void BorderPainter::paintOneBorderSide(const BorderShape& borderShape, const Sid
             mitreAdjacentSide1 = false;
             mitreAdjacentSide2 = false;
         }
-        drawLineForBoxSide(graphicsContext, document(), sideRect, side, colorToPaint, edgeToRender.style(), mitreAdjacentSide1 ? adjacentEdge1.widthForPainting() : 0, mitreAdjacentSide2 ? adjacentEdge2.widthForPainting() : 0, antialias);
+        drawLineForBoxSide(graphicsContext, protect(document()), sideRect, side, colorToPaint, edgeToRender.style(), mitreAdjacentSide1 ? adjacentEdge1.widthForPainting() : 0, mitreAdjacentSide2 ? adjacentEdge2.widthForPainting() : 0, antialias);
     }
 }
 
@@ -795,7 +795,7 @@ void BorderPainter::drawBoxSideFromPath(const BorderShape& borderShape, const Pa
             GraphicsContextStateSaver stateSaver(graphicsContext);
 
             auto innerThirdShape = borderShape.shapeWithBorderWidths(innerThirdInsets);
-            innerThirdShape.clipToInnerShape(graphicsContext, document().deviceScaleFactor()); // FIXME: Cache document().deviceScaleFactor().
+            innerThirdShape.clipToInnerShape(graphicsContext, protect(document())->deviceScaleFactor()); // FIXME: Cache document().deviceScaleFactor().
 
             drawBoxSideFromPath(borderShape, borderPath, edges, thickness, drawThickness, side, color, BorderStyle::Solid, bleedAvoidance);
         }
@@ -803,7 +803,7 @@ void BorderPainter::drawBoxSideFromPath(const BorderShape& borderShape, const Pa
         // Draw outer border line
         {
             auto outerThirdShape = borderShape.shapeWithBorderWidths(outerThirdInsets);
-            outerThirdShape.clipOutInnerShape(graphicsContext, document().deviceScaleFactor());
+            outerThirdShape.clipOutInnerShape(graphicsContext, protect(document())->deviceScaleFactor());
 
             drawBoxSideFromPath(borderShape, borderPath, edges, thickness, drawThickness, side, color, BorderStyle::Solid, bleedAvoidance);
         }
@@ -836,7 +836,7 @@ void BorderPainter::drawBoxSideFromPath(const BorderShape& borderShape, const Pa
         };
 
         auto midBorderShape = borderShape.shapeWithBorderWidths(midWidths);
-        midBorderShape.clipToInnerShape(graphicsContext, document().deviceScaleFactor());
+        midBorderShape.clipToInnerShape(graphicsContext, protect(document())->deviceScaleFactor());
 
         drawBoxSideFromPath(borderShape, borderPath, edges, thickness, drawThickness, side, color, s2, bleedAvoidance);
         return;
@@ -852,7 +852,7 @@ void BorderPainter::drawBoxSideFromPath(const BorderShape& borderShape, const Pa
     graphicsContext.setStrokeStyle(StrokeStyle::NoStroke);
     graphicsContext.setFillColor(color);
 
-    auto borderRect = borderShape.snappedOuterRect(document().deviceScaleFactor());
+    auto borderRect = borderShape.snappedOuterRect(protect(document())->deviceScaleFactor());
     graphicsContext.drawRect(borderRect);
 }
 
@@ -860,7 +860,7 @@ void BorderPainter::clipBorderSidePolygon(const BorderShape& borderShape, BoxSid
 {
     auto& graphicsContext = m_paintInfo.context();
 
-    float deviceScaleFactor = document().deviceScaleFactor();
+    float deviceScaleFactor = protect(document())->deviceScaleFactor();
     auto outerRect = borderShape.snappedOuterRect(deviceScaleFactor);
 
     auto innerRect = borderShape.snappedInnerRect(deviceScaleFactor);
@@ -1232,7 +1232,7 @@ LayoutRect BorderPainter::borderRectAdjustedForBleedAvoidance(const LayoutRect& 
         return rect;
 
     // We shrink the rectangle by one device pixel on each side to make it fully overlap the anti-aliased background border
-    return shrinkRectByOneDevicePixel(m_paintInfo.context(), rect, document().deviceScaleFactor());
+    return shrinkRectByOneDevicePixel(m_paintInfo.context(), rect, protect(document())->deviceScaleFactor());
 }
 
 bool BorderPainter::shouldAntialiasLines(GraphicsContext& context)

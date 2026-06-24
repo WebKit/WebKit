@@ -926,7 +926,7 @@ void IDBTransaction::iterateCursorOnServer(IDBClient::TransactionOperation& oper
 
     if (data.keyData.isNull() && data.primaryKeyData.isNull()) {
         if (auto getResult = cursor->iterateWithPrefetchedRecords(data.count, m_lastWriteOperationID)) {
-            auto result = IDBResultData::iterateCursorSuccess(operation.identifier(), getResult.value());
+            auto result = IDBResultData::iterateCursorSuccess(operation.identifier(), getResult.value(), { });
             m_database->connectionProxy().iterateCursor(operation, { data.keyData, data.primaryKeyData, data.count, IndexedDB::CursorIterateOption::DoNotReply });
             operationCompletedOnServer(result, operation);
             return;

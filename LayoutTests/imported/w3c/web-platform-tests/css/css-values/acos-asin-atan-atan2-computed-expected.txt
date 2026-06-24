@@ -22,6 +22,11 @@ PASS calc(atan2(-1,1)) should be used-value-equivalent to -45deg
 PASS calc(asin(sin(180deg * sibling-index()))) should be used-value-equivalent to 0deg
 PASS calc(acos(cos(180deg * sibling-index()))) should be used-value-equivalent to 180deg
 PASS calc(atan(tan(180deg * sibling-index()))) should be used-value-equivalent to 0deg
+PASS calc(atan2(1, sibling-index())) should be used-value-equivalent to 45deg
+PASS calc(asin(sin(180deg * sign(1em - 1px)))) should be used-value-equivalent to 0deg
+PASS calc(acos(cos(180deg * sign(1em - 1px)))) should be used-value-equivalent to 180deg
+PASS calc(atan(tan(180deg * sign(1em - 1px)))) should be used-value-equivalent to 0deg
+PASS calc(atan2(1, sign(1em - 1px))) should be used-value-equivalent to 45deg
 PASS calc(cos(sin(acos(cos(pi))))) should be used-value-equivalent to 1
 PASS atan2(1px, -1px) should be used-value-equivalent to 135deg
 PASS atan2(1cm, -1cm) should be used-value-equivalent to 135deg

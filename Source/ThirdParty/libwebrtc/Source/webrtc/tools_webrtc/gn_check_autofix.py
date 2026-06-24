@@ -166,17 +166,25 @@ def rebase(base_path, dependency_path, dependency):
 
 def _update_deps(new_lines, current_deps_lines_content, block_type):
     """Helper to finalize and append a processed deps block to new_lines."""
-    absolute_deps = []
-    for dep_line in current_deps_lines_content:
-        absolute_deps.extend(re.findall(r'"(//[^"]*)"', dep_line))
-
     if block_type == 'deps_set':
         new_lines.append('deps = [\n')
     elif block_type == 'deps_add':
         new_lines.append('deps += [\n')
-
-    for dep in absolute_deps:
-        new_lines.append('"' + dep + '",\n')
+    for dep_line in current_deps_lines_content:
+        line = dep_line.strip()
+        # Keep blank lines (inserted for formatting), comments and
+        # lines tagged with "  # keep".
+        if not line or line.startswith('#') or line.endswith(' # keep'):
+            new_lines.append(dep_line)
+            continue
+        deps_to_keep = []
+        # Keep absolute dependencies.
+        deps_to_keep.extend(re.findall(r'"(//[^"]*)"', dep_line))
+        # Keep _unittest and _unittests target.
+        deps_to_keep.extend(
+            re.findall(r'"([^"]*[_:](?:unit)?tests?)"', dep_line))
+        for dep in deps_to_keep:
+            new_lines.append('"' + dep + '",\n')
     new_lines.append(']\n')
 
 
@@ -264,7 +272,14 @@ useful to check for different configurations."""
     errors_by_file = defaultdict(lambda: defaultdict(set))
 
     if flags.local_build_dir:
-        mb_output = Run(["gn", "gen", "--check", flags.local_build_dir])
+        mb_output = Run([
+            "gn",
+            "gen",
+            "--check",
+            # High limit to expose all errors to the tool.
+            "--error-limit=20000",
+            flags.local_build_dir
+        ])
     else:
         with TemporaryDirectory() as tmp_dir:
             mb_script_path = os.path.join(SCRIPT_DIR, 'mb', 'mb.py')

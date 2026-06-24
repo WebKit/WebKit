@@ -39,7 +39,7 @@ ExceptionOr<void> SVGAnimatedString::setBaseVal(const StringOrTrustedScriptURL& 
         [&](const String& str) -> ExceptionOr<String> {
             RefPtr el = contextElement();
             if (el && isScriptElement(*el) && m_isHrefProperty == IsHrefProperty::Yes)
-                return trustedTypeCompliantString(TrustedType::TrustedScriptURL, *contextElement()->scriptExecutionContext(), str, "SVGScriptElement href"_s);
+                return trustedTypeCompliantString(TrustedType::TrustedScriptURL, *protect(contextElement())->scriptExecutionContext(), str, "SVGScriptElement href"_s);
             return String(str);
         },
         [](const Ref<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {

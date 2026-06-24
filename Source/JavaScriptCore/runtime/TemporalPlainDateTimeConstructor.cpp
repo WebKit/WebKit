@@ -28,6 +28,8 @@
 
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
+#include "PlainDateTimeCore.h"
+#include "TemporalCalendar.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainDateTimePrototype.h"
 
@@ -80,27 +82,59 @@ void TemporalPlainDateTimeConstructor::finishCreation(VM& vm, TemporalPlainDateT
     plainDateTimePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime
 JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDateTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // Step 1: NewTarget check done by JSC engine.
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, plainDateTimeStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
+    // Steps 2-10: ToIntegerWithTruncation for each positional arg.
+    // For date args (year/month/day, i < 3): NaN and ±Infinity throw RangeError.
+    // For time args (hour..nanosecond, i ≥ 3): undefined (NaN) defaults to 0; ±Infinity throws.
     ISO8601::Duration duration { };
     auto count = std::min<size_t>(callFrame->argumentCount(), numberOfTemporalPlainDateUnits + numberOfTemporalPlainTimeUnits);
     for (unsigned i = 0; i < count; i++) {
         unsigned durationIndex = i >= static_cast<unsigned>(TemporalUnit::Week) ? i + 1 : i;
-        double v = callFrame->uncheckedArgument(i).toIntegerOrInfinity(globalObject);
+        double v = callFrame->uncheckedArgument(i).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        if (!std::isfinite(v))
+        if (std::isnan(v)) {
+            if (i < static_cast<unsigned>(numberOfTemporalPlainDateUnits)) [[unlikely]]
+                return throwVMRangeError(globalObject, scope, "Temporal.PlainDateTime year/month/day must not be NaN"_s);
+            v = 0;
+        }
+        if (!std::isfinite(v)) [[unlikely]]
             return throwVMRangeError(globalObject, scope, "Temporal.PlainDateTime properties must be finite"_s);
+        v = std::trunc(v);
         duration.setField(durationIndex, v);
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, structure, WTF::move(duration))));
+    // Steps 11-13: if calendar undefined → "iso8601"; if not String → TypeError; CanonicalizeCalendar.
+    CalendarID calId = iso8601CalendarID();
+    if (callFrame->argumentCount() > numberOfTemporalPlainDateUnits + numberOfTemporalPlainTimeUnits) {
+        JSValue calendarArg = callFrame->uncheckedArgument(numberOfTemporalPlainDateUnits + numberOfTemporalPlainTimeUnits);
+        if (!calendarArg.isUndefined()) {
+            if (!calendarArg.isString()) [[unlikely]]
+                return throwVMTypeError(globalObject, scope, "calendarId must be a string"_s);
+            auto rawCalendarId = asString(calendarArg)->value(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            auto canonicalized = isBuiltinCalendar(rawCalendarId);
+            if (!canonicalized) [[unlikely]]
+                return throwVMRangeError(globalObject, scope, "invalid calendar ID"_s);
+            calId = *canonicalized;
+        }
+    }
+
+    // Steps 14-19: IsValidISODate + IsValidTime + CreateTemporalDateTime.
+    auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, structure, WTF::move(duration));
+    RETURN_IF_EXCEPTION(scope, { });
+    if (result && calId != iso8601CalendarID())
+        result->setCalendarID(calId);
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalPlainDateTime, (JSGlobalObject* globalObject, CallFrame*))
@@ -112,25 +146,29 @@ JSC_DEFINE_HOST_FUNCTION(callTemporalPlainDateTime, (JSGlobalObject* globalObjec
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.from
+// Step 1: Return ToTemporalDateTime(item, options).
 JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimeConstructorFuncFrom, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
-    RETURN_IF_EXCEPTION(scope, { });
-
     JSValue itemValue = callFrame->argument(0);
+    JSValue optionsValue = callFrame->argument(1);
 
     if (itemValue.inherits<TemporalPlainDateTime>()) {
-        // Validate overflow
-        toTemporalOverflow(globalObject, options);
+        // ToTemporalDateTime step 2.a: GetOptionsObject + GetTemporalOverflowOption, return new instance.
+        toTemporalOverflow(globalObject, optionsValue);
         RETURN_IF_EXCEPTION(scope, { });
-
-        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), uncheckedDowncast<TemporalPlainDateTime>(itemValue)->plainDate(), uncheckedDowncast<TemporalPlainDateTime>(itemValue)->plainTime())));
+        auto* src = uncheckedDowncast<TemporalPlainDateTime>(itemValue);
+        auto* cloned = TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), src->plainDate(), src->plainTime());
+        if (src->calendarID() != iso8601CalendarID())
+            cloned->setCalendarID(src->calendarID());
+        RELEASE_AND_RETURN(scope, JSValue::encode(cloned));
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::from(globalObject, itemValue, options)));
+    // ToTemporalDateTime remaining steps: property bag or string path,
+    // fields read before options for bags, string parsed first for strings.
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::from(globalObject, itemValue, optionsValue)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindatetime.compare
@@ -139,13 +177,16 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimeConstructorFuncCompare, (JSGlobalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* one = TemporalPlainDateTime::from(globalObject, callFrame->argument(0), nullptr);
+    // Step 1: one = ToTemporalDateTime(one).
+    auto* one = TemporalPlainDateTime::from(globalObject, callFrame->argument(0), jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* two = TemporalPlainDateTime::from(globalObject, callFrame->argument(1), nullptr);
+    // Step 2: two = ToTemporalDateTime(two).
+    auto* two = TemporalPlainDateTime::from(globalObject, callFrame->argument(1), jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
 
-    return JSValue::encode(jsNumber(TemporalPlainDateTime::compare(one, two)));
+    // Step 3: CompareISODateTime(one.[[ISODateTime]], two.[[ISODateTime]]).
+    return JSValue::encode(jsNumber(TemporalCore::compareISODateTime(one->plainDate(), one->plainTime(), two->plainDate(), two->plainTime())));
 }
 
 } // namespace JSC

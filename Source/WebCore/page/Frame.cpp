@@ -356,10 +356,10 @@ void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
             if (!localChild)
                 continue;
 
-            auto oldFrameInfo = oldMap.getOptional(child->frameID());
-            auto newFrameInfo = newMap.getOptional(child->frameID());
+            RefPtr oldFrameInfo = oldMap.get(child->frameID());
+            RefPtr newFrameInfo = newMap.get(child->frameID());
 
-            if (!oldFrameInfo || !newFrameInfo || oldFrameInfo->ownerElementAppearance.contains(FrameOwnerElementAppearance::IsDark) != newFrameInfo->ownerElementAppearance.contains(FrameOwnerElementAppearance::IsDark)) {
+            if (!oldFrameInfo || !newFrameInfo || oldFrameInfo->ownerElementAppearance().contains(FrameOwnerElementAppearance::IsDark) != newFrameInfo->ownerElementAppearance().contains(FrameOwnerElementAppearance::IsDark)) {
                 RefPtr localChildView = localChild->view();
 
                 localChildView->invalidateForBaseBackgroundOrColorSchemeChange();
@@ -380,11 +380,6 @@ bool Frame::frameCanCreatePaymentSession() const
     // Prefer the LocalFrame code path when site isolation is disabled.
     ASSERT(m_settings->siteIsolationEnabled());
     return m_frameTreeSyncData->frameCanCreatePaymentSession;
-}
-
-bool Frame::isPrinting() const
-{
-    return m_isPrinting;
 }
 
 RefPtr<Frame> Frame::parent() const
@@ -441,5 +436,6 @@ TextStream& operator<<(TextStream& ts, const Frame& frame)
     ts << frame.debugDescription();
     return ts;
 }
+
 
 } // namespace WebCore

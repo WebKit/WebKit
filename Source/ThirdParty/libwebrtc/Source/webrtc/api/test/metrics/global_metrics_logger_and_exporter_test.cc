@@ -12,11 +12,11 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_exporter.h"
 #include "api/test/metrics/metrics_logger.h"
@@ -54,7 +54,7 @@ struct TestMetricsExporterFactory {
         : factory_(factory), export_result_(export_result) {}
     ~TestMetricsExporter() override = default;
 
-    bool Export(ArrayView<const Metric> metrics) override {
+    bool Export(std::span<const Metric> metrics) override {
       factory_->exported_metrics =
           std::vector<Metric>(metrics.begin(), metrics.end());
       return export_result_;

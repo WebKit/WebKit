@@ -13,8 +13,7 @@
 #include <stddef.h>
 
 #include <array>
-
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
@@ -32,13 +31,13 @@ class SaturationEstimator {
   // `channel0` and `channel1` contain the samples of the two channels.
   // `dc_levels` contains the estimated DC offsets for the two channels, which
   // are subtracted from the samples before saturation calculation.
-  void Update(ArrayView<const float> channel0,
-              ArrayView<const float> channel1,
-              ArrayView<const float, 2> dc_levels);
+  void Update(std::span<const float> channel0,
+              std::span<const float> channel1,
+              std::span<const float, 2> dc_levels);
 
   // Returns the number of frames since the last activity was detected in each
   // of the channels.
-  ArrayView<const int, 2> GetNumFramesSinceActivity() const {
+  std::span<const int, 2> GetNumFramesSinceActivity() const {
     return num_frames_since_activity_;
   }
 
@@ -46,7 +45,7 @@ class SaturationEstimator {
   // saturation factor is a value between 0 and 1, where 1 means that the signal
   // has recently been fully saturated and 0 means that no saturation has been
   // observed in the resent past.
-  ArrayView<const float, 2> GetSaturationFactors() const {
+  std::span<const float, 2> GetSaturationFactors() const {
     return saturation_factors_;
   }
 

@@ -105,7 +105,7 @@ JSC_DEFINE_HOST_FUNCTION(callRuntimeMethod, (JSGlobalObject* globalObject, CallF
     } else {
         // Calling a runtime object of a plugin element?
         if (auto* jsHTMLElement = dynamicDowncast<JSHTMLElement>(thisValue))
-            instance = pluginInstance(jsHTMLElement->wrapped());
+            instance = pluginInstance(protect(jsHTMLElement->wrapped()));
         if (!instance)
             return throwVMTypeError(globalObject, scope);
     }

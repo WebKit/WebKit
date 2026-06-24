@@ -254,6 +254,8 @@ class CaptureReplayTests
         configParams.depthBits   = traceInfo.configDepthBits;
         configParams.stencilBits = traceInfo.configStencilBits;
 
+        configParams.robustAccess = traceInfo.isRobustAccessEnabled;
+
         configParams.colorSpace = traceInfo.drawSurfaceColorSpace;
 
         configParams.clientArraysEnabled   = traceInfo.areClientArraysEnabled;

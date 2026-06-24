@@ -3203,14 +3203,14 @@ L008grand_ssse3:
 	movdqu	32(%edi),%xmm2
 	movdqu	48(%edi),%xmm3
 	addl	$64,%edi
-.byte	102,15,56,0,199
+	pshufb	%xmm7,%xmm0
 	movl	%edi,100(%esp)
-.byte	102,15,56,0,207
+	pshufb	%xmm7,%xmm1
 	movdqa	(%ebp),%xmm4
-.byte	102,15,56,0,215
+	pshufb	%xmm7,%xmm2
 	movdqa	16(%ebp),%xmm5
 	paddd	%xmm0,%xmm4
-.byte	102,15,56,0,223
+	pshufb	%xmm7,%xmm3
 	movdqa	32(%ebp),%xmm6
 	paddd	%xmm1,%xmm5
 	movdqa	48(%ebp),%xmm7
@@ -3231,11 +3231,11 @@ L009ssse3_00_47:
 	movdqa	%xmm3,%xmm7
 	xorl	%ecx,%edx
 	movl	24(%esp),%edi
-.byte	102,15,58,15,224,4
+	palignr	$4,%xmm0,%xmm4
 	xorl	%edi,%esi
 	rorl	$5,%edx
 	andl	%ecx,%esi
-.byte	102,15,58,15,250,4
+	palignr	$4,%xmm2,%xmm7
 	movl	%ecx,16(%esp)
 	xorl	%ecx,%edx
 	xorl	%esi,%edi
@@ -3391,11 +3391,11 @@ L009ssse3_00_47:
 	movdqa	%xmm0,%xmm7
 	xorl	%ecx,%edx
 	movl	8(%esp),%edi
-.byte	102,15,58,15,225,4
+	palignr	$4,%xmm1,%xmm4
 	xorl	%edi,%esi
 	rorl	$5,%edx
 	andl	%ecx,%esi
-.byte	102,15,58,15,251,4
+	palignr	$4,%xmm3,%xmm7
 	movl	%ecx,(%esp)
 	xorl	%ecx,%edx
 	xorl	%esi,%edi
@@ -3551,11 +3551,11 @@ L009ssse3_00_47:
 	movdqa	%xmm1,%xmm7
 	xorl	%ecx,%edx
 	movl	24(%esp),%edi
-.byte	102,15,58,15,226,4
+	palignr	$4,%xmm2,%xmm4
 	xorl	%edi,%esi
 	rorl	$5,%edx
 	andl	%ecx,%esi
-.byte	102,15,58,15,248,4
+	palignr	$4,%xmm0,%xmm7
 	movl	%ecx,16(%esp)
 	xorl	%ecx,%edx
 	xorl	%esi,%edi
@@ -3711,11 +3711,11 @@ L009ssse3_00_47:
 	movdqa	%xmm2,%xmm7
 	xorl	%ecx,%edx
 	movl	8(%esp),%edi
-.byte	102,15,58,15,227,4
+	palignr	$4,%xmm3,%xmm4
 	xorl	%edi,%esi
 	rorl	$5,%edx
 	andl	%ecx,%esi
-.byte	102,15,58,15,249,4
+	palignr	$4,%xmm1,%xmm7
 	movl	%ecx,(%esp)
 	xorl	%ecx,%edx
 	xorl	%esi,%edi

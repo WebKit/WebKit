@@ -1,7 +1,9 @@
 <body onload="runTest()">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 
 <script>
+window.jsTestIsAsync = true;
+
 async function runTest()
 {
     if (!window.testRunner)
@@ -12,7 +14,6 @@ async function runTest()
         accessKeyModifiers = ["ctrlKey", "altKey"];
 
     testRunner.dumpEditingCallbacks();
-    testRunner.waitUntilDone();
     testRunner.dumpAsText();
 
     shouldBe("first.selectionStart", "12");
@@ -75,7 +76,7 @@ async function runTest()
     eventSender.keyDown("I", accessKeyModifiers);
     shouldBe("ninth.selectionStart", "11");
     shouldBe("ninth.selectionEnd", "18");
-    testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
 

@@ -39,7 +39,7 @@
 #include "NodeInlines.h"
 #include "SerializedNode.h"
 #include "Settings.h"
-#include "StyleScope.h"
+#include "StyleDocumentScope.h"
 #include "StyleSheetContents.h"
 #include "XMLDocumentParser.h"
 #include "XSLStyleSheet.h"
@@ -99,7 +99,7 @@ void ProcessingInstruction::checkStyleSheet()
         // see http://www.w3.org/TR/xml-stylesheet/
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
-        auto attributes = parseAttributes(document->cachedResourceLoader(), data());
+        auto attributes = parseAttributes(protect(document->cachedResourceLoader()), data());
         if (!attributes)
             return;
         String type = attributes->get<HashTranslatorASCIILiteral>("type"_s);
@@ -192,7 +192,7 @@ bool ProcessingInstruction::sheetLoaded()
     if (!isLoading()) {
         Ref document = this->document();
         if (CheckedRef styleScope = document->styleScope(); styleScope->hasPendingSheet(*this))
-            styleScope->removePendingSheet(*this);
+            styleScope->removePendingSheet(protect(*this));
 #if ENABLE(XSLT)
         if (m_isXSL)
             document->scheduleToApplyXSLTransforms();
@@ -266,7 +266,7 @@ void ProcessingInstruction::addSubresourceAttributeURLs(OrderedHashSet<URL>& url
     if (!sheet())
         return;
     
-    addSubresourceURL(urls, sheet()->baseURL());
+    addSubresourceURL(urls, protect(sheet())->baseURL());
 }
 
 Node::NeedsPostConnectionSteps ProcessingInstruction::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

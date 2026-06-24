@@ -14,9 +14,9 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/sequence_checker.h"
 #include "call/rtp_packet_sink_interface.h"
@@ -78,7 +78,7 @@ void RtxReceiveStream::OnRtpPacket(const RtpPacketReceived& rtx_packet) {
   if (rtp_receive_statistics_) {
     rtp_receive_statistics_->OnRtpPacket(rtx_packet);
   }
-  ArrayView<const uint8_t> payload = rtx_packet.payload();
+  std::span<const uint8_t> payload = rtx_packet.payload();
 
   if (payload.size() < kRtxHeaderSize) {
     LogRtpPacketToEventLog(rtx_packet, /*osn=*/std::nullopt);
@@ -111,7 +111,7 @@ void RtxReceiveStream::OnRtpPacket(const RtpPacketReceived& rtx_packet) {
   media_packet.set_arrival_time(rtx_packet.arrival_time());
 
   // Skip the RTX payload header.
-  media_packet.SetPayload(payload.subview(kRtxHeaderSize));
+  media_packet.SetPayload(payload.subspan(kRtxHeaderSize));
 
   media_sink_->OnRtpPacket(media_packet);
 }

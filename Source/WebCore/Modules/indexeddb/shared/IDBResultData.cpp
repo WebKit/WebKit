@@ -29,6 +29,7 @@
 #include "UniqueIDBDatabase.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseTransaction.h"
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
@@ -52,6 +53,8 @@ IDBResultData::IDBResultData(const IDBResultData& other)
     , m_databaseConnectionIdentifier(other.m_databaseConnectionIdentifier)
     , m_resultInteger(other.m_resultInteger)
 {
+    if (other.m_clientOrigin)
+        m_clientOrigin = makeUniqueWithoutFastMallocCheck<ClientOrigin>(*other.m_clientOrigin);
     if (other.m_databaseInfo)
         m_databaseInfo = makeUnique<IDBDatabaseInfo>(*other.m_databaseInfo);
     if (other.m_transactionInfo)
@@ -81,6 +84,8 @@ void IDBResultData::isolatedCopy(const IDBResultData& source, IDBResultData& des
     destination.m_error = source.m_error.isolatedCopy();
     destination.m_databaseConnectionIdentifier = source.m_databaseConnectionIdentifier;
     destination.m_resultInteger = source.m_resultInteger;
+    if (source.m_clientOrigin)
+        destination.m_clientOrigin = makeUniqueWithoutFastMallocCheck<ClientOrigin>(crossThreadCopy(*source.m_clientOrigin));
 
     if (source.m_databaseInfo)
         destination.m_databaseInfo = makeUnique<IDBDatabaseInfo>(*source.m_databaseInfo, IDBDatabaseInfo::IsolatedCopy);
@@ -171,17 +176,19 @@ IDBResultData IDBResultData::putOrAddSuccess(const IDBResourceIdentifier& reques
     return result;
 }
 
-IDBResultData IDBResultData::getRecordSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult)
+IDBResultData IDBResultData::getRecordSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult, ClientOrigin&& origin)
 {
     IDBResultData result { IDBResultType::GetRecordSuccess, requestIdentifier };
     result.m_getResult = makeUnique<IDBGetResult>(getResult);
+    result.setClientOrigin(WTF::move(origin));
     return result;
 }
 
-IDBResultData IDBResultData::getAllRecordsSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetAllResult& getAllResult)
+IDBResultData IDBResultData::getAllRecordsSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetAllResult& getAllResult, ClientOrigin&& origin)
 {
     IDBResultData result { IDBResultType::GetAllRecordsSuccess, requestIdentifier };
     result.m_getAllResult = makeUnique<IDBGetAllResult>(getAllResult);
+    result.setClientOrigin(WTF::move(origin));
     return result;
 }
 
@@ -197,17 +204,19 @@ IDBResultData IDBResultData::deleteRecordSuccess(const IDBResourceIdentifier& re
     return { IDBResultType::DeleteRecordSuccess, requestIdentifier };
 }
 
-IDBResultData IDBResultData::openCursorSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult)
+IDBResultData IDBResultData::openCursorSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult, ClientOrigin&& origin)
 {
     IDBResultData result { IDBResultType::OpenCursorSuccess, requestIdentifier };
     result.m_getResult = makeUnique<IDBGetResult>(getResult);
+    result.setClientOrigin(WTF::move(origin));
     return result;
 }
 
-IDBResultData IDBResultData::iterateCursorSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult)
+IDBResultData IDBResultData::iterateCursorSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult, ClientOrigin&& origin)
 {
     IDBResultData result { IDBResultType::IterateCursorSuccess, requestIdentifier };
     result.m_getResult = makeUnique<IDBGetResult>(getResult);
+    result.setClientOrigin(WTF::move(origin));
     return result;
 }
 
@@ -233,6 +242,19 @@ const IDBGetAllResult& IDBResultData::getAllResult() const
 {
     RELEASE_ASSERT(m_getAllResult);
     return *m_getAllResult;
+}
+
+const ClientOrigin* IDBResultData::clientOrigin() const
+{
+    return m_clientOrigin.get();
+}
+
+void IDBResultData::setClientOrigin(ClientOrigin&& origin)
+{
+    // Skip default-constructed origins (database gone by result time).
+    if (origin.topOrigin.isNull())
+        return;
+    m_clientOrigin = makeUniqueWithoutFastMallocCheck<ClientOrigin>(WTF::move(origin));
 }
 
 } // namespace WebCore

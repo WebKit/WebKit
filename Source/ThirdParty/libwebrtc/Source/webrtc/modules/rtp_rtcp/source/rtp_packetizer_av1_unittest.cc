@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <initializer_list>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame_type.h"
@@ -40,8 +40,8 @@ constexpr uint8_t kNewCodedVideoSequenceBit = 0b00'00'1000;
 
 // Wrapper around rtp_packet to make it look like container of payload bytes.
 struct RtpPayload {
-  using value_type = ArrayView<const uint8_t>::value_type;
-  using const_iterator = ArrayView<const uint8_t>::const_iterator;
+  using value_type = std::span<const uint8_t>::value_type;
+  using const_iterator = std::span<const uint8_t>::iterator;
 
   RtpPayload() : rtp_packet(/*extensions=*/nullptr) {}
   RtpPayload& operator=(RtpPayload&&) = default;
@@ -77,7 +77,7 @@ class Av1Frame {
 };
 
 std::vector<RtpPayload> Packetize(
-    ArrayView<const uint8_t> payload,
+    std::span<const uint8_t> payload,
     RtpPacketizer::PayloadSizeLimits limits,
     VideoFrameType frame_type = VideoFrameType::kVideoFrameDelta,
     bool is_last_frame_in_picture = true) {
@@ -92,8 +92,8 @@ std::vector<RtpPayload> Packetize(
   return result;
 }
 
-Av1Frame ReassembleFrame(ArrayView<const RtpPayload> rtp_payloads) {
-  std::vector<ArrayView<const uint8_t>> payloads(rtp_payloads.size());
+Av1Frame ReassembleFrame(std::span<const RtpPayload> rtp_payloads) {
+  std::vector<std::span<const uint8_t>> payloads(rtp_payloads.size());
   for (size_t i = 0; i < rtp_payloads.size(); ++i) {
     payloads[i] = rtp_payloads[i];
   }

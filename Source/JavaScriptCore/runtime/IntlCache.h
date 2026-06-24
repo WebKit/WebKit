@@ -26,9 +26,12 @@
 #pragma once
 
 #include <unicode/udatpg.h>
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
@@ -41,6 +44,8 @@ public:
 
     Vector<char16_t, 32> getBestDateTimePattern(const CString& locale, std::span<const char16_t> skeleton, UErrorCode&);
     Vector<char16_t, 32> getFieldDisplayName(const CString& locale, UDateTimePatternField, UDateTimePGDisplayWidth, UErrorCode&);
+
+    String canonicalizeUnicodeLocaleID(const String& languageTag);
 
 private:
     UDateTimePatternGenerator* getSharedPatternGenerator(const CString& locale, UErrorCode& status)
@@ -56,6 +61,7 @@ private:
 
     std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>> m_cachedDateTimePatternGenerator;
     CString m_cachedDateTimePatternGeneratorLocale;
+    UncheckedKeyHashMap<String, String> m_cachedCanonicalizedLocaleIDs;
 };
 
 } // namespace JSC

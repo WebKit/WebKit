@@ -9,6 +9,9 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include "aom/aom_codec.h"
+#include "aom/internal/aom_codec_internal.h"
+
 #include "av1/common/common_data.h"
 #include "av1/common/quant_common.h"
 #include "av1/common/reconintra.h"
@@ -182,24 +185,32 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
   struct macroblock_plane *const p = x->plane;
   struct macroblockd_plane *const pd = xd->plane;
   const MB_MODE_INFO *const mi = &ctx->mic;
+  if (ctx == NULL) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "ctx is NULL in av1_update_state: %d %d %d %d %d %d \n",
+                       cm->current_frame.frame_type, cm->width, cm->height,
+                       mi_col, mi_row, bsize);
+  }
+  if (mi == NULL) {
+    aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                       "mi is NULL in av1_update_state: %d %d %d %d %d %d \n",
+                       cm->current_frame.frame_type, cm->width, cm->height,
+                       mi_col, mi_row, bsize);
+  }
   MB_MODE_INFO *const mi_addr = xd->mi[0];
   const struct segmentation *const seg = &cm->seg;
   assert(bsize < BLOCK_SIZES_ALL);
-  const int bw = mi_size_wide[mi->bsize];
-  const int bh = mi_size_high[mi->bsize];
+  assert(mi->bsize == bsize);
+  const int bw = mi_size_wide[bsize];
+  const int bh = mi_size_high[bsize];
   const int mis = mi_params->mi_stride;
   const int mi_width = mi_size_wide[bsize];
   const int mi_height = mi_size_high[bsize];
   TxfmSearchInfo *txfm_info = &x->txfm_search_info;
 
-  assert(mi->bsize == bsize);
-
   *mi_addr = *mi;
   copy_mbmi_ext_frame_to_mbmi_ext(&x->mbmi_ext, &ctx->mbmi_ext_best,
                                   av1_ref_frame_type(ctx->mic.ref_frame));
-
-  memcpy(txfm_info->blk_skip, ctx->blk_skip,
-         sizeof(txfm_info->blk_skip[0]) * ctx->num_4x4_blk);
 
   txfm_info->skip_txfm = ctx->rd_stats.skip_txfm;
 

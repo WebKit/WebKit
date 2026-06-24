@@ -24,8 +24,11 @@
 
 #include "internal.h"
 
-int asn1_utctime_to_tm(struct tm *tm, const ASN1_UTCTIME *d,
-                       int allow_timezone_offset) {
+
+using namespace bssl;
+
+int bssl::asn1_utctime_to_tm(struct tm *tm, const ASN1_UTCTIME *d,
+                             int allow_timezone_offset) {
   if (d->type != V_ASN1_UTCTIME) {
     return 0;
   }
@@ -37,8 +40,8 @@ int asn1_utctime_to_tm(struct tm *tm, const ASN1_UTCTIME *d,
   return 1;
 }
 
-int asn1_parse_utc_time(CBS *cbs, ASN1_UTCTIME *out, CBS_ASN1_TAG tag,
-                        int allow_timezone_offset) {
+int bssl::asn1_parse_utc_time(CBS *cbs, ASN1_UTCTIME *out, CBS_ASN1_TAG tag,
+                              int allow_timezone_offset) {
   tag = tag == 0 ? CBS_ASN1_UTCTIME : tag;
   CBS child;
   if (!CBS_get_asn1(cbs, &child, tag) ||

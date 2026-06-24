@@ -454,8 +454,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (changed) {
             let target = WI.assumingMainTarget();
-            if (target.hasCommand("DOM.markUndoableState"))
-                target.DOMAgent.markUndoableState();
+            WI.domUndoCoordinator.markUndoableState(target);
         }
     }
 

@@ -120,7 +120,7 @@ void createImageControls(HTMLElement& element)
     style->setTextContent(String { shadowStyle });
     shadowRoot->appendChild(WTF::move(style));
     
-    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, protect(element.document()), nullptr);
+    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, protect(element.document()));
     button->setIdAttribute(imageControlsButtonIdentifier());
     controlLayer->appendChild(button);
     controlLayer->setUserAgentPart(UserAgentParts::appleAttachmentControlsContainer());

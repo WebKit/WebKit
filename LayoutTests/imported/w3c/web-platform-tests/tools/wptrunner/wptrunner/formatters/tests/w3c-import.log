@@ -15,4 +15,3 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/formatters/tests/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/formatters/tests/test_chromium.py

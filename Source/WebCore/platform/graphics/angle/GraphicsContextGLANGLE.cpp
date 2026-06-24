@@ -51,7 +51,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
-
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCVCocoa.h"
 #endif
@@ -709,14 +708,34 @@ void GraphicsContextGLANGLE::readPixelsBufferObject(IntRect rect, GCGLenum forma
 {
     if (!makeContextCurrent())
         return;
+
+    if (!m_isForWebGL2) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
+
+    GCGLuint pixelPackBuffer = 0;
+    GL_GetIntegerv(GL_PIXEL_PACK_BUFFER_BINDING, reinterpret_cast<GCGLint*>(&pixelPackBuffer));
+    if (!pixelPackBuffer) {
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
+
+    auto attrs = contextAttributes();
+    if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO) {
+        resolveMultisamplingIfNecessary(rect);
+        GL_BindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, m_fbo);
+    }
+
     setPackParameters(alignment, rowLength, false);
-    GLsizei bufferSize = 0;
-    GL_GetBufferParameterivRobustANGLE(GL_PIXEL_PACK_BUFFER, GL_BUFFER_SIZE, 1, nullptr, &bufferSize);
-    // FIXME: Remove redundant use of unsafe std::span by calling GL_ReadPixelsRobustANGLE directly.
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    std::span<uint8_t> data(reinterpret_cast<uint8_t*>(offset), static_cast<size_t>(bufferSize));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    readPixelsImpl(rect, format, type, data);
+
+    // ANGLE validates the read size against the PBO size.
+    GLsizei bufferSize = std::numeric_limits<GLsizei>::max();
+
+    GL_ReadPixelsRobustANGLE(rect.x(), rect.y(), rect.width(), rect.height(), format, type, bufferSize, nullptr, nullptr, nullptr, reinterpret_cast<void*>(offset));
+
+    if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)
+        GL_BindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, m_multisampleFBO);
 }
 
 std::optional<IntSize> GraphicsContextGLANGLE::readPixelsImpl(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data)

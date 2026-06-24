@@ -40,7 +40,7 @@ using namespace CSS::Literals;
 
 // MARK: - Conversion
 
-auto ToCSS<BorderRadius>::operator()(const BorderRadius& value, const RenderStyle& style) -> CSS::BorderRadius
+auto ToCSS<BorderRadius>::operator()(const BorderRadius& value, const Style::ComputedStyle& style) -> CSS::BorderRadius
 {
     return {
         .horizontal {

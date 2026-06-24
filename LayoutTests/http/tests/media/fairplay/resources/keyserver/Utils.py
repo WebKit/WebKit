@@ -97,7 +97,9 @@ class Utils:
         "nine": SKDAssetInfo("nine", bytearray.fromhex('39393939393939393939393939393939'), bytearray.fromhex('546865517569636B42726F776E466F78'), 86400, 0, 0, SKDHDCPInformation.Type0),
         "ten": SKDAssetInfo("ten", bytearray.fromhex('3A3A3A3A3A3A3A3A3A3A3A3A3A3A3A3A'), bytearray.fromhex('546865517569636B42726F776E466F78'), 86400, 0, 0, SKDHDCPInformation.Type0),
         "eleven": SKDAssetInfo("eleven", bytearray.fromhex('3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B'), bytearray.fromhex('D5FBD6B82ED93E4EF98AE40931EE33B7'), 86400, 0, 0, SKDHDCPInformation.Type0),
-        "twelve": SKDAssetInfo("twelve", bytearray.fromhex('3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C'), bytearray.fromhex('D5FBD6B82ED93E4EF98AE40931EE33B7'), 86400, 0, 0, SKDHDCPInformation.Type0)
+        "twelve": SKDAssetInfo("twelve", bytearray.fromhex('3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C'), bytearray.fromhex('D5FBD6B82ED93E4EF98AE40931EE33B7'), 86400, 0, 0, SKDHDCPInformation.Type0),
+        "mp4-basic": SKDAssetInfo("mp4-basic", bytearray.fromhex('be7df8a3667a6a8fd564d0ed81339a95'), bytearray.fromhex('3D6310382283138188B6077ACCC45FD7'), 86400, 0, 0, SKDHDCPInformation.Type0),
+        "mp4-av-multikey": SKDAssetInfo("mp4-av-multikey", bytearray.fromhex('91039263016da635770d57db92f98bd0'), bytearray.fromhex('09b292f5a4bfd3a46611d787f0ddb9d3'), 86400, 0, 0, SKDHDCPInformation.Type0)
     }
 
     @staticmethod

@@ -224,6 +224,12 @@ inline static RetainPtr<UIToolbar> createToolbarWithItems(NSArray<UIBarButtonIte
     return self;
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super dealloc];
+}
+
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 // FIXME (262139): Adopt -registerForTraitChanges: once iOS 17 is the minimum supported iOS version.

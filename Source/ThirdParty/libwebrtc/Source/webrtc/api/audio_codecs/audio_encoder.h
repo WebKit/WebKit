@@ -16,12 +16,12 @@
 
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_view.h"
 #include "api/call/bitrate_allocation.h"
 #include "api/units/data_rate.h"
@@ -150,7 +150,7 @@ class AudioEncoder {
   // EncodeImpl() which does the actual work, and then checks some
   // postconditions.
   EncodedInfo Encode(uint32_t rtp_timestamp,
-                     ArrayView<const int16_t> audio,
+                     std::span<const int16_t> audio,
                      Buffer* encoded);
 
   // Resets the encoder to its starting state, discarding any input that has
@@ -196,7 +196,7 @@ class AudioEncoder {
   // not call any methods on this encoder afterwards, except for the
   // destructor. The default implementation just returns an empty array.
   // NOTE: This method is subject to change. Do not call or override it.
-  virtual ArrayView<std::unique_ptr<AudioEncoder>> ReclaimContainedEncoders();
+  virtual std::span<std::unique_ptr<AudioEncoder>> ReclaimContainedEncoders();
 
   // Enables audio network adaptor. Returns true if successful.
   virtual bool EnableAudioNetworkAdaptor(absl::string_view config);
@@ -260,7 +260,7 @@ class AudioEncoder {
   // Subclasses implement this to perform the actual encoding. Called by
   // Encode().
   virtual EncodedInfo EncodeImpl(uint32_t rtp_timestamp,
-                                 ArrayView<const int16_t> audio,
+                                 std::span<const int16_t> audio,
                                  Buffer* encoded) = 0;
 };
 }  // namespace webrtc

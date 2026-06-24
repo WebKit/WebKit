@@ -79,9 +79,9 @@ public:
     ExceptionOr<Ref<XRQuadLayer>> createQuadLayer(ScriptExecutionContext&, const XRQuadLayerInit&);
     ExceptionOr<Ref<XRCylinderLayer>> createCylinderLayer(ScriptExecutionContext&, const XRCylinderLayerInit&);
     ExceptionOr<Ref<XREquirectLayer>> createEquirectLayer(ScriptExecutionContext&, const XREquirectLayerInit&);
-    ExceptionOr<Ref<XRCubeLayer>> createCubeLayer(const XRCubeLayerInit&) { RELEASE_ASSERT_NOT_REACHED(); }
+    ExceptionOr<Ref<XRCubeLayer>> createCubeLayer(ScriptExecutionContext&, const XRCubeLayerInit&);
 
-    Ref<WebXRViewport> initializeViewport(IntSize, XRLayerLayout, int offset, int num);
+    Ref<WebXRViewport> initializeViewport(IntSize, XRLayerLayout, XRTextureType, int offset, int num);
 
     ExceptionOr<Ref<XRWebGLSubImage>> getSubImage(XRCompositionLayer&, const WebXRFrame&, XREye);
     ExceptionOr<Ref<XRWebGLSubImage>> getViewSubImage(XRProjectionLayer&, const WebXRView&);
@@ -98,8 +98,8 @@ private:
     ExceptionOr<void> validateCompositionLayerInitParameters(const XRLayerInit&) const;
     ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateColorTexturesForProjectionLayer(XRProjectionLayer&, XRTextureType, GCGLenum textureFormat, double scaleFactor);
     ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateDepthTexturesForProjectionLayer(XRProjectionLayer&, XRTextureType, GCGLenum textureFormat, double scaleFactor);
-    ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateColorTexturesForLayer(XRCompositionLayer&, XRTextureType, const XRLayerInit&);
-    ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateDepthTexturesForLayer(XRCompositionLayer&, XRTextureType, const XRLayerInit&);
+    ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateColorTexturesForLayer(XRCompositionLayer&);
+    ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateDepthTexturesForLayer(XRCompositionLayer&, const XRLayerInit&);
     bool validateXRWebGLSubImageCreation(const XRCompositionLayer&, const WebXRFrame&) const;
 
     IntRect rectForView(const XRProjectionLayer&, const XRTextureType, const WebXRView&) const;

@@ -109,6 +109,12 @@ bool FEDisplacementMapCoreImageApplier::apply(const Filter& filter, std::span<co
     if (!inputImage)
         return false;
 
+    // §16.4: when in2 is tainted, act as a pass-through of in.
+    if (m_effect->in2IsTainted()) {
+        result.setCIImage(WTF::move(inputImage));
+        return true;
+    }
+
     RetainPtr mapImage = mapInput->ciImage();
     if (!mapImage)
         return false;

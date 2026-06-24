@@ -17,8 +17,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-create.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/concurrent-requests.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/create-enabled-on-self-origin-by-permissions-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/create-enabled-on-self-origin-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/create-non-fully-active.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/create.disabled-by-permissions-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/create.disabled-by-permissions-policy.https.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/create.tentative.https.html
@@ -28,11 +30,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/digital-credentials-static-methods.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get-enabled-on-self-origin-by-permissions-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get-enabled-on-self-origin-by-permissions-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get-non-fully-active.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get.disabled-by-permissions-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get.disabled-by-permissions-policy.https.sub.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/historical.any.js
-/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/non-fully-active.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/non-secure-contexts.http.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/protocol-filtering-mdoc.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/protocol-filtering-openid4vp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/tsconfig.json
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/user-activation-create.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/user-activation-get.https.html

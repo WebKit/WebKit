@@ -37,6 +37,7 @@
 #include "DOMJITCallDOMGetterSnippet.h"
 #include "GetterSetter.h"
 #include "JSCInlines.h"
+#include "RegExpConstructor.h"
 #include "TypeLocation.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -1182,7 +1183,7 @@ private:
         case StringMatch: {
             if (node->child2()->shouldSpeculateRegExpObject()) {
                 if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node)) {
-                    addStringMatchPrimordialChecks(node->child2().node());
+                    addRegExpPrimordialStructureCheck(node->child2().node());
 
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     Node* globalObjectNode = m_insertionSet.insertNode(
@@ -1190,6 +1191,32 @@ private:
                         OpInfo(m_graph.freeze(globalObject)));
 
                     node->convertToRegExpMatchFast(globalObjectNode);
+
+                    fixEdge<KnownCellUse>(node->child1());
+                    fixEdge<RegExpObjectUse>(node->child2());
+                    fixEdge<StringUse>(node->child3());
+                    break;
+                }
+                fixEdge<StringUse>(node->child1());
+                fixEdge<RegExpObjectUse>(node->child2());
+                break;
+            }
+            fixEdge<StringUse>(node->child1());
+            fixEdge<StringUse>(node->child2());
+            break;
+        }
+
+        case StringSearch: {
+            if (node->child2()->shouldSpeculateRegExpObject()) {
+                if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node)) {
+                    addRegExpPrimordialStructureCheck(node->child2().node());
+
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                    Node* globalObjectNode = m_insertionSet.insertNode(
+                        m_indexInBlock, SpecObjectOther, JSConstant, node->origin,
+                        OpInfo(m_graph.freeze(globalObject)));
+
+                    node->convertToRegExpSearch(globalObjectNode);
 
                     fixEdge<KnownCellUse>(node->child1());
                     fixEdge<RegExpObjectUse>(node->child2());
@@ -1329,7 +1356,7 @@ private:
                         break;
                     }
 
-                    if (m_graph.m_plan.isFTL()) {
+                    if (is64Bit()) {
                         if (node->op() == GetByVal && m_graph.child(node, 1)->shouldSpeculateInt32()) {
                             if (m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
                                 auto old = node->arrayMode();
@@ -1529,7 +1556,7 @@ private:
                     }
 
                     // Right now, we only support the pattern MultiPutByVal(Object, Int32, Int32)
-                    if (m_graph.m_plan.isFTL()) {
+                    if (is64Bit()) {
                         if (node->op() == PutByVal && child2->shouldSpeculateInt32() && child3->shouldSpeculateInt32()) {
                             ArrayModes arrayModes = 0;
                             {
@@ -1834,6 +1861,20 @@ private:
             break;
         }
 
+        case ArrayJoin: {
+            Edge& array = m_graph.varArgChild(node, 0);
+            Edge& storage = m_graph.varArgChild(node, 2);
+            blessArrayOperation(array, Edge(), storage);
+            ASSERT_WITH_MESSAGE(storage.node(), "blessArrayOperation for ArrayJoin must set Butterfly for storage edge.");
+            fixEdge<KnownCellUse>(array);
+            Edge& separator = m_graph.varArgChild(node, 1);
+            if (separator->shouldSpeculateString())
+                fixEdge<StringUse>(separator);
+            else
+                fixEdge<UntypedUse>(separator);
+            break;
+        }
+
         case ArrayIncludes:
         case ArrayIndexOf:
             fixupArrayIndexOfOrArrayIncludes(node);
@@ -1856,7 +1897,7 @@ private:
         case RegExpSearch: {
             fixEdge<KnownCellUse>(node->child1());
             if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
-                addRegExpSearchPrimordialChecks(node->child2().node());
+                addRegExpPrimordialStructureCheck(node->child2().node());
             else
                 m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
             fixEdge<RegExpObjectUse>(node->child2());
@@ -1867,8 +1908,28 @@ private:
 
         case RegExpMatchFast: {
             fixEdge<KnownCellUse>(node->child1());
+            if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
+                addRegExpPrimordialStructureCheck(node->child2().node());
+            else
+                m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
             fixEdge<RegExpObjectUse>(node->child2());
             fixEdge<StringUse>(node->child3());
+            break;
+        }
+
+        case RegExpSplitFast: {
+            if (m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node) && m_graph.isWatchingRegExpSpeciesWatchpoint(node))
+                addRegExpPrimordialStructureCheck(node->child1().node());
+            else
+                m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
+            fixEdge<RegExpObjectUse>(node->child1());
+            fixEdge<StringUse>(node->child2());
+            // child3 (limit) is checked at runtime by the JIT operation; it can be undefined or any number.
+            break;
+        }
+
+        case RegExpStringIteratorNext: {
+            fixEdge<CellUse>(node->child1());
             break;
         }
 
@@ -1896,8 +1957,8 @@ private:
 
             if (op == StringReplace || op == StringReplaceAll) {
                 if (node->child2()->shouldSpeculateRegExpObject() && m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
-                    addStringReplacePrimordialChecks(node->child2().node());
-                else 
+                    addRegExpPrimordialStructureCheck(node->child2().node());
+                else
                     m_insertionSet.insertNode(m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
             }
 
@@ -2972,6 +3033,15 @@ private:
             break;
         }
 
+        case StringIteratorNext:
+        case StringIteratorNextWithUndefined: {
+            fixEdge<StringUse>(node->child1());
+            fixEdge<Int32Use>(node->child2());
+            m_graph.m_tupleData.at(node->tupleOffset()).resultFlags = NodeResultJS;
+            m_graph.m_tupleData.at(node->tupleOffset() + 1).resultFlags = NodeResultInt32;
+            break;
+        }
+
         case ExtractFromTuple: {
             node->setResult(m_graph.m_tupleData.at(node->tupleIndex()).resultFlags);
             ASSERT(node->hasResult());
@@ -3170,14 +3240,25 @@ private:
             break;
 
         case MapIteratorNext:
-        case MapIteratorKey:
-        case MapIteratorValue:
-            if (node->child1().useKind() == MapIteratorObjectUse)
-                fixEdge<MapIteratorObjectUse>(node->child1());
-            else if (node->child1().useKind() == SetIteratorObjectUse)
-                fixEdge<SetIteratorObjectUse>(node->child1());
+            // child1: storage JSValue (cell or empty); leave as UntypedUse so GetInternalField's
+            // empty-marker value flows through without a speculation check.
+            // child2: iterated map/set object, child3: entry int32.
+            if (node->child2().useKind() == MapObjectUse)
+                fixEdge<MapObjectUse>(node->child2());
+            else if (node->child2().useKind() == SetObjectUse)
+                fixEdge<SetObjectUse>(node->child2());
             else
                 RELEASE_ASSERT_NOT_REACHED();
+            fixEdge<Int32Use>(node->child3());
+            m_graph.m_tupleData.at(node->tupleOffset()).resultFlags = NodeResultJS;
+            m_graph.m_tupleData.at(node->tupleOffset() + 1).resultFlags = NodeResultInt32;
+            break;
+
+        case MapIteratorKey:
+        case MapIteratorValue:
+            // child1: storage cell, child2: entry int32. Map vs Set distinction is in OpInfo (BucketOwnerType).
+            fixEdge<KnownCellUse>(node->child1());
+            fixEdge<Int32Use>(node->child2());
             break;
 
         case MapHash: {
@@ -3688,6 +3769,8 @@ private:
         case NewRegExp:
         case NewMap:
         case NewSet:
+        case NewWeakMap:
+        case NewWeakSet:
         case IsTypedArrayView:
         case IsEmpty:
         case TypeOfIsUndefined:
@@ -4531,57 +4614,7 @@ private:
         m_insertionSet.execute(block);
     }
     
-    void addStringReplacePrimordialChecks(Node* searchRegExp)
-    {
-        Node* node = m_currentNode;
-
-        // Check that structure of searchRegExp is RegExp object
-        m_insertionSet.insertNode(
-            m_indexInBlock, SpecNone, Check, node->origin,
-            Edge(searchRegExp, RegExpObjectUse));
-
-        // Check that searchRegExp.lastIndex is a number
-        Node* lastIndexProperty = m_insertionSet.insertNode(
-            m_indexInBlock, SpecNone, GetRegExpObjectLastIndex, node->origin,
-            Edge(searchRegExp, RegExpObjectUse));
-        m_insertionSet.insertNode(
-            m_indexInBlock, SpecNone, Check, node->origin,
-            Edge(lastIndexProperty, NumberUse));
-
-        auto emitPrimordialCheckFor = [&] (JSValue primordialProperty, UniquedStringImpl* propertyUID) {
-            m_graph.identifiers().ensure(propertyUID);
-            auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromImmortalIdentifier(propertyUID), CacheType::GetByIdPrototype });
-            Node* actualProperty = m_insertionSet.insertNode(m_indexInBlock, SpecNone, TryGetById, node->origin, OpInfo(data), OpInfo(SpecFunction), Edge(searchRegExp, CellUse));
-            m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckIsConstant, node->origin, OpInfo(m_graph.freeze(primordialProperty)), Edge(actualProperty, CellUse));
-        };
-
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-
-        // Check that searchRegExp.exec is the primordial RegExp.prototype.exec
-        emitPrimordialCheckFor(globalObject->regExpProtoExecFunction(), vm().propertyNames->exec.impl());
-        // Check that searchRegExp.flags is the primordial RegExp.prototype.flags
-        emitPrimordialCheckFor(globalObject->regExpProtoFlagsGetter(), vm().propertyNames->flags.impl());
-        // Check that searchRegExp.dotAll is the primordial RegExp.prototype.dotAll
-        emitPrimordialCheckFor(globalObject->regExpProtoDotAllGetter(), vm().propertyNames->dotAll.impl());
-        // Check that searchRegExp.global is the primordial RegExp.prototype.global
-        emitPrimordialCheckFor(globalObject->regExpProtoGlobalGetter(), vm().propertyNames->global.impl());
-        // Check that searchRegExp.hasIndices is the primordial RegExp.prototype.hasIndices
-        emitPrimordialCheckFor(globalObject->regExpProtoHasIndicesGetter(), vm().propertyNames->hasIndices.impl());
-        // Check that searchRegExp.ignoreCase is the primordial RegExp.prototype.ignoreCase
-        emitPrimordialCheckFor(globalObject->regExpProtoIgnoreCaseGetter(), vm().propertyNames->ignoreCase.impl());
-        // Check that searchRegExp.multiline is the primordial RegExp.prototype.multiline
-        emitPrimordialCheckFor(globalObject->regExpProtoMultilineGetter(), vm().propertyNames->multiline.impl());
-        // Check that searchRegExp.sticky is the primordial RegExp.prototype.sticky
-        emitPrimordialCheckFor(globalObject->regExpProtoStickyGetter(), vm().propertyNames->sticky.impl());
-        // Check that searchRegExp.unicode is the primordial RegExp.prototype.unicode
-        emitPrimordialCheckFor(globalObject->regExpProtoUnicodeGetter(), vm().propertyNames->unicode.impl());
-        // Check that searchRegExp.unicodeSets is the primordial RegExp.prototype.unicodeSets
-        emitPrimordialCheckFor(globalObject->regExpProtoUnicodeSetsGetter(), vm().propertyNames->unicodeSets.impl());
-        // Check that searchRegExp[Symbol.replace] is the primordial RegExp.prototype[Symbol.replace]
-        emitPrimordialCheckFor(globalObject->regExpProtoSymbolReplaceFunction(), vm().propertyNames->replaceSymbol.impl());
-    }
-
-    void addStringMatchPrimordialChecks(Node* regExp)
+    void addRegExpPrimordialStructureCheck(Node* regExp)
     {
         Node* node = m_currentNode;
         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
@@ -4600,34 +4633,6 @@ private:
         m_insertionSet.insertNode(
             m_indexInBlock, SpecNone, Check, node->origin,
             Edge(lastIndexProperty, NumberUse));
-    }
-
-    void addRegExpSearchPrimordialChecks(Node* searchRegExp)
-    {
-        Node* node = m_currentNode;
-
-        // Check that structure of searchRegExp is RegExp object
-        m_insertionSet.insertNode(
-            m_indexInBlock, SpecNone, Check, node->origin,
-            Edge(searchRegExp, RegExpObjectUse));
-
-        // Check that searchRegExp.lastIndex is a number
-        Node* lastIndexProperty = m_insertionSet.insertNode(
-            m_indexInBlock, SpecNone, GetRegExpObjectLastIndex, node->origin,
-            Edge(searchRegExp, RegExpObjectUse));
-        m_insertionSet.insertNode(
-            m_indexInBlock, SpecNone, Check, node->origin,
-            Edge(lastIndexProperty, NumberUse));
-
-        // Check that searchRegExp.exec is the primordial RegExp.prototype.exec
-        auto emitPrimordialCheckFor = [&] (JSValue primordialProperty, UniquedStringImpl* propertyUID) {
-            m_graph.identifiers().ensure(propertyUID);
-            auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromImmortalIdentifier(propertyUID), CacheType::GetByIdPrototype });
-            Node* actualProperty = m_insertionSet.insertNode(m_indexInBlock, SpecNone, TryGetById, node->origin, OpInfo(data), OpInfo(SpecFunction), Edge(searchRegExp, CellUse));
-            m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckIsConstant, node->origin, OpInfo(m_graph.freeze(primordialProperty)), Edge(actualProperty, CellUse));
-        };
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-        emitPrimordialCheckFor(globalObject->regExpProtoExecFunction(), vm().propertyNames->exec.impl());
     }
 
     Node* checkArray(ArrayMode arrayMode, const NodeOrigin& origin, Node* array, Node* index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage)
@@ -4994,7 +4999,10 @@ private:
         // Currently, the DFG won't take advantage of this speculation. But, we want to do it in
         // the DFG anyway because if such a speculation would be wrong, we want to know before
         // we do an expensive compile.
-        
+
+        if (m_graph.hasExitSite(m_currentNode->origin.semantic, BadType))
+            return;
+
         if (value->shouldSpeculateInt32()) {
             insertCheck<Int32Use>(value.node());
             return;

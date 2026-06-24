@@ -30,6 +30,7 @@
  *  cCr <ar_coeff_cr_0> ....
  * E <start-time> ...
  */
+#include <inttypes.h>
 #include <string.h>
 #include <stdio.h>
 #include "aom_dsp/aom_dsp_common.h"

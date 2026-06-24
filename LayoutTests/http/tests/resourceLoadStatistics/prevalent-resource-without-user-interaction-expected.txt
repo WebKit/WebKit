@@ -1,5 +1,5 @@
+PASS Cookie deleted.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS Cookie deleted.
 

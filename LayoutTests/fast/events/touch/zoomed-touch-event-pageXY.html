@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="initial-scale=2">
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -37,8 +37,7 @@ function touchEventCallback() {
         // call the isSucccessfullyParsed function to output the correct TEST COMPLETE
         // footer message.
         successfullyParsed = true;
-        isSuccessfullyParsed();
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 
@@ -121,11 +120,10 @@ function sendTouchSequence()
     eventSender.touchEnd();
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 if (window.eventSender) {
     description("This tests pageX and pageY coordinates on touch events and touches when zoomed to 2x scale.");
+    window.jsTestIsAsync = true;
 
     // Give some time for the viewport scale to set in.
     setTimeout(function() {

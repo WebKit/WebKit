@@ -694,11 +694,13 @@ SIMD_INLINE c_v256 c_v256_shuffle_8(c_v256 a, c_v256 pattern) {
 SIMD_INLINE c_v256 c_v256_wideshuffle_8(c_v256 a, c_v256 b, c_v256 pattern) {
   c_v256 t;
   int c;
-  for (c = 0; c < 32; c++)
-    t.u8[c] = (pattern.u8[c] < 32
-                   ? b.u8
-                   : a.u8)[CONFIG_BIG_ENDIAN ? 31 - (pattern.u8[c] & 31)
-                                             : pattern.u8[c] & 31];
+  for (c = 0; c < 32; c++) {
+    const bool from_b_flag = pattern.u8[c] < 32;
+    const uint8_t *const src = from_b_flag ? b.u8 : a.u8;
+    const int idx =
+        CONFIG_BIG_ENDIAN ? 31 - (pattern.u8[c] & 31) : (pattern.u8[c] & 31);
+    t.u8[c] = src[idx];
+  }
   return t;
 }
 

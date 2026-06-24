@@ -28,13 +28,13 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGBlockMapInlines.h"
 #include "DFGBlockSet.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGNodeFlowProjection.h"
 #include "DFGPhase.h"
 #include "JSCJSValueInlines.h"
+#include <wtf/IndexMap.h>
 
 namespace JSC { namespace DFG {
 
@@ -1014,7 +1014,7 @@ public:
     IntegerRangeOptimizationPhase(Graph& graph)
         : Phase(graph, "integer range optimization"_s)
         , m_zero(nullptr)
-        , m_relationshipsAtHead(graph)
+        , m_relationshipsAtHead(graph.numBlocks())
         , m_insertionSet(graph)
     {
     }
@@ -2141,7 +2141,7 @@ private:
     Node* m_zero;
     RelationshipMap m_relationships;
     BlockSet m_seenBlocks;
-    BlockMap<RelationshipMap> m_relationshipsAtHead;
+    IndexMap<BasicBlock*, RelationshipMap> m_relationshipsAtHead;
     InsertionSet m_insertionSet;
 
     unsigned m_iterations { 0 };

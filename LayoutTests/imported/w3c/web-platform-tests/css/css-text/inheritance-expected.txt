@@ -17,6 +17,8 @@ FAIL Property text-align-all has initial value start assert_true: text-align-all
 FAIL Property text-align-all inherits assert_true: text-align-all doesn't seem to be supported in the computed style expected true got false
 PASS Property text-align-last has initial value auto
 PASS Property text-align-last inherits
+FAIL Property text-fit has initial value none assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit inherits assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
 PASS Property text-indent has initial value 0px
 PASS Property text-indent inherits
 PASS Property text-justify has initial value auto

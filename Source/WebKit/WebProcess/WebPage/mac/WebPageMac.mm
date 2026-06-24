@@ -36,6 +36,7 @@
 #import "InjectedBundlePageContextMenuClient.h"
 #import "LaunchServicesDatabaseManager.h"
 #import "Logging.h"
+#import "MessageSenderInlines.h"
 #import "PDFPluginBase.h"
 #import "PageBanner.h"
 #import "PlatformFontInfo.h"
@@ -50,6 +51,7 @@
 #import "WebInspectorBackend.h"
 #import "WebKeyboardEvent.h"
 #import "WebMouseEvent.h"
+#import "MessageSenderInlines.h"
 #import "WebPageOverlay.h"
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardOverrides.h"
@@ -57,6 +59,7 @@
 #import "WebProcess.h"
 #import <Quartz/Quartz.h>
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/AXIsolatedTree.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/BoundaryPointInlines.h>
@@ -84,6 +87,7 @@
 #import <WebCore/ImmediateActionStage.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameInlines.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NetworkStorageSession.h>
@@ -100,9 +104,10 @@
 #import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
-#import <WebCore/RenderStyle.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScrollView.h>
+#import <WebCore/Settings.h>
+#import <WebCore/StyleComputedStyle.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>
@@ -204,6 +209,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     result.canEnableAutomaticSpellingCorrection = result.isContentEditable && protect(frame.editor())->canEnableAutomaticSpellingCorrection();
     RefPtr document = frame.document();
     result.inputMethodUsesCorrectKeyEventOrder = frame.settings().inputMethodUsesCorrectKeyEventOrder() || (document && document->quirks().inputMethodUsesCorrectKeyEventOrder());
+    result.inputMethodMustUseCompositionEvents = document && document->quirks().inputMethodMustUseCompositionEvents();
 
     if (!result.hasPostLayoutAndVisualData())
         return;

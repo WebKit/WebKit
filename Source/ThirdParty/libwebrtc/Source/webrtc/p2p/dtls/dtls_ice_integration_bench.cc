@@ -114,11 +114,13 @@ TEST_P(DtlsIceIntegrationBenchmark, Benchmark) {
   RTC_LOG(LS_INFO) << GetParam() << " START";
 
   SamplesStatsCounter stats = RunBenchmark(iter);
-  RTC_LOG(LS_INFO) << GetParam() << " RESULT:"
-                   << " p10: " << stats.GetPercentile(0.10)
-                   << " p50: " << stats.GetPercentile(0.50)
-                   << " avg: " << stats.GetAverage()
-                   << " p95: " << stats.GetPercentile(0.95);
+  RTC_LOG(LS_INFO)
+      << GetParam() << " RESULT:"
+      << " p10: " << stats.GetPercentile(0.10)
+      << " p50: " << stats.GetPercentile(0.50)
+      << " avg: " << stats.GetAverage()  // Keep the format.
+      << " p95: " << stats.GetPercentile(0.95) << " "
+      << ::testing::UnitTest::GetInstance()->current_test_info()->name();
 }
 
 }  // namespace

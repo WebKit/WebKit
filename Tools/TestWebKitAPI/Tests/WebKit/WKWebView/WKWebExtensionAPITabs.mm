@@ -1172,6 +1172,37 @@ TEST(WKWebExtensionAPITabs, RemoveMultipleTabs)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, RemoveMultipleInvalidTabs)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const tabs = allWindows[0].tabs",
+
+        @"const validTabId = tabs[1].id",
+
+        @"await browser.test.assertRejects(browser.tabs.remove([9999, 9998]), /tab '9999' was not found/i, 'Removing multiple invalid tabs should reject once with the first invalid id')",
+
+        // A valid id batched with an invalid id should also reject without removing anything
+        @"await browser.test.assertRejects(browser.tabs.remove([validTabId, 9999]), /tab '9999' was not found/i, 'A trailing invalid id should reject and remove nothing')",
+        @"await browser.test.assertRejects(browser.tabs.remove([9999, validTabId]), /tab '9999' was not found/i, 'A leading invalid id should reject and remove nothing')",
+
+        @"const remainingTabs = (await browser.windows.getAll({ populate: true }))[0].tabs.map(tab => tab.id)",
+        @"browser.test.assertEq(remainingTabs.length, tabs.length, 'No tabs should be removed when an invalid id is provided')",
+        @"browser.test.assertTrue(remainingTabs.includes(validTabId), 'The valid tab should not have been removed')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().defaultWindow openNewTab];
+    [manager.get().defaultWindow openNewTab];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 3lu);
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPITabs, CreatedEvent)
 {
     auto *backgroundScript = Util::constructScript(@[

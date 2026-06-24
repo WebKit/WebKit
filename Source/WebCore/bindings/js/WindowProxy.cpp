@@ -152,11 +152,11 @@ JSWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
     ASSERT(m_frame);
 
     ASSERT(!m_jsWindowProxies.contains(&world));
-    ASSERT(m_frame->window());
+    ASSERT(protect(m_frame)->window());
 
     VM& vm = world.vm();
 
-    Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *protect(m_frame->window()).get(), world));
+    Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *protect(protect(m_frame)->window()).get(), world));
     m_jsWindowProxies.add(world, jsWindowProxy);
     world.didCreateWindowProxy(this);
 

@@ -344,7 +344,8 @@ bool isWordStartMatch(std::span<const char16_t> buffer, size_t start, size_t len
     auto [contextBuffer, contextOffset] = extractSubspanIncludingContextNeededForDictionaryBasedWordBreak(buffer, start);
     size_t adjustedStart = start - contextOffset;
 
-    size_t wordBreakSearchStart = adjustedStart + length;
+    // Clamp because the trimmed context window may be shorter than adjustedStart + length.
+    size_t wordBreakSearchStart = std::min(adjustedStart + length, contextBuffer.size());
     while (wordBreakSearchStart > adjustedStart)
         wordBreakSearchStart = findNextWordFromIndex(contextBuffer, wordBreakSearchStart, false /* backwards */);
     return wordBreakSearchStart == adjustedStart;

@@ -14,6 +14,8 @@
 
 #include "rtc_base/checks.h"
 
+namespace webrtc {
+
 namespace {
 
 // Adds `a` and `b` frame by frame into `result` (basically matrix addition).
@@ -93,8 +95,6 @@ size_t gcd(size_t a, size_t b) {
 }
 
 }  // namespace
-
-namespace webrtc {
 
 Blocker::Blocker(size_t chunk_size,
                  size_t block_size,

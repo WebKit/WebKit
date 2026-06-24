@@ -53,11 +53,14 @@ type ktsTest struct {
 	ServerE string `json:"serverE,omitempty"`
 	ServerC string `json:"serverC,omitempty"`
 
-	IutN string `json:"iutN,omitempty"`
-	IutE string `json:"iutE,omitempty"`
-	IutP string `json:"iutP,omitempty"`
-	IutQ string `json:"iutQ,omitempty"`
-	IutD string `json:"iutD,omitempty"`
+	IutN    string `json:"iutN,omitempty"`
+	IutE    string `json:"iutE,omitempty"`
+	IutP    string `json:"iutP,omitempty"`
+	IutQ    string `json:"iutQ,omitempty"`
+	IutD    string `json:"iutD,omitempty"`
+	IutDmp1 string `json:"iutDmp1,omitempty"`
+	IutDmq1 string `json:"iutDmq1,omitempty"`
+	IutIqmp string `json:"iutIqmp,omitempty"`
 }
 
 type ktsTestGroupResponse struct {
@@ -100,8 +103,12 @@ func (k *kts) Process(vectorSet []byte, m Transactable) (any, error) {
 			return nil, fmt.Errorf("unsupported scheme %q in test group %d", group.Scheme, group.ID)
 		}
 
-		if group.KeyGen != "rsakpg1-basic" {
-			return nil, fmt.Errorf("unsupported key generation method %q in test group %d - only fixed public exponent (rsakpg1-basic) is supported", group.KeyGen, group.ID)
+		switch group.KeyGen {
+		case "rsakpg1-basic", "rsakpg1-crt", "rsakpg2-basic", "rsakpg2-crt":
+			// Supported key generation method.
+		default:
+			return nil, fmt.Errorf(
+				"unsupported key generation method %q in test group %d", group.KeyGen, group.ID)
 		}
 
 		if group.OutputBits%8 != 0 {
@@ -121,7 +128,7 @@ func (k *kts) Process(vectorSet []byte, m Transactable) (any, error) {
 			case "initiator":
 				err = k.processInitiator(m, &testResponses, group.KTSConf.HashAlg, group.OutputBits, test)
 			case "responder":
-				err = k.processResponder(m, &testResponses, group.KTSConf.HashAlg, test)
+				err = k.processResponder(m, &testResponses, group.KTSConf.HashAlg, group.KeyGen, test)
 			default:
 				err = fmt.Errorf("unknown role %q", group.Role)
 			}
@@ -172,7 +179,7 @@ func (k *kts) processInitiator(m Transactable, responses *[]ktsTestResponse, has
 	return nil
 }
 
-func (k *kts) processResponder(m Transactable, responses *[]ktsTestResponse, hashAlg string, test ktsTest) error {
+func (k *kts) processResponder(m Transactable, responses *[]ktsTestResponse, hashAlg string, keyGen string, test ktsTest) error {
 	nBytes, err := hex.DecodeString(test.IutN)
 	if err != nil {
 		return fmt.Errorf("invalid IutN: %v", err)
@@ -193,18 +200,39 @@ func (k *kts) processResponder(m Transactable, responses *[]ktsTestResponse, has
 		return fmt.Errorf("invalid IutQ: %v", err)
 	}
 
-	dBytes, err := hex.DecodeString(test.IutD)
-	if err != nil {
-		return fmt.Errorf("invalid IutD: %v", err)
-	}
-
 	cBytes, err := hex.DecodeString(test.ServerC)
 	if err != nil {
 		return fmt.Errorf("invalid ServerC: %v", err)
 	}
 
 	cmd := fmt.Sprintf("KTS-IFC/%s/responder", hashAlg)
-	args := [][]byte{nBytes, eBytes, pBytes, qBytes, dBytes, cBytes}
+	var args [][]byte
+
+	if keyGen == "rsakpg1-basic" || keyGen == "rsakpg2-basic" {
+		dBytes, err := hex.DecodeString(test.IutD)
+		if err != nil {
+			return fmt.Errorf("invalid IutD: %v", err)
+		}
+		args = [][]byte{nBytes, eBytes, pBytes, qBytes, dBytes, cBytes}
+	} else {
+		dmp1Bytes, err := hex.DecodeString(test.IutDmp1)
+		if err != nil {
+			return fmt.Errorf("invalid IutDmp1: %v", err)
+		}
+
+		dmq1Bytes, err := hex.DecodeString(test.IutDmq1)
+		if err != nil {
+			return fmt.Errorf("invalid IutDmq1: %v", err)
+		}
+
+		iqmpBytes, err := hex.DecodeString(test.IutIqmp)
+		if err != nil {
+			return fmt.Errorf("invalid IutIqmp: %v", err)
+		}
+
+		cmd = cmd + "/crt"
+		args = [][]byte{nBytes, eBytes, pBytes, qBytes, dmp1Bytes, dmq1Bytes, iqmpBytes, cBytes}
+	}
 
 	m.TransactAsync(cmd, 1, args, func(result [][]byte) error {
 		*responses = append(*responses,

@@ -25,19 +25,14 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 
 // https://w3c.github.io/IntersectionObserver/#dom-intersectionobserverinit-rootmargin
 // https://w3c.github.io/IntersectionObserver/#dom-intersectionobserverinit-scrollmargin
 
-struct IntersectionObserverMarginEdge : Style::LengthWrapperBase<Style::LengthPercentage<>> {
-    using Base::Base;
-};
-
+using IntersectionObserverMarginEdge = Style::LengthPercentage<>;
 using IntersectionObserverMarginBox = MinimallySerializingSpaceSeparatedRectEdges<IntersectionObserverMarginEdge>;
 
 } // namespace WebCore
-
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::IntersectionObserverMarginEdge)

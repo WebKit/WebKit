@@ -28,8 +28,13 @@
 
 #if ENABLE(WEBXR_LAYERS)
 
+#include "Logging.h"
+#include "TransformationMatrix.h"
 #include "WebGLOpaqueTexture.h"
+#include "WebXRRigidTransform.h"
 #include "WebXRSession.h"
+#include "WebXRSpace.h"
+#include "XRCompositionLayerPose.h"
 #include "XRLayerBacking.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -42,6 +47,16 @@ XRCompositionLayer::XRCompositionLayer(ScriptExecutionContext* scriptExecutionCo
     , m_backing(WTF::move(backing))
     , m_init(init)
     , m_session(session)
+{
+}
+
+XRCompositionLayer::XRCompositionLayer(ScriptExecutionContext* scriptExecutionContext, WebXRSession& session, Ref<XRLayerBacking>&& backing, const WebXRLayerInit& init, Ref<WebXRSpace> space, RefPtr<WebXRRigidTransform> transform)
+    : WebXRLayer(scriptExecutionContext)
+    , m_backing(WTF::move(backing))
+    , m_init(init)
+    , m_session(session)
+    , m_space(WTF::move(space))
+    , m_transform(transform ? WTF::move(transform) : RefPtr<WebXRRigidTransform> { WebXRRigidTransform::create() })
 {
 }
 
@@ -76,6 +91,99 @@ void XRCompositionLayer::fillInCommonDeviceLayerData(PlatformXR::DeviceLayer& da
 {
     data.blendTextureSourceAlpha = m_blendTextureSourceAlpha;
     data.forceMonoPresentation = m_forceMonoPresentation;
+}
+
+const WebXRSpace& XRCompositionLayer::space() const
+{
+    ASSERT(m_space);
+    return *m_space;
+}
+
+void XRCompositionLayer::setSpace(WebXRSpace& space)
+{
+    if (m_space == &space)
+        return;
+
+    m_space = space;
+    setNeedsRedraw(true);
+}
+
+const WebXRRigidTransform& XRCompositionLayer::transform() const
+{
+    ASSERT(m_transform);
+    return *m_transform;
+}
+
+void XRCompositionLayer::setTransform(WebXRRigidTransform& transform)
+{
+    if (m_transform == &transform)
+        return;
+
+    m_transform = transform;
+    setNeedsRedraw(true);
+}
+
+void XRCompositionLayer::startFrame(PlatformXR::FrameData& frameData)
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    auto it = frameData.layers.find(m_backing->handle());
+    if (it == frameData.layers.end())
+        return;
+
+    m_backing->startFrame(frameData);
+#else
+    UNUSED_PARAM(frameData);
+#endif
+}
+
+std::optional<PlatformXR::FrameData::Pose> computeXRCompositionLayerPose(const TransformationMatrix& spaceTransform, const TransformationMatrix* layerTransform)
+{
+    // nativeOrigin() returns the transform that maps from the layer's reference space into the session's local space.
+    auto transformInLocalSpace = layerTransform ? spaceTransform * *layerTransform : spaceTransform;
+    TransformationMatrix::Decomposed4Type decomposed;
+    if (!transformInLocalSpace.decompose4(decomposed))
+        return std::nullopt;
+
+    return PlatformXR::FrameData::Pose {
+        .position = { static_cast<float>(decomposed.translateX), static_cast<float>(decomposed.translateY), static_cast<float>(decomposed.translateZ) },
+        .orientation = { static_cast<float>(decomposed.quaternion.x), static_cast<float>(decomposed.quaternion.y), static_cast<float>(decomposed.quaternion.z), static_cast<float>(decomposed.quaternion.w) },
+    };
+}
+
+void XRCompositionLayer::recomputePose()
+{
+    std::optional<TransformationMatrix> spaceTransform;
+    if (m_space)
+        spaceTransform = m_space->nativeOrigin();
+    if (!spaceTransform)
+        spaceTransform = TransformationMatrix();
+
+    auto pose = computeXRCompositionLayerPose(*spaceTransform, m_transform ? &m_transform->rawTransform() : nullptr);
+    if (!pose) {
+        RELEASE_LOG_ERROR(XR, "Failed to decompose space transform, using identity transform for layer pose");
+        m_poseInLocalSpace = PlatformXR::FrameData::Pose { .position = { 0, 0, 0 }, .orientation = { 0, 0, 0, 1 } };
+        return;
+    }
+    m_poseInLocalSpace = *pose;
+}
+
+PlatformXR::DeviceLayer XRCompositionLayer::endFrame()
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    PlatformXR::DeviceLayer layerData;
+    m_backing->endFrame(layerData);
+
+    layerData.handle = m_backing->handle();
+    layerData.visible = true;
+
+    recomputePose();
+
+    fillInCommonDeviceLayerData(layerData);
+    fillInTypeSpecificDeviceLayerData(layerData);
+    return layerData;
+#else
+    return PlatformXR::DeviceLayer { };
+#endif
 }
 
 } // namespace WebCore

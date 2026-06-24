@@ -1,0 +1,32 @@
+Tests WI.DOMUndoCoordinator routes undo/redo/markUndoableState to the most recently edited target.
+
+
+
+== Running test suite: SiteIsolation.DOM.UndoCoordinator
+-- Running test case: Setup
+PASS: Should find the main frame target.
+PASS: Should find a cross-origin child frame target.
+PASS: WI.domUndoCoordinator should exist.
+
+-- Running test case: DefaultsToMainWhenNoEdits
+PASS: page target undo called once.
+PASS: page target redo called once.
+PASS: main frame undo NOT called.
+PASS: child frame undo NOT called.
+PASS: child frame redo NOT called.
+
+-- Running test case: MarkUndoableStateRoutesToFrameTarget
+PASS: child frame markUndoableState called.
+PASS: main frame markUndoableState NOT called.
+PASS: Subsequent undo routes to child frame.
+PASS: Subsequent undo did NOT hit main frame.
+
+-- Running test case: DidEditSwitchesRouting
+PASS: undo routes to child frame after didEdit(childFrameTarget).
+PASS: redo routes to main frame after didEdit(mainFrameTarget).
+PASS: redo did NOT hit child frame after switching to main frame.
+
+-- Running test case: NullTargetIsNoop
+PASS: undo still routes to child frame after didEdit(null).
+PASS: didEdit(null) did NOT reset routing to main frame.
+

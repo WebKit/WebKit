@@ -75,11 +75,11 @@ struct GridTemplateAreas {
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<GridTemplateAreas> { auto operator()(BuilderState&, const CSSValue&) -> GridTemplateAreas; };
-template<> struct CSSValueCreation<GridTemplateAreas> { auto operator()(CSSValuePool&, const RenderStyle&, const GridTemplateAreas&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<GridTemplateAreas> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const GridTemplateAreas&) -> Ref<CSSValue>; };
 
 // MARK: - Serialization
 
-template<> struct Serialize<GridTemplateAreas> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const GridTemplateAreas&); };
+template<> struct Serialize<GridTemplateAreas> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const GridTemplateAreas&); };
 
 } // namespace Style
 } // namespace WebCore

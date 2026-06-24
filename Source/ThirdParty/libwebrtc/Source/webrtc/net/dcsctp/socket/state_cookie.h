@@ -13,9 +13,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/socket/capabilities.h"
 
@@ -50,7 +50,7 @@ class StateCookie {
 
   // Deserializes the cookie, and returns std::nullopt if that failed.
   static std::optional<StateCookie> Deserialize(
-      webrtc::ArrayView<const uint8_t> cookie);
+      std::span<const uint8_t> cookie);
 
   VerificationTag peer_tag() const { return peer_tag_; }
   VerificationTag my_tag() const { return my_tag_; }

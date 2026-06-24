@@ -25,14 +25,47 @@
  */
 
 #include "config.h"
+#include "XRCubeLayer.h"
 
 #if ENABLE(WEBXR_LAYERS)
-#include "XRCubeLayer.h"
+
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-XRCubeLayer::~XRCubeLayer() = default;
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XRCubeLayer);
 
+XRCubeLayer::XRCubeLayer(ScriptExecutionContext& scriptExecutionContext, WebXRSession& session, Ref<XRLayerBacking>&& backing, const XRCubeLayerInit& init)
+    : XRCompositionLayer(&scriptExecutionContext, session, WTF::move(backing), init, init.space, nullptr)
+    , m_orientation(init.orientation ? Ref<DOMPointReadOnly>(*init.orientation) : DOMPointReadOnly::create(0, 0, 0, 1))
+{
+    setIsStatic(init.isStatic);
 }
 
+XRCubeLayer::~XRCubeLayer() = default;
+
+void XRCubeLayer::setOrientation(DOMPointReadOnly& orientation)
+{
+    m_orientation = orientation;
+    setNeedsRedraw(true);
+}
+
+void XRCubeLayer::fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer& layerData) const
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    layerData.cubeLayerData = {
+        .orientation = {
+            static_cast<float>(m_orientation->x()),
+            static_cast<float>(m_orientation->y()),
+            static_cast<float>(m_orientation->z()),
+            static_cast<float>(m_orientation->w()),
+        },
+    };
+#else
+    UNUSED_PARAM(layerData);
 #endif
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBXR_LAYERS)

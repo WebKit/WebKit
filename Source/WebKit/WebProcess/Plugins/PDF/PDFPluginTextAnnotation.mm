@@ -30,6 +30,7 @@
 
 #import "PDFAnnotationTypeHelpers.h"
 #import "PDFKitSPI.h"
+#import "PDFPluginBase.h"
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/ColorCocoa.h>

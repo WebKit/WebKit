@@ -41,12 +41,12 @@
 #include "RenderObjectDocument.h"
 #include "RenderObjectNode.h"
 #include "RenderSVGShapeInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGPaintServerHandlingInlines.h"
-#include "SVGPathData.h"
+#include "SVGPathFromElement.h"
 #include "SVGURIReference.h"
 #include "SVGVisitedRendererTracking.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -54,7 +54,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGShape);
 
-RenderSVGShape::RenderSVGShape(Type type, SVGGraphicsElement& element, RenderStyle&& style)
+RenderSVGShape::RenderSVGShape(Type type, SVGGraphicsElement& element, Style::ComputedStyle&& style)
     : RenderSVGModelObject(type, element, WTF::move(style), SVGModelObjectFlag::IsShape)
 {
 }
@@ -181,14 +181,14 @@ AffineTransform RenderSVGShape::nonScalingStrokeTransform() const
     return protect(graphicsElement())->getScreenCTM(StyleUpdateStrategy::Disallow);
 }
 
-void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& context)
+void RenderSVGShape::fillShape(const Style::ComputedStyle& style, GraphicsContext& context)
 {
     SVGPaintServerHandling paintServerHandling { context };
     if (paintServerHandling.preparePaintOperation<SVGPaintServerHandling::Operation::Fill>(*this, style))
         fillShape(context);
 }
 
-void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& context)
+void RenderSVGShape::strokeShape(const Style::ComputedStyle& style, GraphicsContext& context)
 {
     if (style.stroke().isNone() || !style.strokeWidth().isPossiblyPositive())
         return;
@@ -275,6 +275,14 @@ bool RenderSVGShape::isPointInStroke(const FloatPoint& point)
 {
     if (style().stroke().isNone())
         return false;
+
+    if (hasNonScalingStroke() && hasPath()) {
+        AffineTransform nonScalingTransform = nonScalingStrokeTransform();
+        auto& usePath = *nonScalingStrokePath(m_path.get(), nonScalingTransform);
+        return usePath.strokeContains(nonScalingTransform.mapPoint(point), [checkedThis = CheckedRef { *this }](GraphicsContext& context) {
+            SVGRenderSupport::applyStrokeStyleToContext(context, checkedThis->style(), checkedThis.get());
+        });
+    }
 
     return shapeDependentStrokeContains(point, LocalCoordinateSpace);
 }
@@ -431,7 +439,7 @@ std::unique_ptr<Path> RenderSVGShape::createPath() const
     return makeUnique<Path>(pathFromGraphicsElement(protect(graphicsElement())));
 }
 
-void RenderSVGShape::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
+void RenderSVGShape::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
 {
     CheckedPtr oldStyle = hasInitializedStyle() ? &style() : nullptr;
     if (oldStyle) {
@@ -447,7 +455,7 @@ bool RenderSVGShape::needsHasSVGTransformFlags() const
     return protect(graphicsElement())->hasTransformRelatedAttributes();
 }
 
-void RenderSVGShape::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
+void RenderSVGShape::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     applySVGTransform(transform, protect(graphicsElement()), style, boundingBox, std::nullopt, std::nullopt, options);
 }

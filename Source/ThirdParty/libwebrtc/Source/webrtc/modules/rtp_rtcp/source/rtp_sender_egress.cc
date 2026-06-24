@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/rtc_event_log/rtc_event_log.h"
@@ -370,7 +370,7 @@ void RtpSenderEgress::SetTimestampOffset(uint32_t timestamp) {
 }
 
 std::vector<RtpSequenceNumberMap::Info> RtpSenderEgress::GetSentRtpPacketInfos(
-    ArrayView<const uint16_t> sequence_numbers) const {
+    std::span<const uint16_t> sequence_numbers) const {
   RTC_DCHECK_RUN_ON(worker_queue_);
   RTC_DCHECK(!sequence_numbers.empty());
   if (!need_rtp_packet_infos_) {
@@ -410,7 +410,7 @@ RtpSenderEgress::FetchFecPackets() {
 }
 
 void RtpSenderEgress::OnAbortedRetransmissions(
-    ArrayView<const uint16_t> sequence_numbers) {
+    std::span<const uint16_t> sequence_numbers) {
   RTC_DCHECK_RUN_ON(worker_queue_);
   // Mark aborted retransmissions as sent, rather than leaving them in
   // a 'pending' state - otherwise they can not be requested again and
@@ -441,7 +441,7 @@ bool RtpSenderEgress::SendPacketToNetwork(const RtpPacketToSend& packet,
                                           const PacketOptions& options,
                                           const PacedPacketInfo& pacing_info) {
   RTC_DCHECK_RUN_ON(worker_queue_);
-  if (transport_ == nullptr || !transport_->SendRtp(packet, options)) {
+  if (transport_ == nullptr || !transport_->SendRtp(packet.buffer(), options)) {
     RTC_LOG(LS_WARNING) << "Transport failed to send packet.";
     return false;
   }

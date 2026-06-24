@@ -11,7 +11,6 @@ import("../../../webrtc.gni")
 rtc_library("dcsctp_fuzzers") {
   testonly = true
   deps = [
-    "../../../api:array_view",
     "../../../api/task_queue",
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
@@ -38,7 +37,6 @@ if (rtc_include_tests) {
 
     deps = [
       ":dcsctp_fuzzers",
-      "../../../api:array_view",
       "../../../test:test_support",
       "../public:types",
       "../socket:dcsctp_socket",

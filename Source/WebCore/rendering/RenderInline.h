@@ -35,8 +35,8 @@ class RenderInline : public RenderBoxModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderInline);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderInline);
 public:
-    RenderInline(Type, Element&, RenderStyle&&);
-    RenderInline(Type, Document&, RenderStyle&&);
+    RenderInline(Type, Element&, Style::ComputedStyle&&);
+    RenderInline(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderInline();
 
     LayoutUnit marginLeft() const final;
@@ -92,8 +92,8 @@ public:
 protected:
     void willBeDestroyed() override;
 
-    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     void updateFromStyle() override;
 

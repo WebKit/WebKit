@@ -165,6 +165,8 @@ public:
         return adoptRef(*new WebExtensionContext(std::forward<Args>(args)...));
     }
 
+    virtual ~WebExtensionContext();
+
     void ref() const final { API::ObjectImpl<API::Object::Type::WebExtensionContext>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::WebExtensionContext>::deref(); }
 
@@ -411,6 +413,9 @@ public:
 
     bool hasAccessToPrivateData() const { return m_hasAccessToPrivateData; }
     void setHasAccessToPrivateData(bool);
+
+    bool hasAccessToFileURLs() const { return m_hasAccessToFileURLs; }
+    void setHasAccessToFileURLs(bool);
 
     void grantPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
     void denyPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
@@ -1072,6 +1077,7 @@ private:
 
     bool m_requestedOptionalAccessToAllHosts { false };
     bool m_hasAccessToPrivateData { false };
+    bool m_hasAccessToFileURLs { false };
 
     VoidFunctionVector m_actionsToPerformAfterBackgroundContentLoads;
     EventListenerTypeCountedSet m_backgroundContentEventListeners;

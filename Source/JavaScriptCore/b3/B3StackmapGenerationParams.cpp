@@ -32,6 +32,7 @@
 #include "AirGenerationContext.h"
 #include "B3Procedure.h"
 #include "B3StackmapValue.h"
+#include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 

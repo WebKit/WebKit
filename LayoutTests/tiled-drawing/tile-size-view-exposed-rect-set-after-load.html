@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        testRunner?.dumpAsText();
+
+        function doTest()
+        {
+            if (window.internals) {
+                internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+                internals.disableTileSizeUpdateDelay();
+                internals.setViewExposedRect(0, 200, 800, 200);
+                document.getElementById('layers').innerText =
+                    internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+            }
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<pre id="layers"></pre>
+</body>
+</html>

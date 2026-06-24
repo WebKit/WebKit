@@ -26,7 +26,8 @@
 // https://w3c.github.io/media-capabilities/#media-capabilities-interface
 [
     EnabledBySetting=MediaCapabilitiesEnabled,
-    Exposed=(Window,DedicatedWorker)
+    Exposed=(Window,DedicatedWorker),
+    GenerateIsReachable=ReachableFromNavigator
 ] interface MediaCapabilities {
     [CallWith=CurrentScriptExecutionContext] Promise<MediaCapabilitiesDecodingInfo> decodingInfo(MediaDecodingConfiguration configuration);
     [CallWith=CurrentScriptExecutionContext] Promise<MediaCapabilitiesEncodingInfo> encodingInfo(MediaEncodingConfiguration configuration);

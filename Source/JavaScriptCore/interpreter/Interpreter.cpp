@@ -166,6 +166,12 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     auto cacheKey = DirectEvalCodeCache::CacheLookupKey(programStr.data.impl(), bytecodeIndex);
     DirectEvalExecutable* eval = callerBaselineCodeBlock->directEvalCodeCache().get(cacheKey);
     if (!eval) {
+        // GC needs to be deferred as it's possible cacheKey holds one of programString's fibers'
+        // contents as a raw StringImpl*. Even though programString is on the stack, rope
+        // flattening could cause that fiber JSString to be unreachable by the GC, causing its
+        // content StringImpl to be deref'd if when the JSString is swept.
+        DeferGC deferGC(vm);
+
         auto programSource = programStr.data;
         if (SourceProfiler::g_profilerHook) [[unlikely]] {
             SourceTaintedOrigin sourceTaintedOrigin = computeNewSourceTaintedOriginFromStack(vm, callFrame);

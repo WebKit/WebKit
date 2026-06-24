@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true MediaContainmentEnabled=true ] -->
+<html>
+<head>
+    <title>ManagedMediaSource AAC with shared-format multi-packet CMSampleBuffers</title>
+    <script src="../video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+    // Regression test: ISO-BMFF AAC source from AVStreamDataParser hands the
+    // engine multi-sample CMSampleBuffers whose sizes live in the audio stream
+    // packet description array (CMSampleBufferGetSampleSizeArray returns
+    // kCMSampleBufferError_BufferHasNoSampleSizes). The MediaContainmentEnabled
+    // IPC encode path used CMSampleBufferCallBlockForEachSample, which can't
+    // subdivide those buffers, and silently shipped 0 packets to the GPU side.
+    // currentTime advanced via the timebase but the audio renderer played
+    // silence. The fix in MediaSampleAVFObjC::divide() walks the packet
+    // description array directly. Verifying state here (sourceopen, append
+    // success, buffered range, ready state, currentTime advancing) catches
+    // regressions of the IPC path; whether audio is actually heard must be
+    // confirmed manually by listening.
+    var source;
+    var sourceBuffer;
+    var buffer;
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            run('video.disableRemotePlayback = true');
+            source = new ManagedMediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(\'audio/mp4; codecs="mp4a.40.2"\')');
+
+            const response = await fetch('./content/test-aac-shared-format.mp4');
+            buffer = await response.arrayBuffer();
+            run('sourceBuffer.appendBuffer(buffer)');
+
+            await waitFor(sourceBuffer, 'updateend');
+            testExpected('sourceBuffer.buffered.length', '1');
+            consoleWrite(`sourceBuffer.buffered = ${ timeRangesToString(sourceBuffer.buffered) }`);
+
+            run('source.endOfStream()');
+            await waitFor(source, 'sourceended');
+
+            testExpected('video.readyState', '4'); // HAVE_ENOUGH_DATA
+            consoleWrite(`video.duration = ${ video.duration }`);
+
+            run('video.play()');
+            await waitFor(video, 'playing');
+
+            await waitForConditionOrTimeout('video.currentTime > 0', false, 1000);
+            testExpected('video.paused', false);
+
+            run('video.pause()');
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls disableremoteplayback></video>
+</body>
+</html>

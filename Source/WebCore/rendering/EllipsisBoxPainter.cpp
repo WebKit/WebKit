@@ -30,10 +30,10 @@
 #include "LineSelection.h"
 #include "PaintInfo.h"
 #include "RenderObjectDocument.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleColorResolver.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTextShadow.h"
 
 namespace WebCore {

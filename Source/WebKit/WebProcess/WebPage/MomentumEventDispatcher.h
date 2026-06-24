@@ -67,6 +67,8 @@ public:
         virtual void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) = 0;
         virtual void stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) = 0;
 
+        virtual void didEndSyntheticMomentumScrolling() = 0;
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
         virtual void flushMomentumEventLoggingSoon() = 0;
 #endif

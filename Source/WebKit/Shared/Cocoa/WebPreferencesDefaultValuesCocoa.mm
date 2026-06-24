@@ -211,6 +211,15 @@ bool NODELETE defaultUnifiedPDFEnabled()
 }
 #endif
 
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS) && !USE(APPLE_INTERNAL_SDK)
+
+bool NODELETE defaultHorizontalBannerViewOverlaysEnabled()
+{
+    return false;
+}
+
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

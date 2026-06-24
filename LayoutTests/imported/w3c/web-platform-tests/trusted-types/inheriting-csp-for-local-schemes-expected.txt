@@ -4,7 +4,7 @@ PASS trusted-types directive should be inherited in local srcdoc frames
 PASS require-trusted-types-for directive should be inherited in local data frames
 PASS trusted-types directive should be inherited in local data frames
 PASS require-trusted-types-for directive should be inherited in local blob frames
-FAIL trusted-types directive should be inherited in local blob frames assert_not_equals: got disallowed value null
+PASS trusted-types directive should be inherited in local blob frames
 PASS require-trusted-types-for directive should be inherited in local about:blank frames
 PASS trusted-types directive should be inherited in local about:blank frames
 PASS require-trusted-types-for directive should not be inherited in local blank.html frames

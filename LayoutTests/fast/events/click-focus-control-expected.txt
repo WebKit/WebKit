@@ -10,4 +10,7 @@ a3 received focus ()
 a4 received focus ()
 a5 received focus ()
 PASS All form elements got focus
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

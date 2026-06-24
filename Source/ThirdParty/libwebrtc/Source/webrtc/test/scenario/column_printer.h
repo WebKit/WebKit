@@ -27,18 +27,18 @@ class ColumnPrinter {
   static ColumnPrinter Fixed(const char* headers, std::string fields);
   static ColumnPrinter Lambda(
       const char* headers,
-      std::function<void(webrtc::SimpleStringBuilder&)> printer,
+      std::function<void(webrtc::StringBuilder&)> printer,
       size_t max_length = 256);
 
  protected:
   friend class StatesPrinter;
   const char* headers_;
-  std::function<void(webrtc::SimpleStringBuilder&)> printer_;
+  std::function<void(webrtc::StringBuilder&)> printer_;
   size_t max_length_;
 
  private:
   ColumnPrinter(const char* headers,
-                std::function<void(webrtc::SimpleStringBuilder&)> printer,
+                std::function<void(webrtc::StringBuilder&)> printer,
                 size_t max_length);
 };
 

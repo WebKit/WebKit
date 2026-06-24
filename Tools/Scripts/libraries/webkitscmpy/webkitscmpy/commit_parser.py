@@ -360,6 +360,104 @@ class CommitMessageParser:
             return deleted_result
         return result
 
+    def _file_identity(self, line):
+        # The "* path:" prefix is identical whether the file is modified, Added. or
+        # Removed., so a file keeps one identity as its status changes.
+        match = MODIFIED_FILE_PATTERN.match(line)
+        return match.group(1) if match else None
+
+    def _group_into_blocks(self, lines):
+        # A file header opens a block; the function, comment and blank lines after it
+        # belong to it. Lines before the first header are returned as the preamble.
+        preamble = []
+        blocks = []
+        for line in lines:
+            identity = self._file_identity(line)
+            if identity is not None:
+                blocks.append((identity, [line]))
+            elif blocks:
+                blocks[-1][1].append(line)
+            else:
+                preamble.append(line)
+        return preamble, blocks
+
+    def reconcile_with_changed_files(self, modified_files_lines):
+        """Update the original modified-files section to match the current diff.
+
+        The original section is kept as written -- order, comments, spacing -- except:
+        a file no longer changed keeps only its trailing notes, a file that gained
+        functions has the new markers added before its trailing notes, and files new
+        since the original message are appended at the end.
+
+        modified_files_lines is the regenerated list (prepare-ChangeLog format).
+        """
+        _, current_blocks = self._group_into_blocks(modified_files_lines)
+        current_order = []
+        generated_block = {}
+        for identity, lines in current_blocks:
+            if identity not in generated_block:
+                current_order.append(identity)
+            generated_block[identity] = lines
+        current_identities = set(current_order)
+
+        preamble, original_blocks = self._group_into_blocks(self.modified_files_lines)
+        original_identities = {identity for identity, _ in original_blocks}
+
+        result = list(preamble)
+        for identity, lines in original_blocks:
+            if identity in current_identities:
+                result.extend(self._add_new_functions(lines, generated_block[identity]))
+            else:
+                result.extend(self._trailing_notes(lines))
+        for identity in current_order:
+            if identity not in original_identities:
+                result.extend(generated_block[identity])
+        return result
+
+    def _function_identity(self, line):
+        # The "(function):" prefix is identical across plain, commented and Deleted.
+        # lines, so a function keeps one identity as its status changes.
+        match = MODIFIED_FUNCTION_PATTERN.match(line)
+        return match.group(1) if match else None
+
+    def _trailing_notes(self, block_lines):
+        # A file that's no longer changed loses its file and function markers (and the
+        # notes on them); only free-form notes survive. Surrounding blanks are trimmed
+        # so the removed markers don't leave stray blank lines behind.
+        notes = [
+            line for line in block_lines
+            if self._file_identity(line) is None and self._function_identity(line) is None
+        ]
+        start = 0
+        while start < len(notes) and not notes[start].strip():
+            start += 1
+        end = len(notes)
+        while end > start and not notes[end - 1].strip():
+            end -= 1
+        return notes[start:end]
+
+    def _add_new_functions(self, original_lines, generated_lines):
+        original_functions = {
+            identity for identity in map(self._function_identity, original_lines)
+            if identity is not None
+        }
+        new_function_lines = [
+            line for line in generated_lines
+            if self._function_identity(line) is not None
+            and self._function_identity(line) not in original_functions
+        ]
+        if not new_function_lines:
+            return list(original_lines)
+
+        # After the last marker, i.e. before any trailing notes.
+        insert_at = len(original_lines)
+        while insert_at > 0:
+            previous = original_lines[insert_at - 1]
+            if self._file_identity(previous) is not None or self._function_identity(previous) is not None:
+                break
+            insert_at -= 1
+        return original_lines[:insert_at] + new_function_lines + original_lines[insert_at:]
+
     def delete_trailing_blank_lines(self, lines):
         chomp_at = 0
         for line in reversed(lines):

@@ -105,10 +105,10 @@ public:
     bool operator==(const CustomProperty&) const;
     bool valueEquals(const CustomProperty&) const;
 
-    Ref<CSSValue> propertyValue(CSSValuePool&, const RenderStyle&) const;
-    Ref<DeprecatedCSSOMValue> propertyValueDeprecatedCSSOMWrapper(CSSValuePool&, CSSStyleDeclaration&, const RenderStyle&) const;
-    WTF::String propertyValueSerialization(const CSS::SerializationContext&, const RenderStyle&) const;
-    void propertyValueSerialization(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&) const;
+    Ref<CSSValue> propertyValue(CSSValuePool&, const Style::ComputedStyle&) const;
+    Ref<DeprecatedCSSOMValue> propertyValueDeprecatedCSSOMWrapper(CSSValuePool&, CSSStyleDeclaration&, const Style::ComputedStyle&) const;
+    WTF::String propertyValueSerialization(const CSS::SerializationContext&, const Style::ComputedStyle&) const;
+    void propertyValueSerialization(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&) const;
 
 private:
     CustomProperty(const AtomString& name, Kind&& value, IsAttrTainted isAttrTainted = IsAttrTainted::No)
@@ -118,8 +118,8 @@ private:
     {
     }
 
-    WTF::String propertyValueSerializationForTokenization(const CSS::SerializationContext&, const RenderStyle&) const;
-    void propertyValueSerializationForTokenization(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&) const;
+    WTF::String propertyValueSerializationForTokenization(const CSS::SerializationContext&, const Style::ComputedStyle&) const;
+    void propertyValueSerializationForTokenization(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&) const;
 
     const AtomString m_name;
     const Kind m_value;

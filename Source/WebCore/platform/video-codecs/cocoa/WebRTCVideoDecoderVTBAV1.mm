@@ -38,37 +38,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCVideoDecoderVTBAV1);
 
-static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<const uint8_t> data, int32_t width, int32_t height)
-{
-#if ENABLE(AV1)
-    RefPtr videoInfo = createVideoInfoFromAV1Stream(data);
-    if (!videoInfo)
-        return { };
-
-    if (width && videoInfo->size().width() != width)
-        return { };
-    if (height && videoInfo->size().height() != height)
-        return { };
-
-    return createFormatDescriptionFromTrackInfo(*videoInfo);
-#else
-    UNUSED_PARAM(data);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    ASSERT_NOT_REACHED();
-    return { };
-#endif
-}
-
-WebRTCVideoDecoderVTBAV1::WebRTCVideoDecoderVTBAV1(WebRTCVideoDecoderCallback callback)
-    : WebRTCVideoDecoderVTB(callback)
+WebRTCVideoDecoderVTBAV1::WebRTCVideoDecoderVTBAV1(WebRTCVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+    : WebRTCVideoDecoderVTB(callback, WTF::move(colorSpaceOverride))
 {
 }
+
+WebRTCVideoDecoderVTBAV1::~WebRTCVideoDecoderVTBAV1() = default;
 
 int32_t WebRTCVideoDecoderVTBAV1::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
 {
-    if (auto videoFormat = computeAV1InputFormat(data, width(), height()))
-        setVideoFormat(WTF::move(videoFormat));
+    if (RefPtr videoInfo = createVideoInfoFromAV1Stream(data, std::nullopt))
+        setVideoInfo(videoInfo.releaseNonNull());
 
     return decodeFrameInternal(timeStamp, data);
 }

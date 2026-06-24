@@ -35,9 +35,9 @@
 #include "RenderObjectInlines.h"
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderWidget.h"
 #include "ScrollbarInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
 
@@ -56,7 +56,8 @@ RenderScrollbar::RenderScrollbar(ScrollableArea& scrollableArea, ScrollbarOrient
     ASSERT(ownerElement || owningFrame);
 
     // FIXME: We need to do this because RenderScrollbar::styleChanged is called as soon as the scrollbar is created.
-    
+    relaxAdoptionRequirement();
+
     // Update the scrollbar size.
     int width = 0;
     int height = 0;
@@ -142,7 +143,7 @@ void RenderScrollbar::setPressedPart(ScrollbarPart part)
     updateScrollbarPart(TrackBGPart);
 }
 
-std::unique_ptr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, PseudoElementType pseudoElementType) const
+std::unique_ptr<Style::ComputedStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, PseudoElementType pseudoElementType) const
 {
     CheckedPtr renderer = owningRenderer();
     if (!renderer)
@@ -157,7 +158,7 @@ std::unique_ptr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarP
     scrollbarState.enabled = enabled();
     scrollbarState.scrollCornerIsVisible = protect(scrollableArea())->isScrollCornerVisible();
     
-    std::unique_ptr<RenderStyle> result = renderer->getUncachedPseudoStyle({ pseudoElementType, scrollbarState }, protect(renderer->style()).ptr());
+    std::unique_ptr<Style::ComputedStyle> result = renderer->resolvePseudoElementStyle({ pseudoElementType, scrollbarState }, protect(renderer->style()).ptr());
     // Scrollbars for root frames should always have background color 
     // unless explicitly specified as transparent. So we force it.
     // This is because WebKit assumes scrollbar to be always painted and missing background
@@ -229,7 +230,7 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType)
     if (partType == NoPart)
         return;
 
-    std::unique_ptr<RenderStyle> partStyle = getScrollbarPseudoStyle(partType, pseudoForScrollbarPart(partType));
+    std::unique_ptr<Style::ComputedStyle> partStyle = getScrollbarPseudoStyle(partType, pseudoForScrollbarPart(partType));
     bool needRenderer = partStyle && partStyle->display() != Style::DisplayType::None;
 
     if (needRenderer && partStyle->display() != Style::DisplayType::BlockFlow) {
@@ -371,7 +372,7 @@ float RenderScrollbar::opacity() const
 
 bool RenderScrollbar::isHiddenByStyle() const
 {
-    std::unique_ptr<RenderStyle> partStyle = getScrollbarPseudoStyle(ScrollbarBGPart, pseudoForScrollbarPart(ScrollbarBGPart));
+    std::unique_ptr<Style::ComputedStyle> partStyle = getScrollbarPseudoStyle(ScrollbarBGPart, pseudoForScrollbarPart(ScrollbarBGPart));
     return partStyle && partStyle->display() == Style::DisplayType::None;
 }
 

@@ -16,6 +16,8 @@
 
 #include <string>
 
+#include "api/scoped_refptr.h"
+#include "modules/portal/portal_guard.h"
 #include "modules/portal/portal_request_response.h"
 #include "modules/portal/xdg_session_details.h"
 #include "rtc_base/system/rtc_export.h"
@@ -65,7 +67,8 @@ class RTC_EXPORT ScreenCapturePortalInterface {
       GVariant* parameters,
       GDBusConnection* connection,
       std::string& session_handle,
-      guint& session_closed_signal_id);
+      guint& session_closed_signal_id,
+      scoped_refptr<PortalGuard> guard);
   // Handles the result of session start request.
   void OnStartRequestResult(GDBusProxy* proxy, GAsyncResult* result);
 };

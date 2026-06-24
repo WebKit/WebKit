@@ -44,7 +44,7 @@ NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
         auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
         m_inMemoryStorageSession = makeUnique<NetworkStorageSession>(WebProcess::singleton().sessionID(), WTF::move(storageSession), WTF::move(cookieStorage), NetworkStorageSession::IsInMemoryCookieStore::Yes);
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
-        m_inMemoryStorageSession->setOptInCookiePartitioningEnabled(m_optInCookiePartitioningEnabled);
+        protect(m_inMemoryStorageSession)->setOptInCookiePartitioningEnabled(m_optInCookiePartitioningEnabled);
 #endif
     }
     return *m_inMemoryStorageSession;
@@ -55,7 +55,7 @@ void WebCookieCache::setOptInCookiePartitioningEnabled(bool enabled)
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
     m_optInCookiePartitioningEnabled = enabled;
     if (m_inMemoryStorageSession)
-        m_inMemoryStorageSession->setOptInCookiePartitioningEnabled(enabled);
+        protect(m_inMemoryStorageSession)->setOptInCookiePartitioningEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

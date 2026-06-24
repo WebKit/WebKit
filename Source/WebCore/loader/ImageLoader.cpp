@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,6 +38,7 @@
 #include "DocumentView.h"
 #include "ElementInlines.h"
 #include "Event.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "EventSender.h"
 #include "FrameDestructionObserverInlines.h"
@@ -353,6 +354,9 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, RefPtr
     if (newImage != oldImage || relevantMutation == RelevantMutation::Yes) {
         LOG_WITH_STREAM(LazyLoading, stream << " switching from old image " << oldImage.get() << " to image " << newImage.get() << " " << (newImage ? newImage->url() : URL()));
 
+        if (newImage != oldImage && hasPendingDecodePromises())
+            rejectDecodePromises("Aborted by source change."_s);
+
         m_hasPendingBeforeLoadEvent = false;
         if (m_hasPendingLoadEvent) {
             loadEventSender().cancelEvent(*this, eventNames().loadEvent);
@@ -510,8 +514,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 
         setImageCompleteAndMaybeUpdateRenderer();
 
-        if (hasPendingDecodePromises())
-            decode();
+        decode();
         loadEventSender().dispatchEventSoon(*this, eventNames().loadEvent);
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
@@ -610,13 +613,21 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    if (m_imageComplete)
-        decode();
+    if (m_imageComplete) {
+        Ref document = element().document();
+        document->eventLoop().queueMicrotask(document->vm(), [weakThis = WeakPtr { *this }]() mutable {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis || !protectedThis->m_imageComplete)
+                return;
+            protectedThis->decode();
+        });
+    }
 }
 
 void ImageLoader::decode()
 {
-    ASSERT(hasPendingDecodePromises());
+    if (!hasPendingDecodePromises())
+        return;
     
     if (!element().document().window()) {
         rejectDecodePromises("Inactive document."_s);
@@ -718,6 +729,8 @@ void ImageLoader::dispatchPendingLoadEvents(Page* page)
 
 void ImageLoader::elementDidMoveToNewDocument(Document& oldDocument)
 {
+    if (hasPendingDecodePromises())
+        rejectDecodePromises("Inactive document."_s);
     clearFailedLoadURL();
     clearImage();
     resetLazyImageLoading(oldDocument);

@@ -14,9 +14,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <set>
 
 #include "absl/base/nullability.h"
 #include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/environment/environment.h"
@@ -57,6 +59,10 @@ class RtcEventLogDriver {
     // `LoggedVideoRecvConfig` was logged for the same stream. (This might
     // happen around `SetRemoteDescription`s.)
     bool reuse_streams = false;
+
+    // If non-empty, will only simulate video streams whose main SSRCs is
+    // contained in the set.
+    std::set<uint32_t> ssrc_filter = {};
   };
 
   // A stream that is driven by simulated RTP packets coming from the log.
@@ -130,6 +136,9 @@ class RtcEventLogDriver {
       RTC_GUARDED_BY(simulator_queue_);
   // Streams for reception. Keyed by both `ssrc` and `rtx_ssrc`.
   absl::flat_hash_map<uint32_t, StreamInterface*> receiving_streams_
+      RTC_GUARDED_BY(simulator_queue_);
+  // Keep track of all logged `ssrc`s for text logging purposes.
+  absl::flat_hash_set<uint32_t> all_known_ssrcs_
       RTC_GUARDED_BY(simulator_queue_);
 };
 

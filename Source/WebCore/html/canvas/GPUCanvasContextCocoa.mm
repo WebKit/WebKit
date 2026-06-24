@@ -42,6 +42,7 @@
 #include "ScreenProperties.h"
 #include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -91,6 +92,14 @@ public:
     void NODELETE setOpaque(bool opaque)
     {
         m_isOpaque = opaque;
+    }
+    bool hasExtendedRange() const
+    {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        return m_contentsFormat == ContentsFormat::RGBA16F;
+#else
+        return false;
+#endif
     }
 private:
     GPUDisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
@@ -179,14 +188,16 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, Ref<GPUComposit
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (auto* screenData = WebCore::screenData(displayID))
+
+        Ref screen = PlatformScreen::singleton();
+        if (auto* screenData = screen->screenData(displayID))
             protectedThis->updateScreenHeadroom(screenData->currentEDRHeadroom, screenData->suppressEDR);
     }))
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
     if (document)
-        document->addScreenPropertiesChangedObserver(*m_screenPropertiesChangedObserver);
+        document->addScreenPropertiesChangedObserver(protect(*m_screenPropertiesChangedObserver));
     else
         m_screenPropertiesChangedObserver = nullptr;
 #else
@@ -232,7 +243,15 @@ float GPUCanvasContextCocoa::computeContentsHeadroom()
 
 void GPUCanvasContextCocoa::updateContentsHeadroom()
 {
+    if (!m_layerContentsDisplayDelegate->hasExtendedRange())
+        return;
+
     m_compositorIntegration->updateContentsHeadroom(computeContentsHeadroom());
+}
+
+void GPUCanvasContextCocoa::updateHeadroomFromScreenProperties()
+{
+    updateScreenHeadroom(m_screenEDRHeadroom, m_screenSuppressEDR);
 }
 
 void GPUCanvasContextCocoa::updateScreenHeadroom(float currentEDRHeadroom, bool suppressEDR)
@@ -245,15 +264,34 @@ void GPUCanvasContextCocoa::updateScreenHeadroom(float currentEDRHeadroom, bool 
     updateContentsHeadroom();
 }
 
-void GPUCanvasContextCocoa::updateScreenHeadroomFromScreenProperties()
+void GPUCanvasContextCocoa::updateScreenHeadroomFromScreenPropertiesIfNeeded()
 {
-    m_currentEDRHeadroom = 1.f;
-    m_suppressEDR = false;
-    for (const auto& screenData : WebCore::getScreenProperties().screenDataMap.values()) {
-        m_currentEDRHeadroom = std::max(m_currentEDRHeadroom, screenData.currentEDRHeadroom);
-        m_suppressEDR |= screenData.suppressEDR;
+    if (!m_layerContentsDisplayDelegate->hasExtendedRange())
+        return;
+
+    float maxEDRHeadroom = 1.f;
+    bool suppressEDR = false;
+
+    auto gatherScreenProperties = [&] {
+        auto screen = PlatformScreen::singleton();
+        for (const auto& screenData : screen->screenProperties().screenDataMap.values()) {
+            maxEDRHeadroom = std::max(maxEDRHeadroom, screenData.currentEDRHeadroom);
+            suppressEDR |= screenData.suppressEDR;
+        }
+    };
+
+    if (isMainThread())
+        gatherScreenProperties();
+    else {
+        BinarySemaphore semaphore;
+        callOnMainThread([&gatherScreenProperties, &semaphore] {
+            gatherScreenProperties();
+            semaphore.signal();
+        });
+        semaphore.wait();
     }
-    updateContentsHeadroom();
+
+    updateScreenHeadroom(maxEDRHeadroom, suppressEDR);
 }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -264,8 +302,7 @@ void GPUCanvasContextCocoa::setDynamicRangeLimit(PlatformDynamicRangeLimit dynam
 
     m_dynamicRangeLimit = dynamicRangeLimit;
 
-    if (!m_screenPropertiesChangedObserver || m_currentEDRHeadroom < 1.f)
-        return updateScreenHeadroomFromScreenProperties();
+    updateScreenHeadroomFromScreenPropertiesIfNeeded();
 
     updateContentsHeadroom();
 }
@@ -315,7 +352,7 @@ void GPUCanvasContextCocoa::didUpdateCanvasSizeProperties(bool)
 
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
-    RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
+    RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext();
     if (!scriptExecutionContext)
         return nullptr;
     const auto size = canvasBase().size();
@@ -333,8 +370,7 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=294654 - OffscreenCanvas may not reflect the display the OffscreenCanvas is displayed on during background / resume
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    if (!m_screenPropertiesChangedObserver)
-        updateScreenHeadroomFromScreenProperties();
+    updateScreenHeadroomFromScreenPropertiesIfNeeded();
 #endif
 
     auto frameCount = m_configuration->frameCount;
@@ -356,7 +392,7 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
 
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
 {
-    RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
+    RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext();
     if (!scriptExecutionContext)
         return nullptr;
     const auto size = canvasBase().size();
@@ -432,11 +468,11 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     if (configuration.usage & GPUTextureUsage::TRANSIENT_ATTACHMENT)
         return Exception { ExceptionCode::TypeError, "GPUCanvasContextCocoa::configure: Can not configure a canvas with a transient backing"_s };
 
-    if (auto error = configuration.device->errorValidatingSupportedFormat(configuration.format))
+    if (auto error = protect(configuration.device)->errorValidatingSupportedFormat(configuration.format))
         return Exception { ExceptionCode::TypeError, makeString("GPUCanvasContext.configure: Unsupported texture format: "_s, *error) };
 
     for (auto viewFormat : configuration.viewFormats) {
-        if (auto error = configuration.device->errorValidatingSupportedFormat(viewFormat))
+        if (auto error = protect(configuration.device)->errorValidatingSupportedFormat(viewFormat))
             return Exception { ExceptionCode::TypeError, makeString("Unsupported texture view format: "_s, *error) };
     }
 
@@ -445,7 +481,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
 
     if (configuration.toneMapping.mode != GPUCanvasToneMappingMode::Standard) {
 #if ENABLE(HDR_FOR_WEBGPU)
-        RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
+        RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext();
         if (!scriptExecutionContext || !scriptExecutionContext->settingsValues().webGPUHDREnabled)
             configuration.toneMapping.mode = GPUCanvasToneMappingMode::Standard;
 #else

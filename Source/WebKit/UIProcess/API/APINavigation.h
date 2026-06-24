@@ -113,9 +113,9 @@ public:
     WebCore::NavigationIdentifier navigationID() const { return m_navigationID; }
 
     const WebCore::ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }
-    void setCurrentRequest(WebCore::ResourceRequest&&, std::optional<WebCore::ProcessIdentifier>);
+    void setCurrentRequest(WebCore::ResourceRequest&&);
+    void upgradeCurrentInsecureRequest();
     const WebCore::ResourceRequest& currentRequest() const LIFETIME_BOUND { return m_currentRequest; }
-    std::optional<WebCore::ProcessIdentifier> currentRequestProcessIdentifier() const { return m_currentRequestProcessIdentifier; }
 
     bool currentRequestIsRedirect() const { return m_lastNavigationAction && !m_lastNavigationAction->redirectResponse.isNull(); }
     bool currentRequestIsCrossSiteRedirect() const;
@@ -187,8 +187,8 @@ public:
     bool NODELETE safeBrowsingCheckOngoing();
     void setSafeBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&&);
     RefPtr<WebKit::BrowsingWarning> NODELETE safeBrowsingWarning();
-    void setSafeBrowsingCheckTimedOut() { m_safeBrowsingCheckTimedOut = true; }
-    bool safeBrowsingCheckTimedOut() { return m_safeBrowsingCheckTimedOut; }
+    void whenSafeBrowsingCheckCompletes(Function<void()>&&);
+    void fireSafeBrowsingCheckCompletionCallbacks();
     bool hadSafeBrowsingWarning() const { return m_hadSafeBrowsingWarning; }
     MonotonicTime requestStart() const { return m_requestStart; }
     void resetRequestStart();
@@ -223,7 +223,6 @@ private:
     WebCore::ProcessIdentifier m_processID;
     WebCore::ResourceRequest m_originalRequest;
     WebCore::ResourceRequest m_currentRequest;
-    std::optional<WebCore::ProcessIdentifier> m_currentRequestProcessIdentifier;
     Vector<WTF::URL> m_redirectChain;
 
     const RefPtr<WebKit::WebBackForwardListFrameItem> m_targetFrameItem;
@@ -240,7 +239,6 @@ private:
     bool m_isLoadedWithNavigationShared : 1 { false };
     bool m_requestIsFromClientInput : 1 { false };
     bool m_isFromLoadData : 1 { false };
-    bool m_safeBrowsingCheckTimedOut : 1 { false };
     bool m_hadSafeBrowsingWarning : 1 { false };
     bool m_hasStorageForCurrentSite : 1 { false };
     bool m_isEnhancedSecurityLinkForCurrentSite : 1 { false };
@@ -249,6 +247,7 @@ private:
     MonotonicTime m_requestStart { MonotonicTime::now() };
     RefPtr<WebKit::BrowsingWarning> m_safeBrowsingWarning;
     ListHashSet<size_t> m_ongoingSafeBrowsingChecks;
+    Vector<Function<void()>> m_safeBrowsingCheckCompletionCallbacks;
     RefPtr<WebKit::FrameProcess> m_pendingSharedProcess;
     RefPtr<WebKit::FrameState> m_backForwardFrameState;
 };

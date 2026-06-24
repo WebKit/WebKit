@@ -26,13 +26,12 @@
 #import "APISerializedNode.h"
 #import "WKJSSerializedNode.h"
 #import "WKObject.h"
-#import "_WKSerializedNode.h"
 #import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
 template<> struct WrapperTraits<API::SerializedNode> {
-    using WrapperClass = _WKSerializedNode;
+    using WrapperClass = WKJSSerializedNode;
 };
 
 }

@@ -1,0 +1,4 @@
+
+PASS Reading request.result after the record is deleted still produces a usable handle.
+PASS Reading request.result after the database is closed still produces a usable handle.
+

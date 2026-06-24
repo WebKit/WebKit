@@ -15,8 +15,8 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/vector_math.h"
@@ -27,14 +27,14 @@ namespace rnn_vad {
 namespace {
 
 float ComputeAutoCorrelation(int inverted_lag,
-                             ArrayView<const float, kBufSize24kHz> pitch_buffer,
+                             std::span<const float, kBufSize24kHz> pitch_buffer,
                              const VectorMath& vector_math) {
   RTC_DCHECK_LT(inverted_lag, kBufSize24kHz);
   RTC_DCHECK_LT(inverted_lag, kRefineNumLags24kHz);
   static_assert(kMaxPitch24kHz < kBufSize24kHz, "");
   return vector_math.DotProduct(
-      pitch_buffer.subview(/*offset=*/kMaxPitch24kHz),
-      pitch_buffer.subview(inverted_lag, kFrameSize20ms24kHz));
+      pitch_buffer.subspan(/*offset=*/kMaxPitch24kHz),
+      pitch_buffer.subspan(inverted_lag, kFrameSize20ms24kHz));
 }
 
 // Given an auto-correlation coefficient `curr_auto_correlation` and its
@@ -65,7 +65,7 @@ int GetPitchPseudoInterpolationOffset(float prev_auto_correlation,
 // output sample rate is twice as that of `lag`.
 int PitchPseudoInterpolationLagPitchBuf(
     int lag,
-    ArrayView<const float, kBufSize24kHz> pitch_buffer,
+    std::span<const float, kBufSize24kHz> pitch_buffer,
     const VectorMath& vector_math) {
   int offset = 0;
   // Cannot apply pseudo-interpolation at the boundaries.
@@ -130,7 +130,11 @@ constexpr int kMaxPitchPeriods24kHz =
 
 // Collection of inverted lags.
 class InvertedLagsIndex {
+  using Storage = std::array<int, kMaxPitchPeriods24kHz>;
+
  public:
+  using const_iterator = Storage::const_iterator;
+
   InvertedLagsIndex() : num_entries_(0) {}
   // Adds an inverted lag to the index. Cannot add more than
   // `kMaxPitchPeriods24kHz` values.
@@ -140,6 +144,9 @@ class InvertedLagsIndex {
   }
   const int* data() const { return inverted_lags_.data(); }
   int size() const { return num_entries_; }
+
+  const_iterator begin() const { return inverted_lags_.begin(); }
+  const_iterator end() const { return begin() + size(); }
 
  private:
   std::array<int, kMaxPitchPeriods24kHz> inverted_lags_;
@@ -151,8 +158,8 @@ class InvertedLagsIndex {
 // the inverted lags for the computed auto correlation values.
 void ComputeAutoCorrelation(
     Range inverted_lags,
-    ArrayView<const float, kBufSize24kHz> pitch_buffer,
-    ArrayView<float, kInitialNumLags24kHz> auto_correlation,
+    std::span<const float, kBufSize24kHz> pitch_buffer,
+    std::span<float, kInitialNumLags24kHz> auto_correlation,
     InvertedLagsIndex& inverted_lags_index,
     const VectorMath& vector_math) {
   // Check valid range.
@@ -179,10 +186,10 @@ void ComputeAutoCorrelation(
 // Searches the strongest pitch period at 24 kHz and returns its inverted lag at
 // 48 kHz.
 int ComputePitchPeriod48kHz(
-    ArrayView<const float, kBufSize24kHz> /* pitch_buffer */,
-    ArrayView<const int> inverted_lags,
-    ArrayView<const float, kInitialNumLags24kHz> auto_correlation,
-    ArrayView<const float, kRefineNumLags24kHz> y_energy,
+    std::span<const float, kBufSize24kHz> /* pitch_buffer */,
+    std::span<const int> inverted_lags,
+    std::span<const float, kInitialNumLags24kHz> auto_correlation,
+    std::span<const float, kRefineNumLags24kHz> y_energy,
     const VectorMath& /* vector_math */) {
   static_assert(kMaxPitch24kHz > kInitialNumLags24kHz, "");
   static_assert(kMaxPitch24kHz < kBufSize24kHz, "");
@@ -280,8 +287,8 @@ bool IsAlternativePitchStrongerThanInitial(PitchInfo last,
 
 }  // namespace
 
-void Decimate2x(ArrayView<const float, kBufSize24kHz> src,
-                ArrayView<float, kBufSize12kHz> dst) {
+void Decimate2x(std::span<const float, kBufSize24kHz> src,
+                std::span<float, kBufSize12kHz> dst) {
   // TODO(bugs.webrtc.org/9076): Consider adding anti-aliasing filter.
   static_assert(2 * kBufSize12kHz == kBufSize24kHz, "");
   for (int i = 0; i < kBufSize12kHz; ++i) {
@@ -290,12 +297,12 @@ void Decimate2x(ArrayView<const float, kBufSize24kHz> src,
 }
 
 void ComputeSlidingFrameSquareEnergies24kHz(
-    ArrayView<const float, kBufSize24kHz> pitch_buffer,
-    ArrayView<float, kRefineNumLags24kHz> y_energy,
+    std::span<const float, kBufSize24kHz> pitch_buffer,
+    std::span<float, kRefineNumLags24kHz> y_energy,
     AvailableCpuFeatures cpu_features) {
   VectorMath vector_math(cpu_features);
   static_assert(kFrameSize20ms24kHz < kBufSize24kHz, "");
-  const auto frame_20ms_view = pitch_buffer.subview(0, kFrameSize20ms24kHz);
+  const auto frame_20ms_view = pitch_buffer.subspan(0, kFrameSize20ms24kHz);
   float yy = vector_math.DotProduct(frame_20ms_view, frame_20ms_view);
   y_energy[0] = yy;
   static_assert(kMaxPitch24kHz - 1 + kFrameSize20ms24kHz < kBufSize24kHz, "");
@@ -310,8 +317,8 @@ void ComputeSlidingFrameSquareEnergies24kHz(
 }
 
 CandidatePitchPeriods ComputePitchPeriod12kHz(
-    ArrayView<const float, kBufSize12kHz> pitch_buffer,
-    ArrayView<const float, kNumLags12kHz> auto_correlation,
+    std::span<const float, kBufSize12kHz> pitch_buffer,
+    std::span<const float, kNumLags12kHz> auto_correlation,
     AvailableCpuFeatures cpu_features) {
   static_assert(kMaxPitch12kHz > kNumLags12kHz, "");
   static_assert(kMaxPitch12kHz < kBufSize12kHz, "");
@@ -333,7 +340,7 @@ CandidatePitchPeriods ComputePitchPeriod12kHz(
 
   VectorMath vector_math(cpu_features);
   static_assert(kFrameSize20ms12kHz + 1 < kBufSize12kHz, "");
-  const auto frame_view = pitch_buffer.subview(0, kFrameSize20ms12kHz + 1);
+  const auto frame_view = pitch_buffer.subspan(0, kFrameSize20ms12kHz + 1);
   float denominator = 1.f + vector_math.DotProduct(frame_view, frame_view);
   // Search best and second best pitches by looking at the scaled
   // auto-correlation.
@@ -369,8 +376,8 @@ CandidatePitchPeriods ComputePitchPeriod12kHz(
 }
 
 int ComputePitchPeriod48kHz(
-    ArrayView<const float, kBufSize24kHz> pitch_buffer,
-    ArrayView<const float, kRefineNumLags24kHz> y_energy,
+    std::span<const float, kBufSize24kHz> pitch_buffer,
+    std::span<const float, kRefineNumLags24kHz> y_energy,
     CandidatePitchPeriods pitch_candidates,
     AvailableCpuFeatures cpu_features) {
   // Compute the auto-correlation terms only for neighbors of the two pitch
@@ -407,8 +414,8 @@ int ComputePitchPeriod48kHz(
 }
 
 PitchInfo ComputeExtendedPitchPeriod48kHz(
-    ArrayView<const float, kBufSize24kHz> pitch_buffer,
-    ArrayView<const float, kRefineNumLags24kHz> y_energy,
+    std::span<const float, kBufSize24kHz> pitch_buffer,
+    std::span<const float, kRefineNumLags24kHz> y_energy,
     int initial_pitch_period_48kHz,
     PitchInfo last_pitch_48kHz,
     AvailableCpuFeatures cpu_features) {

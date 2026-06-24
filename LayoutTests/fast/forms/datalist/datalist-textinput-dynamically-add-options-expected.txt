@@ -1,5 +1,5 @@
+PASS isShowingDataListSuggestions is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS isShowingDataListSuggestions is false
 

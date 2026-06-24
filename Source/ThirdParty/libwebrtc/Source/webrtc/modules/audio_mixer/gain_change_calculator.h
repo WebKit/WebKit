@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
@@ -22,17 +22,17 @@ class GainChangeCalculator {
   // The 'out' signal is assumed to be produced from 'in' by applying
   // a smoothly varying gain. This method computes variations of the
   // gain and handles special cases when the samples are small.
-  float CalculateGainChange(ArrayView<const int16_t> in,
-                            ArrayView<const int16_t> out);
+  float CalculateGainChange(std::span<const int16_t> in,
+                            std::span<const int16_t> out);
 
   float LatestGain() const;
 
  private:
-  void CalculateGain(ArrayView<const int16_t> in,
-                     ArrayView<const int16_t> out,
-                     ArrayView<float> gain);
+  void CalculateGain(std::span<const int16_t> in,
+                     std::span<const int16_t> out,
+                     std::span<float> gain);
 
-  float CalculateDifferences(ArrayView<const float> values);
+  float CalculateDifferences(std::span<const float> values);
   float last_value_ = 0.f;
   float last_reliable_gain_ = 1.0f;
 };

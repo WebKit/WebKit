@@ -8,5 +8,12 @@ PASS e.style['background-color'] = "contrast-color(color(srgb 10 10 10))" should
 PASS e.style['background-color'] = "contrast-color(color(srgb -10 -10 -10))" should set the property value
 PASS e.style['background-color'] = "contrast-color(contrast-color(pink))" should set the property value
 PASS e.style['background-color'] = "contrast-color(currentcolor)" should set the property value
-PASS e.style['background-color'] = "contrast-color(color(srgb calc(0.5) calc(1 + (sign(20cqw - 10px) * 0.5)) 1 / .5))" should set the property value
+PASS e.style['background-color'] = "contrast-color(color(srgb calc(0.5) calc(1 + 1 / 1) 1 / .5))" should set the property value
+PASS e.style['background-color'] = "color-mix(contrast-color(blue) 75%, purple 25%)" should set the property value
+PASS e.style['background-color'] = "rgb(from contrast-color(blue) r g b)" should set the property value
+PASS e.style['background-color'] = "contrast-color(color-mix(blue, green))" should set the property value
+PASS e.style['background-color'] = "contrast-color(rgb(from blue r g b))" should set the property value
+PASS e.style['background-color'] = "contrast-color(buttonface)" should set the property value
+PASS e.style['background-color'] = "contrast-color(transparent)" should set the property value
+PASS e.style['background-color'] = "contrast-color(rgba(255, 255, 255, 0.2))" should set the property value
 

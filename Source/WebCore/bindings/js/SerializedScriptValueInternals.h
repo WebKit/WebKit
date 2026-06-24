@@ -117,6 +117,8 @@ struct SerializedScriptValueInternals {
 #endif
     Vector<URLKeepingBlobAlive> blobHandles { };
     uint64_t memoryCost { 0 };
+
+    WEBCORE_EXPORT SerializedScriptValueInternals clone() const;
 };
 
 } // namespace WebCore

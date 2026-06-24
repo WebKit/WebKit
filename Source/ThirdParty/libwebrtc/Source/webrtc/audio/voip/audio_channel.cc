@@ -54,11 +54,11 @@ AudioChannel::AudioChannel(const Environment& env,
   rtp_config.rtcp_report_interval_ms = kRtcpReportIntervalMs;
   rtp_config.outgoing_transport = transport;
   rtp_config.local_media_ssrc = local_ssrc;
+  rtp_config.rtcp_mode = RtcpMode::kCompound;
 
   rtp_rtcp_ = ModuleRtpRtcpImpl2::CreateSendModule(env, rtp_config);
 
   rtp_rtcp_->SetSendingMediaStatus(false);
-  rtp_rtcp_->SetRTCPStatus(RtcpMode::kCompound);
 
   ingress_ = std::make_unique<AudioIngress>(env, rtp_rtcp_.get(),
                                             receive_statistics_.get(),

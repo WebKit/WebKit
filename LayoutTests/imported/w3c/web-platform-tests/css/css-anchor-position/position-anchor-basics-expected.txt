@@ -14,6 +14,7 @@ PASS Property position-anchor value 'auto'
 PASS Property position-anchor value '--foo'
 PASS Property position-anchor has initial value normal
 PASS Property position-anchor does not inherit
+PASS Property position-anchor has initial value normal in popovers
 PASS CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (-0.3) should be [--foo]
 PASS CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0) should be [--foo]
 PASS CSS Transitions with transition-behavior:allow-discrete: property <position-anchor> from [--foo] to [auto] at (0.3) should be [--foo]

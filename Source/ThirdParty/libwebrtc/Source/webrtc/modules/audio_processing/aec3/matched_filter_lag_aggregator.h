@@ -15,9 +15,9 @@
 #include <cstddef>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/delay_estimate.h"
 #include "modules/audio_processing/aec3/matched_filter.h"
@@ -81,7 +81,7 @@ class MatchedFilterLagAggregator {
     void Reset();
     void Aggregate(int lag);
     int candidate() const { return candidate_; }
-    ArrayView<const int> histogram() const { return histogram_; }
+    std::span<const int> histogram() const { return histogram_; }
 
    private:
     std::vector<int> histogram_;

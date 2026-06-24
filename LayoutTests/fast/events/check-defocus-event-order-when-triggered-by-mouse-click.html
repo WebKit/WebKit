@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/record-events.js"></script>
 <script>
 if (window.testRunner)
@@ -14,6 +14,7 @@ async function runTest()
         return;
 
     testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
 
     var firstInput = document.getElementById("firstInput");
     var secondInput = document.getElementById("secondInput");
@@ -28,8 +29,7 @@ async function runTest()
     await eventSender.asyncMouseUp(); // Transfers focus to text field "second input".
     endRecordingEvents();
     checkThatEventsFiredInOrder([["firstInput", "focus"], ["firstInput", "change"], ["firstInput", "blur"], ["secondInput", "focus"], ["secondInput", "click"]]);
-    debug('<br /><span class="pass">TEST COMPLETE</span>');
-    testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
 </head>

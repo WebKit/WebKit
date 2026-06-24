@@ -125,8 +125,7 @@ operator==(const AudioProcessing::Config::CaptureLevelAdjustment::
 }
 
 std::string AudioProcessing::Config::ToString() const {
-  char buf[2048];
-  SimpleStringBuilder builder(buf);
+  StringBuilder builder;
   builder << "AudioProcessing::Config{ "
              "pipeline: { "
              "maximum_internal_processing_rate: "
@@ -208,7 +207,7 @@ std::string AudioProcessing::Config::ToString() const {
           << gain_controller2.adaptive_digital.max_output_noise_level_dbfs
           << " }, input_volume_control : { enabled "
           << gain_controller2.input_volume_controller.enabled << "}}";
-  return builder.str();
+  return builder.Release();
 }
 
 absl_nonnull std::unique_ptr<AudioProcessingBuilderInterface>

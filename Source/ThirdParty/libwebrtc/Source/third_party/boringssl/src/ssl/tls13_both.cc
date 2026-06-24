@@ -21,11 +21,14 @@
 
 #include <openssl/bytestring.h>
 #include <openssl/err.h>
+#include <openssl/evp.h>
 #include <openssl/hkdf.h>
 #include <openssl/mem.h>
+#include <openssl/pool.h>
 #include <openssl/stack.h>
 #include <openssl/x509.h>
 
+#include "../crypto/bytestring/internal.h"
 #include "../crypto/internal.h"
 #include "internal.h"
 
@@ -178,6 +181,7 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
     return false;
   }
 
+  // Only used for X.509 certificates.
   UniquePtr<STACK_OF(CRYPTO_BUFFER)> certs(sk_CRYPTO_BUFFER_new_null());
   if (!certs) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
@@ -188,56 +192,80 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
       ssl->server && hs->config->retain_only_sha256_of_client_certs;
   UniquePtr<EVP_PKEY> pkey;
   while (CBS_len(&certificate_list) > 0) {
-    CBS certificate, extensions;
+    CBS certificate;  // For an RPK, this is the subjectPublicKeyInfo.
+    CBS extensions;
     if (!CBS_get_u24_length_prefixed(&certificate_list, &certificate) ||
         !CBS_get_u16_length_prefixed(&certificate_list, &extensions) ||
         CBS_len(&certificate) == 0) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_DECODE_ERROR);
-      OPENSSL_PUT_ERROR(SSL, SSL_R_CERT_LENGTH_MISMATCH);
+      OPENSSL_PUT_ERROR(SSL, hs->peer_cert_type == TLSEXT_cert_type_rpk
+                                 ? SSL_R_INVALID_RAW_PUBLIC_KEY
+                                 : SSL_R_CERT_LENGTH_MISMATCH);
       return false;
     }
+    const bool is_first_entry = pkey == nullptr;
+    if (is_first_entry) {
+      if (hs->peer_cert_type == TLSEXT_cert_type_rpk) {
+        // Only one CertificateEntry is allowed for RawPublicKey cert type.
+        if (CBS_len(&certificate_list) != 0) {
+          ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
+          OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_RAW_PUBLIC_KEY);
+          return false;
+        }
+        pkey = ssl_parse_peer_subject_public_key_info(certificate);
+      } else {
+        assert(hs->peer_cert_type == TLSEXT_cert_type_x509);
+        bool is_leaf_cert = sk_CRYPTO_BUFFER_num(certs.get()) == 0;
+        if (is_leaf_cert) {
+          pkey = ssl_cert_parse_pubkey(&certificate);
+        }
+      }
 
-    const bool is_leaf = sk_CRYPTO_BUFFER_num(certs.get()) == 0;
-    if (is_leaf) {
-      pkey = ssl_cert_parse_pubkey(&certificate);
       if (!pkey) {
         ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_DECODE_ERROR);
         OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
         return false;
       }
       // TLS 1.3 always uses certificate keys for signing thus the correct
-      // keyUsage is enforced.
-      if (!ssl_cert_check_key_usage(&certificate,
+      // keyUsage is enforced. (RPKs have no keyUsage to enforce.)
+      if (hs->peer_cert_type == TLSEXT_cert_type_x509 &&
+          !ssl_cert_check_key_usage(&certificate,
                                     key_usage_digital_signature)) {
         ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER);
         return false;
       }
 
       if (retain_sha256) {
-        // Retain the hash of the leaf certificate if requested.
+        // Retain the hash of the leaf certificate or RPK if requested.
         SHA256(CBS_data(&certificate), CBS_len(&certificate),
                hs->new_session->peer_sha256);
       }
     }
 
-    UniquePtr<CRYPTO_BUFFER> buf(
-        CRYPTO_BUFFER_new_from_CBS(&certificate, ssl->ctx->pool));
-    if (!buf ||  //
-        !PushToStack(certs.get(), std::move(buf))) {
-      ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
-      return false;
+    if (hs->peer_cert_type == TLSEXT_cert_type_x509) {
+      UniquePtr<CRYPTO_BUFFER> buf(
+          CRYPTO_BUFFER_new_from_CBS(&certificate, ssl->ctx->pool.get()));
+      if (!buf ||  //
+          !PushToStack(certs.get(), std::move(buf))) {
+        ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
+        return false;
+      }
     }
 
+    // Extensions are not supported with RPKs.
+    const bool cert_extensions_allowed =
+        hs->peer_cert_type == TLSEXT_cert_type_x509;
+
     // Parse out the extensions.
-    SSLExtension status_request(
-        TLSEXT_TYPE_status_request,
-        !ssl->server && hs->config->ocsp_stapling_enabled);
-    SSLExtension sct(
-        TLSEXT_TYPE_certificate_timestamp,
-        !ssl->server && hs->config->signed_cert_timestamps_enabled);
+    SSLExtension status_request(TLSEXT_TYPE_status_request,
+                                cert_extensions_allowed && !ssl->server &&
+                                    hs->config->ocsp_stapling_enabled);
+    SSLExtension sct(TLSEXT_TYPE_certificate_timestamp,
+                     cert_extensions_allowed && !ssl->server &&
+                         hs->config->signed_cert_timestamps_enabled);
     SSLExtension trust_anchors(
         TLSEXT_TYPE_trust_anchors,
-        !ssl->server && is_leaf &&
+        cert_extensions_allowed && !ssl->server && is_first_entry &&
             hs->config->requested_trust_anchors.has_value());
     uint8_t alert = SSL_AD_DECODE_ERROR;
     if (!ssl_parse_extensions(&extensions, &alert,
@@ -263,7 +291,7 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
 
       if (sk_CRYPTO_BUFFER_num(certs.get()) == 1) {
         hs->new_session->ocsp_response.reset(
-            CRYPTO_BUFFER_new_from_CBS(&ocsp_response, ssl->ctx->pool));
+            CRYPTO_BUFFER_new_from_CBS(&ocsp_response, ssl->ctx->pool.get()));
         if (hs->new_session->ocsp_response == nullptr) {
           ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
           return false;
@@ -280,7 +308,7 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
 
       if (sk_CRYPTO_BUFFER_num(certs.get()) == 1) {
         hs->new_session->signed_cert_timestamp_list.reset(
-            CRYPTO_BUFFER_new_from_CBS(&sct.data, ssl->ctx->pool));
+            CRYPTO_BUFFER_new_from_CBS(&sct.data, ssl->ctx->pool.get()));
         if (hs->new_session->signed_cert_timestamp_list == nullptr) {
           ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
           return false;
@@ -298,14 +326,16 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
     }
   }
 
-  // Store a null certificate list rather than an empty one if the peer didn't
-  // send certificates.
-  if (sk_CRYPTO_BUFFER_num(certs.get()) == 0) {
-    certs.reset();
+  if (pkey != nullptr) {
+    hs->new_session->peer_cert_type = hs->peer_cert_type;
+    hs->peer_pubkey = std::move(pkey);
+    if (hs->peer_cert_type == TLSEXT_cert_type_rpk) {
+      hs->new_session->peer_raw_public_key = UpRef(hs->peer_pubkey);
+    } else {
+      assert(hs->peer_cert_type == TLSEXT_cert_type_x509);
+      hs->new_session->certs = std::move(certs);
+    }
   }
-
-  hs->peer_pubkey = std::move(pkey);
-  hs->new_session->certs = std::move(certs);
 
   if (!ssl->ctx->x509_method->session_cache_objects(hs->new_session.get())) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
@@ -313,7 +343,7 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
     return false;
   }
 
-  if (sk_CRYPTO_BUFFER_num(hs->new_session->certs.get()) == 0) {
+  if (!ssl_session_has_peer_cred(hs->new_session.get())) {
     if (!allow_anonymous) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_PEER_DID_NOT_RETURN_A_CERTIFICATE);
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_CERTIFICATE_REQUIRED);
@@ -408,7 +438,7 @@ bool tls13_process_finished(SSL_HANDSHAKE *hs, const SSLMessage &msg,
 
 bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
-  const SSL_CREDENTIAL *cred = hs->credential.get();
+  const SSLCredential *cred = hs->credential.get();
 
   ScopedCBB cbb;
   CBB *body, body_storage, certificate_list;
@@ -428,22 +458,32 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
   if (  // The request context is always empty in the handshake.
       !CBB_add_u8(body, 0) ||
       !CBB_add_u24_length_prefixed(body, &certificate_list)) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
   }
 
-  if (hs->credential == nullptr) {
+  if (cred == nullptr) {
     return ssl_add_message_cbb(ssl, cbb.get());
   }
 
-  assert(hs->credential->UsesX509());
-  CRYPTO_BUFFER *leaf_buf = sk_CRYPTO_BUFFER_value(cred->chain.get(), 0);
   CBB leaf, extensions;
-  if (!CBB_add_u24_length_prefixed(&certificate_list, &leaf) ||
-      !CBB_add_bytes(&leaf, CRYPTO_BUFFER_data(leaf_buf),
-                     CRYPTO_BUFFER_len(leaf_buf)) ||
-      !CBB_add_u16_length_prefixed(&certificate_list, &extensions)) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+  if (!CBB_add_u24_length_prefixed(&certificate_list, &leaf)) {
+    return false;
+  }
+  if (cred->type == SSLCredentialType::kRawPublicKey) {
+    // Write the CertificateEntry format for a RawPublicKey (RFC 8446, section
+    // 4.4.2).
+    if (!EVP_marshal_public_key(&leaf, cred->pubkey.get())) {
+      return false;
+    }
+  } else {
+    assert(cred->UsesX509());
+    CRYPTO_BUFFER *leaf_buf = sk_CRYPTO_BUFFER_value(cred->chain.get(), 0);
+    if (!CBB_add_bytes(&leaf, CRYPTO_BUFFER_data(leaf_buf),
+                       CRYPTO_BUFFER_len(leaf_buf))) {
+      return false;
+    }
+  }
+  if (!CBB_add_u16_length_prefixed(&certificate_list, &extensions)) {
     return false;
   }
 
@@ -456,7 +496,6 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
             CRYPTO_BUFFER_data(cred->signed_cert_timestamp_list.get()),
             CRYPTO_BUFFER_len(cred->signed_cert_timestamp_list.get())) ||
         !CBB_flush(&extensions)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
   }
@@ -471,7 +510,6 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
                        CRYPTO_BUFFER_data(cred->ocsp_response.get()),
                        CRYPTO_BUFFER_len(cred->ocsp_response.get())) ||
         !CBB_flush(&extensions)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
   }
@@ -483,7 +521,6 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
         !CBB_add_bytes(&child, CRYPTO_BUFFER_data(cred->dc.get()),
                        CRYPTO_BUFFER_len(cred->dc.get())) ||
         !CBB_flush(&extensions)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
   }
@@ -505,7 +542,6 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
         !CBB_add_bytes(&child, CRYPTO_BUFFER_data(cert_buf),
                        CRYPTO_BUFFER_len(cert_buf)) ||
         !CBB_add_u16(&certificate_list, 0 /* no extensions */)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
   }
@@ -516,7 +552,6 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
 
   Array<uint8_t> msg;
   if (!CBBFinishArray(cbb.get(), &msg)) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
   }
 
@@ -541,7 +576,6 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
       msg.size() > (1u << 24) - 1 ||  //
       !CBB_add_u24(body, static_cast<uint32_t>(msg.size())) ||
       !CBB_add_u24_length_prefixed(body, &compressed)) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
   }
 
@@ -552,7 +586,6 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
       !hints->cert_compression_output.empty()) {
     if (!CBB_add_bytes(&compressed, hints->cert_compression_output.data(),
                        hints->cert_compression_output.size())) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
       return false;
     }
   } else {
@@ -563,15 +596,13 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
     if (hints && hs->hints_requested) {
       hints->cert_compression_alg_id = hs->cert_compression_alg_id;
       if (!hints->cert_compression_input.CopyFrom(msg) ||
-          !hints->cert_compression_output.CopyFrom(
-              Span(CBB_data(&compressed), CBB_len(&compressed)))) {
+          !hints->cert_compression_output.CopyFrom(CBBAsSpan(&compressed))) {
         return false;
       }
     }
   }
 
   if (!ssl_add_message_cbb(ssl, cbb.get())) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return false;
   }
 

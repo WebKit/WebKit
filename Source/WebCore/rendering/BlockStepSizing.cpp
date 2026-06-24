@@ -27,13 +27,13 @@
 #include "BlockStepSizing.h"
 
 #include "RenderBox.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 
 namespace BlockStepSizing {
 
-bool childHasSupportedStyle(const RenderStyle& childStyle)
+bool childHasSupportedStyle(const Style::ComputedStyle& childStyle)
 {
     return childStyle.blockStepInsert() == BlockStepInsert::MarginBox
         && childStyle.blockStepAlign() == BlockStepAlign::Auto

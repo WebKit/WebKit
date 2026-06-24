@@ -116,6 +116,13 @@ private:
 
     bool m_enabled { false };
     HashMap<std::pair<WebCore::ProcessIdentifier, WebCore::PageIdentifier>, unsigned> m_instrumentedProcessPageCounts;
+
+    // Pin each instrumented WebProcessProxy alive while we hold an IPC message
+    // receiver registration on it. Without this, the process can be destructed
+    // before ~ProxyingNetworkAgent runs, leaving the receiver registered against
+    // a map that has already gone away. The receiver's m_messageReceiverMapCount
+    // then stays nonzero and ~MessageReceiver fires its debug ASSERT.
+    HashMap<WebCore::ProcessIdentifier, Ref<WebKit::WebProcessProxy>> m_pinnedInstrumentedProcesses;
 };
 
 } // namespace Inspector

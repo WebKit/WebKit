@@ -14,8 +14,8 @@
 #include <cstdint>
 #include <cstring>
 #include <map>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/units/timestamp.h"
@@ -123,8 +123,8 @@ std::map<int, int> PayloadTypeMapping() {
 }
 
 template <typename T>
-ArrayView<T> Truncate(ArrayView<T> a, size_t drop) {
-  return a.subview(0, a.size() - drop);
+std::span<T> Truncate(std::span<T> a, size_t drop) {
+  return a.subspan(0, a.size() - drop);
 }
 
 }  // namespace
@@ -134,7 +134,7 @@ TEST(RtxReceiveStreamTest, RestoresPacketPayload) {
   Environment env = CreateTestEnvironment();
   RtxReceiveStream rtx_sink(env, &media_sink, PayloadTypeMapping(), kMediaSSRC);
   RtpPacketReceived rtx_packet;
-  EXPECT_TRUE(rtx_packet.Parse(ArrayView<const uint8_t>(kRtxPacket)));
+  EXPECT_TRUE(rtx_packet.Parse(std::span<const uint8_t>(kRtxPacket)));
 
   EXPECT_CALL(media_sink, OnRtpPacket)
       .WillOnce([](const RtpPacketReceived& packet) {
@@ -152,7 +152,7 @@ TEST(RtxReceiveStreamTest, SetsRecoveredFlag) {
   Environment env = CreateTestEnvironment();
   RtxReceiveStream rtx_sink(env, &media_sink, PayloadTypeMapping(), kMediaSSRC);
   RtpPacketReceived rtx_packet;
-  EXPECT_TRUE(rtx_packet.Parse(ArrayView<const uint8_t>(kRtxPacket)));
+  EXPECT_TRUE(rtx_packet.Parse(std::span<const uint8_t>(kRtxPacket)));
   EXPECT_FALSE(rtx_packet.recovered());
   EXPECT_CALL(media_sink, OnRtpPacket)
       .WillOnce([](const RtpPacketReceived& packet) {
@@ -171,7 +171,7 @@ TEST(RtxReceiveStreamTest, IgnoresUnknownPayloadType) {
   Environment env = CreateTestEnvironment({.event_log = &log});
   RtxReceiveStream rtx_sink(env, &media_sink, payload_type_mapping, kMediaSSRC);
   RtpPacketReceived rtx_packet;
-  EXPECT_TRUE(rtx_packet.Parse(ArrayView<const uint8_t>(kRtxPacket)));
+  EXPECT_TRUE(rtx_packet.Parse(std::span<const uint8_t>(kRtxPacket)));
   EXPECT_CALL(log, LogProxy(_));
   rtx_sink.OnRtpPacket(rtx_packet);
 }
@@ -183,7 +183,7 @@ TEST(RtxReceiveStreamTest, IgnoresTruncatedPacket) {
   RtxReceiveStream rtx_sink(env, &media_sink, PayloadTypeMapping(), kMediaSSRC);
   RtpPacketReceived rtx_packet;
   EXPECT_TRUE(
-      rtx_packet.Parse(Truncate(ArrayView<const uint8_t>(kRtxPacket), 2)));
+      rtx_packet.Parse(Truncate(std::span<const uint8_t>(kRtxPacket), 2)));
   EXPECT_CALL(log, LogProxy(_));
   rtx_sink.OnRtpPacket(rtx_packet);
 }
@@ -195,7 +195,7 @@ TEST(RtxReceiveStreamTest, CopiesRtpHeaderExtensions) {
   RtpHeaderExtensionMap extension_map;
   extension_map.RegisterByType(3, kRtpExtensionVideoRotation);
   RtpPacketReceived rtx_packet(&extension_map);
-  EXPECT_TRUE(rtx_packet.Parse(ArrayView<const uint8_t>(kRtxPacketWithCVO)));
+  EXPECT_TRUE(rtx_packet.Parse(std::span<const uint8_t>(kRtxPacketWithCVO)));
 
   VideoRotation rotation = kVideoRotation_0;
   EXPECT_TRUE(rtx_packet.GetExtension<VideoOrientation>(&rotation));
@@ -220,7 +220,7 @@ TEST(RtxReceiveStreamTest, PropagatesArrivalTime) {
   Environment env = CreateTestEnvironment();
   RtxReceiveStream rtx_sink(env, &media_sink, PayloadTypeMapping(), kMediaSSRC);
   RtpPacketReceived rtx_packet(nullptr);
-  EXPECT_TRUE(rtx_packet.Parse(ArrayView<const uint8_t>(kRtxPacket)));
+  EXPECT_TRUE(rtx_packet.Parse(std::span<const uint8_t>(kRtxPacket)));
   rtx_packet.set_arrival_time(Timestamp::Millis(123));
   EXPECT_CALL(media_sink, OnRtpPacket(Property(&RtpPacketReceived::arrival_time,
                                                Timestamp::Millis(123))));
@@ -236,14 +236,14 @@ TEST(RtxReceiveStreamTest, SupportsLargePacket) {
   constexpr int kRtxPayloadOffset = 14;
   uint8_t large_rtx_packet[kRtxPacketSize];
   memcpy(large_rtx_packet, kRtxPacket, sizeof(kRtxPacket));
-  ArrayView<uint8_t> payload(large_rtx_packet + kRtxPayloadOffset,
+  std::span<uint8_t> payload(large_rtx_packet + kRtxPayloadOffset,
                              kRtxPacketSize - kRtxPayloadOffset);
 
   // Fill payload.
   for (size_t i = 0; i < payload.size(); i++) {
     payload[i] = i;
   }
-  EXPECT_TRUE(rtx_packet.Parse(ArrayView<const uint8_t>(large_rtx_packet)));
+  EXPECT_TRUE(rtx_packet.Parse(std::span<const uint8_t>(large_rtx_packet)));
 
   EXPECT_CALL(media_sink, OnRtpPacket)
       .WillOnce([&](const RtpPacketReceived& packet) {
@@ -267,10 +267,10 @@ TEST(RtxReceiveStreamTest, SupportsLargePacketWithPadding) {
   uint8_t large_rtx_packet[kRtxPacketSize];
   memcpy(large_rtx_packet, kRtxPacketWithPadding,
          sizeof(kRtxPacketWithPadding));
-  ArrayView<uint8_t> payload(
+  std::span<uint8_t> payload(
       large_rtx_packet + kRtxPayloadOffset,
       kRtxPacketSize - kRtxPayloadOffset - kRtxPaddingSize);
-  ArrayView<uint8_t> padding(
+  std::span<uint8_t> padding(
       large_rtx_packet + kRtxPacketSize - kRtxPaddingSize, kRtxPaddingSize);
 
   // Fill payload.
@@ -282,7 +282,7 @@ TEST(RtxReceiveStreamTest, SupportsLargePacketWithPadding) {
     padding[i] = kRtxPaddingSize;
   }
 
-  EXPECT_TRUE(rtx_packet.Parse(ArrayView<const uint8_t>(large_rtx_packet)));
+  EXPECT_TRUE(rtx_packet.Parse(std::span<const uint8_t>(large_rtx_packet)));
 
   EXPECT_CALL(media_sink, OnRtpPacket)
       .WillOnce([&](const RtpPacketReceived& packet) {
@@ -314,7 +314,7 @@ TEST(RtxReceiveStreamTest, LogsRtpPacketIncoming) {
   Environment env = CreateTestEnvironment({.event_log = &log});
   RtxReceiveStream rtx_sink(env, &media_sink, PayloadTypeMapping(), kMediaSSRC);
   RtpPacketReceived rtx_packet;
-  EXPECT_TRUE(rtx_packet.Parse(ArrayView<const uint8_t>(kRtxPacket)));
+  EXPECT_TRUE(rtx_packet.Parse(std::span<const uint8_t>(kRtxPacket)));
 
   EXPECT_CALL(log, LogProxy(IsRtcEventRtpPacketIncomingPtrWithSsrcAndOsn(
                        kRtxSSRC, kMediaSeqno)));

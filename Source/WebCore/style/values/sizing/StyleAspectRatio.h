@@ -109,7 +109,7 @@ template<> struct CSSValueConversion<AspectRatio> { auto operator()(BuilderState
 
 template<> struct Blending<AspectRatio> {
     bool NODELETE canBlend(const AspectRatio&, const AspectRatio&);
-    auto blend(const AspectRatio&, const AspectRatio&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> AspectRatio;
+    auto blend(const AspectRatio&, const AspectRatio&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> AspectRatio;
 };
 
 } // namespace Style

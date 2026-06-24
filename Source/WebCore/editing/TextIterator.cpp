@@ -1898,6 +1898,16 @@ inline bool NODELETE SearchBuffer::needsMoreContext() const
     return m_needsMoreContext;
 }
 
+static void prepend(Vector<char16_t>& buffer, StringView text)
+{
+    size_t length = text.length();
+    size_t oldSize = buffer.size();
+    buffer.grow(oldSize + length);
+    if (oldSize)
+        WTF::memmoveSpan(buffer.mutableSpan().subspan(length), buffer.span().first(oldSize));
+    text.getCharacters(buffer.mutableSpan().first(length));
+}
+
 inline void SearchBuffer::prependContext(StringView text)
 {
     ASSERT(m_needsMoreContext);
@@ -1915,7 +1925,8 @@ inline void SearchBuffer::prependContext(StringView text)
     }
 
     size_t usableLength = std::min(m_buffer.capacity() - m_prefixLength, text.length() - wordBoundaryContextStart);
-    WTF::append(m_buffer, text.substring(text.length() - usableLength, usableLength));
+    auto suffix = text.substring(text.length() - usableLength, usableLength);
+    prepend(m_buffer, suffix);
     m_prefixLength += usableLength;
 
     if (wordBoundaryContextStart || m_prefixLength == m_buffer.capacity())

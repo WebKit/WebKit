@@ -11,9 +11,9 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "net/dcsctp/packet/chunk/abort_chunk.h"
 #include "net/dcsctp/packet/chunk/cookie_ack_chunk.h"
 #include "net/dcsctp/packet/chunk/cookie_echo_chunk.h"
@@ -37,7 +37,7 @@ namespace dcsctp {
 
 template <class Chunk>
 bool ParseAndPrint(uint8_t chunk_type,
-                   webrtc::ArrayView<const uint8_t> data,
+                   std::span<const uint8_t> data,
                    webrtc::StringBuilder& sb) {
   if (chunk_type == Chunk::kType) {
     std::optional<Chunk> c = Chunk::Parse(data);
@@ -51,7 +51,7 @@ bool ParseAndPrint(uint8_t chunk_type,
   return false;
 }
 
-std::string DebugConvertChunkToString(webrtc::ArrayView<const uint8_t> data) {
+std::string DebugConvertChunkToString(std::span<const uint8_t> data) {
   webrtc::StringBuilder sb;
 
   if (data.empty()) {

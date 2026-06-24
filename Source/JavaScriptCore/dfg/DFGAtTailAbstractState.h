@@ -30,7 +30,7 @@
 #include "DFGAbstractInterpreterClobberState.h"
 #include "DFGAbstractValue.h"
 #include "DFGBasicBlock.h"
-#include "DFGBlockMap.h"
+#include <wtf/IndexMap.h>
 #include "DFGGraph.h"
 #include "DFGNodeFlowProjection.h"
 
@@ -268,8 +268,8 @@ public:
 
 private:
     Graph& m_graph;
-    BlockMap<UncheckedKeyHashMap<NodeFlowProjection, AbstractValue>> m_valuesAtTailMap;
-    BlockMap<Vector<AbstractValue>> m_tupleAbstractValues;
+    IndexMap<BasicBlock*, UncheckedKeyHashMap<NodeFlowProjection, AbstractValue>> m_valuesAtTailMap;
+    IndexMap<BasicBlock*, Vector<AbstractValue>> m_tupleAbstractValues;
     BasicBlock* m_block { nullptr };
     bool m_trustEdgeProofs { false };
 };

@@ -53,7 +53,6 @@ public:
 
     JS_EXPORT_PRIVATE void enqueue(Ref<Plan>);
     void stopAllPlansForContext(VM&);
-    void requestTemporaryStop();
 
     JS_EXPORT_PRIVATE void completePlanSynchronously(Plan&);
 

@@ -1,11 +1,8 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 
 function loadNextPage()
 {
@@ -49,7 +46,7 @@ function runTest()
             window.sessionStorage.removeItem('testPageLoadCount');
 
             if (window.testRunner) {
-                window.testRunner.notifyDone();
+                finishJSTest();
             }
         }
     }

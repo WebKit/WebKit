@@ -13,9 +13,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/leb128.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
@@ -70,7 +70,7 @@ int MaxFragmentSize(int remaining_bytes) {
 
 }  // namespace
 
-RtpPacketizerAv1::RtpPacketizerAv1(ArrayView<const uint8_t> payload,
+RtpPacketizerAv1::RtpPacketizerAv1(std::span<const uint8_t> payload,
                                    RtpPacketizer::PayloadSizeLimits limits,
                                    VideoFrameType frame_type,
                                    bool is_last_frame_in_picture)
@@ -80,7 +80,7 @@ RtpPacketizerAv1::RtpPacketizerAv1(ArrayView<const uint8_t> payload,
       is_last_frame_in_picture_(is_last_frame_in_picture) {}
 
 std::vector<RtpPacketizerAv1::Obu> RtpPacketizerAv1::ParseObus(
-    ArrayView<const uint8_t> payload) {
+    std::span<const uint8_t> payload) {
   std::vector<Obu> result;
   ByteBufferReader payload_reader(payload);
   while (payload_reader.Length() > 0) {
@@ -99,8 +99,8 @@ std::vector<RtpPacketizerAv1::Obu> RtpPacketizerAv1::ParseObus(
     }
     if (!ObuHasSize(obu.header)) {
       obu.payload =
-          MakeArrayView(reinterpret_cast<const uint8_t*>(payload_reader.Data()),
-                        payload_reader.Length());
+          std::span(reinterpret_cast<const uint8_t*>(payload_reader.Data()),
+                    payload_reader.Length());
       payload_reader.Consume(payload_reader.Length());
     } else {
       uint64_t size = 0;
@@ -111,7 +111,7 @@ std::vector<RtpPacketizerAv1::Obu> RtpPacketizerAv1::ParseObus(
                            << payload_reader.Length();
         return {};
       }
-      obu.payload = MakeArrayView(
+      obu.payload = std::span(
           reinterpret_cast<const uint8_t*>(payload_reader.Data()), size);
       payload_reader.Consume(size);
     }
@@ -147,7 +147,7 @@ int RtpPacketizerAv1::AdditionalBytesForPreviousObuElement(
 }
 
 std::vector<RtpPacketizerAv1::Packet> RtpPacketizerAv1::PacketizeInternal(
-    ArrayView<const Obu> obus,
+    std::span<const Obu> obus,
     PayloadSizeLimits limits) {
   std::vector<Packet> packets;
   if (obus.empty()) {
@@ -300,7 +300,7 @@ std::vector<RtpPacketizerAv1::Packet> RtpPacketizerAv1::PacketizeInternal(
 }
 
 std::vector<RtpPacketizerAv1::Packet> RtpPacketizerAv1::Packetize(
-    ArrayView<const Obu> obus,
+    std::span<const Obu> obus,
     PayloadSizeLimits limits) {
   std::vector<Packet> packets = PacketizeInternal(obus, limits);
   if (packets.size() <= 1) {

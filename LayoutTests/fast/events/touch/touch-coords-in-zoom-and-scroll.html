@@ -1,4 +1,4 @@
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <style>
     #pusher {
         width: 1000px;
@@ -11,6 +11,7 @@
     <div id="pusher">This box is here to create scrollbars.</div>
 </div>
 <script>
+    window.jsTestIsAsync = true;
     var event;
 
     function sendTouchStart(x, y)
@@ -41,10 +42,6 @@
         window.scrollTo(x, y);
     }
 
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
 
     // Default.
     function base(e)
@@ -122,7 +119,6 @@
     if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
-        isSuccessfullyParsed();
-        testRunner.notifyDone();
+        finishJSTest();
     }
 </script>

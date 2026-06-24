@@ -44,6 +44,7 @@
 #include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "FallbackPopupMenu.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FormController.h"
 #include "GenericCachedHTMLCollection.h"
@@ -78,6 +79,9 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleDisplay.h"
+#include "UnicodeBidi.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -130,8 +134,8 @@ SUPPRESS_NODELETE const AtomString& SelectSlotAssignment::slotNameForHostChild(c
 // https://html.spec.whatwg.org/#dom-htmloptionscollection-length
 static constexpr unsigned maxSelectItems = 100000;
 
-HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& document)
+    : HTMLFormControlElement(tagName, document)
     , m_typeAhead(this)
     , m_size(0)
     , m_lastOnChangeIndex(-1)
@@ -146,17 +150,17 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& doc
     ASSERT(hasTagName(selectTag));
 }
 
-Ref<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document& document)
 {
     ASSERT(tagName.matches(selectTag));
-    Ref select = adoptRef(*new HTMLSelectElement(tagName, document, form));
+    Ref select = adoptRef(*new HTMLSelectElement(tagName, document));
     select->addShadowRoot(ShadowRoot::create(document, makeUnique<SelectSlotAssignment>()));
     return select;
 }
 
 Ref<HTMLSelectElement> HTMLSelectElement::create(Document& document)
 {
-    return HTMLSelectElement::create(selectTag, document, nullptr);
+    return HTMLSelectElement::create(selectTag, document);
 }
 
 HTMLSelectElement::~HTMLSelectElement() = default;
@@ -218,7 +222,7 @@ HTMLSelectElement* HTMLSelectElement::findOwnerSelect(ContainerNode* startNode, 
     return findOwnerSelect(startNode->parentNode(), excludeOptGroup);
 }
 
-static bool NODELETE hasBaseAppearance(const RenderStyle* style)
+static bool NODELETE hasBaseAppearance(const Style::ComputedStyle* style)
 {
     return style && style->usedAppearance() == StyleAppearance::Base;
 }
@@ -568,6 +572,7 @@ void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomSt
             invalidateStyleAndRenderersForSubtree();
             setRecalcListItems();
             updateValidity();
+            invalidateButtonText();
         }
         break;
     }
@@ -621,7 +626,7 @@ bool HTMLSelectElement::isMouseFocusable() const
     return HTMLFormControlElement::isMouseFocusable();
 }
 
-RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
+RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
 {
     if (usesMenuList()) {
         if (hasBaseAppearance(&style))
@@ -739,6 +744,8 @@ void HTMLSelectElement::childrenChanged(const ChildChange& change)
     m_lastOnChangeSelection.clear();
 
     HTMLFormControlElement::childrenChanged(change);
+
+    invalidateButtonText();
 }
 
 // Select the given option as the default if no option is explicitly selected.
@@ -772,17 +779,58 @@ void HTMLSelectElement::selectDefaultOptionIfNeeded(HTMLOptionElement& candidate
     }
 }
 
+auto HTMLSelectElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> NeedsPostConnectionSteps
+{
+    auto result = HTMLFormControlElement::insertionSteps(insertionType, parentOfInsertedTree);
+
+    if (insertionType.connectedToDocument) {
+        if (m_buttonTextNeedsUpdate)
+            protect(document())->addElementWithPendingUserAgentShadowTreeUpdate(*this);
+        else
+            invalidateButtonText();
+    }
+
+    return result;
+}
+
+void HTMLSelectElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    HTMLFormControlElement::removingSteps(removalType, oldParentOfRemovedTree);
+
+    if (removalType.disconnectedFromDocument && m_buttonTextNeedsUpdate)
+        protect(document())->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
+}
+
 void HTMLSelectElement::optionElementChildrenChanged()
 {
     setOptionsChangedOnRenderer();
     invalidateStyleForSubtree();
     updateValidity();
-    updateButtonText();
+    invalidateButtonText();
 }
 
 void HTMLSelectElement::updateButtonText(HTMLOptionElement* selectedOption, int optionIndex)
 {
+    if (m_buttonTextNeedsUpdate) {
+        m_buttonTextNeedsUpdate = false;
+        protect(document())->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
+    }
     protect(downcast<SelectFallbackButtonElement>(*m_buttonSlot->firstChild()))->updateText(selectedOption, optionIndex);
+}
+
+void HTMLSelectElement::invalidateButtonText()
+{
+    if (m_buttonTextNeedsUpdate)
+        return;
+    m_buttonTextNeedsUpdate = true;
+    if (isConnected())
+        protect(document())->addElementWithPendingUserAgentShadowTreeUpdate(*this);
+}
+
+void HTMLSelectElement::updateUserAgentShadowTree()
+{
+    ASSERT(m_buttonTextNeedsUpdate);
+    updateButtonText();
 }
 
 void HTMLSelectElement::setSize(unsigned size)
@@ -1162,8 +1210,8 @@ void HTMLSelectElement::setOptionsChangedOnRenderer()
     if (auto* renderer = this->renderer()) {
         if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(*renderer))
             renderMenuList->setOptionsChanged(true);
-        else if (!usesMenuList())
-            downcast<RenderListBox>(*renderer).setOptionsChanged(true);
+        else if (auto* renderListBox = dynamicDowncast<RenderListBox>(*renderer))
+            renderListBox->setOptionsChanged(true);
     }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -1577,7 +1625,7 @@ void HTMLSelectElement::reset()
     setOptionsChangedOnRenderer();
     invalidateStyleForSubtree();
     updateValidity();
-    updateButtonText();
+    invalidateButtonText();
 }
 
 #if !PLATFORM(WIN)
@@ -1864,7 +1912,9 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
             mouseEvent->setDefaultHandled();
         }
     } else if (event.type() == eventNames.mousemoveEvent && mouseEvent) {
-        CheckedRef renderListBox = downcast<RenderListBox>(*renderer());
+        CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(*renderer());
+        if (!renderListBox)
+            return;
         if (renderListBox->canBeScrolledAndHasScrollableArea())
             return;
 
@@ -1995,7 +2045,8 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
                 setActiveSelectionAnchorIndex(m_activeSelectionEndIndex);
             }
 
-            downcast<RenderListBox>(*renderer).scrollToRevealElementAtListIndex(endIndex);
+            if (auto* renderListBox = dynamicDowncast<RenderListBox>(*renderer))
+                renderListBox->scrollToRevealElementAtListIndex(endIndex);
             if (selectNewItem) {
                 updateListBoxSelection(deselectOthers);
                 listBoxOnChange();
@@ -2458,7 +2509,7 @@ PopupMenuStyle HTMLSelectElement::menuStyle() const
     if (!renderer) {
         // Fallback with minimal valid style - this shouldn't normally happen
         // since showPopup() requires a renderer
-        auto defaultStyle = RenderStyle::createPtr();
+        auto defaultStyle = Style::ComputedStyle::createPtr();
         return PopupMenuStyle(
             Color::black,
             Color::white,
@@ -2503,6 +2554,30 @@ void HTMLSelectElement::popupDidHide()
 #endif
 }
 
+#if PLATFORM(WPE)
+void HTMLSelectElement::showFallbackPopupMenu()
+{
+    CheckedPtr renderer = this->renderer();
+    if (!renderer)
+        return;
+
+    RefPtr frame = document().frame();
+    if (!frame)
+        return;
+
+    RefPtr frameView = frame->view();
+    if (!frameView)
+        return;
+
+    m_popup = FallbackPopupMenu::create(*this);
+
+    FloatPoint absTopLeft = renderer->localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms);
+    IntRect absBounds = renderer->absoluteBoundingBoxRectIgnoringTransforms();
+    absBounds.setLocation(roundedIntPoint(absTopLeft));
+    protect(m_popup)->show(absBounds, *frameView, optionToListIndex(selectedIndex()));
+}
+#endif
+
 bool HTMLSelectElement::itemIsSeparator(unsigned listIndex) const
 {
     const auto& listItems = this->listItems();
@@ -2527,7 +2602,7 @@ bool HTMLSelectElement::itemIsSelected(unsigned listIndex) const
 #if !PLATFORM(COCOA)
 void HTMLSelectElement::setTextFromItem(unsigned listIndex)
 {
-    downcast<SelectFallbackButtonElement>(*protect(m_buttonSlot)->firstChild()).updateText(nullptr, listToOptionIndex(listIndex));
+    updateButtonText(nullptr, listToOptionIndex(listIndex));
 }
 #endif
 

@@ -114,7 +114,6 @@
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderLayerScrollableArea.h>
 #import <WebCore/RenderObjectStyle.h>
-#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/RenderTextControl.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
@@ -1302,7 +1301,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     if (!n)
         return CGSizeMake(0, 0);
     if (auto* renderBox = dynamicDowncast<WebCore::RenderBox>(n->renderer()))
-        return CGSizeMake(std::min((float)renderBox->maxPreferredLogicalWidth(), width), renderBox->height());
+        return CGSizeMake(std::min((float)renderBox->maxContentLogicalWidthContribution(), width), renderBox->height());
     return CGSizeMake(0, 0);
 }
 

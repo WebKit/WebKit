@@ -44,6 +44,10 @@ ALWAYS_INLINE bool mapIteratorProtocolIsFastAndNonObservable(VM& vm, JSMapIterat
     if (mapIterator->hasCustomProperties()) {
         if (mapIterator->getDirectOffset(vm, vm.propertyNames->next) != invalidOffset)
             return false;
+        if (mapIterator->getDirectOffset(vm, vm.propertyNames->returnKeyword) != invalidOffset)
+            return false;
+        if (mapIterator->getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
+            return false;
     }
 
     return true;

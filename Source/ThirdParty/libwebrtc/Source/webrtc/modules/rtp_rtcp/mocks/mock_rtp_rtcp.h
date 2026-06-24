@@ -15,10 +15,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/transport/network_types.h"
 #include "api/units/time_delta.h"
@@ -38,10 +39,9 @@ class MockRtpRtcpInterface : public RtpRtcpInterface {
  public:
   MOCK_METHOD(void,
               IncomingRtcpPacket,
-              (ArrayView<const uint8_t> packet),
+              (std::span<const uint8_t> packet),
               (override));
   MOCK_METHOD(void, SetRemoteSSRC, (uint32_t ssrc), (override));
-  MOCK_METHOD(void, SetLocalSsrc, (uint32_t ssrc), (override));
   MOCK_METHOD(void, SetMaxRtpPacketSize, (size_t size), (override));
   MOCK_METHOD(size_t, MaxRtpPacketSize, (), (const, override));
   MOCK_METHOD(void,
@@ -55,7 +55,7 @@ class MockRtpRtcpInterface : public RtpRtcpInterface {
   MOCK_METHOD(void, SetExtmapAllowMixed, (bool extmap_allow_mixed), (override));
   MOCK_METHOD(void,
               RegisterRtpHeaderExtension,
-              (absl::string_view uri, int id),
+              (absl::string_view uri, RtpHeaderExtensionId id),
               (override));
   MOCK_METHOD(void,
               DeregisterSendRtpHeaderExtension,
@@ -120,11 +120,11 @@ class MockRtpRtcpInterface : public RtpRtcpInterface {
               (override));
   MOCK_METHOD(void,
               OnAbortedRetransmissions,
-              (ArrayView<const uint16_t>),
+              (std::span<const uint16_t>),
               (override));
   MOCK_METHOD(void,
               OnPacketsAcknowledged,
-              (ArrayView<const uint16_t>),
+              (std::span<const uint16_t>),
               (override));
   MOCK_METHOD(std::vector<std::unique_ptr<RtpPacketToSend>>,
               GeneratePadding,
@@ -132,7 +132,7 @@ class MockRtpRtcpInterface : public RtpRtcpInterface {
               (override));
   MOCK_METHOD(std::vector<RtpSequenceNumberMap::Info>,
               GetSentRtpPacketInfos,
-              (ArrayView<const uint16_t> sequence_numbers),
+              (std::span<const uint16_t> sequence_numbers),
               (const, override));
   MOCK_METHOD(size_t, ExpectedPerPacketOverhead, (), (const, override));
   MOCK_METHOD(void, OnPacketSendingThreadSwitched, (), (override));

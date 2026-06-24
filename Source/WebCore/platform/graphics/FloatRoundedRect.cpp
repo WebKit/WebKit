@@ -76,7 +76,7 @@ bool FloatRoundedRect::xInterceptsAtY(float y, float& minXIntercept, float& maxX
     if (y < rect().y() || y >  rect().maxY())
         return false;
 
-    if (!isRounded()) {
+    if (!hasNonZeroRadii()) {
         minXIntercept = rect().x();
         maxXIntercept = rect().maxX();
         return true;
@@ -169,7 +169,7 @@ Region approximateAsRegion(const FloatRoundedRect& roundedRect, unsigned stepLen
     auto rect = LayoutRect(roundedRect.rect());
     region.unite(enclosingIntRect(rect));
 
-    if (!roundedRect.isRounded())
+    if (!roundedRect.hasNonZeroRadii())
         return region;
 
     auto& radii = roundedRect.radii();

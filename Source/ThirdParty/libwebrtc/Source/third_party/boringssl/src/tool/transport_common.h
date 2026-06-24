@@ -18,13 +18,19 @@
 #include <openssl/ssl.h>
 #include <string.h>
 
+#include <optional>
 #include <string>
+#include <string_view>
+#include <vector>
+
+
+BSSL_NAMESPACE_BEGIN
 
 // InitSocketLibrary calls the Windows socket init functions, if needed.
 bool InitSocketLibrary();
 
-// Connect sets |*out_sock| to be a socket connected to the destination given
-// in |hostname_and_port|, which should be of the form "www.example.com:123".
+// Connect sets `*out_sock` to be a socket connected to the destination given
+// in `hostname_and_port`, which should be of the form "www.example.com:123".
 // It returns true on success and false otherwise.
 bool Connect(int *out_sock, const std::string &hostname_and_port);
 
@@ -33,11 +39,11 @@ class Listener {
   Listener() {}
   ~Listener();
 
-  // Init initializes the listener to listen on |port|, which should be of the
+  // Init initializes the listener to listen on `port`, which should be of the
   // form "123".
   bool Init(const std::string &port);
 
-  // Accept sets |*out_sock| to be a socket connected to the listener.
+  // Accept sets `*out_sock` to be a socket connected to the listener.
   bool Accept(int *out_sock);
 
  private:
@@ -49,23 +55,34 @@ class Listener {
 
 bool VersionFromString(uint16_t *out_version, const std::string &version);
 
+// CertificateTypesFromString parses a comma-separated list of certificate types
+// ("rpk" for Raw Public Keys, "x509" for X.509 certificates) and returns a
+// vector containing the corresponding certificate type values, or nullopt on
+// parsing error.
+std::optional<std::vector<uint8_t>> CertificateTypesFromString(
+    std::string_view s);
+
+std::optional<std::vector<uint8_t>> DecodeHex(std::string_view hex);
+
 void PrintConnectionInfo(BIO *bio, const SSL *ssl);
 
 bool SocketSetNonBlocking(int sock, bool is_non_blocking);
 
 // PrintSSLError prints information about the most recent SSL error to stderr.
-// |ssl_err| must be the output of |SSL_get_error| and the |SSL| object must be
-// connected to socket from |Connect|.
+// `ssl_err` must be the output of `SSL_get_error` and the `SSL` object must be
+// connected to socket from `Connect`.
 void PrintSSLError(FILE *file, const char *msg, int ssl_err, int ret);
 
 bool TransferData(SSL *ssl, int sock);
 
-// DoSMTPStartTLS performs the SMTP STARTTLS mini-protocol over |sock|. It
+// DoSMTPStartTLS performs the SMTP STARTTLS mini-protocol over `sock`. It
 // returns true on success and false otherwise.
 bool DoSMTPStartTLS(int sock);
 
-// DoHTTPTunnel sends an HTTP CONNECT request over |sock|. It returns true on
+// DoHTTPTunnel sends an HTTP CONNECT request over `sock`. It returns true on
 // success and false otherwise.
 bool DoHTTPTunnel(int sock, const std::string &hostname_and_port);
+
+BSSL_NAMESPACE_END
 
 #endif  // !OPENSSL_HEADER_TOOL_TRANSPORT_COMMON_H

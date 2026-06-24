@@ -101,7 +101,6 @@ class PeerConnectionSdpMethods {
   // observer is removed.
   virtual void RunWithObserver(
       absl::AnyInvocable<void(webrtc::PeerConnectionObserver*) &&>) = 0;
-  virtual std::optional<SSLRole> GetSctpSslRole_n() = 0;
   virtual PeerConnectionInterface::IceConnectionState
   ice_connection_state_internal() = 0;
   virtual void SetIceConnectionState(
@@ -127,20 +126,10 @@ class PeerConnectionSdpMethods {
       scoped_refptr<MediaStreamTrackInterface> track,
       const RtpTransceiverInit& init,
       bool fire_callback = true) = 0;
-  // Asynchronously calls SctpTransport::Start() on the network thread for
-  // `sctp_mid()` if set. Called as part of setting the local description.
+  // Synchronously calls SctpTransport::Start() on the network thread for
+  // `sctp_mid()` if set. Called as part of pushing down the media descriptions
+  // after a complete offer/answer.
   virtual RTCError StartSctpTransport(const SctpOptions& options) = 0;
-  [[deprecated("Call with SctpOptions")]]
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-designated-field-initializers"
-  virtual void StartSctpTransport(int local_port,
-                                  int remote_port,
-                                  int max_message_size) {
-    StartSctpTransport({.local_port = local_port,
-                        .remote_port = remote_port,
-                        .max_message_size = max_message_size});
-  }
-#pragma clang diagnostic pop
 
   // Asynchronously adds a remote candidate on the network thread.
   virtual void AddRemoteCandidate(absl::string_view mid,

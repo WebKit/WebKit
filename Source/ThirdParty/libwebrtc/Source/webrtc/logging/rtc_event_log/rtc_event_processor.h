@@ -104,7 +104,7 @@ class ProcessableEventList : public ProcessableEventListInterface {
 // the common base class.
 //
 // Usage example:
-// ParsedRtcEventLogNew log;
+// ParsedRtcEventLog log;
 // auto incoming_handler = [] (LoggedRtcpPacketIncoming elem) { ... };
 // auto outgoing_handler = [] (LoggedRtcpPacketOutgoing elem) { ... };
 //

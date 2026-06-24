@@ -13,10 +13,10 @@
 
 #include <array>
 #include <memory>
+#include <span>
 #include <vector>
 
 #include "absl/base/nullability.h"
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/neural_residual_echo_estimator.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -45,9 +45,9 @@ class NeuralResidualEchoEstimatorImpl : public NeuralResidualEchoEstimator {
     virtual ~ModelRunner() = default;
 
     virtual int StepSize() const = 0;
-    virtual ArrayView<float> GetInput(
+    virtual std::span<float> GetInput(
         FeatureExtractor::ModelInputEnum input_enum) = 0;
-    virtual ArrayView<const float> GetOutput(
+    virtual std::span<const float> GetOutput(
         FeatureExtractor::ModelOutputEnum output_enum) = 0;
     virtual const audioproc::ReeModelMetadata& GetMetadata() const = 0;
     virtual bool Invoke() = 0;
@@ -71,23 +71,24 @@ class NeuralResidualEchoEstimatorImpl : public NeuralResidualEchoEstimator {
 
   void Estimate(
       const Block& render,
-      ArrayView<const std::array<float, kBlockSize>> y,
-      ArrayView<const std::array<float, kBlockSize>> e,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> S2,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2,
+      std::span<const std::array<float, kBlockSize>> y,
+      std::span<const std::array<float, kBlockSize>> e,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> S2,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> Y2,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> E2,
       bool dominant_nearend,
-      ArrayView<std::array<float, kFftLengthBy2Plus1>> R2,
-      ArrayView<std::array<float, kFftLengthBy2Plus1>> R2_unbounded) override;
+      std::span<std::array<float, kFftLengthBy2Plus1>> R2,
+      std::span<std::array<float, kFftLengthBy2Plus1>> R2_unbounded) override;
 
-  EchoCanceller3Config GetConfiguration(bool multi_channel) const override;
+  EchoCanceller3Config::Suppressor AdjustConfig(
+      const EchoCanceller3Config::Suppressor& config) const override;
 
   void Reset() override;
 
  private:
   void DumpInputs(const Block& render,
-                  ArrayView<const std::array<float, kBlockSize>> y,
-                  ArrayView<const std::array<float, kBlockSize>> e);
+                  std::span<const std::array<float, kBlockSize>> y,
+                  std::span<const std::array<float, kBlockSize>> e);
 
   // Encapsulates all ML model invocation work.
   const std::unique_ptr<ModelRunner> model_runner_;
@@ -100,9 +101,9 @@ class NeuralResidualEchoEstimatorImpl : public NeuralResidualEchoEstimator {
   std::array<float, kFftLengthBy2Plus1> output_mask_;
   std::array<float, kFftLengthBy2Plus1> output_mask_unbounded_;
 
-  std::vector<ArrayView<const float, kBlockSize>> render_channels_;
-  std::vector<ArrayView<const float, kBlockSize>> y_channels_;
-  std::vector<ArrayView<const float, kBlockSize>> e_channels_;
+  std::vector<std::span<const float, kBlockSize>> render_channels_;
+  std::vector<std::span<const float, kBlockSize>> y_channels_;
+  std::vector<std::span<const float, kBlockSize>> e_channels_;
 
   static int instance_count_;
   // Pointer to a data dumper that is used for debugging purposes.

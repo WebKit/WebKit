@@ -32,6 +32,7 @@
 #import "IOSurfacePool.h"
 #import "ImageBufferBackend.h"
 #import "Logging.h"
+#import "NativeImage.h"
 #import "PlatformScreen.h"
 #import "ProcessCapabilities.h"
 #import "ProcessIdentity.h"
@@ -447,7 +448,7 @@ static constexpr IntSize NODELETE fallbackMaxSurfaceDimension()
 
 static IntSize computeMaximumSurfaceSize()
 {
-    auto maxSize = IntSize { clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)) };
+    auto maxSize = IntSize { clampTo<int>(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampTo<int>(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)) };
 
     // On iOS, there's an additional 8K clamp in CA (rdar://101936907).
     // On some macOS VMs, IOSurfaceGetPropertyMaximum() returns INT_MAX (rdar://113661708).
@@ -540,6 +541,20 @@ RetainPtr<CGImageRef> IOSurface::createImage(CGContextRef context)
 {
     ASSERT(CGIOSurfaceContextGetSurface(context) == m_surface);
     return adoptCF(CGIOSurfaceContextCreateImage(context));
+}
+
+RefPtr<NativeImage> IOSurface::createNativeImage()
+{
+    std::optional<CGImageAlphaInfo> alphaInfo;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (pixelFormat() == Format::RGBA16F)
+        alphaInfo = kCGImageAlphaNoneSkipLast;
+#endif
+    RetainPtr<CGContextRef> cgContext { createPlatformContext(0, alphaInfo) };
+    if (!cgContext)
+        return nullptr;
+
+    return NativeImage::create(createImage(cgContext.get()));
 }
 
 RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> context)

@@ -25,6 +25,8 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 static const struct argument kArguments[] = {
     {
         "-out-ech-config-list",
@@ -130,3 +132,5 @@ bool GenerateECH(const std::vector<std::string> &args) {
   }
   return true;
 }
+
+BSSL_NAMESPACE_END

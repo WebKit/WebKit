@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/color-scheme-dependent-color-stops-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/color-scheme-dependent-color-stops-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/color-scheme-dependent-color-stops.html
@@ -23,6 +24,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/conic-gradient-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/css-color-4-colors-default-to-oklab-gradient-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/css-color-4-colors-default-to-oklab-gradient.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/display-p3-linear-gradient-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/display-p3-linear-gradient-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/display-p3-linear-gradient.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/gradient-analogous-missing-components-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/gradient-analogous-missing-components-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient/gradient-analogous-missing-components-001.html

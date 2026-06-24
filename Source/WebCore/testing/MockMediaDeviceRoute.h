@@ -33,6 +33,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 OBJC_CLASS WebMockMediaDeviceRoute;
 
@@ -63,6 +65,14 @@ public:
 
     bool hasPlaybackError() const;
     void setHasPlaybackError(bool);
+
+    struct AudioOption {
+        String displayName;
+        String identifier;
+        String extendedLanguageTag;
+    };
+    Vector<AudioOption> audioOptions() const;
+    void setAudioOptions(const Vector<AudioOption>&);
 
     float playbackRate() const;
     void setPlaybackRate(float);

@@ -5,10 +5,7 @@
 <textarea id="textarea"></textarea>
 <script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 function nodeIndex(node) {
     return Array.prototype.slice.call(node.parentNode.childNodes).indexOf(node);
 }
@@ -18,8 +15,7 @@ window.onload = () => {
     shouldBe("getSelection().type", "'Caret'");
     shouldBe("getSelection().getRangeAt(0).startContainer", "document.body");
     shouldBe("getSelection().getRangeAt(0).startOffset", "textareaOffset");
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 };
 </script>
 </body>

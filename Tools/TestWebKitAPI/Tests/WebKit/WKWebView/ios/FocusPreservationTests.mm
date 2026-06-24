@@ -61,6 +61,7 @@ TEST(FocusPreservationTests, PreserveAndRestoreFocus)
     });
 
     TestWKWebView *webView = webViewAndDelegate.first.get();
+    [webView focusInWindow];
     [webView evaluateJavaScript:@"document.querySelector('input').focus()" completionHandler:nil];
     Util::run(&inputFocused);
 
@@ -85,6 +86,7 @@ TEST(FocusPreservationTests, UserCanDismissInputViewRegardlessOfFocusPreservatio
         inputFocused = true;
     });
 
+    [webView focusInWindow];
     [webView evaluateJavaScript:@"document.querySelector('input').focus()" completionHandler:nil];
     Util::run(&inputFocused);
 

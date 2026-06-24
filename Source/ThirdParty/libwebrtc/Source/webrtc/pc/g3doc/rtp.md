@@ -47,7 +47,7 @@ types are assigned to the lower range [35,63], starting at 35.
 Due to the requirement that payload types must be uniquely identifiable when
 using [BUNDLE](https://datatracker.ietf.org/doc/html/rfc8829) collisions between
 the assignments of the audio and video payload types may arise. These are
-resolved by the [UsedPayloadTypes][4] class which will reassign payload type
+resolved by the [PayloadTypeSuggester][4] interface which will reassign payload type
 numbers descending from 127.
 
 # Bitrate probing
@@ -96,4 +96,4 @@ original packet is lost and will not affect RTP processing at the receiver other
 [1]: https://datatracker.ietf.org/doc/html/rfc3550#section-5.1
 [2]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/media/engine/payload_type_mapper.cc;l=25;drc=4f26a3c7e8e20e0e0ca4ca67a6ebdf3f5543dc3f
 [3]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/media/engine/webrtc_video_engine.cc;l=119;drc=b412efdb780c86e6530493afa403783d14985347
-[4]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/pc/used_ids.h;l=94;drc=b412efdb780c86e6530493afa403783d14985347
+[4]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/call/payload_type.h;l=25

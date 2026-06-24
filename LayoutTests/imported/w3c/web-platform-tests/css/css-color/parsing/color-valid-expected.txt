@@ -15,4 +15,5 @@ PASS e.style['color'] = "rgb(-2, 3, 4)" should set the property value
 PASS e.style['color'] = "rgb(100, 200, 300)" should set the property value
 PASS e.style['color'] = "rgb(20, 10, 0, -10)" should set the property value
 PASS e.style['color'] = "rgb(100%, 200%, 300%)" should set the property value
+PASS e.style['color'] = "light-dark(black, white)" should set the property value
 

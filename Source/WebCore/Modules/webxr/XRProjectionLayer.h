@@ -80,7 +80,7 @@ private:
 #if ENABLE(WEBGPU)
     std::optional<PlatformXR::FrameData::LayerData> m_layerData;
 #endif
-    RefPtr<WebXRRigidTransform> m_transform;
+    RefPtr<WebXRRigidTransform> m_deltaPose;
     Vector<IntRect> m_viewports;
 };
 

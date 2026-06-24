@@ -85,7 +85,7 @@ public:
     bool isContentBoxBased() const { return style().boxSizing() == BoxSizing::ContentBox; }
 
     const ElementBox& layoutBox() const { return *m_layoutBox; }
-    const RenderStyle& style() const LIFETIME_BOUND { return layoutBox().style(); }
+    const Style::ComputedStyle& style() const LIFETIME_BOUND { return layoutBox().style(); }
     WritingMode writingMode() const { return style().writingMode(); }
 
 private:

@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestNSBundleExtras.h"
 #import "Helpers/Utilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>

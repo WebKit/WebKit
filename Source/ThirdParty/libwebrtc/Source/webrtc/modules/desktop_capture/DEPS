@@ -5,19 +5,19 @@ include_rules = [
 ]
 
 specific_include_rules = {
-  "desktop_frame_cgimage\.h": [
+  "desktop_frame_cgimage\\.h": [
     "+sdk/objc",
   ],
-  "desktop_frame_iosurface\.h": [
+  "desktop_frame_iosurface\\.h": [
     "+sdk/objc",
   ],
-  "desktop_frame_provider\.h": [
+  "desktop_frame_provider\\.h": [
     "+sdk/objc",
   ],
-  "screen_capturer_mac\.mm": [
+  "screen_capturer_mac\\.mm": [
     "+sdk/objc",
   ],
-  "screen_capturer_sck\.mm": [
+  "screen_capturer_sck\\.mm": [
     "+absl/strings/str_format.h",
     "+sdk/objc",
   ],

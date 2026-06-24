@@ -33,7 +33,6 @@ namespace WebCore {
 
 class Path;
 struct AcceleratedEffectInsetFunction;
-struct TransformOperationData;
 
 namespace Style {
 
@@ -63,7 +62,7 @@ template<> struct PathComputation<Inset> { WebCore::Path operator()(const Inset&
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-template<> struct Evaluation<InsetFunction, AcceleratedEffectInsetFunction> { AcceleratedEffectInsetFunction operator()(const InsetFunction&, const TransformOperationData&, ZoomFactor); };
+template<> struct Evaluation<InsetFunction, AcceleratedEffectInsetFunction> { AcceleratedEffectInsetFunction operator()(const InsetFunction&, const FloatSize&, ZoomFactor); };
 
 #endif
 

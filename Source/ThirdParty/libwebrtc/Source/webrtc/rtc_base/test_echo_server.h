@@ -20,6 +20,7 @@
 
 #include "absl/memory/memory.h"
 #include "api/environment/environment.h"
+#include "api/task_queue/task_queue_base.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_tcp_socket.h"
 #include "rtc_base/checks.h"
@@ -27,7 +28,7 @@
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
-#include "rtc_base/thread.h"
+#include "rtc_base/socket_server.h"
 
 namespace webrtc {
 
@@ -36,7 +37,7 @@ namespace webrtc {
 class TestEchoServer {
  public:
   TestEchoServer(const Environment& env,
-                 Thread* thread,
+                 SocketServer* ss,
                  const SocketAddress& addr);
   virtual ~TestEchoServer();
 
@@ -74,7 +75,7 @@ class TestEchoServer {
     // `OnClose` is triggered by socket Close callback, deleting `socket` while
     // processing that callback might be unsafe.
     auto node = client_sockets_.extract(iter);
-    Thread::Current()->PostTask([node = std::move(node)] {});
+    TaskQueueBase::Current()->PostTask([node = std::move(node)] {});
   }
 
   const Environment env_;

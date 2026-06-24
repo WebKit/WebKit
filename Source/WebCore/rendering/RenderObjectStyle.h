@@ -26,13 +26,13 @@
 #pragma once
 
 #include <WebCore/RenderElement.h>
-#include <WebCore/RenderStyle.h>
+#include <WebCore/StyleComputedStyle.h>
 
 namespace WebCore {
 
 inline WritingMode RenderObject::writingMode() const { return style().writingMode(); }
 
-inline const RenderStyle& RenderObject::style() const
+inline const Style::ComputedStyle& RenderObject::style() const
 {
     if (isRenderText())
         return m_parent->style();

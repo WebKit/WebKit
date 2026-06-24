@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_REVERB_MODEL_H_
 
 #include <array>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 
 namespace webrtc {
@@ -29,7 +29,7 @@ class ReverbModel {
   void Reset();
 
   // Returns the reverb.
-  ArrayView<const float, kFftLengthBy2Plus1> reverb() const { return reverb_; }
+  std::span<const float, kFftLengthBy2Plus1> reverb() const { return reverb_; }
 
   // The methods UpdateReverbNoFreqShaping and UpdateReverb update the
   // estimate of the reverberation contribution to an input/output power
@@ -37,13 +37,13 @@ class ReverbModel {
   // power spectrum is pre-scaled. Use the method UpdateReverb when a different
   // scaling should be applied per frequency and UpdateReverb_no_freq_shape if
   // the same scaling should be used for all the frequencies.
-  void UpdateReverbNoFreqShaping(ArrayView<const float> power_spectrum,
+  void UpdateReverbNoFreqShaping(std::span<const float> power_spectrum,
                                  float power_spectrum_scaling,
                                  float reverb_decay);
 
   // Update the reverb based on new data.
-  void UpdateReverb(ArrayView<const float> power_spectrum,
-                    ArrayView<const float> power_spectrum_scaling,
+  void UpdateReverb(std::span<const float> power_spectrum,
+                    std::span<const float> power_spectrum_scaling,
                     float reverb_decay);
 
  private:

@@ -30,7 +30,7 @@ GPUProcess/media/RemoteAudioDestinationManager.cpp
 
 GPUProcess/media/gstreamer/RemoteMediaPlayerProxyGStreamer.cpp
 
-NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
+NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp @cost:7
 
 NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp
 
@@ -353,7 +353,7 @@ WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp
 
 WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
-WebProcess/WebPage/ViewGestureGeometryCollector.cpp
+WebProcess/WebPage/ViewGestureGeometryCollector.cpp @cost:5
 
 WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp @no-unify
 WebProcess/WebPage/CoordinatedGraphics/CoordinatedSceneState.cpp

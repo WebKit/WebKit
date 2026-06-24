@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 </head>
 <body>
 <iframe src="resources/drag-inside-iframe2.html"></iframe>
@@ -9,16 +9,15 @@
 <div id="text">Testing</div>
 <div id="result">FAIL</div>
 <script>
+window.jsTestIsAsync = true;
 function onDragStart() {
     document.getElementById("result").innerHTML = "PASS";
     if (window.testRunner) {
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 function runTest()
 {
-    if (window.testRunner)
-        testRunner.dumpAsText();
 
     if (window.internals)
         internals.settings.setTouchDragDropEnabled(true);
@@ -32,9 +31,6 @@ function runTest()
         debug("gestureLongPress not implemented by this platform");
         return;
     }
-}
-if (window.testRunner) {
-    testRunner.waitUntilDone();
 }
 </script>
 </body>

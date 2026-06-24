@@ -54,7 +54,7 @@ struct _WebKitDOMEventTargetIface {
 };
 
 
-WEBKIT_DEPRECATED GType     webkit_dom_event_target_get_type(void) G_GNUC_CONST;
+WEBKIT_DEPRECATED GType     webkit_dom_event_target_get_type(void);
 
 /**
  * webkit_dom_event_target_dispatch_event:

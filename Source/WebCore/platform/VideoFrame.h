@@ -122,6 +122,8 @@ public:
     bool hasNoTransformation() const { return m_rotation == VideoFrameRotation::None && !m_isMirrored; }
     bool has90DegreeRotation() const { return m_rotation == VideoFrameRotation::Left || m_rotation == VideoFrameRotation::Right; }
 
+    WEBCORE_EXPORT bool is10bits() const;
+
 protected:
     WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation, PlatformVideoColorSpace&& = { });
 

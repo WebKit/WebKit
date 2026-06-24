@@ -35,9 +35,9 @@ gcm_init_clmul:
 	pshufd	$78,%xmm2,%xmm4
 	pxor	%xmm0,%xmm3
 	pxor	%xmm2,%xmm4
-.byte	102,15,58,68,194,0
-.byte	102,15,58,68,202,17
-.byte	102,15,58,68,220,0
+	pclmulqdq	$0,%xmm2,%xmm0
+	pclmulqdq	$17,%xmm2,%xmm1
+	pclmulqdq	$0,%xmm4,%xmm3
 	xorps	%xmm0,%xmm3
 	xorps	%xmm1,%xmm3
 	movdqa	%xmm3,%xmm4
@@ -71,7 +71,7 @@ gcm_init_clmul:
 	movdqu	%xmm2,(%edx)
 	pxor	%xmm0,%xmm4
 	movdqu	%xmm0,16(%edx)
-.byte	102,15,58,15,227,8
+	palignr	$8,%xmm3,%xmm4
 	movdqu	%xmm4,32(%edx)
 	ret
 .size	gcm_init_clmul,.-.L_gcm_init_clmul_begin
@@ -90,14 +90,14 @@ gcm_gmult_clmul:
 	movdqu	(%eax),%xmm0
 	movdqa	(%ecx),%xmm5
 	movups	(%edx),%xmm2
-.byte	102,15,56,0,197
+	pshufb	%xmm5,%xmm0
 	movups	32(%edx),%xmm4
 	movdqa	%xmm0,%xmm1
 	pshufd	$78,%xmm0,%xmm3
 	pxor	%xmm0,%xmm3
-.byte	102,15,58,68,194,0
-.byte	102,15,58,68,202,17
-.byte	102,15,58,68,220,0
+	pclmulqdq	$0,%xmm2,%xmm0
+	pclmulqdq	$17,%xmm2,%xmm1
+	pclmulqdq	$0,%xmm4,%xmm3
 	xorps	%xmm0,%xmm3
 	xorps	%xmm1,%xmm3
 	movdqa	%xmm3,%xmm4
@@ -125,7 +125,7 @@ gcm_gmult_clmul:
 	pxor	%xmm4,%xmm0
 	psrlq	$1,%xmm0
 	pxor	%xmm1,%xmm0
-.byte	102,15,56,0,197
+	pshufb	%xmm5,%xmm0
 	movdqu	%xmm0,(%eax)
 	ret
 .size	gcm_gmult_clmul,.-.L_gcm_gmult_clmul_begin
@@ -150,22 +150,22 @@ gcm_ghash_clmul:
 	movdqu	(%eax),%xmm0
 	movdqa	(%ecx),%xmm5
 	movdqu	(%edx),%xmm2
-.byte	102,15,56,0,197
+	pshufb	%xmm5,%xmm0
 	subl	$16,%ebx
 	jz	.L003odd_tail
 	movdqu	(%esi),%xmm3
 	movdqu	16(%esi),%xmm6
-.byte	102,15,56,0,221
-.byte	102,15,56,0,245
+	pshufb	%xmm5,%xmm3
+	pshufb	%xmm5,%xmm6
 	movdqu	32(%edx),%xmm5
 	pxor	%xmm3,%xmm0
 	pshufd	$78,%xmm6,%xmm3
 	movdqa	%xmm6,%xmm7
 	pxor	%xmm6,%xmm3
 	leal	32(%esi),%esi
-.byte	102,15,58,68,242,0
-.byte	102,15,58,68,250,17
-.byte	102,15,58,68,221,0
+	pclmulqdq	$0,%xmm2,%xmm6
+	pclmulqdq	$17,%xmm2,%xmm7
+	pclmulqdq	$0,%xmm5,%xmm3
 	movups	16(%edx),%xmm2
 	nop
 	subl	$32,%ebx
@@ -177,9 +177,9 @@ gcm_ghash_clmul:
 	movdqa	%xmm0,%xmm1
 	pxor	%xmm0,%xmm4
 	nop
-.byte	102,15,58,68,194,0
-.byte	102,15,58,68,202,17
-.byte	102,15,58,68,229,16
+	pclmulqdq	$0,%xmm2,%xmm0
+	pclmulqdq	$17,%xmm2,%xmm1
+	pclmulqdq	$16,%xmm5,%xmm4
 	movups	(%edx),%xmm2
 	xorps	%xmm6,%xmm0
 	movdqa	(%ecx),%xmm5
@@ -188,14 +188,14 @@ gcm_ghash_clmul:
 	pxor	%xmm0,%xmm3
 	movdqu	16(%esi),%xmm6
 	pxor	%xmm1,%xmm3
-.byte	102,15,56,0,253
+	pshufb	%xmm5,%xmm7
 	pxor	%xmm3,%xmm4
 	movdqa	%xmm4,%xmm3
 	psrldq	$8,%xmm4
 	pslldq	$8,%xmm3
 	pxor	%xmm4,%xmm1
 	pxor	%xmm3,%xmm0
-.byte	102,15,56,0,245
+	pshufb	%xmm5,%xmm6
 	pxor	%xmm7,%xmm1
 	movdqa	%xmm6,%xmm7
 	movdqa	%xmm0,%xmm4
@@ -204,7 +204,7 @@ gcm_ghash_clmul:
 	pxor	%xmm0,%xmm3
 	psllq	$1,%xmm0
 	pxor	%xmm3,%xmm0
-.byte	102,15,58,68,242,0
+	pclmulqdq	$0,%xmm2,%xmm6
 	movups	32(%edx),%xmm5
 	psllq	$57,%xmm0
 	movdqa	%xmm0,%xmm3
@@ -217,14 +217,14 @@ gcm_ghash_clmul:
 	psrlq	$1,%xmm0
 	pxor	%xmm7,%xmm3
 	pxor	%xmm4,%xmm1
-.byte	102,15,58,68,250,17
+	pclmulqdq	$17,%xmm2,%xmm7
 	movups	16(%edx),%xmm2
 	pxor	%xmm0,%xmm4
 	psrlq	$5,%xmm0
 	pxor	%xmm4,%xmm0
 	psrlq	$1,%xmm0
 	pxor	%xmm1,%xmm0
-.byte	102,15,58,68,221,0
+	pclmulqdq	$0,%xmm5,%xmm3
 	leal	32(%esi),%esi
 	subl	$32,%ebx
 	ja	.L005mod_loop
@@ -232,9 +232,9 @@ gcm_ghash_clmul:
 	pshufd	$78,%xmm0,%xmm4
 	movdqa	%xmm0,%xmm1
 	pxor	%xmm0,%xmm4
-.byte	102,15,58,68,194,0
-.byte	102,15,58,68,202,17
-.byte	102,15,58,68,229,16
+	pclmulqdq	$0,%xmm2,%xmm0
+	pclmulqdq	$17,%xmm2,%xmm1
+	pclmulqdq	$16,%xmm5,%xmm4
 	movdqa	(%ecx),%xmm5
 	xorps	%xmm6,%xmm0
 	xorps	%xmm7,%xmm1
@@ -271,16 +271,16 @@ gcm_ghash_clmul:
 	movups	(%edx),%xmm2
 .L003odd_tail:
 	movdqu	(%esi),%xmm3
-.byte	102,15,56,0,221
+	pshufb	%xmm5,%xmm3
 	pxor	%xmm3,%xmm0
 	movdqa	%xmm0,%xmm1
 	pshufd	$78,%xmm0,%xmm3
 	pshufd	$78,%xmm2,%xmm4
 	pxor	%xmm0,%xmm3
 	pxor	%xmm2,%xmm4
-.byte	102,15,58,68,194,0
-.byte	102,15,58,68,202,17
-.byte	102,15,58,68,220,0
+	pclmulqdq	$0,%xmm2,%xmm0
+	pclmulqdq	$17,%xmm2,%xmm1
+	pclmulqdq	$0,%xmm4,%xmm3
 	xorps	%xmm0,%xmm3
 	xorps	%xmm1,%xmm3
 	movdqa	%xmm3,%xmm4
@@ -309,7 +309,7 @@ gcm_ghash_clmul:
 	psrlq	$1,%xmm0
 	pxor	%xmm1,%xmm0
 .L006done:
-.byte	102,15,56,0,197
+	pshufb	%xmm5,%xmm0
 	movdqu	%xmm0,(%eax)
 	popl	%edi
 	popl	%esi

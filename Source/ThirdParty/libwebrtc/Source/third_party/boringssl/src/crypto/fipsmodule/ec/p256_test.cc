@@ -16,6 +16,10 @@
 #include "../../internal.h"
 #include "../../test/abi_test.h"
 
+
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 #if !defined(OPENSSL_NO_ASM) && defined(__GNUC__) && defined(__x86_64__) && \
     defined(SUPPORTS_ABI_TEST)
 extern "C" {
@@ -45,3 +49,6 @@ TEST(P256Test, AdxSquareABI) {
   }
 }
 #endif
+
+}  // namespace
+BSSL_NAMESPACE_END

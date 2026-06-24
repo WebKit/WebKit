@@ -40,7 +40,10 @@ function checkImage(entry, expectedUrl, expectedID, expectedSize, timeLowerBound
   if (options.includes('skip')) {
     return;
   }
-  assert_greater_than_equal(performance.now(), entry.renderTime,
+  // Different coarsening of performance.now() and entry.renderTime may result in rounding errors
+  // which cause performance.now() to be < renderTime.
+  const epsilon = 0.00001;
+  assert_greater_than_equal(performance.now() + epsilon, entry.renderTime,
     'renderTime should occur before the entry is dispatched to the observer.');
   assert_approx_equals(entry.startTime, entry.renderTime, 0.001,
     'startTime should be equal to renderTime to the precision of 1 millisecond.');
@@ -142,27 +145,6 @@ const loadImage = (url, shouldBeIgnoredForLCP = false) => {
       image.style.opacity = 0;
     document.body.appendChild(image);
   });
-}
-
-const checkLCPEntryForNonTaoImages = (times = {}) => {
-  const lcp = times['lcp'];
-  const fcp = times['fcp'];
-  const lcp_url_components = lcp.url.split('/');
-
-  if (lcp.loadTime <= fcp.startTime) {
-    assert_approx_equals(lcp.startTime, fcp.startTime, 0.001,
-      'LCP start time should be the same as FCP for ' +
-      lcp_url_components[lcp_url_components.length - 1]) +
-      ' when LCP load time is less than FCP.';
-  } else {
-    assert_approx_equals(lcp.startTime, lcp.loadTime, 0.001,
-      'LCP start time should be the same as LCP load time for ' +
-      lcp_url_components[lcp_url_components.length - 1]) +
-      ' when LCP load time is no less than FCP.';
-  }
-
-  assert_equals(lcp.renderTime, 0,
-    'The LCP render time of Non-Tao image should always be 0.');
 }
 
 const raf = () => {

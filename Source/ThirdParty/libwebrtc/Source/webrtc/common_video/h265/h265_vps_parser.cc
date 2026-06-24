@@ -12,8 +12,8 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
 #include "rtc_base/bitstream_reader.h"
 
@@ -31,12 +31,12 @@ H265VpsParser::VpsState::VpsState() = default;
 
 // Unpack RBSP and parse VPS state from the supplied buffer.
 std::optional<H265VpsParser::VpsState> H265VpsParser::ParseVps(
-    ArrayView<const uint8_t> data) {
+    std::span<const uint8_t> data) {
   return ParseInternal(H265::ParseRbsp(data));
 }
 
 std::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
-    ArrayView<const uint8_t> buffer) {
+    std::span<const uint8_t> buffer) {
   BitstreamReader reader(buffer);
 
   // Now, we need to use a bit buffer to parse through the actual H265 VPS

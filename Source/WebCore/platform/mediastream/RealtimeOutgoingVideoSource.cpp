@@ -31,6 +31,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "LibWebRTCColorSpaceUtilities.h"
 #include "LibWebRTCVideoFrameUtilities.h"
 #include "Logging.h"
 
@@ -50,8 +51,8 @@ RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPri
     , m_blackFrameTimer(*this, &RealtimeOutgoingVideoSource::sendOneBlackFrame)
     , m_isScreencast(CaptureDevice::isScreenShareType(m_videoSource->deviceType()))
 #if !RELEASE_LOG_DISABLED
-    , m_logger(m_videoSource->logger())
-    , m_logIdentifier(m_videoSource->logIdentifier())
+    , m_logger(protect(m_videoSource)->logger())
+    , m_logIdentifier(protect(m_videoSource)->logIdentifier())
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -70,23 +71,23 @@ ASSERT(!m_videoSource->hasObserver(*this));
 void RealtimeOutgoingVideoSource::observeSource()
 {
     ASSERT(!m_videoSource->hasObserver(*this));
-    m_videoSource->addObserver(*this);
+    protect(m_videoSource)->addObserver(*this);
     initializeFromSource();
 }
 
 void RealtimeOutgoingVideoSource::unobserveSource()
 {
-    m_videoSource->removeObserver(*this);
-    m_videoSource->source().removeVideoFrameObserver(*this);
+    protect(m_videoSource)->removeObserver(*this);
+    protect(m_videoSource)->source().removeVideoFrameObserver(*this);
 }
 
 void RealtimeOutgoingVideoSource::startObservingVideoFrames()
 {
     if (m_maxFrameRate) {
-        m_videoSource->source().addVideoFrameObserver(*this, { }, *m_maxFrameRate);
+        protect(m_videoSource)->source().addVideoFrameObserver(*this, { }, *m_maxFrameRate);
         return;
     }
-    m_videoSource->source().addVideoFrameObserver(*this);
+    protect(m_videoSource)->source().addVideoFrameObserver(*this);
 }
 
 void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
@@ -97,11 +98,11 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
     m_isScreencast = CaptureDevice::isScreenShareType(newSource->deviceType());
     m_videoSource = WTF::move(newSource);
 
-    ALWAYS_LOG(LOGIDENTIFIER, "track ", m_videoSource->logIdentifier());
+    ALWAYS_LOG(LOGIDENTIFIER, "track ", protect(m_videoSource)->logIdentifier());
 
     if (!m_areSinksAskingToApplyRotation)
         return;
-    m_videoSource->source().setShouldApplyRotation();
+    protect(m_videoSource)->source().setShouldApplyRotation();
     m_isApplyingRotation = m_videoSource->source().isApplyingRotation();
 }
 
@@ -112,7 +113,7 @@ void RealtimeOutgoingVideoSource::applyRotation()
             return;
 
         m_areSinksAskingToApplyRotation = true;
-        m_videoSource->source().setShouldApplyRotation();
+        protect(m_videoSource)->source().setShouldApplyRotation();
         m_isApplyingRotation = m_videoSource->source().isApplyingRotation();
     });
 }
@@ -154,7 +155,7 @@ void RealtimeOutgoingVideoSource::updateFramesSending()
 
     if (m_isObservingVideoFrames) {
         m_isObservingVideoFrames = false;
-        m_videoSource->source().removeVideoFrameObserver(*this);
+        protect(m_videoSource)->source().removeVideoFrameObserver(*this);
     }
     sendBlackFramesIfNeeded();
 }
@@ -179,7 +180,7 @@ void RealtimeOutgoingVideoSource::sourceEnabledChanged()
 
 void RealtimeOutgoingVideoSource::initializeFromSource()
 {
-    const auto& settings = m_videoSource->source().settings();
+    const auto& settings = protect(m_videoSource)->source().settings();
     {
         Locker lock(m_frameSizeLock);
         m_width = settings.width();
@@ -212,7 +213,7 @@ void RealtimeOutgoingVideoSource::AddOrUpdateSink(webrtc::VideoSinkInterface<web
         m_maxPixelCount = maxPixelCount;
         if (!m_isObservingVideoFrames)
             return;
-        m_videoSource->source().removeVideoFrameObserver(*this);
+        protect(m_videoSource)->source().removeVideoFrameObserver(*this);
         m_isObservingVideoFrames = false;
         updateFramesSending();
     });

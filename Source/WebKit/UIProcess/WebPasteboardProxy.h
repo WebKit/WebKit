@@ -56,6 +56,7 @@ class SharedBuffer;
 namespace WebKit {
 
 enum class PasteboardAccessIntent : bool;
+enum class WriteWebArchiveToPasteBoardResult : uint8_t;
 class WebFrameProxy;
 class WebProcessProxy;
 
@@ -116,7 +117,7 @@ private:
     void setPasteboardColor(IPC::Connection&, const String&, const WebCore::Color&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
     void setPasteboardStringForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, const String&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
     void setPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, RefPtr<WebCore::SharedBuffer>&&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
-    void writeWebArchiveToPasteBoard(IPC::Connection&, const String& pasteboardName, WebCore::FrameIdentifier, HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>&&, const Vector<WebCore::FrameIdentifier>&, CompletionHandler<void(int64_t)>&&);
+    void writeWebArchiveToPasteBoard(IPC::Connection&, const String& pasteboardName, WebCore::FrameIdentifier, HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>&&, const Vector<WebCore::FrameIdentifier>&, CompletionHandler<void(WriteWebArchiveToPasteBoardResult, int64_t)>&&);
     void createOneWebArchiveFromFrames(WebProcessProxy&, WebCore::FrameIdentifier, HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>&&, const Vector<WebCore::FrameIdentifier>&, CompletionHandler<void(RefPtr<WebCore::LegacyWebArchive>&&)>&&);
 
 #if ENABLE(IPC_TESTING_API)

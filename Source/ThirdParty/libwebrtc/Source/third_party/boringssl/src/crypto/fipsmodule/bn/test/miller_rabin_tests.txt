@@ -4,7 +4,7 @@
 # The following Python function may be used to check values.
 #
 #  def is_miller_rabin_witness(w, b):
-#      # Variable names taken from FIPS 186-4 C.3.1 but the algorithm skips a
+#      # Variable names taken from FIPS 186-5 B.3.1 but the algorithm skips a
 #      # couple of optimizations in the FIPS formulation.
 #      m = w - 1
 #      a = 0

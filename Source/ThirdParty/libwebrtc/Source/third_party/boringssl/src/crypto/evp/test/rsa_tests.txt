@@ -646,10 +646,11 @@ Input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 Output = 07fa4e3de9c002c41c952dc292ef5a814c4c17dc1a6cf958c4c971e8089676d6661b442270ef9295c41e5385c9628aa1bdee2cc2558b8473ba212f2ba04b9ff2264c19187b9506b1d0a1cc2751844cc8dedf555d62ce81bc0e70bfe83d0184ee964593af91b9b327c0fb272c799148cd8737d412cbf36c2ad25fd66977bf805f
 
 # The input is 1 (mod p) and q - 1 (mod q). If the CRT implementation does not
-# account for p < q, the subtraction step will break. However, this test only
-# works when RSA blinding is disabled. When blinding is enabled, these values
-# are randomized and, instead, either this or the above test will hit this case
-# if repeated enough. (It hits it with probability (q-p)^2 / 2pq, or 1.8% here.)
+# account for p < q, the subtraction step will break. In an unblinded RSA, as in
+# BoringSSL, this test is reliable. In a blinded RSA implementation, these
+# values are randomized and, instead, either this or the above test will hit
+# this case if repeated enough. (It hits it with probability (q-p)^2 / 2pq, or
+# 1.8% here.)
 Encrypt = RSA-Swapped
 RSAPadding = None
 Input = 7ab490e1f5e718ff23a9e738f9867559e3a6ea72332e3bcc1b6f58585218ed815a865dab75e3f44ea550bdef815101d6039251a513fd99188c1916abb94b15ef72de793f6472a342b33a125cfc96a4fc89d140e337f5fe6ff937ed3f34b6b09f5227f598e12faddf4423254acbee748197bed26954502c7484c65e279fed7fed

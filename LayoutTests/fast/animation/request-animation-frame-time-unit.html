@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
 description("Tests time unit of requestAnimationFrame callback");
+
+window.jsTestIsAsync = true;
 
 var isTimeUnitInMs = false;
 
@@ -20,10 +22,8 @@ window.requestAnimationFrame(function(time) {
             var toleranceInMs = 10;
             isTimeUnitInMs = Math.abs(delta - deltaTimeInMs) <= toleranceInMs;
             shouldBeTrue("isTimeUnitInMs");
-            isSuccessfullyParsed();
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         });
 
         await testRunner?.displayAndTrackRepaints();
@@ -31,7 +31,6 @@ window.requestAnimationFrame(function(time) {
 });
 
 onload = async () => {
-    testRunner?.waitUntilDone();
     await testRunner?.displayAndTrackRepaints();
 }
 </script>

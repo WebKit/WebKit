@@ -18,12 +18,12 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
@@ -35,7 +35,6 @@
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
@@ -60,6 +59,7 @@
 #include "rtc_base/string_encode.h"
 #include "rtc_base/system/arch.h"
 #include "test/audio_decoder_proxy_factory.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_audio_encoder.h"
@@ -161,7 +161,7 @@ class AudioCodingModuleTestOldApi : public ::testing::Test {
   static constexpr uint8_t kPayloadType = 111;
 
   AudioCodingModuleTestOldApi()
-      : env_(CreateEnvironment()),
+      : env_(CreateTestEnvironment()),
         rtp_utility_(new RtpData(kFrameSizeSamples, kPayloadType)) {}
 
   ~AudioCodingModuleTestOldApi() override {}
@@ -208,7 +208,7 @@ class AudioCodingModuleTestOldApi : public ::testing::Test {
     const uint8_t kPayload[kPayloadSizeBytes] = {0};
     ASSERT_EQ(0, neteq_->InsertPacket(
                      rtp_header_,
-                     ArrayView<const uint8_t>(kPayload, kPayloadSizeBytes),
+                     std::span<const uint8_t>(kPayload, kPayloadSizeBytes),
                      /*receive_time=*/Timestamp::MinusInfinity()));
     rtp_utility_->Forward(&rtp_header_);
   }
@@ -389,7 +389,7 @@ class AcmAbsoluteCaptureTimestamp : public ::testing::Test {
         CreateBuiltinAudioEncoderFactory();
     acm_ = AudioCodingModule::Create();
     std::unique_ptr<AudioEncoder> encoder = codec_factory->Create(
-        CreateEnvironment(),
+        CreateTestEnvironment(),
         SdpAudioFormat("OPUS", kSampleRateHz, kNumChannels),
         {.payload_type = 111});
     encoder->SetDtx(true);
@@ -577,7 +577,7 @@ class AcmSenderBitExactnessOldApi : public ::testing::Test,
     Buffer checksum_result =
         Buffer::CreateWithCapacity(payload_checksum_->Size());
     checksum_result.AppendData(
-        payload_checksum_->Size(), [&](ArrayView<uint8_t> checksum_view) {
+        payload_checksum_->Size(), [&](std::span<uint8_t> checksum_view) {
           payload_checksum_->Finish(checksum_view.data(), checksum_view.size());
           return checksum_view.size();
         });
@@ -812,7 +812,7 @@ TEST_F(AcmSenderBitExactnessNewApi, DISABLED_OpusFromFormat_stereo_20ms) {
   ASSERT_TRUE(SetUpSender(kTestFileFakeStereo32kHz, 32000));
   ASSERT_NO_FATAL_FAILURE(SetUpTestExternalEncoder(
       AudioEncoderOpus::MakeAudioEncoder(
-          CreateEnvironment(), *std::move(config), {.payload_type = 120}),
+          CreateTestEnvironment(), *std::move(config), {.payload_type = 120}),
       120));
   Run(audio_checksum, payload_checksum, /*expected_packets=*/50,
       /*expected_channels=*/test::AcmReceiveTestOldApi::kStereoOutput);
@@ -868,7 +868,7 @@ TEST_F(AcmSenderBitExactnessNewApi, DISABLED_OpusFromFormat_stereo_20ms_voip) {
   ASSERT_TRUE(SetUpSender(kTestFileFakeStereo32kHz, 32000));
   ASSERT_NO_FATAL_FAILURE(SetUpTestExternalEncoder(
       AudioEncoderOpus::MakeAudioEncoder(
-          CreateEnvironment(), *std::move(config), {.payload_type = 120}),
+          CreateTestEnvironment(), *std::move(config), {.payload_type = 120}),
       120));
   const std::string audio_maybe_sse =
       "cb644fc17d9666a0f5986eef24818159"
@@ -962,7 +962,7 @@ TEST_F(AcmSetBitRateNewApi, OpusFromFormat_48khz_20ms_10kbps) {
   ASSERT_TRUE(SetUpSender());
   RegisterExternalSendCodec(
       AudioEncoderOpus::MakeAudioEncoder(
-          CreateEnvironment(), *std::move(config), {.payload_type = 107}),
+          CreateTestEnvironment(), *std::move(config), {.payload_type = 107}),
       107);
   RunInner(7000, 12000);
 }
@@ -973,7 +973,7 @@ TEST_F(AcmSetBitRateNewApi, OpusFromFormat_48khz_20ms_50kbps) {
   ASSERT_TRUE(SetUpSender());
   RegisterExternalSendCodec(
       AudioEncoderOpus::MakeAudioEncoder(
-          CreateEnvironment(), *std::move(config), {.payload_type = 107}),
+          CreateTestEnvironment(), *std::move(config), {.payload_type = 107}),
       107);
   RunInner(40000, 60000);
 }
@@ -1083,7 +1083,7 @@ TEST_F(AcmSetBitRateNewApi, MAYBE_OpusFromFormat_48khz_20ms_100kbps) {
   ASSERT_TRUE(SetUpSender());
   RegisterExternalSendCodec(
       AudioEncoderOpus::MakeAudioEncoder(
-          CreateEnvironment(), *std::move(config), {.payload_type = 107}),
+          CreateTestEnvironment(), *std::move(config), {.payload_type = 107}),
       107);
   RunInner(80000, 120000);
 }
@@ -1117,7 +1117,7 @@ TEST_F(AcmSenderBitExactnessOldApi, External_Pcmu_20ms) {
       .Times(AtLeast(1))
       .WillRepeatedly(Invoke(
           &encoder, static_cast<AudioEncoder::EncodedInfo (AudioEncoder::*)(
-                        uint32_t, ArrayView<const int16_t>, Buffer*)>(
+                        uint32_t, std::span<const int16_t>, Buffer*)>(
                         &AudioEncoderPcmU::Encode)));
   ASSERT_TRUE(SetUpSender(kTestFileMono32kHz, 32000));
   ASSERT_NO_FATAL_FAILURE(

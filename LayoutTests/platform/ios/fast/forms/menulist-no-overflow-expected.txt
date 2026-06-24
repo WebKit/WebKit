@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 246x17 clip at (9,9) size 244x15
   RenderMenuList {SELECT} at (0,0) size 246x17 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-    RenderSelectFallbackButton {DIV} at (5,2) size 236x13
-      RenderText at (0,0) size 226x13
+    RenderBlock {DIV} at (5,2) size 236x13
+      RenderText {#text} at (0,0) size 226x13
         text run at (0,0) width 226: "No overflow should be allowed on popup menus!"

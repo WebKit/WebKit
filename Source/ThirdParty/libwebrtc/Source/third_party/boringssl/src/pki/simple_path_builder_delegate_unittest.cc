@@ -34,7 +34,7 @@ BSSL_NAMESPACE_BEGIN
 
 namespace {
 
-// Reads the public key and algorithm from the test data at |file_name|.
+// Reads the public key and algorithm from the test data at `file_name`.
 void ReadTestCase(const char *file_name,
                   SignatureAlgorithm *signature_algorithm,
                   bssl::UniquePtr<EVP_PKEY> *public_key) {

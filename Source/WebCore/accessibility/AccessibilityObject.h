@@ -288,7 +288,7 @@ public:
     RenderObject* renderer() const override { return nullptr; }
     CheckedPtr<RenderObject> rendererOrNearestAncestor() const;
     // Resolves the computed style if necessary (and safe to do so).
-    const RenderStyle* style() const;
+    const Style::ComputedStyle* style() const;
 
     // Note: computeIsIgnored does not consider whether an object is ignored due to presence of modals.
     // Use isIgnored as the word of law when determining if an object is ignored.
@@ -1073,10 +1073,10 @@ private:
 }; // class AXChildIterator
 
 #if PLATFORM(COCOA)
-// Helpers to extract information from RenderStyle needed for accessibility purposes.
-RetainPtr<CTFontRef> fontFrom(const RenderStyle&);
-Color textColorFrom(const RenderStyle&);
-Color backgroundColorFrom(const RenderStyle&);
+// Helpers to extract information from Style::ComputedStyle needed for accessibility purposes.
+RetainPtr<CTFontRef> fontFrom(const Style::ComputedStyle&);
+Color textColorFrom(const Style::ComputedStyle&);
+Color backgroundColorFrom(const Style::ComputedStyle&);
 #endif // PLATFORM(COCOA)
 
 } // namespace WebCore

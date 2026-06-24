@@ -1,0 +1,4 @@
+
+PASS drm test requestMediaKeySystemAccess() exceptions.
+PASS drm test MediaKeySystemAccess attribute syntax.
+

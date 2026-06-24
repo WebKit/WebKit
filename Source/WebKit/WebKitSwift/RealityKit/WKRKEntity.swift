@@ -28,7 +28,11 @@ import CoreGraphics
 import Foundation
 import os
 import simd
+#if canImport(CoreRE)
 @_spi(Private) @_spi(RealityKit) @_spi(RealityKit_Webkit) import RealityKit
+#else
+import RealityKit
+#endif
 
 extension Logger {
     fileprivate static let realityKitEntity = Logger(subsystem: "com.apple.WebKit", category: "RealityKitEntity")
@@ -38,7 +42,7 @@ extension Logger {
 @implementation
 extension WKRKEntity {
     @nonobjc
-    private let entity: Entity
+    private var entity = Entity()
 
     weak var delegate: (any WKRKEntityDelegate)?
 
@@ -57,6 +61,29 @@ extension WKRKEntity {
 
     private static var defaultEnvironmentResource: EnvironmentResource?
 
+    #if !canImport(CoreRE)
+    @nonobjc
+    private static var headlessRenderer: RealityRenderer?
+
+    @nonobjc
+    private static var rendererUpdateTimer: Timer?
+
+    @nonobjc
+    private final func ensureInScene() {
+        guard entity.scene == nil else { return }
+
+        if Self.headlessRenderer == nil {
+            Self.headlessRenderer = try? RealityRenderer()
+            let timer = Timer(timeInterval: 1.0 / 60.0, repeats: true) { _ in
+                try? Self.headlessRenderer?.update(1.0 / 60.0)
+            }
+            RunLoop.main.add(timer, forMode: .common)
+            Self.rendererUpdateTimer = timer
+        }
+        Self.headlessRenderer?.entities.append(entity)
+    }
+    #endif
+
     class func isLoadFromDataAvailable() -> Bool {
         #if canImport(RealityKit, _version: 377)
         true
@@ -69,6 +96,7 @@ extension WKRKEntity {
     class func load(from data: Data, withAttributionTaskID attributionTaskId: String?, entityMemoryLimit: Int) async -> WKRKEntity? {
         #if canImport(RealityKit, _version: "403.0.3")
         do {
+            #if canImport(CoreRE)
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
             var loadOptions = unsafe Entity.__LoadOptions()
             if let attributionTaskId {
@@ -81,8 +109,10 @@ extension WKRKEntity {
             #if canImport(RealityKit, _version: "403.0.9")
             loadOptions.featuresToSkip = [.audio]
             #endif
-
             let loadedEntity = try await Entity(from: data, options: loadOptions)
+            #else
+            let loadedEntity = try await Entity(from: data)
+            #endif
             return WKRKEntity(loadedEntity)
         } catch {
             Logger.realityKitEntity.error("Failed to load entity from data: \(error)")
@@ -95,14 +125,21 @@ extension WKRKEntity {
 
     @nonobjc
     convenience init(_ rkEntity: Entity) {
+        #if canImport(CoreRE)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
         unsafe self.init(coreEntity: rkEntity.coreEntity)
+        #else
+        self.init()
+        entity = rkEntity
+        #endif
     }
 
+    #if canImport(CoreRE)
     init(coreEntity: REEntityRef) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
         entity = unsafe Entity.fromCore(coreEntity)
     }
+    #endif
 
     var name: String {
         get { entity.name }
@@ -246,6 +283,10 @@ extension WKRKEntity {
             Logger.realityKitEntity.info("No animation found in entity to play")
             return
         }
+
+        #if !canImport(CoreRE)
+        ensureInScene()
+        #endif
 
         backingAnimation = animation
         animationPlaybackController = entity.playAnimation(animation, startsPaused: !autoplay)
@@ -401,11 +442,13 @@ extension WKRKEntity {
             )
             let environment = try await EnvironmentResource(cube: textureResource, options: .init())
 
+            #if canImport(CoreRE)
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
             if let coreEnvironmentResourceAsset = unsafe environment.coreIBLAsset?.__as(REAssetRef.self) {
                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
                 unsafe attributionHandler(coreEnvironmentResourceAsset)
             }
+            #endif
 
             applyIBL(environment)
             Logger.realityKitEntity.info("Successfully applied IBL to entity")
@@ -443,12 +486,14 @@ extension WKRKEntity {
         delegate?.entityAnimationPlaybackStateDidUpdate?(self)
     }
 
+    #if canImport(CoreRE)
     @objc(setParentCoreEntity:preservingWorldTransform:)
     func setParentCore(_ coreEntity: REEntityRef, preservingWorldTransform: Bool) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
         let parentEntity = unsafe Entity.fromCore(coreEntity)
         entity.setParent(parentEntity, preservingWorldTransform: preservingWorldTransform)
     }
+    #endif
 
     @objc(interactionContainerDidRecenterFromTransform:)
     func interactionContainerDidRecenter(fromTransform transform: simd_float4x4) {

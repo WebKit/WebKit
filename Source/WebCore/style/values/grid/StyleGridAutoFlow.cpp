@@ -60,7 +60,7 @@ auto CSSValueConversion<GridAutoFlow>::operator()(BuilderState& state, const CSS
     return autoFlowValue->autoFlow();
 }
 
-Ref<CSSValue> CSSValueCreation<GridAutoFlow>::operator()(CSSValuePool& pool, const RenderStyle&, const GridAutoFlow& value)
+Ref<CSSValue> CSSValueCreation<GridAutoFlow>::operator()(CSSValuePool& pool, const Style::ComputedStyle&, const GridAutoFlow& value)
 {
     return CSS::createCSSValue(pool, value);
 }

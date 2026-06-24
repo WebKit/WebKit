@@ -42,13 +42,13 @@ class RenderMathMLBlock : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLBlock);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLBlock);
 public:
-    RenderMathMLBlock(Type, MathMLPresentationElement&, RenderStyle&&);
-    RenderMathMLBlock(Type, Document&, RenderStyle&&);
+    RenderMathMLBlock(Type, MathMLPresentationElement&, Style::ComputedStyle&&);
+    RenderMathMLBlock(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderMathMLBlock();
 
     MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
 
-    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
 
     // MathML defines an "embellished operator" as roughly an <mo> that may have subscripts,
     // superscripts, underscripts, overscripts, or a denominator (as in d/dx, where "d" is some
@@ -60,7 +60,7 @@ public:
     virtual RenderMathMLOperator* unembellishedOperator() const { return nullptr; }
 
 protected:
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     inline LayoutUnit ruleThicknessFallback() const;
 
@@ -76,7 +76,7 @@ protected:
     void layoutFloatingChildren();
 
     void shiftInFlowChildren(LayoutUnit left, LayoutUnit top);
-    void adjustPreferredLogicalWidthsForBorderAndPadding();
+    void adjustContentLogicalWidthsForBorderAndPadding();
     void adjustLayoutForBorderAndPadding();
 
     enum class LayoutPhase : uint8_t {
@@ -108,7 +108,7 @@ class RenderMathMLTable final : public RenderTable {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLTable);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLTable);
 public:
-    inline RenderMathMLTable(MathMLElement&, RenderStyle&&);
+    inline RenderMathMLTable(MathMLElement&, Style::ComputedStyle&&);
     virtual ~RenderMathMLTable();
 
     MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
@@ -120,7 +120,7 @@ private:
     const Ref<MathMLStyle> m_mathMLStyle;
 };
 
-LayoutUnit toUserUnits(const MathMLElement::Length&, const RenderStyle&, const LayoutUnit& referenceValue);
+LayoutUnit toUserUnits(const MathMLElement::Length&, const Style::ComputedStyle&, const LayoutUnit& referenceValue);
 
 } // namespace WebCore
 

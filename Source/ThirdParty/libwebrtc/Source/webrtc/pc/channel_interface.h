@@ -18,6 +18,7 @@
 #include "absl/strings/string_view.h"
 #include "api/jsep.h"
 #include "api/media_types.h"
+#include "api/rtc_error.h"
 #include "media/base/media_channel.h"
 #include "media/base/stream_params.h"
 #include "pc/rtp_transport_internal.h"
@@ -25,12 +26,18 @@
 
 namespace webrtc {
 class Call;
+class RtpPacketReceived;
 class VideoBitrateAllocatorFactory;
-class VideoChannel;
-class VoiceChannel;
-}  // namespace webrtc
 
-namespace webrtc {
+
+// Callbacks for packet events in the channel.
+// These are injected at construction time.
+struct ChannelCallbacks {
+  absl::AnyInvocable<void(const RtpPacketReceived&) &&>
+      on_first_packet_received;
+  absl::AnyInvocable<void() &&> on_first_packet_sent;
+  absl::AnyInvocable<void(const RtpPacketReceived&)> on_packet_received;
+};
 
 // A Channel is a construct that groups media streams of the same type
 // (audio or video), both outgoing and incoming.
@@ -47,9 +54,6 @@ class ChannelInterface {
  public:
   virtual ~ChannelInterface() = default;
   virtual MediaType media_type() const = 0;
-
-  virtual VideoChannel* AsVideoChannel() = 0;
-  virtual VoiceChannel* AsVoiceChannel() = 0;
 
   virtual MediaSendChannelInterface* media_send_channel() = 0;
   // Typecasts of media_channel(). Will cause an exception if the
@@ -74,24 +78,11 @@ class ChannelInterface {
   // Enables or disables this channel
   virtual void Enable(bool enable) = 0;
 
-  // Used for latency measurements.
-  virtual void SetFirstPacketReceivedCallback(
-      absl::AnyInvocable<void() &&> callback) = 0;
-  virtual void SetFirstPacketSentCallback(
-      absl::AnyInvocable<void() &&> callback) = 0;
-
-  // Used to unmute.
-  virtual void SetPacketReceivedCallback_n(
-      absl::AnyInvocable<void()> callback) = 0;
-
   // Channel control
-  virtual bool SetLocalContent(const MediaContentDescription* content,
-                               SdpType type,
-                               std::string& error_desc) = 0;
-  virtual bool SetRemoteContent(const MediaContentDescription* content,
-                                SdpType type,
-                                std::string& error_desc) = 0;
-  virtual bool SetPayloadTypeDemuxingEnabled(bool enabled) = 0;
+  virtual RTCError SetLocalContent(const MediaContentDescription* content,
+                                   SdpType type) = 0;
+  virtual RTCError SetRemoteContent(const MediaContentDescription* content,
+                                    SdpType type) = 0;
 
   // Access to the local and remote streams that were set on the channel.
   virtual const std::vector<StreamParams>& local_streams() const = 0;

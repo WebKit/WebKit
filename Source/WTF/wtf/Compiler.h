@@ -635,7 +635,9 @@
 /* NO_UNIQUE_ADDRESS */
 
 #if !defined(NO_UNIQUE_ADDRESS)
-#if COMPILER_HAS_CPP_ATTRIBUTE(no_unique_address)
+#if COMPILER_HAS_CPP_ATTRIBUTE(msvc::no_unique_address)
+#define NO_UNIQUE_ADDRESS [[msvc::no_unique_address]] // NOLINT: check-webkit-style does not understand annotations.
+#elif COMPILER_HAS_CPP_ATTRIBUTE(no_unique_address)
 #define NO_UNIQUE_ADDRESS [[no_unique_address]] // NOLINT: check-webkit-style does not understand annotations.
 #else
 #define NO_UNIQUE_ADDRESS

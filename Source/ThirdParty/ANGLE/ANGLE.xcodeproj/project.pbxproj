@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -37,6 +37,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				7BD3D2EC2FCDC1D500C386DC /* PBXTargetDependency */,
 				7B533A912E0A93670069B90F /* PBXTargetDependency */,
 				7BFAF9032DE6F6B400327F7F /* PBXTargetDependency */,
 				7BB971C62DE45FE300455D13 /* PBXTargetDependency */,
@@ -347,7 +348,6 @@
 		3A2C66FB292372CC00FEDF46 /* AstcDecompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2C66F9292372BA00FEDF46 /* AstcDecompressor.h */; };
 		3A2C66FC292372D400FEDF46 /* loadimage_paletted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C66F7292372BA00FEDF46 /* loadimage_paletted.cpp */; };
 		3A2C67012923742600FEDF46 /* ConstantNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C66ED29236D4100FEDF46 /* ConstantNames.cpp */; };
-		3A2C67032923766600FEDF46 /* serialize_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C67022923766600FEDF46 /* serialize_mock.cpp */; };
 		3A50108F2988C7CC007516AD /* blocklayoutMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A50108D2988C7CC007516AD /* blocklayoutMetal.cpp */; };
 		3A5010902988C7CC007516AD /* blocklayoutMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A50108E2988C7CC007516AD /* blocklayoutMetal.h */; };
 		3A7AA54D28E1319D009E09C2 /* PixelLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7AA54B28E1319D009E09C2 /* PixelLocalStorage.h */; };
@@ -468,7 +468,6 @@
 		7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */; };
 		7B81955C28CF63D800C7ABCD /* MemoryShaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */; };
 		7B820C562DE992CD00DAC5E4 /* libtranslator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BF5549B2C81EDE0002B101E /* libtranslator.a */; };
-		7B820C792DE9956000DAC5E4 /* End2EndTestsSourcesPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B820C762DE9956000DAC5E4 /* End2EndTestsSourcesPlatform.cpp */; };
 		7B8C09092F7E843B007E37DE /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C09082F7E843B007E37DE /* TestSuite.cpp */; };
 		7B8C09152F84EAB1007E37DE /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C09082F7E843B007E37DE /* TestSuite.cpp */; };
 		7B8C091A2F84EC49007E37DE /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D72DE49CE200327F7F /* GPUTestConfig.cpp */; };
@@ -660,13 +659,221 @@
 		7BB9739C2DE4888800455D13 /* ContextImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB304AC1DE4164800D2C405 /* ContextImpl.cpp */; };
 		7BB9739D2DE4888800455D13 /* mtl_format_table_autogen.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF81FE9225818D6800894E24 /* mtl_format_table_autogen.mm */; };
 		7BB973A12DE48BD900455D13 /* MemoryBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBBE81B0436EC00235552 /* MemoryBuffer.cpp */; };
-		7BB973A42DE48DEE00455D13 /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB973A32DE48DEE00455D13 /* FrameCapture_mock.cpp */; };
 		7BB973A72DE48E4A00455D13 /* WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C66EF29236E7D00FEDF46 /* WorkerThread.cpp */; };
 		7BB973A82DE48E7700455D13 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
-		7BB973AA2DE48EB000455D13 /* serialize_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB973A92DE48EB000455D13 /* serialize_mock.cpp */; };
 		7BCF49C528AD1C8C0090D34A /* apple_platform_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */; };
 		7BCF49C628AD1C8C0090D34A /* CircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */; };
 		7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */; };
+		7BD3D1EC2FCDB6A600C386DC /* End2EndTestsSourcesPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BD3D1EB2FCDB6A600C386DC /* End2EndTestsSourcesPlatform.cpp */; };
+		7BD3D2062FCDB8A300C386DC /* ActiveTextureCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EA2DE59CFF00327F7F /* ActiveTextureCacheTest.cpp */; };
+		7BD3D2072FCDB8A300C386DC /* AdvancedBlendTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EE2DE59D8D00327F7F /* AdvancedBlendTest.cpp */; };
+		7BD3D2082FCDB8A300C386DC /* angle_end2end_tests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB971C32DE457E100455D13 /* angle_end2end_tests_main.cpp */; };
+		7BD3D2092FCDB8A300C386DC /* angle_test_configs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B12DE494CF00327F7F /* angle_test_configs.cpp */; };
+		7BD3D20A2FCDB8A300C386DC /* angle_test_instantiate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B22DE494CF00327F7F /* angle_test_instantiate.cpp */; };
+		7BD3D20B2FCDB8A300C386DC /* angle_test_instantiate_apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B32DE494CF00327F7F /* angle_test_instantiate_apple.mm */; };
+		7BD3D20C2FCDB8A300C386DC /* angle_test_platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B42DE494CF00327F7F /* angle_test_platform.cpp */; };
+		7BD3D20D2FCDB8A300C386DC /* ANGLETest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B52DE494CF00327F7F /* ANGLETest.cpp */; };
+		7BD3D20E2FCDB8A300C386DC /* AtomicCounterBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EF2DE59D8D00327F7F /* AtomicCounterBufferTest.cpp */; };
+		7BD3D20F2FCDB8A300C386DC /* AttributeLayoutTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F02DE59D8D00327F7F /* AttributeLayoutTest.cpp */; };
+		7BD3D2102FCDB8A300C386DC /* BaseInstanceOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFB2F98E33B00A240A7 /* BaseInstanceOverflowTest.cpp */; };
+		7BD3D2112FCDB8A300C386DC /* BindGeneratesResourceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F12DE59D8D00327F7F /* BindGeneratesResourceTest.cpp */; };
+		7BD3D2122FCDB8A300C386DC /* BindUniformLocationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F22DE59D8D00327F7F /* BindUniformLocationTest.cpp */; };
+		7BD3D2132FCDB8A300C386DC /* BlendFuncExtendedTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F32DE59D8D00327F7F /* BlendFuncExtendedTest.cpp */; };
+		7BD3D2142FCDB8A300C386DC /* BlendIntegerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F42DE59D8D00327F7F /* BlendIntegerTest.cpp */; };
+		7BD3D2152FCDB8A300C386DC /* BlendMinMaxTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F52DE59D8D00327F7F /* BlendMinMaxTest.cpp */; };
+		7BD3D2162FCDB8A300C386DC /* BlendPackedTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F62DE59D8D00327F7F /* BlendPackedTest.cpp */; };
+		7BD3D2172FCDB8A300C386DC /* BlitFramebufferANGLETest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F72DE59D8D00327F7F /* BlitFramebufferANGLETest.cpp */; };
+		7BD3D2182FCDB8A300C386DC /* BlobCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F82DE59D8D00327F7F /* BlobCacheTest.cpp */; };
+		7BD3D2192FCDB8A300C386DC /* BPTCCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F92DE59D8D00327F7F /* BPTCCompressedTextureTest.cpp */; };
+		7BD3D21A2FCDB8A300C386DC /* BufferDataTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4FA2DE59D8D00327F7F /* BufferDataTest.cpp */; };
+		7BD3D21B2FCDB8A300C386DC /* BufferPoolTestMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFC2F98E33B00A240A7 /* BufferPoolTestMetal.mm */; };
+		7BD3D21C2FCDB8A300C386DC /* BuiltinVariableTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4FB2DE59D8D00327F7F /* BuiltinVariableTest.cpp */; };
+		7BD3D21D2FCDB8A300C386DC /* ClearTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4AE2DE4903000327F7F /* ClearTest.cpp */; };
+		7BD3D21E2FCDB8A300C386DC /* ClientArraysTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50A2DE59DA000327F7F /* ClientArraysTest.cpp */; };
+		7BD3D21F2FCDB8A300C386DC /* ClipControlTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50B2DE59DA000327F7F /* ClipControlTest.cpp */; };
+		7BD3D2202FCDB8A300C386DC /* ClipDistanceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50C2DE59DA000327F7F /* ClipDistanceTest.cpp */; };
+		7BD3D2212FCDB8A300C386DC /* ColorMaskTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50D2DE59DA000327F7F /* ColorMaskTest.cpp */; };
+		7BD3D2222FCDB8A300C386DC /* CompressedTextureFormatsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50E2DE59DA000327F7F /* CompressedTextureFormatsTest.cpp */; };
+		7BD3D2232FCDB8A300C386DC /* ComputeShaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50F2DE59DA000327F7F /* ComputeShaderTest.cpp */; };
+		7BD3D2242FCDB8A300C386DC /* ContextLostTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5102DE59DA000327F7F /* ContextLostTest.cpp */; };
+		7BD3D2252FCDB8A300C386DC /* ContextNoErrorTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5112DE59DA000327F7F /* ContextNoErrorTest.cpp */; };
+		7BD3D2262FCDB8A300C386DC /* CopyCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5122DE59DA000327F7F /* CopyCompressedTextureTest.cpp */; };
+		7BD3D2272FCDB8A300C386DC /* CopyTexImageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5132DE59DA000327F7F /* CopyTexImageTest.cpp */; };
+		7BD3D2282FCDB8A300C386DC /* CopyTexture3DTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5142DE59DA000327F7F /* CopyTexture3DTest.cpp */; };
+		7BD3D2292FCDB8A300C386DC /* CopyTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5152DE59DA000327F7F /* CopyTextureTest.cpp */; };
+		7BD3D22A2FCDB8A300C386DC /* CubeMapTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5162DE59DA000327F7F /* CubeMapTextureTest.cpp */; };
+		7BD3D22B2FCDB8A300C386DC /* DebugMarkerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5242DE59DB800327F7F /* DebugMarkerTest.cpp */; };
+		7BD3D22C2FCDB8A300C386DC /* DebugTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5252DE59DB800327F7F /* DebugTest.cpp */; };
+		7BD3D22D2FCDB8A300C386DC /* DepthStencilFormatsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5262DE59DB800327F7F /* DepthStencilFormatsTest.cpp */; };
+		7BD3D22E2FCDB8A300C386DC /* DepthStencilTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5272DE59DB800327F7F /* DepthStencilTest.cpp */; };
+		7BD3D22F2FCDB8A300C386DC /* DepthWriteTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5282DE59DB800327F7F /* DepthWriteTest.cpp */; };
+		7BD3D2302FCDB8A300C386DC /* DifferentStencilMasksTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5292DE59DB800327F7F /* DifferentStencilMasksTest.cpp */; };
+		7BD3D2312FCDB8A300C386DC /* DiscardFramebufferEXTTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52A2DE59DB800327F7F /* DiscardFramebufferEXTTest.cpp */; };
+		7BD3D2322FCDB8A300C386DC /* DrawBaseVertexBaseInstanceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52B2DE59DB800327F7F /* DrawBaseVertexBaseInstanceTest.cpp */; };
+		7BD3D2332FCDB8A300C386DC /* DrawBaseVertexVariantsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52C2DE59DB800327F7F /* DrawBaseVertexVariantsTest.cpp */; };
+		7BD3D2342FCDB8A300C386DC /* DrawBuffersTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52D2DE59DB800327F7F /* DrawBuffersTest.cpp */; };
+		7BD3D2352FCDB8A300C386DC /* DrawElementsIndirectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52E2DE59DB800327F7F /* DrawElementsIndirectTest.cpp */; };
+		7BD3D2362FCDB8A300C386DC /* DrawElementsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52F2DE59DB800327F7F /* DrawElementsTest.cpp */; };
+		7BD3D2372FCDB8A300C386DC /* DrawRangeElementsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5302DE59DB800327F7F /* DrawRangeElementsTest.cpp */; };
+		7BD3D2382FCDB8A300C386DC /* DXT1CompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5312DE59DB800327F7F /* DXT1CompressedTextureTest.cpp */; };
+		7BD3D2392FCDB8A300C386DC /* DXTSRGBCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5322DE59DB800327F7F /* DXTSRGBCompressedTextureTest.cpp */; };
+		7BD3D23A2FCDB8A300C386DC /* EGLBackwardsCompatibleContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6212DE5A13800327F7F /* EGLBackwardsCompatibleContextTest.cpp */; };
+		7BD3D23B2FCDB8A300C386DC /* EGLBlobCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6222DE5A13800327F7F /* EGLBlobCacheTest.cpp */; };
+		7BD3D23C2FCDB8A300C386DC /* EGLBufferAgeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6232DE5A13800327F7F /* EGLBufferAgeTest.cpp */; };
+		7BD3D23D2FCDB8A300C386DC /* EGLChooseConfigTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6242DE5A13800327F7F /* EGLChooseConfigTest.cpp */; };
+		7BD3D23E2FCDB8A300C386DC /* EGLContextASANTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6252DE5A13800327F7F /* EGLContextASANTest.cpp */; };
+		7BD3D23F2FCDB8A300C386DC /* EGLContextCompatibilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6262DE5A13800327F7F /* EGLContextCompatibilityTest.cpp */; };
+		7BD3D2402FCDB8A300C386DC /* EGLContextSharingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6272DE5A13800327F7F /* EGLContextSharingTest.cpp */; };
+		7BD3D2412FCDB8A300C386DC /* EGLCreateContextAttribsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6282DE5A13800327F7F /* EGLCreateContextAttribsTest.cpp */; };
+		7BD3D2422FCDB8A300C386DC /* EGLDebugTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6292DE5A13800327F7F /* EGLDebugTest.cpp */; };
+		7BD3D2432FCDB8A300C386DC /* EGLDisplaySelectionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62B2DE5A13800327F7F /* EGLDisplaySelectionTest.cpp */; };
+		7BD3D2442FCDB8A300C386DC /* EGLDisplayTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62C2DE5A13800327F7F /* EGLDisplayTest.cpp */; };
+		7BD3D2452FCDB8A300C386DC /* EGLFeatureControlTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62D2DE5A13800327F7F /* EGLFeatureControlTest.cpp */; };
+		7BD3D2462FCDB8A300C386DC /* EGLIOSurfaceClientBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62E2DE5A13800327F7F /* EGLIOSurfaceClientBufferTest.cpp */; };
+		7BD3D2472FCDB8A300C386DC /* EGLLockSurface3Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62F2DE5A13800327F7F /* EGLLockSurface3Test.cpp */; };
+		7BD3D2482FCDB8A300C386DC /* EGLMemoryUsageReportTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6302DE5A13800327F7F /* EGLMemoryUsageReportTest.cpp */; };
+		7BD3D2492FCDB8A300C386DC /* EGLMultiContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6312DE5A13800327F7F /* EGLMultiContextTest.cpp */; };
+		7BD3D24A2FCDB8A300C386DC /* EGLNoConfigContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6322DE5A13800327F7F /* EGLNoConfigContextTest.cpp */; };
+		7BD3D24B2FCDB8A300C386DC /* EGLNoErrorTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6332DE5A13800327F7F /* EGLNoErrorTest.cpp */; };
+		7BD3D24C2FCDB8A300C386DC /* EGLPrintEGLinfoTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6352DE5A13800327F7F /* EGLPrintEGLinfoTest.cpp */; };
+		7BD3D24D2FCDB8A300C386DC /* EGLProgramCacheControlTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6362DE5A13800327F7F /* EGLProgramCacheControlTest.cpp */; };
+		7BD3D24E2FCDB8A300C386DC /* EGLProtectedContentTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6372DE5A13800327F7F /* EGLProtectedContentTest.cpp */; };
+		7BD3D24F2FCDB8A300C386DC /* EGLQueryContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6382DE5A13800327F7F /* EGLQueryContextTest.cpp */; };
+		7BD3D2502FCDB8A300C386DC /* EGLReadinessCheckTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6392DE5A13800327F7F /* EGLReadinessCheckTest.cpp */; };
+		7BD3D2512FCDB8A300C386DC /* EGLRecordableTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF63A2DE5A13800327F7F /* EGLRecordableTest.cpp */; };
+		7BD3D2522FCDB8A300C386DC /* EGLRobustnessTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF63B2DE5A13800327F7F /* EGLRobustnessTest.cpp */; };
+		7BD3D2532FCDB8A300C386DC /* EGLSurfacelessContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF63D2DE5A13800327F7F /* EGLSurfacelessContextTest.cpp */; };
+		7BD3D2542FCDB8A300C386DC /* EGLSurfaceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF63E2DE5A13800327F7F /* EGLSurfaceTest.cpp */; };
+		7BD3D2552FCDB8A300C386DC /* EGLSyncTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6402DE5A13800327F7F /* EGLSyncTest.cpp */; };
+		7BD3D2562FCDB8A300C386DC /* EGLSyncTestMetalSharedEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6412DE5A13800327F7F /* EGLSyncTestMetalSharedEvent.mm */; };
+		7BD3D2572FCDB8A300C386DC /* EGLWaitUntilWorkScheduledTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6422DE5A13800327F7F /* EGLWaitUntilWorkScheduledTest.cpp */; };
+		7BD3D2582FCDB8A300C386DC /* End2EndTestsSourcesPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BD3D1EB2FCDB6A600C386DC /* End2EndTestsSourcesPlatform.cpp */; };
+		7BD3D2592FCDB8A300C386DC /* ErrorMessages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5432DE59DCD00327F7F /* ErrorMessages.cpp */; };
+		7BD3D25A2FCDB8A300C386DC /* ETCTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5442DE59DCD00327F7F /* ETCTextureTest.cpp */; };
+		7BD3D25B2FCDB8A300C386DC /* ExternalBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5452DE59DCD00327F7F /* ExternalBufferTest.cpp */; };
+		7BD3D25C2FCDB8A300C386DC /* ExternalWrapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5462DE59DCD00327F7F /* ExternalWrapTest.cpp */; };
+		7BD3D25D2FCDB8A300C386DC /* FenceSyncTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5472DE59DCD00327F7F /* FenceSyncTests.cpp */; };
+		7BD3D25E2FCDB8A300C386DC /* FloatingPointSurfaceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5482DE59DCD00327F7F /* FloatingPointSurfaceTest.cpp */; };
+		7BD3D25F2FCDB8A300C386DC /* FormatPrintTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5492DE59DCD00327F7F /* FormatPrintTest.cpp */; };
+		7BD3D2602FCDB8A300C386DC /* FragDepthTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54A2DE59DCD00327F7F /* FragDepthTest.cpp */; };
+		7BD3D2612FCDB8A300C386DC /* FramebufferFetchTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54B2DE59DCD00327F7F /* FramebufferFetchTest.cpp */; };
+		7BD3D2622FCDB8A300C386DC /* FramebufferMixedSamplesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54C2DE59DCD00327F7F /* FramebufferMixedSamplesTest.cpp */; };
+		7BD3D2632FCDB8A300C386DC /* FramebufferRenderMipmapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54E2DE59DCD00327F7F /* FramebufferRenderMipmapTest.cpp */; };
+		7BD3D2642FCDB8A300C386DC /* FramebufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54F2DE59DCD00327F7F /* FramebufferTest.cpp */; };
+		7BD3D2662FCDB8A300C386DC /* GeometryShaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5502DE59DCD00327F7F /* GeometryShaderTest.cpp */; };
+		7BD3D2672FCDB8A300C386DC /* GetTexLevelParameterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5522DE59DCD00327F7F /* GetTexLevelParameterTest.cpp */; };
+		7BD3D2682FCDB8A300C386DC /* gl_enum_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF66D2DE5AA3500327F7F /* gl_enum_utils.cpp */; };
+		7BD3D2692FCDB8A300C386DC /* gl_enum_utils_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF66F2DE5AA3500327F7F /* gl_enum_utils_autogen.cpp */; };
+		7BD3D26A2FCDB8A300C386DC /* GLSLConstantFoldingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFE2F98E33B00A240A7 /* GLSLConstantFoldingTest.cpp */; };
+		7BD3D26B2FCDB8A300C386DC /* GLSLOutputTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFF2F98E33B00A240A7 /* GLSLOutputTest.cpp */; };
+		7BD3D26C2FCDB8A300C386DC /* GLSLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5632DE59E0900327F7F /* GLSLTest.cpp */; };
+		7BD3D26D2FCDB8A300C386DC /* GLSLUBTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC83E2DF1BC9100105EB6 /* GLSLUBTest.cpp */; };
+		7BD3D26E2FCDB8A300C386DC /* GLSLValidationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */; };
+		7BD3D26F2FCDB8A300C386DC /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D72DE49CE200327F7F /* GPUTestConfig.cpp */; };
+		7BD3D2702FCDB8A300C386DC /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4DD2DE49CE200327F7F /* GPUTestExpectationsParser.cpp */; };
+		7BD3D2712FCDB8A300C386DC /* GPUTestExpectationsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EC2DE59D5700327F7F /* GPUTestExpectationsTest.cpp */; };
+		7BD3D2722FCDB8A300C386DC /* ImageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5642DE59E0900327F7F /* ImageTest.cpp */; };
+		7BD3D2732FCDB8A300C386DC /* ImageTestMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC83F2DF1BC9100105EB6 /* ImageTestMetal.mm */; };
+		7BD3D2742FCDB8A300C386DC /* IncompatibleTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5662DE59E0900327F7F /* IncompatibleTextureTest.cpp */; };
+		7BD3D2752FCDB8A300C386DC /* IncompleteTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5672DE59E0900327F7F /* IncompleteTextureTest.cpp */; };
+		7BD3D2762FCDB8A300C386DC /* IndexBufferOffsetTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5682DE59E0900327F7F /* IndexBufferOffsetTest.cpp */; };
+		7BD3D2772FCDB8A300C386DC /* IndexedPointsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5692DE59E0900327F7F /* IndexedPointsTest.cpp */; };
+		7BD3D2782FCDB8A300C386DC /* InstancingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56A2DE59E0900327F7F /* InstancingTest.cpp */; };
+		7BD3D2792FCDB8A300C386DC /* KTXCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56B2DE59E0900327F7F /* KTXCompressedTextureTest.cpp */; };
+		7BD3D27A2FCDB8A300C386DC /* libEGL_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB9723C2DE4827800455D13 /* libEGL_autogen.cpp */; };
+		7BD3D27B2FCDB8A300C386DC /* libGLESv2_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB972342DE480F000455D13 /* libGLESv2_autogen.cpp */; };
+		7BD3D27C2FCDB8A300C386DC /* LineLoopTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56C2DE59E0900327F7F /* LineLoopTest.cpp */; };
+		7BD3D27D2FCDB8A300C386DC /* LinkAndRelinkTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56D2DE59E0900327F7F /* LinkAndRelinkTest.cpp */; };
+		7BD3D27E2FCDB8A300C386DC /* MatrixTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56E2DE59E0900327F7F /* MatrixTest.cpp */; };
+		7BD3D27F2FCDB8A300C386DC /* MaxTextureSizeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56F2DE59E0900327F7F /* MaxTextureSizeTest.cpp */; };
+		7BD3D2802FCDB8A300C386DC /* MemoryBarrierTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5702DE59E0900327F7F /* MemoryBarrierTest.cpp */; };
+		7BD3D2812FCDB8A300C386DC /* MemoryObjectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5712DE59E0900327F7F /* MemoryObjectTest.cpp */; };
+		7BD3D2822FCDB8A300C386DC /* MemorySizeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5722DE59E0900327F7F /* MemorySizeTest.cpp */; };
+		7BD3D2832FCDB8A300C386DC /* MipmapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5732DE59E0900327F7F /* MipmapTest.cpp */; };
+		7BD3D2842FCDB8A300C386DC /* MultiDrawTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5742DE59E0900327F7F /* MultiDrawTest.cpp */; };
+		7BD3D2852FCDB8A300C386DC /* MultisampleCompatibilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5752DE59E0900327F7F /* MultisampleCompatibilityTest.cpp */; };
+		7BD3D2862FCDB8A300C386DC /* MultisampledRenderToTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5762DE59E0900327F7F /* MultisampledRenderToTextureTest.cpp */; };
+		7BD3D2872FCDB8A300C386DC /* MultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5772DE59E0900327F7F /* MultisampleTest.cpp */; };
+		7BD3D2882FCDB8A300C386DC /* MultithreadingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5782DE59E0900327F7F /* MultithreadingTest.cpp */; };
+		7BD3D2892FCDB8A300C386DC /* MultiThreadSteps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF66A2DE5A8F100327F7F /* MultiThreadSteps.cpp */; };
+		7BD3D28A2FCDB8A300C386DC /* ObjectAllocationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57A2DE59E0900327F7F /* ObjectAllocationTest.cpp */; };
+		7BD3D28B2FCDB8A300C386DC /* OcclusionQueriesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57B2DE59E0900327F7F /* OcclusionQueriesTest.cpp */; };
+		7BD3D28C2FCDB8A300C386DC /* OSWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB971EB2DE468FE00455D13 /* OSWindow.cpp */; };
+		7BD3D28D2FCDB8A300C386DC /* PackUnpackTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57C2DE59E0900327F7F /* PackUnpackTest.cpp */; };
+		7BD3D28E2FCDB8A300C386DC /* ParallelShaderCompileTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57D2DE59E0900327F7F /* ParallelShaderCompileTest.cpp */; };
+		7BD3D28F2FCDB8A300C386DC /* PBOExtensionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57E2DE59E0900327F7F /* PBOExtensionTest.cpp */; };
+		7BD3D2902FCDB8A300C386DC /* PbufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57F2DE59E0900327F7F /* PbufferTest.cpp */; };
+		7BD3D2912FCDB8A300C386DC /* PixelLocalStorageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5802DE59E0900327F7F /* PixelLocalStorageTest.cpp */; };
+		7BD3D2922FCDB8A300C386DC /* PixmapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5812DE59E0900327F7F /* PixmapTest.cpp */; };
+		7BD3D2932FCDB8A300C386DC /* PointSpritesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5822DE59E0900327F7F /* PointSpritesTest.cpp */; };
+		7BD3D2942FCDB8A300C386DC /* PolygonModeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5832DE59E0900327F7F /* PolygonModeTest.cpp */; };
+		7BD3D2952FCDB8A300C386DC /* PolygonOffsetClampTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5842DE59E0900327F7F /* PolygonOffsetClampTest.cpp */; };
+		7BD3D2962FCDB8A300C386DC /* ProgramInterfaceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5862DE59E0900327F7F /* ProgramInterfaceTest.cpp */; };
+		7BD3D2972FCDB8A300C386DC /* ProgramParameterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5872DE59E0900327F7F /* ProgramParameterTest.cpp */; };
+		7BD3D2982FCDB8A300C386DC /* ProgramPipelineTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5882DE59E0900327F7F /* ProgramPipelineTest.cpp */; };
+		7BD3D2992FCDB8A300C386DC /* ProvokingVertexTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5892DE59E0900327F7F /* ProvokingVertexTest.cpp */; };
+		7BD3D29A2FCDB8A300C386DC /* PVRTCCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58A2DE59E0900327F7F /* PVRTCCompressedTextureTest.cpp */; };
+		7BD3D29B2FCDB8A300C386DC /* QueryObjectValidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58B2DE59E0900327F7F /* QueryObjectValidation.cpp */; };
+		7BD3D29C2FCDB8A300C386DC /* ReadOnlyFeedbackLoopTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58C2DE59E0900327F7F /* ReadOnlyFeedbackLoopTest.cpp */; };
+		7BD3D29D2FCDB8A300C386DC /* ReadPixelsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58D2DE59E0900327F7F /* ReadPixelsTest.cpp */; };
+		7BD3D29E2FCDB8A300C386DC /* RenderbufferMultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58E2DE59E0900327F7F /* RenderbufferMultisampleTest.cpp */; };
+		7BD3D29F2FCDB8A300C386DC /* RenderDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D32DE49C3B00327F7F /* RenderDoc.cpp */; };
+		7BD3D2A02FCDB8A300C386DC /* RendererTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58F2DE59E0900327F7F /* RendererTest.cpp */; };
+		7BD3D2A12FCDB8A300C386DC /* RequestExtensionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5902DE59E0900327F7F /* RequestExtensionTest.cpp */; };
+		7BD3D2A22FCDB8A300C386DC /* RobustBufferAccessBehaviorTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5912DE59E0900327F7F /* RobustBufferAccessBehaviorTest.cpp */; };
+		7BD3D2A32FCDB8A300C386DC /* RobustClientMemoryTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5922DE59E0900327F7F /* RobustClientMemoryTest.cpp */; };
+		7BD3D2A42FCDB8A300C386DC /* RobustFragmentShaderOutputTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5932DE59E0900327F7F /* RobustFragmentShaderOutputTest.cpp */; };
+		7BD3D2A52FCDB8A300C386DC /* RobustResourceInitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5942DE59E0900327F7F /* RobustResourceInitTest.cpp */; };
+		7BD3D2A62FCDB8A300C386DC /* S3TCTextureSizesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5952DE59E0900327F7F /* S3TCTextureSizesTest.cpp */; };
+		7BD3D2A72FCDB8A300C386DC /* SamplersTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5962DE59E0900327F7F /* SamplersTest.cpp */; };
+		7BD3D2A82FCDB8A300C386DC /* SampleVariablesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5972DE59E0900327F7F /* SampleVariablesTest.cpp */; };
+		7BD3D2A92FCDB8A300C386DC /* SemaphoreTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5982DE59E0900327F7F /* SemaphoreTest.cpp */; };
+		7BD3D2AC2FCDB8A300C386DC /* ShaderAlgorithmTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5992DE59E0900327F7F /* ShaderAlgorithmTest.cpp */; };
+		7BD3D2AD2FCDB8A300C386DC /* ShaderBinaryTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59A2DE59E0900327F7F /* ShaderBinaryTest.cpp */; };
+		7BD3D2AE2FCDB8A300C386DC /* ShaderInterpTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59B2DE59E0900327F7F /* ShaderInterpTest.cpp */; };
+		7BD3D2AF2FCDB8A300C386DC /* ShaderMultisampleInterpolation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59C2DE59E0900327F7F /* ShaderMultisampleInterpolation.cpp */; };
+		7BD3D2B02FCDB8A300C386DC /* ShaderNonConstGlobalInitializerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59D2DE59E0900327F7F /* ShaderNonConstGlobalInitializerTest.cpp */; };
+		7BD3D2B12FCDB8A300C386DC /* ShaderOpTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59E2DE59E0900327F7F /* ShaderOpTest.cpp */; };
+		7BD3D2B22FCDB8A300C386DC /* ShaderStorageBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59F2DE59E0900327F7F /* ShaderStorageBufferTest.cpp */; };
+		7BD3D2B32FCDB8A300C386DC /* ShadingRateQcomTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A02DE59E0900327F7F /* ShadingRateQcomTest.cpp */; };
+		7BD3D2B42FCDB8A300C386DC /* ShadowSamplerFunctionsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A12DE59E0900327F7F /* ShadowSamplerFunctionsTest.cpp */; };
+		7BD3D2B52FCDB8A300C386DC /* SimpleOperationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A22DE59E0900327F7F /* SimpleOperationTest.cpp */; };
+		7BD3D2B62FCDB8A300C386DC /* SixteenBppTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A32DE59E0900327F7F /* SixteenBppTextureTest.cpp */; };
+		7BD3D2B72FCDB8A300C386DC /* SRGBFramebufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A42DE59E0900327F7F /* SRGBFramebufferTest.cpp */; };
+		7BD3D2B82FCDB8A300C386DC /* SRGBTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A52DE59E0900327F7F /* SRGBTextureTest.cpp */; };
+		7BD3D2B92FCDB8A300C386DC /* StateChangeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A62DE59E0900327F7F /* StateChangeTest.cpp */; };
+		7BD3D2BA2FCDB8A300C386DC /* SwizzleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A72DE59E0900327F7F /* SwizzleTest.cpp */; };
+		7BD3D2BB2FCDB8A300C386DC /* system_info_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6662DE5A7A200327F7F /* system_info_util.cpp */; };
+		7BD3D2BC2FCDB8A300C386DC /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C09082F7E843B007E37DE /* TestSuite.cpp */; };
+		7BD3D2BE2FCDB8A300C386DC /* TextureFixedRateCompressionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AA2DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp */; };
+		7BD3D2BF2FCDB8A300C386DC /* TextureMultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */; };
+		7BD3D2C02FCDB8A300C386DC /* TextureRectangleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AC2DE59E0900327F7F /* TextureRectangleTest.cpp */; };
+		7BD3D2C12FCDB8A300C386DC /* TextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AD2DE59E0900327F7F /* TextureTest.cpp */; };
+		7BD3D2C22FCDB8A300C386DC /* TextureUploadFormatTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AE2DE59E0900327F7F /* TextureUploadFormatTest.cpp */; };
+		7BD3D2C32FCDB8A300C386DC /* TiledRenderingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AF2DE59E0900327F7F /* TiledRenderingTest.cpp */; };
+		7BD3D2C42FCDB8A300C386DC /* TimeoutDrawTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B02DE59E0900327F7F /* TimeoutDrawTest.cpp */; };
+		7BD3D2C52FCDB8A300C386DC /* TimerQueriesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B12DE59E0900327F7F /* TimerQueriesTest.cpp */; };
+		7BD3D2C62FCDB8A300C386DC /* TransformFeedbackTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B22DE59E0900327F7F /* TransformFeedbackTest.cpp */; };
+		7BD3D2C72FCDB8A300C386DC /* UniformBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B32DE59E0900327F7F /* UniformBufferTest.cpp */; };
+		7BD3D2C82FCDB8A300C386DC /* UniformTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B42DE59E0900327F7F /* UniformTest.cpp */; };
+		7BD3D2C92FCDB8A300C386DC /* UnpackAlignmentTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B52DE59E0900327F7F /* UnpackAlignmentTest.cpp */; };
+		7BD3D2CA2FCDB8A300C386DC /* UnpackRowLength.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B62DE59E0900327F7F /* UnpackRowLength.cpp */; };
+		7BD3D2CB2FCDB8A300C386DC /* VertexAttributeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B72DE59E0900327F7F /* VertexAttributeTest.cpp */; };
+		7BD3D2CC2FCDB8A300C386DC /* ViewportTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B82DE59E0900327F7F /* ViewportTest.cpp */; };
+		7BD3D2CD2FCDB8A300C386DC /* WebGLCompatibilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF60F2DE59E2300327F7F /* WebGLCompatibilityTest.cpp */; };
+		7BD3D2CE2FCDB8A300C386DC /* WebGLCompressedTextureAvailabilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6102DE59E2300327F7F /* WebGLCompressedTextureAvailabilityTest.cpp */; };
+		7BD3D2CF2FCDB8A300C386DC /* WebGLFramebufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6112DE59E2300327F7F /* WebGLFramebufferTest.cpp */; };
+		7BD3D2D02FCDB8A300C386DC /* WebGLReadOutsideFramebufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6122DE59E2300327F7F /* WebGLReadOutsideFramebufferTest.cpp */; };
+		7BD3D2D12FCDB8A300C386DC /* WEBGLVideoTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6132DE59E2300327F7F /* WEBGLVideoTextureTest.cpp */; };
+		7BD3D2D32FCDB8A300C386DC /* libANGLE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB972002DE47B8A00455D13 /* libANGLE.a */; };
+		7BD3D2D42FCDB8A300C386DC /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BDE1EFA2DED923F007E43DC /* libgtest.a */; };
+		7BD3D2D52FCDB8A300C386DC /* libutils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BFAF8232DE6EADC00327F7F /* libutils.a */; };
+		7BD3D2D72FCDB8A300C386DC /* ANGLEEnd2EndTestsAppLaunch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7BD3D1E92FCDB4A400C386DC /* ANGLEEnd2EndTestsAppLaunch.storyboard */; };
+		7BD3D2E62FCDBAB500C386DC /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB973A32DE48DEE00455D13 /* FrameCapture_mock.cpp */; };
+		7BD3D2E72FCDBABC00C386DC /* serialize_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB973A92DE48EB000455D13 /* serialize_mock.cpp */; };
+		7BD3D2EA2FCDBB4E00C386DC /* angle_end2end_tests_expectations.txt in Copy Test Expectations */ = {isa = PBXBuildFile; fileRef = 7BD3D2E82FCDBB4E00C386DC /* angle_end2end_tests_expectations.txt */; };
+		7BD3D2ED2FCDD69500C386DC /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB973A32DE48DEE00455D13 /* FrameCapture_mock.cpp */; };
+		7BD3D2EE2FCDD69B00C386DC /* serialize_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB973A92DE48EB000455D13 /* serialize_mock.cpp */; };
 		7BDC8C7D2993A4E000C2BDDF /* mtl_library_cache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BDC8C7A2993A4CB00C2BDDF /* mtl_library_cache.mm */; };
 		7BDE1EE82DED8DD6007E43DC /* libgmock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BDE1EE72DED8DD6007E43DC /* libgmock.a */; };
 		7BDE1EF62DED90D7007E43DC /* gtest.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 7BDE1EF22DED90B6007E43DC /* gtest.framework */; };
@@ -682,11 +889,10 @@
 		7BED4E0B2F98E35C00A240A7 /* CompilerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E0A2F98E35C00A240A7 /* CompilerTest.cpp */; };
 		7BED4E0C2F98E35C00A240A7 /* CompilerTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BED4E092F98E35C00A240A7 /* CompilerTest.h */; };
 		7BED5BE82F99F81200A240A7 /* TransformFeedback_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED5BE72F99F81200A240A7 /* TransformFeedback_unittest.cpp */; };
-		7BED6F852F99FE0700A240A7 /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD0029227449D1D002BE3BC /* FrameCapture_mock.cpp */; };
-		7BED6F862F99FE2E00A240A7 /* serialize_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C67022923766600FEDF46 /* serialize_mock.cpp */; };
 		7BED8E022F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */; };
 		7BED8E042F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */; };
 		7BED8E052F9A493200F15B70 /* AddDefaultReturnStatements.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BED8E002F9A493200F15B70 /* AddDefaultReturnStatements.h */; };
+		7BF0DF592F71612100F99E69 /* utilities_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */; };
 		7BF554C42C81EF29002B101E /* libtranslator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BF5549B2C81EDE0002B101E /* libtranslator.a */; };
 		7BF554C52C81EF4D002B101E /* TranslatorFuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */; };
 		7BF554CD2C81F028002B101E /* TranslatorFuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */; };
@@ -931,7 +1137,6 @@
 		7BFAF5C62DE59E0900327F7F /* ProgramPipelineTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5882DE59E0900327F7F /* ProgramPipelineTest.cpp */; };
 		7BFAF5C72DE59E0900327F7F /* SRGBTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A52DE59E0900327F7F /* SRGBTextureTest.cpp */; };
 		7BFAF5C82DE59E0900327F7F /* MatrixTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56E2DE59E0900327F7F /* MatrixTest.cpp */; };
-		7BFAF5C92DE59E0900327F7F /* TextureExternalUpdateTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A92DE59E0900327F7F /* TextureExternalUpdateTest.cpp */; };
 		7BFAF5CA2DE59E0900327F7F /* MultisampleCompatibilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5752DE59E0900327F7F /* MultisampleCompatibilityTest.cpp */; };
 		7BFAF5CB2DE59E0900327F7F /* PVRTCCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58A2DE59E0900327F7F /* PVRTCCompressedTextureTest.cpp */; };
 		7BFAF5CC2DE59E0900327F7F /* TextureMultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */; };
@@ -1373,7 +1578,6 @@
 		FF62F6A027448D6A00AD6EDC /* Context_gles_3_2_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F69427448D6900AD6EDC /* Context_gles_3_2_autogen.h */; };
 		FF62F6A127448D6A00AD6EDC /* gles_extensions_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F69527448D6900AD6EDC /* gles_extensions_autogen.h */; };
 		FFD0022727449647002BE3BC /* DeviceMtl.mm in Sources */ = {isa = PBXBuildFile; fileRef = FFD0022627449647002BE3BC /* DeviceMtl.mm */; };
-		FFD0029327449D1D002BE3BC /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD0029227449D1D002BE3BC /* FrameCapture_mock.cpp */; };
 		FFD0029527449D6B002BE3BC /* system_utils_apple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD0029427449D6B002BE3BC /* system_utils_apple.cpp */; };
 		FFD0029827449E12002BE3BC /* angle_version_info.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD0029627449E11002BE3BC /* angle_version_info.h */; };
 		FFD0029927449E12002BE3BC /* angle_version_info.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD0029727449E11002BE3BC /* angle_version_info.cpp */; };
@@ -1481,6 +1685,27 @@
 			remoteGlobalIDString = 7BB971FF2DE47B8A00455D13;
 			remoteInfo = "ANGLE (static)";
 		};
+		7BD3D2022FCDB8A300C386DC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BFAF76C2DE6EADC00327F7F;
+			remoteInfo = utils;
+		};
+		7BD3D2042FCDB8A300C386DC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BB971FF2DE47B8A00455D13;
+			remoteInfo = "ANGLE (static)";
+		};
+		7BD3D2EB2FCDC1D500C386DC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BD3D2002FCDB8A300C386DC;
+			remoteInfo = ANGLEEnd2EndTestsApp;
+		};
 		7BF554BE2C81EEF5002B101E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -1566,6 +1791,17 @@
 				31CD00D12491979C00486F27 /* LICENSE in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		7BD3D2D82FCDB8A300C386DC /* Copy Test Expectations */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = src/tests;
+			dstSubfolderSpec = 7;
+			files = (
+				7BD3D2EA2FCDBB4E00C386DC /* angle_end2end_tests_expectations.txt in Copy Test Expectations */,
+			);
+			name = "Copy Test Expectations";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7BDE1EE52DED8D6B007E43DC /* Product Dependencies */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -1731,7 +1967,6 @@
 		3A2C66F7292372BA00FEDF46 /* loadimage_paletted.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = loadimage_paletted.cpp; sourceTree = "<group>"; };
 		3A2C66F8292372BA00FEDF46 /* AstcDecompressorNoOp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AstcDecompressorNoOp.cpp; sourceTree = "<group>"; };
 		3A2C66F9292372BA00FEDF46 /* AstcDecompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AstcDecompressor.h; sourceTree = "<group>"; };
-		3A2C67022923766600FEDF46 /* serialize_mock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = serialize_mock.cpp; path = capture/serialize_mock.cpp; sourceTree = "<group>"; };
 		3A50108D2988C7CC007516AD /* blocklayoutMetal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = blocklayoutMetal.cpp; sourceTree = "<group>"; };
 		3A50108E2988C7CC007516AD /* blocklayoutMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blocklayoutMetal.h; sourceTree = "<group>"; };
 		3A7AA54B28E1319D009E09C2 /* PixelLocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PixelLocalStorage.h; path = src/libANGLE/PixelLocalStorage.h; sourceTree = SOURCE_ROOT; };
@@ -2045,8 +2280,8 @@
 		6ED7BDF52432CD6200E01503 /* ProgramExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramExecutable.h; sourceTree = "<group>"; };
 		6EE2FD2C22BAE99C001D369E /* eglext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eglext_angle.h; path = include/EGL/eglext_angle.h; sourceTree = "<group>"; };
 		6EE2FD2E22BAE9CD001D369E /* gl2ext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl2ext_angle.h; path = include/GLES2/gl2ext_angle.h; sourceTree = "<group>"; };
-		7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourcesPlatform.cpp; path = WebKit/SourcesPlatform.cpp; sourceTree = "<group>"; };
-		7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "SourcesPlatform-mm.mm"; path = "WebKit/SourcesPlatform-mm.mm"; sourceTree = "<group>"; };
+		7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourcesPlatform.cpp; sourceTree = "<group>"; };
+		7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "SourcesPlatform-mm.mm"; sourceTree = "<group>"; };
 		7B1538812BBC2C7A00B50C74 /* IntermRebuild.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntermRebuild.cpp; sourceTree = "<group>"; };
 		7B1538822BBC2C7A00B50C74 /* NodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeType.h; sourceTree = "<group>"; };
 		7B1538832BBC2C7A00B50C74 /* IntermRebuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntermRebuild.h; sourceTree = "<group>"; };
@@ -2121,8 +2356,8 @@
 		7B359DEF2A7CF6C10016DC59 /* ShareGroupImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareGroupImpl.h; sourceTree = "<group>"; };
 		7B359DF02A7CF6C10016DC59 /* OverlayImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverlayImpl.h; sourceTree = "<group>"; };
 		7B359DF12A7CF6C10016DC59 /* RenderTargetCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTargetCache.h; sourceTree = "<group>"; };
-		7B359DF52A7CF7AF0016DC59 /* angle_commit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = angle_commit.h; path = WebKit/angle_commit.h; sourceTree = "<group>"; };
-		7B359DF62A7CF7AF0016DC59 /* ANGLEShaderProgramVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANGLEShaderProgramVersion.h; path = WebKit/ANGLEShaderProgramVersion.h; sourceTree = "<group>"; };
+		7B359DF52A7CF7AF0016DC59 /* angle_commit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = angle_commit.h; sourceTree = "<group>"; };
+		7B359DF62A7CF7AF0016DC59 /* ANGLEShaderProgramVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEShaderProgramVersion.h; sourceTree = "<group>"; };
 		7B359DF92A7CFC750016DC59 /* mtl_pipeline_cache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mtl_pipeline_cache.mm; sourceTree = "<group>"; };
 		7B359DFA2A7CFC750016DC59 /* mtl_buffer_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_buffer_manager.h; sourceTree = "<group>"; };
 		7B359DFB2A7CFC750016DC59 /* mtl_pipeline_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_pipeline_cache.h; sourceTree = "<group>"; };
@@ -2161,7 +2396,6 @@
 		7B77FE172D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveUnusedFramebufferFetch.cpp; sourceTree = "<group>"; };
 		7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryShaderCache.cpp; sourceTree = "<group>"; };
 		7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryShaderCache.h; sourceTree = "<group>"; };
-		7B820C762DE9956000DAC5E4 /* End2EndTestsSourcesPlatform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = End2EndTestsSourcesPlatform.cpp; path = WebKit/End2EndTestsSourcesPlatform.cpp; sourceTree = "<group>"; };
 		7B8C09072F7E843B007E37DE /* TestSuite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestSuite.h; sourceTree = "<group>"; };
 		7B8C09082F7E843B007E37DE /* TestSuite.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestSuite.cpp; sourceTree = "<group>"; };
 		7B8EC83E2DF1BC9100105EB6 /* GLSLUBTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GLSLUBTest.cpp; sourceTree = "<group>"; };
@@ -2208,6 +2442,14 @@
 		7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = apple_platform_utils.mm; sourceTree = "<group>"; };
 		7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularBuffer.h; sourceTree = "<group>"; };
 		7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform_utils.h; sourceTree = "<group>"; };
+		7BD3D1E42FCDB2E800C386DC /* ANGLEEnd2EndTestsApp.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ANGLEEnd2EndTestsApp.xcconfig; sourceTree = "<group>"; };
+		7BD3D1E52FCDB43000C386DC /* ANGLEEnd2EndTestsApp-iOS-simulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ANGLEEnd2EndTestsApp-iOS-simulator.entitlements"; sourceTree = "<group>"; };
+		7BD3D1E62FCDB43E00C386DC /* ANGLEEnd2EndTestsApp-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ANGLEEnd2EndTestsApp-iOS.entitlements"; sourceTree = "<group>"; };
+		7BD3D1E92FCDB4A400C386DC /* ANGLEEnd2EndTestsAppLaunch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ANGLEEnd2EndTestsAppLaunch.storyboard; sourceTree = "<group>"; };
+		7BD3D1EB2FCDB6A600C386DC /* End2EndTestsSourcesPlatform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = End2EndTestsSourcesPlatform.cpp; sourceTree = "<group>"; };
+		7BD3D2DE2FCDB8A300C386DC /* ANGLEEnd2EndTestsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANGLEEnd2EndTestsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BD3D2DF2FCDB8A300C386DC /* ANGLEEnd2EndTestsAppInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ANGLEEnd2EndTestsAppInfo.plist; sourceTree = "<group>"; };
+		7BD3D2E82FCDBB4E00C386DC /* angle_end2end_tests_expectations.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = angle_end2end_tests_expectations.txt; sourceTree = "<group>"; };
 		7BDC8C792993A4B000C2BDDF /* FixedQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedQueue.h; sourceTree = "<group>"; };
 		7BDC8C7A2993A4CB00C2BDDF /* mtl_library_cache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mtl_library_cache.mm; sourceTree = "<group>"; };
 		7BDC8C7B2993A4CB00C2BDDF /* mtl_library_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_library_cache.h; sourceTree = "<group>"; };
@@ -2226,13 +2468,14 @@
 		7BED5BE72F99F81200A240A7 /* TransformFeedback_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedback_unittest.cpp; sourceTree = "<group>"; };
 		7BED8E002F9A493200F15B70 /* AddDefaultReturnStatements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDefaultReturnStatements.h; sourceTree = "<group>"; };
 		7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AddDefaultReturnStatements.cpp; sourceTree = "<group>"; };
+		7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utilities_unittest.cpp; sourceTree = "<group>"; };
 		7BF5549B2C81EDE0002B101E /* libtranslator.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtranslator.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TranslatorFuzzer.cpp; path = WebKit/TranslatorFuzzer.cpp; sourceTree = "<group>"; };
-		7BF554A12C81EE77002B101E /* TranslatorFuzzerCoverage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TranslatorFuzzerCoverage.mm; path = WebKit/TranslatorFuzzerCoverage.mm; sourceTree = "<group>"; };
-		7BF554A22C81EE77002B101E /* TranslatorFuzzerCoverageInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = TranslatorFuzzerCoverageInfo.plist; path = WebKit/TranslatorFuzzerCoverageInfo.plist; sourceTree = "<group>"; };
-		7BF554A32C81EE77002B101E /* TranslatorFuzzerDumpTestCase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TranslatorFuzzerDumpTestCase.cpp; path = WebKit/TranslatorFuzzerDumpTestCase.cpp; sourceTree = "<group>"; };
-		7BF554A42C81EE77002B101E /* TranslatorFuzzerStats.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TranslatorFuzzerStats.cpp; path = WebKit/TranslatorFuzzerStats.cpp; sourceTree = "<group>"; };
-		7BF554A52C81EE77002B101E /* TranslatorFuzzerSupport.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = TranslatorFuzzerSupport.h; path = WebKit/TranslatorFuzzerSupport.h; sourceTree = "<group>"; };
+		7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorFuzzer.cpp; sourceTree = "<group>"; };
+		7BF554A12C81EE77002B101E /* TranslatorFuzzerCoverage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TranslatorFuzzerCoverage.mm; sourceTree = "<group>"; };
+		7BF554A22C81EE77002B101E /* TranslatorFuzzerCoverageInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TranslatorFuzzerCoverageInfo.plist; sourceTree = "<group>"; };
+		7BF554A32C81EE77002B101E /* TranslatorFuzzerDumpTestCase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorFuzzerDumpTestCase.cpp; sourceTree = "<group>"; };
+		7BF554A42C81EE77002B101E /* TranslatorFuzzerStats.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorFuzzerStats.cpp; sourceTree = "<group>"; };
+		7BF554A52C81EE77002B101E /* TranslatorFuzzerSupport.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = TranslatorFuzzerSupport.h; sourceTree = "<group>"; };
 		7BF554AA2C81EEB1002B101E /* ANGLETranslatorFuzzerCoverage.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ANGLETranslatorFuzzerCoverage.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BF554B62C81EEDB002B101E /* ANGLETranslatorFuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ANGLETranslatorFuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BF554C62C81EFF9002B101E /* ANGLETranslatorFuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ANGLETranslatorFuzzer.xcconfig; sourceTree = "<group>"; };
@@ -2402,7 +2645,6 @@
 		7BFAF5A52DE59E0900327F7F /* SRGBTextureTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SRGBTextureTest.cpp; sourceTree = "<group>"; };
 		7BFAF5A62DE59E0900327F7F /* StateChangeTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StateChangeTest.cpp; sourceTree = "<group>"; };
 		7BFAF5A72DE59E0900327F7F /* SwizzleTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SwizzleTest.cpp; sourceTree = "<group>"; };
-		7BFAF5A92DE59E0900327F7F /* TextureExternalUpdateTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureExternalUpdateTest.cpp; sourceTree = "<group>"; };
 		7BFAF5AA2DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureFixedRateCompressionTest.cpp; sourceTree = "<group>"; };
 		7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureMultisampleTest.cpp; sourceTree = "<group>"; };
 		7BFAF5AC2DE59E0900327F7F /* TextureRectangleTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureRectangleTest.cpp; sourceTree = "<group>"; };
@@ -2471,8 +2713,8 @@
 		7BFAF6762DE5C0D200327F7F /* IOSPixmap.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = IOSPixmap.mm; sourceTree = "<group>"; };
 		7BFAF6772DE5C0D200327F7F /* IOSWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSWindow.h; sourceTree = "<group>"; };
 		7BFAF6782DE5C0D200327F7F /* IOSWindow.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = IOSWindow.mm; sourceTree = "<group>"; };
-		7BFAF67E2DE5C61400327F7F /* UtilsSourcesPlatform-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "UtilsSourcesPlatform-mm.mm"; path = "WebKit/UtilsSourcesPlatform-mm.mm"; sourceTree = "<group>"; };
-		7BFAF67F2DE5C61400327F7F /* UtilsSourcesPlatform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UtilsSourcesPlatform.cpp; path = WebKit/UtilsSourcesPlatform.cpp; sourceTree = "<group>"; };
+		7BFAF67E2DE5C61400327F7F /* UtilsSourcesPlatform-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UtilsSourcesPlatform-mm.mm"; sourceTree = "<group>"; };
+		7BFAF67F2DE5C61400327F7F /* UtilsSourcesPlatform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UtilsSourcesPlatform.cpp; sourceTree = "<group>"; };
 		7BFAF7692DE6E9D900327F7F /* ANGLEUnitTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ANGLEUnitTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BFAF8232DE6EADC00327F7F /* libutils.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libutils.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BFAF8332DE6EBA700327F7F /* ANGLEUnitTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ANGLEUnitTests.xcconfig; sourceTree = "<group>"; };
@@ -2747,7 +2989,6 @@
 		FF81FF5A2581919700894E24 /* MapFunctionsToDefinitions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapFunctionsToDefinitions.cpp; sourceTree = "<group>"; };
 		FF81FF952581A39700894E24 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		FFD0022627449647002BE3BC /* DeviceMtl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceMtl.mm; sourceTree = "<group>"; };
-		FFD0029227449D1D002BE3BC /* FrameCapture_mock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameCapture_mock.cpp; path = capture/FrameCapture_mock.cpp; sourceTree = "<group>"; };
 		FFD0029427449D6B002BE3BC /* system_utils_apple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = system_utils_apple.cpp; sourceTree = "<group>"; };
 		FFD0029627449E11002BE3BC /* angle_version_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = angle_version_info.h; sourceTree = "<group>"; };
 		FFD0029727449E11002BE3BC /* angle_version_info.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = angle_version_info.cpp; sourceTree = "<group>"; };
@@ -2785,6 +3026,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B820C562DE992CD00DAC5E4 /* libtranslator.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BD3D2D22FCDB8A300C386DC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BD3D2D32FCDB8A300C386DC /* libANGLE.a in Frameworks */,
+				7BD3D2D42FCDB8A300C386DC /* libgtest.a in Frameworks */,
+				7BD3D2D52FCDB8A300C386DC /* libutils.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3147,7 +3398,6 @@
 				5C1DBC6B1B0438D200235552 /* Framebuffer.h */,
 				5C1DBC6C1B0438D200235552 /* FramebufferAttachment.cpp */,
 				5C1DBC6D1B0438D200235552 /* FramebufferAttachment.h */,
-				FFD0029227449D1D002BE3BC /* FrameCapture_mock.cpp */,
 				5CCD595D2284F7960018F2D8 /* GLES1Renderer.cpp */,
 				5CCD59522284F7940018F2D8 /* GLES1Renderer.h */,
 				5CCD59552284F7950018F2D8 /* GLES1State.cpp */,
@@ -3210,7 +3460,6 @@
 				5C1DBDB81B0438D200235552 /* Sampler.h */,
 				A303071C2305F7C4002DA972 /* Semaphore.cpp */,
 				A303071D2305F7C4002DA972 /* Semaphore.h */,
-				3A2C67022923766600FEDF46 /* serialize_mock.cpp */,
 				5C1DBDB91B0438D200235552 /* Shader.cpp */,
 				5C1DBDBA1B0438D200235552 /* Shader.h */,
 				7B359DE82A7CEF9E0016DC59 /* ShareGroup.cpp */,
@@ -3611,6 +3860,7 @@
 				7B5B1F0F2F0FC73B00B5D57B /* unsafe_buffers.h */,
 				5CC7D46819102620000B8C1F /* utilities.cpp */,
 				5CC7D46919102620000B8C1F /* utilities.h */,
+				7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */,
 				31A331C51EA5ED5F00FD2203 /* vector_utils.h */,
 				7BFAF8DC2DE6EDE400327F7F /* vector_utils_unittest.cpp */,
 				3A2C66EF29236E7D00FEDF46 /* WorkerThread.cpp */,
@@ -3675,6 +3925,9 @@
 				31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */,
 				7BB972052DE47BDC00455D13 /* ANGLE-static.xcconfig */,
 				7BB971C82DE463A800455D13 /* ANGLEEnd2EndTests.xcconfig */,
+				7BD3D1E52FCDB43000C386DC /* ANGLEEnd2EndTestsApp-iOS-simulator.entitlements */,
+				7BD3D1E62FCDB43E00C386DC /* ANGLEEnd2EndTestsApp-iOS.entitlements */,
+				7BD3D1E42FCDB2E800C386DC /* ANGLEEnd2EndTestsApp.xcconfig */,
 				FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */,
 				7B9829372E0EB05200F1E9FB /* ANGLETranslator.xcconfig */,
 				7BF554C62C81EFF9002B101E /* ANGLETranslatorFuzzer.xcconfig */,
@@ -3713,8 +3966,10 @@
 			isa = PBXGroup;
 			children = (
 				7B359DF52A7CF7AF0016DC59 /* angle_commit.h */,
+				7BD3D2DF2FCDB8A300C386DC /* ANGLEEnd2EndTestsAppInfo.plist */,
+				7BD3D1E92FCDB4A400C386DC /* ANGLEEnd2EndTestsAppLaunch.storyboard */,
 				7B359DF62A7CF7AF0016DC59 /* ANGLEShaderProgramVersion.h */,
-				7B820C762DE9956000DAC5E4 /* End2EndTestsSourcesPlatform.cpp */,
+				7BD3D1EB2FCDB6A600C386DC /* End2EndTestsSourcesPlatform.cpp */,
 				7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */,
 				7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */,
 				7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */,
@@ -3726,7 +3981,7 @@
 				7BFAF67E2DE5C61400327F7F /* UtilsSourcesPlatform-mm.mm */,
 				7BFAF67F2DE5C61400327F7F /* UtilsSourcesPlatform.cpp */,
 			);
-			name = WebKit;
+			path = WebKit;
 			sourceTree = "<group>";
 		};
 		7B359D5F2A7CED180016DC59 /* glsl */ = {
@@ -3849,6 +4104,7 @@
 				7BB973AB2DE48EE300455D13 /* gl_tests */,
 				7BFAF4D52DE49CBA00327F7F /* test_expectations */,
 				7BFAF4B02DE4947900327F7F /* test_utils */,
+				7BD3D2E82FCDBB4E00C386DC /* angle_end2end_tests_expectations.txt */,
 				7BB971C32DE457E100455D13 /* angle_end2end_tests_main.cpp */,
 				7BFAF92B2DE6F99B00327F7F /* angle_unittest_main.cpp */,
 				7BFAF92C2DE6F99B00327F7F /* angle_unittests_utils.h */,
@@ -4038,7 +4294,6 @@
 				7BFAF5A52DE59E0900327F7F /* SRGBTextureTest.cpp */,
 				7BFAF5A62DE59E0900327F7F /* StateChangeTest.cpp */,
 				7BFAF5A72DE59E0900327F7F /* SwizzleTest.cpp */,
-				7BFAF5A92DE59E0900327F7F /* TextureExternalUpdateTest.cpp */,
 				7BFAF5AA2DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp */,
 				7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */,
 				7BFAF5AC2DE59E0900327F7F /* TextureRectangleTest.cpp */,
@@ -4319,6 +4574,7 @@
 				7BFAF7692DE6E9D900327F7F /* ANGLEUnitTests */,
 				7BFAF8232DE6EADC00327F7F /* libutils.a */,
 				7B533A8F2E0A933D0069B90F /* ANGLETranslator */,
+				7BD3D2DE2FCDB8A300C386DC /* ANGLEEnd2EndTestsApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5014,6 +5270,28 @@
 			productReference = 7BB972002DE47B8A00455D13 /* libANGLE.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		7BD3D2002FCDB8A300C386DC /* ANGLEEnd2EndTestsApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7BD3D2DA2FCDB8A300C386DC /* Build configuration list for PBXNativeTarget "ANGLEEnd2EndTestsApp" */;
+			buildPhases = (
+				7BD3D2052FCDB8A300C386DC /* Sources */,
+				7BD3D2D22FCDB8A300C386DC /* Frameworks */,
+				7BD3D2D62FCDB8A300C386DC /* Resources */,
+				7BD3D2D82FCDB8A300C386DC /* Copy Test Expectations */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7BD3D2012FCDB8A300C386DC /* PBXTargetDependency */,
+				7BD3D2032FCDB8A300C386DC /* PBXTargetDependency */,
+			);
+			name = ANGLEEnd2EndTestsApp;
+			packageProductDependencies = (
+			);
+			productName = ANGLEEnd2EndTestsApp;
+			productReference = 7BD3D2DE2FCDB8A300C386DC /* ANGLEEnd2EndTestsApp.app */;
+			productType = "com.apple.product-type.application";
+		};
 		7BE4AA532DE4544900A16F7E /* ANGLEEnd2EndTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7BE4AA5B2DE4544900A16F7E /* Build configuration list for PBXNativeTarget "ANGLEEnd2EndTests" */;
@@ -5181,7 +5459,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					31CDFDF32491819E00486F27 = {
 						CreatedOnToolsVersion = 12.0;
@@ -5244,11 +5522,20 @@
 				7BE4AA532DE4544900A16F7E /* ANGLEEnd2EndTests */,
 				7BFAF6882DE6E9D900327F7F /* ANGLEUnitTests */,
 				7B533A852E0A933D0069B90F /* ANGLETranslator */,
+				7BD3D2002FCDB8A300C386DC /* ANGLEEnd2EndTestsApp */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		7BD3D2D62FCDB8A300C386DC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BD3D2D72FCDB8A300C386DC /* ANGLEEnd2EndTestsAppLaunch.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7BF554A82C81EEB1002B101E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5452,7 +5739,7 @@
 				DF83E3372639FE18000825EF /* FramebufferAttachment.cpp in Sources */,
 				7B76083C289832BD000012A1 /* FramebufferImpl.cpp in Sources */,
 				DF83E3892639FEB8000825EF /* FrameBufferMtl.mm in Sources */,
-				FFD0029327449D1D002BE3BC /* FrameCapture_mock.cpp in Sources */,
+				7BD3D2ED2FCDD69500C386DC /* FrameCapture_mock.cpp in Sources */,
 				DF83E2D72639FD84000825EF /* FunctionLookup.cpp in Sources */,
 				DF83E2E82639FE17000825EF /* GLES1Renderer.cpp in Sources */,
 				DF83E2ED2639FE17000825EF /* GLES1State.cpp in Sources */,
@@ -5607,7 +5894,7 @@
 				7B359DA92A7CEDAA0016DC59 /* SeparateCompoundExpressions.cpp in Sources */,
 				DF83E28A2639FD33000825EF /* SeparateDeclarations.cpp in Sources */,
 				FF194FE227432CC3006A97A3 /* SeparateStructFromUniformDeclarations.cpp in Sources */,
-				3A2C67032923766600FEDF46 /* serialize_mock.cpp in Sources */,
+				7BD3D2EE2FCDD69B00C386DC /* serialize_mock.cpp in Sources */,
 				3A0EBF9C2980B49D002C72BC /* sha1.cc in Sources */,
 				DF83E2EE2639FE17000825EF /* Shader.cpp in Sources */,
 				DF83E3922639FED4000825EF /* ShaderImpl.cpp in Sources */,
@@ -5747,6 +6034,7 @@
 				7BB9734A2DE4873000455D13 /* FramebufferAttachment.cpp in Sources */,
 				7BB973802DE4888800455D13 /* FramebufferImpl.cpp in Sources */,
 				7BB973832DE4888800455D13 /* FrameBufferMtl.mm in Sources */,
+				7BD3D2E62FCDBAB500C386DC /* FrameCapture_mock.cpp in Sources */,
 				7BB973492DE4873000455D13 /* GLES1Renderer.cpp in Sources */,
 				7BB973272DE4873000455D13 /* GLES1State.cpp in Sources */,
 				7BB973372DE4873000455D13 /* gles_extensions_autogen.cpp in Sources */,
@@ -5816,6 +6104,7 @@
 				7BB973542DE4873000455D13 /* Sampler.cpp in Sources */,
 				7BB973732DE4888800455D13 /* SamplerMtl.mm in Sources */,
 				7BB9731A2DE4873000455D13 /* Semaphore.cpp in Sources */,
+				7BD3D2E72FCDBABC00C386DC /* serialize_mock.cpp in Sources */,
 				7BB9735F2DE4877900455D13 /* sha1.cc in Sources */,
 				7BB973312DE4873000455D13 /* Shader.cpp in Sources */,
 				7BB973772DE4888800455D13 /* ShaderImpl.cpp in Sources */,
@@ -5851,6 +6140,213 @@
 				7BB973922DE4888800455D13 /* VertexArrayMtl.mm in Sources */,
 				7BB973402DE4873000455D13 /* VertexAttribute.cpp in Sources */,
 				7BB973A72DE48E4A00455D13 /* WorkerThread.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BD3D2052FCDB8A300C386DC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BD3D2062FCDB8A300C386DC /* ActiveTextureCacheTest.cpp in Sources */,
+				7BD3D2072FCDB8A300C386DC /* AdvancedBlendTest.cpp in Sources */,
+				7BD3D2082FCDB8A300C386DC /* angle_end2end_tests_main.cpp in Sources */,
+				7BD3D2092FCDB8A300C386DC /* angle_test_configs.cpp in Sources */,
+				7BD3D20A2FCDB8A300C386DC /* angle_test_instantiate.cpp in Sources */,
+				7BD3D20B2FCDB8A300C386DC /* angle_test_instantiate_apple.mm in Sources */,
+				7BD3D20C2FCDB8A300C386DC /* angle_test_platform.cpp in Sources */,
+				7BD3D20D2FCDB8A300C386DC /* ANGLETest.cpp in Sources */,
+				7BD3D20E2FCDB8A300C386DC /* AtomicCounterBufferTest.cpp in Sources */,
+				7BD3D20F2FCDB8A300C386DC /* AttributeLayoutTest.cpp in Sources */,
+				7BD3D2102FCDB8A300C386DC /* BaseInstanceOverflowTest.cpp in Sources */,
+				7BD3D2112FCDB8A300C386DC /* BindGeneratesResourceTest.cpp in Sources */,
+				7BD3D2122FCDB8A300C386DC /* BindUniformLocationTest.cpp in Sources */,
+				7BD3D2132FCDB8A300C386DC /* BlendFuncExtendedTest.cpp in Sources */,
+				7BD3D2142FCDB8A300C386DC /* BlendIntegerTest.cpp in Sources */,
+				7BD3D2152FCDB8A300C386DC /* BlendMinMaxTest.cpp in Sources */,
+				7BD3D2162FCDB8A300C386DC /* BlendPackedTest.cpp in Sources */,
+				7BD3D2172FCDB8A300C386DC /* BlitFramebufferANGLETest.cpp in Sources */,
+				7BD3D2182FCDB8A300C386DC /* BlobCacheTest.cpp in Sources */,
+				7BD3D2192FCDB8A300C386DC /* BPTCCompressedTextureTest.cpp in Sources */,
+				7BD3D21A2FCDB8A300C386DC /* BufferDataTest.cpp in Sources */,
+				7BD3D21B2FCDB8A300C386DC /* BufferPoolTestMetal.mm in Sources */,
+				7BD3D21C2FCDB8A300C386DC /* BuiltinVariableTest.cpp in Sources */,
+				7BD3D21D2FCDB8A300C386DC /* ClearTest.cpp in Sources */,
+				7BD3D21E2FCDB8A300C386DC /* ClientArraysTest.cpp in Sources */,
+				7BD3D21F2FCDB8A300C386DC /* ClipControlTest.cpp in Sources */,
+				7BD3D2202FCDB8A300C386DC /* ClipDistanceTest.cpp in Sources */,
+				7BD3D2212FCDB8A300C386DC /* ColorMaskTest.cpp in Sources */,
+				7BD3D2222FCDB8A300C386DC /* CompressedTextureFormatsTest.cpp in Sources */,
+				7BD3D2232FCDB8A300C386DC /* ComputeShaderTest.cpp in Sources */,
+				7BD3D2242FCDB8A300C386DC /* ContextLostTest.cpp in Sources */,
+				7BD3D2252FCDB8A300C386DC /* ContextNoErrorTest.cpp in Sources */,
+				7BD3D2262FCDB8A300C386DC /* CopyCompressedTextureTest.cpp in Sources */,
+				7BD3D2272FCDB8A300C386DC /* CopyTexImageTest.cpp in Sources */,
+				7BD3D2282FCDB8A300C386DC /* CopyTexture3DTest.cpp in Sources */,
+				7BD3D2292FCDB8A300C386DC /* CopyTextureTest.cpp in Sources */,
+				7BD3D22A2FCDB8A300C386DC /* CubeMapTextureTest.cpp in Sources */,
+				7BD3D22B2FCDB8A300C386DC /* DebugMarkerTest.cpp in Sources */,
+				7BD3D22C2FCDB8A300C386DC /* DebugTest.cpp in Sources */,
+				7BD3D22D2FCDB8A300C386DC /* DepthStencilFormatsTest.cpp in Sources */,
+				7BD3D22E2FCDB8A300C386DC /* DepthStencilTest.cpp in Sources */,
+				7BD3D22F2FCDB8A300C386DC /* DepthWriteTest.cpp in Sources */,
+				7BD3D2302FCDB8A300C386DC /* DifferentStencilMasksTest.cpp in Sources */,
+				7BD3D2312FCDB8A300C386DC /* DiscardFramebufferEXTTest.cpp in Sources */,
+				7BD3D2322FCDB8A300C386DC /* DrawBaseVertexBaseInstanceTest.cpp in Sources */,
+				7BD3D2332FCDB8A300C386DC /* DrawBaseVertexVariantsTest.cpp in Sources */,
+				7BD3D2342FCDB8A300C386DC /* DrawBuffersTest.cpp in Sources */,
+				7BD3D2352FCDB8A300C386DC /* DrawElementsIndirectTest.cpp in Sources */,
+				7BD3D2362FCDB8A300C386DC /* DrawElementsTest.cpp in Sources */,
+				7BD3D2372FCDB8A300C386DC /* DrawRangeElementsTest.cpp in Sources */,
+				7BD3D2382FCDB8A300C386DC /* DXT1CompressedTextureTest.cpp in Sources */,
+				7BD3D2392FCDB8A300C386DC /* DXTSRGBCompressedTextureTest.cpp in Sources */,
+				7BD3D23A2FCDB8A300C386DC /* EGLBackwardsCompatibleContextTest.cpp in Sources */,
+				7BD3D23B2FCDB8A300C386DC /* EGLBlobCacheTest.cpp in Sources */,
+				7BD3D23C2FCDB8A300C386DC /* EGLBufferAgeTest.cpp in Sources */,
+				7BD3D23D2FCDB8A300C386DC /* EGLChooseConfigTest.cpp in Sources */,
+				7BD3D23E2FCDB8A300C386DC /* EGLContextASANTest.cpp in Sources */,
+				7BD3D23F2FCDB8A300C386DC /* EGLContextCompatibilityTest.cpp in Sources */,
+				7BD3D2402FCDB8A300C386DC /* EGLContextSharingTest.cpp in Sources */,
+				7BD3D2412FCDB8A300C386DC /* EGLCreateContextAttribsTest.cpp in Sources */,
+				7BD3D2422FCDB8A300C386DC /* EGLDebugTest.cpp in Sources */,
+				7BD3D2432FCDB8A300C386DC /* EGLDisplaySelectionTest.cpp in Sources */,
+				7BD3D2442FCDB8A300C386DC /* EGLDisplayTest.cpp in Sources */,
+				7BD3D2452FCDB8A300C386DC /* EGLFeatureControlTest.cpp in Sources */,
+				7BD3D2462FCDB8A300C386DC /* EGLIOSurfaceClientBufferTest.cpp in Sources */,
+				7BD3D2472FCDB8A300C386DC /* EGLLockSurface3Test.cpp in Sources */,
+				7BD3D2482FCDB8A300C386DC /* EGLMemoryUsageReportTest.cpp in Sources */,
+				7BD3D2492FCDB8A300C386DC /* EGLMultiContextTest.cpp in Sources */,
+				7BD3D24A2FCDB8A300C386DC /* EGLNoConfigContextTest.cpp in Sources */,
+				7BD3D24B2FCDB8A300C386DC /* EGLNoErrorTest.cpp in Sources */,
+				7BD3D24C2FCDB8A300C386DC /* EGLPrintEGLinfoTest.cpp in Sources */,
+				7BD3D24D2FCDB8A300C386DC /* EGLProgramCacheControlTest.cpp in Sources */,
+				7BD3D24E2FCDB8A300C386DC /* EGLProtectedContentTest.cpp in Sources */,
+				7BD3D24F2FCDB8A300C386DC /* EGLQueryContextTest.cpp in Sources */,
+				7BD3D2502FCDB8A300C386DC /* EGLReadinessCheckTest.cpp in Sources */,
+				7BD3D2512FCDB8A300C386DC /* EGLRecordableTest.cpp in Sources */,
+				7BD3D2522FCDB8A300C386DC /* EGLRobustnessTest.cpp in Sources */,
+				7BD3D2532FCDB8A300C386DC /* EGLSurfacelessContextTest.cpp in Sources */,
+				7BD3D2542FCDB8A300C386DC /* EGLSurfaceTest.cpp in Sources */,
+				7BD3D2552FCDB8A300C386DC /* EGLSyncTest.cpp in Sources */,
+				7BD3D2562FCDB8A300C386DC /* EGLSyncTestMetalSharedEvent.mm in Sources */,
+				7BD3D2572FCDB8A300C386DC /* EGLWaitUntilWorkScheduledTest.cpp in Sources */,
+				7BD3D2582FCDB8A300C386DC /* End2EndTestsSourcesPlatform.cpp in Sources */,
+				7BD3D2592FCDB8A300C386DC /* ErrorMessages.cpp in Sources */,
+				7BD3D25A2FCDB8A300C386DC /* ETCTextureTest.cpp in Sources */,
+				7BD3D25B2FCDB8A300C386DC /* ExternalBufferTest.cpp in Sources */,
+				7BD3D25C2FCDB8A300C386DC /* ExternalWrapTest.cpp in Sources */,
+				7BD3D25D2FCDB8A300C386DC /* FenceSyncTests.cpp in Sources */,
+				7BD3D25E2FCDB8A300C386DC /* FloatingPointSurfaceTest.cpp in Sources */,
+				7BD3D25F2FCDB8A300C386DC /* FormatPrintTest.cpp in Sources */,
+				7BD3D2602FCDB8A300C386DC /* FragDepthTest.cpp in Sources */,
+				7BD3D2612FCDB8A300C386DC /* FramebufferFetchTest.cpp in Sources */,
+				7BD3D2622FCDB8A300C386DC /* FramebufferMixedSamplesTest.cpp in Sources */,
+				7BD3D2632FCDB8A300C386DC /* FramebufferRenderMipmapTest.cpp in Sources */,
+				7BD3D2642FCDB8A300C386DC /* FramebufferTest.cpp in Sources */,
+				7BD3D2662FCDB8A300C386DC /* GeometryShaderTest.cpp in Sources */,
+				7BD3D2672FCDB8A300C386DC /* GetTexLevelParameterTest.cpp in Sources */,
+				7BD3D2682FCDB8A300C386DC /* gl_enum_utils.cpp in Sources */,
+				7BD3D2692FCDB8A300C386DC /* gl_enum_utils_autogen.cpp in Sources */,
+				7BD3D26A2FCDB8A300C386DC /* GLSLConstantFoldingTest.cpp in Sources */,
+				7BD3D26B2FCDB8A300C386DC /* GLSLOutputTest.cpp in Sources */,
+				7BD3D26C2FCDB8A300C386DC /* GLSLTest.cpp in Sources */,
+				7BD3D26D2FCDB8A300C386DC /* GLSLUBTest.cpp in Sources */,
+				7BD3D26E2FCDB8A300C386DC /* GLSLValidationTest.cpp in Sources */,
+				7BD3D26F2FCDB8A300C386DC /* GPUTestConfig.cpp in Sources */,
+				7BD3D2702FCDB8A300C386DC /* GPUTestExpectationsParser.cpp in Sources */,
+				7BD3D2712FCDB8A300C386DC /* GPUTestExpectationsTest.cpp in Sources */,
+				7BD3D2722FCDB8A300C386DC /* ImageTest.cpp in Sources */,
+				7BD3D2732FCDB8A300C386DC /* ImageTestMetal.mm in Sources */,
+				7BD3D2742FCDB8A300C386DC /* IncompatibleTextureTest.cpp in Sources */,
+				7BD3D2752FCDB8A300C386DC /* IncompleteTextureTest.cpp in Sources */,
+				7BD3D2762FCDB8A300C386DC /* IndexBufferOffsetTest.cpp in Sources */,
+				7BD3D2772FCDB8A300C386DC /* IndexedPointsTest.cpp in Sources */,
+				7BD3D2782FCDB8A300C386DC /* InstancingTest.cpp in Sources */,
+				7BD3D2792FCDB8A300C386DC /* KTXCompressedTextureTest.cpp in Sources */,
+				7BD3D27A2FCDB8A300C386DC /* libEGL_autogen.cpp in Sources */,
+				7BD3D27B2FCDB8A300C386DC /* libGLESv2_autogen.cpp in Sources */,
+				7BD3D27C2FCDB8A300C386DC /* LineLoopTest.cpp in Sources */,
+				7BD3D27D2FCDB8A300C386DC /* LinkAndRelinkTest.cpp in Sources */,
+				7BD3D27E2FCDB8A300C386DC /* MatrixTest.cpp in Sources */,
+				7BD3D27F2FCDB8A300C386DC /* MaxTextureSizeTest.cpp in Sources */,
+				7BD3D2802FCDB8A300C386DC /* MemoryBarrierTest.cpp in Sources */,
+				7BD3D2812FCDB8A300C386DC /* MemoryObjectTest.cpp in Sources */,
+				7BD3D2822FCDB8A300C386DC /* MemorySizeTest.cpp in Sources */,
+				7BD3D2832FCDB8A300C386DC /* MipmapTest.cpp in Sources */,
+				7BD3D2842FCDB8A300C386DC /* MultiDrawTest.cpp in Sources */,
+				7BD3D2852FCDB8A300C386DC /* MultisampleCompatibilityTest.cpp in Sources */,
+				7BD3D2862FCDB8A300C386DC /* MultisampledRenderToTextureTest.cpp in Sources */,
+				7BD3D2872FCDB8A300C386DC /* MultisampleTest.cpp in Sources */,
+				7BD3D2882FCDB8A300C386DC /* MultithreadingTest.cpp in Sources */,
+				7BD3D2892FCDB8A300C386DC /* MultiThreadSteps.cpp in Sources */,
+				7BD3D28A2FCDB8A300C386DC /* ObjectAllocationTest.cpp in Sources */,
+				7BD3D28B2FCDB8A300C386DC /* OcclusionQueriesTest.cpp in Sources */,
+				7BD3D28C2FCDB8A300C386DC /* OSWindow.cpp in Sources */,
+				7BD3D28D2FCDB8A300C386DC /* PackUnpackTest.cpp in Sources */,
+				7BD3D28E2FCDB8A300C386DC /* ParallelShaderCompileTest.cpp in Sources */,
+				7BD3D28F2FCDB8A300C386DC /* PBOExtensionTest.cpp in Sources */,
+				7BD3D2902FCDB8A300C386DC /* PbufferTest.cpp in Sources */,
+				7BD3D2912FCDB8A300C386DC /* PixelLocalStorageTest.cpp in Sources */,
+				7BD3D2922FCDB8A300C386DC /* PixmapTest.cpp in Sources */,
+				7BD3D2932FCDB8A300C386DC /* PointSpritesTest.cpp in Sources */,
+				7BD3D2942FCDB8A300C386DC /* PolygonModeTest.cpp in Sources */,
+				7BD3D2952FCDB8A300C386DC /* PolygonOffsetClampTest.cpp in Sources */,
+				7BD3D2962FCDB8A300C386DC /* ProgramInterfaceTest.cpp in Sources */,
+				7BD3D2972FCDB8A300C386DC /* ProgramParameterTest.cpp in Sources */,
+				7BD3D2982FCDB8A300C386DC /* ProgramPipelineTest.cpp in Sources */,
+				7BD3D2992FCDB8A300C386DC /* ProvokingVertexTest.cpp in Sources */,
+				7BD3D29A2FCDB8A300C386DC /* PVRTCCompressedTextureTest.cpp in Sources */,
+				7BD3D29B2FCDB8A300C386DC /* QueryObjectValidation.cpp in Sources */,
+				7BD3D29C2FCDB8A300C386DC /* ReadOnlyFeedbackLoopTest.cpp in Sources */,
+				7BD3D29D2FCDB8A300C386DC /* ReadPixelsTest.cpp in Sources */,
+				7BD3D29E2FCDB8A300C386DC /* RenderbufferMultisampleTest.cpp in Sources */,
+				7BD3D29F2FCDB8A300C386DC /* RenderDoc.cpp in Sources */,
+				7BD3D2A02FCDB8A300C386DC /* RendererTest.cpp in Sources */,
+				7BD3D2A12FCDB8A300C386DC /* RequestExtensionTest.cpp in Sources */,
+				7BD3D2A22FCDB8A300C386DC /* RobustBufferAccessBehaviorTest.cpp in Sources */,
+				7BD3D2A32FCDB8A300C386DC /* RobustClientMemoryTest.cpp in Sources */,
+				7BD3D2A42FCDB8A300C386DC /* RobustFragmentShaderOutputTest.cpp in Sources */,
+				7BD3D2A52FCDB8A300C386DC /* RobustResourceInitTest.cpp in Sources */,
+				7BD3D2A62FCDB8A300C386DC /* S3TCTextureSizesTest.cpp in Sources */,
+				7BD3D2A72FCDB8A300C386DC /* SamplersTest.cpp in Sources */,
+				7BD3D2A82FCDB8A300C386DC /* SampleVariablesTest.cpp in Sources */,
+				7BD3D2A92FCDB8A300C386DC /* SemaphoreTest.cpp in Sources */,
+				7BD3D2AC2FCDB8A300C386DC /* ShaderAlgorithmTest.cpp in Sources */,
+				7BD3D2AD2FCDB8A300C386DC /* ShaderBinaryTest.cpp in Sources */,
+				7BD3D2AE2FCDB8A300C386DC /* ShaderInterpTest.cpp in Sources */,
+				7BD3D2AF2FCDB8A300C386DC /* ShaderMultisampleInterpolation.cpp in Sources */,
+				7BD3D2B02FCDB8A300C386DC /* ShaderNonConstGlobalInitializerTest.cpp in Sources */,
+				7BD3D2B12FCDB8A300C386DC /* ShaderOpTest.cpp in Sources */,
+				7BD3D2B22FCDB8A300C386DC /* ShaderStorageBufferTest.cpp in Sources */,
+				7BD3D2B32FCDB8A300C386DC /* ShadingRateQcomTest.cpp in Sources */,
+				7BD3D2B42FCDB8A300C386DC /* ShadowSamplerFunctionsTest.cpp in Sources */,
+				7BD3D2B52FCDB8A300C386DC /* SimpleOperationTest.cpp in Sources */,
+				7BD3D2B62FCDB8A300C386DC /* SixteenBppTextureTest.cpp in Sources */,
+				7BD3D2B72FCDB8A300C386DC /* SRGBFramebufferTest.cpp in Sources */,
+				7BD3D2B82FCDB8A300C386DC /* SRGBTextureTest.cpp in Sources */,
+				7BD3D2B92FCDB8A300C386DC /* StateChangeTest.cpp in Sources */,
+				7BD3D2BA2FCDB8A300C386DC /* SwizzleTest.cpp in Sources */,
+				7BD3D2BB2FCDB8A300C386DC /* system_info_util.cpp in Sources */,
+				7BD3D2BC2FCDB8A300C386DC /* TestSuite.cpp in Sources */,
+				7BD3D2BE2FCDB8A300C386DC /* TextureFixedRateCompressionTest.cpp in Sources */,
+				7BD3D2BF2FCDB8A300C386DC /* TextureMultisampleTest.cpp in Sources */,
+				7BD3D2C02FCDB8A300C386DC /* TextureRectangleTest.cpp in Sources */,
+				7BD3D2C12FCDB8A300C386DC /* TextureTest.cpp in Sources */,
+				7BD3D2C22FCDB8A300C386DC /* TextureUploadFormatTest.cpp in Sources */,
+				7BD3D2C32FCDB8A300C386DC /* TiledRenderingTest.cpp in Sources */,
+				7BD3D2C42FCDB8A300C386DC /* TimeoutDrawTest.cpp in Sources */,
+				7BD3D2C52FCDB8A300C386DC /* TimerQueriesTest.cpp in Sources */,
+				7BD3D2C62FCDB8A300C386DC /* TransformFeedbackTest.cpp in Sources */,
+				7BD3D2C72FCDB8A300C386DC /* UniformBufferTest.cpp in Sources */,
+				7BD3D2C82FCDB8A300C386DC /* UniformTest.cpp in Sources */,
+				7BD3D2C92FCDB8A300C386DC /* UnpackAlignmentTest.cpp in Sources */,
+				7BD3D2CA2FCDB8A300C386DC /* UnpackRowLength.cpp in Sources */,
+				7BD3D2CB2FCDB8A300C386DC /* VertexAttributeTest.cpp in Sources */,
+				7BD3D2CC2FCDB8A300C386DC /* ViewportTest.cpp in Sources */,
+				7BD3D2CD2FCDB8A300C386DC /* WebGLCompatibilityTest.cpp in Sources */,
+				7BD3D2CE2FCDB8A300C386DC /* WebGLCompressedTextureAvailabilityTest.cpp in Sources */,
+				7BD3D2CF2FCDB8A300C386DC /* WebGLFramebufferTest.cpp in Sources */,
+				7BD3D2D02FCDB8A300C386DC /* WebGLReadOutsideFramebufferTest.cpp in Sources */,
+				7BD3D2D12FCDB8A300C386DC /* WEBGLVideoTextureTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5940,7 +6436,7 @@
 				7BFAF6482DE5A13800327F7F /* EGLSyncTest.cpp in Sources */,
 				7BFAF6572DE5A13800327F7F /* EGLSyncTestMetalSharedEvent.mm in Sources */,
 				7BFAF64A2DE5A13800327F7F /* EGLWaitUntilWorkScheduledTest.cpp in Sources */,
-				7B820C792DE9956000DAC5E4 /* End2EndTestsSourcesPlatform.cpp in Sources */,
+				7BD3D1EC2FCDB6A600C386DC /* End2EndTestsSourcesPlatform.cpp in Sources */,
 				7BFAF5612DE59DCD00327F7F /* ErrorMessages.cpp in Sources */,
 				7BFAF55F2DE59DCD00327F7F /* ETCTextureTest.cpp in Sources */,
 				7BFAF5572DE59DCD00327F7F /* ExternalBufferTest.cpp in Sources */,
@@ -5953,7 +6449,6 @@
 				7BFAF5542DE59DCD00327F7F /* FramebufferMixedSamplesTest.cpp in Sources */,
 				7BFAF55D2DE59DCD00327F7F /* FramebufferRenderMipmapTest.cpp in Sources */,
 				7BFAF5592DE59DCD00327F7F /* FramebufferTest.cpp in Sources */,
-				7BB973A42DE48DEE00455D13 /* FrameCapture_mock.cpp in Sources */,
 				7BFAF5552DE59DCD00327F7F /* GeometryShaderTest.cpp in Sources */,
 				7BFAF55E2DE59DCD00327F7F /* GetTexLevelParameterTest.cpp in Sources */,
 				7BFAF6712DE5AA3500327F7F /* gl_enum_utils.cpp in Sources */,
@@ -6022,7 +6517,6 @@
 				7BFAF6022DE59E0900327F7F /* SamplersTest.cpp in Sources */,
 				7BFAF5F82DE59E0900327F7F /* SampleVariablesTest.cpp in Sources */,
 				7BFAF5FF2DE59E0900327F7F /* SemaphoreTest.cpp in Sources */,
-				7BB973AA2DE48EB000455D13 /* serialize_mock.cpp in Sources */,
 				7BFAF5D42DE59E0900327F7F /* ShaderAlgorithmTest.cpp in Sources */,
 				7BFAF5C52DE59E0900327F7F /* ShaderBinaryTest.cpp in Sources */,
 				7BFAF5EC2DE59E0900327F7F /* ShaderInterpTest.cpp in Sources */,
@@ -6040,7 +6534,6 @@
 				7BFAF5BD2DE59E0900327F7F /* SwizzleTest.cpp in Sources */,
 				7BFAF6672DE5A7A200327F7F /* system_info_util.cpp in Sources */,
 				7B8C09092F7E843B007E37DE /* TestSuite.cpp in Sources */,
-				7BFAF5C92DE59E0900327F7F /* TextureExternalUpdateTest.cpp in Sources */,
 				7BFAF6042DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp in Sources */,
 				7BFAF5CC2DE59E0900327F7F /* TextureMultisampleTest.cpp in Sources */,
 				7BFAF6092DE59E0900327F7F /* TextureRectangleTest.cpp in Sources */,
@@ -6290,7 +6783,6 @@
 				7BFAF8ED2DE6EDE400327F7F /* FixedQueue_unittest.cpp in Sources */,
 				7BFAF8E02DE6EDE400327F7F /* FixedVector_unittest.cpp in Sources */,
 				7BFAF8812DE6ECA700327F7F /* FloatLex_test.cpp in Sources */,
-				7BED6F852F99FE0700A240A7 /* FrameCapture_mock.cpp in Sources */,
 				7B8C091A2F84EC49007E37DE /* GPUTestConfig.cpp in Sources */,
 				7B8C091B2F84EC83007E37DE /* GPUTestExpectationsParser.cpp in Sources */,
 				7BFAF8E52DE6EDE400327F7F /* hash_utils_unittest.cpp in Sources */,
@@ -6305,7 +6797,6 @@
 				7BFAF8E62DE6EDE400327F7F /* Optional_unittest.cpp in Sources */,
 				7B8C091C2F84EC9D007E37DE /* OSWindow.cpp in Sources */,
 				7BFAF8F02DE6EDE400327F7F /* PoolAlloc_unittest.cpp in Sources */,
-				7BED6F862F99FE2E00A240A7 /* serialize_mock.cpp in Sources */,
 				7BFAF8F12DE6EDE400327F7F /* SimpleMutex_unittest.cpp in Sources */,
 				7BFAF8E12DE6EDE400327F7F /* span_unittest.cpp in Sources */,
 				7BFAF8E42DE6EDE400327F7F /* string_utils_unittest.cpp in Sources */,
@@ -6314,6 +6805,7 @@
 				7B8C09152F84EAB1007E37DE /* TestSuite.cpp in Sources */,
 				7BED5BE82F99F81200A240A7 /* TransformFeedback_unittest.cpp in Sources */,
 				7BFAF8C12DE6ECA700327F7F /* Type_test.cpp in Sources */,
+				7BF0DF592F71612100F99E69 /* utilities_unittest.cpp in Sources */,
 				7BFAF8BB2DE6ECA700327F7F /* VariablePacker_test.cpp in Sources */,
 				7BFAF8E22DE6EDE400327F7F /* vector_utils_unittest.cpp in Sources */,
 				7BFAF8E82DE6EDE400327F7F /* WorkerThread_unittest.cpp in Sources */,
@@ -6389,6 +6881,9 @@
 		};
 		7BB971C62DE45FE300455D13 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
 			target = 7BE4AA532DE4544900A16F7E /* ANGLEEnd2EndTests */;
 			targetProxy = 7BB971C52DE45FE300455D13 /* PBXContainerItemProxy */;
 		};
@@ -6396,6 +6891,27 @@
 			isa = PBXTargetDependency;
 			target = 7BB971FF2DE47B8A00455D13 /* ANGLE (static) */;
 			targetProxy = 7BB972FF2DE4866A00455D13 /* PBXContainerItemProxy */;
+		};
+		7BD3D2012FCDB8A300C386DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7BFAF76C2DE6EADC00327F7F /* utils */;
+			targetProxy = 7BD3D2022FCDB8A300C386DC /* PBXContainerItemProxy */;
+		};
+		7BD3D2032FCDB8A300C386DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7BB971FF2DE47B8A00455D13 /* ANGLE (static) */;
+			targetProxy = 7BD3D2042FCDB8A300C386DC /* PBXContainerItemProxy */;
+		};
+		7BD3D2EC2FCDC1D500C386DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				tvos,
+				watchos,
+			);
+			target = 7BD3D2002FCDB8A300C386DC /* ANGLEEnd2EndTestsApp */;
+			targetProxy = 7BD3D2EB2FCDC1D500C386DC /* PBXContainerItemProxy */;
 		};
 		7BF554BF2C81EEF5002B101E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6533,10 +7049,48 @@
 			};
 			name = Production;
 		};
+		7BD3D2DB2FCDB8A300C386DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7BD3D1E42FCDB2E800C386DC /* ANGLEEnd2EndTestsApp.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = WebKit/ANGLEEnd2EndTestsAppInfo.plist;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
+			};
+			name = Debug;
+		};
+		7BD3D2DC2FCDB8A300C386DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7BD3D1E42FCDB2E800C386DC /* ANGLEEnd2EndTestsApp.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = WebKit/ANGLEEnd2EndTestsAppInfo.plist;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
+			};
+			name = Release;
+		};
+		7BD3D2DD2FCDB8A300C386DC /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7BD3D1E42FCDB2E800C386DC /* ANGLEEnd2EndTestsApp.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = WebKit/ANGLEEnd2EndTestsAppInfo.plist;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
+			};
+			name = Production;
+		};
 		7BE4AA582DE4544900A16F7E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7BB971C82DE463A800455D13 /* ANGLEEnd2EndTests.xcconfig */;
 			buildSettings = {
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 			};
 			name = Debug;
 		};
@@ -6544,6 +7098,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7BB971C82DE463A800455D13 /* ANGLEEnd2EndTests.xcconfig */;
 			buildSettings = {
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 			};
 			name = Release;
 		};
@@ -6551,6 +7107,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7BB971C82DE463A800455D13 /* ANGLEEnd2EndTests.xcconfig */;
 			buildSettings = {
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 			};
 			name = Production;
 		};
@@ -6819,6 +7377,16 @@
 				7BB972022DE47B8B00455D13 /* Debug */,
 				7BB972032DE47B8B00455D13 /* Release */,
 				7BB972042DE47B8B00455D13 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		7BD3D2DA2FCDB8A300C386DC /* Build configuration list for PBXNativeTarget "ANGLEEnd2EndTestsApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7BD3D2DB2FCDB8A300C386DC /* Debug */,
+				7BD3D2DC2FCDB8A300C386DC /* Release */,
+				7BD3D2DD2FCDB8A300C386DC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

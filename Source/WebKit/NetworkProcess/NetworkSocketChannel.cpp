@@ -34,6 +34,10 @@
 #include "WebSocketTask.h"
 #include <wtf/TZoneMallocInlines.h>
 
+#if PLATFORM(COCOA)
+#include "NetworkSessionCocoa.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 

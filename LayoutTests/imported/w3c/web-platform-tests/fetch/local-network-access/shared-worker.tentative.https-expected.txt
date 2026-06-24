@@ -1,8 +1,10 @@
 
-FAIL LNA Shared Worker Public to Loopback Fetch with permission Can't find variable: resolveUrl
-FAIL LNA Shared Worker Public to Loopback Fetch without permission Can't find variable: resolveUrl
-FAIL LNA Shared Worker Public to Loopback WebTransport with permission Can't find variable: resolveUrl
-FAIL LNA Shared Worker Public to Loopback WebTransport without permission Can't find variable: resolveUrl
-FAIL LNA Shared Worker Public to Loopback WebSocket with permission Can't find variable: resolveUrl
-FAIL LNA Shared Worker Public to Loopback WebSocket without permission Can't find variable: resolveUrl
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT LNA Shared Worker Public to Loopback Fetch with permission Test timed out
+NOTRUN LNA Shared Worker Public to Loopback Fetch without permission
+NOTRUN LNA Shared Worker Public to Loopback WebTransport with permission
+NOTRUN LNA Shared Worker Public to Loopback WebTransport without permission
+NOTRUN LNA Shared Worker Public to Loopback WebSocket with permission
+NOTRUN LNA Shared Worker Public to Loopback WebSocket without permission
 

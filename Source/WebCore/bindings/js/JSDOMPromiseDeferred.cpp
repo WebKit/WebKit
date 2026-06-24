@@ -84,7 +84,7 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
     if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInMainThread()) {
         JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
         ASSERT(!activeDOMObjectsAreSuspended() || scriptExecutionContext()->eventLoop().isSuspended());
-        scriptExecutionContext()->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTF::move(strongResolution)]() mutable {
+        protect(scriptExecutionContext())->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTF::move(strongResolution)]() mutable {
             if (shouldIgnoreRequestToFulfill())
                 return;
 
@@ -112,13 +112,13 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
         }
         break;
     case ResolveMode::Reject:
-        deferred()->reject(vm, &lexicalGlobalObject, resolution);
+        deferred()->reject(vm, resolution);
         break;
     case ResolveMode::RejectAsHandled:
-        deferred()->rejectAsHandled(vm, &lexicalGlobalObject, resolution);
+        deferred()->rejectAsHandled(vm, resolution);
         break;
     case ResolveMode::Fulfill:
-        deferred()->fulfill(vm, &lexicalGlobalObject, resolution);
+        deferred()->fulfill(vm, resolution);
         break;
     }
 
@@ -132,7 +132,7 @@ void DeferredPromise::whenSettledWithResult(Function<void(JSDOMGlobalObject*, bo
         return;
 
     if (activeDOMObjectsAreSuspended()) {
-        scriptExecutionContext()->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, callback = WTF::move(callback)]() mutable {
+        protect(scriptExecutionContext())->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, callback = WTF::move(callback)]() mutable {
             whenSettledWithResult(WTF::move(callback));
         });
         return;

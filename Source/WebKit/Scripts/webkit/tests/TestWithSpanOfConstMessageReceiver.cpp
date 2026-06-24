@@ -40,7 +40,6 @@ namespace WebKit {
 
 void TestWithSpanOfConst::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithSpanOfConst::TestSpanOfConstFloat::name()) {
         IPC::handleMessage<Messages::TestWithSpanOfConst::TestSpanOfConstFloat>(connection, decoder, this, &TestWithSpanOfConst::testSpanOfConstFloat);
         return;

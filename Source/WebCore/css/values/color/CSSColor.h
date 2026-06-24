@@ -42,6 +42,7 @@ struct ColorLayers;
 struct ColorMix;
 struct ContrastColor;
 struct LightDarkColor;
+struct RelativeAlphaColor;
 template<typename Descriptor> struct AbsoluteColor;
 template<typename Descriptor> struct RelativeColor;
 
@@ -59,6 +60,7 @@ private:
         UniqueRef<ColorMix>,
         UniqueRef<ContrastColor>,
         UniqueRef<LightDarkColor>,
+        UniqueRef<RelativeAlphaColor>,
         UniqueRef<AbsoluteColor<RGBFunctionLegacy<Number<>>>>,
         UniqueRef<AbsoluteColor<RGBFunctionLegacy<Percentage<>>>>,
         UniqueRef<AbsoluteColor<RGBFunctionModernAbsolute>>,
@@ -107,6 +109,7 @@ public:
     explicit Color(ColorMix&&);
     explicit Color(ContrastColor&&);
     explicit Color(LightDarkColor&&);
+    explicit Color(RelativeAlphaColor&&);
     explicit Color(AbsoluteColor<RGBFunctionLegacy<Number<>>>&&);
     explicit Color(AbsoluteColor<RGBFunctionLegacy<Percentage<>>>&&);
     explicit Color(AbsoluteColor<RGBFunctionModernAbsolute>&&);

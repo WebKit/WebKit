@@ -311,6 +311,122 @@ WI.DOMManager = class DOMManager extends WI.Object
         }
     }
 
+    _frameTargetAttributeModified(target, nodeId, name, value)
+    {
+        let scopedId = target.identifier + ":" + nodeId;
+        let node = this._idToDOMNode[scopedId];
+        if (!node)
+            return;
+
+        node._setAttribute(name, value);
+        this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node, name});
+        node.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name});
+    }
+
+    _frameTargetAttributeRemoved(target, nodeId, name)
+    {
+        let scopedId = target.identifier + ":" + nodeId;
+        let node = this._idToDOMNode[scopedId];
+        if (!node)
+            return;
+
+        node._removeAttribute(name);
+        this.dispatchEventToListeners(WI.DOMManager.Event.AttributeRemoved, {node, name});
+        node.dispatchEventToListeners(WI.DOMNode.Event.AttributeRemoved, {name});
+    }
+
+    _frameTargetInlineStyleInvalidated(target, nodeIds)
+    {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=316416 The page-target variant 
+        // (`_inlineStyleInvalidated`) debounces and batches the `DOM.getAttributes` calls 
+        // so they run at most once per tick. Mimic that here to avoid
+        // issuing one command per invalidated node.
+        for (let nodeId of nodeIds) {
+            let scopedId = target.identifier + ":" + nodeId;
+            let node = this._idToDOMNode[scopedId];
+            if (!node)
+                continue;
+
+            target.DOMAgent.getAttributes(nodeId, (error, attributes) => {
+                if (error || !attributes)
+                    return;
+
+                let currentNode = this._idToDOMNode[scopedId];
+                if (!currentNode)
+                    return;
+
+                currentNode._setAttributesPayload(attributes);
+                this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node: currentNode, name: "style"});
+                currentNode.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name: "style"});
+            });
+        }
+    }
+
+    _frameTargetCharacterDataModified(target, nodeId, newValue)
+    {
+        let scopedId = target.identifier + ":" + nodeId;
+        let node = this._idToDOMNode[scopedId];
+        if (!node)
+            return;
+
+        node._nodeValue = newValue;
+        this.dispatchEventToListeners(WI.DOMManager.Event.CharacterDataModified, {node});
+    }
+
+    _frameTargetChildNodeCountUpdated(target, nodeId, newValue)
+    {
+        let scopedId = target.identifier + ":" + nodeId;
+        let node = this._idToDOMNode[scopedId];
+        if (!node)
+            return;
+
+        node.childNodeCount = newValue;
+        this.dispatchEventToListeners(WI.DOMManager.Event.ChildNodeCountUpdated, node);
+    }
+
+    _frameTargetChildNodeInserted(target, parentId, prevId, payload)
+    {
+        let scopedParentId = target.identifier + ":" + parentId;
+        let parent = this._idToDOMNode[scopedParentId];
+        if (!parent)
+            return;
+
+        let scopedPrevId = prevId ? target.identifier + ":" + prevId : 0;
+        let prev = prevId ? this._idToDOMNode[scopedPrevId] : null;
+        let node = parent._insertChild(prev, payload);
+        this._idToDOMNode[node.id] = node;
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
+
+        // A new iframe element may have been inserted — try to splice pending frame documents.
+        this._trySpliceUnsplicedFrameDocuments();
+    }
+
+    _frameTargetChildNodeRemoved(target, parentId, nodeId)
+    {
+        let scopedParentId = target.identifier + ":" + parentId;
+        let scopedNodeId = target.identifier + ":" + nodeId;
+        let parent = this._idToDOMNode[scopedParentId];
+        let node = this._idToDOMNode[scopedNodeId];
+        if (!parent || !node)
+            return;
+
+        parent._removeChild(node);
+        this._frameTargetUnbind(node);
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node, parent});
+    }
+
+    _frameTargetWillDestroyDOMNode(target, nodeId)
+    {
+        let scopedId = target.identifier + ":" + nodeId;
+        let node = this._idToDOMNode[scopedId];
+        if (!node)
+            return;
+
+        node.markDestroyed();
+        delete this._idToDOMNode[scopedId];
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node});
+    }
+
     transitionPageTarget()
     {
         this._documentUpdated();
@@ -995,6 +1111,15 @@ WI.DOMManager = class DOMManager extends WI.Object
 
             this.dispatchEventToListeners(WI.DOMManager.Event.InspectedNodeChanged, {lastInspectedNode});
         };
+
+        // FIXME: <https://webkit.org/b/298980> `DOM.setInspectedNode` for cross-origin frame nodes is not yet supported;
+        // `node.id` for frame-owned nodes is a composite "frameId:nodeId" string, not a numeric backend node id.
+        if (node.owningTarget) {
+            let lastInspectedNode = this._inspectedNode;
+            this._inspectedNode = node;
+            this.dispatchEventToListeners(WI.DOMManager.Event.InspectedNodeChanged, {lastInspectedNode});
+            return;
+        }
 
         let target = WI.assumingMainTarget();
         target.DOMAgent.setInspectedNode(node.id, callback);

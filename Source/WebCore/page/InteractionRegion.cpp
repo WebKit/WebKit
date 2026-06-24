@@ -257,7 +257,7 @@ static bool NODELETE shouldGetOcclusion(const RenderElement& renderer)
     return false;
 }
 
-static bool hasTransparentContainerStyle(const RenderStyle& style)
+static bool hasTransparentContainerStyle(const Style::ComputedStyle& style)
 {
     return !style.hasBackground()
         && !style.hasOutline()
@@ -269,7 +269,7 @@ static bool hasTransparentContainerStyle(const RenderStyle& style)
             || !(style.usedBorderTopWidth() && style.usedBorderRightWidth() && style.usedBorderBottomWidth() && style.usedBorderLeftWidth()));
 }
 
-static bool canTweakShapeForStyle(const RenderStyle& style)
+static bool canTweakShapeForStyle(const Style::ComputedStyle& style)
 {
     if (!hasTransparentContainerStyle(style))
         return false;
@@ -291,7 +291,7 @@ static bool colorIsChallengingToHighlight(const Color& color)
         && ((color.luminance() < luminanceThreshold || std::abs(color.luminance() - 1) < luminanceThreshold));
 }
 
-static bool styleIsChallengingToHighlight(const RenderStyle& style)
+static bool styleIsChallengingToHighlight(const Style::ComputedStyle& style)
 {
     auto color = (style.fill().isNone() ? style.stroke() : style.fill()).tryColor();
     if (!color)
@@ -355,7 +355,7 @@ static RefPtr<Image> findIconImage(const RenderObject& renderer)
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
             return nullptr;
 
-        RefPtr image = renderImage->cachedImage()->imageForRenderer(renderImage);
+        RefPtr image = protect(*renderImage->cachedImage())->imageForRenderer(renderImage);
         if (!image)
             return nullptr;
 
@@ -370,9 +370,9 @@ static RefPtr<Image> findIconImage(const RenderObject& renderer)
 static std::optional<std::pair<Ref<SVGSVGElement>, Ref<SVGGraphicsElement>>> findSVGClipElements(const RenderObject& renderer)
 {
     if (const auto& renderShape = dynamicDowncast<LegacyRenderSVGShape>(renderer)) {
-        auto& shapeElement = renderShape->graphicsElement();
-        if (auto* owner = shapeElement.ownerSVGElement())
-            return std::make_pair(Ref { *owner }, Ref { shapeElement });
+        Ref shapeElement = renderShape->graphicsElement();
+        if (RefPtr owner = shapeElement->ownerSVGElement())
+            return std::make_pair(Ref { *owner }, shapeElement.copyRef());
     }
 
     return std::nullopt;
@@ -439,10 +439,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
     bool hasPointer = hasInteractiveCursorType(*matchedElement) || shouldAllowNonInteractiveCursorForElement(*matchedElement);
 
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(regionRenderer.document().frame()->mainFrame());
-    if (!localMainFrame) {
-        ASSERT_NOT_REACHED();
+    if (!localMainFrame)
         return std::nullopt;
-    }
     RefPtr pageView = localMainFrame->view();
     if (!pageView) {
         ASSERT_NOT_REACHED();
@@ -507,7 +505,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
                 if (!renderImage->cachedImage())
                     return false;
 
-                return cachedImageIsPhoto(*renderImage->cachedImage());
+                return cachedImageIsPhoto(protect(*renderImage->cachedImage()));
             }();
         } else if (auto& backgroundLayers = regionRenderer.style().backgroundLayers(); Style::hasImageInAnyLayer(backgroundLayers)) {
             isPhoto = [&]() -> bool {
@@ -515,7 +513,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
                 if (!backgroundImage || !backgroundImage->cachedImage())
                     return false;
 
-                return cachedImageIsPhoto(*backgroundImage->cachedImage());
+                return cachedImageIsPhoto(protect(*backgroundImage->cachedImage()));
             }();
         }
     }
@@ -549,7 +547,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
     auto rect = bounds;
     float cornerRadius = 0;
     OptionSet<InteractionRegion::CornerMask> maskedCorners { };
-    std::optional<Path> clipPath = std::nullopt;
+    std::optional<Path> clipPath;
 
     CheckedRef style = regionRenderer.style();
     CheckedPtr<const RenderBox> regionRendererBox;
@@ -635,7 +633,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
             if (borderRadii.bottomRight().minDimension() == maxRadius)
                 maskedCorners.add(InteractionRegion::CornerMask::MaxXMaxYCorner);
         } else
-            clipPath = borderShape.pathForOuterShape(regionRendererBox->document().deviceScaleFactor());
+            clipPath = borderShape.pathForOuterShape(protect(regionRendererBox->document())->deviceScaleFactor());
     }
 
     bool canTweakShape = !isPhoto

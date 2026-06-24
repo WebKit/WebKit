@@ -1,0 +1,5 @@
+
+PASS A held lock on main thread must prevent bfcache even after worker releases locks
+PASS A held lock on worker must prevent bfcache even after main thread releases locks
+PASS A held lock on shared worker must prevent bfcache even after main thread releases locks
+

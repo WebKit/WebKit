@@ -3,16 +3,31 @@ Description
 This test verifies that implementations of the Encrypted Media Extensions API match its WebIDL definition.
 
 
-PASS Navigator interface: operation requestMediaKeySystemAccess(DOMString, [object Object])
-PASS Unscopable handled correctly for requestMediaKeySystemAccess(DOMString, [object Object]) on Navigator
-PASS HTMLMediaElement interface: attribute mediaKeys
-PASS Unscopable handled correctly for mediaKeys property on HTMLMediaElement
-PASS HTMLMediaElement interface: attribute onencrypted
-PASS Unscopable handled correctly for onencrypted property on HTMLMediaElement
-PASS HTMLMediaElement interface: attribute onwaitingforkey
-PASS Unscopable handled correctly for onwaitingforkey property on HTMLMediaElement
-PASS HTMLMediaElement interface: operation setMediaKeys(MediaKeys)
-PASS Unscopable handled correctly for setMediaKeys(MediaKeys) on HTMLMediaElement
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Navigator: original interface defined
+PASS Partial interface Navigator: valid exposure set
+PASS Partial interface Navigator: member names are unique
+PASS Partial interface HTMLMediaElement: original interface defined
+PASS Partial interface HTMLMediaElement: valid exposure set
+PASS Partial interface HTMLMediaElement: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
+PASS Partial interface Element: member names are unique
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS HTMLElement includes GlobalEventHandlers: member names are unique
+PASS HTMLElement includes ElementContentEditable: member names are unique
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
 PASS MediaKeySystemAccess interface: existence and properties of interface object
 PASS MediaKeySystemAccess interface object length
 PASS MediaKeySystemAccess interface object name
@@ -20,21 +35,17 @@ PASS MediaKeySystemAccess interface: existence and properties of interface proto
 PASS MediaKeySystemAccess interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaKeySystemAccess interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaKeySystemAccess interface: attribute keySystem
-PASS Unscopable handled correctly for keySystem property on MediaKeySystemAccess
 PASS MediaKeySystemAccess interface: operation getConfiguration()
-PASS Unscopable handled correctly for getConfiguration() on MediaKeySystemAccess
 PASS MediaKeySystemAccess interface: operation createMediaKeys()
-PASS Unscopable handled correctly for createMediaKeys() on MediaKeySystemAccess
 PASS MediaKeys interface: existence and properties of interface object
 PASS MediaKeys interface object length
 PASS MediaKeys interface object name
 PASS MediaKeys interface: existence and properties of interface prototype object
 PASS MediaKeys interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaKeys interface: existence and properties of interface prototype object's @@unscopables property
-PASS MediaKeys interface: operation createSession(MediaKeySessionType)
-PASS Unscopable handled correctly for createSession(MediaKeySessionType) on MediaKeys
+PASS MediaKeys interface: operation createSession(optional MediaKeySessionType)
+PASS MediaKeys interface: operation getStatusForPolicy(optional MediaKeysPolicy)
 PASS MediaKeys interface: operation setServerCertificate(BufferSource)
-PASS Unscopable handled correctly for setServerCertificate(BufferSource) on MediaKeys
 PASS MediaKeySession interface: existence and properties of interface object
 PASS MediaKeySession interface object length
 PASS MediaKeySession interface object name
@@ -42,49 +53,26 @@ PASS MediaKeySession interface: existence and properties of interface prototype 
 PASS MediaKeySession interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaKeySession interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaKeySession interface: attribute sessionId
-PASS Unscopable handled correctly for sessionId property on MediaKeySession
 PASS MediaKeySession interface: attribute expiration
-PASS Unscopable handled correctly for expiration property on MediaKeySession
 PASS MediaKeySession interface: attribute closed
-PASS Unscopable handled correctly for closed property on MediaKeySession
 PASS MediaKeySession interface: attribute keyStatuses
-PASS Unscopable handled correctly for keyStatuses property on MediaKeySession
 PASS MediaKeySession interface: attribute onkeystatuseschange
-PASS Unscopable handled correctly for onkeystatuseschange property on MediaKeySession
 PASS MediaKeySession interface: attribute onmessage
-PASS Unscopable handled correctly for onmessage property on MediaKeySession
 PASS MediaKeySession interface: operation generateRequest(DOMString, BufferSource)
-PASS Unscopable handled correctly for generateRequest(DOMString, BufferSource) on MediaKeySession
 PASS MediaKeySession interface: operation load(DOMString)
-PASS Unscopable handled correctly for load(DOMString) on MediaKeySession
 PASS MediaKeySession interface: operation update(BufferSource)
-PASS Unscopable handled correctly for update(BufferSource) on MediaKeySession
 PASS MediaKeySession interface: operation close()
-PASS Unscopable handled correctly for close() on MediaKeySession
 PASS MediaKeySession interface: operation remove()
-PASS Unscopable handled correctly for remove() on MediaKeySession
 PASS MediaKeyStatusMap interface: existence and properties of interface object
 PASS MediaKeyStatusMap interface object length
 PASS MediaKeyStatusMap interface object name
 PASS MediaKeyStatusMap interface: existence and properties of interface prototype object
 PASS MediaKeyStatusMap interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaKeyStatusMap interface: existence and properties of interface prototype object's @@unscopables property
-PASS Testing Symbol.iterator property of iterable interface MediaKeyStatusMap
-PASS Testing pair iterable interface MediaKeyStatusMap
+PASS MediaKeyStatusMap interface: iterable<BufferSource, MediaKeyStatus>
 PASS MediaKeyStatusMap interface: attribute size
-PASS Unscopable handled correctly for size property on MediaKeyStatusMap
 PASS MediaKeyStatusMap interface: operation has(BufferSource)
-PASS Unscopable handled correctly for has(BufferSource) on MediaKeyStatusMap
 PASS MediaKeyStatusMap interface: operation get(BufferSource)
-PASS Unscopable handled correctly for get(BufferSource) on MediaKeyStatusMap
-PASS MediaKeyStatusMap interface: operation entries()
-PASS Unscopable handled correctly for entries() on MediaKeyStatusMap
-PASS MediaKeyStatusMap interface: operation keys()
-PASS Unscopable handled correctly for keys() on MediaKeyStatusMap
-PASS MediaKeyStatusMap interface: operation values()
-PASS Unscopable handled correctly for values() on MediaKeyStatusMap
-PASS MediaKeyStatusMap interface: operation forEach(function, any)
-PASS Unscopable handled correctly for forEach(function, any) on MediaKeyStatusMap
 PASS MediaKeyMessageEvent interface: existence and properties of interface object
 PASS MediaKeyMessageEvent interface object length
 PASS MediaKeyMessageEvent interface object name
@@ -92,9 +80,7 @@ PASS MediaKeyMessageEvent interface: existence and properties of interface proto
 PASS MediaKeyMessageEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaKeyMessageEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaKeyMessageEvent interface: attribute messageType
-PASS Unscopable handled correctly for messageType property on MediaKeyMessageEvent
 PASS MediaKeyMessageEvent interface: attribute message
-PASS Unscopable handled correctly for message property on MediaKeyMessageEvent
 PASS MediaEncryptedEvent interface: existence and properties of interface object
 PASS MediaEncryptedEvent interface object length
 PASS MediaEncryptedEvent interface object name
@@ -102,6 +88,12 @@ PASS MediaEncryptedEvent interface: existence and properties of interface protot
 PASS MediaEncryptedEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaEncryptedEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaEncryptedEvent interface: attribute initDataType
-PASS Unscopable handled correctly for initDataType property on MediaEncryptedEvent
 PASS MediaEncryptedEvent interface: attribute initData
-PASS Unscopable handled correctly for initData property on MediaEncryptedEvent
+PASS HTMLMediaElement interface: attribute mediaKeys
+PASS HTMLMediaElement interface: attribute onencrypted
+PASS HTMLMediaElement interface: attribute onwaitingforkey
+PASS HTMLMediaElement interface: operation setMediaKeys(MediaKeys?)
+PASS Navigator interface: operation requestMediaKeySystemAccess(DOMString, sequence<MediaKeySystemConfiguration>)
+PASS Navigator interface: navigator must inherit property "requestMediaKeySystemAccess(DOMString, sequence<MediaKeySystemConfiguration>)" with the proper type
+PASS Navigator interface: calling requestMediaKeySystemAccess(DOMString, sequence<MediaKeySystemConfiguration>) on navigator with too few arguments must throw TypeError
+

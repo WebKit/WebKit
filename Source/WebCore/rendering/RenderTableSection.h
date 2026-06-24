@@ -58,8 +58,8 @@ class RenderTableSection final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableSection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableSection);
 public:
-    RenderTableSection(Element&, RenderStyle&&);
-    RenderTableSection(Document&, RenderStyle&&);
+    RenderTableSection(Element&, Style::ComputedStyle&&);
+    RenderTableSection(Document&, Style::ComputedStyle&&);
     virtual ~RenderTableSection();
 
     RenderTableRow* firstRow() const;
@@ -154,9 +154,9 @@ public:
     bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const override { return false; }
 
 private:
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
-    static RenderPtr<RenderTableSection> createTableSectionWithStyle(Document&, const RenderStyle&);
+    static RenderPtr<RenderTableSection> createTableSectionWithStyle(Document&, const Style::ComputedStyle&);
 
     enum ShouldIncludeAllIntersectingCells {
         IncludeAllIntersectingCells,
@@ -182,7 +182,7 @@ private:
     LayoutUnit NODELETE verticalRowGroupBorderHeight(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
     LayoutUnit NODELETE horizontalRowGroupBorderWidth(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row, unsigned column);
 
-    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { }
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { return { }; }
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 

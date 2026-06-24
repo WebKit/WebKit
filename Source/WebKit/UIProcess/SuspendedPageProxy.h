@@ -33,6 +33,7 @@
 #include <WebCore/BackForwardFrameItemIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NavigationIdentifier.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
@@ -88,6 +89,9 @@ public:
 
     bool hasSubframeInProcess(WebCore::ProcessIdentifier) const;
 
+    std::optional<WebCore::BackForwardFrameItemIdentifier> suspendedFrameItemID() const { return m_suspendedFrameItemID; }
+    HashSet<Ref<WebProcessProxy>> iframeProcesses() const;
+
     void pageDidFirstLayerFlush();
     void closeWithoutFlashing();
 
@@ -134,6 +138,8 @@ private:
     bool m_shouldCloseWhenEnteringAcceleratedCompositingMode { false };
 
     SuspensionState m_suspensionState { SuspensionState::BeforeStart };
+    // Set once in startSuspension; never reset (the entry destructor gates reads on its own frame id).
+    std::optional<WebCore::BackForwardFrameItemIdentifier> m_suspendedFrameItemID;
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;
     RunLoop::Timer m_suspensionTimeoutTimer;
     bool m_mainFrameSuspended { false };

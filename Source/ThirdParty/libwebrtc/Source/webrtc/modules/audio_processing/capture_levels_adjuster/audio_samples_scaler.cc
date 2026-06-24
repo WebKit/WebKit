@@ -11,8 +11,8 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -40,7 +40,7 @@ void AudioSamplesScaler::Process(AudioBuffer& audio_buffer) {
   if (previous_gain_ == target_gain_) {
     // Apply a non-changing gain.
     for (size_t channel = 0; channel < audio_buffer.num_channels(); ++channel) {
-      ArrayView<float> channel_view(audio_buffer.channels()[channel],
+      std::span<float> channel_view(audio_buffer.channels()[channel],
                                     samples_per_channel_);
       for (float& sample : channel_view) {
         sample *= gain;
@@ -55,7 +55,7 @@ void AudioSamplesScaler::Process(AudioBuffer& audio_buffer) {
       for (size_t channel = 0; channel < audio_buffer.num_channels();
            ++channel) {
         gain = previous_gain_;
-        ArrayView<float> channel_view(audio_buffer.channels()[channel],
+        std::span<float> channel_view(audio_buffer.channels()[channel],
                                       samples_per_channel_);
         for (float& sample : channel_view) {
           gain = std::min(gain + increment, target_gain_);
@@ -67,7 +67,7 @@ void AudioSamplesScaler::Process(AudioBuffer& audio_buffer) {
       for (size_t channel = 0; channel < audio_buffer.num_channels();
            ++channel) {
         gain = previous_gain_;
-        ArrayView<float> channel_view(audio_buffer.channels()[channel],
+        std::span<float> channel_view(audio_buffer.channels()[channel],
                                       samples_per_channel_);
         for (float& sample : channel_view) {
           gain = std::max(gain + increment, target_gain_);
@@ -80,7 +80,7 @@ void AudioSamplesScaler::Process(AudioBuffer& audio_buffer) {
 
   // Saturate the samples to be in the S16 range.
   for (size_t channel = 0; channel < audio_buffer.num_channels(); ++channel) {
-    ArrayView<float> channel_view(audio_buffer.channels()[channel],
+    std::span<float> channel_view(audio_buffer.channels()[channel],
                                   samples_per_channel_);
     for (float& sample : channel_view) {
       constexpr float kMinFloatS16Value = -32768.f;

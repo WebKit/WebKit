@@ -60,8 +60,9 @@ union ProgramTransformOptions final
         uint16_t removeTransformFeedbackEmulation : 1;
         uint16_t multiSampleFramebufferFetch : 1;
         uint16_t enableSampleShading : 1;
-        uint16_t removeDepthStencilInput : 1;
-        uint16_t padding : 12;  // must initialize to zero
+        uint16_t removeDepthInput : 1;
+        uint16_t removeStencilInput : 1;
+        uint16_t padding : 11;  // must initialize to zero
         uint16_t ditherControl;
     };
     uint32_t permutationIndex;

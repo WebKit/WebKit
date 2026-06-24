@@ -67,7 +67,7 @@ DropTarget::DropTarget(GtkWidget* webView)
         if (drop.m_drop != gdkDrop)
             return static_cast<GdkDragAction>(0);
 
-        drop.enter({ clampToInteger(x), clampToInteger(y) });
+        drop.enter({ clampTo<int>(x), clampTo<int>(y) });
         return dragOperationToSingleGdkDragAction(drop.m_operation);
     }), this);
 
@@ -76,7 +76,7 @@ DropTarget::DropTarget(GtkWidget* webView)
         if (drop.m_drop != gdkDrop)
             return static_cast<GdkDragAction>(0);
 
-        drop.update({ clampToInteger(x), clampToInteger(y) });
+        drop.update({ clampTo<int>(x), clampTo<int>(y) });
         return dragOperationToSingleGdkDragAction(drop.m_operation);
     }), this);
 
@@ -93,7 +93,7 @@ DropTarget::DropTarget(GtkWidget* webView)
         if (drop.m_drop != gdkDrop)
             return FALSE;
 
-        drop.drop({ clampToInteger(x), clampToInteger(y) });
+        drop.drop({ clampTo<int>(x), clampTo<int>(y) });
         return TRUE;
     }), this);
 

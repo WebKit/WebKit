@@ -305,14 +305,14 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
         }
     }
     if (!breakpoint && domAgent)
-        breakpoint = domAgent->breakpointForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+        breakpoint = domAgent->breakpointForEventListener(*protect(event.currentTarget()), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
     if (!breakpoint)
         return;
 
     Ref<JSON::Object> eventData = JSON::Object::create();
     eventData->setString("eventName"_s, event.type());
     if (domAgent) {
-        int eventListenerId = domAgent->idForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+        int eventListenerId = domAgent->idForEventListener(*protect(event.currentTarget()), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
         if (eventListenerId)
             eventData->setInteger("eventListenerId"_s, eventListenerId);
     }
@@ -353,7 +353,7 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
     if (!breakpoint) {
         Ref agents = m_instrumentingAgents.get();
         if (CheckedPtr domAgent = agents->persistentDOMAgent())
-            breakpoint = domAgent->breakpointForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+            breakpoint = domAgent->breakpointForEventListener(*protect(event.currentTarget()), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
     }
     if (!breakpoint)
         return;

@@ -32,14 +32,14 @@ namespace WebCore {
 namespace Style {
 
 template<EnumWithoutValueRepresentation T> struct Serialize<T> {
-    void operator()(StringBuilder& builder, const CSS::SerializationContext&, const RenderStyle&, T value)
+    void operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle&, T value)
     {
         builder.append(nameLiteralForSerialization(toCSSValueID(value)));
     }
 };
 
 template<EnumWithValueRepresentation T> struct Serialize<T> {
-    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const T& value)
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const T& value)
     {
         return valueRepresentation(value, [&](const auto& alternative) { serializationForCSS(builder, context, style, alternative); });
     }

@@ -296,7 +296,7 @@ func main() {
 	// block cipher rotations. This is to ensure full coverage of the
 	// kVarianceBlocks value in the constant-time logic.
 	hashBlockSize := hash.New().BlockSize()
-	for i := 0; i < hashBlockSize; i++ {
+	for i := range hashBlockSize {
 		fmt.Printf("# Test with maximal padding (%d mod %d).\n", i, hashBlockSize)
 		addTestCase(hashBlockSize+i, options{maximalPadding: true})
 	}
@@ -305,7 +305,7 @@ func main() {
 	addTestCase(0, options{omitMAC: true, maximalPadding: true})
 
 	fmt.Printf("# Test that each byte of incorrect padding is noticed.\n")
-	for i := 0; i < 256; i++ {
+	for i := range 256 {
 		addTestCase(64-hash.Size(), options{
 			maximalPadding:     true,
 			wrongPadding:       true,

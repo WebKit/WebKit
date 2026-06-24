@@ -72,46 +72,80 @@ rtc_library("video_adaptation") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("video_adaptation_tests") {
-    testonly = true
-
-    defines = []
-    sources = [
-      "bitrate_constraint_unittest.cc",
-      "overuse_frame_detector_unittest.cc",
-      "pixel_limit_resource_unittest.cc",
-      "quality_scaler_resource_unittest.cc",
-    ]
+  rtc_cc_test("bitrate_constraint_unittest") {
+    sources = [ "bitrate_constraint_unittest.cc" ]
     deps = [
       ":video_adaptation",
-      "..:video_stream_encoder_interface",
-      "../../api:array_view",
-      "../../api:field_trials",
-      "../../api:rtp_parameters",
-      "../../api:scoped_refptr",
-      "../../api/adaptation:resource_adaptation_api",
-      "../../api/environment",
-      "../../api/task_queue",
-      "../../api/units:time_delta",
-      "../../api/units:timestamp",
-      "../../api/video:video_adaptation",
       "../../api/video:video_frame",
-      "../../api/video:video_rtp_headers",
       "../../api/video_codecs:scalability_mode",
       "../../api/video_codecs:video_codecs_api",
       "../../call/adaptation:resource_adaptation",
       "../../call/adaptation:resource_adaptation_test_utilities",
+      "../../test:test_support",
+      "../config:encoder_config",
+    ]
+  }
+
+  rtc_cc_test("overuse_frame_detector_unittest") {
+    sources = [ "overuse_frame_detector_unittest.cc" ]
+    deps = [
+      ":video_adaptation",
+      "..:video_stream_encoder_interface",
+      "../../api/environment",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../api/video:video_frame",
+      "../../api/video:video_rtp_headers",
       "../../rtc_base:random",
       "../../rtc_base:rtc_event",
       "../../rtc_base:task_queue_for_test",
-      "../../rtc_base:threading",
       "../../system_wrappers",
       "../../test:create_test_environment",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("pixel_limit_resource_unittest") {
+    sources = [ "pixel_limit_resource_unittest.cc" ]
+    deps = [
+      ":video_adaptation",
+      "../../api:field_trials",
+      "../../api:scoped_refptr",
+      "../../api/adaptation:resource_adaptation_api",
+      "../../api/task_queue",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../api/video:video_adaptation",
+      "../../call/adaptation:resource_adaptation",
+      "../../call/adaptation:resource_adaptation_test_utilities",
       "../../test:create_test_field_trials",
       "../../test:test_support",
       "../../test/time_controller",
-      "../config:encoder_config",
       "//third_party/abseil-cpp/absl/functional:any_invocable",
+    ]
+  }
+
+  rtc_cc_test("quality_scaler_resource_unittest") {
+    sources = [ "quality_scaler_resource_unittest.cc" ]
+    deps = [
+      ":video_adaptation",
+      "../../api:rtp_parameters",
+      "../../api:scoped_refptr",
+      "../../api/adaptation:resource_adaptation_api",
+      "../../api/task_queue",
+      "../../call/adaptation:resource_adaptation",
+      "../../call/adaptation:resource_adaptation_test_utilities",
+      "../../test:run_loop",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_test_suite("video_adaptation_tests") {
+    tests = [
+      ":bitrate_constraint_unittest",
+      ":overuse_frame_detector_unittest",
+      ":pixel_limit_resource_unittest",
+      ":quality_scaler_resource_unittest",
     ]
   }
 }

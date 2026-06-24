@@ -30,17 +30,18 @@
 #include "AffineTransform.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
-#include <skia/core/SkImage.h>
-#include <skia/core/SkSamplingOptions.h>
-#include <skia/core/SkTileMode.h>
+#include "SkiaUtilities.h"
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkImage.h>
 #include <skia/core/SkMatrix.h>
+#include <skia/core/SkSamplingOptions.h>
+#include <skia/core/SkTileMode.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-sk_sp<SkShader> Pattern::createPlatformPattern(const AffineTransform&, const SkSamplingOptions& samplingOptions) const
+sk_sp<SkShader> Pattern::createPlatformPattern(const SkSamplingOptions& samplingOptions, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext) const
 {
     auto nativeImage = tileNativeImage();
     if (!nativeImage)
@@ -49,6 +50,9 @@ sk_sp<SkShader> Pattern::createPlatformPattern(const AffineTransform&, const SkS
     auto platformImage = nativeImage->platformImage();
     if (!platformImage)
         return nullptr;
+
+    if (threadSafeGrContext)
+        platformImage = SkiaUtilities::createPromiseImageIfNeeded(platformImage, threadSafeGrContext);
 
     return platformImage->makeShader(repeatX() ? SkTileMode::kRepeat : SkTileMode::kDecal, repeatY() ? SkTileMode::kRepeat : SkTileMode::kDecal, samplingOptions, patternSpaceTransform());
 }

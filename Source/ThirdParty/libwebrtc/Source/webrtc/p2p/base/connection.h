@@ -16,10 +16,12 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/base/macros.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/candidate.h"
@@ -46,6 +48,7 @@
 #include "rtc_base/network.h"
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/numerics/event_based_exponential_moving_average.h"
+#include "rtc_base/span_helpers.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/weak_ptr.h"
@@ -159,9 +162,16 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   // The connection can send and receive packets asynchronously.  This matches
   // the interface of AsyncPacketSocket, which may use UDP or TCP under the
   // covers.
-  virtual int Send(const void* data,
-                   size_t size,
+  virtual int Send(std::span<const uint8_t> data,
                    const AsyncSocketPacketOptions& options) = 0;
+
+  ABSL_DEPRECATE_AND_INLINE()
+  int Send(const void* data,
+           size_t size,
+           const AsyncSocketPacketOptions& options) {
+    return Send(AsUint8Span(std::span(static_cast<const char*>(data), size)),
+                options);
+  }
 
   // Error if Send() returns < 0
   virtual int GetError() = 0;
@@ -184,9 +194,12 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   }
   // Called when a packet is received on this connection.
   void OnReadPacket(const ReceivedIpPacket& packet);
-  [[deprecated("Pass a ReceivedIpPacket")]] void
-  OnReadPacket(const char* data, size_t size, int64_t packet_time_us);
 
+  ABSL_DEPRECATE_AND_INLINE()
+  void OnReadPacket(const char* data, size_t size, int64_t packet_time_us) {
+    OnReadPacket(
+        ReceivedIpPacket::CreateFromLegacy(data, size, packet_time_us));
+  }
   // Called when the socket is currently able to send.
   void OnReadyToSend();
 
@@ -425,8 +438,7 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
              const Candidate& candidate);
 
   // Called back when StunRequestManager has a stun packet to send
-  void OnSendStunPacket(const void* data, size_t size, StunRequest* req);
-
+  void OnSendStunPacket(std::span<const uint8_t> data, StunRequest* req);
   // Callbacks from ConnectionRequest
   virtual void OnConnectionRequestResponse(StunRequest* req,
                                            StunMessage* response);
@@ -613,8 +625,7 @@ class ProxyConnection : public Connection {
                   size_t index,
                   const Candidate& remote_candidate);
 
-  int Send(const void* data,
-           size_t size,
+  int Send(std::span<const uint8_t> data,
            const AsyncSocketPacketOptions& options) override;
   int GetError() override;
 

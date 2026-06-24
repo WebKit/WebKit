@@ -28,12 +28,12 @@
 
 #include "RenderElementInlines.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
 #include "RenderTreeBuilder.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -137,7 +137,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
             // COLGROUPs and anonymous RenderTableCols (generated wrappers for COLs) are direct children of the table renderer.
             return parent;
         }
-        auto newColGroup = createRenderer<RenderTableCol>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), Style::DisplayType::TableColumnGroup));
+        auto newColGroup = createRenderer<RenderTableCol>(parent.document(), Style::ComputedStyle::createAnonymousStyleWithDisplay(protect(parent.style()), Style::DisplayType::TableColumnGroup));
         newColGroup->initializeStyle();
         auto& colGroup = *newColGroup;
         m_builder.attach(parent, WTF::move(newColGroup), beforeChild);
@@ -285,30 +285,30 @@ void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(const Rend
     auto toDestroy = collapseAndDetachAnonymousNextSibling(willBeDestroyed.section(), willBeDestroyed.previousRow(), willBeDestroyed.nextRow());
 }
 
-RenderPtr<RenderTable> RenderTreeBuilder::Table::createAnonymousTableWithStyle(Document& document, const RenderStyle& style)
+RenderPtr<RenderTable> RenderTreeBuilder::Table::createAnonymousTableWithStyle(Document& document, const Style::ComputedStyle& style)
 {
-    auto table = createRenderer<RenderTable>(RenderObject::Type::Table, document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == Style::DisplayType::InlineFlow ? Style::DisplayType::InlineTable : Style::DisplayType::BlockTable));
+    auto table = createRenderer<RenderTable>(RenderObject::Type::Table, document, Style::ComputedStyle::createAnonymousStyleWithDisplay(style, style.display() == Style::DisplayType::InlineFlow ? Style::DisplayType::InlineTable : Style::DisplayType::BlockTable));
     table->initializeStyle();
     return table;
 }
 
-RenderPtr<RenderTableCell> RenderTreeBuilder::Table::createAnonymousTableCellWithStyle(Document& document, const RenderStyle& style)
+RenderPtr<RenderTableCell> RenderTreeBuilder::Table::createAnonymousTableCellWithStyle(Document& document, const Style::ComputedStyle& style)
 {
-    auto cell = createRenderer<RenderTableCell>(document, RenderStyle::createAnonymousStyleWithDisplay(style, Style::DisplayType::TableCell));
+    auto cell = createRenderer<RenderTableCell>(document, Style::ComputedStyle::createAnonymousStyleWithDisplay(style, Style::DisplayType::TableCell));
     cell->initializeStyle();
     return cell;
 }
 
-RenderPtr<RenderTableRow> RenderTreeBuilder::Table::createAnonymousTableRowWithStyle(Document& document, const RenderStyle& style)
+RenderPtr<RenderTableRow> RenderTreeBuilder::Table::createAnonymousTableRowWithStyle(Document& document, const Style::ComputedStyle& style)
 {
-    auto row = createRenderer<RenderTableRow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, Style::DisplayType::TableRow));
+    auto row = createRenderer<RenderTableRow>(document, Style::ComputedStyle::createAnonymousStyleWithDisplay(style, Style::DisplayType::TableRow));
     row->initializeStyle();
     return row;
 }
 
-RenderPtr<RenderTableSection> RenderTreeBuilder::Table::createAnonymousTableSectionWithStyle(Document& document, const RenderStyle& style)
+RenderPtr<RenderTableSection> RenderTreeBuilder::Table::createAnonymousTableSectionWithStyle(Document& document, const Style::ComputedStyle& style)
 {
-    auto section = createRenderer<RenderTableSection>(document, RenderStyle::createAnonymousStyleWithDisplay(style, Style::DisplayType::TableRowGroup));
+    auto section = createRenderer<RenderTableSection>(document, Style::ComputedStyle::createAnonymousStyleWithDisplay(style, Style::DisplayType::TableRowGroup));
     section->initializeStyle();
     return section;
 }

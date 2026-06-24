@@ -1,0 +1,5 @@
+
+PASS Property background-image value 'image(red)'
+PASS Property background-image value 'image(rgba(0, 128, 255, 0.5))'
+PASS Property background-image value 'image(transparent)'
+

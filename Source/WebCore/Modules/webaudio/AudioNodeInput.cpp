@@ -88,6 +88,9 @@ void AudioNodeInput::disconnect(AudioNodeOutput* output)
     }
     
     // Otherwise, try to disconnect from disabled connections.
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     if (m_disabledOutputs.remove(output)) {
         output->removeInput(this); // Note: it's important to return immediately after this since the node may be deleted.
         return;

@@ -51,9 +51,9 @@ XRWebGLSubImage::XRWebGLSubImage(Ref<WebXRViewport>&& viewport, WebGLTexture& co
 {
 }
 
-ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLSubImage::create(Ref<WebXRViewport>&& viewport, XRCompositionLayer& layer)
+ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLSubImage::create(Ref<WebXRViewport>&& viewport, XRCompositionLayer& layer, uint32_t colorTextureIndex)
 {
-    auto colorTexture = layer.colorTextures()[0].get();
+    auto colorTexture = layer.colorTextures()[colorTextureIndex].get();
     if (!colorTexture || !colorTexture->isUsable())
         return Exception { ExceptionCode::InvalidStateError, "Cannot get a usable texture for the subimage."_s };
 
@@ -62,7 +62,8 @@ ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLSubImage::create(Ref<WebXRViewport>&& v
     std::optional<IntSize> depthTextureSize;
     WebGLOpaqueTexture* depthTexture = nullptr;
     if (!layer.depthStencilTextures().isEmpty()) {
-        depthTexture = layer.depthStencilTextures()[0].get();
+        auto depthIndex = colorTextureIndex < layer.depthStencilTextures().size() ? colorTextureIndex : 0U;
+        depthTexture = layer.depthStencilTextures()[depthIndex].get();
         if (!depthTexture || !depthTexture->isUsable())
             depthTexture = nullptr;
         else

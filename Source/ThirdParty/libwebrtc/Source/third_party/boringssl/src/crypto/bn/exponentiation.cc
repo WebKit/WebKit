@@ -21,8 +21,10 @@
 #include "../fipsmodule/bn/internal.h"
 
 
+using namespace bssl;
+
 int BN_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *rr;
   if (r == a || r == p) {
     rr = BN_CTX_get(ctx);
@@ -79,7 +81,7 @@ static int mod_exp_even(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
   }
 
   // Make a copy of |a|, in case it aliases |r|.
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
   if (tmp == nullptr || !BN_copy(tmp, a)) {
     return 0;
@@ -128,7 +130,7 @@ int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
     a %= m->d[0];
   }
 
-  bssl::UniquePtr<BIGNUM> a_bignum(BN_new());
+  UniquePtr<BIGNUM> a_bignum(BN_new());
   if (a_bignum == nullptr || !BN_set_word(a_bignum.get(), a)) {
     OPENSSL_PUT_ERROR(BN, ERR_R_INTERNAL_ERROR);
     return 0;
@@ -141,7 +143,7 @@ int BN_mod_exp2_mont(BIGNUM *rr, const BIGNUM *a1, const BIGNUM *p1,
                      const BIGNUM *a2, const BIGNUM *p2, const BIGNUM *m,
                      BN_CTX *ctx, const BN_MONT_CTX *mont) {
   // Allocate a montgomery context if it was not supplied by the caller.
-  bssl::UniquePtr<BN_MONT_CTX> new_mont;
+  UniquePtr<BN_MONT_CTX> new_mont;
   if (mont == nullptr) {
     new_mont.reset(BN_MONT_CTX_new_for_modulus(m, ctx));
     if (new_mont == nullptr) {
@@ -153,7 +155,7 @@ int BN_mod_exp2_mont(BIGNUM *rr, const BIGNUM *a1, const BIGNUM *p1,
   // BN_mod_mul_montgomery removes one Montgomery factor, so passing one
   // Montgomery-encoded and one non-Montgomery-encoded value gives a
   // non-Montgomery-encoded result.
-  bssl::UniquePtr<BIGNUM> tmp(BN_new());
+  UniquePtr<BIGNUM> tmp(BN_new());
   if (tmp == nullptr ||  //
       !BN_mod_exp_mont(rr, a1, p1, m, ctx, mont) ||
       !BN_mod_exp_mont(tmp.get(), a2, p2, m, ctx, mont) ||

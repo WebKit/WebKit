@@ -107,7 +107,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, arrayProtoFuncToLocaleString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().concatPublicName(), arrayProtoFuncConcat, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, ArrayConcatIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->fill, arrayProtoFuncFill, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->join, arrayProtoFuncJoin, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->join, arrayProtoFuncJoin, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, ArrayJoinIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("pop"_s, arrayProtoFuncPop, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, ArrayPopIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().pushPublicName(), arrayProtoFuncPush, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, ArrayPushIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("reverse"_s, arrayProtoFuncReverse, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
@@ -442,8 +442,26 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    JSValue thisValue = callFrame->thisValue();
+    JSValue separatorValue = callFrame->argument(0);
+    {
+        if (isJSArray(thisValue) && separatorValue.isString()) [[likely]] {
+            JSArray* array = asArray(thisValue);
+            JSString* separatorString = asString(separatorValue);
+            if (!separatorString->length() && (array->indexingType() == ArrayWithContiguous || array->indexingType() == ArrayWithInt32)) {
+                auto* butterfly = array->butterfly();
+                unsigned length = butterfly->publicLength();
+                JSOnlyStringsAndInt32sJoiner joiner(StringView { });
+                auto* joined = joiner.tryJoin(globalObject, butterfly->contiguous().data(), length);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (joined)
+                    return JSValue::encode(joined);
+            }
+        }
+    }
+
     // 1. Let O be ? ToObject(this value).
-    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
+    JSObject* thisObject = thisValue.toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (!thisObject) [[unlikely]]
         return encodedJSValue();
@@ -458,7 +476,6 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. If separator is undefined, let separator be the single-element String ",".
-    JSValue separatorValue = callFrame->argument(0);
     if (separatorValue.isUndefined()) {
         const Latin1Character comma = ',';
 
@@ -1304,13 +1321,9 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
                     return jsNumber(index);
             }
         } else {
-            do {
-                ASSERT(index < length);
-                // Array#lastIndexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
-                // And the hole never matches since it is NaN.
-                if (data[index] == searchNumber)
-                    return jsNumber(index);
-            } while (index--);
+            auto* result = WTF::reverseFindDouble(data, searchNumber, static_cast<uint64_t>(index) + 1);
+            if (result)
+                return jsNumber(result - data);
         }
         return jsNumber(-1);
     }

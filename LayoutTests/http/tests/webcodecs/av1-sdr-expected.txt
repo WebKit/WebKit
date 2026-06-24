@@ -1,0 +1,11 @@
+
+PASS AV1 isConfigSupported
+PASS Setup
+PASS AV1 (no override): bitstream colorSpace surfaces
+PASS AV1 colorSpace override: primaries
+PASS AV1 colorSpace override: matrix
+PASS AV1 colorSpace override: transfer (pq)
+PASS AV1 colorSpace override: fullRange (true)
+PASS AV1 colorSpace override: fullRange (false)
+PASS AV1 colorSpace full override
+

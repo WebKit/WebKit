@@ -28,18 +28,22 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3BasicBlockInlines.h"
 #include "B3BlockWorklist.h"
+#include "B3BreakCriticalEdges.h"
 #include "B3Dominators.h"
 #include "B3HeapRange.h"
 #include "B3InsertionSetInlines.h"
 #include "B3MemoryValue.h"
 #include "B3MemoryValueInlines.h"
+#include "B3NaturalLoops.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3PureCSE.h"
+#include "B3SSACalculator.h"
+#include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
-#include "B3VariableValue.h"
 #include "B3WasmArrayElementValue.h"
 #include "B3WasmArrayGetValue.h"
 #include "B3WasmArraySetValue.h"
@@ -48,6 +52,7 @@
 #include "B3WasmStructSetValue.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
+#include <wtf/IndexSet.h>
 #include <wtf/ListDump.h>
 #include <wtf/RangeSet.h>
 #include <wtf/Scope.h>
@@ -72,6 +77,18 @@ static constexpr bool verbose = false;
 using MemoryMatches = Vector<MemoryValue*, 1>;
 using WasmStructMatches = Vector<WasmStructFieldValue*, 1>;
 using WasmArrayMatches = Vector<WasmArrayElementValue*, 1>;
+
+// Only these node kinds can ever become a key in CSE::m_sets (they are the
+// dominating matches: MemoryValue / WasmStructFieldValue / WasmArrayElementValue).
+// Used to skip the per-value m_sets hash lookup in finalize() and to assert at
+// the add site.
+inline bool canHaveSets(Value* value)
+{
+    Opcode opcode = value->opcode();
+    return isMemoryAccess(opcode)
+        || opcode == WasmStructGet || opcode == WasmStructSet
+        || opcode == WasmArrayGet || opcode == WasmArraySet;
+}
 
 class MemoryValueMap {
 public:
@@ -291,8 +308,6 @@ class CSE {
 public:
     CSE(Procedure& proc)
         : m_proc(proc)
-        , m_dominators(proc.dominators())
-        , m_impureBlockData(proc.size())
         , m_insertionSet(proc)
     {
     }
@@ -301,7 +316,13 @@ public:
     {
         dataLogIf(B3EliminateCommonSubexpressionsInternal::verbose, "B3 before CSE:\n", m_proc);
 
+        // Direct Upsilon insertion needs no critical edges.
+        breakCriticalEdges(m_proc);
+
         m_proc.resetValueOwners();
+        m_dominators = &m_proc.dominators();
+        m_impureBlockData = IndexMap<BasicBlock*, ImpureBlockData>(m_proc.size());
+        m_ssa = makeUnique<SSACalculator>(m_proc);
 
         // Summarize the impure effects of each block, and the impure values available at the end of
         // each block. This doesn't edit code yet.
@@ -361,9 +382,36 @@ public:
         }
 
         // Perform CSE. This edits code.
-        Vector<BasicBlock*> postOrder = m_proc.blocksInPostOrder();
-        for (unsigned i = postOrder.size(); i--;) {
-            m_block = postOrder[i];
+        performCSE(nullptr);
+
+        // Re-sweep loop blocks once to catch some additional cases. In reverse-post-order the loop body hasn't been
+        // processed when we visit the header, so back-edge queries from the header miss matches that show up after the body is processed.
+        NaturalLoops& loops = m_proc.naturalLoops();
+        if (loops.numLoops()) {
+            IndexSet<BasicBlock*> loopBlocks;
+            for (unsigned i = 0; i < loops.numLoops(); ++i) {
+                const auto& loop = loops.loop(i);
+                loopBlocks.add(loop.header());
+                for (unsigned j = 0; j < loop.size(); ++j)
+                    loopBlocks.add(loop.at(j));
+            }
+            performCSE(&loopBlocks);
+        }
+
+        finalize();
+
+        dataLogIf(B3EliminateCommonSubexpressionsInternal::verbose, "B3 after CSE:\n", m_proc);
+
+        return m_changed;
+    }
+
+private:
+    void performCSE(const IndexSet<BasicBlock*>* filter)
+    {
+        for (auto* block : m_proc.blocksInPostOrder() | std::views::reverse) {
+            m_block = block;
+            if (filter && !filter->contains(m_block))
+                continue;
             dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "Looking at ", *m_block, ":");
 
             m_data = ImpureBlockData();
@@ -374,32 +422,82 @@ public:
             m_insertionSet.execute(m_block);
             m_impureBlockData[m_block] = m_data;
         }
+    }
 
-        // The previous pass might have requested that we insert code in some basic block other than
-        // the one that it was looking at. This inserts them.
-        for (BasicBlock* block : m_proc) {
-            for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
-                auto iter = m_sets.find(block->at(valueIndex));
-                if (iter == m_sets.end())
-                    continue;
+    void finalize()
+    {
+        if (m_pendingResolutions.isEmpty()) {
+            ASSERT(m_sets.isEmpty());
+            return;
+        }
 
-                for (Value* value : iter->value)
-                    m_insertionSet.insertValue(valueIndex + 1, value);
+        m_ssa->computePhis(
+            [&] (SSACalculator::Variable* var, BasicBlock*) -> Value* {
+                const auto& resolution = m_pendingResolutions[var->index()];
+                return m_proc.add<Value>(Phi, resolution.placeholder->type(), resolution.placeholder->origin());
+            });
+
+        for (BasicBlock* block : m_proc.blocksInPreOrder()) {
+            for (SSACalculator::Def* phiDef : m_ssa->phisForBlock(block))
+                m_insertionSet.insertValue(0, phiDef->value());
+
+            if (m_blocksWithSets.contains(block)) {
+                for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
+                    Value* value = block->at(valueIndex);
+                    if (!canHaveSets(value))
+                        continue;
+                    auto iter = m_sets.find(value);
+                    if (iter == m_sets.end())
+                        continue;
+                    for (Value* extra : iter->value)
+                        m_insertionSet.insertValue(valueIndex + 1, extra);
+                }
             }
+
+            if (block->size()) {
+                unsigned upsilonIndex = block->size() - 1;
+                Origin upsilonOrigin = block->last()->origin();
+                for (BasicBlock* successor : block->successorBlocks()) {
+                    for (SSACalculator::Def* phiDef : m_ssa->phisForBlock(successor)) {
+                        SSACalculator::Variable* var = phiDef->variable();
+                        SSACalculator::Def* reaching = m_ssa->reachingDefAtTail(block, var);
+                        Value* upsilonChild;
+                        if (reaching)
+                            upsilonChild = reaching->value()->foldIdentity();
+                        else {
+                            // Predecessor reaches the Phi on a path with no def.
+                            upsilonChild = m_insertionSet.insertBottom(upsilonIndex, upsilonOrigin, m_pendingResolutions[var->index()].placeholder->type());
+                        }
+                        m_insertionSet.insert<UpsilonValue>(upsilonIndex, upsilonOrigin, upsilonChild, phiDef->value());
+                    }
+                }
+            }
+
             m_insertionSet.execute(block);
         }
 
-        dataLogIf(B3EliminateCommonSubexpressionsInternal::verbose, "B3 after CSE:\n", m_proc);
-
-        return m_changed;
+        for (auto& resolution : m_pendingResolutions) {
+            Value* reachingValue = nullptr;
+            for (SSACalculator::Def* phiDef : m_ssa->phisForBlock(resolution.useBlock)) {
+                if (phiDef->variable() == resolution.var) {
+                    reachingValue = phiDef->value();
+                    break;
+                }
+            }
+            if (!reachingValue) {
+                SSACalculator::Def* def = m_ssa->reachingDefAtHead(resolution.useBlock, resolution.var);
+                ASSERT(def);
+                reachingValue = def->value();
+            }
+            resolution.placeholder->replaceWithIdentity(reachingValue->foldIdentity());
+        }
     }
-    
-private:
+
     void process()
     {
         m_value->performSubstitution();
 
-        if (m_pureCSE.process(m_value, m_dominators)) {
+        if (m_pureCSE.process(m_value, *m_dominators)) {
             ASSERT(!m_value->effects().readsPinned || !m_data.writesPinned);
             ASSERT(!m_value->effects().writes);
             ASSERT(!m_value->effects().writesPinned);
@@ -415,7 +513,7 @@ private:
             Kind altKind = m_value->kind();
             altKind.setTraps(!altKind.traps());
             ValueKey altKey(altKind, m_value->type(), m_value->child(0));
-            if (Value* match = m_pureCSE.findMatch(altKey, m_block, m_dominators)) {
+            if (Value* match = m_pureCSE.findMatch(altKey, m_block, *m_dominators)) {
                 m_value->replaceWithIdentity(match);
                 m_changed = true;
                 return;
@@ -474,7 +572,7 @@ private:
         // since the dominated store nodes may dependent on the data
         // read from the processed block. Note that there is no need to
         // update reads info if the node is deleted.
-        m_data.reads.add(m_value->effects().reads);
+        m_data.reads.add(effects.reads);
     }
 
     // Return true if we got rid of the operation. If you changed IR in this function, you have to
@@ -852,7 +950,7 @@ private:
 
         if (matches.size() == 1) {
             MemoryValue* dominatingMatch = matches[0];
-            RELEASE_ASSERT(m_dominators.dominates(dominatingMatch->owner, m_block));
+            RELEASE_ASSERT(m_dominators->dominates(dominatingMatch->owner, m_block));
             
             dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Eliminating using ", *dominatingMatch);
             Vector<Value*> extraValues;
@@ -869,32 +967,32 @@ private:
             return true;
         }
 
-        // FIXME: It would be way better if this phase just did SSA calculation directly.
-        // Right now we're relying on the fact that CSE's position in the phase order is
-        // almost right before SSA fixup.
 
-        Variable* variable = m_proc.addVariable(m_value->type());
+        // addBottom creates a fresh Const; InsertionSet::insertBottom would
+        // alias placeholders of the same type within one block.
+        SSACalculator::Variable* var = m_ssa->newVariable();
+        Value* placeholder = m_proc.addBottom(m_value->origin(), m_value->type());
+        m_insertionSet.insertValue(m_index, placeholder);
+        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Inserting placeholder for value: ", *placeholder);
+        m_value->replaceWithIdentity(placeholder);
 
-        VariableValue* get = m_insertionSet.insert<VariableValue>(
-            m_index, Get, m_value->origin(), variable);
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Inserting get of value: ", *get);
-        m_value->replaceWithIdentity(get);
-            
         for (MemoryValue* match : matches) {
-            Vector<Value*>& sets = m_sets.add(match, Vector<Value*>()).iterator->value;
-
-            Value* value = replace(match, sets);
+            ASSERT(canHaveSets(match));
+            m_blocksWithSets.add(match->owner);
+            auto& extras = m_sets.add(match, Vector<Value*>()).iterator->value;
+            Value* value = replace(match, extras);
             if (!value) {
                 if (match->isStore())
                     value = match->child(0);
                 else
                     value = match;
             }
-                
-            Value* set = m_proc.add<VariableValue>(Set, m_value->origin(), variable, value);
-            sets.append(set);
+
+            m_ssa->newDef(var, match->owner, value);
         }
 
+        m_pendingResolutions.append({ placeholder, m_block, var });
+        ASSERT(var->index() == m_pendingResolutions.size() - 1);
         return true;
     }
 
@@ -981,7 +1079,7 @@ private:
 
         Value* candidateReplacement = nullptr;
         BasicBlock* dominator = nullptr;
-        m_dominators.forAllStrictDominatorsOf(m_block, [&] (BasicBlock* block) {
+        m_dominators->forAllStrictDominatorsOf(m_block, [&] (BasicBlock* block) {
             if (candidateReplacement)
                 return;
 
@@ -1098,7 +1196,7 @@ private:
         auto fieldType = structType->field(fieldIndex).type;
         auto structGetOrigin = structGet->origin();
 
-        auto replace = [&](Value* dominatingMatch, Vector<Value*, 16>& extraValues) -> Value* {
+        auto replace = [&](Value* dominatingMatch, Vector<Value*>& extraValues) -> Value* {
             if (auto* structSet = dominatingMatch->as<WasmStructSetValue>()) {
                 Value* storedValue = structSet->child(1);
 
@@ -1131,13 +1229,13 @@ private:
 
         if (matches.size() == 1) {
             auto* dominatingMatch = matches[0];
-            RELEASE_ASSERT(m_dominators.dominates(dominatingMatch->owner, m_block));
+            RELEASE_ASSERT(m_dominators->dominates(dominatingMatch->owner, m_block));
 
             dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Eliminating using ", *dominatingMatch);
 
             // Handle store-to-load forwarding from WasmStructSet
 
-            Vector<Value*, 16> extraValues;
+            Vector<Value*> extraValues;
             auto* value = replace(dominatingMatch, extraValues);
             ASSERT(value);
             for (auto* extraValue : extraValues)
@@ -1146,23 +1244,23 @@ private:
             return true;
         }
 
-        // Multiple matches from different paths - need SSA fixup with Variable
-        Variable* variable = m_proc.addVariable(m_value->type());
-
-        VariableValue* get = m_insertionSet.insert<VariableValue>(m_index, Get, m_value->origin(), variable);
-        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Inserting get of value: ", *get);
-        m_value->replaceWithIdentity(get);
+        SSACalculator::Variable* var = m_ssa->newVariable();
+        Value* placeholder = m_proc.addBottom(m_value->origin(), m_value->type());
+        m_insertionSet.insertValue(m_index, placeholder);
+        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Inserting placeholder for value: ", *placeholder);
+        m_value->replaceWithIdentity(placeholder);
 
         for (auto* match : matches) {
-            Vector<Value*>& sets = m_sets.add(match, Vector<Value*>()).iterator->value;
-            Vector<Value*, 16> extraValues;
-            auto* value = replace(match, extraValues);
+            ASSERT(canHaveSets(match));
+            m_blocksWithSets.add(match->owner);
+            Vector<Value*>& extras = m_sets.add(match, Vector<Value*>()).iterator->value;
+            auto* value = replace(match, extras);
             ASSERT(value);
-            sets.appendVector(extraValues);
-            Value* set = m_proc.add<VariableValue>(Set, m_value->origin(), variable, value);
-            sets.append(set);
+            m_ssa->newDef(var, match->owner, value);
         }
 
+        m_pendingResolutions.append({ placeholder, m_block, var });
+        ASSERT(var->index() == m_pendingResolutions.size() - 1);
         return true;
     }
 
@@ -1328,7 +1426,7 @@ private:
         auto elementType = arrayType->elementType().type;
         auto arrayGetOrigin = arrayGet->origin();
 
-        auto replace = [&](Value* dominatingMatch, Vector<Value*, 16>& extraValues) -> Value* {
+        auto replace = [&](Value* dominatingMatch, Vector<Value*>& extraValues) -> Value* {
             if (auto* arraySet = dominatingMatch->as<WasmArraySetValue>()) {
                 Value* storedValue = arraySet->child(2);
                 Value* forwardedValue = storedValue;
@@ -1359,9 +1457,9 @@ private:
 
         if (matches.size() == 1) {
             auto* dominatingMatch = matches[0];
-            RELEASE_ASSERT(m_dominators.dominates(dominatingMatch->owner, m_block));
+            RELEASE_ASSERT(m_dominators->dominates(dominatingMatch->owner, m_block));
 
-            Vector<Value*, 16> extraValues;
+            Vector<Value*> extraValues;
             auto* value = replace(dominatingMatch, extraValues);
             ASSERT(value);
             for (auto* extraValue : extraValues)
@@ -1370,20 +1468,23 @@ private:
             return true;
         }
 
-        Variable* variable = m_proc.addVariable(m_value->type());
-        VariableValue* get = m_insertionSet.insert<VariableValue>(m_index, Get, m_value->origin(), variable);
-        m_value->replaceWithIdentity(get);
+        SSACalculator::Variable* var = m_ssa->newVariable();
+        Value* placeholder = m_proc.addBottom(m_value->origin(), m_value->type());
+        m_insertionSet.insertValue(m_index, placeholder);
+        dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Inserting placeholder for value: ", *placeholder);
+        m_value->replaceWithIdentity(placeholder);
 
         for (auto* match : matches) {
-            Vector<Value*>& sets = m_sets.add(match, Vector<Value*>()).iterator->value;
-            Vector<Value*, 16> extraValues;
-            auto* value = replace(match, extraValues);
+            ASSERT(canHaveSets(match));
+            m_blocksWithSets.add(match->owner);
+            Vector<Value*>& extras = m_sets.add(match, Vector<Value*>()).iterator->value;
+            auto* value = replace(match, extras);
             ASSERT(value);
-            sets.appendVector(extraValues);
-            Value* set = m_proc.add<VariableValue>(Set, m_value->origin(), variable, value);
-            sets.append(set);
+            m_ssa->newDef(var, match->owner, value);
         }
 
+        m_pendingResolutions.append({ placeholder, m_block, var });
+        ASSERT(var->index() == m_pendingResolutions.size() - 1);
         return true;
     }
 
@@ -1476,20 +1577,33 @@ private:
 
     Procedure& m_proc;
 
-    Dominators& m_dominators;
+    Dominators* m_dominators { nullptr };
     PureCSE m_pureCSE;
-    
+
     IndexMap<BasicBlock*, ImpureBlockData> m_impureBlockData;
 
     ImpureBlockData m_data;
 
-    BasicBlock* m_block;
-    unsigned m_index;
-    Value* m_value;
+    BasicBlock* m_block { nullptr };
+    unsigned m_index { 0 };
+    Value* m_value { nullptr };
 
+    // Match -> extra fixup values (e.g. BitAnd masks for packed Wasm types),
+    // flushed at match site during finalize().
     UncheckedKeyHashMap<Value*, Vector<Value*>> m_sets;
+    // Blocks that own at least one m_sets key, so finalize() can skip whole blocks.
+    IndexSet<BasicBlock*> m_blocksWithSets;
 
     InsertionSet m_insertionSet;
+
+    std::unique_ptr<SSACalculator> m_ssa;
+
+    struct PendingResolution {
+        Value* placeholder;
+        BasicBlock* useBlock;
+        SSACalculator::Variable* var;
+    };
+    Vector<PendingResolution> m_pendingResolutions;
 
     bool m_changed { false };
 };

@@ -15,8 +15,8 @@
 #include <cstdint>
 #include <deque>
 #include <queue>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 
@@ -27,7 +27,7 @@ class RtpPacketizerH265 : public RtpPacketizer {
   // Initialize with payload from encoder.
   // The payload_data must be exactly one encoded H.265 frame.
   // For H265 we only support tx-mode SRST.
-  RtpPacketizerH265(ArrayView<const uint8_t> payload, PayloadSizeLimits limits);
+  RtpPacketizerH265(std::span<const uint8_t> payload, PayloadSizeLimits limits);
 
   RtpPacketizerH265(const RtpPacketizerH265&) = delete;
   RtpPacketizerH265& operator=(const RtpPacketizerH265&) = delete;
@@ -43,13 +43,13 @@ class RtpPacketizerH265 : public RtpPacketizer {
 
  private:
   struct PacketUnit {
-    ArrayView<const uint8_t> source_fragment;
+    std::span<const uint8_t> source_fragment;
     bool first_fragment = false;
     bool last_fragment = false;
     bool aggregated = false;
     uint16_t header = 0;
   };
-  std::deque<ArrayView<const uint8_t>> input_fragments_;
+  std::deque<std::span<const uint8_t>> input_fragments_;
   std::queue<PacketUnit> packets_;
 
   bool GeneratePackets();

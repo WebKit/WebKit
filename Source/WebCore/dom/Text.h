@@ -49,7 +49,7 @@ public:
     WEBCORE_EXPORT String wholeText() const;
     WEBCORE_EXPORT void replaceWholeText(const String&);
     
-    RenderPtr<RenderText> createTextRenderer(const RenderStyle&);
+    RenderPtr<RenderText> createTextRenderer(const Style::ComputedStyle&);
     
     bool canContainRangeEndPoint() const final { return true; }
 

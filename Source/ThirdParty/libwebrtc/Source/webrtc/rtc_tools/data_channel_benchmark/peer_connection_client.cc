@@ -41,18 +41,20 @@
 #include "rtc_base/thread.h"
 #include "rtc_tools/data_channel_benchmark/signaling_interface.h"
 
+namespace webrtc {
+
 namespace {
 
 constexpr char kStunServer[] = "stun:stun.l.google.com:19302";
 
 class SetLocalDescriptionObserverAdapter
-    : public webrtc::SetLocalDescriptionObserverInterface {
+    : public SetLocalDescriptionObserverInterface {
  public:
-  using Callback = std::function<void(webrtc::RTCError)>;
-  static webrtc::scoped_refptr<SetLocalDescriptionObserverAdapter> Create(
+  using Callback = std::function<void(RTCError)>;
+  static scoped_refptr<SetLocalDescriptionObserverAdapter> Create(
       Callback callback) {
-    return webrtc::scoped_refptr<SetLocalDescriptionObserverAdapter>(
-        new webrtc::RefCountedObject<SetLocalDescriptionObserverAdapter>(
+    return scoped_refptr<SetLocalDescriptionObserverAdapter>(
+        new RefCountedObject<SetLocalDescriptionObserverAdapter>(
             std::move(callback)));
   }
 
@@ -61,7 +63,7 @@ class SetLocalDescriptionObserverAdapter
   ~SetLocalDescriptionObserverAdapter() override = default;
 
  private:
-  void OnSetLocalDescriptionComplete(webrtc::RTCError error) override {
+  void OnSetLocalDescriptionComplete(RTCError error) override {
     callback_(std::move(error));
   }
 
@@ -69,13 +71,13 @@ class SetLocalDescriptionObserverAdapter
 };
 
 class SetRemoteDescriptionObserverAdapter
-    : public webrtc::SetRemoteDescriptionObserverInterface {
+    : public SetRemoteDescriptionObserverInterface {
  public:
-  using Callback = std::function<void(webrtc::RTCError)>;
-  static webrtc::scoped_refptr<SetRemoteDescriptionObserverAdapter> Create(
+  using Callback = std::function<void(RTCError)>;
+  static scoped_refptr<SetRemoteDescriptionObserverAdapter> Create(
       Callback callback) {
-    return webrtc::scoped_refptr<SetRemoteDescriptionObserverAdapter>(
-        new webrtc::RefCountedObject<SetRemoteDescriptionObserverAdapter>(
+    return scoped_refptr<SetRemoteDescriptionObserverAdapter>(
+        new RefCountedObject<SetRemoteDescriptionObserverAdapter>(
             std::move(callback)));
   }
 
@@ -84,7 +86,7 @@ class SetRemoteDescriptionObserverAdapter
   ~SetRemoteDescriptionObserverAdapter() override = default;
 
  private:
-  void OnSetRemoteDescriptionComplete(webrtc::RTCError error) override {
+  void OnSetRemoteDescriptionComplete(RTCError error) override {
     callback_(std::move(error));
   }
 
@@ -92,16 +94,16 @@ class SetRemoteDescriptionObserverAdapter
 };
 
 class CreateSessionDescriptionObserverAdapter
-    : public webrtc::CreateSessionDescriptionObserver {
+    : public CreateSessionDescriptionObserver {
  public:
-  using Success = std::function<void(webrtc::SessionDescriptionInterface*)>;
-  using Failure = std::function<void(webrtc::RTCError)>;
+  using Success = std::function<void(SessionDescriptionInterface*)>;
+  using Failure = std::function<void(RTCError)>;
 
-  static webrtc::scoped_refptr<CreateSessionDescriptionObserverAdapter> Create(
+  static scoped_refptr<CreateSessionDescriptionObserverAdapter> Create(
       Success success,
       Failure failure) {
-    return webrtc::scoped_refptr<CreateSessionDescriptionObserverAdapter>(
-        new webrtc::RefCountedObject<CreateSessionDescriptionObserverAdapter>(
+    return scoped_refptr<CreateSessionDescriptionObserverAdapter>(
+        new RefCountedObject<CreateSessionDescriptionObserverAdapter>(
             std::move(success), std::move(failure)));
   }
 
@@ -110,21 +112,15 @@ class CreateSessionDescriptionObserverAdapter
   ~CreateSessionDescriptionObserverAdapter() override = default;
 
  private:
-  void OnSuccess(webrtc::SessionDescriptionInterface* desc) override {
-    success_(desc);
-  }
+  void OnSuccess(SessionDescriptionInterface* desc) override { success_(desc); }
 
-  void OnFailure(webrtc::RTCError error) override {
-    failure_(std::move(error));
-  }
+  void OnFailure(RTCError error) override { failure_(std::move(error)); }
 
   Success success_;
   Failure failure_;
 };
 
 }  // namespace
-
-namespace webrtc {
 
 PeerConnectionClient::PeerConnectionClient(
     PeerConnectionFactoryInterface* factory,

@@ -30,12 +30,17 @@
 #include <ws2tcpip.h>
 #endif
 
+#include <utility>
+
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
 #include "../internal.h"
+#include "../mem_internal.h"
 #include "internal.h"
 
+
+using namespace bssl;
 
 enum {
   BIO_CONN_S_BEFORE,
@@ -44,26 +49,25 @@ enum {
 };
 
 namespace {
-typedef struct bio_connect_st {
-  int state;
+struct BIO_CONNECT {
+  int state = BIO_CONN_S_BEFORE;
 
-  char *param_hostname;
-  char *param_port;
-  int nbio;
+  UniquePtr<char> param_hostname;
+  UniquePtr<char> param_port;
+  int nbio = 0;
 
-  unsigned short port;
+  unsigned short port = 0;
 
-  struct sockaddr_storage them;
-  socklen_t them_length;
+  sockaddr_storage them;
+  socklen_t them_length = 0;
 
-  // the file descriptor is kept in bio->num in order to match the socket
-  // BIO.
+  // The file descriptor is kept in bio->num in order to match the socket BIO.
 
   // info_callback is called when the connection is initially made
   // callback(BIO,state,ret);  The callback should return 'ret', state is for
   // compatibility with the SSL info_callback.
-  int (*info_callback)(BIO *bio, int state, int ret);
-} BIO_CONNECT;
+  int (*info_callback)(BIO *bio, int state, int ret) = nullptr;
+};
 }  // namespace
 
 #if !defined(OPENSSL_WINDOWS)
@@ -73,8 +77,8 @@ static int closesocket(int sock) { return close(sock); }
 // split_host_and_port sets |*out_host| and |*out_port| to the host and port
 // parsed from |name|. It returns one on success or zero on error. Even when
 // successful, |*out_port| may be NULL on return if no port was specified.
-static int split_host_and_port(char **out_host, char **out_port,
-                               const char *name) {
+static int split_host_and_port(UniquePtr<char> *out_host,
+                               UniquePtr<char> *out_port, const char *name) {
   const char *host, *port = nullptr;
   size_t host_len = 0;
 
@@ -106,7 +110,7 @@ static int split_host_and_port(char **out_host, char **out_port,
     }
   }
 
-  *out_host = OPENSSL_strndup(host, host_len);
+  out_host->reset(OPENSSL_strndup(host, host_len));
   if (*out_host == nullptr) {
     return 0;
   }
@@ -114,9 +118,8 @@ static int split_host_and_port(char **out_host, char **out_port,
     *out_port = nullptr;
     return 1;
   }
-  *out_port = OPENSSL_strdup(port);
+  out_port->reset(OPENSSL_strdup(port));
   if (*out_port == nullptr) {
-    OPENSSL_free(*out_host);
     *out_host = nullptr;
     return 0;
   }
@@ -144,61 +147,60 @@ static int conn_state(BIO *bio, BIO_CONNECT *c) {
         }
 
         if (c->param_port == nullptr) {
-          char *host, *port;
-          if (!split_host_and_port(&host, &port, c->param_hostname) ||
+          UniquePtr<char> host, port;
+          if (!split_host_and_port(&host, &port, c->param_hostname.get()) ||
               port == nullptr) {
-            OPENSSL_free(host);
-            OPENSSL_free(port);
             OPENSSL_PUT_ERROR(BIO, BIO_R_NO_PORT_SPECIFIED);
-            ERR_add_error_data(2, "host=", c->param_hostname);
+            ERR_add_error_data(2, "host=", c->param_hostname.get());
             goto exit_loop;
           }
 
-          OPENSSL_free(c->param_port);
-          c->param_port = port;
-          OPENSSL_free(c->param_hostname);
-          c->param_hostname = host;
+          c->param_port = std::move(port);
+          c->param_hostname = std::move(host);
         }
 
         if (!bio_ip_and_port_to_socket_and_addr(
-                &bio->num, &c->them, &c->them_length, c->param_hostname,
-                c->param_port)) {
+                &FromOpaque(bio)->num, &c->them, &c->them_length,
+                c->param_hostname.get(), c->param_port.get())) {
           OPENSSL_PUT_ERROR(BIO, BIO_R_UNABLE_TO_CREATE_SOCKET);
-          ERR_add_error_data(4, "host=", c->param_hostname, ":", c->param_port);
+          ERR_add_error_data(4, "host=", c->param_hostname.get(), ":",
+                             c->param_port.get());
           goto exit_loop;
         }
 
         if (c->nbio) {
-          if (!bio_socket_nbio(bio->num, 1)) {
+          if (!bio_socket_nbio(FromOpaque(bio)->num, 1)) {
             OPENSSL_PUT_ERROR(BIO, BIO_R_ERROR_SETTING_NBIO);
-            ERR_add_error_data(4, "host=", c->param_hostname, ":",
-                               c->param_port);
+            ERR_add_error_data(4, "host=", c->param_hostname.get(), ":",
+                               c->param_port.get());
             goto exit_loop;
           }
         }
 
         i = 1;
-        ret = setsockopt(bio->num, SOL_SOCKET, SO_KEEPALIVE, (char *)&i,
-                         sizeof(i));
+        ret = setsockopt(FromOpaque(bio)->num, SOL_SOCKET, SO_KEEPALIVE,
+                         (char *)&i, sizeof(i));
         if (ret < 0) {
           OPENSSL_PUT_SYSTEM_ERROR();
           OPENSSL_PUT_ERROR(BIO, BIO_R_KEEPALIVE);
-          ERR_add_error_data(4, "host=", c->param_hostname, ":", c->param_port);
+          ERR_add_error_data(4, "host=", c->param_hostname.get(), ":",
+                             c->param_port.get());
           goto exit_loop;
         }
 
         BIO_clear_retry_flags(bio);
-        ret = connect(bio->num, (struct sockaddr *)&c->them, c->them_length);
+        ret = connect(FromOpaque(bio)->num, (struct sockaddr *)&c->them,
+                      c->them_length);
         if (ret < 0) {
           if (bio_socket_should_retry(ret)) {
-            BIO_set_flags(bio, (BIO_FLAGS_IO_SPECIAL | BIO_FLAGS_SHOULD_RETRY));
+            BIO_set_retry_special(bio);
             c->state = BIO_CONN_S_BLOCKED_CONNECT;
-            bio->retry_reason = BIO_RR_CONNECT;
+            BIO_set_retry_reason(bio, BIO_RR_CONNECT);
           } else {
             OPENSSL_PUT_SYSTEM_ERROR();
             OPENSSL_PUT_ERROR(BIO, BIO_R_CONNECT_ERROR);
-            ERR_add_error_data(4, "host=", c->param_hostname, ":",
-                               c->param_port);
+            ERR_add_error_data(4, "host=", c->param_hostname.get(), ":",
+                               c->param_port.get());
           }
           goto exit_loop;
         } else {
@@ -207,19 +209,19 @@ static int conn_state(BIO *bio, BIO_CONNECT *c) {
         break;
 
       case BIO_CONN_S_BLOCKED_CONNECT:
-        i = bio_sock_error(bio->num);
+        i = bio_sock_error(FromOpaque(bio)->num);
         if (i) {
           if (bio_socket_should_retry(ret)) {
-            BIO_set_flags(bio, (BIO_FLAGS_IO_SPECIAL | BIO_FLAGS_SHOULD_RETRY));
+            BIO_set_retry_special(bio);
             c->state = BIO_CONN_S_BLOCKED_CONNECT;
-            bio->retry_reason = BIO_RR_CONNECT;
+            BIO_set_retry_reason(bio, BIO_RR_CONNECT);
             ret = -1;
           } else {
             BIO_clear_retry_flags(bio);
             OPENSSL_PUT_SYSTEM_ERROR();
             OPENSSL_PUT_ERROR(BIO, BIO_R_NBIO_CONNECT_ERROR);
-            ERR_add_error_data(4, "host=", c->param_hostname, ":",
-                               c->param_port);
+            ERR_add_error_data(4, "host=", c->param_hostname.get(), ":",
+                               c->param_port.get());
             ret = 0;
           }
           goto exit_loop;
@@ -253,55 +255,35 @@ end:
   return ret;
 }
 
-static BIO_CONNECT *BIO_CONNECT_new(void) {
-  BIO_CONNECT *ret =
-      reinterpret_cast<BIO_CONNECT *>(OPENSSL_zalloc(sizeof(BIO_CONNECT)));
-  if (ret == nullptr) {
-    return nullptr;
-  }
-  ret->state = BIO_CONN_S_BEFORE;
-  return ret;
-}
-
-static void BIO_CONNECT_free(BIO_CONNECT *c) {
-  if (c == nullptr) {
-    return;
-  }
-  OPENSSL_free(c->param_hostname);
-  OPENSSL_free(c->param_port);
-  OPENSSL_free(c);
-}
-
 static int conn_new(BIO *bio) {
-  bio->init = 0;
-  bio->num = -1;
-  bio->flags = 0;
-  bio->ptr = BIO_CONNECT_new();
-  return bio->ptr != nullptr;
+  BIO_set_init(bio, 0);
+  FromOpaque(bio)->num = -1;
+  FromOpaque(bio)->flags = 0;
+  BIO_set_data(bio, New<BIO_CONNECT>());
+  return BIO_get_data(bio) != nullptr;
 }
 
 static void conn_close_socket(BIO *bio) {
-  BIO_CONNECT *c = (BIO_CONNECT *)bio->ptr;
+  BIO_CONNECT *c = (BIO_CONNECT *)BIO_get_data(bio);
 
-  if (bio->num == -1) {
+  if (FromOpaque(bio)->num == -1) {
     return;
   }
 
   // Only do a shutdown if things were established
   if (c->state == BIO_CONN_S_OK) {
-    shutdown(bio->num, 2);
+    shutdown(FromOpaque(bio)->num, 2);
   }
-  closesocket(bio->num);
-  bio->num = -1;
+  closesocket(FromOpaque(bio)->num);
+  FromOpaque(bio)->num = -1;
 }
 
 static int conn_free(BIO *bio) {
-  if (bio->shutdown) {
+  if (BIO_get_shutdown(bio)) {
     conn_close_socket(bio);
   }
 
-  BIO_CONNECT_free((BIO_CONNECT *)bio->ptr);
-
+  Delete(static_cast<BIO_CONNECT *>(BIO_get_data(bio)));
   return 1;
 }
 
@@ -309,7 +291,7 @@ static int conn_read(BIO *bio, char *out, int out_len) {
   int ret = 0;
   BIO_CONNECT *data;
 
-  data = (BIO_CONNECT *)bio->ptr;
+  data = (BIO_CONNECT *)BIO_get_data(bio);
   if (data->state != BIO_CONN_S_OK) {
     ret = conn_state(bio, data);
     if (ret <= 0) {
@@ -318,7 +300,7 @@ static int conn_read(BIO *bio, char *out, int out_len) {
   }
 
   bio_clear_socket_error();
-  ret = (int)recv(bio->num, out, out_len, 0);
+  ret = (int)recv(FromOpaque(bio)->num, out, out_len, 0);
   BIO_clear_retry_flags(bio);
   if (ret <= 0) {
     if (bio_socket_should_retry(ret)) {
@@ -333,7 +315,7 @@ static int conn_write(BIO *bio, const char *in, int in_len) {
   int ret;
   BIO_CONNECT *data;
 
-  data = (BIO_CONNECT *)bio->ptr;
+  data = (BIO_CONNECT *)BIO_get_data(bio);
   if (data->state != BIO_CONN_S_OK) {
     ret = conn_state(bio, data);
     if (ret <= 0) {
@@ -342,7 +324,7 @@ static int conn_write(BIO *bio, const char *in, int in_len) {
   }
 
   bio_clear_socket_error();
-  ret = (int)send(bio->num, in, in_len, 0);
+  ret = (int)send(FromOpaque(bio)->num, in, in_len, 0);
   BIO_clear_retry_flags(bio);
   if (ret <= 0) {
     if (bio_socket_should_retry(ret)) {
@@ -354,12 +336,12 @@ static int conn_write(BIO *bio, const char *in, int in_len) {
 }
 
 static long conn_ctrl(BIO *bio, int cmd, long num, void *ptr) {
-  BIO_CONNECT *data = static_cast<BIO_CONNECT *>(bio->ptr);
+  BIO_CONNECT *data = static_cast<BIO_CONNECT *>(BIO_get_data(bio));
   switch (cmd) {
     case BIO_CTRL_RESET:
       data->state = BIO_CONN_S_BEFORE;
       conn_close_socket(bio);
-      bio->flags = 0;
+      FromOpaque(bio)->flags = 0;
       return 0;
     case BIO_C_DO_STATE_MACHINE:
       // use this one to start the connection
@@ -372,17 +354,16 @@ static long conn_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       if (ptr == nullptr) {
         return 0;
       }
-      bio->init = 1;
+      BIO_set_init(bio, 1);
       if (num == 0) {
-        OPENSSL_free(data->param_hostname);
-        data->param_hostname =
-            OPENSSL_strdup(reinterpret_cast<const char *>(ptr));
+        data->param_hostname.reset(
+            OPENSSL_strdup(reinterpret_cast<const char *>(ptr)));
         if (data->param_hostname == nullptr) {
           return 0;
         }
       } else if (num == 1) {
-        OPENSSL_free(data->param_port);
-        data->param_port = OPENSSL_strdup(reinterpret_cast<const char *>(ptr));
+        data->param_port.reset(
+            OPENSSL_strdup(reinterpret_cast<const char *>(ptr)));
         if (data->param_port == nullptr) {
           return 0;
         }
@@ -394,19 +375,19 @@ static long conn_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       data->nbio = static_cast<int>(num);
       return 1;
     case BIO_C_GET_FD:
-      if (bio->init) {
+      if (BIO_get_init(bio)) {
         int *out = static_cast<int *>(ptr);
         if (out != nullptr) {
-          *out = bio->num;
+          *out = FromOpaque(bio)->num;
         }
-        return bio->num;
+        return FromOpaque(bio)->num;
       } else {
         return -1;
       }
     case BIO_CTRL_GET_CLOSE:
-      return bio->shutdown;
+      return BIO_get_shutdown(bio);
     case BIO_CTRL_SET_CLOSE:
-      bio->shutdown = static_cast<int>(num);
+      BIO_set_shutdown(bio, static_cast<int>(num));
       return 1;
     case BIO_CTRL_FLUSH:
       return 1;
@@ -421,7 +402,7 @@ static long conn_ctrl(BIO *bio, int cmd, long num, void *ptr) {
 }
 
 static long conn_callback_ctrl(BIO *bio, int cmd, BIO_info_cb *fp) {
-  BIO_CONNECT *data = static_cast<BIO_CONNECT *>(bio->ptr);
+  BIO_CONNECT *data = static_cast<BIO_CONNECT *>(BIO_get_data(bio));
   switch (cmd) {
     case BIO_CTRL_SET_CALLBACK:
       data->info_callback = fp;
@@ -451,7 +432,7 @@ static const BIO_METHOD methods_connectp = {
     conn_new,         conn_free,        conn_callback_ctrl,
 };
 
-const BIO_METHOD *BIO_s_connect(void) { return &methods_connectp; }
+const BIO_METHOD *BIO_s_connect() { return &methods_connectp; }
 
 int BIO_set_conn_hostname(BIO *bio, const char *name) {
   return (int)BIO_ctrl(bio, BIO_C_SET_CONNECT, 0, (void *)name);

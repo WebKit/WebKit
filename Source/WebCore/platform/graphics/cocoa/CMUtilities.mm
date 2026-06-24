@@ -58,7 +58,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PacketDurationParser);
 
-#if ENABLE(VORBIS)
+#if ENABLE(VORBIS) && !defined(WEBCORE_kAudioFormatVorbis_DEFINED)
+#define WEBCORE_kAudioFormatVorbis_DEFINED
 constexpr uint32_t kAudioFormatVorbis = 'vorb';
 #endif
 
@@ -99,19 +100,75 @@ static RetainPtr<CFStringRef> cfStringFromFourCC(FourCC fourCC)
     return adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, string.begin(), kCFStringEncodingASCII));
 }
 
+static Vector<std::pair<FourCC, Ref<SharedBuffer>>> parseExtensionAtomsDictionary(CFDictionaryRef atomDictionary, size_t indexStart = 0)
+{
+    CFIndex extensionCount = CFDictionaryGetCount(atomDictionary);
+    if (CFIndex(indexStart) >= extensionCount)
+        return { };
+
+    Vector<const void*, 1> keys(extensionCount);
+    Vector<const void*, 1> values(extensionCount);
+    CFDictionaryGetKeysAndValues(atomDictionary, keys.mutableSpan().data(), values.mutableSpan().data());
+    Vector<std::pair<FourCC, Ref<SharedBuffer>>> result;
+    result.reserveInitialCapacity(extensionCount - indexStart);
+    // Per CMFormatDescription.h, each value is either a CFData payload or a CFArray
+    // of CFData (multiple atoms of the same FourCC). Expand arrays into multiple
+    // entries sharing a FourCC.
+    for (CFIndex index = indexStart; index < extensionCount; ++index) {
+        auto fourCC = cfStringToFourCC(checked_cf_cast<CFStringRef>(keys[index]));
+        CFTypeRef value = static_cast<CFTypeRef>(values[index]);
+        if (RetainPtr data = dynamic_cf_cast<CFDataRef>(value))
+            result.append({ fourCC, SharedBuffer::create(data.get()) });
+        else if (RetainPtr array = dynamic_cf_cast<CFArrayRef>(value)) {
+            CFIndex arrayCount = CFArrayGetCount(array.get());
+            for (CFIndex arrayIndex = 0; arrayIndex < arrayCount; ++arrayIndex) {
+                if (RetainPtr entry = dynamic_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(array.get(), arrayIndex)))
+                    result.append({ fourCC, SharedBuffer::create(entry.get()) });
+            }
+        } else
+            RELEASE_LOG_ERROR(Media, "Unexpected value type in SampleDescriptionExtensionAtoms for FourCC %s", fourCC.string().begin());
+    }
+    return result;
+}
+
 static RetainPtr<CFDictionaryRef> createExtensionAtomsDictionary(const Vector<std::pair<FourCC, Ref<SharedBuffer>>>& configurations)
 {
-    Vector<RetainPtr<CFTypeRef>> configurationCFStringKeys = { configurations.size(), [&](auto index) {
-        return cfStringFromFourCC(configurations[index].first);
+    Vector<FourCC> orderedKeys;
+    Vector<Vector<RetainPtr<CFDataRef>>> groupedDatas;
+    orderedKeys.reserveInitialCapacity(configurations.size());
+    groupedDatas.reserveInitialCapacity(configurations.size());
+    for (auto& [fourCC, buffer] : configurations) {
+        size_t existingIndex = notFound;
+        for (size_t i = 0; i < orderedKeys.size(); ++i) {
+            if (orderedKeys[i] == fourCC) {
+                existingIndex = i;
+                break;
+            }
+        }
+        if (existingIndex == notFound) {
+            orderedKeys.append(fourCC);
+            groupedDatas.append({ buffer->createCFData() });
+        } else
+            groupedDatas[existingIndex].append(buffer->createCFData());
+    }
+
+    Vector<RetainPtr<CFTypeRef>> retainedKeys = { orderedKeys.size(), [&](auto index) -> RetainPtr<CFTypeRef> {
+        return cfStringFromFourCC(orderedKeys[index]);
     } };
-    Vector<RetainPtr<CFDataRef>> configurationValues = { configurations.size(), [&](auto index) {
-        return configurations[index].second->createCFData();
+    Vector<RetainPtr<CFTypeRef>> retainedValues = { groupedDatas.size(), [&](auto index) -> RetainPtr<CFTypeRef> {
+        auto& datas = groupedDatas[index];
+        if (datas.size() == 1)
+            return datas[0];
+        Vector<CFTypeRef> rawDatas(datas.size(), [&](auto j) {
+            return datas[j].get();
+        });
+        return adoptCF(CFArrayCreate(kCFAllocatorDefault, rawDatas.begin(), rawDatas.size(), &kCFTypeArrayCallBacks));
     } };
-    Vector<CFTypeRef> rawConfigurationKeys(configurationCFStringKeys.size(), [&](auto index) {
-        return configurationCFStringKeys[index].get();
+    Vector<CFTypeRef> rawConfigurationKeys(retainedKeys.size(), [&](auto index) {
+        return retainedKeys[index].get();
     });
-    Vector<CFTypeRef> rawConfigurationValues(configurationValues.size(), [&](auto index) {
-        return configurationValues[index].get();
+    Vector<CFTypeRef> rawConfigurationValues(retainedValues.size(), [&](auto index) {
+        return retainedValues[index].get();
     });
     ASSERT(rawConfigurationKeys.size() == rawConfigurationValues.size());
 
@@ -153,20 +210,7 @@ static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFor
 
     // For video content, the first element of the dictionary is always the video's atomData.
     size_t indexStart = PAL::CMFormatDescriptionGetMediaType(description) == kCMMediaType_Video;
-    size_t extensionsCount = CFDictionaryGetCount(extensionAtoms.get());
-    if (extensionsCount <= indexStart) {
-        return EncryptionDataCollection {
-            .encryptionData = WTF::move(*encryptionData),
-            .encryptionOriginalFormat = encryptionOriginalFormat
-        };
-    }
-
-    Vector<const void*, 2> keys(extensionsCount);
-    Vector<const void*, 2> values(extensionsCount);
-    CFDictionaryGetKeysAndValues(extensionAtoms.get(), keys.mutableSpan().data(), values.mutableSpan().data());
-    Vector<TrackInfoEncryptionInitData> encryptionInitDatas = { size_t(extensionsCount) - indexStart, [&](auto index) -> TrackInfoEncryptionInitData {
-        return { cfStringToFourCC(static_cast<CFStringRef>(keys[index + indexStart])), SharedBuffer::create(static_cast<CFDataRef>(values[index + indexStart])) };
-    } };
+    auto encryptionInitDatas = parseExtensionAtomsDictionary(extensionAtoms.get(), indexStart);
 
     return EncryptionDataCollection {
         .encryptionData = WTF::move(*encryptionData),
@@ -366,6 +410,10 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     if (videoInfo.colorSpace().fullRange.value_or(false))
         CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_FullRangeVideo, kCFBooleanTrue);
 
+    int bitDepth = videoInfo.bitDepth();
+    RetainPtr bitsPerComponent = adoptCF(CFNumberCreate(nullptr, kCFNumberIntType, &bitDepth));
+    CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_BitsPerComponent, bitsPerComponent.get());
+
     if (videoInfo.colorSpace().primaries) {
         if (RetainPtr cmColorPrimaries = convertToCMColorPrimaries(*videoInfo.colorSpace().primaries))
             CFDictionaryAddValue(extensions.get(), kCVImageBufferColorPrimariesKey, cmColorPrimaries.get());
@@ -462,14 +510,8 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
         CFIndex extensionCount = CFDictionaryGetCount(atomDictionary.get());
         if (!extensionCount)
             RELEASE_LOG_INFO(Media, "kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms having %ld keys keys expected at least 1", extensionCount);
-        else {
-            Vector<const void*, 1> keys(extensionCount);
-            Vector<const void*, 1> values(extensionCount);
-            CFDictionaryGetKeysAndValues(atomDictionary.get(), keys.mutableSpan().data(), values.mutableSpan().data());
-            extensionAtoms = { size_t(extensionCount), [&](auto index) -> TrackInfo::AtomData {
-                return { cfStringToFourCC(checked_cf_cast<CFStringRef>(keys[index])), SharedBuffer::create(checked_cf_cast<CFDataRef>(values[index])) };
-            } };
-        }
+        else
+            extensionAtoms = parseExtensionAtomsDictionary(atomDictionary.get());
     } else
         RELEASE_LOG_ERROR(Media, "Couldn't retrieve extensionAtoms from CMFormatDescription");
 
@@ -746,7 +788,8 @@ PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixelBuffer
         matrix = PlatformVideoMatrixCoefficients::Bt470bg;
 
     auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
-    bool isFullRange = pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+    // FIXME: We should do a more comprehensive check.
+    bool isFullRange = pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && pixelFormat != kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
 
     return { primaries, transfer, matrix, isFullRange };
 }
@@ -894,6 +937,164 @@ Vector<AudioStreamPacketDescription> getPacketDescriptions(CMSampleBufferRef sam
         return { };
     }
     return descriptions;
+}
+
+Vector<CMSampleTimingInfo> getSampleTimingInfoArray(CMSampleBufferRef sampleBuffer)
+{
+    CMItemCount entriesNeeded = 0;
+    if (PAL::CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, 0, nullptr, &entriesNeeded) != noErr || !entriesNeeded)
+        return { };
+    Vector<CMSampleTimingInfo> timings(entriesNeeded);
+    if (PAL::CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, entriesNeeded, timings.mutableSpan().data(), nullptr) != noErr)
+        return { };
+    return timings;
+}
+
+static bool sampleBufferHasNoSampleSizes(CMSampleBufferRef sampleBuffer)
+{
+    return PAL::CMSampleBufferGetSampleSizeArray(sampleBuffer, 0, nullptr, nullptr) == kCMSampleBufferError_BufferHasNoSampleSizes;
+}
+
+// Synthesize a single-packet CMSampleBuffer that references a slice of a source
+// block buffer. Used when the source CMSampleBuffer carries per-packet sizes in
+// the audio stream packet description array (kCMSampleBufferError_BufferHasNoSampleSizes
+// shape) and CoreMedia APIs that walk the sample-size array cannot be used.
+static RetainPtr<CMSampleBufferRef> createSinglePacketSampleBuffer(CMBlockBufferRef sourceBlockBuffer, CMFormatDescriptionRef formatDescription, const AudioStreamPacketDescription& desc, const CMSampleTimingInfo& timing)
+{
+    if (desc.mStartOffset < 0)
+        return nullptr;
+
+    CMBlockBufferRef rawSubBlock = nullptr;
+    if (PAL::CMBlockBufferCreateEmpty(kCFAllocatorDefault, 1, 0, &rawSubBlock) != kCMBlockBufferNoErr || !rawSubBlock)
+        return nullptr;
+    RetainPtr subBlock = adoptCF(rawSubBlock);
+    if (PAL::CMBlockBufferAppendBufferReference(subBlock.get(), sourceBlockBuffer, static_cast<size_t>(desc.mStartOffset), desc.mDataByteSize, 0) != kCMBlockBufferNoErr)
+        return nullptr;
+
+    size_t sampleSize = desc.mDataByteSize;
+    CMSampleBufferRef rawSample = nullptr;
+    if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, subBlock.get(), formatDescription, 1, 1, &timing, 1, &sampleSize, &rawSample) != noErr || !rawSample)
+        return nullptr;
+    return adoptCF(rawSample);
+}
+
+OSStatus forEachSample(CMSampleBufferRef sampleBuffer, NOESCAPE const Function<OSStatus(CMSampleBufferRef, CMItemCount)>& callback)
+{
+    if (!sampleBufferHasNoSampleSizes(sampleBuffer)) {
+        return PAL::CMSampleBufferCallBlockForEachSample(sampleBuffer, [&](CMSampleBufferRef subSample, CMItemCount index) -> OSStatus {
+            return callback(subSample, index);
+        });
+    }
+
+    auto numSamples = PAL::CMSampleBufferGetNumSamples(sampleBuffer);
+    auto packetDescs = getPacketDescriptions(sampleBuffer);
+    if (packetDescs.size() != static_cast<size_t>(numSamples))
+        return kCMSampleBufferError_CannotSubdivide;
+
+    auto timings = getSampleTimingInfoArray(sampleBuffer);
+    if (timings.isEmpty())
+        return kCMSampleBufferError_CannotSubdivide;
+
+    const bool uniformTiming = timings.size() == 1;
+    const CMSampleTimingInfo& baseTiming = timings[0];
+    CMTime runningPTS = baseTiming.presentationTimeStamp;
+    CMTime runningDTS = baseTiming.decodeTimeStamp;
+
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer);
+    RetainPtr sourceBlockBuffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
+    if (!formatDescription || !sourceBlockBuffer)
+        return kCMSampleBufferError_CannotSubdivide;
+
+    for (CMItemCount i = 0; i < numSamples; ++i) {
+        CMSampleTimingInfo timing = uniformTiming
+            ? CMSampleTimingInfo { baseTiming.duration, runningPTS, runningDTS }
+            : timings[i];
+        if (uniformTiming && CMTIME_IS_VALID(baseTiming.duration)) {
+            if (CMTIME_IS_VALID(runningPTS))
+                runningPTS = PAL::CMTimeAdd(runningPTS, baseTiming.duration);
+            if (CMTIME_IS_VALID(runningDTS))
+                runningDTS = PAL::CMTimeAdd(runningDTS, baseTiming.duration);
+        }
+
+        RetainPtr subSample = createSinglePacketSampleBuffer(sourceBlockBuffer.get(), formatDescription.get(), packetDescs[i], timing);
+        if (!subSample)
+            return kCMSampleBufferError_CannotSubdivide;
+
+        if (auto status = callback(subSample.get(), i))
+            return status;
+    }
+    return noErr;
+}
+
+RetainPtr<CMSampleBufferRef> copySampleBufferForRange(CMSampleBufferRef sampleBuffer, CFRange range)
+{
+    if (!sampleBufferHasNoSampleSizes(sampleBuffer)) {
+        CMSampleBufferRef rawCopy = nullptr;
+        if (PAL::CMSampleBufferCopySampleBufferForRange(kCFAllocatorDefault, sampleBuffer, range, &rawCopy) != noErr || !rawCopy)
+            return nullptr;
+        return adoptCF(rawCopy);
+    }
+
+    auto numSamples = PAL::CMSampleBufferGetNumSamples(sampleBuffer);
+    if (range.location < 0 || range.length <= 0 || range.location + range.length > numSamples)
+        return nullptr;
+
+    auto packetDescs = getPacketDescriptions(sampleBuffer);
+    if (packetDescs.size() != static_cast<size_t>(numSamples))
+        return nullptr;
+
+    auto timings = getSampleTimingInfoArray(sampleBuffer);
+    if (timings.isEmpty())
+        return nullptr;
+
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer);
+    RetainPtr sourceBlockBuffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
+    if (!formatDescription || !sourceBlockBuffer)
+        return nullptr;
+
+    CMBlockBufferRef rawSubBlock = nullptr;
+    if (PAL::CMBlockBufferCreateEmpty(kCFAllocatorDefault, range.length, 0, &rawSubBlock) != kCMBlockBufferNoErr || !rawSubBlock)
+        return nullptr;
+    RetainPtr subBlock = adoptCF(rawSubBlock);
+
+    Vector<size_t> sampleSizes;
+    sampleSizes.reserveInitialCapacity(static_cast<size_t>(range.length));
+    for (CFIndex i = 0; i < range.length; ++i) {
+        const auto& desc = packetDescs[range.location + i];
+        if (desc.mStartOffset < 0)
+            return nullptr;
+        if (PAL::CMBlockBufferAppendBufferReference(subBlock.get(), sourceBlockBuffer.get(), static_cast<size_t>(desc.mStartOffset), desc.mDataByteSize, 0) != kCMBlockBufferNoErr)
+            return nullptr;
+        sampleSizes.append(desc.mDataByteSize);
+    }
+
+    Vector<CMSampleTimingInfo> rangeTimings;
+    CMItemCount timingEntries;
+    const CMSampleTimingInfo* timingArray = nullptr;
+    CMSampleTimingInfo uniformTimingForRange;
+    if (timings.size() == 1) {
+        const CMSampleTimingInfo& baseTiming = timings[0];
+        uniformTimingForRange = baseTiming;
+        if (CMTIME_IS_VALID(baseTiming.duration)) {
+            for (CFIndex i = 0; i < range.location; ++i) {
+                if (CMTIME_IS_VALID(uniformTimingForRange.presentationTimeStamp))
+                    uniformTimingForRange.presentationTimeStamp = PAL::CMTimeAdd(uniformTimingForRange.presentationTimeStamp, baseTiming.duration);
+                if (CMTIME_IS_VALID(uniformTimingForRange.decodeTimeStamp))
+                    uniformTimingForRange.decodeTimeStamp = PAL::CMTimeAdd(uniformTimingForRange.decodeTimeStamp, baseTiming.duration);
+            }
+        }
+        timingArray = &uniformTimingForRange;
+        timingEntries = 1;
+    } else {
+        rangeTimings = timings.subspan(range.location, range.length);
+        timingArray = rangeTimings.span().data();
+        timingEntries = rangeTimings.size();
+    }
+
+    CMSampleBufferRef rawSample = nullptr;
+    if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, subBlock.get(), formatDescription.get(), range.length, timingEntries, timingArray, sampleSizes.size(), sampleSizes.span().data(), &rawSample) != noErr || !rawSample)
+        return nullptr;
+    return adoptCF(rawSample);
 }
 
 RetainPtr<CMBlockBufferRef> ensureContiguousBlockBuffer(CMBlockBufferRef rawBlockBuffer)

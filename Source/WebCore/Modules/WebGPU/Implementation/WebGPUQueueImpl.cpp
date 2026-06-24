@@ -110,7 +110,7 @@ void QueueImpl::writeTexture(
     Ref convertToBackingContext = m_convertToBackingContext;
 
     WGPUImageCopyTexture backingDestination {
-        .texture = convertToBackingContext->convertToBacking(protect(destination.texture).get()),
+        .texture = convertToBackingContext->convertToBacking(protect(destination.texture)),
         .mipLevel = destination.mipLevel,
         .origin = destination.origin ? convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
         .aspect = convertToBackingContext->convertToBacking(destination.aspect),

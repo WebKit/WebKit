@@ -80,11 +80,6 @@ struct AppleColorFilter : ListOrNone<AppleColorFilterValueList> {
     using ListOrNone<AppleColorFilterValueList>::ListOrNone;
 };
 
-// MARK: - DeprecatedCSSOMValue Creation
-
-// Specialized to return a `DeprecatedCSSOMFilterFunctionValue`.
-template<> struct DeprecatedCSSOMValueCreation<AppleColorFilterValue> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const AppleColorFilterValue&); };
-
 } // namespace CSS
 } // namespace WebCore
 

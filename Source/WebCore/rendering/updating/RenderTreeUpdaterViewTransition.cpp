@@ -31,11 +31,11 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElement.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "RenderViewTransitionCapture.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleTreeResolver.h"
 #include "ViewTransition.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -72,7 +72,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
     }
 
     // Destroy pseudo element tree ::view-transition has display: none or no style.
-    auto rootStyle = documentElementRenderer->getCachedPseudoStyle({ PseudoElementType::ViewTransition }, &documentElementRenderer->style());
+    auto rootStyle = documentElementRenderer->style().pseudoElementStyle({ PseudoElementType::ViewTransition });
     if (!rootStyle || rootStyle->display() == Style::DisplayType::None) {
         destroyPseudoElementTreeIfNeeded();
         return;
@@ -81,11 +81,11 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
     RefPtr activeViewTransition = document->activeViewTransition();
     ASSERT(activeViewTransition);
 
-    auto newRootStyle = RenderStyle::clone(*rootStyle);
+    auto newRootStyle = Style::ComputedStyle::clone(*rootStyle);
 
     WeakPtr viewTransitionContainingBlock = documentElementRenderer->view().viewTransitionContainingBlock();
     if (!viewTransitionContainingBlock) {
-        auto containingBlockStyle = RenderStyle::createAnonymousStyleWithDisplay(documentElementRenderer->view().style(), Style::DisplayType::BlockFlow);
+        auto containingBlockStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(documentElementRenderer->view().style(), Style::DisplayType::BlockFlow);
         containingBlockStyle.setPosition(PositionType::Fixed);
         containingBlockStyle.setPointerEvents(PointerEvents::None);
 
@@ -123,7 +123,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
     for (auto& name : activeViewTransition->namedElements().keys()) {
         ASSERT(!currentGroup || currentGroup->style().pseudoElementType() == PseudoElementType::ViewTransitionGroup);
         if (currentGroup && name == currentGroup->style().pseudoElementNameArgument()) {
-            auto style = documentElementRenderer->getCachedPseudoStyle({ PseudoElementType::ViewTransitionGroup, name }, &documentElementRenderer->style());
+            auto style = documentElementRenderer->style().pseudoElementStyle({ PseudoElementType::ViewTransitionGroup, name });
             if (!style || style->display() == Style::DisplayType::None) {
                 documentElementRenderer->view().removeViewTransitionGroup(name);
                 descendantsToDelete.append(currentGroup);
@@ -143,7 +143,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
 static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElementRenderer, const AtomString& name, PseudoElementType pseudoElementType)
 {
     auto& documentElementStyle = documentElementRenderer.style();
-    auto style = documentElementRenderer.getCachedPseudoStyle({ pseudoElementType, name }, &documentElementStyle);
+    auto style = documentElementStyle.pseudoElementStyle({ pseudoElementType, name });
     if (!style || style->display() == Style::DisplayType::None)
         return nullptr;
 
@@ -159,13 +159,13 @@ static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElemen
 
         auto& state = pseudoElementType == PseudoElementType::ViewTransitionOld ? capturedElement->oldState : capturedElement->newState;
 
-        RenderPtr<RenderViewTransitionCapture> rendererViewTransition = WebCore::createRenderer<RenderViewTransitionCapture>(RenderObject::Type::ViewTransitionCapture, document, RenderStyle::clone(*style), state.isRootElement);
+        RenderPtr<RenderViewTransitionCapture> rendererViewTransition = WebCore::createRenderer<RenderViewTransitionCapture>(RenderObject::Type::ViewTransitionCapture, document, Style::ComputedStyle::clone(*style), state.isRootElement);
         if (pseudoElementType == PseudoElementType::ViewTransitionOld)
             rendererViewTransition->setImage(capturedElement->oldImage.value_or(nullptr));
         rendererViewTransition->setCapturedSize(state.size, state.overflowRect, state.layerToLayoutOffset);
         renderer = WTF::move(rendererViewTransition);
     } else
-        renderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, RenderStyle::clone(*style));
+        renderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, Style::ComputedStyle::clone(*style));
 
     renderer->initializeStyle();
     return renderer;
@@ -194,21 +194,21 @@ void RenderTreeUpdater::ViewTransition::buildPseudoElementGroup(RenderBlockFlow&
     }
 }
 
-void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const RenderStyle& groupStyle, RenderBox& group, RenderElement& documentElementRenderer, Style::DifferenceResult minimalStyleDifference)
+void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const Style::ComputedStyle& groupStyle, RenderBox& group, RenderElement& documentElementRenderer, Style::DifferenceResult minimalStyleDifference)
 {
     auto& documentElementStyle = documentElementRenderer.style();
     auto name = groupStyle.pseudoElementNameArgument();
 
-    auto newGroupStyle = RenderStyle::clone(groupStyle);
+    auto newGroupStyle = Style::ComputedStyle::clone(groupStyle);
     group.setStyle(WTF::move(newGroupStyle), minimalStyleDifference);
 
     enum class ShouldDeleteRenderer : bool { No, Yes };
     auto updateRenderer = [&](auto& renderer) -> ShouldDeleteRenderer {
-        auto style = documentElementRenderer.getCachedPseudoStyle({ *renderer.style().pseudoElementType(), name }, &documentElementStyle);
+        auto style = documentElementStyle.pseudoElementStyle({ *renderer.style().pseudoElementType(), name });
         if (!style || style->display() == Style::DisplayType::None)
             return ShouldDeleteRenderer::Yes;
 
-        auto newStyle = RenderStyle::clone(*style);
+        auto newStyle = Style::ComputedStyle::clone(*style);
         renderer.setStyle(WTF::move(newStyle), minimalStyleDifference);
         return ShouldDeleteRenderer::No;
     };

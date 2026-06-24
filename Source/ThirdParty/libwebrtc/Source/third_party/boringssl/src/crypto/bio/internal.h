@@ -20,6 +20,7 @@
 #include <openssl/ex_data.h>
 
 #include "../internal.h"
+#include "../mem_internal.h"
 
 #if !defined(OPENSSL_NO_SOCK)
 #if !defined(OPENSSL_WINDOWS)
@@ -35,10 +36,8 @@ typedef int socklen_t;
 #endif
 #endif  // !OPENSSL_NO_SOCK
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
+DECLARE_OPAQUE_STRUCT(bio_st, Bio)
 
 struct bio_method_st {
   int type;
@@ -52,69 +51,75 @@ struct bio_method_st {
   long (*callback_ctrl)(BIO *, int, BIO_info_cb *);
 };
 
-struct bio_st {
+BSSL_NAMESPACE_BEGIN
+
+class Bio : public bio_st, public RefCounted<Bio> {
+ public:
+  explicit Bio(const BIO_METHOD *m);
+
   const BIO_METHOD *method;
   CRYPTO_EX_DATA ex_data;
 
-  // TODO(crbug.com/412269080): |init| and |shutdown| could be bitfields, or
-  // integrated into |flags|, to save memory.
+  // TODO(crbug.com/412269080): `init` and `shutdown` could be bitfields, or
+  // integrated into `flags`, to save memory.
 
-  // init is non-zero if this |BIO| has been initialised.
-  int init;
-  // shutdown is often used by specific |BIO_METHOD|s to determine whether
+  // init is non-zero if this `BIO` has been initialised.
+  int init = 0;
+  // shutdown is often used by specific `BIO_METHOD`s to determine whether
   // they own some underlying resource. This flag can often be controlled by
-  // |BIO_set_close|. For example, whether an fd BIO closes the underlying fd
+  // `BIO_set_close`. For example, whether an fd BIO closes the underlying fd
   // when it, itself, is closed.
-  int shutdown;
-  int flags;
-  int retry_reason;
+  int shutdown = 1;
+  int flags = 0;
+  int retry_reason = 0;
   // num is a BIO-specific value. For example, in fd BIOs it's used to store a
   // file descriptor.
-  int num;
-  CRYPTO_refcount_t references;
-  void *ptr;
-  // next_bio points to the next |BIO| in a chain. This |BIO| owns a reference
-  // to |next_bio|.
-  BIO *next_bio;  // used by filter BIOs
-  uint64_t num_read, num_write;
+  int num = 0;
+  void *ptr = nullptr;
+  // next_bio points to the next `BIO` in a chain. This `BIO` owns a reference
+  // to `next_bio`.
+  Bio *next_bio = nullptr;  // used by filter BIOs
+  uint64_t num_read = 0, num_write = 0;
+
+ private:
+  friend RefCounted;
+  ~Bio();
 };
 
 #if !defined(OPENSSL_NO_SOCK)
 
-// bio_ip_and_port_to_socket_and_addr creates a socket and fills in |*out_addr|
-// and |*out_addr_length| with the correct values for connecting to |hostname|
-// on |port_str|. It returns one on success or zero on error.
+// bio_ip_and_port_to_socket_and_addr creates a socket and fills in `*out_addr`
+// and `*out_addr_length` with the correct values for connecting to `hostname`
+// on `port_str`. It returns one on success or zero on error.
 int bio_ip_and_port_to_socket_and_addr(int *out_sock,
                                        struct sockaddr_storage *out_addr,
                                        socklen_t *out_addr_length,
                                        const char *hostname,
                                        const char *port_str);
 
-// bio_socket_nbio sets whether |sock| is non-blocking. It returns one on
+// bio_socket_nbio sets whether `sock` is non-blocking. It returns one on
 // success and zero otherwise.
 int bio_socket_nbio(int sock, int on);
 
 // bio_clear_socket_error clears the last system socket error.
 //
 // TODO(fork): remove all callers of this.
-void bio_clear_socket_error(void);
+void bio_clear_socket_error();
 
-// bio_sock_error returns the last socket error on |sock|.
+// bio_sock_error returns the last socket error on `sock`.
 int bio_sock_error(int sock);
 
-// bio_socket_should_retry returns non-zero if |return_value| indicates an error
+// bio_socket_should_retry returns non-zero if `return_value` indicates an error
 // and the last socket error indicates that it's non-fatal.
 int bio_socket_should_retry(int return_value);
 
 #endif  // !OPENSSL_NO_SOCK
 
-// bio_errno_should_retry returns non-zero if |return_value| indicates an error
-// and |errno| indicates that it's non-fatal.
+// bio_errno_should_retry returns non-zero if `return_value` indicates an error
+// and `errno` indicates that it's non-fatal.
 int bio_errno_should_retry(int return_value);
 
+BSSL_NAMESPACE_END
 
-#if defined(__cplusplus)
-}  // extern C
-#endif
 
 #endif  // OPENSSL_HEADER_CRYPTO_BIO_INTERNAL_H

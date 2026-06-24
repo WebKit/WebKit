@@ -1,6 +1,6 @@
+PASS div.scrollTop is window.expectedScrollTop
+PASS div.scrollLeft is window.expectedScrollLeft
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS div.scrollTop is window.expectedScrollTop
-PASS div.scrollLeft is window.expectedScrollLeft
 

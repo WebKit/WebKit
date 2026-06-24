@@ -12,7 +12,6 @@
 
 #include <string>
 
-#include "rtc_base/gunit.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/net_helpers.h"
 #include "test/gtest.h"

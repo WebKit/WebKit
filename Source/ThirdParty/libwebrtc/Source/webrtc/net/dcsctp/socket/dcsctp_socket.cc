@@ -16,13 +16,13 @@
 #include <limits>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/functional/bind_front.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -172,7 +172,7 @@ TieTag MakeTieTag(DcSctpSocketCallbacks& cb) {
 }
 
 SctpImplementation DeterminePeerImplementation(
-    webrtc::ArrayView<const uint8_t> cookie) {
+    std::span<const uint8_t> cookie) {
   if (cookie.size() > 8) {
     absl::string_view magic(reinterpret_cast<const char*>(cookie.data()), 8);
     if (magic == "dcSCTP00") {
@@ -365,8 +365,8 @@ std::vector<uint8_t> DcSctpSocket::GenerateConnectionToken(
 }
 
 bool DcSctpSocket::ConnectWithConnectionToken(
-    webrtc::ArrayView<const uint8_t> my_data,
-    webrtc::ArrayView<const uint8_t> peer_data) {
+    std::span<const uint8_t> my_data,
+    std::span<const uint8_t> peer_data) {
   CallbackDeferrer::ScopedDeferrer deferrer(callbacks_);
 
   std::optional<InitChunk> my_init = InitChunk::Parse(my_data);
@@ -466,7 +466,9 @@ void DcSctpSocket::Shutdown() {
     // TODO(webrtc:12739): Remove this check, as it just hides the problem that
     // the socket can transition from ShutdownSent to ShutdownPending, or
     // ShutdownAckSent to ShutdownPending which is illegal.
-    if (state_ != State::kShutdownSent && state_ != State::kShutdownAckSent) {
+    if (state_ != State::kShutdownSent && state_ != State::kShutdownAckSent &&
+        state_ != State::kShutdownReceived &&
+        state_ != State::kShutdownPending) {
       SetState(State::kShutdownPending, "Shutdown called");
       t1_init_->Stop();
       t1_cookie_->Stop();
@@ -552,7 +554,7 @@ SendStatus DcSctpSocket::Send(DcSctpMessage message,
 }
 
 std::vector<SendStatus> DcSctpSocket::SendMany(
-    webrtc::ArrayView<DcSctpMessage> messages,
+    std::span<DcSctpMessage> messages,
     const SendOptions& send_options) {
   CallbackDeferrer::ScopedDeferrer deferrer(callbacks_);
   Timestamp now = callbacks_.Now();
@@ -618,7 +620,7 @@ SendStatus DcSctpSocket::InternalSend(const DcSctpMessage& message,
 }
 
 ResetStreamsStatus DcSctpSocket::ResetStreams(
-    webrtc::ArrayView<const StreamID> outgoing_streams) {
+    std::span<const StreamID> outgoing_streams) {
   CallbackDeferrer::ScopedDeferrer deferrer(callbacks_);
 
   if (tcb_ == nullptr) {
@@ -678,6 +680,7 @@ std::optional<Metrics> DcSctpSocket::GetMetrics() const {
     return std::nullopt;
   }
 
+  // Note: `metrics_` has some pre-calculated (negotiated) values set already.
   Metrics metrics = metrics_;
   metrics.cwnd_bytes = tcb_->cwnd();
   metrics.srtt_ms = tcb_->current_srtt().ms();
@@ -688,10 +691,6 @@ std::optional<Metrics> DcSctpSocket::GetMetrics() const {
       (send_queue_.total_buffered_amount() + packet_payload_size - 1) /
           packet_payload_size;
   metrics.peer_rwnd_bytes = tcb_->retransmission_queue().rwnd();
-  metrics.negotiated_maximum_incoming_streams =
-      tcb_->capabilities().negotiated_maximum_incoming_streams;
-  metrics.negotiated_maximum_incoming_streams =
-      tcb_->capabilities().negotiated_maximum_incoming_streams;
   metrics.rtx_packets_count = tcb_->retransmission_queue().rtx_packets_count();
   metrics.rtx_bytes_count = tcb_->retransmission_queue().rtx_bytes_count();
 
@@ -840,7 +839,7 @@ void DcSctpSocket::HandleTimeout(TimeoutID timeout_id) {
   RTC_DCHECK(IsConsistent());
 }
 
-void DcSctpSocket::ReceivePacket(webrtc::ArrayView<const uint8_t> data) {
+void DcSctpSocket::ReceivePacket(std::span<const uint8_t> data) {
   CallbackDeferrer::ScopedDeferrer deferrer(callbacks_);
 
   ++metrics_.rx_packets_count;
@@ -890,8 +889,7 @@ void DcSctpSocket::ReceivePacket(webrtc::ArrayView<const uint8_t> data) {
   RTC_DCHECK(IsConsistent());
 }
 
-void DcSctpSocket::DebugPrintOutgoing(
-    webrtc::ArrayView<const uint8_t> payload) {
+void DcSctpSocket::DebugPrintOutgoing(std::span<const uint8_t> payload) {
   auto packet = SctpPacket::Parse(payload, options_);
   RTC_DCHECK(packet.has_value());
 
@@ -1040,6 +1038,8 @@ TimeDelta DcSctpSocket::OnCookieTimerExpiry() {
 }
 
 TimeDelta DcSctpSocket::OnShutdownTimerExpiry() {
+  RTC_DCHECK(state_ == State::kShutdownSent ||
+             state_ == State::kShutdownAckSent);
   RTC_DLOG(LS_VERBOSE) << log_prefix() << "Timer " << t2_shutdown_->name()
                        << " has expired: " << t2_shutdown_->expiration_count()
                        << "/"
@@ -1062,15 +1062,24 @@ TimeDelta DcSctpSocket::OnShutdownTimerExpiry() {
     return TimeDelta::Zero();
   }
 
-  // https://tools.ietf.org/html/rfc4960#section-9.2
-  // "If the timer expires, the endpoint must resend the SHUTDOWN with the
-  // updated last sequential TSN received from its peer."
-  SendShutdown();
+  if (state_ == State::kShutdownAckSent) {
+    // https://tools.ietf.org/html/rfc4960#section-9.2
+    // "... and start a T2-shutdown timer of its own, entering the
+    // SHUTDOWN-ACK-SENT state.  If the timer expires, the endpoint must
+    // resend the SHUTDOWN ACK."
+    SendShutdownAck();
+  } else {
+    // https://tools.ietf.org/html/rfc4960#section-9.2
+    // "It shall then start the T2-shutdown timer and enter the SHUTDOWN-SENT
+    // state.  If the timer expires, the endpoint must resend the SHUTDOWN
+    // with the updated last sequential TSN received from its peer."
+    SendShutdown();
+  }
   RTC_DCHECK(IsConsistent());
   return tcb_->current_rto();
 }
 
-void DcSctpSocket::OnSentPacket(webrtc::ArrayView<const uint8_t> packet,
+void DcSctpSocket::OnSentPacket(std::span<const uint8_t> packet,
                                 SendPacketStatus status) {
   // The packet observer is invoked even if the packet was failed to be sent, to
   // indicate an attempt was made.
@@ -1706,8 +1715,7 @@ void DcSctpSocket::HandleShutdown(
     SendShutdownAck();
     SetState(State::kShutdownAckSent, "SHUTDOWN received");
   } else if (state_ == State::kShutdownAckSent) {
-    // TODO(webrtc:12739): This condition should be removed and handled by the
-    // next (state_ != State::kShutdownReceived).
+    SendShutdownAck();
     return;
   } else if (state_ != State::kShutdownReceived) {
     RTC_DLOG(LS_VERBOSE) << log_prefix()

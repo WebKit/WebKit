@@ -48,7 +48,7 @@ using ParsedCertificateList =
 class OPENSSL_EXPORT ParsedCertificate {
  private:
   // Used to make constructors private while still being compatible with
-  // |std::make_shared|.
+  // `std::make_shared`.
   class PrivateConstructor {
    private:
     friend ParsedCertificate;
@@ -63,17 +63,17 @@ class OPENSSL_EXPORT ParsedCertificate {
   // Creates a ParsedCertificate given a DER-encoded Certificate. Returns
   // nullptr on failure. Failure will occur if the standard certificate fields
   // and supported extensions cannot be parsed.
-  // On either success or failure, if |errors| is non-null it may have error
+  // On either success or failure, if `errors` is non-null it may have error
   // information added to it.
   static std::shared_ptr<const ParsedCertificate> Create(
       bssl::UniquePtr<CRYPTO_BUFFER> cert_data,
       const ParseCertificateOptions &options, CertErrors *errors);
 
-  // Creates a ParsedCertificate by copying the provided |data|, and appends it
-  // to |chain|. Returns true if the certificate was successfully parsed and
-  // added. If false is return, |chain| is unmodified.
+  // Creates a ParsedCertificate by copying the provided `data`, and appends it
+  // to `chain`. Returns true if the certificate was successfully parsed and
+  // added. If false is return, `chain` is unmodified.
   //
-  // On either success or failure, if |errors| is non-null it may have error
+  // On either success or failure, if `errors` is non-null it may have error
   // information added to it.
   static bool CreateAndAddToVector(
       bssl::UniquePtr<CRYPTO_BUFFER> cert_data,
@@ -254,7 +254,7 @@ class OPENSSL_EXPORT ParsedCertificate {
   // Returns a map of all the extensions in the certificate.
   const ExtensionsMap &extensions() const { return extensions_; }
 
-  // Gets the value for extension matching |extension_oid|. Returns false if the
+  // Gets the value for extension matching `extension_oid`. Returns false if the
   // extension is not present.
   bool GetExtension(der::Input extension_oid,
                     ParsedExtension *parsed_extension) const;

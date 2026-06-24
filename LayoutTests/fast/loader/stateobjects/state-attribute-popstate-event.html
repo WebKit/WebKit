@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
 </head/>
 <body>
 <script>
     description("Check that PopStateEvent.state always has a correct value.");
 
     window.jsTestIsAsync = true;
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.clearBackForwardList();
-        testRunner.waitUntilDone();
-    }
 
     shouldBeDefined("history.state");
 
@@ -32,10 +30,7 @@
         shouldEvaluateTo("popStateEvent.state", 1);
         shouldEvaluateTo("history.state", 3);
 
-        var s = document.createElement("script");
-        s.src = "../../../resources/js-test-post.js";
-        document.body.appendChild(s);
-        setTimeout(finishJSTest, 0);
+        finishJSTest();
     }
 
     debug("Go back");

@@ -20,7 +20,9 @@
 #include <sys/auxv.h>
 
 
-void OPENSSL_cpuid_setup(void) {
+using namespace bssl;
+
+void bssl::OPENSSL_cpuid_setup() {
   unsigned long hwcap = getauxval(AT_HWCAP);
 
   // See /usr/include/asm/hwcap.h on an aarch64 installation for the source of
@@ -30,6 +32,7 @@ void OPENSSL_cpuid_setup(void) {
   static const unsigned long kPMULL = 1 << 4;
   static const unsigned long kSHA1 = 1 << 5;
   static const unsigned long kSHA256 = 1 << 6;
+  static const unsigned long kSHA3 = 1 << 17;
   static const unsigned long kSHA512 = 1 << 21;
 
   if ((hwcap & kNEON) == 0) {
@@ -54,6 +57,9 @@ void OPENSSL_cpuid_setup(void) {
   }
   if (hwcap & kSHA512) {
     OPENSSL_armcap_P |= ARMV8_SHA512;
+  }
+  if (hwcap & kSHA3) {
+    OPENSSL_armcap_P |= ARMV8_SHA3;
   }
 }
 

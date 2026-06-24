@@ -10,6 +10,8 @@
 
 #include "libyuv/convert_from.h"
 
+#include <limits.h>
+
 #include "libyuv/basic_types.h"
 #include "libyuv/convert.h"  // For I420Copy
 #include "libyuv/cpu_id.h"
@@ -357,7 +359,8 @@ int I422ToYUY2(const uint8_t* src_y,
   }
   // Coalesce rows.
   if (src_stride_y == width && src_stride_u * 2 == width &&
-      src_stride_v * 2 == width && dst_stride_yuy2 == width * 2) {
+      src_stride_v * 2 == width && dst_stride_yuy2 == width * 2 &&
+      (ptrdiff_t)width * height <= INT_MAX) {
     width *= height;
     height = 1;
     src_stride_y = src_stride_u = src_stride_v = dst_stride_yuy2 = 0;
@@ -503,7 +506,8 @@ int I422ToUYVY(const uint8_t* src_y,
   }
   // Coalesce rows.
   if (src_stride_y == width && src_stride_u * 2 == width &&
-      src_stride_v * 2 == width && dst_stride_uyvy == width * 2) {
+      src_stride_v * 2 == width && dst_stride_uyvy == width * 2 &&
+      (ptrdiff_t)width * height <= INT_MAX) {
     width *= height;
     height = 1;
     src_stride_y = src_stride_u = src_stride_v = dst_stride_uyvy = 0;
@@ -782,7 +786,7 @@ int ConvertFromI420(const uint8_t* y,
       break;
     case FOURCC_NV12: {
       int dst_y_stride = dst_sample_stride ? dst_sample_stride : width;
-      uint8_t* dst_uv = dst_sample + dst_y_stride * height;
+      uint8_t* dst_uv = dst_sample + (ptrdiff_t)dst_y_stride * height;
       r = I420ToNV12(y, y_stride, u, u_stride, v, v_stride, dst_sample,
                      dst_sample_stride ? dst_sample_stride : width, dst_uv,
                      dst_sample_stride ? dst_sample_stride : width, width,
@@ -791,7 +795,7 @@ int ConvertFromI420(const uint8_t* y,
     }
     case FOURCC_NV21: {
       int dst_y_stride = dst_sample_stride ? dst_sample_stride : width;
-      uint8_t* dst_vu = dst_sample + dst_y_stride * height;
+      uint8_t* dst_vu = dst_sample + (ptrdiff_t)dst_y_stride * height;
       r = I420ToNV21(y, y_stride, u, u_stride, v, v_stride, dst_sample,
                      dst_sample_stride ? dst_sample_stride : width, dst_vu,
                      dst_sample_stride ? dst_sample_stride : width, width,
@@ -807,11 +811,11 @@ int ConvertFromI420(const uint8_t* y,
       uint8_t* dst_u;
       uint8_t* dst_v;
       if (format == FOURCC_YV12) {
-        dst_v = dst_sample + dst_sample_stride * height;
-        dst_u = dst_v + halfstride * halfheight;
+        dst_v = dst_sample + (ptrdiff_t)dst_sample_stride * height;
+        dst_u = dst_v + (ptrdiff_t)halfstride * halfheight;
       } else {
-        dst_u = dst_sample + dst_sample_stride * height;
-        dst_v = dst_u + halfstride * halfheight;
+        dst_u = dst_sample + (ptrdiff_t)dst_sample_stride * height;
+        dst_v = dst_u + (ptrdiff_t)halfstride * halfheight;
       }
       r = I420Copy(y, y_stride, u, u_stride, v, v_stride, dst_sample,
                    dst_sample_stride, dst_u, halfstride, dst_v, halfstride,
@@ -825,11 +829,11 @@ int ConvertFromI420(const uint8_t* y,
       uint8_t* dst_u;
       uint8_t* dst_v;
       if (format == FOURCC_YV16) {
-        dst_v = dst_sample + dst_sample_stride * height;
-        dst_u = dst_v + halfstride * height;
+        dst_v = dst_sample + (ptrdiff_t)dst_sample_stride * height;
+        dst_u = dst_v + (ptrdiff_t)halfstride * height;
       } else {
-        dst_u = dst_sample + dst_sample_stride * height;
-        dst_v = dst_u + halfstride * height;
+        dst_u = dst_sample + (ptrdiff_t)dst_sample_stride * height;
+        dst_v = dst_u + (ptrdiff_t)halfstride * height;
       }
       r = I420ToI422(y, y_stride, u, u_stride, v, v_stride, dst_sample,
                      dst_sample_stride, dst_u, halfstride, dst_v, halfstride,
@@ -842,11 +846,11 @@ int ConvertFromI420(const uint8_t* y,
       uint8_t* dst_u;
       uint8_t* dst_v;
       if (format == FOURCC_YV24) {
-        dst_v = dst_sample + dst_sample_stride * height;
-        dst_u = dst_v + dst_sample_stride * height;
+        dst_v = dst_sample + (ptrdiff_t)dst_sample_stride * height;
+        dst_u = dst_v + (ptrdiff_t)dst_sample_stride * height;
       } else {
-        dst_u = dst_sample + dst_sample_stride * height;
-        dst_v = dst_u + dst_sample_stride * height;
+        dst_u = dst_sample + (ptrdiff_t)dst_sample_stride * height;
+        dst_v = dst_u + (ptrdiff_t)dst_sample_stride * height;
       }
       r = I420ToI444(y, y_stride, u, u_stride, v, v_stride, dst_sample,
                      dst_sample_stride, dst_u, dst_sample_stride, dst_v,

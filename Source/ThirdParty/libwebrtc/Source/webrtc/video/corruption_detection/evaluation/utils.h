@@ -12,10 +12,10 @@
 #define VIDEO_CORRUPTION_DETECTION_EVALUATION_UTILS_H_
 
 #include <cstdint>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/video/video_codec_type.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "rtc_base/system/file_wrapper.h"
@@ -37,7 +37,7 @@ class TempY4mFileCreator {
   // format.
   //
   // The number of frames depends on the size of `file_content`.
-  void CreateTempY4mFile(ArrayView<const uint8_t> file_content);
+  void CreateTempY4mFile(std::span<const uint8_t> file_content);
 
   absl::string_view y4m_filepath() const { return y4m_filepath_; }
 

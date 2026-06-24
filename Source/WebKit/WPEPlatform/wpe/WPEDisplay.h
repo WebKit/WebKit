@@ -89,8 +89,9 @@ struct _WPEDisplayClass
  * WPEDisplayError:
  * @WPE_DISPLAY_ERROR_NOT_SUPPORTED: Operation not supported
  * @WPE_DISPLAY_ERROR_CONNECTION_FAILED: Failed to connect to the native system
+ * @WPE_DISPLAY_ERROR_CONNECTION_LOST: The connection to the native system was lost
  *
- * #WPEDisplay errors
+ * [class@Display] errors.
  */
 typedef enum {
     WPE_DISPLAY_ERROR_NOT_SUPPORTED,

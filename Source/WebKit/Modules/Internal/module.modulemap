@@ -320,12 +320,6 @@ module WebKit_Internal [system] {
         requires objc
     }
 
-    module WKTextEffectManager {
-        header "../../UIProcess/Cocoa/WKTextEffectManager.h"
-        export *
-        requires objc
-    }
-
     module WKPreferencesInternal {
         header "../../UIProcess/API/Cocoa/WKPreferencesInternal.h"
         export *

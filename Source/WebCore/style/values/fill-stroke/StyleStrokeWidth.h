@@ -25,26 +25,24 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
-
-struct StrokeWidthLength : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
-    using Base::Base;
-};
 
 // <'stroke-width'> = <length-percentage [0,∞]> | <number [0,∞]>@(converted-to-px)
 // FIXME: The current spec has the grammar as <'stroke-width'> = <length-percentage [0,∞]>#.
 // https://drafts.fxtf.org/fill-stroke-3/#propdef-stroke-width
 struct StrokeWidth {
-    using Fixed = StrokeWidthLength::Fixed;
-    using Percentage = StrokeWidthLength::Percentage;
-    using Calc = StrokeWidthLength::Calc;
+    using LengthPercentage = Style::LengthPercentage<CSS::NonnegativeUnzoomed>;
 
-    StrokeWidthLength value;
+    using Fixed = LengthPercentage::Fixed;
+    using Percentage = LengthPercentage::Percentage;
+    using Calc = LengthPercentage::Calc;
 
-    StrokeWidth(StrokeWidthLength&& length) : value { WTF::move(length) } { }
+    LengthPercentage value;
+
+    StrokeWidth(LengthPercentage&& length) : value { WTF::move(length) } { }
     StrokeWidth(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : value { literal } { }
     StrokeWidth(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal) : value { literal } { }
 
@@ -66,5 +64,4 @@ template<> struct CSSValueConversion<StrokeWidth> { auto operator()(BuilderState
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::StrokeWidthLength)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::StrokeWidth)

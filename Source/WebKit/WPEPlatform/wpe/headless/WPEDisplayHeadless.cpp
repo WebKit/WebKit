@@ -52,6 +52,14 @@
 /**
  * WPEDisplayHeadless:
  *
+ * A headless [class@WPEPlatform.Display] implementation.
+ *
+ * [class@DisplayHeadless] is the built-in [class@WPEPlatform.Display]
+ * implementation that does not connect to any native display. It renders to
+ * offscreen buffers and is useful for testing or for running web content
+ * without showing it on screen. Use [ctor@DisplayHeadless.new] to create a
+ * new instance, or [ctor@DisplayHeadless.new_for_device] to back it by a
+ * specific DRM device.
  */
 struct _WPEDisplayHeadlessPrivate {
     std::optional<GRefPtr<WPEDRMDevice>> drmDevice;

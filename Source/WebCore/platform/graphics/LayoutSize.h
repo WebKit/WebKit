@@ -94,7 +94,7 @@ public:
         m_height *= heightScale;
     }
 
-    LayoutSize constrainedBetween(const LayoutSize& min, const LayoutSize& max) const;
+    WEBCORE_EXPORT LayoutSize constrainedBetween(const LayoutSize& min, const LayoutSize& max) const;
 
     LayoutSize expandedTo(const LayoutSize& other) const
     {

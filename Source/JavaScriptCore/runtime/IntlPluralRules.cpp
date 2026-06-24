@@ -125,6 +125,12 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     m_notation = intlOption<IntlNotation>(globalObject, options, Identifier::fromString(vm, "notation"_s), { { "standard"_s, IntlNotation::Standard }, { "scientific"_s, IntlNotation::Scientific }, { "engineering"_s, IntlNotation::Engineering }, { "compact"_s, IntlNotation::Compact } }, "notation must be either \"standard\", \"scientific\", \"engineering\", or \"compact\""_s, IntlNotation::Standard);
     RETURN_IF_EXCEPTION(scope, void());
 
+    CompactDisplay compactDisplay = intlOption<CompactDisplay>(globalObject, options, Identifier::fromString(vm, "compactDisplay"_s), { { "short"_s, CompactDisplay::Short }, { "long"_s, CompactDisplay::Long } }, "compactDisplay must be either \"short\" or \"long\""_s, CompactDisplay::Short);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (m_notation == IntlNotation::Compact)
+        m_compactDisplay = compactDisplay;
+
     setNumberFormatDigitOptions(globalObject, this, options, 0, 3, m_notation);
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -136,7 +142,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     appendNumberFormatDigitOptionsToSkeleton(this, skeletonBuilder);
     appendNumberFormatNotationOptionsToSkeleton(this, skeletonBuilder);
 
-    StringView skeletonView { skeletonBuilder.toString() };
+    StringView skeletonView { skeletonBuilder };
     auto upconverted = skeletonView.upconvertedCharacters();
 
     m_numberFormatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(upconverted.get(), skeletonView.length(), locale.data(), &status));
@@ -176,6 +182,8 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
     options->putDirect(vm, vm.propertyNames->type, jsNontrivialString(vm, m_type == Type::Ordinal ? "ordinal"_s : "cardinal"_s));
     options->putDirect(vm, Identifier::fromString(vm, "notation"_s), jsNontrivialString(vm, IntlNumberFormat::notationString(m_notation)));
+    if (m_notation == IntlNotation::Compact)
+        options->putDirect(vm, Identifier::fromString(vm, "compactDisplay"_s), jsNontrivialString(vm, IntlNumberFormat::compactDisplayString(m_compactDisplay)));
     options->putDirect(vm, vm.propertyNames->minimumIntegerDigits, jsNumber(m_minimumIntegerDigits));
     switch (m_roundingType) {
     case IntlRoundingType::FractionDigits:

@@ -20,9 +20,9 @@ namespace webrtc {
 namespace test {
 
 struct RtpPacket {
-  // Accommodate for 50 ms packets of 32 kHz PCM16 samples (3200 bytes) plus
+  // Accommodate for 50 ms packets of 48 kHz PCM16 samples (4800 bytes) plus
   // some overhead.
-  static const size_t kMaxPacketBufferSize = 3500;
+  static const size_t kMaxPacketBufferSize = 5100;
   uint8_t data[kMaxPacketBufferSize];
   size_t length;
   // The length the packet had on wire. Will be different from `length` when

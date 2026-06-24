@@ -68,7 +68,7 @@ void ResourceLoadNotifier::willSendRequest(ResourceLoader& loader, ResourceLoade
 
 void ResourceLoadNotifier::didReceiveResponse(ResourceLoader& loader, ResourceLoaderIdentifier identifier, const ResourceResponse& r)
 {
-    loader.documentLoader()->addResponse(r);
+    protect(loader.documentLoader())->addResponse(r);
 
     if (RefPtr page = m_frame->page())
         protect(page->progress())->incrementProgress(identifier, r);

@@ -130,7 +130,7 @@ ExceptionOr<Ref<GPURenderBundle>> GPURenderBundleEncoder::finish(const std::opti
 {
     RefPtr bundle = m_backing->finish(convertToBacking(renderBundleDescriptor));
     if (!bundle)
-        return Exception { ExceptionCode::InvalidStateError, "dynamic offsets overflowed"_s };
+        return Exception { ExceptionCode::InvalidStateError, "GPURenderBundleEncoder.finish: Unable to finish."_s };
     return GPURenderBundle::create(bundle.releaseNonNull());
 }
 

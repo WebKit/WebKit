@@ -346,6 +346,7 @@ PlatformXR::DeviceLayer WebXRWebGLLayer::endFrame()
         .quadLayerData = std::nullopt,
         .equirectLayerData = std::nullopt,
         .cylinderLayerData = std::nullopt,
+        .cubeLayerData = std::nullopt,
 #endif
 #endif
     };

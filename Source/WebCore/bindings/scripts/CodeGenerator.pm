@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
-# Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2007-2026 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -43,6 +43,7 @@ my $defines = "";
 my $targetIdlFilePath = "";
 my $supplementalDependencies;
 my $idlFileNamesList;
+my $ignoreStandaloneConstructorAttributes = 0;
 
 my $codeGenerator = 0;
 
@@ -153,9 +154,15 @@ sub new
     $idlAttributes = shift;
     $supplementalDependencies = shift;
     $idlFileNamesList = shift;
+    $ignoreStandaloneConstructorAttributes = shift // 0;
 
     bless($reference, $object);
     return $reference;
+}
+
+sub IgnoreStandaloneConstructorAttributes
+{
+    return $ignoreStandaloneConstructorAttributes;
 }
 
 sub ProcessDocument

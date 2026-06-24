@@ -15,6 +15,9 @@ root
                 input placeholder=Password name=password minlength=3 maxlength=20 required secure
                 input placeholder=Email pattern=[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$ name=email required
                 input placeholder='Zip Code' pattern=[0-9]{5} name=zipcode minlength=5 maxlength=5
+                'Email Address'
+                input label='Email Address Password' name=multi-step
+                'Password'
 
 -- html
 
@@ -34,6 +37,9 @@ root
                 <input type='password' placeholder='Password' name='password' minlength=3 maxlength=20 required>
                 <input type='text' placeholder='Email' pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$' name='email' required>
                 <input type='text' placeholder='Zip Code' pattern='[0-9]{5}' name='zipcode' minlength=5 maxlength=5>
+                Email Address
+                <input type='text' label='Email Address Password' name='multi-step'>
+                Password
             </form>
         </section>
     </main>

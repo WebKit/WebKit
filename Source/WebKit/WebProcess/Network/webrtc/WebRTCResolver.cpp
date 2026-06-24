@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "Connection.h"
 #include "LibWebRTCResolver.h"
 #include "LibWebRTCSocketFactory.h"
 #include <WebCore/LibWebRTCProvider.h>

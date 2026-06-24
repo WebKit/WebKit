@@ -5,7 +5,7 @@ function savePageData(data) {
 TestPage.registerInitializer(() => {
     InspectorTest.TimelineEvent = {};
 
-    InspectorTest.TimelineEvent.captureTimelineWithScript = function({expression, eventType, timelineType}) {
+    InspectorTest.TimelineEvent.captureTimelineWithScript = function({expression, eventType, timelineType, silent = false}) {
         let savePageDataPromise = InspectorTest.awaitEvent("SavePageData").then((event) => event.data);
 
         let promise = new Promise((resolve, reject) => {
@@ -21,11 +21,13 @@ TestPage.registerInitializer(() => {
 
                         timeline.removeEventListener(WI.Timeline.Event.RecordAdded, recordAddedListener);
 
-                        InspectorTest.log("Stopping Capture...");
+                        if (!silent)
+                            InspectorTest.log("Stopping Capture...");
                         WI.timelineManager.stopCapturing();
                     });
 
-                    InspectorTest.log("Evaluating...");
+                    if (!silent)
+                        InspectorTest.log("Evaluating...");
                     InspectorTest.evaluateInPage(expression).catch(reject);
                     return;
                 }
@@ -39,14 +41,15 @@ TestPage.registerInitializer(() => {
             });
         });
 
-        InspectorTest.log("Starting Capture...");
+        if (!silent)
+            InspectorTest.log("Starting Capture...");
         const newRecording = true;
         WI.timelineManager.startCapturing(newRecording);
 
         return promise;
     }
 
-    InspectorTest.TimelineEvent.captureTimelineWithMarker = function({expression, markerType, timelineType}) {
+    InspectorTest.TimelineEvent.captureTimelineWithMarker = function({expression, markerType, timelineType, silent = false}) {
         let savePageDataPromise = InspectorTest.awaitEvent("SavePageData").then((event) => event.data);
 
         let promise = new Promise((resolve, reject) => {
@@ -61,11 +64,13 @@ TestPage.registerInitializer(() => {
 
                         recording.removeEventListener(WI.TimelineRecording.Event.MarkerAdded, markerAddedListener);
 
-                        InspectorTest.log("Stopping Capture...");
+                        if (!silent)
+                            InspectorTest.log("Stopping Capture...");
                         WI.timelineManager.stopCapturing();
                     });
 
-                    InspectorTest.log("Evaluating...");
+                    if (!silent)
+                        InspectorTest.log("Evaluating...");
                     InspectorTest.evaluateInPage(expression).catch(reject);
                     return;
                 }
@@ -79,7 +84,8 @@ TestPage.registerInitializer(() => {
             });
         });
 
-        InspectorTest.log("Starting Capture...");
+        if (!silent)
+            InspectorTest.log("Starting Capture...");
         const newRecording = true;
         WI.timelineManager.startCapturing(newRecording);
 

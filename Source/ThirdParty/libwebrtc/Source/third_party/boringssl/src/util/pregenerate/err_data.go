@@ -202,32 +202,25 @@ func (e *errorData) readErrorDataFile(filename string) error {
 	return scanner.Err()
 }
 
-type ErrDataTask struct {
-	TargetName string
-	Inputs     []string
-}
-
-func (t *ErrDataTask) Destination() string {
-	return path.Join("gen", t.TargetName, "err_data.cc")
-}
-
-func (t *ErrDataTask) Run() ([]byte, error) {
-	e := &errorData{
-		reasons:    newStringList(),
-		libraryMap: make(map[string]uint32),
-	}
-	for i, name := range libraryNames {
-		e.libraryMap[name] = uint32(i) + 1
-	}
-
-	for _, input := range t.Inputs {
-		if err := e.readErrorDataFile(input); err != nil {
-			return nil, err
+func NewErrDataTask(targetName string, inputs []string) *Task {
+	dst := path.Join("gen", targetName, "err_data.cc")
+	return NewSimpleTask("err_data", dst, func() ([]byte, error) {
+		e := &errorData{
+			reasons:    newStringList(),
+			libraryMap: make(map[string]uint32),
 		}
-	}
+		for i, name := range libraryNames {
+			e.libraryMap[name] = uint32(i) + 1
+		}
 
-	var out bytes.Buffer
-	out.WriteString(`// Copyright 2015 The BoringSSL Authors
+		for _, input := range inputs {
+			if err := e.readErrorDataFile(input); err != nil {
+				return nil, err
+			}
+		}
+
+		var out bytes.Buffer
+		out.WriteString(`// Copyright 2015 The BoringSSL Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -248,14 +241,21 @@ func (t *ErrDataTask) Run() ([]byte, error) {
 
 #include <assert.h>
 
+
+BSSL_NAMESPACE_BEGIN
 `)
 
-	for i, name := range libraryNames {
-		fmt.Fprintf(&out, "static_assert(ERR_LIB_%s == %d, \"library value changed\");\n", name, i+1)
-	}
-	fmt.Fprintf(&out, "static_assert(ERR_NUM_LIBS == %d, \"number of libraries changed\");\n", len(libraryNames)+1)
-	out.WriteString("\n")
+		for i, name := range libraryNames {
+			fmt.Fprintf(&out, "static_assert(ERR_LIB_%s == %d, \"library value changed\");\n", name, i+1)
+		}
+		fmt.Fprintf(&out, "static_assert(ERR_NUM_LIBS == %d, \"number of libraries changed\");\n", len(libraryNames)+1)
+		out.WriteString("\n")
 
-	e.reasons.WriteTo(&out, "Reason")
-	return out.Bytes(), nil
+		e.reasons.WriteTo(&out, "Reason")
+
+		out.WriteString(`
+BSSL_NAMESPACE_END
+`)
+		return out.Bytes(), nil
+	})
 }

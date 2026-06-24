@@ -1,3 +1,5 @@
 
 PASS media attribute on SVG <style> elements should reflect correctly
+PASS Setting media via the IDL attribute updates the content attribute
+PASS Setting the content attribute updates the IDL attribute (media)
 

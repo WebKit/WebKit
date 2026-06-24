@@ -34,6 +34,7 @@
 #include "DOMPointReadOnly.h"
 #include "WebXRRigidTransform.h"
 #include "XRRayDirectionInit.h"
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 
 namespace WebCore {
 

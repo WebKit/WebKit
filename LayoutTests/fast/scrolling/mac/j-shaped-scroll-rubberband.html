@@ -6,7 +6,7 @@
             height: 5000px;
         }
     </style>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
     <script src="../../../resources/ui-helper.js"></script>
     <script>
         var jsTestIsAsync = true;
@@ -14,7 +14,7 @@
         function checkForScroll()
         {
             shouldBeTrue('window.scrollY > 0');
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         async function scrollTest()
@@ -111,8 +111,6 @@
                 return;
             }
 
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
 
             setTimeout(scrollTest, 0);
         }
@@ -121,6 +119,5 @@
     </script>
 </head>
 <body>
-    <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

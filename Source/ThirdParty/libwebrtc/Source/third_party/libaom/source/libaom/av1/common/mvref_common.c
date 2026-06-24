@@ -844,6 +844,7 @@ void av1_setup_frame_buf_refs(AV1_COMMON *cm) {
   cm->cur_frame->order_hint = cm->current_frame.order_hint;
   cm->cur_frame->display_order_hint = cm->current_frame.display_order_hint;
   cm->cur_frame->pyramid_level = cm->current_frame.pyramid_level;
+  cm->cur_frame->base_qindex = cm->quant_params.base_qindex;
   cm->cur_frame->filter_level[0] = -1;
   cm->cur_frame->filter_level[1] = -1;
   MV_REFERENCE_FRAME ref_frame;

@@ -12,11 +12,11 @@
 #define LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_DEFINITION_H_
 
 #include <cstdint>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding_parser.h"
@@ -35,8 +35,8 @@ struct RtcEventFieldDefinition {
 template <typename EventType, typename LoggedType, typename... Ts>
 class RtcEventDefinitionImpl {
  public:
-  void EncodeImpl(EventEncoder&, ArrayView<const RtcEvent*>) const {}
-  RtcEventLogParseStatus ParseImpl(EventParser&, ArrayView<LoggedType>) const {
+  void EncodeImpl(EventEncoder&, std::span<const RtcEvent*>) const {}
+  RtcEventLogParseStatus ParseImpl(EventParser&, std::span<LoggedType>) const {
     return RtcEventLogParseStatus::Success();
   }
 };
@@ -51,15 +51,15 @@ class RtcEventDefinitionImpl<EventType, LoggedType, T, Ts...> {
       : field_(field), rest_(rest...) {}
 
   void EncodeImpl(EventEncoder& encoder,
-                  ArrayView<const RtcEvent*> batch) const {
+                  std::span<const RtcEvent*> batch) const {
     auto values = ExtractRtcEventMember(batch, field_.event_member);
     encoder.EncodeField(field_.params, values);
     rest_.EncodeImpl(encoder, batch);
   }
 
   RtcEventLogParseStatus ParseImpl(EventParser& parser,
-                                   ArrayView<LoggedType> output_batch) const {
-    RtcEventLogParseStatusOr<ArrayView<uint64_t>> result =
+                                   std::span<LoggedType> output_batch) const {
+    RtcEventLogParseStatusOr<std::span<uint64_t>> result =
         parser.ParseNumericField(field_.params);
     if (!result.ok())
       return result.status();
@@ -106,7 +106,7 @@ class RtcEventDefinition {
       RtcEventFieldDefinition<EventType, LoggedType, Ts>... fields)
       : params_(params), fields_(fields...) {}
 
-  std::string EncodeBatch(ArrayView<const RtcEvent*> batch) const {
+  std::string EncodeBatch(std::span<const RtcEvent*> batch) const {
     EventEncoder encoder(params_, batch);
     fields_.EncodeImpl(encoder, batch);
     return encoder.AsString();
@@ -120,7 +120,7 @@ class RtcEventDefinition {
     if (!status.ok())
       return status;
 
-    ArrayView<LoggedType> output_batch =
+    std::span<LoggedType> output_batch =
         ExtendLoggedBatch(output, parser.NumEventsInBatch());
 
     constexpr FieldParameters timestamp_params{
@@ -128,7 +128,7 @@ class RtcEventDefinition {
         .field_id = FieldParameters::kTimestampField,
         .field_type = FieldType::kVarInt,
         .value_width = 64};
-    RtcEventLogParseStatusOr<ArrayView<uint64_t>> result =
+    RtcEventLogParseStatusOr<std::span<uint64_t>> result =
         parser.ParseNumericField(timestamp_params);
     if (!result.ok())
       return result.status();

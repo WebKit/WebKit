@@ -30,8 +30,8 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSRatioValue.h"
 #include "CSSValueList.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {
@@ -69,7 +69,7 @@ auto Blending<AspectRatio>::canBlend(const AspectRatio& a, const AspectRatio& b)
         || (a.isAutoAndRatio() && b.isAutoAndRatio());
 }
 
-auto Blending<AspectRatio>::blend(const AspectRatio& a, const AspectRatio& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> AspectRatio
+auto Blending<AspectRatio>::blend(const AspectRatio& a, const AspectRatio& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> AspectRatio
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1);

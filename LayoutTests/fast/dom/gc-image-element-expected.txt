@@ -10,4 +10,7 @@ PASS: loaded
 PASS: loaded
 PASS: loaded
 PASS: loaded
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

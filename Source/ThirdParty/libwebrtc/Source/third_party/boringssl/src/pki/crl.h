@@ -39,11 +39,11 @@ enum class CRLRevocationStatus {
 };
 
 // Parses a DER-encoded CRL "CertificateList" as specified by RFC 5280 Section
-// 5.1. Returns true on success and sets the results in the |out_*| parameters.
+// 5.1. Returns true on success and sets the results in the `out_*` parameters.
 // The contents of the output data is not validated.
 //
-// Note that on success the out parameters alias data from the input |crl_tlv|.
-// Hence the output values are only valid as long as |crl_tlv| remains valid.
+// Note that on success the out parameters alias data from the input `crl_tlv`.
+// Hence the output values are only valid as long as `crl_tlv` remains valid.
 //
 // On failure the out parameters have an undefined state. Some of them may have
 // been updated during parsing, whereas others may not have been changed.
@@ -58,13 +58,13 @@ enum class CRLRevocationStatus {
     der::BitString *out_signature_value);
 
 // Parses a DER-encoded "TBSCertList" as specified by RFC 5280 Section 5.1.
-// Returns true on success and sets the results in |out|.
+// Returns true on success and sets the results in `out`.
 //
-// Note that on success |out| aliases data from the input |tbs_tlv|.
+// Note that on success `out` aliases data from the input `tbs_tlv`.
 // Hence the fields of the ParsedCrlTbsCertList are only valid as long as
-// |tbs_tlv| remains valid.
+// `tbs_tlv` remains valid.
 //
-// On failure |out| has an undefined state. Some of its fields may have been
+// On failure `out` has an undefined state. Some of its fields may have been
 // updated during parsing, whereas others may not have been changed.
 //
 // Refer to the per-field documentation of ParsedCrlTbsCertList for details on
@@ -165,22 +165,22 @@ enum class ContainedCertsType {
 };
 
 // Parses a DER-encoded IssuingDistributionPoint extension value.
-// Returns true on success and sets the results in the |out_*| parameters.
+// Returns true on success and sets the results in the `out_*` parameters.
 //
 // If the IssuingDistributionPoint contains a distributionPoint fullName field,
-// |out_distribution_point_names| will contain the parsed representation.
+// `out_distribution_point_names` will contain the parsed representation.
 // If the distributionPoint type is nameRelativeToCRLIssuer, parsing will fail.
 //
-// |out_only_contains_cert_type| will contain the logical representation of the
+// `out_only_contains_cert_type` will contain the logical representation of the
 // onlyContainsUserCerts and onlyContainsCACerts fields (or their absence).
 //
 // indirectCRL and onlyContainsAttributeCerts are not supported and parsing will
 // fail if they are present.
 //
-// Note that on success |out_distribution_point_names| aliases data from the
-// input |extension_value|.
+// Note that on success `out_distribution_point_names` aliases data from the
+// input `extension_value`.
 //
-// On failure the |out_*| parameters have undefined state.
+// On failure the `out_*` parameters have undefined state.
 //
 // IssuingDistributionPoint ::= SEQUENCE {
 //     distributionPoint          [0] DistributionPointName OPTIONAL,
@@ -198,27 +198,27 @@ OPENSSL_EXPORT CRLRevocationStatus
 GetCRLStatusForCert(der::Input cert_serial, CrlVersion crl_version,
                     const std::optional<der::Input> &revoked_certificates_tlv);
 
-// Checks the revocation status of the certificate |cert| by using the
-// DER-encoded |raw_crl|. |cert| must already have passed certificate path
+// Checks the revocation status of the certificate `cert` by using the
+// DER-encoded `raw_crl`. `cert` must already have passed certificate path
 // validation.
 //
 // Returns GOOD if the CRL indicates the certificate is not revoked,
 // REVOKED if it indicates it is revoked, or UNKNOWN for all other cases.
 //
-//  * |raw_crl|: A DER encoded CRL CertificateList.
-//  * |valid_chain|: The validated certificate chain containing the target cert.
-//  * |target_cert_index|: The index into |valid_chain| of the certificate being
+//  * `raw_crl`: A DER encoded CRL CertificateList.
+//  * `valid_chain`: The validated certificate chain containing the target cert.
+//  * `target_cert_index`: The index into `valid_chain` of the certificate being
 //        checked for revocation.
-//  * |cert_dp|: The distribution point from the target certificate's CRL
-//        distribution points extension that |raw_crl| corresponds to. If
-//        |raw_crl| was not specified in a distribution point, the caller must
+//  * `cert_dp`: The distribution point from the target certificate's CRL
+//        distribution points extension that `raw_crl` corresponds to. If
+//        `raw_crl` was not specified in a distribution point, the caller must
 //        synthesize a ParsedDistributionPoint object as specified by RFC 5280
 //        6.3.3.
-//  * |verify_time_epoch_seconds|: The time as the difference in seconds from
+//  * `verify_time_epoch_seconds`: The time as the difference in seconds from
 //        the POSIX epoch to use when checking revocation status.
-//  * |max_age_seconds|: If present, the maximum age in seconds for a CRL,
-//        implemented as time since the |thisUpdate| field in the CRL
-//        TBSCertList. Responses older than |max_age_seconds| will be
+//  * `max_age_seconds`: If present, the maximum age in seconds for a CRL,
+//        implemented as time since the `thisUpdate` field in the CRL
+//        TBSCertList. Responses older than `max_age_seconds` will be
 //        considered invalid.
 [[nodiscard]] OPENSSL_EXPORT CRLRevocationStatus CheckCRL(
     std::string_view raw_crl, const ParsedCertificateList &valid_chain,

@@ -106,10 +106,10 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     ASSERT(o.m_namespaceRules.isEmpty());
 
     for (size_t i = 0; i < m_layerRulesBeforeImportRules.size(); ++i)
-        m_layerRulesBeforeImportRules[i] = o.m_layerRulesBeforeImportRules[i]->copy();
+        m_layerRulesBeforeImportRules[i] = protect(o.m_layerRulesBeforeImportRules[i])->copy();
 
     for (size_t i = 0; i < m_childRules.size(); ++i)
-        m_childRules[i] = o.m_childRules[i]->copy();
+        m_childRules[i] = protect(o.m_childRules[i])->copy();
 }
 
 StyleSheetContents::~StyleSheetContents()
@@ -170,7 +170,7 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
         ASSERT(m_childRules.isEmpty());
         m_importRules.append(*importRule);
         m_importRules.last()->setParentStyleSheet(this);
-        m_importRules.last()->requestStyleSheet();
+        protect(m_importRules.last())->requestStyleSheet();
         return;
     }
 
@@ -299,7 +299,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
             return false;
         m_importRules.insert(childVectorIndex, *importRule);
         m_importRules[childVectorIndex]->setParentStyleSheet(this);
-        m_importRules[childVectorIndex]->requestStyleSheet();
+        protect(m_importRules[childVectorIndex])->requestStyleSheet();
         // FIXME: Stylesheet doesn't actually change meaningfully before the imported sheets are loaded.
         return true;
     }
@@ -319,7 +319,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
         if (!m_childRules.isEmpty() || !m_layerRulesBeforeImportRules.isEmpty())
             return false;
 
-        m_namespaceRules.insert(index, *namespaceRule);
+        m_namespaceRules.insert(childVectorIndex, *namespaceRule);
         
         // For now to be compatible with IE and Firefox if a namespace rule with the same
         // prefix is added, it overwrites previous ones.
@@ -359,7 +359,7 @@ bool StyleSheetContents::wrapperDeleteRule(unsigned index)
     childVectorIndex -= m_layerRulesBeforeImportRules.size();
 
     if (childVectorIndex < m_importRules.size()) {
-        m_importRules[childVectorIndex]->cancelLoad();
+        protect(m_importRules[childVectorIndex])->cancelLoad();
         m_importRules[childVectorIndex]->clearParentStyleSheet();
         m_importRules.removeAt(childVectorIndex);
         return true;
@@ -554,13 +554,13 @@ bool StyleSheetContents::traverseSubresources(NOESCAPE const Function<bool(const
     return traverseRules([&] (const StyleRuleBase& rule) {
         switch (rule.type()) {
         case StyleRuleType::Style:
-            return uncheckedDowncast<StyleRule>(rule).properties().traverseSubresources(handler);
+            return protect(uncheckedDowncast<StyleRule>(rule))->properties().traverseSubresources(handler);
         case StyleRuleType::StyleWithNesting:
-            return uncheckedDowncast<StyleRuleWithNesting>(rule).properties().traverseSubresources(handler);
+            return protect(uncheckedDowncast<StyleRuleWithNesting>(rule))->properties().traverseSubresources(handler);
         case StyleRuleType::NestedDeclarations:
-            return uncheckedDowncast<StyleRuleNestedDeclarations>(rule).properties().traverseSubresources(handler);
+            return protect(uncheckedDowncast<StyleRuleNestedDeclarations>(rule))->properties().traverseSubresources(handler);
         case StyleRuleType::FontFace:
-            return uncheckedDowncast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
+            return protect(uncheckedDowncast<StyleRuleFontFace>(rule))->properties().traverseSubresources(handler);
         case StyleRuleType::Import:
             if (RefPtr cachedResource = uncheckedDowncast<StyleRuleImport>(rule).cachedCSSStyleSheet())
                 return handler(*cachedResource);
@@ -637,13 +637,13 @@ bool StyleSheetContents::mayDependOnBaseURL() const
     return traverseRules([&](const StyleRuleBase& rule) -> bool {
         switch (rule.type()) {
         case StyleRuleType::Style:
-            return uncheckedDowncast<StyleRule>(rule).properties().mayDependOnBaseURL();
+            return protect(uncheckedDowncast<StyleRule>(rule))->properties().mayDependOnBaseURL();
         case StyleRuleType::StyleWithNesting:
-            return uncheckedDowncast<StyleRuleWithNesting>(rule).properties().mayDependOnBaseURL();
+            return protect(uncheckedDowncast<StyleRuleWithNesting>(rule))->properties().mayDependOnBaseURL();
         case StyleRuleType::NestedDeclarations:
-            return uncheckedDowncast<StyleRule>(rule).properties().mayDependOnBaseURL();
+            return protect(uncheckedDowncast<StyleRule>(rule))->properties().mayDependOnBaseURL();
         case StyleRuleType::FontFace:
-            return uncheckedDowncast<StyleRuleFontFace>(rule).properties().mayDependOnBaseURL();
+            return protect(uncheckedDowncast<StyleRuleFontFace>(rule))->properties().mayDependOnBaseURL();
         case StyleRuleType::Import:
         case StyleRuleType::CounterStyle:
         case StyleRuleType::Media:

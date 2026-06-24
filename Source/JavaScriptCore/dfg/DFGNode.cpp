@@ -376,6 +376,15 @@ void Node::convertToRegExpMatchFast(Node* globalObjectNode)
     children = AdjacencyList(AdjacencyList::Fixed, Edge(globalObjectNode), regExpEdge, stringEdge);
 }
 
+void Node::convertToRegExpSearch(Node* globalObjectNode)
+{
+    ASSERT(op() == StringSearch);
+    Edge stringEdge = child1();
+    Edge regExpEdge = child2();
+    setOpAndDefaultFlags(RegExpSearch);
+    children = AdjacencyList(AdjacencyList::Fixed, Edge(globalObjectNode), regExpEdge, stringEdge);
+}
+
 void Node::convertToDefineDataProperty(Graph& graph, Edge base, Edge property, Edge value, Edge attributes)
 {
     ASSERT(op() == ObjectDefinePropertyFromFields);
@@ -535,7 +544,7 @@ void printInternal(PrintStream& out, SwitchKind kind)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void printInternal(PrintStream& out, Node* node)
+void printInternal(PrintStream& out, JSC::DFG::Node* node)
 {
     if (!node) {
         out.print("-");

@@ -222,11 +222,23 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             section.propertyVisibilityMode = propertyVisibilityMode;
     }
 
+    spreadsheetCSSStyleDeclarationSectionStyleLockedChanged(section, locked)
+    {
+        if (locked)
+            return;
+
+        if (this._shouldRefreshSubviews)
+            this.needsLayout();
+    }
+
     // Protected
 
     layout()
     {
         if (!this._shouldRefreshSubviews)
+            return;
+
+        if (this._sections.some((section) => section.style.locked))
             return;
 
         this._shouldRefreshSubviews = false;

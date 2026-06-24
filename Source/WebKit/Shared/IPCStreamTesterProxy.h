@@ -32,7 +32,7 @@
 
 namespace IPC {
 class Connection;
-class IPCSemaphore;
+class Semaphore;
 }
 
 namespace WebKit {

@@ -78,7 +78,7 @@ struct GeneralizedTime;
 //     bar OCTET STRING OPTIONAL,
 //     quux OCTET STRING }
 //
-// If we have a DER-encoded Foo in an Input |encoded_value|, the
+// If we have a DER-encoded Foo in an Input `encoded_value`, the
 // following code shows an example of how to parse the quux field from the
 // encoded data.
 //
@@ -115,12 +115,12 @@ class OPENSSL_EXPORT Parser {
   // Reads the current TLV from the input and advances. If the tag or length
   // encoding for the current value is invalid, this method returns false and
   // does not advance the input. Otherwise, it returns true, putting the
-  // read tag in |tag| and the value in |out|.
+  // read tag in `tag` and the value in `out`.
   [[nodiscard]] bool ReadTagAndValue(CBS_ASN1_TAG *tag, Input *out);
 
   // Reads the current TLV from the input and advances. Unlike ReadTagAndValue
-  // where only the value is put in |out|, this puts the raw bytes from the
-  // tag, length, and value in |out|.
+  // where only the value is put in `out`, this puts the raw bytes from the
+  // tag, length, and value in `out`.
   [[nodiscard]] bool ReadRawTLV(Input *out);
 
   // Basic methods for reading or skipping the current TLV, with an
@@ -128,16 +128,16 @@ class OPENSSL_EXPORT Parser {
   // to parse any structure with these 4 methods; convenience methods are also
   // provided to make some cases easier.
 
-  // If the current tag in the input is |tag|, it puts the corresponding value
-  // in |out| and advances the input to the next TLV. If the current tag is
-  // something else, then |out| is set to nullopt and the input is not
+  // If the current tag in the input is `tag`, it puts the corresponding value
+  // in `out` and advances the input to the next TLV. If the current tag is
+  // something else, then `out` is set to nullopt and the input is not
   // advanced. Like ReadTagAndValue, it returns false if the encoding is
   // invalid and does not advance the input.
   [[nodiscard]] bool ReadOptionalTag(CBS_ASN1_TAG tag, std::optional<Input> *out);
 
-  // If the current tag in the input is |tag|, it puts the corresponding value
-  // in |out|, sets |was_present| to true, and advances the input to the next
-  // TLV. If the current tag is something else, then |was_present| is set to
+  // If the current tag in the input is `tag`, it puts the corresponding value
+  // in `out`, sets `was_present` to true, and advances the input to the next
+  // TLV. If the current tag is something else, then `was_present` is set to
   // false and the input is not advanced. Like ReadTagAndValue, it returns
   // false if the encoding is invalid and does not advance the input.
   // DEPRECATED: use the std::optional version above in new code.
@@ -147,18 +147,18 @@ class OPENSSL_EXPORT Parser {
   // Like ReadOptionalTag, but the value is discarded.
   [[nodiscard]] bool SkipOptionalTag(CBS_ASN1_TAG tag, bool *was_present);
 
-  // If the current tag matches |tag|, it puts the current value in |out|,
+  // If the current tag matches `tag`, it puts the current value in `out`,
   // advances the input, and returns true. Otherwise, it returns false.
   [[nodiscard]] bool ReadTag(CBS_ASN1_TAG tag, Input *out);
 
-  // Advances the input and returns true if the current tag matches |tag|;
+  // Advances the input and returns true if the current tag matches `tag`;
   // otherwise it returns false.
   [[nodiscard]] bool SkipTag(CBS_ASN1_TAG tag);
 
   // Convenience methods to combine parsing the TLV with parsing the DER
   // encoding for a specific type.
 
-  // Reads the current TLV from the input, checks that the tag matches |tag|
+  // Reads the current TLV from the input, checks that the tag matches `tag`
   // and is a constructed tag, and creates a new Parser from the value.
   [[nodiscard]] bool ReadConstructed(CBS_ASN1_TAG tag, Parser *out);
 
@@ -191,7 +191,7 @@ class OPENSSL_EXPORT Parser {
   // input may or may not have been advanced).
   [[nodiscard]] std::optional<BitString> ReadBitString();
 
-  // Reads a GeneralizeTime. On success fills |out| and returns true.
+  // Reads a GeneralizeTime. On success fills `out` and returns true.
   //
   // Note that on failure the Parser is left in an undefined state (the
   // input may or may not have been advanced).
@@ -203,8 +203,8 @@ class OPENSSL_EXPORT Parser {
   // the current TLV and a method that advances the internal pointer to the
   // next TLV.
 
-  // Reads the current TLV from the input, putting the tag in |tag| and the raw
-  // value in |out|, but does not advance the input. Returns true if the tag
+  // Reads the current TLV from the input, putting the tag in `tag` and the raw
+  // value in `out`, but does not advance the input. Returns true if the tag
   // and length are successfully read and the output exists.
   [[nodiscard]] bool PeekTagAndValue(CBS_ASN1_TAG *tag, Input *out);
 
@@ -212,6 +212,9 @@ class OPENSSL_EXPORT Parser {
   // after PeekTagAndValue; all other methods will advance the input if they
   // read something.
   bool Advance();
+
+  // Returns the remaining bytes in the input. Does not advance the input.
+  Span<const uint8_t> RemainingBytes();
 
  private:
   CBS cbs_;

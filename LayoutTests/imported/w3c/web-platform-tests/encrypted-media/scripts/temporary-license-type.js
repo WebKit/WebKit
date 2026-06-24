@@ -52,6 +52,10 @@ function runTest(config,qualifier) {
             }
             return access.createMediaKeys();
         }).then(test.step_func(function(mediaKeys) {
+            if (config.servercertificate)
+                return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+            return mediaKeys;
+        })).then(test.step_func(function(mediaKeys) {
             mediaKeySession = mediaKeys.createSession('temporary');
             waitForEventAndRunStep('message', mediaKeySession, test.step_func(processMessage), test);
             return mediaKeySession.generateRequest(initDataType, initData);

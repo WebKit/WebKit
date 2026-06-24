@@ -105,7 +105,7 @@ static TemporalResult<ResolvedISOFields> resolveISOFields(const CalendarFieldsIn
     // Resolve month: prefer month over monthCode; validate consistency if both present.
     uint32_t month;
     if (fields.month && !fields.monthCode) {
-        month = *fields.month;
+        month = clampTo<uint8_t>(*fields.month);
     } else if (fields.monthCode) {
         auto& mc = *fields.monthCode;
         if (mc.isLeapMonth)
@@ -119,7 +119,7 @@ static TemporalResult<ResolvedISOFields> resolveISOFields(const CalendarFieldsIn
     } else if (!fields.month)
         return makeUnexpected(typeError("month or monthCode property must be present"_s));
     else
-        month = *fields.month;
+        month = clampTo<uint8_t>(*fields.month);
 
     // Constrain or reject month and day per overflow.
     if (month < 1 || month > 12) {
@@ -159,7 +159,7 @@ TemporalResult<ResolvedCalendarDate> dateFromFields(CalendarID calendarId, const
             return makeUnexpected(rangeError("Date is not within representable range"_s));
 
         // Step 4: Return result.
-        return ResolvedCalendarDate { isoDate, "iso8601"_s };
+        return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
     }
 
     // Steps 1-2 (non-ISO): CalendarResolveFields + CalendarDateToISO via ICU bridge.
@@ -180,16 +180,15 @@ TemporalResult<ResolvedCalendarDate> dateFromFields(CalendarID calendarId, const
     // Resolve month from month/monthCode
     uint8_t month = 1;
     if (fields.month)
-        month = *fields.month;
+        month = clampTo<uint8_t>(*fields.month);
     else if (fields.monthCode)
         month = static_cast<uint8_t>(fields.monthCode->monthNumber);
 
-    int32_t year = fields.year.value_or(0);
     std::optional<StringView> era;
     if (fields.era)
         era = StringView(*fields.era);
 
-    auto result = calendarDateFromFields(calendarId, year, month, *fields.day, era, fields.eraYear, fields.monthCode, overflow);
+    auto result = calendarDateFromFields(calendarId, fields.year, month, *fields.day, era, fields.eraYear, fields.monthCode, overflow);
     if (!result)
         return makeUnexpected(result.error());
 
@@ -198,7 +197,7 @@ TemporalResult<ResolvedCalendarDate> dateFromFields(CalendarID calendarId, const
         return makeUnexpected(rangeError("Date is not within representable range"_s));
 
     // Step 4: Return result.
-    return ResolvedCalendarDate { *result, calendarIDToString(calendarId).toString() };
+    return ResolvedCalendarDate { *result, calendarId };
 }
 
 // CalendarYearMonthFromFields — temporal_rs: Calendar::year_month_from_fields (src/builtins/core/calendar.rs)
@@ -220,7 +219,7 @@ TemporalResult<ResolvedCalendarDate> yearMonthFromFields(CalendarID calendarId, 
             return makeUnexpected(rangeError("YearMonth is not within representable range"_s));
 
         // Step 5: Return result.
-        return ResolvedCalendarDate { isoDate, "iso8601"_s };
+        return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
     }
 
     // Steps 1-3 (non-ISO): set [[Day]]=1 + CalendarResolveFields + CalendarDateToISO via ICU bridge.
@@ -238,16 +237,15 @@ TemporalResult<ResolvedCalendarDate> yearMonthFromFields(CalendarID calendarId, 
 
     uint8_t month = 1;
     if (fields.month)
-        month = *fields.month;
+        month = clampTo<uint8_t>(*fields.month);
     else if (fields.monthCode)
         month = static_cast<uint8_t>(fields.monthCode->monthNumber);
 
-    int32_t year = fields.year.value_or(0);
     std::optional<StringView> era;
     if (fields.era)
         era = StringView(*fields.era);
 
-    auto result = calendarDateFromFields(calendarId, year, month, 1, era, fields.eraYear, fields.monthCode, overflow);
+    auto result = calendarDateFromFields(calendarId, fields.year, month, 1, era, fields.eraYear, fields.monthCode, overflow);
     if (!result)
         return makeUnexpected(result.error());
 
@@ -256,7 +254,7 @@ TemporalResult<ResolvedCalendarDate> yearMonthFromFields(CalendarID calendarId, 
         return makeUnexpected(rangeError("YearMonth is not within representable range"_s));
 
     // Step 5: Return result.
-    return ResolvedCalendarDate { *result, calendarIDToString(calendarId).toString() };
+    return ResolvedCalendarDate { *result, calendarId };
 }
 
 // CalendarMonthDayFromFields — temporal_rs: Calendar::month_day_from_fields (src/builtins/core/calendar.rs)
@@ -286,7 +284,7 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
             ASSERT(ISO8601::isDateTimeWithinLimits(isoMonthDayReferenceLeapYear, resolved->month, resolved->day, 12, 0, 0, 0, 0, 0));
             auto isoDate = ISO8601::PlainDate(isoMonthDayReferenceLeapYear, resolved->month, resolved->day);
             // Step 4: Return result.
-            return ResolvedCalendarDate { isoDate, "iso8601"_s };
+            return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
         }
         auto resolved = resolveISOFields(fields, overflow, ISOResolveType::MonthDay);
         if (!resolved)
@@ -296,7 +294,7 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
         // Step 3: Assert: ISODateWithinLimits(result) — always holds for reference year 1972.
         ASSERT(ISO8601::isDateTimeWithinLimits(isoMonthDayReferenceLeapYear, resolved->month, resolved->day, 12, 0, 0, 0, 0, 0));
         // Step 4: Return result.
-        return ResolvedCalendarDate { isoDate, "iso8601"_s };
+        return ResolvedCalendarDate { isoDate, iso8601CalendarID() };
     }
 
     // Steps 1-2 (non-ISO): CalendarResolveFields + CalendarMonthDayToISOReferenceDate via ICU bridge.
@@ -317,7 +315,7 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
 
     uint8_t month = 1;
     if (fields.month)
-        month = *fields.month;
+        month = clampTo<uint8_t>(*fields.month);
     else if (fields.monthCode)
         month = static_cast<uint8_t>(fields.monthCode->monthNumber);
 
@@ -343,19 +341,12 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
     } else
         RELEASE_ASSERT_NOT_REACHED();
 
-    // ecmaReferenceYear returns ISO proleptic years (e.g., 1972).
-    // Chinese and Dangi are lunisolar calendars sharing the same ICU code path (chnsecal.cpp).
-    // On older Apple ICU, UCAL_EXTENDED_YEAR uses epoch-based counting instead of ISO years.
-    // We probe what year ICU assigns to ISO 1972-02-15 (Chinese New Year 1972), then use
-    //   chineseEpochOffset = probe_year - 1972
-    // where probe_year = 1972 on modern ICU (offset = 0, no-op) or the epoch-based year on
-    // older Apple ICU (offset = that year - 1972).
-    static const int32_t chineseExtYear1972 = chineseCalendarExtendedYearFor1972();
-    static const int32_t chineseEpochOffset = chineseExtYear1972 - 1972;
+    // ecmaReferenceYear returns ISO proleptic years. On older Apple ICU, UCAL_EXTENDED_YEAR
+    // uses epoch-based counting for lunisolar calendars; probe the offset per calendar.
     auto calStr = calendarIDToString(calendarId);
     bool isChineseOrDangi = (calStr == "chinese"_s || calStr == "dangi"_s);
     if (!fields.year && isChineseOrDangi)
-        year += chineseEpochOffset;
+        year += lunarCalendarExtendedYearFor1972(calendarId) - 1972;
     std::optional<StringView> era;
     if (fields.era)
         era = StringView(*fields.era);
@@ -369,7 +360,11 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
         effectiveMonthCode = &regularMonthCode;
     }
 
-    auto result = calendarDateFromFields(calendarId, year, month, *fields.day, era, fields.eraYear, *effectiveMonthCode, overflow);
+    // Era+eraYear path: ICU ignores the year param (uses UCAL_ERA+UCAL_YEAR instead), so pass
+    // fields.year (optional) to enable the year-consistency check in calendarDateFromFields.
+    // Non-era path: pass ecmaReferenceYear for correct ICU month resolution.
+    std::optional<int32_t> yearArg = (era && fields.eraYear) ? fields.year : std::optional<int32_t>(year);
+    auto result = calendarDateFromFields(calendarId, yearArg, month, *fields.day, era, fields.eraYear, *effectiveMonthCode, overflow);
     if (!result)
         return makeUnexpected(result.error());
 
@@ -385,11 +380,11 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
             auto resolvedMonthCode = ISO8601::parseMonthCode(resolvedFields->monthCode);
             if (resolvedMonthCode) {
                 int32_t refYear = ecmaReferenceYear(calendarId, resolvedMonthCode->monthNumber, resolvedMonthCode->isLeapMonth, resolvedFields->day);
-                if (isChineseOrDangi && chineseEpochOffset)
-                    refYear += chineseEpochOffset;
-                auto refResult = calendarDateFromFields(calendarId, refYear, resolvedFields->month, resolvedFields->day, std::nullopt, std::nullopt, resolvedMonthCode, TemporalOverflow::Constrain);
+                if (isChineseOrDangi)
+                    refYear += lunarCalendarExtendedYearFor1972(calendarId) - 1972;
+                auto refResult = calendarDateFromFields(calendarId, std::optional<int32_t>(refYear), resolvedFields->month, resolvedFields->day, std::nullopt, std::nullopt, resolvedMonthCode, TemporalOverflow::Constrain);
                 if (refResult)
-                    return ResolvedCalendarDate { *refResult, calendarIDToString(calendarId).toString() };
+                    return ResolvedCalendarDate { *refResult, calendarId };
             }
         }
     }
@@ -397,7 +392,7 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
     // Step 3: Assert: ISODateWithinLimits(result) — reference year is always within limits.
     ASSERT(ISO8601::isDateTimeWithinLimits(result->year(), result->month(), result->day(), 12, 0, 0, 0, 0, 0));
     // Step 4: Return result.
-    return ResolvedCalendarDate { *result, calendarIDToString(calendarId).toString() };
+    return ResolvedCalendarDate { *result, calendarId };
 }
 
 // plainYearMonthWith — temporal_rs: PlainYearMonth::with (src/builtins/core/plain_year_month.rs)
@@ -405,7 +400,8 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
 // Implements inner merge steps; IsPartialTemporalObject and PrepareCalendarFields done by JS-layer caller.
 TemporalResult<ResolvedCalendarDate> plainYearMonthWith(CalendarID calendarId, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow overflow)
 {
-    // Step 3: Assert at least one field is user-provided (IsPartialTemporalObject equivalent).
+    // Defensive: JS-layer caller guarantees at least one field via IsPartialTemporalObject;
+    // guard against direct internal calls with an empty partialFields.
     if (!partialFields.year && !partialFields.month && !partialFields.monthCode
         && !partialFields.era && !partialFields.eraYear)
         return makeUnexpected(typeError("at least one field (year, month, monthCode, era, or eraYear) must be provided"_s));
@@ -473,6 +469,64 @@ TemporalResult<ResolvedCalendarDate> plainYearMonthWith(CalendarID calendarId, c
     return yearMonthFromFields(calendarId, merged, overflow);
 }
 
+// plainDateWith — temporal_rs: PlainDate::with (src/builtins/core/plain_date.rs)
+//   merge: CalendarFields::with_fallback_date (src/builtins/core/calendar/fields.rs)
+//   resolve: Calendar::date_from_fields → dateFromFields
+// https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.with
+// Implements steps 5 (ISODateToFields), 7 (CalendarMergeFields), 10 (CalendarDateFromFields).
+// Steps 6, 8-9 (PrepareCalendarFields, overflow) done by PlainDate::with(); step 11 (CreateTemporalDate) by prototype caller.
+TemporalResult<ResolvedCalendarDate> plainDateWith(CalendarID calendarId, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow overflow)
+{
+    // Step 5: fields = ISODateToFields(calendar, plainDate.[[ISODate]], ~date~).
+    auto calFields = isoToCalendarFields(calendarId, currentISODate);
+    if (!calFields)
+        return makeUnexpected(calFields.error());
+
+    bool hasEras = calendarHasEras(calendarId);
+    bool isJapanese = (calendarId == japaneseCalendarID());
+
+    // Step 7: fields = CalendarMergeFields(calendar, fields, partialDate).
+    // NonISOFieldKeysToIgnore (temporal_rs: impl_field_keys_to_ignore!):
+    //   year/era/eraYear in additionalKeys → both era AND year suppressed from base.
+    //   Japanese month/day changes → era suppressed (but NOT year; year still inherited).
+    bool keysToIgnoreEra = hasEras && (partialFields.year.has_value() || partialFields.era.has_value() || partialFields.eraYear.has_value());
+    bool keysToIgnoreYear = keysToIgnoreEra;
+    if (isJapanese && (partialFields.month.has_value() || partialFields.monthCode.has_value() || partialFields.day.has_value()))
+        keysToIgnoreEra = true; // suppress era but not year for Japanese month/day changes
+    bool keysToIgnoreMonth = partialFields.month.has_value() || partialFields.monthCode.has_value();
+
+    CalendarFieldsIn merged;
+
+    merged.era = partialFields.era;
+    merged.eraYear = partialFields.eraYear;
+    if (!keysToIgnoreEra) {
+        if (!merged.era && calFields->era.has_value() && !calFields->era->isEmpty())
+            merged.era = *calFields->era;
+        if (!merged.eraYear && calFields->eraYear.has_value())
+            merged.eraYear = *calFields->eraYear;
+    }
+
+    merged.year = partialFields.year;
+    if (!keysToIgnoreYear && !merged.year)
+        merged.year = std::optional<int32_t>(calFields->year);
+
+    // month: user's value if provided; suppress base month when monthCode is provided (they're mutually exclusive).
+    if (partialFields.month.has_value())
+        merged.month = *partialFields.month;
+    else if (!partialFields.monthCode.has_value())
+        merged.month = static_cast<uint32_t>(calFields->month);
+    merged.day = partialFields.day.has_value() ? *partialFields.day : calFields->day;
+
+    merged.monthCode = partialFields.monthCode;
+    if (!partialFields.month.has_value() && !partialFields.monthCode.has_value() && !keysToIgnoreMonth) {
+        if (!calFields->monthCode.isEmpty())
+            merged.monthCode = ISO8601::parseMonthCode(calFields->monthCode);
+    }
+
+    // Step 10: isoDate = CalendarDateFromFields(calendar, fields, overflow).
+    return dateFromFields(calendarId, merged, overflow);
+}
+
 // differenceYearMonth — temporal_rs: PlainYearMonth::diff (src/builtins/core/plain_year_month.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplainyearmonth
 // Implements steps 7-14; steps 1-6 and rounding (steps 15-16) done by JS-layer caller.
@@ -522,7 +576,7 @@ TemporalResult<ISO8601::Duration> differenceYearMonth(CalendarID calendarId, con
         return makeUnexpected(otherResolved.error());
 
     // Steps 10-14: CalendarDateUntil(thisDate, otherDate, largestUnit).
-    return calendarDateUntil(calendarId, thisResolved->isoDate, otherResolved->isoDate, largestUnit);
+    return TemporalCore::calendarDateUntil(calendarId, thisResolved->isoDate, otherResolved->isoDate, largestUnit);
 }
 
 // plainYearMonthAdd — temporal_rs: PlainYearMonth::add_duration (src/builtins/core/plain_year_month.rs)

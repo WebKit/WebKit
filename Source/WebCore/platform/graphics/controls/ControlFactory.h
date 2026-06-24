@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ class TextAreaPart;
 class TextFieldPart;
 class ToggleButtonPart;
 
-class ControlFactory : public RefCounted<ControlFactory> {
+class ControlFactory : public ThreadSafeRefCounted<ControlFactory> {
     WTF_MAKE_TZONE_ALLOCATED(ControlFactory);
 public:
     virtual ~ControlFactory() = default;

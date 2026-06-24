@@ -10,36 +10,37 @@
 
 #include "modules/video_coding/timing/decode_time_percentile_filter.h"
 
+#include <algorithm>
 #include <cstdint>
 
 namespace webrtc {
-
 namespace {
 
-// The first kIgnoredSampleCount samples will be ignored.
-const int kIgnoredSampleCount = 5;
-// Return the `kPercentile` value in RequiredDecodeTimeMs().
-const float kPercentile = 0.95f;
+// The number of initial samples to ignore.
+constexpr int kIgnoredSampleCount = 5;
+// The percentile value used by the filter.
+constexpr float kPercentile = 0.95f;
 // The window size in ms.
-const int64_t kTimeLimitMs = 10000;
+constexpr int64_t kTimeLimitMs = 10000;
 
-}  // anonymous namespace
+}  // namespace
 
 DecodeTimePercentileFilter::DecodeTimePercentileFilter()
-    : ignored_sample_count_(0), filter_(kPercentile) {}
+    : filter_(kPercentile) {}
 DecodeTimePercentileFilter::~DecodeTimePercentileFilter() = default;
 
-void DecodeTimePercentileFilter::AddTiming(int64_t decode_time_ms,
+void DecodeTimePercentileFilter::AddSample(int64_t decode_time_ms,
                                            int64_t now_ms) {
-  // Ignore the first `kIgnoredSampleCount` samples.
+  // Ignore the first samples.
   if (ignored_sample_count_ < kIgnoredSampleCount) {
     ++ignored_sample_count_;
     return;
   }
 
   // Insert new decode time value.
-  filter_.Insert(decode_time_ms);
-  history_.emplace(decode_time_ms, now_ms);
+  const int64_t capped_decode_ms = std::max(int64_t{0}, decode_time_ms);
+  filter_.Insert(capped_decode_ms);
+  history_.emplace(capped_decode_ms, now_ms);
 
   // Pop old decode time values.
   while (!history_.empty() &&
@@ -49,8 +50,7 @@ void DecodeTimePercentileFilter::AddTiming(int64_t decode_time_ms,
   }
 }
 
-// Get the 95th percentile observed decode time within a time window.
-int64_t DecodeTimePercentileFilter::RequiredDecodeTimeMs() const {
+int64_t DecodeTimePercentileFilter::GetPercentileMs() const {
   return filter_.GetPercentileValue();
 }
 

@@ -13,8 +13,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
@@ -322,7 +322,7 @@ TEST(VideoRtpDepacketizerVp9Test, ParseResolution) {
 }
 
 TEST(VideoRtpDepacketizerVp9Test, ParseFailsForNoPayloadLength) {
-  ArrayView<const uint8_t> empty;
+  std::span<const uint8_t> empty;
 
   RTPVideoHeader video_header;
   EXPECT_EQ(VideoRtpDepacketizerVp9::ParseRtpPayload(empty, &video_header), 0);

@@ -14,10 +14,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
+#include <span>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/render_resolution.h"
 #include "rtc_base/bit_buffer.h"
@@ -57,7 +57,7 @@ NextLayerIdc GetNextLayerIdc(const FrameDependencyTemplate& previous,
 }  // namespace
 
 RtpDependencyDescriptorWriter::RtpDependencyDescriptorWriter(
-    ArrayView<uint8_t> data,
+    std::span<uint8_t> data,
     const FrameDependencyStructure& structure,
     std::bitset<32> active_chains,
     const DependencyDescriptor& descriptor)

@@ -301,17 +301,17 @@ TEST(NetworkProcess, CORSPreflightCachePartitioned)
 }
 
 
-static Vector<RetainPtr<WKScriptMessage>> receivedMessagesVector;
-static bool receivedMessage = false;
+static Vector<RetainPtr<WKScriptMessage>> networkProcessReceivedMessagesVector;
+static bool networkProcessReceivedMessage = false;
 static RetainPtr<WKScriptMessage> waitAndGetNextMessage()
 {
-    if (receivedMessagesVector.isEmpty()) {
-        receivedMessage = false;
-        TestWebKitAPI::Util::run(&receivedMessage);
+    if (networkProcessReceivedMessagesVector.isEmpty()) {
+        networkProcessReceivedMessage = false;
+        TestWebKitAPI::Util::run(&networkProcessReceivedMessage);
     }
 
-    EXPECT_EQ(receivedMessagesVector.size(), 1U);
-    return receivedMessagesVector.takeLast();
+    EXPECT_EQ(networkProcessReceivedMessagesVector.size(), 1U);
+    return networkProcessReceivedMessagesVector.takeLast();
 }
 
 @interface NetworkProcessTestMessageHandler : NSObject <WKScriptMessageHandler>
@@ -320,8 +320,8 @@ static RetainPtr<WKScriptMessage> waitAndGetNextMessage()
 @implementation NetworkProcessTestMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    receivedMessagesVector.append(message);
-    receivedMessage = true;
+    networkProcessReceivedMessagesVector.append(message);
+    networkProcessReceivedMessage = true;
 }
 @end
 
@@ -355,8 +355,8 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     RetainPtr webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     RetainPtr webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
-    receivedMessage = false;
-    receivedMessagesVector.clear();
+    networkProcessReceivedMessage = false;
+    networkProcessReceivedMessagesVector.clear();
 
     NSString *html = [NSString stringWithFormat:@"<script>let bc = new BroadcastChannel('test'); bc.onmessage = (msg) => { webkit.messageHandlers.test.postMessage(msg.data); };</script>"];
     NSURL *baseURL = [NSURL URLWithString:@"http://example.com/"];
@@ -373,12 +373,12 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     auto networkPID = [[WKWebsiteDataStore defaultDataStore] _networkProcessIdentifier];
     EXPECT_NE(networkPID, 0);
 
-    EXPECT_FALSE(receivedMessage);
-    EXPECT_TRUE(receivedMessagesVector.isEmpty());
+    EXPECT_FALSE(networkProcessReceivedMessage);
+    EXPECT_TRUE(networkProcessReceivedMessagesVector.isEmpty());
 
     // Test that initial communication from webView1 to webView2 works.
-    receivedMessage = false;
-    receivedMessagesVector.clear();
+    networkProcessReceivedMessage = false;
+    networkProcessReceivedMessagesVector.clear();
     bool finishedRunningScript = false;
     [webView1 evaluateJavaScript:@"bc.postMessage('foo')" completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);
@@ -386,16 +386,16 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     }];
     TestWebKitAPI::Util::run(&finishedRunningScript);
 
-    TestWebKitAPI::Util::run(&receivedMessage);
+    TestWebKitAPI::Util::run(&networkProcessReceivedMessage);
     TestWebKitAPI::Util::spinRunLoop(10);
 
-    EXPECT_EQ(receivedMessagesVector.size(), 1U);
-    EXPECT_EQ([receivedMessagesVector[0] webView], webView2);
-    EXPECT_WK_STREQ([receivedMessagesVector[0] body], @"foo");
+    EXPECT_EQ(networkProcessReceivedMessagesVector.size(), 1U);
+    EXPECT_EQ([networkProcessReceivedMessagesVector[0] webView], webView2);
+    EXPECT_WK_STREQ([networkProcessReceivedMessagesVector[0] body], @"foo");
 
     // Test that initial communication from webView2 to webView1 works.
-    receivedMessage = false;
-    receivedMessagesVector.clear();
+    networkProcessReceivedMessage = false;
+    networkProcessReceivedMessagesVector.clear();
     finishedRunningScript = false;
     [webView2 evaluateJavaScript:@"bc.postMessage('bar')" completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);
@@ -403,12 +403,12 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     }];
     TestWebKitAPI::Util::run(&finishedRunningScript);
 
-    TestWebKitAPI::Util::run(&receivedMessage);
+    TestWebKitAPI::Util::run(&networkProcessReceivedMessage);
     TestWebKitAPI::Util::spinRunLoop(10);
 
-    EXPECT_EQ(receivedMessagesVector.size(), 1U);
-    EXPECT_EQ([receivedMessagesVector[0] webView], webView1);
-    EXPECT_WK_STREQ([receivedMessagesVector[0] body], @"bar");
+    EXPECT_EQ(networkProcessReceivedMessagesVector.size(), 1U);
+    EXPECT_EQ([networkProcessReceivedMessagesVector[0] webView], webView1);
+    EXPECT_WK_STREQ([networkProcessReceivedMessagesVector[0] body], @"bar");
 
     // Kill the network process.
     kill(networkPID, 9);
@@ -418,8 +418,8 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     waitUntilNetworkProcessIsResponsive(webView1.get(), webView2.get());
 
     // Test that initial communication from webView1 to webView2 works.
-    receivedMessage = false;
-    receivedMessagesVector.clear();
+    networkProcessReceivedMessage = false;
+    networkProcessReceivedMessagesVector.clear();
     finishedRunningScript = false;
     [webView1 evaluateJavaScript:@"bc.postMessage('foo2')" completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);
@@ -427,16 +427,16 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     }];
     TestWebKitAPI::Util::run(&finishedRunningScript);
 
-    TestWebKitAPI::Util::run(&receivedMessage);
+    TestWebKitAPI::Util::run(&networkProcessReceivedMessage);
     TestWebKitAPI::Util::spinRunLoop(10);
 
-    EXPECT_EQ(receivedMessagesVector.size(), 1U);
-    EXPECT_EQ([receivedMessagesVector[0] webView], webView2);
-    EXPECT_WK_STREQ([receivedMessagesVector[0] body], @"foo2");
+    EXPECT_EQ(networkProcessReceivedMessagesVector.size(), 1U);
+    EXPECT_EQ([networkProcessReceivedMessagesVector[0] webView], webView2);
+    EXPECT_WK_STREQ([networkProcessReceivedMessagesVector[0] body], @"foo2");
 
     // Test that initial communication from webView2 to webView1 works.
-    receivedMessage = false;
-    receivedMessagesVector.clear();
+    networkProcessReceivedMessage = false;
+    networkProcessReceivedMessagesVector.clear();
     finishedRunningScript = false;
     [webView2 evaluateJavaScript:@"bc.postMessage('bar2')" completionHandler: [&] (id result, NSError *error) {
         EXPECT_TRUE(!error);
@@ -444,12 +444,12 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     }];
     TestWebKitAPI::Util::run(&finishedRunningScript);
 
-    TestWebKitAPI::Util::run(&receivedMessage);
+    TestWebKitAPI::Util::run(&networkProcessReceivedMessage);
     TestWebKitAPI::Util::spinRunLoop(10);
 
-    EXPECT_EQ(receivedMessagesVector.size(), 1U);
-    EXPECT_EQ([receivedMessagesVector[0] webView], webView1);
-    EXPECT_WK_STREQ([receivedMessagesVector[0] body], @"bar2");
+    EXPECT_EQ(networkProcessReceivedMessagesVector.size(), 1U);
+    EXPECT_EQ([networkProcessReceivedMessagesVector[0] webView], webView1);
+    EXPECT_WK_STREQ([networkProcessReceivedMessagesVector[0] body], @"bar2");
 
     auto networkPID2 = [[WKWebsiteDataStore defaultDataStore] _networkProcessIdentifier];
     EXPECT_NE(networkPID2, 0);
@@ -898,7 +898,7 @@ worker.onmessage = (event) => {
 </script>
 )TESTRESOURCE"_s;
 
-static constexpr auto workerBytes = R"TESTRESOURCE(
+static constexpr auto networkProcessWorkerBytes = R"TESTRESOURCE(
 caches.open("test").then(() => {
     self.postMessage('cache is opened');
 }, () => {
@@ -910,7 +910,7 @@ TEST(NetworkProcess, DoNotLaunchForDOMCacheDestruction)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBytes } },
-        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, workerBytes } }
+        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, networkProcessWorkerBytes } }
     });
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration.get().websiteDataStore _setResourceLoadStatisticsEnabled:NO];

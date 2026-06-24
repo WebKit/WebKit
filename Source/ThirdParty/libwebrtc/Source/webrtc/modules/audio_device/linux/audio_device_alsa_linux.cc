@@ -34,7 +34,11 @@
 #endif
 
 WebRTCAlsaSymbolTable* GetAlsaSymbolTable() {
-  static WebRTCAlsaSymbolTable* alsa_symbol_table = new WebRTCAlsaSymbolTable();
+  static WebRTCAlsaSymbolTable* alsa_symbol_table = []() {
+    auto* table = new WebRTCAlsaSymbolTable();
+    table->Load();
+    return table;
+  }();
   return alsa_symbol_table;
 }
 
@@ -161,7 +165,7 @@ AudioDeviceGeneric::InitStatus AudioDeviceLinuxALSA::Init() {
   MutexLock lock(&mutex_);
 
   // Load libasound
-  if (!GetAlsaSymbolTable()->Load()) {
+  if (!GetAlsaSymbolTable()->IsLoaded()) {
     // Alsa is not installed on this system
     RTC_LOG(LS_ERROR) << "failed to load symbol table";
     return InitStatus::OTHER_ERROR;

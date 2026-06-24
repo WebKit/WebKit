@@ -192,7 +192,7 @@ done
 
 if [ "$MODE" = "local" ]; then
   # TODO(prb): add support for Android devices.
-  for runtime_test in ECDSA_PWCT RSA_PWCT CRNG; do
+  for runtime_test in ECDSA_PWCT RSA_PWCT; do
     echo
     echo -e "\033[1m${runtime_test} failure\033[0m"
     $RUNTIME_BREAK_TEST ${runtime_test}

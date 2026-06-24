@@ -103,8 +103,12 @@ class Browser:
 
     init_timeout: float = 30
 
-    def __init__(self, logger: StructuredLogger):
+    def __init__(self, logger: StructuredLogger, *, manager_number: int, **kwargs: Any):
+        if kwargs:
+            logger.warning(f"Browser.__init__ kwargs: {kwargs!r}")
+        super().__init__()
         self.logger = logger
+        self.manager_number = manager_number
 
     def setup(self) -> None:
         """Used for browser-specific setup that happens at the start of a test run"""
@@ -167,9 +171,6 @@ class Browser:
 
 
 class NullBrowser(Browser):
-    def __init__(self, logger: StructuredLogger, **kwargs: Any):
-        super().__init__(logger)
-
     def start(self, group_metadata: GroupMetadata, **kwargs: Any) -> None:
         """No-op browser to use in scenarios where the TestRunnerManager shouldn't
         actually own the browser process (e.g. Servo where we start one browser
@@ -305,7 +306,7 @@ class WebDriverBrowser(Browser):
                  env: Optional[Mapping[str, str]] = None,
                  supports_pac: bool = True,
                  **kwargs: Any):
-        super().__init__(logger)
+        super().__init__(logger, **kwargs)
 
         if webdriver_binary is None:
             raise ValueError("WebDriver server binary must be given "
@@ -320,7 +321,7 @@ class WebDriverBrowser(Browser):
         self._supports_pac = supports_pac
 
         self.base_path = base_path
-        self.env = os.environ.copy() if env is None else env
+        self.env = {**os.environ, **env} if env else os.environ.copy()
         self.webdriver_args = webdriver_args if webdriver_args is not None else []
 
         self.init_deadline: Optional[float] = None
@@ -388,7 +389,7 @@ class WebDriverBrowser(Browser):
     def stop(self, force: bool = False) -> bool:
         self.logger.debug("Stopping WebDriver")
         clean = True
-        if self.is_alive():
+        if WebDriverBrowser.is_alive(self):
             proc = cast(mozprocess.ProcessHandler, self._proc)
             # Pass a timeout value to mozprocess Processhandler.kill()
             # to ensure it always returns within it.
@@ -397,7 +398,7 @@ class WebDriverBrowser(Browser):
             if force and kill_result != 0:
                 clean = False
                 proc.kill(9, timeout=5)
-        success = not self.is_alive()
+        success = not WebDriverBrowser.is_alive(self)
         if success and self._output_handler is not None:
             # Only try to do output post-processing if we managed to shut down
             self._output_handler.after_process_stop(clean)

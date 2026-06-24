@@ -33,7 +33,10 @@
 //! assert!(public_key.verify(signed_message, sig.as_slice()).is_ok());
 //! ```
 
-use crate::{ec, sealed, with_output_vec, Buffer, FfiSlice, InvalidSignatureError};
+use crate::{
+    ec::{self, Group},
+    with_output_vec, Buffer, FfiSlice, InvalidSignatureError,
+};
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 
@@ -47,7 +50,7 @@ impl<C: ec::Curve> PublicKey<C> {
     /// Parse a public key in uncompressed X9.62 format. (This is the common
     /// format for elliptic curve points beginning with an 0x04 byte.)
     pub fn from_x962_uncompressed(x962: &[u8]) -> Option<Self> {
-        let point = ec::Point::from_x962_uncompressed(C::group(sealed::Sealed), x962)?;
+        let point = ec::Point::from_x962_uncompressed(C::group(), x962)?;
         Some(Self {
             point,
             marker: PhantomData,
@@ -59,10 +62,27 @@ impl<C: ec::Curve> PublicKey<C> {
         self.point.to_x962_uncompressed()
     }
 
+    /// Parse a public key in compressed X9.62 point format.
+    pub fn from_x962_compressed(x962: &[u8]) -> Option<Self> {
+        let point = ec::Point::from_x962_compressed(C::group(), x962)?;
+        Some(Self {
+            point,
+            marker: PhantomData,
+        })
+    }
+
+    /// Serialize this key as compressed X9.62 format.
+    ///
+    /// WARNING: compressed form is rarely used and is not as well supported as
+    /// the uncompressed form.
+    pub fn to_x962_compressed(&self) -> Buffer {
+        self.point.to_x962_compressed()
+    }
+
     /// Parse a public key in SubjectPublicKeyInfo format.
     /// (This is found in, e.g., X.509 certificates.)
     pub fn from_der_subject_public_key_info(spki: &[u8]) -> Option<Self> {
-        let point = ec::Point::from_der_subject_public_key_info(C::group(sealed::Sealed), spki)?;
+        let point = ec::Point::from_der_subject_public_key_info(C::group(), spki)?;
         Some(Self {
             point,
             marker: PhantomData,
@@ -126,24 +146,63 @@ impl<C: ec::Curve> PublicKey<C> {
     }
 }
 
-/// An ECDH private key over the given curve.
+/// An ECDSA private key over the given curve.
 pub struct PrivateKey<C: ec::Curve> {
     key: ec::Key,
     marker: PhantomData<C>,
+}
+
+impl<C: ec::Curve> Clone for PrivateKey<C> {
+    fn clone(&self) -> Self {
+        Self {
+            key: self.key.clone(),
+            marker: PhantomData,
+        }
+    }
+}
+
+/// Parsed `ECPrivateKey` dispatched into the corresponding curve types.
+pub enum ParsedPrivateKey {
+    /// A P-256 private key.
+    P256(PrivateKey<ec::P256>),
+    /// A P-384 private key.
+    P384(PrivateKey<ec::P384>),
+}
+
+impl ParsedPrivateKey {
+    /// Parses an ECPrivateKey structure froma DER encoded structure per [RFC 5915],
+    /// whose curve is specified by the `ECParameters`.
+    ///
+    /// Unless the curve group is one of the variants of [`Group`], this method returns [`None`].
+    ///
+    /// [RFC 5915]: <https://datatracker.ietf.org/doc/html/rfc5915>
+    pub fn from_der(der: &[u8]) -> Option<Self> {
+        let key = ec::Key::from_der_ec_private_key_with_curve_names(der)?;
+        match key.get_group()? {
+            Group::P256 => Some(ParsedPrivateKey::P256(PrivateKey {
+                key,
+                marker: PhantomData,
+            })),
+            Group::P384 => Some(ParsedPrivateKey::P384(PrivateKey {
+                key,
+                marker: PhantomData,
+            })),
+        }
+    }
 }
 
 impl<C: ec::Curve> PrivateKey<C> {
     /// Generate a random private key.
     pub fn generate() -> Self {
         Self {
-            key: ec::Key::generate(C::group(sealed::Sealed)),
+            key: ec::Key::generate(C::group()),
             marker: PhantomData,
         }
     }
 
     /// Parse a `PrivateKey` from a zero-padded, big-endian representation of the secret scalar.
     pub fn from_big_endian(scalar: &[u8]) -> Option<Self> {
-        let key = ec::Key::from_big_endian(C::group(sealed::Sealed), scalar)?;
+        let key = ec::Key::from_big_endian(C::group(), scalar)?;
         Some(Self {
             key,
             marker: PhantomData,
@@ -158,7 +217,7 @@ impl<C: ec::Curve> PrivateKey<C> {
     /// Parse an ECPrivateKey structure (from RFC 5915). The key must be on the
     /// specified curve.
     pub fn from_der_ec_private_key(der: &[u8]) -> Option<Self> {
-        let key = ec::Key::from_der_ec_private_key(C::group(sealed::Sealed), der)?;
+        let key = ec::Key::from_der_ec_private_key(C::group(), der)?;
         Some(Self {
             key,
             marker: PhantomData,
@@ -173,11 +232,21 @@ impl<C: ec::Curve> PrivateKey<C> {
     /// Parse a PrivateKeyInfo structure (from RFC 5208), commonly called
     /// "PKCS#8 format". The key must be on the specified curve.
     pub fn from_der_private_key_info(der: &[u8]) -> Option<Self> {
-        let key = ec::Key::from_der_private_key_info(C::group(sealed::Sealed), der)?;
+        let key = ec::Key::from_der_private_key_info(C::group(), der)?;
         Some(Self {
             key,
             marker: PhantomData,
         })
+    }
+
+    // Caller must make sure that the group of the key matches `C`,
+    // or else it panics.
+    pub(crate) fn from_ec_key(key: ec::Key) -> Self {
+        assert_eq!(key.get_group(), Some(C::group()));
+        Self {
+            key,
+            marker: PhantomData,
+        }
     }
 
     /// Serialize this private key as a PrivateKeyInfo structure (from RFC 5208),
@@ -189,6 +258,14 @@ impl<C: ec::Curve> PrivateKey<C> {
     /// Serialize the _public_ part of this key in uncompressed X9.62 format.
     pub fn to_x962_uncompressed(&self) -> Buffer {
         self.key.to_x962_uncompressed()
+    }
+
+    /// Serialize the _public_ part of this key in compressed X9.62 format.
+    ///
+    /// WARNING: compressed form is rarely used and is not as well supported as
+    /// the uncompressed form.
+    pub fn to_x962_compressed(&self) -> Buffer {
+        self.key.to_x962_compressed()
     }
 
     /// Serialize this key in SubjectPublicKeyInfo format.
@@ -308,13 +385,48 @@ mod test {
             .is_err());
     }
 
+    fn check_compressed<C: ec::Curve>() {
+        let signed_message = b"hello world";
+        let key = PrivateKey::<C>::generate();
+        let mut sig = key.sign(signed_message);
+        let mut sig_p1363 = key.sign_p1363(signed_message);
+
+        let public_key =
+            PublicKey::<C>::from_x962_compressed(key.to_x962_compressed().as_ref()).unwrap();
+        assert!(public_key.verify(signed_message, sig.as_slice()).is_ok());
+        assert!(public_key
+            .verify_p1363(signed_message, sig_p1363.as_slice())
+            .is_ok());
+
+        sig[10] ^= 1;
+        assert!(public_key.verify(signed_message, sig.as_slice()).is_err());
+        sig_p1363[10] ^= 1;
+        assert!(public_key
+            .verify_p1363(signed_message, sig_p1363.as_slice())
+            .is_err());
+    }
+
+    fn check_parsing<C: ec::Curve>() {
+        let key = PrivateKey::<C>::generate();
+        let der = key.to_der_ec_private_key();
+        let parsed = ParsedPrivateKey::from_der(der.as_ref()).unwrap();
+        match parsed {
+            ParsedPrivateKey::P256(_) => assert!(matches!(C::group(), Group::P256)),
+            ParsedPrivateKey::P384(_) => assert!(matches!(C::group(), Group::P384)),
+        }
+    }
+
     #[test]
     fn p256() {
         check_curve::<P256>();
+        check_compressed::<P256>();
+        check_parsing::<P256>();
     }
 
     #[test]
     fn p384() {
         check_curve::<P384>();
+        check_compressed::<P384>();
+        check_parsing::<P384>();
     }
 }

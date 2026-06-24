@@ -166,14 +166,14 @@ void CSSRotate::serialize(StringBuilder& builder) const
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssrotate
     builder.append(is2D() ? "rotate("_s : "rotate3d("_s);
     if (!is2D()) {
-        m_x->serialize(builder);
+        protect(m_x)->serialize(builder);
         builder.append(", "_s);
-        m_y->serialize(builder);
+        protect(m_y)->serialize(builder);
         builder.append(", "_s);
-        m_z->serialize(builder);
+        protect(m_z)->serialize(builder);
         builder.append(", "_s);
     }
-    m_angle->serialize(builder);
+    protect(m_angle)->serialize(builder);
     builder.append(')');
 }
 
@@ -207,20 +207,20 @@ ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
 
 RefPtr<CSSValue> CSSRotate::toCSSValue() const
 {
-    auto angle = m_angle->toCSSValue();
+    auto angle = protect(m_angle)->toCSSValue();
     if (!angle)
         return nullptr;
 
     if (is2D())
         return CSSFunctionValue::create(CSSValueRotate, angle.releaseNonNull());
 
-    auto x = m_x->toCSSValue();
+    auto x = protect(m_x)->toCSSValue();
     if (!x)
         return nullptr;
-    auto y = m_y->toCSSValue();
+    auto y = protect(m_y)->toCSSValue();
     if (!y)
         return nullptr;
-    auto z = m_z->toCSSValue();
+    auto z = protect(m_z)->toCSSValue();
     if (!z)
         return nullptr;
 

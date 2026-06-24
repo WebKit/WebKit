@@ -12,7 +12,8 @@
 
 #include <stddef.h>
 
-#include "api/array_view.h"
+#include <span>
+
 #include "modules/audio_processing/capture_mixer/channel_content_remixer.h"
 
 namespace webrtc {
@@ -48,29 +49,29 @@ class RemixingLogic {
   // active. `saturation_factors`: Saturation measure for each channel. Returns
   // the chosen StereoMixingVariant.
   StereoMixingVariant SelectStereoChannelMixing(
-      ArrayView<const float, 2> average_energies,
-      ArrayView<const int, 2> num_frames_since_activity,
-      ArrayView<const float, 2> saturation_factors);
+      std::span<const float, 2> average_energies,
+      std::span<const int, 2> num_frames_since_activity,
+      std::span<const float, 2> saturation_factors);
 
  private:
   // Checks if any channel is silent and updates the mode and mixing variant
   // accordingly. Returns true if a mode change occurred.
   bool HandleAnySilentChannels(
-      ArrayView<const float, 2> average_energies,
-      ArrayView<const int, 2> num_frames_since_activity);
+      std::span<const float, 2> average_energies,
+      std::span<const int, 2> num_frames_since_activity);
 
   // Checks for channels that are moderately imbalanced and have differing
   // saturation levels, updating mode and mixing variant to favor the less
   // saturated channel. Returns true if a mode change occurred.
   bool HandleAnyImbalancedAndSaturatedChannels(
-      ArrayView<const float, 2> average_energies,
-      ArrayView<const float, 2> saturation_factors);
+      std::span<const float, 2> average_energies,
+      std::span<const float, 2> saturation_factors);
 
   // Checks for channels with a large energy imbalance and updates mode and
   // mixing variant to favor the louder channel. Returns true if a mode change
   // occurred.
   bool HandleAnyLargelyImbalancedChannels(
-      ArrayView<const float, 2> average_energies);
+      std::span<const float, 2> average_energies);
 
   // Represents the current state of the remixing logic.
   enum class Mode {

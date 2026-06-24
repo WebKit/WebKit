@@ -13,11 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/base/attributes.h"
-#include "api/array_view.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame_type.h"
 #include "common_video/h265/h265_bitstream_parser.h"
@@ -118,7 +118,7 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessApOrSingleNalu(
 
     uint8_t nalu_type = (payload_data[start_offset] & kH265TypeMask) >> 1;
     start_offset += kH265NalHeaderSizeBytes;
-    ArrayView<const uint8_t> nalu_data(&payload_data[start_offset],
+    std::span<const uint8_t> nalu_data(&payload_data[start_offset],
                                        end_offset - start_offset);
     switch (nalu_type) {
       case H265::NaluType::kBlaWLp:
@@ -213,7 +213,7 @@ std::optional<VideoRtpDepacketizer::ParsedRtpPayload> ParseFuNalu(
           kH265FuHeaderSizeBytes + kH265PayloadHeaderSizeBytes;
       std::optional<bool> first_slice_segment_in_pic_flag =
           H265BitstreamParser::IsFirstSliceSegmentInPic(
-              ArrayView<const uint8_t>(rtp_payload.cdata() + slice_offset,
+              std::span<const uint8_t>(rtp_payload.cdata() + slice_offset,
                                        rtp_payload.size() - slice_offset));
       if (first_slice_segment_in_pic_flag.value_or(false)) {
         is_first_packet_in_frame = true;

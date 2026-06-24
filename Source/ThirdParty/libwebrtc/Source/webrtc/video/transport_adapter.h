@@ -14,8 +14,8 @@
 #include <stdint.h>
 
 #include <atomic>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 
 namespace webrtc {
@@ -26,9 +26,9 @@ class TransportAdapter : public Transport {
   explicit TransportAdapter(Transport* transport);
   ~TransportAdapter() override;
 
-  bool SendRtp(ArrayView<const uint8_t> packet,
+  bool SendRtp(std::span<const uint8_t> packet,
                const PacketOptions& options) override;
-  bool SendRtcp(ArrayView<const uint8_t> packet,
+  bool SendRtcp(std::span<const uint8_t> packet,
                 const PacketOptions& options) override;
 
   void Enable();

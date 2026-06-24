@@ -11,8 +11,8 @@
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_REMOTE_ESTIMATE_H_
 
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/transport/network_types.h"
 #include "api/units/time_delta.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
@@ -24,7 +24,7 @@ namespace rtcp {
 class CommonHeader;
 class RemoteEstimateSerializer {
  public:
-  virtual bool Parse(ArrayView<const uint8_t> src,
+  virtual bool Parse(std::span<const uint8_t> src,
                      NetworkStateEstimate* target) const = 0;
   virtual Buffer Serialize(const NetworkStateEstimate& src) const = 0;
   virtual ~RemoteEstimateSerializer() = default;

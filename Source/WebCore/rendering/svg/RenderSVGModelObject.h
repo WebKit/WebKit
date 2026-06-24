@@ -51,9 +51,9 @@ class RenderSVGModelObject : public RenderLayerModelObject {
 public:
     virtual ~RenderSVGModelObject();
 
-    bool requiresLayer() const override { return true; }
+    bool requiresLayer() const override;
 
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     static bool checkIntersection(RenderElement*, const FloatRect&);
     static bool checkEnclosure(RenderElement*, const FloatRect&);
@@ -99,8 +99,8 @@ public:
     void invalidateCachedVisualOverflowRect() override { m_cachedVisualOverflowRect = std::nullopt; }
 
 protected:
-    RenderSVGModelObject(Type, Document&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
-    RenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
+    RenderSVGModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
+    RenderSVGModelObject(Type, SVGElement&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
 
     void updateFromStyle() override;
 

@@ -73,6 +73,10 @@
 #include "TypedArrayCTest.h"
 #include "VMManagerStopTheWorldTest.h"
 
+#if defined(JSC_SUPPORTS_SWIFT) && JSC_SUPPORTS_SWIFT
+#include "SwiftTestingHarness.h"
+#endif
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if JSC_OBJC_API_ENABLED
@@ -1619,6 +1623,10 @@ int main(int argc, char* argv[])
 
 #if JSC_OBJC_API_ENABLED
     testObjectiveCAPI(filter);
+#endif
+
+#if defined(JSC_SUPPORTS_SWIFT) && JSC_SUPPORTS_SWIFT
+    failed += testSwiftAPI(filter);
 #endif
 
     RELEASE_ASSERT(!testCAPIViaCpp(filter));

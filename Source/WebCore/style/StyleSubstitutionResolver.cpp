@@ -49,10 +49,10 @@
 #include "HTMLSelectElement.h"
 #include "MatchResult.h"
 #include "MutableStyleProperties.h"
-#include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+SettersInlines.h"
 #include "SelectPopoverElement.h"
 #include "StyleBuilder.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleLocalPropertyRegistry.h"
@@ -95,6 +95,7 @@ auto SubstitutionResolver::substituteVariableFallback(const AtomString& variable
         return { FallbackResult::None, { } };
 
     range.consumeIncludingWhitespace();
+    range.trimTrailingWhitespace();
 
     auto tokens = substituteTokenRange(range, context);
 
@@ -216,8 +217,8 @@ RefPtr<MutableStyleProperties> SubstitutionResolver::resolveAndRegisterDashedFun
         .localPropertyRegistry = &argumentRegistrations
     };
 
-    auto argumentStyles = RenderStyle::createPtr();
-    Builder argumentBuilder(*argumentStyles, WTF::move(builderContext), argumentMatchResult.get());
+    auto argumentStyles = Style::ComputedStyle::createPtr();
+    Builder argumentBuilder(*argumentStyles, WTF::move(builderContext), argumentMatchResult);
     argumentBuilder.state().addGuardedFunctionContexts(m_styleBuilder.state());
     for (auto& parameter : parameters)
         argumentBuilder.applyCustomProperty(parameter.name);
@@ -327,8 +328,8 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
         .localPropertyRegistry = &registrations
     };
 
-    auto bodyStyles = RenderStyle::createPtr();
-    Builder bodyBuilder(*bodyStyles, WTF::move(builderContext), bodyMatchResult.get());
+    auto bodyStyles = Style::ComputedStyle::createPtr();
+    Builder bodyBuilder(*bodyStyles, WTF::move(builderContext), bodyMatchResult);
     bodyBuilder.state().addGuardedFunctionContexts(m_styleBuilder.state());
 
     // "Return the value of the result property in body styles."

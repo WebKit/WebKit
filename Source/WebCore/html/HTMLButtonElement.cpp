@@ -36,8 +36,8 @@
 #include "HTMLSelectElement.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -56,22 +56,22 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLButtonElement);
 
 using namespace HTMLNames;
 
-inline HTMLButtonElement::HTMLButtonElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+inline HTMLButtonElement::HTMLButtonElement(const QualifiedName& tagName, Document& document)
+    : HTMLFormControlElement(tagName, document)
     , m_type(Type::Submit)
     , m_isActivatedSubmit(false)
 {
     ASSERT(hasTagName(buttonTag));
 }
 
-Ref<HTMLButtonElement> HTMLButtonElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLButtonElement> HTMLButtonElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new HTMLButtonElement(tagName, document, form));
+    return adoptRef(*new HTMLButtonElement(tagName, document));
 }
 
 Ref<HTMLButtonElement> HTMLButtonElement::create(Document& document)
 {
-    return adoptRef(*new HTMLButtonElement(buttonTag, document, nullptr));
+    return adoptRef(*new HTMLButtonElement(buttonTag, document));
 }
 
 Node::NeedsPostConnectionSteps HTMLButtonElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
@@ -87,7 +87,7 @@ void HTMLButtonElement::removingSteps(RemovalType removalType, ContainerNode& ol
     computeType(attributeWithoutSynchronization(HTMLNames::typeAttr));
 }
 
-RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
+RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
 {
     // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
     if (style.display().isFlexibleOrGridFormattingContextBox())
@@ -138,13 +138,10 @@ void HTMLButtonElement::attributeChanged(const QualifiedName& name, const AtomSt
 
 RefPtr<Element> HTMLButtonElement::commandForElement() const
 {
-    auto canInvoke = [](const HTMLFormControlElement& element) -> bool {
-        if (!element.document().settings().commandAttributesEnabled())
-            return false;
-        return is<HTMLButtonElement>(element);
-    };
+    if (!document().settings().commandAttributesEnabled())
+        return nullptr;
 
-    if (!canInvoke(*this))
+    if (isDisabledFormControl())
         return nullptr;
 
     return elementForAttributeInternal(commandforAttr);

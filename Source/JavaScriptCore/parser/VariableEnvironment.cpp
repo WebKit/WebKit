@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "VariableEnvironment.h"
+#include "VariableEnvironmentInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -345,7 +346,7 @@ CompactTDZEnvironmentMap::Handle::Handle(const CompactTDZEnvironmentMap::Handle&
 CompactTDZEnvironmentMap::Handle::Handle(CompactTDZEnvironment& environment, CompactTDZEnvironmentMap& map)
     : m_environment(&environment)
     , m_map(&map)
-{ 
+{
 }
 
 } // namespace JSC

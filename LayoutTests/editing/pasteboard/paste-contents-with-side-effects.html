@@ -6,9 +6,8 @@
 <script>
 
 description('This tests inserting content with an event handler. WebKit should never execute event handlers.');
+window.jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 editor.focus();
 
@@ -66,8 +65,7 @@ shouldBeFalse('didExecute');
 didExecute = true;
 
 setTimeout(() => {
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }, 0);
 
 </script>

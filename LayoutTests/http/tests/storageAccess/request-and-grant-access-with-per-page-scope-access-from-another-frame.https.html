@@ -62,7 +62,7 @@
             );
         }
 
-        function runTest() {
+        async function runTest() {
             switch (document.location.hash) {
                 case "#step1":
                     // Set first-party cookie for localhost.
@@ -82,7 +82,7 @@
                     });
                     break;
                 case "#step4":
-                    internals.settings.setStorageAccessAPIPerPageScopeEnabled(true);
+                    await testRunner.setStorageAccessAPIPerPageScopeEnabled(true);
                     document.location.hash = "step5";
                     let iframeElement = document.createElement("iframe");
                     iframeElement.onload = function() {
@@ -98,7 +98,7 @@
                     openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive cookies even though it's not the requesting frame.", runTest);
                     break;
                 case "#step6":
-                    internals.settings.setStorageAccessAPIPerPageScopeEnabled(false);
+                    await testRunner.setStorageAccessAPIPerPageScopeEnabled(false);
                     testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
                         setEnableFeature(false, finishJSTest);
                     });

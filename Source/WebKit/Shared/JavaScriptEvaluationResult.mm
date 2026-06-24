@@ -29,7 +29,6 @@
 #import "WKJSHandleInternal.h"
 #import "WKJSSerializedNodeInternal.h"
 #import "_WKJSHandle.h"
-#import "_WKSerializedNode.h"
 
 namespace WebKit {
 
@@ -161,8 +160,8 @@ auto JavaScriptEvaluationResult::ObjCExtractor::toValue(id object) -> Value
         return { WTF::move(map) };
     }
 
-    if ([object isKindOfClass:_WKSerializedNode.class])
-        return makeUniqueRef<WebCore::SerializedNode>(((_WKSerializedNode *)object)->_node->coreSerializedNode());
+    if ([object isKindOfClass:WKJSSerializedNode.class])
+        return makeUniqueRef<WebCore::SerializedNode>(((WKJSSerializedNode *)object)->_node->coreSerializedNode());
 
     if ([object isKindOfClass:_WKJSHandle.class])
         return makeUniqueRef<JSHandleInfo>(((_WKJSHandle *)object)->_ref->info());

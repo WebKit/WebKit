@@ -150,7 +150,7 @@ void NetworkTaskCocoa::setCookieTransformForThirdPartyRequest(const WebCore::Res
         return;
 
     ASSERT_UNUSED(isRedirect, !task()._cookieTransformCallback || isRedirect == IsRedirect::Yes);
-    task()._cookieTransformCallback = nil;
+    protect(task()).get()._cookieTransformCallback = nil;
 
     if (!Quirks::needsPartitionedCookies(request))
         return;
@@ -164,18 +164,19 @@ void NetworkTaskCocoa::setCookieTransformForThirdPartyRequest(const WebCore::Res
 
     String cookiePartition = networkStorageSession->cookiePartitionIdentifier(request);
 
-    task()._cookieTransformCallback = makeBlockPtr([
+    protect(task()).get()._cookieTransformCallback = makeBlockPtr([
         requestURL = crossThreadCopy(request.url())
         , weakTask = WeakObjCPtr<NSURLSessionTask>(task())
         , cookiePartition = crossThreadCopy(cookiePartition)]
         (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
         auto task = weakTask.get();
+        RetainPtr protectedCookiesSetInResponse = cookiesSetInResponse;
         if (!task || ![cookiesSetInResponse count])
             return cookiesSetInResponse;
 
         // FIXME: Consider making these session cookies, as well.
         if (!cookiePartition.isEmpty())
-            cookiesSetInResponse = cookiesBySettingPartition(cookiesSetInResponse, cookiePartition.createNSString().get()).autorelease();
+            cookiesSetInResponse = protect(cookiesBySettingPartition(protect(cookiesSetInResponse), cookiePartition.createNSString().get()).autorelease()).get();
 
         return cookiesSetInResponse;
     }).get();
@@ -352,9 +353,7 @@ void NetworkTaskCocoa::updateTaskWithStoragePartitionIdentifier(const WebCore::R
     if (!networkStorageSession)
         return;
 
-    // FIXME: Remove respondsToSelector when available with NWLoader. rdar://134913391
-    if ([task() respondsToSelector:@selector(set_storagePartitionIdentifier:)])
-        task()._storagePartitionIdentifier = networkStorageSession->cookiePartitionIdentifier(request).createNSString().get();
+    protect(task()).get()._storagePartitionIdentifier = networkStorageSession->cookiePartitionIdentifier(request).createNSString().get();
 }
 #endif
 

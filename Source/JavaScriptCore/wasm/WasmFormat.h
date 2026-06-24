@@ -959,6 +959,7 @@ struct alignas(8) WasmCallableFunction {
 struct WasmToWasmImportableFunction : public WasmCallableFunction {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmToWasmImportableFunction);
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, rtt); }
+    bool isEmpty() const { return !rtt; }
 
     const RTT* rtt { nullptr };
 };

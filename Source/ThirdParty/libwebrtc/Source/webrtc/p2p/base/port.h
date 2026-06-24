@@ -18,6 +18,7 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
@@ -188,6 +189,13 @@ class RTC_EXPORT Port : public PortInterface {
   // Methods to set/get ICE role and tiebreaker values.
   IceRole GetIceRole() const override;
   void SetIceRole(IceRole role) override;
+
+  /*
+  int SendTo(std::span<const uint8_t> data,
+             const SocketAddress& addr,
+             const AsyncSocketPacketOptions& options,
+             bool payload) override = 0;
+  */
 
   void SetIceTiebreaker(uint64_t tiebreaker) override;
   uint64_t IceTiebreaker() const override;
@@ -434,19 +442,21 @@ class RTC_EXPORT Port : public PortInterface {
                             const std::string& rf,
                             bool port_muxed) override;
 
-  [[deprecated("Use SubscribeReadPacket(const void* tag, ...)")]]
-  void SubscribeReadPacket(
+  // This function causes strange linker behavior if it's inlined,
+  // otherwise it would have been ABSL_DEPRECATE_AND_INLINE.
+  [[deprecated("Use tagged version with span")]] void SubscribeReadPacket(
       absl::AnyInvocable<
           void(PortInterface*, const char*, size_t, const SocketAddress&)>
           callback) override;
+
   void SubscribeReadPacket(
       const void* tag,
-      absl::AnyInvocable<
-          void(PortInterface*, const char*, size_t, const SocketAddress&)>
-          callback) override;
+      absl::AnyInvocable<void(PortInterface*,
+                              std::span<const uint8_t>,
+                              const SocketAddress&)> callback) override;
+
   void NotifyReadPacket(PortInterface* prot,
-                        const char* data,
-                        size_t size,
+                        std::span<const uint8_t> data,
                         const SocketAddress& remote_address) override;
 
   [[deprecated("Use SubscribeSentPacket(const void* tag, ...)")]]
@@ -497,12 +507,10 @@ class RTC_EXPORT Port : public PortInterface {
   // with this port's username fragment, msg will contain the parsed STUN
   // message.  Otherwise, the function may send a STUN response internally.
   // remote_username contains the remote fragment of the STUN username.
-  bool GetStunMessage(const char* data,
-                      size_t size,
+  bool GetStunMessage(std::span<const uint8_t> data,
                       const SocketAddress& addr,
                       std::unique_ptr<IceMessage>* out_msg,
                       std::string* out_username) override;
-
   // Checks if the address in addr is compatible with the port's ip.
   bool IsCompatibleAddress(const SocketAddress& addr);
 
@@ -559,6 +567,8 @@ class RTC_EXPORT Port : public PortInterface {
   void DestroyConnectionInternal(Connection* conn, bool async);
 
   void OnNetworkTypeChanged(const ::webrtc::Network* network);
+
+  void OnNetworkSliceChanged(const ::webrtc::Network* network);
 
   void OnRequestLocalNetworkAccessPermission(
       LocalNetworkAccessPermissionInterface* permission_query,
@@ -620,7 +630,7 @@ class RTC_EXPORT Port : public PortInterface {
                const std::string&,
                bool>
       unknown_address_callbacks_;
-  CallbackList<PortInterface*, const char*, size_t, const SocketAddress&>
+  CallbackList<PortInterface*, std::span<const uint8_t>, const SocketAddress&>
       read_packet_callbacks_;
   CallbackList<const SentPacketInfo&> sent_packet_callbacks_;
 

@@ -17,9 +17,16 @@
 
 #include <openssl/base.h>   // IWYU pragma: export
 
-#ifdef  __cplusplus
+#if defined(__cplusplus)
 extern "C" {
 #endif
+
+
+// Blowfish.
+//
+// This module is deprecated and retained for legacy reasons only.
+//
+// Use a modern cipher, such as AES-GCM or ChaCha20-Poly1305, instead.
 
 
 #define BF_ENCRYPT 1
@@ -44,8 +51,8 @@ OPENSSL_EXPORT void BF_cbc_encrypt(const uint8_t *in, uint8_t *out,
                                    uint8_t *ivec, int enc);
 
 
-#ifdef  __cplusplus
-}
+#if defined(__cplusplus)
+}  // extern C
 #endif
 
 #endif  // OPENSSL_HEADER_BLOWFISH_H

@@ -42,11 +42,12 @@ PAS_END_EXTERN_C;
 #define PAS_HAVE_PTHREAD_PRIVATE 0
 #endif
 
-PAS_BEGIN_EXTERN_C;
+#endif /* PAS_OS(DARWIN) */
 
 /* From OSS libmalloc stack_logging.h
    https://github.com/apple-oss-distributions/libmalloc/blob/main/private/stack_logging.h */
 /*********    MallocStackLogging permanant SPIs  ************/
+// On non-darwin platforms, we just stub out this API.
 
 #define pas_stack_logging_type_free                           0
 #define pas_stack_logging_type_generic                        1    /* anything that is not allocation/deallocation */
@@ -70,8 +71,6 @@ VM_FLAGS_ALIAS_MASK);
 #define pas_stack_logging_flag_zone        8    /* NSZoneMalloc, etc... */
 #define pas_stack_logging_flag_cleared    64    /* for NewEmptyHandle */
 
-PAS_END_EXTERN_C;
-
 // In a build using clang modules, we must never redeclare items
 // from other headers, but instead include those headers.
 #if defined(__has_include) && __has_include(<stack_logging.h>)
@@ -89,14 +88,12 @@ typedef void(malloc_logger_t)(uint32_t type,
                               uintptr_t result,
                               uint32_t num_hot_frames_to_skip);
 // FIXME: Workaround for rdar://119319825
-#if !defined(__swift__)
+#if PAS_ENABLE_MALLOC_STACK_LOGGER
 extern malloc_logger_t* malloc_logger;
 #endif
 
 PAS_END_EXTERN_C;
 
 #endif /* defined(__has_include) && __has_include(<stack_logging.h>) */
-
-#endif /* PAS_OS(DARWIN) */
 
 #endif /* PAS_DARWIN_SPI_H */

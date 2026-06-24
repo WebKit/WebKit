@@ -33,6 +33,14 @@ namespace CSS {
 
 // MARK: Numeric Primitives Raw
 
+// A primitive numeric type that has doesn't have a static category or range.
+struct UnconstrainedPrimitiveNumericRaw {
+    CSSUnitType unit;
+    double value;
+
+    constexpr bool operator==(const UnconstrainedPrimitiveNumericRaw&) const = default;
+};
+
 // NOTE: `ResolvedValueType` only effects the type the CSS value gets resolved to. Unresolved CSS
 // primitive numeric types always use a `double` as its internal representation.
 

@@ -13,9 +13,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/ref_count.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/system/rtc_export.h"
@@ -129,7 +129,7 @@ class RTC_EXPORT VideoFrameBuffer : public RefCountInterface {
   // frame type is not supported, mapping is not possible, or if the kNative
   // frame has not implemented this method. Only callable if type() is kNative.
   virtual scoped_refptr<VideoFrameBuffer> GetMappedFrameBuffer(
-      ArrayView<Type> types);
+      std::span<Type> types);
 
   // For logging: returns a textual representation of the storage.
   virtual std::string storage_representation() const;

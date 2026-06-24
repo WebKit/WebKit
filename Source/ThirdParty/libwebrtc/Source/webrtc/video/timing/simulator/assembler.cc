@@ -36,9 +36,6 @@ VideoReceiveStreamInterface::Config CreateVideoReceiveStreamConfig(
   // From `kNackHistoryMs` in webrtc_video_engine.cc. This enables creating the
   // `NackRequester`.
   config.rtp.nack.rtp_history_ms = 1000;
-  // The value of `local_ssrc` is not really used, but we need to set it to
-  // _something_ due to an RTC_DCHECK in rtp_video_stream_receiver2.cc.
-  config.rtp.local_ssrc = ssrc + 1;
   return config;
 }
 

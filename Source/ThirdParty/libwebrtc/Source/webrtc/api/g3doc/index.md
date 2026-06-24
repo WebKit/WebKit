@@ -47,5 +47,10 @@ See each class' module documentation for details.
 This needs to be done carefully, and in consultation with the WebRTC team. There
 are non-obvious dependencies between many of the components.
 
+## Video Codecs
+
+* [RTC Video Encoder API v2](/api/video_codecs/g3doc/video_encoder_api_v2.md)
+
+
 
 

@@ -26,21 +26,16 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
-
-class FontMetrics;
-
 namespace Style {
-
-struct TextDecorationThicknessLength : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
-    using Base::Base;
-};
 
 // <'text-decoration-thickness'> = auto | from-font | <length-percentage>
 // https://drafts.csswg.org/css-text-decor-4/#propdef-text-decoration-thickness
 struct TextDecorationThickness {
+    using LengthPercentage = Style::LengthPercentage<CSS::AllUnzoomed>;
+
     TextDecorationThickness(CSS::Keyword::Auto keyword)
         : m_value { keyword }
     {
@@ -51,16 +46,16 @@ struct TextDecorationThickness {
     {
     }
 
-    TextDecorationThickness(TextDecorationThicknessLength&& length)
-        : m_value { WTF::move(length) }
+    TextDecorationThickness(LengthPercentage&& value)
+        : m_value { WTF::move(value) }
     {
     }
 
     bool isAuto() const { return WTF::holdsAlternative<CSS::Keyword::Auto>(m_value); }
     bool isFromFont() const { return WTF::holdsAlternative<CSS::Keyword::FromFont>(m_value); }
-    bool isLength() const { return WTF::holdsAlternative<TextDecorationThicknessLength>(m_value); }
+    bool isLengthPercentage() const { return WTF::holdsAlternative<LengthPercentage>(m_value); }
 
-    float resolve(const RenderStyle&) const;
+    float resolve(const Style::ComputedStyle&) const;
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
@@ -70,7 +65,7 @@ struct TextDecorationThickness {
     bool operator==(const TextDecorationThickness&) const = default;
 
 private:
-    Variant<CSS::Keyword::Auto, CSS::Keyword::FromFont, TextDecorationThicknessLength> m_value;
+    Variant<CSS::Keyword::Auto, CSS::Keyword::FromFont, LengthPercentage> m_value;
 };
 
 // MARK: - Conversion
@@ -80,12 +75,11 @@ template<> struct CSSValueConversion<TextDecorationThickness> { auto operator()(
 // MARK: - Blending
 
 template<> struct Blending<TextDecorationThickness> {
-    auto canBlend(const TextDecorationThickness&, const TextDecorationThickness&, const RenderStyle&, const RenderStyle&) -> bool;
-    auto blend(const TextDecorationThickness&, const TextDecorationThickness&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> TextDecorationThickness;
+    auto canBlend(const TextDecorationThickness&, const TextDecorationThickness&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
+    auto blend(const TextDecorationThickness&, const TextDecorationThickness&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> TextDecorationThickness;
 };
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextDecorationThicknessLength)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextDecorationThickness)

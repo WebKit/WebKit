@@ -14,6 +14,7 @@
 #include <cstdint>
 
 #include "api/units/time_delta.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 namespace test {
@@ -48,8 +49,10 @@ class VideoTestConstants {
       0xC0FFED, 0xC0FFEE, 0xC0FFEF, 0xC0FFF0, 0xC0FFF1, 0xC0FFF2};
   static constexpr uint32_t kAudioSendSsrc = 0xDEADBEEF;
   static constexpr uint32_t kFlexfecSendSsrc = 0xBADBEEF;
-  static constexpr uint32_t kReceiverLocalVideoSsrc = 0x123456;
-  static constexpr uint32_t kReceiverLocalAudioSsrc = 0x1234567;
+  // When there is no send stream, the SSRC of receiver RTCP reports
+  // will always send from these two values.
+  static constexpr uint32_t kReceiverLocalVideoSsrc = kFallbackRtcpSsrcForVideo;
+  static constexpr uint32_t kReceiverLocalAudioSsrc = kFallbackRtcpSsrcForAudio;
   static constexpr int kNackRtpHistoryMs = 1000;
 
  private:

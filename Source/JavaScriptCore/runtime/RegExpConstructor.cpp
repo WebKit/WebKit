@@ -309,16 +309,10 @@ inline OptionSet<Yarr::Flags> toFlags(JSGlobalObject* globalObject, JSValue flag
     return result.value();
 }
 
-JSObject* regExpCreate(JSGlobalObject* globalObject, JSValue newTarget, JSValue patternArg, JSValue flagsArg)
+RegExpObject* regExpCreate(JSGlobalObject* globalObject, JSValue newTarget, const String& pattern, OptionSet<Yarr::Flags> flags)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    String pattern = patternArg.isUndefined() ? emptyString() : patternArg.toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-
-    auto flags = toFlags(globalObject, flagsArg);
-    RETURN_IF_EXCEPTION(scope, nullptr);
 
     RegExp* regExp = RegExp::create(vm, pattern, flags);
     if (!regExp->isValid()) [[unlikely]] {
@@ -329,6 +323,19 @@ JSObject* regExpCreate(JSGlobalObject* globalObject, JSValue newTarget, JSValue 
     Structure* structure = getRegExpStructure(globalObject, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
     return RegExpObject::create(vm, structure, regExp, areLegacyFeaturesEnabled(globalObject, newTarget));
+}
+
+RegExpObject* regExpCreate(JSGlobalObject* globalObject, JSValue newTarget, JSValue patternArg, JSValue flagsArg)
+{
+    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+
+    String pattern = patternArg.isUndefined() ? emptyString() : patternArg.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    auto flags = toFlags(globalObject, flagsArg);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    RELEASE_AND_RETURN(scope, regExpCreate(globalObject, newTarget, pattern, flags));
 }
 
 JSObject* constructRegExp(JSGlobalObject* globalObject, const ArgList& args,  JSObject* callee, JSValue newTarget)

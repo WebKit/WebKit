@@ -44,21 +44,21 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLOutputElement);
 
-inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Document& document)
+    : HTMLFormControlElement(tagName, document)
 {
 }
 
 HTMLOutputElement::~HTMLOutputElement() = default;
 
-Ref<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new HTMLOutputElement(tagName, document, form));
+    return adoptRef(*new HTMLOutputElement(tagName, document));
 }
 
 Ref<HTMLOutputElement> HTMLOutputElement::create(Document& document)
 {
-    return create(HTMLNames::outputTag, document, nullptr);
+    return create(HTMLNames::outputTag, document);
 }
 
 const AtomString& HTMLOutputElement::formControlType() const

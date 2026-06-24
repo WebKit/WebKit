@@ -212,10 +212,11 @@ RefPtr<MediaSample> TrackBuffer::nextSample()
 
     MediaTime samplePresentationEnd = sample->presentationEndTime();
     if (highestEnqueuedPresentationTime().isInvalid() || samplePresentationEnd > highestEnqueuedPresentationTime())
-        setHighestEnqueuedPresentationTime(WTF::move(samplePresentationEnd));
+        setHighestEnqueuedPresentationTime(samplePresentationEnd);
 
     setLastEnqueuedDecodeKey({ sample->decodeTime(), sample->presentationTime() });
-    setEnqueueDiscontinuityBoundary(sample->decodeTime() + sample->duration() + m_discontinuityTolerance);
+    auto decodeEnd = std::max(sample->decodeTime() + sample->duration(), samplePresentationEnd);
+    setEnqueueDiscontinuityBoundary(decodeEnd + m_discontinuityTolerance);
 
     m_minimumEnqueuedPresentationTime = MediaTime::invalidTime();
     if (m_hasOutOfOrderFrames)
@@ -314,9 +315,18 @@ bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, const MediaTime& 
 
     // Fill the decode queue with the remaining samples.
     if (currentSampleDTSIterator != m_samples.decodeOrder().end()) {
-        m_decodeQueue.insert(*currentSampleDTSIterator);
-        m_minimumEnqueuedPresentationTime = Ref { currentSampleDTSIterator->second }->presentationTime();
+        Ref sample = currentSampleDTSIterator->second;
+        if (sample->isDivisable() && sample->presentationTime() < time && time < sample->presentationEndTime()) {
+            // Avoid enqueueing content before the current playback position: split the sample
+            // straddling `time` and keep only the tail (sub-entries ending after `time`).
+            auto [head, tail] = sample->divide(time, MediaSample::UseEndTime::Use);
+            if (tail)
+                sample = tail.releaseNonNull();
+        }
+        DecodeOrderSampleMap::KeyType decodeKey(sample->decodeTime(), sample->presentationTime());
+        m_minimumEnqueuedPresentationTime = sample->presentationTime();
         previousSampleTime = m_minimumEnqueuedPresentationTime;
+        m_decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, WTF::move(sample)));
     }
     for (auto iter = ++currentSampleDTSIterator; iter != m_samples.decodeOrder().end(); ++iter) {
         Ref sample = iter->second;

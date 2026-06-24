@@ -15,11 +15,11 @@
 
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_codec_type.h"
@@ -65,7 +65,7 @@ class RtcEventFrameDecoded final : public RtcEvent {
   VideoCodecType codec() const { return codec_; }
   uint8_t qp() const { return qp_; }
 
-  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(std::span<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

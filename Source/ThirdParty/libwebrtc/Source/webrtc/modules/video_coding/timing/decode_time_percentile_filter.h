@@ -18,8 +18,7 @@
 
 namespace webrtc {
 
-// The `DecodeTimePercentileFilter` filters the actual per-frame decode times
-// and provides an estimate for the 95th percentile of those decode times. This
+// This class estimates the 95th percentile of per-frame decode times. This
 // estimate can be used to determine how large the "decode delay term" should be
 // when determining the render timestamp for a frame.
 class DecodeTimePercentileFilter {
@@ -27,12 +26,12 @@ class DecodeTimePercentileFilter {
   DecodeTimePercentileFilter();
   ~DecodeTimePercentileFilter();
 
-  // Add a new decode time to the filter.
-  void AddTiming(int64_t new_decode_time_ms, int64_t now_ms);
+  // Adds a new decode time to the filter.
+  void AddSample(int64_t decode_time_ms, int64_t now_ms);
 
-  // Get the required decode time in ms. It is the 95th percentile observed
-  // decode time within a time window.
-  int64_t RequiredDecodeTimeMs() const;
+  // Returns the 95th percentile of observed decode times within a time window,
+  // in milliseconds.
+  int64_t GetPercentileMs() const;
 
  private:
   struct Sample {
@@ -42,7 +41,7 @@ class DecodeTimePercentileFilter {
   };
 
   // The number of samples ignored so far.
-  int ignored_sample_count_;
+  int ignored_sample_count_ = 0;
   // Queue with history of latest decode time values.
   std::queue<Sample> history_;
   // `filter_` contains the same values as `history_`, but in a data structure

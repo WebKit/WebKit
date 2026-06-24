@@ -28,6 +28,7 @@
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSValuePool.h"
+#include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 #include "DeprecatedCSSOMValue.h"
 
 namespace WebCore {
@@ -55,7 +56,7 @@ bool CSSClipValue::equals(const CSSClipValue& other) const
     return m_clip == other.m_clip;
 }
 
-Ref<DeprecatedCSSOMValue> CSSClipValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CSSClipValue::customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
 {
     return CSS::createDeprecatedCSSOMValue(CSSValuePool::singleton(), owner, m_clip);
 }

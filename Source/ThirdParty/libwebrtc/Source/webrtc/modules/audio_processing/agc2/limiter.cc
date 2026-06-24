@@ -14,9 +14,9 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+#include <span>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_view.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/agc2/interpolated_gain_curve.h"
@@ -38,7 +38,7 @@ constexpr float kAttackFirstSubframeInterpolationPower = 8.0f;
 
 void InterpolateFirstSubframe(float last_factor,
                               float current_factor,
-                              ArrayView<float> subframe) {
+                              std::span<float> subframe) {
   const int n = dchecked_cast<int>(subframe.size());
   constexpr float p = kAttackFirstSubframeInterpolationPower;
   for (int i = 0; i < n; ++i) {
@@ -60,7 +60,7 @@ void ComputePerSampleSubframeFactors(
   if (is_attack) {
     InterpolateFirstSubframe(
         scaling_factors[0], scaling_factors[1],
-        per_sample_scaling_factors.subview(0, subframe_size));
+        per_sample_scaling_factors.subspan(0, subframe_size));
   }
 
   for (size_t i = is_attack ? 1 : 0; i < num_subframes; ++i) {

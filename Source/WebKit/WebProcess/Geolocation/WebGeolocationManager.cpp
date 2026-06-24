@@ -199,7 +199,7 @@ bool WebGeolocationManager::isHighAccuracyEnabled(const PageSets& pageSets) cons
 void WebGeolocationManager::resetPermissions(const WebCore::RegistrableDomain& registrableDomain)
 {
     auto it = m_pageSets.find(registrableDomain);
-    if (it != m_pageSets.end())
+    if (it == m_pageSets.end())
         return;
 
     for (auto& page : copyToVector(it->value.pageSet)) {

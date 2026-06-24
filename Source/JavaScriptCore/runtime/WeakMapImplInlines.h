@@ -70,6 +70,9 @@ ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::add(VM& vm, JSCell* key, JSValue 
     AssertNoGC assertNoGC;
     ASSERT_WITH_MESSAGE(jsWeakMapHash(key) == hash, "We expect hash value is what we expect.");
 
+    if (m_buffer == emptyBuffer()) [[unlikely]]
+        makeAndSetNewBuffer(initialCapacity);
+
     addInternal(vm, key, value, hash);
     if (shouldRehashAfterAdd())
         rehash();
@@ -78,6 +81,13 @@ ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::add(VM& vm, JSCell* key, JSValue 
 template <typename WeakMapBucket>
 ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::addBucket(VM& vm, JSCell* key, JSValue value, uint32_t hash, size_t index)
 {
+    if (m_buffer == emptyBuffer()) [[unlikely]] {
+        // index was computed against the shared empty buffer, so it is meaningless for a real
+        // buffer. Fall back to add(), which allocates and re-probes from scratch.
+        add(vm, key, value, hash);
+        return;
+    }
+
     UNUSED_PARAM(hash);
     ASSERT(jsWeakMapHash(key) == hash);
     ASSERT(!findBucket(key, hash));
@@ -125,7 +135,7 @@ void WeakMapImpl<WeakMapBucket>::rehash(RehashMode mode)
     // in auxiliary buffer.
 
     uint32_t oldCapacity = m_capacity;
-    MallocPtr<WeakMapBufferType> oldBuffer = WTF::move(m_buffer);
+    WeakMapBufferType* oldBuffer = m_buffer;
 
     uint32_t capacity = m_capacity;
     if (mode == RehashMode::RemoveBatching) {
@@ -154,6 +164,10 @@ void WeakMapImpl<WeakMapBucket>::rehash(RehashMode mode)
     m_deleteCount = 0;
 
     checkConsistency();
+
+    // rehash() only runs once a real buffer has been allocated, so the shared empty buffer is never freed here.
+    ASSERT(oldBuffer != emptyBuffer());
+    WeakMapBufferType::destroy(oldBuffer);
 }
 
 template<typename WeakMapBucket>

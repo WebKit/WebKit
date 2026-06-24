@@ -66,6 +66,8 @@
 #include "ScrollingConstraints.h"
 #include "Settings.h"
 #include "StyleImage.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 #include "Styleable.h"
 #include "TextBoxPainter.h"
 #include "TransformState.h"
@@ -85,6 +87,26 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBoxModelObject);
 
+LayoutUnit borderLeft(const RenderBoxModelObject& renderer)
+{
+    return renderer.borderLeft();
+}
+
+LayoutUnit borderTop(const RenderBoxModelObject& renderer)
+{
+    return renderer.borderTop();
+}
+
+LayoutUnit paddingLeft(const RenderBoxModelObject& renderer)
+{
+    return renderer.paddingLeft();
+}
+
+LayoutUnit paddingTop(const RenderBoxModelObject& renderer)
+{
+    return renderer.paddingTop();
+}
+
 using FirstLetterRemainingTextMap = SingleThreadWeakHashMap<const RenderBoxModelObject, SingleThreadWeakPtr<RenderTextFragment>>;
 
 static FirstLetterRemainingTextMap& NODELETE firstLetterRemainingTextMap()
@@ -93,9 +115,9 @@ static FirstLetterRemainingTextMap& NODELETE firstLetterRemainingTextMap()
     return map;
 }
 
-void RenderBoxModelObject::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
+void RenderBoxModelObject::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
 {
-    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+    const Style::ComputedStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
 
     if (Style::AnchorPositionEvaluator::isAnchor(newStyle))
         view().registerAnchor(*this);
@@ -137,13 +159,13 @@ bool RenderBoxModelObject::hasAcceleratedCompositing() const
     return view().compositor().hasAcceleratedCompositing();
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderLayerModelObject(type, element, WTF::move(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderBoxModelObject());
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderLayerModelObject(type, document, WTF::move(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderBoxModelObject());
@@ -311,78 +333,6 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     return defaultDecodingMode();
 }
 
-static bool hasDefiniteHeightByStyle(const RenderBlock& containingBlock)
-{
-    // Checks whether the containing block has a definite height for resolving
-    // percentage top/bottom on relatively positioned elements. This is a
-    // style-only alternative to hasAutoHeightOrContainingBlockWithAutoHeight
-    // that avoids the expensive computePercentageLogicalHeight recursion
-    // triggered by canUseFlexItemForPercentageResolution in nested flex content.
-    if (is<RenderView>(containingBlock) || containingBlock.stretchesToViewport())
-        return true;
-
-    if (isOutOfFlowPositionedWithImplicitHeight(containingBlock))
-        return true;
-
-    // An out-of-flow containing block always gets computed used dimensions, even when
-    // an ancestor's style height is auto. Percentage and stretch heights resolve against
-    // those used dimensions, so they are definite - matching the slow paths out-of-flow early-bail
-    // in containingBlockForAutoHeightDetectionGeneric.
-    if (containingBlock.isOutOfFlowPositioned()) {
-        auto& logicalHeight = containingBlock.style().logicalHeight();
-        if (logicalHeight.isPercentOrCalculated() || logicalHeight.isStretch())
-            return true;
-    }
-
-    if (containingBlock.isGridItem() && containingBlock.gridAreaContentLogicalHeight())
-        return true;
-
-    if (containingBlock.isFlexItem()) {
-        auto hasDefiniteHeight = [&] {
-            auto& flexContainer = downcast<RenderFlexibleBox>(*containingBlock.parent());
-            // §9.8 rule 3: stretched cross-axis items have definite cross size.
-            if (flexContainer.mainAxisIsFlexItemInlineAxis(containingBlock))
-                return flexContainer.alignmentForFlexItem(containingBlock) == ItemPosition::Stretch;
-            // §9.8 rule 2: definite flex-basis makes post-flexing main size definite.
-            auto flexBasis = flexContainer.flexBasisForFlexItem(containingBlock);
-            if (!flexBasis.isAuto() && !flexBasis.isContent() && !flexBasis.isPercentOrCalculated() && !flexBasis.isIntrinsic())
-                return true;
-            // §9.8 rule 1: definite container main size makes all items definite.
-            return hasDefiniteHeightByStyle(flexContainer);
-        };
-        if (hasDefiniteHeight())
-            return true;
-    }
-
-    // Percentage and stretch heights are only definite if the ancestor they resolve against is definite.
-    auto ancestorHasDefiniteHeight = [&] {
-        for (CheckedPtr ancestor = containingBlock.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-            if (!ancestor->shouldSkipForPercentageResolution())
-                return hasDefiniteHeightByStyle(*ancestor);
-        }
-        ASSERT_NOT_REACHED();
-        return false;
-    };
-
-    auto& logicalHeight = containingBlock.style().logicalHeight();
-    if (logicalHeight.isPercentOrCalculated()) {
-        if (containingBlock.document().inQuirksMode()) {
-            // In quirks mode, percentage heights resolve freely unless inside a flex container (does not apply to stretch).
-            CheckedPtr ancestor = containingBlock.containingBlock();
-            return !ancestor || !ancestor->isFlexibleBoxIncludingDeprecated();
-        }
-        return ancestorHasDefiniteHeight();
-    }
-
-    if (logicalHeight.isStretch())
-        return ancestorHasDefiniteHeight();
-
-    if (containingBlock.shouldComputeLogicalHeightFromAspectRatio())
-        return true;
-
-    return !logicalHeight.isAuto() && !logicalHeight.isIntrinsic();
-}
-
 #if ASSERT_ENABLED
 static void verifyDefiniteHeightConsistencyBetweenStyleAndContainingBlockChain(const RenderBlock& containingBlock, bool hasDefiniteHeightByStyleOnly)
 {
@@ -465,7 +415,7 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     if (top.isAuto() && bottom.isAuto())
         return offset;
 
-    auto containingBlockHasDefiniteHeight = hasDefiniteHeightByStyle(*containingBlock);
+    auto containingBlockHasDefiniteHeight = containingBlock->hasDefiniteLogicalHeightForPercentageResolutionFromStyle();
 #if ASSERT_ENABLED
     verifyDefiniteHeightConsistencyBetweenStyleAndContainingBlockChain(*containingBlock, containingBlockHasDefiniteHeight);
 #endif
@@ -721,7 +671,7 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
         return constrainingRect;
     }
     
-    return view().frameView().rectForFixedPositionLayout();
+    return protect(view().frameView())->rectForFixedPositionLayout();
 }
 
 LayoutSize RenderBoxModelObject::stickyPositionOffset() const
@@ -890,7 +840,7 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
 
 bool RenderBoxModelObject::borderObscuresBackgroundEdge(const FloatSize& contextScale) const
 {
-    auto edges = borderEdges(style(), document().deviceScaleFactor());
+    auto edges = borderEdges(style(), protect(document())->deviceScaleFactor());
 
     for (auto side : allBoxSides) {
         auto& currEdge = edges.at(side);
@@ -912,7 +862,7 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     if (!style().borderImageSource().isNone())
         return false;
 
-    auto edges = borderEdges(style(), document().deviceScaleFactor());
+    auto edges = borderEdges(style(), protect(document())->deviceScaleFactor());
 
     for (auto side : allBoxSides) {
         if (!edges.at(side).obscuresBackground())
@@ -983,7 +933,7 @@ bool RenderBoxModelObject::hasRunningAcceleratedAnimations() const
     return false;
 }
 
-void RenderBoxModelObject::applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<Style::TransformResolverOption>) const
+void RenderBoxModelObject::applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect&, OptionSet<Style::TransformResolverOption>) const
 {
     // applyTransform() is only used through RenderLayer*, which only invokes this for RenderBox derived renderers, thus not for
     // RenderInline/RenderLineBreak - the other two renderers that inherit from RenderBoxModelObject.
@@ -995,7 +945,7 @@ bool RenderBoxModelObject::requiresLayer() const
     return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection() || requiresRenderingConsolidationForViewTransition() || isRenderViewTransitionCapture();
 }
 
-void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(RenderBlock& delegateBlock, const RenderStyle& oldStyle, const RenderStyle& newStyle)
+void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(RenderBlock& delegateBlock, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     auto wasContainingBlockForFixedContent = canContainFixedPositionObjects(&oldStyle);
     auto wasContainingBlockForAbsoluteContent = canContainAbsolutelyPositionedObjects(&oldStyle);

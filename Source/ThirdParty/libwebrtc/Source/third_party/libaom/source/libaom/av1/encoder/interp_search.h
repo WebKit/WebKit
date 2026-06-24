@@ -128,12 +128,12 @@ typedef struct HandleInterModeArgs {
   /*!
    * Stack to store full pixel search start mv of NEWMV mode.
    */
-  FULLPEL_MV start_mv_stack[(MAX_REF_MV_SEARCH - 1) * 2];
+  FULLPEL_MV start_mv_stack[MAX_REF_MV_SEARCH * 2];
 
   /*!
    * Stack to store ref_mv_idx of NEWMV mode.
    */
-  uint8_t ref_mv_idx_stack[(MAX_REF_MV_SEARCH - 1) * 2];
+  uint8_t ref_mv_idx_stack[MAX_REF_MV_SEARCH * 2];
 
   /*!
    * Count of mvs in start mv stack.

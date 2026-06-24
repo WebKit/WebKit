@@ -72,9 +72,9 @@ bool ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
     if (state->hasChangedProperty(ScrollingStateNode::Property::ObscuredContentInsets))
         m_obscuredContentInsets = state->obscuredContentInsets();
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    if (state->hasChangedProperty(ScrollingStateNode::Property::BannerViewHeight))
-        m_bannerViewHeight = state->bannerViewHeight();
+#if HAVE(NSREFRESHCONTROLLER)
+    if (state->hasChangedProperty(ScrollingStateNode::Property::TopScrollStretchForRefreshController))
+        m_topScrollStretchForRefreshController = state->topScrollStretchForRefreshController();
 #endif
 
     if (state->hasChangedProperty(ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport))
@@ -176,9 +176,9 @@ void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<S
         ts.dumpProperty("left content inset"_s, m_obscuredContentInsets.left());
     if (m_obscuredContentInsets.right())
         ts.dumpProperty("right content inset"_s, m_obscuredContentInsets.right());
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    if (m_bannerViewHeight)
-        ts.dumpProperty("banner view height"_s, m_bannerViewHeight);
+#if HAVE(NSREFRESHCONTROLLER)
+    if (m_topScrollStretchForRefreshController)
+        ts.dumpProperty("top scroll stretch for refresh controller"_s, m_topScrollStretchForRefreshController);
 #endif
 
     if (m_headerHeight)

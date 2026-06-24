@@ -18,6 +18,8 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats_report.h"
 #include "api/test/create_network_emulation_manager.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
@@ -25,6 +27,8 @@
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/pclf/media_quality_test_params.h"
 #include "api/test/pclf/peer_configurer.h"
+#include "api/test/peerconnection_quality_test_fixture.h"
+#include "api/test/track_id_stream_info_map.h"
 #include "api/units/time_delta.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -45,7 +49,8 @@ void CleanDir(absl::string_view dir, size_t expected_output_files_count) {
   std::optional<std::vector<std::string>> dir_content =
       test::ReadDirectory(dir);
   if (expected_output_files_count == 0) {
-    ASSERT_FALSE(dir_content.has_value()) << "Empty directory is expected";
+    ASSERT_TRUE(!dir_content.has_value() || dir_content->empty())
+        << "Empty directory is expected";
   } else {
     ASSERT_TRUE(dir_content.has_value()) << "Test directory is empty!";
     EXPECT_EQ(dir_content->size(), expected_output_files_count);
@@ -134,6 +139,66 @@ TEST_F(PeerConnectionE2EQualityTestTest, OutputVideoIsDumpedWhenRequested) {
   EXPECT_THAT(frame_reader->num_frames(), Eq(31));  // 2 seconds 15 fps + 1
 
   ExpectOutputFilesCount(1);
+}
+
+class FinalStatsWaitReporter
+    : public PeerConnectionE2EQualityTestFixture::QualityMetricsReporter {
+ public:
+  void Start(absl::string_view test_case_name,
+             const TrackIdStreamInfoMap* reporter_helper) override {}
+
+  void OnStatsReports(
+      absl::string_view pc_label,
+      const scoped_refptr<const RTCStatsReport>& report) override {
+    ++calls_count_;
+  }
+
+  void StopAndReportResults() override { EXPECT_EQ(calls_count_, 4u); }
+
+ private:
+  size_t calls_count_ = 0;
+};
+
+TEST_F(PeerConnectionE2EQualityTestTest, StatsAreCollectedAtTheEndOfTheTest) {
+  std::unique_ptr<NetworkEmulationManager> network_emulation =
+      CreateNetworkEmulationManager({.time_mode = TimeMode::kSimulated});
+  PeerConnectionE2EQualityTest fixture(
+      "test_case", *network_emulation->time_controller(),
+      /*audio_quality_analyzer=*/nullptr, /*video_quality_analyzer=*/nullptr,
+      test::GetGlobalMetricsLogger());
+  // Inject a delay that simulates stats gathering taking some time.
+  fixture.SetStatsPollingDelay(TimeDelta::Millis(100));
+
+  EmulatedEndpoint* alice_endpoint =
+      network_emulation->CreateEndpoint(EmulatedEndpointConfig());
+  EmulatedEndpoint* bob_endpoint =
+      network_emulation->CreateEndpoint(EmulatedEndpointConfig());
+
+  network_emulation->CreateRoute(
+      alice_endpoint, {network_emulation->CreateUnconstrainedEmulatedNode()},
+      bob_endpoint);
+  network_emulation->CreateRoute(
+      bob_endpoint, {network_emulation->CreateUnconstrainedEmulatedNode()},
+      alice_endpoint);
+
+  EmulatedNetworkManagerInterface* alice_network =
+      network_emulation->CreateEmulatedNetworkManagerInterface(
+          {alice_endpoint});
+  EmulatedNetworkManagerInterface* bob_network =
+      network_emulation->CreateEmulatedNetworkManagerInterface({bob_endpoint});
+
+  PeerConfigurer alice(*alice_network);
+  alice.SetName("alice");
+  alice.AddVideoConfig(VideoConfig("alice_video", 320, 180, 30));
+  fixture.AddPeer(std::make_unique<PeerConfigurer>(std::move(alice)));
+
+  PeerConfigurer bob(*bob_network);
+  bob.SetName("bob");
+  fixture.AddPeer(std::make_unique<PeerConfigurer>(std::move(bob)));
+
+  fixture.AddQualityMetricsReporter(std::make_unique<FinalStatsWaitReporter>());
+
+  fixture.Run(RunParams(TimeDelta::Millis(1)));
 }
 
 }  // namespace

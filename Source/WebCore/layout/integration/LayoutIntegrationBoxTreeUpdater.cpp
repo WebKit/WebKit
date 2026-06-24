@@ -48,12 +48,12 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGInline.h"
 #include "RenderSlider.h"
-#include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+SettersInlines.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "TextUtil.h"
 
 #if ENABLE(TREE_DEBUGGING)
@@ -63,12 +63,12 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-static std::unique_ptr<RenderStyle> firstLineStyleFor(const RenderObject& renderer)
+static std::unique_ptr<Style::ComputedStyle> firstLineStyleFor(const RenderObject& renderer)
 {
     CheckedRef firstLineStyle = renderer.firstLineStyle();
     if (&renderer.style() == firstLineStyle.ptr())
         return { };
-    return RenderStyle::clonePtr(firstLineStyle.get());
+    return Style::ComputedStyle::clonePtr(firstLineStyle.get());
 }
 
 static Layout::Box::IsAnonymous NODELETE isAnonymous(const RenderObject& renderer)
@@ -173,7 +173,7 @@ void BoxTreeUpdater::tearDown()
         rootLayoutBox().destroyChildren();
 }
 
-void BoxTreeUpdater::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& style, RenderStyle* firstLineStyle)
+void BoxTreeUpdater::adjustStyleIfNeeded(const RenderElement& renderer, Style::ComputedStyle& style, Style::ComputedStyle* firstLineStyle)
 {
     auto adjustStyle = [&](auto& styleToAdjust) {
         // If we end up here with a box that has a table display type, just treat it as a regular block-level box.
@@ -245,10 +245,10 @@ static EnumSet<Layout::ElementBox::ListMarkerAttribute> calculateListMarkerAttri
 
 UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
 {
-    std::unique_ptr<RenderStyle> firstLineStyle = firstLineStyleFor(renderer);
+    std::unique_ptr<Style::ComputedStyle> firstLineStyle = firstLineStyleFor(renderer);
 
     if (auto* textRenderer = dynamicDowncast<RenderText>(renderer)) {
-        auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer->style(), Style::DisplayType::InlineFlow);
+        auto style = Style::ComputedStyle::createAnonymousStyleWithDisplay(textRenderer->style(), Style::DisplayType::InlineFlow);
         auto isCombinedText = [&] {
             auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(*textRenderer);
             return combineTextRenderer && combineTextRenderer->isCombined();
@@ -293,7 +293,7 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
 
     auto& renderElement = downcast<RenderElement>(renderer);
 
-    auto style = RenderStyle::clone(renderElement.style());
+    auto style = Style::ComputedStyle::clone(renderElement.style());
     adjustStyleIfNeeded(renderElement, style, firstLineStyle.get());
 
     if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderElement))
@@ -322,7 +322,7 @@ void BoxTreeUpdater::buildTreeForFlexContent()
             insertChild(existingChildBox->removeFromParent(), flexItemRenderer.get(), flexItemRenderer->previousSibling());
             continue;
         }
-        auto style = RenderStyle::clone(flexItemRenderer->style());
+        auto style = Style::ComputedStyle::clone(flexItemRenderer->style());
         auto flexItemBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(flexItemRenderer.get()), WTF::move(style));
         insertChild(WTF::move(flexItemBox), flexItemRenderer.get(), flexItemRenderer->previousSibling());
     }
@@ -335,7 +335,7 @@ void BoxTreeUpdater::buildTreeForGridContent()
             insertChild(existingChildBox->removeFromParent(), gridItemRenderer.get(), gridItemRenderer->previousSibling());
             continue;
         }
-        auto style = RenderStyle::clone(gridItemRenderer->style());
+        auto style = Style::ComputedStyle::clone(gridItemRenderer->style());
         auto gridItemBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(gridItemRenderer.get()), WTF::move(style));
         insertChild(WTF::move(gridItemBox), gridItemRenderer.get(), gridItemRenderer->previousSibling());
     }
@@ -385,7 +385,7 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
     if (auto* renderText = dynamicDowncast<RenderText>(renderer)) {
         if (CheckedPtr inlineTextBox = dynamicDowncast<Layout::InlineTextBox>(*layoutBox)) {
             updateContentCharacteristic(*renderText, *inlineTextBox);
-            inlineTextBox->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(renderText->style(), Style::DisplayType::InlineFlow), firstLineStyleFor(*renderText));
+            inlineTextBox->updateStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(renderText->style(), Style::DisplayType::InlineFlow), firstLineStyleFor(*renderText));
             return;
         }
         ASSERT_NOT_REACHED();
@@ -393,7 +393,7 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
     }
 
     auto firstLineNewStyle = firstLineStyleFor(renderer);
-    auto newStyle = RenderStyle::clone(downcast<RenderElement>(renderer).style());
+    auto newStyle = Style::ComputedStyle::clone(downcast<RenderElement>(renderer).style());
     adjustStyleIfNeeded(downcast<RenderElement>(renderer), newStyle, firstLineNewStyle.get());
     layoutBox->updateStyle(WTF::move(newStyle), WTF::move(firstLineNewStyle));
     if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderer)) {

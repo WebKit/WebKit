@@ -22,6 +22,9 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 TEST(CTRDRBGTest, Basic) {
   const uint8_t kSeed[CTR_DRBG_ENTROPY_LEN] = {
       0xe4, 0xbc, 0x23, 0xc5, 0x08, 0x9a, 0x19, 0xd8, 0x6f, 0x41, 0x19, 0xcb,
@@ -106,7 +109,7 @@ TEST(CTRDRBGTest, Allocated) {
   const uint8_t kEntropy[32] = {0};
   const uint8_t kNonce[CTR_DRBG_NONCE_LEN] = {0};
 
-  bssl::UniquePtr<CTR_DRBG_STATE> allocated(
+  UniquePtr<CTR_DRBG_STATE> allocated(
       CTR_DRBG_new_df(kEntropy, sizeof(kEntropy), kNonce, nullptr, 0));
   ASSERT_TRUE(allocated);
 
@@ -190,3 +193,6 @@ TEST(CTRDRBGTest, TestVectorsDF) {
   FileTestGTest("crypto/fipsmodule/rand/ctrdrbg_df_vectors.txt",
                 [](FileTest *t) { RunTestVector(t, /*df=*/true); });
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

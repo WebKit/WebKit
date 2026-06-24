@@ -39,7 +39,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<BorderImageSlice>::operator()(const BorderImageSlice& value, const RenderStyle& style) -> CSS::BorderImageSlice
+auto ToCSS<BorderImageSlice>::operator()(const BorderImageSlice& value, const Style::ComputedStyle& style) -> CSS::BorderImageSlice
 {
     return { toCSS(value.values, style), value.fill };
 }
@@ -58,7 +58,7 @@ auto CSSValueConversion<BorderImageSlice>::operator()(BuilderState& state, const
     return toStyleFromCSSValue<BorderImageSlice::Value>(state, value);
 }
 
-auto CSSValueCreation<BorderImageSlice>::operator()(CSSValuePool&, const RenderStyle& style, const BorderImageSlice& value) -> Ref<CSSValue>
+auto CSSValueCreation<BorderImageSlice>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BorderImageSlice& value) -> Ref<CSSValue>
 {
     return CSSBorderImageSliceValue::create(toCSS(value, style));
 }

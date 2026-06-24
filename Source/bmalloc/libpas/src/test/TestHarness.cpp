@@ -195,6 +195,12 @@ InstallVerifier::InstallVerifier()
 {
 }
 
+NoVerifier::NoVerifier()
+    : TestScope(
+        "no-verifier",
+        [] () { })
+{ }
+
 EpochIsCounter::EpochIsCounter()
     : TestScope(
         "epoch-is-counter",
@@ -611,8 +617,8 @@ ParsedArguments parseArguments(int argc, char** argv)
             }
             i++;
             int value = atoi(argv[i]);
-            if (value <= 0) {
-                cerr << "Error: --child-processes must be a positive integer, got: " << argv[i] << endl;
+            if (value < 0) {
+                cerr << "Error: --child-processes must be a non-negative integer, got: " << argv[i] << endl;
                 exit(1);
             }
             args.childProcesses = value;
@@ -636,6 +642,9 @@ ParsedArguments parseArguments(int argc, char** argv)
 
 unsigned computeTestConcurrency(std::optional<int> childProcesses)
 {
+    if (childProcesses.has_value() && !(*childProcesses))
+        return 1;
+
     const char* envConcurrency = getenv("PasTestConcurrency");
     if (envConcurrency) {
         int concurrency = atoi(envConcurrency);
@@ -747,7 +756,7 @@ size_t waitForAnyProcess(vector<RunningTest>& runningTests)
             cout << "    FAIL: unexpected exit with code " << WEXITSTATUS(waitStatus) << endl;
         }
     } else if (WIFSIGNALED(waitStatus)) {
-        cout << "    CRASH: with signal " << WTERMSIG(waitStatus) << endl;
+        cout << "    FAIL: CRASH with signal " << WTERMSIG(waitStatus) << endl;
     } else
         cout << "    FAIL: child process terminated with unknown status code " << waitStatus << endl;
 
@@ -836,6 +845,11 @@ int main(int argc, char** argv)
 #if SEGHEAP
     pas_segregated_page_config_do_validate = true;
 #endif
+
+    // This list should be kept in sync with the
+    // LIBPAS_SUITE() list in src/test/xctest/LibpasTests.mm;
+    // missing entries in that list will not be run in xctest-based configs,
+    // e.g. CI.
 
     // Run the Thingy tests first because they catch the most bugs.
     ADD_SUITE(ThingyAndUtilityHeapAllocation);

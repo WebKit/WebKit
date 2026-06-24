@@ -1575,10 +1575,27 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
 void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
     RETURN_IF_FINISHED();
+
     if (sumOverflows<uint32_t>(x, width) || x + width > m_renderTargetWidth || sumOverflows<uint32_t>(y, height) || y + height > m_renderTargetHeight) {
         makeInvalid();
         return;
     }
+
+    if (id<MTLRasterizationRateMap> map = m_rasterizationRateMap) {
+        MTLSize physSize = [map physicalSizeForLayer:0];
+        MTLCoordinate2D scissorStart = [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(x, y) forLayer:0];
+        MTLCoordinate2D scissorEnd = [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(std::min<float>(physSize.width, x + width), std::min<float>(physSize.height, y + height)) forLayer:0];
+        MTLSize screenSize = [map screenSize];
+        m_scissorRect = MTLScissorRect {
+            static_cast<NSUInteger>(roundf(scissorStart.x)),
+            static_cast<NSUInteger>(roundf(scissorStart.y)),
+            std::min(screenSize.width, static_cast<NSUInteger>(roundf(scissorEnd.x - scissorStart.x))),
+            std::min(screenSize.height, static_cast<NSUInteger>(roundf(scissorEnd.y - scissorStart.y))),
+        };
+
+        return;
+    }
+
     m_scissorRect = MTLScissorRect { x, y, width, height };
 }
 

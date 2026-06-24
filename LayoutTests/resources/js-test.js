@@ -533,6 +533,14 @@ function shouldBeEqualToString(a, b)
   shouldBe(a, unevaledString);
 }
 
+function shouldNotBeEqualToString(a, b)
+{
+  if (typeof a !== "string" || typeof b !== "string")
+    debug("WARN: shouldNotBeEqualToString() expects string arguments");
+  var unevaledString = JSON.stringify(b);
+  shouldNotBe(a, unevaledString);
+}
+
 function shouldBeEqualToNumber(a, b)
 {
   if (typeof a !== "string" || typeof b !== "number")

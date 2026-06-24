@@ -21,6 +21,7 @@
 #include "rtc_base/event.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/task_utils/repeating_task.h"
+#include "rtc_base/virtual_socket_server.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -163,6 +164,19 @@ TEST(SimulatedTimeControllerTest, SkipsDelayedTaskForward) {
   sim.SkipForwardBy(duration_during_which_nothing_runs);
   // Run tasks that were pending during the skip.
   sim.AdvanceTime(TimeDelta::Zero());
+}
+
+TEST(SimulatedTimeControllerTest, CreateThreadWithSocketServer) {
+  GlobalSimulatedTimeController sim(kStartTime);
+  auto ss = std::make_unique<VirtualSocketServer>();
+  auto t2 = sim.CreateThreadWithSocketServer("thread", ss.get());
+  EXPECT_TRUE(t2);
+  EXPECT_EQ(t2->socketserver(), ss.get());
+
+  bool task_has_run = false;
+  t2->PostTask([&] { task_has_run = true; });
+  sim.AdvanceTime(TimeDelta::Zero());
+  EXPECT_TRUE(task_has_run);
 }
 
 }  // namespace webrtc

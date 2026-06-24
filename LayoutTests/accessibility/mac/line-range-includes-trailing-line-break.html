@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div contenteditable id="editable">First line.<br>Second line.</div>
+
+<script>
+var output = "This tests that a line's text marker range includes its trailing line break.\n\n";
+
+if (window.accessibilityController) {
+    var editable = accessibilityController.accessibleElementById("editable");
+    var fullRange = editable.textMarkerRangeForElement(editable);
+    var startMarker = editable.startTextMarkerForTextMarkerRange(fullRange);
+    var firstLineRange = editable.lineTextMarkerRangeForTextMarker(startMarker);
+
+    // "First line." is 11 characters; the line range must also include the trailing line break (the <br>) for 12.
+    output += expect("editable.textMarkerRangeLength(firstLineRange)", "12");
+    output += expect("editable.stringForTextMarkerRange(firstLineRange) === 'First line.\\n'", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

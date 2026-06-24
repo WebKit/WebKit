@@ -36,6 +36,7 @@ Helpers/cocoa/DecomposedAttributedText.mm @nonARC
 Helpers/cocoa/DragAndDropSimulator.mm @nonARC
 Helpers/cocoa/HostWindowManager.mm @nonARC
 Helpers/cocoa/ImageAnalysisTestingUtilities.mm @nonARC
+Helpers/cocoa/MediaRemoteSoftLink.mm @nonARC
 Helpers/cocoa/ModelLoadingMessageHandler.mm @nonARC
 Helpers/cocoa/NSItemProviderAdditions.mm @nonARC
 Helpers/cocoa/PlatformUtilitiesCocoa.mm @nonARC
@@ -61,6 +62,8 @@ Helpers/cocoa/PDFTestHelpers.mm @nonARC
 Helpers/cocoa/SiteIsolationUtilities.mm @nonARC
 Helpers/ios/IOSMouseEventTestHarness.mm @nonARC
 Helpers/mac/WKWebViewForTestingImmediateActions.mm @nonARC
+
+Resources/cocoa/MessagePortSecurity.mm @nonARC
 
 Tests/WTF/cocoa/URLExtras.mm @nonARC
 
@@ -283,7 +286,6 @@ Tests/WebKit/WKWebView/ShouldGoToBackForwardListItem.mm @nonARC
 Tests/WebKit/WKWebView/ShouldOpenExternalURLsInNewWindowActions.mm @nonARC
 Tests/WebKit/WKWebView/ShrinkToFit.mm @nonARC
 Tests/WebKit/WKWebView/ShouldOpenAppLinks.mm @nonARC
-Tests/WebKit/WKWebView/SimulateClickOverText.mm @nonARC
 Tests/WebKit/WKWebView/SiteIsolation.mm @nonARC
 Tests/WebKit/WKWebView/SnapshotStore.mm @nonARC
 Tests/WebKit/WKWebView/ImmersiveVideoMetadata.mm @nonARC
@@ -325,7 +327,7 @@ Tests/WebKit/WKWebView/VisibilityState.mm @nonARC
 Tests/WebKit/WKWebView/VisibleContentRect.mm @nonARC
 Tests/WebKit/WKWebView/VisitedLinkStore.mm @nonARC
 Tests/WebKit/WKWebView/WKAppHighlights.mm @nonARC
-Tests/WebKit/WKWebView/WKAttachmentTests.mm @nonARC
+Tests/WebKit/WKWebView/WKAttachmentTests.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/WKContentExtensionStore.mm @nonARC
 Tests/WebKit/WKWebView/WKContentViewEditingActions.mm @nonARC
 Tests/WebKit/WKWebView/WKContentViewTargetForAction.mm @nonARC
@@ -398,6 +400,7 @@ Tests/WebKit/WKWebView/WKWebViewPrintFormatter.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewResize.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewServerTrustKVC.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewSnapshot.mm @nonARC
+Tests/WebKit/WKWebView/WKWebViewSubclassedSetFrame.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewSuspendAllMediaPlayback.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewTextInput.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewThemeColor.mm @nonARC

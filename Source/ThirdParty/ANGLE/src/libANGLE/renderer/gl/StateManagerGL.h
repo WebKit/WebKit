@@ -152,7 +152,7 @@ struct VertexBindingGL
 {
     GLuint stride   = 16;
     GLuint divisor  = 0;
-    GLintptr offset = 0;
+    uintptr_t offset = 0;
 
     GLuint buffer = 0;
 };
@@ -197,7 +197,6 @@ class StateManagerGL final : angle::NonCopyable
                          size_t size);
     void activeTexture(size_t unit);
     void bindTexture(gl::TextureType type, GLuint texture);
-    void invalidateTexture(gl::TextureType type);
     void bindSampler(size_t unit, GLuint sampler);
     void bindImageTexture(size_t unit,
                           GLuint texture,
@@ -375,6 +374,7 @@ class StateManagerGL final : angle::NonCopyable
 
     void syncSamplersState(const gl::Context *context);
     void syncTransformFeedbackState(const gl::Context *context);
+    void syncProgramState(const gl::Context *context);
 
     void updateEmulatedClipDistanceState(const gl::ProgramExecutable *executable,
                                          const gl::ClipDistanceEnableBits enables) const;

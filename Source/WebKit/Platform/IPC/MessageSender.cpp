@@ -30,6 +30,10 @@
 
 namespace IPC {
 
+MessageSender::MessageSender(ClangVTableWorkaroundTag)
+{
+}
+
 MessageSender::~MessageSender() = default;
 
 bool MessageSender::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions)

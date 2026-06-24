@@ -26,6 +26,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 long X509_REQ_get_version(const X509_REQ *req) {
   return ASN1_INTEGER_get(req->req_info->version);
 }
@@ -54,27 +56,15 @@ int X509_REQ_check_private_key(const X509_REQ *x, const EVP_PKEY *k) {
     return 0;
   }
 
-  int ret = EVP_PKEY_cmp(xk, k);
-  if (ret > 0) {
+  if (EVP_PKEY_eq(xk, k) == 1) {
     return 1;
   }
 
-  switch (ret) {
-    case 0:
-      OPENSSL_PUT_ERROR(X509, X509_R_KEY_VALUES_MISMATCH);
-      return 0;
-    case -1:
-      OPENSSL_PUT_ERROR(X509, X509_R_KEY_TYPE_MISMATCH);
-      return 0;
-    case -2:
-      if (EVP_PKEY_id(k) == EVP_PKEY_EC) {
-        OPENSSL_PUT_ERROR(X509, ERR_R_EC_LIB);
-      } else {
-        OPENSSL_PUT_ERROR(X509, X509_R_UNKNOWN_KEY_TYPE);
-      }
-      return 0;
+  if (EVP_PKEY_id(xk) != EVP_PKEY_id(k)) {
+    OPENSSL_PUT_ERROR(X509, X509_R_KEY_TYPE_MISMATCH);
+  } else {
+    OPENSSL_PUT_ERROR(X509, X509_R_KEY_VALUES_MISMATCH);
   }
-
   return 0;
 }
 

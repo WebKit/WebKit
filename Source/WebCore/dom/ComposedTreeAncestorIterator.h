@@ -106,10 +106,20 @@ public:
 
     iterator begin()
     {
-        if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(m_node.get()))
-            return iterator(*shadowRoot->host());
-        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(m_node.get()))
-            return iterator(*pseudoElement->hostElement());
+        if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(m_node.get())) {
+            auto* shadowHost = shadowRoot->host();
+            ASSERT(shadowHost);
+            if (!shadowHost)
+                return end();
+            return iterator(*shadowHost);
+        }
+        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(m_node.get())) {
+            auto* hostElement = pseudoElement->hostElement();
+            ASSERT(hostElement);
+            if (!hostElement)
+                return end();
+            return iterator(*hostElement);
+        }
         return iterator(m_node);
     }
     iterator end()

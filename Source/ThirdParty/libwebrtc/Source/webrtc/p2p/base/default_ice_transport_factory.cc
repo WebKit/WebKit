@@ -23,19 +23,19 @@
 #include "p2p/base/ice_controller_interface.h"
 #include "p2p/base/p2p_transport_channel.h"
 
+namespace webrtc {
+
 namespace {
 
-class BasicIceControllerFactory : public webrtc::IceControllerFactoryInterface {
+class BasicIceControllerFactory : public IceControllerFactoryInterface {
  public:
-  std::unique_ptr<webrtc::IceControllerInterface> Create(
-      const webrtc::IceControllerFactoryArgs& args) override {
-    return std::make_unique<webrtc::BasicIceController>(args);
+  std::unique_ptr<IceControllerInterface> Create(
+      const IceControllerFactoryArgs& args) override {
+    return std::make_unique<BasicIceController>(args);
   }
 };
 
 }  // namespace
-
-namespace webrtc {
 
 DefaultIceTransport::DefaultIceTransport(
     std::unique_ptr<P2PTransportChannel> internal)

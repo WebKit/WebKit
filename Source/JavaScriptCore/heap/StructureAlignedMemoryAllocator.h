@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AlignedMemoryAllocator.h"
+#include <cstddef>
 #include <wtf/FastMalloc.h>
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)

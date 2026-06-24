@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <head>
 <title>Test for embedded iframe with height: 100% and anonymous table cell parent.</title>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function getComputedStyleForElement(element, cssPropertyName)
 {
@@ -39,13 +35,13 @@ function getHeight(id)
 function test()
 {
     description("This test checks that iframe with percentage height within anonymous table cell has the correct height (strict mode).");
+    window.jsTestIsAsync = true;
 
     shouldBe("getHeight('iframe-100')", "window.innerHeight");
 
-    isSuccessfullyParsed();
 
     if (window.testRunner) {
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 </script>

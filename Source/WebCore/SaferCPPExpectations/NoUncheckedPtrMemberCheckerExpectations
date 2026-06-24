@@ -78,5 +78,6 @@ style/StyleResolver.h
 style/StyleScope.h
 style/StyleTreeResolver.h
 style/Styleable.h
+style/calc/StyleCalculationTree+Conversion.cpp
 style/calc/StyleCalculationTree+Conversion.h
 svg/properties/SVGPropertyOwnerRegistry.h

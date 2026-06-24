@@ -43,11 +43,11 @@ class OPENSSL_EXPORT CertIssuerSource {
     // Destruction of the Request cancels it.
     virtual ~Request() = default;
 
-    // Retrieves issuers and appends them to |issuers|.
+    // Retrieves issuers and appends them to `issuers`.
     //
     // GetNext should be called again to retrieve any remaining issuers.
     //
-    // If no issuers are left then |issuers| will not be modified. This
+    // If no issuers are left then `issuers` will not be modified. This
     // indicates that the issuers have been exhausted and GetNext() should
     // not be called again.
     virtual void GetNext(ParsedCertificateList *issuers) = 0;
@@ -55,19 +55,19 @@ class OPENSSL_EXPORT CertIssuerSource {
 
   virtual ~CertIssuerSource() = default;
 
-  // Finds certificates whose Subject matches |cert|'s Issuer.
-  // Matches are appended to |issuers|. Any existing contents of |issuers| will
+  // Finds certificates whose Subject matches `cert`'s Issuer.
+  // Matches are appended to `issuers`. Any existing contents of `issuers` will
   // not be modified. If the implementation does not support synchronous
-  // lookups, or if there are no matches, |issuers| is not modified.
+  // lookups, or if there are no matches, `issuers` is not modified.
   virtual void SyncGetIssuersOf(const ParsedCertificate *cert,
                                 ParsedCertificateList *issuers) = 0;
 
-  // Finds certificates whose Subject matches |cert|'s Issuer.
+  // Finds certificates whose Subject matches `cert`'s Issuer.
   // If the implementation does not support asynchronous lookups or can
-  // determine synchronously that it would return no results, |*out_req|
+  // determine synchronously that it would return no results, `*out_req`
   // will be set to nullptr.
   //
-  // Otherwise a request is started and saved to |out_req|. The results can be
+  // Otherwise a request is started and saved to `out_req`. The results can be
   // read through the Request interface.
   virtual void AsyncGetIssuersOf(const ParsedCertificate *cert,
                                  std::unique_ptr<Request> *out_req) = 0;

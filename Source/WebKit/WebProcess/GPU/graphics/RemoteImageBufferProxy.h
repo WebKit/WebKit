@@ -82,6 +82,12 @@ public:
     void didCreateBackend(std::optional<ImageBufferBackendHandle>);
 
     RemoteGraphicsContextIdentifier contextIdentifier() const { return m_context.identifier(); }
+
+    // Sends single-line strokes that have been buffered on the proxy's graphics
+    // context into the IPC stream. Call before any cross-buffer read of this
+    // image buffer (drawImageBuffer source, clipToImageBuffer source, etc.) so
+    // the GPU process sees the up-to-date contents.
+    void sendPendingDrawsIfNecessary() const { m_context.sendPendingDrawsIfNecessary(); }
 private:
     RemoteImageBufferProxy(Parameters, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&);
 
@@ -135,7 +141,20 @@ public:
 
     const WebCore::ImageBuffer::Parameters& parameters() const LIFETIME_BOUND { return m_parameters; }
     const WebCore::ImageBufferBackend::Info& info() const LIFETIME_BOUND { return m_info; }
+
+    std::unique_ptr<WebCore::SerializedImageBuffer> clone() const final
+    {
+        return std::unique_ptr<WebCore::SerializedImageBuffer>(new RemoteSerializedImageBufferProxy(m_parameters, m_info, m_connection));
+    }
+
 private:
+    RemoteSerializedImageBufferProxy(const WebCore::ImageBuffer::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, const RefPtr<IPC::Connection>& connection)
+        : m_parameters(parameters)
+        , m_info(info)
+        , m_connection(connection)
+    {
+    }
+
     RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer() final
     {
         ASSERT_NOT_REACHED();

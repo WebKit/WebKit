@@ -92,7 +92,7 @@ def _generate_compile_commands(work_dir: pathlib.Path) -> None:
     by the include cleaner binary.
 
     Args:
-        work_dir: gn out dir where the compile_commands json file exists
+        work_dir: gn out dir
     """
     compile_commands_path = work_dir / "compile_commands.json"
     print("Generating compile commands file...")

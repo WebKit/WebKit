@@ -13,10 +13,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
 #include "net/dcsctp/packet/tlv_trait.h"
@@ -37,8 +37,7 @@ class ShutdownChunk : public Chunk, public TLVTrait<ShutdownChunkConfig> {
   explicit ShutdownChunk(TSN cumulative_tsn_ack)
       : cumulative_tsn_ack_(cumulative_tsn_ack) {}
 
-  static std::optional<ShutdownChunk> Parse(
-      webrtc::ArrayView<const uint8_t> data);
+  static std::optional<ShutdownChunk> Parse(std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

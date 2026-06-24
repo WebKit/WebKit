@@ -24,7 +24,7 @@ header: "PDFDisplayMode.h"
 
 #if ENABLE(UNIFIED_PDF)
 
-enum class WebKit::PDFDisplayMode : uint8_t {
+enum class WebKit::PDFPluginDisplayMode : uint8_t {
     SinglePageDiscrete,
     SinglePageContinuous,
     TwoUpDiscrete,

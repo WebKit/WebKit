@@ -207,8 +207,7 @@ static TemporalResult<ISO8601::InternalDuration> differenceZonedDateTime(ISO8601
     bool success = false;
     while (dayCorrection <= maxDayCorrection && !success) {
         // Step 11.a: intermediateDate = AddDaysToISODate(endDate, dayCorrection × sign).
-        intermediateDate = balanceISODate(endDate.year(), static_cast<int32_t>(endDate.month()),
-            static_cast<int64_t>(endDate.day()) + dayCorrection * sign);
+        intermediateDate = addDaysToISODate(endDate, static_cast<int64_t>(dayCorrection) * sign);
         // Step 11.b: intermediateDateTime = CombineISODateAndTimeRecord(intermediateDate, startTime).
         // Step 11.c: intermediateNs = GetEpochNanosecondsFor(timeZone, intermediateDateTime, compatible). (11.b+11.c fused)
         auto intermediateNsResult = getEpochNanosecondsFor(timeZone, intermediateDate, startTime, TemporalDisambiguation::Compatible);

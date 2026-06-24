@@ -215,6 +215,14 @@ bool GenerateHandshakeHint(const TestConfig *config,
   return true;
 }
 
+int SignalUnimplemented() {
+  const char msg = kControlMsgUnimplemented;
+  if (write_eintr(kFdControl, &msg, 1) != 1) {
+    return 2;
+  }
+  return 1;
+}
+
 int SignalError() {
   const char msg = kControlMsgError;
   if (write_eintr(kFdControl, &msg, 1) != 1) {
@@ -226,10 +234,22 @@ int SignalError() {
 }  // namespace
 
 int main(int argc, char **argv) {
+  // Read the request before parsing the configuration. This ensures that
+  // flag-parsing errors are signaled at a reliable point in time. read() will
+  // return the entire message in one go, because it's a datagram socket.
+  constexpr size_t kBufSize = 1024 * 1024;
+  std::vector<uint8_t> request(kBufSize);
+  ssize_t len = read_eintr(kFdControl, request.data(), request.size());
+  if (len == -1) {
+    perror("read");
+    return 2;
+  }
+  request.resize(static_cast<size_t>(len));
+
   TestConfig initial_config, resume_config, retry_config;
   if (!ParseConfig(argc - 1, argv + 1, /*is_shim=*/false, &initial_config,
                    &resume_config, &retry_config)) {
-    return SignalError();
+    return SignalUnimplemented();
   }
   const TestConfig *config =
       initial_config.handshaker_resume ? &resume_config : &initial_config;
@@ -246,17 +266,6 @@ int main(int argc, char **argv) {
     RAND_bytes(&byte, 1);
   }
 #endif  // FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
-
-  // read() will return the entire message in one go, because it's a datagram
-  // socket.
-  constexpr size_t kBufSize = 1024 * 1024;
-  std::vector<uint8_t> request(kBufSize);
-  ssize_t len = read_eintr(kFdControl, request.data(), request.size());
-  if (len == -1) {
-    perror("read");
-    return 2;
-  }
-  request.resize(static_cast<size_t>(len));
 
   if (config->handshake_hints) {
     if (!GenerateHandshakeHint(config, request, kFdControl)) {

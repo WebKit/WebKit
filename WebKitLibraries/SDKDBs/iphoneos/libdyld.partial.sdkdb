@@ -76,7 +76,7 @@
       {"access": "public", "name": "DYLD_CHAINED_IMPORT_ADDEND"},
       {"access": "public", "name": "DYLD_CHAINED_IMPORT_ADDEND64"}
      ],
-     "name": "enum (unnamed at fixup-chains.h:2941)"
+     "name": "enum (unnamed at fixup-chains.h:3001)"
     },
     {
      "access": "public",
@@ -86,6 +86,14 @@
       {"access": "public", "name": "DYLD_CHAINED_PTR_START_LAST"}
      ],
      "name": "enum (unnamed at fixup-chains.h:741)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "DYLD_CHAINED_STARTS_USE_FILE_OFFSET"},
+      {"access": "public", "name": "DYLD_CHAINED_STARTS_USE_VM_OFFSET"}
+     ],
+     "name": "enum (unnamed at fixup-chains.h:811)"
     },
     {
      "access": "public",
@@ -106,7 +114,53 @@
       {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_SHARED_CACHE"},
       {"access": "public", "name": "DYLD_CHAINED_PTR_ARM64E_SEGMENTED"}
      ],
-     "name": "enum (unnamed at fixup-chains.h:901)"
+     "name": "enum (unnamed at fixup-chains.h:961)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARM_RELOC_VANILLA"},
+      {"access": "public", "name": "ARM_RELOC_PAIR"},
+      {"access": "public", "name": "ARM_RELOC_SECTDIFF"},
+      {"access": "public", "name": "ARM_RELOC_LOCAL_SECTDIFF"},
+      {"access": "public", "name": "ARM_RELOC_PB_LA_PTR"},
+      {"access": "public", "name": "ARM_RELOC_BR24"},
+      {"access": "public", "name": "ARM_THUMB_RELOC_BR22"},
+      {"access": "public", "name": "ARM_THUMB_32BIT_BRANCH"},
+      {"access": "public", "name": "ARM_RELOC_HALF"},
+      {"access": "public", "name": "ARM_RELOC_HALF_SECTDIFF"}
+     ],
+     "name": "reloc_type_arm"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARM64_RELOC_UNSIGNED"},
+      {"access": "public", "name": "ARM64_RELOC_SUBTRACTOR"},
+      {"access": "public", "name": "ARM64_RELOC_BRANCH26"},
+      {"access": "public", "name": "ARM64_RELOC_PAGE21"},
+      {"access": "public", "name": "ARM64_RELOC_PAGEOFF12"},
+      {"access": "public", "name": "ARM64_RELOC_GOT_LOAD_PAGE21"},
+      {"access": "public", "name": "ARM64_RELOC_GOT_LOAD_PAGEOFF12"},
+      {"access": "public", "name": "ARM64_RELOC_POINTER_TO_GOT"},
+      {"access": "public", "name": "ARM64_RELOC_TLVP_LOAD_PAGE21"},
+      {"access": "public", "name": "ARM64_RELOC_TLVP_LOAD_PAGEOFF12"},
+      {"access": "public", "name": "ARM64_RELOC_ADDEND"},
+      {"access": "public", "name": "ARM64_RELOC_AUTHENTICATED_POINTER"}
+     ],
+     "name": "reloc_type_arm64"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "GENERIC_RELOC_VANILLA"},
+      {"access": "public", "name": "GENERIC_RELOC_PAIR"},
+      {"access": "public", "name": "GENERIC_RELOC_SECTDIFF"},
+      {"access": "public", "name": "GENERIC_RELOC_PB_LA_PTR"},
+      {"access": "public", "name": "GENERIC_RELOC_LOCAL_SECTDIFF"},
+      {"access": "public", "name": "GENERIC_RELOC_TLV"}
+     ],
+     "name": "reloc_type_generic"
     }
    ],
    "globals": [
@@ -140,6 +194,14 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_NSUnLinkModule", "unavailable": true},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_NSVersionOfLinkTimeLibrary"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_NSVersionOfRunTimeLibrary"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_NXCombineCpuSubtypes"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_NXFindBestFatArch"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_NXFindBestFatArch_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_NXFreeArchInfo"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_NXGetAllArchInfos"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_NXGetArchInfoFromCpuType"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_NXGetArchInfoFromName"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_NXGetLocalArchInfo"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__NSGetExecutablePath"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_all_twolevel_modules_prebound", "unavailable": true},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "__dyld_bind_fully_image_containing_address", "unavailable": true},
@@ -157,6 +219,10 @@
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_register_func_for_add_image"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "__dyld_register_func_for_remove_image"},
     {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "__dyld_shared_cache_contains_path"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "__mh_bundle_header"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "__mh_dylib_header"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "__mh_dylinker_header"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "__mh_execute_header"},
     {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__tlv_atexit"},
     {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "__tlv_bootstrap"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_dladdr"},
@@ -165,15 +231,84 @@
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlopen"},
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_dlopen_preflight"},
     {"access": "public", "kind": "function", "linkage": "exported", "name": "_dlsym"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_get_edata"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_get_end"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_get_etext"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_getsectbyname"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_getsectbynamefromheader"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_getsectbynamefromheader_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_getsectbynamefromheaderwithswap"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_getsectbynamefromheaderwithswap_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_getsectdata"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_getsectdatafromFramework"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_getsectdatafromheader"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_getsectdatafromheader_64"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_getsectiondata"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_getsegbyname"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_getsegmentdata"},
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_arch_name_for_cpu_type"},
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_arch_name_for_mach_header"},
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_best_slice"},
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_best_slice_in_fd"},
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_cpu_type_for_arch_name"},
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_for_each_slice"},
-    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_for_each_slice_in_fd"}
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_macho_for_each_slice_in_fd"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nlist"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_build_tool_version"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_build_version_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_dyld_info_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_dylib_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_dylib_module"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_dylib_module_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_dylib_reference"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_dylib_table_of_contents"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_dylinker_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_dysymtab_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_encryption_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_encryption_command_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_entry_point_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_fat_arch"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_fat_arch_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_fat_header"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_fileset_entry_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_fvmfile_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_fvmlib_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_ident_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_indirect_symbols"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_linkedit_data_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_linker_option_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_load_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_mach_header"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_mach_header_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_nlist"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_nlist_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_note_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_prebind_cksum_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_prebound_dylib_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_ranlib"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_ranlib_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_relocation_info"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_routines_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_routines_command_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_rpath_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_section"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_section_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_segment_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_segment_command_64"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_source_version_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_sub_client_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_sub_framework_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_sub_library_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_sub_umbrella_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_symseg_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_symtab_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_thread_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_twolevel_hint"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_twolevel_hints_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_uuid_command"},
+    {"access": "public", "introduced": "1", "kind": "function", "linkage": "exported", "name": "_swap_version_min_command"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "Dl_info"},
     {"access": "public", "name": "NSLinkEditErrorHandlers"},
@@ -183,6 +318,7 @@
     {"access": "public", "name": "NSObjectFileImageReturnCode"},
     {"access": "public", "name": "NSOtherErrorNumbers"},
     {"access": "public", "name": "NSSymbol"},
+    {"access": "public", "introduced": "1", "name": "NXArchInfo"},
     {"access": "public", "name": "dyld_image_notifier"}
    ]
   }

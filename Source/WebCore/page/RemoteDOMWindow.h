@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <JavaScriptCore/Strong.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/RemoteFrame.h>
 #include <WebCore/WindowPostMessageOptions.h>

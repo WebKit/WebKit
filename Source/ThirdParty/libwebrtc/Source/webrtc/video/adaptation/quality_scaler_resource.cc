@@ -24,6 +24,7 @@
 #include "modules/video_coding/utility/quality_scaler.h"
 #include "rtc_base/checks.h"
 #include "video/adaptation/video_stream_encoder_resource.h"
+#include "video/video_stream_encoder_observer.h"
 
 namespace webrtc {
 
@@ -78,17 +79,15 @@ void QualityScalerResource::OnEncodeCompleted(const EncodedImage& encoded_image,
 }
 
 void QualityScalerResource::OnFrameDropped(
-    EncodedImageCallback::DropReason reason) {
+    VideoStreamEncoderObserver::DropReason reason) {
   RTC_DCHECK_RUN_ON(encoder_queue());
-  if (!quality_scaler_)
-    return;
-  switch (reason) {
-    case EncodedImageCallback::DropReason::kDroppedByMediaOptimizations:
-      quality_scaler_->ReportDroppedFrameByMediaOpt();
-      break;
-    case EncodedImageCallback::DropReason::kDroppedByEncoder:
+  if (quality_scaler_) {
+    if (reason == VideoStreamEncoderObserver::DropReason::kEncoder) {
       quality_scaler_->ReportDroppedFrameByEncoder();
-      break;
+    } else if (reason ==
+               VideoStreamEncoderObserver::DropReason::kMediaOptimization) {
+      quality_scaler_->ReportDroppedFrameByMediaOpt();
+    }
   }
 }
 

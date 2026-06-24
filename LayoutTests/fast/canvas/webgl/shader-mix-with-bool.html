@@ -9,6 +9,7 @@
     function runTest()
     {
     	description("Tests that program compiling/linking with a bool mix function works correctly.");
+        window.jsTestIsAsync = true;
         var canvas = document.getElementById('webgl-canvas');
         var gl = canvas.getContext("webgl2");
         var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -25,14 +26,9 @@
         gl.drawArrays(gl.TRIANGLES, 0, 3);
 		wtu.glErrorShouldBe(gl,0,"no error from using mix function");
 
-        if (window.testRunner)
-          testRunner.notifyDone();
+        finishJSTest();
     }
 
-    if (window.testRunner) {
-      testRunner.dumpAsText();
-      testRunner.waitUntilDone();
-    }
 
     window.onpageshow = runTest;
     </script>

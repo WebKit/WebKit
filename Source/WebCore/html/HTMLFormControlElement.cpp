@@ -43,11 +43,11 @@
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderBox.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "ScriptTrackingPrivacyCategory.h"
 #include "SelectionRestorationMode.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTreeResolver.h"
 #include "ValidationMessage.h"
 #include <wtf/Ref.h>
@@ -61,9 +61,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFormControlElement);
 
 using namespace HTMLNames;
 
-HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, { TypeFlag::IsShadowRootOrFormControlElement, TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument } )
-    , ValidatedFormListedElement(form)
     , m_isRequired(false)
     , m_valueMatchesRenderer(false)
     , m_wasChangedSinceLastFormControlChangeEvent(false)

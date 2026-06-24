@@ -15,8 +15,8 @@
 #include <stdint.h>
 
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/encoded_image.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
@@ -32,7 +32,7 @@ class VideoRtpDepacketizerAv1 : public VideoRtpDepacketizer {
   ~VideoRtpDepacketizerAv1() override = default;
 
   scoped_refptr<EncodedImageBuffer> AssembleFrame(
-      ArrayView<const ArrayView<const uint8_t>> rtp_payloads) override;
+      std::span<const std::span<const uint8_t>> rtp_payloads) override;
 
   std::optional<ParsedRtpPayload> Parse(CopyOnWriteBuffer rtp_payload) override;
 };

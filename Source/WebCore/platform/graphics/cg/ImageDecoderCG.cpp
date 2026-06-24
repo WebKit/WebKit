@@ -28,6 +28,7 @@
 
 #if USE(CG)
 
+#include "ColorSpaceCG.h"
 #include "FourCC.h"
 #include "ImageFrame.h"
 #include "Logging.h"
@@ -63,7 +64,9 @@ const CFStringRef WebCoreCGImagePropertyUnclampedDelayTime = CFSTR("UnclampedDel
 const CFStringRef WebCoreCGImagePropertyDelayTime = CFSTR("DelayTime");
 const CFStringRef WebCoreCGImagePropertyLoopCount = CFSTR("LoopCount");
 
+#if HAVE(IMAGE_RESTRICTED_DECODING) && USE(APPLE_INTERNAL_SDK)
 const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSourceEnableRestrictedDecoding");
+#endif
 
 #if HAVE(IMAGEIO_CREATE_UNPREMULTIPLIED_PNG)
 const CFStringRef kCGImageSourceCreateUnpremultipliedPNG = CFSTR("kCGImageSourceCreateUnpremultipliedPNG");

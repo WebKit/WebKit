@@ -63,12 +63,12 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTextFragment.h"
 #include "RenderedPosition.h"
 #include "ShadowRoot.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
@@ -131,7 +131,7 @@ static bool isEditableToAccessibility(const Node& node)
     ASSERT(AXObjectCache::accessibilityEnabled());
     ASSERT(node.document().existingAXObjectCache());
 
-    if (CheckedPtr cache = node.document().existingAXObjectCache())
+    if (CheckedPtr cache = protect(node.document())->existingAXObjectCache())
         return cache->rootAXEditableElement(&node);
 
     return false;
@@ -188,7 +188,7 @@ Element* editableRootForPosition(const Position& position, EditableType editable
 
     switch (editableType) {
     case HasEditableAXRole:
-        if (CheckedPtr cache = node->document().existingAXObjectCache())
+        if (CheckedPtr cache = protect(node->document())->existingAXObjectCache())
             return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
         [[fallthrough]];
     case ContentIsEditable:
@@ -289,7 +289,7 @@ Position firstEditablePositionAfterPositionInRoot(const Position& position, Cont
     }
 
     while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(*highestRoot))
-        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentAfterNode(*candidate.deprecatedNode()) : nextVisuallyDistinctCandidate(candidate);
+        candidate = isAtomicNode(protect(candidate.deprecatedNode())) ? positionInParentAfterNode(protect(*candidate.deprecatedNode())) : nextVisuallyDistinctCandidate(candidate);
 
     if (candidate.deprecatedNode() && !candidate.deprecatedNode()->isInclusiveDescendantOf(*highestRoot))
         return { };
@@ -317,7 +317,7 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
     }
 
     while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.deprecatedNode()->isDescendantOf(*highestRoot))
-        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentBeforeNode(*candidate.deprecatedNode()) : previousVisuallyDistinctCandidate(candidate);
+        candidate = isAtomicNode(protect(candidate.deprecatedNode())) ? positionInParentBeforeNode(protect(*candidate.deprecatedNode())) : previousVisuallyDistinctCandidate(candidate);
 
     if (candidate.deprecatedNode() && !candidate.deprecatedNode()->isInclusiveDescendantOf(*highestRoot))
         return { };
@@ -1195,7 +1195,7 @@ LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caret
         return LayoutRect();
     ASSERT(caretPosition.deepEquivalent().deprecatedNode()->renderer());
     auto [localRect, renderer] = caretPosition.localCaretRect();
-    return localCaretRectInRendererForRect(localRect, caretPosition.deepEquivalent().deprecatedNode(), renderer.get(), caretPainter);
+    return localCaretRectInRendererForRect(localRect, protect(caretPosition.deepEquivalent().deprecatedNode()), renderer.get(), caretPainter);
 }
 
 LayoutRect localCaretRectInRendererForRect(LayoutRect& localRect, Node* node, RenderObject* renderer, RenderBlock*& caretPainter)

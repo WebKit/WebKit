@@ -13,9 +13,9 @@
 #include <bitset>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -228,8 +228,8 @@ TEST(ActiveDecodeTargetsHelperTest, ReturnsBitmaskWhenChanged) {
 }
 
 TEST(ActiveDecodeTargetsHelperTest, ReturnsNulloptWhenChainsAreNotUsed) {
-  const ArrayView<const int> kDecodeTargetProtectedByChain;
-  const ArrayView<const int> kNoChainDiffs;
+  const std::span<const int> kDecodeTargetProtectedByChain;
+  const std::span<const int> kNoChainDiffs;
 
   ActiveDecodeTargetsHelper helper;
   helper.OnFrame(kDecodeTargetProtectedByChain, /*active_decode_targets=*/kAll,

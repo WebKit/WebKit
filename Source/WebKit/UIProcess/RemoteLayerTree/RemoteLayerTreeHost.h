@@ -124,9 +124,6 @@ private:
 #if HAVE(AVKIT)
     HashMap<WebCore::PlatformLayerIdentifier, PlaybackSessionContextIdentifier> m_videoLayers;
 #endif
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    HashSet<WebCore::PlatformLayerIdentifier> m_overlayRegionIDs;
-#endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
     HashSet<WebCore::PlatformLayerIdentifier> m_modelLayers;
 #endif

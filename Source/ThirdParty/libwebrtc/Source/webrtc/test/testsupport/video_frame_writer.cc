@@ -15,10 +15,10 @@
 #include <cstdlib>
 #include <limits>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
@@ -45,7 +45,7 @@ Buffer ExtractI420BufferWithSize(const VideoFrame& frame,
     size_t length =
         CalcBufferSize(VideoType::kI420, scaled->width(), scaled->height());
     Buffer buffer = Buffer::CreateWithCapacity(length);
-    buffer.AppendData(length, [&](ArrayView<uint8_t> buffer) {
+    buffer.AppendData(length, [&](std::span<uint8_t> buffer) {
       RTC_CHECK_NE(ExtractBuffer(scaled, length, buffer.data()), -1);
       return length;
     });
@@ -56,7 +56,7 @@ Buffer ExtractI420BufferWithSize(const VideoFrame& frame,
   size_t length =
       CalcBufferSize(VideoType::kI420, frame.width(), frame.height());
   Buffer buffer = Buffer::CreateWithCapacity(length);
-  buffer.AppendData(length, [&](ArrayView<uint8_t> buffer) {
+  buffer.AppendData(length, [&](std::span<uint8_t> buffer) {
     RTC_CHECK_NE(ExtractBuffer(frame, length, buffer.data()), -1);
     return length;
   });

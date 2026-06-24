@@ -12,11 +12,11 @@
 
 #include <limits>
 #include <memory>
+#include <span>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_view.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "rtc_base/checks.h"
@@ -43,7 +43,7 @@ class MockVad : public VoiceActivityDetectorWrapper::MonoVad {
  public:
   MOCK_METHOD(int, SampleRateHz, (), (const, override));
   MOCK_METHOD(void, Reset, (), (override));
-  MOCK_METHOD(float, Analyze, (ArrayView<const float> frame), (override));
+  MOCK_METHOD(float, Analyze, (std::span<const float> frame), (override));
 };
 
 // Checks that the ctor and `Initialize()` read the sample rate of the wrapped
@@ -159,7 +159,7 @@ TEST_P(VadResamplingParametrization, CheckResampledFrameSize) {
       .Times(AnyNumber())
       .WillRepeatedly(Return(vad_sample_rate_hz()));
   EXPECT_CALL(*vad, Reset).Times(1);
-  EXPECT_CALL(*vad, Analyze(Truly([this](ArrayView<const float> frame) {
+  EXPECT_CALL(*vad, Analyze(Truly([this](std::span<const float> frame) {
     return SafeEq(frame.size(),
                   CheckedDivExact(vad_sample_rate_hz(), kNumFramesPerSecond));
   }))).Times(1);

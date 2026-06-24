@@ -3314,14 +3314,14 @@ fn testPow()
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
         _ = pow(vec2(0),   vec2(1)  );
-        _ = pow(vec2(0),   vec2(0.0));
+        _ = pow(vec2(0),   vec2(1.0));
         _ = pow(vec2(0),   vec2(1f) );
         _ = pow(vec2(0),   vec2(1h) );
         _ = pow(vec2(0),   vec2(f) );
         _ = pow(vec2(0),   vec2(h) );
-        _ = pow(vec2(0.0), vec2(0.0));
-        _ = pow(vec2(0.0), vec2(0f) );
-        _ = pow(vec2(0.0), vec2(0h) );
+        _ = pow(vec2(0.0), vec2(1.0));
+        _ = pow(vec2(0.0), vec2(1f) );
+        _ = pow(vec2(0.0), vec2(1h) );
         _ = pow(vec2(0.0), vec2(f) );
         _ = pow(vec2(0.0), vec2(h) );
         _ = pow(vec2(1f),  vec2(1f) );
@@ -3331,14 +3331,14 @@ fn testPow()
     }
     {
         _ = pow(vec3(0),   vec3(1)  );
-        _ = pow(vec3(0),   vec3(0.0));
+        _ = pow(vec3(0),   vec3(1.0));
         _ = pow(vec3(0),   vec3(1f) );
         _ = pow(vec3(0),   vec3(1h) );
         _ = pow(vec3(0),   vec3(f) );
         _ = pow(vec3(0),   vec3(h) );
-        _ = pow(vec3(0.0), vec3(0.0));
-        _ = pow(vec3(0.0), vec3(0f) );
-        _ = pow(vec3(0.0), vec3(0h) );
+        _ = pow(vec3(0.0), vec3(1.0));
+        _ = pow(vec3(0.0), vec3(1f) );
+        _ = pow(vec3(0.0), vec3(1h) );
         _ = pow(vec3(0.0), vec3(f) );
         _ = pow(vec3(0.0), vec3(h) );
         _ = pow(vec3(1f),  vec3(1f) );
@@ -3348,14 +3348,14 @@ fn testPow()
     }
     {
         _ = pow(vec4(0),   vec4(1)  );
-        _ = pow(vec4(0),   vec4(0.0));
+        _ = pow(vec4(0),   vec4(1.0));
         _ = pow(vec4(0),   vec4(1f) );
         _ = pow(vec4(0),   vec4(1h) );
         _ = pow(vec4(0),   vec4(f) );
         _ = pow(vec4(0),   vec4(h) );
-        _ = pow(vec4(0.0), vec4(0.0));
-        _ = pow(vec4(0.0), vec4(0f) );
-        _ = pow(vec4(0.0), vec4(0h) );
+        _ = pow(vec4(0.0), vec4(1.0));
+        _ = pow(vec4(0.0), vec4(1f) );
+        _ = pow(vec4(0.0), vec4(1h) );
         _ = pow(vec4(0.0), vec4(f) );
         _ = pow(vec4(0.0), vec4(h) );
         _ = pow(vec4(1f),  vec4(1f) );
@@ -4577,6 +4577,9 @@ fn testTextureSampleGrad()
 @compute @workgroup_size(1)
 fn testTextureSampleLevel()
 {
+    // [].(Texture[F32, Texture1d], Sampler, F32, F32) => Vector[F32, 4],
+    _ = textureSampleLevel(t1d, s, 0, 0);
+
     // [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32) => Vector[F32, 4],
     _ = textureSampleLevel(t2d, s, vec2f(0), 0);
 

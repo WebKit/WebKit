@@ -120,7 +120,7 @@ bool ScrollAnimationSmooth::animateScroll(MonotonicTime currentTime)
     currentTime = std::min(currentTime, endTime);
 
     double fractionComplete = (currentTime - m_startTime) / m_duration;
-    float progress = m_timingFunction->transformProgress(fractionComplete, m_duration.value());
+    float progress = protect(m_timingFunction)->transformProgress(fractionComplete, m_duration.value());
 
     m_currentOffset = {
         std::lerp(m_startOffset.x(), m_destinationOffset.x(), progress),

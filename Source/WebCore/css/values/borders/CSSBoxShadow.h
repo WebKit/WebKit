@@ -58,11 +58,6 @@ template<size_t I> const auto& get(const BoxShadow& value)
         return value.inset;
 }
 
-// MARK: - DeprecatedCSSOMValue Creation
-
-// Specialized to return a `DeprecatedCSSOMLazySerializingCustomValue`.
-template<> struct DeprecatedCSSOMValueCreation<BoxShadow> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const BoxShadow&); };
-
 } // namespace CSS
 } // namespace WebCore
 

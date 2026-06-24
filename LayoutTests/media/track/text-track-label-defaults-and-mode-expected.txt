@@ -1,0 +1,9 @@
+
+PASS TextTrack.label: empty string when track was created without a label
+PASS TextTrack.label: returns the label set via addTextTrack
+PASS TextTrack.label: empty for <track> element with no label attribute
+PASS TextTrack.label: reflects the <track> element's label content attribute
+PASS TextTrack.label: empty label is not replaced by an auto-generated UI label
+PASS default mode: addTextTrack creates the track with mode='hidden'
+PASS default mode: <track>-element-backed track has mode='disabled'
+

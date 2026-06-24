@@ -30,6 +30,7 @@
 
 #include "ImageTransferSessionVT.h"
 #include "LibWebRTCMacros.h"
+#include "LibWebRTCColorSpaceUtilities.h"
 #include "LibWebRTCVideoFrameUtilities.h"
 #include "VideoFrameLibWebRTC.h"
 #include <wtf/NeverDestroyed.h>
@@ -81,7 +82,7 @@ public:
 private:
     LibWebRTCVPXInternalVideoEncoder(LibWebRTCVPXVideoEncoder::Type, VideoEncoder::DescriptionCallback&&, VideoEncoder::OutputCallback&&);
     webrtc::EncodedImageCallback::Result OnEncodedImage(const webrtc::EncodedImage&, const webrtc::CodecSpecificInfo*) final;
-    void OnDroppedFrame(DropReason) final;
+    void OnFrameDropped(uint32_t rtpTimestamp, int spatialID, bool isEndOfTemporalUnit) final;
 
     VideoEncoder::DescriptionCallback m_descriptionCallback;
     VideoEncoder::OutputCallback m_outputCallback;
@@ -350,8 +351,11 @@ webrtc::EncodedImageCallback::Result LibWebRTCVPXInternalVideoEncoder::OnEncoded
     return EncodedImageCallback::Result { EncodedImageCallback::Result::OK };
 }
 
-void LibWebRTCVPXInternalVideoEncoder::OnDroppedFrame(DropReason)
+void LibWebRTCVPXInternalVideoEncoder::OnFrameDropped(uint32_t rtpTimestamp, int spatialID, bool isEndOfTemporalUnit)
 {
+    UNUSED_PARAM(rtpTimestamp);
+    UNUSED_PARAM(spatialID);
+    UNUSED_PARAM(isEndOfTemporalUnit);
 }
 
 }

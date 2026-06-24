@@ -13,9 +13,9 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -37,7 +37,7 @@ void Increment(int16_t& t) {
 
 // Fills a given buffer with monotonically increasing values.
 template <typename T>
-void FillBuffer(ArrayView<T> buffer) {
+void FillBuffer(std::span<T> buffer) {
   T value = {};
   for (T& t : buffer) {
     Increment<T>(value);
@@ -50,7 +50,7 @@ void FillBuffer(ArrayView<T> buffer) {
 TEST(AudioViewTest, MonoView) {
   const size_t kArraySize = 100u;
   int16_t arr[kArraySize];
-  FillBuffer(ArrayView<int16_t>(arr));
+  FillBuffer(std::span<int16_t>(arr));
 
   MonoView<int16_t> mono(arr);
   MonoView<const int16_t> const_mono(arr);
@@ -69,15 +69,16 @@ TEST(AudioViewTest, MonoView) {
 TEST(AudioViewTest, InterleavedView) {
   const size_t kArraySize = 100u;
   int16_t arr[kArraySize];
-  FillBuffer(ArrayView<int16_t>(arr));
+  FillBuffer(std::span<int16_t>(arr));
 
   InterleavedView<int16_t> interleaved(arr, kArraySize, 1);
   EXPECT_EQ(NumChannels(interleaved), 1u);
   EXPECT_TRUE(IsMono(interleaved));
   EXPECT_EQ(SamplesPerChannel(interleaved), kArraySize);
-  EXPECT_EQ(interleaved.AsMono().size(), kArraySize);
-  EXPECT_EQ(&interleaved.AsMono()[0], &arr[0]);
-  EXPECT_EQ(interleaved.AsMono(), interleaved.data());
+  EXPECT_EQ(interleaved.AsMono().size(), std::size(arr));
+  EXPECT_EQ(interleaved.AsMono().data(), std::data(arr));
+  EXPECT_EQ(interleaved.AsMono().size(), interleaved.data().size());
+  EXPECT_EQ(interleaved.AsMono().data(), interleaved.data().data());
 
   // Basic iterator test.
   int i = 0;
@@ -121,7 +122,9 @@ TEST(AudioViewTest, DeinterleavedView) {
   auto mono_ch = di.AsMono();
   EXPECT_EQ(NumChannels(mono_ch), 1u);
   EXPECT_EQ(SamplesPerChannel(mono_ch), 10u);
-  EXPECT_EQ(di[0], mono_ch);  // first channel should be same as mono.
+  // first channel should be same as mono.
+  EXPECT_EQ(di[0].data(), mono_ch.data());
+  EXPECT_EQ(di[0].size(), mono_ch.size());
 
   di = DeinterleavedView<int16_t>(arr, 50, 2);
   // Test assignment.
@@ -141,7 +144,7 @@ TEST(AudioViewTest, CopySamples) {
   const size_t kArraySize = 100u;
   int16_t source_arr[kArraySize] = {};
   int16_t dest_arr[kArraySize] = {};
-  FillBuffer(ArrayView<int16_t>(source_arr));
+  FillBuffer(std::span<int16_t>(source_arr));
 
   InterleavedView<const int16_t> source(source_arr, 2);
   InterleavedView<int16_t> destination(dest_arr, 2);
@@ -159,36 +162,6 @@ TEST(AudioViewTest, CopySamples) {
   CopySamples(destination, source);
   for (size_t i = 0; i < kArraySize; ++i) {
     ASSERT_EQ(dest_arr[i], source_arr[i]) << "i == " << i;
-  }
-}
-
-TEST(AudioViewTest, ClearSamples) {
-  std::array<int16_t, 100u> samples = {};
-  FillBuffer(ArrayView<int16_t>(samples));
-  ASSERT_NE(samples[0], 0);
-  ClearSamples(samples);
-  for (const auto s : samples) {
-    ASSERT_EQ(s, 0);
-  }
-
-  std::array<float, 100u> samples_f = {};
-  FillBuffer(ArrayView<float>(samples_f));
-  ASSERT_NE(samples_f[0], 0.0);
-  ClearSamples(samples_f);
-  for (const auto s : samples_f) {
-    ASSERT_EQ(s, 0.0);
-  }
-
-  // Clear only half of the buffer
-  FillBuffer(ArrayView<int16_t>(samples));
-  const auto half_way = samples.size() / 2;
-  ClearSamples(samples, half_way);
-  for (size_t i = 0u; i < samples.size(); ++i) {
-    if (i < half_way) {
-      ASSERT_EQ(samples[i], 0);
-    } else {
-      ASSERT_NE(samples[i], 0);
-    }
   }
 }
 

@@ -30,12 +30,14 @@
 #if !PLATFORM(COCOA) || !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
 
 #include "FrameInfoData.h"
+#include <wtf/URL.h>
 
 namespace WebKit {
 
 struct FrameTreeNodeData {
     FrameInfoData info;
     Vector<FrameTreeNodeData> children;
+    WTF::URL topDocumentURLForTesting;
 };
 
 }

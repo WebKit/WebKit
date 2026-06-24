@@ -30,4 +30,18 @@ inline Structure* ErrorInstance::createStructure(VM& vm, JSGlobalObject* globalO
     return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
 }
 
+inline ErrorInstance* ErrorInstance::create(VM& vm, Structure* structure, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, ErrorType errorType, bool useCurrentFrame, JSCell* subclassCaller)
+{
+    ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
+    instance->finishCreation(vm, message, cause, appender, type, useCurrentFrame, subclassCaller);
+    return instance;
+}
+
+inline ErrorInstance* ErrorInstance::create(VM& vm, Structure* structure, const String& message, JSValue cause, ErrorType errorType, JSCell* owner, CallLinkInfo* callLinkInfo)
+{
+    ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
+    instance->finishCreation(vm, message, cause, owner, callLinkInfo);
+    return instance;
+}
+
 } // namespace JSC

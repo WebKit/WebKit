@@ -13,8 +13,8 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "logging/rtc_event_log/events/rtc_event_field_extraction.h"
 
 namespace webrtc {
@@ -34,7 +34,7 @@ class FixedLengthEncodingParametersV3 final {
 
   static FixedLengthEncodingParametersV3 CalculateParameters(
       uint64_t base,
-      ArrayView<const uint64_t> values,
+      std::span<const uint64_t> values,
       uint64_t value_bit_width,
       bool values_optional);
   static std::optional<FixedLengthEncodingParametersV3> ParseDeltaHeader(

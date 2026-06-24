@@ -24,6 +24,7 @@
 #include "api/video/video_frame_type.h"
 #include "api/video/video_rotation.h"
 #include "api/video_codecs/scalability_mode.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -85,8 +86,8 @@ EncodedImage CreateEncodedImage(VideoFrameType frame_type,
 }
 
 TEST(FrameSelectorTest, AlwaysSelectsKeyFrames) {
-  FrameSelector selector(ScalabilityMode::kL1T1, kLowOverheadSpan,
-                         kHighOverheadSpan);
+  FrameSelector selector(CreateTestEnvironment(), ScalabilityMode::kL1T1,
+                         kLowOverheadSpan, kHighOverheadSpan);
   // Even before any threshold, keyframes should be selected.
   EXPECT_TRUE(selector.ShouldInstrumentFrame(
       CreateLowOverheadFrame(Timestamp::Millis(100)),
@@ -95,8 +96,8 @@ TEST(FrameSelectorTest, AlwaysSelectsKeyFrames) {
 }
 
 TEST(FrameSelectorTest, SelectsBasedOnLowOverheadSpan) {
-  FrameSelector selector(ScalabilityMode::kL1T1, kLowOverheadSpan,
-                         kHighOverheadSpan);
+  FrameSelector selector(CreateTestEnvironment(), ScalabilityMode::kL1T1,
+                         kLowOverheadSpan, kHighOverheadSpan);
   // First frame selected (to init).
   EXPECT_TRUE(selector.ShouldInstrumentFrame(
       CreateLowOverheadFrame(Timestamp::Millis(1000)),
@@ -117,8 +118,8 @@ TEST(FrameSelectorTest, SelectsBasedOnLowOverheadSpan) {
 }
 
 TEST(FrameSelectorTest, SelectsBasedOnHighOverheadSpan) {
-  FrameSelector selector(ScalabilityMode::kL1T1, kLowOverheadSpan,
-                         kHighOverheadSpan);
+  FrameSelector selector(CreateTestEnvironment(), ScalabilityMode::kL1T1,
+                         kLowOverheadSpan, kHighOverheadSpan);
   // First frame selected (to init).
   EXPECT_TRUE(selector.ShouldInstrumentFrame(
       CreateHighOverheadFrame(Timestamp::Millis(1000)),
@@ -139,8 +140,8 @@ TEST(FrameSelectorTest, SelectsBasedOnHighOverheadSpan) {
 }
 
 TEST(FrameSelectorTest, IndependentKeyframesWithSimulcast) {
-  FrameSelector selector(ScalabilityMode::kS2T2, kLowOverheadSpan,
-                         kHighOverheadSpan);
+  FrameSelector selector(CreateTestEnvironment(), ScalabilityMode::kS2T2,
+                         kLowOverheadSpan, kHighOverheadSpan);
   // Initial keyframe.
   EXPECT_TRUE(selector.ShouldInstrumentFrame(
       CreateLowOverheadFrame(Timestamp::Millis(1000)),
@@ -164,8 +165,8 @@ TEST(FrameSelectorTest, IndependentKeyframesWithSimulcast) {
 }
 
 TEST(FrameSelectorTest, TreatsDeltaAsKeyframeWithInterLayerPrediction) {
-  FrameSelector selector(ScalabilityMode::kL2T2, kLowOverheadSpan,
-                         kHighOverheadSpan);
+  FrameSelector selector(CreateTestEnvironment(), ScalabilityMode::kL2T2,
+                         kLowOverheadSpan, kHighOverheadSpan);
   // Initial keyframe.
   EXPECT_TRUE(selector.ShouldInstrumentFrame(
       CreateLowOverheadFrame(Timestamp::Millis(1000)),
@@ -190,8 +191,8 @@ TEST(FrameSelectorTest, TreatsDeltaAsKeyframeWithInterLayerPrediction) {
 }
 
 TEST(FrameSelector, SelectsAboutHalfInMiddleOfSpan) {
-  FrameSelector selector(ScalabilityMode::kL1T1, kLowOverheadSpan,
-                         kHighOverheadSpan);
+  FrameSelector selector(CreateTestEnvironment(), ScalabilityMode::kL1T1,
+                         kLowOverheadSpan, kHighOverheadSpan);
   Timestamp timestamp = Timestamp::Millis(1000);  // Arbitrary start timestamp;
   const TimeDelta p50_delta =
       (kLowOverheadSpan.lower_bound + kLowOverheadSpan.upper_bound) / 2;
@@ -217,8 +218,8 @@ TEST(FrameSelector, SelectsAboutHalfInMiddleOfSpan) {
 }
 
 TEST(FrameSelectorTest, FallbackToRtpTimestamp) {
-  FrameSelector selector(ScalabilityMode::kL1T1, kLowOverheadSpan,
-                         kHighOverheadSpan);
+  FrameSelector selector(CreateTestEnvironment(), ScalabilityMode::kL1T1,
+                         kLowOverheadSpan, kHighOverheadSpan);
   // Frame with 0 capture time but valid RTP.
   // 90kHz clock. 1 second = 90000.
   // Start at 0.

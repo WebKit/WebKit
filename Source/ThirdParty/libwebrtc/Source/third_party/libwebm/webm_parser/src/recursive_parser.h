@@ -28,7 +28,7 @@ template <typename T>
 class RecursiveParser : public ElementParser {
  public:
   explicit RecursiveParser(std::size_t max_recursion_depth = 25)
-      : max_recursion_depth_(max_recursion_depth){};
+      : max_recursion_depth_(max_recursion_depth) {};
 
   RecursiveParser(RecursiveParser&&) = default;
   RecursiveParser& operator=(RecursiveParser&&) = default;

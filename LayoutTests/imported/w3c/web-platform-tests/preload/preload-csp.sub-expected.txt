@@ -1,3 +1,3 @@
 
-PASS Preload requests are blocked by CSP.
+FAIL Preload requests are blocked by CSP. assert_false: Preload with href http://web-platform.test:8800/preload/resources/stash-put.py?key=a14d7f5d-88da-4120-b904-f73e70eb153a, type  and key a14d7f5d-88da-4120-b904-f73e70eb153a should not have arrived at the server. expected false got true
 

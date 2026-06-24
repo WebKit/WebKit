@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 #import "NetworkRTCSharedMonitor.h"
 
+#import "Logging.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/darwin/DispatchExtras.h>

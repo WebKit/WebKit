@@ -43,7 +43,7 @@ class WEBCORE_EXPORT PlatformColorResolutionDelegate {
 public:
     virtual ~PlatformColorResolutionDelegate();
 
-    // Colors to use that usually get resolved dynamically using Document & RenderStyle.
+    // Colors to use that usually get resolved dynamically using Document & StyleComputedStyle.
     virtual WebCore::Color currentColor() const;              // For CSSValueCurrentcolor
     virtual WebCore::Color internalDocumentTextColor() const; // For CSSValueInternalDocumentTextColor
     virtual WebCore::Color webkitLink() const;                // For CSSValueWebkitLink [Style::ForVisitedLink::No]

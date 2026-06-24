@@ -1,2 +1,2 @@
-nosniff-html.html has MIME type text/plain
 
+nosniff-html.html has MIME type text/plain

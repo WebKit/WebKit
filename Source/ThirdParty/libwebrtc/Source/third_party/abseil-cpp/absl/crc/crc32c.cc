@@ -70,11 +70,13 @@ crc32c_t RemoveCrc32cPrefix(crc32c_t crc_a, crc32c_t crc_ab, size_t length_b) {
   return ConcatCrc32c(crc_a, crc_ab, length_b);
 }
 
+#ifndef WEBRTC_WEBKIT_BUILD
 crc32c_t MemcpyCrc32c(void* dest, const void* src, size_t count,
                       crc32c_t initial_crc) {
   return static_cast<crc32c_t>(
       crc_internal::Crc32CAndCopy(dest, src, count, initial_crc, false));
 }
+#endif
 
 // Remove a Suffix of given size from a buffer
 //

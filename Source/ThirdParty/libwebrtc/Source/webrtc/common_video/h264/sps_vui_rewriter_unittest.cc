@@ -13,9 +13,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <tuple>
 
-#include "api/array_view.h"
 #include "api/video/color_space.h"
 #include "common_video/h264/h264_common.h"
 #include "common_video/h264/sps_parser.h"
@@ -250,7 +250,7 @@ void GenerateFakeSps(const VuiHeader& vui, Buffer* out_buffer) {
     byte_count++;
   }
 
-  H264::WriteRbsp(MakeArrayView(rbsp, byte_count), out_buffer);
+  H264::WriteRbsp(std::span(rbsp, byte_count), out_buffer);
 }
 
 void TestSps(const VuiHeader& vui,

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-NotSupportedError.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-behavior-accessibility.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-form.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-labels.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-reportValidity-bubble-expected-mismatch.html
@@ -25,6 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-reportValidity-delegatesFocus.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-setFormValue-nullish-value.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-setFormValue.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-submit-behavior-dialog.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-submit-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-target-element-is-held-strongly.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-validation.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/form-associated/WEB_FEATURES.yml

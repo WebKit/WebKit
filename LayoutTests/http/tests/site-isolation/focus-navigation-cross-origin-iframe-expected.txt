@@ -1,0 +1,12 @@
+Test that keyboard accessory bar next/previous navigation works for form elements inside a cross-origin iframe when site isolation is enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS First input focused in cross-origin iframe
+PASS focusedElementId is "second"
+PASS focusedElementIdAfterPrevious is "first"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

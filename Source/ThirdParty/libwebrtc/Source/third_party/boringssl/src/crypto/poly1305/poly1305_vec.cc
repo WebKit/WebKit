@@ -29,29 +29,30 @@
 
 #include <emmintrin.h>
 
+
+using namespace bssl;
+
+namespace {
+
 typedef __m128i xmmi;
 
-alignas(16) static const uint32_t poly1305_x64_sse2_message_mask[4] = {
+alignas(16) const uint32_t poly1305_x64_sse2_message_mask[4] = {
     (1 << 26) - 1, 0, (1 << 26) - 1, 0};
-alignas(16) static const uint32_t poly1305_x64_sse2_5[4] = {5, 0, 5, 0};
-alignas(16) static const uint32_t poly1305_x64_sse2_1shl128[4] = {(1 << 24), 0,
-                                                                  (1 << 24), 0};
+alignas(16) const uint32_t poly1305_x64_sse2_5[4] = {5, 0, 5, 0};
+alignas(16) const uint32_t poly1305_x64_sse2_1shl128[4] = {(1 << 24), 0,
+                                                           (1 << 24), 0};
 
-static inline uint128_t add128(uint128_t a, uint128_t b) { return a + b; }
+uint128_t add128(uint128_t a, uint128_t b) { return a + b; }
 
-static inline uint128_t add128_64(uint128_t a, uint64_t b) { return a + b; }
+uint128_t add128_64(uint128_t a, uint64_t b) { return a + b; }
 
-static inline uint128_t mul64x64_128(uint64_t a, uint64_t b) {
-  return (uint128_t)a * b;
-}
+uint128_t mul64x64_128(uint64_t a, uint64_t b) { return (uint128_t)a * b; }
 
-static inline uint64_t lo128(uint128_t a) { return (uint64_t)a; }
+uint64_t lo128(uint128_t a) { return (uint64_t)a; }
 
-static inline uint64_t shr128(uint128_t v, const int shift) {
-  return (uint64_t)(v >> shift);
-}
+uint64_t shr128(uint128_t v, const int shift) { return (uint64_t)(v >> shift); }
 
-static inline uint64_t shr128_pair(uint64_t hi, uint64_t lo, const int shift) {
+uint64_t shr128_pair(uint64_t hi, uint64_t lo, const int shift) {
   return (uint64_t)((((uint128_t)hi << 64) | lo) >> shift);
 }
 
@@ -83,14 +84,13 @@ static_assert(sizeof(struct poly1305_state_internal_t) + 63 <=
               "poly1305_state isn't large enough to hold aligned "
               "poly1305_state_internal_t");
 
-static inline poly1305_state_internal *poly1305_aligned_state(
-    poly1305_state *state) {
-  return (poly1305_state_internal *)(((uint64_t)state + 63) & ~63);
+poly1305_state_internal *poly1305_aligned_state(poly1305_state *state) {
+  return reinterpret_cast<poly1305_state_internal *>(align_pointer(state, 64));
 }
 
-static inline size_t poly1305_min(size_t a, size_t b) {
-  return (a < b) ? a : b;
-}
+size_t poly1305_min(size_t a, size_t b) { return (a < b) ? a : b; }
+
+}  // namespace
 
 void CRYPTO_poly1305_init(poly1305_state *state, const uint8_t key[32]) {
   poly1305_state_internal *st = poly1305_aligned_state(state);
@@ -134,8 +134,9 @@ void CRYPTO_poly1305_init(poly1305_state *state, const uint8_t key[32]) {
   st->leftover = 0;
 }
 
-static void poly1305_first_block(poly1305_state_internal *st,
-                                 const uint8_t *m) {
+namespace {
+
+void poly1305_first_block(poly1305_state_internal *st, const uint8_t *m) {
   const xmmi MMASK =
       _mm_load_si128((const xmmi *)poly1305_x64_sse2_message_mask);
   const xmmi FIVE = _mm_load_si128((const xmmi *)poly1305_x64_sse2_5);
@@ -228,8 +229,8 @@ static void poly1305_first_block(poly1305_state_internal *st,
   st->H[4] = _mm_or_si128(_mm_srli_epi64(T6, 40), HIBIT);
 }
 
-static void poly1305_blocks(poly1305_state_internal *st, const uint8_t *m,
-                            size_t bytes) {
+void poly1305_blocks(poly1305_state_internal *st, const uint8_t *m,
+                     size_t bytes) {
   const xmmi MMASK =
       _mm_load_si128((const xmmi *)poly1305_x64_sse2_message_mask);
   const xmmi FIVE = _mm_load_si128((const xmmi *)poly1305_x64_sse2_5);
@@ -419,8 +420,8 @@ static void poly1305_blocks(poly1305_state_internal *st, const uint8_t *m,
   st->H[4] = H4;
 }
 
-static size_t poly1305_combine(poly1305_state_internal *st, const uint8_t *m,
-                               size_t bytes) {
+size_t poly1305_combine(poly1305_state_internal *st, const uint8_t *m,
+                        size_t bytes) {
   const xmmi MMASK =
       _mm_load_si128((const xmmi *)poly1305_x64_sse2_message_mask);
   const xmmi HIBIT = _mm_load_si128((const xmmi *)poly1305_x64_sse2_1shl128);
@@ -662,6 +663,8 @@ static size_t poly1305_combine(poly1305_state_internal *st, const uint8_t *m,
 
   return consumed;
 }
+
+}  // namespace
 
 void CRYPTO_poly1305_update(poly1305_state *state, const uint8_t *m,
                             size_t bytes) {

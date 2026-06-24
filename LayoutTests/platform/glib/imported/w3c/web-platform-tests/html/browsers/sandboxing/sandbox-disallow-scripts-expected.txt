@@ -1,5 +1,0 @@
-Script execution in sandbox iframe
-
-
-PASS Running script from sandbox iframe is disallowed
-

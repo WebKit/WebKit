@@ -1384,7 +1384,7 @@
     {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_kCMTimebaseNotification_TimeJumped"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_kCMTimingInfoInvalid"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "introduced": "4", "name": "CMAttachmentBearerRef"},
     {"access": "public", "introduced": "4", "name": "CMAttachmentMode"},

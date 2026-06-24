@@ -174,7 +174,7 @@ void WebTransport::initializeOverHTTP(SocketProvider& provider, ScriptExecutionC
         m_protocol = WTF::move(connectionInfo.protocol);
         m_reliability = connectionInfo.reliabilityMode;
         m_state = State::Connected;
-        m_ready.second->resolve();
+        protect(m_ready.second)->resolve();
     });
 }
 
@@ -512,9 +512,9 @@ void WebTransport::cleanup(Ref<DOMException>&& exception, std::optional<WebTrans
         m_state = State::Closed;
         // FIXME: The six Safer CPP warnings here and elsewhere in this file are due to the lack of
         // support for const std::pair holding const smart pointers: rdar://155857105.
-        m_closed.second->resolve<IDLDictionary<WebTransportCloseInfo>>(*closeInfo);
-        m_incomingBidirectionalStreams->close();
-        m_incomingUnidirectionalStreams->close();
+        protect(m_closed.second)->resolve<IDLDictionary<WebTransportCloseInfo>>(*closeInfo);
+        protect(m_incomingBidirectionalStreams)->close();
+        protect(m_incomingUnidirectionalStreams)->close();
         m_datagrams->readable().close();
         for (Ref datagramsWritable : std::exchange(m_datagramsWritables, { }))
             datagramsWritable->closeIfPossible();
@@ -657,7 +657,7 @@ void WebTransport::didFail(std::optional<uint32_t>&& code, String&& message)
 void WebTransport::didDrain()
 {
     m_state = State::Draining;
-    m_draining.second->resolve();
+    protect(m_draining.second)->resolve();
 }
 
 void WebTransport::sendStreamClosed(WebTransportStreamIdentifier identifier)

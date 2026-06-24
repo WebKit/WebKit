@@ -17,8 +17,8 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
@@ -72,8 +72,8 @@ class AudioIngress : public AudioMixer::Source {
   void SetReceiveCodecs(const std::map<int, SdpAudioFormat>& codecs);
 
   // APIs to handle received RTP/RTCP packets from caller.
-  void ReceivedRTPPacket(ArrayView<const uint8_t> rtp_packet);
-  void ReceivedRTCPPacket(ArrayView<const uint8_t> rtcp_packet);
+  void ReceivedRTPPacket(std::span<const uint8_t> rtp_packet);
+  void ReceivedRTCPPacket(std::span<const uint8_t> rtcp_packet);
 
   // See comments on LevelFullRange, TotalEnergy, TotalDuration from
   // audio/audio_level.h.
@@ -146,6 +146,8 @@ class AudioIngress : public AudioMixer::Source {
   // Resampler for the output audio. Only accessed in the playout thread.
   acm2::ResamplerHelper resampler_helper_;
 };
+
+NetEq::Config CreateNetEqConfigForTesting(const Environment& env);
 
 }  // namespace webrtc
 

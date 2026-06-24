@@ -299,7 +299,7 @@ StringBuilder StyleProperties::asTextInternal(const CSS::SerializationContext& c
             continue;
 
         if (value.isNull())
-            value = WebCore::serializeLonghandValue(context, propertyID, *property.value());
+            value = WebCore::serializeLonghandValue(context, propertyID, protect(*property.value()));
 
         if (numDecls++)
             result.append(' ');
@@ -325,7 +325,7 @@ bool StyleProperties::hasCSSOMWrapper() const
 bool StyleProperties::traverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const
 {
     for (auto property : *this) {
-        if (property.value()->traverseSubresources(handler))
+        if (protect(property.value())->traverseSubresources(handler))
             return true;
     }
     return false;
@@ -343,7 +343,7 @@ bool StyleProperties::mayDependOnBaseURL() const
     };
 
     for (auto property : *this) {
-        if (func(*property.value()) == IterationStatus::Done)
+        if (func(protect(*property.value())) == IterationStatus::Done)
             return result;
     }
     return false;
@@ -354,7 +354,7 @@ bool StyleProperties::propertyMatches(CSSPropertyID propertyID, const CSSValue* 
     int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
         return false;
-    return propertyAt(foundPropertyIndex).value()->equals(*propertyValue);
+    return protect(propertyAt(foundPropertyIndex).value())->equals(*propertyValue);
 }
 
 Ref<MutableStyleProperties> StyleProperties::mutableCopy() const
@@ -416,7 +416,7 @@ const AtomString& StyleProperties::PropertyReference::cssName() const
 
 String StyleProperties::PropertyReference::cssText(const CSS::SerializationContext& context) const
 {
-    return makeString(cssName(), ": "_s, WebCore::serializeLonghandValue(context, id(), *m_value), isImportant() ? " !important;"_s : ";"_s);
+    return makeString(cssName(), ": "_s, WebCore::serializeLonghandValue(context, id(), protect(*m_value)), isImportant() ? " !important;"_s : ";"_s);
 }
 
 } // namespace WebCore

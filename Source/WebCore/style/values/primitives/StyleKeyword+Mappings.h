@@ -44,6 +44,7 @@
 #include "ScrollTypes.h"
 #include "StyleBuilderState.h"
 #include "StyleContain.h"
+#include "StyleContainerType.h"
 #include "StyleDisplay.h"
 #include "StyleHangingPunctuation.h"
 #include "StyleImageOrientation.h"
@@ -2407,6 +2408,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 #define TYPE Style::ContainValue
 #define FOR_EACH(CASE) CASE(Size) CASE(InlineSize) CASE(Layout) CASE(Style) CASE(Paint)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
+#define TYPE Style::ContainerTypeValue
+#define FOR_EACH(CASE) CASE(Size) CASE(InlineSize) CASE(ScrollState)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

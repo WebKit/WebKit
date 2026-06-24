@@ -15,6 +15,7 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include <openssl/asn1.h>
 #include <openssl/bn.h>
 #include <openssl/buffer.h>
 #include <openssl/err.h>
@@ -23,6 +24,8 @@
 
 #include "internal.h"
 
+
+using namespace bssl;
 
 int X509_REQ_print_fp(FILE *fp, const X509_REQ *x) {
   BIO *bio = BIO_new_fp(fp, BIO_NOCLOSE);
@@ -104,8 +107,7 @@ int X509_REQ_print_ex(BIO *bio, const X509_REQ *x, unsigned long nmflags,
         goto err;
       }
     } else {
-      size_t i;
-      for (i = 0; i < sk_X509_ATTRIBUTE_num(sk); i++) {
+      for (size_t i = 0; i < sk_X509_ATTRIBUTE_num(sk); i++) {
         // TODO(crbug.com/442860745): |X509_ATTRIBUTE| accessors are not
         // const-correct.
         X509_ATTRIBUTE *a = sk_X509_ATTRIBUTE_value(sk, i);
@@ -129,14 +131,8 @@ int X509_REQ_print_ex(BIO *bio, const X509_REQ *x, unsigned long nmflags,
           }
         }
 
-        int j;
-        for (j = 0; j < num_attrs; j++) {
-          const ASN1_TYPE *at = X509_ATTRIBUTE_get0_type(a, j);
-          const int type = at->type;
-          const ASN1_BIT_STRING *bs = at->value.asn1_string;
-
-          int k;
-          for (k = 25 - obj_str_len; k > 0; k--) {
+        for (int j = 0; j < num_attrs; j++) {
+          for (int k = 25 - obj_str_len; k > 0; k--) {
             if (BIO_write(bio, " ", 1) != 1) {
               goto err;
             }
@@ -146,10 +142,14 @@ int X509_REQ_print_ex(BIO *bio, const X509_REQ *x, unsigned long nmflags,
             goto err;
           }
 
-          if (type == V_ASN1_PRINTABLESTRING || type == V_ASN1_UTF8STRING ||
-              type == V_ASN1_IA5STRING || type == V_ASN1_T61STRING) {
-            if (BIO_write(bio, (const char *)bs->data, bs->length) !=
-                bs->length) {
+          const ASN1_TYPE *at = X509_ATTRIBUTE_get0_type(a, j);
+          if (at->type == V_ASN1_PRINTABLESTRING ||
+              at->type == V_ASN1_UTF8STRING || at->type == V_ASN1_IA5STRING ||
+              at->type == V_ASN1_T61STRING) {
+            const ASN1_STRING *str = at->value.asn1_string;
+            int str_len = ASN1_STRING_length(str);
+            if (BIO_write(bio, ASN1_STRING_get0_data(str), str_len) !=
+                str_len) {
               goto err;
             }
             BIO_puts(bio, "\n");

@@ -395,6 +395,21 @@ void PlatformXRSystem::sessionDidUpdateVisibilityState(XRDeviceIdentifier device
     });
 }
 
+void PlatformXRSystem::sessionDidInitializeRendering(XRDeviceIdentifier deviceIdentifier, uint32_t width, uint32_t height, uint32_t arrayLength)
+{
+    ensureOnMainRunLoop([weakThis = WeakPtr { *this }, deviceIdentifier, width, height, arrayLength]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        RefPtr page = protectedThis->m_page.get();
+        if (!page)
+            return;
+
+        protect(page->legacyMainFrameProcess())->send(Messages::PlatformXRSystemProxy::SessionDidInitializeRendering(deviceIdentifier, width, height, arrayLength), page->webPageIDInMainFrameProcess());
+    });
+}
+
 void PlatformXRSystem::setImmersiveSessionState(ImmersiveSessionState state, CompletionHandler<void(bool)>&& completion)
 {
     m_immersiveSessionState = state;

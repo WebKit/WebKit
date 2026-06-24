@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-13500" />
+<style>
+    div {
+        width: 200px;
+        height: 200px;
+    }
+
+    /* The 'transparent' keyword resolves to rgba(0, 0, 0, 0). With OKLab
+       interpolation it goes through the SampledGradientBuilder path, where
+       evaluateLinearOS lerps the IS components directly (no premultiplied
+       alpha). The L channel of the transparent stop is 0, so midpoints carry
+       residual blackness through the gradient — visible as a dark band.
+       The reference uses rgba(255, 255, 255, 0) instead, so both endpoints
+       share L=1 and the bug doesn't manifest. */
+
+    #linear {
+        background-image: linear-gradient(in oklab to bottom, transparent, #fff);
+        background-color: #f0a500;
+    }
+</style>
+</head>
+<body>
+<div id="linear"></div>
+</body>
+</html>

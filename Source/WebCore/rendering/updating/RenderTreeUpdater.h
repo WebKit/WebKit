@@ -38,8 +38,11 @@ class ContainerNode;
 class Document;
 class Element;
 class Node;
-class RenderStyle;
 class Text;
+
+namespace Style {
+class ComputedStyle;
+}
 
 class RenderTreeUpdater {
 public:
@@ -63,9 +66,9 @@ private:
     void createTextRenderer(Text&, const Style::TextUpdate*);
     void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void updateSVGRenderer(Element&);
-    void updateRendererStyle(RenderElement&, RenderStyle&&, Style::DifferenceResult);
+    void updateRendererStyle(RenderElement&, Style::ComputedStyle&&, Style::DifferenceResult);
     void updateRenderViewStyle();
-    void createRenderer(Element&, RenderStyle&&);
+    void createRenderer(Element&, Style::ComputedStyle&&);
     void updateBeforeDescendants(Element&, const Style::ElementUpdate*);
     void updateAfterDescendants(Element&, const Style::ElementUpdate*);
     bool textRendererIsNeeded(const Text& textNode);

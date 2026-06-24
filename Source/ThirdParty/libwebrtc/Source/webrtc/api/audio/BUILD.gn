@@ -48,11 +48,10 @@ rtc_library("audio_frame_api") {
   ]
 
   deps = [
-    "..:array_view",
     "..:rtp_packet_info",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
-    "../../rtc_base:timeutils",
+    "//third_party/abseil-cpp/absl/algorithm:container",
   ]
 }
 
@@ -67,9 +66,7 @@ rtc_source_set("audio_mixer_api") {
 
   deps = [
     ":audio_frame_api",
-    "..:make_ref_counted",
     "..:ref_count",
-    "../../rtc_base:refcount",
   ]
 }
 
@@ -80,16 +77,12 @@ rtc_library("audio_processing") {
     "audio_processing.h",
   ]
   deps = [
-    ":aec3_config",
     ":audio_processing_statistics",
     ":echo_control",
-    "..:array_view",
     "..:ref_count",
     "..:scoped_refptr",
     "../../rtc_base:checks",
     "../../rtc_base:stringutils",
-    "../../rtc_base/system:arch",
-    "../../rtc_base/system:file_wrapper",
     "../../rtc_base/system:rtc_export",
     "../environment",
     "../task_queue",
@@ -113,7 +106,6 @@ rtc_library("builtin_audio_processing_builder") {
     "..:make_ref_counted",
     "..:scoped_refptr",
     "../../modules/audio_processing",
-    "../../rtc_base:logging",
     "../../rtc_base/system:rtc_export",
     "../environment",
     "//third_party/abseil-cpp/absl/base:nullability",
@@ -166,7 +158,6 @@ rtc_source_set("echo_control") {
   sources = [ "echo_control.h" ]
   deps = [
     ":neural_residual_echo_estimator_api",
-    "../../rtc_base:checks",
     "../environment",
     "//third_party/abseil-cpp/absl/base:nullability",
   ]
@@ -175,10 +166,7 @@ rtc_source_set("echo_control") {
 rtc_source_set("neural_residual_echo_estimator_api") {
   visibility = [ "*" ]
   sources = [ "neural_residual_echo_estimator.h" ]
-  deps = [
-    ":aec3_config",
-    "..:array_view",
-  ]
+  deps = [ ":aec3_config" ]
 }
 
 if (rtc_enable_protobuf) {
@@ -216,7 +204,7 @@ rtc_library("echo_detector_creator") {
   deps = [
     ":audio_processing",
     "..:make_ref_counted",
-    "../../api:scoped_refptr",
+    "..:scoped_refptr",
     "../../modules/audio_processing:residual_echo_detector",
   ]
 }
@@ -234,6 +222,7 @@ if (rtc_include_tests) {
       "..:make_ref_counted",
       "..:scoped_refptr",
       "../../modules/audio_processing:mocks",
+      "../../test:create_test_environment",
       "../../test:test_support",
       "../environment",
       "../environment:environment_factory",

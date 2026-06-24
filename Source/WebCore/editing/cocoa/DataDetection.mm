@@ -54,7 +54,7 @@
 #import "QualifiedName.h"
 #import "Range.h"
 #import "RenderObject.h"
-#import "RenderStyle+GettersInlines.h"
+#import "StyleComputedStyle.h"
 #import "StyleProperties.h"
 #import "Text.h"
 #import "TextIterator.h"
@@ -740,7 +740,7 @@ void DataDetection::detectContentInFrame(LocalFrame* frame, OptionSet<DataDetect
     if (types.contains(DataDetectorType::LookupSuggestion))
         PAL::softLink_DataDetectorsCore_DDScannerEnableOptionalSource(scanner.get(), DDScannerSourceSpotlight, true);
 
-    workQueue().dispatch([scanner = WTF::move(scanner), types, referenceDateFromContext, scanQuery = WTF::move(scanQuery), weakDocument = WeakPtr { *document }, fragments = WTF::move(fragments), completionHandler = WTF::move(completionHandler)]() mutable {
+    protect(workQueue())->dispatch([scanner = WTF::move(scanner), types, referenceDateFromContext, scanQuery = WTF::move(scanQuery), weakDocument = WeakPtr { *document }, fragments = WTF::move(fragments), completionHandler = WTF::move(completionHandler)]() mutable {
         if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), scanQuery.get())) {
             callOnMainRunLoop([scanner = WTF::move(scanner), scanQuery = WTF::move(scanQuery), weakDocument = WTF::move(weakDocument), fragments = WTF::move(fragments), completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler(nil);

@@ -12,9 +12,11 @@
 #define API_VIDEO_CODECS_VIDEO_DECODER_FACTORY_H_
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "api/environment/environment.h"
+#include "api/video/resolution.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
 #include "rtc_base/system/rtc_export.h"
@@ -36,6 +38,12 @@ class RTC_EXPORT VideoDecoderFactory {
   // for signaling etc.
   virtual std::vector<SdpVideoFormat> GetSupportedFormats() const = 0;
 
+  [[deprecated("Use the 3-parameter version instead")]]
+  virtual CodecSupport QueryCodecSupport(const SdpVideoFormat& format,
+                                         bool reference_scaling) const {
+    return QueryCodecSupport(format, reference_scaling, std::nullopt);
+  }
+
   // Query whether the specifed format is supported or not and if it will be
   // power efficient, which is currently interpreted as if there is support for
   // hardware acceleration.
@@ -44,10 +52,16 @@ class RTC_EXPORT VideoDecoderFactory {
   // needed is if the video stream is produced with a scalability mode that has
   // a dependency between the spatial layers. See
   // https://w3c.github.io/webrtc-svc/#scalabilitymodes* for a specification of
-  // different scalabilty modes. NOTE: QueryCodecSupport is currently an
-  // experimental feature that is subject to change without notice.
-  virtual CodecSupport QueryCodecSupport(const SdpVideoFormat& format,
-                                         bool reference_scaling) const;
+  // different scalabilty modes.
+  // The parameter `resolution` may optionally be provided to require the format
+  // has decoding support up to the provided resolution to mark it as supported.
+  //
+  // NOTE: QueryCodecSupport is currently an experimental feature that is
+  // subject to change without notice.
+  virtual CodecSupport QueryCodecSupport(
+      const SdpVideoFormat& format,
+      bool reference_scaling,
+      std::optional<Resolution> resolution) const;
 
   // Creates a VideoDecoder for the specified `format`.
   virtual std::unique_ptr<VideoDecoder> Create(

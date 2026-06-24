@@ -23,6 +23,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static const BIT_STRING_BITNAME ns_cert_type_table[] = {
     {0, "SSL Client", "client"}, {1, "SSL Server", "server"},
     {2, "S/MIME", "email"},      {3, "Object Signing", "objsign"},
@@ -92,7 +94,7 @@ static void *v2i_ASN1_BIT_STRING(const X509V3_EXT_METHOD *method,
     (void *)(table)                                                           \
   }
 
-const X509V3_EXT_METHOD v3_nscert =
+const X509V3_EXT_METHOD bssl::v3_nscert =
     EXT_BITSTRING(NID_netscape_cert_type, ns_cert_type_table);
-const X509V3_EXT_METHOD v3_key_usage =
+const X509V3_EXT_METHOD bssl::v3_key_usage =
     EXT_BITSTRING(NID_key_usage, key_usage_type_table);

@@ -40,9 +40,14 @@ void LegacyWebSocketInspectorInstrumentation::didCreateWebSocket(Document* docum
     InspectorInstrumentation::didCreateWebSocket(document, identifier, requestURL);
 }
 
-void LegacyWebSocketInspectorInstrumentation::willSendWebSocketHandshakeRequest(Document* document, WebSocketChannelIdentifier identifier, const ResourceRequest& request)
+void LegacyWebSocketInspectorInstrumentation::willSendWebSocketHandshakeRequest(Document* document, WebSocketChannelIdentifier identifier, ResourceRequest& request)
 {
     InspectorInstrumentation::willSendWebSocketHandshakeRequest(document, identifier, request);
+}
+
+void LegacyWebSocketInspectorInstrumentation::didSendWebSocketHandshakeRequest(Document* document, WebSocketChannelIdentifier identifier, const ResourceRequest& request)
+{
+    InspectorInstrumentation::didSendWebSocketHandshakeRequest(document, identifier, request);
 }
 
 void LegacyWebSocketInspectorInstrumentation::didReceiveWebSocketHandshakeResponse(Document* document, WebSocketChannelIdentifier identifier, const ResourceResponse& response)

@@ -21,12 +21,12 @@
 // Swap each half of the dgd vectors so that we can accumulate the result of
 // the dot-products directly in the destination matrix.
 static inline int16x8x2_t transpose_dgd(int16x8_t dgd0, int16x8_t dgd1) {
-  int16x8_t dgd_trn0 = vreinterpretq_s16_s64(
+  int16x8x2_t dgd_trn;
+  dgd_trn.val[0] = vreinterpretq_s16_s64(
       vzip1q_s64(vreinterpretq_s64_s16(dgd0), vreinterpretq_s64_s16(dgd1)));
-  int16x8_t dgd_trn1 = vreinterpretq_s16_s64(
+  dgd_trn.val[1] = vreinterpretq_s16_s64(
       vzip2q_s64(vreinterpretq_s64_s16(dgd0), vreinterpretq_s64_s16(dgd1)));
-
-  return (struct int16x8x2_t){ dgd_trn0, dgd_trn1 };
+  return dgd_trn;
 }
 
 static inline void compute_M_one_row_win5(int16x8_t src, int16x8_t dgd[5],

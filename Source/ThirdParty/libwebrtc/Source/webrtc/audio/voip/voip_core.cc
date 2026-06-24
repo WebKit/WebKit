@@ -16,10 +16,10 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_processing.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
@@ -367,7 +367,7 @@ VoipResult VoipCore::StopPlayout(ChannelId channel_id) {
 }
 
 VoipResult VoipCore::ReceivedRTPPacket(ChannelId channel_id,
-                                       ArrayView<const uint8_t> rtp_packet) {
+                                       std::span<const uint8_t> rtp_packet) {
   scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {
@@ -380,7 +380,7 @@ VoipResult VoipCore::ReceivedRTPPacket(ChannelId channel_id,
 }
 
 VoipResult VoipCore::ReceivedRTCPPacket(ChannelId channel_id,
-                                        ArrayView<const uint8_t> rtcp_packet) {
+                                        std::span<const uint8_t> rtcp_packet) {
   scoped_refptr<AudioChannel> channel = GetChannel(channel_id);
 
   if (!channel) {

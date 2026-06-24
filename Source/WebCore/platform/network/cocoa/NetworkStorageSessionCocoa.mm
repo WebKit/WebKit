@@ -81,11 +81,11 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto nsCookies = createNSArray(cookies, [] (auto& cookie) -> NSHTTPCookie * {
         return cookie.createNSHTTPCookie().autorelease();
     });
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [nsCookieStorage() setCookies:nsCookies.get() forURL:url.createNSURL().get() mainDocumentURL:mainDocumentURL.createNSURL().get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -280,7 +280,7 @@ static RetainPtr<NSDictionary> policyProperties(const SameSiteInfo& sameSiteInfo
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
     BOOL shouldAllowOnlyPartitioned = thirdPartyCookieBlockingDecision == ThirdPartyCookieBlockingDecision::AllExceptPartitioned;
     RetainPtr policyProperties = adoptNS([[NSMutableDictionary alloc] init]);
-    policyProperties.get()[@"_kCFHTTPCookiePolicyPropertySiteForCookies"] = sameSiteInfo.isSameSite ? url : URL::emptyNSURL();
+    policyProperties.get()[@"_kCFHTTPCookiePolicyPropertySiteForCookies"] = RetainPtr { sameSiteInfo.isSameSite ? url : URL::emptyNSURL() };
     policyProperties.get()[@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"] = [NSNumber numberWithBool:sameSiteInfo.isTopSite];
     policyProperties.get()[@"_kCFHTTPCookiePolicyPropertyAllowOnlyPartitionedCookies"] = @(shouldAllowOnlyPartitioned);
     if (partition)

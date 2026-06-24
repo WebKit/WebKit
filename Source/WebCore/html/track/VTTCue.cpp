@@ -258,7 +258,7 @@ void VTTCueBox::applyCSSProperties()
     // NOTE: Set in text-tracks.css
 }
 
-RenderPtr<RenderElement> VTTCueBox::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> VTTCueBox::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderVTTCue>(*this, WTF::move(style));
 }
@@ -1448,7 +1448,7 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
 uint64_t VTTCue::logIdentifier() const
 {
     if (!m_logIdentifier && track())
-        m_logIdentifier = childLogIdentifier(track()->logIdentifier(), cryptographicallyRandomNumber<uint64_t>());
+        m_logIdentifier = childLogIdentifier(protect(track())->logIdentifier(), cryptographicallyRandomNumber<uint64_t>());
     return m_logIdentifier;
 }
 

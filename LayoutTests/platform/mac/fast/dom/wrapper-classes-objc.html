@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <style id="style" media="screen">
 .non-existent-class {
     color: rgb(0, 0, 0);
@@ -12,8 +12,6 @@
 <body>
 <script>
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 function objCWrapperIsInstanceOf(node, className)
 {
@@ -76,6 +74,7 @@ function runTest()
 {
     // NOTE: This is a sister test to fast/dom/wrapper-class.html which test the JS wrapper classes.  Update accordingly.
     description("This tests wrapper class names for Objective-C.");
+    window.jsTestIsAsync = true;
 
     stylesheet = document.getElementById("style").sheet;
     root = document.documentElement;
@@ -308,8 +307,7 @@ function runTest()
 
     // what else is missing?
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 function frameLoaded()

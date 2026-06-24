@@ -45,4 +45,16 @@ GraphicsLayerCompositingCoordinatesOrientation GraphicsLayerContentsDisplayDeleg
 }
 #endif
 
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+void GraphicsLayerContentsDisplayDelegate::setThreadSafeGrContext(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+{
+    m_threadSafeGrContext = threadSafeGrContext;
 }
+
+const sk_sp<GrContextThreadSafeProxy>& GraphicsLayerContentsDisplayDelegate::threadSafeGrContext() const
+{
+    return m_threadSafeGrContext;
+}
+#endif
+
+} // namespace WebCore

@@ -17,13 +17,13 @@ layer at (0,0) size 800x600
           text run at (708,0) width 4: "."
       RenderBlock {P} at (0,36) size 784x24
         RenderMenuList {SELECT} at (2,2) size 166x20 [color=#6D6D6D] [bgcolor=#FFFFFF]
-          RenderSelectFallbackButton {DIV} at (4,2) size 141x16
-            RenderText at (0,0) size 141x16
+          RenderBlock {DIV} at (4,2) size 141x16
+            RenderText {#text} at (0,0) size 141x16
               text run at (0,0) width 141: "This text should be gray"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,76) size 784x24
         RenderMenuList {SELECT} at (2,2) size 172x20 [bgcolor=#FFFFFF]
-          RenderSelectFallbackButton {DIV} at (4,2) size 147x16
-            RenderText at (0,0) size 147x16
+          RenderBlock {DIV} at (4,2) size 147x16
+            RenderText {#text} at (0,0) size 147x16
               text run at (0,0) width 147: "This text should be black"
         RenderText {#text} at (0,0) size 0x0

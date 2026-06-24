@@ -13,9 +13,9 @@
 
 #include <array>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 
 namespace webrtc {
@@ -35,7 +35,7 @@ class ReverbFrequencyResponse {
               bool stationary_block);
 
   // Returns the estimated frequency response for the reverb.
-  ArrayView<const float> FrequencyResponse() const { return tail_response_; }
+  std::span<const float> FrequencyResponse() const { return tail_response_; }
 
  private:
   void Update(const std::vector<std::array<float, kFftLengthBy2Plus1>>&

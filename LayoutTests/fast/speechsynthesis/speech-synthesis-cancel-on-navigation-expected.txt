@@ -1,0 +1,13 @@
+Tests that speech synthesis is cancelled when the page enters the back-forward cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS speechSynthesis.speaking is true
+PASS Page was restored from the page cache
+PASS speechSynthesis.speaking is false
+PASS speechSynthesis.pending is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

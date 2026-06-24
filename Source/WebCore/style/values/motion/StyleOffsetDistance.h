@@ -25,14 +25,14 @@
 #pragma once
 
 #include <WebCore/AcceleratedEffectOffsetDistance.h>
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
 
 // <'offset-distance'> = <length-percentage>
 // https://drafts.fxtf.org/motion/#propdef-offset-distance
-struct OffsetDistance : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
+struct OffsetDistance : PrimitiveNumericWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 
 #if ENABLE(THREADED_ANIMATIONS)
@@ -45,10 +45,7 @@ struct OffsetDistance : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
 #if ENABLE(THREADED_ANIMATIONS)
 
 template<> struct Evaluation<OffsetDistance, AcceleratedEffectOffsetDistance> {
-    auto operator()(const OffsetDistance& value, float pathLength, ZoomFactor zoom) -> AcceleratedEffectOffsetDistance
-    {
-        return { .value = evaluate<float>(value, pathLength, zoom) };
-    }
+    auto operator()(const OffsetDistance& value, float pathLength, ZoomFactor zoom) -> AcceleratedEffectOffsetDistance;
 };
 
 #endif
@@ -56,4 +53,4 @@ template<> struct Evaluation<OffsetDistance, AcceleratedEffectOffsetDistance> {
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::OffsetDistance)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::OffsetDistance)

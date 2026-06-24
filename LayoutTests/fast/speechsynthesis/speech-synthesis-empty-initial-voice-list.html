@@ -8,8 +8,6 @@
     description("This tests that the voice list can initially be empty and populated after voiceschanged event.");
 
     window.jsTestIsAsync = true;
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     if (window.internals) {
         internals.enableMockSpeechSynthesizer();

@@ -1429,7 +1429,7 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
         });
 
         if (!scriptPaths->length() && !styleSheetPaths->length()) {
-            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has missing or empty 'js' and 'css' arrays.", "WKWebExtensionErrorInvalidContentScripts description for missing or empty 'js' and 'css' arrays")));
+            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has missing or empty `js` and `css` arrays.", "WKWebExtensionErrorInvalidContentScripts description for missing or empty `js` and `css` arrays")));
             return;
         }
 

@@ -2146,6 +2146,8 @@ bool JSArray::isToPrimitiveFastAndNonObservable()
         return false;
     if (!globalObject->objectPrototypeValueOfWatchpointSet().isStillValid()) [[unlikely]]
         return false;
+    if (!globalObject->arrayPrototypeValueOfWatchpointSet().isStillValid()) [[unlikely]]
+        return false;
 
     Structure* structure = this->structure();
     return globalObject->isOriginalArrayStructure(structure);
@@ -2536,6 +2538,8 @@ JSArray* JSArray::fastFlat(JSGlobalObject* globalObject, uint64_t depth, uint64_
         uint64_t flattenedLength = calculateFlattenedLength(globalObject, this, length, depth);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (flattenedLength == std::numeric_limits<uint64_t>::max()) [[unlikely]]
+            return nullptr;
+        if (flattenedLength > MAX_STORAGE_VECTOR_LENGTH) [[unlikely]]
             return nullptr;
 
         Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(sourceType);

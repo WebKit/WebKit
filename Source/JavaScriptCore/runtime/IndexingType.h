@@ -219,7 +219,7 @@ IndexingType leastUpperBoundOfIndexingTypes(IndexingType, IndexingType);
 
 IndexingType leastUpperBoundOfIndexingTypeAndValue(IndexingType, JSValue);
 
-void dumpIndexingType(PrintStream&, IndexingType);
+JS_EXPORT_PRIVATE void dumpIndexingType(PrintStream&, IndexingType);
 MAKE_PRINT_ADAPTOR(IndexingTypeDump, IndexingType, dumpIndexingType);
 
 static const IndexingType AllWritableArrayTypes    = IndexingShapeMask | IsArray;

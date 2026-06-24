@@ -237,7 +237,7 @@ static TextureFormat NODELETE fromBacking(WGPUTextureFormat textureFormat)
     case WGPUTextureFormat_RG16Snorm:
         return TextureFormat::Rg16snorm;
     case WGPUTextureFormat_RGBA16Unorm:
-        return TextureFormat::Rgba16snorm;
+        return TextureFormat::Rgba16unorm;
     case WGPUTextureFormat_RGBA16Snorm:
         return TextureFormat::Rgba16snorm;
     case WGPUTextureFormat_Undefined:

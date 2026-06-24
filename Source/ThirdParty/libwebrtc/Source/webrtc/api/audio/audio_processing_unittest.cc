@@ -12,10 +12,10 @@
 
 #include <memory>
 
-#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -32,7 +32,7 @@ TEST(CustomAudioProcessingTest, ReturnsPassedAudioProcessing) {
       CustomAudioProcessing(ap);
 
   ASSERT_THAT(builder, NotNull());
-  EXPECT_EQ(builder->Build(CreateEnvironment()), ap);
+  EXPECT_EQ(builder->Build(CreateTestEnvironment()), ap);
 }
 
 #if GTEST_HAS_DEATH_TEST

@@ -32,8 +32,9 @@ if (angle_has_build) {
 
 declare_args() {
   # Use the PCI lib to collect GPU information on Linux.
-  use_libpci = (is_linux || is_chromeos) && (angle_use_x11 || use_ozone) &&
-               angle_has_build
+  use_libpci =
+      (is_linux || is_chromeos) &&
+      (angle_use_x11 || angle_use_wayland || use_ozone) && angle_has_build
 
   # Enable using Vulkan to collect system info as a fallback.
   angle_enable_vulkan_system_info = is_chromeos
@@ -132,6 +133,7 @@ if (angle_build_all) {
     if (angle_build_mesa) {
       deps += [ "$angle_root/third_party/mesa" ]
     }
+    data_deps = [ "$angle_root/infra/orchestrator:orchestrator_all" ]
   }
 }
 
@@ -263,21 +265,22 @@ config("internal_config") {
     defines += [ "ANGLE_PLATFORM_CHROMEOS" ]
   }
 
+  # Enable system without X11.
+  if (!angle_use_x11) {
+    defines += [ "EGL_NO_X11" ]
+  }
+
+  # These two are needed here to correctly select OSWindow::New
+  if (angle_use_x11) {
+    defines += [ "ANGLE_USE_X11" ]
+  }
+  if (angle_use_wayland) {
+    defines += [ "ANGLE_USE_WAYLAND" ]
+  }
   if (angle_use_vulkan_null_display) {
     defines += [ "ANGLE_USE_VULKAN_NULL_DISPLAY" ]
   } else if (angle_use_vulkan_display) {
     defines += [ "ANGLE_USE_VULKAN_DISPLAY" ]
-    if (!angle_use_x11) {
-      defines += [ "EGL_NO_X11" ]
-    }
-
-    # These two are needed here to correctly select OSWindow::New
-    if (angle_use_x11) {
-      defines += [ "ANGLE_USE_X11" ]
-    }
-    if (angle_use_wayland) {
-      defines += [ "ANGLE_USE_WAYLAND" ]
-    }
 
     if (angle_vulkan_display_mode == "simple") {
       defines += [ "ANGLE_VULKAN_DISPLAY_MODE_SIMPLE" ]
@@ -365,6 +368,11 @@ config("extra_warnings") {
       "/we4458",  # declaration hides class member.
       "/we4800",  # forcing value to bool.
       "/we4838",  # narrowing conversion.
+    ]
+
+    # Explicitly disable some warnings
+    cflags += [
+      "/wd4715",  # not all control paths return a value.
     ]
   }
   if (is_clang) {
@@ -561,6 +569,9 @@ template("angle_common_lib") {
     ]
 
     deps = [ ":xxhash" ]
+    if (angle_use_partition_alloc) {
+      deps += [ "${angle_partition_alloc_dir}" ]
+    }
 
     public_deps = [
       ":angle_abseil",
@@ -1236,7 +1247,7 @@ if (angle_use_wayland) {
 
     include_dirs = [
       "$wayland_dir/egl",
-      "$wayland_dir/src",
+      "$wayland_dir",
     ]
   }
 
@@ -1684,7 +1695,7 @@ if (angle_standalone || build_with_chromium ||
     if (is_apple && !is_component_build) {
       ldflags = [
         "-install_name",
-        "@rpath/${target_name}.dylib",
+        "@rpath/${output_name}.dylib",
       ]
     }
 
@@ -1715,8 +1726,7 @@ if (angle_enable_cgl) {
   }
 }
 
-if (is_android && symbol_level != 0 &&
-    (angle_standalone || (build_with_chromium && !use_mold))) {
+if (angle_has_build && is_android && enable_compressed_symbols) {
   action_foreach("compressed_symbols") {
     sources = []
     foreach(_library, angle_libraries) {
@@ -1863,6 +1873,7 @@ if (install_prefix != "") {
 }
 
 group("angle") {
+  # Always use shared libraries for the "angle" group, which is used by tests.
   data_deps = [
     ":libEGL",
     ":libGLESv1_CM",

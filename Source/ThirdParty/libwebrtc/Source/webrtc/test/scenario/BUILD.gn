@@ -83,7 +83,6 @@ if (rtc_include_tests && !build_with_chromium) {
       "../:test_support",
       "../:video_test_common",
       "../..//test/network:simulated_network",
-      "../../api:array_view",
       "../../api:create_frame_generator",
       "../../api:fec_controller_api",
       "../../api:field_trials",

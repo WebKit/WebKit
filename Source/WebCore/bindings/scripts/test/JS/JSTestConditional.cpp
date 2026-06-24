@@ -509,6 +509,8 @@ void JSTestConditional::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestConditionalOwner::JSTestConditionalOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestConditionalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -521,7 +523,7 @@ void JSTestConditionalOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* co
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestConditional = static_cast<JSTestConditional*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestConditional->wrapped()).ptr(), jsTestConditional);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestConditional->wrapped(), jsTestConditional);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

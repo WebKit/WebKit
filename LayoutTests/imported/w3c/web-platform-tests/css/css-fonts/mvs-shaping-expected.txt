@@ -1,0 +1,8 @@
+ᠠᠨ᠎ᠠ
+
+PASS ᠢ -> AI.isol(993)
+PASS ᠠ -> AA.isol(929)
+PASS ᠠᠨ -> AA.init(786)|A.fina(427)
+PASS ᠠᠨ᠎ᠢ -> AA.init(786)|A.fina(427)|mvs.wide(260)|I.isol(548)
+PASS ᠠᠨ᠎ᠠ -> AA.init(786)|N.fina.mvs(427)|mvs.narrow(55)|Aa.isol(415)
+

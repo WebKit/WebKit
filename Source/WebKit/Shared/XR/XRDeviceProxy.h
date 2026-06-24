@@ -52,6 +52,7 @@ public:
 
     void sessionDidEnd();
     void updateSessionVisibilityState(PlatformXR::VisibilityState);
+    void sessionDidInitializeRendering(uint32_t width, uint32_t height, uint32_t arrayLength);
 
 private:
     XRDeviceProxy(XRDeviceInfo&&, PlatformXRSystemProxy&);

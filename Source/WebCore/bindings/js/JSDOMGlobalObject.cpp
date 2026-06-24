@@ -236,7 +236,7 @@ JSC_DEFINE_HOST_FUNCTION(addAbortAlgorithmToSignal, (JSGlobalObject* globalObjec
     auto* jsDOMGlobalObject = downcast<JSDOMGlobalObject>(globalObject);
     Ref<AbortAlgorithm> abortAlgorithm = JSAbortAlgorithm::create(callFrame->uncheckedArgument(1).getObject(), jsDOMGlobalObject);
 
-    auto algorithmIdentifier = AbortSignal::addAbortAlgorithmToSignal(abortSignal->wrapped(), WTF::move(abortAlgorithm));
+    auto algorithmIdentifier = AbortSignal::addAbortAlgorithmToSignal(protect(abortSignal->wrapped()), WTF::move(abortAlgorithm));
     return JSValue::encode(JSC::jsNumber(algorithmIdentifier));
 }
 
@@ -249,7 +249,7 @@ JSC_DEFINE_HOST_FUNCTION(removeAbortAlgorithmFromSignal, (JSGlobalObject*, CallF
     if (!abortSignal) [[unlikely]]
         return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
 
-    AbortSignal::removeAbortAlgorithmFromSignal(abortSignal->wrapped(), callFrame->uncheckedArgument(1).asUInt32());
+    AbortSignal::removeAbortAlgorithmFromSignal(protect(abortSignal->wrapped()), callFrame->uncheckedArgument(1).asUInt32());
     return JSValue::encode(JSC::jsUndefined());
 }
 
@@ -272,7 +272,7 @@ JSC_DEFINE_HOST_FUNCTION(signalAbort, (JSGlobalObject*, CallFrame* callFrame))
 
     auto* abortSignal = dynamicDowncast<JSAbortSignal>(callFrame->uncheckedArgument(0));
     if (abortSignal) [[unlikely]]
-        abortSignal->wrapped().signalAbort(callFrame->uncheckedArgument(1));
+        protect(abortSignal->wrapped())->signalAbort(callFrame->uncheckedArgument(1));
     return JSValue::encode(JSC::jsUndefined());
 }
 
@@ -455,6 +455,9 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
         for (auto& guarded : thisObject->m_guardedObjects)
             guarded->visitAggregateInGCThread(visitor);
+
+        for (auto& slot : thisObject->m_jsHandles.values())
+            visitor.append(slot.object);
     }
 
     if (thisObject->m_readableStreamByteStrategySize)
@@ -467,6 +470,47 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 }
 
 DEFINE_VISIT_CHILDREN(JSDOMGlobalObject);
+
+void JSDOMGlobalObject::addJSHandle(JSHandleIdentifier identifier, JSObject& object)
+{
+    Locker locker { m_gcLock };
+    auto& vm = this->vm();
+    auto result = m_jsHandles.ensure(identifier, [&] {
+        return JSHandleSlot { WriteBarrier<JSObject> { vm, this, &object }, 0 };
+    });
+    ++result.iterator->value.refCount;
+}
+
+void JSDOMGlobalObject::refJSHandle(JSHandleIdentifier identifier)
+{
+    Locker locker { m_gcLock };
+    auto it = m_jsHandles.find(identifier);
+    if (it == m_jsHandles.end())
+        return;
+    ++it->value.refCount;
+}
+
+bool JSDOMGlobalObject::derefJSHandle(JSHandleIdentifier identifier)
+{
+    Locker locker { m_gcLock };
+    auto it = m_jsHandles.find(identifier);
+    if (it == m_jsHandles.end())
+        return false;
+    if (--it->value.refCount)
+        return false;
+    m_jsHandles.remove(it);
+    return true;
+}
+
+JSObject* JSDOMGlobalObject::jsHandle(JSHandleIdentifier identifier) const WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+{
+    // We don't need to grab m_gcLock here because m_jsHandles is only mutated on the main thread.
+    // m_gcLock is only used to protect against the main thread mutating m_jsHandles at the same
+    // time as the GC thread reading from m_jsHandles.
+    ASSERT(!Thread::mayBeGCThread());
+    auto it = m_jsHandles.find(identifier);
+    return it == m_jsHandles.end() ? nullptr : it->value.object.get();
+}
 
 void JSDOMGlobalObject::promiseRejectionTracker(JSGlobalObject* jsGlobalObject, JSPromise* promise, JSPromiseRejectionOperation operation)
 {
@@ -547,7 +591,7 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, J
 
     auto deferred = DeferredPromise::create(*downcast<JSDOMGlobalObject>(globalObject), *promise, DeferredPromise::Mode::RetainPromiseOnResolve);
 
-    auto inputResponse = JSFetchResponse::toWrapped(vm, source);
+    RefPtr inputResponse = JSFetchResponse::toWrapped(vm, source);
     if (!inputResponse) {
         deferred->reject(ExceptionCode::TypeError, "first argument must be an Response or Promise for Response"_s);
         return;
@@ -595,9 +639,13 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, J
     auto compiler = JSC::Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), JSC::makeSource("handleResponseOnStreamingAction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted), inputResponse->url());
 
     if (inputResponse->isBodyReceivedByChunk()) {
-        inputResponse->consumeBodyReceivedByChunk([globalObject, compiler = WTF::move(compiler)](auto&& result) mutable {
-            VM& vm = globalObject->vm();
+        inputResponse->consumeBodyReceivedByChunk([vmPtr = &vm, compiler = WTF::move(compiler)](auto&& result) mutable {
+            auto& vm = *vmPtr;
             JSLockHolder lock(vm);
+
+            auto* globalObject = compiler->globalObjectIfActive();
+            if (!globalObject)
+                return;
 
             if (result.hasException()) {
                 auto exception = result.exception();
@@ -695,7 +743,7 @@ JSC::JSPromise* JSDOMGlobalObject::moduleLoaderFetch(JSC::JSGlobalObject* global
         RELEASE_AND_RETURN(scope, loader->fetch(globalObject, moduleLoader, moduleKey, WTF::move(parameters), WTF::move(scriptFetcher)));
     JSC::JSPromise* promise = JSC::JSPromise::create(vm, globalObject->promiseStructure());
     scope.release();
-    promise->reject(vm, globalObject, jsUndefined());
+    promise->reject(vm, jsUndefined());
     return promise;
 }
 
@@ -716,7 +764,7 @@ JSC::JSPromise* JSDOMGlobalObject::moduleLoaderImportModule(JSC::JSGlobalObject*
         RELEASE_AND_RETURN(scope, loader->importModule(globalObject, moduleLoader, moduleName, WTF::move(parameters), sourceOrigin, deferred));
     JSC::JSPromise* promise = JSC::JSPromise::create(vm, globalObject->promiseStructure());
     scope.release();
-    promise->reject(vm, globalObject, jsUndefined());
+    promise->reject(vm, jsUndefined());
     return promise;
 }
 
@@ -746,7 +794,7 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
         // origin while avoiding any lifetime issues (since the topmost document
         // with a given wrapper world should outlive other objects in that
         // world)
-        const auto& originalOrigin = document->securityOrigin();
+        Ref originalOrigin = document->securityOrigin();
         auto& originalWorld = domGlobalObject->world();
 
         while (!document->isTopDocument()) {
@@ -805,7 +853,7 @@ void JSDOMGlobalObject::invokeScriptErrorCallbacks(const String& message, const 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapperWorld& world)
 {
     if (auto* document = dynamicDowncast<Document>(context))
-        return toJSDOMWindow(document->frame(), world);
+        return toJSDOMWindow(protect(document->frame()), world);
 
     if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(context))
         return globalScope->script()->globalScopeWrapper();

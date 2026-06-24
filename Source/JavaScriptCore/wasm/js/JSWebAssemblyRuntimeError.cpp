@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "ErrorInstanceInlines.h"
 #include "JSCJSValueInlines.h"
 
 namespace JSC {

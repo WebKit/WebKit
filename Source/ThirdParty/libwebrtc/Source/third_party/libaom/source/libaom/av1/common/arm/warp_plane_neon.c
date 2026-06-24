@@ -143,31 +143,6 @@ static AOM_FORCE_INLINE int16x8_t horizontal_filter_8x1_f1(const uint8x16_t in,
   return horizontal_filter_8x1_f1_beta0(in, f_s16);
 }
 
-static AOM_FORCE_INLINE void vertical_filter_4x1_f1(const int16x8_t *src,
-                                                    int32x4_t *res, int sy) {
-  int16x4_t s0 = vget_low_s16(src[0]);
-  int16x4_t s1 = vget_low_s16(src[1]);
-  int16x4_t s2 = vget_low_s16(src[2]);
-  int16x4_t s3 = vget_low_s16(src[3]);
-  int16x4_t s4 = vget_low_s16(src[4]);
-  int16x4_t s5 = vget_low_s16(src[5]);
-  int16x4_t s6 = vget_low_s16(src[6]);
-  int16x4_t s7 = vget_low_s16(src[7]);
-
-  int16x8_t f = vld1q_s16(av1_warped_filter[sy >> WARPEDDIFF_PREC_BITS]);
-
-  int32x4_t m0123 = vmull_lane_s16(s0, vget_low_s16(f), 0);
-  m0123 = vmlal_lane_s16(m0123, s1, vget_low_s16(f), 1);
-  m0123 = vmlal_lane_s16(m0123, s2, vget_low_s16(f), 2);
-  m0123 = vmlal_lane_s16(m0123, s3, vget_low_s16(f), 3);
-  m0123 = vmlal_lane_s16(m0123, s4, vget_high_s16(f), 0);
-  m0123 = vmlal_lane_s16(m0123, s5, vget_high_s16(f), 1);
-  m0123 = vmlal_lane_s16(m0123, s6, vget_high_s16(f), 2);
-  m0123 = vmlal_lane_s16(m0123, s7, vget_high_s16(f), 3);
-
-  *res = m0123;
-}
-
 static AOM_FORCE_INLINE void vertical_filter_4x1_f4(const int16x8_t *src,
                                                     int32x4_t *res, int sy,
                                                     int gamma) {
@@ -192,43 +167,6 @@ static AOM_FORCE_INLINE void vertical_filter_4x1_f4(const int16x8_t *src,
   int32x4_t m0123_pairs[] = { m0, m1, m2, m3 };
 
   *res = horizontal_add_4d_s32x4(m0123_pairs);
-}
-
-static AOM_FORCE_INLINE void vertical_filter_8x1_f1(const int16x8_t *src,
-                                                    int32x4_t *res_low,
-                                                    int32x4_t *res_high,
-                                                    int sy) {
-  int16x8_t s0 = src[0];
-  int16x8_t s1 = src[1];
-  int16x8_t s2 = src[2];
-  int16x8_t s3 = src[3];
-  int16x8_t s4 = src[4];
-  int16x8_t s5 = src[5];
-  int16x8_t s6 = src[6];
-  int16x8_t s7 = src[7];
-
-  int16x8_t f = vld1q_s16(av1_warped_filter[sy >> WARPEDDIFF_PREC_BITS]);
-
-  int32x4_t m0123 = vmull_lane_s16(vget_low_s16(s0), vget_low_s16(f), 0);
-  m0123 = vmlal_lane_s16(m0123, vget_low_s16(s1), vget_low_s16(f), 1);
-  m0123 = vmlal_lane_s16(m0123, vget_low_s16(s2), vget_low_s16(f), 2);
-  m0123 = vmlal_lane_s16(m0123, vget_low_s16(s3), vget_low_s16(f), 3);
-  m0123 = vmlal_lane_s16(m0123, vget_low_s16(s4), vget_high_s16(f), 0);
-  m0123 = vmlal_lane_s16(m0123, vget_low_s16(s5), vget_high_s16(f), 1);
-  m0123 = vmlal_lane_s16(m0123, vget_low_s16(s6), vget_high_s16(f), 2);
-  m0123 = vmlal_lane_s16(m0123, vget_low_s16(s7), vget_high_s16(f), 3);
-
-  int32x4_t m4567 = vmull_lane_s16(vget_high_s16(s0), vget_low_s16(f), 0);
-  m4567 = vmlal_lane_s16(m4567, vget_high_s16(s1), vget_low_s16(f), 1);
-  m4567 = vmlal_lane_s16(m4567, vget_high_s16(s2), vget_low_s16(f), 2);
-  m4567 = vmlal_lane_s16(m4567, vget_high_s16(s3), vget_low_s16(f), 3);
-  m4567 = vmlal_lane_s16(m4567, vget_high_s16(s4), vget_high_s16(f), 0);
-  m4567 = vmlal_lane_s16(m4567, vget_high_s16(s5), vget_high_s16(f), 1);
-  m4567 = vmlal_lane_s16(m4567, vget_high_s16(s6), vget_high_s16(f), 2);
-  m4567 = vmlal_lane_s16(m4567, vget_high_s16(s7), vget_high_s16(f), 3);
-
-  *res_low = m0123;
-  *res_high = m4567;
 }
 
 static AOM_FORCE_INLINE void vertical_filter_8x1_f8(const int16x8_t *src,
@@ -272,13 +210,106 @@ static AOM_FORCE_INLINE void vertical_filter_8x1_f8(const int16x8_t *src,
   *res_high = horizontal_add_4d_s32x4(m4567_pairs);
 }
 
+static AOM_FORCE_INLINE void warp_affine_horizontal_neon(
+    const uint8_t *ref, int width, int height, int stride, int p_width,
+    int p_height, int16_t alpha, int16_t beta, const int64_t x4,
+    const int64_t y4, const int i, int16x8_t tmp[]) {
+  const int height_limit = AOMMIN(8, p_height - i) + 7;
+
+  int32_t ix4 = (int32_t)(x4 >> WARPEDMODEL_PREC_BITS);
+  int32_t iy4 = (int32_t)(y4 >> WARPEDMODEL_PREC_BITS);
+
+  int32_t sx4 = x4 & ((1 << WARPEDMODEL_PREC_BITS) - 1);
+  sx4 += alpha * (-4) + beta * (-4) + (1 << (WARPEDDIFF_PREC_BITS - 1)) +
+         (WARPEDPIXEL_PREC_SHIFTS << WARPEDDIFF_PREC_BITS);
+  sx4 &= ~((1 << WARP_PARAM_REDUCE_BITS) - 1);
+
+  if (warp_affine_special_case(ref, ix4, iy4, width, height, stride,
+                               height_limit, tmp)) {
+    return;
+  }
+
+  static const uint8_t kIotaArr[] = { 0, 1, 2,  3,  4,  5,  6,  7,
+                                      8, 9, 10, 11, 12, 13, 14, 15 };
+  const uint8x16_t indx = vld1q_u8(kIotaArr);
+
+  const int out_of_boundary_left = -(ix4 - 6);
+  const int out_of_boundary_right = (ix4 + 8) - width;
+
+  if (p_width == 4) {
+    if (beta == 0) {
+      if (alpha == 0) {
+        int16x8_t f_s16 =
+            vld1q_s16(av1_warped_filter[sx4 >> WARPEDDIFF_PREC_BITS]);
+        APPLY_HORIZONTAL_SHIFT(horizontal_filter_4x1_f1_beta0, f_s16);
+      } else {
+        APPLY_HORIZONTAL_SHIFT(horizontal_filter_4x1_f4, sx4, alpha);
+      }
+    } else {
+      if (alpha == 0) {
+        APPLY_HORIZONTAL_SHIFT(horizontal_filter_4x1_f1,
+                               (sx4 + beta * (k - 3)));
+      } else {
+        APPLY_HORIZONTAL_SHIFT(horizontal_filter_4x1_f4, (sx4 + beta * (k - 3)),
+                               alpha);
+      }
+    }
+  } else {
+    if (beta == 0) {
+      if (alpha == 0) {
+        int16x8_t f_s16 =
+            vld1q_s16(av1_warped_filter[sx4 >> WARPEDDIFF_PREC_BITS]);
+        APPLY_HORIZONTAL_SHIFT(horizontal_filter_8x1_f1_beta0, f_s16);
+      } else {
+        APPLY_HORIZONTAL_SHIFT(horizontal_filter_8x1_f8, sx4, alpha);
+      }
+    } else {
+      if (alpha == 0) {
+        APPLY_HORIZONTAL_SHIFT(horizontal_filter_8x1_f1,
+                               (sx4 + beta * (k - 3)));
+      } else {
+        APPLY_HORIZONTAL_SHIFT(horizontal_filter_8x1_f8, (sx4 + beta * (k - 3)),
+                               alpha);
+      }
+    }
+  }
+}
+
 void av1_warp_affine_neon(const int32_t *mat, const uint8_t *ref, int width,
                           int height, int stride, uint8_t *pred, int p_col,
                           int p_row, int p_width, int p_height, int p_stride,
                           int subsampling_x, int subsampling_y,
                           ConvolveParams *conv_params, int16_t alpha,
                           int16_t beta, int16_t gamma, int16_t delta) {
-  av1_warp_affine_common(mat, ref, width, height, stride, pred, p_col, p_row,
-                         p_width, p_height, p_stride, subsampling_x,
-                         subsampling_y, conv_params, alpha, beta, gamma, delta);
+  const int w0 = conv_params->fwd_offset;
+  const int w1 = conv_params->bck_offset;
+  const int is_compound = conv_params->is_compound;
+  uint16_t *const dst = conv_params->dst;
+  const int dst_stride = conv_params->dst_stride;
+  const int do_average = conv_params->do_average;
+  const int use_dist_wtd_comp_avg = conv_params->use_dist_wtd_comp_avg;
+
+  assert(IMPLIES(is_compound, dst != NULL));
+  assert(IMPLIES(do_average, is_compound));
+
+  for (int i = 0; i < p_height; i += 8) {
+    for (int j = 0; j < p_width; j += 8) {
+      const int32_t src_x = (p_col + j + 4) << subsampling_x;
+      const int32_t src_y = (p_row + i + 4) << subsampling_y;
+      const int64_t dst_x =
+          (int64_t)mat[2] * src_x + (int64_t)mat[3] * src_y + (int64_t)mat[0];
+      const int64_t dst_y =
+          (int64_t)mat[4] * src_x + (int64_t)mat[5] * src_y + (int64_t)mat[1];
+
+      const int64_t x4 = dst_x >> subsampling_x;
+      const int64_t y4 = dst_y >> subsampling_y;
+
+      int16x8_t tmp[15];
+      warp_affine_horizontal_neon(ref, width, height, stride, p_width, p_height,
+                                  alpha, beta, x4, y4, i, tmp);
+      warp_affine_vertical(pred, p_width, p_height, p_stride, is_compound, dst,
+                           dst_stride, do_average, use_dist_wtd_comp_avg, gamma,
+                           delta, y4, i, j, tmp, w0, w1);
+    }
+  }
 }

@@ -15,9 +15,16 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/container-query.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/display-change-after-capture.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/display-change-contents-after-capture.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/display-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/display-none-animation-on-group.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/first-letter-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/implicit-stacking-context.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/mask-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/participating-scope.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/replace-html.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/scroll-marker.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/shuffle.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/scoped/crashtests/zindex-part.html

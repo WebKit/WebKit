@@ -137,7 +137,7 @@ ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const String& 
                 return 0.0;
 
             // PerformanceTiming is only available for the Document ScriptExecutionContext.
-            Ref timing = m_performance->timing();
+            Ref timing = protect(m_performance)->timing();
             auto startTime = timing->navigationStart();
             auto endTime = ((timing.get()).*(*function))();
             if (!endTime)
@@ -148,7 +148,7 @@ ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const String& 
 
     auto iterator = m_marksMap.find(mark);
     if (iterator != m_marksMap.end())
-        return iterator->value.last()->startTime();
+        return protect(iterator->value.last())->startTime();
 
     return Exception { ExceptionCode::SyntaxError, makeString("No mark named '"_s, mark, "' exists"_s) };
 }
@@ -169,7 +169,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(const String
             return end.releaseException();
         endTime = end.returnValue();
     } else
-        endTime = m_performance->now();
+        endTime = protect(m_performance)->now();
 
     double startTime;
     if (!startMark.isNull()) {
@@ -179,7 +179,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(const String
         startTime = start.returnValue();
     } else
         startTime = 0.0;
-        
+
     auto measure = PerformanceMeasure::create(measureName, startTime, endTime, SerializedScriptValue::nullValue());
     if (measure.hasException())
         return measure.releaseException();
@@ -205,7 +205,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGloba
             return duration.releaseException();
         endTime = start.returnValue() + duration.returnValue();
     } else
-        endTime = m_performance->now();
+        endTime = protect(m_performance)->now();
 
     double startTime;
     if (measureOptions.start) {

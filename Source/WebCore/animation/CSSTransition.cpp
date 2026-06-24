@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSTransition);
 
-Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Style::Transition& backingStyleTransition, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
+Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Style::Transition& backingStyleTransition, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, Seconds delay, Seconds duration, const Style::ComputedStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {
     auto result = adoptRef(*new CSSTransition(owningElement, property, generationTime, backingStyleTransition, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
     result->initialize(&oldStyle, newStyle, { nullptr });
@@ -48,12 +48,12 @@ Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const A
     return result;
 }
 
-CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Style::Transition& backingStyleTransition, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
+CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Style::Transition& backingStyleTransition, const Style::ComputedStyle& targetStyle, const Style::ComputedStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
     : StyleOriginatedAnimation(styleable)
     , m_property(property)
     , m_generationTime(generationTime)
-    , m_targetStyle(RenderStyle::clonePtr(targetStyle))
-    , m_reversingAdjustedStartStyle(RenderStyle::clonePtr(reversingAdjustedStartStyle))
+    , m_targetStyle(Style::ComputedStyle::clonePtr(targetStyle))
+    , m_reversingAdjustedStartStyle(Style::ComputedStyle::clonePtr(reversingAdjustedStartStyle))
     , m_reversingShorteningFactor(reversingShorteningFactor)
     , m_backingStyleTransition(backingStyleTransition)
 {

@@ -97,11 +97,10 @@ JSFunction* JSFunction::create(VM& vm, JSGlobalObject*, FunctionExecutable* exec
 
 JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeFunction nativeFunction, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, NativeFunction nativeConstructor, const DOMJIT::Signature* signature)
 {
-    NativeExecutable* executable = vm.getHostFunction(nativeFunction, implementationVisibility, intrinsic, nativeConstructor, signature, name);
+    NativeExecutable* executable = vm.getHostFunction(nativeFunction, implementationVisibility, intrinsic, nativeConstructor, signature, length, name);
     Structure* structure = globalObject->hostFunctionStructure();
     JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm)) JSFunction(vm, executable, globalObject, structure);
-    // Can't do this during initialization because getHostFunction might do a GC allocation.
-    function->finishCreation(vm, executable, length, name);
+    function->finishCreation(vm);
     return function;
 }
 
@@ -111,35 +110,6 @@ JSFunction::JSFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* glo
 {
     assertTypeInfoFlagInvariants();
     ASSERT(structure->realm() == globalObject);
-}
-
-#if ASSERT_ENABLED
-void JSFunction::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(is<JSFunction>(this));
-    ASSERT(type() == JSFunctionType);
-    // JSCell::{getCallData,getConstructData} relies on the following conditions.
-    ASSERT(methodTable()->getConstructData == &JSFunction::getConstructData);
-    ASSERT(methodTable()->getCallData == &JSFunction::getCallData);
-}
-#endif
-
-void JSFunction::finishCreation(VM& vm, NativeExecutable*, unsigned length, const String& name)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-    ASSERT(type() == JSFunctionType);
-    // JSCell::{getCallData,getConstructData} relies on the following conditions.
-    ASSERT(methodTable()->getConstructData == &JSFunction::getConstructData);
-    ASSERT(methodTable()->getCallData == &JSFunction::getCallData);
-
-    // JSBoundFunction/JSRemoteFunction instances use finishCreation(VM&) overload and lazily allocate their name string / length.
-    ASSERT(!this->inherits<JSBoundFunction>() && !this->inherits<JSRemoteFunction>());
-
-    putDirect(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
-    if (!name.isNull())
-        putDirect(vm, vm.propertyNames->name, jsString(vm, name), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 FunctionRareData* JSFunction::allocateRareData(VM& vm)
@@ -607,7 +577,9 @@ JSFunction::PropertyStatus JSFunction::reifyLazyPropertyIfNeeded(VM& vm, JSGloba
         status = PropertyStatus::Eager;
 
     if constexpr (set == SetHasModifiedLengthOrName::Yes) {
-        if (isNonBoundHostFunction() || !structure()->didTransition())
+        // Skip if length/name haven't been reified yet (no transition = no own length/name slot),
+        // or if this is a JSBoundFunction (which tracks modifications differently).
+        if (!structure()->didTransition() || this->inherits<JSBoundFunction>())
             return status;
         bool isLengthProperty = propertyName == vm.propertyNames->length;
         bool isNameProperty = propertyName == vm.propertyNames->name;
@@ -626,11 +598,10 @@ JSFunction::PropertyStatus JSFunction::reifyLazyPropertyIfNeeded(VM& vm, JSGloba
 JSFunction::PropertyStatus JSFunction::reifyLazyPropertyForHostOrBuiltinIfNeeded(VM& vm, JSGlobalObject* globalObject, PropertyName propertyName)
 {
     ASSERT(isHostOrBuiltinFunction());
-    if (isBuiltinFunction() || this->inherits<JSBoundFunction>() || this->inherits<JSRemoteFunction>()) {
-        PropertyStatus lazyLength = reifyLazyLengthIfNeeded(vm, globalObject, propertyName);
-        if (isLazy(lazyLength))
-            return lazyLength;
-    }
+    // length is lazy for everything in here (host, builtin, bound, remote).
+    PropertyStatus lazyLength = reifyLazyLengthIfNeeded(vm, globalObject, propertyName);
+    if (isLazy(lazyLength))
+        return lazyLength;
     return reifyLazyBoundNameIfNeeded(vm, globalObject, propertyName);
 }
 
@@ -696,6 +667,13 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
         JSString* name = uncheckedDowncast<JSRemoteFunction>(this)->nameMayBeNull();
         if (!name)
             name = jsEmptyString(vm);
+        unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
+        rareData->setHasReifiedName();
+        putDirect(vm, nameIdent, name, initialAttributes);
+    } else {
+        ASSERT(isNonBoundHostFunction());
+        FunctionRareData* rareData = this->ensureRareData(vm);
+        JSString* name = uncheckedDowncast<NativeExecutable>(executable())->nameJSString(vm);
         unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         rareData->setHasReifiedName();
         putDirect(vm, nameIdent, name, initialAttributes);

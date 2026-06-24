@@ -389,6 +389,8 @@ void JSTestLegacyOverrideBuiltIns::analyzeHeap(JSCell* cell, HeapAnalyzer& analy
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestLegacyOverrideBuiltInsOwner::JSTestLegacyOverrideBuiltInsOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestLegacyOverrideBuiltInsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -401,7 +403,7 @@ void JSTestLegacyOverrideBuiltInsOwner::finalize(JSC::Handle<JSC::Unknown> handl
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestLegacyOverrideBuiltIns = static_cast<JSTestLegacyOverrideBuiltIns*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestLegacyOverrideBuiltIns->wrapped()).ptr(), jsTestLegacyOverrideBuiltIns);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestLegacyOverrideBuiltIns->wrapped(), jsTestLegacyOverrideBuiltIns);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

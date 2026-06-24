@@ -42,6 +42,10 @@ class EncoderCallback : public EncodedImageCallback {
     return Result(Result::Error::OK);
   }
 
+  void OnFrameDropped(uint32_t /*rtp_timestamp*/,
+                      int /*spatial_id*/,
+                      bool /*is_end_of_temporal_unit*/) override {}
+
   std::vector<EncodedVideoFrameProducer::EncodedFrame>& output_frames_;
 };
 

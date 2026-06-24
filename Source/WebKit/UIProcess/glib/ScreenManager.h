@@ -35,13 +35,17 @@
 
 #if PLATFORM(GTK)
 typedef struct _GdkMonitor GdkMonitor;
-using PlatformScreen = GdkMonitor;
 #elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
 typedef struct _WPEScreen WPEScreen;
-using PlatformScreen = WPEScreen;
 #endif
 
 namespace WebKit {
+
+#if PLATFORM(GTK)
+using PlatformScreen = GdkMonitor;
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+using PlatformScreen = WPEScreen;
+#endif
 
 using PlatformDisplayID = uint32_t;
 

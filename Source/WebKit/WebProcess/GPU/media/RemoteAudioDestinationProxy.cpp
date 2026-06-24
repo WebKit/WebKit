@@ -96,7 +96,7 @@ void RemoteAudioDestinationProxy::startRenderingThread()
                 break;
 
             uint32_t totalFrameCount = this->totalFrameCount();
-            uint32_t frameCount = (totalFrameCount < m_lastFrameCount) ? (totalFrameCount + (std::numeric_limits<uint32_t>::max() - m_lastFrameCount)) : (totalFrameCount - m_lastFrameCount);
+            uint32_t frameCount = totalFrameCount - m_lastFrameCount;
 
             m_lastFrameCount = totalFrameCount;
             renderAudio(frameCount);

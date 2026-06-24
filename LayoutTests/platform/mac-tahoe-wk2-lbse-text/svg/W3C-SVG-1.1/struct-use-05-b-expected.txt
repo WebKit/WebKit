@@ -4,13 +4,24 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (42.75,13) size 394x28
-  RenderSVGText {text} at (42,13) size 396x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 395x28
-      chunk 1 (middle anchor) text run 1 at (42.76,35.00) startOffset 0 endOffset 39 width 394.48: "External references and computed values"
-layer at (10,304) size 263x46
-  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 264x46
-      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
-layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGTransformableContainer {g} at (0,0) size 0x0
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#4169E1]
+          RenderSVGGradientStop {stop} [offset=0.33] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=0.50] [color=#00008B]
+          RenderSVGGradientStop {stop} [offset=0.66] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#4169E1]
+        RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#4169E1]
+          RenderSVGGradientStop {stop} [offset=0.33] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=0.50] [color=#00008B]
+          RenderSVGGradientStop {stop} [offset=0.66] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#4169E1]
+    RenderSVGText {text} at (42,13) size 396x28 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 395x28
+        chunk 1 (middle anchor) text run 1 at (42.76,35.00) startOffset 0 endOffset 39 width 394.48: "External references and computed values"
+    RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x46
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

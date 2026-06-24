@@ -267,7 +267,7 @@ void LegacyTileGrid::updateTileBorderVisibility()
 {
     TileMap::iterator end = m_tiles.end();
     for (TileMap::iterator it = m_tiles.begin(); it != end; ++it)
-        it->value->showBorder(m_tileCache->tileBordersVisible());
+        it->value->showBorder(protect(m_tileCache)->tileBordersVisible());
 }
 
 unsigned LegacyTileGrid::tileCount() const

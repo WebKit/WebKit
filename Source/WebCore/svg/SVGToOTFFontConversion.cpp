@@ -1251,10 +1251,10 @@ Vector<char> SVGToOTFFontConverter::transcodeGlyphPaths(float width, const SVGEl
     bool ok;
     float horizontalOriginX = scaleUnitsPerEm(glyphOrMissingGlyphElement.attributeWithoutSynchronization(SVGNames::horiz_origin_xAttr).toFloat(&ok));
     if (!ok && m_fontFaceElement)
-        horizontalOriginX = scaleUnitsPerEm(m_fontFaceElement->horizontalOriginX());
+        horizontalOriginX = scaleUnitsPerEm(protect(m_fontFaceElement)->horizontalOriginX());
     float horizontalOriginY = scaleUnitsPerEm(glyphOrMissingGlyphElement.attributeWithoutSynchronization(SVGNames::horiz_origin_yAttr).toFloat(&ok));
     if (!ok && m_fontFaceElement)
-        horizontalOriginY = scaleUnitsPerEm(m_fontFaceElement->horizontalOriginY());
+        horizontalOriginY = scaleUnitsPerEm(protect(m_fontFaceElement)->horizontalOriginY());
 
     CFFBuilder builder(result, width, FloatPoint(horizontalOriginX, horizontalOriginY), static_cast<float>(s_outputUnitsPerEm) / m_inputUnitsPerEm);
     SVGPathStringViewSource source(dAttribute);
@@ -1381,11 +1381,12 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         m_xHeight = s_outputUnitsPerEm;
         m_capHeight = m_ascent;
     } else {
-        m_inputUnitsPerEm = m_fontFaceElement->unitsPerEm();
-        m_ascent = scaleUnitsPerEm(m_fontFaceElement->ascent());
-        m_descent = scaleUnitsPerEm(m_fontFaceElement->descent());
-        m_xHeight = scaleUnitsPerEm(m_fontFaceElement->xHeight());
-        m_capHeight = scaleUnitsPerEm(m_fontFaceElement->capHeight());
+        RefPtr fontFaceElement = m_fontFaceElement.get();
+        m_inputUnitsPerEm = fontFaceElement->unitsPerEm();
+        m_ascent = scaleUnitsPerEm(fontFaceElement->ascent());
+        m_descent = scaleUnitsPerEm(fontFaceElement->descent());
+        m_xHeight = scaleUnitsPerEm(fontFaceElement->xHeight());
+        m_capHeight = scaleUnitsPerEm(fontFaceElement->capHeight());
 
         // Some platforms, including macOS, use 0 ascent and descent to mean that the platform should synthesize
         // a value based on a heuristic. However, SVG fonts can legitimately have 0 for ascent or descent.
@@ -1396,8 +1397,8 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
             m_descent = 1;
     }
 
-    float defaultHorizontalAdvance = m_fontFaceElement ? scaleUnitsPerEm(m_fontFaceElement->horizontalAdvanceX()) : 0;
-    float defaultVerticalAdvance = m_fontFaceElement ? scaleUnitsPerEm(m_fontFaceElement->verticalAdvanceY()) : 0;
+    float defaultHorizontalAdvance = m_fontFaceElement ? scaleUnitsPerEm(protect(m_fontFaceElement)->horizontalAdvanceX()) : 0;
+    float defaultVerticalAdvance = m_fontFaceElement ? scaleUnitsPerEm(protect(m_fontFaceElement)->verticalAdvanceY()) : 0;
 
     m_lineGap = s_outputUnitsPerEm / 10;
 
@@ -1466,7 +1467,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     }
 
     if (m_fontFaceElement)
-        m_fontFamily = m_fontFaceElement->fontFamily();
+        m_fontFamily = protect(m_fontFaceElement)->fontFamily();
 }
 
 static inline bool NODELETE isFourByteAligned(size_t x)

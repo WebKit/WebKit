@@ -1025,6 +1025,16 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
     protect(*_preferences)->setServiceWorkerEntitlementDisabledForTesting(disable);
 }
 
+- (void)_setUsesPageCache:(BOOL)enabled
+{
+    protect(*_preferences)->setUsesBackForwardCache(enabled);
+}
+
+- (BOOL)_usesPageCache
+{
+    return protect(*_preferences)->usesBackForwardCache();
+}
+
 #if PLATFORM(MAC)
 - (void)_setCanvasUsesAcceleratedDrawing:(BOOL)enabled
 {
@@ -1084,16 +1094,6 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
 - (BOOL)_localFileContentSniffingEnabled
 {
     return protect(*_preferences)->localFileContentSniffingEnabled();
-}
-
-- (void)_setUsesPageCache:(BOOL)enabled
-{
-    protect(*_preferences)->setUsesBackForwardCache(enabled);
-}
-
-- (BOOL)_usesPageCache
-{
-    return protect(*_preferences)->usesBackForwardCache();
 }
 
 - (void)_setShouldPrintBackgrounds:(BOOL)enabled
@@ -1489,6 +1489,16 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
 - (void)_setPitchCorrectionAlgorithm:(_WKPitchCorrectionAlgorithm)pitchCorrectionAlgorithm
 {
     protect(*_preferences)->setPitchCorrectionAlgorithm(pitchCorrectionAlgorithm);
+}
+
+- (_WKNavigatorWebDriverActivePolicy)_navigatorWebDriverActivePolicy
+{
+    return static_cast<_WKNavigatorWebDriverActivePolicy>(protect(*_preferences)->navigatorWebDriverActivePolicy());
+}
+
+- (void)_setNavigatorWebDriverActivePolicy:(_WKNavigatorWebDriverActivePolicy)policy
+{
+    protect(*_preferences)->setNavigatorWebDriverActivePolicy(policy);
 }
 
 - (BOOL)_mediaSessionEnabled

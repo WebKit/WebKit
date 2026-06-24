@@ -13,9 +13,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/units/time_delta.h"
 #include "modules/audio_coding/codecs/g711/g711_interface.h"
@@ -69,7 +69,7 @@ int AudioEncoderPcm::GetTargetBitrate() const {
 
 AudioEncoder::EncodedInfo AudioEncoderPcm::EncodeImpl(
     uint32_t rtp_timestamp,
-    ArrayView<const int16_t> audio,
+    std::span<const int16_t> audio,
     Buffer* encoded) {
   if (speech_buffer_.empty()) {
     first_timestamp_in_buffer_ = rtp_timestamp;
@@ -83,7 +83,7 @@ AudioEncoder::EncodedInfo AudioEncoderPcm::EncodeImpl(
   info.encoded_timestamp = first_timestamp_in_buffer_;
   info.payload_type = payload_type_;
   info.encoded_bytes = encoded->AppendData(
-      full_frame_samples_ * BytesPerSample(), [&](ArrayView<uint8_t> encoded) {
+      full_frame_samples_ * BytesPerSample(), [&](std::span<uint8_t> encoded) {
         return EncodeCall(&speech_buffer_[0], full_frame_samples_,
                           encoded.data());
       });

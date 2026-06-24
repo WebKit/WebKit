@@ -52,7 +52,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     : m_minimumDOMTimerInterval(settings.minimumDOMTimerInterval())
     , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings.timeWithoutMouseMovementBeforeHidingControls())
     , m_originalEditingBehavior(settings.editingBehaviorType())
-    , m_storageBlockingPolicy(settings.storageBlockingPolicy())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
     , m_forcedColorsAreInvertedAccessibilityValue(settings.forcedColorsAreInvertedAccessibilityValue())
@@ -107,7 +106,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setMinimumDOMTimerInterval(m_minimumDOMTimerInterval);
     settings.setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
     settings.setEditingBehaviorType(m_originalEditingBehavior);
-    settings.setStorageBlockingPolicy(m_storageBlockingPolicy);
     settings.setUserInterfaceDirectionPolicy(m_userInterfaceDirectionPolicy);
     settings.setSystemLayoutDirection(m_systemLayoutDirection);
     settings.setForcedColorsAreInvertedAccessibilityValue(m_forcedColorsAreInvertedAccessibilityValue);
@@ -305,14 +303,6 @@ ExceptionOr<void> InternalSettings::setEditingBehavior(EditingBehaviorType editi
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
     settings().setEditingBehaviorType(editingBehaviorType);
-    return { };
-}
-
-ExceptionOr<void> InternalSettings::setStorageBlockingPolicy(StorageBlockingPolicy policy)
-{
-    if (!m_page)
-        return Exception { ExceptionCode::InvalidAccessError };
-    settings().setStorageBlockingPolicy(policy);
     return { };
 }
 

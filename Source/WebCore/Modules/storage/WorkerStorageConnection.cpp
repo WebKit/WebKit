@@ -58,6 +58,10 @@ void WorkerStorageConnection::scopeClosed()
     for (auto& callback : getDirectoryCallbacks.values())
         callback(Exception { ExceptionCode::InvalidStateError });
 
+    auto getEstimateCallbacks = std::exchange(m_getEstimateCallbacks, { });
+    for (auto& callback : getEstimateCallbacks.values())
+        callback(Exception { ExceptionCode::InvalidStateError });
+
     m_scope = nullptr;
 }
 

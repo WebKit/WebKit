@@ -13,16 +13,15 @@
 
 #include <bitset>
 #include <cstdint>
-#include <vector>
 
 #include "api/audio/audio_processing.h"
 #include "api/audio/echo_detector_creator.h"
 #include "api/scoped_refptr.h"
-#include "rtc_base/checks.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
   // Number of times to update the echo detector.
   constexpr size_t kNrOfUpdates = 7;
   // Each round of updates requires a call to both AnalyzeRender and
@@ -34,25 +33,20 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   // to represent an audio frame in this test, so it should have a maximum value
   // equal to the square root of that value.
   const float maxFuzzedValue = sqrtf(20 * 48) * 32768;
-  if (size < kNrOfNeededInputBytes) {
+  if (fuzz_data.size() < kNrOfNeededInputBytes) {
     return;
   }
-  size_t read_idx = 0;
   // Use the first two bytes to choose the call order.
-  uint16_t call_order_int;
-  memcpy(&call_order_int, &data[read_idx], 2);
-  read_idx += 2;
+  uint16_t call_order_int = fuzz_data.Read<uint16_t>();
   std::bitset<16> call_order(call_order_int);
 
   webrtc::scoped_refptr<EchoDetector> echo_detector = CreateEchoDetector();
-  std::vector<float> input(1);
+  float input[1];
   // Call AnalyzeCaptureAudio once to prevent the flushing of the buffer.
   echo_detector->AnalyzeCaptureAudio(input);
   for (size_t i = 0; i < 2 * kNrOfUpdates; ++i) {
     // Convert 4 input bytes to a float.
-    RTC_DCHECK_LE(read_idx + sizeof(float), size);
-    memcpy(input.data(), &data[read_idx], sizeof(float));
-    read_idx += sizeof(float);
+    fuzz_data.CopyTo(input[0]);
     if (!isfinite(input[0]) || fabs(input[0]) > maxFuzzedValue) {
       // Ignore infinity, nan values and values that are unrealistically large.
       continue;

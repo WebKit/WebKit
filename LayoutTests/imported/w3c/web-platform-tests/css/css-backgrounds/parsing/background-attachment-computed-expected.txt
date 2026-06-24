@@ -1,4 +1,7 @@
 
 PASS Property background-attachment value 'fixed'
 PASS Property background-attachment value 'scroll, fixed, local'
+PASS Property background-attachment value 'scroll' multiple base values
+PASS Property background-attachment value 'scroll, fixed' multiple base values
+PASS Property background-attachment value 'scroll, fixed, local' multiple base values
 

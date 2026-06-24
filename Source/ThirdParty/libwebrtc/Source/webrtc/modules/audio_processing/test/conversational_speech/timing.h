@@ -11,11 +11,11 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_TIMING_H_
 #define MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_TIMING_H_
 
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 
 namespace webrtc {
 namespace test {
@@ -42,7 +42,7 @@ std::vector<Turn> LoadTiming(absl::string_view timing_filepath);
 
 // Writes a list of turns into a file.
 void SaveTiming(absl::string_view timing_filepath,
-                ArrayView<const Turn> timing);
+                std::span<const Turn> timing);
 
 }  // namespace conversational_speech
 }  // namespace test

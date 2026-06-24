@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleContentAlignmentData.h"
 
 namespace WebCore {
@@ -76,7 +76,7 @@ inline bool RenderTableCell::isBaselineAligned() const
         || WTF::holdsAlternative<CSS::Keyword::TextTop>(verticalAlign)
         || WTF::holdsAlternative<CSS::Keyword::Super>(verticalAlign)
         || WTF::holdsAlternative<CSS::Keyword::Sub>(verticalAlign)
-        || WTF::holdsAlternative<Style::VerticalAlign::Length>(verticalAlign);
+        || WTF::holdsAlternative<Style::VerticalAlign::LengthPercentage>(verticalAlign);
 }
 
 inline bool RenderTableCell::isOrthogonal() const

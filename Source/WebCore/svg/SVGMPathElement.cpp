@@ -56,7 +56,7 @@ void SVGMPathElement::buildPendingResource()
     if (!isConnected())
         return;
 
-    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForSVGReferences());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), protect(treeScopeForSVGReferences()));
     if (!target.element) {
         // Do not register as pending if we are already pending this resource.
         Ref treeScope = treeScopeForSVGReferences();
@@ -118,7 +118,7 @@ void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RefPtr<SVGPathElement> SVGMPathElement::pathElement()
 {
-    auto target = targetElementFromIRIString(href(), treeScopeForSVGReferences());
+    auto target = targetElementFromIRIString(href(), protect(treeScopeForSVGReferences()));
     return dynamicDowncast<SVGPathElement>(target.element);
 }
 

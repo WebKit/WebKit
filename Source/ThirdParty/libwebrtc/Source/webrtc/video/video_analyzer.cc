@@ -16,13 +16,13 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <span>
 #include <string>
 #include <utility>
 
 #include "absl/algorithm/container.h"
 #include "absl/flags/flag.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/media_types.h"
 #include "api/numerics/samples_stats_counter.h"
@@ -303,7 +303,7 @@ void VideoAnalyzer::PostEncodeOnFrame(size_t stream_id, uint32_t timestamp) {
   }
 }
 
-bool VideoAnalyzer::SendRtp(ArrayView<const uint8_t> packet,
+bool VideoAnalyzer::SendRtp(std::span<const uint8_t> packet,
                             const PacketOptions& options) {
   RtpPacket rtp_packet;
   rtp_packet.Parse(packet);
@@ -336,7 +336,7 @@ bool VideoAnalyzer::SendRtp(ArrayView<const uint8_t> packet,
   return result;
 }
 
-bool VideoAnalyzer::SendRtcp(ArrayView<const uint8_t> packet,
+bool VideoAnalyzer::SendRtcp(std::span<const uint8_t> packet,
                              const PacketOptions& options) {
   return transport_->SendRtcp(packet, options);
 }

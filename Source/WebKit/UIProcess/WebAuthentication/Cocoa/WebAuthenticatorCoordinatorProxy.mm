@@ -1244,6 +1244,7 @@ void WebAuthenticatorCoordinatorProxy::performRequestLegacy(RetainPtr<ASCCredent
     if (!webPageProxy) {
         RELEASE_LOG_ERROR(WebAuthn, "WebPageProxy had been released");
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "Operation failed."_s });
+        return;
     }
 
     if (RefPtr pageClient = webPageProxy->pageClient())

@@ -61,7 +61,7 @@ public:
         GlobalCoordinateSpace,
         LocalCoordinateSpace
     };
-    RenderSVGShape(Type, SVGGraphicsElement&, RenderStyle&&);
+    RenderSVGShape(Type, SVGGraphicsElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;
@@ -99,7 +99,7 @@ public:
 
     bool needsHasSVGTransformFlags() const final;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
 
     AffineTransform nonScalingStrokeTransform() const;
 
@@ -140,12 +140,12 @@ private:
     
     std::unique_ptr<Path> createPath() const;
 
-    void fillShape(const RenderStyle&, GraphicsContext&);
-    void strokeShape(const RenderStyle&, GraphicsContext&);
+    void fillShape(const Style::ComputedStyle&, GraphicsContext&);
+    void strokeShape(const Style::ComputedStyle&, GraphicsContext&);
     void fillStrokeMarkers(PaintInfo&);
     virtual void drawMarkers(PaintInfo&) { }
 
-    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
+    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
 
     FloatRect calculateApproximateStrokeBoundingBox() const;
 

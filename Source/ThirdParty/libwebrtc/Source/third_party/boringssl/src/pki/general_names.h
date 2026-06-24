@@ -69,10 +69,10 @@ struct OPENSSL_EXPORT GeneralNames {
   ~GeneralNames();
 
   // Create a GeneralNames object representing the DER-encoded
-  // |general_names_tlv|. The returned object may reference data from
-  // |general_names_tlv|, so is only valid as long as |general_names_tlv| is.
-  // Returns nullptr on failure, and may fill |errors| with
-  // additional information. |errors| must be non-null.
+  // `general_names_tlv`. The returned object may reference data from
+  // `general_names_tlv`, so is only valid as long as `general_names_tlv` is.
+  // Returns nullptr on failure, and may fill `errors` with
+  // additional information. `errors` must be non-null.
   static std::unique_ptr<GeneralNames> Create(der::Input general_names_tlv,
                                               CertErrors *errors);
 
@@ -126,10 +126,10 @@ struct OPENSSL_EXPORT GeneralNames {
   int present_name_types = GENERAL_NAME_NONE;
 };
 
-// Parses a GeneralName value and adds it to |subtrees|.
-// |ip_address_type| specifies how to parse iPAddress names.
-// Returns false on failure, and may fill |errors| with additional information.
-// |errors| must be non-null.
+// Parses a GeneralName value and adds it to `subtrees`.
+// `ip_address_type` specifies how to parse iPAddress names.
+// Returns false on failure, and may fill `errors` with additional information.
+// `errors` must be non-null.
 // TODO(mattm): should this be a method on GeneralNames?
 [[nodiscard]] OPENSSL_EXPORT bool ParseGeneralName(
     der::Input input,

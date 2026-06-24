@@ -385,7 +385,7 @@ void IntlCollator::setBoundCompare(VM& vm, JSBoundFunction* format)
 static bool canDoASCIIUCADUCETComparisonWithUCollator(UCollator& collator)
 {
     // Attributes are default ones unless we set. So, non-configured attributes are default ones.
-    static constexpr std::pair<UColAttribute, UColAttributeValue> attributes[] = {
+    static constexpr auto attributes = WTF::toArray<std::pair<UColAttribute, UColAttributeValue>>({
         { UCOL_FRENCH_COLLATION, UCOL_OFF },
         { UCOL_ALTERNATE_HANDLING, UCOL_NON_IGNORABLE },
         { UCOL_STRENGTH, UCOL_TERTIARY },
@@ -393,7 +393,7 @@ static bool canDoASCIIUCADUCETComparisonWithUCollator(UCollator& collator)
         { UCOL_CASE_FIRST, UCOL_OFF },
         { UCOL_NUMERIC_COLLATION, UCOL_OFF },
         // We do not check UCOL_NORMALIZATION_MODE status since FCD normalization does nothing for ASCII strings.
-    };
+    });
 
     for (auto& pair : attributes) {
         UErrorCode status = U_ZERO_ERROR;

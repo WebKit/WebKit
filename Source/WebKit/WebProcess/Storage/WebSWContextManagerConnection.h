@@ -164,7 +164,7 @@ private:
     HashMap<FetchKey, Ref<WebServiceWorkerFetchTaskClient>> m_ongoingNavigationFetchTasks WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     bool isWebSWContextManagerConnection() const final { return true; }
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
-    HashMap<WebCore::ServiceWorkerIdentifier, Ref<ServiceWorkerDebuggableFrontendChannel>> m_channels;
+    HashMap<WebCore::ServiceWorkerIdentifier, Ref<ServiceWorkerDebuggableFrontendChannel>> m_channels WTF_GUARDED_BY_CAPABILITY(mainRunLoop);
 #endif
 };
 

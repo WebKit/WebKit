@@ -154,8 +154,6 @@ public:
 
     void setDataBufferingPolicy(DataBufferingPolicy);
 
-    void willSwitchToSubstituteResource();
-
     const ResourceLoadTiming& loadTiming() LIFETIME_BOUND { return m_loadTiming; }
 
 #if PLATFORM(COCOA)

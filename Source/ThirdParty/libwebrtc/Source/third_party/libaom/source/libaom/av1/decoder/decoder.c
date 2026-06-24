@@ -148,6 +148,11 @@ AV1Decoder *av1_decoder_create(BufferPool *const pool) {
   aom_get_worker_interface()->init(&pbi->lf_worker);
   pbi->lf_worker.thread_name = "aom lf worker";
 
+#if CONFIG_INSPECTION
+  pbi->sb_bits = NULL;
+  pbi->sb_bits_alloc_size = 0;
+#endif
+
   return pbi;
 }
 
@@ -225,6 +230,9 @@ void av1_decoder_remove(AV1Decoder *pbi) {
   av1_dec_free_cb_buf(pbi);
 #if CONFIG_ACCOUNTING
   aom_accounting_clear(&pbi->accounting);
+#endif
+#if CONFIG_INSPECTION
+  aom_free(pbi->sb_bits);
 #endif
   av1_free_mc_tmp_buf(&pbi->td);
   aom_img_metadata_array_free(pbi->metadata);

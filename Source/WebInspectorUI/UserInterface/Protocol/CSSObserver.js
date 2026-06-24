@@ -34,17 +34,17 @@ WI.CSSObserver = class CSSObserver extends InspectorBackend.Dispatcher
 
     styleSheetChanged(styleSheetId)
     {
-        WI.cssManager.styleSheetChanged(styleSheetId);
+        WI.cssManager.styleSheetChanged(styleSheetId, this._target);
     }
 
     styleSheetAdded(styleSheetInfo)
     {
-        WI.cssManager.styleSheetAdded(styleSheetInfo);
+        WI.cssManager.styleSheetAdded(styleSheetInfo, this._target);
     }
 
     styleSheetRemoved(id)
     {
-        WI.cssManager.styleSheetRemoved(id);
+        WI.cssManager.styleSheetRemoved(id, this._target);
     }
 
     nodeLayoutFlagsChanged(nodeId, layoutFlags)

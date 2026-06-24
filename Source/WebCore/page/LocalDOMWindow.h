@@ -57,6 +57,7 @@ namespace WebCore {
 class CloseWatcherManager;
 class SecurityOriginData;
 struct ScrollToOptions;
+struct UserGestureTokenData;
 struct WindowPostMessageOptions;
 
 enum class PlatformEventModifier : uint8_t;
@@ -139,8 +140,14 @@ public:
     Navigator* optionalNavigator() const { return m_navigator.get(); }
 
     WEBCORE_EXPORT static void NODELETE overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
-    void setLastActivationTimestamp(MonotonicTime lastActivationTimestamp) { m_lastActivationTimestamp = lastActivationTimestamp; }
+    void updateActivation(MonotonicTime activationTime)
+    {
+        m_lastActivationTimestamp = activationTime;
+        m_hasStickyActivation = true;
+        m_hasHistoryActionActivation = true;
+    }
     WEBCORE_EXPORT void NODELETE consumeLastActivationIfNecessary();
+    void consumeHistoryActionActivation() { m_hasHistoryActionActivation = false; }
     MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
     void notifyActivated(MonotonicTime);
     WEBCORE_EXPORT bool hasTransientActivation() const;
@@ -227,7 +234,7 @@ public:
     RefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
-    WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, RefPtr<WindowProxy>&& source, const SecurityOriginData& sourceOrigin, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
+    WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, RefPtr<WindowProxy>&& source, const SecurityOriginData& sourceOrigin, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&, std::optional<UserGestureTokenData>&&);
 
     void languagesChanged();
 
@@ -265,6 +272,7 @@ public:
     bool isSecureContext() const;
 
     bool NODELETE crossOriginIsolated() const;
+    bool NODELETE originAgentCluster() const;
 
     // Events
     // EventTarget API
@@ -491,15 +499,17 @@ private:
 
     std::optional<ReducedResolutionSeconds> m_frozenNowTimestamp;
 
-    // For the purpose of tracking user activation, each Window W has a last activation timestamp. This is a number indicating the last time W got
-    // an activation notification. It corresponds to a DOMHighResTimeStamp value except for two cases: positive infinity indicates that W has never
-    // been activated, while negative infinity indicates that a user activation-gated API has consumed the last user activation of W. The initial
-    // value is positive infinity.
+    // User activation data model. m_lastActivationTimestamp drives transient
+    // activation only. m_hasStickyActivation and m_hasHistoryActionActivation
+    // replace the published spec's timestamp-derived states per the proposed
+    // whatwg/html#11454 (https://github.com/whatwg/html/pull/11454): sticky is
+    // monotonic (set once, never cleared), history-action is consumable.
     MonotonicTime m_lastActivationTimestamp { MonotonicTime::infinity() };
-    MonotonicTime m_lastHistoryActionActivationTimestamp { MonotonicTime::infinity() };
 
     std::optional<ClickEventData> m_lastUserClickEvent;
 
+    bool m_hasStickyActivation { false };
+    bool m_hasHistoryActionActivation { false };
     bool m_wasWrappedWithoutInitializedSecurityOrigin { false };
     bool m_mayReuseForNavigation { true };
     bool m_isStopping { false };

@@ -144,7 +144,7 @@ where Wrapped: PlatformIntelligenceTextEffectViewSource {
     // it is an `NSObject`, it performs a selector check, which requires an `@objc` implementation, else it will fail and once again return `true`.
     @objc
     func canGenerateTargetedPreviewForChunk(_ chunk: UITextEffectTextChunk) async -> Bool {
-        if let chunk = chunk as? UIPonderingTextEffectTextChunkAdapter<Wrapped.Chunk> {
+        if chunk is UIPonderingTextEffectTextChunkAdapter<Wrapped.Chunk> {
             return true
         }
 

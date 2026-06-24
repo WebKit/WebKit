@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# CMake script to be installed so other programs or libraries can find BoringSSL
+# the same way as OpenSSL would normally be found. Mimics
+# exporters/cmake/OpenSSLConfig.cmake.in in OpenSSL.
+
 include(${CMAKE_CURRENT_LIST_DIR}/OpenSSLTargets.cmake)
 
 # Recursively collect dependency locations for the imported targets.

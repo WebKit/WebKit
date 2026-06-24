@@ -24,54 +24,51 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
-#include <WebCore/StyleValueTypes.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
 
-struct TextIndentLength : LengthWrapperBase<LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>> {
-    using Base::Base;
-};
-
 // <'text-indent'> = <length-percentage> && hanging? && each-line?
 // https://drafts.csswg.org/css-text-3/#propdef-text-indent
 struct TextIndent {
+    using Amount = LengthPercentage<CSS::AllLayoutUnitClampedUnzoomed>;
+
     TextIndent(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
-        : length { literal }
+        : amount { literal }
     {
     }
 
     TextIndent(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal)
-        : length { literal }
+        : amount { literal }
     {
     }
 
-    TextIndent(TextIndentLength&& length)
-        : length { WTF::move(length) }
+    TextIndent(Amount&& amount)
+        : amount { WTF::move(amount) }
     {
     }
 
-    TextIndent(TextIndentLength&& length, CSS::Keyword::Hanging hanging)
-        : length { WTF::move(length) }
+    TextIndent(Amount&& amount, CSS::Keyword::Hanging hanging)
+        : amount { WTF::move(amount) }
         , hanging { hanging }
     {
     }
 
-    TextIndent(TextIndentLength&& length, CSS::Keyword::EachLine eachLine)
-        : length { WTF::move(length) }
+    TextIndent(Amount&& amount, CSS::Keyword::EachLine eachLine)
+        : amount { WTF::move(amount) }
         , eachLine { eachLine }
     {
     }
 
-    TextIndent(TextIndentLength&& length, std::optional<CSS::Keyword::Hanging> hanging, std::optional<CSS::Keyword::EachLine> eachLine)
-        : length { WTF::move(length) }
+    TextIndent(Amount&& amount, std::optional<CSS::Keyword::Hanging> hanging, std::optional<CSS::Keyword::EachLine> eachLine)
+        : amount { WTF::move(amount) }
         , hanging { hanging }
         , eachLine { eachLine }
     {
     }
 
-    TextIndentLength length;
+    Amount amount;
     std::optional<CSS::Keyword::Hanging> hanging;
     std::optional<CSS::Keyword::EachLine> eachLine;
 
@@ -81,7 +78,7 @@ struct TextIndent {
 template<size_t I> const auto& get(const TextIndent& value)
 {
     if constexpr (!I)
-        return value.length;
+        return value.amount;
     else if constexpr (I == 1)
         return value.hanging;
     else if constexpr (I == 2)
@@ -102,5 +99,4 @@ template<> struct Blending<TextIndent> {
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextIndentLength);
 DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::TextIndent, 3);

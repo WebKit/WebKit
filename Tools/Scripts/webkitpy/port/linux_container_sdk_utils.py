@@ -543,7 +543,7 @@ def maybe_use_container_sdk_root_dir():
     if os.environ.get('WEBKIT_CONTAINER_SDK_INSIDE_MOUNT_NAMESPACE') == '1':
         return
 
-    if any(os.environ.get(e) == '1' for e in ('WEBKIT_FLATPAK', 'WEBKIT_JHBUILD')):
+    if os.environ.get('WEBKIT_JHBUILD') == '1':
         return
 
     if os.environ.get('WEBKIT_CONTAINER_SDK') != '1':

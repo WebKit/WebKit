@@ -139,6 +139,7 @@ typedef struct RefCntBuffer {
   unsigned int ref_display_order_hint[INTER_REFS_PER_FRAME];
   // Frame's level within the hierarchical structure.
   unsigned int pyramid_level;
+  int base_qindex;
   MV_REF *mvs;
   uint8_t *seg_map;
   struct segmentation seg;
@@ -703,8 +704,9 @@ struct CommonQuantParams {
 
   /*!
    * Flag indicating whether quantization matrices are being used:
-   *  - If true, qm_level_y, qm_level_u and qm_level_v indicate the level
-   *    indices to be used to access appropriate global quant matrix tables.
+   *  - If true, qmatrix_level_y, qmatrix_level_u and qmatrix_level_v indicate
+   *    the level indices to be used to access appropriate global quant matrix
+   *    tables.
    *  - If false, we implicitly use level index 'NUM_QM_LEVELS - 1'.
    */
   bool using_qmatrix;

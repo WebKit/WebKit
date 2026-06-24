@@ -33,7 +33,7 @@ class RenderSVGResourceClipper final : public RenderSVGResourceContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceClipper);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceClipper);
 public:
-    RenderSVGResourceClipper(SVGClipPathElement&, RenderStyle&&);
+    RenderSVGResourceClipper(SVGClipPathElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGResourceClipper();
 
     RefPtr<SVGGraphicsElement> shouldApplyPathClipping() const;
@@ -47,7 +47,7 @@ public:
     inline SVGUnitTypes::SVGUnitType clipPathUnits() const;
     inline SVGClipPathElement& clipPathElement() const;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
 
 private:
     void element() const = delete;
@@ -59,7 +59,7 @@ private:
     bool requiresLayer() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderSVGResourceClipper"_s; }
 
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 };
 
 }

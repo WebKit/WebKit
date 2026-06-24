@@ -30,4 +30,9 @@
     readonly attribute unsigned long reservedVMBytes;
     readonly attribute unsigned long committedVMBytes;
     readonly attribute unsigned long freeListBytes;
+
+    // For testing that the generated default toJSON() checks for an exception after invoking a
+    // custom getter. This getter always throws; see JSMallocStatisticsCustom.cpp.
+    [CustomGetter] readonly attribute object throwingValueForToJSON;
+    [Default] object toJSON();
 };

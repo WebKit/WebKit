@@ -32,7 +32,7 @@
 #include "StyleInterpolation.h"
 
 #include "CSSRegisteredCustomProperty.h"
-#include "RenderStyle+SettersInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleInterpolationClient.h"
@@ -46,7 +46,7 @@ namespace WebCore::Style::Interpolation {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleInterpolationWrapperBase);
 // MARK: - Standard property interpolation support
 
-static void interpolateStandardProperty(CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)
+static void interpolateStandardProperty(CSSPropertyID property, Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)
 {
     ASSERT(property != CSSPropertyInvalid && property != CSSPropertyCustom);
 
@@ -66,7 +66,7 @@ static void interpolateStandardProperty(CSSPropertyID property, RenderStyle& des
 
 // MARK: - Custom property interpolation support
 
-static std::optional<CustomProperty::Value> interpolateSyntaxValues(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CustomProperty::Value& from, const CustomProperty::Value& to, const Context& context)
+static std::optional<CustomProperty::Value> interpolateSyntaxValues(const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const CustomProperty::Value& from, const CustomProperty::Value& to, const Context& context)
 {
     if (from.index() != to.index())
         return { };
@@ -103,7 +103,7 @@ static std::optional<CustomProperty::Value> firstValueInSyntaxValueLists(const C
     return std::nullopt;
 }
 
-static std::optional<CustomProperty::ValueList> interpolateSyntaxValueLists(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CustomProperty::ValueList& from, const CustomProperty::ValueList& to, const Context& context)
+static std::optional<CustomProperty::ValueList> interpolateSyntaxValueLists(const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const CustomProperty::ValueList& from, const CustomProperty::ValueList& to, const Context& context)
 {
     // We should only attempt to interpolate lists containing the same types. Since we know all items in a
     // list are of the same type, it is sufficient to check the first value from each list.
@@ -154,7 +154,7 @@ static std::optional<CustomProperty::ValueList> interpolateSyntaxValueLists(cons
     return CustomProperty::ValueList { interpolatedSyntaxValues, from.separator };
 }
 
-static Ref<const CustomProperty> interpolatedCustomProperty(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CustomProperty& from, const CustomProperty& to, const Context& context)
+static Ref<const CustomProperty> interpolatedCustomProperty(const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const CustomProperty& from, const CustomProperty& to, const Context& context)
 {
     auto isAttrTainted = std::max(from.isAttrTainted(), to.isAttrTainted());
 
@@ -176,12 +176,12 @@ static Ref<const CustomProperty> interpolatedCustomProperty(const RenderStyle& f
     return context.progress < 0.5 ? from : to;
 }
 
-static std::pair<const CustomProperty*, const CustomProperty*> customPropertyValuesForInterpolation(const AtomString& customProperty, const RenderStyle& fromStyle, const RenderStyle& toStyle)
+static std::pair<const CustomProperty*, const CustomProperty*> customPropertyValuesForInterpolation(const AtomString& customProperty, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle)
 {
     return { fromStyle.customPropertyValue(customProperty), toStyle.customPropertyValue(customProperty) };
 }
 
-static void interpolateCustomProperty(const AtomString& customProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)
+static void interpolateCustomProperty(const AtomString& customProperty, Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)
 {
     Context context { customProperty, progress, false, compositeOperation, iterationCompositeOperation, currentIteration, client };
 
@@ -278,7 +278,7 @@ bool canInterpolate(const AnimatableCSSProperty& property)
     );
 }
 
-bool equals(const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b, const Document&)
+bool equals(const AnimatableCSSProperty& property, const Style::ComputedStyle& a, const Style::ComputedStyle& b, const Document&)
 {
     return WTF::switchOn(property,
         [&](CSSPropertyID propertyId) {
@@ -295,7 +295,7 @@ bool equals(const AnimatableCSSProperty& property, const RenderStyle& a, const R
     );
 }
 
-bool canInterpolate(const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b, const Document&)
+bool canInterpolate(const AnimatableCSSProperty& property, const Style::ComputedStyle& a, const Style::ComputedStyle& b, const Document&)
 {
     return WTF::switchOn(property,
         [&](CSSPropertyID propertyId) {
@@ -338,7 +338,7 @@ bool canInterpolate(const AnimatableCSSProperty& property, const RenderStyle& a,
     );
 }
 
-void interpolate(const AnimatableCSSProperty& property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)
+void interpolate(const AnimatableCSSProperty& property, Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)
 {
     WTF::switchOn(property,
         [&](CSSPropertyID propertyId) {
@@ -350,12 +350,12 @@ void interpolate(const AnimatableCSSProperty& property, RenderStyle& destination
     );
 }
 
-void interpolate(const AnimatableCSSProperty& property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, const Client& client)
+void interpolate(const AnimatableCSSProperty& property, Style::ComputedStyle& destination, const Style::ComputedStyle& from, const Style::ComputedStyle& to, double progress, CompositeOperation compositeOperation, const Client& client)
 {
     return interpolate(property, destination, from, to, progress, compositeOperation, IterationCompositeOperation::Replace, 0, client);
 }
 
-bool requiresInterpolationForAccumulativeIteration(const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b, const Client&)
+bool requiresInterpolationForAccumulativeIteration(const AnimatableCSSProperty& property, const Style::ComputedStyle& a, const Style::ComputedStyle& b, const Client&)
 {
     return WTF::switchOn(property,
         [&](CSSPropertyID propertyId) {

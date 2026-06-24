@@ -75,7 +75,7 @@ extension WTF.String {
     var description: Swift.String {
         // We could possibly make this quicker by treating a C++ span as
         // a Sequence. For now, we want to avoid unsafe as much as possible.
-        String(utf8(WTF.LenientConversion).toStdString())
+        Swift.String(utf8(WTF.LenientConversion).toStdString())
     }
 }
 

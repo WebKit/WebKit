@@ -52,7 +52,8 @@ VideoStreamDecoder::~VideoStreamDecoder() {
 int32_t VideoStreamDecoder::OnFrameToRender(const FrameToRender& arguments) {
   receive_stats_callback_->OnDecodedFrame(
       arguments.video_frame, arguments.qp, arguments.decode_time,
-      arguments.content_type, arguments.frame_type);
+      arguments.content_type, arguments.frame_type,
+      arguments.timing_frame_info);
   incoming_video_stream_->OnFrame(arguments.video_frame);
   return 0;
 }

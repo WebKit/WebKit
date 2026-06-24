@@ -36,6 +36,9 @@ const opcodeMTU = byte('M')
 // MaxUint64 indicates there should be no timeout.
 const opcodeExpectNextTimeout = byte('E')
 
+// opcodeUpdateTimeout update the timeout of the DTLS object.
+const opcodeUpdateTimeout = byte('U')
+
 type packetAdaptor struct {
 	net.Conn
 	debug *recordingConn
@@ -165,6 +168,17 @@ func (p *packetAdaptor) ExpectNoNextTimeout() error {
 	payload := make([]byte, 1+8)
 	payload[0] = opcodeExpectNextTimeout
 	binary.BigEndian.PutUint64(payload[1:], math.MaxUint64)
+	_, err := p.Conn.Write(payload)
+	return err
+}
+
+// UpdatePeerTimeout instructs the peer to set the timeoput to the specified value.
+func (p *packetAdaptor) SetPeerTimeout(d time.Duration) error {
+	p.log(fmt.Sprintf("Setting timeout to to %d ms", d.Milliseconds()), nil)
+
+	payload := make([]byte, 1+4)
+	payload[0] = opcodeUpdateTimeout
+	binary.BigEndian.PutUint32(payload[1:], uint32(d.Milliseconds()))
 	_, err := p.Conn.Write(payload)
 	return err
 }

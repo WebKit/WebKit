@@ -653,7 +653,7 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, HashSet<TileIndex>& 
                 tilesNeedingDisplay.add(tileIndex);
 
             if (!tileInfo.layer->superlayer())
-                m_containerLayer.get().appendSublayer(*tileInfo.layer);
+                m_containerLayer.get().appendSublayer(protect(*tileInfo.layer));
         }
     }
 

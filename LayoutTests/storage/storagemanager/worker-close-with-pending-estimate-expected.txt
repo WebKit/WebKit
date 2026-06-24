@@ -1,0 +1,10 @@
+Closing a worker while a navigator.storage.estimate() request is still in flight must not leave the estimate completion handler uncalled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Worker closed with in-flight navigator.storage.estimate() requests without crashing the web process.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

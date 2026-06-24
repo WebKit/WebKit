@@ -35,11 +35,11 @@ namespace JSC {
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable"_s, &ExecutableBase::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NativeExecutable) };
 
-NativeExecutable* NativeExecutable::create(VM& vm, Ref<JSC::JITCode>&& callThunk, TaggedNativeFunction function, Ref<JSC::JITCode>&& constructThunk, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, const String& name)
+NativeExecutable* NativeExecutable::create(VM& vm, Ref<JSC::JITCode>&& callThunk, TaggedNativeFunction function, Ref<JSC::JITCode>&& constructThunk, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, unsigned length, const String& name)
 {
     NativeExecutable* executable;
     executable = new (NotNull, allocateCell<NativeExecutable>(vm)) NativeExecutable(vm, function, constructor, implementationVisibility);
-    executable->finishCreation(vm, WTF::move(callThunk), WTF::move(constructThunk), name);
+    executable->finishCreation(vm, WTF::move(callThunk), WTF::move(constructThunk), length, name);
 
     vm.forEachDebugger([&] (Debugger& debugger) {
         debugger.didCreateNativeExecutable(*executable);
@@ -58,7 +58,7 @@ Structure* NativeExecutable::createStructure(VM& vm, JSGlobalObject* globalObjec
     return Structure::create(vm, globalObject, proto, TypeInfo(NativeExecutableType, StructureFlags), info());
 }
 
-void NativeExecutable::finishCreation(VM& vm, Ref<JSC::JITCode>&& callThunk, Ref<JSC::JITCode>&& constructThunk, const String& name)
+void NativeExecutable::finishCreation(VM& vm, Ref<JSC::JITCode>&& callThunk, Ref<JSC::JITCode>&& constructThunk, unsigned length, const String& name)
 {
     Base::finishCreation(vm);
     m_jitCodeForCall = WTF::move(callThunk);
@@ -66,6 +66,7 @@ void NativeExecutable::finishCreation(VM& vm, Ref<JSC::JITCode>&& callThunk, Ref
     m_jitCodeForCallWithArityCheck = m_jitCodeForCall->addressForCall(ArityCheckMode::MustCheckArity);
     m_jitCodeForConstructWithArityCheck = m_jitCodeForConstruct->addressForCall(ArityCheckMode::MustCheckArity);
     m_name = name;
+    m_length = length;
 
     assertIsTaggedWith<JSEntryPtrTag>(m_jitCodeForCall->addressForCall(ArityCheckMode::ArityCheckNotRequired).taggedPtr());
     assertIsTaggedWith<JSEntryPtrTag>(m_jitCodeForConstruct->addressForCall(ArityCheckMode::ArityCheckNotRequired).taggedPtr());
@@ -115,6 +116,11 @@ JSString* NativeExecutable::toStringSlow(JSGlobalObject *globalObject)
     WTF::storeStoreFence();
     m_asString.set(vm, this, asString);
     return asString;
+}
+
+JSString* NativeExecutable::nameJSString(VM& vm) const
+{
+    return m_name.isNull() ? jsEmptyString(vm) : jsString(vm, m_name);
 }
 
 template<typename Visitor>

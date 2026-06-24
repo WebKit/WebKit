@@ -52,11 +52,11 @@
 #include "NodeDocument.h"
 #include "PlatformRenderTheme.h"
 #include "RenderElement.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "UserAgentParts.h"
 #include "UserGestureIndicator.h"
 #include <wtf/TZoneMallocInlines.h>

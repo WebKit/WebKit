@@ -349,7 +349,7 @@ void MediaSessionHelperIOS::mediaServerConnectionDied()
     if (m_presentedApplicationPID) {
         auto presentedApplicationPID = std::exchange(m_presentedApplicationPID, { });
         callOnMainRunLoop([presentedApplicationPID] {
-            sharedHelper().providePresentingApplicationPID(*presentedApplicationPID);
+            protect(sharedHelper())->providePresentingApplicationPID(*presentedApplicationPID);
         });
     }
 }

@@ -53,7 +53,7 @@
         return;
 
     _editing = YES;
-    [_control controlBeginEditing];
+    [protect(_control) controlBeginEditing];
 }
 
 - (void)updateEditing
@@ -70,7 +70,7 @@
         return;
 
     _editing = NO;
-    [_control controlEndEditing];
+    [protect(_control) controlEndEditing];
 }
 
 - (UIView *)assistantView

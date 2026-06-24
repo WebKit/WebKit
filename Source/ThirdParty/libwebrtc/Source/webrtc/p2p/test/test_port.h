@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/candidate.h"
 #include "api/transport/stun.h"
 #include "p2p/base/connection.h"
@@ -41,7 +41,7 @@ class TestPort : public Port {
   using Port::GetStunMessage;
 
   // The last StunMessage that was sent on this Port.
-  ArrayView<const uint8_t> last_stun_buf();
+  std::span<const uint8_t> last_stun_buf();
   IceMessage* last_stun_msg();
   int last_stun_error_code();
 
@@ -61,12 +61,13 @@ class TestPort : public Port {
 
   Connection* CreateConnection(const Candidate& remote_candidate,
                                CandidateOrigin origin) override;
-  int SendTo(const void* data,
-             size_t size,
+  int SendTo(std::span<const uint8_t> data,
              const SocketAddress& addr,
              const AsyncSocketPacketOptions& options,
              bool payload) override;
+
   int SetOption(Socket::Option opt, int value) override;
+
   int GetOption(Socket::Option opt, int* value) override;
   int GetError() override;
   void Reset();

@@ -964,7 +964,7 @@ void AccessibilityAtspi::notifyValueChanged(AccessibilityObjectAtspi& atspiObjec
 
 void AccessibilityAtspi::notifyLoadEvent(AccessibilityObjectAtspi& atspiObject, const CString& event) const
 {
-    if (event != "LoadComplete")
+    if (event != "LoadComplete"_s)
         return;
 
     notify(atspiObject, "AXLoadComplete", nullptr);

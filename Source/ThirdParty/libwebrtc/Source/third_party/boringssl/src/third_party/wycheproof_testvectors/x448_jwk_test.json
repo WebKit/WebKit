@@ -1518,7 +1518,8 @@
           "comment": "public key with low order",
           "flags": [
             "LowOrderPublic",
-            "ZeroSharedSecret"
+            "ZeroSharedSecret",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",
@@ -1563,7 +1564,8 @@
           "tcId": 67,
           "comment": "public key with low order",
           "flags": [
-            "LowOrderPublic"
+            "LowOrderPublic",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",
@@ -1585,7 +1587,8 @@
           "tcId": 68,
           "comment": "public key with low order",
           "flags": [
-            "LowOrderPublic"
+            "LowOrderPublic",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",
@@ -1607,7 +1610,8 @@
           "tcId": 69,
           "comment": "public key with low order",
           "flags": [
-            "LowOrderPublic"
+            "LowOrderPublic",
+            "Twist"
           ],
           "public": {
             "kty": "OKP",

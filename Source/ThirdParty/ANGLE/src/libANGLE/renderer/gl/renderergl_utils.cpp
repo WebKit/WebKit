@@ -2033,7 +2033,6 @@ void GenerateCaps(const FunctionsGL *functions,
                                        functions->hasGLExtension("GL_EXT_provoking_vertex") ||
                                        functions->isAtLeastGL(gl::Version(3, 2));
 
-    extensions->textureExternalUpdateANGLE = true;
     extensions->texture3DOES               = functions->isAtLeastGL(gl::Version(1, 2)) ||
                                functions->isAtLeastGLES(gl::Version(3, 0)) ||
                                functions->hasGLESExtension("GL_OES_texture_3D");
@@ -2193,12 +2192,6 @@ void GenerateCaps(const FunctionsGL *functions,
          functions->hasGLExtension("GL_KHR_blend_equation_advanced_coherent") ||
          functions->isAtLeastGLES(gl::Version(3, 2)) ||
          functions->hasGLESExtension("GL_KHR_blend_equation_advanced_coherent"));
-
-    // PVRTC1 textures must be squares on Apple platforms.
-    if (IsApple())
-    {
-        limitations->squarePvrtc1 = true;
-    }
 
     // Check if the driver clamps constant blend color
     if (IsQualcomm(GetVendorID(functions)))
@@ -2585,9 +2578,11 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, sanitizeAMDGPURendererString, IsLinux() && hasAMD);
 
     // http://crbug.com/1187513
-    // Imagination drivers are buggy with context switching. It needs to unbind fbo before context
+    // http://anglebug.com/519646871
+    // Several drivers are buggy with context switching. It needs to unbind fbo before context
     // switching to workadround the driver issues.
-    ANGLE_FEATURE_CONDITION(features, unbindFBOBeforeSwitchingContext, IsPowerVR(vendor));
+    ANGLE_FEATURE_CONDITION(features, unbindFBOBeforeSwitchingContext,
+                            IsPowerVR(vendor) || (IsWindows() && isNvidia));
 
     // http://crbug.com/1181068 and http://crbug.com/783979
     ANGLE_FEATURE_CONDITION(features, flushOnFramebufferChange,
@@ -2726,9 +2721,8 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // exposed.
     ANGLE_FEATURE_CONDITION(features, bgraTexImageFormatsBroken, !isMesa && isQualcomm);
 
-    // Recreate FBO upon flush/finish/fencesync under certain conditions to work around Qualcomm
-    // driver bugs.
-    ANGLE_FEATURE_CONDITION(features, recreateFboUponFlush,
+    // https://crbug.com/520656244
+    ANGLE_FEATURE_CONDITION(features, reattachFboDepthStencilOnReallocation,
                             !isMesa && isQualcomm && qualcommVersion < 878);
 
     // http://crbug.com/507508103

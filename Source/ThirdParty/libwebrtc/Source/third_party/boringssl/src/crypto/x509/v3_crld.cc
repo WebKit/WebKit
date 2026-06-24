@@ -23,15 +23,18 @@
 #include <openssl/obj.h>
 #include <openssl/x509.h>
 
+#include "../internal.h"
 #include "internal.h"
 
+
+using namespace bssl;
 
 static void *v2i_crld(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
                       const STACK_OF(CONF_VALUE) *nval);
 static int i2r_crldp(const X509V3_EXT_METHOD *method, void *pcrldp, BIO *out,
                      int indent);
 
-const X509V3_EXT_METHOD v3_crld = {
+const X509V3_EXT_METHOD bssl::v3_crld = {
     NID_crl_distribution_points,
     0,
     ASN1_ITEM_ref(CRL_DIST_POINTS),
@@ -48,7 +51,7 @@ const X509V3_EXT_METHOD v3_crld = {
     nullptr,
 };
 
-const X509V3_EXT_METHOD v3_freshest_crl = {
+const X509V3_EXT_METHOD bssl::v3_freshest_crl = {
     NID_freshest_crl, 0,        ASN1_ITEM_ref(CRL_DIST_POINTS),
     nullptr,          nullptr,  nullptr,
     nullptr,          nullptr,  nullptr,
@@ -83,7 +86,7 @@ static int set_dist_point_name(DIST_POINT_NAME **pdp, const X509V3_CTX *ctx,
                                const CONF_VALUE *cnf) {
   STACK_OF(GENERAL_NAME) *fnm = nullptr;
   STACK_OF(X509_NAME_ENTRY) *rnm = nullptr;
-  if (!strncmp(cnf->name, "fullname", 9)) {
+  if (!strcmp(cnf->name, "fullname")) {
     // If |cnf| comes from |X509V3_parse_list|, which is possible for a v2i
     // function, |cnf->value| may be NULL.
     if (cnf->value == nullptr) {
@@ -110,9 +113,10 @@ static int set_dist_point_name(DIST_POINT_NAME **pdp, const X509V3_CTX *ctx,
     if (!nm) {
       return -1;
     }
-    int ret = X509V3_NAME_from_section(nm, dnsect, MBSTRING_ASC);
-    rnm = nm->entries;
-    nm->entries = nullptr;
+    auto *impl = FromOpaque(nm);
+    int ret = X509V3_NAME_from_section(impl, dnsect, MBSTRING_ASC);
+    rnm = impl->entries;
+    impl->entries = nullptr;
     X509_NAME_free(nm);
     if (!ret || sk_X509_NAME_ENTRY_num(rnm) <= 0) {
       goto err;
@@ -374,7 +378,7 @@ static int i2r_idp(const X509V3_EXT_METHOD *method, void *pidp, BIO *out,
 static void *v2i_idp(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
                      const STACK_OF(CONF_VALUE) *nval);
 
-const X509V3_EXT_METHOD v3_idp = {
+const X509V3_EXT_METHOD bssl::v3_idp = {
     NID_issuing_distribution_point,
     X509V3_EXT_MULTILINE,
     ASN1_ITEM_ref(ISSUING_DIST_POINT),
@@ -456,7 +460,7 @@ static int print_distpoint(BIO *out, DIST_POINT_NAME *dpn, int indent) {
     BIO_printf(out, "%*sFull Name:\n", indent, "");
     print_gens(out, dpn->name.fullname, indent);
   } else {
-    X509_NAME ntmp;
+    X509Name ntmp;
     ntmp.entries = dpn->name.relativename;
     BIO_printf(out, "%*sRelative Name:\n%*s", indent, "", indent + 2, "");
     X509_NAME_print_ex(out, &ntmp, 0, XN_FLAG_ONELINE);
@@ -517,7 +521,7 @@ static int i2r_crldp(const X509V3_EXT_METHOD *method, void *pcrldp, BIO *out,
   return 1;
 }
 
-int DIST_POINT_set_dpname(DIST_POINT_NAME *dpn, X509_NAME *iname) {
+int bssl::DIST_POINT_set_dpname(DIST_POINT_NAME *dpn, X509_NAME *iname) {
   size_t i;
   STACK_OF(X509_NAME_ENTRY) *frag;
   X509_NAME_ENTRY *ne;

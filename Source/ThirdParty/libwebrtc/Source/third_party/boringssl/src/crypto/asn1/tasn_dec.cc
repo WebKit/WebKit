@@ -27,6 +27,9 @@
 #include "../internal.h"
 #include "internal.h"
 
+
+using namespace bssl;
+
 // Constructed types with a recursive definition (such as can be found in PKCS7)
 // could eventually exceed the stack given malicious input with excessive
 // recursion. Therefore we limit the stack depth. This is the maximum number of
@@ -433,8 +436,9 @@ err:
   return 0;
 }
 
-int ASN1_item_ex_d2i(ASN1_VALUE **pval, const unsigned char **in, long len,
-                     const ASN1_ITEM *it, int tag, int aclass, char opt) {
+int bssl::ASN1_item_ex_d2i(ASN1_VALUE **pval, const unsigned char **in,
+                           long len, const ASN1_ITEM *it, int tag, int aclass,
+                           char opt) {
   return asn1_item_ex_d2i(pval, in, len, it, tag, aclass, opt, /*depth=*/0);
 }
 
@@ -696,7 +700,7 @@ static int asn1_d2i_ex_primitive_cbs(ASN1_VALUE **pval, CBS *cbs,
   // Handle non-|ASN1_STRING| types.
   switch (utype) {
     case V_ASN1_OBJECT: {
-      bssl::UniquePtr<ASN1_OBJECT> obj(asn1_parse_object(cbs, cbs_tag));
+      UniquePtr<ASN1_OBJECT> obj(asn1_parse_object(cbs, cbs_tag));
       if (obj == nullptr) {
         return 0;
       }

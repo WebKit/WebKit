@@ -18,6 +18,7 @@
         shouldBeTrue("'webkitTransform' in document.body.style");
         shouldBeTrue("'WebkitTransform' in document.body.style");
         shouldBeFalse("'bogus-random-String' in document.body.style");
+        shouldBeFalse("'pad' in document.body.style"); // descriptor only names should not be included 
         shouldBeTrue("'cssText' in document.body.style");
         
         // Test invariants on the order of the enumerated properties. These are not in the spec, but we

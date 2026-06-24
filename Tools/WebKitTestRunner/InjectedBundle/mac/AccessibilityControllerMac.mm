@@ -179,11 +179,12 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
         return findElementByIdRecursive(root.ptr(), toWTFString(idAttribute));
     }
 
-    PlatformUIElement root = static_cast<PlatformUIElement>(_WKAccessibilityRootObjectForTesting(WKBundleFrameForJavaScriptContext(context)));
+    WKRetainPtr<WKBundleFrameRef> frame = WKBundleFrameForJavaScriptContext(context);
 
     NSString *attributeName = [NSString stringWithJSStringRef:idAttribute];
     RetainPtr<id> result;
-    executeOnAXThreadAndWait([&root, &attributeName, &result] {
+    executeOnAXThreadAndWait([&frame, &attributeName, &result] {
+        PlatformUIElement root = static_cast<PlatformUIElement>(_WKAccessibilityRootObjectForTesting(frame.get()));
         result = findAccessibleObjectById(root, attributeName);
     });
 

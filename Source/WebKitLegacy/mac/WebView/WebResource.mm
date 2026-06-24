@@ -48,7 +48,6 @@
 #import <wtf/RunLoop.h>
 #import <wtf/RuntimeApplicationChecks.h>
 
-using namespace WebCore;
 
 static NSString * const WebResourceDataKey =              @"WebResourceData";
 static NSString * const WebResourceFrameNameKey =         @"WebResourceFrameName";
@@ -59,9 +58,9 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 @interface WebResourcePrivate : NSObject {
 @public
-    RefPtr<ArchiveResource> coreResource;
+    RefPtr<WebCore::ArchiveResource> coreResource;
 }
-- (instancetype)initWithCoreResource:(Ref<ArchiveResource>&&)coreResource;
+- (instancetype)initWithCoreResource:(Ref<WebCore::ArchiveResource>&&)coreResource;
 @end
 
 @implementation WebResourcePrivate
@@ -77,7 +76,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     return self;
 }
 
-- (instancetype)initWithCoreResource:(Ref<ArchiveResource>&&)passedResource
+- (instancetype)initWithCoreResource:(Ref<WebCore::ArchiveResource>&&)passedResource
 {
     self = [super init];
     if (!self)
@@ -150,7 +149,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    auto coreResource = ArchiveResource::create(SharedBuffer::create(data.get()), url.get(), mimeType.get(), textEncoding.get(), frameName.get(), response.get());
+    auto coreResource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(data.get()), url.get(), mimeType.get(), textEncoding.get(), frameName.get(), response.get());
     if (!coreResource) {
         [self release];
         return nil;
@@ -252,7 +251,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 @implementation WebResource (WebResourceInternal)
 
-- (id)_initWithCoreResource:(Ref<ArchiveResource>&&)coreResource
+- (id)_initWithCoreResource:(Ref<WebCore::ArchiveResource>&&)coreResource
 {
     self = [super init];
     if (!self)
@@ -301,7 +300,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    auto coreResource = ArchiveResource::create(SharedBuffer::create(copyData ? adoptNS([data copy]).get() : data), URL, MIMEType, textEncodingName, frameName, response);
+    auto coreResource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(copyData ? adoptNS([data copy]).get() : data), URL, MIMEType, textEncodingName, frameName, response);
     if (!coreResource) {
         [self release];
         return nil;

@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
+#include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
 #include <wtf/TriState.h>
@@ -1384,7 +1385,7 @@ ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
     }
     if (isDouble()) {
         double d = asDouble();
-        v = static_cast<uint32_t>(d);
+        v = truncateDoubleToUint32(d);
         return v == d;
     }
     return false;

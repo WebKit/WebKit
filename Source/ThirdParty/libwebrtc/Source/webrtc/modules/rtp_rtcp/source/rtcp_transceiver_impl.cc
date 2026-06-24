@@ -17,12 +17,12 @@
 #include <iterator>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/data_rate.h"
@@ -70,7 +70,7 @@ struct SenderReportTimes {
   NtpTime remote_sent_time;
 };
 
-std::function<void(ArrayView<const uint8_t>)> GetRtcpTransport(
+std::function<void(std::span<const uint8_t>)> GetRtcpTransport(
     const RtcpTransceiverConfig& config) {
   if (config.rtcp_transport != nullptr) {
     return config.rtcp_transport;
@@ -78,7 +78,7 @@ std::function<void(ArrayView<const uint8_t>)> GetRtcpTransport(
 
   bool first = true;
   std::string log_prefix = config.debug_id;
-  return [first, log_prefix](ArrayView<const uint8_t> /* packet */) mutable {
+  return [first, log_prefix](std::span<const uint8_t> /* packet */) mutable {
     if (first) {
       RTC_LOG(LS_ERROR) << log_prefix << "Sending RTCP packets is disabled.";
       first = false;
@@ -126,7 +126,7 @@ class RtcpTransceiverImpl::PacketSender {
   // Sends pending rtcp compound packet.
   void Send() {
     if (index_ > 0) {
-      callback_(ArrayView<const uint8_t>(buffer_, index_));
+      callback_(std::span<const uint8_t>(buffer_, index_));
       index_ = 0;
     }
   }
@@ -215,7 +215,7 @@ void RtcpTransceiverImpl::SetReadyToSend(bool ready) {
   ready_to_send_ = ready;
 }
 
-void RtcpTransceiverImpl::ReceivePacket(ArrayView<const uint8_t> packet,
+void RtcpTransceiverImpl::ReceivePacket(std::span<const uint8_t> packet,
                                         Timestamp now) {
   // Report blocks may be spread across multiple sender and receiver reports.
   std::vector<ReportBlockData> report_blocks;
@@ -288,7 +288,7 @@ void RtcpTransceiverImpl::SendPictureLossIndication(uint32_t ssrc) {
   SendImmediateFeedback(pli);
 }
 
-void RtcpTransceiverImpl::SendFullIntraRequest(ArrayView<const uint32_t> ssrcs,
+void RtcpTransceiverImpl::SendFullIntraRequest(std::span<const uint32_t> ssrcs,
                                                bool new_request) {
   RTC_DCHECK(!ssrcs.empty());
   if (!ready_to_send_)
@@ -377,7 +377,7 @@ void RtcpTransceiverImpl::HandleReceiverReport(
 void RtcpTransceiverImpl::HandleReportBlocks(
     uint32_t sender_ssrc,
     Timestamp now,
-    ArrayView<const rtcp::ReportBlock> rtcp_report_blocks,
+    std::span<const rtcp::ReportBlock> rtcp_report_blocks,
     std::vector<ReportBlockData>& report_blocks) {
   if (rtcp_report_blocks.empty()) {
     return;
@@ -575,7 +575,7 @@ void RtcpTransceiverImpl::HandleDlrr(const rtcp::Dlrr& dlrr, Timestamp now) {
 
 void RtcpTransceiverImpl::ProcessReportBlocks(
     Timestamp now,
-    ArrayView<const ReportBlockData> report_blocks) {
+    std::span<const ReportBlockData> report_blocks) {
   RTC_DCHECK(!report_blocks.empty());
   if (config_.network_link_observer == nullptr) {
     return;
@@ -837,7 +837,7 @@ void RtcpTransceiverImpl::CreateCompoundPacket(Timestamp now,
     sender.AppendPacket(xr_with_rrtr);
   }
   if (xr_with_dlrr.has_value()) {
-    ArrayView<const uint32_t> ssrcs(&sender_ssrc, 1);
+    std::span<const uint32_t> ssrcs(&sender_ssrc, 1);
     if (config_.reply_to_non_sender_rtt_mesaurments_on_all_ssrcs &&
         !sender_ssrcs.empty()) {
       ssrcs = sender_ssrcs;

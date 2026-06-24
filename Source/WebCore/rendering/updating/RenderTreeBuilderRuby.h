@@ -46,7 +46,7 @@ private:
     RenderTreeBuilder& m_builder;
 };
 
-RenderStyle createAnonymousStyleForRuby(const RenderStyle& parentStyle, Style::Display);
+Style::ComputedStyle createAnonymousStyleForRuby(const Style::ComputedStyle& parentStyle, Style::Display);
 
 }
 

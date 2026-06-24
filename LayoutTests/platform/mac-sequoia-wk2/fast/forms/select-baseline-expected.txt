@@ -7,26 +7,26 @@ layer at (0,0) size 800x600
         text run at (0,0) width 474: "This tests that empty select controls and buttons have the correct baseline."
       RenderBR {BR} at (473,0) size 1x18
       RenderMenuList {SELECT} at (0,20) size 36x18 [bgcolor=#FFFFFF]
-        RenderSelectFallbackButton {DIV} at (0,0) size 36x18
-          RenderText at (8,2) size 0x13
+        RenderBlock {DIV} at (0,0) size 36x18
+          RenderText {#text} at (8,2) size 0x13
             text run at (8,2) width 0: " "
       RenderText {#text} at (36,18) size 31x19
         text run at (36,18) width 31: " test "
       RenderMenuList {SELECT} at (66,20) size 53x18 [bgcolor=#FFFFFF]
-        RenderSelectFallbackButton {DIV} at (0,0) size 52x18
-          RenderText at (8,2) size 21x13
+        RenderBlock {DIV} at (0,0) size 52x18
+          RenderText {#text} at (8,2) size 21x13
             text run at (8,2) width 21: "test"
       RenderText {#text} at (118,18) size 5x19
         text run at (118,18) width 5: " "
       RenderMenuList {SELECT} at (122,20) size 37x18 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #00008B)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 34x16
-          RenderText at (8,1) size 0x13
+        RenderBlock {DIV} at (1,1) size 34x16
+          RenderText {#text} at (8,1) size 0x13
             text run at (8,1) width 0: " "
       RenderText {#text} at (158,18) size 31x19
         text run at (158,18) width 31: " test "
       RenderMenuList {SELECT} at (188,20) size 53x18 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #00008B)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 50x16
-          RenderText at (8,1) size 21x13
+        RenderBlock {DIV} at (1,1) size 50x16
+          RenderText {#text} at (8,1) size 21x13
             text run at (8,1) width 21: "test"
       RenderText {#text} at (240,18) size 5x19
         text run at (240,18) width 5: " "

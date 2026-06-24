@@ -377,7 +377,6 @@ private:
     String m_webContentRestrictionsConfigurationFile;
 #endif
     String m_additionalDomainsWithUserInteractionForTesting;
-    std::optional<unsigned> m_overridePersistentNotificationMinimumLifetimeForTesting;
 };
 
 }

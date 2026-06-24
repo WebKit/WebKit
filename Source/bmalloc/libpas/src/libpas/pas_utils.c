@@ -55,7 +55,7 @@
 #if BASAN_ENABLED
 #define PAS_FATAL_CRASH_INST "brk #0x0"
 #else
-#define PAS_FATAL_CRASH_INST "brk #0xc471"
+#define PAS_FATAL_CRASH_INST "brk #0xbb08"
 #endif
 #endif
 

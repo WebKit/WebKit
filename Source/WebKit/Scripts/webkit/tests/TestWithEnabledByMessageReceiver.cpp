@@ -42,7 +42,6 @@ void TestWithEnabledBy::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 {
     auto sharedPreferences = sharedPreferencesForWebProcess(connection);
     UNUSED_VARIABLE(sharedPreferences);
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithEnabledBy::AlwaysEnabled::name()) {
         IPC::handleMessage<Messages::TestWithEnabledBy::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledBy::alwaysEnabled);
         return;

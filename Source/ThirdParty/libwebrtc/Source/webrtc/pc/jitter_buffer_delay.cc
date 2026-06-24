@@ -16,12 +16,12 @@
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
+namespace webrtc {
+
 namespace {
 constexpr int kDefaultDelay = 0;
 constexpr int kMaximumDelayMs = 10000;
 }  // namespace
-
-namespace webrtc {
 
 void JitterBufferDelay::Set(std::optional<double> delay_seconds) {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);

@@ -29,6 +29,7 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/MediaRemoteSoftLink.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -45,29 +46,6 @@
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(MediaRemote)
-
-SOFT_LINK(MediaRemote, MRMediaRemoteSendCommandToApp, Boolean, (MRMediaRemoteCommand command, CFDictionaryRef options, MROriginRef origin, CFStringRef appDisplayID, MRSendCommandAppOptions appOptions, dispatch_queue_t replyQ, void(^completion)(MRSendCommandError err, CFArrayRef handlerReturnStatuses)), (command, options, origin, appDisplayID, appOptions, replyQ, completion));
-#define MRMediaRemoteSendCommandToApp softLinkMRMediaRemoteSendCommandToApp
-
-SOFT_LINK(MediaRemote, MRMediaRemoteGetLocalOrigin, MROriginRef, (), ());
-#define MRMediaRemoteGetLocalOrigin softLinkMRMediaRemoteGetLocalOrigin
-
-SOFT_LINK(MediaRemote, MRMediaRemoteGetSupportedCommandsForOrigin, void, (MROriginRef origin, dispatch_queue_t queue, void(^completion)(CFArrayRef commands)), (origin, queue, completion));
-#define MRMediaRemoteGetSupportedCommandsForOrigin softLinkMRMediaRemoteGetSupportedCommandsForOrigin
-
-SOFT_LINK(MediaRemote, MRMediaRemoteGetNowPlayingClient, void, (dispatch_queue_t queue, void(^completion)(MRNowPlayingClientRef, CFErrorRef)), (queue, completion))
-#define MRMediaRemoteGetNowPlayingClient softLinkMRMediaRemoteGetNowPlayingClient
-
-SOFT_LINK(MediaRemote, MRNowPlayingClientGetProcessIdentifier, pid_t, (MRNowPlayingClientRef client), (client))
-#define MRNowPlayingClientGetProcessIdentifier softLinkMRNowPlayingClientGetProcessIdentifier
-
-SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteOptionSkipInterval, CFStringRef)
-#define kMRMediaRemoteOptionSkipInterval getkMRMediaRemoteOptionSkipIntervalSingleton()
-
-SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteOptionPlaybackPosition, CFStringRef)
-#define kMRMediaRemoteOptionPlaybackPosition getkMRMediaRemoteOptionPlaybackPositionSingleton()
 
 #if !USE(APPLE_INTERNAL_SDK)
 @interface MRCommandInfo : NSObject

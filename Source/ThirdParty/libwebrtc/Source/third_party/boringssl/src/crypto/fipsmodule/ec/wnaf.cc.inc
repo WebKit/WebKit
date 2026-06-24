@@ -29,13 +29,15 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 // This file implements the wNAF-based interleaving multi-exponentiation method
 // at:
 //   http://link.springer.com/chapter/10.1007%2F3-540-45537-X_13
 //   http://www.bmoeller.de/pdf/TI-01-08.multiexp.pdf
 
-void ec_compute_wNAF(const EC_GROUP *group, int8_t *out,
-                     const EC_SCALAR *scalar, size_t bits, int w) {
+void bssl::ec_compute_wNAF(const EC_GROUP *group, int8_t *out,
+                           const EC_SCALAR *scalar, size_t bits, int w) {
   // 'int8_t' can represent integers with absolute values less than 2^7.
   assert(0 < w && w <= 7);
   assert(bits != 0);
@@ -128,10 +130,10 @@ static void lookup_precomp(const EC_GROUP *group, EC_JACOBIAN *out,
 // avoid a malloc.
 #define EC_WNAF_STACK 3
 
-int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_JACOBIAN *r,
-                                 const EC_SCALAR *g_scalar,
-                                 const EC_JACOBIAN *points,
-                                 const EC_SCALAR *scalars, size_t num) {
+int bssl::ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_JACOBIAN *r,
+                                       const EC_SCALAR *g_scalar,
+                                       const EC_JACOBIAN *points,
+                                       const EC_SCALAR *scalars, size_t num) {
   size_t bits = EC_GROUP_order_bits(group);
   size_t wNAF_len = bits + 1;
 

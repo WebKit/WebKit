@@ -14,32 +14,9 @@
 #include <cstdint>
 #include <cstdio>
 #include <memory>
-#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 
 #include "rtc_base/protobuf_utils.h"
 #include "rtc_base/system/arch.h"
-
-namespace {
-// Allocates new memory in the memory owned by the unique_ptr to fit the raw
-// message and returns the number of bytes read when having a string stream as
-// input.
-size_t ReadMessageBytesFromString(std::stringstream* input,
-                                  std::unique_ptr<uint8_t[]>* bytes) {
-  int32_t size = 0;
-  input->read(reinterpret_cast<char*>(&size), sizeof(int32_t));
-  int32_t size_read = input->gcount();
-  if (size_read != sizeof(int32_t))
-    return 0;
-  if (size <= 0)
-    return 0;
-
-  *bytes = std::make_unique<uint8_t[]>(size);
-  input->read(reinterpret_cast<char*>(bytes->get()),
-              size * sizeof((*bytes)[0]));
-  size_read = input->gcount();
-  return size_read == size ? size : 0;
-}
-}  // namespace
 
 namespace webrtc {
 
@@ -63,17 +40,6 @@ size_t ReadMessageBytesFromFile(FILE* file, std::unique_ptr<uint8_t[]>* bytes) {
 bool ReadMessageFromFile(FILE* file, MessageLite* msg) {
   std::unique_ptr<uint8_t[]> bytes;
   size_t size = ReadMessageBytesFromFile(file, &bytes);
-  if (!size)
-    return false;
-
-  msg->Clear();
-  return msg->ParseFromArray(bytes.get(), size);
-}
-
-// Returns true on success, false on error or end of string stream.
-bool ReadMessageFromString(std::stringstream* input, MessageLite* msg) {
-  std::unique_ptr<uint8_t[]> bytes;
-  size_t size = ReadMessageBytesFromString(input, &bytes);
   if (!size)
     return false;
 

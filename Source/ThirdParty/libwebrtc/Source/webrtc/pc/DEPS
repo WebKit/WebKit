@@ -18,7 +18,7 @@ include_rules = [
 ]
 
 specific_include_rules = {
-  "rtc_stats_collector_unittest.cc": [
+  "rtc_stats_collector_unittest\\.cc": [
     "+json/reader.h",
     "+json/value.h",
   ],

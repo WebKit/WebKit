@@ -27,10 +27,10 @@ namespace WebCore {
 
 class GraphicsContext;
 class RenderLayerModelObject;
-class RenderStyle;
 class Color;
 
 namespace Style {
+class ComputedStyle;
 struct SVGPaint;
 }
 
@@ -50,18 +50,18 @@ public:
     enum class URIResolving : bool { Disabled, Enabled };
 
     template<Operation op>
-    bool preparePaintOperation(const RenderLayerModelObject&, const RenderStyle&) const;
+    bool preparePaintOperation(const RenderLayerModelObject&, const Style::ComputedStyle&) const;
 
     template<Operation op, URIResolving allowPaintServerURIResolving = URIResolving::Enabled>
-    static SVGPaintServerOrColor requestPaintServer(const RenderLayerModelObject&, const RenderStyle&);
+    static SVGPaintServerOrColor requestPaintServer(const RenderLayerModelObject&, const Style::ComputedStyle&);
 
 private:
-    inline void prepareFillOperation(const RenderLayerModelObject&, const RenderStyle&, const Color& fillColor) const;
-    inline void prepareStrokeOperation(const RenderLayerModelObject&, const RenderStyle&, const Color& strokeColor) const;
+    inline void prepareFillOperation(const RenderLayerModelObject&, const Style::ComputedStyle&, const Color& fillColor) const;
+    inline void prepareStrokeOperation(const RenderLayerModelObject&, const Style::ComputedStyle&, const Color& strokeColor) const;
 
-    static inline Color resolveColorFromStyle(const RenderStyle&, const Style::SVGPaint& paint, const Style::SVGPaint& visitedLinkPaint);
+    static inline Color resolveColorFromStyle(const Style::ComputedStyle&, const Style::SVGPaint& paint, const Style::SVGPaint& visitedLinkPaint);
     template<Operation op>
-    static Color resolveColorFromStyle(const RenderStyle&);
+    static Color resolveColorFromStyle(const Style::ComputedStyle&);
 
     template<Operation op>
     static bool inheritColorFromParentStyleIfNeeded(const RenderLayerModelObject&, Color&);

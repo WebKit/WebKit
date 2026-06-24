@@ -63,13 +63,16 @@ JSCustomGetterFunction::JSCustomGetterFunction(VM& vm, NativeExecutable* executa
 JSCustomGetterFunction* JSCustomGetterFunction::create(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, CustomFunctionPointer getter, std::optional<DOMAttributeAnnotation> domAttribute)
 {
     ASSERT(getter);
-    NativeExecutable* executable = vm.getHostFunction(customGetterFunctionCall, ImplementationVisibility::Public, callHostFunctionAsConstructor, String(propertyName.publicName()));
+    NativeExecutable* executable = vm.getHostFunction(customGetterFunctionCall, ImplementationVisibility::Public, callHostFunctionAsConstructor, 0, String(propertyName.publicName()));
     Structure* structure = globalObject->customGetterFunctionStructure();
     JSCustomGetterFunction* function = new (NotNull, allocateCell<JSCustomGetterFunction>(vm)) JSCustomGetterFunction(vm, executable, globalObject, structure, propertyName, getter, domAttribute);
-
-    // Can't do this during initialization because getHostFunction might do a GC allocation.
+    function->finishCreation(vm);
+    // ECMAScript-style "get foo" name is exposed via the JSFunction's `name` property; keep the
+    // raw NativeExecutable name unprefixed so toString() renders as `function foo() { [native code] }`.
     auto name = makeString("get "_s, propertyName.publicName());
-    function->finishCreation(vm, executable, 0, name);
+    FunctionRareData* rareData = function->ensureRareData(vm);
+    rareData->setHasReifiedName();
+    function->putDirect(vm, vm.propertyNames->name, jsString(vm, WTF::move(name)), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     return function;
 }
 

@@ -13,17 +13,21 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/transport/stun.h"
 #include "p2p/dtls/dtls_utils.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/network/received_packet.h"
+#include "rtc_base/socket_address.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+
+namespace webrtc {
 
 namespace {
 // Extracted from a stock DTLS call using Wireshark.
@@ -57,8 +61,10 @@ const std::vector<uint8_t> dtls_flight4 = {
 
 const std::vector<uint8_t> empty = {};
 
-std::vector<uint32_t> FromAckAttribute(webrtc::ArrayView<uint8_t> attr) {
-  webrtc::ByteBufferReader ack_reader(attr);
+const std::vector<uint8_t> kPayload = {0x1, 0x2, 0x3};
+
+std::vector<uint32_t> FromAckAttribute(std::span<uint8_t> attr) {
+  ByteBufferReader ack_reader(attr);
   std::vector<uint32_t> values;
   uint32_t value;
   while (ack_reader.ReadUInt32(&value)) {
@@ -75,28 +81,24 @@ std::vector<uint8_t> FakeDtlsPacket(uint16_t packet_number) {
   return packet;
 }
 
-std::unique_ptr<webrtc::StunByteStringAttribute> WrapInStun(
-    webrtc::IceAttributeType type,
-    absl::string_view data) {
-  return std::make_unique<webrtc::StunByteStringAttribute>(type, data);
+std::unique_ptr<StunByteStringAttribute> WrapInStun(IceAttributeType type,
+                                                    absl::string_view data) {
+  return std::make_unique<StunByteStringAttribute>(type, data);
 }
 
-std::unique_ptr<webrtc::StunByteStringAttribute> WrapInStun(
-    webrtc::IceAttributeType type,
+std::unique_ptr<StunByteStringAttribute> WrapInStun(
+    IceAttributeType type,
     const std::vector<uint8_t>& data) {
-  return std::make_unique<webrtc::StunByteStringAttribute>(type, data.data(),
-                                                           data.size());
+  return std::make_unique<StunByteStringAttribute>(type, data);
 }
 
-std::unique_ptr<webrtc::StunByteStringAttribute> WrapInStun(
-    webrtc::IceAttributeType type,
+std::unique_ptr<StunByteStringAttribute> WrapInStun(
+    IceAttributeType type,
     const std::vector<uint32_t>& data) {
-  return std::make_unique<webrtc::StunByteStringAttribute>(type, data);
+  return std::make_unique<StunByteStringAttribute>(type, data);
 }
 
 }  // namespace
-
-namespace webrtc {
 
 using ::testing::ElementsAreArray;
 using ::testing::MockFunction;
@@ -107,10 +109,12 @@ class DtlsStunPiggybackControllerTest : public ::testing::Test {
  protected:
   DtlsStunPiggybackControllerTest()
       : client_(
-            [this](ArrayView<const uint8_t> data) { ClientPacketSink(data); }),
-        server_([this](ArrayView<const uint8_t> data) {
-          ServerPacketSink(data);
-        }) {}
+            [this](std::span<const uint8_t> data) { ClientPacketSink(data); },
+            [this](bool success) { ClientCompleteCallback(success); }),
+        server_(
+            [this](std::span<const uint8_t> data) { ServerPacketSink(data); },
+            [this](bool success) { ServerCompleteCallback(success); }),
+        packet_(kPayload, SocketAddress(), std::nullopt) {}
 
   // Send from client to server embedded in STUN.
   void SendClientToServerEmbedded(const std::vector<uint8_t>& packet,
@@ -122,7 +126,7 @@ class DtlsStunPiggybackControllerTest : public ::testing::Test {
       client_.ClearCachedPacketForTesting();
     }
     std::unique_ptr<StunByteStringAttribute> attr_data;
-    std::optional<ArrayView<uint8_t>> view_data;
+    std::optional<std::span<uint8_t>> view_data;
     if (auto data = client_.GetDataToPiggyback(type)) {
       attr_data = WrapInStun(STUN_ATTR_META_DTLS_IN_STUN, *data);
       view_data = attr_data->array_view();
@@ -155,7 +159,7 @@ class DtlsStunPiggybackControllerTest : public ::testing::Test {
       server_.ClearCachedPacketForTesting();
     }
     std::unique_ptr<StunByteStringAttribute> attr_data;
-    std::optional<ArrayView<uint8_t>> view_data;
+    std::optional<std::span<uint8_t>> view_data;
     if (auto data = server_.GetDataToPiggyback(type)) {
       attr_data = WrapInStun(STUN_ATTR_META_DTLS_IN_STUN, *data);
       view_data = attr_data->array_view();
@@ -190,8 +194,13 @@ class DtlsStunPiggybackControllerTest : public ::testing::Test {
   DtlsStunPiggybackController client_;
   DtlsStunPiggybackController server_;
 
-  MOCK_METHOD(void, ClientPacketSink, (ArrayView<const uint8_t>));
-  MOCK_METHOD(void, ServerPacketSink, (ArrayView<const uint8_t>));
+  MOCK_METHOD(void, ClientPacketSink, (std::span<const uint8_t>));
+  MOCK_METHOD(void, ServerPacketSink, (std::span<const uint8_t>));
+
+  MOCK_METHOD(void, ClientCompleteCallback, (bool));
+  MOCK_METHOD(void, ServerCompleteCallback, (bool));
+
+  ReceivedIpPacket packet_;
 
  private:
   void MaybeSetHandshakeComplete(std::vector<uint8_t> packet) {
@@ -220,10 +229,72 @@ TEST_F(DtlsStunPiggybackControllerTest, BasicHandshake) {
   EXPECT_EQ(client_.state(), State::PENDING);
 
   // Post-handshake ACK
+  EXPECT_CALL(*this, ClientCompleteCallback(true));
   SendServerToClientEmbedded(empty, STUN_BINDING_REQUEST);
+  EXPECT_CALL(*this, ServerCompleteCallback(true));
   SendClientToServerEmbedded(empty, STUN_BINDING_RESPONSE);
   EXPECT_EQ(server_.state(), State::COMPLETE);
   EXPECT_EQ(client_.state(), State::COMPLETE);
+}
+
+TEST_F(DtlsStunPiggybackControllerTest,
+       BasicHandshakeCompleteWithDecryptedPacket) {
+  // Flight 1+2
+  SendClientToServerEmbedded(dtls_flight1, STUN_BINDING_REQUEST);
+  EXPECT_EQ(server_.state(), State::CONFIRMED);
+  SendServerToClientEmbedded(dtls_flight2, STUN_BINDING_RESPONSE);
+  EXPECT_EQ(client_.state(), State::CONFIRMED);
+
+  // Flight 3+4
+  SendClientToServerEmbedded(dtls_flight3, STUN_BINDING_REQUEST);
+  SendServerToClientEmbedded(dtls_flight4, STUN_BINDING_RESPONSE);
+  EXPECT_EQ(server_.state(), State::PENDING);
+  EXPECT_EQ(client_.state(), State::PENDING);
+
+  // Post-handshake ACK
+  EXPECT_CALL(*this, ClientCompleteCallback);
+  client_.ApplicationPacketReceived(
+      packet_.CopyAndSet(ReceivedIpPacket::kDtlsDecrypted));
+  EXPECT_EQ(client_.state(), State::COMPLETE);
+
+  EXPECT_CALL(*this, ServerCompleteCallback);
+  server_.ApplicationPacketReceived(
+      packet_.CopyAndSet(ReceivedIpPacket::kSrtpEncrypted));
+  EXPECT_EQ(server_.state(), State::COMPLETE);
+}
+
+TEST_F(DtlsStunPiggybackControllerTest,
+       BasicHandshakeEarlySrtpDoesNotComplete) {
+  // Flight 1+2
+  SendClientToServerEmbedded(dtls_flight1, STUN_BINDING_REQUEST);
+  EXPECT_EQ(server_.state(), State::CONFIRMED);
+  SendServerToClientEmbedded(dtls_flight2, STUN_BINDING_RESPONSE);
+  EXPECT_EQ(client_.state(), State::CONFIRMED);
+
+  // Flight 3
+  SendClientToServerEmbedded(dtls_flight3, STUN_BINDING_REQUEST);
+  EXPECT_EQ(server_.state(), State::CONFIRMED);
+
+  // An srtp packet arriving before reaching PENDING state.
+  server_.ApplicationPacketReceived(
+      packet_.CopyAndSet(ReceivedIpPacket::kSrtpEncrypted));
+  EXPECT_EQ(server_.state(), State::CONFIRMED);
+
+  // Flight 4
+  SendServerToClientEmbedded(dtls_flight4, STUN_BINDING_RESPONSE);
+  EXPECT_EQ(server_.state(), State::PENDING);
+  EXPECT_EQ(client_.state(), State::PENDING);
+
+  // Post-handshake ACK
+  EXPECT_CALL(*this, ClientCompleteCallback);
+  client_.ApplicationPacketReceived(
+      packet_.CopyAndSet(ReceivedIpPacket::kDtlsDecrypted));
+  EXPECT_EQ(client_.state(), State::COMPLETE);
+
+  EXPECT_CALL(*this, ServerCompleteCallback);
+  server_.ApplicationPacketReceived(
+      packet_.CopyAndSet(ReceivedIpPacket::kSrtpEncrypted));
+  EXPECT_EQ(server_.state(), State::COMPLETE);
 }
 
 TEST_F(DtlsStunPiggybackControllerTest, FirstClientPacketLost) {
@@ -242,11 +313,13 @@ TEST_F(DtlsStunPiggybackControllerTest, FirstClientPacketLost) {
 
   // Flight 4
   SendServerToClientEmbedded(dtls_flight4, STUN_BINDING_REQUEST);
+  EXPECT_CALL(*this, ServerCompleteCallback(true));
   SendClientToServerEmbedded(empty, STUN_BINDING_RESPONSE);
   EXPECT_EQ(server_.state(), State::COMPLETE);
   EXPECT_EQ(client_.state(), State::PENDING);
 
   // Post-handshake ACK
+  EXPECT_CALL(*this, ClientCompleteCallback(true));
   SendServerToClientEmbedded(empty, STUN_BINDING_REQUEST);
   EXPECT_EQ(client_.state(), State::COMPLETE);
 }
@@ -256,6 +329,9 @@ TEST_F(DtlsStunPiggybackControllerTest, NotSupportedByServer) {
 
   // Flight 1
   SendClientToServerEmbedded(dtls_flight1, STUN_BINDING_REQUEST);
+  // TODO: bugs.webrtc.org/367395350 - assert when calling the complete
+  // callback in this case which currently causes a sleuth of test failures.
+  // EXPECT_CALL(*this, ClientCompleteCallback());
   SendServerToClientEmbedded(empty, STUN_BINDING_RESPONSE);
   EXPECT_EQ(client_.state(), State::OFF);
 }
@@ -297,7 +373,9 @@ TEST_F(DtlsStunPiggybackControllerTest, SomeRequestsDoNotGoThrough) {
   EXPECT_EQ(client_.state(), State::PENDING);
 
   // Post-handshake ACK
+  EXPECT_CALL(*this, ServerCompleteCallback(true));
   SendClientToServerEmbedded(empty, STUN_BINDING_REQUEST);
+  EXPECT_CALL(*this, ClientCompleteCallback(true));
   SendServerToClientEmbedded(empty, STUN_BINDING_RESPONSE);
   EXPECT_EQ(server_.state(), State::COMPLETE);
   EXPECT_EQ(client_.state(), State::COMPLETE);
@@ -317,7 +395,9 @@ TEST_F(DtlsStunPiggybackControllerTest, LossOnPostHandshakeAck) {
   EXPECT_EQ(client_.state(), State::PENDING);
 
   // Post-handshake ACK. Client to server gets lost
+  EXPECT_CALL(*this, ClientCompleteCallback(true));
   SendServerToClientEmbedded(empty, STUN_BINDING_REQUEST);
+  EXPECT_CALL(*this, ServerCompleteCallback(true));
   SendClientToServerEmbedded(empty, STUN_BINDING_RESPONSE);
   EXPECT_EQ(server_.state(), State::COMPLETE);
   EXPECT_EQ(client_.state(), State::COMPLETE);
@@ -364,7 +444,9 @@ TEST_F(DtlsStunPiggybackControllerTest, BasicHandshakeAckData) {
               }));
 
   // Post-handshake ACK
+  EXPECT_CALL(*this, ClientCompleteCallback);
   SendServerToClientEmbedded(empty, STUN_BINDING_REQUEST);
+  EXPECT_CALL(*this, ServerCompleteCallback);
   SendClientToServerEmbedded(empty, STUN_BINDING_RESPONSE);
   EXPECT_EQ(server_.state(), State::COMPLETE);
   EXPECT_EQ(client_.state(), State::COMPLETE);
@@ -401,7 +483,9 @@ TEST_F(DtlsStunPiggybackControllerTest, UnwrappedHandshakeAckData) {
               }));
 
   // Post-handshake ACK
+  EXPECT_CALL(*this, ClientCompleteCallback);
   SendServerToClientEmbedded(empty, STUN_BINDING_REQUEST);
+  EXPECT_CALL(*this, ServerCompleteCallback);
   SendClientToServerEmbedded(empty, STUN_BINDING_RESPONSE);
   EXPECT_EQ(server_.state(), State::COMPLETE);
   EXPECT_EQ(client_.state(), State::COMPLETE);
@@ -499,6 +583,26 @@ TEST_F(DtlsStunPiggybackControllerTest, LimitAckSize) {
                   ComputeDtlsPacketHash(dtls_flight4),
                   ComputeDtlsPacketHash(dtls_flight5),
               }));
+}
+
+TEST_F(DtlsStunPiggybackControllerTest, EmptyDataDoesNotClearAck) {
+  std::vector<uint8_t> dtls_flight5 = FakeDtlsPacket(0x5487);
+
+  server_.ReportDataPiggybacked(
+      WrapInStun(STUN_ATTR_META_DTLS_IN_STUN, dtls_flight1)->array_view(),
+      std::nullopt);
+  EXPECT_EQ(server_.GetAckToPiggyback(STUN_BINDING_REQUEST)->size(), 1u);
+
+  // The fact that we don't get any data does not mean that
+  // we can clear the ack list.
+  // a) packets can be arbitrary reordered.
+  // b) the peer might be needing 2 packets (ie. pqc) to produce
+  // a return packet and only one of them has arrived.
+  server_.ReportDataPiggybacked(
+      std::nullopt,
+      std::vector<uint32_t>({ComputeDtlsPacketHash(dtls_flight1)}));
+
+  EXPECT_EQ(server_.GetAckToPiggyback(STUN_BINDING_REQUEST)->size(), 1u);
 }
 
 TEST_F(DtlsStunPiggybackControllerTest, MultiPacketRoundRobin) {

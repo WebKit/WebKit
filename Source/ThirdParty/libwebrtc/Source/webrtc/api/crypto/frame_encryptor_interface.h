@@ -13,8 +13,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/media_types.h"
 #include "api/ref_count.h"
 
@@ -40,9 +40,9 @@ class FrameEncryptorInterface : public RefCountInterface {
   // selected by the implementer to represent error codes.
   virtual int Encrypt(MediaType media_type,
                       uint32_t ssrc,
-                      ArrayView<const uint8_t> additional_data,
-                      ArrayView<const uint8_t> frame,
-                      ArrayView<uint8_t> encrypted_frame,
+                      std::span<const uint8_t> additional_data,
+                      std::span<const uint8_t> frame,
+                      std::span<uint8_t> encrypted_frame,
                       size_t* bytes_written) = 0;
 
   // Returns the total required length in bytes for the output of the

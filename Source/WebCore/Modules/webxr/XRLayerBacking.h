@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/IntRect.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -63,6 +64,8 @@ public:
     void setHandle(PlatformXR::LayerHandle handle) { m_handle = handle; }
 
     virtual bool allColorTexturesAreBound() const = 0;
+
+    virtual void clearTexturesIfNeeded(const IntRect& viewport, std::optional<uint32_t> slice) { UNUSED_PARAM(viewport); UNUSED_PARAM(slice); }
 
 private:
     PlatformXR::LayerHandle m_handle;

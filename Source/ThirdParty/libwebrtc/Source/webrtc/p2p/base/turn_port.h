@@ -16,9 +16,11 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <span>
 #include <string>
 #include <vector>
 
+#include "absl/base/macros.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "api/async_dns_resolver.h"
@@ -155,12 +157,23 @@ class TurnPort : public Port {
   void PrepareAddress() override;
   Connection* CreateConnection(const Candidate& c,
                                PortInterface::CandidateOrigin origin) override;
+  int SendTo(std::span<const uint8_t> data,
+             const SocketAddress& addr,
+             const AsyncSocketPacketOptions& options,
+             bool payload) override;
+
+  ABSL_DEPRECATE_AND_INLINE()
   int SendTo(const void* data,
              size_t size,
              const SocketAddress& addr,
              const AsyncSocketPacketOptions& options,
-             bool payload) override;
+             bool payload) override {
+    return SendTo(std::span(reinterpret_cast<const uint8_t*>(data), size), addr,
+                  options, payload);
+  }
+
   int SetOption(Socket::Option opt, int value) override;
+
   int GetOption(Socket::Option opt, int* value) override;
   int GetError() override;
 
@@ -266,7 +279,7 @@ class TurnPort : public Port {
   void OnLocalNetworkAccessPermissionGranted();
 
   void AddRequestAuthInfo(StunMessage* msg);
-  void OnSendStunPacket(const void* data, size_t size, StunRequest* request);
+  void OnSendStunPacket(std::span<const uint8_t> data, StunRequest* request);
   // Stun address from allocate success response.
   // Currently used only for testing.
   void OnStunAddress(const SocketAddress& address);
@@ -281,8 +294,7 @@ class TurnPort : public Port {
 
   bool ScheduleRefresh(uint32_t lifetime);
   void SendRequest(StunRequest* request, int delay);
-  int Send(const void* data,
-           size_t size,
+  int Send(std::span<const uint8_t> data,
            const AsyncSocketPacketOptions& options);
   void UpdateHash();
   bool UpdateNonce(StunMessage* response);
@@ -299,8 +311,7 @@ class TurnPort : public Port {
   void MaybeAddTurnLoggingId(StunMessage* message);
 
   void TurnCustomizerMaybeModifyOutgoingStunMessage(StunMessage* message);
-  bool TurnCustomizerAllowChannelData(const void* data,
-                                      size_t size,
+  bool TurnCustomizerAllowChannelData(std::span<const uint8_t> data,
                                       bool payload);
 
   ProtocolAddress server_address_;

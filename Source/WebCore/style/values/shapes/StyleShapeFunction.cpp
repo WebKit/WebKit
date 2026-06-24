@@ -34,11 +34,10 @@
 #include "SVGPathByteStreamSource.h"
 #include "SVGPathParser.h"
 #include "SVGPathSource.h"
-#include "StyleLengthWrapper+Blending.h"
 #include "StylePathFunction.h"
+#include "StylePrimitiveNumericOrKeyword+Blending.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
-#include "TransformOperationData.h"
 
 namespace WebCore {
 namespace Style {
@@ -918,10 +917,8 @@ AcceleratedEffectShapeFunction::CloseCommand Evaluation<CloseCommand, Accelerate
     return { };
 }
 
-AcceleratedEffectShapeFunction Evaluation<ShapeFunction, AcceleratedEffectShapeFunction>::operator()(const ShapeFunction& value, const TransformOperationData& data, ZoomFactor zoom)
+AcceleratedEffectShapeFunction Evaluation<ShapeFunction, AcceleratedEffectShapeFunction>::operator()(const ShapeFunction& value, const FloatRect& rect, ZoomFactor zoom)
 {
-    auto rect = data.motionPathData->offsetRect().rect();
-
     auto evaluatedCommands = [&] {
         return WTF::map(value->commands, [&](auto& command) -> AcceleratedEffectShapeFunction::Command {
             return WTF::switchOn(command,

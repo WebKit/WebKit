@@ -3,6 +3,9 @@ Verifies scrolling tree for simple page.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
 (scrolling tree
   (frame scrolling node

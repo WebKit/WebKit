@@ -34,6 +34,7 @@
             consoleWrite('Append media segment.')
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
             await waitFor(sourceBuffer, 'update');
+            source.endOfStream();
 
             run('video.currentTime = video.duration - 0.5');
             await waitFor(video, 'seeked');

@@ -122,10 +122,7 @@ RetainPtr<NSDictionary> SerializedPlatformDataCueValue::toNSDictionary() const
 
 bool SerializedPlatformDataCueValue::operator==(const SerializedPlatformDataCueValue& other) const
 {
-    if (!m_data || !other.m_data)
-        return false;
-
-    return *m_data == *other.m_data;
+    return m_data == other.m_data;
 }
 
 bool SerializedPlatformDataCueValue::Data::operator==(const Data& other) const

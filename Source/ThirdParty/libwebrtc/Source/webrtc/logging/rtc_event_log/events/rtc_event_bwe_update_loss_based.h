@@ -14,11 +14,11 @@
 #include <stdint.h>
 
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_log_parse_status.h"
@@ -64,7 +64,7 @@ class RtcEventBweUpdateLossBased final : public RtcEvent {
   uint8_t fraction_loss() const { return fraction_loss_; }
   int32_t total_packets() const { return total_packets_; }
 
-  static std::string Encode(ArrayView<const RtcEvent*> /* batch */) {
+  static std::string Encode(std::span<const RtcEvent*> /* batch */) {
     // TODO(terelius): Implement
     return "";
   }

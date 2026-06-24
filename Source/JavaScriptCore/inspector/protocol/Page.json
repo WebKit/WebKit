@@ -2,7 +2,7 @@
     "domain": "Page",
     "description": "Actions and events related to the inspected page belong to the page domain.",
     "debuggableTypes": ["itml", "web-page"],
-    "targetTypes": ["itml", "page"],
+    "targetTypes": ["itml", "page", "web-page"],
     "types": [
         {
             "id": "Setting",
@@ -200,6 +200,7 @@
         {
             "name": "getResourceTree",
             "description": "Returns present frame / resource tree structure.",
+            "async": true,
             "returns": [
                 { "name": "frameTree", "$ref": "FrameResourceTree", "description": "Present frame / resource tree structure." }
             ]
@@ -348,7 +349,6 @@
         {
             "name": "frameDetached",
             "description": "Fired when frame has been detached from its parent.",
-            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has been detached." }
             ]

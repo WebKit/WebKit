@@ -110,6 +110,11 @@ MediaStreamTrackData MediaStreamTrackData::isolatedCopy(ShouldUpdateId shouldUpd
     };
 }
 
+std::unique_ptr<MediaStreamTrackDataHolder> MediaStreamTrackDataHolder::copy() const
+{
+    return makeUnique<MediaStreamTrackDataHolder>(m_data.isolatedCopy(MediaStreamTrackData::ShouldUpdateId::No), m_source.copyRef());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

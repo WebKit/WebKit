@@ -131,7 +131,15 @@ void ScrollerCoordinated::updateValues()
     RELEASE_ASSERT(grContext);
     GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
 
-    Ref texture = BitmapTexturePool::singleton().acquireTexture(state.frameRect.size(), { BitmapTexture::Flags::SupportsAlpha });
+    float contentsScale;
+    {
+        Locker layerLocker { hostLayer->lock() };
+        contentsScale = hostLayer->contentsScale();
+    }
+
+    auto frameRect = enclosingIntRect(FloatRect(state.frameRect.x() * contentsScale, state.frameRect.y() * contentsScale,
+        state.frameRect.width() * contentsScale, state.frameRect.height() * contentsScale));
+    Ref texture = BitmapTexturePool::singleton().acquireTexture(frameRect.size(), { BitmapTexture::Flags::SupportsAlpha });
     auto surface = texture->createSkiaSurface(grContext);
     if (!surface)
         return;
@@ -142,8 +150,10 @@ void ScrollerCoordinated::updateValues()
 
     canvas->clear(SK_ColorTRANSPARENT);
 
+    Damage damage(state.frameRect);
     GraphicsContextSkia context(*canvas, RenderingMode::Accelerated, RenderingPurpose::DOM);
-    scrollerImp->paint(context, state.frameRect, state);
+    context.scale(contentsScale);
+    scrollerImp->paint(context, state.frameRect, state, damage);
 
     grContext->flushAndSubmit(surface.get(), GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
     auto buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), { TextureMapperFlags::ShouldBlend }, GLFence::create(display.glDisplay()));
@@ -153,7 +163,7 @@ void ScrollerCoordinated::updateValues()
     Locker layerLocker { hostLayer->lock() };
     hostLayer->setContentsRect(state.frameRect);
     hostLayer->setContentsClippingRect(FloatRoundedRect(state.frameRect));
-    hostLayer->setContentsBuffer(WTF::move(buffer));
+    hostLayer->setContentsBuffer(WTF::move(buffer), WTF::move(damage));
 }
 
 void ScrollerCoordinated::setHoveredAndPressedParts(ScrollbarPart hoveredPart, ScrollbarPart pressedPart)

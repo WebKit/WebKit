@@ -1,82 +1,41 @@
 #!/usr/bin/env python3
-import subprocess
+import argparse
 import os
+import re
 import shlex
 import shutil
-import re
+import subprocess
+import sys
 
 # Preprocesses wtf/Platform.h with clang, extracts macro definitions, and saves
 # the platform flags to a Swift-style response file containing -D arguments.
-
-# For build settings which may be undefined, behave like a shell and implicitly
-# fall back to the empty string.
-os.environ.setdefault('FRAMEWORK_SEARCH_PATHS', '')
-os.environ.setdefault('HEADER_SEARCH_PATHS', '')
-os.environ.setdefault('SYSTEM_FRAMEWORK_SEARCH_PATHS', '')
-os.environ.setdefault('SYSTEM_HEADER_SEARCH_PATHS', '')
-os.environ.setdefault('GCC_PREPROCESSOR_DEFINITIONS', '')
-
-framework_search_paths = shlex.split(
-    '{BUILT_PRODUCTS_DIR} {FRAMEWORK_SEARCH_PATHS}'.format_map(os.environ))
-header_search_paths = shlex.split(
-    '{BUILT_PRODUCTS_DIR} {HEADER_SEARCH_PATHS}'.format_map(os.environ))
-system_framework_search_paths = shlex.split(
-    '{SYSTEM_FRAMEWORK_SEARCH_PATHS}'.format_map(os.environ))
-system_header_search_paths = shlex.split(
-    '{SYSTEM_HEADER_SEARCH_PATHS}'.format_map(os.environ))
-preprocessor_definitions = shlex.split(
-    '__WK_GENERATING_PLATFORM_ARGS__ RELEASE_WITHOUT_OPTIMIZATIONS '
-    '{GCC_PREPROCESSOR_DEFINITIONS}'.format_map(os.environ))
-sanitizer_flags = []
-if os.environ.get('ENABLE_ADDRESS_SANITIZER') == 'YES':
-    sanitizer_flags.append('-fsanitize=address')
-
-archs = shlex.split(os.environ['ARCHS'])
-if 'SWIFT_MODULE_ONLY_ARCHS' in os.environ:
-    archs.extend(shlex.split(os.environ['SWIFT_MODULE_ONLY_ARCHS']))
-
-output_dir = os.path.dirname(os.environ['SCRIPT_OUTPUT_FILE_0'])
-
-combined_depfile_fd = open(
-    '{DERIVED_FILES_DIR}/generate-platform-args.d'.format_map(os.environ), 'w')
-
-# This script is run as a build phase, which Xcode runs once with
-# $arch=undefined, so we have to handle multi-arch builds manually. We generate
-# argument lists for all active architectures, and the build script phase
-# declares all known output paths as outputs.
 #
-# FIXME: Computing search path arguments is duplicated by migrate-header-rule
-# in WebKitLegacy. We could share this implementation and generate
-# bash-compatible variables for these use cases as well.
+# Two modes:
+#
+#   Xcode build phase (default, no args): driven by Xcode env vars
+#   ($SCRIPT_OUTPUT_FILE_0, $ARCHS, $DERIVED_FILES_DIR, ...). Iterates over
+#   $ARCHS and writes one resp per arch.
+#
+#   cmake (--cmake): driven by argparse. Writes a single resp file containing
+#   both the platform -D flags and -Xcc -DNAME=VALUE seeds for cmakeconfig.h
+#   so the Swift clang importer's view of ENABLE()/HAVE() macros agrees with
+#   regular C++ compilation. cmake builds the clang preprocess command itself
+#   (since it owns the configured compiler, sysroot, target triple and
+#   include paths) and passes it after `--`.
 
-with open(f'{output_dir}/rdar150228472.swift', 'w') as fd:
-    fd.write('// generate-platform-args: empty file to work around dependency '
-             'bug in rdar://150228472\n')
+DEFINE_RE = re.compile(r'^#define (\w+) (.+)', re.MULTILINE)
+PLATFORM_PREFIX_RE = re.compile(r'^(HAVE_|USE_|ENABLE_|WTF_PLATFORM|ASSERT_)')
 
-for arch in archs:
-    output_name = f'platform-enabled-swift-args.{arch}.resp'
-    output_file = f'{output_dir}/{output_name}'
-    depfile = f'{{DERIVED_FILES_DIR}}/{output_name}.d'.format_map(os.environ)
-    target_triple = (f'{arch}-'
-        '{LLVM_TARGET_TRIPLE_VENDOR}-{LLVM_TARGET_TRIPLE_OS_VERSION}').format_map(os.environ)
-    target_triple += os.environ.get('LLVM_TARGET_TRIPLE_SUFFIX', '')
 
-    feature_and_platform_defines = subprocess.check_output(
-        ('xcrun', 'clang', '-x', 'c++', '-std={CLANG_CXX_LANGUAGE_STANDARD}'.format_map(os.environ),
-         '-target', target_triple, '-E', '-P', '-dM', '-MD', '-MF', depfile, '-MT', output_name,
-         *(sanitizer_flags),
-         *(f'-D{token}' for token in preprocessor_definitions),
-         *(arg for path in framework_search_paths for arg in ('-F', path)),
-         *(arg for path in header_search_paths for arg in ('-I', path)),
-         *(arg for path in system_framework_search_paths for arg in ('-iframework', path)),
-         *(arg for path in system_header_search_paths for arg in ('-isystem', path)),
-         '-include', 'wtf/Platform.h', '/dev/zero'), text=True)
-
-    # Concatenate all the depfiles, in case a header is only imported on specific architectures.
-    shutil.copyfileobj(open(depfile), combined_depfile_fd)
-
+def platform_defines_from_dM(stdout):
+    """Parse `clang -E -dM` output and return the names of the truthy
+    HAVE_/USE_/ENABLE_/WTF_PLATFORM_/ASSERT_ macros. Resolves simple macro
+    indirection: clang -dM emits macros alphabetically rather than
+    topologically, so a macro may reference another we have not yet seen;
+    iterate to a fixed point with a bound to avoid recursive definitions
+    looping forever."""
     definitions = {}
-    for m in re.finditer(r'^#define (\w+) (.+)', feature_and_platform_defines, re.MULTILINE):
+    for m in re.finditer(DEFINE_RE, stdout):
         name = m.group(1)
         value = m.group(2)
         if value == '1':
@@ -85,11 +44,6 @@ for arch in archs:
             definitions[name] = 0
         else:
             definitions[name] = value
-
-    # Resolve macros which are defined as the value of another macro. clang -dM
-    # prints macros in alphabetical order, so we cannot rely on macros being in
-    # topological order. Limit the maximum amount of indirection to prevent a
-    # recursive definition from causing the script to loop forever.
     for _ in range(10):
         changed = False
         for name, value in definitions.items():
@@ -98,13 +52,148 @@ for arch in archs:
                 changed = True
         if not changed:
             break
+    return [
+        name for name, value in definitions.items()
+        if value == 1 and PLATFORM_PREFIX_RE.match(name)
+    ]
 
-    swift_args = '\n'.join(
-        f'-D{name}'
-        for name, value in definitions.items()
-        if value == 1 and (name.startswith('HAVE_') or name.startswith('USE_') or
-                           name.startswith('ENABLE_') or name.startswith('WTF_PLATFORM') or
-                           name.startswith('ASSERT_'))
-    )
-    print(f'{output_file}:\t', swift_args.replace('\n', ' '))
-    open(output_file, 'w').write(swift_args)
+
+def run_xcode_mode():
+    # For build settings which may be undefined, behave like a shell and implicitly
+    # fall back to the empty string.
+    os.environ.setdefault('FRAMEWORK_SEARCH_PATHS', '')
+    os.environ.setdefault('HEADER_SEARCH_PATHS', '')
+    os.environ.setdefault('SYSTEM_FRAMEWORK_SEARCH_PATHS', '')
+    os.environ.setdefault('SYSTEM_HEADER_SEARCH_PATHS', '')
+    os.environ.setdefault('GCC_PREPROCESSOR_DEFINITIONS', '')
+
+    framework_search_paths = shlex.split(
+        '{BUILT_PRODUCTS_DIR} {FRAMEWORK_SEARCH_PATHS}'.format_map(os.environ))
+    header_search_paths = shlex.split(
+        '{BUILT_PRODUCTS_DIR} {HEADER_SEARCH_PATHS}'.format_map(os.environ))
+    system_framework_search_paths = shlex.split(
+        '{SYSTEM_FRAMEWORK_SEARCH_PATHS}'.format_map(os.environ))
+    system_header_search_paths = shlex.split(
+        '{SYSTEM_HEADER_SEARCH_PATHS}'.format_map(os.environ))
+    preprocessor_definitions = shlex.split(
+        '__WK_GENERATING_PLATFORM_ARGS__ RELEASE_WITHOUT_OPTIMIZATIONS '
+        '{GCC_PREPROCESSOR_DEFINITIONS}'.format_map(os.environ))
+    sanitizer_flags = []
+    if os.environ.get('ENABLE_ADDRESS_SANITIZER') == 'YES':
+        sanitizer_flags.append('-fsanitize=address')
+
+    archs = shlex.split(os.environ['ARCHS'])
+    if 'SWIFT_MODULE_ONLY_ARCHS' in os.environ:
+        archs.extend(shlex.split(os.environ['SWIFT_MODULE_ONLY_ARCHS']))
+
+    output_dir = os.path.dirname(os.environ['SCRIPT_OUTPUT_FILE_0'])
+
+    combined_depfile_fd = open(
+        '{DERIVED_FILES_DIR}/generate-platform-args.d'.format_map(os.environ), 'w')
+
+    # This script is run as a build phase, which Xcode runs once with
+    # $arch=undefined, so we have to handle multi-arch builds manually. We generate
+    # argument lists for all active architectures, and the build script phase
+    # declares all known output paths as outputs.
+    #
+    # FIXME: Computing search path arguments is duplicated by migrate-header-rule
+    # in WebKitLegacy. We could share this implementation and generate
+    # bash-compatible variables for these use cases as well.
+
+    with open(f'{output_dir}/rdar150228472.swift', 'w') as fd:
+        fd.write('// generate-platform-args: empty file to work around dependency '
+                 'bug in rdar://150228472\n')
+
+    for arch in archs:
+        output_name = f'platform-enabled-swift-args.{arch}.resp'
+        output_file = f'{output_dir}/{output_name}'
+        depfile = f'{{DERIVED_FILES_DIR}}/{output_name}.d'.format_map(os.environ)
+        target_triple = (f'{arch}-'
+            '{LLVM_TARGET_TRIPLE_VENDOR}-{LLVM_TARGET_TRIPLE_OS_VERSION}').format_map(os.environ)
+        target_triple += os.environ.get('LLVM_TARGET_TRIPLE_SUFFIX', '')
+
+        feature_and_platform_defines = subprocess.check_output(
+            ('xcrun', 'clang', '-x', 'c++', '-std={CLANG_CXX_LANGUAGE_STANDARD}'.format_map(os.environ),
+             '-target', target_triple, '-E', '-P', '-dM', '-MD', '-MF', depfile, '-MT', output_name,
+             *(sanitizer_flags),
+             *(f'-D{token}' for token in preprocessor_definitions),
+             *(arg for path in framework_search_paths for arg in ('-F', path)),
+             *(arg for path in header_search_paths for arg in ('-I', path)),
+             *(arg for path in system_framework_search_paths for arg in ('-iframework', path)),
+             *(arg for path in system_header_search_paths for arg in ('-isystem', path)),
+             '-include', 'wtf/Platform.h', '/dev/zero'), text=True)
+
+        # Concatenate all the depfiles, in case a header is only imported on specific architectures.
+        shutil.copyfileobj(open(depfile), combined_depfile_fd)
+
+        names = platform_defines_from_dM(feature_and_platform_defines)
+        swift_args = '\n'.join(f'-D{name}' for name in names)
+        print(f'{output_file}:\t', swift_args.replace('\n', ' '))
+        open(output_file, 'w').write(swift_args)
+
+
+def run_cmake_mode(args):
+    cmd = args.command
+    if cmd and cmd[0] == '--':
+        cmd = cmd[1:]
+    if not cmd:
+        sys.exit('clang command is required after --')
+
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        sys.stderr.write(result.stderr)
+        sys.exit(result.returncode)
+
+    swift_defines = platform_defines_from_dM(result.stdout)
+
+    cmake_seeds = []
+    with open(args.cmakeconfig) as f:
+        for line in f:
+            m = DEFINE_RE.match(line.strip())
+            if m:
+                cmake_seeds.append((m.group(1), m.group(2)))
+
+    out_lines = []
+    for name in swift_defines:
+        out_lines.append('-D' + name)
+    for name, value in cmake_seeds:
+        out_lines.append('-Xcc')
+        out_lines.append(f'-D{name}={value}')
+    new_content = '\n'.join(out_lines) + '\n'
+
+    # Skip the write (and the resulting mtime bump) if the resp's contents
+    # haven't actually changed. The Swift compile depends on this file via a
+    # custom_command trigger, so an unchanged-content rewrite would otherwise
+    # spuriously rebuild every Swift TU.
+    try:
+        with open(args.output) as f:
+            if f.read() == new_content:
+                return
+    except FileNotFoundError:
+        pass
+    with open(args.output, 'w') as f:
+        f.write(new_content)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--cmake', action='store_true',
+                    help='Run in cmake mode (argparse-driven; otherwise Xcode env-driven).')
+    ap.add_argument('--output',
+                    help='cmake mode: path to write the response file.')
+    ap.add_argument('--cmakeconfig',
+                    help='cmake mode: path to cmakeconfig.h to seed the clang importer.')
+    ap.add_argument('command', nargs=argparse.REMAINDER,
+                    help='cmake mode: clang preprocess command (preceded by --).')
+    args = ap.parse_args()
+
+    if args.cmake:
+        if not args.output or not args.cmakeconfig:
+            ap.error('--cmake requires --output and --cmakeconfig')
+        run_cmake_mode(args)
+    else:
+        run_xcode_mode()
+
+
+if __name__ == '__main__':
+    main()

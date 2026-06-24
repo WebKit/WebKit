@@ -5,6 +5,6 @@ PASS ./link-upgrade/iframe-link-upgrade.sub.html
 PASS ./link-upgrade/iframe-top-navigation-no-upgrade-1.sub.html
 PASS ./link-upgrade/iframe-top-navigation-no-upgrade-2.sub.html
 PASS ./link-upgrade/iframe-top-navigation-upgrade-1.sub.html
-TIMEOUT ./link-upgrade/iframe-top-navigation-upgrade-2.sub.html Test timed out
+PASS ./link-upgrade/iframe-top-navigation-upgrade-2.sub.html
 PASS ./link-upgrade/iframe-top-navigation-upgrade-meta.sub.html
 

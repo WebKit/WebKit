@@ -54,7 +54,6 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
-#import <WebKit/_WKJSHandle.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKTextPreview.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
@@ -74,6 +73,10 @@
 
 @interface WKWebView (Staging_136152077)
 - (void)showWritingTools:(id)sender;
+@end
+
+@interface WKWebView (Staging_179113970)
+- (BOOL)allowsWritingToolsAffordance;
 @end
 
 @interface NSMenu (Extras)
@@ -3551,6 +3554,28 @@ TEST(WritingTools, AppMenuEditableEmpty)
     }
 }
 
+TEST(WritingTools, ShouldAllowAffordance)
+{
+    {
+        RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body><input id='field' type='text' value='AAAA BBBB CCCC'></body>" writingToolsBehavior:CocoaWritingToolsBehaviorComplete]);
+        [webView stringByEvaluatingJavaScript:@"field.focus(); field.setSelectionRange(0, field.value.length)"];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_FALSE([webView allowsWritingToolsAffordance]);
+    }
+    {
+        RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body><textarea id='field'>AAAA BBBB CCCC</textarea></body>" writingToolsBehavior:CocoaWritingToolsBehaviorComplete]);
+        [webView stringByEvaluatingJavaScript:@"field.focus(); field.setSelectionRange(0, field.value.length)"];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_TRUE([webView allowsWritingToolsAffordance]);
+    }
+    {
+        RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>AAAA BBBB CCCC</p></body>" writingToolsBehavior:CocoaWritingToolsBehaviorComplete]);
+        [webView focusDocumentBodyAndSelectAll];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_TRUE([webView allowsWritingToolsAffordance]);
+    }
+}
+
 #endif // PLATFORM(MAC)
 
 TEST(WritingTools, SmartRepliesMatchStyle)
@@ -3802,6 +3827,41 @@ TEST(WritingTools, ContextRangeFromRangeSelection)
 
         auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
         EXPECT_WK_STREQ(@"", selectionAfterEnd);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, ProofreadingReviewContextRangeFromRangeSelection)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable id='p'><p>AAAA BBBB CCCC</p><p>XXXX YYYY ZZZZ</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    RetainPtr<NSString> setSelectionJavaScript = @""
+        "(() => {"
+        "  const first = document.getElementById('p').childNodes[0].firstChild;"
+        "  const range = document.createRange();"
+        "  range.setStart(first, 5);"
+        "  range.setEnd(first, 9);"
+        "  "
+        "  var selection = window.getSelection();"
+        "  selection.removeAllRanges();"
+        "  selection.addRange(range);"
+        "})();";
+
+    [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
+
+    __block bool finished = false;
+    [(id)[webView writingToolsDelegate] willBeginWritingToolsSession:session forProofreadingReview:YES requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        // A proofreading review session must return the entire editable content as context,
+        // not just the paragraph surrounding the selection — even when a word is selected.
+        EXPECT_WK_STREQ(@"AAAA BBBB CCCC\n\nXXXX YYYY ZZZZ", contexts.firstObject.attributedText.string);
 
         finished = true;
     }];

@@ -7,7 +7,7 @@
       (position 0.00 0.00)
       (bounds 300.00 150.00)
       (children
-        (contents layer (hosted model)
+        (contents layer (canvas)
           (position 0.00 0.00)
           (bounds 300.00 150.00)
         )
@@ -24,7 +24,7 @@ After Changing Source:
       (position 0.00 0.00)
       (bounds 300.00 150.00)
       (children
-        (contents layer (hosted model)
+        (contents layer (canvas)
           (position 0.00 0.00)
           (bounds 300.00 150.00)
         )

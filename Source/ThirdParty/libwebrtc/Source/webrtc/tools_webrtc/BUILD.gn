@@ -6,6 +6,8 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
+import("../webrtc.gni")
+
 if (target_os == "android") {
   action("binary_version_check") {
     testonly = true
@@ -14,5 +16,34 @@ if (target_os == "android") {
     inputs = [ "$root_out_dir/libjingle_peerconnection_so.so" ]
     outputs = [ "$root_out_dir/webrtc_binary_version_check" ]
     args = [ "libjingle_peerconnection_so.so" ]
+  }
+}
+
+if (!build_with_chromium && rtc_include_tests) {
+  generated_file("unittests_in_suites") {
+    testonly = true
+    outputs = [ "$root_gen_dir/tests_in_suites.json" ]
+    data_keys = [ "rtc_cc_test" ]
+    output_conversion = "json"
+    deps = [ "//:test_suites" ]
+  }
+
+  action("validate_test_registration") {
+    testonly = true
+    script = "validate_test_registration.py"
+    inputs = [ "$root_gen_dir/tests_in_suites.json" ]
+    outputs = [ "$root_gen_dir/test_registration_validator.stamp" ]
+    depfile = "$root_gen_dir/test_registration_validator.d"
+    args = [
+      "--suite-tests",
+      rebase_path(inputs[0], root_build_dir),
+      "--stamp",
+      rebase_path(outputs[0], root_build_dir),
+      "--build-dir",
+      ".",
+      "--depfile",
+      rebase_path(depfile, root_build_dir),
+    ]
+    deps = [ ":unittests_in_suites" ]
   }
 }

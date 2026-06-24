@@ -406,6 +406,40 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesURL)
     EXPECT_FALSE([toPattern(@"*://*/foo|bar*") matchesURL:[NSURL URLWithString:@"https://example.com/foo"]]);
 }
 
+TEST(WKWebExtensionMatchPattern, AllowFileSchemeOption)
+{
+    constexpr auto kAllowFile = WKWebExtensionMatchPatternOptionsAllowFileScheme;
+    NSURL *fileURL = [NSURL URLWithString:@"file:///foo/bar.html"];
+    NSURL *httpURL = [NSURL URLWithString:@"http://example.com/foo/bar.html"];
+
+    // <all_urls> default: does not match file:// (also covered by MatchPatternMatchesURL).
+    EXPECT_FALSE([toPattern(@"<all_urls>") matchesURL:fileURL]);
+
+    // <all_urls> with the option: matches file://.
+    EXPECT_TRUE([toPattern(@"<all_urls>") matchesURL:fileURL options:kAllowFile]);
+
+    // <all_urls> with the option still matches non-file URLs.
+    EXPECT_TRUE([toPattern(@"<all_urls>") matchesURL:httpURL options:kAllowFile]);
+
+    // *://*/* must NOT match file:// even with the option (Chrome and Firefox parity).
+    EXPECT_FALSE([toPattern(@"*://*/*") matchesURL:fileURL]);
+    EXPECT_FALSE([toPattern(@"*://*/*") matchesURL:fileURL options:kAllowFile]);
+
+    // Explicit file pattern matches file:// without the option.
+    EXPECT_TRUE([toPattern(@"file:///*") matchesURL:fileURL]);
+    EXPECT_FALSE([toPattern(@"file:///*") matchesURL:httpURL]);
+
+    // Pattern-vs-pattern: <all_urls> covers file:///* only with the option.
+    EXPECT_FALSE([toPattern(@"<all_urls>") matchesPattern:toPattern(@"file:///*")]);
+    EXPECT_TRUE([toPattern(@"<all_urls>") matchesPattern:toPattern(@"file:///*") options:kAllowFile]);
+
+    // *://*/* does not cover file:///* even with the option.
+    EXPECT_FALSE([toPattern(@"*://*/*") matchesPattern:toPattern(@"file:///*") options:kAllowFile]);
+
+    // file:///* covers more specific file patterns (no option needed).
+    EXPECT_TRUE([toPattern(@"file:///*") matchesPattern:toPattern(@"file:///foo/bar.html")]);
+}
+
 TEST(WKWebExtensionMatchPattern, PatternDescriptions)
 {
     EXPECT_NS_EQUAL(toPattern(@"<all_urls>").description, @"<all_urls>");

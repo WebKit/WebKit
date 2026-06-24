@@ -1,2 +1,5 @@
 SUCCESSFUL: keyboard scroll propagated from iframe to main document.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

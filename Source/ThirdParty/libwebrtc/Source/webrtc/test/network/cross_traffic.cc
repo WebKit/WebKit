@@ -79,7 +79,7 @@ DataRate RandomWalkCrossTraffic::TrafficRate() const {
 ColumnPrinter RandomWalkCrossTraffic::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "random_walk_cross_traffic_rate",
-      [this](SimpleStringBuilder& sb) {
+      [this](StringBuilder& sb) {
         sb.AppendFormat("%.0lf", TrafficRate().bps() / 8.0);
       },
       32);
@@ -130,7 +130,7 @@ DataRate PulsedPeaksCrossTraffic::TrafficRate() const {
 ColumnPrinter PulsedPeaksCrossTraffic::StatsPrinter() {
   return ColumnPrinter::Lambda(
       "pulsed_peaks_cross_traffic_rate",
-      [this](SimpleStringBuilder& sb) {
+      [this](StringBuilder& sb) {
         sb.AppendFormat("%.0lf", TrafficRate().bps() / 8.0);
       },
       32);

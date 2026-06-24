@@ -1,14 +1,14 @@
 
 PASS round(10,10) should be used-value-equivalent to 10
 PASS mod(1,1) should be used-value-equivalent to 0
-FAIL mod(0,-2) should be used-value-equivalent to 0 assert_equals: mod(0,-2) and 0 serialize to the same thing in used values. expected "0" but got "-2"
-FAIL mod(2,-2) should be used-value-equivalent to 0 assert_equals: mod(2,-2) and 0 serialize to the same thing in used values. expected "0" but got "-2"
-FAIL mod(4,-2) should be used-value-equivalent to 0 assert_equals: mod(4,-2) and 0 serialize to the same thing in used values. expected "0" but got "-2"
+PASS mod(0,-2) should be used-value-equivalent to 0
+PASS mod(2,-2) should be used-value-equivalent to 0
+PASS mod(4,-2) should be used-value-equivalent to 0
 PASS mod(-2,-2) should be used-value-equivalent to 0
 PASS mod(-4,-2) should be used-value-equivalent to 0
 PASS mod(0, 2) should be used-value-equivalent to 0
 PASS mod(2, 2) should be used-value-equivalent to 0
-FAIL mod(-2, 2) should be used-value-equivalent to 0 assert_equals: mod(-2, 2) and 0 serialize to the same thing in used values. expected "0" but got "2"
+PASS mod(-2, 2) should be used-value-equivalent to 0
 PASS mod(1, 2) should be used-value-equivalent to 1
 PASS mod(3, 2) should be used-value-equivalent to 1
 PASS mod(-1, 2) should be used-value-equivalent to 1

@@ -67,7 +67,6 @@ class RenderLayerModelObject;
 class RenderObject;
 class RenderReplaced;
 class RenderScrollbarPart;
-class RenderStyle;
 class RenderView;
 class RenderWidget;
 class ScrollingCoordinator;
@@ -85,7 +84,11 @@ enum class StyleColorOptions : uint8_t;
 enum class TemporarySelectionOption : uint16_t;
 enum class TiledBackingScrollability : uint8_t;
 
-Pagination::Mode NODELETE paginationModeForRenderStyle(const RenderStyle&);
+namespace Style {
+class ComputedStyle;
+}
+
+Pagination::Mode NODELETE paginationModeForRenderStyle(const Style::ComputedStyle&);
 
 enum class LayoutViewportConstraint : bool { Unconstrained, ConstrainedToDocumentRect };
 
@@ -322,7 +325,10 @@ public:
 
     std::optional<LayoutRect> visibleRectOfChild(const Frame&) const final;
     OptionSet<FrameOwnerElementAppearance> appearanceOfOwnerElementOfChildFrame(const Frame&) const final;
-    
+    LayoutPoint childFrameOwnerContentBoxLocation(const Frame&) const final;
+    TransformationMatrix childFrameOwnerToRootContentTransform(const Frame&) const final;
+    TransformationMatrix absoluteToChildFrameOwnerLocalTransform(const Frame&) const final;
+
     static LayoutRect visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor);
 
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
@@ -380,7 +386,8 @@ public:
 
     // These layers are positioned differently when there are obscured content insets, a header, or a footer.
     // These value need to be computed on both the main thread and the scrolling thread.
-    static FloatRect insetClipLayerRect(const FloatPoint& scrollPosition, const FloatBoxExtent& obscuredContentInsets, const FloatSize& sizeForVisibleContent);
+    // FIXME (webkit.org/b/316233): this function should take scrollOffset instead of scrollPosition.
+    static FloatRect insetClipLayerRect(const FloatPoint& scrollPosition, const FloatSize& totalContentsSize, const FloatBoxExtent& obscuredContentInsets, const FloatSize& sizeForVisibleContent);
     WEBCORE_EXPORT static FloatPoint positionForRootContentLayer(const FloatPoint& scrollPosition, const FloatPoint& scrollOrigin, const FloatBoxExtent& obscuredContentInsets, float headerHeight);
     WEBCORE_EXPORT FloatPoint positionForRootContentLayer() const;
 
@@ -785,6 +792,7 @@ public:
     };
 #endif
     void scrollDidEnd() final;
+    void scrollOriginDidChange() final;
 
 private:
     explicit LocalFrameView(LocalFrame&);

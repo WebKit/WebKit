@@ -28,8 +28,8 @@ layer at (0,0) size 800x600
                     text run at (1,1) width 104: "Run Test Case:"
               RenderTableCell {TD} at (109,33) size 536x32 [r=1 c=1 rs=1 cs=1]
                 RenderMenuList {SELECT} at (1,1) size 303x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderSelectFallbackButton {DIV} at (1,1) size 301x28
-                    RenderText at (5,5) size 84x18
+                  RenderBlock {DIV} at (1,1) size 301x28
+                    RenderText {#text} at (5,5) size 84x18
                       text run at (5,5) width 84: "a_abortinstall"
                 RenderText {#text} at (0,0) size 0x0
               RenderTableCell {TD} at (646,34) size 96x30 [r=1 c=2 rs=1 cs=1]

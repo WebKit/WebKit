@@ -37,7 +37,7 @@ class RenderMedia : public RenderImage {
     WTF_MAKE_TZONE_ALLOCATED(RenderMedia);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMedia);
 public:
-    RenderMedia(Type, HTMLMediaElement&, RenderStyle&&);
+    RenderMedia(Type, HTMLMediaElement&, Style::ComputedStyle&&);
     virtual ~RenderMedia();
 
     inline HTMLMediaElement& mediaElement() const; // Defined in RenderMediaInlines.h
@@ -46,7 +46,7 @@ public:
 
 protected:
     void layout() override;
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     void visibleInViewportStateChanged() override { }
 

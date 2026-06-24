@@ -69,7 +69,7 @@ protected:
     const BlockLayoutState& blockLayoutState() const LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
     BlockLayoutState& blockLayoutState() LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
     const ElementBox& root() const { return m_rootBox; }
-    const RenderStyle& rootStyle() const LIFETIME_BOUND;
+    const Style::ComputedStyle& rootStyle() const LIFETIME_BOUND;
 
 protected:
     Line m_line;

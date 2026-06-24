@@ -22,8 +22,9 @@
     }
     </style>
     <script src="../../resources/ui-helper.js"></script>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script>
+    window.jsTestIsAsync = true;
     var pageScrollPositionBefore;
     var iframeScrollPositionBefore;
     
@@ -37,7 +38,7 @@
         else
             testFailed("iframe did not receive wheel events.");
 
-        testRunner.notifyDone();
+        finishJSTest();
     }
 
     async function scrollTest()
@@ -66,7 +67,6 @@
     function startTest()
     {
         if (window.eventSender) {
-            testRunner.waitUntilDone();
             setTimeout(scrollTest, 0);
         }
     }

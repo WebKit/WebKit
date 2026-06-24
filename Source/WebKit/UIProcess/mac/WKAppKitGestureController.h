@@ -65,6 +65,7 @@ OBJC_CLASS NSPanGestureRecognizer;
 - (void)setTextSelectionDragGesture:(NSGestureRecognizer *)gesture completionHandler:(void (^)(NSDraggingSession *))completionHandler;
 - (void)positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info;
 - (void)didCommitLoadForMainFrame;
+- (void)didEndSyntheticMomentumScrolling;
 - (void)reset;
 
 #if ENABLE(TWO_PHASE_CLICKS)

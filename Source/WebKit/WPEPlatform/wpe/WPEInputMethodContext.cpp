@@ -273,8 +273,8 @@ static void wpe_input_method_context_class_init(WPEInputMethodContextClass* klas
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 
      /**
-     * WPEInputMethodContextClass::preedit-started:
-     * @context: the #WPEInputMethodContextClass on which the signal is emitted
+     * WPEInputMethodContext::preedit-started:
+     * @context: the #WPEInputMethodContext on which the signal is emitted
      *
      * Emitted when a new preediting sequence starts.
      */
@@ -292,7 +292,7 @@ static void wpe_input_method_context_class_init(WPEInputMethodContextClass* klas
      *
      * Emitted whenever the preedit sequence currently being entered has changed.
      * It is also emitted at the end of a preedit sequence, in which case
-     * wpe_input_method_context_get_preedit() returns the empty string.
+     * wpe_input_method_context_get_preedit_string() returns the empty string.
      */
     signals[PREEDIT_CHANGED] = g_signal_new(
         "preedit-changed",

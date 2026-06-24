@@ -248,6 +248,9 @@ TEST(TrustTokenTest, KeyGenExp2PMB) {
             Bytes(pub_key, pub_key_len));
 }
 
+// These tests depend on access to library internals.
+#if !defined(BORINGSSL_SHARED_LIBRARY)
+
 // Test that H in |TRUST_TOKEN_experiment_v1| was computed correctly.
 TEST(TrustTokenTest, HExp1) {
   const EC_GROUP *group = EC_group_p384();
@@ -599,14 +602,12 @@ TEST(TrustTokenTest, PSTV1VOPRFTestVector3) {
             Bytes(CBB_data(response.get()), CBB_len(response.get())));
 }
 
+#endif  // BORINGSSL_SHARED_LIBRARY
+
 static std::vector<const TRUST_TOKEN_METHOD *> AllMethods() {
-  return {
-    TRUST_TOKEN_experiment_v1(),
-    TRUST_TOKEN_experiment_v2_voprf(),
-    TRUST_TOKEN_experiment_v2_pmb(),
-    TRUST_TOKEN_pst_v1_voprf(),
-    TRUST_TOKEN_pst_v1_pmb()
-  };
+  return {TRUST_TOKEN_experiment_v1(), TRUST_TOKEN_experiment_v2_voprf(),
+          TRUST_TOKEN_experiment_v2_pmb(), TRUST_TOKEN_pst_v1_voprf(),
+          TRUST_TOKEN_pst_v1_pmb()};
 }
 
 class TrustTokenProtocolTestBase : public ::testing::Test {
@@ -658,9 +659,6 @@ class TrustTokenProtocolTestBase : public ::testing::Test {
 
     TRUST_TOKEN_CLIENT_set_srr_key(client.get(), pub.get());
     TRUST_TOKEN_ISSUER_set_srr_key(issuer.get(), priv.get());
-    RAND_bytes(metadata_key, sizeof(metadata_key));
-    ASSERT_TRUE(TRUST_TOKEN_ISSUER_set_metadata_key(issuer.get(), metadata_key,
-                                                    sizeof(metadata_key)));
   }
 
   const TRUST_TOKEN_METHOD *method_;
@@ -669,7 +667,6 @@ class TrustTokenProtocolTestBase : public ::testing::Test {
   uint16_t issuer_max_batchsize = 10;
   bssl::UniquePtr<TRUST_TOKEN_CLIENT> client;
   bssl::UniquePtr<TRUST_TOKEN_ISSUER> issuer;
-  uint8_t metadata_key[32];
 };
 
 class TrustTokenProtocolTest
@@ -907,9 +904,6 @@ TEST_P(TrustTokenProtocolTest, IssuedWithBadKeyID) {
 
   TRUST_TOKEN_CLIENT_set_srr_key(client.get(), pub.get());
   TRUST_TOKEN_ISSUER_set_srr_key(issuer.get(), priv.get());
-  RAND_bytes(metadata_key, sizeof(metadata_key));
-  ASSERT_TRUE(TRUST_TOKEN_ISSUER_set_metadata_key(issuer.get(), metadata_key,
-                                                  sizeof(metadata_key)));
 
 
   uint8_t *issue_msg = nullptr, *issue_resp = nullptr;
@@ -959,6 +953,12 @@ TEST_P(TrustTokenMetadataTest, SetAndGetMetadata) {
                                                   &msg_len, 10));
   }
   bssl::UniquePtr<uint8_t> free_issue_msg(issue_msg);
+
+  // Make a copy to test that the testing API works.
+  bssl::UniquePtr<TRUST_TOKEN_CLIENT> client_copy(
+      TRUST_TOKEN_CLIENT_dup_for_testing(client.get()));
+  ASSERT_TRUE(client_copy);
+
   size_t tokens_issued;
   bool result = TRUST_TOKEN_ISSUER_issue(
       issuer.get(), &issue_resp, &resp_len, &tokens_issued, issue_msg, msg_len,
@@ -969,12 +969,26 @@ TEST_P(TrustTokenMetadataTest, SetAndGetMetadata) {
   }
   ASSERT_TRUE(result);
   bssl::UniquePtr<uint8_t> free_msg(issue_resp);
+
   size_t key_index;
   bssl::UniquePtr<STACK_OF(TRUST_TOKEN)> tokens(
       TRUST_TOKEN_CLIENT_finish_issuance(client.get(), &key_index, issue_resp,
                                          resp_len));
   ASSERT_TRUE(tokens);
   EXPECT_EQ(1u, sk_TRUST_TOKEN_num(tokens.get()));
+
+  // Test that the testing copy gave the same result.
+  size_t key_index2;
+  bssl::UniquePtr<STACK_OF(TRUST_TOKEN)> tokens2(
+      TRUST_TOKEN_CLIENT_finish_issuance(client_copy.get(), &key_index2,
+                                         issue_resp, resp_len));
+  ASSERT_TRUE(tokens2);
+  EXPECT_EQ(key_index, key_index2);
+  EXPECT_EQ(1u, sk_TRUST_TOKEN_num(tokens2.get()));
+  EXPECT_EQ(Bytes(sk_TRUST_TOKEN_value(tokens.get(), 0)->data,
+                  sk_TRUST_TOKEN_value(tokens.get(), 0)->len),
+            Bytes(sk_TRUST_TOKEN_value(tokens2.get(), 0)->data,
+                  sk_TRUST_TOKEN_value(tokens2.get(), 0)->len));
 
   for (TRUST_TOKEN *token : tokens.get()) {
     const uint8_t kClientData[] = "\x70TEST CLIENT DATA";

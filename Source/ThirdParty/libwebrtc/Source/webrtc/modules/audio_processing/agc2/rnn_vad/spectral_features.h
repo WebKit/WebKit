@@ -14,8 +14,8 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/ring_buffer.h"
 #include "modules/audio_processing/agc2/rnn_vad/spectral_features_internal.h"
@@ -39,22 +39,22 @@ class SpectralFeaturesExtractor {
   // detects silence and computes features. If silence is detected, the output
   // is neither computed nor written.
   bool CheckSilenceComputeFeatures(
-      ArrayView<const float, kFrameSize20ms24kHz> reference_frame,
-      ArrayView<const float, kFrameSize20ms24kHz> lagged_frame,
-      ArrayView<float, kNumBands - kNumLowerBands> higher_bands_cepstrum,
-      ArrayView<float, kNumLowerBands> average,
-      ArrayView<float, kNumLowerBands> first_derivative,
-      ArrayView<float, kNumLowerBands> second_derivative,
-      ArrayView<float, kNumLowerBands> bands_cross_corr,
+      std::span<const float, kFrameSize20ms24kHz> reference_frame,
+      std::span<const float, kFrameSize20ms24kHz> lagged_frame,
+      std::span<float, kNumBands - kNumLowerBands> higher_bands_cepstrum,
+      std::span<float, kNumLowerBands> average,
+      std::span<float, kNumLowerBands> first_derivative,
+      std::span<float, kNumLowerBands> second_derivative,
+      std::span<float, kNumLowerBands> bands_cross_corr,
       float* variability);
 
  private:
   void ComputeAvgAndDerivatives(
-      ArrayView<float, kNumLowerBands> average,
-      ArrayView<float, kNumLowerBands> first_derivative,
-      ArrayView<float, kNumLowerBands> second_derivative) const;
+      std::span<float, kNumLowerBands> average,
+      std::span<float, kNumLowerBands> first_derivative,
+      std::span<float, kNumLowerBands> second_derivative) const;
   void ComputeNormalizedCepstralCorrelation(
-      ArrayView<float, kNumLowerBands> bands_cross_corr);
+      std::span<float, kNumLowerBands> bands_cross_corr);
   float ComputeVariability() const;
 
   const std::array<float, kFrameSize20ms24kHz / 2> half_window_;

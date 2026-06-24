@@ -24,7 +24,8 @@
 
 #pragma once
 
-#include "CSSPrimitiveNumericTypes+CSSValueCreation.h"
+#include "CSSPrimitiveNumericTypes.h"
+#include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 
 namespace WebCore {
@@ -32,17 +33,40 @@ namespace CSS {
 
 // MARK: - Conversion from strongly typed `CSS::` value types to `WebCore::DeprecatedCSSOMValue` types.
 
+inline Ref<DeprecatedCSSOMPrimitiveValue> makeDeprecatedCSSOMPrimitiveValueForNumericRaw(NumericRaw auto const& value, CSSStyleDeclaration& owner)
+{
+    return DeprecatedCSSOMPrimitiveValue::create(UnconstrainedPrimitiveNumericRaw { toCSSUnitType(value.unit), value.value }, owner);
+}
+
+inline Ref<DeprecatedCSSOMPrimitiveValue> makeDeprecatedCSSOMPrimitiveValueForNumericCalc(Calc auto const& value, CSSStyleDeclaration& owner)
+{
+    return DeprecatedCSSOMPrimitiveValue::create(value, owner);
+}
+
+template<Numeric CSSType>
+Ref<DeprecatedCSSOMPrimitiveValue> makeDeprecatedCSSOMPrimitiveValueForNumeric(const CSSType& value, CSSStyleDeclaration& owner)
+{
+    return WTF::switchOn(value,
+        [&](const typename CSSType::Raw& raw) {
+            return makeDeprecatedCSSOMPrimitiveValueForNumericRaw(raw, owner);
+        },
+        [&](const typename CSSType::Calc& calc) {
+            return makeDeprecatedCSSOMPrimitiveValueForNumericCalc(calc, owner);
+        }
+    );
+}
+
 template<NumericRaw CSSType> struct DeprecatedCSSOMValueCreation<CSSType> {
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, CSSStyleDeclaration& owner, const CSSType& value)
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration& owner, const CSSType& value)
     {
-        return DeprecatedCSSOMPrimitiveValue::create(createCSSValue(pool, value), owner);
+        return makeDeprecatedCSSOMPrimitiveValueForNumericRaw(value, owner);
     }
 };
 
 template<Calc CSSType> struct DeprecatedCSSOMValueCreation<CSSType> {
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, CSSStyleDeclaration& owner, const CSSType& value)
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration& owner, const CSSType& value)
     {
-        return DeprecatedCSSOMPrimitiveValue::create(createCSSValue(pool, value), owner);
+        return makeDeprecatedCSSOMPrimitiveValueForNumericCalc(value, owner);
     }
 };
 

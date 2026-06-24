@@ -66,6 +66,16 @@ RemoteFrame::RemoteFrame(Page& page, ClientCreator&& clientCreator, FrameIdentif
 
 RemoteFrame::~RemoteFrame() = default;
 
+ProcessIdentifier RemoteFrame::hostingProcessIdentifier() const
+{
+    if (m_hostingProcessIdentifier)
+        return *m_hostingProcessIdentifier;
+    // Fallback to the process encoded in the FrameIdentifier's upper bits when the
+    // hosting process has not been recorded. This reproduces the legacy
+    // IdentifierRegistry::protocolFrameId(FrameIdentifier) value. See webkit.org/b/310164.
+    return ObjectIdentifier<ProcessIdentifierType>(frameID().toRawValue() >> 32);
+}
+
 DOMWindow* RemoteFrame::virtualWindow() const
 {
     return &window();
@@ -86,7 +96,7 @@ void RemoteFrame::didFinishLoadInAnotherProcess()
     m_preventsParentFromBeingComplete = false;
 
     if (RefPtr ownerElement = this->ownerElement())
-        ownerElement->document().checkCompleted();
+        protect(ownerElement->document())->checkCompleted();
 }
 
 bool RemoteFrame::preventsParentFromBeingComplete() const
@@ -169,7 +179,7 @@ String RemoteFrame::customNavigatorPlatform() const
 
 URL RemoteFrame::urlForConsoleLog() const
 {
-    return frameDocumentSecurityOrigin()->toURL();
+    return protect(frameDocumentSecurityOrigin())->toURL();
 }
 
 OptionSet<AdvancedPrivacyProtections> RemoteFrame::advancedPrivacyProtections() const
@@ -232,8 +242,10 @@ AutoplayPolicy RemoteFrame::autoplayPolicy() const
 
 float RemoteFrame::usedZoomForChild(const Frame& child) const
 {
-    auto maybeInfo = frameTreeSyncData().childrenFrameLayoutInfo.getOptional(child.frameID());
-    return maybeInfo.transform([] (auto& info) { return info.usedZoom; }).value_or(1.0);
+    if (RefPtr info = frameTreeSyncData().childrenFrameLayoutInfo.get(child.frameID()))
+        return info->usedZoom();
+
+    return 1.0;
 }
 
 String RemoteFrame::debugDescription() const

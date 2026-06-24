@@ -46,6 +46,11 @@ DECLARE_SYSTEM_HEADER
 #import <AppKit/NSScrollPocket_Private.h>
 #endif
 
+#if HAVE(NSREFRESHCONTROLLER)
+#import <AppKit/NSRefreshControl_Private.h>
+#import <AppKit/NSRefreshController_Private.h>
+#endif
+
 #else
 
 @class NSTextPlaceholder;
@@ -130,6 +135,8 @@ NSString * const NSInspectorBarTextAlignmentItemIdentifier = @"NSInspectorBarTex
 + (_NSCornerRadius *)fixedRadius:(CGFloat)radius;
 @end
 
+// FIXME: Drop these and clean up the call sites once the supported configurations allow it.
+#if !defined(__has_include) || !__has_include(<AppKit/NSViewCornerRadii.h>)
 @interface NSViewCornerRadii : NSObject
 @property CGFloat topLeft;
 @property CGFloat topRight;
@@ -137,11 +144,14 @@ NSString * const NSInspectorBarTextAlignmentItemIdentifier = @"NSInspectorBarTex
 @property CGFloat bottomRight;
 @property (copy) CALayerCornerCurve cornerCurve;
 @end
+#endif
 
+#if !defined(__has_include) || !__has_include(<AppKit/NSViewCornerConfiguration.h>)
 @interface NSViewCornerConfiguration : NSObject
 + (NSViewCornerConfiguration *)configurationWithRadius:(_NSCornerRadius *)radius;
 + (instancetype)configurationWithTopLeftRadius:(nullable _NSCornerRadius *)topLeftRadius topRightRadius:(nullable _NSCornerRadius *)topRightRadius bottomLeftRadius:(nullable _NSCornerRadius *)bottomLeftRadius bottomRightRadius:(nullable _NSCornerRadius *)bottomRightRadius;
 @end
+#endif
 
 @interface NSView (NSViewCornerConfiguration)
 @property (nullable, readonly) NSViewCornerRadii *_effectiveCornerRadii;
@@ -150,6 +160,18 @@ NSString * const NSInspectorBarTextAlignmentItemIdentifier = @"NSInspectorBarTex
 - (void)_invalidateCornerConfiguration;
 @end
 
+#endif
+
+#if HAVE(NSREFRESHCONTROLLER)
+
+#if !defined(__has_include) || !__has_include(<AppKit/NSRefreshControl_Private.h>)
+@interface NSRefreshControl : NSView
+@end
+#endif
+
+@interface NSRefreshController (Staging_179255418)
+@property (strong, nonatomic, readonly) NSRefreshControl *refreshControl;
+@end
 #endif
 
 #endif

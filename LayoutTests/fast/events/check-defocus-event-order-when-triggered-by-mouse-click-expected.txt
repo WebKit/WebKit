@@ -9,6 +9,7 @@ PASS fired event is (firstInput, change).
 PASS fired event is (firstInput, blur).
 PASS fired event is (secondInput, focus).
 PASS fired event is (secondInput, click).
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

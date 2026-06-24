@@ -48,7 +48,8 @@ struct InputMethodState {
         Phone,
         Url,
         Email,
-        Password
+        Password,
+        Search,
     };
 
     enum class Hint : uint8_t {

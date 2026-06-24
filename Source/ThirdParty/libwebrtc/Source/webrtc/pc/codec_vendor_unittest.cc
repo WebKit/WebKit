@@ -11,6 +11,7 @@
 #include "pc/codec_vendor.h"
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
@@ -18,6 +19,7 @@
 #include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/media_types.h"
+#include "api/payload_type.h"
 #include "api/rtc_error.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/test/rtc_error_matchers.h"
@@ -72,7 +74,7 @@ const Codec kAudioCodecsAnswer[] = {
 };
 
 TEST(CodecVendorTest, TestSetAudioCodecs) {
-  FieldTrials trials = CreateTestFieldTrials();
+  FieldTrials trials("WebRTC-PayloadTypesInTransport/Disabled/");
   std::vector<Codec> send_codecs = MAKE_VECTOR(kAudioCodecs1);
   std::vector<Codec> recv_codecs = MAKE_VECTOR(kAudioCodecs2);
 
@@ -133,14 +135,16 @@ TEST(CodecVendorTest, TestSetAudioCodecs) {
   media_engine.SetAudioRecvCodecs(no_codecs.codecs());
   {
     CodecVendor codec_vendor(&media_engine, false, trials);
-    EXPECT_EQ(no_codecs, codec_vendor.audio_send_codecs());
-    EXPECT_EQ(no_codecs, codec_vendor.audio_recv_codecs());
-    EXPECT_EQ(no_codecs, codec_vendor.audio_sendrecv_codecs());
+    EXPECT_EQ(no_codecs.codecs(), codec_vendor.audio_send_codecs().codecs());
+    EXPECT_EQ(no_codecs.codecs(), codec_vendor.audio_recv_codecs().codecs());
+    EXPECT_EQ(no_codecs.codecs(),
+              codec_vendor.audio_sendrecv_codecs().codecs());
   }
 }
 
 TEST(CodecVendorTest, VideoRtxIsIncludedWhenAskedFor) {
-  Environment env = CreateEnvironment();
+  FieldTrials trials("WebRTC-PayloadTypesInTransport/Disabled/");
+  Environment env = CreateEnvironment(&trials);
   FakeMediaEngine media_engine;
   std::vector<Codec> video_codecs({
       CreateVideoCodec(97, "vp8"),
@@ -160,7 +164,8 @@ TEST(CodecVendorTest, VideoRtxIsIncludedWhenAskedFor) {
 }
 
 TEST(CodecVendorTest, VideoRtxIsExcludedWhenNotAskedFor) {
-  Environment env = CreateEnvironment();
+  FieldTrials trials("WebRTC-PayloadTypesInTransport/Disabled/");
+  Environment env = CreateEnvironment(&trials);
   FakeMediaEngine media_engine;
   std::vector<Codec> video_codecs({
       CreateVideoCodec(97, "vp8"),
@@ -180,7 +185,8 @@ TEST(CodecVendorTest, VideoRtxIsExcludedWhenNotAskedFor) {
 }
 
 TEST(CodecVendorTest, PreferencesAffectCodecChoice) {
-  Environment env = CreateEnvironment();
+  FieldTrials trials("WebRTC-PayloadTypesInTransport/Disabled/");
+  Environment env = CreateEnvironment(&trials);
   FakeMediaEngine media_engine;
   std::vector<Codec> video_codecs({
       CreateVideoCodec(97, "vp8"),
@@ -194,7 +200,7 @@ TEST(CodecVendorTest, PreferencesAffectCodecChoice) {
   MediaDescriptionOptions options(MediaType::VIDEO, "mid",
                                   RtpTransceiverDirection::kSendOnly, false);
   options.codec_preferences = {
-      ToRtpCodecCapability(CreateVideoCodec(-1, "vp9")),
+      ToRtpCodecCapability(CreateVideoCodec(PayloadType::NotSet(), "vp9")),
   };
   FakePayloadTypeSuggester pt_suggester;
 
@@ -210,7 +216,8 @@ TEST(CodecVendorTest, PreferencesAffectCodecChoice) {
 }
 
 TEST(CodecVendorTest, GetNegotiatedCodecsForAnswerSimple) {
-  Environment env = CreateEnvironment();
+  FieldTrials trials("WebRTC-PayloadTypesInTransport/Disabled/");
+  Environment env = CreateEnvironment(&trials);
   FakeMediaEngine media_engine;
   std::vector<Codec> video_codecs({
       CreateVideoCodec(97, "vp8"),
@@ -234,7 +241,8 @@ TEST(CodecVendorTest, GetNegotiatedCodecsForAnswerSimple) {
 }
 
 TEST(CodecVendorTest, GetNegotiatedCodecsForAnswerWithCollision) {
-  Environment env = CreateEnvironment();
+  FieldTrials trials("WebRTC-PayloadTypesInTransport/Disabled/");
+  Environment env = CreateEnvironment(&trials);
   FakeMediaEngine media_engine;
   std::vector<Codec> video_codecs({
       CreateVideoCodec(97, "vp8"),
@@ -261,6 +269,9 @@ TEST(CodecVendorTest, GetNegotiatedCodecsForAnswerWithCollision) {
 }
 
 TEST(CodecVendorMergeTest, BasicTestSetup) {
+  if (CreateTestFieldTrials().IsEnabled("WebRTC-PayloadTypesInTransport")) {
+    GTEST_SKIP();
+  }
   CodecList reference_codecs;
   const std::string mid = "mid";
   CodecList merged_codecs;
@@ -271,12 +282,16 @@ TEST(CodecVendorMergeTest, BasicTestSetup) {
 }
 
 TEST(CodecVendorMergeTest, IdenticalListsMergeWithNoChange) {
+  if (CreateTestFieldTrials().IsEnabled("WebRTC-PayloadTypesInTransport")) {
+    GTEST_SKIP();
+  }
   CodecList reference_codecs;
   const std::string mid = "mid";
   CodecList merged_codecs;
   FakePayloadTypeSuggester pt_suggester;
   Codec some_codec = CreateVideoCodec(97, "foo");
-  auto pt_or_error = pt_suggester.SuggestPayloadType(mid, some_codec);
+  RTCErrorOr<PayloadType> pt_or_error =
+      pt_suggester.SuggestPayloadType(mid, some_codec, false);
   ASSERT_THAT(pt_or_error.value(), Eq(97));
   reference_codecs.push_back(some_codec);
   merged_codecs.push_back(some_codec);
@@ -288,12 +303,16 @@ TEST(CodecVendorMergeTest, IdenticalListsMergeWithNoChange) {
 }
 
 TEST(CodecVendorMergeTest, MergeRenumbersAdditionalCodecs) {
+  if (CreateTestFieldTrials().IsEnabled("WebRTC-PayloadTypesInTransport")) {
+    GTEST_SKIP();
+  }
   CodecList reference_codecs;
   const std::string mid = "mid";
   CodecList merged_codecs;
   FakePayloadTypeSuggester pt_suggester;
   Codec some_codec = CreateVideoCodec(97, "foo");
-  auto pt_or_error = pt_suggester.SuggestPayloadType(mid, some_codec);
+  RTCErrorOr<PayloadType> pt_or_error =
+      pt_suggester.SuggestPayloadType(mid, some_codec, false);
   ASSERT_THAT(pt_or_error.value(), Eq(97));
   merged_codecs.push_back(some_codec);
   // Use the same PT for a reference codec. This should be renumbered.
@@ -318,6 +337,9 @@ TEST(CodecVendorMergeTest, MergeRenumbersAdditionalCodecs) {
 }
 
 TEST(CodecVendorMergeTest, MergeRenumbersRedCodecArgument) {
+  if (CreateTestFieldTrials().IsEnabled("WebRTC-PayloadTypesInTransport")) {
+    GTEST_SKIP();
+  }
   CodecList reference_codecs;
   const std::string mid = "mid";
   CodecList merged_codecs;
@@ -345,6 +367,9 @@ TEST(CodecVendorMergeTest, MergeRenumbersRedCodecArgument) {
 }
 
 TEST(CodecVendorMergeTest, MergeRenumbersRedCodecArgumentAndMerges) {
+  if (CreateTestFieldTrials().IsEnabled("WebRTC-PayloadTypesInTransport")) {
+    GTEST_SKIP();
+  }
   CodecList reference_codecs;
   const std::string mid = "mid";
   CodecList merged_codecs;
@@ -375,6 +400,9 @@ TEST(CodecVendorMergeTest, MergeRenumbersRedCodecArgumentAndMerges) {
 }
 
 TEST(CodecVendorMergeTest, MergeWithBrokenReferenceRedErrors) {
+  if (CreateTestFieldTrials().IsEnabled("WebRTC-PayloadTypesInTransport")) {
+    GTEST_SKIP();
+  }
   CodecList reference_codecs;
   const std::string mid = "mid";
   CodecList merged_codecs;
@@ -390,6 +418,65 @@ TEST(CodecVendorMergeTest, MergeWithBrokenReferenceRedErrors) {
       MergeCodecsForTesting(reference_codecs, mid, merged_codecs, pt_suggester);
   EXPECT_FALSE(error.ok());
   EXPECT_THAT(error.type(), Eq(RTCErrorType::INTERNAL_ERROR));
+}
+
+TEST(CodecVendorMergeTest, MergeWithCollisionPicksFromTop) {
+  if (CreateTestFieldTrials().IsEnabled("WebRTC-PayloadTypesInTransport")) {
+    GTEST_SKIP();
+  }
+  CodecList reference_codecs;
+  const std::string mid = "mid";
+  CodecList merged_codecs;
+  FakePayloadTypeSuggester pt_suggester;
+  // Existing codec with PT 97
+  Codec some_codec = CreateVideoCodec(97, "foo");
+  merged_codecs.push_back(some_codec);
+  RTC_CHECK(pt_suggester.AddLocalMapping(mid, 97, some_codec).ok());
+
+  // New codec in reference that also wants PT 97
+  Codec some_other_codec = CreateVideoCodec(97, "bar");
+  reference_codecs.push_back(some_other_codec);
+
+  // When merging with pick_from_top_of_range = true, it should pick 127
+  RTCError error =
+      MergeCodecsForTesting(reference_codecs, mid, merged_codecs, pt_suggester,
+                            /*pick_from_top_of_range=*/true);
+  EXPECT_TRUE(error.ok());
+  EXPECT_THAT(merged_codecs.size(), Eq(2));
+  EXPECT_THAT(merged_codecs.codecs(),
+              Contains(AllOf(Field("name", &Codec::name, "bar"),
+                             Field("id", &Codec::id, 127))));
+}
+
+TEST(CodecVendorTest, ModifyVideoCodecsReplacesCodec) {
+  FieldTrials trials("WebRTC-PayloadTypesInTransport/Disabled/");
+  FakeMediaEngine media_engine;
+  std::vector<Codec> video_codecs({
+      CreateVideoCodec(97, "vp8"),
+      CreateVideoCodec(99, "vp9"),
+  });
+  media_engine.SetVideoSendCodecs(video_codecs);
+  media_engine.SetVideoRecvCodecs(video_codecs);
+
+  CodecVendor codec_vendor(&media_engine, false, trials);
+
+  Codec original_codec = video_codecs[0];
+  Codec modified_codec = original_codec;
+  modified_codec.name = "modified_name";
+
+  Codec second_codec = video_codecs[1];
+
+  std::vector<std::pair<Codec, Codec>> changes;
+  changes.push_back({original_codec, modified_codec});
+
+  codec_vendor.ModifyVideoCodecs(changes);
+
+  const CodecList& new_send_codecs = codec_vendor.video_send_codecs();
+  EXPECT_THAT(new_send_codecs.codecs(), Contains(modified_codec));
+  EXPECT_THAT(new_send_codecs.codecs(), Not(Contains(original_codec)));
+
+  // Check that the second codec is NOT changed.
+  EXPECT_THAT(new_send_codecs.codecs(), Contains(second_codec));
 }
 
 }  // namespace

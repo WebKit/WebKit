@@ -69,7 +69,7 @@ DEFINE_TYPE_MAPPING(CSS::GridLineNames, GridLineNames);
 // MARK: - Serialization
 
 // Custom serialization needed to add leading '[' and trailing ']'.
-template<> struct Serialize<GridLineNames> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const GridLineNames&); };
+template<> struct Serialize<GridLineNames> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const GridLineNames&); };
 
 // MARK: - Logging
 

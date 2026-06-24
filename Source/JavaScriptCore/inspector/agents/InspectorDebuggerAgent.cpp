@@ -708,20 +708,25 @@ struct ReplacedThunk {
                 return;
 
             JSC::JITCode::CodeRef<JSC::JSEntryPtrTag> oldJITCodeRef;
+            CodePtr<JSC::JSEntryPtrTag> oldWithArityCheckThunk;
             CodePtr<JSC::JSEntryPtrTag> oldArityJITCodeRef;
             switch (kind) {
             case JSC::CodeSpecializationKind::CodeForCall:
                 oldJITCodeRef = WTF::move(callThunk);
+                oldWithArityCheckThunk = WTF::move(callWithArityCheckThunk);
                 oldArityJITCodeRef = WTF::move(callArityThunk);
                 break;
 
             case JSC::CodeSpecializationKind::CodeForConstruct:
                 oldJITCodeRef = WTF::move(constructThunk);
+                oldWithArityCheckThunk = WTF::move(constructWithArityCheckThunk);
                 oldArityJITCodeRef = WTF::move(constructArityThunk);
                 break;
             }
 
             jitCode->swapCodeRefForDebugger(WTF::move(oldJITCodeRef));
+            if (jitCode->canSwapCodePtrWithArityCheckForDebugger())
+                jitCode->swapCodePtrWithArityCheckForDebugger(WTF::move(oldWithArityCheckThunk));
             nativeExecutable->swapGeneratedJITCodeWithArityCheckForDebugger(kind, oldArityJITCodeRef);
         };
 
@@ -732,9 +737,11 @@ struct ReplacedThunk {
     JSC::Weak<JSC::NativeExecutable> nativeExecutable;
 
     JSC::JITCode::CodeRef<JSC::JSEntryPtrTag> callThunk;
+    CodePtr<JSC::JSEntryPtrTag> callWithArityCheckThunk;
     CodePtr<JSC::JSEntryPtrTag> callArityThunk;
 
     JSC::JITCode::CodeRef<JSC::JSEntryPtrTag> constructThunk;
+    CodePtr<JSC::JSEntryPtrTag> constructWithArityCheckThunk;
     CodePtr<JSC::JSEntryPtrTag> constructArityThunk;
 
     size_t matchCount { 0 };
@@ -1515,6 +1522,11 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
         RELEASE_ASSERT(nativeExecutable.generatedJITCodeWithArityCheckFor(kind) == jitCode->addressForCall(JSC::ArityCheckMode::MustCheckArity));
 
         auto oldJITCodeRef = jitCode->swapCodeRefForDebugger(createJITCodeRef(thunk));
+
+        CodePtr<JSC::JSEntryPtrTag> oldWithArityCheckThunk;
+        if (jitCode->canSwapCodePtrWithArityCheckForDebugger())
+            oldWithArityCheckThunk = jitCode->swapCodePtrWithArityCheckForDebugger(thunk.retagged<JSC::JSEntryPtrTag>());
+
         auto oldArityJITCodeRef = nativeExecutable.swapGeneratedJITCodeWithArityCheckForDebugger(kind, jitCode->addressForCall(JSC::ArityCheckMode::MustCheckArity));
 
         switch (kind) {
@@ -1522,20 +1534,26 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
             ASSERT(!replacedThunk->callThunk);
             replacedThunk->callThunk = WTF::move(oldJITCodeRef);
 
+            ASSERT(!replacedThunk->callWithArityCheckThunk);
+            replacedThunk->callWithArityCheckThunk = WTF::move(oldWithArityCheckThunk);
+
             ASSERT(!replacedThunk->callArityThunk);
             replacedThunk->callArityThunk = WTF::move(oldArityJITCodeRef);
 
-            RELEASE_ASSERT(replacedThunk->callThunk.code() == createJITCodeRef(vm.jitStubs->ctiNativeCall(vm)).code());
+            RELEASE_ASSERT(jitCode->canSwapCodePtrWithArityCheckForDebugger() || replacedThunk->callThunk.code() == createJITCodeRef(vm.jitStubs->ctiNativeCall(vm)).code());
             break;
 
         case JSC::CodeSpecializationKind::CodeForConstruct:
             ASSERT(!replacedThunk->constructThunk);
             replacedThunk->constructThunk = WTF::move(oldJITCodeRef);
 
+            ASSERT(!replacedThunk->constructWithArityCheckThunk);
+            replacedThunk->constructWithArityCheckThunk = WTF::move(oldWithArityCheckThunk);
+
             ASSERT(!replacedThunk->constructArityThunk);
             replacedThunk->constructArityThunk = WTF::move(oldArityJITCodeRef);
 
-            RELEASE_ASSERT(replacedThunk->constructThunk.code() == createJITCodeRef(vm.jitStubs->ctiNativeConstruct(vm)).code());
+            RELEASE_ASSERT(jitCode->canSwapCodePtrWithArityCheckForDebugger() || replacedThunk->constructThunk.code() == createJITCodeRef(vm.jitStubs->ctiNativeConstruct(vm)).code());
             break;
         }
 

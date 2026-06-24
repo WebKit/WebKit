@@ -31,6 +31,7 @@
 #include "Blob.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DOMURL.h"
+#include "Document.h"
 #include "HTMLImageElement.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformRenderTheme.h"

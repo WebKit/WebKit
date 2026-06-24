@@ -7,12 +7,12 @@ layer at (0,0) size 800x600
         text run at (0,0) width 479: "This tests that select elements with a narrow width (1px) are rendered correctly."
       RenderBR {BR} at (479,15) size 0x0
       RenderMenuList {SELECT} at (0,22) size 25x20 [bgcolor=#FFFFFF]
-        RenderSelectFallbackButton {DIV} at (4,2) size 0x16
-          RenderText at (0,0) size 21x16
+        RenderBlock {DIV} at (4,2) size 0x16
+          RenderText {#text} at (0,0) size 21x16
             text run at (0,0) width 21: "test"
       RenderBR {BR} at (25,37) size 0x0
       RenderMenuList {SELECT} at (0,46) size 27x22 [bgcolor=#0000FF] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (5,3) size 0x16
-          RenderText at (0,0) size 21x16
+        RenderBlock {DIV} at (5,3) size 0x16
+          RenderText {#text} at (0,0) size 21x16
             text run at (0,0) width 21: "test"
       RenderText {#text} at (0,0) size 0x0

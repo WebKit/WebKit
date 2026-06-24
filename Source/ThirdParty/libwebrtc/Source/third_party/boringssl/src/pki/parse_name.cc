@@ -26,7 +26,7 @@ BSSL_NAMESPACE_BEGIN
 
 namespace {
 
-// Returns a string containing the dotted numeric form of |oid|, or an empty
+// Returns a string containing the dotted numeric form of `oid`, or an empty
 // string on error.
 std::string OidToString(der::Input oid) {
   CBS cbs;

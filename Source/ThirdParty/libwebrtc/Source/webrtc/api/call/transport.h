@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include "api/array_view.h"
+#include <span>
 
 namespace webrtc {
 
@@ -41,9 +41,9 @@ struct PacketOptions {
 
 class Transport {
  public:
-  virtual bool SendRtp(ArrayView<const uint8_t> packet,
+  virtual bool SendRtp(std::span<const uint8_t> packet,
                        const PacketOptions& options) = 0;
-  virtual bool SendRtcp(ArrayView<const uint8_t> packet,
+  virtual bool SendRtcp(std::span<const uint8_t> packet,
                         const PacketOptions& options) = 0;
 
  protected:

@@ -1,12 +1,9 @@
 <p>Tests for image elements firing their load events even when they're not in the document. Should say "onload fired" ten times, and then "PASS".</p>
 <pre id="console"></pre>
 
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 
 function $(id)
 {
@@ -32,8 +29,7 @@ function createImage()
         --imageCount;
         if (!imageCount) {
             log("PASS");
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
     };
     image = null;

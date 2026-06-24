@@ -137,12 +137,12 @@ constexpr DoublePoint operator-(const DoublePoint& a, const DoubleSize& b)
 
 inline IntPoint flooredIntPoint(const DoublePoint& p)
 {
-    return IntPoint(clampToInteger(floor(p.x())), clampToInteger(floor(p.y())));
+    return IntPoint(clampTo<int>(floor(p.x())), clampTo<int>(floor(p.y())));
 }
 
 inline IntPoint roundedIntPoint(const DoublePoint& p)
 {
-    return IntPoint(clampToInteger(round(p.x())), clampToInteger(round(p.y())));
+    return IntPoint(clampTo<int>(round(p.x())), clampTo<int>(round(p.y())));
 }
 
 inline DoubleSize toDoubleSize(const DoublePoint& a)

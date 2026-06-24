@@ -37,7 +37,6 @@ from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
-from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 
 _log = logging.getLogger(__name__)
 
@@ -217,6 +216,9 @@ class GLibPort(Port):
         return env, pass_fds
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
+        # linux_get_crash_log requires POSIX-only modules (fcntl, resource)
+        # importing it at module load breaks port-factory enumeration on Windows.
+        from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
         return GDBCrashLogGenerator(self._executive, name, pid, newer_than,
                                     self._filesystem, self._path_to_driver, self.port_name, self.get_option('configuration')).generate_crash_log(stdout, stderr)
 

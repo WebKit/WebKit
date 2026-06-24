@@ -24,7 +24,11 @@
 
 #include "internal.h"
 
-int asn1_generalizedtime_to_tm(struct tm *tm, const ASN1_GENERALIZEDTIME *d) {
+
+using namespace bssl;
+
+int bssl::asn1_generalizedtime_to_tm(struct tm *tm,
+                                     const ASN1_GENERALIZEDTIME *d) {
   if (d->type != V_ASN1_GENERALIZEDTIME) {
     return 0;
   }
@@ -36,8 +40,8 @@ int asn1_generalizedtime_to_tm(struct tm *tm, const ASN1_GENERALIZEDTIME *d) {
   return 1;
 }
 
-int asn1_parse_generalized_time(CBS *cbs, ASN1_GENERALIZEDTIME *out,
-                                CBS_ASN1_TAG tag) {
+int bssl::asn1_parse_generalized_time(CBS *cbs, ASN1_GENERALIZEDTIME *out,
+                                      CBS_ASN1_TAG tag) {
   tag = tag == 0 ? CBS_ASN1_GENERALIZEDTIME : tag;
   CBS child;
   if (!CBS_get_asn1(cbs, &child, tag) ||

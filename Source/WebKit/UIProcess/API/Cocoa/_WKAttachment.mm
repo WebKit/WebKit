@@ -39,7 +39,6 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-static const NSInteger UnspecifiedAttachmentErrorCode = 1;
 static const NSInteger InvalidAttachmentErrorCode = 2;
 
 @implementation _WKAttachmentDisplayOptions : NSObject

@@ -32,7 +32,7 @@ class RenderSVGHiddenContainer : public RenderSVGContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGHiddenContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGHiddenContainer);
 public:
-    RenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
+    RenderSVGHiddenContainer(Type, SVGElement&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
     virtual ~RenderSVGHiddenContainer();
 
 protected:
@@ -52,7 +52,8 @@ private:
 
 protected:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { return false; }
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<Style::TransformResolverOption>) const override { }
+    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect&, OptionSet<Style::TransformResolverOption>) const override { }
+    bool requiresLayer() const override { return false; }
     void updateFromStyle() override { }
     bool needsHasSVGTransformFlags() const override { return false; }
 };

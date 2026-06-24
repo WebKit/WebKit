@@ -19,8 +19,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp8.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "rtc_base/buffer.h"
@@ -36,17 +36,17 @@ class RtpFormatVp8TestHelper {
   RtpFormatVp8TestHelper& operator=(const RtpFormatVp8TestHelper&) = delete;
 
   void GetAllPacketsAndCheck(RtpPacketizerVp8* packetizer,
-                             ArrayView<const size_t> expected_sizes);
+                             std::span<const size_t> expected_sizes);
 
-  ArrayView<const uint8_t> payload() const { return payload_; }
+  std::span<const uint8_t> payload() const { return payload_; }
   size_t payload_size() const { return payload_.size(); }
 
  private:
   // Returns header size, i.e. payload offset.
-  int CheckHeader(ArrayView<const uint8_t> rtp_payload, bool first);
-  void CheckPictureID(ArrayView<const uint8_t> rtp_payload, int* offset);
-  void CheckTl0PicIdx(ArrayView<const uint8_t> rtp_payload, int* offset);
-  void CheckTIDAndKeyIdx(ArrayView<const uint8_t> rtp_payload, int* offset);
+  int CheckHeader(std::span<const uint8_t> rtp_payload, bool first);
+  void CheckPictureID(std::span<const uint8_t> rtp_payload, int* offset);
+  void CheckTl0PicIdx(std::span<const uint8_t> rtp_payload, int* offset);
+  void CheckTIDAndKeyIdx(std::span<const uint8_t> rtp_payload, int* offset);
   void CheckPayload(const uint8_t* data_ptr);
 
   const RTPVideoHeaderVP8* const hdr_info_;

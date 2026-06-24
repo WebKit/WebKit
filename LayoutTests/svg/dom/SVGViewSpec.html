@@ -1,27 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
 description("This test checks the SVGViewSpec API, operating on a parsed viewSpec");
-if (window.testRunner)
-    testRunner.waitUntilDone();
-
-function completeTest() {
-    var script = document.createElement("script");
-
-    script.onload = function() {
-        if (window.testRunner)
-            testRunner.notifyDone();
-    };
-
-    script.src = "../../resources/js-test-post.js";
-    document.body.appendChild(script);
-}
+window.jsTestIsAsync = true;
 
 // Load an external file to test svgView() handling.
 function testFragment(string) {
@@ -96,7 +83,7 @@ function continueTesting() {
     shouldBe("currentView.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMID");
     shouldBe("currentView.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE");
 
-    completeTest();
+    finishJSTest();
 }
 
 testFragment("svgView(viewBox(0,0,100,50);preserveAspectRatio(xMinYMid slice);transform(translate(0 10) translate(25 25) rotate(45) translate(-25 -25) scale(0.7 0.7));viewTarget(blub);zoomAndPan(disable))");

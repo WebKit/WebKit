@@ -107,6 +107,7 @@ public:
     // author's primary typographic choice.
     bool hasAuthorSpecifiedNonGenericPrimaryFont() const { return m_hasAuthorSpecifiedNonGenericPrimaryFont; }
 
+    void setOneFamily(FontFamily&& family) { ASSERT(m_families->size() == 1); m_families.get()[0] = WTF::move(family); }
     void setOneFamily(const FontFamily& family) { ASSERT(m_families->size() == 1); m_families.get()[0] = family; }
     void setOneFamily(const AtomString& familyName) { setOneFamily(FontFamily { familyName, FontFamilyKind::Specified }); }
     void setFamilies(const Vector<FontFamily>& families) { m_families = RefCountedFixedVector<FontFamily>::createFromVector(families); }

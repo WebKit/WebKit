@@ -14,6 +14,9 @@
 
 #include <openssl/evp.h>
 
+#include <openssl/cipher.h>
+#include <openssl/digest.h>
+
 
 void EVP_CIPHER_do_all_sorted(void (*callback)(const EVP_CIPHER *cipher,
                                                const char *name,
@@ -67,7 +70,7 @@ void EVP_CIPHER_do_all_sorted(void (*callback)(const EVP_CIPHER *cipher,
   callback(EVP_rc4(), "rc4", nullptr, arg);
 }
 
-void EVP_MD_do_all_sorted(void (*callback)(const EVP_MD *cipher,
+void EVP_MD_do_all_sorted(void (*callback)(const EVP_MD *md,
                                            const char *name, const char *unused,
                                            void *arg),
                           void *arg) {
@@ -90,8 +93,20 @@ void EVP_MD_do_all_sorted(void (*callback)(const EVP_MD *cipher,
   callback(EVP_sha512_256(), "sha512-256", nullptr, arg);
 }
 
-void EVP_MD_do_all(void (*callback)(const EVP_MD *cipher, const char *name,
+void EVP_MD_do_all(void (*callback)(const EVP_MD *md, const char *name,
                                     const char *unused, void *arg),
                    void *arg) {
   EVP_MD_do_all_sorted(callback, arg);
+}
+
+void EVP_MD_do_all_provided(
+    OSSL_LIB_CTX *libctx, void (*callback)(EVP_MD *md, void *arg), void *arg) {
+  callback(const_cast<EVP_MD *>(EVP_md4()), arg);
+  callback(const_cast<EVP_MD *>(EVP_md5()), arg);
+  callback(const_cast<EVP_MD *>(EVP_sha1()), arg);
+  callback(const_cast<EVP_MD *>(EVP_sha224()), arg);
+  callback(const_cast<EVP_MD *>(EVP_sha256()), arg);
+  callback(const_cast<EVP_MD *>(EVP_sha384()), arg);
+  callback(const_cast<EVP_MD *>(EVP_sha512()), arg);
+  callback(const_cast<EVP_MD *>(EVP_sha512_256()), arg);
 }

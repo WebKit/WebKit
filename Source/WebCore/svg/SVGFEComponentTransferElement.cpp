@@ -121,7 +121,7 @@ bool SVGFEComponentTransferElement::setFilterEffectAttributeFromChild(FilterEffe
     case AttributeNames::offsetAttr:
         return effect.setOffset(child->channel(), child->offset());
     case AttributeNames::tableValuesAttr:
-        return effect.setTableValues(child->channel(), child->tableValues());
+        return effect.setTableValues(protect(child)->channel(), child->tableValues());
     default:
         break;
     }

@@ -24,21 +24,9 @@
 
 namespace webrtc {
 
-DesktopCaptureOptions::DesktopCaptureOptions() {}
-DesktopCaptureOptions::DesktopCaptureOptions(
-    const DesktopCaptureOptions& options) = default;
-DesktopCaptureOptions::DesktopCaptureOptions(DesktopCaptureOptions&& options) =
-    default;
-DesktopCaptureOptions::~DesktopCaptureOptions() {}
+namespace {
 
-DesktopCaptureOptions& DesktopCaptureOptions::operator=(
-    const DesktopCaptureOptions& options) = default;
-DesktopCaptureOptions& DesktopCaptureOptions::operator=(
-    DesktopCaptureOptions&& options) = default;
-
-// static
-DesktopCaptureOptions DesktopCaptureOptions::CreateDefault() {
-  DesktopCaptureOptions result;
+void ApplyDefaultSettings(DesktopCaptureOptions& result) {
 #if defined(WEBRTC_USE_X11)
   result.set_x_display(SharedXDisplay::CreateDefault());
 #endif
@@ -56,6 +44,36 @@ DesktopCaptureOptions DesktopCaptureOptions::CreateDefault() {
       make_ref_counted<FullScreenWindowDetector>(
           CreateFullScreenWinApplicationHandler));
 #endif
+}
+
+}  // namespace
+
+DesktopCaptureOptions::DesktopCaptureOptions() {}
+DesktopCaptureOptions::DesktopCaptureOptions(const Environment& env)
+    : env_(env) {}
+DesktopCaptureOptions::DesktopCaptureOptions(
+    const DesktopCaptureOptions& options) = default;
+DesktopCaptureOptions::DesktopCaptureOptions(DesktopCaptureOptions&& options) =
+    default;
+DesktopCaptureOptions::~DesktopCaptureOptions() {}
+
+DesktopCaptureOptions& DesktopCaptureOptions::operator=(
+    const DesktopCaptureOptions& options) = default;
+DesktopCaptureOptions& DesktopCaptureOptions::operator=(
+    DesktopCaptureOptions&& options) = default;
+
+// static
+DesktopCaptureOptions DesktopCaptureOptions::CreateDefault() {
+  DesktopCaptureOptions result;
+  ApplyDefaultSettings(result);
+  return result;
+}
+
+// static
+DesktopCaptureOptions DesktopCaptureOptions::CreateDefault(
+    const Environment& env) {
+  DesktopCaptureOptions result(env);
+  ApplyDefaultSettings(result);
   return result;
 }
 

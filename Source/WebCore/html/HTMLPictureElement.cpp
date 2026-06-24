@@ -70,7 +70,7 @@ bool HTMLPictureElement::isSystemPreviewImage()
     if (!document().settings().systemPreviewEnabled())
         return false;
 
-    auto* parent = dynamicDowncast<HTMLAnchorElement>(parentElement());
+    RefPtr parent = dynamicDowncast<HTMLAnchorElement>(protect(parentElement()));
     return parent && parent->isSystemPreviewLink();
 }
 #endif

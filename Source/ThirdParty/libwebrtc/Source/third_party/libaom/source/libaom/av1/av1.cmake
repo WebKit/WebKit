@@ -343,6 +343,7 @@ list(APPEND AOM_AV1_ENCODER_INTRIN_SSE2
             "${AOM_ROOT}/av1/encoder/x86/av1_quantize_sse2.c"
             "${AOM_ROOT}/av1/encoder/x86/encodetxb_sse2.c"
             "${AOM_ROOT}/av1/encoder/x86/error_intrin_sse2.c"
+            "${AOM_ROOT}/av1/encoder/x86/model_rd_sse2.c"
             "${AOM_ROOT}/av1/encoder/x86/reconinter_enc_sse2.c"
             "${AOM_ROOT}/av1/encoder/x86/temporal_filter_sse2.c"
             "${AOM_ROOT}/av1/encoder/x86/wedge_utils_sse2.c")
@@ -462,11 +463,11 @@ list(APPEND AOM_AV1_COMMON_INTRIN_NEON_I8MM
             "${AOM_ROOT}/av1/common/arm/av1_convolve_scale_neon_i8mm.c"
             "${AOM_ROOT}/av1/common/arm/compound_convolve_neon_i8mm.c"
             "${AOM_ROOT}/av1/common/arm/convolve_neon_i8mm.c"
+            "${AOM_ROOT}/av1/common/arm/reconintra_neon_i8mm.c"
             "${AOM_ROOT}/av1/common/arm/resize_neon_i8mm.c"
             "${AOM_ROOT}/av1/common/arm/warp_plane_neon_i8mm.c")
 
 list(APPEND AOM_AV1_COMMON_INTRIN_SVE
-            "${AOM_ROOT}/av1/common/arm/highbd_warp_plane_sve.c"
             "${AOM_ROOT}/av1/common/arm/warp_plane_sve.c")
 
 list(APPEND AOM_AV1_COMMON_INTRIN_SVE2
@@ -479,8 +480,12 @@ list(APPEND AOM_AV1_COMMON_INTRIN_VSX "${AOM_ROOT}/av1/common/ppc/cfl_ppc.c")
 
 list(APPEND AOM_AV1_COMMON_INTRIN_RVV
             "${AOM_ROOT}/av1/common/riscv/cdef_block_rvv.c"
+            "${AOM_ROOT}/av1/common/riscv/compound_convolve_rvv.c"
             "${AOM_ROOT}/av1/common/riscv/convolve_rvv.c"
-            "${AOM_ROOT}/av1/common/riscv/highbd_convolve_rvv.c")
+            "${AOM_ROOT}/av1/common/riscv/highbd_compound_convolve_rvv.c"
+            "${AOM_ROOT}/av1/common/riscv/highbd_convolve_rvv.c"
+            "${AOM_ROOT}/av1/common/riscv/highbd_wiener_convolve_rvv.c"
+            "${AOM_ROOT}/av1/common/riscv/wiener_convolve_rvv.c")
 
 if(CONFIG_THREE_PASS)
   list(APPEND AOM_AV1_ENCODER_SOURCES "${AOM_ROOT}/av1/encoder/thirdpass.c"
@@ -549,6 +554,9 @@ if(CONFIG_AV1_HIGHBITDEPTH)
               "${AOM_ROOT}/av1/common/arm/highbd_reconintra_neon.c"
               "${AOM_ROOT}/av1/common/arm/highbd_warp_plane_neon.c"
               "${AOM_ROOT}/av1/common/arm/highbd_wiener_convolve_neon.c")
+
+  list(APPEND AOM_AV1_COMMON_INTRIN_SVE
+              "${AOM_ROOT}/av1/common/arm/highbd_warp_plane_sve.c")
 
   list(APPEND AOM_AV1_COMMON_INTRIN_SVE2
               "${AOM_ROOT}/av1/common/arm/highbd_compound_convolve_sve2.c"

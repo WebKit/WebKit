@@ -128,7 +128,7 @@ void RotatePlane90(const uint8_t* src,
   // Rotate by 90 is a transpose with the source read
   // from bottom to top. So set the source pointer to the end
   // of the buffer and flip the sign of the source stride.
-  src += src_stride * (height - 1);
+  src += (ptrdiff_t)src_stride * (height - 1);
   src_stride = -src_stride;
   TransposePlane(src, src_stride, dst, dst_stride, width, height);
 }
@@ -143,7 +143,7 @@ void RotatePlane270(const uint8_t* src,
   // Rotate by 270 is a transpose with the destination written
   // from bottom to top. So set the destination pointer to the end
   // of the buffer and flip the sign of the destination stride.
-  dst += dst_stride * (width - 1);
+  dst += (ptrdiff_t)dst_stride * (width - 1);
   dst_stride = -dst_stride;
   TransposePlane(src, src_stride, dst, dst_stride, width, height);
 }
@@ -160,8 +160,8 @@ void RotatePlane180(const uint8_t* src,
   assert(row);
   if (!row)
     return;
-  const uint8_t* src_bot = src + src_stride * (height - 1);
-  uint8_t* dst_bot = dst + dst_stride * (height - 1);
+  const uint8_t* src_bot = src + (ptrdiff_t)src_stride * (height - 1);
+  uint8_t* dst_bot = dst + (ptrdiff_t)dst_stride * (height - 1);
   int half_height = (height + 1) >> 1;
   int y;
   void (*MirrorRow)(const uint8_t* src, uint8_t* dst, int width) = MirrorRow_C;
@@ -354,7 +354,7 @@ void SplitRotateUV90(const uint8_t* src,
                      int dst_stride_b,
                      int width,
                      int height) {
-  src += src_stride * (height - 1);
+  src += (ptrdiff_t)src_stride * (height - 1);
   src_stride = -src_stride;
 
   SplitTransposeUV(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b,
@@ -397,9 +397,9 @@ void SplitRotateUV180(const uint8_t* src,
     MirrorSplitUVRow = MirrorSplitUVRow_NEON;
   }
 #endif
-#if defined(HAS_MIRRORSPLITUVROW_SSSE3)
-  if (TestCpuFlag(kCpuHasSSSE3) && IS_ALIGNED(width, 16)) {
-    MirrorSplitUVRow = MirrorSplitUVRow_SSSE3;
+#if defined(HAS_MIRRORSPLITUVROW_AVX2)
+  if (TestCpuFlag(kCpuHasAVX2) && IS_ALIGNED(width, 32)) {
+    MirrorSplitUVRow = MirrorSplitUVRow_AVX2;
   }
 #endif
 #if defined(HAS_MIRRORSPLITUVROW_LSX)
@@ -533,7 +533,7 @@ static void RotatePlane90_16(const uint16_t* src,
   // Rotate by 90 is a transpose with the source read
   // from bottom to top. So set the source pointer to the end
   // of the buffer and flip the sign of the source stride.
-  src += src_stride * (height - 1);
+  src += (ptrdiff_t)src_stride * (height - 1);
   src_stride = -src_stride;
   TransposePlane_16(src, src_stride, dst, dst_stride, width, height);
 }
@@ -547,7 +547,7 @@ static void RotatePlane270_16(const uint16_t* src,
   // Rotate by 270 is a transpose with the destination written
   // from bottom to top. So set the destination pointer to the end
   // of the buffer and flip the sign of the destination stride.
-  dst += dst_stride * (width - 1);
+  dst += (ptrdiff_t)dst_stride * (width - 1);
   dst_stride = -dst_stride;
   TransposePlane_16(src, src_stride, dst, dst_stride, width, height);
 }
@@ -558,8 +558,8 @@ static void RotatePlane180_16(const uint16_t* src,
                               int dst_stride,
                               int width,
                               int height) {
-  const uint16_t* src_bot = src + src_stride * (height - 1);
-  uint16_t* dst_bot = dst + dst_stride * (height - 1);
+  const uint16_t* src_bot = src + (ptrdiff_t)src_stride * (height - 1);
+  uint16_t* dst_bot = dst + (ptrdiff_t)dst_stride * (height - 1);
   int half_height = (height + 1) >> 1;
   int y;
 

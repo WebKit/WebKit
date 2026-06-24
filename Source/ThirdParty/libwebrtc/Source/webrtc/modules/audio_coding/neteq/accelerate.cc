@@ -12,8 +12,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/time_stretch.h"
 #include "rtc_base/checks.h"
@@ -31,7 +31,7 @@ Accelerate::ReturnCodes Accelerate::Process(const int16_t* input,
       input_length / num_channels_ < (2 * k15ms - 1) * fs_mult_) {
     // Length of input data too short to do accelerate. Simply move all data
     // from input to output.
-    output->PushBackInterleaved(ArrayView<const int16_t>(input, input_length));
+    output->PushBackInterleaved(std::span<const int16_t>(input, input_length));
     return kError;
   }
   return TimeStretch::Process(input, input_length, fast_accelerate, output,
@@ -74,15 +74,15 @@ Accelerate::ReturnCodes Accelerate::CheckCriteriaAndStretch(
     RTC_DCHECK_GE(fs_mult_120, peak_index);  // Should be handled in Process().
     // Copy first part; 0 to 15 ms.
     output->PushBackInterleaved(
-        ArrayView<const int16_t>(input, fs_mult_120 * num_channels_));
+        std::span<const int16_t>(input, fs_mult_120 * num_channels_));
     // Copy the `peak_index` starting at 15 ms to `temp_vector`.
     AudioMultiVector temp_vector(num_channels_);
-    temp_vector.PushBackInterleaved(ArrayView<const int16_t>(
+    temp_vector.PushBackInterleaved(std::span<const int16_t>(
         &input[fs_mult_120 * num_channels_], peak_index * num_channels_));
     // Cross-fade `temp_vector` onto the end of `output`.
     output->CrossFade(temp_vector, peak_index);
     // Copy the last unmodified part, 15 ms + pitch period until the end.
-    output->PushBackInterleaved(ArrayView<const int16_t>(
+    output->PushBackInterleaved(std::span<const int16_t>(
         &input[(fs_mult_120 + peak_index) * num_channels_],
         input_length - (fs_mult_120 + peak_index) * num_channels_));
 
@@ -93,7 +93,7 @@ Accelerate::ReturnCodes Accelerate::CheckCriteriaAndStretch(
     }
   } else {
     // Accelerate not allowed. Simply move all data from decoded to outData.
-    output->PushBackInterleaved(ArrayView<const int16_t>(input, input_length));
+    output->PushBackInterleaved(std::span<const int16_t>(input, input_length));
     return kNoStretch;
   }
 }

@@ -64,7 +64,7 @@ Repeated calls will retrieve the same WKContentWorld instance.
 @discussion Unlike all other worlds, worlds created with this factory method cannot be retrieved later.
 Clients therefore need to take care to reference them for as long as they are needed.
 */
-+ (WKContentWorld *)worldWithConfiguration:(WKContentWorldConfiguration *)configuration NS_SWIFT_NAME(world(with:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
++ (WKContentWorld *)worldWithConfiguration:(WKContentWorldConfiguration *)configuration NS_SWIFT_NAME(world(configuration:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract Retrieves a named content world for API client use.
 @param name The name of the WKContentWorld to retrieve.

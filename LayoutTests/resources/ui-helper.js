@@ -190,20 +190,24 @@ window.UIHelper = class UIHelper {
         await UIHelper.delayFor(0);
     }
 
-    static async waitForCondition(conditionFunc)
+    static async waitForCondition(conditionFunc, maximumFrames = Infinity)
     {
-        while (!conditionFunc()) {
+        for (let frames = 0; !conditionFunc(); ++frames) {
+            if (frames >= maximumFrames)
+                return false;
             await UIHelper.animationFrame();
         }
+        return true;
     }
 
-    static async waitForConditionAsync(conditionFunc)
+    static async waitForConditionAsync(conditionFunc, maximumFrames = Infinity)
     {
-        var condition = await conditionFunc();
-        while (!condition) {
+        for (let frames = 0; !(await conditionFunc()); ++frames) {
+            if (frames >= maximumFrames)
+                return false;
             await UIHelper.animationFrame();
-            condition = await conditionFunc();
         }
+        return true;
     }
 
     static sendEventStream(eventStream)
@@ -1413,6 +1417,15 @@ window.UIHelper = class UIHelper {
 
     static activateDataListSuggestion(index) {
         const script = `uiController.activateDataListSuggestion(${index}, () => {
+            uiController.uiScriptComplete("");
+        });`;
+        return new Promise(resolve => testRunner.runUIScript(script, resolve));
+    }
+
+    static insertAutofillSuggestion(username, password) {
+        const escapedUsername = JSON.stringify(String(username));
+        const escapedPassword = JSON.stringify(String(password));
+        const script = `uiController.insertAutofillSuggestion(${escapedUsername}, ${escapedPassword}, () => {
             uiController.uiScriptComplete("");
         });`;
         return new Promise(resolve => testRunner.runUIScript(script, resolve));
@@ -2692,14 +2705,20 @@ window.UIHelper = class UIHelper {
 
     static async performTextExtractionInteraction(action, options)
     {
+        const result = await UIHelper.performTextExtractionInteractionResult(action, options);
+        return result.error;
+    }
+
+    static async performTextExtractionInteractionResult(action, options)
+    {
         if (!this.isWebKit2())
-            return Promise.resolve(false);
+            return Promise.resolve({ error: "", summary: "" });
 
         return new Promise(resolve => {
             const scriptToRun = `uiController.performTextExtractionInteraction("${action}", ${JSON.stringify(options)}, result => {
                 uiController.uiScriptComplete(result)
             })`;
-            testRunner.runUIScript(scriptToRun, resolve);
+            testRunner.runUIScript(scriptToRun, raw => resolve(JSON.parse(raw)));
         });
     }
 }

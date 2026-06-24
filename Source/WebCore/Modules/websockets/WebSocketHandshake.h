@@ -32,6 +32,7 @@
 #pragma once
 
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/WebSocketExtensionDispatcher.h>
 #include <WebCore/WebSocketExtensionProcessor.h>
@@ -68,6 +69,8 @@ public:
 
     WEBCORE_EXPORT CString clientHandshakeMessage() const;
     WEBCORE_EXPORT ResourceRequest clientHandshakeRequest(NOESCAPE const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const;
+
+    WEBCORE_EXPORT void setClientHandshakeRequestHeaders(const HTTPHeaderMap&);
 
     WEBCORE_EXPORT void reset();
 
@@ -106,6 +109,8 @@ private:
     String m_clientOrigin;
     bool m_allowCookies;
     bool m_isAppInitiated;
+
+    HTTPHeaderMap m_clientHandshakeRequestHeaders;
 
     ResourceResponse m_serverHandshakeResponse;
 

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-audio-priming-no-spurious-gap</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Regression test for https://bugs.webkit.org/show_bug.cgi?id=317485
+    //
+    // When an audio sample carries encoder priming (`dts < pts`), `duration`
+    // reports the post-trim presentation span, so `dts + duration`
+    // underestimated the sample's decode-end. The next contiguous sample's
+    // DTS then looked like it fell past TrackBuffer's discontinuity boundary,
+    // which caused `nextSample()` to bail and never recover — audio playback
+    // died after the first sample because subsequent appends only added
+    // samples behind the rejected one in the decode queue.
+    //
+    // Crafted to fall in the bug window:
+    //   timescale: 1000  (timeFudgeFactor = 2002/24000 ≈ 83 ms)
+    //   sample 1: dts=-114, pts=0,   duration=396
+    //               → dts+duration         = 282
+    //               → presentationEndTime  = 396
+    //   sample 2: dts=396, pts=396 (decode-contiguous with sample 1's
+    //               presentationEndTime, but past sample 1's dts+duration)
+    //
+    //   Old boundary = dts+duration+tolerance ≈ 282+83 = 365
+    //                  → sample 2 (396) > 365  → BAIL, sample 2 stuck
+    //   New boundary = max(dts+duration, presentationEndTime)+tolerance
+    //                ≈ 396+83 = 479
+    //                  → sample 2 (396) ≤ 479 → enqueued
+    //
+    // We observe via internals.enqueuedSamplesForTrackID: with the fix both
+    // samples reach the decode queue's enqueued list; without it, only the
+    // first one did.
+
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samplesToAppend;
+    var enqueuedSamples;
+
+    const TRACK_ID = 1;
+    const TIMESCALE = 1000;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function runTest() {
+        findMediaElement();
+        source = new MediaSource();
+        const sourceOpened = waitFor(source, 'sourceopen');
+        run('video.src = URL.createObjectURL(source)');
+        await sourceOpened;
+
+        run(`sourceBuffer = source.addSourceBuffer("audio/mock; codecs=mock")`);
+
+        initSegment = makeAInit(10, [makeATrack(TRACK_ID, 'mock', TRACK_KIND.AUDIO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Single buffer carrying two samples back-to-back.
+        // Sample 1 has dts < pts (priming-shaped); sample 2 sits at sample 1's
+        // presentationEndTime — decode-contiguous, but past sample 1's
+        // dts+duration.
+        samplesToAppend = concatenateSamples([
+            makeASample(/* pts */ 0,   /* dts */ -114, /* dur */ 396, TIMESCALE, TRACK_ID, SAMPLE_FLAG.SYNC, 0),
+            makeASample(/* pts */ 396, /* dts */ 396,  /* dur */ 100, TIMESCALE, TRACK_ID, SAMPLE_FLAG.SYNC, 0),
+        ]);
+        run('sourceBuffer.appendBuffer(samplesToAppend)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        enqueuedSamples = await internals.enqueuedSamplesForTrackID(sourceBuffer, TRACK_ID);
+
+        // Both appended samples must end up enqueued. Pre-fix only the first
+        // one made it through; the second was rejected by the discontinuity
+        // boundary check and never recovered.
+        testExpected('enqueuedSamples.length', 2);
+    }
+
+    window.addEventListener('load', () => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

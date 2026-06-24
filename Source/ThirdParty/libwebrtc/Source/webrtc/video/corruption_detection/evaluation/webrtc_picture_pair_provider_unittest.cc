@@ -21,7 +21,6 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_video_decoder.h"
@@ -50,6 +49,7 @@
 #include "modules/video_coding/svc/svc_rate_allocator.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "video/corruption_detection/evaluation/picture_pair_provider.h"
@@ -341,7 +341,7 @@ TEST_P(WebRtcPicturePairProviderTest, SetRatesWithSimulcastRateAllocator) {
     codec_config.qpMax = 63;
   }
 
-  SimulcastRateAllocator simulcast_rate_allocator(CreateEnvironment(),
+  SimulcastRateAllocator simulcast_rate_allocator(CreateTestEnvironment(),
                                                   codec_config);
   VideoEncoder::RateControlParameters rate_params(
       simulcast_rate_allocator.GetAllocation(kDefaultBitrate.bps(), kFramerate),

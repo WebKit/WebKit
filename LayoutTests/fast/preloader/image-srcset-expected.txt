@@ -1,4 +1,6 @@
-base-image1.png has MIME type image/png
 PASS internals.isPreloaded("resources/image1.png") is false
 This test passes if the fallback image (defined in the src attribute) is not preloaded, but the 1x version (defined in srcset) is.
 
+image-srcset.html has MIME type text/html
+js-test-pre.js has MIME type text/javascript
+base-image1.png has MIME type image/png

@@ -148,10 +148,10 @@ void I422ToARGB4444Row_SVE2(const uint8_t* src_y,
 void I422ToRGBARow_SVE2(const uint8_t* src_y,
                         const uint8_t* src_u,
                         const uint8_t* src_v,
-                        uint8_t* dst_argb,
+                        uint8_t* dst_rgba,
                         const struct YuvConstants* yuvconstants,
                         int width) {
-  I422ToRGBARow_SVE_SC(src_y, src_u, src_v, dst_argb, yuvconstants, width);
+  I422ToRGBARow_SVE_SC(src_y, src_u, src_v, dst_rgba, yuvconstants, width);
 }
 
 void I422ToAR30Row_SVE2(const uint8_t* src_y,
@@ -215,6 +215,19 @@ void NV21ToRGB24Row_SVE2(const uint8_t* src_y,
                          const struct YuvConstants* yuvconstants,
                          int width) {
   NV21ToRGB24Row_SVE_SC(src_y, src_vu, dst_rgb24, yuvconstants, width);
+}
+
+void ARGBToUVMatrixRow_SVE2(const uint8_t* src_argb,
+                            int src_stride_argb,
+                            uint8_t* dst_u,
+                            uint8_t* dst_v,
+                            int width,
+                            const struct ArgbConstants* c) {
+  int8_t uvconstants[8] = {
+      (int8_t)c->kRGBToU[0], (int8_t)c->kRGBToU[1], (int8_t)c->kRGBToU[2], (int8_t)c->kRGBToU[3],
+      (int8_t)c->kRGBToV[0], (int8_t)c->kRGBToV[1], (int8_t)c->kRGBToV[2], (int8_t)c->kRGBToV[3]};
+  ARGBToUVMatrixRow_SVE_SC(src_argb, src_stride_argb, dst_u, dst_v, width,
+                           uvconstants);
 }
 
 void ARGBToUVRow_SVE2(const uint8_t* src_argb,

@@ -66,7 +66,6 @@ namespace WebKit {
 
 void TestWithLegacyReceiver::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadURL::name()) {
         IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadURL>(connection, decoder, this, &TestWithLegacyReceiver::loadURL);
         return;
@@ -174,7 +173,6 @@ void TestWithLegacyReceiver::didReceiveMessage(IPC::Connection& connection, IPC:
 
 void TestWithLegacyReceiver::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPluginProcessConnection::name()) {
         IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::getPluginProcessConnection);
         return;

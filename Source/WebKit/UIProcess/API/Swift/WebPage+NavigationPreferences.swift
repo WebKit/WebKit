@@ -140,6 +140,15 @@ extension WebPage {
         @available(watchOS, unavailable)
         @available(tvOS, unavailable)
         public var overrideReferrer: Swift.String? = nil
+
+        /// Whether the Global Privacy Control (GPC) signal is enabled for the navigation.
+        ///
+        /// The default value of this property is `false`. When enabled, both `navigator.globalPrivacyControl`
+        /// and the `Sec-GPC: 1` request header are active for the main frame, its subframes, and their subresources.
+        @available(TBA, *)
+        @available(watchOS, unavailable)
+        @available(tvOS, unavailable)
+        public var isGlobalPrivacyControlEnabled: Bool = false
     }
 }
 
@@ -200,6 +209,7 @@ extension WebPage.NavigationPreferences {
 
         self.alternateRequest = wrapped.alternateRequest
         self.overrideReferrer = wrapped.overrideReferrer
+        self.isGlobalPrivacyControlEnabled = wrapped.globalPrivacyControlEnabled
     }
 }
 

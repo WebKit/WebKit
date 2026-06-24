@@ -20,6 +20,8 @@
 #include "../internal.h"
 
 
+using namespace bssl;
+
 static void siphash_round(uint64_t v[4]) {
   v[0] += v[1];
   v[2] += v[3];

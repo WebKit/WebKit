@@ -8,50 +8,46 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+// This file contains structures used to represent the configuration of
+// RTP sessions, supporting in C++ the Javascript interfaces described
+// in the WebRTC specification - https://w3c.github.io/webrtc-pc/ - with
+// a focus on the RTP Media API.
+//
+// Things with a fixed set of values are usually represented as enums,
+// while things where the set of supported values can vary based on
+// external configurations (such as codecs) are named by strings.
+
 #ifndef API_RTP_PARAMETERS_H_
 #define API_RTP_PARAMETERS_H_
 
 #include <stdint.h>
 
+#include <cstddef>
 #include <map>
 #include <optional>
 #include <string>
 #include <vector>
 
+#include "absl/base/macros.h"
 #include "absl/container/inlined_vector.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/string_view.h"
 #include "api/media_types.h"
 #include "api/priority.h"
 #include "api/rtc_error.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/video/resolution.h"
 #include "api/video_codecs/scalability_mode.h"
+#include "rtc_base/strings/str_join.h"
+#include "rtc_base/strong_alias.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
+
 class StringBuilder;
 
 using CodecParameterMap = std::map<std::string, std::string>;
-
-// These structures are intended to mirror those defined by:
-// http://draft.ortc.org/#rtcrtpdictionaries*
-// Contains everything specified as of 2017 Jan 24.
-//
-// They are used when retrieving or modifying the parameters of an
-// RtpSender/RtpReceiver, or retrieving capabilities.
-//
-// Note on conventions: Where ORTC may use "octet", "short" and "unsigned"
-// types, we typically use "int", in keeping with our style guidelines. The
-// parameter's actual valid range will be enforced when the parameters are set,
-// rather than when the parameters struct is built. An exception is made for
-// SSRCs, since they use the full unsigned 32-bit range, and aren't expected to
-// be used for any numeric comparisons/operations.
-//
-// Additionally, where ORTC uses strings, we may use enums for things that have
-// a fixed number of supported values. However, for things that can be extended
-// (such as codecs, by providing an external encoder factory), a string
-// identifier is used.
 
 enum class FecMechanism {
   RED,
@@ -110,7 +106,8 @@ void AbslStringify(Sink& sink, std::optional<RtcpFeedbackType> type) {
 
 // Used in RtcpFeedback struct when type is NACK or CCM.
 enum class RtcpFeedbackMessageType {
-  // Equivalent to {type: "nack", parameter: undefined} in ORTC.
+  // Generic NACK feedback is represented by a GENERIC_NACK message type,
+  // rather than an unset "parameter" value.
   GENERIC_NACK,
   PLI,  // Usable with NACK.
   FIR,  // Usable with CCM.
@@ -163,10 +160,6 @@ RTCError ParseFmtpParameterSet(absl::string_view line_params,
 struct RTC_EXPORT RtcpFeedback {
   RtcpFeedbackType type = RtcpFeedbackType::CCM;
 
-  // Equivalent to ORTC "parameter" field with slight differences:
-  // 1. It's an enum instead of a string.
-  // 2. Generic NACK feedback is represented by a GENERIC_NACK message type,
-  //    rather than an unset "parameter" value.
   std::optional<RtcpFeedbackMessageType> message_type;
 
   // Constructors for convenience.
@@ -212,10 +205,7 @@ struct RTC_EXPORT RtpCodec {
 
   // Codec-specific parameters that must be signaled to the remote party.
   //
-  // Corresponds to "a=fmtp" parameters in SDP.
-  //
-  // Contrary to ORTC, these parameters are named using all lowercase strings.
-  // This helps make the mapping to SDP simpler, if an application is using SDP.
+  // Corresponds to "a=fmtp" parameters in SDP. The keys are lowercase strings.
   // Boolean values are represented by the string "1".
   std::map<std::string, std::string> parameters;
 
@@ -227,6 +217,30 @@ struct RTC_EXPORT RtpCodec {
   bool operator!=(const RtpCodec& o) const { return !(*this == o); }
   bool IsResiliencyCodec() const;
   bool IsMediaCodec() const;
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const RtpCodec& c) {
+    absl::Format(&sink, "{mime_type: %s", c.mime_type());
+    if (c.clock_rate) {
+      absl::Format(&sink, ", clock_rate: %d", *c.clock_rate);
+    }
+    if (c.num_channels) {
+      absl::Format(&sink, ", num_channels: %d", *c.num_channels);
+    }
+    if (!c.parameters.empty()) {
+      sink.Append(", parameters: {");
+      bool first = true;
+      for (const auto& kv : c.parameters) {
+        if (!first) {
+          sink.Append(", ");
+        }
+        absl::Format(&sink, "%s: %s", kv.first, kv.second);
+        first = false;
+      }
+      sink.Append("}");
+    }
+    sink.Append("}");
+  }
 };
 
 // RtpCodecCapability is to RtpCodecParameters as RtpCapabilities is to
@@ -261,24 +275,23 @@ struct RTC_EXPORT RtpCodecCapability : public RtpCodec {
   }
 };
 
+enum class RtpTransceiverIdDomain {
+  // Only allocate IDs that fit in one-byte header extensions.
+  kOneByteOnly,
+  // Prefer to allocate one-byte header extension IDs, but overflow to
+  // two-byte if none are left.
+  kTwoByteAllowed,
+};
+
 // Used in RtpCapabilities and RtpTransceiverInterface's header extensions query
 // and setup methods; represents the capabilities/preferences of an
 // implementation for a header extension.
-//
-// Just called "RtpHeaderExtension" in ORTC, but the "Capability" suffix was
-// added here for consistency and to avoid confusion with
-// RtpHeaderExtensionParameters.
-//
-// Note that ORTC includes a "kind" field, but we omit this because it's
-// redundant; if you call
-// "RtpReceiver::GetCapabilities(MediaType::AUDIO)", you know you're
-// getting audio capabilities.
 struct RTC_EXPORT RtpHeaderExtensionCapability {
   // URI of this extension, as defined in RFC8285.
   std::string uri;
 
   // Preferred value of ID that goes in the packet.
-  std::optional<int> preferred_id;
+  std::optional<RtpHeaderExtensionId> preferred_id;
 
   // If true, it's preferred that the value in the header is encrypted.
   bool preferred_encrypt = false;
@@ -291,14 +304,36 @@ struct RTC_EXPORT RtpHeaderExtensionCapability {
   // Constructors for convenience.
   RtpHeaderExtensionCapability();
   explicit RtpHeaderExtensionCapability(absl::string_view uri);
-  RtpHeaderExtensionCapability(absl::string_view uri, int preferred_id);
+  RtpHeaderExtensionCapability(absl::string_view uri,
+                               RtpHeaderExtensionId preferred_id);
+  RtpHeaderExtensionCapability(absl::string_view uri,
+                               RtpHeaderExtensionId preferred_id,
+                               RtpTransceiverDirection direction);
+  RtpHeaderExtensionCapability(absl::string_view uri,
+                               RtpHeaderExtensionId preferred_id,
+                               bool preferred_encrypt,
+                               RtpTransceiverDirection direction);
+  // Backwards compatibility overloads.
+  // TODO: bugs.webrtc.org/514817938 - Remove when downstream is updated.
+  ABSL_DEPRECATE_AND_INLINE()
+  RtpHeaderExtensionCapability(absl::string_view uri, int preferred_id)
+      : RtpHeaderExtensionCapability(uri, RtpHeaderExtensionId(preferred_id)) {}
+  ABSL_DEPRECATE_AND_INLINE()
   RtpHeaderExtensionCapability(absl::string_view uri,
                                int preferred_id,
-                               RtpTransceiverDirection direction);
+                               RtpTransceiverDirection direction)
+      : RtpHeaderExtensionCapability(uri,
+                                     RtpHeaderExtensionId(preferred_id),
+                                     direction) {}
+  ABSL_DEPRECATE_AND_INLINE()
   RtpHeaderExtensionCapability(absl::string_view uri,
                                int preferred_id,
                                bool preferred_encrypt,
-                               RtpTransceiverDirection direction);
+                               RtpTransceiverDirection direction)
+      : RtpHeaderExtensionCapability(uri,
+                                     RtpHeaderExtensionId(preferred_id),
+                                     preferred_encrypt,
+                                     direction) {}
   ~RtpHeaderExtensionCapability();
 
   bool operator==(const RtpHeaderExtensionCapability& o) const {
@@ -336,8 +371,16 @@ struct RTC_EXPORT RtpExtension {
   };
 
   RtpExtension();
-  RtpExtension(absl::string_view uri, int id);
-  RtpExtension(absl::string_view uri, int id, bool encrypt);
+  RtpExtension(absl::string_view uri, RtpHeaderExtensionId id);
+  RtpExtension(absl::string_view uri, RtpHeaderExtensionId id, bool encrypt);
+  // Backwards compatibility overloads.
+  // TODO: bugs.webrtc.org/514817938 - Remove when downstream is updated.
+  ABSL_DEPRECATE_AND_INLINE()
+  RtpExtension(absl::string_view uri, int id)
+      : RtpExtension(uri, RtpHeaderExtensionId(id)) {}
+  ABSL_DEPRECATE_AND_INLINE()
+  RtpExtension(absl::string_view uri, int id, bool encrypt)
+      : RtpExtension(uri, RtpHeaderExtensionId(id), encrypt) {}
   ~RtpExtension();
 
   std::string ToString() const;
@@ -466,22 +509,26 @@ struct RTC_EXPORT RtpExtension {
 
   // Inclusive min and max IDs for two-byte header extensions and one-byte
   // header extensions, per RFC8285 Section 4.2-4.3.
-  static constexpr int kMinId = 1;
-  static constexpr int kMaxId = 255;
+  ABSL_DEPRECATE_AND_INLINE()
+  static constexpr RtpHeaderExtensionId kMinId = RtpHeaderExtensionId::kMinId;
+  ABSL_DEPRECATE_AND_INLINE()
+  static constexpr RtpHeaderExtensionId kMaxId = RtpHeaderExtensionId::kMaxId;
   static constexpr int kMaxValueSize = 255;
-  static constexpr int kOneByteHeaderExtensionMaxId = 14;
+  ABSL_DEPRECATE_AND_INLINE()
+  static constexpr RtpHeaderExtensionId kOneByteHeaderExtensionMaxId =
+      RtpHeaderExtensionId::kOneByteHeaderExtensionMaxId;
   static constexpr int kOneByteHeaderExtensionMaxValueSize = 16;
 
   std::string uri;
-  int id = 0;
+  RtpHeaderExtensionId id = RtpHeaderExtensionId::NotSet();
   bool encrypt = false;
 
   template <typename Sink>
   friend void AbslStringify(Sink& sink, const RtpExtension& extension) {
     if (extension.encrypt) {
-      absl::Format(&sink, "[%d %s (encrypted)]", extension.id, extension.uri);
+      absl::Format(&sink, "[%v %s (encrypted)]", extension.id, extension.uri);
     } else {
-      absl::Format(&sink, "[%d %s]", extension.id, extension.uri);
+      absl::Format(&sink, "[%v %s]", extension.id, extension.uri);
     }
   }
 };
@@ -569,9 +616,7 @@ struct RTC_EXPORT RtpEncodingParameters {
   // bitrate. Currently this is implemented for the entire rtp sender by using
   // the value of the first encoding parameter.
   //
-  // Just called "maxBitrate" in ORTC spec.
-  //
-  // TODO(deadbeef): With ORTC RtpSenders, this currently sets the total
+  // TODO(deadbeef): This currently sets the total
   // bandwidth for the entire bandwidth estimator (audio and video). This is
   // just always how "b=AS" was handled, but it's not correct and should be
   // fixed.
@@ -614,7 +659,6 @@ struct RTC_EXPORT RtpEncodingParameters {
   bool active = true;
 
   // Value to use for RID RTP header extension.
-  // Called "encodingId" in ORTC.
   std::string rid;
   bool request_key_frame = false;
 
@@ -642,6 +686,44 @@ struct RTC_EXPORT RtpEncodingParameters {
   bool operator!=(const RtpEncodingParameters& o) const {
     return !(*this == o);
   }
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const RtpEncodingParameters& p) {
+    sink.Append("{");
+    if (p.ssrc)
+      absl::Format(&sink, "ssrc: %u, ", *p.ssrc);
+    absl::Format(&sink, "active: %s, ", p.active ? "true" : "false");
+    absl::Format(&sink, "rid: '%s', ", p.rid);
+    if (p.max_bitrate_bps) {
+      absl::Format(&sink, "max_bitrate_bps: %d, ", *p.max_bitrate_bps);
+    }
+    if (p.min_bitrate_bps) {
+      absl::Format(&sink, "min_bitrate_bps: %d, ", *p.min_bitrate_bps);
+    }
+    if (p.max_framerate) {
+      absl::Format(&sink, "max_framerate: %.2f, ", *p.max_framerate);
+    }
+    if (p.num_temporal_layers) {
+      absl::Format(&sink, "num_temporal_layers: %d, ", *p.num_temporal_layers);
+    }
+    if (p.scale_resolution_down_by) {
+      absl::Format(&sink, "scale_resolution_down_by: %.2f, ",
+                   *p.scale_resolution_down_by);
+    }
+    if (p.scale_resolution_down_to) {
+      absl::Format(&sink, "scale_resolution_down_to: %dx%d, ",
+                   p.scale_resolution_down_to->width,
+                   p.scale_resolution_down_to->height);
+    }
+    if (p.scalability_mode) {
+      absl::Format(&sink, "scalability_mode: '%s', ", *p.scalability_mode);
+    }
+    if (p.codec) {
+      absl::Format(&sink, "codec: %v, ", *p.codec);
+    }
+    absl::Format(&sink, "adaptive_ptime: %s}",
+                 p.adaptive_ptime ? "true" : "false");
+  }
 };
 
 struct RTC_EXPORT RtpCodecParameters : public RtpCodec {
@@ -660,7 +742,8 @@ struct RTC_EXPORT RtpCodecParameters : public RtpCodec {
   bool operator!=(const RtpCodecParameters& o) const { return !(*this == o); }
   template <typename Sink>
   friend void AbslStringify(Sink& sink, const RtpCodecParameters& p) {
-    absl::Format(&sink, "[%d: %s]", p.payload_type, p.mime_type());
+    absl::Format(&sink, "{payload_type: %d, codec: %v}", p.payload_type,
+                 static_cast<const RtpCodec&>(p));
   }
 };
 
@@ -721,6 +804,17 @@ struct RtcpParameters final {
            reduced_size == o.reduced_size && mux == o.mux;
   }
   bool operator!=(const RtcpParameters& o) const { return !(*this == o); }
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const RtcpParameters& p) {
+    sink.Append("{");
+    if (p.ssrc)
+      absl::Format(&sink, "ssrc: %u, ", *p.ssrc);
+    absl::Format(&sink, "cname: '%s', ", p.cname);
+    absl::Format(&sink, "reduced_size: %s, ",
+                 p.reduced_size ? "true" : "false");
+    absl::Format(&sink, "mux: %s}", p.mux ? "true" : "false");
+  }
 };
 
 struct RTC_EXPORT RtpParameters {
@@ -734,7 +828,6 @@ struct RTC_EXPORT RtpParameters {
   std::string transaction_id;
 
   // Value to use for MID RTP header extension.
-  // Called "muxId" in ORTC.
   // TODO(deadbeef): Not implemented.
   std::string mid;
 
@@ -744,9 +837,6 @@ struct RTC_EXPORT RtpParameters {
 
   std::vector<RtpEncodingParameters> encodings;
 
-  // Only available with a Peerconnection RtpSender.
-  // In ORTC, our API includes an additional "RtpTransport"
-  // abstraction on which RTCP parameters are set.
   RtcpParameters rtcp;
 
   // When bandwidth is constrained and the RtpSender needs to choose between
@@ -767,6 +857,23 @@ struct RTC_EXPORT RtpParameters {
   // If at least two active encodings have different codec values
   // (including one being unset and another set), this is considered mixed.
   bool IsMixedCodec() const;
+
+  template <typename Sink>
+  friend void AbslStringify(Sink& sink, const RtpParameters& p) {
+    sink.Append("{");
+    absl::Format(&sink, "transaction_id: '%s', ", p.transaction_id);
+    absl::Format(&sink, "mid: '%s', ", p.mid);
+    absl::Format(&sink, "codecs: [%v], ", StrJoin(p.codecs, ", "));
+    absl::Format(&sink, "header_extensions: [%v], ",
+                 StrJoin(p.header_extensions, ", "));
+    absl::Format(&sink, "encodings: [%v], ", StrJoin(p.encodings, ", "));
+    absl::Format(&sink, "rtcp: %v", p.rtcp);
+    if (p.degradation_preference) {
+      absl::Format(&sink, ", degradation_preference: %s",
+                   DegradationPreferenceToString(*p.degradation_preference));
+    }
+    sink.Append("}");
+  }
 };
 
 }  // namespace webrtc

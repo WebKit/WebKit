@@ -25,6 +25,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static int asn1_item_ex_i2d_opt(ASN1_VALUE **pval, unsigned char **out,
                                 const ASN1_ITEM *it, int tag, int aclass,
                                 int optional);
@@ -69,8 +71,8 @@ int ASN1_item_i2d(ASN1_VALUE *val, unsigned char **out, const ASN1_ITEM *it) {
 // Encode an item, taking care of IMPLICIT tagging (if any). This function
 // performs the normal item handling: it can be used in external types.
 
-int ASN1_item_ex_i2d(ASN1_VALUE **pval, unsigned char **out,
-                     const ASN1_ITEM *it, int tag, int aclass) {
+int bssl::ASN1_item_ex_i2d(ASN1_VALUE **pval, unsigned char **out,
+                           const ASN1_ITEM *it, int tag, int aclass) {
   int ret = asn1_item_ex_i2d_opt(pval, out, it, tag, aclass, /*optional=*/0);
   assert(ret != 0);
   return ret;

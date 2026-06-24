@@ -27,7 +27,7 @@
 #include "DocumentInlines.h"
 #include "DocumentType.h"
 #include "RenderElementInlines.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <gio/gio.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>

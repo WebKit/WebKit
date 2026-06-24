@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/field_trials_view.h"
 #include "api/rtp_parameters.h"
 #include "api/transport/bitrate_settings.h"
@@ -22,11 +21,6 @@
 
 namespace webrtc {
 
-// Verify that extension IDs are within 1-byte extension range and are not
-// overlapping, and that they form a legal change from previously registerd
-// extensions (if any).
-bool ValidateRtpExtensions(ArrayView<const RtpExtension> extennsions,
-                           ArrayView<const RtpExtension> old_extensions);
 
 // Discard any extensions not validated by the 'supported' predicate. Duplicate
 // extensions are removed if 'filter_redundant_extensions' is set, and also any

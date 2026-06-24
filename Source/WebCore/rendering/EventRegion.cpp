@@ -35,8 +35,8 @@
 #include "RenderBox.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SimpleRange.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "WindRule.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -52,7 +52,7 @@ EventRegionContext::EventRegionContext(EventRegion& eventRegion)
 
 EventRegionContext::~EventRegionContext() = default;
 
-void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
+void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable, ContributeToInteractionRegions contributeToInteractionRegions)
 {
     auto transformAndClipIfNeeded = [&](auto input, auto transform) {
         if (m_transformStack.isEmpty() && m_clipStack.isEmpty())
@@ -71,6 +71,9 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const Render
     m_eventRegion.unite(region, renderer, style, overrideUserModifyIsEditable);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (contributeToInteractionRegions == ContributeToInteractionRegions::No)
+        return;
+
     auto rect = roundedRect.rect();
     if (auto* modelObject = dynamicDowncast<RenderLayerModelObject>(renderer))
         rect = snapRectToDevicePixelsIfNeeded(rect, *modelObject);
@@ -93,6 +96,7 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const Render
     uniteInteractionRegions(renderer, layerBounds, clipOffset, transform);
 #else
     UNUSED_PARAM(renderer);
+    UNUSED_PARAM(contributeToInteractionRegions);
 #endif
 }
 
@@ -464,7 +468,7 @@ EventRegion::EventRegion(Region&& region
 {
 }
 
-void EventRegion::unite(const Region& region, const RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
+void EventRegion::unite(const Region& region, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable)
 {
     if (renderer.usedPointerEvents() == PointerEvents::None)
         return;

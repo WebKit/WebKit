@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MediaElementAudioSourceNode: seeking the underlying media element reflects in node output</title>
+<link rel="help" href="https://webaudio.github.io/web-audio-api/#MediaElementAudioSourceNode">
+<script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+
+function waitFor(element, type) {
+    return new Promise(resolve => element.addEventListener(type, resolve, { once: true }));
+}
+
+function sleepFor(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+promise_test(async t => {
+    window.audio = new Audio("../resources/media/sine440.mp3");
+    waitFor(audio, "error").then(event => {
+        throw new Error(`audio element error: code=${event.target.error.code}, message="${event.target.error.message}"`);
+    });
+    audio.loop = true;
+
+    const context = new AudioContext({sampleRate: 48000});
+    t.add_cleanup(() => context.close());
+
+    const source = context.createMediaElementSource(audio);
+    const analyser = context.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0;
+    analyser.minDecibels = -40;
+    analyser.maxDecibels = 0;
+
+    const gain = context.createGain();
+    gain.gain.value = 0;
+
+    source.connect(analyser);
+    analyser.connect(gain);
+    gain.connect(context.destination);
+
+    context.resume();
+    audio.play();
+
+    await t.step_wait(() => audio.currentTime >= 0.2, "currentTime progressed to >= 0.2s.");
+
+    const binIndex = Math.round(440 * analyser.fftSize / context.sampleRate);
+    const buf = new Uint8Array(analyser.frequencyBinCount);
+
+    await t.step_wait(() => {
+        analyser.getByteFrequencyData(buf);
+        return buf[binIndex] > 0;
+    }, "440Hz bin is non-silent before seek.");
+
+    audio.currentTime = 1.5;
+    await waitFor(audio, "seeked");
+    assert_greater_than_equal(audio.currentTime, 1.4,
+        "audio.currentTime advanced to seek target after 'seeked' event.");
+
+    await t.step_wait(() => {
+        analyser.getByteFrequencyData(buf);
+        return buf[binIndex] > 0;
+    }, "440Hz bin is non-silent after seek.");
+
+    audio.pause();
+}, "Seeking the underlying HTMLMediaElement is reflected in MediaElementAudioSourceNode output.");
+</script>
+</body>
+</html>

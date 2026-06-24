@@ -1,0 +1,16 @@
+Within a grid container, a grid item normally has an automatic minimum size that is equal to its min-content size. (100px x 100px, for our example) However, for a grid axis, if the grid item has a scrollable overflow value in that axis, the automatic minimum size is set to zero for that axis.
+
+
+PASS .item 1
+FAIL .item 2 assert_equals:
+<div class="item y-scroller" data-expected-width="100" data-expected-height="100">
+    <div class="content"></div>
+  </div>
+width expected 100 but got 0
+PASS .item 3
+FAIL .item 4 assert_equals:
+<div class="item x-scroller" data-expected-width="100" data-expected-height="100">
+    <div class="content"></div>
+  </div>
+height expected 100 but got 0
+

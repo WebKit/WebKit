@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="console"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const log = message => document.getElementById('console').textContent += message + '\n';
+
+// MallocStatistics has [Default] object toJSON() and a [CustomGetter] attribute whose getter always
+// throws. The generated toJSON() must check for an exception after invoking the custom getter; if it
+// does not, it calls putDirect() with an empty JSValue, which crashes debug builds (ASSERT) and runs
+// a later getter with a pending exception. With the check, toJSON() simply propagates the exception.
+if (!window.internals)
+    log('FAIL: test requires window.internals');
+else {
+    try {
+        internals.mallocStatistics().toJSON();
+        log('FAIL: toJSON() did not propagate the custom getter exception');
+    } catch (e) {
+        log('PASS: toJSON() propagated the custom getter exception');
+    }
+}
+</script>
+</body>
+</html>

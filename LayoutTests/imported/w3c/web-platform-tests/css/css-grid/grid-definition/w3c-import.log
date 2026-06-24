@@ -100,6 +100,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-repeat-out-of-bounds-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-shorthand-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-support-flexible-lengths-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-support-grid-template-areas-001.html

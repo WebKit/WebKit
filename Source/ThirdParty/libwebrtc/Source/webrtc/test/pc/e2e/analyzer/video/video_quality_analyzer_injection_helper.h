@@ -12,11 +12,11 @@
 #define TEST_PC_E2E_ANALYZER_VIDEO_VIDEO_QUALITY_ANALYZER_INJECTION_HELPER_H_
 
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats_report.h"
 #include "api/test/pclf/media_configuration.h"
@@ -77,7 +77,7 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
       bool report_infra_metrics);
 
   void Start(std::string test_case_name,
-             ArrayView<const std::string> peer_names,
+             std::span<const std::string> peer_names,
              int max_threads_count = 1);
 
   // Registers new call participant to the underlying video quality analyzer.

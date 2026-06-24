@@ -35,7 +35,6 @@ rtc_library("vad") {
     "voice_gmm_tables.h",
   ]
   deps = [
-    "../../../audio/utility:audio_frame_operations",
     "../../../common_audio",
     "../../../common_audio:common_audio_c",
     "../../../common_audio/third_party/ooura:fft_size_256",
@@ -59,7 +58,6 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":vad",
-      "../../../common_audio",
       "../../../test:fileutils",
       "../../../test:test_support",
       "//testing/gmock",

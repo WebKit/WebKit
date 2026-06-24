@@ -13,8 +13,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/transport/ecn_marking.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/socket_address.h"
@@ -37,7 +37,7 @@ class RTC_EXPORT ReceivedIpPacket {
 
   // Caller must keep memory pointed to by payload and address valid for the
   // lifetime of this ReceivedPacket.
-  ReceivedIpPacket(ArrayView<const uint8_t> payload,
+  ReceivedIpPacket(std::span<const uint8_t> payload,
                    const SocketAddress& source_address,
                    std::optional<Timestamp> arrival_time = std::nullopt,
                    EcnMarking ecn = EcnMarking::kNotEct,
@@ -47,7 +47,7 @@ class RTC_EXPORT ReceivedIpPacket {
 
   // Address/port of the packet sender.
   const SocketAddress& source_address() const { return source_address_; }
-  ArrayView<const uint8_t> payload() const { return payload_; }
+  std::span<const uint8_t> payload() const { return payload_; }
 
   // Timestamp when this packet was received. Not available on all socket
   // implementations.
@@ -74,7 +74,7 @@ class RTC_EXPORT ReceivedIpPacket {
       const SocketAddress& = SocketAddress());
 
  private:
-  ArrayView<const uint8_t> payload_;
+  std::span<const uint8_t> payload_;
   std::optional<Timestamp> arrival_time_;
   const SocketAddress& source_address_;
   EcnMarking ecn_;

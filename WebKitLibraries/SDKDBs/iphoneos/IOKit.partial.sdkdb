@@ -141,7 +141,7 @@
     {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_kIOMainPortDefault"},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kIOMasterPortDefault", "unavailable": true}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "IOAsyncCallback"},
     {"access": "public", "name": "IOAsyncCallback0"},

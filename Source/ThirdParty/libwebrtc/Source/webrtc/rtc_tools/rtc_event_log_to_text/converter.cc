@@ -61,7 +61,8 @@ void PrintHeaderExtensionConfig(
     return;
   fprintf(output, " extension_map=");
   for (const RtpExtension& extension : rtp_extensions) {
-    fprintf(output, "{uri:%s,id:%d}", extension.uri.c_str(), extension.id);
+    fprintf(output, "{uri:%s,id:%d}", extension.uri.c_str(),
+            extension.id.value());
   }
 }
 

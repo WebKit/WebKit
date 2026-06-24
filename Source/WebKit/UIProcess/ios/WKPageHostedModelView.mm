@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPageHostedModelView.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
 
 #import "Logging.h"
 #import "WKRKEntity.h"

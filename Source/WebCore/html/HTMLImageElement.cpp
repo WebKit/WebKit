@@ -33,6 +33,7 @@
 #include "ContainerNodeInlines.h"
 #include "Editor.h"
 #include "ElementChildIteratorInlines.h"
+#include "ElementInlinesLight.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -86,9 +87,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLImageElement);
 
 using namespace HTMLNames;
 
-HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
-    , FormAssociatedElement(form)
     , ActiveDOMObject(document)
     , m_imageLoader(makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this))
     , m_imageDevicePixelRatio(1.0f)
@@ -98,14 +98,14 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
 
 Ref<HTMLImageElement> HTMLImageElement::create(Document& document)
 {
-    auto image = adoptRef(*new HTMLImageElement(imgTag, document));
+    Ref image = adoptRef(*new HTMLImageElement(imgTag, document));
     image->suspendIfNeeded();
     return image;
 }
 
-Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document)
 {
-    auto image = adoptRef(*new HTMLImageElement(tagName, document, form));
+    Ref image = adoptRef(*new HTMLImageElement(tagName, document));
     image->suspendIfNeeded();
     return image;
 }
@@ -302,8 +302,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         }
 
         Ref document = this->document();
-        RefPtr documentElement = document->documentElement();
-        MQ::MediaQueryEvaluator evaluator { document->printing() ? printAtom() : screenAtom(), document.get(), documentElement ? documentElement->computedStyle() : nullptr };
+        MQ::MediaQueryEvaluator evaluator { document->printing() ? printAtom() : screenAtom(), document.get() };
         auto& queries = source->parsedMediaAttribute(document.get());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
 
@@ -348,8 +347,7 @@ void HTMLImageElement::setIsUserAgentShadowRootResource()
 
 void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 {
-    RefPtr documentElement = document().documentElement();
-    MQ::MediaQueryEvaluator evaluator { protect(document())->printing() ? printAtom() : screenAtom(), document(), documentElement ? documentElement->computedStyle() : nullptr };
+    MQ::MediaQueryEvaluator evaluator { protect(document())->printing() ? printAtom() : screenAtom(), document() };
 
     auto hasChanges = [&] {
         for (auto& results : m_dynamicMediaQueryResults) {
@@ -535,7 +533,7 @@ const AtomString& HTMLImageElement::altText() const
     return attributeWithoutSynchronization(titleAttr);
 }
 
-RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     if (style.content().isData())
         return RenderElement::createFor(*this, WTF::move(style));
@@ -543,7 +541,7 @@ RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(RenderStyle&& s
     return createRenderer<RenderImage>(RenderObject::Type::Image, *this, WTF::move(style), nullptr, m_imageDevicePixelRatio);
 }
 
-bool HTMLImageElement::isReplaced(const RenderStyle* style) const
+bool HTMLImageElement::isReplaced(const Style::ComputedStyle* style) const
 {
     return !style || !style->content().isData();
 }
@@ -978,10 +976,10 @@ bool HTMLImageElement::isSystemPreviewImage() const
     if (!document().settings().systemPreviewEnabled())
         return false;
 
-    auto* parent = parentElement();
-    if (auto* anchorElement = dynamicDowncast<HTMLAnchorElement>(parent))
+    RefPtr parent = parentElement();
+    if (RefPtr anchorElement = dynamicDowncast<HTMLAnchorElement>(parent))
         return anchorElement->isSystemPreviewLink();
-    if (auto* pictureElement = dynamicDowncast<HTMLPictureElement>(parent))
+    if (RefPtr pictureElement = dynamicDowncast<HTMLPictureElement>(parent))
         return pictureElement->isSystemPreviewImage();
     return false;
 }

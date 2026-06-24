@@ -2,8 +2,7 @@
 <script src="../resources/js-test.js"></script>
 <script>
 description("Test that Wasm GC objects (realmless) interact correctly with DOM APIs that use JSValueInWrappedObject / isWorldCompatible.");
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
 
 // Build a minimal Wasm GC module that exports makeStruct and makeArray.
 // WAT:
@@ -228,8 +227,7 @@ async function runTests() {
         testFailed("Unexpected exception: " + e.toString() + "\n" + e.stack);
     }
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 runTests();

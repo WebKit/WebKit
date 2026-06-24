@@ -33,6 +33,11 @@
 /**
  * WPEBufferSHM:
  *
+ * A [class@Buffer] backed by shared memory.
+ *
+ * [class@BufferSHM] is a [class@Buffer] that wraps a block of shared memory holding
+ * the pixel data, used for software rendering. The only supported pixel format
+ * is %WPE_PIXEL_FORMAT_ARGB8888.
  */
 struct _WPEBufferSHMPrivate {
     WPEPixelFormat format;
@@ -154,7 +159,7 @@ static void wpe_buffer_shm_class_init(WPEBufferSHMClass* bufferSHMClass)
  * @data: the buffer data
  * @stride: the buffer stride
  *
- * Crerate a new #WPEBufferSHM for the given parameters.
+ * Create a new #WPEBufferSHM for the given parameters.
  *
  * Returns: (transfer full): a #WPEBufferSHM
  */

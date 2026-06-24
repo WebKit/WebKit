@@ -26,6 +26,8 @@ Relation to NTP timestamps: abs_send_time_24 = (ntp_timestamp_64 >> 14) &
 0x00ffffff ; NTP timestamp is 32 bits for whole seconds, 32 bits fraction of
 second.
 
-Notes: Packets are time stamped when going out, preferably close to metal.
+Notes: Packets are time stamped as close as possible to the time the packet is
+sent on the wire. The current implementation allocates space before pacing
+and stamps them after pacing and before encryption.
 Intermediate RTP relays (entities possibly altering the stream) should remove
 the extension or set its own timestamp.

@@ -16,13 +16,12 @@
 #include <memory>
 #include <numeric>
 #include <optional>
+#include <span>
 #include <string>
 #include <tuple>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
-#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/aec3/adaptive_fir_filter_erl.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
@@ -43,6 +42,7 @@
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/random.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 // Defines WEBRTC_ARCH_X86_FAMILY, used below.
@@ -52,7 +52,6 @@
 #endif
 
 namespace webrtc {
-namespace aec3 {
 namespace {
 
 std::string ProduceDebugText(size_t num_render_channels, size_t delay) {
@@ -168,7 +167,7 @@ TEST_P(AdaptiveFirFilterOneTwoFourEightRenderChannels,
       }
     }
 
-    ComputeFrequencyResponse(num_partitions, H, &H2);
+    ComputeFrequencyResponse_C(num_partitions, H, &H2);
     ComputeFrequencyResponse_Neon(num_partitions, H, &H2_Neon);
 
     for (size_t p = 0; p < num_partitions; ++p) {
@@ -348,7 +347,7 @@ TEST_P(AdaptiveFirFilterOneTwoFourEightRenderChannels,
         }
       }
 
-      ComputeFrequencyResponse(num_partitions, H, &H2);
+      ComputeFrequencyResponse_C(num_partitions, H, &H2);
       ComputeFrequencyResponse_Sse2(num_partitions, H, &H2_Sse2);
 
       for (size_t p = 0; p < num_partitions; ++p) {
@@ -383,7 +382,7 @@ TEST_P(AdaptiveFirFilterOneTwoFourEightRenderChannels,
         }
       }
 
-      ComputeFrequencyResponse(num_partitions, H, &H2);
+      ComputeFrequencyResponse_C(num_partitions, H, &H2);
       ComputeFrequencyResponse_Avx2(num_partitions, H, &H2_Avx2);
 
       for (size_t p = 0; p < num_partitions; ++p) {
@@ -507,7 +506,7 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
   Block x(kNumBands, num_render_channels);
   std::vector<float> n(kBlockSize, 0.f);
   std::vector<float> y(kBlockSize, 0.f);
-  AecState aec_state(CreateEnvironment(), EchoCanceller3Config{},
+  AecState aec_state(CreateTestEnvironment(), EchoCanceller3Config{},
                      num_capture_channels);
   RenderSignalAnalyzer render_signal_analyzer(config);
   std::optional<DelayEstimate> delay_estimate;
@@ -546,11 +545,11 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
         num_render_channels);
     for (size_t ch = 0; ch < num_render_channels; ++ch) {
       x_hp_filter[ch] = std::make_unique<CascadedBiQuadFilter>(
-          ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+          std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
               kHighPassFilterCoefficients));
     }
     CascadedBiQuadFilter y_hp_filter(
-        (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+        (std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
             kHighPassFilterCoefficients)));
 
     SCOPED_TRACE(ProduceDebugText(num_render_channels, delay_samples));
@@ -620,5 +619,4 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
   }
 }
 
-}  // namespace aec3
 }  // namespace webrtc

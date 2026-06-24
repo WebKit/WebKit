@@ -16,9 +16,9 @@
 #include <cstddef>
 #include <numeric>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
@@ -110,7 +110,7 @@ void ReverbModelEstimatorTest::CreateImpulseResponseWithDecay() {
       H_j.Spectrum(Aec3Optimization::kNone, H2_[ch][j]);
     }
   }
-  ArrayView<float> H2_tail(H2_[0][H2_[0].size() - 1]);
+  std::span<float> H2_tail(H2_[0][H2_[0].size() - 1]);
   true_power_tail_ = std::accumulate(H2_tail.begin(), H2_tail.end(), 0.f);
 }
 void ReverbModelEstimatorTest::RunEstimator() {

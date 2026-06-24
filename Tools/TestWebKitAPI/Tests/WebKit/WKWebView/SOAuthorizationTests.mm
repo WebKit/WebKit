@@ -199,6 +199,7 @@ private:
 @property bool shouldOpenExternalSchemes;
 @property bool allowSOAuthorizationLoad;
 @property bool isAsyncExecution;
+@property bool disableExtensibleSSODuringPolicyDecision;
 - (instancetype)init;
 @end
 
@@ -211,6 +212,7 @@ private:
         self.shouldOpenExternalSchemes = false;
         self.allowSOAuthorizationLoad = true;
         self.isAsyncExecution = false;
+        self.disableExtensibleSSODuringPolicyDecision = false;
     }
     return self;
 }
@@ -227,6 +229,8 @@ private:
     delegateNavigationAction = navigationAction;
     navigationPolicyDecided = true;
     EXPECT_EQ(navigationAction._shouldOpenExternalSchemes, self.shouldOpenExternalSchemes);
+    if (self.disableExtensibleSSODuringPolicyDecision)
+        webView.configuration.preferences._extensibleSSOEnabled = NO;
     if (self.isDefaultPolicy) {
         decisionHandler(WKNavigationActionPolicyAllow);
         return;
@@ -533,6 +537,30 @@ TEST(SOAuthorizationRedirect, DisableSSO)
     Util::run(&navigationCompleted);
 
     EXPECT_FALSE(policyForAppSSOPerformed);
+    EXPECT_WK_STREQ(testURL.get().absoluteString, finalURL);
+}
+
+TEST(SOAuthorizationRedirect, DisableSSODuringPolicyDecision)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+
+    RetainPtr testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    EXPECT_TRUE(configuration.get().preferences._isExtensibleSSOEnabled);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    RetainPtr delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+    delegate.get().isDefaultPolicy = false;
+    delegate.get().disableExtensibleSSODuringPolicyDecision = true;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&navigationCompleted);
+
+    EXPECT_FALSE(policyForAppSSOPerformed);
+    EXPECT_FALSE(configuration.get().preferences._isExtensibleSSOEnabled);
     EXPECT_WK_STREQ(testURL.get().absoluteString, finalURL);
 }
 

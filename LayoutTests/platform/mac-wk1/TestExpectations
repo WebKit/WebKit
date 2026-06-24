@@ -523,3 +523,8 @@ userscripts/window-onerror-for-isolated-world-2.html [ Pass ]
 userscripts/window-onerror-for-isolated-world-3.html [ Pass ]
 webarchive/archive-empty-frame-source.html [ Pass ]
 webarchive/doctype.html [ Pass ]
+
+# testRunner.dontForceRepaint() exists only in WebKitTestRunner (WK2); these fail on WK1.
+fast/repaint/align-content-center-in-composited-layer.html [ Skip ]
+fast/repaint/layer-repaint-with-layout-delta-1.html [ Skip ]
+fast/repaint/layer-repaint-with-layout-delta-2.html [ Skip ]

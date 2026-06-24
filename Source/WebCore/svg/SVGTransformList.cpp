@@ -170,7 +170,7 @@ template<typename CharacterType> bool SVGTransformList::parseGeneric(StringParsi
     return !delimParsed;
 }
 
-void SVGTransformList::parse(StringView value)
+bool SVGTransformList::parse(StringView value)
 {
     bool parsingSucceeded = readCharactersForParsing(value, [&](auto buffer) {
         return parseGeneric(buffer, ListReplacement::Replace);
@@ -178,6 +178,7 @@ void SVGTransformList::parse(StringView value)
 
     if (!parsingSucceeded)
         clearItems();
+    return parsingSucceeded;
 }
 
 bool SVGTransformList::parse(StringParsingBuffer<Latin1Character>& buffer)

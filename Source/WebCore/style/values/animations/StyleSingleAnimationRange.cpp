@@ -29,27 +29,13 @@
 #include "CSSKeywordValue.h"
 #include "CSSNumericFactory.h"
 #include "StyleBuilderChecking.h"
-#include "StyleCalculationValue.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
-#include "StyleLengthWrapper+DeprecatedCSSValueConversion.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
 
-using namespace CSS::Literals;
-
-SingleAnimationRangeLength SingleAnimationRangeLength::defaultValue(SingleAnimationRangeType type)
-{
-    return type == SingleAnimationRangeType::Start ? 0_css_percentage : 100_css_percentage;
-}
-
-bool SingleAnimationRangeLength::isDefault(SingleAnimationRangeType type) const
-{
-    return *this == defaultValue(type);
-}
-
-static RefPtr<CSSNumericValue> toCSSNumericValue(const SingleAnimationRangeLength& offset)
+static RefPtr<CSSNumericValue> toCSSNumericValue(const LengthPercentage<>& offset)
 {
     // FIXME: This will fail for calc().
     return offset.isPercentOrCalculated()
@@ -81,6 +67,8 @@ TimelineRangeValue SingleAnimationRangeEnd::toTimelineRangeValue() const
 
 SingleAnimationRange SingleAnimationRange::defaultForScrollTimeline()
 {
+    using namespace CSS::Literals;
+
     return {
         .start = { 0_css_percentage },
         .end = { 100_css_percentage },
@@ -89,6 +77,8 @@ SingleAnimationRange SingleAnimationRange::defaultForScrollTimeline()
 
 SingleAnimationRange SingleAnimationRange::defaultForViewTimeline()
 {
+    using namespace CSS::Literals;
+
     return {
         .start = { CSS::Keyword::Cover { }, 0_css_percentage },
         .end = { CSS::Keyword::Cover { }, 100_css_percentage },
@@ -126,13 +116,13 @@ template<typename Edge> static Edge convertSingleAnimationRangeEdge(BuilderState
     }
 
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
-        return toStyleFromCSSValue<SingleAnimationRangeLength>(state, *primitiveValue);
+        return toStyleFromCSSValue<typename Edge::Offset>(state, *primitiveValue);
 
     auto pair = requiredPairDowncast<CSSKeywordValue, CSSPrimitiveValue>(state, value);
     if (!pair)
         return CSS::Keyword::Normal { };
 
-    auto offset = toStyleFromCSSValue<SingleAnimationRangeLength>(state, pair->second.get());
+    auto offset = toStyleFromCSSValue<typename Edge::Offset>(state, pair->second.get());
 
     switch (pair->first->valueID()) {
     case CSSValueCover:
@@ -185,7 +175,7 @@ template<typename Edge> static Edge convertSingleAnimationRangeEdge(const CSSToL
     }
 
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
-        return toStyleFromCSSValue<SingleAnimationRangeLength>(conversionData, *primitiveValue);
+        return toStyleFromCSSValue<typename Edge::Offset>(conversionData, *primitiveValue);
 
     RefPtr pair = dynamicDowncast<CSSValuePair>(value);
     if (!pair)
@@ -195,7 +185,7 @@ template<typename Edge> static Edge convertSingleAnimationRangeEdge(const CSSToL
     if (!primitiveValue)
         return CSS::Keyword::Normal { };
 
-    auto offset = toStyleFromCSSValue<SingleAnimationRangeLength>(conversionData, *primitiveValue);
+    auto offset = toStyleFromCSSValue<typename Edge::Offset>(conversionData, *primitiveValue);
 
     RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(pair->first());
     if (!keywordValue)
@@ -271,7 +261,7 @@ template<typename Edge> static std::optional<Edge> deprecatedConvertSingleAnimat
     }
 
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        auto offset = deprecatedToStyleFromCSSValue<SingleAnimationRangeLength>(*primitiveValue);
+        auto offset = deprecatedToStyleFromCSSValue<typename Edge::Offset>(*primitiveValue);
         if (!offset)
             return { };
 
@@ -286,7 +276,7 @@ template<typename Edge> static std::optional<Edge> deprecatedConvertSingleAnimat
     if (!primitiveValue)
         return { };
 
-    auto offset = deprecatedToStyleFromCSSValue<SingleAnimationRangeLength>(*primitiveValue);
+    auto offset = deprecatedToStyleFromCSSValue<typename Edge::Offset>(*primitiveValue);
     if (!offset)
         return { };
 

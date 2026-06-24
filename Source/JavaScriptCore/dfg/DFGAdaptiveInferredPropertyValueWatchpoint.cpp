@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "CodeBlockInlines.h"
 #include "DFGCommon.h"
 #include <wtf/TZoneMallocInlines.h>
 

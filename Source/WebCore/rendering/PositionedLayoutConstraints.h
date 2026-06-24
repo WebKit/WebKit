@@ -30,6 +30,7 @@
 #include "RenderBox.h"
 #include "StyleInset.h"
 #include "StyleMargin.h"
+#include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 #include "StyleSelfAlignmentData.h"
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace WebCore {
 class PositionedLayoutConstraints {
 public:
     PositionedLayoutConstraints(const RenderBox&, LogicalBoxAxis selfAxis);
-    PositionedLayoutConstraints(const RenderBox&, const RenderStyle& selfStyleOverride, LogicalBoxAxis selfAxis);
+    PositionedLayoutConstraints(const RenderBox&, const Style::ComputedStyle& selfStyleOverride, LogicalBoxAxis selfAxis);
     void computeInsets();
 
     /*** The following are available without calling computeInsets(). ***/
@@ -118,7 +119,7 @@ private:
     const LogicalBoxAxis m_selfAxis;
     const LogicalBoxAxis m_containingAxis;
     const BoxAxis m_physicalAxis;
-    const RenderStyle& m_style;
+    const Style::ComputedStyle& m_style;
     StyleSelfAlignmentData m_alignment;
     const CheckedPtr<const RenderBoxModelObject> m_defaultAnchorBox; // Only set if needed.
 

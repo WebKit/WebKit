@@ -148,6 +148,7 @@ class AV1RateControlRTC {
   AV1_COMP *cpi_;
   int initial_width_;
   int initial_height_;
+  bool rc_is_valid_ = false;
 };
 }  // namespace aom
 #endif  // __cplusplus

@@ -34,7 +34,6 @@
 #import <WebCore/SecurityOriginData.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-using namespace WebCore;
 
 NSString * const WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOriginNotification";

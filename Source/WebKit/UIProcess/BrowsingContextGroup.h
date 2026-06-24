@@ -29,6 +29,8 @@
 #include "LoadedWebArchive.h"
 #include "WebProcessProxy.h"
 #include <WebCore/BrowsingContextGroupIdentifier.h>
+#include <WebCore/OriginKeyed.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -89,6 +91,10 @@ public:
 
     bool NODELETE hasRemotePages(const WebPageProxy&);
 
+    WebCore::OriginKeyed resolveAgentClusterKeying(const WebCore::SecurityOriginData&, WebCore::OriginKeyed requested);
+
+    void clearBrowsingContextGroupForTesting();
+
 private:
     BrowsingContextGroup();
 
@@ -101,6 +107,8 @@ private:
     HashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
     WeakListHashSet<WebPageProxy> m_pages;
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
+
+    HashMap<WebCore::SecurityOriginData, WebCore::OriginKeyed> m_historicalAgentClusterKeyMap;
 } SWIFT_SHARED_REFERENCE(refBrowsingContextGroup, derefBrowsingContextGroup);
 
 }

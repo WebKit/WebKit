@@ -32,7 +32,7 @@
 #include "HTMLNames.h"
 #include "RenderElement.h"
 #include "RenderText.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 
@@ -190,7 +190,7 @@ static bool NODELETE isNewLineAtPosition(const Position& position)
     return textNode->data()[offset] == '\n';
 }
 
-CheckedPtr<const RenderStyle> ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
+CheckedPtr<const Style::ComputedStyle> ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
 {
     RefPtr node = position.containerNode();
     if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node || !node->isTextNode())
@@ -264,14 +264,14 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
                 return;
             }
             if (isStartAndEndOnSameNode)
-                start = firstPositionInOrBeforeNode(endContainer->previousSibling());
+                start = firstPositionInOrBeforeNode(protect(endContainer->previousSibling()));
             if (isEndAndEndOfLastParagraphOnSameNode) {
                 if (static_cast<unsigned>(m_endOfLastParagraph.offsetInContainerNode()) == endOffset)
-                    m_endOfLastParagraph = lastPositionInOrAfterNode(endContainer->previousSibling());
+                    m_endOfLastParagraph = lastPositionInOrAfterNode(protect(endContainer->previousSibling()));
                 else
                     m_endOfLastParagraph = Position(endContainer.get(), m_endOfLastParagraph.offsetInContainerNode() - endOffset);
             }
-            end = lastPositionInNode(*endContainer->previousSibling());
+            end = lastPositionInNode(*protect(endContainer->previousSibling()));
         }
     }
 }

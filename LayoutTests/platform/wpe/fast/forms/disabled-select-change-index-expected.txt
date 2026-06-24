@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (0,0) size 66x30 [color=#00000066] [bgcolor=#FFFFFF] [border: (1px solid #00000066)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 64x28
-          RenderText at (5,5) size 38x18
+        RenderBlock {DIV} at (1,1) size 64x28
+          RenderText {#text} at (5,5) size 38x18
             text run at (5,5) width 38: "PASS"
       RenderBR {BR} at (66,6) size 0x18
       RenderMenuList {SELECT} at (0,30) size 66x30 [color=#00000066] [bgcolor=#FFFFFF] [border: (1px solid #00000066)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 64x28
-          RenderText at (5,5) size 38x18
+        RenderBlock {DIV} at (1,1) size 64x28
+          RenderText {#text} at (5,5) size 38x18
             text run at (5,5) width 38: "PASS"
       RenderBR {BR} at (66,36) size 0x18
       RenderMenuList {SELECT} at (0,60) size 66x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 64x28
-          RenderText at (5,5) size 38x18
+        RenderBlock {DIV} at (1,1) size 64x28
+          RenderText {#text} at (5,5) size 38x18
             text run at (5,5) width 38: "PASS"
       RenderBR {BR} at (66,66) size 0x18
       RenderMenuList {SELECT} at (0,90) size 66x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderSelectFallbackButton {DIV} at (1,1) size 64x28
-          RenderText at (5,5) size 38x18
+        RenderBlock {DIV} at (1,1) size 64x28
+          RenderText {#text} at (5,5) size 38x18
             text run at (5,5) width 38: "PASS"
       RenderBR {BR} at (66,96) size 0x18
       RenderListBox {SELECT} at (0,120) size 59x37 [color=#00000066] [bgcolor=#FFFFFF] [border: (1px inset #808080)]

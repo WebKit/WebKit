@@ -217,6 +217,8 @@ void JSTestReportExtraMemoryCost::analyzeHeap(JSCell* cell, HeapAnalyzer& analyz
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestReportExtraMemoryCostOwner::JSTestReportExtraMemoryCostOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestReportExtraMemoryCostOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -229,7 +231,7 @@ void JSTestReportExtraMemoryCostOwner::finalize(JSC::Handle<JSC::Unknown> handle
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestReportExtraMemoryCost = static_cast<JSTestReportExtraMemoryCost*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestReportExtraMemoryCost->wrapped()).ptr(), jsTestReportExtraMemoryCost);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestReportExtraMemoryCost->wrapped(), jsTestReportExtraMemoryCost);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

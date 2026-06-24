@@ -110,41 +110,6 @@ bool isBlockDead(BasicBlock* block)
     return block->predecessors().isEmpty();
 }
 
-template<typename BasicBlock>
-Vector<BasicBlock*> blocksInPreOrder(BasicBlock* root)
-{
-    Vector<BasicBlock*> result;
-    GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock*>> worklist;
-    worklist.push(root);
-    while (BasicBlock* block = worklist.pop()) {
-        result.append(block);
-        for (BasicBlock* successor : block->successorBlocks())
-            worklist.push(successor);
-    }
-    return result;
-}
-
-template<typename BasicBlock>
-Vector<BasicBlock*> blocksInPostOrder(BasicBlock* root)
-{
-    Vector<BasicBlock*> result;
-    PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock*>> worklist;
-    worklist.push(root);
-    while (GraphNodeWithOrder<BasicBlock*> item = worklist.pop()) {
-        switch (item.order) {
-        case GraphVisitOrder::Pre:
-            worklist.pushPost(item.node);
-            for (BasicBlock* successor : item.node->successorBlocks())
-                worklist.push(successor);
-            break;
-        case GraphVisitOrder::Post:
-            result.append(item.node);
-            break;
-        }
-    }
-    return result;
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

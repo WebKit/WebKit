@@ -74,11 +74,7 @@ JSC_DEFINE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorNext, (JSGlobalObject 
 
     VM& vm = globalObject->vm();
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
-    if (cell == vm.orderedHashTableSentinel())
-        return JSValue::encode(cell);
-
-    JSSetIterator* iterator = uncheckedDowncast<JSSetIterator>(cell);
-    return JSValue::encode(iterator->next(vm));
+    return JSValue::encode(uncheckedDowncast<JSSetIterator>(cell)->next(vm));
 }
 
 JSC_DEFINE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorKey, (JSGlobalObject * globalObject, CallFrame* callFrame))
@@ -87,11 +83,7 @@ JSC_DEFINE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorKey, (JSGlobalObject *
 
     VM& vm = globalObject->vm();
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
-    if (cell == vm.orderedHashTableSentinel())
-        return JSValue::encode(cell);
-
-    JSSetIterator* iterator = uncheckedDowncast<JSSetIterator>(cell);
-    return JSValue::encode(iterator->peekKey(vm));
+    return JSValue::encode(uncheckedDowncast<JSSetIterator>(cell)->peekKey(vm));
 }
 
 }

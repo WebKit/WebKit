@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ MediaSessionExtendedActionsEnabled=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +7,7 @@
     <script src="../media-file.js"></script>
     <script>
 
-    const mediaSessionActions = [ "play", "pause", "seekbackward", "seekforward", "previoustrack", "nexttrack", "skipad", "stop", "seekto" ];
+    const mediaSessionActions = [ "play", "pause", "seekbackward", "seekforward", "previoustrack", "nexttrack", "skipad", "stop", "seekto", "previousslide", "nextslide" ];
     async function runTest() {
         if (!window.internals) {
             failTest('This test requires Internals');
@@ -25,6 +26,44 @@
             internals.platformSupportedCommands().forEach(value => consoleWrite(`Command: ${value}`));
             navigator.mediaSession.setActionHandler(value, null);
         });
+
+        consoleWrite('Test that removing one of a pair sharing a platform command keeps the command, and removing both clears it');
+
+        consoleWrite('Register nexttrack and nextslide, then remove nexttrack');
+        navigator.mediaSession.setActionHandler('nexttrack', actionDetails => { });
+        navigator.mediaSession.setActionHandler('nextslide', actionDetails => { });
+        navigator.mediaSession.setActionHandler('nexttrack', null);
+        testExpected('internals.platformSupportedCommands().includes("NextTrackCommand")', true);
+        consoleWrite('Remove nextslide');
+        navigator.mediaSession.setActionHandler('nextslide', null);
+        testExpected('internals.platformSupportedCommands().includes("NextTrackCommand")', false);
+
+        consoleWrite('Register nexttrack and nextslide, then remove nextslide');
+        navigator.mediaSession.setActionHandler('nexttrack', actionDetails => { });
+        navigator.mediaSession.setActionHandler('nextslide', actionDetails => { });
+        navigator.mediaSession.setActionHandler('nextslide', null);
+        testExpected('internals.platformSupportedCommands().includes("NextTrackCommand")', true);
+        consoleWrite('Remove nexttrack');
+        navigator.mediaSession.setActionHandler('nexttrack', null);
+        testExpected('internals.platformSupportedCommands().includes("NextTrackCommand")', false);
+
+        consoleWrite('Register previoustrack and previousslide, then remove previoustrack');
+        navigator.mediaSession.setActionHandler('previoustrack', actionDetails => { });
+        navigator.mediaSession.setActionHandler('previousslide', actionDetails => { });
+        navigator.mediaSession.setActionHandler('previoustrack', null);
+        testExpected('internals.platformSupportedCommands().includes("PreviousTrackCommand")', true);
+        consoleWrite('Remove previousslide');
+        navigator.mediaSession.setActionHandler('previousslide', null);
+        testExpected('internals.platformSupportedCommands().includes("PreviousTrackCommand")', false);
+
+        consoleWrite('Register previoustrack and previousslide, then remove previousslide');
+        navigator.mediaSession.setActionHandler('previoustrack', actionDetails => { });
+        navigator.mediaSession.setActionHandler('previousslide', actionDetails => { });
+        navigator.mediaSession.setActionHandler('previousslide', null);
+        testExpected('internals.platformSupportedCommands().includes("PreviousTrackCommand")', true);
+        consoleWrite('Remove previoustrack');
+        navigator.mediaSession.setActionHandler('previoustrack', null);
+        testExpected('internals.platformSupportedCommands().includes("PreviousTrackCommand")', false);
 
         consoleWrite('Iterate over all possible actions');
         mediaSessionActions.forEach(value => {

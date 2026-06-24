@@ -178,7 +178,7 @@ void Path::addRoundedRect(const FloatRoundedRect& roundedRect, PathRoundedRect::
         // after constraint scaling), adjust them to fit rather than dropping them.
         auto adjustedRect = roundedRect;
         adjustedRect.adjustRadii();
-        if (!adjustedRect.isRounded()) {
+        if (!adjustedRect.hasNonZeroRadii()) {
             addRect(adjustedRect.rect());
             return;
         }
@@ -424,7 +424,7 @@ FloatRect Path::fastBoundingRect() const
     if (auto* segment = asSingle())
         return segment->fastBoundingRect();
 
-    if (RefPtr impl = asImpl())
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* impl = asImpl())
         return impl->fastBoundingRect();
 
     return { };

@@ -1,14 +1,14 @@
 
 PASS success (image): preload events
-FAIL success (image): main assert_less_than_equal: http://localhost:8800/preload/resources/square.png?label=image should be downloaded from network at most once expected a number less than or equal to 1 but got 2
+PASS success (image): main
 PASS 404 (image): preload events
-FAIL 404 (image): main assert_less_than_equal: http://localhost:8800/preload/resources/square.png?pipe=status%28404%29&label=image should be downloaded from network at most once expected a number less than or equal to 1 but got 2
+PASS 404 (image): main
 PASS CORS (image): preload events
 PASS CORS (image): main
 PASS CORS-error (image): preload events
-FAIL CORS-error (image): main assert_greater_than: http://127.0.0.1:8800/preload/resources/square.png?label=image should be loaded expected a number greater than 0 but got 0
+FAIL CORS-error (image): main assert_greater_than: http://not-web-platform.test:8800/preload/resources/square.png?label=image should be loaded expected a number greater than 0 but got 0
 PASS CSP-error (image): preload events
-FAIL CSP-error (image): main assert_greater_than: http://localhost:8800/common/redirect.py?location=http%3A%2F%2F127.0.0.1%3A8801%2Fpreload%2Fresources%2Fsquare.png%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=image should be loaded expected a number greater than 0 but got 0
+FAIL CSP-error (image): main assert_greater_than: http://web-platform.test:8800/common/redirect.py?location=http%3A%2F%2Fnot-web-platform.test%3A8801%2Fpreload%2Fresources%2Fsquare.png%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=image should be loaded expected a number greater than 0 but got 0
 PASS success (style): preload events
 PASS success (style): main
 FAIL 404 (style): preload events assert_unreached: preload onerror Reached unreachable code
@@ -16,9 +16,9 @@ PASS 404 (style): main
 PASS CORS (style): preload events
 PASS CORS (style): main
 PASS CORS-error (style): preload events
-FAIL CORS-error (style): main assert_greater_than: http://127.0.0.1:8800/preload/resources/dummy.css?label=style should be loaded expected a number greater than 0 but got 0
+FAIL CORS-error (style): main assert_greater_than: http://not-web-platform.test:8800/preload/resources/dummy.css?label=style should be loaded expected a number greater than 0 but got 0
 PASS CSP-error (style): preload events
-FAIL CSP-error (style): main assert_greater_than: http://localhost:8800/common/redirect.py?location=http%3A%2F%2F127.0.0.1%3A8801%2Fpreload%2Fresources%2Fdummy.css%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=style should be loaded expected a number greater than 0 but got 0
+FAIL CSP-error (style): main assert_greater_than: http://web-platform.test:8800/common/redirect.py?location=http%3A%2F%2Fnot-web-platform.test%3A8801%2Fpreload%2Fresources%2Fdummy.css%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=style should be loaded expected a number greater than 0 but got 0
 PASS success (script): preload events
 PASS success (script): main
 FAIL 404 (script): preload events assert_unreached: preload onerror Reached unreachable code
@@ -26,29 +26,29 @@ PASS 404 (script): main
 PASS CORS (script): preload events
 PASS CORS (script): main
 PASS CORS-error (script): preload events
-FAIL CORS-error (script): main assert_greater_than: http://127.0.0.1:8800/preload/resources/dummy.js?label=script should be loaded expected a number greater than 0 but got 0
+FAIL CORS-error (script): main assert_greater_than: http://not-web-platform.test:8800/preload/resources/dummy.js?label=script should be loaded expected a number greater than 0 but got 0
 PASS CSP-error (script): preload events
-FAIL CSP-error (script): main assert_greater_than: http://localhost:8800/common/redirect.py?location=http%3A%2F%2F127.0.0.1%3A8801%2Fpreload%2Fresources%2Fdummy.js%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=script should be loaded expected a number greater than 0 but got 0
+FAIL CSP-error (script): main assert_greater_than: http://web-platform.test:8800/common/redirect.py?location=http%3A%2F%2Fnot-web-platform.test%3A8801%2Fpreload%2Fresources%2Fdummy.js%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=script should be loaded expected a number greater than 0 but got 0
 PASS success (xhr): preload events
-FAIL success (xhr): main assert_less_than_equal: http://localhost:8800/preload/resources/dummy.xml?label=xhr should be downloaded from network at most once expected a number less than or equal to 1 but got 2
+FAIL success (xhr): main assert_less_than_equal: http://web-platform.test:8800/preload/resources/dummy.xml?label=xhr should be downloaded from network at most once expected a number less than or equal to 1 but got 2
 PASS 404 (xhr): preload events
-FAIL 404 (xhr): main assert_less_than_equal: http://localhost:8800/preload/resources/dummy.xml?pipe=status%28404%29&label=xhr should be downloaded from network at most once expected a number less than or equal to 1 but got 2
+FAIL 404 (xhr): main assert_less_than_equal: http://web-platform.test:8800/preload/resources/dummy.xml?pipe=status%28404%29&label=xhr should be downloaded from network at most once expected a number less than or equal to 1 but got 2
 PASS CORS (xhr): preload events
 PASS CORS (xhr): main
 PASS CORS-error (xhr): preload events
-FAIL CORS-error (xhr): main assert_greater_than: http://127.0.0.1:8800/preload/resources/dummy.xml?label=xhr should be loaded expected a number greater than 0 but got 0
+FAIL CORS-error (xhr): main assert_greater_than: http://not-web-platform.test:8800/preload/resources/dummy.xml?label=xhr should be loaded expected a number greater than 0 but got 0
 PASS CSP-error (xhr): preload events
-FAIL CSP-error (xhr): main assert_greater_than: http://localhost:8800/common/redirect.py?location=http%3A%2F%2F127.0.0.1%3A8801%2Fpreload%2Fresources%2Fdummy.xml%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=xhr should be loaded expected a number greater than 0 but got 0
+FAIL CSP-error (xhr): main assert_greater_than: http://web-platform.test:8800/common/redirect.py?location=http%3A%2F%2Fnot-web-platform.test%3A8801%2Fpreload%2Fresources%2Fdummy.xml%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=xhr should be loaded expected a number greater than 0 but got 0
 PASS success (fetch): preload events
-FAIL success (fetch): main assert_less_than_equal: http://localhost:8800/preload/resources/dummy.xml?label=fetch should be downloaded from network at most once expected a number less than or equal to 1 but got 2
+FAIL success (fetch): main assert_less_than_equal: http://web-platform.test:8800/preload/resources/dummy.xml?label=fetch should be downloaded from network at most once expected a number less than or equal to 1 but got 2
 PASS 404 (fetch): preload events
-FAIL 404 (fetch): main assert_less_than_equal: http://localhost:8800/preload/resources/dummy.xml?pipe=status%28404%29&label=fetch should be downloaded from network at most once expected a number less than or equal to 1 but got 2
+FAIL 404 (fetch): main assert_less_than_equal: http://web-platform.test:8800/preload/resources/dummy.xml?pipe=status%28404%29&label=fetch should be downloaded from network at most once expected a number less than or equal to 1 but got 2
 PASS CORS (fetch): preload events
 PASS CORS (fetch): main
 PASS CORS-error (fetch): preload events
-FAIL CORS-error (fetch): main assert_greater_than: http://127.0.0.1:8800/preload/resources/dummy.xml?label=fetch should be loaded expected a number greater than 0 but got 0
+FAIL CORS-error (fetch): main assert_greater_than: http://not-web-platform.test:8800/preload/resources/dummy.xml?label=fetch should be loaded expected a number greater than 0 but got 0
 PASS CSP-error (fetch): preload events
-FAIL CSP-error (fetch): main assert_greater_than: http://localhost:8800/common/redirect.py?location=http%3A%2F%2F127.0.0.1%3A8801%2Fpreload%2Fresources%2Fdummy.xml%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=fetch should be loaded expected a number greater than 0 but got 0
+FAIL CSP-error (fetch): main assert_greater_than: http://web-platform.test:8800/common/redirect.py?location=http%3A%2F%2Fnot-web-platform.test%3A8801%2Fpreload%2Fresources%2Fdummy.xml%3Fpipe%3Dheader%28Access-Control-Allow-Origin%2C*%29&label=fetch should be loaded expected a number greater than 0 but got 0
 FAIL Decode-error (image): preload events assert_unreached: preload onerror Reached unreachable code
 PASS Decode-error (image): main
 PASS Decode-error (style): preload events
@@ -56,7 +56,7 @@ PASS Decode-error (style): main
 PASS Decode-error (script): preload events
 PASS Decode-error (script): main
 PASS MIME-error (image): preload events
-FAIL MIME-error (image): main assert_less_than_equal: http://localhost:8800/preload/resources/square.png?pipe=header%28Content-Type%2Ctext%2Fnotimage%29&label=image should be downloaded from network at most once expected a number less than or equal to 1 but got 2
+PASS MIME-error (image): main
 PASS MIME-error (script): preload events
 PASS MIME-error (script): main
 PASS MIME-error (style): preload events

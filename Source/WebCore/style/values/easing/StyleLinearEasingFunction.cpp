@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Style {
 
-CSS::LinearEasingFunction toCSSLinearEasingFunction(const LinearTimingFunction& function, const RenderStyle& style)
+CSS::LinearEasingFunction toCSSLinearEasingFunction(const LinearTimingFunction& function, const Style::ComputedStyle& style)
 {
     return CSS::LinearEasingFunction {
         .parameters = {

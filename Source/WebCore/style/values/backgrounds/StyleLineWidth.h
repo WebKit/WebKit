@@ -68,7 +68,7 @@ template<> struct CSSValueConversion<LineWidth> { LineWidth operator()(BuilderSt
 // MARK: - Blending
 
 template<> struct Blending<LineWidth> {
-    auto blend(const LineWidth&, const LineWidth&, const RenderStyle&, const RenderStyle&, const Interpolation::Context&) -> LineWidth;
+    auto blend(const LineWidth&, const LineWidth&, const Style::ComputedStyle&, const Style::ComputedStyle&, const Interpolation::Context&) -> LineWidth;
 };
 
 // MARK: - Evaluate

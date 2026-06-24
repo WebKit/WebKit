@@ -15,6 +15,8 @@
 
 #include "rtc_base/win/hstring.h"
 
+namespace webrtc {
+
 namespace {
 
 FARPROC LoadComBaseFunction(const char* function_name) {
@@ -31,8 +33,6 @@ decltype(&::RoGetActivationFactory) GetRoGetActivationFactoryFunction() {
 }
 
 }  // namespace
-
-namespace webrtc {
 
 bool ResolveCoreWinRTDelayload() {
   return GetRoGetActivationFactoryFunction() &&

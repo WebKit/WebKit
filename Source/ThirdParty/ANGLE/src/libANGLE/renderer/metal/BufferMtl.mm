@@ -14,6 +14,7 @@
 #include "libANGLE/renderer/metal/BufferMtl.h"
 
 #include "common/debug.h"
+#include "common/span.h"
 #include "common/utilities.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -76,11 +77,6 @@ IndexConversionBufferMtl::IndexConversionBufferMtl(ContextMtl *context,
       primitiveRestartEnabled(primitiveRestartEnabledIn)
 {}
 
-IndexRange IndexConversionBufferMtl::getRangeForConvertedBuffer(size_t count)
-{
-    return IndexRange{0, count};
-}
-
 // UniformConversionBufferMtl implementation
 UniformConversionBufferMtl::UniformConversionBufferMtl(ContextMtl *context,
                                                        uint64_t programSerialIdIn,
@@ -128,15 +124,25 @@ angle::Result BufferMtl::setData(const gl::Context *context,
                                  const void *data,
                                  size_t intendedSize,
                                  gl::BufferUsage usage,
-                                 BufferFeedback *feedback)
+                                 BufferFeedback *feedback,
+                                 gl::ZeroFillRequired zeroFillRequired)
 {
+    const void *dataForImpl = data;
+    if (zeroFillRequired == gl::ZeroFillRequired::Yes)
+    {
+        const angle::MemoryBuffer *scratchBuffer = nullptr;
+        ANGLE_CHECK_GL_ALLOC(mtl::GetImpl(context),
+                             context->getZeroFilledBuffer(intendedSize, &scratchBuffer));
+        dataForImpl = scratchBuffer->data();
+    }
+
     ANGLE_TRY(setDataImpl(context, target, intendedSize, usage, feedback));
-    if (data == nullptr || intendedSize == 0)
+    if (dataForImpl == nullptr || intendedSize == 0)
     {
         return angle::Result::Continue;
     }
-    ANGLE_UNSAFE_BUFFERS(
-        angle::Span<const uint8_t> dataSpan(static_cast<const uint8_t *>(data), intendedSize));
+    ANGLE_UNSAFE_BUFFERS(angle::Span<const uint8_t> dataSpan(
+        static_cast<const uint8_t *>(dataForImpl), intendedSize));
     return setSubDataImpl(context, dataSpan, 0, feedback);
 }
 
@@ -457,7 +463,7 @@ void BufferMtl::markConversionBuffersDirty()
         buffer.dirty  = true;
         buffer.buffer = {};
     }
-    mRestartRangeCache.reset();
+    mDrawIndexRangeCache.reset();
 }
 
 void BufferMtl::clearConversionBuffers()
@@ -465,89 +471,86 @@ void BufferMtl::clearConversionBuffers()
     mVertexConversionBuffers.clear();
     mIndexConversionBuffers.clear();
     mUniformConversionBuffers.clear();
-    mRestartRangeCache.reset();
+    mDrawIndexRangeCache.reset();
 }
 
 template <typename T>
-static std::vector<IndexRange> CalculateRestartRanges(angle::Span<const uint8_t> data)
+static std::vector<DrawIndexRange> CalculateDrawIndexRanges(angle::Span<const uint8_t> data)
 {
-    std::vector<IndexRange> result;
+    std::vector<DrawIndexRange> result;
     angle::Span<const T> elements = angle::reinterpret_span<const T>(data);
     constexpr T restartMarker     = std::numeric_limits<T>::max();
     const auto begin              = elements.cbegin();
     const auto end                = elements.cend();
-    for (auto it = begin; it != end; ++it)
+    auto it                       = begin;
+    while (it != end)
     {
-        // Find the start of the restart range, i.e. first index with value of restart marker.
-        if (*it != restartMarker)
+        if (*it == restartMarker)
         {
+            ++it;
             continue;
         }
-        uint32_t restartBegin = static_cast<uint32_t>(std::distance(begin, it));
-        // Find the end of the restart range, i.e. last index with value of restart marker.
+        auto rangeBegin = it;
         do
         {
             ++it;
-        } while (it != end && *it == restartMarker);
-        result.emplace_back(restartBegin, static_cast<uint32_t>(std::distance(begin, it)) - 1);
-        if (it == end)
-        {
-            break;
-        }
+        } while (it != end && *it != restartMarker);
+        result.emplace_back(static_cast<size_t>(std::distance(begin, rangeBegin)),
+                            static_cast<size_t>(std::distance(begin, it)) - 1);
     }
     return result;
 }
 
-const std::vector<IndexRange> &BufferMtl::getRestartIndices(ContextMtl *ctx,
-                                                            gl::DrawElementsType indexType)
+const std::vector<DrawIndexRange> &BufferMtl::getDrawIndexRanges(ContextMtl *ctx,
+                                                                 gl::DrawElementsType indexType)
 {
-    if (!mRestartRangeCache || mRestartRangeCache->indexType != indexType)
+    if (!mDrawIndexRangeCache || mDrawIndexRangeCache->indexType != indexType)
     {
-        mRestartRangeCache.reset();
+        mDrawIndexRangeCache.reset();
         angle::Span<const uint8_t> data = getBufferDataReadOnly(ctx, 0);
-        std::vector<IndexRange> ranges;
+        std::vector<DrawIndexRange> ranges;
         switch (indexType)
         {
             case gl::DrawElementsType::UnsignedByte:
-                ranges = CalculateRestartRanges<uint8_t>(data);
+                ranges = CalculateDrawIndexRanges<uint8_t>(data);
                 break;
             case gl::DrawElementsType::UnsignedShort:
-                ranges = CalculateRestartRanges<uint16_t>(data);
+                ranges = CalculateDrawIndexRanges<uint16_t>(data);
                 break;
             case gl::DrawElementsType::UnsignedInt:
-                ranges = CalculateRestartRanges<uint32_t>(data);
+                ranges = CalculateDrawIndexRanges<uint32_t>(data);
                 break;
             default:
                 ASSERT(false);
         }
-        mRestartRangeCache.emplace(std::move(ranges), indexType);
+        mDrawIndexRangeCache.emplace(std::move(ranges), indexType);
     }
-    return mRestartRangeCache->ranges;
+    return mDrawIndexRangeCache->ranges;
 }
 
-const std::vector<IndexRange> BufferMtl::getRestartIndicesFromClientData(
-    ContextMtl *ctx,
-    gl::DrawElementsType indexType,
-    mtl::BufferRef idxBuffer)
+const std::vector<DrawIndexRange> BufferMtl::GetDrawIndexRangesFromClientData(
+    gl::DrawElementsType type,
+    GLint count,
+    const void *indices)
 {
-    angle::Span<const uint8_t> data = idxBuffer->mapReadOnly(ctx);
-    std::vector<IndexRange> restartIndices;
-    switch (indexType)
+    angle::Span<const uint8_t> data(static_cast<const uint8_t *>(indices),
+                                    static_cast<size_t>(count) * gl::GetDrawElementsTypeSize(type));
+    std::vector<DrawIndexRange> ranges;
+    switch (type)
     {
         case gl::DrawElementsType::UnsignedByte:
-            restartIndices = CalculateRestartRanges<uint8_t>(data);
+            ranges = CalculateDrawIndexRanges<uint8_t>(data);
             break;
         case gl::DrawElementsType::UnsignedShort:
-            restartIndices = CalculateRestartRanges<uint16_t>(data);
+            ranges = CalculateDrawIndexRanges<uint16_t>(data);
             break;
         case gl::DrawElementsType::UnsignedInt:
-            restartIndices = CalculateRestartRanges<uint32_t>(data);
+            ranges = CalculateDrawIndexRanges<uint32_t>(data);
             break;
         default:
             ASSERT(false);
     }
-    idxBuffer->unmap(ctx);
-    return restartIndices;
+    return ranges;
 }
 
 angle::Result BufferMtl::allocateNewMetalBuffer(ContextMtl *contextMtl,

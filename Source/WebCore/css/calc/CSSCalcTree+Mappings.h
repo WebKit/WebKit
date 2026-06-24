@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,7 @@ template<> struct ToCalculationMapping<Abs> { using type = Style::Calculation::A
 template<> struct ToCalculationMapping<Sign> { using type = Style::Calculation::Sign; };
 template<> struct ToCalculationMapping<Random> { using type = Style::Calculation::Random; };
 template<> struct ToCalculationMapping<Progress> { using type = Style::Calculation::Progress; };
+template<> struct ToCalculationMapping<CalcMix> { using type = Style::Calculation::CalcMix; };
 
 template<typename> struct ToCalcMapping;
 template<> struct ToCalcMapping<Style::Calculation::Sum> { using type = Sum; };
@@ -91,6 +92,7 @@ template<> struct ToCalcMapping<Style::Calculation::Abs> { using type = Abs; };
 template<> struct ToCalcMapping<Style::Calculation::Sign> { using type = Sign; };
 template<> struct ToCalcMapping<Style::Calculation::Random> { using type = Random; };
 template<> struct ToCalcMapping<Style::Calculation::Progress> { using type = Progress; };
+template<> struct ToCalcMapping<Style::Calculation::CalcMix> { using type = CalcMix; };
 
 template<typename T> using ToCalculationTreeOp = typename ToCalculationMapping<T>::type;
 template<typename T> using ToCalcTreeOp = typename ToCalcMapping<T>::type;

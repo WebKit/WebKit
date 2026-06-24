@@ -50,7 +50,6 @@ Tests/WebKit/WKWebView/mac/DOMNodeFromJSObject.mm @nonARC
 Tests/WebKit/WKWebView/mac/DOMRangeOfString.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/DragAndDropTestsMac.mm @nonARC
 Tests/WebKit/WKWebView/mac/DynamicDeviceScaleFactor.mm @nonARC
-Tests/WebKit/WKWebView/mac/EarlyKVOCrash.mm @nonARC
 Tests/WebKit/WKWebView/mac/EditableLegacyWebView.mm @nonARC
 Tests/WebKit/WKWebView/mac/ElementAtPointInWebFrame.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/FirstResponderScrollingPosition.mm @nonARC @no-unify

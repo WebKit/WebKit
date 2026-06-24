@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,8 @@
     JSLegacyParent=JSDOMWindowBase,
     LegacyUnenumerableNamedProperties,
     Global=Window,
-    Exposed=Window
+    Exposed=Window,
+    StandaloneConstructorAttributes
 ] interface DOMWindow : EventTarget {
 
     // Properties accessible from DOMWindows that are either remote or local
@@ -66,6 +67,7 @@
     // the current browsing context
     // FIXME: `document` should not be nullable.
     [LegacyUnforgeable] readonly attribute Document? document;
+    [EnabledBySetting=OriginAgentClusterEnabled] readonly attribute boolean originAgentCluster;
     attribute [AtomString] DOMString name;
     readonly attribute History history;
     [EnabledBySetting=NavigationAPIEnabled, Replaceable] readonly attribute Navigation navigation;

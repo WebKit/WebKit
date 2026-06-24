@@ -1,3 +1,0 @@
-
-PASS Sandboxed iframe can not navigate other frame's popup
-

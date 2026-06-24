@@ -11,10 +11,10 @@
 #define NET_DCSCTP_PUBLIC_TEXT_PCAP_PACKET_OBSERVER_H_
 
 #include <cstdint>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "net/dcsctp/public/packet_observer.h"
 #include "net/dcsctp/public/types.h"
 
@@ -27,17 +27,17 @@ class TextPcapPacketObserver : public dcsctp::PacketObserver {
 
   // Implementation of `dcsctp::PacketObserver`.
   void OnSentPacket(dcsctp::TimeMs now,
-                    webrtc::ArrayView<const uint8_t> payload) override;
+                    std::span<const uint8_t> payload) override;
 
   void OnReceivedPacket(dcsctp::TimeMs now,
-                        webrtc::ArrayView<const uint8_t> payload) override;
+                        std::span<const uint8_t> payload) override;
 
   // Prints a packet to the log. Exposed to allow it to be used in compatibility
   // tests suites that don't use PacketObserver.
   static void PrintPacket(absl::string_view prefix,
                           absl::string_view socket_name,
                           dcsctp::TimeMs now,
-                          webrtc::ArrayView<const uint8_t> payload);
+                          std::span<const uint8_t> payload);
 
  private:
   const std::string name_;

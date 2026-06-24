@@ -54,11 +54,11 @@ RefPtr<TimingFunction> createTimingFunctionDeprecated(const CSSValue&);
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<EasingFunction> { auto operator()(BuilderState&, const CSSValue&) -> EasingFunction; };
-template<> struct CSSValueCreation<EasingFunction> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const EasingFunction&); };
+template<> struct CSSValueCreation<EasingFunction> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const EasingFunction&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<EasingFunction> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const EasingFunction&); };
+template<> struct Serialize<EasingFunction> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const EasingFunction&); };
 
 // MARK: - Logging
 

@@ -11,7 +11,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp8.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
@@ -25,31 +24,28 @@
 #include "test/fuzzers/utils/validate_rtp_packetizer.h"
 
 namespace webrtc {
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
-
-  RtpPacketizer::PayloadSizeLimits limits = ReadPayloadSizeLimits(fuzz_input);
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  RtpPacketizer::PayloadSizeLimits limits = ReadPayloadSizeLimits(fuzz_data);
 
   RTPVideoHeaderVP8 hdr_info;
   hdr_info.InitRTPVideoHeaderVP8();
 #if WEBRTC_WEBKIT_BUILD
-  hdr_info.nonReference = fuzz_input.ReadOrDefaultValue<uint8_t>(0) % 2;
+  hdr_info.nonReference = fuzz_data.ReadOrDefaultValue<uint8_t>(0) % 2;
 #endif
-  uint16_t picture_id = fuzz_input.ReadOrDefaultValue<uint16_t>(0);
+  uint16_t picture_id = fuzz_data.ReadOrDefaultValue<uint16_t>(0);
   hdr_info.pictureId =
       picture_id >= 0x8000 ? kNoPictureId : picture_id & 0x7fff;
 #if WEBRTC_WEBKIT_BUILD
-  hdr_info.tl0PicIdx = fuzz_input.ReadOrDefaultValue<uint16_t>(kNoTl0PicIdx);
-  hdr_info.temporalIdx = fuzz_input.ReadOrDefaultValue<uint8_t>(kNoTemporalIdx);
-  hdr_info.layerSync = fuzz_input.ReadOrDefaultValue<uint8_t>(0) % 2;
-  hdr_info.keyIdx = fuzz_input.ReadOrDefaultValue<int>(kNoKeyIdx);
-  hdr_info.partitionId = fuzz_input.ReadOrDefaultValue<int>(0);
-  hdr_info.beginningOfPartition = fuzz_input.ReadOrDefaultValue<uint8_t>(0) % 2;
+  hdr_info.tl0PicIdx = fuzz_data.ReadOrDefaultValue<uint16_t>(kNoTl0PicIdx);
+  hdr_info.temporalIdx = fuzz_data.ReadOrDefaultValue<uint8_t>(kNoTemporalIdx);
+  hdr_info.layerSync = fuzz_data.ReadOrDefaultValue<uint8_t>(0) % 2;
+  hdr_info.keyIdx = fuzz_data.ReadOrDefaultValue<int>(kNoKeyIdx);
+  hdr_info.partitionId = fuzz_data.ReadOrDefaultValue<int>(0);
+  hdr_info.beginningOfPartition = fuzz_data.ReadOrDefaultValue<uint8_t>(0) % 2;
 #endif
 
   // Main function under test: RtpPacketizerVp8's constructor.
-  RtpPacketizerVp8 packetizer(fuzz_input.ReadByteArray(fuzz_input.BytesLeft()),
-                              limits, hdr_info);
+  RtpPacketizerVp8 packetizer(fuzz_data.ReadRemaining(), limits, hdr_info);
 
   size_t num_packets = packetizer.NumPackets();
   if (num_packets == 0) {

@@ -77,7 +77,7 @@ bool FilterImage::equalInputImages(const FilterImage& other) const
     return arePointingToEqualData(m_image, other.m_image);
 }
 
-Ref<CSSValue> FilterImage::computedStyleValue(const RenderStyle& style) const
+Ref<CSSValue> FilterImage::computedStyleValue(const Style::ComputedStyle& style) const
 {
     RefPtr image = m_image;
     return CSSFilterImageValue::create(
@@ -86,7 +86,7 @@ Ref<CSSValue> FilterImage::computedStyleValue(const RenderStyle& style) const
     );
 }
 
-Ref<DeprecatedCSSOMValue> FilterImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> FilterImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }
@@ -139,7 +139,7 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
     if (!styleImage)
         return &WebCore::Image::nullImage();
 
-    auto image = styleImage->image(renderer.get(), size, destinationContext, isForFirstLine);
+    auto image = styleImage->image(renderer, size, destinationContext, isForFirstLine);
     if (!image || image->isNull())
         return &WebCore::Image::nullImage();
 

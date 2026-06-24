@@ -13,11 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/chunk.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
@@ -41,8 +41,7 @@ class ForwardTsnChunk : public AnyForwardTsnChunk,
                   std::vector<SkippedStream> skipped_streams)
       : AnyForwardTsnChunk(new_cumulative_tsn, std::move(skipped_streams)) {}
 
-  static std::optional<ForwardTsnChunk> Parse(
-      webrtc::ArrayView<const uint8_t> data);
+  static std::optional<ForwardTsnChunk> Parse(std::span<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;

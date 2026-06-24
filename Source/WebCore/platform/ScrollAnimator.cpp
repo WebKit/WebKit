@@ -35,6 +35,7 @@
 #include "FloatPoint.h"
 #include "KeyboardScrollingAnimator.h"
 #include "LayoutSize.h"
+#include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollExtents.h"
 #include "ScrollableArea.h"
@@ -131,10 +132,10 @@ bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& position, S
     return m_scrollController.startAnimatedScrollToDestination(offsetFromPosition(m_currentPosition), offsetFromPosition(adjustedPosition));
 }
 
-void ScrollAnimator::retargetRunningAnimation(const FloatPoint& newPosition)
+bool ScrollAnimator::retargetRunningAnimation(const FloatPoint& newPosition)
 {
     ASSERT(scrollableArea().scrollAnimationStatus() == ScrollAnimationStatus::Animating);
-    m_scrollController.retargetAnimatedScroll(offsetFromPosition(newPosition));
+    return m_scrollController.retargetAnimatedScroll(offsetFromPosition(newPosition));
 }
 
 FloatPoint ScrollAnimator::offsetFromPosition(const FloatPoint& position) const

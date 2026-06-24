@@ -33,7 +33,9 @@
 #import <Foundation/NSURLProtectionSpace.h>
 #import <wtf/WeakPtr.h>
 
-using namespace WebCore;
+using WebCore::AuthenticationClient;
+using WebCore::Credential;
+using WebCore::core;
 
 @interface WebCoreAuthenticationClientAsChallengeSender : NSObject <NSURLAuthenticationChallengeSender> {
     WeakPtr<AuthenticationClient> m_client;

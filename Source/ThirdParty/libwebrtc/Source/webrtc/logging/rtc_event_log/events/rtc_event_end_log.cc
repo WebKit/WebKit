@@ -11,11 +11,11 @@
 #include "logging/rtc_event_log/events/rtc_event_end_log.h"
 
 #include <cstdint>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding.h"
@@ -29,7 +29,7 @@ RtcEventEndLog::RtcEventEndLog(Timestamp timestamp)
 
 RtcEventEndLog::~RtcEventEndLog() = default;
 
-std::string RtcEventEndLog::Encode(ArrayView<const RtcEvent*> batch) {
+std::string RtcEventEndLog::Encode(std::span<const RtcEvent*> batch) {
   EventEncoder encoder(event_params_, batch);
   return encoder.AsString();
 }
@@ -43,7 +43,7 @@ RtcEventLogParseStatus RtcEventEndLog::Parse(
   if (!status.ok())
     return status;
 
-  ArrayView<LoggedStopEvent> output_batch =
+  std::span<LoggedStopEvent> output_batch =
       ExtendLoggedBatch(output, parser.NumEventsInBatch());
 
   constexpr FieldParameters timestamp_params{
@@ -51,7 +51,7 @@ RtcEventLogParseStatus RtcEventEndLog::Parse(
       .field_id = FieldParameters::kTimestampField,
       .field_type = FieldType::kVarInt,
       .value_width = 64};
-  RtcEventLogParseStatusOr<ArrayView<uint64_t>> result =
+  RtcEventLogParseStatusOr<std::span<uint64_t>> result =
       parser.ParseNumericField(timestamp_params);
   if (!result.ok())
     return result.status();

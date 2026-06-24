@@ -67,7 +67,7 @@ bool BackForwardController::canGoBackOrForward(int distance) const
         return true;
     if (distance > 0 && static_cast<unsigned>(distance) <= forwardCount())
         return true;
-    if (distance < 0 && static_cast<unsigned>(-distance) <= backCount())
+    if (distance < 0 && -static_cast<unsigned>(distance) <= backCount())
         return true;
     return false;
 }

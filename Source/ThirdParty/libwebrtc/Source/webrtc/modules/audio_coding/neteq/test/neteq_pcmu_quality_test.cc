@@ -11,9 +11,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 
 #include "absl/flags/flag.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
@@ -66,7 +66,7 @@ class NetEqPcmuQualityTest : public NetEqQualityTest {
     AudioEncoder::EncodedInfo info;
     do {
       info = encoder_->Encode(dummy_timestamp,
-                              ArrayView<const int16_t>(
+                              std::span<const int16_t>(
                                   in_data + encoded_samples, kFrameSizeSamples),
                               payload);
       encoded_samples += kFrameSizeSamples;

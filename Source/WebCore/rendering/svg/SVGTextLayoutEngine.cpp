@@ -25,7 +25,6 @@
 #include "PathTraversalState.h"
 #include "RenderElementInlines.h"
 #include "RenderSVGTextPath.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGElement.h"
 #include "SVGGeometryElement.h"
 #include "SVGInlineTextBoxInlines.h"
@@ -33,6 +32,7 @@
 #include "SVGTextContentElement.h"
 #include "SVGTextLayoutEngineBaseline.h"
 #include "SVGTextLayoutEngineSpacing.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 // Set to a value > 0 to dump the text fragments
 #define DUMP_SVG_TEXT_LAYOUT_FRAGMENTS 0
@@ -172,9 +172,13 @@ void SVGTextLayoutEngine::beginTextPathLayout(const RenderSVGTextPath& textPath,
     else {
         m_textPathStartOffset = startOffset.valueInSpecifiedUnits();
         if (RefPtr targetElement = textPath.targetElement()) {
-            // FIXME: A value of zero is valid. Need to differentiate this case from being unspecified.
-            if (float pathLength = targetElement->pathLength())
-                m_textPathStartOffset *= m_textPathLength / pathLength;
+            if (targetElement->hasAttribute(SVGNames::pathLengthAttr)) {
+                float pathLength = targetElement->pathLength();
+                if (pathLength > 0)
+                    m_textPathStartOffset *= m_textPathLength / pathLength;
+                else if (!pathLength && m_textPathStartOffset)
+                    m_textPathStartOffset *= std::numeric_limits<float>::infinity();
+            }
         }
     }
 
@@ -222,7 +226,7 @@ void SVGTextLayoutEngine::layoutInlineTextBox(InlineIterator::SVGTextBoxIterator
     ASSERT(text.parent()->element());
     ASSERT(text.parent()->element()->isSVGElement());
 
-    const RenderStyle& style = text.style();
+    const Style::ComputedStyle& style = text.style();
 
     m_isVerticalText = style.writingMode().isVertical();
     layoutTextOnLineOrPath(textBox, text, style);
@@ -399,7 +403,7 @@ void SVGTextLayoutEngine::advanceToNextVisualCharacter(const SVGTextMetrics& vis
     m_visualCharacterOffset += visualMetrics.length();
 }
 
-void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator textBox, const RenderSVGInlineText& text, const RenderStyle& style)
+void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator textBox, const RenderSVGInlineText& text, const Style::ComputedStyle& style)
 {
     if (m_inPathLayout && m_textPath.isEmpty())
         return;
@@ -433,7 +437,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
     // Main layout algorithm.
     while (true) {
         // Find the start of the current text box in this list, respecting ligatures.
-        SVGTextMetrics visualMetrics(SVGTextMetrics::SkippedSpaceMetrics);
+        SVGTextMetrics visualMetrics(SVGTextMetrics::MetricsType::SkippedSpaceMetrics);
         if (!currentVisualCharacterMetrics(*textBox, visualMetricsValues, visualMetrics))
             break;
 
@@ -447,7 +451,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
             break;
 
         ASSERT(logicalAttributes);
-        SVGTextMetrics logicalMetrics(SVGTextMetrics::SkippedSpaceMetrics);
+        SVGTextMetrics logicalMetrics(SVGTextMetrics::MetricsType::SkippedSpaceMetrics);
         if (!currentLogicalCharacterMetrics(logicalAttributes, logicalMetrics))
             break;
 
@@ -519,11 +523,22 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
                 m_lineLayoutChunkStarts.add(makeKey(*textBox));
         }
 
-        float angle = SVGTextLayoutAttributes::isEmptyValue(data.rotate) ? 0 : data.rotate;
+        // Reduce the supplemental rotation modulo a full turn so an exact
+        // multiple of 360 (e.g. rotate="360") collapses to the identity. A
+        // rotate(360) builds its matrix from sin(2*pi), which evaluates to a
+        // tiny non-zero value (~1e-16, machine-epsilon rounding error) rather
+        // than 0, and getRotationOfChar() then rounds that back up to ~360.
+        float angle = SVGTextLayoutAttributes::isEmptyValue(data.rotate) ? 0 : fmodf(data.rotate, 360);
 
         // Calculate glyph orientation angle.
-        const char16_t* currentCharacter = characters.subspan(m_visualCharacterOffset).data();
-        float orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVerticalText, style, *currentCharacter);
+        auto remainingCharacters = characters.subspan(m_visualCharacterOffset);
+        char32_t currentCodePoint = remainingCharacters[0];
+        if (U16_IS_LEAD(currentCodePoint) && remainingCharacters.size() > 1) {
+            auto trail = remainingCharacters[1];
+            if (U16_IS_TRAIL(trail))
+                currentCodePoint = U16_GET_SUPPLEMENTARY(currentCodePoint, trail);
+        }
+        float orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVerticalText, style, currentCodePoint);
 
         // Calculate glyph advance & x/y orientation shifts.
         float xOrientationShift = 0;
@@ -537,7 +552,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
         updateRelativePositionAdjustmentsIfNeeded(data.dx, data.dy);
 
         // Calculate CSS 'letter-spacing' and 'word-spacing' for next character, if needed.
-        float spacing = spacingLayout.calculateCSSSpacing(currentCharacter ? *currentCharacter : '\0');
+        float spacing = spacingLayout.calculateCSSSpacing(currentCodePoint);
 
         float textPathOffset = 0;
         if (m_inPathLayout) {

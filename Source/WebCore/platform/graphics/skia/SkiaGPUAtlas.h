@@ -27,15 +27,19 @@
 
 #if USE(SKIA)
 #include "BitmapTexture.h"
+#include "GLFence.h"
 #include "IntSize.h"
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkImage.h>
 #include <skia/core/SkRect.h>
 #include <skia/gpu/ganesh/GrBackendSurface.h>
+#include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
+#include <wtf/Condition.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -46,6 +50,40 @@ class SkiaImageAtlasLayout;
 
 using ImageToRectMap = HashMap<const SkImage*, SkRect>;
 
+class AtlasUploadCondition : public ThreadSafeRefCounted<AtlasUploadCondition> {
+public:
+    static Ref<AtlasUploadCondition> create() { return adoptRef(*new AtlasUploadCondition); }
+
+    void addPending()
+    {
+        Locker locker { m_lock };
+        ++m_pendingCount;
+    }
+
+    void signal()
+    {
+        Locker locker { m_lock };
+        ASSERT(m_pendingCount);
+        if (!--m_pendingCount)
+            m_condition.notifyAll();
+    }
+
+    void wait()
+    {
+        Locker locker { m_lock };
+        m_condition.wait(m_lock, [this]() WTF_REQUIRES_LOCK(m_lock) {
+            return !m_pendingCount;
+        });
+    }
+
+private:
+    AtlasUploadCondition() = default;
+
+    Lock m_lock;
+    Condition m_condition;
+    unsigned m_pendingCount WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+};
+
 // GPU atlas that uploads raster images into a BitmapTexture.
 // Uses MemoryMappedGPUBuffer directly for dma-buf (GBM) path and
 // BitmapTexture::updateContents() for GL fallback.
@@ -53,23 +91,28 @@ class SkiaGPUAtlas : public ThreadSafeRefCounted<SkiaGPUAtlas, WTF::DestructionT
     WTF_MAKE_TZONE_ALLOCATED(SkiaGPUAtlas);
     WTF_MAKE_NONCOPYABLE(SkiaGPUAtlas);
 public:
-    static RefPtr<SkiaGPUAtlas> create(const SkiaImageAtlasLayout&, Ref<BitmapTexture>&&);
+    static RefPtr<SkiaGPUAtlas> create(const SkiaImageAtlasLayout&, Ref<BitmapTexture>&&, Ref<AtlasUploadCondition>&&, const sk_sp<GrContextThreadSafeProxy>&);
 
     // Upload images into the atlas texture. Can run from any thread for dma-buf backed textures.
     void uploadImages();
 
     virtual ~SkiaGPUAtlas();
 
-    const GrBackendTexture& backendTexture() const LIFETIME_BOUND { return m_backendTexture; }
     const ImageToRectMap& imageToRect() const LIFETIME_BOUND { return m_imageToRect; }
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
     BitmapTexture& atlasTexture() const { return m_atlasTexture.get(); }
+    sk_sp<SkImage> atlasImageForCurrentThread() const;
 
 private:
-    SkiaGPUAtlas(Ref<BitmapTexture>&&, GrBackendTexture&&, const SkiaImageAtlasLayout&, const IntSize&);
+    SkiaGPUAtlas(Ref<BitmapTexture>&&, GrBackendTexture&&, Ref<AtlasUploadCondition>&&, const sk_sp<GrContextThreadSafeProxy>&, const SkiaImageAtlasLayout&, const IntSize&);
+
+    void waitForUpload() const;
 
     Ref<BitmapTexture> m_atlasTexture;
     GrBackendTexture m_backendTexture;
+    Ref<AtlasUploadCondition> m_uploadCondition;
+    std::unique_ptr<GLFence> m_uploadFence;
+    sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
     ImageToRectMap m_imageToRect;
     Ref<const SkiaImageAtlasLayout> m_layout;
     IntSize m_size;

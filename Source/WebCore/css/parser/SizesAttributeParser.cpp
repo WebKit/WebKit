@@ -48,8 +48,8 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleScope.h"
 #include <wtf/Scope.h>
@@ -257,21 +257,25 @@ std::optional<float> SizesAttributeParser::parseLength(CSSParserTokenRange token
 bool SizesAttributeParser::mediaConditionMatches(const MQ::MediaQuery& mediaCondition)
 {
     // A Media Condition cannot have a media type other than screen.
-    Ref document = m_document.get();
-    CheckedPtr renderer = document->renderView();
-    if (!renderer)
-        return false;
-    CheckedRef style = renderer->style();
-    return MQ::MediaQueryEvaluator { screenAtom(), document, style.ptr() }.evaluate(mediaCondition);
+    return MQ::MediaQueryEvaluator { screenAtom(), m_document.get() }.evaluate(mediaCondition);
 }
 
 std::optional<CSSToLengthConversionData> SizesAttributeParser::conversionData() const
 {
-    CheckedPtr renderer = document().renderView();
-    if (!renderer)
+    Ref document = this->document();
+    CheckedPtr renderView = document->renderView();
+    if (!renderView)
         return std::nullopt;
-    CheckedRef style = renderer->style();
-    return CSSToLengthConversionData { style, style.ptr(), renderer->parentStyle(), renderer.get() };
+
+    // Per https://html.spec.whatwg.org/multipage/images.html#source-size-2:
+    //  "When a source size has a unit relative to the viewport, it must be
+    //   interpreted relative to the img element's node document's viewport.
+    //   Other units must be interpreted the same as in Media Queries."
+    //
+    // MediaQueries are defined to use the initial style, so that is passed
+    // in as the "style", "parent style" and "root style". The `RenderView`
+    // is passed in to resolve viewport relative units.
+    return CSSToLengthConversionData { document->initialStyle(), &document->initialStyle(), &document->initialStyle(), renderView.get() };
 }
 
 } // namespace WebCore

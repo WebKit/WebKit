@@ -49,5 +49,10 @@ inline void BlockDirectory::forEachNotEmptyBlock(const std::invocable<MarkedBloc
         });
 }
 
+inline MarkedBlock::Handle* BlockDirectory::findBlockToSweep()
+{
+    return findBlockToSweep(m_unsweptCursor);
+}
+
 } // namespace JSC
 

@@ -11,8 +11,8 @@
 #include "modules/audio_processing/agc2/biquad_filter.h"
 
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -31,7 +31,7 @@ void BiQuadFilter::Reset() {
   state_ = {};
 }
 
-void BiQuadFilter::Process(ArrayView<const float> x, ArrayView<float> y) {
+void BiQuadFilter::Process(std::span<const float> x, std::span<float> y) {
   RTC_DCHECK_EQ(x.size(), y.size());
   const float config_a0 = config_.a[0];
   const float config_a1 = config_.a[1];

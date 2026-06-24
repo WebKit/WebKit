@@ -21,6 +21,7 @@ if (rtc_include_tests) {
       "../..:test_support",
       "../../../api:audio_options_api",
       "../../../api:jsep",
+      "../../../api:rtp_header_extension_id",
       "../../../api:rtp_parameters",
       "../../../api/test/network_emulation",
       "../../../api/units:time_delta",

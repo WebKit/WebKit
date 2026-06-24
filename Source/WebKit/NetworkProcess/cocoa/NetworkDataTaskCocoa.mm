@@ -103,6 +103,7 @@ void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried
         return;
 
     request._needsNetworkTrackingPrevention = YES;
+    request._privacyProxyFailClosed = YES;
 #else
     UNUSED_PARAM(pcmDataCarried);
     UNUSED_PARAM(request);

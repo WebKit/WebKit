@@ -13,8 +13,8 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/sequence_checker.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
@@ -60,9 +60,9 @@ class NetworkNodeTransport : public Transport {
 
   void UpdateAdapterId(int adapter_id);
 
-  bool SendRtp(ArrayView<const uint8_t> packet,
+  bool SendRtp(std::span<const uint8_t> packet,
                const PacketOptions& options) override;
-  bool SendRtcp(ArrayView<const uint8_t> packet,
+  bool SendRtcp(std::span<const uint8_t> packet,
                 const PacketOptions& options) override;
 
   void Connect(EmulatedEndpoint* endpoint,

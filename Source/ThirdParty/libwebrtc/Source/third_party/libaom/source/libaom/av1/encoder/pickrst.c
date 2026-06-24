@@ -848,25 +848,27 @@ static SgrprojInfo search_selfguided_restoration(
                           flt0, flt1, flt_stride, exqd, &err, error_info);
       get_best_error(&besterr, err, exqd, bestxqd, &bestep, ep);
     }
-    // evaluate left and right ep of winner in seed ep
-    int bestep_ref = bestep;
-    for (ep = bestep_ref - 1; ep < bestep_ref + 2; ep += 2) {
-      if (ep < SGRPROJ_EP_GRP1_START_IDX || ep > SGRPROJ_EP_GRP1_END_IDX)
-        continue;
-      int64_t err;
-      compute_sgrproj_err(dat8, width, height, dat_stride, src8, src_stride,
-                          use_highbitdepth, bit_depth, pu_width, pu_height, ep,
-                          flt0, flt1, flt_stride, exqd, &err, error_info);
-      get_best_error(&besterr, err, exqd, bestxqd, &bestep, ep);
-    }
-    // evaluate last two group
-    for (idx = 0; idx < SGRPROJ_EP_GRP2_3_SEARCH_COUNT; idx++) {
-      ep = sgproj_ep_grp2_3[idx][bestep];
-      int64_t err;
-      compute_sgrproj_err(dat8, width, height, dat_stride, src8, src_stride,
-                          use_highbitdepth, bit_depth, pu_width, pu_height, ep,
-                          flt0, flt1, flt_stride, exqd, &err, error_info);
-      get_best_error(&besterr, err, exqd, bestxqd, &bestep, ep);
+    if (enable_sgr_ep_pruning < 2) {
+      // evaluate left and right ep of winner in seed ep
+      int bestep_ref = bestep;
+      for (ep = bestep_ref - 1; ep < bestep_ref + 2; ep += 2) {
+        if (ep < SGRPROJ_EP_GRP1_START_IDX || ep > SGRPROJ_EP_GRP1_END_IDX)
+          continue;
+        int64_t err;
+        compute_sgrproj_err(dat8, width, height, dat_stride, src8, src_stride,
+                            use_highbitdepth, bit_depth, pu_width, pu_height,
+                            ep, flt0, flt1, flt_stride, exqd, &err, error_info);
+        get_best_error(&besterr, err, exqd, bestxqd, &bestep, ep);
+      }
+      // evaluate last two group
+      for (idx = 0; idx < SGRPROJ_EP_GRP2_3_SEARCH_COUNT; idx++) {
+        ep = sgproj_ep_grp2_3[idx][bestep];
+        int64_t err;
+        compute_sgrproj_err(dat8, width, height, dat_stride, src8, src_stride,
+                            use_highbitdepth, bit_depth, pu_width, pu_height,
+                            ep, flt0, flt1, flt_stride, exqd, &err, error_info);
+        get_best_error(&besterr, err, exqd, bestxqd, &bestep, ep);
+      }
     }
   }
 

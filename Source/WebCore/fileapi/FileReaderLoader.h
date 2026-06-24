@@ -122,7 +122,6 @@ private:
     bool m_isRawDataConverted;
 
     String m_stringResult;
-    RefPtr<Blob> m_blobResult;
 
     // The decoder used to decode the text data.
     RefPtr<TextResourceDecoder> m_decoder;

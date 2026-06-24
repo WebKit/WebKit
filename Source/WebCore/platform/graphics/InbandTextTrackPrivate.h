@@ -71,6 +71,7 @@ public:
     virtual bool isMainProgramContent() const { return true; }
     virtual bool isEasyToRead() const { return false; }
     virtual bool isDefault() const { return false; }
+    virtual bool isMachineGenerated() const { return false; }
     String label() const override { return emptyString(); }
     String language() const override { return emptyString(); }
     std::optional<String> trackUID() const override { return emptyString(); }

@@ -57,7 +57,7 @@ public:
     virtual bool errorOccurred() const = 0;
 
     virtual bool ensureCustomFontData() = 0;
-    virtual RefPtr<Font> createFont(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontCreationContext&) = 0;
+    virtual RefPtr<Font> createFont(const FontDescription&, const FontCreationContext&) = 0;
 
     virtual void setClient(FontLoadRequestClient*) = 0;
 

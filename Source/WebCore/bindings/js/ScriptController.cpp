@@ -187,7 +187,7 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
     std::optional<ExceptionDetails> optionalDetails;
     if (evaluationException) {
         ExceptionDetails details;
-        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), false, &details);
+        reportException(&globalObject, evaluationException, protect(sourceCode.cachedScript()), false, &details);
         optionalDetails = WTF::move(details);
     }
 
@@ -457,7 +457,7 @@ WindowProxy& ScriptController::windowProxy()
 
 JSWindowProxy& ScriptController::jsWindowProxy(DOMWrapperWorld& world)
 {
-    auto* jsWindowProxy = m_frame->windowProxy().jsWindowProxy(world);
+    auto* jsWindowProxy = protect(m_frame->windowProxy())->jsWindowProxy(world);
     ASSERT_WITH_MESSAGE(jsWindowProxy, "The JSWindowProxy can only be null if the frame has been destroyed");
     return *jsWindowProxy;
 }
@@ -561,7 +561,7 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::JSGlobalObj
 {
     for (auto& jsWindowProxy : protect(windowProxy())->jsWindowProxiesAsVector()) {
         auto* lexicalGlobalObject = jsWindowProxy->window();
-        RefPtr origin = downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
+        RefPtr origin = protect(downcast<LocalDOMWindow>(jsWindowProxy->wrapped()))->document()->securityOrigin();
         result.append(std::make_pair(lexicalGlobalObject, WTF::move(origin)));
     }
 }
@@ -668,7 +668,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
     auto sourceURL = parameters.sourceURL;
     if (!sourceURL.isValid()) {
         // FIXME: This is gross, but when setTimeout() and setInterval() are passed JS strings, the thrown errors should use the frame document URL (according to WPT).
-        sourceURL = m_frame->document()->url();
+        sourceURL = protect(m_frame->document())->url();
     }
 
     switch (parameters.runAsAsyncFunction) {
@@ -756,7 +756,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
 
     if (evaluationException && !optionalDetails) {
         ExceptionDetails details;
-        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), false, &details);
+        reportException(&globalObject, evaluationException, protect(sourceCode.cachedScript()), false, &details);
         optionalDetails = WTF::move(details);
     }
 
@@ -852,7 +852,7 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     if (m_frame->document() && m_frame->document()->isSandboxed(SandboxFlag::Scripts)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
         if (reason == ReasonForCallingCanExecuteScripts::AboutToExecuteScript || reason == ReasonForCallingCanExecuteScripts::AboutToCreateEventListener)
-            protect(m_frame->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked script execution in '"_s, m_frame->document()->url().stringCenterEllipsizedToLength(), "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."_s));
+            protect(m_frame->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked script execution in '"_s, protect(m_frame->document())->url().stringCenterEllipsizedToLength(), "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."_s));
         return false;
     }
 

@@ -31,6 +31,7 @@
 #include "AirCode.h"
 #include "AirInstInlines.h"
 #include "AirTmpWidthInlines.h"
+#include <optional>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -38,45 +39,63 @@ TmpWidth::TmpWidth() = default;
 
 TmpWidth::TmpWidth(Code& code)
 {
-    recompute<GP>(code);
-    recompute<FP>(code);
+    recomputeBoth(code);
 }
 
 TmpWidth::~TmpWidth() = default;
 
-template <Bank bank>
+template <auto bankFilter>
 void TmpWidth::recompute(Code& code)
 {
     // Set this to true to cause this analysis to always return pessimistic results.
     constexpr bool beCareful = false;
     constexpr bool verbose = false;
 
+    constexpr auto shouldProcess = [](Bank bank) {
+        if constexpr (std::is_same_v<decltype(bankFilter), Bank>)
+            return bankFilter == bank;
+        else
+            return true;
+    };
+
     if (verbose) {
         dataLogLn("Code before TmpWidth:");
         dataLog(code);
     }
 
-    auto& bankWidthsVector = widthsVector(bank);
-    bankWidthsVector.resize(AbsoluteTmpMapper<bank>::absoluteIndex(code.numTmps(bank)));
-    for (unsigned i = 0; i < bankWidthsVector.size(); ++i)
-        bankWidthsVector[i] = Widths(bank);
-    
-    auto assumeTheWorst = [&] (Tmp tmp) {
-        if (bank == Arg(tmp).bank()) {
-            Width conservative = code.usesSIMD() ? conservativeWidth(bank) : conservativeWidthWithoutVectors(bank);
-            addWidths(tmp, { conservative, conservative });
+    forEachBank([&](Bank bank) {
+        if (!shouldProcess(bank))
+            return;
+
+        auto& bankWidthsVector = widthsVector(bank);
+        switch (bank) {
+        case GP:
+            bankWidthsVector.resize(AbsoluteTmpMapper<GP>::absoluteIndex(code.numTmps(GP)));
+            break;
+        case FP:
+            bankWidthsVector.resize(AbsoluteTmpMapper<FP>::absoluteIndex(code.numTmps(FP)));
+            break;
         }
+        bankWidthsVector.fill(Widths(bank));
+    });
+
+    auto assumeTheWorst = [&](Tmp tmp) {
+        Bank bank = Arg(tmp).bank();
+        if (!shouldProcess(bank))
+            return;
+
+        Width conservative = code.usesSIMD() ? conservativeWidth(bank) : conservativeWidthWithoutVectors(bank);
+        addWidths(tmp, { conservative, conservative });
     };
-    
+
     // Assume the worst for registers.
-    RegisterSet::allRegisters().forEach(
-        [&] (Reg reg) {
-            assumeTheWorst(Tmp(reg));
-        });
+    RegisterSet::allRegisters().forEach([&](Reg reg) {
+        assumeTheWorst(Tmp(reg));
+    });
 
     if (beCareful) {
         code.forEachTmp(assumeTheWorst);
-        
+
         // We fall through because the fixpoint that follows can only make things even more
         // conservative. This mode isn't meant to be fast, just safe.
     }
@@ -84,21 +103,22 @@ void TmpWidth::recompute(Code& code)
     // Now really analyze everything but Move's over Tmp's, but set aside those Move's so we can find
     // them quickly during the fixpoint below. Note that we can make this analysis stronger by
     // recognizing more kinds of Move's or anything that has Move-like behavior, though it's probably not
-    // worth it.
-    Vector<Inst*> moves;
+    // worth it. We bucket the Move's per-bank so the fixpoint can run independently for each bank.
+    std::array<Vector<Inst*>, numBanks> moves;
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
             if (inst.kind.opcode == Move && inst.args[1].isTmp()) {
-                if (Arg(inst.args[1]).bank() != bank)
+                Bank dstBank = Arg(inst.args[1]).bank();
+                if (!shouldProcess(dstBank))
                     continue;
 
                 if (inst.args[0].isTmp()) {
-                    moves.append(&inst);
+                    moves[dstBank].append(&inst);
                     continue;
                 }
+
                 if (inst.args[0].isImm() && inst.args[0].value() >= 0) {
-                    Tmp tmp = inst.args[1].tmp();
-                    Widths& tmpWidths = widths(tmp);
+                    Widths& tmpWidths = widths(inst.args[1].tmp());
                     Width maxWidth = Width64;
                     if (inst.args[0].value() <= std::numeric_limits<int8_t>::max())
                         maxWidth = Width8;
@@ -108,13 +128,12 @@ void TmpWidth::recompute(Code& code)
                         maxWidth = Width32;
 
                     tmpWidths.def = std::max(tmpWidths.def, maxWidth);
-
                     continue;
                 }
             }
             inst.forEachTmp(
                 [&] (Tmp& tmp, Arg::Role role, Bank tmpBank, Width width) {
-                    if (Arg(tmp).bank() != bank)
+                    if (!shouldProcess(Arg(tmp).bank()))
                         return;
 
                     Widths& tmpWidths = widths(tmp);
@@ -130,44 +149,67 @@ void TmpWidth::recompute(Code& code)
     }
 
     // Finally, fixpoint over the Move's.
-    bool changed = true;
-    while (changed) {
-        changed = false;
-        for (Inst* move : moves) {
-            ASSERT(move->kind.opcode == Move);
-            ASSERT(move->args[0].isTmp());
-            ASSERT(move->args[1].isTmp());
+    auto fixpointMoves = [&](const Vector<Inst*>& moves) {
+        bool changed = true;
+        while (changed) {
+            changed = false;
+            for (Inst* move : moves) {
+                ASSERT(move->kind.opcode == Move);
+                ASSERT(move->args[0].isTmp());
+                ASSERT(move->args[1].isTmp());
 
-            Widths& srcWidths = widths(move->args[0].tmp());
-            Widths& dstWidths = widths(move->args[1].tmp());
+                Widths& srcWidths = widths(move->args[0].tmp());
+                Widths& dstWidths = widths(move->args[1].tmp());
 
-            // Legend:
-            //
-            //     Move %src, %dst
+                // Legend:
+                //
+                //     Move %src, %dst
 
-            // defWidth(%dst) is a promise about how many high bits are zero. The smaller the width, the
-            // stronger the promise. This Move may weaken that promise if we know that %src is making a
-            // weaker promise. Such forward flow is the only thing that determines defWidth().
-            if (dstWidths.def < srcWidths.def) {
-                dstWidths.def = srcWidths.def;
-                changed = true;
-            }
+                // defWidth(%dst) is a promise about how many high bits are zero. The smaller the width, the
+                // stronger the promise. This Move may weaken that promise if we know that %src is making a
+                // weaker promise. Such forward flow is the only thing that determines defWidth().
+                if (dstWidths.def < srcWidths.def) {
+                    dstWidths.def = srcWidths.def;
+                    changed = true;
+                }
 
-            // srcWidth(%src) is a promise about how many high bits are ignored. The smaller the width,
-            // the stronger the promise. This Move may weaken that promise if we know that %dst is making
-            // a weaker promise. Such backward flow is the only thing that determines srcWidth().
-            if (srcWidths.use < dstWidths.use) {
-                srcWidths.use = dstWidths.use;
-                changed = true;
+                // srcWidth(%src) is a promise about how many high bits are ignored. The smaller the width,
+                // the stronger the promise. This Move may weaken that promise if we know that %dst is making
+                // a weaker promise. Such backward flow is the only thing that determines srcWidth().
+                if (srcWidths.use < dstWidths.use) {
+                    srcWidths.use = dstWidths.use;
+                    changed = true;
+                }
             }
         }
-    }
+    };
+    forEachBank([&](Bank bank) {
+        if (!shouldProcess(bank))
+            return;
+
+        fixpointMoves(moves[bank]);
+    });
 
     if (verbose) {
-        dataLogLn("bank: ", bank, ", widthsVector: ");
-        for (unsigned i = 0; i < bankWidthsVector.size(); ++i)
-            dataLogLn("\t", AbsoluteTmpMapper<bank>::tmpFromAbsoluteIndex(i), " : ", bankWidthsVector[i]);
+        forEachBank([&](Bank bank) {
+            if (!shouldProcess(bank))
+                return;
+
+            dataLogLn("bank: ", bank, ", widthsVector: ");
+            auto& vector = widthsVector(bank);
+            for (unsigned i = 0; i < vector.size(); ++i) {
+                if (bank == GP)
+                    dataLogLn("\t", AbsoluteTmpMapper<GP>::tmpFromAbsoluteIndex(i), " : ", vector[i]);
+                else
+                    dataLogLn("\t", AbsoluteTmpMapper<FP>::tmpFromAbsoluteIndex(i), " : ", vector[i]);
+            }
+        });
     }
+}
+
+void TmpWidth::recomputeBoth(Code& code)
+{
+    recompute<std::nullopt>(code);
 }
 
 template <Bank bank>
@@ -195,7 +237,10 @@ void TmpWidth::Widths::dump(PrintStream& out) const
     out.print("{use = ", use, ", def = ", def, "}");
 }
 
+template void TmpWidth::recompute<GP>(Code&);
+template void TmpWidth::recompute<FP>(Code&);
+template void TmpWidth::recompute<std::nullopt>(Code&);
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-

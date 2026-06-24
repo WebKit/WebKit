@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 include(VersioningUtils)
 
-SET_PROJECT_VERSION(2 53 2)
+SET_PROJECT_VERSION(2 53 3)
 
 set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
 
@@ -193,9 +193,9 @@ endif ()
 EXPOSE_STRING_VARIABLE_TO_BUILD(WPE_API_VERSION)
 
 if (WPE_API_VERSION VERSION_EQUAL "1.1")
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 13 1 13)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 13 2 13)
 else ()
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 11 1 10)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 11 2 10)
 endif ()
 
 set(CMAKE_C_VISIBILITY_PRESET hidden)
@@ -261,6 +261,10 @@ if (USE_VULKAN)
         message(FATAL_ERROR "Volk is required for USE_VULKAN")
     endif ()
 endif ()
+
+# Resolve FreeType so WOFF2Checks can detect its builtin WOFF2 support. Skia
+# resolves it again later, in a subdirectory scope that is not visible here.
+find_package(Freetype 2.9.0 REQUIRED)
 
 include(WOFF2Checks)
 if (FREETYPE_WOFF2_SUPPORT_IS_AVAILABLE)

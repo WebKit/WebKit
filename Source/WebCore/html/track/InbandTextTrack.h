@@ -47,6 +47,7 @@ public:
     bool containsOnlyForcedSubtitles() const override;
     bool isMainProgramContent() const override;
     bool isEasyToRead() const override;
+    bool isMachineGenerated() const override;
     void setMode(Mode) override;
     bool isDefault() const override;
     size_t inbandTrackIndex();

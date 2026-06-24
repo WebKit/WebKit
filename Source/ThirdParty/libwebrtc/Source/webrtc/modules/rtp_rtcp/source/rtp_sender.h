@@ -16,12 +16,13 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_packet_sender.h"
 #include "modules/rtp_rtcp/include/flexfec_sender.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -73,7 +74,8 @@ class RTPSender {
       RTC_LOCKS_EXCLUDED(send_mutex_);
 
   // RTP header extension
-  bool RegisterRtpHeaderExtension(absl::string_view uri, int id)
+  bool RegisterRtpHeaderExtension(absl::string_view uri,
+                                  RtpHeaderExtensionId id)
       RTC_LOCKS_EXCLUDED(send_mutex_);
   bool IsRtpHeaderExtensionRegistered(RTPExtensionType type) const
       RTC_LOCKS_EXCLUDED(send_mutex_);
@@ -114,21 +116,21 @@ class RTPSender {
       RTC_LOCKS_EXCLUDED(send_mutex_);
 
   // Size info for header extensions used by FEC packets.
-  static ArrayView<const RtpExtensionSize> FecExtensionSizes()
+  static std::span<const RtpExtensionSize> FecExtensionSizes()
       RTC_LOCKS_EXCLUDED(send_mutex_);
 
   // Size info for header extensions used by video packets.
-  static ArrayView<const RtpExtensionSize> VideoExtensionSizes()
+  static std::span<const RtpExtensionSize> VideoExtensionSizes()
       RTC_LOCKS_EXCLUDED(send_mutex_);
 
   // Size info for header extensions used by audio packets.
-  static ArrayView<const RtpExtensionSize> AudioExtensionSizes()
+  static std::span<const RtpExtensionSize> AudioExtensionSizes()
       RTC_LOCKS_EXCLUDED(send_mutex_);
 
   // Create empty packet, fills ssrc, csrcs and reserve place for header
   // extensions RtpSender updates before sending.
   std::unique_ptr<RtpPacketToSend> AllocatePacket(
-      ArrayView<const uint32_t> csrcs = {}) RTC_LOCKS_EXCLUDED(send_mutex_);
+      std::span<const uint32_t> csrcs = {}) RTC_LOCKS_EXCLUDED(send_mutex_);
 
   // Maximum header overhead per fec/padding packet.
   size_t FecOrPaddingPacketMaxRtpHeaderLength() const

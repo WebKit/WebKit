@@ -12,17 +12,16 @@ layer at (9,51) size 400x400
   RenderSVGRoot {svg} at (1,1) size 400x400
 layer at (9,51) size 400x400
   RenderSVGViewportContainer at (0,0) size 400x400
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+    RenderSVGTransformableContainer {g} at (0,0) size 100x80
 layer at (14,51) size 90x80
   RenderSVGResourceMasker {mask} at (5,0) size 90x80
-layer at (14,51) size 40x40
-  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
-layer at (14,91) size 40x40
-  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
-layer at (64,51) size 40x40
-  RenderSVGEllipse {circle} at (50,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
-layer at (64,91) size 40x40
-  RenderSVGEllipse {circle} at (50,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
-layer at (9,51) size 100x80
-  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+    RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+    RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+    RenderSVGEllipse {circle} at (50,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+    RenderSVGEllipse {circle} at (50,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
 layer at (9,51) size 100x80
   RenderSVGRect {rect} at (0,0) size 100x80 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]

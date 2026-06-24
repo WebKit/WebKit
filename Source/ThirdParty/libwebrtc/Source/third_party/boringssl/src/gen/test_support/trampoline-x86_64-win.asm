@@ -9,7 +9,7 @@ default	rel
 %define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
+%include "boringssl_prefix_symbols_internal_x86_64_win_asm.inc"
 %endif
 section	.text code align=64
 
@@ -21,8 +21,8 @@ section	.text code align=64
 
 
 
-
 global	abi_test_trampoline
+
 ALIGN	16
 abi_test_trampoline:
 
@@ -257,248 +257,248 @@ $L$call_done:
 
 $L$SEH_end_abi_test_trampoline_22:
 
-
 global	abi_test_clobber_rax
+
 ALIGN	16
 abi_test_clobber_rax:
 _CET_ENDBR
 	xor	rax,rax
 	ret
 
-
 global	abi_test_clobber_rbx
+
 ALIGN	16
 abi_test_clobber_rbx:
 _CET_ENDBR
 	xor	rbx,rbx
 	ret
 
-
 global	abi_test_clobber_rcx
+
 ALIGN	16
 abi_test_clobber_rcx:
 _CET_ENDBR
 	xor	rcx,rcx
 	ret
 
-
 global	abi_test_clobber_rdx
+
 ALIGN	16
 abi_test_clobber_rdx:
 _CET_ENDBR
 	xor	rdx,rdx
 	ret
 
-
 global	abi_test_clobber_rdi
+
 ALIGN	16
 abi_test_clobber_rdi:
 _CET_ENDBR
 	xor	rdi,rdi
 	ret
 
-
 global	abi_test_clobber_rsi
+
 ALIGN	16
 abi_test_clobber_rsi:
 _CET_ENDBR
 	xor	rsi,rsi
 	ret
 
-
 global	abi_test_clobber_rbp
+
 ALIGN	16
 abi_test_clobber_rbp:
 _CET_ENDBR
 	xor	rbp,rbp
 	ret
 
-
 global	abi_test_clobber_r8
+
 ALIGN	16
 abi_test_clobber_r8:
 _CET_ENDBR
 	xor	r8,r8
 	ret
 
-
 global	abi_test_clobber_r9
+
 ALIGN	16
 abi_test_clobber_r9:
 _CET_ENDBR
 	xor	r9,r9
 	ret
 
-
 global	abi_test_clobber_r10
+
 ALIGN	16
 abi_test_clobber_r10:
 _CET_ENDBR
 	xor	r10,r10
 	ret
 
-
 global	abi_test_clobber_r11
+
 ALIGN	16
 abi_test_clobber_r11:
 _CET_ENDBR
 	xor	r11,r11
 	ret
 
-
 global	abi_test_clobber_r12
+
 ALIGN	16
 abi_test_clobber_r12:
 _CET_ENDBR
 	xor	r12,r12
 	ret
 
-
 global	abi_test_clobber_r13
+
 ALIGN	16
 abi_test_clobber_r13:
 _CET_ENDBR
 	xor	r13,r13
 	ret
 
-
 global	abi_test_clobber_r14
+
 ALIGN	16
 abi_test_clobber_r14:
 _CET_ENDBR
 	xor	r14,r14
 	ret
 
-
 global	abi_test_clobber_r15
+
 ALIGN	16
 abi_test_clobber_r15:
 _CET_ENDBR
 	xor	r15,r15
 	ret
 
-
 global	abi_test_clobber_xmm0
+
 ALIGN	16
 abi_test_clobber_xmm0:
 _CET_ENDBR
 	pxor	xmm0,xmm0
 	ret
 
-
 global	abi_test_clobber_xmm1
+
 ALIGN	16
 abi_test_clobber_xmm1:
 _CET_ENDBR
 	pxor	xmm1,xmm1
 	ret
 
-
 global	abi_test_clobber_xmm2
+
 ALIGN	16
 abi_test_clobber_xmm2:
 _CET_ENDBR
 	pxor	xmm2,xmm2
 	ret
 
-
 global	abi_test_clobber_xmm3
+
 ALIGN	16
 abi_test_clobber_xmm3:
 _CET_ENDBR
 	pxor	xmm3,xmm3
 	ret
 
-
 global	abi_test_clobber_xmm4
+
 ALIGN	16
 abi_test_clobber_xmm4:
 _CET_ENDBR
 	pxor	xmm4,xmm4
 	ret
 
-
 global	abi_test_clobber_xmm5
+
 ALIGN	16
 abi_test_clobber_xmm5:
 _CET_ENDBR
 	pxor	xmm5,xmm5
 	ret
 
-
 global	abi_test_clobber_xmm6
+
 ALIGN	16
 abi_test_clobber_xmm6:
 _CET_ENDBR
 	pxor	xmm6,xmm6
 	ret
 
-
 global	abi_test_clobber_xmm7
+
 ALIGN	16
 abi_test_clobber_xmm7:
 _CET_ENDBR
 	pxor	xmm7,xmm7
 	ret
 
-
 global	abi_test_clobber_xmm8
+
 ALIGN	16
 abi_test_clobber_xmm8:
 _CET_ENDBR
 	pxor	xmm8,xmm8
 	ret
 
-
 global	abi_test_clobber_xmm9
+
 ALIGN	16
 abi_test_clobber_xmm9:
 _CET_ENDBR
 	pxor	xmm9,xmm9
 	ret
 
-
 global	abi_test_clobber_xmm10
+
 ALIGN	16
 abi_test_clobber_xmm10:
 _CET_ENDBR
 	pxor	xmm10,xmm10
 	ret
 
-
 global	abi_test_clobber_xmm11
+
 ALIGN	16
 abi_test_clobber_xmm11:
 _CET_ENDBR
 	pxor	xmm11,xmm11
 	ret
 
-
 global	abi_test_clobber_xmm12
+
 ALIGN	16
 abi_test_clobber_xmm12:
 _CET_ENDBR
 	pxor	xmm12,xmm12
 	ret
 
-
 global	abi_test_clobber_xmm13
+
 ALIGN	16
 abi_test_clobber_xmm13:
 _CET_ENDBR
 	pxor	xmm13,xmm13
 	ret
 
-
 global	abi_test_clobber_xmm14
+
 ALIGN	16
 abi_test_clobber_xmm14:
 _CET_ENDBR
 	pxor	xmm14,xmm14
 	ret
 
-
 global	abi_test_clobber_xmm15
+
 ALIGN	16
 abi_test_clobber_xmm15:
 _CET_ENDBR
@@ -508,8 +508,8 @@ _CET_ENDBR
 
 
 
-
 global	abi_test_bad_unwind_wrong_register
+
 ALIGN	16
 abi_test_bad_unwind_wrong_register:
 
@@ -533,8 +533,8 @@ $L$SEH_end_abi_test_bad_unwind_wrong_register_4:
 
 
 
-
 global	abi_test_bad_unwind_temporary
+
 ALIGN	16
 abi_test_bad_unwind_temporary:
 
@@ -564,8 +564,8 @@ $L$SEH_end_abi_test_bad_unwind_temporary_4:
 
 
 
-
 global	abi_test_get_and_clear_direction_flag
+
 abi_test_get_and_clear_direction_flag:
 _CET_ENDBR
 	pushfq
@@ -578,8 +578,8 @@ _CET_ENDBR
 
 
 
-
 global	abi_test_set_direction_flag
+
 abi_test_set_direction_flag:
 _CET_ENDBR
 	std
@@ -589,8 +589,8 @@ _CET_ENDBR
 
 
 
-
 global	abi_test_bad_unwind_epilog
+
 ALIGN	16
 abi_test_bad_unwind_epilog:
 $L$SEH_begin_abi_test_bad_unwind_epilog_1:

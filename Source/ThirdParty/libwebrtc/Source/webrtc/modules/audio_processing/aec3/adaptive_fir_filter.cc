@@ -14,9 +14,9 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
@@ -34,10 +34,8 @@
 
 namespace webrtc {
 
-namespace aec3 {
-
 // Computes and stores the frequency response of the filter.
-void ComputeFrequencyResponse(
+void ComputeFrequencyResponse_C(
     size_t num_partitions,
     const std::vector<std::vector<FftData>>& H,
     std::vector<std::array<float, kFftLengthBy2Plus1>>* H2) {
@@ -134,7 +132,7 @@ void AdaptPartitions(const RenderBuffer& render_buffer,
                      const FftData& G,
                      size_t num_partitions,
                      std::vector<std::vector<FftData>>* H) {
-  ArrayView<const std::vector<FftData>> render_buffer_data =
+  std::span<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   size_t index = render_buffer.Position();
   const size_t num_render_channels = render_buffer_data[index].size();
@@ -157,7 +155,7 @@ void AdaptPartitions_Neon(const RenderBuffer& render_buffer,
                           const FftData& G,
                           size_t num_partitions,
                           std::vector<std::vector<FftData>>* H) {
-  webrtc::ArrayView<const std::vector<FftData>> render_buffer_data =
+  std::span<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const size_t num_render_channels = render_buffer_data[0].size();
   const size_t lim1 = std::min(
@@ -223,7 +221,7 @@ void AdaptPartitions_Sse2(const RenderBuffer& render_buffer,
                           const FftData& G,
                           size_t num_partitions,
                           std::vector<std::vector<FftData>>* H) {
-  ArrayView<const std::vector<FftData>> render_buffer_data =
+  std::span<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const size_t num_render_channels = render_buffer_data[0].size();
   const size_t lim1 = std::min(
@@ -294,7 +292,7 @@ void ApplyFilter(const RenderBuffer& render_buffer,
   S->re.fill(0.f);
   S->im.fill(0.f);
 
-  ArrayView<const std::vector<FftData>> render_buffer_data =
+  std::span<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   size_t index = render_buffer.Position();
   const size_t num_render_channels = render_buffer_data[index].size();
@@ -319,12 +317,12 @@ void ApplyFilter_Neon(const RenderBuffer& render_buffer,
                       const std::vector<std::vector<FftData>>& H,
                       FftData* S) {
   // const RenderBuffer& render_buffer,
-  //                     webrtc::ArrayView<const FftData> H,
+  //                     std::span<const FftData> H,
   //                     FftData* S) {
   RTC_DCHECK_GE(H.size(), H.size() - 1);
   S->Clear();
 
-  webrtc::ArrayView<const std::vector<FftData>> render_buffer_data =
+  std::span<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const size_t num_render_channels = render_buffer_data[0].size();
   const size_t lim1 = std::min(
@@ -389,13 +387,13 @@ void ApplyFilter_Sse2(const RenderBuffer& render_buffer,
                       const std::vector<std::vector<FftData>>& H,
                       FftData* S) {
   // const RenderBuffer& render_buffer,
-  //                     webrtc::ArrayView<const FftData> H,
+  //                     std::span<const FftData> H,
   //                     FftData* S) {
   RTC_DCHECK_GE(H.size(), H.size() - 1);
   S->re.fill(0.f);
   S->im.fill(0.f);
 
-  ArrayView<const std::vector<FftData>> render_buffer_data =
+  std::span<const std::vector<FftData>> render_buffer_data =
       render_buffer.GetFftBuffer();
   const size_t num_render_channels = render_buffer_data[0].size();
   const size_t lim1 = std::min(
@@ -454,8 +452,6 @@ void ApplyFilter_Sse2(const RenderBuffer& render_buffer,
   } while (p < lim2);
 }
 #endif
-
-}  // namespace aec3
 
 namespace {
 
@@ -563,21 +559,21 @@ void AdaptiveFirFilter::Filter(const RenderBuffer& render_buffer,
   switch (optimization_) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
     case Aec3Optimization::kSse2:
-      aec3::ApplyFilter_Sse2(render_buffer, current_size_partitions_, H_, S);
+      ApplyFilter_Sse2(render_buffer, current_size_partitions_, H_, S);
       break;
 #if !defined(WEBRTC_WEBKIT_BUILD)
     case Aec3Optimization::kAvx2:
-      aec3::ApplyFilter_Avx2(render_buffer, current_size_partitions_, H_, S);
+      ApplyFilter_Avx2(render_buffer, current_size_partitions_, H_, S);
       break;
 #endif
 #endif
 #if defined(WEBRTC_HAS_NEON)
     case Aec3Optimization::kNeon:
-      aec3::ApplyFilter_Neon(render_buffer, current_size_partitions_, H_, S);
+      ApplyFilter_Neon(render_buffer, current_size_partitions_, H_, S);
       break;
 #endif
     default:
-      aec3::ApplyFilter(render_buffer, current_size_partitions_, H_, S);
+      ApplyFilter(render_buffer, current_size_partitions_, H_, S);
   }
 }
 
@@ -609,21 +605,21 @@ void AdaptiveFirFilter::ComputeFrequencyResponse(
   switch (optimization_) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
     case Aec3Optimization::kSse2:
-      aec3::ComputeFrequencyResponse_Sse2(current_size_partitions_, H_, H2);
+      ComputeFrequencyResponse_Sse2(current_size_partitions_, H_, H2);
       break;
 #if !defined(WEBRTC_WEBKIT_BUILD)
     case Aec3Optimization::kAvx2:
-      aec3::ComputeFrequencyResponse_Avx2(current_size_partitions_, H_, H2);
+      ComputeFrequencyResponse_Avx2(current_size_partitions_, H_, H2);
       break;
 #endif
 #endif
 #if defined(WEBRTC_HAS_NEON)
     case Aec3Optimization::kNeon:
-      aec3::ComputeFrequencyResponse_Neon(current_size_partitions_, H_, H2);
+      ComputeFrequencyResponse_Neon(current_size_partitions_, H_, H2);
       break;
 #endif
     default:
-      aec3::ComputeFrequencyResponse(current_size_partitions_, H_, H2);
+      ComputeFrequencyResponse_C(current_size_partitions_, H_, H2);
   }
 }
 
@@ -636,24 +632,21 @@ void AdaptiveFirFilter::AdaptAndUpdateSize(const RenderBuffer& render_buffer,
   switch (optimization_) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
     case Aec3Optimization::kSse2:
-      aec3::AdaptPartitions_Sse2(render_buffer, G, current_size_partitions_,
-                                 &H_);
+      AdaptPartitions_Sse2(render_buffer, G, current_size_partitions_, &H_);
       break;
 #if !defined(WEBRTC_WEBKIT_BUILD)
     case Aec3Optimization::kAvx2:
-      aec3::AdaptPartitions_Avx2(render_buffer, G, current_size_partitions_,
-                                 &H_);
+      AdaptPartitions_Avx2(render_buffer, G, current_size_partitions_, &H_);
       break;
 #endif
 #endif
 #if defined(WEBRTC_HAS_NEON)
     case Aec3Optimization::kNeon:
-      aec3::AdaptPartitions_Neon(render_buffer, G, current_size_partitions_,
-                                 &H_);
+      AdaptPartitions_Neon(render_buffer, G, current_size_partitions_, &H_);
       break;
 #endif
     default:
-      aec3::AdaptPartitions(render_buffer, G, current_size_partitions_, &H_);
+      AdaptPartitions(render_buffer, G, current_size_partitions_, &H_);
   }
 }
 

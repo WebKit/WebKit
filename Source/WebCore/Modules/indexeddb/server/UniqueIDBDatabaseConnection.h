@@ -53,6 +53,7 @@ public:
 
     const IDBResourceIdentifier& openRequestIdentifier() LIFETIME_BOUND { return m_openRequestIdentifier; }
     UniqueIDBDatabase* database() { return m_database.get(); }
+    WEBCORE_EXPORT CheckedPtr<UniqueIDBDatabase> checkedDatabase();
     UniqueIDBDatabaseManager* NODELETE manager();
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
 
@@ -84,6 +85,7 @@ public:
     bool NODELETE connectionIsClosing() const;
 
     void deleteTransaction(UniqueIDBDatabaseTransaction&);
+    void deleteTransactionsAbortedForClientSuspension();
 
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, ServerOpenDBRequest&);

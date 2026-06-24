@@ -1,0 +1,9 @@
+This test ensures iframe content remains accessible across rapid iframe document replacements.
+
+PASS: yesButton && yesButton.title.includes('Yes') === true
+PASS: noButton && noButton.title.includes('No') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

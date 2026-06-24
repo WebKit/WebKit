@@ -22,6 +22,7 @@
 #include "CSSValueList.h"
 
 #include "CSSKeywordValueInlines.h"
+#include "DeprecatedCSSOMValueList.h"
 #include <wtf/Hasher.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -233,13 +234,18 @@ String CSSValueList::customCSSText(const CSS::SerializationContext& context) con
     return serializeItems(context);
 }
 
+Ref<DeprecatedCSSOMValue> CSSValueList::customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+{
+    return DeprecatedCSSOMValueList::create(*this, owner);
+}
+
 bool CSSValueContainingVector::itemsEqual(const CSSValueContainingVector& other) const
 {
     unsigned size = this->size();
     if (size != other.size())
         return false;
     for (unsigned i = 0; i < size; ++i) {
-        if (!(*this)[i].equals(other[i]))
+        if (!protect((*this)[i])->equals(protect(other[i])))
             return false;
     }
     return true;
@@ -252,7 +258,7 @@ bool CSSValueList::equals(const CSSValueList& other) const
 
 bool CSSValueContainingVector::containsSingleEqualItem(const CSSValue& other) const
 {
-    return size() == 1 && (*this)[0].equals(other);
+    return size() == 1 && protect((*this)[0])->equals(other);
 }
 
 bool CSSValueContainingVector::addDerivedHash(Hasher& hasher) const

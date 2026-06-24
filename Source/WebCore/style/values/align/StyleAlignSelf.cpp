@@ -28,16 +28,15 @@
 
 #include "AnchorPositionEvaluator.h"
 #include "CSSKeywordValue.h"
-#include "RenderStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StyleAlignItems.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
 
-StyleSelfAlignmentData AlignSelf::resolve(const RenderStyle* containerStyle) const
+StyleSelfAlignmentData AlignSelf::resolve(const Style::ComputedStyle* containerStyle) const
 {
     if (PrimaryKind::Auto == primary())
         return containerStyle ? containerStyle->alignItems().resolve() : StyleSelfAlignmentData { ItemPosition::Normal };

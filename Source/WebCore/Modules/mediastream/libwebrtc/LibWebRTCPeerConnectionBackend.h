@@ -123,7 +123,6 @@ private:
     bool m_isLocalDescriptionSet { false };
     bool m_isRemoteDescriptionSet { false };
 
-    Vector<std::unique_ptr<webrtc::IceCandidate>> m_pendingCandidates;
     Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
 
     HashMap<String, String> m_trackIds;

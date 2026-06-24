@@ -37,11 +37,6 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-namespace CSS {
-enum class Category : uint8_t;
-}
-
 namespace Style {
 
 struct ZoomFactor;
@@ -52,14 +47,11 @@ namespace Calculation {
 class Value : public RefCounted<Value> {
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(Value);
 public:
-    WEBCORE_EXPORT static Ref<Value> create(CSS::Category, CSS::Range, Tree&&);
+    WEBCORE_EXPORT static Ref<Value> create(Tree&&);
     WEBCORE_EXPORT ~Value();
 
-    double evaluate(double percentResolutionLength, ZoomFactor) const;
-    double evaluate(double percentResolutionLength, ZoomNeeded) const;
-
-    CSS::Category category() const { return m_category; }
-    CSS::Range range() const { return m_range; }
+    double evaluate(CSS::Range, double percentResolutionLength, ZoomFactor) const;
+    double evaluate(CSS::Range, double percentResolutionLength, ZoomNeeded) const;
 
     const Tree& tree() const LIFETIME_BOUND { return m_tree; }
     Tree copyTree() const;
@@ -68,10 +60,8 @@ public:
     WEBCORE_EXPORT bool operator==(const Value&) const;
 
 private:
-    Value(CSS::Category, CSS::Range, Tree&&);
+    Value(Tree&&);
 
-    CSS::Category m_category;
-    CSS::Range m_range;
     Tree m_tree;
 };
 

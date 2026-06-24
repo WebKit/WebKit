@@ -60,27 +60,12 @@ PASS Property color value 'rgb(from rgb(100 110 120 / 0.8) calc(r + 1) calc(g + 
 PASS Property color value 'rgb(from rebeccapurple calc((r / 255) * 100%) calc((g / 255) * 100%) calc((b / 255) * 100%) / calc(alpha * 100%))'
 PASS Property color value 'rgb(from rgb(from rebeccapurple r g b / calc(alpha + 0.5)) r g b / calc(alpha - 0.5))'
 PASS Property color value 'rgb(from rgb(from rebeccapurple r g b / calc(alpha - 1.5)) r g b / calc(alpha + 0.5))'
-FAIL Property color value 'rgb(from rebeccapurple none none none)' Colors do not match.
-Actual:   color(srgb none none none)
-Expected: color(srgb 0 0 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 0
-FAIL Property color value 'rgb(from rebeccapurple none none none / none)' Colors do not match.
-Actual:   color(srgb none none none / none)
-Expected: color(srgb 0 0 0 / none).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 0
-FAIL Property color value 'rgb(from rebeccapurple r g none)' Colors do not match.
-Actual:   color(srgb 0.4 0.2 none)
-Expected: color(srgb 0.4 0.2 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 2
-FAIL Property color value 'rgb(from rebeccapurple r g none / alpha)' Colors do not match.
-Actual:   color(srgb 0.4 0.2 none)
-Expected: color(srgb 0.4 0.2 0).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 2
+PASS Property color value 'rgb(from rebeccapurple none none none)'
+PASS Property color value 'rgb(from rebeccapurple none none none / none)'
+PASS Property color value 'rgb(from rebeccapurple r g none)'
+PASS Property color value 'rgb(from rebeccapurple r g none / alpha)'
 PASS Property color value 'rgb(from rebeccapurple r g b / none)'
-FAIL Property color value 'rgb(from rgb(20% 40% 60% / 80%) r g none / alpha)' Colors do not match.
-Actual:   color(srgb 0.2 0.4 none / 0.8)
-Expected: color(srgb 0.2 0.4 0 / 0.8).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 4 got 3
+PASS Property color value 'rgb(from rgb(20% 40% 60% / 80%) r g none / alpha)'
 PASS Property color value 'rgb(from rgb(20% 40% 60% / 80%) r g b / none)'
 PASS Property color value 'rgb(from rgb(none none none) r g b)'
 PASS Property color value 'rgb(from rgb(none none none / none) r g b / alpha)'
@@ -89,6 +74,10 @@ PASS Property color value 'rgb(from rgb(20% 40% 60% / none) r g b / alpha)'
 PASS Property color value 'color-mix(in srgb, rgb(from rebeccapurple none g b), rebeccapurple)'
 PASS Property background-color value 'rgb(from currentColor r g b)'
 PASS Property color value 'rgb(from color-mix(in srgb, red, red) r g b / alpha)'
+PASS Property background-color value 'rgb(from color-mix(in srgb, currentColor, red) r g b / alpha)'
+PASS Property background-color value 'rgb(from rgb(from currentColor r g b) r g b)'
+PASS Property color value 'light-dark(rgb(from rebeccapurple r g b), rgb(from rebeccapurple r g b))'
+PASS Property color value 'light-dark(color-mix(in srgb, rgb(from rebeccapurple none g b), rebeccapurple), color-mix(in srgb, rgb(from rebeccapurple none g b), rebeccapurple))'
 PASS Property color value 'hsl(from rebeccapurple h s l)'
 PASS Property color value 'hsl(from rebeccapurple h s l / alpha)'
 PASS Property color value 'hsl(from rgb(20%, 40%, 60%, 80%) h s l / alpha)'
@@ -130,6 +119,14 @@ PASS Property color value 'hsl(from rebeccapurple calc(h) calc(s) calc(l))'
 PASS Property color value 'hsl(from rgb(20%, 40%, 60%, 80%) calc(h) calc(s) calc(l) / calc(alpha))'
 PASS Property color value 'hsl(from hsl(20 30 40 / 0.8) calc(h + 1) calc(s + 1) calc(l + 1) / calc(alpha + 0.01))'
 PASS Property color value 'hsl(from rebeccapurple calc((h / 360) * 360deg) calc((s / 100) * 100%) calc((l / 100) * 100%) / calc(alpha * 100%))'
+PASS Property color value 'hsl(from rebeccapurple h s calc(50% * l / 100))'
+PASS Property color value 'hsl(from hsl(50 50 50) h s calc((sin(l) + 1) * 50))'
+PASS Property color value 'hsl(from hsl(50 50 50) h s calc((sin(sin(l)) + 1) * 50))'
+PASS Property color value 'hsl(from hsl(50 50 50) h s calc((sin(asin(sin(l))) + 1) * 50))'
+PASS Property color value 'hsl(from hsl(50 50 50) h s calc((sin(clamp(0, l, 50)) + 1) * 50))'
+PASS Property color value 'hsl(from hsl(50 50 50) h s calc((sin(l * 1) + 1) * 50))'
+PASS Property color value 'hsl(from hsl(50 50 50) h s calc((sin(l * (50rad / 50)) + 1) * 50))'
+PASS Property color value 'hsl(from hsl(50 50 50) h s calc((sin(l * (50rad / (50deg * (180 / pi)))) + 1) * 50))'
 PASS Property color value 'hsl(from hsl(from rebeccapurple h s l / calc(alpha + 0.5)) h s l / calc(alpha - 0.5))'
 PASS Property color value 'hsl(from hsl(from rebeccapurple h s l / calc(alpha - 1.5)) h s l / calc(alpha + 0.5))'
 PASS Property color value 'hsl(from rebeccapurple none none none)'
@@ -148,6 +145,7 @@ PASS Property color value 'hsl(from hsl(120deg 20% 50% / none) h s l / alpha)'
 PASS Property color value 'hsl(from hsl(none 20% 50% / .5) h s l / alpha)'
 PASS Property color value 'color-mix(in hsl, hsl(from rebeccapurple none s l), rebeccapurple)'
 PASS Property background-color value 'hsl(from currentColor h s l)'
+PASS Property background-color value 'hsl(from currentColor calc((h / 360) * 360deg) s l)'
 PASS Property color value 'hsl(from color-mix(in srgb, red, red) h s l / alpha)'
 PASS Property color value 'hwb(from rebeccapurple h w b)'
 PASS Property color value 'hwb(from rebeccapurple h w b / alpha)'
@@ -353,6 +351,8 @@ PASS Property color value 'lch(from lch(0.7 45 30) calc(l) calc(c) calc(h))'
 PASS Property color value 'lch(from lch(0.7 45 30 / 40%) calc(l) calc(c) calc(h) / calc(alpha))'
 PASS Property color value 'lch(from lch(50 5 10 / 0.8) calc(l + 1) calc(c + 1) calc(h + 1) / calc(alpha + 0.01))'
 PASS Property color value 'lch(from lch(0.7 45 30) calc((l / 100) * 100%) calc((c / 150) * 100%) calc((h / 360) * 360deg) / calc(alpha * 100%))'
+PASS Property color value 'lch(from red calc((49.44 - l) * infinity) 0 0)'
+PASS Property color value 'lch(from blue calc((49.44 - l) * infinity) 0 0)'
 PASS Property color value 'lch(from lch(from lch(0.7 45 30) l c h / calc(alpha + 0.5)) l c h / calc(alpha - 0.5))'
 PASS Property color value 'lch(from lch(from lch(0.7 45 30) l c h / calc(alpha - 1.5)) l c h / calc(alpha + 0.5))'
 PASS Property color value 'lch(from lch(0.7 45 30) none none none)'
@@ -413,6 +413,15 @@ PASS Property color value 'oklch(from oklch(0.5 .05 0.1 / 0.8) calc(l + 0.01) ca
 PASS Property color value 'oklch(from oklch(0.7 0.45 30) calc(l * 100%) calc((c / 0.4) * 100%) calc((h / 360) * 360deg) / calc(alpha * 100%))'
 PASS Property color value 'oklch(from oklch(from oklch(0.7 0.45 30) l c h / calc(alpha + 0.5)) l c h / calc(alpha - 0.5))'
 PASS Property color value 'oklch(from oklch(from oklch(0.7 0.45 30) l c h / calc(alpha - 1.5)) l c h / calc(alpha + 0.5))'
+PASS Property color value 'oklch(from blue .5 .3 180deg)'
+PASS Property color value 'oklch(from blue .5 .3 .5turn)'
+PASS Property color value 'oklch(from blue .5 .3 3.14159rad)'
+PASS Property color value 'oklch(from blue .5 .3 200grad)'
+PASS Property color value 'oklch(from blue .5 .3 calc(120deg + 60deg))'
+PASS Property color value 'oklch(from blue .5 .3 calc(90deg + 1.5707rad))'
+PASS Property color value 'oklch(from blue .5 .3 calc(0.25turn + 100grad))'
+PASS Property color value 'oklch(from blue .5 .3 calc(180deg))'
+PASS Property color value 'oklch(from blue .5 .3 calc(0.2turn + 0.3turn))'
 PASS Property color value 'oklch(from oklch(0.7 0.45 30) none none none)'
 PASS Property color value 'oklch(from oklch(0.7 0.45 30) none none none / none)'
 PASS Property color value 'oklch(from oklch(0.7 0.45 30) l c none)'
@@ -1152,4 +1161,5 @@ PASS Property color value 'LCH(from var(--accent) l c calc(h + 180))'
 PASS Property color value 'lch(from var(--mycolor) l 0 h)'
 PASS Property color value 'var(--mygray)'
 PASS Property color value 'lch(from var(--mygray) l 30 h)'
+PASS Property color value 'LCH(from var(--accent) l c calc(h + 180 * sibling-index()))'
 

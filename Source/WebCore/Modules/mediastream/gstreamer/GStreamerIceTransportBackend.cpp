@@ -98,7 +98,7 @@ void GStreamerIceTransportBackendObserver::onIceTransportStateChanged()
     GST_DEBUG_OBJECT(m_iceTransport.get(), "ICE transport state changed to %s", desc.utf8());
 #endif
 
-    callOnMainThread([protectedThis = Ref { *this }, transportState] {
+    callOnMainThread([protectedThis = protect(*this), transportState] {
         if (RefPtr client = protectedThis->m_client.get())
             client->onStateChanged(toRTCIceTransportState(transportState));
     });
@@ -111,7 +111,7 @@ void GStreamerIceTransportBackendObserver::onGatheringStateChanged()
 
     GstWebRTCICEGatheringState gatheringState;
     g_object_get(m_iceTransport.get(), "gathering-state", &gatheringState, nullptr);
-    callOnMainThread([protectedThis = Ref { *this }, gatheringState] {
+    callOnMainThread([protectedThis = protect(*this), gatheringState] {
         if (RefPtr client = protectedThis->m_client.get())
             client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
     });
@@ -174,7 +174,7 @@ void GStreamerIceTransportBackendObserver::onSelectedCandidatePairChanged()
 
     auto localCandidate = candidateFromGstWebRTC(selectedPair->local);
     auto remoteCandidate = candidateFromGstWebRTC(selectedPair->remote);
-    WTF::callOnMainThreadAndWait([protectedThis = Ref { *this }, localCandidate = WTF::move(localCandidate), remoteCandidate = WTF::move(remoteCandidate)] mutable {
+    WTF::callOnMainThreadAndWait([protectedThis = protect(*this), localCandidate = WTF::move(localCandidate), remoteCandidate = WTF::move(remoteCandidate)] mutable {
         if (RefPtr client = protectedThis->m_client.get())
             client->onSelectedCandidatePairChanged(WTF::move(localCandidate), WTF::move(remoteCandidate));
     });

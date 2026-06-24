@@ -523,7 +523,7 @@ PASS In <textarea> in contenteditable, execCommand("selectall", false, null), a[
 PASS In <textarea> in contenteditable, execCommand("undo", false, null), [a]bc): The command should be supported
 FAIL In <textarea> in contenteditable, execCommand("undo", false, null), [a]bc): The command should not be enabled assert_equals: expected false but got true
 FAIL In <textarea> in contenteditable, execCommand("undo", false, null), [a]bc): execCommand() should return false assert_equals: expected false but got true
-FAIL In <textarea> in contenteditable, execCommand("undo", false, null), [a]bc): <textarea>.value should be "[a]bc" assert_equals: expected "[a]bc" but got "abcc[]"
+PASS In <textarea> in contenteditable, execCommand("undo", false, null), [a]bc): <textarea>.value should be "[a]bc"
 FAIL In <textarea> in contenteditable, execCommand("undo", false, null), [a]bc): beforeinput.inputType should be undefined assert_equals: expected (undefined) undefined but got (string) "historyUndo"
 FAIL In <textarea> in contenteditable, execCommand("undo", false, null), [a]bc): beforeinput.target should be undefined assert_equals: expected (undefined) undefined but got (object) Element node <textarea id="target"></textarea>
 FAIL In <textarea> in contenteditable, execCommand("undo", false, null), [a]bc): input.inputType should be undefined assert_equals: expected (undefined) undefined but got (string) "historyUndo"

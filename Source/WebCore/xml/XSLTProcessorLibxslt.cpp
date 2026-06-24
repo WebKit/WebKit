@@ -144,7 +144,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
             return nullptr;
 
         FrameConsoleClient* console = nullptr;
-        if (RefPtr frame = globalProcessor->xslStylesheet()->ownerDocument()->frame())
+        if (RefPtr frame = protect(globalProcessor->xslStylesheet()->ownerDocument())->frame())
             console = &frame->console();
         XMLDocumentParserScope scope(cachedResourceLoader.get(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
 
@@ -244,9 +244,10 @@ static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStyl
 {
     if (!cachedStylesheet && stylesheetRootNode) {
         RefPtr parentNode = stylesheetRootNode->parentNode() ? stylesheetRootNode->parentNode() : stylesheetRootNode;
+        Ref doc = stylesheetRootNode->document();
         cachedStylesheet = XSLStyleSheet::createForXSLTProcessor(parentNode.get(),
-            stylesheetRootNode->document().url().string(),
-            stylesheetRootNode->document().url()); // FIXME: Should we use baseURL here?
+            doc->url().string(),
+            doc->url()); // FIXME: Should we use baseURL here?
 
         // According to Mozilla documentation, the node must be a Document node, an xsl:stylesheet or xsl:transform element.
         // But we just use text content regardless of node type.

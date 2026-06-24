@@ -25,10 +25,13 @@
 #include <openssl/x509.h>
 
 #include "../internal.h"
+#include "../mem_internal.h"
 #include "internal.h"
 
-static CRYPTO_EX_DATA_CLASS g_ex_data_class =
-    CRYPTO_EX_DATA_CLASS_INIT_WITH_APP_DATA;
+
+using namespace bssl;
+
+static ExDataClass g_ex_data_class(/*with_app_data=*/true);
 
 // CRL score values
 
@@ -88,7 +91,8 @@ static int cert_self_signed(X509 *x, int *out_is_self_signed) {
   if (!x509v3_cache_extensions(x)) {
     return 0;
   }
-  *out_is_self_signed = (x->ex_flags & EXFLAG_SS) != 0;
+  auto *impl = FromOpaque(x);
+  *out_is_self_signed = (impl->ex_flags & EXFLAG_SS) != 0;
   return 1;
 }
 
@@ -423,8 +427,8 @@ static X509 *find_issuer(X509_STORE_CTX *ctx, STACK_OF(X509) *sk, X509 *x) {
 
 // Given a possible certificate and issuer check them
 
-int x509_check_issued_with_callback(X509_STORE_CTX *ctx, const X509 *x,
-                                    const X509 *issuer) {
+int bssl::x509_check_issued_with_callback(X509_STORE_CTX *ctx, const X509 *x,
+                                          const X509 *issuer) {
   int ret;
   ret = X509_check_issued(issuer, x);
   if (ret == X509_V_OK) {
@@ -466,7 +470,7 @@ static int check_chain_extensions(X509_STORE_CTX *ctx) {
 
   // Check all untrusted certificates
   for (int i = 0; i < ctx->last_untrusted; i++) {
-    X509 *x = sk_X509_value(ctx->chain, i);
+    X509Impl *x = FromOpaque(sk_X509_value(ctx->chain, i));
     if (!(ctx->param->flags & X509_V_FLAG_IGNORE_CRITICAL) &&
         (x->ex_flags & EXFLAG_CRITICAL)) {
       ctx->error = X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION;
@@ -545,7 +549,7 @@ static int check_name_constraints(X509_STORE_CTX *ctx) {
   int has_name_constraints = 0;
   // Check name constraints for all certificates
   for (i = (int)sk_X509_num(ctx->chain) - 1; i >= 0; i--) {
-    X509 *x = sk_X509_value(ctx->chain, i);
+    X509Impl *x = FromOpaque(sk_X509_value(ctx->chain, i));
     // Ignore self issued certs unless last in chain
     if (i && (x->ex_flags & EXFLAG_SI)) {
       continue;
@@ -555,7 +559,7 @@ static int check_name_constraints(X509_STORE_CTX *ctx) {
     // but if it includes constraints it is to be assumed it expects them
     // to be obeyed.
     for (j = (int)sk_X509_num(ctx->chain) - 1; j > i; j--) {
-      NAME_CONSTRAINTS *nc = sk_X509_value(ctx->chain, j)->nc;
+      NAME_CONSTRAINTS *nc = FromOpaque(sk_X509_value(ctx->chain, j))->nc;
       if (nc) {
         has_name_constraints = 1;
         rv = NAME_CONSTRAINTS_check(x, nc);
@@ -588,7 +592,7 @@ static int check_name_constraints(X509_STORE_CTX *ctx) {
   // standard. Note this does not make "DNS-like" heuristic failures any
   // worse. A decorative common-name misidentified as a DNS name would fail
   // the name constraint anyway.
-  X509 *leaf = sk_X509_value(ctx->chain, 0);
+  X509Impl *leaf = FromOpaque(sk_X509_value(ctx->chain, 0));
   if (has_name_constraints && leaf->altname == nullptr) {
     rv = reject_dns_name_in_common_name(leaf);
     switch (rv) {
@@ -1019,12 +1023,13 @@ static int idp_check_dp(DIST_POINT_NAME *a, DIST_POINT_NAME *b) {
 
 // Check CRLDP and IDP
 static int crl_crldp_check(X509 *x, X509_CRL *crl, int crl_score) {
+  auto *impl = FromOpaque(x);
   // TODO(bbe): crbug.com/409778435 Make tests for the corner cases we hit
   // here so that we stay correct for RFC 5280 6.3.3 steps b.1 and b.2
   if (crl->idp_flags & IDP_ONLYATTR) {
     return 0;
   }
-  if (x->ex_flags & EXFLAG_CA) {
+  if (impl->ex_flags & EXFLAG_CA) {
     if (crl->idp_flags & IDP_ONLYUSER) {
       return 0;
     }
@@ -1033,8 +1038,8 @@ static int crl_crldp_check(X509 *x, X509_CRL *crl, int crl_score) {
       return 0;
     }
   }
-  for (size_t i = 0; i < sk_DIST_POINT_num(x->crldp); i++) {
-    DIST_POINT *dp = sk_DIST_POINT_value(x->crldp, i);
+  for (size_t i = 0; i < sk_DIST_POINT_num(impl->crldp); i++) {
+    DIST_POINT *dp = sk_DIST_POINT_value(impl->crldp, i);
     // Skip distribution points with a reasons field or a CRL issuer:
     //
     // We do not support CRLs partitioned by reason code. RFC 5280 requires CAs
@@ -1098,17 +1103,17 @@ done:
 
 // Check CRL validity
 static int check_crl(X509_STORE_CTX *ctx, X509_CRL *crl) {
-  X509 *issuer = nullptr;
+  X509Impl *issuer = nullptr;
   int cnum = ctx->error_depth;
   int chnum = (int)sk_X509_num(ctx->chain) - 1;
   // If we have an alternative CRL issuer cert use that. Otherwise, it is the
   // issuer of the current certificate.
   if (ctx->current_crl_issuer) {
-    issuer = ctx->current_crl_issuer;
+    issuer = FromOpaque(ctx->current_crl_issuer);
   } else if (cnum < chnum) {
-    issuer = sk_X509_value(ctx->chain, cnum + 1);
+    issuer = FromOpaque(sk_X509_value(ctx->chain, cnum + 1));
   } else {
-    issuer = sk_X509_value(ctx->chain, chnum);
+    issuer = FromOpaque(sk_X509_value(ctx->chain, chnum));
     // If not self signed, can't check signature
     if (!x509_check_issued_with_callback(ctx, issuer, issuer)) {
       ctx->error = X509_V_ERR_UNABLE_TO_GET_CRL_ISSUER;
@@ -1481,17 +1486,14 @@ int X509_STORE_CTX_set_trust(X509_STORE_CTX *ctx, int trust) {
   return 1;
 }
 
-X509_STORE_CTX *X509_STORE_CTX_new(void) {
-  return reinterpret_cast<X509_STORE_CTX *>(
-      OPENSSL_zalloc(sizeof(X509_STORE_CTX)));
-}
+X509_STORE_CTX *X509_STORE_CTX_new() { return New<X509_STORE_CTX>(); }
 
 void X509_STORE_CTX_free(X509_STORE_CTX *ctx) {
   if (ctx == nullptr) {
     return;
   }
   X509_STORE_CTX_cleanup(ctx);
-  OPENSSL_free(ctx);
+  Delete(ctx);
 }
 
 int X509_STORE_CTX_init(X509_STORE_CTX *ctx, X509_STORE *store, X509 *x509,
@@ -1514,20 +1516,23 @@ int X509_STORE_CTX_init(X509_STORE_CTX *ctx, X509_STORE *store, X509 *x509,
     goto err;
   }
 
-  // Inherit callbacks and flags from X509_STORE.
+  {
+    // Inherit callbacks and flags from X509_STORE.
 
-  ctx->verify_cb = store->verify_cb;
+    auto *store_impl = FromOpaque(store);
+    ctx->verify_cb = store_impl->verify_cb;
 
-  if (!X509_VERIFY_PARAM_inherit(ctx->param, store->param) ||
-      !X509_VERIFY_PARAM_inherit(ctx->param,
-                                 X509_VERIFY_PARAM_lookup("default"))) {
-    goto err;
-  }
+    if (!X509_VERIFY_PARAM_inherit(ctx->param, store_impl->param.get()) ||
+        !X509_VERIFY_PARAM_inherit(ctx->param,
+                                   X509_VERIFY_PARAM_lookup("default"))) {
+      goto err;
+    }
 
-  if (store->verify_cb) {
-    ctx->verify_cb = store->verify_cb;
-  } else {
-    ctx->verify_cb = null_callback;
+    if (store_impl->verify_cb) {
+      ctx->verify_cb = store_impl->verify_cb;
+    } else {
+      ctx->verify_cb = null_callback;
+    }
   }
 
   return 1;

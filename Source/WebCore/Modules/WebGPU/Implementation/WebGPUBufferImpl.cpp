@@ -82,7 +82,7 @@ void BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size, NOESC
 
 std::span<uint8_t> BufferImpl::getBufferContents()
 {
-    if (!m_backing.get())
+    if (!m_backing)
         return { };
 
     return wgpuBufferGetBufferContents(m_backing.get());

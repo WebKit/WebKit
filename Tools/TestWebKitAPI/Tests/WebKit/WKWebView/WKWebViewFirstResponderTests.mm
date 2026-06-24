@@ -47,6 +47,8 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
+    [self focusInWindow];
+
     bool doneFocusing = false;
     _inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
     [_inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) {

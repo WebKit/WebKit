@@ -232,9 +232,9 @@ bool MediaSourcePrivateAVFObjC::needsVideoLayer() const
     });
 }
 
-void MediaSourcePrivateAVFObjC::bufferedChanged(const PlatformTimeRanges& buffered)
+void MediaSourcePrivateAVFObjC::bufferedChanged(PlatformTimeRanges&& buffered)
 {
-    MediaSourcePrivate::bufferedChanged(buffered);
+    MediaSourcePrivate::bufferedChanged(WTF::move(buffered));
     callOnMainThreadWithPlayer([](auto& player) {
         player.bufferedChanged();
     });

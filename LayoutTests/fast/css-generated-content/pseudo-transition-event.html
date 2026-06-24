@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 
 <style>
 #before:before,
@@ -37,11 +37,8 @@
 
 <script>
 description('Transitions on :before and :after pseudo elements should run and fire DOM events');
+window.jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
 var expectedEvents = [ ["width", "before", "::before"] , ["width", "after", "::after"] ];
 var currentEvent = 0;
@@ -52,9 +49,7 @@ function recordTransitionEvent()
     shouldBe("event.target.id", "expectedEvents[currentEvent][1]");
     shouldBe("event.pseudoElement", "expectedEvents[currentEvent][2]");
     if (currentEvent == 1) {
-        isSuccessfullyParsed();
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     } else {
         currentEvent++;
         testTransition('after');

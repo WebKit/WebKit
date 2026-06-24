@@ -30,44 +30,44 @@ TEST_F(LibYUVBaseTest, TestFixedDiv) {
   int result_opt[1280];
   int result_c[1280];
 
-  EXPECT_EQ(0x10000, libyuv::FixedDiv(1, 1));
-  EXPECT_EQ(0x7fff0000, libyuv::FixedDiv(0x7fff, 1));
+  ASSERT_EQ(0x10000, libyuv::FixedDiv(1, 1));
+  ASSERT_EQ(0x7fff0000, libyuv::FixedDiv(0x7fff, 1));
   // TODO(fbarchard): Avoid the following that throw exceptions.
-  // EXPECT_EQ(0x100000000, libyuv::FixedDiv(0x10000, 1));
-  // EXPECT_EQ(0x80000000, libyuv::FixedDiv(0x8000, 1));
+  // ASSERT_EQ(0x100000000, libyuv::FixedDiv(0x10000, 1));
+  // ASSERT_EQ(0x80000000, libyuv::FixedDiv(0x8000, 1));
 
-  EXPECT_EQ(0x20000, libyuv::FixedDiv(640 * 2, 640));
-  EXPECT_EQ(0x30000, libyuv::FixedDiv(640 * 3, 640));
-  EXPECT_EQ(0x40000, libyuv::FixedDiv(640 * 4, 640));
-  EXPECT_EQ(0x50000, libyuv::FixedDiv(640 * 5, 640));
-  EXPECT_EQ(0x60000, libyuv::FixedDiv(640 * 6, 640));
-  EXPECT_EQ(0x70000, libyuv::FixedDiv(640 * 7, 640));
-  EXPECT_EQ(0x80000, libyuv::FixedDiv(640 * 8, 640));
-  EXPECT_EQ(0xa0000, libyuv::FixedDiv(640 * 10, 640));
-  EXPECT_EQ(0x20000, libyuv::FixedDiv(960 * 2, 960));
-  EXPECT_EQ(0x08000, libyuv::FixedDiv(640 / 2, 640));
-  EXPECT_EQ(0x04000, libyuv::FixedDiv(640 / 4, 640));
-  EXPECT_EQ(0x20000, libyuv::FixedDiv(1080 * 2, 1080));
-  EXPECT_EQ(0x20000, libyuv::FixedDiv(200000, 100000));
-  EXPECT_EQ(0x18000, libyuv::FixedDiv(150000, 100000));
-  EXPECT_EQ(0x20000, libyuv::FixedDiv(40000, 20000));
-  EXPECT_EQ(0x20000, libyuv::FixedDiv(-40000, -20000));
-  EXPECT_EQ(-0x20000, libyuv::FixedDiv(40000, -20000));
-  EXPECT_EQ(-0x20000, libyuv::FixedDiv(-40000, 20000));
-  EXPECT_EQ(0x10000, libyuv::FixedDiv(4095, 4095));
-  EXPECT_EQ(0x10000, libyuv::FixedDiv(4096, 4096));
-  EXPECT_EQ(0x10000, libyuv::FixedDiv(4097, 4097));
-  EXPECT_EQ(123 * 65536, libyuv::FixedDiv(123, 1));
+  ASSERT_EQ(0x20000, libyuv::FixedDiv(640 * 2, 640));
+  ASSERT_EQ(0x30000, libyuv::FixedDiv(640 * 3, 640));
+  ASSERT_EQ(0x40000, libyuv::FixedDiv(640 * 4, 640));
+  ASSERT_EQ(0x50000, libyuv::FixedDiv(640 * 5, 640));
+  ASSERT_EQ(0x60000, libyuv::FixedDiv(640 * 6, 640));
+  ASSERT_EQ(0x70000, libyuv::FixedDiv(640 * 7, 640));
+  ASSERT_EQ(0x80000, libyuv::FixedDiv(640 * 8, 640));
+  ASSERT_EQ(0xa0000, libyuv::FixedDiv(640 * 10, 640));
+  ASSERT_EQ(0x20000, libyuv::FixedDiv(960 * 2, 960));
+  ASSERT_EQ(0x08000, libyuv::FixedDiv(640 / 2, 640));
+  ASSERT_EQ(0x04000, libyuv::FixedDiv(640 / 4, 640));
+  ASSERT_EQ(0x20000, libyuv::FixedDiv(1080 * 2, 1080));
+  ASSERT_EQ(0x20000, libyuv::FixedDiv(200000, 100000));
+  ASSERT_EQ(0x18000, libyuv::FixedDiv(150000, 100000));
+  ASSERT_EQ(0x20000, libyuv::FixedDiv(40000, 20000));
+  ASSERT_EQ(0x20000, libyuv::FixedDiv(-40000, -20000));
+  ASSERT_EQ(-0x20000, libyuv::FixedDiv(40000, -20000));
+  ASSERT_EQ(-0x20000, libyuv::FixedDiv(-40000, 20000));
+  ASSERT_EQ(0x10000, libyuv::FixedDiv(4095, 4095));
+  ASSERT_EQ(0x10000, libyuv::FixedDiv(4096, 4096));
+  ASSERT_EQ(0x10000, libyuv::FixedDiv(4097, 4097));
+  ASSERT_EQ(123 * 65536, libyuv::FixedDiv(123, 1));
 
   for (int i = 1; i < 4100; ++i) {
-    EXPECT_EQ(0x10000, libyuv::FixedDiv(i, i));
-    EXPECT_EQ(0x20000, libyuv::FixedDiv(i * 2, i));
-    EXPECT_EQ(0x30000, libyuv::FixedDiv(i * 3, i));
-    EXPECT_EQ(0x40000, libyuv::FixedDiv(i * 4, i));
-    EXPECT_EQ(0x08000, libyuv::FixedDiv(i, i * 2));
-    EXPECT_NEAR(16384 * 65536 / i, libyuv::FixedDiv(16384, i), 1);
+    ASSERT_EQ(0x10000, libyuv::FixedDiv(i, i));
+    ASSERT_EQ(0x20000, libyuv::FixedDiv(i * 2, i));
+    ASSERT_EQ(0x30000, libyuv::FixedDiv(i * 3, i));
+    ASSERT_EQ(0x40000, libyuv::FixedDiv(i * 4, i));
+    ASSERT_EQ(0x08000, libyuv::FixedDiv(i, i * 2));
+    ASSERT_NEAR(16384 * 65536 / i, libyuv::FixedDiv(16384, i), 1);
   }
-  EXPECT_EQ(123 * 65536, libyuv::FixedDiv(123, 1));
+  ASSERT_EQ(123 * 65536, libyuv::FixedDiv(123, 1));
 
   MemRandomize(reinterpret_cast<uint8_t*>(&num[0]), sizeof(num));
   MemRandomize(reinterpret_cast<uint8_t*>(&div[0]), sizeof(div));
@@ -84,7 +84,7 @@ TEST_F(LibYUVBaseTest, TestFixedDiv) {
   }
   for (int j = 0; j < 1280; ++j) {
     result_c[j] = libyuv::FixedDiv_C(num[j], div[j]);
-    EXPECT_NEAR(result_c[j], result_opt[j], 1);
+    ASSERT_NEAR(result_c[j], result_opt[j], 1);
   }
 }
 
@@ -118,7 +118,7 @@ TEST_F(LibYUVBaseTest, TestFixedDiv_Opt) {
   }
   for (int j = 0; j < 1280; ++j) {
     result_c[j] = libyuv::FixedDiv_C(num[j], div[j]);
-    EXPECT_NEAR(result_c[j], result_opt[j], 1);
+    ASSERT_NEAR(result_c[j], result_opt[j], 1);
   }
 }
 
@@ -152,7 +152,7 @@ TEST_F(LibYUVBaseTest, TestFixedDiv1_Opt) {
   }
   for (int j = 0; j < 1280; ++j) {
     result_c[j] = libyuv::FixedDiv1_C(num[j], div[j]);
-    EXPECT_NEAR(result_c[j], result_opt[j], 1);
+    ASSERT_NEAR(result_c[j], result_opt[j], 1);
   }
 }
 #endif  // ENABLE_ROW_TESTS

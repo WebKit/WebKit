@@ -13,6 +13,8 @@
 
 #include <stddef.h>
 
+#include <cstdint>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
@@ -70,6 +72,12 @@ size_t ComputeDigest(absl::string_view alg,
                      size_t in_len,
                      void* output,
                      size_t out_len);
+inline size_t ComputeDigest(absl::string_view alg,
+                            std::span<const uint8_t> input,
+                            std::span<uint8_t> output) {
+  return ComputeDigest(alg, input.data(), input.size(), output.data(),
+                       output.size());
+}
 // Computes the hash of `input` using the `digest` hash implementation, and
 // returns it as a hex-encoded string.
 std::string ComputeDigest(MessageDigest* digest, absl::string_view input);
@@ -111,6 +119,20 @@ size_t ComputeHmac(absl::string_view alg,
                    size_t in_len,
                    void* output,
                    size_t out_len);
+inline size_t ComputeHmac(absl::string_view alg,
+                          std::span<const uint8_t> key,
+                          std::span<const uint8_t> input,
+                          std::span<uint8_t> output) {
+  return ComputeHmac(alg, key.data(), key.size(), input.data(), input.size(),
+                     output.data(), output.size());
+}
+inline size_t ComputeHmac(absl::string_view alg,
+                          absl::string_view key,
+                          std::span<const uint8_t> input,
+                          std::span<uint8_t> output) {
+  return ComputeHmac(alg, key.data(), key.size(), input.data(), input.size(),
+                     output.data(), output.size());
+}
 // Computes the HMAC of `input` using the `digest` hash implementation and `key`
 // to key the HMAC, and returns it as a hex-encoded string.
 std::string ComputeHmac(MessageDigest* digest,

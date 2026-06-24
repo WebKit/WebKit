@@ -13,9 +13,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
@@ -139,7 +139,7 @@ int ParseVP8Descriptor(RTPVideoHeaderVP8* vp8,
 
 std::optional<VideoRtpDepacketizer::ParsedRtpPayload>
 VideoRtpDepacketizerVp8::Parse(CopyOnWriteBuffer rtp_payload) {
-  ArrayView<const uint8_t> payload(rtp_payload.cdata(), rtp_payload.size());
+  std::span<const uint8_t> payload(rtp_payload.cdata(), rtp_payload.size());
   std::optional<ParsedRtpPayload> result(std::in_place);
   int offset = ParseRtpPayload(payload, &result->video_header);
   if (offset == kFailedToParse)
@@ -151,7 +151,7 @@ VideoRtpDepacketizerVp8::Parse(CopyOnWriteBuffer rtp_payload) {
 }
 
 int VideoRtpDepacketizerVp8::ParseRtpPayload(
-    ArrayView<const uint8_t> rtp_payload,
+    std::span<const uint8_t> rtp_payload,
     RTPVideoHeader* video_header) {
   RTC_DCHECK(video_header);
   if (rtp_payload.empty()) {

@@ -11,8 +11,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/task_queue/task_queue_base.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/public/dcsctp_options.h"
@@ -49,8 +49,7 @@ class TransmissionControlBlockTest : public testing::Test {
   Capabilities capabilities_;
   StrictMock<MockDcSctpSocketCallbacks> callbacks_;
   StrictMock<MockSendQueue> send_queue_;
-  testing::MockFunction<void(webrtc::ArrayView<const uint8_t>,
-                             SendPacketStatus)>
+  testing::MockFunction<void(std::span<const uint8_t>, SendPacketStatus)>
       on_send_fn_;
   testing::MockFunction<bool()> on_connection_established;
   PacketSender sender_;

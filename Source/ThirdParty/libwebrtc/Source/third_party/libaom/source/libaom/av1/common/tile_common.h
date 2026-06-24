@@ -49,9 +49,6 @@ int av1_get_sb_cols_in_tile(const struct AV1Common *cm, const TileInfo *tile);
 // The minimum tile width or height is fixed at one superblock
 #define MAX_TILE_WIDTH (4096)        // Max Tile width in pixels
 #define MAX_TILE_AREA (4096 * 2304)  // Maximum tile area in pixels
-#if CONFIG_CWG_C013
-#define MAX_TILE_AREA_LEVEL_7_AND_ABOVE (4096 * 4608)
-#endif
 
 // Gets the width and height (in units of MI_SIZE) of the tiles in a tile list.
 // Returns true on success, false on failure.

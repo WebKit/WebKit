@@ -198,12 +198,20 @@ void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Eleme
         pendingEntry->setURLString(image->url().string());
         auto loadTimestamp = protect(window->performance())->relativeTimeFromTimeOriginInReducedResolution(loadTime);
         pendingEntry->setLoadTime(loadTimestamp);
-    }
+
+        // FIXME: Adopt ReducedResolutionSeconds: webkit.org/b/316824.
+        auto reduceResolution = [](Seconds value, Seconds resolution) {
+            return Seconds(std::floor(value.value() / resolution.value()) * resolution.value());
+        };
+
+        // https://w3c.github.io/largest-contentful-paint/#sec-report-largest-contentful-paint coarsens renderTime to 4ms for images.
+        static constexpr auto renderTimeSecondsResolution = 4_ms;
+        pendingEntry->setRenderTime(reduceResolution(Seconds::fromMilliseconds(paintTimestamp), renderTimeSecondsResolution).milliseconds());
+    } else
+        pendingEntry->setRenderTime(paintTimestamp);
 
     if (element.hasID())
         pendingEntry->setID(element.getIdAttribute().string());
-
-    pendingEntry->setRenderTime(paintTimestamp);
 
     LOG_WITH_STREAM(LargestContentfulPaint, stream << " making new entry for " << element << " image " << (image ? image->url().string() : emptyString()) << " id " << pendingEntry->id() <<
         ": entry size " << pendingEntry->size() << ", loadTime " << pendingEntry->loadTime() << ", renderTime " << pendingEntry->renderTime());

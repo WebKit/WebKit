@@ -106,6 +106,10 @@ typedef struct aom_codec_dec_cfg {
  * call is not thread safe and should be guarded with a lock if being used
  * in a multithreaded context.
  *
+ * On success, aom_codec_destroy() must be used to free resources allocated for
+ * the decoder context. If aom_codec_dec_init_ver() fails, it is not necessary
+ * to call aom_codec_destroy() on the decoder context.
+ *
  * \param[in]    ctx     Pointer to this instance's context.
  * \param[in]    iface   Pointer to the algorithm interface to use.
  * \param[in]    cfg     Configuration to use, if known. May be NULL.

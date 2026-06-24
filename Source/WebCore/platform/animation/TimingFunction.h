@@ -26,7 +26,7 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -35,7 +35,7 @@ class TextStream;
 
 namespace WebCore {
 
-class TimingFunction : public RefCounted<TimingFunction> {
+class TimingFunction : public ThreadSafeRefCounted<TimingFunction> {
 public:
     virtual Ref<TimingFunction> clone() const = 0;
 

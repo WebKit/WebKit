@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !defined(OPENSSL_HEADER_BSSL_PKI_VERIFY_ERROR_H_) && defined(__cplusplus)
+#ifndef OPENSSL_HEADER_BSSL_PKI_VERIFY_ERROR_H_
 #define OPENSSL_HEADER_BSSL_PKI_VERIFY_ERROR_H_
 
 #include <openssl/base.h>   // IWYU pragma: export
@@ -59,11 +59,11 @@ class OPENSSL_EXPORT VerifyError {
     CERTIFICATE_UNABLE_TO_CHECK_REVOCATION,
 
     // CERTIFICATE_EXPIRED means that the validation time is after the
-    // certificate's |notAfter| timestamp.
+    // certificate's `notAfter` timestamp.
     CERTIFICATE_EXPIRED,
 
     // CERTIFICATE_NOT_YET_VALID means that the validation time is before the
-    // certificate's |notBefore| timestamp.
+    // certificate's `notBefore` timestamp.
     CERTIFICATE_NOT_YET_VALID,
 
     // CERTIFICATE_NO_MATCHING_EKU means that the certificate's EKU does not

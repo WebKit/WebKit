@@ -14,8 +14,8 @@
 #include <math.h>
 
 #include <array>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/ns/ns_common.h"
 
 namespace webrtc {
@@ -30,8 +30,8 @@ class QuantileNoiseEstimator {
   QuantileNoiseEstimator& operator=(const QuantileNoiseEstimator&) = delete;
 
   // Estimate noise.
-  void Estimate(ArrayView<const float, kFftSizeBy2Plus1> signal_spectrum,
-                ArrayView<float, kFftSizeBy2Plus1> noise_spectrum);
+  void Estimate(std::span<const float, kFftSizeBy2Plus1> signal_spectrum,
+                std::span<float, kFftSizeBy2Plus1> noise_spectrum);
 
  private:
   std::array<float, kSimult * kFftSizeBy2Plus1> density_;

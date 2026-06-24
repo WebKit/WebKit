@@ -14,8 +14,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "common_video/h265/h265_common.h"
 #include "common_video/h265/h265_sps_parser.h"
 #include "rtc_base/bit_buffer.h"
@@ -164,7 +164,7 @@ void WritePps(const H265PpsParser::PpsState& pps,
     bit_buffer.GetCurrentOffset(&byte_offset, &bit_offset);
   }
 
-  H265::WriteRbsp(MakeArrayView(data, byte_offset), out_buffer);
+  H265::WriteRbsp(std::span(data, byte_offset), out_buffer);
 }
 
 class H265PpsParserTest : public ::testing::Test {

@@ -29,11 +29,12 @@
 namespace WebCore {
 
 class Document;
-class RenderStyle;
 
 namespace Style {
 
-RenderStyle resolveForDocument(const Document&);
+class ComputedStyle;
 
-}
-}
+ComputedStyle resolveForDocument(const Document&);
+
+} // namespace Style
+} // namespace WebCore

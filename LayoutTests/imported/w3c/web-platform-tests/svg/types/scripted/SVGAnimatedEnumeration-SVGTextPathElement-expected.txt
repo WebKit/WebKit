@@ -1,3 +1,5 @@
 
 PASS Use of SVGAnimatedEnumeration within SVGTextPathElement
+PASS Use of SVGAnimatedEnumeration within SVGTextPathElement 1
+FAIL Use of SVGAnimatedEnumeration within SVGTextPathElement 2 assert_true: expected true got false
 

@@ -61,3 +61,11 @@ bar:
 	.set foo1, foo
 	.equ foo2, foo
 	.equiv foo3, foo
+
+	.prefalign 2
+	.prefalign 4, .Lfunc_end, nop
+	.type prefalign_func, @function
+prefalign_func:
+	ret
+.Lfunc_end:
+	.size prefalign_func, .Lfunc_end-prefalign_func

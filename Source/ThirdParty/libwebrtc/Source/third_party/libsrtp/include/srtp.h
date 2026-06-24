@@ -211,8 +211,9 @@ typedef enum {
                                         /**< invalid                         */
     srtp_err_status_pkt_idx_old = 26,   /**< packet index is too old to      */
                                         /**< consider                        */
-    srtp_err_status_pkt_idx_adv = 27    /**< packet index advanced, reset    */
+    srtp_err_status_pkt_idx_adv = 27,   /**< packet index advanced, reset    */
                                         /**< needed                          */
+    srtp_err_status_cryptex_err = 28    /**< cryptex error                   */
 } srtp_err_status_t;
 
 typedef struct srtp_ctx_t_ srtp_ctx_t;
@@ -631,7 +632,7 @@ srtp_err_status_t srtp_add_stream(srtp_t session, const srtp_policy_t *policy);
  *    - [other]           otherwise.
  *
  */
-srtp_err_status_t srtp_remove_stream(srtp_t session, unsigned int ssrc);
+srtp_err_status_t srtp_remove_stream(srtp_t session, uint32_t ssrc);
 
 /**
  * @brief srtp_update() updates all streams in the session.
@@ -1745,6 +1746,24 @@ srtp_err_status_t srtp_set_stream_roc(srtp_t session,
 srtp_err_status_t srtp_get_stream_roc(srtp_t session,
                                       uint32_t ssrc,
                                       uint32_t *roc);
+
+/**
+ * @brief srtp_set_stream_use_cryptex(session, ssrc, enable)
+ *
+ * Enable cryptex, RFC 9335, processing for the stream identified by the given
+ * SSRC. For wildcard SSRC types the cryptex setting is applied to the session
+ * template and any streams created from it.
+ *
+ * @param session is the SRTP session containing the stream to update.
+ * @param ssrc describes the SSRC to enable cryptex for.
+ * @param enable whether to enable sending and receiving cryptex.
+ *
+ * @returns srtp_err_status_ok on success, or srtp_err_status_bad_param if the
+ * stream or template cannot be found for the given SSRC.
+ */
+srtp_err_status_t srtp_set_stream_use_cryptex(srtp_t session,
+                                              const srtp_ssrc_t *ssrc,
+                                              int enable);
 
 /**
  * @}

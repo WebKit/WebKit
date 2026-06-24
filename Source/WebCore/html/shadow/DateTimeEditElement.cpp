@@ -236,9 +236,10 @@ size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& fieldToFind
 void DateTimeEditElement::defaultEventHandler(Event& event)
 {
     if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
-        if (keyboardEvent->keyIdentifier() == "U+0020"_s && m_editControlOwner) {
+        RefPtr editControlOwner = m_editControlOwner;
+        if (editControlOwner && keyboardEvent->keyIdentifier() == "U+0020"_s) {
             // Forward space keypresses to the owner to activate the date picker.
-            m_editControlOwner->didReceiveSpaceKeyFromControl();
+            editControlOwner->didReceiveSpaceKeyFromControl();
             // We want to mark the event as handled to avoid scrolling the page.
             event.setDefaultHandled();
             return;
@@ -314,7 +315,8 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
 
 void DateTimeEditElement::didBlurFromField(Event& event)
 {
-    if (!m_editControlOwner)
+    RefPtr editControlOwner = m_editControlOwner;
+    if (!editControlOwner)
         return;
 
     if (RefPtr newFocusedElement = event.relatedTarget()) {
@@ -326,13 +328,13 @@ void DateTimeEditElement::didBlurFromField(Event& event)
             return;
     }
 
-    m_editControlOwner->didBlurFromControl();
+    editControlOwner->didBlurFromControl();
 }
 
 void DateTimeEditElement::fieldValueChanged()
 {
-    if (m_editControlOwner)
-        m_editControlOwner->didChangeValueFromControl();
+    if (RefPtr editControlOwner = m_editControlOwner)
+        editControlOwner->didChangeValueFromControl();
 }
 
 bool DateTimeEditElement::focusOnNextFocusableField(size_t startIndex)
@@ -382,12 +384,16 @@ bool DateTimeEditElement::focusOnPreviousField(const DateTimeFieldElement& field
 
 bool DateTimeEditElement::isFieldOwnerDisabled() const
 {
-    return m_editControlOwner && m_editControlOwner->isEditControlOwnerDisabled();
+    if (RefPtr editControlOwner = m_editControlOwner)
+        return editControlOwner->isEditControlOwnerDisabled();
+    return false;
 }
 
 bool DateTimeEditElement::isFieldOwnerReadOnly() const
 {
-    return m_editControlOwner && m_editControlOwner->isEditControlOwnerReadOnly();
+    if (RefPtr editControlOwner = m_editControlOwner)
+        return editControlOwner->isEditControlOwnerReadOnly();
+    return false;
 }
 
 bool DateTimeEditElement::isFieldOwnerHorizontal() const
@@ -399,18 +405,22 @@ bool DateTimeEditElement::isFieldOwnerHorizontal() const
 
 bool DateTimeEditElement::didFieldOwnerTransferFocusToPicker()
 {
-    return m_editControlOwner && m_editControlOwner->didEditControlOwnerTransferFocusToPicker();
+    if (RefPtr editControlOwner = m_editControlOwner)
+        return editControlOwner->didEditControlOwnerTransferFocusToPicker();
+    return false;
 }
 
 void DateTimeEditElement::didSuppressBlurDueToPickerFocusTransfer()
 {
-    if (m_editControlOwner)
-        m_editControlOwner->didSuppressBlurDueToPickerFocusTransfer();
+    if (RefPtr editControlOwner = m_editControlOwner)
+        editControlOwner->didSuppressBlurDueToPickerFocusTransfer();
 }
 
 AtomString DateTimeEditElement::localeIdentifier() const
 {
-    return m_editControlOwner ? m_editControlOwner->localeIdentifier() : nullAtom();
+    if (RefPtr editControlOwner = m_editControlOwner)
+        return editControlOwner->localeIdentifier();
+    return nullAtom();
 }
 
 const GregorianDateTime& DateTimeEditElement::placeholderDate() const
@@ -439,12 +449,16 @@ void DateTimeEditElement::setEmptyValue(const LayoutParameters& layoutParameters
 
 String DateTimeEditElement::value() const
 {
-    return m_editControlOwner ? m_editControlOwner->formatDateTimeFieldsState(valueAsDateTimeFieldsState()) : emptyString();
+    if (RefPtr editControlOwner = m_editControlOwner)
+        return editControlOwner->formatDateTimeFieldsState(valueAsDateTimeFieldsState());
+    return emptyString();
 }
 
 String DateTimeEditElement::placeholderValue() const
 {
-    return m_editControlOwner ? m_editControlOwner->formatDateTimeFieldsState(valueAsDateTimeFieldsState(DateTimePlaceholderIfNoValue::Yes)) : emptyString();
+    if (RefPtr editControlOwner = m_editControlOwner)
+        return editControlOwner->formatDateTimeFieldsState(valueAsDateTimeFieldsState(DateTimePlaceholderIfNoValue::Yes));
+    return emptyString();
 }
 
 DateTimeFieldsState DateTimeEditElement::valueAsDateTimeFieldsState(DateTimePlaceholderIfNoValue placeholderIfNoValue) const

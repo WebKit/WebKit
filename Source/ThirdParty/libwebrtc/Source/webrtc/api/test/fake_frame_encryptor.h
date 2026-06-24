@@ -14,7 +14,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "api/array_view.h"
+#include <span>
+
 #include "api/crypto/frame_encryptor_interface.h"
 #include "api/media_types.h"
 #include "rtc_base/ref_counted_object.h"
@@ -34,9 +35,9 @@ class FakeFrameEncryptor : public RefCountedObject<FrameEncryptorInterface> {
   // bit to the end. This will always fail if fail_encryption_ is set to true.
   int Encrypt(MediaType media_type,
               uint32_t ssrc,
-              ArrayView<const uint8_t> additional_data,
-              ArrayView<const uint8_t> frame,
-              ArrayView<uint8_t> encrypted_frame,
+              std::span<const uint8_t> additional_data,
+              std::span<const uint8_t> frame,
+              std::span<uint8_t> encrypted_frame,
               size_t* bytes_written) override;
   // Always returns 1 more than the size of the frame.
   size_t GetMaxCiphertextByteSize(MediaType media_type,

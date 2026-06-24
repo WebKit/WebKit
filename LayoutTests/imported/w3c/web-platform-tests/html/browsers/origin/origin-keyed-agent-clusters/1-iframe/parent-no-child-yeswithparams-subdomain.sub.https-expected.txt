@@ -1,0 +1,6 @@
+
+PASS messageerror event must occur
+PASS setting document.domain must not give sync access
+PASS parent: originAgentCluster must equal false
+PASS child: originAgentCluster must equal true
+

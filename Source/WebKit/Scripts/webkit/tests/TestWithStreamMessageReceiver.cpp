@@ -42,7 +42,6 @@ namespace WebKit {
 
 void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithStream::SendString::name()) {
         IPC::handleMessage<Messages::TestWithStream::SendString>(connection, decoder, this, &TestWithStream::sendString);
         return;

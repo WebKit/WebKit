@@ -101,7 +101,6 @@ private:
     bool m_setupArbitrationOngoing { false };
     bool m_inRoutingArbitration { false };
     std::optional<bool> m_playingToBluetooth;
-    std::optional<bool> m_playingToBluetoothOverride;
 #endif
     mutable std::optional<double> m_sampleRate;
     mutable std::optional<size_t> m_bufferSize;

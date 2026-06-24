@@ -42,10 +42,6 @@
 
 namespace WebCore {
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/ScrollingEffectsControllerAdditions.mm>
-#endif
-
 static const Seconds scrollVelocityZeroingTimeout = 100_ms;
 static const float rubberbandDirectionLockStretchRatio = 1;
 static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
@@ -115,6 +111,27 @@ static FloatSize NODELETE deltaAlignedToDominantAxis(FloatSize delta)
     return deltaAlignedToAxis(delta, dominantAxis);
 }
 
+FloatSize ScrollingEffectsController::deltaAlignedToPredominantGestureAxis(MonotonicTime eventTime, FloatSize delta)
+{
+    if (delta.isZero())
+        return delta;
+
+    // Bias the axis alignment to recent events by accumulating deltas in m_cumulativeGestureDelta,
+    // decaying over time. This keeps gesture generally locked to an axis, but allows for
+    // direction changes (e.g. an L-shaped scroll).
+    // 120ms chosen empirically.
+    static constexpr Seconds gestureAxisDecayTimeConstant = 120_ms;
+    if (m_lastGestureEventTime) {
+        auto decay = std::exp(-(eventTime - m_lastGestureEventTime).seconds() / gestureAxisDecayTimeConstant.seconds());
+        m_cumulativeGestureDelta.scale(std::min(decay, 1.0));
+    }
+    m_lastGestureEventTime = eventTime;
+
+    m_cumulativeGestureDelta.expand(std::abs(delta.width()), std::abs(delta.height()));
+
+    return deltaAlignedToAxis(delta, dominantAxisFavoringVertical(m_cumulativeGestureDelta));
+}
+
 static std::optional<BoxSide> NODELETE affectedSideOnDominantAxis(FloatSize delta)
 {
     auto dominantAxis = dominantAxisFavoringVertical(delta);
@@ -150,6 +167,8 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
         m_ignoreMomentumScrolls = false;
         m_lastMomentumScrollTimestamp = { };
         m_momentumVelocity = { };
+        m_cumulativeGestureDelta = { };
+        m_lastGestureEventTime = { };
 
         IntSize stretchAmount = m_client.stretchAmount();
         m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));
@@ -192,8 +211,8 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     delta += eventDelta;
 
     if (wheelEvent.isGestureEvent()) {
-        // FIXME: This replicates what WheelEventDeltaFilter does. We should apply that to events in all phases, and remove axis locking here (webkit.org/b/231207).
-        delta = deltaAlignedToDominantAxis(delta);
+        // FIXME: This axis locking replicates what WheelEventDeltaFilter does. We should apply that to events in all phases, and remove axis locking here (webkit.org/b/231207).
+        delta = deltaAlignedToPredominantGestureAxis(wheelEvent.timestamp(), delta);
     }
 
     auto momentumPhase = wheelEvent.momentumPhase();
@@ -324,23 +343,62 @@ bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWh
     return false;
 }
 
-#if !ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-
-FloatSize ScrollingEffectsController::deltaWithAdditionalAdjustments(const FloatSize& delta, bool)
+FloatSize ScrollingEffectsController::deltaAdjustedForRefreshController(const FloatSize& delta, bool verticalDeltaOpposesStretch)
 {
+#if HAVE(NSREFRESHCONTROLLER)
+    // When pulling down to reveal a refresh control, reduce the rubber band stiffness
+    // to make it easier to pull.
+
+    if (!m_client.hasRefreshController()) {
+        m_skipAdditionalDeltaAdjustments = false;
+        return delta;
+    }
+
+    const auto stretchAmount = m_client.stretchAmount();
+    auto adjustedDelta = delta;
+
+    const auto refreshControlDynamicDampeningThreshold = m_client.refreshControllerSnappingThreshold();
+    static constexpr auto minimumStiffnessFactor = 0.1f;
+    static constexpr auto stiffnessRange = 0.9f;
+
+    auto verticalStretch = std::abs(static_cast<float>(stretchAmount.height()));
+
+    if (verticalStretch < 1.0f)
+        m_skipAdditionalDeltaAdjustments = false;
+
+    if (delta.height() && stretchAmount.height() < 0 && !verticalDeltaOpposesStretch) {
+        if (!m_skipAdditionalDeltaAdjustments && verticalStretch < refreshControlDynamicDampeningThreshold) {
+            auto progress = verticalStretch / refreshControlDynamicDampeningThreshold;
+
+            // Quartic curve: starts at 10% stiffness, ramps up to 100%.
+            auto stiffnessRatio = minimumStiffnessFactor + (stiffnessRange * progress * progress * progress * progress);
+            adjustedDelta.setHeight(delta.height() / stiffnessRatio);
+
+            // Lock in full stiffness once the threshold is crossed to prevent oscillation.
+            if (verticalStretch >= refreshControlDynamicDampeningThreshold)
+                m_skipAdditionalDeltaAdjustments = true;
+        } else
+            m_skipAdditionalDeltaAdjustments = true;
+    }
+
+    return adjustedDelta;
+#else
+    UNUSED_PARAM(verticalDeltaOpposesStretch);
     return delta;
+#endif
 }
 
-#endif
-
-#if !ENABLE(RUBBERBAND_PRESERVATION)
-
-bool ScrollingEffectsController::shouldAttemptRubberbandingRestoration(const RubberbandingState&)
+bool ScrollingEffectsController::shouldAttemptRubberbandingRestoration(const RubberbandingState& state)
 {
+#if HAVE(NSREFRESHCONTROLLER)
+    bool isTopStretched = state.rubberbandingEdges.top() || state.initialOverscroll.height() < 0;
+    bool isValidState = !state.initialOverscroll.isZero() || !state.initialVelocity.isZero();
+    return m_client.hasRefreshController() && isTopStretched && isValidState;
+#else
+    UNUSED_PARAM(state);
     return false;
-}
-
 #endif
+}
 
 bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWheelEvent& wheelEvent, FloatSize delta, bool isHorizontallyStretched, bool isVerticallyStretched)
 {
@@ -394,7 +452,7 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
 
     auto stretchAmount = m_client.stretchAmount();
 
-    FloatSize adjustedDelta = deltaWithAdditionalAdjustments(delta, verticalDeltaOpposesStretch);
+    FloatSize adjustedDelta = deltaAdjustedForRefreshController(delta, verticalDeltaOpposesStretch);
     auto stretchScrollForceDelta = adjustedDelta;
 
     if (horizontalDeltaOpposesStretch)

@@ -15,11 +15,11 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/field_trials.h"
 #include "api/units/time_delta.h"
@@ -71,7 +71,7 @@ class AudioEncoderCopyRedTest : public ::testing::Test {
     ASSERT_TRUE(red_.get() != nullptr);
     encoded_.Clear();
     encoded_info_ = red_->Encode(
-        timestamp_, ArrayView<const int16_t>(audio_, num_audio_samples_10ms),
+        timestamp_, std::span<const int16_t>(audio_, num_audio_samples_10ms),
         &encoded_);
     timestamp_ += checked_cast<uint32_t>(num_audio_samples_10ms);
   }

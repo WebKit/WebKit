@@ -13,9 +13,9 @@
 
 #include <cstring>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "third_party/pffft/src/pffft.h"
 
@@ -45,11 +45,11 @@ class FeatureExtractor {
 
   // Buffers the frames for matching the expecting inference step size.
   virtual void UpdateBuffers(
-      ArrayView<const ArrayView<const float, kBlockSize>> all_channels,
+      std::span<const std::span<const float, kBlockSize>> all_channels,
       ModelInputEnum input_type) = 0;
 
   // Uses the internal buffer data for producing the model input tensors.
-  virtual void PrepareModelInput(ArrayView<float> model_input,
+  virtual void PrepareModelInput(std::span<float> model_input,
                                  ModelInputEnum input_type) = 0;
 
   // Resets the internal state of the feature extractor.
@@ -66,10 +66,10 @@ class TimeDomainFeatureExtractor : public FeatureExtractor {
   bool ReadyForInference() const override;
 
   void UpdateBuffers(
-      ArrayView<const ArrayView<const float, kBlockSize>> all_channels,
+      std::span<const std::span<const float, kBlockSize>> all_channels,
       ModelInputEnum input_type) override;
 
-  void PrepareModelInput(ArrayView<float> model_input,
+  void PrepareModelInput(std::span<float> model_input,
                          ModelInputEnum input_type) override;
 
  private:
@@ -87,10 +87,10 @@ class FrequencyDomainFeatureExtractor : public FeatureExtractor {
   bool ReadyForInference() const override;
 
   void UpdateBuffers(
-      ArrayView<const ArrayView<const float, kBlockSize>> all_channels,
+      std::span<const std::span<const float, kBlockSize>> all_channels,
       ModelInputEnum input_type) override;
 
-  void PrepareModelInput(ArrayView<float> model_input,
+  void PrepareModelInput(std::span<float> model_input,
                          ModelInputEnum input_type) override;
 
  private:
@@ -108,10 +108,10 @@ class FrequencyDomainFeatureExtractor : public FeatureExtractor {
     float* const data_;
   };
 
-  void ComputeAndAddPowerSpectra(ArrayView<const float> frame,
+  void ComputeAndAddPowerSpectra(std::span<const float> frame,
                                  std::unique_ptr<PffftState>& pffft_state,
                                  int number_channels,
-                                 ArrayView<float> power_spectra);
+                                 std::span<float> power_spectra);
 
   const size_t step_size_;
   const int frame_size_;

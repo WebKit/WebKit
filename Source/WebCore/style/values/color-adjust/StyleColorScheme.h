@@ -67,12 +67,12 @@ DEFINE_TYPE_MAPPING(CSS::ColorScheme, ColorScheme)
 // MARK: - Conversion
 
 // `ColorScheme` is special-cased to return a `CSSColorSchemeValue`.
-template<> struct CSSValueCreation<ColorScheme> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const ColorScheme&); };
+template<> struct CSSValueCreation<ColorScheme> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const ColorScheme&); };
 template<> struct CSSValueConversion<ColorScheme> { auto operator()(BuilderState&, const CSSValue&) -> ColorScheme; };
 
 // MARK: - Serialization
 
-template<> struct Serialize<ColorScheme> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const ColorScheme&); };
+template<> struct Serialize<ColorScheme> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const ColorScheme&); };
 
 // MARK: - Logging
 

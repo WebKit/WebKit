@@ -25,9 +25,8 @@
 #include "config.h"
 #include "CSSContent.h"
 
-#include "CSSCounterValue.h"
+#include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
-#include "DeprecatedCSSOMValueList.h"
 
 namespace WebCore {
 namespace CSS {
@@ -67,20 +66,17 @@ void Serialize<ContentCountersFunctionParameters>::operator()(StringBuilder& bui
 
 Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ContentCounterFunction>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const ContentCounterFunction& value)
 {
-    return DeprecatedCSSOMPrimitiveValue::create(CSSCounterValue::create(
-        CustomIdent { value->identifier },
-        String { emptyString() },
-        CounterStyle { value->style }
-    ), owner);
+    return DeprecatedCSSOMPrimitiveValue::create(ContentCounterFunctionWrapper { value }, owner);
 }
 
 Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ContentCountersFunction>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const ContentCountersFunction& value)
 {
-    return DeprecatedCSSOMPrimitiveValue::create(CSSCounterValue::create(
-        CustomIdent { value->identifier },
-        String { value->separator },
-        CounterStyle { value->style }
-    ), owner);
+    return DeprecatedCSSOMPrimitiveValue::create(ContentCountersFunctionWrapper { value }, owner);
+}
+
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ContentLegacyAttrFunction>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const ContentLegacyAttrFunction& value)
+{
+    return DeprecatedCSSOMPrimitiveValue::create(ContentLegacyAttrFunctionWrapper { value }, owner);
 }
 
 Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<Content::Data>::operator()(CSSValuePool& pool, CSSStyleDeclaration& owner, const Content::Data& value)
@@ -89,11 +85,11 @@ Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<Content::Data>::operator(
         return createDeprecatedCSSOMValue(pool, owner, value.visible);
 
     return makeListDeprecatedCSSOMValue<SerializationSeparator<Content::Data>>(
-        owner,
         DeprecatedCSSOMValueListBuilder {
             createDeprecatedCSSOMValue(pool, owner, value.visible),
             createDeprecatedCSSOMValue(pool, owner, *value.alt),
-        }
+        },
+        owner
     );
 }
 

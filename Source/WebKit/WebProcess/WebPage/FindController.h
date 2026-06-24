@@ -63,6 +63,7 @@ public:
     virtual ~FindController();
 
     void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
+    void selectLastFoundRange(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, int32_t, bool)>&&);
 #if ENABLE(IMAGE_ANALYSIS)
     void findStringIncludingImages(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 #endif
@@ -97,6 +98,9 @@ private:
     void updateFindUIAfterFindingAllMatches(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void updateFindUIAfterIncrementalFind(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, WebCore::DidWrap, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 
+    enum class ShouldReuseLastFoundRange : bool { No, Yes };
+    void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, ShouldReuseLastFoundRange, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
+
     void updateFindPageOverlay(bool shouldShowOverlay);
     void updateFindIndicatorIfNeeded(bool found, OptionSet<FindOptions>, bool shouldShowOverlay);
     unsigned markMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
@@ -114,6 +118,8 @@ private:
     WeakPtr<WebCore::PageOverlay> m_findPageOverlay;
     std::optional<uint32_t> m_foundStringMatchIndex;
     Vector<WebCore::SimpleRange> m_findMatches;
+    std::optional<WebCore::SimpleRange> m_lastFoundRange;
+    bool m_lastFoundRangeDidWrap { false };
     std::unique_ptr<FindIndicator> m_findIndicator;
 };
 

@@ -58,7 +58,6 @@ class RenderDelayControllerImpl final : public RenderDelayController {
   RenderDelayControllerMetrics metrics_;
   std::optional<DelayEstimate> delay_samples_;
   size_t capture_call_counter_ = 0;
-  int delay_change_counter_ = 0;
   DelayEstimate::Quality last_delay_estimate_quality_;
 };
 
@@ -102,7 +101,6 @@ void RenderDelayControllerImpl::Reset(bool reset_delay_confidence) {
   delay_ = std::nullopt;
   delay_samples_ = std::nullopt;
   delay_estimator_.Reset(reset_delay_confidence);
-  delay_change_counter_ = 0;
   if (reset_delay_confidence) {
     last_delay_estimate_quality_ = DelayEstimate::Quality::kCoarse;
   }
@@ -119,29 +117,7 @@ std::optional<DelayEstimate> RenderDelayControllerImpl::GetDelay(
   auto delay_samples = delay_estimator_.EstimateDelay(render_buffer, capture);
 
   if (delay_samples) {
-    if (!delay_samples_ || delay_samples->delay != delay_samples_->delay) {
-      delay_change_counter_ = 0;
-    }
-    if (delay_samples_) {
-      delay_samples_->blocks_since_last_change =
-          delay_samples_->delay == delay_samples->delay
-              ? delay_samples_->blocks_since_last_change + 1
-              : 0;
-      delay_samples_->blocks_since_last_update = 0;
-      delay_samples_->delay = delay_samples->delay;
-      delay_samples_->quality = delay_samples->quality;
-    } else {
-      delay_samples_ = delay_samples;
-    }
-  } else {
-    if (delay_samples_) {
-      ++delay_samples_->blocks_since_last_change;
-      ++delay_samples_->blocks_since_last_update;
-    }
-  }
-
-  if (delay_change_counter_ < 2 * kNumBlocksPerSecond) {
-    ++delay_change_counter_;
+    delay_samples_ = delay_samples;
   }
 
   if (delay_samples_) {
@@ -151,7 +127,7 @@ std::optional<DelayEstimate> RenderDelayControllerImpl::GetDelay(
         delay_samples_->quality == DelayEstimate::Quality::kRefined;
     delay_ = ComputeBufferDelay(
         delay_, use_hysteresis ? hysteresis_limit_blocks_ : 0, *delay_samples_);
-    last_delay_estimate_quality_ = delay_samples_->quality;
+    last_delay_estimate_quality_ = delay_->quality;
   }
 
   metrics_.Update(delay_samples_ ? std::optional<size_t>(delay_samples_->delay)
@@ -163,7 +139,6 @@ std::optional<DelayEstimate> RenderDelayControllerImpl::GetDelay(
                         delay_samples ? delay_samples->delay : 0);
   data_dumper_->DumpRaw("aec3_render_delay_controller_buffer_delay",
                         delay_ ? delay_->delay : 0);
-
   return delay_;
 }
 

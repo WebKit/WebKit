@@ -13,6 +13,7 @@
 
 #include <map>
 
+#include "api/environment/environment.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
@@ -46,7 +47,8 @@ class FrameSelector {
     TimeDelta upper_bound;
   };
 
-  FrameSelector(ScalabilityMode scalability_mode,
+  FrameSelector(const Environment& env,
+                ScalabilityMode scalability_mode,
                 Timespan low_overhead_frame_span,
                 Timespan high_overhead_frame_span);
 

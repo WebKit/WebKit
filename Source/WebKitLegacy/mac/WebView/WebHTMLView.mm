@@ -123,12 +123,11 @@
 #import <WebCore/Page.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
-#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/StyleDocumentScope.h>
 #import <WebCore/StyleProperties.h>
-#import <WebCore/StyleScope.h>
 #import <WebCore/Text.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
@@ -656,7 +655,7 @@ static std::optional<NSInteger> NODELETE toTag(WebCore::ContextMenuAction action
 
 - (void)forwardContextMenuAction:(id)sender
 {
-    auto action = toAction([sender tag]);
+    auto action = toAction([(NSMenuItem *)sender tag]);
     if (!action)
         return;
 
@@ -1194,7 +1193,6 @@ static NSControlStateValue NODELETE kit(TriState state)
 
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard inContext:(DOMRange *)context allowPlainText:(BOOL)allowPlainText
 {
-    using namespace WebCore;
     NSArray *types = [pasteboard types];
     DOMDocumentFragment *fragment = nil;
 
@@ -5515,7 +5513,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (![self _canEdit])
         return;
     
-    NSWritingDirection writingDirection = static_cast<NSWritingDirection>([sender tag]);
+    NSWritingDirection writingDirection = static_cast<NSWritingDirection>([(NSMenuItem *)sender tag]);
     
     // We disable the menu item that performs this action because we can't implement
     // NSWritingDirectionNatural's behavior using CSS.
@@ -6251,7 +6249,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!frame || !frame->document() || !frame->document()->documentElement() || !frame->document()->documentElement()->renderer())
         return WebCore::ScrollbarWidth::Auto;
 
-    return WebCore::Style::toPlatform(frame->document()->documentElement()->renderer()->style().scrollbarWidth());
+    return WebCore::scrollbarWidth(*frame->document()->documentElement()->renderer());
 }
 
 @end

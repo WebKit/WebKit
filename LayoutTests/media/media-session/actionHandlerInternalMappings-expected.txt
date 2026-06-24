@@ -20,6 +20,27 @@ ACTION: stop
 Command: StopCommand
 ACTION: seekto
 Command: SeekToPlaybackPositionCommand
+ACTION: previousslide
+Command: PreviousTrackCommand
+ACTION: nextslide
+Command: NextTrackCommand
+Test that removing one of a pair sharing a platform command keeps the command, and removing both clears it
+Register nexttrack and nextslide, then remove nexttrack
+EXPECTED (internals.platformSupportedCommands().includes("NextTrackCommand") == 'true') OK
+Remove nextslide
+EXPECTED (internals.platformSupportedCommands().includes("NextTrackCommand") == 'false') OK
+Register nexttrack and nextslide, then remove nextslide
+EXPECTED (internals.platformSupportedCommands().includes("NextTrackCommand") == 'true') OK
+Remove nexttrack
+EXPECTED (internals.platformSupportedCommands().includes("NextTrackCommand") == 'false') OK
+Register previoustrack and previousslide, then remove previoustrack
+EXPECTED (internals.platformSupportedCommands().includes("PreviousTrackCommand") == 'true') OK
+Remove previousslide
+EXPECTED (internals.platformSupportedCommands().includes("PreviousTrackCommand") == 'false') OK
+Register previoustrack and previousslide, then remove previousslide
+EXPECTED (internals.platformSupportedCommands().includes("PreviousTrackCommand") == 'true') OK
+Remove previoustrack
+EXPECTED (internals.platformSupportedCommands().includes("PreviousTrackCommand") == 'false') OK
 Iterate over all possible actions
 Command: SkipForwardCommand
 Command: SkipBackwardCommand

@@ -54,7 +54,6 @@ WEBCORE_EXPORT RefPtr<Element> containerElementForExtractedText(const LocalFrame
 WEBCORE_EXPORT RefPtr<Element> containerElementForSearchTexts(const LocalFrame&, Vector<String>&&, std::optional<NodeIdentifier>&&);
 
 WEBCORE_EXPORT Vector<FilterRule> extractRules(Vector<FilterRuleData>&&);
-WEBCORE_EXPORT void applyRules(const String&, std::optional<NodeIdentifier>&& containerNodeID, const Vector<FilterRule>&, Page&, CompletionHandler<void(const String&)>&&);
 
 struct RenderedText {
     String textWithReplacedContent;

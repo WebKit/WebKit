@@ -36,6 +36,7 @@ public:
         NeedsChromeBrowser,
         NeedsFirefoxBrowser,
         NeedsMacintoshPlatform,
+        NeedsAndroidPlatform,
         NeedsUnbrandedUserAgent,
 
         NumUserAgentQuirks

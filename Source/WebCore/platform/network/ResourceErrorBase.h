@@ -116,6 +116,6 @@ private:
 WEBCORE_EXPORT ResourceError internalError(const URL&, std::source_location = std::source_location::current());
 WEBCORE_EXPORT ResourceError badResponseHeadersError(const URL&);
 
-inline bool operator==(const ResourceError& a, const ResourceError& b) { return ResourceErrorBase::compare(a, b); }
+bool operator==(const ResourceError& a, const ResourceError& b);
 
 } // namespace WebCore

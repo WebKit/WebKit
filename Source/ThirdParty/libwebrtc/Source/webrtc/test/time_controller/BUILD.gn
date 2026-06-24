@@ -33,6 +33,7 @@ rtc_library("time_controller") {
     "../../rtc_base:timeutils",
     "../../rtc_base/synchronization:yield_policy",
     "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
 
@@ -60,6 +61,7 @@ rtc_library("time_controller_impl") {
     "../../rtc_base:timeutils",
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/synchronization:yield_policy",
+    "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/functional:any_invocable",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
@@ -99,6 +101,7 @@ if (rtc_include_tests) {
       "../../api/units:timestamp",
       "../../rtc_base:checks",
       "../../rtc_base:macromagic",
+      "../../rtc_base:rtc_base_tests_utils",
       "../../rtc_base:rtc_event",
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base:threading",

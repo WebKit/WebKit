@@ -419,7 +419,7 @@ inline CFHashCode safeCFHash(CFTypeRef a)
 }
 
 template<typename T, typename U>
-ALWAYS_INLINE void lazyInitialize(const RetainPtr<T>& ptr, RetainPtr<U>&& obj)
+SUPPRESS_NODELETE ALWAYS_INLINE void NODELETE lazyInitialize(const RetainPtr<T>& ptr, RetainPtr<U>&& obj)
 {
     RELEASE_ASSERT(!ptr);
     const_cast<RetainPtr<T>&>(ptr) = std::move(obj);

@@ -41,6 +41,8 @@
 #endif
 
 
+using namespace bssl;
+
 // Low-level intrinsic operations
 
 static uint64_t load_3(const uint8_t *in) {
@@ -460,7 +462,7 @@ static void fe_pow22523(fe *out, const fe *z) {
 
 // Group operations.
 
-void x25519_ge_tobytes(uint8_t s[32], const ge_p2 *h) {
+void bssl::x25519_ge_tobytes(uint8_t s[32], const ge_p2 *h) {
   fe recip;
   fe x;
   fe y;
@@ -484,7 +486,7 @@ static void ge_p3_tobytes(uint8_t s[32], const ge_p3 *h) {
   s[31] ^= fe_isnegative(&x) << 7;
 }
 
-int x25519_ge_frombytes_vartime(ge_p3 *h, const uint8_t s[32]) {
+int bssl::x25519_ge_frombytes_vartime(ge_p3 *h, const uint8_t s[32]) {
   fe u;
   fe_loose v;
   fe w;
@@ -558,7 +560,7 @@ static void ge_p3_to_p2(ge_p2 *r, const ge_p3 *p) {
 }
 
 // r = p
-void x25519_ge_p3_to_cached(ge_cached *r, const ge_p3 *p) {
+void bssl::x25519_ge_p3_to_cached(ge_cached *r, const ge_p3 *p) {
   fe_add(&r->YplusX, &p->Y, &p->X);
   fe_sub(&r->YminusX, &p->Y, &p->X);
   fe_copy_lt(&r->Z, &p->Z);
@@ -566,14 +568,14 @@ void x25519_ge_p3_to_cached(ge_cached *r, const ge_p3 *p) {
 }
 
 // r = p
-void x25519_ge_p1p1_to_p2(ge_p2 *r, const ge_p1p1 *p) {
+void bssl::x25519_ge_p1p1_to_p2(ge_p2 *r, const ge_p1p1 *p) {
   fe_mul_tll(&r->X, &p->X, &p->T);
   fe_mul_tll(&r->Y, &p->Y, &p->Z);
   fe_mul_tll(&r->Z, &p->Z, &p->T);
 }
 
 // r = p
-void x25519_ge_p1p1_to_p3(ge_p3 *r, const ge_p1p1 *p) {
+void bssl::x25519_ge_p1p1_to_p3(ge_p3 *r, const ge_p1p1 *p) {
   fe_mul_tll(&r->X, &p->X, &p->T);
   fe_mul_tll(&r->Y, &p->Y, &p->Z);
   fe_mul_tll(&r->Z, &p->Z, &p->T);
@@ -648,7 +650,7 @@ static void ge_msub(ge_p1p1 *r, const ge_p3 *p, const ge_precomp *q) {
 }
 
 // r = p + q
-void x25519_ge_add(ge_p1p1 *r, const ge_p3 *p, const ge_cached *q) {
+void bssl::x25519_ge_add(ge_p1p1 *r, const ge_p3 *p, const ge_cached *q) {
   fe trX, trY, trZ, trT;
 
   fe_add(&r->X, &p->Y, &p->X);
@@ -666,7 +668,7 @@ void x25519_ge_add(ge_p1p1 *r, const ge_p3 *p, const ge_cached *q) {
 }
 
 // r = p - q
-void x25519_ge_sub(ge_p1p1 *r, const ge_p3 *p, const ge_cached *q) {
+void bssl::x25519_ge_sub(ge_p1p1 *r, const ge_p3 *p, const ge_cached *q) {
   fe trX, trY, trZ, trT;
 
   fe_add(&r->X, &p->Y, &p->X);
@@ -689,7 +691,7 @@ static void cmov(ge_precomp *t, const ge_precomp *u, uint8_t b) {
   fe_cmov(&t->xy2d, &u->xy2d, b);
 }
 
-void x25519_ge_scalarmult_small_precomp(
+void bssl::x25519_ge_scalarmult_small_precomp(
     ge_p3 *h, const uint8_t a[32], const uint8_t precomp_table[15 * 2 * 32]) {
   // precomp_table is first expanded into matching |ge_precomp|
   // elements.
@@ -745,7 +747,7 @@ void x25519_ge_scalarmult_small_precomp(
 
 #if defined(OPENSSL_SMALL)
 
-void x25519_ge_scalarmult_base(ge_p3 *h, const uint8_t a[32]) {
+void bssl::x25519_ge_scalarmult_base(ge_p3 *h, const uint8_t a[32]) {
   x25519_ge_scalarmult_small_precomp(h, a, k25519SmallPrecomp);
 }
 
@@ -791,7 +793,7 @@ static void table_select(ge_precomp *t, const int pos, const signed char b) {
 //
 // Preconditions:
 //   a[31] <= 127
-void x25519_ge_scalarmult_base(ge_p3 *h, const uint8_t a[32]) {
+void bssl::x25519_ge_scalarmult_base(ge_p3 *h, const uint8_t a[32]) {
 #if defined(BORINGSSL_FE25519_ADX)
   if (CRYPTO_is_BMI1_capable() && CRYPTO_is_BMI2_capable() &&
       CRYPTO_is_ADX_capable()) {
@@ -862,7 +864,8 @@ static void cmov_cached(ge_cached *t, ge_cached *u, uint8_t b) {
 
 // r = scalar * A.
 // where a = a[0]+256*a[1]+...+256^31 a[31].
-void x25519_ge_scalarmult(ge_p2 *r, const uint8_t *scalar, const ge_p3 *A) {
+void bssl::x25519_ge_scalarmult(ge_p2 *r, const uint8_t *scalar,
+                                const ge_p3 *A) {
   ge_p2 Ai_p2[8];
   ge_cached Ai[16];
   ge_p1p1 t;
@@ -1023,7 +1026,7 @@ static void ge_double_scalarmult_vartime(ge_p2 *r, const uint8_t *a,
 
 // int64_lshift21 returns |a << 21| but is defined when shifting bits into the
 // sign bit. This works around a language flaw in C.
-static inline int64_t int64_lshift21(int64_t a) {
+static int64_t int64_lshift21(int64_t a) {
   return (int64_t)((uint64_t)a << 21);
 }
 
@@ -1037,7 +1040,7 @@ static inline int64_t int64_lshift21(int64_t a) {
 //   s[0]+256*s[1]+...+256^31*s[31] = s mod l
 //   where l = 2^252 + 27742317777372353535851937790883648493.
 //   Overwrites s in place.
-void x25519_sc_reduce(uint8_t s[64]) {
+void bssl::x25519_sc_reduce(uint8_t s[64]) {
   int64_t s0 = 2097151 & load_3(s);
   int64_t s1 = 2097151 & (load_4(s + 2) >> 5);
   int64_t s2 = 2097151 & (load_3(s + 5) >> 2);

@@ -166,7 +166,7 @@ die "can't locate x86_64-xlate.pl";
 $avx = 1;
 $shaext = 1;
 
-open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
+open OUT, "|-", $^X, $xlate, $flavour, $output;
 *STDOUT=*OUT;
 
 $ctx="%rdi";	# 1st arg, zapped by $a3

@@ -48,9 +48,6 @@ class FlexfecReceiveStream : public RtpPacketSinkInterface,
     // post initialization.
     uint32_t remote_ssrc = 0;
 
-    // Sender SSRC used for sending RTCP (such as receiver reports).
-    uint32_t local_ssrc = 0;
-
     // Vector containing a single element, corresponding to the SSRC of the
     // media stream being protected by this FlexFEC stream. The vector MUST have
     // size 1.

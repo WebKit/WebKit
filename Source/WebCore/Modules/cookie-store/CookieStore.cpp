@@ -591,18 +591,13 @@ void CookieStore::stop()
     if (!m_hasChangeEventListener)
         return;
 
-    WeakPtr page = document->page();
-    if (!page)
-        return;
-
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    auto host = document->url().host().toString();
-    if (host.isEmpty())
-        return;
-
-    protect(page->cookieJar())->removeChangeListener(host, *this);
+    if (RefPtr cookieJar = m_cookieJar)
+        cookieJar->removeChangeListener(m_host, *this);
 #endif
     m_hasChangeEventListener = false;
+    m_host = { };
+    m_cookieJar = nullptr;
 }
 
 bool CookieStore::virtualHasPendingActivity() const
@@ -627,26 +622,31 @@ void CookieStore::eventListenersDidChange()
     if (!document)
         return;
 
-    auto host = document->url().host().toString();
-    if (host.isEmpty())
-        return;
-
     bool hadChangeEventListener = m_hasChangeEventListener;
     m_hasChangeEventListener = hasEventListeners(eventNames().changeEvent);
 
     if (hadChangeEventListener == m_hasChangeEventListener)
         return;
 
-    WeakPtr page = document->page();
-    if (!page)
-        return;
-
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    Ref cookieJar = page->cookieJar();
-    if (m_hasChangeEventListener)
+    if (m_hasChangeEventListener) {
+        auto host = document->url().host().toString();
+        RefPtr page = document->page();
+        if (host.isEmpty() || !page) {
+            m_hasChangeEventListener = false;
+            return;
+        }
+
+        Ref cookieJar = page->cookieJar();
         cookieJar->addChangeListener(*document, *this);
-    else
-        cookieJar->removeChangeListener(host, *this);
+        m_host = WTF::move(host);
+        m_cookieJar = cookieJar;
+    } else {
+        if (RefPtr cookieJar = m_cookieJar)
+            cookieJar->removeChangeListener(m_host, *this);
+        m_host = { };
+        m_cookieJar = nullptr;
+    }
 #endif
 }
 

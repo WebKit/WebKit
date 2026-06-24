@@ -634,7 +634,7 @@ Ref<GenericPromise> MediaRecorderPrivateEncoder::encodePendingVideoFrames(const 
     if (m_videoEncoderCreationPromise) {
         GenericPromise::Producer producer;
         Ref promise = producer.promise();
-        RefPtr { m_videoEncoderCreationPromise }->chainTo(WTF::move(producer));
+        protect(m_videoEncoderCreationPromise)->chainTo(WTF::move(producer));
         return promise;
     }
 

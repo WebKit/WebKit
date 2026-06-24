@@ -39,6 +39,7 @@
 #include "ModuleProgramExecutable.h"
 #include "SourceProfiler.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
+#include "VariableEnvironmentInlines.h"
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -146,7 +147,7 @@ void JSModuleRecord::execute(JSGlobalObject* globalObject, JSPromise* capability
         asyncCapability(vm, capability);
         JSValue result = globalObject->moduleLoader()->evaluate(globalObject, identifierToJSValue(vm, moduleKey()), this, nullptr, jsUndefined(), jsNumber(static_cast<int32_t>(ResumeMode::NormalMode)));
         if (scope.exception())
-            capability->rejectWithCaughtException(globalObject, scope);
+            capability->rejectWithCaughtException(vm, scope);
         else if (JSValue state = internalField(Field::State).get(); !state.isNumber() || state.asInt32AsAnyInt() == std::to_underlying(State::Executing))
             capability->resolve(globalObject, vm, result);
         else

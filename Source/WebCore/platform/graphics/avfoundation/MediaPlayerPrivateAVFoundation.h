@@ -340,8 +340,6 @@ protected:
     Function<void()> m_pendingSeek;
     MediaTime m_lastSeekTime;
 
-    mutable Lock m_queuedNotificationsLock;
-    Deque<Notification> m_queuedNotifications WTF_GUARDED_BY_LOCK(m_queuedNotificationsLock);
 
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;

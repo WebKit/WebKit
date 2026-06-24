@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="output"></pre>
+<script src="resources/broadcastchannel-test-harness.js"></script>
+<script>
+broadcastChannelTest(function() { return new DOMException("aborted", "AbortError"); }, "DOMException:AbortError:aborted");
+</script>
+</body>
+</html>

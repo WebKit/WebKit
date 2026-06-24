@@ -6,10 +6,9 @@
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
 .text	
 
-.type	beeu_mod_inverse_vartime,@function
-.hidden	beeu_mod_inverse_vartime
 .globl	beeu_mod_inverse_vartime
 .hidden beeu_mod_inverse_vartime
+.type	beeu_mod_inverse_vartime,@function
 .align	32
 beeu_mod_inverse_vartime:
 .cfi_startproc	

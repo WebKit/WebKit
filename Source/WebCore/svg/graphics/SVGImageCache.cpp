@@ -75,7 +75,7 @@ Image* SVGImageCache::findImageForRenderer(const RenderObject* renderer) const
 FloatSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
 {
     SUPPRESS_UNCOUNTED_LOCAL auto* image = findImageForRenderer(renderer);
-    return image ? image->size() : m_svgImage->size();
+    return image ? image->size() : protect(m_svgImage)->size();
 }
 
 // FIXME: This doesn't take into account the animation timeline so animations will not

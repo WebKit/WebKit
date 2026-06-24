@@ -33,6 +33,11 @@
 /**
  * WPEToplevelDRM:
  *
+ * A [class@WPEPlatform.Toplevel] implementation for DRM/KMS.
+ *
+ * [class@ToplevelDRM] is the [class@WPEPlatform.Toplevel] implementation used
+ * by [class@DisplayDRM]. It is always fullscreen, covering the whole screen
+ * managed by the DRM device.
  */
 struct _WPEToplevelDRMPrivate {
 };

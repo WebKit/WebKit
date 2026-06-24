@@ -61,7 +61,7 @@ auto CSSValueConversion<SVGPathData>::operator()(BuilderState& state, const CSSV
     return toStyle(pathValue->path(), state);
 }
 
-auto CSSValueCreation<SVGPathData>::operator()(CSSValuePool& pool, const RenderStyle& style, const SVGPathData& value) -> Ref<CSSValue>
+auto CSSValueCreation<SVGPathData>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const SVGPathData& value) -> Ref<CSSValue>
 {
     if (value.isNone())
         return createCSSValue(pool, style, CSS::Keyword::None { });
@@ -70,7 +70,7 @@ auto CSSValueCreation<SVGPathData>::operator()(CSSValuePool& pool, const RenderS
 
 // MARK: - Serialization
 
-void Serialize<SVGPathData>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const SVGPathData& value)
+void Serialize<SVGPathData>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const SVGPathData& value)
 {
     if (value.isNone()) {
         serializationForCSS(builder, context, style, CSS::Keyword::None { });

@@ -56,8 +56,8 @@ layer at (0,0) size 800x600
                   text run at (16,239) width 130: " option #2"
                 RenderBR {BR} at (146,239) size 0x37
                 RenderMenuList {SELECT} at (0,276) size 326x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderSelectFallbackButton {DIV} at (1,1) size 324x28
-                    RenderText at (5,5) size 83x18
+                  RenderBlock {DIV} at (1,1) size 324x28
+                    RenderText {#text} at (5,5) size 83x18
                       text run at (5,5) width 83: "Initial Value"
                 RenderBR {BR} at (326,267) size 0x37
                 RenderText {#text} at (0,0) size 0x0

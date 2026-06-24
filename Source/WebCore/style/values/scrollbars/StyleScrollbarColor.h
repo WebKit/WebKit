@@ -75,9 +75,9 @@ template<> struct CSSValueConversion<ScrollbarColor> { auto operator()(BuilderSt
 // MARK: - Blending
 
 template<> struct Blending<ScrollbarColor> {
-    auto equals(const ScrollbarColor&, const ScrollbarColor&, const RenderStyle&, const RenderStyle&) -> bool;
+    auto equals(const ScrollbarColor&, const ScrollbarColor&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
     auto canBlend(const ScrollbarColor&, const ScrollbarColor&) -> bool;
-    auto blend(const ScrollbarColor&, const ScrollbarColor&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> ScrollbarColor;
+    auto blend(const ScrollbarColor&, const ScrollbarColor&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> ScrollbarColor;
 };
 
 } // namespace Style

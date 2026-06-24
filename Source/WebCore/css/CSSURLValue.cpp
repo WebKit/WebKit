@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,8 @@
 #include "config.h"
 #include "CSSURLValue.h"
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
-#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
-#include "CSSPrimitiveNumericTypes+Serialization.h"
-#include "CSSPrimitiveNumericTypes.h"
+#include "CSSValuePool.h"
+#include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 
 namespace WebCore {
 
@@ -50,6 +48,11 @@ bool CSSURLValue::equals(const CSSURLValue& other) const
 IterationStatus CSSURLValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_url);
+}
+
+Ref<DeprecatedCSSOMValue> CSSURLValue::customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+{
+    return CSS::createDeprecatedCSSOMValue(CSSValuePool::singleton(), owner, m_url);
 }
 
 } // namespace WebCore

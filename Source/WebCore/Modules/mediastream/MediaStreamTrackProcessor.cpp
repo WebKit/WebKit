@@ -182,14 +182,14 @@ void MediaStreamTrackProcessor::VideoFrameObserver::start()
 {
     assertIsMainThread();
     m_isStarted = true;
-    m_realtimeVideoSource->addVideoFrameObserver(*this);
+    protect(m_realtimeVideoSource)->addVideoFrameObserver(*this);
 }
 
 MediaStreamTrackProcessor::VideoFrameObserver::~VideoFrameObserver()
 {
     assertIsMainThread();
     if (m_isStarted)
-        m_realtimeVideoSource->removeVideoFrameObserver(*this);
+        protect(m_realtimeVideoSource)->removeVideoFrameObserver(*this);
 }
 
 RefPtr<WebCodecsVideoFrame> MediaStreamTrackProcessor::VideoFrameObserver::takeVideoFrame(ScriptExecutionContext& context)

@@ -121,7 +121,7 @@ DEFINE_TYPE_MAPPING(CSS::Clip, Clip);
 template<> struct CSSValueConversion<Clip> { auto operator()(BuilderState&, const CSSValue&) -> Clip; };
 
 // `Clip` is special-cased to return a `CSSClipValue`.
-template<> struct CSSValueCreation<Clip> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const Clip&); };
+template<> struct CSSValueCreation<Clip> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const Clip&); };
 
 // MARK: - Blending
 

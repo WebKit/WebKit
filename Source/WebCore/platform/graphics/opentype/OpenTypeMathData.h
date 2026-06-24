@@ -130,6 +130,7 @@ public:
     float getMathConstant(const Font&, MathConstant) const;
     float getItalicCorrection(const Font&, Glyph) const;
     void getMathVariants(Glyph, bool isVertical, Vector<Glyph>& sizeVariants, Vector<AssemblyPart>& assemblyParts) const;
+    Glyph getMirroredGlyph(char32_t codePoint) const;
 
 private:
     explicit OpenTypeMathData(const FontPlatformData&);

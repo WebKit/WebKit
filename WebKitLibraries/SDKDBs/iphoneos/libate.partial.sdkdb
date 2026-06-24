@@ -133,7 +133,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "at_alpha_t"},
     {"access": "public", "name": "at_block_buffer_t"},

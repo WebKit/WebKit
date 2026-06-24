@@ -43,6 +43,7 @@ RemoteSnapshotRecorderProxy::RemoteSnapshotRecorderProxy(RemoteRenderingBackendP
 
 void RemoteSnapshotRecorderProxy::drawSnapshotFrame(FrameIdentifier frameIdentifier)
 {
+    sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
     send(Messages::RemoteSnapshotRecorder::DrawSnapshotFrame(frameIdentifier));
 }

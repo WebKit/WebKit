@@ -1,0 +1,59 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<style>
+.btn { cursor: pointer; }
+#delegate-target { cursor: pointer; }
+#test3 .clickable { cursor: pointer; }
+</style>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body id="bodyForDelegationTest">
+
+<!-- Scenario 1: click handler on container, the actual interactive target
+     is a descendant signaled by cursor:pointer (.btn). Surrounding text 
+     should stitch normally; .btn text should be standalone. -->
+<ul id="test1" onclick="if (event.target.matches('.btn')) {}">
+    <li>before <b>stitched-with-before</b><span class="btn">clickable-not-stitched-with-anything</span> after<i>stitched-with-after</i></li>
+</ul>
+
+<!-- Scenario 2: click handler on <body> (event delegation). The fixup excludes
+     <body>, so a body-only handler must NOT break stitching of its descendants.
+     The actual interactive target (cursor:pointer) does break. -->
+<div id="test2" role="group">
+    <div>
+        <div>Foo <span>stitched-with-foo</span> <span id="delegate-target">button-not-stitched-with-anything</span> bar<i>stitched-with-bar</i></div>
+    </div>
+</div>
+
+<!-- Scenario 3: click handler directly on an inline interactive element wrapping
+     multiple text pieces. Texts inside the handler should stitch with each other
+     (note: inner <b> inherits cursor:pointer, which must not split the span's text
+     away from itself); texts outside should stitch with each other. -->
+<p id="test3" role="group">
+    Foo <span>stitched-with-foo</span> <span class="clickable" onclick="void(0)">btn <b>should-be-stitched-with-btn</b></span> bar<b>stitched-with-bar</b>
+</p>
+
+<script>
+// Register the body-level click handler used by Scenario 2 via addEventListener so the page is
+// representative of real-world event delegation patterns.
+document.getElementById("bodyForDelegationTest").addEventListener("click", () => { /* ...delegate event... */ });
+
+var output = "Tests text stitching around clickable elements.\n\n";
+
+if (window.accessibilityController) {
+    output += "Scenario 1 (handler on <ul>, .btn signals the target):\n";
+    output += dumpAXSearchTraversal(accessibilityController.accessibleElementById("test1"), { excludeRoles: ["group", "list", "listitem"] }) + "\n";
+
+    output += "Scenario 2 (handler on <body> via delegation, cursor:pointer signals the target):\n";
+    output += dumpAXSearchTraversal(accessibilityController.accessibleElementById("test2"), { excludeRoles: ["group"] }) + "\n";
+
+    output += "Scenario 3 (handler directly on an inline element wrapping multiple texts):\n";
+    output += dumpAXSearchTraversal(accessibilityController.accessibleElementById("test3"), { excludeRoles: ["group"] }) + "\n";
+
+    debugEscaped(output);
+}
+</script>
+</body>
+</html>

@@ -285,6 +285,7 @@ public:
         case CaptureDevice::DeviceType::Microphone:
         case CaptureDevice::DeviceType::Speaker:
         case CaptureDevice::DeviceType::Camera:
+        case CaptureDevice::DeviceType::Canvas:
         case CaptureDevice::DeviceType::SystemAudio:
         case CaptureDevice::DeviceType::Unknown:
             ASSERT_NOT_REACHED();

@@ -25,6 +25,7 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
+#include "api/crypto/crypto_options.h"
 #include "api/jsep.h"
 #include "api/media_types.h"
 #include "api/peer_connection_interface.h"
@@ -48,6 +49,7 @@
 #include "media/base/media_constants.h"
 #include "media/base/stream_params.h"
 #include "pc/peer_connection_wrapper.h"
+#include "pc/rtp_transceiver.h"
 #include "pc/session_description.h"
 #include "pc/test/fake_audio_capture_module.h"
 #include "pc/test/integration_test_helpers.h"
@@ -57,6 +59,7 @@
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 // This file contains unit tests that relate to the behavior of the
 // SdpOfferAnswer module.
@@ -70,6 +73,7 @@ using ::testing::ElementsAre;
 using ::testing::Eq;
 using ::testing::IsTrue;
 using ::testing::NotNull;
+using ::testing::Optional;
 using ::testing::Pair;
 using ::testing::SizeIs;
 
@@ -81,6 +85,19 @@ std::unique_ptr<Thread> CreateAndStartThread() {
   auto thread = Thread::Create();
   thread->Start();
   return thread;
+}
+
+// Helper to enable SFrame directly on a transceiver's internal state.
+// Must be called with the signaling thread to ensure thread safety.
+void EnableSframeOnTransceiver(
+    Thread* signaling_thread,
+    const scoped_refptr<RtpTransceiverInterface>& transceiver) {
+  signaling_thread->BlockingCall([&]() {
+    static_cast<RtpTransceiverProxyWithInternal<RtpTransceiver>*>(
+        transceiver.get())
+        ->internal()
+        ->TryToEnableSframe();
+  });
 }
 
 }  // namespace
@@ -153,7 +170,7 @@ class SdpOfferAnswerTest : public ::testing::Test {
   scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;
 
  private:
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
 };
 
 TEST_F(SdpOfferAnswerTest, OnTrackReturnsProxiedObject) {
@@ -172,8 +189,9 @@ TEST_F(SdpOfferAnswerTest, OnTrackReturnsProxiedObject) {
   transceiver->stopped();
 }
 
-TEST_F(SdpOfferAnswerTest, BundleRejectsCodecCollisionsAudioVideo) {
-  auto pc = CreatePeerConnection();
+TEST_F(SdpOfferAnswerTest,
+       BundleAcceptsCodecCollisionsAudioVideoWhenFieldTrialDisabled) {
+  auto pc = CreatePeerConnection("");
   std::string sdp =
       "v=0\r\n"
       "o=- 0 3 IN IP4 127.0.0.1\r\n"
@@ -205,7 +223,6 @@ TEST_F(SdpOfferAnswerTest, BundleRejectsCodecCollisionsAudioVideo) {
   ASSERT_NE(desc, nullptr);
   RTCError error;
   pc->SetRemoteDescription(std::move(desc), &error);
-  // There is no error yet but the metrics counter will increase.
   EXPECT_TRUE(error.ok());
 
   EXPECT_METRIC_EQ(
@@ -224,8 +241,52 @@ TEST_F(SdpOfferAnswerTest, BundleRejectsCodecCollisionsAudioVideo) {
                             true));
 }
 
-TEST_F(SdpOfferAnswerTest, BundleRejectsCodecCollisionsVideoFmtp) {
-  auto pc = CreatePeerConnection();
+TEST_F(SdpOfferAnswerTest,
+       BundleRejectsCodecCollisionsAudioVideoWhenFieldTrialEnabled) {
+  auto pc = CreatePeerConnection(
+      "WebRTC-SdpBundlePayloadTypeCollisionCheck/Enabled/");
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 0 3 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=group:BUNDLE 0 1\r\n"
+      "a=fingerprint:sha-1 "
+      "4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n"
+      "a=setup:actpass\r\n"
+      "a=ice-ufrag:ETEn\r\n"
+      "a=ice-pwd:OtSK0WpNtpUjkY4+86js7Z/l\r\n"
+      "m=audio 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=rtcp-mux\r\n"
+      "a=sendonly\r\n"
+      "a=mid:0\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "m=video 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=rtcp-mux\r\n"
+      "a=sendonly\r\n"
+      "a=mid:1\r\n"
+      "a=rtpmap:111 H264/90000\r\n"
+      "a=fmtp:111 "
+      "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id="
+      "42e01f\r\n";
+
+  auto desc = CreateSessionDescription(SdpType::kOffer, sdp);
+  ASSERT_NE(desc, nullptr);
+  RTCError error;
+  pc->SetRemoteDescription(std::move(desc), &error);
+  EXPECT_FALSE(error.ok());
+  EXPECT_THAT(error.type(), Eq(RTCErrorType::INVALID_PARAMETER));
+
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents("WebRTC.PeerConnection.ValidBundledPayloadTypes",
+                            false));
+}
+
+TEST_F(SdpOfferAnswerTest,
+       BundleAcceptsCodecCollisionsVideoFmtpWhenFieldTrialDisabled) {
+  auto pc = CreatePeerConnection("");
   std::string sdp =
       "v=0\r\n"
       "o=- 0 3 IN IP4 127.0.0.1\r\n"
@@ -261,6 +322,51 @@ TEST_F(SdpOfferAnswerTest, BundleRejectsCodecCollisionsVideoFmtp) {
   RTCError error;
   pc->SetRemoteDescription(std::move(desc), &error);
   EXPECT_TRUE(error.ok());
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents("WebRTC.PeerConnection.ValidBundledPayloadTypes",
+                            false));
+}
+
+TEST_F(SdpOfferAnswerTest,
+       BundleRejectsCodecCollisionsVideoFmtpWhenFieldTrialEnabled) {
+  auto pc = CreatePeerConnection(
+      "WebRTC-SdpBundlePayloadTypeCollisionCheck/Enabled/");
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 0 3 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=group:BUNDLE 0 1\r\n"
+      "a=fingerprint:sha-1 "
+      "4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n"
+      "a=setup:actpass\r\n"
+      "a=ice-ufrag:ETEn\r\n"
+      "a=ice-pwd:OtSK0WpNtpUjkY4+86js7Z/l\r\n"
+      "m=video 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=rtcp-mux\r\n"
+      "a=sendonly\r\n"
+      "a=mid:0\r\n"
+      "a=rtpmap:111 H264/90000\r\n"
+      "a=fmtp:111 "
+      "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id="
+      "42e01f\r\n"
+      "m=video 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=rtcp-mux\r\n"
+      "a=sendonly\r\n"
+      "a=mid:1\r\n"
+      "a=rtpmap:111 H264/90000\r\n"
+      "a=fmtp:111 "
+      "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id="
+      "42e01f\r\n";
+
+  auto desc = CreateSessionDescription(SdpType::kOffer, sdp);
+  ASSERT_NE(desc, nullptr);
+  RTCError error;
+  pc->SetRemoteDescription(std::move(desc), &error);
+  EXPECT_FALSE(error.ok());
+  EXPECT_THAT(error.type(), Eq(RTCErrorType::INVALID_PARAMETER));
   EXPECT_METRIC_EQ(
       1, metrics::NumEvents("WebRTC.PeerConnection.ValidBundledPayloadTypes",
                             false));
@@ -821,6 +927,46 @@ TEST_F(SdpOfferAnswerTest, SimulcastAnswerWithPayloadType) {
   EXPECT_THAT(sdp, testing::HasSubstr("a=rid:2 send pt=97\r\n"));
 
   EXPECT_TRUE(pc->SetLocalDescription(std::move(answer)));
+}
+
+TEST_F(SdpOfferAnswerTest, SimulcastOfferWithExcessiveRidsClamped) {
+  auto pc = CreatePeerConnection();
+
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 4131505339648218884 3 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=ice-ufrag:zGWFZ+fVXDeN6UoI/136\r\n"
+      "a=ice-pwd:9AUNgUqRNI5LSIrC1qFD2iTR\r\n"
+      "a=fingerprint:sha-256 "
+      "AD:52:52:E0:B1:37:34:21:0E:15:8E:B7:56:56:7B:B4:39:0E:6D:1C:F5:84:A7:EE:"
+      "B5:27:3E:30:B1:7D:69:42\r\n"
+      "a=setup:passive\r\n"
+      "m=video 9 UDP/TLS/RTP/SAVPF 96\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=rtcp:9 IN IP4 0.0.0.0\r\n"
+      "a=mid:0\r\n"
+      "a=extmap:9 urn:ietf:params:rtp-hdrext:sdes:mid\r\n"
+      "a=extmap:10 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id\r\n"
+      "a=recvonly\r\n"
+      "a=rtcp-mux\r\n"
+      "a=rtcp-rsize\r\n"
+      "a=rtpmap:96 VP8/90000\r\n";
+
+  for (int i = 1; i <= 9; ++i) {
+    sdp += "a=rid:" + std::to_string(i) + " recv\r\n";
+  }
+  sdp += "a=simulcast:recv 1;2;3;4;5;6;7;8;9\r\n";
+
+  std::unique_ptr<SessionDescriptionInterface> offer =
+      CreateSessionDescription(SdpType::kOffer, sdp);
+  EXPECT_TRUE(pc->SetRemoteDescription(std::move(offer)));
+
+  auto transceiver = pc->pc()->GetTransceivers()[0];
+  // Verify that the number of send encodings is clamped to 3
+  // (kMaxSimulcastStreams)
+  EXPECT_THAT(transceiver->sender()->GetParameters().encodings, SizeIs(3));
 }
 
 TEST_F(SdpOfferAnswerTest, ExpectAllSsrcsSpecifiedInSsrcGroupFid) {
@@ -1971,42 +2117,45 @@ TEST_F(SdpOfferAnswerTest, SctpInitDisabled) {
   auto pc2 = CreatePeerConnection("WebRTC-Sctp-Snap/Disabled/");
   EXPECT_TRUE(pc1->pc()->CreateDataChannelOrError("dc", nullptr).ok());
   auto offer = pc1->CreateOfferAndSetAsLocal();
-  ASSERT_NE(offer, nullptr);
+  ASSERT_THAT(offer, NotNull());
 
   {
     auto& contents = offer->description()->contents();
-    ASSERT_EQ(contents.size(), 1u);
+    ASSERT_THAT(contents, SizeIs(1));
     auto* media_description = contents[0].media_description();
-    ASSERT_TRUE(media_description);
+    ASSERT_THAT(media_description, NotNull());
     auto* sctp_description = media_description->as_sctp();
-    ASSERT_TRUE(sctp_description);
+    ASSERT_THAT(sctp_description, NotNull());
     EXPECT_FALSE(sctp_description->sctp_init());
   }
 
   RTCError error;
   EXPECT_TRUE(pc2->SetRemoteDescription(std::move(offer)));
   auto answer = pc2->CreateAnswerAndSetAsLocal();
-  ASSERT_NE(answer, nullptr);
+  ASSERT_THAT(answer, NotNull());
 
   {
     auto& contents = answer->description()->contents();
-    ASSERT_EQ(contents.size(), 1u);
+    ASSERT_THAT(contents, SizeIs(1));
     auto* media_description = contents[0].media_description();
-    ASSERT_TRUE(media_description);
+    ASSERT_THAT(media_description, NotNull());
     auto* sctp_description = media_description->as_sctp();
-    ASSERT_TRUE(sctp_description);
+    ASSERT_THAT(sctp_description, NotNull());
     EXPECT_FALSE(sctp_description->sctp_init());
   }
 
   EXPECT_TRUE(pc1->SetRemoteDescription(std::move(answer)));
 }
 
-TEST_F(SdpOfferAnswerTest, SctpInitWithTrial) {
-  auto pc1 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
-  auto pc2 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+TEST_F(SdpOfferAnswerTest, SctpInitWithConfig) {
+  RTCConfiguration config;
+  config.enable_sctp_snap = true;
+  auto pc1 = CreatePeerConnection(config, "WebRTC-Sctp-Snap/Enabled/");
+  auto pc2 = CreatePeerConnection(
+      config, "WebRTC-Sctp-Snap/Disabled/");  // config beats field trial.
   EXPECT_TRUE(pc1->pc()->CreateDataChannelOrError("dc", nullptr).ok());
   auto offer = pc1->CreateOfferAndSetAsLocal();
-  ASSERT_NE(offer, nullptr);
+  ASSERT_THAT(offer, NotNull());
 
   {
     auto& contents = offer->description()->contents();
@@ -2021,7 +2170,42 @@ TEST_F(SdpOfferAnswerTest, SctpInitWithTrial) {
   RTCError error;
   EXPECT_TRUE(pc2->SetRemoteDescription(std::move(offer)));
   auto answer = pc2->CreateAnswerAndSetAsLocal();
-  ASSERT_NE(answer, nullptr);
+  ASSERT_THAT(answer, NotNull());
+
+  {
+    auto& contents = answer->description()->contents();
+    ASSERT_EQ(contents.size(), 1u);
+    auto* media_description = contents[0].media_description();
+    ASSERT_TRUE(media_description);
+    auto* sctp_description = media_description->as_sctp();
+    ASSERT_TRUE(sctp_description);
+    EXPECT_TRUE(sctp_description->sctp_init());
+  }
+
+  EXPECT_TRUE(pc1->SetRemoteDescription(std::move(answer)));
+}
+
+TEST_F(SdpOfferAnswerTest, SctpInitWithTrial) {
+  auto pc1 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  auto pc2 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  EXPECT_TRUE(pc1->pc()->CreateDataChannelOrError("dc", nullptr).ok());
+  auto offer = pc1->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer, NotNull());
+
+  {
+    auto& contents = offer->description()->contents();
+    ASSERT_EQ(contents.size(), 1u);
+    auto* media_description = contents[0].media_description();
+    ASSERT_TRUE(media_description);
+    auto* sctp_description = media_description->as_sctp();
+    ASSERT_TRUE(sctp_description);
+    EXPECT_TRUE(sctp_description->sctp_init());
+  }
+
+  RTCError error;
+  EXPECT_TRUE(pc2->SetRemoteDescription(std::move(offer)));
+  auto answer = pc2->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer, NotNull());
 
   {
     auto& contents = answer->description()->contents();
@@ -2061,7 +2245,7 @@ TEST_F(SdpOfferAnswerTest, AnswerNoSctpInitInOffer) {
 
   EXPECT_TRUE(pc->SetRemoteDescription(std::move(desc)));
   auto answer = pc->CreateAnswerAndSetAsLocal();
-  ASSERT_NE(answer, nullptr);
+  ASSERT_THAT(answer, NotNull());
   EXPECT_TRUE(answer->ToString(&sdp));
 
   auto& contents = answer->description()->contents();
@@ -2093,6 +2277,114 @@ TEST_F(SdpOfferAnswerTest, AnswerNonBase64SctpInit) {
       "a=mid:0\r\n";
   auto desc = CreateSessionDescription(SdpType::kOffer, sdp);
   EXPECT_EQ(desc, nullptr);
+}
+
+TEST_F(SdpOfferAnswerTest,
+       AnswerFromNewPeerAfterProvisionalAnswerFailsSnapSctpInit) {
+  auto pc1 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  auto pc2 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  auto pc3 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  EXPECT_TRUE(pc1->pc()->CreateDataChannelOrError("dc", nullptr).ok());
+  auto offer = pc1->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer, NotNull());
+
+  EXPECT_TRUE(pc2->SetRemoteDescription(offer->Clone()));
+  EXPECT_TRUE(pc3->SetRemoteDescription(std::move(offer)));
+
+  auto answer2 = pc2->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer2, NotNull());
+  std::string sdp;
+  answer2->ToString(&sdp);
+  auto pranswer2 = CreateSessionDescription(SdpType::kPrAnswer, sdp);
+  EXPECT_TRUE(pc1->SetRemoteDescription(std::move(pranswer2)));
+
+  // Changing the sctp-init is not supported currently.
+  auto answer3 = pc3->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer3, NotNull());
+  EXPECT_FALSE(pc1->SetRemoteDescription(std::move(answer3)));
+}
+
+TEST_F(SdpOfferAnswerTest, SubsequentOfferDoesNotAddSctpInit) {
+  auto pc1 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  auto pc2 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  EXPECT_TRUE(pc1->pc()->CreateDataChannelOrError("dc", nullptr).ok());
+  auto offer = pc1->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer, NotNull());
+
+  // Remove the sctp-init.
+  {
+    auto& contents = offer->description()->contents();
+    ASSERT_THAT(contents, SizeIs(1));
+    auto* media_description = contents[0].media_description();
+    ASSERT_THAT(media_description, NotNull());
+    auto* sctp_description = media_description->as_sctp();
+    ASSERT_THAT(sctp_description, NotNull());
+    EXPECT_TRUE(sctp_description->sctp_init());
+    sctp_description->set_sctp_init(std::nullopt);
+  }
+  EXPECT_TRUE(pc2->SetRemoteDescription(std::move(offer)));
+
+  auto answer = pc2->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer, NotNull());
+  EXPECT_TRUE(pc1->SetRemoteDescription(std::move(answer)));
+
+  auto reoffer = pc2->CreateOfferAndSetAsLocal();
+  // Check that there is no sctp-init.
+  {
+    auto& contents = reoffer->description()->contents();
+    ASSERT_THAT(contents, SizeIs(1));
+    auto* media_description = contents[0].media_description();
+    ASSERT_THAT(media_description, NotNull());
+    auto* sctp_description = media_description->as_sctp();
+    ASSERT_THAT(sctp_description, NotNull());
+    EXPECT_FALSE(sctp_description->sctp_init());
+  }
+  EXPECT_TRUE(pc1->SetRemoteDescription(std::move(reoffer)));
+}
+
+TEST_F(SdpOfferAnswerTest, SubsequentOfferDoesNotNegotiateSctpInit) {
+  auto pc1 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  auto pc2 = CreatePeerConnection("WebRTC-Sctp-Snap/Enabled/");
+  EXPECT_TRUE(pc1->pc()->CreateDataChannelOrError("dc", nullptr).ok());
+  auto offer = pc1->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer, NotNull());
+
+  // Remove the sctp-init.
+  {
+    auto& contents = offer->description()->contents();
+    ASSERT_THAT(contents, SizeIs(1));
+    auto* media_description = contents[0].media_description();
+    ASSERT_THAT(media_description, NotNull());
+    auto* sctp_description = media_description->as_sctp();
+    ASSERT_THAT(sctp_description, NotNull());
+    EXPECT_TRUE(sctp_description->sctp_init());
+    sctp_description->set_sctp_init(std::nullopt);
+  }
+  EXPECT_TRUE(pc2->SetRemoteDescription(std::move(offer)));
+
+  auto answer = pc2->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer, NotNull());
+  EXPECT_TRUE(pc1->SetRemoteDescription(std::move(answer)));
+
+  auto reoffer = pc2->CreateOfferAndSetAsLocal();
+  // Check that there is no sctp-init and add one.
+  {
+    auto& contents = reoffer->description()->contents();
+    ASSERT_THAT(contents, SizeIs(1));
+    auto* media_description = contents[0].media_description();
+    ASSERT_THAT(media_description, NotNull());
+    auto* sctp_description = media_description->as_sctp();
+    ASSERT_THAT(sctp_description, NotNull());
+    EXPECT_FALSE(sctp_description->sctp_init());
+    // Example sctp-init from
+    // draft-hancke-tsvwg-snap.html#section-4.1
+    std::vector<uint8_t> example_init = {
+        0x01, 0x00, 0x00, 0x1e, 0x89, 0x6c, 0xdd, 0x1d, 0x00, 0x50,
+        0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xe0, 0x79, 0x65, 0x1d,
+        0xc0, 0x00, 0x00, 0x04, 0x80, 0x08, 0x00, 0x06, 0x82, 0xc0};
+    sctp_description->set_sctp_init(example_init);
+  }
+  EXPECT_FALSE(pc1->SetRemoteDescription(std::move(reoffer)));
 }
 #endif  // WEBRTC_HAVE_SCTP
 
@@ -2515,5 +2807,668 @@ TEST_F(SdpOfferAnswerTest, NegotiatesTransportCcWhenCcfbMissingInBothSections) {
   }
   EXPECT_TRUE(found_transport_cc);
 }
+
+TEST_F(SdpOfferAnswerTest, StopsTransceiverWhenAnswerLacksSframe) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EnableSframeOnTransceiver(signaling_thread_.get(), transceiver);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(offer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(answer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+
+  // Simulate a remote peer that strips sframe from the answer.
+  answer->description()->contents()[0].media_description()->set_sframe_enabled(
+      false);
+
+  // SetRemoteDescription should succeed, but the transceiver should be stopped.
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+  EXPECT_TRUE(transceiver->stopped());
+}
+
+TEST_F(SdpOfferAnswerTest, AcceptsAnswerWithSframeWhenOfferedWithSframe) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EnableSframeOnTransceiver(signaling_thread_.get(), transceiver);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(offer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(answer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+  EXPECT_FALSE(transceiver->stopped());
+}
+
+TEST_F(SdpOfferAnswerTest, AcceptsAnswerWithoutSframeWhenOfferedWithoutSframe) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  caller->AddTransceiver(MediaType::AUDIO);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_FALSE(offer->description()
+                   ->contents()[0]
+                   .media_description()
+                   ->sframe_enabled());
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+
+  ASSERT_THAT(answer->description()->contents(), SizeIs(1));
+  EXPECT_FALSE(answer->description()
+                   ->contents()[0]
+                   .media_description()
+                   ->sframe_enabled());
+
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+}
+
+TEST_F(SdpOfferAnswerTest,
+       SetLocalOfferSyncsTransceiverSframeFromNulloptToFalse) {
+  auto caller = CreatePeerConnection();
+
+  auto transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EXPECT_EQ(transceiver->SframeEnabled(), std::nullopt);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_FALSE(offer->description()
+                   ->contents()[0]
+                   .media_description()
+                   ->sframe_enabled());
+
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(false));
+}
+
+TEST_F(SdpOfferAnswerTest, SetLocalOfferPreservesSframeTrueOnTransceiver) {
+  auto caller = CreatePeerConnection();
+
+  auto transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EnableSframeOnTransceiver(signaling_thread_.get(), transceiver);
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(true));
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(offer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(true));
+}
+
+TEST_F(SdpOfferAnswerTest,
+       RemoteOfferWithoutSframeCreatesTransceiverWithSframeFalse) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  caller->AddTransceiver(MediaType::AUDIO);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_FALSE(offer->description()
+                   ->contents()[0]
+                   .media_description()
+                   ->sframe_enabled());
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+
+  // Callee's transceiver was created by the remote offer. Since the offer
+  // did not contain the sframe attribute, SframeEnabled should be false.
+  auto callee_transceivers = callee->pc()->GetTransceivers();
+  ASSERT_THAT(callee_transceivers, SizeIs(1));
+  EXPECT_THAT(callee_transceivers[0]->SframeEnabled(), Optional(false));
+}
+
+TEST_F(SdpOfferAnswerTest,
+       RemoteOfferWithSframeCreatesTransceiverWithSframeTrue) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EnableSframeOnTransceiver(signaling_thread_.get(), transceiver);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(offer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+
+  // Callee's transceiver was created by the remote offer. Since the offer
+  // contained the sframe attribute, SframeEnabled should be true.
+  auto callee_transceivers = callee->pc()->GetTransceivers();
+  ASSERT_THAT(callee_transceivers, SizeIs(1));
+  EXPECT_THAT(callee_transceivers[0]->SframeEnabled(), Optional(true));
+}
+
+// Verify that enabling SFrame before first negotiation produces
+// an offer with a=sframe, and that the SFrame state is reflected
+// in the local description after SetLocalDescription.
+TEST_F(SdpOfferAnswerTest,
+       EnableSframeBeforeNegotiationProducesOfferWithSframe) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EXPECT_EQ(transceiver->SframeEnabled(), std::nullopt);
+
+  EnableSframeOnTransceiver(signaling_thread_.get(), transceiver);
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(true));
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(offer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+}
+
+// Verify that after a full negotiation with SFrame enabled, the state
+// is consistent on the caller side.
+TEST_F(SdpOfferAnswerTest, SframeTrueConsistentAfterFullNegotiation) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EnableSframeOnTransceiver(signaling_thread_.get(), transceiver);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+  ASSERT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(true));
+}
+
+TEST_F(SdpOfferAnswerTest,
+       RejectsAnswerWithSframeWhenOfferDidNotIncludeSframe) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  caller->AddTransceiver(MediaType::AUDIO);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_FALSE(offer->description()
+                   ->contents()[0]
+                   .media_description()
+                   ->sframe_enabled());
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer->description()->contents(), SizeIs(1));
+  EXPECT_FALSE(answer->description()
+                   ->contents()[0]
+                   .media_description()
+                   ->sframe_enabled());
+
+  // Simulate a malicious/buggy answerer adding a=sframe to the answer.
+  answer->description()->contents()[0].media_description()->set_sframe_enabled(
+      true);
+
+  RTCError error;
+  EXPECT_FALSE(caller->SetRemoteDescription(std::move(answer), &error));
+  EXPECT_EQ(error.type(), RTCErrorType::INVALID_PARAMETER);
+  EXPECT_THAT(error.message(),
+              ::testing::HasSubstr("offer did not include a=sframe"));
+}
+
+// Verify that a rejected m-section with spurious a=sframe in
+// the answer is tolerated (rejected sections are skipped).
+TEST_F(SdpOfferAnswerTest, ToleratesRejectedAnswerSectionWithSpuriousSframe) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  caller->AddTransceiver(MediaType::AUDIO);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+
+  // Mark the section as rejected (port 0) AND add spurious a=sframe.
+  answer->description()->contents()[0].rejected = true;
+  answer->description()->contents()[0].media_description()->set_sframe_enabled(
+      true);
+
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+}
+
+// Sframe state is locked to false after negotiation without Sframe.
+TEST_F(SdpOfferAnswerTest, SframeLockedToFalseAfterNegotiationWithoutSframe) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EXPECT_EQ(transceiver->SframeEnabled(), std::nullopt);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+
+  EXPECT_THAT(transceiver->SframeEnabled(), Optional(false));
+}
+
+// Full end-to-end: Both sides enable Sframe, complete negotiation, verify
+// Sframe is active on both transceivers.
+TEST_F(SdpOfferAnswerTest, BothSidesEnableSframeFullNegotiation) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto caller_transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EnableSframeOnTransceiver(signaling_thread_.get(), caller_transceiver);
+
+  // Callee adds a track via addTrack (so it's matched per JSEP §5.10)
+  // and also explicitly enables Sframe.
+  callee->AddAudioTrack("audio", {});
+  auto callee_transceivers = callee->pc()->GetTransceivers();
+  ASSERT_THAT(callee_transceivers, SizeIs(1));
+  EnableSframeOnTransceiver(signaling_thread_.get(), callee_transceivers[0]);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(offer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(answer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+
+  EXPECT_THAT(caller_transceiver->SframeEnabled(), Optional(true));
+  EXPECT_FALSE(caller_transceiver->stopped());
+
+  callee_transceivers = callee->pc()->GetTransceivers();
+  ASSERT_THAT(callee_transceivers, SizeIs(1));
+  EXPECT_THAT(callee_transceivers[0]->SframeEnabled(), Optional(true));
+  EXPECT_FALSE(callee_transceivers[0]->stopped());
+}
+
+// Callee has a transceiver created via addTrack (without Sframe).
+// Caller offers with a=sframe. The offer should be accepted (standard O/A
+// model), the answer should lack a=sframe, and the caller should stop the
+// transceiver via downgrade protection.
+TEST_F(SdpOfferAnswerTest,
+       AddTrackTransceiverWithoutSframeAcceptsOfferWithSframe) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  auto caller_transceiver = caller->AddTransceiver(MediaType::AUDIO);
+  EnableSframeOnTransceiver(signaling_thread_.get(), caller_transceiver);
+
+  // Callee uses addTrack (creates a transceiver via FindAvailableToReceive
+  // path) but does NOT enable Sframe.
+  callee->AddAudioTrack("audio", {});
+  auto callee_transceivers = callee->pc()->GetTransceivers();
+  ASSERT_THAT(callee_transceivers, SizeIs(1));
+  EXPECT_EQ(callee_transceivers[0]->SframeEnabled(), std::nullopt);
+
+  auto offer = caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  EXPECT_TRUE(offer->description()
+                  ->contents()[0]
+                  .media_description()
+                  ->sframe_enabled());
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+
+  callee_transceivers = callee->pc()->GetTransceivers();
+  ASSERT_THAT(callee_transceivers, SizeIs(1));
+
+  auto answer = callee->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer->description()->contents(), SizeIs(1));
+  EXPECT_FALSE(answer->description()
+                   ->contents()[0]
+                   .media_description()
+                   ->sframe_enabled());
+
+  // Caller receives answer without a=sframe → downgrade protection kicks in.
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+  EXPECT_TRUE(caller_transceiver->stopped());
+}
+
+TEST_F(SdpOfferAnswerTest, CryptexOffInOffer) {
+  CryptoOptions crypto_options;
+  crypto_options.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kDisabled;
+  PeerConnectionInterface::RTCConfiguration config;
+  config.crypto_options = crypto_options;
+  auto pc = CreatePeerConnection(config, "");
+
+  auto offer = pc->CreateOfferAndSetAsLocal();
+  EXPECT_FALSE(offer->description()->cryptex());
+}
+
+TEST_F(SdpOfferAnswerTest, CryptexOffInAnswer) {
+  CryptoOptions crypto_options;
+  crypto_options.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kDisabled;
+  PeerConnectionInterface::RTCConfiguration config;
+  config.crypto_options = crypto_options;
+  auto pc = CreatePeerConnection(config, "");
+
+  std::string sdp_offer =
+      "v=0\r\n"
+      "o=- 0 0 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=group:BUNDLE 0\r\n"
+      "a=ice-ufrag:TESTUFRAG\r\n"
+      "a=ice-pwd:ThisIsATestIcePasswordThatIsLongEnough\r\n"
+      "a=fingerprint:sha-256 "
+      "AD:52:52:E0:B1:37:34:21:0E:15:8E:B7:56:56:7B:B4:39:0E:6D:1C:F5:84:A7:EE:"
+      "B5:27:3E:30:B1:7D:69:42\r\n"
+      "a=cryptex\r\n"
+      "m=audio 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=mid:0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtcp-mux\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=rtcp-fb:111 transport-cc\r\n";
+  auto offer = CreateSessionDescription(SdpType::kOffer, sdp_offer);
+  ASSERT_THAT(offer, NotNull());
+  EXPECT_TRUE(pc->SetRemoteDescription(std::move(offer)));
+
+  auto answer = pc->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer, NotNull());
+  auto* desc = answer->description();
+  EXPECT_FALSE(desc->cryptex());
+}
+
+TEST_F(SdpOfferAnswerTest, CryptexNotOfferedAnswerDeclaresSupport) {
+  CryptoOptions crypto_options;
+  crypto_options.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kNegotiate;
+  PeerConnectionInterface::RTCConfiguration config;
+  config.crypto_options = crypto_options;
+  auto pc = CreatePeerConnection(config, "");
+
+  std::string sdp_offer =
+      "v=0\r\n"
+      "o=- 0 0 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=group:BUNDLE 0\r\n"
+      "a=ice-ufrag:TESTUFRAG\r\n"
+      "a=ice-pwd:ThisIsATestIcePasswordThatIsLongEnough\r\n"
+      "a=fingerprint:sha-256 "
+      "AD:52:52:E0:B1:37:34:21:0E:15:8E:B7:56:56:7B:B4:39:0E:6D:1C:F5:84:A7:EE:"
+      "B5:27:3E:30:B1:7D:69:42\r\n"
+      // No a=cryptex at session level.
+      "m=audio 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=mid:0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtcp-mux\r\n"
+      // No a=cryptex at media level.
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=rtcp-fb:111 transport-cc\r\n";
+  auto offer = CreateSessionDescription(SdpType::kOffer, sdp_offer);
+  ASSERT_THAT(offer, NotNull());
+  EXPECT_TRUE(pc->SetRemoteDescription(std::move(offer)));
+
+  auto answer = pc->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer, NotNull());
+  auto* desc = answer->description();
+  EXPECT_TRUE(desc->cryptex());
+
+  auto* content = desc->GetContentByName("0");
+  ASSERT_THAT(content, NotNull());
+  EXPECT_EQ(content->media_description()->cryptex_level(),
+            MediaContentDescription::AttributeLevel::kSession);
+}
+
+TEST_F(SdpOfferAnswerTest, CryptexSessionLevel) {
+  CryptoOptions crypto_options;
+  crypto_options.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kNegotiate;
+  PeerConnectionInterface::RTCConfiguration config;
+  config.crypto_options = crypto_options;
+  auto pc = CreatePeerConnection(config, "");
+
+  std::string sdp_offer =
+      "v=0\r\n"
+      "o=- 0 0 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=group:BUNDLE 0\r\n"
+      "a=ice-ufrag:TESTUFRAG\r\n"
+      "a=ice-pwd:ThisIsATestIcePasswordThatIsLongEnough\r\n"
+      "a=fingerprint:sha-256 "
+      "AD:52:52:E0:B1:37:34:21:0E:15:8E:B7:56:56:7B:B4:39:0E:6D:1C:F5:84:A7:EE:"
+      "B5:27:3E:30:B1:7D:69:42\r\n"
+      "a=cryptex\r\n"
+      "m=audio 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=mid:0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtcp-mux\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=rtcp-fb:111 transport-cc\r\n";
+
+  auto offer = CreateSessionDescription(SdpType::kOffer, sdp_offer);
+  ASSERT_THAT(offer, NotNull());
+  EXPECT_TRUE(pc->SetRemoteDescription(std::move(offer)));
+
+  auto answer = pc->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer, NotNull());
+  auto* desc = answer->description();
+  EXPECT_TRUE(desc->cryptex());
+
+  auto* content = desc->GetContentByName("0");
+  ASSERT_THAT(content, NotNull());
+  EXPECT_TRUE(content->media_description()->cryptex());
+  EXPECT_EQ(content->media_description()->cryptex_level(),
+            MediaContentDescription::AttributeLevel::kSession);
+}
+
+TEST_F(SdpOfferAnswerTest, CryptexMediaLevel) {
+  CryptoOptions crypto_options;
+  crypto_options.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kNegotiate;
+  PeerConnectionInterface::RTCConfiguration config;
+  config.crypto_options = crypto_options;
+  auto pc = CreatePeerConnection(config, "");
+
+  std::string sdp_offer =
+      "v=0\r\n"
+      "o=- 0 0 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=group:BUNDLE 0 1\r\n"
+      "a=ice-ufrag:TESTUFRAG\r\n"
+      "a=ice-pwd:ThisIsATestIcePasswordThatIsLongEnough\r\n"
+      "a=fingerprint:sha-256 "
+      "AD:52:52:E0:B1:37:34:21:0E:15:8E:B7:56:56:7B:B4:39:0E:6D:1C:F5:84:A7:EE:"
+      "B5:27:3E:30:B1:7D:69:42\r\n"
+      "m=audio 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=mid:0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtcp-mux\r\n"
+      "a=cryptex\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=rtcp-fb:111 transport-cc\r\n"
+      // cryptex is not required for non-rtp content.
+      "m=application 0 UDP/DTLS/SCTP webrtc-datachannel\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=sctp-port:5000\r\n"
+      "a=max-message-size:262144\r\n"
+      "a=mid:1\r\n";
+
+  auto offer = CreateSessionDescription(SdpType::kOffer, sdp_offer);
+  ASSERT_THAT(offer, NotNull());
+  EXPECT_TRUE(pc->SetRemoteDescription(std::move(offer)));
+
+  auto answer = pc->CreateAnswerAndSetAsLocal();
+  ASSERT_THAT(answer, NotNull());
+  auto* desc = answer->description();
+  EXPECT_FALSE(desc->cryptex());
+
+  auto* content = desc->GetContentByName("0");
+  ASSERT_THAT(content, NotNull());
+  EXPECT_TRUE(content->media_description()->cryptex());
+  EXPECT_EQ(content->media_description()->cryptex_level(),
+            MediaContentDescription::AttributeLevel::kMedia);
+}
+
+TEST_F(SdpOfferAnswerTest, CryptexBundleInconsistency) {
+  CryptoOptions crypto_options;
+  crypto_options.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kNegotiate;
+  PeerConnectionInterface::RTCConfiguration config;
+  config.crypto_options = crypto_options;
+  auto pc = CreatePeerConnection(config, "");
+
+  // First m-line in the BUNDLE has cryptex, second does not.
+  std::string sdp_offer =
+      "v=0\r\n"
+      "o=- 0 0 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=group:BUNDLE 0 1\r\n"
+      "a=ice-ufrag:TESTUFRAG\r\n"
+      "a=ice-pwd:ThisIsATestIcePasswordThatIsLongEnough\r\n"
+      "a=fingerprint:sha-256 "
+      "AD:52:52:E0:B1:37:34:21:0E:15:8E:B7:56:56:7B:B4:39:0E:6D:1C:F5:84:A7:EE:"
+      "B5:27:3E:30:B1:7D:69:42\r\n"
+      "m=audio 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=mid:0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtcp-mux\r\n"
+      "a=cryptex\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=rtcp-fb:111 transport-cc\r\n"
+      "m=audio 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=mid:1\r\n"
+      "a=sendrecv\r\n"
+      "a=rtcp-mux\r\n"
+      // "a=cryptex\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=rtcp-fb:111 transport-cc\r\n";
+
+  auto offer = CreateSessionDescription(SdpType::kOffer, sdp_offer);
+  ASSERT_NE(offer, nullptr);
+  RTCError error;
+  pc->SetRemoteDescription(std::move(offer), &error);
+  EXPECT_FALSE(error.ok());
+  EXPECT_EQ(error.type(), RTCErrorType::INVALID_PARAMETER);
+}
+
+TEST_F(SdpOfferAnswerTest, CryptexNegotiated) {
+  CryptoOptions crypto_options;
+  crypto_options.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kNegotiate;
+  PeerConnectionInterface::RTCConfiguration config;
+  config.crypto_options = crypto_options;
+  auto pc1 = CreatePeerConnection(config, "");
+  pc1->AddAudioTrack("audio_track", {});
+  auto pc2 = CreatePeerConnection(config, "");
+
+  auto offer = pc1->CreateOfferAndSetAsLocal();
+  ASSERT_EQ(offer->description()->contents().size(), 1u);
+  EXPECT_TRUE(pc2->SetRemoteDescription(std::move(offer)));
+
+  auto answer = pc2->CreateAnswerAndSetAsLocal();
+  EXPECT_TRUE(answer->description()->cryptex());
+}
+
+TEST_F(SdpOfferAnswerTest, CryptexRequired) {
+  CryptoOptions crypto_options1;
+  crypto_options1.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kRequire;
+  PeerConnectionInterface::RTCConfiguration config1;
+  config1.crypto_options = crypto_options1;
+  auto pc1 = CreatePeerConnection(config1, "");
+  pc1->AddAudioTrack("audio_track", {});
+
+  CryptoOptions crypto_options2;
+  crypto_options2.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kDisabled;
+  PeerConnectionInterface::RTCConfiguration config2;
+  config2.crypto_options = crypto_options2;
+  auto pc2 = CreatePeerConnection(config2, "");
+
+  auto offer = pc1->CreateOfferAndSetAsLocal();
+  EXPECT_TRUE(pc2->SetRemoteDescription(std::move(offer)));
+
+  auto answer = pc2->CreateAnswerAndSetAsLocal();
+  EXPECT_FALSE(answer->description()->cryptex());
+
+  RTCError error;
+  pc1->SetRemoteDescription(std::move(answer), &error);
+  EXPECT_FALSE(error.ok());
+  EXPECT_EQ(error.type(), RTCErrorType::INVALID_PARAMETER);
+}
+
+#ifdef WEBRTC_HAVE_SCTP
+TEST_F(SdpOfferAnswerTest, CryptexRequiredDatachannelOnly) {
+  CryptoOptions crypto_options1;
+  crypto_options1.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kRequire;
+  PeerConnectionInterface::RTCConfiguration config1;
+  config1.crypto_options = crypto_options1;
+  auto pc1 = CreatePeerConnection(config1, "");
+  EXPECT_TRUE(pc1->pc()->CreateDataChannelOrError("dc", nullptr).ok());
+
+  CryptoOptions crypto_options2;
+  crypto_options2.srtp.cryptex_policy =
+      CryptoOptions::Srtp::CryptexPolicy::kDisabled;
+  PeerConnectionInterface::RTCConfiguration config2;
+  config2.crypto_options = crypto_options2;
+  auto pc2 = CreatePeerConnection(config2, "");
+
+  auto offer = pc1->CreateOfferAndSetAsLocal();
+  EXPECT_TRUE(pc2->SetRemoteDescription(std::move(offer)));
+
+  auto answer = pc2->CreateAnswerAndSetAsLocal();
+  EXPECT_FALSE(answer->description()->cryptex());
+
+  RTCError error;
+  pc1->SetRemoteDescription(std::move(answer), &error);
+  EXPECT_TRUE(error.ok());
+}
+#endif  // WEBRTC_HAVE_SCTP
 
 }  // namespace webrtc

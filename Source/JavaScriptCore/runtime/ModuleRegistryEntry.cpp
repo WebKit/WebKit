@@ -109,7 +109,7 @@ JSPromise* ModuleRegistryEntry::ensureFetchPromise(JSGlobalObject* globalObject)
     promise->markAsHandled();
 
     if (m_status == Status::FetchFailed && m_error)
-        promise->reject(vm, globalObject, m_error.get());
+        promise->reject(vm, m_error.get());
 
     m_fetchPromise.set(vm, this, promise);
     return promise;
@@ -129,7 +129,7 @@ JSPromise* ModuleRegistryEntry::ensureModulePromise(JSGlobalObject* globalObject
     m_modulePromise.set(vm, this, modulePromise);
 
     JSPromise* fetchPromise = ensureFetchPromise(globalObject);
-    fetchPromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleRegistryFetchSettled, modulePromise, this);
+    fetchPromise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ModuleRegistryFetchSettled, modulePromise, this);
 
     return modulePromise;
 }
@@ -185,7 +185,7 @@ void ModuleRegistryEntry::setFetchError(JSGlobalObject* globalObject, JSValue er
     VM& vm = globalObject->vm();
     m_error.set(vm, this, error);
     if (m_status == Status::New && m_fetchPromise)
-        m_fetchPromise->reject(vm, globalObject, error);
+        m_fetchPromise->reject(vm, error);
     setStatus(Status::FetchFailed);
 }
 
@@ -231,7 +231,7 @@ void ModuleRegistryEntry::provideFetch(JSGlobalObject* globalObject, JSSourceCod
 
     scope.release();
     m_status = Status::Fetching;
-    m_fetchPromise->fulfill(vm, globalObject, jsSourceCode);
+    m_fetchPromise->fulfill(vm, jsSourceCode);
 }
 
 void ModuleRegistryEntry::fetchComplete(JSGlobalObject* globalObject, AbstractModuleRecord* record)

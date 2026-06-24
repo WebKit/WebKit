@@ -1,0 +1,14 @@
+<script>
+    onload = ()=>{
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                alert('entered fullscreen');
+                testRunner.requestExitFullscreenFromUIProcess();
+            } else {
+                alert('exited fullscreen');
+                testRunner.notifyDone();
+            }
+        });
+        internals.withUserGesture(()=>{ document.body.requestFullscreen() })
+    }
+</script>

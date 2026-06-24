@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/AbstractSlotVisitor.h>
+#include <JavaScriptCore/GCSegmentedArrayInlines.h>
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/WeakInlines.h>
 #include <JavaScriptCore/WriteBarrier.h>
@@ -35,6 +36,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 
 using ReferrerToken = AbstractSlotVisitor::ReferrerToken;
+
+inline bool AbstractSlotVisitor::isEmpty()
+{
+    return m_collectorStack.isEmpty() && m_mutatorStack.isEmpty();
+}
 
 inline ReferrerToken::ReferrerToken(HeapCell* cell)
     : m_bits(std::bit_cast<uintptr_t>(cell) | HeapCellToken)

@@ -2,7 +2,7 @@
 <html>
 <head>
     <script src="../../../resources/ui-helper.js"></script>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
     <style>
         body {
             height: 2000px;
@@ -19,15 +19,12 @@
         }
     </style>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        window.jsTestIsAsync = true;
 
         function documentScrolled()
         {
             debug("SUCCESSFUL: keyboard scroll propagated from overflow:scroll region to main document.");
-            testRunner.notifyDone();
+            finishJSTest();
         }
 
         async function runTest()
@@ -52,6 +49,5 @@
     <div id="scroller">
         <div id="innerDiv"></div>
     </div>
-    <script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

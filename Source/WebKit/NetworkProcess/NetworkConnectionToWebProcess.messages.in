@@ -94,9 +94,9 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     [EnabledBy=StorageAccessAPIEnabled] StorageAccessQuirkForTopFrameDomain(URL topFrameURL) -> (Vector<WebCore::RegistrableDomain> domains)
     [EnabledBy=StorageAccessAPIEnabled] RequestStorageAccessUnderOpener(WebCore::RegistrableDomain domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain openerDomain)
 
-    AddOriginAccessAllowListEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
-    RemoveOriginAccessAllowListEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
-    ResetOriginAccessAllowLists();
+    [EnabledBy=AllowTestOnlyOriginAccessAllowListIPC] AddOriginAccessAllowListEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
+    [EnabledBy=AllowTestOnlyOriginAccessAllowListIPC] RemoveOriginAccessAllowListEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
+    [EnabledBy=AllowTestOnlyOriginAccessAllowListIPC] ResetOriginAccessAllowLists();
 
     GetNetworkLoadInformationResponse(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (WebCore::ResourceResponse response) Synchronous
     GetNetworkLoadIntermediateInformation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (Vector<WebCore::NetworkTransactionInformation> transactions) Synchronous
@@ -122,7 +122,6 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     PostMessageToRemote(struct WebCore::MessageWithMessagePorts message, struct WebCore::MessagePortIdentifier remote)
     DidDeliverMessagePortMessages(WebKit::MessageBatchIdentifier messageBatchIdentifier)
     RegisterURLSchemesAsCORSEnabled(Vector<String> schemes);
-    SetCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String> patterns)
 #if PLATFORM(MAC)
     GetProcessDisplayName(struct WebKit::CoreIPCAuditToken auditToken) -> (String displayName)
     UpdateActivePages(String name, Vector<String> activePagesOrigins, struct WebKit::CoreIPCAuditToken auditToken)
@@ -134,7 +133,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     PrioritizeResourceLoads(Vector<WebCore::ResourceLoaderIdentifier> loadIdentifiers)
 
 #if ENABLE(CONTENT_FILTERING)
-    InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
+    [EnabledBy=AllowTestOnlyMockContentFilterIPC] InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
 
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)

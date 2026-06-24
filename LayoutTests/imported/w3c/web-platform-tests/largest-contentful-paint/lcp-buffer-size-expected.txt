@@ -1,4 +1,0 @@
-LCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate textLCP candidate text
-
-PASS LCP buffer size should be greater than one
-

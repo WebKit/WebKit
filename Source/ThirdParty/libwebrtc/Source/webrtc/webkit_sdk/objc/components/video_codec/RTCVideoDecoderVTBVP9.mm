@@ -70,7 +70,7 @@ std::pair<rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef>, bool> computeInputF
 
   constexpr size_t VPCodecConfigurationContentsSize = 12;
 
-  auto result = webrtc::ParseUncompressedVp9Header(webrtc::MakeArrayView(data, size));
+  auto result = webrtc::ParseUncompressedVp9Header({ data, size });
 
   if (!result)
       return { };

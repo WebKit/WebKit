@@ -12,14 +12,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,4) size 21x19
           text run at (0,4) width 21: "foo"
         RenderMenuList {SELECT} at (21,0) size 35x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 33x26
-            RenderText at (5,5) size 7x16
+          RenderBlock {DIV} at (1,1) size 33x26
+            RenderText {#text} at (5,5) size 7x16
               text run at (5,5) width 7: "1"
       RenderBlock {DIV} at (0,84) size 784x28
         RenderText {#text} at (0,4) size 21x19
           text run at (0,4) width 21: "foo"
         RenderMenuList {SELECT} at (21,0) size 35x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderSelectFallbackButton {DIV} at (1,1) size 33x26
-            RenderText at (5,5) size 7x16
+          RenderBlock {DIV} at (1,1) size 33x26
+            RenderText {#text} at (5,5) size 7x16
               text run at (5,5) width 7: "1"
 caret: position 3 of child 1 {SELECT} of child 4 {DIV} of body

@@ -13,9 +13,9 @@
 
 
 
-.type	abi_test_trampoline, @function
 .globl	abi_test_trampoline
 .hidden abi_test_trampoline
+.type	abi_test_trampoline, @function
 .align	16
 abi_test_trampoline:
 .cfi_startproc	
@@ -178,279 +178,279 @@ abi_test_unwind_stop:
 .cfi_endproc	
 
 .size	abi_test_trampoline,.-abi_test_trampoline
-.type	abi_test_clobber_rax, @function
 .globl	abi_test_clobber_rax
 .hidden abi_test_clobber_rax
+.type	abi_test_clobber_rax, @function
 .align	16
 abi_test_clobber_rax:
 _CET_ENDBR
 	xorq	%rax,%rax
 	ret
 .size	abi_test_clobber_rax,.-abi_test_clobber_rax
-.type	abi_test_clobber_rbx, @function
 .globl	abi_test_clobber_rbx
 .hidden abi_test_clobber_rbx
+.type	abi_test_clobber_rbx, @function
 .align	16
 abi_test_clobber_rbx:
 _CET_ENDBR
 	xorq	%rbx,%rbx
 	ret
 .size	abi_test_clobber_rbx,.-abi_test_clobber_rbx
-.type	abi_test_clobber_rcx, @function
 .globl	abi_test_clobber_rcx
 .hidden abi_test_clobber_rcx
+.type	abi_test_clobber_rcx, @function
 .align	16
 abi_test_clobber_rcx:
 _CET_ENDBR
 	xorq	%rcx,%rcx
 	ret
 .size	abi_test_clobber_rcx,.-abi_test_clobber_rcx
-.type	abi_test_clobber_rdx, @function
 .globl	abi_test_clobber_rdx
 .hidden abi_test_clobber_rdx
+.type	abi_test_clobber_rdx, @function
 .align	16
 abi_test_clobber_rdx:
 _CET_ENDBR
 	xorq	%rdx,%rdx
 	ret
 .size	abi_test_clobber_rdx,.-abi_test_clobber_rdx
-.type	abi_test_clobber_rdi, @function
 .globl	abi_test_clobber_rdi
 .hidden abi_test_clobber_rdi
+.type	abi_test_clobber_rdi, @function
 .align	16
 abi_test_clobber_rdi:
 _CET_ENDBR
 	xorq	%rdi,%rdi
 	ret
 .size	abi_test_clobber_rdi,.-abi_test_clobber_rdi
-.type	abi_test_clobber_rsi, @function
 .globl	abi_test_clobber_rsi
 .hidden abi_test_clobber_rsi
+.type	abi_test_clobber_rsi, @function
 .align	16
 abi_test_clobber_rsi:
 _CET_ENDBR
 	xorq	%rsi,%rsi
 	ret
 .size	abi_test_clobber_rsi,.-abi_test_clobber_rsi
-.type	abi_test_clobber_rbp, @function
 .globl	abi_test_clobber_rbp
 .hidden abi_test_clobber_rbp
+.type	abi_test_clobber_rbp, @function
 .align	16
 abi_test_clobber_rbp:
 _CET_ENDBR
 	xorq	%rbp,%rbp
 	ret
 .size	abi_test_clobber_rbp,.-abi_test_clobber_rbp
-.type	abi_test_clobber_r8, @function
 .globl	abi_test_clobber_r8
 .hidden abi_test_clobber_r8
+.type	abi_test_clobber_r8, @function
 .align	16
 abi_test_clobber_r8:
 _CET_ENDBR
 	xorq	%r8,%r8
 	ret
 .size	abi_test_clobber_r8,.-abi_test_clobber_r8
-.type	abi_test_clobber_r9, @function
 .globl	abi_test_clobber_r9
 .hidden abi_test_clobber_r9
+.type	abi_test_clobber_r9, @function
 .align	16
 abi_test_clobber_r9:
 _CET_ENDBR
 	xorq	%r9,%r9
 	ret
 .size	abi_test_clobber_r9,.-abi_test_clobber_r9
-.type	abi_test_clobber_r10, @function
 .globl	abi_test_clobber_r10
 .hidden abi_test_clobber_r10
+.type	abi_test_clobber_r10, @function
 .align	16
 abi_test_clobber_r10:
 _CET_ENDBR
 	xorq	%r10,%r10
 	ret
 .size	abi_test_clobber_r10,.-abi_test_clobber_r10
-.type	abi_test_clobber_r11, @function
 .globl	abi_test_clobber_r11
 .hidden abi_test_clobber_r11
+.type	abi_test_clobber_r11, @function
 .align	16
 abi_test_clobber_r11:
 _CET_ENDBR
 	xorq	%r11,%r11
 	ret
 .size	abi_test_clobber_r11,.-abi_test_clobber_r11
-.type	abi_test_clobber_r12, @function
 .globl	abi_test_clobber_r12
 .hidden abi_test_clobber_r12
+.type	abi_test_clobber_r12, @function
 .align	16
 abi_test_clobber_r12:
 _CET_ENDBR
 	xorq	%r12,%r12
 	ret
 .size	abi_test_clobber_r12,.-abi_test_clobber_r12
-.type	abi_test_clobber_r13, @function
 .globl	abi_test_clobber_r13
 .hidden abi_test_clobber_r13
+.type	abi_test_clobber_r13, @function
 .align	16
 abi_test_clobber_r13:
 _CET_ENDBR
 	xorq	%r13,%r13
 	ret
 .size	abi_test_clobber_r13,.-abi_test_clobber_r13
-.type	abi_test_clobber_r14, @function
 .globl	abi_test_clobber_r14
 .hidden abi_test_clobber_r14
+.type	abi_test_clobber_r14, @function
 .align	16
 abi_test_clobber_r14:
 _CET_ENDBR
 	xorq	%r14,%r14
 	ret
 .size	abi_test_clobber_r14,.-abi_test_clobber_r14
-.type	abi_test_clobber_r15, @function
 .globl	abi_test_clobber_r15
 .hidden abi_test_clobber_r15
+.type	abi_test_clobber_r15, @function
 .align	16
 abi_test_clobber_r15:
 _CET_ENDBR
 	xorq	%r15,%r15
 	ret
 .size	abi_test_clobber_r15,.-abi_test_clobber_r15
-.type	abi_test_clobber_xmm0, @function
 .globl	abi_test_clobber_xmm0
 .hidden abi_test_clobber_xmm0
+.type	abi_test_clobber_xmm0, @function
 .align	16
 abi_test_clobber_xmm0:
 _CET_ENDBR
 	pxor	%xmm0,%xmm0
 	ret
 .size	abi_test_clobber_xmm0,.-abi_test_clobber_xmm0
-.type	abi_test_clobber_xmm1, @function
 .globl	abi_test_clobber_xmm1
 .hidden abi_test_clobber_xmm1
+.type	abi_test_clobber_xmm1, @function
 .align	16
 abi_test_clobber_xmm1:
 _CET_ENDBR
 	pxor	%xmm1,%xmm1
 	ret
 .size	abi_test_clobber_xmm1,.-abi_test_clobber_xmm1
-.type	abi_test_clobber_xmm2, @function
 .globl	abi_test_clobber_xmm2
 .hidden abi_test_clobber_xmm2
+.type	abi_test_clobber_xmm2, @function
 .align	16
 abi_test_clobber_xmm2:
 _CET_ENDBR
 	pxor	%xmm2,%xmm2
 	ret
 .size	abi_test_clobber_xmm2,.-abi_test_clobber_xmm2
-.type	abi_test_clobber_xmm3, @function
 .globl	abi_test_clobber_xmm3
 .hidden abi_test_clobber_xmm3
+.type	abi_test_clobber_xmm3, @function
 .align	16
 abi_test_clobber_xmm3:
 _CET_ENDBR
 	pxor	%xmm3,%xmm3
 	ret
 .size	abi_test_clobber_xmm3,.-abi_test_clobber_xmm3
-.type	abi_test_clobber_xmm4, @function
 .globl	abi_test_clobber_xmm4
 .hidden abi_test_clobber_xmm4
+.type	abi_test_clobber_xmm4, @function
 .align	16
 abi_test_clobber_xmm4:
 _CET_ENDBR
 	pxor	%xmm4,%xmm4
 	ret
 .size	abi_test_clobber_xmm4,.-abi_test_clobber_xmm4
-.type	abi_test_clobber_xmm5, @function
 .globl	abi_test_clobber_xmm5
 .hidden abi_test_clobber_xmm5
+.type	abi_test_clobber_xmm5, @function
 .align	16
 abi_test_clobber_xmm5:
 _CET_ENDBR
 	pxor	%xmm5,%xmm5
 	ret
 .size	abi_test_clobber_xmm5,.-abi_test_clobber_xmm5
-.type	abi_test_clobber_xmm6, @function
 .globl	abi_test_clobber_xmm6
 .hidden abi_test_clobber_xmm6
+.type	abi_test_clobber_xmm6, @function
 .align	16
 abi_test_clobber_xmm6:
 _CET_ENDBR
 	pxor	%xmm6,%xmm6
 	ret
 .size	abi_test_clobber_xmm6,.-abi_test_clobber_xmm6
-.type	abi_test_clobber_xmm7, @function
 .globl	abi_test_clobber_xmm7
 .hidden abi_test_clobber_xmm7
+.type	abi_test_clobber_xmm7, @function
 .align	16
 abi_test_clobber_xmm7:
 _CET_ENDBR
 	pxor	%xmm7,%xmm7
 	ret
 .size	abi_test_clobber_xmm7,.-abi_test_clobber_xmm7
-.type	abi_test_clobber_xmm8, @function
 .globl	abi_test_clobber_xmm8
 .hidden abi_test_clobber_xmm8
+.type	abi_test_clobber_xmm8, @function
 .align	16
 abi_test_clobber_xmm8:
 _CET_ENDBR
 	pxor	%xmm8,%xmm8
 	ret
 .size	abi_test_clobber_xmm8,.-abi_test_clobber_xmm8
-.type	abi_test_clobber_xmm9, @function
 .globl	abi_test_clobber_xmm9
 .hidden abi_test_clobber_xmm9
+.type	abi_test_clobber_xmm9, @function
 .align	16
 abi_test_clobber_xmm9:
 _CET_ENDBR
 	pxor	%xmm9,%xmm9
 	ret
 .size	abi_test_clobber_xmm9,.-abi_test_clobber_xmm9
-.type	abi_test_clobber_xmm10, @function
 .globl	abi_test_clobber_xmm10
 .hidden abi_test_clobber_xmm10
+.type	abi_test_clobber_xmm10, @function
 .align	16
 abi_test_clobber_xmm10:
 _CET_ENDBR
 	pxor	%xmm10,%xmm10
 	ret
 .size	abi_test_clobber_xmm10,.-abi_test_clobber_xmm10
-.type	abi_test_clobber_xmm11, @function
 .globl	abi_test_clobber_xmm11
 .hidden abi_test_clobber_xmm11
+.type	abi_test_clobber_xmm11, @function
 .align	16
 abi_test_clobber_xmm11:
 _CET_ENDBR
 	pxor	%xmm11,%xmm11
 	ret
 .size	abi_test_clobber_xmm11,.-abi_test_clobber_xmm11
-.type	abi_test_clobber_xmm12, @function
 .globl	abi_test_clobber_xmm12
 .hidden abi_test_clobber_xmm12
+.type	abi_test_clobber_xmm12, @function
 .align	16
 abi_test_clobber_xmm12:
 _CET_ENDBR
 	pxor	%xmm12,%xmm12
 	ret
 .size	abi_test_clobber_xmm12,.-abi_test_clobber_xmm12
-.type	abi_test_clobber_xmm13, @function
 .globl	abi_test_clobber_xmm13
 .hidden abi_test_clobber_xmm13
+.type	abi_test_clobber_xmm13, @function
 .align	16
 abi_test_clobber_xmm13:
 _CET_ENDBR
 	pxor	%xmm13,%xmm13
 	ret
 .size	abi_test_clobber_xmm13,.-abi_test_clobber_xmm13
-.type	abi_test_clobber_xmm14, @function
 .globl	abi_test_clobber_xmm14
 .hidden abi_test_clobber_xmm14
+.type	abi_test_clobber_xmm14, @function
 .align	16
 abi_test_clobber_xmm14:
 _CET_ENDBR
 	pxor	%xmm14,%xmm14
 	ret
 .size	abi_test_clobber_xmm14,.-abi_test_clobber_xmm14
-.type	abi_test_clobber_xmm15, @function
 .globl	abi_test_clobber_xmm15
 .hidden abi_test_clobber_xmm15
+.type	abi_test_clobber_xmm15, @function
 .align	16
 abi_test_clobber_xmm15:
 _CET_ENDBR
@@ -460,9 +460,9 @@ _CET_ENDBR
 
 
 
-.type	abi_test_bad_unwind_wrong_register, @function
 .globl	abi_test_bad_unwind_wrong_register
 .hidden abi_test_bad_unwind_wrong_register
+.type	abi_test_bad_unwind_wrong_register, @function
 .align	16
 abi_test_bad_unwind_wrong_register:
 .cfi_startproc	
@@ -488,9 +488,9 @@ _CET_ENDBR
 
 
 
-.type	abi_test_bad_unwind_temporary, @function
 .globl	abi_test_bad_unwind_temporary
 .hidden abi_test_bad_unwind_temporary
+.type	abi_test_bad_unwind_temporary, @function
 .align	16
 abi_test_bad_unwind_temporary:
 .cfi_startproc	
@@ -522,9 +522,9 @@ _CET_ENDBR
 
 
 
-.type	abi_test_set_direction_flag, @function
 .globl	abi_test_get_and_clear_direction_flag
 .hidden abi_test_get_and_clear_direction_flag
+.type	abi_test_get_and_clear_direction_flag, @function
 abi_test_get_and_clear_direction_flag:
 _CET_ENDBR
 	pushfq
@@ -537,9 +537,9 @@ _CET_ENDBR
 
 
 
-.type	abi_test_set_direction_flag, @function
 .globl	abi_test_set_direction_flag
 .hidden abi_test_set_direction_flag
+.type	abi_test_set_direction_flag, @function
 abi_test_set_direction_flag:
 _CET_ENDBR
 	std

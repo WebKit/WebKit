@@ -13,11 +13,11 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <variant>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_content_type.h"
@@ -67,12 +67,18 @@ class RTC_EXPORT VideoFrameMetadata {
   int GetTemporalIndex() const;
   void SetTemporalIndex(int temporal_index);
 
-  ArrayView<const int64_t> GetFrameDependencies() const;
-  void SetFrameDependencies(ArrayView<const int64_t> frame_dependencies);
+  // TODO: https://issues.webrtc.org/515776877 - Deprecate and remove this
+  // method.
+  std::span<const int64_t> GetFrameDependencies() const;
+  // TODO: https://issues.webrtc.org/515776877 - Deprecate and remove this
+  // method.
+  void SetFrameDependencies(std::span<const int64_t> frame_dependencies);
+  std::optional<std::span<const int64_t>> GetDependencies() const;
+  void SetDependencies(std::optional<std::span<const int64_t>> dependencies);
 
-  ArrayView<const DecodeTargetIndication> GetDecodeTargetIndications() const;
+  std::span<const DecodeTargetIndication> GetDecodeTargetIndications() const;
   void SetDecodeTargetIndications(
-      ArrayView<const DecodeTargetIndication> decode_target_indications);
+      std::span<const DecodeTargetIndication> decode_target_indications);
 
   bool GetIsLastFrameInPicture() const;
   void SetIsLastFrameInPicture(bool is_last_frame_in_picture);
@@ -109,7 +115,7 @@ class RTC_EXPORT VideoFrameMetadata {
   std::optional<int64_t> frame_id_;
   int spatial_index_ = 0;
   int temporal_index_ = 0;
-  absl::InlinedVector<int64_t, 5> frame_dependencies_;
+  std::optional<absl::InlinedVector<int64_t, 5>> frame_dependencies_;
   absl::InlinedVector<DecodeTargetIndication, 10> decode_target_indications_;
 
   bool is_last_frame_in_picture_ = true;

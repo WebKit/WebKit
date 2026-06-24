@@ -6,58 +6,64 @@ else ()
 endif ()
 option(USE_HEADER_MAPS "Collapse per-target include directories into a Clang header map" ${_USE_HEADER_MAPS_DEFAULT})
 
-function(WEBKIT_MAKE_HEADER_MAP _target _source_root _dirs_var)
-    set(_hmap_dirs)
-    set(_result)
-    set(_placeholder "@HMAP@")
-    cmake_path(SET _root NORMALIZE "${_source_root}")
-    cmake_path(SET _build_root NORMALIZE "${CMAKE_BINARY_DIR}")
-    foreach (_dir IN LISTS ${_dirs_var})
-        cmake_path(SET _dir_n NORMALIZE "${_dir}")
-        cmake_path(IS_PREFIX _root "${_dir_n}" _under_source)
-        cmake_path(IS_PREFIX _build_root "${_dir_n}" _under_build)
-        # Source-tree dirs collapse fully into the hmap so basename + framework-style
-        # lookups short-circuit -I scans. Build-tree dirs (e.g. DerivedSources) must
-        # stay on -I because unified sources do `#include "inspector/Foo.cpp"` style
-        # subpath references that the basename hmap cannot resolve. Headers in those
-        # build-tree dirs still get scanned into the hmap so `<Framework/X.h>` works.
-        if (_under_source AND NOT "${_dir_n}" STREQUAL "${_root}")
-            if (IS_DIRECTORY "${_dir}")
-                if (NOT _hmap_dirs)
-                    list(APPEND _result "${_placeholder}")
-                endif ()
-                list(APPEND _hmap_dirs "${_dir}")
-            endif ()
-        else ()
-            list(APPEND _result "${_dir}")
-            if (_under_build AND IS_DIRECTORY "${_dir}")
-                if (NOT _hmap_dirs)
-                    list(APPEND _result "${_placeholder}")
-                endif ()
-                list(APPEND _hmap_dirs "${_dir}")
-            endif ()
-        endif ()
-    endforeach ()
+function(WEBKIT_WRITE_HEADER_MAP target)
+    set(options QUOTED BRACKETED)
+    set(oneValueArgs DESTINATION)
+    set(multiValueArgs FILES)
+    cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if (NOT _hmap_dirs)
+    string(REPLACE ";" "\n" body "${opt_FILES}")
+
+    # Only regenerate headermaps if the manifest file has changed. Bump the
+    # version number in the path when this function changes and needs to
+    # invalidate existing listings.
+    set(manifest "${opt_DESTINATION}.v1.txt")
+    if (EXISTS ${manifest} AND EXISTS ${opt_DESTINATION})
+        file(READ ${manifest} old_body)
+        if ("${old_body}" STREQUAL "${body}")
+            return()
+        endif ()
+    endif ()
+    file(WRITE ${manifest} ${body})
+
+    # Turn the source lists into a JSON object using a python snippet (CMake's
+    # own JSON operations are too slow for thousands of headers). Feed that
+    # object into a vendored copy of LLVM hmaptool.
+    if (opt_QUOTED AND opt_BRACKETED)
+        set(python_code "name, f'${target}/{name}'")
+    elseif (opt_QUOTED)
+        set(python_code "name")
+    elseif (opt_BRACKETED)
+        set(python_code "f'${target}/{name}'")
+    else ()
+        message(AUTHOR_WARNING "Must call with QUOTED and/or BRACKETED argument")
         return()
     endif ()
-
-    set(_dirs_file "${CMAKE_CURRENT_BINARY_DIR}/${_target}HeaderMap.dirs")
-    set(_hmap_file "${CMAKE_CURRENT_BINARY_DIR}/${_target}.hmap")
-    list(JOIN _hmap_dirs "\n" _dirs_content)
-    file(WRITE "${_dirs_file}" "${_dirs_content}\n")
 
     execute_process(
-        COMMAND "${PYTHON_EXECUTABLE}" "${TOOLS_DIR}/Scripts/generate-header-map"
-                --dirs-file "${_dirs_file}" --framework "${_target}" -o "${_hmap_file}"
-        RESULT_VARIABLE _hmap_result
+        COMMAND ${PYTHON_EXECUTABLE} -c "
+import json, os, sys
+map = {}
+for line in sys.stdin:
+    header = line.rstrip()
+    name = os.path.basename(header)
+    dest = os.path.join('${CMAKE_CURRENT_SOURCE_DIR}', header)
+    for entry in [${python_code}]:
+        map[entry] = dest
+json.dump({'mappings': map}, sys.stdout)
+        "
+        OUTPUT_FILE ${opt_DESTINATION}.json
+        INPUT_FILE ${manifest}
+        RESULT_VARIABLE result
     )
-    if (NOT _hmap_result EQUAL 0)
-        message(WARNING "generate-header-map failed for ${_target}; falling back to -I directories")
-        return()
+    if (result EQUAL 0)
+        execute_process(
+            COMMAND ${PYTHON_EXECUTABLE} ${TOOLS_DIR}/Scripts/hmaptool write ${opt_DESTINATION}.json ${opt_DESTINATION}
+            RESULT_VARIABLE result
+        )
     endif ()
-
-    list(TRANSFORM _result REPLACE "^${_placeholder}$" "${_hmap_file}")
-    set(${_dirs_var} "${_result}" PARENT_SCOPE)
+    if (NOT result EQUAL 0)
+        file(REMOVE ${manifest})
+        message(FATAL_ERROR "Generating headermap \"${opt_DESTINATION}\" for ${target} failed")
+    endif ()
 endfunction()

@@ -1,0 +1,22 @@
+
+
+PASS Type conversion happens on the data member of the DigitalCredentialGetRequest object.
+PASS Calling navigator.credentials.get() without a digital member same origin.
+PASS navigator.credentials.get() API rejects if there are no credential request.
+FAIL navigator.credentials.get() API rejects if there are no credential request for same-origin iframe. promise_rejects_js: function "function() { throw e; }" threw object "NotAllowedError: The document is not focused." ("NotAllowedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS navigator.credentials.get() API rejects if there are no credential request in cross-origin iframe.
+PASS navigator.credentials.get() promise is rejected if called with an aborted controller.
+PASS navigator.credentials.get() promise is rejected if called with an aborted controller in same-origin iframe.
+PASS navigator.credentials.get() promise is rejected if called with an aborted signal in cross-origin iframe.
+FAIL navigator.credentials.get() promise is rejected if abort controller is aborted after call to get(). promise_rejects_dom: function "function() { throw e; }" threw object "NotAllowedError: The document is not focused." that is not a DOMException AbortError: property "code" is equal to 0, expected 20
+PASS navigator.credentials.get() promise is rejected if abort controller is aborted after call to get() in cross-origin iframe.
+PASS Mediation is implicitly required and hence ignored. Request is aborted regardless.
+PASS Throws TypeError when request data is not JSON stringifiable.
+PASS `requests` field is required in the options object.
+FAIL navigator.credentials.get() with one unknown protocol with malformed data and one known protocol with proper data should skip the unknown one and not fail. promise_rejects_dom: function "function() { throw e; }" threw object "TypeError: Type error" that is not a DOMException AbortError: property "code" is equal to undefined, expected 20
+PASS navigator.credentials.get() with only bogus requests should reject with TypeError.
+FAIL navigator.credentials.get() with good requests at the start and end should skip the bogus ones and not fail. promise_rejects_dom: function "function() { throw e; }" threw object "TypeError: Type error" that is not a DOMException AbortError: property "code" is equal to undefined, expected 20
+FAIL navigator.credentials.get() with bogus requests at both ends should skip them and not fail. promise_rejects_dom: function "function() { throw e; }" threw object "TypeError: Type error" that is not a DOMException AbortError: property "code" is equal to undefined, expected 20
+

@@ -14,9 +14,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
+#include "absl/functional/any_invocable.h"
 #include "api/audio/audio_device.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
@@ -28,6 +29,9 @@
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_bitrate_allocator_factory.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder_factory.h"
 #include "call/audio_state.h"
 #include "media/base/codec.h"
 #include "media/base/media_channel.h"
@@ -43,13 +47,13 @@ class Call;
 // Checks that the scalability_mode value of each encoding is supported by at
 // least one video codec of the list. If the list is empty, no check is done.
 RTCError CheckScalabilityModeValues(const RtpParameters& new_parameters,
-                                    ArrayView<const Codec> send_codecs,
+                                    std::span<const Codec> send_codecs,
                                     std::optional<Codec> send_codec);
 
 // Checks the parameters have valid and supported values, and checks parameters
 // with CheckScalabilityModeValues().
 RTCError CheckRtpParametersValues(const RtpParameters& new_parameters,
-                                  ArrayView<const Codec> send_codecs,
+                                  std::span<const Codec> send_codecs,
                                   std::optional<Codec> send_codec,
                                   const FieldTrialsView& field_trials);
 
@@ -58,7 +62,7 @@ RTCError CheckRtpParametersValues(const RtpParameters& new_parameters,
 RTCError CheckRtpParametersInvalidModificationAndValues(
     const RtpParameters& old_parameters,
     const RtpParameters& new_parameters,
-    ArrayView<const Codec> send_codecs,
+    std::span<const Codec> send_codecs,
     std::optional<Codec> send_codec,
     const FieldTrialsView& field_trials);
 
@@ -77,10 +81,68 @@ class RtpHeaderExtensionQueryInterface {
   // Returns a vector of RtpHeaderExtensionCapability, whose direction is
   // kStopped if the extension is stopped (not used) by default.
   virtual std::vector<RtpHeaderExtensionCapability> GetRtpHeaderExtensions(
-      const webrtc::FieldTrialsView* field_trials) const = 0;
+      const FieldTrialsView* field_trials) const = 0;
 };
 
-class VoiceEngineInterface : public RtpHeaderExtensionQueryInterface {
+// Interface for creating voice media channels.
+//
+// Methods on this interface only perform thread-safe initialization and do not
+// mutate engine-level state. Consequently, it is safe to call these methods
+// from any thread, including the signaling thread.
+class VoiceChannelFactoryInterface {
+ public:
+  virtual ~VoiceChannelFactoryInterface() = default;
+
+  // Safe to be called from the signaling thread.
+  virtual std::unique_ptr<VoiceMediaSendChannelInterface> CreateSendChannel(
+      const Environment& env,
+      Call* call,
+      const MediaConfig& config,
+      const AudioOptions& options,
+      const CryptoOptions& crypto_options,
+      absl::AnyInvocable<void()> parameters_changed_callback = nullptr) = 0;
+
+  // Safe to be called from the signaling thread.
+  virtual std::unique_ptr<VoiceMediaReceiveChannelInterface>
+  CreateReceiveChannel(const Environment& env,
+                       Call* call,
+                       const MediaConfig& config,
+                       const AudioOptions& options,
+                       const CryptoOptions& crypto_options) = 0;
+};
+
+// Interface for creating video media channels.
+//
+// Methods on this interface only perform thread-safe initialization and do not
+// mutate engine-level state. Consequently, it is safe to call these methods
+// from any thread, including the signaling thread.
+class VideoChannelFactoryInterface {
+ public:
+  virtual ~VideoChannelFactoryInterface() = default;
+
+  // Safe to be called from the signaling thread.
+  virtual std::unique_ptr<VideoMediaSendChannelInterface> CreateSendChannel(
+      const Environment& env,
+      Call* call,
+      const MediaConfig& config,
+      const VideoOptions& options,
+      const CryptoOptions& crypto_options,
+      VideoBitrateAllocatorFactory* video_bitrate_allocator_factory,
+      VideoMediaSendChannelInterface::EncoderSwitchRequestCallback
+          video_encoder_switch_request_callback,
+      absl::AnyInvocable<void()> parameters_changed_callback) = 0;
+
+  // Safe to be called from the signaling thread.
+  virtual std::unique_ptr<VideoMediaReceiveChannelInterface>
+  CreateReceiveChannel(const Environment& env,
+                       Call* call,
+                       const MediaConfig& config,
+                       const VideoOptions& options,
+                       const CryptoOptions& crypto_options) = 0;
+};
+
+class VoiceEngineInterface : public RtpHeaderExtensionQueryInterface,
+                             public VoiceChannelFactoryInterface {
  public:
   VoiceEngineInterface() = default;
   ~VoiceEngineInterface() override = default;
@@ -97,36 +159,32 @@ class VoiceEngineInterface : public RtpHeaderExtensionQueryInterface {
   // TODO(solenberg): Remove once VoE API refactoring is done.
   virtual scoped_refptr<AudioState> GetAudioState() const = 0;
 
-  virtual std::unique_ptr<VoiceMediaSendChannelInterface> CreateSendChannel(
+  // VoiceChannelFactoryInterface overrides.
+  std::unique_ptr<VoiceMediaSendChannelInterface> CreateSendChannel(
       const Environment& env,
       Call* call,
       const MediaConfig& config,
       const AudioOptions& options,
-      const CryptoOptions& crypto_options) = 0;
+      const CryptoOptions& crypto_options,
+      absl::AnyInvocable<void()> parameters_changed_callback =
+          nullptr) override = 0;
 
-  virtual std::unique_ptr<VoiceMediaReceiveChannelInterface>
-  CreateReceiveChannel(const Environment& env,
-                       Call* call,
-                       const MediaConfig& config,
-                       const AudioOptions& options,
-                       const CryptoOptions& crypto_options) = 0;
+  std::unique_ptr<VoiceMediaReceiveChannelInterface> CreateReceiveChannel(
+      const Environment& env,
+      Call* call,
+      const MediaConfig& config,
+      const AudioOptions& options,
+      const CryptoOptions& crypto_options) override = 0;
 
   // Legacy: Retrieve list of supported codecs.
   // + protection codecs, and assigns PT numbers that may have to be
   // reassigned.
-  // This function is being moved to CodecVendor
   // TODO: https://issues.webrtc.org/360058654 - remove when all users updated.
-  [[deprecated]] inline const std::vector<Codec>& send_codecs() const {
-    return LegacySendCodecs();
-  }
-  [[deprecated]] inline const std::vector<Codec>& recv_codecs() const {
-    return LegacyRecvCodecs();
-  }
   virtual const std::vector<Codec>& LegacySendCodecs() const = 0;
   virtual const std::vector<Codec>& LegacyRecvCodecs() const = 0;
 
-  virtual AudioEncoderFactory* encoder_factory() const = 0;
-  virtual AudioDecoderFactory* decoder_factory() const = 0;
+  virtual const scoped_refptr<AudioEncoderFactory>& encoder_factory() const = 0;
+  virtual const scoped_refptr<AudioDecoderFactory>& decoder_factory() const = 0;
 
   // Starts AEC dump using existing file, a maximum file size in bytes can be
   // specified. Logging is stopped just before the size limit is exceeded.
@@ -137,9 +195,14 @@ class VoiceEngineInterface : public RtpHeaderExtensionQueryInterface {
   virtual void StopAecDump() = 0;
 
   virtual std::optional<AudioDeviceModule::Stats> GetAudioDeviceStats() = 0;
+
+  // Returns true if the engine handles built-in codecs like DTMF and CN
+  // automatically.
+  virtual bool NeedsAuxiliaryCodecsAdded() const { return false; }
 };
 
-class VideoEngineInterface : public RtpHeaderExtensionQueryInterface {
+class VideoEngineInterface : public RtpHeaderExtensionQueryInterface,
+                             public VideoChannelFactoryInterface {
  public:
   VideoEngineInterface() = default;
   ~VideoEngineInterface() override = default;
@@ -147,43 +210,45 @@ class VideoEngineInterface : public RtpHeaderExtensionQueryInterface {
   VideoEngineInterface(const VideoEngineInterface&) = delete;
   VideoEngineInterface& operator=(const VideoEngineInterface&) = delete;
 
-  virtual std::unique_ptr<VideoMediaSendChannelInterface> CreateSendChannel(
+  // VideoChannelFactoryInterface overrides.
+  std::unique_ptr<VideoMediaSendChannelInterface> CreateSendChannel(
       const Environment& env,
       Call* call,
       const MediaConfig& config,
       const VideoOptions& options,
       const CryptoOptions& crypto_options,
-      VideoBitrateAllocatorFactory* video_bitrate_allocator_factory) = 0;
+      VideoBitrateAllocatorFactory* video_bitrate_allocator_factory,
+      VideoMediaSendChannelInterface::EncoderSwitchRequestCallback
+          video_encoder_switch_request_callback,
+      absl::AnyInvocable<void()> parameters_changed_callback) override = 0;
 
-  virtual std::unique_ptr<VideoMediaReceiveChannelInterface>
-  CreateReceiveChannel(const Environment& env,
-                       Call* call,
-                       const MediaConfig& config,
-                       const VideoOptions& options,
-                       const CryptoOptions& crypto_options) = 0;
+  std::unique_ptr<VideoMediaReceiveChannelInterface> CreateReceiveChannel(
+      const Environment& env,
+      Call* call,
+      const MediaConfig& config,
+      const VideoOptions& options,
+      const CryptoOptions& crypto_options) override = 0;
 
   // Legacy: Retrieve list of supported codecs.
   // + protection codecs, and assigns PT numbers that may have to be
   // reassigned.
   // This functionality is being moved to the CodecVendor class.
   // TODO: https://issues.webrtc.org/360058654 - deprecate and remove.
-  [[deprecated]] inline std::vector<Codec> send_codecs() const {
-    return LegacySendCodecs();
-  }
-  [[deprecated]] inline std::vector<Codec> recv_codecs() const {
-    return LegacyRecvCodecs();
-  }
   virtual std::vector<Codec> LegacySendCodecs() const = 0;
   virtual std::vector<Codec> LegacyRecvCodecs() const = 0;
   // As above, but if include_rtx is false, don't include RTX codecs.
-  [[deprecated]] inline std::vector<Codec> send_codecs(bool include_rtx) const {
-    return LegacySendCodecs(include_rtx);
-  }
   virtual std::vector<Codec> LegacySendCodecs(bool include_rtx) const = 0;
   virtual std::vector<Codec> LegacyRecvCodecs(bool include_rtx) const = 0;
-  [[deprecated]] inline std::vector<Codec> recv_codecs(bool include_rtx) const {
-    return LegacyRecvCodecs(include_rtx);
-  }
+
+  virtual VideoEncoderFactory* encoder_factory() const = 0;
+  virtual VideoDecoderFactory* decoder_factory() const = 0;
+
+  virtual std::vector<SdpVideoFormat> GetSupportedFormats(
+      bool is_decoder) const = 0;
+
+  // Returns true if the engine handles built-in codecs like RTX, RED, FEC
+  // automatically.
+  virtual bool NeedsAuxiliaryCodecsAdded() const { return false; }
 };
 
 // MediaEngineInterface is an abstraction of a media engine which can be
@@ -240,7 +305,7 @@ RtpParameters CreateRtpParametersWithEncodings(StreamParams sp);
 // GetRtpHeaderExtensions() that are not kStopped.
 std::vector<RtpExtension> GetDefaultEnabledRtpHeaderExtensions(
     const RtpHeaderExtensionQueryInterface& query_interface,
-    const webrtc::FieldTrialsView* field_trials);
+    const FieldTrialsView* field_trials);
 
 }  //  namespace webrtc
 

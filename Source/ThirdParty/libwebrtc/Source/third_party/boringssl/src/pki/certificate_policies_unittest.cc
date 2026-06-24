@@ -46,7 +46,7 @@ class ParseCertificatePoliciesExtensionOidsTest
 };
 
 // Run the tests with all possible values for
-// |fail_parsing_unknown_qualifier_oids|.
+// `fail_parsing_unknown_qualifier_oids`.
 INSTANTIATE_TEST_SUITE_P(All, ParseCertificatePoliciesExtensionOidsTest,
                          testing::Bool());
 

@@ -132,6 +132,7 @@ WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
       cert_generator_(dtls_enabled ? std::move(cert_generator) : nullptr),
       sdp_info_(sdp_info),
       session_id_(session_id),
+      env_(env),
       certificate_request_state_(CERTIFICATE_NOT_NEEDED),
       on_certificate_ready_(on_certificate_ready) {
   RTC_DCHECK(signaling_thread_);
@@ -304,7 +305,9 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
   RTC_DCHECK(session_version_ + 1 > session_version_);
   auto offer = SessionDescriptionInterface::Create(
       SdpType::kOffer, std::move(desc), session_id_,
-      absl::StrCat(session_version_++));
+      absl::StrCat(session_version_++), {},
+      {.use_wildcard =
+           env_.field_trials().IsEnabled("WebRTC-UseWildcardInSdp")});
   if (sdp_info_->local_description()) {
     for (const MediaDescriptionOptions& options :
          request.options.media_description_options) {
@@ -363,7 +366,9 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
   RTC_DCHECK(session_version_ + 1 > session_version_);
   auto answer = SessionDescriptionInterface::Create(
       SdpType::kAnswer, std::move(desc), session_id_,
-      absl::StrCat(session_version_++));
+      absl::StrCat(session_version_++), {},
+      {.use_wildcard =
+           env_.field_trials().IsEnabled("WebRTC-UseWildcardInSdp")});
   if (sdp_info_->local_description()) {
     // Include all local ICE candidates in the SessionDescription unless
     // the remote peer has requested an ICE restart.

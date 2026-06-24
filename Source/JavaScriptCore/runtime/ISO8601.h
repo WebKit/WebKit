@@ -29,6 +29,7 @@
 #include <JavaScriptCore/IntlObject.h>
 #include <JavaScriptCore/TemporalObject.h>
 #include <wtf/Int128.h>
+#include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -454,6 +455,7 @@ struct TimeZoneRecord {
     bool m_z { false };
     std::optional<int64_t> m_offset;
     Variant<Vector<Latin1Character>, int64_t> m_nameOrOffset;
+    bool m_offsetHasSubMinutePrecision { false };
 };
 
 static constexpr unsigned minCalendarLength = 3;
@@ -474,29 +476,55 @@ std::optional<int64_t> parseUTCOffset(StringView, bool parseSubMinutePrecision =
 std::optional<int64_t> parseUTCOffsetInMinutes(StringView);
 enum class ValidateTimeZoneID : bool { No, Yes };
 using CalendarID = RFC9557Value;
-std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView);
-std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarID>>> parseCalendarTime(StringView);
-std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView, TemporalDateFormat);
-JS_EXPORT_PRIVATE std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarID>>> parseCalendarDateTime(StringView, TemporalDateFormat);
+
+enum class TemporalProduction : uint8_t {
+    Instant = 1 << 0, // TemporalInstantString
+    DateTimeZoned = 1 << 1, // TemporalDateTimeString[+Zoned]
+    DateTimeUnzoned = 1 << 2, // TemporalDateTimeString[~Zoned]
+    YearMonth = 1 << 3, // TemporalYearMonthString
+    MonthDay = 1 << 4, // TemporalMonthDayString
+    Time = 1 << 5, // TemporalTimeString
+};
+using TemporalProductionSet = OptionSet<TemporalProduction>;
+
+struct ParsedISODateTime {
+    std::optional<PlainDate> date;
+    std::optional<PlainTime> time;
+    std::optional<TimeZoneRecord> timeZone;
+    std::optional<CalendarID> calendar;
+    TemporalProduction matched { };
+    // True when the matched goal was the SHORT FORM:
+    //   AnnotatedYearMonth (DateDay absent) or AnnotatedMonthDay (DateYear absent).
+    // parseISODateTime already enforces Step 4.a.ii.(3)/(4) (short-form goals require
+    // iso8601 calendar — returns std::nullopt otherwise). This flag remains for
+    // consumers that branch on full-date vs short-form (e.g. PlainMonthDay).
+    bool isShortForm { false };
+};
+
+JS_EXPORT_PRIVATE std::optional<ParsedISODateTime> parseISODateTime(StringView, TemporalProductionSet);
+
+std::optional<TimeZone> JS_EXPORT_PRIVATE parseTemporalTimeZoneIdentifier(StringView);
+// Strict variant: accepts only a bare UTC offset or bare IANA name — no embedded datetime strings.
+std::optional<TimeZone> parseTimeZoneIdentifierStrict(StringView);
 uint8_t dayOfWeek(PlainDate);
 uint16_t NODELETE dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
 uint8_t weekOfYear(PlainDate);
+int32_t yearOfWeek(PlainDate);
 uint8_t NODELETE daysInMonth(int32_t year, uint8_t month);
 uint8_t daysInMonth(uint8_t month);
 String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
-String JS_EXPORT_PRIVATE temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
-String temporalYearMonthToString(PlainYearMonth, StringView);
-String temporalMonthDayToString(PlainMonthDay, StringView);
+JS_EXPORT_PRIVATE String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
+String temporalYearMonthToString(PlainYearMonth, StringView, unsigned calendarId);
+String temporalMonthDayToString(PlainMonthDay, StringView, unsigned calendarId);
 String monthCode(uint32_t);
 
 bool NODELETE isValidDuration(const Duration&);
 bool NODELETE isValidISODate(double, double, double);
 PlainDate NODELETE createISODateRecord(double, double, double);
 
-std::optional<ExactTime> parseInstant(StringView);
 std::optional<ParsedMonthCode> NODELETE parseMonthCode(StringView);
 std::optional<TimeZone> JS_EXPORT_PRIVATE parseTemporalTimeZoneIdentifier(StringView);
 

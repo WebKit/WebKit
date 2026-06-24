@@ -62,10 +62,10 @@ Ref<RTCRtpTransformableFrame> RTCEncodedFrame::rtcFrame(JSC::VM& vm, ShouldNeute
     if (shouldNeuter == ShouldNeuter::Yes && !m_isNeutered) {
         m_isNeutered = true;
         if (m_data) {
-            m_frame->setData(m_data->span());
+            protect(m_frame)->setData(m_data->span());
 
             JSC::ArrayBufferContents emptyBuffer;
-            bool result = m_data->transferTo(vm, emptyBuffer);
+            bool result = protect(m_data)->transferTo(vm, emptyBuffer);
             ASSERT_UNUSED(result, result);
         }
     }
@@ -76,7 +76,7 @@ Ref<RTCRtpTransformableFrame> RTCEncodedFrame::serialize()
 {
     auto clone = m_frame->clone();
     if (m_data)
-        clone->setData(m_data->span());
+        clone->setData(protect(m_data)->span());
     return clone;
 }
 

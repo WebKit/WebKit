@@ -68,7 +68,7 @@ public:
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfRTT(); }
 
 protected:
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
+    DECLARE_DEFAULT_FINISH_CREATION;
     WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, Wasm::WasmOrJSImportableFunction&&, Wasm::WasmOrJSImportableFunctionCallLinkInfo*);
 
     Wasm::WasmOrJSImportableFunction m_importableFunction;

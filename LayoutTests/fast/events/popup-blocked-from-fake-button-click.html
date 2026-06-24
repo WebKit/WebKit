@@ -1,26 +1,22 @@
 <html> <!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
     <head>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
     </head>
     <body>
         <button id="test" onclick="popup()" style="display:none"></button>
         <div id="console"></div>
         <script> 
+            window.jsTestIsAsync = true;
             var win;
             function popup() {
                 win = window.open("about:blank", "blank");
                 shouldBeNull("win");
             }
 
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
 
             document.getElementById("test").click();
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         </script> 
     </body> 
 </html>

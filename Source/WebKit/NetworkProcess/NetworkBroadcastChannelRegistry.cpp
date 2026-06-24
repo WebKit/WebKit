@@ -62,6 +62,7 @@ NetworkBroadcastChannelRegistry::~NetworkBroadcastChannelRegistry() = default;
 void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
 {
     MESSAGE_CHECK(isValidClientOrigin(origin), connection);
+    MESSAGE_CHECK(!name.isNull(), connection);
 
     auto& channelsForOrigin = m_broadcastChannels.ensure(origin, [] { return NameToConnectionIdentifiersMap { }; }).iterator->value;
     auto& connectionIdentifiersForName = channelsForOrigin.ensure(name, [] { return Vector<IPC::Connection::UniqueID> { }; }).iterator->value;
@@ -72,6 +73,7 @@ void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connectio
 void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
 {
     MESSAGE_CHECK(isValidClientOrigin(origin), connection);
+    MESSAGE_CHECK(!name.isNull(), connection);
 
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());
@@ -89,6 +91,7 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
 void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), connection, completionHandler());
+    MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler());
 
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());

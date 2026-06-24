@@ -14,11 +14,11 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_processing.h"
 #include "api/environment/environment.h"
@@ -135,8 +135,8 @@ class CallClient : public EmulatedNetworkReceiverInterface {
   void UpdateBitrateConstraints(const BitrateConstraints& constraints);
   void SetRemoteBitrate(DataRate bitrate);
 
-  void SetAudioReceiveRtpHeaderExtensions(ArrayView<RtpExtension> extensions);
-  void SetVideoReceiveRtpHeaderExtensions(ArrayView<RtpExtension> extensions);
+  void SetAudioReceiveRtpHeaderExtensions(std::span<RtpExtension> extensions);
+  void SetVideoReceiveRtpHeaderExtensions(std::span<RtpExtension> extensions);
 
   // Sets the network adapter id used next time the network route changes.
   void UpdateNetworkAdapterId(int adapter_id);

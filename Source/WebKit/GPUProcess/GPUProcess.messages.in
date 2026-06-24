@@ -100,7 +100,9 @@ messages -> GPUProcess : AuxiliaryProcess {
     SetPresentingApplicationAuditToken(WebCore::ProcessIdentifier processIdentifier, WebCore::PageIdentifier pageIdentifier, struct std::optional<WebKit::CoreIPCAuditToken> auditToken);
 #endif
 #if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+#if HAVE(CORE_RE)
     RequestSharedSimulationConnection(struct WebKit::CoreIPCAuditToken modelProcessAuditToken) -> (std::optional<IPC::SharedFileHandle> sharedSimulationConnection)
+#endif
 #if HAVE(TASK_IDENTITY_TOKEN)
     CreateMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity) -> (std::optional<String> completionHandler)
     UnregisterMemoryAttributionID(String attributionID) -> ()

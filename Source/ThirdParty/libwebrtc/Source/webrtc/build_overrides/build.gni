@@ -21,11 +21,14 @@ asan_suppressions_file = "//build/sanitizers/asan_suppressions.cc"
 lsan_suppressions_file = "//tools_webrtc/sanitizers/lsan_suppressions_webrtc.cc"
 tsan_suppressions_file = "//tools_webrtc/sanitizers/tsan_suppressions_webrtc.cc"
 msan_ignorelist_path =
-    rebase_path("//tools_webrtc/msan/suppressions.txt", root_build_dir)
+    rebase_path("//tools_webrtc/sanitizers/msan_suppressions.txt",
+                root_build_dir)
 ubsan_ignorelist_path =
-    rebase_path("//tools_webrtc/ubsan/suppressions.txt", root_build_dir)
+    rebase_path("//tools_webrtc/sanitizers/ubsan_suppressions.txt",
+                root_build_dir)
 ubsan_vptr_ignorelist_path =
-    rebase_path("//tools_webrtc/ubsan/vptr_suppressions.txt", root_build_dir)
+    rebase_path("//tools_webrtc/sanitizers/ubsan_vptr_suppressions.txt",
+                root_build_dir)
 
 # For Chromium, Android 32-bit non-component, non-clang builds hit a 4GiB size
 # limit, making them requiring symbol_level=2. WebRTC doesn't hit that problem

@@ -89,6 +89,9 @@ enum class WillInternallyHandleFailure : bool { No, Yes };
 
 enum class ShouldContinuePolicyCheck : bool { No, Yes };
 
+enum class ShouldRestoreFromBackForwardCache : uint8_t { Yes, No, Unspecified };
+enum class RestoredFromBackForwardCache : bool { No, Yes };
+
 enum class NewFrameOpenerPolicy : uint8_t {
     Suppress,
     Allow
@@ -151,6 +154,11 @@ enum class BrowsingContextGroupSwitchDecision : uint8_t {
     StayInGroup,
     NewSharedGroup,
     NewIsolatedGroup,
+};
+
+enum class NavigationResponseProcessSwapReason : uint8_t {
+    COOP,
+    EnhancedSecurity,
 };
 
 // Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()

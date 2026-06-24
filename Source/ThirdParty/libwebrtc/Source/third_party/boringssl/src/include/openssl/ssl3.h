@@ -31,7 +31,7 @@ extern "C" {
 // The following constants are equal to TLS cipher suite values, OR-d with
 // 0x03000000. This is part of OpenSSL's SSL 2.0 legacy. SSL 2.0 has long since
 // been removed from BoringSSL.
-// TODO(davidben): Define these in terms of |SSL_CIPHER_*| constants. The
+// TODO(davidben): Define these in terms of `SSL_CIPHER_*` constants. The
 // challenge is that existing code expects them to be defined in ssl3.h, so we
 // must first merge ssl3.h into ssl.h.
 #define SSL3_CK_RSA_DES_192_CBC3_SHA 0x0300000A
@@ -84,7 +84,7 @@ extern "C" {
 // bytes (256) plus the mac size.
 //
 // TODO(davidben): This derivation doesn't take AEADs into account, or TLS 1.1
-// explicit nonces. It happens to work because |SSL3_RT_MAX_MD_SIZE| is larger
+// explicit nonces. It happens to work because `SSL3_RT_MAX_MD_SIZE` is larger
 // than necessary and no true AEAD has variable overhead in TLS 1.2.
 #define SSL3_RT_MAX_ENCRYPTED_OVERHEAD (256 + SSL3_RT_MAX_MD_SIZE)
 
@@ -95,7 +95,7 @@ extern "C" {
     (EVP_AEAD_MAX_OVERHEAD + EVP_AEAD_MAX_NONCE_LENGTH)
 
 // SSL3_RT_MAX_COMPRESSED_LENGTH is an alias for
-// |SSL3_RT_MAX_PLAIN_LENGTH|. Compression is gone, so don't include the
+// `SSL3_RT_MAX_PLAIN_LENGTH`. Compression is gone, so don't include the
 // compression overhead.
 #define SSL3_RT_MAX_COMPRESSED_LENGTH SSL3_RT_MAX_PLAIN_LENGTH
 
@@ -156,7 +156,7 @@ extern "C" {
 #define DTLS1_MT_HELLO_VERIFY_REQUEST 3
 
 // The following are legacy aliases for consumers which use
-// |SSL_CTX_set_msg_callback|.
+// `SSL_CTX_set_msg_callback`.
 #define SSL3_MT_SERVER_DONE SSL3_MT_SERVER_HELLO_DONE
 #define SSL3_MT_NEWSESSION_TICKET SSL3_MT_NEW_SESSION_TICKET
 

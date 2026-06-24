@@ -62,7 +62,7 @@ JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement*
     DOMTimer::scriptDidInteractWithPlugin();
 
     // The plugin element holds an owning reference, so we don't have to.
-    auto* instance = element->bindingsInstance();
+    RefPtr instance = element->bindingsInstance();
     if (!instance || !instance->rootObject())
         return nullptr;
 
@@ -152,7 +152,7 @@ CallData pluginElementCustomGetCallData(JSHTMLElement* element)
 {
     CallData callData;
 
-    Instance* instance = pluginInstance(element->wrapped());
+    RefPtr instance = pluginInstance(protect(element->wrapped()));
     if (instance && instance->supportsInvokeDefaultMethod()) {
         callData.type = CallData::Type::Native;
         callData.native.function = callPlugin;

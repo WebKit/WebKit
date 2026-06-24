@@ -81,6 +81,26 @@ PCM::UnlinkableToken PCM::UnlinkableToken::isolatedCopy()&&
     };
 }
 
+PCM::SourceUnlinkableToken PCM::SourceUnlinkableToken::isolatedCopy() const &
+{
+    return { UnlinkableToken::isolatedCopy() };
+}
+
+PCM::SourceUnlinkableToken PCM::SourceUnlinkableToken::isolatedCopy() &&
+{
+    return { UnlinkableToken::isolatedCopy() };
+}
+
+PCM::DestinationUnlinkableToken PCM::DestinationUnlinkableToken::isolatedCopy() const &
+{
+    return { UnlinkableToken::isolatedCopy() };
+}
+
+PCM::DestinationUnlinkableToken PCM::DestinationUnlinkableToken::isolatedCopy() &&
+{
+    return { UnlinkableToken::isolatedCopy() };
+}
+
 PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const &
 {
     PrivateClickMeasurement copy {

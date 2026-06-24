@@ -1,0 +1,5 @@
+
+PASS b term (NumberToken path) is clamped to INT_MAX
+PASS a term (DimensionToken path) is clamped to INT_MAX
+PASS b term following an a coefficient is clamped to INT_MAX
+

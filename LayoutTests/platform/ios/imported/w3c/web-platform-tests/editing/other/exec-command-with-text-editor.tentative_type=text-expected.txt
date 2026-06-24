@@ -521,7 +521,7 @@ PASS In <input type="text"> in contenteditable, execCommand("selectall", false, 
 PASS In <input type="text"> in contenteditable, execCommand("undo", false, null), [a]bc): The command should be supported
 FAIL In <input type="text"> in contenteditable, execCommand("undo", false, null), [a]bc): The command should not be enabled assert_equals: expected false but got true
 FAIL In <input type="text"> in contenteditable, execCommand("undo", false, null), [a]bc): execCommand() should return false assert_equals: expected false but got true
-FAIL In <input type="text"> in contenteditable, execCommand("undo", false, null), [a]bc): <input>.value should be "[a]bc" assert_equals: expected "[a]bc" but got "abcc[]"
+PASS In <input type="text"> in contenteditable, execCommand("undo", false, null), [a]bc): <input>.value should be "[a]bc"
 FAIL In <input type="text"> in contenteditable, execCommand("undo", false, null), [a]bc): beforeinput.inputType should be undefined assert_equals: expected (undefined) undefined but got (string) "historyUndo"
 FAIL In <input type="text"> in contenteditable, execCommand("undo", false, null), [a]bc): beforeinput.target should be undefined assert_equals: expected (undefined) undefined but got (object) Element node <input id="target" type="text"></input>
 FAIL In <input type="text"> in contenteditable, execCommand("undo", false, null), [a]bc): input.inputType should be undefined assert_equals: expected (undefined) undefined but got (string) "historyUndo"

@@ -67,11 +67,11 @@ void PageRuleCollector::matchAllPageRules(int pageIndex)
     auto isFirst = isFirstPage(pageIndex);
     auto page = pageName(pageIndex);
 
-    matchPageRules(UserAgentStyle::defaultPrintStyle, isLeft, isFirst, page);
-    matchPageRules(m_ruleSets.userStyle(), isLeft, isFirst, page);
+    matchPageRules(protect(UserAgentStyle::defaultPrintStyle), isLeft, isFirst, page);
+    matchPageRules(protect(m_ruleSets.userStyle()), isLeft, isFirst, page);
     // Only consider the global author RuleSet for @page rules, as per the HTML5 spec.
     if (m_ruleSets.isAuthorStyleDefined())
-        matchPageRules(&m_ruleSets.authorStyle(), isLeft, isFirst, page);
+        matchPageRules(protect(&m_ruleSets.authorStyle()), isLeft, isFirst, page);
 }
 
 void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName)
@@ -114,14 +114,14 @@ static bool NODELETE checkPageSelectorComponents(const CSSSelector& selector, bo
 void PageRuleCollector::matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName)
 {
     for (unsigned i = 0; i < rules.size(); ++i) {
-        StyleRulePage* rule = rules[i];
+        RefPtr rule = rules[i];
 
         if (!checkPageSelectorComponents(rule->selector(), isLeftPage, isFirstPage, pageName))
             continue;
 
         // If the rule has no properties to apply, then ignore it.
-        const StyleProperties& properties = rule->properties();
-        if (properties.isEmpty())
+        Ref properties = rule->properties();
+        if (properties->isEmpty())
             continue;
 
         // Add this rule to our list of matched rules.

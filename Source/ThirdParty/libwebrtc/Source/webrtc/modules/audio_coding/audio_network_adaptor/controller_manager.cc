@@ -18,12 +18,12 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "modules/audio_coding/audio_network_adaptor/bitrate_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/channel_controller.h"
@@ -88,7 +88,7 @@ std::unique_ptr<FecControllerPlrBased> CreateFecControllerPlrBased(
 
 std::unique_ptr<FrameLengthController> CreateFrameLengthController(
     const audio_network_adaptor::config::FrameLengthController& config,
-    ArrayView<const int> encoder_frame_lengths_ms,
+    std::span<const int> encoder_frame_lengths_ms,
     int initial_frame_length_ms,
     int min_encoder_bitrate_bps) {
   RTC_CHECK(config.has_fl_increasing_packet_loss_fraction());
@@ -212,7 +212,7 @@ std::unique_ptr<BitrateController> CreateBitrateController(
 
 std::unique_ptr<FrameLengthControllerV2> CreateFrameLengthControllerV2(
     const audio_network_adaptor::config::FrameLengthControllerV2& config,
-    ArrayView<const int> encoder_frame_lengths_ms) {
+    std::span<const int> encoder_frame_lengths_ms) {
   return std::make_unique<FrameLengthControllerV2>(
       encoder_frame_lengths_ms, config.min_payload_bitrate_bps(),
       config.use_slow_adaptation());
@@ -232,7 +232,7 @@ std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
     const Environment& env,
     absl::string_view config_string,
     size_t num_encoder_channels,
-    ArrayView<const int> encoder_frame_lengths_ms,
+    std::span<const int> encoder_frame_lengths_ms,
     int min_encoder_bitrate_bps,
     size_t intial_channels_to_encode,
     int initial_frame_length_ms,

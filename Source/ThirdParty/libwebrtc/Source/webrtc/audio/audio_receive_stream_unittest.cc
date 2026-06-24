@@ -19,10 +19,10 @@
 
 #include "api/audio_codecs/audio_format.h"
 #include "api/crypto/frame_decryptor_interface.h"
-#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
 #include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/mock_audio_mixer.h"
 #include "api/test/mock_frame_decryptor.h"
 #include "audio/channel_receive.h"
@@ -30,13 +30,14 @@
 #include "audio/mock_voe_channel_proxy.h"
 #include "call/audio_receive_stream.h"
 #include "call/audio_state.h"
+#include "call/rtp_packet_sink_interface.h"
 #include "call/rtp_stream_receiver_controller.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
-#include "modules/pacing/packet_router.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/time_utils.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_audio_decoder_factory.h"
@@ -117,14 +118,30 @@ const NetworkStatistics kNetworkStats = {.currentBufferSize = 123,
                                          .totalInterruptionDurationMs = -1};
 const AudioDecodingCallStats kAudioDecodeStats = MakeAudioDecodeStatsForTest();
 
+class DummySinkValidator : public RtpSinkValidator {
+ public:
+  void OnSinkAdded(RtpPacketSinkInterface* sink) override {}
+  void OnSinkRemoved(RtpPacketSinkInterface* sink) override {}
+  bool IsValidSink(RtpPacketSinkInterface* sink) const override { return true; }
+};
+
 struct ConfigHelper {
-  explicit ConfigHelper(bool use_null_audio_processing)
-      : ConfigHelper(make_ref_counted<MockAudioMixer>(),
+  ConfigHelper(TaskQueueBase* network_thread,
+               TaskQueueBase* worker_thread,
+               bool use_null_audio_processing)
+      : ConfigHelper(network_thread,
+                     worker_thread,
+                     make_ref_counted<MockAudioMixer>(),
                      use_null_audio_processing) {}
 
-  ConfigHelper(scoped_refptr<MockAudioMixer> audio_mixer,
+  ConfigHelper(TaskQueueBase* network_thread,
+               TaskQueueBase* worker_thread,
+               scoped_refptr<MockAudioMixer> audio_mixer,
                bool use_null_audio_processing)
-      : audio_mixer_(audio_mixer) {
+      : audio_mixer_(audio_mixer),
+        rtp_stream_receiver_controller_(network_thread,
+                                        worker_thread,
+                                        &dummy_validator_) {
     AudioState::Config config;
     config.audio_mixer = audio_mixer_;
     config.audio_processing =
@@ -134,21 +151,16 @@ struct ConfigHelper {
     config.audio_device_module =
         make_ref_counted<testing::NiceMock<MockAudioDeviceModule>>();
     audio_state_ = AudioState::Create(config);
-
     channel_receive_ = new ::testing::StrictMock<MockChannelReceive>();
     EXPECT_CALL(*channel_receive_, SetNACKStatus(true, 15)).Times(1);
     EXPECT_CALL(*channel_receive_, SetRtcpMode(_)).Times(1);
-    EXPECT_CALL(*channel_receive_,
-                RegisterReceiverCongestionControlObjects(&packet_router_))
-        .Times(1);
-    EXPECT_CALL(*channel_receive_, ResetReceiverCongestionControlObjects())
-        .Times(1);
     EXPECT_CALL(*channel_receive_, SetReceiveCodecs(_))
         .WillRepeatedly([](const std::map<int, SdpAudioFormat>& codecs) {
           EXPECT_THAT(codecs, ::testing::IsEmpty());
         });
+    EXPECT_CALL(*channel_receive_, remote_ssrc)
+        .WillRepeatedly(Return(kRemoteSsrc));
 
-    stream_config_.rtp.local_ssrc = kLocalSsrc;
     stream_config_.rtp.remote_ssrc = kRemoteSsrc;
     stream_config_.rtp.nack.rtp_history_ms = 300;
     stream_config_.rtcp_send_transport = &rtcp_send_transport_;
@@ -158,7 +170,7 @@ struct ConfigHelper {
 
   std::unique_ptr<AudioReceiveStreamImpl> CreateAudioReceiveStream() {
     auto ret = std::make_unique<AudioReceiveStreamImpl>(
-        CreateEnvironment(), &packet_router_, stream_config_, audio_state_,
+        CreateTestEnvironment(), stream_config_, audio_state_,
         std::unique_ptr<voe::ChannelReceiveInterface>(channel_receive_));
     ret->RegisterWithTransport(&rtp_stream_receiver_controller_);
     return ret;
@@ -194,11 +206,11 @@ struct ConfigHelper {
   }
 
  private:
-  PacketRouter packet_router_;
   scoped_refptr<AudioState> audio_state_;
   scoped_refptr<MockAudioMixer> audio_mixer_;
   AudioReceiveStreamInterface::Config stream_config_;
   ::testing::StrictMock<MockChannelReceive>* channel_receive_ = nullptr;
+  DummySinkValidator dummy_validator_;
   RtpStreamReceiverController rtp_stream_receiver_controller_;
   MockTransport rtcp_send_transport_;
 };
@@ -219,10 +231,9 @@ std::vector<uint8_t> CreateRtcpSenderReport() {
 TEST(AudioReceiveStreamTest, ConfigToString) {
   AudioReceiveStreamInterface::Config config;
   config.rtp.remote_ssrc = kRemoteSsrc;
-  config.rtp.local_ssrc = kLocalSsrc;
   config.rtp.rtcp_mode = RtcpMode::kOff;
   EXPECT_EQ(
-      "{rtp: {remote_ssrc: 1234, local_ssrc: 5678, nack: "
+      "{rtp: {remote_ssrc: 1234, nack: "
       "{rtp_history_ms: 0}, rtcp: off}, "
       "rtcp_send_transport: null}",
       config.ToString());
@@ -231,7 +242,8 @@ TEST(AudioReceiveStreamTest, ConfigToString) {
 TEST(AudioReceiveStreamTest, ConstructDestruct) {
   test::RunLoop loop;
   for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
+    ConfigHelper helper(loop.task_queue(), loop.task_queue(),
+                        use_null_audio_processing);
     auto recv_stream = helper.CreateAudioReceiveStream();
     recv_stream->UnregisterFromTransport();
   }
@@ -240,7 +252,8 @@ TEST(AudioReceiveStreamTest, ConstructDestruct) {
 TEST(AudioReceiveStreamTest, ReceiveRtcpPacket) {
   test::RunLoop loop;
   for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
+    ConfigHelper helper(loop.task_queue(), loop.task_queue(),
+                        use_null_audio_processing);
     auto recv_stream = helper.CreateAudioReceiveStream();
     std::vector<uint8_t> rtcp_packet = CreateRtcpSenderReport();
     EXPECT_CALL(*helper.channel_receive(),
@@ -254,7 +267,8 @@ TEST(AudioReceiveStreamTest, ReceiveRtcpPacket) {
 TEST(AudioReceiveStreamTest, GetStats) {
   test::RunLoop loop;
   for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
+    ConfigHelper helper(loop.task_queue(), loop.task_queue(),
+                        use_null_audio_processing);
     auto recv_stream = helper.CreateAudioReceiveStream();
     helper.SetupMockForGetStats();
     AudioReceiveStreamInterface::Stats stats =
@@ -342,7 +356,8 @@ TEST(AudioReceiveStreamTest, GetStats) {
 TEST(AudioReceiveStreamTest, SetGain) {
   test::RunLoop loop;
   for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
+    ConfigHelper helper(loop.task_queue(), loop.task_queue(),
+                        use_null_audio_processing);
     auto recv_stream = helper.CreateAudioReceiveStream();
     EXPECT_CALL(*helper.channel_receive(),
                 SetChannelOutputVolumeScaling(FloatEq(0.765f)));
@@ -354,8 +369,10 @@ TEST(AudioReceiveStreamTest, SetGain) {
 TEST(AudioReceiveStreamTest, StreamsShouldBeAddedToMixerOnceOnStart) {
   test::RunLoop loop;
   for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper1(use_null_audio_processing);
-    ConfigHelper helper2(helper1.audio_mixer(), use_null_audio_processing);
+    ConfigHelper helper1(loop.task_queue(), loop.task_queue(),
+                         use_null_audio_processing);
+    ConfigHelper helper2(loop.task_queue(), loop.task_queue(),
+                         helper1.audio_mixer(), use_null_audio_processing);
     auto recv_stream1 = helper1.CreateAudioReceiveStream();
     auto recv_stream2 = helper2.CreateAudioReceiveStream();
 
@@ -389,19 +406,13 @@ TEST(AudioReceiveStreamTest, StreamsShouldBeAddedToMixerOnceOnStart) {
 TEST(AudioReceiveStreamTest, ReconfigureWithUpdatedConfig) {
   test::RunLoop loop;
   for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
+    ConfigHelper helper(loop.task_queue(), loop.task_queue(),
+                        use_null_audio_processing);
     auto recv_stream = helper.CreateAudioReceiveStream();
 
     auto new_config = helper.config();
 
     MockChannelReceive& channel_receive = *helper.channel_receive();
-
-    // TODO(tommi, nisse): This applies new extensions to the internal config,
-    // but there's nothing that actually verifies that the changes take effect.
-    // In fact Call manages the extensions separately in Call::ReceiveRtpConfig
-    // and changing this config value (there seem to be a few copies), doesn't
-    // affect that logic.
-    recv_stream->ReconfigureForTesting(new_config);
 
     new_config.decoder_map.emplace(1, SdpAudioFormat("foo", 8000, 1));
     EXPECT_CALL(channel_receive, SetReceiveCodecs(new_config.decoder_map));
@@ -414,30 +425,19 @@ TEST(AudioReceiveStreamTest, ReconfigureWithUpdatedConfig) {
   }
 }
 
-TEST(AudioReceiveStreamTest, ReconfigureWithFrameDecryptor) {
+TEST(AudioReceiveStreamTest, SetFrameDecryptorForwardsToChannelReceive) {
   test::RunLoop loop;
   for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
+    ConfigHelper helper(loop.task_queue(), loop.task_queue(),
+                        use_null_audio_processing);
     auto recv_stream = helper.CreateAudioReceiveStream();
 
-    auto new_config_0 = helper.config();
-    scoped_refptr<FrameDecryptorInterface> mock_frame_decryptor_0(
-        make_ref_counted<MockFrameDecryptor>());
-    new_config_0.frame_decryptor = mock_frame_decryptor_0;
+    scoped_refptr<FrameDecryptorInterface> mock_frame_decryptor =
+        make_ref_counted<MockFrameDecryptor>();
+    EXPECT_CALL(*helper.channel_receive(),
+                SetFrameDecryptor(mock_frame_decryptor));
 
-    // TODO(tommi): While this changes the internal config value, it doesn't
-    // actually change what frame_decryptor is used. WebRtcAudioReceiveStream
-    // recreates the whole instance in order to change this value.
-    // So, it's not clear if changing this post initialization needs to be
-    // supported.
-    recv_stream->ReconfigureForTesting(new_config_0);
-
-    auto new_config_1 = helper.config();
-    scoped_refptr<FrameDecryptorInterface> mock_frame_decryptor_1(
-        make_ref_counted<MockFrameDecryptor>());
-    new_config_1.frame_decryptor = mock_frame_decryptor_1;
-    new_config_1.crypto_options.sframe.require_frame_encryption = true;
-    recv_stream->ReconfigureForTesting(new_config_1);
+    recv_stream->SetFrameDecryptor(mock_frame_decryptor);
     recv_stream->UnregisterFromTransport();
   }
 }

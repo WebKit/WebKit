@@ -17,11 +17,16 @@
 #include <assert.h>
 #include <limits.h>
 
+#include <algorithm>
+
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
 #include "../internal.h"
+#include "../mem_internal.h"
 
+
+using namespace bssl;
 
 struct stack_st {
   // num contains the number of valid pointers in |data|.
@@ -42,8 +47,7 @@ struct stack_st {
 static const size_t kMinSize = 4;
 
 OPENSSL_STACK *OPENSSL_sk_new(OPENSSL_sk_cmp_func comp) {
-  OPENSSL_STACK *ret =
-      reinterpret_cast<OPENSSL_STACK *>(OPENSSL_zalloc(sizeof(OPENSSL_STACK)));
+  OPENSSL_STACK *ret = New<OPENSSL_STACK>();
   if (ret == nullptr) {
     return nullptr;
   }
@@ -60,11 +64,11 @@ OPENSSL_STACK *OPENSSL_sk_new(OPENSSL_sk_cmp_func comp) {
   return ret;
 
 err:
-  OPENSSL_free(ret);
+  Delete(ret);
   return nullptr;
 }
 
-OPENSSL_STACK *OPENSSL_sk_new_null(void) { return OPENSSL_sk_new(nullptr); }
+OPENSSL_STACK *OPENSSL_sk_new_null() { return OPENSSL_sk_new(nullptr); }
 
 size_t OPENSSL_sk_num(const OPENSSL_STACK *sk) {
   if (sk == nullptr) {
@@ -93,6 +97,7 @@ void *OPENSSL_sk_set(OPENSSL_STACK *sk, size_t i, void *value) {
   if (!sk || i >= sk->num) {
     return nullptr;
   }
+  sk->sorted = 0;
   return sk->data[i] = value;
 }
 
@@ -101,7 +106,7 @@ void OPENSSL_sk_free(OPENSSL_STACK *sk) {
     return;
   }
   OPENSSL_free(sk->data);
-  OPENSSL_free(sk);
+  Delete(sk);
 }
 
 void OPENSSL_sk_pop_free_ex(OPENSSL_STACK *sk,
@@ -327,8 +332,7 @@ OPENSSL_STACK *OPENSSL_sk_dup(const OPENSSL_STACK *sk) {
     return nullptr;
   }
 
-  OPENSSL_STACK *ret =
-      reinterpret_cast<OPENSSL_STACK *>(OPENSSL_zalloc(sizeof(OPENSSL_STACK)));
+  OPENSSL_STACK *ret = New<OPENSSL_STACK>();
   if (ret == nullptr) {
     return nullptr;
   }
@@ -350,81 +354,36 @@ err:
   return nullptr;
 }
 
-static size_t parent_idx(size_t idx) {
-  assert(idx > 0);
-  return (idx - 1) / 2;
-}
-
-static size_t left_idx(size_t idx) {
-  // The largest possible index is |PTRDIFF_MAX|, not |SIZE_MAX|. If
-  // |ptrdiff_t|, a signed type, is the same size as |size_t|, this cannot
-  // overflow.
-  assert(idx <= PTRDIFF_MAX);
-  static_assert(PTRDIFF_MAX <= (SIZE_MAX - 1) / 2, "2 * idx + 1 may overflow");
-  return 2 * idx + 1;
-}
-
-// down_heap fixes the subtree rooted at |i|. |i|'s children must each satisfy
-// the heap property. Only the first |num| elements of |sk| are considered.
-static void down_heap(OPENSSL_STACK *sk, OPENSSL_sk_call_cmp_func call_cmp_func,
-                      size_t i, size_t num) {
-  assert(i < num && num <= sk->num);
-  for (;;) {
-    size_t left = left_idx(i);
-    if (left >= num) {
-      break;  // No left child.
-    }
-
-    // Swap |i| with the largest of its children.
-    size_t next = i;
-    if (call_cmp_func(sk->comp, sk->data[next], sk->data[left]) < 0) {
-      next = left;
-    }
-    size_t right = left + 1;  // Cannot overflow because |left < num|.
-    if (right < num &&
-        call_cmp_func(sk->comp, sk->data[next], sk->data[right]) < 0) {
-      next = right;
-    }
-
-    if (i == next) {
-      break;  // |i| is already larger than its children.
-    }
-
-    void *tmp = sk->data[i];
-    sk->data[i] = sk->data[next];
-    sk->data[next] = tmp;
-    i = next;
-  }
-}
-
 void OPENSSL_sk_sort(OPENSSL_STACK *sk,
                      OPENSSL_sk_call_cmp_func call_cmp_func) {
   if (sk == nullptr || sk->comp == nullptr || sk->sorted) {
     return;
   }
 
-  if (sk->num >= 2) {
-    // |qsort| lacks a context parameter in the comparison function for us to
-    // pass in |call_cmp_func| and |sk->comp|. While we could cast |sk->comp| to
-    // the expected type, it is undefined behavior in C can trip sanitizers.
-    // |qsort_r| and |qsort_s| avoid this, but using them is impractical. See
-    // https://stackoverflow.com/a/39561369
-    //
-    // Use our own heap sort instead. This is not performance-sensitive, so we
-    // optimize for simplicity and size. First, build a max-heap in place.
-    for (size_t i = parent_idx(sk->num - 1); i < sk->num; i--) {
-      down_heap(sk, call_cmp_func, i, sk->num);
-    }
+  std::sort(sk->data, sk->data + sk->num, [&](void *a, void *b) {
+    return call_cmp_func(sk->comp, a, b) < 0;
+  });
+  sk->sorted = 1;
+}
 
-    // Iteratively remove the maximum element to populate the result in reverse.
-    for (size_t i = sk->num - 1; i > 0; i--) {
-      void *tmp = sk->data[0];
-      sk->data[0] = sk->data[i];
-      sk->data[i] = tmp;
-      down_heap(sk, call_cmp_func, 0, i);
+void OPENSSL_sk_sort_and_dedup(
+    OPENSSL_STACK *sk, OPENSSL_sk_call_cmp_func call_cmp_func,
+    OPENSSL_sk_call_free_func call_free_func, OPENSSL_sk_free_func free_func) {
+  OPENSSL_sk_sort(sk, call_cmp_func);
+  if (sk == nullptr || sk->comp == nullptr || sk->num <= 1) {
+    return;
+  }
+
+  size_t new_num = 1;
+  for (size_t i = 1; i < sk->num; i++) {
+    if (call_cmp_func(sk->comp, sk->data[i], sk->data[new_num - 1]) != 0) {
+      sk->data[new_num] = sk->data[i];
+      new_num++;
+    } else if (free_func != nullptr) {
+      call_free_func(free_func, sk->data[i]);
     }
   }
-  sk->sorted = 1;
+  sk->num = new_num;
 }
 
 int OPENSSL_sk_is_sorted(const OPENSSL_STACK *sk) {
@@ -476,7 +435,7 @@ OPENSSL_STACK *OPENSSL_sk_deep_copy(const OPENSSL_STACK *sk,
   return ret;
 }
 
-OPENSSL_STACK *sk_new_null(void) { return OPENSSL_sk_new_null(); }
+OPENSSL_STACK *sk_new_null() { return OPENSSL_sk_new_null(); }
 
 size_t sk_num(const OPENSSL_STACK *sk) { return OPENSSL_sk_num(sk); }
 

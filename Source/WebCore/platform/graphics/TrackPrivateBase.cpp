@@ -110,7 +110,7 @@ size_t TrackPrivateBase::addClient(TrackPrivateBaseClient::Dispatcher&& dispatch
 void TrackPrivateBase::removeClient(uint32_t index)
 {
     Locker locker { m_lock };
-    if (m_clients.size() > index)
+    if (m_clients.size() <= index)
         return;
     m_clients[index] = std::make_tuple<RefPtr<SharedDispatcher>, WeakPtr<TrackPrivateBaseClient>, bool>({ }, { }, false);
 }

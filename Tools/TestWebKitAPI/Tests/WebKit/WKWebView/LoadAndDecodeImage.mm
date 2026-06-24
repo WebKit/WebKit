@@ -44,7 +44,7 @@
 
 namespace TestWebKitAPI {
 
-static bool done;
+static bool loadAndDecodeDone;
 
 TEST(WebKit, LoadAndDecodeImage)
 {
@@ -77,13 +77,13 @@ TEST(WebKit, LoadAndDecodeImage)
     auto imageOrError = [&] (auto requestPath, CGSize size = CGSizeZero) -> Expected<RetainPtr<Util::PlatformImage>, RetainPtr<NSError>> {
         __block RetainPtr<Util::PlatformImage> image;
         __block RetainPtr<NSError> error;
-        __block bool done { false };
+        __block bool loadAndDecodeDone { false };
         [webView _loadAndDecodeImage:server.request(requestPath) constrainedToSize:size maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *imageResult, NSError *errorResult) {
             image = imageResult;
             error = errorResult;
-            done = true;
+            loadAndDecodeDone = true;
         }];
-        Util::run(&done);
+        Util::run(&loadAndDecodeDone);
         EXPECT_NE(!image, !error);
         if (image)
             return image;
@@ -140,34 +140,34 @@ TEST(WebKit, LoadAndDecodeImage)
     [navigationDelegate allowAnyTLSCertificate];
     webView.get().navigationDelegate = navigationDelegate.get();
 
-    __block bool done { false };
+    __block bool loadAndDecodeDone { false };
     [webView _loadAndDecodeImage:tlsServer.request() constrainedToSize:CGSizeZero maximumBytesFromNetwork:36541 completionHandler:^(Util::PlatformImage *image, NSError *error) {
         EXPECT_EQ(image.size.height, 174);
         EXPECT_EQ(image.size.width, 215);
         EXPECT_NULL(error);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     [webView _loadAndDecodeImage:tlsServer.request() constrainedToSize:CGSizeZero maximumBytesFromNetwork:36540 completionHandler:^(Util::PlatformImage *image, NSError *error) {
         EXPECT_NULL(image);
         EXPECT_EQ(error.code, NSURLErrorDataLengthExceedsMaximum);
         EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     [webView _loadAndDecodeImage:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://127.0.0.1:1/"]] constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
         EXPECT_NULL(image);
         EXPECT_EQ(error.code, 103);
         EXPECT_WK_STREQ(error.domain, "WebKitErrorDomain");
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr syncedWebView = adoptNS([TestWKWebView new]);
     [syncedWebView synchronouslyLoadHTMLString:@""];
     [syncedWebView _close];
@@ -175,15 +175,15 @@ TEST(WebKit, LoadAndDecodeImage)
         EXPECT_NULL(image);
         EXPECT_EQ(error.code, NSURLErrorCannotDecodeContentData);
         EXPECT_WK_STREQ(error.domain, "NSURLErrorDomain");
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 }
 
 TEST(WebKit, GetInformationFromImageData)
 {
     RetainPtr webView = adoptNS([WKWebView new]);
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr pngData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
     [webView _getInformationFromImageData:pngData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
         EXPECT_NULL(error);
@@ -192,11 +192,11 @@ TEST(WebKit, GetInformationFromImageData)
         NSValue *size = [availableSizes firstObject];
         EXPECT_EQ(215, [size sizeValue].width);
         EXPECT_EQ(174, [size sizeValue].height);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr gifData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"]];
     [webView _getInformationFromImageData:gifData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
         EXPECT_NULL(error);
@@ -206,35 +206,35 @@ TEST(WebKit, GetInformationFromImageData)
             EXPECT_EQ(52, [size sizeValue].width);
             EXPECT_EQ(64, [size sizeValue].height);
         }
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr svgData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"AllAhem" withExtension:@"svg"]];
     [webView _getInformationFromImageData:svgData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([typeIdentifier isEqualToString:UTTypeSVG.identifier]);
         EXPECT_EQ(0u, availableSizes.count);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr pdfData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView _getInformationFromImageData:pdfData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
         EXPECT_NOT_NULL(error);
         EXPECT_NULL(typeIdentifier);
         EXPECT_EQ(0u, availableSizes.count);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 }
 
 TEST(WebKit, GetImageMetadata)
 {
     RetainPtr webView = adoptNS([WKWebView new]);
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr pngData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
     [webView _getImageMetadata:pngData.get() completionHandler:^(NSDictionary *metadata, NSError *error) {
         EXPECT_NULL(error);
@@ -244,11 +244,11 @@ TEST(WebKit, GetImageMetadata)
         EXPECT_EQ(72, [metadata[@"DPIWidth"] floatValue]);
         EXPECT_EQ(72, [metadata[@"DPIHeight"] floatValue]);
         EXPECT_EQ(1, [metadata[@"ImageCount"] intValue]);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr gifData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"animated-red-green-blue-repeat-infinite" withExtension:@"gif"]];
     [webView _getImageMetadata:gifData.get() completionHandler:^(NSDictionary *metadata, NSError *error) {
         EXPECT_NULL(error);
@@ -257,11 +257,11 @@ TEST(WebKit, GetImageMetadata)
         EXPECT_EQ(72, [metadata[@"DPIWidth"] floatValue]);
         EXPECT_EQ(72, [metadata[@"DPIHeight"] floatValue]);
         EXPECT_EQ(3, [metadata[@"ImageCount"] intValue]);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr tiffData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"sunset-in-cupertino-100px" withExtension:@"tiff"]];
     [webView _getImageMetadata:tiffData.get() completionHandler:^(NSDictionary *metadata, NSError *error) {
         EXPECT_NULL(error);
@@ -270,18 +270,18 @@ TEST(WebKit, GetImageMetadata)
         EXPECT_EQ(72, [metadata[@"DPIWidth"] floatValue]);
         EXPECT_EQ(72, [metadata[@"DPIHeight"] floatValue]);
         EXPECT_EQ(1, [metadata[@"ImageCount"] intValue]);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr svgData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"AllAhem" withExtension:@"svg"]];
     [webView _getImageMetadata:svgData.get() completionHandler:^(NSDictionary *metadata, NSError *error) {
         EXPECT_NOT_NULL(error);
         EXPECT_EQ(0u, [metadata count]);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 }
 
 TEST(WebKit, GetInformationFromImageDataAfterClosingWebView)
@@ -289,13 +289,13 @@ TEST(WebKit, GetInformationFromImageDataAfterClosingWebView)
     RetainPtr webView = adoptNS([WKWebView new]);
     [webView _close];
 
-    done = false;
+    loadAndDecodeDone = false;
     RetainPtr pngData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
     [webView _getInformationFromImageData:pngData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
         EXPECT_NOT_NULL(error);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 }
 
 TEST(WebKit, CreateIconDataFromImageData)
@@ -306,34 +306,34 @@ TEST(WebKit, CreateIconDataFromImageData)
     RetainPtr length2 = [NSNumber numberWithUnsignedInt:256];
     NSArray *lengths = @[length1.get(), length2.get()];
     __block RetainPtr<NSData> iconData;
-    done = false;
+    loadAndDecodeDone = false;
     [webView _createIconDataFromImageData:imageData.get() withLengths:lengths completionHandler:^(NSData *result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         iconData = result;
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(16, 16)] completionHandler:^(CocoaImage *result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_EQ(result.size.width, 16);
         EXPECT_EQ(result.size.height, 16);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(32, 32)] completionHandler:^(CocoaImage *result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_EQ(result.size.width, 256);
         EXPECT_EQ(result.size.height, 256);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 }
 
 RetainPtr<NSData> tiffRepresentation(CocoaImage *image)
@@ -364,47 +364,47 @@ TEST(WebKit, CreateIconDataFromImageDataSVG)
     RetainPtr length2 = [NSNumber numberWithUnsignedInt:256];
     NSArray *lengths = @[length1.get(), length2.get()];
     __block RetainPtr<NSData> iconData;
-    done = false;
+    loadAndDecodeDone = false;
     [webView _createIconDataFromImageData:imageData.get() withLengths:lengths completionHandler:^(NSData *result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         iconData = result;
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     [webView _decodeImageData:iconData.get() preferredSize:nil completionHandler:^(CocoaImage *result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_EQ(result.size.width, 256);
         EXPECT_EQ(result.size.height, 256);
         EXPECT_TRUE([tiffRepresentation(result) isEqualToData:expectedIconData256.get()]);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(16, 16)] completionHandler:^(CocoaImage *result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_EQ(result.size.width, 16);
         EXPECT_EQ(result.size.height, 16);
         EXPECT_TRUE([tiffRepresentation(result) isEqualToData:expectedIconData16.get()]);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(32, 32)] completionHandler:^(CocoaImage *result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
         EXPECT_EQ(result.size.width, 256);
         EXPECT_EQ(result.size.height, 256);
         EXPECT_TRUE([tiffRepresentation(result) isEqualToData:expectedIconData256.get()]);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 }
 
 TEST(WebKit, CreateIconDataFromImageDataSVGWithSubresource)
@@ -412,7 +412,7 @@ TEST(WebKit, CreateIconDataFromImageDataSVGWithSubresource)
     RetainPtr webView = adoptNS([WKWebView new]);
     RetainPtr imageData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"icon-with-subresource" ofType:@"svg"]];
 
-    done = false;
+    loadAndDecodeDone = false;
     [webView _decodeImageData:imageData.get() preferredSize:nil completionHandler:^(CocoaImage *result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
@@ -425,17 +425,17 @@ TEST(WebKit, CreateIconDataFromImageDataSVGWithSubresource)
         EXPECT_TRUE(Util::compareColors(Util::pixelColor(result, { 3, 3 }), lime, 0.025));
         EXPECT_TRUE(Util::compareColors(Util::pixelColor(result, { 8, 8 }), lime, 0.025));
 
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
-    done = false;
+    loadAndDecodeDone = false;
     [webView _createIconDataFromImageData:imageData.get() withLengths:nil completionHandler:^(NSData *result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(result);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 }
 
 TEST(WebKit, LoadAndDecodeImageInvalidURL)
@@ -445,13 +445,13 @@ TEST(WebKit, LoadAndDecodeImageInvalidURL)
     auto pid = [webView _webProcessIdentifier];
     EXPECT_NE(pid, 0);
 
-    __block bool done { false };
+    __block bool loadAndDecodeDone { false };
     [webView _loadAndDecodeImage:[NSURLRequest requestWithURL:[NSURL URLWithString:@""]] constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
         EXPECT_NULL(image);
         EXPECT_NOT_NULL(error);
-        done = true;
+        loadAndDecodeDone = true;
     }];
-    Util::run(&done);
+    Util::run(&loadAndDecodeDone);
 
     EXPECT_EQ(pid, [webView _webProcessIdentifier]);
 }

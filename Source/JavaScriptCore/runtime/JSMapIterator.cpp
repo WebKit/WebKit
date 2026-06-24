@@ -75,8 +75,6 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorNext, (JSGlobalObject 
 
     VM& vm = globalObject->vm();
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
-    if (cell == vm.orderedHashTableSentinel())
-        return JSValue::encode(cell);
     return JSValue::encode(uncheckedDowncast<JSMapIterator>(cell)->next(vm));
 }
 
@@ -86,8 +84,6 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorKey, (JSGlobalObject *
 
     VM& vm = globalObject->vm();
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
-    if (cell == vm.orderedHashTableSentinel())
-        return JSValue::encode(cell);
     return JSValue::encode(uncheckedDowncast<JSMapIterator>(cell)->peekKey(vm));
 }
 
@@ -97,8 +93,6 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorValue, (JSGlobalObject
 
     VM& vm = globalObject->vm();
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
-    if (cell == vm.orderedHashTableSentinel())
-        return JSValue::encode(cell);
     return JSValue::encode(uncheckedDowncast<JSMapIterator>(cell)->peekValue(vm));
 }
 

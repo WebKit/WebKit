@@ -12,9 +12,9 @@
 
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
@@ -28,8 +28,8 @@ namespace webrtc {
 namespace {
 
 std::vector<FilteredSample> ConvertSampleValuesToFilteredSamples(
-    ArrayView<const double> values,
-    ArrayView<const FilteredSample> samples) {
+    std::span<const double> values,
+    std::span<const FilteredSample> samples) {
   RTC_CHECK_EQ(values.size(), samples.size())
       << "values and samples must have the same size";
   std::vector<FilteredSample> filtered_samples;
@@ -51,15 +51,15 @@ class FrameInstrumentationEvaluationImpl
   }
   ~FrameInstrumentationEvaluationImpl() override = default;
 
-  void OnInstrumentedFrame(const FrameInstrumentationData& data,
+  void OnInstrumentedFrame(FrameInstrumentationData data,
                            const VideoFrame& frame,
                            VideoContentType frame_type) override {
+    frame_sampler_.SetCurrentIndex(data.sequence_index());
     if (data.sample_values().empty()) {
       // Likely a sync message. Silently ignore.
       return;
     }
 
-    frame_sampler_.SetCurrentIndex(data.sequence_index());
     std::vector<HaltonFrameSampler::Coordinates> sample_coordinates =
         frame_sampler_.GetSampleCoordinatesForFrame(
             data.sample_values().size());
@@ -89,6 +89,11 @@ class FrameInstrumentationEvaluationImpl
         data.chroma_error_threshold());
 
     observer_->OnCorruptionScore(score, frame_type);
+  }
+
+  void OnSkippedInstrumentedFrame(FrameInstrumentationData data) override {
+    // Just update the sequence index so that we don't get wraparound issues.
+    frame_sampler_.SetCurrentIndex(data.sequence_index());
   }
 
  private:

@@ -63,6 +63,7 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
     m_delegateMethods.unloadWebExtension = [delegate respondsToSelector:@selector(_automationSession:unloadWebExtensionWithIdentifier:completionHandler:)];
 #endif
     m_delegateMethods.performApplicationCommand = [delegate respondsToSelector:@selector(_automationSession:performCommandForWebView:commandName:arguments:completionHandler:)];
+    m_delegateMethods.shouldEnableInspectorTesting = [delegate respondsToSelector:@selector(_automationSessionShouldEnableInspectorTesting:)];
 }
 
 void AutomationSessionClient::didDisconnectFromRemote(WebAutomationSession& session)
@@ -178,6 +179,13 @@ void AutomationSessionClient::performApplicationCommand(WebAutomationSession& se
         }).get()];
     } else
         completionHandler(nullString());
+}
+
+bool AutomationSessionClient::shouldEnableInspectorTesting(WebAutomationSession& session)
+{
+    if (!m_delegateMethods.shouldEnableInspectorTesting)
+        return false;
+    return [m_delegate.get() _automationSessionShouldEnableInspectorTesting:RetainPtr { wrapper(session) }];
 }
 
 bool AutomationSessionClient::isShowingJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)

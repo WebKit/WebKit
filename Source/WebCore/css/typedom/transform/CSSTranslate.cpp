@@ -120,12 +120,12 @@ void CSSTranslate::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-csstranslate
     builder.append(is2D() ? "translate("_s : "translate3d("_s);
-    m_x->serialize(builder);
+    protect(m_x)->serialize(builder);
     builder.append(", "_s);
-    m_y->serialize(builder);
+    protect(m_y)->serialize(builder);
     if (!is2D()) {
         builder.append(", "_s);
-        m_z->serialize(builder);
+        protect(m_z)->serialize(builder);
     }
     builder.append(')');
 }
@@ -174,18 +174,18 @@ ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
 
 RefPtr<CSSValue> CSSTranslate::toCSSValue() const
 {
-    RefPtr x = m_x->toCSSValue();
+    RefPtr x = protect(m_x)->toCSSValue();
     if (!x)
         return nullptr;
 
-    RefPtr y = m_y->toCSSValue();
+    RefPtr y = protect(m_y)->toCSSValue();
     if (!y)
         return nullptr;
 
     if (is2D())
         return CSSFunctionValue::create(CSSValueTranslate, x.releaseNonNull(), y.releaseNonNull());
 
-    RefPtr z = m_z->toCSSValue();
+    RefPtr z = protect(m_z)->toCSSValue();
     if (!z)
         return nullptr;
 

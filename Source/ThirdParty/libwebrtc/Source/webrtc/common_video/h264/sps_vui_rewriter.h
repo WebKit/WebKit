@@ -16,8 +16,8 @@
 #include <stdint.h>
 
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/video/color_space.h"
 #include "common_video/h264/sps_parser.h"
 #include "rtc_base/buffer.h"
@@ -44,7 +44,7 @@ class SpsVuiRewriter : private SpsParser {
   // SPS state. This function assumes that any previous headers
   // (NALU start, type, Stap-A, etc) have already been parsed and that RBSP
   // decoding has been performed.
-  static ParseResult ParseAndRewriteSps(ArrayView<const uint8_t> buffer,
+  static ParseResult ParseAndRewriteSps(std::span<const uint8_t> buffer,
                                         std::optional<SpsParser::SpsState>* sps,
                                         const ColorSpace* color_space,
                                         Buffer* destination,
@@ -53,11 +53,11 @@ class SpsVuiRewriter : private SpsParser {
   // Parses NAL units from `buffer`, strips AUD blocks and rewrites VUI in SPS
   // blocks if necessary.
   static Buffer ParseOutgoingBitstreamAndRewrite(
-      ArrayView<const uint8_t> buffer,
+      std::span<const uint8_t> buffer,
       const ColorSpace* color_space);
 
  private:
-  static ParseResult ParseAndRewriteSps(ArrayView<const uint8_t> buffer,
+  static ParseResult ParseAndRewriteSps(std::span<const uint8_t> buffer,
                                         std::optional<SpsParser::SpsState>* sps,
                                         const ColorSpace* color_space,
                                         Buffer* destination);

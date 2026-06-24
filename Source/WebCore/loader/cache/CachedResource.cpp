@@ -65,7 +65,7 @@
 #undef CACHEDRESOURCE_RELEASE_LOG
 #define PAGE_ID(frame) (frame.pageID() ? frame.pageID()->toUInt64() : 0)
 #define FRAME_ID(frame) (frame.frameID().toUInt64())
-#define CACHEDRESOURCE_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
+#define CACHEDRESOURCE_RELEASE_LOG(formatString, ...) RELEASE_LOG_FORWARDABLE(Network, CachedResource##formatString, ##__VA_ARGS__)
 #define CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME(fmt, frame, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::" fmt, this, PAGE_ID(frame), FRAME_ID(frame), ##__VA_ARGS__)
 
 namespace WebCore {
@@ -154,7 +154,7 @@ void CachedResource::failBeforeStarting()
 void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 {
     if (!cachedResourceLoader.frame()) {
-        CACHEDRESOURCE_RELEASE_LOG("load: No associated frame");
+        CACHEDRESOURCE_RELEASE_LOG(LoadNoAssociatedFrame);
         failBeforeStarting();
         return;
     }
@@ -465,7 +465,7 @@ Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) cons
 void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     RefPtr protectedThis { *this };
-    CACHEDRESOURCE_RELEASE_LOG("redirectReceived:");
+    CACHEDRESOURCE_RELEASE_LOG(RedirectReceived);
 
     // Remove redirect urls from the memory cache if they contain a fragment.
     // If we cache localhost/#key=foo we will return the same parameters key=foo

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that the Content Security Policy (CSP) of the owner document blocks an AudioWorklet from using eval() because the CSP does not list unsafe-eval in script-src.</p>
+<pre id="result"></pre>
+<script>
+var context = new OfflineAudioContext(2, 100, 44100);
+context.audioWorklet.addModule("resources/audioworklet-inherits-blocks-eval.js").then(() => {
+    var node = new AudioWorkletNode(context, 'eval-test');
+    node.port.onmessage = function(event) {
+        document.getElementById("result").textContent = event.data;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+}, (e) => {
+    document.getElementById("result").textContent = "FAIL: addModule rejected with " + e;
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

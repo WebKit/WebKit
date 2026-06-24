@@ -26,7 +26,13 @@ class EGLBufferAgeTest : public ANGLETest<>
 
     void testSetUp() override
     {
-        EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
+        mOSWindow = OSWindow::New();
+        mOSWindow->initialize("EGLBufferAgeTest", kWidth, kHeight);
+
+        EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
+                                 EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
+                                 static_cast<EGLAttrib>(mOSWindow->getNativeDisplayPlatformType()),
+                                 EGL_NONE};
         mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
                                                       reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
@@ -37,6 +43,9 @@ class EGLBufferAgeTest : public ANGLETest<>
 
     void testTearDown() override
     {
+        mOSWindow->destroy();
+        OSWindow::Delete(&mOSWindow);
+
         if (mDisplay != EGL_NO_DISPLAY)
         {
             eglTerminate(mDisplay);
@@ -130,6 +139,7 @@ class EGLBufferAgeTest : public ANGLETest<>
         return age;
     }
 
+    OSWindow *mOSWindow      = nullptr;
     EGLDisplay mDisplay      = EGL_NO_DISPLAY;
     EGLint mMajorVersion     = 0;
     const EGLint kWidth      = 64;
@@ -226,9 +236,7 @@ TEST_P(EGLBufferAgeTest, QueryBufferAge)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
@@ -271,8 +279,6 @@ TEST_P(EGLBufferAgeTest, QueryBufferAge)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;
@@ -292,9 +298,7 @@ TEST_P(EGLBufferAgeTest, QueryBufferAgeAfterLoop)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
@@ -319,8 +323,6 @@ TEST_P(EGLBufferAgeTest, QueryBufferAgeAfterLoop)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;
@@ -340,9 +342,7 @@ TEST_P(EGLBufferAgeTest, VerifyContents)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
@@ -388,8 +388,6 @@ TEST_P(EGLBufferAgeTest, VerifyContents)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;
@@ -409,9 +407,7 @@ TEST_P(EGLBufferAgeTest, VerifyContentsAfterSwapBehaviorSwitch)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest_MSAA", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
@@ -516,8 +512,6 @@ TEST_P(EGLBufferAgeTest, VerifyContentsAfterSwapBehaviorSwitch)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;
@@ -537,9 +531,7 @@ TEST_P(EGLBufferAgeTest_MSAA, VerifyContentsForMultisampled)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest_MSAA", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
@@ -585,8 +577,6 @@ TEST_P(EGLBufferAgeTest_MSAA, VerifyContentsForMultisampled)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;
@@ -613,9 +603,7 @@ TEST_P(EGLBufferAgeTest_MSAA, VerifyContentsAfterSwapBehaviorSwitch)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest_MSAA", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
@@ -677,8 +665,6 @@ TEST_P(EGLBufferAgeTest_MSAA, VerifyContentsAfterSwapBehaviorSwitch)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;
@@ -698,9 +684,7 @@ TEST_P(EGLBufferAgeTest_MSAA_DS, VerifyContentsForMultisampledWithDepthStencil)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest_MSAA", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
@@ -746,8 +730,6 @@ TEST_P(EGLBufferAgeTest_MSAA_DS, VerifyContentsForMultisampledWithDepthStencil)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;
@@ -767,9 +749,7 @@ TEST_P(EGLBufferAgeTest, UncurrentContextBadSurface)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     // No current context
@@ -793,8 +773,6 @@ TEST_P(EGLBufferAgeTest, UncurrentContextBadSurface)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, otherContext);
     otherContext = EGL_NO_CONTEXT;
@@ -817,9 +795,7 @@ TEST_P(EGLBufferAgeTest, ValidateDamageRegion)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest", 16, 16);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
 
@@ -861,6 +837,12 @@ TEST_P(EGLBufferAgeTest, ValidateDamageRegion)
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
     EXPECT_PIXEL_COLOR_EQ(1, 1, expectColor);
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
 }
 
 // Expect age always == 1 when EGL_BUFFER_PRESERVED is chosen
@@ -877,9 +859,7 @@ TEST_P(EGLBufferAgeTest, BufferPreserved)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
@@ -910,8 +890,6 @@ TEST_P(EGLBufferAgeTest, BufferPreserved)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;
@@ -950,9 +928,7 @@ TEST_P(EGLBufferAgeTest, SingleBuffer)
 
     EGLSurface surface = EGL_NO_SURFACE;
 
-    OSWindow *osWindow = OSWindow::New();
-    osWindow->initialize("EGLBufferAgeTest", kWidth, kHeight);
-    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    EXPECT_TRUE(createWindowSurface(config, mOSWindow->getNativeWindow(), &surface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
@@ -987,8 +963,6 @@ TEST_P(EGLBufferAgeTest, SingleBuffer)
 
     eglDestroySurface(mDisplay, surface);
     surface = EGL_NO_SURFACE;
-    osWindow->destroy();
-    OSWindow::Delete(&osWindow);
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;

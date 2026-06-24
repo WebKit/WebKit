@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
 
     <script type="text/javascript">
+        window.jsTestIsAsync = true;
 
         var numberOfFocusedElements = 0;
         async function test()
@@ -11,7 +12,6 @@
             if (!window.testRunner)
                 return;
 
-            testRunner.waitUntilDone();
 
             for (var i = 1; i <= 5; i++) {
                 var aElement = document.getElementById('a' + i);
@@ -28,7 +28,7 @@
 
             var tc = document.getElementById('test-container');
             tc.parentNode.removeChild(tc);
-            testRunner.notifyDone();
+            finishJSTest();
         };
 
         function handleFocus(e)
@@ -38,9 +38,6 @@
             numberOfFocusedElements = numberOfFocusedElements + 1;
         }
 
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-        }
 
     </script>
 </head>

@@ -2,8 +2,14 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
-layer at (0,0) size 400x400
-  RenderSVGViewportContainer at (0,0) size 400x400
+    RenderSVGViewportContainer at (0,0) size 400x400
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
 layer at (10,10) size 50x50
   RenderSVGRect {rect} at (10,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=50.00] [height=50.00]
 layer at (70,10) size 50x50

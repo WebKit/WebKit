@@ -49,5 +49,11 @@ messages -> WebInspectorBackend {
     EnablePageInstrumentation()
     DisablePageInstrumentation()
 
+    # Returns, for each requested frame that is local to this process, its committed document's
+    # loaderId and cached subresources as typed data, for the UIProcess ProxyingPageAgent to build
+    # Page.getResourceTree cross-process under Site Isolation. The proxy walks the frame tree and
+    # asks each process only for the frames it hosts. See webkit.org/b/308896.
+    GetFrameResourceData(Vector<WebCore::FrameIdentifier> frameIDs) -> (Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>> resourcesByFrame) Async
+
     GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (String content, bool base64Encoded, String errorString) Async
 }

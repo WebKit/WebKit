@@ -24,14 +24,10 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
-
-struct VerticalAlignLength : LengthWrapperBase<LengthPercentage<>> {
-    using Base::Base;
-};
 
 // <'vertical-align'> = baseline | sub | super | top | text-top | middle | bottom | text-bottom | -webkit-baseline-middle | <length-percentage>
 // https://www.w3.org/TR/CSS22/visudet.html#propdef-vertical-align
@@ -40,7 +36,7 @@ struct VerticalAlignLength : LengthWrapperBase<LengthPercentage<>> {
 // https://drafts.csswg.org/css-inline/#propdef-vertical-align
 
 struct VerticalAlign {
-    using Length = VerticalAlignLength;
+    using LengthPercentage = Style::LengthPercentage<>;
 
     VerticalAlign(CSS::Keyword::Baseline keyword) : m_value { keyword } { }
     VerticalAlign(CSS::Keyword::Sub keyword) : m_value { keyword } { }
@@ -51,7 +47,7 @@ struct VerticalAlign {
     VerticalAlign(CSS::Keyword::Bottom keyword) : m_value { keyword } { }
     VerticalAlign(CSS::Keyword::TextBottom keyword) : m_value { keyword } { }
     VerticalAlign(CSS::Keyword::WebkitBaselineMiddle keyword) : m_value { keyword } { }
-    VerticalAlign(Length&& length) : m_value { WTF::move(length) } { }
+    VerticalAlign(LengthPercentage&& length) : m_value { WTF::move(length) } { }
 
     bool isBaseline() const { return WTF::holdsAlternative<CSS::Keyword::Baseline>(m_value); }
     bool isSub() const { return WTF::holdsAlternative<CSS::Keyword::Sub>(m_value); }
@@ -62,8 +58,8 @@ struct VerticalAlign {
     bool isBottom() const { return WTF::holdsAlternative<CSS::Keyword::Bottom>(m_value); }
     bool isTextBottom() const { return WTF::holdsAlternative<CSS::Keyword::TextBottom>(m_value); }
     bool isWebkitBaselineMiddle() const { return WTF::holdsAlternative<CSS::Keyword::WebkitBaselineMiddle>(m_value); }
-    bool isLength() const { return WTF::holdsAlternative<Length>(m_value); }
-    std::optional<Length> tryLength() const { return isLength() ? std::make_optional(std::get<Length>(m_value)) : std::nullopt; }
+    bool isLengthPercentage() const { return WTF::holdsAlternative<LengthPercentage>(m_value); }
+    std::optional<LengthPercentage> tryLengthPercentage() const { return isLengthPercentage() ? std::make_optional(std::get<LengthPercentage>(m_value)) : std::nullopt; }
 
     template<typename U> bool holdsAlternative() const
     {
@@ -80,7 +76,7 @@ struct VerticalAlign {
 private:
     friend struct Blending<VerticalAlign>;
 
-    Variant<CSS::Keyword::Baseline, CSS::Keyword::Sub, CSS::Keyword::Super, CSS::Keyword::Top, CSS::Keyword::TextTop, CSS::Keyword::Middle, CSS::Keyword::Bottom, CSS::Keyword::TextBottom, CSS::Keyword::WebkitBaselineMiddle, VerticalAlignLength> m_value;
+    Variant<CSS::Keyword::Baseline, CSS::Keyword::Sub, CSS::Keyword::Super, CSS::Keyword::Top, CSS::Keyword::TextTop, CSS::Keyword::Middle, CSS::Keyword::Bottom, CSS::Keyword::TextBottom, CSS::Keyword::WebkitBaselineMiddle, LengthPercentage> m_value;
 };
 
 // MARK: - Conversion
@@ -98,5 +94,4 @@ template<> struct Blending<VerticalAlign> {
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::VerticalAlignLength)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::VerticalAlign)

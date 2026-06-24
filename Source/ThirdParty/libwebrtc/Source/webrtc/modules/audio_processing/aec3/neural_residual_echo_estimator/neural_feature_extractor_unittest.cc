@@ -53,9 +53,9 @@ print(format_as_cpp_array(expected_output2, "expected_output2"))
 
 #include <array>
 #include <cstddef>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -229,9 +229,9 @@ class FrequencyDomainFeatureExtractorTest
     : public ::testing::TestWithParam<int> {
  protected:
   void UpdateBlock(FrequencyDomainFeatureExtractor& extractor,
-                   ArrayView<const float, kBlockSize> block,
+                   std::span<const float, kBlockSize> block,
                    int num_channels) {
-    std::vector<ArrayView<const float, kBlockSize>> all_blocks;
+    std::vector<std::span<const float, kBlockSize>> all_blocks;
     all_blocks.reserve(num_channels);
     for (int i = 0; i < num_channels; ++i) {
       all_blocks.push_back(block);
@@ -248,7 +248,7 @@ TEST_P(FrequencyDomainFeatureExtractorTest, BasicTest) {
   std::vector<float> output(kStepSize + 1);
   // First frame.
   for (int i = 0; i < kStepSize; i += kBlockSize) {
-    ArrayView<const float, kBlockSize> block(&noise1_scaled[i], kBlockSize);
+    std::span<const float, kBlockSize> block(&noise1_scaled[i], kBlockSize);
     this->UpdateBlock(extractor, block, num_channels);
   }
   EXPECT_TRUE(extractor.ReadyForInference());
@@ -258,7 +258,7 @@ TEST_P(FrequencyDomainFeatureExtractorTest, BasicTest) {
   EXPECT_FALSE(extractor.ReadyForInference());
 
   for (int i = kStepSize; i < 2 * kStepSize; i += kBlockSize) {
-    ArrayView<const float, kBlockSize> block(&noise1_scaled[i], kBlockSize);
+    std::span<const float, kBlockSize> block(&noise1_scaled[i], kBlockSize);
     this->UpdateBlock(extractor, block, num_channels);
   }
   EXPECT_TRUE(extractor.ReadyForInference());
@@ -270,7 +270,7 @@ TEST_P(FrequencyDomainFeatureExtractorTest, BasicTest) {
   EXPECT_FALSE(extractor.ReadyForInference());
   // Second frame.
   for (int i = 0; i < kStepSize; i += kBlockSize) {
-    ArrayView<const float, kBlockSize> block(&noise2_scaled[i], kBlockSize);
+    std::span<const float, kBlockSize> block(&noise2_scaled[i], kBlockSize);
     this->UpdateBlock(extractor, block, num_channels);
   }
   EXPECT_TRUE(extractor.ReadyForInference());
@@ -279,7 +279,7 @@ TEST_P(FrequencyDomainFeatureExtractorTest, BasicTest) {
   }
 
   for (int i = kStepSize; i < 2 * kStepSize; i += kBlockSize) {
-    ArrayView<const float, kBlockSize> block(&noise2_scaled[i], kBlockSize);
+    std::span<const float, kBlockSize> block(&noise2_scaled[i], kBlockSize);
     this->UpdateBlock(extractor, block, num_channels);
   }
   EXPECT_TRUE(extractor.ReadyForInference());
@@ -318,11 +318,11 @@ TEST(TimeDomainFeatureExtractorTest, BasicTest) {
     block1[i] = i;
     block2[i] = i + kBlockSize;
   }
-  ArrayView<const float, kBlockSize> block1_view(block1);
-  ArrayView<const ArrayView<const float, kBlockSize>> all_blocks1(&block1_view,
+  std::span<const float, kBlockSize> block1_view(block1);
+  std::span<const std::span<const float, kBlockSize>> all_blocks1(&block1_view,
                                                                   1);
-  ArrayView<const float, kBlockSize> block2_view(block2);
-  ArrayView<const ArrayView<const float, kBlockSize>> all_blocks2(&block2_view,
+  std::span<const float, kBlockSize> block2_view(block2);
+  std::span<const std::span<const float, kBlockSize>> all_blocks2(&block2_view,
                                                                   1);
 
   for (auto input_type : kExpectedInputs) {
@@ -346,7 +346,7 @@ TEST(TimeDomainFeatureExtractorTest, BasicTest) {
 TEST(TimeDomainFeatureExtractorTest, ResetsState) {
   TimeDomainFeatureExtractor extractor(kStepSize);
   const std::array<float, kBlockSize> block{};
-  const std::array<const ArrayView<const float, kBlockSize>, 1> all_blocks = {
+  const std::array<const std::span<const float, kBlockSize>, 1> all_blocks = {
       block};
   EXPECT_FALSE(extractor.ReadyForInference());
   for (size_t i = 0; i < kStepSize / kBlockSize; ++i) {

@@ -13,8 +13,8 @@
 
 #include <stddef.h>
 
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "modules/audio_processing/agc2/rnn_vad/rnn_fc.h"
@@ -35,7 +35,7 @@ class RnnVad {
   // Observes `feature_vector` and `is_silence`, updates the RNN and returns the
   // current voice probability.
   float ComputeVadProbability(
-      ArrayView<const float, kFeatureVectorSize> feature_vector,
+      std::span<const float, kFeatureVectorSize> feature_vector,
       bool is_silence);
 
  private:

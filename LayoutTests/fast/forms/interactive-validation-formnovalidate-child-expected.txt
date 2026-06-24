@@ -5,4 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS location.search.indexOf("i0=") != -1 is true
 TEST COMPLETE
+PASS successfullyParsed is true
+
+TEST COMPLETE
  Submit

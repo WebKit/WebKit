@@ -65,6 +65,12 @@ def upload(filename, url, max_attempts=2, content_type=None):
                 sys.stderr.write(f'Response: {response}, status_code: {response.status_code}, {response.reason}\n')
                 if response and response.status_code // 100 == 2:
                     return 0
+                if response.status_code // 100 != 2:
+                    # Log the S3 error code and AWS request ids for debugging in case of failure.
+                    req_id = response.headers.get('x-amz-request-id', '')
+                    ext_id = response.headers.get('x-amz-id-2', '')
+                    sys.stderr.write(f'AWS request ids: x-amz-request-id={req_id} x-amz-id-2={ext_id}\n')
+                    sys.stderr.write(f'Response body: {response.text[:2000]}\n')
             except Exception as e:
                 sys.stderr.write(f'Exception: {e}\n')
 

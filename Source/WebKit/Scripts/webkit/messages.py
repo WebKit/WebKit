@@ -192,6 +192,9 @@ def types_that_must_be_moved():
         'WebKit::UpdateInfo',
         'WebKit::WebProcessCreationParameters',
         'WebKit::RemoteLayerBackingStoreProperties',
+        'WebModel::ImageAsset',
+        'WebModel::UpdateTextureDescriptor',
+        'Vector<WebModel::UpdateTextureDescriptor>',
         'Win32Handle',
         'std::optional<MachSendRight>',
         'std::optional<WebCore::ShareableBitmapHandle>',
@@ -587,6 +590,8 @@ def types_that_cannot_be_forward_declared():
         'IPC::Signal',
         'Inspector::ExtensionAppearance',
         'Inspector::ExtensionTabID',
+        'Inspector::FrameResource',
+        'Inspector::FrameResourceData',
         'Inspector::ResourceType',
         'MachSendRight',
         'MediaTime',
@@ -638,6 +643,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::PathClosedArc',
         'WebCore::PathDataBezierCurve',
         'WebCore::PathDataLine',
+        'WebCore::PathDataLineColorThickness',
         'WebCore::PathDataQuadCurve',
         'WebCore::PatternParameters',
         'WebCore::PlatformLayerIdentifier',
@@ -1117,6 +1123,8 @@ def headers_for_type(type, for_implementation_file=False):
         'Inspector::ExtensionAppearance': ['"InspectorExtensionTypes.h"'],
         'Inspector::ExtensionError': ['"InspectorExtensionTypes.h"'],
         'Inspector::ExtensionTabID': ['"InspectorExtensionTypes.h"'],
+        'Inspector::FrameResource': ['<WebCore/InspectorResourceUtilities.h>'],
+        'Inspector::FrameResourceData': ['<WebCore/InspectorResourceUtilities.h>'],
         'Inspector::FrontendChannel::ConnectionType': ['<JavaScriptCore/InspectorFrontendChannel.h>'],
         'Inspector::InspectorTargetType': ['<JavaScriptCore/InspectorTarget.h>'],
         'Inspector::ResourceType': ['<WebCore/InspectorResourceType.h>'],
@@ -1184,6 +1192,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::BackForwardItemIdentifier': ['<WebCore/ProcessQualified.h>', '<WebCore/BackForwardItemIdentifier.h>', '<wtf/ObjectIdentifier.h>'],
         'WebCore::BlendMode': ['<WebCore/GraphicsTypes.h>'],
         'WebCore::BrowsingContextGroupSwitchDecision': ['<WebCore/FrameLoaderTypes.h>'],
+        'WebCore::NavigationResponseProcessSwapReason': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::CaptionUserPreferencesDisplayMode': ['<WebCore/CaptionUserPreferences.h>'],
         'WebCore::CaptureSourceError': ['<WebCore/RealtimeMediaSource.h>'],
         'WebCore::CaretAnimatorType': ['<WebCore/CaretAnimator.h>'],
@@ -1279,6 +1288,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::Headroom': ['<WebCore/ImageTypes.h>'],
         'WebCore::HighlightRequestOriginatedInApp': ['<WebCore/AppHighlight.h>'],
         'WebCore::HighlightVisibility': ['<WebCore/HighlightVisibility.h>'],
+        'WebCore::IFrameUnloadReason': ['<WebCore/LocalFrameLoaderClient.h>'],
         'WebCore::InterpolationQuality': ['<WebCore/GraphicsTypes.h>'],
         'WebCore::ImageBufferParameters': ['<WebCore/ImageBuffer.h>'],
         'WebCore::ImageDecoderFrameInfo': ['<WebCore/ImageDecoder.h>'],
@@ -1332,6 +1342,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::MediaSettingsRange': ['<WebCore/MediaSettingsRange.h>'],
         'WebCore::MediaSourcePrivateAddStatus': ['<WebCore/MediaSourcePrivate.h>'],
         'WebCore::MediaSourcePrivateEndOfStreamStatus': ['<WebCore/MediaSourcePrivate.h>'],
+        'WebCore::MediaSourceReadyState': ['<WebCore/MediaSourcePrivate.h>'],
         'WebCore::MediaTimePromise::Result': ['<WebCore/MediaPromiseTypes.h>'],
         'WebCore::MessagePortChannelProvider::HasActivity': ['<WebCore/MessagePortChannelProvider.h>'],
         'WebCore::ModalContainerControlType': ['<WebCore/ModalContainerTypes.h>'],
@@ -1350,6 +1361,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::PathClosedArc': ['<WebCore/PathSegmentData.h>'],
         'WebCore::PathDataBezierCurve': ['<WebCore/PathSegmentData.h>'],
         'WebCore::PathDataLine': ['<WebCore/PathSegmentData.h>'],
+        'WebCore::PathDataLineColorThickness': ['<WebCore/PathSegmentData.h>'],
         'WebCore::PathDataQuadCurve': ['<WebCore/PathSegmentData.h>'],
         'WebCore::PatternParameters': ['<WebCore/Pattern.h>'],
         'WebCore::PixelFormat': ['<WebCore/ImageBufferBackend.h>'],
@@ -1371,6 +1383,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::RecentSearch': ['<WebCore/SearchPopupMenu.h>'],
         'WebCore::RedEyeReduction': ['<WebCore/RedEyeReduction.h>'],
         'WebCore::ResourceResponseSource': ['<WebCore/ResourceResponseBase.h>'],
+        'WebCore::RestoredFromBackForwardCache': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::ReloadOption': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::RenderAsTextFlag': ['<WebCore/RenderTreeAsText.h>'],
         'WebCore::RenderingPurpose': ['<WebCore/RenderingMode.h>'],
@@ -1454,6 +1467,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::TrackInfo::TrackType': ['<WebCore/TrackInfo.h>'],
         'WebCore::TrackInfoTrackType': ['<WebCore/TrackInfo.h>'],
         'WebCore::UserGestureTokenIdentifierID': ['"GeneratedSerializers.h"'],
+        'WebCore::UserGestureTokenData': ['<WebCore/UserGestureIndicator.h>'],
         'WebCore::VideoInfo': ['<WebCore/TrackInfo.h>'],
         'WebCore::VideoRendererPreference': ['<WebCore/MediaPlayerEnums.h>'],
         'WebCore::VideoRendererPreferences': ['<WebCore/MediaPlayerEnums.h>'],
@@ -1550,6 +1564,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::FrameState': ['"SessionState.h"'],
         'WebKit::GestureRecognizerState': ['"GestureTypes.h"'],
         'WebKit::GestureType': ['"GestureTypes.h"'],
+        'WebKit::InputType': ['"FocusedElementInformation.h"'],
         'WebKit::RiceBackendIdentifier': ['"RiceBackend.h"'],
         'WebKit::RiceGatherResult': ['"RiceBackend.h"'],
         'WebKit::JSObjectID': ['"JavaScriptEvaluationResult.h"'],
@@ -1559,6 +1574,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::MessageBatchIdentifier': ['"NetworkConnectionToWebProcess.h"'],
         'WebKit::NetworkActivityTracker::CompletionCode': ['"NetworkActivityTracker.h"'],
         'WebKit::PageGroupIdentifier': ['"IdentifierTypes.h"'],
+        'WebKit::PDFPluginDisplayMode': ['"PDFDisplayMode.h"'],
         'WebKit::RealmIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::PaymentSetupConfiguration': ['"PaymentSetupConfigurationWebKit.h"'],
         'WebKit::PaymentSetupFeatures': ['"ApplePayPaymentSetupFeaturesWebKit.h"'],
@@ -1803,7 +1819,6 @@ def generate_enabled_by_for_receiver(receiver, messages):
 
 def generate_get_target_statements(receiver):
     result = []
-    result.append('    Ref protectedThis { *this };\n')
 
     def append_swift_get_target_statements(result):
         result.append('    auto target = getMessageTarget();\n')
@@ -2093,6 +2108,8 @@ def generate_swift_message_handler(receiver):
     result.append('        self.target = target\n')
     result.append('    }\n')
     result.append('\n')
+    # @used ensures these are retained even with -O -wmo: rdar://179098545
+    result.append('    @used\n')
     result.append('    func getMessageTarget() -> %s? {\n' % (class_name))
     result.append('        target\n')
     result.append('    }\n')
@@ -2429,23 +2446,4 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
     result.append('')
     result.append('#endif // ENABLE(IPC_TESTING_API) || !LOG_DISABLED')
     result.append('')
-    return '\n'.join(result)
-
-
-def generate_modulemap(receiver_headers: list[str]) -> str:
-    result = []
-
-    result.append('module WebKit_DerivedSources_IPC {')
-
-    all_headers = receiver_headers + ['MessageNames.h', 'GeneratedSerializers.h', 'GeneratedWebKitSecureCoding.h']
-    for header in all_headers:
-        module_name = header[:-2] if header.endswith('.h') else header
-        result.append('  explicit module %s {' % module_name)
-        result.append('    header "%s"' % header)
-        result.append('    export *')
-        result.append('  }')
-
-    result.append('}')
-    result.append('')
-
     return '\n'.join(result)

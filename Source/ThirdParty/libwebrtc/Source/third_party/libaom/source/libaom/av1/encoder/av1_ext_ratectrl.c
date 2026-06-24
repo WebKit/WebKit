@@ -105,6 +105,80 @@ aom_codec_err_t av1_extrc_send_firstpass_stats(
   return AOM_CODEC_OK;
 }
 
+aom_codec_err_t av1_extrc_send_tpl_stats(
+    AOM_EXT_RATECTRL *ext_ratectrl, const AomTplGopStats *extrc_tpl_gop_stats) {
+  assert(ext_ratectrl != NULL);
+  assert(extrc_tpl_gop_stats != NULL);
+  if (ext_ratectrl->ready && ext_ratectrl->funcs.send_tpl_gop_stats != NULL) {
+    aom_rc_status_t rc_status = ext_ratectrl->funcs.send_tpl_gop_stats(
+        ext_ratectrl->model, extrc_tpl_gop_stats);
+    if (rc_status == AOM_RC_ERROR) {
+      return AOM_CODEC_ERROR;
+    }
+  }
+  return AOM_CODEC_OK;
+}
+
+aom_codec_err_t av1_extrc_get_gop_decision(
+    AOM_EXT_RATECTRL *ext_ratectrl, aom_rc_gop_decision_t *gop_decision) {
+  aom_rc_status_t rc_status;
+  assert(ext_ratectrl != NULL);
+  assert(gop_decision != NULL);
+  if ((ext_ratectrl->funcs.rc_type & AOM_RC_GOP) == 0) {
+    return AOM_CODEC_INVALID_PARAM;
+  }
+  rc_status =
+      ext_ratectrl->funcs.get_gop_decision(ext_ratectrl->model, gop_decision);
+  if (rc_status == AOM_RC_ERROR) {
+    return AOM_CODEC_ERROR;
+  }
+  return AOM_CODEC_OK;
+}
+
+aom_codec_err_t av1_extrc_get_encodeframe_decision(
+    AOM_EXT_RATECTRL *ext_ratectrl, int gop_index,
+    aom_rc_encodeframe_decision_t *encode_frame_decision) {
+  assert(ext_ratectrl != NULL);
+  assert(ext_ratectrl->ready && (ext_ratectrl->funcs.rc_type & AOM_RC_QP) != 0);
+  assert(encode_frame_decision != NULL);
+  aom_rc_status_t rc_status = ext_ratectrl->funcs.get_encodeframe_decision(
+      ext_ratectrl->model, gop_index, encode_frame_decision);
+  if (rc_status == AOM_RC_ERROR) {
+    return AOM_CODEC_ERROR;
+  }
+  return AOM_CODEC_OK;
+}
+
+aom_codec_err_t av1_extrc_update_encodeframe_result(
+    AOM_EXT_RATECTRL *ext_ratectrl, int64_t bit_count,
+    int actual_encoding_qindex) {
+  assert(ext_ratectrl != NULL);
+  if (ext_ratectrl->ready) {
+    aom_rc_status_t rc_status;
+    aom_rc_encodeframe_result_t encode_frame_result;
+    encode_frame_result.bit_count = bit_count;
+    encode_frame_result.actual_encoding_qindex = actual_encoding_qindex;
+    rc_status = ext_ratectrl->funcs.update_encodeframe_result(
+        ext_ratectrl->model, &encode_frame_result);
+    if (rc_status == AOM_RC_ERROR) {
+      return AOM_CODEC_ERROR;
+    }
+  }
+  return AOM_CODEC_OK;
+}
+
+aom_codec_err_t av1_extrc_get_key_frame_decision(
+    AOM_EXT_RATECTRL *ext_ratectrl,
+    aom_rc_key_frame_decision_t *key_frame_decision) {
+  assert(ext_ratectrl != NULL);
+  if (!ext_ratectrl->ready || (ext_ratectrl->funcs.rc_type & AOM_RC_GOP) == 0) {
+    return AOM_CODEC_INVALID_PARAM;
+  }
+  aom_rc_status_t rc_status = ext_ratectrl->funcs.get_key_frame_decision(
+      ext_ratectrl->model, key_frame_decision);
+  return rc_status == AOM_RC_OK ? AOM_CODEC_OK : AOM_CODEC_ERROR;
+}
+
 aom_codec_err_t av1_extrc_delete(AOM_EXT_RATECTRL *ext_ratectrl) {
   if (ext_ratectrl == NULL) {
     return AOM_CODEC_INVALID_PARAM;
@@ -116,6 +190,7 @@ aom_codec_err_t av1_extrc_delete(AOM_EXT_RATECTRL *ext_ratectrl) {
       return AOM_CODEC_ERROR;
     }
     aom_free(ext_ratectrl->rc_firstpass_stats.frame_stats);
+    aom_free(ext_ratectrl->sb_params_list);
   }
   return av1_extrc_init(ext_ratectrl);
 }

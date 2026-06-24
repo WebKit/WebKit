@@ -40,7 +40,8 @@
 		],
 		"paths": [
 			"LayoutTests/",
-			"Tools/TestWebKitAPI"
+			"Tools/TestWebKitAPI",
+			"TestExpectations/apitests"
 		]
 	},
 	{

@@ -1039,14 +1039,7 @@ static TARGET_LEVEL_FAIL_ID check_level_constraints(
       break;
     }
 
-#if CONFIG_CWG_C013
-    const int max_tile_size = (level >= SEQ_LEVEL_7_0 && level <= SEQ_LEVEL_8_3)
-                                  ? MAX_TILE_AREA_LEVEL_7_AND_ABOVE
-                                  : MAX_TILE_AREA;
-#else
-    const int max_tile_size = MAX_TILE_AREA;
-#endif
-    if (level_stats->max_tile_size > max_tile_size) {
+    if (level_stats->max_tile_size > MAX_TILE_AREA) {
       fail_id = TILE_TOO_LARGE;
       break;
     }

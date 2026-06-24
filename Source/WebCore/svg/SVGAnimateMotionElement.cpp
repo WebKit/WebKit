@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,16 +29,16 @@
 #include "ElementChildIteratorInlines.h"
 #include "LegacyRenderSVGResource.h"
 #include "PathTraversalState.h"
-#include "RenderLayerModelObject.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
 #include "SVGMPathElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGPathData.h"
 #include "SVGPathElement.h"
+#include "SVGPathFromElement.h"
 #include "SVGPathUtilities.h"
 #include "Settings.h"
+#include "StyleUpdate.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -116,10 +116,10 @@ SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
     static MainThreadNeverDestroyed<const AtomString> autoReverse("auto-reverse"_s);
     auto& rotate = getAttribute(SVGNames::rotateAttr);
     if (rotate == autoAtom())
-        return RotateAuto;
+        return RotateMode::Auto;
     if (rotate == autoReverse)
-        return RotateAutoReverse;
-    return RotateAngle;
+        return RotateMode::AutoReverse;
+    return RotateMode::Angle;
 }
 
 void SVGAnimateMotionElement::updateAnimationPath()
@@ -212,6 +212,9 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
     if (!isAdditive())
         transform->makeIdentity();
 
+    float angle = 0;
+
+    // Non-path animation
     if (animationMode() != AnimationMode::Path) {
         FloatPoint toPointAtEndOfDuration = m_toPoint;
         if (isAccumulated() && repeatCount && m_toPointAtEndOfDuration)
@@ -224,26 +227,34 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
         animateAdditiveNumber(percentage, repeatCount, m_fromPoint.y(), m_toPoint.y(), toPointAtEndOfDuration.y(), animatedY);
 
         transform->translate(animatedX, animatedY);
-        return;
+
+        // Compute angle from fromPoint -> toPoint.
+        FloatPoint delta(m_toPoint.x() - m_fromPoint.x(), m_toPoint.y() - m_fromPoint.y());
+        angle = rad2deg(delta.slopeAngleRadians());
+    } else {
+        // Path animation
+        buildTransformForProgress(transform, percentage);
+
+        if (isAccumulated() && repeatCount) {
+            for (unsigned i = 0; i < repeatCount; ++i)
+                buildTransformForProgress(transform, 1);
+        }
+
+        auto traversalState = m_animationPath.traversalStateAtLength(m_animationPath.length() * percentage);
+        angle = traversalState.normalAngle();
     }
 
-    buildTransformForProgress(transform, percentage);
-
-    // Handle accumulate="sum".
-    if (isAccumulated() && repeatCount) {
-        for (unsigned i = 0; i < repeatCount; ++i)
-            buildTransformForProgress(transform, 1);
-    }
-    float positionOnPath = m_animationPath.length() * percentage;
-    auto traversalState(m_animationPath.traversalStateAtLength(positionOnPath));
-
-    // The 'angle' below is in 'degrees'.
-    float angle = traversalState.normalAngle();
-    RotateMode rotateMode = this->rotateMode();
-    if (rotateMode != RotateAuto && rotateMode != RotateAutoReverse)
-        return;
-    if (rotateMode == RotateAutoReverse)
+    switch (rotateMode()) {
+    case RotateMode::Auto:
+        break;
+    case RotateMode::AutoReverse:
         angle += 180;
+        break;
+    case RotateMode::Angle:
+        angle = 0;
+        break;
+    }
+
     transform->rotate(angle);
 }
 
@@ -256,9 +267,7 @@ void SVGAnimateMotionElement::applyResultsToTarget()
 
     auto updateTargetElement = [](SVGElement& element) {
         if (element.document().settings().layerBasedSVGEngineEnabled()) {
-            if (CheckedPtr layerRenderer = dynamicDowncast<RenderLayerModelObject>(element.renderer()))
-                layerRenderer->repaintOrRelayoutAfterSVGTransformChange();
-            element.updateSVGRendererForElementChange();
+            element.updateSVGRendererForElementChange(Style::SVGRendererUpdateType::TransformAttributeOnly);
             return;
         }
         if (CheckedPtr renderer = element.renderer())

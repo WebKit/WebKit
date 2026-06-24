@@ -39,6 +39,7 @@ static GtkInputPurpose toGtkInputPurpose(WebKitInputPurpose purpose)
 {
     switch (purpose) {
     case WEBKIT_INPUT_PURPOSE_FREE_FORM:
+    case WEBKIT_INPUT_PURPOSE_SEARCH:
         return GTK_INPUT_PURPOSE_FREE_FORM;
     case WEBKIT_INPUT_PURPOSE_DIGITS:
         return GTK_INPUT_PURPOSE_DIGITS;

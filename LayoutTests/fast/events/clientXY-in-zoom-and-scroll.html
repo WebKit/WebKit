@@ -1,4 +1,4 @@
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <style>
     #pusher {
         width: 1000px;
@@ -48,10 +48,7 @@
         window.scrollTo(x, y);
     }
 
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
+    window.jsTestIsAsync = true;
 
     // Default.
     function base(e)
@@ -101,9 +98,6 @@
         if (!window.testRunner)
             return;
 
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-
         window.addEventListener("click", base, false);
         await sendClick();
         window.removeEventListener("click", base, false);
@@ -131,7 +125,6 @@
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
 
-        testRunner.notifyDone();
+        finishJSTest();
     }
 </script>
-<script src="../../resources/js-test-post.js"></script>

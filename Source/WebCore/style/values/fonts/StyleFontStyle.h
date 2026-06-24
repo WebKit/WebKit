@@ -87,7 +87,7 @@ private:
 
 template<> struct CSSValueConversion<FontStyle> { FontStyle operator()(BuilderState&, const CSSValue&); };
 // `FontStyle` is special-cased to return a `CSSFontStyleWithAngleValue`.
-template<> struct CSSValueCreation<FontStyle> { Ref<CSSValue> NODELETE operator()(CSSValuePool&, const RenderStyle&, const FontStyle&); };
+template<> struct CSSValueCreation<FontStyle> { Ref<CSSValue> NODELETE operator()(CSSValuePool&, const Style::ComputedStyle&, const FontStyle&); };
 
 // MARK: - Blending
 

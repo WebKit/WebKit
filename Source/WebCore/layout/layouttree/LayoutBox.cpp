@@ -35,7 +35,7 @@
 #include "LayoutShape.h"
 #include "LayoutState.h"
 #include "RenderObject.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -46,7 +46,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Box);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Box::BoxRareData);
 
 
-Box::Box(ElementAttributes&& elementAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, EnumSet<BaseTypeFlag> baseTypeFlags)
+Box::Box(ElementAttributes&& elementAttributes, Style::ComputedStyle&& style, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle, EnumSet<BaseTypeFlag> baseTypeFlags)
     : m_nodeType(elementAttributes.nodeType)
     , m_isAnonymous(static_cast<bool>(elementAttributes.isAnonymous))
     , m_baseTypeFlags(baseTypeFlags.toRaw())
@@ -80,7 +80,7 @@ UniqueRef<Box> Box::removeFromParent()
     return makeUniqueRefFromNonNullUniquePtr(WTF::move(ownedSelf));
 }
 
-void Box::updateStyle(RenderStyle&& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle)
+void Box::updateStyle(Style::ComputedStyle&& newStyle, std::unique_ptr<Style::ComputedStyle>&& newFirstLineStyle)
 {
     m_style = WTF::move(newStyle);
     if (newFirstLineStyle)

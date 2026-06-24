@@ -30,8 +30,7 @@
 #include "FontCascadeInlines.h"
 #include "FontSelector.h"
 #include "Logging.h"
-#include "RenderStyle.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+DifferenceLogging.h"
 #include "StyleCustomProperty.h"
 #include "StyleKeyword+Logging.h"
@@ -98,12 +97,12 @@ std::optional<PseudoElementIdentifier> ComputedStyleBase::pseudoElementIdentifie
     return PseudoElementIdentifier { *pseudoElementType(), pseudoElementNameArgument() };
 }
 
-RenderStyle* ComputedStyleBase::getCachedPseudoStyle(const PseudoElementIdentifier& pseudoElementIdentifier) const
+Style::ComputedStyle* ComputedStyleBase::pseudoElementStyle(const PseudoElementIdentifier& pseudoElementIdentifier) const
 {
-    return m_cachedPseudoStyles.get(pseudoElementIdentifier);
+    return m_pseudoElementStyles.get(pseudoElementIdentifier);
 }
 
-RenderStyle* ComputedStyleBase::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseudo)
+Style::ComputedStyle* ComputedStyleBase::addPseudoElementStyle(std::unique_ptr<Style::ComputedStyle> pseudo)
 {
     if (!pseudo)
         return nullptr;
@@ -111,7 +110,7 @@ RenderStyle* ComputedStyleBase::addCachedPseudoStyle(std::unique_ptr<RenderStyle
     ASSERT(pseudo->pseudoElementType());
 
     auto* result = pseudo.get();
-    m_cachedPseudoStyles.add(*result->pseudoElementIdentifier(), WTF::move(pseudo));
+    m_pseudoElementStyles.add(*result->pseudoElementIdentifier(), WTF::move(pseudo));
     return result;
 }
 
@@ -446,7 +445,6 @@ void ComputedStyleBase::NonInheritedFlags::dumpDifferences(TextStream& ts, const
     LOG_IF_DIFFERENT(hasExplicitlyInheritedProperties);
     LOG_IF_DIFFERENT(disallowsFastPathInheritance);
 
-    LOG_IF_DIFFERENT(emptyState);
     LOG_IF_DIFFERENT(firstChildState);
     LOG_IF_DIFFERENT(lastChildState);
     LOG_IF_DIFFERENT(isLink);

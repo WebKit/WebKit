@@ -63,9 +63,9 @@ auto CSSValueConversion<Scale>::operator()(BuilderState& state, const CSSValue& 
     if (!list)
         return CSS::Keyword::None { };
 
-    auto sx = toStyleFromCSSValue<NumberOrPercentageResolvedToNumber<>>(state, list->item(0));
-    auto sy = list->size() > 1 ? toStyleFromCSSValue<NumberOrPercentageResolvedToNumber<>>(state, list->item(1)) : sx;
-    auto sz = list->size() > 2 ? toStyleFromCSSValue<NumberOrPercentageResolvedToNumber<>>(state, list->item(2)) : NumberOrPercentageResolvedToNumber<> { 1_css_number };
+    auto sx = toStyleFromCSSValue<NumberOrPercentageResolvedToNumber<>>(state, protect(list->item(0)));
+    auto sy = list->size() > 1 ? toStyleFromCSSValue<NumberOrPercentageResolvedToNumber<>>(state, protect(list->item(1))) : sx;
+    auto sz = list->size() > 2 ? toStyleFromCSSValue<NumberOrPercentageResolvedToNumber<>>(state, protect(list->item(2))) : NumberOrPercentageResolvedToNumber<> { 1_css_number };
 
     return ScaleTransformFunction::create(sx, sy, sz, TransformFunctionType::Scale);
 }

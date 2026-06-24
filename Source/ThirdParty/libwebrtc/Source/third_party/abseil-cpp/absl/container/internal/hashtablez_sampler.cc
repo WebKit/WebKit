@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <functional>
 #include <limits>
+#include <utility>
 
 #include "absl/base/attributes.h"
 #include "absl/base/config.h"
@@ -86,7 +87,6 @@ void HashtablezInfo::PrepareForSampling(int64_t stride,
   total_probe_length.store(0, std::memory_order_relaxed);
   hashes_bitwise_or.store(0, std::memory_order_relaxed);
   hashes_bitwise_and.store(~size_t{}, std::memory_order_relaxed);
-  hashes_bitwise_xor.store(0, std::memory_order_relaxed);
   max_reserve.store(0, std::memory_order_relaxed);
 
   create_time = absl::Now();
@@ -148,7 +148,7 @@ HashtablezInfo* SampleSlow(SamplingState& next_sample,
                            size_t value_size, uint16_t soo_capacity) {
   if (ABSL_PREDICT_FALSE(ShouldForceSampling())) {
     next_sample.next_sample = 1;
-    const int64_t old_stride = exchange(next_sample.sample_stride, 1);
+    const int64_t old_stride = std::exchange(next_sample.sample_stride, 1);
     HashtablezInfo* result = GlobalHashtablezSampler().Register(
         old_stride, inline_element_size, key_size, value_size, soo_capacity);
     return result;
@@ -230,8 +230,8 @@ void RecordStorageChangedSlow(HashtablezInfo* info, size_t size,
   }
 }
 
-void RecordInsertSlow(HashtablezInfo* info, size_t hash,
-                      size_t distance_from_desired) {
+void RecordInsertMissSlow(HashtablezInfo* info, size_t hash,
+                          size_t distance_from_desired) {
   // SwissTables probe in groups of 16, so scale this to count items probes and
   // not offset from desired.
   size_t probe_length = distance_from_desired;
@@ -243,7 +243,6 @@ void RecordInsertSlow(HashtablezInfo* info, size_t hash,
 
   info->hashes_bitwise_and.fetch_and(hash, std::memory_order_relaxed);
   info->hashes_bitwise_or.fetch_or(hash, std::memory_order_relaxed);
-  info->hashes_bitwise_xor.fetch_xor(hash, std::memory_order_relaxed);
   info->max_probe_length.store(
       std::max(info->max_probe_length.load(std::memory_order_relaxed),
                probe_length),

@@ -25,6 +25,9 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 // A |CONF| is an unordered list of sections, where each section contains an
 // ordered list of (name, value) pairs.
 using ConfModel =
@@ -403,9 +406,9 @@ key2 = value2
   };
   for (const auto &t : kTests) {
     SCOPED_TRACE(t.in);
-    bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(t.in.data(), t.in.size()));
+    UniquePtr<BIO> bio(BIO_new_mem_buf(t.in.data(), t.in.size()));
     ASSERT_TRUE(bio);
-    bssl::UniquePtr<CONF> conf(NCONF_new(nullptr));
+    UniquePtr<CONF> conf(NCONF_new(nullptr));
     ASSERT_TRUE(conf);
     ASSERT_TRUE(NCONF_load_bio(conf.get(), bio.get(), nullptr));
 
@@ -428,9 +431,9 @@ key2 = value2
   };
   for (const auto &t : kInvalidTests) {
     SCOPED_TRACE(t);
-    bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(t, strlen(t)));
+    UniquePtr<BIO> bio(BIO_new_mem_buf(t, strlen(t)));
     ASSERT_TRUE(bio);
-    bssl::UniquePtr<CONF> conf(NCONF_new(nullptr));
+    UniquePtr<CONF> conf(NCONF_new(nullptr));
     ASSERT_TRUE(conf);
     EXPECT_FALSE(NCONF_load_bio(conf.get(), bio.get(), nullptr));
   }
@@ -486,3 +489,6 @@ TEST(ConfTest, ParseList) {
     EXPECT_EQ(result, t.expected);
   }
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

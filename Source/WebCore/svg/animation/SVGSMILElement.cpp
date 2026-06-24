@@ -73,9 +73,6 @@ static const AtomString& indefiniteAtom()
     return indefiniteValue;
 }
 
-// This is used for duration type time values that can't be negative.
-static const double invalidCachedTime = -1.;
-    
 class ConditionEventListener final : public EventListener {
 public:
     static Ref<ConditionEventListener> create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
@@ -139,22 +136,6 @@ SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const Str
 SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document& doc, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
     : SVGElement(tagName, doc, WTF::move(propertyRegistry))
     , m_attributeName(anyQName())
-    , m_conditionsConnected(false)
-    , m_hasEndEventConditions(false)
-    , m_isWaitingForFirstInterval(true)
-    , m_intervalBegin(SMILTime::unresolved())
-    , m_intervalEnd(SMILTime::unresolved())
-    , m_previousIntervalBegin(SMILTime::unresolved())
-    , m_activeState(Inactive)
-    , m_lastPercent(0)
-    , m_lastRepeat(0)
-    , m_nextProgressTime(0)
-    , m_documentOrderIndex(0)
-    , m_cachedDur(invalidCachedTime)
-    , m_cachedRepeatDur(invalidCachedTime)
-    , m_cachedRepeatCount(invalidCachedTime)
-    , m_cachedMin(invalidCachedTime)
-    , m_cachedMax(invalidCachedTime)
 {
 }
 
@@ -656,7 +637,7 @@ void SVGSMILElement::disconnectConditions()
             RefPtr eventBase = eventBaseFor(condition);
             if (eventBase)
                 eventBase->removeEventListener(condition.m_name, Ref { *condition.m_eventListener }, { .capture = false });
-            condition.m_eventListener->disconnectAnimation();
+            protect(condition.m_eventListener)->disconnectAnimation();
             condition.m_eventListener = nullptr;
         } else if (condition.m_type == Condition::Syncbase) {
             if (condition.m_syncbase)
@@ -706,7 +687,7 @@ void SVGSMILElement::setTargetElement(SVGElement* target)
 
 SMILTime SVGSMILElement::elapsed() const
 {
-    return m_timeContainer ? m_timeContainer->elapsed() : 0;
+    return m_timeContainer ? protect(m_timeContainer)->elapsed() : 0;
 }
 
 bool SVGSMILElement::isFrozen() const
@@ -815,33 +796,21 @@ SMILTime SVGSMILElement::findInstanceTime(BeginOrEnd beginOrEnd, SMILTime minimu
     if (list.empty())
         return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
 
-    auto result = std::lower_bound(list.begin(), list.end(), minimumTime, [](const SMILTimeWithOrigin& item, SMILTime time) {
-        return item.time() < time;
-    });
+    // If an equal value is not accepted, return the next bigger item in the list, if any.
+    auto predicate = [equalsMinimumOK](const SMILTimeWithOrigin& instanceTime, const SMILTime& time) {
+        return equalsMinimumOK ? instanceTime.time() < time : instanceTime.time() <= time;
+    };
 
-    if (result == list.end())
+    auto item = std::lower_bound(list.begin(), list.end(), minimumTime, predicate);
+
+    if (item == list.end())
         return SMILTime::unresolved();
-
-    const SMILTime& currentTime = result->time();
 
     // The special value "indefinite" does not yield an instance time in the begin list.
-    if (currentTime.isIndefinite() && beginOrEnd == Begin)
+    if (item->time().isIndefinite() && beginOrEnd == Begin)
         return SMILTime::unresolved();
 
-    if (currentTime > minimumTime)
-        return currentTime;
-
-    ASSERT(currentTime == minimumTime);
-    if (equalsMinimumOK)
-        return currentTime;
-
-    // If the equals is not accepted, return the next bigger item in the list.
-    for (auto it = result + 1; it != list.end(); ++it) {
-        if (it->time() > minimumTime)
-            return it->time();
-    }
-
-    return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
+    return item->time();
 }
 
 SMILTime SVGSMILElement::repeatingDuration() const

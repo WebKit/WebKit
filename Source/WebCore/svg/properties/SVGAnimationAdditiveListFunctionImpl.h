@@ -46,15 +46,14 @@ public:
     {
     }
 
-    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
-        m_from->parse(from);
-        m_to->parse(to);
+        return m_from->parse(from) && m_to->parse(to);
     }
 
-    void setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
     {
-        m_toAtEndOfDuration->parse(toAtEndOfDuration);
+        return m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount, SVGLengthList& animated)
@@ -105,15 +104,14 @@ public:
     using Base = SVGAnimationAdditiveListFunction<SVGNumberList>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
-        m_from->parse(from);
-        m_to->parse(to);
+        return m_from->parse(from) && m_to->parse(to);
     }
 
-    void setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
     {
-        m_toAtEndOfDuration->parse(toAtEndOfDuration);
+        return m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
     void animate(SVGElement&, float progress, unsigned repeatCount, SVGNumberList& animated)
@@ -155,15 +153,14 @@ public:
     using Base = SVGAnimationAdditiveListFunction<SVGPointList>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
-        m_from->parse(from);
-        m_to->parse(to);
+        return m_from->parse(from) && m_to->parse(to);
     }
 
-    void setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
     {
-        m_toAtEndOfDuration->parse(toAtEndOfDuration);
+        return m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
     void animate(SVGElement&, float progress, unsigned repeatCount, SVGPointList& animated)
@@ -208,15 +205,18 @@ public:
     using Base = SVGAnimationAdditiveListFunction<SVGTransformList>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
+    bool setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
+        // FIXME: this should return if m_from->parse(from) fails, however we get default values for
+        // from like "scale()", instead of empty string, which fail the parse but should not return.
+        // So until we have a clean way to catch such a default value, do not return on parse fail yet.
         m_from->parse(from);
-        m_to->parse(to);
+        return m_to->parse(to);
     }
 
-    void setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
+    bool setToAtEndOfDurationValue(SVGElement&, const String& toAtEndOfDuration) override
     {
-        m_toAtEndOfDuration->parse(toAtEndOfDuration);
+        return m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
     void animate(SVGElement&, float progress, unsigned repeatCount, SVGTransformList& animated)

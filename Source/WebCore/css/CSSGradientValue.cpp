@@ -33,7 +33,6 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorInterpolation.h"
 #include "StyleBuilderState.h"
-#include "StyleCalculationValue.h"
 #include "StyleGradientImage.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/text/StringBuilder.h>
@@ -70,7 +69,7 @@ template<NumericRaw CSSType> struct StyleImageIsUncacheable<CSSType> {
 };
 
 template<Calc CSSType> struct StyleImageIsUncacheable<CSSType> {
-    constexpr bool operator()(const auto& value) { return value.calcValue().requiresConversionData(); }
+    constexpr bool operator()(const auto& value) { return value.requiresConversionData(); }
 };
 
 template<OptionalLike CSSType> struct StyleImageIsUncacheable<CSSType> {

@@ -1,6 +1,6 @@
 
+SUCCESS: Blue frame stopped scolling before red frame
 PASS successfullyParsed is true
 
 TEST COMPLETE
-SUCCESS: Blue frame stopped scolling before red frame
 

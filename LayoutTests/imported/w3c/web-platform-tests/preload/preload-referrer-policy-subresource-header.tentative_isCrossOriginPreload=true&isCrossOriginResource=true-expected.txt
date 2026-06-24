@@ -1,0 +1,53 @@
+The referrerpolicy attribute on Link header should be ignored for subresources to prevent cross-origin referrer leakage
+
+
+FAIL referrer policy ( -> , cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy ( -> no-referrer, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy ( -> same-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy ( -> origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy ( -> origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy ( -> strict-origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy ( -> unsafe-url, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+PASS referrer policy (no-referrer -> , cross-origin, cross-origin)
+PASS referrer policy (no-referrer -> no-referrer, cross-origin, cross-origin)
+PASS referrer policy (no-referrer -> same-origin, cross-origin, cross-origin)
+PASS referrer policy (no-referrer -> origin, cross-origin, cross-origin)
+PASS referrer policy (no-referrer -> origin-when-cross-origin, cross-origin, cross-origin)
+PASS referrer policy (no-referrer -> strict-origin-when-cross-origin, cross-origin, cross-origin)
+PASS referrer policy (no-referrer -> unsafe-url, cross-origin, cross-origin)
+PASS referrer policy (same-origin -> , cross-origin, cross-origin)
+PASS referrer policy (same-origin -> no-referrer, cross-origin, cross-origin)
+PASS referrer policy (same-origin -> same-origin, cross-origin, cross-origin)
+PASS referrer policy (same-origin -> origin, cross-origin, cross-origin)
+PASS referrer policy (same-origin -> origin-when-cross-origin, cross-origin, cross-origin)
+PASS referrer policy (same-origin -> strict-origin-when-cross-origin, cross-origin, cross-origin)
+PASS referrer policy (same-origin -> unsafe-url, cross-origin, cross-origin)
+FAIL referrer policy (origin -> , cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin -> no-referrer, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin -> same-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin -> origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin -> origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin -> strict-origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin -> unsafe-url, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin-when-cross-origin -> , cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin-when-cross-origin -> no-referrer, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin-when-cross-origin -> same-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin-when-cross-origin -> origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin-when-cross-origin -> origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin-when-cross-origin -> strict-origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (origin-when-cross-origin -> unsafe-url, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (strict-origin-when-cross-origin -> , cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (strict-origin-when-cross-origin -> no-referrer, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (strict-origin-when-cross-origin -> same-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (strict-origin-when-cross-origin -> origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (strict-origin-when-cross-origin -> origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (strict-origin-when-cross-origin -> strict-origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (strict-origin-when-cross-origin -> unsafe-url, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/"
+FAIL referrer policy (unsafe-url -> , cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/preload/preload-referrer-policy-subresource-header.tentative.html?isCrossOriginPreload=true&isCrossOriginResource=true"
+FAIL referrer policy (unsafe-url -> no-referrer, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/preload/preload-referrer-policy-subresource-header.tentative.html?isCrossOriginPreload=true&isCrossOriginResource=true"
+FAIL referrer policy (unsafe-url -> same-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/preload/preload-referrer-policy-subresource-header.tentative.html?isCrossOriginPreload=true&isCrossOriginResource=true"
+FAIL referrer policy (unsafe-url -> origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/preload/preload-referrer-policy-subresource-header.tentative.html?isCrossOriginPreload=true&isCrossOriginResource=true"
+FAIL referrer policy (unsafe-url -> origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/preload/preload-referrer-policy-subresource-header.tentative.html?isCrossOriginPreload=true&isCrossOriginResource=true"
+FAIL referrer policy (unsafe-url -> strict-origin-when-cross-origin, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/preload/preload-referrer-policy-subresource-header.tentative.html?isCrossOriginPreload=true&isCrossOriginResource=true"
+FAIL referrer policy (unsafe-url -> unsafe-url, cross-origin, cross-origin) assert_equals: expected "NO-REFERER" but got "http://web-platform.test:8800/preload/preload-referrer-policy-subresource-header.tentative.html?isCrossOriginPreload=true&isCrossOriginResource=true"
+

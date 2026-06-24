@@ -1,11 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
 description('Test for a capturing spec change to consider .2 as valid real number for step');
+window.jsTestIsAsync = true;
 
 var parent = document.createElement('div');
 document.body.appendChild(parent);
@@ -16,7 +17,6 @@ onload = async () => {
     if (!window.testRunner)
         return;
 
-    testRunner.waitUntilDone();
     if (window.eventSender) {
         // Move the cursor on the upper button of the input field.
         await eventSender.asyncMouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
@@ -29,10 +29,9 @@ onload = async () => {
     } else {
         document.getElementById('console').innerHTML = '<p>No eventSender. <p>Manual test instruction: Click the upper button of the input field.  Confirm that the input field value is 0.5';
     }
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

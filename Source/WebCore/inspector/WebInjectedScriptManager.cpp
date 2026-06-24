@@ -93,7 +93,7 @@ void WebInjectedScriptManager::discardInjectedScripts()
     InjectedScriptManager::discardInjectedScripts();
 
     if (m_commandLineAPIHost)
-        m_commandLineAPIHost->clearAllWrappers();
+        protect(m_commandLineAPIHost)->clearAllWrappers();
 }
 
 void WebInjectedScriptManager::didCreateInjectedScript(const Inspector::InjectedScript& injectedScript)

@@ -14,27 +14,12 @@
       },
     },
   },
-  'arm64': {
-    'swarming': {
-      'dimensions': {
-        'cpu': 'arm64'
-      }
-    }
-  },
   'cores-12': {
     'swarming': {
       'dimensions': {
         'cores': '12',
       }
     }
-  },
-  'crosshatch': {
-    'swarming': {
-      'dimensions': {
-        'device_type': 'crosshatch',
-        'os': 'Android',
-      },
-    },
   },
   # Hack to use the test-launcher-summary-output flag + emulator folders for gtest-output
   # but it's currently the only way to get the file out of the emulator.
@@ -44,24 +29,6 @@
       '--test-arg=--gtest_output=json:/custom_artifacts/gtest_output.json',
       '--test-arg=--undefok=test_launcher_summary_output'
     ],
-  },
-  'ios-device-18': {
-    'swarming': {
-      'dimensions': {
-        'os': 'iOS-18',
-        'pool': 'chrome.tests',
-      }
-    }
-  },
-  'ios-device-perf': {
-    'swarming': {
-      'idempotent': False,
-      'dimensions': {
-        'os': 'iOS-17.6.1',
-        'pool': 'WebRTC',
-        #'device_status': 'available'
-      },
-    },
   },
   'ios_runtime_cache_17_5': {
     'swarming': {
@@ -125,10 +92,12 @@
       }
     }
   },
-  'mac11': {
+  'panther_on_14': {
     'swarming': {
       'dimensions': {
-        'os': 'Mac-11'
+        'device_type': 'panther',
+        'device_os': 'AP2A.240705.004',  # Android 14
+        'os': 'Android'
       }
     }
   },
@@ -219,25 +188,11 @@
       'shards': 8,
     },
   },
-  'timeout-2h': {
-    'swarming': {
-      'hard_timeout': 7200,
-      'io_timeout': 7200,
-    },
-  },
   'timeout-3h': {
     'swarming': {
       'hard_timeout': 10800,
       'io_timeout': 10800,
     },
-  },
-  'walleye': {
-    'swarming': {
-      'dimensions': {
-        'device_type': 'walleye',
-        'os': 'Android'
-      }
-    }
   },
   'win11': {
     'swarming': {

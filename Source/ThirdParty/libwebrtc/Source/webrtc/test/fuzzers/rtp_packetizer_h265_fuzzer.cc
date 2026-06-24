@@ -8,22 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 #include <cstddef>
-#include <cstdint>
 
+#include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packetizer_h265.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 #include "test/fuzzers/utils/validate_rtp_packetizer.h"
 
 namespace webrtc {
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  test::FuzzDataHelper fuzz_input(MakeArrayView(data, size));
-
-  RtpPacketizer::PayloadSizeLimits limits = ReadPayloadSizeLimits(fuzz_input);
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  RtpPacketizer::PayloadSizeLimits limits = ReadPayloadSizeLimits(fuzz_data);
 
   // Main function under test: RtpPacketizerH265's constructor.
-  RtpPacketizerH265 packetizer(fuzz_input.ReadByteArray(fuzz_input.BytesLeft()),
-                               limits);
+  RtpPacketizerH265 packetizer(fuzz_data.ReadRemaining(), limits);
 
   ValidateRtpPacketizer(limits, packetizer);
 }

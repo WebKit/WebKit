@@ -14,14 +14,15 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/jsep.h"
 #include "api/media_types.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/test/pclf/media_configuration.h"
@@ -51,7 +52,7 @@ std::string CodecRequiredParamsToString(
 }
 
 std::string SupportedCodecsToString(
-    ArrayView<const RtpCodecCapability> supported_codecs) {
+    std::span<const RtpCodecCapability> supported_codecs) {
   StringBuilder out;
   for (const auto& codec : supported_codecs) {
     out << codec.name;
@@ -70,11 +71,11 @@ std::string SupportedCodecsToString(
 }  // namespace
 
 std::vector<RtpCodecCapability> FilterVideoCodecCapabilities(
-    ArrayView<const VideoCodecConfig> video_codecs,
+    std::span<const VideoCodecConfig> video_codecs,
     bool use_rtx,
     bool use_ulpfec,
     bool use_flexfec,
-    ArrayView<const RtpCodecCapability> supported_codecs) {
+    std::span<const RtpCodecCapability> supported_codecs) {
   std::vector<RtpCodecCapability> output_codecs;
   // Find requested codecs among supported and add them to output in the order
   // they were requested.
@@ -164,8 +165,8 @@ void SignalingInterceptor::FillSimulcastContext(
           info.rrid_extension = extension;
         }
       }
-      RTC_CHECK_NE(info.rid_extension.id, 0);
-      RTC_CHECK_NE(info.mid_extension.id, 0);
+      RTC_CHECK(info.rid_extension.id.IsSet());
+      RTC_CHECK(info.mid_extension.id.IsSet());
       bool transport_description_found = false;
       for (auto& transport_info : offer->description()->transport_infos()) {
         if (transport_info.content_name == info.mid) {
@@ -527,7 +528,7 @@ LocalAndRemoteSdp SignalingInterceptor::PatchVp9Answer(
 
 std::vector<std::unique_ptr<IceCandidate>>
 SignalingInterceptor::PatchOffererIceCandidates(
-    ArrayView<const IceCandidate* const> candidates) {
+    std::span<const IceCandidate* const> candidates) {
   std::vector<std::unique_ptr<IceCandidate>> out;
   for (auto* candidate : candidates) {
     auto simulcast_info_it =
@@ -551,7 +552,7 @@ SignalingInterceptor::PatchOffererIceCandidates(
 
 std::vector<std::unique_ptr<IceCandidate>>
 SignalingInterceptor::PatchAnswererIceCandidates(
-    ArrayView<const IceCandidate* const> candidates) {
+    std::span<const IceCandidate* const> candidates) {
   std::vector<std::unique_ptr<IceCandidate>> out;
   for (auto* candidate : candidates) {
     auto simulcast_info_it =

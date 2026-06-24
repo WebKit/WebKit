@@ -49,10 +49,10 @@
 #include "RenderInline.h"
 #include "RenderListBox.h"
 #include "RenderObjectDocument.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderSVGModelObject.h"
 #include "RenderTheme.h"
 #include "StyleBorderRadius.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
@@ -259,12 +259,12 @@ static bool NODELETE useShrinkWrappedFocusRingForOutlineStyleAuto()
 #endif
 }
 
-static void drawFocusRing(GraphicsContext& context, const Path& path, const RenderStyle& style, const Color& color)
+static void drawFocusRing(GraphicsContext& context, const Path& path, const Style::ComputedStyle& style, const Color& color)
 {
     context.drawFocusRing(path, Style::evaluate<float>(style.usedOutlineWidth(), Style::ZoomNeeded { }), color, style.usedZoom());
 }
 
-static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const RenderStyle& style, const Color& color)
+static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const Style::ComputedStyle& style, const Color& color)
 {
     context.drawFocusRing(rects, Style::evaluate<float>(style.usedOutlineWidth(), Style::ZoomNeeded { }), color, style.usedZoom());
 }

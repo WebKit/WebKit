@@ -62,7 +62,7 @@ auto Blending<ImageOrNone>::canBlend(const ImageOrNone& a, const ImageOrNone& b)
     return !a.isNone() && !b.isNone();
 }
 
-auto Blending<ImageOrNone>::blend(const ImageOrNone& a, const ImageOrNone& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> ImageOrNone
+auto Blending<ImageOrNone>::blend(const ImageOrNone& a, const ImageOrNone& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> ImageOrNone
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1.0);

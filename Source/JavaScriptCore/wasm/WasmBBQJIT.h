@@ -127,6 +127,8 @@ public:
 
         static Location NODELETE fromArgumentLocation(ArgumentLocation argLocation, TypeKind type);
 
+        static bool rangesOverlap(Location a, uint32_t aSize, Location b, uint32_t bSize);
+
         bool NODELETE isNone() const;
 
         bool NODELETE isGPR() const;
@@ -923,7 +925,7 @@ public:
         unsigned m_tryStart { 0 };
         unsigned m_tryEnd { 0 };
         unsigned m_tryCatchDepth { 0 };
-        Vector<TryTableTarget, 8> m_tryTableTargets;
+        TargetList m_tryTableTargets;
     };
 
     friend struct ControlData;
@@ -1983,7 +1985,7 @@ public:
 
     MacroAssembler::Label addLoopOSREntrypoint();
 
-    [[nodiscard]] PartialResult addBlock(BlockSignature&&, Stack& enclosingStack, ControlType& result, Stack& newStack);
+    [[nodiscard]] PartialResult addBlock(BlockSignature&&, std::span<TypedExpression> args, ControlType& result);
 
     B3::Type NODELETE toB3Type(Type);
 
@@ -1991,20 +1993,20 @@ public:
 
     B3::ValueRep toB3Rep(Location);
 
-    StackMap makeStackMap(const ControlData& data, Stack& enclosingStack);
+    StackMap makeStackMap(const ControlData&, std::span<const TypedExpression> enclosingStack);
 
-    void emitLoopTierUpCheckAndOSREntryData(const ControlData&, Stack& enclosingStack, unsigned loopIndex);
+    void emitLoopTierUpCheckAndOSREntryData(const ControlData&, std::span<const TypedExpression> enclosingStack, unsigned loopIndex);
 
-    [[nodiscard]] PartialResult addLoop(BlockSignature&&, Stack& enclosingStack, ControlType& result, Stack& newStack, uint32_t loopIndex);
+    [[nodiscard]] PartialResult addLoop(BlockSignature&&, std::span<TypedExpression> args, ControlType& result, uint32_t loopIndex);
 
-    [[nodiscard]] PartialResult addIf(Value condition, BlockSignature&&, Stack& enclosingStack, ControlData& result, Stack& newStack);
+    [[nodiscard]] PartialResult addIf(Value condition, BlockSignature&&, std::span<TypedExpression> args, ControlData& result);
 
-    [[nodiscard]] PartialResult addElse(ControlData& data, Stack& expressionStack);
+    [[nodiscard]] PartialResult addElse(ControlData& data, std::span<TypedExpression> ifBranchResults);
 
     [[nodiscard]] PartialResult addElseToUnreachable(ControlData& data);
 
-    [[nodiscard]] PartialResult addTry(BlockSignature&&, Stack& enclosingStack, ControlType& result, Stack& newStack);
-    [[nodiscard]] PartialResult addTryTable(BlockSignature&&, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
+    [[nodiscard]] PartialResult addTry(BlockSignature&&, std::span<TypedExpression> args, ControlType& result);
+    [[nodiscard]] PartialResult addTryTable(BlockSignature&&, std::span<TypedExpression> args, const Vector<CatchHandler>& targets, ControlType& result);
 
     void emitCatchPrologue();
 
@@ -2013,11 +2015,11 @@ public:
     void emitCatchImpl(ControlData& dataCatch, const RTT& exceptionSignature, ResultList& results);
     void emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTarget&);
 
-    [[nodiscard]] PartialResult addCatch(unsigned exceptionIndex, const RTT& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results);
+    [[nodiscard]] PartialResult addCatch(unsigned exceptionIndex, const RTT& exceptionSignature, std::span<TypedExpression> expressionStack, ControlType& data, ResultList& results);
 
     [[nodiscard]] PartialResult addCatchToUnreachable(unsigned exceptionIndex, const RTT& exceptionSignature, ControlType& data, ResultList& results);
 
-    [[nodiscard]] PartialResult addCatchAll(Stack& expressionStack, ControlType& data);
+    [[nodiscard]] PartialResult addCatchAll(std::span<TypedExpression> expressionStack, ControlType& data);
 
     [[nodiscard]] PartialResult addCatchAllToUnreachable(ControlType& data);
 
@@ -2025,31 +2027,33 @@ public:
 
     [[nodiscard]] PartialResult addDelegateToUnreachable(ControlType& target, ControlType& data);
 
-    [[nodiscard]] PartialResult addThrow(unsigned exceptionIndex, ArgumentList& arguments, Stack&);
+    [[nodiscard]] PartialResult addThrow(unsigned exceptionIndex, ArgumentList& arguments, std::span<TypedExpression>);
 
     [[nodiscard]] PartialResult addRethrow(unsigned, ControlType& data);
 
-    [[nodiscard]] PartialResult addThrowRef(ExpressionType exception, Stack&);
+    [[nodiscard]] PartialResult addThrowRef(ExpressionType exception, std::span<TypedExpression>);
 
     void prepareForExceptions();
 
-    [[nodiscard]] PartialResult addReturn(const ControlData& data, const Stack& returnValues);
+    [[nodiscard]] PartialResult addReturn(const ControlData& data, std::span<const TypedExpression> returnValues);
 
-    [[nodiscard]] PartialResult addBranch(ControlData& target, Value condition, Stack& results);
+    [[nodiscard]] PartialResult addBranch(ControlData& target, Value condition, std::span<TypedExpression> results);
 
-    [[nodiscard]] PartialResult addBranchNull(ControlData& data, ExpressionType reference, Stack& returnValues, bool shouldNegate, ExpressionType& result);
+    [[nodiscard]] PartialResult addBranchNull(ControlData& data, ExpressionType reference, std::span<TypedExpression> returnValues, bool shouldNegate, ExpressionType& result);
 
-    [[nodiscard]] PartialResult addBranchCast(ControlData& data, ExpressionType reference, Stack& returnValues, bool allowNull, int32_t heapType, bool shouldNegate);
+    [[nodiscard]] PartialResult addBranchCast(ControlData& data, ExpressionType reference, std::span<TypedExpression> returnValues, bool allowNull, int32_t heapType, bool shouldNegate);
 
-    [[nodiscard]] PartialResult addSwitch(Value condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, Stack& results);
+    [[nodiscard]] PartialResult addSwitch(Value condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, std::span<TypedExpression> results);
 
-    [[nodiscard]] PartialResult endBlock(ControlEntry& entry, Stack& stack);
+    [[nodiscard]] PartialResult endBlock(ControlEntry& entry, std::span<TypedExpression> enclosedStack);
 
-    [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry& entry, Stack& stack, bool unreachable = true);
+    [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry& entry, std::span<TypedExpression> enclosedStack);
+
+    [[nodiscard]] PartialResult addEndToUnreachableImpl(ControlEntry& entry, std::span<TypedExpression> enclosedStack, bool unreachable);
 
     int alignedFrameSize(int frameSize) const;
 
-    [[nodiscard]] PartialResult endTopLevel(const Stack&);
+    [[nodiscard]] PartialResult endTopLevel(std::span<const TypedExpression>);
 
     enum BranchFoldResult {
         BranchAlwaysTaken,
@@ -2062,10 +2066,10 @@ public:
     [[nodiscard]] BranchFoldResult tryFoldFusedBranchCompare(OpType, ExpressionType, ExpressionType);
     [[nodiscard]] Jump emitFusedBranchCompareBranch(OpType, ExpressionType, Location, ExpressionType, Location);
 
-    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType& target, ExpressionType, Stack&);
-    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType& target, ExpressionType, ExpressionType, Stack&);
-    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, Stack&, ControlType&, Stack&);
-    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, Stack&, ControlType&, Stack&);
+    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType& target, ExpressionType, std::span<TypedExpression>);
+    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType& target, ExpressionType, ExpressionType, std::span<TypedExpression>);
+    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, std::span<TypedExpression> args, ControlType&);
+    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, std::span<TypedExpression> args, ControlType&);
 
     // Flush a value to its canonical slot.
     void flushValue(Value value);

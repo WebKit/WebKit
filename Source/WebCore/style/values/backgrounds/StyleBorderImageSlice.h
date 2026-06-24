@@ -93,11 +93,11 @@ template<size_t I> const auto& get(const BorderImageSlice& value)
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderImageSlice> { auto operator()(const BorderImageSlice&, const RenderStyle&) -> CSS::BorderImageSlice; };
+template<> struct ToCSS<BorderImageSlice> { auto operator()(const BorderImageSlice&, const Style::ComputedStyle&) -> CSS::BorderImageSlice; };
 template<> struct ToStyle<CSS::BorderImageSlice> { auto operator()(const CSS::BorderImageSlice&, const BuilderState&) -> BorderImageSlice; };
 
 template<> struct CSSValueConversion<BorderImageSlice> { auto operator()(BuilderState&, const CSSValue&) -> BorderImageSlice; };
-template<> struct CSSValueCreation<BorderImageSlice> { auto operator()(CSSValuePool&, const RenderStyle&, const BorderImageSlice&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<BorderImageSlice> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const BorderImageSlice&) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 

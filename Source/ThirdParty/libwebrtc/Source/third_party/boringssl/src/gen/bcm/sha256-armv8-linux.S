@@ -1072,111 +1072,111 @@ sha256_block_data_order_hw:
 	orr	v19.16b,v1.16b,v1.16b
 	ld1	{v17.4s},[x3],#16
 	add	v16.4s,v16.4s,v4.4s
-.inst	0x5e2828a4	//sha256su0 v4.16b,v5.16b
+.inst	0x5e2828a4	//sha256su0 v4.4s,v5.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e104020	//sha256h v0.16b,v1.16b,v16.4s
-.inst	0x5e105041	//sha256h2 v1.16b,v2.16b,v16.4s
-.inst	0x5e0760c4	//sha256su1 v4.16b,v6.16b,v7.16b
+.inst	0x5e104020	//sha256h q0,q1,v16.4s
+.inst	0x5e105041	//sha256h2 q1,q2,v16.4s
+.inst	0x5e0760c4	//sha256su1 v4.4s,v6.4s,v7.4s
 	ld1	{v16.4s},[x3],#16
 	add	v17.4s,v17.4s,v5.4s
-.inst	0x5e2828c5	//sha256su0 v5.16b,v6.16b
+.inst	0x5e2828c5	//sha256su0 v5.4s,v6.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e114020	//sha256h v0.16b,v1.16b,v17.4s
-.inst	0x5e115041	//sha256h2 v1.16b,v2.16b,v17.4s
-.inst	0x5e0460e5	//sha256su1 v5.16b,v7.16b,v4.16b
+.inst	0x5e114020	//sha256h q0,q1,v17.4s
+.inst	0x5e115041	//sha256h2 q1,q2,v17.4s
+.inst	0x5e0460e5	//sha256su1 v5.4s,v7.4s,v4.4s
 	ld1	{v17.4s},[x3],#16
 	add	v16.4s,v16.4s,v6.4s
-.inst	0x5e2828e6	//sha256su0 v6.16b,v7.16b
+.inst	0x5e2828e6	//sha256su0 v6.4s,v7.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e104020	//sha256h v0.16b,v1.16b,v16.4s
-.inst	0x5e105041	//sha256h2 v1.16b,v2.16b,v16.4s
-.inst	0x5e056086	//sha256su1 v6.16b,v4.16b,v5.16b
+.inst	0x5e104020	//sha256h q0,q1,v16.4s
+.inst	0x5e105041	//sha256h2 q1,q2,v16.4s
+.inst	0x5e056086	//sha256su1 v6.4s,v4.4s,v5.4s
 	ld1	{v16.4s},[x3],#16
 	add	v17.4s,v17.4s,v7.4s
-.inst	0x5e282887	//sha256su0 v7.16b,v4.16b
+.inst	0x5e282887	//sha256su0 v7.4s,v4.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e114020	//sha256h v0.16b,v1.16b,v17.4s
-.inst	0x5e115041	//sha256h2 v1.16b,v2.16b,v17.4s
-.inst	0x5e0660a7	//sha256su1 v7.16b,v5.16b,v6.16b
+.inst	0x5e114020	//sha256h q0,q1,v17.4s
+.inst	0x5e115041	//sha256h2 q1,q2,v17.4s
+.inst	0x5e0660a7	//sha256su1 v7.4s,v5.4s,v6.4s
 	ld1	{v17.4s},[x3],#16
 	add	v16.4s,v16.4s,v4.4s
-.inst	0x5e2828a4	//sha256su0 v4.16b,v5.16b
+.inst	0x5e2828a4	//sha256su0 v4.4s,v5.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e104020	//sha256h v0.16b,v1.16b,v16.4s
-.inst	0x5e105041	//sha256h2 v1.16b,v2.16b,v16.4s
-.inst	0x5e0760c4	//sha256su1 v4.16b,v6.16b,v7.16b
+.inst	0x5e104020	//sha256h q0,q1,v16.4s
+.inst	0x5e105041	//sha256h2 q1,q2,v16.4s
+.inst	0x5e0760c4	//sha256su1 v4.4s,v6.4s,v7.4s
 	ld1	{v16.4s},[x3],#16
 	add	v17.4s,v17.4s,v5.4s
-.inst	0x5e2828c5	//sha256su0 v5.16b,v6.16b
+.inst	0x5e2828c5	//sha256su0 v5.4s,v6.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e114020	//sha256h v0.16b,v1.16b,v17.4s
-.inst	0x5e115041	//sha256h2 v1.16b,v2.16b,v17.4s
-.inst	0x5e0460e5	//sha256su1 v5.16b,v7.16b,v4.16b
+.inst	0x5e114020	//sha256h q0,q1,v17.4s
+.inst	0x5e115041	//sha256h2 q1,q2,v17.4s
+.inst	0x5e0460e5	//sha256su1 v5.4s,v7.4s,v4.4s
 	ld1	{v17.4s},[x3],#16
 	add	v16.4s,v16.4s,v6.4s
-.inst	0x5e2828e6	//sha256su0 v6.16b,v7.16b
+.inst	0x5e2828e6	//sha256su0 v6.4s,v7.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e104020	//sha256h v0.16b,v1.16b,v16.4s
-.inst	0x5e105041	//sha256h2 v1.16b,v2.16b,v16.4s
-.inst	0x5e056086	//sha256su1 v6.16b,v4.16b,v5.16b
+.inst	0x5e104020	//sha256h q0,q1,v16.4s
+.inst	0x5e105041	//sha256h2 q1,q2,v16.4s
+.inst	0x5e056086	//sha256su1 v6.4s,v4.4s,v5.4s
 	ld1	{v16.4s},[x3],#16
 	add	v17.4s,v17.4s,v7.4s
-.inst	0x5e282887	//sha256su0 v7.16b,v4.16b
+.inst	0x5e282887	//sha256su0 v7.4s,v4.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e114020	//sha256h v0.16b,v1.16b,v17.4s
-.inst	0x5e115041	//sha256h2 v1.16b,v2.16b,v17.4s
-.inst	0x5e0660a7	//sha256su1 v7.16b,v5.16b,v6.16b
+.inst	0x5e114020	//sha256h q0,q1,v17.4s
+.inst	0x5e115041	//sha256h2 q1,q2,v17.4s
+.inst	0x5e0660a7	//sha256su1 v7.4s,v5.4s,v6.4s
 	ld1	{v17.4s},[x3],#16
 	add	v16.4s,v16.4s,v4.4s
-.inst	0x5e2828a4	//sha256su0 v4.16b,v5.16b
+.inst	0x5e2828a4	//sha256su0 v4.4s,v5.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e104020	//sha256h v0.16b,v1.16b,v16.4s
-.inst	0x5e105041	//sha256h2 v1.16b,v2.16b,v16.4s
-.inst	0x5e0760c4	//sha256su1 v4.16b,v6.16b,v7.16b
+.inst	0x5e104020	//sha256h q0,q1,v16.4s
+.inst	0x5e105041	//sha256h2 q1,q2,v16.4s
+.inst	0x5e0760c4	//sha256su1 v4.4s,v6.4s,v7.4s
 	ld1	{v16.4s},[x3],#16
 	add	v17.4s,v17.4s,v5.4s
-.inst	0x5e2828c5	//sha256su0 v5.16b,v6.16b
+.inst	0x5e2828c5	//sha256su0 v5.4s,v6.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e114020	//sha256h v0.16b,v1.16b,v17.4s
-.inst	0x5e115041	//sha256h2 v1.16b,v2.16b,v17.4s
-.inst	0x5e0460e5	//sha256su1 v5.16b,v7.16b,v4.16b
+.inst	0x5e114020	//sha256h q0,q1,v17.4s
+.inst	0x5e115041	//sha256h2 q1,q2,v17.4s
+.inst	0x5e0460e5	//sha256su1 v5.4s,v7.4s,v4.4s
 	ld1	{v17.4s},[x3],#16
 	add	v16.4s,v16.4s,v6.4s
-.inst	0x5e2828e6	//sha256su0 v6.16b,v7.16b
+.inst	0x5e2828e6	//sha256su0 v6.4s,v7.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e104020	//sha256h v0.16b,v1.16b,v16.4s
-.inst	0x5e105041	//sha256h2 v1.16b,v2.16b,v16.4s
-.inst	0x5e056086	//sha256su1 v6.16b,v4.16b,v5.16b
+.inst	0x5e104020	//sha256h q0,q1,v16.4s
+.inst	0x5e105041	//sha256h2 q1,q2,v16.4s
+.inst	0x5e056086	//sha256su1 v6.4s,v4.4s,v5.4s
 	ld1	{v16.4s},[x3],#16
 	add	v17.4s,v17.4s,v7.4s
-.inst	0x5e282887	//sha256su0 v7.16b,v4.16b
+.inst	0x5e282887	//sha256su0 v7.4s,v4.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e114020	//sha256h v0.16b,v1.16b,v17.4s
-.inst	0x5e115041	//sha256h2 v1.16b,v2.16b,v17.4s
-.inst	0x5e0660a7	//sha256su1 v7.16b,v5.16b,v6.16b
+.inst	0x5e114020	//sha256h q0,q1,v17.4s
+.inst	0x5e115041	//sha256h2 q1,q2,v17.4s
+.inst	0x5e0660a7	//sha256su1 v7.4s,v5.4s,v6.4s
 	ld1	{v17.4s},[x3],#16
 	add	v16.4s,v16.4s,v4.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e104020	//sha256h v0.16b,v1.16b,v16.4s
-.inst	0x5e105041	//sha256h2 v1.16b,v2.16b,v16.4s
+.inst	0x5e104020	//sha256h q0,q1,v16.4s
+.inst	0x5e105041	//sha256h2 q1,q2,v16.4s
 
 	ld1	{v16.4s},[x3],#16
 	add	v17.4s,v17.4s,v5.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e114020	//sha256h v0.16b,v1.16b,v17.4s
-.inst	0x5e115041	//sha256h2 v1.16b,v2.16b,v17.4s
+.inst	0x5e114020	//sha256h q0,q1,v17.4s
+.inst	0x5e115041	//sha256h2 q1,q2,v17.4s
 
 	ld1	{v17.4s},[x3]
 	add	v16.4s,v16.4s,v6.4s
 	sub	x3,x3,#64*4-16	// rewind
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e104020	//sha256h v0.16b,v1.16b,v16.4s
-.inst	0x5e105041	//sha256h2 v1.16b,v2.16b,v16.4s
+.inst	0x5e104020	//sha256h q0,q1,v16.4s
+.inst	0x5e105041	//sha256h2 q1,q2,v16.4s
 
 	add	v17.4s,v17.4s,v7.4s
 	orr	v2.16b,v0.16b,v0.16b
-.inst	0x5e114020	//sha256h v0.16b,v1.16b,v17.4s
-.inst	0x5e115041	//sha256h2 v1.16b,v2.16b,v17.4s
+.inst	0x5e114020	//sha256h q0,q1,v17.4s
+.inst	0x5e115041	//sha256h2 q1,q2,v17.4s
 
 	add	v0.4s,v0.4s,v18.4s
 	add	v1.4s,v1.4s,v19.4s

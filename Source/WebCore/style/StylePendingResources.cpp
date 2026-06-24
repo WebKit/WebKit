@@ -29,9 +29,10 @@
 #include "CSSCursorImageValue.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
-#include "RenderStyle+GettersInlines.h"
+#include "NodeInlinesLight.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleCursor.h"
 #include "StyleImage.h"
 
@@ -66,10 +67,10 @@ static void loadPendingImage(Document& document, const Image* image, const Eleme
         }
     }
 
-    const_cast<Image&>(*image).load(document.cachedResourceLoader(), options);
+    const_cast<Image&>(*image).load(protect(document.cachedResourceLoader()), options);
 }
 
-void loadPendingResources(RenderStyle& style, Document& document, const Element* element)
+void loadPendingResources(Style::ComputedStyle& style, Document& document, const Element* element)
 {
     for (auto& backgroundLayer : style.backgroundLayers().usedValues())
         loadPendingImage(document, backgroundLayer.image().tryStyleImage().get(), element);
@@ -107,7 +108,7 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
         loadPendingImage(document, shapeValueImage.get(), element, LoadPolicy::Anonymous);
 
     // Are there other pseudo-elements that need resource loading? 
-    if (CheckedPtr firstLineStyle = style.getCachedPseudoStyle({ PseudoElementType::FirstLine }))
+    if (CheckedPtr firstLineStyle = style.pseudoElementStyle({ PseudoElementType::FirstLine }))
         loadPendingResources(*firstLineStyle, document, element);
 }
 

@@ -31,7 +31,7 @@ class RenderSVGTSpan final : public RenderSVGInline {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGTSpan);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGTSpan);
 public:
-    explicit RenderSVGTSpan(SVGTextPositioningElement& element, RenderStyle&& style)
+    explicit RenderSVGTSpan(SVGTextPositioningElement& element, Style::ComputedStyle&& style)
         : RenderSVGInline(Type::SVGTSpan, element, WTF::move(style))
     {
         ASSERT(isRenderSVGTSpan());

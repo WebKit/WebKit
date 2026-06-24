@@ -44,8 +44,6 @@ static int do_indent(BIO *out, int indent) {
 static int do_name_ex(BIO *out, const X509_NAME *n, int indent,
                       unsigned long flags) {
   int prev = -1, orflags;
-  char objtmp[80];
-  const char *objbuf;
   int outlen, len;
   const char *sep_dn, *sep_mv, *sep_eq;
   int sep_dn_len, sep_mv_len, sep_eq_len;
@@ -129,12 +127,16 @@ static int do_name_ex(BIO *out, const X509_NAME *n, int indent,
     const ASN1_OBJECT *fn = X509_NAME_ENTRY_get_object(ent);
     const ASN1_STRING *val = X509_NAME_ENTRY_get_data(ent);
     assert((flags & XN_FLAG_FN_MASK) == XN_FLAG_FN_SN);
+    // Print the short name if available, othewise serialize the OID.
+    char objtmp[80];
+    const char *objbuf = nullptr;
     int fn_nid = OBJ_obj2nid(fn);
-    if (fn_nid == NID_undef) {
-      OBJ_obj2txt(objtmp, sizeof(objtmp), fn, 1);
-      objbuf = objtmp;
-    } else {
+    if (fn_nid != NID_undef) {
       objbuf = OBJ_nid2sn(fn_nid);
+    }
+    if (objbuf == nullptr) {
+      OBJ_obj2txt(objtmp, sizeof(objtmp), fn, /*always_return_oid=*/1);
+      objbuf = objtmp;
     }
     int objlen = strlen(objbuf);
     if (!maybe_write(out, objbuf, objlen) ||

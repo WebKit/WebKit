@@ -37,7 +37,6 @@ namespace WebCore {
 
 class AudioTrackClient;
 class AudioTrackConfiguration;
-class AudioTrackList;
 
 class AudioTrack final : public MediaTrackBase, private AudioTrackPrivateClient {
     WTF_MAKE_TZONE_ALLOCATED(AudioTrack);
@@ -97,7 +96,6 @@ private:
     ASCIILiteral logClassName() const final { return "AudioTrack"_s; }
 #endif
 
-    WeakPtr<AudioTrackList> m_audioTrackList;
     WeakHashSet<AudioTrackClient> m_clients;
     Ref<AudioTrackPrivate> m_private;
     bool m_enabled { false };

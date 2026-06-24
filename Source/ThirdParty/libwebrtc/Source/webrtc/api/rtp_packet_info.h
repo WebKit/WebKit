@@ -23,6 +23,8 @@
 
 namespace webrtc {
 
+class RtpPacketReceived;
+
 //
 // Structure to hold information about a received `RtpPacket`. It is primarily
 // used to carry per-packet information from when a packet is received until
@@ -32,11 +34,17 @@ class RTC_EXPORT RtpPacketInfo {
  public:
   RtpPacketInfo();
 
+  explicit RtpPacketInfo(const RtpPacketReceived& rtp_packet);
+
+  // TODO: bugs.webrtc.org/42225366 - The constructor will be deprecated. Use
+  // RtpPacketInfo(const RtpPacketReceived& rtp_packet).
   RtpPacketInfo(uint32_t ssrc,
                 std::vector<uint32_t> csrcs,
                 uint32_t rtp_timestamp,
                 Timestamp receive_time);
 
+  // TODO: bugs.webrtc.org/42225366 - The constructor will be deprecated. Use
+  // RtpPacketInfo(const RtpPacketReceived& rtp_packet).
   RtpPacketInfo(const RTPHeader& rtp_header, Timestamp receive_time);
 
   RtpPacketInfo(const RtpPacketInfo& other) = default;
@@ -46,6 +54,9 @@ class RTC_EXPORT RtpPacketInfo {
 
   uint32_t ssrc() const { return ssrc_; }
   void set_ssrc(uint32_t value) { ssrc_ = value; }
+
+  uint16_t sequence_number() const { return sequence_number_; }
+  void set_sequence_number(uint16_t value) { sequence_number_ = value; }
 
   const std::vector<uint32_t>& csrcs() const { return csrcs_; }
   void set_csrcs(std::vector<uint32_t> value) { csrcs_ = std::move(value); }
@@ -80,9 +91,12 @@ class RTC_EXPORT RtpPacketInfo {
     return *this;
   }
 
+  friend bool operator==(const RtpPacketInfo& lhs, const RtpPacketInfo& rhs);
+
  private:
   // Fields from the RTP header:
   // https://tools.ietf.org/html/rfc3550#section-5.1
+  uint16_t sequence_number_;
   uint32_t ssrc_;
   std::vector<uint32_t> csrcs_;
   uint32_t rtp_timestamp_;
@@ -105,12 +119,6 @@ class RTC_EXPORT RtpPacketInfo {
   //   Capture's NTP Clock = Local NTP Clock + Local-Capture Clock Offset
   std::optional<TimeDelta> local_capture_clock_offset_;
 };
-
-bool operator==(const RtpPacketInfo& lhs, const RtpPacketInfo& rhs);
-
-inline bool operator!=(const RtpPacketInfo& lhs, const RtpPacketInfo& rhs) {
-  return !(lhs == rhs);
-}
 
 }  // namespace webrtc
 

@@ -28,7 +28,7 @@
 
 #if ENABLE(TEXT_AUTOSIZING)
 
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -38,24 +38,24 @@ namespace WebCore {
 class Text;
 class TextAutoSizingValue;
 
-// FIXME: We can probably get rid of this class entirely and use std::unique_ptr<RenderStyle> as key
+// FIXME: We can probably get rid of this class entirely and use std::unique_ptr<Style::ComputedStyle> as key
 // as long as we use the right hash traits.
 class TextAutoSizingKey {
 public:
     TextAutoSizingKey() = default;
     enum DeletedTag { Deleted };
     explicit TextAutoSizingKey(DeletedTag);
-    TextAutoSizingKey(const RenderStyle&, unsigned hash);
+    TextAutoSizingKey(const Style::ComputedStyle&, unsigned hash);
 
-    const RenderStyle* style() const LIFETIME_BOUND { ASSERT(!isDeleted()); return m_style.get(); }
-    bool isDeleted() const { return HashTraits<std::unique_ptr<RenderStyle>>::isDeletedValue(m_style); }
+    const Style::ComputedStyle* style() const LIFETIME_BOUND { ASSERT(!isDeleted()); return m_style.get(); }
+    bool isDeleted() const { return HashTraits<std::unique_ptr<Style::ComputedStyle>>::isDeletedValue(m_style); }
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
     unsigned hash() const { return m_hash; }
     bool operator==(const TextAutoSizingKey&) const;
 
 private:
-    std::unique_ptr<RenderStyle> m_style;
+    std::unique_ptr<Style::ComputedStyle> m_style;
     unsigned m_hash { 0 };
 };
 

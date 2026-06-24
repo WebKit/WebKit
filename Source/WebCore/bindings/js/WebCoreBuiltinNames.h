@@ -700,6 +700,7 @@ namespace WebCore {
     macro(onvrdisplaypresentchange) \
     macro(openDatabase) \
     macro(opener) \
+    macro(originAgentCluster) \
     macro(operations) \
     macro(ownerReadableStream) \
     macro(parent) \

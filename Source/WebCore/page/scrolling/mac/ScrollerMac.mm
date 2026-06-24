@@ -40,6 +40,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 
 enum class FeatureToAnimate {
     KnobAlpha,
@@ -49,7 +50,7 @@ enum class FeatureToAnimate {
 };
 
 @interface WebScrollbarPartAnimationMac : NSAnimation {
-    CheckedPtr<WebCore::ScrollerMac> _scroller;
+    ThreadSafeWeakPtr<WebCore::ScrollerMac> _scroller;
     FeatureToAnimate _featureToAnimate;
     CGFloat _startValue;
     CGFloat _endValue;
@@ -77,7 +78,7 @@ enum class FeatureToAnimate {
 
 - (void)startAnimation
 {
-    ASSERT(_scroller);
+    ASSERT(_scroller.get());
 
     [super startAnimation];
 }
@@ -96,13 +97,17 @@ enum class FeatureToAnimate {
 {
     [super setCurrentProgress:progress];
 
+    RefPtr scroller = _scroller.get();
+    if (!scroller)
+        return;
+
     CGFloat currentValue;
     if (_startValue > _endValue)
         currentValue = 1 - progress;
     else
         currentValue = progress;
 
-    CheckedPtr { _scroller }->updateProgress(_featureToAnimate, currentValue);
+    scroller->updateProgress(_featureToAnimate, currentValue);
 }
 
 - (void)invalidate
@@ -116,7 +121,7 @@ enum class FeatureToAnimate {
 @end
 
 @interface WebScrollerImpDelegateMac : NSObject<NSAnimationDelegate, NSScrollerImpDelegate> {
-    CheckedPtr<WebCore::ScrollerMac> _scroller;
+    ThreadSafeWeakPtr<WebCore::ScrollerMac> _scroller;
 
     RetainPtr<WebScrollbarPartAnimationMac> _knobAlphaAnimation;
     RetainPtr<WebScrollbarPartAnimationMac> _trackAlphaAnimation;
@@ -166,12 +171,13 @@ enum class FeatureToAnimate {
 
 - (NSPoint)mouseLocationInScrollerForScrollerImp:(NSScrollerImp *)scrollerImp
 {
-    if (!_scroller)
+    RefPtr scroller = _scroller.get();
+    if (!scroller)
         return NSZeroPoint;
 
-    ASSERT(_scroller->isScrollerFor(scrollerImp));
+    ASSERT(scroller->isScrollerFor(scrollerImp));
 
-    return CheckedPtr { _scroller }->lastKnownMousePositionInScrollbar();
+    return scroller->lastKnownMousePositionInScrollbar();
 }
 
 - (NSRect)convertRectToLayer:(NSRect)rect
@@ -190,11 +196,15 @@ enum class FeatureToAnimate {
 {
     UNUSED_PARAM(scrollerImp);
 
-    if (!_scroller)
+    RefPtr scroller = _scroller.get();
+    if (!scroller)
+        return [NSAppearance currentDrawingAppearance];
+    RefPtr pair = scroller->pair();
+    if (!pair)
         return [NSAppearance currentDrawingAppearance];
     // The base system does not support dark Aqua, so we might get a null result.
     // FIXME: This is a static analysis false positive.
-    SUPPRESS_UNRETAINED_ARG if (auto *appearance = [NSAppearance appearanceNamed:_scroller->pair()->useDarkAppearance() ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
+    SUPPRESS_UNRETAINED_ARG if (auto *appearance = [NSAppearance appearanceNamed:pair->useDarkAppearance() ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
         return appearance;
     return [NSAppearance currentDrawingAppearance];
 }
@@ -207,7 +217,9 @@ enum class FeatureToAnimate {
         scrollbarPartAnimation = nil;
     }
 
-    CheckedPtr scroller = _scroller;
+    RefPtr scroller = _scroller.get();
+    if (!scroller)
+        return;
     CGFloat currentAlpha = featureToAnimate == FeatureToAnimate::KnobAlpha ? scroller->knobAlpha() : scroller->trackAlpha();
 
     scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:scroller.get()
@@ -220,35 +232,38 @@ enum class FeatureToAnimate {
 
 - (void)scrollerImp:(NSScrollerImp *)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration
 {
-    if (!_scroller)
+    RefPtr scroller = _scroller.get();
+    if (!scroller)
         return;
 
-    ASSERT(_scroller->isScrollerFor(scrollerImp));
-    CheckedPtr { _scroller }->visibilityChanged(newKnobAlpha > 0);
+    ASSERT(scroller->isScrollerFor(scrollerImp));
+    scroller->visibilityChanged(newKnobAlpha > 0);
     [self setUpAlphaAnimation:_knobAlphaAnimation featureToAnimate:FeatureToAnimate::KnobAlpha animateAlphaTo:newKnobAlpha duration:duration];
 }
 
 - (void)scrollerImp:(NSScrollerImp *)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration
 {
-    if (!_scroller)
+    RefPtr scroller = _scroller.get();
+    if (!scroller)
         return;
 
-    ASSERT(_scroller->isScrollerFor(scrollerImp));
+    ASSERT(scroller->isScrollerFor(scrollerImp));
     [self setUpAlphaAnimation:_trackAlphaAnimation featureToAnimate:FeatureToAnimate::TrackAlpha animateAlphaTo:newTrackAlpha duration:duration];
 }
 
 - (void)scrollerImp:(NSScrollerImp *)scrollerImp animateUIStateTransitionWithDuration:(NSTimeInterval)duration
 {
-    if (!_scroller)
+    RefPtr scroller = _scroller.get();
+    if (!scroller)
         return;
 
-    ASSERT(_scroller->isScrollerFor(scrollerImp));
+    ASSERT(scroller->isScrollerFor(scrollerImp));
 
     // UIStateTransition always animates to 1. In case an animation is in progress this avoids a hard transition.
     [scrollerImp setUiStateTransitionProgress:1 - [scrollerImp uiStateTransitionProgress]];
 
     if (!_uiStateTransitionAnimation) {
-        _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:_scroller.get()
+        _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:scroller.get()
             featureToAnimate:FeatureToAnimate::UIStateTransition
             animateFrom:[scrollerImp uiStateTransitionProgress]
             animateTo:1.0
@@ -264,16 +279,17 @@ enum class FeatureToAnimate {
 
 - (void)scrollerImp:(NSScrollerImp *)scrollerImp animateExpansionTransitionWithDuration:(NSTimeInterval)duration
 {
-    if (!_scroller)
+    RefPtr scroller = _scroller.get();
+    if (!scroller)
         return;
 
-    ASSERT(_scroller->isScrollerFor(scrollerImp));
+    ASSERT(scroller->isScrollerFor(scrollerImp));
 
     // ExpansionTransition always animates to 1. In case an animation is in progress this avoids a hard transition.
     [scrollerImp setExpansionTransitionProgress:1 - [scrollerImp expansionTransitionProgress]];
 
     if (!_expansionTransitionAnimation) {
-        _expansionTransitionAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:_scroller.get()
+        _expansionTransitionAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:scroller.get()
             featureToAnimate:FeatureToAnimate::ExpansionTransition
             animateFrom:[scrollerImp expansionTransitionProgress]
             animateTo:1.0
@@ -295,7 +311,7 @@ enum class FeatureToAnimate {
 
 - (void)invalidate
 {
-    _scroller = nil;
+    _scroller = nullptr;
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [_knobAlphaAnimation invalidate];
     [_trackAlphaAnimation invalidate];
@@ -308,6 +324,13 @@ enum class FeatureToAnimate {
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollerMac);
+
+Ref<ScrollerMac> ScrollerMac::create(ScrollerPairMac& pair, ScrollbarOrientation orientation)
+{
+    return adoptRef(*new ScrollerMac(pair, orientation));
+}
+
 ScrollerMac::ScrollerMac(ScrollerPairMac& pair, ScrollbarOrientation orientation)
     : m_pair(pair)
     , m_orientation(orientation)
@@ -316,6 +339,7 @@ ScrollerMac::ScrollerMac(ScrollerPairMac& pair, ScrollbarOrientation orientation
 
 ScrollerMac::~ScrollerMac()
 {
+    ASSERT(isMainThread());
     [m_scrollerImpDelegate invalidate];
 }
 
@@ -464,7 +488,7 @@ IntPoint ScrollerMac::lastKnownMousePositionInScrollbar() const
     // When we dont have an update from the Web Process, return
     // a point outside of the scrollbars
     RefPtr pair = m_pair.get();
-    if (!pair->mouseInContentArea())
+    if (!pair || !pair->mouseInContentArea())
         return { -1, -1 };
     return m_lastKnownMousePositionInScrollbar;
 }
@@ -476,6 +500,8 @@ void ScrollerMac::visibilityChanged(bool isVisible)
     m_isVisible = isVisible;
 
     RefPtr pair = m_pair.get();
+    if (!pair)
+        return;
     if (RefPtr node = pair->node())
         node->scrollbarVisibilityDidChange(m_orientation, isVisible);
 }
@@ -487,6 +513,8 @@ void ScrollerMac::updateMinimumKnobLength(int minimumKnobLength)
     m_minimumKnobLength = minimumKnobLength;
 
     RefPtr pair = m_pair.get();
+    if (!pair)
+        return;
     if (RefPtr node = pair->node())
         node->scrollbarMinimumThumbLengthDidChange(m_orientation, m_minimumKnobLength);
 }

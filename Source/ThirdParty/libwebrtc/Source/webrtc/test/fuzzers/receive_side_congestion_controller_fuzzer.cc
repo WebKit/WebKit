@@ -12,21 +12,20 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "api/array_view.h"
 #include "api/environment/environment_factory.h"
 #include "api/media_types.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "system_wrappers/include/clock.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
   Timestamp arrival_time = Timestamp::Micros(123'456'789);
   SimulatedClock clock(arrival_time);
   ReceiveSideCongestionController cc(
@@ -41,17 +40,12 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   RtpPacketReceived rtp_packet(&extensions);
 
   constexpr int kMinPacketSize = sizeof(uint16_t) + sizeof(uint8_t) + 12;
-  const uint8_t* const end_data = data + size;
-  while (end_data - data >= kMinPacketSize) {
-    size_t packet_size = ByteReader<uint16_t>::ReadBigEndian(data) % 1500;
-    data += sizeof(uint16_t);
-    arrival_time += TimeDelta::Millis(ByteReader<uint8_t>::ReadBigEndian(data));
-    data += sizeof(uint8_t);
-    packet_size = std::min<size_t>(end_data - data, packet_size);
-    auto raw_packet = webrtc::MakeArrayView(data, packet_size);
-    data += packet_size;
+  while (fuzz_data.BytesLeft() >= kMinPacketSize) {
+    size_t packet_size = fuzz_data.Read<uint16_t>() % 1500;
+    arrival_time += TimeDelta::Millis(fuzz_data.Read<uint8_t>());
+    packet_size = std::min<size_t>(fuzz_data.BytesLeft(), packet_size);
 
-    if (!rtp_packet.Parse(raw_packet)) {
+    if (!rtp_packet.Parse(fuzz_data.ReadByteArray(packet_size))) {
       continue;
     }
     rtp_packet.set_arrival_time(arrival_time);

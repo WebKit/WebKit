@@ -24,13 +24,14 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 static const struct argument kArguments[] = {
+    {"-hex", kBooleanArgument, "Hex encoded output."},
     {
-     "-hex", kBooleanArgument,
-     "Hex encoded output."
-    },
-    {
-     "", kOptionalArgument, "",
+        "",
+        kOptionalArgument,
+        "",
     },
 };
 
@@ -94,3 +95,5 @@ bool Rand(const std::vector<std::string> &args) {
 
   return true;
 }
+
+BSSL_NAMESPACE_END

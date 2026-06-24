@@ -183,7 +183,7 @@ bool FileInputType::allowsShowPickerAcrossFrames()
     return true;
 }
 
-RenderPtr<RenderElement> FileInputType::createInputRenderer(RenderStyle&& style)
+RenderPtr<RenderElement> FileInputType::createInputRenderer(Style::ComputedStyle&& style)
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
@@ -230,7 +230,7 @@ void FileInputType::createShadowSubtree()
     ASSERT(element()->shadowRoot());
 
     Ref element = *this->element();
-    Ref button = HTMLInputElement::create(inputTag, protect(element->document()), nullptr, false);
+    Ref button = HTMLInputElement::create(inputTag, protect(element->document()), false);
     {
         ScriptDisallowedScope::EventAllowedScope eventAllowedScopeBeforeAppend { button };
         button->setAttributeWithoutSynchronization(typeAttr, InputTypeNames::button());

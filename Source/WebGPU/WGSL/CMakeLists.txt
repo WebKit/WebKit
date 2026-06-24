@@ -44,44 +44,9 @@ add_custom_target(wgsl-types
     ALL
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/TypeDeclarations.h ${CMAKE_CURRENT_BINARY_DIR}/TypeOverloads.h)
 
-set(WGSLCore_SOURCES
-    AliasAnalysis.cpp
-    AttributeValidator.cpp
-    BoundsCheck.cpp
-    CallGraph.cpp
-    CompilationMessage.cpp
-    CompilationScope.cpp
-    ConstantValue.cpp
-    Constraints.cpp
-    EntryPointRewriter.cpp
-    GlobalSorting.cpp
-    GlobalVariableRewriter.cpp
-    IOValidator.cpp
-    Lexer.cpp
-    MangleNames.cpp
-    Overload.cpp
-    Parser.cpp
-    PointerRewriter.cpp
-    Token.cpp
-    TypeCheck.cpp
-    TypeStore.cpp
-    Types.cpp
-    UniformityAnalysis.cpp
-    VisibilityValidator.cpp
-    WGSL.cpp
-    WGSLEnums.cpp
-    WGSLShaderModule.cpp
-
-    AST/ASTBinaryExpression.cpp
-    AST/ASTBuilder.cpp
-    AST/ASTDecrementIncrementStatement.cpp
-    AST/ASTStringDumper.cpp
-    AST/ASTUnaryExpression.cpp
-    AST/ASTVisitor.cpp
-
-    Metal/MetalCodeGenerator.cpp
-    Metal/MetalFunctionWriter.cpp
-    )
+list(APPEND WGSLCore_UNIFIED_SOURCE_LIST_FILES
+    "Sources.txt"
+)
 
 set(wgslc_HEADERS
     AliasAnalysis.h
@@ -197,6 +162,7 @@ set(wgslc_HEADERS
     )
 
 # WGSLCore static library -- shared between wgslc and TestWGSL.
+WEBKIT_COMPUTE_SOURCES(WGSLCore)
 add_library(WGSLCore STATIC ${WGSLCore_SOURCES})
 WEBKIT_ADD_PREFIX_HEADER(WGSLCore WGSLPrefix.h PREFIX_LANGUAGES CXX)
 target_include_directories(WGSLCore PUBLIC

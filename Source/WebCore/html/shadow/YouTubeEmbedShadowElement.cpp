@@ -45,7 +45,7 @@ YouTubeEmbedShadowElement::YouTubeEmbedShadowElement(Document& document)
 {
 }
 
-RenderPtr<RenderElement> YouTubeEmbedShadowElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> YouTubeEmbedShadowElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *this, WTF::move(style));
 }

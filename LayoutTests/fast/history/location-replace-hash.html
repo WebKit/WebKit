@@ -1,5 +1,5 @@
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -13,10 +13,6 @@ var testWindow;
 
 onload = function()
 {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
 
     testWindow = window.open('resources/location-replace-hash-1.html');
     if (!testWindow)
@@ -62,5 +58,4 @@ function onTestWindowNavigation(pageId)
     }
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>

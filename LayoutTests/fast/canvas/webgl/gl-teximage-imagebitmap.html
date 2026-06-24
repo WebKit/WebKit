@@ -10,6 +10,7 @@
 <canvas id="example"></canvas>
 <div id="description"></div>
 <script>
+window.jsTestIsAsync = true;
 function loadImage(url) {
   return new Promise((resolve, reject) => {
     var img = document.createElement('img');
@@ -129,9 +130,8 @@ async function test() {
   checkPixel(buf, width, right,  bottom, [255,   0,   0, 255]);
 }
 
-window.testRunner.waitUntilDone();
 test().then(() => {
-  window.testRunner.notifyDone();
+  finishJSTest();
 }, e => {
   testFailed(String(e));
 });

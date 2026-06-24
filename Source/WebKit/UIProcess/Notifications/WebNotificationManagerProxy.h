@@ -26,7 +26,6 @@
 #pragma once
 
 #include "APIObject.h"
-#include "MessageReceiver.h"
 #include "WebContextSupplement.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/NotificationClient.h>

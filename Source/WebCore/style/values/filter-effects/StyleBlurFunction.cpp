@@ -48,7 +48,7 @@ IntOutsets Blur::calculateOutsets(ZoomFactor) const
 
 // MARK: - Conversion
 
-auto ToCSS<Blur>::operator()(const Blur& value, const RenderStyle& style) -> CSS::Blur
+auto ToCSS<Blur>::operator()(const Blur& value, const Style::ComputedStyle& style) -> CSS::Blur
 {
     return { .value = toCSS(value.value, style) };
 }
@@ -62,7 +62,7 @@ auto ToStyle<CSS::Blur>::operator()(const CSS::Blur& value, const BuilderState& 
 
 // MARK: - Evaluation
 
-auto Evaluation<Blur, Ref<FilterEffect>>::operator()(const Blur& value, const RenderStyle&) -> Ref<FilterEffect>
+auto Evaluation<Blur, Ref<FilterEffect>>::operator()(const Blur& value, const Style::ComputedStyle&) -> Ref<FilterEffect>
 {
     auto stdDeviation = evaluate<float>(value, ZoomNeeded { });
     return FEGaussianBlur::create(stdDeviation, stdDeviation, EdgeModeType::None);
@@ -70,7 +70,7 @@ auto Evaluation<Blur, Ref<FilterEffect>>::operator()(const Blur& value, const Re
 
 // MARK: - Platform
 
-auto ToPlatform<Blur>::operator()(const Blur& value, const RenderStyle&) -> Ref<FilterOperation>
+auto ToPlatform<Blur>::operator()(const Blur& value, const Style::ComputedStyle&) -> Ref<FilterOperation>
 {
     return BlurFilterOperation::create(Style::evaluate<float>(value, ZoomNeeded { }));
 }

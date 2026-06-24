@@ -12,4 +12,7 @@ PASS focusSeen is "fraction"
 PASS blurSeen is "fraction"
 PASS focusSeen is "text"
 PASS blurSeen is "text"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

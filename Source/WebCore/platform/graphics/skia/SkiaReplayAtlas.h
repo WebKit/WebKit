@@ -51,19 +51,18 @@ public:
     // Create atlas wrapper from pre-prepared GPU atlas, rewraps the texture for the current context.
     static std::unique_ptr<SkiaReplayAtlas> create(const SkiaGPUAtlas&);
 
+    SkiaReplayAtlas(Ref<const SkiaGPUAtlas>&&, sk_sp<SkImage>&&);
     ~SkiaReplayAtlas();
 
-    const sk_sp<SkImage>& atlasTexture() const LIFETIME_BOUND { return m_rewrappedTexture; }
+    const sk_sp<SkImage>& atlasImage() const LIFETIME_BOUND { return m_atlasImage; }
 
     // Lookup: original raster image -> rect within atlas texture.
     // Returns nullopt if image is not in this atlas.
     std::optional<SkRect> rectForImage(const SkImage&) const;
 
 private:
-    SkiaReplayAtlas(Ref<const SkiaGPUAtlas>&&, sk_sp<SkImage>&&);
-
     Ref<const SkiaGPUAtlas> m_gpuAtlas;
-    sk_sp<SkImage> m_rewrappedTexture;
+    sk_sp<SkImage> m_atlasImage;
 };
 
 } // namespace WebCore

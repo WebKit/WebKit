@@ -20,9 +20,12 @@
 #include "test/abi_test.h"
 
 
-static bool test_function_ok;
-static int TestFunction(int a1, int a2, int a3, int a4, int a5, int a6, int a7,
-                        int a8) {
+BSSL_NAMESPACE_BEGIN
+namespace {
+
+bool test_function_ok;
+int TestFunction(int a1, int a2, int a3, int a4, int a5, int a6, int a7,
+                 int a8) {
   test_function_ok = a1 == 1 || a2 == 2 || a3 == 3 || a4 == 4 || a5 == 5 ||
                      a6 == 6 || a7 == 7 || a8 == 8;
   return 42;
@@ -71,38 +74,38 @@ TEST(ABITest, SanityCheck) {
 
 #if defined(OPENSSL_X86_64) && defined(SUPPORTS_ABI_TEST)
 extern "C" {
-void abi_test_clobber_rax(void);
-void abi_test_clobber_rbx(void);
-void abi_test_clobber_rcx(void);
-void abi_test_clobber_rdx(void);
-void abi_test_clobber_rsi(void);
-void abi_test_clobber_rdi(void);
-void abi_test_clobber_rbp(void);
-void abi_test_clobber_r8(void);
-void abi_test_clobber_r9(void);
-void abi_test_clobber_r10(void);
-void abi_test_clobber_r11(void);
-void abi_test_clobber_r12(void);
-void abi_test_clobber_r13(void);
-void abi_test_clobber_r14(void);
-void abi_test_clobber_r15(void);
-void abi_test_clobber_xmm0(void);
-void abi_test_clobber_xmm1(void);
-void abi_test_clobber_xmm2(void);
-void abi_test_clobber_xmm3(void);
-void abi_test_clobber_xmm4(void);
-void abi_test_clobber_xmm5(void);
-void abi_test_clobber_xmm6(void);
-void abi_test_clobber_xmm7(void);
-void abi_test_clobber_xmm8(void);
-void abi_test_clobber_xmm9(void);
-void abi_test_clobber_xmm10(void);
-void abi_test_clobber_xmm11(void);
-void abi_test_clobber_xmm12(void);
-void abi_test_clobber_xmm13(void);
-void abi_test_clobber_xmm14(void);
-void abi_test_clobber_xmm15(void);
-}  // extern "C"
+void abi_test_clobber_rax();
+void abi_test_clobber_rbx();
+void abi_test_clobber_rcx();
+void abi_test_clobber_rdx();
+void abi_test_clobber_rsi();
+void abi_test_clobber_rdi();
+void abi_test_clobber_rbp();
+void abi_test_clobber_r8();
+void abi_test_clobber_r9();
+void abi_test_clobber_r10();
+void abi_test_clobber_r11();
+void abi_test_clobber_r12();
+void abi_test_clobber_r13();
+void abi_test_clobber_r14();
+void abi_test_clobber_r15();
+void abi_test_clobber_xmm0();
+void abi_test_clobber_xmm1();
+void abi_test_clobber_xmm2();
+void abi_test_clobber_xmm3();
+void abi_test_clobber_xmm4();
+void abi_test_clobber_xmm5();
+void abi_test_clobber_xmm6();
+void abi_test_clobber_xmm7();
+void abi_test_clobber_xmm8();
+void abi_test_clobber_xmm9();
+void abi_test_clobber_xmm10();
+void abi_test_clobber_xmm11();
+void abi_test_clobber_xmm12();
+void abi_test_clobber_xmm13();
+void abi_test_clobber_xmm14();
+void abi_test_clobber_xmm15();
+}  // extern C
 
 TEST(ABITest, X86_64) {
   // abi_test_trampoline hides unsaved registers from the caller, so we can
@@ -191,22 +194,22 @@ TEST(ABITest, X86_64) {
 
 #if defined(OPENSSL_X86) && defined(SUPPORTS_ABI_TEST)
 extern "C" {
-void abi_test_clobber_eax(void);
-void abi_test_clobber_ebx(void);
-void abi_test_clobber_ecx(void);
-void abi_test_clobber_edx(void);
-void abi_test_clobber_esi(void);
-void abi_test_clobber_edi(void);
-void abi_test_clobber_ebp(void);
-void abi_test_clobber_xmm0(void);
-void abi_test_clobber_xmm1(void);
-void abi_test_clobber_xmm2(void);
-void abi_test_clobber_xmm3(void);
-void abi_test_clobber_xmm4(void);
-void abi_test_clobber_xmm5(void);
-void abi_test_clobber_xmm6(void);
-void abi_test_clobber_xmm7(void);
-}  // extern "C"
+void abi_test_clobber_eax();
+void abi_test_clobber_ebx();
+void abi_test_clobber_ecx();
+void abi_test_clobber_edx();
+void abi_test_clobber_esi();
+void abi_test_clobber_edi();
+void abi_test_clobber_ebp();
+void abi_test_clobber_xmm0();
+void abi_test_clobber_xmm1();
+void abi_test_clobber_xmm2();
+void abi_test_clobber_xmm3();
+void abi_test_clobber_xmm4();
+void abi_test_clobber_xmm5();
+void abi_test_clobber_xmm6();
+void abi_test_clobber_xmm7();
+}  // extern C
 
 TEST(ABITest, X86) {
   // abi_test_trampoline hides unsaved registers from the caller, so we can
@@ -247,38 +250,38 @@ TEST(ABITest, X86) {
 
 #if defined(OPENSSL_ARM) && defined(SUPPORTS_ABI_TEST)
 extern "C" {
-void abi_test_clobber_r0(void);
-void abi_test_clobber_r1(void);
-void abi_test_clobber_r2(void);
-void abi_test_clobber_r3(void);
-void abi_test_clobber_r4(void);
-void abi_test_clobber_r5(void);
-void abi_test_clobber_r6(void);
-void abi_test_clobber_r7(void);
-void abi_test_clobber_r8(void);
-void abi_test_clobber_r9(void);
-void abi_test_clobber_r10(void);
-void abi_test_clobber_r11(void);
-void abi_test_clobber_r12(void);
+void abi_test_clobber_r0();
+void abi_test_clobber_r1();
+void abi_test_clobber_r2();
+void abi_test_clobber_r3();
+void abi_test_clobber_r4();
+void abi_test_clobber_r5();
+void abi_test_clobber_r6();
+void abi_test_clobber_r7();
+void abi_test_clobber_r8();
+void abi_test_clobber_r9();
+void abi_test_clobber_r10();
+void abi_test_clobber_r11();
+void abi_test_clobber_r12();
 // r13, r14, and r15, are sp, lr, and pc, respectively.
 
-void abi_test_clobber_d0(void);
-void abi_test_clobber_d1(void);
-void abi_test_clobber_d2(void);
-void abi_test_clobber_d3(void);
-void abi_test_clobber_d4(void);
-void abi_test_clobber_d5(void);
-void abi_test_clobber_d6(void);
-void abi_test_clobber_d7(void);
-void abi_test_clobber_d8(void);
-void abi_test_clobber_d9(void);
-void abi_test_clobber_d10(void);
-void abi_test_clobber_d11(void);
-void abi_test_clobber_d12(void);
-void abi_test_clobber_d13(void);
-void abi_test_clobber_d14(void);
-void abi_test_clobber_d15(void);
-}  // extern "C"
+void abi_test_clobber_d0();
+void abi_test_clobber_d1();
+void abi_test_clobber_d2();
+void abi_test_clobber_d3();
+void abi_test_clobber_d4();
+void abi_test_clobber_d5();
+void abi_test_clobber_d6();
+void abi_test_clobber_d7();
+void abi_test_clobber_d8();
+void abi_test_clobber_d9();
+void abi_test_clobber_d10();
+void abi_test_clobber_d11();
+void abi_test_clobber_d12();
+void abi_test_clobber_d13();
+void abi_test_clobber_d14();
+void abi_test_clobber_d15();
+}  // extern C
 
 TEST(ABITest, ARM) {
   // abi_test_trampoline hides unsaved registers from the caller, so we can
@@ -344,79 +347,79 @@ TEST(ABITest, ARM) {
 
 #if defined(OPENSSL_AARCH64) && defined(SUPPORTS_ABI_TEST)
 extern "C" {
-void abi_test_clobber_x0(void);
-void abi_test_clobber_x1(void);
-void abi_test_clobber_x2(void);
-void abi_test_clobber_x3(void);
-void abi_test_clobber_x4(void);
-void abi_test_clobber_x5(void);
-void abi_test_clobber_x6(void);
-void abi_test_clobber_x7(void);
-void abi_test_clobber_x8(void);
-void abi_test_clobber_x9(void);
-void abi_test_clobber_x10(void);
-void abi_test_clobber_x11(void);
-void abi_test_clobber_x12(void);
-void abi_test_clobber_x13(void);
-void abi_test_clobber_x14(void);
-void abi_test_clobber_x15(void);
-void abi_test_clobber_x16(void);
-void abi_test_clobber_x17(void);
+void abi_test_clobber_x0();
+void abi_test_clobber_x1();
+void abi_test_clobber_x2();
+void abi_test_clobber_x3();
+void abi_test_clobber_x4();
+void abi_test_clobber_x5();
+void abi_test_clobber_x6();
+void abi_test_clobber_x7();
+void abi_test_clobber_x8();
+void abi_test_clobber_x9();
+void abi_test_clobber_x10();
+void abi_test_clobber_x11();
+void abi_test_clobber_x12();
+void abi_test_clobber_x13();
+void abi_test_clobber_x14();
+void abi_test_clobber_x15();
+void abi_test_clobber_x16();
+void abi_test_clobber_x17();
 // x18 is the platform register and off limits.
-void abi_test_clobber_x19(void);
-void abi_test_clobber_x20(void);
-void abi_test_clobber_x21(void);
-void abi_test_clobber_x22(void);
-void abi_test_clobber_x23(void);
-void abi_test_clobber_x24(void);
-void abi_test_clobber_x25(void);
-void abi_test_clobber_x26(void);
-void abi_test_clobber_x27(void);
-void abi_test_clobber_x28(void);
-void abi_test_clobber_x29(void);
+void abi_test_clobber_x19();
+void abi_test_clobber_x20();
+void abi_test_clobber_x21();
+void abi_test_clobber_x22();
+void abi_test_clobber_x23();
+void abi_test_clobber_x24();
+void abi_test_clobber_x25();
+void abi_test_clobber_x26();
+void abi_test_clobber_x27();
+void abi_test_clobber_x28();
+void abi_test_clobber_x29();
 
-void abi_test_clobber_d0(void);
-void abi_test_clobber_d1(void);
-void abi_test_clobber_d2(void);
-void abi_test_clobber_d3(void);
-void abi_test_clobber_d4(void);
-void abi_test_clobber_d5(void);
-void abi_test_clobber_d6(void);
-void abi_test_clobber_d7(void);
-void abi_test_clobber_d8(void);
-void abi_test_clobber_d9(void);
-void abi_test_clobber_d10(void);
-void abi_test_clobber_d11(void);
-void abi_test_clobber_d12(void);
-void abi_test_clobber_d13(void);
-void abi_test_clobber_d14(void);
-void abi_test_clobber_d15(void);
-void abi_test_clobber_d16(void);
-void abi_test_clobber_d17(void);
-void abi_test_clobber_d18(void);
-void abi_test_clobber_d19(void);
-void abi_test_clobber_d20(void);
-void abi_test_clobber_d21(void);
-void abi_test_clobber_d22(void);
-void abi_test_clobber_d23(void);
-void abi_test_clobber_d24(void);
-void abi_test_clobber_d25(void);
-void abi_test_clobber_d26(void);
-void abi_test_clobber_d27(void);
-void abi_test_clobber_d28(void);
-void abi_test_clobber_d29(void);
-void abi_test_clobber_d30(void);
-void abi_test_clobber_d31(void);
+void abi_test_clobber_d0();
+void abi_test_clobber_d1();
+void abi_test_clobber_d2();
+void abi_test_clobber_d3();
+void abi_test_clobber_d4();
+void abi_test_clobber_d5();
+void abi_test_clobber_d6();
+void abi_test_clobber_d7();
+void abi_test_clobber_d8();
+void abi_test_clobber_d9();
+void abi_test_clobber_d10();
+void abi_test_clobber_d11();
+void abi_test_clobber_d12();
+void abi_test_clobber_d13();
+void abi_test_clobber_d14();
+void abi_test_clobber_d15();
+void abi_test_clobber_d16();
+void abi_test_clobber_d17();
+void abi_test_clobber_d18();
+void abi_test_clobber_d19();
+void abi_test_clobber_d20();
+void abi_test_clobber_d21();
+void abi_test_clobber_d22();
+void abi_test_clobber_d23();
+void abi_test_clobber_d24();
+void abi_test_clobber_d25();
+void abi_test_clobber_d26();
+void abi_test_clobber_d27();
+void abi_test_clobber_d28();
+void abi_test_clobber_d29();
+void abi_test_clobber_d30();
+void abi_test_clobber_d31();
 
-void abi_test_clobber_v8_upper(void);
-void abi_test_clobber_v9_upper(void);
-void abi_test_clobber_v10_upper(void);
-void abi_test_clobber_v11_upper(void);
-void abi_test_clobber_v12_upper(void);
-void abi_test_clobber_v13_upper(void);
-void abi_test_clobber_v14_upper(void);
-void abi_test_clobber_v15_upper(void);
-}  // extern "C"
+void abi_test_clobber_v8_upper();
+void abi_test_clobber_v9_upper();
+void abi_test_clobber_v10_upper();
+void abi_test_clobber_v11_upper();
+void abi_test_clobber_v12_upper();
+void abi_test_clobber_v13_upper();
+void abi_test_clobber_v14_upper();
+void abi_test_clobber_v15_upper();
+}  // extern C
 
 TEST(ABITest, AArch64) {
   // abi_test_trampoline hides unsaved registers from the caller, so we can
@@ -520,4 +523,7 @@ TEST(ABITest, AArch64) {
   CHECK_ABI_NO_UNWIND(abi_test_clobber_v14_upper);
   CHECK_ABI_NO_UNWIND(abi_test_clobber_v15_upper);
 }
-#endif   // OPENSSL_AARCH64 && SUPPORTS_ABI_TEST
+#endif  // OPENSSL_AARCH64 && SUPPORTS_ABI_TEST
+
+}  // namespace
+BSSL_NAMESPACE_END

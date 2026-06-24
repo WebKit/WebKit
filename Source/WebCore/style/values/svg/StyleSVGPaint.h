@@ -175,9 +175,9 @@ template<> struct CSSValueConversion<SVGPaint> { auto operator()(BuilderState&, 
 // MARK: - Blending
 
 template<> struct Blending<SVGPaint> {
-    auto equals(const SVGPaint&, const SVGPaint&, const RenderStyle&, const RenderStyle&) -> bool;
+    auto equals(const SVGPaint&, const SVGPaint&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
     auto canBlend(const SVGPaint&, const SVGPaint&) -> bool;
-    auto blend(const SVGPaint&, const SVGPaint&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> SVGPaint;
+    auto blend(const SVGPaint&, const SVGPaint&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> SVGPaint;
 };
 
 } // namespace Style

@@ -12,10 +12,10 @@
 #define API_TEST_METRICS_METRICS_SET_PROTO_FILE_EXPORTER_H_
 
 #include <map>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/metrics/metrics_exporter.h"
 
@@ -48,7 +48,7 @@ class MetricsSetProtoFileExporter : public MetricsExporter {
   MetricsSetProtoFileExporter& operator=(const MetricsSetProtoFileExporter&) =
       delete;
 
-  bool Export(ArrayView<const Metric> metrics) override;
+  bool Export(std::span<const Metric> metrics) override;
 
  private:
   const Options options_;

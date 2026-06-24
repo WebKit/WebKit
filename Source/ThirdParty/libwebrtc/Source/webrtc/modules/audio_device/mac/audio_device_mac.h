@@ -17,6 +17,7 @@
 
 #include <atomic>
 #include <memory>
+#include <span>
 
 #include "absl/strings/string_view.h"
 #include "modules/audio_device/audio_device_generic.h"
@@ -178,7 +179,7 @@ class AudioDeviceMac : public AudioDeviceGeneric {
 
   int32_t GetDeviceName(AudioObjectPropertyScope scope,
                         uint16_t index,
-                        ArrayView<char> name);
+                        std::span<char> name);
 
   int32_t InitDevice(uint16_t userDeviceIndex,
                      AudioDeviceID& deviceId,

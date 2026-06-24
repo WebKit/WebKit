@@ -15,8 +15,8 @@
 #include <atomic>
 #include <cstddef>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"  // kFftLengthBy2Plus1...
 #include "rtc_base/checks.h"
 
@@ -35,13 +35,13 @@ class StationarityEstimator {
 
   // Update just the noise estimator. Usefull until the delay is known
   void UpdateNoiseEstimator(
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> spectrum);
+      std::span<const std::array<float, kFftLengthBy2Plus1>> spectrum);
 
   // Update the flag indicating whether this current frame is stationary. For
   // getting a more robust estimation, it looks at future and/or past frames.
   void UpdateStationarityFlags(
       const SpectrumBuffer& spectrum_buffer,
-      ArrayView<const float> render_reverb_contribution_spectrum,
+      std::span<const float> render_reverb_contribution_spectrum,
       int idx_current,
       int num_lookahead);
 
@@ -61,7 +61,7 @@ class StationarityEstimator {
   // Get an estimation of the stationarity for the current band by looking
   // at the past/present/future available data.
   bool EstimateBandStationarity(const SpectrumBuffer& spectrum_buffer,
-                                ArrayView<const float> average_reverb,
+                                std::span<const float> average_reverb,
                                 const std::array<int, kWindowLength>& indexes,
                                 size_t band) const;
 
@@ -86,10 +86,10 @@ class StationarityEstimator {
 
     // Update the noise power spectrum with a new frame.
     void Update(
-        ArrayView<const std::array<float, kFftLengthBy2Plus1>> spectrum);
+        std::span<const std::array<float, kFftLengthBy2Plus1>> spectrum);
 
     // Get the noise estimation power spectrum.
-    ArrayView<const float> Spectrum() const { return noise_spectrum_; }
+    std::span<const float> Spectrum() const { return noise_spectrum_; }
 
     // Get the noise power spectrum at a certain band.
     float Power(size_t band) const {

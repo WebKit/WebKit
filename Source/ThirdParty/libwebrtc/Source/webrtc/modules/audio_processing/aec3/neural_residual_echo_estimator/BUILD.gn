@@ -34,7 +34,6 @@ if (rtc_enable_protobuf) {
       "..:aec3_block",
       "..:aec3_common",
       "../..:apm_logging",
-      "../../../../api:array_view",
       "../../../../api/audio:aec3_config",
       "../../../../api/audio:neural_residual_echo_estimator_api",
       "../../../../common_audio",
@@ -55,6 +54,33 @@ if (rtc_enable_protobuf) {
 
 if (rtc_include_tests) {
   if (rtc_enable_protobuf) {
+    rtc_library("neural_residual_echo_estimator_test_helper") {
+      testonly = true
+      visibility = [ "*" ]
+      configs += [ "//third_party/tflite:tflite_config_no_undef" ]
+      sources = [
+        "neural_residual_echo_estimator_test_helper.cc",
+        "neural_residual_echo_estimator_test_helper.h",
+      ]
+      deps = [
+        "../../../../api/audio:neural_residual_echo_estimator_api",
+        "../../../../api/audio:neural_residual_echo_estimator_creator",
+        "../../../../rtc_base:checks",
+        "../../../../test:fileutils",
+      ]
+      if (build_with_chromium) {
+        deps += [
+          "//third_party/tflite",
+          "//third_party/tflite:tflite_builtin_op_resolver",
+        ]
+      } else {
+        deps += [
+          "//third_party/tflite:tflite_builtin_op_resolver_standalone",
+          "//third_party/tflite:tflite_standalone",
+        ]
+      }
+    }
+
     rtc_library("neural_residual_echo_estimator_unittest") {
       testonly = true
       configs += [
@@ -70,7 +96,6 @@ if (rtc_include_tests) {
         ":neural_residual_echo_estimator_proto",
         "..:aec3_block",
         "..:aec3_common",
-        "../../../../api:array_view",
         "../../../../rtc_base:checks",
         "../../../../rtc_base:random",
         "../../../../test:fileutils",

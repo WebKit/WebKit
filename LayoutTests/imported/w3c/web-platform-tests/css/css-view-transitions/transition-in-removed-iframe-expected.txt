@@ -1,0 +1,3 @@
+
+FAIL A view transition in a removed iframe should return a skipped transition object and not return null assert_not_equals: startViewTransition should not return null got disallowed value null
+

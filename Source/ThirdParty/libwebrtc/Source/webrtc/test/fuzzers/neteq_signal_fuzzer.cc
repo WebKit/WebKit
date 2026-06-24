@@ -16,10 +16,10 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
@@ -50,12 +50,12 @@ class SineAndNoiseGenerator : public EncodeNetEqInput::Generator {
         noise_generator_(fuzz_data_.ReadOrDefaultValueNotZero<uint64_t>(1)) {}
 
   // Generates num_samples of the sine-gaussian mixture.
-  webrtc::ArrayView<const int16_t> Generate(size_t num_samples) override {
+  std::span<const int16_t> Generate(size_t num_samples) override {
     if (samples_.size() < num_samples) {
       samples_.resize(num_samples);
     }
 
-    webrtc::ArrayView<int16_t> output(samples_.data(), num_samples);
+    std::span<int16_t> output(samples_.data(), num_samples);
     // Randomize an amplitude between 0 and 32768; use 65000/2 if we are out of
     // fuzzer data.
     const float amplitude = fuzz_data_.ReadOrDefaultValue<uint16_t>(65000) / 2;
@@ -171,12 +171,10 @@ bool MapHas(const std::map<int, T>& m, int key, const T& value) {
 
 }  // namespace
 
-void FuzzOneInputTest(const uint8_t* data, size_t size) {
-  if (size < 1 || size > 65000) {
+void FuzzOneInputTest(FuzzDataHelper fuzz_data) {
+  if (fuzz_data.size() < 1 || fuzz_data.size() > 65'000) {
     return;
   }
-
-  FuzzDataHelper fuzz_data(webrtc::ArrayView<const uint8_t>(data, size));
 
   // Allowed sample rates and payload types used in the test.
   std::pair<int, uint8_t> rate_types[] = {
@@ -217,8 +215,8 @@ void FuzzOneInputTest(const uint8_t* data, size_t size) {
 
 }  // namespace test
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  test::FuzzOneInputTest(data, size);
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  test::FuzzOneInputTest(fuzz_data);
 }
 
 }  // namespace webrtc

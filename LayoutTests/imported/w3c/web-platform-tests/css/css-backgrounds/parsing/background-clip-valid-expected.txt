@@ -3,5 +3,9 @@ PASS e.style['background-clip'] = "border-box" should set the property value
 PASS e.style['background-clip'] = "padding-box" should set the property value
 PASS e.style['background-clip'] = "content-box" should set the property value
 PASS e.style['background-clip'] = "border-area" should set the property value
+PASS e.style['background-clip'] = "text" should set the property value
+FAIL e.style['background-clip'] = "border-area text" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['background-clip'] = "text border-area" should set the property value assert_not_equals: property should be set got disallowed value ""
 PASS e.style['background-clip'] = "border-box, padding-box, content-box, border-area" should set the property value
+FAIL e.style['background-clip'] = "border-area text, content-box" should set the property value assert_not_equals: property should be set got disallowed value ""
 

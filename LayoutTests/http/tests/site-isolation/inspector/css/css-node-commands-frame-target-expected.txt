@@ -1,0 +1,30 @@
+Test that CSS node-dependent commands work correctly on frame targets under site isolation.
+
+
+
+== Running test suite: SiteIsolation.CSS.NodeCommands.FrameTarget
+-- Running test case: SiteIsolation.CSS.NodeCommands.FrameTarget.Setup
+PASS: Should find a child frame target.
+PASS: Should find the target element.
+
+-- Running test case: SiteIsolation.CSS.NodeCommands.FrameTarget.GetComputedStyleForNode
+PASS: Should have computed style properties.
+PASS: Should have a font-weight property.
+PASS: font-weight should be '700' (computed from 'bold').
+
+-- Running test case: SiteIsolation.CSS.NodeCommands.FrameTarget.GetInlineStylesForNode
+PASS: Should have an inline style.
+PASS: Inline style should contain font-weight.
+PASS: font-weight value should be 'bold'.
+
+-- Running test case: SiteIsolation.CSS.NodeCommands.FrameTarget.GetMatchedStylesForNode
+PASS: Should have matched CSS rules.
+PASS: Should have a rule matching .test-class.
+
+-- Running test case: SiteIsolation.CSS.NodeCommands.FrameTarget.GetFontDataForNode
+PASS: Should get font data.
+PASS: Font should have a display name.
+
+-- Running test case: SiteIsolation.CSS.NodeCommands.FrameTarget.ForcePseudoState
+PASS: Should have a :hover rule in matched styles after forcing.
+

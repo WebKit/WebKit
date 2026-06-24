@@ -214,6 +214,8 @@ void JSTestStringifierOperationNamedToString::analyzeHeap(JSCell* cell, HeapAnal
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestStringifierOperationNamedToStringOwner::JSTestStringifierOperationNamedToStringOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestStringifierOperationNamedToStringOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -226,7 +228,7 @@ void JSTestStringifierOperationNamedToStringOwner::finalize(JSC::Handle<JSC::Unk
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestStringifierOperationNamedToString = static_cast<JSTestStringifierOperationNamedToString*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestStringifierOperationNamedToString->wrapped()).ptr(), jsTestStringifierOperationNamedToString);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestStringifierOperationNamedToString->wrapped(), jsTestStringifierOperationNamedToString);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

@@ -165,19 +165,20 @@ ProxyingNetworkAgent::~ProxyingNetworkAgent()
 
 void ProxyingNetworkAgent::removeAllRegisteredReceivers()
 {
-    // Iterate by ProcessIdentifier so we reach swapped-out processes that
-    // forEachWebContentProcess() no longer enumerates. We rely on the
-    // inspected WebPageProxy keeping its WebProcessProxy alive until after
-    // WebPageInspectorController tears down; cross-origin iframe processes
-    // are kept alive by their own page state. processForIdentifier() returning
-    // null would mean the proxy was already destructed, in which case
-    // m_messageReceiverMapCount would leak here -- ~AuxiliaryProcessProxy does
-    // not invalidate its receiver map.
+    // Use the pinned WebProcessProxy refs rather than WebProcessProxy::processForIdentifier(),
+    // which can return null when the process has been destructed but its receiver map entry
+    // has not yet been torn down. The pin guarantees the process (and its receiver map) is
+    // still alive here so removeMessageReceiver() can decrement m_messageReceiverMapCount.
     for (auto& [key, _] : std::exchange(m_instrumentedProcessPageCounts, { })) {
         auto [processID, pageID] = key;
-        if (RefPtr webProcess = WebKit::WebProcessProxy::processForIdentifier(processID))
-            webProcess->removeMessageReceiver(Messages::ProxyingNetworkAgent::messageReceiverName(), pageID);
+        auto it = m_pinnedInstrumentedProcesses.find(processID);
+        ASSERT(it != m_pinnedInstrumentedProcesses.end());
+        if (it == m_pinnedInstrumentedProcesses.end())
+            continue;
+        Ref webProcess = it->value;
+        webProcess->removeMessageReceiver(Messages::ProxyingNetworkAgent::messageReceiverName(), pageID);
     }
+    m_pinnedInstrumentedProcesses.clear();
 }
 
 void ProxyingNetworkAgent::didCreateFrontendAndBackend()
@@ -197,13 +198,17 @@ void ProxyingNetworkAgent::enableInstrumentationForProcess(WebKit::WebProcessPro
     if (++result.iterator->value > 1)
         return;
 
+    m_pinnedInstrumentedProcesses.ensure(webProcess.coreProcessIdentifier(), [&] {
+        return Ref { webProcess };
+    });
     webProcess.addMessageReceiver(Messages::ProxyingNetworkAgent::messageReceiverName(), pageID, *this);
     webProcess.send(Messages::WebInspectorBackend::EnableNetworkInstrumentation { }, pageID);
 }
 
 void ProxyingNetworkAgent::disableInstrumentationForProcess(WebKit::WebProcessProxy& webProcess, WebCore::PageIdentifier pageID)
 {
-    auto key = std::make_pair(webProcess.coreProcessIdentifier(), pageID);
+    auto processID = webProcess.coreProcessIdentifier();
+    auto key = std::make_pair(processID, pageID);
     auto it = m_instrumentedProcessPageCounts.find(key);
     if (it == m_instrumentedProcessPageCounts.end())
         return;
@@ -214,6 +219,17 @@ void ProxyingNetworkAgent::disableInstrumentationForProcess(WebKit::WebProcessPr
     m_instrumentedProcessPageCounts.remove(it);
     webProcess.send(Messages::WebInspectorBackend::DisableNetworkInstrumentation { }, pageID);
     webProcess.removeMessageReceiver(Messages::ProxyingNetworkAgent::messageReceiverName(), pageID);
+
+    // Drop the pin once this process has no remaining page registrations.
+    bool processStillHasRegistrations = false;
+    for (auto& entry : m_instrumentedProcessPageCounts) {
+        if (entry.key.first == processID) {
+            processStillHasRegistrations = true;
+            break;
+        }
+    }
+    if (!processStillHasRegistrations)
+        m_pinnedInstrumentedProcesses.remove(processID);
 }
 
 CommandResult<void> ProxyingNetworkAgent::enable()
@@ -250,11 +266,16 @@ CommandResult<void> ProxyingNetworkAgent::disable()
     // Iterate the registration map, not forEachWebContentProcess(): under
     // Site Isolation a process may have swapped out while still holding our
     // message receiver, in which case forEachWebContentProcess() would no
-    // longer enumerate it.
+    // longer enumerate it. The pinned process refs (see m_pinnedInstrumentedProcesses)
+    // keep the WebProcessProxy alive long enough for the send + remove below.
     for (auto& [key, _] : m_instrumentedProcessPageCounts) {
         auto [processID, pageID] = key;
-        if (RefPtr webProcess = WebKit::WebProcessProxy::processForIdentifier(processID))
-            webProcess->send(Messages::WebInspectorBackend::DisableNetworkInstrumentation { }, pageID);
+        auto it = m_pinnedInstrumentedProcesses.find(processID);
+        ASSERT(it != m_pinnedInstrumentedProcesses.end());
+        if (it == m_pinnedInstrumentedProcesses.end())
+            continue;
+        Ref webProcess = it->value;
+        webProcess->send(Messages::WebInspectorBackend::DisableNetworkInstrumentation { }, pageID);
     }
     removeAllRegisteredReceivers();
 
@@ -395,7 +416,7 @@ void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID fram
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID);
+    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
     auto loaderId = IdentifierRegistry::protocolLoaderId(contextID);
     auto requestObject = buildObjectForResourceRequest(request);
 
@@ -417,7 +438,7 @@ void ProxyingNetworkAgent::responseReceived(ResourceID resourceID, FrameID frame
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID);
+    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
     auto loaderId = IdentifierRegistry::protocolLoaderId(contextID);
     auto responseObject = buildObjectForResourceResponse(response);
 
@@ -459,7 +480,7 @@ void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, F
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID);
+    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
     auto loaderId = IdentifierRegistry::protocolLoaderId(contextID);
     auto requestObject = buildObjectForResourceRequest(request);
     auto responseObject = buildObjectForResourceResponse(response);

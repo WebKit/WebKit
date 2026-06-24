@@ -13,8 +13,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_coding/codecs/cng/webrtc_cng.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/audio_vector.h"
@@ -67,7 +67,7 @@ int ComfortNoise::Generate(size_t requested_length, AudioMultiVector* output) {
   }
 
   std::unique_ptr<int16_t[]> temp(new int16_t[number_of_samples]);
-  if (!cng_decoder->Generate(ArrayView<int16_t>(temp.get(), number_of_samples),
+  if (!cng_decoder->Generate(std::span<int16_t>(temp.get(), number_of_samples),
                              new_period)) {
     // Error returned.
     output->Zeros(requested_length);

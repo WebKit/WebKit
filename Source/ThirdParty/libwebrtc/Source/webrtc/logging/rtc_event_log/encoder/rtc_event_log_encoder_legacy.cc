@@ -15,10 +15,10 @@
 #include <deque>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/candidate.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/rtp_headers.h"
@@ -445,7 +445,7 @@ std::string RtcEventLogEncoderLegacy::EncodeAudioReceiveStreamConfig(
     rtclog::RtpHeaderExtension* extension =
         receiver_config->add_header_extensions();
     extension->set_name(e.uri);
-    extension->set_id(e.id);
+    extension->set_id(e.id.value());
   }
 
   return Serialize(&rtclog_event);
@@ -466,7 +466,7 @@ std::string RtcEventLogEncoderLegacy::EncodeAudioSendStreamConfig(
     rtclog::RtpHeaderExtension* extension =
         sender_config->add_header_extensions();
     extension->set_name(e.uri);
-    extension->set_id(e.id);
+    extension->set_id(e.id.value());
   }
 
   return Serialize(&rtclog_event);
@@ -644,7 +644,7 @@ std::string RtcEventLogEncoderLegacy::EncodeVideoReceiveStreamConfig(
     rtclog::RtpHeaderExtension* extension =
         receiver_config->add_header_extensions();
     extension->set_name(e.uri);
-    extension->set_id(e.id);
+    extension->set_id(e.id.value());
   }
 
   for (const auto& d : event.config().codecs) {
@@ -681,7 +681,7 @@ std::string RtcEventLogEncoderLegacy::EncodeVideoSendStreamConfig(
     rtclog::RtpHeaderExtension* extension =
         sender_config->add_header_extensions();
     extension->set_name(e.uri);
-    extension->set_id(e.id);
+    extension->set_id(e.id.value());
   }
 
   // TODO(perkj): rtclog::VideoSendConfig should contain many possible codec
@@ -753,7 +753,7 @@ std::string RtcEventLogEncoderLegacy::EncodeRtcpPacket(int64_t timestamp_us,
 
 std::string RtcEventLogEncoderLegacy::EncodeRtpPacket(
     int64_t timestamp_us,
-    ArrayView<const uint8_t> header,
+    std::span<const uint8_t> header,
     size_t packet_length,
     int probe_cluster_id,
     bool is_incoming) {

@@ -1,12 +1,12 @@
 <html>
 <head>
 <title>Test for Buzilla Bug 15359: JPEG image not shown when height is specified as percentage inside a table</title>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
     testRunner.dumpAsText();
-}
 
 function getComputedStyleForElement(element, cssPropertyName)
 {
@@ -78,11 +78,7 @@ function test()
     shouldBeTrue("getFullHeight('textarea-75') != '0px'");
     isEqual("getFullHeight('textarea-75')", "getFullHeight('textarea-100')");
 
-    isSuccessfullyParsed();
-
-    if (window.testRunner) { 
-        testRunner.notifyDone();
-    }
+    finishJSTest();
 }
 </script>
 </head>

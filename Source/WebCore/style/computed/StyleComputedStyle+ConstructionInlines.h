@@ -27,13 +27,10 @@
 #pragma once
 
 #include "StyleComputedStyle.h"
-#include "StyleComputedStyleBase+ConstructionInlines.h"
+#include "StyleComputedStyleProperties+ConstructionInlines.h"
 
 namespace WebCore {
 namespace Style {
-
-inline ComputedStyle::ComputedStyle(ComputedStyle&&) = default;
-inline ComputedStyle& ComputedStyle::operator=(ComputedStyle&&) = default;
 
 inline ComputedStyle::ComputedStyle(CreateDefaultStyleTag tag)
     : ComputedStyleProperties { tag }

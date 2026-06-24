@@ -74,6 +74,7 @@ AXTextOperation
 AXTextMarkerForIndex
 AXTextMarkerIsValid
 AXIndexForTextMarker
+AXRelativeIndexForTextMarker
 AXIntersectTextMarkerRanges
 
 ----------------------

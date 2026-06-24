@@ -111,7 +111,12 @@ void ManagedMediaSource::ensurePrefsRead()
 
 void ManagedMediaSource::monitorSourceBuffers()
 {
+    if (isClosed())
+        return;
+
     MediaSource::monitorSourceBuffers();
+
+    Ref msp = *mediaSourcePrivate();
 
     if (!activeSourceBuffers()->length()) {
         setStreaming(true);
@@ -127,15 +132,16 @@ void ManagedMediaSource::monitorSourceBuffers()
         MediaTime aheadTime = currentTime + MediaTime::createWithDouble(upper);
         return isEnded() ? std::min(duration(), aheadTime) : aheadTime;
     };
+
     if (!m_streaming) {
         PlatformTimeRanges neededBufferedRange { currentTime, std::max(currentTime, limitAhead(*m_lowThreshold)) };
-        if (!isBuffered(neededBufferedRange))
+        if (!msp->isBuffered(neededBufferedRange))
             setStreaming(true);
         return;
     }
 
     if (auto ahead = limitAhead(*m_highThreshold); currentTime < ahead) {
-        if (isBuffered({ currentTime,  ahead }))
+        if (msp->isBuffered({ currentTime,  ahead }))
             setStreaming(false);
     } else
         setStreaming(false);

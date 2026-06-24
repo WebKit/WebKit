@@ -13,5 +13,5 @@ PASS svg:g display table
 PASS svg:svg display table-cell
 PASS svg:g display table-cell
 PASS svg:svg display contents computes to none
-FAIL svg:g display contents computes to contents assert_equals: expected "contents" but got "none"
+PASS svg:g display contents computes to contents
 

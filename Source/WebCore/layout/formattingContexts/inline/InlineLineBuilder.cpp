@@ -34,8 +34,8 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutShape.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RubyFormattingContext.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleWebKitLineBoxContain.h"
 #include "TextUtil.h"
@@ -191,7 +191,7 @@ static bool NODELETE hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIn
     return true;
 };
 
-static TextDirection inlineBaseDirectionForLineContent(const Line::RunList& runs, const RenderStyle& rootStyle, std::optional<PreviousLine> previousLine)
+static TextDirection inlineBaseDirectionForLineContent(const Line::RunList& runs, const Style::ComputedStyle& rootStyle, std::optional<PreviousLine> previousLine)
 {
     ASSERT(!runs.isEmpty());
     auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext;
@@ -214,7 +214,7 @@ struct LineCandidate {
         const InlineItem* NODELETE trailingLineBreak() const { return m_trailingLineBreak; }
         const InlineItem* NODELETE trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
 
-        void appendInlineItem(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0);
+        void appendInlineItem(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0);
         void reset();
         bool NODELETE isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
 
@@ -253,7 +253,7 @@ struct LineCandidate {
     const InlineItem* blockItem { nullptr };
 };
 
-inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
+inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
 {
     if (inlineItem.isAtomicInlineBox() || inlineItem.isOutOfFlow())
         return m_continuousContent.append(inlineItem, style, logicalWidth, textSpacingAdjustment);

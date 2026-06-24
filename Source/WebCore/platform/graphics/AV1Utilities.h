@@ -186,7 +186,7 @@ WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRe
 std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(std::span<const uint8_t>);
 std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t>);
 WEBCORE_EXPORT PlatformVideoColorSpace createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord&);
-WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t>, std::optional<FloatSize> = std::nullopt);
+WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t>, std::optional<FloatSize> = std::nullopt, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride = std::nullopt);
 
 template<typename E>
 std::optional<E> parseEnumFromStringView(StringView stringView)

@@ -32,20 +32,17 @@
 </div>
 </body>
 
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 
 <script>
 description("This test checks that custom data attributes are not lost due GC while still referenced.");
+window.jsTestIsAsync = true;
 
 let iterations = 0;
 let currentScaling = 1
 const gElement = document.getElementById('svg').firstElementChild
 const transform = document.getElementById('current-transform')
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
 function checkCache() {
     let cache = gElement["data-transform-cache"];
@@ -71,8 +68,7 @@ function runTest() {
         runTest();
     } else {
         checkCache();
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 }
 
@@ -97,4 +93,3 @@ function setMatrix(element, matrix) {
     m.f = elements[5];
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>

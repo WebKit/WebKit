@@ -36,6 +36,7 @@
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/Utilities.h"
 
 #import <WebCore/Color.h>
@@ -297,6 +298,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
     }
 #endif
     [self.textInputContentView insertTextSuggestion:textSuggestion];
+}
+
+- (void)focusInWindow
+{
+    [[self window] makeKeyWindow];
+    [self becomeFirstResponder];
 }
 
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
@@ -1489,6 +1496,12 @@ static UIWindowScene *windowScene()
 
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script inFrame:(WKFrameInfo *)frame
 {
+#if PLATFORM(IOS_FAMILY)
+    [[self window] makeKeyWindow];
+    [[self textInputContentView] becomeFirstResponder];
+    [self waitForNextPresentationUpdate];
+#endif
+
     auto initialChangeCount = _inputSessionChangeCount;
     BOOL hasEmittedWarning = NO;
     NSTimeInterval secondsToWaitUntilWarning = 2;

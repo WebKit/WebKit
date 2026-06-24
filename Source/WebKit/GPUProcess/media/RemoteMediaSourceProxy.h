@@ -69,7 +69,6 @@ public:
     // MediaSourcePrivateClient overrides
     void setPrivateAndOpen(Ref<WebCore::MediaSourcePrivate>&&) final;
     void reOpen() final;
-    Ref<WebCore::MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
     RefPtr<WebCore::MediaSourcePrivate> mediaSourcePrivate() const final { return m_private; }
 
 #if !RELEASE_LOG_DISABLED
@@ -93,6 +92,8 @@ private:
     void bufferedChanged(WebCore::PlatformTimeRanges&&);
     void markEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus);
     void unmarkEndOfStream();
+    void cancelPendingWaitForTarget();
+    void setReadyState(WebCore::MediaSourceReadyState);
     void setMediaPlayerReadyState(WebCore::MediaPlayerEnums::ReadyState);
     void setTimeFudgeFactor(const MediaTime&);
     void NODELETE attached();

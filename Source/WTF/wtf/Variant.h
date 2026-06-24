@@ -1320,10 +1320,17 @@ namespace mpark {
         template <typename Visitor, typename... Vs>
         inline static constexpr base::dispatch_result_t<Visitor, Vs...>
         visit_alt_at(std::size_t index, Visitor &&visitor, Vs &&... vs) {
+#if defined(__GNUC__) && !defined(__clang__)
+          constexpr std::size_t N = lib::decay_t<
+              lib::type_pack_element_t<0, Vs...>>::size();
+          return switch_at<0, N>(index, lib::forward<Visitor>(visitor),
+                                 lib::forward<Vs>(vs)...);
+#else
           return fold_at(std::make_index_sequence<lib::decay_t<
                              lib::type_pack_element_t<0, Vs...>>::size()>{},
                          index, lib::forward<Visitor>(visitor),
                          lib::forward<Vs>(vs)...);
+#endif
         }
 
       private:
@@ -1333,6 +1340,48 @@ namespace mpark {
           return lib::invoke(lib::forward<Visitor>(visitor),
                              access::base::get_alt<I>(as_base(lib::forward<Vs>(vs)))...);
         }
+
+#if defined(__GNUC__) && !defined(__clang__)
+        // GCC does not reliably lower the comma-fold in fold_at() to a jump
+        // table and instead emits an O(N) cmp/branch cascade, which badly hurts
+        // visits over large variants such as DisplayList::Item (60+
+        // alternatives). This is target-dependent: GCC 14 recovers a jump table
+        // on x86_64 but not on aarch64, where even 14.2 emits the cascade, so
+        // gate on the compiler rather than a version. An explicit switch is
+        // lowered to a jump table everywhere. Clang recovers a jump table from
+        // fold_at() on its own, so it keeps the fold (and its compile-time
+        // benefit).
+        template <std::size_t Base, std::size_t N,
+                  typename Visitor, typename... Vs>
+        inline static constexpr base::dispatch_result_t<Visitor, Vs...>
+        switch_at(std::size_t index, Visitor &&visitor, Vs &&... vs) {
+#define MPARK_CASE(I)                                                          \
+          case Base + I:                                                       \
+            if constexpr (Base + I < N)                                        \
+              return step_at<(Base + I < N ? Base + I : 0)>(                   \
+                  lib::forward<Visitor>(visitor), lib::forward<Vs>(vs)...);    \
+            else                                                               \
+              MPARK_BUILTIN_UNREACHABLE;
+          switch (index) {
+            MPARK_CASE(0)  MPARK_CASE(1)  MPARK_CASE(2)  MPARK_CASE(3)
+            MPARK_CASE(4)  MPARK_CASE(5)  MPARK_CASE(6)  MPARK_CASE(7)
+            MPARK_CASE(8)  MPARK_CASE(9)  MPARK_CASE(10) MPARK_CASE(11)
+            MPARK_CASE(12) MPARK_CASE(13) MPARK_CASE(14) MPARK_CASE(15)
+            MPARK_CASE(16) MPARK_CASE(17) MPARK_CASE(18) MPARK_CASE(19)
+            MPARK_CASE(20) MPARK_CASE(21) MPARK_CASE(22) MPARK_CASE(23)
+            MPARK_CASE(24) MPARK_CASE(25) MPARK_CASE(26) MPARK_CASE(27)
+            MPARK_CASE(28) MPARK_CASE(29) MPARK_CASE(30) MPARK_CASE(31)
+            default:
+              if constexpr (Base + 32 < N)
+                return switch_at<Base + 32, N>(
+                    index, lib::forward<Visitor>(visitor),
+                    lib::forward<Vs>(vs)...);
+              else
+                MPARK_BUILTIN_UNREACHABLE;
+          }
+#undef MPARK_CASE
+        }
+#endif
 
         template <std::size_t... Is, typename Visitor, typename... Vs>
         inline static constexpr base::dispatch_result_t<Visitor, Vs...>
@@ -1471,6 +1520,11 @@ namespace mpark {
               alt_at<I>(in_place_t{}, lib::forward<Args>(args)...);
       }
 
+// GCC 14 through 16 emit a bogus -Wuninitialized for index_ when these
+// accessors are inlined into HashTable bucket teardown (e.g.
+// HashMap<GenericHashKey<...>, ...>::remove()), even though index_ is set by
+// every base constructor. Clang and GCC <= 13 are unaffected.
+IGNORE_GCC_WARNINGS_BEGIN("uninitialized")
       inline constexpr bool valueless_by_exception() const noexcept {
         return index_ == static_cast<index_t<Ts...>>(-1);
       }
@@ -1478,6 +1532,7 @@ namespace mpark {
       inline constexpr std::size_t index() const noexcept {
         return valueless_by_exception() ? variant_npos : index_;
       }
+IGNORE_GCC_WARNINGS_END
 
       template <std::size_t I> inline constexpr alt_at<I> &get_alt() & noexcept {
         return *std::launder(reinterpret_cast<alt_at<I> *>(data_.storage_));

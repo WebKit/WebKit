@@ -229,7 +229,7 @@ struct _WebKitDOMNodeFilterIface {
 };
 
 
-WEBKIT_DEPRECATED GType webkit_dom_node_filter_get_type(void) G_GNUC_CONST;
+WEBKIT_DEPRECATED GType webkit_dom_node_filter_get_type(void);
 
 /**
  * webkit_dom_node_filter_accept_node:

@@ -20,7 +20,6 @@
 #include <string>
 #include <vector>
 
-#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "api/audio_options.h"
 #include "api/candidate.h"
@@ -43,6 +42,7 @@
 #include "media/base/media_engine.h"
 #include "media/base/stream_params.h"
 #include "p2p/base/port_allocator.h"
+#include "p2p/base/transport_description.h"
 #include "pc/codec_vendor.h"
 #include "pc/connection_context.h"
 #include "pc/data_channel_controller.h"
@@ -53,6 +53,7 @@
 #include "pc/rtp_receiver.h"
 #include "pc/rtp_transceiver.h"
 #include "pc/rtp_transmission_manager.h"
+#include "pc/scoped_operations_batcher.h"
 #include "pc/sdp_payload_type_suggester.h"
 #include "pc/sdp_state_provider.h"
 #include "pc/session_description.h"
@@ -72,6 +73,8 @@
 
 namespace webrtc {
 
+class ScopedOperationsBatcher;
+
 // SdpOfferAnswerHandler is a component
 // of the PeerConnection object as defined
 // by the PeerConnectionInterface API surface.
@@ -87,7 +90,6 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   static std::unique_ptr<SdpOfferAnswerHandler> Create(
       const Environment& env,
       PeerConnectionSdpMethods* pc,
-      const PeerConnectionInterface::RTCConfiguration& configuration,
       std::unique_ptr<RTCCertificateGeneratorInterface> cert_generator,
       std::unique_ptr<webrtc::VideoBitrateAllocatorFactory>
           video_bitrate_allocator_factory,
@@ -108,8 +110,8 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
     return video_bitrate_allocator_factory_.get();
   }
 
-  const AudioOptions& audio_options() { return audio_options_; }
-  const VideoOptions& video_options() { return video_options_; }
+  const AudioOptions& audio_options() const { return audio_options_; }
+  const VideoOptions& video_options() const { return video_options_; }
 
   // Change signaling state to Closed, and perform appropriate actions.
   void Close();
@@ -148,19 +150,23 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
       scoped_refptr<SetLocalDescriptionObserverInterface> observer);
   void SetLocalDescription(
       scoped_refptr<SetLocalDescriptionObserverInterface> observer);
-  void SetLocalDescription(SetSessionDescriptionObserver* observer,
-                           SessionDescriptionInterface* desc);
-  void SetLocalDescription(SetSessionDescriptionObserver* observer);
+  void SetLocalDescription(
+      scoped_refptr<SetSessionDescriptionObserver> observer,
+      std::unique_ptr<SessionDescriptionInterface> desc);
+  void SetLocalDescription(
+      scoped_refptr<SetSessionDescriptionObserver> observer);
 
   void SetRemoteDescription(
       std::unique_ptr<SessionDescriptionInterface> desc,
       scoped_refptr<SetRemoteDescriptionObserverInterface> observer);
-  void SetRemoteDescription(SetSessionDescriptionObserver* observer,
-                            SessionDescriptionInterface* desc);
+  void SetRemoteDescription(
+      scoped_refptr<SetSessionDescriptionObserver> observer,
+      std::unique_ptr<SessionDescriptionInterface> desc);
 
   PeerConnectionInterface::RTCConfiguration GetConfiguration();
   RTCError SetConfiguration(
       const PeerConnectionInterface::RTCConfiguration& configuration);
+  void UpdateCachedIceCredentials(std::vector<IceParameters> credentials);
   bool AddIceCandidate(const IceCandidate* candidate);
   void AddIceCandidate(std::unique_ptr<IceCandidate> candidate,
                        std::function<void(RTCError)> callback);
@@ -188,9 +194,8 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   // belongs to the network and worker threads.
   // The caller is responsible for invoking the callbacks on the correct threads
   // in the order 1st network thread, 2nd worker thread.
-  void GetMediaChannelTeardownTasks(
-      std::vector<absl::AnyInvocable<void() &&>>& network_tasks,
-      std::vector<absl::AnyInvocable<void() &&>>& worker_tasks);
+  void GetMediaChannelTeardownTasks(ScopedOperationsBatcher& network_tasks,
+                                    ScopedOperationsBatcher& worker_tasks);
 
   PLAN_B_ONLY scoped_refptr<StreamCollectionInterface> local_streams();
   PLAN_B_ONLY scoped_refptr<StreamCollectionInterface> remote_streams();
@@ -239,7 +244,6 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   // Called from the `Create()` function. Can only be called
   // once. Modifies dependencies.
   void Initialize(
-      const PeerConnectionInterface::RTCConfiguration& configuration,
       std::unique_ptr<RTCCertificateGeneratorInterface> cert_generator,
       std::unique_ptr<webrtc::VideoBitrateAllocatorFactory>
           video_bitrate_allocator_factory,
@@ -277,6 +281,10 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
 
   // Part of ApplyRemoteDescription steps specific to Unified Plan.
   void ApplyRemoteDescriptionUpdateTransceiverState(SdpType sdp_type);
+
+  // Updates sender SSRCs and init send encodings from transceivers.
+  // Part of ApplyLocalDescription steps specific to Unified Plan.
+  void UpdateSenderSsrcsFromLocalDescription() RTC_RUN_ON(signaling_thread());
 
   // Part of ApplyRemoteDescription steps specific to plan b.
   PLAN_B_ONLY void PlanBUpdateSendersAndReceivers(
@@ -380,11 +388,15 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
 
   // Either creates or destroys the transceiver's BaseChannel according to the
   // given media section.
-  RTCError UpdateTransceiverChannel(
+  void UpdateTransceiverChannel(
       scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>
           transceiver,
       const ContentInfo& content,
-      const ContentGroup* bundle_group) RTC_RUN_ON(signaling_thread());
+      const ContentGroup* bundle_group,
+      ScopedOperationsBatcher& network_teardown_tasks,
+      ScopedOperationsBatcher& worker_tasks,
+      ScopedOperationsBatcher& network_init_tasks)
+      RTC_RUN_ON(signaling_thread());
 
   // Either creates or destroys the local data channel according to the given
   // media section.
@@ -571,9 +583,10 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
 
   // Based on number of transceivers per media type, enabled or disable
   // payload type based demuxing in the affected channels.
-  bool UpdatePayloadTypeDemuxingState(
+  void UpdatePayloadTypeDemuxingState(
       ContentSource source,
-      const flat_map<std::string, const ContentGroup*>& bundle_groups_by_mid);
+      const flat_map<std::string, const ContentGroup*>& bundle_groups_by_mid,
+      ScopedOperationsBatcher& worker_tasks);
 
   // Updates the error state, signaling if necessary.
   void SetSessionError(SessionError error, const std::string& error_desc);
@@ -697,8 +710,10 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   std::string session_error_desc_ RTC_GUARDED_BY(signaling_thread());
 
   // Member variables for caching global options.
-  AudioOptions audio_options_ RTC_GUARDED_BY(signaling_thread());
-  VideoOptions video_options_ RTC_GUARDED_BY(signaling_thread());
+  const AudioOptions audio_options_;
+  const VideoOptions video_options_;
+  std::vector<IceParameters> cached_pooled_ice_credentials_
+      RTC_GUARDED_BY(signaling_thread());
 
   // A video bitrate allocator factory.
   // This can be injected using the PeerConnectionDependencies,

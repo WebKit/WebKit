@@ -252,6 +252,12 @@ String lastComponentOfPathIgnoringTrailingSlash(const String& path)
     return path.substring(position + 1, endOfSubstring - position);
 }
 
+void removeTrailingSlash(String& path)
+{
+    if (path.length() > 1 && path.endsWith(FileSystem::pathSeparator))
+        path = path.left(path.length() - 1);
+}
+
 bool filesHaveSameVolume(const String& fileA, const String& fileB)
 {
     if (fileA.isNull() || fileB.isNull())
@@ -709,10 +715,8 @@ bool isAncestor(const String& possibleAncestor, const String& possibleChild)
 {
     auto possibleChildLexicallyNormal = lexicallyNormal(possibleChild);
     auto possibleAncestorLexicallyNormal = lexicallyNormal(possibleAncestor);
-    if (possibleChildLexicallyNormal.endsWith(static_cast<char16_t>(std::filesystem::path::preferred_separator)))
-        possibleChildLexicallyNormal = possibleChildLexicallyNormal.left(possibleChildLexicallyNormal.length() - 1);
-    if (possibleAncestorLexicallyNormal.endsWith(static_cast<char16_t>(std::filesystem::path::preferred_separator)))
-        possibleAncestorLexicallyNormal = possibleAncestorLexicallyNormal.left(possibleAncestorLexicallyNormal.length() - 1);
+    removeTrailingSlash(possibleChildLexicallyNormal);
+    removeTrailingSlash(possibleAncestorLexicallyNormal);
     return possibleChildLexicallyNormal.startsWith(possibleAncestorLexicallyNormal)
         && possibleChildLexicallyNormal.length() > possibleAncestorLexicallyNormal.length()
         && possibleChildLexicallyNormal[possibleAncestorLexicallyNormal.length()] == static_cast<char16_t>(std::filesystem::path::preferred_separator);

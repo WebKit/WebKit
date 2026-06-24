@@ -377,8 +377,8 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
             break;
         }
         case TextGranularity::DocumentBoundary:
-            m_start = startOfDocument(m_start.document()).deepEquivalent();
-            m_end = endOfDocument(m_end.document()).deepEquivalent();
+            m_start = startOfDocument(protect(m_start.document())).deepEquivalent();
+            m_end = endOfDocument(protect(m_end.document())).deepEquivalent();
             break;
         case TextGranularity::ParagraphBoundary:
             m_start = startOfParagraph(VisiblePosition(m_start, m_affinity)).deepEquivalent();

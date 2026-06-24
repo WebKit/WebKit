@@ -320,9 +320,6 @@ class Configuration {
         const ending = this.version_name ? this.version_name.substring(this.version_name.length - 2) : null;
         if ([' A', ' B', ' C', ' D', ' E', ' F', ' G', ' H'].includes(ending))
             version_name = this.version_name.substring(0, this.version_name.length - 2);
-        let architecture = null;
-        if (this.architecture != null && (DEFAULT_ARCHITECTURE == null || this.architecture.search(DEFAULT_ARCHITECTURE) < 0))
-            architecture = this.architecture;
         return {
             platform: [this.platform],
             version:[this.version ? Configuration.integerToVersion(this.version) : null],
@@ -331,7 +328,8 @@ class Configuration {
             style: [this.style],
             flavor: [this.flavor],
             model: [this.model],
-            architecture: [architecture],
+            architecture: [this.architecture],
+            sdk: [this.sdk],
         };
     }
 }

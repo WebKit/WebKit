@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 
 <div id="a">
     <div id="b">
@@ -11,10 +11,9 @@
 </div>
 
 <script>
+window.jsTestIsAsync = true;
 if (window.testRunner) {
-    testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
-    testRunner.waitUntilDone();
 }
 
 var frame = document.createElement('iframe');
@@ -34,9 +33,7 @@ onload = function() {
         shouldBeNull('frame.contentDocument');
         c.appendChild(b);
         shouldNotBe('frame.contentDocument', 'null');
-        isSuccessfullyParsed();
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     };
 
     a.parentNode.removeChild(a);

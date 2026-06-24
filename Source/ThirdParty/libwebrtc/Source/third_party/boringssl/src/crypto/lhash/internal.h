@@ -17,18 +17,15 @@
 
 #include <openssl/base.h>
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
+BSSL_NAMESPACE_BEGIN
 
 // lhash is a traditional, chaining hash table that automatically expands and
 // contracts as needed. One should not use the lh_* functions directly, rather
 // use the type-safe macro wrappers:
 //
-// A hash table of a specific type of object has type |LHASH_OF(type)|. This
-// can be defined (once) with |DEFINE_LHASH_OF(type)| and declared where needed
-// with |DECLARE_LHASH_OF(type)|. For example:
+// A hash table of a specific type of object has type `LHASH_OF(type)`. This
+// can be defined (once) with `DEFINE_LHASH_OF(type)`.
 //
 //   struct foo {
 //     int bar;
@@ -36,25 +33,24 @@ extern "C" {
 //
 //   DEFINE_LHASH_OF(struct foo)
 //
-// Although note that the hash table will contain /pointers/ to |foo|.
+// Although note that the hash table will contain /pointers/ to `foo`.
 //
-// A macro will be defined for each of the |OPENSSL_lh_*| functions below. For
-// |LHASH_OF(foo)|, the macros would be |lh_foo_new|, |lh_foo_num_items| etc.
+// A macro will be defined for each of the `OPENSSL_lh_*` functions below. For
+// `LHASH_OF(foo)`, the macros would be `lh_foo_new`, `lh_foo_num_items` etc.
 //
 // TODO(davidben): Now that this type is completely internal, this can just be a
 // C++ template without any macros.
 
 
-#define LHASH_OF(type) struct lhash_st_##type
-#define DECLARE_LHASH_OF(type) LHASH_OF(type);
+#define LHASH_OF(type) struct bssl::type##_lhash_st
 
 // lhash_cmp_func is a comparison function that returns a value equal, or not
-// equal, to zero depending on whether |*a| is equal, or not equal to |*b|,
-// respectively. Note the difference between this and |stack_cmp_func| in that
+// equal, to zero depending on whether `*a` is equal, or not equal to `*b`,
+// respectively. Note the difference between this and `stack_cmp_func` in that
 // this takes pointers to the objects directly.
 //
 // This function's actual type signature is int (*)(const T*, const T*). The
-// low-level |lh_*| functions will be passed a type-specific wrapper to call it
+// low-level `lh_*` functions will be passed a type-specific wrapper to call it
 // correctly.
 typedef int (*lhash_cmp_func)(const void *a, const void *b);
 typedef int (*lhash_cmp_func_helper)(lhash_cmp_func func, const void *a,
@@ -64,74 +60,76 @@ typedef int (*lhash_cmp_func_helper)(lhash_cmp_func func, const void *a,
 // uint32_t.
 //
 // This function's actual type signature is uint32_t (*)(const T*). The
-// low-level |lh_*| functions will be passed a type-specific wrapper to call it
+// low-level `lh_*` functions will be passed a type-specific wrapper to call it
 // correctly.
 typedef uint32_t (*lhash_hash_func)(const void *a);
 typedef uint32_t (*lhash_hash_func_helper)(lhash_hash_func func, const void *a);
 
-typedef struct lhash_st _LHASH;
+struct _LHASH;
 
 // OPENSSL_lh_new returns a new, empty hash table or NULL on error.
 OPENSSL_EXPORT _LHASH *OPENSSL_lh_new(lhash_hash_func hash,
                                       lhash_cmp_func comp);
 
 // OPENSSL_lh_free frees the hash table itself but none of the elements. See
-// |OPENSSL_lh_doall|.
+// `OPENSSL_lh_doall`.
 OPENSSL_EXPORT void OPENSSL_lh_free(_LHASH *lh);
 
-// OPENSSL_lh_num_items returns the number of items in |lh|.
+// OPENSSL_lh_num_items returns the number of items in `lh`.
 OPENSSL_EXPORT size_t OPENSSL_lh_num_items(const _LHASH *lh);
 
-// OPENSSL_lh_retrieve finds an element equal to |data| in the hash table and
+// OPENSSL_lh_retrieve finds an element equal to `data` in the hash table and
 // returns it. If no such element exists, it returns NULL.
 OPENSSL_EXPORT void *OPENSSL_lh_retrieve(const _LHASH *lh, const void *data,
                                          lhash_hash_func_helper call_hash_func,
                                          lhash_cmp_func_helper call_cmp_func);
 
-// OPENSSL_lh_retrieve_key finds an element matching |key|, given the specified
-// hash and comparison function. This differs from |OPENSSL_lh_retrieve| in that
-// the key may be a different type than the values stored in |lh|. |key_hash|
-// and |cmp_key| must be compatible with the functions passed into
-// |OPENSSL_lh_new|.
+// OPENSSL_lh_retrieve_key finds an element matching `key`, given the specified
+// hash and comparison function. This differs from `OPENSSL_lh_retrieve` in that
+// the key may be a different type than the values stored in `lh`. `key_hash`
+// and `cmp_key` must be compatible with the functions passed into
+// `OPENSSL_lh_new`.
 OPENSSL_EXPORT void *OPENSSL_lh_retrieve_key(const _LHASH *lh, const void *key,
                                              uint32_t key_hash,
                                              int (*cmp_key)(const void *key,
                                                             const void *value));
 
-// OPENSSL_lh_insert inserts |data| into the hash table. If an existing element
-// is equal to |data| (with respect to the comparison function) then |*old_data|
+// OPENSSL_lh_insert inserts `data` into the hash table. If an existing element
+// is equal to `data` (with respect to the comparison function) then `*old_data`
 // will be set to that value and it will be replaced. Otherwise, or in the
-// event of an error, |*old_data| will be set to NULL. It returns one on
+// event of an error, `*old_data` will be set to NULL. It returns one on
 // success or zero in the case of an allocation error.
 OPENSSL_EXPORT int OPENSSL_lh_insert(_LHASH *lh, void **old_data, void *data,
                                      lhash_hash_func_helper call_hash_func,
                                      lhash_cmp_func_helper call_cmp_func);
 
-// OPENSSL_lh_delete removes an element equal to |data| from the hash table and
+// OPENSSL_lh_delete removes an element equal to `data` from the hash table and
 // returns it. If no such element is found, it returns NULL.
 OPENSSL_EXPORT void *OPENSSL_lh_delete(_LHASH *lh, const void *data,
                                        lhash_hash_func_helper call_hash_func,
                                        lhash_cmp_func_helper call_cmp_func);
 
-// OPENSSL_lh_doall_arg calls |func| on each element of the hash table and also
-// passes |arg| as the second argument.
+// OPENSSL_lh_doall_arg calls `func` on each element of the hash table and also
+// passes `arg` as the second argument.
 // TODO(fork): rename this
 OPENSSL_EXPORT void OPENSSL_lh_doall_arg(_LHASH *lh,
                                          void (*func)(void *, void *),
                                          void *arg);
 
+// DEFINE_LHASH_OF creates (inline) definitions of hash table. It must be used
+// from within the bssl namespace.
 #define DEFINE_LHASH_OF(type)                                                  \
   /* We disable MSVC C4191 in this macro, which warns when pointers are cast   \
    * to the wrong type. While the cast itself is valid, it is often a bug      \
    * because calling it through the cast is UB. However, we never actually     \
-   * call functions as |lhash_cmp_func|. The type is just a type-erased        \
+   * call functions as `lhash_cmp_func`. The type is just a type-erased        \
    * function pointer. (C does not guarantee function pointers fit in          \
-   * |void*|, and GCC will warn on this.) Thus we just disable the false       \
+   * `void*`, and GCC will warn on this.) Thus we just disable the false       \
    * positive warning. */                                                      \
   OPENSSL_MSVC_PRAGMA(warning(push))                                           \
   OPENSSL_MSVC_PRAGMA(warning(disable : 4191))                                 \
                                                                                \
-  DECLARE_LHASH_OF(type)                                                       \
+  struct type##_lhash_st;                                                      \
                                                                                \
   typedef int (*lhash_##type##_cmp_func)(const type *, const type *);          \
   typedef uint32_t (*lhash_##type##_hash_func)(const type *);                  \
@@ -219,9 +217,6 @@ OPENSSL_EXPORT void OPENSSL_lh_doall_arg(_LHASH *lh,
                                                                                \
   OPENSSL_MSVC_PRAGMA(warning(pop))
 
-
-#if defined(__cplusplus)
-}  // extern C
-#endif
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_HEADER_CRYPTO_LHASH_INTERNAL_H

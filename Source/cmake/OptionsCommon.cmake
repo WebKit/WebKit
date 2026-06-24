@@ -205,8 +205,6 @@ option(GCC_OFFLINEASM_SOURCE_MAP
   "Produce debug line information for offlineasm-generated code"
   ${GCC_OFFLINEASM_SOURCE_MAP_DEFAULT})
 
-option(USE_APPLE_ICU "Use Apple's internal ICU" ${APPLE})
-
 # Enable the usage of OpenMP.
 #  - At this moment, OpenMP is only used as an alternative implementation
 #    to native threads for the parallelization of the SVG filters.
@@ -229,33 +227,38 @@ set(CXX_STDLIB_TEST_SOURCE "
     #error Clang needed for libc++
     #endif
 ")
-check_cxx_source_compiles("${CXX_STDLIB_TEST_SOURCE}" CXX_STDLIB_IS_LIBCPP)
-if (CXX_STDLIB_IS_LIBCPP)
-    set(CXX_STDLIB_TEST_SOURCE "
-        #include <utility>
-        #if _LIBCPP_VERSION >= 190000
-        int main() { }
-        #else
-        #error libc++ is older than 19.x
-        #endif
-    ")
-    check_cxx_source_compiles("${CXX_STDLIB_TEST_SOURCE}" CXX_STDLIB_IS_LIBCPP_19_OR_NEWER)
-    if (CXX_STDLIB_IS_LIBCPP_19_OR_NEWER)
-        set(CXX_STDLIB_VARIANT "LIBCPP 19+")
-        set(CXX_STDLIB_ASSERTIONS_MACRO _LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE)
-    else ()
-        set(CXX_STDLIB_VARIANT "LIBCPP <19")
-        set(CXX_STDLIB_ASSERTIONS_MACRO _LIBCPP_ENABLE_ASSERTIONS=1)
-    endif ()
+if (APPLE)
+    set(CXX_STDLIB_VARIANT "LIBCPP 19+")
+    set(CXX_STDLIB_ASSERTIONS_MACRO _LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE)
 else ()
-    set(CXX_STDLIB_TEST_SOURCE "
-    #include <utility>
-    int main() { return _GLIBCXX_RELEASE; }
-    ")
-    check_cxx_source_compiles("${CXX_STDLIB_TEST_SOURCE}" CXX_STDLIB_IS_GLIBCXX)
-    if (CXX_STDLIB_IS_GLIBCXX)
-        set(CXX_STDLIB_VARIANT "GLIBCXX")
-        set(CXX_STDLIB_ASSERTIONS_MACRO _GLIBCXX_ASSERTIONS=1)
+    check_cxx_source_compiles("${CXX_STDLIB_TEST_SOURCE}" CXX_STDLIB_IS_LIBCPP)
+    if (CXX_STDLIB_IS_LIBCPP)
+        set(CXX_STDLIB_TEST_SOURCE "
+            #include <utility>
+            #if _LIBCPP_VERSION >= 190000
+            int main() { }
+            #else
+            #error libc++ is older than 19.x
+            #endif
+        ")
+        check_cxx_source_compiles("${CXX_STDLIB_TEST_SOURCE}" CXX_STDLIB_IS_LIBCPP_19_OR_NEWER)
+        if (CXX_STDLIB_IS_LIBCPP_19_OR_NEWER)
+            set(CXX_STDLIB_VARIANT "LIBCPP 19+")
+            set(CXX_STDLIB_ASSERTIONS_MACRO _LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE)
+        else ()
+            set(CXX_STDLIB_VARIANT "LIBCPP <19")
+            set(CXX_STDLIB_ASSERTIONS_MACRO _LIBCPP_ENABLE_ASSERTIONS=1)
+        endif ()
+    else ()
+        set(CXX_STDLIB_TEST_SOURCE "
+        #include <utility>
+        int main() { return _GLIBCXX_RELEASE; }
+        ")
+        check_cxx_source_compiles("${CXX_STDLIB_TEST_SOURCE}" CXX_STDLIB_IS_GLIBCXX)
+        if (CXX_STDLIB_IS_GLIBCXX)
+            set(CXX_STDLIB_VARIANT "GLIBCXX")
+            set(CXX_STDLIB_ASSERTIONS_MACRO _GLIBCXX_ASSERTIONS=1)
+        endif ()
     endif ()
 endif ()
 message(STATUS "C++ standard library in use: ${CXX_STDLIB_VARIANT}")
@@ -298,57 +301,59 @@ elseif (NOT ENABLE_ASSERTS)
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-DASSERT_ENABLED=0)
 endif ()
 
-# Check whether features.h header exists.
-# Including glibc's one defines __GLIBC__, that is used in Platform.h
-WEBKIT_CHECK_HAVE_INCLUDE(HAVE_FEATURES_H features.h)
+if (NOT APPLE)
+    # Check whether features.h header exists.
+    # Including glibc's one defines __GLIBC__, that is used in Platform.h
+    WEBKIT_CHECK_HAVE_INCLUDE(HAVE_FEATURES_H features.h)
 
-# Check for headers
-WEBKIT_CHECK_HAVE_INCLUDE(HAVE_ERRNO_H errno.h)
-WEBKIT_CHECK_HAVE_INCLUDE(HAVE_LANGINFO_H langinfo.h)
-WEBKIT_CHECK_HAVE_INCLUDE(HAVE_MMAP sys/mman.h)
-WEBKIT_CHECK_HAVE_INCLUDE(HAVE_PTHREAD_NP_H pthread_np.h)
-WEBKIT_CHECK_HAVE_INCLUDE(HAVE_SYS_PARAM_H sys/param.h)
-WEBKIT_CHECK_HAVE_INCLUDE(HAVE_SYS_TIME_H sys/time.h)
-WEBKIT_CHECK_HAVE_INCLUDE(HAVE_SYS_TIMEB_H sys/timeb.h)
-WEBKIT_CHECK_HAVE_INCLUDE(HAVE_LINUX_MEMFD_H linux/memfd.h)
+    # Check for headers
+    WEBKIT_CHECK_HAVE_INCLUDE(HAVE_ERRNO_H errno.h)
+    WEBKIT_CHECK_HAVE_INCLUDE(HAVE_LANGINFO_H langinfo.h)
+    WEBKIT_CHECK_HAVE_INCLUDE(HAVE_MMAP sys/mman.h)
+    WEBKIT_CHECK_HAVE_INCLUDE(HAVE_PTHREAD_NP_H pthread_np.h)
+    WEBKIT_CHECK_HAVE_INCLUDE(HAVE_SYS_PARAM_H sys/param.h)
+    WEBKIT_CHECK_HAVE_INCLUDE(HAVE_SYS_TIME_H sys/time.h)
+    WEBKIT_CHECK_HAVE_INCLUDE(HAVE_SYS_TIMEB_H sys/timeb.h)
+    WEBKIT_CHECK_HAVE_INCLUDE(HAVE_LINUX_MEMFD_H linux/memfd.h)
 
-# Check for functions
-# _GNU_SOURCE=1 is required to expose statx
-list(APPEND CMAKE_REQUIRED_DEFINITIONS "-D_GNU_SOURCE=1")
-WEBKIT_CHECK_HAVE_FUNCTION(HAVE_ALIGNED_MALLOC _aligned_malloc malloc.h)
-WEBKIT_CHECK_HAVE_FUNCTION(HAVE_LOCALTIME_R localtime_r time.h)
-WEBKIT_CHECK_HAVE_FUNCTION(HAVE_MALLOC_TRIM malloc_trim malloc.h)
-WEBKIT_CHECK_HAVE_FUNCTION(HAVE_STATX statx sys/stat.h)
-WEBKIT_CHECK_HAVE_FUNCTION(HAVE_TIMEGM timegm time.h)
-WEBKIT_CHECK_HAVE_FUNCTION(HAVE_TIMERFD timerfd_create sys/timerfd.h)
-WEBKIT_CHECK_HAVE_FUNCTION(HAVE_VASPRINTF vasprintf stdio.h)
+    # Check for functions
+    # _GNU_SOURCE=1 is required to expose statx
+    list(APPEND CMAKE_REQUIRED_DEFINITIONS "-D_GNU_SOURCE=1")
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_ALIGNED_MALLOC _aligned_malloc malloc.h)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_LOCALTIME_R localtime_r time.h)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_MALLOC_TRIM malloc_trim malloc.h)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_STATX statx sys/stat.h)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_TIMEGM timegm time.h)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_TIMERFD timerfd_create sys/timerfd.h)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_VASPRINTF vasprintf stdio.h)
 
-# Check for symbols
-WEBKIT_CHECK_HAVE_SYMBOL(HAVE_REGEX_H regexec regex.h)
-if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
-    WEBKIT_CHECK_HAVE_SYMBOL(HAVE_PTHREAD_MAIN_NP pthread_main_np pthread_np.h)
-endif ()
-WEBKIT_CHECK_HAVE_SYMBOL(HAVE_MAP_ALIGNED MAP_ALIGNED sys/mman.h)
-WEBKIT_CHECK_HAVE_SYMBOL(HAVE_SHM_ANON SHM_ANON sys/mman.h)
-WEBKIT_CHECK_HAVE_SYMBOL(HAVE_TIMINGSAFE_BCMP timingsafe_bcmp string.h)
-# Windows has signal.h but is missing symbols that are used in calls to signal.
-WEBKIT_CHECK_HAVE_SYMBOL(HAVE_SIGNAL_H SIGTRAP signal.h)
+    # Check for symbols
+    WEBKIT_CHECK_HAVE_SYMBOL(HAVE_REGEX_H regexec regex.h)
+    if (NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
+        WEBKIT_CHECK_HAVE_SYMBOL(HAVE_PTHREAD_MAIN_NP pthread_main_np pthread_np.h)
+    endif ()
+    WEBKIT_CHECK_HAVE_SYMBOL(HAVE_MAP_ALIGNED MAP_ALIGNED sys/mman.h)
+    WEBKIT_CHECK_HAVE_SYMBOL(HAVE_SHM_ANON SHM_ANON sys/mman.h)
+    WEBKIT_CHECK_HAVE_SYMBOL(HAVE_TIMINGSAFE_BCMP timingsafe_bcmp string.h)
+    # Windows has signal.h but is missing symbols that are used in calls to signal.
+    WEBKIT_CHECK_HAVE_SYMBOL(HAVE_SIGNAL_H SIGTRAP signal.h)
 
-# Check for struct members
-WEBKIT_CHECK_HAVE_STRUCT(HAVE_STAT_BIRTHTIME "struct stat" st_birthtime sys/stat.h)
-WEBKIT_CHECK_HAVE_STRUCT(HAVE_TM_GMTOFF "struct tm" tm_gmtoff time.h)
-WEBKIT_CHECK_HAVE_STRUCT(HAVE_TM_ZONE "struct tm" tm_zone time.h)
+    # Check for struct members
+    WEBKIT_CHECK_HAVE_STRUCT(HAVE_STAT_BIRTHTIME "struct stat" st_birthtime sys/stat.h)
+    WEBKIT_CHECK_HAVE_STRUCT(HAVE_TM_GMTOFF "struct tm" tm_gmtoff time.h)
+    WEBKIT_CHECK_HAVE_STRUCT(HAVE_TM_ZONE "struct tm" tm_zone time.h)
 
-# Check for int types
-check_type_size("__int128_t" INT128_VALUE)
+    # Check for int types
+    check_type_size("__int128_t" INT128_VALUE)
 
-if (HAVE_INT128_VALUE)
-  SET_AND_EXPOSE_TO_BUILD(HAVE_INT128_T INT128_VALUE)
-endif ()
+    if (HAVE_INT128_VALUE)
+      SET_AND_EXPOSE_TO_BUILD(HAVE_INT128_T INT128_VALUE)
+    endif ()
 
-# Check which filesystem implementation is available if any
-if (STD_FILESYSTEM_IS_AVAILABLE)
-    SET_AND_EXPOSE_TO_BUILD(HAVE_STD_FILESYSTEM TRUE)
-elseif (STD_EXPERIMENTAL_FILESYSTEM_IS_AVAILABLE)
-    SET_AND_EXPOSE_TO_BUILD(HAVE_STD_EXPERIMENTAL_FILESYSTEM TRUE)
+    # Check which filesystem implementation is available if any
+    if (STD_FILESYSTEM_IS_AVAILABLE)
+        SET_AND_EXPOSE_TO_BUILD(HAVE_STD_FILESYSTEM TRUE)
+    elseif (STD_EXPERIMENTAL_FILESYSTEM_IS_AVAILABLE)
+        SET_AND_EXPOSE_TO_BUILD(HAVE_STD_EXPERIMENTAL_FILESYSTEM TRUE)
+    endif ()
 endif ()

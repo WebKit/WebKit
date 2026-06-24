@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSRegExpStringIterator.h"
+#include "JSString.h"
 #include "StructureCreateInlines.h"
 
 namespace JSC {
@@ -33,6 +34,16 @@ namespace JSC {
 inline Structure* JSRegExpStringIterator::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(JSRegExpStringIteratorType, StructureFlags), info());
+}
+
+inline JSObject* JSRegExpStringIterator::regExp() const
+{
+    return asObject(internalField(Field::RegExp).get());
+}
+
+inline JSString* JSRegExpStringIterator::iteratedString() const
+{
+    return asString(internalField(Field::String).get());
 }
 
 } // namespace JSC

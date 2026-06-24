@@ -787,6 +787,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-022.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-023-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-023.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-024-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-024.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-025-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-025.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-letter-spacing-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-letter-spacing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-normal-011-expected.html

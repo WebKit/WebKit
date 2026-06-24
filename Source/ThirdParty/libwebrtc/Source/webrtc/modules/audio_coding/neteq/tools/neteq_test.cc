@@ -19,14 +19,12 @@
 #include <optional>
 #include <utility>
 
-#include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
-#include "api/field_trials.h"
+#include "api/field_trials_view.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_factory.h"
@@ -91,11 +89,12 @@ NetEqTest::NetEqTest(const NetEq::Config& config,
                      std::unique_ptr<NetEqInput> input,
                      std::unique_ptr<AudioSink> output,
                      Callbacks callbacks,
-                     absl::string_view field_trials)
+                     const FieldTrialsView* field_trials)
     : input_(std::move(input)),
       clock_(Timestamp::Millis(input_->NextEventTime().value_or(0))),
-      env_(CreateEnvironment(&clock_,
-                             std::make_unique<FieldTrials>(field_trials))),
+      env_(CreateEnvironment(
+          &clock_,
+          field_trials ? field_trials->CreateCopy() : nullptr)),
       neteq_(
           neteq_factory
               ? neteq_factory->Create(env_, config, std::move(decoder_factory))

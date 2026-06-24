@@ -51,6 +51,12 @@ public:
     void layoutTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, const HashSet<InlineIterator::SVGTextBox::Key>& chunkStarts, SVGTextFragmentMap&);
 
 private:
+    // SVG2 §11.10: applies 'textLength' across all chunks of an owning element when
+    // list-valued x/y splits it into per-glyph chunks. spacingAndGlyphs only;
+    // spacing, nested tspan textLength, inline-size, and forced line breaks are
+    // still per-chunk. webkit.org/b/61855.
+    void applyElementLevelTextLength();
+
     Vector<SVGTextChunk> m_textChunks;
     SVGChunkTransformMap m_textBoxTransformations;
 };

@@ -83,9 +83,12 @@ class RenderImage;
 
 class AXTextMarker;
 
-namespace Style { struct Difference; }
+namespace Style {
+class ComputedStyle;
+struct Difference;
+}
+
 class RenderObject;
-class RenderStyle;
 class RenderText;
 class RenderWidget;
 class Scrollbar;
@@ -381,10 +384,12 @@ public:
 #endif
 private:
     using DOMObjectVariant = Variant<std::nullptr_t, RenderObject*, Node*, Widget*>;
-    void cacheAndInitializeWrapper(AccessibilityObject&, DOMObjectVariant = nullptr);
+    enum class ShouldAttachWrapper : bool { No, Yes };
+    void cacheAndInitializeWrapper(AccessibilityObject&, DOMObjectVariant = nullptr, ShouldAttachWrapper = ShouldAttachWrapper::Yes);
     void attachWrapper(AccessibilityObject&);
 
     AccessibilityObject* getOrCreateSlow(Node&, IsPartOfRelation);
+    AccessibilityObject* getOrCreateSlow(Widget&);
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     RefPtr<AccessibilityScrollView> scrollViewForFrame(LocalFrame&);
@@ -430,15 +435,15 @@ public:
     void onSelectedOptionChanged(HTMLSelectElement&, int optionIndex);
     void onSelectedTextChanged(const VisiblePositionRange&, AccessibilityObject* = nullptr);
     void onSlottedContentChange(const HTMLSlotElement&);
-    void onStyleChange(Element&, OptionSet<Style::Change>, const RenderStyle* oldStyle, const RenderStyle* newStyle);
-    void onStyleChange(RenderText&, Style::Difference, const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    void onStyleChange(Element&, OptionSet<Style::Change>, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle);
+    void onStyleChange(RenderText&, Style::Difference, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void onAccessibilityPaintStarted();
     void onAccessibilityPaintFinished();
     // Returns true if the font changes, requiring all descendants to update the Font property.
-    bool onFontChange(Element&, const RenderStyle*, const RenderStyle*);
+    bool onFontChange(Element&, const Style::ComputedStyle*, const Style::ComputedStyle*);
     // Returns true if the text color changes, requiring all descendants to update the TextColor property.
-    bool onTextColorChange(Element&, const RenderStyle*, const RenderStyle*);
+    bool onTextColorChange(Element&, const Style::ComputedStyle*, const Style::ComputedStyle*);
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);
@@ -524,6 +529,12 @@ public:
     Node* modalNode();
 
     void deferAttributeChangeIfNeeded(Element&, const QualifiedName&, const AtomString&, const AtomString&);
+
+    // True for the attributes in relationAttributes() (aria-labelledby, aria-owns, etc.).
+    static bool isRelationAttribute(const QualifiedName&);
+    // Records that an element carries a relation attribute so the next relations rebuild includes it.
+    void trackRelationAttributeElement(Element&);
+
     void recomputeIsIgnored(RenderObject&);
     void recomputeIsIgnored(Node*);
 
@@ -909,6 +920,7 @@ private:
     void handleTabPanelSelected(Element*, Element*);
     void handleRowCountChanged(AccessibilityObject*, Document*);
     void handleAttributeChange(Element*, const QualifiedName&, const AtomString&, const AtomString&);
+    void handleClickHandlerChanged(Node&, const AtomString& eventType);
     bool shouldProcessAttributeChange(Element*, const QualifiedName&);
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
@@ -932,7 +944,6 @@ private:
     bool isModalElement(Element&) const;
     void findModalNodes();
     void updateCurrentModalNode();
-    bool isNodeVisible(const Node*) const;
     bool modalElementHasAccessibleContent(Element&);
 
     void setDirtyStitchGroups(const RenderBlock&);

@@ -26,13 +26,15 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_INFO_ACCESS(
     const X509V3_EXT_METHOD *method, void *ext, STACK_OF(CONF_VALUE) *ret);
 static void *v2i_AUTHORITY_INFO_ACCESS(const X509V3_EXT_METHOD *method,
                                        const X509V3_CTX *ctx,
                                        const STACK_OF(CONF_VALUE) *nval);
 
-const X509V3_EXT_METHOD v3_info = {
+const X509V3_EXT_METHOD bssl::v3_info = {
     NID_info_access,
     X509V3_EXT_MULTILINE,
     ASN1_ITEM_ref(AUTHORITY_INFO_ACCESS),
@@ -49,7 +51,7 @@ const X509V3_EXT_METHOD v3_info = {
     nullptr,
 };
 
-const X509V3_EXT_METHOD v3_sinfo = {
+const X509V3_EXT_METHOD bssl::v3_sinfo = {
     NID_sinfo_access,
     X509V3_EXT_MULTILINE,
     ASN1_ITEM_ref(AUTHORITY_INFO_ACCESS),
@@ -121,13 +123,13 @@ err:
 static void *v2i_AUTHORITY_INFO_ACCESS(const X509V3_EXT_METHOD *method,
                                        const X509V3_CTX *ctx,
                                        const STACK_OF(CONF_VALUE) *nval) {
-  bssl::UniquePtr<AUTHORITY_INFO_ACCESS> ainfo(sk_ACCESS_DESCRIPTION_new_null());
+  UniquePtr<AUTHORITY_INFO_ACCESS> ainfo(sk_ACCESS_DESCRIPTION_new_null());
   if (ainfo == nullptr) {
     return nullptr;
   }
   for (size_t i = 0; i < sk_CONF_VALUE_num(nval); i++) {
     const CONF_VALUE *cnf = sk_CONF_VALUE_value(nval, i);
-    bssl::UniquePtr<ACCESS_DESCRIPTION> acc(ACCESS_DESCRIPTION_new());
+    UniquePtr<ACCESS_DESCRIPTION> acc(ACCESS_DESCRIPTION_new());
     if (acc == nullptr) {
       return nullptr;
     }
@@ -142,7 +144,7 @@ static void *v2i_AUTHORITY_INFO_ACCESS(const X509V3_EXT_METHOD *method,
     if (!v2i_GENERAL_NAME_ex(acc->location, method, ctx, &ctmp, 0)) {
       return nullptr;
     }
-    bssl::UniquePtr<char> objtmp(OPENSSL_strndup(cnf->name, ptmp - cnf->name));
+    UniquePtr<char> objtmp(OPENSSL_strndup(cnf->name, ptmp - cnf->name));
     if (objtmp == nullptr) {
       return nullptr;
     }
@@ -152,7 +154,7 @@ static void *v2i_AUTHORITY_INFO_ACCESS(const X509V3_EXT_METHOD *method,
       ERR_add_error_data(2, "value=", objtmp.get());
       return nullptr;
     }
-    if (!bssl::PushToStack(ainfo.get(), std::move(acc))) {
+    if (!PushToStack(ainfo.get(), std::move(acc))) {
       return nullptr;
     }
   }

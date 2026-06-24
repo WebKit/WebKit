@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    // A nested <svg> (RenderSVGViewportContainer) needs a RenderLayer once its transform attribute
+    // is non-identity. Adding it dynamically must create that layer, otherwise requiresLayer() and
+    // hasLayer() disagree and the nested viewport is left in a stale layer state. The render-tree
+    // dump shows a "layer at" line for the nested <svg> only when the layer exists.
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            document.body.offsetTop;
+            document.getElementById('inner').setAttribute('transform', 'rotate(45 100 100)');
+            requestAnimationFrame(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        });
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <svg id="inner" x="0" y="0" width="200" height="200">
+        <rect x="60" y="90" width="80" height="20" fill="green"/>
+    </svg>
+</svg>
+</body>
+</html>

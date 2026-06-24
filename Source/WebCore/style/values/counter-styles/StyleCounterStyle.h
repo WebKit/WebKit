@@ -50,7 +50,7 @@ DEFINE_TYPE_WRAPPER_GET(CounterStyle, identifier);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<CounterStyle> { auto operator()(const CounterStyle&, const RenderStyle&) -> CSS::CounterStyle; };
+template<> struct ToCSS<CounterStyle> { auto operator()(const CounterStyle&, const Style::ComputedStyle&) -> CSS::CounterStyle; };
 template<> struct ToStyle<CSS::CounterStyle> { auto operator()(const CSS::CounterStyle&, const BuilderState&) -> CounterStyle; };
 template<> struct CSSValueConversion<CounterStyle> { auto operator()(BuilderState&, const CSSValue&) -> CounterStyle; };
 

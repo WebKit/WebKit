@@ -1,0 +1,16 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 400px; height: 400px; }
+</style>
+</head>
+<body>
+<!-- Composited anchor near the origin and a trailing plain rect in the far corner of a large container. The green rect must render at its real position, not clipped. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <rect style="will-change: transform" x="10" y="10" width="60" height="60" fill="red"/>
+    <rect x="320" y="320" width="60" height="60" fill="green"/>
+</svg>
+</body>
+</html>

@@ -17,10 +17,10 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/timestamp.h"
 #include "net/dcsctp/public/dcsctp_message.h"
@@ -66,7 +66,7 @@ class FuzzerTimeout : public Timeout {
 class FuzzerCallbacks : public DcSctpSocketCallbacks {
  public:
   static constexpr int kRandomValue = 42;
-  void SendPacket(webrtc::ArrayView<const uint8_t> data) override {
+  void SendPacket(std::span<const uint8_t> data) override {
     sent_packets_.emplace_back(std::vector<uint8_t>(data.begin(), data.end()));
   }
   std::unique_ptr<Timeout> CreateTimeout(
@@ -86,13 +86,12 @@ class FuzzerCallbacks : public DcSctpSocketCallbacks {
   void OnConnected() override {}
   void OnClosed() override {}
   void OnConnectionRestarted() override {}
-  void OnStreamsResetFailed(
-      webrtc::ArrayView<const StreamID> /* outgoing_streams */,
-      absl::string_view /* reason */) override {}
+  void OnStreamsResetFailed(std::span<const StreamID> /* outgoing_streams */,
+                            absl::string_view /* reason */) override {}
   void OnStreamsResetPerformed(
-      webrtc::ArrayView<const StreamID> outgoing_streams) override {}
+      std::span<const StreamID> outgoing_streams) override {}
   void OnIncomingStreamsReset(
-      webrtc::ArrayView<const StreamID> incoming_streams) override {}
+      std::span<const StreamID> incoming_streams) override {}
 
   std::vector<uint8_t> ConsumeSentPacket() {
     if (sent_packets_.empty()) {
@@ -125,7 +124,7 @@ class FuzzerCallbacks : public DcSctpSocketCallbacks {
 // API methods.
 void FuzzSocket(DcSctpSocketInterface& socket,
                 FuzzerCallbacks& cb,
-                webrtc::ArrayView<const uint8_t> data);
+                std::span<const uint8_t> data);
 
 }  // namespace dcsctp_fuzzers
 }  // namespace dcsctp

@@ -22,7 +22,10 @@
 #include <openssl/mem.h>
 
 #include "../internal.h"
+#include "internal.h"
 
+
+using namespace bssl;
 
 void CBB_zero(CBB *cbb) { OPENSSL_memset(cbb, 0, sizeof(CBB)); }
 
@@ -64,6 +67,7 @@ void CBB_cleanup(CBB *cbb) {
 
   if (cbb->u.base.can_resize) {
     OPENSSL_free(cbb->u.base.buf);
+    cbb->u.base.buf = nullptr;
   }
 }
 
@@ -270,7 +274,7 @@ err:
   return 0;
 }
 
-const uint8_t *CBB_data(const CBB *cbb) {
+uint8_t *CBB_data(const CBB *cbb) {
   assert(cbb->child == nullptr);
   if (cbb->is_child) {
     return cbb->u.child.base->buf + cbb->u.child.offset +
@@ -638,6 +642,38 @@ int CBB_add_asn1_oid_from_text(CBB *cbb, const char *text, size_t len) {
   return 1;
 }
 
+int CBB_add_asn1_relative_oid_from_text(CBB *cbb, const char *text,
+                                        size_t len) {
+  if (!CBB_flush(cbb)) {
+    return 0;
+  }
+
+  // Relative OIDs must have at least one component.
+  if (!len) {
+    return 0;
+  }
+
+  CBS cbs;
+  CBS_init(&cbs, reinterpret_cast<const uint8_t *>(text), len);
+
+  while (CBS_len(&cbs) > 0) {
+    uint64_t a;
+    if (!parse_dotted_decimal(&cbs, &a) || !add_base128_integer(cbb, a)) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
+int CBB_add_asn1_oid_component(CBB *cbb, uint64_t value) {
+  if (!CBB_flush(cbb)) {
+    return 0;
+  }
+
+  return add_base128_integer(cbb, value);
+}
+
 static int compare_set_of_element(const void *a_ptr, const void *b_ptr) {
   // See X.690, section 11.6 for the ordering. They are sorted in ascending
   // order by their DER encoding.
@@ -712,4 +748,15 @@ err:
   OPENSSL_free(buf);
   OPENSSL_free(children);
   return ret;
+}
+
+bool bssl::CBBFinishArray(CBB *cbb, Array<uint8_t> *out) {
+  uint8_t *ptr;
+  size_t len;
+  if (!CBB_finish(cbb, &ptr, &len)) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return false;
+  }
+  out->Reset(ptr, len);
+  return true;
 }

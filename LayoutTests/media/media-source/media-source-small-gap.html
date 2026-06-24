@@ -46,6 +46,7 @@
     }
 
     function checkBuffered() {
+        source.endOfStream();
         testExpected('sourceBuffer.buffered.length', 1);
         testExpected('sourceBuffer.buffered.start(0)', 0);
         testExpected('sourceBuffer.buffered.end(0)', 8);

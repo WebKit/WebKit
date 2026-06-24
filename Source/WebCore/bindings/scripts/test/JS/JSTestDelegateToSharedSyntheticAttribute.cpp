@@ -272,6 +272,8 @@ void JSTestDelegateToSharedSyntheticAttribute::analyzeHeap(JSCell* cell, HeapAna
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestDelegateToSharedSyntheticAttributeOwner::JSTestDelegateToSharedSyntheticAttributeOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestDelegateToSharedSyntheticAttributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -284,7 +286,7 @@ void JSTestDelegateToSharedSyntheticAttributeOwner::finalize(JSC::Handle<JSC::Un
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDelegateToSharedSyntheticAttribute = static_cast<JSTestDelegateToSharedSyntheticAttribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestDelegateToSharedSyntheticAttribute->wrapped()).ptr(), jsTestDelegateToSharedSyntheticAttribute);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDelegateToSharedSyntheticAttribute->wrapped(), jsTestDelegateToSharedSyntheticAttribute);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

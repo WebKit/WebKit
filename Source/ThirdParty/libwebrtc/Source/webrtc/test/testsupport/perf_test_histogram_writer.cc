@@ -13,11 +13,11 @@
 #include <cstdlib>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
@@ -71,7 +71,7 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
   }
   void LogResultList(absl::string_view graph_name,
                      absl::string_view trace_name,
-                     const ArrayView<const double> values,
+                     const std::span<const double> values,
                      absl::string_view units,
                      const bool important,
                      ImproveDirection improve_direction) override {

@@ -66,7 +66,7 @@ auto CSSValueConversion<FontStyle>::operator()(BuilderState& state, const CSSVal
     }
 }
 
-auto CSSValueCreation<FontStyle>::operator()(CSSValuePool& pool, const RenderStyle& style, const FontStyle& value) -> Ref<CSSValue>
+auto CSSValueCreation<FontStyle>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const FontStyle& value) -> Ref<CSSValue>
 {
     if (value.isNormal())
         return createCSSValue(pool, style, CSS::Keyword::Normal { });

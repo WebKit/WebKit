@@ -1,0 +1,4 @@
+
+
+FAIL ResizeObserver causes image to no longer allow lazy loading assert_true: ResizeObserver should have been notified of resize expected true got false
+

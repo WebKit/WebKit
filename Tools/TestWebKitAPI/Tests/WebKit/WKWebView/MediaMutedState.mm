@@ -34,7 +34,7 @@
 #import <wtf/RetainPtr.h>
 
 static void *audioStateObserverChangeKVOContext = &audioStateObserverChangeKVOContext;
-static bool stateDidChange;
+static bool audioStateDidChange;
 
 @interface AudioStateObserver : NSObject
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
@@ -64,7 +64,7 @@ static bool stateDidChange;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == audioStateObserverChangeKVOContext) {
-        stateDidChange = true;
+        audioStateDidChange = true;
         return;
     }
 
@@ -105,9 +105,9 @@ TEST(WKWebView, MediaMuted)
 
     EXPECT_EQ([webView _mediaMutedState], _WKMediaNoneMuted);
 
-    stateDidChange = false;
+    audioStateDidChange = false;
     [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&stateDidChange);
+    TestWebKitAPI::Util::run(&audioStateDidChange);
 
     EXPECT_EQ([webView _mediaMutedState], _WKMediaNoneMuted);
 

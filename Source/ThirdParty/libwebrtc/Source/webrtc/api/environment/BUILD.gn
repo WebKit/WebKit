@@ -35,7 +35,7 @@ rtc_library("deprecated_global_field_trials") {
     "deprecated_global_field_trials.h",
   ]
   deps = [
-    "../:field_trials_registry",
+    "..:field_trials_registry",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
     "//third_party/abseil-cpp/absl/strings:string_view",

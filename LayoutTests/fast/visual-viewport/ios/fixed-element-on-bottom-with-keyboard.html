@@ -2,7 +2,7 @@
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <head>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
     <style>
         body {
             margin: 0;
@@ -37,10 +37,6 @@
         }
     </style>
     <script>
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
 
     function tapInInputScript(tapX, tapY)
     {
@@ -82,6 +78,7 @@
     {
         if (!window.testRunner || !testRunner.runUIScript) {
             description("To manually test, tap this input field and scroll up. The text caret should not end up outside of the input.");
+            window.jsTestIsAsync = true;
             return;
         }
 
@@ -100,7 +97,7 @@
                     debug(`The layout viewport after scrolling past the end is: ${toString(layoutViewportAfterScrollingToEnd)}`);
                     shouldBe("initialLayoutViewport.height", "layoutViewportAfterShowingKeyboard.height");
                     shouldBe("layoutViewportAfterScrollingPastEnd.top", "layoutViewportAfterScrollingToEnd.top");
-                    testRunner.notifyDone();
+                    finishJSTest();
                 });
             });
         });
@@ -111,7 +108,6 @@
     <input></input>
     <div id="content"></div>
     <div id="bottom"></div>
-    <script src="../../../resources/js-test-post.js"></script>
 </body>
 
 </html>

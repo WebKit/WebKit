@@ -330,6 +330,8 @@ void JSTestReadOnlyMapLike::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestReadOnlyMapLikeOwner::JSTestReadOnlyMapLikeOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestReadOnlyMapLikeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -342,7 +344,7 @@ void JSTestReadOnlyMapLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestReadOnlyMapLike = static_cast<JSTestReadOnlyMapLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestReadOnlyMapLike->wrapped()).ptr(), jsTestReadOnlyMapLike);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestReadOnlyMapLike->wrapped(), jsTestReadOnlyMapLike);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

@@ -76,6 +76,15 @@ typedef enum
   WPE_INPUT_PURPOSE_PASSWORD,
   WPE_INPUT_PURPOSE_PIN,
   WPE_INPUT_PURPOSE_TERMINAL,
+
+  /**
+   * WPE_INPUT_PURPOSE_SEARCH:
+   *
+   * Edited field contents will be used for searching data.
+   *
+   * Since: 2.54
+   */
+  WPE_INPUT_PURPOSE_SEARCH,
 } WPEInputPurpose;
 
 /**

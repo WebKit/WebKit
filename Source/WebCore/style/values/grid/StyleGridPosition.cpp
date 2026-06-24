@@ -112,16 +112,16 @@ void GridPosition::setMaxPositionForTesting(unsigned maxPosition)
 
 // MARK: - Conversion
 
-template<> struct ToCSS<GridPosition> { auto operator()(const GridPosition&, const RenderStyle&) -> CSS::GridLine; };
+template<> struct ToCSS<GridPosition> { auto operator()(const GridPosition&, const Style::ComputedStyle&) -> CSS::GridLine; };
 template<> struct ToStyle<CSS::GridLine> { auto operator()(const CSS::GridLine&, const BuilderState&) -> GridPosition; };
 
-template<> struct ToCSS<GridPosition::Explicit> { auto operator()(const GridPosition::Explicit&, const RenderStyle&) -> CSS::GridLine::Explicit; };
+template<> struct ToCSS<GridPosition::Explicit> { auto operator()(const GridPosition::Explicit&, const Style::ComputedStyle&) -> CSS::GridLine::Explicit; };
 template<> struct ToStyle<CSS::GridLine::Explicit> { auto operator()(const CSS::GridLine::Explicit&, const BuilderState&) -> GridPosition::Explicit; };
 
-template<> struct ToCSS<GridPosition::Span> { auto operator()(const GridPosition::Span&, const RenderStyle&) -> CSS::GridLine::Span; };
+template<> struct ToCSS<GridPosition::Span> { auto operator()(const GridPosition::Span&, const Style::ComputedStyle&) -> CSS::GridLine::Span; };
 template<> struct ToStyle<CSS::GridLine::Span> { auto operator()(const CSS::GridLine::Span&, const BuilderState&) -> GridPosition::Span; };
 
-auto ToCSS<GridPosition>::operator()(const GridPosition& value, const RenderStyle& style) -> CSS::GridLine
+auto ToCSS<GridPosition>::operator()(const GridPosition& value, const Style::ComputedStyle& style) -> CSS::GridLine
 {
     return WTF::switchOn(value,
         [&](CSS::Keyword::Auto keyword) -> CSS::GridLine {
@@ -157,7 +157,7 @@ auto ToStyle<CSS::GridLine>::operator()(const CSS::GridLine& value, const Builde
     );
 }
 
-auto ToCSS<GridPosition::Explicit>::operator()(const GridPosition::Explicit& value, const RenderStyle& style) -> CSS::GridLine::Explicit
+auto ToCSS<GridPosition::Explicit>::operator()(const GridPosition::Explicit& value, const Style::ComputedStyle& style) -> CSS::GridLine::Explicit
 {
     return CSS::GridLineExplicit {
         toCSS(value.position, style),
@@ -173,7 +173,7 @@ auto ToStyle<CSS::GridLine::Explicit>::operator()(const CSS::GridLine::Explicit&
     };
 }
 
-auto ToCSS<GridPosition::Span>::operator()(const GridPosition::Span& value, const RenderStyle& style) -> CSS::GridLine::Span
+auto ToCSS<GridPosition::Span>::operator()(const GridPosition::Span& value, const Style::ComputedStyle& style) -> CSS::GridLine::Span
 {
     return CSS::GridLineSpan {
         toCSS(value.position, style),
@@ -213,7 +213,7 @@ auto CSSValueConversion<GridPosition>::operator()(BuilderState& state, const CSS
     return toStyle(gridLineValue->line(), state);
 }
 
-Ref<CSSValue> CSSValueCreation<GridPosition>::operator()(CSSValuePool& pool, const RenderStyle& style, const GridPosition& value)
+Ref<CSSValue> CSSValueCreation<GridPosition>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const GridPosition& value)
 {
     return CSS::createCSSValue(pool, toCSS(value, style));
 }

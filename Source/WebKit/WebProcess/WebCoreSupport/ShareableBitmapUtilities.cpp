@@ -34,11 +34,11 @@
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/PlatformScreen.h>
-#include <WebCore/RenderElementStyleInlines.h>
 #include <WebCore/RenderImage.h>
-#include <WebCore/RenderObjectInlines.h>
+#include <WebCore/RenderObjectDocument.h>
 #include <WebCore/RenderVideo.h>
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/NativePromise.h>
@@ -50,7 +50,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
 {
     Ref frame = renderImage.frame();
     auto colorSpaceForBitmap = screenColorSpace(protect(protect(frame->mainFrame())->virtualView()).get());
-    if (!renderImage.isRenderMedia() && !renderImage.opacity() && options.useSnapshotForTransparentImages == UseSnapshotForTransparentImages::Yes) {
+    if (!renderImage.isRenderMedia() && !opacity(renderImage) && options.useSnapshotForTransparentImages == UseSnapshotForTransparentImages::Yes) {
         auto snapshotRect = renderImage.absoluteBoundingBoxRect();
         if (snapshotRect.isEmpty())
             return { };

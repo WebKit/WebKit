@@ -55,8 +55,7 @@
 #import <WebCore/PlatformWheelEvent.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
-#import <WebCore/RenderObjectInlines.h>
-#import <WebCore/RenderStyle+GettersInlines.h>
+#import <WebCore/RenderObjectStyle.h>
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/ShadowRoot.h>
 #import <WebCore/SimpleRange.h>

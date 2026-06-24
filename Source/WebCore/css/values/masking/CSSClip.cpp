@@ -25,21 +25,14 @@
 #include "config.h"
 #include "CSSClip.h"
 
-#include "CSSPrimitiveNumericTypes+CSSValueCreation.h"
-#include "CSSRectValue.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 
 namespace WebCore {
 namespace CSS {
 
-Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ClipRect>::operator()(CSSValuePool& pool, CSSStyleDeclaration& owner, const ClipRect& value)
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<ClipRect>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const ClipRect& value)
 {
-    return DeprecatedCSSOMPrimitiveValue::create(CSSRectValue::create({
-        createCSSValue(pool, value.value->top()),
-        createCSSValue(pool, value.value->right()),
-        createCSSValue(pool, value.value->bottom()),
-        createCSSValue(pool, value.value->left()),
-    }), owner);
+    return DeprecatedCSSOMPrimitiveValue::create(value, owner);
 }
 
 } // namespace Style

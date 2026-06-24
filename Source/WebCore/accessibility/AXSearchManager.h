@@ -162,15 +162,20 @@ public:
         return { Type::LocalResult, object.ptr(), std::nullopt, index };
     }
 
-    static SearchResultEntry remoteFrame(FrameIdentifier fid, size_t index)
+    // On iOS, a RemoteFrame entry carries its AXRemoteFrame object so the result can be converted to its
+    // AXRemoteElement platform wrapper (see AXCoreObject::findMatchingObjectsWithin). macOS leaves it null
+    // and resolves the frame via IPC instead.
+    static SearchResultEntry remoteFrame(FrameIdentifier frameID, RefPtr<AXCoreObject> remoteFrameObject, size_t index)
     {
-        return { Type::RemoteFrame, nullptr, fid, index };
+        return { Type::RemoteFrame, WTF::move(remoteFrameObject), frameID, index };
     }
 
     bool isLocalResult() const { return m_type == Type::LocalResult; }
     bool isRemoteFrame() const { return m_type == Type::RemoteFrame; }
 
     RefPtr<AXCoreObject> objectIfLocalResult() const { return isLocalResult() ? m_object : nullptr; }
+    // On iOS, a RemoteFrame entry carries its AXRemoteFrame object. null on macOS / when not provided.
+    RefPtr<AXCoreObject> remoteFrameObject() const { return isRemoteFrame() ? m_object : nullptr; }
     const std::optional<FrameIdentifier>& frameID() const LIFETIME_BOUND { return m_frameID; }
     size_t streamIndex() const { return m_streamIndex; }
 
@@ -181,8 +186,9 @@ private:
         , m_frameID(WTF::move(frameID))
         , m_streamIndex(streamIndex)
     {
-        // A local result must have an object; a remote frame must have a frameID.
-        AX_ASSERT((m_type == Type::LocalResult) == (m_object != nullptr));
+        // A local result must have an object. A remote frame must have a frameID and may optionally
+        // carry its AXRemoteFrame object (used on iOS to emit an inline AXRemoteElement placeholder).
+        AX_ASSERT(m_type != Type::LocalResult || m_object);
         AX_ASSERT((m_type == Type::RemoteFrame) == m_frameID.has_value());
     }
 
@@ -204,9 +210,11 @@ public:
         m_entries.append(SearchResultEntry::localResult(WTF::move(object), nextIndex()));
     }
 
-    void appendRemoteFrame(FrameIdentifier frameID)
+    // remoteFrameObject is non-null only on iOS, where it lets callers emit an inline AXRemoteElement
+    // placeholder. macOS passes none and resolves the frame via IPC.
+    void appendRemoteFrame(FrameIdentifier frameID, RefPtr<AXCoreObject> remoteFrameObject = nullptr)
     {
-        m_entries.append(SearchResultEntry::remoteFrame(frameID, nextIndex()));
+        m_entries.append(SearchResultEntry::remoteFrame(frameID, WTF::move(remoteFrameObject), nextIndex()));
     }
 
     const Vector<SearchResultEntry>& entries() const LIFETIME_BOUND { return m_entries; }

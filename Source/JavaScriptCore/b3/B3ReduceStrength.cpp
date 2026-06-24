@@ -49,6 +49,7 @@
 #include "B3WasmRefTypeCheckValue.h"
 #include "B3WasmStructGetValue.h"
 #include "B3WasmStructSetValue.h"
+#include "Options.h"
 #include "SIMDShuffle.h"
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
@@ -572,85 +573,146 @@ public:
 
     bool run()
     {
+        if (Options::useB3ReduceStrengthFixpoint())
+            return runFixpoint();
+        return runSinglePass();
+    }
+
+    bool runFixpoint()
+    {
         bool result = false;
-        bool first = true;
-        unsigned index = 0;
         do {
-            m_changed = false;
-            m_changedCFG = false;
-            ++index;
-
-            if (first)
-                first = false;
-            else if (B3ReduceStrengthInternal::verbose) {
-                dataLog("B3 after iteration #", index - 1, " of reduceStrength:\n");
-                dataLog(m_proc);
-            }
-            
-            simplifyCFG();
-
-            if (m_changedCFG) {
-                m_proc.resetReachability();
-                m_proc.invalidateCFG();
-                m_changed = true;
-            }
-
-            // We definitely want to do DCE before we do CSE so that we don't hoist things. For
-            // example:
-            //
-            // @dead = Mul(@a, @b)
-            // ... lots of control flow and stuff
-            // @thing = Mul(@a, @b)
-            //
-            // If we do CSE before DCE, we will remove @thing and keep @dead. Effectively, we will
-            // "hoist" @thing. On the other hand, if we run DCE before CSE, we will kill @dead and
-            // keep @thing. That's better, since we usually want things to stay wherever the client
-            // put them. We're not actually smart enough to move things around at random.
-            m_changed |= eliminateDeadCodeImpl(m_proc);
-            m_valueForConstant.clear();
-            
-            simplifySSA();
-            
-            if (m_proc.optLevel() >= 2) {
-                m_proc.resetValueOwners();
-                m_dominators = &m_proc.dominators(); // Recompute if necessary.
-                m_pureCSE.clear();
-            }
-
-            for (BasicBlock* block : m_proc.blocksInPreOrder()) {
-                m_block = block;
-                
-                for (m_index = 0; m_index < block->size(); ++m_index) {
-                    if (B3ReduceStrengthInternal::verbose) {
-                        dataLog(
-                            "Looking at ", *block, " #", m_index, ": ",
-                            deepDump(m_proc, block->at(m_index)), "\n");
-                    }
-                    m_value = m_block->at(m_index);
-                    m_value->performSubstitution();
-                    reduceValueStrength();
-                    if (m_proc.optLevel() >= 2)
-                        replaceIfRedundant();
-                }
-                m_insertionSet.execute(m_block);
-            }
-
-            m_changedCFG |= m_blockInsertionSet.execute();
-            handleChangedCFGIfNecessary();
-            
-            result |= m_changed;
+            result |= runOnePass();
         } while (m_changed && m_proc.optLevel() >= 2);
-        
+
         if (m_proc.optLevel() < 2) {
             m_changedCFG = false;
             simplifyCFG();
             handleChangedCFGIfNecessary();
         }
-        
+
         return result;
     }
-    
+
+    bool runSinglePass()
+    {
+        bool result = runOnePass();
+
+        if (m_proc.optLevel() >= 2) {
+            if (result) {
+                m_changed = false;
+                simplifyCFGToFixpoint();
+                simplifySSA();
+
+                // A second value walk is only worthwhile when pass 1 specialized a Select (which
+                // appends cloned values that never saw the reducer) or the CFG/SSA cleanup above
+                // exposed new opportunities (merged blocks enabling Check CSE, or a folded Phi
+                // turning Branch(Phi) into Branch(Identity)).
+                if (m_didSpecializeSelect || m_changed) {
+                    m_valueForConstant.clear();
+                    reduceAllBlocksStrength();
+                    simplifyCFGToFixpoint();
+                }
+
+                eliminateDeadCodeImpl(m_proc);
+            }
+        } else {
+            m_changedCFG = false;
+            simplifyCFG();
+            handleChangedCFGIfNecessary();
+            result |= m_changed;
+        }
+
+        return result;
+    }
+
+    bool runOnePass()
+    {
+        m_changed = false;
+        m_changedCFG = false;
+        m_didSpecializeSelect = false;
+
+        simplifyCFG();
+
+        if (m_changedCFG) {
+            m_proc.resetReachability();
+            m_proc.invalidateCFG();
+            m_changed = true;
+        }
+
+        // We definitely want to do DCE before we do CSE so that we don't hoist things. For
+        // example:
+        //
+        // @dead = Mul(@a, @b)
+        // ... lots of control flow and stuff
+        // @thing = Mul(@a, @b)
+        //
+        // If we do CSE before DCE, we will remove @thing and keep @dead. Effectively, we will
+        // "hoist" @thing. On the other hand, if we run DCE before CSE, we will kill @dead and
+        // keep @thing. That's better, since we usually want things to stay wherever the client
+        // put them. We're not actually smart enough to move things around at random.
+        m_changed |= eliminateDeadCodeImpl(m_proc);
+        m_valueForConstant.clear();
+
+        simplifySSA();
+
+        reduceAllBlocksStrength();
+
+        return m_changed;
+    }
+
+    // Recompute the per-walk caches (value owners, dominators, pure CSE) then run
+    // reduceBlockStrength over every block and flush the pending CFG/value insertions.
+    void reduceAllBlocksStrength()
+    {
+        if (m_proc.optLevel() >= 2) {
+            m_proc.resetValueOwners();
+            m_dominators = &m_proc.dominators(); // Recompute if necessary.
+            m_pureCSE.clear();
+        }
+
+        for (BasicBlock* block : m_proc.blocksInPostOrder() | std::views::reverse)
+            reduceBlockStrength(block);
+
+        m_changedCFG |= m_blockInsertionSet.execute();
+        handleChangedCFGIfNecessary();
+    }
+
 private:
+    void reduceBlockStrength(BasicBlock* block)
+    {
+        m_block = block;
+        for (m_index = 0; m_index < block->size(); ++m_index) {
+            if (B3ReduceStrengthInternal::verbose) {
+                dataLog(
+                    "Looking at ", *block, " #", m_index, ": ",
+                    deepDump(m_proc, block->at(m_index)), "\n");
+            }
+            m_value = m_block->at(m_index);
+            m_value->performSubstitution();
+
+            // Many rules mutate the current value's children in place (e.g. Add(Add(x, c1), c2)
+            // becomes Add(x, c1 + c2)), and the result may match another rule. Without fixpoint
+            // iteration we re-run reductions on the same value until it stops changing or gets
+            // replaced (Identity) / erased (Nop).
+            constexpr unsigned maxReductionAttempts = 8;
+            for (unsigned attempt = 0; attempt < maxReductionAttempts; ++attempt) {
+                bool savedChanged = std::exchange(m_changed, false);
+                reduceValueStrength();
+                bool changedThisAttempt = m_changed;
+                m_changed |= savedChanged;
+                if (!changedThisAttempt)
+                    break;
+                Opcode opcode = m_value->opcode();
+                if (opcode == Identity || opcode == Nop)
+                    break;
+            }
+            if (m_proc.optLevel() >= 2)
+                replaceIfRedundant();
+        }
+        m_insertionSet.execute(m_block);
+    }
+
     void reduceValueStrength()
     {
         switch (m_value->opcode()) {
@@ -814,6 +876,13 @@ private:
                     else
                         minusOne = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), -1);
                     replaceWithNew<Value>(BitXor, m_value->origin(), m_value->child(0)->child(0), minusOne);
+                    break;
+                }
+
+                // Turn this: Sub(value, 0)
+                // Into this: value
+                if (m_value->child(1)->isInt(0)) {
+                    replaceWithIdentity(m_value->child(0));
                     break;
                 }
 
@@ -2871,62 +2940,15 @@ private:
             }
 
             if (comparison.opcode != m_value->opcode()) {
-                replaceWithNew<Value>(comparison.opcode, m_value->origin(), comparison.operands[0], comparison.operands[1]);
+                // Canonicalization flipped the comparison (e.g. AboveEqual(0, x) -> BelowEqual(x, 0)).
+                // Apply any immediate equality fold so we don't depend on a second pass.
+                if (!tryFoldComparisonToEquality(comparison.opcode, comparison.operands[0], comparison.operands[1]))
+                    replaceWithNew<Value>(comparison.opcode, m_value->origin(), comparison.operands[0], comparison.operands[1]);
                 break;
             }
 
-            {
-                bool converted = false;
-                switch (m_value->opcode()) {
-                case BelowEqual: {
-                    // Turn this: value <= 0
-                    // Into this: value == 0
-                    if (m_value->child(1)->isInt(0)) {
-                        replaceWithNew<Value>(Equal, m_value->origin(), m_value->child(0), m_value->child(1));
-                        converted = true;
-                        break;
-                    }
-                    break;
-                }
-                case Below: {
-                    // Turn this: value < 1
-                    // Into this: value == 0
-                    if (m_value->child(1)->isInt(1)) {
-                        auto* constant = m_insertionSet.insertValue(m_index, m_proc.addIntConstant(m_value->child(1), 0));
-                        replaceWithNew<Value>(Equal, m_value->origin(), m_value->child(0), constant);
-                        converted = true;
-                        break;
-                    }
-                    break;
-                }
-                case AboveEqual: {
-                    // Turn this: value >= 1
-                    // Into this: value != 0
-                    if (m_value->child(1)->isInt(1)) {
-                        auto* constant = m_insertionSet.insertValue(m_index, m_proc.addIntConstant(m_value->child(1), 0));
-                        replaceWithNew<Value>(NotEqual, m_value->origin(), m_value->child(0), constant);
-                        converted = true;
-                        break;
-                    }
-                    break;
-                }
-                case Above: {
-                    // Turn this: value > 0
-                    // Into this: value != 0
-                    if (m_value->child(1)->isInt(0)) {
-                        replaceWithNew<Value>(NotEqual, m_value->origin(), m_value->child(0), m_value->child(1));
-                        converted = true;
-                        break;
-                    }
-                    break;
-                }
-                default:
-                    break;
-                }
-
-                if (converted)
-                    break;
-            }
+            if (tryFoldComparisonToEquality(m_value->opcode(), m_value->child(0), m_value->child(1)))
+                break;
 
             if (m_value->child(0)->isInteger() && m_value->child(0) == m_value->child(1)) {
                 switch (m_value->opcode()) {
@@ -3220,7 +3242,7 @@ private:
             // blocks. This is pretty much guaranteed since one of those blocks will replace all
             // uses of the Select with a constant, and that constant will be transitively used
             // from the check.
-            static constexpr unsigned selectSpecializationBound = 3;
+            constexpr unsigned selectSpecializationBound = 5;
             Value* select = findRecentNodeMatching(
                 m_value->child(0), selectSpecializationBound,
                 [&] (Value* value) -> bool {
@@ -3230,6 +3252,7 @@ private:
             
             if (select) {
                 specializeSelect(select);
+                m_didSpecializeSelect = true;
                 break;
             }
             break;
@@ -4176,7 +4199,19 @@ private:
     template<typename Functor>
     Value* findRecentNodeMatching(Value* start, unsigned bound, const Functor& functor)
     {
-        unsigned startIndex = bound < m_index ? m_index - bound : 0;
+        // The bound counts back over non-free nodes, skipping the Nops etc. that this phase
+        // generates, so it reflects "this many useful operations back".
+        unsigned startIndex = 0;
+        unsigned remaining = bound;
+        for (unsigned i = m_index; i--;) {
+            if (!m_block->at(i)->isFree()) {
+                if (!remaining) {
+                    startIndex = i + 1;
+                    break;
+                }
+                --remaining;
+            }
+        }
         Value* result = nullptr;
         start->walk(
             [&] (Value* value) -> Value::WalkStatus {
@@ -4620,6 +4655,51 @@ private:
         replaceWithNewValue(m_proc.add<ValueType>(arguments...));
     }
 
+    // Fold an unsigned comparison against a small constant into an (in)equality against zero.
+    // Returns true if it replaced m_value.
+    bool tryFoldComparisonToEquality(Opcode opcode, Value* left, Value* right)
+    {
+        switch (opcode) {
+        case BelowEqual:
+            // Turn this: value <= 0
+            // Into this: value == 0
+            if (right->isInt(0)) {
+                replaceWithNew<Value>(Equal, m_value->origin(), left, right);
+                return true;
+            }
+            break;
+        case Below:
+            // Turn this: value < 1
+            // Into this: value == 0
+            if (right->isInt(1)) {
+                auto* zero = m_insertionSet.insertValue(m_index, m_proc.addIntConstant(right, 0));
+                replaceWithNew<Value>(Equal, m_value->origin(), left, zero);
+                return true;
+            }
+            break;
+        case AboveEqual:
+            // Turn this: value >= 1
+            // Into this: value != 0
+            if (right->isInt(1)) {
+                auto* zero = m_insertionSet.insertValue(m_index, m_proc.addIntConstant(right, 0));
+                replaceWithNew<Value>(NotEqual, m_value->origin(), left, zero);
+                return true;
+            }
+            break;
+        case Above:
+            // Turn this: value > 0
+            // Into this: value != 0
+            if (right->isInt(0)) {
+                replaceWithNew<Value>(NotEqual, m_value->origin(), left, right);
+                return true;
+            }
+            break;
+        default:
+            break;
+        }
+        return false;
+    }
+
     bool replaceWithNewValue(Value* newValue)
     {
         if (!newValue)
@@ -4660,6 +4740,17 @@ private:
     void replaceIfRedundant()
     {
         m_changed |= m_pureCSE.process(m_value, *m_dominators);
+    }
+
+    // simplifyCFG's rules chain: redirecting past a jump can expose a single-predecessor merge,
+    // and merging a block can redirect more successors. Iterate until the CFG stops changing.
+    void simplifyCFGToFixpoint()
+    {
+        do {
+            m_changedCFG = false;
+            simplifyCFG();
+            handleChangedCFGIfNecessary();
+        } while (m_changedCFG);
     }
 
     void simplifyCFG()
@@ -4886,6 +4977,7 @@ private:
     PureCSE m_pureCSE;
     bool m_changed { false };
     bool m_changedCFG { false };
+    bool m_didSpecializeSelect { false };
 };
 
 } // anonymous namespace

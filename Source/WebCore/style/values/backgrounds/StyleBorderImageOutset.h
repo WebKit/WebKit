@@ -117,11 +117,11 @@ DEFINE_TYPE_WRAPPER_GET(BorderImageOutset, values);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderImageOutset> { auto operator()(const BorderImageOutset&, const RenderStyle&) -> CSS::BorderImageOutset; };
+template<> struct ToCSS<BorderImageOutset> { auto operator()(const BorderImageOutset&, const Style::ComputedStyle&) -> CSS::BorderImageOutset; };
 template<> struct ToStyle<CSS::BorderImageOutset> { auto operator()(const CSS::BorderImageOutset&, const BuilderState&) -> BorderImageOutset; };
 
 template<> struct CSSValueConversion<BorderImageOutset> { auto operator()(BuilderState&, const CSSValue&) -> BorderImageOutset; };
-template<> struct CSSValueCreation<BorderImageOutset> { auto operator()(CSSValuePool&, const RenderStyle&, const BorderImageOutset&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<BorderImageOutset> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const BorderImageOutset&) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 

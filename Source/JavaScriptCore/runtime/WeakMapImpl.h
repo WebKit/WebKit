@@ -191,11 +191,19 @@ public:
         return buffer;
     }
 
+    static void destroy(WeakMapBuffer* buffer)
+    {
+        WTF::fastFree(buffer);
+    }
+
     ALWAYS_INLINE void reset(uint32_t capacity)
     {
         memset(this, 0, allocationSize(capacity));
     }
 };
+
+JS_EXPORT_PRIVATE extern const uint64_t emptyWeakMapBuffer[2];
+static_assert(sizeof(emptyWeakMapBuffer) == sizeof(WeakMapBucketDataKeyValue));
 
 template <typename WeakMapBucketType>
 class WeakMapImpl : public JSNonFinalObject {
@@ -214,11 +222,23 @@ public:
 
     static constexpr uint32_t initialCapacity = 4;
 
+    static constexpr uint32_t emptyCapacity = 1;
+
+    static WeakMapBufferType* emptyBuffer()
+    {
+        return std::bit_cast<WeakMapBufferType*>(const_cast<uint64_t*>(emptyWeakMapBuffer));
+    }
+
     WeakMapImpl(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
         ASSERT_WITH_MESSAGE(WeakMapBucket<WeakMapBucketDataKey>::offsetOfKey() == WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfKey(), "We assume this to be true in the DFG and FTL JIT.");
-        makeAndSetNewBuffer(initialCapacity);
+    }
+
+    ~WeakMapImpl()
+    {
+        if (m_buffer != emptyBuffer())
+            WeakMapBufferType::destroy(m_buffer);
     }
 
     // WeakMap operations must not cause GC. We model operations in DFG based on this guarantee.
@@ -307,6 +327,16 @@ public:
         return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_capacity);
     }
 
+    static constexpr ptrdiff_t offsetOfKeyCount()
+    {
+        return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_keyCount);
+    }
+
+    static constexpr ptrdiff_t offsetOfDeleteCount()
+    {
+        return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_deleteCount);
+    }
+
     static constexpr bool isWeakMap()
     {
         return std::same_as<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKeyValue>>;
@@ -370,6 +400,7 @@ private:
 
     ALWAYS_INLINE void addInternal(VM& vm, JSCell* key, JSValue value, uint32_t hash)
     {
+        ASSERT(m_buffer != emptyBuffer());
         const uint32_t mask = m_capacity - 1;
         uint32_t index = hash & mask;
         WeakMapBucketType* buffer = this->buffer();
@@ -426,11 +457,13 @@ private:
         }
     }
 
+    // Overwrites m_buffer without freeing the previous one. Callers must have already taken
+    // ownership of the old buffer (rehash) or be replacing the shared empty buffer (add).
     void makeAndSetNewBuffer(uint32_t capacity)
     {
         ASSERT(!(capacity & (capacity - 1)));
 
-        m_buffer = WeakMapBufferType::create(capacity);
+        m_buffer = WeakMapBufferType::create(capacity).leakPtr();
         m_capacity = capacity;
         ASSERT(m_buffer);
         assertBufferIsEmpty();
@@ -447,11 +480,14 @@ private:
     template<typename Appender>
     void takeSnapshotInternal(unsigned limit, Appender);
 
-    MallocPtr<WeakMapBufferType> m_buffer;
-    uint32_t m_capacity { 0 };
+    WeakMapBufferType* m_buffer { emptyBuffer() };
+    uint32_t m_capacity { emptyCapacity };
     uint32_t m_keyCount { 0 };
     uint32_t m_deleteCount { 0 };
 };
+
+template<> void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::takeSnapshot(MarkedArgumentBuffer&, unsigned);
+template<> void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::takeSnapshot(MarkedArgumentBuffer&, unsigned);
 
 } // namespace JSC
 

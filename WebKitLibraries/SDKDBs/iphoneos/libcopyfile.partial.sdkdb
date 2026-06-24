@@ -15,7 +15,7 @@
     {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_xattr_name_without_flags"},
     {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_xattr_preserve_for_intent"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "copyfile_callback_t"},
     {"access": "public", "name": "copyfile_flags_t"},

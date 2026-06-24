@@ -29,6 +29,8 @@
 #define SECS_PER_DAY (INT64_C(24) * SECS_PER_HOUR)
 
 
+using namespace bssl;
+
 // Is a year/month/day combination valid, in the range from year 0000
 // to 9999?
 static int is_valid_date(int64_t year, int64_t month, int64_t day) {
@@ -183,7 +185,7 @@ int OPENSSL_timegm(const struct tm *tm, time_t *out) {
   return 1;
 }
 
-struct tm *OPENSSL_gmtime(const time_t *time, struct tm *out_tm) {
+struct tm *bssl::OPENSSL_gmtime(const time_t *time, struct tm *out_tm) {
   static_assert(
       sizeof(time_t) == sizeof(int32_t) || sizeof(time_t) == sizeof(int64_t),
       "time_t is broken");
@@ -194,7 +196,8 @@ struct tm *OPENSSL_gmtime(const time_t *time, struct tm *out_tm) {
   return out_tm;
 }
 
-int OPENSSL_gmtime_adj(struct tm *tm, int offset_day, int64_t offset_sec) {
+int bssl::OPENSSL_gmtime_adj(struct tm *tm, int offset_day,
+                             int64_t offset_sec) {
   int64_t posix_time;
   if (!OPENSSL_tm_to_posix(tm, &posix_time)) {
     return 0;
@@ -221,8 +224,8 @@ int OPENSSL_gmtime_adj(struct tm *tm, int offset_day, int64_t offset_sec) {
   return 1;
 }
 
-int OPENSSL_gmtime_diff(int *out_days, int *out_secs, const struct tm *from,
-                        const struct tm *to) {
+int bssl::OPENSSL_gmtime_diff(int *out_days, int *out_secs,
+                              const struct tm *from, const struct tm *to) {
   int64_t time_to, time_from;
   if (!OPENSSL_tm_to_posix(to, &time_to) ||
       !OPENSSL_tm_to_posix(from, &time_from)) {

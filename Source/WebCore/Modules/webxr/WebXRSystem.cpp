@@ -113,7 +113,7 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
         });
 
         // https://immersive-web.github.io/webxr/#select-an-immersive-xr-device
-        RefPtr oldDevice = m_activeImmersiveDevice.get();
+        RefPtr oldDevice { m_activeImmersiveDevice };
         if (immersiveXRDevices.isEmpty()) {
             m_activeImmersiveDevice = nullptr;
             return;
@@ -179,7 +179,7 @@ void WebXRSystem::isSessionSupported(XRSessionMode mode, IsSessionSupportedPromi
     // 4.1 Ensure an immersive XR device is selected.
     ensureImmersiveXRDeviceIsSelected([this, promise = WTF::move(promise), mode]() mutable {
         // 4.2 If the immersive XR device is null, resolve promise with false and abort these steps.
-        RefPtr activeImmersiveDevice = m_activeImmersiveDevice.get();
+        RefPtr activeImmersiveDevice { m_activeImmersiveDevice };
         if (!activeImmersiveDevice) {
             promise.resolve(false);
             return;
@@ -554,7 +554,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
         //  - Reject promise with a "NotSupportedError" DOMException.
         //  - If immersive is true, set pending immersive session to false.
         //  - Abort these steps.
-        RefPtr device = weakDevice.get();
+        RefPtr device { weakDevice };
         if (!device || !device->supports(mode))
             return;
 

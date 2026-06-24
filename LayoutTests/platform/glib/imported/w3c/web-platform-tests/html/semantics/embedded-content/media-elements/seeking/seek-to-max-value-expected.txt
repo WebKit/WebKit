@@ -1,3 +1,0 @@
-
-PASS seek to Number.MAX_VALUE
-

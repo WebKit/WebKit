@@ -600,6 +600,9 @@ class Driver(object):
         if not self._port.get_option('enable_all_experimental_features'):
             cmd.append('--no-enable-all-experimental-features')
 
+        if self._port.get_option('site_isolation_enabled_by_default'):
+            cmd.append('--site-isolation-enabled-by-default')
+
         for feature in self._port.experimental_feature():
             cmd.append('--experimental-feature')
             cmd.append(feature)

@@ -18,10 +18,10 @@ include_rules = [
 ]
 
 specific_include_rules = {
-  "audio_send_stream.cc": [
+  "audio_send_stream\\.cc": [
     "+modules/audio_coding/codecs/cng/audio_encoder_cng.h",
   ],
-  "audio_transport_impl.h": [
+  "audio_transport_impl\\.h": [
     "+modules/audio_processing/typing_detection.h",
   ]
 }

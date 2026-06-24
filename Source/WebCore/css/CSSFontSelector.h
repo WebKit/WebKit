@@ -60,7 +60,7 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(FontSelector);
 
-    unsigned version() const final { return m_version; }
+    unsigned NODELETE version() const final { return m_version; }
     unsigned uniqueId() const final { return m_uniqueId; }
 
     FontRanges fontRangesForFamily(const FontDescription&, const FontFamily&) final;

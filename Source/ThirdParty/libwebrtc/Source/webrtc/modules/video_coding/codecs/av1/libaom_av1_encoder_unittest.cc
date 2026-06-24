@@ -43,6 +43,7 @@
 #include "modules/video_coding/codecs/test/encoded_video_frame_producer.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -296,7 +297,7 @@ TEST_P(LibaomAv1EncoderMaxConsecDropTest, MaxConsecDrops) {
   allocation.SetBitrate(0, 0,
                         2000);  // A low bitrate to provoke frame drops.
   std::unique_ptr<VideoEncoder> encoder =
-      CreateLibaomAv1Encoder(CreateEnvironment());
+      CreateLibaomAv1Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   codec_settings.SetFrameDropEnabled(true);
   codec_settings.SetScalabilityMode(ScalabilityMode::kL1T1);

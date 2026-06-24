@@ -18,11 +18,11 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 
 #include "absl/flags/flag.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/rtp_headers.h"
@@ -341,7 +341,7 @@ class NetEqBgnTest : public NetEqDecodingTest {
 
       ASSERT_EQ(0,
                 neteq_->InsertPacket(
-                    rtp_info, ArrayView<const uint8_t>(payload, enc_len_bytes),
+                    rtp_info, std::span<const uint8_t>(payload, enc_len_bytes),
                     clock_.CurrentTime()));
       output.Reset();
       ASSERT_EQ(0, neteq_->GetAudio(&output, &muted));
@@ -464,7 +464,7 @@ TEST_F(NetEqDecodingTest, DiscardDuplicateCng) {
   PopulateCng(seq_no, timestamp, &rtp_info, payload, &payload_len);
   // This is the first time this CNG packet is inserted.
   ASSERT_EQ(0, neteq_->InsertPacket(
-                   rtp_info, ArrayView<const uint8_t>(payload, payload_len),
+                   rtp_info, std::span<const uint8_t>(payload, payload_len),
                    clock_.CurrentTime()));
 
   // Pull audio once and make sure CNG is played.
@@ -479,7 +479,7 @@ TEST_F(NetEqDecodingTest, DiscardDuplicateCng) {
   // Insert the same CNG packet again. Note that at this point it is old, since
   // we have already decoded the first copy of it.
   ASSERT_EQ(0, neteq_->InsertPacket(
-                   rtp_info, ArrayView<const uint8_t>(payload, payload_len),
+                   rtp_info, std::span<const uint8_t>(payload, payload_len),
                    clock_.CurrentTime()));
 
   // Pull audio until we have played `kCngPeriodMs` of CNG. Start at 10 ms since
@@ -532,7 +532,7 @@ TEST_F(NetEqDecodingTest, CngFirst) {
   PopulateCng(seq_no, timestamp, &rtp_info, payload, &payload_len);
   ASSERT_EQ(NetEq::kOK,
             neteq_->InsertPacket(rtp_info,
-                                 ArrayView<const uint8_t>(payload, payload_len),
+                                 std::span<const uint8_t>(payload, payload_len),
                                  clock_.CurrentTime()));
   ++seq_no;
   timestamp += kCngPeriodSamples;
@@ -585,7 +585,7 @@ class NetEqDecodingTestWithMutedState : public NetEqDecodingTest {
     PopulateCng(0, rtp_timestamp, &rtp_info, payload, &payload_len);
     EXPECT_EQ(NetEq::kOK,
               neteq_->InsertPacket(
-                  rtp_info, ArrayView<const uint8_t>(payload, payload_len),
+                  rtp_info, std::span<const uint8_t>(payload, payload_len),
                   clock_.CurrentTime()));
   }
 

@@ -41,13 +41,12 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-using namespace WebCore;
 
 @interface WebNotificationPolicyListener : NSObject <WebAllowDenyPolicyListener>
 {
-    NotificationClient::PermissionHandler _permissionHandler;
+    WebCore::NotificationClient::PermissionHandler _permissionHandler;
 }
-- (id)initWithPermissionHandler:(NotificationClient::PermissionHandler&&)permissionHandler;
+- (id)initWithPermissionHandler:(WebCore::NotificationClient::PermissionHandler&&)permissionHandler;
 @end
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebNotificationClient);
@@ -57,7 +56,7 @@ WebNotificationClient::WebNotificationClient(WebView *webView)
 {
 }
 
-bool WebNotificationClient::show(ScriptExecutionContext&, NotificationData&& notification, RefPtr<NotificationResources>&&, CompletionHandler<void()>&& callback)
+bool WebNotificationClient::show(WebCore::ScriptExecutionContext&, WebCore::NotificationData&& notification, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&& callback)
 {
     auto scope = makeScopeExit([&callback] { callback(); });
 
@@ -72,7 +71,7 @@ bool WebNotificationClient::show(ScriptExecutionContext&, NotificationData&& not
     return true;
 }
 
-void WebNotificationClient::cancel(NotificationData&& notification)
+void WebNotificationClient::cancel(WebCore::NotificationData&& notification)
 {
     RetainPtr webNotification = m_notificationMap.get(notification.notificationID);
     if (!webNotification)
@@ -81,7 +80,7 @@ void WebNotificationClient::cancel(NotificationData&& notification)
     [[m_webView _notificationProvider] cancelNotification:webNotification.get()];
 }
 
-void WebNotificationClient::notificationObjectDestroyed(NotificationData&& notification)
+void WebNotificationClient::notificationObjectDestroyed(WebCore::NotificationData&& notification)
 {
     RetainPtr<WebNotification> webNotification = m_notificationMap.take(notification.notificationID);
     if (!webNotification)
@@ -100,7 +99,7 @@ void WebNotificationClient::clearNotificationPermissionState()
     m_notificationPermissionRequesters.clear();
 }
 
-void WebNotificationClient::requestPermission(ScriptExecutionContext& context, WebNotificationPolicyListener *listener)
+void WebNotificationClient::requestPermission(WebCore::ScriptExecutionContext& context, WebNotificationPolicyListener *listener)
 {
     SEL selector = @selector(webView:decidePolicyForNotificationRequestFromOrigin:listener:);
     if (![[m_webView UIDelegate] respondsToSelector:selector])
@@ -116,7 +115,7 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, W
     CallUIDelegate(m_webView, selector, webOrigin.get(), listener);
 }
 
-void WebNotificationClient::requestPermission(ScriptExecutionContext& context, PermissionHandler&& permissionHandler)
+void WebNotificationClient::requestPermission(WebCore::ScriptExecutionContext& context, PermissionHandler&& permissionHandler)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto listener = adoptNS([[WebNotificationPolicyListener alloc] initWithPermissionHandler:WTF::move(permissionHandler)]);
@@ -124,7 +123,7 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
+WebCore::NotificationClient::Permission WebNotificationClient::checkPermission(WebCore::ScriptExecutionContext* context)
 {
     if (!context || !context->isDocument())
         return NotificationClient::Permission::Denied;
@@ -152,7 +151,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 
 @implementation WebNotificationPolicyListener
 
-- (id)initWithPermissionHandler:(NotificationClient::PermissionHandler&&)permissionHandler
+- (id)initWithPermissionHandler:(WebCore::NotificationClient::PermissionHandler&&)permissionHandler
 {
     if (!(self = [super init]))
         return nil;
@@ -164,13 +163,13 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 - (void)allow
 {
     if (_permissionHandler)
-        _permissionHandler(NotificationClient::Permission::Granted);
+        _permissionHandler(WebCore::NotificationClient::Permission::Granted);
 }
 
 - (void)deny
 {
     if (_permissionHandler)
-        _permissionHandler(NotificationClient::Permission::Denied);
+        _permissionHandler(WebCore::NotificationClient::Permission::Denied);
 }
 
 #if PLATFORM(IOS_FAMILY)

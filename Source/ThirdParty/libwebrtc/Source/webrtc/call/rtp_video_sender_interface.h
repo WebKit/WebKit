@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <map>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/call/bitrate_allocation.h"
 #include "api/fec_controller_override.h"
 #include "api/video/video_layers_allocation.h"
@@ -40,7 +40,7 @@ class RtpVideoSenderInterface : public EncodedImageCallback,
   virtual std::map<uint32_t, RtpState> GetRtpStates() const = 0;
   virtual std::map<uint32_t, RtpPayloadState> GetRtpPayloadStates() const = 0;
 
-  virtual void DeliverRtcp(ArrayView<const uint8_t> packet) = 0;
+  virtual void DeliverRtcp(std::span<const uint8_t> packet) = 0;
 
   virtual void OnBitrateAllocationUpdated(
       const VideoBitrateAllocation& bitrate) = 0;
@@ -55,10 +55,10 @@ class RtpVideoSenderInterface : public EncodedImageCallback,
   virtual void SetEncodingData(size_t width,
                                size_t height,
                                size_t num_temporal_layers) = 0;
-  virtual void SetCsrcs(ArrayView<const uint32_t> csrcs) = 0;
+  virtual void SetCsrcs(std::span<const uint32_t> csrcs) = 0;
   virtual std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
       uint32_t ssrc,
-      ArrayView<const uint16_t> sequence_numbers) const = 0;
+      std::span<const uint16_t> sequence_numbers) const = 0;
 
   // Implements FecControllerOverride.
   void SetFecAllowed(bool fec_allowed) override = 0;

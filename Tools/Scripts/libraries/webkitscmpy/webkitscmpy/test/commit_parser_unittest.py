@@ -35,6 +35,20 @@ Commit description.
 
 
 class TestCommitParser(unittest.TestCase):
+    maxDiff = None
+
+    @staticmethod
+    def lines(text):
+        return text.strip('\n').split('\n')
+
+    def assert_reconcile(self, before, changed, after):
+        # `changed` is prepare-ChangeLog output: files sorted, comments stripped.
+        commit_message_parser = CommitMessageParser()
+        commit_message_parser.parse_message(COMMIT_MSG_BASE + before)
+        self.assertEqual(
+            self.lines(after),
+            commit_message_parser.reconcile_with_changed_files(self.lines(changed)),
+        )
 
     def test_basic_commit(self):
         commit_message_parser = CommitMessageParser()
@@ -166,4 +180,304 @@ class TestCommitParser(unittest.TestCase):
                     '(Class.function): Deleted.',
                 ],
                 return_deleted=True),
+        )
+
+    def test_reconcile_preserves_original_verbatim(self):
+        self.assert_reconcile(
+            before='''
+* B.cpp: Comment b.
+(B::foo):
+(B::bar):
+* A.cpp: Comment a.
+(A::baz):
+''',
+            changed='''
+* A.cpp:
+(A::baz):
+* B.cpp:
+(B::bar):
+(B::foo):
+''',
+            after='''
+* B.cpp: Comment b.
+(B::foo):
+(B::bar):
+* A.cpp: Comment a.
+(A::baz):
+''',
+        )
+
+    def test_reconcile_preserves_spacing(self):
+        self.assert_reconcile(
+            before='''
+* Source/A.cpp: Comment.
+(A::foo):
+
+* LayoutTests/t.html: Comment.
+''',
+            changed='''
+* LayoutTests/t.html:
+* Source/A.cpp:
+(A::foo):
+''',
+            after='''
+* Source/A.cpp: Comment.
+(A::foo):
+
+* LayoutTests/t.html: Comment.
+''',
+        )
+
+    def test_reconcile_drops_files_no_longer_changed(self):
+        self.assert_reconcile(
+            before='''
+* B.cpp: Comment b.
+(B::foo):
+* A.cpp: Comment a.
+''',
+            changed='''
+* A.cpp:
+''',
+            after='''
+* A.cpp: Comment a.
+''',
+        )
+
+    def test_reconcile_removed_file_keeps_trailing_notes(self):
+        self.assert_reconcile(
+            before='''
+* Gone.cpp: File-level note.
+(Gone::init): Function comment.
+- A trailing note.
+- Another trailing note.
+* Kept.cpp: Still here.
+''',
+            changed='''
+* Kept.cpp:
+''',
+            after='''
+- A trailing note.
+- Another trailing note.
+* Kept.cpp: Still here.
+''',
+        )
+
+    def test_reconcile_inserts_new_function_before_trailing_note(self):
+        self.assert_reconcile(
+            before='''
+* Bar.cpp: Explanation.
+(Bar::old): Did a thing.
+- Trailing note.
+''',
+            changed='''
+* Bar.cpp:
+(Bar::old):
+(Bar::new):
+''',
+            after='''
+* Bar.cpp: Explanation.
+(Bar::old): Did a thing.
+(Bar::new):
+- Trailing note.
+''',
+        )
+
+    def test_reconcile_inserts_new_function_at_end_without_note(self):
+        self.assert_reconcile(
+            before='''
+* Bar.cpp: Explanation.
+(Bar::old): Did a thing.
+''',
+            changed='''
+* Bar.cpp:
+(Bar::old):
+(Bar::new):
+''',
+            after='''
+* Bar.cpp: Explanation.
+(Bar::old): Did a thing.
+(Bar::new):
+''',
+        )
+
+    def test_reconcile_appends_new_files_at_end(self):
+        self.assert_reconcile(
+            before='''
+* A.cpp: Comment a.
+(A::foo):
+''',
+            changed='''
+* A.cpp:
+* C.cpp: Added.
+(C::C):
+''',
+            after='''
+* A.cpp: Comment a.
+(A::foo):
+* C.cpp: Added.
+(C::C):
+''',
+        )
+
+    def test_reconcile_keeps_original_status_and_comments(self):
+        self.assert_reconcile(
+            before='''
+* Foo.cpp: Added. My note.
+''',
+            changed='''
+* Foo.cpp:
+''',
+            after='''
+* Foo.cpp: Added. My note.
+''',
+        )
+
+    def test_reconcile_without_original_uses_generated(self):
+        self.assert_reconcile(
+            before='',
+            changed='''
+* A.cpp:
+(A::foo):
+* B.cpp:
+''',
+            after='''
+* A.cpp:
+(A::foo):
+* B.cpp:
+''',
+        )
+
+    def test_reconcile_keep_drop_and_add_together(self):
+        self.assert_reconcile(
+            before='''
+* Kept.cpp: Keep me.
+(Kept::a): Did a.
+* Gone.cpp: Drop me.
+(Gone::b): Old work.
+- A note worth keeping.
+''',
+            changed='''
+* Kept.cpp:
+(Kept::a):
+(Kept::new):
+* New.cpp: Added.
+(New::ctor):
+''',
+            after='''
+* Kept.cpp: Keep me.
+(Kept::a): Did a.
+(Kept::new):
+- A note worth keeping.
+* New.cpp: Added.
+(New::ctor):
+''',
+        )
+
+    def test_reconcile_new_function_when_file_had_none(self):
+        self.assert_reconcile(
+            before='''
+* Bar.cpp: Explanation.
+''',
+            changed='''
+* Bar.cpp:
+(Bar::new):
+''',
+            after='''
+* Bar.cpp: Explanation.
+(Bar::new):
+''',
+        )
+
+    def test_reconcile_new_function_before_multiline_notes(self):
+        self.assert_reconcile(
+            before='''
+* Bar.cpp:
+(Bar::old):
+- Note one.
+- Note two.
+''',
+            changed='''
+* Bar.cpp:
+(Bar::old):
+(Bar::new):
+''',
+            after='''
+* Bar.cpp:
+(Bar::old):
+(Bar::new):
+- Note one.
+- Note two.
+''',
+        )
+
+    def test_reconcile_multiple_new_functions_keep_order(self):
+        self.assert_reconcile(
+            before='''
+* Bar.cpp:
+(Bar::old):
+''',
+            changed='''
+* Bar.cpp:
+(Bar::old):
+(Bar::new1):
+(Bar::new2):
+''',
+            after='''
+* Bar.cpp:
+(Bar::old):
+(Bar::new1):
+(Bar::new2):
+''',
+        )
+
+    def test_reconcile_keeps_function_no_longer_regenerated(self):
+        self.assert_reconcile(
+            before='''
+* A.cpp: Comment.
+(A::keep): Keep.
+(A::gone): No longer touched.
+''',
+            changed='''
+* A.cpp:
+(A::keep):
+''',
+            after='''
+* A.cpp: Comment.
+(A::keep): Keep.
+(A::gone): No longer touched.
+''',
+        )
+
+    def test_reconcile_keeps_function_status(self):
+        self.assert_reconcile(
+            before='''
+* Foo.cpp:
+(Foo::bar): Deleted.
+''',
+            changed='''
+* Foo.cpp:
+(Foo::bar):
+''',
+            after='''
+* Foo.cpp:
+(Foo::bar): Deleted.
+''',
+        )
+
+    def test_reconcile_removed_file_trims_separator_blank(self):
+        self.assert_reconcile(
+            before='''
+* Gone.cpp:
+(Gone::a):
+- Keep this note.
+
+* Kept.cpp:
+''',
+            changed='''
+* Kept.cpp:
+''',
+            after='''
+- Keep this note.
+* Kept.cpp:
+''',
         )

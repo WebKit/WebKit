@@ -14,27 +14,33 @@ concerned, balance consistency within a module with the benefits of a
 given rule. Module-wide deviations on naming should be respected while
 integer and return value conventions take precedence over consistency.
 
-Modules from OpenSSL's legacy ASN.1 and X.509 stack are retained for
-compatibility and left largely unmodified. To ease importing patches from
-upstream, they match OpenSSL's new indentation style. For Emacs,
-`doc/openssl-c-indent.el` from OpenSSL may be helpful in this.
-
 
 ## Language
 
-The majority of the project is in C, so C++-specific rules in the
-Google style guide do not apply. Support for C99 features depends on
-our target platforms. Typically, Chromium's target MSVC is the most
-restrictive.
+Although BoringSSL is, now, written in C++, it has a long history from C, so
+some parts of the Google C++ style guide cannot be applied directly. In
+particular, our public API overlaps highly with OpenSSL, and our public headers
+must be C-compatible.
 
-Variable declarations in the middle of a function or inside a `for` loop are
-allowed and preferred where possible. Note that the common `goto err` cleanup
-pattern requires lifting some variable declarations.
+The implementation also used to be in C and has been incrementally adapted to
+C++, so much of our code reflects our C conventions rather than Google C++. If
+unsure, match surrounding code. Discrepancies between it and Google C++ style
+will be fixed over time.
 
-Comments should be `// C99-style` for consistency with C++.
+In C code, BoringSSL does not limit itself to old versions of C. (See
+[BUILDING.md](./BUILDING.md) for current requirements.) In particular:
 
-When declaring pointer or reference types, `*` or `&` should be placed next to
-the variable name, not the type. So
+* Variable declarations in the middle of a function or inside a `for` loop
+  are allowed and preferred where possible. Note that the common `goto err`
+  cleanup pattern requires lifting some variable declarations.
+
+* Comments should be `// C99-style` for consistency with C++.
+
+* For new constants, prefer enums when the values are sequential. If adding
+  values to an existing set of `#define`s, continue with `#define`.
+
+In both C and C++, when declaring pointer or reference types, `*` or `&` should
+be placed next to the variable name, not the type. So
 
     uint8_t *ptr;
     const auto &blah;
@@ -44,12 +50,36 @@ not
     uint8_t* ptr;
     const auto& blah;
 
-Rather than `malloc()` and `free()`, use the wrappers `OPENSSL_malloc()`
-and `OPENSSL_free()`. Use the standard C `assert()` function freely.
 
-Use the following wrappers, found in `crypto/internal.h` instead of the
-corresponding C standard library functions. They behave the same but avoid
-confusing undefined behavior.
+### Memory allocation
+
+When allocating memory in libcrypto and libssl, do not use `malloc()` and
+`free()` from C, or `new` and `delete` from C++. Instead, use the wrappers
+`OPENSSL_malloc()` and `OPENSSL_free()` from `<openssl/mem.h>`, or the internal
+C++ helpers `bssl::New`, `bssl::Delete`, and `bssl::MakeUnique` from
+`crypto/mem_internal.h`.
+
+Memory allocation from these functions is fallible. Calling code should check
+for allocation failure and handle it gracefully. `OPENSSL_free` additionally
+overwrites memory before freeing it.
+
+We may relax these requirements in the future to align with standard C++, after
+evaluating where we need fallible allocations and other ways to handle
+overwriting memory.
+
+### C standard library functions
+
+With the exception of memory allocation above, code in BoringSSL can freely use
+C standard library functions. In particular, use the standard C `assert()` as
+appropriate. (Note that `assert()` is a debug-only assert. Use `BSSL_CHECK()`
+for a check that should be run in release builds.)
+
+Some standard library functions are impacted by a
+[language bug](https://davidben.net/2024/01/15/empty-slices.html) around
+zero-length inputs. Although this
+[will be fixed](https://developers.redhat.com/articles/2024/12/11/making-memcpynull-null-0-well-defined)
+in C29, we cannot rely on this. Instead, use the following wrappers, found in
+`crypto/internal.h`:
 
 * `OPENSSL_memchr`
 * `OPENSSL_memcmp`
@@ -57,22 +87,17 @@ confusing undefined behavior.
 * `OPENSSL_memmove`
 * `OPENSSL_memset`
 
-For new constants, prefer enums when the values are sequential and typed
-constants for flags. If adding values to an existing set of `#define`s,
-continue with `#define`.
+### C++ standard library functions
 
+With the exception of memory allocation above, code in BoringSSL can freely use
+C++ standard library functions. Note this excludes most container types, which
+may allocate. Instead, `crypto/mem_internal.h` contains some replacement
+containers that use `OPENSSL_malloc`. Like `OPENSSL_malloc`, memory allocation
+is fallible in this containers.
 
-## libssl
-
-libssl was originally written in C but is being incrementally rewritten in
-C++11. As of writing, much of the style matches our C conventions rather than
-Google C++. Additionally, libssl on Linux currently may not depend on the C++
-runtime. See the C++ utilities in `ssl/internal.h` for replacements for
-problematic C++ constructs. The `util/check_imported_libraries.go` script may be
-used with a shared library build to check if a new construct is okay.
-
-If unsure, match surrounding code. Discrepancies between it and Google C++ style
-will be fixed over time.
+We may relax these requirements in the future to align with standard C++, after
+evaluating where we need fallible allocations and other ways to handle
+overwriting memory.
 
 
 ## Formatting
@@ -115,44 +140,53 @@ prefer out-of-band error signaling for `size_t` (see Return values).
 
 ## Naming
 
-Follow Google naming conventions in C++ files. In C files, use the
-following naming conventions for consistency with existing OpenSSL and C
-styles:
+Follow Google naming conventions for C++.
 
-Define structs with typedef named `TYPE_NAME`. The corresponding struct
-should be named `struct type_name_st`.
+For C symbols, use the following naming conventions for consistency with
+existing OpenSSL and C styles:
 
-Name public functions as `MODULE_function_name`, unless the module
-already uses a different naming scheme for legacy reasons. The module
-name should be a type name if the function is a method of a particular
-type.
+* Define structs with typedef named `TYPE_NAME`. The corresponding struct
+  should be named `struct type_name_st`.
 
-Some types are allocated within the library while others are initialized
-into a struct allocated by the caller, often on the stack. Name these
-functions `TYPE_NAME_new`/`TYPE_NAME_free` and
-`TYPE_NAME_init`/`TYPE_NAME_cleanup`, respectively. All `TYPE_NAME_free`
-functions must do nothing on `NULL` input.
+* Name public functions as `MODULE_function_name`, unless the module
+  already uses a different naming scheme for legacy reasons. The module
+  name should be a type name if the function is a method of a particular
+  type.
 
-If a variable is the length of a pointer value, it has the suffix
-`_len`. An output parameter is named `out` or has an `out_` prefix. For
-instance, For instance:
+* Some types are allocated within the library while others are initialized
+  into a struct allocated by the caller, often on the stack. Name these
+  functions `TYPE_NAME_new`/`TYPE_NAME_free` and
+  `TYPE_NAME_init`/`TYPE_NAME_cleanup`, respectively. All `TYPE_NAME_free`
+  functions must do nothing on `NULL` input.
+
+* Name enums like `enum unix_hacker_t`. For instance:
+
+      enum should_free_handshake_buffer_t {
+        free_handshake_buffer,
+        dont_free_handshake_buffer,
+      };
+
+
+In both languages, if a variable is the number of objects at some pointer, it
+has the suffix `_len` when the elements are each 1-byte and the prefix `num_`
+otherwise. An output parameter is named `out` or has an `out_` prefix. For
+instance:
 
     uint8_t *out,
     size_t *out_len,
     const uint8_t *in,
     size_t in_len,
+    const uint32_t *codepoints,
+    size_t num_codepoints,
+
+Where possible, prefer to use `bssl::Span` from `<openssl/span.h>`, instead of
+separating pointer and length parameters. This is, however, not possible in
+public functions, which must remain C-compatible.
 
 Name public headers like `include/openssl/evp.h` with header guards like
 `OPENSSL_HEADER_EVP_H`. Name internal headers like
 `crypto/ec/internal.h` with header guards like
 `OPENSSL_HEADER_CRYPTO_EC_INTERNAL_H`.
-
-Name enums like `enum unix_hacker_t`. For instance:
-
-    enum should_free_handshake_buffer_t {
-      free_handshake_buffer,
-      dont_free_handshake_buffer,
-    };
 
 
 ## Return values
@@ -181,8 +215,8 @@ Where not constrained by legacy code, parameter order should be:
 
 For example,
 
-    /* CBB_add_asn sets |*out_contents| to a |CBB| into which the contents of an
-     * ASN.1 object can be written. The |tag| argument will be used as the tag for
+    /* CBB_add_asn sets `*out_contents` to a `CBB` into which the contents of an
+     * ASN.1 object can be written. The `tag` argument will be used as the tag for
      * the object. It returns one on success or zero on error. */
     OPENSSL_EXPORT int CBB_add_asn1(CBB *cbb, CBB *out_contents, unsigned tag);
 
@@ -193,15 +227,15 @@ All public symbols must have a documentation comment in their header
 file. The style is based on that of Go. The first sentence begins with
 the symbol name, optionally prefixed with "A" or "An". Apart from the
 initial mention of symbol, references to other symbols or parameter
-names should be surrounded by |pipes|.
+names should be surrounded by `` `backticks` ``.
 
 Documentation should be concise but completely describe the exposed
 behavior of the function. Pay special note to success/failure behaviors
 and caller obligations on object lifetimes. If this sacrifices
 conciseness, consider simplifying the function's behavior.
 
-    // EVP_DigestVerifyUpdate appends |len| bytes from |data| to the data which
-    // will be verified by |EVP_DigestVerifyFinal|. It returns one on success and
+    // EVP_DigestVerifyUpdate appends `len` bytes from `data` to the data which
+    // will be verified by `EVP_DigestVerifyFinal`. It returns one on success and
     // zero otherwise.
     OPENSSL_EXPORT int EVP_DigestVerifyUpdate(EVP_MD_CTX *ctx, const void *data,
                                               size_t len);
@@ -209,14 +243,14 @@ conciseness, consider simplifying the function's behavior.
 Explicitly mention any surprising edge cases or deviations from common
 return value patterns in legacy functions.
 
-    // RSA_private_encrypt encrypts |flen| bytes from |from| with the private key in
-    // |rsa| and writes the encrypted data to |to|. The |to| buffer must have at
-    // least |RSA_size| bytes of space. It returns the number of bytes written, or
-    // -1 on error. The |padding| argument must be one of the |RSA_*_PADDING|
-    // values. If in doubt, |RSA_PKCS1_PADDING| is the most common.
+    // RSA_private_encrypt encrypts `flen` bytes from `from` with the private key in
+    // `rsa` and writes the encrypted data to `to`. The `to` buffer must have at
+    // least `RSA_size` bytes of space. It returns the number of bytes written, or
+    // -1 on error. The `padding` argument must be one of the `RSA_*_PADDING`
+    // values. If in doubt, `RSA_PKCS1_PADDING` is the most common.
     //
     // WARNING: this function is dangerous because it breaks the usual return value
-    // convention. Use |RSA_sign_raw| instead.
+    // convention. Use `RSA_sign_raw` instead.
     OPENSSL_EXPORT int RSA_private_encrypt(int flen, const uint8_t *from,
                                            uint8_t *to, RSA *rsa, int padding);
 

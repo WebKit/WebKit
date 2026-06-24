@@ -15,6 +15,7 @@
 #include <gtest/gtest.h>
 
 #include <openssl/digest.h>
+#include <openssl/err.h>
 #include <openssl/evp.h>
 
 #include "../internal.h"
@@ -148,3 +149,18 @@ TEST(PBKDFTest, ZeroIterations) {
   // the out key.
   EXPECT_EQ(expected_first_byte, key[0]);
 }
+
+#if defined(OPENSSL_64_BIT)
+TEST(PBKDFTest, HugeKeyLen) {
+  static const char kPassword[] = "password";
+  static const uint8_t kSalt[] = {1, 2, 3, 4};
+  // Try a size chosen to clearly exceed the limit of 2^32-1 SHA-1 blocks by 1.
+  // In case the function does not reject this input, it will crash on writing
+  // to the nullptr.
+  EXPECT_FALSE(PKCS5_PBKDF2_HMAC(kPassword, strlen(kPassword), kSalt,
+                                 sizeof(kSalt), 1, EVP_sha1(),
+                                 size_t{SHA_DIGEST_LENGTH} << 32, nullptr));
+  EXPECT_TRUE(
+      ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_SECRET_LENGTH));
+}
+#endif

@@ -4,17 +4,14 @@
 
 let executorStartEvent = null;
 
-function requestExecutor() {
-  const params = new URLSearchParams(location.search);
-  const startOn = params.get('startOn');
-
+function requestExecutor(uuid, startOn) {
   if (startOn) {
     addEventListener(startOn, (e) => {
       executorStartEvent = e;
-      startExecutor();
+      startExecutor(uuid);
     });
   } else {
-    startExecutor();
+    startExecutor(uuid);
   }
 }
 
@@ -67,4 +64,17 @@ function executeScriptToNavigate(fnString, args) {
   executor.suspend(() => {
     eval(fnString).apply(null, args);
   });
+}
+
+// If a frameset element exists in the document, return the first one. Otherwise
+// create a new one and return that.
+function findOrCreateFrameset() {
+  const framesets = document.getElementsByTagName('frameset');
+  if (framesets.length > 0) {
+    return framesets[0];
+  }
+  const frameset = document.createElement('frameset');
+  frameset.cols = '100%';
+  document.body.append(frameset);
+  return frameset;
 }

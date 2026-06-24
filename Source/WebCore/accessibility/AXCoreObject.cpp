@@ -43,8 +43,8 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "TextDecorationPainter.h"
 #include <wtf/Deque.h>
 #include <wtf/text/MakeString.h>
@@ -685,6 +685,40 @@ RefPtr<AXCoreObject> AXCoreObject::previousInPreOrder(bool updateChildrenIfNeede
         return sibling;
     }
     return parentObject();
+}
+
+RefPtr<AXCoreObject> AXCoreObject::previousInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin, bool includeCrossFrame)
+{
+    if (!includeCrossFrame)
+        return previousInPreOrder(updateChildrenIfNeeded, stayWithin);
+
+    if (stayWithin == this)
+        return nullptr;
+
+    // Cross-frame counterpart of the above: find the previous sibling (crossing frame boundaries) and
+    // descend into its deepest last descendant, otherwise ascend to the cross-frame parent. This mirrors
+    // nextInPreOrder()'s cross-frame path so a backward walk can step out of an in-process child frame.
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    RefPtr parent = parentObjectIncludingCrossFrame();
+#else
+    RefPtr parent = crossFrameParentObjectUnignored();
+#endif
+    if (!parent)
+        return nullptr;
+
+    const auto& siblings = parent->crossFrameChildrenIncludingIgnored(updateChildrenIfNeeded);
+    size_t indexOfThis = indexInSiblings(siblings);
+    if (indexOfThis == notFound || !indexOfThis)
+        return parent;
+
+    Ref previous = siblings[indexOfThis - 1];
+    while (true) {
+        const auto& descendants = previous->crossFrameChildrenIncludingIgnored(updateChildrenIfNeeded);
+        if (descendants.isEmpty())
+            break;
+        previous = descendants[descendants.size() - 1];
+    }
+    return previous;
 }
 
 AXCoreObject* AXCoreObject::deepestLastChildIncludingIgnored(bool updateChildrenIfNeeded)
@@ -2191,12 +2225,21 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::findMatchingObjectsWithi
     criteria.anchorObject = this;
     auto stream = AXSearchManager().findMatchingObjectsAsStream(WTF::move(criteria));
 
-    // Extract local objects from the stream. Remote frame entries are ignored since
-    // callers of this function expect AccessibilityChildrenVector.
     AccessibilityChildrenVector results;
     for (const auto& entry : stream.entries()) {
-        if (RefPtr object = entry.objectIfLocalResult())
+        if (RefPtr object = entry.objectIfLocalResult()) {
             results.append(object.releaseNonNull());
+            continue;
+        }
+#if PLATFORM(IOS_FAMILY)
+        // iOS surfaces the remote frame placeholder inline so makeNSArray() emits its AXRemoteElement and
+        // ATs can descend into the out-of-process iframe. Skip it if there's no platform element.
+        // On other platforms, remote frame entries are ignored since callers expect only local objects.
+        if (RefPtr remoteFrameObject = entry.remoteFrameObject()) {
+            if (remoteFrameObject->remoteFramePlatformElement())
+                results.append(remoteFrameObject.releaseNonNull());
+        }
+#endif
     }
     return results;
 }

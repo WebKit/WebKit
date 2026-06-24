@@ -161,7 +161,7 @@ LegacyRootInlineBox* LegacyLineLayout::createAndAppendRootInlineBox()
 {
     m_legacyRootInlineBox = createRootInlineBox();
     if (AXObjectCache::accessibilityEnabled()) [[unlikely]] {
-        if (AXObjectCache* cache = m_flow.document().existingAXObjectCache())
+        if (AXObjectCache* cache = protect(m_flow)->document().existingAXObjectCache())
             cache->deferRecomputeIsIgnored(m_flow.element());
     }
 
@@ -493,7 +493,7 @@ void LegacyLineLayout::layoutRunsAndFloats(bool hasInlineChild)
 
 void LegacyLineLayout::layoutRunsAndFloatsInRange(InlineBidiResolver& resolver)
 {
-    const RenderStyle& styleToUse = style();
+    const Style::ComputedStyle& styleToUse = style();
     LineWhitespaceCollapsingState& lineWhitespaceCollapsingState = resolver.whitespaceCollapsingState();
     LegacyInlineIterator end = resolver.position();
     RenderTextInfo renderTextInfo;
@@ -592,7 +592,7 @@ size_t LegacyLineLayout::lineCount() const
     return legacyRootBox() ? 1 : 0;
 }
 
-const RenderStyle& LegacyLineLayout::style() const
+const Style::ComputedStyle& LegacyLineLayout::style() const
 {
     return m_flow.style();
 }

@@ -29,6 +29,7 @@
 
 #include "LegacyCustomProtocolManagerMessages.h"
 #include "LegacyCustomProtocolManagerProxyMessages.h"
+#include "MessageSenderInlines.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessCreationParameters.h"
 #include <WebCore/ResourceRequest.h>

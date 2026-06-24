@@ -15,6 +15,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "modules/desktop_capture/desktop_capturer.h"
@@ -82,6 +83,9 @@ class FullScreenPowerPointHandler : public FullScreenApplicationHandler {
   mutable bool was_slide_show_created_after_capture_started_;
 
   mutable FullScreenDetectorResult full_screen_detector_result_;
+
+  mutable std::optional<FullScreenFindEditorResult>
+      previous_find_editor_result_;
 };
 
 std::unique_ptr<FullScreenApplicationHandler>

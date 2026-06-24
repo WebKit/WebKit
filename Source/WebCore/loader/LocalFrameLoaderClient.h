@@ -109,6 +109,7 @@ enum class FromDownloadAttribute : bool { No , Yes };
 enum class IsSameDocumentNavigation : bool { No, Yes };
 enum class ShouldGoToHistoryItem : uint8_t { No, Yes, ItemUnknown };
 enum class ProcessSwapDisposition : uint8_t;
+enum class IFrameUnloadReason : bool { ResourceMonitor, MemoryMonitor };
 
 struct BackForwardFrameItemIdentifierType;
 using BackForwardFrameItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardFrameItemIdentifierType>>;
@@ -175,6 +176,7 @@ public:
     virtual void dispatchWillPerformClientRedirect(const URL&, double interval, WallTime fireDate, LockBackForwardList) = 0;
     virtual void dispatchDidChangeMainDocument() { }
     virtual void dispatchWillChangeDocument(const URL&, const URL&) { }
+    virtual void dispatchDidChangeCSPOriginsThatUpgradeInsecureNavigations(const HashSet<SecurityOriginData>&) { }
     virtual void dispatchDidNavigateWithinPage() { }
     virtual void dispatchDidChangeLocationWithinPage() = 0;
     virtual void dispatchDidPushStateWithinPage() = 0;
@@ -387,6 +389,8 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     virtual void didExceedNetworkUsageThreshold();
 #endif
+
+    virtual void applyMonitorUnloadToOwnerFrame(IFrameUnloadReason);
 
     virtual bool shouldSuppressLayoutMilestones() const { return false; }
 

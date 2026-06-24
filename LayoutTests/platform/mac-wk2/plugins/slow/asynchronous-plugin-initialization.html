@@ -1,5 +1,5 @@
 <head><!-- webkit-test-runner [ AsynchronousPluginInitializationEnabled=true AsynchronousPluginInitializationEnabledForAllPlugins=true ] -->
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 </head>
 <body onload="runTest()">
 <p id="description"></p>
@@ -22,8 +22,6 @@ function runTest()
         return;
     }
 
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
 
     var beforeDate = new Date;
     
@@ -39,9 +37,10 @@ function runTest()
     else
         testPassed("Appending plug-in element took under 500ms, plug-in initializing asynchronously.");
     
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 description("Test that loading a slow loading plug-in (550ms second sleep in NPP_new) doesn't block the WebProcess");
+window.jsTestIsAsync = true;
 
 </script>

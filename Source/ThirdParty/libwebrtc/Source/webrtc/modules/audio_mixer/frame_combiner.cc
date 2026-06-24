@@ -15,10 +15,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_view.h"
 #include "api/rtp_packet_info.h"
@@ -32,7 +32,7 @@
 namespace webrtc {
 namespace {
 
-void SetAudioFrameFields(ArrayView<const AudioFrame* const> mix_list,
+void SetAudioFrameFields(std::span<const AudioFrame* const> mix_list,
                          size_t number_of_channels,
                          int sample_rate,
                          size_t /* number_of_streams */,
@@ -70,7 +70,7 @@ void SetAudioFrameFields(ArrayView<const AudioFrame* const> mix_list,
   }
 }
 
-void MixFewFramesWithNoLimiter(ArrayView<const AudioFrame* const> mix_list,
+void MixFewFramesWithNoLimiter(std::span<const AudioFrame* const> mix_list,
                                AudioFrame* audio_frame_for_mixing) {
   if (mix_list.empty()) {
     audio_frame_for_mixing->Mute();
@@ -82,7 +82,7 @@ void MixFewFramesWithNoLimiter(ArrayView<const AudioFrame* const> mix_list,
   CopySamples(dst, mix_list[0]->data_view());
 }
 
-void MixToFloatFrame(ArrayView<const AudioFrame* const> mix_list,
+void MixToFloatFrame(std::span<const AudioFrame* const> mix_list,
                      DeinterleavedView<float>& mixing_buffer) {
   const size_t number_of_channels = NumChannels(mixing_buffer);
   // Clear the mixing buffer.
@@ -133,7 +133,7 @@ FrameCombiner::FrameCombiner(bool use_limiter)
 
 FrameCombiner::~FrameCombiner() = default;
 
-void FrameCombiner::Combine(ArrayView<AudioFrame* const> mix_list,
+void FrameCombiner::Combine(std::span<AudioFrame* const> mix_list,
                             size_t number_of_channels,
                             int sample_rate,
                             size_t number_of_streams,

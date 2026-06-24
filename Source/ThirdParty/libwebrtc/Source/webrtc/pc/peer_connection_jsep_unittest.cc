@@ -31,11 +31,13 @@
 #include "api/rtp_transceiver_direction.h"
 #include "api/rtp_transceiver_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/stats/rtcstats_objects.h"
 #include "api/test/rtc_error_matchers.h"
 #include "media/base/stream_params.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/transport_info.h"
 #include "pc/media_session.h"
+#include "pc/peer_connection.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/session_description.h"
 #include "pc/test/fake_audio_capture_module.h"
@@ -61,6 +63,8 @@ namespace webrtc {
 using RTCConfiguration = PeerConnectionInterface::RTCConfiguration;
 using ::testing::Combine;
 using ::testing::ElementsAre;
+using ::testing::NotNull;
+using ::testing::SizeIs;
 using ::testing::UnorderedElementsAre;
 using ::testing::Values;
 
@@ -1025,6 +1029,20 @@ TEST_P(RecycleMediaSectionTest, PendingLocalRejectedAndNotRejectedRemote) {
   // Both RtpTransceivers are associated.
   EXPECT_EQ(first_mid, caller_first_transceiver->mid());
   EXPECT_EQ(second_mid, caller_second_transceiver->mid());
+}
+
+TEST_F(PeerConnectionJsepTest, LocallyRejectedTransceiverDoesNotCrash) {
+  auto caller = CreatePeerConnection();
+  auto transceiver = caller->AddTransceiver(MediaType::AUDIO);
+
+  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
+
+  transceiver->StopInternal();
+
+  // The reoffer will have a rejected media section.
+  // Setting it as local description triggers
+  // MaybeHandleLocallyRejectedTransceiver.
+  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
 }
 
 // Test that an m= section is *not* recycled if the media section is only
@@ -2334,6 +2352,69 @@ TEST_F(PeerConnectionJsepTest,
   EXPECT_TRUE(callee->CreateOfferAndSetAsLocal());
 }
 
+TEST_F(PeerConnectionJsepTest, RollbackFollowedByAddTrack) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+
+  RtpTransceiverInit init;
+  init.direction = RtpTransceiverDirection::kSendRecv;
+  RtpEncodingParameters encoding;
+  encoding.rid = "hi";
+  init.send_encodings.push_back(encoding);
+  caller->AddTransceiver(MediaType::VIDEO, init);
+
+  auto video_track = caller->CreateVideoTrack("v");
+  caller->pc()->GetTransceivers()[0]->sender()->SetTrack(video_track.get());
+
+  ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
+
+  ASSERT_EQ(caller->pc()->GetTransceivers().size(), 1u);
+
+  // Create and apply local offer.
+  ASSERT_TRUE(caller->CreateOfferAndSetAsLocal());
+
+  // Rollback.
+  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateRollback()));
+
+  // Add track to the video transceiver.
+  auto video_track2 = caller->CreateVideoTrack("v2");
+  caller->pc()->GetTransceivers()[0]->sender()->SetTrack(video_track2.get());
+
+  // Verify no crash and operation succeeds.
+  EXPECT_TRUE(caller->CreateOfferAndSetAsLocal());
+}
+
+TEST_F(PeerConnectionJsepTest, RollbackAfterSetParametersDoesNotStopAudio) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+  caller->AddAudioTrack("a");
+  ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
+
+  ASSERT_EQ(caller->pc()->GetTransceivers().size(), 1u);
+  auto transceiver = caller->pc()->GetTransceivers()[0];
+
+  auto params = transceiver->sender()->GetParameters();
+  ASSERT_FALSE(params.encodings.empty());
+  EXPECT_NE(params.encodings[0].ssrc, std::nullopt);
+
+  // Verify init_send_encodings are empty BEFORE SetParameters.
+  EXPECT_TRUE(transceiver->sender()->init_send_encodings().empty());
+  EXPECT_EQ(transceiver->sender()->SetParameters(params).type(),
+            RTCErrorType::NONE);
+
+  // Verify that init_send_encodings are empty because no initial encodings were
+  // provided during transceiver creation.
+  EXPECT_TRUE(transceiver->sender()->init_send_encodings().empty());
+
+  ASSERT_TRUE(caller->CreateOfferAndSetAsLocal());
+
+  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateRollback()));
+
+  EXPECT_FALSE(transceiver->stopping());
+  EXPECT_EQ(transceiver->receiver()->track()->state(),
+            MediaStreamTrackInterface::kLive);
+}
+
 TEST_F(PeerConnectionJsepTest, RollbackRemoteDataChannelThenAddDataChannel) {
   auto caller = CreatePeerConnection();
   auto callee = CreatePeerConnection();
@@ -2377,6 +2458,37 @@ TEST_F(PeerConnectionJsepTest, BundleOnlySectionDoesNotNeedRtcpMux) {
   offer->description()->contents()[1].bundle_only = true;
 
   EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+}
+
+TEST_F(PeerConnectionJsepTest, RtcpMuxNotNegotiated) {
+  RTCConfiguration config;
+  // Non-standard as `require` is the only standardized value but we can not
+  // remove support for non-mux.
+  config.rtcp_mux_policy =
+      PeerConnection::RtcpMuxPolicy::kRtcpMuxPolicyNegotiate;
+  auto caller = CreatePeerConnection(config);
+  auto callee = CreatePeerConnection(config);
+  caller->AddTransceiver(MediaType::AUDIO);
+  std::unique_ptr<SessionDescriptionInterface> offer =
+      caller->CreateOfferAndSetAsLocal();
+  ASSERT_THAT(offer, NotNull());
+  ASSERT_THAT(offer->description()->contents(), SizeIs(1));
+  // Remove BUNDLE and rtcp-mux.
+  offer->description()->RemoveGroupByName(GROUP_TYPE_BUNDLE);
+  offer->description()->contents()[0].media_description()->set_rtcp_mux(false);
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  std::unique_ptr<SessionDescriptionInterface> answer =
+      callee->CreateAnswerAndSetAsLocal();
+  EXPECT_THAT(answer, NotNull());
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+
+  auto report = caller->GetStats();
+  ASSERT_THAT(report, NotNull());
+
+  std::vector<const RTCTransportStats*> transports =
+      report->GetStatsOfType<RTCTransportStats>();
+  EXPECT_THAT(transports, SizeIs(2));
 }
 
 // This test is a regression test for crbug.com/410960672

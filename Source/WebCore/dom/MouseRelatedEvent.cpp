@@ -105,7 +105,7 @@ static inline bool isMoveEventType(const AtomString& eventType)
 void MouseRelatedEvent::init(bool isSimulated, const DoublePoint& windowLocation)
 {
     if (!isSimulated) {
-        if (RefPtr frameView = frameViewFromWindowProxy(view())) {
+        if (RefPtr frameView = frameViewFromWindowProxy(protect(view()))) {
             DoublePoint absolutePoint = frameView->windowToContents(windowLocation);
             DoublePoint documentPoint = frameView->absoluteToDocumentPoint(absolutePoint);
             m_pageLocation = WTF::move(documentPoint);
@@ -167,7 +167,7 @@ void MouseRelatedEvent::initCoordinates(const DoublePoint& clientLocation)
     // Correct values are computed lazily, see computeRelativePosition.
 
     auto documentToClientOffset = [&] -> DoubleSize {
-        if (RefPtr frameView = frameViewFromWindowProxy(view()))
+        if (RefPtr frameView = frameViewFromWindowProxy(protect(view())))
             return frameView->documentToClientOffset();
         return { };
     };
@@ -184,7 +184,7 @@ void MouseRelatedEvent::initCoordinates(const DoublePoint& clientLocation)
 
 float MouseRelatedEvent::documentToAbsoluteScaleFactor() const
 {
-    if (RefPtr frameView = frameViewFromWindowProxy(view()))
+    if (RefPtr frameView = frameViewFromWindowProxy(protect(view())))
         return frameView->documentToAbsoluteScaleFactor();
 
     return 1;
@@ -192,7 +192,7 @@ float MouseRelatedEvent::documentToAbsoluteScaleFactor() const
 
 void MouseRelatedEvent::computePageLocation()
 {
-    m_absoluteLocation = pagePointToAbsolutePoint(m_pageLocation, frameViewFromWindowProxy(view()));
+    m_absoluteLocation = pagePointToAbsolutePoint(m_pageLocation, frameViewFromWindowProxy(protect(view())));
 }
 
 void MouseRelatedEvent::receivedTarget()
@@ -279,7 +279,7 @@ void MouseRelatedEvent::computeRelativePosition()
 
 DoublePoint MouseRelatedEvent::locationInRootViewCoordinates() const
 {
-    if (RefPtr frameView = frameViewFromWindowProxy(view()))
+    if (RefPtr frameView = frameViewFromWindowProxy(protect(view())))
         return frameView->contentsToRootView(m_absoluteLocation);
 
     return m_absoluteLocation;

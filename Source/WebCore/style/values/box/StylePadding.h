@@ -25,16 +25,14 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
 
 // <'padding-*'> = <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-box/#padding-physical
-struct PaddingEdge : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
-    using Base::Base;
-};
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(PaddingEdge, LengthPercentage<CSS::NonnegativeUnzoomed>);
 
 // <'padding'> = <'padding-top'>{1,4}
 // https://drafts.csswg.org/css-box/#propdef-padding
@@ -43,4 +41,4 @@ using PaddingBox = MinimallySerializingSpaceSeparatedRectEdges<PaddingEdge>;
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::PaddingEdge)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::PaddingEdge)

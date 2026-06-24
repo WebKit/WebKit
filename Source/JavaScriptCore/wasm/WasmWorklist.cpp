@@ -238,18 +238,6 @@ Worklist::~Worklist()
         Ref { m_threads[i] }->join();
 }
 
-// Ask all underlying threads to exit, so that they can clean up any
-// thread-local data they have saved. Used when under memory pressure.
-void Worklist::requestTemporaryStop()
-{
-    Locker locker { *m_lock };
-    for (auto& thread : m_threads) {
-        if (!thread->hasUnderlyingThread(locker))
-            continue;
-        thread->requestTemporaryStop(locker);
-    }
-}
-
 static Worklist* globalWorklist;
 
 Worklist* existingWorklistOrNull() { return globalWorklist; }

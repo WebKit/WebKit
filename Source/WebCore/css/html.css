@@ -170,51 +170,44 @@ audio:not([controls]) {
 
 /* heading elements */
 
-h1 {
+:heading {
     display: block;
+    font-weight: bold;
+}
+
+:heading(1) {
     font-size: 2em;
     margin-block: 0.67__qem 0.67em;
     margin-inline: 0;
-    font-weight: bold;
 }
 
-h2 {
-    display: block;
+:heading(2) {
     font-size: 1.5em;
     margin-block: 0.83__qem 0.83em;
     margin-inline: 0;
-    font-weight: bold;
 }
 
-h3 {
-    display: block;
+:heading(3) {
     font-size: 1.17em;
     margin-block: 1__qem 1em;
     margin-inline: 0;
-    font-weight: bold;
 }
 
-h4 {
-    display: block;
+:heading(4) {
     margin-block: 1.33__qem 1.33em;
     margin-inline: 0;
-    font-weight: bold;
 }
 
-h5 {
-    display: block;
+:heading(5) {
     font-size: .83em;
     margin-block: 1.67__qem 1.67em;
     margin-inline: 0;
-    font-weight: bold;
 }
 
-h6 {
-    display: block;
+:heading(6, 7, 8, 9) {
     font-size: .67em;
     margin-block: 2.33__qem 2.33em;
     margin-inline: 0;
-    font-weight: bold;
 }
 
 /* tables */
@@ -401,7 +394,7 @@ input, textarea, select, button {
 }
 
 input[type="hidden"] {
-    display: none;
+    display: none !important;
 }
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
@@ -1194,6 +1187,55 @@ select optgroup legend {
     min-block-size: 1lh;
 }
 
+select::-internal-fallback-popup-menu {
+    min-width: 200px;
+    background-color: Canvas;
+    color: CanvasText;
+    border: 1px solid color-mix(in srgb, CanvasText 25%, transparent);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px color-mix(in srgb, CanvasText 15%, transparent);
+    padding-block: 4px;
+    overflow: auto;
+    max-height: 50vh;
+    box-sizing: border-box;
+    z-index: 2147483647;
+}
+
+select::-internal-fallback-popup-menu-item,
+select::-internal-fallback-popup-menu-item-selected {
+    padding-block: 4px;
+    padding-inline: 12px;
+    cursor: default;
+    border-radius: 4px;
+    margin-inline: 4px;
+}
+
+select::-internal-fallback-popup-menu-item-selected {
+    background-color: color-mix(in srgb, Highlight 25%, Canvas);
+    font-weight: bold;
+}
+
+select::-internal-fallback-popup-menu-item:hover,
+select::-internal-fallback-popup-menu-item-selected:hover {
+    /* Items can have custom colors set but we want to always overrule them. */
+    background-color: Highlight !important;
+    color: HighlightText !important;
+}
+
+select::-internal-fallback-popup-menu-group-label {
+    padding-block: 4px;
+    padding-inline: 12px;
+    font-weight: bold;
+    color: color-mix(in srgb, CanvasText 60%, transparent);
+}
+
+select::-internal-fallback-popup-menu-separator {
+    border: none;
+    border-top: 1px solid color-mix(in srgb, CanvasText 20%, transparent);
+    margin-block: 4px;
+    margin-inline: 8px;
+}
+
 output {
     display: inline;
 }
@@ -1426,7 +1468,9 @@ details[open] > summary:first-of-type {
 /* other elements */
 
 frameset, frame {
-    display: block;
+    position: static !important;
+    display: block !important;
+    float: none !important;
 }
 
 frameset {

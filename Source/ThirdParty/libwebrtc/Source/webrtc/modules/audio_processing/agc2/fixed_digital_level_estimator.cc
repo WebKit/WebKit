@@ -15,7 +15,6 @@
 #include <cmath>
 #include <cstddef>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_view.h"
 #include "modules/audio_processing/agc2/agc2_common.h"

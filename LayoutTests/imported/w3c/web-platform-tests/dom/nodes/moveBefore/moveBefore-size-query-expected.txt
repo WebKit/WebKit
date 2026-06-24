@@ -1,4 +1,4 @@
 This text should be green
 
-FAIL moveBefore() between different size containers invalidates target assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS moveBefore() between different size containers invalidates target
 

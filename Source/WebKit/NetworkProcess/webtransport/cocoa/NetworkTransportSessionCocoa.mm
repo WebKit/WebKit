@@ -353,7 +353,7 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
         case nw_connection_group_state_failed:
             if (RefPtr protectedThis = weakThis.get()) {
                 if (RetainPtr metadata = protectedThis->m_sessionMetadata) {
-                    std::optional<unsigned> sessionErrorCode = std::nullopt;
+                    std::optional<unsigned> sessionErrorCode;
                     String sessionErrorMessage;
                     if (canLoad_Network_nw_webtransport_metadata_get_session_closed() && softLink_Network_nw_webtransport_metadata_get_session_closed(metadata.get())) {
                         if (canLoad_Network_nw_webtransport_metadata_get_session_error_code())

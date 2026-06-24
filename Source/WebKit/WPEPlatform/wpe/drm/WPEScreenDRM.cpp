@@ -37,6 +37,11 @@
 /**
  * WPEScreenDRM:
  *
+ * A [class@WPEPlatform.Screen] implementation for DRM/KMS.
+ *
+ * [class@ScreenDRM] is the [class@WPEPlatform.Screen] implementation used by
+ * [class@DisplayDRM]. Each instance represents a DRM connector and its
+ * associated mode.
  */
 struct _WPEScreenDRMPrivate {
     std::unique_ptr<WPE::DRM::Crtc> crtc;

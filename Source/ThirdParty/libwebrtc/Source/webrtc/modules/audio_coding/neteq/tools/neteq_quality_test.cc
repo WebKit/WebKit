@@ -10,25 +10,24 @@
 
 #include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
 
-#include <algorithm>
 #include <climits>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
-#include <iterator>
 #include <memory>
 #include <ostream>
 #include <set>
-#include <sstream>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/flags/flag.h"
+#include "absl/strings/numbers.h"
+#include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/environment/environment_factory.h"
@@ -36,7 +35,6 @@
 #include "api/neteq/neteq.h"
 #include "api/scoped_refptr.h"
 #include "api/units/timestamp.h"
-#include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
 #include "modules/audio_coding/neteq/tools/output_audio_file.h"
 #include "modules/audio_coding/neteq/tools/output_wav_file.h"
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
@@ -376,15 +374,17 @@ void NetEqQualityTest::SetUp() {
       break;
     }
     case kFixedLoss: {
-      std::istringstream loss_events_stream(absl::GetFlag(FLAGS_loss_events));
-      std::string loss_event_string;
       std::set<FixedLossEvent, FixedLossEventCmp> loss_events;
-      while (std::getline(loss_events_stream, loss_event_string, ',')) {
+      for (absl::string_view loss_event_string : absl::StrSplit(
+               absl::GetFlag(FLAGS_loss_events), ',', absl::SkipEmpty())) {
         std::vector<int> loss_event_params;
-        std::istringstream loss_event_params_stream(loss_event_string);
-        std::copy(std::istream_iterator<int>(loss_event_params_stream),
-                  std::istream_iterator<int>(),
-                  std::back_inserter(loss_event_params));
+        for (absl::string_view param :
+             absl::StrSplit(loss_event_string, ' ', absl::SkipEmpty())) {
+          int val;
+          if (absl::SimpleAtoi(param, &val)) {
+            loss_event_params.push_back(val);
+          }
+        }
         RTC_CHECK_EQ(loss_event_params.size(), 2);
         auto result = loss_events.insert(
             FixedLossEvent(loss_event_params[0], loss_event_params[1]));
@@ -434,7 +434,7 @@ int NetEqQualityTest::Transmit() {
     if (!PacketLost()) {
       int ret = neteq_->InsertPacket(
           rtp_header_,
-          ArrayView<const uint8_t>(payload_.data(), payload_size_bytes_),
+          std::span<const uint8_t>(payload_.data(), payload_size_bytes_),
           Timestamp::Millis(packet_input_time_ms));
       if (ret != NetEq::kOK)
         return -1;

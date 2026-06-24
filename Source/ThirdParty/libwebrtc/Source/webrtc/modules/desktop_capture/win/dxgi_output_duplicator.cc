@@ -229,6 +229,19 @@ bool DxgiOutputDuplicator::Duplicate(Context* context,
     // triggers screen flickering?
 
     const DesktopFrame& source = texture_->AsDesktopFrame();
+    // During a resolution transition, DXGI might deliver a frame with the new
+    // size before the controller detects the change and reinitializes.
+    // `unrotated_size_` is cached at initialization and only updated when
+    // this object is recreated. We abort capture on mismatch to force
+    // reinitialization by the |DxgiDuplicatorController|.
+    if (!source.size().equals(unrotated_size_)) {
+      RTC_LOG(LS_WARNING) << "Captured frame size " << source.size().width()
+                        << "x" << source.size().height()
+                        << " does not match expected size "
+                        << unrotated_size_.width() << "x"
+                        << unrotated_size_.height();
+      return false;
+    }
     if (rotation_ != Rotation::CLOCK_WISE_0) {
       for (DesktopRegion::Iterator it(updated_region); !it.IsAtEnd();
            it.Advance()) {

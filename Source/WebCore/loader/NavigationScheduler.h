@@ -84,6 +84,8 @@ private:
     bool NODELETE shouldScheduleNavigation() const;
     bool shouldScheduleNavigation(const URL&) const;
 
+    void scheduleHistoryNavigation(Frame& originatingFrame, int steps);
+
     void timerFired();
     void schedule(std::unique_ptr<ScheduledNavigation>);
 

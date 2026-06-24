@@ -27,11 +27,13 @@
 #include "WindowEventLoop.h"
 
 #include "CommonVM.h"
+#include "ContextDestructionObserverInlines.h"
 #include "CustomElementReactionQueue.h"
 #include "DocumentPage.h"
 #include "HTMLSlotElement.h"
 #include "IdleCallbackController.h"
 #include "Microtasks.h"
+#include "MutationCallback.h"
 #include "MutationObserver.h"
 #include "OpportunisticTaskScheduler.h"
 #include "SecurityOrigin.h"
@@ -260,6 +262,31 @@ void WindowEventLoop::queueMutationObserverCompoundMicrotask()
         protectedThis->m_deliveringMutationRecords = true;
         MutationObserver::notifyMutationObservers(*protectedThis);
         protectedThis->m_deliveringMutationRecords = false;
+    });
+}
+
+void WindowEventLoop::removeMutationObserversForContext(ScriptExecutionContext& context)
+{
+    if (m_activeObservers.isEmpty() && m_suspendedObservers.isEmpty() && m_signalSlotList.isEmpty())
+        return;
+
+    auto disconnectMatching = [&](HashSet<Ref<MutationObserver>>& observers) {
+        observers.removeIf([&](auto& observer) {
+            auto* observerContext = observer->callback().scriptExecutionContext();
+            if (observerContext && observerContext != &context)
+                return false;
+            observer->disconnect();
+            return true;
+        });
+    };
+    disconnectMatching(m_activeObservers);
+    disconnectMatching(m_suspendedObservers);
+
+    m_signalSlotList.removeAllMatching([&](auto& slot) {
+        if (&slot->document() != &context)
+            return false;
+        slot->didRemoveFromSignalSlotList();
+        return true;
     });
 }
 

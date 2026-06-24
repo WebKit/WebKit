@@ -28,8 +28,9 @@
 #include <openssl/mem.h>
 #include <openssl/nid.h>
 #include <openssl/rand.h>
+#include <openssl/span.h>
+#include <openssl/tls_prf.h>
 
-#include "../crypto/fipsmodule/tls/internal.h"
 #include "../crypto/internal.h"
 #include "internal.h"
 
@@ -39,10 +40,11 @@ BSSL_NAMESPACE_BEGIN
 bool tls1_prf(const EVP_MD *digest, Span<uint8_t> out,
               Span<const uint8_t> secret, std::string_view label,
               Span<const uint8_t> seed1, Span<const uint8_t> seed2) {
+  auto label_bytes = StringAsBytes(label);
   return 1 == CRYPTO_tls1_prf(digest, out.data(), out.size(), secret.data(),
-                              secret.size(), label.data(), label.size(),
-                              seed1.data(), seed1.size(), seed2.data(),
-                              seed2.size());
+                              secret.size(), label_bytes.data(),
+                              label_bytes.size(), seed1.data(), seed1.size(),
+                              seed2.data(), seed2.size());
 }
 
 static bool get_key_block_lengths(const SSL *ssl, size_t *out_mac_secret_len,

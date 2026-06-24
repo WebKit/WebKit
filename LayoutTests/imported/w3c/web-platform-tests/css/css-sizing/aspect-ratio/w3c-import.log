@@ -57,6 +57,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-020.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-021-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-aspect-ratio-border.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/auto-margins-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/auto-margins-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-001-expected.xht
@@ -177,6 +178,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/box-sizing-aspect-ratio-positioned.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/box-sizing-dimensions.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/box-sizing-squashed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/fieldset-element-001-expected.html

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SandboxExtension.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/IDBResultData.h>
 #include <wtf/Noncopyable.h>
 
@@ -48,17 +49,27 @@ public:
         , m_handles(WTF::move(handles))
     {
     }
-    
+
+    WebIDBResult(const WebCore::IDBResultData& resultData, Vector<SandboxExtension::Handle>&& handles, std::optional<WebCore::ClientOrigin>&& clientOrigin)
+        : m_resultData(resultData)
+        , m_handles(WTF::move(handles))
+        , m_clientOrigin(WTF::move(clientOrigin))
+    {
+    }
+
     WebIDBResult(WebIDBResult&&) = default;
     WebIDBResult& operator=(WebIDBResult&&) = default;
 
     const WebCore::IDBResultData& resultData() const LIFETIME_BOUND { return m_resultData; }
     const Vector<SandboxExtension::Handle>& handles() const LIFETIME_BOUND { return m_handles; }
+    const std::optional<WebCore::ClientOrigin>& clientOrigin() const LIFETIME_BOUND { return m_clientOrigin; }
+    void setClientOrigin(WebCore::ClientOrigin&& origin) { m_clientOrigin = WTF::move(origin); }
 
 private:
     friend struct IPC::ArgumentCoder<WebIDBResult>;
     WebCore::IDBResultData m_resultData;
     Vector<SandboxExtension::Handle> m_handles;
+    std::optional<WebCore::ClientOrigin> m_clientOrigin;
 };
 
 } // namespace WebKit

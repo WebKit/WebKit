@@ -14,10 +14,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/units/time_delta.h"
 #include "common_audio/vad/include/vad.h"
@@ -49,14 +49,14 @@ class AudioEncoderCng final : public AudioEncoder {
   size_t Max10MsFramesInAPacket() const override;
   int GetTargetBitrate() const override;
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,
-                         ArrayView<const int16_t> audio,
+                         std::span<const int16_t> audio,
                          Buffer* encoded) override;
   void Reset() override;
   bool SetFec(bool enable) override;
   bool SetDtx(bool enable) override;
   bool SetApplication(Application application) override;
   void SetMaxPlaybackRate(int frequency_hz) override;
-  ArrayView<std::unique_ptr<AudioEncoder>> ReclaimContainedEncoders() override;
+  std::span<std::unique_ptr<AudioEncoder>> ReclaimContainedEncoders() override;
   void OnReceivedUplinkPacketLossFraction(
       float uplink_packet_loss_fraction) override;
   void OnReceivedUplinkBandwidth(int target_audio_bitrate_bps,
@@ -125,14 +125,14 @@ int AudioEncoderCng::GetTargetBitrate() const {
 
 AudioEncoder::EncodedInfo AudioEncoderCng::EncodeImpl(
     uint32_t rtp_timestamp,
-    ArrayView<const int16_t> audio,
+    std::span<const int16_t> audio,
     Buffer* encoded) {
   const size_t samples_per_10ms_frame = SamplesPer10msFrame();
   RTC_CHECK_EQ(speech_buffer_.size(),
                rtp_timestamps_.size() * samples_per_10ms_frame);
   rtp_timestamps_.push_back(rtp_timestamp);
   RTC_DCHECK_EQ(samples_per_10ms_frame, audio.size());
-  speech_buffer_.insert(speech_buffer_.end(), audio.cbegin(), audio.cend());
+  speech_buffer_.insert(speech_buffer_.end(), audio.begin(), audio.end());
   const size_t frames_to_encode = speech_encoder_->Num10MsFramesInNextPacket();
   if (rtp_timestamps_.size() < frames_to_encode) {
     return EncodedInfo();
@@ -216,9 +216,9 @@ void AudioEncoderCng::SetMaxPlaybackRate(int frequency_hz) {
   speech_encoder_->SetMaxPlaybackRate(frequency_hz);
 }
 
-ArrayView<std::unique_ptr<AudioEncoder>>
+std::span<std::unique_ptr<AudioEncoder>>
 AudioEncoderCng::ReclaimContainedEncoders() {
-  return ArrayView<std::unique_ptr<AudioEncoder>>(&speech_encoder_, 1);
+  return std::span<std::unique_ptr<AudioEncoder>>(&speech_encoder_, 1);
 }
 
 void AudioEncoderCng::OnReceivedUplinkPacketLossFraction(
@@ -253,7 +253,7 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodePassive(
     // that value, in which case we don't want to overwrite any value from
     // an earlier iteration.
     size_t encoded_bytes_tmp = cng_encoder_->Encode(
-        ArrayView<const int16_t>(&speech_buffer_[i * samples_per_10ms_frame],
+        std::span<const int16_t>(&speech_buffer_[i * samples_per_10ms_frame],
                                  samples_per_10ms_frame),
         force_sid, encoded);
 
@@ -279,7 +279,7 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodeActive(size_t frames_to_encode,
   for (size_t i = 0; i < frames_to_encode; ++i) {
     info = speech_encoder_->Encode(
         rtp_timestamps_.front(),
-        ArrayView<const int16_t>(&speech_buffer_[i * samples_per_10ms_frame],
+        std::span<const int16_t>(&speech_buffer_[i * samples_per_10ms_frame],
                                  samples_per_10ms_frame),
         encoded);
     if (i + 1 == frames_to_encode) {

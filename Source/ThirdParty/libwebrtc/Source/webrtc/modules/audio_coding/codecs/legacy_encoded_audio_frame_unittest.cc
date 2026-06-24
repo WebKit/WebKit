@@ -12,8 +12,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -133,7 +133,7 @@ TEST_P(SplitBySamplesTest, PayloadSizes) {
     // sample was missed or repeated.
     const auto generate_payload = [](size_t num_bytes) {
       Buffer payload = Buffer::CreateWithCapacity(num_bytes);
-      payload.AppendData(num_bytes, [](ArrayView<uint8_t> payload_view) {
+      payload.AppendData(num_bytes, [](std::span<uint8_t> payload_view) {
         uint8_t value = 0;
         // Allow wrap-around of value in counter below.
         for (size_t i = 0; i != payload_view.size(); ++i, ++value) {

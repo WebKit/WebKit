@@ -37,6 +37,11 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
+using ::testing::AllOf;
+using ::testing::ElementsAreArray;
+using ::testing::Eq;
+using ::testing::Field;
+
 namespace webrtc {
 namespace test {
 namespace {
@@ -50,6 +55,12 @@ inline size_t FrameSize(const size_t& min_frame_size,
   return min_frame_size + (s + 1) * i % (max_frame_size - min_frame_size);
 }
 
+struct DroppedFrameInfo {
+  uint32_t rtp_timestamp;
+  int spatial_id;
+  bool is_end_of_temporal_unit;
+};
+
 class FakeEncodedImageCallback : public EncodedImageCallback {
  public:
   FakeEncodedImageCallback() : num_frames_dropped_(0) {}
@@ -57,11 +68,21 @@ class FakeEncodedImageCallback : public EncodedImageCallback {
                         const CodecSpecificInfo* codec_specific_info) override {
     return Result(Result::OK);
   }
-  void OnDroppedFrame(DropReason reason) override { ++num_frames_dropped_; }
+  void OnFrameDropped(uint32_t rtp_timestamp,
+                      int spatial_id,
+                      bool is_end_of_temporal_unit) override {
+    ++num_frames_dropped_;
+    dropped_frames_.push_back(
+        {rtp_timestamp, spatial_id, is_end_of_temporal_unit});
+  }
   size_t GetNumFramesDropped() { return num_frames_dropped_; }
+  const std::vector<DroppedFrameInfo>& GetDroppedFrames() const {
+    return dropped_frames_;
+  }
 
  private:
   size_t num_frames_dropped_;
+  std::vector<DroppedFrameInfo> dropped_frames_;
 };
 
 enum class FrameType {
@@ -616,6 +637,357 @@ TEST(FrameEncodeMetadataWriterTest, Av1SimulcastSpatialLayersCalculation) {
     EXPECT_TRUE(IsTimingFrame(image));
   }
 }
+TEST(FrameEncodeMetadataWriterTest, NotifiesAboutExplicitlyDroppedFrames) {
+  const int64_t kTimestampMs = 4772184;
 
+  FakeEncodedImageCallback sink;
+  FrameEncodeMetadataWriter encode_timer(CreateTestEnvironment(), &sink);
+  encode_timer.OnEncoderInit(VideoCodec());
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(0, 0, 500000);
+  encode_timer.OnSetRates(bitrate_allocation, 30);
+
+  VideoFrame frame = VideoFrame::Builder()
+                         .set_rtp_timestamp(kTimestampMs * 90)
+                         .set_timestamp_ms(kTimestampMs)
+                         .set_video_frame_buffer(kFrameBuffer)
+                         .build();
+  encode_timer.OnEncodeStarted(frame);
+  encode_timer.OnFrameDropped(kTimestampMs * 90, 0, true);
+
+  EXPECT_THAT(
+      sink.GetDroppedFrames(),
+      ElementsAreArray({AllOf(
+          Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs * 90)),
+          Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+          Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(true)))}));
+}
+
+TEST(FrameEncodeMetadataWriterTest, NotifiesAboutImplicitDropsOnEncodedFrame) {
+  const int64_t kTimestampMs1 = 100000;
+  const int64_t kTimestampMs2 = 100010;
+
+  FakeEncodedImageCallback sink;
+  FrameEncodeMetadataWriter encode_timer(CreateTestEnvironment(), &sink);
+  encode_timer.OnEncoderInit(VideoCodec());
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(0, 0, 500000);
+  encode_timer.OnSetRates(bitrate_allocation, 30);
+
+  VideoFrame frame1 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs1 * 90)
+                          .set_timestamp_ms(kTimestampMs1)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame1);
+
+  VideoFrame frame2 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs2 * 90)
+                          .set_timestamp_ms(kTimestampMs2)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame2);
+
+  // Fill metadata for frame 2 without having been given any feedback signal for
+  // frame 1 - implying it has been dropped.
+  EncodedImage image2;
+  image2.capture_time_ms_ = kTimestampMs2;
+  image2.SetRtpTimestamp(static_cast<uint32_t>(kTimestampMs2 * 90));
+  encode_timer.FillMetadataAndTimingInfo(0, &image2);
+
+  EXPECT_THAT(
+      sink.GetDroppedFrames(),
+      ElementsAreArray({AllOf(
+          Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+          Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+          Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(true)))}));
+}
+
+TEST(FrameEncodeMetadataWriterTest, NotifiesAboutImplicitDropsOnExplicitSkip) {
+  const int64_t kTimestampMs1 = 100000;
+  const int64_t kTimestampMs2 = 100010;
+
+  FakeEncodedImageCallback sink;
+  FrameEncodeMetadataWriter encode_timer(CreateTestEnvironment(), &sink);
+  encode_timer.OnEncoderInit(VideoCodec());
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(0, 0, 500000);
+  encode_timer.OnSetRates(bitrate_allocation, 30);
+
+  VideoFrame frame1 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs1 * 90)
+                          .set_timestamp_ms(kTimestampMs1)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame1);
+
+  VideoFrame frame2 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs2 * 90)
+                          .set_timestamp_ms(kTimestampMs2)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame2);
+
+  // Drop signal for frame 2 without having been given a feedback signal for
+  // frame 1 implying it has been dropped.
+  encode_timer.OnFrameDropped(kTimestampMs2 * 90, 0, true);
+
+  EXPECT_THAT(
+      sink.GetDroppedFrames(),
+      ElementsAreArray(
+          {AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(true))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs2 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(true)))}));
+}
+
+TEST(FrameEncodeMetadataWriterTest, DroppingAlreadyDroppedFrameDoesNothing) {
+  const int64_t kTimestampMs1 = 100000;
+  const int64_t kTimestampMs2 = 100010;
+
+  FakeEncodedImageCallback sink;
+  FrameEncodeMetadataWriter encode_timer(CreateTestEnvironment(), &sink);
+  encode_timer.OnEncoderInit(VideoCodec());
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(0, 0, 500000);
+  encode_timer.OnSetRates(bitrate_allocation, 30);
+
+  VideoFrame frame1 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs1 * 90)
+                          .set_timestamp_ms(kTimestampMs1)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame1);
+
+  VideoFrame frame2 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs2 * 90)
+                          .set_timestamp_ms(kTimestampMs2)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame2);
+
+  // Drop frame 1.
+  encode_timer.OnFrameDropped(kTimestampMs1 * 90, 0, true);
+
+  // Dropping an old already-dropped frame does nothing.
+  encode_timer.OnFrameDropped(kTimestampMs1 * 90, 0, true);
+
+  // Encoding an old already-dropped frame shouldn't crash, but it won't drop
+  // anything new.
+  EncodedImage image1;
+  image1.capture_time_ms_ = kTimestampMs1;
+  image1.SetRtpTimestamp(static_cast<uint32_t>(kTimestampMs1 * 90));
+  encode_timer.FillMetadataAndTimingInfo(0, &image1);
+
+  EXPECT_THAT(
+      sink.GetDroppedFrames(),
+      ElementsAreArray({AllOf(
+          Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+          Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+          Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(true)))}));
+}
+
+TEST(FrameEncodeMetadataWriterTest, ExplicitDropsWithMultipleSpatialLayers) {
+  const int64_t kTimestampMs1 = 100000;
+  const int64_t kTimestampMs2 = 100010;
+
+  FakeEncodedImageCallback sink;
+  FrameEncodeMetadataWriter encode_timer(CreateTestEnvironment(), &sink);
+  VideoCodec codec_settings;
+  codec_settings.codecType = kVideoCodecVP8;
+  codec_settings.numberOfSimulcastStreams = 2;
+  encode_timer.OnEncoderInit(codec_settings);
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(0, 0, 500000);
+  bitrate_allocation.SetBitrate(1, 0, 500000);
+  encode_timer.OnSetRates(bitrate_allocation, 30);
+
+  VideoFrame frame1 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs1 * 90)
+                          .set_timestamp_ms(kTimestampMs1)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame1);
+
+  VideoFrame frame2 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs2 * 90)
+                          .set_timestamp_ms(kTimestampMs2)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame2);
+
+  // Drop frame 1 on spatial layer 0.
+  encode_timer.OnFrameDropped(kTimestampMs1 * 90, /*spatial_id=*/0,
+                              /*is_end_of_temporal_unit=*/false);
+  EXPECT_THAT(
+      sink.GetDroppedFrames(),
+      ElementsAreArray({AllOf(
+          Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+          Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+          Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false)))}));
+
+  // Drop frame 2 on spatial layer 1.
+  encode_timer.OnFrameDropped(kTimestampMs2 * 90, /*spatial_id=*/1,
+                              /*is_end_of_temporal_unit=*/true);
+  // This implicitly drops frame 1 on layer 1, THEN explicitly drops frame 2 on
+  // layer 1.
+  EXPECT_THAT(
+      sink.GetDroppedFrames(),
+      ElementsAreArray(
+          {AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(1)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(true))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs2 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs2 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(1)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(true)))}));
+}
+
+TEST(FrameEncodeMetadataWriterTest,
+     EndOfTemporalUnitOnDroppedFrameDropsOtherLayers) {
+  const int64_t kTimestampMs1 = 100000;
+  const int64_t kTimestampMs2 = 100010;
+
+  FakeEncodedImageCallback sink;
+  FrameEncodeMetadataWriter encode_timer(CreateTestEnvironment(), &sink);
+  VideoCodec codec_settings;
+  codec_settings.codecType = kVideoCodecVP8;
+  codec_settings.numberOfSimulcastStreams = 2;
+  encode_timer.OnEncoderInit(codec_settings);
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(0, 0, 500000);
+  bitrate_allocation.SetBitrate(1, 0, 500000);
+  encode_timer.OnSetRates(bitrate_allocation, 30);
+
+  VideoFrame frame1 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs1 * 90)
+                          .set_timestamp_ms(kTimestampMs1)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame1);
+
+  VideoFrame frame2 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs2 * 90)
+                          .set_timestamp_ms(kTimestampMs2)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame2);
+
+  encode_timer.OnFrameDropped(kTimestampMs2 * 90, 0, true);
+
+  // Only the explicitly dropped frame (layer 0) should get
+  // is_end_of_temporal_unit=true. The implicitly dropped frame on layer 1
+  // should be pending on layer 0 at evaluation time and evaluate to false.
+  EXPECT_THAT(
+      sink.GetDroppedFrames(),
+      ElementsAreArray(
+          {AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(1)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(true))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs2 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(1)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs2 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(true)))}));
+}
+
+TEST(FrameEncodeMetadataWriterTest, DropsDifferentTimingAcrossLayers) {
+  const int64_t kTimestampMs1 = 100000;
+  const int64_t kTimestampMs2 = 100010;
+  const int64_t kTimestampMs3 = 100020;
+
+  FakeEncodedImageCallback sink;
+  FrameEncodeMetadataWriter encode_timer(CreateTestEnvironment(), &sink);
+  VideoCodec codec_settings;
+  codec_settings.codecType = kVideoCodecVP8;
+  codec_settings.numberOfSimulcastStreams = 2;
+  encode_timer.OnEncoderInit(codec_settings);
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(0, 0, 500000);
+  bitrate_allocation.SetBitrate(1, 0, 500000);
+  encode_timer.OnSetRates(bitrate_allocation, 30);
+
+  VideoFrame frame1 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs1 * 90)
+                          .set_timestamp_ms(kTimestampMs1)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame1);
+
+  VideoFrame frame2 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs2 * 90)
+                          .set_timestamp_ms(kTimestampMs2)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame2);
+
+  VideoFrame frame3 = VideoFrame::Builder()
+                          .set_rtp_timestamp(kTimestampMs3 * 90)
+                          .set_timestamp_ms(kTimestampMs3)
+                          .set_video_frame_buffer(kFrameBuffer)
+                          .build();
+  encode_timer.OnEncodeStarted(frame3);
+
+  // Fill metadata for frame 3 on spatial layer 0 without having given any
+  // feedback signal for frame 1 and 2 - implying they have been dropped for
+  // spatial layer 0.
+  EncodedImage image3_s0;
+  image3_s0.capture_time_ms_ = kTimestampMs3;
+  image3_s0.SetRtpTimestamp(static_cast<uint32_t>(kTimestampMs3 * 90));
+  encode_timer.FillMetadataAndTimingInfo(0, &image3_s0);
+
+  EXPECT_THAT(
+      sink.GetDroppedFrames(),
+      ElementsAreArray(
+          {AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs2 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false)))}));
+
+  // Now explicitly drop frame 1 on spatial layer 1.
+  encode_timer.OnFrameDropped(kTimestampMs1 * 90, /*spatial_id=*/1,
+                              /*is_end_of_temporal_unit=*/false);
+
+  EXPECT_THAT(
+      sink.GetDroppedFrames(),
+      ElementsAreArray(
+          {AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs2 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(0)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false))),
+           AllOf(
+               Field(&DroppedFrameInfo::rtp_timestamp, Eq(kTimestampMs1 * 90)),
+               Field(&DroppedFrameInfo::spatial_id, Eq(1)),
+               Field(&DroppedFrameInfo::is_end_of_temporal_unit, Eq(false)))}));
+}
 }  // namespace test
 }  // namespace webrtc

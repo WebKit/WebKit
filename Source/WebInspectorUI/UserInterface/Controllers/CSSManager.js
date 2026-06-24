@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: CSSManager lacks advanced multi-target support. (Stylesheets per-target)
-
 WI.CSSManager = class CSSManager extends WI.Object
 {
     constructor()
@@ -39,6 +37,8 @@ WI.CSSManager = class CSSManager extends WI.Object
         WI.DOMNode.addEventListener(WI.DOMNode.Event.AttributeModified, this._nodeAttributesDidChange, this);
         WI.DOMNode.addEventListener(WI.DOMNode.Event.AttributeRemoved, this._nodeAttributesDidChange, this);
         WI.DOMNode.addEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
+
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
 
         this._colorFormatSetting = new WI.Setting("default-color-format", WI.Color.Format.Original);
 
@@ -352,6 +352,10 @@ WI.CSSManager = class CSSManager extends WI.Object
     set layoutContextTypeChangedMode(layoutContextTypeChangedMode)
     {
         for (let target of WI.targets) {
+            // FIXME <https://webkit.org/b/314148> Use FrameCSSAgent in the frontend.
+            if (target instanceof WI.FrameTarget)
+                continue;
+
             // COMPATIBILITY (iOS 14.5): CSS.setLayoutContextTypeChangedMode did not exist.
             if (target.hasCommand("CSS.setLayoutContextTypeChangedMode"))
                 target.CSSAgent.setLayoutContextTypeChangedMode(layoutContextTypeChangedMode);
@@ -442,14 +446,15 @@ WI.CSSManager = class CSSManager extends WI.Object
         return match[1];
     }
 
-    styleSheetForIdentifier(id)
+    styleSheetForIdentifier(id, target)
     {
-        let styleSheet = this._styleSheetIdentifierMap.get(id);
+        let key = CSSManager.keyForStyleSheet(id, target);
+        let styleSheet = this._styleSheetIdentifierMap.get(key);
         if (styleSheet)
             return styleSheet;
 
-        styleSheet = new WI.CSSStyleSheet(id);
-        this._styleSheetIdentifierMap.set(id, styleSheet);
+        styleSheet = new WI.CSSStyleSheet(id, target);
+        this._styleSheetIdentifierMap.set(key, styleSheet);
         return styleSheet;
     }
 
@@ -468,7 +473,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         return this.styleSheets.filter((styleSheet) => styleSheet.isInspectorStyleSheet() && styleSheet.parentFrame === frame);
     }
 
-    preferredInspectorStyleSheetForFrame(frame, callback)
+    preferredInspectorStyleSheetForFrame(frame, callback, target)
     {
         var inspectorStyleSheets = this.inspectorStyleSheetsForFrame(frame);
         for (let styleSheet of inspectorStyleSheets) {
@@ -478,15 +483,15 @@ WI.CSSManager = class CSSManager extends WI.Object
             }
         }
 
-        let target = WI.assumingMainTarget();
-        target.CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
+        let agentTarget = target || WI.assumingMainTarget();
+        agentTarget.CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
             if (error || !styleSheetId) {
                 WI.reportInternalError(error || styleSheetId);
                 return;
             }
 
             const url = null;
-            let styleSheet = WI.cssManager.styleSheetForIdentifier(styleSheetId);
+            let styleSheet = WI.cssManager.styleSheetForIdentifier(styleSheetId, target);
             styleSheet.updateInfo(url, frame, styleSheet.origin, styleSheet.isInlineStyleTag(), styleSheet.startLineNumber, styleSheet.startColumnNumber);
             styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol] = true;
             callback(styleSheet);
@@ -569,9 +574,9 @@ WI.CSSManager = class CSSManager extends WI.Object
             this._nodeStylesMap[key].mediaQueryResultDidChange();
     }
 
-    styleSheetChanged(styleSheetIdentifier)
+    styleSheetChanged(styleSheetIdentifier, target)
     {
-        var styleSheet = this.styleSheetForIdentifier(styleSheetIdentifier);
+        var styleSheet = this.styleSheetForIdentifier(styleSheetIdentifier, target);
         console.assert(styleSheet);
 
         // Do not observe inline styles
@@ -584,10 +589,13 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._updateResourceContent(styleSheet);
     }
 
-    styleSheetAdded(styleSheetInfo)
+    styleSheetAdded(styleSheetInfo, target)
     {
-        console.assert(!this._styleSheetIdentifierMap.has(styleSheetInfo.styleSheetId), "Attempted to add a CSSStyleSheet but identifier was already in use");
-        let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
+        let key = CSSManager.keyForStyleSheet(styleSheetInfo.styleSheetId, target);
+        if (this._styleSheetIdentifierMap.has(key))
+            return;
+
+        let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId, target);
         let parentFrame = WI.networkManager.frameForIdentifier(styleSheetInfo.frameId);
         let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
         styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
@@ -595,19 +603,46 @@ WI.CSSManager = class CSSManager extends WI.Object
         this.dispatchEventToListeners(WI.CSSManager.Event.StyleSheetAdded, {styleSheet});
     }
 
-    styleSheetRemoved(styleSheetIdentifier)
+    styleSheetRemoved(styleSheetIdentifier, target)
     {
-        let styleSheet = this._styleSheetIdentifierMap.get(styleSheetIdentifier);
+        let key = CSSManager.keyForStyleSheet(styleSheetIdentifier, target);
+        let styleSheet = this._styleSheetIdentifierMap.get(key);
         console.assert(styleSheet, "Attempted to remove a CSSStyleSheet that was not tracked");
         if (!styleSheet)
             return;
 
-        this._styleSheetIdentifierMap.delete(styleSheetIdentifier);
+        this._styleSheetIdentifierMap.delete(key);
 
         this.dispatchEventToListeners(WI.CSSManager.Event.StyleSheetRemoved, {styleSheet});
     }
 
     // Private
+
+    static keyForStyleSheet(rawId, target)
+    {
+        if (target instanceof WI.FrameTarget)
+            return `${target.identifier}:${rawId}`;
+        return rawId;
+    }
+
+    _handleTargetRemoved(event)
+    {
+        let {target} = event.data;
+        if (!(target instanceof WI.FrameTarget))
+            return;
+
+        let prefix = target.identifier + ":";
+        let removedKeys = [];
+        for (let key of this._styleSheetIdentifierMap.keys()) {
+            if (typeof key === "string" && key.startsWith(prefix))
+                removedKeys.push(key);
+        }
+        for (let key of removedKeys) {
+            let styleSheet = this._styleSheetIdentifierMap.get(key);
+            this._styleSheetIdentifierMap.delete(key);
+            this.dispatchEventToListeners(WI.CSSManager.Event.StyleSheetRemoved, {styleSheet});
+        }
+    }
 
     _nodePseudoClassesDidChange(event)
     {

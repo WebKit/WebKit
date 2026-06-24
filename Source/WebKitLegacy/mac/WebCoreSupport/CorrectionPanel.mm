@@ -31,22 +31,21 @@
 
 #if USE(AUTOCORRECTION_PANEL)
 
-using namespace WebCore;
 
 CorrectionPanel::CorrectionPanel()
     : m_wasDismissedExternally(false)
-    , m_reasonForDismissing(ReasonForDismissingAlternativeText::Ignored)
+    , m_reasonForDismissing(WebCore::ReasonForDismissingAlternativeText::Ignored)
 {
 }
 
 CorrectionPanel::~CorrectionPanel()
 {
-    dismissInternal(ReasonForDismissingAlternativeText::Ignored, false);
+    dismissInternal(WebCore::ReasonForDismissingAlternativeText::Ignored, false);
 }
 
-void CorrectionPanel::show(WebView* view, AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+void CorrectionPanel::show(WebView* view, WebCore::AlternativeTextType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
-    dismissInternal(ReasonForDismissingAlternativeText::Ignored, false);
+    dismissInternal(WebCore::ReasonForDismissingAlternativeText::Ignored, false);
     
     if (!view)
         return;
@@ -65,12 +64,12 @@ void CorrectionPanel::show(WebView* view, AlternativeTextType type, const FloatR
     }];
 }
 
-String CorrectionPanel::dismiss(ReasonForDismissingAlternativeText reason)
+String CorrectionPanel::dismiss(WebCore::ReasonForDismissingAlternativeText reason)
 {
     return dismissInternal(reason, true);
 }
 
-String CorrectionPanel::dismissInternal(ReasonForDismissingAlternativeText reason, bool dismissingExternally)
+String CorrectionPanel::dismissInternal(WebCore::ReasonForDismissingAlternativeText reason, bool dismissingExternally)
 {
     if (!isShowing())
         return String();
@@ -99,7 +98,7 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
         if (acceptedReplacement)
             recordAutocorrectionResponse(documentTag, NSCorrectionResponseAccepted, replaced, acceptedReplacement);
         else {
-            if (!m_wasDismissedExternally || m_reasonForDismissing == ReasonForDismissingAlternativeText::Cancelled)
+            if (!m_wasDismissedExternally || m_reasonForDismissing == WebCore::ReasonForDismissingAlternativeText::Cancelled)
                 recordAutocorrectionResponse(documentTag, NSCorrectionResponseRejected, replaced, proposedReplacement);
             else
                 recordAutocorrectionResponse(documentTag, NSCorrectionResponseIgnored, replaced, proposedReplacement);

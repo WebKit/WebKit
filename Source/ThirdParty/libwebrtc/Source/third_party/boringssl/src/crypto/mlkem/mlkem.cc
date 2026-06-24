@@ -17,6 +17,8 @@
 #include "../fipsmodule/bcm_interface.h"
 
 
+using namespace bssl;
+
 void MLKEM768_generate_key(
     uint8_t out_encoded_public_key[MLKEM768_PUBLIC_KEY_BYTES],
     uint8_t optional_out_seed[MLKEM_SEED_BYTES],

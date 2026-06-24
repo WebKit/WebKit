@@ -35,6 +35,10 @@ namespace WebCore {
 class RenderText;
 class RenderedDocumentMarker;
 
+namespace Style {
+class ComputedStyle;
+}
+
 struct StyledMarkedText final : MarkedText {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(StyledMarkedText);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyledMarkedText);
@@ -64,7 +68,7 @@ struct StyledMarkedText final : MarkedText {
     static Vector<StyledMarkedText> coalesceAdjacentWithEqualBackground(const Vector<StyledMarkedText>&);
     static Vector<StyledMarkedText> coalesceAdjacentWithEqualForeground(const Vector<StyledMarkedText>&);
     static Vector<StyledMarkedText> coalesceAdjacentWithEqualDecorations(const Vector<StyledMarkedText>&);
-    static Style computeStyleForUnmarkedMarkedText(const RenderText&, const RenderStyle&, bool isFirstLine, const PaintInfo&);
+    static Style computeStyleForUnmarkedMarkedText(const RenderText&, const WebCore::Style::ComputedStyle&, bool isFirstLine, const PaintInfo&);
 };
 
 }

@@ -18,19 +18,6 @@
       }
     }
   },
-  'arm64': {
-    'swarming': {
-      'dimensions': {
-        'cpu': 'arm64'
-      }
-    }
-  },
-  'chrome-tester-service-account': {
-    'swarming': {
-      'service_account':
-      'chrome-tester@chops-service-accounts.iam.gserviceaccount.com'
-    }
-  },
   'chromium-tester-service-account': {
     'fail_if_unused': False,
     'swarming': {
@@ -45,14 +32,6 @@
       }
     }
   },
-  'crosshatch': {
-    'swarming': {
-      'dimensions': {
-        'device_type': 'crosshatch',
-        'os': 'Android'
-      }
-    }
-  },
   'fuchsia-gtest-output': {
     'args': [
       '--test-launcher-summary-output=${ISOLATED_OUTDIR}/gtest_output.json',
@@ -64,23 +43,6 @@
     'resultdb': {
       'enable': True,
       'has_native_resultdb_integration': True
-    }
-  },
-  'ios-device-18': {
-    'swarming': {
-      'dimensions': {
-        'os': 'iOS-18',
-        'pool': 'chrome.tests'
-      }
-    }
-  },
-  'ios-device-perf': {
-    'swarming': {
-      'idempotent': False,
-      'dimensions': {
-        'os': 'iOS-17.6.1',
-        'pool': 'WebRTC'
-      }
     }
   },
   'ios_runtime_cache_17_5': {
@@ -122,13 +84,6 @@
       }
     }
   },
-  'mac11': {
-    'swarming': {
-      'dimensions': {
-        'os': 'Mac-11'
-      }
-    }
-  },
   'mac_12_arm64': {
     'swarming': {
       'dimensions': {
@@ -167,6 +122,15 @@
   },
   'out_dir_arg': {
     'args': ['--out-dir', '${ISOLATED_OUTDIR}']
+  },
+  'panther_on_14': {
+    'swarming': {
+      'dimensions': {
+        'device_type': 'panther',
+        'device_os': 'AP2A.240705.004',
+        'os': 'Android'
+      }
+    }
   },
   'perf-output': {
     'args': [
@@ -247,24 +211,10 @@
       'shards': 8
     }
   },
-  'timeout-2h': {
-    'swarming': {
-      'hard_timeout': 7200,
-      'io_timeout': 7200
-    }
-  },
   'timeout-3h': {
     'swarming': {
       'hard_timeout': 10800,
       'io_timeout': 10800
-    }
-  },
-  'walleye': {
-    'swarming': {
-      'dimensions': {
-        'device_type': 'walleye',
-        'os': 'Android'
-      }
     }
   },
   'webrtc-xctest': {

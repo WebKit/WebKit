@@ -145,7 +145,6 @@ private:
     VideoCaptureFactory* m_videoCaptureFactoryOverride { nullptr };
     DisplayCaptureFactory* m_displayCaptureFactoryOverride { nullptr };
 
-    bool m_shouldInterruptAudioOnPageVisibilityChange { false };
 
 #if ENABLE(APP_PRIVACY_REPORT)
     OSObjectPtr<tcc_identity_t> m_identity;

@@ -19,6 +19,7 @@
 #include "absl/functional/any_invocable.h"
 #include "api/dtls_transport_interface.h"
 #include "api/field_trials_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "p2p/base/packet_transport_internal.h"
 #include "p2p/dtls/dtls_transport_internal.h"
 #include "pc/srtp_transport.h"
@@ -112,7 +113,7 @@ void DtlsSrtpTransport::SetRtcpMuxEnabled(bool enable) {
 }
 
 void DtlsSrtpTransport::UpdateSendEncryptedHeaderExtensionIds(
-    const std::vector<int>& send_extension_ids) {
+    const std::vector<RtpHeaderExtensionId>& send_extension_ids) {
   if (send_extension_ids_ == send_extension_ids) {
     return;
   }
@@ -124,7 +125,7 @@ void DtlsSrtpTransport::UpdateSendEncryptedHeaderExtensionIds(
 }
 
 void DtlsSrtpTransport::UpdateRecvEncryptedHeaderExtensionIds(
-    const std::vector<int>& recv_extension_ids) {
+    const std::vector<RtpHeaderExtensionId>& recv_extension_ids) {
   if (recv_extension_ids_ == recv_extension_ids) {
     return;
   }
@@ -178,8 +179,8 @@ void DtlsSrtpTransport::SetupRtpDtlsSrtp() {
   // Use an empty encrypted header extension ID vector if not set. This could
   // happen when the DTLS handshake is completed before processing the
   // Offer/Answer which contains the encrypted header extension IDs.
-  std::vector<int> send_extension_ids;
-  std::vector<int> recv_extension_ids;
+  std::vector<RtpHeaderExtensionId> send_extension_ids;
+  std::vector<RtpHeaderExtensionId> recv_extension_ids;
   if (send_extension_ids_) {
     send_extension_ids = *send_extension_ids_;
   }
@@ -207,8 +208,8 @@ void DtlsSrtpTransport::SetupRtcpDtlsSrtp() {
     return;
   }
 
-  std::vector<int> send_extension_ids;
-  std::vector<int> recv_extension_ids;
+  std::vector<RtpHeaderExtensionId> send_extension_ids;
+  std::vector<RtpHeaderExtensionId> recv_extension_ids;
   if (send_extension_ids_) {
     send_extension_ids = *send_extension_ids_;
   }

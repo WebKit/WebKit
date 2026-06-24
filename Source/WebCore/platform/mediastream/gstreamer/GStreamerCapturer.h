@@ -111,6 +111,7 @@ private:
     Lock m_lock;
     CaptureDevice::DeviceType m_deviceType;
     WeakHashSet<GStreamerCapturerObserver> m_observers;
+    RefPtr<PadProbeHandle<GStreamerCapturer>> m_pipewireProbe;
 };
 
 } // namespace WebCore

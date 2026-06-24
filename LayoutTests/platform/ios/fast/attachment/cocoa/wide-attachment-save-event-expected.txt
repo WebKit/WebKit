@@ -4,9 +4,6 @@ This tests that clicking on the save button sends a save event.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 PASS attachment is an instance of HTMLAttachmentElement
 PASS saveButtonClientRect is an instance of DOMRectReadOnly
 PASS saveButtonClientRect.width is > 0
@@ -132,4 +129,7 @@ PASS events[0].event.type is "click"
 PASS events[0].event.x is clickX
 PASS events[0].event.y is within 0.5 of 99
 PASS events[0].event.target is attachment
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

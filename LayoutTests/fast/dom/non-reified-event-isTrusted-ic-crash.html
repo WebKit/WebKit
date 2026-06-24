@@ -4,6 +4,7 @@
 <script src="../../resources/js-test.js"></script>
 <script>
 description("No crash when property 'x' is assigned");
+window.jsTestIsAsync = true;
 
 // This structure has a non-reified static property "isTrusted".
 const EVENT = new Event('a');
@@ -75,8 +76,6 @@ function main() {
         opt(/* use_event */ true, /* proxy */ 1.1);
     }
     
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     setTimeout(() => {
         const value = opt(/* use_event */ true, proxy);
@@ -84,8 +83,7 @@ function main() {
         // Should crash here.
         value.x = 1234;
 
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }, 100);
 }
 

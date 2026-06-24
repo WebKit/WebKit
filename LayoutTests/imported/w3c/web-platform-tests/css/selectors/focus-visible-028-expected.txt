@@ -7,5 +7,5 @@ If any button within the group has a blue outline after using either arrow key, 
 Click me
 I will be focused programmatically.  Button 2  Button 3
 
-FAIL Programmatic focus after click and keyboard interaction should match :focus-visible assert_equals: outlineColor for BUTTON#btn2 is blue expected "rgb(0, 0, 255)" but got "rgba(0, 0, 0, 0.847)"
+PASS Programmatic focus after click and keyboard interaction should match :focus-visible
 

@@ -2,7 +2,7 @@
 ; source tree. Do not edit by hand.
 
 %ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
+%include "boringssl_prefix_symbols_internal_x86_win_asm.inc"
 %endif
 %ifidn __OUTPUT_FORMAT__, win32
 %ifidn __OUTPUT_FORMAT__,obj
@@ -856,7 +856,7 @@ align	16
 L$010loop1x:
 	paddd	xmm0,xmm1
 	pxor	xmm3,xmm0
-db	102,15,56,0,222
+	pshufb	xmm3,xmm6
 	paddd	xmm2,xmm3
 	pxor	xmm1,xmm2
 	movdqa	xmm4,xmm1
@@ -865,7 +865,7 @@ db	102,15,56,0,222
 	por	xmm1,xmm4
 	paddd	xmm0,xmm1
 	pxor	xmm3,xmm0
-db	102,15,56,0,223
+	pshufb	xmm3,xmm7
 	paddd	xmm2,xmm3
 	pxor	xmm1,xmm2
 	movdqa	xmm4,xmm1
@@ -878,7 +878,7 @@ db	102,15,56,0,223
 	nop
 	paddd	xmm0,xmm1
 	pxor	xmm3,xmm0
-db	102,15,56,0,222
+	pshufb	xmm3,xmm6
 	paddd	xmm2,xmm3
 	pxor	xmm1,xmm2
 	movdqa	xmm4,xmm1
@@ -887,7 +887,7 @@ db	102,15,56,0,222
 	por	xmm1,xmm4
 	paddd	xmm0,xmm1
 	pxor	xmm3,xmm0
-db	102,15,56,0,223
+	pshufb	xmm3,xmm7
 	paddd	xmm2,xmm3
 	pxor	xmm1,xmm2
 	movdqa	xmm4,xmm1

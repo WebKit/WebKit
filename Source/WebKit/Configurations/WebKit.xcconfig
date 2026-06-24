@@ -43,6 +43,7 @@ WK_HAS_VALID_OBJCXX_MODULE = YES;
 WK_HAS_VALID_OBJCXX_MODULE[sdk=*26.2*] = ;
 WK_HAS_VALID_OBJCXX_MODULE[sdk=*26.3*] = ;
 WK_HAS_VALID_OBJCXX_MODULE[sdk=*26.4*] = ;
+WK_HAS_VALID_OBJCXX_MODULE[sdk=*26.5*] = ;
 
 MODULE_VERIFIER_SUPPORTED_LANGUAGES = $(MODULE_VERIFIER_SUPPORTED_LANGUAGES_$(WK_HAS_VALID_OBJCXX_MODULE));
 MODULE_VERIFIER_SUPPORTED_LANGUAGES_ = objective-c;
@@ -274,10 +275,8 @@ WK_SPRINGBOARDSERVICES_LDFLAGS_iphonesimulator = -framework SpringBoardServices;
 WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
 
-WK_TEXT_EXTRACTION_FILTER_LDFLAGS = $(WK_TEXT_EXTRACTION_FILTER_LDFLAGS_$(USE_INTERNAL_SDK))
-WK_TEXT_EXTRACTION_FILTER_LDFLAGS_NO =
-WK_TEXT_EXTRACTION_FILTER_LDFLAGS_YES = -weak_framework CoreML -weak_framework NaturalLanguage
-WK_TEXT_EXTRACTION_FILTER_LDFLAGS_YES[sdk=watch*] =
+WK_TEXT_EXTRACTION_FILTER_LDFLAGS = -weak_framework CoreML -weak_framework NaturalLanguage
+WK_TEXT_EXTRACTION_FILTER_LDFLAGS[sdk=watch*] =
 
 // FIXME: Remove GameControllerUI linkage once rdar://141183512 is fixed.
 WK_GAMECONTROLLERUI_LDFLAGS = $(WK_GAMECONTROLLERUI_LDFLAGS_$(WK_PLATFORM_NAME));
@@ -320,7 +319,7 @@ WK_EXCLUDED_WEBPUSHD_SANDBOX_NO = com.apple.WebKit.webpushd.relocatable.mac.sb
 WK_EXCLUDED_WEBPUSHD_SANDBOX_YES = com.apple.WebKit.webpushd.mac.sb
 
 WK_EXCLUDED_SWIFT_IN_FILE_NAMES = $(WK_EXCLUDED_SWIFT_IN_FILE_NAMES_$(USE_INTERNAL_SDK));
-WK_EXCLUDED_SWIFT_IN_FILE_NAMES_ = NSGlassEffectView+Extras.swift UIWindowScene+Extras.swift WKDeferringGestureRecognizerExtras.swift WKWebView+WKBannerViewOverlay.swift WKWebView+SystemTextExtraction.swift TestWebKitAPILibraryAdditions.swift GPUProcess/graphics/Model/*.swift;
+WK_EXCLUDED_SWIFT_IN_FILE_NAMES_ = UIWindowScene+Extras.swift WKDeferringGestureRecognizerExtras.swift WKWebView+SystemTextExtraction.swift TestWebKitAPILibraryAdditions.swift GPUProcess/graphics/Model/*.swift;
 
 EXCLUDED_EXTENSION_SOURCE_FILE_NAMES = Shared/AuxiliaryProcessExtensions/*;
 
@@ -387,6 +386,7 @@ OTHER_SWIFT_FLAGS_MIN_ACCESS = -Xfrontend -emit-clang-header-min-access -Xfronte
 OTHER_SWIFT_FLAGS_MIN_ACCESS[sdk=*26.2*] = ;
 OTHER_SWIFT_FLAGS_MIN_ACCESS[sdk=*26.3*] = ;
 OTHER_SWIFT_FLAGS_MIN_ACCESS[sdk=*26.4*] = ;
+OTHER_SWIFT_FLAGS_MIN_ACCESS[sdk=*26.5*] = ;
 
 // WebKit's clang module does not build in public SDK builds of these
 // platforms, preventing any Swift compilation. (https://bugs.webkit.org/show_bug.cgi?id=280912)

@@ -17,12 +17,10 @@
 
 #include "absl/strings/string_view.h"
 #include "api/priority.h"
-#include "media/sctp/sctp_transport_internal.h"
+#include "api/sctp_transport_interface.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "test/gtest.h"
-
-using webrtc::StreamId;
 
 class SctpUtilsTest : public ::testing::Test {
  public:

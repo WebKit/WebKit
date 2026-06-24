@@ -31,6 +31,8 @@
 #include "ModelProcessModelPlayerProxy.h"
 #include <wtf/TZoneMallocInlines.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_modelConnectionToWebProcess->connection())
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -67,15 +69,20 @@ void ModelProcessModelPlayerManagerProxy::createModelPlayer(WebCore::ModelPlayer
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_modelConnectionToWebProcess);
-    ASSERT(!m_proxies.contains(identifier));
+    MESSAGE_CHECK(!m_proxies.contains(identifier));
 
-    auto proxy = ModelProcessModelPlayerProxy::create(*this, identifier, protect(m_modelConnectionToWebProcess->connection()), m_modelConnectionToWebProcess->attributionTaskID(), m_modelConnectionToWebProcess->debugEntityMemoryLimit());
+    auto proxy = ModelProcessModelPlayerProxy::create(*this, identifier, protect(m_modelConnectionToWebProcess->connection()), m_modelConnectionToWebProcess->attributionTaskID(), m_modelConnectionToWebProcess->debugEntityMemoryLimit(), m_modelConnectionToWebProcess->debugImmersiveEntityMemoryLimit());
     m_proxies.add(identifier, WTF::move(proxy));
 }
 
 void ModelProcessModelPlayerManagerProxy::deleteModelPlayer(WebCore::ModelPlayerIdentifier identifier)
 {
     ASSERT(RunLoop::isMain());
+
+    // The unload model timer (ModelProcess) can race the model element suspension (WebProcess).
+    // So the model player might already be gone.
+    if (!m_proxies.contains(identifier))
+        return;
 
     if (auto proxy = m_proxies.take(identifier))
         proxy->invalidate();
@@ -87,6 +94,7 @@ void ModelProcessModelPlayerManagerProxy::deleteModelPlayer(WebCore::ModelPlayer
 void ModelProcessModelPlayerManagerProxy::unloadModelPlayer(WebCore::ModelPlayerIdentifier identifier)
 {
     ASSERT(RunLoop::isMain());
+    MESSAGE_CHECK(m_proxies.contains(identifier));
 
     deleteModelPlayer(identifier);
     m_modelConnectionToWebProcess->didUnloadModelPlayer(identifier);
@@ -105,5 +113,7 @@ void ModelProcessModelPlayerManagerProxy::didReceivePlayerMessage(IPC::Connectio
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(MODEL_PROCESS)

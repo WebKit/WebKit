@@ -85,7 +85,7 @@ void setAdoptedStyleSheetsOnTreeScope(TreeScope& treeScope, JSC::JSGlobalObject&
 
 void JSDocument::setAdoptedStyleSheets(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    setAdoptedStyleSheetsOnTreeScope(wrapped(), lexicalGlobalObject, value);
+    setAdoptedStyleSheetsOnTreeScope(protect(wrapped()), lexicalGlobalObject, value);
 }
 
 template<typename Visitor>

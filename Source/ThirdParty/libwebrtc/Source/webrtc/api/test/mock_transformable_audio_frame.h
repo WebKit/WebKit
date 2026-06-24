@@ -13,9 +13,9 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 
-#include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -27,8 +27,8 @@ class MockTransformableAudioFrame : public TransformableAudioFrameInterface {
  public:
   MockTransformableAudioFrame() : TransformableAudioFrameInterface(Passkey()) {}
 
-  MOCK_METHOD(ArrayView<const uint8_t>, GetData, (), (const, override));
-  MOCK_METHOD(void, SetData, (ArrayView<const uint8_t>), (override));
+  MOCK_METHOD(std::span<const uint8_t>, GetData, (), (const, override));
+  MOCK_METHOD(void, SetData, (std::span<const uint8_t>), (override));
   MOCK_METHOD(void, SetRTPTimestamp, (uint32_t), (override));
   MOCK_METHOD(uint8_t, GetPayloadType, (), (const, override));
   MOCK_METHOD(bool, CanSetPayloadType, (), (const, override));
@@ -36,7 +36,7 @@ class MockTransformableAudioFrame : public TransformableAudioFrameInterface {
   MOCK_METHOD(uint32_t, GetSsrc, (), (const, override));
   MOCK_METHOD(uint32_t, GetTimestamp, (), (const, override));
   MOCK_METHOD(std::string, GetMimeType, (), (const, override));
-  MOCK_METHOD(ArrayView<const uint32_t>,
+  MOCK_METHOD(std::span<const uint32_t>,
               GetContributingSources,
               (),
               (const, override));

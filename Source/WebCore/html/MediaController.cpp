@@ -133,7 +133,7 @@ Ref<TimeRanges> MediaController::buffered() const
     // user agent has buffered, at the time the attribute is evaluated.
     Ref<TimeRanges> bufferedRanges = TimeRanges::create(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
     forEachElement([&] (auto element) {
-        bufferedRanges->intersectWith(element->buffered());
+        bufferedRanges->intersectWith(protect(element)->buffered());
     });
     return bufferedRanges;
 }
@@ -148,7 +148,7 @@ Ref<TimeRanges> MediaController::seekable() const
     // user agent is able to seek to, at the time the attribute is evaluated.
     Ref<TimeRanges> seekableRanges = TimeRanges::create(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
     forEachElement([&] (auto element) {
-        seekableRanges->intersectWith(element->seekable());
+        seekableRanges->intersectWith(protect(element)->seekable());
     });
     return seekableRanges;
 }
@@ -160,7 +160,7 @@ Ref<TimeRanges> MediaController::played()
     // user agent has so far rendered, at the time the attribute is evaluated.
     Ref<TimeRanges> playedRanges = TimeRanges::create();
     forEachElement([&] (auto element) {
-        playedRanges->unionWith(element->played());
+        playedRanges->unionWith(protect(element)->played());
     });
     return playedRanges;
 }

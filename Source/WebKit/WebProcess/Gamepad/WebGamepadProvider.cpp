@@ -65,7 +65,7 @@ void WebGamepadProvider::setInitialGamepads(const Vector<std::optional<GamepadDa
     m_rawGamepads.resize(gamepadDatas.size());
     for (size_t i = 0; i < gamepadDatas.size(); ++i) {
         if (!gamepadDatas[i])
-            return;
+            continue;
 
         m_gamepads[i] = makeUnique<WebGamepad>(*gamepadDatas[i]);
         m_rawGamepads[i] = m_gamepads[i].get();

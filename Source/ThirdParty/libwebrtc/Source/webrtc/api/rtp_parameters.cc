@@ -18,8 +18,8 @@
 
 #include "absl/strings/ascii.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtc_error.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_transceiver_direction.h"
 #include "media/base/media_constants.h"
 #include "rtc_base/checks.h"
@@ -148,28 +148,37 @@ RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
     : uri(uri) {}
 RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
     absl::string_view uri,
-    int preferred_id)
+    RtpHeaderExtensionId preferred_id)
     : uri(uri), preferred_id(preferred_id) {}
 RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
     absl::string_view uri,
-    int preferred_id,
+    RtpHeaderExtensionId preferred_id,
     RtpTransceiverDirection direction)
     : uri(uri), preferred_id(preferred_id), direction(direction) {}
 RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
     absl::string_view uri,
-    int preferred_id,
+    RtpHeaderExtensionId preferred_id,
     bool preferred_encrypt,
     RtpTransceiverDirection direction)
     : uri(uri),
       preferred_id(preferred_id),
       preferred_encrypt(preferred_encrypt),
       direction(direction) {}
+
 RtpHeaderExtensionCapability::~RtpHeaderExtensionCapability() = default;
 
 RtpExtension::RtpExtension() = default;
-RtpExtension::RtpExtension(absl::string_view uri, int id) : uri(uri), id(id) {}
-RtpExtension::RtpExtension(absl::string_view uri, int id, bool encrypt)
-    : uri(uri), id(id), encrypt(encrypt) {}
+RtpExtension::RtpExtension(absl::string_view uri, RtpHeaderExtensionId id)
+    : uri(uri), id(id) {
+  RTC_DCHECK(id.Valid()) << "Extension ID " << id << " is not in valid range";
+}
+RtpExtension::RtpExtension(absl::string_view uri,
+                           RtpHeaderExtensionId id,
+                           bool encrypt)
+    : uri(uri), id(id), encrypt(encrypt) {
+  RTC_DCHECK(id.Valid()) << "Extension ID " << id << " is not in valid range";
+}
+
 RtpExtension::~RtpExtension() = default;
 
 RtpFecParameters::RtpFecParameters() = default;
@@ -206,15 +215,14 @@ RtpParameters::RtpParameters(const RtpParameters& rhs) = default;
 RtpParameters::~RtpParameters() = default;
 
 std::string RtpExtension::ToString() const {
-  char buf[256];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << "{uri: " << uri;
   sb << ", id: " << id;
   if (encrypt) {
     sb << ", encrypt";
   }
-  sb << '}';
-  return sb.str();
+  sb << "}";
+  return sb.Release();
 }
 
 bool RtpExtension::IsSupportedForAudio(absl::string_view uri) {
@@ -248,14 +256,6 @@ bool RtpExtension::IsSupportedForVideo(absl::string_view uri) {
 
 bool RtpExtension::IsEncryptionSupported(absl::string_view uri) {
   return
-#if defined(ENABLE_EXTERNAL_AUTH)
-      // TODO(jbauch): Figure out a way to always allow "kAbsSendTimeUri"
-      // here and filter out later if external auth is really used in
-      // srtpfilter. External auth is used by Chromium and replaces the
-      // extension header value of "kAbsSendTimeUri", so it must not be
-      // encrypted (which can't be done by Chromium).
-      uri != RtpExtension::kAbsSendTimeUri &&
-#endif
       uri != RtpExtension::kEncryptHeaderExtensionsUri;
 }
 

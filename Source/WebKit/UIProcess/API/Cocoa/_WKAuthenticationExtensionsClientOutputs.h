@@ -31,6 +31,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// Staging protocol for Safari's category to use
+@protocol _WKAuthenticationExtensionsLargeBlobOutputsStaging
+@property (nonatomic, readonly) BOOL supported;
+@property (nullable, nonatomic, readonly, copy) NSData *blob;
+@property (nonatomic, readonly) BOOL written;
+@end
+
+// Concrete class that conforms to the staging protocol
+WK_CLASS_AVAILABLE(macos(26.4), ios(26.4))
+@interface _WKAuthenticationExtensionsLargeBlobOutputs : NSObject <_WKAuthenticationExtensionsLargeBlobOutputsStaging>
+@property (nonatomic, readonly) BOOL supported;
+@property (nullable, nonatomic, readonly, copy) NSData *blob;
+@property (nonatomic, readonly) BOOL written;
+@end
+
 WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @interface _WKAuthenticationExtensionsClientOutputs : NSObject
 
@@ -38,6 +53,7 @@ WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @property (nonatomic, readonly) BOOL prfEnabled;
 @property (nullable, nonatomic, readonly, copy) NSData *prfFirst;
 @property (nullable, nonatomic, readonly, copy) NSData *prfSecond;
+@property (nullable, nonatomic, readonly, strong) id <_WKAuthenticationExtensionsLargeBlobOutputsStaging> largeBlob;
 
 @end
 

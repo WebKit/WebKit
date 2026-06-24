@@ -50,23 +50,23 @@ PASS MediaMetadata interface: attribute title
 PASS MediaMetadata interface: attribute artist
 PASS MediaMetadata interface: attribute album
 PASS MediaMetadata interface: attribute artwork
-FAIL MediaMetadata interface: attribute chapterInfo assert_true: The prototype object must have a property "chapterInfo" expected true got false
+PASS MediaMetadata interface: attribute chapterInfo
 PASS MediaMetadata must be primary interface of new MediaMetadata()
 PASS Stringification of new MediaMetadata()
 PASS MediaMetadata interface: new MediaMetadata() must inherit property "title" with the proper type
 PASS MediaMetadata interface: new MediaMetadata() must inherit property "artist" with the proper type
 PASS MediaMetadata interface: new MediaMetadata() must inherit property "album" with the proper type
 PASS MediaMetadata interface: new MediaMetadata() must inherit property "artwork" with the proper type
-FAIL MediaMetadata interface: new MediaMetadata() must inherit property "chapterInfo" with the proper type assert_inherits: property "chapterInfo" not found in prototype chain
-FAIL ChapterInformation interface: existence and properties of interface object assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
-FAIL ChapterInformation interface object length assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
-FAIL ChapterInformation interface object name assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
-FAIL ChapterInformation interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
-FAIL ChapterInformation interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
-FAIL ChapterInformation interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
-FAIL ChapterInformation interface: attribute title assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
-FAIL ChapterInformation interface: attribute startTime assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
-FAIL ChapterInformation interface: attribute artwork assert_own_property: self does not have own property "ChapterInformation" expected property "ChapterInformation" missing
+PASS MediaMetadata interface: new MediaMetadata() must inherit property "chapterInfo" with the proper type
+PASS ChapterInformation interface: existence and properties of interface object
+PASS ChapterInformation interface object length
+PASS ChapterInformation interface object name
+PASS ChapterInformation interface: existence and properties of interface prototype object
+PASS ChapterInformation interface: existence and properties of interface prototype object's "constructor"
+PASS ChapterInformation interface: existence and properties of interface prototype object's @@unscopables property
+PASS ChapterInformation interface: attribute title
+PASS ChapterInformation interface: attribute startTime
+PASS ChapterInformation interface: attribute artwork
 PASS Navigator interface: attribute mediaSession
 PASS Navigator interface: navigator must inherit property "mediaSession" with the proper type
 

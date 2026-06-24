@@ -15,36 +15,31 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <span>
 #include <type_traits>
 
-#include "api/array_view.h"
-#include "modules/rtp_rtcp/source/byte_io.h"
-#include "rtc_base/checks.h"
+#include "absl/strings/string_view.h"
 
 namespace webrtc {
-namespace test {
 
 // Helper class to take care of the fuzzer input, read from it, and keep track
 // of when the end of the data has been reached.
 class FuzzDataHelper {
  public:
-  explicit FuzzDataHelper(ArrayView<const uint8_t> data);
+  explicit FuzzDataHelper(std::span<const uint8_t> data) : data_(data) {}
 
   // Returns true if n bytes can be read.
   bool CanReadBytes(size_t n) const { return data_ix_ + n <= data_.size(); }
 
   // Reads and returns data of type T.
   template <typename T>
-  T Read() {
-    RTC_CHECK(CanReadBytes(sizeof(T)));
-    T x = ByteReader<T>::ReadLittleEndian(&data_[data_ix_]);
-    data_ix_ += sizeof(T);
-    return x;
-  }
+    requires(std::is_trivial_v<T>)
+  T Read();
 
   // Reads and returns data of type T. Returns default_value if not enough
   // fuzzer input remains to read a T.
   template <typename T>
+    requires(std::is_trivial_v<T>)
   T ReadOrDefaultValue(T default_value) {
     if (!CanReadBytes(sizeof(T))) {
       return default_value;
@@ -54,8 +49,8 @@ class FuzzDataHelper {
 
   // Like ReadOrDefaultValue, but replaces the value 0 with default_value.
   template <typename T>
+    requires(std::is_integral_v<T>)
   T ReadOrDefaultValueNotZero(T default_value) {
-    static_assert(std::is_integral<T>::value, "");
     T x = ReadOrDefaultValue(default_value);
     return x == 0 ? default_value : x;
   }
@@ -84,23 +79,41 @@ class FuzzDataHelper {
     return std::move(select_from[index]);
   }
 
-  ArrayView<const uint8_t> ReadByteArray(size_t bytes) {
+  std::span<const uint8_t> ReadByteArray(size_t bytes) {
     if (!CanReadBytes(bytes)) {
-      return ArrayView<const uint8_t>(nullptr, 0);
+      return {};
     }
     const size_t index_to_return = data_ix_;
     data_ix_ += bytes;
-    return data_.subview(index_to_return, bytes);
+    return data_.subspan(index_to_return, bytes);
+  }
+
+  // Returns all unused fuzzing bytes. May return an empty view.
+  std::span<const uint8_t> ReadRemaining() {
+    std::span<const uint8_t> result = data_.subspan(data_ix_);
+    data_ix_ = data_.size();
+    return result;
+  }
+
+  // Returns all unused fuzzing bytes as a string.
+  absl::string_view ReadString() {
+    std::span<const uint8_t> raw = ReadRemaining();
+    return absl::string_view(reinterpret_cast<const char*>(raw.data()),
+                             raw.size());
   }
 
   // If sizeof(T) > BytesLeft then the remaining bytes will be used and the rest
   // of the object will be zero initialized.
   template <typename T>
-  void CopyTo(T* object) {
-    memset(object, 0, sizeof(T));
+    requires(std::is_trivial_v<T>)
+  void CopyTo(T& object) {
+    std::span<uint8_t, sizeof(T)> object_memory(
+        reinterpret_cast<uint8_t*>(&object), sizeof(T));
 
     size_t bytes_to_copy = std::min(BytesLeft(), sizeof(T));
-    memcpy(object, data_.data() + data_ix_, bytes_to_copy);
+    std::ranges::copy(data_.subspan(data_ix_, bytes_to_copy),
+                      object_memory.begin());
+    std::ranges::fill(object_memory.subspan(bytes_to_copy), uint8_t{0});
     data_ix_ += bytes_to_copy;
   }
 
@@ -108,12 +121,39 @@ class FuzzDataHelper {
 
   size_t BytesLeft() const { return data_.size() - data_ix_; }
 
+  size_t size() const { return data_.size(); }
+
+#if WEBRTC_WEBKIT_BUILD
+    std::span<const uint8_t> span() const { return data_; }
+#endif
+
  private:
-  ArrayView<const uint8_t> data_;
+  std::span<const uint8_t> data_;
   size_t data_ix_ = 0;
 };
 
-}  // namespace test
+template <typename T>
+  requires(std::is_trivial_v<T>)
+T FuzzDataHelper::Read() {
+  if constexpr (sizeof(T) == 1) {
+    if (BytesLeft() == 0) {
+      return {};
+    } else {
+      return static_cast<T>(data_[data_ix_++]);
+    }
+  }
+
+  T value;
+  CopyTo(value);
+  return value;
+}
+
+template <>
+inline bool FuzzDataHelper::Read<bool>() {
+  // Return `true' or 'false' with 50% chance each.
+  return (Read<uint8_t>() & 0b1) != 0;
+}
+
 }  // namespace webrtc
 
 #endif  // TEST_FUZZERS_FUZZ_DATA_HELPER_H_

@@ -37,6 +37,8 @@
 #import "HTMLNames.h"
 #import "LocalFrameView.h"
 #import "RenderObject.h"
+#import "RenderObjectStyle.h"
+#import "StyleTextDecorationLine.h"
 #import "WAKView.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
 #import <pal/ios/UIKitSoftLink.h>
@@ -76,7 +78,7 @@ void AccessibilityObject::detachFromParent()
 
 FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
 {
-    auto* frameView = documentFrameView();
+    RefPtr frameView = documentFrameView();
     WAKView *documentView = frameView ? frameView->documentView() : nullptr;
     if (documentView) {
         CGRect cgRect = CGRectMake(rect.x(), rect.y(), rect.width(), rect.height());
@@ -101,7 +103,7 @@ unsigned AccessibilityObject::accessibilitySecureFieldLength()
     if (!renderer || !isSecureField())
         return 0;
 
-    auto* inputElement = dynamicDowncast<HTMLInputElement>(renderer->node());
+    RefPtr inputElement = dynamicDowncast<HTMLInputElement>(renderer->node());
     return inputElement ? inputElement->value()->length() : 0;
 }
 
@@ -128,7 +130,7 @@ bool AccessibilityObject::hasTouchEventListener() const
     auto& eventNames = WebCore::eventNames();
     // If the node is in a shadowRoot, going up the node parent tree will stop and
     // not check the entire chain of ancestors. Thus, use the parentInComposedTree instead.
-    for (auto* node = this->node(); node; node = node->parentInComposedTree()) {
+    for (RefPtr node = this->node(); node; node = node->parentInComposedTree()) {
         if (node->containsMatchingEventListener([&](const AtomString& name, auto&) {
             return eventNames.typeInfoForEvent(name).isInCategory(EventCategory::TouchRelated);
         }))
@@ -247,9 +249,9 @@ static void attributeStringSetStyle(NSMutableAttributedString *attrString, Rende
     auto& style = renderer->style();
 
     // Set basic font info.
-    attributedStringSetFont(attrString, style.fontCascade().primaryFont().ctFont(), range);
+    attributedStringSetFont(attrString, Style::fontCascade(style).primaryFont().ctFont(), range);
 
-    if (style.textDecorationLineInEffect().hasUnderline())
+    if (Style::textDecorationLineInEffect(style).hasUnderline())
         attributedStringSetNumber(attrString, AccessibilityTokenUnderline, @YES, range);
 
     // Add code context if this node is within a <code> block.

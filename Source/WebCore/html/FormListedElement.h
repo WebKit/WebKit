@@ -90,7 +90,7 @@ public:
     virtual ValidatedFormListedElement* asValidatedFormListedElement() = 0;
 
 protected:
-    explicit FormListedElement(HTMLFormElement*);
+    FormListedElement();
 
     void clearForm() { setForm(nullptr); }
 

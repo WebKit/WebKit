@@ -124,6 +124,8 @@ private:
     void removeChildScrollbar(AccessibilityObject*);
 
     bool m_childrenDirty;
+    // Memoized result of isRoot(), which is invariant for this object's lifetime (see isRoot()).
+    mutable std::optional<bool> m_isRoot;
     SingleThreadWeakPtr<ScrollView> m_scrollView;
     WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_frameOwnerElement;
     RefPtr<AccessibilityObject> m_horizontalScrollbar;

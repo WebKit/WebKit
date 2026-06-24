@@ -966,7 +966,7 @@ TEST(WKWebExtensionContext, LoadNonExistentImage)
 
     auto *error = manager.get().context.errors.firstObject;
     EXPECT_EQ(error.code, WKWebExtensionErrorResourceNotFound);
-    EXPECT_NS_EQUAL(error.localizedDescription, @"Unable to find \"non-existent-image.png\" in the extension’s resources. It is an invalid path.");
+    EXPECT_NS_EQUAL(error.localizedDescription, @"Unable to find “non-existent-image.png” in the extension’s resources. It is an invalid path.");
 }
 
 TEST(WKWebExtensionContext, TopLevelThrowInModuleBackground)

@@ -25,6 +25,10 @@ import (
 	"strings"
 )
 
+var (
+	NotAnArchiveFile = errors.New("ar: not an archive file")
+)
+
 // ParseAR parses an archive file from r and returns a map from filename to
 // contents, or else an error.
 func ParseAR(r io.Reader) (map[string][]byte, error) {
@@ -35,7 +39,7 @@ func ParseAR(r io.Reader) (map[string][]byte, error) {
 		return nil, err
 	}
 	if string(magic[:]) != expectedMagic {
-		return nil, errors.New("ar: not an archive file")
+		return nil, NotAnArchiveFile
 	}
 
 	const filenameTableName = "//"

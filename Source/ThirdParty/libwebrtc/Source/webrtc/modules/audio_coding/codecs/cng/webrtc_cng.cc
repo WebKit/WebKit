@@ -13,8 +13,8 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
@@ -75,7 +75,7 @@ void ComfortNoiseDecoder::Reset() {
   dec_used_scale_factor_ = 0;
 }
 
-void ComfortNoiseDecoder::UpdateSid(ArrayView<const uint8_t> sid) {
+void ComfortNoiseDecoder::UpdateSid(std::span<const uint8_t> sid) {
   int16_t refCs[WEBRTC_CNG_MAX_LPC_ORDER];
   int32_t targetEnergy;
   size_t length = sid.size();
@@ -112,7 +112,7 @@ void ComfortNoiseDecoder::UpdateSid(ArrayView<const uint8_t> sid) {
   }
 }
 
-bool ComfortNoiseDecoder::Generate(ArrayView<int16_t> out_data,
+bool ComfortNoiseDecoder::Generate(std::span<int16_t> out_data,
                                    bool new_period) {
   int16_t excitation[kCngMaxOutsizeOrder];
   int16_t low[kCngMaxOutsizeOrder];
@@ -236,7 +236,7 @@ void ComfortNoiseEncoder::Reset(int fs, int interval, int quality) {
   enc_seed_ = 7777; /* For debugging only. */
 }
 
-size_t ComfortNoiseEncoder::Encode(ArrayView<const int16_t> speech,
+size_t ComfortNoiseEncoder::Encode(std::span<const int16_t> speech,
                                    bool force_sid,
                                    Buffer* output) {
   int16_t arCoefs[WEBRTC_CNG_MAX_LPC_ORDER + 1];
@@ -367,7 +367,7 @@ size_t ComfortNoiseEncoder::Encode(ArrayView<const int16_t> speech,
       index = 94;
 
     const size_t output_coefs = enc_nrOfCoefs_ + 1;
-    output->AppendData(output_coefs, [&](ArrayView<uint8_t> output) {
+    output->AppendData(output_coefs, [&](std::span<uint8_t> output) {
       output[0] = (uint8_t)index;
 
       /* Quantize coefficients with tweak for WebRtc implementation of

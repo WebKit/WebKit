@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -98,10 +98,6 @@ function load() {
 }
 
 function runTest() {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
 
     xhr = new XMLHttpRequest();
     xhr.onreadystatechange = stateChange;
@@ -150,6 +146,5 @@ runTest();
 
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

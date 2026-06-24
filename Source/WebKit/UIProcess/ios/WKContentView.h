@@ -45,6 +45,7 @@ class FloatRect;
 namespace WebKit {
 class DrawingAreaProxy;
 class RemoteLayerTreeTransaction;
+class LayerHostingVisibilityPropagator;
 class VisibleContentRectUpdateInfo;
 class WebFrameProxy;
 class WebPageProxy;
@@ -120,6 +121,9 @@ using LayerHostingContextID = uint32_t;
 #endif // ENABLE(MODEL_PROCESS)
 - (RetainPtr<UIView>)_createVisibilityPropagationView;
 - (void)_removeVisibilityPropagationView:(UIView *)view;
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+- (RefPtr<WebKit::LayerHostingVisibilityPropagator>)_createLayerHostingVisibilityPropagator;
+#endif
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;

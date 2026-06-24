@@ -37,6 +37,32 @@
 
 using namespace TestWebKitAPI;
 
+TEST(ParentalControlsContentFilteringTests, BlockedURL)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    auto blockedURL = [NSURL URLWithString:@"https://example.com"];
+    __block bool mockInstalled = false;
+    [[webView configuration].websiteDataStore _installMockParentalControlsURLFilterForTestingWithBlockedURLs:@[blockedURL] completionHandler:^{
+        mockInstalled = true;
+    }];
+    Util::run(&mockInstalled);
+
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    __block bool didFail = false;
+
+    [navigationDelegate setDidFailProvisionalNavigation:^(WKWebView *, WKNavigation *, NSError *error) {
+        EXPECT_WK_STREQ(WebKitErrorDomain, error.domain);
+        EXPECT_EQ(kWKErrorCodeFrameLoadBlockedByContentFilter, error.code);
+        didFail = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com"]]];
+
+    Util::run(&didFail);
+}
+
+
 TEST(ParentalControlsContentFilteringTests, BlockedURLAfterRedirect)
 {
     HTTPServer server({

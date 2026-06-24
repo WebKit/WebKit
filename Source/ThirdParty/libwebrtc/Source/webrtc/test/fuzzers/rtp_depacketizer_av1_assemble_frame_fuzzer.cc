@@ -10,27 +10,26 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_av1.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  std::vector<webrtc::ArrayView<const uint8_t>> rtp_payloads;
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  std::vector<std::span<const uint8_t>> rtp_payloads;
 
   // Convert plain array of bytes into array of array bytes.
-  test::FuzzDataHelper fuzz_input(webrtc::MakeArrayView(data, size));
-  while (fuzz_input.CanReadBytes(sizeof(uint16_t))) {
+  while (fuzz_data.CanReadBytes(sizeof(uint16_t))) {
     // In practice one rtp payload can be up to ~1200 - 1500 bytes. Majority
     // of the payload is just copied. To make fuzzing more efficient limit the
     // size of rtp payload to realistic value.
-    uint16_t next_size = fuzz_input.Read<uint16_t>() % 1200;
-    if (next_size > fuzz_input.BytesLeft()) {
-      next_size = fuzz_input.BytesLeft();
+    uint16_t next_size = fuzz_data.Read<uint16_t>() % 1200;
+    if (next_size > fuzz_data.BytesLeft()) {
+      next_size = fuzz_data.BytesLeft();
     }
-    rtp_payloads.push_back(fuzz_input.ReadByteArray(next_size));
+    rtp_payloads.push_back(fuzz_data.ReadByteArray(next_size));
   }
   // Run code under test.
   VideoRtpDepacketizerAv1().AssembleFrame(rtp_payloads);

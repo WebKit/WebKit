@@ -31,7 +31,7 @@ std::string GetFilePath(const std::string &file_name) {
   return std::string("testdata/parse_certificate_unittest/") + file_name;
 }
 
-// Reads and parses a certificate from the PEM file |file_name|.
+// Reads and parses a certificate from the PEM file `file_name`.
 //
 // Returns nullptr if the certificate parsing failed, and verifies that any
 // errors match the ERRORS block in the .pem file.
@@ -55,7 +55,7 @@ std::shared_ptr<const ParsedCertificate> ParseCertificateFromFile(
                             data.size(), nullptr)),
       options, &errors);
 
-  // The errors are baselined for |!allow_invalid_serial_numbers|. So if
+  // The errors are baselined for `!allow_invalid_serial_numbers`. So if
   // requesting a non-default option skip the error checks.
   // TODO(eroman): This is ugly.
   if (!options.allow_invalid_serial_numbers) {
@@ -596,7 +596,7 @@ TEST(ParsedCertificateTest, SubjectKeyIdentifierNotOctetString) {
 }
 
 // Tests an authorityKeyIdentifier that is not a SEQUENCE.
-TEST(ParsedCertificateTest, AuthourityKeyIdentifierNotSequence) {
+TEST(ParsedCertificateTest, AuthorityKeyIdentifierNotSequence) {
   std::shared_ptr<const ParsedCertificate> cert =
       ParseCertificateFromFile("authority_key_identifier_not_sequence.pem", {});
   ASSERT_FALSE(cert);

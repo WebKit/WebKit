@@ -48,13 +48,7 @@ class FullScreenWindowDetector
   FullScreenWindowDetector& operator=(const FullScreenWindowDetector&) = delete;
 
   void SetHeuristicForFindingEditor(bool use_heuristic) {
-    use_heuristic_for_finding_editor_ = use_heuristic;
-    if (app_handler_) {
-      app_handler_->SetHeuristicForFindingEditor(use_heuristic);
-    }
-  }
-  bool UseHeuristicForFindingEditor() {
-    return use_heuristic_for_finding_editor_;
+    // TODO(crbug.com/409473386): Delete this method once its usage is removed.
   }
 
   // Returns the full-screen window in place of the original window if all the
@@ -82,8 +76,7 @@ class FullScreenWindowDetector
   // Used for tests.
   void CreateFullScreenApplicationHandlerForTest(
       DesktopCapturer::SourceId source_id,
-      bool fullscreen_slide_show_started_after_capture_start,
-      bool use_heuristic_for_finding_editor);
+      bool fullscreen_slide_show_started_after_capture_start);
 
  protected:
   std::unique_ptr<FullScreenApplicationHandler> app_handler_;
@@ -92,12 +85,6 @@ class FullScreenWindowDetector
   void CreateApplicationHandlerIfNeeded(DesktopCapturer::SourceId source_id);
 
   ApplicationHandlerFactory application_handler_factory_;
-
-  // `use_heuristic_for_finding_editor_` implements the finch experiment for
-  // finding the editor window for a chosen slide show.
-  // TODO(crbug.com/409473386): Remove `use_heuristic_for_finding_editor_` once
-  // the feature has been rolled out to Stable for some milestones.
-  bool use_heuristic_for_finding_editor_ = false;
 
   // This bool records if an editor window was found for the selected slide show
   // window. This bool is then used when we create a new application handler for

@@ -42,6 +42,7 @@
 #include "VMTrapsInlines.h"
 #include "WaiterListManager.h"
 #include "Watchdog.h"
+#include <wtf/Condition.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Scope.h>
 #include <wtf/ThreadMessage.h>

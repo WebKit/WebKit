@@ -177,12 +177,6 @@ sub ::file_end
 	    {	push(@out,"$non_lazy_ptr{$i}:\n.indirect_symbol\t$i\n.long\t0\n");   }
 	}
     }
-    if (0 && grep {/\b${nmdecor}OPENSSL_ia32cap_P\b/i} @out) {
-	my $tmp=".comm\t${nmdecor}OPENSSL_ia32cap_P,16";
-	if ($::macosx)	{ push (@out,"$tmp,2\n"); }
-	elsif ($::elf)	{ push (@out,"$tmp,4\n"); }
-	else		{ push (@out,"$tmp\n"); }
-    }
     push(@out,$initseg) if ($initseg);
 }
 
@@ -215,8 +209,6 @@ sub ::picmeup
 	    &::mov($dst,&::DWP("$indirect-$reflabel",$base));
 	    $non_lazy_ptr{"$nmdecor$sym"}=$indirect;
 	}
-	elsif ($sym eq "OPENSSL_ia32cap_P" && $::elf>0)
-	{   &::lea($dst,&::DWP("$sym-$reflabel",$base));   }
 	else
 	{   &::lea($dst,&::DWP("_GLOBAL_OFFSET_TABLE_+[.-$reflabel]",
 			    $base));

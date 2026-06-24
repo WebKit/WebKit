@@ -1,4 +1,7 @@
 PASS document.webkitFullscreenElement.id is 'test'
+PASS successfullyParsed is true
+
+TEST COMPLETE
 Tests that a table-section element can be used in full screen mode.
 
 Test Element

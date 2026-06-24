@@ -57,8 +57,12 @@ protected:
 
 class JSTestTaggedWrapperOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestTaggedWrapperOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestTaggedWrapperOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestTaggedWrapper*)

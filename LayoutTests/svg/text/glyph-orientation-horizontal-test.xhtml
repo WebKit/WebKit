@@ -1,0 +1,49 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>glyph-orientation-horizontal is no longer a supported CSS property</title>
+<script src="../../resources/testharness.js"/>
+<script src="../../resources/testharnessreport.js"/>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200">
+  <text id="plain" x="50" y="50">Test</text>
+  <text id="attr0" x="50" y="80" glyph-orientation-horizontal="0">Test</text>
+  <text id="attr90" x="50" y="110" glyph-orientation-horizontal="90">Test</text>
+  <text id="attr180" x="50" y="140" glyph-orientation-horizontal="180">Test</text>
+  <text id="attr270" x="50" y="170" glyph-orientation-horizontal="270">Test</text>
+</svg>
+<script>
+test(() => {
+    const el = document.getElementById('plain');
+    const val = getComputedStyle(el).getPropertyValue('glyph-orientation-horizontal');
+    assert_equals(val, '', 'computed value should be empty for unsupported property');
+    assert_true(isNaN(parseFloat(val)), 'parseFloat of empty string should be NaN');
+}, 'glyph-orientation-horizontal is not a recognized CSS property');
+
+test(() => {
+    assert_false(CSS.supports('glyph-orientation-horizontal', '0deg'),
+        'CSS.supports should return false');
+}, 'CSS.supports rejects glyph-orientation-horizontal');
+
+test(() => {
+    const el = document.getElementById('attr90');
+    const val = getComputedStyle(el).getPropertyValue('glyph-orientation-horizontal');
+    assert_equals(val, '', 'presentation attribute should have no computed value');
+    assert_true(isNaN(parseFloat(val)), 'parseFloat of empty string should be NaN');
+}, 'glyph-orientation-horizontal presentation attribute has no effect on computed style');
+
+[
+    { id: 'attr0', angle: '0' },
+    { id: 'attr90', angle: '90' },
+    { id: 'attr180', angle: '180' },
+    { id: 'attr270', angle: '270' },
+].forEach(({ id, angle }) => {
+    test(() => {
+        const el = document.getElementById(id);
+        assert_equals(el.getRotationOfChar(0), 0,
+            `glyph-orientation-horizontal="${angle}" should not rotate glyphs`);
+    }, `glyph-orientation-horizontal="${angle}" does not affect getRotationOfChar`);
+});
+</script>
+</body>
+</html>

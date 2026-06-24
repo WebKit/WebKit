@@ -26,6 +26,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 static char *i2s_ASN1_IA5STRING(const X509V3_EXT_METHOD *method, void *ext) {
   const ASN1_IA5STRING *ia5 = reinterpret_cast<const ASN1_IA5STRING *>(ext);
   char *tmp;
@@ -65,17 +67,17 @@ err:
         s2i_ASN1_IA5STRING, 0, 0, 0, 0, nullptr                            \
   }
 
-const X509V3_EXT_METHOD v3_netscape_base_url =
+const X509V3_EXT_METHOD bssl::v3_netscape_base_url =
     EXT_IA5STRING(NID_netscape_base_url);
-const X509V3_EXT_METHOD v3_netscape_revocation_url =
+const X509V3_EXT_METHOD bssl::v3_netscape_revocation_url =
     EXT_IA5STRING(NID_netscape_revocation_url);
-const X509V3_EXT_METHOD v3_netscape_ca_revocation_url =
+const X509V3_EXT_METHOD bssl::v3_netscape_ca_revocation_url =
     EXT_IA5STRING(NID_netscape_ca_revocation_url);
-const X509V3_EXT_METHOD v3_netscape_renewal_url =
+const X509V3_EXT_METHOD bssl::v3_netscape_renewal_url =
     EXT_IA5STRING(NID_netscape_renewal_url);
-const X509V3_EXT_METHOD v3_netscape_ca_policy_url =
+const X509V3_EXT_METHOD bssl::v3_netscape_ca_policy_url =
     EXT_IA5STRING(NID_netscape_ca_policy_url);
-const X509V3_EXT_METHOD v3_netscape_ssl_server_name =
+const X509V3_EXT_METHOD bssl::v3_netscape_ssl_server_name =
     EXT_IA5STRING(NID_netscape_ssl_server_name);
-const X509V3_EXT_METHOD v3_netscape_comment =
+const X509V3_EXT_METHOD bssl::v3_netscape_comment =
     EXT_IA5STRING(NID_netscape_comment);

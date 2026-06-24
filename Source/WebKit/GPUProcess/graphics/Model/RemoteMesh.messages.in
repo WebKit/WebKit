@@ -34,14 +34,14 @@ messages -> RemoteMesh Stream {
     void Update(struct Vector<WebModel::UpdateMeshDescriptor> descriptor) -> (bool success)
     void Render(uint32_t textureIndex) -> (bool success)
     void ProcessRemovals(struct Vector<WebModel::TypedResourceId> meshRemovals, struct Vector<WebModel::TypedResourceId> materialRemovals, struct Vector<WebModel::TypedResourceId> textureRemovals) -> (bool success)
-    void UpdateTexture(struct Vector<WebModel::UpdateTextureDescriptor> descriptor) -> (bool success)
+    void UpdateTexture(struct Vector<WebModel::UpdateTextureDescriptor> descriptor) -> (bool success) NotStreamEncodable
     void UpdateMaterial(struct Vector<WebModel::UpdateMaterialDescriptor> descriptor) -> (bool success)
     void UpdateTransform(struct WebModel::Float4x4 transform)
     void SetFOV(float fovY)
-    void SetBackgroundColor(struct WebModel::Float3 color)
     void Play(bool playing)
-    void SetEnvironmentMap(struct WebModel::UpdateTextureDescriptor imageAsset)
+    void SetEnvironmentMap(struct WebModel::UpdateTextureDescriptor imageAsset) NotStreamEncodable
     void UpdateContentsHeadroom(float headroom)
     void UpdateRenderBuffers(unsigned width, unsigned height) -> (Vector<MachSendRight> renderBuffers) NotStreamEncodableReply
+    void PaintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex) -> () Synchronous
 }
 #endif

@@ -1793,7 +1793,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
                 item.setTitle(contextMenuItemTagDownloadVideoToDisk());
             else
                 item.setTitle(contextMenuItemTagDownloadAudioToDisk());
-            if (m_context.hitTestResult().absoluteImageURL().protocolIsFile())
+            if (m_context.hitTestResult().absoluteMediaURL().protocolIsFile())
                 shouldEnable = false;
             break;
         case ContextMenuItemTagCopyMediaLinkToClipboard:

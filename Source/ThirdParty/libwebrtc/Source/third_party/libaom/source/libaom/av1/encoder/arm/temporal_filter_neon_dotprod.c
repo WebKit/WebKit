@@ -71,8 +71,8 @@ static void apply_temporal_filter(
     const uint32_t *luma_sse_sum, const double inv_num_ref_pixels,
     const double decay_factor, const double inv_factor,
     const double weight_factor, const double *d_factor, int tf_wgt_calc_lvl) {
-  assert(((block_width == 16) || (block_width == 32)) &&
-         ((block_height == 16) || (block_height == 32)));
+  assert(((block_width == 64) || (block_width == 32)) &&
+         ((block_height == 64) || (block_height == 32)));
 
   uint32_t diff_sse[BH][BW];
   const uint8x16x2_t vmask = vld1q_u8_x2(kSlidingWindowMask);
@@ -171,12 +171,16 @@ static void apply_temporal_filter(
   // Perform filtering.
   if (tf_wgt_calc_lvl == 0) {
     for (unsigned int i = 0, k = 0; i < block_height; i++) {
+      const int y32 = i / (block_height / 2);
+      const int y16 = (i % (block_height / 2)) / (block_height / 4);
+
       for (unsigned int j = 0; j < block_width; j++, k++) {
         const int pixel_value = frame[i * stride + j];
 
         const double window_error = diff_sse[i][j] * inv_num_ref_pixels;
-        const int subblock_idx =
-            (i >= block_height / 2) * 2 + (j >= block_width / 2);
+        const int x32 = j / (block_width / 2);
+        const int x16 = (j % (block_width / 2)) / (block_width / 4);
+        const int subblock_idx = (y32 * 2 + x32) * 4 + (y16 * 2 + x16);
         const double block_error = (double)subblock_mses[subblock_idx];
         const double combined_error =
             weight_factor * window_error + block_error * inv_factor;
@@ -191,12 +195,16 @@ static void apply_temporal_filter(
     }
   } else {
     for (unsigned int i = 0, k = 0; i < block_height; i++) {
+      const int y32 = i / (block_height / 2);
+      const int y16 = (i % (block_height / 2)) / (block_height / 4);
+
       for (unsigned int j = 0; j < block_width; j++, k++) {
         const int pixel_value = frame[i * stride + j];
 
         const double window_error = diff_sse[i][j] * inv_num_ref_pixels;
-        const int subblock_idx =
-            (i >= block_height / 2) * 2 + (j >= block_width / 2);
+        const int x32 = j / (block_width / 2);
+        const int x16 = (j % (block_width / 2)) / (block_width / 4);
+        const int subblock_idx = (y32 * 2 + x32) * 4 + (y16 * 2 + x16);
         const double block_error = (double)subblock_mses[subblock_idx];
         const double combined_error =
             weight_factor * window_error + block_error * inv_factor;
@@ -222,7 +230,7 @@ void av1_apply_temporal_filter_neon_dotprod(
     int tf_wgt_calc_lvl, const uint8_t *pred, uint32_t *accum,
     uint16_t *count) {
   const int is_high_bitdepth = frame_to_filter->flags & YV12_FLAG_HIGHBITDEPTH;
-  assert(block_size == BLOCK_32X32 && "Only support 32x32 block with Neon!");
+  assert(block_size == BLOCK_64X64 && "Only support 64x64 block with Neon!");
   assert(TF_WINDOW_LENGTH == 5 && "Only support window length 5 with Neon!");
   assert(!is_high_bitdepth && "Only support low bit-depth with Neon!");
   assert(num_planes >= 1 && num_planes <= MAX_MB_PLANE);
@@ -253,16 +261,16 @@ void av1_apply_temporal_filter_neon_dotprod(
   // Smaller strength -> smaller filtering weight.
   double s_decay = pow((double)filter_strength / TF_STRENGTH_THRESHOLD, 2);
   s_decay = CLIP(s_decay, 1e-5, 1);
-  double d_factor[4] = { 0 };
+  double d_factor[NUM_16X16] = { 0 };
   uint8_t frame_abs_diff[SSE_STRIDE * BH] = { 0 };
   uint32_t luma_sse_sum[BW * BH] = { 0 };
 
-  for (int subblock_idx = 0; subblock_idx < 4; subblock_idx++) {
+  double distance_threshold = min_frame_size * TF_SEARCH_DISTANCE_THRESHOLD;
+  distance_threshold = AOMMAX(distance_threshold, 1);
+  for (int subblock_idx = 0; subblock_idx < NUM_16X16; subblock_idx++) {
     // Larger motion vector -> smaller filtering weight.
     const MV mv = subblock_mvs[subblock_idx];
     const double distance = sqrt(pow(mv.row, 2) + pow(mv.col, 2));
-    double distance_threshold = min_frame_size * TF_SEARCH_DISTANCE_THRESHOLD;
-    distance_threshold = AOMMAX(distance_threshold, 1);
     d_factor[subblock_idx] = distance / distance_threshold;
     d_factor[subblock_idx] = AOMMAX(d_factor[subblock_idx], 1);
   }
@@ -294,15 +302,37 @@ void av1_apply_temporal_filter_neon_dotprod(
     // will be more accurate. The luma sse sum is reused in both chroma
     // planes.
     if (plane == AOM_PLANE_U) {
-      for (unsigned int i = 0; i < plane_h; i++) {
-        for (unsigned int j = 0; j < plane_w; j++) {
-          for (int ii = 0; ii < (1 << ss_y_shift); ++ii) {
-            for (int jj = 0; jj < (1 << ss_x_shift); ++jj) {
-              const int yy = (i << ss_y_shift) + ii;  // Y-coord on Y-plane.
-              const int xx = (j << ss_x_shift) + jj;  // X-coord on Y-plane.
-              luma_sse_sum[i * BW + j] +=
-                  (frame_abs_diff[yy * SSE_STRIDE + xx + 2] *
-                   frame_abs_diff[yy * SSE_STRIDE + xx + 2]);
+      if (ss_x_shift == 1 && ss_y_shift == 1) {
+        for (unsigned int i = 0; i < plane_h; ++i) {
+          const uint8_t *src = &frame_abs_diff[2 * i * SSE_STRIDE + 2];
+          uint32_t *dst = luma_sse_sum + i * BW;
+
+          for (unsigned int j = 0; j < plane_w; j += 8) {
+            const uint8x16_t s0 = vld1q_u8(src + j * 2);
+            const uint8x16_t s1 = vld1q_u8(src + SSE_STRIDE + j * 2);
+
+            uint8x16x2_t tmp = vzipq_u8(s0, s1);
+
+            const uint32x4_t sum0 =
+                vdotq_u32(vdupq_n_u32(0), tmp.val[0], tmp.val[0]);
+            const uint32x4_t sum1 =
+                vdotq_u32(vdupq_n_u32(0), tmp.val[1], tmp.val[1]);
+
+            vst1q_u32(dst + j, sum0);
+            vst1q_u32(dst + j + 4, sum1);
+          }
+        }
+      } else {
+        for (unsigned int i = 0; i < plane_h; i++) {
+          for (unsigned int j = 0; j < plane_w; j++) {
+            for (int ii = 0; ii < (1 << ss_y_shift); ++ii) {
+              for (int jj = 0; jj < (1 << ss_x_shift); ++jj) {
+                const int yy = (i << ss_y_shift) + ii;  // Y-coord on Y-plane.
+                const int xx = (j << ss_x_shift) + jj;  // X-coord on Y-plane.
+                luma_sse_sum[i * BW + j] +=
+                    (frame_abs_diff[yy * SSE_STRIDE + xx + 2] *
+                     frame_abs_diff[yy * SSE_STRIDE + xx + 2]);
+              }
             }
           }
         }

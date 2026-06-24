@@ -348,7 +348,7 @@ String PropertySetCSSStyleProperties::item(unsigned i) const
 
 String PropertySetCSSStyleProperties::cssText() const
 {
-    return m_propertySet->asText(CSS::defaultSerializationContext());
+    return protect(m_propertySet)->asText(CSS::defaultSerializationContext());
 }
 
 ExceptionOr<void> PropertySetCSSStyleProperties::setCssText(const String& text)
@@ -357,7 +357,7 @@ ExceptionOr<void> PropertySetCSSStyleProperties::setCssText(const String& text)
     if (!willMutate())
         return { };
 
-    bool changed = m_propertySet->parseDeclaration(text, cssParserContext());
+    bool changed = protect(m_propertySet)->parseDeclaration(text, cssParserContext());
     didMutate(changed ? MutationType::PropertyChanged : MutationType::StyleAttributeChanged);
 
     mutationScope.enqueueMutationRecord();
@@ -367,7 +367,7 @@ ExceptionOr<void> PropertySetCSSStyleProperties::setCssText(const String& text)
 RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleProperties::getPropertyCSSValue(const String& propertyName)
 {
     if (isCustomPropertyName(propertyName)) {
-        RefPtr<CSSValue> value = m_propertySet->getCustomPropertyCSSValue(propertyName);
+        RefPtr<CSSValue> value = protect(m_propertySet)->getCustomPropertyCSSValue(propertyName);
         if (!value)
             return nullptr;
         return wrapForDeprecatedCSSOM(value.get());
@@ -376,13 +376,13 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleProperties::getPropertyCSSValue(
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return nullptr;
-    return wrapForDeprecatedCSSOM(m_propertySet->getPropertyCSSValue(propertyID).get());
+    return wrapForDeprecatedCSSOM(protect(m_propertySet)->getPropertyCSSValue(propertyID).get());
 }
 
 String PropertySetCSSStyleProperties::getPropertyValue(const String& propertyName)
 {
     if (isCustomPropertyName(propertyName))
-        return m_propertySet->getCustomPropertyValue(propertyName);
+        return protect(m_propertySet)->getCustomPropertyValue(propertyName);
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
@@ -393,12 +393,12 @@ String PropertySetCSSStyleProperties::getPropertyValue(const String& propertyNam
 String PropertySetCSSStyleProperties::getPropertyPriority(const String& propertyName)
 {
     if (isCustomPropertyName(propertyName))
-        return m_propertySet->customPropertyIsImportant(propertyName) ? "important"_s : emptyString();
+        return protect(m_propertySet)->customPropertyIsImportant(propertyName) ? "important"_s : emptyString();
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return emptyString();
-    return m_propertySet->propertyIsImportant(propertyID) ? "important"_s : emptyString();
+    return protect(m_propertySet)->propertyIsImportant(propertyID) ? "important"_s : emptyString();
 }
 
 String PropertySetCSSStyleProperties::getPropertyShorthand(const String& propertyName)
@@ -406,12 +406,12 @@ String PropertySetCSSStyleProperties::getPropertyShorthand(const String& propert
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!isExposed(propertyID))
         return String();
-    return m_propertySet->getPropertyShorthand(propertyID);
+    return protect(m_propertySet)->getPropertyShorthand(propertyID);
 }
 
 bool PropertySetCSSStyleProperties::isPropertyImplicit(const String& propertyName)
 {
-    return m_propertySet->isPropertyImplicit(cssPropertyID(propertyName));
+    return protect(m_propertySet)->isPropertyImplicit(cssPropertyID(propertyName));
 }
 
 ExceptionOr<void> PropertySetCSSStyleProperties::setProperty(const String& propertyName, const String& value, const String& priority)
@@ -434,9 +434,9 @@ ExceptionOr<void> PropertySetCSSStyleProperties::setProperty(const String& prope
 
     bool changed;
     if (propertyID == CSSPropertyCustom) [[unlikely]]
-        changed = m_propertySet->setCustomProperty(propertyName, value, cssParserContext(), important ? IsImportant::Yes : IsImportant::No);
+        changed = protect(m_propertySet)->setCustomProperty(propertyName, value, cssParserContext(), important ? IsImportant::Yes : IsImportant::No);
     else
-        changed = m_propertySet->setProperty(propertyID, value, cssParserContext(), important ? IsImportant::Yes : IsImportant::No);
+        changed = protect(m_propertySet)->setProperty(propertyID, value, cssParserContext(), important ? IsImportant::Yes : IsImportant::No);
 
     didMutate(changed ? MutationType::PropertyChanged : MutationType::NoChanges);
 
@@ -462,7 +462,7 @@ ExceptionOr<String> PropertySetCSSStyleProperties::removeProperty(const String& 
         return String();
 
     String result;
-    bool changed = propertyID != CSSPropertyCustom ? m_propertySet->removeProperty(propertyID, &result) : m_propertySet->removeCustomProperty(propertyName, &result);
+    bool changed = propertyID != CSSPropertyCustom ? protect(m_propertySet)->removeProperty(propertyID, &result) : protect(m_propertySet)->removeCustomProperty(propertyName, &result);
 
     didMutate(changed ? MutationType::PropertyChanged : MutationType::NoChanges);
 
@@ -476,7 +476,7 @@ String PropertySetCSSStyleProperties::getPropertyValueInternal(CSSPropertyID pro
     if (!isExposed(propertyID))
         return { };
 
-    auto value = m_propertySet->getPropertyValue(propertyID);
+    auto value = protect(m_propertySet)->getPropertyValue(propertyID);
 
     if (!value.isEmpty())
         return value;
@@ -493,7 +493,7 @@ ExceptionOr<void> PropertySetCSSStyleProperties::setPropertyInternal(CSSProperty
     if (!isExposed(propertyID))
         return { };
 
-    if (m_propertySet->setProperty(propertyID, value, cssParserContext(), important)) {
+    SUPPRESS_UNCOUNTED_ARG if (m_propertySet->setProperty(propertyID, value, cssParserContext(), important)) {
         didMutate(MutationType::PropertyChanged);
         mutationScope.enqueueMutationRecord();
     } else
@@ -543,7 +543,7 @@ OptionalOrReference<CSSParserContext> PropertySetCSSStyleProperties::cssParserCo
 
 Ref<MutableStyleProperties> PropertySetCSSStyleProperties::copyProperties() const
 {
-    return m_propertySet->mutableCopy();
+    return protect(m_propertySet)->mutableCopy();
 }
 
 // MARK: - StyleRuleCSSStyleProperties
@@ -565,7 +565,7 @@ bool StyleRuleCSSStyleProperties::willMutate()
 {
     if (!m_parentRule || !m_parentRule->parentStyleSheet())
         return false;
-    m_parentRule->parentStyleSheet()->willMutateRules();
+    protect(m_parentRule)->parentStyleSheet()->willMutateRules();
     return true;
 }
 
@@ -578,7 +578,7 @@ void StyleRuleCSSStyleProperties::didMutate(MutationType type)
         m_cssomValueWrappers.clear();
 
     // Style sheet mutation needs to be signaled even if the change failed. willMutate*/didMutate* must pair.
-    m_parentRule->parentStyleSheet()->didMutateRuleFromCSSStyleDeclaration();
+    protect(m_parentRule)->parentStyleSheet()->didMutateRuleFromCSSStyleDeclaration();
 }
 
 CSSStyleSheet* StyleRuleCSSStyleProperties::parentStyleSheet() const
@@ -615,7 +615,7 @@ void StyleRuleCSSStyleProperties::reattach(MutableStyleProperties& propertySet)
 bool InlineCSSStyleProperties::willMutate()
 {
     if (m_parentElement)
-        InspectorInstrumentation::willInvalidateStyleAttr(*m_parentElement);
+        InspectorInstrumentation::willInvalidateStyleAttr(protect(*m_parentElement));
     return true;
 }
 
@@ -625,7 +625,7 @@ void InlineCSSStyleProperties::didMutate(MutationType type)
         return;
 
     if (type == MutationType::StyleAttributeChanged && m_parentElement) {
-        m_parentElement->dirtyStyleAttribute();
+        protect(m_parentElement)->dirtyStyleAttribute();
         return;
     }
 
@@ -653,7 +653,7 @@ OptionalOrReference<CSSParserContext> InlineCSSStyleProperties::cssParserContext
     if (!m_parentElement)
         return PropertySetCSSStyleProperties::cssParserContext();
 
-    auto& documentContext = m_parentElement->document().cssParserContext();
+    auto& documentContext = protect(m_parentElement)->document().cssParserContext();
     if (documentContext.mode == m_propertySet->cssParserMode())
         return documentContext;
 

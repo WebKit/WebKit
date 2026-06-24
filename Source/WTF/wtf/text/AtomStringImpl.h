@@ -64,6 +64,7 @@ public:
 
 private:
     AtomStringImpl() = delete;
+    ~AtomStringImpl();
 
     ALWAYS_INLINE static Ref<AtomStringImpl> add(StringImpl&);
     ALWAYS_INLINE static Ref<AtomStringImpl> add(Ref<StringImpl>&&);

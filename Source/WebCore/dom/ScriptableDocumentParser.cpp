@@ -29,7 +29,7 @@
 #include "CSSPrimitiveValue.h"
 #include "Document.h"
 #include "Settings.h"
-#include "StyleScope.h"
+#include "StyleDocumentScope.h"
 
 namespace WebCore {
 

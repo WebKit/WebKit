@@ -1,0 +1,5 @@
+
+FAIL multiple style preloads of the same file do not cause errors promise_test: Unhandled rejection with value: object "[object Event]"
+PASS multiple json preloads of the same file do not cause errors
+PASS multiple script preloads of the same file do not cause errors
+

@@ -81,7 +81,6 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.useTreeCountingFunctions = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
     m_nonInheritedFlags.disallowsFastPathInheritance = false;
-    m_nonInheritedFlags.emptyState = false;
     m_nonInheritedFlags.firstChildState = false;
     m_nonInheritedFlags.lastChildState = false;
     m_nonInheritedFlags.isLink = false;
@@ -109,7 +108,7 @@ inline ComputedStyleBase::ComputedStyleBase(ComputedStyleBase& a, ComputedStyleB
     , m_inheritedRareData(a.m_inheritedRareData.replace(WTF::move(b.m_inheritedRareData)))
     , m_inheritedData(a.m_inheritedData.replace(WTF::move(b.m_inheritedData)))
     , m_svgData(a.m_svgData.replace(WTF::move(b.m_svgData)))
-    , m_cachedPseudoStyles(std::exchange(a.m_cachedPseudoStyles, WTF::move(b.m_cachedPseudoStyles)))
+    , m_pseudoElementStyles(std::exchange(a.m_pseudoElementStyles, WTF::move(b.m_pseudoElementStyles)))
 {
 }
 

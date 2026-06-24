@@ -16,6 +16,15 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-backdrop-infinite-duration-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-custom-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-custom-property-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-custom-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-custom-timing-function-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-custom-timing-function-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-custom-timing-function-reverse-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-custom-timing-function-reverse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-custom-timing-function-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-custom-timing-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-element-not-visible-at-current-viewport-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-element-not-visible-at-current-viewport-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-element-not-visible-at-current-viewport.html
@@ -46,6 +55,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-non-zero-size-element-change-to-zero-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-non-zero-size-element-change-to-zero-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-non-zero-size-element-change-to-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-offset-position-not-stuck-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-offset-position-not-stuck.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-pseudo-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-pseudo-element-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-pseudo-element.html
@@ -106,10 +117,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-transparent-animation-in-body-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-transparent-animation-in-body.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-image-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-x-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-y-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-size-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-size-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-bottom-left-radius-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-bottom-right-radius-composition.html
@@ -130,6 +143,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-top-right-radius-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-top-width-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-width-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-width-transition-with-style-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/box-shadow-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/box-shadow-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/discrete-no-interpolation.html

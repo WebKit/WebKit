@@ -1,0 +1,5 @@
+
+PASS drm test MediaKeys attribute syntax
+PASS drm test MediaKeys setServerCertificate() exceptions.
+PASS drm test MediaKeys setServerCertificate() syntax with non-empty certificate.
+

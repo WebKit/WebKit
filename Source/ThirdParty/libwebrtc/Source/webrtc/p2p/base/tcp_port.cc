@@ -70,6 +70,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <list>
+#include <span>
 #include <utility>
 
 #include "absl/algorithm/container.h"
@@ -198,8 +199,7 @@ void TCPPort::PrepareAddress() {
   }
 }
 
-int TCPPort::SendTo(const void* data,
-                    size_t size,
+int TCPPort::SendTo(std::span<const uint8_t> data,
                     const SocketAddress& addr,
                     const AsyncSocketPacketOptions& options,
                     bool payload) {
@@ -236,13 +236,13 @@ int TCPPort::SendTo(const void* data,
   }
   AsyncSocketPacketOptions modified_options(options);
   CopyPortInformationToPacketInfo(&modified_options.info_signaled_after_sent);
-  int sent = socket->Send(data, size, modified_options);
+  int sent = socket->Send(data.data(), data.size(), modified_options);
   if (sent < 0) {
     error_ = socket->GetError();
     // Error from this code path for a Connection (instead of from a bare
     // socket) will not trigger reconnecting. In theory, this shouldn't matter
     // as OnClose should always be called and set connected to false.
-    RTC_LOG(LS_ERROR) << ToString() << ": TCP send of " << size
+    RTC_LOG(LS_ERROR) << ToString() << ": TCP send of " << data.size()
                       << " bytes failed with error " << error_;
   }
   return sent;
@@ -392,8 +392,7 @@ TCPConnection::~TCPConnection() {
   RTC_DCHECK_RUN_ON(network_thread());
 }
 
-int TCPConnection::Send(const void* data,
-                        size_t size,
+int TCPConnection::Send(std::span<const uint8_t> data,
                         const AsyncSocketPacketOptions& options) {
   if (!socket_) {
     error_ = ENOTCONN;
@@ -420,7 +419,7 @@ int TCPConnection::Send(const void* data,
   AsyncSocketPacketOptions modified_options(options);
   tcp_port()->CopyPortInformationToPacketInfo(
       &modified_options.info_signaled_after_sent);
-  int sent = socket_->Send(data, size, modified_options);
+  int sent = socket_->Send(data.data(), data.size(), modified_options);
   Timestamp now = env().clock().CurrentTime();
   if (sent < 0) {
     mutable_stats().sent_discarded_packets++;

@@ -33,11 +33,11 @@ class SVGTextLayoutEngineSpacing {
 public:
     SVGTextLayoutEngineSpacing(const FontCascade&);
 
-    float NODELETE calculateCSSSpacing(char16_t);
+    float NODELETE calculateCSSSpacing(char32_t);
 
 private:
     const CheckedRef<const FontCascade> m_font;
-    char16_t m_lastCharacter { '\0' };
+    char32_t m_lastCharacter { '\0' };
 };
 
 } // namespace WebCore

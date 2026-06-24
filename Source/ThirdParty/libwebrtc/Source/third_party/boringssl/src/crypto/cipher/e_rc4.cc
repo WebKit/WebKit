@@ -30,11 +30,11 @@ static int rc4_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
   return 1;
 }
 
-static int rc4_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
-                      size_t in_len) {
+static int rc4_cipher_update(EVP_CIPHER_CTX *ctx, uint8_t *out,
+                             const uint8_t *in, size_t len) {
   RC4_KEY *rc4key = (RC4_KEY *)ctx->cipher_data;
 
-  RC4(rc4key, in_len, in, out);
+  RC4(rc4key, len, in, out);
   return 1;
 }
 
@@ -46,9 +46,11 @@ static const EVP_CIPHER rc4 = {
     /*ctx_size=*/sizeof(RC4_KEY),
     /*flags=*/EVP_CIPH_VARIABLE_LENGTH,
     /*init=*/rc4_init_key,
-    /*cipher=*/rc4_cipher,
+    /*cipher_update=*/rc4_cipher_update,
+    /*cipher_final=*/nullptr,
+    /*update_aad=*/nullptr,
     /*cleanup=*/nullptr,
     /*ctrl=*/nullptr,
 };
 
-const EVP_CIPHER *EVP_rc4(void) { return &rc4; }
+const EVP_CIPHER *EVP_rc4() { return &rc4; }

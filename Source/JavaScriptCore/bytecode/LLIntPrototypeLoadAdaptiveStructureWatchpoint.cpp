@@ -29,6 +29,7 @@
 #include "CodeBlockInlines.h"
 #include "Instruction.h"
 #include "JSCellInlines.h"
+#include "StructureInlinesLight.h"
 
 namespace JSC {
 

@@ -44,8 +44,11 @@ namespace WebCore {
 class IntRect;
 class Path;
 class RenderLayerModelObject;
-class RenderStyle;
 class TransformationMatrix;
+
+namespace Style {
+class ComputedStyle;
+}
 
 struct AcceleratedEffectValues {
     AcceleratedEffectOpacity opacity { };
@@ -67,8 +70,8 @@ struct AcceleratedEffectValues {
     FilterOperations backdropFilter { };
 
     AcceleratedEffectValues() = default;
-    // FIXME: It is a layering violation to use `RenderStyle` and `RenderLayerModelObject` here, as they are defined in the rendering directory.
-    AcceleratedEffectValues(const RenderStyle&, const IntRect&, const RenderLayerModelObject*);
+    // FIXME: It is a layering violation to use `StyleComputedStyle` and `RenderLayerModelObject` here, as they are defined in the rendering directory.
+    AcceleratedEffectValues(const Style::ComputedStyle&, const IntRect&, const RenderLayerModelObject*);
     AcceleratedEffectValues(AcceleratedEffectOpacity opacity, std::optional<TransformOperationData>&& transformOperationData, AcceleratedEffectTransformOrigin transformOrigin, AcceleratedEffectTransformBox transformBox, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, AcceleratedEffectOffsetPath&& offsetPath, AcceleratedEffectOffsetDistance offsetDistance, AcceleratedEffectOffsetPosition offsetPosition, AcceleratedEffectOffsetAnchor offsetAnchor, AcceleratedEffectOffsetRotate offsetRotate, FilterOperations&& filter, FilterOperations&& backdropFilter)
         : opacity(opacity)
         , transformOperationData(WTF::move(transformOperationData))

@@ -121,7 +121,7 @@ void CSSKeyframesRule::setName(const AtomString& name)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_keyframesRule->setName(name);
+    protect(m_keyframesRule)->setName(name);
 }
 
 void CSSKeyframesRule::appendRule(const String& ruleText)
@@ -134,7 +134,7 @@ void CSSKeyframesRule::appendRule(const String& ruleText)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_keyframesRule->wrapperAppendKeyframe(keyframe.releaseNonNull());
+    protect(m_keyframesRule)->wrapperAppendKeyframe(keyframe.releaseNonNull());
 
     m_childRuleCSSOMWrappers.grow(length());
 }
@@ -143,13 +143,13 @@ void CSSKeyframesRule::deleteRule(const String& s)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
-    auto i = m_keyframesRule->findKeyframeIndex(s);
+    auto i = protect(m_keyframesRule)->findKeyframeIndex(s);
     if (!i)
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_keyframesRule->wrapperRemoveKeyframe(*i);
+    protect(m_keyframesRule)->wrapperRemoveKeyframe(*i);
 
     if (m_childRuleCSSOMWrappers[*i])
         m_childRuleCSSOMWrappers[*i]->setParentRule(nullptr);
@@ -158,7 +158,7 @@ void CSSKeyframesRule::deleteRule(const String& s)
 
 CSSKeyframeRule* CSSKeyframesRule::findRule(const String& s)
 {
-    auto i = m_keyframesRule->findKeyframeIndex(s);
+    auto i = protect(m_keyframesRule)->findKeyframeIndex(s);
     return i ? item(*i) : nullptr;
 }
 
@@ -167,7 +167,7 @@ String CSSKeyframesRule::cssText() const
     StringBuilder result;
     result.append("@keyframes "_s, name(), " { \n"_s);
     for (unsigned i = 0, size = length(); i < size; ++i)
-        result.append("  "_s, m_keyframesRule->keyframes()[i]->cssText(), '\n');
+        result.append("  "_s, protect(m_keyframesRule)->keyframes()[i]->cssText(), '\n');
     result.append('}');
     return result.toString();
 }

@@ -109,7 +109,7 @@ void NetworkResourcesData::ResourceData::decodeDataToContent()
 
     if (m_decoder) {
         m_base64Encoded = false;
-        m_content = m_decoder->decodeAndFlush(buffer->span());
+        m_content = protect(m_decoder)->decodeAndFlush(buffer->span());
     } else {
         m_base64Encoded = true;
         m_content = base64EncodeToString(buffer->span());

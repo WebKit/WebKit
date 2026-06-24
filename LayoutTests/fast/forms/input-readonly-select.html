@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 
 <div id="container">
     <input id="input" type="text" value="something">
@@ -14,6 +14,7 @@
 <pre id="console"></pre>
 
 <script>
+window.jsTestIsAsync = true;
 async function doubleClickOn(element)
 {
     var x = element.offsetLeft + element.offsetWidth / 2;
@@ -57,7 +58,6 @@ onload = async () => {
     if (!window.testRunner)
         return;
 
-    testRunner.waitUntilDone();
 
     debug('double clicking on normal input');
     await doubleClickOn(input);
@@ -91,9 +91,8 @@ onload = async () => {
 
     container.innerHTML = "";
 
-    testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 </body></html>

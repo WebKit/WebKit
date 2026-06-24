@@ -28,7 +28,7 @@
 #include "GridLayoutFunctions.h"
 #include "RenderBoxInlines.h"
 #include "RenderGrid.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleFlowTolerance.h"
 #include "StyleGridPositionsResolver.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -216,7 +216,7 @@ LayoutUnit GridMasonryLayout::maxRunningPositionForSpan(unsigned startLine, unsi
 
 GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& item)
 {
-    auto itemSpanLength = Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection());
+    auto itemSpanLength = std::min<unsigned>(Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection()), m_gridAxisTracksCount);
     auto gridAxisLines = m_gridAxisTracksCount + 1;
 
     // Get flow-tolerance from the masonry container's style

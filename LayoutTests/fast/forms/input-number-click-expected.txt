@@ -4,9 +4,6 @@ Test for the spin control behavior in a type=numnber input.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Initial value is 3.14, click the up button once
 FAIL i.value should be 4.14. Was 3.14.
 Click the up button again.  The maximum value is 5.
@@ -19,4 +16,8 @@ Make the control "disabled" and click the up button
 FAIL i.value should be 0.14. Was 3.14.
 Make the control "readOnly" and click the up button
 FAIL i.value should be 0.14. Was 3.14.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
 

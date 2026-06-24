@@ -46,11 +46,11 @@ struct String {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<String> { auto operator()(const String&, const RenderStyle&) -> CSS::String; };
+template<> struct ToCSS<String> { auto operator()(const String&, const Style::ComputedStyle&) -> CSS::String; };
 template<> struct ToStyle<CSS::String> { auto operator()(const CSS::String&, const BuilderState&) -> String; };
 
 template<> struct CSSValueCreation<String> {
-    Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const String&);
+    Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const String&);
 };
 
 template<> struct CSSValueConversion<String> {
@@ -59,12 +59,12 @@ template<> struct CSSValueConversion<String> {
 };
 
 template<> struct DeprecatedCSSOMValueCreation<String> {
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const RenderStyle&, CSSStyleDeclaration&, const String&);
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&, const String&);
 };
 
 // MARK: - Serialization
 
-template<> struct Serialize<String> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const String&); };
+template<> struct Serialize<String> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const String&); };
 
 // MARK: - Logging
 

@@ -29,7 +29,6 @@ namespace WebCore {
 
 class Document;
 class MediaQueryList;
-class RenderStyle;
 class WeakPtrImplWithEventTargetData;
 
 namespace MQ {
@@ -63,7 +62,6 @@ public:
 
 private:
     explicit MediaQueryMatcher(Document&);
-    std::unique_ptr<RenderStyle> documentElementUserAgentStyle() const;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     Vector<WeakPtr<MediaQueryList, WeakPtrImplWithEventTargetData>> m_mediaQueryLists;

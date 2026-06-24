@@ -160,9 +160,33 @@ promise_test(async (test) => {
     videoSenderTransform.port.postMessage("tryAccessingMetadata");
     metadata =await waitForMessage(videoSenderTransform.port);
     assert_array_equals(Object.keys(metadata), ["contributingSources", "dependencies", "frameId", "height", "mimeType", "payloadType", "rtpTimestamp", "spatialIndex", "synchronizationSource", "temporalIndex", "width"]);
+}, "Check metadata getter");
+
+promise_test(async (test) => {
+    audioSenderTransform.port.postMessage("tryWritingAudio");
+    let result = await waitForMessage(audioSenderTransform.port);
+    assert_equals(result, "PASS");
+}, "Try writing receiver audio data on audio sender");
+
+promise_test(async (test) => {
+    videoSenderTransform.port.postMessage("tryWritingVideo");
+    let result = await waitForMessage(videoSenderTransform.port);
+    assert_equals(result, "PASS");
+}, "Try writing receiver video data on video sender");
+
+promise_test(async (test) => {
+    audioSenderTransform.port.postMessage("tryWritingVideo");
+    let result = await waitForMessage(audioSenderTransform.port);
+    assert_equals(result, "PASS");
+}, "Try writing video data on audio sender");
+
+promise_test(async (test) => {
+    videoSenderTransform.port.postMessage("tryWritingAudio");
+    result = await waitForMessage(videoSenderTransform.port);
+    assert_equals(result, "PASS");
 
     test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
-}, "Check metadata getter");
+}, "Try writing audio data on video sender");
         </script>
     </body>
 </html>

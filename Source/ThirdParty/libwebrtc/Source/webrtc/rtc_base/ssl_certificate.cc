@@ -13,13 +13,13 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "rtc_base/base64.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/openssl.h"
@@ -83,7 +83,7 @@ std::unique_ptr<SSLCertificateStats> SSLCertificate::GetStats() const {
 
   Buffer der_buffer;
   ToDER(&der_buffer);
-  ArrayView<const uint8_t> der_view(der_buffer);
+  std::span<const uint8_t> der_view(der_buffer);
   std::string der_base64 = Base64Encode(der_view);
 
   return std::make_unique<SSLCertificateStats>(std::move(fingerprint),

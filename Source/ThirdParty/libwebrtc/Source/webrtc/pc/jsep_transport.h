@@ -17,9 +17,11 @@
 
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
+#include "api/crypto/crypto_options.h"
 #include "api/ice_transport_interface.h"
 #include "api/jsep.h"
 #include "api/rtc_error.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/transport/data_channel_transport_interface.h"
@@ -47,8 +49,7 @@ struct JsepTransportDescription {
   JsepTransportDescription();
   JsepTransportDescription(
       bool rtcp_mux_enabled,
-      const std::vector<int>& encrypted_header_extension_ids,
-      int rtp_abs_sendtime_extn_id,
+      const std::vector<RtpHeaderExtensionId>& encrypted_header_extension_ids,
       const TransportDescription& transport_description);
   JsepTransportDescription(const JsepTransportDescription& from);
   ~JsepTransportDescription();
@@ -56,8 +57,7 @@ struct JsepTransportDescription {
   JsepTransportDescription& operator=(const JsepTransportDescription& from);
 
   bool rtcp_mux_enabled = true;
-  std::vector<int> encrypted_header_extension_ids;
-  int rtp_abs_sendtime_extn_id = -1;
+  std::vector<RtpHeaderExtensionId> encrypted_header_extension_ids;
   // TODO(zhihuang): Add the ICE and DTLS related variables and methods from
   // TransportDescription and remove this extra layer of abstraction.
   TransportDescription transport_desc;
@@ -79,7 +79,8 @@ class JsepTransport {
                 std::unique_ptr<RtpTransport> rtp_transport,
                 scoped_refptr<DtlsTransport> rtp_dtls_transport,
                 std::unique_ptr<SctpTransportInternal> sctp_transport,
-                absl::AnyInvocable<void()> rtcp_mux_active_callback);
+                absl::AnyInvocable<void()> rtcp_mux_active_callback,
+                CryptoOptions::Srtp::CryptexPolicy cryptex_policy);
 
   ~JsepTransport();
 
@@ -262,6 +263,8 @@ class JsepTransport {
   // `rtcp_dtls_transport_` is destroyed. The JsepTransportController will
   // receive the callback and update the aggregate transport states.
   absl::AnyInvocable<void()> rtcp_mux_active_callback_;
+
+  const CryptoOptions::Srtp::CryptexPolicy cryptex_policy_;
 };
 
 }  //  namespace webrtc

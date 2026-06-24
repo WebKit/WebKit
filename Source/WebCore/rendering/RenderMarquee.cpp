@@ -54,8 +54,9 @@
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -141,7 +142,7 @@ int RenderMarquee::computePosition(MarqueeDirection dir, bool stopAtContentEdge)
     if (isHorizontal()) {
         bool ltr = boxStyle->writingMode().deprecatedIsLeftToRightDirection();
         LayoutUnit clientWidth = box->clientWidth();
-        LayoutUnit contentWidth = ltr ? box->maxPreferredLogicalWidth() : box->minPreferredLogicalWidth();
+        LayoutUnit contentWidth = ltr ? box->maxContentLogicalWidthContribution() : box->minContentLogicalWidthContribution();
         if (ltr)
             contentWidth += (box->paddingRight() - box->borderLeft());
         else {

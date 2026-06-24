@@ -399,6 +399,10 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
     }
     AXLOG(makeString("AXIsolatedTree::addUnconnectedNode creating isolated object from live object ID "_s, objectID.loggingString()));
 
+    // Mark this as an unconnected node before creating its isolated data below, as
+    // createIsolatedObjectData() gates caching of the full property set on isUnconnectedNode().
+    m_unconnectedNodes.add(objectID);
+
     // Because we are queuing a change for an object not intended to be connected to the rest of the tree,
     // we don't need to update m_nodeMap or m_pendingChanges.childrenUpdates for this object or its parent as is
     // done in AXIsolatedTree::nodeChangeForObject and AXIsolatedTree::queueChange.
@@ -409,7 +413,6 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
     NodeChange nodeChange { createIsolatedObjectData(axObject, *this), axObject->wrapper() };
     Locker locker { m_changeLogLock };
     mutablePendingChanges()->appends.append(WTF::move(nodeChange));
-    m_unconnectedNodes.add(objectID);
 }
 
 void AXIsolatedTree::queueRemovals(Vector<NodeAndParentID>&& subtreeRemovals)
@@ -1455,7 +1458,6 @@ void AXIsolatedTree::clearTreeContentsLocked()
     // Because each AXIsolatedObject holds a RefPtr to this tree, clear out any member variable
     // that holds an AXIsolatedObject so the ref-cycle is broken and this tree can be destroyed.
     m_readerThreadNodeMap.clear();
-    m_rootNode = nullptr;
     m_pendingChanges.appends.clear();
     // We don't need to bother clearing out any other non-cycle-causing member variables as they
     // will be cleaned up automatically when the tree is destroyed.
@@ -1592,11 +1594,18 @@ AXIsolatedTree::PendingChanges AXIsolatedTree::takePendingChangesLocked()
     AX_ASSERT(m_changeLogLock.isLocked());
 
     auto snapshot = std::exchange(m_pendingChanges, { });
-    // focusedNodeID represents persistent state (not a queue), so preserve it
-    // across snapshots. Otherwise it gets reset to empty and incorrectly clears
-    // the focused node on the next apply cycle.
+
+    // focusedNodeID and rootNodeID represent persistent state (not a queue), so preserve them
+    // across snapshots. Otherwise they get reset to empty and incorrectly clear the focused / root
+    // node on the next apply cycle. Re-sending the root every snapshot also lets the accessibility
+    // thread re-affirm (and, if it ever drifted, repair) the root on every apply.
     m_pendingChanges.focusedNodeID = snapshot.focusedNodeID;
+    m_pendingChanges.rootNodeID = snapshot.rootNodeID;
+
     m_hasPendingChanges.store(false);
+#if ENABLE(ACCESSIBILITY_THREAD_DISPATCHING)
+    m_appliedOrApplyingMainThreadSnapshot.store(true, std::memory_order_relaxed);
+#endif
     return snapshot;
 }
 
@@ -1730,25 +1739,27 @@ void AXIsolatedTree::applyPendingChangesFromSnapshot(PendingChanges&& snapshot)
         m_frameViewOriginScrollPosition = *snapshot.frameViewOriginScrollPosition;
 #endif
 
-    // Do this at the end because it requires looking up the root node by ID, so doing it at the end
-    // ensures all additions to m_readerThreadNodeMap have been made by now.
-    if (snapshot.rootNodeID) {
-        if (RefPtr root = objectForID(snapshot.rootNodeID)) {
-            m_rootNode = WTF::move(root);
+    if (snapshot.rootNodeID != m_rootNodeID) {
+        m_rootNodeID = snapshot.rootNodeID;
 
 #if ASSERT_ENABLED
+        // Check that the applied tree is fully reachable from the root. For performance, only do this
+        // when the root changes. Do this last so all additions to m_readerThreadNodeMap have been made by now.
+        if (RefPtr root = objectForID(m_rootNodeID)) {
             auto markReachableNodes = [](AXCoreObject* object, HashSet<AXID>& reachableNodes, auto& self) -> void {
                 reachableNodes.add(object->objectID());
                 for (auto& child : object->children())
                     self(&child.get(), reachableNodes, self);
             };
             HashSet<AXID> reachableNodes;
-            if (m_rootNode) {
-                markReachableNodes(m_rootNode.get(), reachableNodes, markReachableNodes);
-                ASSERT_WITH_MESSAGE(reachableNodes.size() == m_readerThreadNodeMap.size(), "AX: After applying pending root node, %u reachable nodes but %u are in the node map", reachableNodes.size(), m_readerThreadNodeMap.size());
-            }
-#endif
+            markReachableNodes(root.get(), reachableNodes, markReachableNodes);
+            // FIXME: This can spuriously fire when the tree has unconnected nodes (relation origins /
+            // targets added via addUnconnectedNode), which live in m_readerThreadNodeMap but aren't
+            // reachable from the root. We can't subtract them here because m_unconnectedNodes is only
+            // safe to read on the main thread.
+            ASSERT_WITH_MESSAGE(reachableNodes.size() == m_readerThreadNodeMap.size(), "AX: After applying pending root node, %u reachable nodes but %u are in the node map", reachableNodes.size(), m_readerThreadNodeMap.size());
         }
+#endif // ASSERT_ENABLED
     }
 
     if (AXObjectCache::isAppleInternalInstall()) [[unlikely]]
@@ -1924,6 +1935,17 @@ void AXIsolatedTree::processQueuedNodeUpdates()
     }
 
     queueRemovalsAndUnresolvedChanges();
+
+#if ENABLE(ACCESSIBILITY_THREAD_DISPATCHING)
+    if (hasPendingChanges() && m_appliedOrApplyingMainThreadSnapshot.exchange(false, std::memory_order_relaxed)) {
+        // Eagerly try to applyPendingChanges so we don't have to do it prior to
+        // serving a client request, providing improved responsiveness.
+        // Only queue this up if one isn't already queued up.
+        std::ignore = callOnAXThread([protectedThis = Ref { *this }] {
+            protectedThis->applyPendingChanges();
+        });
+    }
+#endif // ENABLE(ACCESSIBILITY_THREAD_DISPATCHING)
 
     if (AXObjectCache::isAppleInternalInstall()) [[unlikely]]
         WTFEndSignpostAlways(this, UpdateAccessibilityIsolatedTree);
@@ -2531,6 +2553,22 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         getsGeometryFromChildren
     };
 }
+
+#if ENABLE(ACCESSIBILITY_THREAD_DISPATCHING)
+AXIsolatedTree::AXThreadDispatchResult AXIsolatedTree::callOnAXThread(Function<void()>&& function)
+{
+    AX_ASSERT(isMainThread());
+    return platformCallOnAXThread(WTF::move(function));
+}
+
+#if !PLATFORM(MAC)
+AXIsolatedTree::AXThreadDispatchResult AXIsolatedTree::platformCallOnAXThread(Function<void()>&&)
+{
+    AX_ASSERT_NOT_REACHED();
+    return AXThreadDispatchResult::Failed;
+}
+#endif
+#endif // ENABLE(ACCESSIBILITY_THREAD_DISPATCHING)
 
 } // namespace WebCore
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)

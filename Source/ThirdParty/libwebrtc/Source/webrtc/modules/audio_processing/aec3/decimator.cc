@@ -11,8 +11,8 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 #include "rtc_base/checks.h"
@@ -59,20 +59,20 @@ Decimator::Decimator(size_t down_sampling_factor)
     : down_sampling_factor_(down_sampling_factor),
       anti_aliasing_filter_(
           down_sampling_factor_ == 4
-              ? ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+              ? std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
                     kLowPassFilterDs4)
-              : ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+              : std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
                     kBandPassFilterDs8)),
       noise_reduction_filter_(
           down_sampling_factor_ == 8
-              ? (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+              ? (std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
                     kPassThroughFilter))
-              : (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+              : (std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
                     kHighPassFilter))) {
   RTC_DCHECK(down_sampling_factor_ == 4 || down_sampling_factor_ == 8);
 }
 
-void Decimator::Decimate(ArrayView<const float> in, ArrayView<float> out) {
+void Decimator::Decimate(std::span<const float> in, std::span<float> out) {
   RTC_DCHECK_EQ(kBlockSize, in.size());
   RTC_DCHECK_EQ(kBlockSize / down_sampling_factor_, out.size());
   std::array<float, kBlockSize> x;

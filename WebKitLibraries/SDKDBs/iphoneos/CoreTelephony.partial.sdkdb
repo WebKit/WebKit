@@ -118,13 +118,27 @@
     },
     {
      "access": "public",
+     "introduced": "26.4",
+     "linkage": "exported",
+     "name": "CTCellularPlanLifecycleProperties",
+     "properties": [
+      {"access": "public", "getter": "expirationDate", "introduced": "26", "name": "expirationDate", "setter": "setExpirationDate:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
      "introduced": "26",
      "linkage": "exported",
      "name": "CTCellularPlanProperties",
      "properties": [
       {"access": "public", "getter": "associatedIccid", "introduced": "26", "name": "associatedIccid", "setter": "setAssociatedIccid:"},
       {"access": "public", "getter": "simCapability", "introduced": "26", "name": "simCapability", "setter": "setSimCapability:"},
-      {"access": "public", "getter": "supportedRegionCodes", "introduced": "26", "name": "supportedRegionCodes", "setter": "setSupportedRegionCodes:"}
+      {"access": "public", "getter": "supportedRegionCodes", "introduced": "26", "name": "supportedRegionCodes", "setter": "setSupportedRegionCodes:"},
+      {"access": "public", "getter": "lifecycleProperties", "introduced": "26.4", "name": "lifecycleProperties", "setter": "setLifecycleProperties:"}
      ],
      "protocols": [
       "NSSecureCoding"
@@ -242,7 +256,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "CTCellularDataRestrictedState"},
     {"access": "public", "introduced": "26", "name": "CTCellularPlanCapability"},
@@ -253,12 +267,81 @@
   },
   {
    "globals": [
-    {"access": "public", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvM"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvs"}
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO11descriptionSSvg"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO11descriptionSSvpMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO13communicationyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO6gamingyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO8allCasesSayAEGvgZ"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO8allCasesSayAEGvpZMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO8rawValueAESgSi_tcfC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO8rawValueSivg"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO8rawValueSivpMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO9streamingyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryOMa"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryOMn"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryON"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryOSHAAMc"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryOSQAAMc"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryOSYAAMc"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryOs12CaseIterableAAMc"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO10backgroundyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO11avStreamingyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO11descriptionSSvg"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO11descriptionSSvpMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO12responsiveAVyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO14responsiveDatayA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO3anyyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO5videoyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO5voiceyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO8allCasesSayAEGvgZ"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO8allCasesSayAEGvpZMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO9hashValueSivg"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO9hashValueSivpMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassO9signalingyA2EmFWC"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassOMa"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassOMn"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassON"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassOSHAAMc"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassOSQAAMc"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12TrafficClassOs12CaseIterableAAMc"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12activeSlicesSayAC5SliceVGvg"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12activeSlicesSayAC5SliceVGvgTu"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC12activeSlicesSayAC5SliceVGvpMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC14disableSlicingyyYaKF"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC14disableSlicingyyYaKFTu"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC27availableSliceAppCategoriesSayAC0G8CategoryOGvg"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC27availableSliceAppCategoriesSayAC0G8CategoryOGvgTu"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC27availableSliceAppCategoriesSayAC0G8CategoryOGvpMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC33activatePreferredSliceForCategoryyyAC03AppI0OYaKF"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC33activatePreferredSliceForCategoryyyAC03AppI0OYaKFTu"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceV11appCategoryAC03AppG0Ovg"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceV11appCategoryAC03AppG0OvpMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceV12trafficClassAC07TrafficG0OSgvg"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceV12trafficClassAC07TrafficG0OSgvpMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceV20networkInterfaceNameSSvg"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceV20networkInterfaceNameSSvpMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceV2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceVMa"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceVMn"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceVN"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC5SliceVSQAAMc"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC6sharedACvgZ"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC6sharedACvpZMV"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCMa"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCMm"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCMn"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCMo"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCN"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCfD"},
+    {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCfd"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvM"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvg"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvpMV"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvs"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

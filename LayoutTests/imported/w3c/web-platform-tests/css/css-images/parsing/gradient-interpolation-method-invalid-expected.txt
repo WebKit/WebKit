@@ -281,4 +281,14 @@ PASS e.style['background-image'] = "conic-gradient(red, blue, oklch decreasing h
 PASS e.style['background-image'] = "conic-gradient(oklch specified, red, blue)" should not set the property value
 PASS e.style['background-image'] = "conic-gradient(specified hue oklch, red, blue)" should not set the property value
 PASS e.style['background-image'] = "conic-gradient(red, blue, oklch specified hue)" should not set the property value
+PASS e.style['background-image'] = "linear-gradient(in, black, transparent)" should not set the property value
+PASS e.style['background-image'] = "linear-gradient(45deg in, black, transparent)" should not set the property value
+PASS e.style['background-image'] = "linear-gradient(in 45deg, black, transparent)" should not set the property value
+PASS e.style['background-image'] = "linear-gradient(in to right, black, transparent)" should not set the property value
+PASS e.style['background-image'] = "radial-gradient(closest-side in, black, transparent)" should not set the property value
+PASS e.style['background-image'] = "conic-gradient(in from 90deg, black, transparent)" should not set the property value
+PASS e.style['background-image'] = "linear-gradient(90deg in hsl longer, black, transparent)" should not set the property value
+PASS e.style['background-image'] = "linear-gradient(90deg in hsl shorter, black)" should not set the property value
+PASS e.style['background-image'] = "linear-gradient(to right in hsl increasing, black, transparent)" should not set the property value
+PASS e.style['background-image'] = "linear-gradient(to right in hsl decreasing, black, transparent)" should not set the property value
 

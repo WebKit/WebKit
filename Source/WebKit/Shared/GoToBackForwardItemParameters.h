@@ -45,6 +45,7 @@ struct GoToBackForwardItemParameters {
     WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad;
     std::optional<WebsitePoliciesData> websitePolicies;
     bool lastNavigationWasAppInitiated;
+    WebCore::ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache;
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     WebCore::PublicSuffix publicSuffix;
     SandboxExtension::Handle sandboxExtensionHandle;

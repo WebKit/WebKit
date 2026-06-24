@@ -373,4 +373,6 @@ WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContext>* extension)
 
 } // namespace WebCore
 
+#undef ENABLE_IF_REQUESTED
+
 #endif // ENABLE(WEBGL)

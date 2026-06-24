@@ -77,6 +77,11 @@ class RTC_EXPORT CroppingWindowCapturer : public DesktopCapturer,
   std::unique_ptr<DesktopCapturer> screen_capturer_;
   SourceId selected_window_;
   WindowId excluded_window_;
+
+  // The window rectangle in the virtual screen, relative to the top-left corner
+  // of the virtual screen. This is the rectangle used to crop the frame.
+  // It is updated in CaptureFrame() and used in OnCaptureResult().
+  DesktopRect last_window_rect_;
 };
 
 }  // namespace webrtc

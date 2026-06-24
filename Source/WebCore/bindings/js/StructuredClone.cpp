@@ -50,7 +50,7 @@ static EncodedJSValue cloneArrayBufferImpl(JSGlobalObject* lexicalGlobalObject, 
     ASSERT(callFrame->argumentCount());
     ASSERT(callFrame->lexicalGlobalObject(vm) == lexicalGlobalObject);
 
-    auto* buffer = toUnsharedArrayBuffer(vm, callFrame->uncheckedArgument(0));
+    RefPtr buffer = toUnsharedArrayBuffer(vm, callFrame->uncheckedArgument(0));
     if (!buffer) {
         auto scope = DECLARE_THROW_SCOPE(vm);
         throwDataCloneError(*lexicalGlobalObject, scope);
@@ -94,7 +94,7 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
     };
 
     if (value.inherits<JSArrayBuffer>()) {
-        auto* buffer = toUnsharedArrayBuffer(vm, value);
+        RefPtr buffer = toUnsharedArrayBuffer(vm, value);
         if (!buffer || buffer->isDetached()) [[unlikely]] {
             throwDataCloneError(*globalObject, scope);
             return { };
@@ -108,7 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
 
     if (auto* bufferView = dynamicDowncast<JSArrayBufferView>(value)) {
 
-        auto* buffer = bufferView->unsharedBuffer();
+        RefPtr buffer = bufferView->unsharedBuffer();
         if (!buffer || buffer->isDetached()) [[unlikely]] {
             throwDataCloneError(*globalObject, scope);
             return { };

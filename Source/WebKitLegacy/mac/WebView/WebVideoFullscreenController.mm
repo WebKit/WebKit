@@ -42,7 +42,10 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
+#if !defined(WebKitLegacy_AVKitLibrary_SoftLinked)
+#define WebKitLegacy_AVKitLibrary_SoftLinked
 SOFTLINK_AVKIT_FRAMEWORK()
+#endif
 SOFT_LINK_CLASS(AVKit, AVPlayerView)
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

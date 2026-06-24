@@ -15,8 +15,10 @@
 #include <limits.h>
 #include <stdio.h>
 
+#include <algorithm>
 #include <iterator>
 #include <map>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -43,14 +45,24 @@
 #endif
 
 
+BSSL_NAMESPACE_BEGIN
+
+static Span<const uint8_t> ASN1StringToBytes(const ASN1_STRING *str) {
+  return Span(ASN1_STRING_get0_data(str), ASN1_STRING_length(str));
+}
+
+static std::string_view ASN1StringToStringView(const ASN1_STRING *str) {
+  return BytesAsStringView(ASN1StringToBytes(str));
+}
+
 // |obj| and |i2d_func| require different template parameters because C++ may
 // deduce, say, |ASN1_STRING*| via |obj| and |const ASN1_STRING*| via
 // |i2d_func|. Template argument deduction then fails. The language is not able
 // to resolve this by observing that |const ASN1_STRING*| works for both.
 template <typename T, typename U>
 void TestSerialize(T obj, int (*i2d_func)(U a, uint8_t **pp),
-                   bssl::Span<const uint8_t> expected) {
-  static_assert(std::is_convertible<T, U>::value,
+                   Span<const uint8_t> expected) {
+  static_assert(std::is_convertible_v<T, U>,
                 "incompatible parameter to i2d_func");
   // Test the allocating version first. It is easiest to debug.
   uint8_t *ptr = nullptr;
@@ -72,7 +84,7 @@ void TestSerialize(T obj, int (*i2d_func)(U a, uint8_t **pp),
 }
 
 static bssl::UniquePtr<BIGNUM> BIGNUMPow2(unsigned bit) {
-  bssl::UniquePtr<BIGNUM> bn(BN_new());
+  UniquePtr<BIGNUM> bn(BN_new());
   if (!bn ||  //
       !BN_set_bit(bn.get(), bit)) {
     return nullptr;
@@ -81,19 +93,19 @@ static bssl::UniquePtr<BIGNUM> BIGNUMPow2(unsigned bit) {
 }
 
 TEST(ASN1Test, Integer) {
-  bssl::UniquePtr<BIGNUM> int64_min = BIGNUMPow2(63);
+  UniquePtr<BIGNUM> int64_min = BIGNUMPow2(63);
   ASSERT_TRUE(int64_min);
   BN_set_negative(int64_min.get(), 1);
 
-  bssl::UniquePtr<BIGNUM> int64_max = BIGNUMPow2(63);
+  UniquePtr<BIGNUM> int64_max = BIGNUMPow2(63);
   ASSERT_TRUE(int64_max);
   ASSERT_TRUE(BN_sub_word(int64_max.get(), 1));
 
-  bssl::UniquePtr<BIGNUM> int32_min = BIGNUMPow2(31);
+  UniquePtr<BIGNUM> int32_min = BIGNUMPow2(31);
   ASSERT_TRUE(int32_min);
   BN_set_negative(int32_min.get(), 1);
 
-  bssl::UniquePtr<BIGNUM> int32_max = BIGNUMPow2(31);
+  UniquePtr<BIGNUM> int32_max = BIGNUMPow2(31);
   ASSERT_TRUE(int32_max);
   ASSERT_TRUE(BN_sub_word(int32_max.get(), 1));
 
@@ -269,10 +281,10 @@ TEST(ASN1Test, Integer) {
     SCOPED_TRACE(t.bn_asc);
     // Collect a map of different ways to construct the integer. The key is the
     // method used and is only retained to aid debugging.
-    std::map<std::string, bssl::UniquePtr<ASN1_INTEGER>> objs;
+    std::map<std::string, UniquePtr<ASN1_INTEGER>> objs;
 
     // Construct |ASN1_INTEGER| by setting the type and data manually.
-    bssl::UniquePtr<ASN1_INTEGER> by_data(ASN1_STRING_type_new(t.type));
+    UniquePtr<ASN1_INTEGER> by_data(ASN1_STRING_type_new(t.type));
     ASSERT_TRUE(by_data);
     ASSERT_TRUE(ASN1_STRING_set(by_data.get(), t.data.data(), t.data.size()));
     objs["data"] = std::move(by_data);
@@ -280,14 +292,14 @@ TEST(ASN1Test, Integer) {
     // Construct |ASN1_INTEGER| from a |BIGNUM|.
     BIGNUM *bn_raw = nullptr;
     ASSERT_TRUE(BN_asc2bn(&bn_raw, t.bn_asc));
-    bssl::UniquePtr<BIGNUM> bn(bn_raw);
-    bssl::UniquePtr<ASN1_INTEGER> by_bn(BN_to_ASN1_INTEGER(bn.get(), nullptr));
+    UniquePtr<BIGNUM> bn(bn_raw);
+    UniquePtr<ASN1_INTEGER> by_bn(BN_to_ASN1_INTEGER(bn.get(), nullptr));
     ASSERT_TRUE(by_bn);
     objs["bn"] = std::move(by_bn);
 
     // Construct |ASN1_INTEGER| from decoding.
     const uint8_t *ptr = t.der.data();
-    bssl::UniquePtr<ASN1_INTEGER> by_der(
+    UniquePtr<ASN1_INTEGER> by_der(
         d2i_ASN1_INTEGER(nullptr, &ptr, t.der.size()));
     ASSERT_TRUE(by_der);
     EXPECT_EQ(ptr, t.der.data() + t.der.size());
@@ -303,7 +315,7 @@ TEST(ASN1Test, Integer) {
       fits_in_u64 = !BN_is_negative(bn.get());
       if (fits_in_u64) {
         u64 = abs_u64;
-        bssl::UniquePtr<ASN1_INTEGER> by_u64(ASN1_INTEGER_new());
+        UniquePtr<ASN1_INTEGER> by_u64(ASN1_INTEGER_new());
         ASSERT_TRUE(by_u64);
         ASSERT_TRUE(ASN1_INTEGER_set_uint64(by_u64.get(), u64));
         objs["u64"] = std::move(by_u64);
@@ -317,7 +329,7 @@ TEST(ASN1Test, Integer) {
         } else {
           i64 = static_cast<int64_t>(abs_u64);
         }
-        bssl::UniquePtr<ASN1_INTEGER> by_i64(ASN1_INTEGER_new());
+        UniquePtr<ASN1_INTEGER> by_i64(ASN1_INTEGER_new());
         ASSERT_TRUE(by_i64);
         ASSERT_TRUE(ASN1_INTEGER_set_int64(by_i64.get(), i64));
         objs["i64"] = std::move(by_i64);
@@ -332,7 +344,7 @@ TEST(ASN1Test, Integer) {
       }
       if (fits_in_long) {
         l = static_cast<long>(i64);
-        bssl::UniquePtr<ASN1_INTEGER> by_long(ASN1_INTEGER_new());
+        UniquePtr<ASN1_INTEGER> by_long(ASN1_INTEGER_new());
         ASSERT_TRUE(by_long);
         ASSERT_TRUE(ASN1_INTEGER_set(by_long.get(), l));
         objs["long"] = std::move(by_long);
@@ -341,7 +353,7 @@ TEST(ASN1Test, Integer) {
 
     // Default construction should return the zero |ASN1_INTEGER|.
     if (BN_is_zero(bn.get())) {
-      bssl::UniquePtr<ASN1_INTEGER> by_default(ASN1_INTEGER_new());
+      UniquePtr<ASN1_INTEGER> by_default(ASN1_INTEGER_new());
       ASSERT_TRUE(by_default);
       objs["default"] = std::move(by_default);
     }
@@ -358,7 +370,7 @@ TEST(ASN1Test, Integer) {
       // The object should encode correctly.
       TestSerialize(obj, i2d_ASN1_INTEGER, t.der);
 
-      bssl::UniquePtr<BIGNUM> bn2(ASN1_INTEGER_to_BN(obj, nullptr));
+      UniquePtr<BIGNUM> bn2(ASN1_INTEGER_to_BN(obj, nullptr));
       ASSERT_TRUE(bn2);
       EXPECT_EQ(0, BN_cmp(bn.get(), bn2.get()));
 
@@ -404,7 +416,7 @@ TEST(ASN1Test, Integer) {
       data.insert(data.begin(), 0x00);
       SCOPED_TRACE(Bytes(data));
 
-      bssl::UniquePtr<ASN1_INTEGER> non_minimal(ASN1_STRING_type_new(t.type));
+      UniquePtr<ASN1_INTEGER> non_minimal(ASN1_STRING_type_new(t.type));
       ASSERT_TRUE(non_minimal);
       ASSERT_TRUE(ASN1_STRING_set(non_minimal.get(), data.data(), data.size()));
 
@@ -415,13 +427,13 @@ TEST(ASN1Test, Integer) {
   for (size_t i = 0; i < std::size(kTests); i++) {
     SCOPED_TRACE(Bytes(kTests[i].der));
     const uint8_t *ptr = kTests[i].der.data();
-    bssl::UniquePtr<ASN1_INTEGER> a(
+    UniquePtr<ASN1_INTEGER> a(
         d2i_ASN1_INTEGER(nullptr, &ptr, kTests[i].der.size()));
     ASSERT_TRUE(a);
     for (size_t j = 0; j < std::size(kTests); j++) {
       SCOPED_TRACE(Bytes(kTests[j].der));
       ptr = kTests[j].der.data();
-      bssl::UniquePtr<ASN1_INTEGER> b(
+      UniquePtr<ASN1_INTEGER> b(
           d2i_ASN1_INTEGER(nullptr, &ptr, kTests[j].der.size()));
       ASSERT_TRUE(b);
 
@@ -453,7 +465,7 @@ TEST(ASN1Test, Integer) {
     SCOPED_TRACE(Bytes(invalid));
 
     const uint8_t *ptr = invalid.data();
-    bssl::UniquePtr<ASN1_INTEGER> integer(
+    UniquePtr<ASN1_INTEGER> integer(
         d2i_ASN1_INTEGER(nullptr, &ptr, invalid.size()));
     EXPECT_FALSE(integer);
   }
@@ -466,8 +478,7 @@ TEST(ASN1Test, Integer) {
 
 // Although invalid, a negative zero should encode correctly.
 TEST(ASN1Test, NegativeZero) {
-  bssl::UniquePtr<ASN1_INTEGER> neg_zero(
-      ASN1_STRING_type_new(V_ASN1_NEG_INTEGER));
+  UniquePtr<ASN1_INTEGER> neg_zero(ASN1_STRING_type_new(V_ASN1_NEG_INTEGER));
   ASSERT_TRUE(neg_zero);
   EXPECT_EQ(0, ASN1_INTEGER_get(neg_zero.get()));
 
@@ -531,7 +542,7 @@ TEST(ASN1Test, Boolean) {
 
 // The templates go through a different codepath, so test them separately.
 TEST(ASN1Test, SerializeEmbeddedBoolean) {
-  bssl::UniquePtr<BASIC_CONSTRAINTS> val(BASIC_CONSTRAINTS_new());
+  UniquePtr<BASIC_CONSTRAINTS> val(BASIC_CONSTRAINTS_new());
   ASSERT_TRUE(val);
 
   // BasicConstraints defaults to FALSE, so the encoding should be empty.
@@ -551,8 +562,8 @@ TEST(ASN1Test, SerializeEmbeddedBoolean) {
 }
 
 static std::vector<uint8_t> EmbedParamInAlgorithmIdentifier(
-    bssl::Span<const uint8_t> param) {
-  bssl::ScopedCBB cbb;
+    Span<const uint8_t> param) {
+  ScopedCBB cbb;
   CBB seq;
   BSSL_CHECK(CBB_init(cbb.get(), 64));
   BSSL_CHECK(CBB_add_asn1(cbb.get(), &seq, CBS_ASN1_SEQUENCE));
@@ -633,7 +644,7 @@ TEST(ASN1Test, ASN1Type) {
 
     // The input should successfully parse.
     const uint8_t *ptr = t.der.data();
-    bssl::UniquePtr<ASN1_TYPE> val(d2i_ASN1_TYPE(nullptr, &ptr, t.der.size()));
+    UniquePtr<ASN1_TYPE> val(d2i_ASN1_TYPE(nullptr, &ptr, t.der.size()));
     ASSERT_TRUE(val);
 
     check_asn1_type(val.get());
@@ -642,8 +653,7 @@ TEST(ASN1Test, ASN1Type) {
     // Test the same thing wrapped in an AlgorithmIdentifier.
     std::vector<uint8_t> alg_der = EmbedParamInAlgorithmIdentifier(t.der);
     ptr = alg_der.data();
-    bssl::UniquePtr<X509_ALGOR> alg(
-        d2i_X509_ALGOR(nullptr, &ptr, alg_der.size()));
+    UniquePtr<X509_ALGOR> alg(d2i_X509_ALGOR(nullptr, &ptr, alg_der.size()));
     ASSERT_TRUE(alg);
 
     check_asn1_type(alg->parameter);
@@ -698,14 +708,13 @@ TEST(ASN1Test, ASN1Type) {
   for (const auto &t : kInvalidTests) {
     SCOPED_TRACE(Bytes(t));
     const uint8_t *ptr = t.data();
-    bssl::UniquePtr<ASN1_TYPE> val(d2i_ASN1_TYPE(nullptr, &ptr, t.size()));
+    UniquePtr<ASN1_TYPE> val(d2i_ASN1_TYPE(nullptr, &ptr, t.size()));
     EXPECT_FALSE(val);
     ERR_clear_error();
 
     std::vector<uint8_t> alg_der = EmbedParamInAlgorithmIdentifier(t);
     ptr = alg_der.data();
-    bssl::UniquePtr<X509_ALGOR> alg(
-        d2i_X509_ALGOR(nullptr, &ptr, alg_der.size()));
+    UniquePtr<X509_ALGOR> alg(d2i_X509_ALGOR(nullptr, &ptr, alg_der.size()));
     EXPECT_FALSE(alg);
     ERR_clear_error();
   }
@@ -718,7 +727,7 @@ TEST(ASN1Test, UnusedBooleanBits) {
   // OCTET_STRING { "a" }
   static const uint8_t kDER[] = {0x04, 0x01, 0x61};
   const uint8_t *ptr = kDER;
-  bssl::UniquePtr<ASN1_TYPE> val(d2i_ASN1_TYPE(nullptr, &ptr, sizeof(kDER)));
+  UniquePtr<ASN1_TYPE> val(d2i_ASN1_TYPE(nullptr, &ptr, sizeof(kDER)));
   ASSERT_TRUE(val);
   EXPECT_EQ(V_ASN1_OCTET_STRING, val->type);
   EXPECT_TRUE(val->value.ptr);
@@ -787,42 +796,49 @@ TEST(ASN1Test, ParseASN1Object) {
 }
 
 TEST(ASN1Test, BitString) {
-  const size_t kNotWholeBytes = static_cast<size_t>(-1);
   const struct {
     std::vector<uint8_t> in;
-    size_t num_bytes;
+    int num_bytes;
+    uint8_t unused_bits;
   } kValidInputs[] = {
       // Empty bit string
-      {{0x03, 0x01, 0x00}, 0},
+      {{0x03, 0x01, 0x00}, 0, 0},
       // 0b1
-      {{0x03, 0x02, 0x07, 0x80}, kNotWholeBytes},
+      {{0x03, 0x02, 0x07, 0x80}, 1, 7},
       // 0b1010
-      {{0x03, 0x02, 0x04, 0xa0}, kNotWholeBytes},
+      {{0x03, 0x02, 0x04, 0xa0}, 1, 4},
       // 0b1010101
-      {{0x03, 0x02, 0x01, 0xaa}, kNotWholeBytes},
+      {{0x03, 0x02, 0x01, 0xaa}, 1, 1},
       // 0b10101010
-      {{0x03, 0x02, 0x00, 0xaa}, 1},
+      {{0x03, 0x02, 0x00, 0xaa}, 1, 0},
       // Bits 0 and 63 are set
-      {{0x03, 0x09, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01}, 8},
+      {{0x03, 0x09, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
+       8,
+       0},
       // 64 zero bits
-      {{0x03, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, 8},
+      {{0x03, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+       8,
+       0},
   };
   for (const auto &test : kValidInputs) {
     SCOPED_TRACE(Bytes(test.in));
     // The input should parse and round-trip correctly.
     const uint8_t *ptr = test.in.data();
-    bssl::UniquePtr<ASN1_BIT_STRING> val(
+    UniquePtr<ASN1_BIT_STRING> val(
         d2i_ASN1_BIT_STRING(nullptr, &ptr, test.in.size()));
     ASSERT_TRUE(val);
     TestSerialize(val.get(), i2d_ASN1_BIT_STRING, test.in);
 
+    EXPECT_EQ(ASN1_STRING_length(val.get()), test.num_bytes);
+    EXPECT_EQ(ASN1_BIT_STRING_unused_bits(val.get()), test.unused_bits);
+
     // Check the byte count.
     size_t num_bytes;
-    if (test.num_bytes == kNotWholeBytes) {
+    if (test.unused_bits != 0) {
       EXPECT_FALSE(ASN1_BIT_STRING_num_bytes(val.get(), &num_bytes));
     } else {
       ASSERT_TRUE(ASN1_BIT_STRING_num_bytes(val.get(), &num_bytes));
-      EXPECT_EQ(num_bytes, test.num_bytes);
+      EXPECT_EQ(num_bytes, static_cast<size_t>(test.num_bytes));
     }
   }
 
@@ -842,14 +858,14 @@ TEST(ASN1Test, BitString) {
   for (const auto &test : kInvalidInputs) {
     SCOPED_TRACE(Bytes(test));
     const uint8_t *ptr = test.data();
-    bssl::UniquePtr<ASN1_BIT_STRING> val(
+    UniquePtr<ASN1_BIT_STRING> val(
         d2i_ASN1_BIT_STRING(nullptr, &ptr, test.size()));
     EXPECT_FALSE(val);
   }
 }
 
 TEST(ASN1Test, SetBit) {
-  bssl::UniquePtr<ASN1_BIT_STRING> val(ASN1_BIT_STRING_new());
+  UniquePtr<ASN1_BIT_STRING> val(ASN1_BIT_STRING_new());
   ASSERT_TRUE(val);
   static const uint8_t kBitStringEmpty[] = {0x03, 0x01, 0x00};
   TestSerialize(val.get(), i2d_ASN1_BIT_STRING, kBitStringEmpty);
@@ -888,6 +904,16 @@ TEST(ASN1Test, SetBit) {
   EXPECT_EQ(0, ASN1_BIT_STRING_get_bit(val.get(), 2));
   EXPECT_EQ(0, ASN1_BIT_STRING_get_bit(val.get(), 3));
   EXPECT_EQ(0, ASN1_BIT_STRING_get_bit(val.get(), 4));
+
+  // Bits that were already out-of-bounds and clear may be cleared. This is a
+  // no-op.
+  ASSERT_TRUE(ASN1_BIT_STRING_set_bit(val.get(), 100, 0));
+  TestSerialize(val.get(), i2d_ASN1_BIT_STRING, kBitString1);
+
+  // Negative bits do not exist.
+  EXPECT_FALSE(ASN1_BIT_STRING_set_bit(val.get(), -1, 0));
+  EXPECT_FALSE(ASN1_BIT_STRING_set_bit(val.get(), -1, 1));
+  ERR_clear_error();
 
   // Bits may be set beyond the end of the string.
   ASSERT_TRUE(ASN1_BIT_STRING_set_bit(val.get(), 63, 1));
@@ -934,12 +960,70 @@ TEST(ASN1Test, SetBit) {
   EXPECT_EQ(0, ASN1_BIT_STRING_get_bit(val.get(), 63));
   EXPECT_EQ(0, ASN1_BIT_STRING_get_bit(val.get(), 64));
 
-  // By default, a BIT STRING implicitly truncates trailing zeros.
+  // A BIT STRING may be manually set with trailing zeros.
   val.reset(ASN1_BIT_STRING_new());
   ASSERT_TRUE(val);
-  static const uint8_t kZeros[64] = {0};
+  static const uint8_t kZeros[5] = {0};
   ASSERT_TRUE(ASN1_STRING_set(val.get(), kZeros, sizeof(kZeros)));
+  static const uint8_t kBitStringZeros[] = {0x03, 0x06, 0x00, 0x00,
+                                            0x00, 0x00, 0x00, 0x00};
+  TestSerialize(val.get(), i2d_ASN1_BIT_STRING, kBitStringZeros);
+}
+
+TEST(ASN1Test, SetBitString) {
+  // Creating an ASN1_BIT_STRING and then filling in a byte string should assign
+  // the byte string, not a silently truncated version.
+  UniquePtr<ASN1_BIT_STRING> val(ASN1_BIT_STRING_new());
+  ASSERT_TRUE(val);
+  const uint8_t kBytesf000[] = {0xf0, 0x00};
+  ASSERT_TRUE(
+      ASN1_STRING_set(val.get(), kBytesf000, sizeof(kBytesf000)));
+  static const uint8_t kBitStringf000[] = {0x03, 0x03, 0x00, 0xf0, 0x00};
+  TestSerialize(val.get(), i2d_ASN1_BIT_STRING, kBitStringf000);
+
+  // A thin wrapper to simplify getting pointer/length pairs to call the
+  // function.
+  auto set1 = [](ASN1_BIT_STRING *s, const std::vector<uint8_t> &data,
+                 int unused_bits) {
+    return ASN1_BIT_STRING_set1(s, data.data(), data.size(), unused_bits);
+  };
+
+  // Setting a count of unused bits works.
+  ASSERT_TRUE(set1(val.get(), {0xf0}, 4));
+  static const uint8_t kBitString1111[] = {0x03, 0x02, 0x04, 0xf0};
+  TestSerialize(val.get(), i2d_ASN1_BIT_STRING, kBitString1111);
+
+  ASSERT_TRUE(set1(val.get(), {0xf0}, 0));
+  static const uint8_t kBitString11110000[] = {0x03, 0x02, 0x00, 0xf0};
+  TestSerialize(val.get(), i2d_ASN1_BIT_STRING, kBitString11110000);
+
+  ASSERT_TRUE(set1(val.get(), {}, 0));
+  static const uint8_t kBitStringEmpty[] = {0x03, 0x01, 0x00};
   TestSerialize(val.get(), i2d_ASN1_BIT_STRING, kBitStringEmpty);
+
+  // All unused bits must be zero.
+  EXPECT_FALSE(set1(val.get(), {0xff}, 1));
+  EXPECT_FALSE(set1(val.get(), {0xf0}, 5));
+
+  // Invalid unused bit counts.
+  EXPECT_FALSE(set1(val.get(), {0x00, 0x00}, 8));
+  EXPECT_FALSE(set1(val.get(), {0x00, 0x00}, -1));
+  EXPECT_FALSE(set1(val.get(), {}, 1));
+
+  // |ASN1_STRING_set| and |ASN1_STRING_set0| should clear the count of unused
+  // bits, rather then carry it over.
+  ASSERT_TRUE(set1(val.get(), {0xf0}, 4));
+  static const uint8_t kBytes[] = {0x00, 0x01, 0x02};
+  ASSERT_TRUE(ASN1_STRING_set(val.get(), kBytes, sizeof(kBytes)));
+  EXPECT_EQ(ASN1_BIT_STRING_unused_bits(val.get()), 0);
+  EXPECT_EQ(Bytes(ASN1StringToBytes(val.get())), Bytes(kBytes));
+
+  ASSERT_TRUE(set1(val.get(), {0xf0}, 4));
+  void *copy = OPENSSL_memdup(kBytes, sizeof(kBytes));
+  ASSERT_NE(copy, nullptr);
+  ASN1_STRING_set0(val.get(), copy, sizeof(kBytes));
+  EXPECT_EQ(ASN1_BIT_STRING_unused_bits(val.get()), 0);
+  EXPECT_EQ(Bytes(ASN1StringToBytes(val.get())), Bytes(kBytes));
 }
 
 TEST(ASN1Test, StringToUTF8) {
@@ -985,7 +1069,7 @@ TEST(ASN1Test, StringToUTF8) {
   for (const auto &test : kTests) {
     SCOPED_TRACE(Bytes(test.in));
     SCOPED_TRACE(test.type);
-    bssl::UniquePtr<ASN1_STRING> s(ASN1_STRING_type_new(test.type));
+    UniquePtr<ASN1_STRING> s(ASN1_STRING_type_new(test.type));
     ASSERT_TRUE(s);
     ASSERT_TRUE(ASN1_STRING_set(s.get(), test.in.data(), test.in.size()));
 
@@ -1001,12 +1085,6 @@ TEST(ASN1Test, StringToUTF8) {
       ERR_clear_error();
     }
   }
-}
-
-static std::string_view ASN1StringToStringView(const ASN1_STRING *str) {
-  return std::string_view(
-      reinterpret_cast<const char *>(ASN1_STRING_get0_data(str)),
-      ASN1_STRING_length(str));
 }
 
 static bool ASN1Time_check_posix(const ASN1_TIME *s, int64_t t) {
@@ -1039,7 +1117,7 @@ static std::string PrintStringToBIO(const ASN1_STRING *str,
                                                       const ASN1_STRING *)) {
   const uint8_t *data;
   size_t len;
-  bssl::UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
+  UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
   if (!bio ||  //
       !print_func(bio.get(), str) ||
       !BIO_mem_contents(bio.get(), &data, &len)) {
@@ -1082,7 +1160,7 @@ TEST(ASN1Test, SetTime) {
     int64_t tt;
     SCOPED_TRACE(t.time);
 
-    bssl::UniquePtr<ASN1_UTCTIME> utc(ASN1_UTCTIME_set(nullptr, t.time));
+    UniquePtr<ASN1_UTCTIME> utc(ASN1_UTCTIME_set(nullptr, t.time));
     if (t.utc) {
       ASSERT_TRUE(utc);
       EXPECT_EQ(V_ASN1_UTCTIME, ASN1_STRING_type(utc.get()));
@@ -1096,7 +1174,7 @@ TEST(ASN1Test, SetTime) {
       EXPECT_FALSE(utc);
     }
 
-    bssl::UniquePtr<ASN1_GENERALIZEDTIME> generalized(
+    UniquePtr<ASN1_GENERALIZEDTIME> generalized(
         ASN1_GENERALIZEDTIME_set(nullptr, t.time));
     if (t.generalized) {
       ASSERT_TRUE(generalized);
@@ -1114,7 +1192,7 @@ TEST(ASN1Test, SetTime) {
       EXPECT_FALSE(generalized);
     }
 
-    bssl::UniquePtr<ASN1_TIME> choice(ASN1_TIME_set_posix(nullptr, t.time));
+    UniquePtr<ASN1_TIME> choice(ASN1_TIME_set_posix(nullptr, t.time));
     if (t.generalized) {
       ASSERT_TRUE(choice);
       if (t.utc) {
@@ -1134,7 +1212,7 @@ TEST(ASN1Test, SetTime) {
 }
 
 TEST(ASN1Test, TimeSetString) {
-  bssl::UniquePtr<ASN1_STRING> s(ASN1_STRING_new());
+  UniquePtr<ASN1_STRING> s(ASN1_STRING_new());
   ASSERT_TRUE(s);
 
   ASSERT_TRUE(ASN1_UTCTIME_set_string(s.get(), "700101000000Z"));
@@ -1215,7 +1293,7 @@ TEST(ASN1Test, TimeSetString) {
 }
 
 TEST(ASN1Test, UTCTimeZoneOffsets) {
-  bssl::UniquePtr<ASN1_STRING> s(ASN1_STRING_new());
+  UniquePtr<ASN1_STRING> s(ASN1_STRING_new());
   ASSERT_TRUE(s);
 
   ASSERT_TRUE(ASN1_UTCTIME_set_string(s.get(), "700101000000Z"));
@@ -1241,8 +1319,7 @@ TEST(ASN1Test, UTCTimeZoneOffsets) {
 
   // Conscrypt expects a utc time with an arbitrary offset to be
   // accepted by ASN1_TIME_to_generalizedtime.
-  bssl::UniquePtr<ASN1_STRING> g(
-      ASN1_TIME_to_generalizedtime(s.get(), nullptr));
+  UniquePtr<ASN1_STRING> g(ASN1_TIME_to_generalizedtime(s.get(), nullptr));
   ASSERT_TRUE(g);
   EXPECT_EQ(V_ASN1_GENERALIZEDTIME, ASN1_STRING_type(g.get()));
   // crbug.com/389147378
@@ -1258,6 +1335,92 @@ TEST(ASN1Test, UTCTimeZoneOffsets) {
   EXPECT_TRUE(ASN1_TIME_diff(&days, &secs, s.get(), g.get()));
   EXPECT_EQ(days, 0);
   EXPECT_EQ(secs, 0);
+}
+
+TEST(ASN1Test, ToGeneralizedTime) {
+  static const struct {
+    int type;
+    std::string_view in;
+    std::optional<std::string_view> expected;
+  } kTests[] = {
+      // UTCTime is converted.
+      {V_ASN1_UTCTIME, "500101000000Z", "19500101000000Z"},
+      {V_ASN1_UTCTIME, "700101000000Z", "19700101000000Z"},
+      {V_ASN1_UTCTIME, "990101000000Z", "19990101000000Z"},
+      {V_ASN1_UTCTIME, "000101000000Z", "20000101000000Z"},
+      {V_ASN1_UTCTIME, "490101000000Z", "20490101000000Z"},
+
+      // GeneralizedTime is left as-is.
+      {V_ASN1_GENERALIZEDTIME, "00000101000000Z", "00000101000000Z"},
+      {V_ASN1_GENERALIZEDTIME, "19490101000000Z", "19490101000000Z"},
+      {V_ASN1_GENERALIZEDTIME, "19500101000000Z", "19500101000000Z"},
+      {V_ASN1_GENERALIZEDTIME, "19700101000000Z", "19700101000000Z"},
+      {V_ASN1_GENERALIZEDTIME, "19990101000000Z", "19990101000000Z"},
+      {V_ASN1_GENERALIZEDTIME, "20000101000000Z", "20000101000000Z"},
+      {V_ASN1_GENERALIZEDTIME, "20490101000000Z", "20490101000000Z"},
+      {V_ASN1_GENERALIZEDTIME, "20500101000000Z", "20500101000000Z"},
+      {V_ASN1_GENERALIZEDTIME, "99991231235959Z", "99991231235959Z"},
+
+      // For now, UTCTime with offsets are tolerated, but not GeneralizedTime.
+      {V_ASN1_UTCTIME, "000101000000-0400", "20000101000000-0400"},
+      {V_ASN1_GENERALIZEDTIME, "20000101000000-0400", std::nullopt},
+
+      // Invalid strings are rejected.
+      {V_ASN1_OCTET_STRING, "000101000000-0400", std::nullopt},
+      {V_ASN1_UTCTIME, "", std::nullopt},
+      {V_ASN1_UTCTIME, "not a time", std::nullopt},
+      {V_ASN1_UTCTIME, "000101000000", std::nullopt},
+      {V_ASN1_UTCTIME, "000101000000Znope", std::nullopt},
+      {V_ASN1_UTCTIME, "000101000000-040000", std::nullopt},
+      {V_ASN1_GENERALIZEDTIME, "", std::nullopt},
+      {V_ASN1_GENERALIZEDTIME, "not a time", std::nullopt},
+      {V_ASN1_GENERALIZEDTIME, "20000101000000", std::nullopt},
+      {V_ASN1_GENERALIZEDTIME, "20000101000000Znope", std::nullopt},
+  };
+  for (const auto &t : kTests) {
+    SCOPED_TRACE(t.type);
+    SCOPED_TRACE(t.in);
+
+    // Test the basic API.
+    UniquePtr<ASN1_STRING> str(ASN1_STRING_type_new(t.type));
+    ASSERT_TRUE(str);
+    ASSERT_TRUE(ASN1_STRING_set(str.get(), t.in.data(), t.in.size()));
+    UniquePtr<ASN1_GENERALIZEDTIME> gen(
+        ASN1_TIME_to_generalizedtime(str.get(), nullptr));
+    if (t.expected.has_value()) {
+      ASSERT_TRUE(gen);
+      EXPECT_EQ(ASN1_STRING_type(gen.get()), V_ASN1_GENERALIZEDTIME);
+      EXPECT_EQ(ASN1StringToStringView(gen.get()), *t.expected);
+    } else {
+      EXPECT_FALSE(gen);
+      return;
+    }
+
+    // Test returning a new value through the out parameter.
+    ASN1_GENERALIZEDTIME *out = nullptr;
+    gen.reset(ASN1_TIME_to_generalizedtime(str.get(), &out));
+    ASSERT_TRUE(gen);
+    EXPECT_EQ(gen.get(), out);
+    EXPECT_EQ(ASN1_STRING_type(gen.get()), V_ASN1_GENERALIZEDTIME);
+    EXPECT_EQ(ASN1StringToStringView(gen.get()), *t.expected);
+
+    // Test writing to a pre-existing object.
+    gen.reset(ASN1_GENERALIZEDTIME_new());
+    ASSERT_TRUE(ASN1_STRING_set(gen.get(), "test", -1));
+    out = gen.get();
+    ASSERT_EQ(gen.get(), ASN1_TIME_to_generalizedtime(str.get(), &out));
+    EXPECT_EQ(ASN1_STRING_type(gen.get()), V_ASN1_GENERALIZEDTIME);
+    EXPECT_EQ(ASN1StringToStringView(gen.get()), *t.expected);
+
+    // The function should not assume the input is NUL-terminated.
+    void *copy = OPENSSL_memdup(t.in.data(), t.in.size());
+    ASSERT_TRUE(t.in.empty() || copy != nullptr);
+    ASN1_STRING_set0(str.get(), copy, static_cast<int>(t.in.size()));
+    gen.reset(ASN1_TIME_to_generalizedtime(str.get(), nullptr));
+    ASSERT_TRUE(gen);
+    EXPECT_EQ(ASN1_STRING_type(gen.get()), V_ASN1_GENERALIZEDTIME);
+    EXPECT_EQ(ASN1StringToStringView(gen.get()), *t.expected);
+  }
 }
 
 TEST(ASN1Test, AdjTime) {
@@ -1510,7 +1673,7 @@ TEST(ASN1Test, StringPrintEx) {
     SCOPED_TRACE(t.str_flags);
     SCOPED_TRACE(t.flags);
 
-    bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_type_new(t.type));
+    UniquePtr<ASN1_STRING> str(ASN1_STRING_type_new(t.type));
     ASSERT_TRUE(str);
     ASSERT_TRUE(ASN1_STRING_set(str.get(), t.data.data(), t.data.size()));
     str->flags = t.str_flags;
@@ -1524,7 +1687,7 @@ TEST(ASN1Test, StringPrintEx) {
     EXPECT_EQ(len, static_cast<int>(t.expected.size()));
 
     // Actually print the string.
-    bssl::UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
+    UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
     ASSERT_TRUE(bio);
     len = ASN1_STRING_print_ex(bio.get(), str.get(), t.flags);
     EXPECT_EQ(len, static_cast<int>(t.expected.size()));
@@ -1558,6 +1721,11 @@ TEST(ASN1Test, StringPrintEx) {
        {0xff},
        0,
        ASN1_STRFLGS_ESC_MSB | ASN1_STRFLGS_UTF8_CONVERT},
+      // It is a caller error to place non-ASN1_STRING types in an ASN1_STRING.
+      // Still, we should gracefully detect this when we try to encode as DER.
+      {V_ASN1_NULL, {}, 0, ASN1_STRFLGS_DUMP_ALL | ASN1_STRFLGS_DUMP_DER},
+      {V_ASN1_BOOLEAN, {}, 0, ASN1_STRFLGS_DUMP_ALL | ASN1_STRFLGS_DUMP_DER},
+      {V_ASN1_OBJECT, {}, 0, ASN1_STRFLGS_DUMP_ALL | ASN1_STRFLGS_DUMP_DER},
   };
   for (const auto &t : kUnprintableTests) {
     SCOPED_TRACE(t.type);
@@ -1565,7 +1733,7 @@ TEST(ASN1Test, StringPrintEx) {
     SCOPED_TRACE(t.str_flags);
     SCOPED_TRACE(t.flags);
 
-    bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_type_new(t.type));
+    UniquePtr<ASN1_STRING> str(ASN1_STRING_type_new(t.type));
     ASSERT_TRUE(str);
     ASSERT_TRUE(ASN1_STRING_set(str.get(), t.data.data(), t.data.size()));
     str->flags = t.str_flags;
@@ -1581,7 +1749,7 @@ TEST(ASN1Test, StringPrintEx) {
     ERR_clear_error();
 
     // Actually print the string.
-    bssl::UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
+    UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
     ASSERT_TRUE(bio);
     len = ASN1_STRING_print_ex(bio.get(), str.get(), t.flags);
     EXPECT_EQ(len, -1);
@@ -1853,7 +2021,7 @@ TEST(ASN1Test, StringByNID) {
     SCOPED_TRACE(t.in);
 
     // Test allocating a new object.
-    bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
+    UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
         nullptr, reinterpret_cast<const uint8_t *>(t.in.data()), t.in.size(),
         MBSTRING_UTF8, t.nid));
     ASSERT_TRUE(str);
@@ -1918,7 +2086,7 @@ TEST(ASN1Test, StringByNID) {
   for (const auto &t : kInvalidTests) {
     SCOPED_TRACE(t.nid);
     SCOPED_TRACE(t.in);
-    bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
+    UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
         nullptr, reinterpret_cast<const uint8_t *>(t.in.data()), t.in.size(),
         MBSTRING_UTF8, t.nid));
     EXPECT_FALSE(str);
@@ -1939,7 +2107,7 @@ TEST(ASN1Test, StringByCustomNID) {
   // Values registered in the string table should be picked up.
   ASSERT_TRUE(ASN1_STRING_TABLE_add(nid1, 5, 10, V_ASN1_PRINTABLESTRING,
                                     STABLE_NO_MASK));
-  bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
+  UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
       nullptr, reinterpret_cast<const uint8_t *>("12345"), 5, MBSTRING_UTF8,
       nid1));
   ASSERT_TRUE(str);
@@ -1991,7 +2159,7 @@ TEST(ASN1Test, StringByCustomNIDThreads) {
   threads.emplace_back([&] {
     ASSERT_TRUE(ASN1_STRING_TABLE_add(nid1, 5, 10, V_ASN1_PRINTABLESTRING,
                                       STABLE_NO_MASK));
-    bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
+    UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
         nullptr, reinterpret_cast<const uint8_t *>("12345"), 5, MBSTRING_UTF8,
         nid1));
     ASSERT_TRUE(str);
@@ -2002,7 +2170,7 @@ TEST(ASN1Test, StringByCustomNIDThreads) {
   threads.emplace_back([&] {
     ASSERT_TRUE(ASN1_STRING_TABLE_add(nid2, 5, 10, V_ASN1_PRINTABLESTRING,
                                       STABLE_NO_MASK));
-    bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
+    UniquePtr<ASN1_STRING> str(ASN1_STRING_set_by_NID(
         nullptr, reinterpret_cast<const uint8_t *>("12345"), 5, MBSTRING_UTF8,
         nid2));
     ASSERT_TRUE(str);
@@ -2018,7 +2186,7 @@ TEST(ASN1Test, StringByCustomNIDThreads) {
 
 // Encoding a CHOICE type with an invalid selector should fail.
 TEST(ASN1Test, InvalidChoice) {
-  bssl::UniquePtr<GENERAL_NAME> name(GENERAL_NAME_new());
+  UniquePtr<GENERAL_NAME> name(GENERAL_NAME_new());
   ASSERT_TRUE(name);
   // CHOICE types are initialized with an invalid selector.
   EXPECT_EQ(-1, name->type);
@@ -2026,9 +2194,9 @@ TEST(ASN1Test, InvalidChoice) {
   EXPECT_EQ(-1, i2d_GENERAL_NAME(name.get(), nullptr));
 
   // The error should be propagated through types containing |name|.
-  bssl::UniquePtr<GENERAL_NAMES> names(GENERAL_NAMES_new());
+  UniquePtr<GENERAL_NAMES> names(GENERAL_NAMES_new());
   ASSERT_TRUE(names);
-  EXPECT_TRUE(bssl::PushToStack(names.get(), std::move(name)));
+  EXPECT_TRUE(PushToStack(names.get(), std::move(name)));
   EXPECT_EQ(-1, i2d_GENERAL_NAMES(names.get(), nullptr));
 }
 
@@ -2036,7 +2204,7 @@ TEST(ASN1Test, InvalidChoice) {
 TEST(ASN1Test, InvalidObject) {
   EXPECT_EQ(-1, i2d_ASN1_OBJECT(OBJ_nid2obj(NID_kx_ecdhe), nullptr));
 
-  bssl::UniquePtr<X509_ALGOR> alg(X509_ALGOR_new());
+  UniquePtr<X509_ALGOR> alg(X509_ALGOR_new());
   ASSERT_TRUE(alg);
   ASSERT_TRUE(X509_ALGOR_set0(alg.get(), OBJ_nid2obj(NID_kx_ecdhe),
                               V_ASN1_UNDEF, nullptr));
@@ -2046,7 +2214,7 @@ TEST(ASN1Test, InvalidObject) {
 // Encoding invalid |ASN1_TYPE|s should fail. |ASN1_TYPE|s are
 // default-initialized to an invalid type.
 TEST(ASN1Test, EncodeInvalidASN1Type) {
-  bssl::UniquePtr<ASN1_TYPE> obj(ASN1_TYPE_new());
+  UniquePtr<ASN1_TYPE> obj(ASN1_TYPE_new());
   ASSERT_TRUE(obj);
   EXPECT_EQ(-1, obj->type);
   EXPECT_EQ(-1, i2d_ASN1_TYPE(obj.get(), nullptr));
@@ -2065,7 +2233,7 @@ TEST(ASN1Test, EncodeInvalidASN1Type) {
 // Encoding invalid MSTRING types should fail. An MSTRING is a CHOICE of
 // string-like types. They are initialized to an invalid type.
 TEST(ASN1Test, InvalidMSTRING) {
-  bssl::UniquePtr<ASN1_STRING> obj(ASN1_TIME_new());
+  UniquePtr<ASN1_STRING> obj(ASN1_TIME_new());
   ASSERT_TRUE(obj);
   EXPECT_EQ(-1, obj->type);
   EXPECT_EQ(-1, i2d_ASN1_TIME(obj.get(), nullptr));
@@ -2078,9 +2246,9 @@ TEST(ASN1Test, InvalidMSTRING) {
 
 TEST(ASN1Test, TypeMismatch) {
   // Pack PSS parameters into an |ASN1_STRING|. This makes an OCTET STRING.
-  bssl::UniquePtr<RSA_PSS_PARAMS> pss(RSA_PSS_PARAMS_new());
+  UniquePtr<RSA_PSS_PARAMS> pss(RSA_PSS_PARAMS_new());
   ASSERT_TRUE(pss);
-  bssl::UniquePtr<ASN1_STRING> str(
+  UniquePtr<ASN1_STRING> str(
       ASN1_item_pack(pss.get(), ASN1_ITEM_rptr(RSA_PSS_PARAMS), nullptr));
   ASSERT_TRUE(str);
   EXPECT_EQ(ASN1_STRING_type(str.get()), V_ASN1_OCTET_STRING);
@@ -2088,7 +2256,7 @@ TEST(ASN1Test, TypeMismatch) {
   // Pass this to |X509_ALGOR_set0| as a |V_ASN1_SEQUENCE|, which uses the
   // |ASN1_TYPE_set0| calling convention. This leads to an ambiguous state:
   // whether this should be a SEQUENCE or OCTET STRING value.
-  bssl::UniquePtr<X509_ALGOR> alg(X509_ALGOR_new());
+  UniquePtr<X509_ALGOR> alg(X509_ALGOR_new());
   ASSERT_TRUE(alg);
   ASSERT_TRUE(X509_ALGOR_set0(alg.get(), OBJ_nid2obj(NID_rsassaPss),
                               V_ASN1_SEQUENCE, str.release()));
@@ -2115,6 +2283,25 @@ TEST(ASN1Test, TypeMismatch) {
   // test is currently a no-op, but will not be if the above TODO is resolved.
   alg->parameter->value.asn1_string->type = V_ASN1_OCTET_STRING;
   TestSerialize(alg.get(), i2d_X509_ALGOR, kExpected);
+
+  // Repeat the test for a UTF8String parameter that, somehow, was constructed
+  // from an |ASN1_STRING| with the wrong type. This is much less likely than
+  // the |ASN1_item_pack| API flow for making a |V_ASN1_SEQUENCE|, but we should
+  // still be consistent about preferring the |ASN1_TYPE| or |ASN1_STRING| type
+  // value.
+  UniquePtr<ASN1_OCTET_STRING> utf8(ASN1_OCTET_STRING_new());
+  ASSERT_TRUE(utf8);
+  ASSERT_TRUE(X509_ALGOR_set0(alg.get(), OBJ_nid2obj(NID_rsassaPss),
+                              V_ASN1_UTF8STRING, utf8.release()));
+  // SEQUENCE {
+  //   # rsassa-pss
+  //   OBJECT_IDENTIFIER { 1.2.840.113549.1.1.10 }
+  //   UTF8String {}
+  // }
+  static const uint8_t kExpectedUTF8[] = {0x30, 0x0d, 0x06, 0x09, 0x2a,
+                                          0x86, 0x48, 0x86, 0xf7, 0x0d,
+                                          0x01, 0x01, 0x0a, 0x0c, 0x00};
+  TestSerialize(alg.get(), i2d_X509_ALGOR, kExpectedUTF8);
 }
 
 TEST(ASN1Test, StringTableSorted) {
@@ -2153,8 +2340,7 @@ TEST(ASN1Test, Null) {
   // Although the standalone representation of NULL is a non-null pointer, the
   // |ASN1_TYPE| representation is a null pointer.
   ptr = kNull;
-  bssl::UniquePtr<ASN1_TYPE> null_type(
-      d2i_ASN1_TYPE(nullptr, &ptr, sizeof(kNull)));
+  UniquePtr<ASN1_TYPE> null_type(d2i_ASN1_TYPE(nullptr, &ptr, sizeof(kNull)));
   ASSERT_TRUE(null_type);
   EXPECT_EQ(ptr, kNull + sizeof(kNull));
   EXPECT_EQ(V_ASN1_NULL, ASN1_TYPE_get(null_type.get()));
@@ -2162,13 +2348,13 @@ TEST(ASN1Test, Null) {
 }
 
 TEST(ASN1Test, Pack) {
-  bssl::UniquePtr<BASIC_CONSTRAINTS> val(BASIC_CONSTRAINTS_new());
+  UniquePtr<BASIC_CONSTRAINTS> val(BASIC_CONSTRAINTS_new());
   ASSERT_TRUE(val);
   val->ca = 0;
 
   // Test all three calling conventions.
   static const uint8_t kExpected[] = {0x30, 0x00};
-  bssl::UniquePtr<ASN1_STRING> str(
+  UniquePtr<ASN1_STRING> str(
       ASN1_item_pack(val.get(), ASN1_ITEM_rptr(BASIC_CONSTRAINTS), nullptr));
   ASSERT_TRUE(str);
   EXPECT_EQ(ASN1_STRING_type(str.get()), V_ASN1_OCTET_STRING);
@@ -2198,12 +2384,12 @@ TEST(ASN1Test, Pack) {
 }
 
 TEST(ASN1Test, Unpack) {
-  bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_new());
+  UniquePtr<ASN1_STRING> str(ASN1_STRING_new());
   ASSERT_TRUE(str);
 
   static const uint8_t kValid[] = {0x30, 0x00};
   ASSERT_TRUE(ASN1_STRING_set(str.get(), kValid, sizeof(kValid)));
-  bssl::UniquePtr<BASIC_CONSTRAINTS> val(static_cast<BASIC_CONSTRAINTS *>(
+  UniquePtr<BASIC_CONSTRAINTS> val(static_cast<BASIC_CONSTRAINTS *>(
       ASN1_item_unpack(str.get(), ASN1_ITEM_rptr(BASIC_CONSTRAINTS))));
   ASSERT_TRUE(val);
   EXPECT_EQ(val->ca, 0);
@@ -2235,9 +2421,6 @@ TEST(ASN1Test, StringCmp) {
   const Input kInputs[] = {
       {V_ASN1_BIT_STRING, {}, ASN1_STRING_FLAG_BITS_LEFT | 0, false},
       {V_ASN1_BIT_STRING, {}, 0, true},
-      // When |ASN1_STRING_FLAG_BITS_LEFT| is unset, BIT STRINGs implicitly
-      // drop trailing zeros.
-      {V_ASN1_BIT_STRING, {0x00, 0x00, 0x00, 0x00}, 0, true},
 
       {V_ASN1_OCTET_STRING, {}, 0, false},
       {V_ASN1_UTF8STRING, {}, 0, false},
@@ -2255,8 +2438,6 @@ TEST(ASN1Test, StringCmp) {
       {V_ASN1_BIT_STRING, {0xe0}, ASN1_STRING_FLAG_BITS_LEFT | 5, false},
       // 4-bit inputs.
       {V_ASN1_BIT_STRING, {0xf0}, ASN1_STRING_FLAG_BITS_LEFT | 4, false},
-      {V_ASN1_BIT_STRING, {0xf0}, 0, true},        // 4 trailing zeros dropped.
-      {V_ASN1_BIT_STRING, {0xf0, 0x00}, 0, true},  // 12 trailing zeros dropped.
       // 5-bit inputs.
       {V_ASN1_BIT_STRING, {0x00}, ASN1_STRING_FLAG_BITS_LEFT | 3, false},
       {V_ASN1_BIT_STRING, {0xf0}, ASN1_STRING_FLAG_BITS_LEFT | 3, false},
@@ -2297,7 +2478,7 @@ TEST(ASN1Test, StringCmp) {
       {V_ASN1_OCTET_STRING, {0xff, 0x00}, 0, false},
       {V_ASN1_UTF8STRING, {0xff, 0x00}, 0, false},
   };
-  std::vector<bssl::UniquePtr<ASN1_STRING>> strs;
+  std::vector<UniquePtr<ASN1_STRING>> strs;
   strs.reserve(std::size(kInputs));
   for (const auto &input : kInputs) {
     strs.emplace_back(ASN1_STRING_type_new(input.type));
@@ -2386,10 +2567,10 @@ TEST(ASN1Test, PrintASN1Object) {
   };
   for (const auto &t : kDataTests) {
     SCOPED_TRACE(Bytes(t.in));
-    bssl::UniquePtr<ASN1_OBJECT> obj(ASN1_OBJECT_create(
+    UniquePtr<ASN1_OBJECT> obj(ASN1_OBJECT_create(
         NID_undef, t.in.data(), t.in.size(), /*sn=*/nullptr, /*ln=*/nullptr));
     ASSERT_TRUE(obj);
-    bssl::UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
+    UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
     ASSERT_TRUE(bio);
 
     int len = i2a_ASN1_OBJECT(bio.get(), obj.get());
@@ -2403,7 +2584,7 @@ TEST(ASN1Test, PrintASN1Object) {
   }
 
   // Test writing NULL.
-  bssl::UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
+  UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
   ASSERT_TRUE(bio);
   int len = i2a_ASN1_OBJECT(bio.get(), nullptr);
   EXPECT_EQ(len, 4);
@@ -2449,7 +2630,7 @@ void ExpectNoParse(T *(*d2i)(T **, const uint8_t **, long),
                    const std::vector<uint8_t> &in) {
   SCOPED_TRACE(Bytes(in));
   const uint8_t *ptr = in.data();
-  bssl::UniquePtr<T> obj(d2i(nullptr, &ptr, in.size()));
+  UniquePtr<T> obj(d2i(nullptr, &ptr, in.size()));
   EXPECT_FALSE(obj);
 }
 
@@ -2543,13 +2724,13 @@ TEST(ASN1Test, StringEncoding) {
 
     if (t.d2i != nullptr) {
       inp = t.in.data();
-      bssl::UniquePtr<ASN1_STRING> str(t.d2i(nullptr, &inp, t.in.size()));
+      UniquePtr<ASN1_STRING> str(t.d2i(nullptr, &inp, t.in.size()));
       EXPECT_EQ(t.valid, str != nullptr);
     }
 
     // Also test with the ANY parser.
     inp = t.in.data();
-    bssl::UniquePtr<ASN1_TYPE> any(d2i_ASN1_TYPE(nullptr, &inp, t.in.size()));
+    UniquePtr<ASN1_TYPE> any(d2i_ASN1_TYPE(nullptr, &inp, t.in.size()));
     EXPECT_EQ(t.valid, any != nullptr);
   }
 }
@@ -2602,7 +2783,7 @@ TEST(ASN1Test, POSIXTime) {
 }
 
 TEST(ASN1Test, LargeString) {
-  bssl::UniquePtr<ASN1_STRING> str(ASN1_STRING_type_new(V_ASN1_OCTET_STRING));
+  UniquePtr<ASN1_STRING> str(ASN1_STRING_type_new(V_ASN1_OCTET_STRING));
   ASSERT_TRUE(str);
   // Very large strings should be rejected by |ASN1_STRING_set|. Strictly
   // speaking, this is an invalid call because the buffer does not have that
@@ -2716,9 +2897,9 @@ ASN1_SEQUENCE(ASN1_LINKED_LIST) = {
 
 IMPLEMENT_ASN1_FUNCTIONS(ASN1_LINKED_LIST)
 
-static bool MakeLinkedList(bssl::UniquePtr<uint8_t> *out, size_t *out_len,
+static bool MakeLinkedList(UniquePtr<uint8_t> *out, size_t *out_len,
                            size_t count) {
-  bssl::ScopedCBB cbb;
+  ScopedCBB cbb;
   std::vector<CBB> cbbs(count);
   if (!CBB_init(cbb.get(), 2 * count) ||
       !CBB_add_asn1(cbb.get(), &cbbs[0], CBS_ASN1_SEQUENCE)) {
@@ -2738,7 +2919,7 @@ static bool MakeLinkedList(bssl::UniquePtr<uint8_t> *out, size_t *out_len,
 }
 
 TEST(ASN1Test, Recursive) {
-  bssl::UniquePtr<uint8_t> data;
+  UniquePtr<uint8_t> data;
   size_t len;
 
   // Sanity-check that MakeLinkedList can be parsed.
@@ -3103,7 +3284,7 @@ ASN1_SEQUENCE(EMBED_X509) = {
 IMPLEMENT_ASN1_FUNCTIONS(EMBED_X509)
 
 template <typename EmbedT, typename T, typename MaybeConstT, typename StackT>
-void TestEmbedType(bssl::Span<const uint8_t> inp,
+void TestEmbedType(Span<const uint8_t> inp,
                    int (*i2d)(MaybeConstT *, uint8_t **),
                    EmbedT *(*embed_new)(), void (*embed_free)(EmbedT *),
                    EmbedT *(*d2i_embed)(EmbedT **, const uint8_t **, long),
@@ -3113,7 +3294,7 @@ void TestEmbedType(bssl::Span<const uint8_t> inp,
   std::unique_ptr<EmbedT, decltype(embed_free)> obj(nullptr, embed_free);
 
   // Test only the first field present.
-  bssl::ScopedCBB cbb;
+  ScopedCBB cbb;
   ASSERT_TRUE(CBB_init(cbb.get(), 64));
   ASSERT_TRUE(CBB_add_asn1_element(cbb.get(), CBS_ASN1_SEQUENCE, inp.data(),
                                    inp.size()));
@@ -3231,3 +3412,5 @@ TEST(ASN1Test, EmbedTypes) {
 }
 
 #endif  // !WINDOWS || !SHARED_LIBRARY
+
+BSSL_NAMESPACE_END

@@ -20,7 +20,6 @@
 #include "api/task_queue/task_queue_base.h"
 #include "modules/rtp_rtcp/source/frame_object.h"
 #include "rtc_base/system/no_unique_address.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 
@@ -37,7 +36,7 @@ class RtpVideoFrameReceiver {
 };
 
 // Delegates calls to FrameTransformerInterface to transform frames, and to
-// RtpVideoStreamReceiver to manage transformed frames on the `network_thread_`.
+// RtpVideoStreamReceiver to manage transformed frames on the `task_queue`.
 class RtpVideoStreamReceiverFrameTransformerDelegate
     : public TransformedFrameCallback {
  public:
@@ -45,7 +44,7 @@ class RtpVideoStreamReceiverFrameTransformerDelegate
       RtpVideoFrameReceiver* receiver,
       Clock* clock,
       scoped_refptr<FrameTransformerInterface> frame_transformer,
-      Thread* network_thread,
+      TaskQueueBase* task_queue,
       uint32_t ssrc);
 
   void Init();

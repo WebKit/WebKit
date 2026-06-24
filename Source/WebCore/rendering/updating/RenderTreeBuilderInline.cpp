@@ -61,7 +61,7 @@ void RenderTreeBuilder::Inline::attach(RenderInline& parent, RenderPtr<RenderObj
 
     auto& childToAdd = *child;
     m_builder.attachToRenderElement(parent, WTF::move(child), beforeChildOrPlaceholder);
-    childToAdd.setNeedsLayoutAndPreferredWidthsUpdate();
+    childToAdd.setNeedsLayoutAndInvalidateContentLogicalWidths();
 }
 
 }

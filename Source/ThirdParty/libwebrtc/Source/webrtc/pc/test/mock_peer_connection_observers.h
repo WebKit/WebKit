@@ -479,6 +479,7 @@ class MockDataChannelObserver : public DataChannelObserver {
   ~MockDataChannelObserver() override { channel_->UnregisterObserver(); }
 
   void OnBufferedAmountChange(uint64_t previous_amount) override {}
+  void OnMaxMessageSize(int max_message_size) override {}
 
   void OnStateChange() override {
     states_.push_back(channel_->state());

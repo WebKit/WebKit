@@ -1,0 +1,6 @@
+
+PASS src: missing attribute -> IDL getter returns empty string
+PASS src: relative URL resolves against document base URL
+PASS src: surrounding whitespace stripped before URL parse
+PASS src: empty value fires 'error' and sets readyState to ERROR
+

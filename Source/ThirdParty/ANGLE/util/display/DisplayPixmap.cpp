@@ -8,7 +8,8 @@
 
 #include "util/OSPixmap.h"
 
-#if defined(ANGLE_USE_VULKAN_DISPLAY) && defined(EGL_NO_X11)
+// standalone Wayland
+#if defined(EGL_NO_X11)
 OSPixmap *CreateOSPixmap()
 {
     return nullptr;

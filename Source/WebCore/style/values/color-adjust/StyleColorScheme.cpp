@@ -50,7 +50,7 @@ OptionSet<WebCore::ColorScheme> ColorScheme::colorScheme() const
 
 // MARK: - Conversion
 
-Ref<CSSValue> CSSValueCreation<ColorScheme>::operator()(CSSValuePool&, const RenderStyle& style, const ColorScheme& value)
+Ref<CSSValue> CSSValueCreation<ColorScheme>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const ColorScheme& value)
 {
     return CSSColorSchemeValue::create(toCSS(value, style));
 }
@@ -65,7 +65,7 @@ auto CSSValueConversion<ColorScheme>::operator()(BuilderState& state, const CSSV
 
 // MARK: - Serialization
 
-void Serialize<ColorScheme>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const ColorScheme& value)
+void Serialize<ColorScheme>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const ColorScheme& value)
 {
     if (value.isNormal()) {
         serializationForCSS(builder, context, style, CSS::Keyword::Normal { });

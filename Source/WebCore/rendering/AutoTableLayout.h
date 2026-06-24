@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,9 +36,9 @@ public:
     explicit AutoTableLayout(RenderTable*);
     virtual ~AutoTableLayout();
 
-    void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics) override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths(TableIntrinsics) override;
     LayoutUnit scaledWidthFromPercentColumns() const override { return m_scaledWidthFromPercentColumns; }
-    void applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const override;
+    void applyContentLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const override;
     void layout() override;
 
 private:
@@ -48,6 +49,8 @@ private:
     template<typename> float NODELETE shrinkCellWidthForType(float available);
 
     void insertSpanCell(RenderTableCell*);
+
+    bool isColumnCollapsed(unsigned effCol) const;
 
     struct Layout {
         Style::PreferredSize logicalWidth { CSS::Keyword::Auto { } };
@@ -63,8 +66,8 @@ private:
 
     Vector<Layout> m_layoutStruct;
     Vector<RenderTableCell*> m_spanCells;
-    bool m_hasPercent : 1;
-    mutable bool m_effectiveLogicalWidthDirty : 1;
+    bool m_hasPercent : 1 { false };
+    mutable bool m_effectiveLogicalWidthDirty : 1 { true };
     LayoutUnit m_scaledWidthFromPercentColumns;
 };
 

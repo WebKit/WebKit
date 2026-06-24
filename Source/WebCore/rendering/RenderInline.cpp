@@ -64,14 +64,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderInline);
 
-RenderInline::RenderInline(Type type, Element& element, RenderStyle&& style)
+RenderInline::RenderInline(Type type, Element& element, Style::ComputedStyle&& style)
     : RenderBoxModelObject(type, element, WTF::move(style), TypeFlag::IsRenderInline, { })
 {
     setChildrenInline(true);
     ASSERT(isRenderInline());
 }
 
-RenderInline::RenderInline(Type type, Document& document, RenderStyle&& style)
+RenderInline::RenderInline(Type type, Document& document, Style::ComputedStyle&& style)
     : RenderBoxModelObject(type, document, WTF::move(style), TypeFlag::IsRenderInline, { })
 {
     setChildrenInline(true);
@@ -116,7 +116,7 @@ void RenderInline::updateFromStyle()
     setHasReflection(false);    
 }
 
-void RenderInline::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
+void RenderInline::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
 {
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 
@@ -126,12 +126,12 @@ void RenderInline::styleWillChange(Style::Difference diff, const RenderStyle& ne
     if (!container)
         return;
 
-    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+    const Style::ComputedStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     if (oldStyle)
         removeOutOfFlowBoxesIfNeededOnStyleChange(*container, *oldStyle, newStyle);
 }
 
-void RenderInline::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderInline::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
 

@@ -1,15 +1,16 @@
 <!-- go/cmark -->
-<!--* freshness: {owner: 'hta' reviewed: '2025-10-01'} *-->
+
+<!--* freshness: {owner: 'hta' reviewed: '2026-04-23'} *-->
 
 # Field trials
 
 WebRTC provides some means to alter its default behavior during run-time,
-colloquially known as *field trials*. This is foremost used for A/B testing new
-features and are related to
+colloquially known as *field trials*. This is primarily used for A/B testing new
+features and is related to
 [Chromium field trials](https://chromium.googlesource.com/chromium/src/+/main/testing/variations/README.md)
 to facilitate interoperability.
 
-A field trial consist of a key-value pair of strings. By convention, the field
+A field trial consists of a key-value pair of strings. By convention, the field
 trial key is prefixed with `WebRTC-` and each word is capitalized without
 spaces. Sometimes the key is further subdivided into a category, for example,
 `WebRTC-MyCategory-MyExperiment`. The field trial value is an opaque string and
@@ -33,14 +34,14 @@ trials this way, for example:
 
 The policy for field trials is:
 
--   A field trial should only be used to test out new code or parameters for a
-    limited time period. It should not be used for configuring persistent
-    behavior.
--   The field trial must have an end date. The end date may be pushed back if
-    necessary, but should not be pushed back indefinitely.
--   A field trial must be associated with a bug that
-    -   reserves the field trial key, and
-    -   is assigned to an owner.
+- A field trial should only be used to test out new code or parameters for a
+  limited time period. It should not be used for configuring persistent
+  behavior.
+- The field trial must have an end date. The end date may be pushed back if
+  necessary, but should not be pushed back indefinitely.
+- A field trial must be associated with a bug that
+  - reserves the field trial key, and
+  - is assigned to an owner.
 
 ## Creating a field trial
 
@@ -62,9 +63,9 @@ created before the policy was in place.
 Any field trial that has expired or otherwise is not needed anymore may be
 removed by following these steps:
 
--   Remove all references from the code base. You can find these by, e.g.
-    grepping for the field trial key.
--   Clean up potential glue code that might have been added.
--   Remove the field trial from `ACTIVE_FIELD_TRIALS` in
-    `experiments/field_trials.py`.
--   If all work is finished, also close the associated bug.
+- Remove all references from the code base. You can find these by, e.g. grepping
+  for the field trial key.
+- Clean up potential glue code that might have been added.
+- Remove the field trial from `ACTIVE_FIELD_TRIALS` in
+  `experiments/field_trials.py`.
+- If all work is finished, also close the associated bug.

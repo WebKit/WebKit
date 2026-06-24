@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import re
 
 from webkitcorepy import Version
 
@@ -42,6 +43,13 @@ class VisionOSPort(EmbeddedPort):
         if self._os_version is None:
             return None
         return VersionNameMap.map(self.host.platform).to_name(self._os_version, platform=VisionOSPort.port_name)
+
+    def logging_patterns_to_strip(self):
+        logging_patterns = super(VisionOSPort, self).logging_patterns_to_strip()
+        # Filter out noise from USDLib.
+        logging_patterns.append((re.compile('Total unique meshes to compress:.*\n'), ''))
+        logging_patterns.append((re.compile('Compressing mesh:.*\n'), ''))
+        return logging_patterns
 
     def default_baseline_search_path(self, device_type=None, **kwargs):
         if device_type is None:

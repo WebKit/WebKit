@@ -16,9 +16,9 @@
 #include <limits>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/function_view.h"
 #include "api/units/time_delta.h"
@@ -299,7 +299,7 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPayloadPaddingPacket(
 }
 
 void RtpPacketHistory::CullAcknowledgedPackets(
-    ArrayView<const uint16_t> sequence_numbers) {
+    std::span<const uint16_t> sequence_numbers) {
   MutexLock lock(&lock_);
   for (uint16_t sequence_number : sequence_numbers) {
     int packet_index = GetPacketIndex(sequence_number);

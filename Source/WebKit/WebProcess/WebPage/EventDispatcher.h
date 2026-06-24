@@ -161,6 +161,8 @@ private:
     void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) override;
     void stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) override;
 
+    void didEndSyntheticMomentumScrolling() override { }
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     void flushMomentumEventLoggingSoon() override;
 #endif

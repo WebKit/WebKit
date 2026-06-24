@@ -5,10 +5,7 @@
     <script src="../../../resources/js-test.js"></script>
     <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
+        window.jsTestIsAsync = true;
 
         async function runSubTests() {
             overflowElement = document.getElementById("overflowTest");
@@ -86,7 +83,7 @@
 
             // Done.
 
-            testRunner.notifyDone();
+            finishJSTest();
 
         }
     </script>

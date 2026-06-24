@@ -31,8 +31,8 @@
 #include "InlineIteratorTextBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderCombineText.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGInlineTextBox.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace InlineIterator {

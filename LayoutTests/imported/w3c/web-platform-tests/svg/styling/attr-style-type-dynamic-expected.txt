@@ -1,0 +1,6 @@
+
+PASS Initial state: invalid type leaves the sheet unprocessed
+FAIL Changing the type from invalid to valid creates the stylesheet assert_equals: sheet should be created once the type becomes CSS expected 1 but got 0
+PASS Changing the type from valid to invalid removes the stylesheet
+FAIL Removing the type attribute restores the default CSS handling assert_equals: sheet should be created once the type attribute is removed expected 1 but got 0
+

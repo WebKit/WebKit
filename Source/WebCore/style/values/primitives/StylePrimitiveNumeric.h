@@ -24,7 +24,9 @@
 
 #pragma once
 
+#include <WebCore/CSSKeyword.h>
 #include <WebCore/CSSPrimitiveNumeric.h>
+#include <WebCore/StylePrimitiveData.h>
 #include <WebCore/StylePrimitiveNumeric+Forward.h>
 #include <WebCore/StylePrimitiveNumericConcepts.h>
 #include <WebCore/StyleUnevaluatedCalculation.h>
@@ -38,6 +40,8 @@ namespace WebCore {
 namespace Style {
 
 template<typename> struct DimensionPercentageMapping;
+template<Numeric, WebCore::CSS::SpecificKeyword...> struct PrimitiveNumericOrKeyword;
+template<typename, typename> struct EvaluationMinimum;
 
 struct PrimitiveNumericEmptyToken { constexpr bool operator==(const PrimitiveNumericEmptyToken&) const = default; };
 
@@ -68,6 +72,8 @@ template<CSS::Numeric CSSType> struct PrimitiveNumeric {
         : value { clampTo<ResolvedValueType>(value.value) }
     {
     }
+
+    constexpr auto unresolvedValue() const { return value; }
 
     constexpr bool isZero() const requires (range.min <= 0 && range.max >= 0) { return !value; }
     constexpr bool isKnownZero() const requires (range.min <= 0 && range.max >= 0) { return isZero(); }
@@ -271,6 +277,204 @@ private:
     Representation m_value;
 };
 
+// Specialization of `PrimitiveNumeric` for `CSS::LengthPercentage` types.
+template<CSS::Range R, typename V> struct PrimitiveNumeric<CSS::LengthPercentage<R, V>> {
+    using CSS = CSS::LengthPercentage<R, V>;
+    using Raw = typename CSS::Raw;
+    using UnitType = typename CSS::UnitType;
+    using UnitTraits = typename CSS::UnitTraits;
+    using ResolvedValueType = typename CSS::ResolvedValueType;
+    static constexpr auto range = CSS::range;
+    static constexpr auto category = CSS::category;
+
+    // Composite types only currently support float as the `ResolvedValueType`, allowing unconditional use of `CompactVariant`.
+    static_assert(std::same_as<ResolvedValueType, float>);
+
+    using Dimension = typename DimensionPercentageMapping<CSS>::Dimension;
+    using Percentage = typename DimensionPercentageMapping<CSS>::Percentage;
+    using Calc = UnevaluatedCalculation<CSS>;
+
+    PrimitiveNumeric(Dimension dimension)
+        : m_value(indexForType<Dimension>(), dimension.unresolvedValue())
+    {
+    }
+
+    PrimitiveNumeric(Dimension dimension, bool hasQuirk)
+        : m_value(indexForType<Dimension>(), dimension.unresolvedValue(), hasQuirk)
+    {
+    }
+
+    PrimitiveNumeric(Percentage percentage)
+        : m_value(indexForType<Percentage>(), percentage.unresolvedValue())
+    {
+    }
+
+    PrimitiveNumeric(const Calc& calc)
+        : m_value(indexForType<Calc>(), calc)
+    {
+    }
+
+    PrimitiveNumeric(Calc&& calc)
+        : m_value(indexForType<Calc>(), WTF::move(calc))
+    {
+    }
+
+    PrimitiveNumeric(WebCore::CSS::ValueLiteral<Dimension::UnitTraits::canonical> literal)
+        : PrimitiveNumeric { Dimension { literal } }
+    {
+    }
+
+    PrimitiveNumeric(WebCore::CSS::ValueLiteral<Percentage::UnitTraits::canonical> literal)
+        : PrimitiveNumeric { Percentage { literal } }
+    {
+    }
+
+    explicit PrimitiveNumeric(WTF::HashTableEmptyValueType token)
+        : m_value(token)
+    {
+    }
+
+    explicit PrimitiveNumeric(WTF::HashTableDeletedValueType token)
+        : m_value(token)
+    {
+    }
+
+    bool hasQuirk() const { return m_value.hasQuirk(); }
+
+    ALWAYS_INLINE bool isDimension() const { return holdsAlternative<Dimension>(); }
+    ALWAYS_INLINE bool isPercentage() const { return holdsAlternative<Percentage>(); }
+    ALWAYS_INLINE bool isCalc() const { return holdsAlternative<Calc>();}
+    ALWAYS_INLINE bool isPercentageOrCalc() const { return !holdsAlternative<Dimension>(); }
+
+    std::optional<Dimension> tryDimension() const { return tryGet<Dimension>(); }
+    std::optional<Percentage> tryPercentage() const { return tryGet<Percentage>(); }
+    std::optional<Calc> tryCalc() const { return tryGet<Calc>(); }
+
+    // `isKnownZero` returns whether the value can be guaranteed to be `0`. calc() returns `false`.
+    ALWAYS_INLINE bool isKnownZero() const requires (range.min <= 0 && range.max >= 0) { return m_value.isKnownZero(evaluationKind()); }
+    // `isKnownPositive` returns whether the value can be guaranteed to be more than `0`. calc() returns `false`.
+    ALWAYS_INLINE bool isKnownPositive() const requires (range.max > 0) { return m_value.isKnownPositive(evaluationKind()); }
+    // `isKnownNegative` returns whether the value can be guaranteed to be less than `0`. calc() returns `false`.
+    ALWAYS_INLINE bool isKnownNegative() const requires (range.min < 0) { return m_value.isKnownNegative(evaluationKind()); }
+
+    // `isPossiblyZero` returns whether the value can possibly be `0`. calc() returns `true`.
+    ALWAYS_INLINE bool isPossiblyZero() const requires (range.min <= 0 && range.max >= 0) { return m_value.isPossiblyZero(evaluationKind()); }
+    // `isPossiblyPositive` returns whether the value can possibly be more than `0`. calc() returns `true.
+    ALWAYS_INLINE bool isPossiblyPositive() const requires (range.max > 0) { return m_value.isPossiblyPositive(evaluationKind()); }
+    // `isPossiblyNegative` returns whether the value can possibly be less than `0`. calc() returns `true.
+    ALWAYS_INLINE bool isPossiblyNegative() const requires (range.min < 0) { return m_value.isPossiblyNegative(evaluationKind()); }
+
+    template<typename T> bool holdsAlternative() const
+    {
+        return m_value.type() == indexForType<T>();
+    }
+
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+
+        auto opaqueType = m_value.type();
+
+        if (opaqueType == indexForType<Dimension>())
+            return visitor(Dimension { m_value.value() });
+        else if (opaqueType == indexForType<Percentage>())
+            return visitor(Percentage { m_value.value() });
+        else if (opaqueType == indexForType<Calc>())
+            SUPPRESS_FORWARD_DECL_ARG return visitor(Calc { m_value.calculationValue() });
+
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    template<typename T> T get() const
+    {
+        RELEASE_ASSERT(holdsAlternative<T>());
+
+        if constexpr (std::same_as<T, Dimension>)
+            return Dimension { m_value.value() };
+        else if constexpr (std::same_as<T, Percentage>)
+            return Percentage { m_value.value() };
+        else if constexpr (std::same_as<T, Calc>)
+            SUPPRESS_FORWARD_DECL_ARG return Calc { m_value.calculationValue() };
+    }
+
+    template<typename T> std::optional<T> tryGet() const
+    {
+        if (!holdsAlternative<T>())
+            return std::nullopt;
+
+        if constexpr (std::same_as<T, Dimension>)
+            return std::optional<T>(std::in_place, m_value.value());
+        else if constexpr (std::same_as<T, Percentage>)
+            return std::optional<T>(std::in_place, m_value.value());
+        else if constexpr (std::same_as<T, Calc>)
+            SUPPRESS_FORWARD_DECL_ARG return std::optional<T>(std::in_place, m_value.calculationValue());
+    }
+
+    bool hasSameType(const PrimitiveNumeric& other) const
+    {
+        return m_value.type() == other.m_value.type();
+    }
+
+    bool operator==(const PrimitiveNumeric&) const = default;
+
+    // Legacy name support
+    using Fixed = Dimension;
+    ALWAYS_INLINE bool isFixed() const { return holdsAlternative<Dimension>(); }
+    ALWAYS_INLINE bool isPercent() const { return holdsAlternative<Percentage>(); }
+    ALWAYS_INLINE bool isCalculated() const { return holdsAlternative<Calc>();}
+    ALWAYS_INLINE bool isPercentOrCalculated() const { return !holdsAlternative<Dimension>(); }
+    std::optional<Dimension> tryFixed() const { return tryGet<Dimension>(); }
+
+private:
+    template<Numeric, WebCore::CSS::SpecificKeyword...> friend struct PrimitiveNumericOrKeyword;
+    template<typename> friend struct Blending;
+    template<typename, typename> friend struct Evaluation;
+    template<typename, typename> friend struct EvaluationMinimum;
+
+    using Representation = PrimitiveData;
+
+    static constexpr uint8_t indexForDimension          = 0;
+    static constexpr uint8_t indexForPercentage         = 1;
+    static constexpr uint8_t indexForCalc               = 2;
+    static constexpr uint8_t maxIndex                   = indexForCalc;
+
+    template<typename T> static consteval uint8_t indexForType()
+    {
+        if constexpr (std::same_as<T, Dimension>)
+            return indexForDimension;
+        else if constexpr (std::same_as<T, Percentage>)
+            return indexForPercentage;
+        else if constexpr (std::same_as<T, Calc>)
+            return indexForCalc;
+    }
+
+    explicit PrimitiveNumeric(Representation&& representation)
+        : m_value(WTF::move(representation))
+    {
+    }
+
+    explicit PrimitiveNumeric(const Representation& representation)
+        : m_value(representation)
+    {
+    }
+
+    PrimitiveDataEvaluationKind evaluationKind() const
+    {
+        auto opaqueType = m_value.type();
+
+        if (opaqueType == indexForType<Dimension>())
+            return PrimitiveDataEvaluationKind::Fixed;
+        else if (opaqueType == indexForType<Percentage>())
+            return PrimitiveDataEvaluationKind::Percentage;
+        else if (opaqueType == indexForType<Calc>())
+            return PrimitiveDataEvaluationKind::Calculation;
+
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Representation m_value;
+};
+
 // MARK: Integer Primitive
 
 template<CSS::Range R, typename V> struct Integer : PrimitiveNumeric<CSS::Integer<R, V>> {
@@ -381,12 +585,94 @@ template<Numeric T> struct ToCSSMapping<T> {
     using type = typename T::CSS;
 };
 
+// MARK: Wrapper base types
+
+template<typename T> struct PrimitiveNumericWrapperBase;
+
+template<CSS::Range R, typename V> struct PrimitiveNumericWrapperBase<LengthPercentage<R, V>> {
+    using Base = PrimitiveNumericWrapperBase<LengthPercentage<R, V>>;
+    using Wrapped = LengthPercentage<R, V>;
+
+    using Raw = typename Wrapped::Raw;
+    using UnitType = typename Wrapped::UnitType;
+    using UnitTraits = typename Wrapped::UnitTraits;
+    using ResolvedValueType = typename Wrapped::ResolvedValueType;
+    static constexpr auto range = Wrapped::range;
+    static constexpr auto category = Wrapped::category;
+
+    using Dimension = typename Wrapped::Dimension;
+    using Percentage = typename Wrapped::Percentage;
+    using Calc = typename Wrapped::Calc;
+
+    Wrapped value;
+
+    template<typename... Args>
+    ALWAYS_INLINE PrimitiveNumericWrapperBase(Args&&... args) requires (requires { { LengthPercentage<R, V>(args...) }; })
+        : value(std::forward<Args>(args)...)
+    {
+    }
+
+    template<typename T>
+    ALWAYS_INLINE bool holdsAlternative() const
+    {
+        return value.template holdsAlternative<T>();
+    }
+    template<typename... F>
+    ALWAYS_INLINE decltype(auto) switchOn(F&&... f) const
+    {
+        return value.switchOn(std::forward<F>(f)...);
+    }
+
+    ALWAYS_INLINE bool isDimension() const { return value.isDimension(); }
+    ALWAYS_INLINE bool isPercentage() const { return value.isPercentage(); }
+    ALWAYS_INLINE bool isCalc() const { return value.isCalc(); }
+    ALWAYS_INLINE bool isPercentageOrCalc() const { return value.isPercentageOrCalc(); }
+
+    ALWAYS_INLINE std::optional<Dimension> tryDimension() const { return value.tryDimension(); }
+    ALWAYS_INLINE std::optional<Percentage> tryPercentage() const { return value.tryPercentage(); }
+    ALWAYS_INLINE std::optional<Calc> tryCalc() const { return value.tryCalc(); }
+
+    ALWAYS_INLINE bool isKnownZero() const requires (range.min <= 0 && range.max >= 0) { return value.isKnownZero(); }
+    ALWAYS_INLINE bool isKnownPositive() const requires (range.max > 0) { return value.isKnownPositive(); }
+    ALWAYS_INLINE bool isKnownNegative() const requires (range.min < 0) { return value.isKnownNegative(); }
+    ALWAYS_INLINE bool isPossiblyZero() const requires (range.min <= 0 && range.max >= 0) { return value.isPossiblyZero(); }
+    ALWAYS_INLINE bool isPossiblyPositive() const requires (range.max > 0) { return value.isPossiblyPositive(); }
+    ALWAYS_INLINE bool isPossiblyNegative() const requires (range.min < 0) { return value.isPossiblyNegative(); }
+
+    bool operator==(const PrimitiveNumericWrapperBase&) const = default;
+
+    template<size_t> friend const auto& get(const PrimitiveNumericWrapperBase& self)
+    {
+        return self.value;
+    }
+
+    // Legacy name support
+    using Fixed = Dimension;
+    ALWAYS_INLINE bool isFixed() const { return value.isFixed(); }
+    ALWAYS_INLINE bool isPercent() const { return value.isPercent(); }
+    ALWAYS_INLINE bool isCalculated() const { return value.isCalculated(); }
+    ALWAYS_INLINE bool isPercentOrCalculated() const { return value.isPercentOrCalculated(); }
+    ALWAYS_INLINE std::optional<Dimension> tryFixed() const { return value.tryFixed(); }
+};
+
+
+// MARK: Utility Macros
+
+#define DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(wrapper, wrapped)               \
+    struct wrapper : PrimitiveNumericWrapperBase<wrapped> {                   \
+        using Base::Base;                                                     \
+    };
+
 // MARK: Utility Concepts
 
 template<typename T> concept IsPercentage = std::same_as<T, Percentage<T::range, typename T::ResolvedValueType>>;
 template<typename T> concept IsCalc = std::same_as<T, UnevaluatedCalculation<typename T::CSS>>;
 
 template<typename T> concept IsPercentageOrCalc = IsPercentage<T> || IsCalc<T>;
+
+
+template<typename T> concept PrimitiveNumericWrapperBaseDerived = WTF::IsBaseOfTemplate<PrimitiveNumericWrapperBase, T>::value && TupleLike<T>;
+template<typename T, auto category> concept SpecificPrimitiveNumericWrapperBaseDerived = WTF::IsBaseOfTemplate<PrimitiveNumericWrapperBase, T>::value && TupleLike<T> && T::Wrapped::category == category;
 
 } // namespace Style
 } // namespace WebCore

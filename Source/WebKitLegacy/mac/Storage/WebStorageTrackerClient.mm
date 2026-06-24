@@ -33,7 +33,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-using namespace WebCore;
 
 WebStorageTrackerClient* WebStorageTrackerClient::sharedWebStorageTrackerClient()
 {
@@ -45,7 +44,7 @@ WebStorageTrackerClient::WebStorageTrackerClient() = default;
 
 WebStorageTrackerClient::~WebStorageTrackerClient() = default;
 
-void WebStorageTrackerClient::dispatchDidModifyOrigin(SecurityOrigin* origin)
+void WebStorageTrackerClient::dispatchDidModifyOrigin(WebCore::SecurityOrigin* origin)
 {
     RetainPtr<WebSecurityOrigin> webSecurityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
 
@@ -55,7 +54,7 @@ void WebStorageTrackerClient::dispatchDidModifyOrigin(SecurityOrigin* origin)
 
 void WebStorageTrackerClient::dispatchDidModifyOrigin(const String& originIdentifier)
 {
-    auto origin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
+    auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
 
     if (!origin) {
         ASSERT_NOT_REACHED();

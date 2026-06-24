@@ -34,8 +34,8 @@
  * Provides convenience functions returning WPE's major, minor and
  * micro versions of the WPE platform library your code is running
  * against. This is not necessarily the same as the
- * #WPE_PLATFORM_MAJOR_VERSION, #WPE_PLATFORM_MINOR_VERSION or
- * #WPE_PLATFORM_MICRO_VERSION, which represent the version of the WPE platform
+ * %WPE_PLATFORM_MAJOR_VERSION, %WPE_PLATFORM_MINOR_VERSION or
+ * %WPE_PLATFORM_MICRO_VERSION, which represent the version of the WPE platform
  * headers included when compiling the code.
  */
 
@@ -46,7 +46,7 @@
  * (e.g. in WPEPlatform version 1.8.3 this is 1.)
  *
  * This function is in the library, so it represents the WPE platform library
- * your code is running against. Contrast with the #WPE_PLATFORM_MAJOR_VERSION
+ * your code is running against. Contrast with the %WPE_PLATFORM_MAJOR_VERSION
  * macro, which represents the major version of the WPE platform headers you
  * have included when compiling your code.
  *
@@ -64,7 +64,7 @@ guint wpe_platform_get_major_version(void)
  * (e.g. in WPEPlatform version 1.8.3 this is 8.)
  *
  * This function is in the library, so it represents the WPE platform library
- * your code is running against. Contrast with the #WPE_PLATFORM_MINOR_VERSION
+ * your code is running against. Contrast with the %WPE_PLATFORM_MINOR_VERSION
  * macro, which represents the minor version of the WPE platform headers you
  * have included when compiling your code.
  *
@@ -82,7 +82,7 @@ guint wpe_platform_get_minor_version(void)
  * (e.g. in WPEPlatform version 1.8.3 this is 3.)
  *
  * This function is in the library, so it represents the WPE platform library
- * your code is running against. Contrast with the #WPE_PLATFORM_MICRO_VERSION
+ * your code is running against. Contrast with the %WPE_PLATFORM_MICRO_VERSION
  * macro, which represents the micro version of the WPE platform headers you
  * have included when compiling your code.
  *

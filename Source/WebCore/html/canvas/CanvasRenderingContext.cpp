@@ -177,18 +177,18 @@ bool CanvasRenderingContext::taintsOrigin(const CachedImage* cachedImage)
 
 bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement* element)
 {
-    return element && taintsOrigin(element->cachedImage());
+    return element && taintsOrigin(protect(element->cachedImage()));
 }
 
 bool CanvasRenderingContext::taintsOrigin(const SVGImageElement* element)
 {
-    return element && taintsOrigin(element->cachedImage());
+    return element && taintsOrigin(protect(element->cachedImage()));
 }
 
 bool CanvasRenderingContext::taintsOrigin(const HTMLVideoElement* video)
 {
 #if ENABLE(VIDEO)
-    return video && video->taintsOrigin(*m_canvas->securityOrigin());
+    return video && protect(video)->taintsOrigin(*m_canvas->securityOrigin());
 #else
     UNUSED_PARAM(video);
     return false;
@@ -202,7 +202,7 @@ bool CanvasRenderingContext::taintsOrigin(const ImageBitmap* imageBitmap)
 
 bool CanvasRenderingContext::taintsOrigin(const URL& url)
 {
-    return !url.protocolIsData() && !m_canvas->securityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
+    return !url.protocolIsData() && !protect(m_canvas)->securityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
 }
 
 void CanvasRenderingContext::checkOrigin(const URL& url)
@@ -221,7 +221,7 @@ void CanvasRenderingContext::updateMemoryCost(size_t newMemoryCost) const
     size_t oldMemoryCost = m_memoryCost.load(std::memory_order_relaxed);
     m_memoryCost.store(newMemoryCost, std::memory_order_relaxed);
     if (newMemoryCost) {
-        if (RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext()) {
+        if (RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext()) {
             JSC::JSLockHolder lock(scriptExecutionContext->vm());
             scriptExecutionContext->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), newMemoryCost);
         }

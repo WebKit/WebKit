@@ -14,6 +14,7 @@
 #include "common_audio/ring_buffer.h"
 
 #include <stddef.h>  // size_t
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -53,6 +54,10 @@ static size_t GetBufferReadRegions(RingBuffer* buf,
 RingBuffer* WebRtc_CreateBuffer(size_t element_count, size_t element_size) {
   RingBuffer* self = NULL;
   if (element_count == 0 || element_size == 0) {
+    return NULL;
+  }
+
+  if (element_count > SIZE_MAX / element_size) {
     return NULL;
   }
 

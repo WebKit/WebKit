@@ -86,7 +86,7 @@ void SVGResourcesCycleSolver::resolveCycles(RenderElement& renderer, SVGResource
     if (auto* container = dynamicDowncast<LegacyRenderSVGResourceContainer>(renderer))
         activeResources.add(*container);
 
-    // The job of this function is to determine wheter any of the 'resources' associated with the given 'renderer'
+    // The job of this function is to determine whether any of the 'resources' associated with the given 'renderer'
     // references us (or whether any of its kids references us) -> that's a cycle, we need to find and break it.
     for (auto& resource : localResources) {
         if (activeResources.contains(resource) || resourceContainsCycles(resource, activeResources, acyclicResources))

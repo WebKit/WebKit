@@ -18,11 +18,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
@@ -78,11 +78,7 @@ enum RTPExtensionType : int {
   kRtpExtensionRepairedRtpStreamId,
   kRtpExtensionMid,
   kRtpExtensionGenericFrameDescriptor,
-  kRtpExtensionGenericFrameDescriptor00 [[deprecated]] =
-      kRtpExtensionGenericFrameDescriptor,
   kRtpExtensionDependencyDescriptor,
-  kRtpExtensionGenericFrameDescriptor02 [[deprecated]] =
-      kRtpExtensionDependencyDescriptor,
   kRtpExtensionColorSpace,
   kRtpExtensionVideoFrameTrackingId,
   kRtpExtensionCorruptionDetection,
@@ -127,6 +123,11 @@ enum RtxMode {
 };
 
 const size_t kRtxHeaderSize = 2;
+
+// Special values for SSRC, used when sending receiver reports from
+// receive-only endpoints.
+inline constexpr uint32_t kFallbackRtcpSsrcForVideo = 1;
+inline constexpr uint32_t kFallbackRtcpSsrcForAudio = 0xFA17FA17;
 
 struct RtpState {
   uint16_t sequence_number = 0;
@@ -178,7 +179,7 @@ class NetworkLinkRtcpObserver {
   // Called on an RTCP packet with sender or receiver reports with non zero
   // report blocks. Report blocks are combined from all reports into one array.
   virtual void OnReport(Timestamp /* receive_time */,
-                        ArrayView<const ReportBlockData> /* report_blocks */) {}
+                        std::span<const ReportBlockData> /* report_blocks */) {}
   virtual void OnRttUpdate(Timestamp /* receive_time */, TimeDelta /* rtt */) {}
 };
 

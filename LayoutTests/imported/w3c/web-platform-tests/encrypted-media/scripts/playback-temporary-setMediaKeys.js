@@ -80,6 +80,9 @@ function runTest(config,qualifier) {
             return access.createMediaKeys();
         }).then(test.step_func(function(mediaKeys) {
             _mediaKeys = mediaKeys;
+            if (config.servercertificate)
+                return _mediaKeys.setServerCertificate(config.servercertificate);
+        })).then(test.step_func(function() {
             if ( config.testcase === SETMEDIAKEYS_IMMEDIATELY ) {
                 return _video.setMediaKeys( _mediaKeys );
             }

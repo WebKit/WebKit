@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="resources/gesture-helpers.js"></script>
 <style type="text/css">
 #touchtarget {
@@ -87,6 +87,8 @@ var scrollEventsOccurred = 0;
 var expectedScrollEventsOccurred = '1';
 var scrolledElement = 'movingdiv'
 
+window.jsTestIsAsync = true;
+
 function checkWheelScrollOffset()
 {
     if (!window.eventSender)
@@ -110,9 +112,7 @@ function checkWheelScrollOffset()
 	
     if (gesturesOccurred == expectedGesturesTotal) {
         successfullyParsed = true;
-        isSuccessfullyParsed();
-        if (window.testRunner)
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 
@@ -131,8 +131,6 @@ function secondWheelScroll()
     checkWheelScrollOffset();
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
 
 function runTest()
 {

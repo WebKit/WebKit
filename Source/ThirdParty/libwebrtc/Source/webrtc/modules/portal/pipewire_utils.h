@@ -17,6 +17,8 @@
 
 #include <cerrno>
 #include <cstdint>
+#include <string>
+#include <string_view>
 
 // static
 struct dma_buf_sync {
@@ -33,6 +35,20 @@ struct pw_thread_loop;
 namespace webrtc {
 
 constexpr int kInvalidPipeWireFd = -1;
+
+struct PipeWireVersion {
+  static PipeWireVersion Parse(const std::string_view& version);
+
+  // Returns whether current version is newer or same as required version
+  bool operator>=(const PipeWireVersion& other);
+
+  std::string_view ToStringView() const;
+
+  int major = 0;
+  int minor = 0;
+  int micro = 0;
+  std::string full_version;
+};
 
 // Prepare PipeWire so that it is ready to be used. If it needs to be dlopen'd
 // this will do so. Note that this does not guarantee a PipeWire server is

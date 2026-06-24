@@ -21,7 +21,10 @@
 #include "internal.h"
 
 
-size_t ec_point_byte_len(const EC_GROUP *group, point_conversion_form_t form) {
+using namespace bssl;
+
+size_t bssl::ec_point_byte_len(const EC_GROUP *group,
+                               point_conversion_form_t form) {
   if (form != POINT_CONVERSION_COMPRESSED &&
       form != POINT_CONVERSION_UNCOMPRESSED) {
     OPENSSL_PUT_ERROR(EC, EC_R_INVALID_FORM);
@@ -37,9 +40,9 @@ size_t ec_point_byte_len(const EC_GROUP *group, point_conversion_form_t form) {
   return output_len;
 }
 
-size_t ec_point_to_bytes(const EC_GROUP *group, const EC_AFFINE *point,
-                         point_conversion_form_t form, uint8_t *buf,
-                         size_t max_out) {
+size_t bssl::ec_point_to_bytes(const EC_GROUP *group, const EC_AFFINE *point,
+                               point_conversion_form_t form, uint8_t *buf,
+                               size_t max_out) {
   size_t output_len = ec_point_byte_len(group, form);
   if (max_out < output_len) {
     OPENSSL_PUT_ERROR(EC, EC_R_BUFFER_TOO_SMALL);
@@ -63,8 +66,8 @@ size_t ec_point_to_bytes(const EC_GROUP *group, const EC_AFFINE *point,
   return output_len;
 }
 
-int ec_point_from_uncompressed(const EC_GROUP *group, EC_AFFINE *out,
-                               const uint8_t *in, size_t len) {
+int bssl::ec_point_from_uncompressed(const EC_GROUP *group, EC_AFFINE *out,
+                                     const uint8_t *in, size_t len) {
   const size_t field_len = BN_num_bytes(&group->field.N);
   if (len != 1 + 2 * field_len || in[0] != POINT_CONVERSION_UNCOMPRESSED) {
     OPENSSL_PUT_ERROR(EC, EC_R_INVALID_ENCODING);
@@ -116,7 +119,7 @@ static int ec_GFp_simple_oct2point(const EC_GROUP *group, EC_POINT *point,
   // for primes which are not 3 (mod 4), namely P-224 and custom curves. P-224's
   // prime is particularly inconvenient for compressed coordinates. See
   // https://cr.yp.to/papers/sqroot.pdf
-  bssl::UniquePtr<BN_CTX> new_ctx;
+  UniquePtr<BN_CTX> new_ctx;
   if (ctx == nullptr) {
     new_ctx.reset(BN_CTX_new());
     if (new_ctx == nullptr) {
@@ -125,7 +128,7 @@ static int ec_GFp_simple_oct2point(const EC_GROUP *group, EC_POINT *point,
     ctx = new_ctx.get();
   }
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *x = BN_CTX_get(ctx);
   if (x == nullptr || !BN_bin2bn(buf + 1, field_len, x)) {
     return 0;
@@ -211,7 +214,7 @@ int EC_POINT_set_compressed_coordinates_GFp(const EC_GROUP *group,
 
   ERR_clear_error();
 
-  bssl::UniquePtr<BN_CTX> new_ctx;
+  UniquePtr<BN_CTX> new_ctx;
   if (ctx == nullptr) {
     new_ctx.reset(BN_CTX_new());
     if (new_ctx == nullptr) {
@@ -222,7 +225,7 @@ int EC_POINT_set_compressed_coordinates_GFp(const EC_GROUP *group,
 
   y_bit = (y_bit != 0);
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *tmp1 = BN_CTX_get(ctx);
   BIGNUM *tmp2 = BN_CTX_get(ctx);
   BIGNUM *a = BN_CTX_get(ctx);

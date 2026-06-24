@@ -1,0 +1,4 @@
+
+PASS A new held lock must prevent bfcache on all connected documents
+PASS An existing held lock must prevent bfcache on all connected documents
+

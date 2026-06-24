@@ -38,8 +38,8 @@
 
 @class ModalAlertsUIDelegate;
 
-static RetainPtr<TestWKWebView> openedWebView;
-static RetainPtr<ModalAlertsUIDelegate> sharedUIDelegate;
+static RetainPtr<TestWKWebView> modalAlertsOpenedWebView;
+static RetainPtr<ModalAlertsUIDelegate> modalAlertsUIDelegate;
 
 static unsigned dialogsSeen;
 
@@ -58,8 +58,8 @@ static void sawDialog()
     // FIXME: Remove this guard once we fix <https://bugs.webkit.org/show_bug.cgi?id=172614>.
 #if PLATFORM(MAC)
     if (dialogsSeen == dialogsBeforeUnloadConfirmPanel) {
-        [openedWebView sendClicksAtPoint:NSMakePoint(5, 5) numberOfClicks:1];
-        [openedWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html"]]];
+        [modalAlertsOpenedWebView sendClicksAtPoint:NSMakePoint(5, 5) numberOfClicks:1];
+        [modalAlertsOpenedWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html"]]];
         return;
     }
 #endif
@@ -75,9 +75,9 @@ static void sawDialog()
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
-    openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
-    [openedWebView setUIDelegate:sharedUIDelegate.get()];
-    return openedWebView.get();
+    modalAlertsOpenedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [modalAlertsOpenedWebView setUIDelegate:modalAlertsUIDelegate.get()];
+    return modalAlertsOpenedWebView.get();
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
@@ -133,8 +133,8 @@ TEST(WebKit, ModalAlerts)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    sharedUIDelegate = adoptNS([[ModalAlertsUIDelegate alloc] init]);
-    [webView setUIDelegate:sharedUIDelegate.get()];
+    modalAlertsUIDelegate = adoptNS([[ModalAlertsUIDelegate alloc] init]);
+    [webView setUIDelegate:modalAlertsUIDelegate.get()];
 
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 

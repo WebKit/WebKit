@@ -138,8 +138,6 @@
 
 namespace TestWebKitAPI {
 
-const uint16_t tls1_1 = 0x0302;
-
 TEST(TLSVersion, DefaultBehavior)
 {
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsWithLegacyTLS);

@@ -70,6 +70,8 @@ class RTC_EXPORT SharedScreenCastStream
   void UpdateScreenCastStreamFrameRate(uint32_t frame_rate);
   void SetUseDamageRegion(bool use_damage_region);
   void SetObserver(SharedScreenCastStream::Observer* observer);
+  void SetSharedMemoryFactory(
+      std::unique_ptr<webrtc::SharedMemoryFactory> shared_memory_factory);
   void StopScreenCastStream();
 
   // Below functions return the most recent information we get from a

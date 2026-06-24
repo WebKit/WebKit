@@ -13,21 +13,17 @@
 #include <atomic>
 
 #include "api/ref_count.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 namespace webrtc_impl {
 
-class RefCounter {
+class RTC_EXPORT RefCounter {
  public:
   explicit RefCounter(int ref_count) : ref_count_(ref_count) {}
   RefCounter() = delete;
 
-  void IncRef() {
-    // Relaxed memory order: The current thread is allowed to act on the
-    // resource protected by the reference counter both before and after the
-    // atomic op, so this function doesn't prevent memory access reordering.
-    ref_count_.fetch_add(1, std::memory_order_relaxed);
-  }
+  void IncRef();
 
   // Returns kDroppedLastRef if this call dropped the last reference; the caller
   // should therefore free the resource protected by the reference counter.

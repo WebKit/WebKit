@@ -426,7 +426,7 @@ Result<void> Parser<Lexer>::parseEnableDirective()
         CONSUME_TYPE_NAMED(identifier, Identifier);
         auto* extension = parseExtension(identifier.ident);
         if (!extension)
-            FAIL("Expected 'clip_distances' or 'f16'"_s);
+            FAIL("Expected 'clip_distances', 'f16', or 'primitive_index'"_s);
         m_shaderModule.enabledExtensions().add(*extension);
 
         if (current().type != TokenType::Comma)
@@ -701,7 +701,7 @@ Result<std::optional<AST::Attribute::Ref>> Parser<Lexer>::parseAttribute()
         PARSE(name, Identifier);
         auto* builtin = parseBuiltin(name);
         if (!builtin)
-            FAIL("Unknown builtin value. Expected 'clip_distances', 'vertex_index', 'instance_index', 'position', 'front_facing', 'frag_depth', 'sample_index', 'sample_mask', 'local_invocation_id', 'local_invocation_index', 'global_invocation_id', 'workgroup_id' or 'num_workgroups'"_s);
+            FAIL("Unknown builtin value. Expected 'clip_distances', 'vertex_index', 'instance_index', 'position', 'primitive_index', 'front_facing', 'frag_depth', 'sample_index', 'sample_mask', 'local_invocation_id', 'local_invocation_index', 'global_invocation_id', 'workgroup_id' or 'num_workgroups'"_s);
         switch (*builtin) {
         case Builtin::FragDepth:
             m_shaderModule.setUsesFragDepth();
@@ -1943,3 +1943,15 @@ Result<AST::Expression::List> Parser<Lexer>::parseArgumentExpressionList()
 }
 
 } // namespace WGSL
+
+#undef START_PARSE
+#undef CURRENT_SOURCE_SPAN
+#undef MAKE_ARENA_NODE
+#undef RETURN_ARENA_NODE
+#undef FAIL
+#undef PARSE
+#undef PARSE_MOVE
+#undef CONSUME_TYPE_NAMED
+#undef CONSUME_TYPE
+#undef CONSUME_TYPES_NAMED
+#undef CHECK_RECURSION

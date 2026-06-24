@@ -1,0 +1,64 @@
+Tests FrameDOMAgent DOM editing commands: setAttributeValue, setAttributesAsText, removeAttribute, setNodeValue, setNodeName, removeNode, insertAdjacentHTML, setOuterHTML (subtree + whole document via DOMPatchSupport), and moveTo. Each command verifies the edit, undo, and where applicable redo, against a cross-origin iframe.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.Editing
+-- Running test case: Setup
+PASS: Should find a cross-origin frame target.
+PASS: Frame target should have a document.
+PASS: Should find #container in the frame document.
+
+-- Running test case: SetAttributeValue
+PASS: Attribute should be set.
+PASS: Attribute should be removed after undo.
+PASS: Attribute should be restored after redo.
+
+-- Running test case: SetAttributesAsText
+PASS: data-a should be set.
+PASS: data-b should be set.
+PASS: Both attributes should be removed after undo.
+
+-- Running test case: RemoveAttribute
+PASS: data-role should be removed.
+PASS: data-role should be restored after undo.
+
+-- Running test case: SetNodeValue
+PASS: #text-node should have a text child.
+PASS: Text content should be replaced.
+PASS: Text content should be restored after undo.
+
+-- Running test case: SetNodeName
+PASS: setNodeName should return a new backend nodeId.
+PASS: Renamed node should resolve in the frame target.
+PASS: New node should be H2.
+PASS: Attribute should be preserved.
+PASS: Node should revert to H1 after undo.
+
+-- Running test case: RemoveNode
+PASS: Should find first LI.
+PASS: First LI should be removed.
+PASS: Second LI should remain.
+PASS: First LI should be restored after undo.
+
+-- Running test case: InsertAdjacentHTML
+PASS: Injected span should appear in container.
+PASS: Injected span should be removed after undo.
+PASS: Injected span should be reinserted after redo.
+
+-- Running test case: InsertAdjacentHTML.InvalidPosition
+PASS: Should produce an exception.
+Error: SyntaxError
+
+-- Running test case: SetOuterHTML
+PASS: Outer HTML should be replaced.
+PASS: Original text should be restored after undo.
+
+-- Running test case: MoveTo
+PASS: Heading should now be inside #list.
+
+-- Running test case: FrontendDOMNode.SetAttributeAsText
+PASS: Frontend setAttribute should succeed for frame-target node.
+
+-- Running test case: SetOuterHTML.WholeDocument
+PASS: Patched element should exist after whole-document setOuterHTML.
+

@@ -31,102 +31,14 @@ PASS :partial_eval_errors:lowStage="constant";highStage="constant";type="vec3%3C
 PASS :partial_eval_errors:lowStage="constant";highStage="constant";type="vec3%3Cf16%3E"
 PASS :partial_eval_errors:lowStage="constant";highStage="constant";type="vec4%3Cf32%3E"
 PASS :partial_eval_errors:lowStage="constant";highStage="constant";type="vec4%3Cf16%3E"
-FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="f32" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (0f) equal high (0f)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="f16" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (0h) equal high (0h)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec2%3Cf32%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec2(0f, 0f)) equal high (vec2(0f, 0f))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec2%3Cf16%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec2(0h, 0h)) equal high (vec2(0h, 0h))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec3%3Cf32%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec3(0f, 0f, 0f)) equal high (vec3(0f, 0f, 0f))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec3%3Cf16%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec3(0h, 0h, 0h)) equal high (vec3(0h, 0h, 0h))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec4%3Cf32%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec4(0f, 0f, 0f, 0f)) equal high (vec4(0f, 0f, 0f, 0f))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="constant";highStage="override";type="vec4%3Cf16%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec4(0h, 0h, 0h, 0h)) equal high (vec4(0h, 0h, 0h, 0h))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :partial_eval_errors:lowStage="constant";highStage="override";type="f32"
+PASS :partial_eval_errors:lowStage="constant";highStage="override";type="f16"
+PASS :partial_eval_errors:lowStage="constant";highStage="override";type="vec2%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="override";type="vec2%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="override";type="vec3%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="override";type="vec3%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="override";type="vec4%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="constant";highStage="override";type="vec4%3Cf16%3E"
 PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="f32"
 PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="f16"
 PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec2%3Cf32%3E"
@@ -135,198 +47,22 @@ PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec3%3Cf
 PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec3%3Cf16%3E"
 PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec4%3Cf32%3E"
 PASS :partial_eval_errors:lowStage="constant";highStage="runtime";type="vec4%3Cf16%3E"
-FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="f32" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (0f) equal high (0f)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="f16" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (0h) equal high (0h)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec2%3Cf32%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec2(0f, 0f)) equal high (vec2(0f, 0f))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec2%3Cf16%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec2(0h, 0h)) equal high (vec2(0h, 0h))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec3%3Cf32%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec3(0f, 0f, 0f)) equal high (vec3(0f, 0f, 0f))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec3%3Cf16%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec3(0h, 0h, 0h)) equal high (vec3(0h, 0h, 0h))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec4%3Cf32%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec4(0f, 0f, 0f, 0f)) equal high (vec4(0f, 0f, 0f, 0f))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="constant";type="vec4%3Cf16%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec4(0h, 0h, 0h, 0h)) equal high (vec4(0h, 0h, 0h, 0h))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="override";type="f32" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (0f) equal high (0f)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="override";type="f16" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (0h) equal high (0h)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec2%3Cf32%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec2(0f, 0f)) equal high (vec2(0f, 0f))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec2%3Cf16%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec2(0h, 0h)) equal high (vec2(0h, 0h))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec3%3Cf32%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec3(0f, 0f, 0f)) equal high (vec3(0f, 0f, 0f))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec3%3Cf16%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec3(0h, 0h, 0h)) equal high (vec3(0h, 0h, 0h))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec4%3Cf32%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec4(0f, 0f, 0f, 0f)) equal high (vec4(0f, 0f, 0f, 0f))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :partial_eval_errors:lowStage="override";highStage="override";type="vec4%3Cf16%3E" assert_unreached:
-  - (in subcase: low=0;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=0;high=10;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=0;in_shader=true) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=false) INFO: subcase ran
-  - (in subcase: low=10;high=10;in_shader=true) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: smoothstep called with low (vec4(0h, 0h, 0h, 0h)) equal high (vec4(0h, 0h, 0h, 0h))
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :partial_eval_errors:lowStage="override";highStage="constant";type="f32"
+PASS :partial_eval_errors:lowStage="override";highStage="constant";type="f16"
+PASS :partial_eval_errors:lowStage="override";highStage="constant";type="vec2%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="constant";type="vec2%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="constant";type="vec3%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="constant";type="vec3%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="constant";type="vec4%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="constant";type="vec4%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="override";type="f32"
+PASS :partial_eval_errors:lowStage="override";highStage="override";type="f16"
+PASS :partial_eval_errors:lowStage="override";highStage="override";type="vec2%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="override";type="vec2%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="override";type="vec3%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="override";type="vec3%3Cf16%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="override";type="vec4%3Cf32%3E"
+PASS :partial_eval_errors:lowStage="override";highStage="override";type="vec4%3Cf16%3E"
 PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="f32"
 PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="f16"
 PASS :partial_eval_errors:lowStage="override";highStage="runtime";type="vec2%3Cf32%3E"

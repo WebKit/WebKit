@@ -28,7 +28,6 @@
 #include "LegacyRenderSVGResource.h"
 #include "MutableStyleProperties.h"
 #include "RenderSVGPath.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGMPathElement.h"
@@ -36,6 +35,7 @@
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -118,11 +118,11 @@ void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomStrin
     if (name == SVGNames::dAttr) {
         auto& cache = PathSegListCache::singleton();
         if (newValue.isEmpty())
-            m_pathSegList->baseVal()->clearByteStreamData();
+            protect(m_pathSegList)->baseVal()->clearByteStreamData();
         else if (auto data = cache.get(newValue))
-            m_pathSegList->baseVal()->updateByteStreamData(WTF::move(data.value()));
-        else if (m_pathSegList->baseVal()->parse(newValue))
-            cache.add(newValue, m_pathSegList->baseVal()->existingPathByteStream().data());
+            protect(m_pathSegList)->baseVal()->updateByteStreamData(WTF::move(data.value()));
+        else if (protect(m_pathSegList)->baseVal()->parse(newValue))
+            cache.add(newValue, protect(m_pathSegList)->baseVal()->existingPathByteStream().data());
         else
             protect(protect(document())->svgExtensions())->reportError(makeString("Problem parsing d=\""_s, newValue, "\""_s));
     }
@@ -228,7 +228,7 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     return { };
 }
 
-RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGPathElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGPath>(*this, WTF::move(style));
@@ -240,6 +240,12 @@ const SVGPathByteStream& SVGPathElement::pathByteStream() const
     if (document().settings().cssDPropertyEnabled()) {
         if (CheckedPtr renderer = this->renderer()) {
             if (auto& pathFunction = renderer->style().d().tryPath())
+                return pathFunction->parameters.data.byteStream;
+            return SVGPathByteStream::empty();
+        }
+
+        if (CheckedPtr style = const_cast<SVGPathElement&>(*this).computedStyle()) {
+            if (auto& pathFunction = style->d().tryPath())
                 return pathFunction->parameters.data.byteStream;
             return SVGPathByteStream::empty();
         }

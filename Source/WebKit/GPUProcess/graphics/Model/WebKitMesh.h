@@ -70,8 +70,7 @@ public:
     void NODELETE updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&);
     void NODELETE setTransform(const simd_float4x4&);
     void NODELETE setFOV(float);
-    void NODELETE setBackgroundColor(const simd_float3&);
-    void NODELETE setEnvironmentMap(const WebModel::UpdateTextureDescriptor&);
+    void NODELETE setEnvironmentMap(WebModel::UpdateTextureDescriptor&&);
     void NODELETE play(bool);
     void NODELETE updateRenderBuffers(const WebModel::ResizeMeshDescriptor&);
     void processRemovals(Vector<WebModel::TypedResourceId>&& meshRemovals, Vector<WebModel::TypedResourceId>&& materialRemovals, Vector<WebModel::TypedResourceId>&& textureRemovals, CompletionHandler<void(bool)>&&);
@@ -80,6 +79,7 @@ private:
     WebMesh(const WebModelCreateMeshDescriptor&);
 
     RetainPtr<NSMutableArray> m_textures;
+    const bool m_standardDynamicRange { false };
 
 #if ENABLE(GPU_PROCESS_MODEL)
     RetainPtr<WKBridgeReceiver> m_receiver;

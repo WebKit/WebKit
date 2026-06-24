@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
 </head/>
 <body>
 <script>
     description("Make sure the same deserialization of the state object is used every time (both in the history object and popstate events).");
 
     window.jsTestIsAsync = true;
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.clearBackForwardList();
-        testRunner.waitUntilDone();
-    }
 
     shouldBeDefined("history.state");
 
@@ -47,10 +45,7 @@
         // The event's state object and the current state object should match.
         shouldBeTrue("popStateEvent.state === history.state");
 
-        var s = document.createElement("script");
-        s.src = "../../../resources/js-test-post.js";
-        document.body.appendChild(s);
-        setTimeout(finishJSTest, 0);
+        finishJSTest();
     }
 
     // Now let's go back to our original history entry which has a state object that we've stored a reference to already.

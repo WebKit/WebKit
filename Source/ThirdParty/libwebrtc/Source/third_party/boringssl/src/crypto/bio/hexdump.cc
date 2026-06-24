@@ -20,6 +20,8 @@
 #include "../internal.h"
 
 
+using namespace bssl;
+
 namespace {
 // hexdump_ctx contains the state of a hexdump.
 struct hexdump_ctx {

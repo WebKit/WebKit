@@ -518,6 +518,15 @@
     },
     {
      "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "captionPreviewForProfileID:extendedLanguageTag:renderSize:"}
+     ],
+     "interface": "AVCaptionRenderer",
+     "introduced": "26.4",
+     "name": "AVCaptionRenderer_CaptionPreview"
+    },
+    {
+     "access": "public",
      "instanceMethods": [
       {"access": "public", "name": "trackWithTrackID:"},
       {"access": "public", "introduced": "15", "name": "loadTrackWithTrackID:completionHandler:"},
@@ -1019,6 +1028,14 @@
     {
      "access": "public",
      "interface": "AVPlayer",
+     "name": "AVPlayerAllowsCaptureOfClearKeyVideo",
+     "properties": [
+      {"access": "public", "getter": "allowsCaptureOfClearKeyVideo", "introduced": "26.4", "name": "allowsCaptureOfClearKeyVideo", "setter": "setAllowsCaptureOfClearKeyVideo:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVPlayer",
      "name": "AVPlayerAudioDeviceSupport",
      "properties": [
       {"access": "public", "getter": "audioOutputDeviceUniqueID", "name": "audioOutputDeviceUniqueID", "setter": "setAudioOutputDeviceUniqueID:", "unavailable": true}
@@ -1083,7 +1100,8 @@
      "name": "AVPlayerInterstitialSupport",
      "properties": [
       {"access": "public", "getter": "automaticallyHandlesInterstitialEvents", "introduced": "15", "name": "automaticallyHandlesInterstitialEvents", "setter": "setAutomaticallyHandlesInterstitialEvents:"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "templatePlayerItem", "introduced": "15", "name": "templatePlayerItem"}
+      {"access": "public", "attr": [ "readonly" ], "getter": "templatePlayerItem", "introduced": "15", "name": "templatePlayerItem"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "interstitialEventIdentifier", "introduced": "26.4", "name": "interstitialEventIdentifier"}
      ]
     },
     {
@@ -3281,6 +3299,10 @@
     {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVPlayerInterstitialEventMonitorInterstitialEventWasUnscheduledErrorKey"},
     {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVPlayerInterstitialEventMonitorInterstitialEventWasUnscheduledEventKey"},
     {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_AVPlayerInterstitialEventMonitorInterstitialEventWasUnscheduledNotification"},
+    {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_AVPlayerInterstitialEventMonitorScheduleRequestCompletedNotification"},
+    {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_AVPlayerInterstitialEventMonitorScheduleRequestErrorKey"},
+    {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_AVPlayerInterstitialEventMonitorScheduleRequestIdentifierKey"},
+    {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_AVPlayerInterstitialEventMonitorScheduleRequestResponseKey"},
     {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_AVPlayerInterstitialEventNoCue"},
     {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_AVPlayerItemDidPlayToEndTimeNotification"},
     {"access": "public", "introduced": "4.3", "kind": "variable", "linkage": "exported", "name": "_AVPlayerItemFailedToPlayToEndTimeErrorKey"},
@@ -3299,6 +3321,8 @@
     {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_AVPlayerRateDidChangeReasonAppBackgrounded"},
     {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_AVPlayerRateDidChangeReasonAudioSessionInterrupted"},
     {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_AVPlayerRateDidChangeReasonKey"},
+    {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_AVPlayerRateDidChangeReasonPlayheadReachedLiveEdge"},
+    {"access": "public", "introduced": "26.4", "kind": "variable", "linkage": "exported", "name": "_AVPlayerRateDidChangeReasonReversePlaybackReachedStartOfSeekableRange"},
     {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_AVPlayerRateDidChangeReasonSetRateCalled"},
     {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_AVPlayerRateDidChangeReasonSetRateFailed"},
     {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_AVPlayerWaitingDuringInterstitialEventReason"},
@@ -3528,7 +3552,7 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "primaryContentConfiguration", "name": "primaryContentConfiguration"},
       {"access": "public", "getter": "auxiliaryContentConfigurations", "name": "auxiliaryContentConfigurations", "setter": "setAuxiliaryContentConfigurations:"},
       {"access": "public", "getter": "optimizesAuxiliaryContentConfigurations", "name": "optimizesAuxiliaryContentConfigurations", "setter": "setOptimizesAuxiliaryContentConfigurations:"},
-      {"access": "public", "getter": "downloadsInterstitialAssets", "name": "downloadsInterstitialAssets", "setter": "setDownloadsInterstitialAssets:", "unavailable": true}
+      {"access": "public", "getter": "downloadsInterstitialAssets", "introduced": "18", "name": "downloadsInterstitialAssets", "setter": "setDownloadsInterstitialAssets:"}
      ],
      "super": "NSObject"
     },
@@ -4781,9 +4805,13 @@
     },
     {
      "access": "public",
+     "categories": [
+      "AVCaptionRenderer_CaptionPreview"
+     ],
      "instanceMethods": [
-      {"access": "public", "name": "captionSceneChangesInRange:"},
-      {"access": "public", "name": "renderInContext:forTime:"}
+      {"access": "public", "introduced": "18", "name": "init"},
+      {"access": "public", "introduced": "18", "name": "captionSceneChangesInRange:"},
+      {"access": "public", "introduced": "18", "name": "renderInContext:forTime:"}
      ],
      "introduced": "18",
      "ivars": [
@@ -4792,8 +4820,8 @@
      "linkage": "exported",
      "name": "AVCaptionRenderer",
      "properties": [
-      {"access": "public", "getter": "captions", "name": "captions", "setter": "setCaptions:"},
-      {"access": "public", "getter": "bounds", "name": "bounds", "setter": "setBounds:"}
+      {"access": "public", "getter": "captions", "introduced": "18", "name": "captions", "setter": "setCaptions:"},
+      {"access": "public", "getter": "bounds", "introduced": "18", "name": "bounds", "setter": "setBounds:"}
      ],
      "super": "NSObject"
     },
@@ -4965,7 +4993,8 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "canProvidePersistableContentKey", "name": "canProvidePersistableContentKey"},
       {"access": "public", "attr": [ "readonly" ], "getter": "contentKeySpecifier", "introduced": "14.5", "name": "contentKeySpecifier"},
       {"access": "public", "attr": [ "readonly" ], "getter": "contentKey", "introduced": "14.5", "name": "contentKey"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "originatingRecipient", "introduced": "18.4", "name": "originatingRecipient"}
+      {"access": "public", "attr": [ "readonly" ], "getter": "originatingRecipient", "introduced": "26", "name": "originatingRecipient"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canBeFulfilledWithAdvisoryKey", "name": "canBeFulfilledWithAdvisoryKey", "unavailable": true}
      ],
      "super": "NSObject"
     },
@@ -5016,6 +5045,7 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "delegateQueue", "name": "delegateQueue"},
       {"access": "public", "attr": [ "readonly" ], "getter": "storageURL", "name": "storageURL"},
       {"access": "public", "attr": [ "readonly" ], "getter": "keySystem", "name": "keySystem"},
+      {"access": "public", "getter": "supportsAdvisoryKeys", "name": "supportsAdvisoryKeys", "setter": "setSupportsAdvisoryKeys:", "unavailable": true},
       {"access": "public", "attr": [ "readonly" ], "getter": "contentProtectionSessionIdentifier", "name": "contentProtectionSessionIdentifier"}
      ],
      "super": "NSObject"
@@ -5588,7 +5618,7 @@
      "instanceMethods": [
       {"access": "public", "name": "init", "unavailable": true}
      ],
-     "introduced": "18",
+     "introduced": "26",
      "linkage": "exported",
      "name": "AVMetricDownloadSummaryEvent",
      "properties": [
@@ -6405,6 +6435,7 @@
       "AVRoutingPlaybackArbitrationEligibility",
       "AVPlayerRoutingPlaybackArbitrationSupport",
       "AVPlayerObservation",
+      "AVPlayerAllowsCaptureOfClearKeyVideo",
       "AVPlayerDeprecated",
       "AVPlayerInterstitialSupport"
      ],
@@ -6462,6 +6493,7 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "willPlayOnce", "introduced": "16", "name": "willPlayOnce"},
       {"access": "public", "attr": [ "readonly" ], "getter": "userDefinedAttributes", "name": "userDefinedAttributes"},
       {"access": "public", "attr": [ "readonly" ], "getter": "assetListResponse", "introduced": "16.4", "name": "assetListResponse"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scheduleIdentifier", "introduced": "26.4", "name": "scheduleIdentifier"},
       {"access": "public", "attr": [ "readonly" ], "getter": "timelineOccupancy", "introduced": "18", "name": "timelineOccupancy"},
       {"access": "public", "attr": [ "readonly" ], "getter": "supplementsPrimaryContent", "introduced": "18", "name": "supplementsPrimaryContent"},
       {"access": "public", "attr": [ "readonly" ], "getter": "contentMayVary", "introduced": "18", "name": "contentMayVary"},
@@ -6901,7 +6933,9 @@
       {"access": "public", "name": "playerLayerWithPlayer:"}
      ],
      "instanceMethods": [
-      {"access": "public", "introduced": "16", "name": "copyDisplayedPixelBuffer"}
+      {"access": "public", "introduced": "16", "name": "copyDisplayedPixelBuffer"},
+      {"access": "public", "introduced": "26.4", "name": "setCaptionPreviewProfileID:position:text:"},
+      {"access": "public", "introduced": "26.4", "name": "stopShowingCaptionPreview"}
      ],
      "introduced": "4",
      "ivars": [

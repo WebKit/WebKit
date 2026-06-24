@@ -31,6 +31,7 @@
 #if ENABLE(MATHML)
 
 #include "ContainerNodeInlines.h"
+#include "ElementInlinesLight.h"
 #include "NodeName.h"
 #include "RenderMathMLPadded.h"
 #include "RenderObjectInlines.h"
@@ -107,13 +108,13 @@ void MathMLPaddedElement::attributeChanged(const QualifiedName& name, const Atom
 
     if (affectsLayout) {
         if (CheckedPtr renderer = this->renderer())
-            renderer->setNeedsLayoutAndPreferredWidthsUpdate();
+            renderer->setNeedsLayoutAndInvalidateContentLogicalWidths();
     }
 
     MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> MathMLPaddedElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLPaddedElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::mpaddedTag));
     return createRenderer<RenderMathMLPadded>(*this, WTF::move(style));

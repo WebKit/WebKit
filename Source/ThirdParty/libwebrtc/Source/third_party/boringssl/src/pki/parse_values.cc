@@ -52,8 +52,8 @@ bool ParseBoolInternal(Input in, bool *out, bool relaxed) {
   return false;
 }
 
-// Reads a positive decimal number with |digits| digits and stores it in
-// |*out|. This function does not check that the type of |*out| is large
+// Reads a positive decimal number with `digits` digits and stores it in
+// `*out`. This function does not check that the type of `*out` is large
 // enough to hold 10^digits - 1; the caller must choose an appropriate type
 // based on the number of digits they wish to parse.
 template <typename UINT>
@@ -137,7 +137,7 @@ bool ValidateGeneralizedTime(const GeneralizedTime &time) {
 }
 
 // Returns the number of bytes of numeric precision in a DER encoded INTEGER
-// value. |in| must be a valid DER encoding of an INTEGER for this to work.
+// value. `in` must be a valid DER encoding of an INTEGER for this to work.
 //
 // Normally the precision of the number is exactly in.size(). However when
 // encoding positive numbers using DER it is possible to have a leading zero
@@ -149,7 +149,7 @@ size_t GetUnsignedIntegerLength(Input in) {
   der::ByteReader reader(in);
   uint8_t first_byte;
   if (!reader.ReadByte(&first_byte)) {
-    return 0;  // Not valid DER  as |in| was empty.
+    return 0;  // Not valid DER  as `in` was empty.
   }
 
   if (first_byte == 0 && in.size() > 1) {
@@ -246,13 +246,13 @@ bool BitString::AssertsBit(size_t bit_index) const {
   }
 
   // Within a byte, bits are ordered from most significant to least significant.
-  // Convert |bit_index| to an index within the |byte_index| byte, measured from
+  // Convert `bit_index` to an index within the `byte_index` byte, measured from
   // its least significant bit.
   uint8_t bit_index_in_byte = 7 - (bit_index - byte_index * 8);
 
   // BIT STRING parsing already guarantees that unused bits in a byte are zero
   // (otherwise it wouldn't be valid DER). Therefore it isn't necessary to check
-  // |unused_bits_|
+  // `unused_bits_`
   uint8_t byte = bytes_[byte_index];
   return 0 != (byte & (1 << bit_index_in_byte));
 }

@@ -217,8 +217,8 @@ uint32_t SumSquareError_NEON_DotProd(const uint8_t* src_a,
       : "memory", "cc", "v0", "v1", "v2", "v3", "v4", "v5");
   return sse;
 }
-#endif  // !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)
 #endif
+#endif  // !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)
 
 #ifdef __cplusplus
 }  // extern "C"

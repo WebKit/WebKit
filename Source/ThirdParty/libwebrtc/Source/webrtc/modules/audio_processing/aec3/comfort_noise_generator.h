@@ -16,16 +16,15 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "rtc_base/system/arch.h"
 
 namespace webrtc {
-namespace aec3 {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 
 void EstimateComfortNoise_SSE2(const std::array<float, kFftLengthBy2Plus1>& N2,
@@ -37,8 +36,6 @@ void EstimateComfortNoise(const std::array<float, kFftLengthBy2Plus1>& N2,
                           uint32_t* seed,
                           FftData* lower_band_noise,
                           FftData* upper_band_noise);
-
-}  // namespace aec3
 
 // Generates the comfort noise.
 class ComfortNoiseGenerator {
@@ -53,12 +50,12 @@ class ComfortNoiseGenerator {
   // Computes the comfort noise.
   void Compute(
       bool saturated_capture,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> capture_spectrum,
-      ArrayView<FftData> lower_band_noise,
-      ArrayView<FftData> upper_band_noise);
+      std::span<const std::array<float, kFftLengthBy2Plus1>> capture_spectrum,
+      std::span<FftData> lower_band_noise,
+      std::span<FftData> upper_band_noise);
 
   // Returns the estimate of the background noise spectrum.
-  ArrayView<const std::array<float, kFftLengthBy2Plus1>> NoiseSpectrum() const {
+  std::span<const std::array<float, kFftLengthBy2Plus1>> NoiseSpectrum() const {
     return N2_;
   }
 

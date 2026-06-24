@@ -17,9 +17,9 @@
 #include <list>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
@@ -59,7 +59,7 @@ class RtcpTransceiverImpl {
 
   void SetReadyToSend(bool ready);
 
-  void ReceivePacket(ArrayView<const uint8_t> packet, Timestamp now);
+  void ReceivePacket(std::span<const uint8_t> packet, Timestamp now);
 
   void SendCompoundPacket();
 
@@ -71,7 +71,7 @@ class RtcpTransceiverImpl {
   void SendPictureLossIndication(uint32_t ssrc);
   // If new_request is true then requested sequence no. will increase for each
   // requested ssrc.
-  void SendFullIntraRequest(ArrayView<const uint32_t> ssrcs, bool new_request);
+  void SendFullIntraRequest(std::span<const uint32_t> ssrcs, bool new_request);
 
   // SendCombinedRtcpPacket ignores rtcp mode and does not send a compound
   // message. https://tools.ietf.org/html/rfc4585#section-3.1
@@ -103,7 +103,7 @@ class RtcpTransceiverImpl {
                             std::vector<ReportBlockData>& report_blocks);
   void HandleReportBlocks(uint32_t sender_ssrc,
                           Timestamp now,
-                          ArrayView<const rtcp::ReportBlock> rtcp_report_blocks,
+                          std::span<const rtcp::ReportBlock> rtcp_report_blocks,
                           std::vector<ReportBlockData>& report_blocks);
   void HandlePayloadSpecificFeedback(
       const rtcp::CommonHeader& rtcp_packet_header,
@@ -126,7 +126,7 @@ class RtcpTransceiverImpl {
   void HandleTargetBitrate(const rtcp::TargetBitrate& target_bitrate,
                            uint32_t remote_ssrc);
   void ProcessReportBlocks(Timestamp now,
-                           ArrayView<const ReportBlockData> report_blocks);
+                           std::span<const ReportBlockData> report_blocks);
 
   void ReschedulePeriodicCompoundPackets();
   void SchedulePeriodicCompoundPackets(TimeDelta delay);
@@ -156,7 +156,7 @@ class RtcpTransceiverImpl {
                                                     size_t num_max_blocks);
 
   const RtcpTransceiverConfig config_;
-  std::function<void(ArrayView<const uint8_t>)> rtcp_transport_;
+  std::function<void(std::span<const uint8_t>)> rtcp_transport_;
 
   bool ready_to_send_;
   std::optional<rtcp::Remb> remb_;

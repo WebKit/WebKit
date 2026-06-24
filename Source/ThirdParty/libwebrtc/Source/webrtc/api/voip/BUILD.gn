@@ -20,7 +20,6 @@ rtc_source_set("voip_api") {
     "voip_volume_control.h",
   ]
   deps = [
-    "..:array_view",
     "../audio_codecs:audio_codecs_api",
     "../neteq:neteq_api",
     "//third_party/abseil-cpp/absl/base:core_headers",
@@ -56,7 +55,6 @@ if (rtc_include_tests) {
     sources = [ "test/mock_voip_engine.h" ]
     deps = [
       ":voip_api",
-      "..:array_view",
       "../../test:test_support",
       "../audio_codecs:audio_codecs_api",
     ]
@@ -67,7 +65,6 @@ if (rtc_include_tests) {
     sources = [ "test/voip_engine_factory_unittest.cc" ]
     deps = [
       ":voip_engine_factory",
-      "..:field_trials",
       "..:make_ref_counted",
       "../../modules/audio_device:mock_audio_device",
       "../../modules/audio_processing:mocks",

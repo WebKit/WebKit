@@ -33,9 +33,6 @@ sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'Scripts'))
 sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'jhbuild'))
 sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'Scripts', 'webkitpy'))
 
-from webkitpy.port.linux_container_sdk_utils import maybe_enter_webkit_container_sdk
-maybe_enter_webkit_container_sdk()
-
 
 # Executes the command and returns 0 if it was sucessful, otherwise returns a number => 1
 def run_cmd(cmd):
@@ -53,15 +50,18 @@ def run_cmd(cmd):
     return max(sys_retcode, 1)
 
 
-def tests_webdriver_minibroser(platform, bundle_type, bundle_path):
+def tests_webdriver_minibroser(platform, bundle_type, bundle_path, headless):
     if not os.path.isfile(bundle_path):
         raise ValueError(f"Can't find a bundle file at path: {bundle_path}")
+
+    headless_arg = '--headless' if headless else ''
+    xwrap = 'xvfb-run -a ' if headless and platform == 'gtk' else ''
 
     if bundle_type == 'distro-specific':
         # This only works if executing on the same distro than created
         test_script = os.path.join(MYDIR,'webkitpy/binary_bundling/tests/webdriver/test_webdriver_bundle.py')
     elif bundle_type == 'universal':
-        test_script = os.path.join(MYDIR,'webkitpy/binary_bundling/tests/webdriver/run-webdriver-tests-bundle-docker.sh')
+        test_script = os.path.join(MYDIR,'webkitpy/binary_bundling/tests/webdriver/run-webdriver-tests-bundle-podman.sh')
     else:
         raise NotImplementedError(f'Unknown bundle type: {bundle_type}')
 
@@ -70,7 +70,7 @@ def tests_webdriver_minibroser(platform, bundle_type, bundle_path):
 
     # The test runner for the universal bundle handles itself uncompressing the bundle
     if bundle_type == 'universal':
-        retcode = run_cmd(f'{test_script} --platform={platform} {bundle_path}')
+        retcode = run_cmd(f'{xwrap}{test_script} --platform={platform} {headless_arg} {bundle_path}')
         return retcode
 
     # Handle here uncompressing the bundle for the distro-specific tests
@@ -84,7 +84,7 @@ def tests_webdriver_minibroser(platform, bundle_type, bundle_path):
         else:
             raise ValueError("Unsupported file format. Only .tar.xz and .zip are supported.")
 
-        retcode = run_cmd(f'{test_script} --platform={platform} {temp_dir}')
+        retcode = run_cmd(f'{xwrap}{test_script} --platform={platform} {headless_arg} {temp_dir}')
         return retcode
 
 
@@ -92,12 +92,13 @@ def main():
     parser = argparse.ArgumentParser('usage: %prog [options]')
     parser.add_argument('--platform', dest='platform', choices=['gtk', 'wpe'], required=True,
                         help='The WebKit port of the bundle to be tested')
+    parser.add_argument("--no-headless", dest="headless", action="store_false", help="Do not run in headless mode")
     parser.add_argument('--bundle-type', dest='bundle_type', choices=['universal', 'distro-specific'], required=True,
                         help='Select universal if the bundle was created with "--syslibs=bundle-all" or select distro-specific otherwise')
     parser.add_argument('bundle_path', action='store', help='Path to the compressed bundle file')
     options = parser.parse_args()
 
-    return tests_webdriver_minibroser(options.platform, options.bundle_type, options.bundle_path)
+    return tests_webdriver_minibroser(options.platform, options.bundle_type, options.bundle_path, options.headless)
 
 
 if __name__ == '__main__':

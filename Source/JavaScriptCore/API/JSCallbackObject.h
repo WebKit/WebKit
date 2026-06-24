@@ -33,6 +33,7 @@
 #if defined(JSC_GLIB_API_ENABLED)
 #include "JSAPIWrapperGlobalObject.h"
 #endif
+#include "JSBase.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSObjectRef.h"

@@ -419,6 +419,8 @@ class ProgramExecutableVk::WarmUpTaskCommon : public vk::ErrorContext, public Li
         return angle::Result::Continue;
     }
 
+    virtual void removeFailedPipeline() {}
+
   protected:
     void mergeProgramExecutablePipelineCacheToRenderer()
     {
@@ -518,6 +520,23 @@ class ProgramExecutableVk::WarmUpGraphicsTask : public WarmUpTaskCommon
 
             mCompatibleRenderPass->get().destroy(getDevice());
             SafeDelete(mCompatibleRenderPass);
+        }
+    }
+
+    void removeFailedPipeline() override
+    {
+        // Remove the placeholder entry in GraphicsPipelineCache. This
+        // function must NOT be called from the task itself, as the cache is
+        // not internally synchronized, which is why there was a placeholder
+        // pipeline in the first place.
+        ASSERT(mErrorCode != VK_SUCCESS);
+        if (mPipelineSubset == vk::GraphicsPipelineSubset::Complete)
+        {
+            mCompletePipelines.remove(mGraphicsPipelineDesc);
+        }
+        else
+        {
+            mShadersPipelines.remove(mGraphicsPipelineDesc);
         }
     }
 
@@ -633,8 +652,10 @@ angle::Result ProgramInfo::initProgram(vk::ErrorContext *context,
     options.isMultisampledFramebufferFetch =
         optionBits.multiSampleFramebufferFetch && shaderType == gl::ShaderType::Fragment;
     options.enableSampleShading = optionBits.enableSampleShading;
-    options.removeDepthStencilInput =
-        optionBits.removeDepthStencilInput && shaderType == gl::ShaderType::Fragment;
+    options.removeDepthInput =
+        optionBits.removeDepthInput && shaderType == gl::ShaderType::Fragment;
+    options.removeStencilInput =
+        optionBits.removeStencilInput && shaderType == gl::ShaderType::Fragment;
 
     options.useSpirvVaryingPrecisionFixer =
         context->getFeatures().varyingsRequireMatchingPrecisionInSpirv.enabled;
@@ -1147,6 +1168,8 @@ void ProgramExecutableVk::waitForPostLinkTasksImpl(ContextVk *contextVk)
             ANGLE_PERF_WARNING(contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
                                "Post-link task unexpectedly failed. Performance may degrade, or "
                                "device may soon be lost");
+
+            warmUpTask->removeFailedPipeline();
         }
     }
 
@@ -1505,9 +1528,14 @@ ProgramTransformOptions ProgramExecutableVk::getTransformOptions(
     transformOptions.multiSampleFramebufferFetch = hasFramebufferFetch && isMultisampled;
     transformOptions.enableSampleShading =
         contextVk->getState().isSampleShadingEnabled() && isMultisampled;
-    transformOptions.removeDepthStencilInput =
-        hasDepthStencilFramebufferFetch &&
-        drawFrameBuffer->getDepthStencilRenderTarget() == nullptr;
+    transformOptions.removeDepthInput =
+        mExecutable->usesDepthFramebufferFetch() &&
+        (drawFrameBuffer->getDepthStencilRenderTarget() == nullptr ||
+         drawFrameBuffer->getDepthStencilRenderTarget()->getImageActualFormat().depthBits == 0);
+    transformOptions.removeStencilInput =
+        mExecutable->usesStencilFramebufferFetch() &&
+        (drawFrameBuffer->getDepthStencilRenderTarget() == nullptr ||
+         drawFrameBuffer->getDepthStencilRenderTarget()->getImageActualFormat().stencilBits == 0);
 
     transformOptions.ditherControl = static_cast<uint16_t>(desc.getEmulatedDitherControl());
 

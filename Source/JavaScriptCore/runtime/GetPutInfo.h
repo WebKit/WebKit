@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/ECMAMode.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/UniquedStringImpl.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -91,16 +92,16 @@ enum class InitializationMode : unsigned {
 
 ALWAYS_INLINE const char* resolveModeName(ResolveMode resolveMode)
 {
-    static const char* const names[] = {
+    static constexpr auto names = WTF::toArray<const char*>({
         "ThrowIfNotFound",
         "DoNotThrowIfNotFound"
-    };
+    });
     return names[resolveMode];
 }
 
 ALWAYS_INLINE const char* resolveTypeName(ResolveType type)
 {
-    static const char* const names[] = {
+    static constexpr auto names = WTF::toArray<const char*>({
         "GlobalProperty",
         "GlobalVar",
         "GlobalLexicalVar",
@@ -114,18 +115,18 @@ ALWAYS_INLINE const char* resolveTypeName(ResolveType type)
         "UnresolvedProperty",
         "UnresolvedPropertyWithVarInjectionChecks",
         "Dynamic"
-    };
+    });
     return names[type];
 }
 
 ALWAYS_INLINE const char* initializationModeName(InitializationMode initializationMode)
 {
-    static const char* const names[] = {
+    static constexpr auto names = WTF::toArray<const char*>({
         "Initialization",
         "ConstInitialization",
         "NotInitialization",
         "ScopedArgumentInitialization"
-    };
+    });
     return names[static_cast<unsigned>(initializationMode)];
 }
 

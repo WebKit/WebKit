@@ -13,9 +13,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/rtp_parameters.h"
 #include "api/transport/rtp/corruption_detection_message.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -38,9 +38,9 @@ class CorruptionDetectionExtension {
   static constexpr absl::string_view Uri() {
     return RtpExtension::kCorruptionDetectionUri;
   }
-  static bool Parse(ArrayView<const uint8_t> data,
+  static bool Parse(std::span<const uint8_t> data,
                     CorruptionDetectionMessage* message);
-  static bool Write(ArrayView<uint8_t> data,
+  static bool Write(std::span<uint8_t> data,
                     const CorruptionDetectionMessage& message);
   // Size of the header extension in bytes.
   static size_t ValueSize(const CorruptionDetectionMessage& message);

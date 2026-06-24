@@ -10,13 +10,14 @@
 
 #include "rtc_base/buffer.h"
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <span>
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -25,11 +26,18 @@ namespace webrtc {
 
 namespace {
 
+using ::testing::Each;
 using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
+using ::testing::Eq;
 
-constexpr uint8_t kTestData[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
-                                 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf};
+auto kTestData =
+    std::to_array<uint8_t>({0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9,
+                            0xa, 0xb, 0xc, 0xd, 0xe, 0xf});
+
+uint8_t* TestDataAtIndex(int index) {
+  return std::span<uint8_t>(kTestData).subspan(index).data();
+}
 
 void TestBuf(const Buffer& b1, size_t size, size_t capacity) {
   EXPECT_EQ(b1.size(), size);
@@ -43,28 +51,32 @@ TEST(BufferTest, TestConstructEmpty) {
   TestBuf(Buffer(Buffer()), 0, 0);
   TestBuf(Buffer::CreateUninitializedWithSize(0), 0, 0);
 
-  // We can't use a literal 0 for the first argument, because C++ will allow
-  // that to be considered a null pointer, which makes the call ambiguous.
-  TestBuf(Buffer(0 + 0, 10), 0, 10);
+  TestBuf(Buffer::CreateWithCapacity(10), 0, 10);
 
-  TestBuf(Buffer(kTestData, 0), 0, 0);
-  TestBuf(Buffer(kTestData, 0, 20), 0, 20);
+  TestBuf(Buffer(kTestData.data(), 0), 0, 0);
+  TestBuf(Buffer(kTestData.data(), 0, 20), 0, 20);
+}
+
+TEST(BufferTest, TestEmptyBuffersAreEqual) {
+  Buffer buf1;
+  Buffer buf2;
+  EXPECT_EQ(buf1, buf2);
 }
 
 TEST(BufferTest, TestConstructData) {
-  Buffer buf(kTestData, 7);
+  Buffer buf(kTestData.data(), 7);
   EXPECT_EQ(buf.size(), 7u);
   EXPECT_EQ(buf.capacity(), 7u);
   EXPECT_FALSE(buf.empty());
-  EXPECT_EQ(0, memcmp(buf.data(), kTestData, 7));
+  EXPECT_EQ(0, memcmp(buf.data(), kTestData.data(), 7));
 }
 
 TEST(BufferTest, TestConstructDataWithCapacity) {
-  Buffer buf(kTestData, 7, 14);
+  Buffer buf(kTestData.data(), 7, 14);
   EXPECT_EQ(buf.size(), 7u);
   EXPECT_EQ(buf.capacity(), 14u);
   EXPECT_FALSE(buf.empty());
-  EXPECT_EQ(0, memcmp(buf.data(), kTestData, 7));
+  EXPECT_EQ(0, memcmp(buf.data(), kTestData.data(), 7));
 }
 
 TEST(BufferTest, TestConstructArray) {
@@ -72,38 +84,38 @@ TEST(BufferTest, TestConstructArray) {
   EXPECT_EQ(buf.size(), 16u);
   EXPECT_EQ(buf.capacity(), 16u);
   EXPECT_FALSE(buf.empty());
-  EXPECT_EQ(0, memcmp(buf.data(), kTestData, 16));
+  EXPECT_EQ(0, memcmp(buf.data(), kTestData.data(), 16));
 }
 
 TEST(BufferTest, TestStringViewConversion) {
   Buffer buf(kTestData);
   absl::string_view view = buf;
-  EXPECT_EQ(view,
-            absl::string_view(reinterpret_cast<const char*>(kTestData), 16u));
+  EXPECT_EQ(view, absl::string_view(
+                      reinterpret_cast<const char*>(kTestData.data()), 16u));
 }
 
 TEST(BufferTest, TestSetData) {
-  Buffer buf(kTestData + 4, 7);
-  buf.SetData(kTestData, 9);
+  Buffer buf(TestDataAtIndex(4), 7);
+  buf.SetData(kTestData.data(), 9);
   EXPECT_EQ(buf.size(), 9u);
   EXPECT_EQ(buf.capacity(), 7u * 3 / 2);
   EXPECT_FALSE(buf.empty());
-  EXPECT_EQ(0, memcmp(buf.data(), kTestData, 9));
+  EXPECT_EQ(0, memcmp(buf.data(), kTestData.data(), 9));
   Buffer buf2;
   buf2.SetData(buf);
   EXPECT_EQ(buf.size(), 9u);
   EXPECT_EQ(buf.capacity(), 7u * 3 / 2);
-  EXPECT_EQ(0, memcmp(buf.data(), kTestData, 9));
+  EXPECT_EQ(0, memcmp(buf.data(), kTestData.data(), 9));
 }
 
 TEST(BufferTest, TestAppendData) {
-  Buffer buf(kTestData + 4, 3);
-  buf.AppendData(kTestData + 10, 2);
+  Buffer buf(TestDataAtIndex(4), 3);
+  buf.AppendData(TestDataAtIndex(10), 2);
   const int8_t exp[] = {0x4, 0x5, 0x6, 0xa, 0xb};
   EXPECT_EQ(buf, Buffer(exp));
   Buffer buf2;
   buf2.AppendData(buf);
-  buf2.AppendData(ArrayView<uint8_t>(buf));
+  buf2.AppendData(std::span<uint8_t>(buf));
   const int8_t exp2[] = {0x4, 0x5, 0x6, 0xa, 0xb, 0x4, 0x5, 0x6, 0xa, 0xb};
   EXPECT_EQ(buf2, Buffer(exp2));
 }
@@ -111,33 +123,34 @@ TEST(BufferTest, TestAppendData) {
 TEST(BufferTest, TestSetAndAppendWithUnknownArg) {
   struct TestDataContainer {
     size_t size() const { return 3; }
-    const uint8_t* data() const { return kTestData; }
+    const uint8_t* data() const { return kTestData.data(); }
   };
   Buffer buf;
   buf.SetData(TestDataContainer());
   EXPECT_EQ(3u, buf.size());
-  EXPECT_EQ(Buffer(kTestData, 3), buf);
+  EXPECT_EQ(Buffer(kTestData.data(), 3), buf);
   EXPECT_THAT(buf, ElementsAre(0, 1, 2));
   buf.AppendData(TestDataContainer());
   EXPECT_EQ(6u, buf.size());
-  EXPECT_EQ(0, memcmp(buf.data(), kTestData, 3));
-  EXPECT_EQ(0, memcmp(buf.data() + 3, kTestData, 3));
+  EXPECT_EQ(0, memcmp(buf.data(), kTestData.data(), 3));
+  EXPECT_EQ(0, memcmp(std::span<uint8_t>(buf).subspan(3).data(),
+                      kTestData.data(), 3));
   EXPECT_THAT(buf, ElementsAre(0, 1, 2, 0, 1, 2));
 }
 
 TEST(BufferTest, TestSetSizeSmaller) {
   Buffer buf;
-  buf.SetData(kTestData, 15);
+  buf.SetData(kTestData.data(), 15);
   buf.SetSize(10);
   EXPECT_EQ(buf.size(), 10u);
   EXPECT_EQ(buf.capacity(), 15u);  // Hasn't shrunk.
   EXPECT_FALSE(buf.empty());
-  EXPECT_EQ(buf, Buffer(kTestData, 10));
+  EXPECT_EQ(buf, Buffer(kTestData.data(), 10));
 }
 
 TEST(BufferTest, TestSetSizeLarger) {
   Buffer buf;
-  buf.SetData(kTestData, 15);
+  buf.SetData(kTestData.data(), 15);
   EXPECT_EQ(buf.size(), 15u);
   EXPECT_EQ(buf.capacity(), 15u);
   EXPECT_FALSE(buf.empty());
@@ -145,7 +158,7 @@ TEST(BufferTest, TestSetSizeLarger) {
   EXPECT_EQ(buf.size(), 20u);
   EXPECT_EQ(buf.capacity(), 15u * 3 / 2);  // Has grown.
   EXPECT_FALSE(buf.empty());
-  EXPECT_EQ(0, memcmp(buf.data(), kTestData, 15));
+  EXPECT_EQ(0, memcmp(buf.data(), kTestData.data(), 15));
 }
 
 TEST(BufferTest, TestEnsureCapacitySmaller) {
@@ -159,18 +172,18 @@ TEST(BufferTest, TestEnsureCapacitySmaller) {
 }
 
 TEST(BufferTest, TestEnsureCapacityLarger) {
-  Buffer buf(kTestData, 5);
+  Buffer buf(kTestData.data(), 5);
   buf.EnsureCapacity(10);
   const int8_t* data = buf.data<int8_t>();
   EXPECT_EQ(buf.capacity(), 10u);
-  buf.AppendData(kTestData + 5, 5);
+  buf.AppendData(TestDataAtIndex(5), 5);
   EXPECT_EQ(buf.data<int8_t>(), data);  // No reallocation.
   EXPECT_FALSE(buf.empty());
-  EXPECT_EQ(buf, Buffer(kTestData, 10));
+  EXPECT_EQ(buf, Buffer(kTestData.data(), 10));
 }
 
 TEST(BufferTest, TestMoveConstruct) {
-  Buffer buf1(kTestData, 3, 40);
+  Buffer buf1(kTestData.data(), 3, 40);
   const uint8_t* data = buf1.data();
   Buffer buf2(std::move(buf1));
   EXPECT_EQ(buf2.size(), 3u);
@@ -185,7 +198,7 @@ TEST(BufferTest, TestMoveConstruct) {
 }
 
 TEST(BufferTest, TestMoveAssign) {
-  Buffer buf1(kTestData, 3, 40);
+  Buffer buf1(kTestData.data(), 3, 40);
   const uint8_t* data = buf1.data();
   Buffer buf2(kTestData);
   buf2 = std::move(buf1);
@@ -206,14 +219,14 @@ TEST(BufferTest, TestMoveAssignSelf) {
   // state could be caught by the DCHECKs and/or by the leak checker.) We need
   // to be sneaky when testing this; if we're doing a too-obvious
   // move-assign-to-self, clang's -Wself-move triggers at compile time.
-  Buffer buf(kTestData, 3, 40);
+  Buffer buf(kTestData.data(), 3, 40);
   Buffer* buf_ptr = &buf;
   buf = std::move(*buf_ptr);
 }
 
 TEST(BufferTest, TestSwap) {
-  Buffer buf1(kTestData, 3);
-  Buffer buf2(kTestData, 6, 40);
+  Buffer buf1(kTestData.data(), 3);
+  Buffer buf2(kTestData.data(), 6, 40);
   uint8_t* data1 = buf1.data();
   uint8_t* data2 = buf2.data();
   using std::swap;
@@ -230,7 +243,7 @@ TEST(BufferTest, TestSwap) {
 
 TEST(BufferTest, TestClear) {
   Buffer buf;
-  buf.SetData(kTestData, 15);
+  buf.SetData(kTestData.data(), 15);
   EXPECT_EQ(buf.size(), 15u);
   EXPECT_EQ(buf.capacity(), 15u);
   EXPECT_FALSE(buf.empty());
@@ -243,15 +256,15 @@ TEST(BufferTest, TestClear) {
 }
 
 TEST(BufferTest, TestLambdaSetAppend) {
-  auto setter = [](ArrayView<uint8_t> av) {
+  auto setter = [](std::span<uint8_t> av) {
     for (int i = 0; i != 15; ++i)
       av[i] = kTestData[i];
     return 15;
   };
 
   Buffer buf1;
-  buf1.SetData(kTestData, 15);
-  buf1.AppendData(kTestData, 15);
+  buf1.SetData(kTestData.data(), 15);
+  buf1.AppendData(kTestData.data(), 15);
 
   Buffer buf2;
   EXPECT_EQ(buf2.SetData(15, setter), 15u);
@@ -263,15 +276,15 @@ TEST(BufferTest, TestLambdaSetAppend) {
 }
 
 TEST(BufferTest, TestLambdaSetAppendSigned) {
-  auto setter = [](ArrayView<int8_t> av) {
+  auto setter = [](std::span<int8_t> av) {
     for (int i = 0; i != 15; ++i)
       av[i] = kTestData[i];
     return 15;
   };
 
   Buffer buf1;
-  buf1.SetData(kTestData, 15);
-  buf1.AppendData(kTestData, 15);
+  buf1.SetData(kTestData.data(), 15);
+  buf1.AppendData(kTestData.data(), 15);
 
   Buffer buf2;
   EXPECT_EQ(buf2.SetData<int8_t>(15, setter), 15u);
@@ -283,14 +296,14 @@ TEST(BufferTest, TestLambdaSetAppendSigned) {
 }
 
 TEST(BufferTest, TestLambdaAppendEmpty) {
-  auto setter = [](ArrayView<uint8_t> av) {
+  auto setter = [](std::span<uint8_t> av) {
     for (int i = 0; i != 15; ++i)
       av[i] = kTestData[i];
     return 15;
   };
 
   Buffer buf1;
-  buf1.SetData(kTestData, 15);
+  buf1.SetData(kTestData.data(), 15);
 
   Buffer buf2;
   EXPECT_EQ(buf2.AppendData(15, setter), 15u);
@@ -301,7 +314,7 @@ TEST(BufferTest, TestLambdaAppendEmpty) {
 }
 
 TEST(BufferTest, TestLambdaAppendPartial) {
-  auto setter = [](ArrayView<uint8_t> av) {
+  auto setter = [](std::span<uint8_t> av) {
     for (int i = 0; i != 7; ++i)
       av[i] = kTestData[i];
     return 7;
@@ -317,7 +330,7 @@ TEST(BufferTest, TestLambdaAppendPartial) {
 
 TEST(BufferTest, TestMutableLambdaSetAppend) {
   uint8_t magic_number = 17;
-  auto setter = [magic_number](ArrayView<uint8_t> av) mutable {
+  auto setter = [magic_number](std::span<uint8_t> av) mutable {
     for (int i = 0; i != 15; ++i) {
       av[i] = magic_number;
       ++magic_number;
@@ -336,12 +349,12 @@ TEST(BufferTest, TestMutableLambdaSetAppend) {
   EXPECT_FALSE(buf.empty());
 
   for (uint8_t i = 0; i != buf.size(); ++i) {
-    EXPECT_EQ(buf.data()[i], magic_number + i);
+    EXPECT_EQ(buf[i], magic_number + i);
   }
 }
 
 TEST(BufferTest, TestBracketRead) {
-  Buffer buf(kTestData, 7);
+  Buffer buf(kTestData.data(), 7);
   EXPECT_EQ(buf.size(), 7u);
   EXPECT_EQ(buf.capacity(), 7u);
   EXPECT_NE(buf.data(), nullptr);
@@ -353,7 +366,7 @@ TEST(BufferTest, TestBracketRead) {
 }
 
 TEST(BufferTest, TestBracketReadConst) {
-  Buffer buf(kTestData, 7);
+  Buffer buf(kTestData.data(), 7);
   EXPECT_EQ(buf.size(), 7u);
   EXPECT_EQ(buf.capacity(), 7u);
   EXPECT_NE(buf.data(), nullptr);
@@ -377,20 +390,21 @@ TEST(BufferTest, TestBracketWrite) {
     buf[i] = kTestData[i];
   }
 
-  EXPECT_THAT(buf, ElementsAreArray(kTestData, 7));
+  EXPECT_THAT(buf, ElementsAreArray(kTestData.data(), 7));
 }
 
 TEST(BufferTest, TestBeginEnd) {
   const Buffer cbuf(kTestData);
   Buffer buf(kTestData);
-  auto* b1 = cbuf.begin();
+  auto b1 = cbuf.begin();
   for (auto& x : buf) {
     EXPECT_EQ(*b1, x);
+    ASSERT_NE(b1, cbuf.end());
     ++b1;
     ++x;
   }
   EXPECT_EQ(cbuf.end(), b1);
-  auto* b2 = buf.begin();
+  auto b2 = buf.begin();
   for (auto& y : cbuf) {
     EXPECT_EQ(*b2, y + 1);
     ++b2;
@@ -471,12 +485,13 @@ TEST(BufferDeathTest, DieOnUseAfterMove) {
 }
 
 TEST(ZeroOnFreeBufferTest, TestZeroOnSetData) {
-  ZeroOnFreeBuffer<uint8_t> buf(kTestData, 7);
+  ZeroOnFreeBuffer<uint8_t> buf(kTestData.data(), 7);
   const uint8_t* old_data = buf.data();
   const size_t old_capacity = buf.capacity();
-  const size_t old_size = buf.size();
   constexpr size_t offset = 1;
-  buf.SetData(kTestData + offset, 2);
+  // Pointer to the last five bytes of the underlying buffer.
+  auto to_be_zeroed = std::span<const uint8_t>(buf).subspan(2);
+  buf.SetData(TestDataAtIndex(offset), 2);
   // Sanity checks to make sure the underlying heap memory was not reallocated.
   EXPECT_EQ(old_data, buf.data());
   EXPECT_EQ(old_capacity, buf.capacity());
@@ -484,23 +499,21 @@ TEST(ZeroOnFreeBufferTest, TestZeroOnSetData) {
   // been zeroed.
   EXPECT_EQ(kTestData[offset], buf[0]);
   EXPECT_EQ(kTestData[offset + 1], buf[1]);
-  for (size_t i = 2; i < old_size; i++) {
-    EXPECT_EQ(0, old_data[i]);
-  }
+  EXPECT_THAT(to_be_zeroed, Each(Eq(0)));
 }
 
 TEST(ZeroOnFreeBufferTest, TestZeroOnSetDataFromSetter) {
   static constexpr size_t offset = 1;
-  const auto setter = [](ArrayView<uint8_t> av) {
+  const auto setter = [](std::span<uint8_t> av) {
     for (int i = 0; i != 2; ++i)
       av[i] = kTestData[offset + i];
     return 2;
   };
 
-  ZeroOnFreeBuffer<uint8_t> buf(kTestData, 7);
+  ZeroOnFreeBuffer<uint8_t> buf(kTestData.data(), 7);
   const uint8_t* old_data = buf.data();
+  auto to_be_zeroed = std::span<const uint8_t>(buf).subspan(2);
   const size_t old_capacity = buf.capacity();
-  const size_t old_size = buf.size();
   buf.SetData(2, setter);
   // Sanity checks to make sure the underlying heap memory was not reallocated.
   EXPECT_EQ(old_data, buf.data());
@@ -509,16 +522,14 @@ TEST(ZeroOnFreeBufferTest, TestZeroOnSetDataFromSetter) {
   // been zeroed.
   EXPECT_EQ(kTestData[offset], buf[0]);
   EXPECT_EQ(kTestData[offset + 1], buf[1]);
-  for (size_t i = 2; i < old_size; i++) {
-    EXPECT_EQ(0, old_data[i]);
-  }
+  EXPECT_THAT(to_be_zeroed, Each(Eq(0)));
 }
 
 TEST(ZeroOnFreeBufferTest, TestZeroOnSetSize) {
-  ZeroOnFreeBuffer<uint8_t> buf(kTestData, 7);
+  ZeroOnFreeBuffer<uint8_t> buf(kTestData.data(), 7);
+  auto to_be_zeroed = std::span<const uint8_t>(buf).subspan(2);
   const uint8_t* old_data = buf.data();
   const size_t old_capacity = buf.capacity();
-  const size_t old_size = buf.size();
   buf.SetSize(2);
   // Sanity checks to make sure the underlying heap memory was not reallocated.
   EXPECT_EQ(old_data, buf.data());
@@ -527,24 +538,20 @@ TEST(ZeroOnFreeBufferTest, TestZeroOnSetSize) {
   // been zeroed.
   EXPECT_EQ(kTestData[0], buf[0]);
   EXPECT_EQ(kTestData[1], buf[1]);
-  for (size_t i = 2; i < old_size; i++) {
-    EXPECT_EQ(0, old_data[i]);
-  }
+  EXPECT_THAT(to_be_zeroed, Each(Eq(0)));
 }
 
 TEST(ZeroOnFreeBufferTest, TestZeroOnClear) {
-  ZeroOnFreeBuffer<uint8_t> buf(kTestData, 7);
+  ZeroOnFreeBuffer<uint8_t> buf(kTestData.data(), 7);
+  auto to_be_zeroed = std::span<const uint8_t>(buf);
   const uint8_t* old_data = buf.data();
   const size_t old_capacity = buf.capacity();
-  const size_t old_size = buf.size();
   buf.Clear();
   // Sanity checks to make sure the underlying heap memory was not reallocated.
   EXPECT_EQ(old_data, buf.data());
   EXPECT_EQ(old_capacity, buf.capacity());
   // The underlying memory was not released but cleared.
-  for (size_t i = 0; i < old_size; i++) {
-    EXPECT_EQ(0, old_data[i]);
-  }
+  EXPECT_THAT(to_be_zeroed, Each(Eq(0)));
 }
 
 }  // namespace webrtc

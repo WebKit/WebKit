@@ -16,8 +16,8 @@
 
 set -euox pipefail
 
-# Use Xcode 16.3
-sudo xcode-select -s /Applications/Xcode_16.3.app/Contents/Developer
+# Use Xcode 26.2
+sudo xcode-select -s /Applications/Xcode_26.2.app/Contents/Developer
 
 brew install cmake
 
@@ -30,6 +30,11 @@ fi
 ABSEIL_ROOT=$(realpath ${ABSEIL_ROOT})
 
 source "${ABSEIL_ROOT}/ci/cmake_common.sh"
+
+# Avoid depending on GitHub by looking for a cached copy of GoogleTest.
+if [[ -r "${KOKORO_GFILE_DIR:-}/distdir/googletest-${ABSL_GOOGLETEST_VERSION}.tar.gz" ]]; then
+  ABSL_GOOGLETEST_DOWNLOAD_URL="${KOKORO_GFILE_DIR}/distdir/googletest-${ABSL_GOOGLETEST_VERSION}.tar.gz"
+fi
 
 if [[ -z ${ABSL_CMAKE_BUILD_TYPES:-} ]]; then
   ABSL_CMAKE_BUILD_TYPES="Debug"

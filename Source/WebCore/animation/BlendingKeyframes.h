@@ -26,7 +26,7 @@
 
 #include "CompositeOperation.h"
 #include "KeyframeInterpolation.h"
-#include "RenderStyle.h"
+#include "StyleComputedStyle.h"
 #include "StyleSingleAnimationRangeName.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Vector.h>
@@ -63,7 +63,7 @@ public:
         }
     };
 
-    BlendingKeyframe(Offset&&, std::unique_ptr<RenderStyle>&&);
+    BlendingKeyframe(Offset&&, std::unique_ptr<Style::ComputedStyle>&&);
     BlendingKeyframe(const BlendingKeyframe&);
 
     BlendingKeyframe(BlendingKeyframe&&) = default;
@@ -83,8 +83,8 @@ public:
 
     bool NODELETE usesRangeOffset() const;
 
-    const RenderStyle* style() const LIFETIME_BOUND { return m_style.get(); }
-    void setStyle(std::unique_ptr<RenderStyle>&& style) { m_style = WTF::move(style); }
+    const Style::ComputedStyle* style() const LIFETIME_BOUND { return m_style.get(); }
+    void setStyle(std::unique_ptr<Style::ComputedStyle>&& style) { m_style = WTF::move(style); }
 
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     void setTimingFunction(const RefPtr<TimingFunction>& timingFunction) { m_timingFunction = timingFunction; }
@@ -100,7 +100,7 @@ private:
     Offset m_specifiedOffset;
     double m_computedOffset { std::numeric_limits<double>::quiet_NaN() };
     HashSet<AnimatableCSSProperty> m_properties; // The properties specified in this keyframe.
-    std::unique_ptr<RenderStyle> m_style;
+    std::unique_ptr<Style::ComputedStyle> m_style;
     RefPtr<TimingFunction> m_timingFunction;
     std::optional<CompositeOperation> m_compositeOperation;
     bool m_containsDirectionAwareProperty { false };
@@ -143,7 +143,7 @@ public:
     void copyKeyframes(const BlendingKeyframes&);
     bool hasImplicitKeyframes() const;
     bool hasImplicitKeyframeForProperty(AnimatableCSSProperty) const;
-    void fillImplicitKeyframes(const KeyframeEffect&, const RenderStyle& elementStyle);
+    void fillImplicitKeyframes(const KeyframeEffect&, const Style::ComputedStyle& elementStyle);
 
     auto begin() const LIFETIME_BOUND { return m_keyframes.begin(); }
     auto end() const LIFETIME_BOUND { return m_keyframes.end(); }

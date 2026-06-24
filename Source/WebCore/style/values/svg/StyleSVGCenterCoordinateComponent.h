@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
 namespace Style {
@@ -32,11 +32,9 @@ namespace Style {
 // <'cx'/'cy'> = <length-percentage>
 // https://svgwg.org/svg2-draft/geometry.html#CX
 // https://svgwg.org/svg2-draft/geometry.html#CY
-struct SVGCenterCoordinateComponent : LengthWrapperBase<LengthPercentage<>> {
-    using Base::Base;
-};
+DEFINE_PRIMITIVE_NUMERIC_TYPE_WRAPPER(SVGCenterCoordinateComponent, LengthPercentage<>);
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::SVGCenterCoordinateComponent)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::SVGCenterCoordinateComponent)

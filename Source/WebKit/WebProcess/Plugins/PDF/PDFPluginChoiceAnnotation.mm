@@ -86,7 +86,7 @@ Ref<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
         choiceOption->setAttributeWithoutSynchronization(valueAttr, choice);
         choiceOption->setTextContent(choice);
 
-        if (choice == selectedChoice)
+        if ([choice isEqualToString:selectedChoice])
             choiceOption->setAttributeWithoutSynchronization(selectedAttr, "selected"_s);
 
         element->appendChild(choiceOption);

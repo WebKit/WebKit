@@ -14,99 +14,59 @@
 #include <cstdio>
 #include <cstring>
 
+#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 
-SimpleStringBuilder::SimpleStringBuilder(ArrayView<char> buffer)
-    : buffer_(buffer) {
-  buffer_[0] = '\0';
-  RTC_DCHECK(IsConsistent());
-}
-
-SimpleStringBuilder& SimpleStringBuilder::operator<<(char ch) {
-  return operator<<(absl::string_view(&ch, 1));
-}
-
-SimpleStringBuilder& SimpleStringBuilder::operator<<(absl::string_view str) {
-  RTC_DCHECK_LT(size_ + str.length(), buffer_.size())
-      << "Buffer size was insufficient";
-  const size_t chars_added = SafeMin(str.length(), buffer_.size() - size_ - 1);
-  memcpy(&buffer_[size_], str.data(), chars_added);
-  size_ += chars_added;
-  buffer_[size_] = '\0';
-  RTC_DCHECK(IsConsistent());
+StringBuilder& StringBuilder::operator<<(const absl::string_view str) {
+  str_.append(str.data(), str.length());
   return *this;
 }
 
-// Numeric conversion routines.
-//
-// We use std::[v]snprintf instead of std::to_string because:
-// * std::to_string relies on the current locale for formatting purposes,
-//   and therefore concurrent calls to std::to_string from multiple threads
-//   may result in partial serialization of calls
-// * snprintf allows us to print the number directly into our buffer.
-// * avoid allocating a std::string (potential heap alloc).
-// TODO(tommi): Switch to std::to_chars in C++17.
-
-SimpleStringBuilder& SimpleStringBuilder::operator<<(int i) {
-  return AppendFormat("%d", i);
+StringBuilder& StringBuilder::operator<<(char c) {
+  str_ += c;
+  return *this;
 }
 
-SimpleStringBuilder& SimpleStringBuilder::operator<<(unsigned i) {
-  return AppendFormat("%u", i);
+StringBuilder& StringBuilder::operator<<(int i) {
+  str_ += absl::StrCat(i);
+  return *this;
 }
 
-SimpleStringBuilder& SimpleStringBuilder::operator<<(long i) {  // NOLINT
-  return AppendFormat("%ld", i);
+StringBuilder& StringBuilder::operator<<(unsigned i) {
+  str_ += absl::StrCat(i);
+  return *this;
 }
 
-SimpleStringBuilder& SimpleStringBuilder::operator<<(long long i) {  // NOLINT
-  return AppendFormat("%lld", i);
+StringBuilder& StringBuilder::operator<<(long i) {
+  str_ += absl::StrCat(i);
+  return *this;
 }
 
-SimpleStringBuilder& SimpleStringBuilder::operator<<(
-    unsigned long i) {  // NOLINT
-  return AppendFormat("%lu", i);
+StringBuilder& StringBuilder::operator<<(long long i) {
+  str_ += absl::StrCat(i);
+  return *this;
 }
 
-SimpleStringBuilder& SimpleStringBuilder::operator<<(
-    unsigned long long i) {  // NOLINT
-  return AppendFormat("%llu", i);
+StringBuilder& StringBuilder::operator<<(unsigned long i) {
+  str_ += absl::StrCat(i);
+  return *this;
 }
 
-SimpleStringBuilder& SimpleStringBuilder::operator<<(float f) {
-  return AppendFormat("%g", f);
+StringBuilder& StringBuilder::operator<<(unsigned long long i) {
+  str_ += absl::StrCat(i);
+  return *this;
 }
 
-SimpleStringBuilder& SimpleStringBuilder::operator<<(double f) {
-  return AppendFormat("%g", f);
+StringBuilder& StringBuilder::operator<<(float f) {
+  str_ += absl::StrCat(f);
+  return *this;
 }
 
-SimpleStringBuilder& SimpleStringBuilder::operator<<(long double f) {
-  return AppendFormat("%Lg", f);
-}
-
-SimpleStringBuilder& SimpleStringBuilder::AppendFormat(const char* fmt, ...) {
-  va_list args;
-  va_start(args, fmt);
-  const int len =
-      std::vsnprintf(&buffer_[size_], buffer_.size() - size_, fmt, args);
-  if (len >= 0) {
-    const size_t chars_added = SafeMin(len, buffer_.size() - 1 - size_);
-    size_ += chars_added;
-    RTC_DCHECK_EQ(len, chars_added) << "Buffer size was insufficient";
-  } else {
-    // This should never happen, but we're paranoid, so re-write the
-    // terminator in case vsnprintf() overwrote it.
-    RTC_DCHECK_NOTREACHED();
-    buffer_[size_] = '\0';
-  }
-  va_end(args);
-  RTC_DCHECK(IsConsistent());
+StringBuilder& StringBuilder::operator<<(double f) {
+  str_ += absl::StrCat(f);
   return *this;
 }
 

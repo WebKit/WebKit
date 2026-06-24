@@ -47,6 +47,7 @@
 #include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "NodeDocument.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
@@ -64,8 +65,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ValidatedFormListedElement);
 
 using namespace HTMLNames;
 
-ValidatedFormListedElement::ValidatedFormListedElement(HTMLFormElement* form)
-    : FormListedElement { form }
+ValidatedFormListedElement::ValidatedFormListedElement()
 {
     ASSERT(!supportsReadOnly() || readOnlyBarsFromConstraintValidation());
 }
@@ -111,13 +111,13 @@ void ValidatedFormListedElement::updateVisibleValidationMessage(Ref<HTMLElement>
         message = validationMessage().trim(deprecatedIsSpaceOrNewline);
     if (!m_validationMessage)
         m_validationMessage = ValidationMessage::create(validationAnchor);
-    m_validationMessage->updateValidationMessage(validationAnchor, message);
+    protect(m_validationMessage)->updateValidationMessage(validationAnchor, message);
 }
 
 void ValidatedFormListedElement::hideVisibleValidationMessage()
 {
     if (m_validationMessage)
-        m_validationMessage->requestToHideMessage();
+        protect(m_validationMessage)->requestToHideMessage();
 }
 
 bool ValidatedFormListedElement::checkValidity(Vector<Ref<ValidatedFormListedElement>>* unhandledInvalidControls)
@@ -192,7 +192,7 @@ void ValidatedFormListedElement::reportNonFocusableControlError()
 
 bool ValidatedFormListedElement::isShowingValidationMessage() const
 {
-    return m_validationMessage && m_validationMessage->isVisible();
+    return m_validationMessage && protect(m_validationMessage)->isVisible();
 }
 
 bool ValidatedFormListedElement::validationMessageShadowTreeContains(const Node& node) const
@@ -218,7 +218,7 @@ void ValidatedFormListedElement::setDisabledInternal(bool disabled, bool disable
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (changingDisabledState) {
-        emplace(styleInvalidation, asHTMLElement(), {
+        emplace(styleInvalidation, protect(asHTMLElement()), {
             { CSSSelector::PseudoClass::Disabled, newDisabledState },
             { CSSSelector::PseudoClass::Enabled, !newDisabledState },
         });
@@ -273,18 +273,18 @@ void ValidatedFormListedElement::updateValidity()
         if (willValidate) {
             if (!newIsValid) {
                 if (!belongsToFormThatIsBeingDestroyed())
-                    addInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
+                    addInvalidElementToAncestorFromInsertionPoint(element, protect(element.parentNode()).get());
                 if (RefPtr form = this->form())
                     form->addInvalidFormControl(element);
             } else {
                 if (!belongsToFormThatIsBeingDestroyed())
-                    removeInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
+                    removeInvalidElementToAncestorFromInsertionPoint(element, protect(element.parentNode()).get());
                 if (RefPtr form = this->form())
                     form->removeInvalidFormControlIfNeeded(element);
             }
         }
 
-        if (CheckedPtr cache = element.document().existingAXObjectCache())
+        if (CheckedPtr cache = protect(element)->document().existingAXObjectCache())
             cache->onValidityChange(element);
     }
 
@@ -354,7 +354,7 @@ void ValidatedFormListedElement::insertionSteps(Node::InsertionType insertionTyp
     updateWillValidateAndValidity();
     syncWithFieldsetAncestors(&parentOfInsertedTree);
 
-    FormListedElement::elementInsertedIntoAncestor(asHTMLElement(), insertionType);
+    FormListedElement::elementInsertedIntoAncestor(protect(asHTMLElement()), insertionType);
 
     if (!insertionType.connectedToDocument)
         resetFormOwner();
@@ -403,7 +403,7 @@ void ValidatedFormListedElement::removingSteps(Node::RemovalType removalType, Co
 bool ValidatedFormListedElement::computeIsDisabledByFieldsetAncestor() const
 {
     RefPtr<const Element> previousAncestor;
-    for (Ref ancestor : ancestorsOfType<Element>(asHTMLElement())) {
+    for (Ref ancestor : ancestorsOfType<Element>(protect(asHTMLElement()))) {
         if (RefPtr fieldset = dynamicDowncast<HTMLFieldSetElement>(ancestor); fieldset && ancestor->hasAttributeWithoutSynchronization(disabledAttr)) {
             bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor) && previousAncestor == fieldset->legend();
             return !isInFirstLegend;
@@ -416,7 +416,7 @@ bool ValidatedFormListedElement::computeIsDisabledByFieldsetAncestor() const
 void ValidatedFormListedElement::willChangeForm()
 {
     if (RefPtr form = this->form())
-        form->removeInvalidFormControlIfNeeded(asHTMLElement());
+        form->removeInvalidFormControlIfNeeded(protect(asHTMLElement()));
     FormListedElement::willChangeForm();
 }
 
@@ -427,7 +427,7 @@ void ValidatedFormListedElement::didChangeForm()
     FormListedElement::didChangeForm();
     if (RefPtr form = this->form()) {
         if (m_willValidateInitialized && m_willValidate && !isValidFormControlElement())
-            form->addInvalidFormControl(asHTMLElement());
+            form->addInvalidFormControl(protect(asHTMLElement()));
     }
 }
 
@@ -464,7 +464,7 @@ void ValidatedFormListedElement::updateWillValidateAndValidity()
 
     if (!m_willValidate && !wasValid) {
         Ref element = asHTMLElement();
-        removeInvalidElementToAncestorFromInsertionPoint(element, element->parentNode());
+        removeInvalidElementToAncestorFromInsertionPoint(element, protect(element->parentNode()).get());
         if (RefPtr form = this->form())
             form->removeInvalidFormControlIfNeeded(element);
     }
@@ -501,7 +501,7 @@ bool ValidatedFormListedElement::shouldAutocomplete() const
 {
     if (!form())
         return true;
-    return form()->shouldAutocomplete();
+    return protect(form())->shouldAutocomplete();
 }
 
 FormControlState ValidatedFormListedElement::saveFormControlState() const

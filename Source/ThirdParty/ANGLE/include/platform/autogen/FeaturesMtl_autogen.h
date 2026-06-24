@@ -182,6 +182,12 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo clearMsaaRg16UnormWithDrawWorkaround = {
+        "clearMsaaRg16UnormWithDrawWorkaround",
+        FeatureCategory::MetalWorkarounds,
+        &members,
+    };
+
     FeatureInfo copyIOSurfaceToNonIOSurfaceForReadOptimization = {
         "copyIOSurfaceToNonIOSurfaceForReadOptimization",
         FeatureCategory::MetalWorkarounds,
@@ -340,6 +346,12 @@ struct FeaturesMtl : FeatureSetBase
 
     FeatureInfo ensureLoopForwardProgress = {
         "ensureLoopForwardProgress",
+        FeatureCategory::MetalFeatures,
+        &members,
+    };
+
+    FeatureInfo allocateNonZeroTextures = {
+        "allocateNonZeroTextures",
         FeatureCategory::MetalFeatures,
         &members,
     };

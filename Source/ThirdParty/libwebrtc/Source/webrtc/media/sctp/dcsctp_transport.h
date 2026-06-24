@@ -16,11 +16,11 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/dtls_transport_interface.h"
 #include "api/environment/environment.h"
 #include "api/field_trials_view.h"
@@ -83,7 +83,7 @@ class DcSctpTransport : public SctpTransportInternal,
  private:
   // dcsctp::DcSctpSocketCallbacks
   dcsctp::SendPacketStatus SendPacketWithStatus(
-      ArrayView<const uint8_t> data) override;
+      std::span<const uint8_t> data) override;
   std::unique_ptr<dcsctp::Timeout> CreateTimeout(
       TaskQueueBase::DelayPrecision precision) override;
   dcsctp::TimeMs TimeMillis() override;
@@ -96,12 +96,12 @@ class DcSctpTransport : public SctpTransportInternal,
   void OnConnected() override;
   void OnClosed() override;
   void OnConnectionRestarted() override;
-  void OnStreamsResetFailed(ArrayView<const dcsctp::StreamID> outgoing_streams,
+  void OnStreamsResetFailed(std::span<const dcsctp::StreamID> outgoing_streams,
                             absl::string_view reason) override;
   void OnStreamsResetPerformed(
-      ArrayView<const dcsctp::StreamID> outgoing_streams) override;
+      std::span<const dcsctp::StreamID> outgoing_streams) override;
   void OnIncomingStreamsReset(
-      ArrayView<const dcsctp::StreamID> incoming_streams) override;
+      std::span<const dcsctp::StreamID> incoming_streams) override;
 
   // Transport callbacks
   void ConnectTransportSignals();

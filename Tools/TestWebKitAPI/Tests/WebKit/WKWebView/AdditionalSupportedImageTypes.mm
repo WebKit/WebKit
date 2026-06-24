@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA)
 
+#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"

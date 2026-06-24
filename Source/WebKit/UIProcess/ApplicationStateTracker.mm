@@ -172,6 +172,9 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
     ASSERT([protect(m_view) respondsToSelector:m_didEnterBackgroundSelector]);
     ASSERT([protect(m_view) respondsToSelector:m_willEnterForegroundSelector]);
 
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    EndowmentStateTracker::singleton().addClient(*this);
+#endif
     allApplicationStateTrackers().add(*this);
 }
 
@@ -185,6 +188,9 @@ ApplicationStateTracker::~ApplicationStateTracker()
 
     removeAllObservers();
 
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    EndowmentStateTracker::singleton().removeClient(*this);
+#endif
     allApplicationStateTrackers().remove(*this);
     updateApplicationBackgroundState();
 }
@@ -268,19 +274,8 @@ void ApplicationStateTracker::setWindow(UIWindow *window)
 
 void ApplicationStateTracker::setScene(UIScene *scene)
 {
-    auto isWindowAndSceneInBackground = [] (const auto& window, const auto& scene) {
-        if (!scene) {
-            // TestWebKitAPI will create a WKWebView and place it into a UIWindow that
-            // has no UIWindowScene. For the purposes of keeping tests passing, treat
-            // the combination of a window without a windowScene as not in the background:
-            return !window;
-        }
-
-        return [scene activationState] == UISceneActivationStateBackground || [scene activationState] == UISceneActivationStateUnattached;
-    };
-
     if (m_scene.get() == scene) {
-        setIsInBackground(isWindowAndSceneInBackground(m_window, m_scene));
+        setIsInBackground(shouldBeInBackground());
         return;
     }
 
@@ -292,7 +287,7 @@ void ApplicationStateTracker::setScene(UIScene *scene)
     }
 
     m_scene = scene;
-    setIsInBackground(isWindowAndSceneInBackground(m_window, m_scene));
+    setIsInBackground(shouldBeInBackground());
 
     if (!m_scene)
         return;
@@ -305,7 +300,7 @@ void ApplicationStateTracker::setScene(UIScene *scene)
         if (!protectedThis)
             return;
         RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UISceneDidEnterBackground", protectedThis.get());
-        protectedThis->applicationDidEnterBackground();
+        protectedThis->updateIsInBackground(SceneState::Background);
     }];
 
     m_willEnterForegroundObserver = [notificationCenter addObserverForName:UISceneWillEnterForegroundNotification object:scene queue:nil usingBlock:[weakThis = WeakPtr { *this }](NSNotification *notification) {
@@ -313,7 +308,7 @@ void ApplicationStateTracker::setScene(UIScene *scene)
         if (!protectedThis)
             return;
         RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UISceneWillEnterForeground", protectedThis.get());
-        protectedThis->applicationWillEnterForeground();
+        protectedThis->updateIsInBackground(SceneState::Foreground);
     }];
 
     m_willBeginSnapshotSequenceObserver = [notificationCenter addObserverForName:_UISceneWillBeginSystemSnapshotSequence object:scene queue:nil usingBlock:[weakThis = WeakPtr { *this }](NSNotification *notification) {
@@ -386,8 +381,54 @@ void ApplicationStateTracker::setIsInBackground(bool isInBackground)
     m_isInBackground = isInBackground;
 }
 
+bool ApplicationStateTracker::isWindowAndSceneInBackground() const
+{
+    if (RetainPtr scene = m_scene.get()) {
+        auto state = [scene activationState];
+        return state == UISceneActivationStateBackground || state == UISceneActivationStateUnattached;
+    }
+
+    // TestWebKitAPI will create a WKWebView and place it into a UIWindow that
+    // has no UIWindowScene. For the purposes of keeping tests passing, treat
+    // the combination of a window without a windowScene as not in the background:
+    return !m_window;
+}
+
+void ApplicationStateTracker::updateIsInBackground(SceneState sceneState)
+{
+    if (shouldBeInBackground(sceneState))
+        applicationDidEnterBackground();
+    else
+        applicationWillEnterForeground();
+}
+
+bool ApplicationStateTracker::shouldBeInBackground(SceneState sceneState) const
+{
+    bool windowAndSceneInBackground = [&] {
+        switch (sceneState) {
+        case SceneState::Foreground:
+            return false;
+        case SceneState::Background:
+            return true;
+        case SceneState::Unknown:
+            return isWindowAndSceneInBackground();
+        }
+    }();
+
+    if (!windowAndSceneInBackground)
+        return false;
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    if (EndowmentStateTracker::singleton().isVisible())
+        return false;
+#endif
+
+    return true;
+}
+
 void ApplicationStateTracker::applicationDidEnterBackground()
 {
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker::applicationDidEnterBackground()", this);
     setIsInBackground(true);
     updateApplicationBackgroundState();
 
@@ -397,6 +438,7 @@ void ApplicationStateTracker::applicationDidEnterBackground()
 
 void ApplicationStateTracker::applicationWillEnterForeground()
 {
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker::applicationWillEnterForeground()", this);
     setIsInBackground(false);
     updateApplicationBackgroundState();
 
@@ -418,6 +460,13 @@ void ApplicationStateTracker::didCompleteSnapshotSequence()
         wtfObjCMsgSend<void>(view.get(), m_didCompleteSnapshotSequenceSelector);
 }
 
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+void ApplicationStateTracker::isVisibleChanged(bool)
+{
+    updateIsInBackground();
 }
+#endif
+
+} // namespace WebKit
 
 #endif

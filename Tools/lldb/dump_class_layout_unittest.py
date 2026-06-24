@@ -29,6 +29,8 @@ import importlib.machinery
 import importlib.util
 import lldb
 import os
+import platform
+import subprocess
 import sys
 import unittest
 from unittest.mock import call, MagicMock, patch
@@ -48,7 +50,6 @@ _spec = importlib.util.spec_from_file_location(
 dump_class_layout_script = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(dump_class_layout_script)
 
-# Build for x86_64.
 # Run these tests with xcrun python3 Tools/Scripts/test-lldb-webkit
 # Run a single test with e.g. xcrun python3 Tools/Scripts/test-lldb-webkit --debug  --no-build --verbose dump_class_layout_unittest.TestDumpClassLayout.serial_test_MemberHasBitfieldPadding
 # Compare with clang's output: clang++ -Xclang -fdump-record-layouts DumpClassLayoutTesting.cpp
@@ -61,6 +62,27 @@ def destroy_cached_debug_session():
     debugger_instance = None
 
 
+def _select_architecture(binary_path):
+    """Return the architecture slice to load for layout inspection.
+    Prefer the host architecture so the test exercises the binary's primary
+    slice; fall back to whatever is present in the universal binary."""
+    try:
+        archs = subprocess.check_output(
+            ['/usr/bin/lipo', '-archs', binary_path],
+            stderr=subprocess.DEVNULL,
+        ).decode('utf-8', errors='replace').split()
+    except (OSError, subprocess.CalledProcessError):
+        return 'x86_64'
+    host_machine = platform.machine()
+    if host_machine == 'arm64':
+        for arch in ('arm64e', 'arm64'):
+            if arch in archs:
+                return arch
+    if host_machine in archs:
+        return host_machine
+    return archs[0] if archs else 'x86_64'
+
+
 @unittest.skipUnless(SystemHost.get_default().platform.is_mac(), "macOS only")
 class TestDumpClassLayout(unittest.TestCase):
     @classmethod
@@ -69,7 +91,7 @@ class TestDumpClassLayout(unittest.TestCase):
         if not debugger_instance:
             lldbWebKitTesterExecutable = str(os.environ['LLDB_WEBKIT_TESTER_EXECUTABLE'])
 
-            architecture = 'x86_64'
+            architecture = _select_architecture(lldbWebKitTesterExecutable)
             debugger_instance = LLDBDebuggerInstance(lldbWebKitTesterExecutable, architecture)
             if not debugger_instance:
                 print('Failed to create lldb debugger instance for %s' % (lldbWebKitTesterExecutable))
@@ -371,7 +393,35 @@ Padding percentage: 61.98 %"""
         self.assertEqual(EXPECTED_RESULT, actual_layout.as_string())
 
     def serial_test_InheritsFromClassWithPaddedBitfields(self):
-        EXPECTED_RESULT = """  +0 < 24> InheritsFromClassWithPaddedBitfields
+        # x86_64 reports `dsize=10` for ClassWithPaddedBitfields and the
+        # derived bitfield reuses the base's tail padding at +10, giving a
+        # 16-byte layout.  arm64/arm64e report `dsize=16` (no exposed tail
+        # padding), so `derivedBitfield` lands at +16 and the class is
+        # 24 bytes.
+        if debugger_instance.architecture == 'x86_64':
+            EXPECTED_RESULT = """  +0 < 16> InheritsFromClassWithPaddedBitfields
+  +0 < 16>     ClassWithPaddedBitfields ClassWithPaddedBitfields
+  +0 <  1>         bool boolMember
+  +1 < :1>         unsigned int bitfield1 : 1
+  +1 < :1>         bool bitfield2 : 1
+  +1 < :2>         unsigned int bitfield3 : 2
+  +1 < :1>         unsigned int bitfield4 : 1
+  +1 < :2>         unsigned long bitfield5 : 2
+  +1 < :1>         <UNUSED BITS: 1 bit>
+  +2 <  1>         <PADDING: 1 bytes>
+  +4 <  4>         int intMember
+  +8 < :1>         unsigned int bitfield7 : 1
+  +8 < :9>         unsigned int bitfield8 : 9
+  +9 < :1>         bool bitfield9 : 1
+  +9 < :5>         <UNUSED BITS: 5 bits>
+ +10 < :1>     bool derivedBitfield : 1
+ +10 < :7>     <UNUSED BITS: 7 bits>
+ +11 <  5>     <PADDING: 5 bytes>
+Total byte size: 16
+Total pad bytes: 6
+Padding percentage: 42.97 %"""
+        else:
+            EXPECTED_RESULT = """  +0 < 24> InheritsFromClassWithPaddedBitfields
   +0 < 16>     ClassWithPaddedBitfields ClassWithPaddedBitfields
   +0 <  1>         bool boolMember
   +1 < :1>         unsigned int bitfield1 : 1

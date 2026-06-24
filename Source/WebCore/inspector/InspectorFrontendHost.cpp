@@ -294,7 +294,7 @@ void InspectorFrontendHost::setForcedAppearance(String appearance)
 {
     if (appearance == "light"_s) {
         if (m_frontendPage)
-            m_frontendPage->setUseDarkAppearanceOverride(false);
+            protect(m_frontendPage)->setUseDarkAppearanceOverride(false);
         if (m_client)
             m_client->setForcedAppearance(InspectorFrontendClient::Appearance::Light);
         return;
@@ -302,14 +302,14 @@ void InspectorFrontendHost::setForcedAppearance(String appearance)
 
     if (appearance == "dark"_s) {
         if (m_frontendPage)
-            m_frontendPage->setUseDarkAppearanceOverride(true);
+            protect(m_frontendPage)->setUseDarkAppearanceOverride(true);
         if (m_client)
             m_client->setForcedAppearance(InspectorFrontendClient::Appearance::Dark);
         return;
     }
 
     if (m_frontendPage)
-        m_frontendPage->setUseDarkAppearanceOverride(std::nullopt);
+        protect(m_frontendPage)->setUseDarkAppearanceOverride(std::nullopt);
     if (m_client)
         m_client->setForcedAppearance(InspectorFrontendClient::Appearance::System);
 }

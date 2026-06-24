@@ -723,7 +723,7 @@ class BitSetArray final
   private:
     static constexpr std::size_t kDefaultBitSetSizeMinusOne = priv::kDefaultBitSetSize - 1;
     static constexpr std::size_t kShiftForDivision =
-        static_cast<std::size_t>(rx::Log2(static_cast<unsigned int>(priv::kDefaultBitSetSize)));
+        static_cast<std::size_t>(gl::log2(static_cast<unsigned int>(priv::kDefaultBitSetSize)));
     static constexpr std::size_t kArraySize =
         ((N + kDefaultBitSetSizeMinusOne) >> kShiftForDivision);
     constexpr static std::size_t kLastElementCount = (N & kDefaultBitSetSizeMinusOne);

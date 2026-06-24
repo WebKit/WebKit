@@ -17,7 +17,6 @@
 
 #include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_processing.h"
 #include "api/audio/builtin_audio_processing_builder.h"
 #include "api/audio/echo_canceller3_factory.h"
@@ -47,9 +46,9 @@ const Environment& GetEnvironment() {
   return *env;
 }
 
-webrtc::scoped_refptr<AudioProcessing> CreateApm(
-    test::FuzzDataHelper* fuzz_data,
-    TaskQueueBase* absl_nonnull worker_queue) {
+webrtc::scoped_refptr<AudioProcessing> CreateApm(FuzzDataHelper* fuzz_data,
+                                                 TaskQueueBase* absl_nonnull
+                                                     worker_queue) {
   // Parse boolean values for optionally enabling different
   // configurable public components of APM.
   bool use_ts = fuzz_data->ReadOrDefaultValue(true);
@@ -135,11 +134,10 @@ webrtc::scoped_refptr<AudioProcessing> CreateApm(
 
 }  // namespace
 
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  if (size > 400000) {
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  if (fuzz_data.size() > 400'000) {
     return;
   }
-  test::FuzzDataHelper fuzz_data(webrtc::ArrayView<const uint8_t>(data, size));
 
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> worker_queue =
       GetEnvironment().task_queue_factory().CreateTaskQueue(

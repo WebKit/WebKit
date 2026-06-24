@@ -183,9 +183,6 @@ struct Extensions
     // GL_OES_depth32
     bool depth32OES = false;
 
-    // GL_NV_depth_buffer_float2
-    bool depthBufferFloat2NV = false;
-
     // GL_EXT_depth_clamp
     bool depthClampEXT = false;
 
@@ -735,9 +732,6 @@ struct Extensions
     // GL_CHROMIUM_lose_context
     bool loseContextCHROMIUM = false;
 
-    // GL_ANGLE_lossy_etc_decode
-    bool lossyEtcDecodeANGLE = false;
-
     // GL_ANGLE_memory_object_flags
     bool memoryObjectFlagsANGLE = false;
 
@@ -812,9 +806,6 @@ struct Extensions
 
     // GL_ANGLE_texture_compression_dxt5
     bool textureCompressionDxt5ANGLE = false;
-
-    // GL_ANGLE_texture_external_update
-    bool textureExternalUpdateANGLE = false;
 
     // GL_ANGLE_texture_multisample
     bool textureMultisampleANGLE = false;

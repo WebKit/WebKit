@@ -74,7 +74,7 @@ LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceR
     : m_converter { PreviewConverter::create(response, *this) }
     , m_client { makeClient(loader, m_converter->previewFileName(), m_converter->previewUTI()) }
     , m_resourceLoader { loader }
-    , m_shouldDecidePolicyBeforeLoading { loader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview() }
+    , m_shouldDecidePolicyBeforeLoading { protect(loader.frame())->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview() }
 {
     ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));
     protect(m_converter)->addClient(*this);
@@ -154,7 +154,7 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
 
         if (!converter->previewData().isEmpty()) {
             auto bufferSize = converter->previewData().size();
-            resourceLoader->didReceiveBuffer(converter->previewData().copy(), bufferSize, DataPayloadBytes);
+            protect(resourceLoader)->didReceiveBuffer(converter->previewData().copy(), bufferSize, DataPayloadBytes);
         }
 
         if (resourceLoader->reachedTerminalState())

@@ -52,7 +52,7 @@ private:
     const AtomString& formControlType() const final;
     bool isFormDataAppendable() const final;
     bool appendFormData(DOMFormData&) const final;
-    RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
+    RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
     void handleDOMActivateEvent(Event&) final;
     void attributeChanged(const QualifiedName&) final;
     void attach() final;

@@ -87,18 +87,35 @@ struct Effects {
     // if the operation is a memory fence.
     bool fence : 1 { false };
 
+private:
+    // Sentinel for the constant-effects table in B3ValueInlines.h: marks opcodes whose effects are
+    // value-dependent. Never set on Effects describing an actual value. Declared adjacent to the
+    // bitfields above so it packs into the same allocation unit (no size growth).
+    bool m_invalid : 1 { false };
+
+public:
     // WARNING: The B3::hoistLoopInvariantValues() phase thinks that it understands this exhaustively. If you
     // add any new kinds of things that can be read or written, you should check that phase.
 
     HeapRange writes;
     HeapRange reads;
 
-    static Effects none()
+    static constexpr Effects none()
     {
         return Effects();
     }
 
-    static Effects forCall()
+    static constexpr Effects invalid()
+    {
+        Effects result;
+        result.m_invalid = true;
+        return result;
+    }
+
+    constexpr bool isValid() const { return !m_invalid; }
+    constexpr bool isInvalid() const { return m_invalid; }
+
+    static constexpr Effects forCall()
     {
         Effects result;
         result.exitsSideways = true;
@@ -110,8 +127,8 @@ struct Effects {
         result.fence = true;
         return result;
     }
-    
-    static Effects forCheck()
+
+    static constexpr Effects forCheck()
     {
         Effects result;
         result.exitsSideways = true;
@@ -120,7 +137,7 @@ struct Effects {
         return result;
     }
 
-    bool mustExecute() const
+    constexpr bool mustExecute() const
     {
         return terminal || exitsSideways || writesLocalState || writes || writesPinned || fence;
     }

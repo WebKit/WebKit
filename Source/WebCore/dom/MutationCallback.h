@@ -55,6 +55,11 @@ public:
 
     virtual CallbackResult<void> invoke(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
+
+    // Non-inlined wrappers around invoke() to distinguish between mutation observers that fire
+    // on page-installed script vs. work from injected scripts.
+    NEVER_INLINE CallbackResult<void> invokeInNonNormalWorld(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&);
+    NEVER_INLINE CallbackResult<void> invokeInAutoFillWorld(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&);
 };
 
 } // namespace WebCore

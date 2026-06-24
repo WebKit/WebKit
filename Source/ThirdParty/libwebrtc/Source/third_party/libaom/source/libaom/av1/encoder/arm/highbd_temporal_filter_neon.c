@@ -85,8 +85,8 @@ static void highbd_apply_temporal_filter(
     const double decay_factor, const double inv_factor,
     const double weight_factor, const double *d_factor, int tf_wgt_calc_lvl,
     int bd) {
-  assert(((block_width == 16) || (block_width == 32)) &&
-         ((block_height == 16) || (block_height == 32)));
+  assert(((block_width == 64) || (block_width == 32)) &&
+         ((block_height == 64) || (block_height == 32)));
 
   uint32_t acc_5x5_neon[BH][BW] = { 0 };
   const int half_window = TF_WINDOW_LENGTH >> 1;
@@ -233,6 +233,9 @@ static void highbd_apply_temporal_filter(
   // Perform filtering.
   if (tf_wgt_calc_lvl == 0) {
     for (unsigned int i = 0, k = 0; i < block_height; i++) {
+      const int y32_blk_raster_offset = (i >= (block_height >> 1)) << 1;
+      const int y16_blk_raster_offset =
+          ((i % (block_height >> 1)) >= (block_height >> 2)) << 1;
       for (unsigned int j = 0; j < block_width; j++, k++) {
         const int pixel_value = frame[i * stride + j];
         // Scale down the difference for high bit depth input.
@@ -240,8 +243,13 @@ static void highbd_apply_temporal_filter(
             (acc_5x5_neon[i][j] + luma_sse_sum[i * BW + j]) >> ((bd - 8) * 2);
 
         const double window_error = diff_sse * inv_num_ref_pixels;
+        const int x32_blk_raster_offset = j >= (block_width >> 1);
+        const int x16_blk_raster_offset =
+            (j % (block_width >> 1)) >= (block_width >> 2);
         const int subblock_idx =
-            (i >= block_height / 2) * 2 + (j >= block_width / 2);
+            ((y32_blk_raster_offset + x32_blk_raster_offset) << 2) +
+            y16_blk_raster_offset + x16_blk_raster_offset;
+
         const double block_error = (double)subblock_mses[subblock_idx];
         const double combined_error =
             weight_factor * window_error + block_error * inv_factor;
@@ -256,6 +264,9 @@ static void highbd_apply_temporal_filter(
     }
   } else {
     for (unsigned int i = 0, k = 0; i < block_height; i++) {
+      const int y32_blk_raster_offset = (i >= (block_height >> 1)) << 1;
+      const int y16_blk_raster_offset =
+          ((i % (block_height >> 1)) >= (block_height >> 2)) << 1;
       for (unsigned int j = 0; j < block_width; j++, k++) {
         const int pixel_value = frame[i * stride + j];
         // Scale down the difference for high bit depth input.
@@ -263,8 +274,13 @@ static void highbd_apply_temporal_filter(
             (acc_5x5_neon[i][j] + luma_sse_sum[i * BW + j]) >> ((bd - 8) * 2);
 
         const double window_error = diff_sse * inv_num_ref_pixels;
+        const int x32_blk_raster_offset = j >= (block_width >> 1);
+        const int x16_blk_raster_offset =
+            (j % (block_width >> 1)) >= (block_width >> 2);
         const int subblock_idx =
-            (i >= block_height / 2) * 2 + (j >= block_width / 2);
+            ((y32_blk_raster_offset + x32_blk_raster_offset) << 2) +
+            y16_blk_raster_offset + x16_blk_raster_offset;
+
         const double block_error = (double)subblock_mses[subblock_idx];
         const double combined_error =
             weight_factor * window_error + block_error * inv_factor;
@@ -290,6 +306,7 @@ void av1_highbd_apply_temporal_filter_neon(
     int tf_wgt_calc_lvl, const uint8_t *pred8, uint32_t *accum,
     uint16_t *count) {
   const int is_high_bitdepth = frame_to_filter->flags & YV12_FLAG_HIGHBITDEPTH;
+  assert(block_size == BLOCK_64X64 && "Only support 64x64 block with Neon!");
   assert(TF_WINDOW_LENGTH == 5 && "Only support window length 5 with Neon!");
   assert(num_planes >= 1 && num_planes <= MAX_MB_PLANE);
   (void)is_high_bitdepth;
@@ -320,17 +337,17 @@ void av1_highbd_apply_temporal_filter_neon(
   // Smaller strength -> smaller filtering weight.
   double s_decay = pow((double)filter_strength / TF_STRENGTH_THRESHOLD, 2);
   s_decay = CLIP(s_decay, 1e-5, 1);
-  double d_factor[4] = { 0 };
+  double d_factor[NUM_16X16] = { 0 };
   uint32_t frame_sse[BW * BH] = { 0 };
   uint32_t luma_sse_sum[BW * BH] = { 0 };
   uint16_t *pred = CONVERT_TO_SHORTPTR(pred8);
 
-  for (int subblock_idx = 0; subblock_idx < 4; subblock_idx++) {
+  double distance_threshold = min_frame_size * TF_SEARCH_DISTANCE_THRESHOLD;
+  distance_threshold = AOMMAX(distance_threshold, 1);
+  for (int subblock_idx = 0; subblock_idx < NUM_16X16; subblock_idx++) {
     // Larger motion vector -> smaller filtering weight.
     const MV mv = subblock_mvs[subblock_idx];
     const double distance = sqrt(pow(mv.row, 2) + pow(mv.col, 2));
-    double distance_threshold = min_frame_size * TF_SEARCH_DISTANCE_THRESHOLD;
-    distance_threshold = AOMMAX(distance_threshold, 1);
     d_factor[subblock_idx] = distance / distance_threshold;
     d_factor[subblock_idx] = AOMMAX(d_factor[subblock_idx], 1);
   }
@@ -342,7 +359,6 @@ void av1_highbd_apply_temporal_filter_neon(
     const uint32_t plane_w = mb_width >> mbd->plane[plane].subsampling_x;
     const uint32_t frame_stride =
         frame_to_filter->strides[plane == AOM_PLANE_Y ? 0 : 1];
-    const uint32_t frame_sse_stride = plane_w;
     const int frame_offset = mb_row * plane_h * frame_stride + mb_col * plane_w;
 
     const uint16_t *ref =
@@ -364,28 +380,47 @@ void av1_highbd_apply_temporal_filter_neon(
     // will be more accurate. The luma sse sum is reused in both chroma
     // planes.
     if (plane == AOM_PLANE_U) {
-      for (unsigned int i = 0; i < plane_h; i++) {
-        for (unsigned int j = 0; j < plane_w; j++) {
-          for (int ii = 0; ii < (1 << ss_y_shift); ++ii) {
-            for (int jj = 0; jj < (1 << ss_x_shift); ++jj) {
-              const int yy = (i << ss_y_shift) + ii;  // Y-coord on Y-plane.
-              const int xx = (j << ss_x_shift) + jj;  // X-coord on Y-plane.
-              const int ww = frame_sse_stride
-                             << ss_x_shift;  // Width of Y-plane.
-              luma_sse_sum[i * BW + j] += frame_sse[yy * ww + xx];
+      if (ss_x_shift == 1 && ss_y_shift == 1) {
+        for (unsigned int i = 0; i < plane_h; ++i) {
+          const uint32_t *src = &frame_sse[2 * i * BW];
+          uint32_t *dst = luma_sse_sum + i * BW;
+
+          for (unsigned int j = 0; j < plane_w; j += 4) {
+            const uint32x4_t s0_lo = vld1q_u32(src + j * 2);
+            const uint32x4_t s0_hi = vld1q_u32(src + j * 2 + 4);
+            const uint32x4_t s1_lo = vld1q_u32(src + BW + j * 2);
+            const uint32x4_t s1_hi = vld1q_u32(src + BW + j * 2 + 4);
+
+            uint32x4_t sum0 = horizontal_add_2d_u32(s0_lo, s0_hi);
+            uint32x4_t sum1 = horizontal_add_2d_u32(s1_lo, s1_hi);
+
+            sum0 = vaddq_u32(sum0, sum1);
+
+            vst1q_u32(dst + j, sum0);
+          }
+        }
+      } else {
+        for (unsigned int i = 0; i < plane_h; i++) {
+          for (unsigned int j = 0; j < plane_w; j++) {
+            for (int ii = 0; ii < (1 << ss_y_shift); ++ii) {
+              for (int jj = 0; jj < (1 << ss_x_shift); ++jj) {
+                const int yy = (i << ss_y_shift) + ii;  // Y-coord on Y-plane.
+                const int xx = (j << ss_x_shift) + jj;  // X-coord on Y-plane.
+                luma_sse_sum[i * BW + j] += frame_sse[yy * BW + xx];
+              }
             }
           }
         }
       }
     }
     get_squared_error(ref, frame_stride, pred + plane_offset, plane_w, plane_w,
-                      plane_h, frame_sse, frame_sse_stride);
+                      plane_h, frame_sse, BW);
 
     highbd_apply_temporal_filter(
         pred + plane_offset, plane_w, plane_w, plane_h, subblock_mses,
-        accum + plane_offset, count + plane_offset, frame_sse, frame_sse_stride,
-        luma_sse_sum, inv_num_ref_pixels, decay_factor, inv_factor,
-        weight_factor, d_factor, tf_wgt_calc_lvl, mbd->bd);
+        accum + plane_offset, count + plane_offset, frame_sse, BW, luma_sse_sum,
+        inv_num_ref_pixels, decay_factor, inv_factor, weight_factor, d_factor,
+        tf_wgt_calc_lvl, mbd->bd);
 
     plane_offset += plane_h * plane_w;
   }

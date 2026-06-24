@@ -16,11 +16,11 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
 
@@ -55,7 +55,7 @@ class ControllerManagerImpl final : public ControllerManager {
       const Environment& env,
       absl::string_view config_string,
       size_t num_encoder_channels,
-      ArrayView<const int> encoder_frame_lengths_ms,
+      std::span<const int> encoder_frame_lengths_ms,
       int min_encoder_bitrate_bps,
       size_t intial_channels_to_encode,
       int initial_frame_length_ms,

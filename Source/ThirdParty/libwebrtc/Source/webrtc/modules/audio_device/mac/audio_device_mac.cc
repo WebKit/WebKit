@@ -15,6 +15,7 @@
 #include <sys/sysctl.h>  // sysctlbyname()
 
 #include <memory>
+#include <span>
 #include <vector>
 
 #include "modules/third_party/portaudio/pa_ringbuffer.h"
@@ -834,7 +835,7 @@ int32_t AudioDeviceMac::PlayoutDeviceName(uint16_t index,
   }
 
   return GetDeviceName(kAudioDevicePropertyScopeOutput, index,
-                       ArrayView<char>(name, kAdmMaxDeviceNameSize));
+                       std::span<char>(name, kAdmMaxDeviceNameSize));
 }
 
 int32_t AudioDeviceMac::RecordingDeviceName(uint16_t index,
@@ -853,7 +854,7 @@ int32_t AudioDeviceMac::RecordingDeviceName(uint16_t index,
   }
 
   return GetDeviceName(kAudioDevicePropertyScopeInput, index,
-                       ArrayView<char>(name, kAdmMaxDeviceNameSize));
+                       std::span<char>(name, kAdmMaxDeviceNameSize));
 }
 
 int16_t AudioDeviceMac::RecordingDevices() {
@@ -1644,7 +1645,7 @@ int32_t AudioDeviceMac::GetNumberDevices(const AudioObjectPropertyScope scope,
 
 int32_t AudioDeviceMac::GetDeviceName(const AudioObjectPropertyScope scope,
                                       const uint16_t index,
-                                      ArrayView<char> name) {
+                                      std::span<char> name) {
   OSStatus err = noErr;
   AudioDeviceID deviceIds[MaxNumberDevices];
 
@@ -1692,8 +1693,12 @@ int32_t AudioDeviceMac::GetDeviceName(const AudioObjectPropertyScope scope,
     WEBRTC_CA_RETURN_ON_ERR(AudioObjectGetPropertyData(
         usedID, &propertyAddress, 0, NULL, &len, devName.data()));
 
-    SimpleStringBuilder ss(name);
+    StringBuilder ss;
     ss.AppendFormat("default (%s)", devName.data());
+    const std::string& s = ss.str();
+    size_t chars_to_copy = std::min(s.size(), name.size() - 1);
+    std::copy_n(s.data(), chars_to_copy, name.data());
+    name[chars_to_copy] = '\0';
   } else {
     if (index < numberDevices) {
       usedID = deviceIds[index];

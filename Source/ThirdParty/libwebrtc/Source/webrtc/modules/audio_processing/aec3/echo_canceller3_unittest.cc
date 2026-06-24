@@ -16,16 +16,15 @@
 #include <deque>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
 #include "api/audio/neural_residual_echo_estimator.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
@@ -36,6 +35,7 @@
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -100,8 +100,8 @@ bool VerifyOutputFrameBitexactness(size_t frame_length,
   return true;
 }
 
-bool VerifyOutputFrameBitexactness(ArrayView<const float> reference,
-                                   ArrayView<const float> frame,
+bool VerifyOutputFrameBitexactness(std::span<const float> reference,
+                                   std::span<const float> frame,
                                    int offset) {
   for (size_t k = 0; k < frame.size(); ++k) {
     int reference_index = static_cast<int>(k) + offset;
@@ -200,10 +200,10 @@ void RunAecInStereo(AudioBuffer& buffer,
                     EchoCanceller3& aec3,
                     float channel_0_value,
                     float channel_1_value) {
-  ArrayView<float> data_channel_0(&buffer.channels()[0][0],
+  std::span<float> data_channel_0(&buffer.channels()[0][0],
                                   buffer.num_frames());
   std::fill(data_channel_0.begin(), data_channel_0.end(), channel_0_value);
-  ArrayView<float> data_channel_1(&buffer.channels()[1][0],
+  std::span<float> data_channel_1(&buffer.channels()[1][0],
                                   buffer.num_frames());
   std::fill(data_channel_1.begin(), data_channel_1.end(), channel_1_value);
   aec3.AnalyzeRender(&buffer);
@@ -214,7 +214,7 @@ void RunAecInStereo(AudioBuffer& buffer,
 void RunAecInSMono(AudioBuffer& buffer,
                    EchoCanceller3& aec3,
                    float channel_0_value) {
-  ArrayView<float> data_channel_0(&buffer.channels()[0][0],
+  std::span<float> data_channel_0(&buffer.channels()[0][0],
                                   buffer.num_frames());
   std::fill(data_channel_0.begin(), data_channel_0.end(), channel_0_value);
   aec3.AnalyzeRender(&buffer);
@@ -252,7 +252,7 @@ class EchoCanceller3Tester {
   // and that the processor data is properly passed to the EchoCanceller3
   // output.
   void RunCaptureTransportVerificationTest() {
-    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateTestEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         /*neural_residual_echo_estimator=*/nullptr,
                         sample_rate_hz_, 1, 1);
@@ -279,7 +279,7 @@ class EchoCanceller3Tester {
   // Test method for testing that the render data is properly received by the
   // block processor.
   void RunRenderTransportVerificationTest() {
-    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateTestEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         /*neural_residual_echo_estimator=*/nullptr,
                         sample_rate_hz_, 1, 1);
@@ -350,7 +350,7 @@ class EchoCanceller3Tester {
         break;
     }
 
-    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateTestEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         /*neural_residual_echo_estimator=*/nullptr,
                         sample_rate_hz_, 1, 1);
@@ -432,7 +432,7 @@ class EchoCanceller3Tester {
       } break;
     }
 
-    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateTestEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         /*neural_residual_echo_estimator=*/nullptr,
                         sample_rate_hz_, 1, 1);
@@ -520,7 +520,7 @@ class EchoCanceller3Tester {
       } break;
     }
 
-    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateTestEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         /*neural_residual_echo_estimator=*/nullptr,
                         sample_rate_hz_, 1, 1);
@@ -562,7 +562,7 @@ class EchoCanceller3Tester {
   // capture and render API calls.
   void RunRenderSwapQueueVerificationTest() {
     const EchoCanceller3Config config;
-    EchoCanceller3 aec3(CreateEnvironment(), config,
+    EchoCanceller3 aec3(CreateTestEnvironment(), config,
                         /*multichannel_config=*/std::nullopt,
                         /*neural_residual_echo_estimator=*/nullptr,
                         sample_rate_hz_, 1, 1);
@@ -613,7 +613,7 @@ class EchoCanceller3Tester {
   // This test verifies that a buffer overrun in the render swapqueue is
   // properly reported.
   void RunRenderPipelineSwapQueueOverrunReturnValueTest() {
-    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateTestEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         /*neural_residual_echo_estimator=*/nullptr,
                         sample_rate_hz_, 1, 1);
@@ -641,7 +641,7 @@ class EchoCanceller3Tester {
     // Set aec3_sample_rate_hz to be different from sample_rate_hz_ in such a
     // way that the number of bands for the rates are different.
     const int aec3_sample_rate_hz = sample_rate_hz_ == 48000 ? 32000 : 48000;
-    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateTestEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         /*neural_residual_echo_estimator=*/nullptr,
                         aec3_sample_rate_hz, 1, 1);
@@ -657,7 +657,7 @@ class EchoCanceller3Tester {
     // Set aec3_sample_rate_hz to be different from sample_rate_hz_ in such a
     // way that the number of bands for the rates are different.
     const int aec3_sample_rate_hz = sample_rate_hz_ == 48000 ? 32000 : 48000;
-    EchoCanceller3 aec3(CreateEnvironment(), EchoCanceller3Config(),
+    EchoCanceller3 aec3(CreateTestEnvironment(), EchoCanceller3Config(),
                         /*multichannel_config=*/std::nullopt,
                         /*neural_residual_echo_estimator=*/nullptr,
                         aec3_sample_rate_hz, 1, 1);
@@ -982,7 +982,7 @@ TEST(EchoCanceller3, DetectionOfProperStereo) {
   multichannel_config->filter.coarse_initial.length_blocks =
       kNumBlocksForSurroundConfig;
 
-  EchoCanceller3 aec3(CreateEnvironment(), mono_config, multichannel_config,
+  EchoCanceller3 aec3(CreateTestEnvironment(), mono_config, multichannel_config,
                       /*neural_residual_echo_estimator=*/nullptr,
                       /*sample_rate_hz=*/kSampleRateHz,
                       /*num_render_channels=*/kNumChannels,
@@ -1031,7 +1031,7 @@ TEST(EchoCanceller3, DetectionOfProperStereoUsingThreshold) {
   multichannel_config->filter.coarse_initial.length_blocks =
       kNumBlocksForSurroundConfig;
 
-  EchoCanceller3 aec3(CreateEnvironment(), mono_config, multichannel_config,
+  EchoCanceller3 aec3(CreateTestEnvironment(), mono_config, multichannel_config,
                       /*neural_residual_echo_estimator=*/nullptr,
                       /*sample_rate_hz=*/kSampleRateHz,
                       /*num_render_channels=*/kNumChannels,
@@ -1079,7 +1079,7 @@ TEST(EchoCanceller3, DetectionOfProperStereoUsingHysteresis) {
   surround_config->filter.coarse_initial.length_blocks =
       kNumBlocksForSurroundConfig;
 
-  EchoCanceller3 aec3(CreateEnvironment(), mono_config, surround_config,
+  EchoCanceller3 aec3(CreateTestEnvironment(), mono_config, surround_config,
                       /*neural_residual_echo_estimator=*/nullptr,
                       /*sample_rate_hz=*/kSampleRateHz,
                       /*num_render_channels=*/kNumChannels,
@@ -1128,7 +1128,7 @@ TEST(EchoCanceller3, StereoContentDetectionForMonoSignals) {
 
   constexpr size_t kNumBlocksForMonoConfig = 1;
   constexpr size_t kNumBlocksForSurroundConfig = 2;
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   EchoCanceller3Config mono_config;
   std::optional<EchoCanceller3Config> multichannel_config;
 
@@ -1171,14 +1171,14 @@ TEST(EchoCanceller3, InjectedNeuralResidualEchoEstimatorIsUsed) {
     NeuralResidualEchoEstimatorMock() {}
 
     void Estimate(const Block& render,
-                  ArrayView<const std::array<float, 64>> capture,
-                  ArrayView<const std::array<float, 64>> linear_aec_output,
-                  ArrayView<const std::array<float, 65>> S2_linear,
-                  ArrayView<const std::array<float, 65>> Y2,
-                  ArrayView<const std::array<float, 65>> E2,
+                  std::span<const std::array<float, 64>> capture,
+                  std::span<const std::array<float, 64>> linear_aec_output,
+                  std::span<const std::array<float, 65>> S2_linear,
+                  std::span<const std::array<float, 65>> Y2,
+                  std::span<const std::array<float, 65>> E2,
                   bool dominant_nearend,
-                  ArrayView<std::array<float, 65>> R2,
-                  ArrayView<std::array<float, 65>> R2_unbounded) override {
+                  std::span<std::array<float, 65>> R2,
+                  std::span<std::array<float, 65>> R2_unbounded) override {
       residual_echo_estimate_requested_ = true;
       for (auto& R2_ch : R2) {
         R2_ch.fill(0.0f);
@@ -1191,8 +1191,9 @@ TEST(EchoCanceller3, InjectedNeuralResidualEchoEstimatorIsUsed) {
       return residual_echo_estimate_requested_;
     }
 
-    EchoCanceller3Config GetConfiguration(bool multi_channel) const override {
-      return EchoCanceller3Config();
+    EchoCanceller3Config::Suppressor AdjustConfig(
+        const EchoCanceller3Config::Suppressor& config) const override {
+      return config;
     }
 
     MOCK_METHOD(void, Reset, (), (override));
@@ -1204,7 +1205,7 @@ TEST(EchoCanceller3, InjectedNeuralResidualEchoEstimatorIsUsed) {
   constexpr int kSampleRateHz = 16000;
   constexpr int kNumChannels = 1;
   NeuralResidualEchoEstimatorMock neural_residual_echo_estimator;
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   EchoCanceller3Config config;
   AudioBuffer buffer(/*input_rate=*/kSampleRateHz,
                      /*input_num_channels=*/kNumChannels,
@@ -1238,7 +1239,7 @@ TEST(EchoCanceller3InputCheckDeathTest, WrongCaptureNumBandsCheckVerification) {
 // call works.
 TEST(EchoCanceller3InputCheckDeathTest, NullCaptureProcessingParameter) {
   EXPECT_DEATH(
-      EchoCanceller3(CreateEnvironment(), EchoCanceller3Config(),
+      EchoCanceller3(CreateTestEnvironment(), EchoCanceller3Config(),
                      /*multichannel_config_=*/std::nullopt,
                      /*neural_residual_echo_estimator=*/nullptr, 16000, 1, 1)
           .ProcessCapture(nullptr, false),
@@ -1251,7 +1252,7 @@ TEST(EchoCanceller3InputCheckDeathTest, NullCaptureProcessingParameter) {
 TEST(EchoCanceller3InputCheckDeathTest, DISABLED_WrongSampleRate) {
   ApmDataDumper data_dumper(0);
   EXPECT_DEATH(
-      EchoCanceller3(CreateEnvironment(), EchoCanceller3Config(),
+      EchoCanceller3(CreateTestEnvironment(), EchoCanceller3Config(),
                      /*multichannel_config_=*/std::nullopt,
                      /*neural_residual_echo_estimator=*/nullptr, 8001, 1, 1),
       "");

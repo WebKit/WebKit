@@ -2600,7 +2600,7 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
                 : TimeDelta::Zero();
         last_feedback_compact_ntp_time_ =
             feedback.report_timestamp_compact_ntp();
-        if (feedback_delta < TimeDelta::Zero()) {
+        if (feedback_delta < TimeDelta::Millis(-500)) {
           RTC_LOG(LS_WARNING)
               << "Unexpected feedback ntp time delta " << feedback_delta << ".";
           ccfb_feedback_offset = log_feedback_time;
@@ -2658,6 +2658,25 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
                       PacketDirection::kOutgoingPacket);
   }
   process.ProcessEventsInOrder();
+
+  if (!ccfb_indices.empty()) {
+    // The log stores RTP packets by stream (with millisecond timestamps), but
+    // doesn't guarantee the order between packets sent or received at the same
+    // time on different SSRCs. We don't have transport sequence numbers when
+    // CCFB is used, so the order can't be reconstructed using those.
+    // process.ProcessEventsInOrder() will set log feedback time per packet
+    // based on when feedback was originally received/sent for a packet, and we
+    // can use that to ensure packets are at least ordered as originally seen in
+    // feedback.
+    std::stable_sort(packets.begin(), packets.end(),
+                     [](const LoggedPacketInfo& a, const LoggedPacketInfo& b) {
+                       if (a.log_packet_time == b.log_packet_time) {
+                         return a.log_feedback_time < b.log_feedback_time;
+                       }
+                       return a.log_packet_time < b.log_packet_time;
+                     });
+  }
+
   return packets;
 }
 

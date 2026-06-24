@@ -42,34 +42,32 @@ namespace WebCore {
 namespace Style {
 namespace Calculation {
 
-Ref<Value> Value::create(CSS::Category category, CSS::Range range, Tree&& tree)
+Ref<Value> Value::create(Tree&& tree)
 {
-    return adoptRef(*new Value(category, range, WTF::move(tree)));
+    return adoptRef(*new Value(WTF::move(tree)));
 }
 
-Value::Value(CSS::Category category, CSS::Range range, Tree&& tree)
-    : m_category(category)
-    , m_range(range)
-    , m_tree(WTF::move(tree))
+Value::Value(Tree&& tree)
+    : m_tree(WTF::move(tree))
 {
 }
 
 Value::~Value() = default;
 
-double Value::evaluate(double percentageBasis, ZoomFactor zoom) const
+double Value::evaluate(CSS::Range range, double percentageBasis, ZoomFactor zoom) const
 {
     auto result = Calculation::evaluate(m_tree, percentageBasis, zoom);
     if (std::isnan(result))
         return 0;
-    return CSS::clampToRange<double>(result, m_range);
+    return CSS::clampToRange<double>(result, range);
 }
 
-double Value::evaluate(double percentageBasis, ZoomNeeded token) const
+double Value::evaluate(CSS::Range range, double percentageBasis, ZoomNeeded token) const
 {
     auto result = Calculation::evaluate(m_tree, percentageBasis, token);
     if (std::isnan(result))
         return 0;
-    return CSS::clampToRange<double>(result, m_range);
+    return CSS::clampToRange<double>(result, range);
 }
 
 Tree Value::copyTree() const

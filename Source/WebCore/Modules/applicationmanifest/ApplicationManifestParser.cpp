@@ -123,6 +123,11 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const JSON::Object&
     parsedManifest.id = parseId(manifest, parsedManifest.startURL);
     parsedManifest.orientation = parseOrientation(manifest);
 
+    if (auto darkManifest = manifest.getObject("color_scheme_dark"_s)) {
+        parsedManifest.backgroundColorDark = parseColor(*darkManifest, "background_color"_s);
+        parsedManifest.themeColorDark = parseColor(*darkManifest, "theme_color"_s);
+    }
+
     if (m_document)
         m_document->processApplicationManifest(parsedManifest);
 

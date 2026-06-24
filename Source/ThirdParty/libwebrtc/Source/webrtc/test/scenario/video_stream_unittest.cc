@@ -281,7 +281,7 @@ TEST(VideoStreamTest, SuspendsBelowMinBitrate) {
     // Min transmit rate needs to be lower than kMinVideoBitrate for this test
     // to make sense.
     c->transport.rates.min_rate = kMinVideoBitrate / 2;
-    c->transport.rates.start_rate = kMinVideoBitrate;
+    c->transport.rates.start_rate = kMinVideoBitrate * 2;
     c->transport.rates.max_rate = kMinVideoBitrate * 2;
   });
   auto send_net = s.CreateMutableSimulationNode(

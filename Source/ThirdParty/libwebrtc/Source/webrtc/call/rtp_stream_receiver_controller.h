@@ -13,7 +13,10 @@
 #include <cstdint>
 #include <memory>
 
-#include "api/sequence_checker.h"
+#include "absl/base/nullability.h"
+#include "api/scoped_refptr.h"
+#include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
 #include "call/rtp_demuxer.h"
 #include "call/rtp_stream_receiver_controller_interface.h"
 #include "modules/rtp_rtcp/include/recovered_packet_receiver.h"
@@ -23,6 +26,27 @@ namespace webrtc {
 
 class RtpPacketReceived;
 
+// Interface used by RtpStreamReceiverController to validate the lifetime of
+// registered sinks across thread boundaries. It represents the registration
+// state of a sink as considered on the worker thread. Because demuxing occurs
+// on the network thread while delivery happens on the worker thread, this
+// validation prevents use-after-free bugs by verifying that a resolved sink
+// remains valid on the worker thread prior to packet dispatch.
+class RtpSinkValidator {
+ public:
+  virtual ~RtpSinkValidator() = default;
+  // Called when a receiver sink is registered with the controller (e.g.,
+  // synchronously during RtpStreamReceiverController::CreateReceiver on the
+  // worker thread).
+  virtual void OnSinkAdded(RtpPacketSinkInterface* sink) = 0;
+  // Called when a receiver sink is unregistered from the controller (e.g.,
+  // synchronously upon destruction of the returned RtpStreamReceiverInterface
+  // on the worker thread).
+  virtual void OnSinkRemoved(RtpPacketSinkInterface* sink) = 0;
+  // Verifies whether the specified sink remains active and safe for delivery.
+  virtual bool IsValidSink(RtpPacketSinkInterface* sink) const = 0;
+};
+
 // This class represents the RTP receive parsing and demuxing, for a
 // single RTP session.
 // TODO(bugs.webrtc.org/7135): Add RTCP processing, we should aim to terminate
@@ -30,7 +54,9 @@ class RtpPacketReceived;
 class RtpStreamReceiverController : public RtpStreamReceiverControllerInterface,
                                     public RecoveredPacketReceiver {
  public:
-  RtpStreamReceiverController();
+  RtpStreamReceiverController(TaskQueueBase* absl_nonnull network_thread,
+                              TaskQueueBase* absl_nonnull worker_thread,
+                              RtpSinkValidator* absl_nonnull sink_validator);
   ~RtpStreamReceiverController() override;
 
   // Implements RtpStreamReceiverControllerInterface.
@@ -38,12 +64,18 @@ class RtpStreamReceiverController : public RtpStreamReceiverControllerInterface,
       uint32_t ssrc,
       RtpPacketSinkInterface* sink) override;
 
+  RtpPacketSinkInterface* ResolveSink(const RtpPacketReceived& packet);
+
   // TODO(bugs.webrtc.org/7135): Not yet responsible for parsing.
   bool OnRtpPacket(const RtpPacketReceived& packet);
 
   // Implements RecoveredPacketReceiver.
   // Responsible for demuxing recovered FLEXFEC packets.
   void OnRecoveredPacket(const RtpPacketReceived& packet) override;
+
+  void DisconnectFromNetworkThread();
+
+  bool IsEmpty() const;
 
  private:
   class Receiver : public RtpStreamReceiverInterface {
@@ -59,22 +91,22 @@ class RtpStreamReceiverController : public RtpStreamReceiverControllerInterface,
     RtpPacketSinkInterface* const sink_;
   };
 
-  // Thread-safe wrappers for the corresponding RtpDemuxer methods.
   bool AddSink(uint32_t ssrc, RtpPacketSinkInterface* sink);
   bool RemoveSink(const RtpPacketSinkInterface* sink);
 
-  // TODO(bugs.webrtc.org/11993): We expect construction and all methods to be
-  // called on the same thread/tq. Currently this is the worker thread
-  // (including OnRtpPacket) but a more natural fit would be the network thread.
-  // Using a sequence checker to ensure that usage is correct but at the same
-  // time not require a specific thread/tq, an instance of this class + the
-  // associated functionality should be easily moved from one execution context
-  // to another (i.e. when network packets don't hop to the worker thread inside
-  // of Call).
-  SequenceChecker demuxer_sequence_;
-  // At this level the demuxer is only configured to demux by SSRC, so don't
-  // worry about MIDs (MIDs are handled by upper layers).
-  RtpDemuxer demuxer_ RTC_GUARDED_BY(&demuxer_sequence_){false /*use_mid*/};
+  TaskQueueBase* const network_thread_;
+  TaskQueueBase* const worker_thread_;
+  RtpSinkValidator* const sink_validator_;
+  scoped_refptr<PendingTaskSafetyFlag> network_safety_ =
+      PendingTaskSafetyFlag::CreateAttachedToTaskQueue(true, network_thread_);
+  scoped_refptr<PendingTaskSafetyFlag> worker_safety_ =
+      PendingTaskSafetyFlag::CreateAttachedToTaskQueue(true, worker_thread_);
+  // TODO(bugs.webrtc.org/11993): Demuxing and sink resolution (OnRtpPacket,
+  // ResolveSink) now run on the network thread. However, construction and
+  // destruction still occur on the worker thread. Once all receive streams and
+  // associated state are fully migrated to the network thread, cross-thread
+  // posting and dual safety flags can be eliminated.
+  RtpDemuxer demuxer_ RTC_GUARDED_BY(network_thread_){false /*use_mid*/};
 };
 
 }  // namespace webrtc

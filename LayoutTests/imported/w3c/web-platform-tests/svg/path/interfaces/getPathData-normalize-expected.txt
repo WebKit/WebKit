@@ -1,0 +1,8 @@
+
+FAIL path.getPathData({normalize: true}) straight lines path.getPathData is not a function. (In 'path.getPathData({ normalize: true })', 'path.getPathData' is undefined)
+FAIL path.getPathData({normalize: true}) cubic path.getPathData is not a function. (In 'path.getPathData({ normalize: true })', 'path.getPathData' is undefined)
+FAIL path.getPathData({normalize: true}) quadratic path.getPathData is not a function. (In 'path.getPathData({ normalize: true })', 'path.getPathData' is undefined)
+FAIL path.getPathData({normalize: true}) leading lowercase m is treated as absolute moveto path.getPathData is not a function. (In 'path.getPathData({ normalize: true })', 'path.getPathData' is undefined)
+FAIL path.getPathData({normalize: true}) elliptical arc path.getPathData is not a function. (In 'path.getPathData({ normalize: true })', 'path.getPathData' is undefined)
+FAIL path.getPathData({normalize: true}) decomposes arcs into cubics path.getPathData is not a function. (In 'path.getPathData({ normalize: true })', 'path.getPathData' is undefined)
+

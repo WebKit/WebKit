@@ -343,7 +343,7 @@ TEST(ParseValuesTest, ParseBitStringEmptyOneUnusedBit) {
   EXPECT_FALSE(bit_string.has_value());
 }
 
-// Tests parsing an empty BIT STRING that is not minmally encoded (the entire
+// Tests parsing an empty BIT STRING that is not minimally encoded (the entire
 // last byte is comprised of unused bits).
 TEST(ParseValuesTest, ParseBitStringNonEmptyTooManyUnusedBits) {
   const uint8_t kData[] = {0x08, 0x00};

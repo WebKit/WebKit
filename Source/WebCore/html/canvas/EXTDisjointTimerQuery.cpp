@@ -157,7 +157,7 @@ void EXTDisjointTimerQuery::endQueryEXT(ScriptExecutionContext& scriptExecutionC
     protect(context->graphicsContextGL())->endQueryEXT(target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    protect(scriptExecutionContext.eventLoop())->queueMicrotask(scriptExecutionContext.vm(), [query = WTF::move(context->m_activeQuery)] {
+    protect(scriptExecutionContext.eventLoop())->queueMicrotask(scriptExecutionContext.vm(), [query = context->m_activeQuery.releaseNonNull()] {
         query->makeResultAvailable();
     });
 }

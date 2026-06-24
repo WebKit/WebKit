@@ -48,4 +48,8 @@ BEGIN {
 
 use Runner;
 
+if (isLinux()) {
+    portName();
+}
+
 Test262::Runner::main();

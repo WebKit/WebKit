@@ -118,7 +118,7 @@ auto CSSValueConversion<TextDecorationLine>::operator()(BuilderState& state, con
     return flags;
 }
 
-Ref<CSSValue> CSSValueCreation<OptionSet<TextDecorationLine::Flag>>::operator()(CSSValuePool&, const RenderStyle&, const OptionSet<TextDecorationLine::Flag>& value)
+Ref<CSSValue> CSSValueCreation<OptionSet<TextDecorationLine::Flag>>::operator()(CSSValuePool&, const Style::ComputedStyle&, const OptionSet<TextDecorationLine::Flag>& value)
 {
     ASSERT(!value.isEmpty());
 
@@ -136,7 +136,7 @@ Ref<CSSValue> CSSValueCreation<OptionSet<TextDecorationLine::Flag>>::operator()(
 
 // MARK: - Serialization
 
-void Serialize<OptionSet<TextDecorationLine::Flag>>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const RenderStyle&, const OptionSet<TextDecorationLine::Flag>& value)
+void Serialize<OptionSet<TextDecorationLine::Flag>>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle&, const OptionSet<TextDecorationLine::Flag>& value)
 {
     ASSERT(!value.isEmpty());
 

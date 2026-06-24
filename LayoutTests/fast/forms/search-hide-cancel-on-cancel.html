@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -11,6 +11,7 @@
 <div id="console"></div>
 <script>
 description('Bug 46950: Search field cancel button keeps event capturing if the value is cleared in a focus event.');
+window.jsTestIsAsync = true;
 
 var input = document.getElementById('search');
 var cancelX = input.offsetLeft + input.offsetWidth - 6;
@@ -29,7 +30,6 @@ input.addEventListener('focus', clearValue, false);
 onload = async () => {
     if (!window.testRunner)
         return;
-    testRunner.waitUntilDone();
     // Click the cancel button.
     await eventSender.asyncMouseMoveTo(cancelX, middleY);
     await eventSender.asyncMouseDown();
@@ -41,9 +41,8 @@ onload = async () => {
 
     shouldBe('mouseDownCount', '2');
     input.removeEventListener('focus', clearValue, false);
-    testRunner.notifyDone();
+    finishJSTest();
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

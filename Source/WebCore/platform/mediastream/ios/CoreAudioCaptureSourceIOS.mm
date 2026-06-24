@@ -78,7 +78,7 @@ using namespace WebCore;
 
     // mediaserverd crashed and was relaunched, rebuild everything. See
     // https://developer.apple.com/library/content/qa/qa1749/_index.html.
-    _callback->scheduleReconfiguration();
+    protect(_callback)->scheduleReconfiguration();
 }
 @end
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body onload="runTest()">
 
@@ -15,12 +15,12 @@
 <script>
 description("Bug 77391 - Hidden form elements do not save their state prior to form submission");
 
+jsTestIsAsync = true;
+
 function runTest() {
     var state = document.getElementById("emptyOnFirstVisit");
     if (!state.value) {
         // First visit.
-        if (window.testRunner)
-            testRunner.waitUntilDone();
         state.value = "visited";
 
         document.f.hidden.value = "after";
@@ -29,16 +29,7 @@ function runTest() {
     } else {
         // Second visit.
         shouldBeEqualToString("document.f.hidden.value", "after");
-        successfullyParsed = true;
-        
-        var script = document.createElement('script');
-        script.src = "../../resources/js-test-post.js";
-        script.type = "text/javascript";
-        script.onload = function() {
-            if (window.testRunner)
-                testRunner.notifyDone();
-        };
-        document.body.appendChild(script);
+        finishJSTest();
     }
 }
 </script>

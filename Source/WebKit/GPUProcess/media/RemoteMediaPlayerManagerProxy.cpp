@@ -50,6 +50,8 @@
 #include <WebCore/AVAssetMIMETypeCache.h>
 #endif
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_gpuConnectionToWebProcess.get()->connection())
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -101,6 +103,12 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
         return;
     ASSERT(RunLoop::isMain());
     ASSERT(!m_proxies.contains(identifier));
+
+#if PLATFORM(COCOA)
+    MESSAGE_CHECK(!connection->sharedPreferencesForWebProcessValue().mediaContainmentEnabled
+        || engineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundation
+        || engineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::WirelessPlayback);
+#endif
 
     auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, clientIdentifier, connection->connection(), engineIdentifier, WTF::move(proxyConfiguration), Ref { connection->videoFrameObjectHeap() }, connection->webProcessIdentity());
     m_proxies.add(identifier, WTF::move(proxy));
@@ -239,5 +247,7 @@ std::optional<SharedPreferencesForWebProcess> RemoteMediaPlayerManagerProxy::sha
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

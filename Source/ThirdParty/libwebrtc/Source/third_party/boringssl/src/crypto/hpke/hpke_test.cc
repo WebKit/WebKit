@@ -49,6 +49,7 @@ const decltype(&EVP_hpke_aes_128_gcm) kAllAEADs[] = {
 
 const decltype(&EVP_hpke_hkdf_sha256) kAllKDFs[] = {
     &EVP_hpke_hkdf_sha256,
+    &EVP_hpke_hkdf_sha384,
 };
 
 // HPKETestVector corresponds to one array member in the published
@@ -72,19 +73,12 @@ class HPKETestVector {
     uint8_t enc[EVP_HPKE_MAX_ENC_LENGTH];
     size_t enc_len = 0;
 
-    // X25519 and X-Wing use the secret key directly. P-256 uses the IKM to
-    // derive a key.
-    bssl::Span<const uint8_t> secret_input = secret_key_e_;
-    if (kem_id_ == EVP_HPKE_DHKEM_P256_HKDF_SHA256) {
-      secret_input = ikm_e_;
-    }
-
     switch (mode_) {
       case Mode::kBase:
         ASSERT_TRUE(EVP_HPKE_CTX_setup_sender_with_seed_for_testing(
             sender_ctx.get(), enc, &enc_len, sizeof(enc), kem, kdf, aead,
             public_key_r_.data(), public_key_r_.size(), info_.data(),
-            info_.size(), secret_input.data(), secret_input.size()));
+            info_.size(), sender_seed_.data(), sender_seed_.size()));
         break;
       case Mode::kAuth: {
         ScopedEVP_HPKE_KEY sender_key;
@@ -93,12 +87,12 @@ class HPKETestVector {
         ASSERT_TRUE(EVP_HPKE_CTX_setup_auth_sender_with_seed_for_testing(
             sender_ctx.get(), enc, &enc_len, sizeof(enc), sender_key.get(), kdf,
             aead, public_key_r_.data(), public_key_r_.size(), info_.data(),
-            info_.size(), secret_input.data(), secret_input.size()));
+            info_.size(), sender_seed_.data(), sender_seed_.size()));
         break;
       }
     }
 
-    EXPECT_EQ(Bytes(enc, enc_len), Bytes(public_key_e_));
+    EXPECT_EQ(Bytes(enc, enc_len), Bytes(enc_));
     VerifySender(sender_ctx.get());
 
     // Test the recipient.
@@ -106,9 +100,9 @@ class HPKETestVector {
     ASSERT_TRUE(EVP_HPKE_KEY_init(base_key.get(), kem, secret_key_r_.data(),
                                   secret_key_r_.size()));
 
-    enum class CopyMode { kOriginal, kCopy, kMove };
-    for (CopyMode copy :
-         {CopyMode::kOriginal, CopyMode::kCopy, CopyMode::kMove}) {
+    enum class CopyMode { kOriginal, kCopy, kMove, kDerive };
+    for (CopyMode copy : {CopyMode::kOriginal, CopyMode::kCopy, CopyMode::kMove,
+                          CopyMode::kDerive}) {
       SCOPED_TRACE(static_cast<int>(copy));
       const EVP_HPKE_KEY *key = base_key.get();
       ScopedEVP_HPKE_KEY key_copy;
@@ -121,6 +115,11 @@ class HPKETestVector {
           break;
         case CopyMode::kMove:
           EVP_HPKE_KEY_move(key_copy.get(), base_key.get());
+          key = key_copy.get();
+          break;
+        case CopyMode::kDerive:
+          ASSERT_TRUE(EVP_HPKE_KEY_derive(key_copy.get(), kem, ikm_r_.data(),
+                                          ikm_r_.size()));
           key = key_copy.get();
           break;
       }
@@ -247,9 +246,8 @@ class HPKETestVector {
   uint16_t aead_id_;
   std::vector<uint8_t> context_;
   std::vector<uint8_t> info_;
-  std::vector<uint8_t> public_key_e_;
-  std::vector<uint8_t> secret_key_e_;
-  std::vector<uint8_t> ikm_e_;
+  std::vector<uint8_t> enc_;
+  std::vector<uint8_t> sender_seed_;
   std::vector<uint8_t> public_key_r_;
   std::vector<uint8_t> secret_key_r_;
   std::vector<uint8_t> ikm_r_;
@@ -301,9 +299,8 @@ bool HPKETestVector::ReadFromFileTest(FileTest *t) {
       !t->GetBytes(&secret_key_r_, "skRm") ||
       !t->GetBytes(&public_key_r_, "pkRm") ||
       !t->GetBytes(&ikm_r_, "ikmR") ||  //
-      !t->GetBytes(&secret_key_e_, "skEm") ||
-      !t->GetBytes(&public_key_e_, "pkEm") ||  //
-      !t->GetBytes(&ikm_e_, "ikmE")) {
+      !t->GetBytes(&sender_seed_, "sender_seed") ||
+      !t->GetBytes(&enc_, "enc")) {
     return false;
   }
 
@@ -349,6 +346,14 @@ bool HPKETestVector::ReadFromFileTest(FileTest *t) {
 
 TEST(HPKETest, VerifyTestVectors) {
   FileTestGTest("crypto/hpke/hpke_test_vectors.txt", [](FileTest *t) {
+    HPKETestVector test_vec;
+    EXPECT_TRUE(test_vec.ReadFromFileTest(t));
+    test_vec.Verify();
+  });
+}
+
+TEST(HPKETest, VerifyTestVectorsPQ) {
+  FileTestGTest("crypto/hpke/hpke_test_vectors_pq.txt", [](FileTest *t) {
     HPKETestVector test_vec;
     EXPECT_TRUE(test_vec.ReadFromFileTest(t));
     test_vec.Verify();

@@ -2,7 +2,7 @@
 ; source tree. Do not edit by hand.
 
 %ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
+%include "boringssl_prefix_symbols_internal_x86_win_asm.inc"
 %endif
 %ifidn __OUTPUT_FORMAT__, win32
 %ifidn __OUTPUT_FORMAT__,obj
@@ -410,50 +410,50 @@ L$004pic_point:
 	sub	esp,256
 	movdqa	xmm1,[640+ebp]
 	movdqu	xmm0,[edi]
-db	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	movdqa	xmm3,[ebp]
 	movdqa	xmm2,xmm1
 	movdqu	xmm1,[16+edi]
 	paddq	xmm3,xmm0
-db	102,15,56,0,202
+	pshufb	xmm1,xmm2
 	movdqa	[edx-128],xmm3
 	movdqa	xmm4,[16+ebp]
 	movdqa	xmm3,xmm2
 	movdqu	xmm2,[32+edi]
 	paddq	xmm4,xmm1
-db	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	movdqa	[edx-112],xmm4
 	movdqa	xmm5,[32+ebp]
 	movdqa	xmm4,xmm3
 	movdqu	xmm3,[48+edi]
 	paddq	xmm5,xmm2
-db	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	movdqa	[edx-96],xmm5
 	movdqa	xmm6,[48+ebp]
 	movdqa	xmm5,xmm4
 	movdqu	xmm4,[64+edi]
 	paddq	xmm6,xmm3
-db	102,15,56,0,229
+	pshufb	xmm4,xmm5
 	movdqa	[edx-80],xmm6
 	movdqa	xmm7,[64+ebp]
 	movdqa	xmm6,xmm5
 	movdqu	xmm5,[80+edi]
 	paddq	xmm7,xmm4
-db	102,15,56,0,238
+	pshufb	xmm5,xmm6
 	movdqa	[edx-64],xmm7
 	movdqa	[edx],xmm0
 	movdqa	xmm0,[80+ebp]
 	movdqa	xmm7,xmm6
 	movdqu	xmm6,[96+edi]
 	paddq	xmm0,xmm5
-db	102,15,56,0,247
+	pshufb	xmm6,xmm7
 	movdqa	[edx-48],xmm0
 	movdqa	[16+edx],xmm1
 	movdqa	xmm1,[96+ebp]
 	movdqa	xmm0,xmm7
 	movdqu	xmm7,[112+edi]
 	paddq	xmm1,xmm6
-db	102,15,56,0,248
+	pshufb	xmm7,xmm0
 	movdqa	[edx-32],xmm1
 	movdqa	[32+edx],xmm2
 	movdqa	xmm2,[112+ebp]
@@ -484,9 +484,9 @@ align	32
 L$00600_47_ssse3:
 	movdqa	xmm3,xmm5
 	movdqa	xmm1,xmm2
-db	102,15,58,15,208,8
+	palignr	xmm2,xmm0,8
 	movdqa	[edx],xmm4
-db	102,15,58,15,220,8
+	palignr	xmm3,xmm4,8
 	movdqa	xmm4,xmm2
 	psrlq	xmm2,7
 	paddq	xmm0,xmm3
@@ -611,9 +611,9 @@ db	102,15,58,15,220,8
 	movdqa	[edx-128],xmm2
 	movdqa	xmm4,xmm6
 	movdqa	xmm2,xmm3
-db	102,15,58,15,217,8
+	palignr	xmm3,xmm1,8
 	movdqa	[16+edx],xmm5
-db	102,15,58,15,229,8
+	palignr	xmm4,xmm5,8
 	movdqa	xmm5,xmm3
 	psrlq	xmm3,7
 	paddq	xmm1,xmm4
@@ -738,9 +738,9 @@ db	102,15,58,15,229,8
 	movdqa	[edx-112],xmm3
 	movdqa	xmm5,xmm7
 	movdqa	xmm3,xmm4
-db	102,15,58,15,226,8
+	palignr	xmm4,xmm2,8
 	movdqa	[32+edx],xmm6
-db	102,15,58,15,238,8
+	palignr	xmm5,xmm6,8
 	movdqa	xmm6,xmm4
 	psrlq	xmm4,7
 	paddq	xmm2,xmm5
@@ -865,9 +865,9 @@ db	102,15,58,15,238,8
 	movdqa	[edx-96],xmm4
 	movdqa	xmm6,xmm0
 	movdqa	xmm4,xmm5
-db	102,15,58,15,235,8
+	palignr	xmm5,xmm3,8
 	movdqa	[48+edx],xmm7
-db	102,15,58,15,247,8
+	palignr	xmm6,xmm7,8
 	movdqa	xmm7,xmm5
 	psrlq	xmm5,7
 	paddq	xmm3,xmm6
@@ -992,9 +992,9 @@ db	102,15,58,15,247,8
 	movdqa	[edx-80],xmm5
 	movdqa	xmm7,xmm1
 	movdqa	xmm5,xmm6
-db	102,15,58,15,244,8
+	palignr	xmm6,xmm4,8
 	movdqa	[edx],xmm0
-db	102,15,58,15,248,8
+	palignr	xmm7,xmm0,8
 	movdqa	xmm0,xmm6
 	psrlq	xmm6,7
 	paddq	xmm4,xmm7
@@ -1119,9 +1119,9 @@ db	102,15,58,15,248,8
 	movdqa	[edx-64],xmm6
 	movdqa	xmm0,xmm2
 	movdqa	xmm6,xmm7
-db	102,15,58,15,253,8
+	palignr	xmm7,xmm5,8
 	movdqa	[16+edx],xmm1
-db	102,15,58,15,193,8
+	palignr	xmm0,xmm1,8
 	movdqa	xmm1,xmm7
 	psrlq	xmm7,7
 	paddq	xmm5,xmm0
@@ -1246,9 +1246,9 @@ db	102,15,58,15,193,8
 	movdqa	[edx-48],xmm7
 	movdqa	xmm1,xmm3
 	movdqa	xmm7,xmm0
-db	102,15,58,15,198,8
+	palignr	xmm0,xmm6,8
 	movdqa	[32+edx],xmm2
-db	102,15,58,15,202,8
+	palignr	xmm1,xmm2,8
 	movdqa	xmm2,xmm0
 	psrlq	xmm0,7
 	paddq	xmm6,xmm1
@@ -1373,9 +1373,9 @@ db	102,15,58,15,202,8
 	movdqa	[edx-32],xmm0
 	movdqa	xmm2,xmm4
 	movdqa	xmm0,xmm1
-db	102,15,58,15,207,8
+	palignr	xmm1,xmm7,8
 	movdqa	[48+edx],xmm3
-db	102,15,58,15,211,8
+	palignr	xmm2,xmm3,8
 	movdqa	xmm3,xmm1
 	psrlq	xmm1,7
 	paddq	xmm7,xmm2
@@ -1504,12 +1504,12 @@ db	102,15,58,15,211,8
 	movdqa	xmm1,[ebp]
 	lea	ebp,[ebp-640]
 	movdqu	xmm0,[ebx]
-db	102,15,56,0,193
+	pshufb	xmm0,xmm1
 	movdqa	xmm3,[ebp]
 	movdqa	xmm2,xmm1
 	movdqu	xmm1,[16+ebx]
 	paddq	xmm3,xmm0
-db	102,15,56,0,202
+	pshufb	xmm1,xmm2
 	movq	mm1,mm4
 	movq	mm7,[edx-128]
 	pxor	mm5,mm6
@@ -1607,7 +1607,7 @@ db	102,15,56,0,202
 	movdqa	xmm3,xmm2
 	movdqu	xmm2,[32+ebx]
 	paddq	xmm4,xmm1
-db	102,15,56,0,211
+	pshufb	xmm2,xmm3
 	movq	mm1,mm4
 	movq	mm7,[edx-112]
 	pxor	mm5,mm6
@@ -1705,7 +1705,7 @@ db	102,15,56,0,211
 	movdqa	xmm4,xmm3
 	movdqu	xmm3,[48+ebx]
 	paddq	xmm5,xmm2
-db	102,15,56,0,220
+	pshufb	xmm3,xmm4
 	movq	mm1,mm4
 	movq	mm7,[edx-96]
 	pxor	mm5,mm6
@@ -1803,7 +1803,7 @@ db	102,15,56,0,220
 	movdqa	xmm5,xmm4
 	movdqu	xmm4,[64+ebx]
 	paddq	xmm6,xmm3
-db	102,15,56,0,229
+	pshufb	xmm4,xmm5
 	movq	mm1,mm4
 	movq	mm7,[edx-80]
 	pxor	mm5,mm6
@@ -1901,7 +1901,7 @@ db	102,15,56,0,229
 	movdqa	xmm6,xmm5
 	movdqu	xmm5,[80+ebx]
 	paddq	xmm7,xmm4
-db	102,15,56,0,238
+	pshufb	xmm5,xmm6
 	movq	mm1,mm4
 	movq	mm7,[edx-64]
 	pxor	mm5,mm6
@@ -2000,7 +2000,7 @@ db	102,15,56,0,238
 	movdqa	xmm7,xmm6
 	movdqu	xmm6,[96+ebx]
 	paddq	xmm0,xmm5
-db	102,15,56,0,247
+	pshufb	xmm6,xmm7
 	movq	mm1,mm4
 	movq	mm7,[edx-48]
 	pxor	mm5,mm6
@@ -2099,7 +2099,7 @@ db	102,15,56,0,247
 	movdqa	xmm0,xmm7
 	movdqu	xmm7,[112+ebx]
 	paddq	xmm1,xmm6
-db	102,15,56,0,248
+	pshufb	xmm7,xmm0
 	movq	mm1,mm4
 	movq	mm7,[edx-32]
 	pxor	mm5,mm6

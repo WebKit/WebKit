@@ -1,4 +1,0 @@
-
-PASS same-origin > w => w.opener = ""
-PASS cross-origin > w => w.opener = ""
-

@@ -40,6 +40,7 @@
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPagePrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -1997,4 +1998,298 @@ TEST(WKBackForwardList, ItemAddedDelegateObservesUserGestureFlagAtCallbackTime)
 
     EXPECT_EQ(delegate.get()->_itemAddedCount, 1U);
     EXPECT_TRUE(delegate.get()->_lastAddedItemFlag);
+}
+
+static RetainPtr<WKWebView> webViewForCoalescingTests(BOOL useUIProcessForBackForwardItemLoading)
+{
+    RetainPtr config = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[config preferences] _setUseUIProcessForBackForwardItemLoading:useUIProcessForBackForwardItemLoading];
+    return adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:config.get()]);
+}
+
+static void runSynchronousBackForwardGoesNowhereTest(BOOL useUIProcessForBackForwardItemLoading)
+{
+    RetainPtr webView = webViewForCoalescingTests(useUIProcessForBackForwardItemLoading);
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    __block unsigned finishCount = 0;
+    [delegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        ++finishCount;
+    }];
+    auto waitForFinishCount = ^(unsigned target) {
+        while (finishCount < target)
+            TestWebKitAPI::Util::runFor(10_ms);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL1]]];
+    waitForFinishCount(1);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL2]]];
+    waitForFinishCount(2);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL3]]];
+    waitForFinishCount(3);
+    [webView goBack];
+    waitForFinishCount(4);
+
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, loadableURL2.UTF8String);
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)1);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)1);
+
+    finishCount = 0;
+    __block bool jsDone = false;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"history.back(); history.forward();" completionHandler:^(id, NSError *) {
+        jsDone = true;
+    }];
+    TestWebKitAPI::Util::run(&jsDone);
+    TestWebKitAPI::Util::runFor(0.2_s);
+
+    EXPECT_EQ(finishCount, 0u);
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, loadableURL2.UTF8String);
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)1);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)1);
+}
+
+static void runSynchronousBackBackTraversesByMinusTwoTest(BOOL useUIProcessForBackForwardItemLoading)
+{
+    RetainPtr webView = webViewForCoalescingTests(useUIProcessForBackForwardItemLoading);
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    __block unsigned finishCount = 0;
+    [delegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        ++finishCount;
+    }];
+    auto waitForFinishCount = ^(unsigned target) {
+        while (finishCount < target)
+            TestWebKitAPI::Util::runFor(10_ms);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL1]]];
+    waitForFinishCount(1);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL2]]];
+    waitForFinishCount(2);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL3]]];
+    waitForFinishCount(3);
+
+    finishCount = 0;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"history.back(); history.back();" completionHandler:nil];
+    waitForFinishCount(1);
+    TestWebKitAPI::Util::runFor(0.2_s);
+
+    EXPECT_EQ(finishCount, 1u);
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, loadableURL1.UTF8String);
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)0);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)2);
+}
+
+static void runSynchronousForwardForwardTraversesByPlusTwoTest(BOOL useUIProcessForBackForwardItemLoading)
+{
+    RetainPtr webView = webViewForCoalescingTests(useUIProcessForBackForwardItemLoading);
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    __block unsigned finishCount = 0;
+    [delegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        ++finishCount;
+    }];
+    auto waitForFinishCount = ^(unsigned target) {
+        while (finishCount < target)
+            TestWebKitAPI::Util::runFor(10_ms);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL1]]];
+    waitForFinishCount(1);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL2]]];
+    waitForFinishCount(2);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL3]]];
+    waitForFinishCount(3);
+    [webView goBack];
+    waitForFinishCount(4);
+    [webView goBack];
+    waitForFinishCount(5);
+
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, loadableURL1.UTF8String);
+
+    finishCount = 0;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"history.forward(); history.forward();" completionHandler:nil];
+    waitForFinishCount(1);
+    TestWebKitAPI::Util::runFor(0.2_s);
+
+    EXPECT_EQ(finishCount, 1u);
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, loadableURL3.UTF8String);
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)2);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)0);
+}
+
+static void runHistoryGoZeroAfterPendingBackReloadsTest(BOOL useUIProcessForBackForwardItemLoading)
+{
+    RetainPtr webView = webViewForCoalescingTests(useUIProcessForBackForwardItemLoading);
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    __block unsigned finishCount = 0;
+    [delegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        ++finishCount;
+    }];
+    auto waitForFinishCount = ^(unsigned target) {
+        while (finishCount < target)
+            TestWebKitAPI::Util::runFor(10_ms);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL1]]];
+    waitForFinishCount(1);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL2]]];
+    waitForFinishCount(2);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL3]]];
+    waitForFinishCount(3);
+
+    finishCount = 0;
+    __block bool jsDone = false;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"history.back(); history.go(0);" completionHandler:^(id, NSError *) {
+        jsDone = true;
+    }];
+    TestWebKitAPI::Util::run(&jsDone);
+    TestWebKitAPI::Util::runFor(0.5_s);
+
+    // Pin observed behavior: spec-correct outcome would be a single reload (1).
+    EXPECT_EQ(finishCount, 0u);
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, loadableURL3.UTF8String);
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)2);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)0);
+}
+
+static void runIframeAndMainFrameCoalesceGoesNowhereTest(BOOL useUIProcessForBackForwardItemLoading)
+{
+    RetainPtr webView = webViewForCoalescingTests(useUIProcessForBackForwardItemLoading);
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    __block unsigned finishCount = 0;
+    [delegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        ++finishCount;
+    }];
+    auto waitForFinishCount = ^(unsigned target) {
+        while (finishCount < target)
+            TestWebKitAPI::Util::runFor(10_ms);
+    };
+
+    NSString *iframeHostURL = @"data:text/html,%3Cbody%3Ehost%3Ciframe%20srcdoc%3D%22hi%22%3E%3C%2Fiframe%3E%3C%2Fbody%3E";
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL1]]];
+    waitForFinishCount(1);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:iframeHostURL]]];
+    waitForFinishCount(2);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL3]]];
+    waitForFinishCount(3);
+    [webView goBack];
+    waitForFinishCount(4);
+
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, iframeHostURL.UTF8String);
+
+    finishCount = 0;
+    __block bool jsDone = false;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"document.querySelector('iframe').contentWindow.history.back(); history.forward();" completionHandler:^(id, NSError *) {
+        jsDone = true;
+    }];
+    TestWebKitAPI::Util::run(&jsDone);
+    TestWebKitAPI::Util::runFor(0.2_s);
+
+    EXPECT_EQ(finishCount, 0u);
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, iframeHostURL.UTF8String);
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)1);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)1);
+}
+
+static void runIframeBackThenPushStateAdjustsAggregatedTraversalTest(BOOL useUIProcessForBackForwardItemLoading)
+{
+    RetainPtr webView = webViewForCoalescingTests(useUIProcessForBackForwardItemLoading);
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    __block unsigned finishCount = 0;
+    [delegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        ++finishCount;
+    }];
+    auto waitForFinishCount = ^(unsigned target) {
+        while (finishCount < target)
+            TestWebKitAPI::Util::runFor(10_ms);
+    };
+
+    NSString *iframeHostURL = @"data:text/html,%3Cbody%3Ehost%3Ciframe%20srcdoc%3D%22hi%22%3E%3C%2Fiframe%3E%3C%2Fbody%3E";
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL1]]];
+    waitForFinishCount(1);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:iframeHostURL]]];
+    waitForFinishCount(2);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL3]]];
+    waitForFinishCount(3);
+    [webView goBack];
+    waitForFinishCount(4);
+
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, iframeHostURL.UTF8String);
+
+    finishCount = 0;
+    __block bool jsDone = false;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"document.querySelector('iframe').contentWindow.history.back(); document.querySelector('iframe').contentWindow.history.pushState(null, '', 'extra');" completionHandler:^(id, NSError *) {
+        jsDone = true;
+    }];
+    TestWebKitAPI::Util::run(&jsDone);
+    waitForFinishCount(1);
+    TestWebKitAPI::Util::runFor(0.2_s);
+
+    EXPECT_STREQ([[[[webView backForwardList] currentItem] URL] absoluteString].UTF8String, loadableURL1.UTF8String);
+}
+
+TEST(WKBackForwardList, SynchronousBackForwardGoesNowhere)
+{
+    runSynchronousBackForwardGoesNowhereTest(NO);
+}
+
+TEST(WKBackForwardList, SynchronousBackForwardGoesNowhereWithUIProcessLoading)
+{
+    runSynchronousBackForwardGoesNowhereTest(YES);
+}
+
+TEST(WKBackForwardList, SynchronousBackBackTraversesByMinusTwo)
+{
+    runSynchronousBackBackTraversesByMinusTwoTest(NO);
+}
+
+TEST(WKBackForwardList, SynchronousBackBackTraversesByMinusTwoWithUIProcessLoading)
+{
+    runSynchronousBackBackTraversesByMinusTwoTest(YES);
+}
+
+TEST(WKBackForwardList, SynchronousForwardForwardTraversesByPlusTwo)
+{
+    runSynchronousForwardForwardTraversesByPlusTwoTest(NO);
+}
+
+TEST(WKBackForwardList, SynchronousForwardForwardTraversesByPlusTwoWithUIProcessLoading)
+{
+    runSynchronousForwardForwardTraversesByPlusTwoTest(YES);
+}
+
+TEST(WKBackForwardList, HistoryGoZeroAfterPendingBackReloads)
+{
+    runHistoryGoZeroAfterPendingBackReloadsTest(NO);
+}
+
+TEST(WKBackForwardList, HistoryGoZeroAfterPendingBackReloadsWithUIProcessLoading)
+{
+    runHistoryGoZeroAfterPendingBackReloadsTest(YES);
+}
+
+TEST(WKBackForwardList, IframeAndMainFrameCoalesceGoesNowhere)
+{
+    runIframeAndMainFrameCoalesceGoesNowhereTest(NO);
+}
+
+TEST(WKBackForwardList, IframeAndMainFrameCoalesceGoesNowhereWithUIProcessLoading)
+{
+    runIframeAndMainFrameCoalesceGoesNowhereTest(YES);
+}
+
+TEST(WKBackForwardList, IframeBackThenPushStateAdjustsAggregatedTraversal)
+{
+    runIframeBackThenPushStateAdjustsAggregatedTraversalTest(NO);
+}
+
+TEST(WKBackForwardList, IframeBackThenPushStateAdjustsAggregatedTraversalWithUIProcessLoading)
+{
+    runIframeBackThenPushStateAdjustsAggregatedTraversalTest(YES);
 }

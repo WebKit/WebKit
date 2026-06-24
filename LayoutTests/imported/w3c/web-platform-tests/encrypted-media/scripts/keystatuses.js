@@ -153,6 +153,10 @@ function runTest(config,qualifier)
         navigator.requestMediaKeySystemAccess(config.keysystem, [configuration]).then(function(access) {
             return access.createMediaKeys();
         }).then(test.step_func(function(mediaKeys) {
+            if (config.servercertificate)
+                return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+            return mediaKeys;
+        })).then(test.step_func(function(mediaKeys) {
             mediaKeySession = mediaKeys.createSession();
 
             // There should be no keys defined yet.

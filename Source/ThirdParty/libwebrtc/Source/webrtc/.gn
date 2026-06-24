@@ -12,8 +12,8 @@ import("//build/dotfile_settings.gni")
 buildconfig = "//build/config/BUILDCONFIG.gn"
 
 # The python interpreter to use by default. On Windows, this will look
-# for vpython3.exe and vpython3.bat.
-script_executable = "vpython3"
+# for python3.exe and python3.bat.
+script_executable = "python3"
 
 # The secondary source root is a parallel directory tree where
 # GN build files are placed when they can not be placed directly

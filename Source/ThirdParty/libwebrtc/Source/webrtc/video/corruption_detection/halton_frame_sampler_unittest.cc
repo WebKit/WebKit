@@ -13,9 +13,9 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
@@ -67,9 +67,7 @@ VideoFrame MakeDefaultFrame() {
       .build();
 }
 
-VideoFrame MakeFrame(int width,
-                     int height,
-                     webrtc::ArrayView<const uint8_t> data) {
+VideoFrame MakeFrame(int width, int height, std::span<const uint8_t> data) {
   scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width, height);
   memcpy(buffer->MutableDataY(), data.data(), width * height);
   return VideoFrame::Builder().set_video_frame_buffer(buffer).build();

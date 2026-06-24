@@ -34,6 +34,12 @@
 /**
  * WPEViewHeadless:
  *
+ * A headless [class@WPEPlatform.View] implementation.
+ *
+ * [class@ViewHeadless] is the [class@WPEPlatform.View] implementation used by
+ * [class@DisplayHeadless]. It does not display buffers on any native surface;
+ * instead it notifies that each buffer has been rendered, driving the
+ * rendering loop without producing visible output.
  */
 struct _WPEViewHeadlessPrivate {
     GRefPtr<WPEBuffer> pendingBuffer;

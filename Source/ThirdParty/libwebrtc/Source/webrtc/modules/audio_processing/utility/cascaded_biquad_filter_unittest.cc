@@ -12,9 +12,9 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
 
@@ -61,7 +61,7 @@ TEST(CascadedBiquadFilter, BlockingConfiguration) {
   std::vector<float> values = CreateInputWithIncreasingValues(1000);
 
   CascadedBiQuadFilter filter(
-      (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+      (std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
           kBlockingCoefficients)));
   filter.Process(values);
 
@@ -78,7 +78,7 @@ TEST(CascadedBiquadFilter, HighPassConfiguration) {
   }
 
   CascadedBiQuadFilter filter(
-      (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+      (std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
           kHighPassFilterCoefficients)));
   filter.Process(values);
 
@@ -90,7 +90,7 @@ TEST(CascadedBiquadFilter, HighPassConfiguration) {
 // Verifies that the reset functionality works as intended.
 TEST(CascadedBiquadFilter, HighPassConfigurationResetFunctionality) {
   CascadedBiQuadFilter filter(
-      (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+      (std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
           kHighPassFilterCoefficients)));
 
   std::vector<float> values1(100, 1.f);
@@ -114,7 +114,7 @@ TEST(CascadedBiquadFilter, TransparentConfiguration) {
   std::vector<float> output(input.size());
 
   CascadedBiQuadFilter filter(
-      (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+      (std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
           kTransparentCoefficients)));
   filter.Process(input, output);
 
@@ -127,7 +127,7 @@ TEST(CascadedBiquadFilter, CascadedConfiguration) {
   std::vector<float> output(input.size());
 
   CascadedBiQuadFilter filter(
-      (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+      (std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
           kCascadedCoefficients)));
   filter.Process(input, output);
 
@@ -145,7 +145,7 @@ TEST(CascadedBiquadFilterDeathTest, InputSizeCheckVerification) {
   std::vector<float> output(input.size() - 1);
 
   CascadedBiQuadFilter filter(
-      (ArrayView<const CascadedBiQuadFilter::BiQuadCoefficients>(
+      (std::span<const CascadedBiQuadFilter::BiQuadCoefficients>(
           kTransparentCoefficients)));
   EXPECT_DEATH(filter.Process(input, output), "");
 }

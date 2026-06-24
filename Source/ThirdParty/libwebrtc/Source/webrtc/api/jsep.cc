@@ -193,11 +193,13 @@ SessionDescriptionInterface::Create(
     std::unique_ptr<SessionDescription> description,
     absl::string_view id,
     absl::string_view version,
-    std::vector<IceCandidateCollection> candidates) {
+    std::vector<IceCandidateCollection> candidates,
+    EncodingOptions encoding_options) {
   if (!description && type != SdpType::kRollback)
     return nullptr;
-  return absl::WrapUnique(new SessionDescriptionInterface(
-      type, std::move(description), id, version, std::move(candidates)));
+  return absl::WrapUnique(
+      new SessionDescriptionInterface(type, std::move(description), id, version,
+                                      std::move(candidates), encoding_options));
 }
 
 SessionDescriptionInterface::~SessionDescriptionInterface() = default;
@@ -224,12 +226,14 @@ SessionDescriptionInterface::SessionDescriptionInterface(
     std::unique_ptr<SessionDescription> desc,
     absl::string_view id,
     absl::string_view version,
-    std::vector<IceCandidateCollection> candidates)
+    std::vector<IceCandidateCollection> candidates,
+    EncodingOptions encoding_options)
     : sdp_type_(type),
       id_(id),
       version_(version),
       description_(std::move(desc)),
-      candidate_collection_(std::move(candidates)) {
+      candidate_collection_(std::move(candidates)),
+      encoding_options_(encoding_options) {
   RTC_DCHECK(description() || type == SdpType::kRollback);
   RTC_DCHECK(candidate_collection_.empty() ||
              candidate_collection_.size() == number_of_mediasections());
@@ -245,7 +249,8 @@ SessionDescriptionInterface::Clone() const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   return SessionDescriptionInterface::Create(
       sdp_type_, description() ? description()->Clone() : nullptr, id(),
-      version(), CloneCandidateCollection(candidate_collection_));
+      version(), CloneCandidateCollection(candidate_collection_),
+      encoding_options_);
 }
 
 bool SessionDescriptionInterface::AddCandidate(const IceCandidate* candidate) {

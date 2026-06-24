@@ -381,7 +381,6 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
       absl::AnyInvocable<void(webrtc::PeerConnectionObserver*) &&>) override {
     RTC_DCHECK_NOTREACHED();
   }
-  std::optional<SSLRole> GetSctpSslRole_n() override { return std::nullopt; }
   PeerConnectionInterface::IceConnectionState ice_connection_state_internal()
       override {
     return PeerConnectionInterface::IceConnectionState::kIceConnectionNew;

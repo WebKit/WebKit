@@ -3,7 +3,7 @@
 
 <html>
 <head>
-  <script src="../../../resources/js-test-pre.js"></script>
+  <script src="../../../resources/js-test.js"></script>
   <title>CSS scroll snapping should not conflict with user scrolling</title>
   <style>
     html {
@@ -34,6 +34,7 @@
   <div></div>
 </body>
 <script>
+window.jsTestIsAsync = true;
 var expectedScrollTop = 0;
 var testsPassed = 0;
 var testDescription;
@@ -91,8 +92,7 @@ function triggerNextTest() {
         return;
     }
 
-    isSuccessfullyParsed();
-    testRunner.notifyDone();
+    finishJSTest();
 
     return;
 }
@@ -108,9 +108,6 @@ function scrollEventCallback() {
 
 document.addEventListener("scroll", scrollEventCallback, false);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-}
 
 if (window.eventSender) {
     eventSender.setWheelHasPreciseDeltas(true);

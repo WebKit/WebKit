@@ -141,12 +141,6 @@ bool AutomaticThread::tryStop(const AbstractLocker&)
     return true;
 }
 
-void AutomaticThread::requestTemporaryStop(const AbstractLocker& locker)
-{
-    m_temporaryStopRequested = true;
-    notify(locker);
-}
-
 bool AutomaticThread::isWaiting(const AbstractLocker& locker)
 {
     return hasUnderlyingThread(locker) && m_isWaiting;
@@ -210,26 +204,15 @@ void AutomaticThread::start(const AbstractLocker&)
                 m_isRunningCondition.notifyAll();
                 stopImpl(locker);
             };
-
-            auto stopTemporarily = [&](const AbstractLocker& locker) {
-                m_temporaryStopRequested = false;
-                stopImpl(locker);
-            };
-
+            
             auto stopForTimeout = [&] (const AbstractLocker& locker) {
                 stopImpl(locker);
             };
-
+            
             for (;;) {
                 {
                     Locker locker { *m_lock };
                     for (;;) {
-                        // We may have been woken up in order to stop; if that's
-                        // the case, stop before calling poll
-                        // (JITWorklistThread:poll makes assumptions about there
-                        // being work available).
-                        if (m_temporaryStopRequested)
-                            return stopTemporarily(locker);
                         PollResult result = poll(locker);
                         if (result == PollResult::Work)
                             break;
@@ -241,8 +224,6 @@ void AutomaticThread::start(const AbstractLocker&)
                         m_isWaiting = true;
                         bool awokenByNotify =
                             m_waitCondition.waitFor(*m_lock, m_timeout);
-                        if (m_temporaryStopRequested)
-                            return stopTemporarily(locker);
                         if (verbose && !awokenByNotify && !m_isWaiting)
                             dataLog(RawPointer(this), ": waitFor timed out, but notified via m_isWaiting flag!\n");
                         if (m_isWaiting && shouldSleep(locker)) {

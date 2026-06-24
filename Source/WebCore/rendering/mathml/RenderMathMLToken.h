@@ -39,8 +39,8 @@ class RenderMathMLToken : public RenderMathMLBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLToken);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLToken);
 public:
-    RenderMathMLToken(Type, MathMLTokenElement&, RenderStyle&&);
-    RenderMathMLToken(Type, Document&, RenderStyle&&);
+    RenderMathMLToken(Type, MathMLTokenElement&, Style::ComputedStyle&&);
+    RenderMathMLToken(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderMathMLToken();
 
     MathMLTokenElement& NODELETE element();
@@ -53,13 +53,13 @@ protected:
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
     std::optional<LayoutUnit> firstLineBaseline() const override;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
-    void computePreferredLogicalWidths() override;
+    void computeIntrinsicLogicalWidthContributions() override;
 
 private:
     bool isRenderMathMLToken() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderMathMLToken"_s; }
-    bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return true; };
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const final { return true; };
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
     void updateMathVariantGlyph();
     void setMathVariantGlyphDirty();
 

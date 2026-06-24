@@ -242,6 +242,8 @@ void MomentumEventDispatcher::didEndMomentumPhase()
 
     dispatchSyntheticMomentumEvent(WebWheelEvent::Phase::Ended, { });
 
+    m_client->didEndSyntheticMomentumScrolling();
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher ending synthetic momentum phase with total offset %.1f %.1f, duration %f (event offset would have been %.1f %.1f) (tail index %d of %zu)", m_currentGesture.currentOffset.width(), m_currentGesture.currentOffset.height(), (MonotonicTime::now() - m_currentGesture.startTime).seconds(), m_currentGesture.accumulatedEventOffset.width(), m_currentGesture.accumulatedEventOffset.height(), m_currentGesture.currentTailDeltaIndex, m_currentGesture.tailDeltaTable.size());
     m_client->flushMomentumEventLoggingSoon();

@@ -13,8 +13,8 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -53,7 +53,7 @@ class RTC_EXPORT SpsParser {
   };
 
   // Unpack RBSP and parse SPS state from the supplied buffer.
-  static std::optional<SpsState> ParseSps(ArrayView<const uint8_t> data);
+  static std::optional<SpsState> ParseSps(std::span<const uint8_t> data);
 
  protected:
   // Parse the SPS state, up till the VUI part, for a buffer where RBSP

@@ -362,7 +362,7 @@
     {"access": "public", "introduced": "14", "kind": "function", "linkage": "internal", "name": "__ZL35AEAContextGetSignatureEncryptionKeyP15AEAContext_implmPhPm"},
     {"access": "public", "introduced": "14", "kind": "function", "linkage": "internal", "name": "__ZL35AEAContextSetSignatureEncryptionKeyP15AEAContext_implPKhm"}
    ],
-   "target": "arm64-apple-ios26.1",
+   "target": "arm64-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "AAACEFlagSet"},
     {"access": "public", "name": "AAACEPermSet"},
@@ -766,7 +766,7 @@
     {"access": "public", "introduced": "14", "kind": "function", "linkage": "internal", "name": "__ZL35AEAContextGetSignatureEncryptionKeyP15AEAContext_implmPhPm"},
     {"access": "public", "introduced": "14", "kind": "function", "linkage": "internal", "name": "__ZL35AEAContextSetSignatureEncryptionKeyP15AEAContext_implPKhm"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "AAACEFlagSet"},
     {"access": "public", "name": "AAACEPermSet"},

@@ -108,15 +108,8 @@ void ScrollingTreeFrameScrollingNodeCoordinated::repositionScrollingLayers()
     if (!scrollLayer)
         return;
 
-    // If we're committing on the scrolling thread, it means that ThreadedScrollingTree is in "desynchronized" mode.
-    // The main thread may already have set the same layer position, but here we need to trigger a scrolling thread composition
-    // to ensure that the scroll happens even when the main thread commit is taking a long time. So make sure the layer property
-    // changes when there has been a scroll position change.
-    CoordinatedPlatformLayer::ForcePositionSync forceSync = ScrollingThread::isCurrentThread() && !scrollingTree()->isScrollingSynchronizedWithMainThread() ?
-        CoordinatedPlatformLayer::ForcePositionSync::Yes : CoordinatedPlatformLayer::ForcePositionSync::No;
-
     auto scrollPosition = currentScrollPosition();
-    scrollLayer->setPositionForScrolling(-scrollPosition, forceSync);
+    scrollLayer->setPositionForScrolling(-scrollPosition);
 }
 
 void ScrollingTreeFrameScrollingNodeCoordinated::repositionRelatedLayers()
@@ -132,7 +125,7 @@ void ScrollingTreeFrameScrollingNodeCoordinated::repositionRelatedLayers()
         FloatPoint insetClipPosition;
         {
             Locker locker { m_insetClipLayer->lock() };
-            insetClipPosition = LocalFrameView::insetClipLayerRect(scrollPosition, contentInsets, sizeForVisibleContent()).location();
+            insetClipPosition = LocalFrameView::insetClipLayerRect(scrollPosition, totalContentsSize(), contentInsets, sizeForVisibleContent()).location();
         }
         m_insetClipLayer->setPositionForScrolling(insetClipPosition);
         auto rootContentsPosition = LocalFrameView::positionForRootContentLayer(scrollPosition, scrollOrigin(), contentInsets, headerHeight());

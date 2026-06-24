@@ -1,6 +1,0 @@
-Bug test main frame
-
-
-
-PASS Reports should be sent to the correct endpoints
-

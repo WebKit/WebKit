@@ -217,10 +217,17 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
   int disable_filter_rt_screen = 0;
   (void)sd;
 
-  // Enable loop filter sharpness only for allintra encoding mode,
-  // as frames do not have to serve as references to others
-  lf->sharpness_level =
-      cpi->oxcf.mode == ALLINTRA ? cpi->oxcf.algo_cfg.sharpness : 0;
+  // Enable loop filter sharpness only for all-intra encoding mode,
+  // or tune IQ or SSIMULACRA2. This is because:
+  // - All-intra: frames do not have to serve as references to others
+  // - Tune IQ/SSIMULACRA2: enabling loop filter sharpness has been found to
+  //   be beneficial for sharpness perception
+  if (cpi->oxcf.mode == ALLINTRA || cpi->oxcf.tune_cfg.tuning == AOM_TUNE_IQ ||
+      cpi->oxcf.tune_cfg.tuning == AOM_TUNE_SSIMULACRA2) {
+    lf->sharpness_level = cpi->oxcf.algo_cfg.sharpness;
+  } else {
+    lf->sharpness_level = 0;
+  }
 
   if (cpi->oxcf.algo_cfg.enable_adaptive_sharpness) {
     // Loop filter sharpness levels are highly nonlinear. Visually, lf sharpness
@@ -228,7 +235,7 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
     // written to pick levels 0, 1 and 7 to keep it simple.
     int max_lf_sharpness;
 
-    if (cm->quant_params.base_qindex <= 120) {
+    if (cm->quant_params.base_qindex <= 112) {
       max_lf_sharpness = 7;
     } else if (cm->quant_params.base_qindex <= 160) {
       max_lf_sharpness = 1;

@@ -78,6 +78,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferNativeImage.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferProxy.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferRGB.cpp
+        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferSkiaImage.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferYUV.cpp
         platform/graphics/texmap/coordinated/CoordinatedTileBuffer.cpp
         platform/graphics/texmap/coordinated/GraphicsContextGLTextureMapperANGLECoordinated.cpp

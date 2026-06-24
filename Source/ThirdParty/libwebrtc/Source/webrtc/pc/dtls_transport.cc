@@ -84,24 +84,24 @@ void DtlsTransport::OnInternalDtlsState(DtlsTransportInternal* transport) {
 void DtlsTransport::UpdateInformation(DtlsTransportInternal* internal) {
   RTC_DCHECK_RUN_ON(owner_thread_);
   if (internal) {
+    SSLRole internal_role;
+    std::optional<DtlsTransportTlsRole> role;
+    if (internal->GetDtlsRole(&internal_role)) {
+      switch (internal_role) {
+        case SSL_CLIENT:
+          role = DtlsTransportTlsRole::kClient;
+          break;
+        case SSL_SERVER:
+          role = DtlsTransportTlsRole::kServer;
+          break;
+      }
+    }
+
     if (internal->dtls_state() == DtlsTransportState::kConnected) {
       bool success = true;
-      SSLRole internal_role;
-      std::optional<DtlsTransportTlsRole> role;
       int ssl_cipher_suite;
       int tls_version;
       int srtp_cipher;
-      success &= internal->GetDtlsRole(&internal_role);
-      if (success) {
-        switch (internal_role) {
-          case SSL_CLIENT:
-            role = DtlsTransportTlsRole::kClient;
-            break;
-          case SSL_SERVER:
-            role = DtlsTransportTlsRole::kServer;
-            break;
-        }
-      }
       success &= internal->GetSslVersionBytes(&tls_version);
       success &= internal->GetSslCipherSuite(&ssl_cipher_suite);
       success &= internal->GetSrtpCryptoSuite(&srtp_cipher);
@@ -119,7 +119,10 @@ void DtlsTransport::UpdateInformation(DtlsTransportInternal* internal) {
             /* ssl_group_id= */ std::nullopt));
       }
     } else {
-      set_info(DtlsTransportInformation(internal->dtls_state()));
+      set_info(DtlsTransportInformation(
+          internal->dtls_state(), role, std::nullopt, std::nullopt,
+          std::nullopt, internal->GetRemoteSSLCertChain(),
+          /* ssl_group_id= */ std::nullopt));
     }
   } else {
     set_info(DtlsTransportInformation(DtlsTransportState::kClosed));

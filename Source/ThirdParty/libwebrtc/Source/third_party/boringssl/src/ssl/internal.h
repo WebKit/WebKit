@@ -31,6 +31,7 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include <variant>
 
 #include <openssl/aead.h>
 #include <openssl/curve25519.h>
@@ -47,7 +48,6 @@
 #include "../crypto/mem_internal.h"
 #include "../crypto/spake2plus/internal.h"
 
-
 #if defined(OPENSSL_WINDOWS)
 // Windows defines struct timeval in winsock2.h.
 #include <winsock2.h>
@@ -55,6 +55,10 @@
 #include <sys/time.h>
 #endif
 
+
+DECLARE_OPAQUE_STRUCT(ssl_credential_st, SSLCredential)
+DECLARE_OPAQUE_STRUCT(ssl_ctx_st, SSLContext)
+DECLARE_OPAQUE_STRUCT(ssl_ech_keys_st, SSLECHKeys)
 
 BSSL_NAMESPACE_BEGIN
 
@@ -110,9 +114,6 @@ class MRUQueue {
   PackedSize<N> start_ = 0;
 };
 
-// CBBFinishArray behaves like |CBB_finish| but stores the result in an Array.
-OPENSSL_EXPORT bool CBBFinishArray(CBB *cbb, Array<uint8_t> *out);
-
 // GetAllNames helps to implement |*_get_all_*_names| style functions. It
 // writes at most |max_out| string pointers to |out| and returns the number that
 // it would have liked to have written. The strings written consist of
@@ -122,59 +123,17 @@ template <typename T, typename Name, size_t S1, size_t S2>
 inline size_t GetAllNames(const char **out, size_t max_out,
                           Span<const char *const, S1> fixed_names,
                           Name(T::*name), Span<const T, S2> objects) {
-  auto span = bssl::Span(out, max_out);
+  auto span = Span(out, max_out);
   for (size_t i = 0; !span.empty() && i < fixed_names.size(); i++) {
     span[0] = fixed_names[i];
     span = span.subspan(1);
   }
-  span = span.subspan(0, /* up to */ objects.size());
+  span = span.first(std::min(span.size(), objects.size()));
   for (size_t i = 0; i < span.size(); i++) {
     span[i] = objects[i].*name;
   }
   return fixed_names.size() + objects.size();
 }
-
-// RefCounted is a common base for ref-counted types. This is an instance of the
-// C++ curiously-recurring template pattern, so a type Foo must subclass
-// RefCounted<Foo>. It additionally must friend RefCounted<Foo> to allow calling
-// the destructor.
-template <typename Derived>
-class RefCounted {
- public:
-  RefCounted(const RefCounted &) = delete;
-  RefCounted &operator=(const RefCounted &) = delete;
-
-  // These methods are intentionally named differently from `bssl::UpRef` to
-  // avoid a collision. Only the implementations of `FOO_up_ref` and `FOO_free`
-  // should call these.
-  void UpRefInternal() { CRYPTO_refcount_inc(&references_); }
-  void DecRefInternal() {
-    if (CRYPTO_refcount_dec_and_test_zero(&references_)) {
-      Derived *d = static_cast<Derived *>(this);
-      d->~Derived();
-      OPENSSL_free(d);
-    }
-  }
-
- protected:
-  // Ensure that only `Derived`, which must inherit from `RefCounted<Derived>`,
-  // can call the constructor. This catches bugs where someone inherited from
-  // the wrong base.
-  class CheckSubClass {
-   private:
-    friend Derived;
-    CheckSubClass() = default;
-  };
-  RefCounted(CheckSubClass) {
-    static_assert(std::is_base_of<RefCounted, Derived>::value,
-                  "Derived must subclass RefCounted<Derived>");
-  }
-
-  ~RefCounted() = default;
-
- private:
-  CRYPTO_refcount_t references_ = 1;
-};
 
 
 // Protocol versions.
@@ -670,8 +629,8 @@ class DTLSReplayBitmap {
 //
 // |max_valid_seqnum| must be most 2^48-1, in which case the output will also be
 // at most 2^48-1.
-OPENSSL_EXPORT uint64_t reconstruct_seqnum(uint16_t wire_seq, uint64_t seq_mask,
-                                           uint64_t max_valid_seqnum);
+uint64_t reconstruct_seqnum(uint16_t wire_seq, uint64_t seq_mask,
+                            uint64_t max_valid_seqnum);
 
 
 // Record layer.
@@ -881,7 +840,7 @@ enum ssl_private_key_result_t ssl_private_key_decrypt(SSL_HANDSHAKE *hs,
 // ssl_parse_peer_subject_public_key_info decodes a SubjectPublicKeyInfo
 // representing the peer TLS key. It returns a newly-allocated |EVP_PKEY| or
 // nullptr on error.
-bssl::UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
+UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
     Span<const uint8_t> spki);
 
 // ssl_pkey_supports_algorithm returns whether |pkey| may be used to sign
@@ -1134,6 +1093,18 @@ bool ssl_parse_cert_chain(uint8_t *out_alert,
                           uint8_t *out_leaf_sha256, CBS *cbs,
                           CRYPTO_BUFFER_POOL *pool);
 
+// ssl_parse_rpk_cert parses a RawPublicKey certificate from |cbs| in the format
+// used by a TLS 1.2 Certificate message (RFC 7250). On success, it advances
+// |cbs| and returns true, and sets |*out_raw_public_key| to the parsed key, and
+// sets |*out_pubkey| to the same key by incrementing the reference count, and
+// if |out_rpk_sha256| is non-NULL, it writes the SHA-256 hash of the RPK to
+// |out_rpk_sha256|. Otherwise, it returns false and sets |*out_alert| to an
+// alert to send to the peer.
+bool ssl_parse_rpk_cert(uint8_t *out_alert,
+                        UniquePtr<EVP_PKEY> *out_raw_public_key,
+                        UniquePtr<EVP_PKEY> *out_pubkey,
+                        uint8_t *out_rpk_sha256, CBS *cbs);
+
 enum ssl_key_usage_t {
   key_usage_digital_signature = 0,
   key_usage_encipherment = 2,
@@ -1142,13 +1113,12 @@ enum ssl_key_usage_t {
 // ssl_cert_check_key_usage parses the DER-encoded, X.509 certificate in |in|
 // and returns true if doesn't specify a key usage or, if it does, if it
 // includes |bit|. Otherwise it pushes to the error queue and returns false.
-OPENSSL_EXPORT bool ssl_cert_check_key_usage(const CBS *in,
-                                             enum ssl_key_usage_t bit);
+bool ssl_cert_check_key_usage(const CBS *in, enum ssl_key_usage_t bit);
 
 // ssl_cert_extract_issuer parses the DER-encoded, X.509 certificate in |in|
 // and extracts the issuer. On success it returns true and the DER encoded
 // issuer is in |out_dn|, otherwise it returns false.
-OPENSSL_EXPORT bool ssl_cert_extract_issuer(const CBS *in, CBS *out_dn);
+bool ssl_cert_extract_issuer(const CBS *in, CBS *out_dn);
 
 // ssl_cert_matches_issuer parses the DER-encoded, X.509 certificate in |in|
 // and returns true if its issuer is an exact match for the DER encoded
@@ -1257,20 +1227,54 @@ bool tls13_finished_mac(SSL_HANDSHAKE *hs, uint8_t *out, size_t *out_len,
 bool tls13_derive_session_psk(SSL_SESSION *session, Span<const uint8_t> nonce,
                               bool is_dtls);
 
-// tls13_write_psk_binder calculates the PSK binder value over |transcript| and
-// |msg|, and replaces the last bytes of |msg| with the resulting value. It
-// returns true on success, and false on failure. If |out_binder_len| is
-// non-NULL, it sets |*out_binder_len| to the length of the value computed.
-bool tls13_write_psk_binder(const SSL_HANDSHAKE *hs,
-                            const SSLTranscript &transcript, Span<uint8_t> msg,
-                            size_t *out_binder_len);
+struct SSLImportedPSK {
+  static constexpr bool kAllowUniquePtr = true;
+  UniquePtr<SSLCredential> credential;
+  Array<uint8_t> imported_identity;
+  InplaceVector<uint8_t, SSL_MAX_MD_SIZE> ipskx;
+  uint16_t protocol = 0;
+  const EVP_MD *md = nullptr;
+};
 
-// tls13_verify_psk_binder verifies that the handshake transcript, truncated up
-// to the binders has a valid signature using the value of |session|'s
-// resumption secret. It returns true on success, and false on failure.
-bool tls13_verify_psk_binder(const SSL_HANDSHAKE *hs,
-                             const SSL_SESSION *session, const SSLMessage &msg,
-                             CBS *binders);
+// tls13_derive_imported_psk computes the imported PSK value for |cred|, which
+// must be an PSK credential, for use with a target KDF of HKDF with |hkdf_md|.
+// |protocol| should be the wire version (i.e. |TLS1_3_VERSION| or
+// |DTLS1_3_VERSION|) of the target protocol. It returns the imported PSK on
+// success and std::nullopt on error.
+std::optional<SSLImportedPSK> tls13_derive_imported_psk(const SSL_HANDSHAKE *hs,
+                                                        SSLCredential *cred,
+                                                        uint16_t protocol,
+                                                        const EVP_MD *hkdf_md);
+
+// tls13_compare_imported_psk_identity returns whether |id| is equal to |cred|'s
+// imported identity for the specified target protocol and target KDF. This
+// allows matching against PSK identities without deriving imported PSK keys.
+bool tls13_compare_imported_psk_identity(Span<const uint8_t> id,
+                                         const SSLCredential *cred,
+                                         uint16_t protocol,
+                                         const EVP_MD *hkdf_md);
+
+using SSLPreSharedKey = std::variant<SSLImportedPSK, UniquePtr<SSL_SESSION>>;
+BORINGSSL_MAKE_DELETER(SSLPreSharedKey, Delete)
+
+// ssl_pre_shared_key_hash return's |psk|'s hash.
+const EVP_MD *ssl_pre_shared_key_hash(const SSLPreSharedKey &psk);
+
+// ssl_pre_shared_key_identity return's |psk|'s identity.
+Span<const uint8_t> ssl_pre_shared_key_identity(const SSLPreSharedKey &psk);
+
+// ssl_pre_shared_key_secret return's |psk|'s secret.
+Span<const uint8_t> ssl_pre_shared_key_secret(const SSLPreSharedKey &psk);
+
+// tls13_psk_binder calculates the PSK binder value for |psk| over |transcript|
+// and |client_hello|. On success, it writes the result to |out|, sets
+// |*out_len| to the length, and returns true. Otherwise, it returns false.
+// |binders_len| must be the length of the binders field, covering all binders
+// and the overall length prefix, in |client_hello|.
+bool tls13_psk_binder(const SSL_HANDSHAKE *hs, Span<uint8_t> out,
+                      size_t *out_len, const SSLPreSharedKey &psk,
+                      const SSLTranscript &transcript,
+                      Span<const uint8_t> client_hello, size_t binders_len);
 
 
 // Encrypted ClientHello.
@@ -1313,6 +1317,17 @@ class ECHServerConfig {
   ECHConfig ech_config_;
   ScopedEVP_HPKE_KEY key_;
   bool is_retry_config_ = false;
+};
+
+class SSLECHKeys : public ssl_ech_keys_st, public bssl::RefCounted<SSLECHKeys> {
+ public:
+  SSLECHKeys() : RefCounted(CheckSubClass()) {}
+
+  Vector<UniquePtr<ECHServerConfig>> configs;
+
+ private:
+  friend RefCounted;
+  ~SSLECHKeys() = default;
 };
 
 enum ssl_client_hello_type_t {
@@ -1366,8 +1381,7 @@ bool ssl_ech_accept_confirmation(
 
 // ssl_is_valid_ech_public_name returns true if |public_name| is a valid ECH
 // public name and false otherwise. It is exported for testing.
-OPENSSL_EXPORT bool ssl_is_valid_ech_public_name(
-    Span<const uint8_t> public_name);
+bool ssl_is_valid_ech_public_name(Span<const uint8_t> public_name);
 
 // ssl_is_valid_ech_config_list returns true if |ech_config_list| is a valid
 // ECHConfigList structure and false otherwise.
@@ -1408,20 +1422,21 @@ enum class SSLCredentialType {
   kDelegated,
   kSPAKE2PlusV1Client,
   kSPAKE2PlusV1Server,
+  kPreSharedKey,
+  kRawPublicKey,
 };
 
-BSSL_NAMESPACE_END
-
-// SSL_CREDENTIAL is exported to C, so it must be defined outside the namespace.
-struct ssl_credential_st : public bssl::RefCounted<ssl_credential_st> {
-  explicit ssl_credential_st(bssl::SSLCredentialType type);
-  ssl_credential_st(const ssl_credential_st &) = delete;
-  ssl_credential_st &operator=(const ssl_credential_st &) = delete;
+class SSLCredential : public ssl_credential_st,
+                      public RefCounted<SSLCredential> {
+ public:
+  explicit SSLCredential(SSLCredentialType type);
+  SSLCredential(const SSLCredential &) = delete;
+  SSLCredential &operator=(const SSLCredential &) = delete;
 
   // Dup returns a copy of the credential, or nullptr on error. The |ex_data|
   // values are not copied. This is only used on the legacy credential, whose
   // |ex_data| is inaccessible.
-  bssl::UniquePtr<SSL_CREDENTIAL> Dup() const;
+  UniquePtr<SSLCredential> Dup() const;
 
   // ClearCertAndKey erases any certificate and private key on the credential.
   void ClearCertAndKey();
@@ -1430,7 +1445,7 @@ struct ssl_credential_st : public bssl::RefCounted<ssl_credential_st> {
   bool UsesX509() const;
 
   // UsesPrivateKey returns true if the credential type uses an asymmetric
-  // private key.
+  // private and public keypair.
   bool UsesPrivateKey() const;
 
   // IsComplete returns whether all required fields in the credential have been
@@ -1441,8 +1456,7 @@ struct ssl_credential_st : public bssl::RefCounted<ssl_credential_st> {
   // certificates unmodified. It returns true on success and false on error. If
   // |discard_key_on_mismatch| is true and the private key is inconsistent with
   // the new leaf certificate, it is silently discarded.
-  bool SetLeafCert(bssl::UniquePtr<CRYPTO_BUFFER> leaf,
-                   bool discard_key_on_mismatch);
+  bool SetLeafCert(UniquePtr<CRYPTO_BUFFER> leaf, bool discard_key_on_mismatch);
 
   // ClearIntermediateCerts clears intermediate certificates in the certificate
   // chain, while preserving the leaf.
@@ -1451,23 +1465,23 @@ struct ssl_credential_st : public bssl::RefCounted<ssl_credential_st> {
   // AppendIntermediateCert appends |cert| to the certificate chain. If there is
   // no leaf certificate configured, it leaves a placeholder null in |chain|. It
   // returns one on success and zero on error.
-  bool AppendIntermediateCert(bssl::UniquePtr<CRYPTO_BUFFER> cert);
+  bool AppendIntermediateCert(UniquePtr<CRYPTO_BUFFER> cert);
 
   // ChainContainsIssuer returns true if |dn| is a byte for byte match with the
   // issuer of any certificate in |chain|, false otherwise.
-  bool ChainContainsIssuer(bssl::Span<const uint8_t> dn) const;
+  bool ChainContainsIssuer(Span<const uint8_t> dn) const;
 
   // type is the credential type and determines which other fields apply.
-  bssl::SSLCredentialType type;
+  SSLCredentialType type;
 
   // pubkey is the cached public key of the credential. Unlike |privkey|, it is
   // always present and is extracted from the certificate, delegated credential,
   // etc.
-  bssl::UniquePtr<EVP_PKEY> pubkey;
+  UniquePtr<EVP_PKEY> pubkey;
 
   // privkey is the private key of the credential. It may be omitted in favor of
   // |key_method|.
-  bssl::UniquePtr<EVP_PKEY> privkey;
+  UniquePtr<EVP_PKEY> privkey;
 
   // key_method, if non-null, is a set of callbacks to call for private key
   // operations.
@@ -1479,7 +1493,7 @@ struct ssl_credential_st : public bssl::RefCounted<ssl_credential_st> {
   //
   // In delegated credentials, this field is not configurable and is instead
   // computed from the dc_cert_verify_algorithm field.
-  bssl::Array<uint16_t> sigalgs;
+  Array<uint16_t> sigalgs;
 
   // chain contains the certificate chain, with the leaf at the beginning. The
   // first element of |chain| may be nullptr to indicate that the leaf
@@ -1487,29 +1501,36 @@ struct ssl_credential_st : public bssl::RefCounted<ssl_credential_st> {
   //   If |chain| != nullptr -> len(chain) >= 1
   //   If |chain[0]| == nullptr -> len(chain) >= 2.
   //   |chain[1..]| != nullptr
-  bssl::UniquePtr<STACK_OF(CRYPTO_BUFFER)> chain;
+  UniquePtr<STACK_OF(CRYPTO_BUFFER)> chain;
 
   // dc is the DelegatedCredential structure, if this is a delegated credential.
-  bssl::UniquePtr<CRYPTO_BUFFER> dc;
+  UniquePtr<CRYPTO_BUFFER> dc;
 
   // dc_algorithm is the signature scheme of the signature over the delegated
   // credential itself, made by the end-entity certificate's public key.
   uint16_t dc_algorithm = 0;
 
   // Signed certificate timestamp list to be sent to the client, if requested
-  bssl::UniquePtr<CRYPTO_BUFFER> signed_cert_timestamp_list;
+  UniquePtr<CRYPTO_BUFFER> signed_cert_timestamp_list;
 
   // OCSP response to be sent to the client, if requested.
-  bssl::UniquePtr<CRYPTO_BUFFER> ocsp_response;
+  UniquePtr<CRYPTO_BUFFER> ocsp_response;
 
   // SPAKE2+-specific information.
-  bssl::Array<uint8_t> pake_context;
-  bssl::Array<uint8_t> client_identity;
-  bssl::Array<uint8_t> server_identity;
-  bssl::Array<uint8_t> password_verifier_w0;
-  bssl::Array<uint8_t> password_verifier_w1;  // server-only
-  bssl::Array<uint8_t> registration_record;   // client-only
+  Array<uint8_t> pake_context;
+  Array<uint8_t> client_identity;
+  Array<uint8_t> server_identity;
+  Array<uint8_t> password_verifier_w0;
+  Array<uint8_t> password_verifier_w1;  // server-only
+  Array<uint8_t> registration_record;   // client-only
   mutable std::atomic<uint32_t> pake_limit;
+
+  // External-PSK-specific information. epskx is the HKDF-Extract-ed value, from
+  // Section 5.1 of RFC 9258.
+  Array<uint8_t> epskx;
+  Array<uint8_t> epsk_id;
+  const EVP_MD *epsk_md = nullptr;
+  Array<uint8_t> epsk_context;
 
   // Checks whether there are still permitted PAKE attempts remaining, without
   // changing the counter.
@@ -1525,7 +1546,7 @@ struct ssl_credential_st : public bssl::RefCounted<ssl_credential_st> {
 
   // trust_anchor_id, if non-empty, is the trust anchor ID for the root of the
   // chain in |chain|.
-  bssl::Array<uint8_t> trust_anchor_id;
+  Array<uint8_t> trust_anchor_id;
 
   CRYPTO_EX_DATA ex_data;
 
@@ -1538,10 +1559,8 @@ struct ssl_credential_st : public bssl::RefCounted<ssl_credential_st> {
 
  private:
   friend RefCounted;
-  ~ssl_credential_st();
+  ~SSLCredential();
 };
-
-BSSL_NAMESPACE_BEGIN
 
 // ssl_get_full_credential_list computes |hs|'s full credential list, including
 // the legacy credential. On success, it writes it to |*out| and returns true.
@@ -1556,21 +1575,63 @@ BSSL_NAMESPACE_BEGIN
 //
 // The pointers in the result are only valid until |hs| is next mutated.
 bool ssl_get_full_credential_list(SSL_HANDSHAKE *hs,
-                                  Array<SSL_CREDENTIAL *> *out);
+                                  Array<SSLCredential *> *out);
 
 // ssl_credential_matches_requested_issuers returns true if |cred| is a
 // usable match for any requested issuers in |hs|, and false with an error
 // otherwise.
 bool ssl_credential_matches_requested_issuers(SSL_HANDSHAKE *hs,
-                                              const SSL_CREDENTIAL *cred);
+                                              const SSLCredential *cred);
 
 // ssl_check_tls13_credential_ignoring_issuer returns true if |cred| is usable
 // as the certificate in a TLS 1.3 handshake, ignoring the issuer check.
+// |allowed_cert_types| is a nonempty set of cert types (|TLSEXT_cert_type_*|
+// values) that are usable; |cred| must match one of these types.
 // |out_sigalg| will be set to a matching signature algorithm if true is
 // returned.
-bool ssl_check_tls13_credential_ignoring_issuer(SSL_HANDSHAKE *hs,
-                                                const SSL_CREDENTIAL *cred,
-                                                uint16_t *out_sigalg);
+bool ssl_check_tls13_credential_ignoring_issuer(
+    SSL_HANDSHAKE *hs, Span<const uint8_t> allowed_cert_types,
+    const SSLCredential *cred, uint16_t *out_sigalg);
+
+
+// Client certificate type & Server certificate type.
+
+inline constexpr uint8_t kAllCertTypes[] = {
+    TLSEXT_cert_type_x509,
+    TLSEXT_cert_type_rpk,
+};
+inline constexpr size_t kNumCertTypes = std::size(kAllCertTypes);
+inline constexpr uint8_t kDefaultCertType = TLSEXT_cert_type_x509;
+
+// ssl_credential_type_to_cert_type returns the certificate type value
+// (`TLSEXT_cert_type_*` value) corresponding to `cred_type`, or else
+// std::nullopt.
+std::optional<uint8_t> ssl_credential_type_to_cert_type(
+    SSLCredentialType cred_type);
+
+// ssl_setup_client_certificate_type computes the client cert types to offer, as
+// a client, and saves them in |hs|. The values are used later when checking
+// that the server responded with a valid value.
+void ssl_setup_client_certificate_type(SSL_HANDSHAKE *hs);
+
+// ssl_negotiate_client_certificate_type, for a server, negotiates the
+// client_certificate_type extension, if applicable. It updates
+// `hs->peer_cert_type` appropriately and returns true if negotiation was
+// successful or not necessary (i.e. if we are not requesting a cert from the
+// client), or it returns false and sets `*out_alert` to an alert on error.
+bool ssl_negotiate_client_certificate_type(
+    SSL_HANDSHAKE *hs, uint8_t *out_alert,
+    const SSL_CLIENT_HELLO *client_hello);
+
+// ssl_get_allowed_server_cert_types, for a server, returns the cert types that
+// may be used based on the server_certificate_type extension in the
+// ClientHello. It returns a nonempty list of allowable certificate types. By
+// default, if the client did not send the extension, X.509 certificates are
+// allowed. The returned cert types may include unrecognized values. Returns
+// nullopt and sets `out_alert` on failure.
+std::optional<Span<const uint8_t>> ssl_get_allowed_server_cert_types(
+    const SSL_HANDSHAKE *hs, const SSL_CLIENT_HELLO *client_hello,
+    uint8_t *out_alert);
 
 
 // Handshake functions.
@@ -1767,12 +1828,26 @@ struct SSL_HANDSHAKE {
   // the ClientHelloInner.
   uint32_t inner_extensions_sent = 0;
 
+  // early_data_written is the amount of early data that has been written by the
+  // record layer.
+  uint32_t early_data_written = 0;
+
   // error, if |wait| is |ssl_hs_error|, is the error the handshake failed on.
   UniquePtr<ERR_SAVE_STATE> error;
 
   // key_shares are the current key exchange instances, in preference order. Any
   // members of this vector must be non-null.
   InplaceVector<UniquePtr<SSLKeyShare>, kNumNamedGroups> key_shares;
+
+  // pre_shared_keys are the pre-shared keys to be offered by the client.
+  Vector<SSLPreSharedKey> pre_shared_keys;
+
+  // pre_shared_key is the selected pre-shared key on the server.
+  UniquePtr<SSLPreSharedKey> pre_shared_key;
+
+  // selected_psk_index is the index of the selected pre-shared key on the
+  // server.
+  std::optional<uint16_t> selected_psk_index;
 
   // transcript is the current handshake transcript.
   SSLTranscript transcript;
@@ -1881,7 +1956,7 @@ struct SSL_HANDSHAKE {
   Array<uint8_t> certificate_types;
 
   // credential is the credential we are using for the handshake.
-  UniquePtr<SSL_CREDENTIAL> credential;
+  UniquePtr<SSLCredential> credential;
 
   // peer_pubkey is the public key parsed from the peer's leaf certificate.
   UniquePtr<EVP_PKEY> peer_pubkey;
@@ -1897,7 +1972,7 @@ struct SSL_HANDSHAKE {
   // ssl_ech_keys, for servers, is the set of ECH keys to use with this
   // handshake. This is copied from |SSL_CTX| to ensure consistent behavior as
   // |SSL_CTX| rotates keys.
-  UniquePtr<SSL_ECH_KEYS> ech_keys;
+  UniquePtr<SSLECHKeys> ech_keys;
 
   // selected_ech_config, for clients, is the ECHConfig the client uses to offer
   // ECH, or nullptr if ECH is not being offered. If non-NULL, |ech_hpke_ctx|
@@ -2034,10 +2109,6 @@ struct SSL_HANDSHAKE {
   // record layer.
   uint16_t early_data_read = 0;
 
-  // early_data_written is the amount of early data that has been written by the
-  // record layer.
-  uint16_t early_data_written = 0;
-
   // signature_algorithm is the signature algorithm to be used in signing with
   // the selected credential, or zero if not applicable or not yet selected.
   uint16_t signature_algorithm = 0;
@@ -2062,6 +2133,29 @@ struct SSL_HANDSHAKE {
 
   // pake_verifier is the PAKE context for a server.
   UniquePtr<spake2plus::Verifier> pake_verifier;
+
+  // offered_client_cert_types, for a client, is a list of client certificate
+  // types (`TLSEXT_cert_type_*` values) that were sent in the
+  // client_certificate_type extension in the ClientHello.
+  InplaceVector<uint8_t, kNumCertTypes> offered_client_cert_types;
+
+  // peer_cert_type, is the cert type expected from the peer in this handshake,
+  // negotiated based on server_certificate_type extensions (for a client) or
+  // client_certificate_type extensions (for a server), or set to X.509
+  // certificates by default (if the peer didn't send the extension).
+  // This is not used in resumption.
+  uint8_t peer_cert_type = kDefaultCertType;
+
+  // client_cert_type, for a client, is the cert type for this side of the
+  // handshake to present to the peer (server) in a Certificate message,
+  // negotiated based on client_certificate_type extensions.
+  // This is not used in resumption.
+  uint8_t client_cert_type = kDefaultCertType;
+
+  // client_requested_server_cert_padding_size, for a server, is the number of
+  // bytes that the client requested we send, or nullopt if the client did not
+  // request any padding.
+  std::optional<uint16_t> client_requested_server_padding_size;
 };
 
 // kMaxTickets is the maximum number of tickets to send immediately after the
@@ -2121,12 +2215,15 @@ enum ssl_private_key_result_t tls13_add_certificate_verify(SSL_HANDSHAKE *hs);
 
 bool tls13_add_finished(SSL_HANDSHAKE *hs);
 bool tls13_process_new_session_ticket(SSL *ssl, const SSLMessage &msg);
-bssl::UniquePtr<SSL_SESSION> tls13_create_session_with_ticket(SSL *ssl,
-                                                              CBS *body);
+UniquePtr<SSL_SESSION> tls13_create_session_with_ticket(SSL *ssl, CBS *body);
 
 // ssl_setup_extension_permutation computes a ClientHello extension permutation
 // for |hs|, if applicable. It returns true on success and false on error.
 bool ssl_setup_extension_permutation(SSL_HANDSHAKE *hs);
+
+// ssl_setup_pre_shared_keys computes the offered client PSKs and saves them in
+// |hs|. It returns true on success and false on failure.
+bool ssl_setup_pre_shared_keys(SSL_HANDSHAKE *hs);
 
 // ssl_setup_key_shares computes client key shares and saves them in |hs|. It
 // returns true on success and false on failure. In order of precedence:
@@ -2165,14 +2262,35 @@ bool ssl_ext_pake_parse_serverhello(SSL_HANDSHAKE *hs,
                                     Array<uint8_t> *out_secret,
                                     uint8_t *out_alert, CBS *contents);
 
-bool ssl_ext_pre_shared_key_parse_serverhello(SSL_HANDSHAKE *hs,
-                                              uint8_t *out_alert,
-                                              CBS *contents);
-bool ssl_ext_pre_shared_key_parse_clienthello(
-    SSL_HANDSHAKE *hs, CBS *out_ticket, CBS *out_binders,
-    uint32_t *out_obfuscated_ticket_age, uint8_t *out_alert,
-    const SSL_CLIENT_HELLO *client_hello, CBS *contents);
+struct SSLOfferedPSK {
+  CBS identity, binder;
+  uint32_t obfuscated_ticket_age;
+};
+
+struct SSLOfferedPSKs {
+  CBS identities, binders;
+  std::optional<SSLOfferedPSK> Next();
+};
+
+const SSLPreSharedKey *ssl_ext_pre_shared_key_parse_serverhello(
+    SSL_HANDSHAKE *hs, uint8_t *out_alert, CBS *contents);
+std::optional<SSLOfferedPSKs> ssl_ext_pre_shared_key_parse_clienthello(
+    SSL_HANDSHAKE *hs, uint8_t *out_alert, const SSL_CLIENT_HELLO *client_hello,
+    CBS *contents);
+
+// ssl_verify_psk_binder verifies |client_hello| has a valid binder for |psk|.
+// The binder is computed with |client_hello| and |hs|'s transcript, which
+// should not have |client_hello| in it. On success, it returns true. Otherwise,
+// it returns false and sets |*out_alert| to an alert to send.
+//
+// This function additionally saves the index where |psk| was found in |hs|. It
+// must be called before |ssl_ext_pre_shared_key_add_serverhello|.
+bool ssl_verify_psk_binder(SSL_HANDSHAKE *hs, uint8_t *out_alert,
+                           const SSLPreSharedKey &psk,
+                           const SSL_CLIENT_HELLO &client_hello);
+
 bool ssl_ext_pre_shared_key_add_serverhello(SSL_HANDSHAKE *hs, CBB *out);
+
 
 // ssl_is_sct_list_valid does a shallow parse of the SCT list in |contents| and
 // returns whether it's valid.
@@ -2302,6 +2420,12 @@ const SSL_SESSION *ssl_handshake_session(const SSL_HANDSHAKE *hs);
 // by |hs|. It releases some memory that is no longer needed.
 void ssl_done_writing_client_hello(SSL_HANDSHAKE *hs);
 
+// ssl_accepts_server_certificate_auth returns whether |hs|, which must be a
+// client, accepts certificate-based authentication. If it returns false, the
+// client should not send certificate-related extensions, and should not accept
+// server responses that result in a certificate-based flow.
+bool ssl_accepts_server_certificate_auth(const SSL_HANDSHAKE *hs);
+
 
 // Flags.
 
@@ -2386,7 +2510,7 @@ bool tls1_get_legacy_signature_algorithm(uint16_t *out, const EVP_PKEY *pkey);
 // with |cred| based on the peer's preferences and the algorithms supported. It
 // returns true on success and false on error.
 bool tls1_choose_signature_algorithm(SSL_HANDSHAKE *hs,
-                                     const SSL_CREDENTIAL *cred, uint16_t *out);
+                                     const SSLCredential *cred, uint16_t *out);
 
 // tls12_add_verify_sigalgs adds the signature algorithms acceptable for the
 // peer signature to |out|. It returns true on success and false on error.
@@ -2418,12 +2542,16 @@ struct CERT {
 
   // credentials is the list of credentials to select between. Elements of this
   // array immutable.
-  Vector<UniquePtr<SSL_CREDENTIAL>> credentials;
+  Vector<UniquePtr<SSLCredential>> credentials;
 
   // legacy_credential is the credential configured by the legacy
   // non-credential-based APIs. If IsComplete() returns true, it is appended to
   // the list of credentials.
-  UniquePtr<SSL_CREDENTIAL> legacy_credential;
+  UniquePtr<SSLCredential> legacy_credential;
+
+  // available_trust_anchors, if not empty, overrides the default list of
+  // available trust anchors to send in EncryptedExtensions.
+  Array<uint8_t> available_trust_anchors;
 
   // x509_method contains pointers to functions that might deal with |X509|
   // compatibility, or might be a no-op, depending on the application.
@@ -2501,11 +2629,10 @@ struct SSL_PROTOCOL_METHOD {
   bool (*init_message)(const SSL *ssl, CBB *cbb, CBB *body, uint8_t type);
   // finish_message finishes a handshake message. It sets |*out_msg| to the
   // serialized message. It returns true on success and false on error.
-  bool (*finish_message)(const SSL *ssl, CBB *cbb,
-                         bssl::Array<uint8_t> *out_msg);
+  bool (*finish_message)(const SSL *ssl, CBB *cbb, Array<uint8_t> *out_msg);
   // add_message adds a handshake message to the pending flight. It returns
   // true on success and false on error.
-  bool (*add_message)(SSL *ssl, bssl::Array<uint8_t> msg);
+  bool (*add_message)(SSL *ssl, Array<uint8_t> msg);
   // add_change_cipher_spec adds a ChangeCipherSpec record to the pending
   // flight. It returns true on success and false on error.
   bool (*add_change_cipher_spec)(SSL *ssl);
@@ -2613,11 +2740,11 @@ struct SSL_X509_METHOD {
   bool (*ssl_auto_chain_if_needed)(SSL_HANDSHAKE *hs);
   // ssl_ctx_new does any necessary initialisation of |ctx|. It returns true on
   // success or false on error.
-  bool (*ssl_ctx_new)(SSL_CTX *ctx);
+  bool (*ssl_ctx_new)(SSLContext *ctx);
   // ssl_ctx_free frees anything created by |ssl_ctx_new|.
-  void (*ssl_ctx_free)(SSL_CTX *ctx);
+  void (*ssl_ctx_free)(SSLContext *ctx);
   // ssl_ctx_flush_cached_client_CA drops any cached |X509_NAME|s from |ctx|.
-  void (*ssl_ctx_flush_cached_client_CA)(SSL_CTX *ssl);
+  void (*ssl_ctx_flush_cached_client_CA)(SSLContext *ssl);
 };
 
 // ssl_crypto_x509_method provides the |SSL_X509_METHOD| functions using
@@ -2649,11 +2776,7 @@ struct CertCompressionAlg {
   uint16_t alg_id = 0;
 };
 
-BSSL_NAMESPACE_END
-
 DEFINE_LHASH_OF(SSL_SESSION)
-
-BSSL_NAMESPACE_BEGIN
 
 // An ssl_shutdown_t describes the shutdown state of one end of the connection,
 // whether it is alive or has been shutdown via close_notify or fatal alert.
@@ -2808,6 +2931,11 @@ struct SSL3_STATE {
   // TLS mode which was incompatible with the leaf certificate's keyUsage
   // extension.
   bool was_key_usage_invalid : 1;
+
+  // server_sent_requested_padding is true iff a client requested padding
+  // through the server padding extension, and the server sent back the
+  // requested amount of padding.
+  bool server_sent_requested_padding : 1;
 
   // hs_buf is the buffer of handshake data to process.
   UniquePtr<BUF_MEM> hs_buf;
@@ -3029,21 +3157,15 @@ struct DTLSTimer {
   // stopped.
   bool IsSet() const;
 
+  void UpdateDuration(uint64_t microseconds) { duration_ = microseconds; }
+
   // MicrosecondsRemaining returns the time remaining, in microseconds, at
   // |now|, or |kNever| if the timer is unset.
   uint64_t MicrosecondsRemaining(OPENSSL_timeval now) const;
 
  private:
-  // expire_time_ is the time when the timer expires, or zero if the timer is
-  // unset.
-  //
-  // TODO(crbug.com/366284846): This is an extremely inconvenient time
-  // representation. Switch libssl to something like a 64-bit count of
-  // microseconds. While it's decidedly past 1970 now, zero is a less obviously
-  // sound distinguished value for the monotonic clock, so maybe we should use a
-  // different distinguished time, like |INT64_MAX| in the microseconds
-  // representation.
-  OPENSSL_timeval expire_time_ = {0, 0};
+  uint64_t start_time_;
+  uint64_t duration_ = kNever;  // If set to kNever then this timer is unset.
 };
 
 // DTLS_MAX_EXTRA_WRITE_EPOCHS is the maximum number of additional write epochs
@@ -3292,6 +3414,10 @@ struct SSL_CONFIG {
   // a valid subsequence of the supported group list.
   Array<uint16_t> supported_group_list;
 
+  // Contains flags corresponding to `supported_group_list`, which are
+  // SSL_GROUP_FLAG_* values ORed together.
+  Array<uint32_t> supported_group_list_flags;
+
   // For a client, this may contain a subsequence of the group IDs in
   // |suppported_group_list|, which gives the groups for which key shares should
   // be sent in the client's key_share extension. This is non-nullopt iff
@@ -3339,8 +3465,26 @@ struct SSL_CONFIG {
   // negotiating a TLS 1.3 connection.
   enum ssl_compliance_policy_t compliance_policy = ssl_compliance_policy_none;
 
+  // server_padding_request, if set by the client, indicates that the client
+  // will ask the server to include additional padding in the
+  // EncryptedExtensions message of a TLS 1.3 connection.
+  std::optional<uint16_t> server_padding_request;
+
   // verify_mode is a bitmask of |SSL_VERIFY_*| values.
   uint8_t verify_mode = SSL_VERIFY_NONE;
+
+  // accepted_peer_cert_types contains a list of |TLSEXT_cert_type_*| values in
+  // preference order indicating the types of certificates to accept from the
+  // peer. This list should always be non-empty. If the caller did not configure
+  // a valid list, only X.509 certificates are accepted by default.
+  InplaceVector<uint8_t, kNumCertTypes> accepted_peer_cert_types;
+
+  // available_client_cert_types, if not empty, contains a list of
+  // |TLSEXT_cert_type_*| values in preference order indicating the types of
+  // client certificates that the caller, as a client, explicitly configured and
+  // wishes to advertise, instead of the automatically inferred client cert
+  // types from the configured credential list.
+  InplaceVector<uint8_t, kNumCertTypes> available_client_cert_types;
 
   // ech_grease_enabled controls whether ECH GREASE may be sent in the
   // ClientHello.
@@ -3400,6 +3544,10 @@ struct SSL_CONFIG {
   // alps_use_new_codepoint if set indicates we use new ALPS extension codepoint
   // to negotiate and convey application settings.
   bool alps_use_new_codepoint : 1;
+
+  // server_padding_enabled is true iff the server is willing to send additional
+  // padding to clients that request it through the server padding extension.
+  bool server_padding_enabled : 1;
 };
 
 // From RFC 8446, used in determining PSK modes.
@@ -3426,7 +3574,7 @@ bool ssl_get_new_session(SSL_HANDSHAKE *hs);
 bool ssl_encrypt_ticket(SSL_HANDSHAKE *hs, CBB *out,
                         const SSL_SESSION *session);
 
-bool ssl_ctx_rotate_ticket_encryption_key(SSL_CTX *ctx);
+bool ssl_ctx_rotate_ticket_encryption_key(SSLContext *ctx);
 
 // ssl_session_new returns a newly-allocated blank |SSL_SESSION| or nullptr on
 // error.
@@ -3481,6 +3629,11 @@ uint16_t ssl_session_protocol_version(const SSL_SESSION *session);
 // ssl_session_get_digest returns the digest used in |session|.
 const EVP_MD *ssl_session_get_digest(const SSL_SESSION *session);
 
+// ssl_session_has_peer_cred returns whether `session` contains the peer's
+// (non-PSK) credentials (either X.509 cert chain or raw public key, depending
+// on the peer's certificate type) or a valid SHA-256 hash thereof.
+bool ssl_session_has_peer_cred(const SSL_SESSION *session);
+
 void ssl_set_session(SSL *ssl, SSL_SESSION *session);
 
 // ssl_get_prev_session looks up the previous session based on |client_hello|.
@@ -3505,8 +3658,8 @@ enum ssl_hs_wait_t ssl_get_prev_session(SSL_HANDSHAKE *hs,
 // SSL_SESSION_dup returns a newly-allocated |SSL_SESSION| with a copy of the
 // fields in |session| or nullptr on error. The new session is non-resumable and
 // must be explicitly marked resumable once it has been filled in.
-OPENSSL_EXPORT UniquePtr<SSL_SESSION> SSL_SESSION_dup(SSL_SESSION *session,
-                                                      int dup_flags);
+OPENSSL_EXPORT UniquePtr<SSL_SESSION> SSL_SESSION_dup(
+    const SSL_SESSION *session, int dup_flags);
 
 // ssl_session_rebase_time updates |session|'s start time to the current time,
 // adjusting the timeout so the expiration time is unchanged.
@@ -3593,7 +3746,7 @@ bool dtls1_parse_fragment(CBS *cbs, struct hm_header_st *out_hdr,
 
 void dtls1_stop_timer(SSL *ssl);
 
-unsigned int dtls1_min_mtu(void);
+unsigned int dtls1_min_mtu();
 
 bool dtls1_new(SSL *ssl);
 void dtls1_free(SSL *ssl);
@@ -3635,22 +3788,15 @@ bool tls1_check_group_id(const SSL_HANDSHAKE *ssl, uint16_t group_id);
 bool tls1_get_shared_group(SSL_HANDSHAKE *hs, uint16_t *out_group_id);
 
 // ssl_add_clienthello_tlsext writes ClientHello extensions to |out| for |type|.
-// It returns true on success and false on failure. The |header_len| argument is
-// the length of the ClientHello written so far and is used to compute the
-// padding length. (It does not include the record header or handshake headers.)
+// It returns true on success and false on failure. |out| must currently contain
+// a ClientHello message, not including the message and record header. (Its
+// contents will be used to compute padding and PSK binders.)
 //
 // If |type| is |ssl_client_hello_inner|, this function also writes the
 // compressed extensions to |out_encoded|. Otherwise, |out_encoded| should be
 // nullptr.
-//
-// On success, the function sets |*out_needs_psk_binder| to whether the last
-// ClientHello extension was the pre_shared_key extension and needs a PSK binder
-// filled in. The caller should then update |out| and, if applicable,
-// |out_encoded| with the binder after completing the whole message.
 bool ssl_add_clienthello_tlsext(SSL_HANDSHAKE *hs, CBB *out, CBB *out_encoded,
-                                bool *out_needs_psk_binder,
-                                ssl_client_hello_type_t type,
-                                size_t header_len);
+                                ssl_client_hello_type_t type);
 
 bool ssl_add_serverhello_tlsext(SSL_HANDSHAKE *hs, CBB *out);
 bool ssl_parse_clienthello_tlsext(SSL_HANDSHAKE *hs,
@@ -3668,10 +3814,13 @@ bool ssl_parse_serverhello_tlsext(SSL_HANDSHAKE *hs, const CBS *extensions);
 //   |ssl_ticket_aead_retry|: the ticket could not be immediately decrypted.
 //       Retry later.
 //   |ssl_ticket_aead_error|: an error occurred that is fatal to the connection.
+//
+// If |save_ticket| is true, |*out_session| will have a copy of the ticket saved
+// in its |ticket| field.
 enum ssl_ticket_aead_result_t ssl_process_ticket(
     SSL_HANDSHAKE *hs, UniquePtr<SSL_SESSION> *out_session,
     bool *out_renew_ticket, Span<const uint8_t> ticket,
-    Span<const uint8_t> session_id);
+    Span<const uint8_t> session_id, bool save_ticket);
 
 // tls1_verify_channel_id processes |msg| as a Channel ID message, and verifies
 // the signature. If the key is valid, it saves the Channel ID and returns true.
@@ -3699,7 +3848,7 @@ bool ssl_can_write(const SSL *ssl);
 // ssl_can_read returns whether |ssl| is allowed to read.
 bool ssl_can_read(const SSL *ssl);
 
-OPENSSL_timeval ssl_ctx_get_current_time(const SSL_CTX *ctx);
+OPENSSL_timeval ssl_ctx_get_current_time(const SSLContext *ctx);
 
 // ssl_reset_error_state resets state for |SSL_get_error|.
 void ssl_reset_error_state(SSL *ssl);
@@ -3715,6 +3864,8 @@ BSSL_NAMESPACE_END
 //
 // The following types are exported to C code as public typedefs, so they must
 // be defined outside of the namespace.
+//
+// TODO(crbug.com/500444613): Move these to the bssl namespace.
 
 // ssl_method_st backs the public |SSL_METHOD| type. It is a compatibility
 // structure to support the legacy version-locked methods.
@@ -3730,16 +3881,18 @@ struct ssl_method_st {
   const bssl::SSL_X509_METHOD *x509_method;
 };
 
-struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
-  explicit ssl_ctx_st(const SSL_METHOD *ssl_method);
-  ssl_ctx_st(const ssl_ctx_st &) = delete;
-  ssl_ctx_st &operator=(const ssl_ctx_st &) = delete;
+BSSL_NAMESPACE_BEGIN
+class SSLContext : public ssl_ctx_st, public RefCounted<SSLContext> {
+ public:
+  explicit SSLContext(const SSL_METHOD *ssl_method);
+  SSLContext(const SSLContext &) = delete;
+  SSLContext &operator=(const SSLContext &) = delete;
 
-  const bssl::SSL_PROTOCOL_METHOD *method = nullptr;
-  const bssl::SSL_X509_METHOD *x509_method = nullptr;
+  const SSL_PROTOCOL_METHOD *method = nullptr;
+  const SSL_X509_METHOD *x509_method = nullptr;
 
   // lock is used to protect various operations on this object.
-  CRYPTO_MUTEX lock;
+  mutable Mutex lock;
 
   // conf_max_version is the maximum acceptable protocol version configured by
   // |SSL_CTX_set_max_proto_version|. Note this version is normalized in DTLS
@@ -3759,7 +3912,7 @@ struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
   // quic_method is the method table corresponding to the QUIC hooks.
   const SSL_QUIC_METHOD *quic_method = nullptr;
 
-  bssl::UniquePtr<bssl::SSLCipherPreferenceList> cipher_list;
+  UniquePtr<SSLCipherPreferenceList> cipher_list;
 
   X509_STORE *cert_store = nullptr;
   LHASH_OF(SSL_SESSION) *sessions = nullptr;
@@ -3824,28 +3977,29 @@ struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
   void (*info_callback)(const SSL *ssl, int type, int value) = nullptr;
 
   // what we put in client cert requests
-  bssl::UniquePtr<STACK_OF(CRYPTO_BUFFER)> client_CA;
+  UniquePtr<STACK_OF(CRYPTO_BUFFER)> client_CA;
 
   // cached_x509_client_CA is a cache of parsed versions of the elements of
   // |client_CA|.
   STACK_OF(X509_NAME) *cached_x509_client_CA = nullptr;
 
   // What we put in client hello in the CA extension.
-  bssl::UniquePtr<STACK_OF(CRYPTO_BUFFER)> CA_names;
+  UniquePtr<STACK_OF(CRYPTO_BUFFER)> CA_names;
 
   // What we request in the trust_anchors extension.
-  std::optional<bssl::Array<uint8_t>> requested_trust_anchors;
+  std::optional<Array<uint8_t>> requested_trust_anchors;
 
   // Default values to use in SSL structures follow (these are copied by
   // SSL_new)
 
-  uint32_t options = 0;
+  // TODO(crbug.com/41393419): Disable SSL_OP_LEGACY_SERVER_CONNECT by default.
+  uint32_t options = SSL_OP_LEGACY_SERVER_CONNECT;
   // Disable the auto-chaining feature by default. wpa_supplicant relies on this
   // feature, but require callers opt into it.
   uint32_t mode = SSL_MODE_NO_AUTO_CHAIN;
   uint32_t max_cert_list = SSL_MAX_CERT_LIST_DEFAULT;
 
-  bssl::UniquePtr<bssl::CERT> cert;
+  UniquePtr<CERT> cert;
 
   // callback that allows applications to peek at protocol messages
   void (*msg_callback)(int is_write, int version, int content_type,
@@ -3887,8 +4041,8 @@ struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
   // first handshake and |ticket_key_prev| may be NULL at any time.
   // Automatically generated ticket keys are rotated as needed at handshake
   // time. Hence, all access must be synchronized through |lock|.
-  bssl::UniquePtr<bssl::TicketKey> ticket_key_current;
-  bssl::UniquePtr<bssl::TicketKey> ticket_key_prev;
+  UniquePtr<TicketKey> ticket_key_current;
+  UniquePtr<TicketKey> ticket_key_prev;
 
   // Callback to support customisation of ticket key setting
   int (*ticket_key_cb)(SSL *ssl, uint8_t *name, uint8_t *iv,
@@ -3896,7 +4050,7 @@ struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
 
   // Server-only: psk_identity_hint is the default identity hint to send in
   // PSK-based key exchanges.
-  bssl::UniquePtr<char> psk_identity_hint;
+  UniquePtr<char> psk_identity_hint;
 
   unsigned (*psk_client_callback)(SSL *ssl, const char *hint, char *identity,
                                   unsigned max_identity_len, uint8_t *psk,
@@ -3938,25 +4092,26 @@ struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
 
   // For a client, this contains the list of supported protocols in wire
   // format.
-  bssl::Array<uint8_t> alpn_client_proto_list;
+  Array<uint8_t> alpn_client_proto_list;
 
   // SRTP profiles we are willing to do from RFC 5764
-  bssl::UniquePtr<STACK_OF(SRTP_PROTECTION_PROFILE)> srtp_profiles;
+  UniquePtr<STACK_OF(SRTP_PROTECTION_PROFILE)> srtp_profiles;
 
   // Defined compression algorithms for certificates.
-  bssl::Vector<bssl::CertCompressionAlg> cert_compression_algs;
+  Vector<CertCompressionAlg> cert_compression_algs;
 
-  // Supported group values inherited by SSL structure
-  bssl::Array<uint16_t> supported_group_list;
+  // Supported group values and flags inherited by SSL structure
+  Array<uint16_t> supported_group_list;
+  Array<uint32_t> supported_group_list_flags;
 
   // channel_id_private is the client's Channel ID private key, or null if
   // Channel ID should not be offered on this connection.
-  bssl::UniquePtr<EVP_PKEY> channel_id_private;
+  UniquePtr<EVP_PKEY> channel_id_private;
 
   // ech_keys contains the server's list of ECHConfig values and associated
   // private keys. This list may be swapped out at any time, so all access must
   // be synchronized through |lock|.
-  bssl::UniquePtr<SSL_ECH_KEYS> ech_keys;
+  UniquePtr<SSLECHKeys> ech_keys;
 
   // keylog_callback, if not NULL, is the key logging callback. See
   // |SSL_CTX_set_keylog_callback|.
@@ -3969,7 +4124,7 @@ struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
 
   // pool is used for all |CRYPTO_BUFFER|s in case we wish to share certificate
   // memory.
-  CRYPTO_BUFFER_POOL *pool = nullptr;
+  UniquePtr<CRYPTO_BUFFER_POOL> pool;
 
   // ticket_aead_method contains function pointers for opening and sealing
   // session tickets.
@@ -3986,7 +4141,13 @@ struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
 
   // verify_sigalgs, if not empty, is the set of signature algorithms
   // accepted from the peer in decreasing order of preference.
-  bssl::Array<uint16_t> verify_sigalgs;
+  Array<uint16_t> verify_sigalgs;
+
+  // accepted_peer_cert_types inherited by SSL struct.
+  InplaceVector<uint8_t, kNumCertTypes> accepted_peer_cert_types;
+
+  // available_client_cert_types inherited by SSL struct.
+  InplaceVector<uint8_t, kNumCertTypes> available_client_cert_types;
 
   // retain_only_sha256_of_client_certs is true if we should compute the SHA256
   // hash of the peer's certificate and then discard it to save memory and
@@ -4046,11 +4207,12 @@ struct ssl_ctx_st : public bssl::RefCounted<ssl_ctx_st> {
 
  private:
   friend RefCounted;
-  ~ssl_ctx_st();
+  ~SSLContext();
 };
+BSSL_NAMESPACE_END
 
 struct ssl_st {
-  explicit ssl_st(SSL_CTX *ctx_arg);
+  explicit ssl_st(bssl::SSLContext *ctx_arg);
   ssl_st(const ssl_st &) = delete;
   ssl_st &operator=(const ssl_st &) = delete;
   ~ssl_st();
@@ -4100,11 +4262,11 @@ struct ssl_st {
 
   void (*info_callback)(const SSL *ssl, int type, int value) = nullptr;
 
-  bssl::UniquePtr<SSL_CTX> ctx;
+  bssl::UniquePtr<bssl::SSLContext> ctx;
 
-  // session_ctx is the |SSL_CTX| used for the session cache and related
+  // session_ctx is the |SSLContext| used for the session cache and related
   // settings.
-  bssl::UniquePtr<SSL_CTX> session_ctx;
+  bssl::UniquePtr<bssl::SSLContext> session_ctx;
 
   // extra application data
   CRYPTO_EX_DATA ex_data;
@@ -4169,24 +4331,27 @@ struct ssl_session_st : public bssl::RefCounted<ssl_session_st> {
   bssl::UniquePtr<char> psk_identity;
 
   // certs contains the certificate chain from the peer, starting with the leaf
-  // certificate.
+  // certificate. This must be null if `peer_raw_public_key` is non-null.
   bssl::UniquePtr<STACK_OF(CRYPTO_BUFFER)> certs;
 
   const bssl::SSL_X509_METHOD *x509_method = nullptr;
 
-  // x509_peer is the peer's certificate.
+  // x509_peer is the peer's certificate. This must be null if
+  // `peer_raw_public_key` is non-null.
   X509 *x509_peer = nullptr;
 
   // x509_chain is the certificate chain sent by the peer. NOTE: for historical
   // reasons, when a client (so the peer is a server), the chain includes
-  // |peer|, but when a server it does not.
+  // |peer|, but when a server it does not. This must be null if
+  // `peer_raw_public_key` is non-null.
   STACK_OF(X509) *x509_chain = nullptr;
 
   // x509_chain_without_leaf is a lazily constructed copy of |x509_chain| that
   // omits the leaf certificate. This exists because OpenSSL, historically,
   // didn't include the leaf certificate in the chain for a server, but did for
   // a client. The |x509_chain| always includes it and, if an API call requires
-  // a chain without, it is stored here.
+  // a chain without, it is stored here. This must be null if
+  // `peer_raw_public_key` is non-null.
   STACK_OF(X509) *x509_chain_without_leaf = nullptr;
 
   // verify_result is the result of certificate verification in the case of
@@ -4220,8 +4385,9 @@ struct ssl_session_st : public bssl::RefCounted<ssl_session_st> {
   // The OCSP response that came with the session.
   bssl::UniquePtr<CRYPTO_BUFFER> ocsp_response;
 
-  // peer_sha256 contains the SHA-256 hash of the peer's certificate if
-  // |peer_sha256_valid| is true.
+  // peer_sha256 contains the SHA-256 hash of the peer's X.509 certificate or
+  // raw public key if |peer_sha256_valid| is true. (`peer_cert_type` indicates
+  // which type of credential is hashed here.)
   uint8_t peer_sha256[SHA256_DIGEST_LENGTH] = {0};
 
   // original_handshake_hash contains the handshake hash (either SHA-1+MD5 or
@@ -4283,19 +4449,19 @@ struct ssl_session_st : public bssl::RefCounted<ssl_session_st> {
   // rejected when performing a QUIC handshake.
   bssl::Array<uint8_t> quic_early_data_context;
 
+  // peer_cert_type is the peer's cert type (`TLSEXT_cert_type_*` value), which
+  // determines the type of Certificate the peer used for this session: which of
+  // `certs` xor `peer_raw_public_key` is populated for an authenticated
+  // session.
+  uint8_t peer_cert_type = bssl::kDefaultCertType;
+
+  // peer_raw_public_key, if non-null, is the raw public key received from the
+  // peer. This must be null if `certs` is non-null.
+  bssl::UniquePtr<EVP_PKEY> peer_raw_public_key;
+
  private:
   friend RefCounted;
   ~ssl_session_st();
-};
-
-struct ssl_ech_keys_st : public bssl::RefCounted<ssl_ech_keys_st> {
-  ssl_ech_keys_st() : RefCounted(CheckSubClass()) {}
-
-  bssl::Vector<bssl::UniquePtr<bssl::ECHServerConfig>> configs;
-
- private:
-  friend RefCounted;
-  ~ssl_ech_keys_st() = default;
 };
 
 #endif  // OPENSSL_HEADER_SSL_INTERNAL_H

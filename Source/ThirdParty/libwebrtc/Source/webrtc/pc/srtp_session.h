@@ -17,9 +17,12 @@
 #include <vector>
 
 #include "api/field_trials_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/sequence_checker.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/system/no_unique_address.h"
+#include "rtc_base/thread_annotations.h"
 
 // Forward declaration to avoid pulling in libsrtp headers here
 struct srtp_event_data_t;
@@ -42,72 +45,39 @@ class SrtpSession {
   SrtpSession(const SrtpSession&) = delete;
   SrtpSession& operator=(const SrtpSession&) = delete;
 
+  // Enable or disable cryptex. May update existing session.
+  bool UseCryptex(bool enabled, bool require, bool sending_session);
+
   // Configures the session for sending data using the specified
   // crypto suite and key. Receiving must be done by a separate session.
   bool SetSend(int crypto_suite,
                const ZeroOnFreeBuffer<uint8_t>& key,
-               const std::vector<int>& extension_ids);
+               const std::vector<RtpHeaderExtensionId>& extension_ids);
   bool UpdateSend(int crypto_suite,
                   const ZeroOnFreeBuffer<uint8_t>& key,
-                  const std::vector<int>& extension_ids);
+                  const std::vector<RtpHeaderExtensionId>& extension_ids);
 
   // Configures the session for receiving data using the specified
   // crypto suite and key. Sending must be done by a separate session.
   bool SetReceive(int crypto_suite,
                   const ZeroOnFreeBuffer<uint8_t>& key,
-                  const std::vector<int>& extension_ids);
+                  const std::vector<RtpHeaderExtensionId>& extension_ids);
   bool UpdateReceive(int crypto_suite,
                      const ZeroOnFreeBuffer<uint8_t>& key,
-                     const std::vector<int>& extension_ids);
+                     const std::vector<RtpHeaderExtensionId>& extension_ids);
 
   // Encrypts/signs an individual RTP/RTCP packet, in-place.
   // If an HMAC is used, this will increase the packet size.
-  [[deprecated("Pass CopyOnWriteBuffer")]] bool ProtectRtp(void* data,
-                                                           int in_len,
-                                                           int max_len,
-                                                           int* out_len);
-  bool ProtectRtp(CopyOnWriteBuffer& buffer);
-  // Overloaded version, outputs packet index.
-  [[deprecated("Pass CopyOnWriteBuffer")]] bool ProtectRtp(void* data,
-                                                           int in_len,
-                                                           int max_len,
-                                                           int* out_len,
-                                                           int64_t* index);
   bool ProtectRtp(CopyOnWriteBuffer& buffer, int64_t* index);
+  bool ProtectRtp(CopyOnWriteBuffer& buffer);
 
-  [[deprecated("Pass CopyOnWriteBuffer")]] bool ProtectRtcp(void* data,
-                                                            int in_len,
-                                                            int max_len,
-                                                            int* out_len);
   bool ProtectRtcp(CopyOnWriteBuffer& buffer);
   // Decrypts/verifies an invidiual RTP/RTCP packet.
   // If an HMAC is used, this will decrease the packet size.
-  [[deprecated("Pass CopyOnWriteBuffer")]] bool UnprotectRtp(void* data,
-                                                             int in_len,
-                                                             int* out_len);
   bool UnprotectRtp(CopyOnWriteBuffer& buffer);
-  [[deprecated("Pass CopyOnWriteBuffer")]] bool UnprotectRtcp(void* data,
-                                                              int in_len,
-                                                              int* out_len);
   bool UnprotectRtcp(CopyOnWriteBuffer& buffer);
 
-  // Helper method to get authentication params.
-  bool GetRtpAuthParams(uint8_t** key, int* key_len, int* tag_len);
-
   int GetSrtpOverhead() const;
-
-  // If external auth is enabled, SRTP will write a dummy auth tag that then
-  // later must get replaced before the packet is sent out. Only supported for
-  // non-GCM cipher suites and can be checked through "IsExternalAuthActive"
-  // if it is actually used. This method is only valid before the RTP params
-  // have been set.
-  void EnableExternalAuth();
-  bool IsExternalAuthEnabled() const;
-
-  // A SRTP session supports external creation of the auth tag if a non-GCM
-  // cipher is used. This method is only valid after the RTP params have
-  // been set.
-  bool IsExternalAuthActive() const;
 
   // Removes a SSRC from the underlying libSRTP session.
   // Note: this should only be done for SSRCs that are received.
@@ -121,44 +91,45 @@ class SrtpSession {
   bool DoSetKey(int type,
                 int crypto_suite,
                 const ZeroOnFreeBuffer<uint8_t>& key,
-                const std::vector<int>& extension_ids);
+                const std::vector<RtpHeaderExtensionId>& extension_ids);
   bool SetKey(int type,
               int crypto_suite,
               const ZeroOnFreeBuffer<uint8_t>& key,
-              const std::vector<int>& extension_ids);
+              const std::vector<RtpHeaderExtensionId>& extension_ids);
   bool UpdateKey(int type,
                  int crypto_suite,
                  const ZeroOnFreeBuffer<uint8_t>& key,
-                 const std::vector<int>& extension_ids);
+                 const std::vector<RtpHeaderExtensionId>& extension_ids);
   // Returns send stream current packet index from srtp db.
   bool GetSendStreamPacketIndex(CopyOnWriteBuffer& buffer, int64_t* index);
 
   // Writes unencrypted packets in text2pcap format to the log file
   // for debugging.
   void DumpPacket(const CopyOnWriteBuffer& buffer, bool outbound);
-  [[deprecated("Pass CopyOnWriteBuffer")]] void DumpPacket(const void* buf,
-                                                           int len,
-                                                           bool outbound);
 
   void HandleEvent(const srtp_event_data_t* ev);
   static void HandleEventThunk(srtp_event_data_t* ev);
 
-  SequenceChecker thread_checker_;
-  srtp_ctx_t_* session_ = nullptr;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker thread_checker_{
+      SequenceChecker::kDetached};
+  srtp_ctx_t_* session_ RTC_GUARDED_BY(thread_checker_) = nullptr;
 
   // Overhead of the SRTP auth tag for RTP and RTCP in bytes.
   // Depends on the cipher suite used and is usually the same with the exception
   // of the kCsAesCm128HmacSha1_32 cipher suite. The additional four bytes
   // required for RTCP protection are not included.
-  int rtp_auth_tag_len_ = 0;
-  int rtcp_auth_tag_len_ = 0;
+  int rtp_auth_tag_len_ RTC_GUARDED_BY(thread_checker_) = 0;
+  int rtcp_auth_tag_len_ RTC_GUARDED_BY(thread_checker_) = 0;
 
-  bool inited_ = false;
-  int last_send_seq_num_ = -1;
-  bool external_auth_active_ = false;
-  bool external_auth_enabled_ = false;
-  int decryption_failure_count_ = 0;
-  bool dump_plain_rtp_ = false;
+  bool inited_ RTC_GUARDED_BY(thread_checker_) = false;
+  int last_send_seq_num_ RTC_GUARDED_BY(thread_checker_) = -1;
+  int decryption_failure_count_ RTC_GUARDED_BY(thread_checker_) = 0;
+
+  // Supported since libsrtp v2.8.0.
+  bool use_cryptex_ RTC_GUARDED_BY(thread_checker_) = false;
+  bool require_cryptex_ RTC_GUARDED_BY(thread_checker_) = false;
+
+  const bool dump_plain_rtp_ = false;
 };
 
 }  //  namespace webrtc

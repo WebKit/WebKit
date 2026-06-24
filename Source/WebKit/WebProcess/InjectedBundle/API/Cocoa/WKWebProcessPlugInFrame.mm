@@ -76,30 +76,12 @@
     return wrapper(WebKit::WebFrame::contentFrameForWindowOrFrameElement(value.context.JSGlobalContextRef, value.JSValueRef)).autorelease();
 }
 
-// FIXME: Remove this once it is no longer helpful to help Safari transition away from the injected bundle.
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 + (_WKJSHandle *)jsHandleFromValue:(JSValue *)value withContext:(JSContext *)context
 {
-#if PLATFORM(MAC)
-    RELEASE_ASSERT(WTF::MacApplication::isSafari() || applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
-#else
-    RELEASE_ASSERT(WTF::IOSApplication::isMobileSafari() || applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
-#endif
-    JSObjectRef object = JSValueToObject(context.JSGlobalContextRef, value.JSValueRef, 0);
-    JSC::JSGlobalObject* globalObject = ::toJS(context.JSGlobalContextRef);
-    JSC::JSObject* jsObject = ::toJS(globalObject, object).toObject(globalObject);
-
-    if (auto* info = dynamicDowncast<WebCore::JSWebKitJSHandle>(jsObject)) {
-        RELEASE_ASSERT(globalObject->template inherits<WebCore::JSDOMGlobalObject>());
-        auto* domGlobalObject = uncheckedDowncast<WebCore::JSDOMGlobalObject>(globalObject);
-        RefPtr document = dynamicDowncast<WebCore::Document>(domGlobalObject->scriptExecutionContext());
-        RefPtr frame = WebKit::WebFrame::webFrame(document->frameID());
-        RefPtr world = WebKit::InjectedBundleScriptWorld::get(Ref { domGlobalObject->world() });
-        Ref ref { info->wrapped() };
-        WebKit::JSHandleInfo handleInfo { ref->identifier(), world->identifier(), frame->info(), ref->windowFrameIdentifier() };
-        return wrapper(API::JSHandle::create(WTF::move(handleInfo))).autorelease();
-    }
     return nil;
 }
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)dealloc
 {

@@ -18,6 +18,13 @@ load("@chromium-luci//recipe_experiments.star", "register_recipe_experiments")
 WEBRTC_GIT = "https://webrtc.googlesource.com/src"
 WEBRTC_GERRIT = "https://webrtc-review.googlesource.com/src"
 WEBRTC_TROOPER_EMAIL = "webrtc-troopers-robots@google.com"
+TREE_CLOSING_STEPS_REGEXP = [
+    "bot_update",
+    "compile",
+    "gclient runhooks",
+    "generate_build_files",
+    "update",
+]
 
 # Use LUCI Scheduler BBv2 names and add Scheduler realms configs.
 lucicfg.enable_experiment("crbug.com/1182002")
@@ -301,6 +308,7 @@ luci.bucket(
             "webrtc-ci-builder@chops-service-accounts.iam.gserviceaccount.com",
         ]),
         acl.entry(acl.BUILDBUCKET_TRIGGERER, groups = [
+            "project-webrtc-ci-schedulers",
             # Allow Pinpoint to trigger builds for bisection
             "service-account-chromeperf",
         ]),
@@ -313,6 +321,11 @@ luci.bucket(
 
 luci.bucket(
     name = "cron",
+    acls = [
+        acl.entry(acl.BUILDBUCKET_TRIGGERER, groups = [
+            "project-webrtc-ci-schedulers",
+        ]),
+    ],
 )
 
 # Commit queue definitions:
@@ -423,22 +436,7 @@ luci.buildbucket_notification_topic(
 luci.tree_closer(
     name = "webrtc_tree_closer",
     tree_status_host = "webrtc-status.appspot.com",
-    # TODO: These step filters are copied verbatim from Gatekeeper, for testing
-    # that LUCI-Notify would take the exact same actions. Once we've switched
-    # over, this should be updated - several of these steps don't exist in
-    # WebRTC recipes.
-    failed_step_regexp = [
-        "bot_update",
-        "compile",
-        "gclient runhooks",
-        "runhooks",
-        "update",
-        "extract build",
-        "cleanup_temp",
-        "taskkill",
-        "compile",
-        "gn",
-    ],
+    failed_step_regexp = TREE_CLOSING_STEPS_REGEXP,
     failed_step_regexp_exclude = ".*\\(experimental\\).*",
 )
 

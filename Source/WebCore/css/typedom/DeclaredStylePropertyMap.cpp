@@ -66,7 +66,8 @@ auto DeclaredStylePropertyMap::entries(ScriptExecutionContext* context) const ->
         return { };
 
     auto& document = downcast<Document>(*context);
-    return map(styleRule->properties(), [&document](auto propertyReference) {
+    Ref properties = styleRule->properties();
+    return map(properties.get(), [&document](auto propertyReference) {
         return StylePropertyMapEntry {
             propertyReference.cssName(),
             propertyReference.id() == CSSPropertyCustom
@@ -81,7 +82,7 @@ RefPtr<CSSValue> DeclaredStylePropertyMap::propertyValue(CSSPropertyID propertyI
     RefPtr styleRule = this->styleRule();
     if (!styleRule)
         return nullptr;
-    return styleRule->properties().getPropertyCSSValue(propertyID);
+    return protect(styleRule->properties())->getPropertyCSSValue(propertyID);
 }
 
 String DeclaredStylePropertyMap::shorthandPropertySerialization(CSSPropertyID propertyID) const
@@ -89,7 +90,7 @@ String DeclaredStylePropertyMap::shorthandPropertySerialization(CSSPropertyID pr
     RefPtr styleRule = this->styleRule();
     if (!styleRule)
         return { };
-    return styleRule->properties().getPropertyValue(propertyID);
+    return protect(styleRule->properties())->getPropertyValue(propertyID);
 }
 
 RefPtr<CSSValue> DeclaredStylePropertyMap::customPropertyValue(const AtomString& propertyName) const
@@ -97,7 +98,7 @@ RefPtr<CSSValue> DeclaredStylePropertyMap::customPropertyValue(const AtomString&
     RefPtr styleRule = this->styleRule();
     if (!styleRule)
         return nullptr;
-    return styleRule->properties().getCustomPropertyCSSValue(propertyName.string());
+    return protect(styleRule->properties())->getCustomPropertyCSSValue(propertyName.string());
 }
 
 bool DeclaredStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, const String& value)
@@ -108,7 +109,7 @@ bool DeclaredStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, co
 
     CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
     bool didFailParsing = false;
-    styleRule->mutableProperties().setProperty(propertyID, value, IsImportant::No, &didFailParsing);
+    protect(styleRule->mutableProperties())->setProperty(propertyID, value, IsImportant::No, &didFailParsing);
     return !didFailParsing;
 }
 
@@ -120,7 +121,7 @@ bool DeclaredStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValu
 
     CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
     bool didFailParsing = false;
-    styleRule->mutableProperties().setProperty(propertyID, value->cssText(CSS::defaultSerializationContext()), IsImportant::No, &didFailParsing);
+    protect(styleRule->mutableProperties())->setProperty(propertyID, value->cssText(CSS::defaultSerializationContext()), IsImportant::No, &didFailParsing);
     return !didFailParsing;
 }
 
@@ -132,7 +133,7 @@ bool DeclaredStylePropertyMap::setCustomProperty(Document&, const AtomString& pr
 
     CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
     Ref customPropertyValue = CSSCustomPropertyValue::createUnresolved(property, WTF::move(value));
-    styleRule->mutableProperties().addParsedProperty(CSSProperty(CSSPropertyCustom, WTF::move(customPropertyValue)));
+    protect(styleRule->mutableProperties())->addParsedProperty(CSSProperty(CSSPropertyCustom, WTF::move(customPropertyValue)));
     return true;
 }
 
@@ -143,7 +144,7 @@ void DeclaredStylePropertyMap::removeProperty(CSSPropertyID propertyID)
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
-    styleRule->mutableProperties().removeProperty(propertyID);
+    protect(styleRule->mutableProperties())->removeProperty(propertyID);
 }
 
 void DeclaredStylePropertyMap::removeCustomProperty(const AtomString& property)
@@ -153,7 +154,7 @@ void DeclaredStylePropertyMap::removeCustomProperty(const AtomString& property)
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
-    styleRule->mutableProperties().removeCustomProperty(property.string());
+    protect(styleRule->mutableProperties())->removeCustomProperty(property.string());
 }
 
 StyleRule* DeclaredStylePropertyMap::styleRule() const
@@ -168,7 +169,7 @@ void DeclaredStylePropertyMap::clear()
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
-    styleRule->mutableProperties().clear();
+    protect(styleRule->mutableProperties())->clear();
 }
 
 } // namespace WebCore

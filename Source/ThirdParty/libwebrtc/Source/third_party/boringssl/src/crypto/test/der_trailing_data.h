@@ -19,20 +19,24 @@
 
 #include <openssl/span.h>
 
-// TestDERTrailingData decodes |in| as an arbitrary DER structure. It then calls
-// |func| multiple times on different modified versions of |in|, each time with
+BSSL_NAMESPACE_BEGIN
+
+// TestDERTrailingData decodes `in` as an arbitrary DER structure. It then calls
+// `func` multiple times on different modified versions of `in`, each time with
 // extra data appended to a different constructed element. The extra data will
 // be a BER EOC, so this is guaranteed to make the structure invalid.
 //
-// |func| is expected to parse its argument and then assert with GTest that the
-// parser failed. |n|, passed to |func|, is the number of the constructed
-// element that was rewritten, following a pre-order numbering from zero. |func|
-// should pass it to |SCOPED_TRACE| to aid debugging.
+// `func` is expected to parse its argument and then assert with GTest that the
+// parser failed. `n`, passed to `func`, is the number of the constructed
+// element that was rewritten, following a pre-order numbering from zero. `func`
+// should pass it to `SCOPED_TRACE` to aid debugging.
 //
-// TestDERTrailingData returns whether it successful rewrote |in| and called
-// |func| for every constructed element.
+// TestDERTrailingData returns whether it successful rewrote `in` and called
+// `func` for every constructed element.
 bool TestDERTrailingData(
-    bssl::Span<const uint8_t> in,
-    std::function<void(bssl::Span<const uint8_t> rewritten, size_t n)> func);
+    Span<const uint8_t> in,
+    std::function<void(Span<const uint8_t> rewritten, size_t n)> func);
+
+BSSL_NAMESPACE_END
 
 #endif  // OPENSSL_HEADER_CRYPTO_TEST_DER_TRAILING_DATA_H

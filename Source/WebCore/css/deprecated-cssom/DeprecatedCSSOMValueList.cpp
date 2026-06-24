@@ -26,19 +26,36 @@
 #include "config.h"
 #include "DeprecatedCSSOMValueList.h"
 
-#include <wtf/text/StringBuilder.h>
+#include "CSSValueList.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-String DeprecatedCSSOMValueList::cssText() const
+Ref<DeprecatedCSSOMValueList> DeprecatedCSSOMValueList::create(DeprecatedCSSOMValueListBuilder&& values, CSSValue::ValueSeparator separator, CSSStyleDeclaration& owner)
 {
-    // FIXME: Clearly wrong for cases like CSSSubgridValue. Change to call cssText on m_value instead.
-    auto prefix = ""_s;
-    auto separator = CSSValueList::separatorCSSText(static_cast<CSSValueList::ValueSeparator>(m_valueSeparator));
-    StringBuilder result;
-    for (auto& value : m_values)
-        result.append(std::exchange(prefix, separator), value.get().cssText());
-    return result.toString();
+    return adoptRef(*new DeprecatedCSSOMValueList(WTF::move(values), separator, owner));
 }
 
+Ref<DeprecatedCSSOMValueList> DeprecatedCSSOMValueList::create(const CSSValueContainingVector& values, CSSStyleDeclaration& owner)
+{
+    return adoptRef(*new DeprecatedCSSOMValueList(WTF::map<4>(values, [&](auto& value) -> Ref<DeprecatedCSSOMValue> { return value.createDeprecatedCSSOMWrapper(owner); }), values.separator(), owner));
 }
+
+DeprecatedCSSOMValueList::DeprecatedCSSOMValueList(DeprecatedCSSOMValueListBuilder&& values, CSSValue::ValueSeparator separator, CSSStyleDeclaration& owner)
+    : DeprecatedCSSOMValue(owner)
+    , m_valueSeparator { separator }
+    , m_values { WTF::move(values) }
+{
+}
+
+String DeprecatedCSSOMValueList::cssText() const
+{
+    return makeString(interleave(m_values, [](auto& value) { return value.get().cssText(); }, CSSValueList::separatorCSSText(m_valueSeparator)));
+}
+
+unsigned short DeprecatedCSSOMValueList::cssValueType() const
+{
+    return CSS_VALUE_LIST;
+}
+
+} // namespace WebCore

@@ -470,6 +470,8 @@ void JSTestCEReactions::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestCEReactionsOwner::JSTestCEReactionsOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestCEReactionsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -482,7 +484,7 @@ void JSTestCEReactionsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* co
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestCEReactions = static_cast<JSTestCEReactions*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestCEReactions->wrapped()).ptr(), jsTestCEReactions);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestCEReactions->wrapped(), jsTestCEReactions);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

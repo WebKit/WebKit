@@ -395,6 +395,17 @@ TEST_F(MAYBE_PipeWireStreamTest, TestModifierFallback) {
       blue_color, TestScreenCastStreamProvider::EmptyData);
   emptyFrameEvent.Wait(kShortWait);
 
+  // Check that a MemFd buffer with an invalid stride is rejected
+  Event invalidStrideEvent;
+  EXPECT_CALL(*this, OnFrameRecorded);
+  EXPECT_CALL(*this, OnFailedToProcessBuffer).WillOnce([&invalidStrideEvent] {
+    invalidStrideEvent.Set();
+  });
+
+  test_screencast_stream_provider_->RecordFrame(
+      blue_color, TestScreenCastStreamProvider::InvalidStride);
+  invalidStrideEvent.Wait(kShortWait);
+
   // Test disconnection from stream
   EXPECT_CALL(*this, OnStopStreaming);
   shared_screencast_stream_->StopScreenCastStream();

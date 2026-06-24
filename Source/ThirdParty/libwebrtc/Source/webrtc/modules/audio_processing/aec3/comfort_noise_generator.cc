@@ -18,9 +18,9 @@
 #include <memory>
 #include <numbers>
 #include <numeric>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/fft_data.h"
@@ -60,8 +60,8 @@ constexpr std::array<float,32> kSqrt2Sin = {
 
 void GenerateRandomSinTableIndices(
     uint32_t& seed,
-    ArrayView<int16_t, kFftLengthBy2 - 1> re_sin_table_indices,
-    ArrayView<int16_t, kFftLengthBy2 - 1> im_sin_table_indices) {
+    std::span<int16_t, kFftLengthBy2 - 1> re_sin_table_indices,
+    std::span<int16_t, kFftLengthBy2 - 1> im_sin_table_indices) {
   RTC_DCHECK_EQ(re_sin_table_indices.size(), im_sin_table_indices.size());
 
   constexpr int32_t kSeedMask = 0x80000000 - 1;
@@ -84,8 +84,8 @@ void GenerateRandomSinTableIndices(
 void GenerateComfortNoise(
     Aec3Optimization optimization,
     const std::array<float, kFftLengthBy2Plus1>& N2,
-    ArrayView<int16_t, kFftLengthBy2 - 1> re_sin_table_indices,
-    ArrayView<int16_t, kFftLengthBy2 - 1> im_sin_table_indices,
+    std::span<int16_t, kFftLengthBy2 - 1> re_sin_table_indices,
+    std::span<int16_t, kFftLengthBy2 - 1> im_sin_table_indices,
     FftData* lower_band_noise,
     FftData* upper_band_noise) {
   FftData* N_low = lower_band_noise;
@@ -94,7 +94,7 @@ void GenerateComfortNoise(
   // Compute square root spectrum.
   std::array<float, kFftLengthBy2Plus1> N;
   std::copy(N2.begin(), N2.end(), N.begin());
-  aec3::VectorMath(optimization).Sqrt(N);
+  VectorMath(optimization).Sqrt(N);
 
   // Compute the noise level for the upper bands.
   constexpr float kOneByNumBands = 1.f / (kFftLengthBy2Plus1 / 2 + 1);
@@ -151,9 +151,9 @@ ComfortNoiseGenerator::~ComfortNoiseGenerator() = default;
 
 void ComfortNoiseGenerator::Compute(
     bool saturated_capture,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> capture_spectrum,
-    ArrayView<FftData> lower_band_noise,
-    ArrayView<FftData> upper_band_noise) {
+    std::span<const std::array<float, kFftLengthBy2Plus1>> capture_spectrum,
+    std::span<FftData> lower_band_noise,
+    std::span<FftData> upper_band_noise) {
   const auto& Y2 = capture_spectrum;
 
   if (!saturated_capture) {

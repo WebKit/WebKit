@@ -73,6 +73,16 @@
 /**
  * WPEDisplayWayland:
  *
+ * A [class@WPEPlatform.Display] implementation for Wayland.
+ *
+ * [class@DisplayWayland] is the built-in [class@WPEPlatform.Display]
+ * implementation for the Wayland windowing system. Use
+ * [ctor@DisplayWayland.new] to create a new instance and
+ * [method@DisplayWayland.connect] to connect to a particular Wayland display
+ * by name. The underlying Wayland objects can be accessed with
+ * [method@DisplayWayland.get_wl_display],
+ * [method@DisplayWayland.get_wl_compositor] and
+ * [method@DisplayWayland.get_wl_shm].
  */
 struct _WPEDisplayWaylandPrivate {
     struct wl_display* wlDisplay;

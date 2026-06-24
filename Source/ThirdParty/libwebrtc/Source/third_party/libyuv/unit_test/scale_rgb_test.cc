@@ -128,7 +128,7 @@ static int RGBTestFilter(int src_width,
         DX(benchmark_width_, nom, denom), DX(benchmark_height_, nom, denom), \
         kFilter##filter, benchmark_iterations_, disable_cpu_flags_,          \
         benchmark_cpu_info_);                                                \
-    EXPECT_LE(diff, max_diff);                                               \
+    ASSERT_LE(diff, max_diff);                                               \
   }
 
 #if defined(ENABLE_FULL_TESTS)
@@ -163,14 +163,14 @@ TEST_FACTOR(3, 1, 3)
     int diff = RGBTestFilter(benchmark_width_, benchmark_height_, width,     \
                              height, kFilter##filter, benchmark_iterations_, \
                              disable_cpu_flags_, benchmark_cpu_info_);       \
-    EXPECT_LE(diff, max_diff);                                               \
+    ASSERT_LE(diff, max_diff);                                               \
   }                                                                          \
   TEST_F(LibYUVScaleTest, name##From##width##x##height##_##filter) {         \
     int diff = RGBTestFilter(width, height, Abs(benchmark_width_),           \
                              Abs(benchmark_height_), kFilter##filter,        \
                              benchmark_iterations_, disable_cpu_flags_,      \
                              benchmark_cpu_info_);                           \
-    EXPECT_LE(diff, max_diff);                                               \
+    ASSERT_LE(diff, max_diff);                                               \
   }
 
 #if defined(ENABLE_FULL_TESTS)
@@ -202,7 +202,7 @@ TEST_SCALETO(RGBScale, 1920, 1080)
                              benchmark_height_, benchmark_width_,      \
                              kFilter##filter, benchmark_iterations_,   \
                              disable_cpu_flags_, benchmark_cpu_info_); \
-    EXPECT_LE(diff, max_diff);                                         \
+    ASSERT_LE(diff, max_diff);                                         \
   }
 
 #if defined(ENABLE_FULL_TESTS)
@@ -233,14 +233,14 @@ TEST_F(LibYUVScaleTest, RGBTest3x) {
              kFilterBilinear);
   }
 
-  EXPECT_EQ(225, dest_pixels[0]);
-  EXPECT_EQ(255 - 225, dest_pixels[1]);
+  ASSERT_EQ(225, dest_pixels[0]);
+  ASSERT_EQ(255 - 225, dest_pixels[1]);
 
   RGBScale(orig_pixels, kSrcStride, 480, 3, dest_pixels, kDstStride, 160, 1,
            kFilterNone);
 
-  EXPECT_EQ(225, dest_pixels[0]);
-  EXPECT_EQ(255 - 225, dest_pixels[1]);
+  ASSERT_EQ(225, dest_pixels[0]);
+  ASSERT_EQ(255 - 225, dest_pixels[1]);
 
   free_aligned_buffer_page_end(dest_pixels);
   free_aligned_buffer_page_end(orig_pixels);
@@ -264,14 +264,14 @@ TEST_F(LibYUVScaleTest, RGBTest4x) {
              kFilterBilinear);
   }
 
-  EXPECT_EQ(66, dest_pixels[0]);
-  EXPECT_EQ(190, dest_pixels[1]);
+  ASSERT_EQ(66, dest_pixels[0]);
+  ASSERT_EQ(190, dest_pixels[1]);
 
   RGBScale(orig_pixels, kSrcStride, 64, 4, dest_pixels, kDstStride, 16, 1,
            kFilterNone);
 
-  EXPECT_EQ(2, dest_pixels[0]);  // expect the 3rd pixel of the 3rd row
-  EXPECT_EQ(255 - 2, dest_pixels[1]);
+  ASSERT_EQ(2, dest_pixels[0]);  // expect the 3rd pixel of the 3rd row
+  ASSERT_EQ(255 - 2, dest_pixels[1]);
 
   free_aligned_buffer_page_end(dest_pixels);
   free_aligned_buffer_page_end(orig_pixels);

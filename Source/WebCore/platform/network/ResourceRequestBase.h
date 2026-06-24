@@ -269,7 +269,7 @@ public:
     bool encodingRequiresPlatformData() const { return true; }
 #endif
 
-    static bool upgradeInsecureRequest(URL&);
+    WEBCORE_EXPORT static bool upgradeInsecureRequest(URL&);
     static bool upgradeInsecureRequestIfNeeded(URL&, ShouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>&);
     void upgradeInsecureRequest();
     void upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress, const std::optional<uint16_t>&);

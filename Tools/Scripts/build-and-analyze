@@ -180,6 +180,8 @@ def main(args):
         xcodebuild_args['TOOLCHAINS'] = args.toolchains
     if args.swift_conditions:
         xcodebuild_args['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = args.swift_conditions
+    xcodebuild_args['COMPILATION_CACHE_ENABLE_CACHING'] = 'YES' if args.enable_compile_cache else 'NO'
+    xcodebuild_args['CLANG_ENABLE_COMPILE_CACHE'] = 'YES' if args.enable_compile_cache else 'NO'
     if len(xcodebuild_args):
         make_command.extend(['ARGS={}'.format(' '.join(["{}=\"{}\"".format(key, xcodebuild_args[key]) for key in xcodebuild_args]))])
 
@@ -245,6 +247,13 @@ def parse_args():
     parser.add_argument('--dry-run', default=False,
                         action='store_true', help='Output the command instead of executing it.')
     parser.add_argument('--configuration', default='debug', choices=['debug', 'release'], dest='configuration', help='Set the build configuration (default: debug).')
+    compile_cache_group = parser.add_mutually_exclusive_group()
+    compile_cache_group.add_argument('--enable-compile-cache', dest='enable_compile_cache',
+                        action='store_true', default=False,
+                        help='Enable Xcode compilation caching (CAS).')
+    compile_cache_group.add_argument('--disable-compile-cache', dest='enable_compile_cache',
+                        action='store_false', default=False,
+                        help='Disable Xcode compilation caching (CAS) (default).')
 
     args = parser.parse_args()
 

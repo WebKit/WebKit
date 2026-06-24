@@ -3452,50 +3452,82 @@ TEST_P(CopyTextureTestES3, VerifySourceTexturesComplete)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
-ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
-ANGLE_INSTANTIATE_TEST_COMBINE_6(CopyTextureVariationsTest,
-                                 CopyTextureVariationsTestPrint,
-                                 testing::ValuesIn(kCopyTextureVariationsSrcFormats),
-                                 testing::ValuesIn(kCopyTextureVariationsDstFormats),
-                                 testing::Bool(),  // flipY
-                                 testing::Bool(),  // premultiplyAlpha
-                                 testing::Bool(),  // unmultiplyAlpha
-                                 testing::ValuesIn(kMesaYFlips),
-                                 ES2_D3D9(),
-                                 ES2_D3D11(),
-                                 ES2_OPENGL(),
-                                 ES2_OPENGLES(),
-                                 ES2_VULKAN(),
-                                 ES2_METAL(),
-                                 ES2_WEBGPU());
-ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTestWebGL);
-ANGLE_INSTANTIATE_TEST(CopyTextureTestDest,
-                       ES2_D3D11(),
-                       ES2_OPENGL(),
-                       ES2_OPENGLES(),
-                       ES2_VULKAN(),
-                       ES2_METAL());
-
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTextureTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(CopyTextureTestES3);
-
-class BasicCopyTextureTest : public ANGLETest<>
+// Test that glCopyTextureCHROMIUM and glCopySubTextureCHROMIUM work if the texture base level
+// changes after the texture is synced.
+TEST_P(CopyTextureTestES3, ChangeBaseLevel)
 {
-  protected:
-    BasicCopyTextureTest()
-    {
-        setWindowWidth(64);
-        setWindowHeight(64);
-        setConfigRedBits(8);
-        setConfigGreenBits(8);
-        setConfigBlueBits(8);
-        setConfigAlphaBits(8);
-    }
-};
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+
+    constexpr uint32_t kWidth  = 33;
+    constexpr uint32_t kHeight = 17;
+
+    const std::vector<GLColor> kMip0(kWidth * kHeight, GLColor::red);
+    const std::vector<GLColor> kMip2(kWidth * kHeight, GLColor::green);
+    const std::vector<GLColor> kMip4(kWidth * kHeight, GLColor::blue);
+
+    // Define levels 0, 2 and 4 for the src texture.
+    GLTexture src;
+    glBindTexture(GL_TEXTURE_2D, src);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kMip0.data());
+    glTexImage2D(GL_TEXTURE_2D, 2, GL_RGBA8, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kMip2.data());
+    glTexImage2D(GL_TEXTURE_2D, 4, GL_RGBA8, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kMip4.data());
+
+    // Sync the texture to level 2 and copy from it.  The texture is expected to be
+    // framebuffer-attachment-complete, so it's ok to copy from the base level without having the
+    // rest of the mip chain.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 2);
+
+    // Copy from level 2
+    GLTexture dst2;
+    glBindTexture(GL_TEXTURE_2D, dst2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glCopyTextureCHROMIUM(src, 2, GL_TEXTURE_2D, dst2, 0, GL_RGBA, GL_UNSIGNED_BYTE, GL_FALSE,
+                          GL_FALSE, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    // Then switch to level 0 and copy from that
+    glBindTexture(GL_TEXTURE_2D, src);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+
+    GLTexture dst0;
+    glBindTexture(GL_TEXTURE_2D, dst0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glCopyTextureCHROMIUM(src, 0, GL_TEXTURE_2D, dst0, 0, GL_RGBA, GL_UNSIGNED_BYTE, GL_FALSE,
+                          GL_FALSE, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    // Switch to level 4 and copy with glCopySubTextureCHROMIUM.
+    glBindTexture(GL_TEXTURE_2D, src);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 4);
+
+    GLTexture dst4;
+    glBindTexture(GL_TEXTURE_2D, dst4);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glCopySubTextureCHROMIUM(src, 4, GL_TEXTURE_2D, dst4, 0, 0, 0, 0, 0, kWidth, kHeight, GL_FALSE,
+                             GL_FALSE, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the destinations.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dst0, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, kMip0[0]);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dst2, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, kMip2[0]);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dst4, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, kMip4[0]);
+    ASSERT_GL_NO_ERROR();
+}
 
 // Test that self-copying a cube map face with an OOB source rectangle doesn't cause lead to an OOB
 // write in texSubImage2D. See https:crbug.com/506377574
-TEST_P(BasicCopyTextureTest, SelfCopyOOBWrite)
+TEST_P(CopyTextureTest, SelfCopyOOBWrite)
 {
     const int kSmallSize = 8;
     const int kBigSize   = 4096;
@@ -3554,6 +3586,31 @@ TEST_P(BasicCopyTextureTest, SelfCopyOOBWrite)
 
     ASSERT_GL_NO_ERROR();
 }
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(BasicCopyTextureTest);
 
+ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
+ANGLE_INSTANTIATE_TEST_COMBINE_6(CopyTextureVariationsTest,
+                                 CopyTextureVariationsTestPrint,
+                                 testing::ValuesIn(kCopyTextureVariationsSrcFormats),
+                                 testing::ValuesIn(kCopyTextureVariationsDstFormats),
+                                 testing::Bool(),  // flipY
+                                 testing::Bool(),  // premultiplyAlpha
+                                 testing::Bool(),  // unmultiplyAlpha
+                                 testing::ValuesIn(kMesaYFlips),
+                                 ES2_D3D9(),
+                                 ES2_D3D11(),
+                                 ES2_OPENGL(),
+                                 ES2_OPENGLES(),
+                                 ES2_VULKAN(),
+                                 ES2_METAL(),
+                                 ES2_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTestWebGL);
+ANGLE_INSTANTIATE_TEST(CopyTextureTestDest,
+                       ES2_D3D11(),
+                       ES2_OPENGL(),
+                       ES2_OPENGLES(),
+                       ES2_VULKAN(),
+                       ES2_METAL());
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTextureTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(CopyTextureTestES3);
 }  // namespace angle

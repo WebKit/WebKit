@@ -37,27 +37,29 @@
 
 namespace WebCore {
 
-class RenderStyle;
+namespace Style {
+class ComputedStyle;
+}
 
 class CSSTransition final : public StyleOriginatedAnimation {
     WTF_MAKE_TZONE_ALLOCATED(CSSTransition);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSTransition);
 public:
-    static Ref<CSSTransition> create(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
+    static Ref<CSSTransition> create(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, Seconds delay, Seconds duration, const Style::ComputedStyle& reversingAdjustedStartStyle, double);
 
     virtual ~CSSTransition();
 
     const AtomString transitionProperty() const;
     AnimatableCSSProperty property() const { return m_property; }
     MonotonicTime generationTime() const { return m_generationTime; }
-    const RenderStyle& targetStyle() const LIFETIME_BOUND { return *m_targetStyle; }
-    const RenderStyle& reversingAdjustedStartStyle() const LIFETIME_BOUND { return *m_reversingAdjustedStartStyle; }
+    const Style::ComputedStyle& targetStyle() const LIFETIME_BOUND { return *m_targetStyle; }
+    const Style::ComputedStyle& reversingAdjustedStartStyle() const LIFETIME_BOUND { return *m_reversingAdjustedStartStyle; }
     double reversingShorteningFactor() const { return m_reversingShorteningFactor; }
 
     const Style::Transition& backingStyleTransition() const LIFETIME_BOUND { return m_backingStyleTransition; }
 
 private:
-    CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
+    CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Style::Transition&, const Style::ComputedStyle& targetStyle, const Style::ComputedStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
     Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
     void animationDidFinish() final;
@@ -68,8 +70,8 @@ private:
 
     AnimatableCSSProperty m_property;
     MonotonicTime m_generationTime;
-    std::unique_ptr<RenderStyle> m_targetStyle;
-    std::unique_ptr<RenderStyle> m_reversingAdjustedStartStyle;
+    std::unique_ptr<Style::ComputedStyle> m_targetStyle;
+    std::unique_ptr<Style::ComputedStyle> m_reversingAdjustedStartStyle;
     double m_reversingShorteningFactor;
 
     Style::Transition m_backingStyleTransition;

@@ -35,6 +35,9 @@ function runTest(config,qualifier) {
             return access.createMediaKeys();
         }).then(function(mediaKeys) {
             _mediaKeys = mediaKeys;
+            if (config.servercertificate)
+                return _mediaKeys.setServerCertificate(config.servercertificate);
+        }).then(function() {
             _mediaKeySession = _mediaKeys.createSession( 'temporary' );
             waitForEventAndRunStep('message', _mediaKeySession, onMessage, test);
             return _mediaKeySession.generateRequest(config.initDataType, config.initData);

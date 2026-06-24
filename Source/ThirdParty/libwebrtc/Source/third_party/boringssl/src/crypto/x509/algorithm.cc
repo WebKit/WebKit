@@ -23,6 +23,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 // TODO(crbug.com/42290422): Rewrite this logic to recognize signature
 // algorithms without pulling in the OID table. We can enumerate every supported
 // signature algorithm into a small enum and convert them to/from |EVP_PKEY_CTX|
@@ -38,7 +40,7 @@ static int x509_digest_nid_ok(const int digest_nid) {
   return 1;
 }
 
-int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
+int bssl::x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pctx);
   if (pkey == nullptr) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_CONTEXT_NOT_INITIALISED);
@@ -57,9 +59,24 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
     }
   }
 
-  if (EVP_PKEY_id(pkey) == EVP_PKEY_ED25519) {
-    return X509_ALGOR_set0(algor, OBJ_nid2obj(NID_ED25519), V_ASN1_UNDEF,
-                           nullptr);
+  // Check for signing algorithms with an internal hash.
+  ASN1_OBJECT *algo_obj = nullptr;
+  switch (EVP_PKEY_id(pkey)) {
+    case EVP_PKEY_ED25519:
+      algo_obj = OBJ_nid2obj(NID_ED25519);
+      break;
+    case EVP_PKEY_ML_DSA_44:
+      algo_obj = OBJ_nid2obj(NID_ML_DSA_44);
+      break;
+    case EVP_PKEY_ML_DSA_65:
+      algo_obj = OBJ_nid2obj(NID_ML_DSA_65);
+      break;
+    case EVP_PKEY_ML_DSA_87:
+      algo_obj = OBJ_nid2obj(NID_ML_DSA_87);
+      break;
+  }
+  if (algo_obj != nullptr) {
+    return X509_ALGOR_set0(algor, algo_obj, V_ASN1_UNDEF, nullptr);
   }
 
   // Default behavior: look up the OID for the algorithm/hash pair and encode
@@ -85,8 +102,8 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   return X509_ALGOR_set0(algor, OBJ_nid2obj(sign_nid), paramtype, nullptr);
 }
 
-int x509_digest_verify_init(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
-                            EVP_PKEY *pkey) {
+int bssl::x509_digest_verify_init(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
+                                  EVP_PKEY *pkey) {
   // Convert the signature OID into digest and public key OIDs.
   int sigalg_nid = OBJ_obj2nid(sigalg->algorithm);
   int digest_nid, pkey_nid;
@@ -115,7 +132,10 @@ int x509_digest_verify_init(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
     if (sigalg_nid == NID_rsassaPss) {
       return x509_rsa_pss_to_ctx(ctx, sigalg, pkey);
     }
-    if (sigalg_nid == NID_ED25519) {
+    if (sigalg_nid == NID_ED25519 || sigalg_nid == NID_ML_DSA_44 ||
+        sigalg_nid == NID_ML_DSA_65 || sigalg_nid == NID_ML_DSA_87) {
+      // These algorithms require that parameters be absent (Ed25519: RFC 8410
+      // section 3, ML-DSA: RFC 9881 section 2).
       if (sigalg->parameter != nullptr) {
         OPENSSL_PUT_ERROR(X509, X509_R_INVALID_PARAMETER);
         return 0;

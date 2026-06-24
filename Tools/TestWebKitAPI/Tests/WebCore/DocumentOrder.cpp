@@ -297,4 +297,32 @@ TEST(DocumentOrder, Positions)
     // FIXME: Add tests that cover shadow trees.
 }
 
+TEST(Position, EqualsAfterChildrenVersusOffsetInAnchor)
+{
+    auto document = createDocument();
+    auto& body = *document->body();
+
+    body.appendChild(HTMLDivElement::create(document));
+    body.appendChild(HTMLDivElement::create(document));
+    body.appendChild(HTMLDivElement::create(document));
+    ASSERT_EQ(body.countChildNodes(), 3u);
+
+    Position afterChildren { &body, Position::PositionIsAfterChildren };
+    Position offsetAtEnd = makeContainerOffsetPosition(&body, body.countChildNodes()); // (body, 3)
+
+    EXPECT_TRUE(offsetAtEnd.equals(afterChildren));
+    EXPECT_TRUE(afterChildren.equals(offsetAtEnd));
+
+    Position offsetAtStart = makeContainerOffsetPosition(&body, 0u);
+    EXPECT_FALSE(afterChildren.equals(offsetAtStart));
+    EXPECT_FALSE(offsetAtStart.equals(afterChildren));
+
+    Ref empty = HTMLDivElement::create(document);
+    body.appendChild(empty);
+    Position emptyAfterChildren { empty.ptr(), Position::PositionIsAfterChildren };
+    Position emptyOffsetZero = makeContainerOffsetPosition(empty.ptr(), 0u);
+    EXPECT_TRUE(emptyAfterChildren.equals(emptyOffsetZero));
+    EXPECT_TRUE(emptyOffsetZero.equals(emptyAfterChildren));
+}
+
 } // namespace TestWebKitAPI

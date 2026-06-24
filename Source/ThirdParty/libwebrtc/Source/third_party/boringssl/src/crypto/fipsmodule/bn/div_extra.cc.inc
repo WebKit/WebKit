@@ -19,8 +19,11 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 // The following functions use a Barrett reduction variant to avoid leaking the
-// numerator. See http://ridiculousfish.com/blog/posts/labor-of-division-episode-i.html
+// numerator. See
+// http://ridiculousfish.com/blog/posts/labor-of-division-episode-i.html
 //
 // We use 32-bit numerator and 16-bit divisor for simplicity. This allows
 // computing |m| and |q| without architecture-specific code.
@@ -59,7 +62,7 @@ static uint16_t shift_and_add_mod_u16(uint16_t r, uint32_t a, uint16_t d,
   return t;
 }
 
-uint16_t bn_mod_u16_consttime(const BIGNUM *bn, uint16_t d) {
+uint16_t bssl::bn_mod_u16_consttime(const BIGNUM *bn, uint16_t d) {
   if (d <= 1) {
     return 0;
   }

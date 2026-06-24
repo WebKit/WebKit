@@ -17,13 +17,13 @@
 
 #include "rtc_base/checks.h"
 
-using std::complex;
+namespace webrtc {
 
 namespace {
 
 // Modified Bessel function of order 0 for complex inputs.
-complex<float> I0(complex<float> x) {
-  complex<float> y = x / 3.75f;
+std::complex<float> I0(std::complex<float> x) {
+  std::complex<float> y = x / 3.75f;
   y *= y;
   return 1.0f + y * (3.5156229f +
                      y * (3.0899424f +
@@ -33,8 +33,6 @@ complex<float> I0(complex<float> x) {
 }
 
 }  // namespace
-
-namespace webrtc {
 
 void WindowGenerator::Hanning(int length, float* window) {
   RTC_CHECK_GT(length, 1);
@@ -55,7 +53,7 @@ void WindowGenerator::KaiserBesselDerived(float alpha,
   float sum = 0.0f;
 
   for (size_t i = 0; i <= half; ++i) {
-    complex<float> r = (4.0f * i) / length - 1.0f;
+    std::complex<float> r = (4.0f * i) / length - 1.0f;
     sum += I0(std::numbers::pi_v<float> * alpha * sqrt(1.0f - r * r)).real();
     window[i] = sum;
   }

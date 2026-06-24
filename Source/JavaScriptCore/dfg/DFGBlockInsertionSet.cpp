@@ -60,7 +60,7 @@ BasicBlock* BlockInsertionSet::insert(size_t index, float executionCount)
 
 BasicBlock* BlockInsertionSet::insertBefore(BasicBlock* before, float executionCount)
 {
-    return insert(before->index, executionCount);
+    return insert(before->index(), executionCount);
 }
 
 bool BlockInsertionSet::execute()
@@ -88,7 +88,7 @@ bool BlockInsertionSet::execute()
     
     // Make sure that the blocks know their new indices.
     for (unsigned i = 0; i < m_graph.m_blocks.size(); ++i)
-        m_graph.m_blocks[i]->index = i;
+        m_graph.m_blocks[i]->setIndex(i);
     
     // And finally, invalidate all analyses that rely on the CFG.
     m_graph.invalidateCFG();

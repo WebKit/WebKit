@@ -30,8 +30,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-using namespace WebKit;
-
 @implementation WKNSString
 
 - (NSObject *)_web_createTarget

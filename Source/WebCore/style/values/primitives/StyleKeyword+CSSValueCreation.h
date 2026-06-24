@@ -33,14 +33,14 @@ namespace WebCore {
 namespace Style {
 
 template<EnumWithoutValueRepresentation T> struct CSSValueCreation<T> {
-    Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, T value)
+    Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, T value)
     {
         return CSSKeywordValue::create(toCSSValueID(value));
     }
 };
 
 template<EnumWithValueRepresentation T> struct CSSValueCreation<T> {
-    Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, T value)
+    Ref<CSSValue> operator()(CSSValuePool& pool, const Style::ComputedStyle& style, T value)
     {
         return valueRepresentation(value, [&](const auto& alternative) -> Ref<CSSValue> { return createCSSValue(pool, style, alternative); });
     }

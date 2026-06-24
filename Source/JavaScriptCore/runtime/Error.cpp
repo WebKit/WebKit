@@ -24,6 +24,7 @@
 #include "config.h"
 #include "Error.h"
 
+#include "ErrorInstanceInlines.h"
 #include "ExecutableBaseInlines.h"
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"

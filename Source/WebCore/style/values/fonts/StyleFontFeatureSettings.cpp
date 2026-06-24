@@ -69,7 +69,7 @@ auto CSSValueConversion<FontFeatureSettings>::operator()(BuilderState& state, co
     return { WTF::move(platformSettings) };
 }
 
-Ref<CSSValue> CSSValueCreation<FontFeatureSettings>::operator()(CSSValuePool& pool, const RenderStyle& style, const FontFeatureSettings& value)
+Ref<CSSValue> CSSValueCreation<FontFeatureSettings>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const FontFeatureSettings& value)
 {
     if (!value.platform().size())
         return createCSSValue(pool, style, CSS::Keyword::Normal { });
@@ -86,7 +86,7 @@ Ref<CSSValue> CSSValueCreation<FontFeatureSettings>::operator()(CSSValuePool& po
 
 // MARK: - Serialization
 
-void Serialize<FontFeatureSettings>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const FontFeatureSettings& value)
+void Serialize<FontFeatureSettings>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const FontFeatureSettings& value)
 {
     if (value.platform().isEmpty()) {
         serializationForCSS(builder, context, style, CSS::Keyword::Normal { });

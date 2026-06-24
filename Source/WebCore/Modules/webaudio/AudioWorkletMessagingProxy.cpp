@@ -35,6 +35,7 @@
 #include "AudioWorkletThread.h"
 #include "BaseAudioContext.h"
 #include "CacheStorageConnection.h"
+#include "ContentSecurityPolicy.h"
 #include "DocumentPage.h"
 #include "DocumentSettingsValues.h"
 #include "FileSystemStorageConnection.h"
@@ -63,7 +64,8 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
         worklet.audioContext() ? !worklet.audioContext()->isOfflineContext() : false,
         document->advancedPrivacyProtections(),
         document->noiseInjectionHashSalt(),
-        document->agentClusterID()
+        document->agentClusterID(),
+        protect(document->contentSecurityPolicy())->responseHeaders()
     };
 }
 

@@ -83,6 +83,13 @@ inline AccessibilityObject* AXObjectCache::getOrCreate(Element& element, IsPartO
     return getOrCreateSlow(element, isPartOfRelation);
 }
 
+inline AccessibilityObject* AXObjectCache::getOrCreate(Widget& widget)
+{
+    if (auto* object = get(widget))
+        return object;
+    return getOrCreateSlow(widget);
+}
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 inline void AXObjectCache::scheduleObjectRegionsUpdate(bool scheduleImmediately)

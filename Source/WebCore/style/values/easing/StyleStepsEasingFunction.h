@@ -28,14 +28,15 @@
 
 namespace WebCore {
 
-class BuilderState;
-class RenderStyle;
 class StepsTimingFunction;
 class TimingFunction;
 
 namespace Style {
 
-CSS::StepsEasingFunction toCSSStepsEasingFunction(const StepsTimingFunction&, const RenderStyle&);
+class BuilderState;
+class ComputedStyle;
+
+CSS::StepsEasingFunction toCSSStepsEasingFunction(const StepsTimingFunction&, const Style::ComputedStyle&);
 
 Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::StepsEasingFunction&);
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::StepsEasingFunction&);

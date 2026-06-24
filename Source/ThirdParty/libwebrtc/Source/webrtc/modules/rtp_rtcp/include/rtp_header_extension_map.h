@@ -12,10 +12,11 @@
 #define MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_EXTENSION_MAP_H_
 
 #include <array>
-#include <cstdint>
+#include <span>
 
+#include "absl/base/macros.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/checks.h"
@@ -25,28 +26,49 @@ namespace webrtc {
 class RtpHeaderExtensionMap {
  public:
   static constexpr RTPExtensionType kInvalidType = kRtpExtensionNone;
-  static constexpr int kInvalidId = 0;
+  static constexpr RtpHeaderExtensionId kInvalidId =
+      RtpHeaderExtensionId::NotSet();
 
   RtpHeaderExtensionMap();
   explicit RtpHeaderExtensionMap(bool extmap_allow_mixed);
-  explicit RtpHeaderExtensionMap(ArrayView<const RtpExtension> extensions);
+  explicit RtpHeaderExtensionMap(std::span<const RtpExtension> extensions);
 
-  void Reset(ArrayView<const RtpExtension> extensions);
+  void Reset(std::span<const RtpExtension> extensions);
 
   template <typename Extension>
-  bool Register(int id) {
+  bool Register(RtpHeaderExtensionId id) {
     return Register(id, Extension::kId, Extension::Uri());
   }
-  bool RegisterByType(int id, RTPExtensionType type);
-  bool RegisterByUri(int id, absl::string_view uri);
+  // Backwards compatibility overloads.
+  // TODO: bugs.webrtc.org/514817938 - Remove when downstream is updated.
+  template <typename Extension>
+  ABSL_DEPRECATE_AND_INLINE()
+  bool Register(int id) {
+    return Register<Extension>(RtpHeaderExtensionId(id));
+  }
+  bool RegisterByType(RtpHeaderExtensionId id, RTPExtensionType type);
+  ABSL_DEPRECATE_AND_INLINE()
+  bool RegisterByType(int id, RTPExtensionType type) {
+    return RegisterByType(RtpHeaderExtensionId(id), type);
+  }
+  bool RegisterByUri(RtpHeaderExtensionId id, absl::string_view uri);
+  ABSL_DEPRECATE_AND_INLINE()
+  bool RegisterByUri(int id, absl::string_view uri) {
+    return RegisterByUri(RtpHeaderExtensionId(id), uri);
+  }
 
   bool IsRegistered(RTPExtensionType type) const {
     return GetId(type) != kInvalidId;
   }
   // Return kInvalidType if not found.
-  RTPExtensionType GetType(int id) const;
+  RTPExtensionType GetType(RtpHeaderExtensionId id) const;
+  // TODO: bugs.webrtc.org/514817938 - Remove when downstream is updated.
+  ABSL_DEPRECATE_AND_INLINE()
+  RTPExtensionType GetType(int id) const {
+    return GetType(RtpHeaderExtensionId(id));
+  }
   // Return kInvalidId if not found.
-  uint8_t GetId(RTPExtensionType type) const {
+  RtpHeaderExtensionId GetId(RTPExtensionType type) const {
     RTC_DCHECK_GT(type, kRtpExtensionNone);
     RTC_DCHECK_LT(type, kRtpExtensionNumberOfExtensions);
     return ids_[type];
@@ -63,9 +85,11 @@ class RtpHeaderExtensionMap {
   }
 
  private:
-  bool Register(int id, RTPExtensionType type, absl::string_view uri);
+  bool Register(RtpHeaderExtensionId id,
+                RTPExtensionType type,
+                absl::string_view uri);
 
-  std::array<uint8_t, kRtpExtensionNumberOfExtensions> ids_;
+  std::array<RtpHeaderExtensionId, kRtpExtensionNumberOfExtensions> ids_;
   bool extmap_allow_mixed_;
 };
 

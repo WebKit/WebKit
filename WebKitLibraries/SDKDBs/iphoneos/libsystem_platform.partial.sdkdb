@@ -9,7 +9,9 @@
       {"access": "public", "name": "OS_SECURITY_CONFIG_NONE"},
       {"access": "public", "name": "OS_SECURITY_CONFIG_HARDENED_HEAP"},
       {"access": "public", "name": "OS_SECURITY_CONFIG_TPRO"},
-      {"access": "public", "name": "OS_SECURITY_CONFIG_MTE"}
+      {"access": "public", "name": "OS_SECURITY_CONFIG_MTE"},
+      {"access": "public", "name": "OS_SECURITY_CONFIG_SCRIPT_RESTRICTIONS"},
+      {"access": "public", "name": "OS_SECURITY_CONFIG_GUARD_OBJECTS"}
      ],
      "name": "os_security_config_t"
     },
@@ -114,7 +116,7 @@
     {"access": "public", "introduced": "18.2", "kind": "function", "linkage": "exported", "name": "_timingsafe_enable_if_supported"},
     {"access": "public", "introduced": "18.2", "kind": "function", "linkage": "exported", "name": "_timingsafe_restore_if_supported"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "OSAtomic_int64_aligned64_t"},
     {"access": "public", "name": "OSQueueHead"},

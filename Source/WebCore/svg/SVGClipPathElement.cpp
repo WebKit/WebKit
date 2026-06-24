@@ -31,13 +31,13 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGText.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGLayerTransformComputation.h"
 #include "SVGNames.h"
+#include "SVGTransformComputation.h"
 #include "SVGUseElement.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -108,7 +108,7 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
     updateSVGRendererForElementChange();
 }
 
-RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceClipper>(*this, WTF::move(style));
@@ -148,7 +148,7 @@ RefPtr<SVGGraphicsElement> SVGClipPathElement::shouldApplyPathClipping() const
             continue;
 
         // For <use> elements, check visibility of the target element and skip if no visible target.
-        if (auto* useElement = dynamicDowncast<SVGUseElement>(*graphicsElement)) {
+        if (RefPtr useElement = dynamicDowncast<SVGUseElement>(*graphicsElement)) {
             CheckedPtr clipChildRenderer = useElement->rendererClipChild();
             if (!clipChildRenderer)
                 continue;
@@ -183,7 +183,7 @@ FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalcula
         ASSERT(child.isSVGLayerAwareRenderer());
         ASSERT(!child.isRenderSVGRoot());
 
-        auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
+        auto transform = SVGTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
         return transform.isIdentity() ? std::nullopt : std::make_optional(WTF::move(transform));
     };
 

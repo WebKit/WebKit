@@ -218,8 +218,8 @@ public:
     void addResourceLoadCallback(std::string);
     void dumpResourceLoadCallbacks();
     
-    bool dumpResourceResponseMIMETypes() const { return m_dumpResourceResponseMIMETypes; }
-    void setDumpResourceResponseMIMETypes(bool dumpResourceResponseMIMETypes) { m_dumpResourceResponseMIMETypes = dumpResourceResponseMIMETypes; }
+    std::string resourceResponseMIMETypesToDump() const { return m_resourceResponseMIMETypesToDump; }
+    void dumpResourceResponseMIMETypes(std::string dumpResourceResponseMIMETypes) { m_resourceResponseMIMETypesToDump = dumpResourceResponseMIMETypes; }
 
     bool dumpSelectionRect() const { return m_dumpSelectionRect; }
     void setDumpSelectionRect(bool dumpSelectionRect) { m_dumpSelectionRect = dumpSelectionRect; }
@@ -441,7 +441,7 @@ private:
     bool m_dumpUserGestureInFrameLoadCallbacks { false };
     bool m_dumpHistoryDelegateCallbacks { false };
     bool m_dumpResourceLoadCallbacks { false };
-    bool m_dumpResourceResponseMIMETypes { false };
+    std::string m_resourceResponseMIMETypesToDump;
     bool m_dumpSelectionRect { false };
     bool m_dumpSourceAsWebArchive { false };
     bool m_dumpStatusCallbacks { false };

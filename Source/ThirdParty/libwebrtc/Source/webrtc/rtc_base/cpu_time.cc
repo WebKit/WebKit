@@ -36,14 +36,14 @@
 #include <zircon/status.h>
 #endif
 
+namespace webrtc {
+
 #if defined(WEBRTC_WIN)
 namespace {
 // FILETIME resolution is 100 nanosecs.
 const int64_t kNanosecsPerFiletime = 100;
 }  // namespace
 #endif
-
-namespace webrtc {
 
 int64_t GetProcessCpuTimeNanos() {
 #if defined(WEBRTC_FUCHSIA)

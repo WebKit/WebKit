@@ -11,9 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_PITCH_SEARCH_H_
 #define MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_PITCH_SEARCH_H_
 
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/auto_correlation.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
@@ -31,7 +31,7 @@ class PitchEstimator {
   PitchEstimator& operator=(const PitchEstimator&) = delete;
   ~PitchEstimator();
   // Returns the estimated pitch period at 48 kHz.
-  int Estimate(ArrayView<const float, kBufSize24kHz> pitch_buffer);
+  int Estimate(std::span<const float, kBufSize24kHz> pitch_buffer);
 
  private:
   FRIEND_TEST_ALL_PREFIXES(RnnVadTest, PitchSearchWithinTolerance);

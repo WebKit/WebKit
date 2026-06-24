@@ -16,6 +16,7 @@ When pressing and holding the "right mouse button"
 
 PASS received mousedown for the left mouse button while pressing the right mouse button.
 PASS received mousedown for the middle mouse button while pressing the right mouse button.
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

@@ -38,6 +38,12 @@
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+#if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
 namespace WebCore {
 class CoordinatedAnimatedBackingStoreClient;
 class CoordinatedBackingStore;
@@ -100,6 +106,7 @@ public:
     TextureMapperLayer& ensureTarget();
 #if USE(SKIA)
     SkiaCompositingLayer& ensureSkiaTarget();
+    sk_sp<GrContextThreadSafeProxy> threadSafeGrContext() const;
 #endif
     void invalidateTarget();
 
@@ -109,10 +116,9 @@ public:
 #endif
 
     void setPosition(FloatPoint&&);
-    enum class ForcePositionSync : bool { No, Yes };
-    void setPositionForScrolling(const FloatPoint&, ForcePositionSync = ForcePositionSync::No);
+    void setPositionForScrolling(const FloatPoint&);
     const FloatPoint& position() const;
-    void setTopLeftPositionForScrolling(const FloatPoint&, ForcePositionSync = ForcePositionSync::No);
+    void setTopLeftPositionForScrolling(const FloatPoint&);
     FloatPoint topLeftPositionForScrolling();
     void setBoundsOrigin(const FloatPoint&);
     void setBoundsOriginForScrolling(const FloatPoint&);
@@ -152,6 +158,7 @@ public:
     void setContentsRectClipsDescendants(bool);
     void setContentsClippingRect(const FloatRoundedRect&);
     void setContentsScale(float);
+    float contentsScale() const;
     enum class RequireComposition : bool { No, Yes };
     void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt, RequireComposition = RequireComposition::Yes);
 #if ENABLE(VIDEO) && USE(GSTREAMER)
@@ -188,9 +195,12 @@ public:
     void updateContents(bool affectedByTransformAnimation);
     void updateBackingStore();
 
+    void flushPendingState();
     void flushCompositingState(const OptionSet<CompositionReason>&, bool = false);
 
     bool hasPendingTilesCreation() const { return m_pendingTilesCreation; }
+    bool hasPendingBackingStoreTileUpdates() const;
+    void processPendingBackingStoreTileUpdates();
     bool isCompositionRequiredOrOngoing() const;
     void requestComposition(CompositionReason);
     RunLoop* compositingRunLoop() const;
@@ -199,7 +209,7 @@ public:
     Ref<CoordinatedTileBuffer> paint(const IntRect&);
 #if USE(SKIA)
     Ref<SkiaRecordingResult> record(const IntRect&);
-    Ref<CoordinatedTileBuffer> replay(const RefPtr<SkiaRecordingResult>&, const IntRect&);
+    Ref<CoordinatedTileBuffer> replay(Ref<SkiaRecordingResult>&&, const IntRect&, const IntRect&);
 #endif
     void willPaintTile();
     void didPaintTile();
@@ -343,6 +353,13 @@ private:
 #if ENABLE(SCROLLING_THREAD)
     Markable<ScrollingNodeID> m_scrollingNodeID WTF_GUARDED_BY_LOCK(m_lock);
 #endif
+
+    struct {
+        std::optional<FloatPoint> position;
+        std::optional<FloatPoint> positionForScrolling;
+        std::optional<FloatPoint> boundsOrigin;
+        std::optional<FloatPoint> boundsOriginForScrolling;
+    } m_pendingState WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebCore

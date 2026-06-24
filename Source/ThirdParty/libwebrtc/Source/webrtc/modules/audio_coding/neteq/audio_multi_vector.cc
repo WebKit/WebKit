@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_view.h"
 #include "modules/audio_coding/neteq/audio_vector.h"
 #include "rtc_base/checks.h"
@@ -67,7 +67,7 @@ void AudioMultiVector::CopyTo(AudioMultiVector* copy_to) const {
 }
 
 void AudioMultiVector::PushBackInterleaved(
-    ArrayView<const int16_t> append_this) {
+    std::span<const int16_t> append_this) {
   RTC_DCHECK_EQ(append_this.size() % Channels(), 0);
   if (append_this.empty()) {
     return;

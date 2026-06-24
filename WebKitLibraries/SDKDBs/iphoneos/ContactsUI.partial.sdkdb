@@ -87,40 +87,41 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   },
   {
    "categories": [
     {
      "access": "public",
      "instanceMethods": [
-      {"access": "public", "name": "id"}
+      {"access": "public", "introduced": "16", "name": "id"}
      ],
      "interface": "CNMutableContact",
+     "introduced": "9",
      "name": "ContactsUI"
     }
    ],
    "globals": [
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV05SwiftB04ViewAAMc"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV11queryString13ignoredEmails0H12PhoneNumbers16approvalCallbackACSS_ShySSGSgAIySaySSGcSgtcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV4bodyQrvg"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV4bodyQrvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV4bodyQrvpQOMQ"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleV24imageTrailingEdgePadding0G5Width0G5ColorAE12CoreGraphics7CGFloatVSg_AL05SwiftB00L0VSgtcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleV9automaticAEvgZ"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleV9automaticAEvpZMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleVMa"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleVMn"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleVN"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO11defaultTextyA2EmFWC"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO5emailyA2EmFWC"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO5phoneyA2EmFWC"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO8rawValueAESgSS_tcfC"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO8rawValueSSvg"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO8rawValueSSvpMV"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionOMa"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionOMn"},
-    {"access": "public", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionON"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV11queryString13ignoredEmails0H12PhoneNumbers16approvalCallbackACSS_ShySSGSgAIySaySSGcSgtcfC"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV4bodyQrvg"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV4bodyQrvpMV"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV4bodyQrvpQOMQ"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleV24imageTrailingEdgePadding0G5Width0G5ColorAE12CoreGraphics7CGFloatVSg_AL05SwiftB00L0VSgtcfC"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleV9automaticAEvgZ"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleV9automaticAEvpZMV"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleVMa"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleVMn"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV5StyleVN"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO11defaultTextyA2EmFWC"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO5emailyA2EmFWC"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO5phoneyA2EmFWC"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO8rawValueAESgSS_tcfC"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO8rawValueSSvg"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionO8rawValueSSvpMV"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionOMa"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionOMn"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionON"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionOSHAAMc"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionOSQAAMc"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonV7CaptionOSYAAMc"},
@@ -129,13 +130,13 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonVN"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E19contactAccessPicker11isPresented17completionHandlerQrAA7BindingVySbG_ySaySSGctF"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E19contactAccessPicker11isPresented17completionHandlerQrAA7BindingVySbG_ySaySSGctFQOMQ"},
-    {"access": "public", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E24contactAccessButtonStyleyQrAD07ContactfG0V0H0VF"},
-    {"access": "public", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E24contactAccessButtonStyleyQrAD07ContactfG0V0H0VFQOMQ"},
-    {"access": "public", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E26contactAccessButtonCaptionyQrAD07ContactfG0V0H0OF"},
-    {"access": "public", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E26contactAccessButtonCaptionyQrAD07ContactfG0V0H0OFQOMQ"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E24contactAccessButtonStyleyQrAD07ContactfG0V0H0VF"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E24contactAccessButtonStyleyQrAD07ContactfG0V0H0VFQOMQ"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E26contactAccessButtonCaptionyQrAD07ContactfG0V0H0OF"},
+    {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E26contactAccessButtonCaptionyQrAD07ContactfG0V0H0OFQOMQ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo16CNMutableContactC10ContactsUIE2id10Foundation4UUIDVvg"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

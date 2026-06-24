@@ -14,9 +14,9 @@
 #include <stddef.h>
 
 #include <array>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 
 namespace webrtc {
@@ -36,8 +36,8 @@ class ErlEstimator {
   // Updates the ERL estimate.
   void Update(
       const std::vector<bool>& converged_filters,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> render_spectra,
-      ArrayView<const std::array<float, kFftLengthBy2Plus1>> capture_spectra);
+      std::span<const std::array<float, kFftLengthBy2Plus1>> render_spectra,
+      std::span<const std::array<float, kFftLengthBy2Plus1>> capture_spectra);
 
   // Returns the most recent ERL estimate.
   const std::array<float, kFftLengthBy2Plus1>& Erl() const { return erl_; }

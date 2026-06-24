@@ -63,7 +63,7 @@ NumberConstructor::NumberConstructor(VM& vm, NativeExecutable* executable, JSGlo
 NumberConstructor* NumberConstructor::create(VM& vm, Structure* structure, NumberPrototype* numberPrototype)
 {
     JSGlobalObject* globalObject = structure->realm();
-    NativeExecutable* executable = vm.getHostFunction(callNumberConstructor, ImplementationVisibility::Public, NumberConstructorIntrinsic, constructNumberConstructor, nullptr, vm.propertyNames->Number.string());
+    NativeExecutable* executable = vm.getHostFunction(callNumberConstructor, ImplementationVisibility::Public, NumberConstructorIntrinsic, constructNumberConstructor, nullptr, 1, vm.propertyNames->Number.string());
     NumberConstructor* constructor = new (NotNull, allocateCell<NumberConstructor>(vm)) NumberConstructor(vm, executable, globalObject, structure);
     constructor->finishCreation(vm, numberPrototype);
     return constructor;
@@ -77,8 +77,6 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
     JSGlobalObject* globalObject = numberPrototype->realm();
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->name, jsString(vm, vm.propertyNames->Number.string()), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "EPSILON"_s), jsDoubleNumber(std::numeric_limits<double>::epsilon()), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, Identifier::fromString(vm, "MAX_VALUE"_s), jsDoubleNumber(1.7976931348623157E+308), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);

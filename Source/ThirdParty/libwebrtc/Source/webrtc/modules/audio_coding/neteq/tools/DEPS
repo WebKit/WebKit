@@ -1,3 +1,5 @@
 include_rules = [
+  "+absl/strings/numbers.h",
+  "+absl/strings/str_split.h",
   "+logging/rtc_event_log",
 ]

@@ -114,8 +114,6 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/StringPrototype.cpp
     runtime/SymbolConstructor.cpp
     runtime/SymbolPrototype.cpp
-    runtime/TemporalCalendarConstructor.cpp
-    runtime/TemporalCalendarPrototype.cpp
     runtime/TemporalDurationConstructor.cpp
     runtime/TemporalDurationPrototype.cpp
     runtime/TemporalInstantConstructor.cpp
@@ -132,8 +130,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/TemporalPlainTimePrototype.cpp
     runtime/TemporalPlainYearMonthConstructor.cpp
     runtime/TemporalPlainYearMonthPrototype.cpp
-    runtime/TemporalTimeZoneConstructor.cpp
-    runtime/TemporalTimeZonePrototype.cpp
+    runtime/TemporalZonedDateTimeConstructor.cpp
+    runtime/TemporalZonedDateTimePrototype.cpp
 
     wasm/js/JSWebAssembly.cpp
     wasm/js/WebAssemblyArrayConstructor.cpp
@@ -172,6 +170,9 @@ set(JavaScriptCore_FRAMEWORKS
     WTF
     bmalloc
 )
+if (USE_APPLE_INTERNAL_SDK)
+    list(APPEND JavaScriptCore_FRAMEWORKS WebKitAdditions)
+endif ()
 
 if (USE_CAPSTONE)
     list(APPEND JavaScriptCore_LIBRARIES capstone)
@@ -223,11 +224,9 @@ endif ()
 if (MSVC AND NOT ENABLE_C_LOOP)
     list(APPEND OFFLINE_ASM_FORMAT_ARGS --platform=Windows)
 endif ()
-if (WEBKIT_ADDITIONS_INCLUDE_PATH AND EXISTS "${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/Additions")
-    list(APPEND OFFLINE_ASM_ARGS "--webkit-additions-path=${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions")
-    if (EXISTS "${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/Additions/llint")
-        list(APPEND OFFLINE_ASM_INCLUDE_DIRS "-I${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/Additions/llint/")
-    endif ()
+if (USE_APPLE_INTERNAL_SDK)
+    list(APPEND OFFLINE_ASM_ARGS "--webkit-additions-path=${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions")
+    list(APPEND OFFLINE_ASM_INCLUDE_DIRS "-I${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions")
 endif ()
 
 set(LLINT_ASM
@@ -383,14 +382,10 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/PromiseOperations.js
     ${JAVASCRIPTCORE_DIR}/builtins/ProxyHelpers.js
     ${JAVASCRIPTCORE_DIR}/builtins/ReflectObject.js
-    ${JAVASCRIPTCORE_DIR}/builtins/RegExpPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/RegExpStringIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/SetIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/SetPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/ShadowRealmPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/StringConstructor.js
-    ${JAVASCRIPTCORE_DIR}/builtins/StringIteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/StringPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/WrapForValidIteratorPrototype.js
@@ -632,6 +627,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/LinkBuffer.h
     assembler/MacroAssembler.h
     assembler/MacroAssemblerARM64.h
+    assembler/MacroAssemblerARM64E.h
     assembler/MacroAssemblerARMv7.h
     assembler/MacroAssemblerCodeRef.h
     assembler/MacroAssemblerHelpers.h
@@ -731,6 +727,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/ToThisStatus.h
     bytecode/TrackedReferences.h
     bytecode/TypeLocation.h
+    bytecode/TypeLocationInlines.h
     bytecode/UnlinkedCodeBlock.h
     bytecode/UnlinkedEvalCodeBlock.h
     bytecode/UnlinkedFunctionCodeBlock.h
@@ -742,6 +739,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/ValueProfile.h
     bytecode/ValueRecovery.h
     bytecode/VariableWriteFireDetail.h
+    bytecode/VariableWriteFireDetailInlines.h
     bytecode/VirtualRegister.h
     bytecode/Watchpoint.h
 
@@ -830,6 +828,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/GCOwnedDataScope.h
     heap/GCRequest.h
     heap/GCSegmentedArray.h
+    heap/GCSegmentedArrayInlines.h
     heap/Handle.h
     heap/HandleBlock.h
     heap/HandleForward.h
@@ -1020,6 +1019,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     parser/SourceTaintedOrigin.h
     parser/UnlinkedSourceCode.h
     parser/VariableEnvironment.h
+    parser/VariableEnvironmentInlines.h
 
     profiler/ProfilerBytecode.h
     profiler/ProfilerBytecodeSequence.h
@@ -1081,6 +1081,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CallData.h
     runtime/TopExceptionScope.h
     runtime/ClassInfo.h
+    runtime/CloneBase.h
+    runtime/CloneDeserializerBase.h
+    runtime/CloneSerializerBase.h
     runtime/ClonedArguments.h
     runtime/CodeSpecializationKind.h
     runtime/CommonIdentifiers.h
@@ -1273,7 +1276,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSRemoteFunction.h
     runtime/JSRunLoopTimer.h
     runtime/JSScope.h
+    runtime/JSScopeInlines.h
     runtime/JSSegmentedVariableObject.h
+    runtime/JSSentinel.h
+    runtime/JSSentinelInlines.h
     runtime/JSSet.h
     runtime/JSSetInlines.h
     runtime/JSSetIterator.h
@@ -1304,7 +1310,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/KeyAtomStringCache.h
     runtime/KeyAtomStringCacheInlines.h
     runtime/LazyClassStructure.h
+    runtime/LazyClassStructureInlines.h
     runtime/LazyProperty.h
+    runtime/LazyPropertyInlines.h
     runtime/LeafExecutable.h
     runtime/Lookup.h
     runtime/MachineContext.h
@@ -1351,6 +1359,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/PropertyDescriptor.h
     runtime/PropertyName.h
     runtime/PropertyNameArray.h
+    runtime/PropertyNameInlines.h
     runtime/PropertyOffset.h
     runtime/PropertySlot.h
     runtime/PropertyStorage.h
@@ -1416,6 +1425,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/StructureRareData.h
     runtime/StructureRareDataInlines.h
     runtime/StructureTransitionTable.h
+    runtime/StructuredCloneTags.h
     runtime/SubspaceAccess.h
     runtime/Symbol.h
     runtime/SymbolConstructor.h
@@ -1426,8 +1436,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/SyntheticModuleRecord.h
     runtime/TemplateObjectDescriptor.h
     runtime/TemporalCalendar.h
-    runtime/TemporalCalendarConstructor.h
-    runtime/TemporalCalendarPrototype.h
     runtime/TemporalDuration.h
     runtime/TemporalDurationConstructor.h
     runtime/TemporalDurationPrototype.h
@@ -1451,9 +1459,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/TemporalPlainYearMonth.h
     runtime/TemporalPlainYearMonthConstructor.h
     runtime/TemporalPlainYearMonthPrototype.h
-    runtime/TemporalTimeZone.h
-    runtime/TemporalTimeZoneConstructor.h
-    runtime/TemporalTimeZonePrototype.h
+    runtime/TemporalZonedDateTime.h
+    runtime/TemporalZonedDateTimeConstructor.h
+    runtime/TemporalZonedDateTimePrototype.h
     runtime/TestRunnerUtils.h
     runtime/ThrowScope.h
     runtime/ToNativeFromValue.h
@@ -1735,14 +1743,16 @@ add_custom_command(
     VERBATIM)
 
 set(JavaScriptCore_INTERFACE_LIBRARIES JavaScriptCore)
-set(JavaScriptCore_INTERFACE_INCLUDE_DIRECTORIES
-    ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
-    ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-)
-set(JavaScriptCore_INTERFACE_DEPENDENCIES
-    JavaScriptCore_CopyHeaders
-    JavaScriptCore_CopyPrivateHeaders
-)
+if (NOT USE_HEADER_MAPS)
+    set(JavaScriptCore_INTERFACE_INCLUDE_DIRECTORIES
+        ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
+        ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+    )
+    set(JavaScriptCore_INTERFACE_DEPENDENCIES
+        JavaScriptCore_CopyHeaders
+        JavaScriptCore_CopyPrivateHeaders
+    )
+endif ()
 
 WEBKIT_FRAMEWORK_DECLARE(JavaScriptCore)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
@@ -1828,7 +1838,7 @@ endif ()
 if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "OBJECT")
     list(APPEND JavaScriptCore_PRIVATE_LIBRARIES $<TARGET_OBJECTS:LowLevelInterpreterLib>)
 else ()
-    list(APPEND JavaScriptCore_SOURCES $<TARGET_OBJECTS:LowLevelInterpreterLib>)
+    list(APPEND JavaScriptCore_PRIVATE_LIBRARIES LowLevelInterpreterLib)
 endif ()
 
 WEBKIT_COMPUTE_SOURCES(JavaScriptCore)

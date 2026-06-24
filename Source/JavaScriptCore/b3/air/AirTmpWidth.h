@@ -40,8 +40,9 @@ public:
     TmpWidth(Code&);
     ~TmpWidth();
 
-    template <Bank bank>
+    template<auto bankFilter>
     void recompute(Code&);
+    void recomputeBoth(Code&);
 
     // The width of a Tmp is the number of bits that you need to be able to track without some trivial
     // recovery. A Tmp may have a "subwidth" (say, Width32 on a 64-bit system) if either of the following
@@ -104,7 +105,7 @@ private:
     template <Bank bank>
     void ensureSize(Tmp);
 
-    // These are initialized at the beginning of recompute<bank>, which is called in the constructor for both values of bank.
+    // These are initialized at the beginning of recompute(), which is called in the constructor for both banks.
     Vector<Widths> m_widthGP;
     Vector<Widths> m_widthFP;
 };

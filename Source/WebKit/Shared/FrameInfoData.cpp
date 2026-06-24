@@ -34,11 +34,13 @@ FrameInfoData legacyEmptyFrameInfo(WebCore::ResourceRequest&& request)
     constexpr bool isFocused { false };
     constexpr bool errorOccurred { false };
 
+    auto opaqueOrigin = WebCore::SecurityOriginData::createOpaque();
     return FrameInfoData {
         isMainFrame,
         FrameType::Local,
         WTF::move(request),
-        WebCore::SecurityOriginData::createOpaque(),
+        opaqueOrigin,
+        opaqueOrigin,
         String { },
         WebCore::generateFrameIdentifier(),
         std::nullopt,

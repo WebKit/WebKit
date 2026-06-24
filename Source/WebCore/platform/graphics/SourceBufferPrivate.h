@@ -120,8 +120,7 @@ public:
     virtual void setAppendWindowEnd(const MediaTime&);
     std::pair<MediaTime, MediaTime> appendWindow() const;
 
-    using ComputeSeekPromise = MediaTimePromise;
-    WEBCORE_EXPORT virtual Ref<ComputeSeekPromise> computeSeekTime(const SeekTarget&);
+    WEBCORE_EXPORT MediaTime computeSeekTime(const SeekTarget&);
     WEBCORE_EXPORT virtual void reenqueueMediaForTime(const MediaTime&);
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs);
 
@@ -133,6 +132,13 @@ public:
     WEBCORE_EXPORT bool canAppend(uint64_t requiredSize) const;
     WEBCORE_EXPORT SourceBufferEvictionData evictionData() const;
     WEBCORE_EXPORT Vector<PlatformTimeRanges> trackBuffersRanges() const;
+
+    // Implements the SourceBuffer.buffered getter algorithm:
+    // https://w3c.github.io/media-source/#dom-sourcebuffer-buffered
+    // Used by SourceBuffer::updateBuffered() and MediaSourcePrivate when it
+    // needs each active SourceBuffer's aggregate so the per-SourceBuffer
+    // buffered TimeRanges is computed by a single routine.
+    WEBCORE_EXPORT static PlatformTimeRanges computeBufferedRanges(const Vector<PlatformTimeRanges>& trackBufferedRanges, bool mediaSourceEnded);
 
     // Methods used by MediaSourcePrivate
     bool NODELETE hasReceivedFirstInitializationSegment() const;

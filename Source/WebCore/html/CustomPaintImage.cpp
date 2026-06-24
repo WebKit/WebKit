@@ -48,7 +48,7 @@
 #include "RenderElement.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleExtractor.h"
 #include <JavaScriptCore/ArgList.h>
 #include <JavaScriptCore/ConstructData.h>

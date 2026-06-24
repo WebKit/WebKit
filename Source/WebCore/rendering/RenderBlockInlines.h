@@ -21,7 +21,7 @@
 
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 

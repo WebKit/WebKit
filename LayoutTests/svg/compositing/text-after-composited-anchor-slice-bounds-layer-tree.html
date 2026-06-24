@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 400px; height: 200px; }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    // A trailing <text> at the far edge of an offset, non-transformed (opacity) container. Its overlay
+    // segment must crop to the text's slice in compositedBounds() space, so the overlay covers the text
+    // rather than staying at the full container size.
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }));
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+    <g style="opacity: 0.99">
+        <g style="transform: translateZ(0)"><rect x="10" y="10" width="60" height="60" fill="blue"/></g>
+        <text x="200" y="120" font-family="Ahem" font-size="40" fill="green">XXXX</text>
+    </g>
+</svg>
+<pre id="layers"></pre>
+</body>
+</html>

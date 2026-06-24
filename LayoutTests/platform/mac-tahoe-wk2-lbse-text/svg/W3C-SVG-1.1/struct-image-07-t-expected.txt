@@ -4,35 +4,36 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
+    RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x46
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
+    RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 layer at (0,-52) size 100x172 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,-52) size 100x172
 layer at (0,-52) size 100x172 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 100x172
-layer at (6.67,-22) size 86x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGText {text} at (6,30) size 88x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 87x28
-      chunk 1 (middle anchor) text run 1 at (6.68,0.00) startOffset 0 endOffset 8 width 86.65: "xml:base"
-layer at (0,20) size 100x100
-  RenderSVGImage {image} at (0,72) size 100x100
+    RenderSVGText {text} at (38,0) size 24x28 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 24x28
+        chunk 1 (middle anchor) text run 1 at (38.00,-30.00) startOffset 0 endOffset 2 width 24.00: "no"
+    RenderSVGText {text} at (6,30) size 88x28 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 87x28
+        chunk 1 (middle anchor) text run 1 at (6.68,0.00) startOffset 0 endOffset 8 width 86.65: "xml:base"
+    RenderSVGImage {image} at (0,72) size 100x100
 layer at (0,-52) size 100x172 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 100x172
-layer at (5.67,-22) size 88x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGText {text} at (5,30) size 90x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 89x28
-      chunk 1 (middle anchor) text run 1 at (5.68,0.00) startOffset 0 endOffset 8 width 88.64: "on image"
-layer at (0,20) size 100x100
-  RenderSVGImage {image} at (0,72) size 100x100
+    RenderSVGText {text} at (6,0) size 88x28 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 87x28
+        chunk 1 (middle anchor) text run 1 at (6.68,-30.00) startOffset 0 endOffset 8 width 86.65: "xml:base"
+    RenderSVGText {text} at (5,30) size 90x28 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 89x28
+        chunk 1 (middle anchor) text run 1 at (5.68,0.00) startOffset 0 endOffset 8 width 88.64: "on image"
+    RenderSVGImage {image} at (0,72) size 100x100
 layer at (0,-52) size 100x172 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 100x172
-layer at (5.02,-22) size 90x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGText {text} at (5,30) size 90x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 90x28
-      chunk 1 (middle anchor) text run 1 at (5.02,0.00) startOffset 0 endOffset 9 width 89.96: "on parent"
-layer at (0,20) size 100x100
-  RenderSVGImage {image} at (0,72) size 100x100
-layer at (10,304) size 263x46
-  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 264x46
-      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
-layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGText {text} at (6,0) size 88x28 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 87x28
+        chunk 1 (middle anchor) text run 1 at (6.68,-30.00) startOffset 0 endOffset 8 width 86.65: "xml:base"
+    RenderSVGText {text} at (5,30) size 90x28 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 90x28
+        chunk 1 (middle anchor) text run 1 at (5.02,0.00) startOffset 0 endOffset 9 width 89.96: "on parent"
+    RenderSVGImage {image} at (0,72) size 100x100

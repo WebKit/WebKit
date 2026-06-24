@@ -24,14 +24,21 @@
 #include <openssl/mem.h>
 
 #include "../internal.h"
+#include "../mem_internal.h"
 #include "internal.h"
 
+
+using namespace bssl;
+
+BSSL_NAMESPACE_BEGIN
 
 struct conf_section_st {
   char *name;
   // values contains non-owning pointers to the values in the section.
   STACK_OF(CONF_VALUE) *values;
 };
+
+BSSL_NAMESPACE_END
 
 static const char kDefaultSectionName[] = "default";
 
@@ -63,7 +70,7 @@ CONF *NCONF_new(void *method) {
     return nullptr;
   }
 
-  CONF *conf = reinterpret_cast<CONF *>(OPENSSL_malloc(sizeof(CONF)));
+  CONF *conf = New<CONF>();
   if (conf == nullptr) {
     return nullptr;
   }
@@ -78,9 +85,7 @@ CONF *NCONF_new(void *method) {
   return conf;
 }
 
-CONF_VALUE *CONF_VALUE_new(void) {
-  return reinterpret_cast<CONF_VALUE *>(OPENSSL_zalloc(sizeof(CONF_VALUE)));
-}
+CONF_VALUE *bssl::CONF_VALUE_new() { return New<CONF_VALUE>(); }
 
 static void value_free(CONF_VALUE *value) {
   if (value == nullptr) {
@@ -89,7 +94,7 @@ static void value_free(CONF_VALUE *value) {
   OPENSSL_free(value->section);
   OPENSSL_free(value->name);
   OPENSSL_free(value->value);
-  OPENSSL_free(value);
+  Delete(value);
 }
 
 static void section_free(CONF_SECTION *section) {
@@ -98,7 +103,7 @@ static void section_free(CONF_SECTION *section) {
   }
   OPENSSL_free(section->name);
   sk_CONF_VALUE_free(section->values);
-  OPENSSL_free(section);
+  Delete(section);
 }
 
 static void value_free_arg(CONF_VALUE *value, void *arg) { value_free(value); }
@@ -116,12 +121,11 @@ void NCONF_free(CONF *conf) {
   lh_CONF_SECTION_free(conf->sections);
   lh_CONF_VALUE_doall_arg(conf->values, value_free_arg, nullptr);
   lh_CONF_VALUE_free(conf->values);
-  OPENSSL_free(conf);
+  Delete(conf);
 }
 
 static CONF_SECTION *NCONF_new_section(const CONF *conf, const char *section) {
-  CONF_SECTION *s =
-      reinterpret_cast<CONF_SECTION *>(OPENSSL_malloc(sizeof(CONF_SECTION)));
+  CONF_SECTION *s = New<CONF_SECTION>();
   if (!s) {
     return nullptr;
   }
@@ -545,12 +549,12 @@ int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
     }
   }
   BUF_MEM_free(buff);
-  OPENSSL_free(section);
+  Delete(section);
   return 1;
 
 err:
   BUF_MEM_free(buff);
-  OPENSSL_free(section);
+  Delete(section);
   if (out_error_line != nullptr) {
     *out_error_line = eline;
   }
@@ -574,9 +578,10 @@ int NCONF_load(CONF *conf, const char *filename, long *out_error_line) {
   return ret;
 }
 
-int CONF_parse_list(const char *list, char sep, int remove_whitespace,
-                    int (*list_cb)(const char *elem, size_t len, void *usr),
-                    void *arg) {
+int bssl::CONF_parse_list(const char *list, char sep, int remove_whitespace,
+                          int (*list_cb)(const char *elem, size_t len,
+                                         void *usr),
+                          void *arg) {
   int ret;
   const char *lstart, *tmpend, *p;
 
@@ -625,8 +630,8 @@ int CONF_modules_load_file(const char *filename, const char *appname,
 
 void CONF_modules_unload(int all) {}
 
-void CONF_modules_free(void) {}
+void CONF_modules_free() {}
 
 void OPENSSL_config(const char *config_name) {}
 
-void OPENSSL_no_config(void) {}
+void OPENSSL_no_config() {}

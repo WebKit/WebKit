@@ -25,9 +25,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/CalendarICUBridge.h>
 #include <JavaScriptCore/ISO8601.h>
-#include <JavaScriptCore/LazyProperty.h>
-#include <JavaScriptCore/TemporalCalendar.h>
 
 namespace JSC {
 
@@ -48,10 +47,12 @@ public:
     DECLARE_INFO;
 
     static TemporalPlainMonthDay* from(JSGlobalObject*, JSValue, JSValue);
-    static TemporalPlainMonthDay* from(JSGlobalObject*, WTF::String);
 
-    TemporalCalendar* calendar() LIFETIME_BOUND { return m_calendar.get(this); }
     ISO8601::PlainMonthDay plainMonthDay() const { return m_plainMonthDay; }
+    CalendarID calendarID() const { return m_calendarID; }
+    void setCalendarId(WTF::StringView id) { m_calendarID = TemporalCore::calendarIDFromString(id); }
+    void setCalendarID(CalendarID id) { m_calendarID = id; }
+    String calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD(name, capitalizedName) \
     decltype(auto) name() const { return m_plainMonthDay.name(); }
@@ -60,26 +61,24 @@ public:
 
     ISO8601::PlainDate with(JSGlobalObject*, JSObject*, JSValue);
 
-    String monthCode() const;
+    String monthCode() const { return ISO8601::monthCode(m_plainMonthDay.month()); }
 
     String toString(JSGlobalObject*, JSValue options) const;
     String toString() const
     {
-        return ISO8601::temporalMonthDayToString(m_plainMonthDay, ""_s);
+        return ISO8601::temporalMonthDayToString(m_plainMonthDay, "auto"_s, m_calendarID);
     }
-
-    DECLARE_VISIT_CHILDREN;
 
 private:
     TemporalPlainMonthDay(VM&, Structure*, ISO8601::PlainMonthDay&&);
-    void finishCreation(VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     template<typename CharacterType>
     static std::optional<ISO8601::PlainMonthDay> parse(StringParsingBuffer<CharacterType>&);
     static ISO8601::PlainMonthDay fromObject(JSGlobalObject*, JSObject*);
 
     ISO8601::PlainMonthDay m_plainMonthDay;
-    LazyProperty<TemporalPlainMonthDay, TemporalCalendar> m_calendar;
+    CalendarID m_calendarID { 0 };
 };
 
 } // namespace JSC

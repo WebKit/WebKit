@@ -14,14 +14,15 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/media_types.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "call/call.h"
@@ -35,7 +36,9 @@
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/task_utils/repeating_task.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 namespace test {
@@ -45,7 +48,7 @@ Demuxer::Demuxer(const std::map<uint8_t, MediaType>& payload_type_map)
 
 MediaType Demuxer::GetMediaType(const uint8_t* packet_data,
                                 const size_t packet_length) const {
-  if (IsRtpPacket(MakeArrayView(packet_data, packet_length))) {
+  if (IsRtpPacket(std::span(packet_data, packet_length))) {
     RTC_CHECK_GE(packet_length, 2);
     const uint8_t payload_type = packet_data[1] & 0x7f;
     std::map<uint8_t, MediaType>::const_iterator it =
@@ -62,54 +65,74 @@ DirectTransport::DirectTransport(
     std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
     Call* send_call,
     const std::map<uint8_t, MediaType>& payload_type_map,
-    ArrayView<const RtpExtension> audio_extensions,
-    ArrayView<const RtpExtension> video_extensions)
+    std::span<const RtpExtension> audio_extensions,
+    std::span<const RtpExtension> video_extensions)
     : clock_(*Clock::GetRealTimeClock()),
       send_call_(send_call),
-      task_queue_(task_queue),
+      network_thread_(task_queue),
       demuxer_(payload_type_map),
       fake_network_(std::move(pipe)),
       audio_extensions_(audio_extensions),
       video_extensions_(video_extensions) {
+  RTC_DCHECK(network_thread_);
+  if (send_call) {
+    RTC_DCHECK_EQ(task_queue, send_call->network_thread());
+  }
   Start();
 }
 
 DirectTransport::DirectTransport(
     const Environment& env,
-    TaskQueueBase* task_queue,
+    Thread* network_thread,
     std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
     Call* send_call,
     const std::map<uint8_t, MediaType>& payload_type_map,
-    ArrayView<const RtpExtension> audio_extensions,
-    ArrayView<const RtpExtension> video_extensions)
+    std::span<const RtpExtension> audio_extensions,
+    std::span<const RtpExtension> video_extensions)
     : env_(env),
       clock_(env.clock()),
       send_call_(send_call),
-      task_queue_(task_queue),
+      network_thread_(network_thread),
       demuxer_(payload_type_map),
       fake_network_(std::move(pipe)),
       audio_extensions_(audio_extensions),
       video_extensions_(video_extensions) {
+  RTC_DCHECK(network_thread_);
+  if (send_call) {
+    RTC_DCHECK_EQ(static_cast<TaskQueueBase*>(network_thread),
+                  send_call->network_thread());
+  }
   Start();
 }
 
 DirectTransport::~DirectTransport() {
-  next_process_task_.Stop();
+  RTC_DCHECK_RUN_ON(&worker_thread_checker_);
+  // Synchronously stop delayed packet processing on the network thread. This
+  // prevents use-after-free crashes if a scheduled process task executes after
+  // the DirectTransport instance is destroyed.
+  SendTask(network_thread_, [&] {
+    MutexLock lock(&process_lock_);
+    next_process_task_.Stop();
+  });
 }
 
 void DirectTransport::SetReceiver(PacketReceiver* receiver) {
+  RTC_DCHECK_RUN_ON(&worker_thread_checker_);
   fake_network_->SetReceiver(receiver);
 }
 
-bool DirectTransport::SendRtp(ArrayView<const uint8_t> data,
+bool DirectTransport::SendRtp(std::span<const uint8_t> data,
                               const PacketOptions& options) {
+  // Note: This method is thread-agnostic and must not enforce SequenceChecker
+  // constraints, as legacy out-of-tree pacing frameworks may trigger sending
+  // media packets off-thread.
   if (send_call_) {
     SentPacketInfo sent_packet(options.packet_id, clock_.TimeInMilliseconds());
     sent_packet.info.included_in_feedback = options.included_in_feedback;
     sent_packet.info.included_in_allocation = options.included_in_allocation;
     sent_packet.info.packet_size_bytes = data.size();
     sent_packet.info.packet_type = PacketType::kData;
-    send_call_->OnSentPacket(sent_packet);
+    SendTask(network_thread_, [&]() { send_call_->OnSentPacket(sent_packet); });
   }
 
   const RtpHeaderExtensionMap* extensions = nullptr;
@@ -139,8 +162,10 @@ bool DirectTransport::SendRtp(ArrayView<const uint8_t> data,
   return true;
 }
 
-bool DirectTransport::SendRtcp(ArrayView<const uint8_t> data,
+bool DirectTransport::SendRtcp(std::span<const uint8_t> data,
                                const PacketOptions& /* options */) {
+  // Note: This method is thread-agnostic to support paced background RTCP
+  // feedback tasks triggered from downstream thread pool worker threads safely.
   fake_network_->DeliverRtcpPacket(CopyOnWriteBuffer(data));
   MutexLock lock(&process_lock_);
   if (!next_process_task_.Running())
@@ -153,10 +178,12 @@ int DirectTransport::GetAverageDelayMs() {
 }
 
 void DirectTransport::Start() {
-  RTC_DCHECK(task_queue_);
+  RTC_DCHECK_RUN_ON(&worker_thread_checker_);
   if (send_call_) {
-    send_call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
-    send_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
+    SendTask(network_thread_, [this]() {
+      send_call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
+      send_call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
+    });
   }
 }
 
@@ -167,7 +194,7 @@ void DirectTransport::ProcessPackets() {
     return;
 
   next_process_task_ = RepeatingTaskHandle::DelayedStart(
-      task_queue_, TimeDelta::Millis(*initial_delay_ms), [this] {
+      network_thread_, TimeDelta::Millis(*initial_delay_ms), [this] {
         fake_network_->Process();
         if (auto delay_ms = fake_network_->TimeUntilNextProcess())
           return TimeDelta::Millis(*delay_ms);

@@ -32,11 +32,11 @@
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "NodeDocument.h"
-#include "RenderStyle+SettersInlines.h"
 #include "StyleBuilder.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleCustomProperty.h"
+#include "StyleDocumentScope.h"
 #include "StyleResolver.h"
-#include "StyleScope.h"
 #include "WebAnimation.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -47,7 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomPropertyRegistry);
 
 CustomPropertyRegistry::CustomPropertyRegistry(Scope& scope)
     : m_scope(scope)
-    , m_initialValuePrototypeStyle(RenderStyle::createPtr())
+    , m_initialValuePrototypeStyle(Style::ComputedStyle::createPtr())
 {
 }
 
@@ -79,7 +79,7 @@ bool CustomPropertyRegistry::registerFromAPI(CSSRegisteredCustomProperty&& prope
 
     if (success) {
         invalidate(property.name);
-        m_scope.didChangeStyleSheetEnvironment();
+        m_scope.documentScope().didChangeStyleSheetEnvironment();
     }
 
     return success;
@@ -142,12 +142,12 @@ void CustomPropertyRegistry::clearRegisteredFromStylesheets()
     invalidate(nullAtom());
 }
 
-const RenderStyle& CustomPropertyRegistry::initialValuePrototypeStyle() const
+const Style::ComputedStyle& CustomPropertyRegistry::initialValuePrototypeStyle() const
 {
     if (m_hasInvalidPrototypeStyle) {
         m_hasInvalidPrototypeStyle = false;
 
-        auto oldStyle = std::exchange(m_initialValuePrototypeStyle, RenderStyle::createPtr());
+        auto oldStyle = std::exchange(m_initialValuePrototypeStyle, Style::ComputedStyle::createPtr());
 
         auto initializeToStyle = [&](auto& map) {
             for (auto& property : map.values()) {
@@ -197,7 +197,7 @@ auto CustomPropertyRegistry::parseInitialValue(const Document& document, const A
         return makeUnexpected(ParseInitialValueError::NotComputationallyIndependent);
 
     // We don't need to provide a real context style since only computationally independent values are allowed (no 'em' etc).
-    auto placeholderStyle = RenderStyle::create();
+    auto placeholderStyle = Style::ComputedStyle::create();
     auto dummyState = Style::BuilderState::create(placeholderStyle, { &document });
 
     auto initialValue = CSSPropertyParser::parseTypedCustomPropertyInitialValue(propertyName, syntax, tokenRange, dummyState, { document });

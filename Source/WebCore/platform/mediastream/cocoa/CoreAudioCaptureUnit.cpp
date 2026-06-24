@@ -996,7 +996,7 @@ void CoreAudioCaptureUnit::setIsInBackground(bool isInBackground)
 
     if (!isInBackground) {
         if (m_statusBarManager) {
-            m_statusBarManager->stop();
+            protect(m_statusBarManager)->stop();
             m_statusBarManager = nullptr;
         }
         return;
@@ -1019,7 +1019,7 @@ void CoreAudioCaptureUnit::setIsInBackground(bool isInBackground)
         if (protectedThis->isRunning())
             protectedThis->captureFailed();
     });
-    m_statusBarManager->start();
+    protect(m_statusBarManager)->start();
 }
 #endif
 

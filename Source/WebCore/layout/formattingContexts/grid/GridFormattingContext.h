@@ -121,7 +121,7 @@ private:
     BoxGeometry& geometryForGridItem(const ElementBox&) LIFETIME_BOUND;
     void setGridItemGeometries(const GridItemRects&);
 
-    const RenderStyle& gridContainerStyle() const LIFETIME_BOUND { return m_gridBox->style(); }
+    const Style::ComputedStyle& gridContainerStyle() const LIFETIME_BOUND { return m_gridBox->style(); }
 
     const CheckedRef<const ElementBox> m_gridBox;
     const CheckedRef<LayoutState> m_globalLayoutState;

@@ -308,6 +308,175 @@ func addCertificateSelectionTests() {
 			expectedError: ":NO_COMMON_SIGNATURE_ALGORITHMS:",
 		},
 
+		// The default server_certificate_type is X.509, which should match X.509
+		// certificates and delegated credentials, but not raw public key
+		// credentials.
+		{
+			name:          "Server-CertificateType-Default-MatchesX509OverRawPublicKey",
+			testType:      serverTest,
+			match:         &ecdsaP256Certificate,
+			mismatch:      &rpkEcdsaP256,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+		{
+			name:       "Server-CertificateType-Default-MatchesDelegatedCredentialOverRawPublicKey",
+			testType:   serverTest,
+			minVersion: VersionTLS13,
+			config: Config{
+				DelegatedCredentialAlgorithms: []signatureAlgorithm{signatureECDSAWithP256AndSHA256},
+			},
+			match:         p256DC,
+			mismatch:      &rpkEcdsaP256,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+
+		// If server_certificate_type is explicitly negotiated to permit only raw
+		// public keys, X.509 certificates and delegated credentials should not
+		// match.
+		{
+			name:     "Server-CertificateType-MatchesRawPublicKeyOverX509",
+			testType: serverTest,
+			config: Config{
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         &rpkEcdsaP256,
+			mismatch:      &ecdsaP256Certificate,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+		{
+			name:       "Server-CertificateType-MatchesRawPublicKeyOverDelegatedCredential",
+			testType:   serverTest,
+			minVersion: VersionTLS13,
+			config: Config{
+				DelegatedCredentialAlgorithms: []signatureAlgorithm{signatureECDSAWithP256AndSHA256},
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         &rpkEcdsaP256,
+			mismatch:      p256DC,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+
+		// If server_certificate_type contains only an unknown value, no credentials
+		// should match.
+		{
+			name:     "Server-CertificateType-Unknown-RawPublicKey",
+			testType: serverTest,
+			config: Config{
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeBogus},
+				},
+			},
+			mismatch:      &rpkEcdsaP256,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+		{
+			name:     "Server-CertificateType-Unknown-X509",
+			testType: serverTest,
+			config: Config{
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeBogus},
+				},
+			},
+			mismatch:      &ecdsaP256Certificate,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+		{
+			name:       "Server-CertificateType-Unknown-DelegatedCredential",
+			testType:   serverTest,
+			minVersion: VersionTLS13,
+			config: Config{
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeBogus},
+				},
+			},
+			mismatch:      p256DC,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+
+		// Raw Public Key credentials are subject to selection based on
+		// algorithm-based criteria for each TLS version.
+		{
+			name:       "Server-RawPublicKey-SignatureAlgorithm",
+			testType:   serverTest,
+			minVersion: VersionTLS12,
+			maxVersion: VersionTLS12,
+			config: Config{
+				VerifySignatureAlgorithms: []signatureAlgorithm{signatureECDSAWithP256AndSHA256},
+				CipherSuites: []uint16{
+					TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+					TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+				},
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         &rpkEcdsaP256,
+			mismatch:      &rpkRsa,
+			expectedError: ":NO_SHARED_CIPHER:",
+		},
+		{
+			name:       "Server-RawPublicKey-SignatureAlgorithm",
+			testType:   serverTest,
+			minVersion: VersionTLS13,
+			config: Config{
+				VerifySignatureAlgorithms: []signatureAlgorithm{signatureECDSAWithP256AndSHA256},
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         &rpkEcdsaP256,
+			mismatch:      &rpkRsa,
+			expectedError: ":NO_COMMON_SIGNATURE_ALGORITHMS:",
+		},
+		{
+			name:       "Server-RawPublicKey-SignatureAlgorithmECDSACurve",
+			testType:   serverTest,
+			minVersion: VersionTLS13,
+			config: Config{
+				VerifySignatureAlgorithms: []signatureAlgorithm{signatureECDSAWithP256AndSHA256},
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         &rpkEcdsaP256,
+			mismatch:      &rpkEcdsaP384,
+			expectedError: ":NO_COMMON_SIGNATURE_ALGORITHMS:",
+		},
+		{
+			name:       "Server-RawPublicKey-SignatureAlgorithmKeyPrefs",
+			testType:   serverTest,
+			minVersion: VersionTLS12,
+			maxVersion: VersionTLS12,
+			config: Config{
+				VerifySignatureAlgorithms: []signatureAlgorithm{signatureRSAPSSWithSHA256},
+				CipherSuites:              []uint16{TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256},
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         rpkRsa.WithSignatureAlgorithms(signatureRSAPSSWithSHA256),
+			mismatch:      rpkRsa.WithSignatureAlgorithms(signatureRSAPSSWithSHA384),
+			expectedError: ":NO_SHARED_CIPHER:",
+		},
+		{
+			name:       "Server-RawPublicKey-SignatureAlgorithmKeyPrefs",
+			testType:   serverTest,
+			minVersion: VersionTLS13,
+			config: Config{
+				VerifySignatureAlgorithms: []signatureAlgorithm{signatureRSAPSSWithSHA256},
+				Bugs: ProtocolBugs{
+					SendServerCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         rpkRsa.WithSignatureAlgorithms(signatureRSAPSSWithSHA256),
+			mismatch:      rpkRsa.WithSignatureAlgorithms(signatureRSAPSSWithSHA384),
+			expectedError: ":NO_COMMON_SIGNATURE_ALGORITHMS:",
+		},
+
 		// TLS 1.2 clients and below check the certificate against the old
 		// client certificate types field.
 		{
@@ -420,6 +589,101 @@ func addCertificateSelectionTests() {
 			},
 			match:         rsaChainCertificate.WithSignatureAlgorithms(signatureRSAPSSWithSHA256),
 			mismatch:      rsaCertificate.WithSignatureAlgorithms(signatureRSAPSSWithSHA384),
+			expectedError: ":NO_COMMON_SIGNATURE_ALGORITHMS:",
+		},
+
+		// The default client_certificate_type is X.509, which should match X.509
+		// certificates but not raw public key credentials.
+		{
+			name:     "Client-CertificateType-Default-MatchesX509OverRawPublicKey",
+			testType: clientTest,
+			config: Config{
+				ClientAuth: RequestClientCert,
+			},
+			flags:         flagCertTypes("-available-client-cert-types", []CertificateType{certTypeX509, certTypeRawPublicKey}),
+			match:         &ecdsaP256Certificate,
+			mismatch:      &rpkEcdsaP256,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+
+		// If client_certificate_type is explicitly negotiated to permit only raw
+		// public keys, X.509 certificates should not match.
+		{
+			name:     "Client-CertificateType-MatchesRawPublicKeyOverX509",
+			testType: clientTest,
+			config: Config{
+				ClientAuth: RequestClientCert,
+				Bugs: ProtocolBugs{
+					SendClientCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			flags:         flagCertTypes("-available-client-cert-types", []CertificateType{certTypeX509, certTypeRawPublicKey}),
+			match:         &rpkEcdsaP256,
+			mismatch:      &ecdsaP256Certificate,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+
+		// Raw Public Key credentials are subject to selection based on
+		// algorithm-based criteria for each TLS version.
+		{
+			name:       "Client-RawPublicKey-ClientCertificateType",
+			testType:   clientTest,
+			minVersion: VersionTLS12,
+			maxVersion: VersionTLS12,
+			config: Config{
+				ClientAuth:             RequestClientCert,
+				ClientCertificateTypes: []uint8{CertTypeECDSASign},
+				Bugs: ProtocolBugs{
+					SendClientCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         &rpkEcdsaP256,
+			mismatch:      &rpkRsa,
+			expectedError: ":UNKNOWN_CERTIFICATE_TYPE:",
+		},
+		{
+			name:       "Client-RawPublicKey-SignatureAlgorithm",
+			testType:   clientTest,
+			minVersion: VersionTLS12,
+			config: Config{
+				ClientAuth:                RequestClientCert,
+				VerifySignatureAlgorithms: []signatureAlgorithm{signatureECDSAWithP256AndSHA256},
+				Bugs: ProtocolBugs{
+					SendClientCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         &rpkEcdsaP256,
+			mismatch:      &rpkRsa,
+			expectedError: ":NO_COMMON_SIGNATURE_ALGORITHMS:",
+		},
+		{
+			name:       "Client-RawPublicKey-SignatureAlgorithmECDSACurve",
+			testType:   clientTest,
+			minVersion: VersionTLS13,
+			config: Config{
+				ClientAuth:                RequestClientCert,
+				VerifySignatureAlgorithms: []signatureAlgorithm{signatureECDSAWithP256AndSHA256},
+				Bugs: ProtocolBugs{
+					SendClientCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         &rpkEcdsaP256,
+			mismatch:      &rpkEcdsaP384,
+			expectedError: ":NO_COMMON_SIGNATURE_ALGORITHMS:",
+		},
+		{
+			name:       "Client-RawPublicKey-SignatureAlgorithmKeyPrefs",
+			testType:   clientTest,
+			minVersion: VersionTLS12,
+			config: Config{
+				ClientAuth:                RequestClientCert,
+				VerifySignatureAlgorithms: []signatureAlgorithm{signatureRSAPSSWithSHA256},
+				Bugs: ProtocolBugs{
+					SendClientCertificateTypes: []CertificateType{certTypeRawPublicKey},
+				},
+			},
+			match:         rpkRsa.WithSignatureAlgorithms(signatureRSAPSSWithSHA256),
+			mismatch:      rpkRsa.WithSignatureAlgorithms(signatureRSAPSSWithSHA384),
 			expectedError: ":NO_COMMON_SIGNATURE_ALGORITHMS:",
 		},
 
@@ -640,36 +904,37 @@ func addCertificateSelectionTests() {
 					})
 					continue
 				}
-
-				testCases = append(testCases, testCase{
-					name:            fmt.Sprintf("CertificateSelection-%s-MatchFirst-%s", test.name, suffix),
-					protocol:        protocol,
-					testType:        test.testType,
-					config:          config,
-					shimCredentials: []*Credential{test.match, test.mismatch},
-					flags:           append([]string{"-expect-selected-credential", "0"}, test.flags...),
-					expectations:    connectionExpectations{peerCertificate: test.match},
-				})
-				testCases = append(testCases, testCase{
-					name:            fmt.Sprintf("CertificateSelection-%s-MatchSecond-%s", test.name, suffix),
-					protocol:        protocol,
-					testType:        test.testType,
-					config:          config,
-					shimCredentials: []*Credential{test.mismatch, test.match},
-					flags:           append([]string{"-expect-selected-credential", "1"}, test.flags...),
-					expectations:    connectionExpectations{peerCertificate: test.match},
-				})
-				if canBeShimCertificate(test.match) {
+				if test.match != nil {
 					testCases = append(testCases, testCase{
-						name:            fmt.Sprintf("CertificateSelection-%s-MatchDefault-%s", test.name, suffix),
+						name:            fmt.Sprintf("CertificateSelection-%s-MatchFirst-%s", test.name, suffix),
 						protocol:        protocol,
 						testType:        test.testType,
 						config:          config,
-						shimCredentials: []*Credential{test.mismatch},
-						shimCertificate: test.match,
-						flags:           append([]string{"-expect-selected-credential", "-1"}, test.flags...),
+						shimCredentials: []*Credential{test.match, test.mismatch},
+						flags:           append([]string{"-expect-selected-credential", "0"}, test.flags...),
 						expectations:    connectionExpectations{peerCertificate: test.match},
 					})
+					testCases = append(testCases, testCase{
+						name:            fmt.Sprintf("CertificateSelection-%s-MatchSecond-%s", test.name, suffix),
+						protocol:        protocol,
+						testType:        test.testType,
+						config:          config,
+						shimCredentials: []*Credential{test.mismatch, test.match},
+						flags:           append([]string{"-expect-selected-credential", "1"}, test.flags...),
+						expectations:    connectionExpectations{peerCertificate: test.match},
+					})
+					if canBeShimCertificate(test.match) {
+						testCases = append(testCases, testCase{
+							name:            fmt.Sprintf("CertificateSelection-%s-MatchDefault-%s", test.name, suffix),
+							protocol:        protocol,
+							testType:        test.testType,
+							config:          config,
+							shimCredentials: []*Credential{test.mismatch},
+							shimCertificate: test.match,
+							flags:           append([]string{"-expect-selected-credential", "-1"}, test.flags...),
+							expectations:    connectionExpectations{peerCertificate: test.match},
+						})
+					}
 				}
 				testCases = append(testCases, testCase{
 					name:               fmt.Sprintf("CertificateSelection-%s-MatchNone-%s", test.name, suffix),

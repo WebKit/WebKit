@@ -148,11 +148,11 @@ inline std::optional<BoxPath> OffsetPath::tryBox() const
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<OffsetPath> { OffsetPath operator()(BuilderState&, const CSSValue&); };
-template<> struct CSSValueCreation<OffsetPath> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const OffsetPath&); };
+template<> struct CSSValueCreation<OffsetPath> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const OffsetPath&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<OffsetPath> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const OffsetPath&); };
+template<> struct Serialize<OffsetPath> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const OffsetPath&); };
 
 // MARK: - Blending
 

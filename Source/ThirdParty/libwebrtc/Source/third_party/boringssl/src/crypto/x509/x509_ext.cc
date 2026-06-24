@@ -18,7 +18,11 @@
 #include <openssl/stack.h>
 #include <openssl/x509.h>
 
+#include "../internal.h"
 #include "internal.h"
+
+
+using namespace bssl;
 
 int X509_CRL_get_ext_count(const X509_CRL *x) {
   return X509v3_get_ext_count(x->crl->extensions);
@@ -70,41 +74,50 @@ int X509_CRL_add_ext(X509_CRL *x, const X509_EXTENSION *ex, int loc) {
 }
 
 int X509_get_ext_count(const X509 *x) {
-  return X509v3_get_ext_count(x->extensions);
+  const auto *impl = FromOpaque(x);
+  return X509v3_get_ext_count(impl->extensions);
 }
 
 int X509_get_ext_by_NID(const X509 *x, int nid, int lastpos) {
-  return X509v3_get_ext_by_NID(x->extensions, nid, lastpos);
+  const auto *impl = FromOpaque(x);
+  return X509v3_get_ext_by_NID(impl->extensions, nid, lastpos);
 }
 
 int X509_get_ext_by_OBJ(const X509 *x, const ASN1_OBJECT *obj, int lastpos) {
-  return X509v3_get_ext_by_OBJ(x->extensions, obj, lastpos);
+  const auto *impl = FromOpaque(x);
+  return X509v3_get_ext_by_OBJ(impl->extensions, obj, lastpos);
 }
 
 int X509_get_ext_by_critical(const X509 *x, int crit, int lastpos) {
-  return X509v3_get_ext_by_critical(x->extensions, crit, lastpos);
+  const auto *impl = FromOpaque(x);
+  return X509v3_get_ext_by_critical(impl->extensions, crit, lastpos);
 }
 
 X509_EXTENSION *X509_get_ext(const X509 *x, int loc) {
-  return X509v3_get_ext(x->extensions, loc);
+  const auto *impl = FromOpaque(x);
+  return X509v3_get_ext(impl->extensions, loc);
 }
 
 X509_EXTENSION *X509_delete_ext(X509 *x, int loc) {
-  return delete_ext(&x->extensions, loc);
+  auto *impl = FromOpaque(x);
+  return delete_ext(&impl->extensions, loc);
 }
 
 int X509_add_ext(X509 *x, const X509_EXTENSION *ex, int loc) {
-  return X509v3_add_ext(&x->extensions, ex, loc) != nullptr;
+  auto *impl = FromOpaque(x);
+  return X509v3_add_ext(&impl->extensions, ex, loc) != nullptr;
 }
 
 void *X509_get_ext_d2i(const X509 *x509, int nid, int *out_critical,
                        int *out_idx) {
-  return X509V3_get_d2i(x509->extensions, nid, out_critical, out_idx);
+  const auto *impl = FromOpaque(x509);
+  return X509V3_get_d2i(impl->extensions, nid, out_critical, out_idx);
 }
 
 int X509_add1_ext_i2d(X509 *x, int nid, void *value, int crit,
                       unsigned long flags) {
-  return X509V3_add1_i2d(&x->extensions, nid, value, crit, flags);
+  auto *impl = FromOpaque(x);
+  return X509V3_add1_i2d(&impl->extensions, nid, value, crit, flags);
 }
 
 int X509_REVOKED_get_ext_count(const X509_REVOKED *x) {

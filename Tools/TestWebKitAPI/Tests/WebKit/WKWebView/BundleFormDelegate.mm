@@ -32,6 +32,7 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -81,7 +82,7 @@ TEST(WebKit, WKWebProcessPlugInWithoutRegisteredCustomClass)
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleFormDelegatePlugIn"]);
     [[configuration processPool] _setObject:@YES forBundleParameter:@"FormDelegateShouldAddCustomClass"];
 
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView _setInputDelegate:delegate.get()];
     [webView loadHTMLString:@"<input></input><select><option selected>foo</option><option>bar</option></select>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -90,6 +91,10 @@ TEST(WebKit, WKWebProcessPlugInWithoutRegisteredCustomClass)
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleFormDelegateProtocol)];
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+    [webView waitForNextPresentationUpdate];
+#endif
     [webView evaluateJavaScript:@"document.querySelector('input').focus()" completionHandler:nil];
 
     userObject = nil;
@@ -111,7 +116,7 @@ TEST(WebKit, WKWebProcessPlugInWithRegisteredCustomClass)
         configureJSCForTesting:NO]);
     [[configuration processPool] _setObject:@YES forBundleParameter:@"FormDelegateShouldAddCustomClass"];
 
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView _setInputDelegate:delegate.get()];
     [webView loadHTMLString:@"<input></input><select><option selected>foo</option><option>bar</option></select>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -120,6 +125,10 @@ TEST(WebKit, WKWebProcessPlugInWithRegisteredCustomClass)
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleFormDelegateProtocol)];
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+    [webView waitForNextPresentationUpdate];
+#endif
     [webView evaluateJavaScript:@"document.querySelector('input').focus()" completionHandler:nil];
     
     userObject = nil;
@@ -139,7 +148,7 @@ TEST(WebKit, WKWebProcessPlugInWithUnregisteredCustomClass)
         configureJSCForTesting:NO]);
     [[configuration processPool] _setObject:@YES forBundleParameter:@"FormDelegateShouldAddCustomClass"];
 
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView _setInputDelegate:delegate.get()];
     [webView loadHTMLString:@"<input></input><select><option selected>foo</option><option>bar</option></select>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -148,6 +157,10 @@ TEST(WebKit, WKWebProcessPlugInWithUnregisteredCustomClass)
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleFormDelegateProtocol)];
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+    [webView waitForNextPresentationUpdate];
+#endif
     [webView evaluateJavaScript:@"document.querySelector('input').focus()" completionHandler:nil];
 
     userObject = nil;

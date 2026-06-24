@@ -286,6 +286,21 @@
             "status": "non-standard",
             "user-agent-part": true
         },
+        "-internal-fallback-popup-menu": {
+            "user-agent-part": true
+        },
+        "-internal-fallback-popup-menu-group-label": {
+            "user-agent-part": true
+        },
+        "-internal-fallback-popup-menu-item": {
+            "user-agent-part": true
+        },
+        "-internal-fallback-popup-menu-item-selected": {
+            "user-agent-part": true
+        },
+        "-internal-fallback-popup-menu-separator": {
+            "user-agent-part": true
+        },
         "-webkit-color-swatch-wrapper": {
             "status": "non-standard",
             "user-agent-part": true

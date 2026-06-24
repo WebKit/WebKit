@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -748,10 +748,13 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
     float yPosition = height(glyphBuffer.initialAdvance());
 
     auto adjustForSyntheticBold = [&](auto index) {
+        auto& advance = glyphBuffer.advances(index)[0];
+        // Only embolden glyphs that advance the pen, like the "zero width lurkers" letter-spacing guard.
+        if (!width(advance))
+            return;
         auto glyph = glyphBuffer.glyphAt(index);
         auto syntheticBoldOffset = glyph == deletedGlyph ? 0 : glyphBuffer.fontAt(index).syntheticBoldOffset();
         m_runWidthSoFar += syntheticBoldOffset;
-        auto& advance = glyphBuffer.advances(index)[0];
         setWidth(advance, width(advance) + syntheticBoldOffset);
     };
 

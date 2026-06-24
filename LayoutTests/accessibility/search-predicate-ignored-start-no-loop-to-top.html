@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="main" id="main">
+    <div id="wrapper" role="presentation">
+        <button id="b1">Button 1</button>
+        <button id="b2">Button 2</button>
+        <img id="start" alt="Start" src="resources/cake.png">
+        <button id="b3">Button 3</button>
+        <button id="b4">Button 4</button>
+    </div>
+</div>
+
+<div role="group" aria-label="Deep container" id="deepMain">
+    <div id="deepWrapper" role="presentation">
+        <div role="group" aria-label="Group A" id="groupA">
+            <div role="group" aria-label="Deep group" id="deepGroup">
+                <button id="deepLast">Deep Last</button>
+            </div>
+        </div>
+        <img id="deepStart" alt="Deep Start" src="resources/cake.png">
+        <button id="deepTarget">Deep Target</button>
+    </div>
+</div>
+
+<div role="group" aria-label="End container" id="endMain">
+    <div id="endWrapper" role="presentation">
+        <button id="eb1">End Button 1</button>
+        <button id="eb2">End Button 2</button>
+        <img id="endStart" alt="End Start" src="resources/cake.png">
+    </div>
+</div>
+
+<script>
+var output = "This test ensures that a forward AnyType immediate-descendants search whose start element has become ignored resumes from the correct direct child of the container, instead of jumping back to the container's first child.\n\n";
+
+var main, startElement, next, nextDOMId;
+var deepMain, deepStartElement, deepNext, deepNextDOMId;
+var endMain, endStartElement, endNext, endNextDOMId;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    main = accessibilityController.accessibleElementById("main");
+    startElement = accessibilityController.accessibleElementById("start");
+    deepMain = accessibilityController.accessibleElementById("deepMain");
+    deepStartElement = accessibilityController.accessibleElementById("deepStart");
+    endMain = accessibilityController.accessibleElementById("endMain");
+    endStartElement = accessibilityController.accessibleElementById("endStart");
+
+    // Make each start element ignored while keeping its (render-backed) accessibility object alive, so it
+    // can no longer be located among its container's unignored children.
+    document.getElementById("start").setAttribute("aria-hidden", "true");
+    document.getElementById("deepStart").setAttribute("aria-hidden", "true");
+    document.getElementById("endStart").setAttribute("aria-hidden", "true");
+
+    setTimeout(async () => {
+        await waitFor(() => main.childrenCount === 4 && deepMain.childrenCount === 2 && endMain.childrenCount === 2);
+
+        // Shallow: the start sits between b2 and b3, both promoted direct children. The next immediate
+        // descendant is b3.
+        next = main.uiElementForSearchPredicate(startElement, true, "AXAnyTypeSearchKey", "", false, true);
+        nextDOMId = next ? next.domIdentifier : "null";
+        output += "\nShallow (start between two direct children): ";
+        output += expect("nextDOMId", "'b3'");
+
+        // Deep: the start's nearest preceding unignored element is several levels deep inside the first
+        // child (groupA), so recovery must map that deep neighbor up to the container's direct child and
+        // resume after it. The next immediate descendant is deepTarget.
+        deepNext = deepMain.uiElementForSearchPredicate(deepStartElement, true, "AXAnyTypeSearchKey", "", false, true);
+        deepNextDOMId = deepNext ? deepNext.domIdentifier : "null";
+        output += "\nDeep (start's predecessor nested several levels in the first child): ";
+        output += expect("deepNextDOMId", "'deepTarget'");
+
+        // End edge: the start is the last positional child, so nothing follows it. The search returns
+        // nothing -- it must not fall through to the first child.
+        endNext = endMain.uiElementForSearchPredicate(endStartElement, true, "AXAnyTypeSearchKey", "", false, true);
+        endNextDOMId = endNext ? endNext.domIdentifier : "null";
+        output += "\nEnd edge (nothing follows the start): ";
+        output += expect("endNextDOMId", "'null'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

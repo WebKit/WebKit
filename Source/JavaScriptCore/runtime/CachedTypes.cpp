@@ -37,11 +37,13 @@
 #include "ScopedArgumentsTable.h"
 #include "SourceCodeKey.h"
 #include "SourceProvider.h"
+#include "SymbolTableInlines.h"
 #include "UnlinkedEvalCodeBlock.h"
 #include "UnlinkedFunctionCodeBlock.h"
 #include "UnlinkedMetadataTableInlines.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
+#include "VariableEnvironmentInlines.h"
 #include <wtf/FileHandle.h>
 #include <wtf/InlineMap.h>
 #include <wtf/MallocSpan.h>
@@ -1390,6 +1392,9 @@ public:
 
     JSBigInt* decode(Decoder& decoder) const
     {
+        if (!m_length)
+            return decoder.vm().heapBigIntConstantZero.get();
+
         JSBigInt* bigInt = JSBigInt::tryCreateWithLength(decoder.vm(), m_length);
         RELEASE_ASSERT(bigInt);
         bigInt->setSign(m_sign);

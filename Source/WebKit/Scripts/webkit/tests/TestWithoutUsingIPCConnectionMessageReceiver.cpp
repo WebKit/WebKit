@@ -39,7 +39,6 @@ namespace WebKit {
 
 void TestWithoutUsingIPCConnection::didReceiveMessageWithReplyHandler(IPC::Decoder& decoder, Function<void(UniqueRef<IPC::Encoder>&&)>&& replyHandler)
 {
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument::name()) {
         IPC::handleMessageWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument>(decoder, this, &TestWithoutUsingIPCConnection::messageWithoutArgument);
         return;

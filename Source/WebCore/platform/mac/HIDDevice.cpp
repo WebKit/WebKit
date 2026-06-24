@@ -94,7 +94,8 @@ Vector<HIDElement> HIDDevice::uniqueInputElementsInDeviceTreeOrder() const
         switch (IOHIDElementGetType(element.get())) {
         case kIOHIDElementTypeCollection: {
             RetainPtr children = IOHIDElementGetChildren(element.get());
-            for (CFIndex i = CFArrayGetCount(children.get()) - 1; i >= 0; --i)
+            CFIndex childCount = children ? CFArrayGetCount(children.get()) : 0;
+            for (CFIndex i = childCount - 1; i >= 0; --i)
                 elementQueue.prepend(checked_cf_cast<IOHIDElementRef>(CFArrayGetValueAtIndex(children.get(), i)));
             continue;
         }

@@ -36,6 +36,6 @@ enum class CrossOriginEmbedderPolicyValue : bool {
     RequireCORP
 };
 
-constexpr std::array allCrossOriginEmbedderPolicyValues { CrossOriginEmbedderPolicyValue::UnsafeNone, CrossOriginEmbedderPolicyValue::RequireCORP };
+inline constexpr std::array allCrossOriginEmbedderPolicyValues { CrossOriginEmbedderPolicyValue::UnsafeNone, CrossOriginEmbedderPolicyValue::RequireCORP };
 
 } // namespace WebCore

@@ -115,7 +115,7 @@ die "can't locate x86_64-xlate.pl";
 $avx = 2;
 $shaext=1;	### set to zero if compiling for 1.0.1
 
-open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
+open OUT, "|-", $^X, $xlate, $flavour, $output;
 *STDOUT=*OUT;
 
 $ctx="%rdi";	# 1st arg

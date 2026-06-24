@@ -39,7 +39,7 @@ enum VerifyResult {
   FAILURE,
 };
 
-// Reads test data from |file_name| and runs VerifySignedData() over its
+// Reads test data from `file_name` and runs VerifySignedData() over its
 // inputs.
 //
 // If expected_result was SUCCESS then the test will only succeed if
@@ -201,6 +201,24 @@ TEST(VerifySignedDataTest, Ecdsa384) {
   // Using the regular policy both secp384r1 and secp256r1 should be accepted.
   RunTestCase(SUCCESS, "ecdsa-secp384r1-sha256.pem");
   RunTestCase(SUCCESS, "ecdsa-prime256v1-sha512.pem");
+}
+
+TEST(VerifySignedDataTest, Mldsa44) { RunTestCase(SUCCESS, "mldsa-44.pem"); }
+
+TEST(VerifySignedDataTest, Mldsa65) { RunTestCase(SUCCESS, "mldsa-65.pem"); }
+
+TEST(VerifySignedDataTest, Mldsa87) { RunTestCase(SUCCESS, "mldsa-87.pem"); }
+
+TEST(VerifySignedDataTest, Mldsa44NullParams) {
+  RunTestCase(FAILURE, "mldsa-44-spki-params-null.pem");
+}
+
+TEST(VerifySignedDataTest, Mldsa65NullParams) {
+  RunTestCase(FAILURE, "mldsa-65-spki-params-null.pem");
+}
+
+TEST(VerifySignedDataTest, Mldsa87NullParams) {
+  RunTestCase(FAILURE, "mldsa-87-spki-params-null.pem");
 }
 
 TEST(VerifySignedDataTestWithCache, TestVerifyCache) {

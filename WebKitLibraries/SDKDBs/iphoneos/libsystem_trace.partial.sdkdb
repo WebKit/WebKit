@@ -90,7 +90,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "os_activity_flag_t"},
     {"access": "public", "introduced": "8", "name": "os_activity_id_t"},

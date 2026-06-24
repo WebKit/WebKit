@@ -56,8 +56,12 @@ protected:
 
 class JSTestReadOnlySetLikeOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestReadOnlySetLikeOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestReadOnlySetLikeOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestReadOnlySetLike*)

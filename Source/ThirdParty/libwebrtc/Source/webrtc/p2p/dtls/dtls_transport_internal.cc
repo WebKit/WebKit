@@ -10,9 +10,13 @@
 
 #include "p2p/dtls/dtls_transport_internal.h"
 
+#include "api/task_queue/task_queue_base.h"
+#include "p2p/base/packet_transport_internal.h"
+
 namespace webrtc {
 
-DtlsTransportInternal::DtlsTransportInternal() = default;
+DtlsTransportInternal::DtlsTransportInternal(TaskQueueBase* attached_queue)
+    : PacketTransportInternal(attached_queue) {}
 
 DtlsTransportInternal::~DtlsTransportInternal() = default;
 

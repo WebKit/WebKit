@@ -19,9 +19,11 @@
 #include "../../internal.h"
 
 
-void CRYPTO_cbc128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
-                           const AES_KEY *key, uint8_t ivec[16],
-                           block128_f block) {
+using namespace bssl;
+
+void bssl::CRYPTO_cbc128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
+                                 const AES_KEY *key, uint8_t ivec[16],
+                                 block128_f block) {
   assert(key != nullptr && ivec != nullptr);
   if (len == 0) {
     // Avoid |ivec| == |iv| in the |memcpy| below, which is not legal in C.
@@ -60,9 +62,9 @@ void CRYPTO_cbc128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
   OPENSSL_memcpy(ivec, iv, 16);
 }
 
-void CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
-                           const AES_KEY *key, uint8_t ivec[16],
-                           block128_f block) {
+void bssl::CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
+                                 const AES_KEY *key, uint8_t ivec[16],
+                                 block128_f block) {
   assert(key != nullptr && ivec != nullptr);
   if (len == 0) {
     // Avoid |ivec| == |iv| in the |memcpy| below, which is not legal in C.

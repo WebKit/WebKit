@@ -28,7 +28,7 @@
 #include <WebCore/ScrollTypes.h>
 
 #include <wtf/CheckedPtr.h>
-#include <wtf/OptionSet.h>
+#include <wtf/EnumSet.h>
 
 namespace WebCore {
 
@@ -42,24 +42,19 @@ enum class HasVerticalOverflow : bool { No, Yes };
 // may need to layout the renderer again.
 class ScrollbarUpdateScope {
 public:
-    enum class ScrollbarChange : uint8_t {
-        AutoHorizontalScrollbarChanged = 1 << 0,
-        AutoVerticalScrollBarChanged = 1 << 1
-    };
-
-    ScrollbarUpdateScope(RenderLayerScrollableArea&, ScrollPosition originalScrollPosition, OptionSet<ScrollbarChange>, HasHorizontalOverflow, HasVerticalOverflow);
+    ScrollbarUpdateScope(RenderLayerScrollableArea&, ScrollPosition originalScrollPosition, EnumSet<ScrollbarOrientation> autoScrollbarChanges, HasHorizontalOverflow, HasVerticalOverflow);
     ~ScrollbarUpdateScope();
 
     ScrollbarUpdateScope(ScrollbarUpdateScope&&) = default;
     ScrollbarUpdateScope(const ScrollbarUpdateScope&) = delete;
     ScrollbarUpdateScope& operator=(const ScrollbarUpdateScope&) = delete;
 
-    const OptionSet<ScrollbarChange>& scrollbarChanges() const { return m_scrollbarChanges; }
+    const EnumSet<ScrollbarOrientation>& autoScrollbarChanges() const { return m_autoScrollbarChanges; }
 
 private:
     const CheckedRef<RenderLayerScrollableArea> m_renderLayerScrollableArea;
     const ScrollPosition m_originalScrollPosition;
-    const OptionSet<ScrollbarChange> m_scrollbarChanges;
+    const EnumSet<ScrollbarOrientation> m_autoScrollbarChanges;
     HasHorizontalOverflow m_hasHorizontalOverflow;
     HasVerticalOverflow m_hasVerticalOverflow;
 };

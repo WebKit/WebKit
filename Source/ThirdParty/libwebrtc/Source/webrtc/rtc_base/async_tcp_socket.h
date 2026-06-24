@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 
 #include "absl/base/nullability.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/buffer.h"
@@ -37,12 +37,15 @@ class AsyncTCPSocketBase : public AsyncPacketSocket {
   AsyncTCPSocketBase(const AsyncTCPSocketBase&) = delete;
   AsyncTCPSocketBase& operator=(const AsyncTCPSocketBase&) = delete;
 
+  using AsyncPacketSocket::Send;
+  using AsyncPacketSocket::SendTo;
+
   // Pure virtual methods to send and recv data.
   int Send(const void* pv,
            size_t cb,
            const AsyncSocketPacketOptions& options) override = 0;
   // Must return the number of bytes processed.
-  virtual size_t ProcessInput(ArrayView<const uint8_t> data) = 0;
+  virtual size_t ProcessInput(std::span<const uint8_t> data) = 0;
 
   SocketAddress GetLocalAddress() const override;
   SocketAddress GetRemoteAddress() const override;
@@ -89,10 +92,13 @@ class AsyncTCPSocket : public AsyncTCPSocketBase {
   AsyncTCPSocket(const AsyncTCPSocket&) = delete;
   AsyncTCPSocket& operator=(const AsyncTCPSocket&) = delete;
 
+  using AsyncTCPSocketBase::Send;
+  using AsyncTCPSocketBase::SendTo;
+
   int Send(const void* pv,
            size_t cb,
            const AsyncSocketPacketOptions& options) override;
-  size_t ProcessInput(ArrayView<const uint8_t>) override;
+  size_t ProcessInput(std::span<const uint8_t>) override;
 
  private:
   const Environment env_;

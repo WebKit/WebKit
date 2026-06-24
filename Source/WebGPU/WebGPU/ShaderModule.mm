@@ -510,6 +510,13 @@ bool ShaderModule::usesFragDepth(const String& entryPoint) const
     return false;
 }
 
+bool ShaderModule::usesPrimitiveIndexInInput(const String& entryPoint) const
+{
+    if (auto state = shaderModuleState(entryPoint))
+        return state->usesPrimitiveIndexInInput;
+    return false;
+}
+
 uint32_t ShaderModule::clipDistancesCount(const String& entryPoint) const
 {
     if (auto state = shaderModuleState(entryPoint))
@@ -546,6 +553,9 @@ void ShaderModule::populateFragmentInputs(const WGSL::Type& type, ShaderModule::
             case NumWorkgroups:
                 break;
             case Position:
+                break;
+            case PrimitiveIndex:
+                populateShaderModuleState(entryPointName).usesPrimitiveIndexInInput = true;
                 break;
             case SampleIndex:
                 populateShaderModuleState(entryPointName).usesSampleIndexInInput = true;
@@ -1164,6 +1174,8 @@ String wgpuAdapterFeatureName(WGPUFeatureName feature)
         return "float32-blendable"_s;
     case WGPUFeatureName_ClipDistances:
         return "clip-distances"_s;
+    case WGPUFeatureName_PrimitiveIndex:
+        return "primitive-index"_s;
     case WGPUFeatureName_DualSourceBlending:
         return "dual-source-blending"_s;
     case WGPUFeatureName_Float16Renderable:

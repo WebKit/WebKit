@@ -1,0 +1,14 @@
+Verifies that long-pressing non-editable text while a separate editable element is focused starts a selection and dismisses the keyboard (mirrors UIKit TextField behavior: focus and non-editable selection are mutually exclusive). Requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS keyboardWasShowing is true
+PASS focusedElementWasInput is true
+PASS getSelection().toString() became 'Hello'
+PASS keyboardDismissed is true
+PASS focusedElementBlurred is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello

@@ -88,7 +88,7 @@ SchemeMatchResult ContentSecurityPolicySource::schemeMatches(const URL& url) con
         return SchemeMatchResult::Match;
 
     // self-sources can always upgrade to secure protocols and side-grade insecure protocols. (§6.7.2.8 step 4 NOTE)
-    if (m_isSelfSource) {
+    if (m_isSelfSource && !scheme.isEmpty()) {
         if (urlScheme == "https"_s || urlScheme == "wss"_s) {
             if (scheme == "http"_s || scheme == "ws"_s)
                 return SchemeMatchResult::InsecureUpgradeMatch;

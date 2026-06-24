@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
 #include "modules/audio_processing/test/performance_timer.h"
@@ -31,8 +31,8 @@ namespace rnn_vad {
 namespace {
 
 void TestGatedRecurrentLayer(GatedRecurrentLayer& gru,
-                             ArrayView<const float> input_sequence,
-                             ArrayView<const float> expected_output_sequence) {
+                             std::span<const float> input_sequence,
+                             std::span<const float> expected_output_sequence) {
   const int input_sequence_length = CheckedDivExact(
       dchecked_cast<int>(input_sequence.size()), gru.input_size());
   const int output_sequence_length = CheckedDivExact(
@@ -44,10 +44,10 @@ void TestGatedRecurrentLayer(GatedRecurrentLayer& gru,
   for (int i = 0; i < input_sequence_length; ++i) {
     SCOPED_TRACE(i);
     gru.ComputeOutput(
-        input_sequence.subview(i * gru.input_size(), gru.input_size()));
+        input_sequence.subspan(i * gru.input_size(), gru.input_size()));
     const auto expected_output =
-        expected_output_sequence.subview(i * gru.size(), gru.size());
-    ExpectNearAbsolute(expected_output, gru, 3e-6f);
+        expected_output_sequence.subspan(i * gru.size(), gru.size());
+    ExpectNearAbsolute(expected_output, gru.output(), 3e-6f);
   }
 }
 
@@ -138,7 +138,7 @@ TEST_P(RnnGruParametrization, DISABLED_BenchmarkGatedRecurrentLayer) {
                           /*cpu_features=*/GetParam(),
                           /*layer_name=*/"GRU");
 
-  ArrayView<const float> input_sequence(gru_input_sequence);
+  std::span<const float> input_sequence(gru_input_sequence);
   ASSERT_EQ(input_sequence.size() % kInputLayerOutputSize,
             static_cast<size_t>(0));
   const int input_sequence_length =
@@ -150,7 +150,7 @@ TEST_P(RnnGruParametrization, DISABLED_BenchmarkGatedRecurrentLayer) {
     perf_timer.StartTimer();
     for (int i = 0; i < input_sequence_length; ++i) {
       gru.ComputeOutput(
-          input_sequence.subview(i * gru.input_size(), gru.input_size()));
+          input_sequence.subspan(i * gru.input_size(), gru.input_size()));
     }
     perf_timer.StopTimer();
   }

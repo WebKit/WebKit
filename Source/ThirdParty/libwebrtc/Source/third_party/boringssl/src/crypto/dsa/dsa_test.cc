@@ -118,14 +118,13 @@ static const uint8_t fips_sig_bad_length[] = {
 
 // fips_sig_bad_r is fips_sig with a bad r value.
 static const uint8_t fips_sig_bad_r[] = {
-    0x30, 0x2d, 0x02, 0x15, 0x00, 0x8c, 0xac, 0x1a, 0xb6, 0x64, 0x10,
-    0x43, 0x5c, 0xb7, 0x18, 0x1f, 0x95, 0xb1, 0x6a, 0xb9, 0x7c, 0x92,
-    0xb3, 0x41, 0xc0, 0x02, 0x14, 0x41, 0xe2, 0x34, 0x5f, 0x1f, 0x56,
-    0xdf, 0x24, 0x58, 0xf4, 0x26, 0xd1, 0x55, 0xb4, 0xba, 0x2d, 0xb6,
-    0xdc, 0xd8, 0xc8,
+    0x30, 0x2d, 0x02, 0x15, 0x00, 0x8c, 0xac, 0x1a, 0xb6, 0x64, 0x10, 0x43,
+    0x5c, 0xb7, 0x18, 0x1f, 0x95, 0xb1, 0x6a, 0xb9, 0x7c, 0x92, 0xb3, 0x41,
+    0xc0, 0x02, 0x14, 0x41, 0xe2, 0x34, 0x5f, 0x1f, 0x56, 0xdf, 0x24, 0x58,
+    0xf4, 0x26, 0xd1, 0x55, 0xb4, 0xba, 0x2d, 0xb6, 0xdc, 0xd8, 0xc8,
 };
 
-static bssl::UniquePtr<DSA> GetFIPSDSAGroup(void) {
+static bssl::UniquePtr<DSA> GetFIPSDSAGroup() {
   bssl::UniquePtr<DSA> dsa(DSA_new());
   if (!dsa) {
     return nullptr;
@@ -143,7 +142,7 @@ static bssl::UniquePtr<DSA> GetFIPSDSAGroup(void) {
   return dsa;
 }
 
-static bssl::UniquePtr<DSA> GetFIPSDSA(void) {
+static bssl::UniquePtr<DSA> GetFIPSDSA() {
   bssl::UniquePtr<DSA> dsa = GetFIPSDSAGroup();
   if (!dsa) {
     return nullptr;
@@ -231,6 +230,47 @@ TEST(DSATest, Verify) {
                        sizeof(fips_sig_bad_length), dsa.get()));
   EXPECT_EQ(0, DSA_verify(0, fips_digest, sizeof(fips_digest), fips_sig_bad_r,
                           sizeof(fips_sig_bad_r), dsa.get()));
+}
+
+TEST(DSATest, CheckSignature) {
+  bssl::UniquePtr<DSA> dsa = GetFIPSDSA();
+  ASSERT_TRUE(dsa);
+
+  int valid;
+
+  // Valid signature
+  valid = 42;
+  EXPECT_EQ(1, DSA_check_signature(&valid, fips_digest, sizeof(fips_digest),
+                                   fips_sig, sizeof(fips_sig), dsa.get()));
+  EXPECT_EQ(1, valid);
+
+  // Bad r (invalid signature, not error)
+  valid = 42;
+  EXPECT_EQ(1, DSA_check_signature(&valid, fips_digest, sizeof(fips_digest),
+                                   fips_sig_bad_r, sizeof(fips_sig_bad_r),
+                                   dsa.get()));
+  EXPECT_EQ(0, valid);
+
+  // Negative signature (error)
+  valid = 42;
+  EXPECT_EQ(0, DSA_check_signature(&valid, fips_digest, sizeof(fips_digest),
+                                   fips_sig_negative, sizeof(fips_sig_negative),
+                                   dsa.get()));
+  EXPECT_EQ(0, valid);
+
+  // Extra data (error)
+  valid = 42;
+  EXPECT_EQ(0, DSA_check_signature(&valid, fips_digest, sizeof(fips_digest),
+                                   fips_sig_extra, sizeof(fips_sig_extra),
+                                   dsa.get()));
+  EXPECT_EQ(0, valid);
+
+  // Bad length (error)
+  valid = 42;
+  EXPECT_EQ(0, DSA_check_signature(&valid, fips_digest, sizeof(fips_digest),
+                                   fips_sig_bad_length,
+                                   sizeof(fips_sig_bad_length), dsa.get()));
+  EXPECT_EQ(0, valid);
 }
 
 TEST(DSATest, InvalidGroup) {

@@ -1,0 +1,370 @@
+# Copyright (C) 2022-2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+#if ENABLE(APPLE_PAY)
+
+enum class WebCore::ApplePayPaymentTiming : uint8_t {
+    Immediate,
+#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+    Recurring,
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
+    Deferred,
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+    AutomaticReload,
+#endif
+};
+
+#endif // ENABLE(APPLE_PAY)
+
+#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+enum class WebCore::ApplePayRecurringPaymentDateUnit : uint8_t {
+    Year,
+    Month,
+    Day,
+    Hour,
+    Minute,
+};
+#endif // ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+struct WebCore::ApplePayRecurringPaymentRequest {
+    String paymentDescription
+    WebCore::ApplePayLineItem regularBilling
+    std::optional<WebCore::ApplePayLineItem> trialBilling
+    String billingAgreement
+    String managementURL
+    String tokenNotificationURL
+};
+#endif
+
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+struct WebCore::ApplePayPaymentTokenContext {
+    String merchantIdentifier
+    String externalIdentifier
+    String merchantName
+    String merchantDomain
+    String amount
+}
+#endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+struct WebCore::ApplePayDeferredPaymentRequest {
+    String billingAgreement
+    WebCore::ApplePayLineItem deferredBilling
+    WallTime freeCancellationDate
+    String freeCancellationDateTimeZone
+    String managementURL
+    String paymentDescription
+    String tokenNotificationURL
+};
+#endif
+
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+struct WebCore::ApplePayPaymentOrderDetails {
+    String orderTypeIdentifier
+    String orderIdentifier
+    String webServiceURL
+    String authenticationToken
+}
+#endif
+
+#if ENABLE(APPLE_PAY_AMS_UI) && ENABLE(PAYMENT_REQUEST)
+struct WebCore::ApplePayAMSUIRequest {
+    String engagementRequest
+}
+#endif
+
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+struct WebCore::ApplePayAutomaticReloadPaymentRequest {
+    String paymentDescription
+    WebCore::ApplePayLineItem automaticReloadBilling
+    String billingAgreement
+    String managementURL
+    String tokenNotificationURL
+}
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+struct WebCore::ApplePayDateComponents {
+    std::optional<unsigned> years;
+    std::optional<unsigned> months;
+    std::optional<unsigned> days;
+    std::optional<unsigned> hours;
+}
+
+struct WebCore::ApplePayDateComponentsRange {
+    WebCore::ApplePayDateComponents startDateComponents;
+    WebCore::ApplePayDateComponents endDateComponents;
+}
+#endif // ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+
+#if ENABLE(APPLE_PAY)
+struct WebCore::ApplePaySetupConfiguration {
+    String merchantIdentifier;
+    String referrerIdentifier;
+    String signature;
+    Vector<String> signedFields;
+};
+
+[Nested] enum class WebCore::ApplePayLineItem::Type : bool;
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+[Nested] enum class WebCore::ApplePayLineItem::DisbursementLineItemType : uint8_t {
+    Disbursement,
+    InstantFundsOutFee
+};
+#endif
+
+struct WebCore::ApplePayLineItem {
+    WebCore::ApplePayLineItem::Type type
+    String label
+    String amount
+    WebCore::ApplePayPaymentTiming paymentTiming
+#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+    WallTime recurringPaymentStartDate
+    WebCore::ApplePayRecurringPaymentDateUnit recurringPaymentIntervalUnit
+    unsigned recurringPaymentIntervalCount
+    WallTime recurringPaymentEndDate
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
+    WallTime deferredPaymentDate
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+    String automaticReloadPaymentThresholdAmount
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    std::optional<WebCore::ApplePayLineItem::DisbursementLineItemType> disbursementLineItemType
+#endif
+}
+
+struct WebCore::ApplePayShippingMethod {
+    String label
+    String detail
+    String amount
+    String identifier
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+    std::optional<WebCore::ApplePayDateComponentsRange> dateComponentsRange
+#endif
+#if ENABLE(APPLE_PAY_SELECTED_SHIPPING_METHOD)
+    bool selected
+#endif
+}
+
+[Nested] enum class WebCore::ApplePayError::Domain : uint8_t {
+    Disbursement
+};
+
+[RefCounted] class WebCore::ApplePayError {
+    WebCore::ApplePayErrorCode code()
+    std::optional<WebCore::ApplePayErrorContactField> contactField()
+    String message()
+    std::optional<WebCore::ApplePayError::Domain> domain();
+}
+
+enum class WebCore::ApplePayLogoStyle : bool
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayLogoSystemImage {
+    WebCore::ApplePayLogoStyle applePayLogoStyle()
+}
+
+struct WebCore::ApplePayDetailsUpdateBase {
+    WebCore::ApplePayLineItem newTotal;
+    Vector<WebCore::ApplePayLineItem> newLineItems;
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    std::optional<WebCore::ApplePayRecurringPaymentRequest> newRecurringPaymentRequest;
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    std::optional<WebCore::ApplePayAutomaticReloadPaymentRequest> newAutomaticReloadPaymentRequest;
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    std::optional<Vector<WebCore::ApplePayPaymentTokenContext>> newMultiTokenContexts;
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    std::optional<WebCore::ApplePayDeferredPaymentRequest> newDeferredPaymentRequest;
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    std::optional<WebCore::ApplePayDisbursementRequest> newDisbursementRequest;
+#endif
+}
+
+struct WebCore::ApplePayPaymentMethodUpdate : WebCore::ApplePayDetailsUpdateBase {
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    Vector<Ref<WebCore::ApplePayError>> errors;
+    Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
+#endif
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    String installmentGroupIdentifier;
+#endif
+};
+
+struct WebCore::ApplePayShippingContactUpdate : WebCore::ApplePayDetailsUpdateBase {
+    Vector<Ref<WebCore::ApplePayError>> errors;
+    Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
+};
+
+struct WebCore::ApplePayShippingMethodUpdate : WebCore::ApplePayDetailsUpdateBase {
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
+#endif
+};
+
+struct WebCore::ApplePayPaymentAuthorizationResult {
+    unsigned short status;
+    Vector<Ref<WebCore::ApplePayError>> errors;
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+    std::optional<WebCore::ApplePayPaymentOrderDetails> orderDetails;
+#endif
+}
+
+enum class WebCore::ApplePayErrorContactField : uint8_t {
+    PhoneNumber,
+    EmailAddress,
+    Name,
+    PhoneticName,
+    PostalAddress,
+    AddressLines,
+    SubLocality,
+    Locality,
+    PostalCode,
+    SubAdministrativeArea,
+    AdministrativeArea,
+    Country,
+    CountryCode,
+};
+
+header: <WebCore/ApplePayContactField.h>
+enum class WebCore::ApplePayContactField : uint8_t {
+    Email,
+    Name,
+    PhoneticName,
+    Phone,
+    PostalAddress,
+};
+
+enum class WebCore::ApplePayErrorCode : uint8_t {
+    Unknown,
+    ShippingContactInvalid,
+    BillingContactInvalid,
+    AddressUnserviceable,
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    CouponCodeInvalid,
+    CouponCodeExpired,
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    UnsupportedCard,
+    RecipientContactInvalid,
+#endif
+};
+#endif // ENABLE(APPLE_PAY)
+
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+struct WebCore::ApplePayDisbursementRequest {
+    std::optional<Vector<WebCore::ApplePayContactField>> requiredRecipientContactFields
+};
+#endif
+
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+header: <WebCore/ApplePayInstallmentConfigurationWebCore.h>
+[CustomHeader, CreateUsing=fromInstallmentConfiguration] struct WebCore::ApplePayInstallmentConfiguration {
+    WebCore::ApplePaySetupFeatureType featureType;
+    [NotSerialized] String merchandisingImageData;
+    String openToBuyThresholdAmount;
+    String bindingTotalAmount;
+    String currencyCode;
+    bool isInStorePurchase;
+    String merchantIdentifier;
+    String referrerIdentifier;
+    Vector<WebCore::ApplePayInstallmentItem> items;
+    String applicationMetadata;
+    WebCore::ApplePayInstallmentRetailChannel retailChannel;
+};
+header: <WebCore/PaymentInstallmentConfigurationWebCore.h>
+[CustomHeader] class WebCore::PaymentInstallmentConfiguration {
+    std::optional<WebCore::ApplePayInstallmentConfiguration> applePayInstallmentConfiguration()
+}
+struct WebCore::ApplePayInstallmentItem {
+    WebCore::ApplePayInstallmentItemType type;
+    String amount;
+    String currencyCode;
+    String programIdentifier;
+    String apr;
+    String programTerms;
+};
+enum class WebCore::ApplePaySetupFeatureType : bool
+enum class WebCore::ApplePayInstallmentItemType : uint8_t {
+    Generic,
+    Phone,
+    Pad,
+    Watch,
+    Mac,
+};
+enum class WebCore::ApplePayInstallmentRetailChannel : uint8_t {
+    Unknown,
+    App,
+    Web,
+    InStore,
+};
+#endif // ENABLE(APPLE_PAY_INSTALLMENTS)
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+struct WebCore::ApplePayCouponCodeUpdate : WebCore::ApplePayDetailsUpdateBase {
+    Vector<Ref<WebCore::ApplePayError>> errors;
+    Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
+};
+#endif
+
+#if ENABLE(APPLE_PAY)
+header: <WebCore/ApplePayButtonPart.h>
+enum class WebCore::ApplePayButtonType : uint8_t {
+    Plain,
+    Buy,
+    SetUp,
+    Donate,
+    CheckOut,
+    Book,
+    Subscribe,
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    Reload,
+    AddMoney,
+    TopUp,
+    Order,
+    Rent,
+    Support,
+    Contribute,
+    Tip,
+#endif
+}
+
+enum class WebCore::ApplePayButtonStyle : uint8_t {
+    White,
+    WhiteOutline,
+    Black,
+}
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonPart {
+    WebCore::ApplePayButtonType buttonType();
+    WebCore::ApplePayButtonStyle buttonStyle();
+    String locale();
+};
+#endif
+

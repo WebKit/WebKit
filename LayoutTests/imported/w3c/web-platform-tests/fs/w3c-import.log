@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-IndexedDB-deferred-deserialization.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-IndexedDB.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-buckets.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-getUniqueId.https.any.js

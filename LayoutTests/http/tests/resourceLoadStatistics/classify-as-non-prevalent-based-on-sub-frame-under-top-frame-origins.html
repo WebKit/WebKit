@@ -8,6 +8,7 @@
 </head>
 <body onload="run()">
 <script>
+    window.jsTestIsAsync = true;
     const hostUnderTest = "127.0.0.1:8000";
     const statisticsUrl = "http://" + hostUnderTest + "/temp";
     const topFrameOrigin1 = "http://127.0.0.2:8000/temp";
@@ -21,7 +22,7 @@
             testPassed("Host did not get classified as prevalent resource.");
 
         setEnableFeature(false, function() {
-            testRunner.notifyDone();
+            finishJSTest();
         });
     }
 
@@ -41,7 +42,6 @@
 
     function run() {
         if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
-            testRunner.waitUntilDone();
             setEnableFeature(true, runTestRunnerTest);
         }
     }

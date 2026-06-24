@@ -78,7 +78,7 @@
         } else {
             if (bits >= 1 && bits <= 30) {
                 return 0 | ((1 << bits) * Math.random());
-            } else {
+             } else {
                 var high = (0 | ((1 << (bits - 30)) * Math.random())) * (1 << 30);
                 var low = 0 | ((1 << 30) * Math.random());
                 return  high + low;
@@ -134,20 +134,36 @@
         } else {
             // push and then reverse to avoid O(n) unshift in the loop
             let segments = [];
-            for (let node = element;
-                 node.parentElement;
-                 node = node.parentElement) {
-                let segment = "*|" + node.localName;
-                let nth = Array.prototype.indexOf.call(node.parentElement.children, node) + 1;
+            let el = element;
+            while (el && el.parentElement) {
+                let segment = "*|" + el.localName;
+                let nth = Array.prototype.indexOf.call(el.parentNode.children, el) + 1;
                 segments.push(segment + ":nth-child(" + nth + ")");
+                el = el.parentElement;
             }
-            segments.push(":root");
+            if (element.getRootNode() == element.ownerDocument) {
+              segments.push(":root");
+            } else {
+              segments.push(":scope");
+            }
             segments.reverse();
 
             selector = segments.join(" > ");
         }
 
         return selector;
+    };
+
+    const get_selector_array = function(element) {
+        let selectors = [];
+        let current = element;
+
+        do {
+            selectors.push(get_selector(current));
+            current = current.getRootNode().host;
+        } while (current);
+
+        return selectors.reverse();
     };
 
     /**
@@ -160,7 +176,7 @@
         let cmd_id;
         const action_msg = {type: "action",
                             action: name,
-                            ...params};
+                            params};
         if (is_test_context()) {
             cmd_id = window.__wptrunner_message_queue.push(action_msg);
         } else {
@@ -207,14 +223,25 @@
         return create_action(name, context_params);
     };
 
-    const subscribe = function (params) {
-        return create_action("bidi.session.subscribe", {
+    /**
+     * @returns {Promise<(function(): Promise<void>)>}: callback for
+     * unsubscribing from the created subscription.
+     */
+    const subscribe = async function (params) {
+        const action_result = await create_action("bidi.session.subscribe", {
             // Default to subscribing to the window's events.
             contexts: [window],
             ...params
         });
-    };
+        const subscription_id = action_result["subscription"];
 
+        return async ()=>{
+            await create_action("bidi.session.unsubscribe", {
+                // Default to subscribing to the window's events.
+                subscriptions: [subscription_id]
+            });
+        }
+    };
     window.test_driver_internal.in_automation = true;
 
     window.test_driver_internal.bidi.bluetooth.handle_request_device_prompt =
@@ -235,6 +262,15 @@
         });
     }
 
+    window.test_driver_internal.bidi.bluetooth.disable_simulation =
+        function(params) {
+        return create_action('bidi.bluetooth.disable_simulation', {
+            // Default to the current window.
+            context: window,
+            ...params
+        });
+    }
+
     window.test_driver_internal.bidi.bluetooth.simulate_preconnected_peripheral =
         function(params) {
         return create_action('bidi.bluetooth.simulate_preconnected_peripheral', {
@@ -244,10 +280,73 @@
         });
     }
 
+    window.test_driver_internal.bidi.bluetooth.simulate_gatt_connection_response =
+        function(params) {
+        return create_action('bidi.bluetooth.simulate_gatt_connection_response', {
+            // Default to the current window.
+            context: window,
+            ...params
+        });
+    }
+
+    window.test_driver_internal.bidi.bluetooth.simulate_gatt_disconnection =
+        function(params) {
+        return create_action('bidi.bluetooth.simulate_gatt_disconnection', {
+            // Default to the current window.
+            context: window,
+            ...params
+        });
+    }
+
+    window.test_driver_internal.bidi.bluetooth.simulate_service =
+        function(params) {
+        return create_action('bidi.bluetooth.simulate_service', {
+            // Default to the current window.
+            context: window,
+            ...params
+        });
+    }
+
+    window.test_driver_internal.bidi.bluetooth.simulate_characteristic =
+        function(params) {
+        return create_action('bidi.bluetooth.simulate_characteristic', {
+            // Default to the current window.
+            context: window,
+            ...params
+        });
+    }
+
+    window.test_driver_internal.bidi.bluetooth.simulate_characteristic_response =
+        function(params) {
+        return create_action('bidi.bluetooth.simulate_characteristic_response', {
+            // Default to the current window.
+            context: window,
+            ...params
+        });
+    }
+
+    window.test_driver_internal.bidi.bluetooth.simulate_descriptor =
+        function(params) {
+        return create_action('bidi.bluetooth.simulate_descriptor', {
+            // Default to the current window.
+            context: window,
+            ...params
+        });
+    }
+
+    window.test_driver_internal.bidi.bluetooth.simulate_descriptor_response =
+        function(params) {
+        return create_action('bidi.bluetooth.simulate_descriptor_response', {
+            // Default to the current window.
+            context: window,
+            ...params
+        });
+    }
+
     window.test_driver_internal.bidi.bluetooth.request_device_prompt_updated.subscribe =
         function(params) {
         return subscribe(
-            {params, events: ['bluetooth.requestDevicePromptUpdated']})
+            {...params, events: ['bluetooth.requestDevicePromptUpdated']})
     };
 
     window.test_driver_internal.bidi.bluetooth.request_device_prompt_updated.on =
@@ -261,10 +360,112 @@
                     'bluetooth.requestDevicePromptUpdated', on_event);
     };
 
+    window.test_driver_internal.bidi.bluetooth.gatt_connection_attempted.subscribe =
+        function(params) {
+        return subscribe(
+            {...params, events: ['bluetooth.gattConnectionAttempted']})
+    };
+
+    window.test_driver_internal.bidi.bluetooth.gatt_connection_attempted.on =
+        function(callback) {
+        const on_event = (event) => {
+            callback(event.payload);
+        };
+        event_target.addEventListener(
+            'bluetooth.gattConnectionAttempted', on_event);
+        return () => event_target.removeEventListener(
+                    'bluetooth.gattConnectionAttempted', on_event);
+    };
+
+    window.test_driver_internal.bidi.bluetooth.characteristic_event_generated.subscribe =
+        function(params) {
+        return subscribe(
+            {...params, events: ['bluetooth.characteristicEventGenerated']})
+    };
+
+    window.test_driver_internal.bidi.bluetooth.characteristic_event_generated.on =
+        function(callback) {
+        const on_event = (event) => {
+            callback(event.payload);
+        };
+        event_target.addEventListener(
+            'bluetooth.characteristicEventGenerated', on_event);
+        return () => event_target.removeEventListener(
+                    'bluetooth.characteristicEventGenerated', on_event);
+    };
+
+    window.test_driver_internal.bidi.bluetooth.descriptor_event_generated.subscribe =
+        function(params) {
+        return subscribe(
+            {...params, events: ['bluetooth.descriptorEventGenerated']});
+    };
+
+    window.test_driver_internal.bidi.bluetooth.descriptor_event_generated.on =
+        function(callback) {
+        const on_event = (event) => {
+            callback(event.payload);
+        };
+        event_target.addEventListener(
+            'bluetooth.descriptorEventGenerated', on_event);
+        return () => event_target.removeEventListener(
+                    'bluetooth.descriptorEventGenerated', on_event);
+    };
+
+    window.test_driver_internal.bidi.emulation.set_geolocation_override =
+        function (params) {
+            if ('coordinates' in params && 'error' in params) {
+                throw new Error(
+                    "`coordinates` and `error` are mutually exclusive in set_geolocation_override");
+            }
+
+            return create_action("bidi.emulation.set_geolocation_override", {
+                // Default to the current window.
+                contexts: [window],
+                ...(params ?? {})
+            });
+        }
+
+    window.test_driver_internal.bidi.user_agent_client_hints = { 
+        set_client_hints_override: function(params) { 
+            return create_action("bidi.user_agent_client_hints.set_client_hints_override", { 
+                contexts: [window], 
+                ...(params ?? {}) 
+            }); 
+        } 
+    };
+
+    window.test_driver_internal.bidi.emulation.set_locale_override = function (params) {
+        return create_action("bidi.emulation.set_locale_override", {
+            // Default to the current window.
+            contexts: [window],
+            ...(params ?? {})
+        });
+    };
+
+    window.test_driver_internal.bidi.emulation.set_screen_orientation_override =
+        function (params) {
+            return create_action(
+                "bidi.emulation.set_screen_orientation_override", {
+                    // Default to the current window.
+                    contexts: [window],
+                    ...(params ?? {})
+                });
+        }
+
+    window.test_driver_internal.bidi.emulation.set_touch_override =
+        function (params) {
+            return create_action(
+                "bidi.emulation.set_touch_override", {
+                    // Default to the current window.
+                    contexts: [window],
+                    ...(params ?? {})
+                });
+        }
+
     window.test_driver_internal.bidi.log.entry_added.subscribe =
         function (params) {
             return subscribe({
-                params,
+                ...params,
                 events: ["log.entryAdded"]
             })
         };
@@ -294,9 +495,9 @@
     };
 
     window.test_driver_internal.click = function(element) {
-        const selector = get_selector(element);
+        const selectors = get_selector_array(element);
         const context = get_context(element);
-        return create_context_action("click", context, {selector});
+        return create_context_action("click", context, {selectors});
     };
 
     window.test_driver_internal.delete_all_cookies = function(context=null) {
@@ -307,16 +508,34 @@
         return create_context_action("get_all_cookies", context, {});
     };
 
+    window.test_driver_internal.install_web_extension = function (params, context=null) {
+        return create_context_action("install_web_extension", context, {...params});
+    }
+
+    window.test_driver_internal.uninstall_web_extension = function (extension_id, context=null) {
+        return create_context_action("uninstall_web_extension", context, {extension_id});
+    }
+
     window.test_driver_internal.get_computed_label = function(element) {
-        const selector = get_selector(element);
+        const selectors = get_selector_array(element);
         const context = get_context(element);
-        return create_context_action("get_computed_label", context, {selector});
+        return create_context_action("get_computed_label", context, {selectors});
     };
 
     window.test_driver_internal.get_computed_role = function(element) {
+        const selectors = get_selector_array(element);
+        const context = get_context(element);
+        return create_context_action("get_computed_role", context, {selectors});
+    };
+
+    window.test_driver_internal.get_accessibility_properties_for_element = function(element) {
         const selector = get_selector(element);
         const context = get_context(element);
-        return create_context_action("get_computed_role", context, {selector});
+        return create_context_action("get_accessibility_properties_for_element", context, {selector});
+    };
+
+    window.test_driver_internal.get_accessibility_properties_for_accessibility_node = function(accId, context=null) {
+        return create_context_action("get_accessibility_properties_for_accessibility_node", context, { accId });
     };
 
     window.test_driver_internal.get_named_cookie = function(name, context=null) {
@@ -336,9 +555,9 @@
     };
 
     window.test_driver_internal.send_keys = function(element, keys) {
-        const selector = get_selector(element);
+        const selectors = get_selector_array(element);
         const context = get_context(element);
-        return create_context_action("send_keys", context, {selector, keys});
+        return create_context_action("send_keys", context, {selectors, keys});
     };
 
     window.test_driver_internal.action_sequence = function(actions, context=null) {
@@ -348,7 +567,7 @@
                     // The origin of each action can only be an element or a string of a value "viewport" or "pointer".
                     if (action.type == "pointerMove" && typeof(action.origin) != 'string') {
                         let action_context = get_context(action.origin);
-                        action.origin = {selector: get_selector(action.origin)};
+                        action.origin = {selectors: get_selector_array(action.origin)};
                         if (context !== null && action_context !== context) {
                             throw new Error("Actions must be in a single context");
                         }
@@ -468,8 +687,8 @@
         return create_context_action("create_virtual_pressure_source", context, {source_type, metadata});
     };
 
-    window.test_driver_internal.update_virtual_pressure_source = function(source_type, sample, estimate, context=null) {
-        return create_context_action("update_virtual_pressure_source", context, {source_type, sample, estimate});
+    window.test_driver_internal.update_virtual_pressure_source = function(source_type, sample, own_contribution_estimate, context=null) {
+        return create_context_action("update_virtual_pressure_source", context, {source_type, sample, own_contribution_estimate});
     };
 
     window.test_driver_internal.remove_virtual_pressure_source = function(source_type, context=null) {
@@ -480,5 +699,39 @@
         owner, name, hashes, context=null) {
       return create_context_action(
           'set_protected_audience_k_anonymity', context, {owner, name, hashes});
+    };
+
+    window.test_driver_internal.set_display_features = function(features, context=null) {
+        return create_context_action("set_display_features", context, {features});
+    };
+
+    window.test_driver_internal.clear_display_features = function(context=null) {
+        return create_context_action("clear_display_features", context, {});
     }
+
+    window.test_driver_internal.get_global_privacy_control = function(context=null) {
+        return create_action("get_global_privacy_control", {});
+    };
+
+    window.test_driver_internal.set_global_privacy_control = function(gpc, context=null) {
+        return create_action("set_global_privacy_control", {gpc});
+    };
+  
+  
+    window.test_driver_internal.bidi.speculation.prefetch_status_updated.subscribe =
+        function(params) {
+        return subscribe(
+            {...params, events: ['speculation.prefetchStatusUpdated']})
+    };
+
+    window.test_driver_internal.bidi.speculation.prefetch_status_updated.on =
+        function(callback) {
+        const on_event = (event) => {
+            callback(event.payload);
+        };
+        event_target.addEventListener(
+            'speculation.prefetchStatusUpdated', on_event);
+        return () => event_target.removeEventListener(
+                    'speculation.prefetchStatusUpdated', on_event);
+    }; 
 })();

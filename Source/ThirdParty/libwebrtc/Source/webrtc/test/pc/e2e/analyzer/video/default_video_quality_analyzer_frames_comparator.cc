@@ -14,11 +14,11 @@
 #include <cstddef>
 #include <map>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/scoped_refptr.h"
 #include "api/units/time_delta.h"
@@ -308,7 +308,7 @@ void DefaultVideoQualityAnalyzerFramesComparator::EnsureStatsForStream(
 }
 
 void DefaultVideoQualityAnalyzerFramesComparator::RegisterParticipantInCall(
-    ArrayView<std::pair<InternalStatsKey, Timestamp>> stream_started_time,
+    std::span<std::pair<InternalStatsKey, Timestamp>> stream_started_time,
     Timestamp start_time) {
   MutexLock lock(&mutex_);
   RTC_CHECK_EQ(state_, State::kActive)

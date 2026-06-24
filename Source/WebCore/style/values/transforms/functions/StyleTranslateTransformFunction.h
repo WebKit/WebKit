@@ -25,8 +25,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
-#include <WebCore/StylePrimitiveNumericTypes.h>
+#include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleTransformFunctionBase.h>
 
 namespace WebCore {
@@ -43,13 +42,9 @@ namespace Style {
 // translateZ() = translateZ( <length> )
 // https://drafts.csswg.org/css-transforms-2/#funcdef-translatez
 
-struct TranslateLengthPercentage : LengthWrapperBase<LengthPercentage<>> {
-    using Base::Base;
-};
-
 class TranslateTransformFunction final : public TransformFunctionBase {
 public:
-    using LengthPercentage = Style::TranslateLengthPercentage;
+    using LengthPercentage = Style::LengthPercentage<>;
     using Length = Style::Length<>;
 
     static Ref<const TranslateTransformFunction> create(const LengthPercentage&, const LengthPercentage&, TransformFunctionBase::Type);
@@ -90,4 +85,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_STYLE_TRANSFORM_FUNCTION(WebCore::Style::TranslateTransformFunction, WebCore::Style::TransformFunctionBase::isTranslateTransformFunctionType)
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TranslateLengthPercentage)

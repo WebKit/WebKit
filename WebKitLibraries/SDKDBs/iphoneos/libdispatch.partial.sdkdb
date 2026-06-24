@@ -485,7 +485,7 @@
      "name": "OS_os_workgroup_parallel"
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "dispatch_autorelease_frequency_t"},
     {"access": "public", "name": "dispatch_block_flags_t"},

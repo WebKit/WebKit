@@ -30,11 +30,11 @@
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
-static bool navigationComplete;
+static bool jsNavigationComplete;
 static size_t alerts;
 static bool receivedBothAlerts;
-static RetainPtr<NSURL> firstURL;
-static RetainPtr<NSURL> secondURL;
+static RetainPtr<NSURL> jsNavigationFirstURL;
+static RetainPtr<NSURL> jsNavigationSecondURL;
 
 @interface JSNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 @end
@@ -43,12 +43,12 @@ static RetainPtr<NSURL> secondURL;
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    navigationComplete = true;
+    jsNavigationComplete = true;
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    if ([navigationAction.request.URL.absoluteString isEqualToString:[secondURL absoluteString]]) {
+    if ([navigationAction.request.URL.absoluteString isEqualToString:[jsNavigationSecondURL absoluteString]]) {
         [webView evaluateJavaScript:@"alert(document.location);" completionHandler:^(id, NSError *) {
             decisionHandler(WKNavigationActionPolicyAllow);
         }];
@@ -58,7 +58,7 @@ static RetainPtr<NSURL> secondURL;
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
-    if ([navigationResponse.response.URL.absoluteString isEqualToString:[secondURL absoluteString]]) {
+    if ([navigationResponse.response.URL.absoluteString isEqualToString:[jsNavigationSecondURL absoluteString]]) {
         [webView evaluateJavaScript:@"alert(document.location);" completionHandler:^(id, NSError *) {
             decisionHandler(WKNavigationResponsePolicyAllow);
         }];
@@ -68,7 +68,7 @@ static RetainPtr<NSURL> secondURL;
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    EXPECT_STREQ(message.UTF8String, [[firstURL absoluteString] UTF8String]);
+    EXPECT_STREQ(message.UTF8String, [[jsNavigationFirstURL absoluteString] UTF8String]);
     if (++alerts == 2)
         receivedBothAlerts = true;
     completionHandler();
@@ -78,17 +78,17 @@ static RetainPtr<NSURL> secondURL;
 
 TEST(WebKit, JavaScriptDuringNavigation)
 {
-    firstURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
-    secondURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
+    jsNavigationFirstURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    jsNavigationSecondURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
     
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);
     RetainPtr delegate = adoptNS([[JSNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:firstURL.get()]];
-    TestWebKitAPI::Util::run(&navigationComplete);
+    [webView loadRequest:[NSURLRequest requestWithURL:jsNavigationFirstURL.get()]];
+    TestWebKitAPI::Util::run(&jsNavigationComplete);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:secondURL.get()]];
+    [webView loadRequest:[NSURLRequest requestWithURL:jsNavigationSecondURL.get()]];
     TestWebKitAPI::Util::run(&receivedBothAlerts);
 }

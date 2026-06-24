@@ -40,7 +40,6 @@ rtc_library("audio") {
   ]
 
   deps = [
-    "../api:array_view",
     "../api:bitrate_allocation",
     "../api:call_api",
     "../api:field_trials_view",
@@ -48,6 +47,7 @@ rtc_library("audio") {
     "../api:function_view",
     "../api:make_ref_counted",
     "../api:rtc_error",
+    "../api:rtp_header_extension_id",
     "../api:rtp_headers",
     "../api:rtp_packet_info",
     "../api:rtp_parameters",
@@ -72,6 +72,7 @@ rtc_library("audio") {
     "../api/transport/rtp:rtp_source",
     "../api/units:data_rate",
     "../api/units:data_size",
+    "../api/units:frequency",
     "../api/units:time_delta",
     "../api/units:timestamp",
     "../call:audio_sender_interface",
@@ -118,6 +119,7 @@ rtc_library("audio") {
     "../system_wrappers",
     "../system_wrappers:metrics",
     "utility:audio_frame_operations",
+    "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/functional:any_invocable",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
@@ -165,7 +167,6 @@ if (rtc_include_tests) {
       ":audio",
       ":audio_end_to_end_test",
       ":channel_receive_unittest",
-      "../api:array_view",
       "../api:bitrate_allocation",
       "../api:call_api",
       "../api:field_trials",
@@ -181,6 +182,7 @@ if (rtc_include_tests) {
       "../api:mock_transformable_audio_frame",
       "../api:ref_count",
       "../api:rtc_error_matchers",
+      "../api:rtp_header_extension_id",
       "../api:rtp_headers",
       "../api:rtp_parameters",
       "../api:scoped_refptr",
@@ -252,7 +254,6 @@ if (rtc_include_tests) {
     sources = [ "channel_receive_unittest.cc" ]
     deps = [
       ":audio",
-      "../api:array_view",
       "../api:make_ref_counted",
       "../api:mock_frame_transformer",
       "../api:scoped_refptr",
@@ -266,6 +267,7 @@ if (rtc_include_tests) {
       "../api/units:timestamp",
       "../logging:mocks",
       "../modules/audio_device:mock_audio_device",
+      "../modules/pacing",
       "../modules/rtp_rtcp:ntp_time_util",
       "../modules/rtp_rtcp:rtp_rtcp_format",
       "../rtc_base:logging",

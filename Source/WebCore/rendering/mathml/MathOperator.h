@@ -36,14 +36,16 @@
 
 namespace WebCore {
 
-class RenderStyle;
+namespace Style {
+class ComputedStyle;
+}
 
 class MathOperator {
 public:
-    MathOperator();
+    MathOperator() { }
     enum class Type { NormalOperator, DisplayOperator, VerticalOperator, HorizontalOperator };
-    void setOperator(const RenderStyle&, char32_t baseCharacter, Type);
-    void reset(const RenderStyle&);
+    void setOperator(const Style::ComputedStyle&, char32_t baseCharacter, Type);
+    void reset(const Style::ComputedStyle&);
 
     LayoutUnit width() const { return m_width; }
     LayoutUnit maxPreferredWidth() const { return m_maxPreferredWidth; }
@@ -52,9 +54,9 @@ public:
     LayoutUnit italicCorrection() const { return m_italicCorrection; }
     LayoutUnit unstretchedSize() const { return m_unstretchedSize; }
 
-    void stretchTo(const RenderStyle&, LayoutUnit width);
+    void stretchTo(const Style::ComputedStyle&, LayoutUnit width);
 
-    void paint(const RenderStyle&, PaintInfo&, const LayoutPoint&, float deviceScaleFactor);
+    void paint(const Style::ComputedStyle&, PaintInfo&, const LayoutPoint&, float deviceScaleFactor);
 
 private:
     struct GlyphAssemblyData {
@@ -82,26 +84,26 @@ private:
     };
 
     LayoutUnit NODELETE stretchSize() const;
-    bool getGlyph(const RenderStyle&, char32_t character, GlyphData&) const;
-    bool getBaseGlyph(const RenderStyle& style, GlyphData& baseGlyph) const { return getGlyph(style, m_baseCharacter, baseGlyph); }
+    bool getGlyph(const Style::ComputedStyle&, char32_t character, GlyphData&) const;
+    bool getBaseGlyph(const Style::ComputedStyle&, GlyphData&);
     void setSizeVariant(const GlyphData&);
-    void setGlyphAssembly(const RenderStyle&, const GlyphAssemblyData&);
-    void getMathVariantsWithFallback(const RenderStyle&, bool isVertical, Vector<Glyph>&, Vector<OpenTypeMathData::AssemblyPart>&);
-    void calculateDisplayStyleLargeOperator(const RenderStyle&);
-    void calculateStretchyData(const RenderStyle&, bool calculateMaxPreferredWidth, LayoutUnit targetSize = 0_lu);
+    void setGlyphAssembly(const Style::ComputedStyle&, const GlyphAssemblyData&);
+    void getMathVariantsWithFallback(const Style::ComputedStyle&, bool isVertical, Vector<Glyph>&, Vector<OpenTypeMathData::AssemblyPart>&);
+    void calculateDisplayStyleLargeOperator(const Style::ComputedStyle&);
+    void calculateStretchyData(const Style::ComputedStyle&, bool calculateMaxPreferredWidth, LayoutUnit targetSize = 0_lu);
     bool NODELETE calculateGlyphAssemblyFallback(const Vector<OpenTypeMathData::AssemblyPart>&, GlyphAssemblyData&) const;
 
-    LayoutRect paintGlyph(const RenderStyle&, PaintInfo&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming);
-    void fillWithVerticalExtensionGlyph(const RenderStyle&, PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
-    void fillWithHorizontalExtensionGlyph(const RenderStyle&, PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
-    void paintVerticalGlyphAssembly(const RenderStyle&, PaintInfo&, const LayoutPoint&);
-    void paintHorizontalGlyphAssembly(const RenderStyle&, PaintInfo&, const LayoutPoint&);
+    LayoutRect paintGlyph(const Style::ComputedStyle&, PaintInfo&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming);
+    void fillWithVerticalExtensionGlyph(const Style::ComputedStyle&, PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
+    void fillWithHorizontalExtensionGlyph(const Style::ComputedStyle&, PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
+    void paintVerticalGlyphAssembly(const Style::ComputedStyle&, PaintInfo&, const LayoutPoint&);
+    void paintHorizontalGlyphAssembly(const Style::ComputedStyle&, PaintInfo&, const LayoutPoint&);
 
     char32_t m_baseCharacter { 0 };
     Type m_operatorType { Type::NormalOperator };
     StretchType m_stretchType { StretchType::Unstretched };
     union {
-        Glyph m_variantGlyph;
+        Glyph m_variantGlyph { 0 };
         GlyphAssemblyData m_assembly;
     };
     LayoutUnit m_maxPreferredWidth { 0 };
@@ -111,6 +113,7 @@ private:
     LayoutUnit m_italicCorrection { 0 };
     LayoutUnit m_unstretchedSize { 0 };
     float m_radicalVerticalScale { 1 };
+    bool m_baseGlyphMirroredByRTLM { false };
 };
 
 }

@@ -92,7 +92,7 @@ bool AppleColorFilter::inverseTransformColor(WebCore::Color& color) const
 
 // MARK: (AppleColorFilterValueList)
 
-auto ToCSS<AppleColorFilterValueList>::operator()(const AppleColorFilterValueList& value, const RenderStyle& style) -> CSS::AppleColorFilterValueList
+auto ToCSS<AppleColorFilterValueList>::operator()(const AppleColorFilterValueList& value, const Style::ComputedStyle& style) -> CSS::AppleColorFilterValueList
 {
     return CSS::AppleColorFilterValueList::map(value, [&](const auto& x) -> CSS::AppleColorFilterValue { return toCSS(x, style); });
 }
@@ -123,7 +123,7 @@ auto CSSValueConversion<AppleColorFilter>::operator()(BuilderState& state, const
     return toStyle(filter->filter(), state);
 }
 
-Ref<CSSValue> CSSValueCreation<AppleColorFilter>::operator()(CSSValuePool&, const RenderStyle& style, const AppleColorFilter& value)
+Ref<CSSValue> CSSValueCreation<AppleColorFilter>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const AppleColorFilter& value)
 {
     return CSSAppleColorFilterValue::create(toCSS(value, style));
 }
@@ -135,7 +135,7 @@ auto Blending<AppleColorFilter>::canBlend(const AppleColorFilter& from, const Ap
     return canBlendFilterLists(from.m_value, to.m_value, compositeOperation);
 }
 
-auto Blending<AppleColorFilter>::blend(const AppleColorFilter& from, const AppleColorFilter& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> AppleColorFilter
+auto Blending<AppleColorFilter>::blend(const AppleColorFilter& from, const AppleColorFilter& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> AppleColorFilter
 {
     auto blendedFilterList = blendFilterLists(from.m_value, to.m_value, fromStyle, toStyle, context);
 

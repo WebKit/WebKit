@@ -2406,6 +2406,11 @@ public:
         store64(dataTempRegister, address);
     }
 
+    void store64(TrustedImm32 imm, BaseIndex address)
+    {
+        store64(TrustedImm64(imm.m_value), address);
+    }
+
     void store64(TrustedImm64 imm, BaseIndex address)
     {
         if (!imm.m_value) {

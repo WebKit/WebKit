@@ -18,4 +18,5 @@ PASS importNode: pass options argument with value { selfOnly: false }
 PASS importNode: pass options argument with value { selfOnly: true }
 PASS importNode: pass options argument with value { customElementRegistry: scopedRegistry }
 PASS importNode: pass options argument with value { customElementRegistry: null }
+PASS importNode should use the provided fallback registry for null-registry descendants nested under non-null-registry ancestors
 

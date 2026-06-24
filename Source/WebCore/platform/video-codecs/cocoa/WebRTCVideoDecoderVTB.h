@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class VideoInfo;
 class WebRTCVideoDecoderVTBQueue;
 
 class WebRTCVideoDecoderVTB : public WebRTCVideoDecoder {
@@ -40,10 +41,10 @@ public:
     ~WebRTCVideoDecoderVTB();
 
 protected:
-    explicit WebRTCVideoDecoderVTB(WebRTCVideoDecoderCallback);
+    WebRTCVideoDecoderVTB(WebRTCVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride);
 
     int32_t decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data);
-    void setVideoFormat(RetainPtr<CMVideoFormatDescriptionRef>&&, uint8_t reorderSize = 0);
+    void setVideoInfo(Ref<VideoInfo>&&, uint8_t reorderSize = 0);
 
     uint16_t width() const { return m_width; }
     uint16_t height() const { return m_height; }
@@ -52,8 +53,12 @@ private:
     void flush() final;
     void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) override;
     void setFrameSize(uint16_t width, uint16_t height) final;
+    void colorSpaceOverrideChanged() final;
+
+    void updateFormat(const VideoInfo&);
 
     BlockPtr<void(CVPixelBufferRef, int64_t, int64_t, bool)> m_callback;
+    RefPtr<VideoInfo> m_videoInfo;
     RetainPtr<CMVideoFormatDescriptionRef> m_format;
     RefPtr<VideoDecoderVTB> m_decoder;
     RefPtr<WebRTCVideoDecoderVTBQueue> m_queue;

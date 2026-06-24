@@ -62,7 +62,7 @@ void PDFScrollingPresentationController::teardown()
 #endif
 }
 
-bool PDFScrollingPresentationController::supportsDisplayMode(PDFDisplayMode mode) const
+bool PDFScrollingPresentationController::supportsDisplayMode(PDFPluginDisplayMode mode) const
 {
     return isScrollingPDFDisplayMode(mode);
 }

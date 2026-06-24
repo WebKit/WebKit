@@ -43,4 +43,7 @@ PASS gFocusedDocument.activeElement.getAttribute("id") is "25"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "26"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "27"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

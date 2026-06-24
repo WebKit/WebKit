@@ -40,7 +40,9 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKRKEntity)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIntelligenceReplacementTextEffectCoordinator)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIntelligenceSmartReplyTextEffectCoordinator)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaSpatialVideoMetadata)
+#if HAVE(CORE_RE)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKStageModeInteractionDriver)
+#endif
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, CredentialUpdaterShim)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentRawRequestValidator);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKISO18013Request);

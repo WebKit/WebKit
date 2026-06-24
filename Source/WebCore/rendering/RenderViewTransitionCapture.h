@@ -34,7 +34,7 @@ class RenderViewTransitionCapture final : public RenderReplaced {
     WTF_MAKE_TZONE_ALLOCATED(RenderViewTransitionCapture);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderViewTransitionCapture);
 public:
-    RenderViewTransitionCapture(Type, Document&, RenderStyle&&, bool isRootElement);
+    RenderViewTransitionCapture(Type, Document&, Style::ComputedStyle&&, bool isRootElement);
     virtual ~RenderViewTransitionCapture();
 
     void setImage(RefPtr<ImageBuffer>);
@@ -43,7 +43,7 @@ public:
     void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
     void intrinsicSizeChanged() override;
 
-    void styleDidChange(Style::Difference, const RenderStyle*) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
 
     void layout() override;
 

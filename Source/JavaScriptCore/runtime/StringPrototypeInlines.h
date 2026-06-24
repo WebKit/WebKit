@@ -311,7 +311,7 @@ ALWAYS_INLINE String tryMakeReplacedString(const String& string, const String& r
             substituteBackreferencesSlow(builder, replacement, string, ovector, nullptr, dollarPos);
             if (builder.hasOverflowed()) [[unlikely]]
                 return { };
-            if (auto result = tryMakeString(StringView(string).substring(0, matchStart), builder.toString(), StringView(string).substring(matchEnd, string.length() - matchEnd)); !result.isNull()) [[likely]]
+            if (auto result = tryMakeString(StringView(string).substring(0, matchStart), StringView { builder }, StringView(string).substring(matchEnd, string.length() - matchEnd)); !result.isNull()) [[likely]]
                 return result;
         }
     }
@@ -855,6 +855,8 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearchThreeArgument
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, nullptr);
 
             auto string = jsString->value(globalObject);
+            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, nullptr);
+
             replacementsAre8Bit &= string->is8Bit();
             totalLength += string->length();
             totalLength += (start - lastIndex);

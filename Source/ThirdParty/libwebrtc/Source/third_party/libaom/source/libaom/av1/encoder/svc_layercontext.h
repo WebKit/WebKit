@@ -109,8 +109,6 @@ typedef struct SVC {
   int num_encoded_top_layer;
   int first_layer_denoise;
   YV12_BUFFER_CONFIG source_last_TL0;
-  int mi_cols_full_resoln;
-  int mi_rows_full_resoln;
   /*!\endcond */
 
   /*!

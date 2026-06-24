@@ -71,7 +71,6 @@ std::unique_ptr<LayerTreeHost> LayerTreeHost::create(WebPage& webPage)
 LayerTreeHost::LayerTreeHost(WebPage& webPage)
     : m_webPage(webPage)
     , m_sceneState(CoordinatedSceneState::create())
-    , m_skiaPaintingEngine(SkiaPaintingEngine::create())
 {
     {
         auto& rootLayer = m_sceneState->rootLayer();
@@ -88,6 +87,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     }
 
     m_compositor = ThreadedCompositor::create(webPage, *this, m_sceneState.get());
+    m_skiaPaintingEngine = SkiaPaintingEngine::create(m_compositor->threadSafeGrContext());
 #if ENABLE(DAMAGE_TRACKING)
     std::optional<OptionSet<ThreadedCompositor::DamagePropagationFlags>> damagePropagationFlags;
     const auto& settings = webPage.corePage()->settings();
@@ -98,7 +98,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
         if (settings.useDamagingInformationForCompositing())
             damagePropagationFlags->add(ThreadedCompositor::DamagePropagationFlags::UseForCompositing);
     }
-    m_compositor->setDamagePropagationFlags(damagePropagationFlags);
+    m_compositor->setDamagePropagationSettings(damagePropagationFlags, settings.damageRectangleThreshold());
 #endif
 }
 
@@ -352,6 +352,7 @@ void LayerTreeHost::requestComposition(CompositionReason reason)
 {
 #if ENABLE(SCROLLING_THREAD)
     if (ScrollingThread::isCurrentThread()) {
+        m_sceneState->flushPendingState();
         if (!m_compositionRequiredInScrollingThread)
             return;
         m_compositionRequiredInScrollingThread = false;
@@ -386,7 +387,7 @@ Ref<CoordinatedImageBackingStore> LayerTreeHost::imageBackingStore(Ref<NativeIma
 {
     auto nativeImageID = nativeImage->uniqueID();
     auto addResult = m_imageBackingStores.ensure(nativeImageID, [&] {
-        return CoordinatedImageBackingStore::create(WTF::move(nativeImage));
+        return CoordinatedImageBackingStore::create(WTF::move(nativeImage), m_compositor->threadSafeGrContext());
     });
     return addResult.iterator->value;
 }

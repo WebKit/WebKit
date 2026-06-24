@@ -28,8 +28,6 @@
 
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
-#include "StyleCalculationValue.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore {
@@ -46,11 +44,11 @@ auto CSSValueConversion<StrokeWidth>::operator()(BuilderState& state, const CSSV
         return 0_css_px;
 
     if (primitiveValue->isNumberOrInteger()) {
-        return StrokeWidthLength { StrokeWidthLength::Fixed {
+        return StrokeWidth::LengthPercentage { StrokeWidth::Fixed {
             toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value
         } };
     }
-    return toStyleFromCSSValue<StrokeWidthLength>(state, *primitiveValue);
+    return toStyleFromCSSValue<StrokeWidth::LengthPercentage>(state, *primitiveValue);
 }
 
 } // namespace Style

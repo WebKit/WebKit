@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/data_channel_event_observer_interface.h"
 #include "api/data_channel_interface.h"
 #include "api/priority.h"
@@ -75,6 +75,7 @@ class DataChannelController : public SctpDataChannelControllerInterface,
   void OnReadyToSend() override;
   void OnTransportClosed(RTCError error) override;
   void OnBufferedAmountLow(int channel_id) override;
+  void OnMaxMessageSize(int max_message_size) override;
 
   // Called as part of destroying the owning PeerConnection.
   void PrepareForShutdown();
@@ -154,7 +155,7 @@ class DataChannelController : public SctpDataChannelControllerInterface,
   BuildObserverMessage(
       StreamId sid,
       DataMessageType type,
-      ArrayView<const uint8_t> payload,
+      std::span<const uint8_t> payload,
       DataChannelEventObserverInterface::Message::Direction direction) const
       RTC_RUN_ON(network_thread());
 
@@ -175,6 +176,9 @@ class DataChannelController : public SctpDataChannelControllerInterface,
       DataChannelUsage::kNeverUsed;
 
   std::unique_ptr<DataChannelEventObserverInterface> event_observer_;
+
+  // Cached value of max-message-size.
+  std::optional<int> max_message_size_ RTC_GUARDED_BY(network_thread());
 
   // Owning PeerConnection.
   PeerConnectionInternal* const pc_;

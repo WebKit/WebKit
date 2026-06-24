@@ -31,6 +31,7 @@ TEST(CorruptionDetectionFrameSelectorSettingsTest, EnabledWithDefaults) {
   EXPECT_EQ(settings.low_overhead_upper_bound(), TimeDelta::Millis(500));
   EXPECT_EQ(settings.high_overhead_lower_bound(), TimeDelta::Millis(33));
   EXPECT_EQ(settings.high_overhead_upper_bound(), TimeDelta::Millis(5000));
+  EXPECT_FALSE(settings.use_asynchronous_evaluation());
 }
 
 TEST(CorruptionDetectionFrameSelectorSettingsTest, ParsesValues) {
@@ -60,6 +61,14 @@ TEST(CorruptionDetectionFrameSelectorSettingsTest, ValidationHighOverhead) {
       "high_overhead_lower_bound:100ms,high_overhead_upper_bound:10ms/");
   CorruptionDetectionFrameSelectorSettings settings(trials);
   EXPECT_FALSE(settings.is_enabled());
+}
+
+TEST(CorruptionDetectionFrameSelectorSettingsTest,
+     ParsesAsynchronousEvaluation) {
+  FieldTrials trials(
+      "WebRTC-CorruptionDetectionFrameSelector/asynchronous_evaluation:true/");
+  CorruptionDetectionFrameSelectorSettings settings(trials);
+  EXPECT_TRUE(settings.use_asynchronous_evaluation());
 }
 
 }  // namespace

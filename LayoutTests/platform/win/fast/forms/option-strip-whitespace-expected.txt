@@ -20,23 +20,23 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,188) size 280x19
           text run at (0,188) width 280: "Five Spaces (with leading/trailing whitespace): "
         RenderMenuList {SELECT} at (282,188) size 101x20 [bgcolor=#FFFFFF]
-          RenderSelectFallbackButton {DIV} at (4,2) size 76x16
-            RenderText at (0,0) size 76x16
+          RenderBlock {DIV} at (4,2) size 76x16
+            RenderText {#text} at (0,0) size 76x16
               text run at (0,0) width 76: "Five Spaces"
         RenderBR {BR} at (385,203) size 0x0
         RenderBR {BR} at (0,210) size 0x19
         RenderText {#text} at (0,232) size 266x19
           text run at (0,232) width 266: "Five Tabs (with leading/trailing whitespace): "
         RenderMenuList {SELECT} at (268,232) size 86x20 [bgcolor=#FFFFFF]
-          RenderSelectFallbackButton {DIV} at (4,2) size 61x16
-            RenderText at (0,0) size 61x16
+          RenderBlock {DIV} at (4,2) size 61x16
+            RenderText {#text} at (0,0) size 61x16
               text run at (0,0) width 61: "Five Tabs"
         RenderBR {BR} at (356,247) size 0x0
         RenderBR {BR} at (0,254) size 0x19
         RenderText {#text} at (0,276) size 121x19
           text run at (0,276) width 121: "Mixed Whitespace: "
         RenderMenuList {SELECT} at (123,276) size 86x20 [bgcolor=#FFFFFF]
-          RenderSelectFallbackButton {DIV} at (4,2) size 61x16
-            RenderText at (0,0) size 61x16
+          RenderBlock {DIV} at (4,2) size 61x16
+            RenderText {#text} at (0,0) size 61x16
               text run at (0,0) width 61: "Five Tabs"
         RenderText {#text} at (0,0) size 0x0

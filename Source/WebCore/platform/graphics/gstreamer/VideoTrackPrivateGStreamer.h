@@ -49,9 +49,9 @@ public:
         return adoptRef(*new VideoTrackPrivateGStreamer(WTF::move(player), index, WTF::move(pad), trackId));
     }
 
-    static Ref<VideoTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
+    static Ref<VideoTrackPrivateGStreamer> create(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstStream>&& stream)
     {
-        return adoptRef(*new VideoTrackPrivateGStreamer(WTF::move(player), index, stream));
+        return adoptRef(*new VideoTrackPrivateGStreamer(WTF::move(player), index, WTF::move(stream)));
     }
 
     Kind kind() const final;
@@ -78,7 +78,7 @@ protected:
 private:
     VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
     VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstPad>&&, TrackID);
-    VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GstStream*);
+    VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&&, unsigned index, GRefPtr<GstStream>&&);
 };
 
 } // namespace WebCore

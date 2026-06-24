@@ -266,10 +266,10 @@ public:
 
     WEBCORE_EXPORT FloatBoxExtent mainFrameObscuredContentInsets() const;
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
-    virtual float bannerViewHeight() const { return 0; }
-    virtual float bannerViewMaximumHeight() const { return 0; }
-    virtual bool hasBannerViewOverlay() const { return false; }
+#if HAVE(NSREFRESHCONTROLLER)
+    virtual float topScrollStretchForRefreshController() const { return 0; }
+    virtual float refreshControllerSnappingThreshold() const { return 0; }
+    virtual bool hasRefreshController() const { return false; }
 #endif
 
     virtual void triggerMainFrameRubberBandSnapBack() { }

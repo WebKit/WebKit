@@ -535,6 +535,10 @@ bool BackForwardCache::addIfCacheable(BackForwardFrameItemIdentifier identifier,
     if (isInBackForwardCache(identifier))
         return false;
 
+    // Bug 316458: no-LocalFrame pages null-deref on restore via
+    // loadDifferentDocumentItem; FrameLoader::commitProvisionalLoad gates this out.
+    ASSERT(page.hasAnyLocalFrame());
+
     auto cachedPage = trySuspendPage(page, ForceSuspension::No);
     if (!cachedPage)
         return false;
@@ -560,10 +564,9 @@ bool BackForwardCache::addIfCacheable(HistoryItem& item, Page* page)
     if (!page)
         return false;
 
-    // Same-site BFCache is supported when the page has no cross-site
-    // iframes. Cross-site iframes require UIProcess coordination for
-    // suspension which is not yet implemented for the in-process path.
-    if (page->settings().siteIsolationEnabled() && page->mainFrame().tree().hasRemoteFrameDescendant())
+    // Under Site Isolation, BFCache requires MultiProcessBackForwardCacheEnabled
+    // to keep iframe state consistent with the cached main frame.
+    if (page->settings().siteIsolationEnabled() && !page->settings().multiProcessBackForwardCacheEnabled())
         return false;
 
     if (!addIfCacheable(item.frameItemID(), *page, item.itemID()))
@@ -657,6 +660,17 @@ CachedPage* BackForwardCache::get(HistoryItem& item, Page* page)
         }
         return cachedPage.ptr();
     });
+}
+
+CachedPage* BackForwardCache::get(BackForwardFrameItemIdentifier identifier)
+{
+    auto it = m_cachedPageMap.find(identifier);
+    if (it == m_cachedPageMap.end())
+        return nullptr;
+    auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&it->value);
+    if (!cachedPage || (*cachedPage)->hasExpired())
+        return nullptr;
+    return cachedPage->ptr();
 }
 
 // Notify the LocalFrameLoaderClient before tearing down so the WebKit layer

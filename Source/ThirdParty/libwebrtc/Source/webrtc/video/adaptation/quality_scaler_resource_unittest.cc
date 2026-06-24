@@ -16,9 +16,9 @@
 #include "api/task_queue/task_queue_base.h"
 #include "call/adaptation/degradation_preference_provider.h"
 #include "call/adaptation/test/mock_resource_listener.h"
-#include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 
@@ -53,7 +53,7 @@ class QualityScalerResourceTest : public ::testing::Test {
   }
 
  protected:
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
   StrictMock<MockResourceListener> fake_resource_listener_;
   FakeDegradationPreferenceProvider degradation_preference_provider_;
   scoped_refptr<QualityScalerResource> quality_scaler_resource_;

@@ -123,7 +123,8 @@ public:
     void didReceiveScriptResponse(ResourceLoaderIdentifier) override;
     void willDestroyCachedResource(CachedResource&) override;
     void didCreateWebSocket(WebSocketChannelIdentifier, const URL& requestURL);
-    void willSendWebSocketHandshakeRequest(WebSocketChannelIdentifier, const ResourceRequest&);
+    void willSendWebSocketHandshakeRequest(WebSocketChannelIdentifier, ResourceRequest&);
+    void didSendWebSocketHandshakeRequest(WebSocketChannelIdentifier, const ResourceRequest&);
     void didReceiveWebSocketHandshakeResponse(WebSocketChannelIdentifier, const ResourceResponse&);
     void didCloseWebSocket(WebSocketChannelIdentifier);
     void didReceiveWebSocketFrame(WebSocketChannelIdentifier, const WebSocketFrame&);

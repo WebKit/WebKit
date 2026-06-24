@@ -60,6 +60,10 @@ function runTest(config,qualifier) {
                 var p = navigator.requestMediaKeySystemAccess(testspec.keysystem, getSimpleConfigurationForInitDataType(testspec.initDataType)).then(function(access) {
                     return access.createMediaKeys();
                 }).then(function(mediaKeys) {
+                    if (config.servercertificate)
+                        return mediaKeys.setServerCertificate(config.servercertificate).then(function() { return mediaKeys; });
+                    return mediaKeys;
+                }).then(function(mediaKeys) {
                     var mediaKeySession = mediaKeys.createSession("temporary");
                     return mediaKeySession.generateRequest(testspec.initDataType, testspec.initData);
                 });

@@ -67,4 +67,35 @@ ALWAYS_INLINE DeferTraps::~DeferTraps()
     m_traps.m_trapsDeferred = m_previousTrapsDeferred;
 }
 
+inline void VMTraps::notifyGrabAllLocks()
+{
+    if (needHandling(AsyncEvents))
+        invalidateCodeBlocksOnStack();
+}
+
+inline void VMTraps::setStackSoftLimit(void* newLimit)
+{
+    m_stack.setStackSoftLimit(newLimit);
+}
+
+inline void VMTraps::registerMirror(Mirror& mirror)
+{
+    m_stack.registerMirror(mirror);
+}
+
+inline void VMTraps::unregisterMirror(Mirror& mirror)
+{
+    m_stack.unregisterMirror(mirror);
+}
+
+inline void VMTraps::requestStop()
+{
+    m_stack.requestStop();
+}
+
+inline void VMTraps::cancelStop()
+{
+    m_stack.cancelStop();
+}
+
 } // namespace JSC

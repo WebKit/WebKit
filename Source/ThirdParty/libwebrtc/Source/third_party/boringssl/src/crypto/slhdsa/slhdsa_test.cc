@@ -26,9 +26,10 @@
 #include "../test/file_test.h"
 #include "../test/test_util.h"
 
+BSSL_NAMESPACE_BEGIN
 namespace {
 
-TEST(SLHDSATest, KeyGeneration) {
+TEST(SLHDSATest, KeyGenerationSHA2) {
   const uint8_t seed[3 * BCM_SLHDSA_SHA2_128S_N] = {0};
   const uint8_t expected_pub[] = {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -55,7 +56,43 @@ TEST(SLHDSATest, KeyGeneration) {
   EXPECT_EQ(Bytes(pub2), Bytes(expected_pub));
 }
 
-TEST(SLHDSATest, BasicSignVerify) {
+TEST(SLHDSATest, KeyGenerationSHAKE) {
+  const uint8_t seed[3 * BCM_SLHDSA_SHAKE_256F_N] = {0};
+  const uint8_t expected_pub[] = {
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7d,
+      0xb4, 0xc6, 0x2b, 0x72, 0xd7, 0x0a, 0xcf, 0x8b, 0x5e, 0xdb, 0x03,
+      0x8c, 0x22, 0x2f, 0x68, 0x64, 0x17, 0xb0, 0x8b, 0x15, 0x12, 0xcb,
+      0x4c, 0xa1, 0x22, 0x43, 0x90, 0xc8, 0x9b, 0x80, 0xcd,
+  };
+
+  const uint8_t expected_priv[] = {
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x7d, 0xb4, 0xc6, 0x2b, 0x72, 0xd7, 0x0a, 0xcf, 0x8b, 0x5e, 0xdb, 0x03,
+      0x8c, 0x22, 0x2f, 0x68, 0x64, 0x17, 0xb0, 0x8b, 0x15, 0x12, 0xcb, 0x4c,
+      0xa1, 0x22, 0x43, 0x90, 0xc8, 0x9b, 0x80, 0xcd,
+  };
+
+  uint8_t pub[SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES];
+  uint8_t priv[SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES];
+  BCM_slhdsa_shake_256f_generate_key_from_seed(pub, priv, seed);
+  EXPECT_EQ(Bytes(pub), Bytes(expected_pub));
+  EXPECT_EQ(Bytes(priv), Bytes(expected_priv));
+
+  uint8_t pub2[SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES];
+  SLHDSA_SHAKE_256F_public_from_private(pub2, priv);
+  EXPECT_EQ(Bytes(pub2), Bytes(expected_pub));
+}
+
+TEST(SLHDSATest, BasicSignVerifySHA2) {
   uint8_t pub[SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES];
   uint8_t priv[SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES];
   SLHDSA_SHA2_128S_generate_key(pub, priv);
@@ -82,7 +119,34 @@ TEST(SLHDSATest, BasicSignVerify) {
             1);
 }
 
-TEST(SLHDSATest, BasicNonstandardPrehashSignVerify) {
+TEST(SLHDSATest, BasicSignVerifySHAKE) {
+  uint8_t pub[SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES];
+  uint8_t priv[SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES];
+  SLHDSA_SHAKE_256F_generate_key(pub, priv);
+
+  uint8_t kMessage[] = {0x42};
+  uint8_t kContext[256] = {0};
+  std::vector<uint8_t> signature(SLHDSA_SHAKE_256F_SIGNATURE_BYTES);
+  ASSERT_TRUE(SLHDSA_SHAKE_256F_sign(signature.data(), priv, kMessage,
+                                     sizeof(kMessage), nullptr, 0));
+  EXPECT_EQ(SLHDSA_SHAKE_256F_verify(signature.data(), signature.size(), pub,
+                                     kMessage, sizeof(kMessage), nullptr, 0),
+            1);
+  EXPECT_EQ(SLHDSA_SHAKE_256F_verify(signature.data(), signature.size(), pub,
+                                     kMessage, sizeof(kMessage), kContext, 1),
+            0);
+  EXPECT_EQ(SLHDSA_SHAKE_256F_verify(signature.data(), signature.size(), pub,
+                                     kMessage, sizeof(kMessage), kContext, 256),
+            0);
+
+  ASSERT_TRUE(SLHDSA_SHAKE_256F_sign(signature.data(), priv, kMessage,
+                                     sizeof(kMessage), kContext, 1));
+  EXPECT_EQ(SLHDSA_SHAKE_256F_verify(signature.data(), signature.size(), pub,
+                                     kMessage, sizeof(kMessage), kContext, 1),
+            1);
+}
+
+TEST(SLHDSATest, BasicNonstandardPrehashSignVerifySHA2) {
   uint8_t pub[SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES];
   uint8_t priv[SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES];
   SLHDSA_SHA2_128S_generate_key(pub, priv);
@@ -121,65 +185,107 @@ TEST(SLHDSATest, BasicNonstandardPrehashSignVerify) {
       nullptr, 0));
 }
 
+template <size_t PUBLIC_KEY_BYTES, size_t PRIVATE_KEY_BYTES, size_t SEED_SIZE,
+          bcm_infallible (*GENERATE)(uint8_t *, uint8_t *, const uint8_t *)>
 static void NISTKeyGenerationFileTest(FileTest *t) {
   std::vector<uint8_t> seed, expected_pub, expected_priv;
   ASSERT_TRUE(t->GetBytes(&seed, "seed"));
-  ASSERT_EQ(seed.size(), 48u);
+  ASSERT_EQ(seed.size(), SEED_SIZE);
   ASSERT_TRUE(t->GetBytes(&expected_pub, "pub"));
   ASSERT_TRUE(t->GetBytes(&expected_priv, "priv"));
 
-  uint8_t pub[SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES];
-  uint8_t priv[SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES];
-  BCM_slhdsa_sha2_128s_generate_key_from_seed(pub, priv, seed.data());
+  uint8_t pub[PUBLIC_KEY_BYTES];
+  uint8_t priv[PRIVATE_KEY_BYTES];
+  GENERATE(pub, priv, seed.data());
 
   EXPECT_EQ(Bytes(pub), Bytes(expected_pub));
   EXPECT_EQ(Bytes(priv), Bytes(expected_priv));
 }
 
-TEST(SLHDSATest, NISTKeyGeneration) {
-  FileTestGTest("crypto/slhdsa/slhdsa_keygen.txt", NISTKeyGenerationFileTest);
+TEST(SLHDSATest, NISTKeyGenerationSHA2) {
+  FileTestGTest(
+      "crypto/slhdsa/slhdsa_sha2_128s_keygen.txt",
+      NISTKeyGenerationFileTest<SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES,
+                                SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES, 48u,
+                                BCM_slhdsa_sha2_128s_generate_key_from_seed>);
 }
 
+TEST(SLHDSATest, NISTKeyGenerationSHAKE) {
+  FileTestGTest(
+      "crypto/slhdsa/slhdsa_shake_256f_keygen.txt",
+      NISTKeyGenerationFileTest<SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES,
+                                SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES, 96u,
+                                BCM_slhdsa_shake_256f_generate_key_from_seed>);
+}
+
+template <size_t PRIVATE_KEY_BYTES, size_t ENTROPY_SIZE, size_t SIGNATURE_BYTES,
+          bcm_infallible (*SIGN)(uint8_t *, const uint8_t *, const uint8_t *,
+                                 const uint8_t *, size_t, const uint8_t *,
+                                 size_t, const uint8_t *)>
 static void NISTSignatureGenerationFileTest(FileTest *t) {
   std::vector<uint8_t> priv, entropy, msg, expected_sig;
   ASSERT_TRUE(t->GetBytes(&priv, "priv"));
-  ASSERT_EQ(priv.size(),
-            static_cast<size_t>(SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES));
+  ASSERT_EQ(priv.size(), static_cast<size_t>(PRIVATE_KEY_BYTES));
   ASSERT_TRUE(t->GetBytes(&entropy, "entropy"));
-  ASSERT_EQ(entropy.size(), static_cast<size_t>(BCM_SLHDSA_SHA2_128S_N));
+  ASSERT_EQ(entropy.size(), static_cast<size_t>(ENTROPY_SIZE));
   ASSERT_TRUE(t->GetBytes(&msg, "msg"));
   ASSERT_TRUE(t->GetBytes(&expected_sig, "sig"));
 
-  uint8_t sig[SLHDSA_SHA2_128S_SIGNATURE_BYTES];
-  BCM_slhdsa_sha2_128s_sign_internal(sig, priv.data(), nullptr, nullptr, 0,
-                                     msg.data(), msg.size(), entropy.data());
+  std::vector<uint8_t> sig(SIGNATURE_BYTES);
+  SIGN(sig.data(), priv.data(), nullptr, nullptr, 0, msg.data(), msg.size(),
+       entropy.data());
 
   EXPECT_EQ(Bytes(sig), Bytes(expected_sig));
 }
 
-TEST(SLHDSATest, NISTSignatureGeneration) {
-  FileTestGTest("crypto/slhdsa/slhdsa_siggen.txt",
-                NISTSignatureGenerationFileTest);
+TEST(SLHDSATest, NISTSignatureGenerationSHA2) {
+  FileTestGTest(
+      "crypto/slhdsa/slhdsa_sha2_128s_siggen.txt",
+      NISTSignatureGenerationFileTest<SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES,
+                                      BCM_SLHDSA_SHA2_128S_N,
+                                      SLHDSA_SHA2_128S_SIGNATURE_BYTES,
+                                      BCM_slhdsa_sha2_128s_sign_internal>);
 }
 
+TEST(SLHDSATest, NISTSignatureGenerationSHAKE) {
+  FileTestGTest(
+      "crypto/slhdsa/slhdsa_shake_256f_siggen.txt",
+      NISTSignatureGenerationFileTest<SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES,
+                                      BCM_SLHDSA_SHAKE_256F_N,
+                                      SLHDSA_SHAKE_256F_SIGNATURE_BYTES,
+                                      BCM_slhdsa_shake_256f_sign_internal>);
+}
+
+template <size_t PUBLIC_KEY_BYTES,
+          bcm_status (*VERIFY)(const uint8_t *, size_t, const uint8_t *,
+                               const uint8_t *, const uint8_t *, size_t,
+                               const uint8_t *, size_t)>
 static void NISTSignatureVerificationFileTest(FileTest *t) {
   std::vector<uint8_t> pub, msg, sig;
   std::string valid;
   ASSERT_TRUE(t->GetBytes(&pub, "pub"));
-  ASSERT_EQ(pub.size(), static_cast<size_t>(SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES));
+  ASSERT_EQ(pub.size(), PUBLIC_KEY_BYTES);
   ASSERT_TRUE(t->GetBytes(&msg, "msg"));
   ASSERT_TRUE(t->GetBytes(&sig, "sig"));
   ASSERT_TRUE(t->GetAttribute(&valid, "valid"));
 
-  int ok = bcm_success(BCM_slhdsa_sha2_128s_verify_internal(
-      sig.data(), sig.size(), pub.data(), nullptr, nullptr, 0, msg.data(),
-      msg.size()));
+  int ok = bcm_success(VERIFY(sig.data(), sig.size(), pub.data(), nullptr,
+                              nullptr, 0, msg.data(), msg.size()));
   EXPECT_EQ(ok, valid == "true");
 }
 
-TEST(SLHDSATest, NISTSignatureVerification) {
-  FileTestGTest("crypto/slhdsa/slhdsa_sigver.txt",
-                NISTSignatureVerificationFileTest);
+TEST(SLHDSATest, NISTSignatureVerificationSHA2) {
+  FileTestGTest(
+      "crypto/slhdsa/slhdsa_sha2_128s_sigver.txt",
+      NISTSignatureVerificationFileTest<SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES,
+                                        BCM_slhdsa_sha2_128s_verify_internal>);
+}
+
+TEST(SLHDSATest, NISTSignatureVerificationSHAKE) {
+  FileTestGTest(
+      "crypto/slhdsa/slhdsa_shake_256f_sigver.txt",
+      NISTSignatureVerificationFileTest<SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES,
+                                        BCM_slhdsa_shake_256f_verify_internal>);
 }
 
 static void NISTPrehashSignatureVerificationFileTest(FileTest *t) {
@@ -215,8 +321,8 @@ static void NISTPrehashSignatureVerificationFileTest(FileTest *t) {
   }
 }
 
-TEST(SLHDSATest, NISTPrehashSignatureVerification) {
-  FileTestGTest("crypto/slhdsa/slhdsa_prehash.txt",
+TEST(SLHDSATest, NISTPrehashSignatureVerificationSHA2) {
+  FileTestGTest("crypto/slhdsa/slhdsa_sha2_128s_prehash.txt",
                 NISTPrehashSignatureVerificationFileTest);
 }
 
@@ -229,6 +335,12 @@ TEST(SLHDSATest, NullptrArgumentsToCreate) {
   ASSERT_EQ(BCM_slhdsa_sha2_128s_generate_key_from_seed_fips(nullptr, nullptr,
                                                              nullptr),
             bcm_status::failure);
+  ASSERT_EQ(BCM_slhdsa_shake_256f_generate_key_fips(nullptr, nullptr),
+            bcm_status::failure);
+  ASSERT_EQ(BCM_slhdsa_shake_256f_generate_key_from_seed_fips(nullptr, nullptr,
+                                                              nullptr),
+            bcm_status::failure);
 }
 
 }  // namespace
+BSSL_NAMESPACE_END

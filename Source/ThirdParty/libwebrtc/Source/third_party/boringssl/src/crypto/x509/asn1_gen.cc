@@ -29,6 +29,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 // Although this file is in crypto/x509 for layering purposes, it emits
 // errors from the ASN.1 module for OpenSSL compatibility.
 
@@ -57,8 +59,8 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
 
 static int bitstr_cb(const char *elem, size_t len, void *bitstr);
 
-ASN1_TYPE *ASN1_generate_v3(const char *str, const X509V3_CTX *cnf) {
-  bssl::ScopedCBB cbb;
+ASN1_TYPE *bssl::ASN1_generate_v3(const char *str, const X509V3_CTX *cnf) {
+  ScopedCBB cbb;
   if (!CBB_init(cbb.get(), 0) ||  //
       !generate_v3(cbb.get(), str, cnf, /*tag=*/0, ASN1_GEN_FORMAT_ASCII,
                    /*depth=*/0)) {

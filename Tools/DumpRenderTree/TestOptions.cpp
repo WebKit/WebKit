@@ -204,6 +204,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
 
         { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::BoolTestRunner },
         { "dumpResourceLoadCallbacks", TestHeaderKeyType::BoolTestRunner },
+        { "dumpResourceResponseMIMETypes", TestHeaderKeyType::StringTestRunner },
         { "enableDragDestinationActionLoad", TestHeaderKeyType::BoolTestRunner },
         { "layerBackedWebView", TestHeaderKeyType::BoolTestRunner },
         { "useEphemeralSession", TestHeaderKeyType::BoolTestRunner },

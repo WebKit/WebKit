@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_SSL_ROOTS_H_
 #define RTC_BASE_SSL_ROOTS_H_
 
+#include <cstddef>
+
 // This file is the root certificates in C form.
 
 // It was generated at 2023-05-09T15:05:10+00:00 by the following script:

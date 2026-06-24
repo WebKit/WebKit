@@ -116,11 +116,7 @@ public:
     bool m_shouldContentSniff;
     bool m_failsTAOCheck { false };
     bool m_hasCrossOriginRedirect { false };
-    bool m_isCrossOrigin { false };
     bool m_isMainFrameNavigation { false };
-#if PLATFORM(COCOA)
-    bool m_startWhenScheduled { false };
-#endif
 };
 
 } // namespace WebCore

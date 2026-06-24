@@ -346,6 +346,8 @@ void JSTestDomainSecurity::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestDomainSecurityOwner::JSTestDomainSecurityOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestDomainSecurityOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -358,7 +360,7 @@ void JSTestDomainSecurityOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestDomainSecurity = static_cast<JSTestDomainSecurity*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestDomainSecurity->wrapped()).ptr(), jsTestDomainSecurity);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestDomainSecurity->wrapped(), jsTestDomainSecurity);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

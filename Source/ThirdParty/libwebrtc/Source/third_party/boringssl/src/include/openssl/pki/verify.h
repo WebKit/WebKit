@@ -23,15 +23,15 @@ class OPENSSL_EXPORT VerifyTrustStore {
 
   ~VerifyTrustStore();
 
-  // FromDER returns a |TrustStore| derived from interpreting the |der_certs| as
+  // FromDER returns a `TrustStore` derived from interpreting the `der_certs` as
   // a bunch of DER-encoded certs, concatenated. In the event of a failure nullptr
-  // e is returned and a diagnostic string is placed in |out_diagnostic|
+  // e is returned and a diagnostic string is placed in `out_diagnostic`
   static std::unique_ptr<VerifyTrustStore> FromDER(
       std::string_view der_certs, std::string *out_diagnostic);
 
-  // FromDER returns a |TrustStore| consisting of the supplied DER-encoded
-  // certs in |der_certs|. In the event of a failure nullptr is returned and a
-  // diagnostic string is placed in |out_diagnostic|
+  // FromDER returns a `TrustStore` consisting of the supplied DER-encoded
+  // certs in `der_certs`. In the event of a failure nullptr is returned and a
+  // diagnostic string is placed in `out_diagnostic`
   static std::unique_ptr<VerifyTrustStore> FromDER(
       const std::vector<std::string_view> &der_certs,
       std::string *out_diagnostic);
@@ -44,9 +44,9 @@ class OPENSSL_EXPORT CertPool {
   CertPool &operator=(const CertPool &) = delete;
   virtual ~CertPool();
 
-  // FromCerts returns a |CertPool| consisting of the supplied DER-encoded
-  // certs in |der_certs|. In the event of a failure nullptr is returned and a
-  // diagnostic string is placed in |out_diagnostic|
+  // FromCerts returns a `CertPool` consisting of the supplied DER-encoded
+  // certs in `der_certs`. In the event of a failure nullptr is returned and a
+  // diagnostic string is placed in `out_diagnostic`
   static std::unique_ptr<CertPool> FromCerts(
       const std::vector<std::string_view> &der_certs,
       std::string *out_diagnostic);
@@ -103,14 +103,14 @@ class OPENSSL_EXPORT CertificateVerifyOptions {
   // will try to append an intermediate to a potential path. This bounds the
   // amount of time that a verification attempt can take, at the risk of
   // rejecting cases that would be solved if only more effort were used.
-  uint32_t max_iteration_count = 0;
+  uint32_t max_iteration_count = 20;
 
   // Sets an optional deadline for completing path building. It defaults
-  // to std::chrono::time_point::max() if it not set. If |deadline| has a
+  // to std::chrono::time_point::max() if it not set. If `deadline` has a
   // value that has passed based on comparison to
   // std::chrono::steady_clock::now(), and path building has not completed,
   // path building will stop. Note that this is not a hard limit, there is no
-  // guarantee how far past |deadline| time will be when path building is
+  // guarantee how far past `deadline` time will be when path building is
   // aborted.
   std::optional<std::chrono::time_point<std::chrono::steady_clock>> deadline;
 
@@ -151,19 +151,19 @@ class OPENSSL_EXPORT CertificateVerifyStatus {
   size_t max_depth_seen_ = 0;
 };
 
-// Verify verifies |opts.leaf_cert| using the other values in |opts|. It
+// Verify verifies `opts.leaf_cert` using the other values in `opts`. It
 // returns either an error, or else a validated chain from leaf to root.
 //
-// In the event of an error return, |out_error| will be updated with information
-// about the error.  It may be |nullptr|.
+// In the event of an error return, `out_error` will be updated with information
+// about the error.  It may be `nullptr`.
 //
-// Status information about the verification will be returned in |out_status|.
-// It may be |nullptr|.
+// Status information about the verification will be returned in `out_status`.
+// It may be `nullptr`.
 OPENSSL_EXPORT std::optional<std::vector<std::string>> CertificateVerify(
     const CertificateVerifyOptions &opts, VerifyError *out_error = nullptr,
     CertificateVerifyStatus *out_status = nullptr);
 
-// VerifyAllPaths verifies |opts.leaf_cert| using the other values in |opts|,
+// VerifyAllPaths verifies `opts.leaf_cert` using the other values in `opts`,
 // and returns all possible valid chains from the leaf to a root. If no chains
 // exist, it returns an error.
 OPENSSL_EXPORT std::optional<std::vector<std::vector<std::string>>>

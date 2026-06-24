@@ -15,11 +15,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
@@ -27,6 +27,7 @@
 #include "api/frame_transformer_factory.h"
 #include "api/frame_transformer_interface.h"
 #include "api/make_ref_counted.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_base.h"
@@ -68,11 +69,11 @@
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/rate_limiter.h"
-#include "rtc_base/thread.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
@@ -86,24 +87,23 @@ using ::testing::ElementsAreArray;
 using ::testing::IsEmpty;
 using ::testing::NiceMock;
 using ::testing::Not;
+using ::testing::Optional;
 using ::testing::ReturnArg;
 using ::testing::SaveArg;
 using ::testing::SizeIs;
 using ::testing::WithArgs;
 
-enum : int {  // The first valid value is 1.
-  kAbsoluteSendTimeExtensionId = 1,
-  kGenericDescriptorId,
-  kDependencyDescriptorId,
-  kTransmissionTimeOffsetExtensionId,
-  kTransportSequenceNumberExtensionId,
-  kVideoRotationExtensionId,
-  kVideoTimingExtensionId,
-  kAbsoluteCaptureTimeExtensionId,
-  kPlayoutDelayExtensionId,
-  kVideoLayersAllocationExtensionId,
-  kCorruptionDetectionExtensionId,
-};
+constexpr RtpHeaderExtensionId kAbsoluteSendTimeExtensionId(1);
+constexpr RtpHeaderExtensionId kGenericDescriptorId(2);
+constexpr RtpHeaderExtensionId kDependencyDescriptorId(3);
+constexpr RtpHeaderExtensionId kTransmissionTimeOffsetExtensionId(4);
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(5);
+constexpr RtpHeaderExtensionId kVideoRotationExtensionId(6);
+constexpr RtpHeaderExtensionId kVideoTimingExtensionId(7);
+constexpr RtpHeaderExtensionId kAbsoluteCaptureTimeExtensionId(8);
+constexpr RtpHeaderExtensionId kPlayoutDelayExtensionId(9);
+constexpr RtpHeaderExtensionId kVideoLayersAllocationExtensionId(10);
+constexpr RtpHeaderExtensionId kCorruptionDetectionExtensionId(11);
 
 constexpr int kPayloadType = 100;
 constexpr VideoCodecType kType = VideoCodecType::kVideoCodecGeneric;
@@ -141,13 +141,13 @@ class LoopbackTransportTest : public Transport {
         kCorruptionDetectionExtensionId);
   }
 
-  bool SendRtp(ArrayView<const uint8_t> data,
+  bool SendRtp(std::span<const uint8_t> data,
                const PacketOptions& /* options */) override {
     sent_packets_.push_back(RtpPacketReceived(&receivers_extensions_));
     EXPECT_TRUE(sent_packets_.back().Parse(data));
     return true;
   }
-  bool SendRtcp(ArrayView<const uint8_t> /* data */,
+  bool SendRtcp(std::span<const uint8_t> /* data */,
                 const PacketOptions& /* options */) override {
     return false;
   }
@@ -213,7 +213,7 @@ class RtpSenderVideoTest : public ::testing::Test {
       int version);
 
  protected:
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
   SimulatedClock fake_clock_;
   const Environment env_;
   LoopbackTransportTest transport_;
@@ -467,7 +467,7 @@ TEST_F(RtpSenderVideoTest, RetransmissionTypesVP8HigherLayers) {
   header.codec = kVideoCodecVP8;
 
   auto& vp8_header = header.video_type_header.emplace<RTPVideoHeaderVP8>();
-  for (int tid = 1; tid <= kMaxTemporalStreams; ++tid) {
+  for (size_t tid = 1; tid <= kMaxTemporalStreams; ++tid) {
     vp8_header.temporalIdx = tid;
 
     EXPECT_FALSE(rtp_sender_video_->AllowRetransmission(
@@ -487,7 +487,7 @@ TEST_F(RtpSenderVideoTest, RetransmissionTypesVP9) {
   header.codec = kVideoCodecVP9;
 
   auto& vp9_header = header.video_type_header.emplace<RTPVideoHeaderVP9>();
-  for (int tid = 1; tid <= kMaxTemporalStreams; ++tid) {
+  for (size_t tid = 1; tid <= kMaxTemporalStreams; ++tid) {
     vp9_header.temporal_idx = tid;
 
     EXPECT_FALSE(rtp_sender_video_->AllowRetransmission(
@@ -591,10 +591,14 @@ TEST_F(RtpSenderVideoTest,
   constexpr size_t kMaxPacketSize = 1'000;
 
   rtp_module_->SetMaxRtpPacketSize(kMaxPacketSize);
-  rtp_module_->RegisterRtpHeaderExtension(RtpMid::Uri(), 1);
-  rtp_module_->RegisterRtpHeaderExtension(RtpStreamId::Uri(), 2);
-  rtp_module_->RegisterRtpHeaderExtension(RepairedRtpStreamId::Uri(), 3);
-  rtp_module_->RegisterRtpHeaderExtension(AbsoluteSendTime::Uri(), 4);
+  rtp_module_->RegisterRtpHeaderExtension(RtpMid::Uri(),
+                                          RtpHeaderExtensionId(1));
+  rtp_module_->RegisterRtpHeaderExtension(RtpStreamId::Uri(),
+                                          RtpHeaderExtensionId(2));
+  rtp_module_->RegisterRtpHeaderExtension(RepairedRtpStreamId::Uri(),
+                                          RtpHeaderExtensionId(3));
+  rtp_module_->RegisterRtpHeaderExtension(AbsoluteSendTime::Uri(),
+                                          RtpHeaderExtensionId(4));
   rtp_module_->SetMid("long_mid");
   rtp_module_->SetRtxSendPayloadType(kRtxPayloadId, kMediaPayloadId);
   rtp_module_->SetStorePacketsStatus(/*enable=*/true, 10);
@@ -626,7 +630,7 @@ TEST_F(RtpSenderVideoTest,
   // when rtx packet barely fit.
   for (size_t frame_size = 800; frame_size < kMaxPacketSize; ++frame_size) {
     SCOPED_TRACE(frame_size);
-    ArrayView<const uint8_t> payload(kPayload, frame_size);
+    std::span<const uint8_t> payload(kPayload, frame_size);
 
     EXPECT_TRUE(rtp_sender_video_->SendVideo(
         kMediaPayloadId, /*codec_type=*/kVideoCodecVP8, /*rtp_timestamp=*/0,
@@ -929,7 +933,7 @@ TEST_F(RtpSenderVideoTest,
   ON_CALL(*encryptor, GetMaxCiphertextByteSize).WillByDefault(ReturnArg<1>());
   ON_CALL(*encryptor, Encrypt)
       .WillByDefault(WithArgs<3, 5>(
-          [](ArrayView<const uint8_t> frame, size_t* bytes_written) {
+          [](std::span<const uint8_t> frame, size_t* bytes_written) {
             *bytes_written = frame.size();
             return 0;
           }));
@@ -1504,7 +1508,7 @@ TEST_F(RtpSenderVideoTest, SendGenericVideo) {
       kPayloadTypeGeneric, kCodecType, 1234, fake_clock_.CurrentTime(),
       kPayload, sizeof(kPayload), video_header, TimeDelta::PlusInfinity(), {}));
 
-  ArrayView<const uint8_t> sent_payload =
+  std::span<const uint8_t> sent_payload =
       transport_.last_sent_packet().payload();
   uint8_t generic_header = sent_payload[0];
   EXPECT_TRUE(generic_header & RtpFormatVideoGeneric::kKeyFrameBit);
@@ -1543,7 +1547,7 @@ TEST_F(RtpSenderVideoRawPacketizationTest, SendRawVideo) {
       fake_clock_.CurrentTime(), kPayload, sizeof(kPayload), video_header,
       TimeDelta::PlusInfinity(), {}));
 
-  ArrayView<const uint8_t> sent_payload =
+  std::span<const uint8_t> sent_payload =
       transport_.last_sent_packet().payload();
   EXPECT_THAT(sent_payload, ElementsAreArray(kPayload));
 }
@@ -1826,7 +1830,7 @@ TEST_F(RtpSenderVideoWithFrameTransformerTest,
             EXPECT_EQ(metadata.GetFrameId(), 10);
             EXPECT_EQ(metadata.GetTemporalIndex(), 3);
             EXPECT_EQ(metadata.GetSpatialIndex(), 2);
-            EXPECT_THAT(metadata.GetFrameDependencies(), ElementsAre(5));
+            EXPECT_THAT(metadata.GetDependencies(), Optional(ElementsAre(5)));
             EXPECT_THAT(metadata.GetDecodeTargetIndications(),
                         ElementsAre(DecodeTargetIndication::kSwitch));
           });

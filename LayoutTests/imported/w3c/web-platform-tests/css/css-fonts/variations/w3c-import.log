@@ -55,9 +55,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-variable-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-variable-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-variable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-rvrn-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-rvrn-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-rvrn-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-rvrn-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-rvrn.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-warp-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-warp-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-warp-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-warp-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-avar2-warp.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-box-font-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-box-font-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-box-font.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-avar2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-avar2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-avar2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-m2b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-m2b-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-m2b.html
@@ -70,4 +83,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/w3c-import.log

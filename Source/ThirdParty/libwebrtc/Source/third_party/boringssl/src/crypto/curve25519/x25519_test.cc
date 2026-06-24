@@ -25,9 +25,12 @@
 #include "../test/wycheproof_util.h"
 #include "internal.h"
 
-static inline int ctwrapX25519(uint8_t out_shared_key[32],
-                               const uint8_t private_key[32],
-                               const uint8_t peer_public_value[32]) {
+
+BSSL_NAMESPACE_BEGIN
+namespace {
+
+int ctwrapX25519(uint8_t out_shared_key[32], const uint8_t private_key[32],
+                 const uint8_t peer_public_value[32]) {
   uint8_t scalar[32], point[32];
   // Copy all the secrets into a temporary buffer, so we can run constant-time
   // validation on them.
@@ -220,10 +223,10 @@ TEST(X25519Test, Wycheproof) {
 
         uint8_t secret[32];
         int ret = ctwrapX25519(secret, priv.data(), pub.data());
-        EXPECT_EQ(ret, result.IsValid({"NonCanonicalPublic", "Twist",
-                                       "SpecialPublicKey", "EdgeCaseShared",
-                                       "EdgeCaseMultiplication",
-                                       "SmallPublicKey", "LowOrderPublic"})
+        EXPECT_EQ(ret, result.IsValid(
+                           {"NonCanonicalPublic", "Twist", "SpecialPublicKey",
+                            "EdgeCaseShared", "EdgeCaseMultiplication",
+                            "SmallPublicKey", "LowOrderPublic", "Ktv"})
                            ? 1
                            : 0);
         EXPECT_EQ(Bytes(secret), Bytes(shared));
@@ -274,3 +277,6 @@ TEST(X25519Test, AdxSquareABI) {
   }
 }
 #endif  // BORINGSSL_FE25519_ADX && SUPPORTS_ABI_TEST
+
+}  // namespace
+BSSL_NAMESPACE_END

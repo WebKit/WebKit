@@ -179,7 +179,6 @@ public:
         RunJavaScriptPromptResultListener,
         ScriptMessage,
         SerializedNode,
-        SpeechRecognitionPermissionCallback,
         TextChecker,
         TextRun,
         URLSchemeTask,

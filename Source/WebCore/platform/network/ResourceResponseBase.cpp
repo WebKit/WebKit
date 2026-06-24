@@ -701,6 +701,13 @@ bool ResourceResponseBase::cacheControlContainsNoStore() const
     return m_cacheControlDirectives.noStore;
 }
 
+bool ResourceResponseBase::cacheControlContainsPublic() const
+{
+    if (!m_haveParsedCacheControlHeader)
+        parseCacheControlDirectives();
+    return m_cacheControlDirectives.isPublic;
+}
+
 bool ResourceResponseBase::cacheControlContainsMustRevalidate() const
 {
     if (!m_haveParsedCacheControlHeader)

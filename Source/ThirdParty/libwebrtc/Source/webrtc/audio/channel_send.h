@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
@@ -27,6 +27,7 @@
 #include "api/environment/environment.h"
 #include "api/frame_transformer_interface.h"
 #include "api/function_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/scoped_refptr.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
@@ -77,9 +78,10 @@ class ChannelSendInterface {
       FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) = 0;
   virtual void CallEncoder(FunctionView<void(AudioEncoder*)> modifier) = 0;
 
-  // Use 0 to indicate that the extension should not be registered.
   virtual void SetRTCP_CNAME(absl::string_view c_name) = 0;
-  virtual void SetSendAudioLevelIndicationStatus(bool enable, int id) = 0;
+  // Use RtpHeaderExtensionId::NotSet() to indicate that the extension should be
+  // disabled.
+  virtual void SetSendAudioLevelIndicationStatus(RtpHeaderExtensionId id) = 0;
   virtual void RegisterSenderCongestionControlObjects(
       RtpTransportControllerSendInterface* transport) = 0;
   virtual void ResetSenderCongestionControlObjects() = 0;
@@ -96,7 +98,7 @@ class ChannelSendInterface {
   // Sets the list of CSRCs to be included in the RTP header. If more than
   // kRtpCsrcSize CSRCs are provided, only the first kRtpCsrcSize elements are
   // kept.
-  virtual void SetCsrcs(ArrayView<const uint32_t> csrcs) = 0;
+  virtual void SetCsrcs(std::span<const uint32_t> csrcs) = 0;
 
   virtual void ProcessAndEncodeAudio(
       std::unique_ptr<AudioFrame> audio_frame) = 0;

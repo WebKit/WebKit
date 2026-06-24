@@ -176,7 +176,7 @@ public:
     WEBCORE_EXPORT operator SIZE() const;
 #endif
 
-    String toJSONString() const;
+    WEBCORE_EXPORT String toJSONString() const;
     Ref<JSON::Object> toJSONObject() const;
 
 private:

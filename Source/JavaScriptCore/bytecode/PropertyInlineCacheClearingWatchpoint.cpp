@@ -31,6 +31,7 @@
 #include "CodeBlockInlines.h"
 #include "JSCellInlines.h"
 #include "PropertyInlineCache.h"
+#include "StructureInlinesLight.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {

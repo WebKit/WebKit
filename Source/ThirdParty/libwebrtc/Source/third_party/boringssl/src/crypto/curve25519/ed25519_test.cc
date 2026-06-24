@@ -24,6 +24,9 @@
 #include "../test/test_util.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 TEST(Ed25519Test, TestVectors) {
   FileTestGTest("crypto/curve25519/ed25519_tests.txt", [](FileTest *t) {
     std::vector<uint8_t> private_key, public_key, message, expected_signature;
@@ -130,3 +133,6 @@ TEST(Ed25519Test, KeypairFromSeed) {
   EXPECT_EQ(Bytes(public_key1), Bytes(public_key2));
   EXPECT_EQ(Bytes(private_key1), Bytes(private_key2));
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

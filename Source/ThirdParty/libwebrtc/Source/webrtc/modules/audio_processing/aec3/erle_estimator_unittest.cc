@@ -15,18 +15,18 @@
 #include <cmath>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <tuple>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
-#include "api/environment/environment_factory.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
 #include "modules/audio_processing/aec3/spectrum_buffer.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -38,7 +38,7 @@ constexpr float kTrueErleOnsets = 1.0f;
 constexpr float kEchoPathGain = 3.f;
 
 void VerifyErleBands(
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> erle,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> erle,
     float reference_lf,
     float reference_hf) {
   for (size_t ch = 0; ch < erle.size(); ++ch) {
@@ -51,7 +51,7 @@ void VerifyErleBands(
   }
 }
 
-void VerifyErle(ArrayView<const std::array<float, kFftLengthBy2Plus1>> erle,
+void VerifyErle(std::span<const std::array<float, kFftLengthBy2Plus1>> erle,
                 float erle_time_domain,
                 float reference_lf,
                 float reference_hf) {
@@ -60,8 +60,8 @@ void VerifyErle(ArrayView<const std::array<float, kFftLengthBy2Plus1>> erle,
 }
 
 void VerifyErleGreaterOrEqual(
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> erle1,
-    ArrayView<const std::array<float, kFftLengthBy2Plus1>> erle2) {
+    std::span<const std::array<float, kFftLengthBy2Plus1>> erle1,
+    std::span<const std::array<float, kFftLengthBy2Plus1>> erle2) {
   for (size_t ch = 0; ch < erle1.size(); ++ch) {
     for (size_t i = 0; i < kFftLengthBy2Plus1; ++i) {
       EXPECT_GE(erle1[ch][i], erle2[ch][i]);
@@ -90,8 +90,8 @@ void FormFarendTimeFrame(Block* x) {
 void FormFarendFrame(const RenderBuffer& render_buffer,
                      float erle,
                      std::array<float, kFftLengthBy2Plus1>* X2,
-                     ArrayView<std::array<float, kFftLengthBy2Plus1>> E2,
-                     ArrayView<std::array<float, kFftLengthBy2Plus1>> Y2) {
+                     std::span<std::array<float, kFftLengthBy2Plus1>> E2,
+                     std::span<std::array<float, kFftLengthBy2Plus1>> Y2) {
   const auto& spectrum_buffer = render_buffer.GetSpectrumBuffer();
   const int num_render_channels = spectrum_buffer.buffer[0].size();
   const int num_capture_channels = Y2.size();
@@ -114,8 +114,8 @@ void FormFarendFrame(const RenderBuffer& render_buffer,
 
 void FormNearendFrame(Block* x,
                       std::array<float, kFftLengthBy2Plus1>* X2,
-                      ArrayView<std::array<float, kFftLengthBy2Plus1>> E2,
-                      ArrayView<std::array<float, kFftLengthBy2Plus1>> Y2) {
+                      std::span<std::array<float, kFftLengthBy2Plus1>> E2,
+                      std::span<std::array<float, kFftLengthBy2Plus1>> Y2) {
   for (int band = 0; band < x->NumBands(); ++band) {
     for (int ch = 0; ch < x->NumChannels(); ++ch) {
       std::fill(x->begin(band, ch), x->end(band, ch), 0.f);
@@ -130,7 +130,7 @@ void FormNearendFrame(Block* x,
 }
 
 void GetFilterFreq(size_t delay_headroom_samples,
-                   ArrayView<std::vector<std::array<float, kFftLengthBy2Plus1>>>
+                   std::span<std::vector<std::array<float, kFftLengthBy2Plus1>>>
                        filter_frequency_response) {
   const size_t delay_headroom_blocks = delay_headroom_samples / kBlockSize;
   for (size_t ch = 0; ch < filter_frequency_response[0].size(); ++ch) {
@@ -180,7 +180,8 @@ TEST_P(ErleEstimatorMultiChannel, VerifyErleIncreaseAndHold) {
 
   GetFilterFreq(config.delay.delay_headroom_samples, filter_frequency_response);
 
-  ErleEstimator estimator(CreateEnvironment(), 0, config, num_capture_channels);
+  ErleEstimator estimator(CreateTestEnvironment(), 0, config,
+                          num_capture_channels);
 
   FormFarendTimeFrame(&x);
   render_delay_buffer->Insert(x);
@@ -243,7 +244,7 @@ TEST_P(ErleEstimatorMultiChannel, VerifyErleTrackingOnOnsets) {
 
   GetFilterFreq(config.delay.delay_headroom_samples, filter_frequency_response);
 
-  ErleEstimator estimator(CreateEnvironment(),
+  ErleEstimator estimator(CreateTestEnvironment(),
                           /*startup_phase_length_blocks=*/0, config,
                           num_capture_channels);
 

@@ -1,0 +1,27 @@
+<!doctype html><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=false ] -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<style>
+    #target::before { content: "before-"; }
+    #target::after { content: "-after"; }
+</style>
+</head>
+<body>
+
+<p id="target">middle</p>
+
+<script>
+    description("::before / ::after generated content has no DOM node, so it must be excluded from the text-marker string of a containing range, matching the live tree (and TextIterator), which never emits generated content. Regression test for the isolated tree caching generated-content text runs.");
+
+    if (window.accessibilityController) {
+        var target = accessibilityController.accessibleElementById("target");
+        var range = target.textMarkerRangeForElement(target);
+        shouldBe("target.stringForTextMarkerRange(range)", "'middle'");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

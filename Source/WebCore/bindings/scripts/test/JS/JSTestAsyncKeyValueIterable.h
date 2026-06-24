@@ -56,8 +56,12 @@ protected:
 
 class JSTestAsyncKeyValueIterableOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestAsyncKeyValueIterableOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestAsyncKeyValueIterableOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestAsyncKeyValueIterable*)

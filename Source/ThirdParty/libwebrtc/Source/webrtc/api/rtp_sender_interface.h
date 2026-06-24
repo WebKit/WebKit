@@ -31,7 +31,9 @@
 #include "api/rtc_error.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
+#include "api/sframe/sframe_encrypter_interface.h"
 #include "api/video_codecs/video_encoder_factory.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -126,14 +128,37 @@ class RTC_EXPORT RtpSenderInterface : public RefCountInterface,
 
   // Sets a user defined encoder selector.
   // Overrides selector that is (optionally) provided by VideoEncoderFactory.
+  [[deprecated(
+      "Use SetEncoderSelector with Ref Counted EncoderSelectorInterface")]]
   virtual void SetEncoderSelector(
       std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface>
-          encoder_selector) = 0;
+          encoder_selector) {
+    SetEncoderSelector(
+        scoped_refptr<VideoEncoderFactory::EncoderSelectorInterface>(
+            encoder_selector.release()));
+  }
+
+  virtual void SetEncoderSelector(
+      scoped_refptr<VideoEncoderFactory::EncoderSelectorInterface>
+          encoder_selector) {
+    RTC_DCHECK_NOTREACHED();
+  }
 
   // Default implementation of SetFrameTransformer.
   // TODO: bugs.webrtc.org/15929 - remove when all implementations are good
   void SetFrameTransformer(scoped_refptr<FrameTransformerInterface>
                            /* frame_transformer */) override {}
+
+  // Creates an internal Sframe encrypter and returns a handle for key
+  // management.
+  // Default implementation of CreateSframeEncrypterOrError.
+  // TODO: bugs.webrtc.org/479862368 - remove when all implementations are
+  // updated
+  virtual RTCErrorOr<scoped_refptr<SframeEncrypterInterface>>
+  CreateSframeEncrypterOrError(const SframeEncrypterInit& options) {
+    RTC_DCHECK_NOTREACHED();
+    return RTCError();
+  }
 
   // TODO(crbug.com/1354101): make pure virtual again after Chrome roll.
   virtual RTCError GenerateKeyFrame(const std::vector<std::string>& rids) {

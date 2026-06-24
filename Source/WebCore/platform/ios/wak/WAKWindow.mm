@@ -281,7 +281,7 @@ static RetainPtr<WebEvent>& currentEvent()
     // FIXME: Size of the host layer is directly available so there is no real reason to save it here.
     // However we currently use this call to catch changes to the host layer size.
     if (_tileCache)
-        _tileCache->hostLayerSizeChanged();
+        protect(*_tileCache)->hostLayerSizeChanged();
 }
 
 - (void)setScreenSize:(CGSize)size
@@ -404,35 +404,35 @@ static RetainPtr<WebEvent>& currentEvent()
 {
     if (!_tileCache)
         return;    
-    _tileCache->layoutTiles();
+    protect(*_tileCache)->layoutTiles();
 }
 
 - (void)layoutTilesNow
 {
     if (!_tileCache)
         return;
-    _tileCache->layoutTilesNow();
+    protect(*_tileCache)->layoutTilesNow();
 }
 
 - (void)layoutTilesNowForRect:(CGRect)rect
 {
     if (!_tileCache)
         return;
-    _tileCache->layoutTilesNowForRect(WebCore::enclosingIntRect(rect));
+    protect(*_tileCache)->layoutTilesNowForRect(WebCore::enclosingIntRect(rect));
 }
 
 - (void)setNeedsDisplay
 {
     if (!_tileCache)
         return;
-    _tileCache->setNeedsDisplay();
+    protect(*_tileCache)->setNeedsDisplay();
 }
 
 - (void)setNeedsDisplayInRect:(CGRect)rect
 {
     if (!_tileCache)
         return;
-    _tileCache->setNeedsDisplayInRect(WebCore::enclosingIntRect(rect));
+    protect(*_tileCache)->setNeedsDisplayInRect(WebCore::enclosingIntRect(rect));
 }
 
 - (BOOL)tilesOpaque
@@ -446,7 +446,7 @@ static RetainPtr<WebEvent>& currentEvent()
 {
     if (!_tileCache)
         return;
-    _tileCache->setTilesOpaque(opaque);
+    protect(*_tileCache)->setTilesOpaque(opaque);
 }
 
 - (void)setIsInSnapshottingPaint:(BOOL)isInSnapshottingPaint
@@ -510,21 +510,21 @@ static RetainPtr<WebEvent>& currentEvent()
 {
     if (!_tileCache)
         return;
-    _tileCache->removeAllNonVisibleTiles();
+    protect(*_tileCache)->removeAllNonVisibleTiles();
 }
 
 - (void)removeAllTiles
 {
     if (!_tileCache)
         return;
-    _tileCache->removeAllTiles();
+    protect(*_tileCache)->removeAllTiles();
 }
 
 - (void)removeForegroundTiles
 {
     if (!_tileCache)
         return;
-    _tileCache->removeForegroundTiles();
+    protect(*_tileCache)->removeForegroundTiles();
 }
 
 - (void)setTilingMode:(WAKWindowTilingMode)mode
@@ -559,35 +559,35 @@ static RetainPtr<WebEvent>& currentEvent()
 {
     if (!_tileCache)
         return;
-    _tileCache->setZoomedOutScale(scale);
+    protect(*_tileCache)->setZoomedOutScale(scale);
 }
 
 - (float)zoomedOutTileScale
 {
     if (!_tileCache)
         return 1.0f;
-    return _tileCache->zoomedOutScale();
+    return protect(*_tileCache)->zoomedOutScale();
 }
 
 - (void)setCurrentTileScale:(float)scale
 {
     if (!_tileCache)
         return;
-    _tileCache->setCurrentScale(scale);
+    protect(*_tileCache)->setCurrentScale(scale);
 }
 
 - (float)currentTileScale
 {
     if (!_tileCache)
         return 1.0f;
-    return _tileCache->currentScale();
+    return protect(*_tileCache)->currentScale();
 }
 
 - (void)setKeepsZoomedOutTiles:(BOOL)keepsZoomedOutTiles
 {
     if (!_tileCache)
         return;
-    _tileCache->setKeepsZoomedOutTiles(keepsZoomedOutTiles);
+    protect(*_tileCache)->setKeepsZoomedOutTiles(keepsZoomedOutTiles);
 }
 
 - (BOOL)keepsZoomedOutTiles
@@ -606,14 +606,14 @@ static RetainPtr<WebEvent>& currentEvent()
 {
     if (!_tileCache)
         return;
-    _tileCache->setContentReplacementImage(contentReplacementImage);
+    protect(*_tileCache)->setContentReplacementImage(contentReplacementImage);
 }
 
 - (CGImageRef)contentReplacementImage
 {
     if (!_tileCache)
         return NULL;
-    return _tileCache->contentReplacementImage().autorelease();
+    return protect(*_tileCache)->contentReplacementImage().autorelease();
 }
 
 - (void)displayRect:(NSRect)rect
@@ -659,7 +659,7 @@ static RetainPtr<WebEvent>& currentEvent()
     CGRect visibleRect = [self visibleRect];
     NSLog(@"visibleRect = [%6.1f %6.1f %6.1f %6.1f]", visibleRect.origin.x, visibleRect.origin.y, visibleRect.size.width, visibleRect.size.height);
     _frozenVisibleRect = savedFrozenVisibleRect;
-    _tileCache->dumpTiles();
+    protect(*_tileCache)->dumpTiles();
 }
 
 - (NSString *)description

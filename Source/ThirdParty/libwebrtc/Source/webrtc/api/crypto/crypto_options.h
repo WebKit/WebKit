@@ -32,6 +32,10 @@ struct RTC_EXPORT CryptoOptions {
   // suites disabled. This method should be used instead of depending on current
   // default values set by the constructor.
   static CryptoOptions NoGcm();
+  // Helper method to return an instance of the CryptoOptions with GCM crypto
+  // suites preferred. This method should be used instead of depending on
+  // current default values set by the constructor.
+  static CryptoOptions PreferGcm();
 
   // Returns a list of the supported DTLS-SRTP Crypto suites based on this set
   // of crypto options.
@@ -43,8 +47,13 @@ struct RTC_EXPORT CryptoOptions {
   // SRTP Related Peer Connection options.
   struct Srtp {
     // Enable GCM crypto suites from RFC 7714 for SRTP. GCM will only be used
-    // if both sides enable it.
+    // if both sides support and the server prefers it.
     bool enable_gcm_crypto_suites = true;
+
+    // If set, GCM crypto suites are listed before kSrtpAes128CmSha1_80 in the
+    // SRTP cipher preference order, so GCM is selected whenever both peers
+    // support it. Otherwise GCM is offered last.
+    bool prefer_gcm_crypto_suites = false;
 
     // If set to true, the (potentially insecure) crypto cipher
     // kSrtpAes128CmSha1_32 will be included in the list of supported ciphers
@@ -60,6 +69,13 @@ struct RTC_EXPORT CryptoOptions {
     // requested. For this to work the Chromium field trial
     // `kWebRtcEncryptedRtpHeaderExtensions` must be enabled.
     bool enable_encrypted_rtp_header_extensions = true;
+
+    // Enable cryptex, a modern take on encrypting header extensions:
+    // https://www.rfc-editor.org/rfc/rfc9335.html
+    // Supported as of libsrtp v2.8.0.
+    enum class CryptexPolicy { kDisabled, kNegotiate, kRequire };
+    // TODO: bugs.webrtc.org/455813732 - the default should be `negotiate`.
+    CryptexPolicy cryptex_policy = CryptexPolicy::kDisabled;
   } srtp;
 
   // Options to be used when the FrameEncryptor / FrameDecryptor APIs are used.

@@ -40,7 +40,9 @@ SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerAppInfoRef)
 SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDomainContextRef)
 SOFT_LINK(libnetworkextension, NEHelperTrackerGetDisposition, NEHelperTrackerDisposition_t*, (NEHelperTrackerAppInfoRef *app_info_ref, CFArrayRef domains, NEHelperTrackerDomainContextRef *trackerDomainContextRef, CFIndex *trackerDomainIndex), (app_info_ref, domains, trackerDomainContextRef, trackerDomainIndex))
 
+#ifndef WebKit_libnetworkLibrary_SoftLinked
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
+#endif
 SOFT_LINK_OPTIONAL(libnetwork, nw_parameters_set_attributed_bundle_identifier, void, __cdecl, (nw_parameters_t, const char*))
 
 namespace WebKit {

@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-change-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-change.html
@@ -22,10 +23,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-02.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-02.tentative-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-02.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-02.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-permissions-policy-02.tentative.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-preload-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-preload-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-preload.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/font-display/w3c-import.log

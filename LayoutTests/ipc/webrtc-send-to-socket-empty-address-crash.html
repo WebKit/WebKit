@@ -1,0 +1,103 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PeerConnectionEnabled=true ] -->
+<body>
+<p id="result">FAIL</p>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+if (!window.IPC) {
+    document.getElementById('result').textContent = 'PASS';
+    window.testRunner?.notifyDone();
+} else {
+    let done = false;
+    const finish = (pass, msg) => {
+        if (done) return;
+        done = true;
+        document.getElementById('result').textContent = (pass ? 'PASS' : 'FAIL') + (msg ? ': ' + msg : '');
+        window.testRunner?.notifyDone();
+    };
+
+    const conn = IPC.connectionForProcessTarget('Networking');
+    const createRTCProviderMsgName = IPC.messages.NetworkConnectionToWebProcess_CreateRTCProvider?.name;
+    const createUDPSocketMsgName = IPC.messages.NetworkRTCProvider_CreateUDPSocket?.name;
+    const sendToSocketMsgName = IPC.messages.NetworkRTCProvider_SendToSocket?.name;
+    const getInterfaceNameMsgName = IPC.messages.NetworkRTCProvider_GetInterfaceName?.name;
+
+    if (!createRTCProviderMsgName || !createUDPSocketMsgName || !sendToSocketMsgName) {
+        finish(false, 'missing message names');
+    } else {
+        conn.sendWithAsyncReply(0, createRTCProviderMsgName, [], () => {
+            // Create a socket with a non-empty hostname so it passes the empty-address guard
+            // and gets added to m_sockets. Using hostname='localhost' satisfies the check
+            // (ipaddr().IsNil() && hostname().empty()) == false.
+            try {
+                conn.sendMessage(0, createUDPSocketMsgName, [
+                    {type: 'uint64_t', value: 393216},
+                    {type: 'uint16_t', value: 0},
+                    {type: 'int32_t',  value: 0},
+                    {type: 'String',   value: 'localhost'},
+                    {type: 'bool',     value: 0},
+                    {type: 'uint16_t', value: 0},
+                    {type: 'uint16_t', value: 0},
+                    {type: 'uint64_t', value: IPC.webPageProxyID},
+                    {type: 'bool',     value: 0},
+                    {type: 'bool',     value: 0},
+                    {type: 'bool',     value: 0},
+                    {type: 'String',   value: ''},
+                ]);
+            } catch (e) {
+                finish(false, 'createUDPSocket threw: ' + e);
+                return;
+            }
+
+            // Send to that socket with an empty remote address.
+            // Both messages are dispatched to the same RTC thread queue, so sendToSocket
+            // runs while the socket is still in m_sockets, exercising the empty-address guard.
+            // Without the fix: ASSERT fires in debug builds when sendTo receives a nil/empty address.
+            // With the fix: NetworkRTCProvider::sendToSocket returns early → no crash.
+            try {
+                conn.sendMessage(0, sendToSocketMsgName, [
+                    {type: 'uint64_t', value: 393216},  // identifier (same socket)
+                    {type: 'uint64_t', value: 0},        // data: empty span
+                    {type: 'uint16_t', value: 0},        // address.port
+                    {type: 'int32_t',  value: 0},        // address.scopeID
+                    {type: 'String',   value: ''},       // address.hostname (empty)
+                    {type: 'bool',     value: 0},        // address.ipAddress (not present)
+                    {type: 'int8_t',   value: 0},        // options.dscp (CS0)
+                    {type: 'int32_t',  value: 0},        // options.packetId
+                    {type: 'int32_t',  value: 0},        // options.rtpSendtimeExtensionId
+                    {type: 'int64_t',  value: 0},        // options.srtpAuthTagLength
+                    {type: 'uint64_t', value: 0},        // options.srtpAuthKey (empty span)
+                    {type: 'int64_t',  value: 0},        // options.srtpPacketIndex
+                ]);
+            } catch (e) {
+                finish(false, 'sendToSocket threw: ' + e);
+                return;
+            }
+
+            if (getInterfaceNameMsgName) {
+                // GetInterfaceName is dispatched to the same RTC thread queue as SendToSocket,
+                // so its reply fires only after the RTC thread survives SendToSocket.
+                // With the fix: RTC thread handles SendToSocket gracefully → reply arrives → PASS.
+                // Without the fix: ASSERT fires on RTC thread → process crashes → reply never arrives → FAIL.
+                conn.sendWithAsyncReply(0, getInterfaceNameMsgName, [
+                    {type: 'String',   value: ''},
+                    {type: 'uint64_t', value: IPC.webPageProxyID},
+                    {type: 'bool',     value: 0},
+                    {type: 'bool',     value: 0},
+                    {type: 'bool',     value: 0},
+                    {type: 'String',   value: ''},
+                ], () => finish(true));
+                setTimeout(() => finish(false, 'network process did not respond'), 1000);
+            } else {
+                // Non-Cocoa: no crash in this code path, ping immediately.
+                conn.sendWithAsyncReply(0, createRTCProviderMsgName, [], () => finish(true));
+                setTimeout(() => finish(false, 'network process did not respond'), 500);
+            }
+        });
+
+        setTimeout(() => finish(false, 'CreateRTCProvider timed out'), 2000);
+    }
+}
+</script>
+</body>

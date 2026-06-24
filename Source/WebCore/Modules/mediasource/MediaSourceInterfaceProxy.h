@@ -48,6 +48,7 @@ public:
     virtual RefPtr<MediaSourcePrivateClient> client() const = 0;
     virtual void monitorSourceBuffers() = 0;
     virtual bool isClosed() const = 0;
+    virtual bool isEnded() const = 0;
     virtual MediaTime duration() const = 0;
     virtual PlatformTimeRanges buffered() const = 0;
     virtual PlatformTimeRanges seekable() const = 0;

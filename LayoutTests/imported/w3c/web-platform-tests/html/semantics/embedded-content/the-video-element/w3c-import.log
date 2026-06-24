@@ -28,12 +28,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-load-when-visible.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-not-rendered.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-poster-when-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-source-poster-deferred.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-to-eager.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-window-onload.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-load-deferred.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-load-preload-auto-deferred.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-load-preload-metadata-deferred.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-poster-deferred.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-clone-template-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-clone-template.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto.html

@@ -224,7 +224,7 @@ class RuntimeSettingWriter {
     if (file_ == nullptr) {
       StringBuilder file_name;
       file_name << setting_name_ << frame_offset_ << ".txt";
-      file_ = OpenFile(file_name.str(), "wb");
+      file_ = OpenFile(file_name.Release(), "wb");
     }
 
     // Time in the current WAV file, in seconds.
@@ -305,7 +305,7 @@ std::string GetWavFileIndex(int init_index, int frame_count) {
   } else {
     suffix << frame_count;
   }
-  return suffix.str();
+  return suffix.Release();
 }
 
 }  // namespace
@@ -344,7 +344,7 @@ int do_main(int argc, char* argv[]) {
   StringBuilder callorder_raw_name;
   callorder_raw_name << absl::GetFlag(FLAGS_callorder_file) << ".char";
   FILE* callorder_char_file = WritingCallOrderFile()
-                                  ? OpenFile(callorder_raw_name.str(), "wb")
+                                  ? OpenFile(callorder_raw_name.Release(), "wb")
                                   : nullptr;
   FILE* settings_file = OpenFile(absl::GetFlag(FLAGS_settings_file), "wb");
 
@@ -579,21 +579,21 @@ int do_main(int argc, char* argv[]) {
         StringBuilder reverse_name;
         reverse_name << absl::GetFlag(FLAGS_reverse_file) << suffix << ".wav";
         reverse_wav_file.reset(new WavWriter(
-            reverse_name.str(), reverse_sample_rate, num_reverse_channels));
+            reverse_name.Release(), reverse_sample_rate, num_reverse_channels));
         StringBuilder input_name;
         input_name << absl::GetFlag(FLAGS_input_file) << suffix << ".wav";
-        input_wav_file.reset(new WavWriter(input_name.str(), input_sample_rate,
-                                           num_input_channels));
+        input_wav_file.reset(new WavWriter(
+            input_name.Release(), input_sample_rate, num_input_channels));
         StringBuilder output_name;
         output_name << absl::GetFlag(FLAGS_output_file) << suffix << ".wav";
         output_wav_file.reset(new WavWriter(
-            output_name.str(), output_sample_rate, num_output_channels));
+            output_name.Release(), output_sample_rate, num_output_channels));
 
         if (WritingCallOrderFile()) {
           StringBuilder callorder_name;
           callorder_name << absl::GetFlag(FLAGS_callorder_file) << suffix
                          << ".char";
-          callorder_char_file = OpenFile(callorder_name.str(), "wb");
+          callorder_char_file = OpenFile(callorder_name.Release(), "wb");
         }
 
         if (WritingRuntimeSettingFiles()) {

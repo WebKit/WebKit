@@ -9,13 +9,12 @@
  */
 
 #include <cstddef>
-#include <cstdint>
 
-#include "api/array_view.h"
 #include "modules/video_coding/utility/vp9_uncompressed_header_parser.h"
+#include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
-void FuzzOneInput(const uint8_t* data, size_t size) {
-  ParseUncompressedVp9Header(webrtc::MakeArrayView(data, size));
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+  ParseUncompressedVp9Header(fuzz_data.ReadRemaining());
 }
 }  // namespace webrtc

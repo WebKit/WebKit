@@ -319,7 +319,7 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
         // and ::after as children, so we must match that here by making sure ::before and ::after regard the
         // generating element as their parent rather than their "natural" render tree parent. This avoids
         // a parent-child mismatch which can cause issues for ATs.
-        if (RefPtr parent = cache->getOrCreate(renderElement->generatingElement()))
+        if (RefPtr parent = cache->getOrCreate(protect(renderElement->generatingElement())))
             return parent.unsafeGet();
     }
 #endif // !USE(ATSPI)
@@ -338,7 +338,7 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
 
     // WebArea's parent should be the scroll view containing it.
     if (isWebArea())
-        return cache->getOrCreate(m_renderer->view().frameView());
+        return cache->getOrCreate(protect(m_renderer->view())->frameView());
 
     return nullptr;
 }
@@ -694,7 +694,7 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
 
     // The size of the web area should be the content size, not the clipped size.
     if (isWebArea())
-        result.setSize(renderer->view().frameView().contentsSize());
+        result.setSize(protect(renderer->view())->frameView().contentsSize());
 
     if (result.isEmpty())
         return nonEmptyAncestorBoundingBox();
@@ -710,7 +710,7 @@ bool AccessibilityRenderObject::isNonLayerSVGObject() const
 static Path computePathForRenderBox(const RenderBox& renderBox)
 {
     auto borderShape = BorderShape::shapeForBorderRect(renderBox.style(), renderBox.borderBoxRect());
-    auto path = borderShape.pathForOuterShape(renderBox.document().deviceScaleFactor());
+    auto path = borderShape.pathForOuterShape(protect(renderBox.document())->deviceScaleFactor());
     // borderBoxRect() is in local coordinates. Offset it to absolute document coordinates
     // to match the coordinate system used by SVG, RenderText, and RenderInline paths.
     auto absoluteOrigin = flooredLayoutPoint(renderBox.localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms));
@@ -748,7 +748,7 @@ static Path computePathForMultiLineRenderInline(const RenderInline& renderInline
     if (!rectsSpanMultipleLines(rects, style->writingMode().isHorizontal()))
         return { };
 
-    float deviceScaleFactor = renderInline.document().deviceScaleFactor();
+    float deviceScaleFactor = protect(renderInline.document())->deviceScaleFactor();
     Vector<FloatRect> pixelSnappedRects;
     for (auto rect : rects)
         pixelSnappedRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
@@ -787,7 +787,7 @@ Path AccessibilityRenderObject::elementPath() const
             return { };
 
         auto outlineOffset = Style::evaluate<float>(style->usedOutlineOffset(), Style::ZoomNeeded { });
-        float deviceScaleFactor = renderText->document().deviceScaleFactor();
+        float deviceScaleFactor = protect(renderText->document())->deviceScaleFactor();
         Vector<FloatRect> pixelSnappedRects;
         for (auto rect : rects) {
             rect.inflate(outlineOffset);
@@ -807,7 +807,7 @@ Path AccessibilityRenderObject::elementPath() const
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
         // FIXME: This seems wrong for SVG inside HTML.
         if (CheckedPtr svgRoot = ancestorsOfType<LegacyRenderSVGRoot>(*m_renderer).first()) {
-            LayoutPoint parentOffset = cache->getOrCreate(&*svgRoot)->elementRect().location();
+            LayoutPoint parentOffset = protect(cache->getOrCreate(&*svgRoot))->elementRect().location();
             path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
         }
         return path;
@@ -822,7 +822,7 @@ Path AccessibilityRenderObject::elementPath() const
 
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
         if (CheckedPtr svgRoot = ancestorsOfType<RenderSVGRoot>(*m_renderer).first()) {
-            LayoutPoint parentOffset = cache->getOrCreate(&*svgRoot)->elementRect().location();
+            LayoutPoint parentOffset = protect(cache->getOrCreate(&*svgRoot))->elementRect().location();
             path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
         }
         return path;
@@ -1079,7 +1079,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
 
 #if PLATFORM(COCOA)
     // If this widget has an underlying AX object, don't ignore it.
-    if (widget() && widget()->accessibilityObject())
+    if (widget() && protect(widget())->accessibilityObject())
         return false;
 #endif
 
@@ -1253,7 +1253,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
 
             // check whether rendered image was stretched from one-dimensional file image
             if (image->cachedImage()) {
-                LayoutSize imageSize = image->cachedImage()->imageSizeForRenderer(image.get(), image->view().pageZoomFactor());
+                LayoutSize imageSize = protect(image->cachedImage())->imageSizeForRenderer(image.get(), image->view().pageZoomFactor());
                 return imageSize.height() <= 1 || imageSize.width() <= 1;
             }
         }
@@ -1445,6 +1445,57 @@ CharacterRange AccessibilityRenderObject::selectedTextRange() const
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+// Returns true when the AX text runs for a RenderText parented by this pseudo-element type must be
+// excluded. Some pseudo-elements represent generated content as text with no backing DOM node. Such
+// content cannot be a valid text position nor be selected (with a mouse or otherwise), so emitting
+// text runs for it would make the isolated tree's text-marker strings diverge from what can actually
+// be represented on the main-thread.
+static bool shouldExcludeTextRunsForPseudoElement(std::optional<PseudoElementType> pseudoElementType)
+{
+    if (!pseudoElementType) {
+        // No pseudo type, so this function is not applicable.
+        return false;
+    }
+
+    switch (*pseudoElementType) {
+    case PseudoElementType::Before:
+    case PseudoElementType::After:
+    case PseudoElementType::Marker:
+    case PseudoElementType::Checkmark:
+    case PseudoElementType::PickerIcon:
+    case PseudoElementType::InternalWritingSuggestions:
+    // These pseudos are paint-time decorations and shouldn't generate text of their own.
+    case PseudoElementType::GrammarError:
+    case PseudoElementType::Highlight:
+    case PseudoElementType::Selection:
+    case PseudoElementType::SpellingError:
+    case PseudoElementType::TargetText:
+    // These generate a box / chrome / image that never hosts text.
+    case PseudoElementType::Backdrop:
+    case PseudoElementType::WebKitScrollbar:
+    case PseudoElementType::WebKitScrollbarThumb:
+    case PseudoElementType::WebKitScrollbarButton:
+    case PseudoElementType::WebKitScrollbarTrack:
+    case PseudoElementType::WebKitScrollbarTrackPiece:
+    case PseudoElementType::WebKitScrollbarCorner:
+    case PseudoElementType::WebKitResizer:
+    case PseudoElementType::ViewTransition:
+    case PseudoElementType::ViewTransitionGroup:
+    case PseudoElementType::ViewTransitionImagePair:
+    case PseudoElementType::ViewTransitionOld:
+    case PseudoElementType::ViewTransitionNew:
+    case PseudoElementType::UserAgentPartFallback:
+        return true;
+
+    // These relate to real, selectable DOM text, so we must not exclude their text runs.
+    case PseudoElementType::FirstLine:
+    case PseudoElementType::FirstLetter:
+        return false;
+    }
+    AX_ASSERT_NOT_REACHED();
+    return true;
+}
+
 AXTextRuns AccessibilityRenderObject::textRuns()
 {
     constexpr std::array<uint16_t, 2> lengthOneDomOffsets = { 0, 1 };
@@ -1499,6 +1550,11 @@ AXTextRuns AccessibilityRenderObject::textRuns()
     WeakPtr renderText = dynamicDowncast<RenderText>(renderer.get());
     if (!renderText)
         return { };
+
+    if (CheckedPtr parent = renderText->parent()) {
+        if (shouldExcludeTextRunsForPseudoElement(parent->style().pseudoElementType()))
+            return { };
+    }
 
     // FIXME: Need to handle PseudoElementType::FirstLetter. Right now, it will be chopped off from the other
     // other text in the line, and AccessibilityRenderObject::computeIsIgnored ignores the
@@ -1736,7 +1792,7 @@ void AccessibilityRenderObject::setSelectedTextRange(CharacterRange&& range)
 {
     setTextSelectionIntent(axObjectCache(), range.length ? AXTextStateChangeType::SelectionExtend : AXTextStateChangeType::SelectionMove);
 
-    CheckedPtr client = m_renderer ? m_renderer->document().editor().client() : nullptr;
+    CheckedPtr client = m_renderer ? protect(m_renderer->document())->editor().client() : nullptr;
     if (client)
         client->willChangeSelectionForAccessibility();
 
@@ -1767,7 +1823,7 @@ void AccessibilityRenderObject::setSelectedTextRange(CharacterRange&& range)
 URL AccessibilityRenderObject::url() const
 {
     if (m_renderer && isWebArea())
-        return m_renderer->document().url();
+        return protect(m_renderer->document())->url();
     return AccessibilityNodeObject::url();
 }
 
@@ -1925,7 +1981,7 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
 {
     if (m_renderer) {
         if (isNativeTextControl())
-            return downcast<RenderTextControl>(*m_renderer).textFormControlElement().indexForVisiblePosition(position);
+            return protect(downcast<RenderTextControl>(*m_renderer).textFormControlElement())->indexForVisiblePosition(position);
 
         if (!allowsTextRanges() && !is<RenderText>(*m_renderer))
             return 0;
@@ -1979,11 +2035,11 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
 
     // In WebKit1, when the top web area sets the selection to be an input element in an iframe, the caret will disappear.
     // FrameSelection::setSelectionWithoutUpdatingAppearance is setting the selection on the new frame in this case, and causing this behavior.
-    if (isWebArea() && parentObject() && parentObject()->isAttachment()
+    if (isWebArea() && parentObject() && protect(parentObject())->isAttachment()
         && isVisiblePositionRangeInDifferentDocument(range))
         return;
 
-    CheckedPtr client = m_renderer ? m_renderer->document().editor().client() : nullptr;
+    CheckedPtr client = m_renderer ? protect(m_renderer->document())->editor().client() : nullptr;
     if (client)
         client->willChangeSelectionForAccessibility();
 
@@ -2255,7 +2311,7 @@ RefPtr<AXCoreObject> AccessibilityRenderObject::accessibilityHitTest(const IntPo
     if (!m_renderer || !m_renderer->hasLayer())
         return nullptr;
 
-    m_renderer->document().updateLayout();
+    protect(m_renderer->document())->updateLayout();
     // Layout may have destroyed this renderer or layer, so re-check their presence.
     if (!m_renderer || !m_renderer->hasLayer())
         return nullptr;
@@ -2269,7 +2325,7 @@ RefPtr<AXCoreObject> AccessibilityRenderObject::accessibilityHitTest(const IntPo
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AccessibilityHitTest };
     HitTestResult hitTestResult { adjustedPoint };
 
-    dynamicDowncast<RenderLayerModelObject>(*m_renderer)->layer()->hitTest(hitType, hitTestResult);
+    protect(dynamicDowncast<RenderLayerModelObject>(*m_renderer))->layer()->hitTest(hitType, hitTestResult);
     RefPtr node = hitTestResult.innerNode();
     if (!node)
         return nullptr;
@@ -2280,7 +2336,7 @@ RefPtr<AXCoreObject> AccessibilityRenderObject::accessibilityHitTest(const IntPo
     if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*node))
         node = option->ownerSelectElement();
 
-    CheckedPtr cache = node ? node->document().axObjectCache() : nullptr;
+    CheckedPtr cache = node ? protect(node->document())->axObjectCache() : nullptr;
     RefPtr result = cache ? cache->getOrCreate(*node) : nullptr;
     if (!result)
         return nullptr;
@@ -2517,7 +2573,7 @@ bool AccessibilityRenderObject::isInsideIgnoredImageOverlay() const
         return false;
 
     CheckedPtr cache = axObjectCache();
-    if (RefPtr hostObject = cache ? cache->getOrCreate(node->shadowHost()) : nullptr)
+    if (RefPtr hostObject = cache ? cache->getOrCreate(protect(node->shadowHost())) : nullptr)
         return hostObject->isIgnored();
     return false;
 }
@@ -2551,7 +2607,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityRenderObje
         if (!imageOverlayHost)
             return;
 
-        if (CheckedPtr cache = imageOverlayHost->document().existingAXObjectCache())
+        if (CheckedPtr cache = protect(imageOverlayHost->document())->existingAXObjectCache())
             cache->postNotification(imageOverlayHost.get(), AXNotification::ImageOverlayChanged);
     });
 #endif
@@ -2624,7 +2680,7 @@ void AccessibilityRenderObject::addImageMapChildren()
         // add an <area> element for this child if it has a link
         if (!area->isLink())
             continue;
-        addChild(cache->getOrCreate(area.get()));
+        addChild(protect(cache->getOrCreate(area.get())));
     }
 }
 
@@ -2725,7 +2781,7 @@ void AccessibilityRenderObject::addAttachmentChildren()
         return;
 
     if (CheckedPtr cache = axObjectCache())
-        addChild(cache->getOrCreate(*widget));
+        addChild(protect(cache->getOrCreate(*widget)));
 }
 
 #if USE(ATSPI)
@@ -2915,14 +2971,14 @@ void AccessibilityRenderObject::addChildren()
     WeakPtr cache = axObjectCache();
     auto addListItemMarker = [&] () {
         if (CheckedPtr marker = markerRenderer(); marker && cache)
-            addChild(cache->getOrCreate(*marker));
+            addChild(protect(cache->getOrCreate(*marker)));
     };
 
     auto addListBoxChildrenIfNecessary = [&](Node& node) -> bool {
         if (role() == AccessibilityRole::ListBox) {
             if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node)) {
                 for (const auto& listItem : selectElement->listItems())
-                    addChild(cache->getOrCreate(listItem.get()), AccessibilityObject::DescendIfIgnored::No);
+                    addChild(protect(cache->getOrCreate(protect(listItem.get()))), AccessibilityObject::DescendIfIgnored::No);
                 return true;
             }
         }
@@ -3182,22 +3238,22 @@ bool AccessibilityRenderObject::isIgnoredElementWithinMathTree() const
 #if PLATFORM(IOS_FAMILY)
 String AccessibilityRenderObject::interactiveVideoDuration() const
 {
-    return AccessibilityMediaHelpers::interactiveVideoDuration(mediaElement());
+    return AccessibilityMediaHelpers::interactiveVideoDuration(protect(mediaElement()));
 }
 
 void AccessibilityRenderObject::toggleMute()
 {
-    AccessibilityMediaHelpers::toggleMute(mediaElement());
+    AccessibilityMediaHelpers::toggleMute(protect(mediaElement()));
 }
 
 bool AccessibilityRenderObject::isPlaying() const
 {
-    return AccessibilityMediaHelpers::isPlaying(mediaElement());
+    return AccessibilityMediaHelpers::isPlaying(protect(mediaElement()));
 }
 
 bool AccessibilityRenderObject::isMuted() const
 {
-    return AccessibilityMediaHelpers::isMuted(mediaElement());
+    return AccessibilityMediaHelpers::isMuted(protect(mediaElement()));
 }
 
 bool AccessibilityRenderObject::isMediaObject() const
@@ -3207,7 +3263,7 @@ bool AccessibilityRenderObject::isMediaObject() const
 
 bool AccessibilityRenderObject::isAutoplayEnabled() const
 {
-    return AccessibilityMediaHelpers::isAutoplayEnabled(mediaElement());
+    return AccessibilityMediaHelpers::isAutoplayEnabled(protect(mediaElement()));
 }
 
 void AccessibilityRenderObject::enterFullscreen() const

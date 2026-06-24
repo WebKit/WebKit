@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../security/resources/canvas-video-crossorigin.js"></script>
+</head>
+<body>
+<pre id="console"></pre>
+<script>
+    description("Ensure that a canvas is not tainted by a cross-origin WebM video when CORS is enabled with crossorigin='anonymous'.");
+
+    function test()
+    {
+        testDataRetrievalAllowed();
+        finishJSTest();
+    }
+
+    var video = document.createElement("video");
+    video.addEventListener("loadeddata", test);
+
+    video.crossOrigin = "anonymous";
+    video.src = "http://localhost:8080/media/resources/serve_video_cors.py.webm?type=video/webm&name=../media-source/webm/test.webm";
+
+    window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

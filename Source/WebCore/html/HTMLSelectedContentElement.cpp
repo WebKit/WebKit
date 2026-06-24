@@ -40,15 +40,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLSelectedContentElement);
 
 using namespace HTMLNames;
 
-HTMLSelectedContentElement::HTMLSelectedContentElement(Document& document)
-    : HTMLElement(selectedcontentTag, document, { })
+HTMLSelectedContentElement::HTMLSelectedContentElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, document, { })
 {
     ASSERT(hasTagName(selectedcontentTag));
 }
 
-Ref<HTMLSelectedContentElement> HTMLSelectedContentElement::create(const QualifiedName&, Document& document)
+Ref<HTMLSelectedContentElement> HTMLSelectedContentElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new HTMLSelectedContentElement(document));
+    return adoptRef(*new HTMLSelectedContentElement(tagName, document));
 }
 
 auto HTMLSelectedContentElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> NeedsPostConnectionSteps

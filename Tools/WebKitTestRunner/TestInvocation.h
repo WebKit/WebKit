@@ -149,6 +149,7 @@ private:
 
     bool m_waitUntilDone { false };
     bool m_notifyDoneMessageSent { false };
+    bool m_notifyDoneDeferredForWorkQueue { false };
     bool m_dumpFrameLoadCallbacks { false };
     bool m_globalFlag { false };
     bool m_dumpPixels { false };

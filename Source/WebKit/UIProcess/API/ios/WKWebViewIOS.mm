@@ -83,6 +83,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/UserInterfaceLayoutDirection.h>
 #import <WebCore/VelocityData.h>
+#import <notify.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <ranges>
@@ -386,9 +387,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return deviceOrientationForUIInterfaceOrientation([&] {
         if (auto windowScene = self.window.windowScene)
             return windowScene.effectiveGeometry.interfaceOrientation;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        return UIApplication.sharedApplication.statusBarOrientation;
-ALLOW_DEPRECATED_DECLARATIONS_END
+        return UIInterfaceOrientationUnknown;
     }());
 }
 
@@ -889,6 +888,11 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     [self _destroyResizeAnimationView];
     [_contentView setHidden:NO];
 
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+    if (_liveResizeSnapshotState)
+        [self _removeLiveSnapshotState];
+#endif
+
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     [self _invalidateResizeAssertions];
 #endif
@@ -1191,6 +1195,20 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
         _perProcessState.lastTransactionID = transactionID;
 
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+        auto transactionIDForEndLiveResize = _perProcessState.transactionIDForEndLiveResize;
+        if (transactionIDForEndLiveResize && transactionID.greaterThanOrEqualSameProcess(*transactionIDForEndLiveResize)) {
+            _perProcessState.waitingForEndLiveResizePresentationUpdate = YES;
+            _perProcessState.transactionIDForEndLiveResize = std::nullopt;
+            [self _doAfterNextPresentationUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] {
+                RetainPtr strongSelf = weakSelf.get();
+                if (!strongSelf)
+                    return;
+                strongSelf->_perProcessState.waitingForEndLiveResizePresentationUpdate = NO;
+            }).get()];
+        }
+#endif
+
 #if HAVE(LIQUID_GLASS)
         bool isEnteringStableState = !std::exchange(_perProcessState.lastTransactionWasInStableState, mainFrameCommitData.isInStableState);
 #endif
@@ -1239,6 +1257,12 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
         if (_perProcessState.liveResizeParameters)
             return;
+
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=317005
+        if (_perProcessState.transactionIDForEndLiveResize || _perProcessState.waitingForEndLiveResizePresentationUpdate)
+            return;
+#endif
 
         if (_resizeAnimationView)
             WKWEBVIEW_RELEASE_LOG("%p -[WKWebView _didCommitLayerTree:] - dynamicViewportUpdateMode is NotResizing, but still have a live resizeAnimationView (unpaired begin/endAnimatedResize?)", self);
@@ -2052,6 +2076,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (CheckedPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
         [_scrollView _setDecelerationRateInternal:(coordinator->shouldSetScrollViewDecelerationRateFast()) ? UIScrollViewDecelerationRateFast : UIScrollViewDecelerationRateNormal];
         coordinator->setRootNodeIsInUserScroll(true);
+
+        if (coordinator->scrollingPerformanceTestingEnabled() && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
+            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES; currentURL=%s", _page->currentURL().utf8().data());
+            _scrollPerfIntervalState = ScrollPerfIntervalState::FingerDown;
+            _scrollPerfRubberbandingNotified = NO;
+        }
     }
 }
 
@@ -2124,6 +2154,19 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
+    if (CheckedPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
+        if (coordinator->scrollingPerformanceTestingEnabled()) {
+            if (_scrollPerfIntervalState == ScrollPerfIntervalState::FingerDown) {
+                WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES;");
+                _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
+            }
+            if (decelerate && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
+                WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES; currentURL=%s", _page->currentURL().utf8().data());
+                _scrollPerfIntervalState = ScrollPerfIntervalState::Momentum;
+            }
+        }
+    }
+
     // If we're decelerating, scroll offset will be updated when scrollViewDidFinishDecelerating: is called.
     if (!decelerate)
         [self _didFinishScrolling:scrollView];
@@ -2131,6 +2174,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    if (CheckedPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
+        if (coordinator->scrollingPerformanceTestingEnabled()) {
+            if (_scrollPerfIntervalState == ScrollPerfIntervalState::Momentum) {
+                WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+                _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
+            }
+        }
+    }
+
     [self _didFinishScrolling:scrollView];
 }
 
@@ -2346,6 +2398,20 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
         scrollPerfData->didScroll([self visibleRectInViewCoordinates]);
 
+    if (_scrollPerfIntervalState != ScrollPerfIntervalState::Inactive) {
+        if ([scrollView _wk_isScrolledBeyondExtents]) {
+            if (_scrollPerfIntervalState == ScrollPerfIntervalState::FingerDown)
+                WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES;");
+            else
+                WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+            _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
+            if (!_scrollPerfRubberbandingNotified) {
+                notify_post("com.apple.safari.scrollingperformancetest.rubberbanding");
+                _scrollPerfRubberbandingNotified = YES;
+            }
+        }
+    }
+
     [_contentView updateSelection];
 
 #if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
@@ -2385,6 +2451,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_scrollViewDidInterruptDecelerating:(UIScrollView *)scrollView
 {
+    if (_scrollPerfIntervalState == ScrollPerfIntervalState::Momentum) {
+        WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+        _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
+    }
+
     if (![self usesStandardContentView])
         return;
 
@@ -2468,6 +2539,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_dispatchSetViewLayoutSize:(WebCore::FloatSize)viewLayoutSize
 {
+    if (!_page)
+        return;
+
     auto newMinimumEffectiveDeviceWidth = _page->minimumEffectiveDeviceWidth();
     if (_perProcessState.lastSentViewLayoutSize && CGSizeEqualToSize(_perProcessState.lastSentViewLayoutSize.value(), viewLayoutSize) && _perProcessState.lastSentMinimumEffectiveDeviceWidth && _perProcessState.lastSentMinimumEffectiveDeviceWidth == newMinimumEffectiveDeviceWidth)
         return;
@@ -2536,6 +2610,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     [self _rescheduleEndLiveResizeTimer];
+
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+    if (_perProcessState.transactionIDForEndLiveResize || _perProcessState.waitingForEndLiveResizePresentationUpdate)
+        return;
+#endif
 
     if (_perProcessState.liveResizeParameters)
         return;
@@ -2608,7 +2687,11 @@ static CGFloat liveResizeMinimumWidthDifference()
     auto endLiveResizeHysteresis = 500_ms;
     bool didEndLiveResizeImmediately = false;
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-    if ([self _shouldForceEndLiveResize]) {
+    if ([self _shouldForceEndLiveResize]
+#if ENABLE(FULLSCREEN_API)
+        && ![_fullScreenWindowController isFullScreen]
+#endif
+    ) {
         endLiveResizeHysteresis = 0_ms;
         didEndLiveResizeImmediately = true;
     }
@@ -2621,10 +2704,10 @@ static CGFloat liveResizeMinimumWidthDifference()
             auto strongSelf = weakSelf.get();
             [strongSelf _endLiveResize];
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-        if (!didEndLiveResizeImmediately)
-            [strongSelf _resetResponsiveResizeState];
+            if (!didEndLiveResizeImmediately)
+                [strongSelf _resetResponsiveResizeState];
 #else
-        UNUSED_PARAM(didEndLiveResizeImmediately);
+            UNUSED_PARAM(didEndLiveResizeImmediately);
 #endif
         }).get()];
 }
@@ -2642,20 +2725,45 @@ static CGFloat liveResizeMinimumWidthDifference()
 
     [_resizeAnimationView setTransform:transform];
 
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+    if (_perProcessState.resizeAnimationViewIsUpdating && _liveResizeSnapshotState) {
+        _perProcessState.resizeAnimationViewIsUpdating = NO;
+        auto snapshotTransactionID = _liveResizeSnapshotState->first;
+        [self _doAfterNextPresentationUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self), snapshotTransactionID] {
+            RetainPtr strongSelf = weakSelf.get();
+            if (!strongSelf || !strongSelf->_liveResizeSnapshotState || strongSelf->_liveResizeSnapshotState->first != snapshotTransactionID)
+                return;
+            [strongSelf _removeLiveSnapshotState];
+        }).get()];
+    }
+#endif
+
 #if HAVE(LIQUID_GLASS)
     [self _updateFixedColorExtensionViewFrames];
 #endif
+}
 
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-    if (_liveResizeSnapshotContainerView)
-        [_liveResizeSnapshotContainerView setTransform:transform];
-#endif
+- (void)_updateLiveSnapshotTransform
+{
+    CGFloat snapshotScale = self.bounds.size.width / _liveResizeSnapshotState->second.initialWidth;
+    [_liveResizeSnapshotState->second.snapshotView setTransform:CGAffineTransformMakeScale(snapshotScale, snapshotScale)];
 }
+
+- (void)_removeLiveSnapshotState
+{
+    [_liveResizeSnapshotState->second.snapshotView removeFromSuperview];
+    _liveResizeSnapshotState = std::nullopt;
+}
+#endif
 
 #endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
 
 - (void)_frameOrBoundsWillChange
 {
+    if (!_page)
+        return;
+
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
     auto [sizeBeforeUpdate, orientationBeforeUpdate] = _lastKnownWindowSizeAndOrientation;
     [self _updateLastKnownWindowSizeAndOrientation];
@@ -2690,6 +2798,9 @@ static CGFloat liveResizeMinimumWidthDifference()
 
 - (void)_frameOrBoundsMayHaveChanged
 {
+    if (!_page)
+        return;
+
     CGRect bounds = self.bounds;
     [_scrollView setFrame:bounds];
 
@@ -2702,7 +2813,16 @@ static CGFloat liveResizeMinimumWidthDifference()
         [self _updateLiveResizeTransform];
 #endif
 
-    if (!self._shouldDeferGeometryUpdates) {
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+    if (_liveResizeSnapshotState)
+        [self _updateLiveSnapshotTransform];
+#endif
+
+    if (!self._shouldDeferGeometryUpdates
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+        && !_perProcessState.transactionIDForEndLiveResize && !_perProcessState.waitingForEndLiveResizePresentationUpdate
+#endif
+    ) {
         if (!_overriddenLayoutParameters) {
             [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
             _page->setDefaultUnobscuredSize(WebCore::FloatSize(bounds.size));
@@ -3209,6 +3329,11 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     if (_resizeAnimationView)
         return;
 
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+    if (_liveResizeSnapshotState)
+        _perProcessState.resizeAnimationViewIsUpdating = YES;
+#endif
+
     NSUInteger indexOfContentView = [[_scrollView subviews] indexOfObject:_contentView.get()];
     _resizeAnimationView = adoptNS([[UIView alloc] init]);
     [_resizeAnimationView layer].name = @"ResizeAnimation";
@@ -3672,6 +3797,82 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [self _ensureResizeAnimationView];
 }
 
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+- (void)_endLiveResizeWithResponsiveRelayout
+{
+    if (_liveResizeSnapshotState)
+        [self _removeLiveSnapshotState];
+
+    _perProcessState.transactionIDForEndLiveResize = std::nullopt;
+    _perProcessState.waitingForEndLiveResizePresentationUpdate = NO;
+
+#if ENABLE(FULLSCREEN_API)
+    if ([_fullScreenWindowController isFullScreen]) {
+        [self _endLiveResizeDefault];
+        return;
+    }
+#endif
+
+    if (RefPtr drawingArea = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea()))
+        _perProcessState.transactionIDForEndLiveResize = drawingArea->nextMainFrameLayerTreeTransactionID();
+
+    if (!_perProcessState.transactionIDForEndLiveResize)
+        return;
+
+    RetainPtr liveResizeSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
+    [liveResizeSnapshotView setFrame:self.bounds];
+    [liveResizeSnapshotView layer].anchorPoint = CGPointZero;
+    [liveResizeSnapshotView layer].position = CGPointZero;
+    [self addSubview:liveResizeSnapshotView.get()];
+    auto transactionIDForEndLiveResize = *_perProcessState.transactionIDForEndLiveResize;
+    _liveResizeSnapshotState = { { transactionIDForEndLiveResize, { liveResizeSnapshotView, self.bounds.size.width } } };
+
+    _perProcessState.lastResizeTimestamp = [NSDate now];
+    _perProcessState.lastResizedViewWidth = self.bounds.size.width;
+
+    _perProcessState.liveResizeParameters = std::nullopt;
+
+    ASSERT(_perProcessState.dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing);
+    [self _destroyResizeAnimationView];
+    [self _didStopDeferringGeometryUpdates];
+
+    // Ensure that the live resize snapshot is eventually removed, even if the webpage is unresponsive.
+    RunLoop::mainSingleton().dispatchAfter(1_s, [weakSelf = WeakObjCPtr<WKWebView>(self), transactionIDForEndLiveResize] {
+        RetainPtr strongSelf = weakSelf.get();
+        if (!strongSelf || !strongSelf->_liveResizeSnapshotState || strongSelf->_liveResizeSnapshotState->first != transactionIDForEndLiveResize)
+            return;
+        [strongSelf _removeLiveSnapshotState];
+        strongSelf->_perProcessState.transactionIDForEndLiveResize = std::nullopt;
+        strongSelf->_perProcessState.waitingForEndLiveResizePresentationUpdate = NO;
+    });
+}
+#endif
+
+- (void)_endLiveResizeDefault
+{
+    RetainPtr liveResizeSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
+    [liveResizeSnapshotView setFrame:self.bounds];
+    [self addSubview:liveResizeSnapshotView];
+
+    _perProcessState.liveResizeParameters = std::nullopt;
+
+    ASSERT(_perProcessState.dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing);
+    [self _destroyResizeAnimationView];
+    [self _didStopDeferringGeometryUpdates];
+
+    [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([liveResizeSnapshotView, weakSelf = WeakObjCPtr<WKWebView>(self)] mutable {
+        RetainPtr strongSelf = weakSelf.get();
+        [strongSelf _doAfterNextPresentationUpdate:makeBlockPtr([liveResizeSnapshotView] {
+            [liveResizeSnapshotView removeFromSuperview];
+        }).get()];
+    }).get()];
+
+    // Ensure that the live resize snapshot is eventually removed, even if the webpage is unresponsive.
+    RunLoop::mainSingleton().dispatchAfter(1_s, [liveResizeSnapshotView] {
+        [liveResizeSnapshotView removeFromSuperview];
+    });
+}
+
 - (void)_endLiveResize
 {
     WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _endLiveResize]", self, _page->identifier().toUInt64());
@@ -3682,61 +3883,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_endLiveResizeTimer invalidate];
     _endLiveResizeTimer = nil;
 
-    RetainPtr liveResizeSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
-    [liveResizeSnapshotView setFrame:self.bounds];
-
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-    _liveResizeSnapshotContainerView = adoptNS([[UIView alloc] initWithFrame:self.bounds]);
-    [_liveResizeSnapshotContainerView layer].anchorPoint = CGPointZero;
-    [_liveResizeSnapshotContainerView layer].position = CGPointZero;
-    [_liveResizeSnapshotContainerView addSubview:liveResizeSnapshotView.get()];
-    [self addSubview:_liveResizeSnapshotContainerView.get()];
+    [self _endLiveResizeWithResponsiveRelayout];
 #else
-    [self addSubview:liveResizeSnapshotView.get()];
+    [self _endLiveResizeDefault];
 #endif
-
-#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-    _perProcessState.lastResizeTimestamp = [NSDate now];
-    _perProcessState.lastResizedViewWidth = self.bounds.size.width;
-#endif
-
-    _perProcessState.liveResizeParameters = std::nullopt;
-
-    ASSERT(_perProcessState.dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing);
-    [self _destroyResizeAnimationView];
-    [self _didStopDeferringGeometryUpdates];
-
-    [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([liveResizeSnapshotView, weakSelf = WeakObjCPtr<WKWebView>(self)] mutable {
-        RetainPtr strongSelf = weakSelf.get();
-        [strongSelf _doAfterNextPresentationUpdate:makeBlockPtr([liveResizeSnapshotView, weakSelf] {
-#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-            UNUSED_PARAM(liveResizeSnapshotView);
-            RetainPtr strongSelf = weakSelf.get();
-            if (!strongSelf)
-                return;
-            [strongSelf->_liveResizeSnapshotContainerView removeFromSuperview];
-            strongSelf->_liveResizeSnapshotContainerView = nil;
-#else
-            UNUSED_PARAM(weakSelf);
-            [liveResizeSnapshotView removeFromSuperview];
-#endif
-        }).get()];
-    }).get()];
-
-    // Ensure that the live resize snapshot is eventually removed, even if the webpage is unresponsive.
-    RunLoop::mainSingleton().dispatchAfter(1_s, [liveResizeSnapshotView, weakSelf = WeakObjCPtr<WKWebView>(self)] {
-#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-        UNUSED_PARAM(liveResizeSnapshotView);
-        RetainPtr strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-        [strongSelf->_liveResizeSnapshotContainerView removeFromSuperview];
-        strongSelf->_liveResizeSnapshotContainerView = nil;
-#else
-        UNUSED_PARAM(weakSelf);
-        [liveResizeSnapshotView removeFromSuperview];
-#endif
-    });
 }
 
 #endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
@@ -3972,7 +4123,7 @@ static bool isLockdownModeWarningNeeded()
             if (!appDisplayName)
                 appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleNameKey];
 
-            SUPPRESS_UNRETAINED_ARG RetainPtr title = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@“", "Lockdown Mode alert title"), appDisplayName]);
+            SUPPRESS_UNRETAINED_ARG RetainPtr title = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@”", "Lockdown Mode alert title"), appDisplayName]);
             auto alert = WebKit::createUIAlertController(title.get(), message.get());
 
             [alert addAction:[UIAlertAction actionWithTitle:protect(WEB_UI_NSSTRING(@"OK", "Lockdown Mode alert OK button")) style:UIAlertActionStyleDefault handler:nil]];

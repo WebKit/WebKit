@@ -1,0 +1,51 @@
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
+}
+
+var results=[];
+function checkForPreload(url, shouldbe) {
+    var preloaded = internals.isPreloaded(url);
+    if ((preloaded && shouldbe) || (!preloaded && !shouldbe))
+        results.push("PASS\n");
+    else
+        results.push("FAIL\n");
+}
+function printResults(){
+    for(var i = 0; i < results.length; i++)
+        log.textContent += results[i];
+}
+
+</script>
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=1000"></script>
+<script>
+checkForPreload("resources/small_mq.css?1", true);
+checkForPreload("resources/small_mq.css?2", true);
+checkForPreload("resources/small_mq.css?3", true);
+checkForPreload("resources/small_mq.css?4", true);
+</script>
+<style>
+@charset "utf-8";
+@import url("resources/small_mq.css?1");
+</style>
+<style>
+@layer foo, bar;
+@import url("resources/small_mq.css?2");
+</style>
+<style>
+@charset "utf-8";
+@layer foo, bar;
+@import url("resources/small_mq.css?3");
+</style>
+<style>
+@layer foo, bar;
+@import url("resources/small_mq.css?4") layer(foo);
+</style>
+<body>
+<p>Preload scanner should preload @import rules that follow @charset and @layer statement rules</p>
+<pre id=log></pre>
+<script>
+printResults();
+</script>

@@ -16,10 +16,10 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
@@ -121,9 +121,9 @@ class AndroidVoipClient : public webrtc::Transport {
   void Delete(JNIEnv* env);
 
   // Implementation for Transport.
-  bool SendRtp(webrtc::ArrayView<const uint8_t> packet,
+  bool SendRtp(std::span<const uint8_t> packet,
                const webrtc::PacketOptions& options) override;
-  bool SendRtcp(webrtc::ArrayView<const uint8_t> packet,
+  bool SendRtcp(std::span<const uint8_t> packet,
                 const webrtc::PacketOptions& options) override;
 
   void OnSignalReadRTPPacket(webrtc::AsyncPacketSocket* socket,

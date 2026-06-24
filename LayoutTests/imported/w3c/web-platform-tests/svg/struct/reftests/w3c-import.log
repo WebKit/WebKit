@@ -65,6 +65,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-html-resource-with-doctype-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-html-resource-with-doctype.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-html-resource.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-nested-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-nested-image.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-nested-symbol-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-nested-symbol.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-no-svg-root-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-no-svg-root.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-target-pseudo-001-expected.html

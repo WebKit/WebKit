@@ -11,18 +11,18 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,1) size 784x20
             RenderTableCell {TD} at (1,1) size 2x20 [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 0x18 [bgcolor=#FFFFFF]
-                RenderSelectFallbackButton {DIV} at (0,0) size 31x18
-                  RenderText at (8,2) size 20x13
+                RenderBlock {DIV} at (0,0) size 31x18
+                  RenderText {#text} at (8,2) size 20x13
                     text run at (8,2) width 20: "one"
             RenderTableCell {TD} at (4,1) size 2x20 [r=0 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 0x18 [bgcolor=#FFFFFF]
-                RenderSelectFallbackButton {DIV} at (0,0) size 31x18
-                  RenderText at (8,2) size 19x13
+                RenderBlock {DIV} at (0,0) size 31x18
+                  RenderText {#text} at (8,2) size 19x13
                     text run at (8,2) width 19: "two"
             RenderTableCell {TD} at (7,1) size 2x20 [r=0 c=2 rs=1 cs=1]
               RenderMenuList {SELECT} at (1,1) size 0x18 [bgcolor=#FFFFFF]
-                RenderSelectFallbackButton {DIV} at (0,0) size 31x18
-                  RenderText at (8,2) size 28x13
+                RenderBlock {DIV} at (0,0) size 31x18
+                  RenderText {#text} at (8,2) size 28x13
                     text run at (8,2) width 28: "three"
             RenderTableCell {TD} at (10,1) size 773x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18

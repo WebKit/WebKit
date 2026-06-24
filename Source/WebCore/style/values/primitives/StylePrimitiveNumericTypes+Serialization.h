@@ -34,7 +34,7 @@ namespace WebCore {
 namespace Style {
 
 template<Numeric StyleType> struct Serialize<StyleType> {
-    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value)
     {
         // FIXME: Do this more efficiently without creating and destroying a CSS::Numeric object.
         CSS::serializationForCSS(builder, context, toCSS(value, style));
@@ -42,7 +42,7 @@ template<Numeric StyleType> struct Serialize<StyleType> {
 };
 
 template<DimensionPercentageNumeric StyleType> struct Serialize<StyleType> {
-    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value)
     {
         // FIXME: Do this more efficiently without creating and destroying a CSS::Numeric object.
         CSS::serializationForCSS(builder, context, toCSS(value, style));
@@ -50,7 +50,7 @@ template<DimensionPercentageNumeric StyleType> struct Serialize<StyleType> {
 };
 
 template<Calc StyleType> struct Serialize<StyleType> {
-    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value)
     {
         // FIXME: Do this more efficiently without creating and destroying a CSS::UnevaluatedCalc object.
         CSS::serializationForCSS(builder, context, toCSS(value, style));
@@ -60,7 +60,7 @@ template<Calc StyleType> struct Serialize<StyleType> {
 template<auto nR, auto pR, typename V> struct Serialize<NumberOrPercentage<nR, pR, V>> {
     using StyleType = NumberOrPercentage<nR, pR, V>;
 
-    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value)
     {
         // FIXME: Do this more efficiently without creating and destroying a CSS::UnevaluatedCalc object.
         CSS::serializationForCSS(builder, context, toCSS(value, style));
@@ -70,7 +70,7 @@ template<auto nR, auto pR, typename V> struct Serialize<NumberOrPercentage<nR, p
 template<auto nR, auto pR, typename V> struct Serialize<NumberOrPercentageResolvedToNumber<nR, pR, V>> {
     using StyleType = NumberOrPercentageResolvedToNumber<nR, pR, V>;
 
-    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const StyleType& value)
+    void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value)
     {
         // FIXME: Do this more efficiently without creating and destroying a CSS::UnevaluatedCalc object.
         CSS::serializationForCSS(builder, context, toCSS(value, style));

@@ -11,8 +11,9 @@
 #include "modules/audio_processing/agc2/rnn_vad/features_extraction.h"
 
 #include <array>
+#include <cstddef>
+#include <span>
 
-#include "api/array_view.h"
 #include "modules/audio_processing/agc2/biquad_filter.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
@@ -54,8 +55,8 @@ void FeaturesExtractor::Reset() {
 }
 
 bool FeaturesExtractor::CheckSilenceComputeFeatures(
-    ArrayView<const float, kFrameSize10ms24kHz> samples,
-    ArrayView<float, kFeatureVectorSize> feature_vector) {
+    std::span<const float, kFrameSize10ms24kHz> samples,
+    std::span<float, kFeatureVectorSize> feature_vector) {
   // Pre-processing.
   if (use_high_pass_filter_) {
     std::array<float, kFrameSize10ms24kHz> samples_filtered;
@@ -76,17 +77,17 @@ bool FeaturesExtractor::CheckSilenceComputeFeatures(
   feature_vector[kFeatureVectorSize - 2] = 0.01f * (pitch_period_48kHz_ - 300);
   // Extract lagged frames (according to the estimated pitch period).
   RTC_DCHECK_LE(pitch_period_48kHz_ / 2, kMaxPitch24kHz);
-  auto lagged_frame = pitch_buf_24kHz_view_.subview(
+  auto lagged_frame = pitch_buf_24kHz_view_.subspan(
       kMaxPitch24kHz - pitch_period_48kHz_ / 2, kFrameSize20ms24kHz);
   // Analyze reference and lagged frames checking if silence has been detected
   // and write the feature vector.
   return spectral_features_extractor_.CheckSilenceComputeFeatures(
-      reference_frame_view_, {lagged_frame.data(), kFrameSize20ms24kHz},
-      {feature_vector.data() + kNumLowerBands, kNumBands - kNumLowerBands},
-      {feature_vector.data(), kNumLowerBands},
-      {feature_vector.data() + kNumBands, kNumLowerBands},
-      {feature_vector.data() + kNumBands + kNumLowerBands, kNumLowerBands},
-      {feature_vector.data() + kNumBands + 2 * kNumLowerBands, kNumLowerBands},
+      reference_frame_view_, lagged_frame.first<kFrameSize20ms24kHz>(),
+      feature_vector.subspan<kNumLowerBands, kNumBands - kNumLowerBands>(),
+      feature_vector.first<kNumLowerBands>(),
+      feature_vector.subspan<kNumBands, kNumLowerBands>(),
+      feature_vector.subspan<kNumBands + kNumLowerBands, kNumLowerBands>(),
+      feature_vector.subspan<kNumBands + 2 * kNumLowerBands, kNumLowerBands>(),
       &feature_vector[kFeatureVectorSize - 1]);
 }
 

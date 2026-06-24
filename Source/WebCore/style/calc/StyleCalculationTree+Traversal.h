@@ -70,6 +70,13 @@ template<typename F, typename Op> void forAllChildren(const Op& root, const F& f
         {
             functor(root);
         }
+        void operator()(const Vector<CalcMix::Item>& root)
+        {
+            for (auto& child : root) {
+                functor(child.value);
+                functor(child.weight);
+            }
+        }
     };
     auto caller = Caller { functor };
     WTF::apply([&](const auto& ...x) { (..., caller(x)); }, root);

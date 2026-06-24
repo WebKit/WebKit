@@ -24,6 +24,7 @@ struct WebKit::FrameTreeCreationParameters {
     WebCore::FrameIdentifier frameID;
     std::optional<WebCore::FrameIdentifier> openerFrameID;
     String frameName;
+    WebCore::ProcessIdentifier hostingProcessID;
     Ref<WebCore::FrameTreeSyncData> frameTreeSyncData;
     Vector<WebKit::FrameTreeCreationParameters> children;
 };

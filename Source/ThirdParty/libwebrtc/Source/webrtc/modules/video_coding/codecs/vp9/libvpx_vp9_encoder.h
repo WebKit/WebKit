@@ -259,6 +259,9 @@ class LibvpxVp9Encoder : public VideoEncoder {
 #if WEBRTC_WEBKIT_BUILD
   std::optional<webrtc::ColorSpace> current_color_space_;
 #endif
+
+  // TODO(webrtc:500517546): Remove once the feature is fully deployed.
+  const bool post_encode_frame_drop_;
 };
 
 }  // namespace webrtc

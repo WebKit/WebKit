@@ -66,7 +66,7 @@ class HTMLInputElement final : public HTMLTextFormControlElement {
 public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
-    static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
+    static Ref<HTMLInputElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLInputElement();
 
     WEBCORE_EXPORT bool NODELETE alpha();
@@ -150,7 +150,7 @@ public:
     bool NODELETE isCheckbox() const;
     bool NODELETE isSwitch() const;
     bool NODELETE isCheckable() const;
-    bool NODELETE isRangeControl() const;
+    WEBCORE_EXPORT bool NODELETE isRangeControl() const;
     WEBCORE_EXPORT bool NODELETE isColorControl() const;
     // FIXME: It's highly likely that any call site calling this function should instead
     // be using a different one. Many input elements behave like text fields, and in addition
@@ -180,7 +180,7 @@ public:
 
     RefPtr<TextControlInnerTextElement> innerTextElement() const final;
     RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() final;
-    RenderStyle createInnerTextStyle(const RenderStyle&) final;
+    Style::ComputedStyle createInnerTextStyle(const Style::ComputedStyle&) final;
 
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
@@ -220,9 +220,9 @@ public:
     // delay the 'input' event with EventQueueScope.
     void setValueFromRenderer(const String&);
 
-    bool rendererIsNeeded(const RenderStyle&) final;
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const RenderStyle* = nullptr) const final;
+    bool rendererIsNeeded(const Style::ComputedStyle&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
     void willAttachRenderers() final;
     void didAttachRenderers() final;
     void didDetachRenderers() final;
@@ -341,7 +341,7 @@ public:
 
     void capsLockStateMayHaveChanged();
 
-    bool NODELETE shouldTruncateText(const RenderStyle&) const;
+    bool NODELETE shouldTruncateText(const Style::ComputedStyle&) const;
 
     String resultForDialogSubmit() const final;
 
@@ -363,7 +363,7 @@ public:
 
 private:
     enum class CreationType : uint8_t { Normal, ByParser, ByCloning };
-    HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, CreationType);
+    HTMLInputElement(const QualifiedName&, Document&, CreationType);
 
     void defaultEventHandler(Event&) final;
 

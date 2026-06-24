@@ -14,17 +14,16 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
 #include "api/call/bitrate_allocation.h"
-#include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/field_trials_view.h"
 #include "api/rtp_parameters.h"
@@ -39,11 +38,12 @@
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/fake_clock.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
+#include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
 namespace {
@@ -65,8 +65,9 @@ AudioEncoderOpusConfig CreateConfigWithParameters(
 struct AudioEncoderOpusStates {
   MockAudioNetworkAdaptor* mock_audio_network_adaptor;
   MockSmoothingFilter* mock_bitrate_smoother;
+  GlobalSimulatedTimeController time_controller{
+      Timestamp::Micros(kInitialTimeUs)};
   std::unique_ptr<AudioEncoderOpusImpl> encoder;
-  std::unique_ptr<ScopedFakeClock> fake_clock;
   int uplink_bandwidth_update_interval_ms = 0;
 };
 
@@ -77,8 +78,6 @@ std::unique_ptr<AudioEncoderOpusStates> CreateCodec(
   std::unique_ptr<AudioEncoderOpusStates> states =
       std::make_unique<AudioEncoderOpusStates>();
   states->mock_audio_network_adaptor = nullptr;
-  states->fake_clock.reset(new ScopedFakeClock());
-  states->fake_clock->SetTime(Timestamp::Micros(kInitialTimeUs));
 
   MockAudioNetworkAdaptor** mock_ptr = &states->mock_audio_network_adaptor;
   AudioEncoderOpusImpl::AudioNetworkAdaptorCreator creator =
@@ -106,8 +105,10 @@ std::unique_ptr<AudioEncoderOpusStates> CreateCodec(
   states->mock_bitrate_smoother = bitrate_smoother.get();
 
   states->encoder = AudioEncoderOpusImpl::CreateForTesting(
-      CreateEnvironment(field_trials), std::move(config),
-      kDefaultOpusPayloadType, creator, std::move(bitrate_smoother));
+      CreateTestEnvironment(
+          {.field_trials = field_trials, .time = &states->time_controller}),
+      std::move(config), kDefaultOpusPayloadType, creator,
+      std::move(bitrate_smoother));
   return states;
 }
 
@@ -374,7 +375,7 @@ TEST_P(AudioEncoderOpusTest,
   states->encoder->OnReceivedUplinkPacketLossFraction(kPacketLossFraction_1);
   EXPECT_FLOAT_EQ(0.02f, states->encoder->packet_loss_rate());
 
-  states->fake_clock->AdvanceTime(TimeDelta::Millis(kSecondSampleTimeMs));
+  states->time_controller.AdvanceTime(TimeDelta::Millis(kSecondSampleTimeMs));
   states->encoder->OnReceivedUplinkPacketLossFraction(kPacketLossFraction_2);
 
   // Now the output of packet loss fraction smoother should be
@@ -512,23 +513,23 @@ TEST_P(AudioEncoderOpusTest, UpdateUplinkBandwidthInAudioNetworkAdaptor) {
       .WillOnce(Return(50000));
   EXPECT_CALL(*states->mock_audio_network_adaptor, SetUplinkBandwidth(50000));
   states->encoder->Encode(
-      0, ArrayView<const int16_t>(audio.data(), audio.size()), &encoded);
+      0, std::span<const int16_t>(audio.data(), audio.size()), &encoded);
 
   // Repeat update uplink bandwidth tests.
   for (int i = 0; i < 5; i++) {
     // Don't update till it is time to update again.
-    states->fake_clock->AdvanceTime(
+    states->time_controller.AdvanceTime(
         TimeDelta::Millis(states->uplink_bandwidth_update_interval_ms - 1));
     states->encoder->Encode(
-        0, ArrayView<const int16_t>(audio.data(), audio.size()), &encoded);
+        0, std::span<const int16_t>(audio.data(), audio.size()), &encoded);
 
     // Update when it is time to update.
     EXPECT_CALL(*states->mock_bitrate_smoother, GetAverage)
         .WillOnce(Return(40000));
     EXPECT_CALL(*states->mock_audio_network_adaptor, SetUplinkBandwidth(40000));
-    states->fake_clock->AdvanceTime(TimeDelta::Millis(1));
+    states->time_controller.AdvanceTime(TimeDelta::Millis(1));
     states->encoder->Encode(
-        0, ArrayView<const int16_t>(audio.data(), audio.size()), &encoded);
+        0, std::span<const int16_t>(audio.data(), audio.size()), &encoded);
   }
 }
 
@@ -687,7 +688,7 @@ TEST(AudioEncoderOpusTest, GetFrameLenghtRange) {
   AudioEncoderOpusConfig config =
       CreateConfigWithParameters({{"maxptime", "10"}, {"ptime", "10"}});
   std::unique_ptr<AudioEncoder> encoder = AudioEncoderOpus::MakeAudioEncoder(
-      CreateEnvironment(), std::move(config),
+      CreateTestEnvironment(), std::move(config),
       {.payload_type = kDefaultOpusPayloadType});
   auto ptime = TimeDelta::Millis(10);
   std::optional<std::pair<TimeDelta, TimeDelta>> range = {{ptime, ptime}};
@@ -779,7 +780,7 @@ TEST_P(AudioEncoderOpusTest, OpusFlagDtxAsNonSpeech) {
   config.dtx_enabled = true;
   config.sample_rate_hz = sample_rate_hz_;
   const auto encoder = AudioEncoderOpus::MakeAudioEncoder(
-      CreateEnvironment(), std::move(config), {.payload_type = 17});
+      CreateTestEnvironment(), std::move(config), {.payload_type = 17});
 
   // Open file containing speech and silence.
   const std::string kInputFileName =

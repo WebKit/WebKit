@@ -112,7 +112,7 @@ void FTPDirectoryDocumentParser::appendEntry(String&& filename, String&& size, S
 {
     Ref document = *this->document();
 
-    Ref rowElement = m_tableElement->insertRow(-1).releaseReturnValue();
+    Ref rowElement = protect(m_tableElement)->insertRow(-1).releaseReturnValue();
     rowElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "ftpDirectoryEntryRow"_s);
 
     Ref typeElement = HTMLTableCellElement::create(tdTag, document);
@@ -295,7 +295,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
         return false;
     }
 
-    HTMLDocumentParser::insert(String(byteCast<Latin1Character>(templateDocumentData.get()->span())));
+    HTMLDocumentParser::insert(String(byteCast<Latin1Character>(protect(templateDocumentData.get())->span())));
 
     Ref document = *this->document();
 

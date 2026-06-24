@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Event Listeners Frame</title>
+</head>
+<body>
+    <div id="container" data-role="frame-root">
+        <h1 id="heading">Cross-Origin Heading</h1>
+        <button id="button">Click</button>
+    </div>
+    <script>
+    window.fireCount = 0;
+
+    window.basicClickHandler = function basicClickHandler() {
+        window.fireCount++;
+    };
+
+    window.captureHandler = function captureHandler() { };
+    window.bubbleHandler = function bubbleHandler() { };
+    window.onceHandler = function onceHandler() { };
+    window.passiveHandler = function passiveHandler() { };
+    window.ancestorHandler = function ancestorHandler() { };
+
+    window.attachBasicClickListener = function attachBasicClickListener() {
+        document.getElementById("heading").addEventListener("click", window.basicClickHandler);
+    };
+
+    window.attachCaptureAndBubbleListeners = function attachCaptureAndBubbleListeners() {
+        let button = document.getElementById("button");
+        button.addEventListener("click", window.captureHandler, true);
+        button.addEventListener("click", window.bubbleHandler, false);
+    };
+
+    window.attachOnceAndPassiveListeners = function attachOnceAndPassiveListeners() {
+        let button = document.getElementById("button");
+        button.addEventListener("click", window.onceHandler, {once: true});
+        button.addEventListener("wheel", window.passiveHandler, {passive: true});
+    };
+
+    window.attachAncestorListener = function attachAncestorListener() {
+        document.body.addEventListener("click", window.ancestorHandler);
+    };
+
+    window.dispatchClick = function dispatchClick(id) {
+        document.getElementById(id).dispatchEvent(new Event("click", {bubbles: true}));
+    };
+
+    window.resetFireCount = function resetFireCount() {
+        window.fireCount = 0;
+    };
+    </script>
+</body>
+</html>

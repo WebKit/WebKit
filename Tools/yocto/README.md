@@ -67,18 +67,33 @@ You have there also a debugger enabled to debug binaries for the target board.
 Inside this shell, you use ```$CC``` and ```$CXX``` as compilers for the target.
 A cross-aware debugger is also enabled, you can invoke it with: ```$GDB```
 
+```
+user@workstation(WKCrossDevShell:rpi4-64bits-mesa): ~/WebKit $ $ env | grep -P '^(CC|CXX|LD|AR|GDB|.*WEBKIT.*)='
+BUILD_WEBKIT_ARGS=--no-fatal-warnings --cmakeargs="-DENABLE_WPE_QT_API=OFF -DENABLE_DOCUMENTATION=OFF -DENABLE_INTROSPECTION=OFF -DENABLE_SPEECH_SYNTHESIS=OFF -DBWRAP_EXECUTABLE=/usr/bin/bwrap -DDBUS_PROXY_EXECUTABLE=/usr/bin/xdg-dbus-proxy"
+GDB=aarch64-poky-linux-gdb
+CXX=aarch64-poky-linux-clang++ --target=aarch64-poky-linux -mcpu=cortex-a72+crc -mbranch-protection=standard -mlittle-endian --sysroot=/home/igalia/webkit/WebKitBuild/CrossToolChains/rpi4-64bits-mesa/build/toolchain/sysroots/cortexa72-poky-linux
+LD=aarch64-poky-linux-ld  --sysroot=/home/igalia/webkit/WebKitBuild/CrossToolChains/rpi4-64bits-mesa/build/toolchain/sysroots/cortexa72-poky-linux
+AR=aarch64-poky-linux-ar
+CC=aarch64-poky-linux-clang --target=aarch64-poky-linux -mcpu=cortex-a72+crc -mbranch-protection=standard -mlittle-endian --sysroot=/home/igalia/webkit/WebKitBuild/CrossToolChains/rpi4-64bits-mesa/build/toolchain/sysroots/cortexa72-poky-linux
+WEBKIT_CROSS_VERSION=f2cc6d37723215008044c87e69046019
+WEBKIT_CROSS_TARGET=rpi4-64bits-mesa
+```
+
+### Using Clang
+
+It is possible to use Clang to build webkit via script `build-webkit` when
+using `cross-toolchain-helper`, or inside the `cross-dev-shell`.
+For that simply set on your environment `CC=clang` and `CXX=clang++` before
+starting the webkit build or before executing `cross-dev-shell`
+
+Example:
 
 ```
-user@workstation(WKCrossDevShell:rpi3-32bits-mesa): ~/WebKit $ env | grep -P '^(CC|CXX|LD|AR|GDB|.*WEBKIT.*)='
-BUILD_WEBKIT_ARGS=--no-fatal-warnings --cmakeargs="-DENABLE_WPE_QT_API=OFF -DENABLE_THUNDER=OFF -DENABLE_DOCUMENTATION=OFF -DENABLE_INTROSPECTION=OFF -DWPE_COG_PLATFORMS=drm,headless,wayland"
-GDB=arm-poky-linux-gnueabi-gdb
-CXX=arm-poky-linux-gnueabi-g++ -mthumb -mfpu=neon-vfpv4 -mfloat-abi=hard -mcpu=cortex-a7 --sysroot=/home/igalia/webkit/WebKitBuild/CrossToolChains/rpi3-32bits-mesa/build/toolchain/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi
-LD=arm-poky-linux-gnueabi-ld  --sysroot=/home/igalia/webkit/WebKitBuild/CrossToolChains/rpi3-32bits-mesa/build/toolchain/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi
-AR=arm-poky-linux-gnueabi-ar
-CC=arm-poky-linux-gnueabi-gcc -mthumb -mfpu=neon-vfpv4 -mfloat-abi=hard -mcpu=cortex-a7 --sysroot=/home/igalia/webkit/WebKitBuild/CrossToolChains/rpi3-32bits-mesa/build/toolchain/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi
-WEBKIT_CROSS_TARGET=rpi3-32bits-mesa
+  CC=clang CXX=clang++ Tools/Scripts/build-webkit --cross-target=rpi4-64bits-mesa --wpe --release
+  CC=clang CXX=clang++ Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --cross-dev-shell
 ```
 
+To use GCC simply unset CC or CXX (is the default).
 
 ### Using the bitbake-dev-shell
 
@@ -144,7 +159,7 @@ This is an example on how to build and run WPE for development on the RPi:
 1. Build the image that will be flashed on the board:
 
 ```
-user@workstation $ Tools/Scripts/cross-toolchain-helper --cross-target=rpi3-32bits-mesa --build-image
+user@workstation $ Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --build-image
 ```
 
 2. At the end of the build it will print the path to the image, if you missed it
@@ -152,8 +167,8 @@ user@workstation $ Tools/Scripts/cross-toolchain-helper --cross-target=rpi3-32bi
    Example:
 
 ```
-user@workstation $ Tools/Scripts/cross-toolchain-helper --cross-target=rpi3-32bits-mesa --build-image
-cross-toolchain-helper INFO: Image already built at: /home/igalia/webkit/WebKitBuild/CrossToolChains/rpi3-32bits-mesa/build/image/core-image-webkit-dev-ci-tools-tests.wic.xz
+user@workstation $ Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --build-image
+cross-toolchain-helper INFO: Image already built at: /home/igalia/webkit/WebKitBuild/CrossToolChains/rpi4-64bits-mesa/build/image/core-image-webkit-dev-ci-tools-tests.wic.xz
 ```
 
 3. Flash a SDCard with this image
@@ -175,7 +190,7 @@ user@workstation $ cat /path/to/core-image-webkit-dev-ci-tools-tests.wic.xz | xz
   * 3.3. Or alternatively use the script for deploying
 
 ```
-user@workstation $ DEVICESDCARD=/dev/mmcblk0 Tools/Scripts/cross-toolchain-helper --cross-target=rpi3-32bits-mesa --deploy-image-with-script Tools/yocto/deploy_image_scripts/wic-to-sdcard.sh
+user@workstation $ DEVICESDCARD=/dev/mmcblk0 Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --deploy-image-with-script Tools/yocto/deploy_image_scripts/wic-to-sdcard.sh
 ```
 
 4. Grow the rootfs partition to use all the available space on the SDcard
@@ -195,21 +210,43 @@ user@workstation $ sudo resize2fs /dev/mmcblk0p2
 # Insert SDCard, boot RPi and obtain the IP address asigned via DHCP
 # NOTE: password for root is empty (no auth required)
 user@workstation $ ssh root@192.168.X.Y
-root@raspberrypi3:~# git clone https://github.com/WebKit/WebKit.git --depth 1
+root@raspberrypi4:~# git clone https://github.com/WebKit/WebKit.git --depth 1
 ````
 
-# NOTE: In the raspberrypi3 the clone can be too much, in that situation you need
-# to clone in the machine building the image and copy to the device after that.
+**TIP:** Cloning the repository from inside the board can be very slow, it is a 
+better idea to pre-clone it on the machine building the image, either inside
+the sdcard or on an external USB pen-drive.
+
+### Extra features for the image
+
+The image can be built with extra programs included like Chromium (useful for
+performance benchmark) or Netdata.
+
+To add this extra features (opt-in) into the image either pass the flag
+`--image-extras` to cross-toolchain-helper or set the env var `WEBKIT_CROSS_IMAGE_EXTRAS`
+
+Examples:
+
+```
+WEBKIT_CROSS_IMAGE_EXTRAS=netdata+chromium Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --build-image
+```
+
+To check the available extra image features simply pass a random string to `cross-toolchain-helper`
+and it will error saying which ones are available.
+
+```
+Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --image-extras randomstr --build-toolchain
+```
 
 ### Build WPE for the target board
 
 1. You can use the build-webkit script passing the flag --cross-target=name
 
 ```
-user@workstation $ Tools/Scripts/build-webkit --wpe --release --cross-target=rpi3-32bits-mesa
+user@workstation $ Tools/Scripts/build-webkit --wpe --release --cross-target=rpi4-64bits-mesa
 ```
 
-2. The build will be stored in a per-target directory: ```WebKitBuild/WPE/Release_rpi3-32bits-mesa```
+2. The build will be stored in a per-target directory: ```WebKitBuild/WPE/Release_rpi4-64bits-mesa```
 
 This allows to build simultaneously for different targets (and for your host system)
 from the same checkout.
@@ -217,7 +254,7 @@ from the same checkout.
 3. Generate a release.zip for copying to the target board.
 
 ```
-Tools/CISupport/built-product-archive --platform=wpe --release --cross-target=rpi3-32bits-mesa archive
+Tools/CISupport/built-product-archive --platform=wpe --release --cross-target=rpi4-64bits-mesa archive
 ```
 
 4. Copy release.zip to the board
@@ -226,6 +263,28 @@ Tools/CISupport/built-product-archive --platform=wpe --release --cross-target=rp
 scp WebKitBuild/release.zip root@192.168.X.Y:
 ```
 
+### Starting Weston (Wayland environment)
+
+Weston is configured to automatically start when any program tries to use
+the socket. You can, for example, execute `weston-simple-egl` and then
+weston should be automatically launched.
+
+So when you execute the MiniBrowser it should automatically launch weston if
+is still not launched.
+
+If for some reason it doesn't auto-launch then you can try to do that manually:
+
+```
+root@raspberrypi4:~/WebKit# systemctl start weston
+# define and export the required environment variables
+root@raspberrypi4:~/WebKit# source <(strings /proc/$(pidof weston-desktop-shell)/environ | grep -P '(XDG_RUNTIME_DIR|WAYLAND_DISPLAY)')
+root@raspberrypi4:~/WebKit# export XDG_RUNTIME_DIR
+root@raspberrypi4:~/WebKit# export WAYLAND_DISPLAY
+```
+
+Check also the config file `/etc/xdg/weston/weston.ini` that it has the
+right output entries for your screen and that the option `xwayland=true`
+is not set.
 
 ### Unpack the built product on the board and run the browser or run tests
 
@@ -235,43 +294,30 @@ scp WebKitBuild/release.zip root@192.168.X.Y:
 # cd to the webkit checkout in the board and copy release.zip inside the build directory
 user@workstation $ ssh root@192.168.X.Y
 
-root@raspberrypi3:~# cd WebKit/
-root@raspberrypi3:~/WebKit# mkdir WebKitBuild
-root@raspberrypi3:~/WebKit# cp ~/release.zip WebKitBuild/
+root@raspberrypi4:~# cd WebKit/
+root@raspberrypi4:~/WebKit# mkdir WebKitBuild
+root@raspberrypi4:~/WebKit# cp ~/release.zip WebKitBuild/
 
-root@raspberrypi3:~/WebKit# Tools/CISupport/built-product-archive --platform=wpe --release extract
+root@raspberrypi4:~/WebKit# Tools/CISupport/built-product-archive --platform=wpe --release extract
 Extracting: /home/root/WebKit/WebKitBuild/Release
 Archive:  /home/root/WebKit/WebKitBuild/release.zip
 [....]
 ```
 
-2. Now you can run the minibrowser (cog) or any type of tests.
+2. Now you can run the minibrowser or any type of tests.
 
 ```
-# [Example 1]: Run Cog over the framebuffer with KMS/DRM
-# first: ensure weston is stopped
-root@raspberrypi3:~/WebKit# systemctl stop weston
-# Run cog with platform plugin 'drm'
-root@raspberrypi3:~/WebKit# Tools/Scripts/run-minibrowser --wpe -P drm
-
-# [Example 2]: Run Cog inside Weston/Wayland
-# first: start weston
-root@raspberrypi3:~/WebKit# systemctl start weston
-# define and export the required environment variables
-root@raspberrypi3:~/WebKit# source <(strings /proc/$(pidof weston-desktop-shell)/environ | grep -P '(XDG_RUNTIME_DIR|WAYLAND_DISPLAY)')
-root@raspberrypi3:~/WebKit# export XDG_RUNTIME_DIR
-root@raspberrypi3:~/WebKit# export WAYLAND_DISPLAY
-# Run cog with platform plugin 'wl'
-root@raspberrypi3:~/WebKit# Tools/Scripts/run-minibrowser --wpe -P wl
+# [Example 1]: Run MiniBrowser
+root@raspberrypi4:~/WebKit# Tools/Scripts/run-minibrowser --wpe --release
 
 
-# [Example 3]: Run layout tests
-root@raspberrypi3:~/WebKit# Tools/Scripts/run-webkit-tests --debug-rwt-logging --no-build --wpe --release fast/css
+# [Example 2]: Run layout tests
+root@raspberrypi4:~/WebKit# Tools/Scripts/run-webkit-tests --debug-rwt-logging --no-build --wpe --release fast/css
 
 # Note: the board may be not powerful enough or have not enough ram.
 # If you see issues with tests crashing or timing out try to lower the
 # number of parallel tests and raise the timeout value for the tests.
 # [Example 4]: Run layout tests with one worker:
-root@raspberrypi3:~/WebKit# export NUMBER_OF_PROCESSORS=1
-root@raspberrypi3:~/WebKit# Tools/Scripts/run-webkit-tests --debug-rwt-logging --no-build --wpe --release fast/css
+root@raspberrypi4:~/WebKit# export NUMBER_OF_PROCESSORS=1
+root@raspberrypi4:~/WebKit# Tools/Scripts/run-webkit-tests --debug-rwt-logging --no-build --wpe --release fast/css
 ```

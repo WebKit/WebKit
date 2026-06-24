@@ -80,11 +80,11 @@ DEFINE_TYPE_WRAPPER_GET(MaskBorderRepeat, values);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<MaskBorderRepeat> { auto operator()(const MaskBorderRepeat&, const RenderStyle&) -> CSS::MaskBorderRepeat; };
+template<> struct ToCSS<MaskBorderRepeat> { auto operator()(const MaskBorderRepeat&, const Style::ComputedStyle&) -> CSS::MaskBorderRepeat; };
 template<> struct ToStyle<CSS::MaskBorderRepeat> { auto operator()(const CSS::MaskBorderRepeat&, const BuilderState&) -> MaskBorderRepeat; };
 
 template<> struct CSSValueConversion<MaskBorderRepeat> { auto operator()(BuilderState&, const CSSValue&) -> MaskBorderRepeat; };
-template<> struct CSSValueCreation<MaskBorderRepeat> { auto operator()(CSSValuePool&, const RenderStyle&, const MaskBorderRepeat&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<MaskBorderRepeat> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const MaskBorderRepeat&) -> Ref<CSSValue>; };
 
 } // namespace Style
 } // namespace WebCore

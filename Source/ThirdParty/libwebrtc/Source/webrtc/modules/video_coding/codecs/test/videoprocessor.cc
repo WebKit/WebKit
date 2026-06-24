@@ -161,7 +161,8 @@ VideoProcessor::VideoProcessor(const Environment& env,
                                VideoCodecTestStatsImpl* stats,
                                IvfFileWriterMap* encoded_frame_writers,
                                FrameWriterList* decoded_frame_writers)
-    : config_(config),
+    : env_(env),
+      config_(config),
       num_simulcast_or_spatial_layers_(
           std::max(config_.NumberOfSimulcastStreams(),
                    config_.NumberOfSpatialLayers())),
@@ -315,7 +316,7 @@ void VideoProcessor::ProcessFrame() {
 
   // For the highest measurement accuracy of the encode time, the start/stop
   // time recordings should wrap the Encode call as tightly as possible.
-  const int64_t encode_start_ns = TimeNanos();
+  const int64_t encode_start_ns = env_.clock().CurrentTime().ns();
   for (size_t i = 0; i < num_simulcast_or_spatial_layers_; ++i) {
     FrameStatistics* frame_stat = stats_->GetFrame(frame_number, i);
     frame_stat->encode_start_ns = encode_start_ns;
@@ -387,7 +388,7 @@ void VideoProcessor::FrameEncoded(const EncodedImage& encoded_image,
 
   // For the highest measurement accuracy of the encode time, the start/stop
   // time recordings should wrap the Encode call as tightly as possible.
-  const int64_t encode_stop_ns = TimeNanos();
+  const int64_t encode_stop_ns = env_.clock().CurrentTime().ns();
 
   const VideoCodecType codec_type = codec_specific.codecType;
   if (config_.encoded_frame_checker) {
@@ -509,7 +510,7 @@ void VideoProcessor::FrameEncoded(const EncodedImage& encoded_image,
   if (!config_.encode_in_real_time) {
     // To get pure encode time for next layers, measure time spent in encode
     // callback and subtract it from encode time of next layers.
-    post_encode_time_ns_ += TimeNanos() - encode_stop_ns;
+    post_encode_time_ns_ += env_.clock().CurrentTime().ns() - encode_stop_ns;
   }
 }
 
@@ -569,7 +570,7 @@ void VideoProcessor::FrameDecoded(const VideoFrame& decoded_frame,
 
   // For the highest measurement accuracy of the decode time, the start/stop
   // time recordings should wrap the Decode call as tightly as possible.
-  const int64_t decode_stop_ns = TimeNanos();
+  const int64_t decode_stop_ns = env_.clock().CurrentTime().ns();
 
   FrameStatistics* frame_stat =
       stats_->GetFrameWithTimestamp(decoded_frame.rtp_timestamp(), spatial_idx);
@@ -653,7 +654,7 @@ void VideoProcessor::DecodeFrame(const EncodedImage& encoded_image,
   FrameStatistics* frame_stat =
       stats_->GetFrameWithTimestamp(encoded_image.RtpTimestamp(), spatial_idx);
 
-  frame_stat->decode_start_ns = TimeNanos();
+  frame_stat->decode_start_ns = env_.clock().CurrentTime().ns();
   frame_stat->decode_return_code =
       decoders_->at(spatial_idx)->Decode(encoded_image, 0);
 }

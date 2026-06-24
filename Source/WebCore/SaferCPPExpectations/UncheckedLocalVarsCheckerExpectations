@@ -1,5 +1,4 @@
 accessibility/AXObjectCache.cpp
-[ iOS ] accessibility/AccessibilityNodeObject.cpp
 accessibility/AccessibilityRenderObject.cpp
 [ iOS ] accessibility/cocoa/AXTextMarkerCocoa.mm
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
@@ -7,20 +6,10 @@ accessibility/AccessibilityRenderObject.cpp
 dom/ContainerNode.cpp
 dom/Document.cpp
 dom/Position.cpp
-dom/Range.cpp
-editing/DeleteSelectionCommand.cpp
 editing/Editing.cpp
 [ iOS ] editing/cocoa/EditorCocoa.mm
-[ iOS ] editing/ios/DictationCommandIOS.cpp
-[ iOS ] html/HTMLAnchorElement.cpp
 html/HTMLFormElement.cpp
-[ iOS ] html/HTMLImageElement.cpp
-[ iOS ] html/HTMLImageLoader.cpp
-html/HTMLOptionElement.cpp
-[ iOS ] html/HTMLPictureElement.cpp
-html/OffscreenCanvas.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
-inspector/InspectorNodeFinder.cpp
 inspector/InspectorOverlay.cpp
 inspector/agents/InspectorDOMAgent.cpp
 layout/formattingContexts/FormattingGeometry.cpp
@@ -37,15 +26,12 @@ layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 [ iOS ] page/DOMTimer.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
-page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/LocalFrameView.cpp
 [ iOS ] page/cocoa/ContentChangeObserver.cpp
-[ iOS ] page/ios/EventHandlerIOS.mm
 [ iOS ] page/ios/FrameIOS.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp
-[ iOS ] platform/ios/DragImageIOS.mm
 [ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
 platform/network/cocoa/ResourceHandleCocoa.mm
 rendering/AutoTableLayout.cpp
@@ -82,6 +68,7 @@ rendering/RenderInline.cpp
 rendering/RenderIterator.h
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
+rendering/RenderLayerBackingSVGAdditions.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLayerScrollableArea.cpp
@@ -93,7 +80,6 @@ rendering/RenderMultiColumnFlow.cpp
 rendering/RenderMultiColumnSet.cpp
 rendering/RenderObject.cpp
 rendering/RenderReplaced.cpp
-[ iOS ] rendering/RenderSelectFallbackButton.cpp
 rendering/RenderTable.cpp
 rendering/RenderTableCell.cpp
 rendering/RenderTableCellInlines.h
@@ -128,9 +114,8 @@ rendering/svg/RenderSVGResourceClipper.cpp
 rendering/svg/RenderSVGRoot.cpp
 rendering/svg/RenderSVGText.cpp
 rendering/svg/SVGContainerLayout.cpp
-rendering/svg/SVGLayerTransformComputation.h
 rendering/svg/SVGPaintServerHandlingInlines.h
-rendering/svg/SVGPathData.cpp
+rendering/svg/SVGPathFromElement.cpp
 rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGRenderingContext.cpp
@@ -139,6 +124,7 @@ rendering/svg/SVGTextLayoutAttributesBuilder.cpp
 rendering/svg/SVGTextLayoutEngine.cpp
 rendering/svg/SVGTextMetrics.cpp
 rendering/svg/SVGTextMetricsBuilder.cpp
+rendering/svg/SVGTransformComputation.h
 rendering/svg/legacy/LegacyRenderSVGContainer.cpp
 rendering/svg/legacy/LegacyRenderSVGPath.cpp
 rendering/svg/legacy/LegacyRenderSVGResource.cpp
@@ -146,7 +132,6 @@ rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceContainer.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp
 rendering/svg/legacy/LegacyRenderSVGRoot.cpp
-rendering/svg/legacy/LegacyRenderSVGTransformableContainer.cpp
 rendering/svg/legacy/SVGResources.cpp
 rendering/svg/legacy/SVGResourcesCache.cpp
 rendering/svg/legacy/SVGResourcesCycleSolver.cpp
@@ -173,10 +158,10 @@ style/StyleBuilder.cpp
 style/StyleBuilderCustom.h
 style/StyleBuilderStateInlines.h
 style/StyleDifference.cpp
+style/StyleDocumentScope.cpp
 style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
 style/StyleInvalidationFunctions.h
-style/StyleRelations.cpp
 style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleTreeResolver.cpp
@@ -185,7 +170,6 @@ style/computed/StyleComputedStyleBase.cpp
 style/values/grid/StyleGridPositionsResolver.cpp
 style/values/images/kinds/StyleCanvasImage.cpp
 style/values/primitives/StyleLengthResolution.cpp
-svg/SVGClipPathElement.cpp
 svg/SVGFilterPrimitiveStandardAttributes.cpp
 svg/SVGGeometryElement.cpp
 svg/SVGLengthContext.cpp
@@ -193,4 +177,3 @@ svg/SVGUseElement.cpp
 testing/Internals.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerOrWorkletThread.cpp
-workers/service/ServiceWorkerContainer.cpp

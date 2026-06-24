@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("getComputedStyle of the background/mask shorthand must not crash when a non-image longhand has fewer specified values than background-image/mask-image (the longhand list is shorter than the layer count). The shorter list should repeat across layers.");
+
+function backgroundOf(declaration)
+{
+    var element = document.createElement("div");
+    element.setAttribute("style", declaration);
+    document.body.appendChild(element);
+    var value = getComputedStyle(element).getPropertyValue("background");
+    element.remove();
+    return value;
+}
+
+function maskOf(declaration)
+{
+    var element = document.createElement("div");
+    element.setAttribute("style", declaration);
+    document.body.appendChild(element);
+    var value = getComputedStyle(element).getPropertyValue("mask");
+    element.remove();
+    return value;
+}
+
+// Reaching these assertions at all proves getComputedStyle did not crash. The
+// counts verify the single specified value is repeated into each image layer.
+
+// Before-slash longhand (background-repeat) shorter than the image layer count.
+shouldBe('backgroundOf("background-image: url(a.png), url(b.png); background-repeat: repeat-x;").match(/repeat-x/g).length', '2');
+
+// After-slash longhand (background-size) shorter than the image layer count.
+shouldBe('backgroundOf("background-image: url(a.png), url(b.png); background-size: cover;").match(/cover/g).length', '2');
+
+// Three image layers, two repeat values: modulo repetition gives layers x, y, x.
+shouldBe('backgroundOf("background-image: url(a.png), url(b.png), url(c.png); background-repeat: repeat-x, repeat-y;").match(/repeat-x/g).length', '2');
+shouldBe('backgroundOf("background-image: url(a.png), url(b.png), url(c.png); background-repeat: repeat-x, repeat-y;").match(/repeat-y/g).length', '1');
+
+// Mask shorthand, same shape.
+shouldBe('maskOf("mask-image: url(a.png), url(b.png); mask-repeat: repeat-x;").match(/repeat-x/g).length', '2');
+</script>
+</body>
+</html>

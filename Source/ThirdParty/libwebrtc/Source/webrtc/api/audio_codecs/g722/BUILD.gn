@@ -28,7 +28,7 @@ rtc_library("audio_encoder_g722") {
   deps = [
     ":audio_encoder_g722_config",
     "..:audio_codecs_api",
-    "../../../api:field_trials_view",
+    "../..:field_trials_view",
     "../../../modules/audio_coding:g722",
     "../../../rtc_base:checks",
     "../../../rtc_base:safe_conversions",
@@ -48,7 +48,7 @@ rtc_library("audio_decoder_g722") {
   ]
   deps = [
     "..:audio_codecs_api",
-    "../../../api:field_trials_view",
+    "../..:field_trials_view",
     "../../../modules/audio_coding:g722",
     "../../../rtc_base:checks",
     "../../../rtc_base:safe_conversions",

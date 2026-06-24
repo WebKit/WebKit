@@ -52,6 +52,16 @@
 /**
  * WPEDisplayDRM:
  *
+ * A [class@WPEPlatform.Display] implementation for DRM/KMS.
+ *
+ * [class@DisplayDRM] is the built-in [class@WPEPlatform.Display]
+ * implementation that drives the screen directly through DRM/KMS, without a
+ * windowing system. Use [ctor@DisplayDRM.new] to create a new instance and
+ * [method@DisplayDRM.connect] to connect to a particular DRM device by name.
+ * [method@DisplayDRM.get_device] gives access to the underlying `gbm_device`,
+ * while [method@DisplayDRM.supports_atomic] and
+ * [method@DisplayDRM.supports_modifiers] report the capabilities of the
+ * device.
  */
 struct _WPEDisplayDRMPrivate {
     std::unique_ptr<WPE::DRM::Session> session;

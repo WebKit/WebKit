@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/ui-helper.js"></script>
 </head>
 <body>
@@ -21,8 +21,6 @@
 <div id="console"></div>
 
 <script>
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     var focusSeen = "";
     var blurSeen = "";
@@ -50,6 +48,7 @@
 
     addEventListener("load", async () => {
         description("Test whether focus and blur events are dispatched and seen in the focus/blur event handlers: ");
+        window.jsTestIsAsync = true;
 
         spaceElement.tabIndex = 0;
         spaceElement.addEventListener("focus", focusHandler, false);
@@ -95,7 +94,7 @@
         shouldBeEqualToString('blurSeen', 'text');
         successfullyParsed = true;
 
-        testRunner.notifyDone();
+        finishJSTest();
     });
 </script>
 </body>

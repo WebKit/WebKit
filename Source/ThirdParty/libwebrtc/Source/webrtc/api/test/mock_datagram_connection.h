@@ -12,11 +12,11 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <type_traits>
 
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/candidate.h"
 #include "api/datagram_connection.h"
 #include "p2p/base/transport_description.h"
@@ -45,14 +45,14 @@ class MockDatagramConnection : public DatagramConnection {
               (override));
   MOCK_METHOD(void,
               SendPackets,
-              (ArrayView<PacketSendParameters> packets),
+              (std::span<PacketSendParameters> packets),
               (override));
   MOCK_METHOD(void,
               Terminate,
               (absl::AnyInvocable<void()> terminate_complete_callback),
               (override));
-  MOCK_METHOD(std::string_view, IceUsernameFragment, (), (override));
-  MOCK_METHOD(std::string_view, IcePassword, (), (override));
+  MOCK_METHOD(absl::string_view, IceUsernameFragment, (), (override));
+  MOCK_METHOD(absl::string_view, IcePassword, (), (override));
 };
 
 static_assert(!std::is_abstract_v<RefCountedObject<MockDatagramConnection>>,

@@ -56,6 +56,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
@@ -162,6 +163,41 @@ String WebSocketHandshake::clientLocation() const
     return makeString(m_secure ? "wss"_s : "ws"_s, "://"_s, hostName(m_url, m_secure), resourceName(m_url));
 }
 
+static bool isStandardWebSocketHandshakeRequestHeader(HTTPHeaderName name)
+{
+    switch (name) {
+    case HTTPHeaderName::Upgrade:
+    case HTTPHeaderName::Connection:
+    case HTTPHeaderName::Host:
+    case HTTPHeaderName::Origin:
+    case HTTPHeaderName::SecWebSocketProtocol:
+    case HTTPHeaderName::SecWebSocketKey:
+    case HTTPHeaderName::SecWebSocketVersion:
+    case HTTPHeaderName::SecWebSocketExtensions:
+    case HTTPHeaderName::Pragma:
+    case HTTPHeaderName::CacheControl:
+    case HTTPHeaderName::UserAgent:
+    case HTTPHeaderName::Cookie:
+        return true;
+    default:
+        return false;
+    }
+}
+
+void WebSocketHandshake::setClientHandshakeRequestHeaders(const HTTPHeaderMap& headers)
+{
+    HTTPHeaderMap filtered;
+    for (const auto& header : headers) {
+        if (auto httpHeaderName = header.keyAsHTTPHeaderName) {
+            if (isStandardWebSocketHandshakeRequestHeader(*httpHeaderName))
+                continue;
+            filtered.set(*httpHeaderName, header.value);
+        } else
+            filtered.setUncommonHeader(header.key, header.value);
+    }
+    m_clientHandshakeRequestHeaders = WTF::move(filtered);
+}
+
 CString WebSocketHandshake::clientHandshakeMessage() const
 {
     // Keep the following consistent with clientHandshakeRequest just below.
@@ -172,6 +208,10 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     // Add no-cache headers to avoid a compatibility issue. There are some proxies that
     // rewrite "Connection: upgrade" to "Connection: close" in the response if a request
     // doesn't contain these headers.
+
+    StringBuilder extraHeaders;
+    for (const auto& header : m_clientHandshakeRequestHeaders)
+        extraHeaders.append(header.key, ": "_s, header.value, "\r\n"_s);
 
     auto extensions = m_extensionDispatcher.createHeaderValue();
     return makeString("GET "_s, resourceName(m_url), " HTTP/1.1\r\n"
@@ -185,7 +225,8 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         "Sec-WebSocket-Key: "_s, m_secWebSocketKey, "\r\n"
         "Sec-WebSocket-Version: 13\r\n"_s,
         extensions.isEmpty() ? ""_s : "Sec-WebSocket-Extensions: "_s, extensions, extensions.isEmpty() ? ""_s : "\r\n"_s,
-        "User-Agent: "_s, m_userAgent, "\r\n"
+        "User-Agent: "_s, m_userAgent, "\r\n"_s,
+        extraHeaders.toString(),
         "\r\n"_s).utf8();
 }
 
@@ -197,6 +238,7 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest(NOESCAPE const Functi
     auto extensions = m_extensionDispatcher.createHeaderValue();
     ResourceRequest request { URL { m_url } };
     request.setHTTPMethod("GET"_s);
+    request.setHTTPHeaderField(HTTPHeaderName::Upgrade, "websocket"_s);
     request.setHTTPHeaderField(HTTPHeaderName::Connection, "Upgrade"_s);
     request.setHTTPHeaderField(HTTPHeaderName::Host, hostName(m_url, m_secure));
     request.setHTTPHeaderField(HTTPHeaderName::Origin, m_clientOrigin);
@@ -212,6 +254,12 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest(NOESCAPE const Functi
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketExtensions, extensions);
     request.setHTTPUserAgent(m_userAgent);
     request.setIsAppInitiated(m_isAppInitiated);
+    for (const auto& header : m_clientHandshakeRequestHeaders) {
+        if (auto httpHeaderName = header.keyAsHTTPHeaderName)
+            request.setHTTPHeaderField(*httpHeaderName, header.value);
+        else
+            request.setHTTPHeaderField(header.key, header.value);
+    }
     return request;
 }
 
@@ -325,26 +373,29 @@ URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
     return url;
 }
 
-// https://tools.ietf.org/html/rfc6455#section-4.1
-// "The HTTP version MUST be at least 1.1."
-static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
+struct HTTPVersion {
+    int major;
+    int minor;
+};
+
+static inline std::optional<HTTPVersion> readHTTPVersion(StringView httpStatusLine)
 {
     constexpr auto preamble = "HTTP/"_s;
     if (!httpStatusLine.startsWith(preamble))
-        return false;
+        return std::nullopt;
 
     // Check that there is a version number which should be at least three characters after "HTTP/"
     unsigned preambleLength = preamble.length();
     if (httpStatusLine.length() < preambleLength + 3)
-        return false;
+        return std::nullopt;
 
     auto dotPosition = httpStatusLine.find('.', preambleLength);
     if (dotPosition == notFound)
-        return false;
+        return std::nullopt;
 
     auto majorVersion = parseInteger<int>(httpStatusLine.substring(preambleLength, dotPosition - preambleLength));
     if (!majorVersion)
-        return false;
+        return std::nullopt;
 
     unsigned minorVersionLength;
     unsigned charactersLeftAfterDotPosition = httpStatusLine.length() - dotPosition;
@@ -354,9 +405,20 @@ static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
     }
     auto minorVersion = parseInteger<int>(httpStatusLine.substring(dotPosition + 1, minorVersionLength));
     if (!minorVersion)
-        return false;
+        return std::nullopt;
 
-    return (*majorVersion >= 1 && *minorVersion >= 1) || *majorVersion >= 2;
+    // Accept any well-formed HTTP/1.x or later status line. While a successful WebSocket
+    // upgrade requires HTTP/1.1 (enforced separately by the 101 status-code check in
+    // readStatusLine()), a failed handshake may legitimately come back as an HTTP/1.0
+    // error response (e.g. from a simple proxy or origin server). Rejecting HTTP/1.0 here
+    // would discard that response's status code and text instead of surfacing them.
+    if (*majorVersion < 1 || *minorVersion < 0)
+        return std::nullopt;
+
+    return { {
+        .major = *majorVersion,
+        .minor = *minorVersion,
+    } };
 }
 
 // Returns the header length (including "\r\n"), or -1 if we have not received enough data yet.
@@ -414,7 +476,8 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
     }
 
     StringView httpStatusLine(byteCast<Latin1Character>(header.first(*firstSpaceIndex)));
-    if (!headerHasValidHTTPVersion(httpStatusLine)) {
+    auto httpVersion = readHTTPVersion(httpStatusLine);
+    if (!httpVersion) {
         m_failureReason = makeString("Invalid HTTP version string: "_s, httpStatusLine);
         return lineLength;
     }
@@ -430,7 +493,15 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
     }
 
     statusCode = parseInteger<int>(statusCodeString).value();
-    statusText = String(byteCast<Latin1Character>(header.subspan(*secondSpaceIndex + 1, index - *secondSpaceIndex - 3))); // Exclude "\r\n".
+    statusText = String(byteCast<Latin1Character>(header.subspan(*secondSpaceIndex + 1, lineLength - *secondSpaceIndex - 3))); // Exclude "\r\n".
+
+    // https://tools.ietf.org/html/rfc6455#section-4.1
+    // "The HTTP version MUST be at least 1.1."
+    if (statusCode == 101 && (httpVersion->major < 1 || httpVersion->minor < 1)) {
+        m_failureReason = makeString("Invalid HTTP version string: "_s, httpStatusLine);
+        return lineLength;
+    }
+
     return lineLength;
 }
 

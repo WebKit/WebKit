@@ -88,7 +88,7 @@ static int ssl_ctx_make_profiles(
 }
 
 int SSL_CTX_set_srtp_profiles(SSL_CTX *ctx, const char *profiles) {
-  return ssl_ctx_make_profiles(profiles, &ctx->srtp_profiles);
+  return ssl_ctx_make_profiles(profiles, &FromOpaque(ctx)->srtp_profiles);
 }
 
 int SSL_set_srtp_profiles(SSL *ssl, const char *profiles) {

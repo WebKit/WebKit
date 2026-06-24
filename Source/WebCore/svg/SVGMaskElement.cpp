@@ -33,12 +33,12 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceMasker.h"
 #include "SVGElementInlines.h"
-#include "SVGLayerTransformComputation.h"
 #include "SVGNames.h"
 #include "SVGParsingError.h"
 #include "SVGPropertyOwnerRegistry.h"
 #include "SVGRenderSupport.h"
 #include "SVGStringList.h"
+#include "SVGTransformComputation.h"
 #include "SVGUnitTypes.h"
 #include "StyleResolver.h"
 #include <wtf/NeverDestroyed.h>
@@ -151,7 +151,7 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
     updateSVGRendererForElementChange();
 }
 
-RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceMasker>(*this, WTF::move(style));
@@ -171,7 +171,7 @@ FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation
         ASSERT(child.isSVGLayerAwareRenderer());
         ASSERT(!child.isRenderSVGRoot());
 
-        auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
+        auto transform = SVGTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
         return transform.isIdentity() ? std::nullopt : std::make_optional(WTF::move(transform));
     };
     FloatRect maskRepaintRect;

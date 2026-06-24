@@ -15,13 +15,13 @@
 #include <map>
 #include <numeric>
 #include <optional>
+#include <span>
 #include <tuple>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/common/sequence_numbers.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
@@ -288,8 +288,7 @@ int TraditionalReassemblyStreams::Add(UnwrappedTSN tsn, Data data) {
 
 size_t TraditionalReassemblyStreams::HandleForwardTsn(
     UnwrappedTSN new_cumulative_ack_tsn,
-    webrtc::ArrayView<const AnyForwardTsnChunk::SkippedStream>
-        skipped_streams) {
+    std::span<const AnyForwardTsnChunk::SkippedStream> skipped_streams) {
   size_t bytes_removed = 0;
   // The `skipped_streams` only cover ordered messages - need to
   // iterate all unordered streams manually to remove those chunks.
@@ -307,7 +306,7 @@ size_t TraditionalReassemblyStreams::HandleForwardTsn(
 }
 
 void TraditionalReassemblyStreams::ResetStreams(
-    webrtc::ArrayView<const StreamID> stream_ids) {
+    std::span<const StreamID> stream_ids) {
   if (stream_ids.empty()) {
     for (auto& [stream_id, stream] : ordered_streams_) {
       RTC_DLOG(LS_VERBOSE) << log_prefix_

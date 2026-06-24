@@ -10,48 +10,29 @@
 #include "net/dcsctp/public/text_pcap_packet_observer.h"
 
 #include <cstdint>
+#include <span>
 
-#include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "net/dcsctp/public/types.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/strings/string_builder.h"
+#include "rtc_base/text2pcap.h"
 
 namespace dcsctp {
 
-void TextPcapPacketObserver::OnSentPacket(
-    dcsctp::TimeMs now,
-    webrtc::ArrayView<const uint8_t> payload) {
-  PrintPacket("O ", name_, now, payload);
+void TextPcapPacketObserver::OnSentPacket(dcsctp::TimeMs now,
+                                          std::span<const uint8_t> payload) {
+  RTC_LOG(LS_VERBOSE) << "\n"
+                      << webrtc::Text2Pcap::DumpPacket(/*outbound=*/true,
+                                                       payload, *now)
+                      << " # SCTP_PACKET " << name_;
 }
 
 void TextPcapPacketObserver::OnReceivedPacket(
     dcsctp::TimeMs now,
-    webrtc::ArrayView<const uint8_t> payload) {
-  PrintPacket("I ", name_, now, payload);
-}
-
-void TextPcapPacketObserver::PrintPacket(
-    absl::string_view prefix,
-    absl::string_view socket_name,
-    dcsctp::TimeMs now,
-    webrtc::ArrayView<const uint8_t> payload) {
-  webrtc::StringBuilder s;
-  s << "\n" << prefix;
-  int64_t remaining = *now % (24 * 60 * 60 * 1000);
-  int hours = remaining / (60 * 60 * 1000);
-  remaining = remaining % (60 * 60 * 1000);
-  int minutes = remaining / (60 * 1000);
-  remaining = remaining % (60 * 1000);
-  int seconds = remaining / 1000;
-  int ms = remaining % 1000;
-  s.AppendFormat("%02d:%02d:%02d.%03d", hours, minutes, seconds, ms);
-  s << " 0000";
-  for (uint8_t byte : payload) {
-    s.AppendFormat(" %02x", byte);
-  }
-  s << " # SCTP_PACKET " << socket_name;
-  RTC_LOG(LS_VERBOSE) << s.str();
+    std::span<const uint8_t> payload) {
+  RTC_LOG(LS_VERBOSE) << "\n"
+                      << webrtc::Text2Pcap::DumpPacket(/*outbound=*/false,
+                                                       payload, *now)
+                      << " # SCTP_PACKET " << name_;
 }
 
 }  // namespace dcsctp

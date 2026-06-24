@@ -392,12 +392,6 @@ ShouldInjectUserScriptsInInitialEmptyDocument:
     WebCore:
       default: false
 
-StorageAccessAPIPerPageScopeEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
 StorageBlockingPolicy:
   type: uint32_t
   refinedType: StorageBlockingPolicy

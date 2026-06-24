@@ -26,6 +26,7 @@
 #include "IncrementalSweeper.h"
 #include "MarkedBlockInlines.h"
 #include "MarkedSpaceInlines.h"
+#include "WeakSetInlines.h"
 #include <wtf/ListDump.h>
 #include <wtf/SimpleStats.h>
 

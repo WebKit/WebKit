@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -106,11 +106,11 @@ class RTC_EXPORT H265SpsParser {
   };
 
   // Unpack RBSP and parse SPS state from the supplied buffer.
-  static std::optional<SpsState> ParseSps(ArrayView<const uint8_t> data);
+  static std::optional<SpsState> ParseSps(std::span<const uint8_t> data);
   // TODO: bugs.webrtc.org/42225170 - Deprecate.
   static inline std::optional<SpsState> ParseSps(const uint8_t* data,
                                                  size_t length) {
-    return ParseSps(MakeArrayView(data, length));
+    return ParseSps(std::span(data, length));
   }
 
   static bool ParseScalingListData(BitstreamReader& reader);
@@ -131,7 +131,7 @@ class RTC_EXPORT H265SpsParser {
   // Parse the SPS state, for a bit buffer where RBSP decoding has already been
   // performed.
   static std::optional<SpsState> ParseSpsInternal(
-      ArrayView<const uint8_t> buffer);
+      std::span<const uint8_t> buffer);
 
   // From Table A.8 - General tier and level limits.
   static int GetMaxLumaPs(int general_level_idc);

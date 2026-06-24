@@ -38,10 +38,10 @@ public:
 private:
     SVGGElement(const QualifiedName&, Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     bool isValid() const final { return SVGTests::isValid(); }
-    bool rendererIsNeeded(const RenderStyle&) final;
+    bool rendererIsNeeded(const Style::ComputedStyle&) final;
 };
 
 } // namespace WebCore

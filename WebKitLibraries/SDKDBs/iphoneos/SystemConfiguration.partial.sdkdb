@@ -592,7 +592,7 @@
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kSCValNetSMBNetBIOSNodeTypeMixed", "unavailable": true},
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_kSCValNetSMBNetBIOSNodeTypePeer", "unavailable": true}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "AuthorizationRef"},
     {"access": "public", "name": "SCBondInterfaceRef"},

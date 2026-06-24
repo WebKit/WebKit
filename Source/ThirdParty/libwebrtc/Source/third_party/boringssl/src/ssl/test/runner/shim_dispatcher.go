@@ -113,7 +113,16 @@ func (d *shimDispatcher) dispatch(conn net.Conn) error {
 		return fmt.Errorf("shim ID %d not found", shimID)
 	}
 
+	// Concurrent channel writes and closes can cause data races. Locking
+	// ensures that the channel is not closed while we are writing to it. This
+	// is slightly slower, but that should be fine.
+	shim.lock.Lock()
+	defer shim.lock.Unlock()
+	if shim.err != nil {
+		return fmt.Errorf("shim ID %d has been closed", shimID)
+	}
 	shim.connChan <- conn
+
 	return nil
 }
 

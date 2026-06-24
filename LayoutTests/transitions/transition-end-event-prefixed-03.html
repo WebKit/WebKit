@@ -27,8 +27,7 @@
 <script type="text/javascript">
     description("Test to make sure that if prefixed transition events are modified we correctly modify unprefixed events.");
 
-    if (window.testRunner)
-        testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
 
     var testContainer = document.createElement("div");
     document.body.appendChild(testContainer);
@@ -62,8 +61,7 @@
         shouldBe("transitionEventContainer.pseudoElement", "transitionEventBox.pseudoElement");
         shouldBe("transitionEventContainer.elapsedTime", "transitionEventBox.elapsedTime");
         shouldBe("transitionEventContainer.propertyName", "transitionEventBox.propertyName");
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
         document.body.removeChild(testContainer);
     }
 

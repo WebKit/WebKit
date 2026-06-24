@@ -4,6 +4,8 @@
 <body>
   <script src="/resources/testharness.js"></script>
   <script src="/resources/testharnessreport.js"></script>
+  <script src="/resources/testdriver.js"></script>
+  <script src="/resources/testdriver-vendor.js"></script>
   <script src="resources/largest-contentful-paint-helpers.js"></script>
   <script src="/common/utils.js"></script>
   <script>
@@ -12,8 +14,22 @@
     const imageURL = `${window.location.origin}/images/blue.png`;
 
     async function load_image_and_get_lcp_size(t, imageStyle = {}, containerStyle = {}) {
-      const popup = window.open();
-      t.add_cleanup(() => popup.close());
+      let popup;
+      await test_driver.bless('Open a popup', () => {
+        popup = window.open('about:blank');
+        t.add_cleanup(() => popup.close());
+      });
+
+      // Ensure the popup document is ready before manipulating it.
+      // Per spec, about:blank should load synchronously and should be
+      // immediately ready. In older Gecko versions this may not be the case,
+      // so we wait for pageshow if needed.
+      if (popup.document.readyState !== 'complete') {
+        await new Promise((resolve) =>
+          popup.addEventListener('pageshow', resolve, { once: true })
+        );
+      }
+
       const image = popup.document.createElement('img');
       image.src = imageURL;
 

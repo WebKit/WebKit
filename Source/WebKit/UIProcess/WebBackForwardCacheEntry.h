@@ -31,6 +31,8 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SwiftBridging.h>
@@ -65,14 +67,19 @@ public:
     // state while this entry is alive.
     bool hasCachedChildren() const { return !m_cachedChildren.isEmpty(); }
     void setCachedChildren(Vector<Ref<WebFrameProxy>>&&);
-    Vector<Ref<WebFrameProxy>> takeCachedChildren();
+
+    std::pair<Vector<Ref<WebFrameProxy>>, Vector<Ref<WebProcessProxy>>> takeForRestoration();
 
     bool referencesIframeProcess(WebCore::ProcessIdentifier) const;
+    HashSet<Ref<WebProcessProxy>> iframeProcesses() const;
 
 private:
     WebBackForwardCacheEntry(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier, WebCore::ProcessIdentifier, RefPtr<SuspendedPageProxy>&&);
 
+    HashSet<Ref<WebProcessProxy>> allProcesses() const;
+
     void expirationTimerFired();
+    void markAsTakenForRestoration();
 
     WeakPtr<WebBackForwardCache> m_backForwardCache;
     WebCore::ProcessIdentifier m_processIdentifier;

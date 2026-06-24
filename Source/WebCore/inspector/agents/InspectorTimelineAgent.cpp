@@ -205,12 +205,12 @@ void InspectorTimelineAgent::autoCaptureStarted() const
 
 double InspectorTimelineAgent::timestamp()
 {
-    return protect(environment())->executionStopwatch().elapsedTime().seconds();
+    return protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
 }
 
 std::optional<double> InspectorTimelineAgent::timestampFromMonotonicTime(MonotonicTime time)
 {
-    auto stopwatchTime = protect(environment())->executionStopwatch().fromMonotonicTime(time);
+    auto stopwatchTime = protect(protect(environment())->executionStopwatch())->fromMonotonicTime(time);
     if (!stopwatchTime)
         return std::nullopt;
     return stopwatchTime->seconds();
@@ -221,7 +221,7 @@ void InspectorTimelineAgent::startFromConsole(const String& title)
     // Allow duplicate unnamed profiles. Disallow duplicate named profiles.
     if (!title.isEmpty()) {
         for (const TimelineRecordEntry& record : m_pendingConsoleProfileRecords) {
-            auto recordTitle = record.data->getString("title"_s);
+            auto recordTitle = protect(record.data)->getString("title"_s);
             if (recordTitle == title) {
                 if (auto* consoleAgent = Ref { m_instrumentingAgents.get() } -> webConsoleAgent()) {
                     // FIXME: Send an enum to the frontend for localization?
@@ -246,7 +246,7 @@ void InspectorTimelineAgent::stopFromConsole(const String& title)
     for (int i = m_pendingConsoleProfileRecords.size() - 1; i >= 0; --i) {
         const TimelineRecordEntry& record = m_pendingConsoleProfileRecords[i];
 
-        auto recordTitle = record.data->getString("title"_s);
+        auto recordTitle = protect(record.data)->getString("title"_s);
         if (title.isEmpty() || recordTitle == title) {
             didCompleteRecordEntry(record);
             m_pendingConsoleProfileRecords.removeAt(i);
@@ -287,7 +287,7 @@ void InspectorTimelineAgent::didDispatchEvent(bool defaultPrevented)
 
     auto& entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::EventDispatch);
-    entry.data->setBoolean("defaultPrevented"_s, defaultPrevented);
+    protect(entry.data)->setBoolean("defaultPrevented"_s, defaultPrevented);
 
     didCompleteCurrentRecord(TimelineRecordType::EventDispatch);
 }
@@ -629,7 +629,7 @@ void InspectorTimelineAgent::addRecordToTimeline(Ref<JSON::Object>&& record, Tim
         // Nested paint records are an implementation detail and add no information not already contained in the parent.
         if (type == TimelineRecordType::Paint && previousEntry->type == type)
             return;
-        previousEntry->children->pushObject(WTF::move(record));
+        protect(previousEntry->children)->pushObject(WTF::move(record));
     } else {
         // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
         auto recordObject = Inspector::Protocol::BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTF::move(record));
@@ -639,10 +639,11 @@ void InspectorTimelineAgent::addRecordToTimeline(Ref<JSON::Object>&& record, Tim
 
 void InspectorTimelineAgent::didCompleteRecordEntry(const TimelineRecordEntry& entry)
 {
-    entry.record->setObject("data"_s, entry.data.copyRef());
+    Ref entryRecord = entry.record;
+    entryRecord->setObject("data"_s, entry.data.copyRef());
     if (entry.children)
-        entry.record->setArray("children"_s, *entry.children);
-    entry.record->setDouble("endTime"_s, timestamp());
+        entryRecord->setArray("children"_s, *entry.children);
+    entryRecord->setDouble("endTime"_s, timestamp());
     addRecordToTimeline(entry.record.copyRef(), entry.type);
 }
 

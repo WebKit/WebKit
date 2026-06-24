@@ -28,8 +28,8 @@
 #include "CSSBoxShadowPropertyValue.h"
 #include "CSSKeywordValue.h"
 #include "ColorBlending.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -43,7 +43,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<BoxShadow>::operator()(const BoxShadow& value, const RenderStyle& style) -> CSS::BoxShadow
+auto ToCSS<BoxShadow>::operator()(const BoxShadow& value, const Style::ComputedStyle& style) -> CSS::BoxShadow
 {
     return {
         .color = toCSS(value.color, style),
@@ -67,7 +67,7 @@ auto ToStyle<CSS::BoxShadow>::operator()(const CSS::BoxShadow& value, const Buil
     };
 }
 
-Ref<CSSValue> CSSValueCreation<BoxShadowList>::operator()(CSSValuePool&, const RenderStyle& style, const BoxShadowList& value)
+Ref<CSSValue> CSSValueCreation<BoxShadowList>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BoxShadowList& value)
 {
     CSS::BoxShadowProperty::List list;
 
@@ -107,7 +107,7 @@ auto CSSValueConversion<BoxShadows>::operator()(BuilderState& state, const CSSVa
 
 // MARK: - Serialization
 
-void Serialize<BoxShadowList>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const BoxShadowList& value)
+void Serialize<BoxShadowList>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const BoxShadowList& value)
 {
     serializationForCSSOnRangeLike(builder, context, style, value | std::views::reverse, SerializationSeparatorString<BoxShadowList>);
 }
@@ -126,7 +126,7 @@ static inline std::optional<CSS::Keyword::Inset> NODELETE blendInset(std::option
     return result > 0 ? std::nullopt : std::make_optional(CSS::Keyword::Inset { });
 }
 
-auto Blending<BoxShadow>::blend(const BoxShadow& a, const BoxShadow& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> BoxShadow
+auto Blending<BoxShadow>::blend(const BoxShadow& a, const BoxShadow& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> BoxShadow
 {
     ColorResolver aColorResolver { aStyle };
     ColorResolver bColorResolver { bStyle };
@@ -197,7 +197,7 @@ auto Blending<BoxShadows>::canBlend(const BoxShadows& from, const BoxShadows& to
     return ShadowInterpolation<BoxShadows, MatchingBoxShadows>::canInterpolate(from, to, compositeOperation);
 }
 
-auto Blending<BoxShadows>::blend(const BoxShadows& from, const BoxShadows& to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const BlendingContext& context) -> BoxShadows
+auto Blending<BoxShadows>::blend(const BoxShadows& from, const BoxShadows& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> BoxShadows
 {
     return ShadowInterpolation<BoxShadows, MatchingBoxShadows>::interpolate(from, to, fromStyle, toStyle, context);
 }

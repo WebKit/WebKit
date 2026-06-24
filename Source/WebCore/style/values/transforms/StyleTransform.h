@@ -108,7 +108,7 @@ inline TransformFunctionSizeDependencies Transform::computeSizeDependencies() co
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<Transform> { auto operator()(BuilderState&, const CSSValue&) -> Transform; };
-template<> struct CSSValueCreation<Transform> { auto operator()(CSSValuePool&, const RenderStyle&, const Transform&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<Transform> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const Transform&) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 

@@ -1419,7 +1419,7 @@ void main()
                              mFetchYUVVSUniformLocation);
     }
 
-    void verifyResultsRenderbuffer(GLuint renderbuffer, GLubyte referenceColor[4])
+    void verifyResultsRenderbuffer(GLuint renderbuffer, const GLubyte referenceColor[4])
     {
         // Bind the renderbuffer to a framebuffer
         GLFramebuffer framebuffer;
@@ -5448,6 +5448,81 @@ TEST_P(ImageTestES3, PartialRenderToYUVAHB)
     destroyAndroidHardwareBuffer(source);
 }
 
+// Test rendering to a YUV AHB using EXT_yuv_target then reading back the pixels into PBO.
+TEST_P(ImageTestES3, RenderToYUVAHBThenReadPixels)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() || !hasYUVTargetExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+    ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+
+    // 3 planes of data, initialize to all zeroes
+    GLubyte dataY[4]  = {0, 0, 0, 0};
+    GLubyte dataCb[1] = {
+        0,
+    };
+    GLubyte dataCr[1] = {
+        0,
+    };
+
+    constexpr uint32_t kWidth  = 2;
+    constexpr uint32_t kHeight = 2;
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(
+        kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
+        {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image);
+
+    // Create a texture target to bind the egl image
+    GLTexture target;
+    createEGLImageTargetTextureExternal(image, target);
+
+    // Set up a framebuffer to render into the AHB
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_EXTERNAL_OES, target,
+                           0);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glUseProgram(mRenderYUVProgram2);
+    glUniform4f(mRenderYUVUniformLocation, kYUVColorRedY[0] / 255.0f, kYUVColorRedCb[0] / 255.0f,
+                kYUVColorRedCr[0] / 255.0f, 1.0f);
+
+    drawQuad(mRenderYUVProgram2, "position", 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    // Read back into PBO.
+    std::array<GLColor, kWidth * kHeight> readback;
+    readback.fill(GLColor(123, 234, 213, 231));
+
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_PACK_BUFFER, sizeof(readback), nullptr, GL_STATIC_DRAW);
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    const GLColor *mapped = reinterpret_cast<const GLColor *>(
+        glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(readback), GL_MAP_READ_BIT));
+    memcpy(readback.data(), mapped, sizeof(readback));
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+
+    for (uint32_t r = 0; r < kHeight; ++r)
+    {
+        for (uint32_t c = 0; c < kWidth; ++c)
+        {
+            EXPECT_COLOR_NEAR(readback[r * kWidth + c], GLColor::red, 1);
+        }
+    }
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+}
+
 // Test glClear on FBO with AHB attachment is applied to the AHB image before we read back
 TEST_P(ImageTestES3, AHBClearAppliedBeforeReadBack)
 {
@@ -8150,13 +8225,13 @@ TEST_P(ImageTest, Deletion)
     EGLWindow *window = getEGLWindow();
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
 
-    GLubyte originalData[4] = {255, 0, 255, 255};
-    GLubyte updateData[4]   = {0, 255, 0, 255};
+    constexpr GLubyte kOriginalData[4] = {255, 0, 255, 255};
+    constexpr GLubyte kUpdateData[4]   = {0, 255, 0, 255};
 
     // Create the Image
     GLTexture source;
     EGLImageKHR image;
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kOriginalData,
                                   source, &image);
 
     // Create multiple targets
@@ -8170,16 +8245,16 @@ TEST_P(ImageTest, Deletion)
     source.reset();
 
     // Expect that both the targets have the original data
-    verifyResults2D(targetTexture, originalData);
-    verifyResultsRenderbuffer(targetRenderbuffer, originalData);
+    verifyResults2D(targetTexture, kOriginalData);
+    verifyResultsRenderbuffer(targetRenderbuffer, kOriginalData);
 
     // Update the data of the target
     glBindTexture(GL_TEXTURE_2D, targetTexture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
 
     // Expect that both targets have the updated data
-    verifyResults2D(targetTexture, updateData);
-    verifyResultsRenderbuffer(targetRenderbuffer, updateData);
+    verifyResults2D(targetTexture, kUpdateData);
+    verifyResultsRenderbuffer(targetRenderbuffer, kUpdateData);
 
     // Delete the EGL image
     eglDestroyImageKHR(window->getDisplay(), image);
@@ -8187,11 +8262,11 @@ TEST_P(ImageTest, Deletion)
 
     // Update the data of the target back to the original data
     glBindTexture(GL_TEXTURE_2D, targetTexture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, originalData);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kOriginalData);
 
     // Expect that both targets have the original data again
-    verifyResults2D(targetTexture, originalData);
-    verifyResultsRenderbuffer(targetRenderbuffer, originalData);
+    verifyResults2D(targetTexture, kOriginalData);
+    verifyResultsRenderbuffer(targetRenderbuffer, kOriginalData);
 }
 
 TEST_P(ImageTest, MipLevels)
@@ -8306,13 +8381,13 @@ TEST_P(ImageTest, Respecification)
     EGLWindow *window = getEGLWindow();
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
 
-    GLubyte originalData[4] = {255, 0, 255, 255};
-    GLubyte updateData[4]   = {0, 255, 0, 255};
+    constexpr GLubyte kOriginalData[4] = {255, 0, 255, 255};
+    constexpr GLubyte kUpdateData[4]   = {0, 255, 0, 255};
 
     // Create the Image
     GLTexture source;
     EGLImageKHR image;
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kOriginalData,
                                   source, &image);
 
     // Create the target
@@ -8321,13 +8396,13 @@ TEST_P(ImageTest, Respecification)
 
     // Respecify source
     glBindTexture(GL_TEXTURE_2D, source);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
 
     // Expect that the target texture has the original data
-    verifyResults2D(target, originalData);
+    verifyResults2D(target, kOriginalData);
 
     // Expect that the source texture has the updated data
-    verifyResults2D(source, updateData);
+    verifyResults2D(source, kUpdateData);
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
@@ -8340,13 +8415,14 @@ TEST_P(ImageTest, RespecificationDifferentSize)
     EGLWindow *window = getEGLWindow();
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
 
-    GLubyte originalData[4] = {255, 0, 255, 255};
-    GLubyte updateData[16]  = {0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255};
+    constexpr GLubyte kOriginalData[4] = {255, 0, 255, 255};
+    constexpr GLubyte kUpdateData[16]  = {0, 255, 0, 255, 0, 255, 0, 255,
+                                          0, 255, 0, 255, 0, 255, 0, 255};
 
     // Create the Image
     GLTexture source;
     EGLImageKHR image;
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kOriginalData,
                                   source, &image);
 
     // Create the target
@@ -8355,13 +8431,13 @@ TEST_P(ImageTest, RespecificationDifferentSize)
 
     // Respecify source
     glBindTexture(GL_TEXTURE_2D, source);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
 
     // Expect that the target texture has the original data
-    verifyResults2D(target, originalData);
+    verifyResults2D(target, kOriginalData);
 
     // Expect that the source texture has the updated data
-    verifyResults2D(source, updateData);
+    verifyResults2D(source, kUpdateData);
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
@@ -8376,13 +8452,13 @@ TEST_P(ImageTest, RespecificationWithFBO)
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
 
-    GLubyte originalData[4] = {255, 0, 255, 255};
-    GLubyte updateData[4]   = {0, 255, 0, 255};
+    constexpr GLubyte kOriginalData[4] = {255, 0, 255, 255};
+    constexpr GLubyte kUpdateData[4]   = {0, 255, 0, 255};
 
     // Create the Image
     GLTexture source;
     EGLImageKHR image;
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kOriginalData,
                                   source, &image);
 
     // Create the target
@@ -8398,10 +8474,10 @@ TEST_P(ImageTest, RespecificationWithFBO)
 
     // Respecify source with same parameters. This should not change the texture storage in D3D11.
     glBindTexture(GL_TEXTURE_2D, source);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
 
     // Expect that the source texture has the updated data
-    verifyResults2D(source, updateData);
+    verifyResults2D(source, kUpdateData);
 
     // Render to the target texture again and verify it gets the rendered pixels.
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
@@ -8426,18 +8502,18 @@ TEST_P(ImageTest, RespecificationOfOtherLevel)
     EGLWindow *window = getEGLWindow();
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
 
-    GLubyte originalData[2 * 2 * 4] = {
+    constexpr GLubyte kOriginalData[2 * 2 * 4] = {
         255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255,
     };
 
-    GLubyte updateData[2 * 2 * 4] = {
+    constexpr GLubyte kUpdateData[2 * 2 * 4] = {
         0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
     };
 
     // Create the Image
     GLTexture source;
     EGLImageKHR image;
-    createEGLImage2DTextureSource(2, 2, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+    createEGLImage2DTextureSource(2, 2, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kOriginalData,
                                   source, &image);
 
     // Create the target
@@ -8445,25 +8521,25 @@ TEST_P(ImageTest, RespecificationOfOtherLevel)
     createEGLImageTargetTexture2D(image, target);
 
     // Expect that the target and source textures have the original data
-    verifyResults2D(source, originalData);
-    verifyResults2D(target, originalData);
+    verifyResults2D(source, kOriginalData);
+    verifyResults2D(target, kOriginalData);
 
     // Add a new mipLevel to the target, orphaning it
     glBindTexture(GL_TEXTURE_2D, target);
-    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, originalData);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, kOriginalData);
     EXPECT_GL_NO_ERROR();
 
     // Expect that the target and source textures still have the original data
-    verifyResults2D(source, originalData);
-    verifyResults2D(target, originalData);
+    verifyResults2D(source, kOriginalData);
+    verifyResults2D(target, kOriginalData);
 
     // Update the source's data
     glBindTexture(GL_TEXTURE_2D, source);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
 
     // Expect that the target still has the original data and source has the updated data
-    verifyResults2D(source, updateData);
-    verifyResults2D(target, originalData);
+    verifyResults2D(source, kUpdateData);
+    verifyResults2D(target, kOriginalData);
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
@@ -8475,13 +8551,13 @@ TEST_P(ImageTest, UpdatedData)
     EGLWindow *window = getEGLWindow();
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
 
-    GLubyte originalData[4] = {255, 0, 255, 255};
-    GLubyte updateData[4]   = {0, 255, 0, 255};
+    constexpr GLubyte kOriginalData[4] = {255, 0, 255, 255};
+    constexpr GLubyte kUpdateData[4]   = {0, 255, 0, 255};
 
     // Create the Image
     GLTexture source;
     EGLImageKHR image;
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kOriginalData,
                                   source, &image);
 
     // Create multiple targets
@@ -8492,27 +8568,27 @@ TEST_P(ImageTest, UpdatedData)
     createEGLImageTargetRenderbuffer(image, targetRenderbuffer);
 
     // Expect that both the source and targets have the original data
-    verifyResults2D(source, originalData);
-    verifyResults2D(targetTexture, originalData);
-    verifyResultsRenderbuffer(targetRenderbuffer, originalData);
+    verifyResults2D(source, kOriginalData);
+    verifyResults2D(targetTexture, kOriginalData);
+    verifyResultsRenderbuffer(targetRenderbuffer, kOriginalData);
 
     // Update the data of the source
     glBindTexture(GL_TEXTURE_2D, source);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
 
     // Expect that both the source and targets have the updated data
-    verifyResults2D(source, updateData);
-    verifyResults2D(targetTexture, updateData);
-    verifyResultsRenderbuffer(targetRenderbuffer, updateData);
+    verifyResults2D(source, kUpdateData);
+    verifyResults2D(targetTexture, kUpdateData);
+    verifyResultsRenderbuffer(targetRenderbuffer, kUpdateData);
 
     // Update the data of the target back to the original data
     glBindTexture(GL_TEXTURE_2D, targetTexture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, originalData);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kOriginalData);
 
     // Expect that both the source and targets have the original data again
-    verifyResults2D(source, originalData);
-    verifyResults2D(targetTexture, originalData);
-    verifyResultsRenderbuffer(targetRenderbuffer, originalData);
+    verifyResults2D(source, kOriginalData);
+    verifyResults2D(targetTexture, kOriginalData);
+    verifyResultsRenderbuffer(targetRenderbuffer, kOriginalData);
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
@@ -8527,8 +8603,8 @@ TEST_P(ImageTest, AHBUpdatedExternalTexture)
     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
 
-    GLubyte originalData[4]      = {255, 0, 255, 255};
-    GLubyte updateData[4]        = {0, 255, 0, 255};
+    constexpr GLubyte kOriginalData[4] = {255, 0, 255, 255};
+    constexpr GLubyte kUpdateData[4]   = {0, 255, 0, 255};
     const uint32_t bytesPerPixel = 4;
 
     // Create the Image
@@ -8536,18 +8612,18 @@ TEST_P(ImageTest, AHBUpdatedExternalTexture)
     EGLImageKHR image;
     createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
                                               kDefaultAHBUsage, kDefaultAttribs,
-                                              {{originalData, bytesPerPixel}}, &source, &image);
+                                              {{kOriginalData, bytesPerPixel}}, &source, &image);
 
     // Create target
     GLTexture targetTexture;
     createEGLImageTargetTexture2D(image, targetTexture);
 
     // Expect that both the target have the original data
-    verifyResults2D(targetTexture, originalData);
+    verifyResults2D(targetTexture, kOriginalData);
 
     // Update the data of the source
     glBindTexture(GL_TEXTURE_2D, targetTexture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
 
     // Set sync object and flush the GL commands
     EGLSyncKHR fence = eglCreateSyncKHR(window->getDisplay(), EGL_SYNC_FENCE_KHR, NULL);
@@ -8566,7 +8642,7 @@ TEST_P(ImageTest, AHBUpdatedExternalTexture)
     eglDestroyImageKHR(window->getDisplay(), image);
 
     // Access the android hardware buffer directly to check the data is updated
-    verifyResultAHB(source, {{updateData, bytesPerPixel}});
+    verifyResultAHB(source, {{kUpdateData, bytesPerPixel}});
 
     // Create the EGL image again
     image =
@@ -8579,11 +8655,100 @@ TEST_P(ImageTest, AHBUpdatedExternalTexture)
     createEGLImageTargetTexture2D(image, targetTexture2);
 
     // Expect that the target have the update data
-    verifyResults2D(targetTexture2, updateData);
+    verifyResults2D(targetTexture2, kUpdateData);
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
     destroyAndroidHardwareBuffer(source);
+}
+
+// Similar to AHBUpdatedExternalTexture but with shared contexts
+TEST_P(ImageTest, AHBUpdatedExternalTextureWithSharedContext)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+    ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+    EGLConfig config   = getEGLWindow()->getConfig();
+    EGLSurface surface = getEGLWindow()->getSurface();
+    EGLContext context = eglGetCurrentContext();
+
+    const EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, window->getClientMajorVersion(),
+                                     EGL_NONE};
+    EGLint pbufferAttributes[]    = {EGL_WIDTH, 128, EGL_HEIGHT, 128, EGL_NONE, EGL_NONE};
+
+    EGLContext pBufferContext = eglCreateContext(display, config, context, contextAttribs);
+    EGLSurface pBufferSurface = eglCreatePbufferSurface(display, config, pbufferAttributes);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_TRUE(pBufferContext != EGL_NO_CONTEXT);
+    ASSERT_EGL_TRUE(eglMakeCurrent(display, pBufferSurface, pBufferSurface, pBufferContext));
+    EXPECT_EGL_TRUE(eglMakeCurrent(display, surface, surface, context));
+
+    constexpr GLubyte kOriginalData[4] = {255, 0, 255, 255};
+    constexpr GLubyte kUpdateData[4]   = {0, 255, 0, 255};
+    const uint32_t bytesPerPixel = 4;
+    ASSERT_GL_NO_ERROR();
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                              kDefaultAHBUsage, kDefaultAttribs,
+                                              {{kOriginalData, bytesPerPixel}}, &source, &image);
+    ASSERT_GL_NO_ERROR();
+
+    // Create target
+    GLTexture targetTexture;
+    createEGLImageTargetTexture2D(image, targetTexture);
+    ASSERT_GL_NO_ERROR();
+
+    // Expect that both the target have the original data
+    verifyResults2D(targetTexture, kOriginalData);
+    // Update the data of the source
+    glBindTexture(GL_TEXTURE_2D, targetTexture);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
+
+    // Set sync object and flush the GL commands
+    EGLSyncKHR fence = eglCreateSyncKHR(window->getDisplay(), EGL_SYNC_FENCE_KHR, nullptr);
+    ASSERT_NE(fence, EGL_NO_SYNC_KHR);
+    glFlush();
+
+    // Delete the target texture
+    targetTexture.reset();
+
+    // Wait that the flush command is finished
+    EGLint result = eglClientWaitSyncKHR(window->getDisplay(), fence, 0, 1000000000);
+    ASSERT_EQ(result, EGL_CONDITION_SATISFIED_KHR);
+    ASSERT_EGL_TRUE(eglDestroySyncKHR(window->getDisplay(), fence));
+
+    // Delete the EGL image
+    eglDestroyImageKHR(window->getDisplay(), image);
+
+    // Access the android hardware buffer directly to check the data is updated
+    verifyResultAHB(source, {{kUpdateData, bytesPerPixel}});
+
+    // Create the EGL image again
+    image =
+        eglCreateImageKHR(window->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                          angle::android::AHardwareBufferToClientBuffer(source), kDefaultAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Create the target texture again
+    GLTexture targetTexture2;
+    createEGLImageTargetTexture2D(image, targetTexture2);
+
+    // Expect that the target have the update data
+    verifyResults2D(targetTexture2, kUpdateData);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+
+    ASSERT_EGL_TRUE(eglDestroyContext(display, pBufferContext));
+    ASSERT_EGL_TRUE(eglDestroySurface(display, pBufferSurface));
 }
 
 // Check that the texture is successfully updated using PBO.
@@ -8595,7 +8760,7 @@ TEST_P(ImageTest, AHBUpdatedUnpackBuffer)
     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
 
-    GLubyte originalData[4 * 4] = {
+    constexpr GLubyte kOriginalData[4 * 4] = {
         0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
         0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
     };
@@ -8617,14 +8782,14 @@ TEST_P(ImageTest, AHBUpdatedUnpackBuffer)
     EGLImageKHR image;
     createEGLImageAndroidHardwareBufferSource(2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
                                               kDefaultAHBUsage, kDefaultAttribs,
-                                              {{originalData, bytesPerPixel}}, &source, &image);
+                                              {{kOriginalData, bytesPerPixel}}, &source, &image);
 
     // Create target
     GLTexture targetTexture;
     createEGLImageTargetTexture2D(image, targetTexture);
 
     // Expect that both the target have the original data
-    verifyResults2D(targetTexture, originalData);
+    verifyResults2D(targetTexture, kOriginalData);
 
     GLBuffer buf;
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buf);
@@ -8670,13 +8835,13 @@ TEST_P(ImageTest, DeletedImageWithSameSizeAndFormat)
 
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
 
-    GLubyte originalData[4] = {255, 0, 255, 255};
-    GLubyte updateData[4]   = {0, 255, 0, 255};
+    constexpr GLubyte kOriginalData[4] = {255, 0, 255, 255};
+    constexpr GLubyte kUpdateData[4]   = {0, 255, 0, 255};
 
     // Create the Image
     GLTexture source;
     EGLImageKHR image;
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kOriginalData,
                                   source, &image);
 
     // Create texture & bind to Image
@@ -8689,7 +8854,7 @@ TEST_P(ImageTest, DeletedImageWithSameSizeAndFormat)
     ASSERT_EGL_SUCCESS();
 
     // Redefine Texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
 
     ASSERT_GL_NO_ERROR();
 }
@@ -10328,15 +10493,15 @@ TEST_P(ImageTest, RedefineWithMultipleImages)
 
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
 
-    GLubyte originalData[4] = {255, 0, 255, 255};
-    GLubyte updateData[4]   = {0, 255, 0, 255};
+    constexpr GLubyte kOriginalData[4] = {255, 0, 255, 255};
+    constexpr GLubyte kUpdateData[4]   = {0, 255, 0, 255};
 
     // Create the Images
     GLTexture source1, source2;
     EGLImageKHR image1, image2;
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kOriginalData,
                                   source1, &image1);
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kOriginalData,
                                   source2, &image2);
 
     // Create texture & bind to Image
@@ -10345,7 +10510,7 @@ TEST_P(ImageTest, RedefineWithMultipleImages)
 
     // Upload some data between the redefinition
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, kUpdateData);
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);

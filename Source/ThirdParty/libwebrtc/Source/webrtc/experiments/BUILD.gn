@@ -22,5 +22,8 @@ action("registered_field_trials_header") {
 rtc_library("registered_field_trials") {
   visibility = [ "*" ]
   sources = get_target_outputs(":registered_field_trials_header")
-  deps = [ ":registered_field_trials_header" ]
+  deps = [
+    ":registered_field_trials_header",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
 }

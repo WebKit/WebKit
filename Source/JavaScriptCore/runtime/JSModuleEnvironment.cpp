@@ -31,6 +31,7 @@
 
 #include "AbstractModuleRecord.h"
 #include "JSCInlines.h"
+#include "JSLexicalEnvironmentInlines.h"
 
 namespace JSC {
 

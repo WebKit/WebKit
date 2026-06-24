@@ -22,7 +22,8 @@
 #pragma once
 
 #include <WebCore/RenderBoxModelObject.h>
-#include <WebCore/RenderStyle+GettersInlines.h>
+#include <WebCore/StyleComputedStyle+GettersInlines.h>
+#include <WebCore/StylePrimitiveNumericTypes+EvaluationMinimum.h>
 
 namespace WebCore {
 

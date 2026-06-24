@@ -56,7 +56,7 @@ private:
     AtomString youTubeURL(const AtomString& rawURL);
 
     bool willCreateRenderer() final { return m_embedShadowElement; }
-    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     WeakPtr<HTMLPlugInElement, WeakPtrImplWithEventTargetData> m_parentElement;
     RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;

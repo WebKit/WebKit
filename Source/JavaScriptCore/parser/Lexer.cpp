@@ -505,8 +505,8 @@ Lexer<T>::Lexer(VM& vm, JSParserBuiltinMode builtinMode, JSParserScriptMode scri
     : m_vm(vm)
     , m_parsingBuiltinFunction(builtinMode == JSParserBuiltinMode::Builtin || Options::exposePrivateIdentifiers())
     , m_positionBeforeLastNewline(0, 0, 0)
-    , m_scriptMode(scriptMode)
     , m_isReparsingFunction(false)
+    , m_scriptMode(scriptMode)
 {
 }
 

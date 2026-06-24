@@ -35,9 +35,9 @@ struct MaskBorderWidthValue {
     using LengthPercentage = CSS::LengthPercentage<CSS::Nonnegative, float>;
     using Number = CSS::Number<CSS::Nonnegative, float>;
 
-    MaskBorderWidthValue(Keyword::Auto keyword) : m_value { keyword } { }
-    MaskBorderWidthValue(LengthPercentage&& lengthPercentage) : m_value { WTF::move(lengthPercentage) } { }
-    MaskBorderWidthValue(Number&& number) : m_value { WTF::move(number) } { }
+    MaskBorderWidthValue(Keyword::Auto value) : m_value { value } { }
+    MaskBorderWidthValue(LengthPercentage&& value) : m_value { WTF::move(value) } { }
+    MaskBorderWidthValue(Number&& value) : m_value { WTF::move(value) } { }
 
     bool isAuto() const { return WTF::holdsAlternative<Keyword::Auto>(m_value); }
     bool isLengthPercentage() const { return WTF::holdsAlternative<LengthPercentage>(m_value); }

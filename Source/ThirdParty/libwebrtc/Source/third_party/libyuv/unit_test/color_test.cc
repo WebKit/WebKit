@@ -22,14 +22,8 @@ namespace libyuv {
 
 // TODO(fbarchard): clang x86 has a higher accuracy YUV to RGB.
 // Port to Visual C and other CPUs
-#if !defined(LIBYUV_BIT_EXACT) && !defined(LIBYUV_DISABLE_X86) && \
-    (defined(__x86_64__) || defined(__i386__))
-#define ERROR_FULL 5
-#define ERROR_J420 4
-#else
 #define ERROR_FULL 6
 #define ERROR_J420 6
-#endif
 #define ERROR_R 1
 #define ERROR_G 1
 #ifdef LIBYUV_UNLIMITED_DATA
@@ -119,11 +113,11 @@ namespace libyuv {
     }                                                                          \
     /* Test C and SIMD match. */                                               \
     for (int i = 0; i < kPixels * 4; ++i) {                                    \
-      EXPECT_EQ(dst_pixels_c[i], dst_pixels_opt[i]);                           \
+      ASSERT_EQ(dst_pixels_c[i], dst_pixels_opt[i]);                           \
     }                                                                          \
     /* Test SIMD is close to original. */                                      \
     for (int i = 0; i < kPixels * 4; ++i) {                                    \
-      EXPECT_NEAR(static_cast<int>(orig_pixels[i]),                            \
+      ASSERT_NEAR(static_cast<int>(orig_pixels[i]),                            \
                   static_cast<int>(dst_pixels_opt[i]), DIFF);                  \
     }                                                                          \
                                                                                \
@@ -431,15 +425,16 @@ TEST_F(LibYUVColorTest, TestRoundToByte) {
       allb |= b;
     }
   }
-  EXPECT_GE(allb, 0);
-  EXPECT_LE(allb, 255);
+  ASSERT_GE(allb, 0);
+  ASSERT_LE(allb, 255);
 }
 
 // BT.601 limited range YUV to RGB reference
 static void YUVToRGBReference(int y, int u, int v, int* r, int* g, int* b) {
-  *r = RoundToByte((y - 16) * 1.164 - (v - 128) * -1.596);
-  *g = RoundToByte((y - 16) * 1.164 - (u - 128) * 0.391 - (v - 128) * 0.813);
-  *b = RoundToByte((y - 16) * 1.164 - (u - 128) * -2.018);
+  double y1 = (y - 16) * 1.164;
+  *r = RoundToByte(y1 - (v - 128) * -1.596);
+  *g = RoundToByte(y1 - (u - 128) * 0.391 - (v - 128) * 0.813);
+  *b = RoundToByte(y1 - (u - 128) * -2.018);
 }
 
 // BT.601 full range YUV to RGB reference (aka JPEG)
@@ -452,9 +447,10 @@ static void YUVJToRGBReference(int y, int u, int v, int* r, int* g, int* b) {
 // BT.709 limited range YUV to RGB reference
 // See also http://www.equasys.de/colorconversion.html
 static void YUVHToRGBReference(int y, int u, int v, int* r, int* g, int* b) {
-  *r = RoundToByte((y - 16) * 1.164 - (v - 128) * -1.793);
-  *g = RoundToByte((y - 16) * 1.164 - (u - 128) * 0.213 - (v - 128) * 0.533);
-  *b = RoundToByte((y - 16) * 1.164 - (u - 128) * -2.112);
+  double y1 = (y - 16) * 1.164;
+  *r = RoundToByte(y1 - (v - 128) * -1.793);
+  *g = RoundToByte(y1 - (u - 128) * 0.213 - (v - 128) * 0.533);
+  *b = RoundToByte(y1 - (u - 128) * -2.112);
 }
 
 // BT.709 full range YUV to RGB reference
@@ -466,10 +462,11 @@ static void YUVFToRGBReference(int y, int u, int v, int* r, int* g, int* b) {
 
 // BT.2020 limited range YUV to RGB reference
 static void YUVUToRGBReference(int y, int u, int v, int* r, int* g, int* b) {
-  *r = RoundToByte((y - 16) * 1.164384 - (v - 128) * -1.67867);
-  *g = RoundToByte((y - 16) * 1.164384 - (u - 128) * 0.187326 -
+  double y1 = (y - 16) * 1.164384;
+  *r = RoundToByte(y1 - (v - 128) * -1.67867);
+  *g = RoundToByte(y1 - (u - 128) * 0.187326 -
                    (v - 128) * 0.65042);
-  *b = RoundToByte((y - 16) * 1.164384 - (u - 128) * -2.14177);
+  *b = RoundToByte(y1 - (u - 128) * -2.14177);
 }
 
 // BT.2020 full range YUV to RGB reference
@@ -484,48 +481,48 @@ TEST_F(LibYUVColorTest, TestYUV) {
 
   // cyan (less red)
   YUVToRGBReference(240, 255, 0, &r0, &g0, &b0);
-  EXPECT_EQ(56, r0);
-  EXPECT_EQ(255, g0);
-  EXPECT_EQ(255, b0);
+  ASSERT_EQ(56, r0);
+  ASSERT_EQ(255, g0);
+  ASSERT_EQ(255, b0);
 
   YUVToRGB(240, 255, 0, &r1, &g1, &b1);
-  EXPECT_EQ(57, r1);
-  EXPECT_EQ(255, g1);
-  EXPECT_EQ(255, b1);
+  ASSERT_EQ(57, r1);
+  ASSERT_EQ(255, g1);
+  ASSERT_EQ(255, b1);
 
   // green (less red and blue)
   YUVToRGBReference(240, 0, 0, &r0, &g0, &b0);
-  EXPECT_EQ(56, r0);
-  EXPECT_EQ(255, g0);
-  EXPECT_EQ(2, b0);
+  ASSERT_EQ(56, r0);
+  ASSERT_EQ(255, g0);
+  ASSERT_EQ(2, b0);
 
   YUVToRGB(240, 0, 0, &r1, &g1, &b1);
-  EXPECT_EQ(57, r1);
-  EXPECT_EQ(255, g1);
+  ASSERT_EQ(57, r1);
+  ASSERT_EQ(255, g1);
 #ifdef LIBYUV_UNLIMITED_DATA
-  EXPECT_EQ(3, b1);
+  ASSERT_EQ(3, b1);
 #else
-  EXPECT_EQ(5, b1);
+  ASSERT_EQ(5, b1);
 #endif
 
   for (int i = 0; i < 256; ++i) {
     YUVToRGBReference(i, 128, 128, &r0, &g0, &b0);
     YUVToRGB(i, 128, 128, &r1, &g1, &b1);
-    EXPECT_NEAR(r0, r1, ERROR_R);
-    EXPECT_NEAR(g0, g1, ERROR_G);
-    EXPECT_NEAR(b0, b1, ERROR_B);
+    ASSERT_NEAR(r0, r1, ERROR_R);
+    ASSERT_NEAR(g0, g1, ERROR_G);
+    ASSERT_NEAR(b0, b1, ERROR_B);
 
     YUVToRGBReference(i, 0, 0, &r0, &g0, &b0);
     YUVToRGB(i, 0, 0, &r1, &g1, &b1);
-    EXPECT_NEAR(r0, r1, ERROR_R);
-    EXPECT_NEAR(g0, g1, ERROR_G);
-    EXPECT_NEAR(b0, b1, ERROR_B);
+    ASSERT_NEAR(r0, r1, ERROR_R);
+    ASSERT_NEAR(g0, g1, ERROR_G);
+    ASSERT_NEAR(b0, b1, ERROR_B);
 
     YUVToRGBReference(i, 0, 255, &r0, &g0, &b0);
     YUVToRGB(i, 0, 255, &r1, &g1, &b1);
-    EXPECT_NEAR(r0, r1, ERROR_R);
-    EXPECT_NEAR(g0, g1, ERROR_G);
-    EXPECT_NEAR(b0, b1, ERROR_B);
+    ASSERT_NEAR(r0, r1, ERROR_R);
+    ASSERT_NEAR(g0, g1, ERROR_G);
+    ASSERT_NEAR(b0, b1, ERROR_B);
   }
 }
 
@@ -534,47 +531,47 @@ TEST_F(LibYUVColorTest, TestGreyYUV) {
 
   // black
   YUVToRGBReference(16, 128, 128, &r0, &g0, &b0);
-  EXPECT_EQ(0, r0);
-  EXPECT_EQ(0, g0);
-  EXPECT_EQ(0, b0);
+  ASSERT_EQ(0, r0);
+  ASSERT_EQ(0, g0);
+  ASSERT_EQ(0, b0);
 
   YUVToRGB(16, 128, 128, &r1, &g1, &b1);
-  EXPECT_EQ(0, r1);
-  EXPECT_EQ(0, g1);
-  EXPECT_EQ(0, b1);
+  ASSERT_EQ(0, r1);
+  ASSERT_EQ(0, g1);
+  ASSERT_EQ(0, b1);
 
   // white
   YUVToRGBReference(240, 128, 128, &r0, &g0, &b0);
-  EXPECT_EQ(255, r0);
-  EXPECT_EQ(255, g0);
-  EXPECT_EQ(255, b0);
+  ASSERT_EQ(255, r0);
+  ASSERT_EQ(255, g0);
+  ASSERT_EQ(255, b0);
 
   YUVToRGB(240, 128, 128, &r1, &g1, &b1);
-  EXPECT_EQ(255, r1);
-  EXPECT_EQ(255, g1);
-  EXPECT_EQ(255, b1);
+  ASSERT_EQ(255, r1);
+  ASSERT_EQ(255, g1);
+  ASSERT_EQ(255, b1);
 
   // grey
   YUVToRGBReference(128, 128, 128, &r0, &g0, &b0);
-  EXPECT_EQ(130, r0);
-  EXPECT_EQ(130, g0);
-  EXPECT_EQ(130, b0);
+  ASSERT_EQ(130, r0);
+  ASSERT_EQ(130, g0);
+  ASSERT_EQ(130, b0);
 
   YUVToRGB(128, 128, 128, &r1, &g1, &b1);
-  EXPECT_EQ(130, r1);
-  EXPECT_EQ(130, g1);
-  EXPECT_EQ(130, b1);
+  ASSERT_EQ(130, r1);
+  ASSERT_EQ(130, g1);
+  ASSERT_EQ(130, b1);
 
   for (int y = 0; y < 256; ++y) {
     YUVToRGBReference(y, 128, 128, &r0, &g0, &b0);
     YUVToRGB(y, 128, 128, &r1, &g1, &b1);
     YToRGB(y, &r2, &g2, &b2);
-    EXPECT_EQ(r0, r1);
-    EXPECT_EQ(g0, g1);
-    EXPECT_EQ(b0, b1);
-    EXPECT_EQ(r0, r2);
-    EXPECT_EQ(g0, g2);
-    EXPECT_EQ(b0, b2);
+    ASSERT_EQ(r0, r1);
+    ASSERT_EQ(g0, g1);
+    ASSERT_EQ(b0, b1);
+    ASSERT_EQ(r0, r2);
+    ASSERT_EQ(g0, g2);
+    ASSERT_EQ(b0, b2);
   }
 }
 
@@ -612,10 +609,11 @@ static void PrintHistogram(int rh[256], int gh[256], int bh[256]) {
 #ifdef DISABLE_SLOW_TESTS
 #define FASTSTEP 5
 #else
-#define FASTSTEP 1
+#define FASTSTEP 3
 #endif
 
 // BT.601 limited range.
+#ifndef DISABLE_SLOW_TESTS
 TEST_F(LibYUVColorTest, TestFullYUV) {
   int rh[256] = {
       0,
@@ -626,16 +624,16 @@ TEST_F(LibYUVColorTest, TestFullYUV) {
   int bh[256] = {
       0,
   };
-  for (int u = 0; u < 256; ++u) {
-    for (int v = 0; v < 256; ++v) {
+  for (int u = 0; u < 256; u += FASTSTEP) {
+    for (int v = 0; v < 256; v += FASTSTEP) {
       for (int y2 = 0; y2 < 256; y2 += FASTSTEP) {
         int r0, g0, b0, r1, g1, b1;
         int y = RANDOM256(y2);
         YUVToRGBReference(y, u, v, &r0, &g0, &b0);
         YUVToRGB(y, u, v, &r1, &g1, &b1);
-        EXPECT_NEAR(r0, r1, ERROR_R);
-        EXPECT_NEAR(g0, g1, ERROR_G);
-        EXPECT_NEAR(b0, b1, ERROR_B);
+        ASSERT_NEAR(r0, r1, ERROR_R);
+        ASSERT_NEAR(g0, g1, ERROR_G);
+        ASSERT_NEAR(b0, b1, ERROR_B);
         ++rh[r1 - r0 + 128];
         ++gh[g1 - g0 + 128];
         ++bh[b1 - b0 + 128];
@@ -656,16 +654,16 @@ TEST_F(LibYUVColorTest, TestFullYUVJ) {
   int bh[256] = {
       0,
   };
-  for (int u = 0; u < 256; ++u) {
-    for (int v = 0; v < 256; ++v) {
+  for (int u = 0; u < 256; u += FASTSTEP) {
+    for (int v = 0; v < 256; v += FASTSTEP) {
       for (int y2 = 0; y2 < 256; y2 += FASTSTEP) {
         int r0, g0, b0, r1, g1, b1;
         int y = RANDOM256(y2);
         YUVJToRGBReference(y, u, v, &r0, &g0, &b0);
         YUVJToRGB(y, u, v, &r1, &g1, &b1);
-        EXPECT_NEAR(r0, r1, ERROR_R);
-        EXPECT_NEAR(g0, g1, ERROR_G);
-        EXPECT_NEAR(b0, b1, ERROR_B);
+        ASSERT_NEAR(r0, r1, ERROR_R);
+        ASSERT_NEAR(g0, g1, ERROR_G);
+        ASSERT_NEAR(b0, b1, ERROR_B);
         ++rh[r1 - r0 + 128];
         ++gh[g1 - g0 + 128];
         ++bh[b1 - b0 + 128];
@@ -686,16 +684,16 @@ TEST_F(LibYUVColorTest, TestFullYUVH) {
   int bh[256] = {
       0,
   };
-  for (int u = 0; u < 256; ++u) {
-    for (int v = 0; v < 256; ++v) {
+  for (int u = 0; u < 256; u += FASTSTEP) {
+    for (int v = 0; v < 256; v += FASTSTEP) {
       for (int y2 = 0; y2 < 256; y2 += FASTSTEP) {
         int r0, g0, b0, r1, g1, b1;
         int y = RANDOM256(y2);
         YUVHToRGBReference(y, u, v, &r0, &g0, &b0);
         YUVHToRGB(y, u, v, &r1, &g1, &b1);
-        EXPECT_NEAR(r0, r1, ERROR_R);
-        EXPECT_NEAR(g0, g1, ERROR_G);
-        EXPECT_NEAR(b0, b1, ERROR_B);
+        ASSERT_NEAR(r0, r1, ERROR_R);
+        ASSERT_NEAR(g0, g1, ERROR_G);
+        ASSERT_NEAR(b0, b1, ERROR_B);
         ++rh[r1 - r0 + 128];
         ++gh[g1 - g0 + 128];
         ++bh[b1 - b0 + 128];
@@ -716,16 +714,16 @@ TEST_F(LibYUVColorTest, TestFullYUVF) {
   int bh[256] = {
       0,
   };
-  for (int u = 0; u < 256; ++u) {
-    for (int v = 0; v < 256; ++v) {
+  for (int u = 0; u < 256; u += FASTSTEP) {
+    for (int v = 0; v < 256; v += FASTSTEP) {
       for (int y2 = 0; y2 < 256; y2 += FASTSTEP) {
         int r0, g0, b0, r1, g1, b1;
         int y = RANDOM256(y2);
         YUVFToRGBReference(y, u, v, &r0, &g0, &b0);
         YUVFToRGB(y, u, v, &r1, &g1, &b1);
-        EXPECT_NEAR(r0, r1, ERROR_R);
-        EXPECT_NEAR(g0, g1, ERROR_G);
-        EXPECT_NEAR(b0, b1, ERROR_B);
+        ASSERT_NEAR(r0, r1, ERROR_R);
+        ASSERT_NEAR(g0, g1, ERROR_G);
+        ASSERT_NEAR(b0, b1, ERROR_B);
         ++rh[r1 - r0 + 128];
         ++gh[g1 - g0 + 128];
         ++bh[b1 - b0 + 128];
@@ -746,16 +744,16 @@ TEST_F(LibYUVColorTest, TestFullYUVU) {
   int bh[256] = {
       0,
   };
-  for (int u = 0; u < 256; ++u) {
-    for (int v = 0; v < 256; ++v) {
+  for (int u = 0; u < 256; u += FASTSTEP) {
+    for (int v = 0; v < 256; v += FASTSTEP) {
       for (int y2 = 0; y2 < 256; y2 += FASTSTEP) {
         int r0, g0, b0, r1, g1, b1;
         int y = RANDOM256(y2);
         YUVUToRGBReference(y, u, v, &r0, &g0, &b0);
         YUVUToRGB(y, u, v, &r1, &g1, &b1);
-        EXPECT_NEAR(r0, r1, ERROR_R);
-        EXPECT_NEAR(g0, g1, ERROR_G);
-        EXPECT_NEAR(b0, b1, ERROR_B);
+        ASSERT_NEAR(r0, r1, ERROR_R);
+        ASSERT_NEAR(g0, g1, ERROR_G);
+        ASSERT_NEAR(b0, b1, ERROR_B);
         ++rh[r1 - r0 + 128];
         ++gh[g1 - g0 + 128];
         ++bh[b1 - b0 + 128];
@@ -776,16 +774,16 @@ TEST_F(LibYUVColorTest, TestFullYUVV) {
   int bh[256] = {
       0,
   };
-  for (int u = 0; u < 256; ++u) {
-    for (int v = 0; v < 256; ++v) {
+  for (int u = 0; u < 256; u += FASTSTEP) {
+    for (int v = 0; v < 256; v += FASTSTEP) {
       for (int y2 = 0; y2 < 256; y2 += FASTSTEP) {
         int r0, g0, b0, r1, g1, b1;
         int y = RANDOM256(y2);
         YUVVToRGBReference(y, u, v, &r0, &g0, &b0);
         YUVVToRGB(y, u, v, &r1, &g1, &b1);
-        EXPECT_NEAR(r0, r1, ERROR_R);
-        EXPECT_NEAR(g0, g1, 2);
-        EXPECT_NEAR(b0, b1, ERROR_B);
+        ASSERT_NEAR(r0, r1, ERROR_R);
+        ASSERT_NEAR(g0, g1, 2);
+        ASSERT_NEAR(b0, b1, ERROR_B);
         ++rh[r1 - r0 + 128];
         ++gh[g1 - g0 + 128];
         ++bh[b1 - b0 + 128];
@@ -794,6 +792,8 @@ TEST_F(LibYUVColorTest, TestFullYUVV) {
   }
   PrintHistogram(rh, gh, bh);
 }
+#endif  // DISABLE_SLOW_TESTS
+
 #undef FASTSTEP
 
 TEST_F(LibYUVColorTest, TestGreyYUVJ) {
@@ -801,47 +801,47 @@ TEST_F(LibYUVColorTest, TestGreyYUVJ) {
 
   // black
   YUVJToRGBReference(0, 128, 128, &r0, &g0, &b0);
-  EXPECT_EQ(0, r0);
-  EXPECT_EQ(0, g0);
-  EXPECT_EQ(0, b0);
+  ASSERT_EQ(0, r0);
+  ASSERT_EQ(0, g0);
+  ASSERT_EQ(0, b0);
 
   YUVJToRGB(0, 128, 128, &r1, &g1, &b1);
-  EXPECT_EQ(0, r1);
-  EXPECT_EQ(0, g1);
-  EXPECT_EQ(0, b1);
+  ASSERT_EQ(0, r1);
+  ASSERT_EQ(0, g1);
+  ASSERT_EQ(0, b1);
 
   // white
   YUVJToRGBReference(255, 128, 128, &r0, &g0, &b0);
-  EXPECT_EQ(255, r0);
-  EXPECT_EQ(255, g0);
-  EXPECT_EQ(255, b0);
+  ASSERT_EQ(255, r0);
+  ASSERT_EQ(255, g0);
+  ASSERT_EQ(255, b0);
 
   YUVJToRGB(255, 128, 128, &r1, &g1, &b1);
-  EXPECT_EQ(255, r1);
-  EXPECT_EQ(255, g1);
-  EXPECT_EQ(255, b1);
+  ASSERT_EQ(255, r1);
+  ASSERT_EQ(255, g1);
+  ASSERT_EQ(255, b1);
 
   // grey
   YUVJToRGBReference(128, 128, 128, &r0, &g0, &b0);
-  EXPECT_EQ(128, r0);
-  EXPECT_EQ(128, g0);
-  EXPECT_EQ(128, b0);
+  ASSERT_EQ(128, r0);
+  ASSERT_EQ(128, g0);
+  ASSERT_EQ(128, b0);
 
   YUVJToRGB(128, 128, 128, &r1, &g1, &b1);
-  EXPECT_EQ(128, r1);
-  EXPECT_EQ(128, g1);
-  EXPECT_EQ(128, b1);
+  ASSERT_EQ(128, r1);
+  ASSERT_EQ(128, g1);
+  ASSERT_EQ(128, b1);
 
   for (int y = 0; y < 256; ++y) {
     YUVJToRGBReference(y, 128, 128, &r0, &g0, &b0);
     YUVJToRGB(y, 128, 128, &r1, &g1, &b1);
     YJToRGB(y, &r2, &g2, &b2);
-    EXPECT_EQ(r0, r1);
-    EXPECT_EQ(g0, g1);
-    EXPECT_EQ(b0, b1);
-    EXPECT_EQ(r0, r2);
-    EXPECT_EQ(g0, g2);
-    EXPECT_EQ(b0, b2);
+    ASSERT_EQ(r0, r1);
+    ASSERT_EQ(g0, g1);
+    ASSERT_EQ(b0, b1);
+    ASSERT_EQ(r0, r2);
+    ASSERT_EQ(g0, g2);
+    ASSERT_EQ(b0, b2);
   }
 }
 

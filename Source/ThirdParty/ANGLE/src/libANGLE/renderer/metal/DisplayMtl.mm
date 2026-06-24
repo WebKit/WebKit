@@ -482,6 +482,7 @@ egl::Error DisplayMtl::makeCurrent(egl::Display *display,
 
 void DisplayMtl::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
+    outExtensions->createContextRobustness    = true;
     outExtensions->iosurfaceClientBuffer      = true;
     outExtensions->surfacelessContext         = true;
     outExtensions->noConfigContext            = true;
@@ -526,6 +527,8 @@ void DisplayMtl::initializeFrontendFeatures(angle::FrontendFeatures *features) c
     // The Metal backend's handling of compile and link is thread-safe
     ANGLE_FEATURE_CONDITION(features, compileJobIsThreadSafe, true);
     ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, true);
+
+    ANGLE_FEATURE_CONDITION(features, setNeedInitOnInvalidation, true);
 }
 
 void DisplayMtl::populateFeatureList(angle::FeatureList *features)
@@ -793,25 +796,6 @@ void DisplayMtl::ensureCapsInitialized() const
     mNativeCaps.maxViewportWidth     = mNativeCaps.max2DTextureSize;
     mNativeCaps.maxViewportHeight    = mNativeCaps.max2DTextureSize;
 
-    bool isCatalyst = TARGET_OS_MACCATALYST;
-
-    mMaxColorTargetBits = mtl::kMaxColorTargetBitsApple1To3;
-    if (supportsMacGPUFamily(1) || isCatalyst)
-    {
-        mMaxColorTargetBits = mtl::kMaxColorTargetBitsMacAndCatalyst;
-    }
-    else if (supportsAppleGPUFamily(4))
-    {
-        mMaxColorTargetBits = mtl::kMaxColorTargetBitsApple4Plus;
-    }
-
-    if (mFeatures.limitMaxColorTargetBitsForTesting.enabled)
-    {
-        // Set so we have enough for RGBA8 on every attachment
-        // but not enough for RGBA32UI.
-        mMaxColorTargetBits = mNativeCaps.maxColorAttachments * 32;
-    }
-
     // MSAA
     mNativeCaps.maxSamples             = mFormatTable.getMaxSamples();
     mNativeCaps.maxSampleMaskWords     = 1;
@@ -919,9 +903,6 @@ void DisplayMtl::ensureCapsInitialized() const
 
     // Metal doesn't support GL_TEXTURE_COMPARE_MODE=GL_NONE for shadow samplers
     mNativeLimitations.noShadowSamplerCompareModeNone = true;
-
-    // Apple platforms require PVRTC1 textures to be squares.
-    mNativeLimitations.squarePvrtc1 = true;
 
     // MSL `uint32 instance_id = baseInstance + count`, so GLES baseinstance + primcount
     // must not overflow GLuint.
@@ -1074,6 +1055,8 @@ void DisplayMtl::initializeExtensions() const
 
     mNativeExtensions.packReverseRowOrderANGLE = true;
 
+    mNativeExtensions.framebufferFlipYMESA = true;
+
     if (mFeatures.hasEvents.enabled)
     {
         // MTLSharedEvent is only available since Metal 2.1
@@ -1215,7 +1198,6 @@ void DisplayMtl::initializeTextureCaps() const
     // Disable all depth buffer and stencil buffer readback extensions until we need them
     mNativeExtensions.readDepthNV         = false;
     mNativeExtensions.readStencilNV       = false;
-    mNativeExtensions.depthBufferFloat2NV = false;
 }
 
 void DisplayMtl::initializeFeatures()
@@ -1284,6 +1266,8 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), writeHelperSampleMask, supportsAppleGPUFamily(1));
 
     ANGLE_FEATURE_CONDITION((&mFeatures), multisampleColorFormatShaderReadWorkaround, isAMD());
+    // At least for Radeon 5500M. See rdar://178796612.
+    ANGLE_FEATURE_CONDITION((&mFeatures), clearMsaaRg16UnormWithDrawWorkaround, isAMD());
     ANGLE_FEATURE_CONDITION((&mFeatures), copyIOSurfaceToNonIOSurfaceForReadOptimization,
                             isIntel() || isAMD());
     ANGLE_FEATURE_CONDITION((&mFeatures), copyTextureToBufferForReadOptimization, isAMD());

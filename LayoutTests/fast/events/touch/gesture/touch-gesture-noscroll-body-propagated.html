@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="resources/gesture-helpers.js"></script>
 <style type="text/css">
 #touchtarget {
@@ -122,8 +122,7 @@ function secondGestureScroll()
     finishTest();
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
 
 function runTest()
 {
@@ -146,10 +145,7 @@ function finishTest()
     if (window.eventSender) {
         if (gesturesOccurred == expectedGesturesTotal) {
             shouldBe('scrollEventsOccurred', expectedScrollEventsOccurred);
-            successfullyParsed = true;
-            isSuccessfullyParsed();
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
     }
 }

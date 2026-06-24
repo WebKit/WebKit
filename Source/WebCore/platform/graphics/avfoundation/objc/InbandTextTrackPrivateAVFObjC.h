@@ -52,17 +52,18 @@ public:
 
     ~InbandTextTrackPrivateAVFObjC() = default;
 
-    InbandTextTrackPrivate::Kind kind() const override;
-    bool isClosedCaptions() const override;
-    bool isSDH() const override;
-    bool containsOnlyForcedSubtitles() const override;
-    bool isMainProgramContent() const override;
-    bool isEasyToRead() const override;
-    String label() const override;
-    String language() const override;
-    bool isDefault() const override;
+    InbandTextTrackPrivate::Kind kind() const final;
+    bool isClosedCaptions() const final;
+    bool isSDH() const final;
+    bool containsOnlyForcedSubtitles() const final;
+    bool isMainProgramContent() const final;
+    bool isEasyToRead() const final;
+    bool isMachineGenerated() const final;
+    String label() const final;
+    String language() const final;
+    bool isDefault() const final;
 
-    void disconnect() override;
+    void disconnect() final;
 
     Category textTrackCategory() const final { return InBand; }
 

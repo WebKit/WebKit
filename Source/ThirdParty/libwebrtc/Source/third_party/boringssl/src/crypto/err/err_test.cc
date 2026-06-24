@@ -32,6 +32,8 @@
 #endif
 
 
+using namespace bssl;
+
 TEST(ErrTest, Overflow) {
   for (unsigned i = 0; i < ERR_NUM_ERRORS*2; i++) {
     ERR_put_error(1, 0 /* unused */, i+1, "test", 1);
@@ -82,7 +84,7 @@ TEST(ErrTest, PutError) {
   EXPECT_STREQ("testing", data);
 
   ERR_put_error(1, 0 /* unused */, 2, "test", 4);
-  bssl::UniquePtr<char> str(OPENSSL_strdup("testing"));
+  UniquePtr<char> str(OPENSSL_strdup("testing"));
   ERR_set_error_data(str.release(), ERR_FLAG_STRING | ERR_FLAG_MALLOCED);
   packed_error = ERR_get_error_line_data(&file, &line, &data, &flags);
   EXPECT_STREQ("testing", data);
@@ -155,7 +157,7 @@ TEST(ErrTest, SaveAndRestore) {
   ERR_put_error(2, 0 /* unused */, 2, "test2.c", 2);
   ERR_put_error(3, 0 /* unused */, 3, "test3.c", 3);
   ERR_add_error_data(1, "data3");
-  bssl::UniquePtr<ERR_SAVE_STATE> saved(ERR_save_state());
+  UniquePtr<ERR_SAVE_STATE> saved(ERR_save_state());
   ASSERT_TRUE(saved);
 
   // The existing error queue entries still exist.

@@ -1,0 +1,2 @@
+This test passes if import() in the null-URL initial document of a new top-level window rejects with a TypeError instead of crashing the WebContent process.
+PASS

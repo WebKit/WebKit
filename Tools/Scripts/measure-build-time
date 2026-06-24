@@ -33,7 +33,7 @@ class Task:
 
     result: TestResult | None
 
-    def __init__(self, args):
+    def __init__(self, args: Arguments):
         self.build_command = args.build_command
         self.stdout_filter = args.stdout_filter
         self.source_dir = args.source_dir
@@ -56,6 +56,11 @@ class CleanBuild(Task):
     name = 'clean'
     description = 'Delete the build directory and run a full build from scratch.'
 
+    def __init__(self, args: Arguments):
+        super().__init__(args)
+        if args.configure_command:
+            self.build_command = f'{args.configure_command} && {self.build_command}'
+
     def __enter__(self):
         if self.build_dir.exists():
             if sys.stdin.isatty():
@@ -71,7 +76,7 @@ class PatchIncrementalBuild(Task):
 
     patch: str
 
-    def __init__(self, args):
+    def __init__(self, args: Arguments):
         super().__init__(args)
         self.unapply_patch = args.unapply_patch
 
@@ -218,25 +223,11 @@ class IncrementalBuild6(PatchIncrementalBuild):
     name = 'webkit-swift-interface'
     description = 'Apply a small patch that changes a Swift-C++ class\'s public initializer and rebuild.'
     patch = '''\
-diff --git a/Source/WebKit/UIProcess/WebBackForwardList.swift b/Source/WebKit/UIProcess/WebBackForwardList.swift
-index 5ddc84b79cb2..1e447dc476c0 100644
---- a/Source/WebKit/UIProcess/WebBackForwardList.swift
-+++ b/Source/WebKit/UIProcess/WebBackForwardList.swift
-@@ -135,7 +135,8 @@ final class WebBackForwardList {
-         #endif
-     }()
-
--    init(page: WebKit.WeakPtrWebPageProxy) {
-+    init(page: WebKit.WeakPtrWebPageProxy, addedByMeasureBuildTimeDoNotCommit: Bool = true) {
-+        print(addedByMeasureBuildTimeDoNotCommit)
-         self.page = page
-         self.messageForwarder = WebKit.WebBackForwardListMessageForwarder.create(target: self)
-         backForwardLog("(Back/Forward) Created WebBackForwardList \(ObjectIdentifier(self))")
 diff --git a/Source/WebKit/UIProcess/WebBackForwardList.cpp b/Source/WebKit/UIProcess/WebBackForwardList.cpp
-index 1c90c5556c38..8da62b88edf6 100644
+index 5fbcb767a0f5..b251202181fd 100644
 --- a/Source/WebKit/UIProcess/WebBackForwardList.cpp
 +++ b/Source/WebKit/UIProcess/WebBackForwardList.cpp
-@@ -946,7 +946,7 @@ String WebBackForwardList::loggingString() const
+@@ -968,7 +968,7 @@ void WebBackForwardList::didReceiveProvisionalMessage(IPC::Connection& connectio
  #else // ENABLE(BACK_FORWARD_LIST_SWIFT)
  
  WebBackForwardListWrapper::WebBackForwardListWrapper(WebPageProxy& webPageProxy)
@@ -245,7 +236,20 @@ index 1c90c5556c38..8da62b88edf6 100644
  {
  }
  
-
+diff --git a/Source/WebKit/UIProcess/WebBackForwardList.swift b/Source/WebKit/UIProcess/WebBackForwardList.swift
+index 3e1247fdf3d3..8b243cd79c1e 100644
+--- a/Source/WebKit/UIProcess/WebBackForwardList.swift
++++ b/Source/WebKit/UIProcess/WebBackForwardList.swift
+@@ -137,7 +137,8 @@ final class WebBackForwardList {
+ 
+     // @used ensures these are retained even under -O -wmo: rdar://179098545
+     @used
+-    init(page: WebKit.WeakPtrWebPageProxy) {
++    init(page: WebKit.WeakPtrWebPageProxy, addedByMeasureBuildTimeDoNotCommit: Bool = true) {
++        print(addedByMeasureBuildTimeDoNotCommit)
+         self.page = page
+         self.messageForwarder = WebKit.WebBackForwardListMessageForwarder.create(target: self)
+         backForwardLog("(Back/Forward) Created WebBackForwardList \(ObjectIdentifier(self))")
 '''
 
 
@@ -365,15 +369,34 @@ def run_test(name: str, command: str, stdout_filter: str | None = None) -> TestR
 
 # --- Test runner ------------------------------------------------------------
 
-DEFAULT_MAKE_COMMAND = ('make -C {workspace_dir} {configuration} '
-                        'ARGS=-showBuildTimingSummary')
+DEFAULT_MAKE_COMMAND = (
+    'make -C {workspace_dir} {configuration} ARGS=-showBuildTimingSummary'
+)
+DEFAULT_CMAKE_BUILD_COMMAND = (
+    'xcrun ninja -C {build_dir}'
+)
+DEFAULT_CMAKE_CONFIGURE_COMMAND = (
+    'xcrun cmake -S {source_dir} -B {build_dir} --preset {preset}'
+)
 
-def main() -> None:
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(message)s',
-    )
+class Arguments(argparse.Namespace):
+    build_command: str
+    configure_command: str | None
+    make: bool
+    cmake: bool
+    configuration: str
 
+    build_dir: Path
+    source_dir: Path
+
+    tests: list[str]
+    unapply_patch: bool
+    keep_going: bool
+
+    stdout_filter: str | None
+    output: str
+
+def get_args() -> Arguments:
     test_list = '\n'.join(f'  {T.name:<24}{T.description}' for T in AVAILABLE_TESTS)
     parser = argparse.ArgumentParser(
         description='Measure build time and emit perf metrics JSON.',
@@ -381,11 +404,15 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-    cmd_parser = parser.add_mutually_exclusive_group(required=True)
-    cmd_parser.add_argument('--build-command',
-                            help='Shell command to run the build')
-    cmd_parser.add_argument('--make', action='store_true',
-                            help='Use a default Make invocation to build WebKit.')
+    parser.add_argument('--build-command',
+                        help='Shell command to run the build')
+    parser.add_argument('--configure-command',
+                        help='Shell command to configure the build')
+    parser.add_argument('--make', action='store_true',
+                        help='Use a default Make invocation to build WebKit with Xcode.')
+    parser.add_argument('--cmake', action='store_true',
+                        help='Use a default CMake invocation to build WebKit with Ninja.')
+
     parser.add_argument('--build-dir', type=Path,
                         help='Path to top-level build directory (deleted by `clean` test)')
     parser.add_argument('--source-dir', type=Path,
@@ -397,7 +424,7 @@ def main() -> None:
                         help='Which tests to run (default: all). Will skip test dependencies which are not listed.')
     parser.add_argument('--unapply-patch', action=argparse.BooleanOptionalAction, default=False,
                         help='Whether to undo changes made to the source directory between tests')
-    parser.add_argument('--keep-going', action=argparse.BooleanOptionalAction, default=False,
+    parser.add_argument('--keep-going', action=argparse.BooleanOptionalAction, default=True,
                         help='Continue benchmarking after a build command has failed')
     parser.add_argument('--metric-key',
                         help='Top-level test key in the results. '
@@ -407,7 +434,7 @@ def main() -> None:
     parser.add_argument('--output', '-o', default='build-time-results.json',
                         help='Output JSON file path (default: build-time-results.json)')
 
-    args = parser.parse_args()
+    args = parser.parse_args(namespace=Arguments())
 
     if not args.build_dir:
         args.build_dir = Path(subprocess.check_output(
@@ -416,30 +443,67 @@ def main() -> None:
         ).rstrip())
     if not args.source_dir:
         args.source_dir = SCRIPTS.parent.parent
+
+    if sum((
+        1 if args.make else 0,
+        1 if args.cmake else 0,
+        1 if args.build_command or args.configure_command else 0,
+    )) > 1:
+        parser.error('cannot mix --cmake or --make with a custom build or '
+                     'configure command')
+    if not any((args.make, args.cmake, args.build_command)):
+        parser.error('one of --make, --cmake, or --build-command is required')
+    if args.configure_command and not args.build_command:
+        parser.error('--build-command must be provided when using a custom '
+                     '--configure-command')
+
     if args.make:
         internal_dir = args.source_dir / '../Internal/WebKit'
         args.build_command = DEFAULT_MAKE_COMMAND.format(
             configuration=args.configuration.lower(),
             workspace_dir=str(internal_dir if internal_dir.exists() else args.source_dir)
         )
+    elif args.cmake:
+        args.build_command = DEFAULT_CMAKE_BUILD_COMMAND.format(
+            build_dir=str(args.build_dir),
+        )
+        cmake_preset = {
+            'debug': 'mac-dev-debug',
+            'release': 'mac-dev-release',
+        }.get(args.configuration.lower(), args.configuration)
+        args.configure_command = DEFAULT_CMAKE_CONFIGURE_COMMAND.format(
+            build_dir=str(args.build_dir),
+            source_dir=str(args.source_dir),
+            preset=cmake_preset,
+        )
     if not args.metric_key:
         # e.g. "BuildTime-Debug"
         args.metric_key = f'BuildTime-{args.configuration.capitalize()}'
+    return args
+
+def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s %(message)s',
+    )
+
+    args = get_args()
 
     # Read each test's `depends` lists to compute a topological order to run
-    # all the tests. Does NOT perform cycle detection.
+    # all the tests. Ties are broken by AVAILABLE_TESTS order, so the plan is
+    # deterministic. Does NOT perform cycle detection.
     plan: list[type[Task]] = []
-    roots = {T for T in AVAILABLE_TESTS if not T.depends}
+    roots = [T for T in AVAILABLE_TESTS if not T.depends]
     edges = {T: set(T.depends) for T in AVAILABLE_TESTS}
 
     while roots:
-        T = roots.pop()
+        T = roots.pop(0)
         plan.append(T)
         for T2 in AVAILABLE_TESTS:
             if T in edges[T2]:
                 edges[T2].remove(T)
                 if not edges[T2]:
-                    roots.add(T2)
+                    roots.append(T2)
 
     tests: dict[str, TestResult] = {}
     for T in plan:

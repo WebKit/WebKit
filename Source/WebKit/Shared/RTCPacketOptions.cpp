@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RTCPacketOptions.h"
 
+#include <wtf/CheckedArithmetic.h>
+
 #if USE(LIBWEBRTC)
 
 

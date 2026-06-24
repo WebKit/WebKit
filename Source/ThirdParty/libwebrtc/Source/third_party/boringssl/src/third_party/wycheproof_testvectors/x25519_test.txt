@@ -532,7 +532,7 @@ private = c8d74acde5934e64b9895d5ff7afbffd7f704f7dfccff7ac28fa62a1e6410347
 public = e0eb7a7c3b41b8ae1656e3faf19fc46ada098deb9c32b1fd866205165f49b880
 result = acceptable
 shared = 0000000000000000000000000000000000000000000000000000000000000000
-flags = LowOrderPublic,NonCanonicalPublic,Twist,SpecialPublicKey,ZeroSharedSecret
+flags = LowOrderPublic,NonCanonicalPublic,SpecialPublicKey,ZeroSharedSecret
 
 # tcId = 67
 # public key with low order
@@ -540,7 +540,7 @@ private = b85649d5120e01e8ccaf7b2fb8d81b62e8ad6f3d5c0553fdde1906cb9d79c050
 public = 5f9c95bca3508c24b1d0b1559c83ef5b04445cc4581c8e86d8224eddd09f11d7
 result = acceptable
 shared = 0000000000000000000000000000000000000000000000000000000000000000
-flags = LowOrderPublic,NonCanonicalPublic,Twist,SpecialPublicKey,ZeroSharedSecret
+flags = LowOrderPublic,NonCanonicalPublic,SpecialPublicKey,ZeroSharedSecret
 
 # tcId = 68
 # public key with low order
@@ -548,7 +548,7 @@ private = 2064b2f4c9dc97ec7cf58932fdfa3265ba6ea4d11f0259b8efc8afb35db88c48
 public = ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 result = acceptable
 shared = 0000000000000000000000000000000000000000000000000000000000000000
-flags = LowOrderPublic,NonCanonicalPublic,SpecialPublicKey,ZeroSharedSecret
+flags = LowOrderPublic,NonCanonicalPublic,SpecialPublicKey,ZeroSharedSecret,Twist
 
 # tcId = 69
 # public key with low order
@@ -572,7 +572,7 @@ private = 786a33a4f7af297a20e7642925932bf509e7070fa1bc36986af1eb13f4f50b55
 public = ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f
 result = acceptable
 shared = 0000000000000000000000000000000000000000000000000000000000000000
-flags = LowOrderPublic,ZeroSharedSecret
+flags = LowOrderPublic,ZeroSharedSecret,Twist
 
 # tcId = 72
 # public key with low order
@@ -628,7 +628,7 @@ private = 786a33a4f7af297a20e7642925932bf509e7070fa1bc36986af1eb13f4f50b55
 public = ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 result = acceptable
 shared = 0000000000000000000000000000000000000000000000000000000000000000
-flags = LowOrderPublic,ZeroSharedSecret
+flags = LowOrderPublic,ZeroSharedSecret,Twist
 
 # tcId = 79
 # public key with low order
@@ -692,7 +692,7 @@ private = e07971ee820e48b0b266d8be3cdbbb5e900a43f59ee8535c6572418615de4962
 public = 0100000000000000000000000000000000000000000000000000000000000080
 result = acceptable
 shared = 0000000000000000000000000000000000000000000000000000000000000000
-flags = SmallPublicKey,LowOrderPublic,NonCanonicalPublic,Twist,SpecialPublicKey,ZeroSharedSecret
+flags = SmallPublicKey,LowOrderPublic,NonCanonicalPublic,SpecialPublicKey,ZeroSharedSecret
 
 # tcId = 87
 # non-canonical public key
@@ -764,7 +764,7 @@ private = c8e0330ae9dceeff887fba761225879a4bd2e0db08799244136e4721b2c88970
 public = dbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 result = acceptable
 shared = dfe60831c9f4f96c816e51048804dbdc27795d760eced75ef575cbe3b464054b
-flags = NonCanonicalPublic,SpecialPublicKey
+flags = NonCanonicalPublic,SpecialPublicKey,Twist
 
 # tcId = 96
 # non-canonical public key
@@ -772,7 +772,7 @@ private = 10db6210fc1fb13382472fa1787b004b5d11868ab3a79510e0cee30f4a6df26b
 public = dcffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 result = acceptable
 shared = 50bfa826ca77036dd2bbfd092c3f78e2e4a1f980d7c8e78f2f14dca3cce5cc3c
-flags = NonCanonicalPublic,Twist,SpecialPublicKey
+flags = NonCanonicalPublic,SpecialPublicKey
 
 # tcId = 97
 # non-canonical public key
@@ -780,7 +780,7 @@ private = 9041c6e044a277df8466275ca8b5ee0da7bc028648054ade5c592add3057474e
 public = eaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 result = acceptable
 shared = 13da5695a4c206115409b5277a934782fe985fa050bc902cba5616f9156fe277
-flags = NonCanonicalPublic,SpecialPublicKey
+flags = NonCanonicalPublic,SpecialPublicKey,Twist
 
 # tcId = 98
 # non-canonical public key
@@ -810,9 +810,9 @@ flags = Ktv
 # RFC 7748
 private = 4866e9d4d1b4673c5ad22691957d6af5c11b6421e0ea01d42ca4169e7918ba4d
 public = e5210f12786811d3f4b7959d0538ae2c31dbe7106fc03c3efc4cd549c715a413
-result = valid
+result = acceptable
 shared = 95cbde9476e8907d7aade45cb4b873f88b595a68799fa152e6f8f7647aac7957
-flags = Ktv
+flags = Ktv,Twist
 
 # tcId = 102
 # RFC 8037, Section A.6

@@ -84,7 +84,7 @@ class OpenSSLErrStackTracer {
 
 }  // namespace
 
-// Parses an RSA public key or EC public key from SPKI to an EVP_PKEY. Returns
+// Parses an RSA, EC, or ML-DSA public key from SPKI to an EVP_PKEY. Returns
 // true on success.
 //
 // This function only recognizes the "pk-rsa" (rsaEncryption) flavor of RSA
@@ -160,6 +160,9 @@ bool ParsePublicKey(der::Input public_key_spki,
       // TODO(davidben): Remove P-521 from here, or let callers configure this.
       // We don't advertise it in TLS.
       EVP_pkey_ec_p521(),
+      EVP_pkey_ml_dsa_44(),
+      EVP_pkey_ml_dsa_65(),
+      EVP_pkey_ml_dsa_87(),
   };
   public_key->reset(EVP_PKEY_from_subject_public_key_info(
       public_key_spki.data(), public_key_spki.size(), algs, std::size(algs)));
@@ -234,6 +237,23 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       cache_algorithm_name = "RsaPssSha512";
       is_rsa_pss = true;
       break;
+
+    case SignatureAlgorithm::kMtcProofDraftDavidben08:
+      // This function can't verify MTC proofs.
+      return false;
+
+    case SignatureAlgorithm::kMldsa44:
+      expected_pkey_id = EVP_PKEY_ML_DSA_44;
+      cache_algorithm_name = "Mldsa44";
+      break;
+    case SignatureAlgorithm::kMldsa65:
+      expected_pkey_id = EVP_PKEY_ML_DSA_65;
+      cache_algorithm_name = "Mldsa65";
+      break;
+    case SignatureAlgorithm::kMldsa87:
+      expected_pkey_id = EVP_PKEY_ML_DSA_87;
+      cache_algorithm_name = "Mldsa87";
+      break;
   }
 
   if (expected_pkey_id != EVP_PKEY_id(public_key)) {
@@ -266,7 +286,7 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
   OpenSSLErrStackTracer err_tracer;
 
   bssl::ScopedEVP_MD_CTX ctx;
-  EVP_PKEY_CTX *pctx = nullptr;  // Owned by |ctx|.
+  EVP_PKEY_CTX *pctx = nullptr;  // Owned by `ctx`.
 
   if (!EVP_DigestVerifyInit(ctx.get(), &pctx, digest, nullptr, public_key)) {
     return false;

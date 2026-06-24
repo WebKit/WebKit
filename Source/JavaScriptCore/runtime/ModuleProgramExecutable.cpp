@@ -67,7 +67,7 @@ UnlinkedModuleProgramCodeBlock* ModuleProgramExecutable::getUnlinkedCodeBlock(JS
     m_unlinkedCodeBlock.set(vm, this, unlinkedModuleProgramCode);
     VirtualRegister symbolTableReg = VirtualRegister(unlinkedModuleProgramCode->moduleEnvironmentSymbolTableConstantRegisterOffset());
     SymbolTable* symbolTable = uncheckedDowncast<SymbolTable>(unlinkedModuleProgramCode->getConstant(symbolTableReg));
-    m_moduleEnvironmentSymbolTable.set(vm, this, symbolTable->cloneScopePart(vm));
+    m_moduleEnvironmentSymbolTable.set(vm, this, symbolTable->cloneScopePart(vm, SymbolTable::PropagateCloneInvalidationToOriginal::Yes));
     RELEASE_AND_RETURN(throwScope, unlinkedModuleProgramCode);
 }
 

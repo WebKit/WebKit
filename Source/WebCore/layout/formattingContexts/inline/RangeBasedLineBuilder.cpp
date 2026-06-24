@@ -27,7 +27,7 @@
 #include "RangeBasedLineBuilder.h"
 
 #include "InlineFormattingContext.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 
 namespace WebCore {

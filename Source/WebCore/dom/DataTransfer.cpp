@@ -195,7 +195,7 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
     auto lowercaseType = type.trim(isASCIIWhitespace).convertToASCIILowercase();
     if (shouldSuppressGetAndSetDataToAvoidExposingFilePaths()) {
         if (lowercaseType == "text/uri-list"_s) {
-            return readURLsFromPasteboardAsString(document.page(), *m_pasteboard, [] (auto& urlString) {
+            return readURLsFromPasteboardAsString(protect(document.page()), *m_pasteboard, [] (auto& urlString) {
                 return Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(urlString);
             });
         }
@@ -323,7 +323,7 @@ void DataTransfer::didAddFileToItemList()
 
     auto& newItem = m_itemList->items().last();
     ASSERT(newItem->isFile());
-    m_fileList->append(*newItem->file());
+    protect(m_fileList)->append(*newItem->file());
 }
 
 DataTransferItemList& DataTransfer::items(Document& document)
@@ -416,7 +416,7 @@ FileList& DataTransfer::files(Document* document) const
 {
     if (!canReadData()) {
         if (m_fileList)
-            m_fileList->clear();
+            protect(m_fileList)->clear();
         else
             m_fileList = FileList::create();
         return *m_fileList;
@@ -610,9 +610,9 @@ DragImageRef DataTransfer::createDragImage(const Document* document, IntPoint& l
     location = m_dragLocation;
 
     if (m_dragImage) {
-        HostWindow* hostWindow = document && document->view() ? document->view()->hostWindow() : nullptr;
+        HostWindow* hostWindow = document && document->view() ? protect(document->view())->hostWindow() : nullptr;
         auto deviceScaleFactor = document ? document->deviceScaleFactor() : 1.f;
-        return createDragImageFromImage(protect(m_dragImage->image()).get(), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
+        return createDragImageFromImage(protect(protect(m_dragImage)->image()).get(), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
     }
 
     if (m_dragImageElement) {
@@ -645,12 +645,12 @@ void DragImageLoader::moveToDataTransfer(DataTransfer& newDataTransfer)
 void DragImageLoader::startLoading(CachedResourceHandle<WebCore::CachedImage>& image)
 {
     // FIXME: Does this really trigger a load? Does it need to?
-    image->addClient(*this);
+    protect(image)->addClient(*this);
 }
 
 void DragImageLoader::stopLoading(CachedResourceHandle<WebCore::CachedImage>& image)
 {
-    image->removeClient(*this);
+    protect(image)->removeClient(*this);
 }
 
 void DragImageLoader::imageChanged(CachedImage*, const IntRect*)

@@ -37,12 +37,11 @@ void BundleManager::Update(const SessionDescription* description,
   // Rollbacks should call Rollback, not Update.
   RTC_DCHECK(type != SdpType::kRollback);
   bool bundle_groups_changed = false;
-  // TODO(bugs.webrtc.org/3349): Do this for kPrAnswer as well. To make this
-  // work, we also need to make sure PRANSWERs don't call
-  // MaybeDestroyJsepTransport, because the final answer may need the destroyed
-  // transport if it changes the BUNDLE group.
+  // TODO: bugs.webrtc.org/42228228 - Evaluate whether a PR-Answer can establish
+  // a bundle and a final Answer can remove it again. If this happens, PRAnswer
+  // should not destroy the unused transport.
   if (bundle_policy_ == PeerConnectionInterface::kBundlePolicyMaxBundle ||
-      type == SdpType::kAnswer) {
+      type == SdpType::kAnswer || type == SdpType::kPrAnswer) {
     // If our policy is "max-bundle" or this is an answer, update all bundle
     // groups.
     bundle_groups_changed = true;
@@ -270,14 +269,16 @@ bool JsepTransportCollection::RollbackTransports() {
   // First, remove any new mid->transport mappings.
   for (const auto& kv : mid_to_transport_) {
     if (stable_mid_to_transport_.count(kv.first) == 0) {
-      ret = ret && map_change_callback_(kv.first, nullptr);
+      bool success = map_change_callback_(kv.first, nullptr);
+      ret = ret && success;
     }
   }
   // Next, restore old mappings.
   for (const auto& kv : stable_mid_to_transport_) {
     auto it = mid_to_transport_.find(kv.first);
     if (it == mid_to_transport_.end() || it->second != kv.second) {
-      ret = ret && map_change_callback_(kv.first, kv.second);
+      bool success = map_change_callback_(kv.first, kv.second);
+      ret = ret && success;
     }
   }
   mid_to_transport_ = stable_mid_to_transport_;

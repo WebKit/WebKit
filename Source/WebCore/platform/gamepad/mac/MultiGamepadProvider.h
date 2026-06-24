@@ -71,7 +71,6 @@ private:
     unsigned indexForNewlyConnectedDevice();
 
     bool m_shouldMakeGamepadsVisible { false };
-    size_t m_initialGamepadsCount { 0 };
     Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
 
     // We create our own Gamepad type - to wrap both HID and GameController gamepads -
@@ -103,7 +102,6 @@ private:
     };
 
     WeakHashMap<PlatformGamepad, std::unique_ptr<PlatformGamepadWrapper>> m_gamepadMap;
-    bool m_hidImportComplete { false };
     bool m_usesOnlyHIDProvider { false };
 };
 

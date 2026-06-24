@@ -29,7 +29,6 @@
 #import <WebCore/HistoryItem.h>
 #import <wtf/cf/VectorCF.h>
 
-using namespace WebCore;
 
 static const int currentFileVersion = 1;
 
@@ -85,7 +84,7 @@ void HistoryPropertyListWriter::writeObjects(BinaryPropertyListObjectStream& str
 
 void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream& stream, WebHistoryItem* webHistoryItem)
 {
-    HistoryItem* item = core(webHistoryItem);
+    WebCore::HistoryItem* item = core(webHistoryItem);
 
     size_t itemDictionaryStart = stream.writeDictionaryStart();
 

@@ -56,7 +56,7 @@ struct CalendarFieldsIn {
 // Result of calendar field resolution: ISO date + calendar ID.
 struct ResolvedCalendarDate {
     ISO8601::PlainDate isoDate;
-    String calendarId;
+    CalendarID calendarId { 0 };
 };
 
 TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE dateFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
@@ -66,6 +66,8 @@ TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE yearMonthFromFields(Calen
 TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE monthDayFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
 
 TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainYearMonthWith(CalendarID, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow);
+
+TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE plainDateWith(CalendarID, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow);
 
 TemporalResult<ISO8601::Duration> JS_EXPORT_PRIVATE differenceYearMonth(CalendarID, const ISO8601::PlainDate& thisISODate, const ISO8601::PlainDate& otherISODate, TemporalUnit largestUnit);
 

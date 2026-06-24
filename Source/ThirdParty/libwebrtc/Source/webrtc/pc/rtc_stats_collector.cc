@@ -24,7 +24,6 @@
 #include "absl/functional/any_invocable.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_processing_statistics.h"
 #include "api/candidate.h"
@@ -64,6 +63,7 @@
 #include "pc/rtp_receiver_proxy.h"
 #include "pc/rtp_sender_proxy.h"
 #include "pc/rtp_transceiver.h"
+#include "pc/scoped_operations_batcher.h"
 #include "pc/track_media_info_map.h"
 #include "pc/transport_stats.h"
 #include "rtc_base/checks.h"
@@ -75,6 +75,7 @@
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_base/system/plan_b_only.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
@@ -98,8 +99,7 @@ std::string RTCCodecStatsIDFromTransportAndCodecParameters(
     const char direction,
     const std::string& transport_id,
     const RtpCodecParameters& codec_params) {
-  char buf[1024];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << 'C' << direction << transport_id << '_' << codec_params.payload_type;
   // TODO(https://crbug.com/webrtc/14420): If we stop supporting different FMTP
   // lines for the same PT and transport, which should be illegal SDP, then we
@@ -108,69 +108,62 @@ std::string RTCCodecStatsIDFromTransportAndCodecParameters(
   if (WriteFmtpParameters(codec_params.parameters, fmtp)) {
     sb << '_' << fmtp.Release();
   }
-  return sb.str();
+  return sb.Release();
 }
 
 std::string RTCIceCandidatePairStatsIDFromConnectionInfo(
     const ConnectionInfo& info) {
-  char buf[4096];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << "CP" << info.local_candidate.id() << "_" << info.remote_candidate.id();
-  return sb.str();
+  return sb.Release();
 }
 
 std::string RTCTransportStatsIDFromTransportChannel(
     const std::string& transport_name,
     int channel_component) {
-  char buf[1024];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << 'T' << transport_name << channel_component;
-  return sb.str();
+  return sb.Release();
 }
 
 std::string RTCInboundRtpStreamStatsIDFromSSRC(const std::string& transport_id,
                                                MediaType media_type,
                                                uint32_t ssrc) {
-  char buf[1024];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << 'I' << transport_id << (media_type == MediaType::AUDIO ? 'A' : 'V')
      << ssrc;
-  return sb.str();
+  return sb.Release();
 }
 
 std::string RTCOutboundRtpStreamStatsIDFromSSRC(const std::string& transport_id,
                                                 MediaType media_type,
                                                 uint32_t ssrc) {
-  char buf[1024];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << 'O' << transport_id << (media_type == MediaType::AUDIO ? 'A' : 'V')
      << ssrc;
-  return sb.str();
+  return sb.Release();
 }
 
 std::string RTCRemoteInboundRtpStreamStatsIdFromSourceSsrc(
     MediaType media_type,
     uint32_t source_ssrc) {
-  char buf[1024];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << "RI" << (media_type == MediaType::AUDIO ? 'A' : 'V') << source_ssrc;
-  return sb.str();
+  return sb.Release();
 }
 
 std::string RTCRemoteOutboundRTPStreamStatsIDFromSSRC(MediaType media_type,
                                                       uint32_t source_ssrc) {
-  char buf[1024];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << "RO" << (media_type == MediaType::AUDIO ? 'A' : 'V') << source_ssrc;
-  return sb.str();
+  return sb.Release();
 }
 
 std::string RTCMediaSourceStatsIDFromKindAndAttachment(MediaType media_type,
                                                        int attachment_id) {
-  char buf[1024];
-  SimpleStringBuilder sb(buf);
+  StringBuilder sb;
   sb << 'S' << (media_type == MediaType::AUDIO ? 'A' : 'V') << attachment_id;
-  return sb.str();
+  return sb.Release();
 }
 
 const char* DataStateToRTCDataChannelState(
@@ -309,6 +302,18 @@ absl::string_view NetworkTypeToStatsNetworkAdapterType(AdapterType type) {
       return "any";
     case ADAPTER_TYPE_VPN:
       /* should not be handled here. Vpn is modelled as a bool */
+      break;
+  }
+  RTC_DCHECK_NOTREACHED();
+  return {};
+}
+
+absl::string_view NetworkSliceToStatsNetworkSlice(NetworkSlice slice) {
+  switch (slice) {
+    case NetworkSlice::UNIFIED_COMMUNICATIONS:
+      return "unified-communications";
+    case NetworkSlice::NO_SLICE:
+      /* Should not be handled here. Report empty slice in stats instead. */
       break;
   }
   RTC_DCHECK_NOTREACHED();
@@ -1082,6 +1087,10 @@ const std::string& ProduceIceCandidateStats(Timestamp timestamp,
     if (candidate.protocol() == "tcp") {
       candidate_stats->tcp_type = candidate.tcptype();
     }
+    if (candidate.network_slice() != NetworkSlice::NO_SLICE) {
+      candidate_stats->network_slice =
+          NetworkSliceToStatsNetworkSlice(candidate.network_slice());
+    }
 
     stats = candidate_stats.get();
     report->AddStats(std::move(candidate_stats));
@@ -1355,11 +1364,14 @@ void RTCStatsCollector::GetStatsReportInternal(
   // `ProducePartialResultsOnSignalingThread`.
   auto worker_task = PrepareTransceiverStatsInfosAndCallStats_s_w();
 
-  auto signaling_task = [this](StatsGatheringResults results) mutable {
+  auto signaling_task = [this](WorkerThreadResult worker_result) mutable {
     RTC_DCHECK_RUN_ON(signaling_thread_);
     // Create the initial `partial_report_` for the gathering operation.
-    ProducePartialResultsOnSignalingThread(results.transceiver_stats_infos,
-                                           results.audio_device_stats);
+    ProducePartialResultsOnSignalingThread(
+        worker_result.results.transceiver_stats_infos,
+        worker_result.transceiver_references,
+        worker_result.results.audio_device_stats);
+
     Timestamp timestamp = collection_context_->partial_report->timestamp();
     std::set<std::string> transport_names;
     auto sctp_transport_name = pc_->sctp_transport_name();
@@ -1367,15 +1379,16 @@ void RTCStatsCollector::GetStatsReportInternal(
       transport_names.emplace(std::move(*sctp_transport_name));
     }
 
-    for (const auto& info : results.transceiver_stats_infos) {
+    for (const auto& info : worker_result.results.transceiver_stats_infos) {
       if (info.transport_name)
         transport_names.insert(*info.transport_name);
     }
 
     network_thread_->PostTask(SafeTask(
-        network_safety_, [this, transport_names = std::move(transport_names),
-                          timestamp, signaling_flag = signaling_safety_,
-                          results = std::move(results)]() mutable {
+        network_safety_,
+        [this, transport_names = std::move(transport_names), timestamp,
+         signaling_flag = signaling_safety_,
+         results = std::move(worker_result.results)]() mutable {
           ProducePartialResultsOnNetworkThread(
               std::move(signaling_flag), timestamp, std::move(transport_names),
               std::move(results));
@@ -1385,12 +1398,13 @@ void RTCStatsCollector::GetStatsReportInternal(
   worker_thread_->PostTask(SafeTask(
       worker_safety_, [this, worker_task = std::move(worker_task),
                        signaling_task = std::move(signaling_task)]() mutable {
-        auto results = std::move(worker_task)();
-        signaling_thread_->PostTask(SafeTask(
-            signaling_safety_, [signaling_task = std::move(signaling_task),
-                                results = std::move(results)]() mutable {
-              signaling_task(std::move(results));
-            }));
+        auto worker_result = std::move(worker_task)();
+        signaling_thread_->PostTask(
+            SafeTask(signaling_safety_,
+                     [signaling_task = std::move(signaling_task),
+                      worker_result = std::move(worker_result)]() mutable {
+                       signaling_task(std::move(worker_result));
+                     }));
       }));
 }
 
@@ -1407,16 +1421,17 @@ void RTCStatsCollector::ClearCachedStatsReport() {
 }
 
 void RTCStatsCollector::CancelPendingRequestAndGetShutdownTasks(
-    std::vector<absl::AnyInvocable<void() &&>>& network_tasks,
-    std::vector<absl::AnyInvocable<void() &&>>& worker_tasks) {
+    ScopedOperationsBatcher& network_tasks,
+    ScopedOperationsBatcher& worker_tasks) {
   RTC_DCHECK_RUN_ON(signaling_thread_);
   signaling_safety_->SetNotAlive();
-  worker_tasks.push_back([flag = worker_safety_]() { flag->SetNotAlive(); });
-  network_tasks.push_back([flag = network_safety_]() { flag->SetNotAlive(); });
+  worker_tasks.Add([flag = worker_safety_]() { flag->SetNotAlive(); });
+  network_tasks.Add([flag = network_safety_]() { flag->SetNotAlive(); });
 }
 
 void RTCStatsCollector::ProducePartialResultsOnSignalingThread(
     const std::vector<RtpTransceiverStatsInfo>& transceiver_stats_infos,
+    const std::vector<TransceiverReferences>& transceiver_references,
     const std::optional<AudioDeviceModule::Stats>& audio_device_stats) {
   RTC_DCHECK_RUN_ON(signaling_thread_);
   RTC_DCHECK(collection_context_);
@@ -1425,16 +1440,19 @@ void RTCStatsCollector::ProducePartialResultsOnSignalingThread(
 
   ProducePartialResultsOnSignalingThreadImpl(
       collection_context_->partial_report->timestamp(), transceiver_stats_infos,
-      audio_device_stats, collection_context_->partial_report.get());
+      transceiver_references, audio_device_stats,
+      collection_context_->partial_report.get());
 }
 
 void RTCStatsCollector::ProducePartialResultsOnSignalingThreadImpl(
     Timestamp timestamp,
     const std::vector<RtpTransceiverStatsInfo>& transceiver_stats_infos,
+    const std::vector<TransceiverReferences>& transceiver_references,
     const std::optional<AudioDeviceModule::Stats>& audio_device_stats,
     RTCStatsReport* partial_report) {
   RTC_DCHECK_RUN_ON(signaling_thread_);
-  ProduceMediaSourceStats_s(timestamp, transceiver_stats_infos, partial_report);
+  ProduceMediaSourceStats_s(timestamp, transceiver_stats_infos,
+                            transceiver_references, partial_report);
   ProducePeerConnectionStats_s(timestamp, partial_report);
   ProduceAudioPlayoutStats_s(timestamp, audio_device_stats, partial_report);
 }
@@ -1704,12 +1722,17 @@ void RTCStatsCollector::ProduceIceCandidateAndPairStats_s(
 void RTCStatsCollector::ProduceMediaSourceStats_s(
     Timestamp timestamp,
     const std::vector<RtpTransceiverStatsInfo>& transceiver_stats_infos,
+    const std::vector<TransceiverReferences>& transceiver_references,
     RTCStatsReport* report) const {
   RTC_DCHECK_RUN_ON(signaling_thread_);
   Thread::ScopedDisallowBlockingCalls no_blocking_calls;
 
-  for (const RtpTransceiverStatsInfo& transceiver_stats_info :
-       transceiver_stats_infos) {
+  RTC_DCHECK_EQ(transceiver_stats_infos.size(), transceiver_references.size());
+  for (size_t i = 0; i < transceiver_stats_infos.size(); ++i) {
+    const RtpTransceiverStatsInfo& transceiver_stats_info =
+        transceiver_stats_infos[i];
+    const TransceiverReferences& refs = transceiver_references[i];
+
     // The transceiver will still exist but in a stopped state after pc.close().
     if (transceiver_stats_info.current_direction ==
         RtpTransceiverDirection::kStopped) {
@@ -1719,7 +1742,9 @@ void RTCStatsCollector::ProduceMediaSourceStats_s(
     const TrackMediaInfoMap& track_media_info_map =
         *transceiver_stats_info.track_media_info_map;
 
-    for (const auto& sender : transceiver_stats_info.transceiver->senders()) {
+    RTC_ALLOW_PLAN_B_DEPRECATION_BEGIN()
+    for (const auto& sender : refs.transceiver->senders()) {
+      RTC_ALLOW_PLAN_B_DEPRECATION_END()
       const auto& sender_internal = sender->internal();
       const auto& track = sender_internal->track();
       if (!track)
@@ -1732,7 +1757,7 @@ void RTCStatsCollector::ProduceMediaSourceStats_s(
       // levels are moved to the corresponding audio track/source object), don't
       // create separate media source stats objects on a per-attachment basis.
       std::unique_ptr<RTCMediaSourceStats> media_source_stats;
-      if (track->kind() == MediaStreamTrackInterface::kAudioKind) {
+      if (sender_internal->media_type() == MediaType::AUDIO) {
         AudioTrackInterface* audio_track =
             static_cast<AudioTrackInterface*>(track.get());
         auto audio_source_stats = std::make_unique<RTCAudioSourceStats>(
@@ -1843,6 +1868,10 @@ void RTCStatsCollector::ProduceRTPStreamStats_s(
 
   for (const RtpTransceiverStatsInfo& stats : transceiver_stats_infos) {
     if (!stats.mid || !stats.transport_name) {
+      continue;
+    }
+
+    if (stats.current_direction == RtpTransceiverDirection::kStopped) {
       continue;
     }
 
@@ -2247,21 +2276,13 @@ RTCStatsCollector::PrepareTransportCertificateStats_n(
   return transport_cert_stats;
 }
 
-absl::AnyInvocable<RTCStatsCollector::StatsGatheringResults()>
+absl::AnyInvocable<RTCStatsCollector::WorkerThreadResult()>
 RTCStatsCollector::PrepareTransceiverStatsInfosAndCallStats_s_w() {
   RTC_DCHECK_RUN_ON(signaling_thread_);
+  RTC_DCHECK_DISALLOW_THREAD_BLOCKING_CALLS();
 
   std::vector<RtpTransceiverStatsInfo> transceiver_stats_infos;
-  // These are used to invoke GetStats for all the media channels together in
-  // one worker thread hop.
-  std::map<VoiceMediaSendChannelInterface*, VoiceMediaSendInfo>
-      voice_send_stats;
-  std::map<VideoMediaSendChannelInterface*, VideoMediaSendInfo>
-      video_send_stats;
-  std::map<VoiceMediaReceiveChannelInterface*, VoiceMediaReceiveInfo>
-      voice_receive_stats;
-  std::map<VideoMediaReceiveChannelInterface*, VideoMediaReceiveInfo>
-      video_receive_stats;
+  std::vector<TransceiverReferences> transceiver_references;
 
   auto transceivers = pc_->GetTransceiversInternal();
 
@@ -2269,13 +2290,16 @@ RTCStatsCollector::PrepareTransceiverStatsInfosAndCallStats_s_w() {
     RtpTransceiver* transceiver = transceiver_proxy->internal();
 
     RtpTransceiverStatsInfo stats{
-        .transceiver = scoped_refptr<RtpTransceiver>(transceiver),
         .media_type = transceiver->media_type(),
         .mid = transceiver->mid(),
         .transport_name = transceiver->transport_name(),
         .current_direction = transceiver->current_direction(),
         .has_channel = transceiver->HasChannel()};
 
+    TransceiverReferences refs{.transceiver =
+                                   scoped_refptr<RtpTransceiver>(transceiver)};
+
+    RTC_ALLOW_PLAN_B_DEPRECATION_BEGIN()
     for (const auto& sender : transceiver->senders()) {
       stats.sender_infos.push_back(
           {.ssrc = sender->ssrc(),
@@ -2287,28 +2311,40 @@ RTCStatsCollector::PrepareTransceiverStatsInfosAndCallStats_s_w() {
           {.track_id = receiver->track() ? receiver->track()->id() : "",
            .attachment_id = receiver->internal()->AttachmentId(),
            .media_type = receiver->media_type()});
-      stats.receivers.push_back(
+      refs.receivers.push_back(
           scoped_refptr<RtpReceiverInternal>(receiver->internal()));
     }
-    stats.has_receivers = !stats.receivers.empty();
+    RTC_ALLOW_PLAN_B_DEPRECATION_END()
+    stats.has_receivers = !refs.receivers.empty();
 
     if (stats.has_channel) {
+      auto* send_channel = transceiver->media_send_channel();
+      auto* receive_channel = transceiver->media_receive_channel();
       if (stats.media_type == MediaType::AUDIO) {
-        AddChannelStats(voice_send_stats,
-                        transceiver->voice_media_send_channel());
-        AddChannelStats(voice_receive_stats,
-                        transceiver->voice_media_receive_channel());
+        VoiceMediaSendChannelInterface* voice_send =
+            send_channel->AsVoiceSendChannel();
+        RTC_CHECK(voice_send);
+        VoiceMediaReceiveChannelInterface* voice_receive =
+            receive_channel->AsVoiceReceiveChannel();
+        RTC_CHECK(voice_receive);
+        refs.get_send_stats_voice = voice_send->GetStatsTask();
+        refs.get_receive_stats_voice = voice_receive->GetStatsTask(false);
+        refs.get_send_parameters = voice_send->GetRtpSendParametersCallback();
       } else if (stats.media_type == MediaType::VIDEO) {
-        AddChannelStats(video_send_stats,
-                        transceiver->video_media_send_channel());
-        AddChannelStats(video_receive_stats,
-                        transceiver->video_media_receive_channel());
-      } else {
-        RTC_DCHECK_NOTREACHED();
+        VideoMediaSendChannelInterface* video_send =
+            send_channel->AsVideoSendChannel();
+        RTC_CHECK(video_send);
+        VideoMediaReceiveChannelInterface* video_receive =
+            receive_channel->AsVideoReceiveChannel();
+        RTC_CHECK(video_receive);
+        refs.get_send_stats_video = video_send->GetStatsTask();
+        refs.get_receive_stats_video = video_receive->GetStatsTask();
+        refs.get_send_parameters = video_send->GetRtpSendParametersCallback();
       }
     }
 
     transceiver_stats_infos.push_back(std::move(stats));
+    transceiver_references.push_back(std::move(refs));
   }
 
   // Embed the collected information into this lambda which will run on the
@@ -2316,86 +2352,82 @@ RTCStatsCollector::PrepareTransceiverStatsInfosAndCallStats_s_w() {
   // as GetCallStats(). At the same time we construct the TrackMediaInfoMaps,
   // which also needs info from the worker thread.
   return [this, transceiver_stats_infos = std::move(transceiver_stats_infos),
-          voice_send_stats = std::move(voice_send_stats),
-          voice_receive_stats = std::move(voice_receive_stats),
-          video_send_stats = std::move(video_send_stats),
-          video_receive_stats = std::move(video_receive_stats)]() mutable {
+          transceiver_references =
+              std::move(transceiver_references)]() mutable {
     Thread::ScopedDisallowBlockingCalls no_blocking_calls;
 
-    StatsGatheringResults results = {.transceiver_stats_infos =
-                                         std::move(transceiver_stats_infos)};
-
-    for (auto& pair : voice_send_stats) {
-      if (!pair.first->GetStats(&pair.second)) {
-        RTC_LOG(LS_WARNING) << "Failed to get voice send stats.";
-      }
-    }
-    for (auto& pair : voice_receive_stats) {
-      if (!pair.first->GetStats(&pair.second,
-                                /*get_and_clear_legacy_stats=*/false)) {
-        RTC_LOG(LS_WARNING) << "Failed to get voice receive stats.";
-      }
-    }
-    for (auto& pair : video_send_stats) {
-      if (!pair.first->GetStats(&pair.second)) {
-        RTC_LOG(LS_WARNING) << "Failed to get video send stats.";
-      }
-    }
-    for (auto& pair : video_receive_stats) {
-      if (!pair.first->GetStats(&pair.second)) {
-        RTC_LOG(LS_WARNING) << "Failed to get video receive stats.";
-      }
-    }
+    WorkerThreadResult worker_result;
+    worker_result.results.transceiver_stats_infos =
+        std::move(transceiver_stats_infos);
+    worker_result.transceiver_references = std::move(transceiver_references);
 
     // Create the TrackMediaInfoMap for each transceiver stats object
     // and keep track of whether we have at least one audio receiver.
     bool has_audio_receiver = false;
-    for (auto& stats : results.transceiver_stats_infos) {
+    RTC_DCHECK_EQ(worker_result.results.transceiver_stats_infos.size(),
+                  worker_result.transceiver_references.size());
+    for (size_t i = 0; i < worker_result.results.transceiver_stats_infos.size();
+         ++i) {
+      auto& stats = worker_result.results.transceiver_stats_infos[i];
+      auto& refs = worker_result.transceiver_references[i];
       // The transceiver will still exist but in a stopped state after
       // pc.close().
       if (stats.current_direction == RtpTransceiverDirection::kStopped) {
         continue;
       }
 
+      std::vector<RtpParameters> sender_parameters;
+      for (const auto& sender : stats.sender_infos) {
+        RtpParameters params;
+        if (sender.ssrc != 0 && stats.has_channel) {
+          params = refs.get_send_parameters(sender.ssrc);
+        }
+        // `sender_parameters` must be the same size as `stats.sender_infos` to
+        // allow 1:1 mapping when TrackMediaInfoMap is constructed. Empty params
+        // are safely ignored since they have no encodings/SSRCs.
+        sender_parameters.push_back(std::move(params));
+      }
+
       std::vector<RtpParameters> receiver_parameters;
-      for (const auto& receiver : stats.receivers) {
+      for (const auto& receiver : refs.receivers) {
         receiver_parameters.push_back(receiver->GetParameters());
       }
 
       std::optional<VoiceMediaInfo> voice_media_info;
       std::optional<VideoMediaInfo> video_media_info;
       if (stats.has_channel) {
-        auto& transceiver = stats.transceiver;
         if (stats.media_type == MediaType::AUDIO) {
-          auto voice_send_channel = transceiver->voice_media_send_channel();
-          auto voice_receive_channel =
-              transceiver->voice_media_receive_channel();
+          std::optional<VoiceMediaSendInfo> voice_send =
+              refs.get_send_stats_voice();
+          std::optional<VoiceMediaReceiveInfo> voice_receive =
+              refs.get_receive_stats_voice();
           voice_media_info = VoiceMediaInfo(
-              std::move(voice_send_stats[voice_send_channel]),
-              std::move(voice_receive_stats[voice_receive_channel]));
+              std::move(voice_send).value_or(VoiceMediaSendInfo{}),
+              std::move(voice_receive).value_or(VoiceMediaReceiveInfo{}));
         } else if (stats.media_type == MediaType::VIDEO) {
-          auto video_send_channel = transceiver->video_media_send_channel();
-          auto video_receive_channel =
-              transceiver->video_media_receive_channel();
+          std::optional<VideoMediaSendInfo> video_send =
+              refs.get_send_stats_video();
+          std::optional<VideoMediaReceiveInfo> video_receive =
+              refs.get_receive_stats_video();
           video_media_info = VideoMediaInfo(
-              std::move(video_send_stats[video_send_channel]),
-              std::move(video_receive_stats[video_receive_channel]));
+              std::move(video_send).value_or(VideoMediaSendInfo{}),
+              std::move(video_receive).value_or(VideoMediaReceiveInfo{}));
         }
       }
 
       stats.track_media_info_map = std::make_unique<TrackMediaInfoMap>(
           std::move(voice_media_info), std::move(video_media_info),
-          std::move(stats.sender_infos), std::move(stats.receiver_infos),
-          std::move(receiver_parameters));
+          std::move(stats.sender_infos), std::move(sender_parameters),
+          std::move(stats.receiver_infos), std::move(receiver_parameters));
       if (stats.media_type == MediaType::AUDIO) {
         has_audio_receiver |= stats.has_receivers;
       }
     }
 
-    results.call_stats = pc_->GetCallStats();
-    results.audio_device_stats =
+    worker_result.results.call_stats = pc_->GetCallStats();
+    worker_result.results.audio_device_stats =
         has_audio_receiver ? pc_->GetAudioDeviceStats() : std::nullopt;
-    return results;
+    return worker_result;
   };
 }
 

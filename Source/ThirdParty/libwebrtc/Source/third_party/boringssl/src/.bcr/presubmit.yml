@@ -6,7 +6,7 @@ matrix: &matrix
   linux_platforms:
     - debian11
     - ubuntu2204
-  bazel: [7.x]
+  bazel: [7.x, 8.x, rolling]
 tasks:
   verify_targets_on_linux:
     name: Verify build targets on Linux

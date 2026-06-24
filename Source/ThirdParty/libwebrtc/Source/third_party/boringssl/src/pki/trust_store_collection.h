@@ -35,7 +35,7 @@ class OPENSSL_EXPORT TrustStoreCollection : public TrustStore {
 
   ~TrustStoreCollection() override;
 
-  // Includes results from |store| in the combined output. |store| must
+  // Includes results from `store` in the combined output. `store` must
   // outlive the TrustStoreCollection.
   void AddTrustStore(TrustStore *store);
 
@@ -43,6 +43,8 @@ class OPENSSL_EXPORT TrustStoreCollection : public TrustStore {
   void SyncGetIssuersOf(const ParsedCertificate *cert,
                         ParsedCertificateList *issuers) override;
   CertificateTrust GetTrust(const ParsedCertificate *cert) override;
+  std::shared_ptr<const MTCAnchor> GetTrustedMTCIssuerOf(
+      const ParsedCertificate *cert) override;
 
  private:
   std::vector<TrustStore *> stores_;

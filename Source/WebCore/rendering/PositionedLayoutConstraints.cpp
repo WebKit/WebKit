@@ -33,8 +33,8 @@
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
-#include "RenderStyle.h"
 #include "RenderView.h"
+#include "StyleComputedStyle.h"
 #include "StylePositionArea.h"
 
 namespace WebCore {
@@ -46,7 +46,7 @@ PositionedLayoutConstraints::PositionedLayoutConstraints(const RenderBox& render
 {
 }
 
-PositionedLayoutConstraints::PositionedLayoutConstraints(const RenderBox& renderer, const RenderStyle& style, LogicalBoxAxis selfAxis)
+PositionedLayoutConstraints::PositionedLayoutConstraints(const RenderBox& renderer, const Style::ComputedStyle& style, LogicalBoxAxis selfAxis)
     : m_renderer(renderer)
     , m_container(downcast<RenderBoxModelObject>(*renderer.container())) // Using containingBlock() would be wrong for relpositioned inlines.
     , m_containingWritingMode(m_container->writingMode())

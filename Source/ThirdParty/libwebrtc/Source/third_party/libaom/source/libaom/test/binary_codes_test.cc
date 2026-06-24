@@ -42,7 +42,7 @@ TEST(AV1, TestPrimitiveRefsubexpfin) {
   const uint16_t kValues = 16;
   uint16_t enc_values[kRanges][kSubexpParams][kReferences][kValues][4];
   const uint16_t range_vals[kRanges] = { 1, 13, 64, 120, 230, 420, 1100, 8000 };
-  aom_start_encode(&bw, bw_buffer);
+  aom_start_encode(&bw, bw_buffer, sizeof(bw_buffer));
   for (int n = 0; n < kRanges; ++n) {
     const uint16_t range = range_vals[n];
     for (int k = 0; k < kSubexpParams; ++k) {

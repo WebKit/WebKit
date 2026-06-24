@@ -46,9 +46,9 @@ Ref<CSSValue> CSSValueCreation<CustomIdent>::operator()(CSSValuePool&, const Cus
     return CSSCustomIdentValue::create(value);
 }
 
-Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<CustomIdent>::operator()(CSSValuePool& pool, CSSStyleDeclaration& owner, const CustomIdent& value)
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<CustomIdent>::operator()(CSSValuePool&, CSSStyleDeclaration& owner, const CustomIdent& value)
 {
-    return DeprecatedCSSOMPrimitiveValue::create(createCSSValue(pool, value), owner);
+    return DeprecatedCSSOMPrimitiveValue::create(value, owner);
 }
 
 // MARK: - Logging

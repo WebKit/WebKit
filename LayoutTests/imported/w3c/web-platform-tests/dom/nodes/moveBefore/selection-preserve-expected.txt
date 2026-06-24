@@ -1,12 +1,21 @@
+Four
 One
 Two
 Three
-Four
 
-FAIL moveBefore should not reset selection with preceding text assert_equals: expected Text node "This text does not move" but got Text node "Text"
-FAIL moveBefore resets selection that enters a subtree, when the whole selection is moved assert_equals: expected Text node "Grandparent paragraph" but got Text node "Parent paragraph"
-FAIL moveBefore anchor node moved up to expand selection and absorb nodes assert_equals: expected Text node "Child paragraph one" but got Text node "Parent paragraph"
-FAIL moveBefore move intersecting nodes out of a selection assert_false: expected false got true
-FAIL moveBefore focus node moved up to shrink selection and exclude nodes; focus node gets reset assert_equals: expected Text node "Parent paragraph" but got Text node "Paragraph two"
-FAIL moveBefore selection is not preserved, especially when underlying range gets inverted assert_equals: expected Text node "Three" but got Text node "Four"
+FAIL moveBefore should not reset selection with preceding text assert_equals: expected Text node "This text does not move" but got Element node <div id="old_parent">
+      <span id="notMove">This text ...
+FAIL moveBefore resets selection that enters a subtree, when the whole selection is moved assert_equals: expected Text node "Grandparent paragraph" but got Element node <div id="grandparentDiv">
+    <div id="parentDiv">
+      ...
+FAIL moveBefore anchor node moved up to expand selection and absorb nodes assert_equals: expected Text node "Child paragraph one" but got Element node <div id="parentDiv">
+
+      <div id="childDiv">
+   ...
+PASS moveBefore move intersecting nodes out of a selection
+FAIL moveBefore focus node moved up to shrink selection and exclude nodes; focus node gets reset assert_equals: expected Text node "Parent paragraph" but got Element node <div id="parentDiv">
+      <div id="childDiv">
+        <s...
+FAIL moveBefore selection is not preserved, especially when underlying range gets inverted assert_equals: expected Text node "Three" but got Element node <ul id="list">
+      <li id="i4">Four</li><li id="i1">One...
 

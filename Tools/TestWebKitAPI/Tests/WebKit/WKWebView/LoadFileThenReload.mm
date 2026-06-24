@@ -31,6 +31,8 @@
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
+static bool loadFileThenReloadDone;
+
 @interface LoadFileThenReloadDelegate : NSObject <WKNavigationDelegate>
 @end
 
@@ -38,7 +40,7 @@
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    done = true;
+    loadFileThenReloadDone = true;
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
@@ -64,5 +66,5 @@ TEST(WKWebView, LoadFileThenReload)
     [webView loadFileURL:file allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
     [webView reload];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&loadFileThenReloadDone);
 }

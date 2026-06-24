@@ -2544,7 +2544,7 @@
     {"access": "public", "introduced": "3.2", "kind": "function", "linkage": "exported", "name": "_y1"},
     {"access": "public", "introduced": "3.2", "kind": "function", "linkage": "exported", "name": "_yn"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "_Argument_type_is_not_arithmetic"},
     {"access": "public", "name": "__SIMD_BOOLEAN_TYPE__"},

@@ -33,7 +33,6 @@
 namespace WebCore {
 
 struct AcceleratedEffectPolygonFunction;
-struct TransformOperationData;
 
 namespace Style {
 
@@ -74,7 +73,7 @@ template<> struct Blending<Polygon> {
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-template<> struct Evaluation<PolygonFunction, AcceleratedEffectPolygonFunction> { AcceleratedEffectPolygonFunction operator()(const PolygonFunction&, const TransformOperationData&, ZoomFactor); };
+template<> struct Evaluation<PolygonFunction, AcceleratedEffectPolygonFunction> { AcceleratedEffectPolygonFunction operator()(const PolygonFunction&, const FloatSize&, ZoomFactor); };
 
 #endif
 

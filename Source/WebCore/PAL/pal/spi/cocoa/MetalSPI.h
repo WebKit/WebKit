@@ -67,13 +67,11 @@ typedef struct __IOSurface *IOSurfaceRef;
 - (mach_port_t)eventPort;
 @end
 
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
 @interface MTLSharedTextureHandle(Private)
 - (instancetype)initWithIOSurface:(IOSurfaceRef)ioSurface label:(NSString*)label;
 - (instancetype)initWithMachPort:(mach_port_t)machPort;
 - (mach_port_t)createMachPort;
 @end
-#endif
 
 WTF_EXTERN_C_BEGIN
 

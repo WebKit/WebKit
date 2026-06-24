@@ -13,12 +13,13 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <optional>
+#include <span>
 
-#include "api/array_view.h"
 #include "api/video/video_codec_type.h"
+#include "modules/video_coding/utility/av1_qp_parser.h"
 #include "modules/video_coding/utility/qp_parser.h"
-#include "video/corruption_detection/evaluation/av1_qp_parser.h"
 
 namespace webrtc {
 
@@ -27,13 +28,16 @@ namespace webrtc {
 // H265.
 class GenericQpParser {
  public:
+  GenericQpParser();
+  ~GenericQpParser();
+
   std::optional<uint32_t> Parse(VideoCodecType codec_type,
                                 size_t spatial_idx,
-                                ArrayView<const uint8_t> frame_data,
+                                std::span<const uint8_t> frame_data,
                                 int operating_point = 0);
 
  private:
-  Av1QpParser av1_parser_;
+  std::unique_ptr<Av1QpParser> av1_parser_;
   QpParser non_av1_parsers_;
 };
 

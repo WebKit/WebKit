@@ -38,7 +38,6 @@ typedef struct PICK_MODE_CONTEXT {
   MB_MODE_INFO mic;
   MB_MODE_INFO_EXT_FRAME mbmi_ext_best;
   uint8_t *color_index_map[2];
-  uint8_t *blk_skip;
 
   tran_low_t *coeff[MAX_MB_PLANE];
   tran_low_t *qcoeff[MAX_MB_PLANE];

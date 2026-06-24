@@ -1,0 +1,5 @@
+
+
+FAIL Scroll anchoring is suppressed during editing in a textarea assert_equals: expected 30 but got 94
+PASS Scroll anchoring is suppressed during editing in a contenteditable element
+

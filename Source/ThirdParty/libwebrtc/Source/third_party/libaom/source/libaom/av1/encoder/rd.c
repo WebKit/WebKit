@@ -92,6 +92,8 @@ void av1_fill_mode_rates(AV1_COMMON *const cm, ModeCosts *mode_costs,
       av1_cost_tokens_from_cdf(mode_costs->skip_mode_cost[i],
                                fc->skip_mode_cdfs[i], NULL);
     }
+  } else {
+    av1_zero(mode_costs->skip_mode_cost);
   }
 
   for (i = 0; i < SKIP_CONTEXTS; ++i) {
@@ -386,7 +388,8 @@ static double def_kf_rd_multiplier(int qindex) {
 
 int av1_compute_rd_mult_based_on_qindex(aom_bit_depth_t bit_depth,
                                         FRAME_UPDATE_TYPE update_type,
-                                        int qindex, aom_tune_metric tuning) {
+                                        int qindex, aom_tune_metric tuning,
+                                        MODE mode) {
   const int q = av1_dc_quant_QTX(qindex, 0, bit_depth);
   int64_t rdmult = q * q;
   if (update_type == KF_UPDATE) {
@@ -401,21 +404,32 @@ int av1_compute_rd_mult_based_on_qindex(aom_bit_depth_t bit_depth,
   }
 
   if (tuning == AOM_TUNE_IQ || tuning == AOM_TUNE_SSIMULACRA2) {
-    // Further multiply rdmult (by up to 200/128 = 1.5625) to improve image
-    // quality. The most noticeable effect is a mild bias towards choosing
-    // larger transform sizes (e.g. one 16x16 transform instead of 4 8x8
-    // transforms).
-    // For very high qindexes, start progressively reducing the weight towards
-    // unity (128/128), as transforms are large enough and making them even
-    // larger actually harms subjective quality and SSIMULACRA 2 scores.
-    // This weight part of the equation was determined by iteratively increasing
-    // weight on CID22 and Daala's subset1, and observing its effects on visual
+    int weight;
+
+    // Weight terms were determined by iteratively testing various weights
+    // on CID22 and Daala's subset1, and observing its effects on visual
     // quality and SSIMULACRA 2 scores along the usable (0-100) range.
-    // The ramp-down part of the equation was determined by choosing a fixed
-    // initial qindex point [qindex 159 = (255 - 159) * 3 / 4] where SSIMULACRA
-    // 2 scores for encodes with qindexes greater than 159 scored at or above
-    // their equivalents with no rdmult adjustment.
-    const int weight = clamp(((255 - qindex) * 3) / 4, 0, 72) + 128;
+    if (mode == REALTIME) {
+      // Realtime mode: further multiply rdmult by a fourth (32/128 = 0.25)
+      // to improve image quality.
+      // The most noticeable effect is that for inter frames, there's a
+      // stronger bias towards choosing inter prediction modes with encoded
+      // coefficient residuals (i.e. no skip mode).
+      weight = 32;
+    } else {
+      // All-intra and good-quality modes: Further multiply rdmult (by up to
+      // 200/128 = 1.5625) to improve image quality.
+      // The most noticeable effect is a mild bias towards choosing larger
+      // transform sizes (e.g. one 16x16 transform instead of 4 8x8 transforms).
+      // For very high qindexes, start progressively reducing the weight towards
+      // unity (128/128), as transforms are large enough and making them even
+      // larger actually harms subjective quality and SSIMULACRA 2 scores.
+      // The ramp-down part of the equation was determined by choosing a fixed
+      // initial qindex point [qindex 159 = (255 - 159) * 3 / 4] where
+      // SSIMULACRA 2 scores for encodes with qindexes greater than 159 scored
+      // at or above their equivalents with no rdmult adjustment.
+      weight = clamp(((255 - qindex) * 3) / 4, 0, 72) + 128;
+    }
     rdmult = (int64_t)((double)rdmult * weight / 128.0);
   }
 
@@ -436,10 +450,10 @@ int av1_compute_rd_mult(const int qindex, const aom_bit_depth_t bit_depth,
                         const FRAME_TYPE frame_type,
                         const int use_fixed_qp_offsets,
                         const int is_stat_consumption_stage,
-                        const aom_tune_metric tuning) {
+                        const aom_tune_metric tuning, const MODE mode) {
   int64_t rdmult = av1_compute_rd_mult_based_on_qindex(bit_depth, update_type,
-                                                       qindex, tuning);
-  if (is_stat_consumption_stage && !use_fixed_qp_offsets &&
+                                                       qindex, tuning, mode);
+  if (is_stat_consumption_stage && (use_fixed_qp_offsets == 0) &&
       (frame_type != KEY_FRAME)) {
     // Layer depth adjustment
     rdmult = (rdmult * rd_layer_depth_factor[layer_depth]) >> 7;
@@ -506,7 +520,8 @@ int av1_get_adaptive_rdmult(const AV1_COMP *cpi, double beta) {
                    cpi->ppi->gf_group.update_type[cpi->gf_frame_index],
                    layer_depth, boost_index, frame_type,
                    cpi->oxcf.q_cfg.use_fixed_qp_offsets,
-                   is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning) /
+                   is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning,
+                   cpi->oxcf.mode) /
                beta);
 }
 #endif  // !CONFIG_REALTIME_ONLY
@@ -790,7 +805,8 @@ void av1_initialize_rd_consts(AV1_COMP *cpi) {
       qindex_rdmult, cm->seq_params->bit_depth,
       cpi->ppi->gf_group.update_type[cpi->gf_frame_index], layer_depth,
       boost_index, frame_type, cpi->oxcf.q_cfg.use_fixed_qp_offsets,
-      is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning);
+      is_stat_consumption_stage(cpi), cpi->oxcf.tune_cfg.tuning,
+      cpi->oxcf.mode);
 #if CONFIG_RD_COMMAND
   if (cpi->oxcf.pass == 2) {
     const RD_COMMAND *rd_command = &cpi->rd_command;
@@ -933,6 +949,12 @@ static double interp_cubic(const double *p, double x) {
                           x * (3.0 * (p[1] - p[2]) + p[3] - p[0])));
 }
 
+void av1_interp_cubic_rate_dist_c(const double *p1, const double *p2, double x,
+                                  double rate_dist_f[2]) {
+  rate_dist_f[0] = interp_cubic(p1, x);
+  rate_dist_f[1] = interp_cubic(p2, x);
+}
+
 /*
 static double interp_bicubic(const double *p, int p_stride, double x,
                              double y) {
@@ -1046,7 +1068,7 @@ static const double interp_dgrid_curv[3][65] = {
 };
 
 void av1_model_rd_curvfit(BLOCK_SIZE bsize, double sse_norm, double xqr,
-                          double *rate_f, double *distbysse_f) {
+                          double rate_dist_f[2]) {
   const double x_start = -15.5;
   const double x_end = 16.5;
   const double x_step = 0.5;
@@ -1064,9 +1086,8 @@ void av1_model_rd_curvfit(BLOCK_SIZE bsize, double sse_norm, double xqr,
   assert(xi > 0);
 
   const double *prate = &interp_rgrid_curv[rcat][(xi - 1)];
-  *rate_f = interp_cubic(prate, xo);
   const double *pdist = &interp_dgrid_curv[dcat][(xi - 1)];
-  *distbysse_f = interp_cubic(pdist, xo);
+  av1_interp_cubic_rate_dist(prate, pdist, xo, rate_dist_f);
 }
 
 static void get_entropy_contexts_plane(BLOCK_SIZE plane_bsize,

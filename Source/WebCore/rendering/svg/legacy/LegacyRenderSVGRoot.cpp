@@ -57,18 +57,18 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGRoot);
 
-const int defaultWidth = 300;
-const int defaultHeight = 150;
+const int legacySVGRootDefaultWidth = 300;
+const int legacySVGRootDefaultHeight = 150;
 
-LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
+LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, Style::ComputedStyle&& style)
     : RenderReplaced(Type::LegacySVGRoot, element, WTF::move(style), ReplacedFlag::UsesBoundaryCaching)
 {
     ASSERT(isLegacyRenderSVGRoot());
     LayoutSize intrinsicSize(computeIntrinsicSize());
     if (!svgSVGElement().hasIntrinsicWidth())
-        intrinsicSize.setWidth(defaultWidth);
+        intrinsicSize.setWidth(legacySVGRootDefaultWidth);
     if (!svgSVGElement().hasIntrinsicHeight())
-        intrinsicSize.setHeight(defaultHeight);
+        intrinsicSize.setHeight(legacySVGRootDefaultHeight);
     setIntrinsicSize(intrinsicSize);
 }
 
@@ -90,7 +90,7 @@ FloatSize LegacyRenderSVGRoot::computeIntrinsicSize() const
     // The base class returns values from the cache / contain-intrinsic-size without querying image data.
     if (shouldApplySizeOrInlineSizeContainment())
         return { intrinsicLogicalWidth(), intrinsicLogicalHeight() };
-    FloatSize intrinsicSize = { svgSVGElement().intrinsicWidth(), svgSVGElement().intrinsicHeight() };
+    FloatSize intrinsicSize = { protect(svgSVGElement())->intrinsicWidth(), protect(svgSVGElement())->intrinsicHeight() };
     // Transpose for vertical writing mode
     if (!isHorizontalWritingMode())
         return intrinsicSize.transposedSize();
@@ -114,7 +114,7 @@ FloatSize LegacyRenderSVGRoot::preferredAspectRatioAsSize() const
     if (!intrinsicSize.isEmpty())
         preferredAspectRatio = { intrinsicSize.width(), intrinsicSize.height() };
     else {
-        FloatSize viewBoxSize = svgSVGElement().currentViewBoxRect().size();
+        FloatSize viewBoxSize = protect(svgSVGElement())->currentViewBoxRect().size();
         if (!viewBoxSize.isEmpty()) {
             // The viewBox can only yield an intrinsic ratio, not an intrinsic size.
             if (isHorizontalWritingMode())
@@ -162,7 +162,7 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferr
         if (!element->hasIntrinsicWidth()) {
             FloatSize viewBoxSize = element->currentViewBoxRect().size();
             if (!viewBoxSize.isEmpty()) {
-                float height = element->hasIntrinsicHeight() ? element->intrinsicHeight() : defaultHeight;
+                float height = element->hasIntrinsicHeight() ? element->intrinsicHeight() : legacySVGRootDefaultHeight;
                 double ratio = viewBoxSize.width() / viewBoxSize.height();
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit(height * ratio), shouldComputePreferred);
             }
@@ -183,14 +183,14 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalHeight(std::optional<Layou
         return containingBlock()->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding);
 
     // For intrinsic sizing keywords (e.g. max-content), when the SVG has no intrinsic height
-    // but has an intrinsic ratio (from viewBox), compute the height using the width and the
+    // but has an intrinsic ratio (from viewBox), compute the height from the used width and the
     // aspect ratio.
     if (style().logicalHeight().isIntrinsic()) {
         Ref element = svgSVGElement();
         if (!element->hasIntrinsicHeight()) {
             FloatSize viewBoxSize = element->currentViewBoxRect().size();
             if (!viewBoxSize.isEmpty()) {
-                float width = element->hasIntrinsicWidth() ? element->intrinsicWidth() : defaultWidth;
+                float width = element->hasIntrinsicWidth() ? element->intrinsicWidth() : (estimatedUsedWidth ? estimatedUsedWidth.value() : contentBoxLogicalWidth()).toFloat();
                 double ratio = viewBoxSize.height() / viewBoxSize.width();
                 return computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit(width * ratio));
             }
@@ -245,6 +245,7 @@ void LegacyRenderSVGRoot::layout()
     clearOverflow();
     if (!shouldApplyViewportClip())
         addVisualOverflow(computeContentsInkOverflow());
+    addVisualEffectOverflow();
 
     updateLayerTransform();
     m_hasBoxDecorations = isDocumentElementRenderer() ? hasVisibleBoxDecorationStyle() : hasVisibleBoxDecorations();
@@ -313,13 +314,13 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
         if (!resources || !resources->filter()) {
             if (paintInfo.phase == PaintPhase::Foreground)
-                page().addRelevantUnpaintedObject(*this, visualOverflowRect());
+                protect(page())->addRelevantUnpaintedObject(*this, visualOverflowRect());
             return;
         }
     }
 
     if (paintInfo.phase == PaintPhase::Foreground)
-        page().addRelevantRepaintedObject(*this, visualOverflowRect());
+        protect(page())->addRelevantRepaintedObject(*this, visualOverflowRect());
 
     // Make a copy of the PaintInfo because applyTransform will modify the damage rect.
     PaintInfo childPaintInfo(paintInfo);
@@ -327,15 +328,15 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
 
     // Apply initial viewport clip
     if (clipViewport) {
-        auto clipRect = snappedIntRect(overflowClipRect(paintOffset));
+        auto clipRect = snapRectToDevicePixels(overflowClipRect(paintOffset), document().deviceScaleFactor());
         childPaintInfo.context().clip(clipRect);
         if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
-            childPaintInfo.eventRegionContext()->pushClip(clipRect);
+            childPaintInfo.eventRegionContext()->pushClip(enclosingIntRect(clipRect));
     }
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
     // Transform from our paint container's coordinate system to our local coords.
-    FloatPoint adjustedPaintOffset = roundPointToDevicePixels(paintOffset, document().deviceScaleFactor());
+    FloatPoint adjustedPaintOffset = roundPointToDevicePixels(paintOffset, protect(document())->deviceScaleFactor());
     auto transform = AffineTransform::makeTranslation(toFloatSize(adjustedPaintOffset)) * localToBorderBoxTransform();
     childPaintInfo.applyTransform(transform);
     if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
@@ -386,7 +387,7 @@ void LegacyRenderSVGRoot::willBeRemovedFromTree()
     RenderReplaced::willBeRemovedFromTree();
 }
 
-void LegacyRenderSVGRoot::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void LegacyRenderSVGRoot::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     if (diff == Style::DifferenceResult::Layout)
         invalidateCachedBoundaries();
@@ -406,7 +407,7 @@ void LegacyRenderSVGRoot::buildLocalToBorderBoxTransform()
     float scale = style().usedZoom();
     FloatPoint translate = svgSVGElement().currentTranslateValue();
     LayoutSize borderAndPadding(borderLeft() + paddingLeft(), borderTop() + paddingTop());
-    m_localToBorderBoxTransform = svgSVGElement().viewBoxToViewTransform(contentBoxWidth() / scale, contentBoxHeight() / scale);
+    m_localToBorderBoxTransform = protect(svgSVGElement())->viewBoxToViewTransform(contentBoxWidth() / scale, contentBoxHeight() / scale);
     if (borderAndPadding.isZero() && scale == 1 && translate == FloatPoint::zero())
         return;
     m_localToBorderBoxTransform = AffineTransform(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y()) * m_localToBorderBoxTransform;

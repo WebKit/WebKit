@@ -34,11 +34,11 @@ if (rtc_include_tests) {
         "..:peer_scenario",
         "../..:create_frame_generator_capturer",
         "../..:test_support",
-        "../../../api:array_view",
         "../../../api:audio_options_api",
         "../../../api:jsep",
         "../../../api:make_ref_counted",
         "../../../api:network_emulation_manager_api",
+        "../../../api:peer_connection_interface",
         "../../../api:rtc_error",
         "../../../api:rtc_stats_api",
         "../../../api:rtp_parameters",
@@ -71,6 +71,7 @@ if (rtc_include_tests) {
         "../../../rtc_base:network_constants",
         "../../network:emulated_network",
         "../../scenario",
+        "//third_party/abseil-cpp/absl/flags:flag",
         "//third_party/abseil-cpp/absl/strings",
       ]
     }

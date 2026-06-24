@@ -100,7 +100,7 @@ public:
     virtual ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) = 0;
     virtual RefPtr<TextControlInnerTextElement> innerTextElement() const = 0;
     virtual RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() = 0;
-    virtual RenderStyle createInnerTextStyle(const RenderStyle&) = 0;
+    virtual Style::ComputedStyle createInnerTextStyle(const Style::ComputedStyle&) = 0;
 
     virtual bool dirAutoUsesValue() const = 0;
 
@@ -121,7 +121,7 @@ public:
     WEBCORE_EXPORT void dispatchUserTextInputEvent();
 
 protected:
-    HTMLTextFormControlElement(const QualifiedName&, Document&, HTMLFormElement*);
+    HTMLTextFormControlElement(const QualifiedName&, Document&);
     virtual void updatePlaceholderText() = 0;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
@@ -146,7 +146,7 @@ protected:
 
     String valueWithHardLineBreaks() const;
 
-    void adjustInnerTextStyle(const RenderStyle& parentStyle, RenderStyle& textBlockStyle) const;
+    void adjustInnerTextStyle(const Style::ComputedStyle& parentStyle, Style::ComputedStyle& textBlockStyle) const;
 
     void internalSetMaxLength(int maxLength) { m_maxLength = maxLength; }
     void internalSetMinLength(int minLength) { m_minLength = minLength; }

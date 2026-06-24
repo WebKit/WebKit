@@ -1,0 +1,36 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that History API navigations triggered from a navigate event listener are rate-limited, so they cannot create an infinite navigation loop");
+
+jsTestIsAsync = true;
+
+var navigateEventCount = 0;
+
+navigation.addEventListener("navigate", () => {
+    navigateEventCount++;
+    history.go(0);
+});
+
+onload = () => {
+    if (!window.internals) {
+        testFailed("window.internals is required to configure the rate limiter");
+        finishJSTest();
+        return;
+    }
+
+    // Lower the navigation rate limit so the test runs faster.
+    internals.setNavigationRateLimiterParameters(window, 5, 10);
+
+    // Kick off the loop.
+    history.pushState(null, "", "#start");
+
+    // Give the (rate-limited) loop time to run, then confirm it was capped
+    // instead of running forever.
+    setTimeout(() => {
+        shouldBe("navigateEventCount", "5");
+        finishJSTest();
+    }, 50);
+};
+</script>

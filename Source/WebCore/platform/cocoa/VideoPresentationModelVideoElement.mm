@@ -117,7 +117,7 @@ void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* video
             videoElement->addEventListener(eventName, m_videoListener);
         m_isListening = true;
         for (auto& eventName : documentObservedEventNames())
-            videoElement->document().addEventListener(eventName, m_videoListener);
+            protect(videoElement->document())->addEventListener(eventName, m_videoListener);
     }
 
     updateForEventName(eventNameAll());
@@ -177,7 +177,7 @@ void VideoPresentationModelVideoElement::documentVisibilityChanged()
     if (!videoElement)
         return;
 
-    bool isDocumentVisible = !videoElement->document().hidden();
+    bool isDocumentVisible = !protect(videoElement->document())->hidden();
 
     if (isDocumentVisible == m_documentIsVisible)
         return;
@@ -299,7 +299,7 @@ void VideoPresentationModelVideoElement::requestFullscreenMode(HTMLMediaElementE
 #endif
         && mode == MediaPlayer::VideoFullscreenModeNone
         && videoElement->document().isMediaDocument()) {
-        if (RefPtr window = videoElement->document().window())
+        if (RefPtr window = protect(videoElement->document())->window())
             window->history().back();
     }
 }

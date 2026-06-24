@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -90,9 +90,9 @@ float FixedTableLayout::calcWidthArray()
     unsigned currentEffectiveColumn = 0;
     for (RenderTableCol* col = m_table->firstColumn(); col; col = col->nextColumn()) {
         // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
-        // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark it's
+        // so that if we call setContentWidthsDirty(true) on a col or one of its descendants, we'll mark it's
         // ancestors as dirty.
-        col->clearNeedsPreferredLogicalWidthsUpdate();
+        col->clearContentLogicalWidthsInvalidation();
 
         // Width specified by column-groups that have column child does not affect column width in fixed layout tables
         if (col->isTableColumnGroupWithColumnChildren())
@@ -123,7 +123,7 @@ float FixedTableLayout::calcWidthArray()
                 spanInCurrentEffectiveColumn = m_table->spanOfEffCol(currentEffectiveColumn);
             }
             if (auto fixedColStyleLogicalWidth = colStyleLogicalWidth.tryFixed(); fixedColStyleLogicalWidth && fixedColStyleLogicalWidth->isPositive()) {
-                m_width[currentEffectiveColumn] = Style::PreferredSize::Fixed { fixedColStyleLogicalWidth->resolveZoom(colUsedZoom) * spanInCurrentEffectiveColumn };
+                m_width[currentEffectiveColumn] = Style::PreferredSize::Fixed { effectiveColWidth * spanInCurrentEffectiveColumn };
                 usedWidth += effectiveColWidth * spanInCurrentEffectiveColumn;
             } else if (auto percentageColStyleLogicalWidth = colStyleLogicalWidth.tryPercentage(); percentageColStyleLogicalWidth && percentageColStyleLogicalWidth->value > 0) {
                 m_width[currentEffectiveColumn] = Style::PreferredSize::Percentage { percentageColStyleLogicalWidth->value * spanInCurrentEffectiveColumn };
@@ -171,22 +171,23 @@ float FixedTableLayout::calcWidthArray()
             ++currentColumn;
         }
 
-        // FixedTableLayout doesn't use min/maxPreferredLogicalWidths, but we need to clear the
+        // FixedTableLayout doesn't use min/maxContentLogicalWidths, but we need to clear the
         // dirty bit on the cell so that we'll correctly mark its ancestors dirty
-        // in case we later call setNeedsPreferredWidthsUpdate() on it later.
-        if (cell->needsPreferredLogicalWidthsUpdate())
-            cell->clearNeedsPreferredWidthsUpdate();
+        // in case we later call invalidateContentLogicalWidths() on it later.
+        if (cell->hasInvalidContentLogicalWidths())
+            cell->clearContentLogicalWidthsInvalidation();
     }
 
     return usedWidth;
 }
 
-void FixedTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics)
+std::pair<LayoutUnit, LayoutUnit> FixedTableLayout::computeIntrinsicLogicalWidths(TableIntrinsics)
 {
-    minWidth = maxWidth = calcWidthArray();
+    auto logicalWidth = LayoutUnit { calcWidthArray() };
+    return { logicalWidth, logicalWidth };
 }
 
-void FixedTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
+void FixedTableLayout::applyContentLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
 {
     auto& tableLogicalWidth = m_table->style().logicalWidth();
     if (auto fixedTableLogicalWidth = tableLogicalWidth.tryFixed(); fixedTableLogicalWidth && fixedTableLogicalWidth->isPositive())
@@ -319,7 +320,7 @@ void FixedTableLayout::layout()
         m_table->setColumnPosition(i, LayoutUnit(pos));
         pos += calcWidth[i] + hspacing;
     }
-    float colPositionsSize = m_table->columnPositions().size();
+    auto colPositionsSize = m_table->columnPositions().size();
     if (colPositionsSize > 0)
         m_table->setColumnPosition(colPositionsSize - 1, LayoutUnit(pos));
 }

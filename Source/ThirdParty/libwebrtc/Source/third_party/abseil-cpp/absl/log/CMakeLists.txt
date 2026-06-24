@@ -215,6 +215,7 @@ absl_cc_library(
     absl::memory
     absl::nullability
     absl::raw_logging_internal
+    absl::source_location
     absl::span
     absl::strerror
     absl::strings
@@ -632,6 +633,7 @@ absl_cc_library(
     absl::absl_log
     absl::log_severity
     absl::optional
+    absl::source_location
     absl::strings
     absl::strings_internal
     absl::utility
@@ -757,7 +759,6 @@ absl_cc_library(
     absl::nullability
     absl::strings
     absl::synchronization
-    absl::optional
 )
 
 absl_cc_library(
@@ -806,7 +807,6 @@ absl_cc_test(
     absl::vlog_is_on
     absl::log_severity
     absl::flags
-    absl::optional
     GTest::gmock_main
 )
 
@@ -1016,7 +1016,6 @@ absl_cc_test(
     absl::config
     absl::log
     absl::log_internal_test_matchers
-    absl::optional
     absl::scoped_mock_log
     absl::str_format
     absl::strings
@@ -1082,6 +1081,7 @@ absl_cc_test(
     absl::log_streamer
     absl::log_severity
     absl::scoped_mock_log
+    absl::source_location
     absl::strings
     GTest::gmock_main
 )
@@ -1102,6 +1102,7 @@ absl_cc_test(
     absl::log_internal_test_matchers
     absl::log_sink
     absl::scoped_mock_log
+    absl::source_location
     absl::strings
     absl::time
     GTest::gmock_main
@@ -1202,5 +1203,38 @@ absl_cc_test(
     ${ABSL_DEFAULT_LINKOPTS}
   DEPS
     absl::log_internal_fnmatch
+    GTest::gmock_main
+)
+
+absl_cc_library(
+  NAME
+    log_internal_container
+  HDRS
+    "internal/container.h"
+  COPTS
+    ${ABSL_DEFAULT_COPTS}
+  LINKOPTS
+    ${ABSL_DEFAULT_LINKOPTS}
+  DEPS
+    absl::config
+    absl::requires_internal
+    absl::strings
+)
+
+absl_cc_test(
+  NAME
+    internal_container_test
+  SRCS
+    "internal/container_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  LINKOPTS
+    ${ABSL_DEFAULT_LINKOPTS}
+  DEPS
+    absl::config
+    absl::log_internal_container
+    absl::span
+    absl::strings
+    absl::str_format
     GTest::gmock_main
 )

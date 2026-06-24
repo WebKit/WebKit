@@ -28,7 +28,8 @@ namespace webrtc {
 // Returns nullptr if unable to read the file or initialize a model from the
 // file contents.
 //
-// Beware: This is an experimental API and may change without notice.
+// `model` needs to outlive the created estimator. `op_resolver` is only used
+// during this call.
 RTC_EXPORT
 absl_nullable std::unique_ptr<NeuralResidualEchoEstimator>
 CreateNeuralResidualEchoEstimator(const tflite::FlatBufferModel* model,

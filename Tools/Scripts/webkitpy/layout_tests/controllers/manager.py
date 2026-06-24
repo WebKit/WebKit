@@ -345,12 +345,16 @@ class Manager(object):
         new_test_inputs = self._multiply_test_inputs(test_inputs, self._options.repeat_each, self._options.iterations)
         worker_count = self._runner.get_worker_count(new_test_inputs, int(self._options.child_processes))
         self._options.child_processes = worker_count
+        # Port has a copy of options (see _create_port_for_driver), so sync the effective
+        # worker count for code paths that read it via self.get_option (mac warmup gate,
+        # embedded port device count).
+        self._port.set_option('child_processes', worker_count)
 
     def _set_up_run(self, test_inputs, device_type):
-        # This must be started before we check the system dependencies,
-        # since the helper may do things to make the setup correct.
+        # The helper was kicked off in run() so its ~440 ms warmup overlaps with
+        # _collect_tests; join on it now since check_sys_deps and setup_test_run may use it.
         self._printer.write_update("Starting helper ...")
-        if not self._port.start_helper(pixel_tests=self._options.pixel_tests, prefer_integrated_gpu=self._options.prefer_integrated_gpu):
+        if not self._port.wait_for_helper_ready():
             return False
 
         self._update_worker_count(test_inputs)
@@ -390,6 +394,10 @@ class Manager(object):
 
             self._results_directory = self._port.results_directory()
             self._finder = LayoutTestFinder(self._port, self._options)
+
+            # Kick the helper off in parallel with test discovery and expectations
+            # parsing; _set_up_run will join on it. Saves ~440 ms on Mac.
+            self._port.start_helper_async(pixel_tests=self._options.pixel_tests, prefer_integrated_gpu=self._options.prefer_integrated_gpu)
 
             device_type_list = self._port.supported_device_types()
             tests_to_run_by_device, aggregate_tests_to_skip = self._collect_tests(args, device_type_list, driver_name)
@@ -517,9 +525,14 @@ class Manager(object):
                 if not self._set_up_run(test_inputs, device_type=device_type):
                     return test_run_results.RunDetails(exit_code=-1)
 
-                configuration = self._port.configuration_for_upload(self._port.target_host(0))
-                if not configuration.get('flavor', None):  # The --result-report-flavor argument should override wk1/wk2
-                    configuration['flavor'] = 'wk1' if self._port.is_webkitlegacy() else 'wk2'
+                # Capture upload configuration before _run_test_subset; its finally
+                # calls clean_up_test_run, which tears down the iOS simulator and
+                # leaves target_host(0) with no initialized device.
+                if self._options.report_urls:
+                    configuration = self._port.configuration_for_upload(self._port.target_host(0))
+                    if not configuration.get('flavor', None):  # The --result-report-flavor argument should override wk1/wk2
+                        configuration['flavor'] = 'wk1' if self._port.is_webkitlegacy() else 'wk2'
+
                 temp_initial_results, temp_retry_results, temp_enabled_pixel_tests_in_retry = self._run_test_subset(test_inputs, device_type=device_type)
 
                 skipped_results = TestRunResults(self._expectations[(self._current_driver_name, device_type)], len(aggregate_tests_to_skip))

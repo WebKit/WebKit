@@ -13,10 +13,10 @@
 #include <algorithm>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
@@ -101,7 +101,7 @@ void AudioMixerImpl::Mix(size_t number_of_channels,
                  });
 
   int output_frequency = output_rate_calculator_->CalculateOutputRateFromRange(
-      ArrayView<const int>(helper_containers_->preferred_rates.data(),
+      std::span<const int>(helper_containers_->preferred_rates.data(),
                            number_of_streams));
 
   frame_combiner_.Combine(GetAudioFromSources(output_frequency),
@@ -129,7 +129,7 @@ void AudioMixerImpl::RemoveSource(Source* audio_source) {
   audio_source_list_.erase(iter);
 }
 
-ArrayView<AudioFrame* const> AudioMixerImpl::GetAudioFromSources(
+std::span<AudioFrame* const> AudioMixerImpl::GetAudioFromSources(
     int output_frequency) {
   int audio_to_mix_count = 0;
   for (auto& source_and_status : audio_source_list_) {
@@ -148,7 +148,7 @@ ArrayView<AudioFrame* const> AudioMixerImpl::GetAudioFromSources(
             &source_and_status->audio_frame;
     }
   }
-  return ArrayView<AudioFrame* const>(helper_containers_->audio_to_mix.data(),
+  return std::span<AudioFrame* const>(helper_containers_->audio_to_mix.data(),
                                       audio_to_mix_count);
 }
 

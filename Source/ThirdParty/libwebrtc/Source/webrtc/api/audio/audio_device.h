@@ -56,6 +56,13 @@ class AudioDeviceModule : public RefCountInterface {
     double total_samples_duration_s = 0;
     double total_playout_delay_s = 0;
     uint64_t total_samples_count = 0;
+
+    // Capture stats.
+    double dropped_samples_duration_s = 0;
+    uint64_t dropped_samples_events = 0;
+    double total_capture_samples_duration_s = 0;
+    double total_capture_delay_s = 0;
+    uint64_t total_capture_samples_count = 0;
   };
 
  public:

@@ -375,6 +375,8 @@ void JSTestIndexedSetterWithIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& 
     Base::analyzeHeap(cell, analyzer);
 }
 
+JSTestIndexedSetterWithIdentifierOwner::JSTestIndexedSetterWithIdentifierOwner(ClangVTableWorkaroundTag) { }
+
 bool JSTestIndexedSetterWithIdentifierOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     UNUSED_PARAM(handle);
@@ -387,7 +389,7 @@ void JSTestIndexedSetterWithIdentifierOwner::finalize(JSC::Handle<JSC::Unknown> 
 {
     SUPPRESS_MEMORY_UNSAFE_CAST auto* jsTestIndexedSetterWithIdentifier = static_cast<JSTestIndexedSetterWithIdentifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, protect(jsTestIndexedSetterWithIdentifier->wrapped()).ptr(), jsTestIndexedSetterWithIdentifier);
+    SUPPRESS_UNCOUNTED_ARG uncacheWrapper(world, &jsTestIndexedSetterWithIdentifier->wrapped(), jsTestIndexedSetterWithIdentifier);
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

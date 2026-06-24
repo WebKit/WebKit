@@ -35,7 +35,7 @@ class RenderHTMLCanvas final : public RenderReplaced {
     WTF_MAKE_TZONE_ALLOCATED(RenderHTMLCanvas);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderHTMLCanvas);
 public:
-    RenderHTMLCanvas(HTMLCanvasElement&, RenderStyle&&);
+    RenderHTMLCanvas(HTMLCanvasElement&, Style::ComputedStyle&&);
     virtual ~RenderHTMLCanvas();
 
     HTMLCanvasElement& NODELETE canvasElement() const;
@@ -48,7 +48,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderHTMLCanvas"_s; }
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
     void intrinsicSizeChanged() override { canvasSizeChanged(); }
-    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 };
 
 } // namespace WebCore

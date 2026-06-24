@@ -29,16 +29,14 @@
 #define X509_CERT_DIR_EVP "SSL_CERT_DIR"
 #define X509_CERT_FILE_EVP "SSL_CERT_FILE"
 
-const char *X509_get_default_private_dir(void) { return X509_PRIVATE_DIR; }
+const char *X509_get_default_private_dir() { return X509_PRIVATE_DIR; }
 
-const char *X509_get_default_cert_area(void) { return X509_CERT_AREA; }
+const char *X509_get_default_cert_area() { return X509_CERT_AREA; }
 
-const char *X509_get_default_cert_dir(void) { return X509_CERT_DIR; }
+const char *X509_get_default_cert_dir() { return X509_CERT_DIR; }
 
-const char *X509_get_default_cert_file(void) { return X509_CERT_FILE; }
+const char *X509_get_default_cert_file() { return X509_CERT_FILE; }
 
-const char *X509_get_default_cert_dir_env(void) { return X509_CERT_DIR_EVP; }
+const char *X509_get_default_cert_dir_env() { return X509_CERT_DIR_EVP; }
 
-const char *X509_get_default_cert_file_env(void) {
-  return X509_CERT_FILE_EVP;
-}
+const char *X509_get_default_cert_file_env() { return X509_CERT_FILE_EVP; }

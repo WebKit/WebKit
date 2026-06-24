@@ -19,7 +19,7 @@ example_tests=$(ls -r $(dirname $0)/*.sh)
 exclude_list="best_encode examples run_encodes tools_common"
 
 if [ "$(realtime_only_build)" = "yes" ]; then
-  exclude_list="${exclude_list} twopass_encoder simple_decoder lightfield_test"
+  exclude_list="${exclude_list} twopass_encoder simple_decoder lightfield_test low_complexity_test"
 fi
 
 # Filter out the scripts in $exclude_list.

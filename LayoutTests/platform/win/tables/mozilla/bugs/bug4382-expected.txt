@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (190,3) size 4x19
           text run at (190,3) width 4: " "
         RenderMenuList {SELECT} at (196,3) size 76x20 [bgcolor=#FFFFFF]
-          RenderSelectFallbackButton {DIV} at (4,2) size 51x16
-            RenderText at (0,0) size 36x16
+          RenderBlock {DIV} at (4,2) size 51x16
+            RenderText {#text} at (0,0) size 36x16
               text run at (0,0) width 36: "Excite"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,62) size 784x40
@@ -28,8 +28,8 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (250,35) size 0x0
       RenderBlock {FORM} at (0,102) size 784x24
         RenderMenuList {SELECT} at (2,2) size 196x20 [bgcolor=#FFFFFF]
-          RenderSelectFallbackButton {DIV} at (4,2) size 171x16
-            RenderText at (0,0) size 61x16
+          RenderBlock {DIV} at (4,2) size 171x16
+            RenderText {#text} at (0,0) size 61x16
               text run at (0,0) width 61: "Quick Link"
 layer at (62,33) size 132x16
   RenderBlock {DIV} at (2,3) size 132x16

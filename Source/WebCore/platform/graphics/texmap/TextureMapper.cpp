@@ -1379,7 +1379,7 @@ bool TextureMapper::beginRoundedRectClip(const TransformationMatrix& modelViewMa
     // arrays must have a predefined size. The limit is defined inside ClipStack, and that's why we need to call
     // clipStack().isRoundedRectClipAllowed() before trying to add a new clip.
 
-    if (!targetRect.isRounded() || !targetRect.isRenderable() || targetRect.isEmpty() || !modelViewMatrix.isInvertible() || !clipStack().isRoundedRectClipAllowed())
+    if (!targetRect.hasNonZeroRadii() || !targetRect.isRenderable() || targetRect.isEmpty() || !modelViewMatrix.isInvertible() || !clipStack().isRoundedRectClipAllowed())
         return false;
 
     FloatQuad quad = modelViewMatrix.projectQuad(targetRect.rect());

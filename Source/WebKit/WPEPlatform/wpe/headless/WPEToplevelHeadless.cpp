@@ -31,6 +31,11 @@
 /**
  * WPEToplevelHeadless:
  *
+ * A headless [class@WPEPlatform.Toplevel] implementation.
+ *
+ * [class@ToplevelHeadless] is the [class@WPEPlatform.Toplevel] implementation
+ * used by [class@DisplayHeadless]. It has no native window and only tracks its
+ * state, since there is no compositor or display to manage it.
  */
 struct _WPEToplevelHeadlessPrivate {
 };

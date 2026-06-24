@@ -80,3 +80,11 @@ NSString * const _WKMenuItemIdentifierPlayAllAnimations = @"WKMenuItemIdentifier
 NSString * const _WKMenuItemIdentifierPauseAllAnimations = @"WKMenuItemIdentifierPauseAllAnimations";
 NSString * const _WKMenuItemIdentifierPlayAnimation = @"WKMenuItemIdentifierPlayAnimation";
 NSString * const _WKMenuItemIdentifierPauseAnimation = @"WKMenuItemIdentifierPauseAnimation";
+
+NSString * const _WKMenuItemIdentifierSubstitutionsMenu = @"WKMenuItemIdentifierSubstitutionsMenu";
+NSString * const _WKMenuItemIdentifierShowSubstitutions = @"WKMenuItemIdentifierShowSubstitutions";
+NSString * const _WKMenuItemIdentifierSmartCopyPaste = @"WKMenuItemIdentifierSmartCopyPaste";
+NSString * const _WKMenuItemIdentifierSmartQuotes = @"WKMenuItemIdentifierSmartQuotes";
+NSString * const _WKMenuItemIdentifierSmartDashes = @"WKMenuItemIdentifierSmartDashes";
+NSString * const _WKMenuItemIdentifierSmartLinks = @"WKMenuItemIdentifierSmartLinks";
+NSString * const _WKMenuItemIdentifierTextReplacement = @"WKMenuItemIdentifierTextReplacement";

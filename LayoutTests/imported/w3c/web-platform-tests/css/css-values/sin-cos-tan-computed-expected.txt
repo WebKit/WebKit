@@ -25,4 +25,10 @@ PASS calc(tan(pi * sibling-index()) should be used-value-equivalent to 0
 PASS calc(sin(180deg * sibling-index()) should be used-value-equivalent to 0
 PASS calc(cos(180deg * sibling-index()) should be used-value-equivalent to -1
 PASS calc(tan(180deg * sibling-index()) should be used-value-equivalent to 0
+PASS calc(sin(pi * sign(1em - 1px)) should be used-value-equivalent to 0
+PASS calc(cos(pi * sign(1em - 1px)) should be used-value-equivalent to -1
+PASS calc(tan(pi * sign(1em - 1px)) should be used-value-equivalent to 0
+PASS calc(sin(180deg * sign(1em - 1px)) should be used-value-equivalent to 0
+PASS calc(cos(180deg * sign(1em - 1px)) should be used-value-equivalent to -1
+PASS calc(tan(180deg * sign(1em - 1px)) should be used-value-equivalent to 0
 

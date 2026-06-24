@@ -30,7 +30,6 @@
 #include "AnchorPositionEvaluator.h"
 #include "CSSCounterStyleRegistry.h"
 #include "CSSCounterStyleRule.h"
-#include "CSSCounterValue.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSStringValue.h"
@@ -56,9 +55,8 @@
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleKeyword+CSSValueConversion.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
+#include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
-#include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleResolveForFont.h"
 #include "StyleResolver.h"
 #include "StyleTextEdge+CSSValueConversion.h"
@@ -144,6 +142,7 @@ inline OffsetDistance forwardInheritedValue(const OffsetDistance& value) { auto 
 inline OffsetPath forwardInheritedValue(const OffsetPath& value) { auto copy = value; return copy; }
 inline OffsetPosition forwardInheritedValue(const OffsetPosition& value) { auto copy = value; return copy; }
 inline OffsetRotate forwardInheritedValue(const OffsetRotate& value) { auto copy = value; return copy; }
+inline ObjectViewBox forwardInheritedValue(const ObjectViewBox& value) { auto copy = value; return copy; }
 inline OutlineOffset forwardInheritedValue(const OutlineOffset& value) { auto copy = value; return copy; }
 inline OverflowClipMargin forwardInheritedValue(const OverflowClipMargin& value) { auto copy = value; return copy; }
 inline Position forwardInheritedValue(const Position& value) { auto copy = value; return copy; }
@@ -357,9 +356,7 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
 
     resetUsedZoom(builderState);
     auto zoom = toStyleFromCSSValue<Zoom>(builderState, value);
-    // FIXME: The spec says that zoom values of 0 should be treated as 1, not ignored entirely. https://drafts.csswg.org/css-viewport/#valdef-zoom-number
-    if (!isZero(zoom))
-        builderState.setZoom(zoom);
+    builderState.setZoom(isZero(zoom) ? Zoom { 1.0f } : zoom);
 }
 
 void maybeUpdateFontForLetterSpacingOrWordSpacing(BuilderState& builderState, CSSValue& value)
@@ -787,7 +784,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
             [&](const CSSPrimitiveValue::Calc& calc) -> float {
                 using CSSRaw = typename StyleType::CSS::Raw;
 
-                auto resolved = toStyle(CSS::UnevaluatedCalc<CSSRaw>(const_cast<CSSPrimitiveValue::Calc&>(calc)), conversionData);
+                auto resolved = toStyle(CSS::UnevaluatedCalc<CSSRaw> { calc }, conversionData);
                 return WTF::switchOn(resolved,
                     [&](const typename StyleType::Dimension& length) {
                         return handleLength(length);

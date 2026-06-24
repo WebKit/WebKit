@@ -1,0 +1,83 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false ] -->
+<!doctype html>
+<html><head>
+<title>Media containment: rogue CreateMediaPlayer of a contained engine must terminate WebContent</title>
+<script src="../resources/ipc.js"></script>
+<script src="fuzz_tools.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = function() {
+    var out = document.getElementById('out');
+
+    function fail(msg) {
+        out.textContent = msg;
+        if (window.testRunner) testRunner.notifyDone();
+    }
+
+    if (!window.IPC) {
+        // No IPC testing API → nothing to test. Match empty expectation.
+        out.textContent = "";
+        if (window.testRunner) testRunner.notifyDone();
+        return;
+    }
+
+    // Engines that GPU's RemoteMediaPlayerManagerProxy::createMediaPlayer must reject
+    // when MediaContainmentEnabled is true. AVFoundation (0) and WirelessPlayback (10)
+    // are the only allowed engines; AVFoundationMSE (1) corresponds to
+    // MediaPlayerPrivateMediaSourceAVFObjC, and CocoaWebM (9) corresponds to
+    // MediaPlayerPrivateWebM.
+    var blockedEngines = [
+        { id: 1, name: 'AVFoundationMSE' },
+        { id: 9, name: 'CocoaWebM' },
+    ];
+    var sent = [];
+
+    $F.GPUOutgoingHandler[IPC.messages.RemoteMediaPlayerManagerProxy_CreateMediaPlayer.name] = function(msg) {
+        // Use the legitimate CreateMediaPlayer payload as a template, modify
+        // the engine identifier (and a unique MediaPlayerIdentifier so GPU does
+        // not reject for ID collision), then resend.
+        var origBody = msg.buffer.slice(16);
+        for (var i = 0; i < blockedEngines.length; ++i) {
+            var engine = blockedEngines[i];
+            var body = origBody.slice(0);
+            var bodyArr = new Uint8Array(body);
+            var bodyView = new DataView(body);
+            bodyView.setUint32(0, 990001 + engine.id, true);
+            bodyView.setUint32(4, 0, true);
+            bodyArr[16] = engine.id;
+            try {
+                $F.enableListener = false;
+                IPC.sendMessage("GPU", msg.destinationID, IPC.messages.RemoteMediaPlayerManagerProxy_CreateMediaPlayer.name, bodyArr);
+                sent.push(engine.name);
+            } catch (e) {
+            } finally {
+                $F.enableListener = true;
+            }
+        }
+    };
+
+    var v = document.createElement('video');
+    document.body.appendChild(v);
+    v.src = 'http://127.0.0.1/test.mp4';
+    v.load();
+
+    // If GPU's MESSAGE_CHECK fires for the rogue CreateMediaPlayer it asks the
+    // UI to terminate this WebContent process. The kill is asynchronous and
+    // crosses three processes, so wait long enough for it to land. If we are
+    // still alive when the timer fires, MESSAGE_CHECK did not fire — emit FAIL
+    // listing every blocked engine that was successfully (rogue-)instantiated.
+    setTimeout(function() {
+        if (sent.length === 0)
+            fail("FAIL: never intercepted CreateMediaPlayer — could not exercise the bypass");
+        else
+            fail("FAIL: WebContent was not terminated after rogue CreateMediaPlayer for: " + sent.join(', '));
+    }, 5000);
+};
+</script></head>
+<body>
+<pre id="out"></pre>
+</body></html>

@@ -2,8 +2,10 @@
 PASS rect1
 PASS rect2
 PASS circle
-FAIL ellipse1 assert_equals: ellipse1: x expected 0 but got -9
-FAIL ellipse2 assert_equals: ellipse2: x expected 0 but got 1
+PASS ellipse1
+PASS ellipse2
+PASS ellipse3
+PASS ellipse4
 PASS image3
 PASS image4
 PASS foreign1

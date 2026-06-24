@@ -22,39 +22,52 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"os"
+	"time"
 )
 
-var baselineFile = flag.String("baseline", "", "the path to the JSON file containing the base results")
+var baseline = flag.String("baseline", "", "the path to the JSON file containing the base results")
 
 type Result struct {
-	Description  string `json:"description"`
-	NumCalls     int    `json:"numCalls"`
-	Microseconds int    `json:"microseconds"`
-	BytesPerCall int    `json:"bytesPerCall"`
+	Name           string  `json:"name"`
+	Iterations     int     `json:"iterations"`
+	CPUTime        float64 `json:"cpu_time"`
+	TimeUnit       string  `json:"time_unit"`
+	BytesPerSecond float64 `json:"bytes_per_second"`
+}
+
+type googlebenchmarks struct {
+	Benchmarks []Result `json:"benchmarks"`
 }
 
 func (r *Result) Speed() (float64, string) {
-	callsPerSecond := float64(r.NumCalls) / float64(r.Microseconds) * 1000000
-	if r.BytesPerCall == 0 {
-		return callsPerSecond, "ops/sec"
+	if r.BytesPerSecond != 0 {
+		return r.BytesPerSecond / 1000000, "MB/sec"
 	}
-	return callsPerSecond * float64(r.BytesPerCall) / 1000000, "MB/sec"
+	var unit time.Duration
+	switch r.TimeUnit {
+	case "ns":
+		unit = time.Nanosecond
+	case "us":
+		unit = time.Microsecond
+	case "ms":
+		unit = time.Millisecond
+	default:
+		log.Panicf("unsupported time unit: %q", r.TimeUnit)
+	}
+	return float64(unit) / r.CPUTime, "ops/sec"
 }
 
 func printResult(result Result, baseline *Result) error {
 	if baseline != nil {
-		if result.Description != baseline.Description {
-			return fmt.Errorf("result did not match baseline: %q vs %q", result.Description, baseline.Description)
-		}
-
-		if result.BytesPerCall != baseline.BytesPerCall {
-			return fmt.Errorf("result %q bytes per call did not match baseline: %d vs %d", result.Description, result.BytesPerCall, baseline.BytesPerCall)
+		if result.Name != baseline.Name {
+			return fmt.Errorf("result did not match baseline: %q vs %q", result.Name, baseline.Name)
 		}
 	}
 
 	newSpeed, unit := result.Speed()
-	fmt.Printf("Did %d %s operations in %dus (%.1f %s)", result.NumCalls, result.Description, result.Microseconds, newSpeed, unit)
+	fmt.Printf("Did %d %s operations (%.1f %s)", result.Iterations, result.Name, newSpeed, unit)
 	if baseline != nil {
 		oldSpeed, _ := baseline.Speed()
 		fmt.Printf(" [%+.1f%%]", (newSpeed-oldSpeed)/oldSpeed*100)
@@ -68,26 +81,26 @@ func readResults(path string) ([]Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	var ret []Result
+	var ret googlebenchmarks
 	if err := json.Unmarshal(data, &ret); err != nil {
 		return nil, err
 	}
-	return ret, nil
+	return ret.Benchmarks, nil
 }
 
 func main() {
 	flag.Parse()
 
-	baseline, err := readResults(*baselineFile)
+	baselineResults, err := readResults(*baseline)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error reading %q: %s\n", *baselineFile, err)
+		fmt.Fprintf(os.Stderr, "Error reading %q: %s\n", *baseline, err)
 		os.Exit(1)
 	}
 
-	fmt.Println(*baselineFile)
-	for _, result := range baseline {
+	fmt.Println(*baseline)
+	for _, result := range baselineResults {
 		if err := printResult(result, nil); err != nil {
-			fmt.Fprintf(os.Stderr, "Error in %q: %s\n", *baselineFile, err)
+			fmt.Fprintf(os.Stderr, "Error in %q: %s\n", *baseline, err)
 			os.Exit(1)
 		}
 	}
@@ -99,14 +112,14 @@ func main() {
 			os.Exit(1)
 		}
 
-		if len(results) != len(baseline) {
-			fmt.Fprintf(os.Stderr, "Result files %q and %q have different lengths\n", arg, *baselineFile)
+		if len(results) != len(baselineResults) {
+			fmt.Fprintf(os.Stderr, "Result files %q and %q have different lengths\n", arg, *baseline)
 			os.Exit(1)
 		}
 
 		fmt.Printf("\n%s\n", arg)
 		for i, result := range results {
-			if err := printResult(result, &baseline[i]); err != nil {
+			if err := printResult(result, &baselineResults[i]); err != nil {
 				fmt.Fprintf(os.Stderr, "Error in %q: %s\n", arg, err)
 				os.Exit(1)
 			}

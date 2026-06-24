@@ -221,7 +221,11 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 #endif
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(WEBCONTENT_SERVICE_INITIALIZER));
             } else if (serviceName == networkingServiceName) {
+#if USE(EXTENSIONKIT)
+                setUserDirSuffix(WTF::move(uiProcessName));
+#else
                 setUserDirSuffix(networkingServiceName);
+#endif
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(NETWORK_SERVICE_INITIALIZER));
             } else if (serviceName == gpuServiceName) {
 #if USE(EXTENSIONKIT)

@@ -320,4 +320,46 @@ bool H264IsSameProfileAndLevel(const CodecParameterMap& params1,
          profile_level_id->level == other_profile_level_id->level;
 }
 
+bool H264IsProfileSubsetOf(const CodecParameterMap& subset,
+                           const CodecParameterMap& superset) {
+  const std::optional<H264ProfileLevelId> subset_profile_level_id =
+      ParseSdpForH264ProfileLevelId(subset);
+  const std::optional<H264ProfileLevelId> superset_profile_level_id =
+      ParseSdpForH264ProfileLevelId(superset);
+
+  if (!subset_profile_level_id || !superset_profile_level_id) {
+    return false;
+  }
+
+  const H264Profile subset_profile = subset_profile_level_id->profile;
+  const H264Profile superset_profile = superset_profile_level_id->profile;
+
+  if (subset_profile == superset_profile) {
+    return true;
+  }
+
+  // Evaluates whether the `subset` profile is a valid subset of the `superset`
+  // profile according to ITU-T H.264 Annex A.2.
+  switch (superset_profile) {
+    case H264Profile::kProfileConstrainedBaseline:
+      return false;
+    case H264Profile::kProfileBaseline:
+    case H264Profile::kProfileMain:
+      return subset_profile == H264Profile::kProfileConstrainedBaseline;
+    case H264Profile::kProfileConstrainedHigh:
+      return subset_profile == H264Profile::kProfileConstrainedBaseline;
+    case H264Profile::kProfileHigh:
+      return subset_profile == H264Profile::kProfileConstrainedBaseline ||
+             subset_profile == H264Profile::kProfileMain ||
+             subset_profile == H264Profile::kProfileConstrainedHigh;
+    case H264Profile::kProfilePredictiveHigh444:
+      return subset_profile == H264Profile::kProfileConstrainedBaseline ||
+             subset_profile == H264Profile::kProfileMain ||
+             subset_profile == H264Profile::kProfileConstrainedHigh ||
+             subset_profile == H264Profile::kProfileHigh;
+    default:
+      return false;
+  }
+}
+
 }  // namespace webrtc

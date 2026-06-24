@@ -51,7 +51,6 @@ namespace JSC {
 
 const ClassInfo JSIteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIteratorPrototype) };
 
-static JSC_DECLARE_HOST_FUNCTION(iteratorProtoFuncIterator);
 static JSC_DECLARE_CUSTOM_GETTER(iteratorProtoConstructorGetter);
 static JSC_DECLARE_CUSTOM_SETTER(iteratorProtoConstructorSetter);
 static JSC_DECLARE_CUSTOM_GETTER(iteratorProtoToStringTagGetter);
@@ -65,8 +64,7 @@ void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.iterator]"_s, iteratorProtoFuncIterator, ImplementationVisibility::Public, IteratorIntrinsic);
-    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, globalObject->iteratorProtoSymbolIteratorFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.constructor
     putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->constructor, CustomGetterSetter::create(vm, iteratorProtoConstructorGetter, iteratorProtoConstructorSetter), static_cast<unsigned>(PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor));
@@ -168,10 +166,7 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncToArray, (JSGlobalObject* globalObject
     });
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* array = constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), value);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    return JSValue::encode(array);
+    RELEASE_AND_RETURN(scope, JSValue::encode(constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), value)));
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.foreach
@@ -200,21 +195,23 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncForEach, (JSGlobalObject* globalObject
         CachedCall cachedCall(globalObject, uncheckedDowncast<JSFunction>(callbackArg), 2);
         RETURN_IF_EXCEPTION(scope, { });
 
+        scope.release();
         forEachInIteratorProtocol(globalObject, thisValue, [&](VM&, JSGlobalObject*, JSValue nextItem) ALWAYS_INLINE_LAMBDA {
             cachedCall.callWithArguments(globalObject, jsUndefined(), nextItem, jsNumber(counter++));
         });
-    } else {
-        forEachInIteratorProtocol(globalObject, thisValue, [&](VM&, JSGlobalObject*, JSValue nextItem) ALWAYS_INLINE_LAMBDA {
-            MarkedArgumentBuffer args;
-            args.append(nextItem);
-            args.append(jsNumber(counter++));
-            ASSERT(!args.hasOverflowed());
-
-            call(globalObject, callbackArg, callData, jsUndefined(), args);
-        });
+        return JSValue::encode(jsUndefined());
     }
 
-    RETURN_IF_EXCEPTION(scope, { });
+    scope.release();
+    forEachInIteratorProtocol(globalObject, thisValue, [&](VM&, JSGlobalObject*, JSValue nextItem) ALWAYS_INLINE_LAMBDA {
+        MarkedArgumentBuffer args;
+        args.append(nextItem);
+        args.append(jsNumber(counter++));
+        ASSERT(!args.hasOverflowed());
+
+        call(globalObject, callbackArg, callData, jsUndefined(), args);
+    });
+
     return JSValue::encode(jsUndefined());
 }
 
@@ -232,7 +229,7 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIncludes, (JSGlobalObject* globalObjec
     JSValue skippedElementsArg = callFrame->argument(1);
     uint64_t toSkip = 0;
     if (!skippedElementsArg.isUndefined()) {
-        constexpr ASCIILiteral errorMessage = "Iterator.prototype.includes requires that the second argument is a non-negative integral Number or Infinity."_s;
+        constexpr ASCIILiteral errorMessage = "Iterator.prototype.includes requires that the second argument is a non-negative safe integral Number or Infinity."_s;
 
         if (skippedElementsArg.isInt32()) [[likely]] {
             int32_t skippedAsInt32 = skippedElementsArg.asInt32();
@@ -244,14 +241,17 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIncludes, (JSGlobalObject* globalObjec
             toSkip = skippedAsInt32;
         } else if (skippedElementsArg.isDouble()) {
             double skippedAsDouble = skippedElementsArg.asDouble();
-            uint64_t skippedAsUInt = truncateDoubleToUint64(skippedAsDouble);
-            if (skippedAsUInt == skippedAsDouble && skippedAsUInt < maxSafeIntegerAsUInt64())
-                toSkip = skippedAsUInt;
-            else if (!isInteger(skippedAsDouble) && !std::isinf(skippedAsDouble)) {
+            bool isInfinity = std::isinf(skippedAsDouble);
+            if (!isInteger(skippedAsDouble) && !isInfinity) {
                 iteratorClose(globalObject, thisValue);
                 TRY_CLEAR_EXCEPTION(scope, { });
-                return throwVMTypeError(globalObject, scope, errorMessage);                
-            } else if (skippedAsDouble > 0) {
+                return throwVMTypeError(globalObject, scope, errorMessage);
+            }
+
+            uint64_t skippedAsUInt = truncateDoubleToUint64(skippedAsDouble);
+            if (skippedAsUInt == skippedAsDouble && skippedAsUInt <= maxSafeIntegerAsUInt64())
+                toSkip = skippedAsUInt;
+            else if (isInfinity && skippedAsDouble > 0) {
                 // if the 2nd argument is +Infinity or too big, we should consume the iterator to the end.
                 toSkip = std::numeric_limits<uint64_t>::max();
             } else {

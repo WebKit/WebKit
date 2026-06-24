@@ -55,7 +55,7 @@ public:
 
     const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
     const CornerRadii& radii() const LIFETIME_BOUND { return m_radii; }
-    bool isRounded() const { return !m_radii.isZero(); }
+    bool hasNonZeroRadii() const { return !m_radii.isZero(); }
     bool isEmpty() const { return m_rect.isEmpty(); }
 
     void setRect(const FloatRect& rect) { m_rect = rect; }

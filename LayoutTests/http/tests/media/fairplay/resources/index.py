@@ -64,6 +64,7 @@ def badRequest(errorMessage=""):
     sys.stderr.write(errorMessage + "\n")
     print("Status: 400 Bad Request")
     print("Content-Type: text/plain")
+    print("Access-Control-Allow-Origin: *")
     print()
     print("Bad request")
     exit()
@@ -145,5 +146,6 @@ response = {
 }
 
 print("Content-Type: text/json")
+print("Access-Control-Allow-Origin: *")
 print()
 print(json.dumps(response))

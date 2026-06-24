@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -11,11 +11,11 @@
 <div id="console"></div>
 <script>
 description('Test for the spin control behavior in a type=numnber input.');
+window.jsTestIsAsync = true;
 
 var i = document.getElementById('i1');
 onload = async () => {
     if (window.eventSender && window.testRunner) {
-        testRunner.waitUntilDone();
         debug('Initial value is 3.14, click the up button once');
         // The spin control is at (130,-1) in the input element on Mac.
         // The size is 15x22.
@@ -64,13 +64,12 @@ onload = async () => {
         await eventSender.asyncMouseUp();
         shouldBe('i.value', '"0.14"');
         i.readOnly = false;
-        testRunner.notifyDone();
+        finishJSTest();
     } else {
         document.getElementById('console').innerHTML = 'No eventSender or testRunner';
     }
 }
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

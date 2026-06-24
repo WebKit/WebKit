@@ -47,7 +47,6 @@ void TestWithDeferSendingOption::didReceiveMessage(IPC::Connection& connection, 
         decoder.markInvalid();
         return;
     }
-    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithDeferSendingOption::NoOptions::name()) {
         IPC::handleMessage<Messages::TestWithDeferSendingOption::NoOptions>(connection, decoder, this, &TestWithDeferSendingOption::noOptions);
         return;

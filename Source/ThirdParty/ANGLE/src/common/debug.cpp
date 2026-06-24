@@ -26,7 +26,10 @@
 #endif
 
 #if defined(ANGLE_PLATFORM_APPLE)
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wignored-attributes"
 #    include <os/log.h>
+#    pragma GCC diagnostic pop
 #endif
 
 #if defined(ANGLE_PLATFORM_WINDOWS)
@@ -301,8 +304,11 @@ void Trace(LogSeverity severity, const char *message)
             default:
                 UNREACHABLE();
         }
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wignored-attributes"
         os_log_with_type(OS_LOG_DEFAULT, apple_log_type, "ANGLE: %s: %s\n",
                          LogSeverityName(severity), str.c_str());
+#    pragma GCC diagnostic pop
 #else
         // Note: we use fprintf because <iostream> includes static initializers.
         fprintf((severity >= LOG_WARN) ? stderr : stdout, "%s: %s\n", LogSeverityName(severity),

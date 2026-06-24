@@ -144,42 +144,6 @@ void aom_extend_frame_borders_plane_row_c(const YV12_BUFFER_CONFIG *ybf,
                extend_bottom_border ? bottom : 0, right, v_start, v_end);
 }
 
-void aom_yv12_extend_frame_borders_c(YV12_BUFFER_CONFIG *ybf,
-                                     const int num_planes) {
-  assert(ybf->border % 2 == 0);
-  assert(ybf->y_height - ybf->y_crop_height < 16);
-  assert(ybf->y_width - ybf->y_crop_width < 16);
-  assert(ybf->y_height - ybf->y_crop_height >= 0);
-  assert(ybf->y_width - ybf->y_crop_width >= 0);
-
-#if CONFIG_AV1_HIGHBITDEPTH
-  if (ybf->flags & YV12_FLAG_HIGHBITDEPTH) {
-    for (int plane = 0; plane < num_planes; ++plane) {
-      const int is_uv = plane > 0;
-      const int plane_border = ybf->border >> is_uv;
-      extend_plane_high(
-          ybf->buffers[plane], ybf->strides[is_uv], ybf->crop_widths[is_uv],
-          ybf->crop_heights[is_uv], plane_border, plane_border,
-          plane_border + ybf->heights[is_uv] - ybf->crop_heights[is_uv],
-          plane_border + ybf->widths[is_uv] - ybf->crop_widths[is_uv], 0,
-          ybf->crop_heights[is_uv]);
-    }
-    return;
-  }
-#endif
-
-  for (int plane = 0; plane < num_planes; ++plane) {
-    const int is_uv = plane > 0;
-    const int plane_border = ybf->border >> is_uv;
-    extend_plane(ybf->buffers[plane], ybf->strides[is_uv],
-                 ybf->crop_widths[is_uv], ybf->crop_heights[is_uv],
-                 plane_border, plane_border,
-                 plane_border + ybf->heights[is_uv] - ybf->crop_heights[is_uv],
-                 plane_border + ybf->widths[is_uv] - ybf->crop_widths[is_uv], 0,
-                 ybf->crop_heights[is_uv]);
-  }
-}
-
 static void extend_frame(YV12_BUFFER_CONFIG *const ybf, int ext_size,
                          const int num_planes) {
   const int ss_x = ybf->subsampling_x;
@@ -254,7 +218,7 @@ void aom_yv12_copy_frame_c(const YV12_BUFFER_CONFIG *src_bc,
         plane_dst += dst_bc->strides[is_uv];
       }
     }
-    aom_yv12_extend_frame_borders_c(dst_bc, num_planes);
+    aom_extend_frame_borders_c(dst_bc, num_planes);
     return;
   }
 #endif
@@ -269,7 +233,7 @@ void aom_yv12_copy_frame_c(const YV12_BUFFER_CONFIG *src_bc,
       plane_dst += dst_bc->strides[is_uv];
     }
   }
-  aom_yv12_extend_frame_borders_c(dst_bc, num_planes);
+  aom_extend_frame_borders_c(dst_bc, num_planes);
 }
 
 void aom_yv12_copy_y_c(const YV12_BUFFER_CONFIG *src_ybc,
@@ -481,9 +445,6 @@ int aom_yv12_realloc_with_new_border_c(YV12_BUFFER_CONFIG *ybf, int new_border,
     if (error) return error;
     // Copy image buffer
     aom_yv12_copy_frame(ybf, &new_buf, num_planes);
-
-    // Extend up to new border
-    aom_extend_frame_borders(&new_buf, num_planes);
 
     // Now free the old buffer and replace with the new
     aom_free_frame_buffer(ybf);

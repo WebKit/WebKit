@@ -20,10 +20,10 @@
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/test_client.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "test/create_test_environment.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 
@@ -57,7 +57,7 @@ class StunServerTest : public ::testing::Test {
  private:
   const Environment env_ = CreateTestEnvironment();
   VirtualSocketServer ss_;
-  AutoSocketServerThread main_thread_{&ss_};
+  test::RunLoop run_loop_{&ss_};
   StunServer server_{AsyncUDPSocket::Create(env_, server_addr, ss_)};
   TestClient client_{AsyncUDPSocket::Create(env_, client_addr, ss_)};
 };

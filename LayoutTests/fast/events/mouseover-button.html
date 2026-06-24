@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
     </head>
 
 <body>
@@ -19,8 +19,6 @@ document.saveWhere = null;
 
 function runTest() {
     if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
 
         eventSender.mouseMoveTo(1,1);
         eventSender.mouseDown();
@@ -68,10 +66,11 @@ function finish()
     shouldBe("document.events['C-no-press'].which", "0");
     shouldBe("document.events['D-middle'].which", "2");
 
-    testRunner.notifyDone()
+    finishJSTest();
 }
 
 description("This test verifies that we get the correct button on mouseover events in .which when entering a document.");
+window.jsTestIsAsync = true;
 
 window.onload = function()
 {

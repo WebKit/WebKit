@@ -36,7 +36,10 @@ class Element;
 class LocalFrame;
 class RenderBox;
 class RenderScrollbarPart;
-class RenderStyle;
+
+namespace Style {
+class ComputedStyle;
+}
 
 class RenderScrollbar final : public Scrollbar {
 public:
@@ -58,7 +61,7 @@ public:
     
     bool isHiddenByStyle() const override;
 
-    std::unique_ptr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoElementType) const;
+    std::unique_ptr<Style::ComputedStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoElementType) const;
 
 private:
     RenderScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, LocalFrame*);

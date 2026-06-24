@@ -214,7 +214,7 @@ void PDFDocumentImage::destroyDecodedData(bool)
 
 void PDFDocumentImage::createPDFDocument()
 {
-    auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data()->makeContiguous()->createCFData().get()));
+    RetainPtr dataProvider = adoptCF(CGDataProviderCreateWithCFData(protect(data())->makeContiguous()->createCFData().get()));
     m_document = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
 }
 

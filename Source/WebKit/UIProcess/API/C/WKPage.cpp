@@ -76,7 +76,6 @@
 #include "QueryPermissionResultCallback.h"
 #include "ResourceLoadInfo.h"
 #include "RunJavaScriptParameters.h"
-#include "SpeechRecognitionPermissionRequest.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include "WKAPICast.h"
 #include "WKPagePolicyClientInternal.h"

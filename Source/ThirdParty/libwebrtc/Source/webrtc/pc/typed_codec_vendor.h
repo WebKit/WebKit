@@ -12,11 +12,14 @@
 #define PC_TYPED_CODEC_VENDOR_H_
 
 #include <utility>
+#include <vector>
 
 #include "api/field_trials_view.h"
 #include "api/media_types.h"
+#include "media/base/codec.h"
 #include "media/base/codec_list.h"
 #include "media/base/media_engine.h"
+#include "pc/codec_configuration.h"
 
 namespace webrtc {
 
@@ -39,6 +42,8 @@ class TypedCodecVendor {
   // part of the `CodecVendor::ModifyVideoCodecs` workaround.
   explicit TypedCodecVendor(CodecList codecs) : codecs_(std::move(codecs)) {}
 
+  void SetRawPacketization(const Codec& codec);
+
   TypedCodecVendor(const MediaEngineInterface* media_engine,
                    MediaType type,
                    bool is_sender,
@@ -46,10 +51,14 @@ class TypedCodecVendor {
                    const FieldTrialsView& trials);
 
   const CodecList& codecs() const { return codecs_; }
+  const std::vector<CodecConfiguration>& configurations() const {
+    return configurations_;
+  }
 
  private:
   // Effectively const, but not marked as such since that breaks move semantics.
   CodecList codecs_;
+  std::vector<CodecConfiguration> configurations_;
 };
 
 }  //  namespace webrtc

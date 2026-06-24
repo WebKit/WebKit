@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ DetachableMediaSourceEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var removetrackCount = 0;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource({ detachable: true });
+        testExpected('source.detachable', true);
+
+        run('video.srcObject = source');
+        await waitFor(source, 'sourceopen');
+
+        let sourceBuffer = source.addSourceBuffer('video/mock; codecs=mock');
+        sourceBuffer.appendBuffer(makeAInit(8, [
+            makeATrack(1, 'mock', TRACK_KIND.VIDEO),
+            makeATrack(2, 'mock', TRACK_KIND.TEXT),
+            makeATrack(3, 'mock', TRACK_KIND.TEXT),
+        ]));
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('video.textTracks.length', 2);
+
+        video.textTracks.addEventListener('removetrack', () => { ++removetrackCount; });
+        run('video.srcObject = null');
+
+        for (let i = 0; i < 20 && removetrackCount < 2; ++i)
+            await new Promise(resolve => setTimeout(resolve, 0));
+
+        testExpected('removetrackCount', 2);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest().catch(failTest)">
+    <video></video>
+</body>
+</html>

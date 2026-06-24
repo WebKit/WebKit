@@ -57,8 +57,6 @@ class LayoutRect;
 class LayoutSize;
 class LayoutUnit;
 class RenderElement;
-class RenderStyle;
-class RenderStyleProperties;
 class ScrollTimeline;
 class TransformationMatrix;
 class ViewTimeline;
@@ -205,6 +203,7 @@ using IntOutsets = RectEdges<int>;
 
 namespace Style {
 class ChangedAnimatablePropertiesFunctions;
+class ComputedStyle;
 class CustomProperty;
 class CustomPropertyData;
 class CustomPropertyRegistry;
@@ -308,6 +307,7 @@ struct OffsetPosition;
 struct OffsetRotate;
 struct Opacity;
 struct Orphans;
+struct ObjectViewBox;
 struct OutlineOffset;
 struct OverflowClipMargin;
 struct PaddingEdge;
@@ -396,7 +396,6 @@ enum class GridTrackSizingDirection : bool;
 enum class ImageOrientation : bool;
 enum class PositionTryOrder : uint8_t;
 enum class Resize : uint8_t;
-enum class SVGGlyphOrientationHorizontal : uint8_t;
 enum class SVGGlyphOrientationVertical : uint8_t;
 enum class ScrollBehavior : bool;
 enum class ScrollbarWidth : uint8_t;
@@ -446,7 +445,7 @@ constexpr auto TextDecorationLineBits = 5;
 constexpr auto TextTransformBits = 6;
 constexpr auto PseudoElementTypeBits = 5;
 
-using PseudoStyleCache = HashMap<PseudoElementIdentifier, std::unique_ptr<RenderStyle>>;
+using PseudoElementStyles = HashMap<PseudoElementIdentifier, std::unique_ptr<ComputedStyle>>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ComputedStyleBase);
 class ComputedStyleBase : public CanMakeCheckedPtr<ComputedStyleBase, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
@@ -476,9 +475,6 @@ public:
 
     inline bool isLink() const;
     inline void setIsLink(bool);
-
-    inline bool emptyState() const;
-    inline void setEmptyState(bool);
 
     inline bool firstChildState() const;
     inline void setFirstChildState();
@@ -587,11 +583,11 @@ public:
     inline bool hasPseudoStyle(PseudoElementType) const;
     inline void setHasPseudoStyles(EnumSet<PseudoElementType>);
 
-    RenderStyle* NODELETE getCachedPseudoStyle(const PseudoElementIdentifier&) const;
-    RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);
+    Style::ComputedStyle* NODELETE pseudoElementStyle(const PseudoElementIdentifier&) const;
+    Style::ComputedStyle* addPseudoElementStyle(std::unique_ptr<Style::ComputedStyle>);
 
-    bool hasCachedPseudoStyles() const { return !m_cachedPseudoStyles.isEmpty(); }
-    const PseudoStyleCache& cachedPseudoStyles() const LIFETIME_BOUND { return m_cachedPseudoStyles; }
+    bool hasPseudoElementStyles() const { return !m_pseudoElementStyles.isEmpty(); }
+    const PseudoElementStyles& pseudoElementStyles() const LIFETIME_BOUND { return m_pseudoElementStyles; }
 
     // MARK: - Custom properties
 
@@ -617,6 +613,9 @@ public:
 
     inline float usedZoom() const;
     inline bool setUsedZoom(float);
+
+    inline float deviceScaleFactor() const;
+    inline void setDeviceScaleFactor(float);
 
     void setZoomFromAnimation(Zoom);
 
@@ -755,7 +754,6 @@ public:
         PREFERRED_TYPE(bool) unsigned disallowsFastPathInheritance : 1;
 
         // Non-property related state bits.
-        PREFERRED_TYPE(bool) unsigned emptyState : 1;
         PREFERRED_TYPE(bool) unsigned firstChildState : 1;
         PREFERRED_TYPE(bool) unsigned lastChildState : 1;
         PREFERRED_TYPE(bool) unsigned isLink : 1;
@@ -820,8 +818,6 @@ protected:
     friend class Adjuster;
     friend class ChangedAnimatablePropertiesFunctions;
     friend class DifferenceFunctions;
-    friend class WebCore::RenderStyle;
-    friend class WebCore::RenderStyleProperties;
 
     ComputedStyleBase(ComputedStyleBase&&);
     ComputedStyleBase& operator=(ComputedStyleBase&&);
@@ -855,12 +851,14 @@ protected:
     DataRef<SVGData> m_svgData;
 
     // Associated pseudo styles
-    PseudoStyleCache m_cachedPseudoStyles;
+    PseudoElementStyles m_pseudoElementStyles;
 
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     bool m_deletionHasBegun { false };
 #endif
 };
+
+std::optional<PseudoElementType> pseudoElementType(const ComputedStyleBase&);
 
 } // namespace Style
 } // namespace WebCore

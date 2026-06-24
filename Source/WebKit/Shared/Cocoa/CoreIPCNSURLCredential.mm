@@ -116,7 +116,7 @@ CoreIPCNSURLCredential::CoreIPCNSURLCredential(NSURLCredential *credential)
     if ([flags isKindOfClass:NSDictionary.class]) {
         Vector<WebKit::CoreIPCNSURLCredentialData::Flags> vector;
         vector.reserveCapacity(flags.count);
-        for (NSString *key in attributes) {
+        for (NSString *key in flags) {
             if (![key isKindOfClass:NSString.class]) {
                 ASSERT_NOT_REACHED();
                 break;

@@ -4,17 +4,16 @@
 <head>
     <style>
     </style>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
     <script>
     </script>
 </head>
 <body>
 
     <script>
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     description("Tests that detaching and reattaching a frame with a wheel event handlers doesn't crash.");
+    window.jsTestIsAsync = true;
     
     const maxLoads = 10;
     var loadCount = 0;
@@ -43,9 +42,7 @@
             shouldBe("internals.wheelEventHandlerCount()", "0");
 
         if (++loadCount == maxLoads) {
-            isSuccessfullyParsed();
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
 
             return;
         }

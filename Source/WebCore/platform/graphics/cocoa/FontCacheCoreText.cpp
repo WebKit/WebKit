@@ -352,11 +352,11 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
         uint32_t rawAxisIdentifier = 0;
         Boolean success = CFNumberGetValue(axisIdentifier.get(), kCFNumberSInt32Type, &rawAxisIdentifier);
         ASSERT_UNUSED(success, success);
-        if (rawAxisIdentifier == 0x77676874) // 'wght'
+        if (rawAxisIdentifier == fontVariationAxisTagValue(FontVariationAxisTag::wght))
             result.weight = extractVariationBounds(axis.get());
-        else if (rawAxisIdentifier == 0x77647468) // 'wdth'
+        else if (rawAxisIdentifier == fontVariationAxisTagValue(FontVariationAxisTag::wdth))
             result.width = extractVariationBounds(axis.get());
-        else if (rawAxisIdentifier == 0x736C6E74) // 'slnt'
+        else if (rawAxisIdentifier == fontVariationAxisTagValue(FontVariationAxisTag::slnt))
             result.slope = extractVariationBounds(axis.get());
     }
 

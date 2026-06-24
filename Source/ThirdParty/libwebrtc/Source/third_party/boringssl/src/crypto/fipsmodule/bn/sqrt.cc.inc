@@ -19,6 +19,8 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
   // Compute a square root of |a| mod |p| using the Tonelli/Shanks algorithm
   // (cf. Henri Cohen, "A Course in Algebraic Computational Number Theory",
@@ -61,7 +63,7 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
     return ret;
   }
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   A = BN_CTX_get(ctx);
   b = BN_CTX_get(ctx);
   q = BN_CTX_get(ctx);

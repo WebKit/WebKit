@@ -35,4 +35,7 @@ State popped with event null (type object) and last path component pushstate-wit
 Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html#
 State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html#
 State popped with event OriginalEntry (type string) and last path component pushstate-with-fragment-urls-and-hashchange.html
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

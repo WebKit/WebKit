@@ -1323,7 +1323,7 @@ void InlineCacheCompiler::emitExplicitExceptionHandler()
 
 ScratchRegisterAllocator InlineCacheCompiler::makeDefaultScratchAllocator(GPRReg extraToLock)
 {
-    ScratchRegisterAllocator allocator(m_propertyCache.usedRegisters.toRegisterSet());
+    ScratchRegisterAllocator allocator(m_propertyCache.usedRegisters().toRegisterSet());
     allocator.lock(m_propertyCache.baseRegs());
     allocator.lock(m_propertyCache.valueRegs());
     allocator.lock(m_propertyCache.m_extraGPR);
@@ -4541,14 +4541,19 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
 
 #if USE(JSVALUE64)
         if (isResizableOrGrowableSharedTypedArrayIncludingDataView(accessCase.structure()->classInfoForCells())) {
+            // The null-vector guard above was emitted before the push, so route it
+            // directly to m_failAndIgnore to avoid the post-push restore path.
+            m_failAndIgnore.append(failAndIgnore);
+
             auto allocator = makeDefaultScratchAllocator(m_scratchGPR);
             GPRReg scratch2GPR = allocator.allocateScratchGPR();
 
             ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
+            CCallHelpers::JumpList postPushFailAndIgnore;
             if (isDataView) {
                 auto [outOfBounds, doneCases] = jit.loadDataViewByteLength(baseGPR, valueGPR, m_scratchGPR, scratch2GPR, type);
-                failAndIgnore.append(outOfBounds);
+                postPushFailAndIgnore.append(outOfBounds);
                 doneCases.link(&jit);
             } else
                 jit.loadTypedArrayByteLength(baseGPR, valueGPR, m_scratchGPR, scratch2GPR, typedArrayType(accessCase.structure()->typeInfo().type()));
@@ -4560,12 +4565,12 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
             allocator.restoreReusedRegistersByPopping(jit, preservedState);
             succeed();
 
-            if (allocator.didReuseRegisters() && !failAndIgnore.empty()) {
-                failAndIgnore.link(&jit);
+            if (allocator.didReuseRegisters() && !postPushFailAndIgnore.empty()) {
+                postPushFailAndIgnore.link(&jit);
                 allocator.restoreReusedRegistersByPopping(jit, preservedState);
                 m_failAndIgnore.append(jit.jump());
             } else
-                m_failAndIgnore.append(failAndIgnore);
+                m_failAndIgnore.append(postPushFailAndIgnore);
             return;
         }
 #endif

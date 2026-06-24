@@ -21,6 +21,7 @@
 #include "api/fec_controller_override.h"
 #include "api/units/time_delta.h"
 #include "api/video/encoded_image.h"
+#include "api/video/resolution.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_type.h"
 #include "api/video_codecs/scalability_mode.h"
@@ -239,7 +240,8 @@ std::vector<SdpVideoFormat> FakeWebRtcVideoEncoderFactory::GetSupportedFormats()
 VideoEncoderFactory::CodecSupport
 FakeWebRtcVideoEncoderFactory::QueryCodecSupport(
     const SdpVideoFormat& format,
-    std::optional<std::string> scalability_mode) const {
+    std::optional<std::string> scalability_mode,
+    std::optional<Resolution> resolution) const {
   std::vector<SdpVideoFormat> supported_formats;
   for (const auto& f : formats_) {
     if (format.IsSameCodec(f))

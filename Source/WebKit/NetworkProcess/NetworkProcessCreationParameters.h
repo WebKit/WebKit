@@ -63,6 +63,10 @@ struct NetworkProcessCreationParameters {
     bool isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    String containerTemporaryDirectory;
+#endif
+
 #if USE(SOUP)
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::AlwaysAccept };
     Vector<String> languages;

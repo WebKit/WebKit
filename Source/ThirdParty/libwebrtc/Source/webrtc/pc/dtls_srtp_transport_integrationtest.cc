@@ -22,6 +22,7 @@
 #include "api/scoped_refptr.h"
 #include "api/test/rtc_error_matchers.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "call/rtp_demuxer.h"
 #include "media/base/fake_rtp.h"
 #include "p2p/base/transport_description.h"
@@ -35,15 +36,14 @@
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/copy_on_write_buffer.h"
-#include "rtc_base/fake_clock.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_fingerprint.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
-#include "rtc_base/thread.h"
 #include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/time_controller/simulated_time_controller.h"
 #include "test/wait_until.h"
 
 namespace webrtc {
@@ -61,7 +61,9 @@ constexpr int kTimeout = 10000;
 class DtlsSrtpTransportIntegrationTest : public ::testing::Test {
  protected:
   DtlsSrtpTransportIntegrationTest()
-      : client_ice_transport_(MakeIceTransport(ICEROLE_CONTROLLING)),
+      : time_controller_(Timestamp::Millis(0)),
+        env_(CreateTestEnvironment({.time = &time_controller_})),
+        client_ice_transport_(MakeIceTransport(ICEROLE_CONTROLLING)),
         server_ice_transport_(MakeIceTransport(ICEROLE_CONTROLLED)),
         client_dtls_transport_(MakeDtlsTransport(client_ice_transport_.get())),
         server_dtls_transport_(MakeDtlsTransport(server_ice_transport_.get())),
@@ -137,7 +139,7 @@ class DtlsSrtpTransportIntegrationTest : public ::testing::Test {
                     },
                     IsTrue(),
                     {.timeout = TimeDelta::Millis(kTimeout),
-                     .clock = &fake_clock_}),
+                     .clock = &time_controller_}),
                 IsRtcOk());
     EXPECT_EQ(client_dtls_transport_->dtls_state(),
               DtlsTransportState::kConnected);
@@ -189,9 +191,10 @@ class DtlsSrtpTransportIntegrationTest : public ::testing::Test {
     EXPECT_TRUE(
         srtp_transport_.SendRtpPacket(&packet, options, PF_SRTP_BYPASS));
     EXPECT_THAT(
-        WaitUntil(
-            [&] { return dtls_srtp_transport_observer_.rtp_count(); }, Eq(1),
-            {.timeout = TimeDelta::Millis(kTimeout), .clock = &fake_clock_}),
+        WaitUntil([&] { return dtls_srtp_transport_observer_.rtp_count(); },
+                  Eq(1),
+                  {.timeout = TimeDelta::Millis(kTimeout),
+                   .clock = &time_controller_}),
         IsRtcOk());
     EXPECT_EQ(1, dtls_srtp_transport_observer_.rtp_count());
     ASSERT_TRUE(dtls_srtp_transport_observer_.last_recv_rtp_packet().data());
@@ -208,9 +211,9 @@ class DtlsSrtpTransportIntegrationTest : public ::testing::Test {
     EXPECT_TRUE(
         dtls_srtp_transport_.SendRtpPacket(&packet, options, PF_SRTP_BYPASS));
     EXPECT_THAT(
-        WaitUntil(
-            [&] { return srtp_transport_observer_.rtp_count(); }, Eq(1),
-            {.timeout = TimeDelta::Millis(kTimeout), .clock = &fake_clock_}),
+        WaitUntil([&] { return srtp_transport_observer_.rtp_count(); }, Eq(1),
+                  {.timeout = TimeDelta::Millis(kTimeout),
+                   .clock = &time_controller_}),
         IsRtcOk());
     EXPECT_EQ(1, srtp_transport_observer_.rtp_count());
     ASSERT_TRUE(srtp_transport_observer_.last_recv_rtp_packet().data());
@@ -220,9 +223,8 @@ class DtlsSrtpTransportIntegrationTest : public ::testing::Test {
   }
 
  private:
-  AutoThread main_thread_;
-  ScopedFakeClock fake_clock_;
-  const Environment env_ = CreateTestEnvironment();
+  GlobalSimulatedTimeController time_controller_;
+  const Environment env_;
 
   std::unique_ptr<FakeIceTransportInternal> client_ice_transport_;
   std::unique_ptr<FakeIceTransportInternal> server_ice_transport_;

@@ -22,7 +22,6 @@ rtc_library("capture_levels_adjuster") {
 
   deps = [
     "..:audio_buffer",
-    "../../../api:array_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:safe_minmax",
   ]
@@ -39,8 +38,6 @@ rtc_library("capture_levels_adjuster_unittests") {
     ":capture_levels_adjuster",
     "..:audio_buffer",
     "..:audioproc_test_utils",
-    "../../../rtc_base:gunit_helpers",
-    "../../../rtc_base:stringutils",
     "../../../test:test_support",
   ]
 }

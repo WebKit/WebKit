@@ -36,7 +36,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<String>::operator()(const String& value, const RenderStyle&) -> CSS::String
+auto ToCSS<String>::operator()(const String& value, const Style::ComputedStyle&) -> CSS::String
 {
     return { .value = value.value };
 }
@@ -46,7 +46,7 @@ auto ToStyle<CSS::String>::operator()(const CSS::String& value, const BuilderSta
     return { .value = value.value };
 }
 
-Ref<CSSValue> CSSValueCreation<String>::operator()(CSSValuePool& pool, const RenderStyle& style, const String& value)
+Ref<CSSValue> CSSValueCreation<String>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const String& value)
 {
     return CSS::createCSSValue(pool, toCSS(value, style));
 }
@@ -64,14 +64,14 @@ auto CSSValueConversion<String>::operator()(BuilderState& state, const CSSValue&
     return toStyle(stringValue->string(), state);
 }
 
-Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<String>::operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const String& value)
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<String>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const String& value)
 {
     return CSS::createDeprecatedCSSOMValue(pool, owner, toCSS(value, style));
 }
 
 // MARK: - Serialization
 
-void Serialize<String>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const String& value)
+void Serialize<String>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const String& value)
 {
     CSS::serializationForCSS(builder, context, toCSS(value, style));
 }

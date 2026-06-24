@@ -37,6 +37,7 @@
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
+#include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/VideoCodecType.h>
 #include <WebCore/VideoEncoder.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
@@ -101,6 +102,7 @@ public:
         VideoDecoderIdentifier identifier;
         WebCore::VideoCodecType type;
         String codec;
+        std::optional<WebCore::PlatformVideoColorSpace> colorSpaceOverride;
         void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
         DecoderCallback decoderCallback;
         Lock decodedImageCallbackLock;
@@ -110,12 +112,12 @@ public:
     };
 
     Decoder* createDecoder(WebCore::VideoCodecType);
-    void createDecoderAndWaitUntilReady(WebCore::VideoCodecType, const String& codec, Function<void(Decoder*)>&&);
+    void createDecoderAndWaitUntilReady(WebCore::VideoCodecType, const String& codec, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, Function<void(Decoder*)>&&);
 
     int32_t releaseDecoder(Decoder&);
     Ref<GenericPromise> flushDecoder(Decoder&);
     void setDecoderFormatDescription(Decoder&, std::span<const uint8_t>, uint16_t width, uint16_t height);
-    int32_t decodeWebRTCFrame(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height);
+    int32_t decodeWebRTCFrame(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height, std::optional<WebCore::PlatformVideoColorSpace>&& = std::nullopt);
     Ref<FramePromise> decodeFrame(Decoder&, int64_t timeStamp, std::span<const uint8_t>);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
@@ -137,13 +139,25 @@ public:
     public:
         explicit Encoder(VideoEncoderIdentifier identifier)
             : identifier(identifier)
-        { }
+        {
+        }
+
+        struct PendingFrame {
+            PendingFrame(std::unique_ptr<webrtc::VideoFrame>&&, bool shouldEncodeAsKeyFrame);
+            PendingFrame(PendingFrame&&);
+            PendingFrame& operator=(PendingFrame&&);
+            ~PendingFrame();
+
+            std::unique_ptr<webrtc::VideoFrame> videoFrame;
+            bool shouldEncodeAsKeyFrame { false };
+        };
 
         VideoEncoderIdentifier identifier;
         WebCore::VideoCodecType type;
         String codec;
         Vector<std::pair<String, String>> parameters;
         std::optional<EncoderInitializationData> initializationData;
+        Vector<PendingFrame> pendingFrames;
         void* encodedImageCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock) { nullptr };
         EncoderCallback encoderCallback;
 #if ENABLE(WEB_CODECS)
@@ -152,7 +166,6 @@ public:
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
         SharedVideoFrameWriter sharedVideoFrameWriter;
-        bool hasSentInitialEncodeRates { false };
         bool useAnnexB { true };
         bool isRealtime { true };
         WebCore::VideoEncoderScalabilityMode scalabilityMode { WebCore::VideoEncoderScalabilityMode::L1T1 };
@@ -172,7 +185,7 @@ public:
 #if ENABLE(WEB_CODECS)
     void registerEncoderDescriptionCallback(Encoder&, DescriptionCallback&&);
 #endif
-    Ref<GenericPromise> setEncodeRates(Encoder&, uint32_t bitRateInKbps, uint32_t frameRate);
+    RefPtr<GenericPromise> setEncodeRates(Encoder&, uint32_t bitRateInKbps, uint32_t frameRate);
 
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType);
 
@@ -219,17 +232,19 @@ private:
     void clearConnection();
 
     IPC::Connection* NODELETE encoderConnection(Encoder&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
-    void setEncoderConnection(Encoder&, RefPtr<IPC::Connection>&&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
+    void setEncoderConnection(Encoder&, Ref<IPC::Connection>&&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
+    std::optional<EncoderInitializationData>& encoderInitializationData(Encoder&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
+    void setEncoderInitializationData(Encoder&, EncoderInitializationData&&) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
     IPC::Connection* NODELETE decoderConnection(Decoder&) WTF_REQUIRES_LOCK(m_connectionLock);
     void setDecoderConnection(Decoder&, RefPtr<IPC::Connection>&&) WTF_REQUIRES_LOCK(m_connectionLock);
 
     template<typename Buffer> bool copySharedVideoFrame(LibWebRTCCodecs::Encoder&, IPC::Connection&, Buffer&&);
 
-    Decoder* createDecoderInternal(WebCore::VideoCodecType, const String& codec, Function<void(Decoder(*))>&&);
+    Decoder* createDecoderInternal(WebCore::VideoCodecType, const String& codec, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, Function<void(Decoder(*))>&&);
     Encoder* createEncoderInternal(WebCore::VideoCodecType, const String& codec, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, Function<void(Encoder*)>&&);
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration);
+    template<typename Frame> RefPtr<FramePromise> encodeFrameInternalWithLock(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
 
-    void initializeEncoderInternal(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     RefPtr<FramePromise> decodeFrameInternal(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height);
     Ref<FramePromise> sendFrameToDecode(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height);
 

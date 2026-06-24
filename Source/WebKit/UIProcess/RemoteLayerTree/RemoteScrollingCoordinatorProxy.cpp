@@ -408,12 +408,12 @@ WebCore::FloatBoxExtent RemoteScrollingCoordinatorProxy::obscuredContentInsets()
     return m_scrollingTree->mainFrameObscuredContentInsets();
 }
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
+#if HAVE(NSREFRESHCONTROLLER)
 
-void RemoteScrollingCoordinatorProxy::setBannerViewHeight(float offset)
+void RemoteScrollingCoordinatorProxy::setTopScrollStretchForRefreshController(float offset)
 {
-    auto previousOffset = m_scrollingTree->bannerViewHeight();
-    m_scrollingTree->setBannerViewHeight(offset);
+    auto previousOffset = m_scrollingTree->topScrollStretchForRefreshController();
+    m_scrollingTree->setTopScrollStretchForRefreshController(offset);
 
     if (offset < previousOffset)
         m_scrollingTree->triggerMainFrameRubberBandSnapBack();
@@ -421,14 +421,14 @@ void RemoteScrollingCoordinatorProxy::setBannerViewHeight(float offset)
         m_scrollingTree->mainFrameRubberBandTargetOffsetDidChange();
 }
 
-void RemoteScrollingCoordinatorProxy::setBannerViewMaximumHeight(float offset)
+void RemoteScrollingCoordinatorProxy::setRefreshControllerSnappingThreshold(float offset)
 {
-    m_scrollingTree->setBannerViewMaximumHeight(offset);
+    m_scrollingTree->setRefreshControllerSnappingThreshold(offset);
 }
 
-void RemoteScrollingCoordinatorProxy::setHasBannerViewOverlay(bool hasBannerView)
+void RemoteScrollingCoordinatorProxy::setHasRefreshController(bool hasBannerView)
 {
-    m_scrollingTree->setHasBannerViewOverlay(hasBannerView);
+    m_scrollingTree->setHasRefreshController(hasBannerView);
 }
 
 #endif

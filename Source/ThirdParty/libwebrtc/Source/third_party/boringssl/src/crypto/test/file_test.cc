@@ -97,7 +97,9 @@ FileTest::ReadResult FileTest::ReadNext() {
 
   ClearTest();
 
-  static const size_t kBufLen = 8192 * 4;
+  // We need a buffer that is large enough to hold SLH-DSA-SHAKE-256f
+  // test vectors.
+  static const size_t kBufLen = 8192 * 14;
   auto buf = std::make_unique<char[]>(kBufLen);
 
   bool in_instruction_block = false;

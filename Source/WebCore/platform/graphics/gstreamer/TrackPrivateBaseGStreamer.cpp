@@ -136,19 +136,19 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlay
     m_data->installUpdateConfigurationHandlers();
 }
 
-TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, GStreamerTrackType type, TrackPrivateBase* owner, unsigned index, GstStream* stream)
+TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, GStreamerTrackType type, TrackPrivateBase* owner, unsigned index, GRefPtr<GstStream>&& stream)
     : m_data(TrackDataHolder::create(*this))
 {
     ASSERT(stream);
 
     m_data->m_player = WTF::move(player);
     m_data->m_index = index;
-    m_data->m_gstStreamId = byteCast<Latin1Character>(unsafeSpan(gst_stream_get_stream_id(stream)));
+    m_data->m_gstStreamId = byteCast<Latin1Character>(unsafeSpan(gst_stream_get_stream_id(stream.get())));
     m_data->m_id = parseStreamId(m_data->m_gstStreamId).value_or(index);
     m_data->m_type = type;
     m_data->m_owner = owner;
 
-    m_data->setStream(GRefPtr(stream));
+    m_data->setStream(WTF::move(stream));
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
     m_data->tagsChanged();
@@ -170,8 +170,7 @@ void TrackDataHolder::setPad(GRefPtr<GstPad>&& pad)
 {
     ASSERT(isMainThread());
 
-    if (m_bestUpstreamPad && m_eventProbe)
-        gst_pad_remove_probe(m_bestUpstreamPad.get(), m_eventProbe);
+    m_eventProbeClient = nullptr;
 
     g_clear_signal_handler(&m_padTagsNotifyHandlerId, m_pad.get());
     g_clear_signal_handler(&m_padCapsNotifyHandlerId, m_pad.get());
@@ -185,11 +184,7 @@ void TrackDataHolder::setPad(GRefPtr<GstPad>&& pad)
     if (!m_bestUpstreamPad)
         return;
 
-    m_eventProbe = gst_pad_add_probe(m_bestUpstreamPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
-        RefPtr holder = reinterpret_cast<ThreadSafeWeakPtr<TrackDataHolder>*>(userData)->get();
-        if (!holder)
-            return GST_PAD_PROBE_REMOVE;
-
+    m_eventProbeClient = PadProbeHandle<TrackDataHolder>::create(*this, GRefPtr(m_bestUpstreamPad), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, [](const auto& holder, const auto&, auto info) -> GstPadProbeReturn {
         auto event = gst_pad_probe_info_get_event(info);
         switch (GST_EVENT_TYPE(event)) {
         case GST_EVENT_TAG:
@@ -217,9 +212,7 @@ void TrackDataHolder::setPad(GRefPtr<GstPad>&& pad)
             break;
         }
         return GST_PAD_PROBE_OK;
-    }), new ThreadSafeWeakPtr<TrackDataHolder> { this }, reinterpret_cast<GDestroyNotify>(+[](gpointer data) {
-        delete static_cast<ThreadSafeWeakPtr<TrackDataHolder>*>(data);
-    }));
+    });
 }
 
 void TrackDataHolder::setStream(GRefPtr<GstStream>&& stream)
@@ -311,9 +304,8 @@ void TrackDataHolder::disconnect()
 
     m_notifier->cancelPendingNotifications();
 
-    if (m_bestUpstreamPad && m_eventProbe) {
-        gst_pad_remove_probe(m_bestUpstreamPad.get(), m_eventProbe);
-        m_eventProbe = 0;
+    if (m_bestUpstreamPad && m_eventProbeClient) {
+        m_eventProbeClient = nullptr;
         m_bestUpstreamPad.clear();
     }
 

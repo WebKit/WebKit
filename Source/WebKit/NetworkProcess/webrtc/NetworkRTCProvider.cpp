@@ -113,13 +113,23 @@ void NetworkRTCProvider::close()
     });
 }
 
+static bool isEmptyRTCAddress(const webrtc::SocketAddress& address)
+{
+    return address.ipaddr().IsNil() && address.hostname().empty();
+}
+
 void NetworkRTCProvider::sendToSocket(LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, RTCNetwork::SocketAddress&& address, RTCPacketOptions&& options)
 {
     assertIsRTCNetworkThread();
     auto iterator = m_sockets.find(identifier);
     if (iterator == m_sockets.end())
         return;
-    iterator->second->sendTo(data, address.rtcAddress(), options.options);
+    auto rtcAddress = address.rtcAddress();
+    if (isEmptyRTCAddress(rtcAddress)) {
+        RELEASE_LOG_ERROR(WebRTC, "NetworkRTCProvider::sendToSocket invalid address");
+        return;
+    }
+    iterator->second->sendTo(data, rtcAddress, options.options);
 }
 
 void NetworkRTCProvider::closeSocket(LibWebRTCSocketIdentifier identifier)
@@ -266,7 +276,14 @@ void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, c
         return;
     }
 
-    auto socket = makeUnique<NetworkRTCUDPSocketCocoa>(identifier, *this, address.rtcAddress(), m_ipcConnection.copyRef(), String(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), flags, WTF::move(domain));
+    auto rtcAddress = address.rtcAddress();
+    if (isEmptyRTCAddress(rtcAddress)) {
+        RELEASE_LOG_ERROR(WebRTC, "NetworkRTCProvider::createUDPSocket invalid local address");
+        signalSocketIsClosed(identifier);
+        return;
+    }
+
+    auto socket = makeUnique<NetworkRTCUDPSocketCocoa>(identifier, *this, rtcAddress, m_ipcConnection.copyRef(), String(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), flags, WTF::move(domain));
     addSocket(identifier, WTF::move(socket));
 }
 
@@ -279,7 +296,14 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
         return;
     }
 
-    auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress.rtcAddress(), options, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), flags, domain, m_ipcConnection.copyRef());
+    auto rtcRemoteAddress = remoteAddress.rtcAddress();
+    if (isEmptyRTCAddress(rtcRemoteAddress)) {
+        RELEASE_LOG_ERROR(WebRTC, "NetworkRTCProvider::createClientTCPSocket invalid remote address");
+        signalSocketIsClosed(identifier);
+        return;
+    }
+
+    auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, rtcRemoteAddress, options, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), flags, domain, m_ipcConnection.copyRef());
     if (socket)
         addSocket(identifier, WTF::move(socket));
     else

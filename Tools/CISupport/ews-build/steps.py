@@ -46,6 +46,7 @@ import sys
 import time
 
 from Shared.steps import ShellMixin, SetBuildSummary, SetO3OptimizationLevel, WaitForDuration, InstallSwiftToolchain, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, SWIFT_DIR, USER_TOOLCHAINS_DIR
+from Shared import generate_s3_url
 
 if sys.version_info < (3, 9):  # noqa: UP036
     print('ERROR: Minimum supported Python version for this code is Python 3.9')
@@ -2668,7 +2669,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     flunkOnFailure = False
     haltOnFailure = False
     EMBEDDED_CHECKS = ['ios', 'ios-safer-cpp', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'vision', 'vision-sim', 'vision-wk2', 'tv', 'tv-sim', 'watch', 'watch-sim']
-    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'api-mac-debug', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'mac-safer-cpp', 'jsc-x86-64', 'jsc-debug-arm64']
+    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'api-mac-debug', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'mac-safer-cpp', 'jsc-x86-64', 'jsc-debug-arm64']
     LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'gtk3-libwebrtc', 'wpe-wk2', 'api-wpe']
     WINDOWS_CHECKS = ['win']
     EWS_WEBKIT_FAILED = 0
@@ -2980,9 +2981,10 @@ class Trigger(trigger.Trigger):
 
         properties_to_pass = {prop: properties.Property(prop) for prop in property_names}
         properties_to_pass['retry_count'] = properties.Property('retry_count', default=0)
-        properties_to_pass['os_version_builder'] = properties.Property('os_version', default='')
-        properties_to_pass['xcode_version_builder'] = properties.Property('xcode_version', default='')
-        properties_to_pass['deployment_target_builder'] = properties.Property('deployment_target')
+        if not self.triggers:
+            properties_to_pass['os_version_builder'] = properties.Property('os_version', default='')
+            properties_to_pass['xcode_version_builder'] = properties.Property('xcode_version', default='')
+            properties_to_pass['deployment_target_builder'] = properties.Property('deployment_target')
         properties_to_pass['parent_buildnumber'] = properties.Property('buildnumber')
         properties_to_pass['parent_builderid'] = properties.Property('builderid')
         properties_to_pass['rebuild_without_change_on_builder'] = properties.Property('rebuild_without_change_on_builder', default=False)
@@ -3894,8 +3896,13 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
                 RevertAppliedChanges(),
                 CleanWorkingDirectory(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
-                SetO3OptimizationLevel(),
-                CompileJSCWithoutChange(),
+                SetO3OptimizationLevel()
+            ]
+            if self.getProperty('rebuild_without_change_on_builder', False):
+                steps_to_add.extend([DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()])
+            else:
+                steps_to_add.extend([CompileJSCWithoutChange()])
+            steps_to_add += [
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 KillOldProcesses(),
                 RunJSCTestsWithoutChange(),
@@ -4198,6 +4205,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         self.incorrectLayoutLines = []
         self.failing_tests_filtered = []
         self.preexisting_failures_in_results_db = []
+        self.layout_test_driver = None
 
     def doStepIf(self, step):
         return not ((self.getProperty('buildername', '').lower() in ['commit-queue', 'merge-queue']) and
@@ -4207,10 +4215,9 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         platform = self.getProperty('platform')
         self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
 
-        driver = self.getProperty('layout-test-driver', None)
-        if driver == 'DumpRenderTree':
+        if self.layout_test_driver == 'DumpRenderTree':
             self.command += ['-1']
-        elif driver == 'WebKitTestRunner':
+        elif self.layout_test_driver == 'WebKitTestRunner':
             self.command += ['-2']
 
         self.command += ['--results-directory', self.resultDirectory]
@@ -4332,10 +4339,9 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         if style and style in ['debug', 'release']:
             configuration['style'] = style
 
-        driver = self.getProperty('layout-test-driver', None)
-        if driver == 'DumpRenderTree':
+        if self.layout_test_driver == 'DumpRenderTree':
             configuration['flavor'] = 'wk1'
-        elif driver == 'WebKitTestRunner':
+        elif self.layout_test_driver == 'WebKitTestRunner':
             configuration['flavor'] = 'wk2'
 
         yield self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
@@ -4482,9 +4488,9 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
 
     def setLayoutTestCommand(self):
         if self.layout_test_class == RunWebKit1Tests:
-            self.setProperty('layout-test-driver', 'DumpRenderTree')
+            self.layout_test_driver = 'DumpRenderTree'
         else:
-            self.setProperty('layout-test-driver', 'WebKitTestRunner')
+            self.layout_test_driver = 'WebKitTestRunner'
         RunWebKitTests.setLayoutTestCommand(self)
 
         self.command += ['--iterations', self.num_iterations]
@@ -4547,9 +4553,9 @@ class RunWebKitTestsInSiteIsolationMode(RunWebKitTestsInStressMode):
 
     def setLayoutTestCommand(self):
         if self.layout_test_class == RunWebKit1Tests:
-            self.setProperty('layout-test-driver', 'DumpRenderTree')
+            self.layout_test_driver = 'DumpRenderTree'
         else:
-            self.setProperty('layout-test-driver', 'WebKitTestRunner')
+            self.layout_test_driver = 'WebKitTestRunner'
         RunWebKitTests.setLayoutTestCommand(self)
 
         self.command += ['--site-isolation']
@@ -5142,7 +5148,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
 class RunWebKit1Tests(RunWebKitTests):
     @defer.inlineCallbacks
     def run(self):
-        self.setProperty('layout-test-driver', 'DumpRenderTree')
+        self.layout_test_driver = 'DumpRenderTree'
         rc = yield RunWebKitTests.run(self)
         defer.returnValue(rc)
 
@@ -5654,52 +5660,40 @@ class UploadFileToS3(shell.ShellCommand, AddToLogMixin):
         return super().getResultSummary()
 
 
-class GenerateS3URL(master.MasterShellCommand):
+class GenerateS3URL(buildstep.BuildStep, AddToLogMixin):
     name = 'generate-s3-url'
     descriptionDone = ['Generated S3 URL']
     haltOnFailure = False
     flunkOnFailure = False
 
     def __init__(self, identifier, extension='zip', additions=None, content_type=None, **kwargs):
+        super().__init__(**kwargs)
         self.identifier = identifier
         self.extension = extension
         self.additions = additions
-        kwargs['command'] = [
-            'python3', '../Shared/generate-s3-url',
-            '--change-id', WithProperties('%(change_id)s'),
-            '--identifier', self.identifier,
-        ]
-        if extension:
-            kwargs['command'] += ['--extension', extension]
-        if additions:
-            kwargs['command'] += ['--additions', additions]
-        if content_type:
-            kwargs['command'] += ['--content-type', content_type]
-        super().__init__(logEnviron=False, **kwargs)
+        self.content_type = content_type
 
     @defer.inlineCallbacks
     def run(self):
-        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-
-        rc = yield super().run()
-
         self.build.s3url = ''
         if not getattr(self.build, 's3_archives', None):
             self.build.s3_archives = []
 
-        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
-        match = re.search(r'S3 URL: (?P<url>[^\s]+)', log_text)
-        # Sample log: S3 URL: https://s3-us-west-2.amazonaws.com/ews-archives.webkit.org/ios-simulator-12-x86_64-release/123456.zip
+        change_id = self.getProperty('change_id')
+        try:
+            url = generate_s3_url.generateS3URL(
+                S3_BUCKET, self.identifier, change_id,
+                additions=self.additions,
+                extension=self.extension,
+                content_type=self.content_type,
+            )
+        except Exception as e:
+            yield self._addToLog('stdio', f'Failed to generate S3 URL: {type(e).__name__}\n')
+            return defer.returnValue(FAILURE)
 
-        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
-        if match:
-            self.build.s3url = match.group('url')
-            self.build.s3_archives.append(S3URL + f"{S3_BUCKET}/{self.identifier}/{self.getProperty('change_id')}{f'-{self.additions}' if self.additions else ''}.{self.extension}")
-            defer.returnValue(rc)
-        else:
-            print(f'build: {build_url}, logs for GenerateS3URL:\n{log_text}')
-            defer.returnValue(FAILURE)
+        self.build.s3url = url
+        self.build.s3_archives.append(S3URL + f"{S3_BUCKET}/{self.identifier}/{change_id}{f'-{self.additions}' if self.additions else ''}.{self.extension}")
+        return defer.returnValue(SUCCESS)
 
     def hideStepIf(self, results, step):
         return results == SUCCESS
@@ -7000,8 +6994,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
 class DetermineLandedIdentifier(shell.ShellCommand):
     name = 'determine-landed-identifier'
     descriptionDone = ['Determined landed identifier']
-    command = ['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]
-    CANONICAL_LINK_RE = re.compile(r'\ACanonical link: https://commits\.webkit\.org/(?P<identifier>\d+.?\d*@\S+)\Z')
+    command = ['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log -1 --format=%B | sed 's/^Canonical link:/Canonical-link:/' | git -c trailer.Canonical-link.key=Canonical-link -c trailer.Identifier.key=Identifier -c trailer.git-svn-id.key=git-svn-id interpret-trailers --parse --no-divider | grep 'Canonical-link: https://commits\\.webkit\\.org/'"]
+    CANONICAL_LINK_RE = re.compile(r'\ACanonical-link: https://commits\.webkit\.org/(?P<identifier>\d+.?\d*@\S+)\Z')
     haltOnFailure = False
 
     def __init__(self, **kwargs):
@@ -7027,7 +7021,7 @@ class DetermineLandedIdentifier(shell.ShellCommand):
         for line in loglines:
             if not line:
                 continue
-            match = self.CANONICAL_LINK_RE.match(line[4:])
+            match = self.CANONICAL_LINK_RE.match(line)
             if match:
                 self.identifier = match.group('identifier')
                 break
@@ -7255,6 +7249,119 @@ class MapBranchAlias(shell.ShellCommand):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+
+class ValidateChangeContent(shell.ShellCommand, AddToLogMixin):
+    name = 'validate-change-content'
+    haltOnFailure = True
+    flunkOnFailure = True
+    MAX_FILES_IN_SUMMARY = 10
+
+    HUNK_HEADER_RE = re.compile(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@')
+    CONFLICT_MARKER_PREFIXES = ('<<<<<<<', '|||||||', '>>>>>>>')
+
+    @staticmethod
+    def is_conflict_marker(line: str) -> bool:
+        return any(line.startswith(f'{marker} ') for marker in ValidateChangeContent.CONFLICT_MARKER_PREFIXES)
+
+    @staticmethod
+    def conflict_markers_in_diff(diff_text: str) -> list[tuple[str, int]]:
+        """Return (file, line_number) for git conflict markers added by a unified diff.
+
+        Only added lines ('+') are considered, and a marker must begin at column 0
+        so quoted or indented occurrences in fixtures and docs are not flagged. The
+        bare '=======' separator is intentionally ignored to avoid colliding with
+        Markdown/RST headers.
+        """
+        locations = []
+        current_file = None
+        new_line_number = 0
+        for line in diff_text.splitlines():
+            if line.startswith('+++ b/'):
+                current_file = line[len('+++ b/'):]
+                continue
+            if line.startswith('@@'):
+                match = ValidateChangeContent.HUNK_HEADER_RE.match(line)
+                new_line_number = int(match.group(1)) if match else 0
+                continue
+            if line.startswith('+'):
+                if line.startswith('+++'):
+                    continue
+                if current_file and ValidateChangeContent.is_conflict_marker(line[1:]):
+                    locations.append((current_file, new_line_number))
+                new_line_number += 1
+            elif line.startswith(' '):
+                new_line_number += 1
+        return locations
+
+    def __init__(self, block_pr_on_failure: bool = False, **kwargs) -> None:
+        self.summary = ''
+        self.block_pr_on_failure = block_pr_on_failure
+        super().__init__(logEnviron=False, **kwargs)
+        if block_pr_on_failure:
+            self.haltOnFailure = False
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number', False)
+
+    def hideStepIf(self, results, step):
+        return results == SUCCESS or not self.doStepIf(step)
+
+    @defer.inlineCallbacks
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        self.command = ['git', '-c', 'color.ui=false', 'diff', f'remotes/{remote}/{base_ref}...HEAD']
+
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+
+        if rc != SUCCESS:
+            self.summary = 'Failed to check for conflict markers'
+            return defer.returnValue(SKIPPED)
+
+        locations = self.conflict_markers_in_diff(self.log_observer.getStdout())
+        if not locations:
+            self.summary = 'No conflict markers found'
+            return defer.returnValue(SUCCESS)
+
+        files = []
+        for path, _ in locations:
+            if path not in files:
+                files.append(path)
+
+        yield self._addToLog('stdio', '\nConflict markers found at:\n{}\n'.format(
+            '\n'.join(f'{path}:{line}' for path, line in locations)))
+        self.summary = f'Found git conflict markers in {self.format_file_summary(files)}'
+
+        if self.block_pr_on_failure:
+            pr_number = self.getProperty('github.number')
+            file_list = '\n'.join(f'* `{path}`' for path in files)
+            comment = 'This pull request still contains unresolved git conflict markers in the following files ' \
+                      f'and cannot be landed:\n{file_list}\n\nResolve the conflicts, then re-apply the merge-queue label.'
+            self.setProperty('comment_text', comment)
+            self.setProperty('build_finish_summary', self.summary)
+            self.build.addStepsAfterCurrentStep([
+                LeaveComment(),
+                BlockPullRequest()
+            ])
+
+        return defer.returnValue(FAILURE)
+
+    def format_file_summary(self, files) -> str:
+        shown = files[:self.MAX_FILES_IN_SUMMARY]
+        formatted = ', '.join(os.path.basename(path) for path in shown)
+        remaining = len(files) - len(shown)
+        if remaining > 0:
+            formatted = f'{formatted} (and {remaining} more)'
+        return formatted
+
+    def getResultSummary(self):
+        if self.summary:
+            return {'step': self.summary}
+        return super().getResultSummary()
 
 
 class ValidateSquashed(shell.ShellCommand, AddToLogMixin):

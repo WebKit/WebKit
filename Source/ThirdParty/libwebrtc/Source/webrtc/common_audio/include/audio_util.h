@@ -106,7 +106,7 @@ inline float FloatS16ToDbfs(float v) {
 // Copy audio from `src` channels to `dest` channels unless `src` and `dest`
 // point to the same address. `src` and `dest` must have the same number of
 // channels, and there must be sufficient space allocated in `dest`.
-// TODO: b/335805780 - Accept ArrayView.
+// TODO: b/335805780 - Accept std::span.
 template <typename T>
 void CopyAudioIfNeeded(const T* const* src,
                        int num_frames,

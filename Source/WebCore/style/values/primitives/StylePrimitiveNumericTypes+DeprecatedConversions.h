@@ -55,9 +55,53 @@ template<CSS::NumericRaw RawType> struct DeprecatedToStyle<CSS::UnevaluatedCalc<
     using From = CSS::UnevaluatedCalc<RawType>;
     using To = typename ToStyleMapping<typename RawToCSSMapping<RawType>::type>::type;
 
-    template<typename... Rest> auto operator()(const From& value, Rest&&... rest) -> To
+    template<typename... Rest> auto operator()(const From& value, Rest&&...) -> To
     {
-        return { Style::canonicalize(RawType { To::unit, value.evaluateDeprecated(From::category, rest...) }, NoConversionDataRequiredToken { }) };
+        return { Style::canonicalize(RawType { To::unit, value.evaluateDeprecated() }, NoConversionDataRequiredToken { }) };
+    }
+};
+
+template<auto R, typename V> struct DeprecatedToStyle<CSS::UnevaluatedCalc<CSS::LengthPercentageRaw<R, V>>> {
+    using From = CSS::UnevaluatedCalc<CSS::LengthPercentageRaw<R, V>>;
+    using To = LengthPercentage<R, V>;
+
+    template<typename... Rest> auto operator()(const From& value, Rest&&...) -> To
+    {
+        // NOTE: Simplification is needed here for the case of the user using the Typed CSSOM
+        // to explicitly specify a CSSMath* value for a specified value.
+
+        auto simplifiedCalc = value.simplify();
+
+        // FIXME: This ASSERT and the following extra cases for Category::Length and Category::Percentage
+        // should go away once the typed CSSOM learns to set the correct category when creating internal
+        // representations of CSSMath* types.
+
+        ASSERT(simplifiedCalc.runtimeCategory() == CSS::Category::LengthPercentage || simplifiedCalc.runtimeCategory() == CSS::Category::Length || simplifiedCalc.runtimeCategory() == CSS::Category::Percentage);
+
+        if (simplifiedCalc.runtimeCategory() == CSS::Category::Length) {
+            auto doubleValue = simplifiedCalc.evaluateDeprecated();
+            return Style::canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, doubleValue }, NoConversionDataRequiredToken { });
+        }
+
+        if (simplifiedCalc.runtimeCategory() == CSS::Category::Percentage) {
+            if (simplifiedCalc.rootNodeIsPercentage()) {
+                auto doubleValue = simplifiedCalc.evaluateDeprecated();
+                return canonicalize(CSS::PercentageRaw<R, V> { doubleValue }, NoConversionDataRequiredToken { });
+            }
+            return typename To::Calc(simplifiedCalc.createCalculationValue(NoConversionDataRequiredToken { }));
+        }
+
+        auto simplifiedPrimitiveType = simplifiedCalc.primitiveType();
+
+        if (simplifiedPrimitiveType == CSSUnitType::CSS_PX) {
+            auto doubleValue = simplifiedCalc.evaluateDeprecated();
+            return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, doubleValue }, NoConversionDataRequiredToken { });
+        }
+        if (simplifiedPrimitiveType == CSSUnitType::CSS_PERCENTAGE) {
+            auto doubleValue = simplifiedCalc.evaluateDeprecated();
+            return canonicalize(CSS::PercentageRaw<R, V> { doubleValue }, NoConversionDataRequiredToken { });
+        }
+        return typename To::Calc(simplifiedCalc.createCalculationValue(NoConversionDataRequiredToken { }));
     }
 };
 

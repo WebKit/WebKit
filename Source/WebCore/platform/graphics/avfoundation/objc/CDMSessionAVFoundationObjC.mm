@@ -93,7 +93,7 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
         return nullptr;
     }
 
-    RetainPtr certificateData = toNSData(certificate->span());
+    RetainPtr certificateData = WTF::toNSData(certificate->span());
     RetainPtr assetString = keyID.createNSString();
     RetainPtr<NSData> assetID = [assetString dataUsingEncoding:NSUTF8StringEncoding];
     NSError* nsError = nullptr;
@@ -123,7 +123,7 @@ void CDMSessionAVFoundationObjC::releaseKeys()
 
 bool CDMSessionAVFoundationObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
 {
-    RetainPtr keyData = toNSData(key->span());
+    RetainPtr keyData = WTF::toNSData(key->span());
     [retainPtr([m_request dataRequest]) respondWithData:keyData.get()];
     [m_request finishLoading];
     errorCode = MediaPlayer::NoError;

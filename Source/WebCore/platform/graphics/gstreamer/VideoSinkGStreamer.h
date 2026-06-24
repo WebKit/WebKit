@@ -45,7 +45,7 @@ struct _WebKitVideoSinkClass {
     GstVideoSinkClass parentClass;
 };
 
-GType webkit_video_sink_get_type() G_GNUC_CONST;
+GType webkit_video_sink_get_type();
 
 GstElement* webkitVideoSinkNew();
 

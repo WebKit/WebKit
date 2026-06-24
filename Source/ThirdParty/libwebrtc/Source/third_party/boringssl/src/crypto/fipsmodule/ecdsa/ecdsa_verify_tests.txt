@@ -2450,6 +2450,10 @@ S = 01e1099fb389db498ab4cf23b4f06a74b9326878ae3c76ea13832e50702b30fe8303093a59cc
 #
 # "x" in the comments refer to the x-coordinate of the computed point, not that
 # of the public key.
+#
+# TODO(davidben): As of https://github.com/C2SP/wycheproof/pull/206, these tests
+# are upstreamed to Wycheproof. If we update Wycheproof past this point, we may
+# consider dropping these.
 
 # r = 3, x = 3 is valid.
 Curve = P-224
@@ -2723,54 +2727,66 @@ R = 00000000000000000000000000000000000000000000000000000000000000000005ae79787c
 S = 01fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa51868783bf2f966b7fcc0148f709a5d03bb5c9b8899c47aebb6fb71e91386406
 Invalid =
 
-# Although we do not support secp160r1, all our built-in curves have p > n,
+# Although we do not support secp224k1, all our built-in curves have p > n,
 # while n > p is reachable from custom curve logic. Moreover, p and n have
 # different word widths on 32-bit machines. We include some test vectors to
 # cover these cases.
 #
 # When n > p, the reduction mod n never occurs, but an optimized implementation,
 # working mod p, may incorrectly accept, e.g., r = p+4 instead of r = 4.
+#
+# TODO(davidben): As of https://github.com/C2SP/wycheproof/pull/206, these tests
+# are upstreamed to Wycheproof. If we update Wycheproof past this point, and
+# also import secp224k1 tests using custom groups, consider dropping these.
 
-# r = 4, x = 4 is valid.
-Curve = secp160r1
-X = 39891bd61138e775cd012518ff00f59ae01c4733
-Y = 25026b77b1c44affb1592dcf711b4290e9404c9f
+# r = 2, x = 2 is valid.
+Curve = secp224k1
+X = a911e33eff1e86c66a45ab4f3661cb2d893fb2a5e54da79fd5ccf2f7
+Y = 5dca2bf4c6f8e56587fe7275f7389efba79ff9b579f169ea7b523a0c
 Digest = 09ca7e4eaa6e8ae9c7d261167129184883644d07dfba7cbfbc4c8a2e08360d5b
-R = 000000000000000000000000000000000000000004
-S = 0100000000000000000001f4c8f927aed3ca752254
+R = 0000000000000000000000000000000000000000000000000000000002
+S = 010000000000000000000000000001dce8d2ec6184caf0a971769fb1f4
 
-# r = 4 + n, x = 4 is invalid. r must already be reduced.
-Curve = secp160r1
-X = 39891bd61138e775cd012518ff00f59ae01c4733
-Y = 25026b77b1c44affb1592dcf711b4290e9404c9f
+# r = 3, x = 2 is invalid.
+Curve = secp224k1
+X = 42e5f313c92730facbc6e2c2e86729bedb9e300d921c882f9e8df191
+Y = c00ce253829a8e695af216471aaa5622e79d363fd96971fb152c1fbb
 Digest = 09ca7e4eaa6e8ae9c7d261167129184883644d07dfba7cbfbc4c8a2e08360d5b
-R = 0100000000000000000001f4c8f927aed3ca75225b
-S = 0100000000000000000001f4c8f927aed3ca752254
+R = 0000000000000000000000000000000000000000000000000000000003
+S = 010000000000000000000000000001dce8d2ec6184caf0a971769fb1f4
 Invalid =
 
-# r = p-3, x = p-3 are the largest valid values of x and r.
-Curve = secp160r1
-X = d88d902a0d8d942333c7b846a933d4794fcb5807
-Y = d24c4f405689b86cd5c61fe104e6365d254d5222
+# r = 2 + n, x = 2 is invalid; r was not reduced mod n.
+Curve = secp224k1
+X = a911e33eff1e86c66a45ab4f3661cb2d893fb2a5e54da79fd5ccf2f7
+Y = 5dca2bf4c6f8e56587fe7275f7389efba79ff9b579f169ea7b523a0c
 Digest = 09ca7e4eaa6e8ae9c7d261167129184883644d07dfba7cbfbc4c8a2e08360d5b
-R = 00ffffffffffffffffffffffffffffffff7ffffffc
-S = 0100000000000000000001f4c8f927aed3ca752254
-
-# r = p-4, x = p-3 is incorrect.
-Curve = secp160r1
-X = d88d902a0d8d942333c7b846a933d4794fcb5807
-Y = d24c4f405689b86cd5c61fe104e6365d254d5222
-Digest = 09ca7e4eaa6e8ae9c7d261167129184883644d07dfba7cbfbc4c8a2e08360d5b
-R = 00ffffffffffffffffffffffffffffffff7ffffffb
-S = 0100000000000000000001f4c8f927aed3ca752254
+R = 010000000000000000000000000001dce8d2ec6184caf0a971769fb1f9
+S = 010000000000000000000000000001dce8d2ec6184caf0a971769fb1f4
 Invalid =
 
-# r = p+4, x = 4 is incorrect. They should be compared modulo the order, not p,
-# so r >= p is never valid.
-Curve = secp160r1
-X = d8add22064027856c162243ab09ea96642975297
-Y = 8822a506712385ab3ebe5c61737c3bbb722b06b9
+# r = p - 1, x = p - 1 is the largest valid r and x.
+Curve = secp224k1
+X = 7a777c555eec4f128c423e6d8f0d640493a4be26617daad0a31ca348
+Y = 7054a4057f376690665ea29400e5f765105391f62aab798535e9b9dd
 Digest = 09ca7e4eaa6e8ae9c7d261167129184883644d07dfba7cbfbc4c8a2e08360d5b
-R = 00ffffffffffffffffffffffffffffffff80000003
-S = 0100000000000000000001f4c8f927aed3ca752254
+R = 00fffffffffffffffffffffffffffffffffffffffffffffffeffffe56c
+S = 010000000000000000000000000001dce8d2ec6184caf0a971769fb1f4
+
+# r = p - 2, x = p - 1 is invalid.
+Curve = secp224k1
+X = fd98a3a0013c4e419a9eba5573603cd1c5149c9aab98090a5e2acc32
+Y = 45eeaa262f1ce4b2e1f1cc52f8e6e4cf066cce70d4a8fe46ab0b8c7d
+Digest = 09ca7e4eaa6e8ae9c7d261167129184883644d07dfba7cbfbc4c8a2e08360d5b
+R = 00fffffffffffffffffffffffffffffffffffffffffffffffeffffe56b
+S = 010000000000000000000000000001dce8d2ec6184caf0a971769fb1f4
+Invalid =
+
+# r = 2 + p, x = 2 is invalid; values only match mod p.
+Curve = secp224k1
+X = 1da460c39781eb145324dcaccccbfce952eb9b631d4b46ea6afbc9dd
+Y = 548f82751b73c2f790afcdad85784a24f53a9459b1f1da1f3bf6c7c3
+Digest = 09ca7e4eaa6e8ae9c7d261167129184883644d07dfba7cbfbc4c8a2e08360d5b
+R = 00fffffffffffffffffffffffffffffffffffffffffffffffeffffe56f
+S = 010000000000000000000000000001dce8d2ec6184caf0a971769fb1f4
 Invalid =

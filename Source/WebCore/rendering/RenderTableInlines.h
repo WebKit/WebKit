@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTable.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 

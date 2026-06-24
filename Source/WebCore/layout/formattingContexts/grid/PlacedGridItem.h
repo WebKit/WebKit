@@ -50,7 +50,7 @@ struct ComputedSizes {
 
 class PlacedGridItem {
 public:
-    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const BoxGeometry& gridItemGeometry,  const RenderStyle& gridContainerWritingMode);
+    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const BoxGeometry& gridItemGeometry,  const Style::ComputedStyle& gridContainerWritingMode);
 
     const ComputedSizes& inlineAxisSizes() const LIFETIME_BOUND { return m_inlineAxisSizes; }
     const ComputedSizes& blockAxisSizes() const LIFETIME_BOUND { return m_blockAxisSizes; }
@@ -77,7 +77,7 @@ public:
     const Style::ZoomFactor& usedZoom() const LIFETIME_BOUND { return m_usedZoom; }
 
 private:
-    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const BoxGeometry& gridItemGeometry,  const RenderStyle& gridContainerWritingMode, const RenderStyle& gridItemWritingMode);
+    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const BoxGeometry& gridItemGeometry,  const Style::ComputedStyle& gridContainerWritingMode, const Style::ComputedStyle& gridItemWritingMode);
 
     const CheckedRef<const ElementBox> m_layoutBox;
 

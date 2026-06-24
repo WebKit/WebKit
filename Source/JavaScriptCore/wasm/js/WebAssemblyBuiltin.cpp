@@ -564,15 +564,10 @@ DEFINE_BUILTIN_IMPLEMENTATION_I32(jsstring, intoCharCodeArray, JSGlobalObject* g
 
     auto data = array->span<char16_t>();
     auto dest = data.subspan(start, stringLength);
-    auto stringValue = string->value(globalObject);
+    auto view = string->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
-    if (stringValue.data.is8Bit()) {
-        for (size_t i = 0; i < stringLength; ++i)
-            dest[i] = stringValue.data[i];
-    } else {
-        auto source = stringValue.data.span<char16_t>();
-        memcpySpan(dest, source);
-    }
+    view->getCharacters(dest);
 
     return toUCPUStrictInt32(stringLength);
 }

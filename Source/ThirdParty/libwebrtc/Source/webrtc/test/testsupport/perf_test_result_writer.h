@@ -11,10 +11,10 @@
 #ifndef TEST_TESTSUPPORT_PERF_TEST_RESULT_WRITER_H_
 #define TEST_TESTSUPPORT_PERF_TEST_RESULT_WRITER_H_
 
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "test/testsupport/perf_test.h"
 
 namespace webrtc {
@@ -43,7 +43,7 @@ class PerfTestResultWriter {
   virtual void LogResultList(
       absl::string_view graph_name,
       absl::string_view trace_name,
-      ArrayView<const double> values,
+      std::span<const double> values,
       absl::string_view units,
       bool important,
       webrtc::test::ImproveDirection improve_direction) = 0;

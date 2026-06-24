@@ -1,0 +1,10 @@
+
+FAIL Dictionary with unknown match-dest is not used for fetch() API assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Dictionary registration with empty match-dest list acts as wildcard assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Dictionary registration with matching fetch destination assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Dictionary with non-matching match-dest is not used assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Dictionary registration with unknown match-dest and empty string matches fetch destination assert_equals: expected ":U5abz16WDg7b8KS93msLPpOB4Vbef1uRzoORYkJw9BY=:" but got "\"available-dictionary\" header is not available"
+FAIL Best match algorithm prioritizes dictionaries with longer match patterns assert_equals: expected ":VLdZ26Le0JNzcrVwBgkaHtLw3kdN1q15BKQR2qcVhEs=:" but got "\"available-dictionary\" header is not available"
+FAIL match-dest presence takes priority over longer match patterns assert_equals: expected ":mQFnGACiVSLc9mwWS22BPExP8I7RIWZWEqwbhlP5zU4=:" but got "\"available-dictionary\" header is not available"
+FAIL Most recently fetched dictionary takes priority when match lengths are equal assert_equals: expected ":r+EVFUrwCNz24EfjB5wgqtGi8xgVCK4oMyVziZ0Mcbw=:" but got "\"available-dictionary\" header is not available"
+

@@ -77,7 +77,7 @@ static void ssl_ctx_add_session(SSL_SESSION *session, void *void_param) {
 }
 
 void CopySessions(SSL_CTX *dst, const SSL_CTX *src) {
-  lh_SSL_SESSION_doall_arg(src->sessions, ssl_ctx_add_session, dst);
+  lh_SSL_SESSION_doall_arg(FromOpaque(src)->sessions, ssl_ctx_add_session, dst);
 }
 
 static void push_session(SSL_SESSION *session, void *arg) {
@@ -97,7 +97,7 @@ bool SerializeContextState(SSL_CTX *ctx, CBB *cbb) {
     return false;
   }
   std::vector<SSL_SESSION *> sessions;
-  lh_SSL_SESSION_doall_arg(ctx->sessions, push_session, &sessions);
+  lh_SSL_SESSION_doall_arg(FromOpaque(ctx)->sessions, push_session, &sessions);
   for (const auto &sess : sessions) {
     if (!ssl_session_serialize(sess, &ctx_sessions)) {
       return false;
@@ -120,8 +120,8 @@ bool DeserializeContextState(CBS *cbs, SSL_CTX *ctx) {
     return false;
   }
   while (CBS_len(&sessions)) {
-    UniquePtr<SSL_SESSION> session =
-        SSL_SESSION_parse(&sessions, ctx->x509_method, ctx->pool);
+    UniquePtr<SSL_SESSION> session = SSL_SESSION_parse(
+        &sessions, FromOpaque(ctx)->x509_method, FromOpaque(ctx)->pool.get());
     if (!session) {
       return false;
     }
@@ -166,8 +166,9 @@ std::unique_ptr<TestState> TestState::Deserialize(CBS *cbs, SSL_CTX *ctx) {
     return nullptr;
   }
   if (CBS_len(&pending_session)) {
-    state->pending_session = SSL_SESSION_parse(
-        &pending_session, ctx->x509_method, ctx->pool);
+    state->pending_session =
+        SSL_SESSION_parse(&pending_session, FromOpaque(ctx)->x509_method,
+                          FromOpaque(ctx)->pool.get());
     if (!state->pending_session) {
       return nullptr;
     }

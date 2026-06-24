@@ -185,15 +185,12 @@ static inline void release_compound_type_rd_buffers(
 static inline void dealloc_compressor_data(AV1_COMP *cpi) {
   AV1_COMMON *const cm = &cpi->common;
   TokenInfo *token_info = &cpi->token_info;
-  AV1EncRowMultiThreadInfo *const enc_row_mt = &cpi->mt_info.enc_row_mt;
   const int num_planes = av1_num_planes(cm);
   dealloc_context_buffers_ext(&cpi->mbmi_ext_info);
 
   aom_free(cpi->tile_data);
   cpi->tile_data = NULL;
   cpi->allocated_tiles = 0;
-  enc_row_mt->allocated_tile_cols = 0;
-  enc_row_mt->allocated_tile_rows = 0;
 
   // Delete sementation map
   aom_free(cpi->enc_seg.map);
@@ -336,6 +333,7 @@ static inline void dealloc_compressor_data(AV1_COMP *cpi) {
   aom_free(cpi->td.mb.palette_buffer);
   release_compound_type_rd_buffers(&cpi->td.mb.comp_rd_buffer);
   aom_free(cpi->td.mb.tmp_conv_dst);
+  aom_free(cpi->td.mb.upsample_pred);
   for (int j = 0; j < 2; ++j) {
     aom_free(cpi->td.mb.tmp_pred_bufs[j]);
   }
@@ -378,6 +376,10 @@ static inline void dealloc_compressor_data(AV1_COMP *cpi) {
 
   aom_free(cpi->mb_delta_q);
   cpi->mb_delta_q = NULL;
+
+#if !CONFIG_REALTIME_ONLY
+  av1_free_tpl_gop_stats(&cpi->extrc_tpl_gop_stats);
+#endif
 }
 
 static inline void allocate_gradient_info_for_hog(AV1_COMP *cpi) {
@@ -474,6 +476,7 @@ static inline void free_thread_data(AV1_PRIMARY *ppi) {
     aom_free(td->tctx);
     aom_free(td->palette_buffer);
     aom_free(td->tmp_conv_dst);
+    aom_free(td->upsample_pred);
     release_compound_type_rd_buffers(&td->comp_rd_buffer);
     for (int j = 0; j < 2; ++j) {
       aom_free(td->tmp_pred_bufs[j]);

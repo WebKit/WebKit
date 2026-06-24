@@ -63,16 +63,16 @@ struct ParsedTbsCertificate;
 //     that are negative or zero.  Certificate users SHOULD be prepared to
 //     gracefully handle such certificates.
 //
-// |errors| must be a non-null destination for any errors/warnings. If
-// |warnings_only| is set to true, then what would ordinarily be errors are
+// `errors` must be a non-null destination for any errors/warnings. If
+// `warnings_only` is set to true, then what would ordinarily be errors are
 // instead added as warnings.
 [[nodiscard]] OPENSSL_EXPORT bool VerifySerialNumber(der::Input value,
                                                      bool warnings_only,
                                                      CertErrors *errors);
 
-// Consumes a "Time" value (as defined by RFC 5280) from |parser|. On success
-// writes the result to |*out| and returns true. On failure no guarantees are
-// made about the state of |parser|.
+// Consumes a "Time" value (as defined by RFC 5280) from `parser`. On success
+// writes the result to `*out` and returns true. On failure no guarantees are
+// made about the state of `parser`.
 //
 // From RFC 5280:
 //
@@ -83,13 +83,13 @@ struct ParsedTbsCertificate;
     der::Parser *parser, der::GeneralizedTime *out);
 
 // Parses a DER-encoded "Validity" as specified by RFC 5280. Returns true on
-// success and sets the results in |not_before| and |not_after|:
+// success and sets the results in `not_before` and `not_after`:
 //
 //       Validity ::= SEQUENCE {
 //            notBefore      Time,
 //            notAfter       Time }
 //
-// Note that upon success it is NOT guaranteed that |*not_before <= *not_after|.
+// Note that upon success it is NOT guaranteed that `*not_before <= *not_after`.
 [[nodiscard]] OPENSSL_EXPORT bool ParseValidity(
     der::Input validity_tlv, der::GeneralizedTime *not_before,
     der::GeneralizedTime *not_after);
@@ -103,13 +103,13 @@ struct OPENSSL_EXPORT ParseCertificateOptions {
 };
 
 // Parses a DER-encoded "Certificate" as specified by RFC 5280. Returns true on
-// success and sets the results in the |out_*| parameters. On both the failure
-// and success case, if |out_errors| was non-null it may contain extra error
+// success and sets the results in the `out_*` parameters. On both the failure
+// and success case, if `out_errors` was non-null it may contain extra error
 // information.
 //
 // Note that on success the out parameters alias data from the input
-// |certificate_tlv|.  Hence the output values are only valid as long as
-// |certificate_tlv| remains valid.
+// `certificate_tlv`.  Hence the output values are only valid as long as
+// `certificate_tlv` remains valid.
 //
 // On failure the out parameters have an undefined state, except for
 // out_errors. Some of them may have been updated during parsing, whereas
@@ -118,7 +118,7 @@ struct OPENSSL_EXPORT ParseCertificateOptions {
 // The out parameters represent each field of the Certificate SEQUENCE:
 //       Certificate  ::=  SEQUENCE  {
 //
-// The |out_tbs_certificate_tlv| parameter corresponds with "tbsCertificate"
+// The `out_tbs_certificate_tlv` parameter corresponds with "tbsCertificate"
 // from RFC 5280:
 //         tbsCertificate       TBSCertificate,
 //
@@ -126,7 +126,7 @@ struct OPENSSL_EXPORT ParseCertificateOptions {
 // guarantees are made regarding the value of this SEQUENCE.
 // This can be further parsed using ParseTbsCertificate().
 //
-// The |out_signature_algorithm_tlv| parameter corresponds with
+// The `out_signature_algorithm_tlv` parameter corresponds with
 // "signatureAlgorithm" from RFC 5280:
 //         signatureAlgorithm   AlgorithmIdentifier,
 //
@@ -134,7 +134,7 @@ struct OPENSSL_EXPORT ParseCertificateOptions {
 // guarantees are made regarding the value of this SEQUENCE.
 // This can be further parsed using SignatureValue::Create().
 //
-// The |out_signature_value| parameter corresponds with "signatureValue" from
+// The `out_signature_value` parameter corresponds with "signatureValue" from
 // RFC 5280:
 //         signatureValue       BIT STRING  }
 //
@@ -145,17 +145,17 @@ struct OPENSSL_EXPORT ParseCertificateOptions {
     der::BitString *out_signature_value, CertErrors *out_errors);
 
 // Parses a DER-encoded "TBSCertificate" as specified by RFC 5280. Returns true
-// on success and sets the results in |out|. Certain invalid inputs may
-// be accepted based on the provided |options|.
+// on success and sets the results in `out`. Certain invalid inputs may
+// be accepted based on the provided `options`.
 //
-// If |errors| was non-null then any warnings/errors that occur during parsing
+// If `errors` was non-null then any warnings/errors that occur during parsing
 // are added to it.
 //
-// Note that on success |out| aliases data from the input |tbs_tlv|.
+// Note that on success `out` aliases data from the input `tbs_tlv`.
 // Hence the fields of the ParsedTbsCertificate are only valid as long as
-// |tbs_tlv| remains valid.
+// `tbs_tlv` remains valid.
 //
-// On failure |out| has an undefined state. Some of its fields may have been
+// On failure `out` has an undefined state. Some of its fields may have been
 // updated during parsing, whereas others may not have been changed.
 //
 // Refer to the per-field documentation of ParsedTbsCertificate for details on
@@ -215,10 +215,10 @@ struct OPENSSL_EXPORT ParsedTbsCertificate {
   //
   // The serial number may or may not be a valid DER-encoded INTEGER:
   //
-  // If the option |allow_invalid_serial_numbers=true| was used during
+  // If the option `allow_invalid_serial_numbers=true` was used during
   // parsing, then nothing further can be assumed about these bytes.
   //
-  // Otherwise if |allow_invalid_serial_numbers=false| then in addition
+  // Otherwise if `allow_invalid_serial_numbers=false` then in addition
   // to being a valid DER-encoded INTEGER, parsing guarantees that
   // the serial number is at most 20 bytes long. Parsing does NOT guarantee
   // that the integer is positive (might be zero or negative).
@@ -257,6 +257,10 @@ struct OPENSSL_EXPORT ParsedTbsCertificate {
   der::GeneralizedTime validity_not_before;
   der::GeneralizedTime validity_not_after;
 
+  // Contains the full Tag-Length-Value for a SEQUENCE containing the validity.
+  // No guarantees are made regarding the value of this SEQUENCE.
+  der::Input validity_tlv;
+
   // Corresponds with "subject" from RFC 5280:
   //         subject              Name,
   //
@@ -270,6 +274,10 @@ struct OPENSSL_EXPORT ParsedTbsCertificate {
   // This contains the full (unverified) Tag-Length-Value for a SEQUENCE. No
   // guarantees are made regarding the value of this SEQUENCE.
   der::Input spki_tlv;
+
+  // Contains the remaining bytes in the certificate after the SPKI. No
+  // guarantees are made regarding the contents of these bytes.
+  Span<const uint8_t> bytes_after_spki;
 
   // Corresponds with "issuerUniqueID" from RFC 5280:
   //         issuerUniqueID  [1]  IMPLICIT UniqueIdentifier OPTIONAL,
@@ -313,20 +321,20 @@ struct OPENSSL_EXPORT ParsedTbsCertificate {
 //            }
 struct OPENSSL_EXPORT ParsedExtension {
   der::Input oid;
-  // |value| will contain the contents of the OCTET STRING. For instance for
+  // `value` will contain the contents of the OCTET STRING. For instance for
   // basicConstraints it will be the TLV for a SEQUENCE.
   der::Input value;
   bool critical = false;
 };
 
 // Parses a DER-encoded "Extension" as specified by RFC 5280. Returns true on
-// success and sets the results in |out|.
+// success and sets the results in `out`.
 //
-// Note that on success |out| aliases data from the input |extension_tlv|.
+// Note that on success `out` aliases data from the input `extension_tlv`.
 // Hence the fields of the ParsedExtension are only valid as long as
-// |extension_tlv| remains valid.
+// `extension_tlv` remains valid.
 //
-// On failure |out| has an undefined state. Some of its fields may have been
+// On failure `out` has an undefined state. Some of its fields may have been
 // updated during parsing, whereas others may not have been changed.
 [[nodiscard]] OPENSSL_EXPORT bool ParseExtension(der::Input extension_tlv,
                                                  ParsedExtension *out);
@@ -467,20 +475,20 @@ inline constexpr uint8_t kRcsMlsAcsParticipantInformation[] = {
     0x67, 0x81, 0x12, 0x02, 0x01, 0x05};
 
 // Parses the Extensions sequence as defined by RFC 5280. Extensions are added
-// to the map |extensions| keyed by the OID. Parsing guarantees that each OID
+// to the map `extensions` keyed by the OID. Parsing guarantees that each OID
 // is unique. Note that certificate verification must consume each extension
 // marked as critical.
 //
-// Returns true on success and fills |extensions|. The output will reference
-// bytes in |extensions_tlv|, so that data must be kept alive.
-// On failure |extensions| may be partially written to and should not be used.
+// Returns true on success and fills `extensions`. The output will reference
+// bytes in `extensions_tlv`, so that data must be kept alive.
+// On failure `extensions` may be partially written to and should not be used.
 [[nodiscard]] OPENSSL_EXPORT bool ParseExtensions(
     der::Input extensions_tlv,
     std::map<der::Input, ParsedExtension> *extensions);
 
-// Removes the extension with OID |oid| from |unconsumed_extensions| and fills
-// |extension| with the matching extension value. If there was no extension
-// matching |oid| then returns |false|.
+// Removes the extension with OID `oid` from `unconsumed_extensions` and fills
+// `extension` with the matching extension value. If there was no extension
+// matching `oid` then returns `false`.
 [[nodiscard]] OPENSSL_EXPORT bool ConsumeExtension(
     der::Input oid,
     std::map<der::Input, ParsedExtension> *unconsumed_extensions,
@@ -532,8 +540,8 @@ enum KeyUsageBit {
 };
 
 // Parses the KeyUsage extension as defined by RFC 5280. Returns true on
-// success, and |key_usage| will alias data in |key_usage_tlv|. On failure
-// returns false, and |key_usage| may have been modified.
+// success, and `key_usage` will alias data in `key_usage_tlv`. On failure
+// returns false, and `key_usage` may have been modified.
 //
 // In addition to validating that key_usage_tlv is a BIT STRING, this does
 // additional KeyUsage specific validations such as requiring at least 1 bit to
@@ -551,8 +559,8 @@ struct AuthorityInfoAccessDescription {
   der::Input access_location;
 };
 // Parses the Authority Information Access extension defined by RFC 5280.
-// Returns true on success, and |out_access_descriptions| will alias data
-// in |authority_info_access_tlv|.On failure returns false, and
+// Returns true on success, and `out_access_descriptions` will alias data
+// in `authority_info_access_tlv`.On failure returns false, and
 // out_access_descriptions may have been partially filled.
 //
 // No validation is performed on the contents of the
@@ -564,16 +572,16 @@ struct AuthorityInfoAccessDescription {
 // Parses the Authority Information Access extension defined by RFC 5280,
 // extracting the caIssuers URIs and OCSP URIs.
 //
-// Returns true on success, and |out_ca_issuers_uris| and |out_ocsp_uris| will
-// alias data in |authority_info_access_tlv|. On failure returns false, and
-// |out_ca_issuers_uris| and |out_ocsp_uris| may have been partially filled.
+// Returns true on success, and `out_ca_issuers_uris` and `out_ocsp_uris` will
+// alias data in `authority_info_access_tlv`. On failure returns false, and
+// `out_ca_issuers_uris` and `out_ocsp_uris` may have been partially filled.
 //
-// |out_ca_issuers_uris| is filled with the accessLocations of type
+// `out_ca_issuers_uris` is filled with the accessLocations of type
 // uniformResourceIdentifier for the accessMethod id-ad-caIssuers.
-// |out_ocsp_uris| is filled with the accessLocations of type
+// `out_ocsp_uris` is filled with the accessLocations of type
 // uniformResourceIdentifier for the accessMethod id-ad-ocsp.
 //
-// The values in |out_ca_issuers_uris| and |out_ocsp_uris| are checked to be
+// The values in `out_ca_issuers_uris` and `out_ocsp_uris` are checked to be
 // IA5String (ASCII strings), but no other validation is performed on them.
 //
 // accessMethods other than id-ad-caIssuers and id-ad-ocsp are silently ignored.
@@ -613,8 +621,8 @@ struct OPENSSL_EXPORT ParsedDistributionPoint {
 };
 
 // Parses the value of a CRL Distribution Points extension (sequence of
-// DistributionPoint). Return true on success, and fills |distribution_points|
-// with values that reference data in |distribution_points_tlv|.
+// DistributionPoint). Return true on success, and fills `distribution_points`
+// with values that reference data in `distribution_points_tlv`.
 [[nodiscard]] OPENSSL_EXPORT bool ParseCrlDistributionPoints(
     der::Input distribution_points_tlv,
     std::vector<ParsedDistributionPoint> *distribution_points);
@@ -648,16 +656,16 @@ struct OPENSSL_EXPORT ParsedAuthorityKeyIdentifier {
 };
 
 // Parses the value of an authorityKeyIdentifier extension. Returns true on
-// success and fills |authority_key_identifier| with values that reference data
-// in |extension_value|. On failure the state of |authority_key_identifier| is
+// success and fills `authority_key_identifier` with values that reference data
+// in `extension_value`. On failure the state of `authority_key_identifier` is
 // not guaranteed.
 [[nodiscard]] OPENSSL_EXPORT bool ParseAuthorityKeyIdentifier(
     der::Input extension_value,
     ParsedAuthorityKeyIdentifier *authority_key_identifier);
 
 // Parses the value of a subjectKeyIdentifier extension. Returns true on
-// success and |subject_key_identifier| references data in |extension_value|.
-// On failure the state of |subject_key_identifier| is not guaranteed.
+// success and `subject_key_identifier` references data in `extension_value`.
+// On failure the state of `subject_key_identifier` is not guaranteed.
 [[nodiscard]] OPENSSL_EXPORT bool ParseSubjectKeyIdentifier(
     der::Input extension_value, der::Input *subject_key_identifier);
 

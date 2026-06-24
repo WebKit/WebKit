@@ -31,6 +31,7 @@
 #include "ScriptWrappable.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
@@ -90,7 +91,8 @@ private:
 
     Ref<DOMPromise> m_closedPromise;
     Ref<DeferredPromise> m_closedDeferred;
-    RefPtr<ReadableStream> m_stream;
+    mutable Lock m_streamLock;
+    RefPtr<ReadableStream> m_stream WTF_GUARDED_BY_LOCK(m_streamLock);
     Deque<Ref<ReadableStreamReadIntoRequest>> m_readIntoRequests;
 
     ClosedCallback m_closedCallback;

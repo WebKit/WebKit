@@ -619,6 +619,11 @@ int AccessibilityUIElement::indexForTextMarker(WTR::AccessibilityTextMarker*)
     return 0;
 }
 
+int AccessibilityUIElement::relativeIndexForTextMarker(WTR::AccessibilityTextMarker*)
+{
+    return 0;
+}
+
 int AccessibilityUIElement::indexInTable()
 {
     return 0;

@@ -604,6 +604,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     if (!parameters.injectedBundlePath.isEmpty()) {
         if (RefPtr injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(protect(parameters.initializationUserData.object()).get())))
             lazyInitialize(m_injectedBundle, injectedBundle.releaseNonNull());
+        else
+            WEBPROCESS_RELEASE_LOG_ERROR(Process, "Failed to create injected bundle for path [%" PUBLIC_LOG_STRING "]; bundle plug-in callbacks will not fire for any WebPage in this process", parameters.injectedBundlePath.utf8().data());
     }
 
     for (auto& supplement : m_supplements.values())
@@ -1404,11 +1406,6 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
                 m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(std::exchange(m_pendingDisplayName, String()), { }, *auditToken), 0);
         }
 #endif
-        // This can be called during a WebPage's constructor, so wait until after the constructor returns to touch the WebPage.
-        RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }] {
-            for (auto& webPage : m_pageMap.values())
-                webPage->synchronizeCORSDisablingPatternsWithNetworkProcess();
-        });
     }
 
     return *m_networkProcessConnection;
@@ -1460,6 +1457,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     m_webLoaderStrategy->networkProcessCrashed();
     m_webSocketChannelManager.networkProcessCrashed();
     m_broadcastChannelRegistry->networkProcessCrashed();
+    WebMessagePortChannelProvider::singleton().networkProcessConnectionClosed();
 
 #if USE(LIBWEBRTC)
     if (m_libWebRTCNetwork)

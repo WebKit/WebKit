@@ -565,11 +565,6 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
         "Error: The aec dump file cannot be specified "
         "together with input wav files!\n");
 
-    ReportConditionalErrorAndExit(
-        !!settings.aec_dump_input_string,
-        "Error: The aec dump input string cannot be specified "
-        "together with input wav files!\n");
-
     ReportConditionalErrorAndExit(!!settings.artificial_nearend_filename,
                                   "Error: The artificial nearend cannot be "
                                   "specified together with input wav files!\n");
@@ -585,13 +580,8 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
         "must be specified if the reverse output wav filename is specified!\n");
   } else {
     ReportConditionalErrorAndExit(
-        !settings.aec_dump_input_filename && !settings.aec_dump_input_string,
-        "Error: Either the aec dump input file, the wav "
-        "input file or the aec dump input string must be specified!\n");
-    ReportConditionalErrorAndExit(
-        settings.aec_dump_input_filename && settings.aec_dump_input_string,
-        "Error: The aec dump input file cannot be specified together with the "
-        "aec dump input string!\n");
+        !settings.aec_dump_input_filename,
+        "Error: The aec dump input file must be specified!\n");
   }
 
   ReportConditionalErrorAndExit(settings.use_aec && !(*settings.use_aec) &&
@@ -790,7 +780,6 @@ void SetDependencies(const SimulationSettings& settings,
                      BuiltinAudioProcessingBuilder& builder,
                      AudioProcessingBuilderState& builder_state) {
   EchoCanceller3Config aec3_config;
-  std::optional<EchoCanceller3Config> aec3_multichannel_config;
   if (settings.neural_echo_residual_estimator_model) {
     tflite::ops::builtin::BuiltinOpResolver op_resolver;
     builder_state.model = tflite::FlatBufferModel::BuildFromFile(
@@ -799,9 +788,6 @@ void SetDependencies(const SimulationSettings& settings,
     std::unique_ptr<NeuralResidualEchoEstimator> estimator =
         CreateNeuralResidualEchoEstimator(builder_state.model.get(),
                                           &op_resolver);
-    aec3_config = estimator->GetConfiguration(/*multi_channel=*/false);
-    aec3_multichannel_config =
-        estimator->GetConfiguration(/*multi_channel=*/true);
     RTC_CHECK(estimator);
     builder.SetNeuralResidualEchoEstimator(std::move(estimator));
   }
@@ -823,7 +809,7 @@ void SetDependencies(const SimulationSettings& settings,
     }
     std::cout << Aec3ConfigToJsonString(aec3_config) << std::endl;
   }
-  builder.SetEchoCancellerConfig(aec3_config, aec3_multichannel_config);
+  builder.SetEchoCancellerConfig(aec3_config, std::nullopt);
 
   if (settings.use_ed && *settings.use_ed) {
     builder.SetEchoDetector(CreateEchoDetector());
@@ -857,7 +843,7 @@ int RunSimulation(
   RTC_CHECK(audio_processing);
 
   std::unique_ptr<AudioProcessingSimulator> processor;
-  if (settings.aec_dump_input_filename || settings.aec_dump_input_string) {
+  if (settings.aec_dump_input_filename) {
     processor = std::make_unique<AecDumpBasedSimulator>(
         settings, std::move(audio_processing));
   } else {

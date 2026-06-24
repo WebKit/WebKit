@@ -15,6 +15,8 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
+
 namespace webrtc {
 
 constexpr uint16_t kNetworkCostMax = 999;
@@ -42,13 +44,15 @@ constexpr uint16_t kNetworkCostSlice = -2;
 
 // Aliases for correct wrap-around with network slice cost.
 constexpr uint16_t kNetworkCostCellular5GSlice =  // 248
-    kNetworkCostCellular5G + kNetworkCostSlice;
+    static_cast<uint16_t>(kNetworkCostCellular5G + kNetworkCostSlice);
 constexpr uint16_t kNetworkCostCellular5GVpnSlice =  // 249
-    kNetworkCostCellular5G + kNetworkCostVpn + kNetworkCostSlice;
+    static_cast<uint16_t>(kNetworkCostCellular5G + kNetworkCostVpn +
+                          kNetworkCostSlice);
 constexpr uint16_t kNetworkCostCellularSlice =  // 898
-    kNetworkCostCellular + kNetworkCostSlice;
+    static_cast<uint16_t>(kNetworkCostCellular + kNetworkCostSlice);
 constexpr uint16_t kNetworkCostCellularVpnSlice =  // 899
-    kNetworkCostCellular + kNetworkCostVpn + kNetworkCostSlice;
+    static_cast<uint16_t>(kNetworkCostCellular + kNetworkCostVpn +
+                          kNetworkCostSlice);
 
 // alias
 constexpr uint16_t kNetworkCostHigh = kNetworkCostCellular;
@@ -84,6 +88,18 @@ constexpr AdapterType kAllAdapterTypes[] = {
     ADAPTER_TYPE_CELLULAR_3G, ADAPTER_TYPE_CELLULAR_4G,
     ADAPTER_TYPE_CELLULAR_5G,
 };
+
+// Network slice is a property of a network, primarily used in 5G and beyond.
+// It allows for the creation of multiple logical networks on a shared physical
+// infrastructure, each optimized for specific use cases. This is not about
+// whether the network is 3G/4G/5G/6G, but rather a feature available within
+// some of those network generations (e.g., 5G).
+enum class NetworkSlice {
+  NO_SLICE = 0,
+  UNIFIED_COMMUNICATIONS = 1,
+};
+
+absl::string_view NetworkSliceToString(NetworkSlice network_slice);
 
 }  //  namespace webrtc
 

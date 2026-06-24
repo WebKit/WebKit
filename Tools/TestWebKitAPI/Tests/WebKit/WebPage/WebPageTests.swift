@@ -72,15 +72,6 @@ struct WebPageTests {
     func observableProperties() async throws {
         let page = WebPage()
 
-        let html = """
-            <html>
-            <head>
-                <title>Title</title>
-            </head>
-            <body></body>
-            </html>
-            """
-
         #expect(page.url == nil)
         #expect(page.title == "")
         #expect(!page.isLoading)
@@ -106,6 +97,24 @@ struct WebPageTests {
 
         #expect(actions[0].request.url!.absoluteString == "http://webkit.org/")
         #expect(actions[1].request.url!.absoluteString == "http://webkit.org/#fragment")
+    }
+
+    @Test(arguments: [true, false])
+    func globalPrivacyControlEnabledForNavigation(enabled: Bool) async throws {
+        let decider = TestNavigationDecider()
+        decider.preferencesMutation = { preferences in
+            preferences.isGlobalPrivacyControlEnabled = enabled
+        }
+
+        let page = WebPage(navigationDecider: decider)
+        try await page.load(html: "<body></body>").wait()
+
+        let result = try await page.callJavaScript(returning: Bool.self) {
+            """
+            return navigator.globalPrivacyControl;
+            """
+        }
+        #expect(result == enabled)
     }
 
     @Test
@@ -143,7 +152,7 @@ struct WebPageTests {
     func clearContentWorld() async throws {
         let worldConfiguration = WKContentWorldConfiguration()
         worldConfiguration.nodeSerializationEnabled = true
-        let world = WKContentWorld.world(with: worldConfiguration)
+        let world = WKContentWorld.world(configuration: worldConfiguration)
 
         let page = WebPage()
         try await page.load(html: "<body></body>").wait()

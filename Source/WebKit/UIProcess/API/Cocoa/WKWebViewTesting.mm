@@ -28,6 +28,7 @@
 
 #import "AudioSessionRoutingArbitratorProxy.h"
 #import "EditingRange.h"
+#import "EndowmentStateTracker.h"
 #import "GPUProcessProxy.h"
 #import "LogStream.h"
 #import "MediaSessionCoordinatorProxyPrivate.h"
@@ -361,8 +362,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (pid_t)_networkProcessIdentifier
 {
     RefPtr networkProcess = _page->websiteDataStore().networkProcessIfExists();
-    RELEASE_ASSERT(networkProcess);
-    return networkProcess->processID();
+    return networkProcess ? networkProcess->processID() : 0;
 }
 
 - (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled
@@ -750,6 +750,17 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+- (void)_numberOfLiveDocumentsForTesting:(void (^)(NSUInteger count))completionHandler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler(0);
+
+    pageForTesting->numberOfLiveDocuments([completionHandler = makeBlockPtr(completionHandler)](uint64_t count) {
+        completionHandler(static_cast<NSUInteger>(count));
+    });
+}
+
 - (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler
 {
     WebKit::PrintInfo printInfo;
@@ -1122,11 +1133,32 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+- (void)_enableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting
+{
+    _adjustedColorExtensionsForBannerViewOverlaysEnablement = WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::ForcedOnForTesting;
+}
+
+- (void)_disableColorExtensionBehaviorForHorizontalBannerViewOverlaysForTesting
+{
+    _adjustedColorExtensionsForBannerViewOverlaysEnablement = WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::ForcedOffForTesting;
+}
+
+- (void)_clearColorExtensionBehaviorOverridesForHorizontalBannerViewOverlaysForTesting
+{
+    _adjustedColorExtensionsForBannerViewOverlaysEnablement = WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::EnabledIfHorizontalBannerViewPresent;
+}
+#endif
+
 - (void)_cancelFixedColorExtensionFadeAnimationsForTesting
 {
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
     for (auto side : WebCore::allBoxSides)
         [_fixedColorExtensionViews.at(side) cancelFadeAnimation];
+#endif
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    [_systemBackgroundColorExtensionViews.left() cancelFadeAnimation];
+    [_systemBackgroundColorExtensionViews.right() cancelFadeAnimation];
 #endif
 }
 
@@ -1334,6 +1366,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return nil;
 #endif
 }
+
+#if PLATFORM(IOS_FAMILY)
++ (void)_setVisibilityEndowmentForTesting:(BOOL)isVisible
+{
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    WebKit::EndowmentStateTracker::singleton().setStateForTesting(isVisible, isVisible);
+#endif
+}
+#endif
 
 @end
 

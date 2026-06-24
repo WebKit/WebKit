@@ -609,7 +609,7 @@ static WebKit::UnifiedOriginStorageLevel NODELETE toUnifiedOriginStorageLevel(_W
 
 - (void)setOriginQuotaRatio:(NSNumber *)originQuotaRatio
 {
-    std::optional<double> ratio = std::nullopt;
+    std::optional<double> ratio;
     if (originQuotaRatio) {
         ratio = [originQuotaRatio doubleValue];
         if (*ratio < 0.0 || *ratio > 1.0)
@@ -630,7 +630,7 @@ static WebKit::UnifiedOriginStorageLevel NODELETE toUnifiedOriginStorageLevel(_W
 
 - (void)setTotalQuotaRatio:(NSNumber *)totalQuotaRatio
 {
-    std::optional<double> ratio = std::nullopt;
+    std::optional<double> ratio;
     if (totalQuotaRatio) {
         ratio = [totalQuotaRatio doubleValue];
         if (*ratio < 0.0 || *ratio > 1.0)
@@ -669,7 +669,7 @@ static WebKit::UnifiedOriginStorageLevel NODELETE toUnifiedOriginStorageLevel(_W
 
 - (void)setVolumeCapacityOverride:(NSNumber *)mockVolumeCapactiy
 {
-    std::optional<uint64_t> capacity = std::nullopt;
+    std::optional<uint64_t> capacity;
     if (mockVolumeCapactiy)
         capacity = [mockVolumeCapactiy unsignedLongLongValue];
 

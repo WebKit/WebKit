@@ -93,13 +93,12 @@ static NSString *redirectURLsKey = @"redirectURLs";
 // Notification strings.
 NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
 
-using namespace WebCore;
 
 @implementation WebHistoryItemPrivate
 
 @end
 
-using HistoryItemMap = HashMap<WeakRef<HistoryItem>, WebHistoryItem*>;
+using HistoryItemMap = HashMap<WeakRef<WebCore::HistoryItem>, WebHistoryItem*>;
 
 static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* itemPrivate)
 {
@@ -131,14 +130,14 @@ void WKNotifyHistoryItemChanged()
 
 - (instancetype)init
 {
-    return [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton())];
+    return [self initWithWebCoreHistoryItem:WebCore::HistoryItem::create(LegacyHistoryItemClient::singleton())];
 }
 
 - (instancetype)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
 {
     WebCoreThreadViolationCheckRoundOne();
 
-    SUPPRESS_UNRETAINED_LOCAL auto item = [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title)];
+    SUPPRESS_UNRETAINED_LOCAL auto item = [self initWithWebCoreHistoryItem:WebCore::HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title)];
     item->_private->_lastVisitedTime = time;
 
     return item;
@@ -224,7 +223,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSString *)description
 {
-    HistoryItem* coreItem = core(_private);
+    WebCore::HistoryItem* coreItem = core(_private);
     RetainPtr result = [NSMutableString stringWithFormat:@"%@ %@", [super description], coreItem->urlString().createNSString().get()];
     if (!coreItem->target().isEmpty())
         [result appendFormat:@" in \"%@\"", coreItem->target().createNSString().get()];
@@ -239,7 +238,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         int currPos = [result length];
         unsigned size = children.size();
         for (unsigned i = 0; i < size; ++i) {
-            RetainPtr child = kit(const_cast<HistoryItem*>(children[i].ptr()));
+            RetainPtr child = kit(const_cast<WebCore::HistoryItem*>(children[i].ptr()));
             [result appendString:@"\n"];
             [result appendString:[child.get() description]];
         }
@@ -251,7 +250,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return result.autorelease();
 }
 
-HistoryItem* core(WebHistoryItem *item)
+WebCore::HistoryItem* core(WebHistoryItem *item)
 {
     if (!item)
         return nullptr;
@@ -259,7 +258,7 @@ HistoryItem* core(WebHistoryItem *item)
     return core(item->_private);
 }
 
-WebHistoryItem *kit(HistoryItem* item)
+WebHistoryItem *kit(WebCore::HistoryItem* item)
 {
     if (!item)
         return nil;
@@ -275,14 +274,14 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
 {
-    SUPPRESS_UNRETAINED_LOCAL auto item = [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title, displayTitle)];
+    SUPPRESS_UNRETAINED_LOCAL auto item = [self initWithWebCoreHistoryItem:WebCore::HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title, displayTitle)];
     if (!item)
         return nil;
     item->_private->_lastVisitedTime = time;
     return item;
 }
 
-- (id)initWithWebCoreHistoryItem:(Ref<HistoryItem>&&)item
+- (id)initWithWebCoreHistoryItem:(Ref<WebCore::HistoryItem>&&)item
 {   
     WebCoreThreadViolationCheckRoundOne();
 
@@ -352,7 +351,7 @@ WebHistoryItem *kit(HistoryItem* item)
     NSNumber *scrollPointXValue = [dict objectForKey:scrollPointXKey];
     NSNumber *scrollPointYValue = [dict objectForKey:scrollPointYKey];
     if (scrollPointXValue && scrollPointYValue)
-        core(_private)->setScrollPosition(IntPoint([scrollPointXValue intValue], [scrollPointYValue intValue]));
+        core(_private)->setScrollPosition(WebCore::IntPoint([scrollPointXValue intValue], [scrollPointYValue intValue]));
 #endif
 
     return self;
@@ -392,7 +391,7 @@ WebHistoryItem *kit(HistoryItem* item)
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:8];
 
-    HistoryItem* coreItem = core(_private);
+    WebCore::HistoryItem* coreItem = core(_private);
     
     if (!coreItem->urlString().isEmpty())
         [dict setObject:coreItem->urlString().createNSString().get() forKey:@""];
@@ -419,7 +418,7 @@ WebHistoryItem *kit(HistoryItem* item)
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:children.size()];
         
         for (int i = children.size() - 1; i >= 0; i--)
-            [childDicts addObject:[kit(const_cast<HistoryItem*>(children[i].ptr())) dictionaryRepresentation]];
+            [childDicts addObject:[kit(const_cast<WebCore::HistoryItem*>(children[i].ptr())) dictionaryRepresentation]];
         [dict setObject: childDicts forKey:childrenKey];
     }
 
@@ -431,7 +430,7 @@ WebHistoryItem *kit(HistoryItem* item)
     if (viewportArguments)
         [dict setObject:viewportArguments forKey:@"WebViewportArguments"];
 
-    IntPoint scrollPosition = core(_private)->scrollPosition();
+    WebCore::IntPoint scrollPosition = core(_private)->scrollPosition();
     [dict setObject:@(scrollPosition.x()) forKey:scrollPointXKey];
     [dict setObject:@(scrollPosition.y()) forKey:scrollPointYKey];
 #endif
@@ -466,7 +465,7 @@ WebHistoryItem *kit(HistoryItem* item)
         return nil;
 
     return createNSArray(children, [] (auto& item) {
-        return kit(const_cast<HistoryItem*>(item.ptr()));
+        return kit(const_cast<WebCore::HistoryItem*>(item.ptr()));
     }).autorelease();
 }
 
@@ -516,7 +515,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (NSDictionary *)_viewportArguments
 {
-    const ViewportArguments& viewportArguments = core(_private)->viewportArguments();
+    const WebCore::ViewportArguments& viewportArguments = core(_private)->viewportArguments();
     NSMutableDictionary *argumentsDictionary = [NSMutableDictionary dictionary];
     [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.zoom] forKey:WebViewportInitialScaleKey];
     [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.minZoom] forKey:WebViewportMinimumScaleKey];
@@ -530,7 +529,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (void)_setViewportArguments:(NSDictionary *)arguments
 {
-    ViewportArguments viewportArguments;
+    WebCore::ViewportArguments viewportArguments;
     viewportArguments.zoom = [[arguments objectForKey:WebViewportInitialScaleKey] floatValue];
     viewportArguments.minZoom = [[arguments objectForKey:WebViewportMinimumScaleKey] floatValue];
     viewportArguments.maxZoom = [[arguments objectForKey:WebViewportMaximumScaleKey] floatValue];
@@ -548,7 +547,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (void)_setScrollPoint:(CGPoint)scrollPoint
 {
-    core(_private)->setScrollPosition(IntPoint(scrollPoint));
+    core(_private)->setScrollPosition(WebCore::IntPoint(scrollPoint));
 }
 
 #endif // PLATFORM(IOS_FAMILY)

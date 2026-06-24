@@ -21,7 +21,7 @@ include_rules = [
 ]
 
 specific_include_rules = {
-  ".*ivf_converter\.cc": [
+  ".*ivf_converter\\.cc": [
     "+absl/debugging/failure_signal_handler.h",
     "+absl/debugging/symbolize.h",
     "+modules/video_coding/codecs/vp8/include/vp8.h",
@@ -30,19 +30,19 @@ specific_include_rules = {
     "+modules/video_coding/utility/ivf_file_writer.h",
     "+modules/video_coding/codecs/h264/include/h264.h",
   ],
-  ".*video_replay\.cc": [
+  ".*video_replay\\.cc": [
     "+absl/strings/str_format.h",
     "+absl/strings/str_split.h",
     "+modules/video_coding/include/video_error_codes.h",
     "+modules/video_coding/utility/ivf_file_writer.h",
   ],
-  ".*video_encoder\.cc": [
+  ".*video_encoder\\.cc": [
     "+modules/video_coding/codecs/av1/av1_svc_config.h",
     "+modules/video_coding/include/video_codec_interface.h",
     "+modules/video_coding/include/video_error_codes.h",
     "+modules/video_coding/svc/scalability_mode_util.h",
   ],
-  ".*encoded_image_file_writer\.(cc|h)": [
+  ".*encoded_image_file_writer\\.(cc|h)": [
     "+modules/video_coding/include/video_codec_interface.h",
     "+modules/video_coding/svc/scalability_mode_util.h",
     "+modules/video_coding/utility/ivf_file_writer.h",

@@ -27,8 +27,8 @@
 
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGShape.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGGraphicsElement.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 

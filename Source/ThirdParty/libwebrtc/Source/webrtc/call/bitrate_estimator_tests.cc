@@ -7,7 +7,6 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include <cstddef>
 #include <functional>
 #include <list>
 #include <memory>
@@ -152,8 +151,6 @@ class BitrateEstimatorTest : public test::CallTest {
           VideoReceiveStreamInterface::Config(receive_transport_.get());
       // receive_config_.decoders will be set by every stream separately.
       receive_config_.rtp.remote_ssrc = GetVideoSendConfig()->rtp.ssrcs[0];
-      receive_config_.rtp.local_ssrc =
-          test::VideoTestConstants::kReceiverLocalVideoSsrc;
     });
   }
 
@@ -209,7 +206,6 @@ class BitrateEstimatorTest : public test::CallTest {
       test_->receive_config_.decoders.push_back(decoder);
       test_->receive_config_.rtp.remote_ssrc =
           test_->GetVideoSendConfig()->rtp.ssrcs[0];
-      test_->receive_config_.rtp.local_ssrc++;
       test_->receive_config_.renderer = &test->fake_renderer_;
       video_receive_stream_ = test_->receiver_call_->CreateVideoReceiveStream(
           test_->receive_config_.Copy());

@@ -64,6 +64,7 @@ std::optional<WebAssemblyCompileOptions> WebAssemblyCompileOptions::tryCreate(JS
         forEachInIterable(globalObject, builtinsValue, [&] (VM&, JSGlobalObject* globalObject, JSValue nextValue) {
             if (nextValue.isString()) {
                 auto contents = asString(nextValue)->value(globalObject);
+                RETURN_IF_EXCEPTION(scope, void());
                 String qualifiedName = makeString("wasm:"_s, StringView(contents));
                 options.m_qualifiedBuiltinSetNames.append(qualifiedName);
             } else

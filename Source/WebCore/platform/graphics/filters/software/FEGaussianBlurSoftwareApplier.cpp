@@ -442,7 +442,7 @@ bool FEGaussianBlurSoftwareApplier::apply(const Filter& filter, std::span<const 
     input->copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
 
     auto stdDeviation = m_effect->effectiveStdDeviation(filter.renderingOptions());
-    if (stdDeviation.isEmpty())
+    if (!stdDeviation.width() && !stdDeviation.height())
         return true;
 
     auto kernelSize = m_effect->calculateKernelSize(filter, stdDeviation);

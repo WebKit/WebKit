@@ -31,8 +31,7 @@
 <script>
   description("Acid3 test 77, checking text metric functionality");
 
-  if (window.testRunner)
-    testRunner.waitUntilDone();
+  window.jsTestIsAsync = true;
 
   var text;
   var iframe;
@@ -85,8 +84,7 @@
   }
 
   function completeTest() {
-    if (window.testRunner)
-      testRunner.notifyDone();
+    finishJSTest();
   }
 
   startTest();

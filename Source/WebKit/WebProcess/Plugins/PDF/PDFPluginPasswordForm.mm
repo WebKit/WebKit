@@ -28,6 +28,7 @@
 
 #if ENABLE(PDF_PLUGIN)
 
+#import "PDFPluginBase.h"
 #import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/LocalizedStrings.h>
@@ -80,7 +81,7 @@ Ref<Element> PDFPluginPasswordForm::createAnnotationElement()
 
 void PDFPluginPasswordForm::unlockFailed()
 {
-    RefPtr { m_subtitleElement }->setTextContent(pdfPasswordFormInvalidPasswordSubtitle());
+    protect(m_subtitleElement)->setTextContent(pdfPasswordFormInvalidPasswordSubtitle());
 }
 
 void PDFPluginPasswordForm::updateGeometry()

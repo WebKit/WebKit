@@ -103,12 +103,18 @@ void Navigation::resetRequestStart()
     m_requestStart = MonotonicTime::now();
 }
 
-void Navigation::setCurrentRequest(ResourceRequest&& request, std::optional<ProcessIdentifier> processIdentifier)
+void Navigation::setCurrentRequest(ResourceRequest&& request)
 {
     m_currentRequest = WTF::move(request);
-    m_currentRequestProcessIdentifier = processIdentifier;
     m_hasStorageForCurrentSite = false;
     m_isEnhancedSecurityLinkForCurrentSite = false;
+}
+
+void Navigation::upgradeCurrentInsecureRequest()
+{
+    auto url = m_currentRequest.url();
+    ResourceRequestBase::upgradeInsecureRequest(url);
+    m_currentRequest.setURL(WTF::move(url));
 }
 
 void Navigation::appendRedirectionURL(const WTF::URL& url)
@@ -178,6 +184,21 @@ void Navigation::setSafeBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&& safeBr
     if (safeBrowsingWarning)
         m_hadSafeBrowsingWarning = true;
     m_safeBrowsingWarning = WTF::move(safeBrowsingWarning);
+}
+
+void Navigation::whenSafeBrowsingCheckCompletes(Function<void()>&& callback)
+{
+    if (!safeBrowsingCheckOngoing()) {
+        callback();
+        return;
+    }
+    m_safeBrowsingCheckCompletionCallbacks.append(WTF::move(callback));
+}
+
+void Navigation::fireSafeBrowsingCheckCompletionCallbacks()
+{
+    for (auto& callback : std::exchange(m_safeBrowsingCheckCompletionCallbacks, { }))
+        callback();
 }
 
 size_t Navigation::redirectChainIndex(const WTF::URL& url)

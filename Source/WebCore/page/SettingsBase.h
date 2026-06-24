@@ -37,6 +37,7 @@
 #include <WebCore/FourCC.h>
 #include <WebCore/HTMLParserScriptingFlagPolicy.h>
 #include <WebCore/MediaPlayerEnums.h>
+#include <WebCore/NavigatorWebDriverActivePolicy.h>
 #include <WebCore/StorageBlockingPolicy.h>
 #include <WebCore/TextDirectionSubmenuInclusionBehavior.h>
 #include <WebCore/Timer.h>

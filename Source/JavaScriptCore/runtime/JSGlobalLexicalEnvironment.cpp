@@ -27,6 +27,7 @@
 #include "JSGlobalLexicalEnvironment.h"
 
 #include "JSCInlines.h"
+#include "SymbolTableInlines.h"
 
 namespace JSC {
 

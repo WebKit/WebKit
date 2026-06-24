@@ -22,14 +22,29 @@
 .set .Llocally_set_symbol1, 1
 .equ .Llocally_set_symbol2, 2
 .equiv .Llocally_set_symbol3, 3
+.Llocally_set_symbol4 = 4
 
 # References to local symbols in .set directives should be rewritten.
 .set alias_to_local_label, .Llocal_label
 .equ alias_to_local_label, .Llocal_label
 .equiv alias_to_local_label, .Llocal_label
+alias_to_local_label = .LLocal_label
 .set .Llocal_alias_to_local_label, .Llocal_label
 .equ .Llocal_alias_to_local_label, .Llocal_label
 .equiv .Llocal_alias_to_local_label, .Llocal_label
+.Llocal_alias_to_local_label = .Llocal_label
 
 	# When rewritten, AVX-512 tokens are preserved.
 	vpcmpneqq .Llabel(%rip){1to8}, %zmm1, %k0
+
+.Ltmp0:
+# The first operand (the "place") of a .reloc should be rewritten.
+	.reloc .Ltmp0, R_AARCH64_PATCHINST, ds
+
+	.prefalign 2
+	.prefalign 4, .Lfunc_end, nop
+	.type prefalign_func2, @function
+prefalign_func2:
+	ret
+.Lfunc_end:
+	.size prefalign_func2, .Lfunc_end-prefalign_func2

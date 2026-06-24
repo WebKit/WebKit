@@ -12,9 +12,9 @@
 
 #include <algorithm>
 #include <cmath>
+#include <span>
 #include <variant>
 
-#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "video/corruption_detection/halton_frame_sampler.h"
@@ -39,8 +39,8 @@ CorruptionClassifier::CorruptionClassifier(float growth_rate, float midpoint)
 }
 
 double CorruptionClassifier::CalculateCorruptionProbability(
-    ArrayView<const FilteredSample> filtered_original_samples,
-    ArrayView<const FilteredSample> filtered_compressed_samples,
+    std::span<const FilteredSample> filtered_original_samples,
+    std::span<const FilteredSample> filtered_compressed_samples,
     int luma_threshold,
     int chroma_threshold) const {
   double loss = GetScore(filtered_original_samples, filtered_compressed_samples,
@@ -67,8 +67,8 @@ double CorruptionClassifier::CalculateCorruptionProbability(
 // either `luma_threshold` or `chroma_threshold` depending on whether the
 // sample is luma or chroma.
 double CorruptionClassifier::GetScore(
-    ArrayView<const FilteredSample> filtered_original_samples,
-    ArrayView<const FilteredSample> filtered_compressed_samples,
+    std::span<const FilteredSample> filtered_original_samples,
+    std::span<const FilteredSample> filtered_compressed_samples,
     int luma_threshold,
     int chroma_threshold) const {
   RTC_DCHECK_GE(luma_threshold, 0);

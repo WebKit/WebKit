@@ -111,6 +111,7 @@ private:
 } SWIFT_ESCAPABLE;
 
 WTF_EXPORT_PRIVATE bool NODELETE operator==(const CString&, const CString&);
+WTF_EXPORT_PRIVATE bool NODELETE operator==(const CString&, ASCIILiteral);
 WTF_EXPORT_PRIVATE bool operator<(const CString&, const CString&);
 
 WTF_EXPORT_PRIVATE CString convertToASCIILowercase(std::span<const char8_t>);

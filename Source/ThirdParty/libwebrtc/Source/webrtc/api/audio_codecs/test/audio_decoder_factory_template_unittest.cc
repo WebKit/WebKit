@@ -24,9 +24,9 @@
 #include "api/audio_codecs/g722/audio_decoder_g722.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_audio_decoder.h"
@@ -149,7 +149,7 @@ struct TraitWithFourMakeAudioDecoders : BaseAudioDecoderApi {
 
 TEST(AudioDecoderFactoryTemplateTest,
      PrefersToPassEnvironmentToMakeAudioDecoder) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   auto factory = CreateAudioDecoderFactory<TraitWithFourMakeAudioDecoders>();
 
   EXPECT_THAT(factory->Create(env, BaseAudioDecoderApi::AudioFormat(), {}),
@@ -168,14 +168,14 @@ struct AudioDecoderApiWithV1Make : BaseAudioDecoderApi {
 
 TEST(AudioDecoderFactoryTemplateTest,
      CanUseMakeAudioDecoderWithoutPassingEnvironment) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   auto factory = CreateAudioDecoderFactory<AudioDecoderApiWithV1Make>();
   EXPECT_THAT(factory->Create(env, BaseAudioDecoderApi::AudioFormat(), {}),
               NotNull());
 }
 
 TEST(AudioDecoderFactoryTemplateTest, NoDecoderTypes) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   scoped_refptr<AudioDecoderFactory> factory(
       make_ref_counted<
           audio_decoder_factory_template_impl::AudioDecoderFactoryT<>>());
@@ -185,7 +185,7 @@ TEST(AudioDecoderFactoryTemplateTest, NoDecoderTypes) {
 }
 
 TEST(AudioDecoderFactoryTemplateTest, OneDecoderType) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   auto factory = CreateAudioDecoderFactory<AudioDecoderFakeApi<BogusParams>>();
   EXPECT_THAT(factory->GetSupportedDecoders(),
               ::testing::ElementsAre(
@@ -199,7 +199,7 @@ TEST(AudioDecoderFactoryTemplateTest, OneDecoderType) {
 }
 
 TEST(AudioDecoderFactoryTemplateTest, TwoDecoderTypes) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   auto factory = CreateAudioDecoderFactory<AudioDecoderFakeApi<BogusParams>,
                                            AudioDecoderFakeApi<ShamParams>>();
   EXPECT_THAT(factory->GetSupportedDecoders(),
@@ -223,7 +223,7 @@ TEST(AudioDecoderFactoryTemplateTest, TwoDecoderTypes) {
 }
 
 TEST(AudioDecoderFactoryTemplateTest, G711) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   auto factory = CreateAudioDecoderFactory<AudioDecoderG711>();
   EXPECT_THAT(factory->GetSupportedDecoders(),
               ::testing::ElementsAre(
@@ -242,7 +242,7 @@ TEST(AudioDecoderFactoryTemplateTest, G711) {
 }
 
 TEST(AudioDecoderFactoryTemplateTest, G722) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   auto factory = CreateAudioDecoderFactory<AudioDecoderG722>();
   EXPECT_THAT(factory->GetSupportedDecoders(),
               ::testing::ElementsAre(
@@ -263,7 +263,7 @@ TEST(AudioDecoderFactoryTemplateTest, G722) {
 }
 
 TEST(AudioDecoderFactoryTemplateTest, L16) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   auto factory = CreateAudioDecoderFactory<AudioDecoderL16>();
   EXPECT_THAT(
       factory->GetSupportedDecoders(),
@@ -284,7 +284,7 @@ TEST(AudioDecoderFactoryTemplateTest, L16) {
 }
 
 TEST(AudioDecoderFactoryTemplateTest, Opus) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   auto factory = CreateAudioDecoderFactory<AudioDecoderOpus>();
   AudioCodecInfo opus_info{48000, 1, 64000, 6000, 510000};
   opus_info.allow_comfort_noise = false;
@@ -303,7 +303,7 @@ TEST(AudioDecoderFactoryTemplateTest, Opus) {
 
 TEST(AudioDecoderFactoryTemplateTest, G711TooManyChannels) {
   auto factory = CreateAudioDecoderFactory<AudioDecoderG711>();
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   EXPECT_EQ(nullptr, factory->Create(env,
                                      {"pcmu", 16000,
                                       /* num_channels=*/1000},

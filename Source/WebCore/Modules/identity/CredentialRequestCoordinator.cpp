@@ -147,7 +147,7 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
         // CredentialsContainer handled rejecting pre-aborted signal
         ASSERT(!signal->aborted());
         m_abortSignal = signal;
-        m_abortAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }, signal = RefPtr { signal }](JSC::JSValue reason) {
+        m_abortAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }, signal = protect(signal)](JSC::JSValue reason) {
             if (!weakThis)
                 return;
             LOG(DigitalCredentials, "Credential request was aborted by AbortSignal");

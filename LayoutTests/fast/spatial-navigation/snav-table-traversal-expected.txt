@@ -12,4 +12,8 @@ PASS gFocusedDocument.activeElement.getAttribute("id") is "6"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
 FAIL gFocusedDocument.activeElement.getAttribute("id") should be 1. Was start.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
 

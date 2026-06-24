@@ -37,9 +37,9 @@
 #include "ProcessingInstruction.h"
 #include "SVGStyleElement.h"
 #include "Settings.h"
+#include "StyleDocumentScope.h"
 #include "StyleInvalidator.h"
 #include "StyleResolver.h"
-#include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include "UserContentController.h"
@@ -239,7 +239,7 @@ void ExtensionStyleSheets::addDisplayNoneSelector(const String& identifier, cons
     if (result.isNewEntry)
         m_userStyleSheets.append(result.iterator->value->styleSheet());
 
-    if (result.iterator->value->addDisplayNoneSelector(selector, selectorID))
+    if (protect(result.iterator->value)->addDisplayNoneSelector(selector, selectorID))
         document->styleScope().didChangeExtensionStyleSheets();
 }
 
@@ -267,7 +267,7 @@ String ExtensionStyleSheets::contentForInjectedStyleSheet(CSSStyleSheet& styleSh
 void ExtensionStyleSheets::detachFromDocument()
 {
     if (m_pageUserSheet)
-        m_pageUserSheet->detachFromDocument();
+        protect(m_pageUserSheet)->detachFromDocument();
     for (auto& sheet : m_injectedUserStyleSheets)
         sheet->detachFromDocument();
     for (auto& sheet :  m_injectedAuthorStyleSheets)

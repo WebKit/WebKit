@@ -37,7 +37,7 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKNavigationDelegate", macos(10.10, 10.14.
 /* Sent when the provisional load begins. */
 - (void)browsingContextControllerDidStartProvisionalLoad:(WKBrowsingContextController *)sender;
 
-/* Sent if a server-side redirect was recieved. */
+/* Sent if a server-side redirect was received. */
 - (void)browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:(WKBrowsingContextController *)sender;
 
 /* Sent if the provisional load fails. */

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageProxyTesting.h"
 
+#include "BrowsingContextGroup.h"
 #include "Connection.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
@@ -86,6 +87,11 @@ void WebPageProxyTesting::dispatchActivityStateUpdate()
 void WebPageProxyTesting::isLayerTreeFrozen(CompletionHandler<void(bool)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPageTesting::IsLayerTreeFrozen(), WTF::move(completionHandler));
+}
+
+void WebPageProxyTesting::numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageTesting::NumberOfLiveDocuments(), WTF::move(completionHandler));
 }
 
 void WebPageProxyTesting::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&& completionHandler)
@@ -222,14 +228,17 @@ void WebPageProxyTesting::setObscuredContentInsets(float top, float right, float
 
 void WebPageProxyTesting::resetStateBetweenTests()
 {
-    page().legacyMainFrameProcess().resetState();
+    Ref page = m_page;
+    page->legacyMainFrameProcess().resetState();
 
-    if (auto* mainFrame = m_page->mainFrame())
+    if (auto* mainFrame = page->mainFrame())
         mainFrame->disownOpener();
 
-    protect(page())->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPageTesting::ResetStateBetweenTests(), pageID);
     });
+
+    protect(page->browsingContextGroup())->clearBrowsingContextGroupForTesting();
 }
 
 void WebPageProxyTesting::clearBackForwardList(CompletionHandler<void()>&& completionHandler)

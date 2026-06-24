@@ -16,12 +16,12 @@
 #include <iterator>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/call/bitrate_allocation.h"
 #include "api/field_trials_view.h"
@@ -64,7 +64,7 @@ size_t GetMaxRedundancyFromFieldTrial(const FieldTrialsView& field_trials) {
 AudioEncoderCopyRed::AudioEncoderCopyRed(Config&& config,
                                          const FieldTrialsView& field_trials)
     : speech_encoder_(std::move(config.speech_encoder)),
-      primary_encoded_(0, kAudioMaxRtpPacketLen),
+      primary_encoded_(Buffer::CreateWithCapacity(kAudioMaxRtpPacketLen)),
       max_packet_length_(kAudioMaxRtpPacketLen),
       red_payload_type_(config.payload_type) {
   RTC_CHECK(speech_encoder_) << "Speech encoder not provided.";
@@ -106,7 +106,7 @@ int AudioEncoderCopyRed::GetTargetBitrate() const {
 
 AudioEncoder::EncodedInfo AudioEncoderCopyRed::EncodeImpl(
     uint32_t rtp_timestamp,
-    ArrayView<const int16_t> audio,
+    std::span<const int16_t> audio,
     Buffer* encoded) {
   primary_encoded_.Clear();
   EncodedInfo info =
@@ -160,7 +160,7 @@ AudioEncoder::EncodedInfo AudioEncoderCopyRed::EncodeImpl(
     const uint32_t timestamp_delta =
         info.encoded_timestamp - it->first.encoded_timestamp;
     encoded->data()[header_offset] = it->first.payload_type | 0x80;
-    SetBE16(static_cast<uint8_t*>(encoded->data()) + header_offset + 1,
+    SetBE16(std::span<uint8_t>(*encoded).subspan(header_offset + 1, 2),
             (timestamp_delta << 2) | (it->first.encoded_bytes >> 8));
     encoded->data()[header_offset + 3] = it->first.encoded_bytes & 0xff;
     header_offset += kRedHeaderLength;
@@ -282,9 +282,9 @@ ANAStats AudioEncoderCopyRed::GetANAStats() const {
   return speech_encoder_->GetANAStats();
 }
 
-ArrayView<std::unique_ptr<AudioEncoder>>
+std::span<std::unique_ptr<AudioEncoder>>
 AudioEncoderCopyRed::ReclaimContainedEncoders() {
-  return ArrayView<std::unique_ptr<AudioEncoder>>(&speech_encoder_, 1);
+  return std::span<std::unique_ptr<AudioEncoder>>(&speech_encoder_, 1);
 }
 
 }  // namespace webrtc

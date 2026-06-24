@@ -31,19 +31,42 @@
 
 namespace JSC {
 
-enum class IterationMode : uint8_t {
+enum class IterationMode : uint16_t {
     Generic = 1 << 0,
     FastArray = 1 << 1,
     FastMap = 1 << 2,
     FastSet = 1 << 3,
+    FastString = 1 << 4,
+    FastArrayValues = 1 << 5,
+    FastArrayKeys = 1 << 6,
+    FastArrayEntries = 1 << 7,
+    FastMapKeys = 1 << 8,
+    FastMapValues = 1 << 9,
+    FastMapEntries = 1 << 10,
+    FastSetValues = 1 << 11,
+    FastSetEntries = 1 << 12,
 };
 
-constexpr uint8_t numberOfIterationModes = 4;
+constexpr unsigned numberOfIterationModes = 13;
+
+// To keep the amount of code emitted for one iteration site reasonable, we only allow this many
+// distinct fast iteration modes per site. Once the limit is reached, newly observed iterable
+// types are recorded and handled as Generic instead.
+constexpr unsigned maxNumberOfFastIterationModes = 2;
 
 OVERLOAD_BITWISE_OPERATORS_FOR_ENUM_CLASS_WITH_INTERGRALS(IterationMode);
 
+inline bool canUseFastIterationMode(uint16_t seenModes, IterationMode mode)
+{
+    ASSERT(mode != IterationMode::Generic);
+    uint16_t seenFastModes = seenModes & ~static_cast<uint16_t>(IterationMode::Generic);
+    if (seenFastModes & static_cast<uint16_t>(mode))
+        return true;
+    return static_cast<unsigned>(std::popcount(seenFastModes)) < maxNumberOfFastIterationModes;
+}
+
 struct IterationModeMetadata {
-    uint8_t seenModes { 0 };
+    uint16_t seenModes { 0 };
     static constexpr ptrdiff_t offsetOfSeenModes() { return OBJECT_OFFSETOF(IterationModeMetadata, seenModes); }
     static_assert(sizeof(decltype(seenModes)) == sizeof(IterationMode));
 };

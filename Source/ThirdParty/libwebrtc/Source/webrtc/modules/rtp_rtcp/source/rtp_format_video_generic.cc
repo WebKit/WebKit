@@ -12,9 +12,9 @@
 
 #include <cstdint>
 #include <cstring>
+#include <span>
 #include <variant>
 
-#include "api/array_view.h"
 #include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
@@ -29,7 +29,7 @@ constexpr size_t kExtendedHeaderLength = 2;
 }  // namespace
 
 RtpPacketizerGeneric::RtpPacketizerGeneric(
-    ArrayView<const uint8_t> payload,
+    std::span<const uint8_t> payload,
     PayloadSizeLimits limits,
     const RTPVideoHeader& rtp_video_header)
     : remaining_payload_(payload) {
@@ -40,7 +40,7 @@ RtpPacketizerGeneric::RtpPacketizerGeneric(
   current_packet_ = payload_sizes_.begin();
 }
 
-RtpPacketizerGeneric::RtpPacketizerGeneric(ArrayView<const uint8_t> payload,
+RtpPacketizerGeneric::RtpPacketizerGeneric(std::span<const uint8_t> payload,
                                            PayloadSizeLimits limits)
     : header_size_(0), remaining_payload_(payload) {
   payload_sizes_ = SplitAboutEqually(payload.size(), limits);

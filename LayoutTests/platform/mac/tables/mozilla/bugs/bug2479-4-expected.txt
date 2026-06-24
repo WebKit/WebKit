@@ -185,8 +185,8 @@ layer at (0,0) size 785x2582
           RenderText {#text} at (0,0) size 267x18
             text run at (0,0) width 267: "How does your browser fare on this test? "
           RenderMenuList {SELECT} at (266,1) size 464x18 [bgcolor=#FFFFFF]
-            RenderSelectFallbackButton {DIV} at (0,0) size 463x18
-              RenderText at (8,2) size 432x13
+            RenderBlock {DIV} at (0,0) size 463x18
+              RenderText {#text} at (8,2) size 432x13
                 text run at (8,2) width 432: "The tests all render identically, and this browser may or may not grok CSS2 tables."
           RenderText {#text} at (0,0) size 0x0
           RenderInline {LABEL} at (0,19) size 220x18

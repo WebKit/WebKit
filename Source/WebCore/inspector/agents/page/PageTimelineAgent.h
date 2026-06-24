@@ -49,19 +49,19 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setAutoCaptureEnabled(bool) override;
 
     // InspectorInstrumentation
-    void didInvalidateLayout();
+    void didInvalidateLayout(const RenderElement&);
     void willLayout();
     void didLayout(const RenderElement&, const Vector<FloatQuad>&);
     void willComposite();
-    void didComposite();
+    void didComposite(const LocalFrame&);
     void willPaint();
     void didPaint(RenderObject&, const LayoutRect&);
     void willRecalculateStyle();
-    void didRecalculateStyle();
-    void didScheduleStyleRecalculation();
+    void didRecalculateStyle(Document&);
+    void didScheduleStyleRecalculation(Document&);
     void mainFrameStartedLoading();
     void mainFrameNavigated();
-    void didCompleteRenderingFrame();
+    void didCompleteRenderingFrame(const LocalFrame&);
 
 private:
     bool enabled() const override;
@@ -76,6 +76,9 @@ private:
 
     void captureScreenshot();
 
+    Inspector::Protocol::DOM::NodeId nodeIdForDocument(Document&) const;
+    Inspector::Protocol::DOM::NodeId nodeIdForRenderer(const RenderObject&) const;
+
     WeakRef<Page> m_inspectedPage;
 
     bool m_autoCaptureEnabled { false };
@@ -84,7 +87,6 @@ private:
 
 #if PLATFORM(COCOA)
     std::unique_ptr<WebCore::RunLoopObserver> m_frameStartObserver;
-    std::unique_ptr<WebCore::RunLoopObserver> m_frameStopObserver;
     int m_runLoopNestingLevel { 0 };
 #elif USE(GLIB_EVENT_LOOP)
     RefPtr<RunLoop::EventObserver> m_runLoopObserver;

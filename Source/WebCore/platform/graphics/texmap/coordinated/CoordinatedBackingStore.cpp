@@ -46,12 +46,18 @@ void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect,
     auto it = m_tiles.find(id);
     ASSERT(it != m_tiles.end());
     it->value.addUpdate({ WTF::move(buffer), sourceRect, tileRect, offset });
+    m_hasPendingTileUpdates = true;
 }
 
 void CoordinatedBackingStore::processPendingUpdates()
 {
+    if (!m_hasPendingTileUpdates)
+        return;
+
     for (auto& tile : m_tiles.values())
         tile.processPendingUpdates();
+
+    m_hasPendingTileUpdates = false;
 }
 
 void CoordinatedBackingStore::resize(const FloatSize& size, float scale)

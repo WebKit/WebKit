@@ -1,7 +1,8 @@
 <html>
     <head>
-        <script src="../../resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test.js"></script>
         <script>
+        window.jsTestIsAsync = true;
         function log(msg)
         {
             document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
@@ -13,10 +14,6 @@
 
         async function test()
         {
-            if (window.testRunner) {
-                testRunner.waitUntilDone();
-                testRunner.dumpAsText();
-            }
 
             iframe = document.getElementById('NoScrolliFrame');
             iframeDocument = iframe.contentDocument;
@@ -64,8 +61,7 @@
             else
                 log("FAILED: the autoscroll has happened.");
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+            finishJSTest();
         }
         </script>
     </head>

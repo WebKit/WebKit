@@ -30,6 +30,7 @@
 #pragma once
 
 #include "LayoutRoundedRect.h"
+#include "RectCorners.h"
 #include "RectEdges.h"
 #include "RenderStyleConstants.h"
 
@@ -40,24 +41,28 @@ class GraphicsContext;
 class FloatRect;
 class FloatRoundedRect;
 class Path;
-class RenderStyle;
+
+namespace Style {
+class ComputedStyle;
+}
 
 // BorderShape is used to fill and clip to the shape formed by the border and padding boxes with border-radius.
 // In future, this may be a more complex shape than a rounded rect, so accessors that return rounded rects
 // are deprecated.
 class BorderShape {
 public:
-    static BorderShape shapeForBorderRect(const RenderStyle&, const LayoutRect& borderRect, RectEdges<bool> closedEdges = { true });
+    static BorderShape shapeForBorderRect(const Style::ComputedStyle&, const LayoutRect& borderRect, RectEdges<bool> closedEdges = { true });
     // overrideBorderWidths describe custom insets from the border box, used instead of the border widths from the style.
-    static BorderShape shapeForBorderRect(const RenderStyle&, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges = { true });
+    static BorderShape shapeForBorderRect(const Style::ComputedStyle&, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges = { true });
 
     // Create a BorderShape suitable for rendering an outline or shadow. borderRect is provided to
     // allow for scaling the corner radii; radii expand outward or shrink inward based on the offset
     // between borderRect and offsetRect.
-    static BorderShape shapeForOffsetRect(const RenderStyle&, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges = { true });
+    static BorderShape shapeForOffsetRect(const Style::ComputedStyle&, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges = { true });
 
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths);
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const LayoutRoundedRectRadii&);
+    BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const LayoutRoundedRectRadii&, const RectCorners<float>& cornerCurvatures);
 
     BorderShape(const BorderShape&) = default;
 
@@ -91,7 +96,7 @@ public:
     FloatRect snappedOuterRect(float deviceScaleFactor) const;
     FloatRect snappedInnerRect(float deviceScaleFactor) const;
 
-    bool isRounded() const { return m_borderRect.isRounded(); }
+    bool hasNonZeroRadii() const { return m_borderRect.hasNonZeroRadii(); }
 
     bool NODELETE outerShapeIsRectangular() const;
     bool NODELETE innerShapeIsRectangular() const;
@@ -125,9 +130,19 @@ public:
 private:
     static LayoutRoundedRect computeInnerEdgeRoundedRect(const LayoutRoundedRect& borderRoundedRect, const RectEdges<LayoutUnit>& borderWidths);
 
+    // True if any corner uses a non-`round` shape (curvature != 1), so the shape
+    bool hasNonRoundCornerShape() const;
+
+    Path pathForOuterRoundedRect(const FloatRoundedRect& outerSnapped) const;
+    Path pathForInnerRoundedRect(const FloatRoundedRect& innerSnapped) const;
+
+    Path pathForOuterCornerShape(const FloatRoundedRect& outerSnapped) const;
+    Path pathForInnerCornerShape(const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped) const;
+
     LayoutRoundedRect m_borderRect;
     LayoutRoundedRect m_innerEdgeRect;
     RectEdges<LayoutUnit> m_borderWidths;
+    RectCorners<float> m_cornerCurvatures { 1.0f, 1.0f, 1.0f, 1.0f };
 };
 
 } // namespace WebCore

@@ -68,27 +68,27 @@ using BoxShadows = Shadows<BoxShadow>;
 
 // MARK: - Conversions
 
-template<> struct ToCSS<BoxShadow> { auto operator()(const BoxShadow&, const RenderStyle&) -> CSS::BoxShadow; };
+template<> struct ToCSS<BoxShadow> { auto operator()(const BoxShadow&, const Style::ComputedStyle&) -> CSS::BoxShadow; };
 template<> struct ToStyle<CSS::BoxShadow> { auto operator()(const CSS::BoxShadow&, const BuilderState&) -> BoxShadow; };
 
 // `BoxShadowList` is special-cased to return a `CSSBoxShadowPropertyValue`.
-template<> struct CSSValueCreation<BoxShadowList> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const BoxShadowList&); };
+template<> struct CSSValueCreation<BoxShadowList> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const BoxShadowList&); };
 template<> struct CSSValueConversion<BoxShadows> { auto operator()(BuilderState&, const CSSValue&) -> BoxShadows; };
 
 // MARK: - Serialization
 
-template<> struct Serialize<BoxShadowList> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const BoxShadowList&); };
+template<> struct Serialize<BoxShadowList> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const BoxShadowList&); };
 
 // MARK: - Blending
 
 template<> struct Blending<BoxShadow> {
-    auto blend(const BoxShadow&, const BoxShadow&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> BoxShadow;
+    auto blend(const BoxShadow&, const BoxShadow&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> BoxShadow;
 };
 
 template<> struct Blending<BoxShadows> {
     auto canBlend(const BoxShadows&, const BoxShadows&, CompositeOperation) -> bool;
     constexpr auto requiresInterpolationForAccumulativeIteration(const BoxShadows&, const BoxShadows&) -> bool { return true; }
-    auto blend(const BoxShadows&, const BoxShadows&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> BoxShadows;
+    auto blend(const BoxShadows&, const BoxShadows&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> BoxShadows;
 };
 
 // MARK: - Shadow-specific Interfaces

@@ -315,7 +315,7 @@ add_custom_target(WebKit_MigrateHeaders
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/Source/cmake/MigrateHeaders.cmake "${_migrate_pairs_file}"
     COMMENT "Migrating WebCore/WebKitLegacy headers into WebKit.framework/{Headers,PrivateHeaders}/"
 )
-add_dependencies(WebKit_MigrateHeaders WebCore_CopyPrivateHeaders WebKitLegacy_CopyHeaders)
+add_dependencies(WebKit_MigrateHeaders WebKit_StageFrameworkHeaders WebCore_CopyPrivateHeaders WebKitLegacy_CopyHeaders)
 add_dependencies(WebKit WebKit_MigrateHeaders)
 unset(_migrate_pairs_file)
 unset(_migrate_pairs_content)
@@ -497,31 +497,12 @@ target_compile_options(WebKit PRIVATE
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-no-verify-emitted-module-interface>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-library-level api>"
     "$<$<COMPILE_LANGUAGE:Swift>:-strict-memory-safety>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -std=c++2b>"
+    # -Xcc -D/-f flags shared with PAL/WebGPU come from
+    # _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS in WebKitMacros.cmake (which also
+    # omits WK_SUPPORTS_SWIFT_OBJCXX_INTEROP on iOS — see bug 312083). Only
+    # -I/-isystem/-ivfsoverlay/-fmodule-map-file (not in the module-cache hash)
+    # remain per-target here.
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DHAVE_CONFIG_H=1>"
-    # Intentionally do NOT define WK_SUPPORTS_SWIFT_OBJCXX_INTEROP for the Swift
-    # compile's clang importer. WebKit_Internal headers (WKWebViewIOS.h,
-    # WKWebViewInternal.h, _WKTextExtractionInternal.h, ...) gate their C++
-    # / Obj-C++ surface behind this macro; with it set, headers do textual
-    # `#import "_WKTapHandlingResult.h"` and similar that trip clang's strict
-    # cross-module-import-visibility check during the WebKit_Internal PCM
-    # compile (bug 312083). With the macro undefined, the gated sections are
-    # skipped and only the `WKViewInternalIOS_SwiftNonObjCxxSupport` Swift-
-    # friendly category (declaring `_allowsMagnification` etc.) is exposed —
-    # exactly what the iOS Swift sources need. The non-Swift C++/Obj-C++
-    # TUs still see WK_SUPPORTS_SWIFT_OBJCXX_INTEROP=1 via xcconfig-mirroring
-    # in WebKitMacros.cmake (only the Swift→Clang side is gated here).
-    # Export-macro stubs. CMakeLists.txt:866-901 sets these only for non-Apple;
-    # but Swift's clang importer on iOS hits the same problem — when WebKit_Internal
-    # or wtf submodules compile in isolation, headers using WTF_EXPORT_PRIVATE,
-    # JS_EXPORT_PRIVATE, etc. don't see those macros via the usual prefix-header /
-    # transitive ExportMacros.h chain. Stub them empty for the Swift clang importer
-    # (no effect on the regular ObjC++ compile, which has them defined normally).
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DJS_EXPORT_PRIVATE=>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DPAL_EXPORT=>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DWK_EXPORT=>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DWTF_EXPORT_PRIVATE=>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DNODELETE=>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -disable-cross-import-overlays>"
     # Auto-import the WebKit framework's clang module (matched by -module-name
@@ -560,13 +541,8 @@ target_compile_options(WebKit PRIVATE
 
 target_compile_options(WebKit PRIVATE
     "$<$<COMPILE_LANGUAGE:Swift>:-enable-library-evolution>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-swift-version 6>"
     "$<$<COMPILE_LANGUAGE:Swift>:-emit-module-interface>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-emit-private-module-interface-path ${CMAKE_BINARY_DIR}/Source/WebKit/WebKit.private.swiftinterface>"
-)
-
-set(WebKit_SWIFT_EXTRA_OPTIONS
-    -DHAVE_MATERIAL_HOSTING
 )
 
 # FIXME: Re-enable Swift C++ interop header generation once WebKit_Internal
@@ -604,7 +580,6 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+NavigationDeciding.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+NavigationPreferences.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Transferable.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/Foundation+Extras.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/CALayer+CoreRE.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView+Analysis.swift
@@ -617,13 +592,24 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKUIDelegateAdapter.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WebPageWebView.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKScrollGeometryAdapter.swift
-    ${WEBKIT_DIR}/UIProcess/Cocoa/WKTextEffectManager+VersionCheck.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKURLSchemeHandlerAdapter.swift
     ${WEBKIT_DIR}/UIProcess/WKMouseDeviceObserver.swift
 )
 
 if (WEBKIT_ADDITIONS_SWIFT_SOURCES)
-    list(APPEND WebKit_SOURCES ${WEBKIT_ADDITIONS_SWIFT_SOURCES})
+    # WebViewRepresentable+Extras.swift belongs to the _WebKit_SwiftUI overlay
+    # module (per the pbxproj); compiling it in main WebKit clashes with
+    # WKMaterialHostingSupport.swift's @_weakLinked SwiftUI import.
+    set(WebKit_SwiftUI_ADDITIONS_SOURCES "")
+    foreach (_f IN LISTS WEBKIT_ADDITIONS_SWIFT_SOURCES)
+        cmake_path(GET _f FILENAME _fn)
+        if (_fn STREQUAL "WebViewRepresentable+Extras.swift")
+            list(APPEND WebKit_SwiftUI_ADDITIONS_SOURCES "${_f}")
+        else ()
+            list(APPEND WebKit_SOURCES "${_f}")
+        endif ()
+    endforeach ()
+    unset(_fn)
 endif ()
 
 set(_log_defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ENABLE_STREAMING_IPC_IN_LOG_FORWARDING")
@@ -1197,6 +1183,7 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     set(_default_sim_entitlements "${WEBKIT_DIR}/Resources/ios/XPCService-embedded-simulator.entitlements")
 
     set(_wka_entitlements_dir "")
+    # FIXME: Use the WebKitAdditions path provided by the interface library.
     if (WEBKIT_ADDITIONS_INCLUDE_PATH AND EXISTS "${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/Entitlements")
         set(_wka_entitlements_dir "${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/Entitlements")
     endif ()
@@ -1383,6 +1370,9 @@ with open(sys.argv[2], 'wb') as f:
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${WEBKIT_DIR}/Resources/ResourceLoadStatistics/corePrediction_model
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/corePrediction_model
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodel
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${_wk_assets_staging}/Assets.car
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Assets.car
@@ -1728,6 +1718,16 @@ add_library(_WebKit_SwiftUI SHARED
 if (ENABLE_MODEL_ELEMENT_IMMERSIVE)
     target_sources(_WebKit_SwiftUI PRIVATE
         ${_swiftui_dir}/API/WebViewImmersiveEnvironmentView.swift
+    )
+endif ()
+
+if (WebKit_SwiftUI_ADDITIONS_SOURCES)
+    target_sources(_WebKit_SwiftUI PRIVATE ${WebKit_SwiftUI_ADDITIONS_SOURCES})
+    # Share WebKit's platform-swift-args.resp so the overlay's #if
+    # conditionals (e.g. ENABLE_WEBVIEW_ADDITIONAL_SETUP) match the main
+    # module. Re-fires propagate via add_dependencies(_WebKit_SwiftUI WebKit).
+    target_compile_options(_WebKit_SwiftUI PRIVATE
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${CMAKE_CURRENT_BINARY_DIR}/WebKit.platform-swift-args.resp>"
     )
 endif ()
 

@@ -30,9 +30,12 @@
 
 #include <openssl/aead.h>
 #include <openssl/base64.h>
+#include <openssl/bytestring.h>
+#include <openssl/evp.h>
 #include <openssl/hmac.h>
 #include <openssl/hpke.h>
 #include <openssl/rand.h>
+#include <openssl/sha2.h>
 #include <openssl/span.h>
 #include <openssl/ssl.h>
 
@@ -47,6 +50,9 @@
 #else
 #include <sys/time.h>
 #endif
+
+
+using namespace bssl;
 
 namespace {
 
@@ -67,52 +73,36 @@ struct Flag {
   std::function<bool(Config *config, const char *param)> set_param;
 };
 
+template <typename Config, typename T, typename U>
+Flag<Config> SetValueFlag(const char *name, T Config::*field, U value,
+                          bool skip_handshaker = false) {
+  return Flag<Config>{name, /*has_param=*/false, skip_handshaker,
+                      [=](Config *config, const char *param) -> bool {
+                        config->*field = value;
+                        return true;
+                      }};
+}
+
 template <typename Config>
 Flag<Config> BoolFlag(const char *name, bool Config::*field,
                       bool skip_handshaker = false) {
-  return Flag<Config>{name, false, skip_handshaker,
-                      [=](Config *config, const char *) -> bool {
-                        config->*field = true;
-                        return true;
-                      }};
-}
-
-template <typename Config>
-Flag<Config> OptionalBoolTrueFlag(const char *name,
-                                  std::optional<bool> Config::*field,
-                                  bool skip_handshaker = false) {
-  return Flag<Config>{name, false, skip_handshaker,
-                      [=](Config *config, const char *) -> bool {
-                        config->*field = true;
-                        return true;
-                      }};
-}
-
-template <typename Config>
-Flag<Config> OptionalBoolFalseFlag(const char *name,
-                                   std::optional<bool> Config::*field,
-                                   bool skip_handshaker = false) {
-  return Flag<Config>{name, false, skip_handshaker,
-                      [=](Config *config, const char *) -> bool {
-                        config->*field = false;
-                        return true;
-                      }};
+  return SetValueFlag(name, field, true, skip_handshaker);
 }
 
 template <typename T>
 bool StringToInt(T *out, const char *str) {
-  static_assert(std::is_integral<T>::value, "not an integral type");
+  static_assert(std::is_integral_v<T>, "not an integral type");
 
   // |strtoull| allows leading '-' with wraparound. Additionally, both
   // functions accept empty strings and leading whitespace.
   if (!OPENSSL_isdigit(static_cast<unsigned char>(*str)) &&
-      (!std::is_signed<T>::value || *str != '-')) {
+      (!std::is_signed_v<T> || *str != '-')) {
     return false;
   }
 
   errno = 0;
   char *end;
-  if (std::is_signed<T>::value) {
+  if (std::is_signed_v<T>) {
     static_assert(sizeof(T) <= sizeof(long long),
                   "type too large for long long");
     long long value = strtoll(str, &end, 10);
@@ -189,19 +179,6 @@ Flag<Config> OptionalIntVectorFlag(const char *name,
                           return false;
                         }
                         (config->*field)->push_back(value);
-                        return true;
-                      }};
-}
-
-// Defines a flag which resets a std::optional field to its default constructed
-// value.
-template <typename Config, typename T>
-Flag<Config> OptionalDefaultInitFlag(const char *name,
-                                     std::optional<T> Config::*field,
-                                     bool skip_handshaker = false) {
-  return Flag<Config>{name, false, skip_handshaker,
-                      [=](Config *config, const char *) -> bool {
-                        (config->*field).emplace();
                         return true;
                       }};
 }
@@ -365,8 +342,10 @@ const Flag<TestConfig> *FindFlag(const char *name) {
         IntVectorFlag("-expect-peer-verify-pref",
                       &TestConfig::expect_peer_verify_prefs),
         IntVectorFlag("-curves", &TestConfig::curves),
+        IntVectorFlag("-curves-flags", &TestConfig::curves_flags),
         OptionalIntVectorFlag("-key-shares", &TestConfig::key_shares),
-        OptionalDefaultInitFlag("-no-key-shares", &TestConfig::key_shares),
+        SetValueFlag("-no-key-shares", &TestConfig::key_shares,
+                     std::vector<uint16_t>{}),
         IntVectorFlag("-server-supported-groups-hint",
                       &TestConfig::server_supported_groups_hint),
         StringFlag("-trust-cert", &TestConfig::trust_cert),
@@ -407,10 +386,15 @@ const Flag<TestConfig> *FindFlag(const char *name) {
         BoolFlag("-no-tls11", &TestConfig::no_tls11),
         BoolFlag("-no-tls1", &TestConfig::no_tls1),
         BoolFlag("-no-ticket", &TestConfig::no_ticket),
+        BoolFlag("-no-legacy-server-connect",
+                 &TestConfig::no_legacy_server_connect),
         Base64Flag("-expect-channel-id", &TestConfig::expect_channel_id),
         BoolFlag("-enable-channel-id", &TestConfig::enable_channel_id),
         StringFlag("-send-channel-id", &TestConfig::send_channel_id),
         BoolFlag("-shim-writes-first", &TestConfig::shim_writes_first),
+        StringFlag("-shim-initial-write", &TestConfig::shim_initial_write),
+        IntFlag("-repeat-shim-initial-write",
+                &TestConfig::repeat_shim_initial_write),
         StringFlag("-host-name", &TestConfig::host_name),
         StringFlag("-advertise-alpn", &TestConfig::advertise_alpn),
         StringFlag("-expect-alpn", &TestConfig::expect_alpn),
@@ -516,6 +500,7 @@ const Flag<TestConfig> *FindFlag(const char *name) {
         IntFlag("-expect-cipher", &TestConfig::expect_cipher),
         StringFlag("-expect-peer-cert-file",
                    &TestConfig::expect_peer_cert_file),
+        BoolFlag("-expect-no-peer-cert", &TestConfig::expect_no_peer_cert),
         IntFlag("-resumption-delay", &TestConfig::resumption_delay),
         BoolFlag("-retain-only-sha256-client-cert",
                  &TestConfig::retain_only_sha256_client_cert),
@@ -579,14 +564,18 @@ const Flag<TestConfig> *FindFlag(const char *name) {
         BoolFlag("-fips-202205", &TestConfig::fips_202205),
         BoolFlag("-wpa-202304", &TestConfig::wpa_202304),
         BoolFlag("-cnsa-202407", &TestConfig::cnsa_202407),
-        OptionalBoolTrueFlag("-expect-peer-match-trust-anchor",
-                             &TestConfig::expect_peer_match_trust_anchor),
-        OptionalBoolFalseFlag("-expect-no-peer-match-trust-anchor",
-                              &TestConfig::expect_peer_match_trust_anchor),
+        BoolFlag("-cnsa1-202603", &TestConfig::cnsa1_202603),
+        BoolFlag("-cnsa2-202603", &TestConfig::cnsa2_202603),
+        SetValueFlag("-expect-peer-match-trust-anchor",
+                     &TestConfig::expect_peer_match_trust_anchor, true),
+        SetValueFlag("-expect-no-peer-match-trust-anchor",
+                     &TestConfig::expect_peer_match_trust_anchor, false),
         OptionalBase64Flag("-expect-peer-available-trust-anchors",
                            &TestConfig::expect_peer_available_trust_anchors),
         OptionalBase64Flag("-requested-trust-anchors",
                            &TestConfig::requested_trust_anchors),
+        Base64Flag("-available-trust-anchors",
+                   &TestConfig::available_trust_anchors),
         OptionalIntFlag("-expect-selected-credential",
                         &TestConfig::expect_selected_credential),
         // Credential flags are stateful. First, use one of the
@@ -598,6 +587,10 @@ const Flag<TestConfig> *FindFlag(const char *name) {
                           CredentialConfigType::kDelegated),
         NewCredentialFlag("-new-spake2plusv1-credential",
                           CredentialConfigType::kSPAKE2PlusV1),
+        NewCredentialFlag("-new-psk-credential",
+                          CredentialConfigType::kPreSharedKey),
+        NewCredentialFlag("-new-rpk-credential",
+                          CredentialConfigType::kRawPublicKey),
         CredentialFlagWithDefault(
             StringFlag("-cert-file", &TestConfig::cert_file),
             StringFlag("-cert-file", &CredentialConfig::cert_file)),
@@ -629,16 +622,39 @@ const Flag<TestConfig> *FindFlag(const char *name) {
             Base64Flag("-pake-password", &CredentialConfig::pake_password)),
         CredentialFlag(
             BoolFlag("-wrong-pake-role", &CredentialConfig::wrong_pake_role)),
+        CredentialFlag(Base64Flag("-psk-importer-key", &CredentialConfig::psk)),
+        CredentialFlag(Base64Flag("-psk-importer-identity",
+                                  &CredentialConfig::psk_identity)),
+        CredentialFlag(Base64Flag("-psk-importer-context",
+                                  &CredentialConfig::psk_context)),
+        CredentialFlag(SetValueFlag("-psk-importer-sha256",
+                                    &CredentialConfig::psk_hash, EVP_sha256())),
+        CredentialFlag(SetValueFlag("-psk-importer-sha384",
+                                    &CredentialConfig::psk_hash, EVP_sha384())),
         CredentialFlag(
             Base64Flag("-trust-anchor-id", &CredentialConfig::trust_anchor_id)),
         IntFlag("-private-key-delay-ms", &TestConfig::private_key_delay_ms),
         BoolFlag("-resumption-across-names-enabled",
                  &TestConfig::resumption_across_names_enabled),
-        OptionalBoolTrueFlag("-expect-resumable-across-names",
-                             &TestConfig::expect_resumable_across_names),
-        OptionalBoolFalseFlag("-expect-not-resumable-across-names",
-                              &TestConfig::expect_resumable_across_names),
+        SetValueFlag("-expect-resumable-across-names",
+                     &TestConfig::expect_resumable_across_names, true),
+        SetValueFlag("-expect-not-resumable-across-names",
+                     &TestConfig::expect_resumable_across_names, false),
         BoolFlag("-no-server-name-ack", &TestConfig::no_server_name_ack),
+        IntVectorFlag("-accepted-peer-cert-types",
+                      &TestConfig::accepted_peer_cert_types),
+        IntVectorFlag("-available-client-cert-types",
+                      &TestConfig::available_client_cert_types),
+        OptionalIntFlag("-expect-peer-certificate-type",
+                        &TestConfig::expect_peer_certificate_type),
+        Base64Flag("-expect-peer-rpk-sha256",
+                   &TestConfig::expect_peer_rpk_sha256),
+        OptionalIntFlag("-request-server-padding",
+                        &TestConfig::request_server_padding),
+        BoolFlag("-expect-server-sent-requested-padding",
+                 &TestConfig::expect_server_sent_requested_padding),
+        BoolFlag("-server-supports-padding",
+                 &TestConfig::server_supports_padding),
     };
     std::sort(ret.begin(), ret.end(), FlagNameComparator{});
     return ret;
@@ -1466,6 +1482,16 @@ static const SSL_TICKET_AEAD_METHOD g_async_ticket_aead_method = {
 
 static bssl::UniquePtr<SSL_CREDENTIAL> CredentialFromConfig(
     const TestConfig &config, const CredentialConfig &cred_config, int number) {
+  bssl::UniquePtr<EVP_PKEY> pkey;
+  if (!cred_config.key_file.empty()) {
+    pkey = LoadPrivateKey(cred_config.key_file.c_str());
+    if (pkey == nullptr) {
+      return nullptr;
+    }
+  }
+  auto info = std::make_unique<CredentialInfo>();
+  info->number = number;
+
   bssl::UniquePtr<SSL_CREDENTIAL> cred;
   switch (cred_config.type) {
     case CredentialConfigType::kX509:
@@ -1511,13 +1537,28 @@ static bssl::UniquePtr<SSL_CREDENTIAL> CredentialFromConfig(
       }
       break;
     }
+    case CredentialConfigType::kPreSharedKey:
+      cred.reset(SSL_CREDENTIAL_new_pre_shared_key(
+          cred_config.psk.data(), cred_config.psk.size(),
+          cred_config.psk_identity.data(), cred_config.psk_identity.size(),
+          cred_config.psk_hash, cred_config.psk_context.data(),
+          cred_config.psk_context.size()));
+      break;
+    case CredentialConfigType::kRawPublicKey: {
+      assert(pkey != nullptr);
+      if (config.async || config.handshake_hints) {
+        info->private_key = UpRef(pkey);
+        cred.reset(SSL_CREDENTIAL_new_raw_public_key_custom(
+            pkey.get(), &g_async_private_key_method));
+      } else {
+        cred.reset(SSL_CREDENTIAL_new_raw_public_key(pkey.get()));
+      }
+      break;
+    }
   }
   if (cred == nullptr) {
     return nullptr;
   }
-
-  auto info = std::make_unique<CredentialInfo>();
-  info->number = number;
 
   if (!cred_config.cert_file.empty()) {
     bssl::UniquePtr<X509> x509;
@@ -1546,14 +1587,10 @@ static bssl::UniquePtr<SSL_CREDENTIAL> CredentialFromConfig(
     }
   }
 
-  if (!cred_config.key_file.empty()) {
-    bssl::UniquePtr<EVP_PKEY> pkey =
-        LoadPrivateKey(cred_config.key_file.c_str());
-    if (pkey == nullptr) {
-      return nullptr;
-    }
+  if (pkey != nullptr &&
+      cred_config.type != CredentialConfigType::kRawPublicKey) {
     if (config.async || config.handshake_hints) {
-      info->private_key = std::move(pkey);
+      info->private_key = UpRef(pkey);
       if (!SSL_CREDENTIAL_set_private_key_method(cred.get(),
                                                  &g_async_private_key_method)) {
         return nullptr;
@@ -2003,9 +2040,12 @@ bssl::UniquePtr<SSL_CTX> TestConfig::SetupCtx(SSL_CTX *old_ctx) const {
     return nullptr;
   }
 
-  SSL_CTX_set0_buffer_pool(ssl_ctx.get(), BufferPool());
+  SSL_CTX_set1_buffer_pool(ssl_ctx.get(), BufferPool());
 
-  std::string cipher_list = "ALL:TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256";
+  std::string cipher_list = "ALL";
+  // Explicitly add deprecated ciphers that are otherwise not included.
+  cipher_list += ":TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256";
+  cipher_list += ":TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256";
   if (!cipher.empty()) {
     cipher_list = cipher;
     SSL_CTX_set_options(ssl_ctx.get(), SSL_OP_CIPHER_SERVER_PREFERENCE);
@@ -2276,6 +2316,30 @@ static ssl_verify_result_t CustomVerifyCallback(SSL *ssl, uint8_t *out_alert) {
   return ssl_verify_ok;
 }
 
+static ssl_verify_result_t VerifyRawPublicKeyCallback(SSL *ssl,
+                                                      uint8_t *out_alert) {
+  const TestConfig *config = GetTestConfig(ssl);
+  const EVP_PKEY *peer_rpk = SSL_get0_peer_rpk(ssl);
+  if (peer_rpk == nullptr) {
+    fprintf(stderr, "Expected peer RPK but found none.\n");
+    return ssl_verify_invalid;
+  }
+  ScopedCBB spki_cbb;
+  uint8_t peer_rpk_sha256[SHA256_DIGEST_LENGTH];
+  if (!CBB_init(spki_cbb.get(), 0) ||
+      !EVP_marshal_public_key(spki_cbb.get(), peer_rpk) ||
+      !SHA256(CBB_data(spki_cbb.get()), CBB_len(spki_cbb.get()),
+              peer_rpk_sha256)) {
+    fprintf(stderr, "Error computing sha256 hash of peer RPK.\n");
+    return ssl_verify_invalid;
+  }
+  if (Span(peer_rpk_sha256) != Span(config->expect_peer_rpk_sha256)) {
+    fprintf(stderr, "sha256 hash of peer RPK does not match expectation.\n");
+    return ssl_verify_invalid;
+  }
+  return ssl_verify_ok;
+}
+
 static int CertCallback(SSL *ssl, void *arg) {
   const TestConfig *config = GetTestConfig(ssl);
 
@@ -2338,7 +2402,16 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
   if (verify_peer) {
     mode = SSL_VERIFY_PEER;
   }
-  if (use_custom_verify_callback) {
+  if (!expect_peer_rpk_sha256.empty()) {
+    if (expect_peer_rpk_sha256.size() != SHA256_DIGEST_LENGTH) {
+      fprintf(stderr,
+              "Invalid -expect-peer-rpk-sha256 length: %d (should be %d).\n",
+              static_cast<int>(expect_peer_rpk_sha256.size()),
+              SHA256_DIGEST_LENGTH);
+      return nullptr;
+    }
+    SSL_set_custom_verify(ssl.get(), mode, VerifyRawPublicKeyCallback);
+  } else if (use_custom_verify_callback) {
     SSL_set_custom_verify(ssl.get(), mode, CustomVerifyCallback);
   } else if (mode != SSL_VERIFY_NONE) {
     SSL_set_verify(ssl.get(), mode, nullptr);
@@ -2373,32 +2446,14 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
   if (no_ticket) {
     SSL_set_options(ssl.get(), SSL_OP_NO_TICKET);
   }
+  if (no_legacy_server_connect) {
+    SSL_clear_options(ssl.get(), SSL_OP_LEGACY_SERVER_CONNECT);
+  }
   if (!expect_channel_id.empty() || enable_channel_id) {
     SSL_set_tls_channel_id_enabled(ssl.get(), 1);
   }
   if (enable_ech_grease) {
     SSL_set_enable_ech_grease(ssl.get(), 1);
-  }
-  if (static_cast<int>(fips_202205) + static_cast<int>(wpa_202304) +
-          static_cast<int>(cnsa_202407) >
-      1) {
-    fprintf(stderr, "Multiple policy options given\n");
-    return nullptr;
-  }
-  if (fips_202205 && !SSL_set_compliance_policy(
-                         ssl.get(), ssl_compliance_policy_fips_202205)) {
-    fprintf(stderr, "SSL_set_compliance_policy failed\n");
-    return nullptr;
-  }
-  if (wpa_202304 && !SSL_set_compliance_policy(
-                        ssl.get(), ssl_compliance_policy_wpa3_192_202304)) {
-    fprintf(stderr, "SSL_set_compliance_policy failed\n");
-    return nullptr;
-  }
-  if (cnsa_202407 && !SSL_set_compliance_policy(
-                         ssl.get(), ssl_compliance_policy_cnsa_202407)) {
-    fprintf(stderr, "SSL_set_compliance_policy failed\n");
-    return nullptr;
   }
   if (!ech_config_list.empty() &&
       !SSL_set1_ech_config_list(ssl.get(), ech_config_list.data(),
@@ -2478,6 +2533,12 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
                                         requested_trust_anchors->size())) {
     return nullptr;
   }
+  if (!available_trust_anchors.empty() &&
+      !SSL_set1_available_trust_anchors(ssl.get(),
+                                        available_trust_anchors.data(),
+                                        available_trust_anchors.size())) {
+    return nullptr;
+  }
   if (enable_ocsp_stapling) {
     SSL_enable_ocsp_stapling(ssl.get());
   }
@@ -2493,11 +2554,6 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
     return nullptr;
   }
   if (min_version != 0 && !SSL_set_min_proto_version(ssl.get(), min_version)) {
-    return nullptr;
-  }
-  // TODO(crbug.com/42290594): Remove this once DTLS 1.3 is enabled by default.
-  if (is_dtls && max_version == 0 &&
-      !SSL_set_max_proto_version(ssl.get(), DTLS1_3_VERSION)) {
     return nullptr;
   }
   if (max_version != 0 && !SSL_set_max_proto_version(ssl.get(), max_version)) {
@@ -2527,9 +2583,18 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
   if (!check_close_notify) {
     SSL_set_quiet_shutdown(ssl.get(), 1);
   }
-  if (!curves.empty() &&
-      !SSL_set1_group_ids(ssl.get(), curves.data(), curves.size())) {
-    return nullptr;
+  if (!curves.empty()) {
+    if (!curves_flags.empty()) {
+      if (curves.size() != curves_flags.size() ||
+          !SSL_set1_group_ids_with_flags(ssl.get(), curves.data(),
+                                         curves_flags.data(), curves.size())) {
+        return nullptr;
+      }
+    } else {
+      if (!SSL_set1_group_ids(ssl.get(), curves.data(), curves.size())) {
+        return nullptr;
+      }
+    }
   }
   if (key_shares.has_value() &&
       !SSL_set1_client_key_shares(ssl.get(), key_shares->data(),
@@ -2571,6 +2636,18 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
   if (jdk11_workaround) {
     SSL_set_jdk11_workaround(ssl.get(), 1);
   }
+  if (!accepted_peer_cert_types.empty() &&
+      !SSL_set1_accepted_peer_cert_types(ssl.get(),
+                                         accepted_peer_cert_types.data(),
+                                         accepted_peer_cert_types.size())) {
+    return nullptr;
+  }
+  if (!available_client_cert_types.empty() &&
+      !SSL_set1_available_client_cert_types(
+          ssl.get(), available_client_cert_types.data(),
+          available_client_cert_types.size())) {
+    return nullptr;
+  }
 
   if (session != nullptr) {
     if (!is_server) {
@@ -2593,5 +2670,38 @@ bssl::UniquePtr<SSL> TestConfig::NewSSL(
     return nullptr;
   }
 
+  if (request_server_padding) {
+    SSL_set_server_padding_request(ssl.get(), request_server_padding.value());
+  }
+  if (server_supports_padding) {
+    SSL_set_server_padding_enabled(ssl.get(), 1);
+  }
+
+  // The compliance policy must be the last thing configured to have defined
+  // behavior.
+  struct {
+    const bool *setting;
+    ssl_compliance_policy_t policy;
+  } compliance_options[] = {
+      {&fips_202205, ssl_compliance_policy_fips_202205},
+      {&wpa_202304, ssl_compliance_policy_wpa3_192_202304},
+      {&cnsa_202407, ssl_compliance_policy_cnsa_202407},
+      {&cnsa1_202603, ssl_compliance_policy_cnsa1_202603},
+      {&cnsa2_202603, ssl_compliance_policy_cnsa2_202603},
+  };
+  bool set_compliance_option = false;
+  for (const auto &option : compliance_options) {
+    if (*option.setting) {
+      if (set_compliance_option) {
+        fprintf(stderr, "Multiple policy options given\n");
+        return nullptr;
+      }
+      if (!SSL_set_compliance_policy(ssl.get(), option.policy)) {
+        fprintf(stderr, "SSL_set_compliance_policy failed\n");
+        return nullptr;
+      }
+      set_compliance_option = true;
+    }
+  }
   return ssl;
 }

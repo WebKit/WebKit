@@ -113,4 +113,10 @@ inline bool Structure::hasIndexingHeader(const JSCell* cell) const
     return isWastefulTypedArray(mode);
 }
 
+inline void Structure::addTransitionWatchpoint(Watchpoint* watchpoint) const
+{
+    ASSERT(transitionWatchpointSetIsStillValid());
+    m_transitionWatchpointSet.add(watchpoint);
+}
+
 } // namespace JSC

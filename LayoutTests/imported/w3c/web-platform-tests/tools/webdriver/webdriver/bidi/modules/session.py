@@ -29,6 +29,13 @@ class Session(BidiModule):
     def status(self) -> Mapping[str, Any]:
         return {}
 
+    @status.result
+    def _status(self, result: Mapping[str, Any]) -> Any:
+        assert isinstance(result["ready"], bool)
+        assert isinstance(result["message"], str)
+
+        return result
+
     @command
     def subscribe(self,
                   events: List[str],
@@ -41,14 +48,17 @@ class Session(BidiModule):
             params["userContexts"] = user_contexts
         return params
 
+    @subscribe.result
+    def _subscribe(self, result: Mapping[str, Any]) -> Any:
+        assert isinstance(result["subscription"], str)
+
+        return result
+
     @command
     def unsubscribe(self,
                     events: Optional[List[str]] = None,
-                    contexts: Optional[List[str]] = None,
                     subscriptions: Optional[List[str]] = None) -> Mapping[str, Any]:
         params: MutableMapping[str, Any] = {}
-        if contexts is not None:
-            params["contexts"] = contexts
         if events is not None:
             params["events"] = events
         if subscriptions is not None:

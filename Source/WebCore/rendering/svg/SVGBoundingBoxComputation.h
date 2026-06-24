@@ -19,13 +19,13 @@
 
 #pragma once
 
+#include <WebCore/FloatRect.h>
 #include <WebCore/RenderLayerModelObject.h>
+#include <wtf/Markable.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
-
-class FloatRect;
 
 class SVGBoundingBoxComputation {
     WTF_MAKE_NONCOPYABLE(SVGBoundingBoxComputation);
@@ -74,6 +74,11 @@ public:
     }
 
     static LayoutRect computeVisualOverflowRect(const RenderLayerModelObject&);
+
+    // Recompute the transform-dependent bounding boxes shared by RenderSVGContainer and
+    // RenderSVGRoot after a descendant transform changed outside layout. Pass objectBoundingBoxValid
+    // where the caller tracks it (RenderSVGContainer), else omit it (RenderSVGRoot).
+    static void recomputeTransformDependentBoundingBoxes(const RenderLayerModelObject& renderer, bool& dirty, FloatRect& objectBoundingBox, Markable<FloatRect>& strokeBoundingBox, bool* objectBoundingBoxValid = nullptr);
 
 private:
     FloatRect handleShapeOrTextOrInline(const DecorationOptions&, bool* boundingBoxValid = nullptr) const;

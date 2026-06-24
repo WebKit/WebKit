@@ -312,7 +312,7 @@
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelTransferSessionGetTypeID"},
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelTransferSessionInvalidate"},
     {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_VTPixelTransferSessionTransferImage"},
-    {"access": "public", "kind": "function", "linkage": "exported", "name": "_VTRegisterSupplementalVideoDecoderIfAvailable", "unavailable": true},
+    {"access": "public", "introduced": "26.2", "kind": "function", "linkage": "exported", "name": "_VTRegisterSupplementalVideoDecoderIfAvailable"},
     {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTSessionCopyProperty"},
     {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTSessionCopySerializableProperties"},
     {"access": "public", "introduced": "8", "kind": "function", "linkage": "exported", "name": "_VTSessionCopySupportedPropertyDictionary"},
@@ -1090,7 +1090,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "VTCompressionOutputCallback"},
     {"access": "public", "introduced": "9", "name": "VTCompressionOutputHandler"},

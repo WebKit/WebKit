@@ -560,7 +560,7 @@ void PageClientImpl::derefView()
     g_object_unref(m_viewWidget);
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, WebCore::FrameIdentifier, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
     auto& clipboard = Clipboard::get("CLIPBOARD"_s);
     clipboard.readBuffer(PasteboardCustomData::gtkType().characters(), [weakWebView = GWeakPtr<GtkWidget>(m_viewWidget), originIdentifier, requiresInteraction, completionHandler = WTF::move(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {

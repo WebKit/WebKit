@@ -32,6 +32,7 @@
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ip_address.h"
+#include "rtc_base/net_helpers.h"
 #include "rtc_base/net_test_helpers.h"
 #include "rtc_base/network.h"
 #include "rtc_base/socket_factory.h"
@@ -109,14 +110,14 @@ class FakePortAllocatorSession : public PortAllocatorSession {
         allocator_(allocator),
         network_thread_(network_thread),
         factory_(factory),
-        ipv4_network_("network", "unittest", IPAddress(INADDR_LOOPBACK), 32),
-        ipv6_network_("network", "unittest", IPAddress(in6addr_loopback), 64),
+        ipv4_network_("network", "unittest", GetLoopbackIP(AF_INET), 32),
+        ipv6_network_("network", "unittest", GetLoopbackIP(AF_INET6), 64),
         port_(),
         port_config_count_(0),
         stun_servers_(allocator->stun_servers()),
         turn_servers_(allocator->turn_servers()) {
-    ipv4_network_.AddIP(IPAddress(INADDR_LOOPBACK));
-    ipv6_network_.AddIP(IPAddress(in6addr_loopback));
+    ipv4_network_.AddIP(GetLoopbackIP(AF_INET));
+    ipv6_network_.AddIP(GetLoopbackIP(AF_INET6));
   }
 
   void SetCandidateFilter(uint32_t filter) override {

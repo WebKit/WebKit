@@ -309,7 +309,7 @@ String WebExtensionLocalization::stringByReplacingNamedPlaceholdersInString(Stri
 
         auto key = originalKey.substring(1, originalKey.length() - 2).convertToASCIILowercase();
 
-        auto localizedReplacement = placeholders->getObject(key) ? placeholders->getObject(key)->getString(placeholderDictionaryContentKey) : emptyString();
+        auto localizedReplacement = (placeholders && placeholders->getObject(key)) ? placeholders->getObject(key)->getString(placeholderDictionaryContentKey) : emptyString();
 
         localizedString = makeStringByReplacingAll(localizedString, originalKey, localizedReplacement);
 

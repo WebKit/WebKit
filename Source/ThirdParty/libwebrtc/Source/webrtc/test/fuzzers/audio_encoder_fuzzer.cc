@@ -14,7 +14,6 @@
 #include <cstring>
 #include <memory>
 
-#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
@@ -25,13 +24,12 @@ namespace webrtc {
 // This function reads bytes from `data_view`, interprets them as RTP timestamp
 // and input samples, and sends them for encoding. The process continues until
 // no more data is available.
-void FuzzAudioEncoder(ArrayView<const uint8_t> data_view,
+void FuzzAudioEncoder(FuzzDataHelper data,
                       std::unique_ptr<AudioEncoder> encoder) {
-  test::FuzzDataHelper data(data_view);
   const size_t block_size_samples =
       encoder->SampleRateHz() / 100 * encoder->NumChannels();
   const size_t block_size_bytes = block_size_samples * sizeof(int16_t);
-  if (data_view.size() / block_size_bytes > 1000) {
+  if (data.BytesLeft() / block_size_bytes > 1000) {
     // If the size of the fuzzer data is more than 1000 input blocks (i.e., more
     // than 10 seconds), then don't fuzz at all for the fear of timing out.
     return;

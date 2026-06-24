@@ -11,12 +11,12 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/array_view.h"
 #include "api/candidate.h"
 #include "api/environment/environment.h"
 #include "api/jsep.h"
@@ -64,8 +64,8 @@ class ScenarioIceConnectionImpl : public ScenarioIceConnection,
                             IceConnectionObserver* observer);
   ~ScenarioIceConnectionImpl() override;
 
-  void SendRtpPacket(ArrayView<const uint8_t> packet_view) override;
-  void SendRtcpPacket(ArrayView<const uint8_t> packet_view) override;
+  void SendRtpPacket(std::span<const uint8_t> packet_view) override;
+  void SendRtcpPacket(std::span<const uint8_t> packet_view) override;
 
   void SetRemoteSdp(SdpType type, const std::string& remote_sdp) override;
   void SetLocalSdp(SdpType type, const std::string& local_sdp) override;
@@ -187,7 +187,7 @@ JsepTransportController::Config ScenarioIceConnectionImpl::CreateJsepConfig() {
 }
 
 void ScenarioIceConnectionImpl::SendRtpPacket(
-    ArrayView<const uint8_t> packet_view) {
+    std::span<const uint8_t> packet_view) {
   CopyOnWriteBuffer packet(packet_view.data(), packet_view.size(),
                            kMaxRtpPacketLen);
   network_thread_->PostTask([this, packet = std::move(packet)]() mutable {
@@ -199,7 +199,7 @@ void ScenarioIceConnectionImpl::SendRtpPacket(
 }
 
 void ScenarioIceConnectionImpl::SendRtcpPacket(
-    ArrayView<const uint8_t> packet_view) {
+    std::span<const uint8_t> packet_view) {
   CopyOnWriteBuffer packet(packet_view.data(), packet_view.size(),
                            kMaxRtpPacketLen);
   network_thread_->PostTask([this, packet = std::move(packet)]() mutable {

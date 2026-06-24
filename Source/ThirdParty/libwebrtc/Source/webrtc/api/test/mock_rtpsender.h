@@ -12,7 +12,6 @@
 #define API_TEST_MOCK_RTPSENDER_H_
 
 #include <cstdint>
-#include <memory>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -82,7 +81,7 @@ class MockRtpSender : public RtpSenderInterface {
               (override));
   MOCK_METHOD(void,
               SetEncoderSelector,
-              (std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface>),
+              (scoped_refptr<VideoEncoderFactory::EncoderSelectorInterface>),
               (override));
   MOCK_METHOD(void, SetObserver, (RtpSenderObserverInterface*), (override));
 };

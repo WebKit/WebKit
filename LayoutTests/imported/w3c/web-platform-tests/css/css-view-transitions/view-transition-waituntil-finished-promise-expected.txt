@@ -1,0 +1,7 @@
+
+Harness Error (FAIL), message = Unhandled rejection: Old view transition aborted by new view transition.
+
+FAIL View transition finished promise is delayed by waitUntil assert_implements: ViewTransition.waitUntil is not available undefined
+FAIL View transition finished promise is delayed by multiple waitUntil calls promise_test: Unhandled rejection with value: object "TypeError: transition.waitUntil is not a function. (In 'transition.waitUntil(promise1)', 'transition.waitUntil' is undefined)"
+FAIL View transition finished promise is delayed by a rejecting waitUntil promise promise_test: Unhandled rejection with value: object "TypeError: transition.waitUntil is not a function. (In 'transition.waitUntil(promise1)', 'transition.waitUntil' is undefined)"
+

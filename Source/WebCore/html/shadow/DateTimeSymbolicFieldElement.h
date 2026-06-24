@@ -46,7 +46,7 @@ private:
     static constexpr int invalidIndex = -1;
 
     // DateTimeFieldElement functions:
-    void adjustMinInlineSize(RenderStyle&) const final;
+    void adjustMinInlineSize(Style::ComputedStyle&) const final;
     void stepDown() final;
     void stepUp() final;
     ValueOrReference<String> value() const final;

@@ -55,25 +55,26 @@ struct _WPEGamepadClass
 
 /**
  * WPEGamepadButton:
- * @WPE_GAMEPAD_BUTTON_RIGHT_CLUSTER_BOTTOM:
- * @WPE_GAMEPAD_BUTTON_RIGHT_CLUSTER_RIGHT:
- * @WPE_GAMEPAD_BUTTON_RIGHT_CLUSTER_LEFT:
- * @WPE_GAMEPAD_BUTTON_RIGHT_CLUSTER_TOP:
- * @WPE_GAMEPAD_BUTTON_LEFT_SHOULDER_FRONT:
- * @WPE_GAMEPAD_BUTTON_RIGHT_SHOULDER_FRONT:
- * @WPE_GAMEPAD_BUTTON_LEFT_SHOULDER_BACK:
- * @WPE_GAMEPAD_BUTTON_RIGHT_SHOULDER_BACK:
- * @WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_LEFT:
- * @WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_RIGHT:
- * @WPE_GAMEPAD_BUTTON_LEFT_THUMB:
- * @WPE_GAMEPAD_BUTTON_RIGHT_THUMB:
- * @WPE_GAMEPAD_BUTTON_LEFT_CLUSTER_TOP:
- * @WPE_GAMEPAD_BUTTON_LEFT_CLUSTER_BOTTOM:
- * @WPE_GAMEPAD_BUTTON_LEFT_CLUSTER_LEFT:
- * @WPE_GAMEPAD_BUTTON_LEFT_CLUSTER_RIGHT:
- * @WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_CENTER:
+ * @WPE_GAMEPAD_BUTTON_RIGHT_CLUSTER_BOTTOM: bottom button in the right cluster.
+ * @WPE_GAMEPAD_BUTTON_RIGHT_CLUSTER_RIGHT: right button in the right cluster.
+ * @WPE_GAMEPAD_BUTTON_RIGHT_CLUSTER_LEFT: left button in the right cluster.
+ * @WPE_GAMEPAD_BUTTON_RIGHT_CLUSTER_TOP: top button in the right cluster.
+ * @WPE_GAMEPAD_BUTTON_LEFT_SHOULDER_FRONT: top left front button.
+ * @WPE_GAMEPAD_BUTTON_RIGHT_SHOULDER_FRONT: top right front button.
+ * @WPE_GAMEPAD_BUTTON_LEFT_SHOULDER_BACK: bottom left front button.
+ * @WPE_GAMEPAD_BUTTON_RIGHT_SHOULDER_BACK: bottom right front button.
+ * @WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_LEFT: left button in the center cluster.
+ * @WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_RIGHT: right button in the center cluster.
+ * @WPE_GAMEPAD_BUTTON_LEFT_THUMB: left stick pressed button.
+ * @WPE_GAMEPAD_BUTTON_RIGHT_THUMB: right stick pressed button.
+ * @WPE_GAMEPAD_BUTTON_LEFT_CLUSTER_TOP: top button in the left cluster.
+ * @WPE_GAMEPAD_BUTTON_LEFT_CLUSTER_BOTTOM: bottom button in the left cluster.
+ * @WPE_GAMEPAD_BUTTON_LEFT_CLUSTER_LEFT: left button in the left cluster.
+ * @WPE_GAMEPAD_BUTTON_LEFT_CLUSTER_RIGHT: right button in the left cluster.
+ * @WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_CENTER: center button in the center cluster.
  *
- * Available buttons in a #WPEGamepad
+ * Available buttons in a [class@Gamepad], following the W3C standard gamepad
+ * mapping.
  */
 typedef enum {
     WPE_GAMEPAD_BUTTON_RIGHT_CLUSTER_BOTTOM,
@@ -97,12 +98,13 @@ typedef enum {
 
 /**
  * WPEGamepadAxis:
- * @WPE_GAMEPAD_AXIS_LEFT_X:
- * @WPE_GAMEPAD_AXIS_LEFT_Y:
- * @WPE_GAMEPAD_AXIS_RIGHT_X:
- * @WPE_GAMEPAD_AXIS_RIGHT_Y:
+ * @WPE_GAMEPAD_AXIS_LEFT_X: horizontal axis for the left stick (negative left/positive right).
+ * @WPE_GAMEPAD_AXIS_LEFT_Y: vertical axis for the left stick (negative up/positive down).
+ * @WPE_GAMEPAD_AXIS_RIGHT_X: horizontal axis for the right stick (negative left/positive right).
+ * @WPE_GAMEPAD_AXIS_RIGHT_Y: vertical axis for the right stick (negative up/positive down).
  *
- * Available axis in a #WPEGamepad
+ * Available axes in a [class@Gamepad], following the W3C standard gamepad
+ * mapping.
  */
 typedef enum {
     WPE_GAMEPAD_AXIS_LEFT_X,

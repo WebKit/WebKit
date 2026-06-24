@@ -11,8 +11,8 @@
 #define NET_DCSCTP_PUBLIC_PACKET_OBSERVER_H_
 
 #include <cstdint>
+#include <span>
 
-#include "api/array_view.h"
 #include "net/dcsctp/public/types.h"
 
 namespace dcsctp {
@@ -24,13 +24,12 @@ class PacketObserver {
   virtual ~PacketObserver() = default;
   // Called when a packet is sent, with the current time (in milliseconds) as
   // `now`, and the packet payload as `payload`.
-  virtual void OnSentPacket(TimeMs now,
-                            webrtc::ArrayView<const uint8_t> payload) = 0;
+  virtual void OnSentPacket(TimeMs now, std::span<const uint8_t> payload) = 0;
 
   // Called when a packet is received, with the current time (in milliseconds)
   // as `now`, and the packet payload as `payload`.
   virtual void OnReceivedPacket(TimeMs now,
-                                webrtc::ArrayView<const uint8_t> payload) = 0;
+                                std::span<const uint8_t> payload) = 0;
 };
 }  // namespace dcsctp
 

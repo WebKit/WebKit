@@ -30,7 +30,7 @@ int SSL_add_dir_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
   DIR *dir = opendir(path);
   if (dir == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_SYS_LIB);
-    ERR_add_error_data(3, "opendir('", dir, "')");
+    ERR_add_error_data(3, "opendir('", path, "')");
     return 0;
   }
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,13 +147,7 @@ bool Color::anyComponentIsNone() const
 Color Color::colorWithAlpha(float alpha) const
 {
     return callOnUnderlyingType([&] (const auto& underlyingColor) -> Color {
-        auto result = colorWithOverriddenAlpha(underlyingColor, alpha);
-
-        // FIXME: Why is preserving the semantic bit desired and/or correct here?
-        if (isSemantic())
-            return { result, Flags::Semantic };
-
-        return { result };
+        return { colorWithOverriddenAlpha(underlyingColor, alpha), flagsExcludingPrivate() };
     });
 }
 
@@ -163,9 +158,9 @@ Color Color::invertedColorWithAlpha(float alpha) const
         // better for non-invertible color types like Lab or consider removing this in favor
         // of alternatives.
         if constexpr (ColorType::Model::isInvertible)
-            return invertedColorWithOverriddenAlpha(underlyingColor, alpha);
+            return { invertedColorWithOverriddenAlpha(underlyingColor, alpha), flagsExcludingPrivate() };
         else
-            return invertedColorWithOverriddenAlpha(convertColor<SRGBA<float>>(underlyingColor), alpha);
+            return { invertedColorWithOverriddenAlpha(convertColor<SRGBA<float>>(underlyingColor), alpha), flagsExcludingPrivate() };
     });
 }
 
@@ -175,8 +170,8 @@ Color Color::semanticColor() const
         return *this;
     
     if (isOutOfLine())
-        return { protect(asOutOfLine()), colorSpace(), Flags::Semantic };
-    return { asInline(), Flags::Semantic };
+        return { protect(asOutOfLine()), colorSpace(), flagsExcludingPrivate() | Flags::Semantic };
+    return { asInline(), flagsExcludingPrivate() | Flags::Semantic };
 }
 
 ColorComponents<float, 4> Color::toResolvedColorComponentsInColorSpace(ColorSpace outputColorSpace) const

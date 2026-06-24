@@ -59,6 +59,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
@@ -275,6 +276,8 @@ public:
     enum class EndsUsingDataStore : bool { No, Yes };
     void removeWebPage(WebPageProxy&, EndsUsingDataStore);
 
+    void sendPageCloseMessage(std::optional<WebPageProxyIdentifier>, WebCore::PageIdentifier, CompletionHandler<void()>&& = [] { });
+
     void addProvisionalPageProxy(ProvisionalPageProxy&);
     void removeProvisionalPageProxy(ProvisionalPageProxy&);
     void addRemotePageProxy(RemotePageProxy&);
@@ -287,6 +290,7 @@ public:
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
 
     Vector<WeakPtr<RemotePageProxy>> remotePages() const;
+    unsigned remotePageCount() const;
 
     void activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&&); // This is what is reported to ActivityMonitor.
 
@@ -304,6 +308,9 @@ public:
 
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
+    bool hasCommittedClientOrigin(const WebCore::ClientOrigin&) const;
+    void didCommitLoadClientOrigin(WebCore::ClientOrigin&&);
+
     void addVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
     void removeVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
 
@@ -318,6 +325,7 @@ public:
     VisibleWebPageToken visiblePageToken() const;
 
     void addPreviouslyApprovedFileURL(const URL&);
+    void addPreviouslyApprovedFileURLsFromFrameStateTree(const FrameState&);
     bool wasPreviouslyApprovedFileURL(const URL&) const;
 
     void updateTextCheckerState();
@@ -506,6 +514,11 @@ public:
     bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
     void setIgnoreInvalidMessageForTesting();
 #endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void addAllowedAttachmentFilePath(const String&);
+    bool isAllowedAttachmentFilePath(const String&) const;
+#endif
     
     bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
     void setAllowTestOnlyIPC(bool allowTestOnlyIPC) { m_allowTestOnlyIPC = allowTestOnlyIPC; }
@@ -623,6 +636,13 @@ public:
     void decrementFrameProcessCount() { --m_frameProcessCount; }
     uint64_t frameProcessCount() const { return m_frameProcessCount; }
 
+    enum class FirstPartyAccessResult {
+        Pass,
+        SilentFailure,
+        HardFailure,
+    };
+    FirstPartyAccessResult allowsFirstPartyAccess(const WebCore::RegistrableDomain&) const;
+
 private:
     Type type() const final { return Type::WebContent; }
 
@@ -667,7 +687,7 @@ private:
     void initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy&);
 
     void reportProcessDisassociatedWithPageIfNecessary(WebPageProxyIdentifier);
-    bool NODELETE isAssociatedWithPage(WebPageProxyIdentifier) const;
+    bool isAssociatedWithPage(WebPageProxyIdentifier) const;
 
     void platformInitialize();
     void platformDestroy();
@@ -809,9 +829,12 @@ private:
     WeakHashSet<RemotePageProxy> m_remotePages;
     WeakHashSet<ProvisionalPageProxy> m_provisionalPages;
     WeakHashSet<SuspendedPageProxy> m_suspendedPages;
+    HashCountedSet<WebPageProxyIdentifier> m_pagesPendingClose;
     UserInitiatedActionMap m_userInitiatedActionMap;
     HashMap<WebCore::PageIdentifier, UserInitiatedActionByAuthorizationTokenMap> m_userInitiatedActionByAuthorizationTokenMap;
     uint64_t m_frameProcessCount { 0 };
+
+    HashSet<WebCore::ClientOrigin> m_committedClientOrigins; // Only grows because WebProcess can navigate back to an old origin in a history item.
 
     WeakHashMap<VisitedLinkStore, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;
 
@@ -819,6 +842,7 @@ private:
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
     bool m_areThrottleStateChangesEnabled { true };
+    bool m_lastNotifiedNetworkProcessSuspended { false };
 
 #if HAVE(DISPLAY_LINK)
     const UniqueRef<DisplayLinkProcessProxyClient> m_displayLinkClient;
@@ -828,9 +852,8 @@ private:
     bool m_hasSentMessageToUnblockAccessibilityServer { false };
 #endif
 
-    HashMap<String, uint64_t> m_pageURLRetainCountMap;
-
     Expected<WebCore::Site, SiteState> m_site { std::unexpected<SiteState> { SiteState::NotYetSpecified } };
+    HashSet<WebCore::Site> m_committedSites;
     std::optional<WebCore::Site> m_sharedProcessMainFrameSite;
     HashSet<WebCore::RegistrableDomain> m_sharedProcessDomains;
     std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
@@ -891,6 +914,10 @@ private:
 
 #if ENABLE(IPC_TESTING_API)
     bool m_ignoreInvalidMessageForTesting { false };
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    HashSet<String> m_allowedAttachmentFilePaths;
 #endif
     
     bool m_allowTestOnlyIPC { false };

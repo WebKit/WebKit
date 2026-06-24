@@ -41,6 +41,7 @@ private:
     RefPtr<MediaSourcePrivateClient> NODELETE client() const final;
     void monitorSourceBuffers() final;
     bool isClosed() const final;
+    bool isEnded() const final;
     MediaTime duration() const final;
     PlatformTimeRanges buffered() const final;
     PlatformTimeRanges seekable() const final;

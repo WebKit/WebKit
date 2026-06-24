@@ -65,7 +65,6 @@ rtc_library("read_auth_file") {
     "turnserver/read_auth_file.h",
   ]
   deps = [
-    "../api:array_view",
     "../rtc_base:stringutils",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
@@ -677,7 +676,6 @@ if (is_linux || is_chromeos || is_win) {
     ]
 
     deps = [
-      "../api:array_view",
       "../api:async_dns_resolver",
       "../api:audio_options_api",
       "../api:create_frame_generator",
@@ -822,6 +820,7 @@ if (is_linux || is_chromeos || is_win) {
       "../pc:rtc_pc",
       "../rtc_base:async_udp_socket",
       "../rtc_base:ip_address",
+      "../rtc_base:net_helper",
       "../rtc_base:socket_address",
       "../rtc_base:socket_server",
       "../rtc_base:threading",

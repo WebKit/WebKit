@@ -31,8 +31,6 @@
 #include "CSSKeywordValueInlines.h"
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
-#include "StyleLengthWrapper+Blending.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
@@ -43,46 +41,9 @@ namespace Style {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderImageWidth::Value> { auto operator()(const BorderImageWidth::Value&, const RenderStyle&) -> CSS::BorderImageWidth::Value; };
-template<> struct ToStyle<CSS::BorderImageWidth::Value> { auto operator()(const CSS::BorderImageWidth::Value&, const BuilderState&) -> BorderImageWidth::Value; };
+DEFINE_TYPE_MAPPING(CSS::BorderImageWidth::Value, BorderImageWidth::Value);
 
-auto ToCSS<BorderImageWidth::Value>::operator()(const BorderImageWidth::Value& value, const RenderStyle& style) -> CSS::BorderImageWidth::Value
-{
-    return WTF::switchOn(value,
-        [&](const CSS::Keyword::Auto& keyword) -> CSS::BorderImageWidth::Value {
-            return keyword;
-        },
-        [&](const BorderImageWidth::Value::LengthPercentage& lengthPercentage) -> CSS::BorderImageWidth::Value {
-            // FIXME: Support direct conversion from Style::LengthWrapperBase<LengthPercentage<...>> to CSS::LengthPercentage<...>.
-            return lengthPercentage.switchOnUsingSpecified(
-                [&](const auto& specified) -> CSS::BorderImageWidth::Value {
-                    return toCSS(specified, style);
-                }
-            );
-        },
-        [&](const BorderImageWidth::Value::Number& number) -> CSS::BorderImageWidth::Value {
-            return toCSS(number, style);
-        }
-    );
-}
-
-auto ToStyle<CSS::BorderImageWidth::Value>::operator()(const CSS::BorderImageWidth::Value& value, const BuilderState& state) -> BorderImageWidth::Value
-{
-    return WTF::switchOn(value,
-        [&](const CSS::Keyword::Auto& keyword) -> BorderImageWidth::Value {
-            return keyword;
-        },
-        [&](const CSS::BorderImageWidth::Value::LengthPercentage& lengthPercentage) -> BorderImageWidth::Value {
-            // FIXME: Support direct conversion from CSS::LengthPercentage<...> to Style::LengthWrapperBase<LengthPercentage<...>>.
-            return BorderImageWidthValueLength { toStyle(lengthPercentage, state) };
-        },
-        [&](const CSS::BorderImageWidth::Value::Number& number) -> BorderImageWidth::Value {
-            return toStyle(number, state);
-        }
-    );
-}
-
-auto ToCSS<BorderImageWidth>::operator()(const BorderImageWidth& value, const RenderStyle& style) -> CSS::BorderImageWidth
+auto ToCSS<BorderImageWidth>::operator()(const BorderImageWidth& value, const Style::ComputedStyle& style) -> CSS::BorderImageWidth
 {
     return { toCSS(value.values, style), value.legacyWebkitBorderImage };
 }
@@ -112,7 +73,7 @@ auto CSSValueConversion<BorderImageWidth>::operator()(BuilderState& state, const
     return toStyleFromCSSValue<BorderImageWidthValue::LengthPercentage>(state, *primitiveValue);
 }
 
-auto CSSValueCreation<BorderImageWidth>::operator()(CSSValuePool&, const RenderStyle& style, const BorderImageWidth& value) -> Ref<CSSValue>
+auto CSSValueCreation<BorderImageWidth>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BorderImageWidth& value) -> Ref<CSSValue>
 {
     return CSSBorderImageWidthValue::create(toCSS(value, style));
 }

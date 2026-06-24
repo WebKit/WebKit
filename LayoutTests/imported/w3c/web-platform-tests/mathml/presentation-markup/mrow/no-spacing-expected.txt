@@ -5,29 +5,29 @@ FAIL Spacing inside an <mfrac> child of <mrow>. assert_less_than_equal: expected
 PASS Spacing around an <mfrac> child of an <mrow>.
 FAIL Spacing inside an <mfrac> child of <mtd>. assert_less_than_equal: expected a number less than or equal to 100 but got 227
 PASS Spacing around an <mfrac> child of an <mtd>.
-FAIL Spacing inside an <msub> child of <math>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+FAIL Spacing inside an <msub> child of <math>. assert_less_than_equal: expected a number less than or equal to 100 but got 451.03125
 PASS Spacing around an <msub> child of an <math>.
-FAIL Spacing inside an <msub> child of <mrow>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+FAIL Spacing inside an <msub> child of <mrow>. assert_less_than_equal: expected a number less than or equal to 100 but got 451.03125
 PASS Spacing around an <msub> child of an <mrow>.
-FAIL Spacing inside an <msub> child of <mtd>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+FAIL Spacing inside an <msub> child of <mtd>. assert_less_than_equal: expected a number less than or equal to 100 but got 451.03125
 PASS Spacing around an <msub> child of an <mtd>.
-FAIL Spacing inside an <msup> child of <math>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+FAIL Spacing inside an <msup> child of <math>. assert_less_than_equal: expected a number less than or equal to 100 but got 451.03125
 PASS Spacing around an <msup> child of an <math>.
-FAIL Spacing inside an <msup> child of <mrow>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+FAIL Spacing inside an <msup> child of <mrow>. assert_less_than_equal: expected a number less than or equal to 100 but got 451.03125
 PASS Spacing around an <msup> child of an <mrow>.
-FAIL Spacing inside an <msup> child of <mtd>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+FAIL Spacing inside an <msup> child of <mtd>. assert_less_than_equal: expected a number less than or equal to 100 but got 451.03125
 PASS Spacing around an <msup> child of an <mtd>.
-FAIL Spacing inside an <msubsup> child of <math>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+FAIL Spacing inside an <msubsup> child of <math>. assert_less_than_equal: expected a number less than or equal to 100 but got 451.03125
 PASS Spacing around an <msubsup> child of an <math>.
-FAIL Spacing inside an <msubsup> child of <mrow>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+FAIL Spacing inside an <msubsup> child of <mrow>. assert_less_than_equal: expected a number less than or equal to 100 but got 451.03125
 PASS Spacing around an <msubsup> child of an <mrow>.
-FAIL Spacing inside an <msubsup> child of <mtd>. assert_less_than_equal: expected a number less than or equal to 100 but got 455
+FAIL Spacing inside an <msubsup> child of <mtd>. assert_less_than_equal: expected a number less than or equal to 100 but got 451.03125
 PASS Spacing around an <msubsup> child of an <mtd>.
-FAIL Spacing inside an <mmultiscripts> child of <math>. assert_less_than_equal: expected a number less than or equal to 100 but got 685
+FAIL Spacing inside an <mmultiscripts> child of <math>. assert_less_than_equal: expected a number less than or equal to 100 but got 677.0625
 PASS Spacing around an <mmultiscripts> child of an <math>.
-FAIL Spacing inside an <mmultiscripts> child of <mrow>. assert_less_than_equal: expected a number less than or equal to 100 but got 685
+FAIL Spacing inside an <mmultiscripts> child of <mrow>. assert_less_than_equal: expected a number less than or equal to 100 but got 677.0625
 PASS Spacing around an <mmultiscripts> child of an <mrow>.
-FAIL Spacing inside an <mmultiscripts> child of <mtd>. assert_less_than_equal: expected a number less than or equal to 100 but got 685
+FAIL Spacing inside an <mmultiscripts> child of <mtd>. assert_less_than_equal: expected a number less than or equal to 100 but got 677.0625
 PASS Spacing around an <mmultiscripts> child of an <mtd>.
 FAIL Spacing inside an <munder> child of <math>. assert_less_than_equal: expected a number less than or equal to 100 but got 225
 PASS Spacing around an <munder> child of an <math>.

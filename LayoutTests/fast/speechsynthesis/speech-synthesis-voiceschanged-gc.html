@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -11,8 +11,6 @@
         window.internals.enableMockSpeechSynthesizer();
 
     window.jsTestIsAsync = true;
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     speechSynthesis.testProperty = 1;
     const voices = speechSynthesis.getVoices();
@@ -33,5 +31,4 @@
         finishJSTest();
     }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>

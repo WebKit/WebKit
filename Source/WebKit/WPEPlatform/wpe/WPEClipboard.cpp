@@ -40,6 +40,15 @@
 /**
  * WPEClipboard:
  *
+ * A clipboard for copy and paste.
+ *
+ * [class@Clipboard] is an abstract class that gives access to the platform's
+ * clipboard. Get the clipboard of a display with [method@Display.get_clipboard].
+ *
+ * Clipboard contents are represented by [struct@ClipboardContent], which can hold
+ * text and arbitrary data identified by MIME type. Set the contents with
+ * [method@Clipboard.set_content] and read them with
+ * [method@Clipboard.read_text] or [method@Clipboard.read_bytes].
  */
 struct _WPEClipboardPrivate {
     GWeakPtr<WPEDisplay> display;
@@ -161,7 +170,7 @@ WPEClipboard* wpe_clipboard_new(WPEDisplay* display)
 
 /**
  * wpe_clipboard_get_display:
- * @clipboard: a #WPEClipoard
+ * @clipboard: a #WPEClipboard
  *
  * Get the #WPEDisplay of @clipboard
  *
@@ -176,7 +185,7 @@ WPEDisplay* wpe_clipboard_get_display(WPEClipboard* clipboard)
 
 /**
  * wpe_clipboard_get_change_count:
- * @clipboard: a #WPEClipoard
+ * @clipboard: a #WPEClipboard
  *
  * Get the amount of times @clipboard changed since it was created.
  *
@@ -191,7 +200,7 @@ gint64 wpe_clipboard_get_change_count(WPEClipboard* clipboard)
 
 /**
  * wpe_clipboard_get_formats:
- * @clipboard: a #WPEClipoard
+ * @clipboard: a #WPEClipboard
  *
  * Get the MIME type formats that clipboard can provide
  *
@@ -208,7 +217,7 @@ const char* const* wpe_clipboard_get_formats(WPEClipboard* clipboard)
 
 /**
  * wpe_clipboard_set_content:
- * @clipboard: a #WPEClipoard
+ * @clipboard: a #WPEClipboard
  * @content: (transfer none) (nullable): a #WPEClipboardContent, or %NULL to clear the clipboard
  *
  * Set @content on @clipboard. Passing a %NULL @content will clear the @clipboard.
@@ -239,7 +248,7 @@ void wpe_clipboard_set_content(WPEClipboard* clipboard, WPEClipboardContent* con
 
 /**
  * wpe_clipboard_get_content:
- * @clipboard: a #WPEClipoard
+ * @clipboard: a #WPEClipboard
  *
  * Get the #WPEClipboardContent previously set with wpe_clipboard_set_content().
  * This function returns %NULL if @clipboard is empty or its contents are owned
@@ -256,7 +265,7 @@ WPEClipboardContent* wpe_clipboard_get_content(WPEClipboard* clipboard)
 
 /**
  * wpe_clipboard_read_bytes:
- * @clipboard: a #WPEClipoard
+ * @clipboard: a #WPEClipboard
  * @format: the MIME type format of the text to read
  *
  * Get the contents of @clipboard for the given MIME type @format as bytes.
@@ -294,7 +303,7 @@ GBytes* wpe_clipboard_read_bytes(WPEClipboard* clipboard, const char* format)
 
 /**
  * wpe_clipboard_read_text:
- * @clipboard: a #WPEClipoard
+ * @clipboard: a #WPEClipboard
  * @format: the MIME type format of the text to read
  * @size: (out) (optional): location to return size of returned text.
  *

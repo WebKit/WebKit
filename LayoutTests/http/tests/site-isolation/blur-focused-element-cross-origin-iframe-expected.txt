@@ -1,0 +1,11 @@
+Test that blurring a focused element in a cross-origin iframe works correctly when site isolation is enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Blur event fired on input inside cross-origin iframe
+PASS activeElementTag is "BODY"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -223,14 +223,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
             const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
             SimpleJumpTable& linkedTable = m_jitCode->m_switchJumpTables[data.switchTableIndex];
-            linkedTable.m_ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
+            linkedTable.m_ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index()]);
             RELEASE_ASSERT(linkedTable.m_ctiOffsets.size() == unlinkedTable.m_branchOffsets.size());
             for (unsigned j = linkedTable.m_ctiOffsets.size(); j--;)
                 linkedTable.m_ctiOffsets[j] = linkedTable.m_ctiDefault;
             for (unsigned j = data.cases.size(); j--;) {
                 SwitchCase& myCase = data.cases[j];
                 linkedTable.m_ctiOffsets[myCase.value.switchLookupValue(data.kind) - unlinkedTable.m_min] =
-                    linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[myCase.target.block->index]);
+                    linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[myCase.target.block->index()]);
             }
             break;
         }
@@ -246,7 +246,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
             const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data.switchTableIndex);
             StringJumpTable& linkedTable = m_jitCode->m_stringSwitchJumpTables[data.switchTableIndex];
-            auto ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
+            auto ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index()]);
             RELEASE_ASSERT(linkedTable.m_ctiOffsets.size() == unlinkedTable.m_offsetTable.size() + 1);
             for (auto& entry : linkedTable.m_ctiOffsets)
                 entry = ctiDefault;
@@ -254,7 +254,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
                 SwitchCase& myCase = data.cases[j];
                 auto iter = unlinkedTable.m_offsetTable.find(myCase.value.stringImpl());
                 RELEASE_ASSERT(iter != unlinkedTable.m_offsetTable.end());
-                linkedTable.m_ctiOffsets[iter->value.m_indexInTable] = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[myCase.target.block->index]);
+                linkedTable.m_ctiOffsets[iter->value.m_indexInTable] = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[myCase.target.block->index()]);
             }
             break;
         }

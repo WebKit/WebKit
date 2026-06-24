@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "DFGAtTailAbstractState.h"
-#include "DFGBlockMapInlines.h"
+#include <wtf/IndexMap.h>
 
 #if ENABLE(DFG_JIT)
 
@@ -35,8 +35,8 @@ namespace JSC { namespace DFG {
 
 AtTailAbstractState::AtTailAbstractState(Graph& graph)
     : m_graph(graph)
-    , m_valuesAtTailMap(m_graph)
-    , m_tupleAbstractValues(m_graph)
+    , m_valuesAtTailMap(m_graph.numBlocks())
+    , m_tupleAbstractValues(m_graph.numBlocks())
 {
     for (BasicBlock* block : graph.blocksInNaturalOrder()) {
         auto& valuesAtTail = m_valuesAtTailMap.at(block);

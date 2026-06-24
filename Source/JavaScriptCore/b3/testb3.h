@@ -1402,6 +1402,9 @@ void addLoadTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 void addTupleTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 
 void testCSEStoreWithLoop();
+void testCSELoadAfterStoreDiamond(bool flag);
+void testCSELoadAcrossLoopBackEdge(unsigned count);
+void testCSELoopHeaderLoadFromBackEdgeStore(unsigned count);
 
 bool shouldRun(const TestConfig*, const char* testName);
 

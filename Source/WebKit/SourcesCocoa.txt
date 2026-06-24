@@ -41,7 +41,7 @@ NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 NetworkProcess/Cookies/mac/WebCookieManagerMac.mm @nonARC
 
 NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm @nonARC
-NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
+NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp @cost:3
 
 NetworkProcess/Downloads/cocoa/DownloadCocoa.mm @nonARC
 
@@ -74,7 +74,7 @@ GPUProcess/cocoa/GPUProcessCocoa.mm @nonARC
 GPUProcess/graphics/Model/MeshImpl.cpp
 GPUProcess/graphics/Model/WebKitMesh.mm
 GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
-GPUProcess/graphics/ScopedRenderingResourcesRequestCocoa.mm @nonARC @no-unify
+GPUProcess/graphics/ScopedRenderingResourcesRequestCocoa.mm @nonARC @no-unify-when(bundle<=8)
 GPUProcess/ios/GPUProcessIOS.mm @nonARC
 GPUProcess/mac/GPUProcessMac.mm @nonARC
 GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp
@@ -83,10 +83,10 @@ GPUProcess/media/RemoteImageDecoderAVFProxy.cpp
 GPUProcess/media/cocoa/VideoReceiverEndpointManager.mm @nonARC
 GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm @nonARC
 GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp
-GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @nonARC @no-unify
+GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @nonARC @no-unify // Includes libwebrtc headers with macro pollution.
 GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.mm @nonARC
-GPUProcess/webrtc/UserMediaCaptureManagerProxy.cpp
+GPUProcess/webrtc/UserMediaCaptureManagerProxy.cpp @cost:3
 
 ModelProcess/EntryPoint/Cocoa/XPCService/ModelServiceEntryPoint.mm @nonARC
 ModelProcess/cocoa/ModelProcessCocoa.mm @nonARC
@@ -95,10 +95,11 @@ ModelProcess/cocoa/ModelProcessModelPlayerProxy.mm @nonARC
 ModelProcess/ios/ModelProcessIOS.mm @nonARC
 
 Platform/classifier/cocoa/TextExtractionFilter.mm @nonARC
+Platform/classifier/cocoa/TextExtractionTokenizer.mm @nonARC
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
-Platform/cocoa/AssertionCapability.mm @nonARC @no-unify
+Platform/cocoa/AssertionCapability.mm @nonARC @no-unify-when(bundle<=8)
 Platform/cocoa/ExtensionCapabilityGrant.mm @nonARC
 Platform/cocoa/MediaCapability.mm @nonARC
 Platform/cocoa/MediaPlaybackTargetContextSerialized.mm @nonARC
@@ -106,7 +107,7 @@ Platform/cocoa/MediaPlaybackTargetSerialized.cpp
 Platform/cocoa/PaymentAuthorizationPresenter.mm @nonARC
 Platform/cocoa/PaymentAuthorizationViewController.mm @nonARC
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm @nonARC
-Platform/cocoa/WebKitAdditions.mm @nonARC @no-unify
+Platform/cocoa/WebKitAdditions.mm @nonARC @no-unify // #includes opaque WebKitAdditions sources.
 Platform/cocoa/WebPrivacyHelpers.mm @nonARC
 
 Platform/ios/PaymentAuthorizationController.mm @nonARC
@@ -194,7 +195,7 @@ Shared/Cocoa/SandboxExtensionCocoa.mm @nonARC
 Shared/Cocoa/SandboxInitialiationParametersCocoa.mm @nonARC
 Shared/Cocoa/SandboxUtilities.mm @nonARC
 Shared/Cocoa/SharedCARingBuffer.cpp
-Shared/Cocoa/TCCSoftLink.mm @nonARC @no-unify
+Shared/Cocoa/TCCSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
 Shared/Cocoa/WebErrorsCocoa.mm @nonARC
 Shared/Cocoa/WebKit2InitializeCocoa.mm @nonARC
 Shared/Cocoa/WKNSArray.mm @nonARC
@@ -285,9 +286,10 @@ UIProcess/API/Cocoa/_WKArchiveExclusionRule.mm @nonARC
 UIProcess/API/Cocoa/_WKAttachment.mm @nonARC
 UIProcess/API/Cocoa/_WKAutomationSession.mm @nonARC
 UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm @nonARC
+UIProcess/API/Cocoa/_WKAutomationSessionTesting.mm @nonARC
 UIProcess/API/Cocoa/_WKContentRuleListAction.mm @nonARC
 UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm @nonARC
-UIProcess/API/Cocoa/_WKCustomHeaderFields.mm @nonARC @no-unify
+UIProcess/API/Cocoa/_WKCustomHeaderFields.mm @nonARC @no-unify-when(bundle<=8)
 UIProcess/API/Cocoa/_WKDataTask.mm @nonARC
 UIProcess/API/Cocoa/_WKDownload.mm @nonARC
 UIProcess/API/Cocoa/_WKElementAction.mm @nonARC
@@ -313,7 +315,6 @@ UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm @nonARC
 UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm @nonARC
 UIProcess/API/Cocoa/_WKResourceLoadInfo.mm @nonARC
 UIProcess/API/Cocoa/_WKSessionState.mm @nonARC
-UIProcess/API/Cocoa/_WKSpatialBackdropSource.mm @nonARC
 UIProcess/API/Cocoa/_WKSystemPreferences.mm @nonARC
 UIProcess/API/Cocoa/_WKTargetedElementInfo.mm @nonARC
 UIProcess/API/Cocoa/_WKTargetedElementRequest.mm @nonARC
@@ -443,7 +444,7 @@ UIProcess/Cocoa/AutomationSessionClient.mm @nonARC
 UIProcess/Cocoa/BrowsingWarningCocoa.mm @nonARC
 UIProcess/Cocoa/CoreTelephonyUtilities.mm @nonARC
 UIProcess/Cocoa/DiagnosticLoggingClient.mm @nonARC
-UIProcess/Cocoa/DisplayCaptureSessionManager.mm @nonARC
+UIProcess/Cocoa/DisplayCaptureSessionManager.mm @nonARC @cost:3
 UIProcess/Cocoa/DownloadProxyMapCocoa.mm @nonARC
 UIProcess/Cocoa/ExtensionCapabilityGranter.mm @nonARC
 UIProcess/Cocoa/FindClient.mm @nonARC
@@ -457,7 +458,7 @@ UIProcess/Cocoa/LegacySessionStateCoding.cpp
 UIProcess/Cocoa/MediaUtilities.mm @nonARC
 UIProcess/Cocoa/MediaPermissionUtilities.mm @nonARC
 UIProcess/Cocoa/NavigationState.mm @nonARC
-UIProcess/Cocoa/PageClientImplCocoa.mm @nonARC
+UIProcess/Cocoa/PageClientImplCocoa.mm @nonARC @cost:3
 UIProcess/Cocoa/PlatformWritingToolsUtilities.mm @nonARC
 UIProcess/Cocoa/PlatformXRCoordinator.mm @nonARC
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm @nonARC
@@ -468,7 +469,7 @@ UIProcess/Cocoa/SessionStateCoding.mm @nonARC
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm @nonARC
 UIProcess/Cocoa/TextCheckingController.mm @nonARC
 UIProcess/Cocoa/TextExtraction/WKTextExtractionUtilities.mm @nonARC
-UIProcess/Cocoa/UIDelegate.mm @nonARC
+UIProcess/Cocoa/UIDelegate.mm @nonARC @cost:3
 UIProcess/Cocoa/UIProcessLogInitializationCocoa.mm @nonARC
 UIProcess/Cocoa/UIRemoteObjectRegistry.cpp
 UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm @nonARC
@@ -476,13 +477,13 @@ UIProcess/Cocoa/UserMediaPermissionRequestProxyCocoa.mm @nonARC
 UIProcess/Cocoa/VideoPresentationManagerProxy.mm @nonARC
 UIProcess/Cocoa/ViewSnapshotStoreCocoa.mm @nonARC
 UIProcess/Cocoa/WebGeolocationManagerProxyCocoa.cpp
-UIProcess/Cocoa/WebKitSwiftSoftLink.mm @nonARC @no-unify
+UIProcess/Cocoa/WebKitSwiftSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
 UIProcess/Cocoa/WebPagePreferencesLockdownModeObserver.mm @nonARC
-UIProcess/Cocoa/WebPageProxyCocoa.mm @nonARC
-UIProcess/Cocoa/WebPasteboardProxyCocoa.mm @nonARC
+UIProcess/Cocoa/WebPageProxyCocoa.mm @nonARC @cost:12
+UIProcess/Cocoa/WebPasteboardProxyCocoa.mm @nonARC @cost:5
 UIProcess/Cocoa/WebPreferencesCocoa.mm @nonARC
 UIProcess/Cocoa/WebProcessCacheCocoa.mm @nonARC
-UIProcess/Cocoa/WebProcessPoolCocoa.mm @nonARC
+UIProcess/Cocoa/WebProcessPoolCocoa.mm @nonARC @cost:5
 UIProcess/Cocoa/WebProcessProxyCocoa.mm @nonARC
 UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm @nonARC
 UIProcess/Cocoa/WKColorExtensionView.mm @nonARC
@@ -581,6 +582,7 @@ UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm @nonARC
 UIProcess/ios/CompactContextMenuPresenter.mm @nonARC
 UIProcess/ios/DragDropInteractionState.mm @nonARC
 UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm @nonARC
+UIProcess/ios/LayerHostingVisibilityPropagator.mm @nonARC
 UIProcess/ios/PageClientImplIOS.mm @nonARC
 UIProcess/ios/PointerTouchCompatibilitySimulator.mm @nonARC
 UIProcess/ios/ProcessStateMonitor.mm @nonARC
@@ -622,7 +624,6 @@ UIProcess/ios/WKUIScrollEdgeEffect.mm @nonARC
 UIProcess/ios/WKUSDPreviewView.mm @nonARC
 UIProcess/ios/WKVideoView.mm @nonARC
 UIProcess/ios/WKVisibilityPropagationView.mm @nonARC
-UIProcess/ios/WKWebEvent.mm @nonARC
 UIProcess/ios/WKWebGeolocationPolicyDeciderIOS.mm @nonARC
 
 UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm @nonARC
@@ -672,8 +673,8 @@ UIProcess/RemoteLayerTree/mac/RemoteLayerTreeDrawingAreaProxyMac.mm @nonARC
 UIProcess/RemoteLayerTree/mac/RemoteLayerTreeEventDispatcher.mm @nonARC
 UIProcess/RemoteLayerTree/mac/RemoteScrollingCoordinatorProxyMac.mm @nonARC
 UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm @nonARC
-UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp
-UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp
+UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp @cost:3
+UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp @cost:3
 UIProcess/RemoteLayerTree/mac/ScrollingTreePluginScrollingNodeRemoteMac.cpp
 
 UIProcess/RemoteLayerTree/ios/RemoteLayerTreeDrawingAreaProxyIOS.mm @nonARC
@@ -696,20 +697,20 @@ UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm @nonARC
 UIProcess/RemoteLayerTree/RemoteLayerTreeInteractionRegionLayers.mm @nonARC
 UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm @nonARC
 UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm @nonARC
-UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
-UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp
+UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp @cost:3
+UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp @cost:3
 UIProcess/RemoteLayerTree/RemoteProgressBasedTimeline.cpp
-UIProcess/RemoteLayerTree/RemoteProgressBasedTimelineRegistry.cpp
+UIProcess/RemoteLayerTree/RemoteProgressBasedTimelineRegistry.cpp @cost:3
 
-UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm @nonARC @no-unify
+UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
 UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm @nonARC
 UIProcess/WebAuthentication/Cocoa/CcidConnection.mm @nonARC
 UIProcess/WebAuthentication/Cocoa/CcidService.mm @nonARC
-UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.mm @nonARC @no-unify
+UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
 UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm @nonARC
 UIProcess/WebAuthentication/Cocoa/LocalConnection.mm @nonARC
 UIProcess/WebAuthentication/Cocoa/LocalService.mm @nonARC
-UIProcess/WebAuthentication/Cocoa/NearFieldSoftLink.mm @nonARC @no-unify
+UIProcess/WebAuthentication/Cocoa/NearFieldSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
 UIProcess/WebAuthentication/Cocoa/NfcConnection.mm @nonARC
 UIProcess/WebAuthentication/Cocoa/NfcService.mm @nonARC
 UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm @nonARC
@@ -748,8 +749,8 @@ WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp
 WebProcess/cocoa/RemoteRealtimeVideoSource.cpp
 WebProcess/cocoa/TextRecognitionRequest.cpp
 WebProcess/cocoa/UserMediaCaptureManager.cpp
-WebProcess/cocoa/VideoPresentationManager.mm @nonARC
-WebProcess/cocoa/WebProcessCocoa.mm @nonARC
+WebProcess/cocoa/VideoPresentationManager.mm @nonARC @cost:7
+WebProcess/cocoa/WebProcessCocoa.mm @nonARC @cost:4
 
 WebProcess/cocoa/IdentityDocumentServices/DigitalCredentialsRequestValidatorBridge.mm @nonARC
 
@@ -847,7 +848,7 @@ WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 WebProcess/Plugins/PDF/PDFAnnotationTypeHelpers.mm @nonARC
 WebProcess/Plugins/PDF/PDFIncrementalLoader.mm @nonARC
 WebProcess/Plugins/PDF/PDFPlugin.mm @nonARC
-WebProcess/Plugins/PDF/PDFPluginBase.mm @nonARC
+WebProcess/Plugins/PDF/PDFPluginBase.mm @nonARC @cost:7
 WebProcess/Plugins/PDF/PDFPluginAnnotation.mm @nonARC
 WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm @nonARC
 WebProcess/Plugins/PDF/PDFPluginPasswordField.mm @nonARC
@@ -855,15 +856,15 @@ WebProcess/Plugins/PDF/PDFPluginPasswordForm.mm @nonARC
 WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm @nonARC
 WebProcess/Plugins/PDF/PDFScriptEvaluation.mm @nonARC
 WebProcess/Plugins/PDF/WKAccessibilityPDFDocumentObject.mm @nonARC
-WebProcess/Plugins/PDF/UnifiedPDF/AsyncPDFRenderer.mm @nonARC
+WebProcess/Plugins/PDF/UnifiedPDF/AsyncPDFRenderer.mm @nonARC @cost:3
 WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorItem.mm @nonARC
-WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorOverlayController.mm @nonARC
-WebProcess/Plugins/PDF/UnifiedPDF/PDFDiscretePresentationController.mm @nonARC
+WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorOverlayController.mm @nonARC @cost:3
+WebProcess/Plugins/PDF/UnifiedPDF/PDFDiscretePresentationController.mm @nonARC @cost:3
 WebProcess/Plugins/PDF/UnifiedPDF/PDFDocumentLayout.mm @nonARC
 WebProcess/Plugins/PDF/UnifiedPDF/PDFPageCoverage.mm @nonARC
-WebProcess/Plugins/PDF/UnifiedPDF/PDFPresentationController.mm @nonARC
-WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm @nonARC
-WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC
+WebProcess/Plugins/PDF/UnifiedPDF/PDFPresentationController.mm @nonARC @cost:3
+WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm @nonARC @cost:3
+WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC @cost:7
 
 WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
@@ -892,31 +893,31 @@ WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm @nonARC
 WebProcess/WebPage/Cocoa/TextAnimationController.mm @nonARC
 WebProcess/WebPage/Cocoa/WebCookieCacheCocoa.mm @nonARC
 WebProcess/WebPage/Cocoa/WebCookieJarCocoa.mm @nonARC
-WebProcess/WebPage/Cocoa/WebPageCocoa.mm @nonARC
+WebProcess/WebPage/Cocoa/WebPageCocoa.mm @nonARC @cost:10
 WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp
 
 WebProcess/WebPage/ios/FindIndicatorIOS.cpp
 WebProcess/WebPage/ios/WebPageIOS.mm @nonARC
 
 WebProcess/WebPage/mac/PageBannerMac.mm @nonARC
-WebProcess/WebPage/mac/RemoteLayerTreeDrawingAreaMac.mm @nonARC
+WebProcess/WebPage/mac/RemoteLayerTreeDrawingAreaMac.mm @nonARC @cost:3
 WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.mm @nonARC
 WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm @nonARC
-WebProcess/WebPage/mac/WebPageMac.mm @nonARC
+WebProcess/WebPage/mac/WebPageMac.mm @nonARC @cost:7
 WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm @nonARC
 WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm @nonARC
 
-WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm @nonARC
-WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm @nonARC
-WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm @nonARC
-WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm @nonARC
+WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm @nonARC @cost:3
+WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm @nonARC @cost:3
+WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm @nonARC @cost:3
+WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm @nonARC @cost:3
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteHost.mm @nonARC
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.mm @nonARC
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.cpp
-WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm @nonARC
-WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm @nonARC @no-unify
+WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm @nonARC @cost:4
+WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm @nonARC @no-unify-when(bundle<=8) @cost:4
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollbarsController.mm @nonARC
-WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm @nonARC
+WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm @nonARC @cost:3
 
 // Derived Sources
 AudioSessionRoutingArbitratorProxyMessageReceiver.cpp
@@ -924,12 +925,12 @@ AuthenticationManagerMessageReceiver.cpp
 AuxiliaryProcessMessageReceiver.cpp
 DownloadProxyMessageReceiver.cpp
 DrawingAreaMessageReceiver.cpp
-DrawingAreaProxyMessageReceiver.cpp
+DrawingAreaProxyMessageReceiver.cpp @cost:10
 DigitalCredentialsCoordinatorMessageReceiver.cpp
 EventDispatcherMessageReceiver.cpp
-GPUConnectionToWebProcessMessageReceiver.cpp
+GPUConnectionToWebProcessMessageReceiver.cpp @cost:6
 GPUProcessConnectionMessageReceiver.cpp
-GPUProcessMessageReceiver.cpp
+GPUProcessMessageReceiver.cpp @cost:7
 GPUProcessProxyMessageReceiver.cpp
 LegacyCustomProtocolManagerMessageReceiver.cpp
 LegacyCustomProtocolManagerProxyMessageReceiver.cpp
@@ -937,43 +938,42 @@ LibWebRTCCodecsMessageReceiver.cpp
 LibWebRTCCodecsProxyMessageReceiver.cpp
 LibWebRTCNetworkMessageReceiver.cpp
 LogStreamMessageReceiver.cpp
-Shared/LogStream.mm @no-unify
+Shared/LogStream.mm @no-unify-when(bundle<=8)
 ModelConnectionToWebProcessMessageReceiver.cpp
-MediaPlayerPrivateRemoteMessageReceiver.cpp
-MediaSourcePrivateRemoteMessageReceiverMessageReceiver.cpp
+MediaPlayerPrivateRemoteMessageReceiver.cpp @cost:5
 ModelProcessConnectionMessageReceiver.cpp
 ModelProcessMessageReceiver.cpp
 ModelProcessModelPlayerProxyMessageReceiver.cpp
 ModelProcessProxyMessageReceiver.cpp
-NetworkConnectionToWebProcessMessageReceiver.cpp
-NetworkContentRuleListManagerMessageReceiver.cpp
+NetworkConnectionToWebProcessMessageReceiver.cpp @cost:9
+NetworkContentRuleListManagerMessageReceiver.cpp @cost:3
 NetworkMDNSRegisterMessageReceiver.cpp
-NetworkProcessConnectionMessageReceiver.cpp
-NetworkProcessMessageReceiver.cpp
-NetworkProcessProxyMessageReceiver.cpp
-NetworkResourceLoaderMessageReceiver.cpp
+NetworkProcessConnectionMessageReceiver.cpp @cost:3
+NetworkProcessMessageReceiver.cpp @cost:9
+NetworkProcessProxyMessageReceiver.cpp @cost:6
+NetworkResourceLoaderMessageReceiver.cpp @cost:5
 NetworkRTCMonitorMessageReceiver.cpp
-NetworkRTCProviderMessageReceiver.cpp
+NetworkRTCProviderMessageReceiver.cpp @cost:3
 NetworkSocketChannelMessageReceiver.cpp
-NetworkStorageManagerMessageReceiver.cpp
-NotificationManagerMessageHandlerMessageReceiver.cpp
-PlaybackSessionManagerMessageReceiver.cpp
-PlaybackSessionManagerProxyMessageReceiver.cpp
+NetworkStorageManagerMessageReceiver.cpp @cost:6
+NotificationManagerMessageHandlerMessageReceiver.cpp @cost:3
+PlaybackSessionManagerMessageReceiver.cpp @cost:3
+PlaybackSessionManagerProxyMessageReceiver.cpp @cost:3
 RemoteAudioDestinationManagerMessageReceiver.cpp
 RemoteAudioHardwareListenerMessageReceiver.cpp
 RemoteAudioSessionMessageReceiver.cpp
 RemoteAudioSessionProxyMessageReceiver.cpp
 RemoteAudioSourceProviderManagerMessageReceiver.cpp
 RemoteCaptureSampleManagerMessageReceiver.cpp
-RemoteCDMFactoryProxyMessageReceiver.cpp
+RemoteCDMFactoryProxyMessageReceiver.cpp @cost:3
 RemoteCDMInstanceMessageReceiver.cpp
-RemoteCDMInstanceProxyMessageReceiver.cpp
+RemoteCDMInstanceProxyMessageReceiver.cpp @cost:3
 RemoteCDMInstanceSessionMessageReceiver.cpp
 RemoteCDMInstanceSessionProxyMessageReceiver.cpp
 RemoteCDMProxyMessageReceiver.cpp
-RemoteImageBufferMessageReceiver.cpp
+RemoteImageBufferMessageReceiver.cpp @cost:5
 RemoteImageBufferProxyMessageReceiver.cpp
-RemoteImageBufferSetMessageReceiver.cpp
+RemoteImageBufferSetMessageReceiver.cpp @cost:5
 RemoteImageDecoderAVFManagerMessageReceiver.cpp
 RemoteImageDecoderAVFProxyMessageReceiver.cpp
 RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp
@@ -996,78 +996,78 @@ RemoteMediaSourceProxyMessageReceiver.cpp
 RemoteObjectRegistryMessageReceiver.cpp
 RemoteRemoteCommandListenerMessageReceiver.cpp
 RemoteRemoteCommandListenerProxyMessageReceiver.cpp
-RemoteRenderingBackendMessageReceiver.cpp
+RemoteRenderingBackendMessageReceiver.cpp @cost:7
 RemoteRenderingBackendProxyMessageReceiver.cpp
 RemoteSampleBufferDisplayLayerManagerMessageReceiver.cpp
 RemoteSampleBufferDisplayLayerMessageReceiver.cpp
 RemoteScrollingCoordinatorMessageReceiver.cpp
-RemoteSharedResourceCacheMessageReceiver.cpp
+RemoteSharedResourceCacheMessageReceiver.cpp @cost:5
 RemoteSourceBufferProxyMessageReceiver.cpp
 RemoteWebInspectorUIMessageReceiver.cpp
 RemoteWebInspectorUIProxyMessageReceiver.cpp
 SampleBufferDisplayLayerMessageReceiver.cpp
 SecItemShimProxyMessageReceiver.cpp
-SerializedTypeInfo.mm @nonARC
+SerializedTypeInfo.mm @nonARC @cost:14
 ServiceWorkerFetchTaskMessageReceiver.cpp
 SmartMagnificationControllerMessageReceiver.cpp
 SourceBufferPrivateRemoteMessageReceiverMessageReceiver.cpp
 SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp
-SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp
-SpeechRecognitionServerMessageReceiver.cpp
+SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp @cost:10
+SpeechRecognitionServerMessageReceiver.cpp @cost:10
 StorageAreaMapMessageReceiver.cpp
 TextCheckingControllerProxyMessageReceiver.cpp
-UserMediaCaptureManagerMessageReceiver.cpp
-UserMediaCaptureManagerProxyMessageReceiver.cpp
-VideoPresentationManagerMessageReceiver.cpp
-VideoPresentationManagerProxyMessageReceiver.cpp
-ViewGestureControllerMessageReceiver.cpp
+UserMediaCaptureManagerMessageReceiver.cpp @cost:3
+UserMediaCaptureManagerProxyMessageReceiver.cpp @cost:3
+VideoPresentationManagerMessageReceiver.cpp @cost:3
+VideoPresentationManagerProxyMessageReceiver.cpp @cost:3
+ViewGestureControllerMessageReceiver.cpp @cost:10
 ViewGestureGeometryCollectorMessageReceiver.cpp
 ViewUpdateDispatcherMessageReceiver.cpp
-VisitedLinkStoreMessageReceiver.cpp
+VisitedLinkStoreMessageReceiver.cpp @cost:9
 VisitedLinkTableControllerMessageReceiver.cpp
-WebAuthenticatorCoordinatorProxyMessageReceiver.cpp
-WebAutomationSessionProxyMessageReceiver.cpp
+WebAuthenticatorCoordinatorProxyMessageReceiver.cpp @cost:4
+WebAutomationSessionProxyMessageReceiver.cpp @cost:3
 WebBackForwardListMessageReceiver.cpp
-WebCookieManagerMessageReceiver.cpp
+WebCookieManagerMessageReceiver.cpp @cost:3
 WebDeviceOrientationUpdateProviderMessageReceiver.cpp
 WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp
-WebExtensionContextMessageReceiver.cpp
-WebExtensionContextProxyMessageReceiver.cpp
-WebExtensionControllerMessageReceiver.cpp
-WebExtensionControllerProxyMessageReceiver.cpp
+WebExtensionContextMessageReceiver.cpp @cost:11
+WebExtensionContextProxyMessageReceiver.cpp @cost:7
+WebExtensionControllerMessageReceiver.cpp @cost:6
+WebExtensionControllerProxyMessageReceiver.cpp @cost:6
 WebFileSystemStorageConnectionMessageReceiver.cpp
-WebFullScreenManagerMessageReceiver.cpp
-WebFullScreenManagerProxyMessageReceiver.cpp
+WebFullScreenManagerMessageReceiver.cpp @cost:3
+WebFullScreenManagerProxyMessageReceiver.cpp @cost:10
 WebGeolocationManagerMessageReceiver.cpp
-WebGeolocationManagerProxyMessageReceiver.cpp
-WebIDBConnectionToServerMessageReceiver.cpp
+WebGeolocationManagerProxyMessageReceiver.cpp @cost:10
+WebIDBConnectionToServerMessageReceiver.cpp @cost:3
 WasmDebuggerDispatcherMessageReceiver.cpp
 WebInspectorInterruptDispatcherMessageReceiver.cpp
 WebInspectorBackendMessageReceiver.cpp
-WebInspectorBackendProxyMessageReceiver.cpp
-ProxyingNetworkAgentMessageReceiver.cpp
-ProxyingPageAgentMessageReceiver.cpp
-WebInspectorUIExtensionControllerMessageReceiver.cpp
+WebInspectorBackendProxyMessageReceiver.cpp @cost:4
+ProxyingNetworkAgentMessageReceiver.cpp @cost:3
+ProxyingPageAgentMessageReceiver.cpp @cost:3
+WebInspectorUIExtensionControllerMessageReceiver.cpp @cost:3
 WebInspectorUIExtensionControllerProxyMessageReceiver.cpp
-WebInspectorUIMessageReceiver.cpp
-WebInspectorUIProxyMessageReceiver.cpp
+WebInspectorUIMessageReceiver.cpp @cost:3
+WebInspectorUIProxyMessageReceiver.cpp @cost:4
 WebNotificationManagerMessageReceiver.cpp
-WebPageMessageReceiver.cpp
-WebPageProxyMessageReceiver.cpp
+WebPageMessageReceiver.cpp @cost:22
+WebPageProxyMessageReceiver.cpp @cost:33
 WebPageTestingMessageReceiver.cpp
-WebPasteboardProxyMessageReceiver.cpp
+WebPasteboardProxyMessageReceiver.cpp @cost:15
 WebPaymentCoordinatorMessageReceiver.cpp
-WebPaymentCoordinatorProxyMessageReceiver.cpp
-WebProcessMessageReceiver.cpp
-WebProcessPoolMessageReceiver.cpp
-WebProcessProxyMessageReceiver.cpp
-WebResourceLoaderMessageReceiver.cpp
-WebRTCMonitorMessageReceiver.cpp
+WebPaymentCoordinatorProxyMessageReceiver.cpp @cost:3
+WebProcessMessageReceiver.cpp @cost:9
+WebProcessPoolMessageReceiver.cpp @cost:10
+WebProcessProxyMessageReceiver.cpp @cost:15
+WebResourceLoaderMessageReceiver.cpp @cost:3
+WebRTCMonitorMessageReceiver.cpp @cost:3
 WebRTCResolverMessageReceiver.cpp
 WebSocketChannelMessageReceiver.cpp
 WebSpeechRecognitionConnectionMessageReceiver.cpp
-WebSWClientConnectionMessageReceiver.cpp
-WebSWContextManagerConnectionMessageReceiver.cpp
-WebSWServerConnectionMessageReceiver.cpp
-WebSWServerToContextConnectionMessageReceiver.cpp
+WebSWClientConnectionMessageReceiver.cpp @cost:3
+WebSWContextManagerConnectionMessageReceiver.cpp @cost:5
+WebSWServerConnectionMessageReceiver.cpp @cost:5
+WebSWServerToContextConnectionMessageReceiver.cpp @cost:5
 WebUserContentControllerMessageReceiver.cpp

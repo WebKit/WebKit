@@ -9,6 +9,7 @@ PASS 'font' in document.body.style is true
 PASS 'webkitTransform' in document.body.style is true
 PASS 'WebkitTransform' in document.body.style is true
 PASS 'bogus-random-String' in document.body.style is false
+PASS 'pad' in document.body.style is false
 PASS 'cssText' in document.body.style is true
 PASS initialIndexOfGroup2 > initialIndexOfGroup1 is true
 PASS initialIndexOfGroup3 > initialIndexOfGroup2 is true

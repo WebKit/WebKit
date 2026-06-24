@@ -63,6 +63,9 @@ class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class PlaybackSessionModelContext;
 class VideoPresentationManagerProxy;
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+class LayerHostingVisibilityPropagator;
+#endif
 struct SharedPreferencesForWebProcess;
 
 class VideoPresentationModelContext final
@@ -75,6 +78,11 @@ public:
     virtual ~VideoPresentationModelContext();
 
     void requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&&);
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    LayerHostingVisibilityPropagator* layerHostingVisibilityPropagator() const { return m_layerHostingVisibilityPropagator.get(); }
+    void setLayerHostingVisibilityPropagator(RefPtr<LayerHostingVisibilityPropagator>&&);
+#endif
 
 private:
     friend class VideoPresentationManagerProxy;
@@ -147,6 +155,10 @@ private:
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
     bool m_isChildOfElementFullscreen { false };
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    RefPtr<LayerHostingVisibilityPropagator> m_layerHostingVisibilityPropagator;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     mutable uint64_t m_childIdentifierSeed { 0 };

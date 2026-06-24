@@ -14,12 +14,14 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
 #include "api/field_trials.h"
 #include "api/make_ref_counted.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/transport/ecn_marking.h"
 #include "api/units/timestamp.h"
 #include "call/rtp_demuxer.h"
@@ -37,16 +39,14 @@
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_identity.h"
-#include "rtc_base/thread.h"
 #include "test/create_test_field_trials.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 namespace {
 
 constexpr int kRtpAuthTagLen = 10;
-// kRtcpReport also exists as an enum value. Disambiguate.
-const auto& kRtcpReportForTest = ::kRtcpReport;
 
 class DtlsSrtpTransportTest : public ::testing::Test {
  protected:
@@ -137,7 +137,7 @@ class DtlsSrtpTransportTest : public ::testing::Test {
     memcpy(rtp_packet_data, kPcmuFrame, rtp_len);
     // In order to be able to run this test function multiple times we can not
     // use the same sequence number twice. Increase the sequence number by one.
-    SetBE16(reinterpret_cast<uint8_t*>(rtp_packet_data) + 2,
+    SetBE16(std::span<uint8_t>(rtp_packet_buffer).subspan(2),
             ++sequence_number_);
     CopyOnWriteBuffer rtp_packet1to2(rtp_packet_data, rtp_len, packet_size);
     CopyOnWriteBuffer rtp_packet2to1(rtp_packet_data, rtp_len, packet_size);
@@ -163,17 +163,15 @@ class DtlsSrtpTransportTest : public ::testing::Test {
   }
 
   void SendRecvRtcpPackets() {
-    size_t rtcp_len = sizeof(kRtcpReportForTest);
+    size_t rtcp_len = sizeof(kFakeRtcpReport);
     size_t packet_size = rtcp_len + 4 + kRtpAuthTagLen;
     Buffer rtcp_packet_buffer =
         Buffer::CreateUninitializedWithSize(packet_size);
 
     // TODO(zhihuang): Remove the extra copy when the SendRtpPacket method
     // doesn't take the CopyOnWriteBuffer by pointer.
-    CopyOnWriteBuffer rtcp_packet1to2(kRtcpReportForTest, rtcp_len,
-                                      packet_size);
-    CopyOnWriteBuffer rtcp_packet2to1(kRtcpReportForTest, rtcp_len,
-                                      packet_size);
+    CopyOnWriteBuffer rtcp_packet1to2(kFakeRtcpReport, rtcp_len, packet_size);
+    CopyOnWriteBuffer rtcp_packet2to1(kFakeRtcpReport, rtcp_len, packet_size);
 
     AsyncSocketPacketOptions options;
     // Send a packet from `srtp_transport1_` to `srtp_transport2_` and verify
@@ -183,7 +181,7 @@ class DtlsSrtpTransportTest : public ::testing::Test {
                                                       PF_SRTP_BYPASS));
     ASSERT_TRUE(transport_observer2_.last_recv_rtcp_packet().data());
     EXPECT_EQ(0, memcmp(transport_observer2_.last_recv_rtcp_packet().data(),
-                        kRtcpReportForTest, rtcp_len));
+                        kFakeRtcpReport, rtcp_len));
     EXPECT_EQ(prev_received_packets + 1, transport_observer2_.rtcp_count());
 
     // Do the same thing in the opposite direction;
@@ -192,12 +190,12 @@ class DtlsSrtpTransportTest : public ::testing::Test {
                                                       PF_SRTP_BYPASS));
     ASSERT_TRUE(transport_observer1_.last_recv_rtcp_packet().data());
     EXPECT_EQ(0, memcmp(transport_observer1_.last_recv_rtcp_packet().data(),
-                        kRtcpReportForTest, rtcp_len));
+                        kFakeRtcpReport, rtcp_len));
     EXPECT_EQ(prev_received_packets + 1, transport_observer1_.rtcp_count());
   }
 
   void SendRecvRtpPacketsWithHeaderExtension(
-      const std::vector<int>& encrypted_header_ids) {
+      const std::vector<RtpHeaderExtensionId>& encrypted_header_ids) {
     ASSERT_TRUE(dtls_srtp_transport1_);
     ASSERT_TRUE(dtls_srtp_transport2_);
     ASSERT_TRUE(dtls_srtp_transport1_->IsSrtpActive());
@@ -210,7 +208,7 @@ class DtlsSrtpTransportTest : public ::testing::Test {
     memcpy(rtp_packet_data, kPcmuFrameWithExtensions, rtp_len);
     // In order to be able to run this test function multiple times we can not
     // use the same sequence number twice. Increase the sequence number by one.
-    SetBE16(reinterpret_cast<uint8_t*>(rtp_packet_data) + 2,
+    SetBE16(std::span<uint8_t>(rtp_packet_buffer).subspan(2),
             ++sequence_number_);
     CopyOnWriteBuffer rtp_packet1to2(rtp_packet_data, rtp_len, packet_size);
     CopyOnWriteBuffer rtp_packet2to1(rtp_packet_data, rtp_len, packet_size);
@@ -266,7 +264,7 @@ class DtlsSrtpTransportTest : public ::testing::Test {
     SendRecvRtcpPackets();
   }
 
-  AutoThread main_thread_;
+  test::RunLoop main_thread_;
   std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport1_;
   std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport2_;
   TransportObserver transport_observer1_;
@@ -462,7 +460,7 @@ TEST_F(DtlsSrtpTransportTest, EncryptedHeaderExtensionIdUpdated) {
                          /*rtcp_mux_enabled=*/true);
   CompleteDtlsHandshake(rtp_dtls1.get(), rtp_dtls2.get());
 
-  std::vector<int> encrypted_headers;
+  std::vector<RtpHeaderExtensionId> encrypted_headers;
   encrypted_headers.push_back(kHeaderExtensionIDs[0]);
   encrypted_headers.push_back(kHeaderExtensionIDs[1]);
 

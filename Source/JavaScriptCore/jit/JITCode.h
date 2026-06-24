@@ -239,6 +239,9 @@ public:
 
     virtual bool canSwapCodeRefForDebugger() const { return false; }
     virtual CodeRef<JSEntryPtrTag> swapCodeRefForDebugger(CodeRef<JSEntryPtrTag>);
+
+    virtual bool canSwapCodePtrWithArityCheckForDebugger() const { return false; }
+    virtual CodePtr<JSEntryPtrTag> swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>);
     
     enum class ShareAttribute : uint8_t {
         NotShared,
@@ -342,6 +345,10 @@ public:
     ~DirectJITCode() override;
     
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
+
+    bool canSwapCodeRefForDebugger() const override { return jitType() == JITType::HostCallThunk; }
+    bool canSwapCodePtrWithArityCheckForDebugger() const override { return jitType() == JITType::HostCallThunk; }
+    CodePtr<JSEntryPtrTag> swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>) override;
 
 protected:
     void initializeCodeRefForDFG(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck);

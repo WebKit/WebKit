@@ -13,7 +13,6 @@
 #include <utility>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/parameter/forward_tsn_supported_parameter.h"
 #include "net/dcsctp/packet/parameter/parameter.h"

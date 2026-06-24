@@ -17,7 +17,7 @@
     {"access": "public", "introduced": "2", "kind": "function", "linkage": "exported", "name": "_notify_set_state"},
     {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_notify_suspend"}
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "notify_handler_t"}
    ]

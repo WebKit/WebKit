@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <span>
 #include <vector>
 
 #include "absl/base/nullability.h"
-#include "api/array_view.h"
 #include "api/call/bitrate_allocation.h"
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
@@ -113,7 +113,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   std::map<uint32_t, RtpPayloadState> GetRtpPayloadStates() const
       RTC_LOCKS_EXCLUDED(mutex_) override;
 
-  void DeliverRtcp(ArrayView<const uint8_t> packet)
+  void DeliverRtcp(std::span<const uint8_t> packet)
       RTC_LOCKS_EXCLUDED(mutex_) override;
   // Implements webrtc::VCMProtectionCallback.
   int ProtectionRequest(const FecProtectionParams* delta_params,
@@ -138,6 +138,10 @@ class RtpVideoSender : public RtpVideoSenderInterface,
       const CodecSpecificInfo* codec_specific_info)
       RTC_LOCKS_EXCLUDED(mutex_) override;
 
+  void OnFrameDropped(uint32_t rtp_timestamp,
+                      int spatial_id,
+                      bool is_end_of_temporal_unit) override;
+
   void OnBitrateAllocationUpdated(const VideoBitrateAllocation& bitrate)
       RTC_LOCKS_EXCLUDED(mutex_) override;
   void OnVideoLayersAllocationUpdated(
@@ -154,12 +158,12 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   // Sets the list of CSRCs to be included in every packet. If more than
   // kRtpCsrcSize CSRCs are provided, only the first kRtpCsrcSize elements are
   // kept.
-  void SetCsrcs(ArrayView<const uint32_t> csrcs)
+  void SetCsrcs(std::span<const uint32_t> csrcs)
       RTC_LOCKS_EXCLUDED(mutex_) override;
 
   std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
       uint32_t ssrc,
-      ArrayView<const uint16_t> sequence_numbers) const
+      std::span<const uint16_t> sequence_numbers) const
       RTC_LOCKS_EXCLUDED(mutex_) override;
 
   // From StreamFeedbackObserver.

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script>
+(async () => {
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+try { await (()=>{ let utterance = (()=>{ let text = `\u{1fb26}\u7c45\ua25f\udca4\u{1fd53}\u{1fb71}&\u0c42\u0ebb\u3e1b\u7fcb\u{1f7f8}\u{1f8a1}\u{1fb04}\u{1fda1}\u5280\u0da4\u0fb6\u0bf0\u02c8\u2fcc\u{1f7ce}\u9db2\u{1f740}\u{1ff40}\u3907`; return new SpeechSynthesisUtterance(text) })(); return speechSynthesis.speak(utterance) })() } catch {}
+document.write("PASS");
+if (testRunner) testRunner.notifyDone();
+})();
+</script>

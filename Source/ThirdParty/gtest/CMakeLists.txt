@@ -34,9 +34,11 @@ endif ()
 
 target_include_directories(gtest PRIVATE ${GTEST_INCLUDE_DIRECTORIES})
 
-WEBKIT_ADD_TARGET_CXX_FLAGS(gtest -Wno-undef
-                                  -Wno-stringop-truncation
-                                  -Wno-suggest-attribute=format)
+WEBKIT_ADD_TARGET_CXX_FLAGS(gtest -Wno-undef)
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    WEBKIT_ADD_TARGET_CXX_FLAGS(gtest -Wno-stringop-truncation
+                                      -Wno-suggest-attribute=format)
+endif ()
 
 if (CMAKE_USE_PTHREADS_INIT)
     target_link_libraries(gtest PRIVATE ${CMAKE_THREAD_LIBS_INIT})

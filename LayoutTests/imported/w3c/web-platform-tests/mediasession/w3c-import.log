@@ -14,10 +14,16 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/mediasession/META.yml
-/LayoutTests/imported/w3c/mediasession/README.md
-/LayoutTests/imported/w3c/mediasession/idlharness.window.js
-/LayoutTests/imported/w3c/mediasession/mediametadata.html
-/LayoutTests/imported/w3c/mediasession/playbackstate.html
-/LayoutTests/imported/w3c/mediasession/positionstate.html
-/LayoutTests/imported/w3c/mediasession/setactionhandler.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/README.md
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/artwork-url-encoding-euc-kr.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/media-session-artwork-fetch-service-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/media-session-artwork-fetch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/mediametadata.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/playbackstate.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/positionstate.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/setactionhandler.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/setcameraactive.html
+/LayoutTests/imported/w3c/web-platform-tests/mediasession/setmicrophoneactive.html

@@ -32,7 +32,7 @@ namespace JSC {
 
 const ClassInfo JSPromiseCombinatorsGlobalContext::s_info = { "PromiseCombinatorsGlobalContext"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSPromiseCombinatorsGlobalContext) };
 
-JSPromiseCombinatorsGlobalContext* JSPromiseCombinatorsGlobalContext::create(VM& vm, JSValue promise, JSValue values, JSValue remainingElementsCount)
+JSPromiseCombinatorsGlobalContext* JSPromiseCombinatorsGlobalContext::create(VM& vm, JSValue promise, JSValue values, uint64_t remainingElementsCount)
 {
     auto* structure = vm.promiseCombinatorsGlobalContextStructure.get();
     JSPromiseCombinatorsGlobalContext* result = new (NotNull, allocateCell<JSPromiseCombinatorsGlobalContext>(vm)) JSPromiseCombinatorsGlobalContext(vm, structure, promise, values, remainingElementsCount);
@@ -53,7 +53,6 @@ void JSPromiseCombinatorsGlobalContext::visitChildrenImpl(JSCell* cell, Visitor&
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_promise);
     visitor.append(thisObject->m_values);
-    visitor.append(thisObject->m_remainingElementsCount);
 }
 
 DEFINE_VISIT_CHILDREN(JSPromiseCombinatorsGlobalContext);

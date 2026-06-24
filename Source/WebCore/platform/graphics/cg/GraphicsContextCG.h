@@ -80,6 +80,7 @@ public:
     void clearRect(const FloatRect&) final;
     void strokeRect(const FloatRect&, float lineWidth) final;
     void strokeArc(const PathArc&) final;
+    void strokeLine(const PathDataLine&) final;
 
     void fillEllipse(const FloatRect& ellipse) final;
     void strokeEllipse(const FloatRect& ellipse) final;

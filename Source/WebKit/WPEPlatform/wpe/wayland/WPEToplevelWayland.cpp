@@ -221,6 +221,11 @@ struct DMABufFeedback {
 /**
  * WPEToplevelWayland:
  *
+ * A [class@WPEPlatform.Toplevel] implementation for Wayland.
+ *
+ * [class@ToplevelWayland] is the [class@WPEPlatform.Toplevel] implementation
+ * used by [class@DisplayWayland]. It is backed by an `xdg_toplevel` and its
+ * Wayland surface can be accessed with [method@ToplevelWayland.get_wl_surface].
  */
 struct _WPEToplevelWaylandPrivate {
     struct wl_surface* wlSurface;

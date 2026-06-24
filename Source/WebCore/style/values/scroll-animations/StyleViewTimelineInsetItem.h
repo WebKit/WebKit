@@ -24,8 +24,7 @@
 
 #pragma once
 
-#include <WebCore/StyleLengthWrapper.h>
-#include <WebCore/StyleValueTypes.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 #include <WebCore/WebAnimationTypes.h>
 
 namespace WebCore {
@@ -38,31 +37,31 @@ namespace Style {
 // <single-view-timeline-inset-item> = [ [ auto | <length-percentage> ]{1,2} ]
 // https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
 struct ViewTimelineInsetItem {
-    struct Length : LengthWrapperBase<LengthPercentage<>, CSS::Keyword::Auto> {
+    struct Offset : PrimitiveNumericOrKeyword<LengthPercentage<>, CSS::Keyword::Auto> {
         using Base::Base;
 
         bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }
     };
 
-    MinimallySerializingSpaceSeparatedPair<Length> value;
+    MinimallySerializingSpaceSeparatedPair<Offset> value;
 
     ViewTimelineInsetItem(CSS::Keyword::Auto keyword)
-        : value { Length { keyword }, Length { keyword } }
+        : value { Offset { keyword }, Offset { keyword } }
     {
     }
 
-    ViewTimelineInsetItem(Length&& length)
+    ViewTimelineInsetItem(Offset&& length)
         : value { length, length }
     {
     }
 
-    ViewTimelineInsetItem(Length&& first, Length&& second)
+    ViewTimelineInsetItem(Offset&& first, Offset&& second)
         : value { WTF::move(first), WTF::move(second) }
     {
     }
 
-    const Length& start() const { return value.first(); }
-    const Length& end() const { return value.second(); }
+    const Offset& start() const { return value.first(); }
+    const Offset& end() const { return value.second(); }
 
     bool operator==(const ViewTimelineInsetItem&) const = default;
 };
@@ -78,5 +77,5 @@ template<> struct CSSValueConversion<ViewTimelineInsetItem> {
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ViewTimelineInsetItem::Length)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ViewTimelineInsetItem::Offset)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::ViewTimelineInsetItem)

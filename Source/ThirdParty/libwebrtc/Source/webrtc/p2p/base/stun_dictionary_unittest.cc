@@ -18,14 +18,16 @@
 #include <vector>
 
 #include "api/transport/stun.h"
+#include "rtc_base/byte_buffer.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/socket_address.h"
 #include "test/gtest.h"
 
+namespace webrtc {
+
 namespace {
 
-void Sync(webrtc::StunDictionaryView& dictionary,
-          webrtc::StunDictionaryWriter& writer) {
+void Sync(StunDictionaryView& dictionary, StunDictionaryWriter& writer) {
   int pending = writer.Pending();
   auto delta = writer.CreateDelta();
   if (delta == nullptr) {
@@ -43,18 +45,17 @@ void Sync(webrtc::StunDictionaryView& dictionary,
   }
 }
 
-void XorToggle(webrtc::StunByteStringAttribute& attr, size_t byte) {
+void XorToggle(StunByteStringAttribute& attr, size_t byte) {
   ASSERT_TRUE(attr.length() > byte);
   uint8_t val = attr.GetByte(byte);
   uint8_t new_val = val ^ (128 - (byte & 255));
   attr.SetByte(byte, new_val);
 }
 
-std::unique_ptr<webrtc::StunByteStringAttribute> Crop(
-    const webrtc::StunByteStringAttribute& attr,
+std::unique_ptr<StunByteStringAttribute> Crop(
+    const StunByteStringAttribute& attr,
     int new_length) {
-  auto new_attr =
-      std::make_unique<webrtc::StunByteStringAttribute>(attr.type());
+  auto new_attr = std::make_unique<StunByteStringAttribute>(attr.type());
   std::string content = std::string(attr.string_view());
   content.erase(new_length);
   new_attr->CopyBytes(content);
@@ -62,8 +63,6 @@ std::unique_ptr<webrtc::StunByteStringAttribute> Crop(
 }
 
 }  // namespace
-
-namespace webrtc {
 
 constexpr int kKey1 = 100;
 
@@ -338,6 +337,93 @@ TEST(StunDictionary, ParseError) {
       EXPECT_FALSE(dictionary.ApplyDelta(*cropped_delta).ok());
     }
   }
+}
+
+TEST(StunDictionary, DuplicateKeysDesyncBytesStored) {
+  StunDictionaryView dictionary;
+  StunDictionaryWriter writer;
+
+  // 1. Store a value initially.
+  writer.SetUInt32(kKey1)->SetValue(10);
+  Sync(dictionary, writer);
+  EXPECT_EQ(dictionary.GetUInt32(kKey1)->value(), 10u);
+  int initial_bytes = dictionary.bytes_stored();
+  EXPECT_EQ(initial_bytes, 12);
+
+  // 2. Manually construct a delta with duplicate keys.
+  // We want version 3.
+  // It should contain:
+  // - Version attribute (version 3)
+  // - kKey1 (UINT32, value 27)
+  // - kKey1 (BYTE_STRING, length 0) [delete]
+
+  ByteBufferWriter buf;
+  buf.WriteUInt16(StunDictionaryView::kDeltaMagic);
+  buf.WriteUInt16(StunDictionaryView::kDeltaVersion);
+
+  // Version attribute
+  buf.WriteUInt16(StunDictionaryView::kVersionKey);
+  buf.WriteUInt16(8);
+  buf.WriteUInt16(STUN_VALUE_UINT64);
+  buf.WriteUInt64(3);  // Version 3
+
+  // First attribute: kKey1 (UINT32, value 27)
+  buf.WriteUInt16(kKey1);
+  buf.WriteUInt16(4);  // length
+  buf.WriteUInt16(STUN_VALUE_UINT32);
+  buf.WriteUInt32(27);
+
+  // Second attribute: kKey1 (BYTE_STRING, length 0) [delete]
+  buf.WriteUInt16(kKey1);
+  buf.WriteUInt16(0);  // length
+  buf.WriteUInt16(STUN_VALUE_BYTE_STRING);
+
+  StunByteStringAttribute delta(STUN_ATTR_GOOG_DELTA, buf.DataView());
+
+  // 3. Apply the delta
+  auto delta_ack = dictionary.ApplyDelta(delta);
+  // We expect this to fail once fixed.
+  EXPECT_FALSE(delta_ack.ok());
+
+  if (delta_ack.ok()) {
+    // 4. Verify desync (only if we didn't fail as expected)
+    ASSERT_NE(dictionary.GetUInt32(kKey1), nullptr);
+    EXPECT_EQ(dictionary.GetUInt32(kKey1)->value(), 27u);
+
+    // In the bugged version, this will be 8 instead of 12.
+    EXPECT_EQ(dictionary.bytes_stored(), 8);
+  }
+}
+
+TEST(StunDictionary, TombstoneLifeline) {
+  StunDictionaryWriter writer;
+
+  // 1. Set kKey1 (will be version 2)
+  writer.SetUInt32(kKey1)->SetValue(10);
+
+  // 2. Set kKey2 (will be version 3)
+  writer.SetUInt32(kKey1 + 1)->SetValue(20);
+
+  // 3. Delete kKey2 (will remove version 3, add version 4 tombstone)
+  writer.Delete(kKey1 + 1);
+
+  // Now pending has:
+  // (2, kKey1_attr)
+  // (4, kKey2_tombstone)
+
+  // We construct an ACK for version 2.
+  StunUInt64Attribute ack(STUN_ATTR_GOOG_DELTA_ACK, 2);
+
+  // This should remove kKey1 from pending, but KEEP kKey2 tombstone.
+  writer.ApplyDeltaAck(ack);
+
+  // If the bug is present, the tombstone for kKey2 has been deleted from
+  // writer.tombstones_, but it is still in pending_. Calling CreateDelta will
+  // try to access it and crash/UAF.
+  auto delta = writer.CreateDelta();
+
+  // If we survived, let's make sure the delta contains the tombstone.
+  ASSERT_NE(delta, nullptr);
 }
 
 }  // namespace webrtc

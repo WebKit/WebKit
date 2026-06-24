@@ -181,7 +181,7 @@ static JSPromise* rejectPromise(ThrowScope& scope, JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
-    return promise->rejectWithCaughtException(globalObject, scope);
+    return promise->rejectWithCaughtException(vm, scope);
 }
 
 JSPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, const String& moduleName, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher)
@@ -239,7 +239,7 @@ JSPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, SourceCode&& sour
 
     JSPromise* resultPromise = JSPromise::create(vm, globalObject->promiseStructure());
     resultPromise->markAsHandled();
-    promise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadReturnModuleKey, resultPromise, jsUndefined());
+    promise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::ModuleLoadReturnModuleKey, resultPromise, jsUndefined());
 
     return resultPromise;
 }

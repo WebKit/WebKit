@@ -69,7 +69,6 @@
 #include "RenderBlockFlow.h"
 #include "RenderObject.h"
 #include "RenderObjectStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
 #include "ReplaceNodeWithSpanCommand.h"
@@ -81,6 +80,7 @@
 #include "SplitTextNodeCommand.h"
 #include "SplitTextNodeContainingElementCommand.h"
 #include "StaticRange.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "TextListParser.h"
@@ -252,17 +252,18 @@ void EditCommandComposition::unapply(AddToUndoStack addToUndoStack)
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
+    Ref document = m_document.get();
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Where should iPhone code deal with the composition?
     // Since editing commands don't save/restore the composition, undoing without fixing
     // up the composition will leave a stale, invalid composition, as in <rdar://problem/6831637>.
     // Desktop handles this in -[WebHTMLView _updateSelectionForInputManager], but the phone
     // goes another route.
-    m_document->editor().cancelComposition();
+    document->editor().cancelComposition();
 #endif
 
-    auto prohibitScrollingForScope = m_document->view() ? m_document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
-    if (addToUndoStack == AddToUndoStack::Yes && !m_document->editor().willUnapplyEditing(*this))
+    auto prohibitScrollingForScope = document->view() ? document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
+    if (addToUndoStack == AddToUndoStack::Yes && !document->editor().willUnapplyEditing(*this))
         return;
 
     size_t size = m_commands.size();
@@ -272,7 +273,7 @@ void EditCommandComposition::unapply(AddToUndoStack addToUndoStack)
     if (addToUndoStack == AddToUndoStack::No)
         return;
 
-    m_document->editor().unappliedEditing(*this);
+    document->editor().unappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForUnapply(m_document->existingAXObjectCache());
@@ -301,14 +302,15 @@ void EditCommandComposition::reapply()
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
 
-    auto prohibitScrollingForScope = m_document->view() ? m_document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
-    if (!m_document->editor().willReapplyEditing(*this))
+    Ref document = m_document.get();
+    auto prohibitScrollingForScope = document->view() ? document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
+    if (!document->editor().willReapplyEditing(*this))
         return;
 
     for (Ref command : m_commands)
         command->doReapply();
 
-    m_document->editor().reappliedEditing(*this);
+    document->editor().reappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForReapply(m_document->existingAXObjectCache());
@@ -365,7 +367,7 @@ CompositeEditCommand::~CompositeEditCommand()
 
 bool CompositeEditCommand::willApplyCommand()
 {
-    return document().editor().willApplyEditing(*this, targetRangesForBindings());
+    return protect(document())->editor().willApplyEditing(*this, targetRangesForBindings());
 }
 
 void CompositeEditCommand::apply()
@@ -411,7 +413,7 @@ void CompositeEditCommand::apply()
     Ref document = this->document();
     document->updateLayoutIgnorePendingStylesheets();
 
-    auto prohibitScrollingForScope = document->view() ? document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
+    auto prohibitScrollingForScope = document->view() ? protect(document->view())->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
     if (!willApplyCommand())
         return;
 
@@ -426,7 +428,7 @@ void CompositeEditCommand::apply()
 
 void CompositeEditCommand::didApplyCommand()
 {
-    document().editor().appliedEditing(*this);
+    protect(document())->editor().appliedEditing(*this);
 }
 
 Vector<Ref<StaticRange>> CompositeEditCommand::targetRanges() const
@@ -595,7 +597,7 @@ void CompositeEditCommand::insertNodeAfter(Ref<Node>&& insertChild, Node& refChi
         appendNode(WTF::move(insertChild), *parent);
     else {
         ASSERT(refChild.nextSibling());
-        insertNodeBefore(WTF::move(insertChild), *refChild.nextSibling());
+        insertNodeBefore(WTF::move(insertChild), protect(*refChild.nextSibling()));
     }
 }
 
@@ -848,20 +850,20 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& position)
     case Position::PositionIsOffsetInAnchor:
         break;
     case Position::PositionIsBeforeAnchor:
-        return positionInParentBeforeNode(*position.anchorNode());
+        return positionInParentBeforeNode(protect(*position.anchorNode()));
     case Position::PositionIsAfterAnchor:
-        return positionInParentAfterNode(*position.anchorNode());
+        return positionInParentAfterNode(protect(*position.anchorNode()));
     }
 
     RefPtr tabSpan { parentTabSpanNode(position.containerNode()) };
 
-    if (position.offsetInContainerNode() <= caretMinOffset(*position.containerNode()))
+    if (position.offsetInContainerNode() <= caretMinOffset(protect(*position.containerNode())))
         return positionInParentBeforeNode(*tabSpan);
 
-    if (position.offsetInContainerNode() >= caretMaxOffset(*position.containerNode()))
+    if (position.offsetInContainerNode() >= caretMaxOffset(protect(*position.containerNode())))
         return positionInParentAfterNode(*tabSpan);
 
-    splitTextNodeContainingElement(downcast<Text>(*position.containerNode()), position.offsetInContainerNode());
+    splitTextNodeContainingElement(protect(downcast<Text>(*position.containerNode())), position.offsetInContainerNode());
     return positionInParentBeforeNode(*tabSpan);
 }
 
@@ -1285,7 +1287,7 @@ RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(co
     moveParagraphs(visibleParagraphStart, visibleParagraphEnd, VisiblePosition(firstPositionInNode(newBlock)));
 
     if (newBlock->lastChild() && newBlock->lastChild()->hasTagName(brTag) && !endWasBr)
-        removeNode(*newBlock->lastChild());
+        removeNode(protect(*newBlock->lastChild()));
 
     return newBlock;
 }

@@ -16,10 +16,10 @@
 #include <cstring>
 #include <iterator>
 #include <optional>
+#include <span>
 #include <utility>
 
 #include "absl/container/inlined_vector.h"
-#include "api/array_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_codec_type.h"
@@ -93,7 +93,7 @@ class ArrayOfArrayViews {
   }
 
  private:
-  using Storage = absl::InlinedVector<ArrayView<const uint8_t>, 2>;
+  using Storage = absl::InlinedVector<std::span<const uint8_t>, 2>;
 
   size_t size_ = 0;
   Storage data_;
@@ -195,10 +195,10 @@ int RtpStartsNewCodedVideoSequence(uint8_t aggregation_header) {
 // fills ObuInfo::data field.
 // Returns empty vector on error.
 VectorObuInfo ParseObus(
-    ArrayView<const ArrayView<const uint8_t>> rtp_payloads) {
+    std::span<const std::span<const uint8_t>> rtp_payloads) {
   VectorObuInfo obu_infos;
   bool expect_continues_obu = false;
-  for (ArrayView<const uint8_t> rtp_payload : rtp_payloads) {
+  for (std::span<const uint8_t> rtp_payload : rtp_payloads) {
     ByteBufferReader payload(rtp_payload);
     uint8_t aggregation_header;
     if (!payload.ReadUInt8(&aggregation_header)) {
@@ -337,7 +337,7 @@ bool CalculateObuSizes(ObuInfo* obu_info) {
 }  // namespace
 
 scoped_refptr<EncodedImageBuffer> VideoRtpDepacketizerAv1::AssembleFrame(
-    ArrayView<const ArrayView<const uint8_t>> rtp_payloads) {
+    std::span<const std::span<const uint8_t>> rtp_payloads) {
   VectorObuInfo obu_infos = ParseObus(rtp_payloads);
   if (obu_infos.empty()) {
     return nullptr;

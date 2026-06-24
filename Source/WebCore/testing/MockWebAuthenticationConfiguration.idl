@@ -125,4 +125,6 @@
     Conditional=WEB_AUTHN,
 ] dictionary MockCcidConfiguration {
     sequence<DOMString> payloadBase64 = [];
+    DOMString appletSelectionResponseBase64 = "";
+    DOMString u2fVersionResponseBase64 = "";
 };

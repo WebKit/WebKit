@@ -25,8 +25,7 @@
 #include "config.h"
 #include "StyleLetterSpacing.h"
 
-#include "StyleCalculationValue.h"
-#include "StyleLengthWrapper+CSSValueConversion.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
@@ -53,14 +52,10 @@ auto CSSValueConversion<LetterSpacing>::operator()(BuilderState& state, const CS
         auto zoom = state.zoomWithTextZoomFactor();
         if (zoom == state.cssToLengthConversionData().zoom())
             return state.cssToLengthConversionData();
-        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, LetterSpacing::Fixed::range.zoomOptions);
+        return state.cssToLengthConversionData().copyWithAdjustedZoom(zoom, LetterSpacing::range.zoomOptions);
     };
 
-    if (auto result = convertLengthWrapperFromCSSValue<LetterSpacing>(conversionData(state), *primitiveValue))
-        return *result;
-
-    state.setCurrentPropertyInvalidAtComputedValueTime();
-    return CSS::Keyword::Normal { };
+    return toStyleFromCSSValue<LetterSpacing::Wrapped>(conversionData(state), *primitiveValue);
 }
 
 } // namespace Style

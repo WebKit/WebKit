@@ -25,12 +25,10 @@
 
 #pragma once
 
-#include <WebCore/CSSValueKeywords.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-enum CSSValueID : uint16_t;
 
 class DeprecatedCSSOMCounter final : public RefCounted<DeprecatedCSSOMCounter> {
 public:

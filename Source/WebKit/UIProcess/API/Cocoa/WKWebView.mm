@@ -69,6 +69,7 @@
 #import "TextExtractionAssertionScope.h"
 #import "TextExtractionFilter.h"
 #import "TextExtractionToStringConversion.h"
+#import "TextExtractionTokenizer.h"
 #import "TextExtractionURLCache.h"
 #import "UIDelegate.h"
 #import "UIKitUtilities.h"
@@ -151,7 +152,6 @@
 #import "_WKPageLoadTimingInternal.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
-#import "_WKSpatialBackdropSourceInternal.h"
 #import "_WKTargetedElementInfoInternal.h"
 #import "_WKTargetedElementRequestInternal.h"
 #import "_WKTextExtractionInternal.h"
@@ -190,7 +190,6 @@
 #import <WebCore/RunJavaScriptParameters.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/SpatialBackdropSource.h>
 #import <WebCore/StringUtilities.h>
 #import <WebCore/TextAnimationTypes.h>
 #import <WebCore/TextExtractionTypes.h>
@@ -645,6 +644,10 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
     [self _setupPageConfiguration:pageConfiguration withPool:processPool.get()];
 
     _usePlatformFindUI = YES;
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    _adjustedColorExtensionsForBannerViewOverlaysEnablement = WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::EnabledIfHorizontalBannerViewPresent;
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     _obscuredInsetEdgesAffectedBySafeArea = UIRectEdgeTop | UIRectEdgeLeft | UIRectEdgeRight;
@@ -1965,16 +1968,33 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)_showWarningView:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
 {
-    _warningView = adoptNS([[_WKWarningView alloc] initWithFrame:self.bounds browsingWarning:warning completionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), completionHandler = WTF::move(completionHandler)] (auto&& result) mutable {
-        completionHandler(std::forward<decltype(result)>(result));
-        auto strongSelf = weakSelf.get();
+#if HAVE(SAFE_BROWSING)
+    if (_warningView)
+        [std::exchange(_warningView, nullptr) removeFromSuperview];
+
+    auto navigationID = _page->safeBrowsingWarningShownForNavigation();
+#endif
+    _warningView = adoptNS([[_WKWarningView alloc] initWithFrame:self.bounds browsingWarning:warning completionHandler:[weakSelf = WeakObjCPtr { self },
+#if HAVE(SAFE_BROWSING)
+        navigationID,
+#endif
+        completionHandler = WTF::move(completionHandler)]<typename Result> (Result&& result) mutable {
+        RetainPtr strongSelf = weakSelf.get();
+#if HAVE(SAFE_BROWSING)
+        if (!strongSelf || !strongSelf->_page
+            || strongSelf->_page->safeBrowsingWarningShownForNavigation() != navigationID) {
+            completionHandler(std::forward<Result>(result));
+            return;
+        }
+#endif
+        bool forMainFrameNavigation = [strongSelf->_warningView forMainFrameNavigation];
+        completionHandler(std::forward<Result>(result));
         if (!strongSelf)
             return;
         bool navigatesFrame = WTF::switchOn(result,
             [] (WebKit::ContinueUnsafeLoad continueUnsafeLoad) { return continueUnsafeLoad == WebKit::ContinueUnsafeLoad::Yes; },
             [] (const URL&) { return true; }
         );
-        bool forMainFrameNavigation = [strongSelf->_warningView forMainFrameNavigation];
         if (navigatesFrame && forMainFrameNavigation) {
             // The safe browsing warning will be hidden once the next page is shown.
             return;
@@ -2135,16 +2155,6 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 
 #endif // PLATFORM(MAC) && HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
-
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-- (void)_spatialBackdropSourceDidChange
-{
-    if (auto spatialBackdropSource = _page->spatialBackdropSource())
-        _cachedSpatialBackdropSource = adoptNS([[_WKSpatialBackdropSource alloc] initWithSpatialBackdropSource:spatialBackdropSource.value()]);
-    else
-        _cachedSpatialBackdropSource = nil;
-}
-#endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 - (void)_allowImmersiveElement:(WKFrameInfo *)frameInfo completion:(CompletionHandler<void(bool)>&&)completion
@@ -2512,6 +2522,86 @@ static _WKSelectionAttributes NODELETE selectionAttributes(const WebKit::EditorS
 {
     _page->setNeedsScrollGeometryUpdates(needsScrollGeometryUpdates);
 }
+
+#if PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MACCATALYST)
+
+#define CocoaRefreshControl UIRefreshControl
+#define CocoaDarkAppearance UIUserInterfaceStyleDark
+#define CocoaLightAppearance UIUserInterfaceStyleLight
+
+#elif HAVE(NSREFRESHCONTROLLER)
+
+#define CocoaRefreshControl NSRefreshControl
+#define CocoaDarkAppearance NSAppearanceNameDarkAqua
+#define CocoaLightAppearance NSAppearanceNameAqua
+
+#endif
+
+#if HAVE(NSREFRESHCONTROLLER)
+
+- (void)setRefreshController:(NSRefreshController *)refreshController
+{
+    THROW_IF_SUSPENDED;
+    _impl->setRefreshController(refreshController);
+}
+
+- (NSRefreshController *)refreshController
+{
+    return _impl->refreshController();
+}
+
+#endif
+
+#if ENABLE(MANAGED_REFRESHCONTROL_APPEARANCE)
+- (void)_updateRefreshControlAppearance
+{
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ManagedRefreshControlAppearance))
+        return;
+#if PLATFORM(MAC)
+    CocoaRefreshControl *refreshControl = [self.refreshController refreshControl];
+#else
+    UIRefreshControl *refreshControl = self.scrollView.refreshControl;
+#endif
+
+    if (!refreshControl)
+        return;
+
+    RetainPtr<WebCore::CocoaColor> effectiveColor = self._sampledTopFixedPositionContentColor;
+    CGFloat sampledTopColorAlpha = 0;
+    CGFloat effectiveColorWhiteComponent = 0;
+
+#if PLATFORM(MAC)
+    sampledTopColorAlpha = [effectiveColor alphaComponent];
+#else
+    [effectiveColor getWhite:nil alpha:&sampledTopColorAlpha];
+#endif
+
+    if (!sampledTopColorAlpha) {
+#if PLATFORM(MAC)
+        effectiveColor = self.underPageBackgroundColor;
+#else
+        effectiveColor = self.scrollView.backgroundColor;
+#endif
+    }
+
+#if PLATFORM(MAC)
+    RetainPtr grayscaleColor = [effectiveColor colorUsingColorSpace:NSColorSpace.genericGrayColorSpace];
+    if (!grayscaleColor)
+        return;
+    effectiveColorWhiteComponent = [grayscaleColor whiteComponent];
+#else
+    if (![effectiveColor getWhite:&effectiveColorWhiteComponent alpha:nil])
+        return;
+#endif
+
+    auto appearance = effectiveColorWhiteComponent <= 0.6 ? CocoaDarkAppearance : CocoaLightAppearance;
+#if PLATFORM(MAC)
+    [refreshControl setAppearance:[NSAppearance appearanceNamed:appearance]];
+#else
+    refreshControl.traitOverrides.userInterfaceStyle = appearance;
+#endif
+}
+#endif
 
 #if (USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))) || ENABLE(WRITING_TOOLS)
 
@@ -3247,7 +3337,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 #endif // ENABLE(SWIFTUI)
 }
 
-#if ENABLE(SCROLL_STRETCH_NOTIFICATIONS)
+#if HAVE(NSREFRESHCONTROLLER)
 - (void)_topScrollStretchDidChange:(CGFloat)topScrollStretch
 {
     _impl->topScrollStretchDidChange(topScrollStretch);
@@ -3471,21 +3561,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 #if PLATFORM(MAC)
             [extensionView setWantsLayer:YES];
 #endif
-            [extensionView layer].name = adoptNS([[NSString alloc] initWithFormat:@"Fixed color extension fill (%s)", [side] {
-                switch (side) {
-                case WebCore::BoxSide::Top:
-                    return "Top";
-                case WebCore::BoxSide::Right:
-                    return "Right";
-                case WebCore::BoxSide::Bottom:
-                    return "Bottom";
-                case WebCore::BoxSide::Left:
-                    return "Left";
-                default:
-                    ASSERT_NOT_REACHED();
-                    return "";
-                }
-            }()]).get();
+            [extensionView layer].name = [NSString stringWithFormat:@"Fixed color extension fill (%s)", WebCore::nameForBoxSide(side).characters()];
             addColorExtensionView(extensionView.get());
             _fixedColorExtensionViews.setAt(side, extensionView);
         }
@@ -3497,6 +3573,24 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
     for (auto side : WebCore::allBoxSides)
         updateExtensionView(side);
 
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    auto createSystemBackgroundExtensionViewIfNeeded = [&](WebCore::BoxSide side) {
+        if (_systemBackgroundColorExtensionViews.at(side))
+            return;
+
+        RetainPtr view = adoptNS([[WKColorExtensionView alloc] initWithFrame:CGRectZero delegate:self]);
+        [view setWantsLayer:YES];
+        [view layer].name = [NSString stringWithFormat:@"%s system background color extension", WebCore::nameForBoxSide(side).characters()];
+        addColorExtensionView(view.get());
+        _systemBackgroundColorExtensionViews.setAt(side, view);
+    };
+
+    if ([self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays]) {
+        createSystemBackgroundExtensionViewIfNeeded(WebCore::BoxSide::Left);
+        createSystemBackgroundExtensionViewIfNeeded(WebCore::BoxSide::Right);
+        [self _updateAppearanceForSystemBackgroundColorExtensionViews];
+    }
+#endif
     [self _updateFixedColorExtensionViewFrames];
 }
 
@@ -3524,11 +3618,35 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
         [view setFrame:[parentView convertRect:targetRect fromView:self]];
     }
 
+    auto leftExtensionFrame = [&] {
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+        if ([self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays]) {
+            auto distanceFromLeftEdge = _impl->webContentDistanceFromLeftEdge();
+            auto colorExtensionWidth = std::clamp<CGFloat>(insets.left() - distanceFromLeftEdge, 0, insets.left());
+            auto xPosition = insets.left() - colorExtensionWidth;
+            return [parentView convertRect:CGRectMake(xPosition, 0, colorExtensionWidth, bounds.height()) fromView:self];
+        }
+#endif
+        return [parentView convertRect:CGRectMake(0, 0, insets.left(), bounds.height()) fromView:self];
+    };
+
+    auto rightExtensionFrame = [&] {
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+        if ([self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays]) {
+            auto distanceFromRightEdge = _impl->webContentDistanceFromRightEdge();
+            auto colorExtensionWidth = std::clamp<CGFloat>(insets.right() - distanceFromRightEdge, 0, insets.right());
+            auto xPosition = bounds.width() - insets.right();
+            return [parentView convertRect:CGRectMake(xPosition, 0, colorExtensionWidth, bounds.height()) fromView:self];
+        }
+#endif
+        return [parentView convertRect:CGRectMake(bounds.width() - insets.right(), 0, insets.right(), bounds.height()) fromView:self];
+    };
+
     if (RetainPtr view = _fixedColorExtensionViews.left(); view && ![view isHidden])
-        [view setFrame:[parentView convertRect:CGRectMake(0, 0, insets.left(), bounds.height()) fromView:self]];
+        [view setFrame:leftExtensionFrame()];
 
     if (RetainPtr view = _fixedColorExtensionViews.right(); view && ![view isHidden])
-        [view setFrame:[parentView convertRect:CGRectMake(bounds.width() - insets.right(), 0, insets.right(), bounds.height()) fromView:self]];
+        [view setFrame:rightExtensionFrame()];
 
     if (RetainPtr view = _fixedColorExtensionViews.bottom(); view && ![view isHidden]) {
 #if PLATFORM(IOS_FAMILY)
@@ -3538,6 +3656,25 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 #endif
         [view setFrame:[parentView convertRect:targetRect fromView:self]];
     }
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    if (![self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays])
+        return;
+
+    if (RetainPtr view = _systemBackgroundColorExtensionViews.left(); view && ![view isHidden]) {
+        auto distanceFromLeftEdge = _impl->webContentDistanceFromLeftEdge();
+        auto xPosition = std::min<CGFloat>(distanceFromLeftEdge - insets.left(), 0);
+        auto rect = CGRectMake(xPosition, 0, insets.left(), bounds.height());
+        [view setFrame:[parentView convertRect:rect fromView:self]];
+    }
+
+    if (RetainPtr view = _systemBackgroundColorExtensionViews.right(); view && ![view isHidden]) {
+        auto distanceFromRightEdge = _impl->webContentDistanceFromRightEdge();
+        auto xPosition = bounds.width() - insets.right() + std::max<CGFloat>(insets.right() - distanceFromRightEdge, 0);
+        auto rect = CGRectMake(xPosition, 0, insets.right(), bounds.height());
+        [view setFrame:[parentView convertRect:rect fromView:self]];
+    }
+#endif
 }
 
 - (void)_updatePrefersSolidColorHardPocket
@@ -3625,6 +3762,50 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
         _impl->updatePrefersSolidColorHardPocket();
 }
 
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS) && !USE(APPLE_INTERNAL_SDK)
+- (BOOL)_hasDetectedHorizontalBannerViewOverlays
+{
+    return NO;
+}
+#endif
+
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+
+- (void)_updateAppearanceForSystemBackgroundColorExtensionViews
+{
+    if (![self _shouldAdjustColorExtensionsForHorizontalBannerViewOverlays])
+        return;
+
+    RetainPtr<NSColor> systemBackgroundColor;
+    auto fadeOrSetColorIfNeeded = [&](WebCore::BoxSide side, CGFloat inset) {
+        RetainPtr view = _systemBackgroundColorExtensionViews.at(side);
+        if (!view)
+            return;
+
+        if (inset <= 0) {
+            [view fadeOut];
+            return;
+        }
+
+        if (!systemBackgroundColor) {
+            __block RetainPtr<NSColor> resolvedColor;
+            [self.effectiveAppearance performAsCurrentDrawingAppearance:^{
+                RetainPtr<CGColorRef> windowBackgroundCGColor = [NSColor windowBackgroundColor].CGColor;
+                resolvedColor = [NSColor colorWithCGColor:windowBackgroundCGColor];
+            }];
+            systemBackgroundColor = WTF::move(resolvedColor);
+        }
+        [view updateColor:systemBackgroundColor];
+    };
+
+
+    auto insets = [self _obscuredInsetsForFixedColorExtension];
+    fadeOrSetColorIfNeeded(WebCore::BoxSide::Left, insets.left());
+    fadeOrSetColorIfNeeded(WebCore::BoxSide::Right, insets.right());
+}
+
+#endif // ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+
 #endif // PLATFORM(MAC)
 
 - (BOOL)_hasVisibleColorExtensionView:(WebCore::BoxSide)side
@@ -3692,6 +3873,36 @@ static ASCIILiteral descriptionForReason(WebKit::HideScrollPocketReason reason)
 }
 
 #endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+
+- (BOOL)_scrollPocketInFullscreenEnabled
+{
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScrollPocketInFullscreen);
+#else
+    return NO;
+#endif
+}
+
+- (BOOL)_shouldAdjustColorExtensionsForHorizontalBannerViewOverlays
+{
+#if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    switch (_adjustedColorExtensionsForBannerViewOverlaysEnablement) {
+    case WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::ForcedOnForTesting:
+        return YES;
+    case WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::ForcedOffForTesting:
+        return NO;
+    case WebKit::AdjustedColorExtensionsForBannerViewOverlaysEnablement::EnabledIfHorizontalBannerViewPresent:
+        break;
+    }
+
+    if (_page
+        && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AdjustColorExtensionsForHorizontalBannerViewOverlays)
+        && protect(_page->preferences())->horizontalBannerViewOverlaysEnabled()
+        && protect(_page->preferences())->contentInsetBackgroundFillEnabled())
+        return [self _hasDetectedHorizontalBannerViewOverlays];
+#endif
+    return NO;
+}
 
 - (CocoaEdgeInsets)obscuredContentInsets
 {
@@ -3880,11 +4091,11 @@ struct WKWebViewData {
 
 - (void)_setContentOffsetX:(NSNumber *)x y:(NSNumber *)y animated:(BOOL)animated
 {
-    std::optional<int> optionalX = std::nullopt;
+    std::optional<int> optionalX;
     if (x)
         optionalX = static_cast<int>([x doubleValue]);
 
-    std::optional<int> optionalY = std::nullopt;
+    std::optional<int> optionalY;
     if (y)
         optionalY = static_cast<int>([y doubleValue]);
 
@@ -3898,18 +4109,31 @@ struct WKWebViewData {
     protect(_page)->scrollToEdge(toRectEdges(edge), animated ? WebCore::ScrollIsAnimated::Yes : WebCore::ScrollIsAnimated::No);
 }
 
-#if !ENABLE(WEBVIEW_ADDITIONAL_SETUP) && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION))
-
-- (void)_setWebViewInformation:(id)information
+- (void)_setPlatformRefreshControl:(id)control
 {
-}
-
-- (id)_webViewInformation
-{
-    return nil;
-}
-
+#if ENABLE(SWIFTUI_REFRESHABLE_MODIFIER)
+#if PLATFORM(MAC)
+    self.refreshController = control;
+#else
+    self.scrollView.refreshControl = control;
 #endif
+#else
+    UNUSED_VARIABLE(control);
+#endif
+}
+
+- (id)_platformRefreshControl
+{
+#if ENABLE(SWIFTUI_REFRESHABLE_MODIFIER)
+#if PLATFORM(MAC)
+    return self.refreshController;
+#else
+    return self.scrollView.refreshControl;
+#endif
+#else
+    return nil;
+#endif
+}
 
 - (id<WKImmersiveEnvironmentDelegate>)immersiveEnvironmentDelegate
 {
@@ -4140,6 +4364,16 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 {
     _page->getAllFrameTrees([completionHandler = makeBlockPtr(completionHandler), page = protect(*_page)] (Vector<WebKit::FrameTreeNodeData>&& vector) {
         auto set = adoptNS([[NSMutableSet alloc] initWithCapacity:vector.size()]);
+        for (auto& data : vector)
+            [set addObject:wrapper(API::FrameTreeNode::create(WTF::move(data), page.get())).get()];
+        completionHandler(set.get());
+    });
+}
+
+- (void)_frameTreesInBackForwardCacheAtIndex:(NSInteger)relativeIndex completionHandler:(void (^)(NSSet<_WKFrameTreeNode *> *))completionHandler
+{
+    _page->getFrameTreesForBackForwardItem(static_cast<int>(relativeIndex), [completionHandler = makeBlockPtr(completionHandler), page = protect(*_page)] (Vector<WebKit::FrameTreeNodeData>&& vector) {
+        RetainPtr set = adoptNS([[NSMutableSet alloc] initWithCapacity:vector.size()]);
         for (auto& data : vector)
             [set addObject:wrapper(API::FrameTreeNode::create(WTF::move(data), page.get())).get()];
         completionHandler(set.get());
@@ -6107,15 +6341,6 @@ static inline OptionSet<WebKit::FindOptions> NODELETE toFindOptions(_WKFindOptio
     return cocoaColorOrNil(_page->sampledPageTopColor()).autorelease();
 }
 
-- (_WKSpatialBackdropSource *)_spatialBackdropSource
-{
-#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
-    return _cachedSpatialBackdropSource.get();
-#else
-    return nil;
-#endif
-}
-
 - (id <_WKInputDelegate>)_inputDelegate
 {
     return _inputDelegate.getAutoreleased();
@@ -6973,6 +7198,22 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
     return adoptNS([[_WKTextExtractionResult alloc] initWithWebView:nil origin:nil textContent:@"" filteredOutAnyText:NO shortenedURLs:@{ } textToContainerMap:{ }]);
 }
 
+#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
+- (void)_ensureTextExtractionFilterRulesWithCompletionHandler:(CompletionHandler<void()>&&)completionHandler
+{
+    _page->hasTextExtractionFilterRules([completionHandler = WTF::move(completionHandler), weakSelf = WeakObjCPtr<WKWebView>(self)](bool hasRules) mutable {
+        if (hasRules)
+            return completionHandler();
+
+        WebKit::requestTextExtractionFilterRuleData([completionHandler = WTF::move(completionHandler), weakSelf](auto&& data) mutable {
+            if (RetainPtr strongSelf = weakSelf.get())
+                strongSelf->_page->updateTextExtractionFilterRules(WTF::move(data));
+            completionHandler();
+        });
+    });
+}
+#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
+
 - (void)_extractDebugTextWithConfiguration:(_WKTextExtractionConfiguration *)configuration completionHandler:(void(^)(_WKTextExtractionResult *))completionHandler
 {
     bool shouldAvoidExtractingText = [&] {
@@ -6980,7 +7221,7 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
         if (_page->pageLoadState().committedHadSafeBrowsingWarning())
             return YES;
 
-        if (_page->hasShownSafeBrowsingWarningAfterLastLoadCommit())
+        if (_page->safeBrowsingWarningShownForNavigation())
             return YES;
 #endif
 #if HAVE(SAFE_BROWSING) && PLATFORM(IOS_FAMILY)
@@ -7004,23 +7245,12 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
     UniqueRef assertionScope = _page->createTextExtractionAssertionScope();
 #if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
     if (protect(_page->preferences())->textExtractionFilterEnabled() && (configuration.filterOptions & _WKTextExtractionFilterRules)) {
-        _page->hasTextExtractionFilterRules([assertionScope = WTF::move(assertionScope), configuration = RetainPtr { configuration }, completionHandler = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr { self }](bool hasRules) mutable {
+        [self _ensureTextExtractionFilterRulesWithCompletionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), assertionScope = WTF::move(assertionScope), configuration = RetainPtr { configuration }, completionHandler = makeBlockPtr(completionHandler)]() mutable {
             RetainPtr strongSelf = weakSelf.get();
             if (!strongSelf)
                 return completionHandler(createEmptyTextExtractionResult().get());
-
-            if (hasRules)
-                return [strongSelf _extractDebugTextWithConfigurationWithoutUpdatingFilterRules:configuration.get() assertionScope:WTF::move(assertionScope) completionHandler:completionHandler.get()];
-
-            WebKit::requestTextExtractionFilterRuleData([assertionScope = WTF::move(assertionScope), configuration = WTF::move(configuration), completionHandler = WTF::move(completionHandler), weakSelf](auto&& data) mutable {
-                RetainPtr strongSelf = weakSelf.get();
-                if (!strongSelf)
-                    return completionHandler(createEmptyTextExtractionResult().get());
-
-                strongSelf->_page->updateTextExtractionFilterRules(WTF::move(data));
-                [strongSelf _extractDebugTextWithConfigurationWithoutUpdatingFilterRules:configuration.get() assertionScope:WTF::move(assertionScope) completionHandler:completionHandler.get()];
-            });
-        });
+            [strongSelf _extractDebugTextWithConfigurationWithoutUpdatingFilterRules:configuration.get() assertionScope:WTF::move(assertionScope) completionHandler:completionHandler.get()];
+        }];
         return;
     }
 #endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
@@ -7146,11 +7376,11 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
 
         if (filterUsingRules) {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
-            filterCallbacks.append([page = strongSelf->_page](auto& text, auto&&, auto&& enclosingNodeID) mutable {
+            filterCallbacks.append([page = strongSelf->_page](auto& text, auto&&, auto&&) mutable {
                 WebKit::TextExtractionFilterPromise::Producer producer;
                 Ref promise = producer.promise();
 
-                page->applyTextExtractionFilter(text, WTF::move(enclosingNodeID), [producer = WTF::move(producer)](auto&& output) mutable {
+                page->applyTextExtractionFilter(text, [producer = WTF::move(producer)](auto&& output) mutable {
                     producer.settle(WTF::move(output));
                 });
 
@@ -7187,6 +7417,19 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
             WTF::move(maxWordsPerParagraph),
             WTF::move(topHostName),
         };
+        if (result->pdfMarkdownContent) {
+            RELEASE_LOG(TextExtraction, "<%@: %p> PDF extraction complete (%.0f ms)", [strongSelf class], strongSelf.get(), (MonotonicTime::now() - startTime).milliseconds());
+            auto formattedText = WebKit::formatPDFMarkdownForOutput(*result->pdfMarkdownContent, outputFormat);
+            completionHandler(adoptNS([[_WKTextExtractionResult alloc]
+                initWithWebView:strongSelf
+                origin:wrapper(API::SecurityOrigin::create(origin))
+                textContent:formattedText.createNSString()
+                filteredOutAnyText:NO
+                shortenedURLs:@{ }
+                textToContainerMap:{ }]));
+            return;
+        }
+
         WebKit::convertToText(WTF::move(result->rootItem), WTF::move(options), [weakSelf, startTime, urlCache, origin = WTF::move(origin), completionHandler = WTF::move(completionHandler), endTextExtractionScope = WTF::move(endTextExtractionScope)](auto&& result) {
             RetainPtr strongSelf = weakSelf.get();
             if (!strongSelf)
@@ -7432,6 +7675,105 @@ static NSString *nameForAction(_WKTextExtractionAction action)
 #endif
 }
 
+- (void)_filterExtractedString:(NSString *)string options:(_WKTextExtractionFilterOptions)options completionHandler:(void(^)(NSString *))completionHandler
+{
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+    bool allowFiltering = protect(_page->preferences())->textExtractionFilterEnabled();
+    bool filterUsingClassifier = allowFiltering && options & _WKTextExtractionFilterClassifier;
+    bool filterUsingRules = allowFiltering && options & _WKTextExtractionFilterRules;
+
+    if (!filterUsingClassifier && !filterUsingRules) {
+        completionHandler(string);
+        return;
+    }
+
+    if (filterUsingClassifier)
+        WebKit::TextExtractionFilter::singleton().prewarm();
+
+#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
+    if (filterUsingRules) {
+        [self _ensureTextExtractionFilterRulesWithCompletionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), string = adoptNS([string copy]), completionHandler = makeBlockPtr(completionHandler), options]() mutable {
+            RetainPtr strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return completionHandler(string.get());
+            [strongSelf _filterExtractedStringWithoutUpdatingFilterRules:string.get() options:options completionHandler:completionHandler.get()];
+        }];
+        return;
+    }
+#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
+
+    [self _filterExtractedStringWithoutUpdatingFilterRules:string options:options completionHandler:completionHandler];
+#else
+    completionHandler(string);
+#endif // ENABLE(TEXT_EXTRACTION_FILTER)
+}
+
+- (void)_filterExtractedStringWithoutUpdatingFilterRules:(NSString *)string options:(_WKTextExtractionFilterOptions)options completionHandler:(void(^)(NSString *))completionHandler
+{
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+    bool allowFiltering = protect(_page->preferences())->textExtractionFilterEnabled();
+    bool filterUsingClassifier = allowFiltering && options & _WKTextExtractionFilterClassifier;
+    bool filterUsingRules = allowFiltering && options & _WKTextExtractionFilterRules;
+
+    struct Applier : RefCounted<Applier> {
+        Vector<WebKit::TextExtractionFilterCallback> callbacks;
+        BlockPtr<void(NSString *)> completion;
+
+        void apply(String&& text, size_t index)
+        {
+            if (index >= callbacks.size()) {
+                completion(text.createNSString().get());
+                return;
+            }
+
+            Ref promise = callbacks[index](text, std::nullopt, std::nullopt);
+            promise->whenSettled(RunLoop::mainSingleton(), [text, protectedThis = Ref { *this }, index](auto&& result) mutable {
+                if (!result)
+                    protectedThis->completion(@"");
+                else
+                    protectedThis->apply(WTF::move(*result), index + 1);
+            });
+        }
+    };
+
+    Ref applier = adoptRef(*new Applier);
+    applier->completion = makeBlockPtr(completionHandler);
+
+    if (filterUsingClassifier) {
+        applier->callbacks.append([](auto& text, auto&&, auto&&) mutable {
+            WebKit::TextExtractionFilterPromise::Producer producer;
+
+            Ref promise = producer.promise();
+            WebKit::TextExtractionFilter::singleton().shouldFilter(text, [producer = WTF::move(producer), text](bool shouldFilterOut) mutable {
+                if (shouldFilterOut)
+                    producer.settle(emptyString());
+                else
+                    producer.settle(text);
+            });
+
+            return promise;
+        });
+    }
+
+    if (filterUsingRules) {
+        applier->callbacks.append([page = _page](auto& text, auto&&, auto&&) mutable {
+            WebKit::TextExtractionFilterPromise::Producer producer;
+
+            Ref promise = producer.promise();
+            page->applyTextExtractionFilter(text, [producer = WTF::move(producer)](auto&& output) mutable {
+                producer.settle(WTF::move(output));
+            });
+
+            return promise;
+        });
+    }
+
+    applier->apply(String(string), 0);
+#else
+    completionHandler(string);
+#endif // ENABLE(TEXT_EXTRACTION_FILTER)
+}
+
 @end
 
 @implementation WKWebView (WKDeprecated)
@@ -7632,6 +7974,8 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
         });
     }
+
+    WebKit::TextExtractionTokenizer::singleton().prewarm();
 
 #if ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(VISION)
     if (!_textExtractionRecognizedWords && preferences->textExtractionFilterEnabled() && (configuration.filterOptions & _WKTextExtractionFilterTextRecognition)) {
@@ -7873,8 +8217,8 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
     if (RefPtr filter = WebKit::TextExtractionFilter::singletonIfCreated())
         filter->resetCache();
 
-    if (_textExtractionURLCache)
-        _textExtractionURLCache->clear();
+    if (RefPtr cache = _textExtractionURLCache)
+        cache->clear();
 
     _textValidationCache.clear();
     _textExtractionRecognizedWords = { };
@@ -7948,11 +8292,11 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
     });
 }
 
-#if ENABLE(TOP_BANNER_VIEW_OVERLAYS)
+#if HAVE(NSREFRESHCONTROLLER)
 
-- (CGFloat)_bannerViewOverlayHeight
+- (CGFloat)_refreshControlVisibleHeight
 {
-    return _impl->bannerViewHeight();
+    return _impl->topScrollStretchForRefreshController();
 }
 
 #endif

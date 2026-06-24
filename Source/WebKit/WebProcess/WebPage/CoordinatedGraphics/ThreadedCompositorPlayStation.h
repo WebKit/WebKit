@@ -95,7 +95,7 @@ public:
         Unified = 1 << 0,
         UseForCompositing = 1 << 1
     };
-    void setDamagePropagationFlags(std::optional<OptionSet<DamagePropagationFlags>>);
+    void setDamagePropagationSettings(std::optional<OptionSet<DamagePropagationFlags>>, unsigned rectangleThreshold);
     void enableFrameDamageNotificationForTesting();
 #endif
 

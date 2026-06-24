@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 
 #include "absl/base/nullability.h"
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_tcp_socket.h"
@@ -32,10 +32,13 @@ class AsyncStunTCPSocket : public AsyncTCPSocketBase {
   AsyncStunTCPSocket(const AsyncStunTCPSocket&) = delete;
   AsyncStunTCPSocket& operator=(const AsyncStunTCPSocket&) = delete;
 
+  using AsyncPacketSocket::Send;
+  using AsyncPacketSocket::SendTo;
+
   int Send(const void* pv,
            size_t cb,
            const AsyncSocketPacketOptions& options) override;
-  size_t ProcessInput(ArrayView<const uint8_t> data) override;
+  size_t ProcessInput(std::span<const uint8_t> data) override;
 
  private:
   // This method returns the message hdr + length written in the header.

@@ -41,7 +41,7 @@ StreamConnectionBuffer::~StreamConnectionBuffer() = default;
 
 StreamConnectionBuffer::Handle StreamConnectionBuffer::createHandle()
 {
-    auto handle = Ref { m_sharedMemory }->createHandle(WebCore::SharedMemory::Protection::ReadWrite);
+    auto handle = protect(m_sharedMemory)->createHandle(WebCore::SharedMemory::Protection::ReadWrite);
     if (!handle)
         CRASH();
     return { WTF::move(*handle) };

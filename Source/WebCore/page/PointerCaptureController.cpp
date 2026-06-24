@@ -87,7 +87,7 @@ ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturing
 
 #if ENABLE(POINTER_LOCK)
     // 3. If this method is invoked while the document has a locked element, throw an exception with the name InvalidStateError.
-    if (auto* page = capturingTarget->document().page()) {
+    if (RefPtr page = capturingTarget->document().page()) {
         if (page->pointerLockController().isLocked())
             return Exception { ExceptionCode::InvalidStateError };
     }
@@ -174,7 +174,7 @@ void PointerCaptureController::elementWasRemovedSlow(Element& element)
             auto pointerType = capturingData->pointerType;
             releasePointerCapture(&element, pointerId);
             // FIXME: Spec doesn't specify which task source to use.
-            element.document().queueTaskToDispatchEvent(TaskSource::UserInteraction, PointerEvent::create(eventNames().lostpointercaptureEvent, pointerId, pointerType));
+            protect(element.document())->queueTaskToDispatchEvent(TaskSource::UserInteraction, PointerEvent::create(eventNames().lostpointercaptureEvent, pointerId, pointerType));
             return;
         }
     }
@@ -498,9 +498,9 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
         // to the target (as normal) indicating that capture is active.
         setPointerCapture(&element, event.pointerId());
     }
-    element.document().handlePopoverLightDismiss(event, element);
-    if (element.document().settings().closedbyAttributeEnabled())
-        element.document().handleDialogLightDismiss(event, element);
+    protect(element.document())->handlePopoverLightDismiss(event, element);
+    if (element.document().settings().closeWatcherEnabled())
+        protect(element.document())->handleDialogLightDismiss(event, element);
 }
 
 auto PointerCaptureController::ensureCapturingDataForPointerEvent(const PointerEvent& event) -> Ref<CapturingData>
@@ -534,11 +534,8 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
 
     // If the pointer event dispatched was pointerdown and the event was canceled, then set the PREVENT MOUSE EVENT flag for this pointerType.
     // https://www.w3.org/TR/pointerevents/#mapping-for-devices-that-support-hover
-    if (event.type() == eventNames().pointerdownEvent) {
+    if (event.type() == eventNames().pointerdownEvent)
         capturingData->preventsCompatibilityMouseEvents = event.defaultPrevented();
-        if (event.defaultPrevented())
-            m_pointerDownDefaultPreventedDuringCurrentHandling = true;
-    }
 }
 
 void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint& documentPoint, PointerEvent* existingCancelEvent)
@@ -627,7 +624,7 @@ void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
     // then fire a pointer event named lostpointercapture at the pointer capture target override node.
     if (auto targetOverride = capturingData->targetOverride; targetOverride && targetOverride != pendingTargetOverride) {
         if (capturingData->targetOverride->isConnected())
-            capturingData->targetOverride->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, pointerId, capturingData->isPrimary, capturingData->pointerType));
+            protect(capturingData->targetOverride)->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, pointerId, capturingData->isPrimary, capturingData->pointerType));
         if (capturingData->pointerType == mousePointerEventType()) {
             if (RefPtr frame = capturingData->targetOverride->document().frame())
                 frame->eventHandler().pointerCaptureElementDidChange(nullptr);

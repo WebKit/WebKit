@@ -33,7 +33,10 @@
 namespace WebCore {
 
 class RenderElement;
-class RenderStyle;
+
+namespace Style {
+class ComputedStyle;
+}
 
 namespace Layout {
 
@@ -41,21 +44,21 @@ class ElementBox : public Box {
     WTF_MAKE_TZONE_ALLOCATED(ElementBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ElementBox);
 public:
-    ElementBox(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, EnumSet<BaseTypeFlag> = { ElementBoxFlag });
+    ElementBox(ElementAttributes&&, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr, EnumSet<BaseTypeFlag> = { ElementBoxFlag });
 
     enum class ListMarkerAttribute : uint8_t {
         Image,
         Outside,
         ShouldCollapseAnonymousBlockParent,
     };
-    ElementBox(ElementAttributes&&, EnumSet<ListMarkerAttribute>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    ElementBox(ElementAttributes&&, EnumSet<ListMarkerAttribute>, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
 
     struct ReplacedAttributes {
         LayoutSize intrinsicSize;
         std::optional<LayoutUnit> intrinsicRatio { };
         WeakPtr<CachedImage> cachedImage { };
     };
-    ElementBox(ElementAttributes&&, ReplacedAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    ElementBox(ElementAttributes&&, ReplacedAttributes&&, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
 
     ~ElementBox();
 

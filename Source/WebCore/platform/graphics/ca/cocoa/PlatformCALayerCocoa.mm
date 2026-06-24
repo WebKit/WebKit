@@ -845,7 +845,7 @@ void PlatformCALayerCocoa::setContents(CFTypeRef value)
 
 void PlatformCALayerCocoa::setDelegatedContents(const PlatformCALayerInProcessDelegatedContents& contents)
 {
-    if (!contents.finishedFence || contents.finishedFence->waitFor(delegatedContentsFinishedTimeout))
+    if (!contents.finishedFence || protect(contents.finishedFence)->waitFor(delegatedContentsFinishedTimeout))
         setContents(contents.surface.asLayerContents());
 }
 

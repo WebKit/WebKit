@@ -30,6 +30,16 @@
 
 namespace WebCore {
 
+PolicyContainer PolicyContainer::isolatedCopy() const &
+{
+    return { contentSecurityPolicyResponseHeaders.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), crossOriginOpenerPolicy.isolatedCopy(), referrerPolicy, ipAddressSpace };
+}
+
+PolicyContainer PolicyContainer::isolatedCopy() &&
+{
+    return { WTF::move(contentSecurityPolicyResponseHeaders).isolatedCopy(), WTF::move(crossOriginEmbedderPolicy).isolatedCopy(), WTF::move(crossOriginOpenerPolicy).isolatedCopy(), referrerPolicy, ipAddressSpace };
+}
+
 void addPolicyContainerHeaders(ResourceResponse& response, const PolicyContainer& policyContainer)
 {
     policyContainer.contentSecurityPolicyResponseHeaders.addPolicyHeadersTo(response);

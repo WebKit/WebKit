@@ -43,7 +43,7 @@ auto convertNumericFromCSSValue(const CSSToLengthConversionData& conversionData,
 
     return WTF::switchOn(value,
         [&](const CSSPrimitiveValue::Calc& calc) -> StyleType {
-            return toStyle(CSS::UnevaluatedCalc<CSSRaw>(const_cast<CSSPrimitiveValue::Calc&>(calc)), conversionData, std::forward<Rest>(rest)...);
+            return toStyle(CSS::UnevaluatedCalc<CSSRaw> { calc }, conversionData, std::forward<Rest>(rest)...);
         },
         [&](const CSSPrimitiveValue::Raw& raw) -> StyleType {
             if constexpr (DimensionPercentageNumeric<StyleType>) {
@@ -80,7 +80,7 @@ auto convertNumericFromCSSValue(BuilderState& state, const CSSPrimitiveValue& va
 
     return WTF::switchOn(value,
         [&](const CSSPrimitiveValue::Calc& calc) -> StyleType {
-            return toStyle(CSS::UnevaluatedCalc<CSSRaw>(const_cast<CSSPrimitiveValue::Calc&>(calc)), state, std::forward<Rest>(rest)...);
+            return toStyle(CSS::UnevaluatedCalc<CSSRaw> { calc }, state, std::forward<Rest>(rest)...);
         },
         [&](const CSSPrimitiveValue::Raw& raw) -> StyleType {
             if constexpr (DimensionPercentageNumeric<StyleType>) {

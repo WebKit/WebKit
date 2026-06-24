@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Helpers/cocoa/TestProtocol.h"
 
+#import "Helpers/cocoa/TestNSBundleExtras.h"
 #import <WebKit/WKBrowsingContextController.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>

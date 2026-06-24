@@ -25,12 +25,23 @@
 #include <openssl/x509.h>
 
 // For compatibility with open-iscsi, which assumes that it can get
-// |OPENSSL_malloc| from pem.h or err.h
+// `OPENSSL_malloc` from pem.h or err.h
 #include <openssl/crypto.h>
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 extern "C" {
 #endif
+
+
+// PEM.
+//
+// This library contains functions for reading and writing data encoded in PEM
+// format. This format originated in Privacy-Enhanced Mail (RFC 1421).
+//
+// As an exception to RFC 1421, generally PEM data is limited to 1 GiB by this
+// library. This limit should not affect anyone in practice.
+//
+// TODO(crbug.com/42290574): Finish documenting this header.
 
 
 #define PEM_BUFSIZE 1024
@@ -60,7 +71,6 @@ extern "C" {
 #define PEM_STRING_ECPRIVATEKEY "EC PRIVATE KEY"
 #define PEM_STRING_CMS "CMS"
 
-// enc_type is one off
 #define PEM_TYPE_ENCRYPTED 10
 #define PEM_TYPE_MIC_ONLY 20
 #define PEM_TYPE_MIC_CLEAR 30
@@ -270,20 +280,20 @@ extern "C" {
 // "userdata": new with OpenSSL 0.9.4
 typedef int pem_password_cb(char *buf, int size, int rwflag, void *userdata);
 
-// PEM_read_bio reads from |bp|, until the next PEM block. If one is found, it
-// returns one and sets |*name|, |*header|, and |*data| to newly-allocated
+// PEM_read_bio reads from `bp`, until the next PEM block. If one is found, it
+// returns one and sets `*name`, `*header`, and `*data` to newly-allocated
 // buffers containing the PEM type, the header block, and the decoded data,
-// respectively. |*name| and |*header| are NUL-terminated C strings, while
-// |*data| has |*len| bytes. The caller must release each of |*name|, |*header|,
-// and |*data| with |OPENSSL_free| when done. If no PEM block is found, this
-// function returns zero and pushes |PEM_R_NO_START_LINE| to the error queue. If
+// respectively. `*name` and `*header` are NUL-terminated C strings, while
+// `*data` has `*len` bytes. The caller must release each of `*name`, `*header`,
+// and `*data` with `OPENSSL_free` when done. If no PEM block is found, this
+// function returns zero and pushes `PEM_R_NO_START_LINE` to the error queue. If
 // one is found, but there is an error decoding it, it returns zero and pushes
 // some other error to the error queue.
 OPENSSL_EXPORT int PEM_read_bio(BIO *bp, char **name, char **header,
                                 unsigned char **data, long *len);
 
-// PEM_write_bio writes a PEM block to |bp|, containing |len| bytes from |data|
-// as data. |name| and |hdr| are NUL-terminated C strings containing the PEM
+// PEM_write_bio writes a PEM block to `bp`, containing `len` bytes from `data`
+// as data. `name` and `hdr` are NUL-terminated C strings containing the PEM
 // type and header block, respectively. This function returns zero on error and
 // the number of bytes written on success.
 OPENSSL_EXPORT int PEM_write_bio(BIO *bp, const char *name, const char *hdr,
@@ -300,35 +310,35 @@ OPENSSL_EXPORT int PEM_ASN1_write_bio(i2d_of_void *i2d, const char *name,
                                       const unsigned char *pass, int pass_len,
                                       pem_password_cb *cb, void *u);
 
-// PEM_X509_INFO_read_bio reads PEM blocks from |bp| and decodes any
+// PEM_X509_INFO_read_bio reads PEM blocks from `bp` and decodes any
 // certificates, CRLs, and private keys found. It returns a
-// |STACK_OF(X509_INFO)| structure containing the results, or NULL on error.
+// `STACK_OF(X509_INFO)` structure containing the results, or NULL on error.
 //
-// If |sk| is NULL, the result on success will be a newly-allocated
-// |STACK_OF(X509_INFO)| structure which should be released with
-// |sk_X509_INFO_pop_free| and |X509_INFO_free| when done.
+// If `sk` is NULL, the result on success will be a newly-allocated
+// `STACK_OF(X509_INFO)` structure which should be released with
+// `sk_X509_INFO_pop_free` and `X509_INFO_free` when done.
 //
-// If |sk| is non-NULL, it appends the results to |sk| instead and returns |sk|
-// on success. In this case, the caller retains ownership of |sk| in both
+// If `sk` is non-NULL, it appends the results to `sk` instead and returns `sk`
+// on success. In this case, the caller retains ownership of `sk` in both
 // success and failure.
 //
-// This function will decrypt any encrypted certificates in |bp|, using |cb|,
+// This function will decrypt any encrypted certificates in `bp`, using `cb`,
 // but it will not decrypt encrypted private keys. Encrypted private keys are
-// instead represented as placeholder |X509_INFO| objects with an empty |x_pkey|
+// instead represented as placeholder `X509_INFO` objects with an empty `x_pkey`
 // field. This allows this function to be used with inputs with unencrypted
 // certificates, but encrypted passwords, without knowing the password. However,
 // it also means that this function cannot be used to decrypt the private key
 // when the password is known.
 //
 // WARNING: If the input contains "TRUSTED CERTIFICATE" PEM blocks, this
-// function parses auxiliary properties as in |d2i_X509_AUX|. Passing untrusted
+// function parses auxiliary properties as in `d2i_X509_AUX`. Passing untrusted
 // input to this function allows an attacker to influence those properties. See
-// |d2i_X509_AUX| for details.
+// `d2i_X509_AUX` for details.
 OPENSSL_EXPORT STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(
     BIO *bp, STACK_OF(X509_INFO) *sk, pem_password_cb *cb, void *u);
 
-// PEM_X509_INFO_read behaves like |PEM_X509_INFO_read_bio| but reads from a
-// |FILE|.
+// PEM_X509_INFO_read behaves like `PEM_X509_INFO_read_bio` but reads from a
+// `FILE`.
 OPENSSL_EXPORT STACK_OF(X509_INFO) *PEM_X509_INFO_read(FILE *fp,
                                                        STACK_OF(X509_INFO) *sk,
                                                        pem_password_cb *cb,
@@ -345,9 +355,9 @@ OPENSSL_EXPORT int PEM_ASN1_write(i2d_of_void *i2d, const char *name, FILE *fp,
                                   const unsigned char *pass, int pass_len,
                                   pem_password_cb *callback, void *u);
 
-// PEM_def_callback treats |userdata| as a string and copies it into |buf|,
-// assuming its |size| is sufficient. Returns the length of the string, or -1 on
-// error. Error cases the buffer being too small, or |buf| and |userdata| being
+// PEM_def_callback treats `userdata` as a string and copies it into `buf`,
+// assuming its `size` is sufficient. Returns the length of the string, or -1 on
+// error. Error cases the buffer being too small, or `buf` and `userdata` being
 // NULL. Note that this is different from OpenSSL, which prompts for a password.
 OPENSSL_EXPORT int PEM_def_callback(char *buf, int size, int rwflag,
                                     void *userdata);
@@ -356,7 +366,8 @@ OPENSSL_EXPORT int PEM_def_callback(char *buf, int size, int rwflag,
 DECLARE_PEM_rw(X509, X509)
 
 // TODO(crbug.com/boringssl/426): When documenting these, copy the warning
-// about auxiliary properties from |PEM_X509_INFO_read_bio|.
+// about auxiliary properties from `PEM_X509_INFO_read_bio`.
+
 DECLARE_PEM_rw(X509_AUX, X509)
 
 DECLARE_PEM_rw(X509_REQ, X509_REQ)
@@ -437,8 +448,8 @@ OPENSSL_EXPORT int PEM_write_PKCS8PrivateKey(FILE *fp, const EVP_PKEY *x,
                                              pem_password_cb *cd, void *u);
 
 
-#ifdef __cplusplus
-}  // extern "C"
+#if defined(__cplusplus)
+}  // extern C
 #endif
 
 #define PEM_R_BAD_BASE64_DECODE 100
@@ -457,5 +468,6 @@ OPENSSL_EXPORT int PEM_write_PKCS8PrivateKey(FILE *fp, const EVP_PKEY *x,
 #define PEM_R_UNSUPPORTED_CIPHER 113
 #define PEM_R_UNSUPPORTED_ENCRYPTION 114
 #define PEM_R_UNSUPPORTED_PROC_TYPE_VERSION 115
+#define PEM_R_NO_DATA 116
 
 #endif  // OPENSSL_HEADER_PEM_H

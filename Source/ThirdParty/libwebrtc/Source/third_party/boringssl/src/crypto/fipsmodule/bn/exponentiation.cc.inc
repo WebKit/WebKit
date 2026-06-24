@@ -25,6 +25,9 @@
 #include "internal.h"
 #include "rsaz_exp.h"
 
+
+using namespace bssl;
+
 #if defined(OPENSSL_BN_ASM_MONT5)
 
 // bn_mul_mont_gather5 multiples loads index |power| of |table|, multiplies it
@@ -151,7 +154,7 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
   BIGNUM *val[TABLE_SIZE];
 
-  bssl::BN_CTXScope scope(ctx);
+  BN_CTXScope scope(ctx);
   BIGNUM *r = BN_CTX_get(ctx);
   val[0] = BN_CTX_get(ctx);
   if (r == nullptr || val[0] == nullptr) {
@@ -159,7 +162,7 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
   }
 
   // Allocate a montgomery context if it was not supplied by the caller.
-  bssl::UniquePtr<BN_MONT_CTX> new_mont;
+  UniquePtr<BN_MONT_CTX> new_mont;
   if (mont == nullptr) {
     new_mont.reset(BN_MONT_CTX_new_consttime(m, ctx));
     if (new_mont == nullptr) {
@@ -249,9 +252,9 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
   return BN_from_montgomery(rr, r, mont, ctx);
 }
 
-void bn_mod_exp_mont_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
-                           const BN_ULONG *p, size_t num_p,
-                           const BN_MONT_CTX *mont) {
+void bssl::bn_mod_exp_mont_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
+                                 const BN_ULONG *p, size_t num_p,
+                                 const BN_MONT_CTX *mont) {
   if (num != (size_t)mont->N.width || num > BN_SMALL_MAX_WORDS ||
       num_p > SIZE_MAX / BN_BITS2) {
     abort();
@@ -341,8 +344,9 @@ void bn_mod_exp_mont_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
   OPENSSL_cleanse(val, sizeof(val));
 }
 
-void bn_mod_inverse0_prime_mont_small(BN_ULONG *r, const BN_ULONG *a,
-                                      size_t num, const BN_MONT_CTX *mont) {
+void bssl::bn_mod_inverse0_prime_mont_small(BN_ULONG *r, const BN_ULONG *a,
+                                            size_t num,
+                                            const BN_MONT_CTX *mont) {
   if (num != (size_t)mont->N.width || num > BN_SMALL_MAX_WORDS || num == 0) {
     abort();
   }
@@ -448,7 +452,7 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
   // Allocate a montgomery context if it was not supplied by the caller.
   int top, num_powers, window;
-  bssl::UniquePtr<BN_MONT_CTX> new_mont;
+  UniquePtr<BN_MONT_CTX> new_mont;
   if (mont == nullptr) {
     new_mont.reset(BN_MONT_CTX_new_consttime(m, ctx));
     if (new_mont == nullptr) {

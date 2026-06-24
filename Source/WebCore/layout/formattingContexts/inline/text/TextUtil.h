@@ -36,13 +36,16 @@
 
 namespace WebCore {
 
+namespace Style {
+class ComputedStyle;
+}
+
 namespace TextSpacing {
 struct SpacingState;
 }
 
 struct GlyphOverflow;
 class FontCascade;
-class RenderStyle;
 class TextRun;
 
 namespace Layout {
@@ -63,14 +66,14 @@ public:
 
     using FallbackFontList = SingleThreadWeakHashSet<const Font>;
     enum class IncludeHyphen : bool { No, Yes };
-    static FallbackFontList fallbackFontsForText(StringView, const RenderStyle&, IncludeHyphen);
+    static FallbackFontList fallbackFontsForText(StringView, const Style::ComputedStyle&, IncludeHyphen);
 
     struct EnclosingAscentDescent {
         InlineLayoutUnit ascent { 0.f };
         InlineLayoutUnit descent { 0.f };
     };
     enum class ShouldUseSimpleGlyphOverflowCodePath : bool { No, Yes };
-    static EnclosingAscentDescent enclosingGlyphBoundsForText(StringView, const RenderStyle&, ShouldUseSimpleGlyphOverflowCodePath);
+    static EnclosingAscentDescent enclosingGlyphBoundsForText(StringView, const Style::ComputedStyle&, ShouldUseSimpleGlyphOverflowCodePath);
 
     struct WordBreakLeft {
         size_t length { 0 };
@@ -80,38 +83,38 @@ public:
     static WordBreakLeft breakWord(const InlineTextItem&, const FontCascade&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
 
     static bool mayBreakInBetween(const InlineTextItem& previousInlineItem, const InlineTextItem& nextInlineItem);
-    // FIXME: Remove when computeInlinePreferredLogicalWidths is all IFC.
-    static bool mayBreakInBetween(String previousContent, const RenderStyle& previousContentStyle, String nextContent, const RenderStyle& nextContentStyle);
-    static unsigned findNextBreakablePosition(CachedLineBreakIteratorFactory&, unsigned startPosition, const RenderStyle&);
+    // FIXME: Remove when computeInlineIntrinsicLogicalWidths is all IFC.
+    static bool mayBreakInBetween(String previousContent, const Style::ComputedStyle& previousContentStyle, String nextContent, const Style::ComputedStyle& nextContentStyle);
+    static unsigned findNextBreakablePosition(CachedLineBreakIteratorFactory&, unsigned startPosition, const Style::ComputedStyle&);
     static TextBreakIterator::LineMode::Behavior NODELETE lineBreakIteratorMode(LineBreak);
     static TextBreakIterator::ContentAnalysis NODELETE contentAnalysis(WordBreak);
 
     static bool NODELETE shouldPreserveSpacesAndTabs(const Box&);
     static bool NODELETE shouldPreserveNewline(const Box&);
-    static bool NODELETE isWrappingAllowed(const RenderStyle&);
-    static bool NODELETE shouldTrailingWhitespaceHang(const RenderStyle&);
+    static bool NODELETE isWrappingAllowed(const Style::ComputedStyle&);
+    static bool NODELETE shouldTrailingWhitespaceHang(const Style::ComputedStyle&);
 
     static bool isStrongDirectionalityCharacter(char32_t);
     static bool containsStrongDirectionalityText(StringView);
 
     static AtomString ellipsisTextInInlineDirection(bool isHorizontal = true);
 
-    static InlineLayoutUnit hyphenWidth(const RenderStyle&);
+    static InlineLayoutUnit hyphenWidth(const Style::ComputedStyle&);
 
     static size_t firstUserPerceivedCharacterLength(const InlineTextItem&);
     static size_t firstUserPerceivedCharacterLength(const InlineTextBox&, size_t startPosition, size_t length);
     static TextDirection directionForTextContent(StringView);
 
-    static bool hasHangablePunctuationStart(const InlineTextItem&, const RenderStyle&);
-    static float hangablePunctuationStartWidth(const InlineTextItem&, const RenderStyle&);
+    static bool hasHangablePunctuationStart(const InlineTextItem&, const Style::ComputedStyle&);
+    static float hangablePunctuationStartWidth(const InlineTextItem&, const Style::ComputedStyle&);
 
-    static bool hasHangablePunctuationEnd(const InlineTextItem&, const RenderStyle&);
-    static float hangablePunctuationEndWidth(const InlineTextItem&, const RenderStyle&);
+    static bool hasHangablePunctuationEnd(const InlineTextItem&, const Style::ComputedStyle&);
+    static float hangablePunctuationEndWidth(const InlineTextItem&, const Style::ComputedStyle&);
 
-    static bool hasHangableStopOrCommaEnd(const InlineTextItem&, const RenderStyle&);
-    static float hangableStopOrCommaEndWidth(const InlineTextItem&, const RenderStyle&);
+    static bool hasHangableStopOrCommaEnd(const InlineTextItem&, const Style::ComputedStyle&);
+    static float hangableStopOrCommaEndWidth(const InlineTextItem&, const Style::ComputedStyle&);
 
-    static bool canUseSimplifiedTextMeasuring(StringView, const FontCascade&, bool whitespaceIsCollapsed, const RenderStyle* firstLineStyle);
+    static bool canUseSimplifiedTextMeasuring(StringView, const FontCascade&, bool whitespaceIsCollapsed, const Style::ComputedStyle* firstLineStyle);
     static bool hasPositionDependentContentWidth(StringView);
 
     static char32_t NODELETE lastBaseCharacterFromText(StringView);

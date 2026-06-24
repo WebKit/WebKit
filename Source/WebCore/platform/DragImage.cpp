@@ -78,14 +78,14 @@ struct ScopedNodeDragEnabler {
         : element(dynamicDowncast<Element>(node))
     {
         if (element)
-            element->setBeingDragged(true);
+            protect(element)->setBeingDragged(true);
         protect(frame.document())->updateLayout();
     }
 
     ~ScopedNodeDragEnabler()
     {
         if (element)
-            element->setBeingDragged(false);
+            protect(element)->setBeingDragged(false);
     }
 
     RefPtr<Element> element;

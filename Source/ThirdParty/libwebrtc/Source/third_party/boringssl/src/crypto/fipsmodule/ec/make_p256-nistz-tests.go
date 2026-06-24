@@ -186,27 +186,27 @@ func main() {
 	printTestCase(gx, gy, affine, gx, minusGy, affine)
 
 	fmt.Printf("# Test some random Jacobian sums.\n")
-	for i := 0; i < 4; i++ {
+	for range 4 {
 		ax, ay := randPoint()
 		bx, by := randPoint()
 		printTestCase(ax, ay, jacobian, bx, by, jacobian)
 	}
 
 	fmt.Printf("# Test some random Jacobian doublings.\n")
-	for i := 0; i < 4; i++ {
+	for range 4 {
 		ax, ay := randPoint()
 		printTestCase(ax, ay, jacobian, ax, ay, jacobian)
 	}
 
 	fmt.Printf("# Test some random affine sums.\n")
-	for i := 0; i < 4; i++ {
+	for range 4 {
 		ax, ay := randPoint()
 		bx, by := randPoint()
 		printTestCase(ax, ay, affine, bx, by, affine)
 	}
 
 	fmt.Printf("# Test some random affine doublings.\n")
-	for i := 0; i < 4; i++ {
+	for range 4 {
 		ax, ay := randPoint()
 		printTestCase(ax, ay, affine, ax, ay, affine)
 	}

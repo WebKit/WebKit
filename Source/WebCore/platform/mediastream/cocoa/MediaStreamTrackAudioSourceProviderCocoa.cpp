@@ -77,7 +77,7 @@ void MediaStreamTrackAudioSourceProviderCocoa::setClient(WeakPtr<AudioSourceProv
     if (m_client == client)
         return;
     m_client = WTF::move(client);
-    hasNewClient(m_client.get());
+    hasNewClient(protect(m_client.get()));
 }
 
 void MediaStreamTrackAudioSourceProviderCocoa::hasNewClient(AudioSourceProviderClient* client)
@@ -89,13 +89,13 @@ void MediaStreamTrackAudioSourceProviderCocoa::hasNewClient(AudioSourceProviderC
     m_connected = shouldBeConnected;
     if (!client) {
         if (m_captureSource)
-            m_captureSource->removeObserver(*this);
+            protect(m_captureSource.get())->removeObserver(*this);
         m_source->removeAudioSampleObserver(*this);
         return;
     }
 
     m_enabled = m_captureSource->enabled();
-    m_captureSource->addObserver(*this);
+    protect(m_captureSource.get())->addObserver(*this);
     m_source->addAudioSampleObserver(*this);
 }
 
@@ -139,7 +139,7 @@ void MediaStreamTrackAudioSourceProviderCocoa::provideInput(AudioBus& bus, size_
     }
 
     ASSERT(framesToProcess <= bus.length());
-    m_dataSource->pullSamples(*m_audioBufferList->list(), framesToProcess, m_readCount, 0, AudioSampleDataSource::Copy);
+    protect(m_dataSource)->pullSamples(*m_audioBufferList->list(), framesToProcess, m_readCount, 0, AudioSampleDataSource::Copy);
     m_readCount += framesToProcess;
 }
 
@@ -168,12 +168,12 @@ void MediaStreamTrackAudioSourceProviderCocoa::prepare(const AudioStreamBasicDes
 
     if (!m_dataSource)
         m_dataSource = AudioSampleDataSource::create(kRingBufferDuration * sampleRate, loggerHelper(), m_pollSamplesCount);
-    m_dataSource->setInputFormat(m_inputDescription.value());
-    m_dataSource->setOutputFormat(m_outputDescription.value());
+    protect(m_dataSource)->setInputFormat(m_inputDescription.value());
+    protect(m_dataSource)->setOutputFormat(m_outputDescription.value());
 
     callOnMainThread([protectedThis = Ref { *this }, numberOfChannels, sampleRate] {
         if (protectedThis->m_client)
-            protectedThis->m_client->setFormat(numberOfChannels, sampleRate);
+            protect(protectedThis->m_client.get())->setFormat(numberOfChannels, sampleRate);
     });
 }
 
@@ -191,7 +191,7 @@ void MediaStreamTrackAudioSourceProviderCocoa::audioSamplesAvailable(const WTF::
     if (!m_dataSource)
         return;
 
-    m_dataSource->pushSamples(MediaTime(m_writeCount, m_inputDescription->sampleRate()), data, frameCount);
+    protect(m_dataSource)->pushSamples(MediaTime(m_writeCount, m_inputDescription->sampleRate()), data, frameCount);
 
     m_writeCount += frameCount;
 }

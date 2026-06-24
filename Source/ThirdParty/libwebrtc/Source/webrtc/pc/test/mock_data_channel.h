@@ -12,9 +12,11 @@
 #define PC_TEST_MOCK_DATA_CHANNEL_H_
 
 #include <cstdint>
+#include <optional>
 #include <string>
 #include <utility>
 
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "pc/sctp_data_channel.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/weak_ptr.h"
@@ -53,6 +55,8 @@ class MockSctpDataChannel : public SctpDataChannel {
                         std::move(controller),
                         label,
                         false,
+                        std::nullopt,
+                        PendingTaskSafetyFlag::Create(),
                         signaling_thread,
                         network_thread) {
     EXPECT_CALL(*this, id()).WillRepeatedly(::testing::Return(id));

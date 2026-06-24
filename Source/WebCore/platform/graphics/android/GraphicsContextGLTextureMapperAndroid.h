@@ -40,6 +40,9 @@ private:
         : GraphicsContextGLTextureMapperANGLE(WTF::move(attributes))
     {
     }
+#if ENABLE(WEBXR)
+    bool enableRequiredWebXRExtensionsImpl();
+#endif
 
     bool platformInitializeExtensions() override;
 };

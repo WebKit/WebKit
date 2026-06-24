@@ -32,7 +32,7 @@ private import CxxStdlib
 @objc
 @implementation
 extension WKTextSelectionController {
-    private unowned let view: WKWebView
+    private weak var view: WKWebView?
 
     @nonobjc
     private var currentRangeSelectionGranularity: NSTextSelection.Granularity? = nil
@@ -43,7 +43,7 @@ extension WKTextSelectionController {
     }
 
     func addTextSelectionManager() {
-        guard let page = view._protectedPage().get() else {
+        guard let view, let page = view._protectedPage().get() else {
             return
         }
 
@@ -51,7 +51,7 @@ extension WKTextSelectionController {
             return
         }
 
-        Logger.viewGestures.log("Creating a text selection manager for view \(self.view)")
+        Logger.viewGestures.log("Creating a text selection manager for view \(view)")
 
         let manager = NSTextSelectionManager()
         manager._webkitDelegate = self
@@ -63,7 +63,7 @@ extension WKTextSelectionController {
     }
 
     func selectionDidChange() {
-        guard let page = view._protectedPage().get() else {
+        guard let view, let page = view._protectedPage().get() else {
             return
         }
 
@@ -77,7 +77,7 @@ extension WKTextSelectionController {
 @implementation
 extension WKTextSelectionController {
     var insertionCursorRect: NSRect {
-        guard let page = view._protectedPage().get() else {
+        guard let view, let page = view._protectedPage().get() else {
             return .zero
         }
 
@@ -89,7 +89,7 @@ extension WKTextSelectionController {
     }
 
     var selectionIsInsertionPoint: Bool {
-        guard let page = view._protectedPage().get() else {
+        guard let view, let page = view._protectedPage().get() else {
             return false
         }
 
@@ -101,7 +101,7 @@ extension WKTextSelectionController {
     func isTextSelected(at point: NSPoint) -> Bool {
         // The `point` location is relative to the view.
 
-        guard let page = view._protectedPage().get() else {
+        guard let view, let page = view._protectedPage().get() else {
             return false
         }
 
@@ -135,7 +135,7 @@ extension WKTextSelectionController {
     func moveInsertionCursor(to point: NSPoint, placeAtWordBoundary: Bool) async -> Bool {
         // A return value of `true` indicates the selection has changed.
 
-        guard let page = view._protectedPage().get() else {
+        guard let view, let page = view._protectedPage().get() else {
             return false
         }
 
@@ -166,19 +166,22 @@ extension WKTextSelectionController {
         let newState = page.editorState
         let newVisualData = Optional(fromCxx: newState.visualData)
 
-        guard let previousVisualData, let newVisualData else {
-            return false
+        return switch (previousVisualData, newVisualData) {
+        case (let previousVisualData?, let newVisualData?):
+            // FIXME: (rdar://170847912) Use the `!=` operator instead when possible.
+            !(previousVisualData.caretRectAtStart == newVisualData.caretRectAtStart)
+        case (nil, nil):
+            false
+        default:
+            true
         }
-
-        // FIXME: (rdar://170847912) Use the `!=` operator instead when possible.
-        return !(previousVisualData.caretRectAtStart == newVisualData.caretRectAtStart)
     }
 
     @objc(showContextMenuAtPoint:)
     func showContextMenu(at point: NSPoint) {
         // The `point` location is relative to the window.
 
-        guard let page = view._protectedPage().get(), let impl = view._impl() else {
+        guard let view, let page = view._protectedPage().get(), let impl = view._impl() else {
             return
         }
 
@@ -200,7 +203,7 @@ extension WKTextSelectionController {
 
     @objc(dragSelectionWithGesture:completionHandler:)
     func dragSelection(withGesture gesture: NSGestureRecognizer, completionHandler: @escaping @Sendable (NSDraggingSession) -> Void) {
-        guard let page = view._protectedPage().get(), let impl = view._impl() else {
+        guard let view, let page = view._protectedPage().get(), let impl = view._impl() else {
             return
         }
 
@@ -243,7 +246,7 @@ extension WKTextSelectionController {
 
     @objc
     private func textSelectionDragGestureUpdated(_ gesture: NSGestureRecognizer) {
-        guard let impl = view._impl() else {
+        guard let view, let impl = view._impl() else {
             gesture.removeTarget(self, action: #selector(textSelectionDragGestureUpdated(_:)))
             return
         }
@@ -293,7 +296,7 @@ extension WKTextSelectionController {
 
     @objc(beginRangeSelectionAtPoint:withGranularity:)
     func beginRangeSelection(at point: NSPoint, with granularity: NSTextSelection.Granularity) {
-        guard let page = view._protectedPage().get(), let impl = view._impl() else {
+        guard let view, let page = view._protectedPage().get(), let impl = view._impl() else {
             return
         }
 
@@ -316,7 +319,7 @@ extension WKTextSelectionController {
 
     @objc(continueRangeSelectionAtPoint:)
     func continueRangeSelection(at point: NSPoint) {
-        guard let page = view._protectedPage().get() else {
+        guard let view, let page = view._protectedPage().get() else {
             return
         }
 
@@ -339,7 +342,7 @@ extension WKTextSelectionController {
 
     @objc(endRangeSelectionAtPoint:)
     func endRangeSelection(at point: NSPoint) {
-        guard let page = view._protectedPage().get(), let impl = view._impl() else {
+        guard let view, let page = view._protectedPage().get(), let impl = view._impl() else {
             return
         }
 

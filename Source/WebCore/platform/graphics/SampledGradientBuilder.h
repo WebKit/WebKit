@@ -156,14 +156,25 @@ static ColorComponents<float, 4> evaluateColorIS(const SamplingData& data, float
     return asColorComponents(interpolatedColor.unresolved());
 }
 
-// Linearly interpolate between stops in the interpolation color space (plain
-// component-wise lerp, no hue interpolation rules) and convert to the output
-// color space. Used by bisection after coarse sampling, where the hue
-// interpolation has already been baked into the coarse IS samples.
-template<typename OutputColorType, typename InterpolationSpace>
+// Interpolate between stops in the interpolation color space and convert to
+// the output color space. Used by bisection between adjacent coarse samples.
+//
+// For rectangular orthogonal color spaces (sRGB, OKLab, etc.) the IS lerp
+// honors the CSS Color 4 §12.3 premultiplied-alpha rule via
+// interpolateColorComponents. For hue color spaces (HSL, LCH, OKLCH, …) the
+// per-bisection step uses a plain component-wise lerp: the global hue rotation
+// has already been baked into the coarse samples by coarseSampleStops, and
+// re-running the hueInterpolationMethod (Longer in particular) on adjacent
+// coarse samples would re-expand small angle deltas back to ≥180° and scramble
+// the gradient.
+template<typename OutputColorType, typename InterpolationSpace, AlphaPremultiplication alphaPremultiplication>
 static ColorComponents<float, 4> evaluateLinearOS(const SamplingData& data, float offset)
 {
     using InterpolationSpaceColorType = typename InterpolationSpace::ColorType;
+    constexpr auto componentInfo = InterpolationSpaceColorType::Model::componentInfo;
+    constexpr bool isHueColorSpace = componentInfo[0].type == ColorComponentType::Angle
+        || componentInfo[1].type == ColorComponentType::Angle
+        || componentInfo[2].type == ColorComponentType::Angle;
 
     // 1. Find stops that bound the requested offset.
     auto [stop0, stop1] = [&] {
@@ -177,18 +188,33 @@ static ColorComponents<float, 4> evaluateLinearOS(const SamplingData& data, floa
     // 2. Compute percentage offset between the two stops.
     float t = (stop1.offset == stop0.offset) ? 0.0f : (offset - stop0.offset) / (stop1.offset - stop0.offset);
 
-    // 3. Plain linear interpolation of IS components (hue already resolved).
-    // Handle NaN ('none') components: replace with the other stop's value per CSS spec.
-    auto lerped = mapColorComponents([t](float c0, float c1) {
-        if (std::isnan(c0))
-            return c1;
-        if (std::isnan(c1))
-            return c0;
-        return c0 + t * (c1 - c0);
-    }, stop0.color, stop1.color);
+    // 3. Interpolate IS components.
+    auto interpolated = [&] {
+        if constexpr (isHueColorSpace) {
+            // Plain component-wise lerp: the hue rotation rule has already
+            // been applied by coarseSampleStops. NaN ('none') is replaced
+            // with the other stop's value per CSS spec.
+            auto lerped = mapColorComponents([t](float c0, float c1) {
+                if (std::isnan(c0))
+                    return c1;
+                if (std::isnan(c1))
+                    return c0;
+                return c0 + t * (c1 - c0);
+            }, stop0.color, stop1.color);
+            return makeFromComponents<InterpolationSpaceColorType>(lerped);
+        } else {
+            // interpolateColorComponents premultiplies, lerps, and unpremultiplies
+            // internally per §12.3, leaving the result in non-premultiplied IS form
+            // ready for color-space conversion.
+            return interpolateColorComponents<alphaPremultiplication>(
+                std::get<InterpolationSpace>(data.colorInterpolationMethod.colorSpace),
+                makeFromComponents<InterpolationSpaceColorType>(stop0.color), 1.0f - t,
+                makeFromComponents<InterpolationSpaceColorType>(stop1.color), t);
+        }
+    }();
 
     // 4. Convert to the output color space.
-    return asColorComponents(convertColor<OutputColorType>(makeFromComponents<InterpolationSpaceColorType>(lerped)).resolved());
+    return asColorComponents(convertColor<OutputColorType>(interpolated).resolved());
 }
 
 static void bisectAndCollectStops(
@@ -304,7 +330,12 @@ SampledGradientStops sampleGradientStops(ColorInterpolationMethod colorInterpola
 
     auto evaluateOS = WTF::switchOn(colorInterpolationMethod.colorSpace,
         [&]<typename MethodColorSpace>(const MethodColorSpace&) -> EvaluateCallback {
-            return &evaluateLinearOS<OutputColorType, MethodColorSpace>;
+            switch (colorInterpolationMethod.alphaPremultiplication) {
+            case AlphaPremultiplication::Unpremultiplied:
+                return &evaluateLinearOS<OutputColorType, MethodColorSpace, AlphaPremultiplication::Unpremultiplied>;
+            case AlphaPremultiplication::Premultiplied:
+                return &evaluateLinearOS<OutputColorType, MethodColorSpace, AlphaPremultiplication::Premultiplied>;
+            }
         });
 
     Vector<float> locations;

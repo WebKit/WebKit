@@ -41,11 +41,16 @@ TEST(CMSTest, KernelModuleSigning) {
   // Sign a message with the same call that the Linux kernel's sign-file.c
   // makes.
   std::string cert_pem = GetTestData("crypto/pkcs7/test/sign_cert.pem");
+  std::string cert2_pem = GetTestData("crypto/pkcs7/test/sign_cert2.pem");
   std::string key_pem = GetTestData("crypto/pkcs7/test/sign_key.pem");
   bssl::UniquePtr<BIO> cert_bio(
       BIO_new_mem_buf(cert_pem.data(), cert_pem.size()));
   bssl::UniquePtr<X509> cert(
       PEM_read_bio_X509(cert_bio.get(), nullptr, nullptr, nullptr));
+  bssl::UniquePtr<BIO> cert2_bio(
+      BIO_new_mem_buf(cert2_pem.data(), cert2_pem.size()));
+  bssl::UniquePtr<X509> cert2(
+      PEM_read_bio_X509(cert2_bio.get(), nullptr, nullptr, nullptr));
 
   bssl::UniquePtr<BIO> key_bio(BIO_new_mem_buf(key_pem.data(), key_pem.size()));
   bssl::UniquePtr<EVP_PKEY> key(
@@ -119,6 +124,26 @@ TEST(CMSTest, KernelModuleSigning) {
   expected = GetTestData("crypto/pkcs7/test/sign_sha256_key_id.p7s");
   EXPECT_EQ(Bytes(BIOMemContents(out.get())), Bytes(expected));
 
+  // After
+  // https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0ad9a71933e7,
+  // the kernel started accidentally passing extra flag to every function, even
+  // where it doesn't make sense. Make sure it works, even if though it's
+  // dubious. (Passing |CMS_PARTIAL| to |CMS_final| is particularly
+  // questionable.)
+  const uint32_t many_flags = CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY |
+                              CMS_DETACHED | CMS_STREAM | CMS_NOSMIMECAP |
+                              CMS_NO_SIGNING_TIME | CMS_USE_KEYID | CMS_NOATTR;
+  ASSERT_TRUE(BIO_reset(data_bio.get()));
+  cms.reset(CMS_sign(nullptr, nullptr, nullptr, nullptr, many_flags));
+  ASSERT_TRUE(cms);
+  ASSERT_TRUE(CMS_add1_signer(cms.get(), cert.get(), key.get(), EVP_sha256(),
+                              many_flags));
+  ASSERT_TRUE(
+      CMS_final(cms.get(), data_bio.get(), /*dcont=*/nullptr, many_flags));
+  ASSERT_TRUE(BIO_reset(out.get()));
+  ASSERT_TRUE(i2d_CMS_bio(out.get(), cms.get()));
+  EXPECT_EQ(Bytes(BIOMemContents(out.get())), Bytes(expected));
+
   // Specify a different hash function.
   ASSERT_TRUE(BIO_reset(data_bio.get()));
   cms.reset(
@@ -161,4 +186,15 @@ TEST(CMSTest, KernelModuleSigning) {
   EXPECT_FALSE(cms);
   EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_CMS,
                           CMS_R_CERTIFICATE_HAS_NO_KEYID));
+
+  // Sign with a certificate that isn't self-signed. The issuer and serial tuple
+  // should use the correct name.
+  ASSERT_TRUE(BIO_reset(data_bio.get()));
+  cms.reset(CMS_sign(cert2.get(), key.get(), nullptr, data_bio.get(),
+                     CMS_DETACHED | CMS_NOCERTS | CMS_NOATTR | CMS_BINARY));
+  ASSERT_TRUE(cms);
+  ASSERT_TRUE(BIO_reset(out.get()));
+  ASSERT_TRUE(i2d_CMS_bio(out.get(), cms.get()));
+  expected = GetTestData("crypto/pkcs7/test/sign_sha256_cert2.p7s");
+  EXPECT_EQ(Bytes(BIOMemContents(out.get())), Bytes(expected));
 }

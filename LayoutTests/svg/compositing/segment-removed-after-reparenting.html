@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html class="reftest-wait">
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsPixels = true;
+    }
+
+    // Moving the plain middle rect out from between two composited anchors collapses source's overlay segment layer. The final render must match the uncomposited DOM, with green translated into empty-dest.
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            const middle = document.getElementById('middle');
+            document.getElementById('empty-dest').appendChild(middle);
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                document.documentElement.classList.remove('reftest-wait');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }));
+        }));
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g id="source">
+        <g class="anchor"><rect x="10" y="10" width="60" height="60" fill="red"/></g>
+        <rect id="middle" x="40" y="40" width="60" height="60" fill="green"/>
+        <g class="anchor"><rect x="70" y="70" width="60" height="60" fill="blue"/></g>
+    </g>
+    <g id="empty-dest" transform="translate(0 100)"></g>
+</svg>
+</body>
+</html>

@@ -453,33 +453,33 @@ GraphicsLayerCA::~GraphicsLayerCA()
 
     // Clean up the layer.
     if (m_layer)
-        m_layer->setOwner(nullptr);
-    
+        protect(m_layer)->setOwner(nullptr);
+
     if (m_contentsLayer)
-        m_contentsLayer->setOwner(nullptr);
+        protect(m_contentsLayer)->setOwner(nullptr);
 
     if (m_contentsClippingLayer)
-        m_contentsClippingLayer->setOwner(nullptr);
+        protect(m_contentsClippingLayer)->setOwner(nullptr);
 
     if (m_contentsShapeMaskLayer)
-        m_contentsShapeMaskLayer->setOwner(nullptr);
+        protect(m_contentsShapeMaskLayer)->setOwner(nullptr);
 
     if (m_shapeMaskLayer)
-        m_shapeMaskLayer->setOwner(nullptr);
-    
+        protect(m_shapeMaskLayer)->setOwner(nullptr);
+
     if (m_structuralLayer)
-        m_structuralLayer->setOwner(nullptr);
+        protect(m_structuralLayer)->setOwner(nullptr);
 
     if (m_backdropLayer)
-        m_backdropLayer->setOwner(nullptr);
+        protect(m_backdropLayer)->setOwner(nullptr);
 
     if (m_backdropClippingLayer)
-        m_backdropClippingLayer->setOwner(nullptr);
+        protect(m_backdropClippingLayer)->setOwner(nullptr);
 
     removeCloneLayers();
 
     if (m_parent)
-        downcast<GraphicsLayerCA>(*m_parent).noteSublayersChanged();
+        downcast<GraphicsLayerCA>(*protect(m_parent)).noteSublayersChanged();
 
     willBeDestroyed();
 }
@@ -517,7 +517,7 @@ std::optional<PlatformLayerIdentifier> GraphicsLayerCA::layerIDIgnoringStructura
 
 PlatformLayer* GraphicsLayerCA::platformLayer() const
 {
-    return primaryLayer()->platformLayer();
+    return protect(primaryLayer())->platformLayer();
 }
 
 bool GraphicsLayerCA::setChildren(Vector<Ref<GraphicsLayer>>&& children)
@@ -578,7 +578,7 @@ void GraphicsLayerCA::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
     propagateLayerChangeToReplicas();
     
     if (m_replicatedLayer)
-        downcast<GraphicsLayerCA>(*m_replicatedLayer).propagateLayerChangeToReplicas();
+        downcast<GraphicsLayerCA>(*protect(m_replicatedLayer)).propagateLayerChangeToReplicas();
 }
 
 void GraphicsLayerCA::setReplicatedLayer(GraphicsLayer* layer)
@@ -1406,7 +1406,7 @@ std::optional<PlatformLayerIdentifier> GraphicsLayerCA::contentsLayerIDForModel(
 
 void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose purpose)
 {
-    if (m_contentsLayer && platformLayer == m_contentsLayer->platformLayer())
+    if (m_contentsLayer && platformLayer == protect(m_contentsLayer)->platformLayer())
         return;
 
     // FIXME: The passed in layer might be a raw layer or an externally created
@@ -1433,7 +1433,7 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
 
 void GraphicsLayerCA::setContentsToPlatformLayerHost(LayerHostingContextIdentifier identifier)
 {
-    if (m_contentsLayer && m_contentsLayer->hostingContextIdentifier() == identifier)
+    if (m_contentsLayer && protect(m_contentsLayer)->hostingContextIdentifier() == identifier)
         return;
 
     m_contentsLayer = createPlatformCALayerHost(identifier, this);
@@ -1498,7 +1498,7 @@ void GraphicsLayerCA::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDis
         return;
 
     if (m_contentsLayer)
-        m_contentsLayer->setOwner(nullptr);
+        protect(m_contentsLayer)->setOwner(nullptr);
     m_contentsLayer = nullptr;
     m_contentsDisplayDelegate = nullptr;
     m_contentsLayerPurpose = ContentsLayerPurpose::None;
@@ -1530,7 +1530,7 @@ PlatformLayerIdentifier GraphicsLayerCA::setContentsToAsyncDisplayDelegate(RefPt
 #if PLATFORM(IOS_FAMILY)
 PlatformLayer* GraphicsLayerCA::contentsLayerForMedia() const
 {
-    return m_contentsLayerPurpose == ContentsLayerPurpose::Media ? m_contentsLayer->platformLayer() : nullptr;
+    return m_contentsLayerPurpose == ContentsLayerPurpose::Media ? protect(m_contentsLayer)->platformLayer() : nullptr;
 }
 #endif
 
@@ -1602,7 +1602,7 @@ void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
 #if PLATFORM(IOS_FAMILY)
     // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so disable the optimization.
     // See the similar test in computeVisibleAndCoverageRect().
-    if (m_layer->type() == PlatformCALayer::Type::Cocoa)
+    if (protect(m_layer)->type() == PlatformCALayer::Type::Cocoa)
         commitState.ancestorHadChanges = true;
 #endif
 
@@ -1815,8 +1815,8 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     auto boundsOrigin = m_boundsOrigin;
 #if PLATFORM(IOS_FAMILY)
     // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so use the layer's origin.
-    if (m_layer->type() == PlatformCALayer::Type::Cocoa)
-        boundsOrigin = m_layer->bounds().location();
+    if (protect(m_layer)->type() == PlatformCALayer::Type::Cocoa)
+        boundsOrigin = protect(m_layer)->bounds().location();
 #endif
 
     auto coverageRect = clipRectForSelf;
@@ -2078,7 +2078,7 @@ void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsCon
 {
     m_hasEverPainted = true;
     if (m_displayList) {
-        context.drawDisplayList(*m_displayList);
+        context.drawDisplayList(protect(*m_displayList));
         
         if (isTrackingDisplayListReplay()) [[unlikely]] {
             // Original purpose of the code was to track playback time optimizations. However, there are no such things, and as such we
@@ -2961,7 +2961,7 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
 
     // We've changed the layer that our parent added to its sublayer list, so tell it to update
     // sublayers again in its commitLayerChangesAfterSublayers().
-    downcast<GraphicsLayerCA>(*parent()).noteSublayersChanged(DontScheduleFlush);
+    downcast<GraphicsLayerCA>(*protect(parent())).noteSublayersChanged(DontScheduleFlush);
 
     // Set properties of m_layer to their default values, since these are expressed on on the structural layer.
     FloatPoint point(m_size.width() / 2.0f, m_size.height() / 2.0f);
@@ -3268,7 +3268,7 @@ void GraphicsLayerCA::updateContentsRects()
     auto contentBounds = FloatRect { { }, m_contentsRect.size() };
     
     bool gainedOrLostClippingLayer = false;
-    if (m_contentsClippingRect.isRounded() || !m_contentsClippingRect.rect().contains(m_contentsRect)) {
+    if (m_contentsClippingRect.hasNonZeroRadii() || !m_contentsClippingRect.rect().contains(m_contentsRect)) {
         if (!m_contentsClippingLayer) {
             Ref contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
             m_contentsClippingLayer = contentsClippingLayer.copyRef();
@@ -3304,7 +3304,7 @@ void GraphicsLayerCA::updateContentsRects()
         }
 
         if (m_contentsShapeMaskLayer) {
-            m_contentsShapeMaskLayer->setOwner(nullptr);
+            protect(m_contentsShapeMaskLayer)->setOwner(nullptr);
             m_contentsShapeMaskLayer = nullptr;
         }
     }
@@ -3340,7 +3340,7 @@ void GraphicsLayerCA::updateContentsRects()
 
 void GraphicsLayerCA::updateEventRegion()
 {
-    m_layer->setEventRegion(eventRegion());
+    protect(m_layer)->setEventRegion(eventRegion());
 }
 
 #if ENABLE(SCROLLING_THREAD)
@@ -4475,7 +4475,7 @@ String GraphicsLayerCA::displayListAsText(OptionSet<DisplayList::AsTextFlag> fla
     if (!m_displayList)
         return String();
 
-    return m_displayList->asText(flags);
+    return protect(m_displayList)->asText(flags);
 }
 
 void GraphicsLayerCA::setAllowsBackingStoreDetaching(bool allowDetaching)
@@ -5046,7 +5046,7 @@ void GraphicsLayerCA::propagateLayerChangeToReplicas(ScheduleFlushOrNot schedule
             break;
 
         if (currentLayerCA->replicaLayer())
-            downcast<GraphicsLayerCA>(*currentLayerCA->replicaLayer()).noteLayerPropertyChanged(ReplicatedLayerChanged, scheduleFlush);
+            downcast<GraphicsLayerCA>(*protect(currentLayerCA->replicaLayer())).noteLayerPropertyChanged(ReplicatedLayerChanged, scheduleFlush);
     }
 }
 
@@ -5419,7 +5419,7 @@ void GraphicsLayerCA::setShadowPath(const Path& path)
 
 void GraphicsLayerCA::updateShadowPath()
 {
-    m_layer->setShadowPath(m_shadowPath);
+    protect(m_layer)->setShadowPath(m_shadowPath);
 }
 
 void GraphicsLayerCA::markFrontBufferVolatileForTesting()

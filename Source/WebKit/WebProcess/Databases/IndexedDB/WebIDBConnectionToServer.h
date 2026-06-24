@@ -113,6 +113,8 @@ private:
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
     void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, Vector<WebCore::IDBDatabaseNameAndVersion>&&);
 
+    void attachStorageKeepAliveIfNeeded(const WebIDBResult&, const WebCore::IDBValue&);
+
     const RefPtr<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
 };
 

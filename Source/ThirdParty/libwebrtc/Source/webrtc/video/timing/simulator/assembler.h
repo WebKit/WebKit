@@ -13,10 +13,10 @@
 
 #include <cstdint>
 #include <memory>
+#include <span>
 
 #include "absl/base/nullability.h"
 #include "absl/container/flat_hash_set.h"
-#include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/sequence_checker.h"
@@ -83,10 +83,10 @@ class Assembler : public ReceivedRtpPacketCallback,
  private:
   // Trivially implements `Transport`.
   // We need to implement this due to an RTC_DCHECK in rtcp_sender.cc.
-  bool SendRtp(ArrayView<const uint8_t>, const PacketOptions&) override {
+  bool SendRtp(std::span<const uint8_t>, const PacketOptions&) override {
     return true;
   }
-  bool SendRtcp(ArrayView<const uint8_t>, const PacketOptions&) override {
+  bool SendRtcp(std::span<const uint8_t>, const PacketOptions&) override {
     return true;
   }
 

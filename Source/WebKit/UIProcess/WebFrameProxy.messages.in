@@ -27,6 +27,7 @@
 ]
 messages -> WebFrameProxy {
     [EnabledBy=AppBadgeEnabled] SetAppBadge(WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    [EnabledBy=SiteIsolationEnabled] DidChangeCSPOriginsThatUpgradeInsecureNavigations(HashSet<WebCore::SecurityOriginData> cspOriginsThatUpgradeInsecureNavigations)
     [EnabledBy=SiteIsolationEnabled] FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
     [EnabledBy=SiteIsolationEnabled] FindFocusableElementContinuingFromFrame(enum:uint8_t WebCore::FocusDirection direction, WebCore::FrameIdentifier frameIdentifer, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement)
 }

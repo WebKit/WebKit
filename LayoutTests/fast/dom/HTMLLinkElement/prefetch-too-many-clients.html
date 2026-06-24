@@ -1,8 +1,9 @@
 <html>
 <body onload="many_link_updates(50);setTimeout('done();',0)">
 <div id="console"></div>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script>
+window.jsTestIsAsync = true;
 
 function addLink(url, rel) {
     var link = document.getElementById(rel) ||
@@ -22,14 +23,10 @@ function many_link_updates(iter) {
 function done() {
     testPassed("we didn't crash.");
     if (window.testRunner) {
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 
-if (window.testRunner) {
-    testRunner.waitUntilDone(); 
-    testRunner.dumpAsText();
-}
 </script>
 <p>This test makes sure that a single prefetch element is not a client of multiple cachedresources at the same time; by 
 repeatedly changing an existing link element, we will induce a double-notify bug if that element is not releasing its

@@ -381,11 +381,13 @@ protected:
 
     LayoutUnit logicalHeightForGridItem(RenderBox&, RenderGridLayoutState&) const;
     bool updateOverridingContainingBlockContentSizeForGridItem(RenderBox&, Style::GridTrackSizingDirection, std::optional<LayoutUnit> = std::nullopt) const;
+    bool isComputingColumnIntrinsicWidthForNonOrthogonalItem(const RenderBox&) const;
 
     // GridTrackSizingAlgorithm accessors for subclasses.
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }
     Style::GridTrackSizingDirection direction() const { return m_algorithm.m_direction; }
     GridTrackSizingAlgorithm::SizingState sizingState() const { return m_algorithm.m_sizingState; }
+    SizingOperation sizingOperation() const { return m_algorithm.m_sizingOperation; }
     double findFrUnitSize(const GridSpan& tracksSpan, LayoutUnit leftOverSpace) const { return m_algorithm.findFrUnitSize(tracksSpan, leftOverSpace); }
     void distributeSpaceToTracks(Vector<CheckedRef<GridTrack>>& tracks, LayoutUnit& availableLogicalSpace) const { m_algorithm.distributeSpaceToTracks<TrackSizeComputationVariant::NotCrossingFlexibleTracks, TrackSizeComputationPhase::MaximizeTracks>(tracks, nullptr, availableLogicalSpace); }
     const RenderGrid* renderGrid() const { return m_algorithm.m_renderGrid; }

@@ -104,6 +104,7 @@ endmacro()
 # 1.1. Find headers and libraries
 FIND_GSTREAMER_COMPONENT(GSTREAMER gstreamer-1.0 gstreamer-1.0)
 FIND_GSTREAMER_COMPONENT(GSTREAMER_BASE gstreamer-base-1.0 gstbase-1.0)
+set(GSTREAMER_VERSION ${PC_GSTREAMER_VERSION})
 FIND_GSTREAMER_COMPONENT(GSTREAMER_FULL gstreamer-full-1.0>=1.17.0 gstreamer-full-1.0)
 
 # -------------------------
@@ -138,7 +139,7 @@ foreach (_component ${GStreamer_FIND_COMPONENTS})
 endforeach ()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(GStreamer REQUIRED_VARS _GSTREAMER_REQUIRED_VARS
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(GStreamer REQUIRED_VARS ${_GSTREAMER_REQUIRED_VARS}
                                             VERSION_VAR   GSTREAMER_VERSION)
 
 mark_as_advanced(

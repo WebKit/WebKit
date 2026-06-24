@@ -77,12 +77,12 @@ void PendingScript::notifyFinished(LoadableScript&)
 
 bool PendingScript::isLoaded() const
 {
-    return m_loadableScript && m_loadableScript->isLoaded();
+    return m_loadableScript && protect(m_loadableScript)->isLoaded();
 }
 
 bool PendingScript::hasError() const
 {
-    return m_loadableScript && m_loadableScript->hasError();
+    return m_loadableScript && protect(m_loadableScript)->hasError();
 }
 
 void PendingScript::setClient(PendingScriptClient& client)

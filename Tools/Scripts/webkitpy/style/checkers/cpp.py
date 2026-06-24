@@ -48,6 +48,7 @@ import unicodedata
 from webkitcorepy import unicode, Version
 
 from webkitpy.style.checkers.common import match, search, sub, subn
+from webkitpy.style.checkers.computed_style_inline_includes import ComputedStyleInlineIncludesChecker
 from webkitpy.style.checkers.inclusive_language import InclusiveLanguageChecker
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version_name_map import VersionNameMap
@@ -2636,7 +2637,7 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
 _ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType']
 
 # Enum value allowlist
-_ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'GPU', 'LTR', 'PM', 'RTL', 'URL', 'XHR']
+_ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'COOP', 'GPU', 'LTR', 'PM', 'RTL', 'URL', 'XHR']
 
 
 def check_enum_members(clean_lines, line_number, enum_state, error):
@@ -2790,10 +2791,6 @@ def check_using_namespace(clean_lines, line_number, file_extension, error):
       error: The function to call with any errors found.
     """
 
-    # This check applies only to headers.
-    if file_extension != 'h':
-        return
-
     line = clean_lines.elided[line_number]  # Get rid of comments and strings.
 
     using_namespace_match = match(r'\s*using\s+namespace\s+(?P<method_name>\S+)\s*;\s*$', line)
@@ -2801,8 +2798,25 @@ def check_using_namespace(clean_lines, line_number, file_extension, error):
         return
 
     method_name = using_namespace_match.group('method_name')
-    error(line_number, 'build/using_namespace', 4,
-          "Do not use 'using namespace %s;'." % method_name)
+
+    if file_extension == 'h':
+        error(line_number, 'build/using_namespace', 4,
+              "Do not use 'using namespace %s;'." % method_name)
+        return
+
+    # In implementation files, only flag true file scope: a using-directive that
+    # appears before any 'namespace X {' opener. Inside a namespace body the
+    # directive is contained, which is the recommended fix; inside a function
+    # (indented) it is scoped.
+    if file_extension in ('cpp', 'cc', 'mm', 'm') and not line.startswith((' ', '\t')):
+        if method_name.startswith('std::literals'):
+            return
+        for preceding in clean_lines.elided[:line_number]:
+            if match(r'\s*namespace\s+[\w:]*\s*{', preceding):
+                return
+        error(line_number, 'build/using_namespace', 4,
+              "Do not use 'using namespace %s;' at file or namespace scope; "
+              "global using namespace is likely to cause name collisions in the unified build." % method_name)
 
 
 def check_max_min_macros(clean_lines, line_number, file_state, error):
@@ -4225,8 +4239,10 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
                 'You should not add a blank line before implementation file\'s own header.')
 
     # Check to make sure all headers besides config.h and the primary header are
-    # alphabetically sorted.
-    if not error_message and header_type == _OTHER_HEADER and not search(r'\A#include.*\.lut\.h', line):
+    # alphabetically sorted. Prefix headers are exempt: their include order is
+    # load-bearing (export macros must precede project headers; chain-parent
+    # prefix must precede everything).
+    if not error_message and header_type == _OTHER_HEADER and not search(r'\A#include.*\.lut\.h', line) and not filename.endswith('Prefix.h'):
         previous_line_number = line_number - 1
         previous_line = clean_lines.lines[previous_line_number]
         previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
@@ -5345,6 +5361,7 @@ class CppChecker(object):
         self.handle_style_error = handle_style_error
         self.min_confidence = min_confidence
         self._inclusive_language_checker = InclusiveLanguageChecker(handle_style_error)
+        self._computed_style_inline_includes_checker = ComputedStyleInlineIncludesChecker(file_path, handle_style_error)
         _unit_test_config = unit_test_config
 
     # Useful for unit testing.
@@ -5380,3 +5397,4 @@ class CppChecker(object):
                        self.handle_style_error, self.min_confidence,
                        set(line_numbers) if line_numbers is not None else None)
         self._inclusive_language_checker.check(lines)
+        self._computed_style_inline_includes_checker.check(lines, line_numbers)

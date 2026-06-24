@@ -87,8 +87,6 @@
 
 namespace WebKit {
 
-static const Seconds unexpectedActivityDuration = 10_s;
-
 void WebProcessProxy::registerNotifyObservers()
 {
     PAL::registerNotifyCallback("com.apple.WebKit.logFrameTrees"_s, [] {

@@ -3,4 +3,7 @@
 --------
 Frame: '<!--frame1-->'
 --------
+PASS successfullyParsed is true
+
+TEST COMPLETE
 This test should not crash or assert.

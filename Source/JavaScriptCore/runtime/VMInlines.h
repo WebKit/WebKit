@@ -124,4 +124,35 @@ Type& VM::ensureSideData(void* key, const Functor& functor)
 inline std::optional<RefPtr<Thread>> VM::ownerThread() const { return m_apiLock->ownerThread(); }
 inline std::optional<uint64_t> VM::ownerThreadUID() const { return m_apiLock->ownerThreadUID(); }
 
+inline JSPropertyNameEnumerator* VM::emptyPropertyNameEnumerator()
+{
+    if (m_emptyPropertyNameEnumerator) [[likely]]
+        return m_emptyPropertyNameEnumerator.get();
+    return emptyPropertyNameEnumeratorSlow();
+}
+
+#define JSC_DEFINE_VM_LAZY_EXECUTABLE(_name) \
+    inline NativeExecutable* VM::_name##Executable() \
+    { \
+        if (m_##_name##Executable) [[likely]] \
+            return m_##_name##Executable.get(); \
+        return _name##ExecutableSlow(); \
+    }
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseResolvingFunctionResolve)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseResolvingFunctionReject)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseFirstResolvingFunctionResolve)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseFirstResolvingFunctionReject)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseResolvingFunctionResolveWithInternalMicrotask)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseResolvingFunctionRejectWithInternalMicrotask)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseCapabilityExecutor)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseAllFulfillFunction)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseAllSlowFulfillFunction)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseAllSettledFulfillFunction)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseAllSettledRejectFunction)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseAllSettledSlowFulfillFunction)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseAllSettledSlowRejectFunction)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseAnyRejectFunction)
+JSC_DEFINE_VM_LAZY_EXECUTABLE(promiseAnySlowRejectFunction)
+#undef JSC_DEFINE_VM_LAZY_EXECUTABLE
+
 } // namespace JSC

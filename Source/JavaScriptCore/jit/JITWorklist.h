@@ -63,7 +63,6 @@ public:
     State compilationState(VM&, JITCompilationKey);
 
     State completeAllReadyPlansForVM(VM&, JITCompilationKey = JITCompilationKey());
-    void requestTemporaryStop();
 
     // This is equivalent to:
     // worklist->waitUntilAllPlansForVMAreReady(vm);
@@ -85,6 +84,8 @@ public:
     void iterateCodeBlocksForGC(Visitor&, VM&, NOESCAPE const Function<void(CodeBlock*)>&);
 
     void dump(PrintStream&) const;
+
+    size_t totalOngoingCompilations() const;
 
 private:
     JITWorklist();

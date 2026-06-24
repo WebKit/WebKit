@@ -1,3 +1,0 @@
-
-PASS Block parent content to access sandbox child iframe content when sandbox attribute exists
-

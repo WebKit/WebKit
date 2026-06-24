@@ -1,4 +1,3 @@
 
-PASS SVGAElement.type setter
 PASS Test anchor's type setter
 

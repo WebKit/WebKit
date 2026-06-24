@@ -29,6 +29,10 @@
 #include "rtc_base/synchronization/mutex.h"
 #include "test/fake_encoder.h"
 
+namespace webrtc {
+
+namespace test {
+
 namespace {
 
 // Write width and height to the payload the same way as the real encoder does.
@@ -48,10 +52,6 @@ void WriteFakeVp8(unsigned char* payload,
   }
 }
 }  // namespace
-
-namespace webrtc {
-
-namespace test {
 
 FakeVp8Encoder::FakeVp8Encoder(const Environment& env) : FakeEncoder(env) {
   sequence_checker_.Detach();

@@ -92,7 +92,9 @@ int main(int argc, char* argv[]) {
   wnd.Create();
 
   CustomSocketServer socket_server(&wnd);
-  webrtc::AutoSocketServerThread thread(&socket_server);
+  std::unique_ptr<webrtc::Thread> thread =
+      std::make_unique<webrtc::Thread>(&socket_server);
+  webrtc::ThreadManager::Instance()->SetCurrentThread(thread.get());
 
   webrtc::InitializeSSL();
   // Must be constructed after we set the socketserver.
@@ -101,7 +103,8 @@ int main(int argc, char* argv[]) {
   socket_server.set_client(&client);
   socket_server.set_conductor(conductor.get());
 
-  thread.Run();
+  thread->Run();
+  webrtc::ThreadManager::Instance()->SetCurrentThread(nullptr);
 
   // gtk_main();
   wnd.Destroy();

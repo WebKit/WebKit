@@ -37,12 +37,12 @@ void TestSequenceBufferPushOp() {
     SCOPED_TRACE(i);
     seq_buf.Push(chunk);
     // Still in the buffer.
-    const auto* m = std::max_element(seq_buf_view.begin(), seq_buf_view.end());
+    auto m = std::max_element(seq_buf_view.begin(), seq_buf_view.end());
     EXPECT_EQ(1, *m);
   }
   // Gone after another push.
   seq_buf.Push(chunk);
-  const auto* m = std::max_element(seq_buf_view.begin(), seq_buf_view.end());
+  auto m = std::max_element(seq_buf_view.begin(), seq_buf_view.end());
   EXPECT_EQ(0, *m);
 
   // Check that the last item moves left by N positions after a push op.

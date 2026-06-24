@@ -69,13 +69,13 @@ void MultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions&
 
     m_isPending = false;
 
-    auto bestFitImage = selectBestFitImage(*loader.document());
+    auto bestFitImage = selectBestFitImage(protect(*loader.document()));
 
     ASSERT(is<CachedImage>(bestFitImage.image) || is<GeneratedImage>(bestFitImage.image));
 
     if (is<GeneratedImage>(bestFitImage.image)) {
         m_selectedImage = bestFitImage.image;
-        m_selectedImage->load(loader, options);
+        protect(m_selectedImage)->load(loader, options);
         return;
     }
 
@@ -85,8 +85,8 @@ void MultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions&
         else
             m_selectedImage = CachedImage::copyOverridingScaleFactor(*styleCachedImage, bestFitImage.scaleFactor.value);
 
-        if (m_selectedImage->isPending())
-            m_selectedImage->load(loader, options);
+        if (protect(m_selectedImage)->isPending())
+            protect(m_selectedImage)->load(loader, options);
         return;
     }
 }
@@ -95,110 +95,110 @@ WebCore::CachedImage* MultiImage::cachedImage() const
 {
     if (!m_selectedImage)
         return nullptr;
-    return m_selectedImage->cachedImage();
+    return protect(m_selectedImage)->cachedImage();
 }
 
 WrappedImagePtr MultiImage::data() const
 {
     if (!m_selectedImage)
         return nullptr;
-    return m_selectedImage->data();
+    return protect(m_selectedImage)->data();
 }
 
 bool MultiImage::canRender(const RenderElement* renderer, float multiplier) const
 {
-    return m_selectedImage && m_selectedImage->canRender(renderer, multiplier);
+    return m_selectedImage && protect(m_selectedImage)->canRender(renderer, multiplier);
 }
 
 bool MultiImage::isLoaded(const RenderElement* renderer) const
 {
-    return m_selectedImage && m_selectedImage->isLoaded(renderer);
+    return m_selectedImage && protect(m_selectedImage)->isLoaded(renderer);
 }
 
 bool MultiImage::errorOccurred() const
 {
-    return m_selectedImage && m_selectedImage->errorOccurred();
+    return m_selectedImage && protect(m_selectedImage)->errorOccurred();
 }
 
 FloatSize MultiImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType) const
 {
     if (!m_selectedImage)
         return { };
-    return m_selectedImage->imageSize(renderer, multiplier, sizeType);
+    return protect(m_selectedImage)->imageSize(renderer, multiplier, sizeType);
 }
 
 bool MultiImage::imageHasRelativeWidth() const
 {
-    return m_selectedImage && m_selectedImage->imageHasRelativeWidth();
+    return m_selectedImage && protect(m_selectedImage)->imageHasRelativeWidth();
 }
 
 bool MultiImage::imageHasRelativeHeight() const
 {
-    return m_selectedImage && m_selectedImage->imageHasRelativeHeight();
+    return m_selectedImage && protect(m_selectedImage)->imageHasRelativeHeight();
 }
 
 void MultiImage::computeIntrinsicDimensions(const RenderElement* element, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     if (!m_selectedImage)
         return;
-    m_selectedImage->computeIntrinsicDimensions(element, intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    protect(m_selectedImage)->computeIntrinsicDimensions(element, intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
 bool MultiImage::usesImageContainerSize() const
 {
-    return m_selectedImage && m_selectedImage->usesImageContainerSize();
+    return m_selectedImage && protect(m_selectedImage)->usesImageContainerSize();
 }
 
 void MultiImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& url)
 {
     if (!m_selectedImage)
         return;
-    m_selectedImage->setContainerContextForRenderer(renderer, containerSize, containerZoom, url);
+    protect(m_selectedImage)->setContainerContextForRenderer(renderer, containerSize, containerZoom, url);
 }
 
 void MultiImage::addClient(RenderElement& renderer)
 {
     if (!m_selectedImage)
         return;
-    m_selectedImage->addClient(renderer);
+    protect(m_selectedImage)->addClient(renderer);
 }
 
 void MultiImage::removeClient(RenderElement& renderer)
 {
     if (!m_selectedImage)
         return;
-    m_selectedImage->removeClient(renderer);
+    protect(m_selectedImage)->removeClient(renderer);
 }
 
 bool MultiImage::hasClient(RenderElement& renderer) const
 {
     if (!m_selectedImage)
         return false;
-    return m_selectedImage->hasClient(renderer);
+    return protect(m_selectedImage)->hasClient(renderer);
 }
 
 RefPtr<WebCore::Image> MultiImage::image(const RenderElement* renderer, const FloatSize& size, const GraphicsContext& destinationContext, bool isForFirstLine) const
 {
     if (!m_selectedImage)
         return nullptr;
-    return m_selectedImage->image(renderer, size, destinationContext, isForFirstLine);
+    return protect(m_selectedImage)->image(renderer, size, destinationContext, isForFirstLine);
 }
 
 bool MultiImage::currentFrameIsComplete(const RenderElement* renderer) const
 {
-    return m_selectedImage && m_selectedImage->currentFrameIsComplete(renderer);
+    return m_selectedImage && protect(m_selectedImage)->currentFrameIsComplete(renderer);
 }
 
 float MultiImage::imageScaleFactor() const
 {
     if (!m_selectedImage)
         return 1;
-    return m_selectedImage->imageScaleFactor();
+    return protect(m_selectedImage)->imageScaleFactor();
 }
 
 bool MultiImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    return m_selectedImage && m_selectedImage->knownToBeOpaque(renderer);
+    return m_selectedImage && protect(m_selectedImage)->knownToBeOpaque(renderer);
 }
 
 } // namespace Style

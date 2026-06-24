@@ -39,7 +39,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourcePattern);
 
-RenderSVGResourcePattern::RenderSVGResourcePattern(SVGElement& element, RenderStyle&& style)
+RenderSVGResourcePattern::RenderSVGResourcePattern(SVGElement& element, Style::ComputedStyle&& style)
     : RenderSVGResourcePaintServer(Type::SVGResourcePattern, element, WTF::move(style))
 {
 }
@@ -62,7 +62,7 @@ void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
             break;
         current->collectPatternAttributes(attributes);
 
-        auto target = SVGURIReference::targetElementFromIRIString(current->href(), current->treeScopeForSVGReferences());
+        auto target = SVGURIReference::targetElementFromIRIString(current->href(), protect(current->treeScopeForSVGReferences()));
         current = dynamicDowncast<SVGPatternElement>(target.element.get());
     }
 
@@ -130,7 +130,7 @@ RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context,
     return Pattern::create({ tileImage.releaseNonNull() }, { true, true, m_transformMap.get(renderer) } );
 }
 
-bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const RenderStyle& style)
+bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style)
 {
     auto pattern = buildPattern(context, targetRenderer);
     if (!pattern)
@@ -142,7 +142,7 @@ bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, co
     return true;
 }
 
-bool RenderSVGResourcePattern::prepareStrokeOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const RenderStyle& style)
+bool RenderSVGResourcePattern::prepareStrokeOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style)
 {
     auto pattern = buildPattern(context, targetRenderer);
     if (!pattern)

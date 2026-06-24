@@ -28,7 +28,7 @@
 #include "av1/common/filter.h"
 
 // clang-format off
-DECLARE_ALIGNED(16, static const uint8_t, kScale2DotProdPermuteTbl[32]) = {
+DECLARE_ALIGNED(16, const uint8_t, kScale2DotProdPermuteTbl[32]) = {
   0, 1, 2, 3, 2, 3, 4, 5, 4, 5,  6,  7,  6,  7,  8,  9,
   4, 5, 6, 7, 6, 7, 8, 9, 8, 9, 10, 11, 10, 11, 12, 13
 };

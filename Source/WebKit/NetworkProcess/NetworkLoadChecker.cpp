@@ -414,6 +414,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
     switch (m_options.destination) {
     case FetchOptions::Destination::Audioworklet:
     case FetchOptions::Destination::Paintworklet:
+        return contentSecurityPolicy->allowScriptFromSource(request.url(), { }, redirectResponseReceived, preRedirectURL);
     case FetchOptions::Destination::Worker:
     case FetchOptions::Destination::Serviceworker:
     case FetchOptions::Destination::Sharedworker:

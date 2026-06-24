@@ -3,6 +3,9 @@ Verifies scrolling tree for page with multiple iframes in the same process.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
 (scrolling tree
   (frame scrolling node

@@ -317,5 +317,22 @@ TEST(TimeRanges, Add_SmallGaps)
     EXPECT_EQ(1u, ranges->length());
 }
 
+TEST(TimeRanges, ContainWithEpsilon_TolerantOfSmallGap)
+{
+    // PlatformTimeRanges::containWithEpsilon should report containment when
+    // the buffered segments cover the requested range with a gap smaller
+    // than epsilon. Before the fix the gap check used end(i) - start(i-1)
+    // (the span across both segments) instead of start(i) - end(i-1)
+    // (the actual gap), so any multi-segment region was reported as
+    // non-contained.
+    RefPtr<TimeRanges> buffered = TimeRanges::create();
+    buffered->add(0, 5);
+    buffered->add(6, 10);
+
+    RefPtr<TimeRanges> requested = TimeRanges::create(0, 10);
+
+    EXPECT_TRUE(buffered->ranges().containWithEpsilon(requested->ranges(), MediaTime::createWithDouble(2)));
+}
+
 }
 

@@ -32,16 +32,16 @@ struct env_md_st {
   // md_size contains the size, in bytes, of the resulting digest.
   unsigned md_size;
 
-  // flags contains the OR of |EVP_MD_FLAG_*| values.
+  // flags contains the OR of `EVP_MD_FLAG_*` values.
   uint32_t flags;
 
-  // init initialises the state in |ctx->md_data|.
+  // init initialises the state in `ctx->md_data`.
   void (*init)(EVP_MD_CTX *ctx);
 
-  // update hashes |len| bytes of |data| into the state in |ctx->md_data|.
+  // update hashes `len` bytes of `data` into the state in `ctx->md_data`.
   void (*update)(EVP_MD_CTX *ctx, const void *data, size_t count);
 
-  // final completes the hash and writes |md_size| bytes of digest to |out|.
+  // final completes the hash and writes `md_size` bytes of digest to `out`.
   void (*final)(EVP_MD_CTX *ctx, uint8_t *out);
 
   // block_size contains the hash's native block size.
@@ -51,15 +51,15 @@ struct env_md_st {
   unsigned ctx_size;
 };
 
-// evp_md_pctx_ops contains function pointers to allow the |pctx| member of
-// |EVP_MD_CTX| to be manipulated without breaking layering by calling EVP
+// evp_md_pctx_ops contains function pointers to allow the `pctx` member of
+// `EVP_MD_CTX` to be manipulated without breaking layering by calling EVP
 // functions.
 struct evp_md_pctx_ops {
-  // free is called when an |EVP_MD_CTX| is being freed and the |pctx| also
+  // free is called when an `EVP_MD_CTX` is being freed and the `pctx` also
   // needs to be freed.
   void (*free)(EVP_PKEY_CTX *pctx);
 
-  // dup is called when an |EVP_MD_CTX| is copied and so the |pctx| also needs
+  // dup is called when an `EVP_MD_CTX` is copied and so the `pctx` also needs
   // to be copied.
   EVP_PKEY_CTX *(*dup)(EVP_PKEY_CTX *pctx);
 };

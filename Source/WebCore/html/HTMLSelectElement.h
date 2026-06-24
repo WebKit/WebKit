@@ -58,7 +58,7 @@ public:
     void ref() const final { HTMLFormControlElement::ref(); }
     void deref() const final { HTMLFormControlElement::deref(); }
 
-    static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static Ref<HTMLSelectElement> create(const QualifiedName&, Document&);
     static Ref<HTMLSelectElement> create(Document&);
     ~HTMLSelectElement();
 
@@ -102,6 +102,8 @@ public:
     Ref<HTMLCollection> selectedOptions();
 
     void optionElementChildrenChanged();
+    void updateButtonText(HTMLOptionElement* = nullptr, int optionIndex = -1);
+    void invalidateButtonText();
 
     void setRecalcListItems();
     void updateListItemSelectedStates(AllowStyleInvalidation = AllowStyleInvalidation::Yes);
@@ -141,6 +143,9 @@ public:
     PopupMenuStyle menuStyle() const override;
     int listSize() const override;
     void popupDidHide() override;
+#if PLATFORM(WPE)
+    void showFallbackPopupMenu() override;
+#endif
     bool itemIsSeparator(unsigned listIndex) const override;
     bool itemIsLabel(unsigned listIndex) const override;
     bool itemIsSelected(unsigned listIndex) const override;
@@ -208,7 +213,7 @@ public:
     int typeAheadMatchIndex(KeyboardEvent&);
 
 protected:
-    HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);
+    HTMLSelectElement(const QualifiedName&, Document&);
 
 private:
     const AtomString& formControlType() const final;
@@ -238,7 +243,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
 
     bool childShouldCreateRenderer(const Node&) const final;
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool appendFormData(DOMFormData&) final;
 
     void reset() final;
@@ -275,7 +280,6 @@ private:
     bool platformHandleKeydownEvent(KeyboardEvent*);
     void listBoxDefaultEventHandler(Event&);
     void setOptionsChangedOnRenderer();
-    void updateButtonText(HTMLOptionElement* = nullptr, int optionIndex = -1);
     size_t searchOptionsForValue(const String&, size_t listIndexStart, size_t listIndexEnd) const;
 
     enum class SkipDirection : bool { Backwards, Forwards };
@@ -288,6 +292,9 @@ private:
     int nextSelectableListIndexForPickerPageMove(int startIndex, SkipDirection, WritingMode) const;
 
     void childrenChanged(const ChildChange&) final;
+    NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
+    void removingSteps(RemovalType, ContainerNode&) final;
+    void updateUserAgentShadowTree() final;
 
     void didDetachRenderers() final;
 
@@ -328,6 +335,7 @@ private:
     std::optional<FloatPoint> m_lastPopupLocationForTesting;
     bool m_popupIsVisible { false };
     bool m_wasBaseAppearance { false };
+    bool m_buttonTextNeedsUpdate { false };
 };
 
 } // namespace

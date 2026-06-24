@@ -126,12 +126,12 @@ messages -> RemoteGraphicsContextGL Stream {{
     void PrepareForDisplay() -> (std::optional<WebKit::WCContentBufferIdentifier> contentBuffer) Synchronous
 #endif
 #if USE(GBM)
-    void PrepareForDisplay() -> (uint64_t bufferID, struct std::optional<WebCore::DMABufBufferAttributes> dmabufAttributes, UnixFileDescriptor fenceFD) Synchronous NotStreamEncodableReply
+    void PrepareForDisplay() -> (uint64_t bufferID, std::optional<WebCore::DMABufBufferAttributes> dmabufAttributes, UnixFileDescriptor fenceFD) Synchronous NotStreamEncodableReply
 #endif
 #if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC) && !USE(GBM)
     void PrepareForDisplay() -> () Synchronous
 #endif
-    void EnsureExtensionEnabled(WebCore::GCGLExtension extension)
+    void EnsureExtensionEnabled(WebCore::GCGLExtension extension) StreamBatched
     void GetErrors() -> (GCGLErrorCodeSet returnValue) Synchronous
     void copyNativeImageYFlipped(enum:bool WebCore::GraphicsContextGLSurfaceBuffer buffer, WebCore::RenderingResourceIdentifier nativeImageIdentifier)
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
@@ -153,8 +153,8 @@ messages -> RemoteGraphicsContextGL Stream {{
     void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
     void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
-    void DrawBuffers(std::span<const uint32_t> bufs)
-    void DrawBuffersEXT(std::span<const uint32_t> bufs)
+    void DrawBuffers(std::span<const uint32_t> bufs) StreamBatched
+    void DrawBuffersEXT(std::span<const uint32_t> bufs) StreamBatched
     void InvalidateFramebuffer(uint32_t target, std::span<const uint32_t> attachments)
     void InvalidateSubFramebuffer(uint32_t target, std::span<const uint32_t> attachments, int32_t x, int32_t y, int32_t width, int32_t height)
 #if ENABLE(WEBXR)
@@ -674,6 +674,142 @@ def webkit_ipc_msg_arg_type(cpp_type: cpp_type) -> cpp_type:
 # FIXME: these should be removed and IPC should know this.
 non_stream_types = set({"WebCore::GraphicsContextGL::ExternalImageSource&&", "WebCore::GraphicsContextGL::ExternalSyncSource&&"})
 
+stream_batched_msg_names = set([
+    "ActiveTexture",
+    "AttachShader",
+    "BindAttribLocation",
+    "BindBuffer",
+    "BindBufferBase",
+    "BindBufferRange",
+    "BindExternalImage",
+    "BindFramebuffer",
+    "BindRenderbuffer",
+    "BindSampler",
+    "BindTexture",
+    "BindTransformFeedback",
+    "BindVertexArray",
+    "BlendColor",
+    "BlendEquation",
+    "BlendEquationSeparate",
+    "BlendEquationSeparateiOES",
+    "BlendEquationiOES",
+    "BlendFunc",
+    "BlendFuncSeparate",
+    "BlendFuncSeparateiOES",
+    "BlendFunciOES",
+    "ClearColor",
+    "ClearDepth",
+    "ClearStencil",
+    "ClipControlEXT",
+    "ColorMask",
+    "ColorMaskiOES",
+    "CreateBuffer",
+    "CreateFramebuffer",
+    "CreateProgram",
+    "CreateQuery",
+    "CreateQueryEXT",
+    "CreateRenderbuffer",
+    "CreateSampler",
+    "CreateShader",
+    "CreateTexture",
+    "CreateTransformFeedback",
+    "CreateVertexArray",
+    "CullFace",
+    "DepthFunc",
+    "DepthMask",
+    "DepthRange",
+    "DetachShader",
+    "Disable",
+    "DisableFoveation",
+    "DisableVertexAttribArray",
+    "DisableiOES",
+    "Enable",
+    "EnableFoveation",
+    "EnableVertexAttribArray",
+    "EnableiOES",
+    "FramebufferRenderbuffer",
+    "FramebufferResolveRenderbuffer",
+    "FramebufferTexture2D",
+    "FramebufferTextureLayer",
+    "FrontFace",
+    "Hint",
+    "LineWidth",
+    "PixelStorei",
+    "PolygonModeANGLE",
+    "PolygonOffset",
+    "PolygonOffsetClampEXT",
+    "ProvokingVertexANGLE",
+    "QueryCounterEXT",
+    "ReadBuffer",
+    "RenderbufferStorage",
+    "RenderbufferStorageMultisample",
+    "RenderbufferStorageMultisampleANGLE",
+    "SampleCoverage",
+    "SamplerParameterf",
+    "SamplerParameteri",
+    "Scissor",
+    "ShaderSource",
+    "StencilFunc",
+    "StencilFuncSeparate",
+    "StencilMask",
+    "StencilMaskSeparate",
+    "StencilOp",
+    "StencilOpSeparate",
+    "TexParameterf",
+    "TexParameteri",
+    "TransformFeedbackVaryings",
+    "Uniform1f",
+    "Uniform1fv",
+    "Uniform1i",
+    "Uniform1iv",
+    "Uniform1ui",
+    "Uniform1uiv",
+    "Uniform2f",
+    "Uniform2fv",
+    "Uniform2i",
+    "Uniform2iv",
+    "Uniform2ui",
+    "Uniform2uiv",
+    "Uniform3f",
+    "Uniform3fv",
+    "Uniform3i",
+    "Uniform3iv",
+    "Uniform3ui",
+    "Uniform3uiv",
+    "Uniform4f",
+    "Uniform4fv",
+    "Uniform4i",
+    "Uniform4iv",
+    "Uniform4ui",
+    "Uniform4uiv",
+    "UniformBlockBinding",
+    "UniformMatrix2fv",
+    "UniformMatrix2x3fv",
+    "UniformMatrix2x4fv",
+    "UniformMatrix3fv",
+    "UniformMatrix3x2fv",
+    "UniformMatrix3x4fv",
+    "UniformMatrix4fv",
+    "UniformMatrix4x2fv",
+    "UniformMatrix4x3fv",
+    "VertexAttrib1f",
+    "VertexAttrib1fv",
+    "VertexAttrib2f",
+    "VertexAttrib2fv",
+    "VertexAttrib3f",
+    "VertexAttrib3fv",
+    "VertexAttrib4f",
+    "VertexAttrib4fv",
+    "VertexAttribDivisor",
+    "VertexAttribI4i",
+    "VertexAttribI4iv",
+    "VertexAttribI4ui",
+    "VertexAttribI4uiv",
+    "VertexAttribIPointer",
+    "VertexAttribPointer",
+    "Viewport",
+])
+
 
 class webkit_ipc_msg(object):
     cond: str
@@ -703,6 +839,8 @@ class webkit_ipc_msg(object):
         self.tags = []
         if any(arg.type.type_name in non_stream_types for arg in in_args):
             self.tags += ["NotStreamEncodable"]
+        if self.name in stream_batched_msg_names:
+            self.tags += ["StreamBatched"]
 
     def __str__(self):
         tags = f" {' '.join(self.tags)}" if self.tags else ""
@@ -1005,7 +1143,7 @@ class webkit_ipc_cpp_impl(object):
             contained_type = a.type.contained_type.type_name
             self.pre_call_stmts += [f"if (!WTF::isValidCapacityForVector<{contained_type}>({a.name}Size))"]
             self.pre_call_stmts += [f"    {a.name}Size = {inline_capacity};"]
-            self.pre_call_stmts += [f"{str(store_arg.type)} {str(store_arg.name)}({a.name}Size, 0);"]
+            self.pre_call_stmts += [f"{str(store_arg.type)} {str(store_arg.name)}(FillWith {{ }}, {a.name}Size, 0);"]
             self.in_exprs += [cpp_expr(store_arg.type, f"{store_arg.name}")]
             webkit_ipc_type = webkit_ipc_types[a.type]
             self.out_exprs += [webkit_ipc_convert_expr(cpp_expr(store_arg.type, store_arg.name), webkit_ipc_type)]

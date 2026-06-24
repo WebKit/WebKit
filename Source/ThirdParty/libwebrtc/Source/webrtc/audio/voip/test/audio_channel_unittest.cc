@@ -14,10 +14,10 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
 #include "absl/functional/any_invocable.h"
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
@@ -120,7 +120,7 @@ class AudioChannelTest : public ::testing::Test {
 // Resulted RTP packet is looped back into AudioChannel and gets decoded into
 // audio frame to see if it has some signal to indicate its validity.
 TEST_F(AudioChannelTest, PlayRtpByLocalLoop) {
-  auto loop_rtp = [&](ArrayView<const uint8_t> packet, Unused) {
+  auto loop_rtp = [&](std::span<const uint8_t> packet, Unused) {
     audio_channel_->ReceivedRTPPacket(packet);
     return true;
   };
@@ -145,7 +145,7 @@ TEST_F(AudioChannelTest, PlayRtpByLocalLoop) {
 // Validate assigned local SSRC is resulted in RTP packet.
 TEST_F(AudioChannelTest, VerifyLocalSsrcAsAssigned) {
   RtpPacketReceived rtp;
-  auto loop_rtp = [&](ArrayView<const uint8_t> packet, Unused) {
+  auto loop_rtp = [&](std::span<const uint8_t> packet, Unused) {
     rtp.Parse(packet);
     return true;
   };
@@ -160,7 +160,7 @@ TEST_F(AudioChannelTest, VerifyLocalSsrcAsAssigned) {
 
 // Check metrics after processing an RTP packet.
 TEST_F(AudioChannelTest, TestIngressStatistics) {
-  auto loop_rtp = [&](ArrayView<const uint8_t> packet, Unused) {
+  auto loop_rtp = [&](std::span<const uint8_t> packet, Unused) {
     audio_channel_->ReceivedRTPPacket(packet);
     return true;
   };
@@ -237,11 +237,11 @@ TEST_F(AudioChannelTest, TestIngressStatistics) {
 
 // Check ChannelStatistics metric after processing RTP and RTCP packets.
 TEST_F(AudioChannelTest, TestChannelStatistics) {
-  auto loop_rtp = [&](ArrayView<const uint8_t> packet, Unused) {
+  auto loop_rtp = [&](std::span<const uint8_t> packet, Unused) {
     audio_channel_->ReceivedRTPPacket(packet);
     return true;
   };
-  auto loop_rtcp = [&](ArrayView<const uint8_t> packet, Unused) {
+  auto loop_rtcp = [&](std::span<const uint8_t> packet, Unused) {
     audio_channel_->ReceivedRTCPPacket(packet);
     return true;
   };
@@ -306,7 +306,7 @@ TEST_F(AudioChannelTest, RttIsAvailableAfterChangeOfRemoteSsrc) {
   auto send_recv_rtp = [&](scoped_refptr<AudioChannel> rtp_sender,
                            scoped_refptr<AudioChannel> rtp_receiver) {
     // Setup routing logic via transport_.
-    auto route_rtp = [&](ArrayView<const uint8_t> packet, Unused) {
+    auto route_rtp = [&](std::span<const uint8_t> packet, Unused) {
       rtp_receiver->ReceivedRTPPacket(packet);
       return true;
     };
@@ -328,7 +328,7 @@ TEST_F(AudioChannelTest, RttIsAvailableAfterChangeOfRemoteSsrc) {
   auto send_recv_rtcp = [&](scoped_refptr<AudioChannel> rtcp_sender,
                             scoped_refptr<AudioChannel> rtcp_receiver) {
     // Setup routing logic via transport_.
-    auto route_rtcp = [&](ArrayView<const uint8_t> packet, Unused) {
+    auto route_rtcp = [&](std::span<const uint8_t> packet, Unused) {
       rtcp_receiver->ReceivedRTCPPacket(packet);
       return true;
     };

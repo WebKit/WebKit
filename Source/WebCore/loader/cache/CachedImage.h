@@ -97,6 +97,8 @@ public:
     void addClientWaitingForAsyncDecoding(CachedImageClient&);
     void removeAllClientsWaitingForAsyncDecoding();
 
+    bool hasRendererClients() const;
+
     void setForceUpdateImageDataEnabledForTesting(bool enabled) { m_forceUpdateImageDataEnabledForTesting =  enabled; }
 
     bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }

@@ -414,6 +414,7 @@
       {"access": "public", "introduced": "10", "name": "AVAudioSessionCategoryOptionAllowBluetoothA2DP"},
       {"access": "public", "introduced": "10", "name": "AVAudioSessionCategoryOptionAllowAirPlay"},
       {"access": "public", "introduced": "14.5", "name": "AVAudioSessionCategoryOptionOverrideMutedMicrophoneInterruption"},
+      {"access": "public", "introduced": "26.2", "name": "AVAudioSessionCategoryOptionFarFieldInput"},
       {"access": "public", "introduced": "26", "name": "AVAudioSessionCategoryOptionBluetoothHighQualityRecording"}
      ],
      "name": "AVAudioSessionCategoryOptions"
@@ -848,6 +849,7 @@
     {"access": "public", "introduced": "18.2", "kind": "variable", "linkage": "exported", "name": "_AVAudioSessionMicrophoneInjectionCapabilitiesChangeNotification"},
     {"access": "public", "introduced": "18.2", "kind": "variable", "linkage": "exported", "name": "_AVAudioSessionMicrophoneInjectionIsAvailableKey"},
     {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVAudioSessionModeDefault"},
+    {"access": "public", "introduced": "26.2", "kind": "variable", "linkage": "exported", "name": "_AVAudioSessionModeDualRoute"},
     {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVAudioSessionModeGameChat"},
     {"access": "public", "introduced": "5", "kind": "variable", "linkage": "exported", "name": "_AVAudioSessionModeMeasurement"},
     {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_AVAudioSessionModeMoviePlayback"},
@@ -2576,7 +2578,7 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.1",
+   "target": "arm64e-apple-ios26.5",
    "typedefs": [
     {"access": "public", "name": "AVAudio3DAngularOrientation"},
     {"access": "public", "name": "AVAudio3DMixingPointSourceInHeadMode"},
@@ -7915,10 +7917,10 @@
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$sSo22AVAudioSessionLocationa12AVFoundationE20polarPatternCardioidABvpZMV"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$sSo22AVAudioSessionLocationa12AVFoundationE23polarPatternSubcardioidABvpZMV"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$sSo22AVAudioSessionLocationa12AVFoundationE27polarPatternOmnidirectionalABvpZMV"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo23AVAudioCompressedBufferC8AVFAudioE18packetDependenciesSaySo38AudioStreamPacketDependencyDescriptionVGSgvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo23AVAudioCompressedBufferC8AVFAudioE18packetDependenciesSaySo38AudioStreamPacketDependencyDescriptionVGSgvpMV"}
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo23AVAudioCompressedBufferC8AVFAudioE18packetDependenciesSaySo38AudioStreamPacketDependencyDescriptionVGSgvg"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo23AVAudioCompressedBufferC8AVFAudioE18packetDependenciesSaySo38AudioStreamPacketDependencyDescriptionVGSgvpMV"}
    ],
-   "target": "arm64e-apple-ios26.1"
+   "target": "arm64e-apple-ios26.5"
   }
  ],
  "version": "1.0"

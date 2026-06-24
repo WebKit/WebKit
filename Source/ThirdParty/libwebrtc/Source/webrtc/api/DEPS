@@ -1,6 +1,7 @@
 # This is supposed to be a complete list of top-level directories,
 # excepting only api/ itself.
 include_rules = [
+  "-.agents",
   "-agents",
   "-audio",
   "-base",
@@ -26,6 +27,7 @@ include_rules = [
   "-resources",
   "-rtc_base",
   "-rtc_tools",
+  "-rust",
   "-sdk",
   "-stats",
   "-style-guide",
@@ -45,105 +47,110 @@ include_rules = [
 specific_include_rules = {
   # Some internal headers are allowed even in API headers:
 
-  ".*\.h": [
+  ".*\\.h": [
     "+rtc_base/checks.h",
     "+rtc_base/system/rtc_export.h",
     "+rtc_base/system/rtc_export_template.h",
     "+rtc_base/units/unit_base.h",
   ],
 
-  "array_view\.h": [
+  "array_view\\.h": [
     "+rtc_base/type_traits.h",
   ],
 
   # Needed because AudioEncoderOpus is in the wrong place for
   # backwards compatibilty reasons. See
   # https://bugs.chromium.org/p/webrtc/issues/detail?id=7847
-  "audio_encoder_opus\.h": [
+  "audio_encoder_opus\\.h": [
     "+modules/audio_coding/codecs/opus/audio_encoder_opus.h",
   ],
 
-  "async_resolver_factory\.h": [
+  "async_resolver_factory\\.h": [
     "+rtc_base/async_resolver_interface.h",
   ],
 
-  "async_dns_resolver\.h": [
+  "async_dns_resolver\\.h": [
     "+rtc_base/socket_address.h",
   ],
 
-  "audio_device_defines\.h": [
+  "audio_device_defines\\.h": [
     "+rtc_base/strings/string_builder.h",
   ],
 
-  "audio_format\.h": [
+  "audio_format\\.h": [
     "+rtc_base/strings/string_builder.h",
   ],
 
-  "candidate\.h": [
+  "candidate\\.h": [
     "+rtc_base/network_constants.h",
     "+rtc_base/socket_address.h",
   ],
 
-  "create_peerconnection_factory\.h": [
+  "create_peerconnection_factory\\.h": [
     "+rtc_base/thread.h",
   ],
 
-  "data_channel_interface\.h": [
+  "data_channel_interface\\.h": [
     "+rtc_base/copy_on_write_buffer.h",
   ],
 
-  "data_channel_transport_interface\.h": [
+  "data_channel_transport_interface\\.h": [
     "+rtc_base/copy_on_write_buffer.h",
   ],
 
-  "datagram_connection\.h": [
+  "datagram_connection\\.h": [
     "+p2p/base/transport_description.h",
   ],
 
-  "mock_datagram_connection\.h": [
+  "mock_datagram_connection\\.h": [
     "+p2p/base/transport_description.h",
   ],
 
-  "datagram_connection_factory\.h": [
+  "datagram_connection_factory\\.h": [
     "+p2p/base/port_allocator.h",
     "+rtc_base/rtc_certificate.h",
   ],
 
-  "dtls_transport_interface\.h": [
+  "dtls_transport_interface\\.h": [
     "+rtc_base/ssl_certificate.h",
   ],
 
-  "fec_controller\.h": [
+  "fec_controller\\.h": [
     "+modules/include/module_fec_types.h",
   ],
 
-  "ice_server_parsing\.h": [
+  "ice_server_parsing\\.h": [
     "+p2p/base/port_allocator.h",
     "+rtc_base/socket_address.h",
   ],
 
-  "jsep\.h": [
+  "jsep\\.h": [
     "+absl/strings/has_absl_stringify.h",
     "+absl/strings/str_format.h",
     "+rtc_base/system/no_unique_address.h",
     "+rtc_base/thread_annotations.h",
   ],
 
-  "local_network_access_permission\.h": [
+  "local_network_access_permission\\.h": [
     "+rtc_base/socket_address.h",
   ],
 
-  "packet_socket_factory\.h": [
+  "packet_socket_factory\\.h": [
     "+rtc_base/async_packet_socket.h",
     "+rtc_base/socket_address.h",
     "+rtc_base/ssl_certificate.h",
   ],
 
-  "turn_customizer\.h": [
+  "payload_type\\.h": [
+    "+absl/strings/str_format.h",
+    "+rtc_base/strong_alias.h",
+  ],
+
+  "turn_customizer\\.h": [
     "+p2p/base/port_interface.h",
   ],
 
-  "peer_connection_interface\.h": [
+  "peer_connection_interface\\.h": [
     "+media/base/media_config.h",
     "+media/base/media_engine.h",
     "+p2p/base/port.h",
@@ -162,125 +169,136 @@ specific_include_rules = {
     "+rtc_base/thread.h",
   ],
 
-  "proxy\.h": [
+  "proxy\\.h": [
     "+rtc_base/event.h",
     "+rtc_base/message_handler.h",  # Inherits from it.
     "+rtc_base/thread.h",
   ],
 
-  "ref_counted_base\.h": [
+  "ref_counted_base\\.h": [
     "+rtc_base/ref_counter.h",
   ],
 
-  "rtc_error\.h": [
+  "rtc_error\\.h": [
     "+rtc_base/logging.h",
     "+rtc_base/strings/string_builder.h",
     "+absl/strings/has_absl_stringify.h",
     "+absl/strings/str_format.h",
   ],
-  "rtc_event_log_output_file.h": [
+  "rtc_event_log_output_file\\.h": [
     # For private member and constructor.
     "+rtc_base/system/file_wrapper.h",
   ],
 
-  "legacy_stats_types\.h": [
+  "legacy_stats_types\\.h": [
     "+rtc_base/thread_annotations.h",
     "+rtc_base/thread_checker.h",
   ],
 
-  "audio_decoder\.h": [
+  "audio_decoder\\.h": [
     "+rtc_base/buffer.h",
   ],
 
-  "audio_encoder\.h": [
+  "audio_encoder\\.h": [
     "+rtc_base/buffer.h",
   ],
 
-  "make_ref_counted\.h": [
+  "make_ref_counted\\.h": [
     "+rtc_base/ref_counted_object.h",
   ],
 
-  "mock.*\.h": [
+  "mock.*\\.h": [
     "+test/gmock.h",
   ],
 
-  "mock_peerconnectioninterface\.h": [
+  "mock_peerconnectioninterface\\.h": [
     "+rtc_base/ref_counted_object.h",
   ],
 
-  "mock_video_track\.h": [
+  "mock_video_track\\.h": [
     "+rtc_base/ref_counted_object.h",
   ],
 
-  "notifier\.h": [
+  "notifier\\.h": [
     "+rtc_base/system/no_unique_address.h",
     "+rtc_base/thread_annotations.h",
   ],
 
-  "priority\.h": [
+  "priority\\.h": [
     "+rtc_base/strong_alias.h",
   ],
 
-  "sctp_transport_interface\.h": [
+  "sctp_transport_interface\\.h": [
     "+absl/strings/str_format.h",
   ],
 
-  "simulated_network\.h": [
+  "simulated_network\\.h": [
     "+rtc_base/random.h",
     "+rtc_base/thread_annotations.h",
   ],
 
-  "time_controller\.h": [
+  "time_controller\\.h": [
     "+rtc_base/thread.h",
   ],
 
-  "videocodec_test_fixture\.h": [
+  "videocodec_test_fixture\\.h": [
     "+modules/video_coding/include/video_codec_interface.h"
   ],
 
-  "rtp_parameters\.h": [
+  "rtp_header_extension_id\\.h": [
     "+absl/strings/str_format.h",
+    "+rtc_base/strong_alias.h"
   ],
 
-  "sequence_checker\.h": [
+  "rtp_parameters\\.h": [
+    "+absl/strings/str_format.h",
+    "+rtc_base/strings/str_join.h",
+    "+rtc_base/strong_alias.h"
+  ],
+
+  "sequence_checker\\.h": [
     "+rtc_base/synchronization/sequence_checker_internal.h",
     "+rtc_base/thread_annotations.h",
   ],
 
-  "video_encoder_factory_template.*\.h": [
+  "video_encoder_factory_template.*\\.h": [
     "+modules/video_coding",
   ],
 
-  "video_encoder_factory_interface\.h": [
+  "video_encoder_factory_interface\\.h": [
     "+rtc_base/numerics",
   ],
 
-  "video_encoder_interface\.h": [
+  "video_encoder_interface\\.h": [
     "+rtc_base/numerics",
   ],
 
-  "simple_encoder_wrapper\.h": [
+  "video_quality_test_fixture\\.h": [
+    "+video/config/video_encoder_config.h",
+  ],
+
+  "simple_encoder_wrapper\\.h": [
     "+common_video",
     "+modules",
   ],
 
-  "video_decoder_factory_template.*\.h": [
+  "video_decoder_factory_template.*\\.h": [
     "+modules/video_coding",
   ],
 
-  "field_trials\.h": [
+  "field_trials\\.h": [
     "+rtc_base/containers/flat_map.h",
   ],
 
-  "video_track_source_proxy_factory.h": [
+  "video_track_source_proxy_factory\\.h": [
     "+rtc_base/thread.h",
   ],
 
-  "field_trials_registry\.h": [
+  "field_trials_registry\\.h": [
     "+rtc_base/containers/flat_set.h",
   ],
 
-  "ice_transport_factory\.h": [
+  "ice_transport_factory\\.h": [
     "+p2p/base/port_allocator.h",
   ],
 
@@ -288,7 +306,7 @@ specific_include_rules = {
   # so we re-add all the top-level directories here. (That's because .h
   # files leak their #includes to whoever's #including them, but .cc files
   # do not since no one #includes them.)
-  ".*\.cc": [
+  ".*\\.cc": [
     "+audio",
     "+call",
     "+common_audio",

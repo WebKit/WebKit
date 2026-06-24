@@ -119,7 +119,7 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
 
 void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)> completion)
 {
-    if (!m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size() || !m_device.get())
+    if (!m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size() || !m_device)
         return completion(nullptr);
 
     RefPtr<NativeImage> displayImage;
@@ -131,16 +131,7 @@ void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIn
         if (!isIOSurfaceSupportedFormat)
             return completion(nullptr);
 
-        auto& renderBuffer = m_renderBuffers[bufferIndex];
-        std::optional<CGImageAlphaInfo> alphaInfo;
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-        if (renderBuffer->pixelFormat() == IOSurface::Format::RGBA16F)
-            alphaInfo = kCGImageAlphaNoneSkipLast;
-#endif
-        RetainPtr<CGContextRef> cgContext = renderBuffer->createPlatformContext(0, alphaInfo);
-
-        if (cgContext)
-            displayImage = NativeImage::create(renderBuffer->createImage(cgContext.get()));
+        displayImage = m_renderBuffers[bufferIndex]->createNativeImage();
     }
 
     if (!displayImage)

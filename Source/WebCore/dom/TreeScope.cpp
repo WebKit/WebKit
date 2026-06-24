@@ -155,7 +155,7 @@ void TreeScope::setParentTreeScope(TreeScope& newParentScope)
     ASSERT(!m_rootNode->isDocumentNode());
 
     m_parentTreeScope = &newParentScope;
-    setDocumentScope(newParentScope.documentScope());
+    setDocumentScope(protect(newParentScope.documentScope()));
 }
 
 void TreeScope::setCustomElementRegistry(RefPtr<CustomElementRegistry>&& registry)
@@ -658,7 +658,7 @@ ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&& 
 {
     if (!m_adoptedStyleSheets && sheets.isEmpty())
         return { };
-    return ensureAdoptedStyleSheets().setSheets(WTF::move(sheets));
+    return protect(ensureAdoptedStyleSheets())->setSheets(WTF::move(sheets));
 }
 
 SVGResourcesMap& TreeScope::svgResourcesMap() const

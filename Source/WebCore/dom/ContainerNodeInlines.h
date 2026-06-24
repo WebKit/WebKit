@@ -30,11 +30,17 @@
 
 namespace WebCore {
 
+inline ContainerNode::ContainerNode(Document& document, NodeType type, OptionSet<TypeFlag> typeFlags)
+    : Node(document, type, typeFlags | TypeFlag::IsContainerNode)
+{
+    ASSERT(!isCharacterDataNode());
+}
+
 inline ContainerNode& ContainerNode::rootNode() const
 {
     if (isInTreeScope())
         return treeScope().rootNode();
-    return traverseToRootNode();
+    return downcast<ContainerNode>(shadowIncludingRoot());
 }
 
 inline RenderElement* ContainerNode::renderer() const

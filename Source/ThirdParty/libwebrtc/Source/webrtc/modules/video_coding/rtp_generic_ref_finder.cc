@@ -21,6 +21,7 @@
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/rtp_frame_reference_finder.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 
@@ -28,7 +29,7 @@ RtpFrameReferenceFinder::ReturnVector RtpGenericFrameRefFinder::ManageFrame(
     std::unique_ptr<RtpFrameObject> frame,
     const RTPVideoHeader::GenericDescriptorInfo& descriptor) {
   RtpFrameReferenceFinder::ReturnVector res;
-  if (descriptor.spatial_index >= kMaxSpatialLayers) {
+  if (checked_cast<size_t>(descriptor.spatial_index) >= kMaxSpatialLayers) {
     RTC_LOG(LS_WARNING) << "Spatial index " << descriptor.spatial_index
                         << " is unsupported.";
     return res;

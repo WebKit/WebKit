@@ -90,7 +90,7 @@ Ref<NodeIterator> NodeIterator::create(Node& rootNode, unsigned whatToShow, RefP
 
 NodeIterator::~NodeIterator()
 {
-    root().document().detachNodeIterator(*this);
+    protect(root().document())->detachNodeIterator(*this);
 }
 
 ExceptionOr<RefPtr<Node>> NodeIterator::nextNode()

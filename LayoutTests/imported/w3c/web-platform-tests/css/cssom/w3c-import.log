@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSKeyframeRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSKeyframesRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSNamespaceRule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSRuleList-appendRule-keyframe-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSRuleList.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleDeclaration-iterator.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleRule-set-selectorText-namespace.html
@@ -233,6 +234,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/setproperty-null-undefined.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/shorthand-values.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-clone-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-clone-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-clone.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-update-across-documents.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-002.html

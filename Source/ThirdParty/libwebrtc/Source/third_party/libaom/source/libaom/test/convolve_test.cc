@@ -875,7 +875,27 @@ const ConvolveParam kArray_Convolve8_avx2[] = { ALL_SIZES(convolve8_avx2) };
 
 INSTANTIATE_TEST_SUITE_P(AVX2, LowbdConvolveTest,
                          ::testing::ValuesIn(kArray_Convolve8_avx2));
+
 #endif  // HAVE_AVX2
+
+#if HAVE_AVX512 && CONFIG_HIGHWAY
+extern "C" void aom_convolve8_horiz_avx512(
+    const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
+    ptrdiff_t dst_stride, const int16_t *filter_x, int x_step_q4,
+    const int16_t *filter_y, int y_step_q4, int w, int h);
+
+extern "C" void aom_convolve8_vert_avx512(
+    const uint8_t *src, ptrdiff_t src_stride, uint8_t *dst,
+    ptrdiff_t dst_stride, const int16_t *filter_x, int x_step_q4,
+    const int16_t *filter_y, int y_step_q4, int w, int h);
+
+const ConvolveFunctions convolve8_avx512(aom_convolve8_horiz_avx512,
+                                         aom_convolve8_vert_avx512, 0);
+const ConvolveParam kArray_Convolve8_avx512[] = { ALL_SIZES(convolve8_avx512) };
+
+INSTANTIATE_TEST_SUITE_P(AVX512, LowbdConvolveTest,
+                         ::testing::ValuesIn(kArray_Convolve8_avx512));
+#endif  // HAVE_AVX512
 
 #if HAVE_NEON
 #if CONFIG_AV1_HIGHBITDEPTH

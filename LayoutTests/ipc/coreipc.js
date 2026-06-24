@@ -545,6 +545,7 @@ export class ArgumentSerializer {
         if (argumentType.includes("<")) {
             const [ templateType, innerType ] = ArgumentSerializer.parseTemplate(argumentType);
             switch (templateType) {
+                case 'Box':
                 case 'RefPtr':
                 case 'std::unique_ptr':
                 case 'RetainPtr':
@@ -727,6 +728,8 @@ export class ArgumentSerializer {
                 }
                 throw new SerializationError(`Primitive value of type ${ argumentDefinition.type } is neither a number nor a bigint`);
             case 'String':
+                if (argument === null)
+                    return {value: null, type: 'String'};
                 if (typeof argument != 'string') {
                     throw new SerializationError(`Primitive value is not a string`);
                 }
@@ -1048,6 +1051,7 @@ export class ArgumentParser {
         if (argumentType.includes("<")) {
             const [ templateType, innerType ] = ArgumentSerializer.parseTemplate(argumentType);
             switch (templateType) {
+                case 'Box':
                 case 'RefPtr':
                 case 'std::unique_ptr':
                 case 'RetainPtr':

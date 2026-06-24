@@ -293,6 +293,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
 
     m_fontCascadeCache.pruneUnreferencedEntries();
     m_fontCascadeCache.pruneSystemFallbackFonts();
+    m_fontCascadeCache.clearShapedTextCaches();
 
 #if PLATFORM(IOS_FAMILY)
     Locker locker { m_fontLock };
@@ -346,7 +347,7 @@ RefPtr<OpenTypeVerticalData> FontCache::verticalData(const FontPlatformData& pla
 
 void FontCache::updateFontCascade(const FontCascade& fontCascade)
 {
-    fontCascade.updateFonts(m_fontCascadeCache.retrieveOrAddCachedFonts(fontCascade.fontDescription(), fontCascade.fontSelector()));
+    fontCascade.updateFonts(m_fontCascadeCache.retrieveOrAddCachedFonts(fontCascade.fontDescription(), protect(fontCascade.fontSelector())));
 }
 
 size_t FontCache::fontCount()

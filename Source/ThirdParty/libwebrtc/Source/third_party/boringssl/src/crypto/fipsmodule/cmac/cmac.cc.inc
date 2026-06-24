@@ -23,8 +23,11 @@
 #include <openssl/mem.h>
 
 #include "../../internal.h"
+#include "../../mem_internal.h"
 #include "../service_indicator/internal.h"
 
+
+using namespace bssl;
 
 struct cmac_ctx_st {
   EVP_CIPHER_CTX cipher_ctx;
@@ -84,8 +87,8 @@ int AES_CMAC(uint8_t out[16], const uint8_t *key, size_t key_len,
   return ok;
 }
 
-CMAC_CTX *CMAC_CTX_new(void) {
-  CMAC_CTX *ctx = reinterpret_cast<CMAC_CTX *>(OPENSSL_malloc(sizeof(*ctx)));
+CMAC_CTX *CMAC_CTX_new() {
+  CMAC_CTX *ctx = New<CMAC_CTX>();
   if (ctx != nullptr) {
     CMAC_CTX_init(ctx);
   }
@@ -98,7 +101,7 @@ void CMAC_CTX_free(CMAC_CTX *ctx) {
   }
 
   CMAC_CTX_cleanup(ctx);
-  OPENSSL_free(ctx);
+  Delete(ctx);
 }
 
 int CMAC_CTX_copy(CMAC_CTX *out, const CMAC_CTX *in) {

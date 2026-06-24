@@ -1,0 +1,89 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-block-start-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-block-start-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-block-start-writing-modes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-overflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-video-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-video-overflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter-video-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-backdrop-filter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-overflow-composite-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-overflow-composite-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-overflow-composite.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-overflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-fill-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-fill-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-fill.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-gallery.manual.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-hittest.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-iframe-border-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-iframe-border.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-img-border-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-img-border-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-img-border.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-img-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-img-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-img.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-inset-shadow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-inset-shadow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-inset-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-noop-keyframe-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-noop-keyframe-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-noop-keyframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-outside-left.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-outside-right.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-overflow-clip-margin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-overflow-clip-margin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-overflow-clip-margin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-square-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-square-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-square.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-svg-border-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-svg-border.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-video-border-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-video-border.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-zoom-overlap-extreme-values-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shorthand-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shorthand-rendering-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shorthand-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-left-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-left-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-left-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corners-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/render-corner-shape.html

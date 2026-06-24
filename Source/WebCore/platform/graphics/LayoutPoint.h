@@ -85,7 +85,7 @@ public:
         return { m_x * sx, m_y * sy };
     }
 
-    LayoutPoint constrainedBetween(const LayoutPoint& min, const LayoutPoint& max) const;
+    WEBCORE_EXPORT LayoutPoint constrainedBetween(const LayoutPoint& min, const LayoutPoint& max) const;
 
     LayoutPoint expandedTo(const LayoutPoint& other) const
     {

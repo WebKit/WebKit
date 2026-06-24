@@ -32,6 +32,7 @@
 #include "MarkedBlockInlines.h"
 #include "SweepingScope.h"
 #include "VMManager.h"
+#include "WeakSetInlines.h"
 #include <wtf/CommaPrinter.h>
 
 #if PLATFORM(COCOA)

@@ -53,18 +53,14 @@ public:
     static constexpr OptionSet allTransformOperations { Option::TransformOrigin, Option::Translate, Option::Rotate, Option::Scale, Option::Offset };
     static constexpr OptionSet individualTransformOperations { Option::Translate, Option::Rotate, Option::Scale, Option::Offset };
 
-    explicit TransformResolver(TransformationMatrix&, const RenderStyle&);
     explicit TransformResolver(TransformationMatrix&, const ComputedStyle&);
 
-    static bool affectedByTransformOrigin(const RenderStyle&);
     static bool affectedByTransformOrigin(const ComputedStyle&);
     bool affectedByTransformOrigin() const;
 
-    static FloatPoint3D computeTransformOrigin(const RenderStyle&, const FloatRect& boundingBox);
     static FloatPoint3D computeTransformOrigin(const ComputedStyle&, const FloatRect& boundingBox);
     FloatPoint3D computeTransformOrigin(const FloatRect& boundingBox) const;
 
-    static FloatPoint computePerspectiveOrigin(const RenderStyle&, const FloatRect& boundingBox);
     static FloatPoint computePerspectiveOrigin(const ComputedStyle&, const FloatRect& boundingBox);
     FloatPoint computePerspectiveOrigin(const FloatRect& boundingBox) const;
 
@@ -83,10 +79,8 @@ public:
     void applyTransform(const TransformOperationData&, OptionSet<Option> = allTransformOperations);
 
     static void applyTransform(TransformationMatrix&, const ComputedStyle&, const TransformOperationData&, OptionSet<Option> = allTransformOperations);
-    static void applyTransform(TransformationMatrix&, const RenderStyle&, const TransformOperationData&, OptionSet<Option> = allTransformOperations);
 
     static TransformationMatrix computeTransform(const ComputedStyle&, const TransformOperationData&, OptionSet<Option> = allTransformOperations);
-    static TransformationMatrix computeTransform(const RenderStyle&, const TransformOperationData&, OptionSet<Option> = allTransformOperations);
 
 private:
     void applyMotionPathTransform(const TransformOperationData&, ZoomFactor);

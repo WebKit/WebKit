@@ -40,7 +40,7 @@ public:
     bool isDisabled() { return m_isDisabled; }
 
 private:
-    explicit HTMLSelectedContentElement(Document&);
+    HTMLSelectedContentElement(const QualifiedName&, Document&);
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;

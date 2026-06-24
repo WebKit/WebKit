@@ -81,6 +81,7 @@ beeu_mod_inverse_vartime:
 
     // shift := number of trailing 0s in x25
     // (      = number of leading 0s in x15; see the "rbit" instruction in TEST_B_ZERO)
+	orr	x15, x15, #1	// Clamp the shift to 63 bits (see SHIFT256)
 	clz	x13, x15
 
     // If there is no shift, goto shift_A_Y
@@ -138,6 +139,7 @@ beeu_mod_inverse_vartime:
     // - The loop is only used to call SHIFT1(X)
     //   and x13 is decreased while executing the X loop.
     // - SHIFT256(B, x13) is performed before right-shifting X; they are independent
+    // - "x13" is clamped to 63 bits.
 
 .Lbeeu_shift_A_Y:
     // Same for A and Y.
@@ -145,6 +147,7 @@ beeu_mod_inverse_vartime:
     // Reverse the bit order of x21
     // x13 := number of trailing 0s in x21 (= number of leading 0s in x15)
 	rbit	x15, x21
+	orr	x15, x15, #1	// Clamp the shift to 63 bits (see SHIFT256)
 	clz	x13, x15
 
     // If there is no shift, goto |B-A|, X+Y update

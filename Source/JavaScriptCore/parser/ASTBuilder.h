@@ -419,6 +419,12 @@ public:
 
     DefineFieldNode* createDefineField(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* initializer, DefineFieldNode::Type type)
     {
+        if (initializer && type != DefineFieldNode::Type::ComputedName) {
+            if (initializer->isBaseFuncExprNode())
+                static_cast<BaseFuncExprNode*>(initializer)->metadata()->setEcmaName(ident);
+            else if (initializer->isClassExprNode())
+                static_cast<ClassExprNode*>(initializer)->setEcmaName(ident);
+        }
         return new (m_parserArena) DefineFieldNode(location, ident, initializer, type);
     }
 

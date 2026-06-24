@@ -65,8 +65,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,6) size 71x18
             text run at (0,6) width 71: "select box: "
           RenderMenuList {SELECT} at (71,0) size 36x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderSelectFallbackButton {DIV} at (1,1) size 34x28
-              RenderText at (5,5) size 8x18
+            RenderBlock {DIV} at (1,1) size 34x28
+              RenderText {#text} at (5,5) size 8x18
                 text run at (5,5) width 8: "1"
           RenderText {#text} at (107,6) size 66x18
             text run at (107,6) width 66: " the end ..."

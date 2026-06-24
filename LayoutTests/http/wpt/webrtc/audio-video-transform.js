@@ -1,3 +1,7 @@
+var audioSenderTransformer, videoSenderTransformer;
+var audioReceiverTransformer, videoReceiverTransformer;
+var audioChunk, videoChunk;
+
 class AudioVideoRTCRtpTransformer {
     constructor(transformer) {
         this.askKeyFrame = false;
@@ -17,7 +21,24 @@ class AudioVideoRTCRtpTransformer {
                 this.tryAccessingDataTwice = true;
             else if (event.data === "tryAccessingMetadata")
                 this.tryAccessingMetadata = true;
+            else if (event.data === "tryWritingAudio")
+                this.tryWritingAudio = true;
+            else if (event.data === "tryWritingVideo")
+                this.tryWritingVideo = true;
         };
+
+        if (this.context.options.side === "sender") {
+            if (this.context.options.mediaType === "audio")
+                audioSenderTransformer = this;
+            else if (this.context.options.mediaType === "video")
+                videoSenderTransformer = this;
+        } else {
+            if (this.context.options.mediaType === "audio")
+                audioReceiverTransformer = this;
+            else if (this.context.options.mediaType === "video")
+                videoReceiverTransformer = this;
+        }
+
         this.start();
     }
     start()
@@ -29,9 +50,97 @@ class AudioVideoRTCRtpTransformer {
 
     process()
     {
-        this.reader.read().then(chunk => {
+        this.reader.read().then(async chunk => {
             if (chunk.done)
                 return;
+
+            if (audioSenderTransformer && audioSenderTransformer.tryWritingVideo) {
+                if (audioSenderTransformer === this) {
+                    this.writer.write(chunk.value);
+                    if (videoChunk !== undefined) {
+                       this.writer.write(videoChunk.value);
+                       audioSenderTransformer.tryWritingVideo = false;
+                       this.context.options.port.postMessage("PASS");
+                    }
+                    this.process();
+                    return;
+                }
+                if(videoSenderTransformer === this) {
+                    videoChunk = chunk;
+                    while (audioSenderTransformer.tryWritingVideo)
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                    videoSenderTransformer.writer.write(videoChunk);
+                    videoChunk = undefined;
+                    this.process();
+                    return;
+                }
+            }
+
+            if (videoSenderTransformer && videoSenderTransformer.tryWritingAudio) {
+                if (videoSenderTransformer === this) {
+                    this.writer.write(chunk.value);
+                    if (audioChunk !== undefined) {
+                       this.writer.write(audioChunk.value);
+                       videoSenderTransformer.tryWritingAudio = false;
+                       this.context.options.port.postMessage("PASS");
+                    }
+                    this.process();
+                    return;
+                }
+                if(audioSenderTransformer === this) {
+                    audioChunk = chunk;
+                    while (videoSenderTransformer.tryWritingAudio)
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                    audioSenderTransformer.writer.write(audioChunk);
+                    audioChunk = undefined;
+                    this.process();
+                    return;
+                }
+            }
+
+            if (audioSenderTransformer && audioSenderTransformer.tryWritingAudio) {
+                if (audioSenderTransformer === this) {
+                    this.writer.write(chunk.value);
+                    if (audioChunk !== undefined) {
+                       this.writer.write(audioChunk.value);
+                       audioSenderTransformer.tryWritingAudio = false;
+                       this.context.options.port.postMessage("PASS");
+                    }
+                    this.process();
+                    return;
+                }
+                if(audioReceiverTransformer === this) {
+                    audioChunk = chunk;
+                    while (audioSenderTransformer.tryWritingAudio)
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                    audioReceiverTransformer.writer.write(audioChunk);
+                    audioChunk = undefined;
+                    this.process();
+                    return;
+                }
+            }
+
+            if (videoSenderTransformer && videoSenderTransformer.tryWritingVideo) {
+                if (videoSenderTransformer === this) {
+                    this.writer.write(chunk.value);
+                    if (videoChunk !== undefined) {
+                       this.writer.write(videoChunk.value);
+                       videoSenderTransformer.tryWritingVideo = false;
+                       this.context.options.port.postMessage("PASS");
+                    }
+                    this.process();
+                    return;
+                }
+                if (videoReceiverTransformer === this) {
+                    videoChunk = chunk;
+                    while (videoSenderTransformer.tryWritingVideo)
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                    videoReceiverTransformer.writer.write(videoChunk);
+                    videoChunk = undefined;
+                    this.process();
+                    return;
+                }
+            }
 
             if (this.tryAccessingDataTwice) {
                 this.tryAccessingDataTwice = false;

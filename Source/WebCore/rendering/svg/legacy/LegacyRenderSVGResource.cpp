@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResourceMode mode, RenderElement& renderer, const RenderStyle& style, Color& fallbackColor)
+static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResourceMode mode, RenderElement& renderer, const Style::ComputedStyle& style, Color& fallbackColor)
 {
     bool applyToFill = mode == RenderSVGResourceMode::ApplyToFill;
 
@@ -126,12 +126,12 @@ void LegacyRenderSVGResource::removeAllClientsFromCacheAndMarkForInvalidation(bo
     removeAllClientsFromCacheAndMarkForInvalidationIfNeeded(markForInvalidation, &visitedRenderers);
 }
 
-LegacyRenderSVGResource* LegacyRenderSVGResource::fillPaintingResource(RenderElement& renderer, const RenderStyle& style, Color& fallbackColor)
+LegacyRenderSVGResource* LegacyRenderSVGResource::fillPaintingResource(RenderElement& renderer, const Style::ComputedStyle& style, Color& fallbackColor)
 {
     return requestPaintingResource(RenderSVGResourceMode::ApplyToFill, renderer, style, fallbackColor);
 }
 
-LegacyRenderSVGResource* LegacyRenderSVGResource::strokePaintingResource(RenderElement& renderer, const RenderStyle& style, Color& fallbackColor)
+LegacyRenderSVGResource* LegacyRenderSVGResource::strokePaintingResource(RenderElement& renderer, const Style::ComputedStyle& style, Color& fallbackColor)
 {
     return requestPaintingResource(RenderSVGResourceMode::ApplyToStroke, renderer, style, fallbackColor);
 }
@@ -157,7 +157,7 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
             clipper->removeClientFromCacheAndMarkForInvalidation(renderer);
     }
 
-    auto svgElement = dynamicDowncast<SVGElement>(protect(renderer.element()));
+    RefPtr svgElement = dynamicDowncast<SVGElement>(renderer.element());
     if (!svgElement)
         return;
 
@@ -167,7 +167,7 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
             // reference graph adjustments on changes, so we need to break possible cycles here.
             static NeverDestroyed<WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> invalidatingDependencies;
             if (!invalidatingDependencies.get().add(element.get()).isNewEntry) [[unlikely]] {
-                // Reference cycle: we are in process of invalidating this dependant.
+                // Reference cycle: we are in process of invalidating this dependent.
                 continue;
             }
             LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(*renderer, needsLayout, visitedRenderers);

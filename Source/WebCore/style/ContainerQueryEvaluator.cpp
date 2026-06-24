@@ -35,8 +35,8 @@
 #include "MediaList.h"
 #include "NodeDocument.h"
 #include "NodeRenderStyle.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include <ranges>
@@ -63,7 +63,7 @@ bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery)
     return evaluateCondition(containerQuery.condition, *context) == MQ::EvaluationResult::True;
 }
 
-static const RenderStyle* styleForContainer(const Element& container, OptionSet<CQ::Axis> requiredAxes, const ContainerQueryEvaluationState* evaluationState)
+static const Style::ComputedStyle* styleForContainer(const Element& container, OptionSet<CQ::Axis> requiredAxes, const ContainerQueryEvaluationState* evaluationState)
 {
     // Any element can be a style container and we haven't necessarily committed the style to render tree yet.
     // Look it up from the currently computed style update instead.

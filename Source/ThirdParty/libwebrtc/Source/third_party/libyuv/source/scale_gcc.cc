@@ -183,10 +183,10 @@ void ScaleRowDown2Box_SSSE3(const uint8_t* src_ptr,
       "lea         0x10(%1),%1                   \n"
       "sub         $0x10,%2                      \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),               // %0
-        "+r"(dst_ptr),               // %1
-        "+r"(dst_width)              // %2
-      : "r"((intptr_t)(src_stride))  // %3
+      : "+r"(src_ptr),   // %0
+        "+r"(dst_ptr),   // %1
+        "+r"(dst_width)  // %2
+      : "r"(src_stride)  // %3
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm5");
 }
 
@@ -283,10 +283,10 @@ void ScaleRowDown2Box_AVX2(const uint8_t* src_ptr,
       "sub         $0x20,%2                      \n"
       "jg          1b                            \n"
       "vzeroupper  \n"
-      : "+r"(src_ptr),               // %0
-        "+r"(dst_ptr),               // %1
-        "+r"(dst_width)              // %2
-      : "r"((intptr_t)(src_stride))  // %3
+      : "+r"(src_ptr),   // %0
+        "+r"(dst_ptr),   // %1
+        "+r"(dst_width)  // %2
+      : "r"(src_stride)  // %3
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm5");
 }
 #endif  // HAS_SCALEROWDOWN2_AVX2
@@ -326,7 +326,7 @@ void ScaleRowDown4Box_SSSE3(const uint8_t* src_ptr,
                             ptrdiff_t src_stride,
                             uint8_t* dst_ptr,
                             int dst_width) {
-  intptr_t stridex3;
+  ptrdiff_t stridex3;
   asm volatile(
       "pcmpeqb     %%xmm4,%%xmm4                 \n"
       "pabsw       %%xmm4,%%xmm5                 \n"
@@ -367,11 +367,11 @@ void ScaleRowDown4Box_SSSE3(const uint8_t* src_ptr,
       "lea         0x8(%1),%1                    \n"
       "sub         $0x8,%2                       \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),               // %0
-        "+r"(dst_ptr),               // %1
-        "+r"(dst_width),             // %2
-        "=&r"(stridex3)              // %3
-      : "r"((intptr_t)(src_stride))  // %4
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width),  // %2
+        "=&r"(stridex3)   // %3
+      : "r"(src_stride)   // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5");
 }
 
@@ -456,11 +456,11 @@ void ScaleRowDown4Box_AVX2(const uint8_t* src_ptr,
       "sub         $0x10,%2                      \n"
       "jg          1b                            \n"
       "vzeroupper  \n"
-      : "+r"(src_ptr),                   // %0
-        "+r"(dst_ptr),                   // %1
-        "+r"(dst_width)                  // %2
-      : "r"((intptr_t)(src_stride)),     // %3
-        "r"((intptr_t)(src_stride * 3))  // %4
+      : "+r"(src_ptr),       // %0
+        "+r"(dst_ptr),       // %1
+        "+r"(dst_width)      // %2
+      : "r"(src_stride),     // %3
+        "r"(src_stride * 3)  // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5");
 }
 #endif  // HAS_SCALEROWDOWN4_AVX2
@@ -557,11 +557,11 @@ void ScaleRowDown34_1_Box_SSSE3(const uint8_t* src_ptr,
       "lea         0x18(%1),%1                   \n"
       "sub         $0x18,%2                      \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "m"(kMadd21)                  // %4
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width)   // %2
+      : "r"(src_stride),  // %3
+        "m"(kMadd21)      // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -625,11 +625,11 @@ void ScaleRowDown34_0_Box_SSSE3(const uint8_t* src_ptr,
       "lea         0x18(%1),%1                   \n"
       "sub         $0x18,%2                      \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "m"(kMadd21)                  // %4
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width)   // %2
+      : "r"(src_stride),  // %3
+        "m"(kMadd21)      // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -701,10 +701,10 @@ void ScaleRowDown38_2_Box_SSSE3(const uint8_t* src_ptr,
       "lea         0x6(%1),%1                    \n"
       "sub         $0x6,%2                       \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),               // %0
-        "+r"(dst_ptr),               // %1
-        "+r"(dst_width)              // %2
-      : "r"((intptr_t)(src_stride))  // %3
+      : "+r"(src_ptr),   // %0
+        "+r"(dst_ptr),   // %1
+        "+r"(dst_width)  // %2
+      : "r"(src_stride)  // %3
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6");
 }
 
@@ -762,10 +762,10 @@ void ScaleRowDown38_3_Box_SSSE3(const uint8_t* src_ptr,
       "lea         0x6(%1),%1                    \n"
       "sub         $0x6,%2                       \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),               // %0
-        "+r"(dst_ptr),               // %1
-        "+r"(dst_width)              // %2
-      : "r"((intptr_t)(src_stride))  // %3
+      : "+r"(src_ptr),   // %0
+        "+r"(dst_ptr),   // %1
+        "+r"(dst_width)  // %2
+      : "r"(src_stride)  // %3
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -935,11 +935,11 @@ void ScaleRowUp2_Bilinear_SSE2(const uint8_t* src_ptr,
       "lea         0x10(%1),%1                   \n"  // 8 sample to 16 sample
       "sub         $0x10,%2                      \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride))   // %4
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width)   // %2
+      : "r"(src_stride),  // %3
+        "r"(dst_stride)   // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -1084,12 +1084,12 @@ void ScaleRowUp2_Bilinear_12_SSSE3(const uint16_t* src_ptr,
       "lea         0x20(%1),%1                   \n"  // 8 sample to 16 sample
       "sub         $0x10,%2                      \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride)),  // %4
-        "m"(kLinearShuffleFar)        // %5
+      : "+r"(src_ptr),          // %0
+        "+r"(dst_ptr),          // %1
+        "+r"(dst_width)         // %2
+      : "r"(src_stride),        // %3
+        "r"(dst_stride),        // %4
+        "m"(kLinearShuffleFar)  // %5
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -1246,11 +1246,11 @@ void ScaleRowUp2_Bilinear_16_SSE2(const uint16_t* src_ptr,
       "lea         0x10(%1),%1                   \n"  // 4 pixel to 8 pixel
       "sub         $0x8,%2                       \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride))   // %4
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width)   // %2
+      : "r"(src_stride),  // %3
+        "r"(dst_stride)   // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -1371,12 +1371,12 @@ void ScaleRowUp2_Bilinear_SSSE3(const uint8_t* src_ptr,
       "lea         0x10(%1),%1                   \n"  // 8 sample to 16 sample
       "sub         $0x10,%2                      \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride)),  // %4
-        "m"(kLinearMadd31)            // %5
+      : "+r"(src_ptr),      // %0
+        "+r"(dst_ptr),      // %1
+        "+r"(dst_width)     // %2
+      : "r"(src_stride),    // %3
+        "r"(dst_stride),    // %4
+        "m"(kLinearMadd31)  // %5
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -1497,12 +1497,12 @@ void ScaleRowUp2_Bilinear_AVX2(const uint8_t* src_ptr,
       "sub         $0x20,%2                      \n"
       "jg          1b                            \n"
       "vzeroupper  \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride)),  // %4
-        "m"(kLinearMadd31)            // %5
+      : "+r"(src_ptr),      // %0
+        "+r"(dst_ptr),      // %1
+        "+r"(dst_width)     // %2
+      : "r"(src_stride),    // %3
+        "r"(dst_stride),    // %4
+        "m"(kLinearMadd31)  // %5
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -1612,12 +1612,12 @@ void ScaleRowUp2_Bilinear_12_AVX2(const uint16_t* src_ptr,
       "sub         $0x10,%2                      \n"
       "jg          1b                            \n"
       "vzeroupper  \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride)),  // %4
-        "m"(kLinearShuffleFar)        // %5
+      : "+r"(src_ptr),          // %0
+        "+r"(dst_ptr),          // %1
+        "+r"(dst_width)         // %2
+      : "r"(src_stride),        // %3
+        "r"(dst_stride),        // %4
+        "m"(kLinearShuffleFar)  // %5
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5");
 }
 #endif
@@ -1746,11 +1746,11 @@ void ScaleRowUp2_Bilinear_16_AVX2(const uint16_t* src_ptr,
       "sub         $0x10,%2                      \n"
       "jg          1b                            \n"
       "vzeroupper  \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride))   // %4
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width)   // %2
+      : "r"(src_stride),  // %3
+        "r"(dst_stride)   // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6");
 }
 #endif
@@ -1815,14 +1815,8 @@ void ScaleAddRow_AVX2(const uint8_t* src_ptr,
 }
 #endif  // HAS_SCALEADDROW_AVX2
 
-// Constant for making pixels signed to avoid pmaddubsw
-// saturation.
-static const uvec8 kFsub80 = {0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-                              0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80};
-
-// Constant for making pixels unsigned and adding .5 for rounding.
-static const uvec16 kFadd40 = {0x4040, 0x4040, 0x4040, 0x4040,
-                               0x4040, 0x4040, 0x4040, 0x4040};
+static const uvec16 kFadd40 = {0x0040, 0x0040, 0x0040, 0x0040,
+                               0x0040, 0x0040, 0x0040, 0x0040};
 
 // Bilinear column filtering. SSSE3 version.
 void ScaleFilterCols_SSSE3(uint8_t* dst_ptr,
@@ -1838,8 +1832,9 @@ void ScaleFilterCols_SSSE3(uint8_t* dst_ptr,
       "movd        %k2,%%xmm5                    \n"
       "pcmpeqb     %%xmm6,%%xmm6                 \n"
       "psrlw       $0x9,%%xmm6                   \n"  // 0x007f007f
-      "pcmpeqb     %%xmm7,%%xmm7                 \n"
-      "psrlw       $15,%%xmm7                    \n"  // 0x00010001
+      "pcmpeqb     %%xmm7,%%xmm7                 \n"  // 0x00ff mask for
+                                                      // extracting 'a'
+      "psrlw       $8,%%xmm7                     \n"
 
       "pextrw      $0x1,%%xmm2,%k3               \n"
       "subl        $0x2,%5                       \n"
@@ -1862,17 +1857,18 @@ void ScaleFilterCols_SSSE3(uint8_t* dst_ptr,
       "movd        %k2,%%xmm4                    \n"
       "pshufb      %%xmm5,%%xmm1                 \n"
       "punpcklwd   %%xmm4,%%xmm0                 \n"
-      "psubb       %8,%%xmm0                     \n"  // make pixels signed.
-      "pxor        %%xmm6,%%xmm1                 \n"  // 128 - f = (f ^ 127 ) +
-                                                      // 1
-      "paddusb     %%xmm7,%%xmm1                 \n"
-      "pmaddubsw   %%xmm0,%%xmm1                 \n"
+      "pxor        %%xmm6,%%xmm1                 \n"
+      "movdqa      %%xmm0,%%xmm4                 \n"  // Copy pixels.
+      "pmaddubsw   %%xmm1,%%xmm0                 \n"  // a * (127 - f) + b * f
+      "pand        %%xmm7,%%xmm4                 \n"  // Extract left pixels
+                                                      // 'a'.
+      "paddw       %%xmm4,%%xmm0                 \n"  // a * 128 + f * (b - a)
       "pextrw      $0x1,%%xmm2,%k3               \n"
+      "paddw       %8,%%xmm0                     \n"  // add rounding bias 64.
       "pextrw      $0x3,%%xmm2,%k4               \n"
-      "paddw       %9,%%xmm1                     \n"  // make pixels unsigned.
-      "psrlw       $0x7,%%xmm1                   \n"
-      "packuswb    %%xmm1,%%xmm1                 \n"
-      "movd        %%xmm1,%k2                    \n"
+      "psrlw       $0x7,%%xmm0                   \n"
+      "packuswb    %%xmm0,%%xmm0                 \n"
+      "movd        %%xmm0,%k2                    \n"
       "mov         %w2,(%0)                      \n"
       "lea         0x2(%0),%0                    \n"
       "subl        $0x2,%5                       \n"
@@ -1886,14 +1882,15 @@ void ScaleFilterCols_SSSE3(uint8_t* dst_ptr,
       "movd        %k2,%%xmm0                    \n"
       "psrlw       $0x9,%%xmm2                   \n"
       "pshufb      %%xmm5,%%xmm2                 \n"
-      "psubb       %8,%%xmm0                     \n"  // make pixels signed.
       "pxor        %%xmm6,%%xmm2                 \n"
-      "paddusb     %%xmm7,%%xmm2                 \n"
-      "pmaddubsw   %%xmm0,%%xmm2                 \n"
-      "paddw       %9,%%xmm2                     \n"  // make pixels unsigned.
-      "psrlw       $0x7,%%xmm2                   \n"
-      "packuswb    %%xmm2,%%xmm2                 \n"
-      "movd        %%xmm2,%k2                    \n"
+      "movdqa      %%xmm0,%%xmm4                 \n"  // Copy pixels.
+      "pmaddubsw   %%xmm2,%%xmm0                 \n"  // a * (127 - f) + b * f
+      "pand        %%xmm7,%%xmm4                 \n"  // Extract left pixel 'a'.
+      "paddw       %%xmm4,%%xmm0                 \n"  // a * 128 + f * (b - a)
+      "paddw       %8,%%xmm0                     \n"  // add rounding bias 64.
+      "psrlw       $0x7,%%xmm0                   \n"
+      "packuswb    %%xmm0,%%xmm0                 \n"
+      "movd        %%xmm0,%k2                    \n"
       "mov         %b2,(%0)                      \n"
       "99:         \n"
       : "+r"(dst_ptr),      // %0
@@ -1909,11 +1906,9 @@ void ScaleFilterCols_SSSE3(uint8_t* dst_ptr,
       : "rm"(x),   // %6
         "rm"(dx),  // %7
 #if defined(__x86_64__)
-        "x"(kFsub80),  // %8
-        "x"(kFadd40)   // %9
+        "x"(kFadd40)  // %8
 #else
-        "m"(kFsub80),    // %8
-        "m"(kFadd40)     // %9
+        "m"(kFadd40)  // %8
 #endif
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
@@ -2016,10 +2011,10 @@ void ScaleARGBRowDown2Box_SSE2(const uint8_t* src_argb,
       "lea         0x10(%1),%1                   \n"
       "sub         $0x4,%2                       \n"
       "jg          1b                            \n"
-      : "+r"(src_argb),              // %0
-        "+r"(dst_argb),              // %1
-        "+r"(dst_width)              // %2
-      : "r"((intptr_t)(src_stride))  // %3
+      : "+r"(src_argb),  // %0
+        "+r"(dst_argb),  // %1
+        "+r"(dst_width)  // %2
+      : "r"(src_stride)  // %3
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3");
 }
 
@@ -2030,8 +2025,8 @@ void ScaleARGBRowDownEven_SSE2(const uint8_t* src_argb,
                                int src_stepx,
                                uint8_t* dst_argb,
                                int dst_width) {
-  intptr_t src_stepx_x4 = (intptr_t)(src_stepx);
-  intptr_t src_stepx_x12;
+  ptrdiff_t src_stepx_x4 = (ptrdiff_t)(src_stepx);
+  ptrdiff_t src_stepx_x12;
   (void)src_stride;
   asm volatile(
       "lea         0x00(,%1,4),%1                \n"
@@ -2067,9 +2062,8 @@ void ScaleARGBRowDownEvenBox_SSE2(const uint8_t* src_argb,
                                   int src_stepx,
                                   uint8_t* dst_argb,
                                   int dst_width) {
-  intptr_t src_stepx_x4 = (intptr_t)(src_stepx);
-  intptr_t src_stepx_x12;
-  intptr_t row1 = (intptr_t)(src_stride);
+  ptrdiff_t src_stepx_x4 = (ptrdiff_t)(src_stepx);
+  ptrdiff_t src_stepx_x12;
   asm volatile(
       "lea         0x00(,%1,4),%1                \n"
       "lea         0x00(%1,%1,2),%4              \n"
@@ -2102,7 +2096,7 @@ void ScaleARGBRowDownEvenBox_SSE2(const uint8_t* src_argb,
         "+r"(dst_argb),        // %2
         "+rm"(dst_width),      // %3
         "=&r"(src_stepx_x12),  // %4
-        "+r"(row1)             // %5
+        "+r"(src_stride)       // %5
       :
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3");
 }
@@ -2364,12 +2358,12 @@ void ScaleUVRowDown2Box_SSSE3(const uint8_t* src_ptr,
       "lea         0x8(%1),%1                    \n"  // 4 UV
       "sub         $0x4,%2                       \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "m"(kShuffleSplitUV),         // %4
-        "m"(kShuffleMergeUV)          // %5
+      : "+r"(src_ptr),         // %0
+        "+r"(dst_ptr),         // %1
+        "+r"(dst_width)        // %2
+      : "r"(src_stride),       // %3
+        "m"(kShuffleSplitUV),  // %4
+        "m"(kShuffleMergeUV)   // %5
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5");
 }
 #endif  // HAS_SCALEUVROWDOWN2BOX_SSSE3
@@ -2405,12 +2399,12 @@ void ScaleUVRowDown2Box_AVX2(const uint8_t* src_ptr,
       "sub         $0x8,%2                       \n"
       "jg          1b                            \n"
       "vzeroupper  \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "m"(kShuffleSplitUV),         // %4
-        "m"(kShuffleMergeUV)          // %5
+      : "+r"(src_ptr),         // %0
+        "+r"(dst_ptr),         // %1
+        "+r"(dst_width)        // %2
+      : "r"(src_stride),       // %3
+        "m"(kShuffleSplitUV),  // %4
+        "m"(kShuffleMergeUV)   // %5
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5");
 }
 #endif  // HAS_SCALEUVROWDOWN2BOX_AVX2
@@ -2531,12 +2525,12 @@ void ScaleUVRowUp2_Bilinear_SSSE3(const uint8_t* src_ptr,
       "lea         0x10(%1),%1                   \n"  // 4 uv to 8 uv
       "sub         $0x8,%2                       \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride)),  // %4
-        "m"(kUVLinearMadd31)          // %5
+      : "+r"(src_ptr),        // %0
+        "+r"(dst_ptr),        // %1
+        "+r"(dst_width)       // %2
+      : "r"(src_stride),      // %3
+        "r"(dst_stride),      // %4
+        "m"(kUVLinearMadd31)  // %5
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -2655,12 +2649,12 @@ void ScaleUVRowUp2_Bilinear_AVX2(const uint8_t* src_ptr,
       "sub         $0x10,%2                      \n"
       "jg          1b                            \n"
       "vzeroupper  \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride)),  // %4
-        "m"(kUVLinearMadd31)          // %5
+      : "+r"(src_ptr),        // %0
+        "+r"(dst_ptr),        // %1
+        "+r"(dst_width)       // %2
+      : "r"(src_stride),      // %3
+        "r"(dst_stride),      // %4
+        "m"(kUVLinearMadd31)  // %5
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -2799,11 +2793,11 @@ void ScaleUVRowUp2_Bilinear_16_SSE41(const uint16_t* src_ptr,
       "lea         0x10(%1),%1                   \n"  // 2 uv to 4 uv
       "sub         $0x4,%2                       \n"
       "jg          1b                            \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride))   // %4
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width)   // %2
+      : "r"(src_stride),  // %3
+        "r"(dst_stride)   // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
         "xmm7");
 }
@@ -2930,11 +2924,11 @@ void ScaleUVRowUp2_Bilinear_16_AVX2(const uint16_t* src_ptr,
       "sub         $0x8,%2                       \n"
       "jg          1b                            \n"
       "vzeroupper  \n"
-      : "+r"(src_ptr),                // %0
-        "+r"(dst_ptr),                // %1
-        "+r"(dst_width)               // %2
-      : "r"((intptr_t)(src_stride)),  // %3
-        "r"((intptr_t)(dst_stride))   // %4
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width)   // %2
+      : "r"(src_stride),  // %3
+        "r"(dst_stride)   // %4
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6");
 }
 #endif

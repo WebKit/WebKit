@@ -238,7 +238,8 @@ struct macroblock;
  */
 int av1_compute_rd_mult_based_on_qindex(aom_bit_depth_t bit_depth,
                                         FRAME_UPDATE_TYPE update_type,
-                                        int qindex, aom_tune_metric tuning);
+                                        int qindex, aom_tune_metric tuning,
+                                        MODE mode);
 
 int av1_compute_rd_mult(const int qindex, const aom_bit_depth_t bit_depth,
                         const FRAME_UPDATE_TYPE update_type,
@@ -246,7 +247,7 @@ int av1_compute_rd_mult(const int qindex, const aom_bit_depth_t bit_depth,
                         const FRAME_TYPE frame_type,
                         const int use_fixed_qp_offsets,
                         const int is_stat_consumption_stage,
-                        const aom_tune_metric tuning);
+                        const aom_tune_metric tuning, const MODE mode);
 
 void av1_initialize_rd_consts(struct AV1_COMP *cpi);
 
@@ -257,8 +258,23 @@ void av1_set_sad_per_bit(const struct AV1_COMP *cpi, int *sadperbit,
 void av1_model_rd_from_var_lapndz(int64_t var, unsigned int n,
                                   unsigned int qstep, int *rate, int64_t *dist);
 
+/*!\brief Estimate rate and distortion for a block.
+ *
+ * \param[in]    bsize           Block size
+ * \param[in]    sse_norm        Normalized SSE
+ * \param[in]    xqr             The log2 ratio of normalized SSE to the
+ *                               squared quantization step size, computed
+ *                               as: log2(sse_norm / qstep^2)
+ * \param[out]   rate_dist_f     Pointer to store the results
+ *                               rate_dist_f[0] stores the estimated rate
+ *                               rate_dist_f[1] stores the estimated
+ *                               distortion by normalized SSE
+ *
+ * \remark Nothing is returned. Results are saved in rate_dist_f[0]
+ * and rate_dist_f[1].
+ */
 void av1_model_rd_curvfit(BLOCK_SIZE bsize, double sse_norm, double xqr,
-                          double *rate_f, double *distbysse_f);
+                          double rate_dist_f[2]);
 
 int av1_get_switchable_rate(const MACROBLOCK *x, const MACROBLOCKD *xd,
                             InterpFilter interp_filter, int dual_filter);

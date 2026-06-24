@@ -44,7 +44,6 @@
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "RawDataDocumentParser.h"
-#include "RenderStyle+GettersInlines.h"
 #include "UserScriptTypes.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -87,7 +86,7 @@ void ModelDocumentParser::createDocumentStructure()
     document->setCSSTarget(rootElement.ptr());
 
     if (document->frame())
-        document->frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);
+        protect(document->frame())->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 
     auto headElement = HTMLHeadElement::create(document);
     rootElement->appendChild(headElement);
@@ -137,7 +136,7 @@ void ModelDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>)
 
 void ModelDocumentParser::finish()
 {
-    document()->finishedParsing();
+    protect(document())->finishedParsing();
 }
 
 ModelDocument::ModelDocument(LocalFrame* frame, const Settings& settings, const URL& url)

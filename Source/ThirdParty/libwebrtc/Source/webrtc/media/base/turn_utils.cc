@@ -12,6 +12,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
 #include "api/transport/stun.h"
 #include "rtc_base/byte_order.h"
@@ -31,7 +32,7 @@ bool IsTurnSendIndicationPacket(const uint8_t* data, size_t length) {
     return false;
   }
 
-  uint16_t type = GetBE16(data);
+  uint16_t type = GetBE16(std::span<const uint8_t>(data, 2));
   return (type == TURN_SEND_INDICATION);
 }
 
@@ -41,6 +42,7 @@ bool UnwrapTurnPacket(const uint8_t* packet,
                       size_t packet_size,
                       size_t* content_position,
                       size_t* content_size) {
+  std::span<const uint8_t> data_view(packet, packet_size);
   if (IsTurnChannelData(packet, packet_size)) {
     // Turn Channel Message header format.
     //   0                   1                   2                   3
@@ -52,7 +54,7 @@ bool UnwrapTurnPacket(const uint8_t* packet,
     // /                       Application Data                        /
     // /                                                               /
     // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    size_t length = GetBE16(&packet[2]);
+    size_t length = GetBE16(data_view.subspan(2, 2));
     if (length + kTurnChannelHeaderLength > packet_size) {
       return false;
     }
@@ -64,7 +66,7 @@ bool UnwrapTurnPacket(const uint8_t* packet,
 
   if (IsTurnSendIndicationPacket(packet, packet_size)) {
     // Validate STUN message length.
-    const size_t stun_message_length = GetBE16(&packet[2]);
+    const size_t stun_message_length = GetBE16(data_view.subspan(2, 2));
     if (stun_message_length + kStunHeaderSize != packet_size) {
       return false;
     }
@@ -94,8 +96,8 @@ bool UnwrapTurnPacket(const uint8_t* packet,
       }
 
       // Getting attribute type and length.
-      attr_type = GetBE16(&packet[pos]);
-      attr_length = GetBE16(&packet[pos + sizeof(attr_type)]);
+      attr_type = GetBE16(data_view.subspan(pos, 2));
+      attr_length = GetBE16(data_view.subspan(pos + sizeof(attr_type), 2));
 
       pos += kAttrHeaderLength;  // Skip STUN_DATA_ATTR header.
 

@@ -45,6 +45,14 @@ static bool shouldUseFullRange(CMVideoFormatDescriptionRef format)
     return fullRange && CFBooleanGetValue(fullRange.get());
 }
 
+static int bitDepthFromFormat(CMVideoFormatDescriptionRef format)
+{
+    int bitDepth = 8;
+    if (RetainPtr bitsPerComponent = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(format, PAL::kCMFormatDescriptionExtension_BitsPerComponent)))
+        CFNumberGetValue(bitsPerComponent.get(), kCFNumberIntType, &bitDepth);
+    return bitDepth;
+}
+
 static RetainPtr<CFDictionaryRef> createPixelBufferAttributes(CMVideoFormatDescriptionRef format)
 {
     static size_t const attributesSize = 3;
@@ -59,8 +67,16 @@ static RetainPtr<CFDictionaryRef> createPixelBufferAttributes(CMVideoFormatDescr
     };
 
     auto ioSurfaceValue = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, nullptr, nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    int64_t nv12type = shouldUseFullRange(format) ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
-    auto pixelFormat = adoptCF(CFNumberCreate(nullptr, kCFNumberLongType, &nv12type));
+    bool isFullRange = shouldUseFullRange(format);
+    int bitDepth = bitDepthFromFormat(format);
+    ASSERT(bitDepth == 8 || bitDepth == 10);
+
+    int64_t pixelFormatType;
+    if (bitDepth > 8)
+        pixelFormatType = isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+    else
+        pixelFormatType = isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+    RetainPtr pixelFormat = adoptCF(CFNumberCreate(nullptr, kCFNumberLongType, &pixelFormatType));
     CFTypeRef values[attributesSize] = { kCFBooleanTrue, ioSurfaceValue.get(), pixelFormat.get() };
     return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, attributesSize, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
@@ -92,8 +108,9 @@ private:
     MediaReorderQueue<Buffer, BufferComparator> m_queue WTF_GUARDED_BY_LOCK(m_lock);
 };
 
-WebRTCVideoDecoderVTB::WebRTCVideoDecoderVTB(WebRTCVideoDecoderCallback callback)
-    : m_callback(makeBlockPtr(callback))
+WebRTCVideoDecoderVTB::WebRTCVideoDecoderVTB(WebRTCVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+    : WebRTCVideoDecoder(WTF::move(colorSpaceOverride))
+    , m_callback(makeBlockPtr(callback))
 {
 }
 
@@ -147,12 +164,33 @@ int32_t WebRTCVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<
     return 0;
 }
 
-void WebRTCVideoDecoderVTB::setVideoFormat(RetainPtr<CMVideoFormatDescriptionRef>&& format, uint8_t reorderSize)
+void WebRTCVideoDecoderVTB::setVideoInfo(Ref<VideoInfo>&& videoInfo, uint8_t reorderSize)
 {
-    m_format = WTF::move(format);
+    updateFormat(videoInfo);
+    m_videoInfo = WTF::move(videoInfo);
     m_reorderSize = reorderSize;
     if (reorderSize && !m_queue)
         m_queue = WebRTCVideoDecoderVTBQueue::create(reorderSize);
+}
+
+void WebRTCVideoDecoderVTB::colorSpaceOverrideChanged()
+{
+    if (RefPtr videoInfo = m_videoInfo)
+        updateFormat(*videoInfo);
+}
+
+void WebRTCVideoDecoderVTB::updateFormat(const VideoInfo& videoInfo)
+{
+    auto colorSpaceOverride = this->colorSpaceOverride();
+    if (!colorSpaceOverride) {
+        m_format = createFormatDescriptionFromTrackInfo(videoInfo);
+        return;
+    }
+
+    auto data = videoInfo.toVideoInfoData();
+    overrideVideoColorSpaceAsNeeded(data.second.colorSpace, colorSpaceOverride);
+    Ref updatedVideoInfo = VideoInfo::create(WTF::move(data));
+    m_format = createFormatDescriptionFromTrackInfo(updatedVideoInfo);
 }
 
 void WebRTCVideoDecoderVTB::flush()

@@ -58,7 +58,6 @@ class Icon;
 class KeyboardEvent;
 class MouseEvent;
 class Node;
-class RenderStyle;
 class StepRange;
 class TextControlInnerTextElement;
 class TouchEvent;
@@ -68,6 +67,10 @@ struct InputElementClickState;
 enum class AnyStepHandling : bool;
 enum class RangeLimitations : bool;
 enum class DateComponentsType : uint8_t;
+
+namespace Style {
+class ComputedStyle;
+}
 
 // An InputType object represents the type-specific part of an HTMLInputElement.
 // Do not expose instances of InputType and classes derived from it to classes
@@ -340,7 +343,7 @@ public:
     // Miscellaneous functions.
 
     virtual bool NODELETE rendererIsNeeded();
-    virtual RenderPtr<RenderElement> createInputRenderer(RenderStyle&&);
+    virtual RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&);
     virtual void addSearchResult();
     virtual void attach();
     virtual void detach();

@@ -49,8 +49,7 @@ AudioSendStream::Config::Rtp::Rtp() = default;
 AudioSendStream::Config::Rtp::~Rtp() = default;
 
 std::string AudioSendStream::Config::Rtp::ToString() const {
-  char buf[1024];
-  SimpleStringBuilder ss(buf);
+  StringBuilder ss;
   ss << "{ssrc: " << ssrc;
   if (!rid.empty()) {
     ss << ", rid: " << rid;
@@ -77,7 +76,7 @@ std::string AudioSendStream::Config::Rtp::ToString() const {
   ss << ']';
   ss << ", c_name: " << c_name;
   ss << '}';
-  return ss.str();
+  return ss.Release();
 }
 
 AudioSendStream::Config::SendCodecSpec::SendCodecSpec(
@@ -87,8 +86,7 @@ AudioSendStream::Config::SendCodecSpec::SendCodecSpec(
 AudioSendStream::Config::SendCodecSpec::~SendCodecSpec() = default;
 
 std::string AudioSendStream::Config::SendCodecSpec::ToString() const {
-  char buf[1024];
-  SimpleStringBuilder ss(buf);
+  StringBuilder ss;
   ss << "{nack_enabled: " << (nack_enabled ? "true" : "false");
   ss << ", enable_non_sender_rtt: "
      << (enable_non_sender_rtt ? "true" : "false");
@@ -99,7 +97,7 @@ std::string AudioSendStream::Config::SendCodecSpec::ToString() const {
   ss << ", payload_type: " << payload_type;
   ss << ", format: " << absl::StrCat(format);
   ss << '}';
-  return ss.str();
+  return ss.Release();
 }
 
 bool AudioSendStream::Config::SendCodecSpec::operator==(

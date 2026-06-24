@@ -27,93 +27,227 @@
 #include "config.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 
-#include "CSSAttrValue.h"
-#include "CSSCalcValue.h"
-#include "CSSColorValue.h"
-#include "CSSCounterValue.h"
-#include "CSSCustomIdentValue.h"
-#include "CSSFontFamilyNameValue.h"
-#include "CSSKeywordValue.h"
-#include "CSSRectValue.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSSerializationContext.h"
-#include "CSSStringValue.h"
-#include "CSSURLValue.h"
+#include "CSSWideKeyword.h"
 #include "DeprecatedCSSOMCounter.h"
+#include "DeprecatedCSSOMPrimitiveValueData.h"
 #include "DeprecatedCSSOMRGBColor.h"
 #include "DeprecatedCSSOMRect.h"
 
 namespace WebCore {
 
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(Function<String(const CSS::SerializationContext&)>&& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { WTF::move(value) }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::UnconstrainedPrimitiveNumericRaw& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::UnevaluatedCalcBase& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::ClipRect& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::Color& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::ContentCounterFunctionWrapper& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value.value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::ContentCountersFunctionWrapper& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value.value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::ContentLegacyAttrFunctionWrapper& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value.value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::CustomIdent& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::FontFamilyName& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::Keyword& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::String& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(const CSS::URL& value, CSSStyleDeclaration& owner)
+{
+    return create(DeprecatedCSSOMPrimitiveValueData { value }, owner);
+}
+
+Ref<DeprecatedCSSOMPrimitiveValue> DeprecatedCSSOMPrimitiveValue::create(DeprecatedCSSOMPrimitiveValueData&& data, CSSStyleDeclaration& owner)
+{
+    return adoptRef(*new DeprecatedCSSOMPrimitiveValue(WTF::move(data), owner));
+}
+
+DeprecatedCSSOMPrimitiveValue::DeprecatedCSSOMPrimitiveValue(DeprecatedCSSOMPrimitiveValueData&& data, CSSStyleDeclaration& owner)
+    : DeprecatedCSSOMValue(owner)
+    , m_data(makeUniqueRef<DeprecatedCSSOMPrimitiveValueData>(WTF::move(data)))
+{
+}
+
+DeprecatedCSSOMPrimitiveValue::~DeprecatedCSSOMPrimitiveValue() = default;
+
 String DeprecatedCSSOMPrimitiveValue::cssText() const
 {
-    return protect(value())->cssText(CSS::defaultSerializationContext());
+    return WTF::switchOn(m_data.get(),
+        [](const DeprecatedCSSOMPrimitiveValueData::TypeErasedValue& value) -> String {
+            return value(CSS::defaultSerializationContext());
+        },
+        [](const DeprecatedCSSOMPrimitiveValueData::NumericRaw& raw) -> String {
+            return CSS::serializationForCSS(CSS::defaultSerializationContext(), CSS::SerializableNumber { raw.value, unitTypeString(raw.unit) });
+        },
+        [](const auto& value) -> String {
+            return CSS::serializationForCSS(CSS::defaultSerializationContext(), value);
+        }
+    );
+}
+
+unsigned short DeprecatedCSSOMPrimitiveValue::cssValueType() const
+{
+    // These values are exposed in the DOM, but constants for them are not.
+    constexpr unsigned short CSS_INITIAL = 4;
+    constexpr unsigned short CSS_UNSET = 5;
+    constexpr unsigned short CSS_REVERT = 6;
+
+    if (auto* keyword = std::get_if<CSS::Keyword>(&m_data->value)) {
+        switch (keyword->value) {
+        case CSSValueInherit:
+            return CSS_INHERIT;
+        case CSSValueInitial:
+            return CSS_INITIAL;
+        case CSSValueUnset:
+            return CSS_UNSET;
+        case CSSValueRevert:
+            return CSS_REVERT;
+        default:
+            break;
+        }
+    }
+
+    return CSS_PRIMITIVE_VALUE;
 }
 
 unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
 {
-    if (m_value->isCounter())
-        return CSS_COUNTER;
-    if (m_value->isRect())
-        return CSS_RECT;
-    if (m_value->isColor())
-        return CSS_RGBCOLOR;
-    if (m_value->isURL())
-        return CSS_URI;
-    if (m_value->isKeywordValue() || m_value->isCustomIdentValue())
-        return CSS_IDENT;
-    if (m_value->isStringValue() || m_value->isFontFamilyNameValue())
-        return CSS_STRING;
-    if (m_value->isAttrValue())
-        return CSS_ATTR;
+    auto convertUnitType = [](CSSUnitType unitType) -> unsigned short {
+        switch (unitType) {
+        case CSSUnitType::CSS_CM:                           return CSS_CM;
+        case CSSUnitType::CSS_DEG:                          return CSS_DEG;
+        case CSSUnitType::CSS_EM:                           return CSS_EMS;
+        case CSSUnitType::CSS_EX:                           return CSS_EXS;
+        case CSSUnitType::CSS_GRAD:                         return CSS_GRAD;
+        case CSSUnitType::CSS_HZ:                           return CSS_HZ;
+        case CSSUnitType::CSS_INTEGER:                      return CSS_NUMBER;
+        case CSSUnitType::CSS_IN:                           return CSS_IN;
+        case CSSUnitType::CSS_KHZ:                          return CSS_KHZ;
+        case CSSUnitType::CSS_MM:                           return CSS_MM;
+        case CSSUnitType::CSS_MS:                           return CSS_MS;
+        case CSSUnitType::CSS_NUMBER:                       return CSS_NUMBER;
+        case CSSUnitType::CSS_PC:                           return CSS_PC;
+        case CSSUnitType::CSS_PERCENTAGE:                   return CSS_PERCENTAGE;
+        case CSSUnitType::CSS_PT:                           return CSS_PT;
+        case CSSUnitType::CSS_PX:                           return CSS_PX;
+        case CSSUnitType::CSS_RAD:                          return CSS_RAD;
+        case CSSUnitType::CSS_S:                            return CSS_S;
 
-    RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
-    if (!primitiveValue)
-        return CSS_UNKNOWN;
+        // All other, including newer types, should return UNKNOWN.
+        default:                                            return CSS_UNKNOWN;
+        }
+    };
 
-    switch (primitiveValue->primitiveType()) {
-    case CSSUnitType::CSS_CM:                           return CSS_CM;
-    case CSSUnitType::CSS_DEG:                          return CSS_DEG;
-    case CSSUnitType::CSS_EM:                           return CSS_EMS;
-    case CSSUnitType::CSS_EX:                           return CSS_EXS;
-    case CSSUnitType::CSS_GRAD:                         return CSS_GRAD;
-    case CSSUnitType::CSS_HZ:                           return CSS_HZ;
-    case CSSUnitType::CSS_INTEGER:                      return CSS_NUMBER;
-    case CSSUnitType::CSS_IN:                           return CSS_IN;
-    case CSSUnitType::CSS_KHZ:                          return CSS_KHZ;
-    case CSSUnitType::CSS_MM:                           return CSS_MM;
-    case CSSUnitType::CSS_MS:                           return CSS_MS;
-    case CSSUnitType::CSS_NUMBER:                       return CSS_NUMBER;
-    case CSSUnitType::CSS_PC:                           return CSS_PC;
-    case CSSUnitType::CSS_PERCENTAGE:                   return CSS_PERCENTAGE;
-    case CSSUnitType::CSS_PT:                           return CSS_PT;
-    case CSSUnitType::CSS_PX:                           return CSS_PX;
-    case CSSUnitType::CSS_RAD:                          return CSS_RAD;
-    case CSSUnitType::CSS_S:                            return CSS_S;
-
-    // All other, including newer types, should return UNKNOWN.
-    default:                                            return CSS_UNKNOWN;
-    }
+    return WTF::switchOn(m_data.get(),
+        [&](const DeprecatedCSSOMPrimitiveValueData::TypeErasedValue&) -> unsigned short {
+            return CSS_UNKNOWN;
+        },
+        [&](const DeprecatedCSSOMPrimitiveValueData::NumericRaw& raw) -> unsigned short {
+            return convertUnitType(raw.unit);
+        },
+        [&](const DeprecatedCSSOMPrimitiveValueData::NumericCalc& calc) -> unsigned short {
+            return convertUnitType(calc.primitiveType());
+        },
+        [](const CSS::CustomIdent&) -> unsigned short {
+            return CSS_IDENT;
+        },
+        [](const CSS::Keyword&) -> unsigned short {
+            return CSS_IDENT;
+        },
+        [](const CSS::String&) -> unsigned short {
+            return CSS_STRING;
+        },
+        [](const CSS::FontFamilyName&) -> unsigned short {
+            return CSS_STRING;
+        },
+        [](const CSS::URL&) -> unsigned short {
+            return CSS_URI;
+        },
+        [](const CSS::Color&) -> unsigned short {
+            return CSS_RGBCOLOR;
+        },
+        [](const CSS::ContentCounterFunction&) -> unsigned short {
+            return CSS_COUNTER;
+        },
+        [](const CSS::ContentCountersFunction&) -> unsigned short {
+            return CSS_COUNTER;
+        },
+        [](const CSS::ContentLegacyAttrFunction&) -> unsigned short {
+            return CSS_ATTR;
+        },
+        [](const CSS::ClipRect&) -> unsigned short {
+            return CSS_RECT;
+        }
+    );
 }
 
 ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short unitType) const
 {
-    RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
-    if (!primitiveValue)
-        return Exception { ExceptionCode::InvalidAccessError };
+    using ValueAndOptionalUnit = std::pair<double, std::optional<CSSUnitType>>;
 
-    auto doubleValueDeprecated = [&] {
-        return WTF::switchOn(*primitiveValue,
-            [](const CSSPrimitiveValue::Calc& calc) {
-                return calc.doubleValueDeprecated();
-            },
-            [](const CSSPrimitiveValue::Raw& raw) {
-                return raw.value;
-            }
-        );
-    };
+    auto doubleValueAndOptionalUnitOrException = WTF::switchOn(m_data.get(),
+        [&](const DeprecatedCSSOMPrimitiveValueData::NumericRaw& raw) -> ExceptionOr<ValueAndOptionalUnit> {
+            return ValueAndOptionalUnit { raw.value, raw.unit };
+        },
+        [&](const DeprecatedCSSOMPrimitiveValueData::NumericCalc& calc) -> ExceptionOr<ValueAndOptionalUnit> {
+            return ValueAndOptionalUnit { calc.evaluateDeprecated(), std::nullopt };
+        },
+        [&](const auto&) -> ExceptionOr<ValueAndOptionalUnit> {
+            return Exception { ExceptionCode::InvalidAccessError };
+        }
+    );
+    if (doubleValueAndOptionalUnitOrException.hasException())
+        return doubleValueAndOptionalUnitOrException.releaseException();
+
+    auto [doubleValue, selfUnitType] = doubleValueAndOptionalUnitOrException.releaseReturnValue();
 
     if (unitType == CSS_DIMENSION)
-        return clampTo<float>(doubleValueDeprecated());
+        return clampTo<float>(doubleValue);
 
     auto requestedUnitType = [&] -> std::optional<CSSUnitType> {
         switch (unitType) {
@@ -141,20 +275,12 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
         return Exception { ExceptionCode::InvalidAccessError };
     auto targetUnitType = *requestedUnitType;
 
-    auto selfUnitType = WTF::switchOn(*primitiveValue,
-        [](const CSSPrimitiveValue::Calc&) -> std::optional<CSSUnitType> {
-            return std::nullopt;
-        },
-        [](const CSSPrimitiveValue::Raw& raw) -> std::optional<CSSUnitType> {
-            return raw.unit;
-        }
-    );
     if (!selfUnitType)
         return Exception { ExceptionCode::InvalidAccessError };
     auto sourceUnitType = *selfUnitType;
 
     if (targetUnitType == sourceUnitType)
-        return clampTo<float>(doubleValueDeprecated());
+        return clampTo<float>(doubleValue);
 
     auto sourceCategory = unitCategory(sourceUnitType);
     ASSERT(sourceCategory != CSSUnitCategory::Other);
@@ -185,7 +311,7 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
             return Exception { ExceptionCode::InvalidAccessError };
     }
 
-    double convertedValue = doubleValueDeprecated();
+    double convertedValue = doubleValue;
 
     // If we don't need to scale it, don't worry about if we can scale it.
     if (sourceUnitType == targetUnitType)
@@ -208,30 +334,35 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
 
 ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
 {
-    switch (primitiveType()) {
-    case CSS_ATTR:
-        return downcast<CSSAttrValue>(m_value.get()).cssText(CSS::defaultSerializationContext());
-    case CSS_IDENT:
-        if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(m_value))
-            return customIdentValue->stringValue();
-        return downcast<CSSKeywordValue>(m_value.get()).stringValue();
-    case CSS_STRING:
-        if (RefPtr fontFamilyNameValue = dynamicDowncast<CSSFontFamilyNameValue>(m_value))
-            return fontFamilyNameValue->stringValue();
-        return downcast<CSSStringValue>(m_value.get()).stringValue();
-    case CSS_URI:
-        return downcast<CSSURLValue>(m_value.get()).stringValue();
-
-    // All other, including newer types, should raise an exception.
-    default:
-        return Exception { ExceptionCode::InvalidAccessError };
-    }
+    return WTF::switchOn(m_data.get(),
+        [](const CSS::CustomIdent& customIdent) -> ExceptionOr<String> {
+            return String { customIdent.value };
+        },
+        [](const CSS::Keyword& keyword) -> ExceptionOr<String> {
+            return String { nameStringForSerialization(keyword.value) };
+        },
+        [](const CSS::String& string) -> ExceptionOr<String> {
+            return String { string.value };
+        },
+        [](const CSS::FontFamilyName& fontFamilyName) -> ExceptionOr<String> {
+            return String { fontFamilyName.value };
+        },
+        [](const CSS::URL& url) -> ExceptionOr<String> {
+            return String { url.specified };
+        },
+        [](const CSS::ContentLegacyAttrFunction& attrFunction) -> ExceptionOr<String> {
+            return CSS::serializationForCSS(CSS::defaultSerializationContext(), attrFunction);
+        },
+        [](const auto&) -> ExceptionOr<String> {
+            return Exception { ExceptionCode::InvalidAccessError };
+        }
+    );
 }
 
 ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCounterValue() const
 {
-    if (RefPtr value = dynamicDowncast<CSSCounterValue>(m_value.get())) {
-        auto counterStyle = WTF::switchOn(value->counterStyle().identifier,
+    auto convertStyleToString = [](auto& style) -> String {
+        return WTF::switchOn(style.identifier,
             [](const CSS::Keyword& predefinedKeyword) -> String {
                 return nameLiteralForSerialization(predefinedKeyword.value);
             },
@@ -239,29 +370,43 @@ ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCount
                 return customIdent.value.string();
             }
         );
-        return DeprecatedCSSOMCounter::create(value->identifier().value, value->separator().value, WTF::move(counterStyle));
+    };
+
+    if (auto* contentCounter = std::get_if<CSS::ContentCounterFunction>(&m_data->value)) {
+        return DeprecatedCSSOMCounter::create(
+            contentCounter->parameters.identifier.value,
+            emptyString(),
+            convertStyleToString(contentCounter->parameters.style)
+        );
+    }
+    if (auto* contentCounters = std::get_if<CSS::ContentCountersFunction>(&m_data->value)) {
+        return DeprecatedCSSOMCounter::create(
+            contentCounters->parameters.identifier.value,
+            contentCounters->parameters.separator.value,
+            convertStyleToString(contentCounters->parameters.style)
+        );
     }
     return Exception { ExceptionCode::InvalidAccessError };
 }
 
 ExceptionOr<Ref<DeprecatedCSSOMRect>> DeprecatedCSSOMPrimitiveValue::getRectValue() const
 {
-    if (RefPtr rectValue = dynamicDowncast<CSSRectValue>(m_value.get()))
-        return DeprecatedCSSOMRect::create(rectValue->rect(), m_owner);
+    if (auto* clipRect = std::get_if<CSS::ClipRect>(&m_data->value))
+        return DeprecatedCSSOMRect::create(*clipRect, m_owner);
     return Exception { ExceptionCode::InvalidAccessError };
 }
 
 ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> DeprecatedCSSOMPrimitiveValue::getRGBColorValue() const
 {
-    if (primitiveType() != CSS_RGBCOLOR)
-        return Exception { ExceptionCode::InvalidAccessError };
-    return DeprecatedCSSOMRGBColor::create(m_owner, downcast<CSSColorValue>(m_value.get()).color().absoluteColor());
+    if (auto* color = std::get_if<CSS::Color>(&m_data->value))
+        return DeprecatedCSSOMRGBColor::create(color->absoluteColor(), m_owner);
+    return Exception { ExceptionCode::InvalidAccessError };
 }
 
 bool DeprecatedCSSOMPrimitiveValue::isCSSWideKeyword() const
 {
-    if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(m_value))
-        return WebCore::isCSSWideKeyword(keywordValue->valueID());
+    if (auto* keyword = std::get_if<CSS::Keyword>(&m_data->value))
+        return WebCore::isCSSWideKeyword(keyword->value);
     return false;
 }
 

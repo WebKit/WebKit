@@ -44,7 +44,7 @@ inline bool requiresConversionData(Numeric auto const& primitive)
 
 template<Calc T> auto evaluateCalc(const T& calc, NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) -> typename T::Raw
 {
-    return { calc.evaluate(T::category, token, symbolTable) };
+    return { calc.evaluate(token, symbolTable) };
 }
 
 template<typename T> constexpr auto evaluateCalc(const T& component, NoConversionDataRequiredToken, const CSSCalcSymbolTable&) -> T

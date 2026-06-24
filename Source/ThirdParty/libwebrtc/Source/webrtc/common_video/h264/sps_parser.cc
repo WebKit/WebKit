@@ -13,18 +13,18 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "common_video/h264/h264_common.h"
 #include "rtc_base/bitstream_reader.h"
+
+namespace webrtc {
 
 namespace {
 constexpr int kScalingDeltaMin = -128;
 constexpr int kScaldingDeltaMax = 127;
 }  // namespace
-
-namespace webrtc {
 
 SpsParser::SpsState::SpsState() = default;
 SpsParser::SpsState::SpsState(const SpsState&) = default;
@@ -36,7 +36,7 @@ SpsParser::SpsState::~SpsState() = default;
 
 // Unpack RBSP and parse SPS state from the supplied buffer.
 std::optional<SpsParser::SpsState> SpsParser::ParseSps(
-    ArrayView<const uint8_t> data) {
+    std::span<const uint8_t> data) {
   std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data);
   BitstreamReader reader(unpacked_buffer);
   return ParseSpsUpToVui(reader);

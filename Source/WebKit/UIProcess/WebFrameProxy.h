@@ -37,6 +37,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -66,7 +67,6 @@ class FloatRect;
 class FrameTreeSyncData;
 class ResourceRequest;
 class SecurityOrigin;
-class SecurityOriginData;
 class ShareableBitmapHandle;
 class TextIndicator;
 
@@ -104,6 +104,7 @@ namespace WebKit {
 
 class BrowsingContextGroup;
 class FrameProcess;
+class FrameState;
 class ProvisionalFrameProxy;
 class BrowsingWarning;
 class UserData;
@@ -177,6 +178,9 @@ public:
     const String& title() const LIFETIME_BOUND { return m_title; }
 
     void setSpecifiedName(const String& name) { m_frameName = name; }
+    const String& frameName() const LIFETIME_BOUND { return m_frameName; }
+    const ListHashSet<Ref<WebFrameProxy>>& childFrames() const LIFETIME_BOUND { return m_childFrames; }
+    WebCore::SecurityOriginData documentSecurityOriginData() const;
 
     const WebCore::CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_certificateInfo; }
 
@@ -197,7 +201,7 @@ public:
     void didExplicitOpen(URL&&, String&& mimeType);
     void didReceiveServerRedirectForProvisionalLoad(URL&&);
     void didFailProvisionalLoad();
-    void didCommitLoad(const String& contentType, const WebCore::CertificateInfo&, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&);
+    void didCommitLoad(const String& contentType, const WebCore::CertificateInfo&, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations);
     void didFinishLoad();
     void didFailLoad();
     void didSameDocumentNavigation(URL&&); // eg. anchor navigation, session state change.
@@ -226,7 +230,7 @@ public:
     ProcessID NODELETE processID() const;
     void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, std::optional<WebCore::SecurityOriginData>, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
 
-    void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, const UserData&);
+    void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
 
     void getFrameTree(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&&);
     void getFrameInfo(CompletionHandler<void(std::optional<FrameInfoData>&&)>&&);
@@ -278,6 +282,7 @@ public:
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
+    void didChangeCSPOriginsThatUpgradeInsecureNavigations(HashSet<WebCore::SecurityOriginData>&&);
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
     void findFocusableElementContinuingFromFrame(WebCore::FocusDirection, WebCore::FrameIdentifier, const WebCore::FocusEventData&, WebCore::ShouldFocusElement);
 
@@ -291,6 +296,9 @@ public:
 
     WebCore::ScrollbarMode scrollingMode() const { return m_scrollingMode; }
     void updateScrollingMode(WebCore::ScrollbarMode);
+
+    const HashSet<WebCore::SecurityOriginData>& cspOriginsThatUpgradeInsecureNavigations() const { return m_cspOriginsThatUpgradeInsecureNavigations; }
+    void setCSPOriginsThatUpgradeInsecureNavigations(HashSet<WebCore::SecurityOriginData>&& origins) { m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(origins); }
 
     void updateOpener(std::optional<WebCore::FrameIdentifier>);
     WebFrameProxy* opener() const { return m_opener; }
@@ -370,6 +378,7 @@ private:
     WebCore::ScrollbarMode m_scrollingMode;
     std::optional<WebCore::DocumentSecurityPolicy> m_documentSecurityPolicy;
     RefPtr<WebCore::SecurityOrigin> m_documentSecurityOrigin;
+    HashSet<WebCore::SecurityOriginData> m_cspOriginsThatUpgradeInsecureNavigations;
 } SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebKit

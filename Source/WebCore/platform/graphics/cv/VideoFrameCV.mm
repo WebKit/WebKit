@@ -126,6 +126,9 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
 
     auto data = span;
     data = copyToCVPixelBufferPlane(pixelBuffer.get(), 0, data, height, planeY.sourceWidthBytes);
+    // Source height may be bigger than destination height in case of a cropped frame, skip the cropped lines.
+    if (planeY.sourceHeight > height)
+        data = data.subspan((planeY.sourceHeight - height) * planeY.sourceWidthBytes);
     if (CVPixelBufferGetPlaneCount(pixelBuffer.get()) == 2) {
         const auto heightUV = height / 2;
         ASSERT(std::to_address(span.end()) >= data.subspan(heightUV * planeUV.sourceWidthBytes).data());
@@ -196,8 +199,11 @@ RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t 
 RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, PlatformVideoColorSpace&& colorSpace)
 {
 #if USE(LIBWEBRTC)
-    size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * height;
-    size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * ((height + 1) / 2);
+    // Plane offsets must step over the full coded plane heights (layout*.sourceHeight), not the
+    // visible output height, otherwise a frame whose codedHeight exceeds visibleRect.height (e.g.
+    // a 1920x1088 frame cropped to 1920x1080) reads the chroma planes from the wrong offset.
+    size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * layoutY.sourceHeight;
+    size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * layoutU.sourceHeight;
     webrtc::I420BufferLayout layout {
         layoutY.sourceLeftBytes, layoutY.sourceWidthBytes,
         offsetLayoutU, layoutU.sourceWidthBytes,
@@ -224,9 +230,9 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
 RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, const ComputedPlaneLayout& layoutA, PlatformVideoColorSpace&& colorSpace)
 {
 #if USE(LIBWEBRTC)
-    size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * height;
-    size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * ((height + 1) / 2);
-    size_t offsetLayoutA = offsetLayoutV + layoutV.sourceLeftBytes + layoutV.sourceWidthBytes * ((height + 1) / 2);
+    size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * layoutY.sourceHeight;
+    size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * layoutU.sourceHeight;
+    size_t offsetLayoutA = offsetLayoutV + layoutV.sourceLeftBytes + layoutV.sourceWidthBytes * layoutV.sourceHeight;
     webrtc::I420ABufferLayout layout {
         {
             layoutY.sourceLeftBytes, layoutY.sourceWidthBytes,

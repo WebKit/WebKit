@@ -131,16 +131,29 @@ class Tracker(GenericTracker):
         self._invalid_keywords = set()
 
         self.library = self.radarclient()
-        authentication = authentication or (self.authentication() if self.library else None)
-        if authentication:
-            self.client = self.library.RadarClient(
-                authentication, self.library.ClientSystemIdentifier(library_name, str(library_version)),
+
+        self._authentication = authentication
+        self._client = None
+
+    @property
+    def client(self):
+        if self._client:
+            return self._client
+
+        if self.authentication():
+            self._client = self.library.RadarClient(
+                self.authentication(), self.library.ClientSystemIdentifier(library_name, str(library_version)),
                 retry_policy=self.radarclient().RetryPolicy(),
             )
-        else:
-            self.client = None
+        return self._client
 
     def authentication(self):
+        if self._authentication:
+            return self._authentication
+
+        if not self.library:
+            return None
+
         identity = Environment.instance().get('RADAR_IDENTITY')
         username = Environment.instance().get('RADAR_USERNAME')
         password = Environment.instance().get('RADAR_PASSWORD')
@@ -149,15 +162,16 @@ class Tracker(GenericTracker):
 
         try:
             if identity and os.path.isdir(identity):
-                return self.library.AuthenticationStrategyNarrative(identity)
-            if username and password and totp_secret and totp_id:
-                return self.library.AuthenticationStrategySystemAccountOAuth(
+                self._authentication = self.library.AuthenticationStrategyNarrative(identity)
+            elif username and password and totp_secret and totp_id:
+                self._authentication = self.library.AuthenticationStrategySystemAccountOAuth(
                     username, password, totp_secret, totp_id,
                 )
-            return self.library.AuthenticationStrategyAppleConnect()
+            else:
+                self._authentication = self.library.AuthenticationStrategyAppleConnect()
         except Exception:
             sys.stderr.write('No valid authentication session for Radar\n')
-            return None
+        return self._authentication
 
     @classmethod
     def parse_id(cls, string):

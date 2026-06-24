@@ -35,7 +35,6 @@
 #import <WebCore/SecurityOriginData.h>
 #import <wtf/URL.h>
 
-using namespace WebCore;
 
 @implementation WebSecurityOrigin
 
@@ -43,7 +42,7 @@ using namespace WebCore;
 {
     WTF::initializeMainThread();
 
-    auto origin = SecurityOriginData::fromDatabaseIdentifier(String { databaseIdentifier });
+    auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(String { databaseIdentifier });
     if (!origin)
         return nil;
 
@@ -58,40 +57,40 @@ using namespace WebCore;
     if (!self)
         return nil;
 
-    _private = reinterpret_cast<WebSecurityOriginPrivate *>(&SecurityOrigin::create(URL([url absoluteURL])).leakRef());
+    _private = reinterpret_cast<WebSecurityOriginPrivate *>(&WebCore::SecurityOrigin::create(URL([url absoluteURL])).leakRef());
     return self;
 }
 
 - (NSString *)protocol
 {
-    return reinterpret_cast<SecurityOrigin*>(_private)->protocol().createNSString().autorelease();
+    return reinterpret_cast<WebCore::SecurityOrigin*>(_private)->protocol().createNSString().autorelease();
 }
 
 - (NSString *)host
 {
-    return reinterpret_cast<SecurityOrigin*>(_private)->host().createNSString().autorelease();
+    return reinterpret_cast<WebCore::SecurityOrigin*>(_private)->host().createNSString().autorelease();
 }
 
 - (NSString *)databaseIdentifier
 {
-    return reinterpret_cast<SecurityOrigin*>(_private)->data().databaseIdentifier().createNSString().autorelease();
+    return reinterpret_cast<WebCore::SecurityOrigin*>(_private)->data().databaseIdentifier().createNSString().autorelease();
 }
 
 #if PLATFORM(IOS_FAMILY)
 - (NSString *)toString
 {
-    return reinterpret_cast<SecurityOrigin*>(_private)->toString().createNSString().autorelease();
+    return reinterpret_cast<WebCore::SecurityOrigin*>(_private)->toString().createNSString().autorelease();
 }
 #endif
 
 - (NSString *)stringValue
 {
-    return reinterpret_cast<SecurityOrigin*>(_private)->toString().createNSString().autorelease();
+    return reinterpret_cast<WebCore::SecurityOrigin*>(_private)->toString().createNSString().autorelease();
 }
 
 - (unsigned short)port
 {
-    return reinterpret_cast<SecurityOrigin*>(_private)->port().value_or(0);
+    return reinterpret_cast<WebCore::SecurityOrigin*>(_private)->port().value_or(0);
 }
 
 // FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into an NSSet or is the key in an NSDictionary,
@@ -107,7 +106,7 @@ using namespace WebCore;
 - (void)dealloc
 {
     if (_private)
-        reinterpret_cast<SecurityOrigin*>(_private)->deref();
+        reinterpret_cast<WebCore::SecurityOrigin*>(_private)->deref();
     if (_databaseQuotaManager)
         [(NSObject *)_databaseQuotaManager release];
     [super dealloc];
@@ -117,7 +116,7 @@ using namespace WebCore;
 
 @implementation WebSecurityOrigin (WebInternal)
 
-- (id)_initWithWebCoreSecurityOrigin:(SecurityOrigin*)origin
+- (id)_initWithWebCoreSecurityOrigin:(WebCore::SecurityOrigin*)origin
 {
     ASSERT(origin);
     self = [super init];
@@ -132,13 +131,13 @@ using namespace WebCore;
 
 - (id)_initWithString:(NSString *)originString
 {
-    auto origin = SecurityOrigin::createFromString(originString);
+    auto origin = WebCore::SecurityOrigin::createFromString(originString);
     return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.ptr()]).autorelease();
 }
 
-- (SecurityOrigin *)_core
+- (WebCore::SecurityOrigin *)_core
 {
-    return reinterpret_cast<SecurityOrigin*>(_private);
+    return reinterpret_cast<WebCore::SecurityOrigin*>(_private);
 }
 
 @end
@@ -169,17 +168,17 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-    return DatabaseTracker::singleton().usage(reinterpret_cast<SecurityOrigin*>(_private)->data());
+    return WebCore::DatabaseTracker::singleton().usage(reinterpret_cast<WebCore::SecurityOrigin*>(_private)->data());
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseTracker::singleton().quota(reinterpret_cast<SecurityOrigin*>(_private)->data());
+    return WebCore::DatabaseTracker::singleton().quota(reinterpret_cast<WebCore::SecurityOrigin*>(_private)->data());
 }
 
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseTracker::singleton().setQuota(reinterpret_cast<SecurityOrigin*>(_private)->data(), quota);
+    WebCore::DatabaseTracker::singleton().setQuota(reinterpret_cast<WebCore::SecurityOrigin*>(_private)->data(), quota);
 }
 
 @end

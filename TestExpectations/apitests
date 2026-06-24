@@ -309,3 +309,35 @@ webkit.org/b/314846 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.PasteRichTextCopi
 webkit.org/b/314846 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.InsertPastedMapItemAsAttachment [ Skip ]
 webkit.org/b/315119 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.InsertPastedFilesAsAttachments [ Skip ]
 webkit.org/b/315119 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.InsertPastedContactAsAttachment [ Skip ]
+
+webkit.org/b/315673 [ mac release ] TestWebKitAPI.WritingTools.ProofreadingWithUntitledImageAttachment [ Pass Failure ]
+
+webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.Basic [ Pass Timeout ]
+webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.DestinationClickFraudPrevention [ Pass Timeout ]
+webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.EphemeralWithAttributedBundleIdentifier [ Pass Timeout ]
+webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.ManualAttributionAndConversion [ Pass Timeout ]
+
+webkit.org/b/316420 [ ios ] TestWebKitAPI.HSTS.Preconnect [ Pass Timeout ]
+
+webkit.org/b/316706 [ ios ] TestWebKitAPI.WritingTools.CompositionWithMultipleChunks [ Pass Timeout ]
+
+webkit.org/b/316807 [ mac ] TestWebKitAPI.EnhancedSecurityPolicies.OpenerThenSelfNavigationWithSiteIsolation [ Pass Crash ]
+
+webkit.org/b/316819 [ mac debug ] TestWebKitAPI.SiteIsolation.MultiProcessBFCacheSameSiteWithCrossSiteIframe [ Pass Crash ]
+
+webkit.org/b/316931 [ ios ] TestWebKitAPI.CopyHTML.SanitizationPreservesCharacterSetInSelectedText [ Pass Failure Crash ]
+
+webkit.org/b/317144 TestWebKitAPI.WKHTTPCookieStore.WebSocketCookiesFromRedirect [ Skip ]
+webkit.org/b/317144 TestWebKitAPI.WKHTTPCookieStore.WebSocketCookiesThroughRedirect [ Skip ]
+
+webkit.org/b/317214 [ mac ] TestWebKitAPI.MediaSessionTest.MinimalCommands [ Crash ]
+webkit.org/b/317214 [ mac ] TestWebKitAPI.NowPlayingTest.VideoElementWithMutedAudio [ Crash ]
+webkit.org/b/317214 [ mac ] TestWebKitAPI.NowPlayingTest.VideoElementWithoutAudio [ Crash ]
+webkit.org/b/317214 [ mac ] TestWebKitAPI.NowPlayingTest.VideoElementWithoutAudioPlayWithUserGesture [ Crash ]
+
+webkit.org/b/317676 TestWebKitAPI.SiteIsolation.NavigateFrameWithSiblingsBackForward [ Skip ]
+webkit.org/b/317676 TestWebKitAPI.SiteIsolation.NavigateIframeCrossOriginBackForwardAfterSessionRestoreToNewWebView [ Skip ]
+webkit.org/b/317676 TestWebKitAPI.SiteIsolation.NavigateIframeSameOriginBackForwardAfterSessionRestoreToNewWebView [ Skip ]
+webkit.org/b/317676 TestWebKitAPI.SiteIsolation.RestoreSessionFromAnotherWebView [ Skip ]
+
+webkit.org/b/317783 [ ios ] TestWebKitAPI.SiteIsolation.FindStringSelectionSameOriginFrameBeforeWrap [ Skip ]

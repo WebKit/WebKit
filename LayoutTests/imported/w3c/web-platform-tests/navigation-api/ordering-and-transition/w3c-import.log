@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download-intercept-reject.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/anchor-download.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/back-cross-document-event-order-with-pagehide.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/back-cross-document-event-order.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/back-same-document-intercept-reject.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/back-same-document-intercept.html
@@ -34,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-204-205-download-then-same-document.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-canceled.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-cross-document-double.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-cross-document-event-order-with-pagehide.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-cross-document-event-order.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-double-intercept.html
 /LayoutTests/imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-in-transition-finished.html

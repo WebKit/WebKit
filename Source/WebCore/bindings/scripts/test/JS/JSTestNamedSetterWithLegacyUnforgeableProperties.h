@@ -67,8 +67,12 @@ protected:
 
 class JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedSetterWithLegacyUnforgeableProperties*)

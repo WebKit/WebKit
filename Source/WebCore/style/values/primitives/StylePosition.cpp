@@ -26,9 +26,9 @@
 #include "StylePosition.h"
 
 #include "CSSPositionValue.h"
-#include "RenderStyle.h"
 #include "StyleBuilderChecking.h"
 #include "StyleCalculationTree.h"
+#include "StyleComputedStyle.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
@@ -176,7 +176,7 @@ static auto resolve(const CSS::FourComponentPositionVertical& value, const Build
     );
 }
 
-auto ToCSS<TwoComponentPositionHorizontal>::operator()(const TwoComponentPositionHorizontal& value, const RenderStyle& style) -> CSS::TwoComponentPositionHorizontal
+auto ToCSS<TwoComponentPositionHorizontal>::operator()(const TwoComponentPositionHorizontal& value, const Style::ComputedStyle& style) -> CSS::TwoComponentPositionHorizontal
 {
     return WTF::switchOn(value.offset,
         [&](const auto& value) {
@@ -190,7 +190,7 @@ auto ToStyle<CSS::TwoComponentPositionHorizontal>::operator()(const CSS::TwoComp
     return { PositionX { resolve(value, state) } };
 }
 
-auto ToCSS<TwoComponentPositionVertical>::operator()(const TwoComponentPositionVertical& value, const RenderStyle& style) -> CSS::TwoComponentPositionVertical
+auto ToCSS<TwoComponentPositionVertical>::operator()(const TwoComponentPositionVertical& value, const Style::ComputedStyle& style) -> CSS::TwoComponentPositionVertical
 {
     return WTF::switchOn(value.offset,
         [&](const auto& value) {
@@ -206,7 +206,7 @@ auto ToStyle<CSS::TwoComponentPositionVertical>::operator()(const CSS::TwoCompon
 
 // MARK: <position> conversion
 
-auto ToCSS<Position>::operator()(const Position& value, const RenderStyle& style) -> CSS::Position
+auto ToCSS<Position>::operator()(const Position& value, const Style::ComputedStyle& style) -> CSS::Position
 {
     return CSS::TwoComponentPositionHorizontalVertical {
         WTF::switchOn(value.x,
@@ -236,7 +236,7 @@ auto ToStyle<CSS::Position>::operator()(const CSS::Position& position, const Bui
 
 // MARK: <position-x> conversion
 
-auto ToCSS<PositionX>::operator()(const PositionX& value, const RenderStyle& style) -> CSS::PositionX
+auto ToCSS<PositionX>::operator()(const PositionX& value, const Style::ComputedStyle& style) -> CSS::PositionX
 {
     return WTF::switchOn(value,
         [&](const auto& value) {
@@ -256,7 +256,7 @@ auto ToStyle<CSS::PositionX>::operator()(const CSS::PositionX& positionX, const 
 
 // MARK: <position-y> conversion
 
-auto ToCSS<PositionY>::operator()(const PositionY& value, const RenderStyle& style) -> CSS::PositionY
+auto ToCSS<PositionY>::operator()(const PositionY& value, const Style::ComputedStyle& style) -> CSS::PositionY
 {
     return WTF::switchOn(value,
         [&](const auto& value) {

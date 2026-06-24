@@ -133,7 +133,7 @@ JSScope* JSHTMLElement::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObjec
     // https://bugs.webkit.org/show_bug.cgi?id=134932
     VM& vm = lexicalGlobalObject->vm();
     
-    scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, realm(), element->document())));
+    scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, realm(), protect(element->document()))));
 
     // The form is next, searched before the document, but after the element itself.
     if (auto* formAssociated = element->asFormAssociatedElement()) {

@@ -32,7 +32,6 @@
 #include "CSSBorderImageSliceValue.h"
 #include "CSSBorderImageSourceValue.h"
 #include "CSSBorderImageWidthValue.h"
-#include "CSSCalcValue.h"
 #include "CSSKeywordValueInlines.h"
 #include "CSSMaskBorderOutsetValue.h"
 #include "CSSMaskBorderRepeatValue.h"
@@ -42,11 +41,10 @@
 #include "CSSOffsetRotateValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
-#include "CSSQuadValue.h"
+#include "CSSUnevaluatedCalc.h"
 #include "CSSUnits.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
-#include "RectBase.h"
 #include <wtf/Variant.h>
 #include <wtf/text/ASCIILiteral.h>
 

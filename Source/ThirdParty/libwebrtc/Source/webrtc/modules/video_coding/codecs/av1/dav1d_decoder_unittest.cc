@@ -13,9 +13,9 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/video/color_space.h"
@@ -23,6 +23,7 @@
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -45,7 +46,7 @@ constexpr uint8_t kAv1FrameWithBT709FullRangeColorSpace[] = {
     0x22, 0x02, 0x02, 0x03, 0x08, 0x32, 0x0e, 0x10, 0x00, 0xac, 0x02, 0x05,
     0x14, 0x20, 0x81, 0x00, 0x02, 0x00, 0x95, 0xe1, 0xe0};
 
-EncodedImage CreateEncodedImage(ArrayView<const uint8_t> data) {
+EncodedImage CreateEncodedImage(std::span<const uint8_t> data) {
   EncodedImage image;
   image.SetEncodedData(EncodedImageBuffer::Create(data.data(), data.size()));
   return image;
@@ -90,7 +91,7 @@ class TestAv1Decoder : public DecodedImageCallback {
 };
 
 TEST(Dav1dDecoderTest, KeepsDecodedResolutionByDefault) {
-  TestAv1Decoder decoder(CreateEnvironment());
+  TestAv1Decoder decoder(CreateTestEnvironment());
   EXPECT_EQ(decoder.Decode(CreateEncodedImage(
                 kAv1FrameWith36x20EncodededAnd32x16RenderResolution)),
             WEBRTC_VIDEO_CODEC_OK);
@@ -119,7 +120,7 @@ TEST(Dav1dDecoderTest, DoesNotCropToRenderResolutionWhenCropIsDisabled) {
 }
 
 TEST(Dav1dDecoderTest, SetsColorSpaceOnDecodedFrame) {
-  TestAv1Decoder decoder(CreateEnvironment());
+  TestAv1Decoder decoder(CreateTestEnvironment());
   EXPECT_EQ(
       decoder.Decode(CreateEncodedImage(kAv1FrameWithBT709FullRangeColorSpace)),
       WEBRTC_VIDEO_CODEC_OK);
@@ -157,7 +158,7 @@ TEST(Dav1dDecoderTest, FailDecoderOnTiles) {
       0xbf, 0x51, 0xa3, 0x0d, 0xf4, 0xb6, 0x45, 0xd8, 0x16, 0xda, 0x8c,
       0xb0, 0xbf, 0x29, 0x39, 0xdf, 0x9a, 0x9e, 0x9c, 0x69, 0x80};
 
-  TestAv1Decoder decoder(CreateEnvironment());
+  TestAv1Decoder decoder(CreateTestEnvironment());
   decoder.Decode(CreateEncodedImage(kTile0));
   decoder.Decode(CreateEncodedImage(kTile1));
 }

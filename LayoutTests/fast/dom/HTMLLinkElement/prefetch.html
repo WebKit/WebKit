@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ dumpResourceResponseMIMETypes=* ] -->
 <body>
 <script>
 function log(message) {
@@ -12,7 +13,6 @@ function prefetch_onload() {
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
-    testRunner.dumpResourceResponseMIMETypes();
 }
 </script>
 <html>

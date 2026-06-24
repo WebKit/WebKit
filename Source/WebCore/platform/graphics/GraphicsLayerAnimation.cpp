@@ -64,7 +64,7 @@ bool GraphicsLayerAnimation::operator==(const GraphicsLayerAnimation& other) con
 
 TextStream& operator<<(TextStream& ts, const GraphicsLayerAnimation& animation)
 {
-    ts.dumpProperty("delay"_s, animation.iterationCount());
+    ts.dumpProperty("delay"_s, animation.delay());
     ts.dumpProperty("direction"_s, animation.direction());
     ts.dumpProperty("duration"_s, animation.duration());
     ts.dumpProperty("fill-mode"_s, animation.fillMode());

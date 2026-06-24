@@ -31,6 +31,7 @@
 #import "AdditionalReadAccessAllowedURLsProtocol.h"
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebKit/NSAttributedStringPrivate.h>

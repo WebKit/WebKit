@@ -1,0 +1,54 @@
+<!doctype html><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=false ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select">
+    <option>Apple</option>
+    <option selected>Banana</option>
+</select>
+
+<script>
+var output = "A base-appearance select's checked option renders a ::checkmark whose user-agent content is a check glyph (content: \"\\2713\"). That generated content is not a valid DOM position, so it must be excluded from the option's text-marker string.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+
+    setTimeout(async function() {
+        // The ::checkmark only renders once the picker is open, so expand it first.
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+
+        window.menu = findBaseSelectMenu(select);
+        window.checkedItem = menu.selectedChildAtIndex(0);
+        output += expect("checkedItem.role.toLowerCase().includes('menuitem')", "true");
+
+        // The checked option's text-marker string must contain its label but not the ::checkmark glyph
+        // (U+2713), which is generated content with no DOM node.
+        window.range = checkedItem.textMarkerRangeForElement(checkedItem);
+        window.markerString = checkedItem.stringForTextMarkerRange(range) || "";
+        output += `Checked option's text-marker string: "${markerString}"\n`;
+        output += expect("markerString.includes('Banana')", "true");
+        output += expect("markerString.includes(String.fromCharCode(0x2713))", "false");
+
+        // Close the picker.
+        select.press();
+        output += await expectAsync("select.isExpanded", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

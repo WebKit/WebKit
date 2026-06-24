@@ -29,6 +29,8 @@
 #include "../fipsmodule/bn/internal.h"
 
 
+using namespace bssl;
+
 int BN_bn2cbb_padded(CBB *out, size_t len, const BIGNUM *in) {
   uint8_t *ptr;
   return CBB_add_space(out, &ptr, len) && BN_bn2bin_padded(ptr, len, in);
@@ -198,7 +200,7 @@ int BN_hex2bn(BIGNUM **outp, const char *in) {
 char *BN_bn2dec(const BIGNUM *a) {
   // It is easier to print strings little-endian, so we assemble it in reverse
   // and fix at the end.
-  bssl::ScopedCBB cbb;
+  ScopedCBB cbb;
   if (!CBB_init(cbb.get(), 16) || //
       !CBB_add_u8(cbb.get(), 0 /* trailing NUL */)) {
     return nullptr;
@@ -209,7 +211,7 @@ char *BN_bn2dec(const BIGNUM *a) {
       return nullptr;
     }
   } else {
-    bssl::UniquePtr<BIGNUM> copy(BN_dup(a));
+    UniquePtr<BIGNUM> copy(BN_dup(a));
     if (copy == nullptr) {
       return nullptr;
     }

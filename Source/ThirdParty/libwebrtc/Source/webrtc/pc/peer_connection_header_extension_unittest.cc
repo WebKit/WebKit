@@ -23,6 +23,7 @@
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/rtp_transceiver_interface.h"
@@ -37,9 +38,11 @@
 #include "rtc_base/socket_server.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 
@@ -100,7 +103,7 @@ class PeerConnectionHeaderExtensionTest
         CreateModularPeerConnectionFactory(std::move(factory_dependencies));
 
     auto fake_port_allocator = std::make_unique<FakePortAllocator>(
-        CreateEnvironment(), socket_server_.get());
+        CreateTestEnvironment(), socket_server_.get());
     auto observer = std::make_unique<MockPeerConnectionObserver>();
     PeerConnectionInterface::RTCConfiguration config;
     if (semantics)
@@ -116,7 +119,7 @@ class PeerConnectionHeaderExtensionTest
   }
 
   std::unique_ptr<SocketServer> socket_server_;
-  AutoSocketServerThread main_thread_;
+  test::RunLoop main_thread_;
   std::vector<RtpHeaderExtensionCapability> extensions_;
 };
 
@@ -615,7 +618,7 @@ TEST_P(PeerConnectionHeaderExtensionUnifiedPlanTest,
                                       Field(&RtpExtension::uri, "uri3"),
                                       Field(&RtpExtension::uri, "uri4")));
   // Check uri1's id still matches the remote id.
-  EXPECT_EQ(extensions[0].id, 5);
+  EXPECT_EQ(extensions[0].id, RtpHeaderExtensionId(5));
 }
 
 TEST_P(PeerConnectionHeaderExtensionUnifiedPlanTest,
@@ -671,7 +674,7 @@ TEST_P(PeerConnectionHeaderExtensionUnifiedPlanTest,
                         ->rtp_header_extensions();
   EXPECT_THAT(extensions, ElementsAre(Field(&RtpExtension::uri, "uri1")));
   // Check uri1's id still matches the remote id.
-  EXPECT_EQ(extensions[0].id, 5);
+  EXPECT_EQ(extensions[0].id, RtpHeaderExtensionId(5));
 }
 
 TEST_P(PeerConnectionHeaderExtensionUnifiedPlanTest,

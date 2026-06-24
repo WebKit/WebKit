@@ -20,6 +20,7 @@
 #include "simple_path_builder_delegate.h"
 #include "test_helpers.h"
 #include "trust_store.h"
+#include "trust_store_in_memory.h"
 #include "verify_certificate_chain_typed_unittest.h"
 
 BSSL_NAMESPACE_BEGIN
@@ -35,7 +36,7 @@ class VerifyCertificateChainTestDelegate {
     CertPathErrors errors;
     std::set<der::Input> user_constrained_policy_set;
     VerifyCertificateChain(
-        test.chain, test.last_cert_trust, &delegate, test.time,
+        test.chain, TrustAnchor(test.last_cert_trust), &delegate, test.time,
         test.key_purpose, test.initial_explicit_policy,
         test.user_initial_policy_set, test.initial_policy_mapping_inhibit,
         test.initial_any_policy_inhibit, &user_constrained_policy_set, &errors);

@@ -27,7 +27,7 @@
 #include "InlineContentConstrainer.h"
 
 #include "InlineLineBuilder.h"
-#include "RenderStyle+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <limits>
 #include <ranges>
 #include <wtf/MathExtras.h>
@@ -297,7 +297,9 @@ void InlineContentConstrainer::initialize()
 
     // Cache inline item widths after laying out all inline content with LineBuilder.
     updateCachedWidths();
-    m_numberOfLinesInOriginalLayout = lineIndex;
+    // Derive the line count from the actually-recorded lines so the line-clamp early
+    // break path does not under-count by one.
+    m_numberOfLinesInOriginalLayout = m_originalLineConstraints.size();
 
     // Do not adjust single line content.
     if (m_numberOfLinesInOriginalLayout == 1)

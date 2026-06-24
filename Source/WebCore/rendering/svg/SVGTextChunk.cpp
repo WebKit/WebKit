@@ -23,10 +23,10 @@
 #include "SVGTextChunk.h"
 
 #include "RenderSVGInlineText.h"
-#include "RenderStyle+GettersInlines.h"
 #include "SVGInlineTextBoxInlines.h"
 #include "SVGTextContentElement.h"
 #include "SVGTextFragment.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include <ranges>
 
 namespace WebCore {
@@ -57,6 +57,7 @@ SVGTextChunk::SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>& lin
     }
 
     if (RefPtr textContentElement = SVGTextContentElement::elementFromRenderer(firstBox->renderer().parent())) {
+        m_textContentElement = textContentElement.get();
         SVGLengthContext lengthContext(textContentElement.get());
         m_desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);
 
@@ -129,7 +130,8 @@ float SVGTextChunk::totalAnchorShift() const
 
 void SVGTextChunk::layout(SVGChunkTransformMap& textBoxTransformations) const
 {
-    if (hasDesiredTextLength()) {
+    // ElementGroup mode: textLength was already applied by SVGTextChunkBuilder. webkit.org/b/61855.
+    if (hasDesiredTextLength() && m_textLengthLayoutMode == TextLengthLayoutMode::SingleChunk) {
         if (hasLengthAdjustSpacing())
             processTextLengthSpacingCorrection();
         else {

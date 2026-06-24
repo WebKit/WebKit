@@ -188,7 +188,7 @@ bool OpenXRCoordinator::collectSwapchainFormatsIfNeeded()
     return true;
 }
 
-std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t width, uint32_t height, bool alpha) const
+std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t width, uint32_t height, bool alpha, uint32_t faceCount) const
 {
     // Even if alpha is false we always ask for the RGBA8 format, as the DRM_FORMAT_RGB8 is not supported by ANGLE.
     // In this case we ignore the alpha channel by using DRM_FORMAT_XRGB8888 when exporting the texture.
@@ -202,7 +202,7 @@ std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t wid
     info.width = width;
     info.height = height;
     info.mipCount = 1;
-    info.faceCount = 1;
+    info.faceCount = faceCount;
     info.sampleCount = sampleCount;
     info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
 
@@ -267,6 +267,20 @@ void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType 
 #endif
     }
 
+    if (type == PlatformXR::CompositionLayerType::Cube) {
+#if !defined(XR_KHR_composition_layer_cube)
+        RELEASE_LOG(XR, "OpenXRCoordinator: cube layer not supported (XR_KHR_composition_layer_cube not defined)");
+        reply(std::nullopt);
+        return;
+#else
+        if (!OpenXRExtensions::singleton().isExtensionSupported(XR_KHR_COMPOSITION_LAYER_CUBE_EXTENSION_NAME ""_span)) {
+            RELEASE_LOG(XR, "OpenXRCoordinator: cube layer extension not supported");
+            reply(std::nullopt);
+            return;
+        }
+#endif
+    }
+
     WTF::switchOn(m_state,
         [&](Idle&) { reply(std::nullopt); },
         [&](Active& active) {
@@ -280,7 +294,8 @@ void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType 
                 }
 
                 bool alpha = false;
-                auto swapchain = createSwapchain(size.width(), size.height(), alpha);
+                uint32_t faceCount = type == PlatformXR::CompositionLayerType::Cube ? 6 : 1;
+                auto swapchain = createSwapchain(size.width(), size.height(), alpha, faceCount);
                 if (!swapchain) {
                     RELEASE_LOG(XR, "OpenXRCoordinator: failed to create swapchain");
                     callOnMainRunLoop([completion = WTF::move(completionHandler)] mutable {
@@ -304,6 +319,15 @@ void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType 
                 case PlatformXR::CompositionLayerType::Cylinder:
 #if defined(XR_KHR_composition_layer_cylinder)
                     layer = OpenXRCylinderLayer::create(WTF::move(swapchain), layout);
+#endif
+                    break;
+                case PlatformXR::CompositionLayerType::Cube:
+#if defined(XR_KHR_composition_layer_cube)
+                    ASSERT(layout == PlatformXR::LayerLayout::Mono || layout == PlatformXR::LayerLayout::Stereo);
+                    if (layout == PlatformXR::LayerLayout::Mono)
+                        layer = OpenXRCubeLayer::create(WTF::move(swapchain), nullptr, layout);
+                    else if (auto rightSwapchain = createSwapchain(size.width(), size.height(), alpha, faceCount))
+                        layer = OpenXRCubeLayer::create(WTF::move(swapchain), WTF::move(rightSwapchain), layout);
 #endif
                     break;
                 }
@@ -680,6 +704,10 @@ void OpenXRCoordinator::createInstance()
 #if defined(XR_KHR_composition_layer_cylinder)
     if (OpenXRExtensions::singleton().isExtensionSupported(XR_KHR_COMPOSITION_LAYER_CYLINDER_EXTENSION_NAME ""_span))
         extensions.append(const_cast<char*>(XR_KHR_COMPOSITION_LAYER_CYLINDER_EXTENSION_NAME));
+#endif
+#if defined(XR_KHR_composition_layer_cube)
+    if (OpenXRExtensions::singleton().isExtensionSupported(XR_KHR_COMPOSITION_LAYER_CUBE_EXTENSION_NAME ""_span))
+        extensions.append(const_cast<char*>(XR_KHR_COMPOSITION_LAYER_CUBE_EXTENSION_NAME));
 #endif
 
     XrInstanceCreateInfo createInfo = createOpenXRStruct<XrInstanceCreateInfo, XR_TYPE_INSTANCE_CREATE_INFO >();

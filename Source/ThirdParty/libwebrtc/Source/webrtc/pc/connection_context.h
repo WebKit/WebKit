@@ -84,6 +84,9 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
     return media_engine_.get();
   }
 
+  VoiceChannelFactoryInterface* voice_channel_factory();
+  VideoChannelFactoryInterface* video_channel_factory();
+
   bool is_configured_for_media() const { return is_configured_for_media_; }
 
   Thread* signaling_thread() { return signaling_thread_; }

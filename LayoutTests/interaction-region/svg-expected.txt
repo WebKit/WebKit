@@ -52,15 +52,7 @@
           (opacity 0.60)
           (drawsContent 1)
           (event region
-            (rect (245,40) width=70 height=14)
-            (rect (6,54) width=164 height=57)
-            (rect (245,54) width=70 height=57)
-            (rect (6,111) width=164 height=27)
-            (rect (235,155) width=90 height=4)
-            (rect (23,159) width=54 height=46)
-            (rect (235,159) width=90 height=46)
-            (rect (23,205) width=54 height=7)
-            (rect (8,216) width=160 height=80)
+            (rect (0,0) width=400 height=400)
 
           (interaction regions [
             (interaction (6,54) width=164 height=84)
@@ -81,7 +73,7 @@
           (opacity 0.60)
           (drawsContent 1)
           (event region
-            (rect (0,133) width=367 height=267)
+            (rect (0,0) width=400 height=400)
 
           (interaction regions [
             (interaction (0,133.33) width=366.67 height=266.67)
@@ -94,7 +86,7 @@
           (opacity 0.60)
           (drawsContent 1)
           (event region
-            (rect (66,0) width=334 height=267)
+            (rect (0,0) width=400 height=400)
 
           (interaction regions [
             (interaction (66.67,0) width=333.33 height=266.67)

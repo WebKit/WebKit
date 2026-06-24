@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ dumpResourceResponseMIMETypes=* ] -->
 <html>
 <head>
 <script>
@@ -9,7 +10,6 @@ function finishUp() {
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
-    testRunner.dumpResourceResponseMIMETypes();
 }
 </script>
 <link href="resources/prefetch-purpose.py" rel="prefetch" onload="finishUp()">

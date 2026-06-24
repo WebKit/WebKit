@@ -2,7 +2,8 @@
 PASS basic sibling-index() test
 PASS basic sibling-count() test
 PASS sibling-index() in calc() with percentage
-PASS sibling-count() on pseudo-element
+PASS sibling-index() and sibling-count() on pseudo-element
+FAIL sibling-index() and sibling-count() on nested pseudo-element assert_equals: expected "4" but got ""
 PASS sibling-index() on root
 PASS sibling-count() on root
 

@@ -67,8 +67,12 @@ protected:
 
 class JSTestNamedAndIndexedSetterNoIdentifierOwner final : public JSC::WeakHandleOwner {
 public:
+    JSTestNamedAndIndexedSetterNoIdentifierOwner() = default;
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+
+private:
+    explicit JSTestNamedAndIndexedSetterNoIdentifierOwner(ClangVTableWorkaroundTag);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedAndIndexedSetterNoIdentifier*)

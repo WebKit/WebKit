@@ -35,12 +35,12 @@
 #include "RenderSVGResourceClipperInlines.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
-#include "RenderStyle.h"
 #include "RenderView.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGUseElement.h"
 #include "SVGVisitedRendererTracking.h"
+#include "StyleComputedStyle.h"
 #include "StyleTransformResolver.h"
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -49,7 +49,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceClipper);
 
-RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, RenderStyle&& style)
+RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, Style::ComputedStyle&& style)
     : RenderSVGResourceContainer(Type::SVGResourceClipper, element, WTF::move(style))
 {
     ASSERT(isRenderSVGResourceClipper());
@@ -287,7 +287,7 @@ void RenderSVGResourceClipper::updateFromStyle()
     updateHasSVGTransformFlags();
 }
 
-void RenderSVGResourceClipper::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
+void RenderSVGResourceClipper::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
     applySVGTransform(transform, protect(clipPathElement()), style, boundingBox, std::nullopt, std::nullopt, options);
@@ -298,7 +298,7 @@ bool RenderSVGResourceClipper::needsHasSVGTransformFlags() const
     return protect(clipPathElement())->hasTransformRelatedAttributes();
 }
 
-void RenderSVGResourceClipper::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
+void RenderSVGResourceClipper::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 

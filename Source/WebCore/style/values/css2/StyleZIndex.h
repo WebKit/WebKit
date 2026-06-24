@@ -27,13 +27,11 @@
 #include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
-
-class RenderStyleProperties;
-
 namespace Style {
 
 class BoxData;
 class ComputedStyleBase;
+class ComputedStyleProperties;
 
 // <'z-index'> = auto | <integer>
 // https://drafts.csswg.org/css2/#propdef-z-index
@@ -85,8 +83,6 @@ private:
     friend class BoxData;
     friend class ComputedStyleBase;
     friend class ComputedStyleProperties;
-    friend class WebCore::RenderStyle;
-    friend class WebCore::RenderStyleProperties;
 
     constexpr ZIndex(bool isAuto, Value value)
         : m_isAuto { isAuto }

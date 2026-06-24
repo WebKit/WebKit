@@ -12,10 +12,10 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <span>
 #include <tuple>
 #include <vector>
 
-#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -33,7 +33,7 @@ void PopulateChannels(std::vector<float>& channel0,
 
 void VerifyCrossFade(float value_begin,
                      float value_end,
-                     ArrayView<const float> channel_data) {
+                     std::span<const float> channel_data) {
   const float one_by_num_samples_per_channel = 1.0f / channel_data.size();
   for (size_t k = 0; k < channel_data.size(); ++k) {
     const float expected_value =
@@ -44,7 +44,7 @@ void VerifyCrossFade(float value_begin,
 }
 
 void VerifyConstantValue(float expected_value,
-                         ArrayView<const float> channel_data) {
+                         std::span<const float> channel_data) {
   for (size_t k = 0; k < channel_data.size(); ++k) {
     EXPECT_NEAR(channel_data[k], expected_value, 1e-3);
   }

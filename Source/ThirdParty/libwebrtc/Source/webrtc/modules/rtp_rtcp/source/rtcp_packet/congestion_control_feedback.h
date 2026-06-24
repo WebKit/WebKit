@@ -12,9 +12,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/transport/ecn_marking.h"
 #include "api/units/time_delta.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
@@ -50,7 +50,7 @@ class CongestionControlFeedback : public Rtpfb {
 
   bool Parse(const CommonHeader& packet);
 
-  ArrayView<const PacketInfo> packets() const { return packets_; }
+  std::span<const PacketInfo> packets() const { return packets_; }
 
   uint32_t report_timestamp_compact_ntp() const {
     return report_timestamp_compact_ntp_;

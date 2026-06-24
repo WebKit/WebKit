@@ -27,7 +27,7 @@
 #include "CSSQuotesValue.h"
 
 #include "CSSValuePool.h"
-#include "DeprecatedCSSOMValue.h"
+#include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 
 namespace WebCore {
 
@@ -54,7 +54,7 @@ bool CSSQuotesValue::equals(const CSSQuotesValue& other) const
     return m_quotes == other.m_quotes;
 }
 
-Ref<DeprecatedCSSOMValue> CSSQuotesValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CSSQuotesValue::customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
 {
     return CSS::createDeprecatedCSSOMValue(CSSValuePool::singleton(), owner, m_quotes);
 }

@@ -90,7 +90,9 @@ static void initializeNetworkSettings()
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
     m_isParentProcessFullWebBrowserOrRunningTest = parameters.isParentProcessFullWebBrowserOrRunningTest;
-
+#if PLATFORM(IOS_FAMILY)
+    m_containerTemporaryDirectory = parameters.containerTemporaryDirectory;
+#endif
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;

@@ -28,6 +28,9 @@
 #include "../internal.h"
 #include "internal.h"
 
+
+using namespace bssl;
+
 static int v3_check_critical(const char **value);
 static int v3_check_generic(const char **value);
 static X509_EXTENSION *do_ext_nconf(const CONF *conf, const X509V3_CTX *ctx,
@@ -226,14 +229,14 @@ static int v3_check_generic(const char **value) {
 static X509_EXTENSION *v3_generic_extension(const char *ext, const char *value,
                                             int crit, int gen_type,
                                             const X509V3_CTX *ctx) {
-  bssl::UniquePtr<ASN1_OBJECT> obj(OBJ_txt2obj(ext, 0));
+  UniquePtr<ASN1_OBJECT> obj(OBJ_txt2obj(ext, 0));
   if (obj == nullptr) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_EXTENSION_NAME_ERROR);
     ERR_add_error_data(2, "name=", ext);
     return nullptr;
   }
 
-  bssl::UniquePtr<unsigned char> ext_der;
+  UniquePtr<unsigned char> ext_der;
   size_t ext_len = 0;
   if (gen_type == 1) {
     ext_der.reset(x509v3_hex_to_bytes(value, &ext_len));
@@ -252,7 +255,7 @@ static X509_EXTENSION *v3_generic_extension(const char *ext, const char *value,
     return nullptr;
   }
 
-  bssl::UniquePtr<ASN1_OCTET_STRING> oct(ASN1_OCTET_STRING_new());
+  UniquePtr<ASN1_OCTET_STRING> oct(ASN1_OCTET_STRING_new());
   if (oct == nullptr) {
     return nullptr;
   }
@@ -308,7 +311,7 @@ int X509V3_EXT_add_nconf(const CONF *conf, const X509V3_CTX *ctx,
                          const char *section, X509 *cert) {
   STACK_OF(X509_EXTENSION) **sk = nullptr;
   if (cert) {
-    sk = &cert->extensions;
+    sk = &FromOpaque(cert)->extensions;
   }
   return X509V3_EXT_add_nconf_sk(conf, ctx, section, sk);
 }
@@ -344,8 +347,8 @@ int X509V3_EXT_REQ_add_nconf(const CONF *conf, const X509V3_CTX *ctx,
 
 // Config database functions
 
-const STACK_OF(CONF_VALUE) *X509V3_get_section(const X509V3_CTX *ctx,
-                                               const char *section) {
+const STACK_OF(CONF_VALUE) *bssl::X509V3_get_section(const X509V3_CTX *ctx,
+                                                     const char *section) {
   if (ctx->db == nullptr) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_OPERATION_NOT_DEFINED);
     return nullptr;

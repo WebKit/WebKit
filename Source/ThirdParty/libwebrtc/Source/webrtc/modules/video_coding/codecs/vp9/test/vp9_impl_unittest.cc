@@ -14,15 +14,16 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <tuple>
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
 #include "absl/memory/memory.h"
-#include "api/array_view.h"
 #include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
+#include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "api/test/create_frame_generator.h"
 #include "api/test/frame_generator_interface.h"
@@ -31,6 +32,7 @@
 #include "api/units/timestamp.h"
 #include "api/video/color_space.h"
 #include "api/video/encoded_image.h"
+#include "api/video/i420_buffer.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_codec_type.h"
@@ -58,10 +60,13 @@
 #include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
 #include "modules/video_coding/utility/vp9_uncompressed_header_parser.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mappable_native_buffer.h"
+#include "test/testsupport/file_utils.h"
+#include "test/testsupport/frame_reader.h"
 #include "test/video_codec_settings.h"
 #include "third_party/libvpx/source/libvpx/vpx/vp8cx.h"
 #include "third_party/libvpx/source/libvpx/vpx/vpx_codec.h"
@@ -269,6 +274,55 @@ TEST_P(TestVp9ImplForPixelFormat, CheckPresentationTimestamp) {
             encoded_frame.PresentationTimestamp()->us());
 }
 
+TEST_F(TestVp9Impl, RejectsI420FramesWithUnequalChromaStrides) {
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, kSettings));
+
+  auto buffer = I420Buffer::Create(
+      /*width=*/kWidth,
+      /*height=*/kHeight,
+      /*stride_y=*/kWidth,
+      /*stride_u=*/(kWidth + 1) / 2,
+      /*stride_v=*/(kWidth + 1) / 2 + 1);
+
+  VideoFrame frame = VideoFrame::Builder()
+                         .set_video_frame_buffer(buffer)
+                         .set_rtp_timestamp(0)
+                         .build();
+
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERROR, encoder_->Encode(frame, nullptr));
+}
+
+TEST_F(TestVp9Impl, RejectsNativeFramesWithUnequalChromaStrides) {
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, kSettings));
+
+  class FakeNativeBuffer : public VideoFrameBuffer {
+   public:
+    FakeNativeBuffer(int width, int height) : width_(width), height_(height) {}
+    Type type() const override { return Type::kNative; }
+    int width() const override { return width_; }
+    int height() const override { return height_; }
+    scoped_refptr<I420BufferInterface> ToI420() override {
+      return I420Buffer::Create(width_, height_, width_, (width_ + 1) / 2,
+                                (width_ + 1) / 2 + 1);
+    }
+
+   private:
+    int width_;
+    int height_;
+  };
+
+  auto buffer = make_ref_counted<FakeNativeBuffer>(kWidth, kHeight);
+
+  VideoFrame frame = VideoFrame::Builder()
+                         .set_video_frame_buffer(buffer)
+                         .set_rtp_timestamp(0)
+                         .build();
+
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERROR, encoder_->Encode(frame, nullptr));
+}
+
 TEST_F(TestVp9Impl, SwitchInputPixelFormatsWithoutReconfigure) {
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Encode(NextInputFrame(), nullptr));
   EncodedImage encoded_frame;
@@ -290,8 +344,55 @@ TEST_F(TestVp9Impl, SwitchInputPixelFormatsWithoutReconfigure) {
   ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
 }
 
+TEST_F(TestVp9Impl, PostEncodeFrameDrop) {
+  // To trigger post-encode frame drop, encode a frame of a high complexity
+  // using a medium bitrate, then reduce the bitrate and encode the same frame
+  // again.
+  // Using a medium bitrate for the first frame prevents quality and QP
+  // saturation. Encoding the same content twice prevents scene change
+  // detection. The second frame overshoots RC buffer and provokes post-encode
+  // drop.
+  VideoFrame input_frame =
+      VideoFrame::Builder()
+          .set_video_frame_buffer(
+              test::CreateYuvFrameReader(
+                  test::ResourcePath("photo_1850_1110", "yuv"),
+                  {.width = 1850, .height = 1110})
+                  ->PullFrame())
+          .build();
+
+  VideoBitrateAllocation allocation;
+  allocation.SetBitrate(0, 0, 10000000);
+
+  codec_settings_.width = input_frame.width();
+  codec_settings_.height = input_frame.height();
+  codec_settings_.startBitrate = allocation.get_sum_kbps();
+  codec_settings_.SetFrameDropEnabled(true);
+  ConfigureSvc(codec_settings_, 1, 1);
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, kSettings));
+
+  encoder_->SetRates(VideoEncoder::RateControlParameters(
+      allocation, codec_settings_.maxFramerate));
+
+  input_frame.set_rtp_timestamp(1 * kVideoPayloadTypeFrequency /
+                                codec_settings_.maxFramerate);
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Encode(input_frame, nullptr));
+  EXPECT_EQ(GetNumEncodedFrames(), 1u);
+
+  allocation.SetBitrate(0, 0, 1000);
+  encoder_->SetRates(VideoEncoder::RateControlParameters(
+      allocation, codec_settings_.maxFramerate));
+
+  input_frame.set_rtp_timestamp(2 * kVideoPayloadTypeFrequency /
+                                codec_settings_.maxFramerate);
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Encode(input_frame, nullptr));
+  EXPECT_EQ(GetNumEncodedFrames(), 1u);
+}
+
 TEST(Vp9ImplTest, ParserQpEqualsEncodedQp) {
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   encoder->InitEncode(&codec_settings, kSettings);
 
@@ -308,7 +409,8 @@ TEST(Vp9ImplTest, ParserQpEqualsEncodedQp) {
 }
 
 TEST(Vp9ImplTest, EncodeAttachesTemplateStructureWithSvcController) {
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   EXPECT_EQ(encoder->InitEncode(&codec_settings, kSettings),
             WEBRTC_VIDEO_CODEC_OK);
@@ -328,7 +430,8 @@ TEST(Vp9ImplTest, EncodeAttachesTemplateStructureWithSvcController) {
 }
 
 TEST(Vp9ImplTest, EncoderWith2TemporalLayers) {
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   // Tl0PidIdx is only used in non-flexible mode.
   codec_settings.VP9()->flexibleMode = false;
@@ -351,7 +454,8 @@ TEST(Vp9ImplTest, EncoderWith2TemporalLayers) {
 }
 
 TEST(Vp9ImplTest, EncodeTemporalLayersWithSvcController) {
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   ConfigureSvc(codec_settings, /*num_spatial_layers=*/1,
                /*num_temporal_layers=*/2);
@@ -381,7 +485,8 @@ TEST(Vp9ImplTest, EncodeTemporalLayersWithSvcController) {
 }
 
 TEST(Vp9ImplTest, EncoderWith2SpatialLayers) {
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   ConfigureSvc(codec_settings, /*num_spatial_layers=*/2);
   EXPECT_EQ(encoder->InitEncode(&codec_settings, kSettings),
@@ -399,7 +504,8 @@ TEST(Vp9ImplTest, EncoderWith2SpatialLayers) {
 }
 
 TEST(Vp9ImplTest, EncodeSpatialLayersWithSvcController) {
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   ConfigureSvc(codec_settings, /*num_spatial_layers=*/2);
   EXPECT_EQ(encoder->InitEncode(&codec_settings, kSettings),
@@ -662,7 +768,8 @@ TEST(Vp9ImplTest, EnableDisableSpatialLayersWithSvcController) {
   // Note: bit rate allocation is high to avoid frame dropping due to rate
   // control, the encoder should always produce a frame. A dropped
   // frame indicates a problem and the test will fail.
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   ConfigureSvc(codec_settings, num_spatial_layers);
   codec_settings.SetFrameDropEnabled(true);
@@ -729,7 +836,8 @@ MATCHER_P2(GenericLayerIs, spatial_id, temporal_id, "") {
 }
 
 TEST(Vp9ImplTest, SpatialUpswitchNotAtGOFBoundary) {
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   ConfigureSvc(codec_settings, /*num_spatial_layers=*/3,
                /*num_temporal_layers=*/3);
@@ -935,7 +1043,8 @@ TEST(Vp9ImplTest, DisableEnableBaseLayerWithSvcControllerTriggersKeyFrame) {
   // Must not be multiple of temporal period to exercise all code paths.
   const size_t num_frames_to_encode = 5;
 
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   ConfigureSvc(codec_settings, num_spatial_layers, num_temporal_layers);
   codec_settings.SetFrameDropEnabled(false);
@@ -2017,7 +2126,8 @@ TEST_P(Vp9ImplWithLayeringTest, FlexibleMode) {
   // encoder and writes it into RTP payload descriptor. Check that reference
   // list in payload descriptor matches the predefined one, which is used
   // in non-flexible mode.
-  std::unique_ptr<VideoEncoder> encoder = CreateVp9Encoder(CreateEnvironment());
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateVp9Encoder(CreateTestEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   codec_settings.VP9()->flexibleMode = true;
   codec_settings.SetFrameDropEnabled(false);
@@ -2065,7 +2175,7 @@ TEST_P(Vp9ImplWithLayeringTest, FlexibleMode) {
     if (picture_idx == 0) {
       EXPECT_EQ(vp9.num_ref_pics, 0) << "Frame " << i;
     } else {
-      EXPECT_THAT(MakeArrayView(vp9.p_diff, vp9.num_ref_pics),
+      EXPECT_THAT(std::span(vp9.p_diff, vp9.num_ref_pics),
                   UnorderedElementsAreArray(gof.pid_diff[gof_idx],
                                             gof.num_ref_pics[gof_idx]))
           << "Frame " << i;
@@ -2371,7 +2481,7 @@ TEST_F(TestVp9Impl, ScalesInputToActiveResolution) {
   // Keep a raw pointer for EXPECT calls and the like. Ownership is otherwise
   // passed on to LibvpxVp9Encoder.
   auto* const vpx = new NiceMock<MockLibvpxInterface>();
-  LibvpxVp9Encoder encoder(CreateEnvironment(), {},
+  LibvpxVp9Encoder encoder(CreateTestEnvironment(), {},
                            absl::WrapUnique<LibvpxInterface>(vpx));
 
   VideoCodec settings = DefaultCodecSettings();
@@ -2469,7 +2579,7 @@ TEST_F(TestVp9Impl, ReportFrameDroppedOnZeroSizePacket) {
   // Keep a raw pointer for EXPECT calls and the like. Ownership is otherwise
   // passed on to LibvpxVp9Encoder.
   auto* const vpx = new NiceMock<MockLibvpxInterface>();
-  LibvpxVp9Encoder encoder(CreateEnvironment(), {},
+  LibvpxVp9Encoder encoder(CreateTestEnvironment(), {},
                            absl::WrapUnique<LibvpxInterface>(vpx));
 
   VideoCodec settings = DefaultCodecSettings();
@@ -2560,7 +2670,7 @@ TEST_F(TestVp9Impl, ReportFrameDroppedOnLayerDrop) {
   // Keep a raw pointer for EXPECT calls and the like. Ownership is otherwise
   // passed on to LibvpxVp9Encoder.
   auto* const vpx = new NiceMock<MockLibvpxInterface>();
-  LibvpxVp9Encoder encoder(CreateEnvironment(), {},
+  LibvpxVp9Encoder encoder(CreateTestEnvironment(), {},
                            absl::WrapUnique<LibvpxInterface>(vpx));
 
   VideoCodec settings = DefaultCodecSettings();

@@ -18,13 +18,14 @@ from ..executors.executorwktr import (  # noqa: F401
 )
 
 
-__wptrunner__ = {"product": "WebKitTestRunner",
+__wptrunner__ = {"product": "wktr",
                  "check_args": "check_args",
                  "browser": "WKTRBrowser",
                  "executor": {
                      "crashtest": "WKTRCrashtestExecutor",
                      "reftest": "WKTRRefTestExecutor",
                      "testharness": "WKTRTestharnessExecutor",
+                     "test262": "WKTRTestharnessExecutor",
                  },
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",
@@ -82,7 +83,7 @@ class WKTRBrowser(Browser):
     """
 
     def __init__(self, logger, binary="WebKitTestRunner", binary_args=[], **kwargs):
-        super().__init__(logger)
+        super().__init__(logger, **kwargs)
 
         self._args = [binary] + binary_args
         self._proc = None

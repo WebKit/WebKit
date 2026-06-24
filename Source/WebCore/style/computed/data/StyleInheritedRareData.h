@@ -105,6 +105,10 @@ public:
 #endif
 
     float usedZoom;
+    // This lives here so that we can access the device scale factor cheaply during
+    // layout in order to perform pixel snapping for StyleLineWidth evaluations.
+    // Otherwise, we get significant regressions on performance benchmarks.
+    float deviceScaleFactor;
     WebkitTextStrokeWidth textStrokeWidth;
 
     Color textStrokeColor;

@@ -195,6 +195,10 @@ template<typename Descriptor> bool componentsRequireConversionData(const CSSColo
 constexpr auto AlphaComponent = CSSColorComponent<CSS::Percentage<>, CSS::Number<>, CSS::Keyword::None> { .symbol = CSSValueAlpha, .min = 0.0, .max = 1.0 };
 constexpr auto AlphaLegacyComponent = CSSColorComponent<CSS::Percentage<>, CSS::Number<>> { .symbol = CSSValueAlpha, .min = 0.0, .max = 1.0 };
 
+struct AlphaDescriptor {
+    static constexpr auto components = std::make_tuple(AlphaComponent);
+};
+
 // MARK: - Color Function Descriptors
 
 // <modern-rgb-syntax>  =  rgb( [<number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )

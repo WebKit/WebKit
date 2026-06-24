@@ -27,13 +27,20 @@
 #include <openssl/digest.h>
 #include <openssl/hmac.h>
 #include <openssl/sha2.h>
+#include <openssl/tls_prf.h>
 
 #include "../bcm_support.h"
 #include "../internal.h"
 #include "bcm_interface.h"
 
+// The .cc.inc files are not written as headers, but .cc files which we
+// currently need to combine together in the style of a unity or jumbo build.
+// -Wheader-hygiene interprets them as headers.
+//
 // TODO(crbug.com/362530616): When delocate is removed, build these files as
 // separate compilation units again.
+OPENSSL_CLANG_PRAGMA("clang diagnostic push")
+OPENSSL_CLANG_PRAGMA("clang diagnostic ignored \"-Wheader-hygiene\"")
 #include "aes/aes.cc.inc"
 #include "aes/aes_nohw.cc.inc"
 #include "aes/cbc.cc.inc"
@@ -80,7 +87,6 @@
 #include "ec/ec_montgomery.cc.inc"
 #include "ec/felem.cc.inc"
 #include "ec/oct.cc.inc"
-#include "ec/p224-64.cc.inc"
 #include "ec/p256-nistz.cc.inc"
 #include "ec/p256.cc.inc"
 #include "ec/scalar.cc.inc"
@@ -96,9 +102,9 @@
 #include "keccak/keccak.cc.inc"
 #include "mldsa/mldsa.cc.inc"
 #include "mlkem/mlkem.cc.inc"
+#include "rand/android_entropy_client.cc.inc"
 #include "rand/ctrdrbg.cc.inc"
 #include "rand/rand.cc.inc"
-#include "rsa/blinding.cc.inc"
 #include "rsa/padding.cc.inc"
 #include "rsa/rsa.cc.inc"
 #include "rsa/rsa_impl.cc.inc"
@@ -114,7 +120,10 @@
 #include "slhdsa/thash.cc.inc"
 #include "slhdsa/wots.cc.inc"
 #include "tls/kdf.cc.inc"
+OPENSSL_CLANG_PRAGMA("clang diagnostic pop")
 
+
+using namespace bssl;
 
 #if defined(BORINGSSL_FIPS)
 
@@ -125,7 +134,7 @@
 // the location of the integrity hash, respectively.
 extern const uint8_t BORINGSSL_bcm_text_start[];
 extern const uint8_t BORINGSSL_bcm_text_end[];
-extern const uint8_t BORINGSSL_bcm_text_hash[];
+extern const uint8_t BORINGSSL_bcm_text_hash[SHA256_DIGEST_LENGTH];
 #if defined(BORINGSSL_SHARED_LIBRARY)
 extern const uint8_t BORINGSSL_bcm_rodata_start[];
 extern const uint8_t BORINGSSL_bcm_rodata_end[];
@@ -194,7 +203,7 @@ err:
 }
 
 #if !defined(OPENSSL_ASAN)
-int BORINGSSL_integrity_test(void) {
+int BORINGSSL_integrity_test() {
   const uint8_t *const start = BORINGSSL_bcm_text_start;
   const uint8_t *const end = BORINGSSL_bcm_text_end;
 
@@ -220,7 +229,6 @@ int BORINGSSL_integrity_test(void) {
   assert_within(rodata_start, kPKCS1SigPrefixes, rodata_end);
 
   uint8_t result[SHA256_DIGEST_LENGTH];
-  const EVP_MD *const kHashFunction = EVP_sha256();
   if (!boringssl_self_test_sha256() || !boringssl_self_test_hmac_sha256()) {
     return 0;
   }
@@ -229,7 +237,7 @@ int BORINGSSL_integrity_test(void) {
   unsigned result_len;
   HMAC_CTX hmac_ctx;
   HMAC_CTX_init(&hmac_ctx);
-  if (!HMAC_Init_ex(&hmac_ctx, kHMACKey, sizeof(kHMACKey), kHashFunction,
+  if (!HMAC_Init_ex(&hmac_ctx, kHMACKey, sizeof(kHMACKey), EVP_sha256(),
                     nullptr /* no ENGINE */)) {
     fprintf(CRYPTO_get_stderr(), "HMAC_Init_ex failed.\n");
     return 0;
@@ -249,16 +257,13 @@ int BORINGSSL_integrity_test(void) {
 #endif
   BORINGSSL_maybe_set_module_text_permissions(PROT_EXEC);
 
-  if (!HMAC_Final(&hmac_ctx, result, &result_len) ||
-      result_len != sizeof(result)) {
+  if (!HMAC_Final(&hmac_ctx, result, &result_len)) {
     fprintf(CRYPTO_get_stderr(), "HMAC failed.\n");
     return 0;
   }
   HMAC_CTX_cleanse(&hmac_ctx);  // FIPS 140-3, AS05.10.
 
-  const uint8_t *expected = BORINGSSL_bcm_text_hash;
-
-  if (!BORINGSSL_check_test(expected, result, sizeof(result),
+  if (!BORINGSSL_check_test(BORINGSSL_bcm_text_hash, Span(result, result_len),
                             "FIPS integrity test")) {
 #if !defined(BORINGSSL_FIPS_BREAK_TESTS)
     return 0;
@@ -269,11 +274,11 @@ int BORINGSSL_integrity_test(void) {
   return 1;
 }
 
-const uint8_t *FIPS_module_hash(void) { return BORINGSSL_bcm_text_hash; }
+const uint8_t *FIPS_module_hash() { return BORINGSSL_bcm_text_hash; }
 
 #endif  // OPENSSL_ASAN
 
-void BORINGSSL_FIPS_abort(void) {
+void bssl::BORINGSSL_FIPS_abort() {
   for (;;) {
     abort();
     exit(1);

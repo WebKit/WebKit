@@ -1,3 +1,162 @@
+2026-05-22 v3.14.1
+  This release is ABI compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.14.0..v3.14.1 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * b:513603812: NULL Pointer Dereference in validate_img
+      (av1_cx_iface.c) with 10-bit monochrome input
+    * oss-fuzz:514006304: Increase ctx->cx_data_sz to 2.5x uncomp frame
+      size
+
+2026-05-12 v3.14.0
+  This release is ABI compatible with the last release.
+
+  This release includes significant compression efficiency and
+  perceptual quality improvements for layered image encoding, in
+  addition to bug fixes.
+
+  The `build` directory in the source tree was removed and the original
+  build/cmake directory was moved up one level. If you use the CMake
+  toolchain files in the original build/cmake/toolchains directory,
+  they are now in the cmake/toolchains directory.
+
+  The unsupported aom_img_fmt_t enum constants AOM_IMG_FMT_AOMYV12 and
+  AOM_IMG_FMT_AOMI420 are deprecated and will be removed in a future
+  release. Do not use them.
+
+  The new codec controls AV1E_SET_EXTERNAL_RATE_CONTROL (including the
+  new aom_rc_funcs_t struct and the new "aom/aom_ext_ratectrl.h" and
+  "aom/aom_tpl.h" headers) and AV1E_GET_GOP_INFO (including the new
+  aom_gop_info_t struct) have the experimental API status and are NOT
+  part of the stable API. Applications that need the backward
+  compatibility of the stable API must not use
+  AV1E_SET_EXTERNAL_RATE_CONTROL and AV1E_GET_GOP_INFO.
+
+  - New Features
+    * Tuning modes AOM_TUNE_IQ and AOM_TUNE_SSIMULACRA2 now work with
+      inter-frame encoding modes (good-quality and realtime), enabling
+      efficient layered image encoding.
+    * Variance Boost (deltaq-mode 6) support has been extended to
+      include good-quality and realtime modes.
+    * New value 2 for use_fixed_qp_offsets: disallow the application of
+      per-frame QP offsets, enabling full control of each frame's QP, by
+      adjusting rc_cfg.cq_level between each encoded frame.
+    * Low complexity decode mode (the encoder optimizations that produce
+      encoded bitstreams that can be decoded at low computational
+      complexity) now supports good-quality encoding (speed 1 to 3) for
+      not only vertical videos (608p to 1080p) but also horizontal
+      videos (720p to 1080p).
+    * Realtime encoding with non-zero lookahead is supported, for
+      !REALTME_ONLY_CONFIG.
+    * New AOM_EFLAG_FREEZE_INTERNAL_STATE flag for aom_codec_encode() to
+      encode a frame without updating encoder state such as reference
+      buffers, CDF tables, and rate control state. Useful for
+      speculative encoding.
+    * New aom_matrix_coefficients_t enum constants:
+      - AOM_CICP_MC_IPT_C2 (15): IPT-C2
+      - AOM_CICP_MC_YCGCO_RE (16): YCgCo-Re
+      - AOM_CICP_MC_YCGCO_RO (17): YCgCo-Ro
+    * New aom_metadata_insert_flags_t enum constants for adding
+      layer-specific metadata OBUs:
+      - AOM_MIF_NON_KEY_FRAME_LAYER_SPECIFIC: Adds layer-specific
+        metadata if it's not a keyframe
+      - AOM_MIF_KEY_FRAME_LAYER_SPECIFIC: Adds layer-specific metadata
+        only if it's a keyframe
+      - AOM_MIF_ANY_FRAME_LAYER_SPECIFIC: Adds layer-specific metadata
+        to any type of frame
+    * Experimental: New codec control AV1E_SET_EXTERNAL_RATE_CONTROL to
+      enable an external rate control library. Not part of the stable
+      API.
+    * Experimental: New codec control AV1E_GET_GOP_INFO to get the GOP
+      structure from the encoder. Not part of the stable API.
+    * New codec control AOME_SET_VALIDATE_HBD_INPUT to validate high
+      bitdepth (HBD) input and ensure that every pixel is within the
+      valid range. The corresponding option for aom_codec_set_option()
+      is "validate-hbd-input".
+    * New codec control AOMD_SET_FRAME_SIZE_LIMIT to set the maximum
+      frame size for a decoder
+
+  - Compression Efficiency Improvements
+    * When encoding 2-layered images with AOM_TUNE_IQ vs. AOM_TUNE_SSIM:
+      - Good-quality mode: up to 15% gains at similar SSIMULACRA 2
+        scores.
+      - Realtime mode: up to 30% gains at similar SSIMULACRA 2 scores.
+    * Enable screen detection mode 2 (anti-aliased text and graphics
+      aware) in all-intra mode.
+    * Some minor quantization matrix formula and delta chroma q tweaks
+      for the AOM_TUNE_SSIMULACRA2 tuning mode, with up to 0.2%
+      SSIMULACRA 2 score efficiency gains.
+    * Re-tune and re-work encoder features, achieving coding gains at
+      each speed level and better coding efficiency vs complexity
+      tradeoff (an estimated 20-30% encoder time reduction with about
+      1-5% vmaf gains).
+    * RTC screen: improvements to quality and scroll detection for high
+      resolutions.
+
+  - Perceptual Quality Improvements
+    * AOM_TUNE_IQ improves the visual quality of layered image encoding
+      compared to AOM_TUNE_SSIM.
+    * Adaptive sharpness: tweak loop filter sharpness threshold to
+      improve visual quality at QPs 29 and 30.
+    * Improve encoder algorithms in loop restoration, CDEF, temporal
+      filter and rate control, delivering better visual quality.
+
+  - Speedups
+    * Make Adaptive CDEF more decoder friendly by limiting CDEF
+      application to only regions where high filter strengths are
+      needed.
+    * Encoder complexity is reduced significantly, especially at speed
+      1 to 3.
+    * Further AArch64 SIMD optimization of filtering algorithms,
+      particularly using Armv8.6 Neon I8MM.
+    * Additional tweaks to AArch64 Neon paths for quantization, SAD,
+      subpel variance and intra-predictors.
+
+  - Bug Fixes
+    * Commit 4cc0867f: fix multithreading crashes when loop restoration
+      filtering is used by the encoder.
+    * Commit 74aaa1ef: fix AOM_SCALING_MODE crashes when compound mask
+      prediction modes are used by the encoder.
+    * b:502030569: Avoid assertion failure in `read_uncompressed_header`
+      triggered by fuzzed input
+    * b:503197490: Fix an integer overflow in target bits calculation
+    * b:503691210: Avoid reference to uninitialized member variables for
+      multi workers.
+    * b:504317456: Handle buffer pointer in LAP mode to avoid overflow
+    * b:502133197: Avoid a bitread assertion failure in
+      get_av1config_from_obu()
+
+2026-04-02 v3.13.3
+  This release includes several bug fixes. This release is ABI
+  compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.13.2..v3.13.3 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * Commit 4cc0867f: fix multithreading crashes when loop restoration
+      filtering is used by the encoder.
+    * Commit 74aaa1ef: fix AOM_SCALING_MODE crashes when compound mask
+      prediction modes are used by the encoder.
+
+2026-03-17 v3.13.2
+  This release includes several bug fixes. This release is ABI
+  compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.13.1..v3.13.2 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * x86: enable SSE4.2 in x86_simd_caps
+      https://aomedia-review.googlesource.com/206481
+    * b:448994065: Working nasm-3.0.0 is not detected with libaom on
+      3.13.1
+    * b:480978101: Heap buffer overflow in av1_copy_and_extend_frame
+      during encode triggered by NV12/bordered image with size_align
+    * b:487259772: Out-of-bounds heap read in VP9 encoder via WebCodecs
+      VideoEncoder dimension reconfiguration
+    * b:489473886: Invalid memory read access in aom_sse_avx2 (Mozilla
+      report)
+
 2025-09-05 v3.13.1
   This release is ABI compatible with the last release.
 

@@ -11,10 +11,10 @@
 #ifndef RTC_BASE_COPY_ON_WRITE_BUFFER_H_
 #define RTC_BASE_COPY_ON_WRITE_BUFFER_H_
 
-#include <stdint.h>
-
-#include <algorithm>
-#include <cstring>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <span>
 #include <type_traits>
 #include <utility>
 
@@ -30,12 +30,24 @@ namespace webrtc {
 
 class RTC_EXPORT CopyOnWriteBuffer {
  public:
+  using const_iterator = std::span<const uint8_t>::iterator;
+
   // An empty buffer.
   CopyOnWriteBuffer();
   // Share the data with an existing buffer.
   CopyOnWriteBuffer(const CopyOnWriteBuffer& buf);
+  CopyOnWriteBuffer& operator=(const CopyOnWriteBuffer& buf) = default;
+
   // Move contents from an existing buffer.
   CopyOnWriteBuffer(CopyOnWriteBuffer&& buf) noexcept;
+  CopyOnWriteBuffer& operator=(CopyOnWriteBuffer&& buf) {
+    RTC_DCHECK(IsConsistent());
+    RTC_DCHECK(buf.IsConsistent());
+    buffer_ = std::exchange(buf.buffer_, nullptr);
+    offset_ = std::exchange(buf.offset_, 0);
+    size_ = std::exchange(buf.size_, 0);
+    return *this;
+  }
 
   // Construct a buffer from a string, convenient for unittests.
   explicit CopyOnWriteBuffer(absl::string_view s);
@@ -56,11 +68,7 @@ class RTC_EXPORT CopyOnWriteBuffer {
                 internal::BufferCompat<uint8_t, T>::value>::type* = nullptr>
   CopyOnWriteBuffer(const T* data, size_t size, size_t capacity)
       : CopyOnWriteBuffer(size, capacity) {
-    if (buffer_) {
-      std::memcpy(buffer_->data(), data, size);
-      offset_ = 0;
-      size_ = size;
-    }
+    SetData(data, size);
   }
 
   // Construct a buffer from the contents of an array.
@@ -115,7 +123,7 @@ class RTC_EXPORT CopyOnWriteBuffer {
       return nullptr;
     }
     UnshareAndEnsureCapacity(capacity());
-    return buffer_->data<T>() + offset_;
+    return reinterpret_cast<T*>(buffer_->data().subspan(offset_).data());
   }
 
   // Get const pointer to the data. This will not create a copy of the
@@ -124,11 +132,7 @@ class RTC_EXPORT CopyOnWriteBuffer {
             typename std::enable_if<
                 internal::BufferCompat<uint8_t, T>::value>::type* = nullptr>
   const T* cdata() const {
-    RTC_DCHECK(IsConsistent());
-    if (!buffer_) {
-      return nullptr;
-    }
-    return buffer_->data<T>() + offset_;
+    return reinterpret_cast<const T*>(AsConstSpan().data());
   }
 
   bool empty() const { return size_ == 0; }
@@ -143,40 +147,14 @@ class RTC_EXPORT CopyOnWriteBuffer {
     return buffer_ ? buffer_->capacity() - offset_ : 0;
   }
 
-  const uint8_t* begin() const { return data(); }
-  const uint8_t* end() const { return data() + size_; }
-
-  CopyOnWriteBuffer& operator=(const CopyOnWriteBuffer& buf) {
-    RTC_DCHECK(IsConsistent());
-    RTC_DCHECK(buf.IsConsistent());
-    if (&buf != this) {
-      buffer_ = buf.buffer_;
-      offset_ = buf.offset_;
-      size_ = buf.size_;
-    }
-    return *this;
-  }
-
-  CopyOnWriteBuffer& operator=(CopyOnWriteBuffer&& buf) {
-    RTC_DCHECK(IsConsistent());
-    RTC_DCHECK(buf.IsConsistent());
-    buffer_ = std::move(buf.buffer_);
-    offset_ = buf.offset_;
-    size_ = buf.size_;
-    buf.offset_ = 0;
-    buf.size_ = 0;
-    return *this;
-  }
+  const_iterator begin() const { return AsConstSpan().begin(); }
+  const_iterator end() const { return AsConstSpan().end(); }
 
   bool operator==(const CopyOnWriteBuffer& buf) const;
 
-  bool operator!=(const CopyOnWriteBuffer& buf) const {
-    return !(*this == buf);
-  }
-
   uint8_t operator[](size_t index) const {
     RTC_DCHECK_LT(index, size());
-    return cdata()[index];
+    return AsConstSpan()[index];
   }
 
   // Replace the contents of the buffer. Accepts the same types as the
@@ -185,18 +163,7 @@ class RTC_EXPORT CopyOnWriteBuffer {
             typename std::enable_if<
                 internal::BufferCompat<uint8_t, T>::value>::type* = nullptr>
   void SetData(const T* data, size_t size) {
-    RTC_DCHECK(IsConsistent());
-    if (!buffer_) {
-      buffer_ = size > 0 ? new RefCountedBuffer(data, size) : nullptr;
-    } else if (!buffer_->HasOneRef()) {
-      buffer_ = new RefCountedBuffer(data, size, capacity());
-    } else {
-      buffer_->SetData(data, size);
-    }
-    offset_ = 0;
-    size_ = size;
-
-    RTC_DCHECK(IsConsistent());
+    Set(std::span(reinterpret_cast<const uint8_t*>(data), size));
   }
 
   template <typename T,
@@ -207,38 +174,14 @@ class RTC_EXPORT CopyOnWriteBuffer {
     SetData(array, N);
   }
 
-  void SetData(const CopyOnWriteBuffer& buf) {
-    RTC_DCHECK(IsConsistent());
-    RTC_DCHECK(buf.IsConsistent());
-    if (&buf != this) {
-      buffer_ = buf.buffer_;
-      offset_ = buf.offset_;
-      size_ = buf.size_;
-    }
-  }
+  void SetData(const CopyOnWriteBuffer& buf) { *this = buf; }
 
   // Append data to the buffer. Accepts the same types as the constructors.
   template <typename T,
             typename std::enable_if<
                 internal::BufferCompat<uint8_t, T>::value>::type* = nullptr>
   void AppendData(const T* data, size_t size) {
-    RTC_DCHECK(IsConsistent());
-    if (!buffer_) {
-      buffer_ = new RefCountedBuffer(data, size);
-      offset_ = 0;
-      size_ = size;
-      RTC_DCHECK(IsConsistent());
-      return;
-    }
-
-    UnshareAndEnsureCapacity(std::max(capacity(), size_ + size));
-
-    buffer_->SetSize(offset_ +
-                     size_);  // Remove data to the right of the slice.
-    buffer_->AppendData(data, size);
-    size_ += size;
-
-    RTC_DCHECK(IsConsistent());
+    Append(std::span(reinterpret_cast<const uint8_t*>(data), size));
   }
 
   template <typename T,
@@ -291,7 +234,32 @@ class RTC_EXPORT CopyOnWriteBuffer {
   }
 
  private:
-  using RefCountedBuffer = FinalRefCountedObject<Buffer>;
+  class RTC_EXPORT RawBuffer {
+   public:
+    explicit RawBuffer(size_t size);
+
+    std::span<uint8_t> data() { return std::span(data_.get(), size_); }
+    size_t capacity() const { return size_; }
+
+   private:
+    const size_t size_;
+    const std::unique_ptr<uint8_t[]> data_;
+  };
+  using RefCountedBuffer = FinalRefCountedObject<RawBuffer>;
+
+  static scoped_refptr<RefCountedBuffer> CreateBuffer(size_t capacity);
+
+  std::span<const uint8_t> AsConstSpan() const {
+    RTC_DCHECK(IsConsistent());
+    if (buffer_ == nullptr) {
+      return {};
+    }
+    return buffer_->data().subspan(offset_, size_);
+  }
+
+  void Set(std::span<const uint8_t> buffer);
+  void Append(std::span<const uint8_t> buffer);
+
   // Create a copy of the underlying data if it is referenced from other Buffer
   // objects or there is not enough capacity.
   void UnshareAndEnsureCapacity(size_t new_capacity);
@@ -299,8 +267,7 @@ class RTC_EXPORT CopyOnWriteBuffer {
   // Pre- and postcondition of all methods.
   bool IsConsistent() const {
     if (buffer_) {
-      return buffer_->capacity() > 0 && offset_ <= buffer_->size() &&
-             offset_ + size_ <= buffer_->size();
+      return buffer_->capacity() > 0 && offset_ + size_ <= buffer_->capacity();
     } else {
       return size_ == 0 && offset_ == 0;
     }

@@ -31,8 +31,8 @@
 #include <WebCore/RenderObjectNode.h>
 #include <WebCore/RenderObjectStyle.h>
 #include <WebCore/RenderReplaced.h>
-#include <WebCore/RenderStyle+GettersInlines.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/StyleComputedStyle+GettersInlines.h>
 #include <WebCore/VisibleRectContext.h>
 
 namespace WebCore {
@@ -64,16 +64,11 @@ inline TreeScope& RenderObject::treeScopeForSVGReferences() const
     return m_node->treeScopeForSVGReferences();
 }
 
-inline CheckedRef<const RenderStyle> RenderObject::firstLineStyle() const
+inline CheckedRef<const Style::ComputedStyle> RenderObject::firstLineStyle() const
 {
     if (isRenderText())
         return protect(parent())->firstLineStyle();
     return downcast<RenderElement>(*this).firstLineStyle();
-}
-
-inline LocalFrame& RenderObject::frame() const
-{
-    return *document().frame();
 }
 
 inline Page& RenderObject::page() const
@@ -101,10 +96,10 @@ inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
         setLayerNeedsFullRepaint();
 }
 
-inline void RenderObject::setNeedsLayoutAndPreferredWidthsUpdate()
+inline void RenderObject::setNeedsLayoutAndInvalidateContentLogicalWidths()
 {
     setNeedsLayout();
-    setNeedsPreferredWidthsUpdate();
+    invalidateContentLogicalWidths();
 }
 
 inline bool RenderObject::isNonReplacedAtomicInlineLevelBox() const

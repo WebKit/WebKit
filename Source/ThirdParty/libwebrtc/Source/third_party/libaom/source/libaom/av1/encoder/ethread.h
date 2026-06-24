@@ -111,12 +111,15 @@ void av1_cdef_mse_calc_frame_mt(AV1_COMP *cpi);
 
 void av1_cdef_mt_dealloc(AV1CdefSync *cdef_sync);
 
-void av1_write_tile_obu_mt(
-    AV1_COMP *const cpi, uint8_t *const dst, uint32_t *total_size,
-    struct aom_write_bit_buffer *saved_wb, uint8_t obu_extn_header,
-    const FrameHeaderInfo *fh_info, int *const largest_tile_id,
-    unsigned int *max_tile_size, uint32_t *const obu_header_size,
-    uint8_t **tile_data_start, const int num_workers);
+void av1_write_tile_obu_mt(AV1_COMP *const cpi, uint8_t *const dst,
+                           size_t dst_size, uint32_t *total_size,
+                           struct aom_write_bit_buffer *saved_wb,
+                           uint8_t obu_extn_header,
+                           const FrameHeaderInfo *fh_info,
+                           int *const largest_tile_id,
+                           unsigned int *max_tile_size,
+                           uint32_t *const obu_header_size,
+                           uint8_t **tile_data_start, const int num_workers);
 
 int av1_compute_num_fp_contexts(AV1_PRIMARY *ppi, AV1EncoderConfig *oxcf);
 

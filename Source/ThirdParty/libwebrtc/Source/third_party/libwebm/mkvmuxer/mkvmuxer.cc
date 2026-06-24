@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 
+#include <algorithm>
 #include <cfloat>
 #include <climits>
 #include <cstdio>
@@ -649,6 +650,93 @@ uint64_t ContentEncoding::EncryptionSize() const {
 
 ///////////////////////////////////////////////////////////////
 //
+// BlockAdditionMapping Class
+BlockAdditionMapping::BlockAdditionMapping(uint64_t value, const char* name,
+                                           uint64_t type,
+                                           const uint8* extra_data,
+                                           uint64_t extra_data_size)
+    : value_(value), type_(type), extra_data_size_(extra_data_size) {
+  if (name) {
+    const size_t length = strlen(name) + 1;
+    char* temp_str = new (std::nothrow) char[length];  // NOLINT
+    if (!temp_str)
+      return;
+
+    memcpy(temp_str, name, length - 1);
+    temp_str[length - 1] = '\0';
+
+    name_ = temp_str;
+  } else {
+    name_ = NULL;
+  }
+  if (extra_data && extra_data_size_) {
+    uint8_t* temp = new (std::nothrow) uint8_t[extra_data_size];  // NOLINT
+    if (!temp)
+      return;
+    memcpy(temp, extra_data, static_cast<size_t>(extra_data_size));
+    extra_data_ = temp;
+  } else {
+    extra_data_ = NULL;
+    extra_data_size_ = 0;
+  }
+}
+
+BlockAdditionMapping::~BlockAdditionMapping() {
+  delete[] name_;
+  delete[] extra_data_;
+}
+
+uint64_t BlockAdditionMapping::PayloadSize() const {
+  return EbmlElementSize(libwebm::kMkvBlockAddIdValue,
+                         static_cast<uint64>(value_)) +
+         (name_ ? EbmlElementSize(libwebm::kMkvBlockAddIdName, name_) : 0) +
+         EbmlElementSize(libwebm::kMkvBlockAddIdType,
+                         static_cast<uint64>(type_)) +
+         (extra_data_
+              ? EbmlElementSize(libwebm::kMkvBlockAddIdExtraData, extra_data_,
+                                static_cast<uint64>(extra_data_size_))
+              : 0);
+}
+
+uint64_t BlockAdditionMapping::Size() const {
+  const uint64_t payload_size = PayloadSize();
+  return EbmlMasterElementSize(libwebm::kMkvBlockAdditionMapping,
+                               payload_size) +
+         payload_size;
+}
+
+bool BlockAdditionMapping::Write(IMkvWriter* writer) const {
+  const uint64_t size = Size();
+  const int64_t payload_position = writer->Position();
+  if (payload_position < 0)
+    return false;
+
+  if (!WriteEbmlMasterElement(writer, libwebm::kMkvBlockAdditionMapping,
+                              PayloadSize()))
+    return false;
+  if (!WriteEbmlElement(writer, libwebm::kMkvBlockAddIdValue,
+                        static_cast<uint64>(value_)))
+    return false;
+  if (name_ && !WriteEbmlElement(writer, libwebm::kMkvBlockAddIdName, name_))
+    return false;
+  if (!WriteEbmlElement(writer, libwebm::kMkvBlockAddIdType,
+                        static_cast<uint64>(type_)))
+    return false;
+  if (extra_data_ &&
+      !WriteEbmlElement(writer, libwebm::kMkvBlockAddIdExtraData, extra_data_,
+                        static_cast<uint64>(extra_data_size_)))
+    return false;
+
+  const int64_t stop_position = writer->Position();
+  if (stop_position < 0 ||
+      stop_position - payload_position != static_cast<int64_t>(size))
+    return false;
+
+  return true;
+}
+
+///////////////////////////////////////////////////////////////
+//
 // Track Class
 
 Track::Track(unsigned int* seed)
@@ -719,6 +807,18 @@ ContentEncoding* Track::GetContentEncodingByIndex(uint32_t index) const {
   return content_encoding_entries_[index];
 }
 
+bool Track::AddBlockAdditionMapping(uint64_t value, const char* name,
+                                    uint64_t type, const uint8_t* extra_data,
+                                    uint64_t extra_data_size) {
+  if ((extra_data_size && !extra_data) || (!extra_data_size && extra_data)) {
+    return false;
+  }
+  block_addition_mappings_.emplace_back(value, name, type, extra_data,
+                                        extra_data_size);
+  max_block_additional_id_ = std::max(max_block_additional_id_, value);
+  return true;
+}
+
 uint64_t Track::PayloadSize() const {
   uint64_t size =
       EbmlElementSize(libwebm::kMkvTrackNumber, static_cast<uint64>(number_));
@@ -749,7 +849,9 @@ uint64_t Track::PayloadSize() const {
     size += EbmlElementSize(libwebm::kMkvDefaultDuration,
                             static_cast<uint64>(default_duration_));
   }
-
+  for (const auto& block_addition_mapping : block_addition_mappings_) {
+    size += block_addition_mapping.Size();
+  }
   if (content_encoding_entries_size_ > 0) {
     uint64_t content_encodings_size = 0;
     for (uint32_t i = 0; i < content_encoding_entries_size_; ++i) {
@@ -876,6 +978,11 @@ bool Track::Write(IMkvWriter* writer) const {
   if (stop_position < 0 ||
       stop_position - payload_position != static_cast<int64_t>(size))
     return false;
+
+  for (const auto& block_addition_mapping : block_addition_mappings_) {
+    if (!block_addition_mapping.Write(writer))
+      return false;
+  }
 
   if (content_encoding_entries_size_ > 0) {
     uint64_t content_encodings_size = 0;
@@ -4023,7 +4130,7 @@ bool Segment::UpdateChunkName(const char* ext, char** name) const {
   memcpy(&str[chunking_base_name_length], ext_chk, ext_chk_length);
   str[chunking_base_name_length + ext_chk_length] = '\0';
 
-  delete[] * name;
+  delete[] *name;
   *name = str;
 
   return true;
@@ -4152,12 +4259,14 @@ bool Segment::WriteFramesLessThan(uint64_t timestamp) {
         doc_type_version_ = 4;
       if (!cluster->AddFrame(frame_prev)) {
         delete frame_prev;
+        ++shift_left;
         continue;
       }
 
       if (new_cuepoint_ && cues_track_ == frame_prev->track_number()) {
         if (!AddCuePoint(frame_prev->timestamp(), cues_track_)) {
           delete frame_prev;
+          ++shift_left;
           continue;
         }
       }

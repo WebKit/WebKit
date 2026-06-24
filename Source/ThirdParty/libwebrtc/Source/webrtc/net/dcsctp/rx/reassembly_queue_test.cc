@@ -14,9 +14,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
+#include <span>
 #include <vector>
 
-#include "api/array_view.h"
 #include "net/dcsctp/common/handover_testing.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
@@ -103,7 +103,7 @@ TEST_F(ReassemblyQueueTest, SingleUnorderedChunkMessage) {
 
 TEST_F(ReassemblyQueueTest, LargeUnorderedChunkAllPermutations) {
   std::vector<uint32_t> tsns = {10, 11, 12, 13};
-  webrtc::ArrayView<const uint8_t> payload(kLongPayload);
+  std::span<const uint8_t> payload(kLongPayload);
   do {
     ReassemblyQueue reasm("log: ", kBufferSize);
 
@@ -138,7 +138,7 @@ TEST_F(ReassemblyQueueTest, SingleOrderedChunkMessage) {
 
 TEST_F(ReassemblyQueueTest, ManySmallOrderedMessages) {
   std::vector<uint32_t> tsns = {10, 11, 12, 13};
-  webrtc::ArrayView<const uint8_t> payload(kLongPayload);
+  std::span<const uint8_t> payload(kLongPayload);
   do {
     ReassemblyQueue reasm("log: ", kBufferSize);
     for (size_t i = 0; i < tsns.size(); i++) {
@@ -348,7 +348,7 @@ TEST_F(ReassemblyQueueTest, UnorderedInterleavedMessagesAllPermutations) {
   StreamID stream_ids[] = {StreamID(1), StreamID(2), StreamID(1),
                            StreamID(1), StreamID(2), StreamID(2)};
   FSN fsns[] = {FSN(0), FSN(0), FSN(1), FSN(2), FSN(1), FSN(2)};
-  webrtc::ArrayView<const uint8_t> payload(kSixBytePayload);
+  std::span<const uint8_t> payload(kSixBytePayload);
   do {
     ReassemblyQueue reasm("log: ", kBufferSize,
                           /*use_message_interleaving=*/true);

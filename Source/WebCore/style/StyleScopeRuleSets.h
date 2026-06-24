@@ -27,6 +27,7 @@
 #include "UserAgentStyle.h"
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -46,6 +47,20 @@ enum class DeclarationOrigin : uint8_t;
 class InspectorCSSOMWrappers;
 class Resolver;
 
+// Properties of a :has() argument used to limit sibling-combinator invalidation visits.
+enum class HasArgumentProperty : uint8_t {
+    // The argument depends on sibling order/position (a sibling combinator or a sibling-relative pseudo-class
+    // anywhere). Order-insensitive arguments don't need sibling-combinator invalidation visits — the changed
+    // element's own SelfOrDescendant traversal covers them — so they are skipped there to avoid re-walking the
+    // bearer subtree on every mutation.
+    OrderSensitive = 1 << 0,
+    // The order-sensitivity is *purely* structural sibling combinators (+/~) with no positional or stateful
+    // pseudo-classes (recursing into :is()/:where()/:not()). For these an element's match depends only on itself
+    // and its preceding siblings, so the hasAlreadyMatchedAndMutationIsIrrelevant short-circuit can be applied on
+    // sibling-combinator visits when the mutation is at the end of the element list.
+    StructuralSibling = 1 << 1,
+};
+
 struct InvalidationRuleSet {
     RefPtr<RuleSet> ruleSet;
     // Invalidation selectors are used for attribute selector and :has() invalidation.
@@ -55,12 +70,13 @@ struct InvalidationRuleSet {
     CSSSelectorList invalidationSelectors;
     MatchElement matchElement;
     IsNegation isNegation;
+    OptionSet<HasArgumentProperty> hasArgumentProperties;
     // Selector for the :has() scope element, used to bound invalidation traversal.
     //   - Specific selectors: strong scope.
     //   - Universal `*`: weak scope (bearer has no compound peer); scope element is still
     //     DOM-identifiable relative to a changed element.
-    //   - Empty: scope-breaking (nested :is()/:not() reaches outside the scope).
-    CSSSelectorList scopeSelector;
+    //   - Null: scope-breaking (nested :is()/:not() reaches outside the scope).
+    RefPtr<const RefCountedCSSSelectorList> scopeSelector;
 };
 
 enum class SelectorsForStyleAttribute : uint8_t { None, SubjectPositionOnly, NonSubjectPosition };

@@ -12,7 +12,9 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding"
+	"fmt"
 	"hash"
+	"time"
 
 	"golang.org/x/crypto/cryptobyte"
 )
@@ -118,47 +120,47 @@ var finishedLabel = []byte("finished")
 var channelIDLabel = []byte("TLS Channel ID signature\x00")
 var channelIDResumeLabel = []byte("Resumption\x00")
 
-func prfForVersion(version uint16, suite *cipherSuite) func(result, secret, label, seed []byte) {
-	switch version {
+func prfForVersion(vers version, suite *cipherSuite) func(result, secret, label, seed []byte) {
+	switch vers.protocolVersion() {
 	case VersionTLS10, VersionTLS11:
 		return prf10
 	case VersionTLS12:
 		return prf12(suite.hash().New)
 	}
-	panic("unknown version")
+	panic(fmt.Sprintf("unknown version 0x%x", vers.wire))
 }
 
 // masterFromPreMasterSecret generates the master secret from the pre-master
 // secret. See http://tools.ietf.org/html/rfc5246#section-8.1
-func masterFromPreMasterSecret(version uint16, suite *cipherSuite, preMasterSecret, clientRandom, serverRandom []byte) []byte {
+func masterFromPreMasterSecret(vers version, suite *cipherSuite, preMasterSecret, clientRandom, serverRandom []byte) []byte {
 	var seed [tlsRandomLength * 2]byte
 	copy(seed[0:len(clientRandom)], clientRandom)
 	copy(seed[len(clientRandom):], serverRandom)
 	masterSecret := make([]byte, masterSecretLength)
-	prfForVersion(version, suite)(masterSecret, preMasterSecret, masterSecretLabel, seed[0:])
+	prfForVersion(vers, suite)(masterSecret, preMasterSecret, masterSecretLabel, seed[0:])
 	return masterSecret
 }
 
 // extendedMasterFromPreMasterSecret generates the master secret from the
 // pre-master secret when the Triple Handshake fix is in effect. See
 // https://tools.ietf.org/html/rfc7627
-func extendedMasterFromPreMasterSecret(version uint16, suite *cipherSuite, preMasterSecret []byte, h finishedHash) []byte {
+func extendedMasterFromPreMasterSecret(vers version, suite *cipherSuite, preMasterSecret []byte, h finishedHash) []byte {
 	masterSecret := make([]byte, masterSecretLength)
-	prfForVersion(version, suite)(masterSecret, preMasterSecret, extendedMasterSecretLabel, h.Sum())
+	prfForVersion(vers, suite)(masterSecret, preMasterSecret, extendedMasterSecretLabel, h.Sum())
 	return masterSecret
 }
 
 // keysFromMasterSecret generates the connection keys from the master
 // secret, given the lengths of the MAC key, cipher key and IV, as defined in
 // RFC 2246, section 6.3.
-func keysFromMasterSecret(version uint16, suite *cipherSuite, masterSecret, clientRandom, serverRandom []byte, macLen, keyLen, ivLen int) (clientMAC, serverMAC, clientKey, serverKey, clientIV, serverIV []byte) {
+func keysFromMasterSecret(vers version, suite *cipherSuite, masterSecret, clientRandom, serverRandom []byte, macLen, keyLen, ivLen int) (clientMAC, serverMAC, clientKey, serverKey, clientIV, serverIV []byte) {
 	var seed [tlsRandomLength * 2]byte
 	copy(seed[0:len(clientRandom)], serverRandom)
 	copy(seed[len(serverRandom):], clientRandom)
 
 	n := 2*macLen + 2*keyLen + 2*ivLen
 	keyMaterial := make([]byte, n)
-	prfForVersion(version, suite)(keyMaterial, masterSecret, keyExpansionLabel, seed[0:])
+	prfForVersion(vers, suite)(keyMaterial, masterSecret, keyExpansionLabel, seed[0:])
 	clientMAC = keyMaterial[:macLen]
 	keyMaterial = keyMaterial[macLen:]
 	serverMAC = keyMaterial[:macLen]
@@ -173,43 +175,35 @@ func keysFromMasterSecret(version uint16, suite *cipherSuite, masterSecret, clie
 	return
 }
 
-func newFinishedHash(wireVersion uint16, isDTLS bool, cipherSuite *cipherSuite) finishedHash {
-	version, ok := wireToVersion(wireVersion, isDTLS)
-	if !ok {
-		panic("unknown version")
-	}
-
+func newFinishedHash(vers version, hashAlg crypto.Hash) finishedHash {
 	var ret finishedHash
-	if version >= VersionTLS12 {
-		ret.hash = cipherSuite.hash().New()
-
-		if version == VersionTLS12 {
-			ret.prf = prf12(cipherSuite.hash().New)
+	protoVers := vers.protocolVersion()
+	if protoVers >= VersionTLS12 {
+		ret.hash = hashAlg.New()
+		if protoVers == VersionTLS12 {
+			ret.prf = prf12(hashAlg.New)
 		} else {
 			ret.secret = make([]byte, ret.hash.Size())
 		}
 	} else {
 		ret.hash = sha1.New()
 		ret.md5 = md5.New()
-
 		ret.prf = prf10
 	}
 
-	ret.suite = cipherSuite
+	ret.hashAlg = hashAlg
 	ret.buffer = []byte{}
-	ret.version = version
-	ret.wireVersion = wireVersion
-	ret.isDTLS = isDTLS
+	ret.vers = vers
 	return ret
 }
 
 // A finishedHash calculates the hash of a set of handshake messages suitable
 // for including in a Finished message.
 type finishedHash struct {
-	suite *cipherSuite
+	hashAlg crypto.Hash
 
 	// hash maintains a running hash of handshake messages. In TLS 1.2 and up,
-	// the hash is determined from suite.hash(). In TLS 1.0 and 1.1, this is the
+	// the hash is determined from hashAlg. In TLS 1.0 and 1.1, this is the
 	// SHA-1 half of the MD5/SHA-1 concatenation.
 	hash hash.Hash
 
@@ -219,10 +213,8 @@ type finishedHash struct {
 	// In TLS 1.2, a full buffer is required.
 	buffer []byte
 
-	version     uint16
-	wireVersion uint16
-	isDTLS      bool
-	prf         func(result, secret, label, seed []byte)
+	vers version
+	prf  func(result, secret, label, seed []byte)
 
 	// secret, in TLS 1.3, is the running input secret.
 	secret []byte
@@ -233,7 +225,7 @@ func (h *finishedHash) UpdateForHelloRetryRequest() {
 	data.AddUint8(typeMessageHash)
 	data.AddUint24(uint32(h.hash.Size()))
 	data.AddBytes(h.Sum())
-	h.hash = h.suite.hash().New()
+	h.hash = h.hashAlg.New()
 	if h.buffer != nil {
 		h.buffer = []byte{}
 	}
@@ -243,7 +235,7 @@ func (h *finishedHash) UpdateForHelloRetryRequest() {
 func (h *finishedHash) Write(msg []byte) (n int, err error) {
 	h.hash.Write(msg)
 
-	if h.version < VersionTLS12 {
+	if h.vers.protocolVersion() < VersionTLS12 {
 		h.md5.Write(msg)
 	}
 
@@ -258,7 +250,7 @@ func (h *finishedHash) Write(msg []byte) (n int, err error) {
 // handshake message with a TLS header. In DTLS, the header is rewritten to a
 // DTLS header with |seqno| as the sequence number.
 func (h *finishedHash) WriteHandshake(msg []byte, seqno uint16) {
-	if h.isDTLS && h.version <= VersionTLS12 {
+	if h.vers.isDTLS() && h.vers.protocolVersion() <= VersionTLS12 {
 		// This is somewhat hacky. DTLS <= 1.2 hashes a slightly different format. (DTLS 1.3 uses the same format as TLS.)
 		// First, the TLS header.
 		h.Write(msg[:4])
@@ -274,7 +266,7 @@ func (h *finishedHash) WriteHandshake(msg []byte, seqno uint16) {
 }
 
 func (h finishedHash) Sum() []byte {
-	if h.version >= VersionTLS12 {
+	if h.vers.protocolVersion() >= VersionTLS12 {
 		return h.hash.Sum(nil)
 	}
 
@@ -286,14 +278,14 @@ func (h finishedHash) Sum() []byte {
 // clientSum returns the contents of the verify_data member of a client's
 // Finished message.
 func (h finishedHash) clientSum(baseKey []byte) []byte {
-	if h.version < VersionTLS13 {
+	if h.vers.protocolVersion() < VersionTLS13 {
 		out := make([]byte, finishedVerifyLength)
 		h.prf(out, baseKey, clientFinishedLabel, h.Sum())
 		return out
 	}
 
-	clientFinishedKey := hkdfExpandLabel(h.suite.hash(), baseKey, finishedLabel, nil, h.hash.Size(), h.isDTLS)
-	finishedHMAC := hmac.New(h.suite.hash().New, clientFinishedKey)
+	clientFinishedKey := hkdfExpandLabel(h.vers, h.hashAlg, baseKey, finishedLabel, nil, h.hash.Size())
+	finishedHMAC := hmac.New(h.hashAlg.New, clientFinishedKey)
 	finishedHMAC.Write(h.appendContextHashes(nil))
 	return finishedHMAC.Sum(nil)
 }
@@ -301,14 +293,14 @@ func (h finishedHash) clientSum(baseKey []byte) []byte {
 // serverSum returns the contents of the verify_data member of a server's
 // Finished message.
 func (h finishedHash) serverSum(baseKey []byte) []byte {
-	if h.version < VersionTLS13 {
+	if h.vers.protocolVersion() < VersionTLS13 {
 		out := make([]byte, finishedVerifyLength)
 		h.prf(out, baseKey, serverFinishedLabel, h.Sum())
 		return out
 	}
 
-	serverFinishedKey := hkdfExpandLabel(h.suite.hash(), baseKey, finishedLabel, nil, h.hash.Size(), h.isDTLS)
-	finishedHMAC := hmac.New(h.suite.hash().New, serverFinishedKey)
+	serverFinishedKey := hkdfExpandLabel(h.vers, h.hashAlg, baseKey, finishedLabel, nil, h.hash.Size())
+	finishedHMAC := hmac.New(h.hashAlg.New, serverFinishedKey)
 	finishedHMAC.Write(h.appendContextHashes(nil))
 	return finishedHMAC.Sum(nil)
 }
@@ -342,25 +334,25 @@ func (h *finishedHash) zeroSecret() []byte {
 // addEntropy incorporates ikm into the running TLS 1.3 secret with HKDF-Expand.
 func (h *finishedHash) addEntropy(ikm []byte) {
 	var err error
-	h.secret, err = hkdf.Extract(h.suite.hash().New, ikm, h.secret)
+	h.secret, err = hkdf.Extract(h.hashAlg.New, ikm, h.secret)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (h *finishedHash) nextSecret() {
-	h.secret = hkdfExpandLabel(h.suite.hash(), h.secret, []byte("derived"), h.suite.hash().New().Sum(nil), h.hash.Size(), h.isDTLS)
+	h.secret = hkdfExpandLabel(h.vers, h.hashAlg, h.secret, []byte("derived"), h.hashAlg.New().Sum(nil), h.hash.Size())
 }
 
 // hkdfExpandLabel implements TLS 1.3's HKDF-Expand-Label function, as defined
 // in section 7.1 of RFC 8446.
-func hkdfExpandLabel(hash crypto.Hash, secret, label, hashValue []byte, length int, isDTLS bool) []byte {
+func hkdfExpandLabel(vers version, hash crypto.Hash, secret, label, hashValue []byte, length int) []byte {
 	if len(label) > 255 || len(hashValue) > 255 {
 		panic("hkdfExpandLabel: label or hashValue too long")
 	}
 
 	versionLabel := []byte("tls13 ")
-	if isDTLS {
+	if vers.isDTLS() {
 		versionLabel = []byte("dtls13")
 	}
 	hkdfLabel := make([]byte, 3+len(versionLabel)+len(label)+1+len(hashValue))
@@ -390,8 +382,8 @@ func (h *finishedHash) appendContextHashes(b []byte) []byte {
 }
 
 var (
-	externalPSKBinderLabel        = []byte("ext binder")
 	resumptionPSKBinderLabel      = []byte("res binder")
+	importedPSKBinderLabel        = []byte("imp binder")
 	earlyTrafficLabel             = []byte("c e traffic")
 	clientHandshakeTrafficLabel   = []byte("c hs traffic")
 	serverHandshakeTrafficLabel   = []byte("s hs traffic")
@@ -406,25 +398,27 @@ var (
 
 	echAcceptConfirmationLabel    = []byte("ech accept confirmation")
 	echAcceptConfirmationHRRLabel = []byte("hrr ech accept confirmation")
+
+	derivedPSKLabel = []byte("derived psk")
 )
 
 // deriveSecret implements TLS 1.3's Derive-Secret function, as defined in
 // section 7.1 of RFC8446.
 func (h *finishedHash) deriveSecret(label []byte) []byte {
-	return hkdfExpandLabel(h.suite.hash(), h.secret, label, h.appendContextHashes(nil), h.hash.Size(), h.isDTLS)
+	return hkdfExpandLabel(h.vers, h.hashAlg, h.secret, label, h.appendContextHashes(nil), h.hash.Size())
 }
 
 // echAcceptConfirmation computes the ECH accept confirmation signal, as defined
-// in sections 7.2 and 7.2.1 of draft-ietf-tls-esni-13. The transcript hash is
-// computed by concatenating |h| with |extraMessages|.
+// in sections 7.2 and 7.2.1 of RFC 9849. The transcript hash is computed by
+// concatenating |h| with |extraMessages|.
 func (h *finishedHash) echAcceptConfirmation(clientRandom, label, extraMessages []byte) []byte {
-	secret, err := hkdf.Extract(h.suite.hash().New, clientRandom, h.zeroSecret())
+	secret, err := hkdf.Extract(h.hashAlg.New, clientRandom, h.zeroSecret())
 	if err != nil {
 		panic(err)
 	}
-	hashCopy := copyHash(h.hash, h.suite.hash())
+	hashCopy := copyHash(h.hash, h.hashAlg)
 	hashCopy.Write(extraMessages)
-	return hkdfExpandLabel(h.suite.hash(), secret, label, hashCopy.Sum(nil), echAcceptConfirmationLength, h.isDTLS)
+	return hkdfExpandLabel(h.vers, h.hashAlg, secret, label, hashCopy.Sum(nil), echAcceptConfirmationLength)
 }
 
 // The following are context strings for CertificateVerify in TLS 1.3.
@@ -439,7 +433,7 @@ var (
 func (h *finishedHash) certificateVerifyInput(context []byte) []byte {
 	const paddingLen = 64
 	b := make([]byte, paddingLen, paddingLen+len(context)+1+2*h.hash.Size())
-	for i := 0; i < paddingLen; i++ {
+	for i := range paddingLen {
 		b[i] = 32
 	}
 	b = append(b, context...)
@@ -462,31 +456,132 @@ var (
 
 // deriveTrafficAEAD derives traffic keys and constructs an AEAD given a traffic
 // secret.
-func deriveTrafficAEAD(version uint16, suite *cipherSuite, secret []byte, side trafficDirection, isDTLS bool) any {
-	key := hkdfExpandLabel(suite.hash(), secret, keyTLS13, nil, suite.keyLen, isDTLS)
-	iv := hkdfExpandLabel(suite.hash(), secret, ivTLS13, nil, suite.ivLen(version), isDTLS)
+func deriveTrafficAEAD(vers version, suite *cipherSuite, secret []byte, side trafficDirection) any {
+	key := hkdfExpandLabel(vers, suite.hash(), secret, keyTLS13, nil, suite.keyLen)
+	iv := hkdfExpandLabel(vers, suite.hash(), secret, ivTLS13, nil, suite.ivLen(vers))
 
-	return suite.aead(version, key, iv)
+	return suite.aead(vers, key, iv)
 }
 
-func updateTrafficSecret(hash crypto.Hash, version uint16, secret []byte, isDTLS bool) []byte {
-	return hkdfExpandLabel(hash, secret, applicationTrafficLabel, nil, hash.Size(), isDTLS)
+func updateTrafficSecret(vers version, hash crypto.Hash, secret []byte) []byte {
+	return hkdfExpandLabel(vers, hash, secret, applicationTrafficLabel, nil, hash.Size())
 }
 
-func computePSKBinder(psk []byte, version uint16, isDTLS bool, label []byte, cipherSuite *cipherSuite, clientHello, helloRetryRequest, truncatedHello []byte) []byte {
-	finishedHash := newFinishedHash(version, isDTLS, cipherSuite)
-	finishedHash.addEntropy(psk)
-	binderKey := finishedHash.deriveSecret(label)
+type preSharedKey struct {
+	version       version
+	hash          crypto.Hash
+	identity      []byte
+	secret        []byte
+	binderKey     []byte
+	creationTime  time.Time
+	ticketAgeAdd  uint32
+	clientSession *ClientSessionState
+	serverSession *sessionState
+	credential    *Credential
+}
+
+func newClientSessionPSK(session *ClientSessionState) *preSharedKey {
+	psk := &preSharedKey{
+		version:       session.vers,
+		hash:          session.cipherSuite.hash(),
+		identity:      session.sessionTicket,
+		secret:        session.secret,
+		creationTime:  session.ticketCreationTime,
+		ticketAgeAdd:  session.ticketAgeAdd,
+		clientSession: session,
+	}
+	psk.initBinder(resumptionPSKBinderLabel)
+	return psk
+}
+
+func newServerSessionPSK(ticket []byte, session *sessionState) *preSharedKey {
+	psk := &preSharedKey{
+		version:       session.vers,
+		hash:          session.cipherSuite.hash(),
+		identity:      ticket,
+		secret:        session.secret,
+		creationTime:  session.ticketCreationTime,
+		ticketAgeAdd:  session.ticketAgeAdd,
+		serverSession: session,
+	}
+	psk.initBinder(resumptionPSKBinderLabel)
+	return psk
+}
+
+func (psk *preSharedKey) initBinder(label []byte) {
+	finishedHash := newFinishedHash(psk.version, psk.hash)
+	finishedHash.addEntropy(psk.secret)
+	psk.binderKey = finishedHash.deriveSecret(label)
+}
+
+func (psk *preSharedKey) computeBinder(clientHello, helloRetryRequest, truncatedHello []byte) []byte {
+	finishedHash := newFinishedHash(psk.version, psk.hash)
 	finishedHash.Write(clientHello)
 	if len(helloRetryRequest) != 0 {
 		finishedHash.UpdateForHelloRetryRequest()
 	}
 	finishedHash.Write(helloRetryRequest)
 	finishedHash.Write(truncatedHello)
-	return finishedHash.clientSum(binderKey)
+	return finishedHash.clientSum(psk.binderKey)
 }
 
-func deriveSessionPSK(suite *cipherSuite, version uint16, masterSecret []byte, nonce []byte, isDTLS bool) []byte {
+func deriveSessionPSK(suite *cipherSuite, vers version, masterSecret []byte, nonce []byte) []byte {
 	hash := suite.hash()
-	return hkdfExpandLabel(hash, masterSecret, resumptionPSKLabel, nonce, hash.Size(), isDTLS)
+	return hkdfExpandLabel(vers, hash, masterSecret, resumptionPSKLabel, nonce, hash.Size())
+}
+
+func importPSK(cred *Credential, targetProtocol version, targetHash crypto.Hash) *preSharedKey {
+	if cred.Type != CredentialTypePreSharedKey {
+		panic("not a PSK credential")
+	}
+
+	var targetKDF uint16
+	switch targetHash {
+	case 0:
+		// We treat zero as some unrecognized hash value for testing.
+		targetKDF = 0x1234
+		targetHash = crypto.SHA256
+	case crypto.SHA256:
+		targetKDF = kdfHKDFWithSHA256
+	case crypto.SHA384:
+		targetKDF = kdfHKDFWithSHA384
+	default:
+		panic("unrecogized target HKDF hash")
+	}
+
+	targetProtocolValue := targetProtocol.wire
+	if cred.ImportTargetPSKProtocol != 0 {
+		targetProtocolValue = cred.ImportTargetPSKProtocol
+	}
+
+	// See RFC 9258, Section 5.1.
+	identity := (&importedPSKIdentity{
+		externalIdentity: cred.PSKIdentity,
+		context:          cred.PSKContext,
+		targetProtocol:   targetProtocolValue,
+		targetKDF:        targetKDF,
+	}).marshal()
+	identity = append(identity, cred.AppendToImportedPSKIdentity...)
+
+	h := cred.PSKHash.New()
+	h.Write(identity)
+	identityHash := h.Sum(nil)
+
+	epskx, err := hkdf.Extract(cred.PSKHash.New, cred.PreSharedKey, make([]byte, cred.PSKHash.Size()))
+	if err != nil {
+		panic(err)
+	}
+
+	// HKDF-Expand-Label in the ipskx calculation uses the label for the target protocol.
+	ipskx := hkdfExpandLabel(targetProtocol, cred.PSKHash, epskx, derivedPSKLabel, identityHash, targetHash.Size())
+
+	psk := &preSharedKey{
+		version:    targetProtocol,
+		hash:       targetHash,
+		identity:   identity,
+		secret:     ipskx,
+		credential: cred,
+	}
+	psk.initBinder(importedPSKBinderLabel)
+	return psk
 }

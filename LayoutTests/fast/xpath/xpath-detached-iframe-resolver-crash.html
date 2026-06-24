@@ -3,10 +3,7 @@
 <script src="../../resources/js-test.js"></script>
 <script>
     description("Ensure that using XPath namespace resolver with a detached iframe doesn't crash.");
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
-    }
+    window.jsTestIsAsync = true;
 
     var dummyResolverCalled = false;
     var foundNode;
@@ -29,8 +26,7 @@
         shouldBeTrue("dummyResolverCalled");
         shouldBe("foundNode.toString()", "\"[object HTMLDivElement]\"");
 
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 </script>
 </head>

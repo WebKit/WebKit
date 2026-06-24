@@ -23,6 +23,8 @@
 #include "internal.h"
 
 
+BSSL_NAMESPACE_BEGIN
+
 bool Ciphers(const std::vector<std::string> &args) {
   bool openssl_name = false;
   if (args.size() == 2 && args[0] == "-openssl-name") {
@@ -66,3 +68,5 @@ bool Ciphers(const std::vector<std::string> &args) {
 
   return true;
 }
+
+BSSL_NAMESPACE_END

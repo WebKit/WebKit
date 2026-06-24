@@ -15,9 +15,9 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <utility>
 
-#include "api/array_view.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder.h"
@@ -83,10 +83,10 @@ class AudioChannel : public RefCountInterface {
 
   // APIs relayed to AudioIngress.
   bool IsPlaying() const { return ingress_->IsPlaying(); }
-  void ReceivedRTPPacket(ArrayView<const uint8_t> rtp_packet) {
+  void ReceivedRTPPacket(std::span<const uint8_t> rtp_packet) {
     ingress_->ReceivedRTPPacket(rtp_packet);
   }
-  void ReceivedRTCPPacket(ArrayView<const uint8_t> rtcp_packet) {
+  void ReceivedRTCPPacket(std::span<const uint8_t> rtcp_packet) {
     ingress_->ReceivedRTCPPacket(rtcp_packet);
   }
   void SetReceiveCodecs(const std::map<int, SdpAudioFormat>& codecs) {
